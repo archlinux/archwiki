@@ -1,0 +1,45 @@
+#head_container {margin: 0; padding: 0;  height: 140px;}
+
+#main_nav ul {
+	list-style: none;
+	margin: 0;
+	padding: 20px;
+	padding-right: 10px;
+	padding-top: 48px;
+}
+
+#main_nav ul li {
+	display: block;
+	float: right;
+	width: 67px;
+	height: 20px;
+	margin: 0;
+	padding-top: 2px;
+	margin-left: 3px;
+	background: url("tab.png") repeat-x bottom left #fbf8f1;
+	text-align: center;
+	font-size: 13px;
+}
+
+#main_nav ul li[class~=selected] {
+	background: #fbf8f1;
+}
+
+#main_nav ul li a {
+color: #35526f;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+
+
+#title {margin: 0; padding: 0;
+	height: 140px;
+	float: left;
+}
+
+#logo {margin: 0; padding: 0;
+	float: left;
+	width: 140px;
+	height: 140px;
+}
