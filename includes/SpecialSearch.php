@@ -77,6 +77,7 @@ class SpecialSearch {
 	function goResult( $term ) {
 		global $wgOut;
 		global $wgGoToEdit;
+		global $wgContLang;
 
 		$this->setupPage( $term );
 
@@ -110,7 +111,7 @@ class SpecialSearch {
 				$editurl = $t->escapeLocalURL( 'action=edit' );
 			}
 		}
-		$wgOut->addWikiText( wfMsg( 'noexactmatch', $term ) );
+		$wgOut->addWikiText( wfMsg( 'noexactmatch', wfEscapeWikiText( $term ) ) );
 
 		return $this->showResults( $term );
 	}
@@ -151,7 +152,7 @@ class SpecialSearch {
 				wfMsg( 'googlesearch',
 					htmlspecialchars( $term ),
 					htmlspecialchars( $wgInputEncoding ),
-					htmlspecialchars( wfMsg( 'search' ) )
+					htmlspecialchars( wfMsg( 'searchbutton' ) )
 				)
 			);
 			wfProfileOut( $fname );

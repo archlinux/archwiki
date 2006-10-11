@@ -4,9 +4,6 @@
  * @todo document
  */
 
-/** */
-require_once( 'Database.php' );
-
 /**
  * @package MediaWiki
  * @todo document
@@ -22,10 +19,10 @@ class Revision {
 	 * Returns null if no such revision can be found.
 	 *
 	 * @param int $id
-	 * @static
 	 * @access public
+	 * @static
 	 */
-	function newFromId( $id ) {
+	public static function newFromId( $id ) {
 		return Revision::newFromConds(
 			array( 'page_id=rev_page',
 			       'rev_id' => intval( $id ) ) );
@@ -42,7 +39,7 @@ class Revision {
 	 * @access public
 	 * @static
 	 */
-	function newFromTitle( &$title, $id = 0 ) {
+	public static function newFromTitle( &$title, $id = 0 ) {
 		if( $id ) {
 			$matchId = intval( $id );
 		} else {
@@ -56,6 +53,21 @@ class Revision {
 	}
 
 	/**
+	 * Load a page revision from a given revision ID number.
+	 * Returns null if no such revision can be found.
+	 *
+	 * @param Database $db
+	 * @param int $id
+	 * @access public
+	 * @static
+	 */
+	public static function loadFromId( &$db, $id ) {
+		return Revision::loadFromConds( $db,
+			array( 'page_id=rev_page',
+			       'rev_id' => intval( $id ) ) );
+	}
+
+	/**
 	 * Load either the current, or a specified, revision
 	 * that's attached to a given page. If not attached
 	 * to that page, will return null.
@@ -65,8 +77,9 @@ class Revision {
 	 * @param int $id
 	 * @return Revision
 	 * @access public
+	 * @static
 	 */
-	function loadFromPageId( &$db, $pageid, $id = 0 ) {
+	public static function loadFromPageId( &$db, $pageid, $id = 0 ) {
 		$conds=array('page_id=rev_page','rev_page'=>intval( $pageid ), 'page_id'=>intval( $pageid ));
 		if( $id ) {
 			$conds['rev_id']=intval($id);
@@ -86,8 +99,9 @@ class Revision {
 	 * @param int $id
 	 * @return Revision
 	 * @access public
+	 * @static
 	 */
-	function loadFromTitle( &$db, $title, $id = 0 ) {
+	public static function loadFromTitle( &$db, $title, $id = 0 ) {
 		if( $id ) {
 			$matchId = intval( $id );
 		} else {
@@ -113,7 +127,7 @@ class Revision {
 	 * @access public
 	 * @static
 	 */
-	function loadFromTimestamp( &$db, &$title, $timestamp ) {
+	public static function loadFromTimestamp( &$db, &$title, $timestamp ) {
 		return Revision::loadFromConds(
 			$db,
 			array( 'rev_timestamp'  => $db->timestamp( $timestamp ),
@@ -127,10 +141,10 @@ class Revision {
 	 *
 	 * @param array $conditions
 	 * @return Revision
-	 * @static
 	 * @access private
+	 * @static
 	 */
-	function newFromConds( $conditions ) {
+	private static function newFromConds( $conditions ) {
 		$db =& wfGetDB( DB_SLAVE );
 		$row = Revision::loadFromConds( $db, $conditions );
 		if( is_null( $row ) ) {
@@ -147,10 +161,10 @@ class Revision {
 	 * @param Database $db
 	 * @param array $conditions
 	 * @return Revision
-	 * @static
 	 * @access private
+	 * @static
 	 */
-	function loadFromConds( &$db, $conditions ) {
+	private static function loadFromConds( &$db, $conditions ) {
 		$res = Revision::fetchFromConds( $db, $conditions );
 		if( $res ) {
 			$row = $res->fetchObject();
@@ -171,10 +185,10 @@ class Revision {
 	 *
 	 * @param Title $title
 	 * @return ResultWrapper
-	 * @static
 	 * @access public
+	 * @static
 	 */
-	function fetchAllRevisions( &$title ) {
+	public static function fetchAllRevisions( &$title ) {
 		return Revision::fetchFromConds(
 			wfGetDB( DB_SLAVE ),
 			array( 'page_namespace' => $title->getNamespace(),
@@ -189,10 +203,10 @@ class Revision {
 	 *
 	 * @param Title $title
 	 * @return ResultWrapper
-	 * @static
 	 * @access public
+	 * @static
 	 */
-	function fetchRevision( &$title ) {
+	public static function fetchRevision( &$title ) {
 		return Revision::fetchFromConds(
 			wfGetDB( DB_SLAVE ),
 			array( 'rev_id=page_latest',
@@ -209,10 +223,10 @@ class Revision {
 	 * @param Database $db
 	 * @param array $conditions
 	 * @return ResultWrapper
-	 * @static
 	 * @access private
+	 * @static
 	 */
-	function fetchFromConds( &$db, $conditions ) {
+	private static function fetchFromConds( &$db, $conditions ) {
 		$res = $db->select(
 			array( 'page', 'revision' ),
 			array( 'page_namespace',
@@ -259,10 +273,13 @@ class Revision {
 				$this->mTitle = null;
 			}
 
+			// Lazy extraction...
+			$this->mText      = null;
 			if( isset( $row->old_text ) ) {
-				$this->mText  = $this->getRevisionText( $row );
+				$this->mTextRow = $row;
 			} else {
-				$this->mText  = null;
+				// 'text' table row entry will be lazy-loaded
+				$this->mTextRow = null;
 			}
 		} elseif( is_array( $row ) ) {
 			// Build a new revision to be saved...
@@ -519,7 +536,6 @@ class Revision {
 				wfProfileOut( $fname );
 				return false;
 			}
-			require_once('ExternalStore.php');
 			$text=ExternalStore::fetchFromURL($url);
 		}
 
@@ -609,7 +625,6 @@ class Revision {
 			} else {
 				$store = $wgDefaultExternalStore;
 			}
-			require_once('ExternalStore.php');
 			// Store and get the URL
 			$data = ExternalStore::insert( $store, $data );
 			if ( !$data ) {
@@ -668,14 +683,37 @@ class Revision {
 	function loadText() {
 		$fname = 'Revision::loadText';
 		wfProfileIn( $fname );
-
-		$dbr =& wfGetDB( DB_SLAVE );
-		$row = $dbr->selectRow( 'text',
-			array( 'old_text', 'old_flags' ),
-			array( 'old_id' => $this->getTextId() ),
-			$fname);
+		
+		// Caching may be beneficial for massive use of external storage
+		global $wgRevisionCacheExpiry, $wgMemc;
+		$key = wfMemcKey( 'revisiontext', 'textid', $this->getTextId() );
+		if( $wgRevisionCacheExpiry ) {
+			$text = $wgMemc->get( $key );
+			if( is_string( $text ) ) {
+				wfProfileOut( $fname );
+				return $text;
+			}
+		}
+		
+		// If we kept data for lazy extraction, use it now...
+		if ( isset( $this->mTextRow ) ) {
+			$row = $this->mTextRow;
+			$this->mTextRow = null;
+		} else {
+			$row = null;
+		}
+		
+		if( !$row ) {
+			// Text data is immutable; check slaves first.
+			$dbr =& wfGetDB( DB_SLAVE );
+			$row = $dbr->selectRow( 'text',
+				array( 'old_text', 'old_flags' ),
+				array( 'old_id' => $this->getTextId() ),
+				$fname);
+		}
 
 		if( !$row ) {
+			// Possible slave lag!
 			$dbw =& wfGetDB( DB_MASTER );
 			$row = $dbw->selectRow( 'text',
 				array( 'old_text', 'old_flags' ),
@@ -684,6 +722,11 @@ class Revision {
 		}
 
 		$text = Revision::getRevisionText( $row );
+		
+		if( $wgRevisionCacheExpiry ) {
+			$wgMemc->set( $key, $text, $wgRevisionCacheExpiry );
+		}
+		
 		wfProfileOut( $fname );
 
 		return $text;

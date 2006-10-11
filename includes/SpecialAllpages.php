@@ -91,15 +91,11 @@ function showToplevel ( $namespace = NS_MAIN, $including = false ) {
 	# in the querycache table.
 
 	$dbr =& wfGetDB( DB_SLAVE );
-	$page = $dbr->tableName( 'page' );
-	$fromwhere = "FROM $page WHERE page_namespace=$namespace";
-	$order_arr = array ( 'ORDER BY' => 'page_title' );
-	$order_str = 'ORDER BY page_title';
 	$out = "";
 	$where = array( 'page_namespace' => $namespace );
 
-	global $wgMemc, $wgDBname;
-	$key = "$wgDBname:allpages:ns:$namespace";
+	global $wgMemc;
+	$key = wfMemcKey( 'allpages', 'ns', $namespace );
 	$lines = $wgMemc->get( $key );
 
 	if( !is_array( $lines ) ) {
@@ -280,11 +276,9 @@ function showChunk( $namespace = NS_MAIN, $from, $including = false ) {
 				$sk->makeKnownLink( $wgContLang->specialPage( "Allpages" ),
 					wfMsgHtml ( 'allpages' ) );
 		if ( isset($dbr) && $dbr && ($n == $this->maxPerPage) && ($s = $dbr->fetchObject( $res )) ) {
-			$namespaceparam = $namespace ? "&namespace=$namespace" : "";
-			$out2 .= " | " . $sk->makeKnownLink(
-				$wgContLang->specialPage( "Allpages" ),
-				wfMsgHtml ( 'nextpage', $s->page_title ),
-				"from=" . wfUrlEncode ( $s->page_title ) . $namespaceparam );
+			$self = Title::makeTitle( NS_SPECIAL, 'Allpages' );
+			$q = 'from=' . $t->getPartialUrl() . ( $namespace ? '&namespace=' . $namespace : '' );
+			$out2 .= ' | ' . $sk->makeKnownLinkObj( $self, wfMsgHtml( 'nextpage', $t->getText() ), $q );
 		}
 		$out2 .= "</td></tr></table><hr />";
 	}

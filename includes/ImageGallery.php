@@ -55,7 +55,7 @@ class ImageGallery
 	 *
 	 * @param $skin Skin object
 	 */
-	function useSkin( &$skin ) {
+	function useSkin( $skin ) {
 		$this->mSkin =& $skin;
 	}
 	
@@ -82,6 +82,7 @@ class ImageGallery
 	 */
 	function add( $image, $html='' ) {
 		$this->mImages[] = array( &$image, $html );
+		wfDebug( "ImageGallery::add " . $image->getName() . "\n" );
 	}
 
 	/**
@@ -135,7 +136,7 @@ class ImageGallery
 	function toHTML() {
 		global $wgLang, $wgIgnoreImageErrors, $wgGenerateThumbnailOnParse;
 
-		$sk =& $this->getSkin();
+		$sk = $this->getSkin();
 
 		$s = '<table class="gallery" cellspacing="0" cellpadding="0">';
 		if( $this->mCaption )
@@ -157,8 +158,7 @@ class ImageGallery
 				# The image is blacklisted, just show it as a text link.
 				$thumbhtml = '<div style="height: 152px;">'
 					. $sk->makeKnownLinkObj( $nt, htmlspecialchars( $nt->getText() ) ) . '</div>';
-			}
-			else if( !( $thumb = $img->getThumbnail( 120, 120, $wgGenerateThumbnailOnParse ) ) ) {
+			} else if( !( $thumb = $img->getThumbnail( 120, 120, $wgGenerateThumbnailOnParse ) ) ) {
 				# Error generating thumbnail.
 				$thumbhtml = '<div style="height: 152px;">'
 					. htmlspecialchars( $img->getLastError() ) . '</div>';

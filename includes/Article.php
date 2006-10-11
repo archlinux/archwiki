@@ -5,11 +5,6 @@
  */
 
 /**
- * Need the CacheManager to be loaded
- */
-require_once( 'CacheManager.php' );
-
-/**
  * Class representing a MediaWiki article and history.
  *
  * See design.txt for an overview.
@@ -651,15 +646,16 @@ class Article {
 		# diff page instead of the article.
 
 		if ( !is_null( $diff ) ) {
-			require_once( 'DifferenceEngine.php' );
 			$wgOut->setPageTitle( $this->mTitle->getPrefixedText() );
 
 			$de = new DifferenceEngine( $this->mTitle, $oldid, $diff, $rcid );
 			// DifferenceEngine directly fetched the revision:
 			$this->mRevIdFetched = $de->mNewid;
 			$de->showDiffPage();
-
-			if( $diff == 0 ) {
+			
+			// Needed to get the page's current revision
+			$this->loadPageData();
+			if( $diff == 0 || $diff == $this->mLatest ) {
 				# Run view updates for current revision only
 				$this->viewUpdates();
 			}
@@ -719,6 +715,7 @@ class Article {
 		$outputDone = false;
 		if ( $pcache ) {
 			if ( $wgOut->tryParserCache( $this, $wgUser ) ) {
+				wfRunHooks( 'ArticleViewHeader', array( &$this ) );
 				$outputDone = true;
 			}
 		}
@@ -804,13 +801,13 @@ class Article {
 				# Display content, don't attempt to save to parser cache
 				# Don't show section-edit links on old revisions... this way lies madness.
 				if( !$this->isCurrent() ) {
-					$oldEditSectionSetting = $wgOut->mParserOptions->setEditSection( false );
+					$oldEditSectionSetting = $wgOut->parserOptions()->setEditSection( false );
 				}
 				# Display content and don't save to parser cache
 				$wgOut->addPrimaryWikiText( $text, $this, false );
 
 				if( !$this->isCurrent() ) {
-					$wgOut->mParserOptions->setEditSection( $oldEditSectionSetting );
+					$wgOut->parserOptions()->setEditSection( $oldEditSectionSetting );
 				}
 			}
 		}
@@ -886,7 +883,7 @@ class Article {
 		}
 
 		if ((!$wgUser->isAllowed('delete'))) {
-			$wgOut->sysopRequired();
+			$wgOut->permissionRequired( 'delete' );
 			return;
 		}
 
@@ -1216,7 +1213,7 @@ class Article {
 
 		# Silently ignore EDIT_MINOR if not allowed
 		$isminor = ( $flags & EDIT_MINOR ) && $wgUser->isAllowed('minoredit');
-		$bot = $wgUser->isBot() || ( $flags & EDIT_FORCE_BOT );
+		$bot = $wgUser->isAllowed( 'bot' ) || ( $flags & EDIT_FORCE_BOT );
 
 		$text = $this->preSaveTransform( $text );
 
@@ -1447,7 +1444,7 @@ class Article {
 			$wgOut->setPagetitle( wfMsg( 'addedwatch' ) );
 			$wgOut->setRobotpolicy( 'noindex,nofollow' );
 
-			$link = $this->mTitle->getPrefixedText();
+			$link = wfEscapeWikiText( $this->mTitle->getPrefixedText() );
 			$text = wfMsg( 'addedwatchtext', $link );
 			$wgOut->addWikiText( $text );
 		}
@@ -1467,7 +1464,6 @@ class Article {
 		
 		if (wfRunHooks('WatchArticle', array(&$wgUser, &$this))) {
 			$wgUser->addWatch( $this->mTitle );
-			$wgUser->saveSettings();
 
 			return wfRunHooks('WatchArticleComplete', array(&$wgUser, &$this));
 		}
@@ -1495,7 +1491,7 @@ class Article {
 			$wgOut->setPagetitle( wfMsg( 'removedwatch' ) );
 			$wgOut->setRobotpolicy( 'noindex,nofollow' );
 
-			$link = $this->mTitle->getPrefixedText();
+			$link = wfEscapeWikiText( $this->mTitle->getPrefixedText() );
 			$text = wfMsg( 'removedwatchtext', $link );
 			$wgOut->addWikiText( $text );
 		}
@@ -1515,7 +1511,6 @@ class Article {
 
 		if (wfRunHooks('UnwatchArticle', array(&$wgUser, &$this))) {
 			$wgUser->removeWatch( $this->mTitle );
-			$wgUser->saveSettings();
 
 			return wfRunHooks('UnwatchArticleComplete', array(&$wgUser, &$this));
 		}
@@ -1527,7 +1522,6 @@ class Article {
 	 * action=protect handler
 	 */
 	function protect() {
-		require_once 'ProtectionForm.php';
 		$form = new ProtectionForm( $this );
 		$form->show();
 	}
@@ -1641,7 +1635,7 @@ class Article {
 
 		# Check permissions
 		if( $wgUser->isAllowed( 'delete' ) ) {
-			if( $wgUser->isBlocked() ) {
+			if( $wgUser->isBlocked( !$confirm ) ) {
 				$wgOut->blockedPage();
 				return;
 			}
@@ -1842,7 +1836,7 @@ class Article {
 
 		if (wfRunHooks('ArticleDelete', array(&$this, &$wgUser, &$reason))) {
 			if ( $this->doDeleteArticle( $reason ) ) {
-				$deleted = $this->mTitle->getPrefixedText();
+				$deleted = wfEscapeWikiText( $this->mTitle->getPrefixedText() );
 
 				$wgOut->setPagetitle( wfMsg( 'actioncomplete' ) );
 				$wgOut->setRobotpolicy( 'noindex,nofollow' );
@@ -1910,28 +1904,34 @@ class Article {
 		);
 
 		# Now that it's safely backed up, delete it
-		$dbw->delete( 'revision', array( 'rev_page' => $id ), __METHOD__ );
 		$dbw->delete( 'page', array( 'page_id' => $id ), __METHOD__);
 
-		if ($wgUseTrackbacks)
-			$dbw->delete( 'trackbacks', array( 'tb_page' => $id ), __METHOD__ );
+		# If using cascading deletes, we can skip some explicit deletes
+		if ( !$dbw->cascadingDeletes() ) {
 
- 		# Clean up recentchanges entries...
-		$dbw->delete( 'recentchanges', array( 'rc_namespace' => $ns, 'rc_title' => $t ), __METHOD__ );
+			$dbw->delete( 'revision', array( 'rev_page' => $id ), __METHOD__ );
 
-		# Finally, clean up the link tables
-		$t = $this->mTitle->getPrefixedDBkey();
+			if ($wgUseTrackbacks)
+				$dbw->delete( 'trackbacks', array( 'tb_page' => $id ), __METHOD__ );
+
+			# Delete outgoing links
+			$dbw->delete( 'pagelinks', array( 'pl_from' => $id ) );
+			$dbw->delete( 'imagelinks', array( 'il_from' => $id ) );
+			$dbw->delete( 'categorylinks', array( 'cl_from' => $id ) );
+			$dbw->delete( 'templatelinks', array( 'tl_from' => $id ) );
+			$dbw->delete( 'externallinks', array( 'el_from' => $id ) );
+			$dbw->delete( 'langlinks', array( 'll_from' => $id ) );
+		}
+
+		# If using cleanup triggers, we can skip some manual deletes
+		if ( !$dbw->cleanupTriggers() ) {
+
+			# Clean up recentchanges entries...
+			$dbw->delete( 'recentchanges', array( 'rc_namespace' => $ns, 'rc_title' => $t ), __METHOD__ );
+		}
 
 		# Clear caches
 		Article::onArticleDelete( $this->mTitle );
-
-		# Delete outgoing links
-		$dbw->delete( 'pagelinks', array( 'pl_from' => $id ) );
-		$dbw->delete( 'imagelinks', array( 'il_from' => $id ) );
-		$dbw->delete( 'categorylinks', array( 'cl_from' => $id ) );
-		$dbw->delete( 'templatelinks', array( 'tl_from' => $id ) );
-		$dbw->delete( 'externallinks', array( 'el_from' => $id ) );
-		$dbw->delete( 'langlinks', array( 'll_from' => $id ) );
 
 		# Log the deletion
 		$log = new LogPage( 'delete' );
@@ -2141,7 +2141,7 @@ class Article {
 		# If this is another user's talk page, update newtalk
 		# Don't do this if $changed = false otherwise some idiot can null-edit a
 		# load of user talk pages and piss people off
-		if( $this->mTitle->getNamespace() == NS_USER_TALK && $shortTitle != $wgUser->getName() && $changed ) {
+		if( $this->mTitle->getNamespace() == NS_USER_TALK && $shortTitle != $wgUser->getTitleKey() && $changed ) {
 			if (wfRunHooks('ArticleEditUpdateNewTalk', array(&$this)) ) {
 				$other = User::newFromName( $shortTitle );
 				if( is_null( $other ) && User::isIP( $shortTitle ) ) {
@@ -2161,6 +2161,22 @@ class Article {
 
 		wfProfileOut( __METHOD__ );
 	}
+	
+	/**
+	 * Perform article updates on a special page creation.
+	 *
+	 * @param Revision $rev
+	 *
+	 * @fixme This is a shitty interface function. Kill it and replace the
+	 * other shitty functions like editUpdates and such so it's not needed
+	 * anymore.
+	 */
+	function createUpdates( $rev ) {
+		$this->mGoodAdjustment = $this->isCountable( $rev->getText() );
+		$this->mTotalAdjustment = 1;
+		$this->editUpdates( $rev->getText(), $rev->getComment(),
+			$rev->isMinor(), wfTimestamp(), $rev->getId(), true );
+	}
 
 	/**
 	 * Generate the navigation links when browsing through an article revisions
@@ -2173,6 +2189,10 @@ class Article {
 	 */
 	function setOldSubtitle( $oldid=0 ) {
 		global $wgLang, $wgOut, $wgUser;
+
+		if ( !wfRunHooks( 'DisplayOldSubtitle', array(&$this, &$oldid) ) ) {
+				return; 
+		}       
 
 		$revision = Revision::newFromId( $oldid );
 

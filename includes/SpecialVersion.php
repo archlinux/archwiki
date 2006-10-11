@@ -45,7 +45,7 @@ class SpecialVersion {
 	 * @static
 	 */
 	function MediaWikiCredits() {
-		$version = $this->getVersion();
+		$version = self::getVersion();
 		$dbr =& wfGetDB( DB_SLAVE );
 
 		$ret =
@@ -77,9 +77,9 @@ class SpecialVersion {
 		return str_replace( "\t\t", '', $ret );
 	}
 	
-	function getVersion() {
+	public static function getVersion() {
 		global $wgVersion, $IP;
-		$svn = $this->getSvnRevision( $IP );
+		$svn = self::getSvnRevision( $IP );
 		return $svn ? "$wgVersion (r$svn)" : $wgVersion;
 	}
 
@@ -129,6 +129,11 @@ class SpecialVersion {
 			$out .= "** Parser extension tags:\n";
 			$out .= '***' . $this->listToText( $tags ). "\n";
 		}
+		
+		if( $cnt = count( $fhooks = $wgParser->getFunctionHooks() ) ) {
+			$out .= "** Parser function hooks:\n";
+			$out .= '***' . $this->listToText( $fhooks ) . "\n";
+		}
 
 		if ( count( $wgSkinExtensionFunction ) ) {
 			$out .= "** Skin extension functions:\n";
@@ -142,7 +147,7 @@ class SpecialVersion {
 		if ( $a['name'] === $b['name'] )
 			return 0;
 		else
-			return LanguageUtf8::lc( $a['name'] ) > LanguageUtf8::lc( $b['name'] ) ? 1 : -1;
+			return Language::lc( $a['name'] ) > Language::lc( $b['name'] ) ? 1 : -1;
 	}
 
 	function formatCredits( $name, $version = null, $author = null, $url = null, $description = null) {
@@ -232,34 +237,51 @@ class SpecialVersion {
 
 	/**
 	 * Retrieve the revision number of a Subversion working directory.
+	 * 
+	 * @bug 7335
 	 *
 	 * @param string $dir
 	 * @return mixed revision number as int, or false if not a SVN checkout
 	 */
-	function getSvnRevision( $dir ) {
-		if( !function_exists( 'simplexml_load_file' ) ) {
-			// We could fall back to expat... YUCK
-			return false;
-		}
-		
+	public static function getSvnRevision( $dir ) {
 		// http://svnbook.red-bean.com/nightly/en/svn.developer.insidewc.html
 		$entries = $dir . '/.svn/entries';
-		
-		// SimpleXml whines about the xmlns...
-		wfSuppressWarnings();
-		$xml = simplexml_load_file( $entries );
-		wfRestoreWarnings();
-		
-		if( $xml ) {
-			foreach( $xml->entry as $entry ) {
-				if( $xml->entry[0]['name'] == '' ) {
-					// The directory entry should always have a revision marker.
-					if( $entry['revision'] ) {
-						return intval( $entry['revision'] );
+
+		if( !file_exists( $entries ) ) {
+			return false;
+		}
+
+		$content = file( $entries );
+
+		// check if file is xml (subversion release <= 1.3) or not (subversion release = 1.4)
+		if( preg_match( '/^<\?xml/', $content[0] ) ) {
+			// subversion is release <= 1.3
+			if( !function_exists( 'simplexml_load_file' ) ) {
+				// We could fall back to expat... YUCK
+				return false;
+			}
+
+			// SimpleXml whines about the xmlns...
+			wfSuppressWarnings();
+			$xml = simplexml_load_file( $entries );
+			wfRestoreWarnings();
+
+			if( $xml ) {
+				foreach( $xml->entry as $entry ) {
+					if( $xml->entry[0]['name'] == '' ) {
+						// The directory entry should always have a revision marker.
+						if( $entry['revision'] ) {
+							return intval( $entry['revision'] );
+						}
 					}
 				}
 			}
+			return false;
+		} else {
+			// subversion is release 1.4
+			return intval( $content[3] );
 		}
+
 		return false;
 	}
 

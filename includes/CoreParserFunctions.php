@@ -5,6 +5,15 @@
  */
 
 class CoreParserFunctions {
+	static function intFunction( $parser, $part1 = '' /*, ... */ ) {
+		if ( strval( $part1 ) !== '' ) {
+			$args = array_slice( func_get_args(), 2 );
+			return wfMsgReal( $part1, $args, true );
+		} else {
+			return array( 'found' => false );
+		}
+	}
+
 	static function ns( $parser, $part1 = '' ) {
 		global $wgContLang;
 		$found = false;
@@ -106,7 +115,7 @@ class CoreParserFunctions {
 	function isRaw( $param ) {
 		static $mwRaw;
 		if ( !$mwRaw ) {
-			$mwRaw =& MagicWord::get( MAG_RAWSUFFIX );
+			$mwRaw =& MagicWord::get( 'rawsuffix' );
 		}
 		if ( is_null( $param ) ) {
 			return false;
@@ -145,6 +154,27 @@ class CoreParserFunctions {
 		$lang = $wgContLang->getLanguageName( strtolower( $arg ) );
 		return $lang != '' ? $lang : $arg;
 	}
+	
+	function pad( $string = '', $length = 0, $char = 0, $direction = STR_PAD_RIGHT ) {
+		$length = min( max( $length, 0 ), 500 );
+		$char = substr( $char, 0, 1 );
+		return ( $string && (int)$length > 0 && strlen( trim( (string)$char ) ) > 0 )
+				? str_pad( $string, $length, (string)$char, $direction )
+				: $string;
+	}
+	
+	function padleft( $parser, $string = '', $length = 0, $char = 0 ) {
+		return self::pad( $string, $length, $char, STR_PAD_LEFT );
+	}
+	
+	function padright( $parser, $string = '', $length = 0, $char = 0 ) {
+		return self::pad( $string, $length, $char );
+	}
+	
+	function anchorencode( $parser, $text ) {
+		return str_replace( '%', '.', str_replace('+', '_', urlencode( $text ) ) );
+	}
+	
 }
 
 ?>

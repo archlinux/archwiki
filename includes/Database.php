@@ -5,13 +5,6 @@
  * @package MediaWiki
  */
 
-/** See Database::makeList() */
-define( 'LIST_COMMA', 0 );
-define( 'LIST_AND', 1 );
-define( 'LIST_SET', 2 );
-define( 'LIST_NAMES', 3);
-define( 'LIST_OR', 4);
-
 /** Number of times to re-try an operation in case of deadlock */
 define( 'DEADLOCK_TRIES', 4 );
 /** Minimum time to wait before retry, in microseconds */
@@ -84,6 +77,11 @@ class DBConnectionError extends DBError {
 	
 	function getText() {
 		return $this->getMessage() . "\n";
+	}
+
+	function getLogMessage() {
+		# Don't send to the exception log
+		return false;
 	}
 
 	function getPageTitle() {
@@ -205,6 +203,11 @@ class DBQueryError extends DBError {
 		}
 	}
 	
+	function getLogMessage() {
+		# Don't send to the exception log
+		return false;
+	}
+
 	function getPageTitle() {
 		return $this->msg( 'databaseerror', 'Database error' );
 	}
@@ -244,6 +247,9 @@ class Database {
 	protected $mTrxLevel = 0;
 	protected $mErrorCount = 0;
 	protected $mLBInfo = array();
+	protected $mCascadingDeletes = false;
+	protected $mCleanupTriggers = false;
+	protected $mStrictIPs = false;
 
 #------------------------------------------------------------------------------
 # Accessors
@@ -332,6 +338,28 @@ class Database {
 		} else {
 			$this->mLBInfo[$name] = $value;
 		}
+	}
+
+	/**
+	 * Returns true if this database supports (and uses) cascading deletes
+	 */
+	function cascadingDeletes() {
+		return $this->mCascadingDeletes;
+	}
+
+	/**
+	 * Returns true if this database supports (and uses) triggers (e.g. on the page table)
+	 */
+	function cleanupTriggers() {
+		return $this->mCleanupTriggers;
+	}
+
+	/**
+	 * Returns true if this database is strict about what can be put into an IP field.
+	 * Specifically, it uses a NULL value instead of an empty string.
+	 */
+	function strictIPs() {
+		return $this->mStrictIPs;
 	}
 
 	/**#@+
@@ -433,6 +461,7 @@ class Database {
 	 */
 	function open( $server, $user, $password, $dbName ) {
 		global $wguname;
+		wfProfileIn( __METHOD__ );
 
 		# Test for missing mysql.so
 		# First try to load it
@@ -454,12 +483,28 @@ class Database {
 
 		$success = false;
 
-		if ( $this->mFlags & DBO_PERSISTENT ) {
-			@/**/$this->mConn = mysql_pconnect( $server, $user, $password );
-		} else {
-			# Create a new connection...
-			@/**/$this->mConn = mysql_connect( $server, $user, $password, true );
+		wfProfileIn("dbconnect-$server");
+		
+		# LIVE PATCH by Tim, ask Domas for why: retry loop
+		$this->mConn = false;
+		$max = 3;
+		for ( $i = 0; $i < $max && !$this->mConn; $i++ ) {
+			if ( $i > 1 ) {
+				usleep( 1000 );
+			}
+			if ( $this->mFlags & DBO_PERSISTENT ) {
+				@/**/$this->mConn = mysql_pconnect( $server, $user, $password );
+			} else {
+				# Create a new connection...
+				@/**/$this->mConn = mysql_connect( $server, $user, $password, true );
+			}
+			if ($this->mConn === false) {
+				$iplus = $i + 1;
+				wfLogDBError("Connect loop error $iplus of $max ($server): " . mysql_errno() . " - " . mysql_error()."\n"); 
+			}
 		}
+		
+		wfProfileOut("dbconnect-$server");
 
 		if ( $dbName != '' ) {
 			if ( $this->mConn !== false ) {
@@ -467,6 +512,7 @@ class Database {
 				if ( !$success ) {
 					$error = "Error selecting database $dbName on server {$this->mServer} " .
 						"from client host {$wguname['nodename']}\n";
+					wfLogDBError(" Error selecting database $dbName on server {$this->mServer} \n");
 					wfDebug( $error );
 				}
 			} else {
@@ -480,18 +526,19 @@ class Database {
 			$success = (bool)$this->mConn;
 		}
 
-		if ( !$success ) {
+		if ( $success ) {
+			global $wgDBmysql5;
+			if( $wgDBmysql5 ) {
+				// Tell the server we're communicating with it in UTF-8.
+				// This may engage various charset conversions.
+				$this->query( 'SET NAMES utf8' );
+			}
+		} else {
 			$this->reportConnectionError();
 		}
 
-		global $wgDBmysql5;
-		if( $wgDBmysql5 ) {
-			// Tell the server we're communicating with it in UTF-8.
-			// This may engage various charset conversions.
-			$this->query( 'SET NAMES utf8' );
-		}
-
 		$this->mOpened = $success;
+		wfProfileOut( __METHOD__ );
 		return $success;
 	}
 	/**@}}*/
@@ -760,8 +807,8 @@ class Database {
 	 */
 	function fetchObject( $res ) {
 		@/**/$row = mysql_fetch_object( $res );
-		if( mysql_errno() ) {
-			throw new DBUnexpectedError( $this, 'Error in fetchObject(): ' . htmlspecialchars( mysql_error() ) );
+		if( $this->lastErrno() ) {
+			throw new DBUnexpectedError( $this, 'Error in fetchObject(): ' . htmlspecialchars( $this->lastError() ) );
 		}
 		return $row;
 	}
@@ -772,8 +819,8 @@ class Database {
 	 */
  	function fetchRow( $res ) {
 		@/**/$row = mysql_fetch_array( $res );
-		if (mysql_errno() ) {
-			throw new DBUnexpectedError( $this, 'Error in fetchRow(): ' . htmlspecialchars( mysql_error() ) );
+		if ( $this->lastErrno() ) {
+			throw new DBUnexpectedError( $this, 'Error in fetchRow(): ' . htmlspecialchars( $this->lastError() ) );
 		}
 		return $row;
 	}
@@ -783,8 +830,8 @@ class Database {
 	 */
 	function numRows( $res ) {
 		@/**/$n = mysql_num_rows( $res );
-		if( mysql_errno() ) {
-			throw new DBUnexpectedError( $this, 'Error in numRows(): ' . htmlspecialchars( mysql_error() ) );
+		if( $this->lastErrno() ) {
+			throw new DBUnexpectedError( $this, 'Error in numRows(): ' . htmlspecialchars( $this->lastError() ) );
 		}
 		return $n;
 	}
@@ -1865,7 +1912,7 @@ class Database {
 	function sourceFile( $filename ) {
 		$fp = fopen( $filename, 'r' );
 		if ( false === $fp ) {
-			return "Could not open \"{$fname}\".\n";
+			return "Could not open \"{$filename}\".\n";
 		}
 
 		$cmd = "";

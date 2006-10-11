@@ -9,8 +9,6 @@
 if( !defined( 'MEDIAWIKI' ) )
 	die( 1 );
 
-require_once( 'Image.php' );
-
 /**
  * Special handling for image description pages
  * @package MediaWiki
@@ -165,7 +163,7 @@ class ImagePage extends Article {
 	}
 
 	function openShowImage() {
-		global $wgOut, $wgUser, $wgImageLimits, $wgRequest;
+		global $wgOut, $wgUser, $wgImageLimits, $wgRequest, $wgLang;
 		global $wgUseImageResize, $wgGenerateThumbnailOnParse;
 
 		$full_url  = $this->img->getURL();
@@ -187,6 +185,12 @@ class ImagePage extends Article {
 
 		if ( $this->img->exists() ) {
 			# image
+			$page = $wgRequest->getIntOrNull( 'page' );
+			if ( ! is_null( $page ) ) {
+				$this->img->selectPage( $page );
+			} else {
+				$page = 1;
+			}
 			$width = $this->img->getWidth();
 			$height = $this->img->getHeight();
 			$showLink = false;
@@ -236,9 +240,50 @@ class ImagePage extends Article {
 					$url = $this->img->getViewURL();
 					$showLink = true;
 				}
+
+				if ( $this->img->isMultipage() ) {
+					$wgOut->addHTML( '<table class="multipageimage"><tr><td>' );
+				}
+
 				$wgOut->addHTML( '<div class="fullImageLink" id="file">' . $anchoropen .
 				     "<img border=\"0\" src=\"{$url}\" width=\"{$width}\" height=\"{$height}\" alt=\"" .
 				     htmlspecialchars( $wgRequest->getVal( 'image' ) ).'" />' . $anchorclose . '</div>' );
+
+				if ( $this->img->isMultipage() ) {
+					$count = $this->img->pageCount();
+
+					if ( $page > 1 ) {
+						$label = $wgOut->parse( wfMsg( 'imgmultipageprev' ), false );
+						$link = $sk->makeLinkObj( $this->mTitle, $label, 'page='. ($page-1) );
+						$this->img->selectPage( $page - 1 );
+						$thumb1 = $sk->makeThumbLinkObj( $this->img, $link, $label, 'none' );
+					} else {
+						$thumb1 = '';
+					}
+
+					if ( $page < $count ) {
+						$label = wfMsg( 'imgmultipagenext' );
+						$this->img->selectPage( $page + 1 );
+						$link = $sk->makeLinkObj( $this->mTitle, $label, 'page='. ($page+1) );
+						$thumb2 = $sk->makeThumbLinkObj( $this->img, $link, $label, 'none' );
+					} else {
+						$thumb2 = '';
+					}
+
+					$select = '<form name="pageselector" action="' . $this->img->getEscapeLocalUrl( '' ) . '" method="GET" onchange="document.pageselector.submit();">' ;
+					$select .= $wgOut->parse( wfMsg( 'imgmultigotopre' ), false ) .
+						' <select id="pageselector" name="page">';
+					for ( $i=1; $i <= $count; $i++ ) {
+						$select .= Xml::option( $wgLang->formatNum( $i ), $i,
+							$i == $page );
+					}
+					$select .= '</select>' . $wgOut->parse( wfMsg( 'imgmultigotopost' ), false ) .
+						'<input type="submit" value="' .
+						htmlspecialchars( wfMsg( 'imgmultigo' ) ) . '"></form>';
+
+					$wgOut->addHTML( '</td><td><div class="multipageimagenavbox">' .
+					   "$select<hr />$thumb1\n$thumb2<br clear=\"all\" /></div></td></tr></table>" );
+				}
 			} else {
 				#if direct link is allowed but it's not a renderable image, show an icon.
 				if ($this->img->isSafeFile()) {
@@ -312,10 +357,7 @@ END
 		$wgOut->addHTML($sharedtext);
 
 		if ($wgRepositoryBaseUrl && $wgFetchCommonsDescriptions) {
-			require_once("HttpFunctions.php");
-			$ur = ini_set('allow_url_fopen', true);
-			$text = wfGetHTTP($url . '?action=render');
-			ini_set('allow_url_fopen', $ur);
+			$text = Http::get($url . '?action=render');
 			if ($text)
 				$this->mExtraDescription = $text;
 		}
@@ -373,7 +415,7 @@ END
 		$line = $this->img->nextHistoryLine();
 
 		if ( $line ) {
-			$list =& new ImageHistoryList( $sk );
+			$list = new ImageHistoryList( $sk );
 			$s = $list->beginImageHistoryList() .
 				$list->imageHistoryLine( true, wfTimestamp(TS_MW, $line->img_timestamp),
 					$this->mTitle->getDBkey(),  $line->img_user,
@@ -435,13 +477,14 @@ END
 		global $wgUser, $wgOut, $wgRequest;
 
 		$confirm = $wgRequest->wasPosted();
+		$reason = $wgRequest->getVal( 'wpReason' );
 		$image = $wgRequest->getVal( 'image' );
 		$oldimage = $wgRequest->getVal( 'oldimage' );
 
 		# Only sysops can delete images. Previously ordinary users could delete
 		# old revisions, but this is no longer the case.
 		if ( !$wgUser->isAllowed('delete') ) {
-			$wgOut->sysopRequired();
+			$wgOut->permissionRequired( 'delete' );
 			return;
 		}
 		if ( $wgUser->isBlocked() ) {
@@ -465,7 +508,7 @@ END
 		# Deleting old images doesn't require confirmation
 		if ( !is_null( $oldimage ) || $confirm ) {
 			if( $wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ), $oldimage ) ) {
-				$this->doDelete();
+				$this->doDelete( $reason );
 			} else {
 				$wgOut->showFatalError( wfMsg( 'sessionfailure' ) );
 			}
@@ -482,13 +525,16 @@ END
 		return $this->confirmDelete( $q, $wgRequest->getText( 'wpReason' ) );
 	}
 
-	function doDelete()	{
+	/*
+	 * Delete an image.
+	 * @param $reason User provided reason for deletion.
+	 */
+	function doDelete( $reason ) {
 		global $wgOut, $wgRequest, $wgUseSquid;
 		global $wgPostCommitUpdateList;
 
 		$fname = 'ImagePage::doDelete';
 
-		$reason = $wgRequest->getVal( 'wpReason' );
 		$oldimage = $wgRequest->getVal( 'oldimage' );
 
 		$dbw =& wfGetDB( DB_MASTER );
@@ -576,7 +622,7 @@ END
 			return;
 		}
 		if ( ! $this->mTitle->userCanEdit() ) {
-			$wgOut->sysopRequired();
+			$wgOut->readOnlyPage( $this->getContent(), true );
 			return;
 		}
 		if ( $wgUser->isBlocked() ) {

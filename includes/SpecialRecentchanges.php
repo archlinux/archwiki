@@ -319,7 +319,7 @@ function rcFilterByCategories ( &$rows , $categories , $any ) {
 }
 
 function rcOutputFeed( $rows, $feedFormat, $limit, $hideminor, $lastmod ) {
-	global $messageMemc, $wgDBname, $wgFeedCacheTimeout;
+	global $messageMemc, $wgFeedCacheTimeout;
 	global $wgFeedClasses, $wgTitle, $wgSitename, $wgContLanguageCode;
 
 	if( !isset( $wgFeedClasses[$feedFormat] ) ) {
@@ -327,8 +327,8 @@ function rcOutputFeed( $rows, $feedFormat, $limit, $hideminor, $lastmod ) {
 		return false;
 	}
 
-	$timekey = "$wgDBname:rcfeed:$feedFormat:timestamp";
-	$key = "$wgDBname:rcfeed:$feedFormat:limit:$limit:minor:$hideminor";
+	$timekey = wfMemcKey( 'rcfeed', $feedFormat, 'timestamp' );
+	$key = wfMemcKey( 'rcfeed', $feedFormat, 'limit', $limit, 'minor', $hideminor );
 
 	$feedTitle = $wgSitename . ' - ' . wfMsgForContent( 'recentchanges' ) .
 		' [' . $wgContLanguageCode . ']';
@@ -481,7 +481,7 @@ function makeOptionsLink( $title, $override, $options ) {
 	global $wgUser, $wgContLang;
 	$sk = $wgUser->getSkin();
 	return $sk->makeKnownLink( $wgContLang->specialPage( 'Recentchanges' ),
-		$title, wfArrayToCGI( $override, $options ) );
+		htmlspecialchars( $title ), wfArrayToCGI( $override, $options ) );
 }
 
 /**
@@ -624,7 +624,6 @@ function rcFormatDiffRow( $title, $oldid, $newid, $timestamp, $comment ) {
 	$fname = 'rcFormatDiff';
 	wfProfileIn( $fname );
 
-	require_once( 'DifferenceEngine.php' );
 	$skin = $wgUser->getSkin();
 	$completeText = '<p>' . $skin->formatComment( $comment ) . "</p>\n";
 

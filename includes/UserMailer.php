@@ -53,7 +53,10 @@ class MailAddress {
 	 * @return string
 	 */
 	function toString() {
-		if( $this->name != '' ) {
+		# PHP's mail() implementation under Windows is somewhat shite, and
+		# can't handle "Joe Bloggs <joe@bloggs.com>" format email addresses,
+		# so don't bother generating them
+		if( $this->name != '' && !wfIsWindows() ) {
 			$quoted = wfQuotedPrintable( $this->name );
 			if( strpos( $quoted, '.' ) !== false ) {
 				$quoted = '"' . $quoted . '"';
@@ -101,6 +104,11 @@ function userMailer( $to, $from, $subject, $body, $replyto=false ) {
 
 		// Create the mail object using the Mail::factory method
 		$mail_object =& Mail::factory('smtp', $wgSMTP);
+		if( PEAR::isError( $mail_object ) ) {
+			wfDebug( "PEAR::Mail factory failed: " . $mail_object->getMessage() . "\n" );
+			return $mail_object->getMessage();
+		}
+
 		wfDebug( "Sending mail via PEAR::Mail to $dest\n" );
 		$mailResult =& $mail_object->send($dest, $headers, $body);
 
@@ -258,8 +266,11 @@ class EmailNotification {
 
 						$wuser = $dbr->fetchObject( $res );
 						$watchingUser->setID($wuser->wl_user);
+						
 						if ( ( $enotifwatchlistpage && $watchingUser->getOption('enotifwatchlistpages') ) ||
-							( $enotifusertalkpage && $watchingUser->getOption('enotifusertalkpages') )
+							( $enotifusertalkpage
+								&& $watchingUser->getOption('enotifusertalkpages')
+								&& $title->equals( $watchingUser->getTalkPage() ) )
 						&& (!$minorEdit || ($wgEnotifMinorEdits && $watchingUser->getOption('enotifminoredits') ) )
 						&& ($watchingUser->isEmailConfirmed() ) ) {
 							# ... adjust remaining text and page edit time placeholders
@@ -286,7 +297,7 @@ class EmailNotification {
 			);
 			# FIXME what do we do on failure ?
 		}
-
+		wfProfileOut( $fname );
 	} # function NotifyOnChange
 
 	/**

@@ -77,7 +77,6 @@ class PageArchive {
 	 * @fixme Does this belong in Image for fuller encapsulation?
 	 */
 	function listFiles() {
-		$fname = __CLASS__ . '::' . __FUNCTION__;
 		if( $this->title->getNamespace() == NS_IMAGE ) {
 			$dbr =& wfGetDB( DB_SLAVE );
 			$res = $dbr->select( 'filearchive',
@@ -93,7 +92,7 @@ class PageArchive {
 					'fa_user_text',
 					'fa_timestamp' ),
 				array( 'fa_name' => $this->title->getDbKey() ),
-				$fname,
+				__METHOD__,
 				array( 'ORDER BY' => 'fa_timestamp DESC' ) );
 			$ret = $dbr->resultObject( $res );
 			return $ret;
@@ -108,14 +107,13 @@ class PageArchive {
 	 * @return string
 	 */
 	function getRevisionText( $timestamp ) {
-		$fname = 'PageArchive::getRevisionText';
 		$dbr =& wfGetDB( DB_SLAVE );
 		$row = $dbr->selectRow( 'archive',
 			array( 'ar_text', 'ar_flags', 'ar_text_id' ),
 			array( 'ar_namespace' => $this->title->getNamespace(),
 			       'ar_title' => $this->title->getDbkey(),
 			       'ar_timestamp' => $dbr->timestamp( $timestamp ) ),
-			$fname );
+			__METHOD__ );
 		if( $row ) {
 			return $this->getTextFromRow( $row );
 		} else {
@@ -127,8 +125,6 @@ class PageArchive {
 	 * Get the text from an archive row containing ar_text, ar_flags and ar_text_id
 	 */
 	function getTextFromRow( $row ) {
-		$fname = 'PageArchive::getTextFromRow';
-
 		if( is_null( $row->ar_text_id ) ) {
 			// An old row from MediaWiki 1.4 or previous.
 			// Text is embedded in this row in classic compression format.
@@ -139,7 +135,7 @@ class PageArchive {
 			$text = $dbr->selectRow( 'text',
 				array( 'old_text', 'old_flags' ),
 				array( 'old_id' => $row->ar_text_id ),
-				$fname );
+				__METHOD__ );
 			return Revision::getRevisionText( $text );
 		}
 	}
@@ -252,7 +248,6 @@ class PageArchive {
 	private function undeleteRevisions( $timestamps ) {
 		global $wgParser, $wgDBtype;
 
-		$fname = __CLASS__ . '::' . __FUNCTION__;
 		$restoreAll = empty( $timestamps );
 		
 		$dbw =& wfGetDB( DB_MASTER );
@@ -267,7 +262,7 @@ class PageArchive {
 			array( 'page_id', 'page_latest' ),
 			array( 'page_namespace' => $this->title->getNamespace(),
 			       'page_title'     => $this->title->getDBkey() ),
-			$fname,
+			__METHOD__,
 			$options );
 		if( $page ) {
 			# Page already exists. Import the history, and if necessary
@@ -311,12 +306,12 @@ class PageArchive {
 				'ar_namespace' => $this->title->getNamespace(),
 				'ar_title'     => $this->title->getDBkey(),
 				$oldones ),
-			$fname,
+			__METHOD__,
 			/* options */ array(
 				'ORDER BY' => 'ar_timestamp' )
 			);
 		if( $dbw->numRows( $result ) < count( $timestamps ) ) {
-			wfDebug( "$fname: couldn't find all requested rows\n" );
+			wfDebug( __METHOD__.": couldn't find all requested rows\n" );
 			return false;
 		}
 		
@@ -355,17 +350,11 @@ class PageArchive {
 		if( $revision ) {
 			# FIXME: Update latest if newer as well...
 			if( $newid ) {
-				# FIXME: update article count if changed...
+				// Attach the latest revision to the page...
 				$article->updateRevisionOn( $dbw, $revision, $previousRevId );
-
-				# Finally, clean up the link tables
-				$options = new ParserOptions;
-				$parserOutput = $wgParser->parse( $revision->getText(), $this->title, $options,
-					true, true, $newRevId );
-				$u = new LinksUpdate( $this->title, $parserOutput );
-				$u->doUpdate();
-
-				#TODO: SearchUpdate, etc.
+				
+				// Update site stats, link tables, etc
+				$article->createUpdates( $revision );
 			}
 
 			if( $newid ) {
@@ -383,7 +372,7 @@ class PageArchive {
 				'ar_namespace' => $this->title->getNamespace(),
 				'ar_title' => $this->title->getDBkey(),
 				$oldones ),
-			$fname );
+			__METHOD__ );
 
 		return $restored;
 	}
@@ -401,9 +390,10 @@ class UndeleteForm {
 
 	function UndeleteForm( &$request, $par = "" ) {
 		global $wgUser;
-		$this->mAction = $request->getText( 'action' );
-		$this->mTarget = $request->getText( 'target' );
-		$this->mTimestamp = $request->getText( 'timestamp' );
+		$this->mAction = $request->getVal( 'action' );
+		$this->mTarget = $request->getVal( 'target' );
+		$time = $request->getVal( 'timestamp' );
+		$this->mTimestamp = $time ? wfTimestamp( TS_MW, $time ) : '';
 		$this->mFile = $request->getVal( 'file' );
 		
 		$posted = $request->wasPosted() &&
@@ -463,7 +453,6 @@ class UndeleteForm {
 
 	/* private */ function showList() {
 		global $wgLang, $wgContLang, $wgUser, $wgOut;
-		$fname = "UndeleteForm::showList";
 
 		# List undeletable articles
 		$result = PageArchive::listAllPages();
@@ -479,14 +468,10 @@ class UndeleteForm {
 		$undelete =& Title::makeTitle( NS_SPECIAL, 'Undelete' );
 		$wgOut->addHTML( "<ul>\n" );
 		while( $row = $result->fetchObject() ) {
-			$n = ($row->ar_namespace ?
-				($wgContLang->getNsText( $row->ar_namespace ) . ":") : "").
-				$row->ar_title;
-			$link = $sk->makeKnownLinkObj( $undelete,
-				htmlspecialchars( $n ), "target=" . urlencode( $n ) );
-			$revisions = htmlspecialchars( wfMsg( "undeleterevisions",
-				$wgLang->formatNum( $row->count ) ) );
-			$wgOut->addHTML( "<li>$link ($revisions)</li>\n" );
+			$title = Title::makeTitleSafe( $row->ar_namespace, $row->ar_title );
+			$link = $sk->makeKnownLinkObj( $undelete, htmlspecialchars( $title->getPrefixedText() ), 'target=' . $title->getPrefixedUrl() );
+			$revs = wfMsgHtml( 'undeleterevisions', $wgLang->formatNum( $row->count ) );
+			$wgOut->addHtml( "<li>{$link} ({$revs})</li>\n" );
 		}
 		$result->free();
 		$wgOut->addHTML( "</ul>\n" );
@@ -496,11 +481,10 @@ class UndeleteForm {
 
 	/* private */ function showRevision( $timestamp ) {
 		global $wgLang, $wgUser, $wgOut;
-		$fname = "UndeleteForm::showRevision";
 
 		if(!preg_match("/[0-9]{14}/",$timestamp)) return 0;
 
-		$archive =& new PageArchive( $this->mTargetObj );
+		$archive = new PageArchive( $this->mTargetObj );
 		$text = $archive->getRevisionText( $timestamp );
 
 		$wgOut->setPagetitle( wfMsg( "undeletepage" ) );
@@ -619,8 +603,7 @@ class UndeleteForm {
 
 		# Show relevant lines from the deletion log:
 		$wgOut->addHTML( "<h2>" . htmlspecialchars( LogPage::logName( 'delete' ) ) . "</h2>\n" );
-		require_once( 'SpecialLog.php' );
-		$logViewer =& new LogViewer(
+		$logViewer = new LogViewer(
 			new LogReader(
 				new FauxRequest(
 					array( 'page' => $this->mTargetObj->getPrefixedText(),

@@ -22,7 +22,7 @@ class OutputPage {
 	var $mDoNothing;
 	var $mContainsOldMagic, $mContainsNewMagic;
 	var $mIsArticleRelated;
-	var $mParserOptions;
+	protected $mParserOptions; // lazy initialised, use parserOptions()
 	var $mShowFeedLinks = false;
 	var $mEnableClientCache = true;
 	var $mArticleBodyOnly = false;
@@ -46,7 +46,7 @@ class OutputPage {
 		$this->mCategoryLinks = array();
 		$this->mDoNothing = false;
 		$this->mContainsOldMagic = $this->mContainsNewMagic = 0;
-		$this->mParserOptions = ParserOptions::newFromUser( $temp = NULL );
+		$this->mParserOptions = null;
 		$this->mSquidMaxage = 0;
 		$this->mScripts = '';
 		$this->mETag = false;
@@ -92,7 +92,7 @@ class OutputPage {
 	 * returns true iff cache-ok headers was sent.
 	 */
 	function checkLastModified ( $timestamp ) {
-		global $wgCachePages, $wgCacheEpoch, $wgUser;
+		global $wgCachePages, $wgCacheEpoch, $wgUser, $wgRequest;
 		$fname = 'OutputPage::checkLastModified';
 
 		if ( !$timestamp || $timestamp == '19700101000000' ) {
@@ -122,7 +122,7 @@ class OutputPage {
 			wfDebug( "$fname: --  we might send Last-Modified : $lastmod\n", false );
 			if( ($ismodsince >= $timestamp ) && $wgUser->validateCache( $ismodsince ) && $ismodsince >= $wgCacheEpoch ) {
 				# Make sure you're in a place you can leave when you call us!
-				header( "HTTP/1.0 304 Not Modified" );
+				$wgRequest->response()->header( "HTTP/1.0 304 Not Modified" );
 				$this->mLastModified = $lastmod;
 				$this->sendCacheControl();
 				wfDebug( "$fname: CACHED client: $ismodsince ; user: $wgUser->mTouched ; page: $timestamp ; site $wgCacheEpoch\n", false );
@@ -255,10 +255,13 @@ class OutputPage {
 
 	/* @deprecated */
 	function setParserOptions( $options ) {
-		return $this->ParserOptions( $options );
+		return $this->parserOptions( $options );
 	}
 
-	function ParserOptions( $options = null ) {
+	function parserOptions( $options = null ) {
+		if ( !$this->mParserOptions ) {
+			$this->mParserOptions = new ParserOptions;
+		}
 		return wfSetVar( $this->mParserOptions, $options );
 	}
 
@@ -289,9 +292,13 @@ class OutputPage {
 
 	function addWikiTextTitle($text, &$title, $linestart) {
 		global $wgParser;
-		$parserOutput = $wgParser->parse( $text, $title, $this->mParserOptions,
+		$fname = 'OutputPage:addWikiTextTitle';
+		wfProfileIn($fname);
+		wfIncrStats('pcache_not_possible');
+		$parserOutput = $wgParser->parse( $text, $title, $this->parserOptions(),
 			$linestart, true, $this->mRevisionId );
 		$this->addParserOutput( $parserOutput );
+		wfProfileOut($fname);
 	}
 
 	function addParserOutputNoText( &$parserOutput ) {
@@ -304,13 +311,19 @@ class OutputPage {
 		}
 		if ( $parserOutput->mHTMLtitle != "" ) {
 			$this->mPagetitle = $parserOutput->mHTMLtitle ;
+		}
+		if ( $parserOutput->mSubtitle != '' ) {
 			$this->mSubtitle .= $parserOutput->mSubtitle ;
 		}
+		$this->mNoGallery = $parserOutput->getNoGallery();
+		wfRunHooks( 'OutputPageParserOutput', array( &$this, $parserOutput ) );
 	}
 
 	function addParserOutput( &$parserOutput ) {
 		$this->addParserOutputNoText( $parserOutput );
-		$this->addHTML( $parserOutput->getText() );
+		$text =	$parserOutput->getText();
+		wfRunHooks( 'OutputPageBeforeHTML',array( &$this, &$text ) );
+		$this->addHTML( $text );
 	}
 
 	/**
@@ -320,21 +333,17 @@ class OutputPage {
 	function addPrimaryWikiText( $text, $article, $cache = true ) {
 		global $wgParser, $wgUser;
 
-		$this->mParserOptions->setTidy(true);
+		$popts = $this->parserOptions();
+		$popts->setTidy(true);
 		$parserOutput = $wgParser->parse( $text, $article->mTitle,
-			$this->mParserOptions, true, true, $this->mRevisionId );
-		$this->mParserOptions->setTidy(false);
+			$popts, true, true, $this->mRevisionId );
+		$popts->setTidy(false);
 		if ( $cache && $article && $parserOutput->getCacheTime() != -1 ) {
 			$parserCache =& ParserCache::singleton();
 			$parserCache->save( $parserOutput, $article, $wgUser );
 		}
 
-		$this->addParserOutputNoText( $parserOutput );
-		$text =	$parserOutput->getText();
-		$this->mNoGallery = $parserOutput->getNoGallery();
-		wfRunHooks( 'OutputPageBeforeHTML',array( &$this, &$text ) );
-		$parserOutput->setText( $text );
-		$this->addHTML( $parserOutput->getText() );
+		$this->addParserOutput( $parserOutput );
 	}
 
 	/**
@@ -342,9 +351,10 @@ class OutputPage {
 	 */
 	function addSecondaryWikiText( $text, $linestart = true ) {
 		global $wgTitle;
-		$this->mParserOptions->setTidy(true);
+		$popts = $this->parserOptions();
+		$popts->setTidy(true);
 		$this->addWikiTextTitle($text, $wgTitle, $linestart);
-		$this->mParserOptions->setTidy(false);
+		$popts->setTidy(false);
 	}
 
 
@@ -364,10 +374,11 @@ class OutputPage {
 	 */
 	function parse( $text, $linestart = true, $interface = false ) {
 		global $wgParser, $wgTitle;
-		if ( $interface) { $this->mParserOptions->setInterfaceMessage(true); }
-		$parserOutput = $wgParser->parse( $text, $wgTitle, $this->mParserOptions,
+		$popts = $this->parserOptions();
+		if ( $interface) { $popts->setInterfaceMessage(true); }
+		$parserOutput = $wgParser->parse( $text, $wgTitle, $popts,
 			$linestart, true, $this->mRevisionId );
-		if ( $interface) { $this->mParserOptions->setInterfaceMessage(false); }
+		if ( $interface) { $popts->setInterfaceMessage(false); }
 		return $parserOutput->getText();
 	}
 
@@ -381,18 +392,7 @@ class OutputPage {
 		$parserCache =& ParserCache::singleton();
 		$parserOutput = $parserCache->get( $article, $user );
 		if ( $parserOutput !== false ) {
-			$this->mLanguageLinks += $parserOutput->getLanguageLinks();
-			$this->addCategoryLinks( $parserOutput->getCategories() );
-			$this->addKeywords( $parserOutput );
-			$this->mNewSectionLink = $parserOutput->getNewSection();
-			$this->mNoGallery = $parserOutput->getNoGallery();
-			$text = $parserOutput->getText();
-			wfRunHooks( 'OutputPageBeforeHTML', array( &$this, &$text ) );
-			$this->addHTML( $text );
-			$t = $parserOutput->getTitleText();
-			if( !empty( $t ) ) {
-				$this->setPageTitle( $t );
- 			}
+			$this->addParserOutput( $parserOutput );
 			return true;
 		} else {
 			return false;
@@ -422,15 +422,15 @@ class OutputPage {
 	}
 
 	function sendCacheControl() {
-		global $wgUseSquid, $wgUseESI, $wgSquidMaxage;
+		global $wgUseSquid, $wgUseESI, $wgUseETag, $wgSquidMaxage, $wgRequest;
 		$fname = 'OutputPage::sendCacheControl';
 
-		if ($this->mETag)
-			header("ETag: $this->mETag");
+		if ($wgUseETag && $this->mETag)
+			$wgRequest->response()->header("ETag: $this->mETag");
 
 		# don't serve compressed data to clients who can't handle it
 		# maintain different caches for logged-in users and non-logged in ones
-		header( 'Vary: Accept-Encoding, Cookie' );
+		$wgRequest->response()->header( 'Vary: Accept-Encoding, Cookie' );
 		if( !$this->uncacheableBecauseRequestvars() && $this->mEnableClientCache ) {
 			if( $wgUseSquid && ! isset( $_COOKIE[ini_get( 'session.name') ] ) &&
 			  ! $this->isPrintable() && $this->mSquidMaxage != 0 )
@@ -442,8 +442,8 @@ class OutputPage {
 					wfDebug( "$fname: proxy caching with ESI; {$this->mLastModified} **\n", false );
 					# start with a shorter timeout for initial testing
 					# header( 'Surrogate-Control: max-age=2678400+2678400, content="ESI/1.0"');
-					header( 'Surrogate-Control: max-age='.$wgSquidMaxage.'+'.$this->mSquidMaxage.', content="ESI/1.0"');
-					header( 'Cache-Control: s-maxage=0, must-revalidate, max-age=0' );
+					$wgRequest->response()->header( 'Surrogate-Control: max-age='.$wgSquidMaxage.'+'.$this->mSquidMaxage.', content="ESI/1.0"');
+					$wgRequest->response()->header( 'Cache-Control: s-maxage=0, must-revalidate, max-age=0' );
 				} else {
 					# We'll purge the proxy cache for anons explicitly, but require end user agents
 					# to revalidate against the proxy on each visit.
@@ -452,24 +452,24 @@ class OutputPage {
 					wfDebug( "$fname: local proxy caching; {$this->mLastModified} **\n", false );
 					# start with a shorter timeout for initial testing
 					# header( "Cache-Control: s-maxage=2678400, must-revalidate, max-age=0" );
-					header( 'Cache-Control: s-maxage='.$this->mSquidMaxage.', must-revalidate, max-age=0' );
+					$wgRequest->response()->header( 'Cache-Control: s-maxage='.$this->mSquidMaxage.', must-revalidate, max-age=0' );
 				}
 			} else {
 				# We do want clients to cache if they can, but they *must* check for updates
 				# on revisiting the page.
 				wfDebug( "$fname: private caching; {$this->mLastModified} **\n", false );
-				header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', 0 ) . ' GMT' );
-				header( "Cache-Control: private, must-revalidate, max-age=0" );
+				$wgRequest->response()->header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', 0 ) . ' GMT' );
+				$wgRequest->response()->header( "Cache-Control: private, must-revalidate, max-age=0" );
 			}
-			if($this->mLastModified) header( "Last-modified: {$this->mLastModified}" );
+			if($this->mLastModified) $wgRequest->response()->header( "Last-modified: {$this->mLastModified}" );
 		} else {
 			wfDebug( "$fname: no caching **\n", false );
 
 			# In general, the absence of a last modified header should be enough to prevent
 			# the client from using its cache. We send a few other things just to make sure.
-			header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', 0 ) . ' GMT' );
-			header( 'Cache-Control: no-cache, no-store, max-age=0, must-revalidate' );
-			header( 'Pragma: no-cache' );
+			$wgRequest->response()->header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', 0 ) . ' GMT' );
+			$wgRequest->response()->header( 'Cache-Control: no-cache, no-store, max-age=0, must-revalidate' );
+			$wgRequest->response()->header( 'Pragma: no-cache' );
 		}
 	}
 
@@ -478,9 +478,9 @@ class OutputPage {
 	 * the object, let's actually output it:
 	 */
 	function output() {
-		global $wgUser, $wgOutputEncoding;
+		global $wgUser, $wgOutputEncoding, $wgRequest;
 		global $wgContLanguageCode, $wgDebugRedirects, $wgMimeType;
-		global $wgJsMimeType, $wgStylePath, $wgUseAjax, $wgScriptPath, $wgServer;
+		global $wgJsMimeType, $wgStylePath, $wgUseAjax, $wgAjaxSearch, $wgScriptPath, $wgServer;
 
 		if( $this->mDoNothing ){
 			return;
@@ -490,11 +490,12 @@ class OutputPage {
 		$sk = $wgUser->getSkin();
 
 		if ( $wgUseAjax ) {
-			$this->addScript( "<script type=\"{$wgJsMimeType}\">
-				var wgScriptPath=\"{$wgScriptPath}\";
-				var wgServer=\"{$wgServer}\";
-			</script>" );
 			$this->addScript( "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajax.js\"></script>\n" );
+		}
+
+		if ( $wgUseAjax && $wgAjaxSearch ) {
+			$this->addScript( "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajaxsearch.js\"></script>\n" );
+			$this->addScript( "<script type=\"{$wgJsMimeType}\">hookEvent(\"load\", sajax_onload);</script>\n" );
 		}
 
 		if ( '' != $this->mRedirect ) {
@@ -505,7 +506,7 @@ class OutputPage {
 			}
 			if( $this->mRedirectCode == '301') {
 				if( !$wgDebugRedirects ) {
-					header("HTTP/1.1 {$this->mRedirectCode} Moved Permanently");
+					$wgRequest->response()->header("HTTP/1.1 {$this->mRedirectCode} Moved Permanently");
 				}
 				$this->mLastModified = wfTimestamp( TS_RFC2822 );
 			}
@@ -518,7 +519,7 @@ class OutputPage {
 				print "<p>Location: <a href=\"$url\">$url</a></p>\n";
 				print "</body>\n</html>\n";
 			} else {
-				header( 'Location: '.$this->mRedirect );
+				$wgRequest->response()->header( 'Location: '.$this->mRedirect );
 			}
 			wfProfileOut( $fname );
 			return;
@@ -575,7 +576,7 @@ class OutputPage {
 			);
 
 			if ( $statusMessage[$this->mStatusCode] )
-				header( 'HTTP/1.1 ' . $this->mStatusCode . ' ' . $statusMessage[$this->mStatusCode] );
+				$wgRequest->response()->header( 'HTTP/1.1 ' . $this->mStatusCode . ' ' . $statusMessage[$this->mStatusCode] );
 		}
 
 		# Buffer output; final headers may depend on later processing
@@ -584,8 +585,8 @@ class OutputPage {
 		# Disable temporary placeholders, so that the skin produces HTML
 		$sk->postParseLinkColour( false );
 
-		header( "Content-type: $wgMimeType; charset={$wgOutputEncoding}" );
-		header( 'Content-language: '.$wgContLanguageCode );
+		$wgRequest->response()->header( "Content-type: $wgMimeType; charset={$wgOutputEncoding}" );
+		$wgRequest->response()->header( 'Content-language: '.$wgContLanguageCode );
 
 		if ($this->mArticleBodyOnly) {
 			$this->out($this->mBodytext);
@@ -616,11 +617,6 @@ class OutputPage {
 		global $wgUser, $wgContLang;
 
 		$wgInputEncoding = strtolower( $wgInputEncoding );
-
-		if( $wgUser->getOption( 'altencoding' ) ) {
-			$wgContLang->setAltEncoding();
-			return;
-		}
 
 		if ( empty( $_SERVER['HTTP_ACCEPT_CHARSET'] ) ) {
 			$wgOutputEncoding = strtolower( $wgOutputEncoding );
@@ -715,11 +711,10 @@ class OutputPage {
 
 	/**
 	 * Display an error page noting that a given permission bit is required.
-	 * This should generally replace the sysopRequired, developerRequired etc.
 	 * @param string $permission key required
 	 */
 	function permissionRequired( $permission ) {
-		global $wgUser;
+		global $wgGroupPermissions, $wgUser;
 
 		$this->setPageTitle( wfMsg( 'badaccess' ) );
 		$this->setHTMLTitle( wfMsg( 'errorpagetitle' ) );
@@ -727,46 +722,46 @@ class OutputPage {
 		$this->setArticleRelated( false );
 		$this->mBodytext = '';
 
-		$sk = $wgUser->getSkin();
-		$ap = $sk->makeKnownLink( wfMsgForContent( 'administrators' ) );
-		$this->addHTML( wfMsgHtml( 'badaccesstext', $ap, $permission ) );
-		$this->returnToMain();
+		$groups = array();
+		foreach( $wgGroupPermissions as $key => $value ) {
+			if( isset( $value[$permission] ) && $value[$permission] == true ) {
+				$groupName = User::getGroupName( $key );
+				$groupPage = User::getGroupPage( $key );
+				if( $groupPage ) {
+					$skin =& $wgUser->getSkin();
+					$groups[] = '"'.$skin->makeLinkObj( $groupPage, $groupName ).'"';
+				} else {
+					$groups[] = '"'.$groupName.'"';
+				}
+			}
+		}
+		$n = count( $groups );
+		$groups = implode( ', ', $groups );
+		switch( $n ) {
+			case 0:
+			case 1:
+			case 2:
+				$message = wfMsgHtml( "badaccess-group$n", $groups );
+				break;
+			default:
+				$message = wfMsgHtml( 'badaccess-groups', $groups );
+		}
+		$this->addHtml( $message );
+		$this->returnToMain( false );
 	}
 
 	/**
 	 * @deprecated
 	 */
 	function sysopRequired() {
-		global $wgUser;
-
-		$this->setPageTitle( wfMsg( 'sysoptitle' ) );
-		$this->setHTMLTitle( wfMsg( 'errorpagetitle' ) );
-		$this->setRobotpolicy( 'noindex,nofollow' );
-		$this->setArticleRelated( false );
-		$this->mBodytext = '';
-
-		$sk = $wgUser->getSkin();
-		$ap = $sk->makeKnownLink( wfMsgForContent( 'administrators' ), '' );
-		$this->addHTML( wfMsgHtml( 'sysoptext', $ap ) );
-		$this->returnToMain();
+		throw new MWException( "Call to deprecated OutputPage::sysopRequired() method\n" );
 	}
 
 	/**
 	 * @deprecated
 	 */
 	function developerRequired() {
-		global $wgUser;
-
-		$this->setPageTitle( wfMsg( 'developertitle' ) );
-		$this->setHTMLTitle( wfMsg( 'errorpagetitle' ) );
-		$this->setRobotpolicy( 'noindex,nofollow' );
-		$this->setArticleRelated( false );
-		$this->mBodytext = '';
-
-		$sk = $wgUser->getSkin();
-		$ap = $sk->makeKnownLink( wfMsgForContent( 'administrators' ), '' );
-		$this->addHTML( wfMsgHtml( 'developertext', $ap ) );
-		$this->returnToMain();
+		throw new MWException( "Call to deprecated OutputPage::developerRequired() method\n" );
 	}
 
 	/**
@@ -774,6 +769,12 @@ class OutputPage {
 	 */
 	function loginToUse() {
 		global $wgUser, $wgTitle, $wgContLang;
+
+		if( $wgUser->isLoggedIn() ) {
+			$this->permissionRequired( 'read' );
+			return;
+		}
+
 		$skin = $wgUser->getSkin();
 		
 		$this->setPageTitle( wfMsg( 'loginreqtitle' ) );
@@ -786,7 +787,11 @@ class OutputPage {
 		$this->addHtml( wfMsgWikiHtml( 'loginreqpagetext', $loginLink ) );
 		$this->addHtml( "\n<!--" . $wgTitle->getPrefixedUrl() . "-->" );
 		
-		$this->returnToMain();
+		# Don't return to the main page if the user can't read it
+		# otherwise we'll end up in a pointless loop
+		$mainPage = Title::newFromText( wfMsgForContent( 'mainpage' ) );
+		if( $mainPage->userCanRead() )
+			$this->returnToMain( true, $mainPage );
 	}
 
 	/** @obsolete */
@@ -828,7 +833,7 @@ class OutputPage {
 				if ( $wgTitle->getNamespace() == NS_MEDIAWIKI ) {
 					$source = wfMsgWeirdKey ( $wgTitle->getText() );
 				} else {
-					$source = wfMsg( $wgUser->isLoggedIn() ? 'noarticletext' : 'noarticletextanon' );
+					$source = '';
 				}
 			}
 			$rows = $wgUser->getIntOption( 'rows' );
@@ -1045,7 +1050,7 @@ class OutputPage {
 			$link = $wgRequest->escapeAppendQuery( 'feed=rss' );
 			$ret .= "<link rel='alternate' type='application/rss+xml' title='RSS 2.0' href='$link' />\n";
 			$link = $wgRequest->escapeAppendQuery( 'feed=atom' );
-			$ret .= "<link rel='alternate' type='application/atom+xml' title='Atom 0.3' href='$link' />\n";
+			$ret .= "<link rel='alternate' type='application/atom+xml' title='Atom 1.0' href='$link' />\n";
 		}
 
 		return $ret;

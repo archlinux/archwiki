@@ -31,7 +31,6 @@ $optionsWithArgs = array( 'regex' );
 require_once( 'commandLine.inc' );
 require_once( "$IP/includes/ObjectCache.php" );
 require_once( "$IP/includes/BagOStuff.php" );
-require_once( "$IP/languages/LanguageUtf8.php" );
 require_once( "$IP/includes/Hooks.php" );
 require_once( "$IP/maintenance/parserTestsParserHook.php" );
 require_once( "$IP/maintenance/parserTestsStaticParserHook.php" );
@@ -238,7 +237,7 @@ class ParserTest {
 
 		$this->setupGlobals($opts);
 
-		$user =& new User();
+		$user = new User();
 		$options = ParserOptions::newFromUser( $user );
 
 		if (preg_match('/\\bmath\\b/i', $opts)) {
@@ -255,7 +254,7 @@ class ParserTest {
 
 		$noxml = (bool)preg_match( '~\\b noxml \\b~x', $opts );
 
-		$parser =& new Parser();
+		$parser = new Parser();
 		foreach( $this->hooks as $tag => $callback ) {
 			$parser->setHook( $tag, $callback );
 		}
@@ -335,14 +334,12 @@ class ParserTest {
 			'wgLanguageCode' => $lang,
 			'wgContLanguageCode' => $lang,
 			'wgDBprefix' => 'parsertest_',
-			'wgDefaultUserOptions' => array(),
 
 			'wgLang' => null,
 			'wgContLang' => null,
 			'wgNamespacesWithSubpages' => array( 0 => preg_match('/\\bsubpage\\b/i', $opts)),
 			'wgMaxTocLevel' => 999,
 			'wgCapitalLinks' => true,
-			'wgDefaultUserOptions' => array(),
 			'wgNoFollowLinks' => true,
 			'wgThumbnailScriptPath' => false,
 			'wgUseTeX' => false,
@@ -354,13 +351,12 @@ class ParserTest {
 			$this->savedGlobals[$var] = $GLOBALS[$var];
 			$GLOBALS[$var] = $val;
 		}
-		$langClass = 'Language' . str_replace( '-', '_', ucfirst( $lang ) );
-		$langObj = setupLangObj( $langClass );
+		$langObj = Language::factory( $lang );
 		$GLOBALS['wgLang'] = $langObj;
 		$GLOBALS['wgContLang'] = $langObj;
 
 		$GLOBALS['wgLoadBalancer']->loadMasterPos();
-		$GLOBALS['wgMessageCache'] = new MessageCache( new BagOStuff(), false, 0, $GLOBALS['wgDBname'] );
+		//$GLOBALS['wgMessageCache'] = new MessageCache( new BagOStuff(), false, 0, $GLOBALS['wgDBname'] );
 		$this->setupDatabase();
 
 		global $wgUser;

@@ -279,24 +279,43 @@ class SpecialPage
 	}	
 
 	/**
-	 * Return categorised listable special pages
-	 * Returns a 2d array where the first index is the restriction name
+	 * Return categorised listable special pages for all users
 	 * @static
 	 */
-	static function getPages() {
+	static function getRegularPages() {
 		if ( !self::$mListInitialised ) {
 			self::initList();
 		}
-		$pages = array(
-		  '' => array(),
-		  'sysop' => array(),
-		  'developer' => array()
-		);
+		$pages = array();
+
+		foreach ( self::$mList as $name => $rec ) {
+			$page = self::getPage( $name );
+			if ( $page->isListed() && $page->getRestriction() == '' ) {
+				$pages[$name] = $page;
+			}
+		}
+		return $pages;
+	}
+
+	/**
+	 * Return categorised listable special pages which are available
+	 * for the current user, but not for everyone
+	 * @static
+	 */
+	static function getRestrictedPages() {
+		global $wgUser;
+		if ( !self::$mListInitialised ) {
+			self::initList();
+		}
+		$pages = array();
 
 		foreach ( self::$mList as $name => $rec ) {
 			$page = self::getPage( $name );
 			if ( $page->isListed() ) {
-				$pages[$page->getRestriction()][$page->getName()] = $page;
+				$restriction = $page->getRestriction();
+				if ( $restriction != '' && $wgUser->isAllowed( $restriction ) ) {
+					$pages[$name] = $page;
+				}
 			}
 		}
 		return $pages;
@@ -313,7 +332,7 @@ class SpecialPage
 	 * @param $title          a title object
 	 * @param $including      output is being captured for use in {{special:whatever}}
 	 */
-	function executePath( &$title, $including = false ) {
+	static function executePath( &$title, $including = false ) {
 		global $wgOut, $wgTitle;
 		$fname = 'SpecialPage::executePath';
 		wfProfileIn( $fname );
@@ -410,7 +429,7 @@ class SpecialPage
 	 *     and displayRestrictionError()
 	 *
 	 * @param string $name Name of the special page, as seen in links and URLs
-	 * @param string $restriction Minimum user level required, e.g. "sysop" or "developer".
+	 * @param string $restriction User right required, e.g. "block" or "delete"
 	 * @param boolean $listed Whether the page is listed in Special:Specialpages
 	 * @param string $function Function called by execute(). By default it is constructed from $name
 	 * @param string $file File which is included by execute(). It is also constructed from $name by default
@@ -460,15 +479,7 @@ class SpecialPage
 	 * special page (as defined by $mRestriction)
 	 */
 	function userCanExecute( &$user ) {
-		if ( $this->mRestriction == "" ) {
-			return true;
-		} else {
-			if ( in_array( $this->mRestriction, $user->getRights() ) ) {
-				return true;
-			} else {
-				return false;
-			}
-		}
+		return $user->isAllowed( $this->mRestriction );
 	}
 
 	/**

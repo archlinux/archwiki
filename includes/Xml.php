@@ -16,7 +16,7 @@ class Xml {
 	 * @param $contents String: NULL to make an open tag only; '' for a contentless closed tag (default)
 	 * @return string
 	 */
-	function element( $element, $attribs = null, $contents = '') {
+	public static function element( $element, $attribs = null, $contents = '') {
 		$out = '<' . $element;
 		if( !is_null( $attribs ) ) {
 			foreach( $attribs as $name => $val ) {
@@ -45,7 +45,7 @@ class Xml {
 	 * @param $contents String: NULL to make an open tag only; '' for a contentless closed tag (default)
 	 * @return string
 	 */
-	function elementClean( $element, $attribs = array(), $contents = '') {
+	public static function elementClean( $element, $attribs = array(), $contents = '') {
 		if( $attribs ) {
 			$attribs = array_map( array( 'UtfNormal', 'cleanUp' ), $attribs );
 		}
@@ -56,8 +56,8 @@ class Xml {
 	}
 
 	// Shortcuts
-	function openElement( $element, $attribs = null ) { return self::element( $element, $attribs, null ); }
-	function closeElement( $element ) { return "</$element>"; }
+	public static function openElement( $element, $attribs = null ) { return self::element( $element, $attribs, null ); }
+	public static function closeElement( $element ) { return "</$element>"; }
 
 	/**
 	 * Create a namespace selector
@@ -67,7 +67,7 @@ class Xml {
 	 * @param $includehidden Bool: include hidden namespaces?
 	 * @return String: Html string containing the namespace selector
 	 */
-	function &namespaceSelector($selected = '', $allnamespaces = null, $includehidden=false) {
+	public static function &namespaceSelector($selected = '', $allnamespaces = null, $includehidden=false) {
 		global $wgContLang;
 		if( $selected !== '' ) {
 			if( is_null( $selected ) ) {
@@ -78,7 +78,7 @@ class Xml {
 				$selected = intval( $selected );
 			}
 		}
-		$s = "<select id='namespace' name='namespace' class='namespaceselector'>\n\t";
+		$s = "\n<select id='namespace' name='namespace' class='namespaceselector'>\n";
 		$arr = $wgContLang->getFormattedNamespaces();
 		if( !is_null($allnamespaces) ) {
 			$arr = array($allnamespaces => wfMsg('namespacesall')) + $arr;
@@ -89,18 +89,18 @@ class Xml {
 			$name = $index !== 0 ? $name : wfMsg('blanknamespace');
 
 			if ($index === $selected) {
-				$s .= self::element("option",
+				$s .= "\t" . self::element("option",
 						array("value" => $index, "selected" => "selected"),
-						$name);
+						$name) . "\n";
 			} else {
-				$s .= self::element("option", array("value" => $index), $name);
+				$s .= "\t" . self::element("option", array("value" => $index), $name) . "\n";
 			}
 		}
-		$s .= "\n</select>\n";
+		$s .= "</select>\n";
 		return $s;
 	}
 
-	function span( $text, $class, $attribs=array() ) {
+	public static function span( $text, $class, $attribs=array() ) {
 		return self::element( 'span', array( 'class' => $class ) + $attribs, $text );
 	}
 
@@ -108,7 +108,7 @@ class Xml {
 	 * Convenience function to build an HTML text input field
 	 * @return string HTML
 	 */
-	function input( $name, $size=false, $value=false, $attribs=array() ) {
+	public static function input( $name, $size=false, $value=false, $attribs=array() ) {
 		return self::element( 'input', array(
 			'name' => $name,
 			'size' => $size,
@@ -119,7 +119,7 @@ class Xml {
 	 * Internal function for use in checkboxes and radio buttons and such.
 	 * @return array
 	 */
-	function attrib( $name, $present = true ) {
+	public static function attrib( $name, $present = true ) {
 		return $present ? array( $name => $name ) : array();
 	}
 
@@ -127,7 +127,7 @@ class Xml {
 	 * Convenience function to build an HTML checkbox
 	 * @return string HTML
 	 */
-	function check( $name, $checked=false, $attribs=array() ) {
+	public static function check( $name, $checked=false, $attribs=array() ) {
 		return self::element( 'input', array(
 			'name' => $name,
 			'type' => 'checkbox',
@@ -138,7 +138,7 @@ class Xml {
 	 * Convenience function to build an HTML radio button
 	 * @return string HTML
 	 */
-	function radio( $name, $value, $checked=false, $attribs=array() ) {
+	public static function radio( $name, $value, $checked=false, $attribs=array() ) {
 		return self::element( 'input', array(
 			'name' => $name,
 			'type' => 'radio',
@@ -149,7 +149,7 @@ class Xml {
 	 * Convenience function to build an HTML form label
 	 * @return string HTML
 	 */
-	function label( $label, $id ) {
+	public static function label( $label, $id ) {
 		return self::element( 'label', array( 'for' => $id ), $label );
 	}
 
@@ -157,7 +157,7 @@ class Xml {
 	 * Convenience function to build an HTML text input field with a label
 	 * @return string HTML
 	 */
-	function inputLabel( $label, $name, $id, $size=false, $value=false, $attribs=array() ) {
+	public static function inputLabel( $label, $name, $id, $size=false, $value=false, $attribs=array() ) {
 		return Xml::label( $label, $id ) .
 			'&nbsp;' .
 			self::input( $name, $size, $value, array( 'id' => $id ) + $attribs );
@@ -167,7 +167,7 @@ class Xml {
 	 * Convenience function to build an HTML checkbox with a label
 	 * @return string HTML
 	 */
-	function checkLabel( $label, $name, $id, $checked=false, $attribs=array() ) {
+	public static function checkLabel( $label, $name, $id, $checked=false, $attribs=array() ) {
 		return self::check( $name, $checked, array( 'id' => $id ) + $attribs ) .
 			'&nbsp;' .
 			self::label( $label, $id );
@@ -177,7 +177,7 @@ class Xml {
 	 * Convenience function to build an HTML radio button with a label
 	 * @return string HTML
 	 */
-	function radioLabel( $label, $name, $value, $id, $checked=false, $attribs=array() ) {
+	public static function radioLabel( $label, $name, $value, $id, $checked=false, $attribs=array() ) {
 		return self::radio( $name, $value, $checked, array( 'id' => $id ) + $attribs ) .
 			'&nbsp;' .
 			self::label( $label, $id );
@@ -189,7 +189,7 @@ class Xml {
 	 * @param $attribs Array: optional custom attributes
 	 * @return string HTML
 	 */
-	function submitButton( $value, $attribs=array() ) {
+	public static function submitButton( $value, $attribs=array() ) {
 		return self::element( 'input', array( 'type' => 'submit', 'value' => $value ) + $attribs );
 	}
 
@@ -201,11 +201,30 @@ class Xml {
 	 * @param $attribs Array: optional custom attributes
 	 * @return string HTML
 	 */
-	function hidden( $name, $value, $attribs=array() ) {
+	public static function hidden( $name, $value, $attribs=array() ) {
 		return self::element( 'input', array(
 			'name' => $name,
 			'type' => 'hidden',
 			'value' => $value ) + $attribs );
+	}
+	
+	/**
+	 * Convenience function to build an HTML drop-down list item.
+	 * @param $text String: text for this item
+	 * @param $value String: form submission value; if empty, use text
+	 * @param $selected boolean: if true, will be the default selected item
+	 * @param $attribs array: optional additional HTML attributes
+	 * @return string HTML
+	 */
+	public static function option( $text, $value=null, $selected=false,
+			$attribs=array() ) {
+		if( !is_null( $value ) ) {
+			$attribs['value'] = $value;
+		}
+		if( $selected ) {
+			$attribs['selected'] = 'selected';
+		}
+		return self::element( 'option', $attribs, $text );
 	}
 
 	/**
@@ -216,7 +235,7 @@ class Xml {
 	 * @param string $string
 	 * @return string
 	 */
-	function escapeJsString( $string ) {
+	public static function escapeJsString( $string ) {
 		// See ECMA 262 section 7.8.4 for string literal format
 		$pairs = array(
 			"\\" => "\\\\",
@@ -228,6 +247,9 @@ class Xml {
 			# To avoid closing the element or CDATA section
 			"<" => "\\x3c",
 			">" => "\\x3e",
+
+			# To avoid any complaints about bad entity refs                        
+			"&" => "\\x26",
 		);
 		return strtr( $string, $pairs );
 	}
@@ -241,7 +263,7 @@ class Xml {
 	 *
 	 * @todo Error position reporting return
 	 */
-	function isWellFormed( $text ) {
+	public static function isWellFormed( $text ) {
 		$parser = xml_parser_create( "UTF-8" );
 
 		# case folding violates XML standard, turn it off
@@ -267,7 +289,7 @@ class Xml {
 	 * @param $text String:
 	 * @return bool
 	 */
-	function isWellFormedXmlFragment( $text ) {
+	public static function isWellFormedXmlFragment( $text ) {
 		$html =
 			Sanitizer::hackDocType() .
 			'<html>' .

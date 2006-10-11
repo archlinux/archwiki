@@ -33,9 +33,10 @@ require_once( 'XmlFunctions.php' );
 
 /**
  * Compatibility functions
- * PHP <4.3.x is not actively supported; 4.1.x and 4.2.x might or might not work.
- * <4.1.x will not work, as we use a number of features introduced in 4.1.0
- * such as the new autoglobals.
+ *
+ * We more or less support PHP 5.0.x and up.
+ * Re-implementations of newer functions or functions in non-standard
+ * PHP extensions may be included here.
  */
 if( !function_exists('iconv') ) {
 	# iconv support is not in the default configuration and so may not be present.
@@ -46,22 +47,6 @@ if( !function_exists('iconv') ) {
 		if(strcasecmp( $from, 'utf-8' ) == 0) return utf8_decode( $string );
 		if(strcasecmp( $to, 'utf-8' ) == 0) return utf8_encode( $string );
 		return $string;
-	}
-}
-
-if( !function_exists('file_get_contents') ) {
-	# Exists in PHP 4.3.0+
-	function file_get_contents( $filename ) {
-		return implode( '', file( $filename ) );
-	}
-}
-
-if( !function_exists('is_a') ) {
-	# Exists in PHP 4.2.0+
-	function is_a( $object, $class_name ) {
-		return
-			(strcasecmp( get_class( $object ), $class_name ) == 0) ||
-			 is_subclass_of( $object, $class_name );
 	}
 }
 
@@ -76,17 +61,6 @@ if ( !function_exists( 'mb_substr' ) ) {
 		} else {
 			return join( '', array_slice( $ar[0], $start ) );
 		}
-	}
-}
-
-if( !function_exists( 'floatval' ) ) {
-	/**
-	 * First defined in PHP 4.2.0
-	 * @param mixed $var;
-	 * @return float
-	 */
-	function floatval( $var ) {
-		return (float)$var;
 	}
 }
 
@@ -109,39 +83,25 @@ if ( !function_exists( 'array_diff_key' ) ) {
 
 
 /**
- * Wrapper for clone() for PHP 4, for the moment.
+ * Wrapper for clone(), for compatibility with PHP4-friendly extensions.
  * PHP 5 won't let you declare a 'clone' function, even conditionally,
  * so it has to be a wrapper with a different name.
  */
 function wfClone( $object ) {
-	// WARNING: clone() is not a function in PHP 5, so function_exists fails.
-	if( version_compare( PHP_VERSION, '5.0' ) < 0 ) {
-		return $object;
-	} else {
-		return clone( $object );
-	}
+	return clone( $object );
 }
 
 /**
  * Where as we got a random seed
- * @var bool $wgTotalViews
  */
 $wgRandomSeeded = false;
 
 /**
  * Seed Mersenne Twister
- * Only necessary in PHP < 4.2.0
- *
- * @return bool
+ * No-op for compatibility; only necessary in PHP < 4.2.0
  */
 function wfSeedRandom() {
-	global $wgRandomSeeded;
-
-	if ( ! $wgRandomSeeded && version_compare( phpversion(), '4.2.0' ) < 0 ) {
-		$seed = hexdec(substr(md5(microtime()),-8)) & 0x7fffffff;
-		mt_srand( $seed );
-		$wgRandomSeeded = true;
-	}
+	/* No-op */
 }
 
 /**
@@ -190,13 +150,25 @@ function wfUrlencode ( $s ) {
  */
 function wfDebug( $text, $logonly = false ) {
 	global $wgOut, $wgDebugLogFile, $wgDebugComments, $wgProfileOnly, $wgDebugRawPage;
+	static $recursion = 0;
 
 	# Check for raw action using $_GET not $wgRequest, since the latter might not be initialised yet
 	if ( isset( $_GET['action'] ) && $_GET['action'] == 'raw' && !$wgDebugRawPage ) {
 		return;
 	}
 
-	if ( isset( $wgOut ) && $wgDebugComments && !$logonly ) {
+	if ( $wgDebugComments && !$logonly ) {
+		if ( !isset( $wgOut ) ) {
+			return;
+		}
+		if ( !StubObject::isRealObject( $wgOut ) ) {
+			if ( $recursion ) {
+				return;
+			}
+			$recursion++;
+			$wgOut->_unstub();
+			$recursion--;
+		}
 		$wgOut->debug( $text );
 	}
 	if ( '' != $wgDebugLogFile && !$wgProfileOnly ) {
@@ -217,11 +189,12 @@ function wfDebug( $text, $logonly = false ) {
  *                     log file is specified, (default true)
  */
 function wfDebugLog( $logGroup, $text, $public = true ) {
-	global $wgDebugLogGroups, $wgDBname;
+	global $wgDebugLogGroups;
 	if( $text{strlen( $text ) - 1} != "\n" ) $text .= "\n";
 	if( isset( $wgDebugLogGroups[$logGroup] ) ) {
 		$time = wfTimestamp( TS_DB );
-		@error_log( "$time $wgDBname: $text", 3, $wgDebugLogGroups[$logGroup] );
+		$wiki = wfWikiID();
+		@error_log( "$time $wiki: $text", 3, $wgDebugLogGroups[$logGroup] );
 	} else if ( $public === true ) {
 		wfDebug( $text, true );
 	}
@@ -243,13 +216,12 @@ function wfLogDBError( $text ) {
 /**
  * @todo document
  */
-function logProfilingData() {
+function wfLogProfilingData() {
 	global $wgRequestTime, $wgDebugLogFile, $wgDebugRawPage, $wgRequest;
 	global $wgProfiling, $wgUser;
-	$now = wfTime();
-
-	$elapsed = $now - $wgRequestTime;
 	if ( $wgProfiling ) {
+		$now = wfTime();
+		$elapsed = $now - $wgRequestTime;
 		$prof = wfGetProfilingOutput( $wgRequestTime, $elapsed );
 		$forward = '';
 		if( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) )
@@ -260,7 +232,8 @@ function logProfilingData() {
 			$forward .= ' from ' . $_SERVER['HTTP_FROM'];
 		if( $forward )
 			$forward = "\t(proxied via {$_SERVER['REMOTE_ADDR']}{$forward})";
-		if( is_object($wgUser) && $wgUser->isAnon() )
+		// Don't unstub $wgUser at this late stage just for statistics purposes
+		if( StubObject::isRealObject($wgUser) && $wgUser->isAnon() )
 			$forward .= ' anon';
 		$log = sprintf( "%s\t%04.3f\t%s\n",
 		  gmdate( 'YmdHis' ), $elapsed,
@@ -418,12 +391,12 @@ function wfMsgReal( $key, $args, $useDB = true, $forContent=false, $transform = 
 function wfMsgWeirdKey ( $key ) {
 	$subsource = str_replace ( ' ' , '_' , $key ) ;
 	$source = wfMsgForContentNoTrans( $subsource ) ;
-	if ( $source == "&lt;{$subsource}&gt;" ) {
+	if ( wfEmptyMsg( $subsource, $source) ) {
 		# Try again with first char lower case
 		$subsource = strtolower ( substr ( $subsource , 0 , 1 ) ) . substr ( $subsource , 1 ) ;
 		$source = wfMsgForContentNoTrans( $subsource ) ;
 	}
-	if ( $source == "&lt;{$subsource}&gt;" ) {
+	if ( wfEmptyMsg( $subsource, $source ) ) {
 		# Didn't work either, return blank text
 		$source = "" ;
 	}
@@ -439,7 +412,7 @@ function wfMsgWeirdKey ( $key ) {
  * @private
  */
 function wfMsgGetKey( $key, $useDB, $forContent = false, $transform = true ) {
-	global $wgParser, $wgMsgParserOptions, $wgContLang, $wgMessageCache, $wgLang;
+	global $wgParser, $wgContLang, $wgMessageCache, $wgLang;
 
 	if ( is_object( $wgMessageCache ) )
 		$transstat = $wgMessageCache->getTransform();
@@ -466,7 +439,7 @@ function wfMsgGetKey( $key, $useDB, $forContent = false, $transform = true ) {
 		if($message === false)
 			$message = Language::getMessage($key);
 		if ( $transform && strstr( $message, '{{' ) !== false ) {
-			$message = $wgParser->transformMsg($message, $wgMsgParserOptions);
+			$message = $wgParser->transformMsg($message, $wgMessageCache->getParserOptions() );
 		}
 	}
 
@@ -621,8 +594,7 @@ function wfAbruptExit( $error = false ){
 		wfDebug('WARNING: Abrupt exit\n');
 	}
 
-	wfProfileClose();
-	logProfilingData();
+	wfLogProfilingData();
 
 	if ( !$error ) {
 		$wgLoadBalancer->closeAll();
@@ -867,8 +839,8 @@ function wfCheckLimits( $deflimit = 50, $optionname = 'rclimit' ) {
  */
 function wfEscapeWikiText( $text ) {
 	$text = str_replace(
-		array( '[',		'|',	  '\'',	   'ISBN '	  , '://'	  , "\n=", '{{' ),
-		array( '&#91;', '&#124;', '&#39;', 'ISBN&#32;', '&#58;//' , "\n&#61;", '&#123;&#123;' ),
+		array( '[',     '|',      '\'',    'ISBN ',     'RFC ',     '://',     "\n=",     '{{' ),
+		array( '&#91;', '&#124;', '&#39;', 'ISBN&#32;', 'RFC&#32;', '&#58;//', "\n&#61;", '&#123;&#123;' ),
 		htmlspecialchars($text) );
 	return $text;
 }
@@ -1296,6 +1268,11 @@ define('TS_EXIF', 5);
 define('TS_ORACLE', 6);
 
 /**
+ * Postgres format time.
+ */
+define('TS_POSTGRES', 7);
+
+/**
  * @param mixed $outputtype A timestamp in one of the supported formats, the
  *                          function will autodetect which format is supplied
  *                          and act accordingly.
@@ -1329,6 +1306,10 @@ function wfTimestamp($outputtype=TS_UNIX,$ts=0) {
 		# TS_ISO_8601
 		$uts=gmmktime((int)$da[4],(int)$da[5],(int)$da[6],
 			(int)$da[2],(int)$da[3],(int)$da[1]);
+	} elseif (preg_match("/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)[\+\- ](\d\d)$/",$ts,$da)) {
+		# TS_POSTGRES
+		$uts=gmmktime((int)$da[4],(int)$da[5],(int)$da[6],
+		(int)$da[2],(int)$da[3],(int)$da[1]);
 	} else {
 		# Bogus value; fall back to the epoch...
 		wfDebug("wfTimestamp() fed bogus time value: $outputtype; $ts\n");
@@ -1352,6 +1333,8 @@ function wfTimestamp($outputtype=TS_UNIX,$ts=0) {
 			return gmdate( 'D, d M Y H:i:s', $uts ) . ' GMT';
 		case TS_ORACLE:
 			return gmdate( 'd-M-y h.i.s A', $uts) . ' +00:00';
+		case TS_POSTGRES:
+			return gmdate( 'Y-m-d H:i:s', $uts) . ' GMT';
 		default:
 			throw new MWException( 'wfTimestamp() called with illegal output type.');
 	}
@@ -1395,18 +1378,18 @@ function swap( &$x, &$y ) {
 }
 
 function wfGetCachedNotice( $name ) {
-	global $wgOut, $parserMemc, $wgDBname;
+	global $wgOut, $parserMemc;
 	$fname = 'wfGetCachedNotice';
 	wfProfileIn( $fname );
 	
 	$needParse = false;
 	$notice = wfMsgForContent( $name );
-	if( $notice == '&lt;'. $name . ';&gt' || $notice == '-' ) {
+	if( wfEmptyMsg( $name, $notice ) || $notice == '-' ) {
 		wfProfileOut( $fname );
 		return( false );
 	}
 	
-	$cachedNotice = $parserMemc->get( $wgDBname . ':' . $name );
+	$cachedNotice = $parserMemc->get( wfMemcKey( $name ) );
 	if( is_array( $cachedNotice ) ) {
 		if( md5( $notice ) == $cachedNotice['hash'] ) {
 			$notice = $cachedNotice['html'];
@@ -1420,7 +1403,7 @@ function wfGetCachedNotice( $name ) {
 	if( $needParse ) {
 		if( is_object( $wgOut ) ) {
 			$parsed = $wgOut->parse( $notice );
-			$parserMemc->set( $wgDBname . ':' . $name, array( 'html' => $parsed, 'hash' => md5( $notice ) ), 600 );
+			$parserMemc->set( wfMemcKey( $name ), array( 'html' => $parsed, 'hash' => md5( $notice ) ), 600 );
 			$notice = $parsed;
 		} else {
 			wfDebug( 'wfGetCachedNotice called for ' . $name . ' with no $wgOut available' );
@@ -1480,36 +1463,13 @@ function wfGetSiteNotice() {
 	return $siteNotice;
 }
 
-/** Global singleton instance of MimeMagic. This is initialized on demand,
-* please always use the wfGetMimeMagic() function to get the instance.
-*
-* @private
-*/
-$wgMimeMagic= NULL;
-
-/** Factory functions for the global MimeMagic object.
-* This function always returns the same singleton instance of MimeMagic.
-* That objects will be instantiated on the first call to this function.
-* If needed, the MimeMagic.php file is automatically included by this function.
-* @return MimeMagic the global MimeMagic objects.
-*/
+/** 
+ * BC wrapper for MimeMagic::singleton()
+ * @deprecated
+ */
 function &wfGetMimeMagic() {
-	global $wgMimeMagic;
-
-	if (!is_null($wgMimeMagic)) {
-		return $wgMimeMagic;
-	}
-
-	if (!class_exists("MimeMagic")) {
-		#include on demand
-		require_once("MimeMagic.php");
-	}
-
-	$wgMimeMagic= new MimeMagic();
-
-	return $wgMimeMagic;
+	return MimeMagic::singleton();
 }
-
 
 /**
  * Tries to get the system directory for temporary files.
@@ -1582,8 +1542,8 @@ function wfMkdirParents( $fullDir, $mode = 0777 ) {
  * Increment a statistics counter
  */
  function wfIncrStats( $key ) {
-	 global $wgDBname, $wgMemc;
-	 $key = "$wgDBname:stats:$key";
+	 global $wgMemc;
+	 $key = wfMemcKey( 'stats', $key );
 	 if ( is_null( $wgMemc->incr( $key ) ) ) {
 		 $wgMemc->add( $key, 1 );
 	 }
@@ -1689,7 +1649,7 @@ function wfUrlProtocols() {
  * @return collected stdout as a string (trailing newlines stripped)
  */
 function wfShellExec( $cmd, &$retval=null ) {
-	global $IP, $wgMaxShellMemory;
+	global $IP, $wgMaxShellMemory, $wgMaxShellFileSize;
 	
 	if( ini_get( 'safe_mode' ) ) {
 		wfDebug( "wfShellExec can't run in safe_mode, PHP's exec functions are too broken.\n" );
@@ -1700,11 +1660,12 @@ function wfShellExec( $cmd, &$retval=null ) {
 	if ( php_uname( 's' ) == 'Linux' ) {
 		$time = ini_get( 'max_execution_time' );
 		$mem = intval( $wgMaxShellMemory );
+		$filesize = intval( $wgMaxShellFileSize );
 
 		if ( $time > 0 && $mem > 0 ) {
-			$script = "$IP/bin/ulimit.sh";
+			$script = "$IP/bin/ulimit-tvf.sh";
 			if ( is_executable( $script ) ) {
-				$cmd = escapeshellarg( $script ) . " $time $mem $cmd";
+				$cmd = escapeshellarg( $script ) . " $time $mem $filesize $cmd";
 			}
 		}
 	} elseif ( php_uname( 's' ) == 'Windows NT' ) {
@@ -2000,6 +1961,106 @@ function wfGetHTTP( $url, $timeout = 'default' ) {
 }
 function wfIsLocalURL( $url ) { 
 	return Http::isLocalURL( $url ); 
+}
+
+/**
+ * Initialise php session
+ */
+function wfSetupSession() {
+	global $wgSessionsInMemcached, $wgCookiePath, $wgCookieDomain;
+	if( $wgSessionsInMemcached ) {
+		require_once( 'MemcachedSessions.php' );
+	} elseif( 'files' != ini_get( 'session.save_handler' ) ) {
+		# If it's left on 'user' or another setting from another
+		# application, it will end up failing. Try to recover.
+		ini_set ( 'session.save_handler', 'files' );
+	}
+	session_set_cookie_params( 0, $wgCookiePath, $wgCookieDomain );
+	session_cache_limiter( 'private, must-revalidate' );
+	@session_start();
+}
+
+/**
+ * Get an object from the precompiled serialized directory
+ *
+ * @return mixed The variable on success, false on failure
+ */
+function wfGetPrecompiledData( $name ) {
+	global $IP;
+
+	$file = "$IP/serialized/$name";
+	if ( file_exists( $file ) ) {
+		$blob = file_get_contents( $file );
+		if ( $blob ) {
+			return unserialize( $blob );
+		}
+	}
+	return false;
+}
+
+function wfGetCaller( $level = 2 ) {
+	$backtrace = debug_backtrace();
+	if ( isset( $backtrace[$level] ) ) {
+		if ( isset( $backtrace[$level]['class'] ) ) {
+			$caller = $backtrace[$level]['class'] . '::' . $backtrace[$level]['function'];
+		} else {
+			$caller = $backtrace[$level]['function'];
+		}
+	} else {
+		$caller = 'unknown';
+	}
+	return $caller;
+}
+
+/** Return a string consisting all callers in stack, somewhat useful sometimes for profiling specific points */
+function wfGetAllCallers() {
+	return implode('/', array_map(
+		create_function('$frame',' 
+			return isset( $frame["class"] )?
+				$frame["class"]."::".$frame["function"]:
+				$frame["function"]; 
+			'),
+		array_reverse(debug_backtrace())));
+}
+
+/**
+ * Get a cache key
+ */
+function wfMemcKey( /*... */ ) {
+	global $wgDBprefix, $wgDBname;
+	$args = func_get_args();
+	if ( $wgDBprefix ) {
+		$key = "$wgDBname-$wgDBprefix:" . implode( ':', $args );
+	} else {
+		$key = $wgDBname . ':' . implode( ':', $args );
+	}
+	return $key;
+}
+
+/**
+ * Get a cache key for a foreign DB
+ */
+function wfForeignMemcKey( $db, $prefix /*, ... */ ) {
+	$args = array_slice( func_get_args(), 2 );
+	if ( $prefix ) {
+		$key = "$db-$prefix:" . implode( ':', $args );
+	} else {
+		$key = $db . ':' . implode( ':', $args );
+	}
+	return $key;
+}
+
+/**
+ * Get an ASCII string identifying this wiki
+ * This is used as a prefix in memcached keys
+ */
+function wfWikiID() {
+	global $wgDBprefix, $wgDBname;
+	if ( $wgDBprefix ) {
+		return "$wgDBname-$wgDBprefix";
+	} else {
+		return $wgDBname;
+	}
 }
 
 ?>

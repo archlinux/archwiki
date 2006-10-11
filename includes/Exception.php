@@ -3,7 +3,8 @@
 class MWException extends Exception
 {
 	function useOutputPage() {
-		return !empty( $GLOBALS['wgFullyInitialised'] );
+		return !empty( $GLOBALS['wgFullyInitialised'] ) && 
+			!empty( $GLOBALS['wgArticle'] ) && !empty( $GLOBALS['wgTitle'] );
 	}
 
 	function useMessageCache() {
@@ -19,16 +20,28 @@ class MWException extends Exception
 			return wfMsgReplaceArgs( $fallback, $args );
 		}
 	}
-			
+
 	function getHTML() {
-		return '<p>' . htmlspecialchars( $this->getMessage() ) . 
-			'</p><p>Backtrace:</p><p>' . nl2br( htmlspecialchars( $this->getTraceAsString() ) ) .
-			"</p>\n";
+		global $wgShowExceptionDetails;
+		if( $wgShowExceptionDetails ) {
+			return '<p>' . htmlspecialchars( $this->getMessage() ) . 
+				'</p><p>Backtrace:</p><p>' . nl2br( htmlspecialchars( $this->getTraceAsString() ) ) .
+				"</p>\n";
+		} else {
+			return "<p>Set <b><tt>\$wgShowExceptionDetails = true;</tt></b> " .
+				"in LocalSettings.php to show detailed debugging information.</p>";
+		}
 	}
 
 	function getText() {
-		return $this->getMessage() .  
-			"\nBacktrace:\n" . $this->getTraceAsString() . "\n";
+		global $wgShowExceptionDetails;
+		if( $wgShowExceptionDetails ) {
+			return $this->getMessage() .
+				"\nBacktrace:\n" . $this->getTraceAsString() . "\n";
+		} else {
+			return "<p>Set <tt>\$wgShowExceptionDetails = true;</tt> " .
+				"in LocalSettings.php to show detailed debugging information.</p>";
+		}
 	}
 	
 	function getPageTitle() {
@@ -38,6 +51,13 @@ class MWException extends Exception
 			global $wgSitename;
 			return "$wgSitename error";
 		}
+	}
+	
+	function getLogMessage() {
+		$file = $this->getFile();
+		$line = $this->getLine();
+		$message = $this->getMessage();
+		return "{$_SERVER['REQUEST_URI']} Exception from line $line of $file: $message";
 	}
 	
 	function reportHTML() {
@@ -67,6 +87,10 @@ class MWException extends Exception
 		if ( $wgCommandLineMode ) {
 			$this->reportText();
 		} else {
+			$log = $this->getLogMessage();
+			if ( $log ) {
+				wfDebugLog( 'exception', $log );
+			}
 			$this->reportHTML();
 		}
 	}
@@ -93,11 +117,12 @@ class MWException extends Exception
 
 	function htmlFooter() {
 		echo "</body></html>";
-	}		
+	}
+
 }
 
 /**
- * Exception class which takes an HTML error message, and does not 
+ * Exception class which takes an HTML error message, and does not
  * produce a backtrace. Replacement for OutputPage::fatalError().
  */
 class FatalError extends MWException {
@@ -145,11 +170,11 @@ function wfReportException( Exception $e ) {
 			 $e->report();
 		 } catch ( Exception $e2 ) {
 			 // Exception occurred from within exception handler
-			 // Show a simpler error message for the original exception, 
+			 // Show a simpler error message for the original exception,
 			 // don't try to invoke report()
 			 $message = "MediaWiki internal error.\n\n" .
-			 "Original exception: " . $e->__toString() . 
-			 "\n\nException caught inside exception handler: " . 
+			 "Original exception: " . $e->__toString() .
+			 "\n\nException caught inside exception handler: " .
 			 $e2->__toString() . "\n";
 
 			 if ( !empty( $GLOBALS['wgCommandLineMode'] ) ) {
@@ -165,7 +190,7 @@ function wfReportException( Exception $e ) {
 
 /**
  * Exception handler which simulates the appropriate catch() handling:
- * 
+ *
  *   try {
  *       ...
  *   } catch ( MWException $e ) {
@@ -181,8 +206,7 @@ function wfExceptionHandler( $e ) {
 	// Final cleanup, similar to wfErrorExit()
 	if ( $wgFullyInitialised ) {
 		try {
-			wfProfileClose();
-			logProfilingData(); // uses $wgRequest, hence the $wgFullyInitialised condition
+			wfLogProfilingData(); // uses $wgRequest, hence the $wgFullyInitialised condition
 		} catch ( Exception $e ) {}
 	}
 

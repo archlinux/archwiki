@@ -170,6 +170,12 @@ class MediaWiki {
 	 * @return Article
 	 */
 	function articleFromTitle( $title ) {
+		$article = null;
+		wfRunHooks('ArticleFromTitle', array( &$title, &$article ) );
+		if ( $article ) {
+			return $article;
+		}
+
 		if( NS_MEDIA == $title->getNamespace() ) {
 			// FIXME: where should this go?
 			$title = Title::makeTitle( NS_IMAGE, $title->getDBkey() );
@@ -258,8 +264,14 @@ class MediaWiki {
 	 */
 	function doUpdates ( &$updates ) {
 		wfProfileIn( 'MediaWiki::doUpdates' );
+		$dbw =& wfGetDB( DB_MASTER );
 		foreach( $updates as $up ) {
 			$up->doUpdate();
+
+			# Commit after every update to prevent lock contention
+			if ( $dbw->trxLevel() ) {
+				$dbw->commit();
+			}
 		}
 		wfProfileOut( 'MediaWiki::doUpdates' );
 	}
@@ -270,7 +282,7 @@ class MediaWiki {
 	function doJobs() {
 		global $wgJobRunRate;
 		
-		if ( $wgJobRunRate <= 0 ) {
+		if ( $wgJobRunRate <= 0 || wfReadOnly() ) {
 			return;
 		}
 		if ( $wgJobRunRate < 1 ) {
@@ -302,8 +314,7 @@ class MediaWiki {
 	 * Ends this task peacefully
 	 */
 	function restInPeace ( &$loadBalancer ) {
-		wfProfileClose();
-		logProfilingData();
+		wfLogProfilingData();
 		$loadBalancer->closeAll();
 		wfDebug( "Request ended normally\n" );
 	}

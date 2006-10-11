@@ -93,7 +93,7 @@ class ListUsersPage extends QueryPage {
 		$out .= wfCloseElement( 'select' ) . ' ';;# . wfElement( 'br' );
 
 		# Username field
-		$out .= wfElement( 'label', array( 'for' => 'username' ), wfMsg( 'specialloguserlabel' ) ) . ' ';
+		$out .= wfElement( 'label', array( 'for' => 'username' ), wfMsg( 'listusersfrom' ) ) . ' ';
 		$out .= wfElement( 'input', array( 'type' => 'text', 'id' => 'username', 'name' => 'username',
 							'value' => $this->requestedUser ) ) . ' ';
 
@@ -111,6 +111,7 @@ class ListUsersPage extends QueryPage {
 	}
 
 	function getSQL() {
+		global $wgDBtype;
 		$dbr =& wfGetDB( DB_SLAVE );
 		$user = $dbr->tableName( 'user' );
 		$user_groups = $dbr->tableName( 'user_groups' );
@@ -133,24 +134,26 @@ class ListUsersPage extends QueryPage {
 			"LEFT JOIN $user_groups ON user_id=ug_user " .
 			$this->userQueryWhere( $dbr ) .
 			" GROUP BY user_name";
-
+		if ( $wgDBtype != 'mysql' ) {
+			$sql .= ",user_id";
+		}
 		return $sql;
 	}
 
 	function userQueryWhere( &$dbr ) {
-		$conds = $this->userQueryConditions();
+		$conds = $this->userQueryConditions( $dbr );
 		return empty( $conds )
 			? ""
 			: "WHERE " . $dbr->makeList( $conds, LIST_AND );
 	}
 
-	function userQueryConditions() {
+	function userQueryConditions( $dbr ) {
 		$conds = array();
 		if( $this->requestedGroup != '' ) {
 			$conds['ug_group'] = $this->requestedGroup;
 		}
 		if( $this->requestedUser != '' ) {
-			$conds['user_name'] = $this->requestedUser;
+			$conds[] = 'user_name >= ' . $dbr->addQuotes( $this->requestedUser );
 		}
 		return $conds;
 	}
@@ -189,16 +192,12 @@ class ListUsersPage extends QueryPage {
 
 			if( count( $groups ) > 0 ) {
 				foreach( $groups as $group => $desc ) {
-					if( $page = User::getGroupPage( $group ) ) {
-						$list[] = $skin->makeLinkObj( $page, htmlspecialchars( $desc ) );
-					} else {
-						$list[] = htmlspecialchars( $desc );
-					}
+					$list[] = User::makeGroupLinkHTML( $group, $desc );
 				}
 				$groups = implode( ', ', $list );
 			} else {
 				$groups = '';
-			}				
+			}
 
 		}
 

@@ -108,7 +108,7 @@ class Title {
 	 * @static
 	 * @access public
 	 */
-	function newFromText( $text, $defaultNamespace = NS_MAIN ) {
+	public static function newFromText( $text, $defaultNamespace = NS_MAIN ) {
 		$fname = 'Title::newFromText';
 
 		if( is_object( $text ) ) {
@@ -132,7 +132,7 @@ class Title {
 		 */
 		$filteredText = Sanitizer::decodeCharReferences( $text );
 
-		$t =& new Title();
+		$t = new Title();
 		$t->mDbkeyform = str_replace( ' ', '_', $filteredText );
 		$t->mDefaultNamespace = $defaultNamespace;
 
@@ -233,8 +233,8 @@ class Title {
 	 * @static
 	 * @access public
 	 */
-	function &makeTitle( $ns, $title ) {
-		$t =& new Title();
+	public static function &makeTitle( $ns, $title ) {
+		$t = new Title();
 		$t->mInterwiki = '';
 		$t->mFragment = '';
 		$t->mNamespace = intval( $ns );
@@ -246,7 +246,7 @@ class Title {
 	}
 
 	/**
-	 * Create a new Title frrom a namespace index and a DB key.
+	 * Create a new Title from a namespace index and a DB key.
 	 * The parameters will be checked for validity, which is a bit slower
 	 * than makeTitle() but safer for user-provided data.
 	 *
@@ -256,7 +256,7 @@ class Title {
 	 * @static
 	 * @access public
 	 */
-	function makeTitleSafe( $ns, $title ) {
+	public static function makeTitleSafe( $ns, $title ) {
 		$t = new Title();
 		$t->mDbkeyform = Title::makeName( $ns, $title );
 		if( $t->secureAndSplit() ) {
@@ -273,7 +273,7 @@ class Title {
 	 * @return Title the new object
 	 * @access public
 	 */
-	function newMainPage() {
+	public static function newMainPage() {
 		return Title::newFromText( wfMsgForContent( 'mainpage' ) );
 	}
 
@@ -285,8 +285,8 @@ class Title {
 	 * @static
 	 * @access public
 	 */
-	function newFromRedirect( $text ) {
-		$mwRedir = MagicWord::get( MAG_REDIRECT );
+	public static function newFromRedirect( $text ) {
+		$mwRedir = MagicWord::get( 'redirect' );
 		$rt = NULL;
 		if ( $mwRedir->matchStart( $text ) ) {
 			if ( preg_match( '/\[{2}(.*?)(?:\||\]{2})/', $text, $m ) ) {
@@ -336,7 +336,7 @@ class Title {
 	 * @static
 	 * @access public
 	 */
-	function legalChars() {
+	public static function legalChars() {
 		global $wgLegalTitleChars;
 		return $wgLegalTitleChars;
 	}
@@ -376,7 +376,7 @@ class Title {
 	 * @param string $title the DB key form the title
 	 * @return string the prefixed form of the title
 	 */
-	/* static */ function makeName( $ns, $title ) {
+	public static function makeName( $ns, $title ) {
 		global $wgContLang;
 
 		$n = $wgContLang->getNsText( $ns );
@@ -392,13 +392,13 @@ class Title {
 	 * @access public
 	 */
 	function getInterwikiLink( $key )  {
-		global $wgMemc, $wgDBname, $wgInterwikiExpiry;
+		global $wgMemc, $wgInterwikiExpiry;
 		global $wgInterwikiCache;
 		$fname = 'Title::getInterwikiLink';
 
 		$key = strtolower( $key );
 
-		$k = $wgDBname.':interwiki:'.$key;
+		$k = wfMemcKey( 'interwiki', $key );
 		if( array_key_exists( $k, Title::$interwikiCache ) ) {
 			return Title::$interwikiCache[$k]->iw_url;
 		}
@@ -445,18 +445,18 @@ class Title {
 	 * @access public
 	 */
 	function getInterwikiCached( $key ) {
-		global $wgDBname, $wgInterwikiCache, $wgInterwikiScopes, $wgInterwikiFallbackSite;
+		global $wgInterwikiCache, $wgInterwikiScopes, $wgInterwikiFallbackSite;
 		static $db, $site;
 
 		if (!$db)
 			$db=dba_open($wgInterwikiCache,'r','cdb');
 		/* Resolve site name */
 		if ($wgInterwikiScopes>=3 and !$site) {
-			$site = dba_fetch("__sites:{$wgDBname}", $db);
+			$site = dba_fetch('__sites:' . wfWikiID(), $db);
 			if ($site=="")
 				$site = $wgInterwikiFallbackSite;
 		}
-		$value = dba_fetch("{$wgDBname}:{$key}", $db);
+		$value = dba_fetch( wfMemcKey( $key ), $db);
 		if ($value=='' and $wgInterwikiScopes>=3) {
 			/* try site-level */
 			$value = dba_fetch("_{$site}:{$key}", $db);
@@ -476,7 +476,7 @@ class Title {
 			$s->iw_url=$url;
 			$s->iw_local=(int)$local;
 		}
-		Title::$interwikiCache[$wgDBname.':interwiki:'.$key] = $s;
+		Title::$interwikiCache[wfMemcKey( 'interwiki', $key )] = $s;
 		return $s->iw_url;
 	}
 	/**
@@ -488,12 +488,10 @@ class Title {
 	 * @access public
 	 */
 	function isLocal() {
-		global $wgDBname;
-
 		if ( $this->mInterwiki != '' ) {
 			# Make sure key is loaded into cache
 			$this->getInterwikiLink( $this->mInterwiki );
-			$k = $wgDBname.':interwiki:' . $this->mInterwiki;
+			$k = wfMemcKey( 'interwiki', $this->mInterwiki );
 			return (bool)(Title::$interwikiCache[$k]->iw_local);
 		} else {
 			return true;
@@ -508,13 +506,11 @@ class Title {
 	 * @access public
 	 */
 	function isTrans() {
-		global $wgDBname;
-
 		if ($this->mInterwiki == '')
 			return false;
 		# Make sure key is loaded into cache
 		$this->getInterwikiLink( $this->mInterwiki );
-		$k = $wgDBname.':interwiki:' . $this->mInterwiki;
+		$k = wfMemcKey( 'interwiki', $this->mInterwiki );
 		return (bool)(Title::$interwikiCache[$k]->iw_trans);
 	}
 
@@ -1075,6 +1071,7 @@ class Title {
 		if( $action == 'create' ) {
 			if( (  $this->isTalkPage() && !$wgUser->isAllowed( 'createtalk' ) ) ||
 				( !$this->isTalkPage() && !$wgUser->isAllowed( 'createpage' ) ) ) {
+				wfProfileOut( $fname );
 				return false;
 			}
 		}
@@ -1897,7 +1894,7 @@ class Title {
 		$linkCache->clearLink( $nt->getPrefixedDBkey() );
 
 		# Recreate the redirect, this time in the other direction.
-		$mwRedir = MagicWord::get( MAG_REDIRECT );
+		$mwRedir = MagicWord::get( 'redirect' );
 		$redirectText = $mwRedir->getSynonym( 0 ) . ' [[' . $nt->getPrefixedText() . "]]\n";
 		$redirectArticle = new Article( $this );
 		$newid = $redirectArticle->insertOn( $dbw );
@@ -1970,7 +1967,7 @@ class Title {
 		$linkCache->clearLink( $nt->getPrefixedDBkey() );
 
 		# Insert redirect
-		$mwRedir = MagicWord::get( MAG_REDIRECT );
+		$mwRedir = MagicWord::get( 'redirect' );
 		$redirectText = $mwRedir->getSynonym( 0 ) . ' [[' . $nt->getPrefixedText() . "]]\n";
 		$redirectArticle = new Article( $this );
 		$newid = $redirectArticle->insertOn( $dbw );
@@ -2147,7 +2144,9 @@ class Title {
 					$stack[$parent] = array();
 				} else {
 					$nt = Title::newFromText($parent);
-					$stack[$parent] = $nt->getParentCategoryTree( $children + array($parent => 1) );
+					if ( $nt ) {
+						$stack[$parent] = $nt->getParentCategoryTree( $children + array($parent => 1) );
+					}
 				}
 			}
 			return $stack;
@@ -2239,6 +2238,46 @@ class Title {
 			$u = new HTMLCacheUpdate( $this, 'categorylinks' );
 			$u->doUpdate();
 		}
+	}
+
+	/**
+	 * Get the last touched timestamp
+	 */
+	function getTouched() {
+		$dbr =& wfGetDB( DB_SLAVE );
+		$touched = $dbr->selectField( 'page', 'page_touched',
+			array( 
+				'page_namespace' => $this->getNamespace(),
+				'page_title' => $this->getDBkey()
+			), __METHOD__
+		);
+		return $touched;
+	}
+
+	/**
+	 * Get a cached value from a global cache that is invalidated when this page changes
+	 * @param string $key the key
+	 * @param callback $callback A callback function which generates the value on cache miss
+	 */
+	function getRelatedCache( $memc, $key, $expiry, $callback, $params = array() ) {
+		$touched = $this->getTouched();
+		$cacheEntry = $memc->get( $key );
+		if ( $cacheEntry ) {
+			if ( $cacheEntry['touched'] >= $touched ) {
+				return $cacheEntry['value'];
+			} else {
+				wfDebug( __METHOD__.": $key expired\n" );
+			}
+		} else {
+			wfDebug( __METHOD__.": $key not found\n" );
+		}
+		$value = call_user_func_array( $callback, $params );
+		$cacheEntry = array(
+			'value' => $value,
+			'touched' => $touched
+		);
+		$memc->set( $key, $cacheEntry, $expiry );
+		return $value;
 	}
 
 	function trackbackURL() {

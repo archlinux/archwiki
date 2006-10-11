@@ -46,6 +46,7 @@ class Image
 		$size,          # Size in bytes (loadFromXxx)
 		$metadata,      # Metadata
 		$dataLoaded,    # Whether or not all this has been loaded from the database (loadFromXxx)
+		$page,		# Page to render when creating thumbnails
 		$lastError;     # Error string associated with a thumbnail display error
 
 
@@ -86,6 +87,7 @@ class Image
 		$this->extension = Image::normalizeExtension( $n ?
 			substr( $this->name, $n + 1 ) : '' );
 		$this->historyLine = 0;
+		$this->page = 1;
 
 		$this->dataLoaded = false;
 	}
@@ -119,12 +121,12 @@ class Image
 	 * Returns an array, first element is the local cache key, second is the shared cache key, if there is one
 	 */
 	function getCacheKeys( ) {
-		global $wgDBname, $wgUseSharedUploads, $wgSharedUploadDBname, $wgCacheSharedUploads;
+		global $wgUseSharedUploads, $wgSharedUploadDBname, $wgCacheSharedUploads;
 
 		$hashedName = md5($this->name);
-		$keys = array( "$wgDBname:Image:$hashedName" );
+		$keys = array( wfMemcKey( 'Image', $hashedName ) );
 		if ( $wgUseSharedUploads && $wgSharedUploadDBname && $wgCacheSharedUploads ) {
-			$keys[] = "$wgSharedUploadDBname:Image:$hashedName";
+			$keys[] = wfForeignMemcKey( $wgSharedUploadDBname, false, 'Image', $hashedName );
 		}
 		return $keys;
 	}
@@ -142,7 +144,7 @@ class Image
 		// Check if the key existed and belongs to this version of MediaWiki
 		if (!empty($cachedValues) && is_array($cachedValues)
 		  && isset($cachedValues['version']) && ( $cachedValues['version'] == MW_IMAGE_VERSION )
-		  && $cachedValues['fileExists'] && isset( $cachedValues['mime'] ) && isset( $cachedValues['metadata'] ) )
+		  && isset( $cachedValues['mime'] ) && isset( $cachedValues['metadata'] ) )
 		{
 			if ( $wgUseSharedUploads && $cachedValues['fromShared']) {
 				# if this is shared file, we need to check if image
@@ -200,13 +202,13 @@ class Image
 	 * Save the image metadata to memcached
 	 */
 	function saveToCache() {
-		global $wgMemc;
+		global $wgMemc, $wgUseSharedUploads;
 		$this->load();
 		$keys = $this->getCacheKeys();
-		if ( $this->fileExists ) {
-			// We can't cache negative metadata for non-existent files,
-			// because if the file later appears in commons, the local
-			// keys won't be purged.
+		// We can't cache negative metadata for non-existent files,
+		// because if the file later appears in commons, the local
+		// keys won't be purged.
+		if ( $this->fileExists || !$wgUseSharedUploads ) {
 			$cachedValues = array(
 				'version'    => MW_IMAGE_VERSION,
 				'name'       => $this->name,
@@ -258,7 +260,7 @@ class Image
 
 
 		if ( $this->fileExists ) {
-			$magic=& wfGetMimeMagic();
+			$magic=& MimeMagic::singleton();
 
 			$this->mime = $magic->guessMimeType($this->imagePath,true);
 			$this->type = $magic->getMediaType($this->imagePath,$this->mime);
@@ -266,7 +268,7 @@ class Image
 			# Get size in bytes
 			$this->size = filesize( $this->imagePath );
 
-			$magic=& wfGetMimeMagic();
+			$magic=& MimeMagic::singleton();
 
 			# Height and width
 			wfSuppressWarnings();
@@ -307,7 +309,11 @@ class Image
 		$this->dataLoaded = true;
 
 
-		$this->metadata = serialize( $this->retrieveExifData( $this->imagePath ) );
+		if ( $this->mime == 'image/vnd.djvu' ) {
+			$this->metadata = $deja->retrieveMetaData();
+		} else {
+			$this->metadata = serialize( $this->retrieveExifData( $this->imagePath ) );
+		}
 
 		if ( isset( $gis['bits'] ) )  $this->bits = $gis['bits'];
 		else $this->bits = 0;
@@ -323,7 +329,6 @@ class Image
 		wfProfileIn( __METHOD__ );
 
 		$dbr =& wfGetDB( DB_SLAVE );
-
 		$this->checkDBSchema($dbr);
 
 		$row = $dbr->selectRow( 'image',
@@ -374,6 +379,7 @@ class Image
 			$this->fileExists = false;
 			$this->fromSharedDirectory = false;
 			$this->metadata = serialize ( array() ) ;
+			$this->mime = false;
 		}
 
 		# Unconditionally set loaded=true, we don't want the accessors constantly rechecking
@@ -416,9 +422,12 @@ class Image
 				$this->loadFromDB();
 				if ( !$wgSharedUploadDBname && $wgUseSharedUploads ) {
 					$this->loadFromFile();
-				} elseif ( $this->fileExists ) {
+				} elseif ( $this->fileExists || !$wgUseSharedUploads ) {
+					// We can do negative caching for local images, because the cache
+					// will be purged on upload. But we can't do it when shared images
+					// are enabled, since updates to that won't purge foreign caches.
 					$this->saveToCache();
-				}
+				} 
 			}
 			$this->dataLoaded = true;
 		}
@@ -601,7 +610,7 @@ class Image
 	 * @todo remember the result of this check.
 	 */
 	function canRender() {
-		global $wgUseImageMagick;
+		global $wgUseImageMagick, $wgDjvuRenderer;
 
 		if( $this->getWidth()<=0 || $this->getHeight()<=0 ) return false;
 
@@ -647,6 +656,7 @@ class Image
 			if ( $mime === 'image/vnd.wap.wbmp'
 			  || $mime === 'image/x-xbitmap' ) return true;
 		}
+		if ( $mime === 'image/vnd.djvu' && isset( $wgDjvuRenderer ) && $wgDjvuRenderer ) return true;
 
 		return false;
 	}
@@ -734,9 +744,16 @@ class Image
 	 * Return the escapeLocalURL of this image
 	 * @public
 	 */
-	function getEscapeLocalURL() {
+	function getEscapeLocalURL( $query=false) {
 		$this->getTitle();
-		return $this->title->escapeLocalURL();
+		if ( $query === false ) {
+			if ( $this->page != 1 ) {
+				$query = 'page=' . $this->page;
+			} else {
+				$query = '';
+			}
+		}
+		return $this->title->escapeLocalURL( $query );
 	}
 
 	/**
@@ -836,6 +853,9 @@ class Image
 	 */
 	function thumbName( $width ) {
 		$thumb = $width."px-".$this->name;
+		if ( $this->page != 1 ) {
+			$thumb = "page{$this->page}-$thumb";
+		}
 
 		if( $this->mustRender() ) {
 			if( $this->canRender() ) {
@@ -1123,6 +1143,7 @@ class Image
 		global $wgSVGConverters, $wgSVGConverter;
 		global $wgUseImageMagick, $wgImageMagickConvertCommand;
 		global $wgCustomConvertCommand;
+		global $wgDjvuRenderer, $wgDjvuPostProcessor;
 
 		$this->load();
 
@@ -1149,96 +1170,112 @@ class Image
 				$err = wfShellExec( $cmd, $retval );
 				wfProfileOut( 'rsvg' );
 			}
-		} elseif ( $wgUseImageMagick ) {
-			# use ImageMagick
-			
-			if ( $this->mime == 'image/jpeg' ) {
-				$quality = "-quality 80"; // 80%
-			} elseif ( $this->mime == 'image/png' ) {
-				$quality = "-quality 95"; // zlib 9, adaptive filtering
-			} else {
-				$quality = ''; // default
-			}
-
-			# Specify white background color, will be used for transparent images
-			# in Internet Explorer/Windows instead of default black.
-
-			# Note, we specify "-size {$width}" and NOT "-size {$width}x{$height}".
-			# It seems that ImageMagick has a bug wherein it produces thumbnails of
-			# the wrong size in the second case.
-			
-			$cmd  =  wfEscapeShellArg($wgImageMagickConvertCommand) .
-				" {$quality} -background white -size {$width} ".
-				wfEscapeShellArg($this->imagePath) .
-				// Coalesce is needed to scale animated GIFs properly (bug 1017).
-				' -coalesce ' .
-				// For the -resize option a "!" is needed to force exact size,
-				// or ImageMagick may decide your ratio is wrong and slice off
-				// a pixel.
-				" -resize " . wfEscapeShellArg( "{$width}x{$height}!" ) .
-				" -depth 8 " .
-				wfEscapeShellArg($thumbPath) . " 2>&1";
-			wfDebug("reallyRenderThumb: running ImageMagick: $cmd\n");
-			wfProfileIn( 'convert' );
-			$err = wfShellExec( $cmd, $retval );
-			wfProfileOut( 'convert' );
-		} elseif( $wgCustomConvertCommand ) {
-			# Use a custom convert command
-			# Variables: %s %d %w %h
-			$src = wfEscapeShellArg( $this->imagePath );
-			$dst = wfEscapeShellArg( $thumbPath );
-			$cmd = $wgCustomConvertCommand;
-			$cmd = str_replace( '%s', $src, str_replace( '%d', $dst, $cmd ) ); # Filenames
-			$cmd = str_replace( '%h', $height, str_replace( '%w', $width, $cmd ) ); # Size
-			wfDebug( "reallyRenderThumb: Running custom convert command $cmd\n" );
-			wfProfileIn( 'convert' );
-			$err = wfShellExec( $cmd, $retval );
-			wfProfileOut( 'convert' );
 		} else {
-			# Use PHP's builtin GD library functions.
-			#
-			# First find out what kind of file this is, and select the correct
-			# input routine for this.
+			if ( $this->mime === "image/vnd.djvu" && $wgDjvuRenderer ) {
+				// DJVU image
+				// The file contains several images. First, extract the
+				// page in hi-res, if it doesn't yet exist. Then, thumbnail
+				// it.
 
-			$typemap = array(
-				'image/gif'          => array( 'imagecreatefromgif',  'palette',   'imagegif'  ),
-				'image/jpeg'         => array( 'imagecreatefromjpeg', 'truecolor', array( &$this, 'imageJpegWrapper' ) ),
-				'image/png'          => array( 'imagecreatefrompng',  'bits',      'imagepng'  ),
-				'image/vnd.wap.wmbp' => array( 'imagecreatefromwbmp', 'palette',   'imagewbmp'  ),
-				'image/xbm'          => array( 'imagecreatefromxbm',  'palette',   'imagexbm'  ),
-			);
-			if( !isset( $typemap[$this->mime] ) ) {
-				$err = 'Image type not supported';
-				wfDebug( "$err\n" );
-				return $err;
-			}
-			list( $loader, $colorStyle, $saveType ) = $typemap[$this->mime];
+				$cmd = "{$wgDjvuRenderer} -page={$this->page} -size=${width}x${height} " .
+					wfEscapeShellArg( $this->imagePath ) . 
+					" | {$wgDjvuPostProcessor} > " . wfEscapeShellArg($thumbPath);
+				wfProfileIn( 'ddjvu' );
+				wfDebug( "reallyRenderThumb DJVU: $cmd\n" );
+				$err = wfShellExec( $cmd, $retval );
+				wfProfileOut( 'ddjvu' );
 
-			if( !function_exists( $loader ) ) {
-				$err = "Incomplete GD library configuration: missing function $loader";
-				wfDebug( "$err\n" );
-				return $err;
-			}
-			if( $colorStyle == 'palette' ) {
-				$truecolor = false;
-			} elseif( $colorStyle == 'truecolor' ) {
-				$truecolor = true;
-			} elseif( $colorStyle == 'bits' ) {
-				$truecolor = ( $this->bits > 8 );
-			}
+			} elseif ( $wgUseImageMagick ) {
+				# use ImageMagick
+			
+				if ( $this->mime == 'image/jpeg' ) {
+					$quality = "-quality 80"; // 80%
+				} elseif ( $this->mime == 'image/png' ) {
+					$quality = "-quality 95"; // zlib 9, adaptive filtering
+				} else {
+					$quality = ''; // default
+				}
 
-			$src_image = call_user_func( $loader, $this->imagePath );
-			if ( $truecolor ) {
-				$dst_image = imagecreatetruecolor( $width, $height );
+				# Specify white background color, will be used for transparent images
+				# in Internet Explorer/Windows instead of default black.
+	
+				# Note, we specify "-size {$width}" and NOT "-size {$width}x{$height}".
+				# It seems that ImageMagick has a bug wherein it produces thumbnails of
+				# the wrong size in the second case.
+				
+				$cmd  =  wfEscapeShellArg($wgImageMagickConvertCommand) .
+					" {$quality} -background white -size {$width} ".
+					wfEscapeShellArg($this->imagePath) .
+					// Coalesce is needed to scale animated GIFs properly (bug 1017).
+					' -coalesce ' .
+					// For the -resize option a "!" is needed to force exact size,
+					// or ImageMagick may decide your ratio is wrong and slice off
+					// a pixel.
+					" -thumbnail " . wfEscapeShellArg( "{$width}x{$height}!" ) .
+					" -depth 8 " .
+					wfEscapeShellArg($thumbPath) . " 2>&1";
+				wfDebug("reallyRenderThumb: running ImageMagick: $cmd\n");
+				wfProfileIn( 'convert' );
+				$err = wfShellExec( $cmd, $retval );
+				wfProfileOut( 'convert' );
+			} elseif( $wgCustomConvertCommand ) {
+				# Use a custom convert command
+				# Variables: %s %d %w %h
+				$src = wfEscapeShellArg( $this->imagePath );
+				$dst = wfEscapeShellArg( $thumbPath );
+				$cmd = $wgCustomConvertCommand;
+				$cmd = str_replace( '%s', $src, str_replace( '%d', $dst, $cmd ) ); # Filenames
+				$cmd = str_replace( '%h', $height, str_replace( '%w', $width, $cmd ) ); # Size
+				wfDebug( "reallyRenderThumb: Running custom convert command $cmd\n" );
+				wfProfileIn( 'convert' );
+				$err = wfShellExec( $cmd, $retval );
+				wfProfileOut( 'convert' );
 			} else {
-				$dst_image = imagecreate( $width, $height );
+				# Use PHP's builtin GD library functions.
+				#
+				# First find out what kind of file this is, and select the correct
+				# input routine for this.
+	
+				$typemap = array(
+					'image/gif'          => array( 'imagecreatefromgif',  'palette',   'imagegif'  ),
+					'image/jpeg'         => array( 'imagecreatefromjpeg', 'truecolor', array( &$this, 'imageJpegWrapper' ) ),
+					'image/png'          => array( 'imagecreatefrompng',  'bits',      'imagepng'  ),
+					'image/vnd.wap.wmbp' => array( 'imagecreatefromwbmp', 'palette',   'imagewbmp'  ),
+					'image/xbm'          => array( 'imagecreatefromxbm',  'palette',   'imagexbm'  ),
+				);
+				if( !isset( $typemap[$this->mime] ) ) {
+					$err = 'Image type not supported';
+					wfDebug( "$err\n" );
+					return $err;
+				}
+				list( $loader, $colorStyle, $saveType ) = $typemap[$this->mime];
+
+				if( !function_exists( $loader ) ) {
+					$err = "Incomplete GD library configuration: missing function $loader";
+					wfDebug( "$err\n" );
+					return $err;
+				}
+				if( $colorStyle == 'palette' ) {
+					$truecolor = false;
+				} elseif( $colorStyle == 'truecolor' ) {
+					$truecolor = true;
+				} elseif( $colorStyle == 'bits' ) {
+					$truecolor = ( $this->bits > 8 );
+				}
+
+				$src_image = call_user_func( $loader, $this->imagePath );
+				if ( $truecolor ) {
+					$dst_image = imagecreatetruecolor( $width, $height );
+				} else {
+					$dst_image = imagecreate( $width, $height );
+				}
+				imagecopyresampled( $dst_image, $src_image,
+							0,0,0,0,
+							$width, $height, $this->width, $this->height );
+				call_user_func( $saveType, $dst_image, $thumbPath );
+				imagedestroy( $dst_image );
+				imagedestroy( $src_image );
 			}
-			imagecopyresampled( $dst_image, $src_image,
-						0,0,0,0,
-						$width, $height, $this->width, $this->height );
-			call_user_func( $saveType, $dst_image, $thumbPath );
-			imagedestroy( $dst_image );
-			imagedestroy( $src_image );
 		}
 
 		#
@@ -1367,14 +1404,16 @@ class Image
 	}
 
 	function checkDBSchema(&$db) {
+		static $checkDone = false;
 		global $wgCheckDBSchema;
-		if (!$wgCheckDBSchema) {
+		if (!$wgCheckDBSchema || $checkDone) {
 			return;
 		}
 		# img_name must be unique
 		if ( !$db->indexUnique( 'image', 'img_name' ) && !$db->indexExists('image','PRIMARY') ) {
 			throw new MWException( 'Database schema not up to date, please run maintenance/archives/patch-image_name_unique.sql' );
 		}
+		$checkDone = true;
 
 		# new fields must exist
 		# 
@@ -1489,7 +1528,7 @@ class Image
 	 * @return bool
 	 * @static
 	 */
-	function isHashed( $shared ) {
+	public static function isHashed( $shared ) {
 		global $wgHashedUploadDirectory, $wgHashedSharedUploadDirectory;
 		return $shared ? $wgHashedSharedUploadDirectory : $wgHashedUploadDirectory;
 	}
@@ -1706,7 +1745,7 @@ class Image
 
 	function getExifData() {
 		global $wgRequest;
-		if ( $this->metadata === '0' )
+		if ( $this->metadata === '0' || $this->mime == 'image/vnd.djvu' )
 			return array();
 
 		$purge = $wgRequest->getVal( 'action' ) == 'purge';
@@ -2095,7 +2134,7 @@ class Image
 						$tempFile = $store->filePath( $row->fa_storage_key );
 						$metadata = serialize( $this->retrieveExifData( $tempFile ) );
 						
-						$magic = wfGetMimeMagic();
+						$magic = MimeMagic::singleton();
 						$mime = $magic->guessMimeType( $tempFile, true );
 						$media_type = $magic->getMediaType( $tempFile, $mime );
 						list( $major_mime, $minor_mime ) = self::splitMime( $mime );
@@ -2203,6 +2242,73 @@ class Image
 		}
 		
 		return $revisions;
+	}
+
+	/**
+	 * Select a page from a multipage document. Determines the page used for
+	 * rendering thumbnails.
+	 *
+	 * @param $page Integer: page number, starting with 1
+	 */
+	function selectPage( $page ) {
+		wfDebug( __METHOD__." selecting page $page \n" );
+		$this->page = $page;
+		if ( ! $this->dataLoaded ) {
+			$this->load();
+		}
+		if ( ! isset( $this->multiPageXML ) ) {
+			$this->initializeMultiPageXML();
+		}
+		$o = $this->multiPageXML->BODY[0]->OBJECT[$page-1];
+		$this->height = intval( $o['height'] );
+		$this->width = intval( $o['width'] );
+	}
+
+	function initializeMultiPageXML() {
+		#
+		# Check for files uploaded prior to DJVU support activation
+		# They have a '0' in their metadata field.
+		#
+		if ( $this->metadata == '0' ) {
+			$deja = new DjVuImage( $this->imagePath );
+			$this->metadata = $deja->retrieveMetaData();
+			$this->purgeMetadataCache();
+
+			# Update metadata in the database
+			$dbw =& wfGetDB( DB_MASTER );
+			$dbw->update( 'image',
+				array( 'img_metadata' => $this->metadata ),
+				array( 'img_name' => $this->name ),
+				__METHOD__
+			);
+		}
+		wfSuppressWarnings();
+		$this->multiPageXML = new SimpleXMLElement( $this->metadata );
+		wfRestoreWarnings();
+	}
+
+	/**
+	 * Returns 'true' if this image is a multipage document, e.g. a DJVU
+	 * document.
+	 *
+	 * @return Bool
+	 */
+	function isMultipage() {
+		return ( $this->mime == 'image/vnd.djvu' );
+	}
+
+	/**
+	 * Returns the number of pages of a multipage document, or NULL for
+	 * documents which aren't multipage documents
+	 */
+	function pageCount() {
+		if ( ! $this->isMultipage() ) {
+			return null;
+		}
+		if ( ! isset( $this->multiPageXML ) ) {
+			$this->initializeMultiPageXML();
+		}
+		return count( $this->multiPageXML->xpath( '//OBJECT' ) );
 	}
 	
 } //class

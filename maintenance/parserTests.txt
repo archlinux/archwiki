@@ -714,6 +714,24 @@ External links: [encoded equals] (bug 6102)
 !! end
 
 !! test
+External links: [IDN ignored character reference in hostname; strip it right off]
+!! input
+[http://e&zwnj;xample.com/]
+!! result
+<p><a href="http://example.com/" class="external autonumber" title="http://example.com/" rel="nofollow">[1]</a>
+</p>
+!! end
+
+!! test
+External links: IDN ignored character reference in hostname; strip it right off
+!! input
+http://e&zwnj;xample.com/
+!! result
+<p><a href="http://example.com/" class="external free" title="http://example.com/" rel="nofollow">http://example.com/</a>
+</p>
+!! end
+
+!! test
 External links: www.jpeg.org (bug 554)
 !! input
 http://www.jpeg.org
@@ -1192,7 +1210,7 @@ Invalid attributes in table cell (bug 1830)
 
 # FIXME: this one has incorrect tag nesting still.
 !! test
-Table security: embedded pipes (http://mail.wikipedia.org/pipermail/wikitech-l/2006-April/034637.html)
+TODO: Table security: embedded pipes (http://mail.wikipedia.org/pipermail/wikitech-l/2006-April/034637.html)
 !! input
 {|
 | |[ftp://|x||]" onmouseover="alert(document.cookie)">test
@@ -1365,7 +1383,7 @@ Link containing "<#" and ">#" as a hex sequences
 !! end
 
 !! test
-Link containing double-single-quotes '' (bug 4598)
+TODO: Link containing double-single-quotes '' (bug 4598)
 !! input
 [[Lista d''e paise d''o munno]]
 !! result
@@ -2152,7 +2170,7 @@ Template with complex template as argument
 !! end
 
 !! test
-Template with thumb image (wiht link in description)
+TODO: Template with thumb image (with link in description)
 !! input
 {{paramtest|
   param =[[Image:noimage.png|thumb|[[no link|link]] [[no link|caption]]]]}}
@@ -2624,6 +2642,146 @@ pst
 Foo
 !! end
 
+!! test
+pre-save transform: context links ("pipe trick")
+!! options
+pst
+!! input
+[[Article (context)|]]
+[[Bar:Article|]]
+[[:Bar:Article|]]
+[[Bar:Article (context)|]]
+[[:Bar:Article (context)|]]
+[[|Article]]
+[[|Article (context)]]
+[[Bar:X (Y) Z|]]
+[[:Bar:X (Y) Z|]]
+!! result
+[[Article (context)|Article]]
+[[Bar:Article|Article]]
+[[:Bar:Article|Article]]
+[[Bar:Article (context)|Article]]
+[[:Bar:Article (context)|Article]]
+[[Article]]
+[[Article (context)]]
+[[Bar:X (Y) Z|X (Y) Z]]
+[[:Bar:X (Y) Z|X (Y) Z]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with interwiki prefix
+!! options
+pst
+!! input
+[[interwiki:Article|]]
+[[:interwiki:Article|]]
+[[interwiki:Bar:Article|]]
+[[:interwiki:Bar:Article|]]
+!! result
+[[interwiki:Article|Article]]
+[[:interwiki:Article|Article]]
+[[interwiki:Bar:Article|Bar:Article]]
+[[:interwiki:Bar:Article|Bar:Article]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with parens in title
+!! options
+pst title=[[Somearticle (context)]]
+!! input
+[[|Article]]
+!! result
+[[Article (context)|Article]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with comma in title
+!! options
+pst title=[[Someplace, Somewhere]]
+!! input
+[[|Otherplace]]
+[[Otherplace, Elsewhere|]]
+[[Otherplace, Elsewhere, Anywhere|]]
+!! result
+[[Otherplace, Somewhere|Otherplace]]
+[[Otherplace, Elsewhere|Otherplace]]
+[[Otherplace, Elsewhere, Anywhere|Otherplace]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with parens and comma
+!! options
+pst title=[[Someplace (IGNORED), Somewhere]]
+!! input
+[[|Otherplace]]
+[[Otherplace (place), Elsewhere|]]
+!! result
+[[Otherplace, Somewhere|Otherplace]]
+[[Otherplace (place), Elsewhere|Otherplace]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with comma and parens
+!! options
+pst title=[[Who, me? (context)]]
+!! input
+[[|Yes, you.]]
+[[Me, Myself, and I (1937 song)|]]
+!! result
+[[Yes, you. (context)|Yes, you.]]
+[[Me, Myself, and I (1937 song)|Me, Myself, and I]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with namespace
+!! options
+pst title=[[Ns:Somearticle]]
+!! input
+[[|Article]]
+!! result
+[[Ns:Article|Article]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with namespace and parens
+!! options
+pst title=[[Ns:Somearticle (context)]]
+!! input
+[[|Article]]
+!! result
+[[Ns:Article (context)|Article]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with namespace and comma
+!! options
+pst title=[[Ns:Somearticle, Context, Whatever]]
+!! input
+[[|Article]]
+!! result
+[[Ns:Article, Context, Whatever|Article]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with namespace, comma and parens
+!! options
+pst title=[[Ns:Somearticle, Context (context)]]
+!! input
+[[|Article]]
+!! result
+[[Ns:Article (context)|Article]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with namespace, parens and comma
+!! options
+pst title=[[Ns:Somearticle (IGNORED), Context]]
+!! input
+[[|Article]]
+!! result
+[[Ns:Article, Context|Article]]
+!! end
+
 
 ###
 ### Message transform tests
@@ -2649,7 +2807,7 @@ msg
 !! end
 
 !! test
-message transform: <noinclude> in transcluded template (bug 4926)
+TODO: message transform: <noinclude> in transcluded template (bug 4926)
 !! options
 msg
 !! input
@@ -2659,7 +2817,7 @@ Foobar
 !! end
 
 !! test
-message transform: <onlyinclude> in transcluded template (bug 4926)
+TODO: message transform: <onlyinclude> in transcluded template (bug 4926)
 !! options
 msg
 !! input
@@ -4043,6 +4201,16 @@ Something, but defenetly not <br id="9" />...
 !! end
 
 !! test
+Sanitizer: Validating id attribute uniqueness (bug 4515, bug 6301)
+!! options
+disabled
+!! input
+<br id="foo" /><br id="foo" />
+!! result
+Something need to be done. foo-2 ? 
+!! end
+
+!! test
 Language converter: output gets cut off unexpectedly (bug 5757)
 !! options
 language=zh
@@ -4094,7 +4262,7 @@ HTML bullet list, closed tags (bug 5497)
 !! end
 
 !! test
-HTML bullet list, unclosed tags (bug 5497)
+TODO: HTML bullet list, unclosed tags (bug 5497)
 !! input
 <ul>
 <li>One
@@ -4124,7 +4292,7 @@ HTML ordered list, closed tags (bug 5497)
 !! end
 
 !! test
-HTML ordered list, unclosed tags (bug 5497)
+TODO: HTML ordered list, unclosed tags (bug 5497)
 !! input
 <ol>
 <li>One
@@ -4164,7 +4332,7 @@ HTML nested bullet list, closed tags (bug 5497)
 !! end
 
 !! test
-HTML nested bullet list, open tags (bug 5497)
+TODO: HTML nested bullet list, open tags (bug 5497)
 !! input
 <ul>
 <li>One
@@ -4212,7 +4380,7 @@ HTML nested ordered list, closed tags (bug 5497)
 !! end
 
 !! test
-HTML nested ordered list, open tags (bug 5497)
+TODO: HTML nested ordered list, open tags (bug 5497)
 !! input
 <ol>
 <li>One
@@ -4458,7 +4626,7 @@ Fuzz testing: encoded newline in generated HTML replacements (bug 6577)
 !! end
 
 !! test
-Parsing optional HTML elements (Bug 6171)
+TODO: Parsing optional HTML elements (Bug 6171)
 !! options
 !! input
 <table>
@@ -4524,7 +4692,7 @@ New wiki paragraph
 !! end
 
 !! test
-Inline HTML vs wiki block nesting
+TODO: Inline HTML vs wiki block nesting
 !! input
 <b>Bold paragraph
 
@@ -4537,7 +4705,7 @@ New wiki paragraph
 
 
 !!test
-Mixing markup for italics and bold
+TODO: Mixing markup for italics and bold
 !! options
 !! input
 '''bold''''''bold''bolditalics'''''
@@ -5463,6 +5631,226 @@ Handling of &#x0A; in URLs
 </li></ul>
 
 !!end
+
+!! test
+TODO: 5 quotes, code coverage +1 line
+!! input
+'''''
+!! result
+!! end
+
+!! test
+Special:Search page linking.
+!! input
+{{Special:search}}
+!! result
+<p><a href="/wiki/Special:Search" title="Special:Search">Special:Search</a>
+</p>
+!! end
+
+!! test
+Say the magic word
+!! input
+* {{PAGENAME}}
+* {{BASEPAGENAME}}
+* {{SUBPAGENAME}}
+* {{SUBPAGENAMEE}}
+* {{BASEPAGENAME}}
+* {{BASEPAGENAMEE}}
+* {{TALKPAGENAME}}
+* {{TALKPAGENAMEE}}
+* {{SUBJECTPAGENAME}}
+* {{SUBJECTPAGENAMEE}}
+* {{NAMESPACEE}}
+* {{NAMESPACE}}
+* {{TALKSPACE}}
+* {{TALKSPACEE}}
+* {{SUBJECTSPACE}}
+* {{SUBJECTSPACEE}}
+* {{Dynamic|{{NUMBEROFUSERS}}|{{NUMBEROFPAGES}}|{{CURRENTVERSION}}|{{CONTENTLANGUAGE}}|{{DIRECTIONMARK}}|{{CURRENTTIMESTAMP}}|{{NUMBEROFARTICLES}}}}
+!! result
+<ul><li> Parser test
+</li><li> Parser test
+</li><li> Parser test
+</li><li> Parser_test
+</li><li> Parser test
+</li><li> Parser_test
+</li><li> Talk:Parser test
+</li><li> Talk:Parser_test
+</li><li> Parser test
+</li><li> Parser_test
+</li><li> 
+</li><li> 
+</li><li> Talk
+</li><li> Talk
+</li><li> 
+</li><li> 
+</li><li> <a href="/index.php?title=Template:Dynamic&amp;action=edit" class="new" title="Template:Dynamic">Template:Dynamic</a>
+</li></ul>
+
+!! end
+### Note: Above tests excludes the "{{NUMBEROFADMINS}}" magic word because it generates a MySQL error when included.
+
+!! test
+Gallery
+!! input
+<gallery>
+image1.png |
+image2.gif|||||
+
+image3|
+image4    |300px| centre
+ image5.svg| http://///////
+[[x|xx]]]]
+* image6
+</gallery>
+!! result
+<table class="gallery" cellspacing="0" cellpadding="0"><tr><td><div class="gallerybox"><div style="height: 152px;">Image1.png</div><div class="gallerytext">
+</div></div></td>
+<td><div class="gallerybox"><div style="height: 152px;">Image2.gif</div><div class="gallerytext">
+||||</div></div></td>
+<td><div class="gallerybox"><div style="height: 152px;">Image3</div><div class="gallerytext">
+</div></div></td>
+<td><div class="gallerybox"><div style="height: 152px;">Image4</div><div class="gallerytext">
+300px| centre</div></div></td>
+</tr><tr><td><div class="gallerybox"><div style="height: 152px;">Image5.svg</div><div class="gallerytext">
+ <a href="http://///////" class="external free" title="http://///////" rel="nofollow">http://///////</a></div></div></td>
+<td><div class="gallerybox"><div style="height: 152px;">* image6</div><div class="gallerytext">
+</div></div></td>
+</tr>
+</table>
+
+!! end
+
+!! test
+TODO: HTML Hex character encoding.
+!! input
+&#x4A;&#x061;&#x0076;&#x00061;&#x000053;&#x0000063;&#114;&#x0000069;&#00000112;&#x0000000074;
+!! result
+<p>JavaScript
+</p>
+!! end
+
+!! test
+__FORCETOC__ override
+!! input 
+__NEWSECTIONLINK__
+__FORCETOC__
+!! result
+<p><br />
+</p>
+!! end
+
+!! test
+ISBN code coverage
+!! input
+ISBN  983&#x20;987
+!! result
+<p><a href="/index.php?title=Special:Booksources&amp;isbn=983" class="internal">ISBN 983</a>&#x20;987
+</p>
+!! end
+
+!! test
+ISBN followed by 5 spaces
+!! input
+ISBN    
+!! result
+<p>ISBN    
+</p>
+!! end
+
+!! test
+Double ISBN
+!! options
+disabled # Disabled until Bug 6560 resolved
+!! input
+ISBN ISBN 1234
+!! result
+<p>ISBN <a href="/wiki/index.php?title=Special:Booksources&amp;isbn=1234" class="internal">ISBN 1234</a>
+</p>
+!! end
+
+!! test
+Double RFC
+!! input
+RFC RFC 1234
+!! result
+<p>RFC <a href="http://www.ietf.org/rfc/rfc1234.txt" class="external" title="http://www.ietf.org/rfc/rfc1234.txt">RFC 1234</a>
+</p>
+!! end
+
+!! test
+Double RFC with a wiki link 
+!! input
+RFC [[RFC 1234]]
+!! result
+<p>RFC <a href="/index.php?title=RFC_1234&amp;action=edit" class="new" title="RFC 1234">RFC 1234</a>
+</p>
+!! end
+
+!! test
+RFC code coverage
+!! input
+RFC   983&#x20;987
+!! result
+<p><a href="http://www.ietf.org/rfc/rfc983.txt" class="external" title="http://www.ietf.org/rfc/rfc983.txt">RFC 983</a>&#x20;987
+</p>
+!! end
+
+!! test
+Centre-aligned image
+!! input
+[[Image:foobar.jpg|centre]]
+!! result
+<div class="center"><div class="floatnone"><span><a href="/wiki/Image:Foobar.jpg" class="image" title=""><img src="http://example.com/images/3/3a/Foobar.jpg" alt="" width="1941" height="220" longdesc="/wiki/Image:Foobar.jpg" /></a></span></div></div>
+
+!!end
+
+!! test
+None-aligned image
+!! input
+[[Image:foobar.jpg|none]]
+!! result
+<div class="floatnone"><span><a href="/wiki/Image:Foobar.jpg" class="image" title=""><img src="http://example.com/images/3/3a/Foobar.jpg" alt="" width="1941" height="220" longdesc="/wiki/Image:Foobar.jpg" /></a></span></div>
+
+!!end
+
+!! test
+Width + Height sized image (using px) (height is ignored)
+!! input
+[[Image:foobar.jpg|640x480px]]
+!! result
+<p><a href="/wiki/Image:Foobar.jpg" class="image" title=""><img src="http://example.com/images/thumb/3/3a/Foobar.jpg/640px-Foobar.jpg" alt="" width="640" height="73" longdesc="/wiki/Image:Foobar.jpg" /></a>
+</p>
+!!end
+
+!! test
+Another italics / bold test
+!! input
+ ''' ''x'
+!! result
+<pre>'<i> </i>x'
+</pre>
+!!end
+
+# Note the results may be incorrect, as parserTest output included this:
+# XML error: Mismatched tag at byte 6120:
+# ...<dd> </dt></dl> </dd...
+!! test
+TODO: dt/dd/dl test
+!! input
+:;;;::
+!! result
+<dl><dd><dl><dt><dl><dt><dl><dt><dl><dd><dl><dd>
+</dt></dl>
+</dd></dl>
+</dd></dl>
+</dd></dl>
+</dd></dl>
+</dd></dl>
+
+!!end
+
 #
 #
 #
@@ -5473,3 +5861,4 @@ more tables
 math
 character entities
 and much more
+Try for 100% code coverage

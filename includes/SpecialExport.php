@@ -22,9 +22,6 @@
  * @subpackage SpecialPage
  */
 
-/** */
-require_once( 'Export.php' );
-
 /**
  *
  */
@@ -33,16 +30,54 @@ function wfSpecialExport( $page = '' ) {
 	global $wgExportAllowHistory, $wgExportMaxHistory;
 
 	$curonly = true;
-	if( $wgRequest->getVal( 'action' ) == 'submit') {
+	$fullHistory = array(
+		'dir' => 'asc',
+		'offset' => false,
+		'limit' => $wgExportMaxHistory,
+	);
+	if( $wgRequest->wasPosted() ) {
 		$page = $wgRequest->getText( 'pages' );
 		$curonly = $wgRequest->getCheck( 'curonly' );
-	}
-	if( $wgRequest->getCheck( 'history' ) ) {
-		$curonly = false;
+		$rawOffset = $wgRequest->getVal( 'offset' );
+		if( $rawOffset ) {
+			$offset = wfTimestamp( TS_MW, $rawOffset );
+		} else {
+			$offset = null;
+		}
+		$limit = $wgRequest->getInt( 'limit' );
+		$dir = $wgRequest->getVal( 'dir' );
+		$history = array(
+			'dir' => 'asc',
+			'offset' => false,
+			'limit' => $wgExportMaxHistory,
+		);
+		$historyCheck = $wgRequest->getCheck( 'history' );
+		if ( $curonly ) {
+			$history = WikiExporter::CURRENT;
+		} elseif ( !$historyCheck ) {
+			if ( $limit > 0 && $limit < $wgExportMaxHistory ) {
+				$history['limit'] = $limit;
+			}
+			if ( !is_null( $offset ) ) {
+				$history['offset'] = $offset;
+			}
+			if ( strtolower( $dir ) == 'desc' ) {
+				$history['dir'] = 'desc';
+			}
+		}
+	} else {
+		// Default to current-only for GET requests
+		$page = $wgRequest->getText( 'pages', $page );
+		$historyCheck = $wgRequest->getCheck( 'history' );
+		if( $historyCheck ) {
+			$history = WikiExporter::FULL;
+		} else {
+			$history = WikiExporter::CURRENT;
+		}
 	}
 	if( !$wgExportAllowHistory ) {
 		// Override
-		$curonly = true;
+		$history = WikiExporter::CURRENT;
 	}
 	
 	$list_authors = $wgRequest->getCheck( 'listauthors' );
@@ -63,12 +98,12 @@ function wfSpecialExport( $page = '' ) {
 		$pages = explode( "\n", $page );
 
 		$db =& wfGetDB( DB_SLAVE );
-		$history = $curonly ? MW_EXPORT_CURRENT : MW_EXPORT_FULL;
 		$exporter = new WikiExporter( $db, $history );
 		$exporter->list_authors = $list_authors ;
 		$exporter->openStream();
 		
 		foreach( $pages as $page ) {
+			/*
 			if( $wgExportMaxHistory && !$curonly ) {
 				$title = Title::newFromText( $page );
 				if( $title ) {
@@ -79,7 +114,7 @@ function wfSpecialExport( $page = '' ) {
 						continue;
 					}
 				}
-			}
+			}*/
 			$exporter->pageByName( $page );
 		}
 		

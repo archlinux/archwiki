@@ -5,10 +5,7 @@
  * @subpackage SpecialPage
  */
 
-/**
- *
- */
-require_once 'Image.php';
+
 /**
  * Entry point
  */
@@ -30,7 +27,7 @@ class UploadForm {
 	var $mUploadFile, $mUploadDescription, $mLicense ,$mIgnoreWarning, $mUploadError;
 	var $mUploadSaveName, $mUploadTempName, $mUploadSize, $mUploadOldVersion;
 	var $mUploadCopyStatus, $mUploadSource, $mReUpload, $mAction, $mUpload;
-	var $mOname, $mSessionKey, $mStashed, $mDestFile, $mRemoveTempFile;
+	var $mOname, $mSessionKey, $mStashed, $mDestFile, $mRemoveTempFile, $mSourceType;
 	/**#@-*/
 
 	/**
@@ -39,6 +36,7 @@ class UploadForm {
 	 * @param $request Data posted.
 	 */
 	function UploadForm( &$request ) {
+		global $wgAllowCopyUploads;
 		$this->mDestFile          = $request->getText( 'wpDestFile' );
 
 		if( !$request->wasPosted() ) {
@@ -55,6 +53,7 @@ class UploadForm {
 		$this->mUploadCopyStatus  = $request->getText( 'wpUploadCopyStatus' );
 		$this->mUploadSource      = $request->getText( 'wpUploadSource' );
 		$this->mWatchthis         = $request->getBool( 'wpWatchthis' );
+		$this->mSourceType         = $request->getText( 'wpSourceType' );
 		wfDebug( "UploadForm: watchthis is: '$this->mWatchthis'\n" );
 
 		$this->mAction            = $request->getVal( 'action' );
@@ -79,16 +78,112 @@ class UploadForm {
 			/**
 			 *Check for a newly uploaded file.
 			 */
-			$this->mUploadTempName = $request->getFileTempName( 'wpUploadFile' );
-			$this->mUploadSize     = $request->getFileSize( 'wpUploadFile' );
-			$this->mOname          = $request->getFileName( 'wpUploadFile' );
-			$this->mUploadError    = $request->getUploadError( 'wpUploadFile' );
-			$this->mSessionKey     = false;
-			$this->mStashed        = false;
-			$this->mRemoveTempFile = false; // PHP will handle this
+			if( $wgAllowCopyUploads && $this->mSourceType == 'web' ) {
+				$this->initializeFromUrl( $request );
+			} else {
+				$this->initializeFromUpload( $request );
+			}
 		}
 	}
 
+	/**
+	 * Initialize the uploaded file from PHP data
+	 * @access private
+	 */
+	function initializeFromUpload( $request ) {
+		$this->mUploadTempName = $request->getFileTempName( 'wpUploadFile' );
+		$this->mUploadSize     = $request->getFileSize( 'wpUploadFile' );
+		$this->mOname          = $request->getFileName( 'wpUploadFile' );
+		$this->mUploadError    = $request->getUploadError( 'wpUploadFile' );
+		$this->mSessionKey     = false;
+		$this->mStashed        = false;
+		$this->mRemoveTempFile = false; // PHP will handle this
+	}
+
+	/**
+	 * Copy a web file to a temporary file
+	 * @access private
+	 */
+	function initializeFromUrl( $request ) {
+		global $wgTmpDirectory, $wgMaxUploadSize;
+		$url = $request->getText( 'wpUploadFileURL' );
+		$local_file = tempnam( $wgTmpDirectory, 'WEBUPLOAD' );
+
+		$this->mUploadTempName = $local_file;
+		$this->mUploadError    = $this->curlCopy( $url, $local_file );
+		$this->mUploadSize     = $this->mUploadTempFileSize;
+		$this->mOname          = array_pop( explode( '/', $url ) );
+		$this->mSessionKey     = false;
+		$this->mStashed        = false;
+		
+		// PHP won't auto-cleanup the file
+		$this->mRemoveTempFile = file_exists( $local_file );
+	}
+	
+	/**
+	 * Safe copy from URL
+	 * Returns true if there was an error, false otherwise
+	 */
+	private function curlCopy( $url, $dest ) {
+		global $wgMaxUploadSize, $wgUser;
+
+		if( !$wgUser->isAllowed( 'upload_by_url' ) ) {
+			$wgOut->permissionRequired( 'upload_by_url' );
+			return true;
+		}
+
+		# Maybe remove some pasting blanks :-)
+		$url = strtolower( trim( $url ) );
+		if( substr( $url, 0, 7 ) != 'http://' && substr( $url, 0, 6 ) != 'ftp://' ) {
+			# Only HTTP or FTP URLs
+			return true;
+		}
+
+		# Open temporary file
+		$this->mUploadTempFileSize = 0;
+		$this->mUploadTempFile = @fopen( $this->mUploadTempName, "wb" );
+		if( $this->mUploadTempFile === false ) {
+			# Could not open temporary file to write in
+			return true;
+		}
+		
+		$ch = curl_init();
+		curl_setopt( $ch, CURLOPT_HTTP_VERSION, 1.0); # Probably not needed, but apparently can work around some bug
+		curl_setopt( $ch, CURLOPT_TIMEOUT, 10); # 10 seconds timeout
+		curl_setopt( $ch, CURLOPT_LOW_SPEED_LIMIT, 512); # 0.5KB per second minimum transfer speed
+		curl_setopt( $ch, CURLOPT_URL, $url); 
+		curl_setopt( $ch, CURLOPT_WRITEFUNCTION, array( $this, 'uploadCurlCallback' ) );
+		curl_exec( $ch );
+		$error = curl_errno( $ch ) ? true : false;
+#		if ( $error ) print curl_error ( $ch ) ; # Debugging output
+		curl_close( $ch );
+		
+		fclose( $this->mUploadTempFile );
+		unset( $this->mUploadTempFile );
+		if( $error ) {
+			unlink( $dest );
+		}
+		
+		return $error;
+	}
+	
+	/**
+	 * Callback function for CURL-based web transfer
+	 * Write data to file unless we've passed the length limit;
+	 * if so, abort immediately.
+	 * @access private
+	 */
+	function uploadCurlCallback( $ch, $data ) {
+		global $wgMaxUploadSize;
+		$length = strlen( $data );
+		$this->mUploadTempFileSize += $length;
+		if( $this->mUploadTempFileSize > $wgMaxUploadSize ) {
+			return 0;
+		}
+		fwrite( $this->mUploadTempFile, $data );
+		return $length;
+	}
+	
 	/**
 	 * Start doing stuff
 	 * @access public
@@ -104,13 +199,12 @@ class UploadForm {
 		}
 
 		# Check permissions
-		if( $wgUser->isLoggedIn() ) {
-			if( !$wgUser->isAllowed( 'upload' ) ) {
+		if( !$wgUser->isAllowed( 'upload' ) ) {
+			if( !$wgUser->isLoggedIn() ) {
+				$wgOut->showErrorPage( 'uploadnologin', 'uploadnologintext' );
+			} else {
 				$wgOut->permissionRequired( 'upload' );
-				return;
 			}
-		} else {
-			$wgOut->showErrorPage( 'uploadnologin', 'uploadnologintext' );
 			return;
 		}
 
@@ -126,17 +220,17 @@ class UploadForm {
 		}
 
 		/** Check if the image directory is writeable, this is a common mistake */
-		if ( !is_writeable( $wgUploadDirectory ) ) {
+		if( !is_writeable( $wgUploadDirectory ) ) {
 			$wgOut->addWikiText( wfMsg( 'upload_directory_read_only', $wgUploadDirectory ) );
 			return;
 		}
 
 		if( $this->mReUpload ) {
-			if ( !$this->unsaveUploadedFile() ) {
+			if( !$this->unsaveUploadedFile() ) {
 				return;
 			}
 			$this->mainUploadForm();
-		} else if ( 'submit' == $this->mAction || $this->mUpload ) {
+		} else if( 'submit' == $this->mAction || $this->mUpload ) {
 			$this->processUpload();
 		} else {
 			$this->mainUploadForm();
@@ -156,7 +250,7 @@ class UploadForm {
 		global $wgUser, $wgOut;
 
 		/* Check for PHP error if any, requires php 4.2 or newer */
-		if ( $this->mUploadError == 1/*UPLOAD_ERR_INI_SIZE*/ ) {
+		if( $this->mUploadError == 1/*UPLOAD_ERR_INI_SIZE*/ ) {
 			$this->mainUploadForm( wfMsgHtml( 'largefileserver' ) );
 			return;
 		}
@@ -170,7 +264,7 @@ class UploadForm {
 		}
 
 		# Chop off any directories in the given filename
-		if ( $this->mDestFile ) {
+		if( $this->mDestFile ) {
 			$basename = wfBaseName( $this->mDestFile );
 		} else {
 			$basename = wfBaseName( $this->mOname );
@@ -196,7 +290,7 @@ class UploadForm {
 				$partname .= '.' . $ext[$i];
 		}
 
-		if ( strlen( $partname ) < 3 ) {
+		if( strlen( $partname ) < 3 ) {
 			$this->mainUploadForm( wfMsgHtml( 'minlength' ) );
 			return;
 		}
@@ -363,7 +457,9 @@ class UploadForm {
 	 *                        is a PHP-managed upload temporary
 	 */
 	function saveUploadedFile( $saveName, $tempName, $useRename = false ) {
-		global $wgOut;
+		global $wgOut, $wgAllowCopyUploads;
+		
+		if ( !$useRename AND $wgAllowCopyUploads AND $this->mSourceType == 'web' ) $useRename = true;
 
 		$fname= "SpecialUpload::saveUploadedFile";
 
@@ -586,6 +682,7 @@ class UploadForm {
 	function mainUploadForm( $msg='' ) {
 		global $wgOut, $wgUser;
 		global $wgUseCopyrightUpload;
+		global $wgRequest, $wgAllowCopyUploads;
 
 		$cols = intval($wgUser->getOption( 'cols' ));
 		$ew = $wgUser->getOption( 'editwidth' );
@@ -624,13 +721,33 @@ class UploadForm {
 			? 'checked="checked"'
 			: '';
 
+		// Prepare form for upload or upload/copy
+		if( $wgAllowCopyUploads && $wgUser->isAllowed( 'upload_by_url' ) ) {
+			$source_comment = wfMsgHtml( 'upload_source_url' );
+			$filename_form = 
+				"<input type='radio' id='wpSourceTypeFile' name='wpSourceType' value='file' onchange='toggle_element_activation(\"wpUploadFileURL\",\"wpUploadFile\")' checked />" . 
+				"<input tabindex='1' type='file' name='wpUploadFile' id='wpUploadFile' onfocus='toggle_element_activation(\"wpUploadFileURL\",\"wpUploadFile\");toggle_element_check(\"wpSourceTypeFile\",\"wpSourceTypeURL\")'" . 
+				($this->mDestFile?"":"onchange='fillDestFilename(\"wpUploadFile\")' ") . "size='40' />" .
+				wfMsgHTML( 'upload_source_file' ) . "<br/>" .
+				"<input type='radio' id='wpSourceTypeURL' name='wpSourceType' value='web' onchange='toggle_element_activation(\"wpUploadFile\",\"wpUploadFileURL\")' />" .
+				"<input tabindex='1' type='text' name='wpUploadFileURL' id='wpUploadFileURL' onfocus='toggle_element_activation(\"wpUploadFile\",\"wpUploadFileURL\");toggle_element_check(\"wpSourceTypeURL\",\"wpSourceTypeFile\")'" . 
+				($this->mDestFile?"":"onchange='fillDestFilename(\"wpUploadFileURL\")' ") . "size='40' DISABLED />" .
+				wfMsgHtml( 'upload_source_url' ) ;
+		} else {
+			$filename_form = 
+				"<input tabindex='1' type='file' name='wpUploadFile' id='wpUploadFile' " . 
+				($this->mDestFile?"":"onchange='fillDestFilename(\"wpUploadFile\")' ") . 
+				"size='40' />" .
+				"<input type='hidden' name='wpSourceType' value='file' />" ;
+		}
+
 		$wgOut->addHTML( "
 	<form id='upload' method='post' enctype='multipart/form-data' action=\"$action\">
 		<table border='0'>
 		<tr>
-			<td align='right'><label for='wpUploadFile'>{$sourcefilename}:</label></td>
+			<td align='right' valign='top'><label for='wpUploadFile'>{$sourcefilename}:</label></td>
 			<td align='left'>
-				<input tabindex='1' type='file' name='wpUploadFile' id='wpUploadFile' " . ($this->mDestFile?"":"onchange='fillDestFilename()' ") . "size='40' />
+				{$filename_form}
 			</td>
 		</tr>
 		<tr>
@@ -687,7 +804,7 @@ class UploadForm {
 		<td></td>
 		<td>
 			<input tabindex='7' type='checkbox' name='wpWatchthis' id='wpWatchthis' $watchChecked value='true' />
-			<label for='wpWatchthis'>" . wfMsgHtml( 'watchthis' ) . "</label>
+			<label for='wpWatchthis'>" . wfMsgHtml( 'watchthisupload' ) . "</label>
 			<input tabindex='8' type='checkbox' name='wpIgnoreWarning' id='wpIgnoreWarning' value='true' />
 			<label for='wpIgnoreWarning'>" . wfMsgHtml( 'ignorewarnings' ) . "</label>
 		</td>
@@ -767,7 +884,7 @@ class UploadForm {
 	 */
 	function verify( $tmpfile, $extension ) {
 		#magically determine mime type
-		$magic=& wfGetMimeMagic();
+		$magic=& MimeMagic::singleton();
 		$mime= $magic->guessMimeType($tmpfile,false);
 
 		$fname= "SpecialUpload::verify";
@@ -816,7 +933,7 @@ class UploadForm {
 	function verifyExtension( $mime, $extension ) {
 		$fname = 'SpecialUpload::verifyExtension';
 
-		$magic =& wfGetMimeMagic();
+		$magic =& MimeMagic::singleton();
 
 		if ( ! $mime || $mime == 'unknown' || $mime == 'unknown/unknown' )
 			if ( ! $magic->isRecognizableExtension( $extension ) ) {
@@ -1106,4 +1223,6 @@ class UploadForm {
 	}
 
 }
+	
+
 ?>

@@ -11,12 +11,19 @@
 function wfSpecialMovepage( $par = null ) {
 	global $wgUser, $wgOut, $wgRequest, $action, $wgOnlySysopMayMove;
 
-	# check rights. We don't want newbies to move pages to prevents possible attack
-	if ( !$wgUser->isAllowed( 'move' ) or $wgUser->isBlocked() or ($wgOnlySysopMayMove and $wgUser->isNewbie())) {
-		$wgOut->showErrorPage( "movenologin", "movenologintext" );
+	# Check rights
+	if ( !$wgUser->isAllowed( 'move' ) ) {
+		$wgOut->showErrorPage( 'movenologin', 'movenologintext' );
 		return;
 	}
-	# We don't move protected pages
+
+	# Don't allow blocked users to move pages
+	if ( $wgUser->isBlocked() ) {
+		$wgOut->blockedPage();
+		return;
+	}
+
+	# Check for database lock
 	if ( wfReadOnly() ) {
 		$wgOut->readOnlyPage();
 		return;
@@ -249,8 +256,8 @@ class MovePageForm {
 		$wgOut->setPagetitle( wfMsg( 'movepage' ) );
 		$wgOut->setSubtitle( wfMsg( 'pagemovedsub' ) );
 
-		$oldText = $wgRequest->getVal('oldtitle');
-		$newText = $wgRequest->getVal('newtitle');
+		$oldText = wfEscapeWikiText( $wgRequest->getVal('oldtitle') );
+		$newText = wfEscapeWikiText( $wgRequest->getVal('newtitle') );
 		$talkmoved = $wgRequest->getVal('talkmoved');
 
 		$text = wfMsg( 'pagemovedtext', $oldText, $newText );
@@ -266,7 +273,7 @@ class MovePageForm {
 			$wgOut->addWikiText( wfMsg( 'talkexists' ) );
 		} else {
 			$oldTitle = Title::newFromText( $oldText );
-			if ( !$oldTitle->isTalkPage() && $talkmoved != 'notalkpage' ) {
+			if ( isset( $oldTitle ) && !$oldTitle->isTalkPage() && $talkmoved != 'notalkpage' ) {
 				$wgOut->addWikiText( wfMsg( 'talkpagenotmoved', wfMsg( $talkmoved ) ) );
 			}
 		}

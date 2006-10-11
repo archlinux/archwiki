@@ -79,7 +79,7 @@ class ProtectionForm {
 
 		$wgOut->addWikiText(
 			wfMsg( $this->disabled ? "protect-viewtext" : "protect-text",
-				$this->mTitle->getPrefixedText() ) );
+				wfEscapeWikiText( $this->mTitle->getPrefixedText() ) ) );
 
 		$wgOut->addHTML( $this->buildForm() );
 
@@ -230,7 +230,6 @@ class ProtectionForm {
 	function showLogExtract( &$out ) {
 		# Show relevant lines from the deletion log:
 		$out->addHTML( "<h2>" . htmlspecialchars( LogPage::logName( 'protect' ) ) . "</h2>\n" );
-		require_once( 'SpecialLog.php' );
 		$logViewer = new LogViewer(
 			new LogReader(
 				new FauxRequest(

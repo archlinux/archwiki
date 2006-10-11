@@ -34,6 +34,15 @@
  *
  * @package MediaWiki
  */
+
+/**
+ * Some entry points may use this file without first enabling the 
+ * autoloader.
+ */
+if ( !function_exists( '__autoload' ) ) {
+	require_once( dirname(__FILE__) . '/normal/UtfNormal.php' );
+}
+
 class WebRequest {
 	function WebRequest() {
 		$this->checkMagicQuotes();
@@ -44,6 +53,8 @@ class WebRequest {
 				substr( $_SERVER['PATH_INFO'], 1 );
 		}
 	}
+	
+	private $_response;
 
 	/**
 	 * Recursively strips slashes from the given array;
@@ -117,7 +128,6 @@ class WebRequest {
 					$data = $wgContLang->checkTitleEncoding( $data );
 				}
 			}
-			require_once( 'normal/UtfNormal.php' );
 			$data = $this->normalizeUnicode( $data );
 			return $data;
 		} else {
@@ -437,6 +447,19 @@ class WebRequest {
 		wfDebug( "WebRequest::getFileName() '" . $_FILES[$key]['name'] . "' normalized to '$name'\n" );
 		return $name;
 	}
+	
+	/**
+	 * Return a handle to WebResponse style object, for setting cookies, 
+	 * headers and other stuff, for Request being worked on.
+	 */
+	function response() {
+		/* Lazy initialization of response object for this request */
+		if (!is_object($this->_response)) {
+			$this->_response = new WebResponse;
+		} 
+		return $this->_response;
+	}
+	
 }
 
 /**

@@ -21,7 +21,7 @@ class LinkCache {
 	/**
 	 * Get an instance of this class
 	 */
-	function &singleton() {
+	static function &singleton() {
 		static $instance;
 		if ( !isset( $instance ) ) {
 			$instance = new LinkCache;
@@ -37,8 +37,7 @@ class LinkCache {
 	}
 
 	/* private */ function getKey( $title ) {
-		global $wgDBname;
-		return $wgDBname.':lc:title:'.$title;
+		return wfMemcKey( 'lc', 'title', $title );
 	}
 
 	/**
