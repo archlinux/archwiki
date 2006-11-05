@@ -193,7 +193,7 @@ class AuthPlugin {
 	 * @public
 	 */
 	function updateExternalDB( $user ) {
-		return false;
+		return $this->initUser($user);
 	}
 
 	/**
