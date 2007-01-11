@@ -55,7 +55,6 @@ class HTMLCacheUpdate
 		$numRows = $res->numRows();
 		$numBatches = ceil( $numRows / $this->mRowsPerJob );
 		$realBatchSize = $numRows / $numBatches;
-		$boundaries = array();
 		$start = false;
 		$jobs = array();
 		do {
@@ -176,7 +175,7 @@ class HTMLCacheUpdate
 				# Update file cache
 				if  ( $wgUseFileCache ) {
 					foreach ( $titles as $title ) {
-						$cm = new CacheManager($title);
+						$cm = new HTMLFileCache($title);
 						@unlink($cm->fileCacheName());
 					}
 				}

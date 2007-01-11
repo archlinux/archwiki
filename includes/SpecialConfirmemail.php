@@ -36,8 +36,8 @@ class EmailConfirmation extends SpecialPage {
 					$wgOut->addWikiText( wfMsg( 'confirmemail_noemail' ) );
 				}
 			} else {
-				$title = Title::makeTitle( NS_SPECIAL, 'Userlogin' );
-				$self = Title::makeTitle( NS_SPECIAL, 'Confirmemail' );
+				$title = SpecialPage::getTitleFor( 'Userlogin' );
+				$self = SpecialPage::getTitleFor( 'Confirmemail' );
 				$skin = $wgUser->getSkin();
 				$llink = $skin->makeKnownLinkObj( $title, wfMsgHtml( 'loginreqlink' ), 'returnto=' . $self->getPrefixedUrl() );
 				$wgOut->addHtml( wfMsgWikiHtml( 'confirmemail_needlogin', $llink ) );
@@ -54,15 +54,21 @@ class EmailConfirmation extends SpecialPage {
 		global $wgOut, $wgUser, $wgLang, $wgRequest;
 		if( $wgRequest->wasPosted() && $wgUser->matchEditToken( $wgRequest->getText( 'token' ) ) ) {
 			$ok = $wgUser->sendConfirmationMail();
-			$message = WikiError::isError( $ok ) ? 'confirmemail_sendfailed' : 'confirmemail_sent';
-			$wgOut->addWikiText( wfMsg( $message ) );
+			if ( WikiError::isError( $ok ) ) {
+				$wgOut->addWikiText( wfMsg( 'confirmemail_sendfailed', $ok->toString() ) );
+			} else {
+				$wgOut->addWikiText( wfMsg( 'confirmemail_sent' ) );
+			}
 		} else {
 			if( $wgUser->isEmailConfirmed() ) {
 				$time = $wgLang->timeAndDate( $wgUser->mEmailAuthenticated, true );
 				$wgOut->addWikiText( wfMsg( 'emailauthenticated', $time ) );
 			}
+			if( $wgUser->isEmailConfirmationPending() ) {
+				$wgOut->addWikiText( wfMsg( 'confirmemail_pending' ) );
+			}
 			$wgOut->addWikiText( wfMsg( 'confirmemail_text' ) );
-			$self = Title::makeTitle( NS_SPECIAL, 'Confirmemail' );		
+			$self = SpecialPage::getTitleFor( 'Confirmemail' );		
 			$form  = wfOpenElement( 'form', array( 'method' => 'post', 'action' => $self->getLocalUrl() ) );
 			$form .= wfHidden( 'token', $wgUser->editToken() );
 			$form .= wfSubmitButton( wfMsgHtml( 'confirmemail_send' ) );
@@ -85,7 +91,7 @@ class EmailConfirmation extends SpecialPage {
 				$message = $wgUser->isLoggedIn() ? 'confirmemail_loggedin' : 'confirmemail_success';
 				$wgOut->addWikiText( wfMsg( $message ) );
 				if( !$wgUser->isLoggedIn() ) {
-					$title = Title::makeTitle( NS_SPECIAL, 'Userlogin' );
+					$title = SpecialPage::getTitleFor( 'Userlogin' );
 					$wgOut->returnToMain( true, $title->getPrefixedText() );
 				}
 			} else {

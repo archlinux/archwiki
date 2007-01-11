@@ -29,8 +29,6 @@ class SquidUpdate {
 		wfProfileIn( $fname );
 
 		# Get a list of URLs linking to this page
-		$id = $title->getArticleID();
-
 		$dbr =& wfGetDB( DB_SLAVE );
 		$res = $dbr->select( array( 'links', 'page' ),
 			array( 'page_namespace', 'page_title' ),
@@ -201,9 +199,11 @@ class SquidUpdate {
 		$htcpOpCLR = 4;                 // HTCP CLR
 
 		// FIXME PHP doesn't support these socket constants (include/linux/in.h)
-		define( "IPPROTO_IP", 0 );
-		define( "IP_MULTICAST_LOOP", 34 );
-		define( "IP_MULTICAST_TTL", 33 );
+		if( !defined( "IPPROTO_IP" ) ) {
+			define( "IPPROTO_IP", 0 );
+			define( "IP_MULTICAST_LOOP", 34 );
+			define( "IP_MULTICAST_TTL", 33 );
+		}
 
 		// pfsockopen doesn't work because we need set_sock_opt
 	        $conn = socket_create( AF_INET, SOCK_DGRAM, SOL_UDP );
@@ -215,6 +215,9 @@ class SquidUpdate {
 					$wgHTCPMulticastTTL );
 
 			foreach ( $urlArr as $url ) {
+				if( !is_string( $url ) ) {
+					wfDebugDieBacktrace( 'Bad purge URL' );
+				}
 				$url = SquidUpdate::expand( $url );
 				
 				// Construct a minimal HTCP request diagram
@@ -223,7 +226,7 @@ class SquidUpdate {
 				$htcpTransID = rand();
 
 				$htcpSpecifier = pack( 'na4na*na8n',
-					4, 'NONE', strlen( $url ), $url,
+					4, 'HEAD', strlen( $url ), $url,
 					8, 'HTTP/1.0', 0 );
 
 				$htcpDataLen = 8 + 2 + strlen( $htcpSpecifier );

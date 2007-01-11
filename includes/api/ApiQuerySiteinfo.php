@@ -44,7 +44,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 
 				case 'general' :
 
-					global $wgSitename, $wgVersion, $wgCapitalLinks;
+					global $wgSitename, $wgVersion, $wgCapitalLinks, $wgRightsCode, $wgRightsText;
 					$data = array ();
 					$mainPage = Title :: newFromText(wfMsgForContent('mainpage'));
 					$data['mainpage'] = $mainPage->getText();
@@ -52,6 +52,9 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 					$data['sitename'] = $wgSitename;
 					$data['generator'] = "MediaWiki $wgVersion";
 					$data['case'] = $wgCapitalLinks ? 'first-letter' : 'case-sensitive'; // 'case-insensitive' option is reserved for future
+					if (isset($wgRightsCode))
+						$data['rightscode'] = $wgRightsCode;
+					$data['rights'] = $wgRightsText;
 					$this->getResult()->addValue('query', $p, $data);
 					break;
 
@@ -65,10 +68,10 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 						);
 						ApiResult :: setContent($data[$ns], $title);
 					}
-					ApiResult :: setIndexedTagName($data, 'ns');
+					$this->getResult()->setIndexedTagName($data, 'ns');
 					$this->getResult()->addValue('query', $p, $data);
 					break;
-
+					
 				default :
 					ApiBase :: dieDebug(__METHOD__, "Unknown prop=$p");
 			}
@@ -107,7 +110,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQuerySiteinfo.php 16757 2006-10-03 05:41:55Z yurik $';
+		return __CLASS__ . ': $Id: ApiQuerySiteinfo.php 17265 2006-10-27 03:50:34Z yurik $';
 	}
 }
 ?>

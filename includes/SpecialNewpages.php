@@ -42,7 +42,7 @@ class NewPagesPage extends QueryPage {
 		global $wgUser, $wgUseRCPatrol;
 		$usepatrol = ( $wgUseRCPatrol && $wgUser->isAllowed( 'patrol' ) ) ? 1 : 0;
 		$dbr =& wfGetDB( DB_SLAVE );
-		extract( $dbr->tableNames( 'recentchanges', 'page', 'text' ) );
+		list( $recentchanges, $page ) = $dbr->tableNamesN( 'recentchanges', 'page' );
 
 		$uwhere = $this->makeUserWhere( $dbr );
 
@@ -96,8 +96,8 @@ class NewPagesPage extends QueryPage {
 		$time = $wgLang->timeAndDate( $result->timestamp, true );
 		$plink = $skin->makeKnownLinkObj( $title, '', $this->patrollable( $result ) ? 'rcid=' . $result->rcid : '' );
 		$hist = $skin->makeKnownLinkObj( $title, wfMsgHtml( 'hist' ), 'action=history' );
-		$length = wfMsgHtml( 'nbytes', $wgLang->formatNum( htmlspecialchars( $result->length ) ) );
-		$ulink = $skin->userLink( $result->user, $result->user_text ) . $skin->userToolLinks( $result->user, $result->user_text );
+		$length = wfMsgExt( 'nbytes', array( 'parsemag', 'escape' ), $wgLang->formatNum( htmlspecialchars( $result->length ) ) );
+		$ulink = $skin->userLink( $result->user, $result->user_text ) . ' ' . $skin->userToolLinks( $result->user, $result->user_text );
 		$comment = $skin->commentBlock( $result->comment );
 
 		return "{$time} {$dm}{$plink} ({$hist}) {$dm}[{$length}] {$dm}{$ulink} {$comment}";
@@ -132,7 +132,7 @@ class NewPagesPage extends QueryPage {
 	 * @return string
 	 */	
 	function getPageHeader() {
-		$self = Title::makeTitle( NS_SPECIAL, $this->getName() );
+		$self = SpecialPage::getTitleFor( $this->getName() );
 		$form = wfOpenElement( 'form', array( 'method' => 'post', 'action' => $self->getLocalUrl() ) );
 		$form .= '<table><tr><td align="right">' . wfMsgHtml( 'namespace' ) . '</td>';
 		$form .= '<td>' . HtmlNamespaceSelector( $this->namespace ) . '</td><tr>';
@@ -172,6 +172,7 @@ function wfSpecialNewpages($par, $specialPage) {
 			if ( is_numeric( $bit ) )
 				$limit = $bit;
 
+			$m = array();
 			if ( preg_match( '/^limit=(\d+)$/', $bit, $m ) )
 				$limit = intval($m[1]);
 			if ( preg_match( '/^offset=(\d+)$/', $bit, $m ) )

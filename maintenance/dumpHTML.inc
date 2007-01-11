@@ -38,6 +38,9 @@ class DumpHTML {
 	# Make a copy of all images encountered
 	var $makeSnapshot = false;
 
+	# Don't image description pages in doEverything()
+	var $noSharedDesc = false;
+
 	# Make links assuming the script path is in the same directory as
 	# the destination
 	var $alternateScriptPath = false;
@@ -66,6 +69,9 @@ class DumpHTML {
 
 	# Max page ID, lazy initialised
 	var $maxPageID = false;
+
+	# UDP profiling
+	var $udpProfile, $udpProfileCounter = 0, $udpProfileInit = false;
 
 	function DumpHTML( $settings = array() ) {
 		foreach ( $settings as $var => $value ) {
@@ -124,12 +130,15 @@ class DumpHTML {
 			return;
 		}
 		$this->doArticles();
-		$this->doLocalImageDescriptions();
-		$this->doSharedImageDescriptions();
 		$this->doCategories();
 		$this->doRedirects();
 		if ( $this->sliceNumerator == 1 ) {
 			$this->doSpecials();
+		}
+		$this->doLocalImageDescriptions();
+
+		if ( !$this->noSharedDesc ) {
+			$this->doSharedImageDescriptions();
 		}
 
 		$this->setCheckpoint( 'everything', 'done' );
@@ -179,7 +188,8 @@ class DumpHTML {
 			$title = Title::newFromID( $id );
 			if ( $title ) {
 				$ns = $title->getNamespace() ;
-				if ( $ns != NS_CATEGORY && $title->getPrefixedDBkey() != $mainPage ) {
+				if ( $ns != NS_CATEGORY && $ns != NS_MEDIAWIKI && 
+				  $title->getPrefixedDBkey() != $mainPage ) {
 					$this->doArticle( $title );
 				}
 			}
@@ -193,7 +203,7 @@ class DumpHTML {
 
 		$this->setupGlobals();
 		print "Special:Categories...";
-		$this->doArticle( Title::makeTitle( NS_SPECIAL, 'Categories' ) );
+		$this->doArticle( SpecialPage::getTitleFor( 'Categories' ) );
 		print "\n";
 	}
 
@@ -224,7 +234,9 @@ class DumpHTML {
 
 	function doImageDescriptions() {
 		$this->doLocalImageDescriptions();
-		$this->doSharedImageDescriptions();
+		if ( !$this->noSharedDesc ) {
+			$this->doSharedImageDescriptions();
+		}
 	}
 
 	/**
@@ -309,18 +321,22 @@ class DumpHTML {
 		for ( $hash = $start; $hash <= $end; $hash++ ) {
 			$this->setCheckpoint( 'shared image', $hash );
 
-			$dir = sprintf( "%01x/%02x", intval( $hash / 16 ), $hash );
-			$paths = array_merge( glob( "{$this->sharedStaticDirectory}/$dir/*" ),
-				glob( "{$this->sharedStaticDirectory}/thumb/$dir/*" ) );
-
-			foreach ( $paths as $path ) {
-				$file = wfBaseName( $path );
+			$dir = sprintf( "%s/%01x/%02x", $this->sharedStaticDirectory,
+		       		intval( $hash / 16 ), $hash );
+			$handle = @opendir( $dir );
+			while ( $handle && $file = readdir( $handle ) ) {
+				if ( $file[0] == '.' ) {
+					continue;
+				}
 				if ( !(++$i % REPORTING_INTERVAL ) ) {
 					print "$i\r";
 				}
 
-				$title = Title::makeTitle( NS_IMAGE, $file );
+				$title = Title::makeTitleSafe( NS_IMAGE, $file );
 				$this->doArticle( $title );
+			}
+			if ( $handle ) {
+				closedir( $handle );
 			}
 		}
 		$this->setCheckpoint( 'shared image', 'done' );
@@ -437,6 +453,8 @@ class DumpHTML {
 			}
 		}
 
+		$this->profile();
+
 		$this->rawPages = array();
 		$text = $this->getArticleHTML( $title );
 
@@ -473,11 +491,26 @@ class DumpHTML {
 				fclose( $file );
 			}
 		}
+
+		wfIncrStats( 'dumphtml_article' );
 	}
 
 	/** Write the given text to the file identified by the given title object */
 	function writeArticle( &$title, $text ) {
 		$filename = $this->getHashedFilename( $title );
+
+		# Temporary hack for current dump, this should be moved to 
+		# getFriendlyName() at the earliest opportunity.
+		#
+		# Limit filename length to 255 characters, so it works on ext3.
+		# Titles are in fact limited to 255 characters, but dumpHTML 
+		# adds a suffix which may put them over the limit.
+		$length = strlen( $filename );
+		if ( $length > 255 ) {
+			print "Warning: Filename too long ($length bytes). Skipping.\n";
+			return;
+		}
+			
 		$fullName = "{$this->dest}/$filename";
 		$fullDir = dirname( $fullName );
 
@@ -579,13 +612,11 @@ class DumpHTML {
 		$wgUser->setOption( 'skin', $this->skin );
 		$wgUser->setOption( 'editsection', 0 );
 
-		if ( $this->makeSnapshot ) {
-			$this->destUploadDirectory = "{$this->dest}/{$this->imageRel}";
-			if ( realpath( $this->destUploadDirectory == $wgUploadDirectory ) ) {
-				$this->makeSnapshot = false;
-			}
+		$this->destUploadDirectory = "{$this->dest}/{$this->imageRel}";
+		if ( realpath( $this->destUploadDirectory ) == realpath( $wgUploadDirectory ) ) {
+			print "Disabling image snapshot because the destination is the same as the source\n";
+			$this->makeSnapshot = false;
 		}
-
 		$this->sharedStaticDirectory = "{$this->destUploadDirectory}/shared";
 
 		$this->setupDone = true;
@@ -683,9 +714,13 @@ ENDTEXT;
 		if ( !file_exists( $destLoc ) ) {
 			wfMkdirParents( dirname( $destLoc ), 0755 );
 			if ( function_exists( 'symlink' ) && !$this->forceCopy ) {
-				symlink( $sourceLoc, $destLoc );
+				if ( !symlink( $sourceLoc, $destLoc ) ) {
+					print "Warning: unable to create symlink at $destLoc\n";
+				}
 			} else {
-				copy( $sourceLoc, $destLoc );
+				if ( !copy( $sourceLoc, $destLoc ) ) {
+					print "Warning: unable to copy $sourceLoc to $destLoc\n";
+				}
 			}
 		}
 	}
@@ -928,7 +963,33 @@ ENDTEXT;
 		}
 		return $this->maxPageID;
 	}
-			
+
+	function profile() {
+		global $wgProfiler;
+
+		if ( !$this->udpProfile ) {
+			return;
+		}
+		if ( !$this->udpProfileInit ) {
+			$this->udpProfileInit = true;
+		} elseif ( $this->udpProfileCounter == 1 % $this->udpProfile ) {
+			$wgProfiler->getFunctionReport();
+			$wgProfiler = new DumpHTML_ProfilerStub;
+		}
+		if ( $this->udpProfileCounter == 0 ) {
+			$wgProfiler = new ProfilerSimpleUDP;
+			$wgProfiler->setProfileID( 'dumpHTML' );
+		}
+		$this->udpProfileCounter = ( $this->udpProfileCounter + 1 ) % $this->udpProfile;
+	}
+}
+
+class DumpHTML_ProfilerStub {
+	function profileIn() {}
+	function profileOut() {}
+	function getOutput() {}
+	function close() {}
+	function getFunctionReport() {}
 }
 
 /** XML parser callback */

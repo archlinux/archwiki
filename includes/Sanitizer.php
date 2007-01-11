@@ -390,11 +390,13 @@ class Sanitizer {
 		if(!$wgUseTidy) {
 			$tagstack = $tablestack = array();
 			foreach ( $bits as $x ) {
-				$prev = error_reporting( E_ALL & ~( E_NOTICE | E_WARNING ) );
-				preg_match( '!^(/?)(\\w+)([^>]*?)(/{0,1}>)([^<]*)$!', $x, $regs );
-				list( $qbar, $slash, $t, $params, $brace, $rest ) = $regs;
-				error_reporting( $prev );
-
+				$regs = array();
+				if( preg_match( '!^(/?)(\\w+)([^>]*?)(/{0,1}>)([^<]*)$!', $x, $regs ) ) {
+					list( /* $qbar */, $slash, $t, $params, $brace, $rest ) = $regs;
+				} else {
+					$slash = $t = $params = $brace = $rest = null;
+				}
+				
 				$badtag = 0 ;
 				if ( isset( $htmlelements[$t = strtolower( $t )] ) ) {
 					# Check our stack
@@ -487,7 +489,7 @@ class Sanitizer {
 			foreach ( $bits as $x ) {
 				preg_match( '/^(\\/?)(\\w+)([^>]*?)(\\/{0,1}>)([^<]*)$/',
 				$x, $regs );
-				@list( $qbar, $slash, $t, $params, $brace, $rest ) = $regs;
+				@list( /* $qbar */, $slash, $t, $params, $brace, $rest ) = $regs;
 				if ( isset( $htmlelements[$t = strtolower( $t )] ) ) {
 					if( is_callable( $processCallback ) ) {
 						call_user_func_array( $processCallback, array( &$params, $args ) );
@@ -603,7 +605,8 @@ class Sanitizer {
 		$stripped = Sanitizer::decodeCharReferences( $value );
 
 		// Remove any comments; IE gets token splitting wrong
-		$stripped = preg_replace( '!/\\*.*?\\*/!S', ' ', $stripped );
+		$stripped = StringUtils::delimiterReplace( '/*', '*/', ' ', $stripped );
+		
 		$value = $stripped;
 
 		// ... and continue checks
@@ -734,6 +737,25 @@ class Sanitizer {
 		$id = urlencode( Sanitizer::decodeCharReferences( strtr( $id, ' ', '_' ) ) );
 
 		return str_replace( array_keys( $replace ), array_values( $replace ), $id );
+	}
+
+	/**
+	 * Given a value, escape it so that it can be used as a CSS class and
+	 * return it.
+	 *
+	 * TODO: For extra validity, input should be validated UTF-8.
+	 *
+	 * @link http://www.w3.org/TR/CSS21/syndata.html Valid characters/format
+	 *
+	 * @param string $class
+	 * @return string
+	 */
+	static function escapeClass( $class ) {
+		// Convert ugly stuff to underscores and kill underscores in ugly places
+		return rtrim(preg_replace(
+			array('/(^[0-9\\-])|[\\x00-\\x20!"#$%&\'()*+,.\\/:;<=>?@[\\]^`{|}~]|\\xC2\\xA0/','/_+/'),
+			'_',
+			$class ), '_');
 	}
 
 	/**
@@ -1159,7 +1181,7 @@ class Sanitizer {
 	 */
 	static function stripAllTags( $text ) {
 		# Actual <tags>
-		$text = preg_replace( '/ < .*? > /x', '', $text );
+		$text = StringUtils::delimiterReplace( '<', '>', '', $text );
 
 		# Normalize &entities and whitespace
 		$text = Sanitizer::normalizeAttributeValue( $text );
@@ -1203,8 +1225,9 @@ class Sanitizer {
 		$url = preg_replace( '/[\][<>"\\x00-\\x20\\x7F]/e', "urlencode('\\0')", $url );
 		
 		# Validate hostname portion
+		$matches = array();
 		if( preg_match( '!^([^:]+:)(//[^/]+)?(.*)$!iD', $url, $matches ) ) {
-			list( $whole, $protocol, $host, $rest ) = $matches;
+			list( /* $whole */, $protocol, $host, $rest ) = $matches;
 			
 			// Characters that will be ignored in IDNs.
 			// http://tools.ietf.org/html/3454#section-3.1

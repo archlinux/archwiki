@@ -71,13 +71,13 @@ class ImagePage extends Article {
 			$this->imageHistory();
 			$this->imageLinks();
 			if( $exif ) {
-				global $wgStylePath;
+				global $wgStylePath, $wgStyleVersion;
 				$expand = htmlspecialchars( wfEscapeJsString( wfMsg( 'metadata-expand' ) ) );
 				$collapse = htmlspecialchars( wfEscapeJsString( wfMsg( 'metadata-collapse' ) ) );
 				$wgOut->addHTML( "<h2 id=\"metadata\">" . wfMsgHtml( 'metadata' ) . "</h2>\n" );
 				$wgOut->addWikiText( $this->makeMetadataTable( $exif ) );
 				$wgOut->addHTML(
-					"<script type=\"text/javascript\" src=\"$wgStylePath/common/metadata.js\"></script>\n" .
+					"<script type=\"text/javascript\" src=\"$wgStylePath/common/metadata.js?$wgStyleVersion\"></script>\n" .
 					"<script type=\"text/javascript\">attachMetadataToggle('mw_metadata', '$expand', '$collapse');</script>\n" );
 			}
 		} else {
@@ -142,6 +142,7 @@ class ImagePage extends Article {
 		$fields = array();
 		$lines = explode( "\n", wfMsgForContent( 'metadata-fields' ) );
 		foreach( $lines as $line ) {
+			$matches = array();
 			if( preg_match( '/^\\*\s*(.*?)\s*$/', $line, $matches ) ) {
 				$fields[] = $matches[1];
 			}
@@ -169,12 +170,8 @@ class ImagePage extends Article {
 		$full_url  = $this->img->getURL();
 		$anchoropen = '';
 		$anchorclose = '';
+		$sizeSel = intval( $wgUser->getOption( 'imagesize') );
 
-		if( $wgUser->getOption( 'imagesize' ) == '' ) {
-			$sizeSel = User::getDefaultOption( 'imagesize' );
-		} else {
-			$sizeSel = intval( $wgUser->getOption( 'imagesize' ) );
-		}
 		if( !isset( $wgImageLimits[$sizeSel] ) ) {
 			$sizeSel = User::getDefaultOption( 'imagesize' );
 		}
@@ -247,7 +244,7 @@ class ImagePage extends Article {
 
 				$wgOut->addHTML( '<div class="fullImageLink" id="file">' . $anchoropen .
 				     "<img border=\"0\" src=\"{$url}\" width=\"{$width}\" height=\"{$height}\" alt=\"" .
-				     htmlspecialchars( $wgRequest->getVal( 'image' ) ).'" />' . $anchorclose . '</div>' );
+				     htmlspecialchars( $this->img->getTitle()->getPrefixedText() ).'" />' . $anchorclose . '</div>' );
 
 				if ( $this->img->isMultipage() ) {
 					$count = $this->img->pageCount();
@@ -300,9 +297,15 @@ class ImagePage extends Article {
 
 			if ($showLink) {
 				$filename = wfEscapeWikiText( $this->img->getName() );
+				// Hacky workaround: for some reason we use the incorrect MIME type
+				// image/svg for SVG.  This should be fixed internally, but at least
+				// make the displayed type right.
+				$mime = $this->img->getMimeType();
+				if ($mime == 'image/svg') $mime = 'image/svg+xml';
+
 				$info = wfMsg( 'fileinfo',
 					ceil($this->img->getSize()/1024.0),
-					$this->img->getMimeType() );
+					$mime );
 
 				global $wgContLang;
 				$dirmark = $wgContLang->getDirMark();
@@ -333,7 +336,7 @@ END
 		} else {
 			# Image does not exist
 
-			$title = Title::makeTitle( NS_SPECIAL, 'Upload' );
+			$title = SpecialPage::getTitleFor( 'Upload' );
 			$link = $sk->makeKnownLinkObj($title, wfMsgHtml('noimage-linktext'),
 				'wpDestFile=' . urlencode( $this->img->getName() ) );
 			$wgOut->addHTML( wfMsgWikiHtml( 'noimage', $link ) );
@@ -348,7 +351,7 @@ END
 		if ($wgRepositoryBaseUrl && !$wgFetchCommonsDescriptions) {
 
 			$sk = $wgUser->getSkin();
-			$title = Title::makeTitle( NS_SPECIAL, 'Upload' );
+			$title = SpecialPage::getTitleFor( 'Upload' );
 			$link = $sk->makeKnownLinkObj($title, wfMsgHtml('shareduploadwiki-linktext'),
 			array( 'wpDestFile' => urlencode( $this->img->getName() )));
 			$sharedtext .= " " . wfMsgWikiHtml('shareduploadwiki', $link);
@@ -365,7 +368,7 @@ END
 
 	function getUploadUrl() {
 		global $wgServer;
-		$uploadTitle = Title::makeTitle( NS_SPECIAL, 'Upload' );
+		$uploadTitle = SpecialPage::getTitleFor( 'Upload' );
 		return $wgServer . $uploadTitle->getLocalUrl( 'wpDestFile=' . urlencode( $this->img->getName() ) );
 	}
 
@@ -530,14 +533,9 @@ END
 	 * @param $reason User provided reason for deletion.
 	 */
 	function doDelete( $reason ) {
-		global $wgOut, $wgRequest, $wgUseSquid;
-		global $wgPostCommitUpdateList;
-
-		$fname = 'ImagePage::doDelete';
+		global $wgOut, $wgRequest;
 
 		$oldimage = $wgRequest->getVal( 'oldimage' );
-
-		$dbw =& wfGetDB( DB_MASTER );
 
 		if ( !is_null( $oldimage ) ) {
 			if ( strlen( $oldimage ) < 16 ) {

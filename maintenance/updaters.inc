@@ -6,9 +6,14 @@
 
  /** */
 
+if ( !defined( 'MEDIAWIKI' ) ) {
+	echo "This file is not a valid entry point\n";
+	exit( 1 );
+}
+
 require_once 'convertLinks.inc';
-require_once 'InitialiseMessages.inc';
 require_once 'userDupes.inc';
+require_once 'deleteDefaultMessages.php';
 
 $wgRenamedTables = array(
 #           from             to                  patch file
@@ -30,16 +35,20 @@ $wgNewTables = array(
 	array( 'langlinks',     'patch-langlinks.sql' ),
 	array( 'querycache_info', 'patch-querycacheinfo.sql' ),
 	array( 'filearchive',   'patch-filearchive.sql' ),
+	array( 'redirect',      'patch-redirect.sql' ),
+	array( 'querycachetwo',	'patch-querycachetwo.sql' ),
 );
 
 $wgNewFields = array(
 #           table            field             patch file (in maintenance/archives)
 	array( 'ipblocks',      'ipb_id',           'patch-ipblocks.sql' ),
 	array( 'ipblocks',      'ipb_expiry',       'patch-ipb_expiry.sql' ),
+	array( 'ipblocks',	'ipb_enable_autoblock', 'patch-ipb_optional_autoblock.sql' ),
 	array( 'recentchanges', 'rc_type',          'patch-rc_type.sql' ),
 	array( 'recentchanges', 'rc_ip',            'patch-rc_ip.sql' ),
 	array( 'recentchanges', 'rc_id',            'patch-rc_id.sql' ),
 	array( 'recentchanges', 'rc_patrolled',     'patch-rc-patrol.sql' ),
+	array( 'recentchanges', 'rc_old_len',       'patch-rc_len.sql' ),
 	array( 'user',          'user_real_name',   'patch-user-realname.sql' ),
 	array( 'user',          'user_token',       'patch-user_token.sql' ),
 	array( 'user',          'user_email_token', 'patch-user_email_token.sql' ),
@@ -57,6 +66,8 @@ $wgNewFields = array(
 	array( 'ipblocks',      'ipb_range_start',  'patch-ipb_range_start.sql' ),
 	array( 'site_stats',    'ss_images',        'patch-ss_images.sql' ),
 	array( 'ipblocks',      'ipb_anon_only',    'patch-ipb_anon_only.sql' ),
+	array( 'user',          'user_newpass_time','patch-user_newpass_time.sql' ),
+	array( 'user',          'user_editcount',   'patch-user_editcount.sql' ),
 );
 
 function rename_table( $from, $to, $patch ) {
@@ -379,7 +390,7 @@ function do_schema_restructuring() {
   			page_id int(8) unsigned NOT NULL auto_increment,
   			page_namespace int NOT NULL,
   			page_title varchar(255) binary NOT NULL,
-  			page_restrictions tinyblob NOT NULL default '',
+  			page_restrictions tinyblob NOT NULL,
   			page_counter bigint(20) unsigned NOT NULL default '0',
   			page_is_redirect tinyint(1) unsigned NOT NULL default '0',
   			page_is_new tinyint(1) unsigned NOT NULL default '0',
@@ -396,7 +407,7 @@ function do_schema_restructuring() {
 		$wgDatabase->query("CREATE TABLE $revision (
   			rev_id int(8) unsigned NOT NULL auto_increment,
   			rev_page int(8) unsigned NOT NULL,
-  			rev_comment tinyblob NOT NULL default '',
+  			rev_comment tinyblob NOT NULL,
   			rev_user int(5) unsigned NOT NULL default '0',
   			rev_user_text varchar(255) binary NOT NULL default '',
   			rev_timestamp char(14) binary NOT NULL default '',
@@ -775,12 +786,59 @@ function do_rc_indices_update() {
 		dbsource( archive( 'patch-recentchanges-utindex.sql' ) );
 	} else {
 		# Index seems to exist
-		echo( "...seems to be ok\n" );
+		echo( "...index on ( rc_namespace, rc_user_text ) seems to be ok\n" );
+	}
+
+	#Add (rc_user_text, rc_timestamp) index [A. Garrett], November 2006
+	# See if we can find the index we want
+	$info = $wgDatabase->indexInfo( 'recentchanges', 'rc_user_text', __METHOD__ );
+	if( !$info ) {
+		# None, so create
+		echo( "...index on ( rc_user_text, rc_timestamp ) not found; creating\n" );
+		dbsource( archive( 'patch-rc_user_text-index.sql' ) );
+	} else {
+		# Index seems to exist
+		echo( "...index on ( rc_user_text, rc_timestamp ) seems to be ok\n" );
 	}
 }
 
-function do_all_updates( $doShared = false ) {
-	global $wgNewTables, $wgNewFields, $wgRenamedTables, $wgSharedDB, $wgDatabase, $wgDBtype;
+function index_has_field($table, $index, $field) {
+	global $wgDatabase;
+	echo( "Checking if $table index $index includes field $field...\n" );
+	$info = $wgDatabase->indexInfo( $table, $index, __METHOD__ );
+	if( $info ) {
+		foreach($info as $row) {
+			if($row->Column_name == $field) {
+				echo( "...index $index on table $table seems to be ok\n" );
+				return true;
+			}
+		}
+	}
+	echo( "...index $index on table $table has no field $field; adding\n" );
+	return false;
+}
+
+function do_backlinking_indices_update() {
+	echo( "Checking for backlinking indices...\n" );
+	if (!index_has_field('pagelinks', 'pl_namespace', 'pl_from') ||
+		!index_has_field('templatelinks', 'tl_namespace', 'tl_from') ||
+		!index_has_field('imagelinks', 'il_to', 'il_from'))
+	{	
+		dbsource( archive( 'patch-backlinkindexes.sql' ) );
+	}
+}
+
+function purge_cache() {
+	global $wgDatabase;
+	# We can't guarantee that the user will be able to use TRUNCATE,
+	# but we know that DELETE is available to us
+	echo( "Purging caches..." );
+	$wgDatabase->delete( 'objectcache', '*', __METHOD__ );
+	echo( "done.\n" );
+}
+
+function do_all_updates( $shared = false, $purge = true ) {
+	global $wgNewTables, $wgNewFields, $wgRenamedTables, $wgSharedDB, $wgDatabase, $wgDBtype, $IP;
 
 	$doUser = !$wgSharedDB || $doShared;
 
@@ -844,8 +902,17 @@ function do_all_updates( $doShared = false ) {
 	do_page_random_update(); flush();
 	
 	do_rc_indices_update(); flush();
+	
+	do_backlinking_indices_update(); flush();
 
-	initialiseMessages(); flush();
+	echo "Deleting old default messages..."; flush();
+	deleteDefaultMessages();
+	echo "Done\n"; flush();
+	
+	if( $purge ) {
+		purge_cache();
+		flush();
+	}
 }
 
 function archive($name) {
@@ -861,20 +928,28 @@ function archive($name) {
 function do_postgres_updates() {
 	global $wgDatabase, $wgVersion, $wgDBmwschema;
 
-	$version = "1.7.1";
-
 	# Just in case their LocalSetings.php does not have this:
 	if ( !isset( $wgDBmwschema ))
 		$wgDBmwschema = 'mediawiki';
 
+	## Default to the oldest supported version
+	$version = 1.7;
+
 	if ($wgDatabase->tableExists("mediawiki_version")) {
 		$version = "1.8";
+		$sql = "SELECT mw_version FROM mediawiki_version ORDER BY cdate DESC LIMIT 1";
+		$tempversion = pg_fetch_result($wgDatabase->doQuery($sql),0,0);
+		$thisver = array();
+		if (preg_match('/(\d+\.\d+)/', $tempversion, $thisver)) {
+			$version = $thisver[1];
+		}
 	}
 
-	if ($version == '1.7.1') {
-		$upgrade = <<<PGEND
+	print " Detected version: $version ";
+	$upgrade = '';
 
-BEGIN;
+	if ($version <= 1.7) {
+		$upgrade = <<<PGEND
 
 -- Type tweaking:
 ALTER TABLE oldimage ALTER oi_size TYPE INTEGER;
@@ -927,9 +1002,6 @@ CREATE TABLE mediawiki_version (
   cdate        TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
 
-INSERT INTO mediawiki_version (type,mw_version,notes)
-VALUES ('Upgrade','MWVERSION','Upgrade from older version 1.7.1');
-
 -- Special modifications
 ALTER TABLE archive RENAME to archive2;
 CREATE VIEW archive AS 
@@ -957,19 +1029,68 @@ END;
 CREATE TRIGGER page_deleted AFTER DELETE ON page
   FOR EACH ROW EXECUTE PROCEDURE page_deleted();
 
-COMMIT;
+PGEND;
+
+	} ## end version 1.7
+
+	else if ($version <= 1.8) {
+		$upgrade = <<<PGEND
+
+-- Tighten up restrictions on the revision table so we don't lose data:
+ALTER TABLE revision DROP CONSTRAINT revision_rev_user_fkey;
+ALTER TABLE revision ADD CONSTRAINT revision_rev_user_fkey
+  FOREIGN KEY (rev_user) REFERENCES mwuser(user_id) ON DELETE RESTRICT;
+
+-- New columns for better password tracking:
+ALTER TABLE mwuser ADD user_newpass_time TIMESTAMPTZ;
+ALTER TABLE mwuser ADD user_editcount INTEGER;
+
+-- New column for autoblocking problem users
+ALTER TABLE ipblocks ADD ipb_enable_autoblock CHAR NOT NULL DEFAULT '1';
+
+-- Despite it's name, ipb_address does not necessarily contain IP addresses :)
+ALTER TABLE ipblocks ALTER ipb_address TYPE TEXT USING ipb_address::TEXT;
+
+-- New tables:
+CREATE TABLE redirect (
+  rd_from       INTEGER  NOT NULL  REFERENCES page(page_id) ON DELETE CASCADE,
+  rd_namespace  SMALLINT NOT NULL,
+  rd_title      TEXT     NOT NULL
+);
+CREATE INDEX redirect_ns_title ON redirect (rd_namespace,rd_title,rd_from);
+
+CREATE TABLE querycachetwo (
+  qcc_type          TEXT     NOT NULL,
+  qcc_value         SMALLINT NOT NULL  DEFAULT 0,
+  qcc_namespace     INTEGER  NOT NULL  DEFAULT 0,
+  qcc_title         TEXT     NOT NULL  DEFAULT '',
+  qcc_namespacetwo  INTEGER  NOT NULL  DEFAULT 0,
+  qcc_titletwo      TEXT     NOT NULL  DEFAULT ''
+);
+CREATE INDEX querycachetwo_type_value ON querycachetwo (qcc_type, qcc_value);
+CREATE INDEX querycachetwo_title      ON querycachetwo (qcc_type,qcc_namespace,qcc_title);
+CREATE INDEX querycachetwo_titletwo   ON querycachetwo (qcc_type,qcc_namespacetwo,qcc_titletwo);
+
+-- New columns for fancy recentchanges display
+ALTER TABLE recentchanges ADD rc_old_len INT;
+ALTER TABLE recentchanges ADD rc_new_len INT;
+
+-- Note this upgrade
+INSERT INTO mediawiki_version (type,mw_version,notes)
+VALUES ('Upgrade','MWVERSION','Upgrade from older version THISVERSION');
 
 PGEND;
 
-		$upgrade = str_replace( 'MWVERSION', $wgVersion, $upgrade );
-
-		$res = $wgDatabase->query($upgrade);
-
-	} ## end version 1.7.1 upgrade
-
-	else {
-		print "No updates needed\n";
 	}
+
+	if ( !strlen($upgrade)) {
+		print "No updates needed for version $version\n";
+		return;
+	}
+
+	$upgrade = str_replace( 'MWVERSION', $wgVersion, $upgrade );
+	$upgrade = str_replace( 'THISVERSION', $version, $upgrade );
+	$res = $wgDatabase->query("BEGIN;\n\n $upgrade\n\nCOMMIT;\n");
 
 	return;
 }

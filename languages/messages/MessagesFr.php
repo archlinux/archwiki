@@ -93,7 +93,6 @@ $messages = array(
 'tog-externaldiff' => 'Utiliser un comparateur externe par défaut',
 'tog-showjumplinks' => 'Activer les liens d’accessibilité rapide.',
 'tog-uselivepreview' => 'Utiliser l’aperçu rapide (JavaScript) (Expérimental)',
-'tog-autopatrol' => 'Marquer mes modifications comme patrouillées',
 'tog-forceeditsummary' => 'M’avertir lorsque je n’ai pas completé le contenu de la boîte de commentaires',
 'tog-watchlisthideown' => 'Cacher mes propres modifications dans la liste de suivi',
 'tog-watchlisthidebots' => 'Cacher dans la liste de suivi les modifications faites par les bots',
@@ -141,13 +140,14 @@ $messages = array(
 
 # Bits of text used by many pages:
 
-'categories'	=> '{{PLURAL:$1|Catégorie|Catégories}}',
+'categories'	=> 'Catégories',
+'pagecategories'	=> '{{PLURAL:$1|Catégorie|Catégories}}',
 'category_header' => 'Articles dans la catégorie « $1 ».',
 'subcategories'	=> 'Sous-catégories',
 
 'mainpage'      => 'Accueil',
 'mainpagetext'	=> '<big>\'\'\'MediaWiki a été installé avec succès.\'\'\'</big>',
-'mainpagedocfooter' => 'Consultez le [http://meta.wikipedia.org/wiki/Aide:Contenu Guide de l’utilisateur] pour plus d’informations sur l’utilisation de ce logiciel.',
+'mainpagedocfooter' => 'Consultez le [http://meta.wikimedia.org/wiki/Aide:Contenu Guide de l’utilisateur] pour plus d’informations sur l’utilisation de ce logiciel.',
 'portal'        => 'Communauté',
 'portal-url'	=> '{{ns:4}}:Accueil',
 'about'         => 'À propos',
@@ -238,6 +238,10 @@ $messages = array(
 'ncategories'	=> '$1 catégories',
 'nrevisions'	=> '$1 révisions',
 'retrievedfrom' => 'Récupérée de « $1 »',
+'size-bytes' => '$1 O',
+'size-kilobytes' => '$1 KO',
+'size-megabytes' => '$1 MO',
+'size-gigabytes' => '$1 GO',
 'youhavenewmessages' => 'Vous avez $1 ($2).',
 'newmessageslink' => 'des nouveaux messages',
 'newmessagesdifflink' => 'diff vers l’avant-dernière révision',
@@ -314,7 +318,8 @@ Fonction : $1<br />
 Requête : $2',
 'viewsource'	=> 'Voir le texte source',
 'viewsourcefor' => 'pour $1',
-'protectedtext'	=> 'Cette page a été protégée pour empêcher sa modification. Vous pouvez consulter [[{{ns:4}}:Page protégée]] pour voir les différentes raisons possibles. Vous pouvez toutefois voir et copier son code source.',
+'viewsourcetext' => 'Vous pouvez toutefois voir et copier son code source:',
+'protectedtext'	=> 'Cette page a été protégée pour empêcher sa modification. Vous pouvez consulter [[{{ns:4}}:Page protégée]] pour voir les différentes raisons possibles.',
 'protectedinterface' => 'Cette page fournit du texte d’interface pour le logiciel, et est protégée pour éviter les abus.',
 'editinginterface' => '\'\'\'Attention :\'\'\' Vous éditez une page utilisée pour fournir le texte de l’interface du logiciel. Les modifications affecteront l’apparence de l’interface pour les autres utilisateurs.',
 'sqlhidden' => '(requête SQL cachée)',
@@ -570,7 +575,7 @@ contenant tous les termes apparaissent dans les résultats).',
 'powersearchtext' => 'Rechercher dans les espaces :<br />
 $1<br />
 $2 Inclure les page de redirections &nbsp; Rechercher $3 $9',
-'searchdisabled' => 'La recherche sur {{SITENAME]] a été désactivée. En attendant la réactivation, vous pouvez effectuer une recherche par le biais de Google. Attention, leur indexation du contenu {{SITENAME]] peut ne pas être à jour.',
+'searchdisabled' => 'La recherche sur {{SITENAME}} a été désactivée. En attendant la réactivation, vous pouvez effectuer une recherche par le biais de Google. Attention, leur indexation du contenu {{SITENAME}} peut ne pas être à jour.',
 
 # Preferences page
 #
@@ -928,8 +933,10 @@ Pour supprimer cette page de votre liste de suivi, cliquez sur « ne plus suivre
 'wlnote' => 'Ci-dessous se trouvent les $1 dernières modifications depuis les <b>$2</b> dernières heures.',
 'wlshowlast' => 'Montrer les dernières $1 heures $2 jours $3',
 'wlsaved' => 'La liste de suivi n’est remise à jour qu’une fois par heure pour alléger la charge sur le serveur.',
-'wlhideshowown'   	=> '$1 mes modifications',
-'wlhideshowbots'   	=> '$1 les contributions de bots',
+'watchlist-show-bots' => 'Affichier les contributions de bots',
+'watchlist-hide-bots' => 'Masquer les contributions de bots',
+'watchlist-show-own' => 'Affichier mes modifications',
+'watchlist-hide-own' => 'Masquer mes modifications',
 
 'enotif_mailer' 		=> '{{SITENAME}} Notificateur par courriel',
 'enotif_reset'			=> 'Marque toutes les pages comme visitées',
@@ -989,7 +996,7 @@ L’heure indiquée est celle du serveur (UTC).',
 'rollbacklink'	=> 'révoquer',
 'rollbackfailed' => 'La révocation a échoué',
 'cantrollback'	=> 'Impossible de révoquer : il n’y a qu’un seul auteur à avoir modifié cet article',
-'alreadyrolled'	=> "Impossible de révoquer la dernière modification de l’article « [[$1]] » effectuée par [[User:$2|$2]] ([[User talk:$2|Discussion]]) ; quelqu’un d’autre a déjà modifié ou révoqué l’article. La dernière modification a été effectuée par [[User:$3|$3]] ([[User talk:$3|Discussion]]).",
+'alreadyrolled'	=> "Impossible de révoquer la dernière modification de l’article « [[:$1]] » effectuée par [[User:$2|$2]] ([[User talk:$2|Discussion]]) ; quelqu’un d’autre a déjà modifié ou révoqué l’article. La dernière modification a été effectuée par [[User:$3|$3]] ([[User talk:$3|Discussion]]).",
 'editcomment' => "Le résumé de la modification était: <i>« $1 »</i>.",
 'revertpage'	=> "Modifications de [[Special:Contributions/$2|$2]] ([[User_talk:$2|Discussion]]) révertées; retour à l'ancienne version de [[User:$1|$1]]",
 'sessionfailure' => 'Il semble qu’il y ait eu un problème avec votre session d’identification; cette action a été annulée par précaution contre le piratage de session. Merci de cliquer sur « retour » et de recharger la page d’où vous venez, et de réessayer.',
@@ -1264,8 +1271,8 @@ Dans ce dernier cas, vous pouvez aussi utiliser un lien, comme [[{{ns:Special}}:
 
 # stylesheets
 
-'Common.css' => '/** Le CSS placé ici sera appliqué à toutes les apparences. */',
-'Monobook.css' => '/* Le CSS placé ici affectera les utilisateurs du skin Monobook */',
+'common.css' => '/** Le CSS placé ici sera appliqué à toutes les apparences. */',
+'monobook.css' => '/* Le CSS placé ici affectera les utilisateurs du skin Monobook */',
 
 # Metadata
 
@@ -1325,7 +1332,7 @@ Dans ce dernier cas, vous pouvez aussi utiliser un lien, comme [[{{ns:Special}}:
 'markedaspatrollederrortext' => 'Vous devez spécifier une révision à marquer comme patrouillée.',
 
 # Monobook.js: tooltips and access keys for monobook
-'Monobook.js' => '/* infobulles et touches d’accès */
+'monobook.js' => '/* infobulles et touches d’accès */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Ma page utilisateur\');
 ta[\'pt-anonuserpage\'] = new Array(\'.\',\'La page utilisateur de l’IP avec laquelle vous contribuez\');
@@ -1336,7 +1343,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'liste des pages dont vous suivez les mo
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Liste de mes contributions\');
 ta[\'pt-login\'] = new Array(\'o\',\'Vous êtes invité à vous identifier, mais ce n’est pas obligatoire.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Vous êtes invité à vous identifier, mais ce n’est pas obligatoire.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Se déconnecter\');
+ta[\'pt-logout\'] = new Array(\'\',\'Se déconnecter\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Discussion à propos de l’article\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Vous pouvez modifier cette page. Merci d’utiliser le bouton de prévisualisation avant de sauvegarder.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Ajouter un commentaire à cette discussion.\');

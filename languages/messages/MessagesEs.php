@@ -119,7 +119,8 @@ $messages = array(
 'oct'                   => 'oct',
 'nov'                   => 'nov',
 'dec'                   => 'dic',
-'categories'            => '{{PLURAL:$1|Categoría|Categorías}}',
+'categories'            => 'Categorías',
+'pagecategories'        => '{{PLURAL:$1|Categoría|Categorías}}',
 'category_header'       => 'Artículos en la categoría "$1"',
 'subcategories'         => 'Subcategorías',
 'mainpage'              => 'Portada',
@@ -821,8 +822,11 @@ pulsa el botón \'Eliminar artículos seleccionados\' al final de la página.',
 'wlnote'                => 'Abajo están los últimos $1 cambios en las últimas <b>$2</b> horas.',
 'wlshowlast'            => 'Mostrar las últimas $1 horas $2 días $3',
 'wlsaved'               => 'Esta es una versión guardada de tu lista de seguimiento.',
-'wlhideshowown'         => '$1 mis ediciones.',
-'wlhideshowbots'        => '$1 ediciones de bots.',
+'watchlist-show-bots' => 'Mostrar ediciones de bots',
+'watchlist-hide-bots' => 'Esconder ediciones de bots',
+'watchlist-show-own' => 'Mostrar mis ediciones',
+'watchlist-hide-own' => 'Esconder mis ediciones',
+
 'enotif_mailer'         => 'Notificación por correo de {{SITENAME}}',
 'enotif_reset'          => 'Marcar todas las páginas visitadas',
 'enotif_newpagetext'    => 'Se trata de una nueva página.',
@@ -885,7 +889,7 @@ Todos los tiempos se muestran en hora del servidor (UTC).
 'rollbacklink'          => 'Revertir',
 'rollbackfailed'        => 'Reversión fallida',
 'cantrollback'          => 'No se pueden revertir las ediciones; el último colaborador es el único autor de este artículo.',
-'alreadyrolled'         => 'No se puede revertir la última edición de [[$1]] por [[User:$2|$2]] ([[User talk:$2|discusión]]); alguien más ya ha editado o revertido esa página. La última edición fue hecha por [[User:$3|$3]] ([[User talk:$3|discusión]]).',
+'alreadyrolled'         => 'No se puede revertir la última edición de [[:$1]] por [[User:$2|$2]] ([[User talk:$2|discusión]]); alguien más ya ha editado o revertido esa página. La última edición fue hecha por [[User:$3|$3]] ([[User talk:$3|discusión]]).',
 'editcomment'           => 'El resumen de la edición fue: "<i>$1</i>".',
 'revertpage'            => 'Revertidas las ediciones realizadas por [[Special:Contributions/$2|$2]] ([[User talk:$2|Talk]]); hacia la última versión por [[User:$1|$1]]',
 'sessionfailure'        => 'Parece que hay un problema con tu sesión;
@@ -1095,10 +1099,10 @@ En el último caso puedes usar un enlace, por ejemplo [[Special:Export/{{Mediawi
 'tooltip-minoredit'     => 'Marcar este cambio como menor [alt-i]',
 'tooltip-save'          => 'Guardar tus cambios [alt-s]',
 'tooltip-preview'       => 'Previsualiza tus cambios, ¡por favor, usa esto antes de grabar! [alt-p]',
-'tooltip-diff'          => 'Muestra los cambios que has introducido en el texto. [alt-d]',
+'tooltip-diff'          => 'Muestra los cambios que has introducido en el texto. [alt-v]',
 'tooltip-compareselectedversions'=> 'Ver las diferencias entre las dos versiones seleccionadas de esta página. [alt-v]',
 'tooltip-watch'         => 'Añadir esta página a tu lista de seguimiento [alt-w]',
-'Monobook.css'          => '/* cambia este archivo para personalizar la piel monobook para el sitio entero */',
+'monobook.css'          => '/* cambia este archivo para personalizar la piel monobook para el sitio entero */',
 'nodublincore'          => 'Metadatos Dublin Core RDF deshabilitados en este servidor.',
 'nocreativecommons'     => 'Metadatos Creative Commons RDF deshabilitados en este servidor.',
 'notacceptable'         => 'El servidor wiki no puede proveer los datos en un formato que tu cliente (navegador) pueda entender.',
@@ -1136,7 +1140,7 @@ La siguiente expresión regular define los enlaces que se encuentran bloqueados 
 'markedaspatrolledtext' => 'La versión seleccionada ha sido marcada como revisada.',
 'rcpatroldisabled'      => 'Revisión de los Cambios Recientes deshabilitada',
 'rcpatroldisabledtext'  => 'La capacidad de revisar los Cambios Recientes está deshabilitada en este momento.',
-'Monobook.js'           => '/* tooltips and access keys */
+'monobook.js'           => '/* tooltips and access keys */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Mi página de usuario\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'La página de usuario de la IP desde la que editas\');
@@ -1147,7 +1151,7 @@ La siguiente expresión regular define los enlaces que se encuentran bloqueados 
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Lista de mis contribuciones\');
  ta[\'pt-login\'] = new Array(\'o\',\'Te animamos a registrarte, aunque no es obligatorio\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'Te animamos a registrarte, aunque no es obligatorio\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Salir de la sesión\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Salir de la sesión\');
  ta[\'ca-talk\'] = new Array(\'t\',\'Discusión acerca del artículo\');
  ta[\'ca-edit\'] = new Array(\'e\',\'Puedes editar esta página. Por favor, usa el botón de previsualización antes de grabar.\');
  ta[\'ca-addsection\'] = new Array(\'+\',\'Añade un comentario a esta discusión\');
@@ -1469,7 +1473,7 @@ Esto se debe probablemente a vandalismos persistentes desde tu escuela o tu prov
 'cantcreateaccounttitle'	=> 'No se puede crear la cuenta',
 'categorypage'	=> 'Ver página de categoría',
 'clearwatchlist'	=> 'Limpiar lista de seguimiento',
-'Common.css'	=> '/* Los estilos CSS definidos aquí aplicarán a todas las pieles (skins) */',
+'common.css'	=> '/* Los estilos CSS definidos aquí aplicarán a todas las pieles (skins) */',
 'confirmedittext'	=> 'Debes confirmar tu dirección electrónica antes de editar páginas. Por favor, establece y valida una dirección electrónica a través de tus [[Special:Preferences|preferencias de usuario]].',
 'confirmedittitle'	=> 'Se requiere confirmación de dirección electrónica para editar',
 'confirmemail_needlogin'	=> 'Necesitas $1 para confirmar tu dirección electrónica.',
@@ -1520,7 +1524,7 @@ Las fechas de revisiones y los nombres de editores se preservarán.
 Todas las importaciones transwiki se registran en el [[Special:Log/import|registro de importaciones]].',
 'import-logentry-interwiki'	=> 'transwikificada $1',
 'import-logentry-interwiki-detail'	=> '$1 revisión/ones desde $2',
-'import-logentry-upload'	=> 'importada $1 por subida de archivo',
+'import-logentry-upload'	=> 'importada [[$1]] por subida de archivo',
 'import-logentry-upload-detail'	=> '$1 revisión/ones',
 'importlogpage'	=> 'Registro de importaciones',
 'importlogpagetext'	=> 'Importaciones administrativas de páginas con historial desde otros wikis.',
@@ -1561,7 +1565,6 @@ Todas las importaciones transwiki se registran en el [[Special:Log/import|regist
 'mon'	=> 'lun',
 'newpageletter'	=> 'N',
 'newpages-username'	=> 'Nombre de usuario',
-'newtalkseperator'	=> ',_',
 'noexactmatch'	=> '<div style="border: 1px solid #ccc; padding: 7px;"><div style="background: #F9F9F9; padding: 7px">
 <div style="font-size:115%"><b>No existe ningún artículo con el título que has escrito.</b></div>
 <hr />
@@ -1586,7 +1589,7 @@ Ten en cuenta que {{SITENAME}} es un wiki en desarrollo que va siendo construido
 'november-gen'	=> 'noviembre',
 'october-gen'	=> 'octubre',
 'ok'	=> 'OK',
-'old-revision-navigation'	=> 'Revisión a fecha de $1; $5<br />($6) $3 | $2 | $4 ($7)',
+'revision-info' => 'Revisión a fecha de $1; $2',
 'orig'	=> 'orig',
 'pagetitle'	=> '$1 - {{SITENAME}}',
 'prefs-watchlist'	=> 'Seguimiento',

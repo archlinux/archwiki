@@ -31,7 +31,7 @@ $linkTrail = '/^([a-zа-яĕçăӳ"»]+)(.*)$/sDu';
 
 $messages = array(
 
-'Monobook.js' => '/* tooltips and access keys */
+'monobook.js' => '/* tooltips and access keys */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Пользователь страници\');
 ta[\'pt-anonuserpage\'] = new Array(\'.\',\'The user page for the ip you\'re editing as\');
@@ -42,7 +42,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'The list of pages you\'re monitoring fo
 ta[\'pt-mycontris\'] = new Array(\'y\',\'List of my contributions\');
 ta[\'pt-login\'] = new Array(\'o\',\'You are encouraged to log in, it is not mandatory however.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'You are encouraged to log in, it is not mandatory however.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Log out\');
+ta[\'pt-logout\'] = new Array(\'\',\'Log out\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Статьяна сӳтсе явасси\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Эсир ку страницӑна тӳрлетме пултаратӑр. Тархасшӑн ҫырса хӑваричен страницӑ мӗнле пулассине пӑхӑр.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Кӗске ӑнлантару хушма пултаратӑр.\');
@@ -209,6 +209,7 @@ ta[\'ca-nstab-category\'] = new Array(\'c\',\'View the category page\');',
 'october' => 'Юпа',
 'talkpage' => 'Сӳтсе явасси',
 'categories' => 'Категорисем',
+'pagecategories' => 'Категорисем',
 'hidetoc' => 'кӑтартмалла мар',
 'april' => 'Ака',
 'listusers' => 'Хутшăнакансен списокĕ',

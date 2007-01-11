@@ -297,6 +297,7 @@ class Revision {
 			// Enforce spacing trimming on supplied text
 			$this->mComment   = isset( $row['comment']    ) ?  trim( strval( $row['comment'] ) ) : null;
 			$this->mText      = isset( $row['text']       ) ? rtrim( strval( $row['text']    ) ) : null;
+			$this->mTextRow   = null;
 
 			$this->mTitle     = null; # Load on demand if needed
 			$this->mCurrent   = false;
@@ -507,7 +508,7 @@ class Revision {
 	  * @param string $prefix table prefix (default 'old_')
 	  * @return string $text|false the text requested
 	  */
-	function getRevisionText( $row, $prefix = 'old_' ) {
+	public static function getRevisionText( $row, $prefix = 'old_' ) {
 		$fname = 'Revision::getRevisionText';
 		wfProfileIn( $fname );
 
@@ -531,7 +532,7 @@ class Revision {
 		# Use external methods for external objects, text in table is URL-only then
 		if ( in_array( 'external', $flags ) ) {
 			$url=$text;
-			@list($proto,$path)=explode('://',$url,2);
+			@list(/* $proto */,$path)=explode('://',$url,2);
 			if ($path=="") {
 				wfProfileOut( $fname );
 				return false;
@@ -801,6 +802,7 @@ class Revision {
 	 * @param integer $id
 	 */
 	static function getTimestampFromID( $id ) {
+		$dbr =& wfGetDB( DB_SLAVE );
 		$timestamp = $dbr->selectField( 'revision', 'rev_timestamp', 
 			array( 'rev_id' => $id ), __METHOD__ );
 		if ( $timestamp === false ) {

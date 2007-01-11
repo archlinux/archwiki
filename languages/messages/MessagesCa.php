@@ -122,7 +122,8 @@ $messages = array(
 'oct'                   => 'oct',
 'nov'                   => 'nov',
 'dec'                   => 'des',
-'categories'            => '{{PLURAL:$1|Categoria|Categories}}',
+'categories'            => 'Categories',
+'pagecategories'        => '{{PLURAL:$1|Categoria|Categories}}',
 'category_header'       => 'Articles a la categoria «$1»',
 'subcategories'         => 'Subcategories',
 'mainpage'              => 'Pàgina principal',
@@ -488,7 +489,7 @@ Reviseu l\'URL que heu emprat per a accedir-hi.',
 'loadhist'              => 'Recuperant la història de la pàgina',
 'currentrev'            => 'Revisió actual',
 'revisionasof'          => 'Revisió de $1',
-'old-revision-navigation'=> 'Revisió de $1; $5<br />($6) $3 | $4 ($7) $2',
+'revision-info' => 'Revisió de $1; $2',
 'previousrevision'      => '←Versió anterior',
 'nextrevision'          => 'Versió posterior→',
 'currentrevisionlink'   => 'Versió actual',
@@ -1076,8 +1077,8 @@ L\'article de destí, "[[$1]]", ja existeix. Voleu esborrar-lo per fer lloc per 
 'tooltip-minoredit'     => 'Marca-ho com una edició menor [alt-i]',
 'tooltip-save'          => 'Desa els vostres canvis [alt-s]',
 'tooltip-diff'          => 'Mostra quins canvis heu fet al text. [alt-v]',
-'Common.css'            => '/* Editeu aquest fitxer per personalitzar totes les aparences per al lloc sencer */',
-'Monobook.css'          => '/* Editeu aquest fitxer per personalitzar l\'aparença del monobook per a tot el lloc sencer */',
+'common.css'            => '/* Editeu aquest fitxer per personalitzar totes les aparences per al lloc sencer */',
+'monobook.css'          => '/* Editeu aquest fitxer per personalitzar l\'aparença del monobook per a tot el lloc sencer */',
 'notacceptable'         => 'El servidor wiki no pot oferir dades en un format que el client no pot llegir.',
 'anonymous'             => 'Usuaris anònims del projecte {{SITENAME}}',
 'lastmodifiedatby'        => 'Va modificar-se la pàgina per darrera vegada el $2, $1 per $3.',
@@ -1096,7 +1097,7 @@ L\'article de destí, "[[$1]]", ja existeix. Voleu esborrar-lo per fer lloc per 
 'markedaspatrolled'     => 'Marca com a vigilat',
 'markedaspatrollederror'=> 'No es pot marcar com a vigilat',
 'markedaspatrollederrortext'=> 'Cal que especifiqueu una revisió per a marcar-la com a vigilada.',
-'Monobook.js'           => '/* tooltips and access keys */
+'monobook.js'           => '/* tooltips and access keys */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'La vostra pàgina d\'usuari.\'); 
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'La pàgina d\'usuari per la ip que utilitzeu\'); 
@@ -1107,7 +1108,7 @@ L\'article de destí, "[[$1]]", ja existeix. Voleu esborrar-lo per fer lloc per 
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Llista de les vostres contribucions.\'); 
  ta[\'pt-login\'] = new Array(\'o\',\'Us animem a registrar-vos, però no és obligatori.\'); 
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'Us animem a registrar-vos, però no és obligatori.\'); 
- ta[\'pt-logout\'] = new Array(\'o\',\'Finalitza la sessió d\'usuari\'); 
+ ta[\'pt-logout\'] = new Array(\'\',\'Finalitza la sessió d\'usuari\'); 
  ta[\'ca-talk\'] = new Array(\'t\',\'Discussió sobre el contingut d\'aquesta pàgina.\'); 
  ta[\'ca-edit\'] = new Array(\'e\',\'Podeu editar aquesta pàgina. Si us plau, previsualitzeu abans de desar.\'); 
  ta[\'ca-addsection\'] = new Array(\'+\',\'Afegeix un comentari a aquesta discussió.\'); 

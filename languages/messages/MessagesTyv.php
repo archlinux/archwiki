@@ -98,6 +98,7 @@ $messages = array(
 # Bits of text used by many pages:
 #
 'categories' => 'Бөлүктер', //Categories
+'pagecategories' => 'Бөлүктер', //{{PLURAL:$1|Category|Categories}}
 'category_header' => '"$1" бөлүкте чүүлдер', //Articles in category $1
 'subcategories' => 'Бичии бөлүктер', //Subcategories
 
@@ -300,7 +301,7 @@ $1', //Sorry! The wiki is experiencing some technical difficulties, and cannot c
 'allmessagescurrent' => 'Амгы сөзүглел', //Current text
 
 # labels for User: and Title: on Special:Log pages
-'specialloguserlabel' => 'Ажыглакчы: ', //User:
+'specialloguserlabel' => 'Ажыглакчы:', //User:
 
 );
 ?>

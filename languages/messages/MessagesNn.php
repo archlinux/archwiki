@@ -231,12 +231,13 @@ $messages = array(
 
 # Bits of text used by many pages:
 'categories'              => 'Kategoriar',
+'pagecategories'          => 'Kategoriar',
 'category_header'         => 'Artiklar i kategorien «$1»',
 'subcategories'           => 'Underkategoriar',
 
 'mainpage'		  => 'Hovudside',
 'mainpagetext'	          => 'MediaWiki er no installert.',
-'mainpagedocfooter'       => 'Sjå [http://meta.wikipedia.org/wiki/MediaWiki_localization dokumentasjon for å tilpasse brukargrensesnittet] og [http://meta.wikipedia.org/wiki/Help:Contents brukarmanualen] for bruk og konfigurasjonshjelp.',
+'mainpagedocfooter'       => 'Sjå [http://meta.wikimedia.org/wiki/MediaWiki_localization dokumentasjon for å tilpasse brukargrensesnittet] og [http://meta.wikimedia.org/wiki/Help:Contents brukarmanualen] for bruk og konfigurasjonshjelp.',
 
 'portal'		  => 'Brukarportal',
 'portal-url'		  => 'Project:Brukarportal',
@@ -952,7 +953,7 @@ For hjelp og meir informasjon:
 'rollbacklink'	        => 'rull attende',
 'rollbackfailed'        => 'Kunne ikkje rulle attende',
 'cantrollback'	        => 'Kan ikkje rulle attende fordi den siste brukaren er den einaste forfattaren.',
-'alreadyrolled'	        => 'Kan ikkje rulle attende den siste endringa av [[$1]] gjort av [[{{ns:2}}:$2|$2]] ([[{{ns:3}}:$2|brukardiskusjon]]) fordi nokon andre allereie har endra sida att eller fjerna endringa.
+'alreadyrolled'	        => 'Kan ikkje rulle attende den siste endringa av [[:$1]] gjort av [[{{ns:2}}:$2|$2]] ([[{{ns:3}}:$2|brukardiskusjon]]) fordi nokon andre allereie har endra sida att eller fjerna endringa.
 
 Den siste endringa vart gjort av [[{{ns:2}}:$3|$3]] ([[{{ns:3}}:$3|brukardiskusjon]]).',
 # only shown if there is an edit comment
@@ -1170,7 +1171,7 @@ For å eksportere bruker du [[{{ns:-1}}:Export|eksportsida]] på kjeldewikien; h
 'accesskey-minoredit'   => 'i',
 'accesskey-save'        => 's',
 'accesskey-preview'     => 'p',
-'accesskey-diff'        => 'd',
+'accesskey-diff'        => 'v',
 'accesskey-compareselectedversions' => 'v',
 
 # tooltip help for some actions, most are in Monobook.js
@@ -1178,7 +1179,7 @@ For å eksportere bruker du [[{{ns:-1}}:Export|eksportsida]] på kjeldewikien; h
 'tooltip-minoredit'     => 'Merk dette som ei uviktig endring [alt-i]',
 'tooltip-save'          => 'Lagre endringane dine [alt-s]',
 'tooltip-preview'       => 'Førehandsvis endringane dine, bruk denne funksjonen før du lagrar! [alt-p]',
-'tooltip-diff'          => 'Vis skilnaden mellom din versjon og lagra versjon, utan å lagre. [alt-d]',
+'tooltip-diff'          => 'Vis skilnaden mellom din versjon og lagra versjon, utan å lagre. [alt-v]',
 'tooltip-compareselectedversions' => 'Sjå endringane mellom dei valde versjonane av denne sida. [alt-v]',
 'tooltip-watch'         => 'Legg denne sida til i overvakingslista di [alt-w]',
 
@@ -1231,7 +1232,7 @@ For å eksportere bruker du [[{{ns:-1}}:Export|eksportsida]] på kjeldewikien; h
 'rcpatroldisabledtext'  => 'Patruljeringsfunksjonen er deaktivert.',
 
 # stylesheets
-'Monobook.js'           => '/*
+'monobook.js'           => '/*
 <pre>
 */
 /* verktøytips og snøggtastar */
@@ -1245,7 +1246,7 @@ ta[\'pt-watchlist\']            = new Array(\'l\',\'Liste over sidene du overvak
 ta[\'pt-mycontris\']            = new Array(\'y\',\'Liste over bidraga mine\');
 ta[\'pt-login\']                = new Array(\'o\',\'Det er ikkje obligatorisk å logga inn, men medfører mange fordelar.\');
 ta[\'pt-anonlogin\']            = new Array(\'o\',\'Det er ikkje obligatorisk å logga inn, men medfører mange fordelar.\');
-ta[\'pt-logout\']               = new Array(\'o\',\'Logg ut\');
+ta[\'pt-logout\']               = new Array(\'\',\'Logg ut\');
 ta[\'ca-talk\']                 = new Array(\'t\',\'Diskusjon om innhaldssida\');
 ta[\'ca-edit\']                 = new Array(\'e\',\'Du kan endre denne sida. Bruk førehandsvisings-knappen før du lagrar.\');
 ta[\'ca-addsection\']           = new Array(\'+\',\'Legg til ein bolk på denne diskusjonssida.\');

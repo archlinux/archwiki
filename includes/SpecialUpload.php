@@ -28,6 +28,13 @@ class UploadForm {
 	var $mUploadSaveName, $mUploadTempName, $mUploadSize, $mUploadOldVersion;
 	var $mUploadCopyStatus, $mUploadSource, $mReUpload, $mAction, $mUpload;
 	var $mOname, $mSessionKey, $mStashed, $mDestFile, $mRemoveTempFile, $mSourceType;
+	var $mUploadTempFileSize = 0;
+
+	# Placeholders for text injection by hooks (must be HTML)
+	# extensions should take care to _append_ to the present value
+	var $uploadFormTextTop;
+	var $uploadFormTextAfterSummary;
+
 	/**#@-*/
 
 	/**
@@ -43,6 +50,10 @@ class UploadForm {
 			# GET requests just give the main form; no data except wpDestfile.
 			return;
 		}
+
+		# Placeholders for text injection by hooks (empty per default)
+		$this->uploadFormTextTop = "";
+		$this->uploadFormTextAfterSummary = "";
 
 		$this->mIgnoreWarning     = $request->getCheck( 'wpIgnoreWarning' );
 		$this->mReUpload          = $request->getCheck( 'wpReUpload' );
@@ -105,7 +116,7 @@ class UploadForm {
 	 * @access private
 	 */
 	function initializeFromUrl( $request ) {
-		global $wgTmpDirectory, $wgMaxUploadSize;
+		global $wgTmpDirectory;
 		$url = $request->getText( 'wpUploadFileURL' );
 		$local_file = tempnam( $wgTmpDirectory, 'WEBUPLOAD' );
 
@@ -125,7 +136,7 @@ class UploadForm {
 	 * Returns true if there was an error, false otherwise
 	 */
 	private function curlCopy( $url, $dest ) {
-		global $wgMaxUploadSize, $wgUser;
+		global $wgUser, $wgOut;
 
 		if( !$wgUser->isAllowed( 'upload_by_url' ) ) {
 			$wgOut->permissionRequired( 'upload_by_url' );
@@ -133,17 +144,18 @@ class UploadForm {
 		}
 
 		# Maybe remove some pasting blanks :-)
-		$url = strtolower( trim( $url ) );
-		if( substr( $url, 0, 7 ) != 'http://' && substr( $url, 0, 6 ) != 'ftp://' ) {
+		$url =  trim( $url );
+		if( stripos($url, 'http://') !== 0 && stripos($url, 'ftp://') !== 0 ) {
 			# Only HTTP or FTP URLs
+			$wgOut->errorPage( 'upload-proto-error', 'upload-proto-error-text' );
 			return true;
 		}
 
 		# Open temporary file
-		$this->mUploadTempFileSize = 0;
 		$this->mUploadTempFile = @fopen( $this->mUploadTempName, "wb" );
 		if( $this->mUploadTempFile === false ) {
 			# Could not open temporary file to write in
+			$wgOut->errorPage( 'upload-file-error', 'upload-file-error-text');
 			return true;
 		}
 		
@@ -155,13 +167,18 @@ class UploadForm {
 		curl_setopt( $ch, CURLOPT_WRITEFUNCTION, array( $this, 'uploadCurlCallback' ) );
 		curl_exec( $ch );
 		$error = curl_errno( $ch ) ? true : false;
-#		if ( $error ) print curl_error ( $ch ) ; # Debugging output
+		$errornum =  curl_errno( $ch );
+		// if ( $error ) print curl_error ( $ch ) ; # Debugging output
 		curl_close( $ch );
 		
 		fclose( $this->mUploadTempFile );
 		unset( $this->mUploadTempFile );
 		if( $error ) {
 			unlink( $dest );
+			if( wfEmptyMsg( "upload-curl-error$errornum", wfMsg("upload-curl-error$errornum") ) )
+				$wgOut->errorPage( 'upload-misc-error', 'upload-misc-error-text' );
+			else
+				$wgOut->errorPage( "upload-curl-error$errornum", "upload-curl-error$errornum-text" );
 		}
 		
 		return $error;
@@ -249,6 +266,12 @@ class UploadForm {
 	function processUpload() {
 		global $wgUser, $wgOut;
 
+		if( !wfRunHooks( 'UploadForm:BeforeProcessing', array( &$this ) ) )
+		{
+			wfDebug( "Hook 'UploadForm:BeforeProcessing' broke processing the file." );
+			return false;
+		}
+
 		/* Check for PHP error if any, requires php 4.2 or newer */
 		if( $this->mUploadError == 1/*UPLOAD_ERR_INI_SIZE*/ ) {
 			$this->mainUploadForm( wfMsgHtml( 'largefileserver' ) );
@@ -330,7 +353,7 @@ class UploadForm {
 		if( $this->checkFileExtensionList( $ext, $wgFileBlacklist ) ||
 			($wgStrictFileExtensions &&
 				!$this->checkFileExtension( $finalExt, $wgFileExtensions ) ) ) {
-			return $this->uploadError( wfMsgHtml( 'badfiletype', htmlspecialchars( $fullExt ) ) );
+			return $this->uploadError( wfMsgHtml( 'badfiletype', htmlspecialchars( $finalExt ) ) );
 		}
 
 		/**
@@ -373,15 +396,16 @@ class UploadForm {
 			global $wgCheckFileExtensions;
 			if ( $wgCheckFileExtensions ) {
 				if ( ! $this->checkFileExtension( $finalExt, $wgFileExtensions ) ) {
-					$warning .= '<li>'.wfMsgHtml( 'badfiletype', htmlspecialchars( $fullExt ) ).'</li>';
+					$warning .= '<li>'.wfMsgHtml( 'badfiletype', htmlspecialchars( $finalExt ) ).'</li>';
 				}
 			}
 
 			global $wgUploadSizeWarning;
 			if ( $wgUploadSizeWarning && ( $this->mUploadSize > $wgUploadSizeWarning ) ) {
-				# TODO: Format $wgUploadSizeWarning to something that looks better than the raw byte
-				# value, perhaps add GB,MB and KB suffixes?
-				$warning .= '<li>'.wfMsgHtml( 'largefile', $wgUploadSizeWarning, $this->mUploadSize ).'</li>';
+				$skin =& $wgUser->getSkin();
+				$wsize = $skin->formatSize( $wgUploadSizeWarning );
+				$asize = $skin->formatSize( $this->mUploadSize );
+				$warning .= '<li>' . wfMsgHtml( 'large-file', $wsize, $asize ) . '</li>';
 			}
 			if ( $this->mUploadSize == 0 ) {
 				$warning .= '<li>'.wfMsgHtml( 'emptyfile' ).'</li>';
@@ -398,7 +422,7 @@ class UploadForm {
 				$image = new Image( $nt );
 				if( $image->wasDeleted() ) {
 					$skin = $wgUser->getSkin();
-					$ltitle = Title::makeTitle( NS_SPECIAL, 'Log' );
+					$ltitle = SpecialPage::getTitleFor( 'Log' );
 					$llink = $skin->makeKnownLinkObj( $ltitle, wfMsgHtml( 'deletionlog' ), 'type=delete&page=' . $nt->getPrefixedUrl() );
 					$warning .= wfOpenElement( 'li' ) . wfMsgWikiHtml( 'filewasdeleted', $llink ) . wfCloseElement( 'li' );
 				}
@@ -632,7 +656,7 @@ class UploadForm {
 		$reupload = wfMsgHtml( 'reupload' );
 		$iw = wfMsgWikiHtml( 'ignorewarning' );
 		$reup = wfMsgWikiHtml( 'reuploaddesc' );
-		$titleObj = Title::makeTitle( NS_SPECIAL, 'Upload' );
+		$titleObj = SpecialPage::getTitleFor( 'Upload' );
 		$action = $titleObj->escapeLocalURL( 'action=submit' );
 
 		if ( $wgUseCopyrightUpload )
@@ -684,6 +708,12 @@ class UploadForm {
 		global $wgUseCopyrightUpload;
 		global $wgRequest, $wgAllowCopyUploads;
 
+		if( !wfRunHooks( 'UploadForm:initial', array( &$this ) ) )
+		{
+			wfDebug( "Hook 'UploadForm:initial' broke output of the upload form" );
+			return false;
+		}
+
 		$cols = intval($wgUser->getOption( 'cols' ));
 		$ew = $wgUser->getOption( 'editwidth' );
 		if ( $ew ) $ew = " style=\"width:100%\"";
@@ -697,8 +727,6 @@ class UploadForm {
 		$wgOut->addHTML( '<div id="uploadtext">' );
 		$wgOut->addWikiText( wfMsg( 'uploadtext' ) );
 		$wgOut->addHTML( '</div>' );
-		$sk = $wgUser->getSkin();
-
 
 		$sourcefilename = wfMsgHtml( 'sourcefilename' );
 		$destfilename = wfMsgHtml( 'destfilename' );
@@ -712,18 +740,19 @@ class UploadForm {
 		$ulb = wfMsgHtml( 'uploadbtn' );
 
 
-		$titleObj = Title::makeTitle( NS_SPECIAL, 'Upload' );
+		$titleObj = SpecialPage::getTitleFor( 'Upload' );
 		$action = $titleObj->escapeLocalURL();
 
 		$encDestFile = htmlspecialchars( $this->mDestFile );
 
-		$watchChecked = $wgUser->getOption( 'watchdefault' )
+		$watchChecked =
+			( $wgUser->getOption( 'watchdefault' ) ||
+				( $wgUser->getOption( 'watchcreations' ) && $this->mDestFile == '' ) )
 			? 'checked="checked"'
 			: '';
 
 		// Prepare form for upload or upload/copy
 		if( $wgAllowCopyUploads && $wgUser->isAllowed( 'upload_by_url' ) ) {
-			$source_comment = wfMsgHtml( 'upload_source_url' );
 			$filename_form = 
 				"<input type='radio' id='wpSourceTypeFile' name='wpSourceType' value='file' onchange='toggle_element_activation(\"wpUploadFileURL\",\"wpUploadFile\")' checked />" . 
 				"<input tabindex='1' type='file' name='wpUploadFile' id='wpUploadFile' onfocus='toggle_element_activation(\"wpUploadFileURL\",\"wpUploadFile\");toggle_element_check(\"wpSourceTypeFile\",\"wpSourceTypeURL\")'" . 
@@ -745,6 +774,7 @@ class UploadForm {
 	<form id='upload' method='post' enctype='multipart/form-data' action=\"$action\">
 		<table border='0'>
 		<tr>
+	  {$this->uploadFormTextTop}
 			<td align='right' valign='top'><label for='wpUploadFile'>{$sourcefilename}:</label></td>
 			<td align='left'>
 				{$filename_form}
@@ -760,6 +790,7 @@ class UploadForm {
 			<td align='right'><label for='wpUploadDescription'>{$summary}</label></td>
 			<td align='left'>
 				<textarea tabindex='3' name='wpUploadDescription' id='wpUploadDescription' rows='6' cols='{$cols}'{$ew}>" . htmlspecialchars( $this->mUploadDescription ) . "</textarea>
+	   {$this->uploadFormTextAfterSummary}
 			</td>
 		</tr>
 		<tr>" );
@@ -808,9 +839,6 @@ class UploadForm {
 			<input tabindex='8' type='checkbox' name='wpIgnoreWarning' id='wpIgnoreWarning' value='true' />
 			<label for='wpIgnoreWarning'>" . wfMsgHtml( 'ignorewarnings' ) . "</label>
 		</td>
-	</tr>
-	<tr>
-
 	</tr>
 	<tr>
 		<td></td>
@@ -1046,13 +1074,13 @@ class UploadForm {
 		$chunk = Sanitizer::decodeCharReferences( $chunk );
 
 		#look for script-types
-		if (preg_match("!type\s*=\s*['\"]?\s*(\w*/)?(ecma|java)!sim",$chunk)) return true;
+		if (preg_match('!type\s*=\s*[\'"]?\s*(\w*/)?(ecma|java)!sim',$chunk)) return true;
 
 		#look for html-style script-urls
-		if (preg_match("!(href|src|data)\s*=\s*['\"]?\s*(ecma|java)script:!sim",$chunk)) return true;
+		if (preg_match('!(href|src|data)\s*=\s*[\'"]?\s*(ecma|java)script:!sim',$chunk)) return true;
 
 		#look for css-style script-urls
-		if (preg_match("!url\s*\(\s*['\"]?\s*(ecma|java)script:!sim",$chunk)) return true;
+		if (preg_match('!url\s*\(\s*[\'"]?\s*(ecma|java)script:!sim',$chunk)) return true;
 
 		wfDebug("SpecialUpload::detectScript: no scripts found\n");
 		return false;
@@ -1104,21 +1132,25 @@ class UploadForm {
 		#NOTE: there's a 50 line workaround to make stderr redirection work on windows, too.
 		#      that does not seem to be worth the pain.
 		#      Ask me (Duesentrieb) about it if it's ever needed.
+		$output = array();
 		if (wfIsWindows()) exec("$scanner",$output,$code);
 		else exec("$scanner 2>&1",$output,$code);
 
-		$exit_code= $code; #remeber for user feedback
+		$exit_code= $code; #remember for user feedback
 
 		if ($virus_scanner_codes) { #map exit code to AV_xxx constants.
-			if (isset($virus_scanner_codes[$code])) $code= $virus_scanner_codes[$code]; #explicite mapping
-			else if (isset($virus_scanner_codes["*"])) $code= $virus_scanner_codes["*"]; #fallback mapping
+			if (isset($virus_scanner_codes[$code])) {
+				$code= $virus_scanner_codes[$code]; # explicit mapping
+			} else if (isset($virus_scanner_codes["*"])) {
+				$code= $virus_scanner_codes["*"];   # fallback mapping
+			}
 		}
 
 		if ($code===AV_SCAN_FAILED) { #scan failed (code was mapped to false by $virus_scanner_codes)
 			wfDebug("$fname: failed to scan $file (code $exit_code).\n");
 
-			if ($wgAntivirusRequired) return "scan failed (code $exit_code)";
-			else return NULL;
+			if ($wgAntivirusRequired) { return "scan failed (code $exit_code)"; }
+			else { return NULL; }
 		}
 		else if ($code===AV_SCAN_ABORTED) { #scan failed because filetype is unknown (probably imune)
 			wfDebug("$fname: unsupported file type $file (code $exit_code).\n");
@@ -1132,7 +1164,7 @@ class UploadForm {
 			$output= join("\n",$output);
 			$output= trim($output);
 
-			if (!$output) $output= true; #if ther's no output, return true
+			if (!$output) $output= true; #if there's no output, return true
 			else if ($msg_pattern) {
 				$groups= array();
 				if (preg_match($msg_pattern,$output,$groups)) {

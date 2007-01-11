@@ -50,16 +50,26 @@ h1, h2, h3, h4, h5, h6 {
     padding-bottom: 0.17em;
     border-bottom: 1px solid #aaaaaa;
 }
+.editsection {
+	font-weight: normal;
+	float: right;
+	margin-left: 5px;
+}
 h1 { font-size: 188%; }
+h1 .editsection { font-size: 53.2%; }
 h2 { font-size: 150%; }
+h2 .editsection { font-size: 66.7%; }
 h3, h4, h5, h6 {
     border-bottom: none;
     font-weight: bold;
 }
 h3 { font-size: 132%; }
+h3 .editsection { font-size: 75.8%; }
 h4 { font-size: 116%; }
+h4 .editsection { font-size: 86.2%; }
 h5 { font-size: 100%; }
 h6 { font-size: 80%;  }
+h6 .editsection { font-size: 125%; }
 
 ul {
     line-height: 1.5em;
@@ -260,6 +270,7 @@ div.floatright, table.floatright {
 div.floatright p { font-style: italic; }
 div.floatleft, table.floatleft {
     float: left;
+    clear: left;
     margin: 0.3em 0.5em 0.5em 0;
     position: relative;
     border: 0.5em solid White;
@@ -306,6 +317,7 @@ div.tright {
 }
 div.tleft {
     float: left;
+    clear: left;
     margin-right:0.5em;
     border-width: 0.5em 1.4em 0.8em 0;
 }
@@ -479,3 +491,9 @@ div.gallerytext {
 #jump-to-nav {
   display: none;
 }
+
+.templatesUsed { margin-top: 1.5em; }
+
+#toolbar { clear: both; }
+
+.mw-plusminus-null { color: #aaa; }

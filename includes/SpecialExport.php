@@ -30,11 +30,6 @@ function wfSpecialExport( $page = '' ) {
 	global $wgExportAllowHistory, $wgExportMaxHistory;
 
 	$curonly = true;
-	$fullHistory = array(
-		'dir' => 'asc',
-		'offset' => false,
-		'limit' => $wgExportMaxHistory,
-	);
 	if( $wgRequest->wasPosted() ) {
 		$page = $wgRequest->getText( 'pages' );
 		$curonly = $wgRequest->getCheck( 'curonly' );
@@ -88,12 +83,7 @@ function wfSpecialExport( $page = '' ) {
 		
 		// Cancel output buffering and gzipping if set
 		// This should provide safer streaming for pages with history
-		while( $status = ob_get_status() ) {
-			ob_end_clean();
-			if( $status['name'] == 'ob_gzhandler' ) {
-				header( 'Content-Encoding:' );
-			}
-		}
+		wfResetOutputBuffers();
 		header( "Content-type: application/xml; charset=utf-8" );
 		$pages = explode( "\n", $page );
 
@@ -123,7 +113,7 @@ function wfSpecialExport( $page = '' ) {
 	}
 
 	$wgOut->addWikiText( wfMsg( "exporttext" ) );
-	$titleObj = Title::makeTitle( NS_SPECIAL, "Export" );
+	$titleObj = SpecialPage::getTitleFor( "Export" );
 	
 	$form = wfOpenElement( 'form', array( 'method' => 'post', 'action' => $titleObj->getLocalUrl() ) );
 	$form .= wfOpenElement( 'textarea', array( 'name' => 'pages', 'cols' => 40, 'rows' => 10 ) ) . '</textarea><br />';

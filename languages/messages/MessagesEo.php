@@ -100,12 +100,13 @@ $messages = array(
 'may'                   => 'Maj',
 'aug'                   => 'Aŭg',
 'oct'                   => 'Okt',
-'categories'            => '{{PLURAL:$1|Kategorio|Kategorioj}}',
+'categories'            => 'Kategorioj',
+'pagecategories'        => '{{PLURAL:$1|Kategorio|Kategorioj}}',
 'category_header'       => 'Artikoloj en kategorio "$1"',
 'subcategories'         => 'Subkategorioj',
 'mainpage'              => 'Ĉefpaĝo',
 'mainpagetext'          => 'Vikisoftvaro sukcese instaliĝis.',
-'mainpagedocfooter'     => 'Consult the [http://meta.wikipedia.org/wiki/MediaWiki_User%27s_Guide User\'s Guide] for information on using the wiki software.
+'mainpagedocfooter'     => 'Consult the [http://meta.wikimedia.org/wiki/MediaWiki_User%27s_Guide User\'s Guide] for information on using the wiki software.
 
 == Getting started ==
 
@@ -868,7 +869,7 @@ Vidu la paĝon $2 por registro de lastatempaj forigoj.',
 'rollbacklink'          => 'restarigu antaŭan',
 'rollbackfailed'        => 'Restarigo malsukcesis',
 'cantrollback'          => 'Neeblas restarigi antaŭan redakton; la redaktinto lasta estas la sola de la paĝo.',
-'alreadyrolled'         => 'Ne eblas restarigi la lastan redakton de [[$1]] de la [[User:$2|$2]] ([[User talk:$2|diskuto]]) pro tio, ke oni intertempe redaktis la paĝon. La lasta redaktinto estas [[User:$3|$3]] ([[User talk:$3|diskuto]]).',
+'alreadyrolled'         => 'Ne eblas restarigi la lastan redakton de [[:$1]] de la [[User:$2|$2]] ([[User talk:$2|diskuto]]) pro tio, ke oni intertempe redaktis la paĝon. La lasta redaktinto estas [[User:$3|$3]] ([[User talk:$3|diskuto]]).',
 'editcomment'           => 'La komento estis: \'<i>$1</i>\'.',
 'revertpage'            => 'Restarigis redaktojn de [[Special:Contributions/$2|$2]] ([[User talk:$2|diskuto]]); restarigis al la lasta versio de [[User:$1|$1]]',
 'sessionfailure'        => 'Ŝajnas ke estas problemo kun via ensalutado;
@@ -1092,10 +1093,10 @@ La celartikolo "[[$1]]" jam ekzistas. Ĉu vi volas forigi ĝin por krei spacon p
 'tooltip-minoredit'     => 'Marku tiun ŝanĝon kiel malgrava [alt-i]',
 'tooltip-save'          => 'Konservu viajn ŝanĝojn [alt-s]',
 'tooltip-preview'       => 'Antaŭrigardu viajn ŝanĝojn. Bonvolu uzi tion antaŭ ol konservi ilin! [alt-p]',
-'tooltip-diff'          => 'Show which changes you made to the text. [alt-d]',
+'tooltip-diff'          => 'Show which changes you made to the text. [alt-v]',
 'tooltip-compareselectedversions'=> 'Vidu la malsamojn inter ambaŭ selektitaj versioj de ĉi paĝo. [alt-v]',
 'tooltip-watch'         => 'Aldonu ĉi paĝon al via atentaro [alt-w]',
-'Monobook.css'          => '/* CSS placed here will affect users of the Monobook skin */',
+'monobook.css'          => '/* CSS placed here will affect users of the Monobook skin */',
 'anonymous'             => 'Anonima(j) uzanto(j) de {{SITENAME}}',
 'siteuser'              => '{{SITENAME}} uzanto $1',
 'lastmodifiedatby'        => 'Ĉi paĝo estis laste ŝanĝita je $2, $1 de $3.',
@@ -1125,7 +1126,7 @@ La celartikolo "[[$1]]" jam ekzistas. Ĉu vi volas forigi ĝin por krei spacon p
 'markedaspatrolledtext' => 'La elektita versio estas markita kiel patrolita.',
 'rcpatroldisabled'      => 'Patrolado de lastaj ŝanĝoj malaktivigita',
 'rcpatroldisabledtext'  => 'La funkcio patrolado de la lastaj ŝanĝoj estas nun malaktivigita.',
-'Monobook.js'           => '/* iletikedoj kaj rektaj klavoj */   
+'monobook.js'           => '/* iletikedoj kaj rektaj klavoj */   
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Mia uzantopaĝo\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'La uzantopaĝo por la IP adreso sub kiu vi estas redaktanta\');  
@@ -1136,7 +1137,7 @@ La celartikolo "[[$1]]" jam ekzistas. Ĉu vi volas forigi ĝin por krei spacon p
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Listo de miaj kontribuoj\');
  ta[\'pt-login\'] = new Array(\'o\',\'Vi estas invitita ensaluti, tamen ne estas devige.\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'Vi estas invitita ensaluti, tamen ne estas devige.\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Elsalutu\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Elsalutu\');
  ta[\'ca-talk\'] = new Array(\'t\',\'Diskuto pri la artikolo\');
  ta[\'ca-edit\'] = new Array(\'e\',\'Vi povas redakti tiun ĉi paĝon. Bv uzi la antaŭvidbutonon antaŭ ol konservi.\');
  ta[\'ca-addsection\'] = new Array(\'+\',\'Aldonu komenton al tiu diskuto.\');

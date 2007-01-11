@@ -129,6 +129,7 @@ $messages = array(
 # Bits of text used by many pages:
 #----------------------------------------------------#
 'categories' => 'Κατηγορίες',
+'pagecategories' => 'Κατηγορίες',
 'category_header' => 'Άρθρα στην κατηγορία "$1"',
 'subcategories' => 'Υποκατηγορίες',
 
@@ -981,7 +982,7 @@ Tο σύστημα ειδοποίησης του {{SITENAME}}
 'rollbackfailed' => 'Η επαναφορά απέτυχε.',
 'cantrollback' => 'Δεν είναι δυνατή η αναίρεση αυτής της αλλαγής, πρόκειται για την αρχική ενέργεια δημιουργίας της σελίδας.',
 
-'alreadyrolled' => 'Αδύνατον να αναιρεθεί η τελευταία αλλαγή της σελίδας [[$1]]
+'alreadyrolled' => 'Αδύνατον να αναιρεθεί η τελευταία αλλαγή της σελίδας [[:$1]]
 από το χρήστη [[User:$2|$2]] ([[User talk:$2|Συζήτηση]]), κάποιος έχει ήδη αναιρέσει την αλλαγή ή έχει αλλάξει εκ νέου τη σελίδα.
 
 Τελευταία αλλαγή από το χρήστη [[User:$3|$3]] ([[User talk:$3|Συζήτηση]]).',
@@ -1246,7 +1247,7 @@ Tο σύστημα ειδοποίησης του {{SITENAME}}
 'accesskey-minoredit' => 'i',
 'accesskey-save' => 's',
 'accesskey-preview' => 'p',
-'accesskey-diff' => 'd',
+'accesskey-diff' => 'v',
 'accesskey-compareselectedversions' => 'v',
 
 
@@ -1256,15 +1257,15 @@ Tο σύστημα ειδοποίησης του {{SITENAME}}
 'tooltip-minoredit' => 'Χαρακτηρήστε τις αλλαγές "μικρής κλίμακας" [alt-i]',
 'tooltip-save' => 'Αποθήκευση αλλαγών [alt-s]',
 'tooltip-preview' => 'Προεπισκόπηση - Παρακαλούμε να χρησιμοποιήτε αυτή την επιλογή πριν αποθηκεύσετε τις αλλαγές σας! [alt-p]',
-'tooltip-diff' => 'Προβολή των αλλαγών που κάνατε στο κείμενο. [alt-d]',
+'tooltip-diff' => 'Προβολή των αλλαγών που κάνατε στο κείμενο. [alt-v]',
 'tooltip-compareselectedversions' => 'Εμφάνιση των διαφορών ανάμεσα στις δύο αναθεωρήσεις της σελίδας που έχετε επιλέξει. [alt-v]',
 'tooltip-watch' => 'Προσθήκη της σελίδας στη λίστα παρακολούθησης [alt-w]',
 
 
 # stylesheets
 #-------------------#
-'Monobook.css' => '/* edit this file to customize the monobook skin for the entire site */',
-#'Monobook.js' => '/* edit this file to change js things in the monobook skin */',
+'monobook.css' => '/* edit this file to customize the monobook skin for the entire site */',
+#'monobook.js' => '/* edit this file to change js things in the monobook skin */',
 
 
 # Metadata
@@ -1331,7 +1332,7 @@ Tο σύστημα ειδοποίησης του {{SITENAME}}
 
 # Monobook.js: tooltips and access keys for monobook
 #------------------------------------------------------------------------------------#
-'Monobook.js' => '/* tooltips and access keys */
+'monobook.js' => '/* tooltips and access keys */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Η προσωπική μου σελίδα στο Wiκi\');
 ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Η σελίδα χρήστη στον οποίο αντιστοιχεί η διεύθυνση IP που έχετε\');
@@ -1342,7 +1343,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'Η λίστα με τις σελίδε�
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Κατάλογος των συνεισφορών μου\');
 ta[\'pt-login\'] = new Array(\'o\',\'Σας προτείνουμε να συνδεθείτε παρόλο που δεν είναι αναγκαίο.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Σας προτείνουμε να συνδεθείτε παρόλο που δεν είναι αναγκαίο.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Αποσύνδεση\');
+ta[\'pt-logout\'] = new Array(\'\',\'Αποσύνδεση\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Συζήτηση για το παρόν άρθρο\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Μπορείτε να επεξεργαστείτε αυτό το άρθρο. Χρησιμοποιείστε την "Προεπισκόπηση" πριν αποθηκεύσετε.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Προσθέστε σχόλιο στη συζήτηση.\');

@@ -105,17 +105,49 @@ class PageArchive {
 	 * revision of the page with the given timestamp.
 	 *
 	 * @return string
+	 * @deprecated Use getRevision() for more flexible information
 	 */
 	function getRevisionText( $timestamp ) {
+		$rev = $this->getRevision( $timestamp );
+		return $rev ? $rev->getText() : null;
+	}
+
+	/**
+	 * Return a Revision object containing data for the deleted revision.
+	 * Note that the result *may* or *may not* have a null page ID.
+	 * @param string $timestamp
+	 * @return Revision
+	 */
+	function getRevision( $timestamp ) {
 		$dbr =& wfGetDB( DB_SLAVE );
 		$row = $dbr->selectRow( 'archive',
-			array( 'ar_text', 'ar_flags', 'ar_text_id' ),
+			array(
+				'ar_rev_id',
+				'ar_text',
+				'ar_comment',
+				'ar_user',
+				'ar_user_text',
+				'ar_timestamp',
+				'ar_minor_edit',
+				'ar_flags',
+				'ar_text_id' ),
 			array( 'ar_namespace' => $this->title->getNamespace(),
 			       'ar_title' => $this->title->getDbkey(),
 			       'ar_timestamp' => $dbr->timestamp( $timestamp ) ),
 			__METHOD__ );
 		if( $row ) {
-			return $this->getTextFromRow( $row );
+			return new Revision( array(
+				'page'       => $this->title->getArticleId(),
+				'id'         => $row->ar_rev_id,
+				'text'       => ($row->ar_text_id
+					? null
+					: Revision::getRevisionText( $row, 'ar_' ) ),
+				'comment'    => $row->ar_comment,
+				'user'       => $row->ar_user,
+				'user_text'  => $row->ar_user_text,
+				'timestamp'  => $row->ar_timestamp,
+				'minor_edit' => $row->ar_minor_edit,
+				'text_id'    => $row->ar_text_id ) );
 		} else {
 			return null;
 		}
@@ -246,12 +278,12 @@ class PageArchive {
 	 * @return int number of revisions restored
 	 */
 	private function undeleteRevisions( $timestamps ) {
-		global $wgParser, $wgDBtype;
+		global $wgDBtype;
 
 		$restoreAll = empty( $timestamps );
 		
 		$dbw =& wfGetDB( DB_MASTER );
-		extract( $dbw->tableNames( 'page', 'archive' ) );
+		$page = $dbw->tableName( 'archive' );
 
 		# Does this page already exist? We'll have to update it...
 		$article = new Article( $this->title );
@@ -316,7 +348,6 @@ class PageArchive {
 		}
 		
 		$revision = null;
-		$newRevId = $previousRevId;
 		$restored = 0;
 
 		while( $row = $dbw->fetchObject( $result ) ) {
@@ -343,7 +374,7 @@ class PageArchive {
 				'minor_edit' => $row->ar_minor_edit,
 				'text_id'    => $row->ar_text_id,
 				) );
-			$newRevId = $revision->insertOn( $dbw );
+			$revision->insertOn( $dbw );
 			$restored++;
 		}
 
@@ -421,6 +452,7 @@ class UndeleteForm {
 			$timestamps = array();
 			$this->mFileVersions = array();
 			foreach( $_REQUEST as $key => $val ) {
+				$matches = array();
 				if( preg_match( '/^ts(\d{14})$/', $key, $matches ) ) {
 					array_push( $timestamps, $matches[1] );
 				}
@@ -465,7 +497,7 @@ class UndeleteForm {
 		$wgOut->addWikiText( wfMsg( "undeletepagetext" ) );
 
 		$sk = $wgUser->getSkin();
-		$undelete =& Title::makeTitle( NS_SPECIAL, 'Undelete' );
+		$undelete = SpecialPage::getTitleFor( 'Undelete' );
 		$wgOut->addHTML( "<ul>\n" );
 		while( $row = $result->fetchObject() ) {
 			$title = Title::makeTitleSafe( $row->ar_namespace, $row->ar_title );
@@ -485,25 +517,33 @@ class UndeleteForm {
 		if(!preg_match("/[0-9]{14}/",$timestamp)) return 0;
 
 		$archive = new PageArchive( $this->mTargetObj );
-		$text = $archive->getRevisionText( $timestamp );
-
+		$rev = $archive->getRevision( $timestamp );
+		
 		$wgOut->setPagetitle( wfMsg( "undeletepage" ) );
 		$wgOut->addWikiText( "(" . wfMsg( "undeleterevision",
-			$wgLang->date( $timestamp ) ) . ")\n" );
+			$wgLang->timeAndDate( $timestamp ) ) . ")\n" );
+		
+		if( !$rev ) {
+			$wgOut->addWikiText( wfMsg( 'undeleterevision-missing' ) );
+			return;
+		}
+		
+		wfRunHooks( 'UndeleteShowRevision', array( $this->mTargetObj, $rev ) );
 		
 		if( $this->mPreview ) {
 			$wgOut->addHtml( "<hr />\n" );
-			$wgOut->addWikiText( $text );
+			$article = new Article ( $archive->title );  # OutputPage wants an Article obj
+			$wgOut->addPrimaryWikiText( $rev->getText(), $article, false );
 		}
 		
-		$self = Title::makeTitle( NS_SPECIAL, "Undelete" );
+		$self = SpecialPage::getTitleFor( "Undelete" );
 		
 		$wgOut->addHtml(
 			wfElement( 'textarea', array(
 					'readonly' => true,
 					'cols' => intval( $wgUser->getOption( 'cols' ) ),
 					'rows' => intval( $wgUser->getOption( 'rows' ) ) ),
-				$text . "\n" ) .
+				$rev->getText() . "\n" ) .
 			wfOpenElement( 'div' ) .
 			wfOpenElement( 'form', array(
 				'method' => 'post',
@@ -535,8 +575,16 @@ class UndeleteForm {
 	 * Show a deleted file version requested by the visitor.
 	 */
 	function showFile( $key ) {
-		global $wgOut;
+		global $wgOut, $wgRequest;
 		$wgOut->disable();
+		
+		# We mustn't allow the output to be Squid cached, otherwise
+		# if an admin previews a deleted image, and it's cached, then
+		# a user without appropriate permissions can toddle off and
+		# nab the image, and Squid will serve it
+		$wgRequest->response()->header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', 0 ) . ' GMT' );
+		$wgRequest->response()->header( 'Cache-Control: no-cache, no-store, max-age=0, must-revalidate' );
+		$wgRequest->response()->header( 'Pragma: no-cache' );
 		
 		$store = FileStore::get( 'deleted' );
 		$store->stream( $key );
@@ -553,8 +601,8 @@ class UndeleteForm {
 		}
 
 		$archive = new PageArchive( $this->mTargetObj );
-		$text = $archive->getLastRevisionText();
 		/*
+		$text = $archive->getLastRevisionText();
 		if( is_null( $text ) ) {
 			$wgOut->addWikiText( wfMsg( "nohistory" ) );
 			return;
@@ -594,7 +642,7 @@ class UndeleteForm {
 		}
 
 		if ( $this->mAllowed ) {
-			$titleObj = Title::makeTitle( NS_SPECIAL, "Undelete" );
+			$titleObj = SpecialPage::getTitleFor( "Undelete" );
 			$action = $titleObj->getLocalURL( "action=submit" );
 			# Start the form here
 			$top = wfOpenElement( 'form', array( 'method' => 'post', 'action' => $action, 'id' => 'undelete' ) );
@@ -698,7 +746,6 @@ class UndeleteForm {
 		global $wgOut, $wgUser;
 		if( !is_null( $this->mTargetObj ) ) {
 			$archive = new PageArchive( $this->mTargetObj );
-			$ok = true;
 			
 			$ok = $archive->undelete(
 				$this->mTargetTimestamp,

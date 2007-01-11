@@ -92,7 +92,7 @@ class QueryPage {
 	 * @return Title
 	 */
 	function getTitle() {
-		return Title::makeTitle( NS_SPECIAL, $this->getName() );
+		return SpecialPage::getTitleFor( $this->getName() );
 	}
 
 	/**
@@ -282,13 +282,15 @@ class QueryPage {
 
 		$sname = $this->getName();
 		$fname = get_class($this) . '::doQuery';
-		$sql = $this->getSQL();
 		$dbr =& wfGetDB( DB_SLAVE );
-		$querycache = $dbr->tableName( 'querycache' );
 
 		$wgOut->setSyndicated( $this->isSyndicated() );
 
-		if ( $this->isCached() ) {
+		if ( !$this->isCached() ) {
+			$sql = $this->getSQL();
+		} else {
+			# Get the cached result
+			$querycache = $dbr->tableName( 'querycache' );
 			$type = $dbr->strencode( $sname );
 			$sql =
 				"SELECT qc_type as type, qc_namespace as namespace,qc_title as title, qc_value as value
@@ -310,6 +312,14 @@ class QueryPage {
 				}
 	
 				$wgOut->addWikiText( $cacheNotice );
+				
+				# If updates on this page have been disabled, let the user know
+				# that the data set won't be refreshed for now
+				global $wgDisableQueryPageUpdate;
+				if( is_array( $wgDisableQueryPageUpdate ) && in_array( $this->getName(), $wgDisableQueryPageUpdate ) ) {
+					$wgOut->addWikiText( wfMsg( 'querypage-no-updates' ) );
+				}
+				
 			}
 
 		}
@@ -339,7 +349,7 @@ class QueryPage {
 		if ( $num > 0 ) {
 			$s = array();
 			if ( ! $this->listoutput )
-				$s[] = "<ol start='" . ( $offset + 1 ) . "' class='special'>";
+				$s[] = $this->openList( $offset );
 
 			# Only read at most $num rows, because $res may contain the whole 1000
 			for ( $i = 0; $i < $num && $obj = $dbr->fetchObject( $res ); $i++ ) {
@@ -364,7 +374,7 @@ class QueryPage {
 
 			$dbr->freeResult( $res );
 			if ( ! $this->listoutput )
-				$s[] = '</ol>';
+				$s[] = $this->closeList();
 			$str = $this->listoutput ? $wgContLang->listToText( $s ) : implode( '', $s );
 			$wgOut->addHTML( $str );
 		}
@@ -373,12 +383,20 @@ class QueryPage {
 		}
 		return $num;
 	}
+	
+	function openList( $offset ) {
+		return "<ol start='" . ( $offset + 1 ) . "' class='special'>";
+	}
+	
+	function closeList() {
+		return '</ol>';
+	}
 
 	/**
 	 * Do any necessary preprocessing of the result object.
-	 * You should pass this by reference: &$db , &$res
+	 * You should pass this by reference: &$db , &$res  [although probably no longer necessary in PHP5]
 	 */
-	function preprocessResults( $db, $res ) {}
+	function preprocessResults( &$db, &$res ) {}
 
 	/**
 	 * Similar to above, but packaging in a syndicated feed instead of a web page
@@ -459,7 +477,7 @@ class QueryPage {
 	}
 
 	function feedUrl() {
-		$title = Title::MakeTitle( NS_SPECIAL, $this->getName() );
+		$title = SpecialPage::getTitleFor( $this->getName() );
 		return $title->getFullURL();
 	}
 }

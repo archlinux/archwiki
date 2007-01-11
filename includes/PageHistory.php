@@ -70,7 +70,7 @@ class PageHistory {
 		$wgOut->setRobotpolicy( 'noindex,nofollow' );
 		$wgOut->setSyndicated( true );
 
-		$logPage = Title::makeTitle( NS_SPECIAL, 'Log' );
+		$logPage = SpecialPage::getTitleFor( 'Log' );
 		$logLink = $this->mSkin->makeKnownLinkObj( $logPage, wfMsgHtml( 'viewpagelogs' ), 'page=' . $this->mTitle->getPrefixedUrl() );
 
 		$subtitle = wfMsgHtml( 'revhistory' ) . '<br />' . $logLink;
@@ -106,12 +106,11 @@ class PageHistory {
 		 * Do the list
 		 */
 		$pager = new PageHistoryPager( $this );
-		$navbar = $pager->getNavigationBar();
 		$this->linesonpage = $pager->getNumRows();
 		$wgOut->addHTML(
 			$pager->getNavigationBar() . 
 			$this->beginHistoryList() . 
-			$pager->getBody() . 
+			$pager->getBody() .
 			$this->endHistoryList() .
 			$pager->getNavigationBar()
 		);
@@ -166,7 +165,19 @@ class PageHistory {
 			: '';
 	}
 
-	/** @todo document */
+	/**
+	 * Returns a row from the history printout.
+	 *
+	 * @todo document some more, and maybe clean up the code (some params redundant?)
+	 *
+	 * @param object $row The database row corresponding to the line (or is it the previous line?).
+	 * @param object $next The database row corresponding to the next line (or is it this one?).
+	 * @param int $counter Apparently a counter of what row number we're at, counted from the top row = 1.
+	 * @param $notificationtimestamp
+	 * @param bool $latest Whether this row corresponds to the page's latest revision.
+	 * @param bool $firstInList Whether this row corresponds to the first displayed on this history page.
+	 * @return string HTML output for the row
+	 */
 	function historyLine( $row, $next, $counter = '', $notificationtimestamp = false, $latest = false, $firstInList = false ) {
 		global $wgUser;
 		$rev = new Revision( $row );
@@ -184,7 +195,7 @@ class PageHistory {
 		$s .= "($curlink) ($lastlink) $arbitrary";
 		
 		if( $wgUser->isAllowed( 'deleterevision' ) ) {
-			$revdel = Title::makeTitle( NS_SPECIAL, 'Revisiondelete' );
+			$revdel = SpecialPage::getTitleFor( 'Revisiondelete' );
 			if( $firstInList ) {
 				// We don't currently handle well changing the top revision's settings
 				$del = wfMsgHtml( 'rev-delundel' );
@@ -209,6 +220,9 @@ class PageHistory {
 		}
 		if( $row->rev_deleted & Revision::DELETED_TEXT ) {
 			$s .= ' ' . wfMsgHtml( 'deletedrev' );
+		}
+		if( $wgUser->isAllowed( 'rollback' ) && $latest ) {
+			$s .= ' '.$this->mSkin->generateRollback( $rev );
 		}
 		$s .= "</li>\n";
 

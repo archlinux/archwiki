@@ -15,18 +15,25 @@ $skinNames = array(
 	'nostalgia' => 'Nostalgy',
 );
 
+$datePreferences = array(
+	'default',
+	'fy normal',
+	'ISO 8601',
+);
+
+$defaultDateFormat = 'fy normal';
+
 $dateFormats = array(
-	'mdy time' => 'H.i',
-	'mdy date' => 'M j, Y',
-	'mdy both' => 'H.i, M j, Y',
+	'fy normal time' => 'H.i',
+	'fy normal date' => 'j M Y',
+	'fy normal both' => 'j M Y, H.i',
+);
 
-	'dmy time' => 'H.i',
-	'dmy date' => 'j M Y',
-	'dmy both' => 'H.i, j M Y',
-
-	'ymd time' => 'H.i',
-	'ymd date' => 'Y M j',
-	'ymd both' => 'H.i, Y M j',	
+$datePreferenceMigrationMap = array(
+	'default',
+	'fy normal',
+	'fy normal',
+	'fy normal',
 );
 
 $namespaceNames = array(
@@ -314,10 +321,10 @@ Oars kinne jo tebek mei de tebek-knop fan jo blêdzjer.",
 dy't sich net oanmeld hat. Om't der gjin namme is wurd it Ynternet-adres brûkt om
 oan te jaan wa. Mar faak is it sa dat sa'n adres net altid troch deselde brûkt wurdt.
 As jo it idee hawwe dat jo as ûnbekinde brûker opmerkings foar in oar krije, dan kinne
-jo jo [[{{ns:special}}:Userlogin|oanmelde]], dat jo allinnich opmerkings foar josels krije.'' ",
+jo jo [[{{ns:special}}:Userlogin|oanmelde]], dat jo allinnich opmerkings foar josels krije.''",
 "noarticletext" => "(Der stjit noch gjin tekst op dizze side.)",
 "updated"		=> "(Bewurke)",
-"note"		=> "<strong>Opmerking:</strong> ",
+"note"		=> "<strong>Opmerking:</strong>",
 "previewnote"	=> "Tink der om dat dizze side noch net fêstlein is!",
 "previewconflict" => "Dizze side belanget allinich it earste bewurkingsfjild oan.",
 "editing"		=> "Bewurkje \"$1\"",
@@ -694,7 +701,7 @@ Jou oan hokfoar siden jo net mear folgje wolle, en befêstigje dat ûnderoan de 
 "exblank"		=> "side wie leech",
 "confirmdelete"	=> "Befestigje wiskjen",
 "deletesub"		=> "(Wiskje \"$1\")",
-"historywarning"	=> "Waarskôging: De side dy't jo wiskje wolle hat skiednis: ",
+"historywarning"	=> "Waarskôging: De side dy't jo wiskje wolle hat skiednis:",
 "confirmdeletetext" => "Jo binne dwaande mei it foar altyd wiskjen fan in side
 of ôfbyld, tegearre mei alle skiednis, út de databank.
 Befêstigje dat jo dat wier dwaan wolle. Befêstigje dat dat is wat jo witte wat it gefolch
@@ -718,11 +725,11 @@ Sjoch \"$2\" foar in list fan wat resint wiske is.",
 "rollbacklink"	=> "feroaring tebeksette",
 "rollbackfailed"	=> "Feroaring tebeksette net slagge",
 "cantrollback"	=> "Disse feroaringt kin net tebek set, om't der mar ien skriuwer is.",
-"alreadyrolled"	=> "Kin de feroaring fan [[$1]]
+"alreadyrolled"	=> "Kin de feroaring fan [[:$1]]
 troch [[Brûker:$2|$2]] ([[Brûker oerlis:$2|Oerlis]]) net tebeksette;
 inoar hat de feroaring tebekset, of oars wat oan de side feroare.
 
-De lêste feroaring wie fan [[Brûker:$3|$3]] ([[Brûker oerlis:$3|Oerlis]]). ",
+De lêste feroaring wie fan [[Brûker:$3|$3]] ([[Brûker oerlis:$3|Oerlis]]).",
 #   only shown if there is an edit comment
 "editcomment"	=> "De gearfetting wie: \"<i>$1</i>\".",
 "revertpage"	=> "Tebek set ta de ferzje fan \"$1\"",

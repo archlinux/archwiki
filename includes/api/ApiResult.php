@@ -31,21 +31,34 @@ if (!defined('MEDIAWIKI')) {
 
 class ApiResult extends ApiBase {
 
-	private $mData;
+	private $mData, $mIsRawMode;
 
 	/**
 	* Constructor
 	*/
 	public function __construct($main) {
 		parent :: __construct($main, 'result');
-		$this->Reset();
+		$this->mIsRawMode = false;
+		$this->reset();
 	}
 
-	public function Reset() {
+	public function reset() {
 		$this->mData = array ();
 	}
+	
+	/**
+	 * Call this function when special elements such as '_element' 
+	 * are needed by the formatter, for example in XML printing. 
+	 */
+	public function setRawMode() {
+		$this->mIsRawMode = true;
+	}
+	
+	public function getIsRawMode() {
+		return $this->mIsRawMode;
+	}
 
-	function & getData() {
+	public function & getData() {
 		return $this->mData;
 	}
 
@@ -73,11 +86,19 @@ class ApiResult extends ApiBase {
 	/**
 	 * Adds the content element to the array.
 	 * Use this function instead of hardcoding the '*' element.
+	 * @param string $subElemName when present, content element is created as a sub item of the arr.
+	 *  Use this parameter to create elements in format <elem>text</elem> without attributes
 	 */
-	public static function setContent(& $arr, $value) {
+	public static function setContent(& $arr, $value, $subElemName = null) {
 		if (is_array($value))
 			ApiBase :: dieDebug(__METHOD__, 'Bad parameter');
-		ApiResult :: setElement($arr, '*', $value);
+		if (is_null($subElemName)) {
+			ApiResult :: setElement($arr, '*', $value);
+		} else {
+			if (!isset ($arr[$subElemName]))
+				$arr[$subElemName] = array ();
+			ApiResult :: setElement($arr[$subElemName], '*', $value);
+		}
 	}
 
 	//	public static function makeContentElement($tag, $value) {
@@ -89,10 +110,13 @@ class ApiResult extends ApiBase {
 	 * In case the array contains indexed values (in addition to named),
 	 * all indexed values will have the given tag name.
 	 */
-	public static function setIndexedTagName(& $arr, $tag) {
-		// Do not use setElement() as it is ok to call this more than once
+	public function setIndexedTagName(& $arr, $tag) {
+		// In raw mode, add the '_element', otherwise just ignore
+		if (!$this->getIsRawMode())
+			return;
 		if ($arr === null || $tag === null || !is_array($arr) || is_array($tag))
 			ApiBase :: dieDebug(__METHOD__, 'Bad parameter');
+		// Do not use setElement() as it is ok to call this more than once
 		$arr['_element'] = $tag;
 	}
 
@@ -105,7 +129,7 @@ class ApiResult extends ApiBase {
 
 		$data = & $this->getData();
 
-		if (isset ($path)) {
+		if (!is_null($path)) {
 			if (is_array($path)) {
 				foreach ($path as $p) {
 					if (!isset ($data[$p]))
@@ -122,32 +146,12 @@ class ApiResult extends ApiBase {
 		ApiResult :: setElement($data, $name, $value);
 	}
 
-	/**
-	* Recursivelly removes any elements from the array that begin with an '_'.
-	* The content element '*' is the only special element that is left.
-	* Use this method when the entire data object gets sent to the user.
-	*/
-	public function SanitizeData() {
-		ApiResult :: SanitizeDataInt($this->mData);
-	}
-
-	private static function SanitizeDataInt(& $data) {
-		foreach ($data as $key => & $value) {
-			if ($key[0] === '_') {
-				unset ($data[$key]);
-			}
-			elseif (is_array($value)) {
-				ApiResult :: SanitizeDataInt($value);
-			}
-		}
-	}
-
 	public function execute() {
 		ApiBase :: dieDebug(__METHOD__, 'execute() is not supported on Result object');
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiResult.php 16757 2006-10-03 05:41:55Z yurik $';
+		return __CLASS__ . ': $Id: ApiResult.php 17076 2006-10-18 05:35:24Z yurik $';
 	}
 }
 ?>

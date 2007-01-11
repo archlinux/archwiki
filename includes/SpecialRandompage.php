@@ -11,7 +11,7 @@
  *               used as e.g. Special:Randompage/Category
  */
 function wfSpecialRandompage( $par = NS_MAIN ) {
-	global $wgOut, $wgExtraRandompageSQL, $wgContLang, $wgLang;
+	global $wgOut, $wgExtraRandompageSQL;
 	$fname = 'wfSpecialRandompage';
 
 	# Determine namespace
@@ -49,7 +49,7 @@ function wfSpecialRandompage( $par = NS_MAIN ) {
 	}
 	if( is_null( $title ) ) {
 		# That's not supposed to happen :)
-		$title = Title::newFromText( wfMsg( 'mainpage' ) );
+		$title = Title::newMainPage();
 	}
 	$wgOut->reportTime(); # for logfile
 	$wgOut->redirect( $title->getFullUrl() );

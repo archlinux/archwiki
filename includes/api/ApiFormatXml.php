@@ -31,6 +31,8 @@ if (!defined('MEDIAWIKI')) {
 
 class ApiFormatXml extends ApiFormatBase {
 
+	private $mRootElemName = 'api';
+
 	public function __construct($main, $format) {
 		parent :: __construct($main, $format);
 	}
@@ -42,18 +44,14 @@ class ApiFormatXml extends ApiFormatBase {
 	public function getNeedsRawData() {
 		return true;
 	}
+	
+	public function setRootElement($rootElemName) {
+		$this->mRootElemName = $rootElemName;
+	}
 
 	public function execute() {
-		$xmlindent = null;
-		extract($this->extractRequestParams());
-
-		if ($xmlindent || $this->getIsHtml())
-			$xmlindent = -2;
-		else
-			$xmlindent = null;
-
 		$this->printText('<?xml version="1.0" encoding="utf-8"?>');
-		$this->recXmlPrint('api', $this->getResultData(), $xmlindent);
+		$this->recXmlPrint($this->mRootElemName, $this->getResultData(), $this->getIsHtml() ? -2 : null);
 	}
 
 	/**
@@ -98,8 +96,6 @@ class ApiFormatXml extends ApiFormatBase {
 				$subElements = array ();
 				foreach ($elemValue as $subElemId => & $subElemValue) {
 					if (gettype($subElemId) === 'integer') {
-						if (!is_array($subElemValue))
-							ApiBase :: dieDebug(__METHOD__, "($elemName, ...) has a scalar indexed value.");
 						$indElements[] = $subElemValue;
 						unset ($elemValue[$subElemId]);
 					} elseif (is_array($subElemValue)) {
@@ -109,7 +105,7 @@ class ApiFormatXml extends ApiFormatBase {
 				}
 
 				if (is_null($subElemIndName) && !empty ($indElements))
-					ApiBase :: dieDebug(__METHOD__, "($elemName, ...) has integer keys without _element value");
+					ApiBase :: dieDebug(__METHOD__, "($elemName, ...) has integer keys without _element value. Use ApiResult::setIndexedTagName().");
 
 				if (!empty ($subElements) && !empty ($indElements) && !is_null($subElemContent))
 					ApiBase :: dieDebug(__METHOD__, "($elemName, ...) has content and subelements");
@@ -139,23 +135,11 @@ class ApiFormatXml extends ApiFormatBase {
 		}
 	}
 	protected function getDescription() {
-		return 'Output data in XML format';
-	}
-
-	protected function getAllowedParams() {
-		return array (
-			'xmlindent' => false
-		);
-	}
-
-	protected function getParamDescription() {
-		return array (
-			'xmlindent' => 'Enable XML indentation'
-		);
+		return 'Output data in XML format' . parent :: getDescription();
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatXml.php 16725 2006-10-01 21:20:55Z yurik $';
+		return __CLASS__ . ': $Id: ApiFormatXml.php 17374 2006-11-03 06:53:47Z yurik $';
 	}
 }
 ?>

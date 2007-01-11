@@ -77,7 +77,8 @@ $messages = array(
 'oct'                   => 'Oto',
 'nov'                   => 'Nov',
 'dec'                   => 'Diç',
-'categories'            => '{{PLURAL:$1|Categoria|Categorie}}',
+'categories'            => 'Categorie',
+'pagecategories'        => '{{PLURAL:$1|Categoria|Categorie}}',
 'category_header'       => 'Voçi n\'te ła categoria "$1"',
 'mainpage'              => 'Paxèna prinzsipałe',
 'mainpagetext'          => '\'\'\'MediaWiki xè stà instałà con sucesso.\'\'\'',
@@ -682,7 +683,7 @@ Par cortesia, conferma che l\'è to intenzsion proçedere a tałe scancełazsion
 'rollback'              => 'Usa una revisione precedente',
 'rollbackfailed'        => 'Rollback non riuzsio',
 'cantrollback'          => 'No xè mia possibiłe tornar a na verzsión precedente: l\'ultima modifica xè stà apportà da l\'unico utente che gà laorà a stò arthicoło.',
-'alreadyrolled'         => 'Non xè mia possibile effettuare el rollback de [[$1]] da [[User:$2|$2]] ([[User talk:$2|discussion]]); qualcun altro gà xà modificà o effetuà el rollback de sta voçe. L\'ultima modefega l\'è stà fata da [[User:$3|$3]] ([[User talk:$3|discussion]]).',
+'alreadyrolled'         => 'Non xè mia possibile effettuare el rollback de [[:$1]] da [[User:$2|$2]] ([[User talk:$2|discussion]]); qualcun altro gà xà modificà o effetuà el rollback de sta voçe. L\'ultima modefega l\'è stà fata da [[User:$3|$3]] ([[User talk:$3|discussion]]).',
 'editcomment'           => 'El commento a la modifica xera: "<i>$1</i>".',
 'revertpage'            => 'Anułate łe modifeghe de [[Special:Contributions/$2|$2]] ([[User talk:$2|discussion]]), riportà a ła verzsion preçedente de [[User:$1|$1]]',
 'protectlogpage'        => 'Log de protezsión',
@@ -856,7 +857,7 @@ Tute łe operazsion de importazsion trans-wiki łe xè registrae nel [[Special:L
 'importuploaderror'     => 'El caricamento de le imamgini xè falío, forse parché el file l\'è pì grosso del quel che xè permesso.',
 'importlogpage'         => 'Importazsion',
 'importlogpagetext'     => 'Registro de łe importazsion d\'uffiçio de paxène provenienti da altre wiki, complete de cronołogia.',
-'import-logentry-upload'=> 'gà importà $1 tramite upload',
+'import-logentry-upload'=> 'gà importà [[$1]] tramite upload',
 'import-logentry-upload-detail'=> '{{PLURAL:$1|una revixion importà|$1 revixion importae}}',
 'import-logentry-interwiki'=> 'gà trasferio da altra wiki ła paxèna $1',
 'import-logentry-interwiki-detail'=> '{{PLURAL:$1|una revixion importà|$1 revixion importae}} da $2',
@@ -865,7 +866,7 @@ Tute łe operazsion de importazsion trans-wiki łe xè registrae nel [[Special:L
 'tooltip-minoredit'     => 'Segnała come modifega minore [alt-i]',
 'tooltip-save'          => 'Salva łe modifeghe [alt-s]',
 'tooltip-preview'       => 'Anteprima de łe modifeghe (consilià, prima de salvare!) [alt-p]',
-'tooltip-diff'          => 'Varda łe modifeghe apportae al testo. [alt-d]',
+'tooltip-diff'          => 'Varda łe modifeghe apportae al testo. [alt-v]',
 'tooltip-compareselectedversions'=> 'Varda łe diferenzse tra łe do verzsion selezsionà de sta paxèna. [alt-v]',
 'notacceptable'         => 'El server wiki non xè in grado di fornire i dati in un formato łeggibiłe dal client utilixà.',
 'anonymous'             => 'Utente(/i) anonimo(/i) de {{SITENAME}}',
@@ -891,7 +892,7 @@ Tute łe operazsion de importazsion trans-wiki łe xè registrae nel [[Special:L
 'rcpatroldisabled'      => 'Recent Changes Patrol disabled',
 'markedaspatrollederror'=> 'Impossibiłe contrassegnare ła voçe come verificà',
 'markedaspatrollederrortext'=> 'Occorre speçificare na revixion da contrazsegnare come verificà.',
-'Monobook.js'           => '/* tooltips and access keys */
+'monobook.js'           => '/* tooltips and access keys */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'La me paxèna utente\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'La paxèna utente de l\'ip che te stè usando\');
@@ -902,7 +903,7 @@ Tute łe operazsion de importazsion trans-wiki łe xè registrae nel [[Special:L
  ta[\'pt-mycontris\'] = new Array(\'y\',\'La lista de i me contributi\');
  ta[\'pt-login\'] = new Array(\'o\',\'Te consigliemo de registrarte, ma non l\'è obbligatorio.\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'Te consigliemo de registrarte, ma non l\'è obbligatorio.\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Log out (esci)\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Log out (esci)\');
  ta[\'ca-talk\'] = new Array(\'t\',\'Varda łe discussion rełative a la voçe\');
  ta[\'ca-edit\'] = new Array(\'e\',\'Te podi modificar sta paxèna. Per favor usa el botton de anteprima prima de salvare.\');
  ta[\'ca-addsection\'] = new Array(\'+\',\'Xonta un commento a sta discussion.\');

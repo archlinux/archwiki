@@ -121,6 +121,7 @@ $messages = array(
 # Bits of text used by many pages:
 #
 'categories'	=> 'Rummadoù ar bajenn',
+'pagecategories'	=> 'Rummadoù ar bajenn',
 'category_header' => 'Niver a bennadoù er rummad "$1"',
 'subcategories'	=> 'Isrummad',
 'uncategorizedcategories' => 'Rummadoù hep rummadoù',
@@ -786,10 +787,10 @@ Eur ar servijer (UTC) eo an eur merket.
 'rollbacklink'	=> 'disteuler',
 'rollbackfailed' => 'C\'hwitet eo bet an distaoladenn',
 'cantrollback'	=> "Dibosupl da zisteuler: an aozer diwezhañ eo an hini nemetañ da vezañ kemmet ar pennad-mañ",
-'alreadyrolled'	=> "Dibosupl eo disteuler ar c'hemm diwezhañ graet e [[$1]]
+'alreadyrolled'	=> "Dibosupl eo disteuler ar c'hemm diwezhañ graet e [[:$1]]
 gant [[User:$2|$2]] ([[User talk:$2|Talk]]); kemmet pe distaolet eo bet c'hoazh gant unan bennak all.
 
-Ar c'hemm diwezhañ a oa gant [[User:$3|$3]] ([[User talk:$3|Talk]]). ", //Looxix
+Ar c'hemm diwezhañ a oa gant [[User:$3|$3]] ([[User talk:$3|Talk]]).", //Looxix
 #   only shown if there is an edit comment
 'editcomment' => "Diverradenn ar c'hemm a oa: \"<i>$1</i>\".", //Looxix
 'revertpage'	=> 'Adlakaat kemm diwezhañ $1',

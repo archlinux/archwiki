@@ -112,7 +112,8 @@ $messages = array(
 'jul'                   => 'Júl',
 'aug'                   => 'aug',
 'oct'                   => 'Okt',
-'categories'            => '{{PLURAL:$1|Kategória|Kategóriák}}',
+'categories'            => 'Kategóriák',
+'pagecategories'        => '{{PLURAL:$1|Kategória|Kategóriák}}',
 'category_header'       => '„$1” kategóriába tartozó szócikkek',
 'subcategories'         => 'Alkategóriák',
 'mainpage'              => 'Kezdőlap',
@@ -776,7 +777,7 @@ Minden időpont a server órája ([[UTC]]) szerinti.
 'deletionlog'           => 'törlési napló',
 'deletecomment'         => 'A törlés oka',
 'cantrollback'          => 'Nem lehet visszaállítani: az utolsó szerkesztést végző felhasználó az egyetlen, aki a lapot szerkesztette.',
-'alreadyrolled'         => '[[$1]] utolsó, [[User:$2|$2]] ([[User talk:$2|vita]]) általi szerkesztését nem lehet visszavonni: időközben valakimár visszavonta, vagy szerkesztette a lapot.
+'alreadyrolled'         => '[[:$1]] utolsó, [[User:$2|$2]] ([[User talk:$2|vita]]) általi szerkesztését nem lehet visszavonni: időközben valakimár visszavonta, vagy szerkesztette a lapot.
 
 Az utolsó szerkesztést [[User:$3|$3]] ([[User talk:$3|vita]]) végezte.',
 'editcomment'           => 'A változtatás összefoglalója "<i>$1</i>" volt.',
@@ -923,7 +924,7 @@ Az utóbbi esetben közvetlen linket is használhatsz, például a [[Special:Exp
 'tooltip-minoredit'     => 'Szerkesztés megjelölése apróként [alt-i]',
 'tooltip-save'          => 'A változtatásaid elmentése [alt-s]',
 'tooltip-preview'       => 'Mielőtt elmentenéd a lapot, ellenőrizd, biztosan úgy néz-e ki, ahogy szeretnéd! [alt-p]',
-'tooltip-diff'          => 'Nézd meg, milyen változtatásokat végeztél eddig a szövegen [alt-d]',
+'tooltip-diff'          => 'Nézd meg, milyen változtatásokat végeztél eddig a szövegen [alt-v]',
 'tooltip-compareselectedversions'=> 'A két kiválasztott változat közötti eltérések megjelenítése [alt-v]',
 'anonymous'             => 'Névtelen {{SITENAME}}-felhasználó(k)',
 'lastmodifiedatby'        => 'Ezt a lapot utoljára $3 módosította $2, $1 időpontban.',
@@ -945,7 +946,7 @@ Az utóbbi esetben közvetlen linket is használhatsz, például a [[Special:Exp
 'markedaspatrolledtext' => 'A kiválasztott változatot ellenőrzöttnek jelölted.',
 'rcpatroldisabled'      => 'A Friss Változtatások Ellenőrzése kikapcsolva',
 'rcpatroldisabledtext'  => 'A Friss Változtatások Ellenőrzése jelenleg nincs engedélyezve.',
-'Monobook.js'           => '/* Tooltipek és gyorsbillentyűk */
+'monobook.js'           => '/* Tooltipek és gyorsbillentyűk */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'A felhasználói lapod\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Az általad használt IP címhez tartozó felhasználói lap\');
@@ -956,7 +957,7 @@ Az utóbbi esetben közvetlen linket is használhatsz, például a [[Special:Exp
  ta[\'pt-mycontris\'] = new Array(\'y\',\'A közreműködéseid listája\');
  ta[\'pt-login\'] = new Array(\'o\',\'Bejelentkezni javasolt, de nem kötelező.\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'Bejelentkezni javasolt, de nem kötelező.\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Kijelentkezés\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Kijelentkezés\');
  ta[\'ca-talk\'] = new Array(\'t\',\'Az oldal tartalmának megvitatása\');
  ta[\'ca-edit\'] = new Array(\'e\',\'Te is szerkesztheted ezt az oldalt. Mielőtt elmentenéd, használd az előnézetet.\');
  ta[\'ca-addsection\'] = new Array(\'+\',\'Újabb fejezet nyitása a vitában.\');

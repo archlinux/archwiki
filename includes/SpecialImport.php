@@ -208,7 +208,7 @@ class ImportReporter {
 			$dbw = wfGetDB( DB_MASTER );
 			$nullRevision = Revision::newNullRevision(
 				$dbw, $title->getArticleId(), $comment, true );
-			$nullRevId = $nullRevision->insertOn( $dbw );
+			$nullRevision->insertOn( $dbw );
 		}
 	}
 	
@@ -304,7 +304,6 @@ class WikiRevision {
 	}
 
 	function importOldRevision() {
-		$fname = "WikiImporter::importOldRevision";
 		$dbw =& wfGetDB( DB_MASTER );
 
 		# Sneak a single revision into place
@@ -818,7 +817,7 @@ class ImportStreamSource {
 		return new ImportStreamSource( $file );
 	}
 
-	function newFromUpload( $fieldname = "xmlimport" ) {
+	static function newFromUpload( $fieldname = "xmlimport" ) {
 		$upload =& $_FILES[$fieldname];
 
 		if( !isset( $upload ) || !$upload['name'] ) {
@@ -844,10 +843,9 @@ class ImportStreamSource {
 		return $ret;
 	}
 
-	function newFromInterwiki( $interwiki, $page, $history=false ) {
-		$base = Title::getInterwikiLink( $interwiki );
+	public static function newFromInterwiki( $interwiki, $page, $history=false ) {
 		$link = Title::newFromText( "$interwiki:Special:Export/$page" );
-		if( empty( $base ) || empty( $link ) ) {
+		if( is_null( $link ) || $link->getInterwiki() == '' ) {
 			return new WikiErrorMsg( 'importbadinterwiki' );
 		} else {
 			$params = $history ? 'history=1' : '';

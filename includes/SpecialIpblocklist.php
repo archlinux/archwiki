@@ -58,7 +58,7 @@ class IPUnblockForm {
 		$ipa = wfMsgHtml( $wgSysopUserBans ? 'ipadressorusername' : 'ipaddress' );
 		$ipr = wfMsgHtml( 'ipbreason' );
 		$ipus = wfMsgHtml( 'ipusubmit' );
-		$titleObj = Title::makeTitle( NS_SPECIAL, "Ipblocklist" );
+		$titleObj = SpecialPage::getTitleFor( "Ipblocklist" );
 		$action = $titleObj->escapeLocalURL( "action=submit" );
 
 		if ( "" != $err ) {
@@ -142,7 +142,7 @@ class IPUnblockForm {
 
 		if ( $success ) {
 			# Report to the user
-			$titleObj = Title::makeTitle( NS_SPECIAL, "Ipblocklist" );
+			$titleObj = SpecialPage::getTitleFor( "Ipblocklist" );
 			$success = $titleObj->getFullURL( "action=success&successip=" . urlencode( $this->ip ) );
 			$wgOut->redirect( $success );
 		} else {
@@ -167,6 +167,7 @@ class IPUnblockForm {
 		}
 
 		$conds = array();
+		$matches = array();
 		if ( $this->ip == '' ) {
 			// No extra conditions
 		} elseif ( substr( $this->ip, 0, 1 ) == '#' ) {
@@ -174,7 +175,7 @@ class IPUnblockForm {
 		} elseif ( IP::toUnsigned( $this->ip ) !== false ) {
 			$conds['ipb_address'] = $this->ip;
 			$conds['ipb_auto'] = 0;
-		} elseif( preg_match( "/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\\/(\\d{1,2})$/", $this->ip, $matches ) ) {
+		} elseif( preg_match( '/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\\/(\\d{1,2})$/', $this->ip, $matches ) ) {
 			$conds['ipb_address'] = Block::normaliseRange( $this->ip );
 			$conds['ipb_auto'] = 0;
 		} else {
@@ -222,7 +223,7 @@ class IPUnblockForm {
 				'value' => $this->ip ) ) .
 			wfElement( 'input', array(
 				'type' => 'submit',
-				'value' => wfMsg( 'search' ) ) ) .
+				'value' => wfMsg( 'searchbutton' ) ) ) .
 			'</form>';
 	}
 
@@ -241,7 +242,7 @@ class IPUnblockForm {
 		if( is_null( $msg ) ) {
 			$msg = array();
 			$keys = array( 'infiniteblock', 'expiringblock', 'contribslink', 'unblocklink', 
-				'anononlyblock', 'createaccountblock' );
+				'anononlyblock', 'createaccountblock', 'noautoblockblock' );
 			foreach( $keys as $key ) {
 				$msg[$key] = wfMsgHtml( $key );
 			}
@@ -250,16 +251,17 @@ class IPUnblockForm {
 		}
 
 		# Prepare links to the blocker's user and talk pages
+		$blocker_id = $block->getBy();
 		$blocker_name = $block->getByName();
-		$blocker = $sk->MakeLinkObj( Title::makeTitle( NS_USER, $blocker_name ), $blocker_name );
-		$blocker .= ' (' . $sk->makeLinkObj( Title::makeTitle( NS_USER_TALK, $blocker_name ), $wgLang->getNsText( NS_TALK ) ) . ')';
+		$blocker = $sk->userLink( $blocker_id, $blocker_name );
+		$blocker .= $sk->userToolLinks( $blocker_id, $blocker_name );
 
 		# Prepare links to the block target's user and contribs. pages (as applicable, don't do it for autoblocks)
 		if( $block->mAuto ) {
 			$target = $block->getRedactedName(); # Hide the IP addresses of auto-blocks; privacy
 		} else {
 			$target = $sk->makeLinkObj( Title::makeTitle( NS_USER, $block->mAddress ), $block->mAddress );
-			$target .= ' (' . $sk->makeKnownLinkObj( Title::makeTitle( NS_SPECIAL, 'Contributions' ), $msg['contribslink'], 'target=' . urlencode( $block->mAddress ) ) . ')';
+			$target .= ' (' . $sk->makeKnownLinkObj( SpecialPage::getSafeTitleFor( 'Contributions', $block->mAddress ), $msg['contribslink'] ) . ')';
 		}
 		
 		$formattedTime = $wgLang->timeanddate( $block->mTimestamp, true );
@@ -277,6 +279,10 @@ class IPUnblockForm {
 		if ( $block->mCreateAccount ) {
 			$properties[] = $msg['createaccountblock'];
 		}
+		if (!$block->mEnableAutoblock && $block->mUser ) {
+			$properties[] = $msg['noautoblockblock'];
+		}
+
 		$properties = implode( ', ', $properties );
 
 		$line = wfMsgReplaceArgs( $msg['blocklistline'], array( $formattedTime, $blocker, $target, $properties ) );
@@ -284,7 +290,7 @@ class IPUnblockForm {
 		$s = "<li>{$line}";
 
 		if ( $wgUser->isAllowed('block') ) {
-			$titleObj = Title::makeTitle( NS_SPECIAL, "Ipblocklist" );
+			$titleObj = SpecialPage::getTitleFor( "Ipblocklist" );
 			$s .= ' (' . $sk->makeKnownLinkObj($titleObj, $msg['unblocklink'], 'action=unblock&id=' . urlencode( $block->mId ) ) . ')';
 		}
 		$s .= $sk->commentBlock( $block->mReason );

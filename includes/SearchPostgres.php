@@ -60,6 +60,7 @@ class SearchPostgres extends SearchEngine {
 		$this->searchTerms = array();
 
 		# FIXME: This doesn't handle parenthetical expressions.
+		$m = array();
 		if( preg_match_all( '/([-+<>~]?)(([' . $lc . ']+)(\*?)|"[^"]*")/',
 			  $filteredText, $m, PREG_SET_ORDER ) ) {
 			foreach( $m as $terms ) {
@@ -77,7 +78,7 @@ class SearchPostgres extends SearchEngine {
 				$this->searchTerms[] = $regexp;
 			}
 			wfDebug( "Would search with '$searchon'\n" );
-			wfDebug( "Match with /\b" . implode( '\b|\b', $this->searchTerms ) . "\b/\n" );
+			wfDebug( 'Match with /\b' . implode( '\b|\b', $this->searchTerms ) . "\b/\n" );
 		} else {
 			wfDebug( "Can't understand search query '{$this->filteredText}'\n" );
 		}
@@ -97,7 +98,8 @@ class SearchPostgres extends SearchEngine {
 
 		$match = $this->parseQuery( $filteredTerm, $fulltext );
 
-		$query = "SELECT page_id, page_namespace, page_title, old_text AS page_text ".
+		$query = "SELECT page_id, page_namespace, page_title, old_text AS page_text, ".
+			"rank(titlevector, to_tsquery('default','$match')) AS rnk ".
 			"FROM page p, revision r, pagecontent c WHERE p.page_latest = r.rev_id " .
 			"AND r.rev_text_id = c.old_id AND $fulltext @@ to_tsquery('default','$match')";
 
@@ -113,7 +115,7 @@ class SearchPostgres extends SearchEngine {
 			$query .=  " AND page_namespace IN ($namespaces)";
 		}
 
-		$query .= " ORDER BY rank($fulltext, to_tsquery('default','$fulltext')) DESC";
+		$query .= " ORDER BY rnk DESC, page_id DESC";
 
 		$query .= $this->db->limitResult( '', $this->limit, $this->offset );
 

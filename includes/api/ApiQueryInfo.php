@@ -46,14 +46,17 @@ class ApiQueryInfo extends ApiQueryBase {
 
 		$pageSet = $this->getPageSet();
 		$titles = $pageSet->getGoodTitles();
-		$result = & $this->getResult();
+		$result = $this->getResult();
 
 		$pageIsRedir = $pageSet->getCustomField('page_is_redirect');
 		$pageTouched = $pageSet->getCustomField('page_touched');
 		$pageLatest = $pageSet->getCustomField('page_latest');
 
-		foreach ($titles as $pageid => $title) {
-			$pageInfo = array ('touched' => $pageTouched[$pageid], 'lastrevid' => $pageLatest[$pageid]);
+		foreach ( $titles as $pageid => $unused ) {
+			$pageInfo = array (
+				'touched' => wfTimestamp(TS_ISO_8601, $pageTouched[$pageid]),
+				'lastrevid' => intval($pageLatest[$pageid])
+			);
 
 			if ($pageIsRedir[$pageid])
 				$pageInfo['redirect'] = '';
@@ -76,7 +79,7 @@ class ApiQueryInfo extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryInfo.php 16757 2006-10-03 05:41:55Z yurik $';
+		return __CLASS__ . ': $Id: ApiQueryInfo.php 17929 2006-11-25 17:11:58Z tstarling $';
 	}
 }
 ?>

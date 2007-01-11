@@ -99,7 +99,8 @@ $messages = array(
 'oct'                   => 'Ekim',
 'nov'                   => 'Kasım',
 'dec'                   => 'Aralık',
-'categories'            => 'Sayfa {{PLURAL:$1|kategorisi|kategorileri}}',
+'categories'            => 'Sayfa kategorileri',
+'pagecategories'        => 'Sayfa {{PLURAL:$1|kategorisi|kategorileri}}',
 'category_header'       => '"$1" kategorisindeki sayfalar',
 'subcategories'         => 'Alt Kategoriler',
 'mainpage'              => 'Ana Sayfa',
@@ -558,11 +559,7 @@ Eğer bu bir resim ise <tt><nowiki>[[{{ns:Image}}:$1|thumb|açıklama]]</nowiki>
 'uploadwarning'         => 'Yükleme uyarısı',
 'savefile'              => 'Dosyayı kaydet',
 'uploadedimage'         => 'Yüklenen: "[[$1]]"',
-'uploaddisabled'        => '{|
-|-
-| valign="top" | [[Image:Padlock.svg|45px|Şu anda dosya yüklenmez]]
-|Geçici olarak şu anda herhangi bir dosya yüklenmez. Biraz sonra bir daha deneyiniz.
-|}',
+'uploaddisabled'        => 'Geçici olarak şu anda herhangi bir dosya yüklenmez. Biraz sonra bir daha deneyiniz.',
 'uploaddisabledtext'    => 'Bu wikide dosya yükleme özelliği iptal edilmiştir.',
 'uploadvirus'           => 'Bu dosya virüslüdür! Detayları: $1',
 'sourcefilename'        => 'Yüklemek istediğiniz dosya',
@@ -943,7 +940,7 @@ In the latter case you can also use a link, e.g. [[Special:Export/{{int:Mainpage
 'tooltip-diff'          => 'Metine yaptığınız değişiklikleri gösterir. [alt-v]',
 'tooltip-compareselectedversions'=> 'Seçilmiş iki sürüm arasındaki farkları göster. [alt-v]',
 'tooltip-watch'         => 'Sayfayı izleme listene ekle [alt-w]',
-'Monobook.css'          => '/* monobook temasının ayarlarını değiştirmek için burayı değiştirin. Tüm sitede etkili olur. */',
+'monobook.css'          => '/* monobook temasının ayarlarını değiştirmek için burayı değiştirin. Tüm sitede etkili olur. */',
 'siteuser'              => '{{SITENAME}} kullanıcı $1',
 'lastmodifiedatby'        => 'Sayfa en son $3 tarafından $2, $1 tarihinde değiştirildi.',
 'and'                   => 've',
@@ -961,7 +958,7 @@ In the latter case you can also use a link, e.g. [[Special:Export/{{int:Mainpage
 'mw_math_source'        => 'Değiştirmeden TeX olarak bırak  (metin tabanlı tarayıcılar için)',
 'mw_math_modern'        => 'Modern tarayıcılar için tavsiye edilen',
 'mw_math_mathml'        => 'Mümkünse MathML (daha deneme aşamasında)',
-'Monobook.js'           => '/* Kısa yol tuşları ve yardım balonları */
+'monobook.js'           => '/* Kısa yol tuşları ve yardım balonları */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Kişisel sayfam\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'The user page for the ip you\'re editing as\');
@@ -972,7 +969,7 @@ In the latter case you can also use a link, e.g. [[Special:Export/{{int:Mainpage
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Yaptığım katkıların listesi\');
  ta[\'pt-login\'] = new Array(\'o\',\'Oturum açmanız tavsiye olunur ama mecbur değilsiniz.\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'Oturum açmanız tavsiye olunur ama mecbur değilsiniz.\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Sistemden çık\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Sistemden çık\');
  ta[\'ca-talk\'] = new Array(\'t\',\'İçerik ile ilgili görüş belirt\');
  ta[\'ca-edit\'] = new Array(\'e\',\'Bu sayfayı değiştirebilirsiniz. Kaydetmeden önce önizleme yapmayı unutmayın.\');
  ta[\'ca-addsection\'] = new Array(\'+\',\'Bu tartışmaya yorum ekleyin.\');

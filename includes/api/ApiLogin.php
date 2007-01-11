@@ -89,8 +89,8 @@ class ApiLogin extends ApiBase {
 
 	protected function getAllowedParams() {
 		return array (
-			'name' => '',
-			'password' => '',
+			'name' => null,
+			'password' => null,
 			'domain' => null
 		);
 	}
@@ -116,7 +116,7 @@ class ApiLogin extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiLogin.php 16757 2006-10-03 05:41:55Z yurik $';
+		return __CLASS__ . ': $Id: ApiLogin.php 17065 2006-10-17 02:11:29Z yurik $';
 	}
 }
 ?>

@@ -75,7 +75,7 @@ function sajax_do_call(func_name, args, target) {
 	var i, x, n;
 	var uri;
 	var post_data;
-	uri = wgServer + "/" + wgScriptPath + "/index.php?action=ajax";
+	uri = wgServer + wgScriptPath + "/index.php?action=ajax";
 	if (sajax_request_type == "GET") {
 		if (uri.indexOf("?") == -1)
 			uri = uri + "?rs=" + encodeURIComponent(func_name);
@@ -96,7 +96,14 @@ function sajax_do_call(func_name, args, target) {
 		return false;
 	}
 	
-	x.open(sajax_request_type, uri, true);
+	try {
+		x.open(sajax_request_type, uri, true);
+	} catch (e) {
+		if (window.location.hostname == "localhost") {
+			alert("Your browser blocks XMLHttpRequest to 'localhost', try using a real hostname for development/testing.");
+		}
+		throw e;
+	}
 	if (sajax_request_type == "POST") {
 		x.setRequestHeader("Method", "POST " + uri + " HTTP/1.1");
 		x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");

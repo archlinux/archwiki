@@ -27,7 +27,7 @@ function wfSpecialPrefixIndex( $par=NULL, $specialPage ) {
 		$namespace = 0;
 
 	$wgOut->setPagetitle( $namespace > 0 ?
-		wfMsg( 'allinnamespace', $namespaces[$namespace] ) :
+		wfMsg( 'allinnamespace', str_replace( '_', ' ', $namespaces[$namespace] ) ) :
 		wfMsg( 'allarticles' )
 		);
 
@@ -97,7 +97,6 @@ function showChunk( $namespace = NS_MAIN, $prefix, $including = false, $from = n
 		$n = 0;
 		$out = '<table style="background: inherit;" border="0" width="100%">';
 
-		$namespaces = $wgContLang->getFormattedNamespaces();
 		while( ($n < $this->maxPerPage) && ($s = $dbr->fetchObject( $res )) ) {
 			$t = Title::makeTitle( $s->page_namespace, $s->page_title );
 			if( $t ) {

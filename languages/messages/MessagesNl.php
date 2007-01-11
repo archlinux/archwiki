@@ -172,7 +172,8 @@ parent class in order maintain consistency across languages.
 'dec'                   => 'dec',
 # Bits of text used by many pages:
 #
-'categories'            => '{{PLURAL:$1|Categorie|Categorieën}}',
+'categories'            => 'Categorieën',
+'pagecategories'        => '{{PLURAL:$1|Categorie|Categorieën}}',
 'category_header'       => 'Pagina\'s in categorie "$1"',
 'subcategories'         => 'Ondercategorieën',
 
@@ -595,7 +596,7 @@ U kunt reeds bestaande pagina\'s wijzigen, of u kunt [[Special:Userlogin|zich aa
 'loadhist'              => 'Bezig met het laden van de paginageschiedenis',
 'currentrev'            => 'Huidige versie',
 'revisionasof'          => 'Versie op $1',
-'old-revision-navigation'=> 'Versie per $1; $5<br />($6) $3 | $2 | $4 ($7)',
+'revision-info' => 'Versie per $1; $2',
 'previousrevision'      => '←Oudere versie',
 'nextrevision'          => 'Nieuwere versie→',
 'currentrevisionlink'   => 'Huidige versie',
@@ -1131,7 +1132,7 @@ Feedback en andere assistentie:
 'rollbacklink'          => 'terugdraaien',
 'rollbackfailed'        => 'Ongedaan maken van wijzigingen mislukt.',
 'cantrollback'          => 'Ongedaan maken van wijzigingen onmogelijk: deze pagina heeft slechts 1 auteur.',
-'alreadyrolled'         => 'Het is niet mogelijk om de bewerking van de pagina [[$1]] door [[User:$2|$2]] ([[User talk:$2|overleg]]) ongedaan te maken. Iemand anders heeft deze pagina al bewerkt of hersteld naar een eerdere versie. 
+'alreadyrolled'         => 'Het is niet mogelijk om de bewerking van de pagina [[:$1]] door [[User:$2|$2]] ([[User talk:$2|overleg]]) ongedaan te maken. Iemand anders heeft deze pagina al bewerkt of hersteld naar een eerdere versie. 
 
 De meest recente bewerking is gemaakt door [[User:$3|$3]] ([[User talk:$3|overleg]]).',
 'editcomment'           => 'Bewerkingssamenvatting: "<i>$1</i>".',
@@ -1406,7 +1407,7 @@ Alle transwiki-importhandelingen worden opgeslagen in het [[Special:Log/import|i
 # import log
 'importlogpage'         => 'Importlogboek',
 'importlogpagetext'     => 'Administratieve import van pagina\'s met geschiedenis van andere wiki\'s.',
-'import-logentry-upload'=> '$1 geïmporteerd via een bestandsupload',
+'import-logentry-upload'=> '[[$1]] geïmporteerd via een bestandsupload',
 'import-logentry-upload-detail'=> '$1 versie(s)',
 'import-logentry-interwiki'=> 'transwiki voor $1 geslaagd',
 'import-logentry-interwiki-detail'=> '$1 versie(s) van $2',
@@ -1418,12 +1419,12 @@ Alle transwiki-importhandelingen worden opgeslagen in het [[Special:Log/import|i
 'tooltip-minoredit'     => 'Markeer dit als een kleine wijziging [alt-i]',
 'tooltip-save'          => 'Sla uw wijzigingen op [alt-s]',
 'tooltip-preview'       => 'Maak een voorvertoning. Gebruik dit! [alt-p]',
-'tooltip-diff'          => 'Toon de gemaakte wijzigingen. [alt-d]',
+'tooltip-diff'          => 'Toon de gemaakte wijzigingen. [alt-v]',
 'tooltip-compareselectedversions'=> 'Toon de verschillen tussen de geselecteerde versies. [alt-v]',
 'tooltip-watch'         => 'Voeg deze pagina toe aan uw volglijst [alt-w]',
 
 # stylesheets
-'Monobook.css'          => '/* Een CSS die hier wordt geplaatst heeft invloed op alle gebruikers van de skin Monobook */',
+'monobook.css'          => '/* Een CSS die hier wordt geplaatst heeft invloed op alle gebruikers van de skin Monobook */',
 
 # Metadata
 'nodublincore'          => 'Dublin Core RDF metadata is uitgeschakeld op deze server.',
@@ -1479,7 +1480,7 @@ Alle transwiki-importhandelingen worden opgeslagen in het [[Special:Log/import|i
 'markedaspatrollederrortext'=> 'Selecteer een versie om als gecontroleerd aan te merken.',
 
 # Monobook.js: tooltips and access keys for monobook
-'Monobook.js'           => '/* tooltips en sneltoetsen */
+'monobook.js'           => '/* tooltips en sneltoetsen */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Mijn gebruikerspagina\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Gebruikerspagina voor uw IP-adres\');
@@ -1490,7 +1491,7 @@ Alle transwiki-importhandelingen worden opgeslagen in het [[Special:Log/import|i
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Mijn bijdragen\');
  ta[\'pt-login\'] = new Array(\'o\',\'U wordt van harte uitgenodigd om u aan te melden als gebruiker, maar dit is niet verplicht\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'U wordt van harte uitgenodigd om u aan te melden als gebruiker, maar dit is niet verplicht\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Afmelden\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Afmelden\');
  ta[\'ca-talk\'] = new Array(\'t\',\'Toon de overlegtekst bij deze pagina\');
  ta[\'ca-edit\'] = new Array(\'e\',\'U kunt deze pagina bewerken. Gebruik a.u.b. de voorbeeldweergaveknop alvorens te bewaren\');
  ta[\'ca-addsection\'] = new Array(\'+\',\'Voeg uw opmerking toe aan de overlegpagina\');

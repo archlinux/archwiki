@@ -14,7 +14,7 @@ require_once( 'ChangesList.php' );
  * Constructor
  */
 function wfSpecialRecentchanges( $par, $specialPage ) {
-	global $wgUser, $wgOut, $wgRequest, $wgUseRCPatrol, $wgDBtype;
+	global $wgUser, $wgOut, $wgRequest, $wgUseRCPatrol;
 	global $wgRCShowWatchingUsers, $wgShowUpdatedMarker;
 	global $wgAllowCategorizedRecentChanges ;
 	$fname = 'wfSpecialRecentchanges';
@@ -43,12 +43,10 @@ function wfSpecialRecentchanges( $par, $specialPage ) {
 	extract($defaults);
 
 
-	$days = $wgUser->getOption( 'rcdays' );
-	if ( !$days ) { $days = $defaults['days']; }
+	$days = $wgUser->getOption( 'rcdays', $defaults['days']);
 	$days = $wgRequest->getInt( 'days', $days );
 
-	$limit = $wgUser->getOption( 'rclimit' );
-	if ( !$limit ) { $limit = $defaults['limit']; }
+	$limit = $wgUser->getOption( 'rclimit', $defaults['limit'] );
 
 	#	list( $limit, $offset ) = wfCheckLimits( 100, 'rclimit' );
 	$limit = $wgRequest->getInt( 'limit', $limit );
@@ -90,7 +88,8 @@ function wfSpecialRecentchanges( $par, $specialPage ) {
 				if ( is_numeric( $bit ) ) {
 					$limit = $bit;
 				}
-
+				
+				$m = array();
 				if ( preg_match( '/^limit=(\d+)$/', $bit, $m ) ) {
 					$limit = $m[1];
 				}
@@ -107,7 +106,7 @@ function wfSpecialRecentchanges( $par, $specialPage ) {
 
 	# Database connection and caching
 	$dbr =& wfGetDB( DB_SLAVE );
-	extract( $dbr->tableNames( 'recentchanges', 'watchlist' ) );
+	list( $recentchanges, $watchlist ) = $dbr->tableNamesN( 'recentchanges', 'watchlist' );
 
 
 	$cutoff_unixtime = time() - ( $days * 86400 );
@@ -198,7 +197,7 @@ function wfSpecialRecentchanges( $par, $specialPage ) {
 
 		// Output header
 		if ( !$specialPage->including() ) {
-			$wgOut->addWikiText( wfMsgForContent( "recentchangestext" ) );
+			$wgOut->addWikiText( wfMsgForContentNoTrans( "recentchangestext" ) );
 
 			// Dump everything here
 			$nondefaults = array();
@@ -222,7 +221,6 @@ function wfSpecialRecentchanges( $par, $specialPage ) {
 		}
 
 		// And now for the content
-		$sk = $wgUser->getSkin();
 		$wgOut->setSyndicated( true );
 
 		$list = ChangesList::newFromUser( $wgUser );
@@ -334,7 +332,7 @@ function rcOutputFeed( $rows, $feedFormat, $limit, $hideminor, $lastmod ) {
 		' [' . $wgContLanguageCode . ']';
 	$feed = new $wgFeedClasses[$feedFormat](
 		$feedTitle,
-		htmlspecialchars( wfMsgForContent( 'recentchangestext' ) ),
+		htmlspecialchars( wfMsgForContent( 'recentchanges-feed-description' ) ),
 		$wgTitle->getFullUrl() );
 
 	/**
@@ -397,7 +395,6 @@ function rcDoOutputFeed( $rows, &$feed ) {
 			$sorted[$n] = $obj;
 			$n++;
 		}
-		$first = false;
 	}
 
 	foreach( $sorted as $obj ) {
@@ -571,7 +568,7 @@ function rcOptionsPanel( $defaults, $nondefaults ) {
  */
 function rcNamespaceForm( $namespace, $invert, $nondefaults, $categories_any ) {
 	global $wgScript, $wgAllowCategorizedRecentChanges, $wgRequest;
-	$t = Title::makeTitle( NS_SPECIAL, 'Recentchanges' );
+	$t = SpecialPage::getTitleFor( 'Recentchanges' );
 
 	$namespaceselect = HTMLnamespaceselector($namespace, '');
 	$submitbutton = '<input type="submit" value="' . wfMsgHtml( 'allpagessubmit' ) . "\" />\n";
@@ -613,9 +610,10 @@ function rcNamespaceForm( $namespace, $invert, $nondefaults, $categories_any ) {
  */
 function rcFormatDiff( $row ) {
 	$titleObj = Title::makeTitle( $row->rc_namespace, $row->rc_title );
+	$timestamp = wfTimestamp( TS_MW, $row->rc_timestamp );
 	return rcFormatDiffRow( $titleObj,
 		$row->rc_last_oldid, $row->rc_this_oldid,
-		$row->rc_timestamp,
+		$timestamp,
 		$row->rc_comment );
 }
 

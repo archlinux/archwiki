@@ -17,6 +17,8 @@
  * --checkpoint <file>  use a checkpoint file to allow restarting of interrupted dumps
  * --slice <n/m>        split the job into m segments and do the n'th one
  * --images             only do image description pages
+ * --shared-desc        only do shared (commons) image description pages
+ * --no-shared-desc     don't do shared image description pages
  * --categories         only do category pages
  * --redirects          only do redirects
  * --special            only do miscellaneous stuff
@@ -24,10 +26,11 @@
  * --interlang          allow interlanguage links
  * --image-snapshot     copy all images used to the destination directory
  * --compress           generate compressed version of the html pages
+ * --udp-profile <N>    profile 1/N rendering operations using ProfilerSimpleUDP
  */
 
 
-$optionsWithArgs = array( 's', 'd', 'e', 'k', 'checkpoint', 'slice' );
+$optionsWithArgs = array( 's', 'd', 'e', 'k', 'checkpoint', 'slice', 'udp-profile' );
 
 $profiling = false;
 
@@ -39,6 +42,10 @@ if ( $profiling ) {
 		$wgProfileToDatabase = false;
 		$wgProfileSampleRate = 1;
 	}
+}
+
+if ( in_array( '--udp-profile', $argv ) ) {
+	define( 'MW_FORCE_PROFILE', 1 );
 }
 
 require_once( "commandLine.inc" );
@@ -93,6 +100,8 @@ $wgHTMLDump = new DumpHTML( array(
 	'sliceDenominator' => $sliceDenominator,
 	'noOverwrite' => $options['no-overwrite'],
 	'compress' => $options['compress'],
+	'noSharedDesc' => $options['no-shared-desc'],
+	'udpProfile' => $options['udp-profile'],
 ));
 
 
@@ -104,6 +113,8 @@ if ( $options['special'] ) {
 	$wgHTMLDump->doCategories();
 } elseif ( $options['redirects'] ) {
 	$wgHTMLDump->doRedirects();
+} elseif ( $options['shared-desc'] ) {
+	$wgHTMLDump->doSharedImageDescriptions();
 } else {
 	print "Creating static HTML dump in directory $dest. \n";
 	$dbr =& wfGetDB( DB_SLAVE );

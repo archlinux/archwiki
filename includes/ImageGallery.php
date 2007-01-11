@@ -42,11 +42,20 @@ class ImageGallery
 	}
 	
 	/**
-	 * Set the caption
+	 * Set the caption (as plain text)
 	 *
 	 * @param $caption Caption
 	 */
 	function setCaption( $caption ) {
+		$this->mCaption = htmlspecialchars( $caption );
+	}
+	
+	/**
+	 * Set the caption (as HTML)
+	 *
+	 * @param $caption Caption
+	 */
+	function setCaptionHtml( $caption ) {
 		$this->mCaption = $caption;
 	}
 
@@ -134,20 +143,19 @@ class ImageGallery
 	 *
 	 */
 	function toHTML() {
-		global $wgLang, $wgIgnoreImageErrors, $wgGenerateThumbnailOnParse;
+		global $wgLang, $wgGenerateThumbnailOnParse;
 
 		$sk = $this->getSkin();
 
 		$s = '<table class="gallery" cellspacing="0" cellpadding="0">';
 		if( $this->mCaption )
-			$s .= '<td class="galleryheader" colspan="4"><big>' . htmlspecialchars( $this->mCaption ) . '</big></td>';
+			$s .= '<td class="galleryheader" colspan="4"><big>' . $this->mCaption . '</big></td>';
 		
 		$i = 0;
 		foreach ( $this->mImages as $pair ) {
 			$img =& $pair[0];
 			$text = $pair[1];
 
-			$name = $img->getName();
 			$nt = $img->getTitle();
 
 			if( $nt->getNamespace() != NS_IMAGE ) {
@@ -205,6 +213,13 @@ class ImageGallery
 		$s .= '</table>';
 
 		return $s;
+	}
+	
+	/**
+	 * @return int Number of images in the gallery
+	 */
+	public function count() {
+		return count( $this->mImages );
 	}
 
 } //class

@@ -59,7 +59,8 @@ $messages = array(
 'oct'                   => 'kew',
 'nov'                   => 'ser',
 'dec'                   => 'ber',
-'categories'            => '{{PLURAL:$1|Kategorî|Kategorî}}',
+'categories'            => 'Kategorî',
+'pagecategories'        => '{{PLURAL:$1|Kategorî|Kategorî}}',
 'category_header'       => 'Gotarên di kategoriya "$1" de',
 'subcategories'         => 'Binkategorî',
 'mainpage'              => 'Destpêk',
@@ -513,7 +514,7 @@ Li rûpela [[Special:Recentchanges|Guherandinên dawî]] jî ji bo hasan dîtina
 'rollback_short'        => 'Bizivirîne pêş',
 'rollbacklink'          => 'bizivirîne pêş',
 'cantrollback'          => 'Guharto naye vegerandin; bikarhêrê dawî, \'\'\'tenya\'\'\' nivîskarê wê rûpelê ye.',
-'alreadyrolled'         => 'Guherandina dawiya [[$1]]
+'alreadyrolled'         => 'Guherandina dawiya [[:$1]]
 bi [[User:$2|$2]] ([[User talk:$2|guftûgo]]) venizivre; keseke din wê rûpelê zivrandiye an guherandiye.
 
 Guhartoya dawî bi [[User:$3|$3]] ([[User talk:$3|guftûgo]]).',
@@ -595,9 +596,9 @@ da bikarî navê wê rûpelê biguherînî.',
 'allmessagesnotsupportedDB'=> '\'\'\'Special:Allmessages\'\'\' cannot be used because \'\'\'$wgUseDatabaseMessages\'\'\' is switched off.',
 'thumbnail-more'        => 'Mezin bike',
 'importnotext'          => 'Vala an nivîs tune',
-'tooltip-diff'          => 'Show which changes you made to the text. [alt-d]',
+'tooltip-diff'          => 'Show which changes you made to the text. [alt-v]',
 'tooltip-compareselectedversions'=> 'Cudatiyên guhartoyên hilbijartî yên vê rûpelê bibîne. [alt-v]',
-'Monobook.css'          => '*.rtl 
+'monobook.css'          => '*.rtl 
  {
   dir:rtl;
   text-align:right;
@@ -659,7 +660,7 @@ da bikarî navê wê rûpelê biguherînî.',
 'subcategorycount'      => 'Di vê kategoriyê de $1 binkategorî hene.',
 'categoryarticlecount'  => 'Di vê kategoriyê de $1 gotar hene.',
 'listingcontinuesabbrev'=> ' dewam',
-'Monobook.js'           => '/* tooltips and access keys */
+'monobook.js'           => '/* tooltips and access keys */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Rûpela min a şexsî\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'The user page for the ip you\'re editing as\');
@@ -670,7 +671,7 @@ da bikarî navê wê rûpelê biguherînî.',
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Lîsteya tevkariyên min\');
  ta[\'pt-login\'] = new Array(\'o\',\'You are encouraged to log in, it is not mandatory however.\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'You are encouraged to log in, it is not mandatory however.\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Derkeve (Log out)\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Derkeve (Log out)\');
  ta[\'ca-talk\'] = new Array(\'t\',\'guftûgo û şîrove ser vê rûpelê\');
  ta[\'ca-edit\'] = new Array(\'e\',\'Vê rûpelê biguherîne! Berê qeydkirinê bişkoka "Pêşdîtin" bi kar bîne.\');
  ta[\'ca-addsection\'] = new Array(\'+\',\'Beşekê zêde bike.\');

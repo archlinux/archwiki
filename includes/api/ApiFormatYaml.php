@@ -40,16 +40,15 @@ class ApiFormatYaml extends ApiFormatBase {
 	}
 
 	public function execute() {
-		require ('ApiFormatYaml_spyc.php');
 		$this->printText(Spyc :: YAMLDump($this->getResultData()));
 	}
 
 	protected function getDescription() {
-		return 'Output data in YAML format';
+		return 'Output data in YAML format' . parent :: getDescription();
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatYaml.php 16725 2006-10-01 21:20:55Z yurik $';
+		return __CLASS__ . ': $Id: ApiFormatYaml.php 17374 2006-11-03 06:53:47Z yurik $';
 	}
 }
 ?>

@@ -31,26 +31,39 @@ if (!defined('MEDIAWIKI')) {
 
 class ApiFormatJson extends ApiFormatBase {
 
+	private $mIsRaw;
+
 	public function __construct($main, $format) {
 		parent :: __construct($main, $format);
+		$this->mIsRaw = ($format === 'rawfm');
 	}
 
 	public function getMimeType() {
 		return 'application/json';
 	}
 
+	public function getNeedsRawData() {
+		return $this->mIsRaw;
+	}
+
 	public function execute() {
-		require ('ApiFormatJson_json.php');
-		$json = new Services_JSON();
-		$this->printText($json->encode($this->getResultData(), true));
+		if (!function_exists('json_encode') || $this->getIsHtml()) {
+			$json = new Services_JSON();
+			$this->printText($json->encode($this->getResultData(), $this->getIsHtml()));
+		} else {
+			$this->printText(json_encode($this->getResultData()));
+		}
 	}
 
 	protected function getDescription() {
-		return 'Output data in JSON format';
+		if ($this->mIsRaw)
+			return 'Output data with the debuging elements in JSON format' . parent :: getDescription();
+		else
+			return 'Output data in JSON format' . parent :: getDescription();
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatJson.php 16725 2006-10-01 21:20:55Z yurik $';
+		return __CLASS__ . ': $Id: ApiFormatJson.php 17374 2006-11-03 06:53:47Z yurik $';
 	}
 }
 ?>

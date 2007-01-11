@@ -23,7 +23,7 @@ class UnusedtemplatesPage extends QueryPage {
 
 	function getSQL() {
 		$dbr =& wfGetDB( DB_SLAVE );
-		extract( $dbr->tableNames( 'page', 'templatelinks' ) );
+		list( $page, $templatelinks) = $dbr->tableNamesN( 'page', 'templatelinks' );
 		$sql = "SELECT 'Unusedtemplates' AS type, page_title AS title,
 			page_namespace AS namespace, 0 AS value
 			FROM $page
@@ -37,7 +37,7 @@ class UnusedtemplatesPage extends QueryPage {
 		$title = Title::makeTitle( NS_TEMPLATE, $result->title );
 		$pageLink = $skin->makeKnownLinkObj( $title, '', 'redirect=no' );
 		$wlhLink = $skin->makeKnownLinkObj(
-			Title::makeTitle( NS_SPECIAL, 'Whatlinkshere' ),
+			SpecialPage::getTitleFor( 'Whatlinkshere' ),
 			wfMsgHtml( 'unusedtemplateswlh' ),
 			'target=' . $title->getPrefixedUrl() );
 		return wfSpecialList( $pageLink, $wlhLink );

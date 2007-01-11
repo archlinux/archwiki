@@ -124,7 +124,8 @@ $messages = array(
 'oct'                   => 'lis',
 'nov'                   => 'stu',
 'dec'                   => 'pro',
-'categories'            => '{{PLURAL:$1|Kategorija|Kategorije}}',
+'categories'            => 'Kategorije',
+'pagecategories'        => '{{PLURAL:$1|Kategorija|Kategorije}}',
 'category_header'       => 'Članci u kategoriji "$1"',
 'subcategories'         => 'Potkategorije',
 'mainpage'              => 'Glavna stranica',
@@ -933,7 +934,7 @@ Sva vremena su prema poslužiteljevom vremenu (UTC).
 'rollbacklink'          => 'ukloni',
 'rollbackfailed'        => 'Uklanjanje neuspješno',
 'cantrollback'          => 'Ne mogu ukloniti posljednju promjenu, postoji samo jedna promjena.',
-'alreadyrolled'         => 'Ne mogu ukloniti posljednju promjenu članka [[$1]] koju je napravio suradnik [[User:$2|$2]]
+'alreadyrolled'         => 'Ne mogu ukloniti posljednju promjenu članka [[:$1]] koju je napravio suradnik [[User:$2|$2]]
 ([[User talk:$2|Talk]]); netko je već promijenio stranicu ili uklonio promjenu.
 
 Posljednju promjenu napravio je suradnik [[User:$3|$3]] ([[User talk:$3|Talk]]).',
@@ -1166,10 +1167,10 @@ U potonjem slučaju možete koristiti i poveznicu, npr. [[{{ns:Special}}:Export/
 'tooltip-minoredit'     => 'Označi kao manju promjenu [alt-i]',
 'tooltip-save'          => 'Sačuvaj promjene [alt-s]',
 'tooltip-preview'       => 'Prikaži kako će izgledati, molimo koristite prije snimanja! [alt-p]',
-'tooltip-diff'          => 'Prikaži promjene učinjene u tekstu. [alt-d]',
+'tooltip-diff'          => 'Prikaži promjene učinjene u tekstu. [alt-v]',
 'tooltip-compareselectedversions'=> 'Prikaži usporedbu izabranih inačica ove stranice. [alt-v]',
 'tooltip-watch'         => 'Dodaj na popis praćenja [alt-w]',
-'Monobook.css'          => '/** Ovdje idu izmjene monobook stylesheeta */',
+'monobook.css'          => '/** Ovdje idu izmjene monobook stylesheeta */',
 'nodublincore'          => 'Dublin Core RDF metapodaci su isključeni na ovom serveru.',
 'nocreativecommons'     => 'Creative Commons RDF metapodaci su isključeni na ovom serveru.',
 'notacceptable'         => 'Wiki server ne može dobaviti podatke u obliku kojega vaš klijent može pročitati.',
@@ -1211,7 +1212,7 @@ U potonjem slučaju možete koristiti i poveznicu, npr. [[{{ns:Special}}:Export/
 'rcpatroldisabledtext'  => 'Naredba "Nadziri nedavne promjene" trenutno je isključena.',
 'markedaspatrollederror'=> 'Ne mogu označiti za pregledano',
 'markedaspatrollederrortext'=> 'Morate odabrati inačicu koju treba označiti za pregledanu.',
-'Monobook.js'           => '/* tooltips and access keys */
+'monobook.js'           => '/* tooltips and access keys */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Moja suradnička stranica\');
 ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Suradnička stranica za IP adresu pod kojom uređujete\');
@@ -1222,7 +1223,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'Popis stranica koje pratite.\');
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Popis mojih doprinosa\');
 ta[\'pt-login\'] = new Array(\'o\',\'Predlažemo vam da se prijavite, ali nije obvezno.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Predlažemo vam da se prijavite, ali nije obvezno.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Odjavi se\');
+ta[\'pt-logout\'] = new Array(\'\',\'Odjavi se\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Razgovor o stranici\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Možete uređivati ovu stranicu. Koristite Pregled kako će izgledati prije nego što snimite.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Dodaj komentar ovom razgovoru.\');

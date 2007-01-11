@@ -13,7 +13,7 @@ $namespaceNames = array(
 	NS_MAIN             => '',
 	NS_TALK             => 'చర్చ',
 	NS_USER             => 'సభ్యుడు',
-	NS_USER_TALK        => 'సభ్యునిపై_చర్చ',
+	NS_USER_TALK        => 'సభ్యులపై_చర్చ',
 	# NS_PROJECT set by $wgMetaNamespace
 	NS_PROJECT_TALK     => '$1_చర్చ',
 	NS_IMAGE            => 'బొమ్మ',
@@ -27,6 +27,13 @@ $namespaceNames = array(
 	NS_CATEGORY         => 'వర్గం',
 	NS_CATEGORY_TALK    => 'వర్గం_చర్చ'
 );
+
+$namespaceAliases = array(
+	'సభ్యునిపై_చర్చ'         => NS_USER_TALK,
+	'బొమ్మపై_చర్చ'          => NS_IMAGE_TALK
+);
+
+
 $linkTrail = "/^([\xE0\xB0\x81-\xE0\xB1\xAF]+)(.*)$/sDu";
 
 // nobody seems to use these anymore
@@ -102,7 +109,8 @@ $messages = array(
 'oct'                   => 'అక్టోబర్',
 'nov'                   => 'నవంబర్',
 'dec'                   => 'డిసెంబర్‌',
-'categories'            => '{{PLURAL:$1|వర్గం|వర్గాలు}}',
+'categories'            => 'వర్గాలు',
+'pagecategories'        => '{{PLURAL:$1|వర్గం|వర్గాలు}}',
 'category_header'       => '"$1" వర్గంలో వ్యాసాలు',
 'subcategories'         => 'ఉపవర్గములు',
 'mainpage'              => 'మొదటి పేజీ',
@@ -632,7 +640,7 @@ $1',
 'deletecomment'         => 'తుడిచివేతకు కారణము',
 'imagereverted'         => 'విజయవంతంగా పాత సంచికకు వెళ్ళింది.',
 'cantrollback'          => 'రచనను వెనక్కి తీసుకువెళ్ళలేము; ఈ పేజీకి ఇదొక్కటే రచన.',
-'alreadyrolled'         => '[[$1]]లో [[User:$2|$2]] ([[User talk:$2|చర్చ]]) చేసిన చివరి మార్పును రోల్‌బాక్ చెయ్యలేము; మరెవరో ఆ పేజీని రోల్‌బాక్ చేసారు, లేదా మార్చారు. 
+'alreadyrolled'         => '[[:$1]]లో [[User:$2|$2]] ([[User talk:$2|చర్చ]]) చేసిన చివరి మార్పును రోల్‌బాక్ చెయ్యలేము; మరెవరో ఆ పేజీని రోల్‌బాక్ చేసారు, లేదా మార్చారు. 
 
 చివరి మార్పులు చేసినవారు: [[User:$3|$3]] ([[User talk:$3|చర్చ]]).',
 'revertpage'            => '[[Special:Contributions/$2|$2]] ([[User_talk:$2|చర్చ]]) చేసిన మార్పులను [[User:$1|$1]] వైనక్కు తేసుకువెళ్ళారు',

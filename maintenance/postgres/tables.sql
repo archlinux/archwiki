@@ -17,6 +17,7 @@ CREATE TABLE mwuser ( -- replace reserved word 'user'
   user_real_name            TEXT,
   user_password             TEXT,
   user_newpassword          TEXT,
+  user_newpass_time         TIMESTAMPTZ,
   user_token                CHAR(32),
   user_email                TEXT,
   user_email_token          CHAR(32),
@@ -24,7 +25,8 @@ CREATE TABLE mwuser ( -- replace reserved word 'user'
   user_email_authenticated  TIMESTAMPTZ,
   user_options              TEXT,
   user_touched              TIMESTAMPTZ,
-  user_registration         TIMESTAMPTZ
+  user_registration         TIMESTAMPTZ,
+  user_editcount            INTEGER
 );
 CREATE INDEX user_email_token_idx ON mwuser (user_email_token);
 
@@ -86,7 +88,7 @@ CREATE TABLE revision (
   rev_page        INTEGER          NULL  REFERENCES page (page_id) ON DELETE CASCADE,
   rev_text_id     INTEGER          NULL, -- FK
   rev_comment     TEXT,
-  rev_user        INTEGER      NOT NULL  REFERENCES mwuser(user_id),
+  rev_user        INTEGER      NOT NULL  REFERENCES mwuser(user_id) ON DELETE RESTRICT,
   rev_user_text   TEXT         NOT NULL,
   rev_timestamp   TIMESTAMPTZ  NOT NULL,
   rev_minor_edit  CHAR         NOT NULL  DEFAULT '0',
@@ -135,6 +137,14 @@ DO INSTEAD INSERT INTO archive2 VALUES (
   TO_DATE(NEW.ar_timestamp, 'YYYYMMDDHH24MISS'),
   NEW.ar_minor_edit, NEW.ar_flags, NEW.ar_rev_id, NEW.ar_text_id
 );
+
+
+CREATE TABLE redirect (
+  rd_from       INTEGER  NOT NULL  REFERENCES page(page_id) ON DELETE CASCADE,
+  rd_namespace  SMALLINT NOT NULL,
+  rd_title      TEXT     NOT NULL
+);
+CREATE INDEX redirect_ns_title ON redirect (rd_namespace,rd_title,rd_from);
 
 
 CREATE TABLE pagelinks (
@@ -201,18 +211,19 @@ CREATE TABLE hitcounter (
 
 CREATE SEQUENCE ipblocks_ipb_id_val;
 CREATE TABLE ipblocks (
-  ipb_id              INTEGER      NOT NULL  PRIMARY KEY DEFAULT nextval('ipblocks_ipb_id_val'),
-  ipb_address         CIDR             NULL,
-  ipb_user            INTEGER          NULL  REFERENCES mwuser(user_id) ON DELETE SET NULL,
-  ipb_by              INTEGER      NOT NULL  REFERENCES mwuser(user_id) ON DELETE CASCADE,
-  ipb_reason          TEXT         NOT NULL,
-  ipb_timestamp       TIMESTAMPTZ  NOT NULL,
-  ipb_auto            CHAR         NOT NULL  DEFAULT '0',
-  ipb_anon_only       CHAR         NOT NULL  DEFAULT '0',
-  ipb_create_account  CHAR         NOT NULL  DEFAULT '1',
-  ipb_expiry          TIMESTAMPTZ  NOT NULL,
-  ipb_range_start     TEXT,
-  ipb_range_end       TEXT
+  ipb_id                INTEGER      NOT NULL  PRIMARY KEY DEFAULT nextval('ipblocks_ipb_id_val'),
+  ipb_address           TEXT             NULL,
+  ipb_user              INTEGER          NULL  REFERENCES mwuser(user_id) ON DELETE SET NULL,
+  ipb_by                INTEGER      NOT NULL  REFERENCES mwuser(user_id) ON DELETE CASCADE,
+  ipb_reason            TEXT         NOT NULL,
+  ipb_timestamp         TIMESTAMPTZ  NOT NULL,
+  ipb_auto              CHAR         NOT NULL  DEFAULT '0',
+  ipb_anon_only         CHAR         NOT NULL  DEFAULT '0',
+  ipb_create_account    CHAR         NOT NULL  DEFAULT '1',
+  ipb_enable_autoblock  CHAR         NOT NULL  DEFAULT '1',
+  ipb_expiry            TIMESTAMPTZ  NOT NULL,
+  ipb_range_start       TEXT,
+  ipb_range_end         TEXT
 );
 CREATE INDEX ipb_address ON ipblocks (ipb_address);
 CREATE INDEX ipb_user    ON ipblocks (ipb_user);
@@ -300,7 +311,9 @@ CREATE TABLE recentchanges (
   rc_moved_to_ns     SMALLINT,
   rc_moved_to_title  TEXT,
   rc_patrolled       CHAR         NOT NULL  DEFAULT '0',
-  rc_ip              CIDR
+  rc_ip              CIDR,
+  rc_old_len         INTEGER,
+  rc_new_len         INTEGER
 );
 CREATE INDEX rc_timestamp       ON recentchanges (rc_timestamp);
 CREATE INDEX rc_namespace_title ON recentchanges (rc_namespace, rc_title);
@@ -347,6 +360,19 @@ CREATE TABLE querycache_info (
   qci_type       TEXT              UNIQUE,
   qci_timestamp  TIMESTAMPTZ NULL
 );
+
+CREATE TABLE querycachetwo (
+  qcc_type          TEXT     NOT NULL,
+  qcc_value         SMALLINT NOT NULL  DEFAULT 0,
+  qcc_namespace     INTEGER  NOT NULL  DEFAULT 0,
+  qcc_title         TEXT     NOT NULL  DEFAULT '',
+  qcc_namespacetwo  INTEGER  NOT NULL  DEFAULT 0,
+  qcc_titletwo      TEXT     NOT NULL  DEFAULT ''
+);
+CREATE INDEX querycachetwo_type_value ON querycachetwo (qcc_type, qcc_value);
+CREATE INDEX querycachetwo_title      ON querycachetwo (qcc_type,qcc_namespace,qcc_title);
+CREATE INDEX querycachetwo_titletwo   ON querycachetwo (qcc_type,qcc_namespacetwo,qcc_titletwo);
+
 
 CREATE TABLE objectcache (
   keyname  CHAR(255)              UNIQUE,
@@ -470,7 +496,7 @@ CREATE TABLE mediawiki_version (
 );
 
 INSERT INTO mediawiki_version (type,mw_version,sql_version,sql_date)
-  VALUES ('Creation','??','$LastChangedRevision: 16747 $','$LastChangedDate: 2006-10-02 17:55:26 -0700 (Mon, 02 Oct 2006) $');
+  VALUES ('Creation','??','$LastChangedRevision: 18326 $','$LastChangedDate: 2006-12-14 07:34:56 -0800 (Thu, 14 Dec 2006) $');
 
 
 COMMIT;

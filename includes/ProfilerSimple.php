@@ -12,6 +12,7 @@ require_once(dirname(__FILE__).'/Profiler.php');
 
 class ProfilerSimple extends Profiler {
 	var $mMinimumTime = 0;
+	var $mProfileID = false;
 
 	function ProfilerSimple() {
 		global $wgRequestTime,$wgRUstart;
@@ -24,7 +25,7 @@ class ProfilerSimple extends Profiler {
 			$entry =& $this->mCollated["-setup"];
 			if (!is_array($entry)) {
 				$entry = array('cpu'=> 0.0, 'cpu_sq' => 0.0, 'real' => 0.0, 'real_sq' => 0.0, 'count' => 0);
-				$this->mCollated[$functionname] =& $entry;
+				$this->mCollated["-setup"] =& $entry;
 				
 			}
 			$entry['cpu'] += $elapsedcpu;
@@ -39,6 +40,18 @@ class ProfilerSimple extends Profiler {
 		$this->mMinimumTime = $min;
 	}
 
+	function setProfileID( $id ) {
+		$this->mProfileID = $id;
+	}
+
+	function getProfileID() {
+		if ( $this->mProfileID === false ) {
+			return wfWikiID();
+		} else {
+			return $this->mProfileID;
+		}
+	}
+
 	function profileIn($functionname) {
 		global $wgDebugFunctionEntry;
 		if ($wgDebugFunctionEntry) {
@@ -48,15 +61,13 @@ class ProfilerSimple extends Profiler {
 	}
 
 	function profileOut($functionname) {
-		$memory = memory_get_usage();
-
 		global $wgDebugFunctionEntry;
 
 		if ($wgDebugFunctionEntry) {
 			$this->debug(str_repeat(' ', count($this->mWorkStack) - 1).'Exiting '.$functionname."\n");
 		}
 
-		list($ofname,$ocount,$ortime,$octime) = array_pop($this->mWorkStack);
+		list($ofname, /* $ocount */ ,$ortime,$octime) = array_pop($this->mWorkStack);
 
 		if (!$ofname) {
 			$this->debug("Profiling error: $functionname\n");

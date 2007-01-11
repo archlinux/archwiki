@@ -90,8 +90,8 @@ class DBConnectionError extends DBError {
 	}
 
 	function getHTML() {
-		global $wgTitle, $wgUseFileCache, $title, $wgInputEncoding, $wgOutputEncoding;
-		global $wgSitename, $wgServer, $wgMessageCache, $wgLogo;
+		global $wgTitle, $wgUseFileCache, $title, $wgInputEncoding;
+		global $wgSitename, $wgServer, $wgMessageCache;
 
 		# I give up, Brion is right. Getting the message cache to work when there is no DB is tricky.
 		# Hard coding strings instead.
@@ -152,7 +152,7 @@ border=\"0\" ALT=\"Google\"></A>
 				}
 			}
 
-			$cache = new CacheManager( $t );
+			$cache = new HTMLFileCache( $t );
 			if( $cache->isFileCached() ) {
 				$msg = '<p style="color: red"><b>'.$msg."<br />\n" .
 					$cachederror . "</b></p>\n";
@@ -295,7 +295,7 @@ class Database {
 	 * Turns on (false) or off (true) the automatic generation and sending
 	 * of a "we're sorry, but there has been a database error" page on
 	 * database errors. Default is on (false). When turned off, the
-	 * code should use wfLastErrno() and wfLastError() to handle the
+	 * code should use lastErrno() and lastError() to handle the
 	 * situation as appropriate.
 	 */
 	function ignoreErrors( $ignoreErrors = NULL ) {
@@ -360,6 +360,20 @@ class Database {
 	 */
 	function strictIPs() {
 		return $this->mStrictIPs;
+	}
+
+	/**
+	 * Returns true if this database uses timestamps rather than integers
+	*/
+	function realTimestamps() {
+		return false;
+	}
+
+	/**
+	 * Returns true if this database does an implicit sort when doing GROUP BY
+	 */
+	function implicitGroupby() {
+		return true;
 	}
 
 	/**#@+
@@ -613,7 +627,7 @@ class Database {
 
 		# Add a comment for easy SHOW PROCESSLIST interpretation
 		if ( $fname ) {
-			$commentedSql = preg_replace("/\s/", " /* $fname */ ", $sql, 1);
+			$commentedSql = preg_replace('/\s/', " /* $fname */ ", $sql, 1);
 		} else {
 			$commentedSql = $sql;
 		}
@@ -679,7 +693,7 @@ class Database {
 	 * @param bool $tempIgnore
 	 */
 	function reportQueryError( $error, $errno, $sql, $fname, $tempIgnore = false ) {
-		global $wgCommandLineMode, $wgFullyInitialised, $wgColorErrors;
+		global $wgCommandLineMode;
 		# Ignore errors during error handling to avoid infinite recursion
 		$ignore = $this->ignoreErrors( true );
 		++$this->mErrorCount;
@@ -778,7 +792,7 @@ class Database {
 			case '\\!': return '!';
 			case '\\&': return '&';
 		}
-		list( $n, $arg ) = each( $this->preparedArgs );
+		list( /* $n */ , $arg ) = each( $this->preparedArgs );
 		switch( $matches[1] ) {
 			case '?': return $this->addQuotes( $arg );
 			case '!': return $arg;
@@ -981,6 +995,7 @@ class Database {
 		if ( isset( $noKeyOptions['DISTINCT'] ) && isset( $noKeyOptions['DISTINCTROW'] ) ) $startOpts .= 'DISTINCT';
 
 		# Various MySQL extensions
+		if ( isset( $noKeyOptions['STRAIGHT_JOIN'] ) ) $startOpts .= ' /*! STRAIGHT_JOIN */';
 		if ( isset( $noKeyOptions['HIGH_PRIORITY'] ) ) $startOpts .= ' HIGH_PRIORITY';
 		if ( isset( $noKeyOptions['SQL_BIG_RESULT'] ) ) $startOpts .= ' SQL_BIG_RESULT';
 		if ( isset( $noKeyOptions['SQL_BUFFER_RESULT'] ) ) $startOpts .= ' SQL_BUFFER_RESULT';
@@ -1000,6 +1015,14 @@ class Database {
 
 	/**
 	 * SELECT wrapper
+	 *
+	 * @param mixed  $table   Array or string, table name(s) (prefix auto-added)
+	 * @param mixed  $vars    Array or string, field name(s) to be retrieved
+	 * @param mixed  $conds   Array or string, condition(s) for WHERE
+	 * @param string $fname   Calling function name (use __METHOD__) for logs/profiling
+	 * @param array  $options Associative array of options (e.g. array('GROUP BY' => 'page_title')),
+	 *                        see Database::makeSelectOptions code for list of supported stuff
+	 * @return mixed Database result resource (feed to Database::fetchObject or whatever), or false on failure
 	 */
 	function select( $table, $vars, $conds='', $fname = 'Database::select', $options = array() )
 	{
@@ -1010,7 +1033,7 @@ class Database {
 			$options = array( $options );
 		}
 		if( is_array( $table ) ) {
-			if ( @is_array( $options['USE INDEX'] ) )
+			if ( isset( $options['USE INDEX'] ) && is_array( $options['USE INDEX'] ) )
 				$from = ' FROM ' . $this->tableNamesWithUseIndex( $table, $options['USE INDEX'] );
 			else
 				$from = ' FROM ' . implode( ',', array_map( array( &$this, 'tableName' ), $table ) );
@@ -1082,7 +1105,7 @@ class Database {
 		$sql = preg_replace ('/".*"/s', "'X'", $sql);
 
 		# All newlines, tabs, etc replaced by single space
-		$sql = preg_replace ( "/\s+/", ' ', $sql);
+		$sql = preg_replace ( '/\s+/', ' ', $sql);
 
 		# All numbers => N
 		$sql = preg_replace ('/-?[0-9]+/s', 'N', $sql);
@@ -1143,12 +1166,15 @@ class Database {
 			return NULL;
 		}
 
+		$result = array();
 		while ( $row = $this->fetchObject( $res ) ) {
 			if ( $row->Key_name == $index ) {
-				return $row;
+				$result[] = $row;
 			}
 		}
-		return false;
+		$this->freeResult($res);
+		
+		return empty($result) ? false : $result;
 	}
 
 	/**
@@ -1202,7 +1228,7 @@ class Database {
 		if ( !$indexInfo ) {
 			return NULL;
 		}
-		return !$indexInfo->Non_unique;
+		return !$indexInfo[0]->Non_unique;
 	}
 
 	/**
@@ -1292,7 +1318,7 @@ class Database {
 	}
 
 	/**
-	 * Makes a wfStrencoded list from an array
+	 * Makes an encoded list of strings from an array
 	 * $mode:
 	 *        LIST_COMMA         - comma separated, no field names
 	 *        LIST_AND           - ANDed WHERE clause (without the WHERE)
@@ -1321,6 +1347,8 @@ class Database {
 			}
 			if ( ($mode == LIST_AND || $mode == LIST_OR) && is_numeric( $field ) ) {
 				$list .= "($value)";
+			} elseif ( ($mode == LIST_SET) && is_numeric( $field ) ) {
+				$list .= "$value";
 			} elseif ( ($mode == LIST_AND || $mode == LIST_OR) && is_array ($value) ) {
 				$list .= $field." IN (".$this->makeList($value).") ";
 			} else {
@@ -1379,11 +1407,29 @@ class Database {
 	 * $sql = "SELECT wl_namespace,wl_title FROM $watchlist,$user
 	 *         WHERE wl_user=user_id AND wl_user=$nameWithQuotes";
 	 */
-	function tableNames() {
+	public function tableNames() {
 		$inArray = func_get_args();
 		$retVal = array();
 		foreach ( $inArray as $name ) {
 			$retVal[$name] = $this->tableName( $name );
+		}
+		return $retVal;
+	}
+	
+	/**
+	 * @desc: Fetch a number of table names into an zero-indexed numerical array
+	 * This is handy when you need to construct SQL for joins
+	 *
+	 * Example:
+	 * list( $user, $watchlist ) = $dbr->tableNames('user','watchlist');
+	 * $sql = "SELECT wl_namespace,wl_title FROM $watchlist,$user
+	 *         WHERE wl_user=user_id AND wl_user=$nameWithQuotes";
+	 */
+	public function tableNamesN() {
+		$inArray = func_get_args();
+		$retVal = array();
+		foreach ( $inArray as $name ) {
+			$retVal[] = $this->tableName( $name );
 		}
 		return $retVal;
 	}
@@ -1528,7 +1574,8 @@ class Database {
 		$row = $this->fetchObject( $res );
 		$this->freeResult( $res );
 
-		if ( preg_match( "/\((.*)\)/", $row->Type, $m ) ) {
+		$m = array();
+		if ( preg_match( '/\((.*)\)/', $row->Type, $m ) ) {
 			$size = $m[1];
 		} else {
 			$size = -1;
@@ -1829,7 +1876,7 @@ class Database {
 	 * @return string Version information from the database
 	 */
 	function getServerVersion() {
-		return mysql_get_server_info();
+		return mysql_get_server_info( $this->mConn );
 	}
 
 	/**
@@ -1852,7 +1899,6 @@ class Database {
 		$res = $this->query( 'SHOW PROCESSLIST' );
 		# Find slave SQL thread. Assumed to be the second one running, which is a bit
 		# dubious, but unfortunately there's no easy rigorous way
-		$slaveThreads = 0;
 		while ( $row = $this->fetchObject( $res ) ) {
 			/* This should work for most situations - when default db 
 			 * for thread is not specified, it had no events executed, 

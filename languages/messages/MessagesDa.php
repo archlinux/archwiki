@@ -124,6 +124,7 @@ $messages = array(
 # Bits of text used by many pages:
 #
 "categories" => "Kategorier",
+"pagecategories" => "Kategorier",
 "category_header" => 'Artikler i kategorien "$1"',
 "subcategories" => "Underkategorier",
 
@@ -947,7 +948,7 @@ succes.",
 "rollbackfailed" => "Kunne ikke fjerne redigeringen",
 "cantrollback"	=> "Kan ikke fjerne redigering;
 den sidste bruger er den eneste forfatter.",
-"alreadyrolled"	=> "Kan ikke fjerne den seneste redigering af [[$1]] foretaget af [[Bruger:$2|$2]] ([[Bruger diskussion:$2|diskussion]]); en anden har allerede redigeret siden eller fjernet redigeringen. Den seneste redigering er foretaget af [[Bruger:$3|$3]] ([[Bruger diskussion:$3|diskussion]]).",
+"alreadyrolled"	=> "Kan ikke fjerne den seneste redigering af [[:$1]] foretaget af [[Bruger:$2|$2]] ([[Bruger diskussion:$2|diskussion]]); en anden har allerede redigeret siden eller fjernet redigeringen. Den seneste redigering er foretaget af [[Bruger:$3|$3]] ([[Bruger diskussion:$3|diskussion]]).",
 #   only shown if there is an edit comment
 "editcomment" => "Kommentaren til redigeringen var: \"<i>$1</i>\".",
 "revertpage"	=> "Gendannelse til seneste version ved $1, fjerner ændringer fra $2",
@@ -1181,7 +1182,7 @@ Målartiklen "[[$1]]" eksisterer allerede. Vil du slette den for at lave plads t
 'accesskey-minoredit' => 'i',
 'accesskey-save' => 's',
 'accesskey-preview' => 'p',
-'accesskey-diff' => 'd',
+'accesskey-diff' => 'v',
 'accesskey-compareselectedversions' => 'v',
 
 # tooltip help for some actions, most are in Monobook.js
@@ -1189,13 +1190,13 @@ Målartiklen "[[$1]]" eksisterer allerede. Vil du slette den for at lave plads t
 'tooltip-minoredit' => 'Marker dette som en mindre ændring [alt-i]',
 'tooltip-save' => 'Gem dine ændringer [alt-s]',
 'tooltip-preview' => 'Forhåndsvis dine ændringer, brug venligst denne funktion inden du gemmer! [alt-p]',
-'tooltip-diff' => 'Vis hvilke ændringer du har lavet i teksten. [alt-d]',
+'tooltip-diff' => 'Vis hvilke ændringer du har lavet i teksten. [alt-v]',
 'tooltip-compareselectedversions' => 'Se forskellene imellem de to valgte versioner af denne side. [alt-v]',
 'tooltip-watch' => 'Tilføj denne side til din overvågningsliste [alt-w]',
 
 # stylesheets
-#'Monobook.css' => '/* edit this file to customize the monobook skin for the entire site */',
-#'Monobook.js' => '/* redigér denne fil for at ændre js-indstillinger i monobook-udseendet */',
+#'monobook.css' => '/* edit this file to customize the monobook skin for the entire site */',
+#'monobook.js' => '/* redigér denne fil for at ændre js-indstillinger i monobook-udseendet */',
 
 # Metadata
 'nodublincore' => 'Dublin Core RDF-metadata er slået fra på denne server.',
@@ -1248,7 +1249,7 @@ Målartiklen "[[$1]]" eksisterer allerede. Vil du slette den for at lave plads t
 'rcpatroldisabledtext'  => "Funktionen til seneste ændringer-patruljeringen er pt. slået fra.",
 
 # Monobook.js: tooltips and access keys for monobook
-'Monobook.js' => '/* tooltips and access keys */
+'monobook.js' => '/* tooltips and access keys */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Min brugerside\');
 ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Brugersiden for den ip-adresse du redigerer som\');
@@ -1259,7 +1260,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'Listen over sider du overvåger for æn
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Listen over dine bidrag\');
 ta[\'pt-login\'] = new Array(\'o\',\'Du opfordres til at logge på, men det er ikke obligatorisk.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Du opfordres til at logge på, men det er ikke obligatorisk\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Log af\');
+ta[\'pt-logout\'] = new Array(\'\',\'Log af\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Diskussion om indholdet på siden\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Du kan redigere denne side. Brug venligst forhåndsvisning før du gemmer.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Tilføj en kommentar til denne diskussion.\');

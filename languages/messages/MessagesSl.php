@@ -130,13 +130,14 @@ $messages = array(
 'october-gen'           => 'oktobra',  
 'november-gen'          => 'novembra', 
 'december-gen'          => 'decembra',
-'categories'            => '{{plural:$1|Kategorija|Kategoriji|Kategorije|Kategorije|Kategorije}}',
+'categories'            => 'Kategorije',
+'pagecategories'        => '{{plural:$1|Kategorija|Kategoriji|Kategorije|Kategorije|Kategorije}}',
 'category_header'       => 'Strani v kategoriji »$1«',
 'subcategories'         => 'Podkategorije',
 'mainpage'              => 'Glavna stran',
 'mainpagetext'          => 'Wikiprogramje ste uspešno naložili!',
-'mainpagedocfooter'     => 'Za uporabo in pomoč pri nastavitvi, prosimo, preglejte [http://meta.wikipedia.org/wiki/MediaWiki_i18n dokumentacijo za prilagajanje vmesnika]
-in [http://meta.wikipedia.org/wiki/MediaWiki_User%27s_Guide Uporabniški priročnik].',
+'mainpagedocfooter'     => 'Za uporabo in pomoč pri nastavitvi, prosimo, preglejte [http://meta.wikimedia.org/wiki/MediaWiki_i18n dokumentacijo za prilagajanje vmesnika]
+in [http://meta.wikimedia.org/wiki/MediaWiki_User%27s_Guide Uporabniški priročnik].',
 'portal'                => 'Portal občestva',
 'portal-url'            => 'Project:Portal občestva',
 'about'                 => 'O projektu',
@@ -951,7 +952,7 @@ Za zapise nedavnih brisanj glej $2.',
 'rollbacklink'          => 'vrni',
 'rollbackfailed'        => 'Vrnitev ni uspela.',
 'cantrollback'          => 'Urejanja ne morem vrniti; zadnji urejevalec je hkrati edini.',
-'alreadyrolled'         => 'Ne morem vrniti zadnje spremembe [[$1]]
+'alreadyrolled'         => 'Ne morem vrniti zadnje spremembe [[:$1]]
 od uporabnika [[Uporabnik:$2|$2]] ([[Pogovor z uporabnikom:$2|Pogovor]]); nekdo drug je že spremenil ali vrnil članek.
 
 Zadnja sprememba od uporabnika [[Uporabnik:$3|$3]] ([[Pogovor z uporabnikom:$3|Pogovor]]).',
@@ -1231,7 +1232,7 @@ Da boste stran lahko shranili, boste morali odstraniti vse na črni listi navede
 'rcpatroldisabledtext'  => 'Spremljanje zadnjih sprememb je začasno onemogočeno.',
 'markedaspatrollederror'=> 'Ni mogoče označiti kot pregledano',
 'markedaspatrollederrortext'=> 'Določite redakcijo, ki jo želite označiti kot pregledano.',
-'Monobook.js'           => '/* plavajoča polja in bližnjične tipke */
+'monobook.js'           => '/* plavajoča polja in bližnjične tipke */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Vaša uporabniška stran\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Uporabniška stran IP-naslova, ki ga uporabljate\');
@@ -1242,7 +1243,7 @@ Da boste stran lahko shranili, boste morali odstraniti vse na črni listi navede
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Seznam vaših prispevkov\');
  ta[\'pt-login\'] = new Array(\'o\',\'Prijava ni obvezna, vendar je zaželena\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'Prijava ni obvezna, vendar je zaželena\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Odjavite se\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Odjavite se\');
  ta[\'ca-talk\'] = new Array(\'t\',\'Pogovor o strani\');
  ta[\'ca-edit\'] = new Array(\'e\',\'Stran lahko uredite. Preden jo shranite, uporabite gumb za predogled.\');
  ta[\'ca-addsection\'] = new Array(\'+\',\'Začnite novo razpravo\');

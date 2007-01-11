@@ -53,12 +53,13 @@ class SrConverter extends LanguageConverter {
 	);
 
 	function loadDefaultTables() {
-		$this->mTables = array();
-		$this->mTables['sr-ec'] = $this->mToCyrillics;
-		$this->mTables['sr-jc'] = $this->mToCyrillics;
-		$this->mTables['sr-el'] = $this->mToLatin;
-		$this->mTables['sr-jl'] = $this->mToLatin;
-		$this->mTables['sr'] = array();
+		$this->mTables = array(
+			'sr-ec' => new ReplacementArray( $this->mToCyrillics ),
+			'sr-jc' => new ReplacementArray( $this->mToCyrillics),
+			'sr-el' => new ReplacementArray( $this->mToLatin),
+			'sr-jl' => new ReplacementArray( $this->mToLatin),
+			'sr'    => new ReplacementArray()
+		);
 	}
 
 	/* rules should be defined as -{ekavian | iyekavian-} -or-
@@ -67,39 +68,47 @@ class SrConverter extends LanguageConverter {
 		        currently, and just produces a couple of bugs
 	*/
 	function parseManualRule($rule, $flags=array()) {
-		// ignore all formatting
-		foreach($this->mVariants as $v) {
-				$carray[$v] = $rule;
-			}
+		if(in_array('T',$flags)){
+			return parent::parseManualRule($rule, $flags);
+		}
 
+		// otherwise ignore all formatting
+		foreach($this->mVariants as $v) {
+			$carray[$v] = $rule;
+		}
+		
 		return $carray;
 	}
 
-	/*
-	 * Override function from LanguageConvertor
-	 * Additional checks: 
-	 *  - There should be no conversion for Talk pages
-	 */
-	function getPreferredVariant(){
-		global $wgTitle;
-		if($wgTitle!=NULL && $wgTitle->isTalkPage()){
-			return $this->mMainLanguageCode;
-		}
-		return parent::getPreferredVariant();
+	// Do not convert content on talk pages
+	function parserConvert( $text, &$parser ){
+		if(is_object($parser->mTitle) && $parser->mTitle->isTalkPage())
+			$this->mDoContentConvert=false;
+		else 
+			$this->mDoContentConvert=true;
+
+		return parent::parserConvert($text, $parser );
 	}
 
-
 	/*
-	 * A function wrapper, if there is no selected variant, 
-	 * leave the link names as they were
+	 * A function wrapper:
+	 *   - if there is no selected variant, leave the link 
+	 *     names as they were
+	 *   - do not try to find variants for usernames
 	 */
 	function findVariantLink( &$link, &$nt ) {
+		// check for user namespace
+		if(is_object($nt)){
+			$ns = $nt->getNamespace();
+			if($ns==NS_USER || $ns==NS_USER_TALK)
+				return;
+		}
+
 		$oldlink=$link;
 		parent::findVariantLink($link,$nt);
 		if($this->getPreferredVariant()==$this->mMainLanguageCode)
 			$link=$oldlink;
 	}
-
 
 	/*
 	 * We want our external link captions to be converted in variants,
@@ -117,7 +126,7 @@ class SrConverter extends LanguageConverter {
 	 */
 	function autoConvert($text, $toVariant=false) {
 		global $wgTitle;
-		if($wgTitle->getNameSpace()==NS_IMAGE){ 
+		if(is_object($wgTitle) && $wgTitle->getNameSpace()==NS_IMAGE){ 
 			$imagename = $wgTitle->getNsText();
 			if(preg_match("/^$imagename:/",$text)) return $text;
 		}
@@ -139,7 +148,10 @@ class SrConverter extends LanguageConverter {
 		$matches = preg_split($reg, $text, -1, PREG_SPLIT_OFFSET_CAPTURE);
 		
 		$m = array_shift($matches);
-		$ret = strtr($m[0], $this->mTables[$toVariant]);
+		if( !isset( $this->mTables[$toVariant] ) ) {
+			throw new MWException( "Broken variant table: " . implode( ',', array_keys( $this->mTables ) ) );
+		}
+		$ret = $this->mTables[$toVariant]->replace( $m[0] );
 		$mstart = $m[1]+strlen($m[0]);
 		foreach($matches as $m) {
 			$ret .= substr($text, $mstart, $m[1]-$mstart);
@@ -149,7 +161,6 @@ class SrConverter extends LanguageConverter {
 
 		return $ret;
 	}
-
 
 }
 
@@ -164,8 +175,8 @@ class LanguageSr extends LanguageSr_ec {
 		$variants = array('sr', 'sr-ec', 'sr-el');
 		$variantfallbacks = array(
 			'sr'    => 'sr-ec',
-			'sr-ec' => 'sr-ec',
-			'sr-el' => 'sr-el',
+			'sr-ec' => 'sr',
+			'sr-el' => 'sr',
 			); 
 
 

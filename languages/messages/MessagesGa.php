@@ -178,6 +178,7 @@ $messages = array(
 # FIXME
 #
 'categories' => 'Catagóirí',
+'pagecategories' => 'Catagóirí',
 'category_header' => 'Ailt sa chatagóir "$1"',
 "subcategories" => "Fo-chatagóirí",
 
@@ -1043,7 +1044,7 @@ Is in am an freastalaí (UTC) iad na hamanna anseo thíos.
 "rollbacklink"  => "athúsáid",
 "rollbackfailed" => "Theip an athúsáid",
 "cantrollback"  => "Ní féidir an athrú a athúsáid; ba é údar an ailt an t-aon duine a rinne athrú dó.",
-"alreadyrolled" => "Ní féidir eagrán níos luaí an leathanaigh [[$1]]
+"alreadyrolled" => "Ní féidir eagrán níos luaí an leathanaigh [[:$1]]
 le [[Úsáideoir:$2|$2]] ([[Plé úsáideora:$2|Plé]]) a athúsáid; d'athraigh duine eile é cheana fein, nó
 d'athúsáid duine eile eagrán níos luaí cheana féin.
 
@@ -1304,7 +1305,7 @@ ní féidir uaslódála staire díreacha a dhéanamh faoi láthair.',
 'accesskey-minoredit' => 'm', # Mionathrú
 'accesskey-save' => 's', # Sábháil
 'accesskey-preview' => 'r', # Reamhamharc
-'accesskey-diff' => 'd', # Difríocht
+'accesskey-diff' => 'v', # Difríocht
 'accesskey-compareselectedversions' => 'l', # Leagain
 
 # tooltip help for some actions, most are in Monobook.js
@@ -1314,13 +1315,13 @@ ní féidir uaslódála staire díreacha a dhéanamh faoi láthair.',
 'tooltip-preview' => 'Réamhamharc ar do chuid athruithe; úsáid an gné seo roimh a shábhálaíonn tú! [alt-r]',
 'tooltip-compareselectedversions' => 'Féach na difríochtaí idir an dhá leagain roghnaithe den leathanach seo. [alt-l]',
 'tooltip-watch' => 'Cuir an leathanach seo ar do liosta faire [alt-f]',
-'tooltip-diff' => 'Taispeáin na difríochtaí áirithe a rinne tú don téacs [alt-d]',
+'tooltip-diff' => 'Taispeáin na difríochtaí áirithe a rinne tú don téacs [alt-v]',
 
 
 # stylesheets
 
-'Monobook.css' => '/* athraigh an comhad seo chun an craiceann MonoBook a athrú don suíomh ar fad */',
-#'Monobook.js' => '/* athraigh an comhad seo chun rudaí js sa craiceann MonoBook a hathrú */',
+'monobook.css' => '/* athraigh an comhad seo chun an craiceann MonoBook a athrú don suíomh ar fad */',
+#'monobook.js' => '/* athraigh an comhad seo chun rudaí js sa craiceann MonoBook a hathrú */',
 
 # Metadata
 'nodublincore' => 'Míchumasaítear meitea-shonraí Dublin Core RDF ar an freastalaí seo.',
@@ -1373,7 +1374,7 @@ iarradh sábháil. Is dócha gur nasc chuig suíomh seachtrach ba chúis leis.',
 'rcpatroldisabledtext'  => "Tá an tréith Patról na n-Athruithe is Déanaí míchumasaithe faoi láthair.",
 
 # Monobook.js: tooltips and access keys for monobook
-'Monobook.js' => '/* leideanna uirlisí agus cnaipí rochtana */
+'monobook.js' => '/* leideanna uirlisí agus cnaipí rochtana */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Mo leathanach úsáideora\');
 ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Leathanach úsáideora don IP ina dhéanann tú do chuid athruithe\');
@@ -1384,7 +1385,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'Liosta de na leathanaigh a dhéanann t�
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Liosta de mo chuid dréachtaí\');
 ta[\'pt-login\'] = new Array(\'o\',\'Moltar duit logáil isteach, ach níl sé riachtanach.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Moltar duit logáil isteach, ach níl sé riachtanach.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Logáil amach\');
+ta[\'pt-logout\'] = new Array(\'\',\'Logáil amach\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Plé maidir leis an leathanach ábhair\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Is féidir leat an leathanach seo a athrú. Más é do thoil é, bain úsáid as an cnaipe réamhamhairc roimh sábháil a dhéanamh.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Cuir trácht leis an plé seo..\');

@@ -43,16 +43,16 @@ class ShortPagesPage extends QueryPage {
 			WHERE page_namespace=".NS_MAIN." AND page_is_redirect=0";
 	}
 
-	function preprocessResults( &$dbo, $res ) {
+	function preprocessResults( &$db, &$res ) {
 		# There's no point doing a batch check if we aren't caching results;
 		# the page must exist for it to have been pulled out of the table
 		if( $this->isCached() ) {
 			$batch = new LinkBatch();
-			while( $row = $dbo->fetchObject( $res ) )
+			while( $row = $db->fetchObject( $res ) )
 				$batch->addObj( Title::makeTitleSafe( $row->namespace, $row->title ) );
 			$batch->execute();
-			if( $dbo->numRows( $res ) > 0 )
-				$dbo->dataSeek( $res, 0 );
+			if( $db->numRows( $res ) > 0 )
+				$db->dataSeek( $res, 0 );
 		}
 	}
 
@@ -72,7 +72,7 @@ class ShortPagesPage extends QueryPage {
 		$plink = $this->isCached()
 					? $skin->makeLinkObj( $title )
 					: $skin->makeKnownLinkObj( $title );
-		$size = wfMsgHtml( 'nbytes', $wgLang->formatNum( htmlspecialchars( $result->value ) ) );
+		$size = wfMsgExt( 'nbytes', array( 'parsemag', 'escape' ), $wgLang->formatNum( htmlspecialchars( $result->value ) ) );
 		
 		return $title->exists()
 				? "({$hlink}) {$dm}{$plink} {$dm}[{$size}]"

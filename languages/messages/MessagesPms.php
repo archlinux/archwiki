@@ -106,12 +106,13 @@ dj\'artìcol ancó pa scrit',
 'oct'                   => 'Oto',
 'nov'                   => 'Nov',
 'dec'                   => 'Dze',
-'categories'            => '{{PLURAL:$1|Categorìa|Categorìe}}',
+'categories'            => 'Categorìe',
+'pagecategories'        => '{{PLURAL:$1|Categorìa|Categorìe}}',
 'category_header'       => 'Artìcoj ant la categorìa "$1"',
 'subcategories'         => 'Sotacategorìe',
 'mainpage'              => 'Intrada',
 'mainpagetext'          => '<big>\'\'\'MediaWiki a l\'é staita anstalà a la perfession.\'\'\'</big>',
-'mainpagedocfooter'     => 'Che a varda la [http://meta.wikipedia.org/wiki/MediaWiki_User%27s_Guide User\'s Guide] ([[belavans]] për adess a-i é mach n\'anglèis) për avej dj\'anformassion suplementar ant sël coma dovré ël programa dla wiki.
+'mainpagedocfooter'     => 'Che a varda la [http://meta.wikimedia.org/wiki/MediaWiki_User%27s_Guide User\'s Guide] ([[belavans]] për adess a-i é mach n\'anglèis) për avej dj\'anformassion suplementar ant sël coma dovré ël programa dla wiki.
 
 == Për anandiesse a travajé ==
 
@@ -482,7 +483,6 @@ a-j ven-a còmod copiesse via sò test e butesslo da na part për salvelo peuj.<
 'protectedpagewarning'  => '<strong>AVIS: costa pàgina-sì a l\'é staita blocà an manera che mach dj\'utent con la qualìfica da aministrator a peulo modifichelo. Che a varda le [[Project:Pàgina proteta|polìtiche për la protession dle pàgine]] për savejne dë pì.</strong>',
 'semiprotectedpagewarning'=> '\'\'\'Nòta:\'\'\'costa pàgina-sì a l\'é staita protegiùa an manera che mach j\'utent registrà a peulo modifichela.',
 'templatesused'         => 'Stamp dovrà dzora a sta pàgina-sì:',
-'edittools'             => '',
 'nocreatetitle'         => 'Creassion ëd pàgine limità',
 'nocreatetext'          => 'Cost sit-sì a l\'ha limità la possibilità ëd creé dle pàgine neuve.
 A peul torné andaré e modifiché na pàgine che a-i é già, ò pura [[Special:Userlogin|rintré ant ël sistema ò deurb-se un cont]].',
@@ -494,7 +494,7 @@ Che as controla për piasì l\'adrëssa (URL) che a l\'ha dovrà për rivé a st
 'loadhist'              => 'I soma antramentr che i carioma la stòria dë sta pàgina-sì',
 'currentrev'            => 'Versione dël dì d\'ancheuj',
 'revisionasof'          => 'Revision $1',
-'old-revision-navigation' => 'Revision al $1; $5<br />($6) $3 | $2 | $4 ($7)',
+'revision-info' => 'Revision al $1; $2',
 'previousrevision'      => '←Version pì veja',
 'nextrevision'          => 'Revision pì neuve→',
 'currentrevisionlink'   => 'vardé la version corenta',
@@ -994,7 +994,7 @@ Ij temp a son conforma a l\'ora dël server (UTC).
 'rollbacklink'          => 'ripristiné j\'archivi',
 'rollbackfailed'        => 'A l\'é pa podusse ripristiné',
 'cantrollback'          => 'As peul pa tornesse a na version pì veja: l\'ùltima modìfica a l\'ha fala l\'ùnich utent che a l\'abia travajà a cost artìcol-sì.',
-'alreadyrolled'         => 'As peulo pa anulé j\'Ultime modìfiche ëd [[$1]]
+'alreadyrolled'         => 'As peulo pa anulé j\'Ultime modìfiche ëd [[:$1]]
 faite da [[User:$2|$2]] ([[User talk:$2|Talk]]); Cheidun d\'àutr a l\'ha già modificà ò pura anulà le modìfiche a sta pàgina-sì.
 
 L\'ùltima modìfica a l\'é staita faita da [[User:$3|$3]] ([[User talk:$3|Talk]]).',
@@ -1251,7 +1251,7 @@ Tute le amportassion antra wiki diferente a resto marcà ant ël [[Special:Log/i
 'importuploaderror'     => 'L\'archivi da amporté a l\'é pa podusse carié; miraco a fussa mai pì gròss che ël màssim consentì?',
 'importlogpage'         => 'Registr dj\'amportassion',
 'importlogpagetext'     => 'Amportassion aministrative ëd pàgine e ëd soa stòria da dj\'àutre wiki.',
-'import-logentry-upload'=> 'amportà $1 con un càrich d\'archivi',
+'import-logentry-upload'=> 'amportà [[$1]] con un càrich d\'archivi',
 'import-logentry-upload-detail'=> '$1 revision',
 'import-logentry-interwiki'=> 'Amportà da n\'àutra wiki $1',
 'import-logentry-interwiki-detail'=> '$1 revision da $2',
@@ -1259,18 +1259,18 @@ Tute le amportassion antra wiki diferente a resto marcà ant ël [[Special:Log/i
 'accesskey-minoredit'   => 'c',
 'accesskey-save'        => 's',
 'accesskey-preview'     => 'p',
-'accesskey-diff'        => 'd',
+'accesskey-diff'        => 'v',
 'accesskey-compareselectedversions'=> 'v',
 'accesskey-watch'       => 'w',
 'tooltip-search'        => 'Sërca an {{SITENAME}} [alt-f]',
 'tooltip-minoredit'     => 'Marca sossì coma modìfica cita [alt-i]',
 'tooltip-save'          => 'Salva le modìfiche [alt-s]',
 'tooltip-preview'       => 'Preuva dle modìfiche (mej sempe fela, prima che fé che salvé!) [alt-p]',
-'tooltip-diff'          => 'Fame vëdde che modìfiche che i l\'hai faje al test. [alt-d]',
+'tooltip-diff'          => 'Fame vëdde che modìfiche che i l\'hai faje al test. [alt-v]',
 'tooltip-compareselectedversions'=> 'Fame ël paragon dle diferense antra le version selessionà. [alt-v]',
 'tooltip-watch'         => 'Gionta sta pàgina-sì a la lista dle ròbe che im ten-o sot euj [alt-w]',
-'Common.css'            => '/** Ël còdes CSS che as buta ambelessì a resta dovrà ant tute le "facie" */',
-'Monobook.css'          => '/* cangé st\'archivi-sì për modifiché la formatassion dël sit antregh */',
+'common.css'            => '/** Ël còdes CSS che as buta ambelessì a resta dovrà ant tute le "facie" */',
+'monobook.css'          => '/* cangé st\'archivi-sì për modifiché la formatassion dël sit antregh */',
 'nodublincore'          => 'Ij metadat dla sòrt \'\'\'Dublin Core RDF\'\'\' a son disabilità ansima a sta màchina-sì.',
 'nocreativecommons'     => 'Ij metadat dla sòrt \'\'\'Creative Commons RDF\'\'\' a son disabilità ansima a sta màchina-sì.',
 'notacceptable'         => 'Ël server dla wiki a-i la fa pa a provëdde dij dat ant na forma che sò programa local a peula lese.',
@@ -1312,7 +1312,7 @@ Tute le amportassion antra wiki diferente a resto marcà ant ël [[Special:Log/i
 'rcpatroldisabledtext'  => 'La possibilità ëd verifichè j\'ùltime modìfiche a l\'é disabilità.',
 'markedaspatrollederror'=> 'As peul pa marchè verificà',
 'markedaspatrollederrortext'=> 'A venta che a specìfica che version che a veul marchè verificà.',
-'Monobook.js'           => '/* tooltips and access keys */
+'monobook.js'           => '/* tooltips and access keys */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Mia pàgina Utent.\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Pàgina Utent për l\'IP dont a scriv coma anònim.\');
@@ -1323,7 +1323,7 @@ Tute le amportassion antra wiki diferente a resto marcà ant ël [[Special:Log/i
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Sòn i l\'hai falo mi! \');
  ta[\'pt-login\'] = new Array(\'o\',\'Un a l\'é nen obligà a rintré ant al sistema, ma se a lo fa a l\'é mej.\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'Un a l\'é nen obligà a rintré ant al sistema, ma se a lo fa a l\'é mej.\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Seurte da \'nt ël sistema.\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Seurte da \'nt ël sistema.\');
  ta[\'ca-talk\'] = new Array(\'t\',\'Discussion ansima a sta pàgina ëd contnù.\');
  ta[\'ca-edit\'] = new Array(\'e\',\'Modifiché sta pàgina-sì. Për piasì, che as fasa na preuva anans che salvé .\');
  ta[\'ca-addsection\'] = new Array(\'+\',\'Gionteje un coment a sta discussion-sì.\');
@@ -1688,7 +1688,6 @@ Për piasì, che an conferma che da bon a veul torna creélo.',
 $1',
 'confirm_purge_button'  => 'Va bin',
 'youhavenewmessagesmulti'=> 'A l\'ha dij neuv messagi an $1',
-'newtalkseperator'      => ',_',
 'searchcontaining'      => 'Sërca le vos che a l\'han andrinta \'\'$1\'\'.',
 'searchnamed'           => 'Sërca le vos che a l\'han për tìtol \'\'$1\'\'.',
 'articletitles'         => 'Artìcoj che as anandio për \'\'$1\'\'',

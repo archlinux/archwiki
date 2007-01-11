@@ -32,8 +32,13 @@ $namespaceNames = array(
 	NS_TEMPLATE_TALK  => 'Euverlik_sjabloon',
 	NS_HELP           => 'Help',
 	NS_HELP_TALK      => 'Euverlik_help',
-	NS_CATEGORY       => 'Kategorie',
-	NS_CATEGORY_TALK  => 'Euverlik_kategorie'
+	NS_CATEGORY       => 'Categorie',
+	NS_CATEGORY_TALK  => 'Euverlik_categorie'
+);
+
+$namespaceAliases = array(
+	'Kategorie'          => NS_CATEGORY,
+	'Euverlik_kategorie' => NS_CATEGORY_TALK,
 );
 
 $dateFormats = array(	
@@ -100,7 +105,8 @@ $messages = array(
 'oct'                   => 'okt',
 'nov'                   => 'nov',
 'dec'                   => 'dec',
-'categories'            => '{{PLURAL:$1|Categorie|Categorieë}}',
+'categories'            => 'Categorieë',
+'pagecategories'        => '{{PLURAL:$1|Categorie|Categorieë}}',
 'category_header'       => 'Artikele in categorie "$1"',
 'subcategories'         => 'Subkattegorië',
 'mainpage'              => 'Huidpazjena',
@@ -670,7 +676,7 @@ Commentaar en wiejer assistentie:
 'rollback'              => 'Wijzigingen ongedaan maken',
 'rollbacklink'          => 'Trukdrieje',
 'cantrollback'          => 'Trökdrejje van verangeringe neet meugelik: Dit artikel haet mer einen auteur.',
-'alreadyrolled'         => '\'t Is neet meugelik óm de lèste verangering van [[$1]]
+'alreadyrolled'         => '\'t Is neet meugelik óm de lèste verangering van [[:$1]]
 door [[User:$2|$2]] ([[User talk:$2|euverlik]]) óngedaon te make. Emes angers haet de pazjena al hersjtèld of haet \'n anger bewèrking gedaon. 
 
 De lèste bewèrking is gedaon door [[User:$3|$3]] ([[User talk:$3|euverlik]]).',
@@ -799,7 +805,7 @@ De doeltitel "[[$1]]" besjteit al. Wils te dit artikel wisse óm ruumde te make 
 'tooltip-minoredit'     => 'Markeer dit as \'n kleine verangering [alt-i]',
 'tooltip-save'          => 'Bewaar dien verangeringe [alt-s]',
 'tooltip-preview'       => 'Bekiek dien verangeringe veurdets te ze definitief opsjleis! [alt-p]',
-'tooltip-diff'          => 'Bekiek dien verangeringe in de teks. [alt-d]',
+'tooltip-diff'          => 'Bekiek dien verangeringe in de teks. [alt-v]',
 'tooltip-compareselectedversions'=> 'Bekiek de versjille tusje de twie geselectierde versies van dees pazjena. [alt-v]',
 'tooltip-watch'         => 'Voog dees pazjena toe aan dien volglies [alt-w]',
 'anonymous'             => 'Anoniem(e) gebroeker(s) van {{SITENAME}}',
@@ -816,7 +822,7 @@ De doeltitel "[[$1]]" besjteit al. Wils te dit artikel wisse óm ruumde te make 
 'mw_math_source'        => 'Laot de TeX code sjtaon (vuur tèksbrowsers)',
 'mw_math_modern'        => 'Aangeroaje vuur nuui browsers',
 'mw_math_mathml'        => 'MathML woe meugelik (experimenteil)',
-'Monobook.js'           => '/* tooltips en access keys, pas op mit \'t \'-teike */
+'monobook.js'           => '/* tooltips en access keys, pas op mit \'t \'-teike */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Mien gebroekerspazjena\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'De gebroekerspazjena veur dit IP adres\');
@@ -827,7 +833,7 @@ De doeltitel "[[$1]]" besjteit al. Wils te dit artikel wisse óm ruumde te make 
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Liest van mien biedraag\');
  ta[\'pt-login\'] = new Array(\'o\',\'De weurs aangemodigd om in te logge, meh t is neet verplich.\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'De weurs aangemodigd om in te logge, meh t is neet verplich.\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Aafmèlde\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Aafmèlde\');
  ta[\'ca-talk\'] = new Array(\'t\',\'Euverlik euver dit artikel\');
  ta[\'ca-edit\'] = new Array(\'e\',\'De kins dees pazjena verangere.\');
  ta[\'ca-addsection\'] = new Array(\'+\',\'Opmèrking toevoge aan dees discussie.\');

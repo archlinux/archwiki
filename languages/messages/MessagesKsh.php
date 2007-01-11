@@ -48,6 +48,8 @@ $namespaceAliases = array(
 	'Katejorije_Klaaf'  => NS_CATEGORY_TALK,
 );
 
+$separatorTransformTable = array(',' => "\xc2\xa0", '.' => ',' );
+
 /**
  * Labels of the quickbar settings in Special:Preferences
  */
@@ -177,7 +179,8 @@ dren shtëijdt',
 'oct'                   => 'Okt',
 'nov'                   => 'Nov',
 'dec'                   => 'Dez',
-'categories'            => '{{PLURAL:$1| Saachjropp | Saachjroppe }}',
+'categories'            => 'Saachjroppe',
+'pagecategories'        => '{{PLURAL:$1|Saachjropp|Saachjroppe }}',
 'category_header'       => 'Attikkelle in_de Saachjropp „$1“',
 'subcategories'         => 'Ungerjroppe',
 'mainpage'              => 'Houpsigk',
@@ -866,7 +869,7 @@ fottjeschmeßße hätt?',
 'loadhist'              => 'Donn de Lėßß met ahle Väsohne laade',
 'currentrev'            => 'Nöüßte Väsjohn',
 'revisionasof'          => 'Väsjohn fum $1',
-'old-revision-navigation'=> 'Väsjohn fum $1; $5<br />($6) $3 | $2 | $4 ($7)',
+'revision-info' => 'Väsjohn fum $1; $2',
 'previousrevision'      => '← De Revisjohn dö_für zëije',
 'nextrevision'          => 'De Väsjohn do_noh zëije →',
 'currentrevisionlink'   => 'De nöüßte Väsjohn',
@@ -2026,7 +2029,7 @@ huh_laade darrəf.',
 'accesskey-minoredit'   => 'm',
 'accesskey-save'        => 's',
 'accesskey-preview'     => 'p',
-'accesskey-diff'        => 'd',
+'accesskey-diff'        => 'v',
 'accesskey-compareselectedversions'=> 'v',
 'accesskey-watch'       => 'w',
 'tooltip-search'        => 'En de {{SITENAME}} sööke [alt-f]',
@@ -2035,11 +2038,11 @@ huh_laade darrəf.',
 'tooltip-preview'       => 'Lißß de Füür_Aansėsh fun dä Sigk un_fun_Dinge Ännderonge ih_dat_De_n Affsphëijshere 
 
 dëijß! [alt-p]',
-'tooltip-diff'          => 'Zëijsh Ding Ännderone am Täxx aan. [alt-d]',
+'tooltip-diff'          => 'Zëijsh Ding Ännderone am Täxx aan. [alt-v]',
 'tooltip-compareselectedversions'=> 'Donn de Ungescheed zweshe dä bëijde ußjewäälte Väsjohne zëije. [alt-v]',
 'tooltip-watch'         => 'Op di Sigk hee oppaßße. [alt-w]',
-'Common.css'            => '.allpagesredirect, .titleNamespace {font-style:italic}',
-'Monobook.css'          => ' /* edit this file to customize the monobook skin for the entire site */
+'common.css'            => '.allpagesredirect, .titleNamespace {font-style:italic}',
+'monobook.css'          => ' /* edit this file to customize the monobook skin for the entire site */
  
  /* distinguish redirections in Special:Allpages directory */
  .allpagesredirect {font-style:italic}
@@ -2109,7 +2112,7 @@ mieh op de füürije un nähkßte Sigge jëvve)</small>',
 'rcpatroldisabledtext'  => 'Et Nohluere fun de läzde Ännderonge eß fö_do_Mommännt nit mööshlėsh.',
 'markedaspatrollederror'=> 'Kann dat Kënnzëijshe „Nohjeluert“ nit affshpëijshere.',
 'markedaspatrollederrortext'=> 'Do_moss_en beshtemmpte Väsjohn ußsööke.',
-'Monobook.js'           => ' /* tooltips and access keys */
+'monobook.js'           => ' /* tooltips and access keys */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Ding ëijen Medmaacher_Sigk.\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'De Medmaacher_Sigk fun Dinge aktlowälle IP_Adräßß.\');
@@ -2120,7 +2123,7 @@ mieh op de füürije un nähkßte Sigge jëvve)</small>',
  ta[\'pt-mycontris\'] = new Array(\'y\',\'De Leßß met Dinge eijene Bëijdräsh.\');
  ta[\'pt-login\'] = new Array(\'o\',\'Do küünz Desh widdo ennlogge, ed_eß ävver nit nüüdish.\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'Do küünz Desh hee als_enne Medmaacher aanmëllde, moss_ävvor nit.\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Ußlogge, domet De zem nameloose Medmaacher weeß.\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Ußlogge, domet De zem nameloose Medmaacher weeß.\');
  ta[\'ca-talk\'] = new Array(\'t\',\'Klaaf övver de Sigk med Enhalld.\');
  ta[\'ca-edit\'] = new Array(\'e\',\'Do kannß di Sigk fo_änndere. Luer Der de Füür_Aansesh aan, ih dat_De_se 
 
@@ -2315,7 +2318,6 @@ Wellß Do jäz medd_en nöüe Väsjohn di Sigk nöü aanlääje?',
 $1',
 'confirm_purge_button'  => 'Jo — loßß jonn!',
 'youhavenewmessagesmulti'=> 'Do häßß nöü Nohrishte op $1',
-'newtalkseperator'      => ',_',
 'searchcontaining'      => 'Söök noh Atikkelle, wo „$1“ em Täxx fürkütt.',
 'searchnamed'           => 'Söök noh Atikkelle, wo „$1“ em Name fürkütt.',
 'articletitles'         => 'Atikkelle di met „$1“ aanfange',

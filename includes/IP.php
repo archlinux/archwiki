@@ -10,11 +10,15 @@
 // Some regex definition to "play" with IP address and IP address blocks
 
 // An IP is made of 4 bytes from x00 to xFF which is d0 to d255
-define( 'RE_IP_BYTE', '(25[0-5]|2[0-4]\d|1?\d{1,2})');
+define( 'RE_IP_BYTE', '(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|0?[0-9]?[0-9])');
 define( 'RE_IP_ADD' , RE_IP_BYTE . '\.' . RE_IP_BYTE . '\.' . RE_IP_BYTE . '\.' . RE_IP_BYTE );
 // An IP block is an IP address and a prefix (d1 to d32)
-define( 'RE_IP_PREFIX' , '(3[0-2]|[12]?\d)');
+define( 'RE_IP_PREFIX', '(3[0-2]|[12]?\d)');
 define( 'RE_IP_BLOCK', RE_IP_ADD . '\/' . RE_IP_PREFIX);
+// For IPv6 canonicalization (NOT for strict validation; these are quite lax!)
+define( 'RE_IPV6_WORD', '([0-9A-Fa-f]{1,4})' );
+define( 'RE_IPV6_GAP', ':(?:0+:)*(?::(?:0+:)*)?' );
+define( 'RE_IPV6_V4_PREFIX', '0*' . RE_IPV6_GAP . '(?:ffff:)?' );
 
 class IP {
 
@@ -23,7 +27,7 @@ class IP {
 	 * @return boolean True if it is valid.
 	 */
 	public static function isValid( $ip ) {
-		return preg_match( '/^' . RE_IP_ADD . '$/', $ip, $matches) ;
+		return preg_match( '/^' . RE_IP_ADD . '$/', $ip) ;
 	}
 
 	/**
@@ -74,12 +78,13 @@ class IP {
 
 	/**
 	 * Split out an IP block as an array of 4 bytes and a mask,
-	 * return false if it cant be determined
+	 * return false if it can't be determined
 	 *
 	 * @parameter $ip string A quad dotted IP address
 	 * @return array
 	 */
 	public static function toArray( $ipblock ) {
+		$matches = array();
 		if(! preg_match( '/^' . RE_IP_ADD . '(?:\/(?:'.RE_IP_PREFIX.'))?' . '$/', $ipblock, $matches ) ) {
 			return false;
 		} else {
@@ -206,6 +211,50 @@ class IP {
 		} else {				
 			return array( $start, $end );
 		}
-	}
+    }
+
+    /**
+     * Determine if a given integer IPv4 address is in a given CIDR network
+     * @param $addr The address to check against the given range.
+     * @param $range The range to check the given address against.
+     * @return bool Whether or not the given address is in the given range.
+     */
+    public static function isInRange( $addr, $range ) {
+        $unsignedIP = IP::toUnsigned($addr);
+        list( $start, $end ) = IP::parseRange($range);
+
+		$start = hexdec($start);
+		$end   = hexdec($end);
+
+        return (($unsignedIP >= $start) && ($unsignedIP <= $end));
+    }
+
+    /**
+     * Convert some unusual representations of IPv4 addresses to their
+     * canonical dotted quad representation.
+     *
+     * This currently only checks a few IPV4-to-IPv6 related cases.  More
+     * unusual representations may be added later.
+     *
+     * @param $addr something that might be an IP address
+     * @return valid dotted quad IPv4 address or null
+     */
+    public static function canonicalize( $addr ) {
+	if ( IP::isValid( $addr ) )
+	    return $addr;
+
+	// IPv6 loopback address
+	if ( preg_match( '/^0*' . RE_IPV6_GAP . '1$/', $addr, $m ) )
+	    return '127.0.0.1';
+
+	// IPv4-mapped and IPv4-compatible IPv6 addresses
+	if ( preg_match( '/^' . RE_IPV6_V4_PREFIX . '(' . RE_IP_ADD . ')$/i', $addr, $m ) )
+	    return $m[1];
+	if ( preg_match( '/^' . RE_IPV6_V4_PREFIX . RE_IPV6_WORD . ':' . RE_IPV6_WORD . '$/i', $addr, $m ) )
+	    return long2ip( ( hexdec( $m[1] ) << 16 ) + hexdec( $m[2] ) );
+
+	return null;  // give up
+    }
 }
+
 ?>

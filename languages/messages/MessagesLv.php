@@ -102,7 +102,8 @@ $messages= array(
 'oct'                   => 'oktobrī,',
 'nov'                   => 'novembrī,',
 'dec'                   => 'decembrī,',
-'categories'            => '{{PLURAL:$1|Kategorija|Kategorijas}}',
+'categories'            => 'Kategorijas',
+'pagecategories'        => '{{PLURAL:$1|Kategorija|Kategorijas}}',
 'category_header'       => 'Raksti, kas ietverti kategorijā "$1".',
 'subcategories'         => 'Apakškategorijas',
 'mainpage'              => 'Sākumlapa',
@@ -432,7 +433,7 @@ m = maznozīmīgs labojums.',
 'searchresults'         => 'Meklēšanas rezultāti',
 'searchresulttext'      => 'Lai iegūtu vairāk informācijas par meklēšanu {{grammar:akuzatīvs|{{SITENAME}}}}, skat. [[Project:Searching|{{grammar:ģenitīvs|{{SITENAME}}}} meklēšana]].',
 'searchsubtitle'           => 'Pieprasījums: [[:$1]] [[Special:Allpages/$1|&#x5B;Indekss&#x5D;]]',
-'searchsubtitleinvalid'           => 'Pieprasījums: $1 ',
+'searchsubtitleinvalid'           => 'Pieprasījums: $1',
 'badquery'              => 'Nepareizi noformulēts meklēšanas pieprasījums',
 'badquerytext'          => 'Mēs nevarējām apstrādāt tavu pieprasījumu. Iespējams, tāpēc, ka tu mēģināji meklēt vārdu, kas ir īsāks par trim burtiem, kas vēl nav iespējams. Varbūt tu nepareizi ierakstīji kādu frāzi, piemēram "fish and and scales". Lūdzu, mēģini citus atslēgvārdus.',
 'titlematches'          => 'Rezultāti virsrakstos',
@@ -736,7 +737,7 @@ un klikšķini uz pogas "\'\'\'Izņemt no uzraugāmajām lapām\'\'\'".',
 'rollbacklink'          => 'novērst',
 'rollbackfailed'        => 'Novēršana neizdevās',
 'cantrollback'          => 'Nav iespējams novērst labojumu; iepriekšējais labotājs ir vienīgais lapas autors.',
-'alreadyrolled'         => 'Nav iespējams novērst pēdējās izmaiņas, ko lapā [[$1]] saglabāja [[User:$2|$2]] ([[User talk:$2|Diskusija]]). Kāds cits jau ir rediģējis šo lapu vai novērsis izmaiņas.
+'alreadyrolled'         => 'Nav iespējams novērst pēdējās izmaiņas, ko lapā [[:$1]] saglabāja [[User:$2|$2]] ([[User talk:$2|Diskusija]]). Kāds cits jau ir rediģējis šo lapu vai novērsis izmaiņas.
 
 Pēdējās izmaiņas saglabāja [[User:$3|$3]] ([[User talk:$3|diskusija]])',
 'revertpage'            => 'Novērsu izmaiņas, ko izdarīja [[Special:Contributions/$2|$2]], atjaunoju versiju, ko saglabāja $1',
@@ -857,7 +858,7 @@ Ja tomēr vēlēsies, tad tev šī diskusiju lapa būs jāpārvieto vai jāapvie
 'tooltip-minoredit'     => 'Atzīmēt šo par maznozīmīgu labojumu [alt-i]',
 'tooltip-save'          => 'Saglabāt veiktās izmaiņas [alt-s]',
 'tooltip-preview'       => 'Parādīt izmaiņu priekšskatījumu. Lūdzam izmantot šo iespēju pirms saglabāšanas. [alt-p]',
-'tooltip-diff'          => 'Parādīt, kā esi izmainījis tekstu. [alt-d]',
+'tooltip-diff'          => 'Parādīt, kā esi izmainījis tekstu. [alt-v]',
 'tooltip-compareselectedversions'=> 'Aplūkot atšķirības starp divām izvēlētajām lapas versijām. [alt-v]',
 'tooltip-watch'         => 'Pievienot šo lapu uzraugāmo lapu sarakstam [alt-w]',
 'siteuser'              => '{{grammar:ģenitīvs|{{SITENAME}}}} lietotājs $1',
@@ -871,7 +872,7 @@ Ja tomēr vēlēsies, tad tev šī diskusiju lapa būs jāpārvieto vai jāapvie
 'mw_math_source'        => 'Saglabāt kā TeX (teksta pārlūkiem)',
 'mw_math_modern'        => 'Moderniem pārlūkiem ieteiktais variants',
 'mw_math_mathml'        => 'MathML, ja iespējams (eksperimentāla iespēja)',
-'Monobook.js'           => '/* tooltips and access keys */
+'monobook.js'           => '/* tooltips and access keys */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Mana lietotāja lapa\');
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Manas IP adreses lietotāja lapa\');
@@ -882,7 +883,7 @@ Ja tomēr vēlēsies, tad tev šī diskusiju lapa būs jāpārvieto vai jāapvie
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Mani ieguldījumi\');
  ta[\'pt-login\'] = new Array(\'o\',\'Aicinām tevi ieiet {{grammar:lokatīvs|{{SITENAME}}}}, tomēr tas nav obligāti.\');
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'Aicinām tevi ieiet {{grammar:lokatīvs|{{SITENAME}}}}, tomēr tas nav obligāti.\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Iziet\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Iziet\');
  ta[\'ca-talk\'] = new Array(\'t\',\'Diskusija par šī raksta lapu\');
  ta[\'ca-edit\'] = new Array(\'e\',\'Izmainīt šo lapu. Lūdzam izmantot pirmskatu pirms lapas saglabāšanas.\');
  ta[\'ca-addsection\'] = new Array(\'+\',\'Pievienot komentāru šai diskusijai.\');

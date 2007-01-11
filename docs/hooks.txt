@@ -286,6 +286,10 @@ $isminor: minor flag
 $iswatch: watch flag
 $section: section #
 
+'AuthPluginSetup': update or replace authentication plugin object ($wgAuth)
+Gives a chance for an extension to set it programattically to a variable class.
+&$auth: the $wgAuth object, probably a stub
+
 'AutoAuthenticate': called to authenticate users on external/environmental means
 $user: writes user object to this parameter
 
@@ -308,6 +312,10 @@ $user: the user who did the block (not the one being blocked)
 $diff: DifferenceEngine object that's calling
 $oldRev: Revision object of the "old" revision (may be null/invalid)
 $newRev: Revision object of the "new" revision
+
+'EditPage::attemptSave': called before an article is
+saved, that is before insertNewArticle() is called
+&$editpage_Obj: the current EditPage object
 
 'EditFormPreloadText': Allows population of the edit form when creating new pages
 &$text: Text to preload with
@@ -408,6 +416,17 @@ my talk page, my contributions" etc).
 &$personal_urls: Array of link specifiers (see SkinTemplate.php)
 &$title: Title object representing the current page
 
+'PingLimiter': Allows extensions to override the results of User::pingLimiter()
+&$user : User performing the action
+$action : Action being performed
+&$result : Whether or not the action should be prevented
+Change $result and return false to give a definitive answer, otherwise
+the built-in rate limiting checks are used, if enabled.
+
+'PreferencesUserInformationPanel': Add HTML bits to user information list in preferences form
+$form : PreferencesForm object
+&$html : HTML to append to
+
 'SiteNoticeBefore': Before the sitenotice/anonnotice is composed
 &$siteNotice: HTML returned as the sitenotice
 Return true to allow the normal method of notice selection/rendering to work,
@@ -436,6 +455,17 @@ $article: article object to be removed
 'UnwatchArticle': after a watch is removed from an article
 $user: user that was watching
 $article: article object removed
+
+'UploadForm:initial': before the upload form is generated
+$form: UploadForm object
+You might set the member-variables $uploadFormTextTop and 
+$uploadFormTextAfterSummary to inject text (HTML) either before
+or after the editform.
+
+'UploadForm:BeforeProcessing': at the beginning of processUpload()
+$form: UploadForm object
+Lets you poke at member variables like $mUploadDescription before the
+file is saved.
 
 'UploadVerification': additional chances to reject an uploaded file
 string $saveName: destination file name
@@ -488,9 +518,10 @@ $article: article object that was watched
 $catpage: CategoryPage instance
 
 'SkinTemplateContentActions': after building the $content_action array right
-                              before returning it, see content_action.php in
-			      the extension module for a demonstration of how
-			      to use this hook.
+                              before returning it, see Content_action.php in
+                              the extensions/examples/ directory
+                              ( http://svn.wikimedia.org/viewvc/mediawiki/trunk/extensions/examples/ )
+                              for a demonstration of how to use this hook.
 $content_actions: The array of content actions
 
 'BeforePageDisplay': Called just before outputting a page (all kinds of,

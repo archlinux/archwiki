@@ -141,7 +141,8 @@ $messages = array(
 
 # Bits of text used by many pages:
 #
-'categories' => '{{PLURAL:$1|Categoreye|Categoreyes}}',
+'categories' => 'Categoreyes',
+'pagecategories' => '{{PLURAL:$1|Categoreye|Categoreyes}}',
 'category_header' => 'Årtikes el categoreye «$1»',
 'subcategories' => 'Dizo-categoreyes',
 #'linkprefix'		=> '/^(.*?)([a-zA-Z\x80-\xff]+)$/sD',
@@ -1099,7 +1100,7 @@ djivêye des dierins disfaçaedjes.',
 'deletecomment' => 'Råjhon do disfaçaedje',
 'imagereverted' => 'Li rmetaedje del modêye di dvant a stî comifåt.',
 'cantrollback' => 'Dji n\' sai disfé les candjmints; li dierin contribouweu est li seu oteur po cist årtike ci.',
-'alreadyrolled' => 'Dji n\' sai disfé li dierin candjmint di [[$1]]
+'alreadyrolled' => 'Dji n\' sai disfé li dierin candjmint di [[:$1]]
 fwait pa [[{{ns:user}}:$2|$2]] ([[{{ns:user_talk}}:$2|Copene]]); 
 ene sakî d\' ôte a ddja candjî l\' årtike ou ddja rmetou l\' modêye di dvant. 
 
@@ -1377,8 +1378,8 @@ Dins ç\' dierin cas, vos ploz eto eployî ene hårdêye, eg: [[{{ns:special}}:E
 'tooltip-watch' => 'Radjouter cisse pådje ci a vosse djivêye des shuvous [alt-w]',
 
 # stylesheets
-'Monobook.css' => '/* candjî ci fitchî ci po candjî l\' foye di stîle eyet l\' rivnance del waibe etire */',
-#'Monobook.js' => '/* candjî ci fitchî ci po candjî l\' javascripe do stîle monobook */',
+'monobook.css' => '/* candjî ci fitchî ci po candjî l\' foye di stîle eyet l\' rivnance del waibe etire */',
+#'monobook.js' => '/* candjî ci fitchî ci po candjî l\' javascripe do stîle monobook */',
 
 # Metadata
 'notacceptable' => 'Li sierveu wiki èn vos pout nén dner les dnêyes dins ene cogne ki vosse cliyint sait lére.',
@@ -1418,7 +1419,7 @@ Dins ç\' dierin cas, vos ploz eto eployî ene hårdêye, eg: [[{{ns:special}}:E
 
 # NOTE: les apostrofes divèt esse escapêyes.
 # Monobook.js: tooltips and access keys for monobook
-'Monobook.js' => '/* <pre> <nowiki> */
+'monobook.js' => '/* <pre> <nowiki> */
 /* tooltips and access keys */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Pådje d\\\' uzeu da minne\');
@@ -1430,7 +1431,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'Li djivêye des pådjes ki vos shujhoz 
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Djivêye des ovraedjes da minne\');
 ta[\'pt-login\'] = new Array(\'o\',\'Vos estoz ecoraedjî d\\\' vos elodjî, mins nerén, c\\\' est nén oblidjî.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Vos estoz ecoraedjî d\\\' vos elodjî, mins nerén, c\\\' est nén oblidjî.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Vos dislodjî\');
+ta[\'pt-logout\'] = new Array(\'\',\'Vos dislodjî\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Copene åd fwait do contnou del pådje\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Vos ploz candjî cisse pådje ci. S\\\' i vs plait, eployîz l\\\' boton «Vey divant» po vs acertiner k\\\' tot est comifåt dvant d\\\' schaper vos candjmints.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Radjouter on comintaire a cisse copene ci.\');
@@ -1738,7 +1739,6 @@ $1',
 'confirm_purge_button' => '\'l est bon',
 
 'youhavenewmessagesmulti' => 'Vos avoz des noveas messaedjes so $1',
-#'newtalkseperator' => ',_',
 'searchcontaining' => 'Cweri après des årtikes k\' ont «\'\'$1\'\'» å dvins.',
 'searchnamed' =>  'Cweri après des årtikes lomés «\'\'$1\'\'».',
 'articletitles' =>  'Årtikes ki cmincèt avou «\'\'$1\'\'»',

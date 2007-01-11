@@ -179,6 +179,7 @@ $messages = array(
 
 # Části textu používané různými stránkami:
 'categories' => 'Kategorie',
+'pagecategories' => 'Kategorie',
 'category_header' => 'Články v kategorii „$1“',
 'subcategories' => 'Podkategorie',
 
@@ -653,7 +654,7 @@ Můžete se vrátit a editovat již existující stránku, nebo [[Special:Userlo
 'loadhist'              => 'Načítá se stránka historie editací', #FIXME Apparently not used
 'currentrev'    => 'Aktuální verze',
 'revisionasof'          => 'Verze z $1',
-'old-revision-navigation' => 'Verze z $1; $5<br />($6) $3 | $2 | $4 ($7)',
+'revision-info' => 'Verze z $1; $2',
 'previousrevision' => '← Starší verze',
 'nextrevision'		=> 'Novější verze →',
 'currentrevisionlink'   => 'zobrazit aktuální verzi',
@@ -1208,7 +1209,7 @@ Rady a kontakt:
 'rollbacklink'  => 'vrácení zpět',
 'rollbackfailed' => 'Nešlo vrátit zpět',
 'cantrollback'  => 'Nelze vrátit zpět poslední editaci, neboť poslední přispěvatel je jediným autorem tohoto článku.',
-'alreadyrolled' => 'Nelze vrátit zpět poslední editaci [[$1]] od [[User:$2|$2]] ([[User talk:$2|Diskuse]]), protože někdo jiný již článek editoval nebo vrátil tuto změnu zpět. Poslední editace byla od [[User:$3|$3]] ([[User talk:$3|Diskuse]]).',
+'alreadyrolled' => 'Nelze vrátit zpět poslední editaci [[:$1]] od [[User:$2|$2]] ([[User talk:$2|Diskuse]]), protože někdo jiný již článek editoval nebo vrátil tuto změnu zpět. Poslední editace byla od [[User:$3|$3]] ([[User talk:$3|Diskuse]]).',
 #   only shown if there is an edit comment
 'editcomment' => 'Shrnutí editace bylo: „<i>$1</i>“.',
 'revertpage'	=> 'Editace uživatele „$2“ vrácena do předchozího stavu, jehož autorem je „$1“.',
@@ -1401,7 +1402,7 @@ V těchto případech musíte přesunout nebo sloučit stránky manuálně, jest
 'pagemovedsub'  => 'Úspěšně přesunuto',
 'pagemovedtext' => "Stránka „[[$1]]“ přesunuta na „[[$2]]“.
 
-'''Nyní''' následujte odkaz [[{{ns-1}}:Whatlinkshere/$1]]: pokud se v seznamu vyskytnou nějaké přesměrovače, je třeba je upravit tak, aby ukazovaly na nový název ($2), jinak nebudou fungovat.",
+'''Nyní''' následujte odkaz [[{{ns:-1}}:Whatlinkshere/$1]]: pokud se v seznamu vyskytnou nějaké přesměrovače, je třeba je upravit tak, aby ukazovaly na nový název ($2), jinak nebudou fungovat.",
 'articleexists' => 'Takto nazvaná stránka již existuje, nebo Vámi zvolený název je neplatný. Zvolte jiný název.',
 'talkexists'	=> 'Stránka byla přesunuta úspěšně, ale diskusní stránka přesunuta být nemohla, neboť pod novým názvem již nějaká stránka existuje. Proveďte prosím ruční sloučení.',
 'movedto'               => 'přesunuto na',
@@ -1479,7 +1480,7 @@ Do níže uvedeného editačního pole zadejte názvy stránek, které chcete ex
 # import log
 'importlogpage' => 'Kniha importů',
 'importlogpagetext' => 'Na této stránce se zobrazují správcovské importy stránek včetně historie editací z jiných wiki.',
-'import-logentry-upload' => 'naimportoval $1 načtením souboru',
+'import-logentry-upload' => 'naimportoval [[$1]] načtením souboru',
 'import-logentry-upload-detail' => '$1 {{PLURAL:$1|revizi|revize|revizí}}',
 'import-logentry-interwiki' => 'přenesl $1',
 'import-logentry-interwiki-detail' => '$1 {{PLURAL:$1|revizi|revize|revizí}} z $2',
@@ -1491,7 +1492,7 @@ Do níže uvedeného editačního pole zadejte názvy stránek, které chcete ex
 'accesskey-watch' => 'w',
 'accesskey-save' => 's',
 'accesskey-preview' => 'p',
-'accesskey-diff' => 'd',
+'accesskey-diff' => 'v',
 'accesskey-compareselectedversions' => 'v',
 
 # tooltip help for some actions, most are in Monobook.js
@@ -1499,13 +1500,13 @@ Do níže uvedeného editačního pole zadejte názvy stránek, které chcete ex
 'tooltip-minoredit' => 'Označit jako malou editaci [alt-i]',
 'tooltip-save' => 'Uložit vaše úpravy [alt-s]',
 'tooltip-preview' => 'Prohlédnout vaše úpravy, prosíme použijte tuto funkci před uložením! [alt-p]',
-'tooltip-diff' => 'Zobrazit, jaké změny jste v textu provedli. [alt-d]',
+'tooltip-diff' => 'Zobrazit, jaké změny jste v textu provedli. [alt-v]',
 'tooltip-compareselectedversions' => 'Porovnat rozdíly mezi zvolenými verzemi této stránky. [alt-v]',
 'tooltip-watch' => 'Přidat stránku do seznamu sledovaných [alt-w]',
 
 # stylesheets
-'Common.css' => '/* Zde uvedené CSS bude ovlivňovat všechny styly */',
-'Monobook.css' => '/* Zde uvedené CSS bude ovlivňovat pouze styl „monobook“ */',
+'common.css' => '/* Zde uvedené CSS bude ovlivňovat všechny styly */',
+'monobook.css' => '/* Zde uvedené CSS bude ovlivňovat pouze styl „monobook“ */',
 
 # Metadata
 'nodublincore' => 'Na tomto serveru je vypnuto generování metadat Dublin Core RDF.',
@@ -1566,7 +1567,7 @@ Do níže uvedeného editačního pole zadejte názvy stránek, které chcete ex
 'markedaspatrollederrortext' => 'Musíte zvolit revizi, která má být označena jako prověřená.',
 
 # Monobook.js: tooltips and access keys for monobook
-'Monobook.js' => "/* tooltips and access keys */
+'monobook.js' => "/* tooltips and access keys */
 var ta = new Object();
 ta['pt-userpage'] = new Array('.','Moje uživatelská stránka');
 ta['pt-anonuserpage'] = new Array('.','Uživatelská stránka pro IP adresu, ze které editujete');
@@ -1577,7 +1578,7 @@ ta['pt-watchlist'] = new Array('l','Seznam stránek, jejichž změny sleduji');
 ta['pt-mycontris'] = new Array('y','Seznam mých příspěvků');
 ta['pt-login'] = new Array('o','Doporučujeme vám přihlásit se, ovšem není to povinné.');
 ta['pt-anonlogin'] = new Array('o','Doporučujeme vám přihlásit se, ovšem není to povinné.');
-ta['pt-logout'] = new Array('o','Odhlásit se');
+ta['pt-logout'] = new Array('','Odhlásit se');
 ta['ca-talk'] = new Array('t','Diskuse ke stránce');
 ta['ca-edit'] = new Array('e','Tuto stránku můžete editovat. Prosíme použijte tlačítko Ukázat náhled před uložením.');
 ta['ca-addsection'] = new Array('+','Přidat k této diskusi svůj komentář.');
@@ -2046,7 +2047,7 @@ Opravdu si přejete znovu tuto stránku založit?',
 'confirm_purge_button' => 'OK',
 
 'youhavenewmessagesmulti' => 'Na $1 máte nové zprávy',
-'newtalkseperator' => ',_',
+
 'searchcontaining' => "Hledat články obsahující ''$1''.",
 'searchnamed' => "Hledat články pojmenované ''$1''.",
 'articletitles' => "Články začínající ''$1''",

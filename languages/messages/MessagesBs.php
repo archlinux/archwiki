@@ -95,9 +95,9 @@ $linkTrail = '/^([a-zćčžšđž]+)(.*)$/sDu';
 $messages = array(
 '1movedto2' => 'stranica [[$1]] premještena u stranicu [[$2]]',
 '1movedto2_redir' => 'stranica [[$1]] premještena u stranicu [[$2]] putem preusmjerenja',
-'Monobook.css' => '/*
+'monobook.css' => '/*
 */',
-'Monobook.js' => '
+'monobook.js' => '
 /* tooltips and access keys */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Moja korisnička stranica\');
@@ -109,7 +109,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'Spisak članaka koje pratite.\');
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Spisak mog doprinosa\');
 ta[\'pt-login\'] = new Array(\'o\',\'Prijava nije obavezna, ali donosi mnogo koristi.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Prijava nije obavezna, ali donosi mnogo koristi.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Odjava sa projekta {{SITENAME}}\');
+ta[\'pt-logout\'] = new Array(\'\',\'Odjava sa projekta {{SITENAME}}\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Razgovor o sadržaju\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Možete da uređujete ovaj članak. Molimo Vas, koristite dugme "Prikaži izgled" prije konačnog sačuvavanja vaših imjena.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Dodajte svoj komentar.\');
@@ -165,7 +165,7 @@ ta[\'ca-nstab-category\'] = new Array(\'c\',\'Pogledajte stranicu kategorije\');
 'allpages' => 'Sve stranice',
 'alphaindexline' => '$1 u $2',
 'alreadyloggedin' => '<strong>Korisniče $1, već ste prijavljeni!</strong><br />',
-'alreadyrolled' => 'Ne može se vratiti poslednja izmjena [[$1]] od korisnika [[{{ns:2}}:$2|$2]] ([[{{ns:3}}:$2|razgovor]]); neko drugi je već izmjenio ili vratio članak.  Poslednja izmjena od korisnika [[{{ns:2}}:$3|$3]] ([[{{ns:3}}:$3|razgovor]]).',
+'alreadyrolled' => 'Ne može se vratiti poslednja izmjena [[:$1]] od korisnika [[{{ns:2}}:$2|$2]] ([[{{ns:3}}:$2|razgovor]]); neko drugi je već izmjenio ili vratio članak.  Poslednja izmjena od korisnika [[{{ns:2}}:$3|$3]] ([[{{ns:3}}:$3|razgovor]]).',
 'ancientpages' => 'Najstarije stranice',
 'and' => 'i',
 'anoneditwarning' => 'Niste prijavljeni. Vaša IP adresa će biti zapisana.',
@@ -699,6 +699,7 @@ na kome bi se izvela ova funkcija.',
 'orig' => 'orig',
 'othercontribs' => 'Bazirano na radu od strane korisnika $1.',
 'otherlanguages' => 'Ostali jezici',
+'pagecategories' => 'Kategorije',
 'pagemovedsub' => 'Premještanje uspjelo',
 'pagemovedtext' => 'Stranica "[[$1]]" premještena je na "[[$2]]".',
 'pagetitle' => '$1 - {{SITENAME}}',
@@ -839,7 +840,7 @@ Molimo Vas da provjerite URL pomoću kojeg ste pristupili ovoj stranici.',
 'searchbutton' => 'Pretraži',
 'searchdisabled' => '<p>Izvinjavamo se!  Puno pretraga teksta je privremeno onemogućena.  U međuvremenu, možete koristiti Google za pretragu.  Indeks može biti stariji.',
 'searchsubtitle' => 'Tražili ste [[:$1]] [[Special:Allpages/$1|&#x5B;Sadržaj&#x5D;]]',
-'searchsubtitleinvalid' => 'Tražili ste $1 ',
+'searchsubtitleinvalid' => 'Tražili ste $1',
 'searchresults' => 'Rezultati pretrage',
 'searchresultshead' => 'Podešavanja rezultata pretrage',
 'searchresulttext' => 'Za više informacija o pretraživanju {{SITENAME}}, pogledajte [[{{ns:4}}:Pretraga|Pretraga]].',

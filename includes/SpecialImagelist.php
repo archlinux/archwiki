@@ -9,18 +9,19 @@
  *
  */
 function wfSpecialImagelist() {
-	global $wgUser, $wgOut, $wgLang, $wgContLang, $wgRequest, $wgMiserMode;
+	global $wgOut;
 
 	$pager = new ImageListPager;
 
 	$limit = $pager->getForm();
 	$body = $pager->getBody();
 	$nav = $pager->getNavigationBar();
-	$wgOut->addHTML( "
+	$wgOut->addHTML(
 		$limit
-		<br/>
-		$body
-		$nav" );
+		. '<br/>'
+		. $body
+		. '<br/>'
+		. $nav );
 }
 
 class ImageListPager extends TablePager {

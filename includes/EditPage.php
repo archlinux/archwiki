@@ -32,6 +32,7 @@ class EditPage {
 	var $allowBlankSummary = false;
 	var $autoSumm = '';
 	var $hookError = '';
+	var $mPreviewTemplates;
 
 	# Form values
 	var $save = false, $preview = false, $diff = false;
@@ -39,6 +40,14 @@ class EditPage {
 	var $textbox1 = '', $textbox2 = '', $summary = '';
 	var $edittime = '', $section = '', $starttime = '';
 	var $oldid = 0, $editintro = '', $scrolltop = null;
+
+	# Placeholders for text injection by hooks (must be HTML)
+	# extensions should take care to _append_ to the present value
+	public $editFormPageTop; // Before even the preview
+	public $editFormTextTop;
+	public $editFormTextAfterWarn;
+	public $editFormTextAfterTools;
+	public $editFormTextBottom;
 
 	/**
 	 * @todo document
@@ -48,17 +57,25 @@ class EditPage {
 		$this->mArticle =& $article;
 		global $wgTitle;
 		$this->mTitle =& $wgTitle;
+
+		# Placeholders for text injection by hooks (empty per default)
+		$this->editFormPageTop =
+		$this->editFormTextTop =
+		$this->editFormTextAfterWarn =
+		$this->editFormTextAfterTools =
+		$this->editFormTextBottom = "";
 	}
 	
 	/**
 	 * Fetch initial editing page content.
 	 */
 	private function getContent() {
-		global $wgRequest, $wgParser;
+		global $wgOut, $wgRequest, $wgParser;
 
 		# Get variables from query string :P
 		$section = $wgRequest->getVal( 'section' );
 		$preload = $wgRequest->getVal( 'preload' );
+		$undo = $wgRequest->getVal( 'undo' );
 
 		wfProfileIn( __METHOD__ );
 
@@ -79,8 +96,41 @@ class EditPage {
 			// information.
 			
 			$text = $this->mArticle->getContent();
-			
-			if( $section != '' ) {
+
+			if ( $undo > 0 ) {
+				#Undoing a specific edit overrides section editing; section-editing
+				# doesn't work with undoing.
+				$undorev = Revision::newFromId($undo);
+
+				#Sanity check, make sure it's the right page.
+				# Otherwise, $text will be left as-is.
+				if (!is_null($undorev) && $undorev->getPage() == $this->mArticle->getID()) {
+					$oldrev = $undorev->getPrevious();
+					$undorev_text = $undorev->getText();
+					$oldrev_text = $oldrev->getText();
+					$currev_text = $text;
+
+					#No use doing a merge if it's just a straight revert.
+					if ($currev_text != $undorev_text) {
+						$result = wfMerge($undorev_text, $oldrev_text, $currev_text, $text);
+					} else {
+						$text = $oldrev_text;
+						$result = true;
+					}
+					
+					if( $result ) {
+						# Inform the user of our success and set an automatic edit summary
+						$this->editFormPageTop .= $wgOut->parse( wfMsgNoTrans( 'undo-success' ) );
+						$this->summary = wfMsgForContent( 'undo-summary', $undo, $undorev->getUserText() );
+						$this->formtype = 'diff';
+					} else {
+						# Warn the user that something went wrong
+						$this->editFormPageTop .= $wgOut->parse( wfMsgNoTrans( 'undo-failure' ) );
+					}
+	
+				}
+			}
+			else if( $section != '' ) {
 				if( $section == 'new' ) {
 					$text = $this->getPreloadedText( $preload );
 				} else {
@@ -439,6 +489,9 @@ class EditPage {
 					# The unmarked state will be assumed to be a save,
 					# if the form seems otherwise complete.
 					wfDebug( "$fname: Passed token check.\n" );
+				} else if ( $this->diff ) {
+					# Failed token check, but only requested "Show Changes".
+					wfDebug( "$fname: Failed token check; Show Changes requested.\n" );
 				} else {
 					# Page might be a hack attempt posted from
 					# an external site. Preview instead of saving.
@@ -507,8 +560,8 @@ class EditPage {
 		global $wgUser;
 		if( $wgUser->isAnon() ) {
 			# Anonymous users may not have a session
-			# open. Don't tokenize.
-			$this->mTokenOk = true;
+			# open. Check for suffix anyway.
+			$this->mTokenOk = ( EDIT_TOKEN_SUFFIX == $request->getVal( 'wpEditToken' ) );
 		} else {
 			$this->mTokenOk = $wgUser->matchEditToken( $request->getVal( 'wpEditToken' ) );
 		}
@@ -549,11 +602,18 @@ class EditPage {
 		wfProfileIn( $fname );
 		wfProfileIn( "$fname-checks" );
 
+		if( !wfRunHooks( 'EditPage::attemptSave', array( &$this ) ) )
+		{
+			wfDebug( "Hook 'EditPage::attemptSave' aborted article saving" );
+			return false;
+		}
+
 		# Reintegrate metadata
 		if ( $this->mMetaData != '' ) $this->textbox1 .= "\n" . $this->mMetaData ;
 		$this->mMetaData = '' ;
 
 		# Check for spam
+		$matches = array();
 		if ( $wgSpamRegex && preg_match( $wgSpamRegex, $this->textbox1, $matches ) ) {
 			$this->spamPage ( $matches[0] );
 			wfProfileOut( "$fname-checks" );
@@ -634,6 +694,7 @@ class EditPage {
 		# If article is new, insert it.
 		$aid = $this->mTitle->getArticleID( GAID_FOR_UPDATE );
 		if ( 0 == $aid ) {
+
 			// Late check for create permission, just in case *PARANOIA*
 			if ( !$this->mTitle->userCanCreate() ) {
 				wfDebug( "$fname: no create permission\n" );
@@ -647,14 +708,6 @@ class EditPage {
 					$wgOut->redirect( $this->mTitle->getFullURL() );
 					wfProfileOut( $fname );
 					return false;
-			}
-
-			# If no edit comment was given when creating a new page, and what's being
-			# created is a redirect, be smart and fill in a neat auto-comment
-			if( $this->summary == '' ) {
-				$rt = Title::newFromRedirect( $this->textbox1 );
-				if( is_object( $rt ) )
-					$this->summary = wfMsgForContent( 'autoredircomment', $rt->getPrefixedText() );
 			}
 
 			$isComment=($this->section=='new');
@@ -728,17 +781,21 @@ class EditPage {
 			return true;
 		}
 
-		# If no edit comment was given when turning a page into a redirect, be smart
-		# and fill in a neat auto-comment
-		if( $this->summary == '' ) {
-			$rt = Title::newFromRedirect( $this->textbox1 );
-			if( is_object( $rt ) )
-				$this->summary = wfMsgForContent( 'autoredircomment', $rt->getPrefixedText() );
+		$oldtext = $this->mArticle->getContent();
+
+		# Handle the user preference to force summaries here, but not for null edits
+		if( $this->section != 'new' && !$this->allowBlankSummary && $wgUser->getOption( 'forceeditsummary')
+			&&  0 != strcmp($oldtext, $text) && !Article::getRedirectAutosummary( $text )) {
+			if( md5( $this->summary ) == $this->autoSumm ) {
+				$this->missingSummary = true;
+				wfProfileOut( $fname );
+				return( true );
+			}
 		}
 
-		# Handle the user preference to force summaries here
-		if( $this->section != 'new' && !$this->allowBlankSummary && $wgUser->getOption( 'forceeditsummary' ) ) {
-			if( md5( $this->summary ) == $this->autoSumm ) {
+		#And a similar thing for new sections
+                if( $this->section == 'new' && !$this->allowBlankSummary && $wgUser->getOption( 'forceeditsummary' ) ) {
+			if (trim($this->summary) == '') {
 				$this->missingSummary = true;
 				wfProfileOut( $fname );
 				return( true );
@@ -802,8 +859,8 @@ class EditPage {
 	 */
 	function initialiseForm() {
 		$this->edittime = $this->mArticle->getTimestamp();
-		$this->textbox1 = $this->getContent();
 		$this->summary = '';
+		$this->textbox1 = $this->getContent();
 		if ( !$this->mArticle->exists() && $this->mArticle->mTitle->getNamespace() == NS_MEDIAWIKI )
 			$this->textbox1 = wfMsgWeirdKey( $this->mArticle->mTitle->getText() ) ;
 		wfProxyCheck();
@@ -845,6 +902,7 @@ class EditPage {
 					$s = wfMsg('editingcomment', $this->mTitle->getPrefixedText() );
 				} else {
 					$s = wfMsg('editingsection', $this->mTitle->getPrefixedText() );
+					$matches = array();
 					if( !$this->summary && !$this->preview && !$this->diff ) {
 						preg_match( "/^(=+)(.+)\\1/mi",
 							$this->textbox1,
@@ -863,9 +921,13 @@ class EditPage {
 				$wgOut->addWikiText( wfMsg( 'missingcommenttext' ) );
 			}
 			
-			if( $this->missingSummary ) {
+			if( $this->missingSummary && $this->section != 'new' ) {
 				$wgOut->addWikiText( wfMsg( 'missingsummary' ) );
 			}
+
+                        if( $this->missingSummary && $this->section == 'new' ) {
+                                $wgOut->addWikiText( wfMsg( 'missingcommentheader' ) );
+                        }
 			
 			if( !$this->hookError == '' ) {
 				$wgOut->addWikiText( $this->hookError );
@@ -922,6 +984,12 @@ class EditPage {
 			$wgOut->addWikiText( wfMsg( 'longpageerror', $wgLang->formatNum( $this->kblength ), $wgMaxArticleSize ) );
 		} elseif( $this->kblength > 29 ) {
 			$wgOut->addWikiText( wfMsg( 'longpagewarning', $wgLang->formatNum( $this->kblength ) ) );
+		}
+
+		#need to parse the preview early so that we know which templates are used,
+		#otherwise users with "show preview after edit box" will get a blank list
+		if ( $this->formtype == 'preview' ) {
+			$previewOutput = $this->getPreviewText();
 		}
 
 		$rows = $wgUser->getIntOption( 'rows' );
@@ -998,10 +1066,12 @@ class EditPage {
 
 		$checkboxhtml = $minoredithtml . $watchhtml;
 
+		$wgOut->addHTML( $this->editFormPageTop );
+
 		if ( $wgUser->getOption( 'previewontop' ) ) {
 
 			if ( 'preview' == $this->formtype ) {
-				$this->showPreview();
+				$this->showPreview( $previewOutput );
 			} else {
 				$wgOut->addHTML( '<div id="wikiPreview"></div>' );
 			}
@@ -1012,22 +1082,29 @@ class EditPage {
 		}
 
 
+		$wgOut->addHTML( $this->editFormTextTop );
+
 		# if this is a comment, show a subject line at the top, which is also the edit summary.
 		# Otherwise, show a summary field at the bottom
 		$summarytext = htmlspecialchars( $wgContLang->recodeForEdit( $this->summary ) ); # FIXME
 		if( $this->section == 'new' ) {
 			$commentsubject="<span id='wpSummaryLabel'><label for='wpSummary'>{$subject}:</label></span>\n<div class='editOptions'>\n<input tabindex='1' type='text' value=\"$summarytext\" name='wpSummary' id='wpSummary' maxlength='200' size='60' /><br />";
 			$editsummary = '';
+			$subjectpreview = $summarytext && $this->preview ? "<div class=\"mw-summary-preview\">".wfMsg('subject-preview').':'.$sk->commentBlock( $this->summary, $this->mTitle )."</div>\n" : '';
+			$summarypreview = '';
 		} else {
 			$commentsubject = '';
 			$editsummary="<span id='wpSummaryLabel'><label for='wpSummary'>{$summary}:</label></span>\n<div class='editOptions'>\n<input tabindex='2' type='text' value=\"$summarytext\" name='wpSummary' id='wpSummary' maxlength='200' size='60' /><br />";
+			$summarypreview = $summarytext && $this->preview ? "<div class=\"mw-summary-preview\">".wfMsg('summary-preview').':'.$sk->commentBlock( $this->summary, $this->mTitle )."</div>\n" : '';
+			$subjectpreview = '';
 		}
 
 		# Set focus to the edit box on load, except on preview or diff, where it would interfere with the display
 		if( !$this->preview && !$this->diff ) {
 			$wgOut->setOnloadHandler( 'document.editform.wpTextbox1.focus()' );
 		}
-		$templates = $this->formatTemplates();
+		$templates = ($this->preview || $this->section) ? $this->mPreviewTemplates : $this->mArticle->getUsedTemplates();
+		$formattedtemplates = $sk->formatTemplates( $templates, $this->preview, $this->section != '');
 
 		global $wgUseMetadataEdit ;
 		if ( $wgUseMetadataEdit ) {
@@ -1138,6 +1215,7 @@ END
 		$wgOut->addHTML( <<<END
 $recreate
 {$commentsubject}
+{$subjectpreview}
 <textarea tabindex='1' accesskey="," name="wpTextbox1" id="wpTextbox1" rows='{$rows}'
 cols='{$cols}'{$ew} $hidden>
 END
@@ -1147,9 +1225,11 @@ END
 		" );
 
 		$wgOut->addWikiText( $copywarn );
+		$wgOut->addHTML( $this->editFormTextAfterWarn );
 		$wgOut->addHTML( "
 {$metadata}
 {$editsummary}
+{$summarypreview}
 {$checkboxhtml}
 {$safemodehtml}
 ");
@@ -1164,26 +1244,36 @@ END
 </div><!-- editButtons -->
 </div><!-- editOptions -->");
 
+		$wgOut->addHtml( '<div class="mw-editTools">' );
 		$wgOut->addWikiText( wfMsgForContent( 'edittools' ) );
+		$wgOut->addHtml( '</div>' );
+
+		$wgOut->addHTML( $this->editFormTextAfterTools );
 
 		$wgOut->addHTML( "
 <div class='templatesUsed'>
-{$templates}
+{$formattedtemplates}
 </div>
 " );
 
-		if ( $wgUser->isLoggedIn() ) {
-			/**
-			 * To make it harder for someone to slip a user a page
-			 * which submits an edit form to the wiki without their
-			 * knowledge, a random token is associated with the login
-			 * session. If it's not passed back with the submission,
-			 * we won't save the page, or render user JavaScript and
-			 * CSS previews.
-			 */
+		/**
+		 * To make it harder for someone to slip a user a page
+		 * which submits an edit form to the wiki without their
+		 * knowledge, a random token is associated with the login
+		 * session. If it's not passed back with the submission,
+		 * we won't save the page, or render user JavaScript and
+		 * CSS previews.
+		 *
+		 * For anon editors, who may not have a session, we just
+		 * include the constant suffix to prevent editing from
+		 * broken text-mangling proxies.
+		 */
+		if ( $wgUser->isLoggedIn() )
 			$token = htmlspecialchars( $wgUser->editToken() );
-			$wgOut->addHTML( "\n<input type='hidden' value=\"$token\" name=\"wpEditToken\" />\n" );
-		}
+		else
+			$token = EDIT_TOKEN_SUFFIX;
+		$wgOut->addHTML( "\n<input type='hidden' value=\"$token\" name=\"wpEditToken\" />\n" );
+
 
 		# If a blank edit summary was previously provided, and the appropriate
 		# user preference is active, pass a hidden tag here. This will stop the
@@ -1209,11 +1299,12 @@ END
 			$wgOut->addHTML( "<textarea tabindex=6 id='wpTextbox2' name=\"wpTextbox2\" rows='{$rows}' cols='{$cols}' wrap='virtual'>"
 				. htmlspecialchars( $this->safeUnicodeOutput( $this->textbox2 ) ) . "\n</textarea>" );
 		}
+		$wgOut->addHTML( $this->editFormTextBottom );
 		$wgOut->addHTML( "</form>\n" );
 		if ( !$wgUser->getOption( 'previewontop' ) ) {
 
 			if ( $this->formtype == 'preview') {
-				$this->showPreview();
+				$this->showPreview( $previewOutput );
 			} else {
 				$wgOut->addHTML( '<div id="wikiPreview"></div>' );
 			}
@@ -1230,53 +1321,21 @@ END
 	/**
 	 * Append preview output to $wgOut.
 	 * Includes category rendering if this is a category page.
-	 * @private
+	 *
+	 * @param string $text The HTML to be output for the preview.
 	 */
-	function showPreview() {
+	private function showPreview( $text ) {
 		global $wgOut;
+
 		$wgOut->addHTML( '<div id="wikiPreview">' );
 		if($this->mTitle->getNamespace() == NS_CATEGORY) {
 			$this->mArticle->openShowCategory();
 		}
-		$previewOutput = $this->getPreviewText();
-		$wgOut->addHTML( $previewOutput );
+		$wgOut->addHTML( $text );
 		if($this->mTitle->getNamespace() == NS_CATEGORY) {
 			$this->mArticle->closeShowCategory();
 		}
-		$wgOut->addHTML( "<br style=\"clear:both;\" />\n" );
 		$wgOut->addHTML( '</div>' );
-	}
-
-	/**
-	 * Prepare a list of templates used by this page. Returns HTML.
-	 */
-	function formatTemplates() {
-		global $wgUser;
-
-		$fname = 'EditPage::formatTemplates';
-		wfProfileIn( $fname );
-
-		$sk =& $wgUser->getSkin();
-
-		$outText = '';
-		$templates = $this->mArticle->getUsedTemplates();
-		if ( count( $templates ) > 0 ) {
-			# Do a batch existence check
-			$batch = new LinkBatch;
-			foreach( $templates as $title ) {
-				$batch->addObj( $title );
-			}
-			$batch->execute();
-
-			# Construct the HTML
-			$outText = '<br />'. wfMsgExt( 'templatesused', array( 'parseinline' ) ) . '<ul>';
-			foreach ( $templates as $titleObj ) {
-				$outText .= '<li>' . $sk->makeLinkObj( $titleObj ) . '</li>';
-			}
-			$outText .= '</ul>';
-		}
-		wfProfileOut( $fname );
-		return $outText;
 	}
 
 	/**
@@ -1290,9 +1349,9 @@ END
 	 * of the preview button
 	 */
 	function doLivePreviewScript() {
-		global $wgStylePath, $wgJsMimeType, $wgOut, $wgTitle;
+		global $wgStylePath, $wgJsMimeType, $wgStyleVersion, $wgOut, $wgTitle;
 		$wgOut->addHTML( '<script type="'.$wgJsMimeType.'" src="' .
-			htmlspecialchars( $wgStylePath . '/common/preview.js' ) .
+			htmlspecialchars( "$wgStylePath/common/preview.js?$wgStyleVersion" ) .
 			'"></script>' . "\n" );
 		$liveAction = $wgTitle->getLocalUrl( 'action=submit&wpPreview=true&live=true' );
 		return "return !livePreview(" .
@@ -1395,6 +1454,10 @@ END
 			$previewHTML = $parserOutput->getText();
 			$wgOut->addParserOutputNoText( $parserOutput );
 
+			foreach ( $parserOutput->getTemplates() as $ns => $template)
+				foreach ( array_keys( $template ) as $dbk)
+					$this->mPreviewTemplates[] = Title::makeTitle($ns, $dbk);
+
 			wfProfileOut( $fname );
 			return $previewhead . $previewHTML;
 		}
@@ -1434,7 +1497,7 @@ END
 		global $wgUser, $wgOut;
 		$skin = $wgUser->getSkin();
 		
-		$loginTitle = Title::makeTitle( NS_SPECIAL, 'Userlogin' );
+		$loginTitle = SpecialPage::getTitleFor( 'Userlogin' );
 		$loginLink = $skin->makeKnownLinkObj( $loginTitle, wfMsgHtml( 'loginreqlink' ), 'returnto=' . $this->mTitle->getPrefixedUrl() );
 	
 		$wgOut->setPageTitle( wfMsg( 'whitelistedittitle' ) );
@@ -1508,6 +1571,7 @@ END
 		}
 		$currentText = $currentRevision->getText();
 
+		$result = '';
 		if( wfMerge( $baseText, $editText, $currentText, $result ) ){
 			$editText = $result;
 			wfProfileOut( $fname );
@@ -1583,15 +1647,15 @@ END
 		 */
 		$toolarray=array(
 			array(	'image'=>'button_bold.png',
-					'open'	=>	"\'\'\'",
-					'close'	=>	"\'\'\'",
+					'open'	=>	'\\\'\\\'\\\'',
+					'close'	=>	'\\\'\\\'\\\'',
 					'sample'=>	wfMsg('bold_sample'),
 					'tip'	=>	wfMsg('bold_tip'),
 					'key'	=>	'B'
 				),
 			array(	'image'=>'button_italic.png',
-					'open'	=>	"\'\'",
-					'close'	=>	"\'\'",
+					'open'	=>	'\\\'\\\'',
+					'close'	=>	'\\\'\\\'',
 					'sample'=>	wfMsg('italic_sample'),
 					'tip'	=>	wfMsg('italic_tip'),
 					'key'	=>	'I'

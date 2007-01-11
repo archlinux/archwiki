@@ -126,6 +126,7 @@ function wfScaleSVGUnit( $length ) {
 		''   => 1.0, // "User units" pixels by default
 		'%'  => 2.0, // Fake it!
 		);
+	$matches = array();
 	if( preg_match( '/^(\d+(?:\.\d+)?)(em|ex|px|pt|pc|cm|mm|in|%|)$/', $length, $matches ) ) {
 		$length = floatval( $matches[1] );
 		$unit = $matches[2];
@@ -156,6 +157,7 @@ function wfGetSVGsize( $filename ) {
 	fclose( $f );
 
 	// Uber-crappy hack! Run through a real XML parser.
+	$matches = array();
 	if( !preg_match( '/<svg\s*([^>]*)\s*>/s', $chunk, $matches ) ) {
 		return false;
 	}
@@ -198,7 +200,7 @@ function wfIsBadImage( $name, $contextTitle = false ) {
 	if( !$badImages ) {
 		# Build the list now
 		$badImages = array();
-		$lines = explode( "\n", wfMsgForContent( 'bad_image_list' ) );
+		$lines = explode( "\n", wfMsgForContentNoTrans( 'bad_image_list' ) );
 		foreach( $lines as $line ) {
 			# List items only
 			if ( substr( $line, 0, 1 ) !== '*' ) {
@@ -206,6 +208,7 @@ function wfIsBadImage( $name, $contextTitle = false ) {
 			}
 
 			# Find all links
+			$m = array();
 			if ( !preg_match_all( '/\[\[:?(.*?)\]\]/', $line, $m ) ) {
 				continue;
 			}

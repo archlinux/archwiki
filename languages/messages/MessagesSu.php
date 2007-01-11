@@ -69,8 +69,8 @@ $messages = array(
 
 '1movedto2' => 'mindahkeun $1 ka $2',
 '1movedto2_redir' => '$1 dipindahkeun ka $2',
-'Monobook.css' => ' /* édit koropak ieu pikeun nyaluyukeun kulit \'\'monobook\'\' pikeun sakabéh situs */',
-'Monobook.js' => '/* tooltips and access keys */
+'monobook.css' => ' /* édit koropak ieu pikeun nyaluyukeun kulit \'\'monobook\'\' pikeun sakabéh situs */',
+'monobook.js' => '/* tooltips and access keys */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Kaca pamaké kuring\');
 ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Kaca pamaké pikeun IP nu ku anjeun keur diédit\');
@@ -81,7 +81,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'Daptar kaca nu diawaskeun ku anjeun par
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Daptar kontribusi kuring\');
 ta[\'pt-login\'] = new Array(\'o\',\'Anjeun leuwih hadé asup log, sanajan teu wajib.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Anjeun leuwih hadé asup log, sanajan teu wajib.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Kaluar log\');
+ta[\'pt-logout\'] = new Array(\'\',\'Kaluar log\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Sawala ngeunaan eusi kaca\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Anjeun bisa ngédit kaca ieu. Mangga pigunakeun tombol sawangan saméméh nyimpen.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Tambihan koméntar kana sawala ieu.\');
@@ -154,7 +154,7 @@ Jaga, parobahan na kaca ieu katut kaca obrolanana bakal dibéréndélkeun di din
 'already_bureaucrat' => 'Pamaké ieu geus boga kalungguhan birokrat',
 'already_sysop' => 'Pamaké ieu geus boga kalungguhan kuncén',
 'alreadyloggedin' => '<strong>Pamaké $1, anjeun geus asup log!</strong><br />',
-'alreadyrolled' => 'Teu bisa mulangkeun édit ahir [[$1]] ku [[User:$2|$2]] ([[User talk:$2|Obrolan]]); geus aya nu ngédit atawa mulangkeun kacana. 
+'alreadyrolled' => 'Teu bisa mulangkeun édit ahir [[:$1]] ku [[User:$2|$2]] ([[User talk:$2|Obrolan]]); geus aya nu ngédit atawa mulangkeun kacana. 
 
 Édit ahir ku [[User:$3|$3]] ([[User talk:$3|Obrolan]]).',
 'ancientpages' => 'Kaca pangheubeulna',
@@ -536,7 +536,7 @@ Katerangan: (kiw) = bédana jeung vérsi kiwari,
 'mailnologin' => 'Euweuh alamat ngirim',
 'mailnologintext' => 'Anjeun kudu <a href="{{localurl:Special:Userlogin">asup log</a> sarta boga alamat surélék nu sah na <a href="{{localurl:Special:Preferences">préferénsi</a> anjeun sangkan bisa nyurélékan pamaké séjén.',
 'mainpage' => 'Tepas',
-'mainpagedocfooter' => 'Mangga tingal \'\'[http://meta.wikipedia.org/wiki/MediaWiki_i18n documentation on customizing the interface]\'\' jeung [http://meta.wikipedia.org/wiki/MediaWiki_User%27s_Guide Tungtunan Pamaké] pikeun pitulung maké jeung konfigurasi.',
+'mainpagedocfooter' => 'Mangga tingal \'\'[http://meta.wikimedia.org/wiki/MediaWiki_i18n documentation on customizing the interface]\'\' jeung [http://meta.wikimedia.org/wiki/MediaWiki_User%27s_Guide Tungtunan Pamaké] pikeun pitulung maké jeung konfigurasi.',
 'mainpagetext' => '\'\'Software\'\' Wiki geus diinstal.',
 'makesysop' => 'Ngangkat pamaké jadi kuncén',
 'makesysopfail' => '<b>Pamaké "$1" teu bisa dijadikeun kuncén. (Ngaran nu diasupkeun bener teu?)</b>',
@@ -691,6 +691,7 @@ Coba saksrak na téks lengkep, atawa \'\'\'[[<nowiki>$1</nowiki>|nyieun artikel 
 'othercontribs' => 'Dumasar karya $1.',
 'otherlanguages' => 'Basa séjén',
 'others' => 'Séjénna',
+'pagecategories' => 'Kategori',
 'pagemovedsub' => 'Mindahkeun geus hasil!',
 'pagemovedtext' => 'Kaca "[[$1]]" dipindahkeun ka "[[$2]]".',
 'pagetitle' => '$1 - {{SITENAME}}',
@@ -886,7 +887,7 @@ jumlah-jamléh geus aya \'\'\'$3\'\'\' kaca ulasan sarta \'\'\'$4\'\'\' éditan 
 'tog-watchdefault' => 'Tambahkeun kaca nu diédit ku anjeun kana awaskeuneun anjeun',
 'toolbox' => 'Kotak parabot',
 'tooltip-compareselectedversions' => 'Tempo béda antara dua vérsi kaca ieu nu dipilih [alt-v].',
-'tooltip-diff' => 'Témbongkeun parobahan mana nu geus dijieun. [alt-d]',
+'tooltip-diff' => 'Témbongkeun parobahan mana nu geus dijieun. [alt-v]',
 'tooltip-minoredit' => 'Tandaan ieu salaku éditan minor [alt-i]',
 'tooltip-preview' => 'Sawang heula robahan anjeun, pami tos leres mangga simpen! [alt-p]',
 'tooltip-save' => 'Simpen parobahan anjeun [alt-s]',

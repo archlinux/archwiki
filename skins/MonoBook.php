@@ -51,23 +51,27 @@ class MonoBookTemplate extends QuickTemplate {
 		wfSuppressWarnings();
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php $this->text('lang') ?>" lang="<?php $this->text('lang') ?>" dir="<?php $this->text('dir') ?>">
+<html xmlns="<?php $this->text('xhtmldefaultnamespace') ?>" <?php 
+	foreach($this->data['xhtmlnamespaces'] as $tag => $ns) {
+		?>xmlns:<?php echo "{$tag}=\"{$ns}\" ";
+	} ?>xml:lang="<?php $this->text('lang') ?>" lang="<?php $this->text('lang') ?>" dir="<?php $this->text('dir') ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="<?php $this->text('mimetype') ?>; charset=<?php $this->text('charset') ?>" />
 		<?php $this->html('headlinks') ?>
 		<title><?php $this->text('pagetitle') ?></title>
-		<style type="text/css" media="screen,projection">/*<![CDATA[*/ @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/main.css?9"; /*]]>*/</style>
-		<link rel="stylesheet" type="text/css" <?php if(empty($this->data['printable']) ) { ?>media="print"<?php } ?> href="<?php $this->text('stylepath') ?>/common/commonPrint.css" />
-		<!--[if lt IE 5.5000]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE50Fixes.css";</style><![endif]-->
-		<!--[if IE 5.5000]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE55Fixes.css";</style><![endif]-->
-		<!--[if IE 6]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE60Fixes.css";</style><![endif]-->
-		<!--[if IE 7]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE70Fixes.css?1";</style><![endif]-->
-		<!--[if lt IE 7]><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/common/IEFixes.js"></script>
+		<style type="text/css" media="screen,projection">/*<![CDATA[*/ @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/main.css?<?php echo $GLOBALS['wgStyleVersion'] ?>"; /*]]>*/</style>
+		<link rel="stylesheet" type="text/css" <?php if(empty($this->data['printable']) ) { ?>media="print"<?php } ?> href="<?php $this->text('stylepath') ?>/common/commonPrint.css?<?php echo $GLOBALS['wgStyleVersion'] ?>" />
+		<link rel="stylesheet" type="text/css" media="handheld" href="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/handheld.css?<?php echo $GLOBALS['wgStyleVersion'] ?>" />
+		<!--[if lt IE 5.5000]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE50Fixes.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style><![endif]-->
+		<!--[if IE 5.5000]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE55Fixes.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style><![endif]-->
+		<!--[if IE 6]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE60Fixes.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style><![endif]-->
+		<!--[if IE 7]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE70Fixes.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style><![endif]-->
+		<!--[if lt IE 7]><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/common/IEFixes.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"></script>
 		<meta http-equiv="imagetoolbar" content="no" /><![endif]-->
 		
 		<?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
                 
-		<script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?1"><!-- wikibits js --></script>
+		<script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"><!-- wikibits js --></script>
 <?php	if($this->data['jsvarurl'  ]) { ?>
 		<script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('jsvarurl'  ) ?>"><!-- site js --></script>
 <?php	} ?>
@@ -89,7 +93,7 @@ class MonoBookTemplate extends QuickTemplate {
 	</head>
 <body <?php if($this->data['body_ondblclick']) { ?>ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
 <?php if($this->data['body_onload'    ]) { ?>onload="<?php     $this->text('body_onload')     ?>"<?php } ?>
- class="mediawiki <?php $this->text('nsclass') ?> <?php $this->text('dir') ?>">
+ class="mediawiki <?php $this->text('nsclass') ?> <?php $this->text('dir') ?> <?php $this->text('pageclass') ?>">
 	<div id="globalWrapper">
 		<div id="column-content">
 	<div id="content">
@@ -113,21 +117,23 @@ class MonoBookTemplate extends QuickTemplate {
 		<div id="column-one">
 	<div id="p-cactions" class="portlet">
 		<h5><?php $this->msg('views') ?></h5>
-		<ul>
-<?php			foreach($this->data['content_actions'] as $key => $tab) { ?>
-				 <li id="ca-<?php echo htmlspecialchars($key) ?>"<?php
-				 	if($tab['class']) { ?> class="<?php echo htmlspecialchars($tab['class']) ?>"<?php }
-				 ?>><a href="<?php echo htmlspecialchars($tab['href']) ?>"><?php
-				 echo htmlspecialchars($tab['text']) ?></a></li>
-<?php			 } ?>
-		</ul>
+		<div class="pBody">
+			<ul>
+	<?php			foreach($this->data['content_actions'] as $key => $tab) { ?>
+					 <li id="ca-<?php echo Sanitizer::escapeId($key) ?>"<?php
+					 	if($tab['class']) { ?> class="<?php echo htmlspecialchars($tab['class']) ?>"<?php }
+					 ?>><a href="<?php echo htmlspecialchars($tab['href']) ?>"><?php
+					 echo htmlspecialchars($tab['text']) ?></a></li>
+	<?php			 } ?>
+			</ul>
+		</div>
 	</div>
 	<div class="portlet" id="p-personal">
 		<h5><?php $this->msg('personaltools') ?></h5>
 		<div class="pBody">
 			<ul>
 <?php 			foreach($this->data['personal_urls'] as $key => $item) { ?>
-				<li id="pt-<?php echo htmlspecialchars($key) ?>"<?php
+				<li id="pt-<?php echo Sanitizer::escapeId($key) ?>"<?php
 					if ($item['active']) { ?> class="active"<?php } ?>><a href="<?php
 				echo htmlspecialchars($item['href']) ?>"<?php
 				if(!empty($item['class'])) { ?> class="<?php
@@ -144,12 +150,12 @@ class MonoBookTemplate extends QuickTemplate {
 	</div>
 	<script type="<?php $this->text('jsmimetype') ?>"> if (window.isMSIE55) fixalpha(); </script>
 	<?php foreach ($this->data['sidebar'] as $bar => $cont) { ?>
-	<div class='portlet' id='p-<?php echo htmlspecialchars($bar) ?>'>
+	<div class='portlet' id='p-<?php echo Sanitizer::escapeId($bar) ?>'>
 		<h5><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?></h5>
 		<div class='pBody'>
 			<ul>
 <?php 			foreach($cont as $key => $val) { ?>
-				<li id="<?php echo htmlspecialchars($val['id']) ?>"<?php
+				<li id="<?php echo Sanitizer::escapeId($val['id']) ?>"<?php
 					if ( $val['active'] ) { ?> class="active" <?php }
 				?>><a href="<?php echo htmlspecialchars($val['href']) ?>"><?php echo htmlspecialchars($val['text']) ?></a></li>
 <?php			} ?>
@@ -167,7 +173,7 @@ class MonoBookTemplate extends QuickTemplate {
 					if( isset( $this->data['search'] ) ) {
 						?> value="<?php $this->text('search') ?>"<?php } ?> />
 				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>" />&nbsp;
-				<input type='submit' name="fulltext" class="searchButton" value="<?php $this->msg('searchbutton') ?>" />
+				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>" />
 			</div></form>
 		</div>
 	</div>
@@ -194,7 +200,7 @@ class MonoBookTemplate extends QuickTemplate {
 <?php 	}
 		if($this->data['feeds']) { ?>
 			<li id="feedlinks"><?php foreach($this->data['feeds'] as $key => $feed) {
-					?><span id="feed-<?php echo htmlspecialchars($key) ?>"><a href="<?php
+					?><span id="feed-<?php echo Sanitizer::escapeId($key) ?>"><a href="<?php
 					echo htmlspecialchars($feed['href']) ?>"><?php echo htmlspecialchars($feed['text'])?></a>&nbsp;</span>
 					<?php } ?></li><?php
 		}
@@ -258,7 +264,7 @@ class MonoBookTemplate extends QuickTemplate {
 			'privacy', 'about', 'disclaimer', 'tagline',
 		);
 		foreach( $footerlinks as $aLink ) {
-			if( $this->data[$aLink] ) {
+			if( isset( $this->data[$aLink] ) && $this->data[$aLink] ) {
 ?>				<li id="<?php echo$aLink?>"><?php $this->html($aLink) ?></li>
 <?php 		}
 		}

@@ -236,24 +236,31 @@ class CategoryViewer {
 		$r = '';
 		if( count( $this->children ) > 0 ) {
 			# Showing subcategories
+			$r .= "<div id=\"mw-subcategories\">\n";
 			$r .= '<h2>' . wfMsg( 'subcategories' ) . "</h2>\n";
 			$r .= wfMsgExt( 'subcategorycount', array( 'parse' ), count( $this->children) );
 			$r .= $this->formatList( $this->children, $this->children_start_char );
+			$r .= "\n</div>";
 		}
 		return $r;
 	}
 
 	function getPagesSection() {
 		$ti = htmlspecialchars( $this->title->getText() );
-		$r = '<h2>' . wfMsg( 'category_header', $ti ) . "</h2>\n";
+		$r = "<div id=\"mw-pages\">\n";
+		$r .= '<h2>' . wfMsg( 'category_header', $ti ) . "</h2>\n";
 		$r .= wfMsgExt( 'categoryarticlecount', array( 'parse' ), count( $this->articles) );
 		$r .= $this->formatList( $this->articles, $this->articles_start_char );
+		$r .= "\n</div>";
 		return $r;
 	}
 
 	function getImageSection() {
 		if( $this->showGallery && ! $this->gallery->isEmpty() ) {
-			return $this->gallery->toHTML();
+			return "<div id=\"mw-category-media\">\n" .
+			'<h2>' . wfMsg( 'category-media-header', htmlspecialchars($this->title->getText()) ) . "</h2>\n" .
+			wfMsgExt( 'category-media-count', array( 'parse' ), $this->gallery->count() ) .
+			$this->gallery->toHTML() . "\n</div>";
 		} else {
 			return '';
 		}

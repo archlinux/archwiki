@@ -97,12 +97,10 @@ CONTROL;
 			return;
 		}
 
-		$t = $this->mTitle->getPrefixedText() . " (Diff: {$this->mOldid}, " .
-		  "{$this->mNewid})";
-		$mtext = wfMsg( 'missingarticle', "<nowiki>$t</nowiki>" );
-
 		$wgOut->setArticleFlag( false );
 		if ( ! $this->loadRevisionData() ) {
+			$t = $this->mTitle->getPrefixedText() . " (Diff: {$this->mOldid}, {$this->mNewid})";
+			$mtext = wfMsg( 'missingarticle', "<nowiki>$t</nowiki>" );
 			$wgOut->setPagetitle( wfMsg( 'errorpagetitle' ) );
 			$wgOut->addWikitext( $mtext );
 			wfProfileOut( $fname );
@@ -144,15 +142,9 @@ CONTROL;
 		}
 
 		$sk = $wgUser->getSkin();
-		$talk = $wgContLang->getNsText( NS_TALK );
-		$contribs = wfMsg( 'contribslink' );
 
 		if ( $this->mNewRev->isCurrent() && $wgUser->isAllowed('rollback') ) {
-			$username = $this->mNewRev->getUserText();
-			$rollback = '&nbsp;&nbsp;&nbsp;<strong>[' . $sk->makeKnownLinkObj( $this->mTitle, wfMsg( 'rollbacklink' ),
-				'action=rollback&from=' . urlencode( $username ) .
-				'&token=' . urlencode( $wgUser->editToken( array( $this->mTitle->getPrefixedText(), $username ) ) ) ) .
-				']</strong>';
+			$rollback = '&nbsp;&nbsp;&nbsp;' . $sk->generateRollback( $this->mNewRev );
 		} else {
 			$rollback = '';
 		}
@@ -171,13 +163,26 @@ CONTROL;
 				'diff=next&oldid='.$this->mNewid, '', '', 'id="differences-nextlink"' );
 		}
 
+		$oldminor = '';
+		$newminor = '';
+
+		if ($this->mOldRev->mMinorEdit == 1) {
+			$oldminor = wfElement( 'span', array( 'class' => 'minor' ),
+				wfMsg( 'minoreditletter') ) . ' ';
+		}
+
+		if ($this->mNewRev->mMinorEdit == 1) {
+			$newminor = wfElement( 'span', array( 'class' => 'minor' ),
+			wfMsg( 'minoreditletter') ) . ' ';
+		}
+
 		$oldHeader = "<strong>{$this->mOldtitle}</strong><br />" .
 			$sk->revUserTools( $this->mOldRev ) . "<br />" .
-			$sk->revComment( $this->mOldRev ) . "<br />" .
+			$oldminor . $sk->revComment( $this->mOldRev, true ) . "<br />" .
 			$prevlink;
 		$newHeader = "<strong>{$this->mNewtitle}</strong><br />" .
 			$sk->revUserTools( $this->mNewRev ) . " $rollback<br />" .
-			$sk->revComment( $this->mNewRev ) . "<br />" .
+			$newminor . $sk->revComment( $this->mNewRev, true ) . "<br />" .
 			$nextlink . $patrol;
 
 		$this->showDiff( $oldHeader, $newHeader );
@@ -287,7 +292,8 @@ CONTROL;
 		if ( $body === false ) {
 			return false;
 		} else {
-			return $this->addHeader( $body, $otitle, $ntitle );
+			$multi = $this->getMultiNotice();
+			return $this->addHeader( $body, $otitle, $ntitle, $multi );
 		}
 	}
 
@@ -426,20 +432,49 @@ CONTROL;
 		return wfMsgExt( 'lineno', array('parseinline'), $wgLang->formatNum( $matches[1] ) );
 	}
 
+	
+	/**
+	 * If there are revisions between the ones being compared, return a note saying so.
+	 */
+	function getMultiNotice() {
+		if ( !is_object($this->mOldRev) || !is_object($this->mNewRev) )
+			return '';
+		
+		if( !$this->mOldPage->equals( $this->mNewPage ) ) {
+			// Comparing two different pages? Count would be meaningless.
+			return '';
+		}
+		
+		$oldid = $this->mOldRev->getId();
+		$newid = $this->mNewRev->getId();
+		if ( $oldid > $newid ) {
+			$tmp = $oldid; $oldid = $newid; $newid = $tmp;
+		}
+
+		$n = $this->mTitle->countRevisionsBetween( $oldid, $newid );
+		if ( !$n )
+			return '';
+
+		return wfMsgExt( 'diff-multi', array( 'parseinline' ), $n );
+	}
+
+
 	/**
 	 * Add the header to a diff body
 	 */
-	function addHeader( $diff, $otitle, $ntitle ) {
-		$out = "
+	function addHeader( $diff, $otitle, $ntitle, $multi = '' ) {
+		$header = "
 			<table border='0' width='98%' cellpadding='0' cellspacing='4' class='diff'>
 			<tr>
 				<td colspan='2' width='50%' align='center' class='diff-otitle'>{$otitle}</td>
 				<td colspan='2' width='50%' align='center' class='diff-ntitle'>{$ntitle}</td>
 			</tr>
-			$diff
-			</table>
 		";
-		return $out;
+
+		if ( $multi != '' )
+			$header .= "<tr><td colspan='4' align='center' class='diff-multi'>{$multi}</td></tr>";
+
+		return $header . $diff . "</table>";
 	}
 
 	/**
@@ -488,17 +523,21 @@ CONTROL;
 			$newLink = $this->mNewPage->escapeLocalUrl();
 			$this->mPagetitle = htmlspecialchars( wfMsg( 'currentrev' ) );
 			$newEdit = $this->mNewPage->escapeLocalUrl( 'action=edit' );
-			
-			$this->mNewtitle = "<strong><a href='$newLink'>{$this->mPagetitle}</a> ($timestamp)</strong>"
-				. " (<a href='$newEdit'>" . htmlspecialchars( wfMsg( 'editold' ) ) . "</a>)";
+			$newUndo = $this->mNewPage->escapeLocalUrl( 'action=edit&undo=' . $this->mNewid );
+
+			$this->mNewtitle = "<a href='$newLink'>{$this->mPagetitle}</a> ($timestamp)"
+				. " (<a href='$newEdit'>" . htmlspecialchars( wfMsg( 'editold' ) ) . "</a>)"
+				. " (<a href='$newUndo'>" . htmlspecialchars( wfMsg( 'editundo' ) ) . "</a>)";
 
 		} else {
 			$newLink = $this->mNewPage->escapeLocalUrl( 'oldid=' . $this->mNewid );
 			$newEdit = $this->mNewPage->escapeLocalUrl( 'action=edit&oldid=' . $this->mNewid );
+			$newUndo = $this->mNewPage->escapeLocalUrl( 'action=edit&undo=' . $this->mNewid );
 			$this->mPagetitle = htmlspecialchars( wfMsg( 'revisionasof', $timestamp ) );
-			
-			$this->mNewtitle = "<strong><a href='$newLink'>{$this->mPagetitle}</a></strong>"
-				. " (<a href='$newEdit'>" . htmlspecialchars( wfMsg( 'editold' ) ) . "</a>)";
+
+			$this->mNewtitle = "<a href='$newLink'>{$this->mPagetitle}</a>"
+				. " (<a href='$newEdit'>" . htmlspecialchars( wfMsg( 'editold' ) ) . "</a>)"
+				. " (<a href='$newUndo'>" . htmlspecialchars( wfMsg( 'editundo' ) ) . "</a>)";
 		}
 
 		// Load the old revision object
@@ -527,8 +566,8 @@ CONTROL;
 			$t = $wgLang->timeanddate( $this->mOldRev->getTimestamp(), true );
 			$oldLink = $this->mOldPage->escapeLocalUrl( 'oldid=' . $this->mOldid );
 			$oldEdit = $this->mOldPage->escapeLocalUrl( 'action=edit&oldid=' . $this->mOldid );
-			$this->mOldtitle = "<strong><a href='$oldLink'>" . htmlspecialchars( wfMsg( 'revisionasof', $t ) )
-				. "</a></strong> (<a href='$oldEdit'>" . htmlspecialchars( wfMsg( 'editold' ) ) . "</a>)";
+			$this->mOldtitle = "<a href='$oldLink'>" . htmlspecialchars( wfMsg( 'revisionasof', $t ) )
+				. "</a> (<a href='$oldEdit'>" . htmlspecialchars( wfMsg( 'editold' ) ) . "</a>)";
 		}
 
 		return true;
@@ -890,7 +929,7 @@ class _DiffEngine
 						$ymids[$k] = $ymids[$k-1];
 						break;
 					}
-				while (list ($junk, $y) = each($matches)) {
+				while (list ( /* $junk */, $y) = each($matches)) {
 					if ($y > $this->seq[$k-1]) {
 						USE_ASSERTS && assert($y < $this->seq[$k]);
 						// Optimization: this is a common case:
@@ -1608,6 +1647,7 @@ class WordLevelDiff extends MappedDiff
 				$words[] = $line;
 				$stripped[] = $line;
 			} else {
+				$m = array();
 				if (preg_match_all('/ ( [^\S\n]+ | [0-9_A-Za-z\x80-\xff]+ | . ) (?: (?!< \n) [^\S\n])? /xs',
 					$line, $m))
 				{

@@ -17,8 +17,11 @@ if( !defined( 'MEDIAWIKI' ) )
  */
 class SkinCologneBlue extends Skin {
 
+	private $searchboxes = '';
+	// How many search boxes have we made?  Avoid duplicate id's.
+
 	function getStylesheet() {
-		return "common/cologneblue.css?2";
+		return 'common/cologneblue.css';
 	}
 	function getSkinName() {
 		return "cologneblue";
@@ -81,7 +84,7 @@ class SkinCologneBlue extends Skin {
 		$s .= "<td class='bottom' align='center' valign='top'>";
 
 		$s .= $this->bottomLinks();
-		$s .= "\n<br />" . $this->makeKnownLink( wfMsgForContent( "mainpage" ) ) . " | "
+		$s .= "\n<br />" . $this->makeKnownLinkObj( Title::newMainPage() ) . " | "
 		  . $this->aboutLink() . " | "
 		  . $this->searchForm( wfMsg( "qbfind" ) );
 
@@ -135,7 +138,7 @@ class SkinCologneBlue extends Skin {
 		}
 
 		$s = "" .
-		  $this->makeKnownLink( wfMsgForContent( "mainpage" ), wfMsg( "mainpage" ) )
+		  $this->mainPageLink()
 		  . " | " .
 		  $this->makeKnownLink( wfMsgForContent( "aboutpage" ), wfMsg( "about" ) )
 		  . " | " .
@@ -143,25 +146,17 @@ class SkinCologneBlue extends Skin {
 		  . " | " .
 		  $this->makeKnownLink( wfMsgForContent( "faqpage" ), wfMsg("faq") )
 		  . " | " .
-		  $this->specialLink( "specialpages" ) . " | ";
+		  $this->specialLink( "specialpages" );
 
+		/* show links to different language variants */
+		$s .= $this->variantLinks();
+		$s .= $this->extensionTabLinks();
+		
+		$s .= " | ";
 		if ( $wgUser->isLoggedIn() ) {
 			$s .=  $this->makeKnownLink( $lo, wfMsg( "logout" ), $q );
 		} else {
 			$s .=  $this->makeKnownLink( $li, wfMsg( "login" ), $q );
-		}
-
-		/* show links to different language variants */
-		global $wgDisableLangConversion;
-		$variants = $wgContLang->getVariants();
-		if( !$wgDisableLangConversion && sizeof( $variants ) > 1 ) {
-			$actstr = '';
-			foreach( $variants as $code ) {
-				$varname = $wgContLang->getVariantname( $code );
-				if( $varname == 'disable' )
-					continue;
-				$s .= ' | <a href="' . $wgTitle->getLocalUrl( 'variant=' . $code ) . '">' . $varname . '</a>';
-			}
 		}
 
 		return $s;
@@ -259,8 +254,8 @@ class SkinCologneBlue extends Skin {
 				wfMsg( "mypage" ) )
 			  . $sep . $tl
 			  . $sep . $this->specialLink( "watchlist" )
-			  . $sep . $this->makeKnownLinkObj( Title::makeTitle( NS_SPECIAL, "Contributions" ),
-			  	wfMsg( "mycontris" ), "target=" . wfUrlencode($wgUser->getName() ) )
+			  . $sep . $this->makeKnownLinkObj( SpecialPage::getSafeTitleFor( "Contributions", $wgUser->getName() ),
+			  	wfMsg( "mycontris" ) )
 		  	  . $sep . $this->specialLink( "preferences" )
 		  	  . $sep . $this->specialLink( "userlogout" );
 		} else {
@@ -282,7 +277,7 @@ class SkinCologneBlue extends Skin {
 		}
 
 		$s .= $sep . $this->makeKnownLinkObj(
-			Title::makeTitle( NS_SPECIAL, 'Specialpages' ),
+			SpecialPage::getTitleFor( 'Specialpages' ),
 			wfMsg( 'moredotdotdot' ) );
 
 		$s .= $sep . "\n</div>\n";
@@ -301,12 +296,16 @@ class SkinCologneBlue extends Skin {
 
 		$search = $wgRequest->getText( 'search' );
 		$action = $this->escapeSearchLink();
-		$s = "<form id=\"search\" method=\"get\" class=\"inline\" action=\"$action\">";
+		$s = "<form id=\"searchform{$this->searchboxes}\" method=\"get\" class=\"inline\" action=\"$action\">";
 		if ( "" != $label ) { $s .= "{$label}: "; }
 
-		$s .= "<input type='text' name=\"search\" size='14' value=\""
-		  . htmlspecialchars(substr($search,0,256)) . "\" />"
-		  . "<br /><input type='submit' name=\"go\" value=\"" . htmlspecialchars( wfMsg( "searcharticle" ) ) . "\" /> <input type='submit' name=\"fulltext\" value=\"" . htmlspecialchars( wfMsg( "search" ) ) . "\" /></form>";
+		$s .= "<input type='text' id=\"searchInput{$this->searchboxes}\" class=\"mw-searchInput\" name=\"search\" size=\"14\" value=\""
+		  . htmlspecialchars(substr($search,0,256)) . "\" /><br />"
+		  . "<input type='submit' id=\"searchGoButton{$this->searchboxes}\" class=\"searchButton\" name=\"go\" value=\"" . htmlspecialchars( wfMsg( "searcharticle" ) ) . "\" />"
+		  . "<input type='submit' id=\"mw-searchButton{$this->searchboxes}\" class=\"searchButton\" name=\"fulltext\" value=\"" . htmlspecialchars( wfMsg( "search" ) ) . "\" /></form>";
+
+		// Ensure unique id's for search boxes made after the first
+		$this->searchboxes = $this->searchboxes == '' ? 2 : $this->searchboxes + 1;
 
 		return $s;
 	}

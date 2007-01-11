@@ -32,8 +32,9 @@ if (!defined('MEDIAWIKI')) {
 class ApiPageSet extends ApiQueryBase {
 
 	private $mAllPages; // [ns][dbkey] => page_id or 0 when missing
-	private $mGoodTitles, $mMissingTitles, $mMissingPageIDs, $mRedirectTitles, $mNormalizedTitles;
+	private $mTitles, $mGoodTitles, $mMissingTitles, $mMissingPageIDs, $mRedirectTitles, $mNormalizedTitles;
 	private $mResolveRedirects, $mPendingRedirectIDs;
+	private $mGoodRevIDs, $mMissingRevIDs;
 
 	private $mRequestedPageFields;
 
@@ -41,11 +42,14 @@ class ApiPageSet extends ApiQueryBase {
 		parent :: __construct($query, __CLASS__);
 
 		$this->mAllPages = array ();
+		$this->mTitles = array();
 		$this->mGoodTitles = array ();
 		$this->mMissingTitles = array ();
 		$this->mMissingPageIDs = array ();
 		$this->mRedirectTitles = array ();
 		$this->mNormalizedTitles = array ();
+		$this->mGoodRevIDs = array();
+		$this->mMissingRevIDs = array();
 
 		$this->mRequestedPageFields = array ();
 		$this->mResolveRedirects = $resolveRedirects;
@@ -86,6 +90,21 @@ class ApiPageSet extends ApiQueryBase {
 	}
 
 	/**
+	 * All Title objects provided.
+	 * @return array of Title objects
+	 */
+	public function getTitles() {
+		return $this->mTitles;
+	}
+
+	/**
+	 * Returns the number of unique pages (not revisions) in the set.
+	 */
+	public function getTitleCount() {
+		return count($this->mTitles);
+	}
+
+	/**
 	 * Title objects that were found in the database.
 	 * @return array page_id (int) => Title (obj)
 	 */
@@ -94,10 +113,10 @@ class ApiPageSet extends ApiQueryBase {
 	}
 
 	/**
-	 * Returns the number of unique pages (not revisions) in the set.
+	 * Returns the number of found unique pages (not revisions) in the set.
 	 */
 	public function getGoodTitleCount() {
-		return count($this->getGoodTitles());
+		return count($this->mGoodTitles);
 	}
 
 	/**
@@ -135,16 +154,25 @@ class ApiPageSet extends ApiQueryBase {
 
 	/**
 	 * Get the list of revision IDs (requested with revids= parameter)
+	 * @return array revID (int) => pageID (int)
 	 */
 	public function getRevisionIDs() {
-		$this->dieUsage(__METHOD__ . ' is not implemented', 'notimplemented');
+		return $this->mGoodRevIDs;
+	}
+
+	/**
+	 * Revision IDs that were not found in the database
+	 * @return array of revision IDs
+	 */
+	public function getMissingRevisionIDs() {
+		return $this->mMissingRevIDs;
 	}
 
 	/**
 	 * Returns the number of revisions (requested with revids= parameter)
 	 */
 	public function getRevisionCount() {
-		return 0; // TODO: implement
+		return count($this->getRevisionIDs());
 	}
 
 	/**
@@ -178,6 +206,8 @@ class ApiPageSet extends ApiQueryBase {
 				$this->initFromPageIds($pageids);
 				break;
 			case 'revids' :
+				if($this->mResolveRedirects)
+					$this->dieUsage('revids may not be used with redirect resolution', 'params');
 				$this->initFromRevIDs($revids);
 				break;
 			default :
@@ -216,23 +246,39 @@ class ApiPageSet extends ApiQueryBase {
 	}
 
 	/**
+	 * Initialize PageSet from a list of Revision IDs
+	 */
+	public function populateFromRevisionIDs($revIDs) {
+		$this->profileIn();
+		$revIDs = array_map('intval', $revIDs); // paranoia
+		$this->initFromRevIDs($revIDs);
+		$this->profileOut();
+	}
+
+	/**
 	 * Extract all requested fields from the row received from the database
 	 */
 	public function processDbRow($row) {
-		$pageId = intval($row->page_id);
-
+	
 		// Store Title object in various data structures
 		$title = Title :: makeTitle($row->page_namespace, $row->page_title);
-		$this->mAllPages[$row->page_namespace][$row->page_title] = $pageId;
+	
+		// skip any pages that user has no rights to read
+		if ($title->userCanRead()) {
 
-		if ($this->mResolveRedirects && $row->page_is_redirect == '1') {
-			$this->mPendingRedirectIDs[$pageId] = $title;
-		} else {
-			$this->mGoodTitles[$pageId] = $title;
+			$pageId = intval($row->page_id);	
+			$this->mAllPages[$row->page_namespace][$row->page_title] = $pageId;
+			$this->mTitles[] = $title;
+	
+			if ($this->mResolveRedirects && $row->page_is_redirect == '1') {
+				$this->mPendingRedirectIDs[$pageId] = $title;
+			} else {
+				$this->mGoodTitles[$pageId] = $title;
+			}
+	
+			foreach ($this->mRequestedPageFields as $fieldName => & $fieldValues)
+				$fieldValues[$pageId] = $row-> $fieldName;
 		}
-
-		foreach ($this->mRequestedPageFields as $fieldName => & $fieldValues)
-			$fieldValues[$pageId] = $row-> $fieldName;
 	}
 	
 	public function finishPageSetGeneration() {
@@ -256,10 +302,13 @@ class ApiPageSet extends ApiQueryBase {
 	 * #6 Repeat from step #1     
 	 */
 	private function initFromTitles($titles) {
-		$db = $this->getDB();
 
 		// Get validated and normalized title objects
 		$linkBatch = $this->processTitlesStrArray($titles);
+		if($linkBatch->isEmpty())
+			return;
+			
+		$db = & $this->getDB();
 		$set = $linkBatch->constructSet('page', $db);
 
 		// Get pageIDs data from the `page` table
@@ -275,11 +324,14 @@ class ApiPageSet extends ApiQueryBase {
 	}
 
 	private function initFromPageIds($pageids) {
-		$db = $this->getDB();
-
+		if(empty($pageids))
+			return;
+			
 		$set = array (
 			'page_id' => $pageids
 		);
+
+		$db = & $this->getDB();
 
 		// Get pageIDs data from the `page` table
 		$this->profileDBIn();
@@ -306,7 +358,7 @@ class ApiPageSet extends ApiQueryBase {
 	 */
 	private function initFromQueryResult($db, $res, &$remaining = null, $processTitles = null) {
 		if (!is_null($remaining) && is_null($processTitles))
-			$this->dieDebug('Missing $processTitles parameter when $remaining is provided');
+			ApiBase :: dieDebug(__METHOD__, 'Missing $processTitles parameter when $remaining is provided');
 			
 		while ($row = $db->fetchObject($res)) {
 
@@ -330,9 +382,11 @@ class ApiPageSet extends ApiQueryBase {
 			if($processTitles) {
 				// The remaining titles in $remaining are non-existant pages
 				foreach ($remaining as $ns => $dbkeys) {
-					foreach ($dbkeys as $dbkey => $nothing) {
-						$this->mMissingTitles[] = Title :: makeTitle($ns, $dbkey);
+					foreach ( $dbkeys as $dbkey => $unused ) {
+						$title = Title :: makeTitle($ns, $dbkey);
+						$this->mMissingTitles[] = $title;
 						$this->mAllPages[$ns][$dbkey] = 0;
+						$this->mTitles[] = $title;
 					}
 				}
 			}
@@ -348,13 +402,43 @@ class ApiPageSet extends ApiQueryBase {
 	}
 
 	private function initFromRevIDs($revids) {
-		$this->dieUsage(__METHOD__ . ' is not implemented', 'notimplemented');
+
+		if(empty($revids))
+			return;
+			
+		$db = & $this->getDB();
+		$pageids = array();
+		$remaining = array_flip($revids);
+		
+		$tables = array('revision');
+		$fields = array('rev_id','rev_page');
+		$where = array('rev_deleted' => 0, 'rev_id' => $revids);
+		
+		// Get pageIDs data from the `page` table
+		$this->profileDBIn();
+		$res = $db->select( $tables, $fields, $where,  __METHOD__ );
+		while ( $row = $db->fetchObject( $res ) ) {
+			$revid = intval($row->rev_id);
+			$pageid = intval($row->rev_page);
+			$this->mGoodRevIDs[$revid] = $pageid;
+			$pageids[$pageid] = '';
+			unset($remaining[$revid]);
+		}
+		$db->freeResult( $res );
+		$this->profileDBOut();
+
+		$this->mMissingRevIDs = array_keys($remaining);
+
+		// Populate all the page information
+		if($this->mResolveRedirects)
+			ApiBase :: dieDebug(__METHOD__, 'revids may not be used with redirect resolution');
+		$this->initFromPageIds(array_keys($pageids));
 	}
 
 	private function resolvePendingRedirects() {
 
 		if($this->mResolveRedirects) {
-			$db = $this->getDB();
+			$db = & $this->getDB();
 			$pageFlds = $this->getPageTableFields();
 	
 			// Repeat until all redirects have been resolved
@@ -386,7 +470,7 @@ class ApiPageSet extends ApiQueryBase {
 	private function getRedirectTargets() {
 
 		$linkBatch = new LinkBatch();
-		$db = $this->getDB();
+		$db = & $this->getDB();
 
 		// find redirect targets for all redirect pages
 		$this->profileDBIn();
@@ -443,7 +527,7 @@ class ApiPageSet extends ApiQueryBase {
 
 		// All IDs must exist in the page table
 		if (!empty($this->mPendingRedirectIDs[$plfrom]))
-			$this->dieDebug('Invalid redirect IDs were found');
+			ApiBase :: dieDebug(__METHOD__, 'Invalid redirect IDs were found');
 
 		return $linkBatch;
 	}
@@ -508,7 +592,7 @@ class ApiPageSet extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiPageSet.php 16820 2006-10-06 01:02:14Z yurik $';
+		return __CLASS__ . ': $Id: ApiPageSet.php 17929 2006-11-25 17:11:58Z tstarling $';
 	}
 }
 ?>

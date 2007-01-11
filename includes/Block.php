@@ -17,7 +17,7 @@
 class Block
 {
 	/* public*/ var $mAddress, $mUser, $mBy, $mReason, $mTimestamp, $mAuto, $mId, $mExpiry,
-		            $mRangeStart, $mRangeEnd, $mAnonOnly;
+		            $mRangeStart, $mRangeEnd, $mAnonOnly, $mEnableAutoblock;
 	/* private */ var $mNetworkBits, $mIntegerAddr, $mForUpdate, $mFromMaster, $mByName;
 	
 	const EB_KEEP_EXPIRED = 1;
@@ -25,7 +25,7 @@ class Block
 	const EB_RANGE_ONLY = 4;
 
 	function Block( $address = '', $user = 0, $by = 0, $reason = '',
-		$timestamp = '' , $auto = 0, $expiry = '', $anonOnly = 0, $createAccount = 0 )
+		$timestamp = '' , $auto = 0, $expiry = '', $anonOnly = 0, $createAccount = 0, $enableAutoblock = 0 )
 	{
 		$this->mId = 0;
 		$this->mAddress = $address;
@@ -37,6 +37,7 @@ class Block
 		$this->mAnonOnly = $anonOnly;
 		$this->mCreateAccount = $createAccount;
 		$this->mExpiry = self::decodeExpiry( $expiry );
+		$this->mEnableAutoblock = $enableAutoblock;
 
 		$this->mForUpdate = false;
 		$this->mFromMaster = false;
@@ -72,7 +73,8 @@ class Block
 	{
 		$this->mAddress = $this->mReason = $this->mTimestamp = '';
 		$this->mId = $this->mAnonOnly = $this->mCreateAccount = 
-			$this->mAuto = $this->mUser = $this->mBy = 0;
+			$this->mEnableAutoblock = $this->mAuto = $this->mUser = 
+			$this->mBy = 0;
 		$this->mByName = false;
 	}
 
@@ -110,9 +112,6 @@ class Block
 
 		$options = array();
 		$db =& $this->getDBOptions( $options );
-
-		$ret = false;
-		$killed = false;
 
 		if ( 0 == $user && $address == '' ) {
 			# Invalid user specification, not blocked
@@ -239,14 +238,10 @@ class Block
 
 	/**
 	 * Determine if a given integer IPv4 address is in a given CIDR network
+	 * @deprecated Use IP::isInRange
 	 */
 	function isAddressInRange( $addr, $range ) {
-		list( $network, $bits ) = wfParseCIDR( $range );
-		if ( $network !== false && $addr >> ( 32 - $bits ) == $network >> ( 32 - $bits ) ) {
-			return true;
-		} else {
-			return false;
-		}
+		return IP::isInRange( $addr, $range );
 	}
 
 	function initFromRow( $row )
@@ -259,6 +254,7 @@ class Block
 		$this->mAuto = $row->ipb_auto;
 		$this->mAnonOnly = $row->ipb_anon_only;
 		$this->mCreateAccount = $row->ipb_create_account;
+		$this->mEnableAutoblock = $row->ipb_enable_autoblock;
 		$this->mId = $row->ipb_id;
 		$this->mExpiry = self::decodeExpiry( $row->ipb_expiry );
 		if ( isset( $row->user_name ) ) {
@@ -274,12 +270,9 @@ class Block
 	{
 		$this->mRangeStart = '';
 		$this->mRangeEnd = '';
+
 		if ( $this->mUser == 0 ) {
-			list( $network, $bits ) = wfParseCIDR( $this->mAddress );
-			if ( $network !== false ) {
-				$this->mRangeStart = sprintf( '%08X', $network );
-				$this->mRangeEnd = sprintf( '%08X', $network + (1 << (32 - $bits)) - 1 );
-			}
+			list( $this->mRangeStart, $this->mRangeEnd ) = IP::parseRange( $this->mAddress );
 		}
 	}
 
@@ -312,7 +305,7 @@ class Block
 
 		$now = wfTimestampNow();
 
-		extract( $db->tableNames( 'ipblocks', 'user' ) );
+		list( $ipblocks, $user ) = $db->tableNamesN( 'ipblocks', 'user' );
 
 		$sql = "SELECT $ipblocks.*,user_name FROM $ipblocks,$user " .
 			"WHERE user_id=ipb_by $cond ORDER BY ipb_timestamp DESC $options";
@@ -335,7 +328,7 @@ class Block
 				call_user_func( $callback, $block, $tag );
 			}
 		}
-		wfFreeResult( $res );
+		$db->freeResult( $res );
 		return $num_rows;
 	}
 
@@ -353,6 +346,10 @@ class Block
 		return $dbw->affectedRows() > 0;
 	}
 
+	/**
+	* Insert a block into the block table.
+	*@return Whether or not the insertion was successful.
+	*/
 	function insert()
 	{
 		wfDebug( "Block::insert; timestamp {$this->mTimestamp}\n" );
@@ -364,9 +361,14 @@ class Block
 			$this->mAnonOnly = 0;
 		}
 
+		# Unset ipb_enable_autoblock for IP blocks, makes no sense
+		if ( !$this->mUser ) {
+			$this->mEnableAutoblock = 0;
+		}
+
 		# Don't collide with expired blocks
 		Block::purgeExpired();
-		
+
 		$ipb_id = $dbw->nextSequenceValue('ipblocks_ipb_id_val');
 		$dbw->insert( 'ipblocks',
 			array(
@@ -379,6 +381,7 @@ class Block
 				'ipb_auto' => $this->mAuto,
 				'ipb_anon_only' => $this->mAnonOnly,
 				'ipb_create_account' => $this->mCreateAccount,
+				'ipb_enable_autoblock' => $this->mEnableAutoblock,
 				'ipb_expiry' => self::encodeExpiry( $this->mExpiry, $dbw ),
 				'ipb_range_start' => $this->mRangeStart,
 				'ipb_range_end' => $this->mRangeEnd,
@@ -386,7 +389,122 @@ class Block
 		);
 		$affected = $dbw->affectedRows();
 		$dbw->commit();
+
+		if ($affected)
+			$this->doRetroactiveAutoblock();
+
 		return $affected;
+	}
+
+	/**
+	* Retroactively autoblocks the last IP used by the user (if it is a user)
+	* blocked by this Block.
+	*@return Whether or not a retroactive autoblock was made.
+	*/
+	function doRetroactiveAutoblock() {
+		$dbr = wfGetDB( DB_SLAVE );
+		#If autoblock is enabled, autoblock the LAST IP used
+		# - stolen shamelessly from CheckUser_body.php
+
+		if ($this->mEnableAutoblock && $this->mUser) {
+			wfDebug("Doing retroactive autoblocks for " . $this->mAddress . "\n");
+
+			$row = $dbr->selectRow( 'recentchanges', array( 'rc_ip' ), array( 'rc_user_text' => $this->mAddress ),
+				__METHOD__ , array( 'ORDER BY' => 'rc_timestamp DESC' ) );
+
+			if ( !$row || !$row->rc_ip ) {
+				#No results, don't autoblock anything
+				wfDebug("No IP found to retroactively autoblock\n");
+			} else {
+				#Limit is 1, so no loop needed.
+				$retroblockip = $row->rc_ip;
+				return $this->doAutoblock($retroblockip);
+			}
+		}
+	}
+
+	/**
+	* Autoblocks the given IP, referring to this Block.
+	* @param $autoblockip The IP to autoblock.
+	* @return bool Whether or not an autoblock was inserted.
+	*/
+	function doAutoblock( $autoblockip ) {
+		# Check if this IP address is already blocked
+		$dbw =& wfGetDB( DB_MASTER );
+		$dbw->begin();
+
+		# If autoblocks are disabled, go away.
+		if ( !$this->mEnableAutoblock ) {
+			return;
+		}
+
+		# Check for presence on the autoblock whitelist
+		# TODO cache this?
+		$lines = explode( "\n", wfMsgForContentNoTrans( 'autoblock_whitelist' ) );
+
+		$ip = $autoblockip;
+
+		wfDebug("Checking the autoblock whitelist..\n");
+
+		foreach( $lines as $line ) {
+			# List items only
+			if ( substr( $line, 0, 1 ) !== '*' ) {
+				continue;
+			}
+
+			$wlEntry = substr($line, 1);
+			$wlEntry = trim($wlEntry);
+
+			wfDebug("Checking $ip against $wlEntry...");
+
+			# Is the IP in this range?
+			if (IP::isInRange( $ip, $wlEntry )) {
+				wfDebug(" IP $ip matches $wlEntry, not autoblocking\n");
+				#$autoblockip = null; # Don't autoblock a whitelisted IP.
+				return; #This /SHOULD/ introduce a dummy block - but
+					# I don't know a safe way to do so. -werdna
+			} else {
+				wfDebug( " No match\n" );
+			}
+		}
+
+		# It's okay to autoblock. Go ahead and create/insert the block.
+
+		$ipblock = Block::newFromDB( $autoblockip );
+		if ( $ipblock ) {
+			# If the user is already blocked. Then check if the autoblock would
+			# exceed the user block. If it would exceed, then do nothing, else
+			# prolong block time
+			if ($this->mExpiry &&
+			($this->mExpiry < Block::getAutoblockExpiry($ipblock->mTimestamp))) {
+				return;
+			}
+			# Just update the timestamp
+			$ipblock->updateTimestamp();
+			return;
+		} else {
+			$ipblock = new Block;
+		}
+
+		# Make a new block object with the desired properties
+		wfDebug( "Autoblocking {$this->mAddress}@" . $autoblockip . "\n" );
+		$ipblock->mAddress = $autoblockip;
+		$ipblock->mUser = 0;
+		$ipblock->mBy = $this->mBy;
+		$ipblock->mReason = wfMsgForContent( 'autoblocker', $this->mAddress, $this->mReason );
+		$ipblock->mTimestamp = wfTimestampNow();
+		$ipblock->mAuto = 1;
+		$ipblock->mCreateAccount = $this->mCreateAccount;
+
+		# If the user is already blocked with an expiry date, we don't
+		# want to pile on top of that!
+		if($this->mExpiry) {
+			$ipblock->mExpiry = min ( $this->mExpiry, Block::getAutoblockExpiry( $this->mTimestamp ));
+		} else {
+			$ipblock->mExpiry = Block::getAutoblockExpiry( $this->mTimestamp );
+		}
+		# Insert it
+		return $ipblock->insert();
 	}
 
 	function deleteIfExpired()
@@ -449,6 +567,16 @@ class Block
 		return $this->mNetworkBits;
 	}*/
 
+	/**
+	 * @return The blocker user ID.
+	 */
+	public function getBy() {
+		return $this->mBy;
+	}
+
+	/**
+	 * @return The blocker user name.
+	 */
 	function getByName()
 	{
 		if ( $this->mByName === false ) {

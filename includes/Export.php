@@ -337,8 +337,7 @@ class XmlDumpWriter {
 	}
 
 	function homelink() {
-		$page = Title::newFromText( wfMsgForContent( 'mainpage' ) );
-		return wfElement( 'base', array(), $page->getFullUrl() );
+		return wfElement( 'base', array(), Title::newMainPage()->getFullUrl() );
 	}
 
 	function caseSetting() {
@@ -597,7 +596,7 @@ class DumpFilter {
 	 * Override for page-based filter types.
 	 * @return bool
 	 */
-	function pass( $page, $string ) {
+	function pass( $page ) {
 		return true;
 	}
 }

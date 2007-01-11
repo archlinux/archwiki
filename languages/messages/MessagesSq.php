@@ -124,7 +124,8 @@ $messages = array(
 'oct'                   => 'Tet',
 'nov'                   => 'Nën',
 'dec'                   => 'Dhj',
-'categories'            => '{{PLURAL:$1|Kategoria|Kategoritë}}',
+'categories'            => 'Kategoritë',
+'pagecategories'        => '{{PLURAL:$1|Kategoria|Kategoritë}}',
 'category_header'       => 'Artikuj në kategorinë "$1"',
 'subcategories'         => 'Nën-kategori',
 'mainpage'              => 'Faqja Kryesore',
@@ -959,7 +960,7 @@ Të gjitha kohët janë sipas orës së shërbyesit (UTC).
 'rollbacklink'          => 'riktheje',
 'rollbackfailed'        => 'Rikthimi dështoi',
 'cantrollback'          => 'Nuk munda ta kthejë redaktimin; redaktori i fundit është i vetmi autor i këtij artikulli.',
-'alreadyrolled'         => 'Nuk munda ta rikthej redaktimin e fundit e [[$1]] nga [[User:$2|$2]] ([[User talk:$2|diskutim]]); dikush tjetër e ka redaktuar ose rikthyer këtë faqe.
+'alreadyrolled'         => 'Nuk munda ta rikthej redaktimin e fundit e [[:$1]] nga [[User:$2|$2]] ([[User talk:$2|diskutim]]); dikush tjetër e ka redaktuar ose rikthyer këtë faqe.
 
 Redaktimi i fundit është bërë nga [[User:$3|$3]] ([[User talk:$3|diskutim]]).',
 'editcomment'           => 'Komenti i redaktimit ishte: "<i>$1</i>".',
@@ -1190,10 +1191,10 @@ Për të eksportuar faqe, thjesht shtypni një emër për çdo rresht, ose krijo
 'tooltip-minoredit'     => 'Shënoje këtë redaktim të vogël [alt-i]',
 'tooltip-save'          => 'Kryej ndryshimet [alt-s]',
 'tooltip-preview'       => 'Shiko parapamjen e ndryshimeve, përdoreni këtë para se të kryeni ndryshimet! [alt-p]',
-'tooltip-diff'          => 'Show which changes you made to the text. [alt-d]',
+'tooltip-diff'          => 'Show which changes you made to the text. [alt-v]',
 'tooltip-compareselectedversions'=> 'Shikoni krahasimin midis dy versioneve të zgjedhura të kësaj faqeje. [alt-v]',
 'tooltip-watch'         => 'Mbikqyre këtë faqe [alt-w]',
-'Monobook.css'          => '/* redaktoni këtë faqe për të përshtatur pamjen Monobook për tëra faqet tuaja */',
+'monobook.css'          => '/* redaktoni këtë faqe për të përshtatur pamjen Monobook për tëra faqet tuaja */',
 'nodublincore'          => 'Dublin Core RDF metadata nuk është i mundshëm për këtë server.',
 'nocreativecommons'     => 'Creative Commons RDF metadata nuk është i mundshëm për këtë server.',
 'notacceptable'         => 'Wiki server nuk mundet ti përgatit të dhënat për klintin tuaj.',
@@ -1235,7 +1236,7 @@ Për të eksportuar faqe, thjesht shtypni një emër për çdo rresht, ose krijo
 'rcpatroldisabledtext'  => 'Kontrollimi i ndryshimeve së fundmi nuk është i mundshëm për momentin.',
 'markedaspatrollederror'=> 'Nuk munda ta shënoj të patrulluar',
 'markedaspatrollederrortext'=> 'Duhet të përcaktoni versionin për tu shënuar i patrulluar.',
-'Monobook.js'           => '/* tooltips and access keys */
+'monobook.js'           => '/* tooltips and access keys */
  var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Faqja juaj e përdoruesit\'); 
  ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Faqja e përdoruesve anonim nga kjo adresë IP\'); 
@@ -1246,7 +1247,7 @@ Për të eksportuar faqe, thjesht shtypni një emër për çdo rresht, ose krijo
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Lista e kontributeve tuaja\'); 
  ta[\'pt-login\'] = new Array(\'o\',\'Të hysh brenda nuk është e detyrueshme, por ka shumë përparësi.\'); 
  ta[\'pt-anonlogin\'] = new Array(\'o\',\'Të hysh brenda nuk është e detyrueshme, por ka shumë përparësi.\'); 
- ta[\'pt-logout\'] = new Array(\'o\',\'Dalje\'); 
+ ta[\'pt-logout\'] = new Array(\'\',\'Dalje\'); 
  ta[\'ca-talk\'] = new Array(\'t\',\'Diskuto për përmbajtjen e faqes\'); 
  ta[\'ca-edit\'] = new Array(\'e\',\'Ju mund ta redaktoni këtë faqe. Përdorni butonin >>Trego parapamjen<< para se t\'i kryeni ndryshimet.\'); 
  ta[\'ca-addsection\'] = new Array(\'+\',\'Fillo një temë të re diskutimi.\'); 
@@ -1485,7 +1486,6 @@ Ju lutem konfirmoni nëse dëshironi me të vertetë ta ri-krijoni këtë artiku
 $1',
 'confirm_purge_button'  => 'Shko',
 'youhavenewmessagesmulti'=> 'Ju keni mesazh të ri në $1',
-'newtalkseperator'      => ',_',
 'searchcontaining'      => 'Kërko për artikuj që përmbajnë \'\'$1\'\'.',
 'searchnamed'           => 'Kërko për artikuj të quajtur \'\'$1\'\'.',
 'articletitles'         => 'Artikuj që fillojnë me \'\'$1\'\'',

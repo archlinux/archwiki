@@ -272,7 +272,7 @@ Dikh ando $2 ek patrinipen le palutne butyange khosle.',
 'lastmodifiedatby'        => 'Kadaya patrin sas paruvdi agoreste $2, $1 katar $3.',
 'and'                   => 'thai',
 'others'                => 'aver',
-'Monobook.js'           => '/* tooltips and access keys */
+'monobook.js'           => '/* tooltips and access keys */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Miri labyarneski pajina\');
 ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Miri labyarneski pajina ki akanutni IP adress\');
@@ -283,7 +283,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'I lista le pajinenge so dikhav lendar (
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Le mire editisarimata\');
 ta[\'pt-login\'] = new Array(\'o\',\'Mishto si te identifikares tut, pale na si musai.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Mishto si te identifikares tut, pale na si musai.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Kathe aćhaves i sesiyunya\');
+ta[\'pt-logout\'] = new Array(\'\',\'Kathe aćhaves i sesiyunya\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Diskuciya le artikoleske\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Shai te editisares kadaya pajina. Mangas te paledikhes o teksto anglal te uxtaves les.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Kathe shai te thos ek komentaryo ki kadaya diskuciya.\');

@@ -16,7 +16,6 @@
  * @package MediaWiki
  */
 class Linker {
-
 	function Linker() {}
 
 	/**
@@ -39,7 +38,6 @@ class Linker {
 	function getInterwikiLinkAttributes( $link, $text, $class='' ) {
 		global $wgContLang;
 
-		$same = ($link == $text);
 		$link = urldecode( $link );
 		$link = $wgContLang->checkTitleEncoding( $link );
 		$link = preg_replace( '/[\\x00-\\x1f]/', ' ', $link );
@@ -180,12 +178,14 @@ class Linker {
 	 * call this lots of times, pre-fill the link cache with a LinkBatch, otherwise each
 	 * call to this will result in a DB query.
 	 * 
-	 * @param $title String: the text of the title
+	 * @param $nt     Title: the title object to make the link from, e.g. from
+	 *                      Title::newFromText.
 	 * @param $text  String: link text
 	 * @param $query String: optional query part
 	 * @param $trail String: optional trail. Alphabetic characters at the start of this string will
 	 *                      be included in the link text. Other characters will be appended after
 	 *                      the end of the link.
+	 * @param $prefix String: optional prefix. As trail, only before instead of after.
 	 */
 	function makeLinkObj( $nt, $text= '', $query = '', $trail = '', $prefix = '' ) {
 		global $wgUser;
@@ -199,8 +199,6 @@ class Linker {
 			return "<!-- ERROR -->{$prefix}{$text}{$trail}";
 		}
 
-		$ns = $nt->getNamespace();
-		$dbkey = $nt->getDBkey();
 		if ( $nt->isExternal() ) {
 			$u = $nt->getFullURL();
 			$link = $nt->getPrefixedURL();
@@ -209,27 +207,12 @@ class Linker {
 
 			$inside = '';
 			if ( '' != $trail ) {
+				$m = array();
 				if ( preg_match( '/^([a-z]+)(.*)$$/sD', $trail, $m ) ) {
 					$inside = $m[1];
 					$trail = $m[2];
 				}
 			}
-
-			# Check for anchors, normalize the anchor
-
-			$parts = explode( '#', $u, 2 );
-			if ( count( $parts ) == 2 ) {
-				$anchor = urlencode( Sanitizer::decodeCharReferences( str_replace(' ', '_', $parts[1] ) ) );
-				$replacearray = array(
-					'%3A' => ':',
-					'%' => '.'
-				);
-				$u = $parts[0] . '#' .
-				     str_replace( array_keys( $replacearray ),
-				    		 array_values( $replacearray ),
-						 $anchor );
-			}
-
 			$t = "<a href=\"{$u}\"{$style}>{$text}{$inside}</a>";
 
 			wfProfileOut( $fname );
@@ -308,12 +291,7 @@ class Linker {
 					$text = htmlspecialchars( $nt->getFragment() );
 				}
 			}
-			$anchor = urlencode( Sanitizer::decodeCharReferences( str_replace( ' ', '_', $nt->getFragment() ) ) );
-			$replacearray = array(
-				'%3A' => ':',
-				'%' => '.'
-			);
-			$u .= '#' . str_replace(array_keys($replacearray),array_values($replacearray),$anchor);
+			$u .= $nt->getFragmentForURL();
 		}
 		if ( $text == '' ) {
 			$text = htmlspecialchars( $nt->getPrefixedText() );
@@ -380,8 +358,6 @@ class Linker {
 	 *                      the end of the link.
 	 */
 	function makeStubLinkObj( $nt, $text = '', $query = '', $trail = '', $prefix = '' ) {
-		$link = $nt->getPrefixedURL();
-
 		$u = $nt->escapeLocalURL( $query );
 
 		if ( '' == $text ) {
@@ -535,6 +511,8 @@ class Linker {
 					$url = $thumb->getUrl();
 				} else {
 					$error = htmlspecialchars( $img->getLastError() );
+					// Do client-side scaling...
+					$height = intval( $img->getHeight() * $width / $img->getWidth() );
 				}
 			}
 		} else {
@@ -627,10 +605,14 @@ class Linker {
 		$magnifyalign = $wgContLang->isRTL() ? 'left' : 'right';
 		$textalign = $wgContLang->isRTL() ? ' style="text-align:right"' : '';
 
-		$s = "<div class=\"thumb t{$align}\"><div style=\"width:{$oboxwidth}px;\">";
+		$s = "<div class=\"thumb t{$align}\"><div class=\"thumbinner\" style=\"width:{$oboxwidth}px;\">";
 		if( $thumbUrl == '' ) {
 			// Couldn't generate thumbnail? Scale the image client-side.
 			$thumbUrl = $img->getViewURL();
+			if( $boxheight == -1 ) {
+				// Approximate...
+				$boxheight = intval( $height * $boxwidth / $width );
+			}
 		}
 		if ( $error ) {
 			$s .= htmlspecialchars( $error );
@@ -642,14 +624,14 @@ class Linker {
 			$s .= '<a href="'.$u.'" class="internal" title="'.$alt.'">'.
 				'<img src="'.$thumbUrl.'" alt="'.$alt.'" ' .
 				'width="'.$boxwidth.'" height="'.$boxheight.'" ' .
-				'longdesc="'.$u.'" /></a>';
+				'longdesc="'.$u.'" class="thumbimage" /></a>';
 			if ( $framed ) {
 				$zoomicon="";
 			} else {
 				$zoomicon =  '<div class="magnify" style="float:'.$magnifyalign.'">'.
 					'<a href="'.$u.'" class="internal" title="'.$more.'">'.
 					'<img src="'.$wgStylePath.'/common/images/magnify-clip.png" ' .
-					'width="15" height="11" alt="'.$more.'" /></a></div>';
+					'width="15" height="11" alt="" /></a></div>';
 			}
 		}
 		$s .= '  <div class="thumbcaption"'.$textalign.'>'.$zoomicon.$label."</div></div></div>";
@@ -673,7 +655,7 @@ class Linker {
 		if ( '' != $query ) {
 			$q .= "&$query";
 		}
-		$uploadTitle = Title::makeTitle( NS_SPECIAL, 'Upload' );
+		$uploadTitle = SpecialPage::getTitleFor( 'Upload' );
 		$url = $uploadTitle->escapeLocalURL( $q );
 
 		if ( '' == $text ) {
@@ -710,13 +692,12 @@ class Linker {
 			### HOTFIX. Instead of breaking, return empty string.
 			return $text;
 		} else {
-			$name = $title->getDBKey();
 			$img  = new Image( $title );
 			if( $img->exists() ) {
 				$url  = $img->getURL();
 				$class = 'internal';
 			} else {
-				$upload = Title::makeTitle( NS_SPECIAL, 'Upload' );
+				$upload = SpecialPage::getTitleFor( 'Upload' );
 				$url = $upload->getLocalUrl( 'wpDestFile=' . urlencode( $img->getName() ) );
 				$class = 'new';
 			}
@@ -763,9 +744,9 @@ class Linker {
 	function userLink( $userId, $userText ) {
 		$encName = htmlspecialchars( $userText );
 		if( $userId == 0 ) {
-			$contribsPage = Title::makeTitle( NS_SPECIAL, 'Contributions' );
+			$contribsPage = SpecialPage::getTitleFor( 'Contributions', $userText );
 			return $this->makeKnownLinkObj( $contribsPage,
-				$encName, 'target=' . urlencode( $userText ) );
+				$encName);
 		} else {
 			$userPage = Title::makeTitle( NS_USER, $userText );
 			return $this->makeLinkObj( $userPage, $encName );
@@ -788,9 +769,9 @@ class Linker {
 			$items[] = $this->userTalkLink( $userId, $userText );
 		}
 		if( $userId ) {
-			$contribsPage = Title::makeTitle( NS_SPECIAL, 'Contributions' );
-			$items[] = $this->makeKnownLinkObj( $contribsPage,
-				wfMsgHtml( 'contribslink' ), 'target=' . urlencode( $userText ) );
+			$contribsPage = SpecialPage::getTitleFor( 'Contributions', $userText );
+			$items[] = $this->makeKnownLinkObj( $contribsPage ,
+				wfMsgHtml( 'contribslink' ) );
 		}
 		if( $blockable && $wgUser->isAllowed( 'block' ) ) {
 			$items[] = $this->blockLink( $userId, $userText );
@@ -825,9 +806,9 @@ class Linker {
 	 * @private
 	 */
 	function blockLink( $userId, $userText ) {
-		$blockPage = Title::makeTitle( NS_SPECIAL, 'Blockip' );
+		$blockPage = SpecialPage::getTitleFor( 'Blockip', $userText );
 		$blockLink = $this->makeKnownLinkObj( $blockPage,
-			wfMsgHtml( 'blocklink' ), 'ip=' . urlencode( $userText ) );
+			wfMsgHtml( 'blocklink' ) );
 		return $blockLink;
 	}
 	
@@ -873,17 +854,18 @@ class Linker {
 	 * comments. It escapes any HTML in the comment, but adds some CSS to format
 	 * auto-generated comments (from section editing) and formats [[wikilinks]].
 	 *
-	 * The $title parameter must be a title OBJECT. It is used to generate a
-	 * direct link to the section in the autocomment.
 	 * @author Erik Moeller <moeller@scireview.de>
 	 *
 	 * Note: there's not always a title to pass to this function.
 	 * Since you can't set a default parameter for a reference, I've turned it
 	 * temporarily to a value pass. Should be adjusted further. --brion
+	 *
+	 * $param string $comment
+	 * @param mixed $title Title object (to generate link to the section in autocomment) or null
+	 * @param bool $local Whether section links should refer to local page
 	 */
-	function formatComment($comment, $title = NULL) {
-		$fname = 'Linker::formatComment';
-		wfProfileIn( $fname );
+	function formatComment($comment, $title = NULL, $local = false) {
+		wfProfileIn( __METHOD__ );
 
 		global $wgContLang;
 		$comment = str_replace( "\n", " ", $comment );
@@ -893,6 +875,7 @@ class Linker {
 		# some nasty regex.
 		# We look for all comments, match any text before and after the comment,
 		# add a separator where needed and format the comment itself with CSS
+		$match = array();
 		while (preg_match('/(.*)\/\*\s*(.*?)\s*\*\/(.*)/', $comment,$match)) {
 			$pre=$match[1];
 			$auto=$match[2];
@@ -909,8 +892,12 @@ class Linker {
 				$section = str_replace( '[[:', '', $section );
 				$section = str_replace( '[[', '', $section );
 				$section = str_replace( ']]', '', $section );
-				$sectionTitle = wfClone( $title );
-				$sectionTitle->mFragment = $section;
+				if ( $local ) {
+					$sectionTitle = Title::newFromText( '#' . $section);
+				} else {
+					$sectionTitle = wfClone( $title );
+					$sectionTitle->mFragment = $section;
+				}
 				$link = $this->makeKnownLinkObj( $sectionTitle, wfMsg( 'sectionlink' ) );
 			}
 			$sep='-';
@@ -923,14 +910,16 @@ class Linker {
 
 		# format regular and media links - all other wiki formatting
 		# is ignored
-		$medians = $wgContLang->getNsText( NS_MEDIA ) . ':';
-		while(preg_match('/\[\[(.*?)(\|(.*?))*\]\](.*)$/',$comment,$match)) {
+		$medians = '(?:' . preg_quote( Namespace::getCanonicalName( NS_MEDIA ), '/' ) . '|';
+		$medians .= preg_quote( $wgContLang->getNsText( NS_MEDIA ), '/' ) . '):';
+		while(preg_match('/\[\[:?(.*?)(\|(.*?))*\]\](.*)$/',$comment,$match)) {
 			# Handle link renaming [[foo|text]] will show link as "text"
 			if( "" != $match[3] ) {
 				$text = $match[3];
 			} else {
 				$text = $match[1];
 			}
+			$submatch = array();
 			if( preg_match( '/^' . $medians . '(.*)$/i', $match[1], $submatch ) ) {
 				# Media link; trail not supported.
 				$linkRegexp = '/\[\[(.*?)\]\]/';
@@ -943,13 +932,13 @@ class Linker {
 					$trail = "";
 				}
 				$linkRegexp = '/\[\[(.*?)\]\]' . preg_quote( $trail, '/' ) . '/';
-				if ($match[1][0] == ':')
+				if (isset($match[1][0]) && $match[1][0] == ':')
 					$match[1] = substr($match[1], 1);
 				$thelink = $this->makeLink( $match[1], $text, "", $trail );
 			}
-			$comment = preg_replace( $linkRegexp, wfRegexReplacement( $thelink ), $comment, 1 );
+			$comment = preg_replace( $linkRegexp, StringUtils::escapeRegexReplacement( $thelink ), $comment, 1 );
 		}
-		wfProfileOut( $fname );
+		wfProfileOut( __METHOD__ );
 		return $comment;
 	}
 
@@ -957,19 +946,20 @@ class Linker {
 	 * Wrap a comment in standard punctuation and formatting if
 	 * it's non-empty, otherwise return empty string.
 	 *
-	 * @param $comment String: the comment.
-	 * @param $title Title object.
+	 * @param string $comment
+	 * @param mixed $title Title object (to generate link to section in autocomment) or null
+	 * @param bool $local Whether section links should refer to local page
 	 *
 	 * @return string
 	 */
-	function commentBlock( $comment, $title = NULL ) {
+	function commentBlock( $comment, $title = NULL, $local = false ) {
 		// '*' used to be the comment inserted by the software way back
 		// in antiquity in case none was provided, here for backwards
 		// compatability, acc. to brion -ævar
 		if( $comment == '' || $comment == '*' ) {
 			return '';
 		} else {
-			$formatted = $this->formatComment( $comment, $title );
+			$formatted = $this->formatComment( $comment, $title, $local );
 			return " <span class=\"comment\">($formatted)</span>";
 		}
 	}
@@ -977,12 +967,14 @@ class Linker {
 	/**
 	 * Wrap and format the given revision's comment block, if the current
 	 * user is allowed to view it.
-	 * @param $rev Revision object.
+	 *
+	 * @param Revision $rev
+	 * @param bool $local Whether section links should refer to local page
 	 * @return string HTML
 	 */
-	function revComment( $rev ) {
+	function revComment( Revision $rev, $local = false ) {
 		if( $rev->userCan( Revision::DELETED_COMMENT ) ) {
-			$block = $this->commentBlock( $rev->getRawComment(), $rev->getTitle() );
+			$block = $this->commentBlock( $rev->getRawComment(), $rev->getTitle(), $local );
 		} else {
 			$block = " <span class=\"comment\">" .
 				wfMsgHtml( 'rev-deleted-comment' ) . "</span>";
@@ -1039,44 +1031,46 @@ class Linker {
 	}
 
 	/** @todo document */
-	function editSectionLinkForOther( $title, $section ) {
+	public function editSectionLinkForOther( $title, $section ) {
 		global $wgContLang;
 
 		$title = Title::newFromText( $title );
 		$editurl = '&section='.$section;
 		$url = $this->makeKnownLinkObj( $title, wfMsg('editsection'), 'action=edit'.$editurl );
 
-		if( $wgContLang->isRTL() ) {
-			$farside = 'left';
-			$nearside = 'right';
-		} else {
-			$farside = 'right';
-			$nearside = 'left';
-		}
-		return "<div class=\"editsection\" style=\"float:$farside;margin-$nearside:5px;\">[".$url."]</div>";
+		return "<span class=\"editsection\">[".$url."]</span>";
 
 	}
 
-	/** 
+	/**
 	 * @param $title Title object.
 	 * @param $section Integer: section number.
 	 * @param $hint Link String: title, or default if omitted or empty
 	 */
-	function editSectionLink( $nt, $section, $hint='' ) {
+	public function editSectionLink( $nt, $section, $hint='' ) {
 		global $wgContLang;
 
 		$editurl = '&section='.$section;
 		$hint = ( $hint=='' ) ? '' : ' title="' . wfMsgHtml( 'editsectionhint', htmlspecialchars( $hint ) ) . '"';
 		$url = $this->makeKnownLinkObj( $nt, wfMsg('editsection'), 'action=edit'.$editurl, '', '', '',  $hint );
 
-		if( $wgContLang->isRTL() ) {
-			$farside = 'left';
-			$nearside = 'right';
-		} else {
-			$farside = 'right';
-			$nearside = 'left';
-		}
-		return "<div class=\"editsection\" style=\"float:$farside;margin-$nearside:5px;\">[".$url."]</div>";
+		return "<span class=\"editsection\">[".$url."]</span>";
+	}
+
+	/**
+	 * Create a headline for content
+	 *
+	 * @param int    $level   The level of the headline (1-6)
+	 * @param string $attribs Any attributes for the headline, starting with a space and ending with '>'
+	 *                        This *must* be at least '>' for no attribs
+	 * @param string $anchor  The anchor to give the headline (the bit after the #)
+	 * @param string $text    The text of the header
+	 * @param string $link    HTML to add for the section edit link
+	 *
+	 * @return string HTML headline
+	 */
+	public function makeHeadline( $level, $attribs, $anchor, $text, $link ) {
+		return "<a name=\"$anchor\"></a><h$level$attribs$link <span class=\"mw-headline\">$text</span></h$level>";
 	}
 
 	/**
@@ -1093,6 +1087,7 @@ class Linker {
 		}
 		$inside = '';
 		if ( '' != $trail ) {
+			$m = array();
 			if ( preg_match( $regex, $trail, $m ) ) {
 				$inside = $m[1];
 				$trail = $m[2];
@@ -1101,5 +1096,112 @@ class Linker {
 		return array( $inside, $trail );
 	}
 
+	/**
+	 * Generate a rollback link for a given revision.  Currently it's the
+	 * caller's responsibility to ensure that the revision is the top one. If
+	 * it's not, of course, the user will get an error message.
+	 *
+	 * If the calling page is called with the parameter &bot=1, all rollback
+	 * links also get that parameter. It causes the edit itself and the rollback
+	 * to be marked as "bot" edits. Bot edits are hidden by default from recent
+	 * changes, so this allows sysops to combat a busy vandal without bothering
+	 * other users.
+	 *
+	 * @param Revision $rev
+	 */
+	function generateRollback( $rev ) {
+		global $wgUser, $wgRequest;
+		$title = $rev->getTitle();
+
+		$extraRollback = $wgRequest->getBool( 'bot' ) ? '&bot=1' : '';
+		$extraRollback .= '&token=' . urlencode(
+			$wgUser->editToken( array( $title->getPrefixedText(), $rev->getUserText() ) ) );
+		return '<span class="mw-rollback-link">['. $this->makeKnownLinkObj( $title,
+		  	wfMsg('rollbacklink'),
+		  	'action=rollback&from=' . urlencode( $rev->getUserText() ) . $extraRollback ) .']</span>';
+	}
+
+	/**
+	 * Returns HTML for the "templates used on this page" list.
+	 *
+	 * @param array $templates Array of templates from Article::getUsedTemplate
+	 * or similar
+	 * @param bool $preview Whether this is for a preview
+	 * @param bool $section Whether this is for a section edit
+	 * @return string HTML output
+	 */
+	public function formatTemplates( $templates, $preview = false, $section = false) {
+		global $wgUser;
+		wfProfileIn( __METHOD__ );
+
+		$sk =& $wgUser->getSkin();
+
+		$outText = '';
+		if ( count( $templates ) > 0 ) {
+			# Do a batch existence check
+			$batch = new LinkBatch;
+			foreach( $templates as $title ) {
+				$batch->addObj( $title );
+			}
+			$batch->execute();
+
+			# Construct the HTML
+			$outText = '<div class="mw-templatesUsedExplanation">';
+			if ( $preview ) {
+				$outText .= wfMsgExt( 'templatesusedpreview', array( 'parse' ) );
+			} elseif ( $section ) {
+				$outText .= wfMsgExt( 'templatesusedsection', array( 'parse' ) );
+			} else {
+				$outText .= wfMsgExt( 'templatesused', array( 'parse' ) );
+			}
+			$outText .= '</div><ul>';
+
+			foreach ( $templates as $titleObj ) {
+				$r = $titleObj->getRestrictions( 'edit' );
+				if ( in_array( 'sysop', $r ) ) { 
+					$protected = wfMsgExt( 'template-protected', array( 'parseinline' ) );
+				} elseif ( in_array( 'autoconfirmed', $r ) ) {
+					$protected = wfMsgExt( 'template-semiprotected', array( 'parseinline' ) );
+				} else {
+					$protected = '';
+				}
+				$outText .= '<li>' . $sk->makeLinkObj( $titleObj ) . ' ' . $protected . '</li>';
+			}
+			$outText .= '</ul>';
+		}
+		wfProfileOut( __METHOD__  );
+		return $outText;
+	}
+	
+	/**
+	 * Format a size in bytes for output, using an appropriate
+	 * unit (B, KB, MB or GB) according to the magnitude in question
+	 *
+	 * @param $size Size to format
+	 * @return string
+	 */
+	public function formatSize( $size ) {
+		global $wgLang;
+		if( $size > 1024 ) {
+			$size = $size / 1024;
+			if( $size > 1024 ) {
+				$size = $size / 1024;
+				if( $size > 1024 ) {
+					$size = $size / 1024;
+					$msg = 'size-gigabytes';
+				} else {
+					$msg = 'size-megabytes';
+				}
+			} else {
+				$msg = 'size-kilobytes';
+			}
+		} else {
+			$msg = 'size-bytes';
+		}
+		$size = round( $size, 0 );
+		return wfMsgHtml( $msg, $wgLang->formatNum( $size ) );
+	}
+	
 }
+
 ?>

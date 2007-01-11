@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This is Postgres database abstraction layer.
+ * This is the Postgres database abstraction layer.
  *
  * As it includes more generic version for DB functions,
  * than MySQL ones, some of them should be moved to parent
@@ -18,7 +18,7 @@ class DatabasePostgres extends Database {
 		$failFunction = false, $flags = 0 )
 	{
 
-		global $wgOut, $wgDBprefix, $wgCommandLineMode;
+		global $wgOut;
 		# Can't get a reference if it hasn't been set yet
 		if ( !isset( $wgOut ) ) {
 			$wgOut = NULL;
@@ -31,6 +31,14 @@ class DatabasePostgres extends Database {
 		$this->mFlags = $flags;
 		$this->open( $server, $user, $password, $dbName);
 
+	}
+
+	function realTimestamps() {
+		return true;
+	}
+
+	function implicitGroupby() {
+		return false;
 	}
 
 	static function newFromParams( $server = false, $user = false, $password = false, $dbName = false,
@@ -59,7 +67,6 @@ class DatabasePostgres extends Database {
 		$this->mPassword = $password;
 		$this->mDBname = $dbName;
 
-		$success = false;
 		$hstring="";
 		if ($server!=false && $server!="") {
 			$hstring="host=$server ";
@@ -85,13 +92,14 @@ class DatabasePostgres extends Database {
 		$this->mOpened = true;
 		## If this is the initial connection, setup the schema stuff and possibly create the user
 		if (defined('MEDIAWIKI_INSTALL')) {
-			global $wgDBname, $wgDBuser, $wgDBpass, $wgDBsuperuser, $wgDBmwschema,
-				$wgDBts2schema, $wgDBts2locale;
+			global $wgDBname, $wgDBuser, $wgDBpassword, $wgDBsuperuser, $wgDBmwschema,
+				$wgDBts2schema;
 			print "OK</li>\n";
 
 			print "<li>Checking the version of Postgres...";
 			$version = pg_fetch_result($this->doQuery("SELECT version()"),0,0);
-			if (!preg_match("/PostgreSQL (\d+\.\d+)(\S+)/", $version, $thisver)) {
+			$thisver = array();
+			if (!preg_match('/PostgreSQL (\d+\.\d+)(\S+)/', $version, $thisver)) {
 				print "<b>FAILED</b> (could not determine the version)</li>\n";
 				dieout("</ul>");
 			}
@@ -131,7 +139,7 @@ class DatabasePostgres extends Database {
 						dieout('</ul>');
 					}
 					print "<li>Creating user <b>$wgDBuser</b>...";
-					$safepass = $this->addQuotes($wgDBpass);
+					$safepass = $this->addQuotes($wgDBpassword);
 					$SQL = "CREATE USER $safeuser NOCREATEDB PASSWORD $safepass";
 					$this->doQuery($SQL);
 					print "OK</li>\n";
@@ -460,6 +468,9 @@ class DatabasePostgres extends Database {
 		while ( $row = $this->fetchObject( $res ) ) {
 			if ( $row->indexname == $index ) {
 				return $row;
+				
+				// BUG: !!!! This code needs to be synced up with database.php
+				
 			}
 		}
 		return false;
@@ -651,9 +662,8 @@ class DatabasePostgres extends Database {
 		return " (CASE WHEN $cond THEN $trueVal ELSE $falseVal END) ";
 	}
 
-	# FIXME: actually detecting deadlocks might be nice
 	function wasDeadlock() {
-		return false;
+		return $this->lastErrno() == '40P01';
 	}
 
 	function timestamp( $ts=0 ) {
@@ -669,11 +679,21 @@ class DatabasePostgres extends Database {
 
 
 	function reportQueryError( $error, $errno, $sql, $fname, $tempIgnore = false ) {
-		$message = "A database error has occurred\n" .
-			"Query: $sql\n" .
-			"Function: $fname\n" .
-			"Error: $errno $error\n";
-		throw new DBUnexpectedError($this, $message);
+		# Ignore errors during error handling to avoid infinite recursion
+		$ignore = $this->ignoreErrors( true );
+		++$this->mErrorCount;
+
+		if ($ignore || $tempIgnore) {
+			wfDebug("SQL ERROR (ignored): $error\n");
+			$this->ignoreErrors( $ignore );
+		}
+		else {
+			$message = "A database error has occurred\n" .
+				"Query: $sql\n" .
+				"Function: $fname\n" .
+				"Error: $errno $error\n";
+			throw new DBUnexpectedError($this, $message);
+		}
 	}
 
 	/**
@@ -800,10 +820,10 @@ class DatabasePostgres extends Database {
 		$SQL = "INSERT INTO interwiki(iw_prefix,iw_url,iw_local) VALUES ";
 		while ( ! feof( $f ) ) {
 			$line = fgets($f,1024);
-			if (!preg_match("/^\s*(\(.+?),(\d)\)/", $line, $matches)) {
+			$matches = array();
+			if (!preg_match('/^\s*(\(.+?),(\d)\)/', $line, $matches)) {
 				continue;
 			}
-			$yesno = $matches[2]; ## ? "'true'" : "'false'";
 			$this->query("$SQL $matches[1],$matches[2])");
 		}
 		print " (table interwiki successfully populated)...\n";
@@ -827,13 +847,66 @@ class DatabasePostgres extends Database {
 			return "E'$s[1]'";
 		}
 		return "'" . pg_escape_string($s) . "'";
-		return "E'" . pg_escape_string($s) . "'";
+		// Unreachable: return "E'" . pg_escape_string($s) . "'";
 	}
 
 	function quote_ident( $s ) {
 		return '"' . preg_replace( '/"/', '""', $s) . '"';
 	}
 
-}
+	/* For now, does nothing */
+	function selectDB( $db ) {
+		return true;
+	}
+
+	/**
+	 * Returns an optional USE INDEX clause to go after the table, and a
+	 * string to go at the end of the query
+	 *
+	 * @private
+	 *
+	 * @param array $options an associative array of options to be turned into
+	 *              an SQL query, valid keys are listed in the function.
+	 * @return array
+	 */
+	function makeSelectOptions( $options ) {
+		$tailOpts = '';
+		$startOpts = '';
+
+		$noKeyOptions = array();
+		foreach ( $options as $key => $option ) {
+			if ( is_numeric( $key ) ) {
+				$noKeyOptions[$option] = true;
+			}
+		}
+
+		if ( isset( $options['GROUP BY'] ) ) $tailOpts .= " GROUP BY {$options['GROUP BY']}";
+		if ( isset( $options['ORDER BY'] ) ) $tailOpts .= " ORDER BY {$options['ORDER BY']}";
+		
+		if (isset($options['LIMIT'])) {
+			$tailOpts .= $this->limitResult('', $options['LIMIT'],
+				isset($options['OFFSET']) ? $options['OFFSET'] : false);
+		}
+
+		if ( isset( $noKeyOptions['FOR UPDATE'] ) ) $tailOpts .= ' FOR UPDATE';
+		if ( isset( $noKeyOptions['LOCK IN SHARE MODE'] ) ) $tailOpts .= ' LOCK IN SHARE MODE';
+		if ( isset( $noKeyOptions['DISTINCT'] ) && isset( $noKeyOptions['DISTINCTROW'] ) ) $startOpts .= 'DISTINCT';
+
+		if ( isset( $options['USE INDEX'] ) && ! is_array( $options['USE INDEX'] ) ) {
+			$useIndex = $this->useIndexClause( $options['USE INDEX'] );
+		} else {
+			$useIndex = '';
+		}
+		
+		return array( $startOpts, $useIndex, $tailOpts );
+	}
+
+	function ping() {
+		wfDebug( "Function ping() not written for DatabasePostgres.php yet");
+		return true;
+	}
+
+
+} // end DatabasePostgres class
 
 ?>

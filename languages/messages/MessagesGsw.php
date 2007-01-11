@@ -54,7 +54,8 @@ $messages = array(
 'november'              => 'Novämber',
 'december'              => 'Dezämber',
 'may'                   => 'Mei',
-'categories'            => '{{PLURAL:$1|Kategori|Kategorie}}',
+'categories'            => 'Kategorie',
+'pagecategories'        => '{{PLURAL:$1|Kategori|Kategorie}}',
 'category_header'       => 'Artikel in de Kategori "$1"',
 'subcategories'         => 'Unterkategorie',
 'mainpage'              => 'Houptsyte',
@@ -296,7 +297,7 @@ Für d Bestätigung muesch du em Link folge, wo dir isch gmailet worde. Du chasc
 'media_tip'             => 'Mediedateivoweis',
 'hr_tip'                => 'Horizontal Linie (sparsom vowende)',
 'summary'               => 'Zämefassig',
-'minoredit'             => 'Numen es birebitzeli gänderet ',
+'minoredit'             => 'Numen es birebitzeli gänderet',
 'watchthis'             => 'Dä Artikel beobachte',
 'savearticle'           => 'Syte spychere',
 'showpreview'           => 'Vorschau aaluege',
@@ -598,7 +599,7 @@ Bitte bis dir über d Konsequänze bewusst, u bis sicher, das du di a üsi [[Pro
 Im $2 het’s e Lischte vo de letschte Löschige.',
 'deletionlog'           => 'Lösch-Logbuech',
 'deletecomment'         => 'Löschigsgrund',
-'alreadyrolled'         => 'Cha d Änderig uf [[$1]] wo [[User:$2|$2]] ([[User talk:$2|Talk]]) gmacht het nit zruckneh will des öbber anderscht scho gmacht het.
+'alreadyrolled'         => 'Cha d Änderig uf [[:$1]] wo [[User:$2|$2]] ([[User talk:$2|Talk]]) gmacht het nit zruckneh will des öbber anderscht scho gmacht het.
 
 Di letschti Änderig het [[User:$3|$3]] ([[User talk:$3|Talk]]) gmacht.',
 'revertpage'            => 'Rückgängig gmacht zuer letschte Änderig vo $1',
@@ -682,14 +683,14 @@ I söttigne Fäll müessti d Diskussionssyten allefalls vo Hand kopiert wärde.'
 'markaspatrolleddiff'   => 'Als geprüft markiere',
 'markaspatrolledtext'   => 'Den Artikel als geprüft markiere',
 'markedaspatrolledtext' => 'Die usgwählte Artikeländerung isch als geprüft markiert worre.',
-'Monobook.js'           => ' var ta = new Object();
+'monobook.js'           => ' var ta = new Object();
  ta[\'pt-userpage\'] = new Array(\'.\',\'Myni Benutzersyte\');
  ta[\'pt-mytalk\'] = new Array(\'n\',\'Myni Diskussionssyte\');
  ta[\'pt-preferences\'] = new Array(\'\',\'Myni Ystellige\');
  ta[\'pt-watchlist\'] = new Array(\'l\',\'Lischte vo de beobachtete Syte.\');
  ta[\'pt-mycontris\'] = new Array(\'y\',\'Lischte vo myne Byträg\');
  ta[\'pt-login\'] = new Array(\'o\',\'Ylogge\');
- ta[\'pt-logout\'] = new Array(\'o\',\'Uslogge\');
+ ta[\'pt-logout\'] = new Array(\'\',\'Uslogge\');
  ta[\'ca-article\'] = new Array(\'a\',\'Artikel aaluege\');
  ta[\'ca-talk\'] = new Array(\'t\',\'Diskussion zum Artikelinhalt\');
  ta[\'ca-edit\'] = new Array(\'e\',\'Syte bearbeite. Bitte vor em Spychere d Vorschou aaluege.\');

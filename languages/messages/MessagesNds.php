@@ -157,12 +157,13 @@ $messages = array(
 # Textdelen, de vun vele Sieten bruukt warrn:
 #
 'categories'            => 'Sietenkategorien',
+'pagecategories'        => 'Sietenkategorien',
 'category_header'       => 'Sieten in de Kategorie $1',
 'subcategories'         => 'Ünnerkategorien',
 'mainpage'                      => 'Hööftsiet',
 'mainpagetext'          => 'De Wiki-Software is mit Spood installeert worrn.',
-'mainpagedocfooter'     => 'Kiek de [http://meta.wikipedia.org/wiki/MediaWiki_i18n Dokumentatschoon för dat Anpassen vun de Brukerböversiet]
-un dat [http://meta.wikipedia.org/wiki/MediaWiki_User%27s_Guide Brukerhandbook] för Hülp to de Bruuk un Konfiguratschoon.',
+'mainpagedocfooter'     => 'Kiek de [http://meta.wikimedia.org/wiki/MediaWiki_i18n Dokumentatschoon för dat Anpassen vun de Brukerböversiet]
+un dat [http://meta.wikimedia.org/wiki/MediaWiki_User%27s_Guide Brukerhandbook] för Hülp to de Bruuk un Konfiguratschoon.',
 'portal'                        => '{{SITENAME}}-Portal',
 'portal-url'                      => '{{ns:4}}:Portal',
 'about'                               => 'Över',
@@ -819,7 +820,7 @@ In $2 kannst du en List vun de letzten Löschen finnen.',
 'rollbacklink'          => 'Trüchnehmen',
 'rollbackfailed'        => 'Trüchnahm hett kenen Spood',
 'cantrollback'          => 'De Ännern kann nich trüchnahmen warrn; de letzte Autor is de eenzige.',
-'alreadyrolled'         => 'Dat Trüchnehmen vun de Ännern an de Siet [[$1]] vun [[User:$2|$2]]
+'alreadyrolled'         => 'Dat Trüchnehmen vun de Ännern an de Siet [[:$1]] vun [[User:$2|$2]]
 ([[User_talk:$2|Diskuschoonssiet]]) is nich mööglich, vun wegen dat dor en annere Ännern oder Trüchnahm ween is.
 
 De letzte Ännern is vun [[User:$3|$3]]
@@ -1050,11 +1051,11 @@ Kontakteer dien Provider oder diene Systemtechnik un informeer se över dat mö�
 
 # Stilvörlagen
 
-'Monobook.css'          => '/* disse Datei editeern üm den Monobook-Skin för de ganze Siet antopassen */',
-#'Monobook.js'          => '/* disse Datei editeern üm js-Saken in den Monobook-Skin to ännern */',
+'monobook.css'          => '/* disse Datei editeern üm den Monobook-Skin för de ganze Siet antopassen */',
+#'monobook.js'          => '/* disse Datei editeern üm js-Saken in den Monobook-Skin to ännern */',
 
 # Monobook.js: tooltips and access keys for monobook
-'Monobook.js'           => '/* Tooltips un Togriepslötel */
+'monobook.js'           => '/* Tooltips un Togriepslötel */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Mien Brukersiet\');
 ta[\'pt-anonuserpage\'] = new Array(\'.\',\'De Brukersiet för de IP-Adress ünner de du schriffst\');
@@ -1065,7 +1066,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'Mien Oppasslist\');
 ta[\'pt-mycontris\'] = new Array(\'y\',\'List vun mien Bidreeg\');
 ta[\'pt-login\'] = new Array(\'o\',\'Du kannst di geern anmellen, dat is aver nich neudig, üm Sieten to bearbeiden.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Du kannst di geern anmellen, dat is aver nich neudig, üm Sieten to bearbeiden.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Afmellen\');
+ta[\'pt-logout\'] = new Array(\'\',\'Afmellen\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Diskuschoon över disse Siet\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Du kannst disse Siet ännern. Bruuk dat vör dat Spiekern.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'En Kommentar to disse Diskuschoonssiet hentofögen.\');

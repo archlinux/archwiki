@@ -116,7 +116,7 @@ class SearchEngine {
 		# Entering an IP address goes to the contributions page
 		if ( ( $title->getNamespace() == NS_USER && User::isIP($title->getText() ) )
 			|| User::isIP( trim( $searchterm ) ) ) {
-			return Title::makeTitle( NS_SPECIAL, "Contributions/" . $title->getDbkey() );
+			return SpecialPage::getTitleFor( 'Contributions', $title->getDbkey() );
 		}
 
 
@@ -126,6 +126,7 @@ class SearchEngine {
 		}
 
 		# Quoted term? Try without the quotes...
+		$matches = array();
 		if( preg_match( '/^"([^"]+)"$/', $searchterm, $matches ) ) {
 			return SearchEngine::getNearMatch( $matches[1] );
 		}

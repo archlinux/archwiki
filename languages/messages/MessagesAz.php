@@ -78,6 +78,7 @@ $messages = array(
 # Bits of text used by many pages: # Birçok sayfada geçen metinler
 #
 'categories' => 'Kateqoriyalar',
+'pagecategories' => 'Kateqoriyalar',
 'category_header' => '"$1" kategoriyasındaki məqalələr',
 'subcategories' => 'Alt kategoriyalar',
 
@@ -261,8 +262,8 @@ $messages = array(
 'previewnote' => '<strong>Bu yalnız sınaq göstərişidir; dəyişikliklər hal-hazırda qeyd edilmemişdir!</strong>',
 'editing' => 'Redaktə $1',
 'editinguser' => 'Redaktə $1',
-'yourtext' => 'Metniniz ',
-'yourdiff' => 'Fərqlər ',
+'yourtext' => 'Metniniz',
+'yourdiff' => 'Fərqlər',
 'templatesused' => 'Bu səhifədə istifadə edilmiş şablonlar:',
 
 
@@ -534,7 +535,7 @@ Hal-hazırda [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] sayı: \'
 'ipbreason' => 'Səbəb',
 'ipbsubmit' => 'Bu istifadəçiyi əngəllə',
 'badipaddress' => 'Yanlış IP',
-'blockipsuccesssub' => 'bloklandi ',
+'blockipsuccesssub' => 'bloklandi',
 'blockipsuccesstext' => '[[{{ns:Special}}:Contributions/$1| $1]]bloklanıb. <br />See[[{{ns:Special}}:Ipblocklist|IP blok siyahisi]] bloklanmış IP lər.',
 'ipblocklist' => 'Əngəllənmiş istifadəçilər siyahı',
 'blocklink' => 'blokla',
@@ -583,7 +584,7 @@ Hal-hazırda [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] sayı: \'
 'listingcontinuesabbrev' => '(davam)',
 
 # Monobook.js: tooltips and access keys for monobook
-'Monobook.js' => '/*
+'monobook.js' => '/*
 <pre>
 */
 
@@ -598,7 +599,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'İzləməyə aldığım məqalələr.\'
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Mən redakə etdiğim məqalələr siyahəsi\');
 ta[\'pt-login\'] = new Array(\'o\',\'Hesab açmaniz tövsiə olur, ama icbar yoxdu .\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Hesab açib girişiniz tövsiyə olur, ama məndatlı dəyil.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Çixiş\');
+ta[\'pt-logout\'] = new Array(\'\',\'Çixiş\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Məqalə həqqində müzakirə edib, nəzərivi bildir\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Bu səhifani redaktə edə bilərsiz. Lütfən avvəl sinaq gostəriş edin.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Bu müzakirə səhifəsində iştirak edin.\');

@@ -58,7 +58,7 @@ class Image
 	 * @param string $name name of the image, used to create a title object using Title::makeTitleSafe
 	 * @public
 	 */
-	function newFromName( $name ) {
+	public static function newFromName( $name ) {
 		$title = Title::makeTitleSafe( NS_IMAGE, $name );
 		if ( is_object( $title ) ) {
 			return new Image( $title );
@@ -235,7 +235,7 @@ class Image
 	 * Load metadata from the file itself
 	 */
 	function loadFromFile() {
-		global $wgUseSharedUploads, $wgSharedUploadDirectory, $wgContLang, $wgShowEXIF;
+		global $wgUseSharedUploads, $wgSharedUploadDirectory, $wgContLang;
 		wfProfileIn( __METHOD__ );
 		$this->imagePath = $this->getFullPath();
 		$this->fileExists = file_exists( $this->imagePath );
@@ -925,7 +925,7 @@ class Image
 					if ( !$this->mustRender() && $width == $this->width && $height == $this->height ) {
 						$url = $this->getURL();
 					} else {
-						list( $isScriptUrl, $url ) = $this->thumbUrl( $width );
+						list( /* $isScriptUrl */, $url ) = $this->thumbUrl( $width );
 					}
 					$thumb = new ThumbnailImage( $url, $width, $height );
 				} else {
@@ -1360,15 +1360,17 @@ class Image
 		$dir = wfImageThumbDir( $this->name, $shared );
 		$urls = array();
 		foreach ( $files as $file ) {
+			$m = array();
 			if ( preg_match( '/^(\d+)px/', $file, $m ) ) {
-				$urls[] = $this->thumbUrl( $m[1], $this->fromSharedDirectory );
+				list( /* $isScriptUrl */, $url ) = $this->thumbUrl( $m[1] );
+				$urls[] = $url;
 				@unlink( "$dir/$file" );
 			}
 		}
 
 		// Purge the squid
 		if ( $wgUseSquid ) {
-			$urls[] = $this->getViewURL();
+			$urls[] = $this->getURL();
 			foreach ( $archiveFiles as $file ) {
 				$urls[] = wfImageArchiveUrl( $file );
 			}
@@ -1461,7 +1463,7 @@ class Image
 				array( 'img_name' => $this->title->getDBkey() ),
 				__METHOD__
 			);
-			if ( 0 == wfNumRows( $this->historyRes ) ) {
+			if ( 0 == $dbr->numRows( $this->historyRes ) ) {
 				return FALSE;
 			}
 		} else if ( $this->historyLine == 1 ) {
@@ -1701,7 +1703,7 @@ class Image
 		}
 		$linkCache =& LinkCache::singleton();
 
-		extract( $db->tableNames( 'page', 'imagelinks' ) );
+		list( $page, $imagelinks ) = $db->tableNamesN( 'page', 'imagelinks' );
 		$encName = $db->addQuotes( $this->name );
 		$sql = "SELECT page_namespace,page_title,page_id FROM $page,$imagelinks WHERE page_id=il_from AND il_to=$encName $options";
 		$res = $db->query( $sql, __METHOD__ );

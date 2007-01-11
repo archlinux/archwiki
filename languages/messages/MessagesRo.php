@@ -143,7 +143,8 @@ pe titlul secţiunii (JavaScript)',
 'oct'                   => 'oct',
 'nov'                   => 'nov',
 'dec'                   => 'dec',
-'categories'            => '{{PLURAL:$1|Categorie|Categorii}}',
+'categories'            => 'Categorii',
+'pagecategories'        => '{{PLURAL:$1|Categorie|Categorii}}',
 'category_header'       => 'Articole din categoria "$1"',
 'subcategories'         => 'Subcategorii',
 'mainpage'              => 'Pagina principală',
@@ -487,8 +488,7 @@ ceea ce înseamnă mai mult decât maximum de $2 kilobytes. Salvarea nu este pos
 'loadhist'              => 'Încarc istoria versiunilor',
 'currentrev'            => 'Versiunea curentă',
 'revisionasof'          => 'Versiunea de la data $1',
-'old-revision-navigation'=> 'Revizia pentru $1; $5<br />
-($6) $3 | $2 | $4 ($7)',
+'revision-info'         => 'Revizia pentru $1; $2',
 'previousrevision'      => '←Versiunea anterioară',
 'nextrevision'          => 'Versiunea următoare →',
 'currentrevisionlink'   => 'afişează versiunea curentă',
@@ -946,7 +946,7 @@ Asistenţă şi suport:
 'rollbacklink'          => 'revenire',
 'rollbackfailed'        => 'Revenirea nu s-a putut face',
 'cantrollback'          => 'Nu se poate reveni; ultimul contribuitor este autorul acestui articol.',
-'alreadyrolled'         => 'Nu se poate reveni peste ultima modificare a articolului [[$1]]
+'alreadyrolled'         => 'Nu se poate reveni peste ultima modificare a articolului [[:$1]]
 făcută de către [[User:$2|$2]] ([[User talk:$2|discuţie]]); altcineva a modificat articolul sau a revenit deja.
 
 Ultima editare a fost făcută de către [[User:$3|$3]] ([[User talk:$3|discuţie]]).',
@@ -1196,7 +1196,7 @@ Articolul de destinaţie "[[$1]]" există deja. Doriţi să îl ştergeţi pentr
 'importuploaderror'     => 'Încărcarea fişierului de import nu a avut succes; probabil mărimea fişierului este mai mare decât mărimea maximă acceptată pentru fişiere.',
 'importlogpage'         => 'Log import',
 'importlogpagetext'     => 'Imoprturi administrative de pagini de la alte wiki, cu istoricul editărilor.',
-'import-logentry-upload'=> '$1 importate prin upload',
+'import-logentry-upload'=> '[[$1]] importate prin upload',
 'import-logentry-upload-detail'=> '$1 revizie(i)',
 'import-logentry-interwiki'=> 'transwikificat $1',
 'import-logentry-interwiki-detail'=> '$1 revizie(i) de la $2',
@@ -1211,11 +1211,11 @@ Articolul de destinaţie "[[$1]]" există deja. Doriţi să îl ştergeţi pentr
 'tooltip-minoredit'     => 'Marcaţi această modificare ca fiind minoră [alt-i]',
 'tooltip-save'          => 'Salvează modificările tale [alt-s]',
 'tooltip-preview'       => 'Previzualizarea modificărilor tale, foloseşte-o te rog înainte de a salva! [alt-p]',
-'tooltip-diff'          => 'Arată ce modificări ai făcut textului. [alt-d]',
+'tooltip-diff'          => 'Arată ce modificări ai făcut textului. [alt-v]',
 'tooltip-compareselectedversions'=> 'Vezi diferenţele între cele două versiuni selectate de pe această pagină. [alt-v]',
 'tooltip-watch'         => 'Adaugă această pagină la lista mea de pagini urmărite [alt-w]',
-'Common.css'            => '/** CSS plasate aici vor fi aplicate tuturor apariţiilor */',
-'Monobook.css'          => '/* modificaţi acest fişier pentru a adapta înfăţişarea monobook-ului pentru tot situl*/',
+'common.css'            => '/** CSS plasate aici vor fi aplicate tuturor apariţiilor */',
+'monobook.css'          => '/* modificaţi acest fişier pentru a adapta înfăţişarea monobook-ului pentru tot situl*/',
 'nodublincore'          => 'Metadatele Dublin Core RDF sunt dezactivate pentru acest server.',
 'nocreativecommons'     => 'Metadatele Creative Commons RDF dezactivate pentru acest server.',
 'notacceptable'         => 'Serverul wiki nu poate oferi date într-un format pe care clientul tău să-l poată citi.',
@@ -1257,7 +1257,7 @@ Articolul de destinaţie "[[$1]]" există deja. Doriţi să îl ştergeţi pentr
 'rcpatroldisabledtext'  => 'Patrularea modificărilor recente este în prezent dezactivată.',
 'markedaspatrollederror'=> 'Nu se poate marca ca patrulat',
 'markedaspatrollederrortext'=> 'Trebuie să specificaţi o revizie care să fie marcată ca patrulată.',
-'Monobook.js'           => '/* tooltips and access keys */
+'monobook.js'           => '/* tooltips and access keys */
 var ta = new Object();
 ta[\'history-prevlink\'] = new Array(\'-\',\'Previous\');
 ta[\'history-nextlink\'] = new Array(\'+\',\'Next\');
@@ -1270,7 +1270,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'Lista paginilor pe care le monitorizez.
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Listă de contribuţii\');
 ta[\'pt-login\'] = new Array(\'o\',\'Eşti încurajat să te autentifici, deşi acest lucru nu este obligatoriu.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Eşti încurajat să te autentifici, deşi acest lucru nu este obligatoriu.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Închide sesiunea\');
+ta[\'pt-logout\'] = new Array(\'\',\'Închide sesiunea\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Discuţie despre articol\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Poţi edita această pagină. Te rugăm să previzualizezi conţinutul înainte de salvare.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Adaugă un comentariu acestei discuţii.\');
@@ -1615,7 +1615,6 @@ Vă rugăm să confirmaţi faptul că într-adevăr doriţi să recreaţi acest 
 'confirm_purge'         => 'Doriţi să reîncărcaţi pagina? $1',
 'confirm_purge_button'  => 'Da',
 'youhavenewmessagesmulti'=> 'Aveţi mesaje noi la $1',
-'newtalkseperator'      => ',_',
 'searchcontaining'      => 'Caută articolele care conţin \'\'$1\'\'.',
 'searchnamed'           => 'Caută articole cu numele \'\'$1\'\'.',
 'articletitles'         => 'Articole începând cu \'\'$1\'\'',

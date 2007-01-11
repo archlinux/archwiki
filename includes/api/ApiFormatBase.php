@@ -75,32 +75,40 @@ abstract class ApiFormatBase extends ApiBase {
 	function initPrinter($isError) {
 		$isHtml = $this->getIsHtml();
 		$mime = $isHtml ? 'text/html' : $this->getMimeType();
+
+		// Some printers (ex. Feed) do their own header settings,
+		// in which case $mime will be set to null
+		if (is_null($mime))
+			return; // skip any initialization
+
 		header("Content-Type: $mime; charset=utf-8;");
 
 		if ($isHtml) {
 ?>
-		<html>
-		<head>
-			<title>MediaWiki API</title>
-		</head>
-		<body>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<title>MediaWiki API</title>
+</head>
+<body>
 <?php
 
 
 			if (!$isError) {
 ?>
-			<br/>
-			<small>
-			This result is being shown in <?=$this->mFormat?> format,
-			which might not be suitable for your application.<br/>
-			See <a href='api.php'>API help</a> for more information.<br/>
-			</small>
+<br/>
+<small>
+You are looking at the HTML representation of the <?=$this->mFormat?> format.<br/>
+HTML is good for debugging, but probably is not suitable for your application.<br/>
+Please see "format" parameter documentation at the <a href='api.php'>API help</a>
+for more information.
+</small>
 <?php
 
 
 			}
 ?>
-		<pre>
+<pre>
 <?php
 
 
@@ -113,8 +121,10 @@ abstract class ApiFormatBase extends ApiBase {
 	public function closePrinter() {
 		if ($this->getIsHtml()) {
 ?>
-		</pre>
-		</body>
+
+</pre>
+</body>
+</html>
 <?php
 
 
@@ -134,9 +144,10 @@ abstract class ApiFormatBase extends ApiBase {
 	*/
 	protected function formatHTML($text) {
 		// encode all tags as safe blue strings
-		$text = ereg_replace('\<([^>]+)\>', '<font color=blue>&lt;\1&gt;</font>', $text);
+		$text = ereg_replace('\<([^>]+)\>', '<span style="color:blue;">&lt;\1&gt;</span>', $text);
 		// identify URLs
-		$text = ereg_replace("[a-zA-Z]+://[^ '()<\n]+", '<a href="\\0">\\0</a>', $text);
+		$protos = "http|https|ftp|gopher";
+		$text = ereg_replace("($protos)://[^ '\"()<\n]+", '<a href="\\0">\\0</a>', $text);
 		// identify requests to api.php
 		$text = ereg_replace("api\\.php\\?[^ ()<\n\t]+", '<a href="\\0">\\0</a>', $text);
 		// make strings inside * bold
@@ -151,11 +162,71 @@ abstract class ApiFormatBase extends ApiBase {
 	 * Returns usage examples for this format.
 	 */
 	protected function getExamples() {
-		return 'api.php?action=query&meta=siteinfo&si=namespaces&format=' . $this->getModuleName();
+		return 'api.php?action=query&meta=siteinfo&siprop=namespaces&format=' . $this->getModuleName();
+	}
+
+	protected function getDescription() {
+		return $this->getIsHtml() ? ' (pretty-print in HTML)' : '';
 	}
 
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiFormatBase.php 16757 2006-10-03 05:41:55Z yurik $';
+		return __CLASS__ . ': $Id: ApiFormatBase.php 17374 2006-11-03 06:53:47Z yurik $';
+	}
+}
+
+/**
+ * This printer is used to wrap an instance of the Feed class 
+ */
+class ApiFormatFeedWrapper extends ApiFormatBase {
+
+	public function __construct($main) {
+		parent :: __construct($main, 'feed');
+	}
+
+	/**
+	 * Call this method to initialize output data
+	 */
+	public static function setResult($result, $feed, $feedItems) {
+		// Store output in the Result data.
+		// This way we can check during execution if any error has occured
+		$data = & $result->getData();
+		$data['_feed'] = $feed;
+		$data['_feeditems'] = $feedItems;
+	}
+
+	/**
+	 * Feed does its own headers
+	 */
+	public function getMimeType() {
+		return null;
+	}
+
+	/**
+	 * Optimization - no need to sanitize data that will not be needed
+	 */
+	public function getNeedsRawData() {
+		return true;
+	}
+
+	public function execute() {
+		$data = $this->getResultData();
+		if (isset ($data['_feed']) && isset ($data['_feeditems'])) {
+			$feed = $data['_feed'];
+			$items = $data['_feeditems'];
+
+			$feed->outHeader();
+			foreach ($items as & $item)
+				$feed->outItem($item);
+			$feed->outFooter();
+		} else {
+			// Error has occured, print something usefull
+			// TODO: make this error more informative using ApiBase :: dieDebug() or similar
+			wfHttpError(500, 'Internal Server Error', '');
+		}
+	}
+	
+	public function getVersion() {
+		return __CLASS__ . ': $Id: ApiFormatBase.php 17374 2006-11-03 06:53:47Z yurik $';
 	}
 }
 ?>

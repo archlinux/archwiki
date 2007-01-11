@@ -45,15 +45,19 @@ class ApiQuery extends ApiBase {
 	//	'templates' => 'ApiQueryTemplates',
 
 	private $mQueryListModules = array (
-		'allpages' => 'ApiQueryAllpages'
+		'allpages' => 'ApiQueryAllpages',
+		'logevents' => 'ApiQueryLogEvents',
+		'watchlist' => 'ApiQueryWatchlist',
+		'recentchanges' => 'ApiQueryRecentChanges',
+		'backlinks' => 'ApiQueryBacklinks',
+		'embeddedin' => 'ApiQueryBacklinks',
+		'imagelinks' => 'ApiQueryBacklinks',
+		'usercontribs' => 'ApiQueryContributions'
 	);
-	//	'backlinks' => 'ApiQueryBacklinks',
 	//	'categorymembers' => 'ApiQueryCategorymembers',
 	//	'embeddedin' => 'ApiQueryEmbeddedin',
 	//	'imagelinks' => 'ApiQueryImagelinks',
-	//	'logevents' => 'ApiQueryLogevents',
 	//	'recentchanges' => 'ApiQueryRecentchanges',
-	//	'usercontribs' => 'ApiQueryUsercontribs',
 	//	'users' => 'ApiQueryUsers',
 	//	'watchlist' => 'ApiQueryWatchlist',
 
@@ -75,9 +79,12 @@ class ApiQuery extends ApiBase {
 		$this->mAllowedGenerators = array_merge($this->mListModuleNames, $this->mPropModuleNames);
 	}
 
-	public function getDB() {
-		if (!isset ($this->mSlaveDB))
+	public function & getDB() {
+		if (!isset ($this->mSlaveDB)) {
+			$this->profileDBIn();
 			$this->mSlaveDB = & wfGetDB(DB_SLAVE);
+			$this->profileDBOut();
+		}
 		return $this->mSlaveDB;
 	}
 
@@ -151,6 +158,7 @@ class ApiQuery extends ApiBase {
 	private function outputGeneralPageInfo() {
 
 		$pageSet = $this->getPageSet();
+		$result = $this->getResult();
 
 		// Title normalizations
 		$normValues = array ();
@@ -162,8 +170,8 @@ class ApiQuery extends ApiBase {
 		}
 
 		if (!empty ($normValues)) {
-			ApiResult :: setIndexedTagName($normValues, 'n');
-			$this->getResult()->addValue('query', 'normalized', $normValues);
+			$result->setIndexedTagName($normValues, 'n');
+			$result->addValue('query', 'normalized', $normValues);
 		}
 
 		// Show redirect information
@@ -176,8 +184,23 @@ class ApiQuery extends ApiBase {
 		}
 
 		if (!empty ($redirValues)) {
-			ApiResult :: setIndexedTagName($redirValues, 'r');
-			$this->getResult()->addValue('query', 'redirects', $redirValues);
+			$result->setIndexedTagName($redirValues, 'r');
+			$result->addValue('query', 'redirects', $redirValues);
+		}
+
+		//
+		// Missing revision elements
+		//
+		$missingRevIDs = $pageSet->getMissingRevisionIDs();
+		if (!empty ($missingRevIDs)) {
+			$revids = array ();
+			foreach ($missingRevIDs as $revid) {
+				$revids[$revid] = array (
+					'revid' => $revid
+				);
+			}
+			$result->setIndexedTagName($revids, 'rev');
+			$result->addValue('query', 'badrevids', $revids);
 		}
 
 		//
@@ -195,7 +218,7 @@ class ApiQuery extends ApiBase {
 		// Report any missing page ids
 		foreach ($pageSet->getMissingPageIDs() as $pageid) {
 			$pages[$pageid] = array (
-				'id' => $pageid,
+				'pageid' => $pageid,
 				'missing' => ''
 			);
 		}
@@ -203,12 +226,13 @@ class ApiQuery extends ApiBase {
 		// Output general page information for found titles
 		foreach ($pageSet->getGoodTitles() as $pageid => $title) {
 			$pages[$pageid] = array (
-			'ns' => $title->getNamespace(), 'title' => $title->getPrefixedText(), 'id' => $pageid);
+				'pageid' => $pageid,
+			'ns' => $title->getNamespace(), 'title' => $title->getPrefixedText());
 		}
 
 		if (!empty ($pages)) {
-			ApiResult :: setIndexedTagName($pages, 'page');
-			$this->getResult()->addValue('query', 'pages', $pages);
+			$result->setIndexedTagName($pages, 'page');
+			$result->addValue('query', 'pages', $pages);
 		}
 	}
 
@@ -238,13 +262,13 @@ class ApiQuery extends ApiBase {
 
 		// execute current pageSet to get the data for the generator module
 		$this->mPageSet->execute();
-		
+
 		// populate resultPageSet with the generator output
 		$generator->profileIn();
 		$generator->executeGenerator($resultPageSet);
 		$resultPageSet->finishPageSetGeneration();
 		$generator->profileOut();
-		
+
 		// Swap the resulting pageset back in
 		$this->mPageSet = $resultPageSet;
 	}
@@ -346,7 +370,7 @@ class ApiQuery extends ApiBase {
 	public function getVersion() {
 		$psModule = new ApiPageSet($this);
 		$vers = array ();
-		$vers[] = __CLASS__ . ': $Id: ApiQuery.php 16820 2006-10-06 01:02:14Z yurik $';
+		$vers[] = __CLASS__ . ': $Id: ApiQuery.php 17374 2006-11-03 06:53:47Z yurik $';
 		$vers[] = $psModule->getVersion();
 		return $vers;
 	}

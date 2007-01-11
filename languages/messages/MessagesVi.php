@@ -88,14 +88,42 @@ $magicWords = array(
 	'revisionid'             => array( 1,    'REVISIONID'  , 'SỐBẢN'           ),
  );
 
-$dateFormats = array(
-    MW_DATE_DEFAULT => 'Không lựa chọn',
-    1 => '16:12, tháng 1 ngày 15 năm 2001',
-    2 => '16:12, ngày 15 tháng 1 năm 2001',
-    3 => '16:12, năm 2001 tháng 1 ngày 15',
-    4 => '',
-    MW_DATE_ISO => '2001-01-15 16:12:34'
+$datePreferences = array(
+	'default',
+	'vi normal',
+	'vi longmonth',
+	'vi shortcolon',
+	'vi short',
+	'ISO 8601',
 );
+
+$defaultDateFormat = 'vi normal';
+
+$dateFormats = array(
+	'vi normal time' => 'H:i',
+	'vi normal date' => '"ngày" j M "năm" Y',
+	'vi normal both' => 'H:i, "ngày" j M "năm" Y',
+
+	'vi longmonth time' => 'H:i',
+	'vi longmonth date' => '"ngày" j F "năm" Y',
+	'vi longmonth both' => 'H:i, "ngày" j F "năm" Y',
+
+	'vi shortcolon time' => 'H:i',
+	'vi shortcolon date' => 'j/n/Y',
+	'vi shortcolon both' => 'H:i, j/n/Y',
+
+	'vi short time' => 'H"h"i',
+	'vi short date' => 'j/n/Y',
+	'vi short both' => 'H"h"i, j/n/Y',
+);
+
+$datePreferenceMigrationMap = array(
+	'default',
+	'vi normal',
+	'vi normal',
+	'vi normal',
+);
+
 
 $linkTrail = "/^([a-zàâçéèêîôûäëïöüùÇÉÂÊÎÔÛÄËÏÖÜÀÈÙ]+)(.*)$/sDu";
 $separatorTransformTable = array(',' => '.', '.' => ',' );
@@ -143,18 +171,18 @@ $messages = array(
 'thursday' => 'thứ năm',
 'friday' => 'thứ sáu',
 'saturday' => 'thứ bảy',
-'january' => 'tháng 1',
-'february' => 'tháng 2',
-'march' => 'tháng 3',
-'april' => 'tháng 4',
-'may_long' => 'tháng 5',
-'june' => 'tháng 6',
-'july' => 'tháng 7',
-'august' => 'tháng 8',
-'september' => 'tháng 9',
-'october' => 'tháng 10',
-'november' => 'tháng 11',
-'december' => 'tháng 12',
+'january'   => 'tháng Một',
+'february'  => 'tháng Hai',
+'march'     => 'tháng Ba',
+'april'     => 'tháng Tư',
+'may_long'  => 'tháng Năm',
+'june'      => 'tháng Sáu',
+'july'      => 'tháng Bảy',
+'august'    => 'tháng Tám',
+'september' => 'tháng Chín',
+'october'   => 'tháng Mười',
+'november'  => 'tháng Mười một',
+'december'  => 'tháng Mười hai',
 'jan' => 'tháng 1',
 'feb' => 'tháng 2',
 'mar' => 'tháng 3',
@@ -170,6 +198,7 @@ $messages = array(
 
 # Bits of text used by many pages:
 'categories'	=> 'Thể loại',
+'pagecategories'	=> 'Thể loại',
 'category_header' => 'Các bài trong Thể loại "$1"',
 'subcategories'	=> 'Tiểu thể loại',
 'subcategorycount' => 'Thể loại này có $1 tiểu thể loại.',
@@ -800,7 +829,7 @@ Những sửa đổi đối với trang này và trang thảo luận của nó s
 'rollbacklink'  => 'quay lại',
 'rollbackfailed' => 'Không quay lại được',
 'cantrollback'  => 'Không quay lại được; trang này có 1 tác giả.',
-'alreadyrolled' => "Không thể quay lại phiên bản của [[$1]] bởi [[Thành_viên:$2|$2]] ([[Thảo_luận_thành_viên:$2|Thảo luận]]). Đã có sửa đổi lần cuối bởi [[Thành_viên:$3|$3]] ([[Thảo_luận_thành_viên:$3|Thảo luận]]).",
+'alreadyrolled' => "Không thể quay lại phiên bản của [[:$1]] bởi [[Thành_viên:$2|$2]] ([[Thảo_luận_thành_viên:$2|Thảo luận]]). Đã có sửa đổi lần cuối bởi [[Thành_viên:$3|$3]] ([[Thảo_luận_thành_viên:$3|Thảo luận]]).",
 #   only shown if there is an edit comment
 'editcomment' => "Tóm lược sửa đổi: \"<i>$1</i>\".",
 'revertpage'    => "đã hủy sửa đổi của $2, quay về phiên bản của $1",
@@ -1080,9 +1109,9 @@ Nếu không phải bạn, đừng mở địa chỉ này. Mã xác nhận này 
 'userjspreview' => "'''Bạn đang xem thử trang Javascript và nó chưa được lưu !'''",
 
 # stylesheets
-'Monobook.css' => '/* edit this file to customize the monobook skin for the entire site */',
+'monobook.css' => '/* edit this file to customize the monobook skin for the entire site */',
 # Monobook.js: tooltips and access keys for monobook
-'Monobook.js' => '/* tooltips and access keys */
+'monobook.js' => '/* tooltips and access keys */
 var ta = new Object();
 ta[\'pt-userpage\'] = new Array(\'.\',\'Trang của tôi\');
 ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Trang của IP bạn đang dùng\');
@@ -1093,7 +1122,7 @@ ta[\'pt-watchlist\'] = new Array(\'l\',\'Thay đổi của các trang tôi theo 
 ta[\'pt-mycontris\'] = new Array(\'y\',\'Đóng góp của tôi\');
 ta[\'pt-login\'] = new Array(\'o\',\'Đăng nhập sẽ có lợi hơn, tuy nhiên không bắt buộc.\');
 ta[\'pt-anonlogin\'] = new Array(\'o\',\'Không đăng nhập vẫn tham gia được, tuy nhiên đăng nhập sẽ lợi hơn.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Đăng xuất\');
+ta[\'pt-logout\'] = new Array(\'\',\'Đăng xuất\');
 ta[\'ca-talk\'] = new Array(\'t\',\'Thảo luận về trang này\');
 ta[\'ca-edit\'] = new Array(\'e\',\'Bạn có thể sửa được trang này. Xin xem thử trước khi lưu.\');
 ta[\'ca-addsection\'] = new Array(\'+\',\'Thêm bình luận vào đây.\');
@@ -1274,7 +1303,7 @@ Bài với tên "[[$1]]" đã tồn tại. Bạn có muốn xóa nó để di ch
 
 'templatesused' => 'Các tiêu bản dùng trong trang này',
 'thumbsize' => 'Kích thước thu nhỏ:&nbsp;',
-'tooltip-diff' => 'Xem thay đổi bạn đã thực hiện [alt-d]',
+'tooltip-diff' => 'Xem thay đổi bạn đã thực hiện [alt-v]',
 'tryexact' => 'Thử tìm đoạn văn khớp chính xác với từ khóa',
 'upload_directory_read_only' => 'Thư mục tải lên không ghi vào được',
 'uploadvirus' => 'Tệp tin có virút: $1',

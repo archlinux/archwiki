@@ -88,12 +88,12 @@ $messages = array(
 
 '1movedto2' => "$1 færð á $2",
 '1movedto2_redir' => "$1 færð á $2 yfir tilvísun",
-'Monobook.css' => "
+'monobook.css' => "
 /* Stórir stafir í ýmsu */
 #p-personal ul { text-transform: inherit; } /* notandanfn, spjall, stillingar */
 .portlet h5 { text-transform: inherit;}     /* flakk, leit, verkfæri... */
 #p-cactions li a {text-transform: inherit;} /* notandasíða, spjall... */",
-'Monobook.js' => "/* tooltips and access keys */
+'monobook.js' => "/* tooltips and access keys */
 var ta = new Object();
 ta['pt-userpage'] = new Array('.','Notendasíðan mín');
 ta['pt-anonuserpage'] = new Array('.','Notendasíðan fyrir IP töluna þína');
@@ -104,7 +104,7 @@ ta['pt-watchlist'] = new Array('l','Vaktlistinn.');
 ta['pt-mycontris'] = new Array('y','Listi yfir framlög þín');
 ta['pt-login'] = new Array('o','Þú ert hvattur/hvött til að innskrá þig, það er hinsvegar ekki nauðsynlegt.');
 ta['pt-anonlogin'] = new Array('o','Þú ert hvattur/hvött til að innskrá þig, það er hinsvegar ekki nauðsynlegt.');
-ta['pt-logout'] = new Array('o','Útskráning');
+ta['pt-logout'] = new Array('','Útskráning');
 ta['ca-talk'] = new Array('t','Spallsíða þessarar síðu');
 ta['ca-edit'] = new Array('e','Þú getur breytt síðu þessari, vinsamlegast notaðu „forskoða“ hnappinn áður en þú vistar');
 ta['ca-addsection'] = new Array('+','Viðbótarumræða.');
@@ -464,6 +464,7 @@ mjög rótækar breytingar á vinsælum síðum og valdið titringi hjá öðrum
 'october' => "október",
 'oldpassword' => "Gamla lykilorðið",
 'otherlanguages' => "Á öðrum tungumálum",
+'pagecategories' => "Flokkar",
 'pagemovedsub' => "Færsla tókst",
 'pagemovedtext' => "Síðan „[[$1]]“ var færð yfir á „[[$2]]“.",
 'pagetitle' => "$1 - {{SITENAME}}",

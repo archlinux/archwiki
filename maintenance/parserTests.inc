@@ -25,7 +25,7 @@
  */
 
 /** */
-$options = array( 'quick', 'color', 'quiet', 'help' );
+$options = array( 'quick', 'color', 'quiet', 'help', 'show-output', 'record' );
 $optionsWithArgs = array( 'regex' );
 
 require_once( 'commandLine.inc' );
@@ -54,6 +54,11 @@ class ParserTest {
 	var $lightcolor;
 
 	/**
+	 * boolean $showOutput Show test output
+	 */
+	var $showOutput;
+
+	/**
 	 * Sets terminal colorization and diff/quick modes depending on OS and
 	 * command-line options (--color and --quick).
 	 *
@@ -80,10 +85,14 @@ class ParserTest {
 				break;
 			}
 		}
+		$this->term = $this->color
+			? new AnsiTermColorer( $this->lightcolor )
+			: new DummyTermColorer();
 
 		$this->showDiffs = !isset( $options['quick'] );
-
 		$this->quiet = isset( $options['quiet'] );
+		$this->showOutput = isset( $options['show-output'] );
+
 
 		if (isset($options['regex'])) {
 			$this->regex = $options['regex'];
@@ -92,7 +101,14 @@ class ParserTest {
 			$this->regex = '';
 		}
 		
+		if( isset( $options['record'] ) ) {
+			$this->recorder = new DbTestRecorder( $this->term );
+		} else {
+			$this->recorder = new TestRecorder( $this->term );
+		}
+		
 		$this->hooks = array();
+		$this->functionHooks = array();
 	}
 
 	/**
@@ -109,38 +125,53 @@ class ParserTest {
 	}
 
 	/**
-	 * Run a series of tests listed in the given text file.
+	 * Run a series of tests listed in the given text files.
 	 * Each test consists of a brief description, wikitext input,
 	 * and the expected HTML output.
 	 *
 	 * Prints status updates on stdout and counts up the total
 	 * number and percentage of passed tests.
 	 *
-	 * @param string $filename
+	 * @param array of strings $filenames
 	 * @return bool True if passed all tests, false if any tests failed.
 	 * @public
 	 */
-	function runTestsFromFile( $filename ) {
+	function runTestsFromFiles( $filenames ) {
+		$this->recorder->start();
+		$ok = true;
+		foreach( $filenames as $filename ) {
+			$ok = $this->runFile( $filename ) && $ok;
+		}
+		$this->recorder->end();
+		$this->recorder->report();
+		return $ok;
+	}
+	
+	private function runFile( $filename ) {
 		$infile = fopen( $filename, 'rt' );
 		if( !$infile ) {
 			wfDie( "Couldn't open $filename\n" );
+		} else {
+			print $this->term->color( 1 ) .
+				"Reading tests from \"$filename\"..." .
+				$this->term->reset() .
+				"\n";
 		}
 
 		$data = array();
 		$section = null;
-		$success = 0;
-		$total = 0;
 		$n = 0;
+		$ok = true;
 		while( false !== ($line = fgets( $infile ) ) ) {
 			$n++;
 			if( preg_match( '/^!!\s*(\w+)/', $line, $matches ) ) {
 				$section = strtolower( $matches[1] );
 				if( $section == 'endarticle') {
 					if( !isset( $data['text'] ) ) {
-						wfDie( "'endarticle' without 'text' at line $n\n" );
+						wfDie( "'endarticle' without 'text' at line $n of $filename\n" );
 					}
 					if( !isset( $data['article'] ) ) {
-						wfDie( "'endarticle' without 'article' at line $n\n" );
+						wfDie( "'endarticle' without 'article' at line $n of $filename\n" );
 					}
 					$this->addArticle($this->chomp($data['article']), $this->chomp($data['text']), $n);
 					$data = array();
@@ -149,7 +180,7 @@ class ParserTest {
 				}
 				if( $section == 'endhooks' ) {
 					if( !isset( $data['hooks'] ) ) {
-						wfDie( "'endhooks' without 'hooks' at line $n\n" );
+						wfDie( "'endhooks' without 'hooks' at line $n of $filename\n" );
 					}
 					foreach( explode( "\n", $data['hooks'] ) as $line ) {
 						$line = trim( $line );
@@ -161,15 +192,29 @@ class ParserTest {
 					$section = null;
 					continue;
 				}
+				if( $section == 'endfunctionhooks' ) {
+					if( !isset( $data['functionhooks'] ) ) {
+						wfDie( "'endfunctionhooks' without 'functionhooks' at line $n of $filename\n" );
+					}
+					foreach( explode( "\n", $data['functionhooks'] ) as $line ) {
+						$line = trim( $line );
+						if( $line ) {
+							$this->requireFunctionHook( $line );
+						}
+					}
+					$data = array();
+					$section = null;
+					continue;
+				}
 				if( $section == 'end' ) {
 					if( !isset( $data['test'] ) ) {
-						wfDie( "'end' without 'test' at line $n\n" );
+						wfDie( "'end' without 'test' at line $n of $filename\n" );
 					}
 					if( !isset( $data['input'] ) ) {
-						wfDie( "'end' without 'input' at line $n\n" );
+						wfDie( "'end' without 'input' at line $n of $filename\n" );
 					}
 					if( !isset( $data['result'] ) ) {
-						wfDie( "'end' without 'result' at line $n\n" );
+						wfDie( "'end' without 'result' at line $n of $filename\n" );
 					}
 					if( !isset( $data['options'] ) ) {
 						$data['options'] = '';
@@ -184,20 +229,19 @@ class ParserTest {
 						$section = null;
 						continue;
 					}
-					if( $this->runTest(
+					$result = $this->runTest(
 						$this->chomp( $data['test'] ),
 						$this->chomp( $data['input'] ),
 						$this->chomp( $data['result'] ),
-						$this->chomp( $data['options'] ) ) ) {
-						$success++;
-					}
-					$total++;
+						$this->chomp( $data['options'] ) );
+					$ok = $ok && $result;
+					$this->recorder->record( $this->chomp( $data['test'] ), $result );
 					$data = array();
 					$section = null;
 					continue;
 				}
 				if ( isset ($data[$section] ) ) {
-					wfDie( "duplicate section '$section' at line $n\n" );
+					wfDie( "duplicate section '$section' at line $n of $filename\n" );
 				}
 				$data[$section] = '';
 				continue;
@@ -206,19 +250,8 @@ class ParserTest {
 				$data[$section] .= $line;
 			}
 		}
-		if( $total > 0 ) {
-			$ratio = wfPercent( 100 * $success / $total );
-			print $this->termColor( 1 ) . "\nPassed $success of $total tests ($ratio) ";
-			if( $success == $total ) {
-				print $this->termColor( 32 ) . "PASSED!";
-			} else {
-				print $this->termColor( 31 ) . "FAILED!";
-			}
-			print $this->termReset() . "\n";
-			return ($success == $total);
-		} else {
-			wfDie( "No tests found.\n" );
-		}
+		print "\n";
+		return $ok;
 	}
 
 	/**
@@ -257,6 +290,9 @@ class ParserTest {
 		$parser = new Parser();
 		foreach( $this->hooks as $tag => $callback ) {
 			$parser->setHook( $tag, $callback );
+		}
+		foreach( $this->functionHooks as $tag => $callback ) {
+			$parser->setFunctionHook( $tag, $callback );
 		}
 		wfRunHooks( 'ParserTestParser', array( &$parser ) );
 		
@@ -320,6 +356,12 @@ class ParserTest {
 			$lang = 'en';
 		}
 
+		if( preg_match( '/variant=([a-z]+(?:-[a-z]+)?)/', $opts, $m ) )
+			$variant = $m[1];
+		else 
+			$variant = false;
+
+
 		$settings = array(
 			'wgServer' => 'http://localhost',
 			'wgScript' => '/index.php',
@@ -334,7 +376,7 @@ class ParserTest {
 			'wgLanguageCode' => $lang,
 			'wgContLanguageCode' => $lang,
 			'wgDBprefix' => 'parsertest_',
-
+			'wgRawHtml' => preg_match('/\\brawhtml\\b/i', $opts),
 			'wgLang' => null,
 			'wgContLang' => null,
 			'wgNamespacesWithSubpages' => array( 0 => preg_match('/\\bsubpage\\b/i', $opts)),
@@ -345,6 +387,9 @@ class ParserTest {
 			'wgUseTeX' => false,
 			'wgLocaltimezone' => 'UTC',
 			'wgAllowExternalImages' => true,
+			'wgUseTidy' => false,
+			'wgDefaultLanguageVariant' => $variant,
+			'wgVariantArticlePath' => false,
 			);
 		$this->savedGlobals = array();
 		foreach( $settings as $var => $val ) {
@@ -374,7 +419,8 @@ class ParserTest {
 			'recentchanges',
 			'watchlist', 'math', 'searchindex',
 			'interwiki', 'querycache',
-			'objectcache', 'job'
+			'objectcache', 'job', 'redirect',
+			'querycachetwo'
 		);
 
 		// FIXME manually adding additional table for the tasks extension
@@ -477,6 +523,7 @@ class ParserTest {
 				'img_media_type'  => MEDIATYPE_BITMAP,
 				'img_major_mime'  => "image",
 				'img_minor_mime'  => "jpeg",
+				'img_metadata'    => serialize( array() ),
 				) );
 				
 			# Update certain things in site_stats
@@ -532,21 +579,56 @@ class ParserTest {
 	 * @private
 	 */
 	function teardownUploadDir( $dir ) {
-		unlink( "$dir/3/3a/Foobar.jpg" );
-		rmdir( "$dir/3/3a" );
-		rmdir( "$dir/3" );
-		@rmdir( "$dir/thumb/6/65" );
-		@rmdir( "$dir/thumb/6" );
-
-		@unlink( "$dir/thumb/3/3a/Foobar.jpg/180px-Foobar.jpg" );
-		@rmdir( "$dir/thumb/3/3a/Foobar.jpg" );
-		@rmdir( "$dir/thumb/3/3a" );
-		@rmdir( "$dir/thumb/3/39" ); # wtf?
-		@rmdir( "$dir/thumb/3" );
-		@rmdir( "$dir/thumb" );
-		@rmdir( "$dir" );
+		// delete the files first, then the dirs.
+		self::deleteFiles( 
+			array (
+				"$dir/3/3a/Foobar.jpg",
+				"$dir/thumb/3/3a/Foobar.jpg/180px-Foobar.jpg",
+				"$dir/thumb/3/3a/Foobar.jpg/200px-Foobar.jpg",
+				"$dir/thumb/3/3a/Foobar.jpg/640px-Foobar.jpg",
+				"$dir/thumb/3/3a/Foobar.jpg/120px-Foobar.jpg",
+			)
+		);
+		    
+		self::deleteDirs(
+			array ( 
+				"$dir/3/3a",
+				"$dir/3",
+				"$dir/thumb/6/65",
+				"$dir/thumb/6",
+				"$dir/thumb/3/3a/Foobar.jpg",
+				"$dir/thumb/3/3a",
+				"$dir/thumb/3",
+				"$dir/thumb",
+				"$dir",
+			)
+		);
 	}
 
+	/**
+	 * @desc delete the specified files, if they exist.
+	 * @param array $files full paths to files to delete.
+	 */
+	private static function deleteFiles( $files ) {
+		foreach( $files as $file ) {
+			if( file_exists( $file ) ) {
+				unlink( $file );
+			}
+		}
+	}
+	
+	/**
+	 * @desc delete the specified directories, if they exist. Must be empty.
+	 * @param array $dirs full paths to directories to delete.
+	 */
+	private static function deleteDirs( $dirs ) {
+		foreach( $dirs as $dir ) {
+			if( is_dir( $dir ) ) {
+				rmdir( $dir );
+			}
+		}
+	}
+	
 	/**
 	 * "Running test $desc..."
 	 * @private
@@ -564,7 +646,7 @@ class ParserTest {
 	 */
 	function showSuccess( $desc ) {
 		if( !$this->quiet ) {
-			print $this->termColor( '1;32' ) . 'PASSED' . $this->termReset() . "\n";
+			print $this->term->color( '1;32' ) . 'PASSED' . $this->term->reset() . "\n";
 		}
 		return true;
 	}
@@ -585,7 +667,10 @@ class ParserTest {
 			# test, in case it succeeded. Show it now:
 			$this->showTesting( $desc );
 		}
-		print $this->termColor( '1;31' ) . 'FAILED!' . $this->termReset() . "\n";
+		print $this->term->color( '1;31' ) . 'FAILED!' . $this->term->reset() . "\n";
+		if ( $this->showOutput ) {
+			print "--- Expected ---\n$result\n--- Actual ---\n$html\n";
+		}
 		if( $this->showDiffs ) {
 			print $this->quickDiff( $result, $html );
 			if( !$this->wellFormed( $html ) ) {
@@ -636,33 +721,6 @@ class ParserTest {
 	}
 
 	/**
-	 * Return ANSI terminal escape code for changing text attribs/color,
-	 * or empty string if color output is disabled.
-	 *
-	 * @param string $color Semicolon-separated list of attribute/color codes
-	 * @return string
-	 * @private
-	 */
-	function termColor( $color ) {
-		if($this->lightcolor) {
-			return $this->color ? "\x1b[1;{$color}m" : '';
-		} else {
-			return $this->color ? "\x1b[{$color}m" : '';
-		}
-	}
-
-	/**
-	 * Return ANSI terminal escape code for restoring default text attributes,
-	 * or empty string if color output is disabled.
-	 *
-	 * @return string
-	 * @private
-	 */
-	function termReset() {
-		return $this->color ? "\x1b[0m" : '';
-	}
-
-	/**
 	 * Colorize unified diff output if set for ANSI color output.
 	 * Subtractions are colored blue, additions red.
 	 *
@@ -673,8 +731,8 @@ class ParserTest {
 	function colorDiff( $text ) {
 		return preg_replace(
 			array( '/^(-.*)$/m', '/^(\+.*)$/m' ),
-			array( $this->termColor( 34 ) . '$1' . $this->termReset(),
-			       $this->termColor( 31 ) . '$1' . $this->termReset() ),
+			array( $this->term->color( 34 ) . '$1' . $this->term->reset(),
+			       $this->term->color( 31 ) . '$1' . $this->term->reset() ),
 			$text );
 	}
 
@@ -714,6 +772,22 @@ class ParserTest {
 			$this->hooks[$name] = $wgParser->mTagHooks[$name];
 		} else {
 			wfDie( "This test suite requires the '$name' hook extension.\n" );
+		}
+	}
+
+	
+	/**
+	 * Steal a callback function from the primary parser, save it for
+	 * application to our scary parser. If the hook is not installed,
+	 * die a painful dead to warn the others.
+	 * @param string $name
+	 */
+	private function requireFunctionHook( $name ) {
+		global $wgParser;
+		if( isset( $wgParser->mFunctionHooks[$name] ) ) {
+			$this->functionHooks[$name] = $wgParser->mFunctionHooks[$name];
+		} else {
+			wfDie( "This test suite requires the '$name' function hook extension.\n" );
 		}
 	}
 
@@ -762,24 +836,240 @@ class ParserTest {
 		$start = max( 0, $position - 10 );
 		$before = $position - $start;
 		$fragment = '...' .
-			$this->termColor( 34 ) .
+			$this->term->color( 34 ) .
 			substr( $text, $start, $before ) .
-			$this->termColor( 0 ) .
-			$this->termColor( 31 ) .
-			$this->termColor( 1 ) .
+			$this->term->color( 0 ) .
+			$this->term->color( 31 ) .
+			$this->term->color( 1 ) .
 			substr( $text, $position, 1 ) .
-			$this->termColor( 0 ) .
-			$this->termColor( 34 ) .
+			$this->term->color( 0 ) .
+			$this->term->color( 34 ) .
 			substr( $text, $position + 1, 9 ) .
-			$this->termColor( 0 ) .
+			$this->term->color( 0 ) .
 			'...';
 		$display = str_replace( "\n", ' ', $fragment );
 		$caret = '   ' .
 			str_repeat( ' ', $before ) .
-			$this->termColor( 31 ) .
+			$this->term->color( 31 ) .
 			'^' .
-			$this->termColor( 0 );
+			$this->term->color( 0 );
 		return "$display\n$caret";
+	}
+	
+}
+
+class AnsiTermColorer {
+	function __construct( $light ) {
+		$this->light = $light;
+	}
+	
+	/**
+	 * Return ANSI terminal escape code for changing text attribs/color
+	 *
+	 * @param string $color Semicolon-separated list of attribute/color codes
+	 * @return string
+	 * @private
+	 */
+	function color( $color ) {
+		$light = $this->light ? "1;" : "";
+		return "\x1b[{$light}{$color}m";
+	}
+
+	/**
+	 * Return ANSI terminal escape code for restoring default text attributes
+	 *
+	 * @return string
+	 * @private
+	 */
+	function reset() {
+		return "\x1b[0m";
+	}
+}
+
+/* A colour-less terminal */
+class DummyTermColorer {
+	function color( $color ) {
+		return '';
+	}
+	
+	function reset() {
+		return '';
+	}
+}
+
+class TestRecorder {
+	function __construct( $term ) {
+		$this->term = $term;
+	}
+	
+	function start() {
+		$this->total = 0;
+		$this->success = 0;
+	}
+	
+	function record( $test, $result ) {
+		$this->total++;
+		$this->success += ($result ? 1 : 0);
+	}
+	
+	function end() {
+		// dummy
+	}
+	
+	function report() {
+		if( $this->total > 0 ) {
+			$this->reportPercentage( $this->success, $this->total );
+		} else {
+			wfDie( "No tests found.\n" );
+		}
+	}
+	
+	function reportPercentage( $success, $total ) {
+		$ratio = wfPercent( 100 * $success / $total );
+		print $this->term->color( 1 ) . "Passed $success of $total tests ($ratio)... ";
+		if( $success == $total ) {
+			print $this->term->color( 32 ) . "PASSED!";
+		} else {
+			print $this->term->color( 31 ) . "FAILED!";
+		}
+		print $this->term->reset() . "\n";
+		return ($success == $total);
+	}
+}
+
+class DbTestRecorder extends TestRecorder  {
+	private $db;      ///< Database connection to the main DB
+	private $curRun;  ///< run ID number for the current run
+	private $prevRun; ///< run ID number for the previous run, if any
+	
+	function __construct( $term ) {
+		parent::__construct( $term );
+		$this->db = wfGetDB( DB_MASTER );
+	}
+	
+	/**
+	 * Set up result recording; insert a record for the run with the date
+	 * and all that fun stuff
+	 */
+	function start() {
+		parent::start();
+		
+		$this->db->begin();
+		
+		// We'll make comparisons against the previous run later...
+		$this->prevRun = $this->db->selectField( 'testrun', 'MAX(tr_id)' );
+		
+		$this->db->insert( 'testrun',
+			array(
+				'tr_date'        => $this->db->timestamp(),
+				'tr_mw_version'  => SpecialVersion::getVersion(),
+				'tr_php_version' => phpversion(),
+				'tr_db_version'  => $this->db->getServerVersion(),
+				'tr_uname'       => php_uname()
+			),
+			__METHOD__ );
+		$this->curRun = $this->db->insertId();
+	}
+	
+	/**
+	 * Record an individual test item's success or failure to the db
+	 * @param string $test
+	 * @param bool $result
+	 */
+	function record( $test, $result ) {
+		parent::record( $test, $result );
+		$this->db->insert( 'testitem',
+			array(
+				'ti_run'     => $this->curRun,
+				'ti_name'    => $test,
+				'ti_success' => $result ? 1 : 0,
+			),
+			__METHOD__ );
+	}
+	
+	/**
+	 * Commit transaction and clean up for result recording
+	 */
+	function end() {
+		$this->db->commit();
+		parent::end();
+	}
+	
+	function report() {
+		if( $this->prevRun ) {
+			$table = array(
+				array( 'previously failing test(s) now PASSING! :)', 0, 1 ),
+				array( 'previously PASSING test(s) removed o_O', 1, null ),
+				array( 'new PASSING test(s) :)', null, 1 ),
+				
+				array( 'previously passing test(s) now FAILING! :(', 1, 0 ),
+				array( 'previously FAILING test(s) removed O_o', 0, null ),
+				array( 'new FAILING test(s) :(', null, 0 ),
+			);
+			foreach( $table as $criteria ) {
+				list( $label, $before, $after ) = $criteria;
+				$differences = $this->compareResult( $before, $after );
+				if( $differences ) {
+					$count = count($differences);
+					printf( "%4d %s\n", $count, $label );
+					foreach ($differences as $differing_test_name) {
+						print "      * $differing_test_name\n";
+					}
+				}
+			}
+		} else {
+			print "No previous test runs to compare against.\n";
+		}
+		parent::report();
+	}
+	
+	/**
+	 ** @desc: Returns an array of the test names with changed results, based on the specified
+	 **        before/after criteria.
+	 */
+	private function compareResult( $before, $after ) {
+		$testitem = $this->db->tableName( 'testitem' );
+		$prevRun = intval( $this->prevRun );
+		$curRun = intval( $this->curRun );
+		$prevStatus = $this->condition( $before );
+		$curStatus = $this->condition( $after );
+		
+		// note: requires mysql >= ver 4.1 for subselects
+		if( is_null( $after ) ) {
+			$sql = "
+				select prev.ti_name as t from $testitem as prev
+					where prev.ti_run=$prevRun and
+						prev.ti_success $prevStatus and
+						(select current.ti_success from $testitem as current
+							where current.ti_run=$curRun
+								and prev.ti_name=current.ti_name) $curStatus";
+		} else {
+			$sql = "
+				select current.ti_name as t from $testitem as current 
+					where current.ti_run=$curRun and
+						current.ti_success $curStatus and
+						(select prev.ti_success from $testitem as prev
+							where prev.ti_run=$prevRun
+								and prev.ti_name=current.ti_name) $prevStatus";
+		}
+		$result = $this->db->query( $sql, __METHOD__ );
+		$retval = array();
+		while ($row = $this->db->fetchObject( $result )) {
+			$retval[] = $row->t;
+		}
+		$this->db->freeResult( $result );
+		return $retval;
+	}
+	
+	/**
+	 ** @desc: Helper function for compareResult() database querying.
+	 */
+	private function condition( $value ) {
+		if( is_null( $value ) ) {
+			return 'IS NULL';
+		} else {
+			return '=' . intval( $value );
+		}
 	}
 
 }

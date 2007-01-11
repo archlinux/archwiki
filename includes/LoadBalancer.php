@@ -141,6 +141,9 @@ class LoadBalancer {
 		$i = false;
 		if ( $this->mForce >= 0 ) {
 			$i = $this->mForce;
+		} elseif ( count( $this->mServers ) == 1 )  {
+			# Skip the load balancing if there's only one server
+			$i = 0;
 		} else {
 			if ( $this->mReadIndex >= 0 ) {
 				$i = $this->mReadIndex;
@@ -171,10 +174,9 @@ class LoadBalancer {
 							unset( $loads[$i] );
 							$sleepTime = 0;
 						} else {
-							$status = $this->mConnections[$i]->getStatus("Thread%");
-							if ( isset( $this->mServers[$i]['max threads'] ) &&
-							  $status['Threads_running'] > $this->mServers[$i]['max threads'] )
-							{
+							if ( isset( $this->mServers[$i]['max threads'] ) ) {
+							    $status = $this->mConnections[$i]->getStatus("Thread%");
+							    if ( $status['Threads_running'] > $this->mServers[$i]['max threads'] ) {
 								# Too much load, back off and wait for a while.
 								# The sleep time is scaled by the number of threads connected,
 								# to produce a roughly constant global poll rate.
@@ -182,9 +184,13 @@ class LoadBalancer {
 
 								# If we reach the timeout and exit the loop, don't use it
 								$i = false;
-							} else {
+							    } else {
 								$done = true;
 								$sleepTime = 0;
+							    }
+							} else {
+							    $done = true;
+							    $sleepTime = 0;
 							}
 						}
 					} else {

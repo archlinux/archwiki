@@ -343,22 +343,11 @@ if( ini_get( "safe_mode" ) ) {
 }
 
 $sapi = php_sapi_name();
-$conf->prettyURLs = true;
 print "<li>PHP server API is $sapi; ";
-switch( $sapi ) {
-case "apache":
-case "apache2handler":
+if( $wgUsePathInfo ) {
 	print "ok, using pretty URLs (<tt>index.php/Page_Title</tt>)";
-	break;
-default:
-	print "unknown; ";
-case "cgi":
-case "cgi-fcgi":
-case "apache2filter":
-case "isapi":
+} else {
 	print "using ugly URLs (<tt>index.php?title=Page_Title</tt>)";
-	$conf->prettyURLs = false;
-	break;
 }
 print "</li>\n";
 
@@ -431,7 +420,14 @@ if( !$conf->turck && !$conf->eaccel && !$conf->apc ) {
 }
 
 $conf->diff3 = false;
-$diff3locations = array( "/usr/bin", "/usr/local/bin", "/opt/csw/bin", "/usr/gnu/bin", "/usr/sfw/bin" ) + explode( $sep, getenv( "PATH" ) );
+$diff3locations = array_merge(
+	array(
+		"/usr/bin",
+		"/usr/local/bin",
+		"/opt/csw/bin",
+		"/usr/gnu/bin",
+		"/usr/sfw/bin" ),
+	explode( $sep, getenv( "PATH" ) ) );
 $diff3names = array( "gdiff3", "diff3", "diff3.exe" );
 
 $diff3versioninfo = array( '$1 --version 2>&1', 'diff3 (GNU diffutils)' );
@@ -477,7 +473,14 @@ $conf->UseImageResize = $conf->HaveGD || $conf->ImageMagick;
 $conf->IP = dirname( dirname( __FILE__ ) );
 print "<li>Installation directory: <tt>" . htmlspecialchars( $conf->IP ) . "</tt></li>\n";
 
-$conf->ScriptPath = preg_replace( '{^(.*)/config.*$}', '$1', $_SERVER["PHP_SELF"] ); # was SCRIPT_NAME
+
+// PHP_SELF isn't available sometimes, such as when PHP is CGI but
+// cgi.fix_pathinfo is disabled. In that case, fall back to SCRIPT_NAME
+// to get the path to the current script... hopefully it's reliable. SIGH
+$path = ($_SERVER["PHP_SELF"] === '')
+	? $_SERVER["SCRIPT_NAME"]
+	: $_SERVER["PHP_SELF"];
+$conf->ScriptPath = preg_replace( '{^(.*)/config.*$}', '$1', $path );
 print "<li>Script URI path: <tt>" . htmlspecialchars( $conf->ScriptPath ) . "</tt></li>\n";
 
 print "<li style='font-weight:bold;color:green;font-size:110%'>Environment checked. You can install MediaWiki.</li>\n";
@@ -501,12 +504,16 @@ print "<li style='font-weight:bold;color:green;font-size:110%'>Environment check
 	$conf->SysopPass = importPost( "SysopPass" );
 	$conf->SysopPass2 = importPost( "SysopPass2" );
 	$conf->RootUser = importPost( "RootUser", "root" );
-	$conf->RootPW = importPost( "RootPW", "-" );
+	$conf->RootPW = importPost( "RootPW", "" );
+	$useRoot = importCheck( 'useroot', false );
 
 	## MySQL specific:
-	$conf->DBprefix     =  importPost( "DBprefix" );
-	$conf->DBmysql5     = (importPost( "DBmysql5" ) == "true") ? "true" : "false";
-	$conf->LanguageCode =  importPost( "LanguageCode", "en" );
+	$conf->DBprefix     = importPost( "DBprefix" );
+	$conf->DBschema     = importPost( "DBschema", "mysql4" );
+	$conf->DBmysql5     = ($conf->DBschema == "mysql5" ||
+	                       $conf->DBschema == "mysql5-binary")
+	                       ? "true" : "false";
+	$conf->LanguageCode = importPost( "LanguageCode", "en" );
 
 	## Postgres specific:
 	$conf->DBport      = importPost( "DBport",      "5432" );
@@ -584,12 +591,22 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 
 		/* Load up the settings and get installin' */
 		$local = writeLocalSettings( $conf );
+		echo "<li style=\"list-style: none\">\n";
 		echo "<p><b>Generating configuration file...</b></p>\n";
-		// for debugging: // echo "<pre>" . htmlspecialchars( $local ) . "</pre>\n";
-		
+		echo "</li>\n";		
+
 		$wgCommandLineMode = false;
 		chdir( ".." );
-		eval($local);
+		$ok = eval( $local );
+		if( $ok === false ) {
+			dieout( "Errors in generated configuration; " .
+				"most likely due to a bug in the installer... " .
+				"Config file was: " .
+				"<pre>" .
+				htmlspecialchars( $local ) .
+				"</pre>" .
+				"</ul>" );
+		}
 		$conf->DBtypename = '';
 		foreach (array_keys($ourdb) as $db) {
 			if ($conf->DBtype === $db)
@@ -623,8 +640,6 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 		require_once( "includes/Setup.php" );
 		chdir( "config" );
 
-		require_once( "maintenance/InitialiseMessages.inc" );
-
 		$wgTitle = Title::newFromText( "Installation script" );
 		error_reporting( E_ALL );
 		print "<li>Loading class: $dbclass";
@@ -641,16 +656,13 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 			$ok = true; # Let's be optimistic
 			
 			# Decide if we're going to use the superuser or the regular database user
-			if( $conf->RootPW == '-' ) {
-				# Regular user
-				$conf->Root = false;
-				$db_user = $wgDBuser;
-				$db_pass = $wgDBpassword;
-			} else {
-				# Superuser
-				$conf->Root = true;
+			$conf->Root = $useRoot;
+			if( $conf->Root ) {
 				$db_user = $conf->RootUser;
 				$db_pass = $conf->RootPW;
+			} else {
+				$db_user = $wgDBuser;
+				$db_pass = $wgDBpassword;
 			}
 			
 			# Attempt to connect
@@ -701,7 +713,7 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 			error_reporting( E_ALL );
 			$wgSuperUser = '';
 			## Possible connect as a superuser
-			if( $conf->RootPW != '-' and strlen($conf->RootPW)) {
+			if( $conf->Root ) {
 				$wgDBsuperuser = $conf->RootUser;
 				echo( "<li>Attempting to connect to database \"postgres\" as superuser \"$wgDBsuperuser\"..." );
 				$wgDatabase = $dbc->newFromParams($wgDBserver, $wgDBsuperuser, $conf->RootPW, "postgres", 1);
@@ -754,11 +766,16 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 				print "<li>Database <tt>" . htmlspecialchars( $wgDBname ) . "</tt> exists</li>\n";
 			} else {
 				$err = mysql_errno();
-				if ( $err != 1049 ) {
-					print "<ul><li>Error selecting database $wgDBname: $err " .
-						htmlspecialchars( mysql_error() ) . "</li></ul>";
+				$databaseSafe = htmlspecialchars( $wgDBname );
+				if( $err == 1102 /* Invalid database name */ ) {
+					print "<ul><li><strong>{$databaseSafe}</strong> is not a valid database name.</li></ul>";
+					continue;
+				} elseif( $err != 1049 /* Database doesn't exist */ ) {
+					print "<ul><li>Error selecting database <strong>{$databaseSafe}</strong>: {$err} ";
+					print htmlspecialchars( mysql_error() ) . "</li></ul>";
 					continue;
 				}
+				print "<li>Attempting to create database...</li>";
 				$res = $wgDatabase->query( "CREATE DATABASE `$wgDBname`" );
 				if( !$res ) {
 					print "<li>Couldn't create database <tt>" .
@@ -806,12 +823,21 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 			# FIXME: Check for errors
 			print "<li>Creating tables...";
 			if ($conf->DBtype == 'mysql') {
-				if( $wgDBmysql5 ) {
-					print " using MySQL 5 table defs...";
-					dbsource( "../maintenance/mysql5/tables.sql", $wgDatabase );
-				} else {
+				switch( $conf->DBschema ) {
+				case "mysql4":
 					print " using MySQL 4 table defs...";
 					dbsource( "../maintenance/tables.sql", $wgDatabase );
+					break;
+				case "mysql5":
+					print " using MySQL 5 UTF-8 table defs...";
+					dbsource( "../maintenance/mysql5/tables.sql", $wgDatabase );
+					break;
+				case "mysql5-binary":
+					print " using MySQL 5 binary table defs...";
+					dbsource( "../maintenance/mysql5/tables-binary.sql", $wgDatabase );
+					break;
+				default:
+					dieout( " <b>invalid schema selection!</b></li>" );
 				}
 				dbsource( "../maintenance/interwiki.sql", $wgDatabase );
 			} else if ($conf->DBtype == 'postgres') {
@@ -824,7 +850,7 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 
 			print " done.</li>\n";
 
-			print "<li>Initializing data...";
+			print "<li>Initializing data...</li>\n";
 			$wgDatabase->insert( 'site_stats',
 				array ( 'ss_row_id'        => 1,
 						'ss_total_views'   => 0,
@@ -838,18 +864,21 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 				if( $wgDatabase2->isOpen() ) {
 					# Nope, just close the test connection and continue
 					$wgDatabase2->close();
-					echo( "<li>User $wgDBuser exists. Skipping grants.</li>" );
+					echo( "<li>User $wgDBuser exists. Skipping grants.</li>\n" );
 				} else {
 					# Yes, so run the grants
 					echo( "<li>Granting user permissions to $wgDBuser on $wgDBname..." );
 					dbsource( "../maintenance/users.sql", $wgDatabase );
-					echo( "success.</li>" );
+					echo( "success.</li>\n" );
 				}
 			}
 
 			if( $conf->SysopName ) {
 				$u = User::newFromName( $conf->getSysopName() );
-				if ( 0 == $u->idForName() ) {
+				if ( !$u ) {
+					print "<li><strong class=\"error\">Warning:</strong> Skipped sysop account creation - invalid username!</li>\n";
+				}
+				else if ( 0 == $u->idForName() ) {
 					$u->addToDatabase();
 					$u->setPassword( $conf->getSysopPass() );
 					$u->saveSettings();
@@ -878,11 +907,10 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 				) );
 			$revid = $revision->insertOn( $wgDatabase );
 			$article->updateRevisionOn( $wgDatabase, $revision );
-
-			initialiseMessages( false, false, 'printListItem' );
 		}
 
 		/* Write out the config file now that all is well */
+		print "<li style=\"list-style: none\">\n";
 		print "<p>Creating LocalSettings.php...</p>\n\n";
 		$localSettings = "<" . "?php$endl$local$endl?" . ">\r\n";
 		// Fix up a common line-ending problem (due to CVS on Windows)
@@ -902,6 +930,7 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 			die("<p class='error'>An error occured while writing the config/LocalSettings.php file. Check user rights and disk space then try again.</p>\n");
 
 		}
+		print "</li>\n";
 
 	} while( false );
 }
@@ -958,7 +987,7 @@ if( count( $errs ) ) {
 		</select>
 	</div>
 	<p class="config-desc">
-		Select the language for your wiki's interface. Some localizations aren't fully complete. Unicode (UTF-8) used for all localizations.
+		Select the language for your wiki's interface. Some localizations aren't fully complete. Unicode (UTF-8) is used for all localizations.
 	</p>
 
 	<div class="config-input">
@@ -977,7 +1006,7 @@ if( count( $errs ) ) {
 			?>
 		<?php if( $conf->License == "cc" ) { ?>
 			<ul>
-				<li><?php aField( $conf, "RightsIcon", "<img src=\"" . htmlspecialchars( $conf->RightsIcon ) . "\" alt='icon' />", "hidden" ); ?></li>
+				<li><?php aField( $conf, "RightsIcon", "<img src=\"" . htmlspecialchars( $conf->RightsIcon ) . "\" alt='(Creative Commons icon)' />", "hidden" ); ?></li>
 				<li><?php aField( $conf, "RightsText", htmlspecialchars( $conf->RightsText ), "hidden" ); ?></li>
 				<li><?php aField( $conf, "RightsCode", "code: " . htmlspecialchars( $conf->RightsCode ), "hidden" ); ?></li>
 				<li><?php aField( $conf, "RightsUrl", "<a href=\"" . htmlspecialchars( $conf->RightsUrl ) . "\">" . htmlspecialchars( $conf->RightsUrl ) . "</a>", "hidden" ); ?></li>
@@ -1132,8 +1161,13 @@ if( count( $errs ) ) {
 	</p>
 
 	<div class="config-input">
+		<label class="column">Superuser account:</label>
+		<input type="checkbox" name="useroot" id="useroot" <?php if( $useRoot ) { ?>checked="checked" <?php } ?>/>
+		&nbsp;<label for="useroot">Use superuser account</label>
+	</div>
+	<div class="config-input">
 		<?php
-		aField( $conf, "RootUser", "Superuser account:", "superuser" );
+		aField( $conf, "RootUser", "Superuser name:", "superuser" );
 		?>
 	</div>
 	<div class="config-input">
@@ -1144,8 +1178,8 @@ if( count( $errs ) ) {
 	
 	<p class="config-desc">
 		If the database user specified above does not exist, or does not have access to create
-		the database (if needed) or tables within it, please provide details of a superuser account,
-		such as <strong>root</strong>, which does. Leave the password set to <strong>-</strong> if this is not needed.
+		the database (if needed) or tables within it, please check the box and provide details
+		of a superuser account,	such as <strong>root</strong>, which does.
 	</p>
 
 	<?php database_switcher('mysql'); ?>
@@ -1163,8 +1197,9 @@ if( count( $errs ) ) {
 	<div class="config-input"><label class="column">Database charset</label>
 		<div>Select one:</div>
 		<ul class="plain">
-		<li><?php aField( $conf, "DBmysql5", "Backwards-compatible UTF-8", "radio", "false" ); ?></li>
-		<li><?php aField( $conf, "DBmysql5", "Experimental MySQL 4.1/5.0 UTF-8", "radio", "true" ); ?></li>
+		<li><?php aField( $conf, "DBschema", "Backwards-compatible UTF-8", "radio", "mysql4" ); ?></li>
+		<li><?php aField( $conf, "DBschema", "Experimental MySQL 4.1/5.0 UTF-8", "radio", "mysql5" ); ?></li>
+		<li><?php aField( $conf, "DBschema", "Experimental MySQL 4.1/5.0 binary", "radio", "mysql5-binary" ); ?></li>
 		</ul>
 	</div>
 	<p class="config-desc">
@@ -1253,8 +1288,6 @@ function writeLocalSettings( $conf ) {
 	$zlib = ($conf->zlib ? "" : "# ");
 	$magic = ($conf->ImageMagick ? "" : "# ");
 	$convert = ($conf->ImageMagick ? $conf->ImageMagick : "/usr/bin/convert" );
-	$pretty = ($conf->prettyURLs ? "" : "# ");
-	$ugly = ($conf->prettyURLs ? "# " : "");
 	$rights = ($conf->RightsUrl) ? "" : "# ";
 	$hashedUploads = $conf->safeMode ? '' : '# ';
 
@@ -1354,22 +1387,12 @@ if ( \$wgCommandLineMode ) {
 
 \$wgSitename         = \"{$slconf['Sitename']}\";
 
+## The URL base path to the directory containing the wiki;
+## defaults for all runtime URL paths are based off of this.
 \$wgScriptPath       = \"{$slconf['ScriptPath']}\";
-\$wgScript           = \"\$wgScriptPath/index.php\";
-\$wgRedirectScript   = \"\$wgScriptPath/redirect.php\";
 
 ## For more information on customizing the URLs please see:
-## http://meta.wikimedia.org/wiki/Eliminating_index.php_from_the_url
-## If using PHP as a CGI module, the ?title= style usually must be used.
-{$pretty}\$wgArticlePath      = \"\$wgScript/\$1\";
-{$ugly}\$wgArticlePath      = \"\$wgScript?title=\$1\";
-
-\$wgStylePath        = \"\$wgScriptPath/skins\";
-\$wgStyleDirectory   = \"\$IP/skins\";
-\$wgLogo             = \"\$wgStylePath/common/images/wiki.png\";
-
-\$wgUploadPath       = \"\$wgScriptPath/images\";
-\$wgUploadDirectory  = \"\$IP/images\";
+## http://www.mediawiki.org/wiki/Manual:Short_URL
 
 \$wgEnableEmail      = $enableemail;
 \$wgEnableUserEmail  = $enableuseremail;
@@ -1421,9 +1444,6 @@ if ( \$wgCommandLineMode ) {
 ## If you have the appropriate support software installed
 ## you can enable inline LaTeX equations:
 \$wgUseTeX           = false;
-\$wgMathPath         = \"{\$wgUploadPath}/math\";
-\$wgMathDirectory    = \"{\$wgUploadDirectory}/math\";
-\$wgTmpDirectory     = \"{\$wgUploadDirectory}/tmp\";
 
 \$wgLocalInterwiki   = \$wgSitename;
 
@@ -1476,6 +1496,10 @@ function importVar( &$var, $name, $default = "" ) {
 
 function importPost( $name, $default = "" ) {
 	return importVar( $_POST, $name, $default );
+}
+
+function importCheck( $name ) {
+	return isset( $_POST[$name] );
 }
 
 function importRequest( $name, $default = "" ) {
@@ -1690,7 +1714,7 @@ function printListItem( $item ) {
 			<li><a href="http://meta.wikipedia.org/wiki/MediaWiki_User's_Guide">User's Guide</a></li>
 			<li><a href="http://meta.wikimedia.org/wiki/MediaWiki_FAQ">FAQ</a></li>
 		</ul>
-		<p style="font-size:90%;margin-top:1em">MediaWiki is Copyright &copy; 2001-2006 by Magnus Manske, Brion Vibber, Lee Daniel Crocker, Tim Starling, Erik M&ouml;ller, Gabriel Wicke and others.</p>
+		<p style="font-size:90%;margin-top:1em">MediaWiki is Copyright &copy; 2001-2007 by Magnus Manske, Brion Vibber, Lee Daniel Crocker, Tim Starling, Erik M&ouml;ller, Gabriel Wicke and others.</p>
 	</div></div>
 </div>
 
