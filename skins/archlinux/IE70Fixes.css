@@ -5,7 +5,7 @@
 /* This bit is needed to make links clickable... WTF */
 #column-content #content {
 	margin-left: 12.2em;
-	margin-top: 3em;
+	margin-top: 6px;
 	height: 1%;
 }
 
@@ -23,6 +23,10 @@
 	z-index: 3;
 }
 
+#logo {
+	position: relative;
+	top:-1px;
+}
 
 #p-cactions li {
 	padding-bottom: 0 !important;

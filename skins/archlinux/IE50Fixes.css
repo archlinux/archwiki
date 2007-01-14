@@ -6,8 +6,8 @@
 	margin: 0 !important;
 	float: none;
 }
-#column-content #content { 
-	margin-top: 3em; 
+#column-content #content {
+	margin-top: 6px;
 	height: 1%;
 }
 #column-one {
@@ -20,6 +20,12 @@
 #footer {
 	margin: 0 0 0 13.6em;
 }
+
+#logo {
+	position: relative;
+	top:-1px;
+}
+
 
 /* IE 5 & 5.5 interpret keyword sizes one off */
 body { font-size: xx-small; }
