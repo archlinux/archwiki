@@ -177,7 +177,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 		// Ensure that all revisions are shown as '<rev>' elements
 		$result = $this->getResult();
 		if ($result->getIsRawMode()) {
-			$data = $result->getData();
+			$data =& $result->getData();
 			foreach ($data['query']['pages'] as & $page) {
 				if (is_array($page) && array_key_exists('revisions', $page)) {
 					$result->setIndexedTagName($page['revisions'], 'rev');
@@ -262,7 +262,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryRevisions.php 17374 2006-11-03 06:53:47Z yurik $';
+		return __CLASS__ . ': $Id: ApiQueryRevisions.php 19434 2007-01-18 02:04:11Z brion $';
 	}
 }
 ?>

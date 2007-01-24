@@ -35,7 +35,6 @@ $wgNewTables = array(
 	array( 'langlinks',     'patch-langlinks.sql' ),
 	array( 'querycache_info', 'patch-querycacheinfo.sql' ),
 	array( 'filearchive',   'patch-filearchive.sql' ),
-	array( 'redirect',      'patch-redirect.sql' ),
 	array( 'querycachetwo',	'patch-querycachetwo.sql' ),
 );
 
@@ -43,7 +42,6 @@ $wgNewFields = array(
 #           table            field             patch file (in maintenance/archives)
 	array( 'ipblocks',      'ipb_id',           'patch-ipblocks.sql' ),
 	array( 'ipblocks',      'ipb_expiry',       'patch-ipb_expiry.sql' ),
-	array( 'ipblocks',	'ipb_enable_autoblock', 'patch-ipb_optional_autoblock.sql' ),
 	array( 'recentchanges', 'rc_type',          'patch-rc_type.sql' ),
 	array( 'recentchanges', 'rc_ip',            'patch-rc_ip.sql' ),
 	array( 'recentchanges', 'rc_id',            'patch-rc_id.sql' ),
@@ -66,6 +64,7 @@ $wgNewFields = array(
 	array( 'ipblocks',      'ipb_range_start',  'patch-ipb_range_start.sql' ),
 	array( 'site_stats',    'ss_images',        'patch-ss_images.sql' ),
 	array( 'ipblocks',      'ipb_anon_only',    'patch-ipb_anon_only.sql' ),
+	array( 'ipblocks',	'ipb_enable_autoblock', 'patch-ipb_optional_autoblock.sql' ),
 	array( 'user',          'user_newpass_time','patch-user_newpass_time.sql' ),
 	array( 'user',          'user_editcount',   'patch-user_editcount.sql' ),
 );
@@ -902,7 +901,9 @@ function do_all_updates( $shared = false, $purge = true ) {
 	do_page_random_update(); flush();
 	
 	do_rc_indices_update(); flush();
-	
+
+	add_table( 'redirect', 'patch-redirect.sql' );
+
 	do_backlinking_indices_update(); flush();
 
 	echo "Deleting old default messages..."; flush();

@@ -32,7 +32,7 @@ require_once( 'includes/SiteConfiguration.php' );
 $wgConf = new SiteConfiguration;
 
 /** MediaWiki version number */
-$wgVersion			= '1.9.0';
+$wgVersion			= '1.9.1';
 
 /** Name of the site. It must be changed in LocalSettings.php */
 $wgSitename         = 'MediaWiki';
@@ -1096,7 +1096,7 @@ $wgCacheEpoch = '20030516000000';
  * to ensure that client-side caches don't keep obsolete copies of global
  * styles.
  */
-$wgStyleVersion = '42';
+$wgStyleVersion = '42a';
 
 
 # Server-side caching:
@@ -2237,7 +2237,7 @@ $wgTrustedMediaFormats= array(
 	MEDIATYPE_VIDEO,  //all plain video formats
 	"image/svg",  //svg (only needed if inline rendering of svg is not supported)
 	"application/pdf",  //PDF files
-	#"application/x-shockwafe-flash", //flash/shockwave movie
+	#"application/x-shockwave-flash", //flash/shockwave movie
 );
 
 /**

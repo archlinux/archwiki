@@ -81,7 +81,7 @@ abstract class ApiFormatBase extends ApiBase {
 		if (is_null($mime))
 			return; // skip any initialization
 
-		header("Content-Type: $mime; charset=utf-8;");
+		header("Content-Type: $mime; charset=utf-8");
 
 		if ($isHtml) {
 ?>
@@ -170,7 +170,7 @@ for more information.
 	}
 
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiFormatBase.php 17374 2006-11-03 06:53:47Z yurik $';
+		return __CLASS__ . ': $Id: ApiFormatBase.php 19434 2007-01-18 02:04:11Z brion $';
 	}
 }
 
@@ -226,7 +226,7 @@ class ApiFormatFeedWrapper extends ApiFormatBase {
 	}
 	
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatBase.php 17374 2006-11-03 06:53:47Z yurik $';
+		return __CLASS__ . ': $Id: ApiFormatBase.php 19434 2007-01-18 02:04:11Z brion $';
 	}
 }
 ?>
