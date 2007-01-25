@@ -180,7 +180,7 @@ class AuthPlugin {
 	 * @return bool
 	 * @public
 	 */
-	function setPassword( $password ) {
+	function setPassword( $user, $password ) {
 		return false;
 	}
 
