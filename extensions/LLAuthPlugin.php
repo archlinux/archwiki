@@ -35,7 +35,10 @@
  *
  * @package MediaWiki
  */
-class AuthPlugin {
+
+require_once('includes/AuthPlugin.php');
+
+class LLAuthPlugin extends AuthPlugin {
 
 	private $dbLink = null;
 

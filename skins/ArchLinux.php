@@ -266,7 +266,8 @@ class ArchLinuxTemplate extends QuickTemplate {
 			<ul id="f-list">
 <?php
 		$footerlinks = array(
-			'lastmod', 'viewcount', 'numberofwatchingusers', 'credits', 'copyright', 'tagline',
+			'lastmod', 'viewcount', 'numberofwatchingusers', 'credits', 'copyright',
+			'privacy', 'about', 'disclaimer', 'tagline',
 		);
 		foreach( $footerlinks as $aLink ) {
 			if( isset( $this->data[$aLink] ) && $this->data[$aLink] ) {
