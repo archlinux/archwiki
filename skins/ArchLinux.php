@@ -102,17 +102,37 @@ class ArchLinuxTemplate extends QuickTemplate {
 		</div>
 		<div id="main_nav">
 			<ul>
-				<li><a href="http://wiki.archlinux.de/?title=Download">Dateien</a></li>
-				<li><a href="http://wiki.archlinux.de/?title=AUR">AUR</a></li>
-				<li><a href="http://wiki.archlinux.de/?title=Bugs">Bugs</a></li>
-				<li class="selected"><a href="#">Wiki</a></li>
+				<?php
+					$bugsTab = '';
+					$downloadTab = '';
+					$aurTab = '';
+					$wikiTab = '';
+
+					if ($this->data['title'] == 'Fehler melden') {
+						$bugsTab = ' class="selected"';
+					} elseif ($this->data['title'] == 'Download') {
+						$downloadTab = ' class="selected"';
+					} elseif ($this->data['title'] == 'ArchLinux User-Community Repository') {
+						$aurTab = ' class="selected"';
+					} else {
+						$wikiTab = ' class="selected"';
+					}
+				?>
+				<li<?php echo $downloadTab; ?>><a href="?title=Download">Dateien</a></li>
+				<li<?php echo $aurTab; ?>><a href="?title=AUR">AUR</a></li>
+				<li<?php echo $bugsTab; ?>><a href="?title=Bugs">Bugs</a></li>
+				<li<?php echo $wikiTab; ?>><a href="?title=Hauptseite">Wiki</a></li>
 				<li><a href="http://www.laber-land.de/?page=Forums;id=20">Forum</a></li>
 				<li><a href="http://www.archlinux.de">Start</a></li>
 			</ul>
 		</div>
 	</div>
-	<div style="clear:both;background-image:url(FunnyDotImage.php);background-repeat:no-repeat;visibility:hidden;">&nbsp;</div>
-	<?php } ?>
+	<?php if (!empty($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'submit') ) { ?>
+		<div style="clear:both;background-image:url(FunnyDotImage.php);background-repeat:no-repeat;visibility:hidden;">&nbsp;</div>
+	<?php } else { ?>
+		<div style="clear:both;visibility:hidden;">&nbsp;</div>
+		<?php }
+	} ?>
 
 	<div id="globalWrapper">
 		<div id="column-content">
