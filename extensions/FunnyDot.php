@@ -6,6 +6,12 @@ global $wgHooks;
 $wgHooks['ArticleSave'][] = 'checkAntiSpamHash';
 
 
+function hexVal($in)
+	{
+	$result = preg_replace('/[^0-9a-fA-F]/', '', $in);
+	return (empty($result) ? 0 : $result);
+	}
+
 function checkAntiSpamHash()
 	{
 	global $wgAntiSpamHash, $wgAntiSpamTimeout, $wgAntiSpamWait;
@@ -15,7 +21,7 @@ function checkAntiSpamHash()
 	if (!empty($_COOKIE['AntiSpamTime']) && !empty($_COOKIE['AntiSpamHash']))
 		{
 		$time = intval($_COOKIE['AntiSpamTime']);
-		$hash = $_COOKIE['AntiSpamHash'];
+		$hash = hexVal($_COOKIE['AntiSpamHash']);
 
 		if ($hash != sha1($time.$wgAntiSpamHash))
 			{
