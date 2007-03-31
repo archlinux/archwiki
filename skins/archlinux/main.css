@@ -290,10 +290,10 @@ border-collapse:collapse;
 }
 
 #bodyContent td {
-padding:2px;
+padding:4px;
 border-style:solid;
 border-width:1px;
-border-color:#8FAECD;
+border-color:#AAAAAA;
 }
 
 /* user notification thing */
