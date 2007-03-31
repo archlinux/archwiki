@@ -283,13 +283,14 @@ span.subpages {
 
 #bodyContent table {
 border-style:none;
+border-collapse:collapse;
 }
 
 #bodyContent tr {
 }
 
 #bodyContent td {
-padding:1px;
+padding:2px;
 border-style:solid;
 border-width:1px;
 border-color:#8FAECD;
