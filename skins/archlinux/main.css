@@ -281,6 +281,20 @@ span.subpages {
 	margin-bottom: .1em;
 }
 
+#bodyContent table {
+border-style:none;
+}
+
+#bodyContent tr {
+}
+
+#bodyContent td {
+padding:1px;
+border-style:solid;
+border-width:1px;
+border-color:#8FAECD;
+}
+
 /* user notification thing */
 .usermessage {
 	background-color: #ffce7b;
