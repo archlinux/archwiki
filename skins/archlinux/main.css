@@ -296,6 +296,10 @@ border-width:1px;
 border-color:#AAAAAA;
 }
 
+#mw-pages td {
+border-style:none;
+}
+
 /* user notification thing */
 .usermessage {
 	background-color: #ffce7b;
