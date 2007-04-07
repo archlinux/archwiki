@@ -281,23 +281,19 @@ span.subpages {
 	margin-bottom: .1em;
 }
 
-#bodyContent table {
+table[border="1"] {
 border-style:none;
 border-collapse:collapse;
 }
 
-#bodyContent tr {
+table[border="1"] tr {
 }
 
-#bodyContent td {
+table[border="1"] td {
 padding:4px;
 border-style:solid;
 border-width:1px;
 border-color:#AAAAAA;
-}
-
-#mw-pages td {
-border-style:none;
 }
 
 /* user notification thing */
