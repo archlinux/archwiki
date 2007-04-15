@@ -5,6 +5,12 @@ if ( defined( 'MEDIAWIKI' ) ) {
 global $wgHooks;
 $wgHooks['ArticleSave'][] = 'checkAntiSpamHash';
 
+$wgExtensionCredits['other'][] = array(
+    'name' => 'FunnyDot',
+    'description' => 'Schutz vor Spam-Bots',
+    'author' => 'Pierre Schmitz',
+    'url' => 'http://www.laber-land.de',
+);
 
 function hexVal($in)
 	{

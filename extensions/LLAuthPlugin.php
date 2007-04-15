@@ -36,6 +36,13 @@
  * @package MediaWiki
  */
 
+$wgExtensionCredits['other'][] = array(
+    'name' => 'LLAuthPlugin',
+    'description' => 'Authentifizierung am Laber-Land-Forum',
+    'author' => 'Pierre Schmitz',
+    'url' => 'http://www.laber-land.de',
+);
+
 require_once('includes/AuthPlugin.php');
 
 class LLAuthPlugin extends AuthPlugin {
