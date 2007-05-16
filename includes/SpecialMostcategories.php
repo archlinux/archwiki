@@ -1,7 +1,6 @@
 <?php
 /**
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  *
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  * @copyright Copyright © 2005, Ævar Arnfjörð Bjarmason
@@ -9,8 +8,8 @@
  */
 
 /**
- * @package MediaWiki
- * @subpackage SpecialPage
+ * implements Special:Mostcategories
+ * @addtogroup SpecialPage
  */
 class MostcategoriesPage extends QueryPage {
 
@@ -19,7 +18,7 @@ class MostcategoriesPage extends QueryPage {
 	function isSyndicated() { return false; }
 
 	function getSQL() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		list( $categorylinks, $page) = $dbr->tableNamesN( 'categorylinks', 'page' );
 		return
 			"

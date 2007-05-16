@@ -3,17 +3,23 @@
  * Special handling for category description pages
  * Modelled after ImagePage.php
  *
- * @package MediaWiki
  */
 
 if( !defined( 'MEDIAWIKI' ) )
 	die( 1 );
 
 /**
- * @package MediaWiki
  */
 class CategoryPage extends Article {
 	function view() {
+		global $wgRequest, $wgUser;
+
+		$diff = $wgRequest->getVal( 'diff' );
+		$diffOnly = $wgRequest->getBool( 'diffonly', $wgUser->getOption( 'diffonly' ) );
+
+		if ( isset( $diff ) && $diffOnly )
+			return Article::view();
+
 		if(!wfRunHooks('CategoryPageView', array(&$this))) return;
 
 		if ( NS_CATEGORY == $this->mTitle->getNamespace() ) {
@@ -175,7 +181,7 @@ class CategoryViewer {
 	}
 
 	function doCategoryQuery() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		if( $this->from != '' ) {
 			$pageCondition = 'cl_sortkey >= ' . $dbr->addQuotes( $this->from );
 			$this->flip = false;
@@ -196,6 +202,7 @@ class CategoryViewer {
 			#+ $pageCondition,
 			__METHOD__,
 			array( 'ORDER BY' => $this->flip ? 'cl_sortkey DESC' : 'cl_sortkey',
+			       'USE INDEX' => 'cl_sortkey', 
 			       'LIMIT'    => $this->limit + 1 ) );
 
 		$count = 0;
@@ -234,11 +241,12 @@ class CategoryViewer {
 	function getSubcategorySection() {
 		# Don't show subcategories section if there are none.
 		$r = '';
-		if( count( $this->children ) > 0 ) {
+		$c = count( $this->children );
+		if( $c > 0 ) {
 			# Showing subcategories
 			$r .= "<div id=\"mw-subcategories\">\n";
 			$r .= '<h2>' . wfMsg( 'subcategories' ) . "</h2>\n";
-			$r .= wfMsgExt( 'subcategorycount', array( 'parse' ), count( $this->children) );
+			$r .= wfMsgExt( 'subcategorycount', array( 'parse' ), $c );
 			$r .= $this->formatList( $this->children, $this->children_start_char );
 			$r .= "\n</div>";
 		}
@@ -247,11 +255,16 @@ class CategoryViewer {
 
 	function getPagesSection() {
 		$ti = htmlspecialchars( $this->title->getText() );
-		$r = "<div id=\"mw-pages\">\n";
-		$r .= '<h2>' . wfMsg( 'category_header', $ti ) . "</h2>\n";
-		$r .= wfMsgExt( 'categoryarticlecount', array( 'parse' ), count( $this->articles) );
-		$r .= $this->formatList( $this->articles, $this->articles_start_char );
-		$r .= "\n</div>";
+		# Don't show articles section if there are none.
+		$r = '';
+		$c = count( $this->articles );
+		if( $c > 0 ) {
+			$r = "<div id=\"mw-pages\">\n";
+			$r .= '<h2>' . wfMsg( 'category_header', $ti ) . "</h2>\n";
+			$r .= wfMsgExt( 'categoryarticlecount', array( 'parse' ), $c );
+			$r .= $this->formatList( $this->articles, $this->articles_start_char );
+			$r .= "\n</div>";
+		}
 		return $r;
 	}
 
@@ -391,7 +404,7 @@ class CategoryViewer {
 	 */
 	function pagingLinks( $title, $first, $last, $limit, $query = array() ) {
 		global $wgUser, $wgLang;
-		$sk =& $this->getSkin();
+		$sk = $this->getSkin();
 		$limitText = $wgLang->formatNum( $limit );
 
 		$prevLink = htmlspecialchars( wfMsg( 'prevn', $limitText ) );

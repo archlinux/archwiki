@@ -1,13 +1,8 @@
 <?php
 /** Interlingua (Interlingua)
  *
- * @package MediaWiki
- * @subpackage Language
+ * @addtogroup Language
  */
-$quickbarSettings = array(
-	'Nulle', 'Fixe a sinistra', 'Fixe a dextera', 'Flottante a sinistra'
-);
-
 $skinNames = array(
 	'cologneblue' => 'Blau Colonia',
 );
@@ -366,6 +361,11 @@ $2 Listar redireciones &nbsp; Recercar pro $3 $9",
 pro definir tu preferentias.",
 "prefsreset"	=> "Tu preferentias salvate previemente ha essite restaurate.",
 "qbsettings"	=> "Configuration del barra de utensiles",
+'qbsettings-none'	=> 'Nulle',
+'qbsettings-fixedleft'	=> 'Fixe a sinistra',
+'qbsettings-fixedright'	=> 'Fixe a dextera',
+'qbsettings-floatingleft'	=> 'Flottante a sinistra',
+'qbsettings-floatingright'	=> 'Flottante a dextera',
 "changepassword" => "Cambiar contrasigno",
 "skin"			=> "Apparentia",
 "math"			=> "Exhibition de formulas",
@@ -608,19 +608,18 @@ o ha optate pro non reciper e-mail de altere usatores.",
 # Watchlist
 #
 "watchlist"		=> "Paginas sub observation",
+"mywatchlist"		=> "Paginas sub observation",
 "nowatchlist"	=> "Tu non ha paginas sub observation.",
 "watchnologin"	=> "Session non aperte",
 "watchnologintext"	=> "Tu debe [[Special:Userlogin|aperir un session]]
 pro modificar tu lista de paginas sub observation.",
 "addedwatch"	=> "Ponite sub observation",
-"addedwatchtext" => "Le pagina \"$1\" es ora in tu <a href=\"" .
-  "{{localurle:Special:Watchlist}}\">lista de paginas sub observation</a>.
+"addedwatchtext" => "Le pagina \"$1\" es ora in tu [[Special:Watchlist||lista de paginas sub observation]].
 Modificationes futur a iste pagina e su pagina de discussion associate essera listate la,
-e le pagina apparera <b>in nigretto</b> in le <a href=\"" .
-  "{{localurle:Special:Recentchanges}}\">lista de modificationes recente</a> pro
-facilitar su identification.</p>
+e le pagina apparera '''in nigretto''' in le [[Special:Recentchanges|lista de modificationes recente]] pro
+facilitar su identification.
 
-<p>Si tu vole cessar le obsevation de iste pagina posteriormente, clicca \"Cancellar observation\" in le barra de navigation.",
+Si tu vole cessar le obsevation de iste pagina posteriormente, clicca \"Cancellar observation\" in le barra de navigation.",
 "removedwatch"	=> "Observation cancellate",
 "removedwatchtext" => "Le pagina \"$1\" non es plus sub observation.",
 "watchthispage"	=> "Poner iste pagina sub observation",
@@ -674,7 +673,7 @@ non essera automaticamente substituite.",
 #
 "contributions"	=> "Contributiones de usator",
 "mycontris" => "Mi contributiones",
-"contribsub"	=> "Pro $1",
+"contribsub2"	=> "Pro $1 ($2)",
 "nocontribs"	=> "Necun modification ha essite trovate secundo iste criterios.",
 "ucnote"		=> "Infra es le <b>$1</b> ultime modificationes de iste usator in le <b>$2</b> ultime dies.",
 "uclinks"		=> "Vider le $1 ultime modificationes; vider le $2 ultime dies.",

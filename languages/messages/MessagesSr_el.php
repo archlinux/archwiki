@@ -1,7 +1,6 @@
 <?php
 /**
-  * @package MediaWiki
-  * @subpackage Language
+  * @addtogroup Language
   */
 
 $namespaceNames = array(
@@ -43,11 +42,6 @@ $namespaceAliases = array(
 	'Разговор_о_помоћи'       => NS_HELP_TALK,
 	'Категорија'              => NS_CATEGORY,
 	'Разговор_о_категорији'   => NS_CATEGORY_TALK,
-);
-
-
-$quickbarSettings = array(
- "Nikakva", "Pričvršćena levo", "Pričvršćena desno", "Plutajuća levo"
 );
 
 $skinNames = array(
@@ -159,7 +153,6 @@ $magicWords = array(
 	'toc'                    => array( 0, '__TOC__', '__SADRŽAJ__' ),
 	'noeditsection'          => array( 0, '__NOEDITSECTION__', '__BEZ_IZMENA__', '__BEZIZMENA__' ),
 	'start'                  => array( 0, '__START__', '__POČETAK__' ),
-	'end'                    => array( 0, '__END__', '__KRAJ__' ),
 	'currentmonth'           => array( 1, 'CURRENTMONTH', 'TRENUTNIMESEC' ),
 	'currentmonthname'       => array( 1, 'CURRENTMONTHNAME', 'TRENUTNIMESECIME' ),
 	'currentmonthnamegen'    => array( 1, 'CURRENTMONTHNAMEGEN', 'TRENUTNIMESECGEN' ),
@@ -656,7 +649,7 @@ Molimo prijavite se pošto je primite.',
 
 Blokirao vas je korisnik $1. Razlog za blokiranje je \'\'$2\'\'.
 
-Možete kontaktirati korisnika $1 ili nekog drugog [[{{ns:project}}:Administratori|administratora]] kako biste razgovarali o blokadi. Ne možete da koristite opciju "Pošalji e-poštu ovom korisniku" ukoliko nemate valjanu adresu e-pošte navedenu u vašim [[{ns:special}}:Preferences|podešavanjima]]. Vaša trenutna IP adresa je $3. Molimo uključite ovo u svaki vaš zahtev.',
+Možete kontaktirati korisnika $1 ili nekog drugog [[{{ns:project}}:Administratori|administratora]] kako biste razgovarali o blokadi. Ne možete da koristite opciju "Pošalji e-poštu ovom korisniku" ukoliko nemate valjanu adresu e-pošte navedenu u vašim [[Special:Preferences|podešavanjima]]. Vaša trenutna IP adresa je $3. Molimo uključite ovo u svaki vaš zahtev.',
 'blockedoriginalsource' => 'Izvor \'\'\'$1\'\'\' je prikazan ispod:',
 'blockededitsource' => 'Tekst \'\'\'vaših izmena\'\'\' za \'\'\'$1\'\'\' je prikazan ispod:',
 'whitelistedittitle' => 'Obavezno je prijavljivanje za uređivanje',
@@ -725,7 +718,7 @@ Takođe nam obećavate da ste ovo sami napisali ili prekopirali iz izvora u javn
 tako da sada nećete moći da snimite svoje izmene. Možda bi bilo dobro da iskopirate tekst u neki editor teksta i snimite ga za kasnije.</strong>',
 'protectedpagewarning' => '<strong>PAŽNJA: Ova stranica je zaključana tako da samo korisnici sa
 administratorskim privilegijama mogu da je menjaju. Uverite se
-da pratite [[{{ns:project}}:Pravila o zaštiti stranica|pravila o zaštiti stranica]].',
+da pratite [[{{ns:project}}:Pravila o zaštiti stranica|pravila o zaštiti stranica]].</strong>',
 'semiprotectedpagewarning' => '\'\'\'Napomena:\'\'\' Ova stranica je zaključana tako da je samo registrovani korisnici mogu uređivati.',
 'templatesused' => 'Šabloni koji se koriste na ovoj stranici:',
 'edittools' => '<!-- Tekst odavde će biti pokazan ispod formulara za uređivanje i slanje slika. -->',
@@ -853,6 +846,11 @@ koje sadrže sve izraze koji se traže će se pojaviti u rezultatu).',
 da biste podešavali korisnička podešavanja.',
 'prefsreset' => 'Vraćena su uskladištena podešavanja.',
 'qbsettings' => 'Brza paleta',
+'qbsettings-none'	=> 'Nikakva',
+'qbsettings-fixedleft'	=> 'Pričvršćena levo',
+'qbsettings-fixedright'	=> 'Pričvršćena desno',
+'qbsettings-floatingleft'	=> 'Plutajuća levo',
+'qbsettings-floatingright'	=> 'Plutajuća desno',
 'changepassword' => 'Promeni lozinku',
 'skin' => 'Koža',
 'math' => 'Matematike',
@@ -1224,6 +1222,7 @@ ili je izabrao da ne prima e-poštu od drugih korisnika.',
 
 # Watchlist
 'watchlist' => 'Moj spisak nadgledanja',
+'mywatchlist' => 'Moj spisak nadgledanja',
 'watchlistfor' => '(za \'\'\'$1\'\'\')',
 'nowatchlist' => 'Nemate ništa na svom spisku nadgledanja.',
 'watchlistanontext' => 'Molimo $1 da biste gledali ili menjali stavke na vašem spisku nadgledanja.',
@@ -1404,7 +1403,7 @@ Pogledajte [[{{ns:special}}:Log/delete|istoriju brisanja]] za spisak skorašnjih
 #
 'contributions' => 'Prilozi korisnika',
 'mycontris' => 'Moji prilozi',
-'contribsub' => 'Za $1',
+'contribsub2' => 'Za $1 ($2)',
 'nocontribs' => 'Nisu nađene promene koje zadovoljavaju ove uslove.',
 'ucnote' => 'Ispod je poslednjih <b>$1</b> promena u poslednjih <b>$2</b> dana.',
 'uclinks' => 'Gledaj poslednjih $1 promena; gledaj poslednjih $2 dana.',
@@ -1516,23 +1515,9 @@ Molimo potvrdite da je ovo zaista ono što nameravate da uradite.',
 'databasenotlocked' => 'Baza podataka nije zaključana.',
 
 # Make sysop
-'makesysoptitle' => 'Pretvorite korisnika u administratora',
-'makesysoptext' => 'Ovaj upitnik koriste birokrate da se obični korisnici pretvore u administratore. Unesite ime korisnika u polje i pritisnite dugme da bi korisnik postao administrator',
-'makesysopname' => 'Ime korisnika:',
-'makesysopsubmit' => 'Dodajte ovom korisniku administratorska ovlašćenja',
-'makesysopok' => '<b>Korisnik "$1" je sada administrator</b>',
-'makesysopfail' => '<b>Korisnik "$1" ne može da postane administrator. (Da li ste pravilno uneli ime?)</b>',
-'setbureaucratflag' => 'Postavi prava birokrate',
 'rightslog' => 'istorija korisničkih prava',
 'rightslogtext' => 'Ovo je istorija izmena korisničkih prava.',
 'rightslogentry' => 'je promenio prava za $1 sa $2 na $3',
-'rights' => 'Prava:',
-'set_user_rights' => 'Postavi prava korisnika',
-'user_rights_set' => '<b>Prava za korisnika "$1" promenjena</b>',
-'set_rights_fail' => '<b>Korisnička prava za "$1" nisu mogla da se podese. (Da li ste pravilno uneli ime?)</b>',
-'makesysop' => 'Davanje administratorskih ovlašćenja korisniku',
-'already_sysop' => 'Ovaj korisnik je već administrator',
-'already_bureaucrat' => 'Ovaj korisnik je već birokrata',
 'rightsnone' => '(nema)',
 
 # Move page
@@ -1667,13 +1652,13 @@ Svi transviki uvozi su zabeleženi u [[Posebno:Log/import|istoriji uvoza]].',
 'accesskey-watch' => 'w',
 
 # tooltip help for some actions, most are in Monobook.js
-'tooltip-search' => 'Pretražite viki [alt-f]',
-'tooltip-minoredit' => 'Naznačite da se radi o maloj izmeni [alt-i]',
-'tooltip-save' => 'Snimite Vaše izmene [alt-s]',
-'tooltip-preview' => 'Pretpregled Vaših izmena, molimo koristite ovo pre snimanja! [alt-p]',
-'tooltip-diff' => 'Prikaži koje promene ste napravili na tekstu. [alt-v]',
-'tooltip-compareselectedversions' => 'Pogledaj razlike između dve odabrane verzije ove stranice. [alt-v]',
-'tooltip-watch' => 'Dodajte ovu stranicu na Vaš spisak nadgledanja [alt-w]',
+'tooltip-search' => 'Pretražite viki',
+'tooltip-minoredit' => 'Naznačite da se radi o maloj izmeni',
+'tooltip-save' => 'Snimite Vaše izmene',
+'tooltip-preview' => 'Pretpregled Vaših izmena, molimo koristite ovo pre snimanja!',
+'tooltip-diff' => 'Prikaži koje promene ste napravili na tekstu.',
+'tooltip-compareselectedversions' => 'Pogledaj razlike između dve odabrane verzije ove stranice.',
+'tooltip-watch' => 'Dodajte ovu stranicu na Vaš spisak nadgledanja',
 
 # stylesheets
 'common.css' => '/** CSS stavljen ovde će se odnositi na sve kože */',
@@ -1734,56 +1719,104 @@ Svi transviki uvozi su zabeleženi u [[Posebno:Log/import|istoriji uvoza]].',
 'markedaspatrollederrortext' => 'Morate izabrati reviziju da biste označili kao patrolirano.',
 
 # Monobook.js: tooltips and access keys for monobook
-'monobook.js' => '/* tooltips and access keys */
-var ta = new Object();
-ta[\'pt-userpage\'] = new Array(\'.\',\'Moja korisnička stranica\');
-ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Korisnička stranica IP adrese sa koje uređujete\');
-ta[\'pt-mytalk\'] = new Array(\'n\',\'Moja stranica za razgovor\');
-ta[\'pt-anontalk\'] = new Array(\'n\',\'Razgovor o prilozima sa ove IP adrese\');
-ta[\'pt-preferences\'] = new Array(\'\',\'Moja korisnička podešavanja\');
-ta[\'pt-watchlist\'] = new Array(\'l\',\'Spisak članaka koje nadgledate\');
-ta[\'pt-mycontris\'] = new Array(\'y\',\'Spisak mojih priloga\');
-ta[\'pt-login\'] = new Array(\'o\',\'Preporučuje se da se prijavite, ali nije obavezno\');
-ta[\'pt-anonlogin\'] = new Array(\'o\',\'Preporučuje se da se prijavite, ali nije obavezno\');
-ta[\'pt-logout\'] = new Array(\'\',\'Odjavi se\');
-ta[\'ca-talk\'] = new Array(\'t\',\'Razgovor o članku\');
-ta[\'ca-edit\'] = new Array(\'e\',\'Možete urediti ovu stranicu. Molimo koristite pretpregled pre sačuvavanja.\');
-ta[\'ca-addsection\'] = new Array(\'+\',\'Dodajte komentar na ovu diskusiju\');
-ta[\'ca-viewsource\'] = new Array(\'e\',\'Ova stranica je zaključana. Možete videti njen izvor\');
-ta[\'ca-history\'] = new Array(\'h\',\'Prethodne verzije ove stranice\');
-ta[\'ca-protect\'] = new Array(\'=\',\'Zaštiti ovu stranicu\');
-ta[\'ca-delete\'] = new Array(\'d\',\'Obriši ovu stranicu\');
-ta[\'ca-undelete\'] = new Array(\'d\',\'Vraćati izmene koje su načinjene pre brisanja stranice\');
-ta[\'ca-move\'] = new Array(\'m\',\'Premesti ovu stranicu\');
-ta[\'ca-watch\'] = new Array(\'w\',\'Dodajte ovu stranicu na Vaš spisak nadgledanja\');
-ta[\'ca-unwatch\'] = new Array(\'w\',\'Uklonite ovu stranicu sa Vašeg spiska nadgledanja\');
-ta[\'search\'] = new Array(\'f\',\'Pretražite ovaj viki\');
-ta[\'p-logo\'] = new Array(\'\',\'Glavna strana\');
-ta[\'n-mainpage\'] = new Array(\'z\',\'Posetite glavnu stranu\');
-ta[\'n-portal\'] = new Array(\'\',\'O projektu, šta možete da radite i gde da pronađete stvari\');
-ta[\'n-currentevents\'] = new Array(\'\',\'Saznajte više o aktuelnostima\');
-ta[\'n-recentchanges\'] = new Array(\'r\',\'Spisak skorašnjih izmena na vikiju\');
-ta[\'n-randompage\'] = new Array(\'x\',\'Učitavaj slučajnu stranicu\');
-ta[\'n-help\'] = new Array(\'\',\'Mesto gde možete da naučite nešto\');
-ta[\'n-sitesupport\'] = new Array(\'\',\'Podržite nas\');
-ta[\'t-whatlinkshere\'] = new Array(\'j\',\'Spisak svih stranica koje vezuju na ovu\');
-ta[\'t-recentchangeslinked\'] = new Array(\'k\',\'Skorašnje izmene na člancima povezanim sa ove stranice\');
-ta[\'feed-rss\'] = new Array(\'\',\'RSS fid za ovu stranicu\');
-ta[\'feed-atom\'] = new Array(\'\',\'Atom fid za ovu stranicu\');
-ta[\'t-contributions\'] = new Array(\'\',\'Pogledaj spisak priloga ovog korisnika\');
-ta[\'t-emailuser\'] = new Array(\'\',\'Pošalji elektronsku poštu ovom korisniku\');
-ta[\'t-upload\'] = new Array(\'u\',\'Pošalji slike i medija fajlove\');
-ta[\'t-specialpages\'] = new Array(\'q\',\'Spisak svih posebnih stranica\');
-ta[\'ca-nstab-main\'] = new Array(\'c\',\'Pogledajte članak\');
-ta[\'ca-nstab-user\'] = new Array(\'c\',\'Pogledajte korisničku stranicu\');
-ta[\'ca-nstab-media\'] = new Array(\'c\',\'Pogledajte medija stranicu\');
-ta[\'ca-nstab-special\'] = new Array(\'\',\'Ovo je posebna stranica, ne možete je menjati\');
-ta[\'ca-nstab-wp\'] = new Array(\'c\',\'Pogledajte stranicu o projektu\');
-ta[\'ca-nstab-image\'] = new Array(\'c\',\'Pogledajte stranicu slike\');
-ta[\'ca-nstab-mediawiki\'] = new Array(\'c\',\'Pogledajte sistemsku poruku\');
-ta[\'ca-nstab-template\'] = new Array(\'c\',\'Pogledajte šablon\');
-ta[\'ca-nstab-help\'] = new Array(\'c\',\'Pogledajte stranicu za pomoć\');
-ta[\'ca-nstab-category\'] = new Array(\'c\',\'Pogledajte stranicu kategorije\');',
+'monobook.js' => '/* Deprecated; use [[MediaWiki:common.js]] */',
+
+'accesskey-pt-userpage' => '.',
+'tooltip-pt-userpage' => 'Moja korisnička stranica',
+'accesskey-pt-anonuserpage' => '.',
+'tooltip-pt-anonuserpage' => 'Korisnička stranica IP adrese sa koje uređujete',
+'accesskey-pt-mytalk' => 'n',
+'tooltip-pt-mytalk' => 'Moja stranica za razgovor',
+'accesskey-pt-anontalk' => 'n',
+'tooltip-pt-anontalk' => 'Razgovor o prilozima sa ove IP adrese',
+'accesskey-pt-preferences' => '',
+'tooltip-pt-preferences' => 'Moja korisnička podešavanja',
+'accesskey-pt-watchlist' => 'l',
+'tooltip-pt-watchlist' => 'Spisak članaka koje nadgledate',
+'accesskey-pt-mycontris' => 'y',
+'tooltip-pt-mycontris' => 'Spisak mojih priloga',
+'accesskey-pt-login' => 'o',
+'tooltip-pt-login' => 'Preporučuje se da se prijavite, ali nije obavezno',
+'accesskey-pt-anonlogin' => 'o',
+'tooltip-pt-anonlogin' => 'Preporučuje se da se prijavite, ali nije obavezno',
+'accesskey-pt-logout' => '',
+'tooltip-pt-logout' => 'Odjavi se',
+'accesskey-ca-talk' => 't',
+'tooltip-ca-talk' => 'Razgovor o članku',
+'accesskey-ca-edit' => 'e',
+'tooltip-ca-edit' => 'Možete urediti ovu stranicu. Molimo koristite pretpregled pre sačuvavanja.',
+'accesskey-ca-addsection' => '+',
+'tooltip-ca-addsection' => 'Dodajte komentar na ovu diskusiju',
+'accesskey-ca-viewsource' => 'e',
+'tooltip-ca-viewsource' => 'Ova stranica je zaključana. Možete videti njen izvor',
+'accesskey-ca-history' => 'h',
+'tooltip-ca-history' => 'Prethodne verzije ove stranice',
+'accesskey-ca-protect' => '=',
+'tooltip-ca-protect' => 'Zaštiti ovu stranicu',
+'accesskey-ca-delete' => 'd',
+'tooltip-ca-delete' => 'Obriši ovu stranicu',
+'accesskey-ca-undelete' => 'd',
+'tooltip-ca-undelete' => 'Vraćati izmene koje su načinjene pre brisanja stranice',
+'accesskey-ca-move' => 'm',
+'tooltip-ca-move' => 'Premesti ovu stranicu',
+'accesskey-ca-watch' => 'w',
+'tooltip-ca-watch' => 'Dodajte ovu stranicu na Vaš spisak nadgledanja',
+'accesskey-ca-unwatch' => 'w',
+'tooltip-ca-unwatch' => 'Uklonite ovu stranicu sa Vašeg spiska nadgledanja',
+'accesskey-search' => 'f',
+'tooltip-search' => 'Pretražite ovaj viki',
+'accesskey-p-logo' => '',
+'tooltip-p-logo' => 'Glavna strana',
+'accesskey-n-mainpage' => 'z',
+'tooltip-n-mainpage' => 'Posetite glavnu stranu',
+'accesskey-n-portal' => '',
+'tooltip-n-portal' => 'O projektu, šta možete da radite i gde da pronađete stvari',
+'accesskey-n-currentevents' => '',
+'tooltip-n-currentevents' => 'Saznajte više o aktuelnostima',
+'accesskey-n-recentchanges' => 'r',
+'tooltip-n-recentchanges' => 'Spisak skorašnjih izmena na vikiju',
+'accesskey-n-randompage' => 'x',
+'tooltip-n-randompage' => 'Učitavaj slučajnu stranicu',
+'accesskey-n-help' => '',
+'tooltip-n-help' => 'Mesto gde možete da naučite nešto',
+'accesskey-n-sitesupport' => '',
+'tooltip-n-sitesupport' => 'Podržite nas',
+'accesskey-t-whatlinkshere' => 'j',
+'tooltip-t-whatlinkshere' => 'Spisak svih stranica koje vezuju na ovu',
+'accesskey-t-recentchangeslinked' => 'k',
+'tooltip-t-recentchangeslinked' => 'Skorašnje izmene na člancima povezanim sa ove stranice',
+'accesskey-feed-rss' => '',
+'tooltip-feed-rss' => 'RSS fid za ovu stranicu',
+'accesskey-feed-atom' => '',
+'tooltip-feed-atom' => 'Atom fid za ovu stranicu',
+'accesskey-t-contributions' => '',
+'tooltip-t-contributions' => 'Pogledaj spisak priloga ovog korisnika',
+'accesskey-t-emailuser' => '',
+'tooltip-t-emailuser' => 'Pošalji elektronsku poštu ovom korisniku',
+'accesskey-t-upload' => 'u',
+'tooltip-t-upload' => 'Pošalji slike i medija fajlove',
+'accesskey-t-specialpages' => 'q',
+'tooltip-t-specialpages' => 'Spisak svih posebnih stranica',
+'accesskey-ca-nstab-main' => 'c',
+'tooltip-ca-nstab-main' => 'Pogledajte članak',
+'accesskey-ca-nstab-user' => 'c',
+'tooltip-ca-nstab-user' => 'Pogledajte korisničku stranicu',
+'accesskey-ca-nstab-media' => 'c',
+'tooltip-ca-nstab-media' => 'Pogledajte medija stranicu',
+'accesskey-ca-nstab-special' => '',
+'tooltip-ca-nstab-special' => 'Ovo je posebna stranica, ne možete je menjati',
+'accesskey-ca-nstab-wp' => 'c',
+'tooltip-ca-nstab-wp' => 'Pogledajte stranicu o projektu',
+'accesskey-ca-nstab-image' => 'c',
+'tooltip-ca-nstab-image' => 'Pogledajte stranicu slike',
+'accesskey-ca-nstab-mediawiki' => 'c',
+'tooltip-ca-nstab-mediawiki' => 'Pogledajte sistemsku poruku',
+'accesskey-ca-nstab-template' => 'c',
+'tooltip-ca-nstab-template' => 'Pogledajte šablon',
+'accesskey-ca-nstab-help' => 'c',
+'tooltip-ca-nstab-help' => 'Pogledajte stranicu za pomoć',
+'accesskey-ca-nstab-category' => 'c',
+'tooltip-ca-nstab-category' => 'Pogledajte stranicu kategorije',
 
 # image deletion
 'deletedrevision' => 'Obrisana stara revizija $1.',

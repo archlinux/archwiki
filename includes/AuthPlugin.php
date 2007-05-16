@@ -1,6 +1,5 @@
 <?php
 /**
- * @package MediaWiki
  */
 # Copyright (C) 2004 Brion Vibber <brion@pobox.com>
 # http://www.mediawiki.org/
@@ -33,7 +32,6 @@
  * This interface is new, and might change a bit before 1.4.0 final is
  * done...
  *
- * @package MediaWiki
  */
 class AuthPlugin {
 	/**
@@ -187,12 +185,14 @@ class AuthPlugin {
 	 * Add a user to the external authentication database.
 	 * Return true if successful.
 	 *
-	 * @param User $user
+	 * @param User $user - only the name should be assumed valid at this point
 	 * @param string $password
+	 * @param string $email
+	 * @param string $realname
 	 * @return bool
 	 * @public
 	 */
-	function addUser( $user, $password ) {
+	function addUser( $user, $password, $email='', $realname='' ) {
 		return true;
 	}
 

@@ -1,15 +1,14 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
-/**
- *
- */
 require_once('UserMailer.php');
 
+/**
+ * @todo document
+ */
 function wfSpecialEmailuser( $par ) {
 	global $wgUser, $wgOut, $wgRequest, $wgEnableEmail, $wgEnableUserEmail;
 
@@ -51,7 +50,14 @@ function wfSpecialEmailuser( $par ) {
 	if ( "success" == $action ) {
 		$f->showSuccess( $nu );
 	} else if ( "submit" == $action && $wgRequest->wasPosted() &&
-		$wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ) ) ) {
+				$wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ) ) ) 
+	{
+		# Check against the rate limiter
+		if( $wgUser->pingLimiter( 'emailuser' ) ) {
+			$wgOut->rateLimited();
+			return;
+		}
+
 		$f->doSubmit();
 	} else {
 		$f->showForm();
@@ -59,9 +65,8 @@ function wfSpecialEmailuser( $par ) {
 }
 
 /**
- * @todo document
- * @package MediaWiki
- * @subpackage SpecialPage
+ * Implements the Special:Emailuser web interface, and invokes userMailer for sending the email message.
+ * @addtogroup SpecialPage
  */
 class EmailUserForm {
 

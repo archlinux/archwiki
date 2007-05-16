@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Sep 7, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiQueryBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiQueryRevisions extends ApiQueryBase {
 
 	public function __construct($query, $moduleName) {
@@ -149,7 +151,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 		$count = 0;
 		$res = $this->select(__METHOD__);
 
-		$db = & $this->getDB();
+		$db = $this->getDB();
 		while ($row = $db->fetchObject($res)) {
 
 			if (++ $count > $limit) {
@@ -262,7 +264,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryRevisions.php 19434 2007-01-18 02:04:11Z brion $';
+		return __CLASS__ . ': $Id: ApiQueryRevisions.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

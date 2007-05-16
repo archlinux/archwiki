@@ -2,86 +2,12 @@
 /**
  * Check a language file.
  *
- * @package MediaWiki
- * @subpackage Maintenance
+ * @addtogroup Maintenance
  */
 
 require_once( dirname(__FILE__).'/../commandLine.inc' );
 require_once( 'languages.inc' );
-
-/**
- * Check a language.
- *
- * @param $code The language code.
- */
-function checkLanguage( $code ) {
-	global $wgLanguages, $wgGeneralMessages, $wgRequiredMessagesNumber, $wgDisplayLevel, $wgLinks, $wgWikiLanguage, $wgChecks;
-
-	# Get messages
-	$messages = $wgLanguages->getMessages( $code );
-	$messagesNumber = count( $messages['translated'] );
-
-	# Skip the checks if specified
-	if ( $wgDisplayLevel == 0 ) {
-		return;
-	}
-
-	# Untranslated messages
-	if ( in_array( 'untranslated', $wgChecks ) ) {
-		$untranslatedMessages = $wgLanguages->getUntranslatedMessages( $code );
-		$untranslatedMessagesNumber = count( $untranslatedMessages );
-		$wgLanguages->outputMessagesList( $untranslatedMessages, $code, "\n$untranslatedMessagesNumber messages of $wgRequiredMessagesNumber are not translated to $code, but exist in en:", $wgDisplayLevel, $wgLinks, $wgWikiLanguage );
-	}
-
-	# Duplicate messages
-	if ( in_array( 'duplicate', $wgChecks ) ) {
-		$duplicateMessages = $wgLanguages->getDuplicateMessages( $code );
-		$duplicateMessagesNumber = count( $duplicateMessages );
-		$wgLanguages->outputMessagesList( $duplicateMessages, $code, "\n$duplicateMessagesNumber messages of $messagesNumber are translated the same in en and $code:", $wgDisplayLevel, $wgLinks, $wgWikiLanguage );
-	}
-
-	# Obsolete messages
-	if ( in_array( 'obsolete', $wgChecks ) ) {
-		$obsoleteMessages = $messages['obsolete'];
-		$obsoleteMessagesNumber = count( $obsoleteMessages );
-		$wgLanguages->outputMessagesList( $obsoleteMessages, $code, "\n$obsoleteMessagesNumber messages of $messagesNumber are not exist in en (or are in the ignored list), but still exist in $code:", $wgDisplayLevel, $wgLinks, $wgWikiLanguage );
-	}
-
-	# Messages without variables
-	if ( in_array( 'variables', $wgChecks ) ) {
-		$messagesWithoutVariables = $wgLanguages->getMessagesWithoutVariables( $code );
-		$messagesWithoutVariablesNumber = count( $messagesWithoutVariables );
-		$wgLanguages->outputMessagesList( $messagesWithoutVariables, $code, "\n$messagesWithoutVariablesNumber messages of $messagesNumber in $code don't use some variables while en uses them:", $wgDisplayLevel, $wgLinks, $wgWikiLanguage );
-	}
-
-	# Empty messages
-	if ( in_array( 'empty', $wgChecks ) ) {
-		$emptyMessages = $wgLanguages->getEmptyMessages( $code );
-		$emptyMessagesNumber = count( $emptyMessages );
-		$wgLanguages->outputMessagesList( $emptyMessages, $code, "\n$emptyMessagesNumber messages of $messagesNumber in $code are empty or -:", $wgDisplayLevel, $wgLinks, $wgWikiLanguage );
-	}
-
-	# Messages with whitespace
-	if ( in_array( 'whitespace', $wgChecks ) ) {
-		$messagesWithWhitespace = $wgLanguages->getMessagesWithWhitespace( $code );
-		$messagesWithWhitespaceNumber = count( $messagesWithWhitespace );
-		$wgLanguages->outputMessagesList( $messagesWithWhitespace, $code, "\n$messagesWithWhitespaceNumber messages of $messagesNumber in $code have a trailing whitespace:", $wgDisplayLevel, $wgLinks, $wgWikiLanguage );
-	}
-
-	# Non-XHTML messages
-	if ( in_array( 'xhtml', $wgChecks ) ) {
-		$nonXHTMLMessages = $wgLanguages->getNonXHTMLMessages( $code );
-		$nonXHTMLMessagesNumber = count( $nonXHTMLMessages );
-		$wgLanguages->outputMessagesList( $nonXHTMLMessages, $code, "\n$nonXHTMLMessagesNumber messages of $messagesNumber in $code are not well-formed XHTML:", $wgDisplayLevel, $wgLinks, $wgWikiLanguage );
-	}
-
-	# Messages with wrong characters
-	if ( in_array( 'chars', $wgChecks ) ) {
-		$messagesWithWrongChars = $wgLanguages->getMessagesWithWrongChars( $code );
-		$messagesWithWrongCharsNumber = count( $messagesWithWrongChars );
-		$wgLanguages->outputMessagesList( $messagesWithWrongChars, $code, "\n$messagesWithWrongCharsNumber messages of $messagesNumber in $code include hidden chars which should not be used in the messages:", $wgDisplayLevel, $wgLinks, $wgWikiLanguage );
-	}
-}
+require_once( 'checkLanguage.inc' );
 
 # Show help
 if ( isset( $options['help'] ) ) {
@@ -96,6 +22,7 @@ Parameters:
 	* whitelist: Make only the following checks (form: code,code).
 	* blacklist: Don't make the following checks (form: code,code).
 	* duplicate: Additionally check for messages which are translated the same to English (default off).
+	* plural: Additionally check for messages that don't use plural while English does (default off).
 	* noexif: Don't check for EXIF messages (a bit hard and boring to translate), if you know that they are currently not translated and want to focus on other problems (default off).
 Check codes (ideally, all of them should result 0; all the checks are executed by default):
 	* untranslated: Messages which are required to translate, but are not translated.
@@ -141,9 +68,12 @@ if ( isset( $options['whitelist'] ) ) {
 	$wgChecks = array_diff( $wgChecks, explode( ',', $options['blacklist'] ) );
 }
 
-# Add duplicate option if specified
+# Add duplicate and plural options if specified
 if ( isset( $options['duplicate'] ) ) {
 	$wgChecks[] = 'duplicate';
+}
+if ( isset( $options['plural'] ) ) {
+	$wgChecks[] = 'plural';
 }
 
 # Should check for EXIF?
@@ -160,7 +90,7 @@ $wgRequiredMessagesNumber = count( $wgGeneralMessages['required'] );
 if ( $wgCode == 'all' ) {
 	foreach ( $wgLanguages->getLanguages() as $language ) {
 		if ( $language != 'en' && $language != 'enRTL' ) {
-			checkLanguage( $language );
+			checkLanguage( $wgLanguages, $language );
 		}
 	}
 } else {
@@ -170,7 +100,7 @@ if ( $wgCode == 'all' ) {
 	} else if ( $wgCode == 'enRTL' ) {
 		echo "Current selected language is RTL English, which cannot be checked.\n";
 	} else {
-		checkLanguage( $wgCode );
+		checkLanguage( $wgLanguages, $wgCode );
 	}
 }
 

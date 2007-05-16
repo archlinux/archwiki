@@ -4,8 +4,7 @@
  * Class representing a list of titles
  * The execute() method checks them all for existence and adds them to a LinkCache object
  +
- * @package MediaWiki
- * @subpackage Cache
+ * @addtogroup Cache
  */
 class LinkBatch {
 	/**
@@ -13,7 +12,7 @@ class LinkBatch {
 	 */
 	var $data = array();
 
-	function LinkBatch( $arr = array() ) {
+	function __construct( $arr = array() ) {
 		foreach( $arr as $item ) {
 			$this->addObj( $item );
 		}
@@ -120,7 +119,7 @@ class LinkBatch {
 
 		// Construct query
 		// This is very similar to Parser::replaceLinkHolders
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$page = $dbr->tableName( 'page' );
 		$set = $this->constructSet( 'page', $dbr );
 		if ( $set === false ) {

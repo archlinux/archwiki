@@ -499,8 +499,8 @@ class SkinMonoBookCBT extends SkinTemplate {
 	}
 
 	function is_special() { return cbt_value( $this->mTitle->getNamespace() == NS_SPECIAL, 'title' ); }
-	function can_edit() { return cbt_value( (string)($this->mTitle->userCanEdit()), 'dynamic' ); }
-	function can_move() { return cbt_value( (string)($this->mTitle->userCanMove()), 'dynamic' ); }
+	function can_edit() { return cbt_value( (string)($this->mTitle->userCan( 'edit' )), 'dynamic' ); }
+	function can_move() { return cbt_value( (string)($this->mTitle->userCan( 'move' )), 'dynamic' ); }
 	function is_talk() { return cbt_value( (string)($this->mTitle->isTalkPage()), 'title' ); }
 	function is_protected() { return cbt_value( (string)$this->mTitle->isProtected(), 'dynamic' ); }
 	function nskey() { return cbt_value( $this->mTitle->getNamespaceKey(), 'title' ); }
@@ -1017,7 +1017,7 @@ class SkinMonoBookCBT extends SkinTemplate {
 		global $wgPageShowWatchingUsers;
 		if ( !$wgPageShowWatchingUsers ) return '';
 
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		extract( $dbr->tableNames( 'watchlist' ) );
 		$sql = "SELECT COUNT(*) AS n FROM $watchlist
 			WHERE wl_title='" . $dbr->strencode($this->mTitle->getDBKey()) .

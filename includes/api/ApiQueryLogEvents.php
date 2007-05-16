@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Oct 16, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiQueryBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiQueryLogEvents extends ApiQueryBase {
 
 	public function __construct($query, $moduleName) {
@@ -39,7 +41,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		$limit = $type = $start = $end = $dir = $user = $title = null;
 		extract($this->extractRequestParams());
 
-		$db = & $this->getDB();
+		$db = $this->getDB();
 
 		list($tbl_logging, $tbl_page, $tbl_user) = $db->tableNamesN('logging', 'page', 'user');
 
@@ -167,7 +169,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryLogEvents.php 17952 2006-11-27 08:36:57Z nickj $';
+		return __CLASS__ . ': $Id: ApiQueryLogEvents.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

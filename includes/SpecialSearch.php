@@ -19,8 +19,7 @@
 
 /**
  * Run text & title search and display the output
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 /**
@@ -43,9 +42,8 @@ function wfSpecialSearch( $par = '' ) {
 }
 
 /**
- * @todo document
- * @package MediaWiki
- * @subpackage SpecialPage
+ * implements Special:Search - Run text & title search and display the output
+ * @addtogroup SpecialPage
  */
 class SpecialSearch {
 
@@ -161,12 +159,14 @@ class SpecialSearch {
 
 		$num = ( $titleMatches ? $titleMatches->numRows() : 0 )
 			+ ( $textMatches ? $textMatches->numRows() : 0);
-		if ( $num >= $this->limit ) {
-			$top = wfShowingResults( $this->offset, $this->limit );
-		} else {
-			$top = wfShowingResultsNum( $this->offset, $this->limit, $num );
+		if ( $num > 0 ) {
+			if ( $num >= $this->limit ) {
+				$top = wfShowingResults( $this->offset, $this->limit );
+			} else {
+				$top = wfShowingResultsNum( $this->offset, $this->limit, $num );
+			}
+			$wgOut->addHTML( "<p>{$top}</p>\n" );
 		}
-		$wgOut->addHTML( "<p>{$top}</p>\n" );
 
 		if( $num || $this->offset ) {
 			$prevnext = wfViewPrevNext( $this->offset, $this->limit,
@@ -314,7 +314,7 @@ class SpecialSearch {
 			wfProfileOut( $fname );
 			return "<!-- Broken link in search result -->\n";
 		}
-		$sk =& $wgUser->getSkin();
+		$sk = $wgUser->getSkin();
 
 		$contextlines = $wgUser->getOption( 'contextlines',  5 );
 		$contextchars = $wgUser->getOption( 'contextchars', 50 );

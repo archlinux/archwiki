@@ -1,11 +1,13 @@
 <?php
-/* ProfilerSimpleUDP class, that sends out messages for 'udpprofile' daemon
-   (the one from wikipedia/udpprofile CVS )
-*/
 
 require_once(dirname(__FILE__).'/Profiler.php');
 require_once(dirname(__FILE__).'/ProfilerSimple.php');
 
+/**
+ * ProfilerSimpleUDP class, that sends out messages for 'udpprofile' daemon
+ * (the one from mediawiki/trunk/udpprofile SVN )
+ * @addtogroup Profiler
+ */
 class ProfilerSimpleUDP extends ProfilerSimple {
 	function getFunctionReport() {
 		global $wgUDPProfilerHost;
@@ -15,8 +17,7 @@ class ProfilerSimpleUDP extends ProfilerSimple {
 			# Less than minimum, ignore
 			return;
 		}
-			
-		
+
 		$sock = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 		$plength=0;
 		$packet="";

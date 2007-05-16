@@ -1,13 +1,8 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage Cache
- */
-
-/**
- *
- * @package MediaWiki
+ * @addtogroup Cache
+ * @todo document
  */
 class ParserCache {
 	/**
@@ -28,14 +23,14 @@ class ParserCache {
 	 *
 	 * @param object $memCached
 	 */
-	function ParserCache( &$memCached ) {
+	function __construct( &$memCached ) {
 		$this->mMemc =& $memCached;
 	}
 
 	function getKey( &$article, &$user ) {
 		global $action;
 		$hash = $user->getPageRenderingHash();
-		if( !$article->mTitle->userCanEdit() ) {
+		if( !$article->mTitle->quickUserCan( 'edit' ) ) {
 			// section edit links are suppressed even if the user has them on
 			$edit = '!edit=0';
 		} else {
@@ -95,31 +90,30 @@ class ParserCache {
 	function save( $parserOutput, &$article, &$user ){
 		global $wgParserCacheExpireTime;
 		$key = $this->getKey( $article, $user );
-		
+
 		if( $parserOutput->getCacheTime() != -1 ) {
-		
+
 			$now = wfTimestampNow();
 			$parserOutput->setCacheTime( $now );
-	
+
 			// Save the timestamp so that we don't have to load the revision row on view
 			$parserOutput->mTimestamp = $article->getTimestamp();
-			
+
 			$parserOutput->mText .= "\n<!-- Saved in parser cache with key $key and timestamp $now -->\n";
 			wfDebug( "Saved in parser cache with key $key and timestamp $now\n" );
-	
+
 			if( $parserOutput->containsOldMagic() ){
 				$expire = 3600; # 1 hour
 			} else {
 				$expire = $wgParserCacheExpireTime;
 			}
 			$this->mMemc->set( $key, $parserOutput, $expire );
-		
+
 		} else {
 			wfDebug( "Parser output was marked as uncacheable and has not been saved.\n" );
 		}
-		
 	}
-	
+
 }
 
 ?>

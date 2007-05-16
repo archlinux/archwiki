@@ -2,8 +2,7 @@
 /**
  * A special page to show pages in the
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  *
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  * @copyright Copyright © 2005, Ævar Arnfjörð Bjarmason
@@ -11,8 +10,7 @@
  */
 
 /**
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 class MostrevisionsPage extends QueryPage {
 
@@ -21,7 +19,7 @@ class MostrevisionsPage extends QueryPage {
 	function isSyndicated() { return false; }
 
 	function getSQL() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		list( $revision, $page ) = $dbr->tableNamesN( 'revision', 'page' );
 		return
 			"

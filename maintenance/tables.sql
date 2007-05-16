@@ -130,7 +130,7 @@ CREATE TABLE /*$wgDBprefix*/user (
   UNIQUE INDEX user_name (user_name),
   INDEX (user_email_token)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- User permissions have been broken out to a separate table;
@@ -156,20 +156,20 @@ CREATE TABLE /*$wgDBprefix*/user_groups (
   
   PRIMARY KEY (ug_user,ug_group),
   KEY (ug_group)
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 -- Stores notifications of user talk page changes, for the display
 -- of the "you have new messages" box
 CREATE TABLE /*$wgDBprefix*/user_newtalk (
   -- Key to user.user_id
   user_id int(5) NOT NULL default '0',
-  -- If the user is an anonymous user hir IP address is stored here
+  -- If the user is an anonymous user their IP address is stored here
   -- since the user_id of 0 is ambiguous
   user_ip varchar(40) NOT NULL default '',
   INDEX user_id (user_id),
   INDEX user_ip (user_ip)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 
 --
@@ -229,7 +229,7 @@ CREATE TABLE /*$wgDBprefix*/page (
   INDEX (page_random),
   INDEX (page_len)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- Every edit of a page creates also a revision row.
@@ -270,6 +270,13 @@ CREATE TABLE /*$wgDBprefix*/revision (
   -- Not yet used; reserved for future changes to the deletion system.
   rev_deleted tinyint(1) unsigned NOT NULL default '0',
   
+  -- Length of this revision in bytes
+  rev_len int(8) unsigned,
+
+  -- Key to revision.rev_id
+  -- This field is used to add support for a tree structure (The Adjacency List Model)
+  rev_parent_id int(8) unsigned default NULL,
+
   PRIMARY KEY rev_page_id (rev_page, rev_id),
   UNIQUE INDEX rev_id (rev_id),
   INDEX rev_timestamp (rev_timestamp),
@@ -277,8 +284,8 @@ CREATE TABLE /*$wgDBprefix*/revision (
   INDEX user_timestamp (rev_user,rev_timestamp),
   INDEX usertext_timestamp (rev_user_text,rev_timestamp)
 
-) TYPE=InnoDB;
-
+) /*$wgDBTableOptions*/ MAX_ROWS=10000000 AVG_ROW_LENGTH=1024;
+-- In case tables are created as MyISAM, use row hints for MySQL <5.0 to avoid 4GB limit
 
 --
 -- Holds text of individual page revisions.
@@ -313,7 +320,8 @@ CREATE TABLE /*$wgDBprefix*/text (
   
   PRIMARY KEY old_id (old_id)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/ MAX_ROWS=10000000 AVG_ROW_LENGTH=10240;
+-- In case tables are created as MyISAM, use row hints for MySQL <5.0 to avoid 4GB limit
 
 --
 -- Holding area for deleted articles, which may be viewed
@@ -362,10 +370,16 @@ CREATE TABLE /*$wgDBprefix*/archive (
   -- ar_text and ar_flags fields will be used to create a new text
   -- row upon undeletion.
   ar_text_id int(8) unsigned,
+
+  -- rev_deleted for archives
+  ar_deleted tinyint(1) unsigned NOT NULL default '0',
+
+  -- Length of this revision in bytes
+  ar_len int(8) unsigned,
   
   KEY name_title_timestamp (ar_namespace,ar_title,ar_timestamp)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 
 --
@@ -385,7 +399,7 @@ CREATE TABLE /*$wgDBprefix*/pagelinks (
   UNIQUE KEY pl_from (pl_from,pl_namespace,pl_title),
   KEY (pl_namespace,pl_title,pl_from)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 
 --
@@ -405,7 +419,7 @@ CREATE TABLE /*$wgDBprefix*/templatelinks (
   UNIQUE KEY tl_from (tl_from,tl_namespace,tl_title),
   KEY (tl_namespace,tl_title,tl_from)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- Track links to images *used inline*
@@ -424,7 +438,7 @@ CREATE TABLE /*$wgDBprefix*/imagelinks (
   UNIQUE KEY il_from (il_from,il_to),
   KEY (il_to,il_from)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- Track category inclusions *used inline*
@@ -464,7 +478,7 @@ CREATE TABLE /*$wgDBprefix*/categorylinks (
   -- Not really used?
   KEY cl_timestamp (cl_to,cl_timestamp)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- Track links to external URLs
@@ -492,7 +506,7 @@ CREATE TABLE /*$wgDBprefix*/externallinks (
   KEY (el_from, el_to(40)),
   KEY (el_to(60), el_from),
   KEY (el_index(60))
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 -- 
 -- Track interlanguage links
@@ -509,7 +523,7 @@ CREATE TABLE /*$wgDBprefix*/langlinks (
 
   UNIQUE KEY (ll_from, ll_lang),
   KEY (ll_lang, ll_title)
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- Contains a single row with some aggregate info
@@ -546,7 +560,7 @@ CREATE TABLE /*$wgDBprefix*/site_stats (
 
   UNIQUE KEY ss_row_id (ss_row_id)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- Stores an ID for every time any article is visited;
@@ -605,6 +619,9 @@ CREATE TABLE /*$wgDBprefix*/ipblocks (
   -- Size chosen to allow IPv6
   ipb_range_start tinyblob NOT NULL,
   ipb_range_end tinyblob NOT NULL,
+
+  -- Flag for entries hidden from users and Sysops
+  ipb_deleted bool NOT NULL default 0,
   
   PRIMARY KEY ipb_id (ipb_id),
 
@@ -617,7 +634,7 @@ CREATE TABLE /*$wgDBprefix*/ipblocks (
   INDEX ipb_timestamp (ipb_timestamp),
   INDEX ipb_expiry (ipb_expiry)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 
 --
@@ -674,7 +691,7 @@ CREATE TABLE /*$wgDBprefix*/image (
   -- Used by Special:Newimages and Special:Imagelist
   INDEX img_timestamp (img_timestamp)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- Previous revisions of uploaded files.
@@ -701,7 +718,7 @@ CREATE TABLE /*$wgDBprefix*/oldimage (
 
   INDEX oi_name (oi_name(10))
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- Record of deleted file data
@@ -746,6 +763,9 @@ CREATE TABLE /*$wgDBprefix*/filearchive (
   fa_user int(5) unsigned default '0',
   fa_user_text varchar(255) binary,
   fa_timestamp char(14) binary default '',
+
+  -- Visibility of deleted revisions, bitfield
+  fa_deleted tinyint(1) unsigned NOT NULL default '0',
   
   PRIMARY KEY (fa_id),
   INDEX (fa_name, fa_timestamp),             -- pick out by image name
@@ -753,7 +773,7 @@ CREATE TABLE /*$wgDBprefix*/filearchive (
   INDEX (fa_deleted_timestamp),              -- sort by deletion time
   INDEX (fa_deleted_user)                    -- sort by deleter
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- Primarily a summary table for Special:Recentchanges,
@@ -815,6 +835,18 @@ CREATE TABLE /*$wgDBprefix*/recentchanges (
   rc_old_len int(10),
   rc_new_len int(10),
 
+  -- Visibility of deleted revisions, bitfield
+  rc_deleted tinyint(1) unsigned NOT NULL default '0',
+
+  -- Value corresonding to log_id, specific log entries
+  rc_logid int(10) unsigned NOT NULL default '0',
+  -- Store log type info here, or null
+  rc_log_type varchar(255) binary NULL default NULL,
+  -- Store log action or null
+  rc_log_action varchar(255) binary NULL default NULL,
+  -- Log params
+  rc_params blob NOT NULL default '',
+  
   PRIMARY KEY rc_id (rc_id),
   INDEX rc_timestamp (rc_timestamp),
   INDEX rc_namespace_title (rc_namespace, rc_title),
@@ -824,7 +856,7 @@ CREATE TABLE /*$wgDBprefix*/recentchanges (
   INDEX rc_ns_usertext (rc_namespace, rc_user_text),
   INDEX rc_user_text (rc_user_text, rc_timestamp)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 CREATE TABLE /*$wgDBprefix*/watchlist (
   -- Key to user.user_id
@@ -843,7 +875,7 @@ CREATE TABLE /*$wgDBprefix*/watchlist (
   UNIQUE KEY (wl_user, wl_namespace, wl_title),
   KEY namespace_title (wl_namespace, wl_title)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 
 --
@@ -869,7 +901,7 @@ CREATE TABLE /*$wgDBprefix*/math (
   
   UNIQUE KEY math_inputhash (math_inputhash)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- When using the default MySQL search backend, page titles
@@ -916,7 +948,7 @@ CREATE TABLE /*$wgDBprefix*/interwiki (
   
   UNIQUE KEY iw_prefix (iw_prefix)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- Used for caching expensive grouped queries
@@ -934,7 +966,7 @@ CREATE TABLE /*$wgDBprefix*/querycache (
   
   KEY (qc_type,qc_value)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- For a few generic cache operations if not using Memcached
@@ -946,7 +978,7 @@ CREATE TABLE /*$wgDBprefix*/objectcache (
   UNIQUE KEY (keyname),
   KEY (exptime)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 --
 -- Cache of interwiki transclusion
@@ -956,7 +988,7 @@ CREATE TABLE /*$wgDBprefix*/transcache (
   tc_contents text,
   tc_time int NOT NULL,
   UNIQUE INDEX tc_url_idx (tc_url)
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 CREATE TABLE /*$wgDBprefix*/logging (
   -- Symbolic keys for the general log type and the action type
@@ -982,12 +1014,19 @@ CREATE TABLE /*$wgDBprefix*/logging (
   -- LF separated list of miscellaneous parameters
   log_params blob NOT NULL,
 
+  -- Log ID, for referring to this specific log entry, probably for deletion and such.
+  log_id int unsigned NOT NULL auto_increment,
+
+  -- rev_deleted for logs
+  log_deleted tinyint(1) unsigned NOT NULL default '0',
+
+  PRIMARY KEY log_id (log_id),
   KEY type_time (log_type, log_timestamp),
   KEY user_time (log_user, log_timestamp),
   KEY page_time (log_namespace, log_title, log_timestamp),
   KEY times (log_timestamp)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 CREATE TABLE /*$wgDBprefix*/trackbacks (
   tb_id int auto_increment,
@@ -999,7 +1038,7 @@ CREATE TABLE /*$wgDBprefix*/trackbacks (
 
   PRIMARY KEY (tb_id),
   INDEX (tb_page)
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 
 -- Jobs performed by parallel apache threads or a command-line daemon
@@ -1020,7 +1059,7 @@ CREATE TABLE /*$wgDBprefix*/job (
 
   PRIMARY KEY job_id (job_id),
   KEY (job_cmd, job_namespace, job_title)
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 
 -- Details of updates to cached special pages
@@ -1035,7 +1074,7 @@ CREATE TABLE /*$wgDBprefix*/querycache_info (
 
   UNIQUE KEY ( qci_type )
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 -- For each redirect, this table contains exactly one row defining its target
 CREATE TABLE /*$wgDBprefix*/redirect (
@@ -1051,7 +1090,7 @@ CREATE TABLE /*$wgDBprefix*/redirect (
 
   PRIMARY KEY rd_from (rd_from),
   KEY rd_ns_title (rd_namespace,rd_title,rd_from)
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
 
 -- Used for caching expensive grouped queries that need two links (for example double-redirects)
 CREATE TABLE /*$wgDBprefix*/querycachetwo (
@@ -1073,6 +1112,32 @@ CREATE TABLE /*$wgDBprefix*/querycachetwo (
   KEY qcc_title (qcc_type,qcc_namespace,qcc_title),
   KEY qcc_titletwo (qcc_type,qcc_namespacetwo,qcc_titletwo)
 
-) TYPE=InnoDB;
+) /*$wgDBTableOptions*/;
+
+--- Used for storing page restrictions (i.e. protection levels)
+CREATE TABLE /*$wgDBprefix*/page_restrictions (
+  -- Page to apply restrictions to (Foreign Key to page).
+  pr_page int(8) NOT NULL,
+  -- The protection type (edit, move, etc)
+  pr_type varchar(255) NOT NULL,
+  -- The protection level (Sysop, autoconfirmed, etc)
+  pr_level varchar(255) NOT NULL,
+  -- Whether or not to cascade the protection down to pages transcluded.
+  pr_cascade tinyint(4) NOT NULL,
+  -- Field for future support of per-user restriction.
+  pr_user int(8) NULL,
+  -- Field for time-limited protection.
+  pr_expiry char(14) binary NULL,
+  -- Field for an ID for this restrictions row (sort-key for Special:ProtectedPages)
+  pr_id int unsigned NOT NULL auto_increment,
+
+  PRIMARY KEY pr_pagetype (pr_page,pr_type),
+
+  UNIQUE KEY pr_id (pr_id),
+  KEY pr_page (pr_page),
+  KEY pr_typelevel (pr_type,pr_level),
+  KEY pr_level (pr_level),
+  KEY pr_cascade (pr_cascade)
+) /*$wgDBTableOptions*/;
 
 -- vim: sw=2 sts=2 et

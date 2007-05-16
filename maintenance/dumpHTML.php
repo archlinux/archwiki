@@ -1,8 +1,7 @@
 <?php
 /**
  * @todo document
- * @package MediaWiki
- * @subpackage Maintenance
+ * @addtogroup Maintenance
  */
 
 /**
@@ -62,7 +61,7 @@ if ( !empty( $options['s'] ) ) {
 if ( !empty( $options['e'] ) ) {
 	$end = $options['e'];
 } else {
-	$dbr =& wfGetDB( DB_SLAVE );
+	$dbr = wfGetDB( DB_SLAVE );
 	$end = $dbr->selectField( 'page', 'max(page_id)', false );
 }
 
@@ -117,7 +116,7 @@ if ( $options['special'] ) {
 	$wgHTMLDump->doSharedImageDescriptions();
 } else {
 	print "Creating static HTML dump in directory $dest. \n";
-	$dbr =& wfGetDB( DB_SLAVE );
+	$dbr = wfGetDB( DB_SLAVE );
 	$server = $dbr->getProperty( 'mServer' );
 	print "Using database {$server}\n";
 

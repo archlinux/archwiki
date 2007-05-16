@@ -35,8 +35,7 @@
  * percentage of messages correctly localised and the number of messages to be
  * translated.
  *
- * @package MediaWiki
- * @subpackage Maintenance
+ * @addtogroup Maintenance
  */
 
 /** This script run from the commandline */
@@ -75,7 +74,8 @@ function ucfirstlcrest($string) {
 function getMediawikiMessages($languageCode = 'En') {
 
 	$foo = "wgAllMessages$languageCode";
-	global $$foo, $wgSkinNamesEn;
+	global $$foo;
+	global $wgSkinNamesEn; // potentially unused global declaration?
 
 	// it might already be loaded in LocalSettings.php
 	if(!isset($$foo)) {
@@ -83,7 +83,7 @@ function getMediawikiMessages($languageCode = 'En') {
 		$langFile = $IP.'/languages/classes/Language'.$languageCode.'.php';
 		if (file_exists( $langFile ) ) {
 			print "Including $langFile\n";
-			global $wgNamespaceNamesEn;
+			global $wgNamespaceNamesEn;  // potentially unused global declaration?
 			include($langFile);
 		} else wfDie("ERROR: The file $langFile does not exist !\n");
 	}

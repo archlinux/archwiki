@@ -1,7 +1,8 @@
 <?php
 
-if( !defined( 'MEDIAWIKI' ) )
-        die( 1 );
+if( !defined( 'MEDIAWIKI' ) ) {
+	die( 1 );
+}
 
 if ( ! $wgUseAjax ) {
 	die( 1 );
@@ -9,12 +10,16 @@ if ( ! $wgUseAjax ) {
 
 require_once( 'AjaxFunctions.php' );
 
+/**
+ * Object-Oriented Ajax functions.
+ * @addtogroup Ajax
+ */
 class AjaxDispatcher {
 	var $mode;
 	var $func_name;
 	var $args;
 
-	function AjaxDispatcher() {
+	function __construct() {
 		wfProfileIn( __METHOD__ );
 
 		$this->mode = "";
@@ -28,14 +33,14 @@ class AjaxDispatcher {
 		}
 
 		if ($this->mode == "get") {
-			$this->func_name = $_GET["rs"];
+			$this->func_name = isset( $_GET["rs"] ) ? $_GET["rs"] : '';
 			if (! empty($_GET["rsargs"])) {
 				$this->args = $_GET["rsargs"];
 			} else {
 				$this->args = array();
 			}
 		} else {
-			$this->func_name = $_POST["rs"];
+			$this->func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : '';
 			if (! empty($_POST["rsargs"])) {
 				$this->args = $_POST["rsargs"];
 			} else {
@@ -47,7 +52,7 @@ class AjaxDispatcher {
 
 	function performAction() {
 		global $wgAjaxExportList, $wgOut;
-		
+
 		if ( empty( $this->mode ) ) {
 			return;
 		}
@@ -59,7 +64,7 @@ class AjaxDispatcher {
 		} else {
 			try {
 				$result = call_user_func_array($this->func_name, $this->args);
-				
+
 				if ( $result === false || $result === NULL ) {
 					wfHttpError( 500, 'Internal Error',
 						"{$this->func_name} returned no data" );
@@ -68,7 +73,7 @@ class AjaxDispatcher {
 					if ( is_string( $result ) ) {
 						$result= new AjaxResponse( $result );
 					}
-					
+
 					$result->sendHeaders();
 					$result->printText();
 				}
@@ -82,7 +87,7 @@ class AjaxDispatcher {
 				}
 			}
 		}
-		
+
 		wfProfileOut( __METHOD__ );
 		$wgOut = null;
 	}

@@ -2,7 +2,6 @@
 /**
  * This file deals with MySQL interface functions
  * and query specifics/optimisations
- * @package MediaWiki
  */
 
 /** Number of times to re-try an operation in case of deadlock */
@@ -16,6 +15,10 @@ define( 'DEADLOCK_DELAY_MAX', 1500000 );
  * Utility classes
  *****************************************************************************/
 
+/**
+ * Utility class.
+ * @addtogroup Database
+ */
 class DBObject {
 	public $mData;
 
@@ -32,12 +35,66 @@ class DBObject {
 	}
 };
 
+/**
+ * Utility class.
+ * @addtogroup Database
+ */
+class MySQLField {
+	private $name, $tablename, $default, $max_length, $nullable,
+		$is_pk, $is_unique, $is_key, $type;
+	function __construct ($info) {
+		$this->name = $info->name;
+		$this->tablename = $info->table;
+		$this->default = $info->def;
+		$this->max_length = $info->max_length;
+		$this->nullable = !$info->not_null;
+		$this->is_pk = $info->primary_key;
+		$this->is_unique = $info->unique_key;
+		$this->is_multiple = $info->multiple_key;
+		$this->is_key = ($this->is_pk || $this->is_unique || $this->is_multiple);
+		$this->type = $info->type;
+	}
+
+	function name() {
+		return $this->name;
+	}
+
+	function tableName() {
+		return $this->tableName;
+	}
+
+	function defaultValue() {
+		return $this->default;
+	}
+
+	function maxLength() {
+		return $this->max_length;
+	}
+
+	function nullable() {
+		return $this->nullable;
+	}
+
+	function isKey() {
+		return $this->is_key;
+	}
+
+	function isMultipleKey() {
+		return $this->is_multiple;
+	}
+
+	function type() {
+		return $this->type;
+	}
+}
+
 /******************************************************************************
  * Error classes
  *****************************************************************************/
 
 /**
  * Database error base class
+ * @addtogroup Database
  */
 class DBError extends MWException {
 	public $db;
@@ -53,6 +110,9 @@ class DBError extends MWException {
 	}
 }
 
+/**
+ * @addtogroup Database
+ */
 class DBConnectionError extends DBError {
 	public $error;
 	
@@ -154,6 +214,7 @@ border=\"0\" ALT=\"Google\"></A>
 
 			$cache = new HTMLFileCache( $t );
 			if( $cache->isFileCached() ) {
+				// FIXME: $msg is not defined on the next line.
 				$msg = '<p style="color: red"><b>'.$msg."<br />\n" .
 					$cachederror . "</b></p>\n";
 
@@ -169,6 +230,9 @@ border=\"0\" ALT=\"Google\"></A>
 	}
 }
 
+/**
+ * @addtogroup Database
+ */
 class DBQueryError extends DBError {
 	public $error, $errno, $sql, $fname;
 	
@@ -222,13 +286,16 @@ class DBQueryError extends DBError {
 	}
 }
 
+/**
+ * @addtogroup Database
+ */
 class DBUnexpectedError extends DBError {}
 
 /******************************************************************************/
 
 /**
  * Database abstraction object
- * @package MediaWiki
+ * @addtogroup Database
  */
 class Database {
 
@@ -247,9 +314,6 @@ class Database {
 	protected $mTrxLevel = 0;
 	protected $mErrorCount = 0;
 	protected $mLBInfo = array();
-	protected $mCascadingDeletes = false;
-	protected $mCleanupTriggers = false;
-	protected $mStrictIPs = false;
 
 #------------------------------------------------------------------------------
 # Accessors
@@ -344,14 +408,14 @@ class Database {
 	 * Returns true if this database supports (and uses) cascading deletes
 	 */
 	function cascadingDeletes() {
-		return $this->mCascadingDeletes;
+		return false;
 	}
 
 	/**
 	 * Returns true if this database supports (and uses) triggers (e.g. on the page table)
 	 */
 	function cleanupTriggers() {
-		return $this->mCleanupTriggers;
+		return false;
 	}
 
 	/**
@@ -359,7 +423,7 @@ class Database {
 	 * Specifically, it uses a NULL value instead of an empty string.
 	 */
 	function strictIPs() {
-		return $this->mStrictIPs;
+		return false;
 	}
 
 	/**
@@ -374,6 +438,14 @@ class Database {
 	 */
 	function implicitGroupby() {
 		return true;
+	}
+
+	/**
+	 * Returns true if this database can do a native search on IP columns
+	 * e.g. this works as expected: .. WHERE rc_ip = '127.42.12.102/32';
+	 */
+	function searchableIPs() {
+		return false;
 	}
 
 	/**#@+
@@ -407,13 +479,11 @@ class Database {
 #------------------------------------------------------------------------------
 
 	/**@{{
+	 * Constructor.
 	 * @param string $server database server host
 	 * @param string $user database user name
 	 * @param string $password database user password
 	 * @param string $dbname database name
-	 */
-
-	/**
 	 * @param failFunction
 	 * @param $flags
 	 * @param $tablePrefix String: database table prefixes. By default use the prefix gave in LocalSettings.php
@@ -463,8 +533,7 @@ class Database {
 	 * @param failFunction
 	 * @param $flags
 	 */
-	static function newFromParams( $server, $user, $password, $dbName,
-		$failFunction = false, $flags = 0 )
+	static function newFromParams( $server, $user, $password, $dbName, $failFunction = false, $flags = 0 )
 	{
 		return new Database( $server, $user, $password, $dbName, $failFunction, $flags );
 	}
@@ -514,7 +583,7 @@ class Database {
 			}
 			if ($this->mConn === false) {
 				$iplus = $i + 1;
-				wfLogDBError("Connect loop error $iplus of $max ($server): " . mysql_errno() . " - " . mysql_error()."\n"); 
+				#wfLogDBError("Connect loop error $iplus of $max ($server): " . mysql_errno() . " - " . mysql_error()."\n"); 
 			}
 		}
 		
@@ -541,12 +610,19 @@ class Database {
 		}
 
 		if ( $success ) {
-			global $wgDBmysql5;
-			if( $wgDBmysql5 ) {
+			$version = $this->getServerVersion();
+			if ( version_compare( $version, '4.1' ) >= 0 ) {
 				// Tell the server we're communicating with it in UTF-8.
 				// This may engage various charset conversions.
-				$this->query( 'SET NAMES utf8' );
+				global $wgDBmysql5;
+				if( $wgDBmysql5 ) {
+					$this->query( 'SET NAMES utf8', __METHOD__ );
+				}
+				// Turn off strict mode
+				$this->query( "SET sql_mode = ''", __METHOD__ );
 			}
+
+			// Turn off strict mode if it is on
 		} else {
 			$this->reportConnectionError();
 		}
@@ -599,10 +675,15 @@ class Database {
 	}
 
 	/**
-	 * Usually aborts on failure
-	 * If errors are explicitly ignored, returns success
+	 * Usually aborts on failure.  If errors are explicitly ignored, returns success.
+	 *
+	 * @param  $sql        String: SQL query
+	 * @param  $fname      String: Name of the calling function, for profiling/SHOW PROCESSLIST comment (you can use __METHOD__ or add some extra info)
+	 * @param  $tempIgnore Bool:   Whether to avoid throwing an exception on errors... maybe best to catch the exception instead?
+	 * @return Result object to feed to fetchObject, fetchRow, ...; or false on failure if $tempIgnore set
+	 * @throws DBQueryError Thrown when the database returns an error of any kind
 	 */
-	function query( $sql, $fname = '', $tempIgnore = false ) {
+	public function query( $sql, $fname = '', $tempIgnore = false ) {
 		global $wgProfiling;
 
 		if ( $wgProfiling ) {
@@ -626,11 +707,21 @@ class Database {
 		$this->mLastQuery = $sql;
 
 		# Add a comment for easy SHOW PROCESSLIST interpretation
-		if ( $fname ) {
-			$commentedSql = preg_replace('/\s/', " /* $fname */ ", $sql, 1);
-		} else {
-			$commentedSql = $sql;
-		}
+		#if ( $fname ) {
+			global $wgUser;
+			if ( is_object( $wgUser ) && !($wgUser instanceof StubObject) ) {
+				$userName = $wgUser->getName();
+				if ( strlen( $userName ) > 15 ) {
+					$userName = substr( $userName, 0, 15 ) . '...';
+				}
+				$userName = str_replace( '/', '', $userName );
+			} else {
+				$userName = '';
+			}
+			$commentedSql = preg_replace('/\s/', " /* $fname $userName */ ", $sql, 1);
+		#} else {
+		#	$commentedSql = $sql;
+		#}
 
 		# If DBO_TRX is set, start a transaction
 		if ( ( $this->mFlags & DBO_TRX ) && !$this->trxLevel() && 
@@ -655,6 +746,11 @@ class Database {
 			wfDebug( "Connection lost, reconnecting...\n" );
 			if ( $this->ping() ) {
 				wfDebug( "Reconnected\n" );
+				$sqlx = substr( $commentedSql, 0, 500 );
+				$sqlx = strtr( $sqlx, "\t\n", '  ' );
+				global $wgRequestTime;
+				$elapsed = round( microtime(true) - $wgRequestTime, 3 );
+				wfLogDBError( "Connection lost and reconnected after {$elapsed}s, query: $sqlx\n" );
 				$ret = $this->doQuery( $commentedSql );
 			} else {
 				wfDebug( "Failed\n" );
@@ -674,9 +770,11 @@ class Database {
 
 	/**
 	 * The DBMS-dependent part of query()
-	 * @param string $sql SQL query.
+	 * @param  $sql String: SQL query.
+	 * @return Result object to feed to fetchObject, fetchRow, ...; or false on failure
+	 * @access private
 	 */
-	function doQuery( $sql ) {
+	/*private*/ function doQuery( $sql ) {
 		if( $this->bufferResults() ) {
 			$ret = mysql_query( $sql, $this->mConn );
 		} else {
@@ -817,7 +915,13 @@ class Database {
 	}
 
 	/**
-	 * Fetch the next row from the given result object, in object form
+	 * Fetch the next row from the given result object, in object form.
+	 * Fields can be retrieved with $row->fieldname, with fields acting like
+	 * member variables.
+	 *
+	 * @param $res SQL result object as returned from Database::query(), etc.
+	 * @return MySQL row object
+	 * @throws DBUnexpectedError Thrown if the database returns an error
 	 */
 	function fetchObject( $res ) {
 		@/**/$row = mysql_fetch_object( $res );
@@ -828,8 +932,12 @@ class Database {
 	}
 
 	/**
-	 * Fetch the next row from the given result object
-	 * Returns an array
+	 * Fetch the next row from the given result object, in associative array
+	 * form.  Fields are retrieved with $row['fieldname'].
+	 *
+	 * @param $res SQL result object as returned from Database::query(), etc.
+	 * @return MySQL row object
+	 * @throws DBUnexpectedError Thrown if the database returns an error
 	 */
  	function fetchRow( $res ) {
 		@/**/$row = mysql_fetch_array( $res );
@@ -972,7 +1080,7 @@ class Database {
 	 * @return array
 	 */
 	function makeSelectOptions( $options ) {
-		$tailOpts = '';
+		$preLimitTail = $postLimitTail = '';
 		$startOpts = '';
 
 		$noKeyOptions = array();
@@ -982,16 +1090,17 @@ class Database {
 			}
 		}
 
-		if ( isset( $options['GROUP BY'] ) ) $tailOpts .= " GROUP BY {$options['GROUP BY']}";
-		if ( isset( $options['ORDER BY'] ) ) $tailOpts .= " ORDER BY {$options['ORDER BY']}";
+		if ( isset( $options['GROUP BY'] ) ) $preLimitTail .= " GROUP BY {$options['GROUP BY']}";
+		if ( isset( $options['ORDER BY'] ) ) $preLimitTail .= " ORDER BY {$options['ORDER BY']}";
 		
-		if (isset($options['LIMIT'])) {
-			$tailOpts .= $this->limitResult('', $options['LIMIT'],
-				isset($options['OFFSET']) ? $options['OFFSET'] : false);
-		}
+		//if (isset($options['LIMIT'])) {
+		//	$tailOpts .= $this->limitResult('', $options['LIMIT'],
+		//		isset($options['OFFSET']) ? $options['OFFSET'] 
+		//		: false);
+		//}
 
-		if ( isset( $noKeyOptions['FOR UPDATE'] ) ) $tailOpts .= ' FOR UPDATE';
-		if ( isset( $noKeyOptions['LOCK IN SHARE MODE'] ) ) $tailOpts .= ' LOCK IN SHARE MODE';
+		if ( isset( $noKeyOptions['FOR UPDATE'] ) ) $postLimitTail .= ' FOR UPDATE';
+		if ( isset( $noKeyOptions['LOCK IN SHARE MODE'] ) ) $postLimitTail .= ' LOCK IN SHARE MODE';
 		if ( isset( $noKeyOptions['DISTINCT'] ) && isset( $noKeyOptions['DISTINCTROW'] ) ) $startOpts .= 'DISTINCT';
 
 		# Various MySQL extensions
@@ -1010,7 +1119,7 @@ class Database {
 			$useIndex = '';
 		}
 		
-		return array( $startOpts, $useIndex, $tailOpts );
+		return array( $startOpts, $useIndex, $preLimitTail, $postLimitTail );
 	}
 
 	/**
@@ -1038,20 +1147,33 @@ class Database {
 			else
 				$from = ' FROM ' . implode( ',', array_map( array( &$this, 'tableName' ), $table ) );
 		} elseif ($table!='') {
-			$from = ' FROM ' . $this->tableName( $table );
+			if ($table{0}==' ') {
+				$from = ' FROM ' . $table;
+			} else {
+				$from = ' FROM ' . $this->tableName( $table );
+			}
 		} else {
 			$from = '';
 		}
 
-		list( $startOpts, $useIndex, $tailOpts ) = $this->makeSelectOptions( $options );
+		list( $startOpts, $useIndex, $preLimitTail, $postLimitTail ) = $this->makeSelectOptions( $options );
 
 		if( !empty( $conds ) ) {
 			if ( is_array( $conds ) ) {
 				$conds = $this->makeList( $conds, LIST_AND );
 			}
-			$sql = "SELECT $startOpts $vars $from $useIndex WHERE $conds $tailOpts";
+			$sql = "SELECT $startOpts $vars $from $useIndex WHERE $conds $preLimitTail";
 		} else {
-			$sql = "SELECT $startOpts $vars $from $useIndex $tailOpts";
+			$sql = "SELECT $startOpts $vars $from $useIndex $preLimitTail";
+		}
+
+		if (isset($options['LIMIT']))
+			$sql = $this->limitResult($sql, $options['LIMIT'],
+				isset($options['OFFSET']) ? $options['OFFSET'] : false);
+		$sql = "$sql $postLimitTail";
+		
+		if (isset($options['EXPLAIN'])) {
+			$sql = 'EXPLAIN ' . $sql;
 		}
 
 		return $this->query( $sql, $fname );
@@ -1085,6 +1207,33 @@ class Database {
 		return $obj;
 
 	}
+	
+	/**
+	 * Estimate rows in dataset
+	 * Returns estimated count, based on EXPLAIN output
+	 * Takes same arguments as Database::select()
+	 */
+	
+	function estimateRowCount( $table, $vars='*', $conds='', $fname = 'Database::estimateRowCount', $options = array() ) {
+		$options['EXPLAIN']=true;
+		$res = $this->select ($table, $vars, $conds, $fname, $options );
+		if ( $res === false )
+			return false;
+		if (!$this->numRows($res)) {
+			$this->freeResult($res);
+			return 0;
+		}
+		
+		$rows=1;
+	
+		while( $plan = $this->fetchObject( $res ) ) {
+			$rows *= ($plan->rows > 0)?$plan->rows:1; // avoid resetting to zero
+		}
+		
+		$this->freeResult($res);
+		return $rows;		
+	}
+	
 
 	/**
 	 * Removes most variables from an SQL query and replaces them with X or N for numbers.
@@ -1207,7 +1356,7 @@ class Database {
 		for( $i = 0; $i < $n; $i++ ) {
 			$meta = mysql_fetch_field( $res, $i );
 			if( $field == $meta->name ) {
-				return $meta;
+				return new MySQLField($meta);
 			}
 		}
 		return false;
@@ -1417,7 +1566,7 @@ class Database {
 	}
 	
 	/**
-	 * @desc: Fetch a number of table names into an zero-indexed numerical array
+	 * Fetch a number of table names into an zero-indexed numerical array
 	 * This is handy when you need to construct SQL for joins
 	 *
 	 * Example:
@@ -1952,20 +2101,50 @@ class Database {
 	}
 
 	/**
+	 * Override database's default connection timeout.
+	 * May be useful for very long batch queries such as
+	 * full-wiki dumps, where a single query reads out
+	 * over hours or days.
+	 * @param int $timeout in seconds
+	 */
+	public function setTimeout( $timeout ) {
+		$this->query( "SET net_read_timeout=$timeout" );
+		$this->query( "SET net_write_timeout=$timeout" );
+	}
+
+	/**
 	 * Read and execute SQL commands from a file.
 	 * Returns true on success, error string on failure
+	 * @param string $filename File name to open
+	 * @param callback $lineCallback Optional function called before reading each line
+	 * @param callback $resultCallback Optional function called for each MySQL result
 	 */
-	function sourceFile( $filename ) {
+	function sourceFile( $filename, $lineCallback = false, $resultCallback = false ) {
 		$fp = fopen( $filename, 'r' );
 		if ( false === $fp ) {
 			return "Could not open \"{$filename}\".\n";
 		}
+		$error = $this->sourceStream( $fp, $lineCallback, $resultCallback );
+		fclose( $fp );
+		return $error;
+	}
 
+	/**
+	 * Read and execute commands from an open file handle
+	 * Returns true on success, error string on failure
+	 * @param string $fp File handle
+	 * @param callback $lineCallback Optional function called before reading each line
+	 * @param callback $resultCallback Optional function called for each MySQL result
+	 */
+	function sourceStream( $fp, $lineCallback = false, $resultCallback = false ) {
 		$cmd = "";
 		$done = false;
 		$dollarquote = false;
 
 		while ( ! feof( $fp ) ) {
+			if ( $lineCallback ) {
+				call_user_func( $lineCallback );
+			}
 			$line = trim( fgets( $fp, 1024 ) );
 			$sl = strlen( $line ) - 1;
 
@@ -1995,7 +2174,10 @@ class Database {
 			if ( $done ) {
 				$cmd = str_replace(';;', ";", $cmd);
 				$cmd = $this->replaceVars( $cmd );
-				$res = $this->query( $cmd, 'dbsource', true );
+				$res = $this->query( $cmd, __METHOD__, true );
+				if ( $resultCallback ) {
+					call_user_func( $resultCallback, $this->resultObject( $res ) );
+				}
 
 				if ( false === $res ) {
 					$err = $this->lastError();
@@ -2006,9 +2188,9 @@ class Database {
 				$done = false;
 			}
 		}
-		fclose( $fp );
 		return true;
 	}
+
 
 	/**
 	 * Replace variables in sourced SQL
@@ -2017,7 +2199,7 @@ class Database {
 		$varnames = array(
 			'wgDBserver', 'wgDBname', 'wgDBintlname', 'wgDBuser',
 			'wgDBpassword', 'wgDBsqluser', 'wgDBsqlpassword',
-			'wgDBadminuser', 'wgDBadminpassword',
+			'wgDBadminuser', 'wgDBadminpassword', 'wgDBTableOptions',
 		);
 
 		// Ordinary variables
@@ -2050,7 +2232,7 @@ class Database {
  * Database abstraction object for mySQL
  * Inherit all methods and properties of Database::Database()
  *
- * @package MediaWiki
+ * @addtogroup Database
  * @see Database
  */
 class DatabaseMysql extends Database {
@@ -2060,8 +2242,7 @@ class DatabaseMysql extends Database {
 
 /**
  * Result wrapper for grabbing data queried by someone else
- *
- * @package MediaWiki
+ * @addtogroup Database
  */
 class ResultWrapper {
 	var $db, $result;
@@ -2106,6 +2287,12 @@ class ResultWrapper {
 
 	function seek( $row ) {
 		$this->db->dataSeek( $this->result, $row );
+	}
+	
+	function rewind() {
+		if ($this->numRows()) {
+			$this->db->dataSeek($this->result, 0);
+		}
 	}
 
 }

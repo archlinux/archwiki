@@ -2,19 +2,18 @@
 /**
  * Handle messages in the language files.
  *
- * @package MediaWiki
- * @subpackage Maintenance
+ * @addtogroup Maintenance
  */
 
 require_once( 'messageTypes.inc' );
 
 class languages {
-	private $mLanguages; # List of languages
-	private $mRawMessages; # Raw list of the messages in each language
-	private $mMessages; # Messages in each language (except for English), divided to groups
-	private $mGeneralMessages; # General messages in English, divided to groups
-	private $mIgnoredMessages; # All the messages which should be exist only in the English file
-	private $mOptionalMessages; # All the messages which may be translated or not, depending on the language
+	protected $mLanguages; # List of languages
+	protected $mRawMessages; # Raw list of the messages in each language
+	protected $mMessages; # Messages in each language (except for English), divided to groups
+	protected $mGeneralMessages; # General messages in English, divided to groups
+	protected $mIgnoredMessages; # All the messages which should be exist only in the English file
+	protected $mOptionalMessages; # All the messages which may be translated or not, depending on the language
 
 	/**
 	 * Load the list of languages: all the Messages*.php
@@ -67,7 +66,7 @@ class languages {
 	 *
 	 * @param $code The langauge code.
 	 */
-	private function loadRawMessages( $code ) {
+	protected function loadRawMessages( $code ) {
 		if ( isset( $this->mRawMessages[$code] ) ) {
 			return;
 		}
@@ -245,6 +244,25 @@ class languages {
 			}
 		}
 		return $messagesWithoutVariables;
+	}
+
+	/**
+	 * Get the messages which do not use plural.
+	 *
+	 * @param $code The langauge code.
+	 *
+	 * @return The messages which do not use plural in this language.
+	 */
+	public function getMessagesWithoutPlural( $code ) {
+		$this->loadGeneralMessages();
+		$this->loadMessages( $code );
+		$messagesWithoutPlural = array();
+		foreach ( $this->mMessages[$code]['translated'] as $key => $value ) {
+			if ( stripos( $this->mGeneralMessages['translatable'][$key], '{{plural:' ) !== false && stripos( $value, '{{plural:' ) === false ) {
+				$messagesWithoutPlural[$key] = $value;
+			}
+		}
+		return $messagesWithoutPlural;
 	}
 
 	/**

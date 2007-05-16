@@ -1,8 +1,7 @@
 <?php
 /**
   *  Tatarish (Tatarça)
-  * @package MediaWiki
-  * @subpackage Language
+  * @addtogroup Language
   */
 
 
@@ -66,7 +65,6 @@ $magicWords = array(
         'namespace'              => array( 1,    'İSEMARA',                'NAMESPACE'),
         'subst'                  => array( 0,    'TÖPÇEK:',                'SUBST:'),
         'msgnw'                  => array( 0,    'MSGNW:'                 ),
-        'end'                    => array( 0,    '__AZAQ__',               '__END__'),
         'img_thumbnail'          => array( 1,    'thumbnail', 'thumb'     ),
         'img_right'              => array( 1,    'uñda',                   'right'),
         'img_left'               => array( 1,    'sulda',                  'left'),
@@ -355,9 +353,9 @@ Xata çığuınnan monda eläkkänseñ ikän, browserıñnıñ '''kire''' sädä
 'editingold'           => '<strong>KİSÄTMÄ: Sin bu bitneñ iskergän yuramasın üzgärtäsen.
 Ägär sin monı saqlísıñ ikän, şul yuramadan soñ yasalğan üzgärmälär yuğalır.</strong>',
 'yourdiff'             => 'Ayırmalar',
-'longpagewarning'      => "KİSÄTMÄ:</font> Bu bit zurlığı $1 KB; qayber browserlarda 32 KB'tan da zurraq bulğan bitlärne kürsätkändä qíınlıqlar bula.
+'longpagewarning'      => "KİSÄTMÄ: Bu bit zurlığı $1 KB; qayber browserlarda 32 KB'tan da zurraq bulğan bitlärne kürsätkändä qíınlıqlar bula.
 Zínhar, bu bitneñ wağraq kisäklärgä bülü turında uylap qara.",
-'protectedpagewarning' => 'KİSÄTMÄ: Bu bit yaqlanğan ide wä anı idäräçe xoquqı iä bulğan genä keşe üzgärtä ala. Kübrägen <a href="/wiki/{{SITENAME}}:Bit_yaqlaw_qullanması">bit yaqlaw qullanmasında</a> uqıp bula.',
+'protectedpagewarning' => 'KİSÄTMÄ: Bu bit yaqlanğan ide wä anı idäräçe xoquqı iä bulğan genä keşe üzgärtä ala. Kübrägen [[Project:Bit_yaqlaw_qullanması|bit yaqlaw qullanmasında]] uqıp bula.',
 
 # History pages
 'loadhist'   => 'Bit taríxın yökläw',
@@ -547,6 +545,7 @@ yurama beterü, (qaytart) = iske yurama qaytartu.
 
 # Watchlist
 'watchlist'         => 'Saqtezmäm',
+'mywatchlist'         => 'Saqtezmäm',
 'nowatchlist'       => 'Saqtezmäñdä kertemnär yuq.',
 'watchnologin'      => 'Kermädeñ',
 'watchnologintext'  => 'Saqtezmäñ üzgärtü öçen, säxifägä isem belän [[Special:Userlogin|keräse]].',
@@ -605,7 +604,7 @@ Soñğı beterülär $2 bitendä terkälenä.',
 # Contributions
 'contributions' => 'Äğzä qatnaşuı',
 'mycontris'     => 'Qatnaşuım',
-'contribsub'    => '$1 öçen',
+'contribsub2'    => '$1 ($2) öçen',
 'uctop'         => ' (öskä)',
 
 # What links here
@@ -647,15 +646,6 @@ Soñğı beterülär $2 bitendä terkälenä.',
 'unlockdbsuccesstext' => 'Bu biremlek yozağı salınğan ide.',
 
 # Make sysop
-'makesysoptitle'    => 'Äğzäne idäräçe itep quyu',
-'makesysopname'     => 'Bu äğzäne:',
-'makesysopsubmit'   => 'Bu äğzäne idäräçe itep quy',
-'makesysopok'       => '<b>«$1» isemle äğzä idäräçe buldı</b>',
-'setbureaucratflag' => 'Näzir itep quyası',
-'rights'            => 'Xoquqlar:',
-'set_user_rights'   => 'Äğzä xoquqın üzgärt',
-'user_rights_set'   => '<b>«$1» atlı äğzä xoquqı yañartıldı</b>',
-'makesysop'         => 'Äğzäne idäräçe itep quyu',
 
 # Move page
 'movepage'         => 'Bit küçerü',
@@ -704,9 +694,9 @@ yä isä saylanğan isem yaraqsız buldı. Başqa isem sayla zínhar.',
 'accesskey-watch'                   => 'w',
 
 # Tooltip help for some actions, most are in Monobook.js
-'tooltip-search'    => "{{SITENAME}}'dä ezläw [alt-f]",
-'tooltip-minoredit' => 'Bu üzgärtmä waq-töyäk dip bilgelä [alt-i]',
-'tooltip-save'      => 'Üzgärtüne saqlaw [alt-s]',
+'tooltip-search'    => "{{SITENAME}}'dä ezläw",
+'tooltip-minoredit' => 'Bu üzgärtmä waq-töyäk dip bilgelä',
+'tooltip-save'      => 'Üzgärtüne saqlaw',
 
 # Stylesheets
 'common.css'   => '/** CSS placed here will be applied to all skins */',
@@ -733,57 +723,106 @@ yä isä saylanğan isem yaraqsız buldı. Başqa isem sayla zínhar.',
 'numwatchers'  => 'Küzätep toruçı sanı:',
 
 # Monobook.js: tooltips and access keys for monobook
-'monobook.js' => "/* äsbäpkiñäş wä ireşü töymäläre */
-ta = new Object();
-ta['pt-userpage'] = new Array('.','Şäxsi bitem');
-ta['pt-anonuserpage'] = new Array('.','The user page for the ip you're editing as');
-ta['pt-mytalk'] = new Array('n','Bäxäs bitem');
-ta['pt-anontalk'] = new Array('n','Discussion about edits from this ip address');
-ta['pt-preferences'] = new Array('','Köyläwlärem');
-ta['pt-watchlist'] = new Array('l','The list of pages you're monitoring for changes.');
-ta['pt-mycontris'] = new Array('y','Qatnaşuım tezmäse');
-ta['pt-login'] = new Array('o','You are encouraged to log in, it is not mandatory however.');
-ta['pt-anonlogin'] = new Array('o','You are encouraged to log in, it is not mandatory however.');
-ta['pt-logout'] = new Array('','Çığış');
-ta['ca-talk'] = new Array('t','Discussion about the content page');
-ta['ca-edit'] = new Array('e','You can edit Bu bit. Please use the preview button before saving.');
-ta['ca-addsection'] = new Array('+','Bu bäxästä yazma östäw.');
-ta['ca-viewsource'] = new Array('e','Bu bit yaqlanğan ide. Anıñ çığanağın kürä alasıñ.');
-ta['ca-history'] = new Array('h','Bu bitneñ soñğı yuramaları.');
-ta['ca-protect'] = new Array('=','Bu bit yaqlaw');
-ta['ca-delete'] = new Array('d','Bu bit beterü');
-ta['ca-undelete'] = new Array('d','Restore the edits done to Bu bit before it was deleted');
-ta['ca-move'] = new Array('m','Bu bit küçerü');
-ta['ca-nomove'] = new Array('','Bu bit küçerü öçen xoquqlarıñ citmi');
-ta['ca-watch'] = new Array('w','Bu bitne saqtezmägä östäw');
-ta['ca-unwatch'] = new Array('w','Bu bitne saqtezmädän töşerü');
-ta['search'] = new Array('e','Äydä, ezlä monı');
-ta['p-logo'] = new Array('','Täwge Bit');
-ta['n-mainpage'] = new Array('z','Täwge Bitkä küçü');
-ta['n-portal'] = new Array('','About the project, what you can do, where to find things');
-ta['n-currentevents'] = new Array('','Find background information on current events');
-ta['n-recentchanges'] = new Array('r','The list of recent changes in the wiki.');
-ta['n-randompage'] = new Array('x','Berär nindi bit kürsätä');
-ta['n-help'] = new Array('','The place to find out.');
-ta['n-sitesupport'] = new Array('','Ximäyäçe bul');
-ta['t-whatlinkshere'] = new Array('j','List of all wiki pages that link here');
-ta['t-recentchangeslinked'] = new Array('k','Recent changes in pages linking to Bu bit');
-ta['feed-rss'] = new Array('','Bu bitneñ RSS tasması');
-ta['feed-atom'] = new Array('','Bu bitneñ Atom tasması');
-ta['t-contributions'] = new Array('','View the list of contributions of this user');
-ta['t-emailuser'] = new Array('','Send a mail to this user');
-ta['t-upload'] = new Array('u','Upload images or media files');
-ta['t-specialpages'] = new Array('q','Bar maxsus bitlär tezmäse');
-ta['ca-nstab-main'] = new Array('c','Bu bit eçtälegen kürü');
-ta['ca-nstab-user'] = new Array('c','Bu äğzä biten kürü');
-ta['ca-nstab-media'] = new Array('c','Bu media biten kürü');
-ta['ca-nstab-special'] = new Array('','Bu bit maxsus, wä sin anı üzgärtä almísıñ.');
-ta['ca-nstab-project'] = new Array('a','Proékt biten kürü');
-ta['ca-nstab-image'] = new Array('c','Bu räsem biten kürü');
-ta['ca-nstab-mediawiki'] = new Array('c','Bu säxifä sätiren kürü');
-ta['ca-nstab-template'] = new Array('c','Bu qalıpnı kürü');
-ta['ca-nstab-help'] = new Array('c','Bu yärdäm biten kürü');
-ta['ca-nstab-category'] = new Array('c','View the category page');",
+'monobook.js' => '/* Deprecated; use [[MediaWiki:common.js]] */',
+
+'accesskey-pt-userpage' => '.',
+'tooltip-pt-userpage' => 'Şäxsi bitem',
+'accesskey-pt-anonuserpage' => '.',
+'tooltip-pt-anonuserpage' => 'The user page for the ip you',
+'accesskey-pt-mytalk' => 'n',
+'tooltip-pt-mytalk' => 'Bäxäs bitem',
+'accesskey-pt-anontalk' => 'n',
+'tooltip-pt-anontalk' => 'Discussion about edits from this ip address',
+'accesskey-pt-preferences' => '',
+'tooltip-pt-preferences' => 'Köyläwlärem',
+'accesskey-pt-watchlist' => 'l',
+'tooltip-pt-watchlist' => 'The list of pages you',
+'accesskey-pt-mycontris' => 'y',
+'tooltip-pt-mycontris' => 'Qatnaşuım tezmäse',
+'accesskey-pt-login' => 'o',
+'tooltip-pt-login' => 'You are encouraged to log in, it is not mandatory however.',
+'accesskey-pt-anonlogin' => 'o',
+'tooltip-pt-anonlogin' => 'You are encouraged to log in, it is not mandatory however.',
+'accesskey-pt-logout' => '',
+'tooltip-pt-logout' => 'Çığış',
+'accesskey-ca-talk' => 't',
+'tooltip-ca-talk' => 'Discussion about the content page',
+'accesskey-ca-edit' => 'e',
+'tooltip-ca-edit' => 'You can edit Bu bit. Please use the preview button before saving.',
+'accesskey-ca-addsection' => '+',
+'tooltip-ca-addsection' => 'Bu bäxästä yazma östäw.',
+'accesskey-ca-viewsource' => 'e',
+'tooltip-ca-viewsource' => 'Bu bit yaqlanğan ide. Anıñ çığanağın kürä alasıñ.',
+'accesskey-ca-history' => 'h',
+'tooltip-ca-history' => 'Bu bitneñ soñğı yuramaları.',
+'accesskey-ca-protect' => '=',
+'tooltip-ca-protect' => 'Bu bit yaqlaw',
+'accesskey-ca-delete' => 'd',
+'tooltip-ca-delete' => 'Bu bit beterü',
+'accesskey-ca-undelete' => 'd',
+'tooltip-ca-undelete' => 'Restore the edits done to Bu bit before it was deleted',
+'accesskey-ca-move' => 'm',
+'tooltip-ca-move' => 'Bu bit küçerü',
+'accesskey-ca-nomove' => '',
+'tooltip-ca-nomove' => 'Bu bit küçerü öçen xoquqlarıñ citmi',
+'accesskey-ca-watch' => 'w',
+'tooltip-ca-watch' => 'Bu bitne saqtezmägä östäw',
+'accesskey-ca-unwatch' => 'w',
+'tooltip-ca-unwatch' => 'Bu bitne saqtezmädän töşerü',
+'accesskey-search' => 'e',
+'tooltip-search' => 'Äydä, ezlä monı',
+'accesskey-p-logo' => '',
+'tooltip-p-logo' => 'Täwge Bit',
+'accesskey-n-mainpage' => 'z',
+'tooltip-n-mainpage' => 'Täwge Bitkä küçü',
+'accesskey-n-portal' => '',
+'tooltip-n-portal' => 'About the project, what you can do, where to find things',
+'accesskey-n-currentevents' => '',
+'tooltip-n-currentevents' => 'Find background information on current events',
+'accesskey-n-recentchanges' => 'r',
+'tooltip-n-recentchanges' => 'The list of recent changes in the wiki.',
+'accesskey-n-randompage' => 'x',
+'tooltip-n-randompage' => 'Berär nindi bit kürsätä',
+'accesskey-n-help' => '',
+'tooltip-n-help' => 'The place to find out.',
+'accesskey-n-sitesupport' => '',
+'tooltip-n-sitesupport' => 'Ximäyäçe bul',
+'accesskey-t-whatlinkshere' => 'j',
+'tooltip-t-whatlinkshere' => 'List of all wiki pages that link here',
+'accesskey-t-recentchangeslinked' => 'k',
+'tooltip-t-recentchangeslinked' => 'Recent changes in pages linking to Bu bit',
+'accesskey-feed-rss' => '',
+'tooltip-feed-rss' => 'Bu bitneñ RSS tasması',
+'accesskey-feed-atom' => '',
+'tooltip-feed-atom' => 'Bu bitneñ Atom tasması',
+'accesskey-t-contributions' => '',
+'tooltip-t-contributions' => 'View the list of contributions of this user',
+'accesskey-t-emailuser' => '',
+'tooltip-t-emailuser' => 'Send a mail to this user',
+'accesskey-t-upload' => 'u',
+'tooltip-t-upload' => 'Upload images or media files',
+'accesskey-t-specialpages' => 'q',
+'tooltip-t-specialpages' => 'Bar maxsus bitlär tezmäse',
+'accesskey-ca-nstab-main' => 'c',
+'tooltip-ca-nstab-main' => 'Bu bit eçtälegen kürü',
+'accesskey-ca-nstab-user' => 'c',
+'tooltip-ca-nstab-user' => 'Bu äğzä biten kürü',
+'accesskey-ca-nstab-media' => 'c',
+'tooltip-ca-nstab-media' => 'Bu media biten kürü',
+'accesskey-ca-nstab-special' => '',
+'tooltip-ca-nstab-special' => 'Bu bit maxsus, wä sin anı üzgärtä almísıñ.',
+'accesskey-ca-nstab-project' => 'a',
+'tooltip-ca-nstab-project' => 'Proékt biten kürü',
+'accesskey-ca-nstab-image' => 'c',
+'tooltip-ca-nstab-image' => 'Bu räsem biten kürü',
+'accesskey-ca-nstab-mediawiki' => 'c',
+'tooltip-ca-nstab-mediawiki' => 'Bu säxifä sätiren kürü',
+'accesskey-ca-nstab-template' => 'c',
+'tooltip-ca-nstab-template' => 'Bu qalıpnı kürü',
+'accesskey-ca-nstab-help' => 'c',
+'tooltip-ca-nstab-help' => 'Bu yärdäm biten kürü',
+'accesskey-ca-nstab-category' => 'c',
+'tooltip-ca-nstab-category' => 'View the category page',
 
 # Common.js: contains nothing but a placeholder comment
 'common.js' => '/* Any JavaScript here will be loaded for all users on every page load. */',

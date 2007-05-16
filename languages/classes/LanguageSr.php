@@ -1,7 +1,6 @@
 <?php
 /**
-  * @package MediaWiki
-  * @subpackage Language
+  * @addtogroup Language
   */
 
 /*
@@ -82,7 +81,7 @@ class SrConverter extends LanguageConverter {
 
 	// Do not convert content on talk pages
 	function parserConvert( $text, &$parser ){
-		if(is_object($parser->mTitle) && $parser->mTitle->isTalkPage())
+		if(is_object($parser->getTitle() ) && $parser->getTitle()->isTalkPage())
 			$this->mDoContentConvert=false;
 		else 
 			$this->mDoContentConvert=true;

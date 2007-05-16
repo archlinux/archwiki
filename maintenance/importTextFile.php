@@ -4,17 +4,16 @@
  * Maintenance script allows creating or editing pages using
  * the contents of a text file
  *
- * @package MediaWiki
- * @subpackage Maintenance
+ * @addtogroup Maintenance
  * @author Rob Church <robchur@gmail.com>
  */
- 
-$options = array( 'help', 'nooverwrite' ); 
+
+$options = array( 'help', 'nooverwrite', 'norc' ); 
 $optionsWithArgs = array( 'title', 'user', 'comment' );
 require_once( 'commandLine.inc' );
 echo( "Import Text File\n\n" );
 
-if( isset( $options['help'] ) ) {
+if( count( $args ) < 1 || isset( $options['help'] ) ) {
 	showHelp();
 } else {
 
@@ -31,7 +30,7 @@ if( isset( $options['help'] ) ) {
 			if( !$title->exists() || !isset( $options['nooverwrite'] ) ) {
 			
 				$text = file_get_contents( $filename );
-				$user = isset( $options['user'] ) ? $options['user'] : 'MediaWiki default';
+				$user = isset( $options['user'] ) ? $options['user'] : 'Maintenance script';
 				$user = User::newFromName( $user );
 				echo( "\nUsing username '" . $user->getName() . "'..." );
 				
@@ -39,11 +38,11 @@ if( isset( $options['help'] ) ) {
 				
 					$wgUser =& $user;
 					$comment = isset( $options['comment'] ) ? $options['comment'] : 'Importing text file';
-					$comment = str_replace( '_', ' ', $comment );
+					$flags = 0 | ( isset( $options['norc'] ) ? EDIT_SUPPRESS_RC : 0 );
 					
 					echo( "\nPerforming edit..." );
 					$article = new Article( $title );
-					$article->doEdit( $text, $comment );
+					$article->doEdit( $text, $comment, $flags );
 					echo( "done.\n" );
 				
 				} else {
@@ -71,14 +70,17 @@ function titleFromFilename( $filename ) {
 }
 
 function showHelp() {
-	echo( "Import the contents of a text file into a wiki page.\n\n" );
-	echo( "USAGE: php importTextFile.php [--help|--title <title>|--user <user>|--comment <comment>|--nooverwrite] <filename>\n\n" );
-	echo( "              --help: Show this help information\n" );
-	echo( "    --title <title> : Title for the new page; if not supplied, the filename is used as a base for the title\n" );
-	echo( "      --user <user> : User to be associated with the edit; if not supplied, a default is used\n" );
-	echo( "--comment <comment> : Edit summary to be associated with the edit; underscores are transformed into spaces; if not supplied, a default is used\n" );
-	echo( "      --nooverwrite : Don't overwrite existing page content\n" );
-	echo( "         <filename> : Path to the file containing the wikitext to import\n\n" );
+	echo( "Import the contents of a text file into a wiki page.\n" );
+	echo( "USAGE: php importTextFile.php <options> <filename>\n\n" );
+	echo( "<filename> : Path to the file containing page content to import\n\n" );
+	echo( "Options:\n\n" );
+	echo( "--title <title>\n\tTitle for the new page; default is to use the filename as a base\n" );
+	echo( "--user <user>\n\tUser to be associated with the edit\n" );
+	echo( "--comment <comment>\n\tEdit summary\n" );
+	echo( "--nooverwrite\n\tDon't overwrite existing content\n" );
+	echo( "--norc\n\tDon't update recent changes\n" );
+	echo( "--help\n\tShow this information\n" );
+	echo( "\n" );
 }
 
 ?>

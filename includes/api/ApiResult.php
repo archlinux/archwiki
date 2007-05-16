@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Sep 4, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiResult extends ApiBase {
 
 	private $mData, $mIsRawMode;
@@ -151,7 +153,7 @@ class ApiResult extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiResult.php 17076 2006-10-18 05:35:24Z yurik $';
+		return __CLASS__ . ': $Id: ApiResult.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

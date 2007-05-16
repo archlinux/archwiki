@@ -1,7 +1,6 @@
 <?php
 /** Tyvan localization (Тыва дыл)
- * @package MediaWiki
- * @subpackage Language
+ * @addtogroup Language
  */
 
 # From friends at tyvawiki.org
@@ -289,9 +288,6 @@ $1', //Sorry! The wiki is experiencing some technical difficulties, and cannot c
 'ipadressorusername' => 'ИП-адрес азы aжыглaкчының aды', //IP Address or username
 'badipaddress'	=> 'Багай ИП-адрес', //Invalid IP address
 'infiniteblock' => 'кезээ-мөңгеде', //infinite
-
-# Make sysop
-'makesysopname'		=> 'Ажыглакчыниң ады:', //Name of the user:
 
 # Namespace 8 related
 

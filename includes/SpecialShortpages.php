@@ -1,15 +1,13 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 /**
  * SpecialShortpages extends QueryPage. It is used to return the shortest
  * pages in the database.
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 class ShortPagesPage extends QueryPage {
 
@@ -29,7 +27,7 @@ class ShortPagesPage extends QueryPage {
 	}
 
 	function getSQL() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$page = $dbr->tableName( 'page' );
 		$name = $dbr->addQuotes( $this->getName() );
 

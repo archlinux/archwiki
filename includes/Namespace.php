@@ -1,7 +1,6 @@
 <?php
 /**
  * Provide things related to namespaces
- * @package MediaWiki
  */
 
 /**
@@ -41,7 +40,6 @@ if( is_array( $wgExtraNamespaces ) ) {
  * These are synonyms for the names given in the language file
  * Users and translators should not change them
  *
- * @package MediaWiki
  */
 class Namespace {
 
@@ -125,5 +123,19 @@ class Namespace {
 	 static function canTalk( $index ) {
 	 	return( $index >= NS_MAIN );
 	 }
+	 
+	/**
+	 * Does this namespace contain content, for the purposes
+	 * of calculating statistics, etc?
+	 *
+	 * @param $index Index to check
+	 * @return bool
+	 */
+	public static function isContent( $index ) {
+		global $wgContentNamespaces;
+		return $index == NS_MAIN || in_array( $index, $wgContentNamespaces );
+	}	 
+	 
 }
+
 ?>

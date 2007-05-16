@@ -1,14 +1,9 @@
 <?php
 /** Ossetic (Иронау)
  *
- * @package MediaWiki
- * @subpackage Language
+ * @addtogroup Language
  */
 $fallback = 'ru';
-
-$quickbarSettings = array(
-	'Ма равдис', 'Галиуырдыгæй', 'Рахизырдыгæй', 'Рахизырдыгæй ленккæнгæ'
-);
 
 $skinNames = array(
 	'standard' => 'Стандартон',
@@ -149,6 +144,10 @@ $messages = array(
 'prevn' => "$1 фæстæмæ",
 'printableversion' => "Мыхурмæ верси",
 'qbfind' => "Агур",
+'qbsettings-none'	=> 'Ма равдис',
+'qbsettings-fixedleft'	=> 'Галиуырдыгæй',
+'qbsettings-fixedright'	=> 'Рахизырдыгæй',
+'qbsettings-floatingleft'	=> 'Рахизырдыгæй ленккæнгæ',
 'qbspecialpages' => "Сæрмагонд фæрстæ",
 'randompage' => "Æнæбары æвзæрст фарс",
 'rclinks' => "Фæстаг $1 ивддзинæдтæ (афæстаг $2 боны дæргъы чи ’рцыдысты) равдис;
@@ -197,6 +196,7 @@ $3",
 'watch' => "Дæ цæст æрдар",
 'watchdetails' => "($1 фæрстæм дæ цæст дарыс, дискусситы фæстæмæ; $3... [$4 Æххæст номхыгъд фен].)",
 'watchlist' => "Дæ цæст кæмæ дарыс, уыцы фæрстæ",
+'mywatchlist' => "Дæ цæст кæмæ дарыс, уыцы фæрстæ",
 'watchlistcontains' => "Дæ цæст $1 фæрстæм дарыс.",
 'watchnologin' => "Системæйæн дæхи нæ бавдыстай",
 'watchnologintext' => "Ацы номхыгъд ивынмæ <a href=\"{{localurle:Специальные:Userlogin}}\">хъуамæ дæхи бавдисай системæйæн</a>.",

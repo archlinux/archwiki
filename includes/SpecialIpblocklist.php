@@ -1,8 +1,7 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 /**
@@ -10,7 +9,7 @@
  */
 function wfSpecialIpblocklist() {
 	global $wgUser, $wgOut, $wgRequest;
-
+	
 	$ip = $wgRequest->getVal( 'wpUnblockAddress', $wgRequest->getVal( 'ip' ) );
 	$id = $wgRequest->getVal( 'id' );
 	$reason = $wgRequest->getText( 'wpUnblockReason' );
@@ -27,8 +26,18 @@ function wfSpecialIpblocklist() {
 			$wgOut->permissionRequired( 'block' );
 			return;
 		}
+		# Can't unblock when the database is locked
+		if( wfReadOnly() ) {
+			$wgOut->readOnlyPage();
+			return;
+		}
 		$ipu->doSubmit();
 	} else if ( "unblock" == $action ) {
+		# Can't unblock when the database is locked
+		if( wfReadOnly() ) {
+			$wgOut->readOnlyPage();
+			return;
+		}
 		$ipu->showForm( "" );
 	} else {
 		$ipu->showList( "" );
@@ -36,15 +45,14 @@ function wfSpecialIpblocklist() {
 }
 
 /**
- *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * implements Special:ipblocklist GUI
+ * @addtogroup SpecialPage
  */
 class IPUnblockForm {
 	var $ip, $reason, $id;
 
 	function IPUnblockForm( $ip, $id, $reason ) {
-		$this->ip = $ip;
+		$this->ip = strtr( $ip, '_', ' ' );
 		$this->id = $id;
 		$this->reason = $reason;
 	}
@@ -154,7 +162,7 @@ class IPUnblockForm {
 	}
 
 	function showList( $msg ) {
-		global $wgOut;
+		global $wgOut, $wgUser;
 
 		$wgOut->setPagetitle( wfMsg( "ipblocklist" ) );
 		if ( "" != $msg ) {
@@ -168,6 +176,9 @@ class IPUnblockForm {
 
 		$conds = array();
 		$matches = array();
+		// Is user allowed to see all the blocks?
+		if ( !$wgUser->isAllowed( 'oversight' ) )
+			$conds['ipb_deleted'] = 0;
 		if ( $this->ip == '' ) {
 			// No extra conditions
 		} elseif ( substr( $this->ip, 0, 1 ) == '#' ) {
@@ -189,17 +200,21 @@ class IPUnblockForm {
 			}
 		}
 
+                # TODO: difference message between
+		#       a) an real empty list and
+		#       b) requested ip/username not on list
 		$pager = new IPBlocklistPager( $this, $conds );
-		$s = $pager->getNavigationBar() .
-			$this->searchForm();
 		if ( $pager->getNumRows() ) {
+			$s = $this->searchForm() .
+				$pager->getNavigationBar();
 			$s .= "<ul>" . 
 				$pager->getBody() .
 				"</ul>";
+			$s .= $pager->getNavigationBar();
 		} else {
-			$s .= '<p>' . wfMsgHTML( 'ipblocklistempty' ) . '</p>';
+			$s = $this->searchForm() .
+				'<p>' . wfMsgHTML( 'ipblocklistempty' ) . '</p>';
 		}
-		$s .= $pager->getNavigationBar();
 		$wgOut->addHTML( $s );
 	}
 
@@ -223,7 +238,7 @@ class IPUnblockForm {
 				'value' => $this->ip ) ) .
 			wfElement( 'input', array(
 				'type' => 'submit',
-				'value' => wfMsg( 'searchbutton' ) ) ) .
+				'value' => wfMsg( 'ipblocklist-submit' ) ) ) .
 			'</form>';
 	}
 
@@ -287,19 +302,27 @@ class IPUnblockForm {
 
 		$line = wfMsgReplaceArgs( $msg['blocklistline'], array( $formattedTime, $blocker, $target, $properties ) );
 
-		$s = "<li>{$line}";
-
+		$unblocklink = '';
 		if ( $wgUser->isAllowed('block') ) {
 			$titleObj = SpecialPage::getTitleFor( "Ipblocklist" );
-			$s .= ' (' . $sk->makeKnownLinkObj($titleObj, $msg['unblocklink'], 'action=unblock&id=' . urlencode( $block->mId ) ) . ')';
+			$unblocklink = ' (' . $sk->makeKnownLinkObj($titleObj, $msg['unblocklink'], 'action=unblock&id=' . urlencode( $block->mId ) ) . ')';
 		}
-		$s .= $sk->commentBlock( $block->mReason );
-		$s .= "</li>\n";
+		
+		$comment = $sk->commentBlock( $block->mReason );
+		
+		$s = "{$line} $comment";	
+		if ( $block->mHideName )
+			$s = '<span class="history-deleted">' . $s . '</span>';
+				
 		wfProfileOut( __METHOD__ );
-		return $s;
+		return "<li>$s $unblocklink</li>\n";
 	}
 }
 
+/**
+ * @todo document
+ * @addtogroup Pager
+ */
 class IPBlocklistPager extends ReverseChronologicalPager {
 	public $mForm, $mConds;
 

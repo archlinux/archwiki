@@ -3,15 +3,14 @@
    * Spyc -- A Simple PHP YAML Class
    * @version 0.2.3 -- 2006-02-04
    * @author Chris Wanstrath <chris@ozmm.org>
-   * @link http://spyc.sourceforge.net/
+   * @see http://spyc.sourceforge.net/
    * @copyright Copyright 2005-2006 Chris Wanstrath
    * @license http://www.opensource.org/licenses/mit-license.php MIT License
-   * @package Spyc
    */
 
   /** 
    * A node, used by Spyc for parsing YAML.
-   * @package Spyc
+   * @addtogroup API
    */
   class YAMLNode {
     /**#@+
@@ -20,7 +19,7 @@
      */ 
     var $parent;
     var $id;
-    /**#@+*/
+    /**#@-*/
     /** 
      * @access public
      * @var mixed
@@ -59,7 +58,7 @@
    *   $parser = new Spyc;
    *   $array  = $parser->load($file);
    * </code>
-   * @package Spyc
+   * @addtogroup API
    */
   class Spyc {
     
@@ -340,7 +339,7 @@
     var $_isInline;
     var $_dumpIndent;
     var $_dumpWordWrap;
-    /**#@+*/
+    /**#@-*/
 
     /**** Private Methods ****/
     

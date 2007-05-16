@@ -1,14 +1,12 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 /**
- *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * implements Special:Wantedpages
+ * @addtogroup SpecialPage
  */
 class WantedPagesPage extends QueryPage {
 	var $nlinks;
@@ -30,7 +28,7 @@ class WantedPagesPage extends QueryPage {
 	function getSQL() {
 		global $wgWantedPagesThreshold;
 		$count = $wgWantedPagesThreshold - 1;
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$pagelinks = $dbr->tableName( 'pagelinks' );
 		$page      = $dbr->tableName( 'page' );
 		return

@@ -1,12 +1,10 @@
 <?php
 /**
  * Provide functions to handle article trackbacks.
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 require_once( './includes/WebStart.php' );
-
-require_once('DatabaseFunctions.php');
+require_once( './includes/DatabaseFunctions.php' );
 
 /**
  *
@@ -43,7 +41,7 @@ if (   !isset($_POST['url'])
     || !isset($_REQUEST['article']))
 	XMLerror("Required field not specified");
 
-$dbw =& wfGetDB(DB_MASTER);
+$dbw = wfGetDB(DB_MASTER);
 
 $tbtitle = $_POST['title'];
 $tbex = $_POST['excerpt'];

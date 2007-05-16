@@ -11,7 +11,6 @@ define( 'MW_UPGRADE_CALLBACK', null  ); // for self-documentation only
 
 class FiveUpgrade {
 	function FiveUpgrade() {
-		global $wgDatabase;
 		$this->conversionTables = $this->prepareWindows1252();
 
 		$this->dbw =& $this->newConnection();
@@ -275,7 +274,6 @@ class FiveUpgrade {
 		$name_temp = $name . '_temp';
 		$this->log( "Migrating $name table to $name_temp..." );
 
-		$table      = $this->dbw->tableName( $name );
 		$table_temp = $this->dbw->tableName( $name_temp );
 
 		// Create temporary table; we're going to copy everything in there,
@@ -335,7 +333,7 @@ class FiveUpgrade {
 
 		$this->log( "...converting from cur/old to page/revision/text DB structure." );
 
-		extract( $this->dbw->tableNames( 'cur', 'old', 'page', 'revision', 'text' ) );
+		list ($cur, $old, $page, $revision, $text) = $this->dbw->tableNamesN( 'cur', 'old', 'page', 'revision', 'text' );
 
 		$this->log( "Creating page and revision tables..." );
 		$this->dbw->query("CREATE TABLE $page (
@@ -497,14 +495,15 @@ class FiveUpgrade {
 	function upgradeLinks() {
 		$fname = 'FiveUpgrade::upgradeLinks';
 		$chunksize = 200;
-		extract( $this->dbw->tableNames( 'links', 'brokenlinks', 'pagelinks', 'cur' ) );
+		list ($links, $brokenlinks, $pagelinks, $cur) = $this->dbw->tableNamesN( 'links', 'brokenlinks', 'pagelinks', 'cur' );
 
 		$this->log( 'Checking for interwiki table change in case of bogus items...' );
 		if( $this->dbw->fieldExists( 'interwiki', 'iw_trans' ) ) {
 			$this->log( 'interwiki has iw_trans.' );
 		} else {
+			global $IP;
 			$this->log( 'adding iw_trans...' );
-			dbsource( 'maintenance/archives/patch-interwiki-trans.sql', $this->dbw );
+			dbsource( $IP . '/maintenance/archives/patch-interwiki-trans.sql', $this->dbw );
 			$this->log( 'added iw_trans.' );
 		}
 
@@ -740,7 +739,7 @@ END;
 	function clearTable( $table ) {
 		print "Clearing $table...\n";
 		$tableName = $this->db->tableName( $table );
-		$this->db->query( 'TRUNCATE $tableName' );
+		$this->db->query( "TRUNCATE $tableName" );
 	}
 
 	/**
@@ -765,7 +764,7 @@ END;
 
 		$this->log( "$oldpath -> $newpath" );
 		if( rename( $oldpath, $newpath ) ) {
-			$relpath = $this->relativize( $newpath, dirname( $oldpath ) );
+			$relpath = wfRelativePath( $newpath, dirname( $oldpath ) );
 			if( !symlink( $relpath, $oldpath ) ) {
 				$this->log( "... symlink failed!" );
 			}
@@ -774,38 +773,6 @@ END;
 			$this->log( "... rename failed!" );
 			return false;
 		}
-	}
-
-	/**
-	 * Generate a relative path name to the given file.
-	 * Assumes Unix-style paths, separators, and semantics.
-	 *
-	 * @param string $path Absolute destination path including target filename
-	 * @param string $from Absolute source path, directory only
-	 * @return string
-	 * @access private
-	 * @static
-	 */
-	function relativize( $path, $from ) {
-		$pieces  = explode( '/', dirname( $path ) );
-		$against = explode( '/', $from );
-
-		// Trim off common prefix
-		while( count( $pieces ) && count( $against )
-			&& $pieces[0] == $against[0] ) {
-			array_shift( $pieces );
-			array_shift( $against );
-		}
-
-		// relative dots to bump us to the parent
-		while( count( $against ) ) {
-			array_unshift( $pieces, '..' );
-			array_shift( $against );
-		}
-
-		array_push( $pieces, wfBaseName( $path ) );
-
-		return implode( '/', $pieces );
 	}
 
 	function upgradeOldImage() {
@@ -868,7 +835,7 @@ END;
 		$fname = 'FiveUpgrade::upgradeWatchlist';
 		$chunksize = 100;
 
-		extract( $this->dbw->tableNames( 'watchlist', 'watchlist_temp' ) );
+		list ($watchlist, $watchlist_temp) = $this->dbw->tableNamesN( 'watchlist', 'watchlist_temp' );
 
 		$this->log( 'Migrating watchlist table to watchlist_temp...' );
 		$this->dbw->query(
@@ -907,7 +874,6 @@ END;
 
 		$add = array();
 		while( $row = $this->dbr->fetchObject( $result ) ) {
-			$now = $this->dbw->timestamp();
 			$add[] = array(
 				'wl_user'      =>                        $row->wl_user,
 				'wl_namespace' => Namespace::getSubject( $row->wl_namespace ),

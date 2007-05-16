@@ -1,14 +1,10 @@
 <?php
 /** Venitian ( Vèneto )
   *
-  * @package MediaWiki
-  * @subpackage Language
+  * @addtogroup Language
   */
 $fallback = 'it';
 
-$quickbarSettings = array(
-	'Nessun', 'Fisso a sinistra', 'Fisso a destra', 'Fluttuante a sinistra'
-);
 $namespaceNames = array(		
 	NS_MEDIA            => 'Media',
 	NS_SPECIAL          => 'Speciale',
@@ -318,7 +314,7 @@ Se el cołegamento xè stà seguio par eror, xè suficiente far clic sul botòn 
 
 
 ---- \'\'Sta quà l\'è la paxèna de discussion de un utente anonimo che non\'l se ga ancora registrà o che non effettua el login. De conseguenzsa xè necessario identificarlo tramite l\'[[Indirizzo IP|indirizzo IP]] numerico. Tale indirizso el pode esser condivixo da diversi utenti. Se te sì un utente anonimo e te pensi che ghe sia sta commenti irrilevanti, te podi [[Special:Userlogin|registrarte o effettuare el login]] par evitare confuxion con altri utenti in futuro.\'\'',
-'noarticletext'         => 'In sto momento ła paxèna richiesta xè voda. Xè possibiłe [Special:Search/{{PAGENAME}}|çercar sto titoło]] ne łe altre paxène del sito oppure [{{fullurl:{{FULLPAGENAME}}|action=edit}} modificar ła paxèna \'desso].',
+'noarticletext'         => 'In sto momento ła paxèna richiesta xè voda. Xè possibiłe [[Special:Search/{{PAGENAME}}|çercar sto titoło]] ne łe altre paxène del sito oppure [{{fullurl:{{FULLPAGENAME}}|action=edit}} modificar ła paxèna \'desso].',
 'clearyourcache'        => '\'\'\'Nota:\'\'\' dopo aver salvà, te devi pulire la cache del to browser par veder i cambiamenti: \'\'\'Mozilla:\'\'\' clicca su \'\'reload\'\' (oppure \'\'ctrl-r\'\'), \'\'\'IE / Opera:\'\'\' \'\'ctrl-f5\'\', \'\'\'Safari:\'\'\' \'\'cmd-r\'\', \'\'\'Konqueror\'\'\' \'\'ctrl-r\'\'.',
 'previewnote'           => 'Tegni presente che sta qua xè solo n\'anteprima, e che la to verzsion NON xè stà ancora salvà!',
 'session_fail_preview'  => '<strong>Purtroppo non xè stà possibiłe salvare le to modifiche parché i dati de la sezsion i xè andai persi. Per favore, riproa.<br />
@@ -398,6 +394,11 @@ $2 Elenca i redirects &nbsp; cerca per $3 $9',
 par poder personalixare le to preferenzse.',
 'prefsreset'            => 'Le to Preferenzse xè stà ripescae da la memoria de sistema del potente server de {{SITENAME}}.',
 'qbsettings'            => 'Settaggio barra menu',
+'qbsettings-none'	=> 'Nessun',
+'qbsettings-fixedleft'	=> 'Fisso a sinistra',
+'qbsettings-fixedright'	=> 'Fisso a destra',
+'qbsettings-floatingleft'	=> 'Fluttuante a sinistra',
+'qbsettings-floatingright'	=> 'Fluttuante a destra',
 'changepassword'        => 'Cambia ła password',
 'skin'                  => 'Aspetto',
 'math'                  => 'Formułe matematiche',
@@ -598,6 +599,7 @@ La [http://meta.wikimedia.org/wiki/Help:Job_queue coda] contegne \'\'\'{{FORMATN
 'emailsent'             => 'E-mail invià',
 'emailsenttext'         => 'La to e-mail xè stà invià',
 'watchlist'             => 'osservati speciali',
+'mywatchlist'             => 'osservati speciali',
 'watchlistfor'          => '(par \'\'\'$1\'\'\')',
 'nowatchlist'           => 'Non hai indicato articoli da tenere d\'occhio.',
 'watchlistanontext'     => 'Per vixualixare e modifegar l\'ełenco de i osservati speciałi xè necessario $1.',
@@ -778,18 +780,6 @@ Per cortesia, conferma che questo è effettivamente quanto tu intendi ora effett
 'lockdbsuccesstext'     => 'Il database di {{SITENAME}} è stato bloccato.
 <br />Ricordati di rimuovere il blocco non appena avrai terminatoi le tue manutenzioni.',
 'unlockdbsuccesstext'   => ' Il database di {{SITENAME}} è stato sbloccato.',
-'makesysoptitle'        => 'Rendi aministradore un utente',
-'makesysoptext'         => 'Sto form xè usà dai burocrati par far diventare amistradori i utenti normali. 
-Scrivi el nome de l\'utente ne la caseła e struca el botón par far diventare aministradore un utente.',
-'makesysopname'         => 'Nome dell\'utente:',
-'makesysopsubmit'       => 'Fa diventar sto utente un aministrador',
-'makesysopok'           => '\'\'\'L\'utente \'$1\' adesso xè un aministrador\'\'\'',
-'makesysopfail'         => '<b>Impossibiłe far diventare aministrador l\'utente "$1". Verificare che el nome utente sia stà scrito coretamente.</b>',
-'setbureaucratflag'     => 'Imposta i diritti del burocrate',
-'set_user_rights'       => 'Imposta diritti utente',
-'makesysop'             => 'Rendi un utente aministrador',
-'already_sysop'         => 'Sto utente l\'è xà un aministradór',
-'already_bureaucrat'    => 'Sto utente l\'è xà un burocrate',
 'movepage'              => 'Spostamento de paxèna',
 'movepagetext'          => 'Con el modulo sottostante te podi rinominar na paxèna, spostando anca tuta la so cronołogia al novo nome. El vecio titoło diverrà automaticamente un redirect che punta al novo titoło. I link a la vecia paxèna non sarà agiornai (e i punterà quindi al redirect); azsertai de [[Special:Manutenzsion|controłare con cura]] che non se crea doppi redirects o redirects interroti. Resta ne la to responsabilità de accertarte che i link i continua a puntare verso dove i deve dirigerse. Nota ben: la paxèna \'\'\'non\'\'\' sarà spostà se ve fusse xà una voçe con el novo nome, a meno che non sia na paxèna voda o un redirect, e sempre che non abbia cronologia. Questo significa che, se te commetti un error, te podi novamente rinominar na paxèna col vecio titoło, ma non te podi sovrascriver na paxèna xà esistente. <b>ATTENZSION!</b> Sto cambiamento drastico podaria crear inattesi contrattempi, specialmente se se tratta de na paxèna molto visità. Accertai de aver ben valutà le conseguenzse de lo spostamento, prima de procedere. Nel dubbio, contatta un Aministrador.',
 'movepagetalktext'      => 'La corrispondente paxèna de discussion sarà spostà automaticamente insieme a ła paxèna prinçipałe, \'\'\'tranne che nei seguenti casi:\'\'\'
@@ -862,12 +852,12 @@ Tute łe operazsion de importazsion trans-wiki łe xè registrae nel [[Special:L
 'import-logentry-interwiki'=> 'gà trasferio da altra wiki ła paxèna $1',
 'import-logentry-interwiki-detail'=> '{{PLURAL:$1|una revixion importà|$1 revixion importae}} da $2',
 'accesskey-diff'        => 'v',
-'tooltip-search'        => 'Zserca in {{SITENAME}} [alt-f]',
-'tooltip-minoredit'     => 'Segnała come modifega minore [alt-i]',
-'tooltip-save'          => 'Salva łe modifeghe [alt-s]',
-'tooltip-preview'       => 'Anteprima de łe modifeghe (consilià, prima de salvare!) [alt-p]',
-'tooltip-diff'          => 'Varda łe modifeghe apportae al testo. [alt-v]',
-'tooltip-compareselectedversions'=> 'Varda łe diferenzse tra łe do verzsion selezsionà de sta paxèna. [alt-v]',
+'tooltip-search'        => 'Zserca in {{SITENAME}}',
+'tooltip-minoredit'     => 'Segnała come modifega minore',
+'tooltip-save'          => 'Salva łe modifeghe',
+'tooltip-preview'       => 'Anteprima de łe modifeghe (consilià, prima de salvare!)',
+'tooltip-diff'          => 'Varda łe modifeghe apportae al testo.',
+'tooltip-compareselectedversions'=> 'Varda łe diferenzse tra łe do verzsion selezsionà de sta paxèna.',
 'notacceptable'         => 'El server wiki non xè in grado di fornire i dati in un formato łeggibiłe dal client utilixà.',
 'anonymous'             => 'Utente(/i) anonimo(/i) de {{SITENAME}}',
 'lastmodifiedatby'        => 'Sta paxèna xè stà modificà l\'ultima volta el $2, $1 da $3.',
@@ -892,57 +882,106 @@ Tute łe operazsion de importazsion trans-wiki łe xè registrae nel [[Special:L
 'rcpatroldisabled'      => 'Recent Changes Patrol disabled',
 'markedaspatrollederror'=> 'Impossibiłe contrassegnare ła voçe come verificà',
 'markedaspatrollederrortext'=> 'Occorre speçificare na revixion da contrazsegnare come verificà.',
-'monobook.js'           => '/* tooltips and access keys */
- var ta = new Object();
- ta[\'pt-userpage\'] = new Array(\'.\',\'La me paxèna utente\');
- ta[\'pt-anonuserpage\'] = new Array(\'.\',\'La paxèna utente de l\'ip che te stè usando\');
- ta[\'pt-mytalk\'] = new Array(\'n\',\'Le me discussion\');
- ta[\'pt-anontalk\'] = new Array(\'n\',\'Discussioni riguardo le modifiche fate da sto ip\');
- ta[\'pt-preferences\'] = new Array(\'\',\'Le me preferenzse\');
- ta[\'pt-watchlist\'] = new Array(\'l\',\'La lista de le paxène che te stè tegnendo soto ocio.\');
- ta[\'pt-mycontris\'] = new Array(\'y\',\'La lista de i me contributi\');
- ta[\'pt-login\'] = new Array(\'o\',\'Te consigliemo de registrarte, ma non l\'è obbligatorio.\');
- ta[\'pt-anonlogin\'] = new Array(\'o\',\'Te consigliemo de registrarte, ma non l\'è obbligatorio.\');
- ta[\'pt-logout\'] = new Array(\'\',\'Log out (esci)\');
- ta[\'ca-talk\'] = new Array(\'t\',\'Varda łe discussion rełative a la voçe\');
- ta[\'ca-edit\'] = new Array(\'e\',\'Te podi modificar sta paxèna. Per favor usa el botton de anteprima prima de salvare.\');
- ta[\'ca-addsection\'] = new Array(\'+\',\'Xonta un commento a sta discussion.\');
- ta[\'ca-viewsource\'] = new Array(\'e\',\'Sta paxèna xè proteta, ma te podi vedar el suo codexe sorjente.\');
- ta[\'ca-history\'] = new Array(\'h\',\'Verzsion preçedenti de sta paxèna.\');
- ta[\'ca-protect\'] = new Array(\'=\',\'Protedj sta paxèna\');
- ta[\'ca-delete\'] = new Array(\'d\',\'Scanceła sta paxèna\');
- ta[\'ca-undelete\'] = new Array(\'d\',\'Ripristina la paxèna come l\'era prima de ła scancełazsion\');
- ta[\'ca-move\'] = new Array(\'m\',\'Sposta sta paxèna a un altro titoło\');
- ta[\'ca-nomove\'] = new Array(\'\',\'Non te ghè el permezso de spostar sta paxèna\');
- ta[\'ca-watch\'] = new Array(\'w\',\'Xonta sta paxèna a l\'elenco de łe paxène che te tegni soto ocio\');
- ta[\'ca-unwatch\'] = new Array(\'w\',\'Cava sta paxèna da l\'elenco de łe paxène che te tegni soto ocio\');
- ta[\'search\'] = new Array(\'f\',\'Serca sta wiki\');
- ta[\'p-logo\'] = new Array(\'\',\'Paxèna prinzsipałe\');
- ta[\'n-mainpage\'] = new Array(\'z\',\'Visita la Paxèna prinzsipałe\');
- ta[\'n-portal\'] = new Array(\'\',\'Descrizsion del projeto, cosa te podi far, e dove trovar le robe\');
- ta[\'n-currentevents\'] = new Array(\'\',\'Eventi de atuałità\');
- ta[\'n-recentchanges\'] = new Array(\'r\',\'La lista de le ultime modifiche a sta wiki.\');
- ta[\'n-randompage\'] = new Array(\'x\',\'Mostra na paxèna a caso\');
- ta[\'n-help\'] = new Array(\'\',\'Raccolta de manuałi.\');
- ta[\'n-sitesupport\'] = new Array(\'\',\'Iútane\');
- ta[\'t-whatlinkshere\'] = new Array(\'j\',\'Lista de tute le paxène che le porta a sta\' quà\');
- ta[\'t-recentchangeslinked\'] = new Array(\'k\',\'Lista de le ultime modifiche a le paxène linkae da sta quà.\');
- ta[\'feed-rss\'] = new Array(\'\',\'RSS feed for this page\');
- ta[\'feed-atom\'] = new Array(\'\',\'Atom feed for this page\');
- ta[\'t-contributions\'] = new Array(\'\',\'Lista de i contributi de sto utente\');
- ta[\'t-emailuser\'] = new Array(\'\',\'Manda n\'E.mail a sto utente\');
- ta[\'t-upload\'] = new Array(\'u\',\'Meti imagini o file multimediałi su {{SITENAME}}\');
- ta[\'t-specialpages\'] = new Array(\'q\',\'Lista de tute łe paxène speciali\');
- ta[\'ca-nstab-main\'] = new Array(\'c\',\'Varda la voçe rełativa\');
- ta[\'ca-nstab-user\'] = new Array(\'c\',\'Varda la paxèna utente\');
- ta[\'ca-nstab-media\'] = new Array(\'c\',\'Vedi la paxèna de el file multimediale\');
- ta[\'ca-nstab-special\'] = new Array(\'\',\'Sta quà xè na paxèna speciale, non la pode essere modificà.\');
- ta[\'ca-nstab-project\'] = new Array(\'a\',\'Varda la paxèna del projeto\');
- ta[\'ca-nstab-image\'] = new Array(\'c\',\'Varda la paxèna dell\'imagine\'); 
- ta[\'ca-nstab-mediawiki\'] = new Array(\'c\',\'Varda el messajo de sistema\');
- ta[\'ca-nstab-template\'] = new Array(\'c\',\'Varda el template\');
- ta[\'ca-nstab-help\'] = new Array(\'c\',\'Varda la paxèna de aiuto\');
- ta[\'ca-nstab-category\'] = new Array(\'c\',\'Varda la paxèna de la categoria\');',
+'monobook.js' => '/* Deprecated; use [[MediaWiki:common.js]] */',
+ 
+'accesskey-pt-userpage' => '.',
+'tooltip-pt-userpage' => 'La me paxèna utente',
+'accesskey-pt-anonuserpage' => '.',
+'tooltip-pt-anonuserpage' => 'La paxèna utente de l',
+'accesskey-pt-mytalk' => 'n',
+'tooltip-pt-mytalk' => 'Le me discussion',
+'accesskey-pt-anontalk' => 'n',
+'tooltip-pt-anontalk' => 'Discussioni riguardo le modifiche fate da sto ip',
+'accesskey-pt-preferences' => '',
+'tooltip-pt-preferences' => 'Le me preferenzse',
+'accesskey-pt-watchlist' => 'l',
+'tooltip-pt-watchlist' => 'La lista de le paxène che te stè tegnendo soto ocio.',
+'accesskey-pt-mycontris' => 'y',
+'tooltip-pt-mycontris' => 'La lista de i me contributi',
+'accesskey-pt-login' => 'o',
+'tooltip-pt-login' => 'Te consigliemo de registrarte, ma non l',
+'accesskey-pt-anonlogin' => 'o',
+'tooltip-pt-anonlogin' => 'Te consigliemo de registrarte, ma non l',
+'accesskey-pt-logout' => '',
+'tooltip-pt-logout' => 'Log out (esci)',
+'accesskey-ca-talk' => 't',
+'tooltip-ca-talk' => 'Varda łe discussion rełative a la voçe',
+'accesskey-ca-edit' => 'e',
+'tooltip-ca-edit' => 'Te podi modificar sta paxèna. Per favor usa el botton de anteprima prima de salvare.',
+'accesskey-ca-addsection' => '+',
+'tooltip-ca-addsection' => 'Xonta un commento a sta discussion.',
+'accesskey-ca-viewsource' => 'e',
+'tooltip-ca-viewsource' => 'Sta paxèna xè proteta, ma te podi vedar el suo codexe sorjente.',
+'accesskey-ca-history' => 'h',
+'tooltip-ca-history' => 'Verzsion preçedenti de sta paxèna.',
+'accesskey-ca-protect' => '=',
+'tooltip-ca-protect' => 'Protedj sta paxèna',
+'accesskey-ca-delete' => 'd',
+'tooltip-ca-delete' => 'Scanceła sta paxèna',
+'accesskey-ca-undelete' => 'd',
+'tooltip-ca-undelete' => 'Ripristina la paxèna come l',
+'accesskey-ca-move' => 'm',
+'tooltip-ca-move' => 'Sposta sta paxèna a un altro titoło',
+'accesskey-ca-nomove' => '',
+'tooltip-ca-nomove' => 'Non te ghè el permezso de spostar sta paxèna',
+'accesskey-ca-watch' => 'w',
+'tooltip-ca-watch' => 'Xonta sta paxèna a l',
+'accesskey-ca-unwatch' => 'w',
+'tooltip-ca-unwatch' => 'Cava sta paxèna da l',
+'accesskey-search' => 'f',
+'tooltip-search' => 'Serca sta wiki',
+'accesskey-p-logo' => '',
+'tooltip-p-logo' => 'Paxèna prinzsipałe',
+'accesskey-n-mainpage' => 'z',
+'tooltip-n-mainpage' => 'Visita la Paxèna prinzsipałe',
+'accesskey-n-portal' => '',
+'tooltip-n-portal' => 'Descrizsion del projeto, cosa te podi far, e dove trovar le robe',
+'accesskey-n-currentevents' => '',
+'tooltip-n-currentevents' => 'Eventi de atuałità',
+'accesskey-n-recentchanges' => 'r',
+'tooltip-n-recentchanges' => 'La lista de le ultime modifiche a sta wiki.',
+'accesskey-n-randompage' => 'x',
+'tooltip-n-randompage' => 'Mostra na paxèna a caso',
+'accesskey-n-help' => '',
+'tooltip-n-help' => 'Raccolta de manuałi.',
+'accesskey-n-sitesupport' => '',
+'tooltip-n-sitesupport' => 'Iútane',
+'accesskey-t-whatlinkshere' => 'j',
+'tooltip-t-whatlinkshere' => 'Lista de tute le paxène che le porta a sta',
+'accesskey-t-recentchangeslinked' => 'k',
+'tooltip-t-recentchangeslinked' => 'Lista de le ultime modifiche a le paxène linkae da sta quà.',
+'accesskey-feed-rss' => '',
+'tooltip-feed-rss' => 'RSS feed for this page',
+'accesskey-feed-atom' => '',
+'tooltip-feed-atom' => 'Atom feed for this page',
+'accesskey-t-contributions' => '',
+'tooltip-t-contributions' => 'Lista de i contributi de sto utente',
+'accesskey-t-emailuser' => '',
+'tooltip-t-emailuser' => 'Manda n',
+'accesskey-t-upload' => 'u',
+'tooltip-t-upload' => 'Meti imagini o file multimediałi su {{SITENAME}}',
+'accesskey-t-specialpages' => 'q',
+'tooltip-t-specialpages' => 'Lista de tute łe paxène speciali',
+'accesskey-ca-nstab-main' => 'c',
+'tooltip-ca-nstab-main' => 'Varda la voçe rełativa',
+'accesskey-ca-nstab-user' => 'c',
+'tooltip-ca-nstab-user' => 'Varda la paxèna utente',
+'accesskey-ca-nstab-media' => 'c',
+'tooltip-ca-nstab-media' => 'Vedi la paxèna de el file multimediale',
+'accesskey-ca-nstab-special' => '',
+'tooltip-ca-nstab-special' => 'Sta quà xè na paxèna speciale, non la pode essere modificà.',
+'accesskey-ca-nstab-project' => 'a',
+'tooltip-ca-nstab-project' => 'Varda la paxèna del projeto',
+'accesskey-ca-nstab-image' => 'c',
+'tooltip-ca-nstab-image' => 'Varda la paxèna dell\'imagine',
+'accesskey-ca-nstab-mediawiki' => 'c',
+'tooltip-ca-nstab-mediawiki' => 'Varda el messajo de sistema',
+'accesskey-ca-nstab-template' => 'c',
+'tooltip-ca-nstab-template' => 'Varda el template',
+'accesskey-ca-nstab-help' => 'c',
+'tooltip-ca-nstab-help' => 'Varda la paxèna de aiuto',
+'accesskey-ca-nstab-category' => 'c',
+'tooltip-ca-nstab-category' => 'Varda la paxèna de la categoria',
 'deletedrevision'       => 'Vecia verzsion scancełà $1',
 'nextdiff'              => 'Next diff →',
 'imagemaxsize'          => 'Limita łe imagini o łe paxène de descrizsion de łe imagini a:',

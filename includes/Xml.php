@@ -50,7 +50,9 @@ class Xml {
 			$attribs = array_map( array( 'UtfNormal', 'cleanUp' ), $attribs );
 		}
 		if( $contents ) {
+			wfProfileIn( __METHOD__ . '-norm' );
 			$contents = UtfNormal::cleanUp( $contents );
+			wfProfileOut( __METHOD__ . '-norm' );
 		}
 		return self::element( $element, $attribs, $contents );
 	}
@@ -60,6 +62,14 @@ class Xml {
 	public static function closeElement( $element ) { return "</$element>"; }
 
 	/**
+	 * Same as <link>element</link>, but does not escape contents. Handy when the
+	 * content you have is already valid xml.
+	 */
+	public static function tags( $element, $attribs = null, $contents ) {
+		return self::element( $element, $attribs, null ) . $contents . "</$element>";
+	}
+
+	/**
 	 * Create a namespace selector
 	 *
 	 * @param $selected Mixed: the namespace which should be selected, default ''
@@ -67,7 +77,7 @@ class Xml {
 	 * @param $includehidden Bool: include hidden namespaces?
 	 * @return String: Html string containing the namespace selector
 	 */
-	public static function &namespaceSelector($selected = '', $allnamespaces = null, $includehidden=false) {
+	public static function namespaceSelector($selected = '', $allnamespaces = null, $includehidden=false) {
 		global $wgContLang;
 		if( $selected !== '' ) {
 			if( is_null( $selected ) ) {

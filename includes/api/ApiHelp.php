@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Sep 6, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiHelp extends ApiBase {
 
 	public function __construct($main, $action) {
@@ -49,7 +51,7 @@ class ApiHelp extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiHelp.php 16757 2006-10-03 05:41:55Z yurik $';
+		return __CLASS__ . ': $Id: ApiHelp.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

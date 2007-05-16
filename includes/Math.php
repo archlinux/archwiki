@@ -1,7 +1,6 @@
 <?php
 /**
  * Contain everything related to <math> </math> parsing
- * @package MediaWiki
  */
 
 /**
@@ -11,7 +10,6 @@
  *
  * by Tomasz Wegrzanowski, with additions by Brion Vibber (2003, 2004)
  *
- * @package MediaWiki
  */
 class MathRenderer {
 	var $mode = MW_MATH_MODERN;
@@ -22,7 +20,7 @@ class MathRenderer {
 	var $mathml = '';
 	var $conservativeness = 0;
 
-	function MathRenderer( $tex ) {
+	function __construct( $tex ) {
 		$this->tex = $tex;
  	}
 
@@ -156,7 +154,7 @@ class MathRenderer {
 
 				$md5_sql = pack('H32', $this->md5); # Binary packed, not hex
 
-				$dbw =& wfGetDB( DB_MASTER );
+				$dbw = wfGetDB( DB_MASTER );
 				$dbw->replace( 'math', array( 'math_inputhash' ),
 				  array(
 					'math_inputhash' => $md5_sql,
@@ -185,7 +183,7 @@ class MathRenderer {
 		$fname = 'MathRenderer::_recall';
 
 		$this->md5 = md5( $this->tex );
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$rpage = $dbr->selectRow( 'math',
 			array( 'math_outputhash','math_html_conservativeness','math_html','math_mathml' ),
 			array( 'math_inputhash' => pack("H32", $this->md5)), # Binary packed, not hex

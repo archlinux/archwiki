@@ -559,7 +559,7 @@ td.diff-context {
 	background: #eee;
 	font-size: smaller;
 }
-span.diffchange {
+.diffchange {
 	color: red;
 	font-weight: bold;
 }
@@ -997,15 +997,6 @@ span.updatedmarker {
 	color: black;
 	background-color: #0f0;
 }
-span.newpageletter {
-	font-weight: bold;
-	color: black;
-	background-color: yellow;
-}
-span.minoreditletter {
-	color: black;
-	background-color: #c5ffe6;
-}
 
 table.gallery {
 	border: 1px solid #ccc;
@@ -1024,8 +1015,12 @@ table.gallery td {
 	border: solid 2px white;
 }
 
+/* Keep this temporarily so that cached pages will display right */
 table.gallery td.galleryheader {
-	text-align: center;
+    text-align: center;
+	font-weight: bold;
+}
+table.gallery caption {
 	font-weight: bold;
 }
 
@@ -1325,13 +1320,18 @@ tr.sv-space td { display: none; }
 .mw-summary-preview {
 	margin: 0.1em 0;
 }
-#toolbar { clear: both; }
-
-.mw-plusminus-null { color: #aaa; }
-
 @media handheld {
 	.nonessential {
 		/* Kill big bulky stuff that will clog up the screen */
 		display: none;
 	}
 }
+
+/**
+ * Here is some stuff that's ACTUALLY COMMON TO ALL SKINS.
+ * When the day comes, it can be moved to a *real* common.css.
+ */
+.mw-plusminus-null { color: #aaa; }
+.texvc { direction: ltr; unicode-bidi: embed; }
+/* Stop floats from intruding into edit area in previews */
+#toolbar, #wpTextbox1 { clear: both; }

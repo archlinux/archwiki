@@ -1,7 +1,6 @@
 <?php
 /**
  * Include most things that's need to customize the site
- * @package MediaWiki
  */
 
 /**
@@ -134,13 +133,14 @@ if ( $wgDBprefix ) {
 } else {
 	$wgCookiePrefix = $wgDBname;
 }
+$wgCookiePrefix = strtr($wgCookiePrefix, "=,; +.\"'\\[", "__________");
 
 # If session.auto_start is there, we can't touch session name
 #
 if( !ini_get( 'session.auto_start' ) )
 	session_name( $wgSessionName ? $wgSessionName : $wgCookiePrefix . '_session' );
 
-if( !$wgCommandLineMode && ( isset( $_COOKIE[session_name()] ) || isset( $_COOKIE[$wgCookiePrefix.'Token'] ) ) ) {
+if( !$wgCommandLineMode && ( $wgRequest->checkSessionCookie() || isset( $_COOKIE[$wgCookiePrefix.'Token'] ) ) ) {
 	wfIncrStats( 'request_with_session' );
 	wfSetupSession();
 	$wgSessionStarted = true;

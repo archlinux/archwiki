@@ -1,13 +1,8 @@
 <?php
 /** Albanian (Shqip)
  *
- * @package MediaWiki
- * @subpackage Language
+ * @addtogroup Language
  */
-
-$quickbarSettings = array(
-	'Asnjë', 'Lidhur majtas', 'Lidhur djathtas', 'Pezull majtas', 'Pezull djathtas'
-);
 
 $skinNames = array(
 	'standard' => 'Standarte',
@@ -431,14 +426,14 @@ Adresa e IP-së që keni është $3. Jepni këtë adresë në çdo ankesë.',
 'whitelistacctitle'     => 'Nuk ju lejohet të hapni një llogari',
 'whitelistacctext'      => 'Duhet të [[Special:Userlogin|hyni brënda]] dhe të keni të drejta të posaçme pasi tu lejohet të hapni llogari në Wiki.',
 'confirmedittitle'      => 'Nevojitet adresë email-i e vërtetuar për të redaktuar',
-'confirmedittext'       => 'Ju duhet së pari ta vërtetoni e-mail adresen para se të redaktoni. Ju lutem plotësoni dhe vërtetoni e-mailin tuaj  te [[{ns:special}}:Preferences|parapëlqimet]] e juaja.',
+'confirmedittext'       => 'Ju duhet së pari ta vërtetoni e-mail adresen para se të redaktoni. Ju lutem plotësoni dhe vërtetoni e-mailin tuaj  te [[Special:Preferences|parapëlqimet]] e juaja.',
 'loginreqtitle'         => 'Detyrohet hyrja',
 'loginreqlink'          => 'hyni',
 'loginreqpagetext'      => 'Ju duhet $1 për të parë faqe e tjera.',
 'accmailtitle'          => 'Fjalëkalimi u dërgua.',
 'accmailtext'           => 'Fjalëkalimi për \'$1\' u dërgua tek $2.',
 'newarticle'            => '(I Ri)',
-'newarticletext'        => '<div style="border: 1px solid #ccc; padding: 7px;">{{SITENAME}} nuk ka akoma një \'\'{{NAMESPACE}} faqe\'\' të quajtur \'\'\'{{PAGENAME}}\'\'\'. Shtypni \'\'\'redaktoni\'\'\' më sipër ose [[Special:Search/{{PAGENAME}}|bëni një kërkim për {{PAGENAME}}]]</div>',
+'newarticletext'        => '{{SITENAME}} nuk ka akoma një \'\'{{NAMESPACE}} faqe\'\' të quajtur \'\'\'{{PAGENAME}}\'\'\'. Shtypni \'\'\'redaktoni\'\'\' më sipër ose [[Special:Search/{{PAGENAME}}|bëni një kërkim për {{PAGENAME}}]]',
 'anontalkpagetext'      => '---- \'\'Kjo është një faqe diskutimi për një përdorues anonim i cili nuk ka hapur akoma një llogari ose nuk e përdor atë. Prandaj, më duhet të përdor numrin e adresës [[IP adresë|IP]] për ta identifikuar. Kjo adresë mund të përdoret nga disa njerëz. Në qoftë se jeni një përdorues anonim dhe mendoni se komente kot janë drejtuar ndaj jush, ju lutem [[Special:Userlogin|krijoni një llogari ose hyni brënda]] për të mos u ngatarruar me përdorues të tjerë anonim.\'\'',
 'noarticletext'         => 'Tani për tani nuk ka tekst në këtë faqe, mund ta [[Special:Search/{{PAGENAME}}|kërkoni]] këtë titull në faqe të tjera ose mund ta [{{fullurl:{{FULLPAGENAME}}|action=edit}} filloni] atë.',
 'clearyourcache'        => '\'\'\'Shënim:\'\'\' Pasi të ruani parapëlqimet ose pasi të kryeni ndryshimet, duhet të pastroni \'\'cache\'\'-në e shfletuesit tuaj për të parë ndryshimet: për \'\'\'Mozilla/Safari/Konqueror\'\'\' shtypni \'\'Ctrl+Shift+Reload\'\' (ose \'\'ctrl+shift+r\'\'), për \'\'\'IE\'\'\' \'\'Ctrl+f5\'\', \'\'\'Opera\'\'\': \'\'F5\'\'.',
@@ -568,6 +563,11 @@ $2 Lidhje përcjellëse   Kërko për $3 $9',
 'prefsnologintext'      => 'Duhet të keni [[Special:Userlogin|hyrë brenda]] për të ndryshuar parapëlqimet e përdoruesit.',
 'prefsreset'            => 'Parapëlqimet janë rikthyer siç ishin.',
 'qbsettings'            => 'Vendime të shpejta',
+'qbsettings-none'	=> 'Asnjë',
+'qbsettings-fixedleft'	=> 'Lidhur majtas',
+'qbsettings-fixedright'	=> 'Lidhur djathtas',
+'qbsettings-floatingleft'	=> 'Pezull majtas',
+'qbsettings-floatingright'	=> 'Pezull djathtas',
 'changepassword'        => 'Ndërroni fjalëkalimin',
 'skin'                  => 'Pamja',
 'math'                  => 'Formula',
@@ -846,7 +846,7 @@ një figurë me një URL në mënyrë direkte, kështuqë ka mundësi që këto 
 'allpagessubmit'        => 'Shko',
 'allpagesprefix'        => 'Trego faqet me parashtesë:',
 'mailnologin'           => 'S\'ka adresë dërgimi',
-'mailnologintext'       => 'Duhet të keni [[{ns:special}}:Userlogin|hyrë brenda]] dhe të keni një adresë të saktë në [[{ns:special}}:Preferences|parapëlqimet]] tuaja për tu dërguar email përdoruesve të tjerë.',
+'mailnologintext'       => 'Duhet të keni [[Special:Userlogin|hyrë brenda]] dhe të keni një adresë të saktë në [[Special:Preferences|parapëlqimet]] tuaja për tu dërguar email përdoruesve të tjerë.',
 'emailuser'             => 'Email përdoruesit',
 'emailpage'             => 'Dërgo email përdoruesve',
 'emailpagetext'         => 'Në qoftë se ky përdorues ka dhënë një adresë të saktë në parapëlqimet, formulari më poshtë do t\'i dërgojë një mesazh. 
@@ -865,6 +865,7 @@ ose ka vendosur të mos pranojë mesazhe email-i nga përdorues të tjerë.',
 'emailsent'             => 'Email-i u dërgua',
 'emailsenttext'         => 'Email-i është dërguar.',
 'watchlist'             => 'Lista mbikqyrëse',
+'mywatchlist'             => 'Lista mbikqyrëse',
 'nowatchlist'           => 'Nuk keni asnjë faqe në listën mbikqyrëse.',
 'watchlistcount'        => '\'\'\'Keni $1 faqe nën mbikqyrje duke përfshirë dhe faqet e diskutimit.\'\'\'',
 'clearwatchlist'        => 'Pastroni listën mbikqyrëse',
@@ -1013,7 +1014,7 @@ Shikoni [[Special:Log/delete|regjistrin e grisjeve]] për grisjet dhe restaurime
 'invert'                => 'Kundër zgjedhjes',
 'contributions'         => 'Kontributet',
 'mycontris'             => 'Redaktimet e mia',
-'contribsub'            => 'Për $1',
+'contribsub2'            => 'Për $1 ($2)',
 'nocontribs'            => 'Nuk ka asnjë ndryshim që përputhet me këto kritere.',
 'ucnote'                => 'Më poshtë janë redaktimet më të fundit të <b>$1</b> gjatë <b>$2</b> ditëve.',
 'uclinks'               => 'Shikoni $1 redaktimet e fundit; shikoni $2 ditët e fundit.',
@@ -1065,7 +1066,7 @@ një përdoruesi ose IP adreseje të bllokuar.',
 'autoblocker'           => 'I bllokuar automatikisht sepse përdor të njëjtën IP adresë si "$1". Arsye "$2".',
 'blocklogpage'          => 'Regjistri i bllokimeve',
 'blocklogentry'         => 'bllokoi "[[$1]]" për një kohëzgjatje prej $2',
-'blocklogtext'          => 'Ky është një regjistër bllokimesh dhe çbllokimesh të përdoruesve. IP-të e bllokuara automatikisht nuk janë të dhëna. Shikoni dhe [[{ns:special}}:Ipblocklist|listën e IP-ve të bllokuara]] për një listë të bllokimeve të tanishme.',
+'blocklogtext'          => 'Ky është një regjistër bllokimesh dhe çbllokimesh të përdoruesve. IP-të e bllokuara automatikisht nuk janë të dhëna. Shikoni dhe [[Special:Ipblocklist|listën e IP-ve të bllokuara]] për një listë të bllokimeve të tanishme.',
 'unblocklogentry'       => 'çbllokoi "$1"',
 'range_block_disabled'  => 'Mundësia e administruesve për të bllokuar me shtrirje është çaktivizuar.',
 'ipb_expiry_invalid'    => 'Afati i kohës është gabim.',
@@ -1091,26 +1092,12 @@ Ju lutem konfirmoni që dëshironi me të vërtetë të kryeni këtë veprim, dh
 'lockdbsuccesstext'     => 'Regjistri i {{SITENAME}} është bllokuar.
 <br />Kujtohu ta çbllokosh mbasi të kesh mbaruar mirëmbajtjen.',
 'unlockdbsuccesstext'   => 'Regjistri i {{SITENAME}} është çbllokuar.',
-'makesysoptitle'        => 'Jepini privilegjin e titullit administrues',
-'makesysoptext'         => 'Ky formular përdoret për tu dhënë titullin [[Project:Administruesit|administrues]] një përdoruesi të thjeshtë. Kini kujdes, mbasi të jetë dhënë, vetëm një \'\'zhvillues\'\' mund t\'ia heqi këtë titull një administruesi.',
-'makesysopname'         => 'Emri i përdoruesit:',
-'makesysopsubmit'       => 'Jepini privilegjin',
-'makesysopok'           => '<b>Përdoruesi \'$1\' u bë administrues</b>',
-'makesysopfail'         => '<b>Përdoruesi \'$1\' nuk mund të bëhej administrues. (Kontrolloni nëse emrin e keni shtypur saktësisht)</b>',
-'setbureaucratflag'     => 'Jepi titullin burokrat',
 'rightslog'             => 'Regjistri i privilegjeve',
 'rightslogtext'         => 'Ky është një regjistër për ndryshimet e titujve të përdoruesve.',
 'rightslogentry'        => 'ndryshoi privilegjet e $1 prej "$2" në "$3"',
-'rights'                => 'Privilegje:',
-'set_user_rights'       => 'Vendosni privilegjet e përdoruesve',
-'user_rights_set'       => '<b>Privilegjet për përdoruesin "$1" u freskuan</b>',
-'set_rights_fail'       => '<b>Nuk mund të vendoseshin privilegjet për përdoruesin "$1". (Vendosët emrin e saktë?)</b>',
-'makesysop'             => 'Jepni titullin administrues',
-'already_sysop'         => 'Ky përdorues është bërë administrues më parë',
-'already_bureaucrat'    => 'Ky përdorues është bërë burokrat më parë',
 'rightsnone'            => '(asnjë)',
 'movepage'              => 'Zhvendose faqen',
-'movepagetext'          => 'Duke përdorur formularin e mëposhtëm do të ndërroni titullin e një faqeje, duke zhvendosur gjithë historinë përkatëse tek titulli i ri. Titulli i vjetër do të bëhet një faqe përcjellëse tek titulli i ri. Lidhjet tek faqja e vjetër nuk do të ndryshohen; duhet të kontrolloni [[{ns:special}}:Maintenance|mirëmbajtjen]] për përcjellime të dyfishta ose të prishura.
+'movepagetext'          => 'Duke përdorur formularin e mëposhtëm do të ndërroni titullin e një faqeje, duke zhvendosur gjithë historinë përkatëse tek titulli i ri. Titulli i vjetër do të bëhet një faqe përcjellëse tek titulli i ri. Lidhjet tek faqja e vjetër nuk do të ndryshohen; duhet të kontrolloni [[Special:SpecialPages|mirëmbajtjen]] për përcjellime të dyfishta ose të prishura.
 Keni përgjegjësinë për tu siguruar që lidhjet të vazhdojnë të jenë të sakta.
 
 Vini re se kjo faqe \'\'\'nuk\'\'\' do të zhvendoset n.q.s. ekziston një faqe me titullin e ri, përveçse kur ajo të jetë bosh ose një përcjellim dhe të mos ketë një histori të vjetër. Kjo do të thotë se mund ta zhvendosni një faqe prapë tek emri
@@ -1187,13 +1174,13 @@ Për të eksportuar faqe, thjesht shtypni një emër për çdo rresht, ose krijo
 'accesskey-diff'        => 'v',
 'accesskey-compareselectedversions'=> 'v',
 'accesskey-watch'       => 'w',
-'tooltip-search'        => 'Kërko {{SITENAME}} [alt-f]',
-'tooltip-minoredit'     => 'Shënoje këtë redaktim të vogël [alt-i]',
-'tooltip-save'          => 'Kryej ndryshimet [alt-s]',
-'tooltip-preview'       => 'Shiko parapamjen e ndryshimeve, përdoreni këtë para se të kryeni ndryshimet! [alt-p]',
-'tooltip-diff'          => 'Show which changes you made to the text. [alt-v]',
-'tooltip-compareselectedversions'=> 'Shikoni krahasimin midis dy versioneve të zgjedhura të kësaj faqeje. [alt-v]',
-'tooltip-watch'         => 'Mbikqyre këtë faqe [alt-w]',
+'tooltip-search'        => 'Kërko {{SITENAME}}',
+'tooltip-minoredit'     => 'Shënoje këtë redaktim të vogël',
+'tooltip-save'          => 'Kryej ndryshimet',
+'tooltip-preview'       => 'Shiko parapamjen e ndryshimeve, përdoreni këtë para se të kryeni ndryshimet!',
+'tooltip-diff'          => 'Show which changes you made to the text.',
+'tooltip-compareselectedversions'=> 'Shikoni krahasimin midis dy versioneve të zgjedhura të kësaj faqeje.',
+'tooltip-watch'         => 'Mbikqyre këtë faqe',
 'monobook.css'          => '/* redaktoni këtë faqe për të përshtatur pamjen Monobook për tëra faqet tuaja */',
 'nodublincore'          => 'Dublin Core RDF metadata nuk është i mundshëm për këtë server.',
 'nocreativecommons'     => 'Creative Commons RDF metadata nuk është i mundshëm për këtë server.',
@@ -1236,57 +1223,106 @@ Për të eksportuar faqe, thjesht shtypni një emër për çdo rresht, ose krijo
 'rcpatroldisabledtext'  => 'Kontrollimi i ndryshimeve së fundmi nuk është i mundshëm për momentin.',
 'markedaspatrollederror'=> 'Nuk munda ta shënoj të patrulluar',
 'markedaspatrollederrortext'=> 'Duhet të përcaktoni versionin për tu shënuar i patrulluar.',
-'monobook.js'           => '/* tooltips and access keys */
- var ta = new Object();
- ta[\'pt-userpage\'] = new Array(\'.\',\'Faqja juaj e përdoruesit\'); 
- ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Faqja e përdoruesve anonim nga kjo adresë IP\'); 
- ta[\'pt-mytalk\'] = new Array(\'n\',\'Faqja juaj e diskutimeve\'); 
- ta[\'pt-anontalk\'] = new Array(\'n\',\'Faqja e diskutimeve të përdoruesve anonim për këtë adresë IP\'); 
- ta[\'pt-preferences\'] = new Array(\'\',\'Parapëlqimet tuaja\'); 
- ta[\'pt-watchlist\'] = new Array(\'l\',\'Lista e faqeve nën mbikqyrjen tuaj.\'); 
- ta[\'pt-mycontris\'] = new Array(\'y\',\'Lista e kontributeve tuaja\'); 
- ta[\'pt-login\'] = new Array(\'o\',\'Të hysh brenda nuk është e detyrueshme, por ka shumë përparësi.\'); 
- ta[\'pt-anonlogin\'] = new Array(\'o\',\'Të hysh brenda nuk është e detyrueshme, por ka shumë përparësi.\'); 
- ta[\'pt-logout\'] = new Array(\'\',\'Dalje\'); 
- ta[\'ca-talk\'] = new Array(\'t\',\'Diskuto për përmbajtjen e faqes\'); 
- ta[\'ca-edit\'] = new Array(\'e\',\'Ju mund ta redaktoni këtë faqe. Përdorni butonin >>Trego parapamjen<< para se t\'i kryeni ndryshimet.\'); 
- ta[\'ca-addsection\'] = new Array(\'+\',\'Fillo një temë të re diskutimi.\'); 
- ta[\'ca-viewsource\'] = new Array(\'e\',\'Kjo faqe është e mbrojtur. Ju mundeni vetëm ta shikoni burimin e tekstit.\'); 
- ta[\'ca-history\'] = new Array(\'h\',\'Versione të mëparshme të artikullit.\'); 
- ta[\'ca-protect\'] = new Array(\'=\',\'Mbroje këtë faqe\'); 
- ta[\'ca-delete\'] = new Array(\'d\',\'Grise këtë faqe\'); 
- ta[\'ca-undelete\'] = new Array(\'d\',\'Faqja u restaurua\'); 
- ta[\'ca-move\'] = new Array(\'m\',\'Me anë të zhvendosjes mund ta ndryshoni titullin e artikullit\'); 
- ta[\'ca-nomove\'] = new Array(\'\',\'Ti nuk ke të drejtë ta zhvendosish këtë faqe\'); 
- ta[\'ca-watch\'] = new Array(\'w\',\'Shtoje faqen në lisën e faqeve nën mbikqyrje\'); 
- ta[\'ca-unwatch\'] = new Array(\'w\',\'Hiqe faqen nga lista e faqeve nën mbikqyrje.\'); 
- ta[\'search\'] = new Array(\'f\',\'Kërko në projekt\'); 
- ta[\'p-logo\'] = new Array(\'\',\'Figura e Faqes Kryesore\'); 
- ta[\'n-mainpage\'] = new Array(\'z\',\'Vizitoni Faqen kryesore\'); 
- ta[\'n-portal\'] = new Array(\'\',\'Mbi projektin, çka mund të bëni për të dhe ku gjenden faqet.\'); 
- ta[\'n-currentevents\'] = new Array(\'\',\'Informacion rreth ngjarjeve aktuale.\'); 
- ta[\'n-recentchanges\'] = new Array(\'r\',\'Lista e ndryshimeve së fundmi në projekt\'); 
- ta[\'n-randompage\'] = new Array(\'x\',\'Shikoni një artikull të rastit.\'); 
- ta[\'n-help\'] = new Array(\'\',\'Vendi ku mund të gjeni ndihmë.\'); 
- ta[\'n-sitesupport\'] = new Array(\'\',\'Përkrahni projektin\'); 
- ta[\'t-whatlinkshere\'] = new Array(\'j\',\'Lista e faqeve që lidhen tek kjo faqe\'); 
- ta[\'t-recentchangeslinked\'] = new Array(\'k\',\'Lista e ndryshimeve të faqeve që lidhen tek kjo faqe\'); 
- ta[\'feed-rss\'] = new Array(\'\',\'Burimi ushqyes "RSS" për këtë faqe \'); 
- ta[\'feed-atom\'] = new Array(\'\',\'Burimi ushqyes "Atom" për këtë faqe\'); 
- ta[\'t-contributions\'] = new Array(\'\',\'Shiko listën e kontributeve për përdoruesin në fjalë\'); 
- ta[\'t-emailuser\'] = new Array(\'\',\'Dërgoni një email përdoruesit\'); 
- ta[\'t-upload\'] = new Array(\'u\',\'Ngarkoni figura ose skeda të tjera\'); 
- ta[\'t-specialpages\'] = new Array(\'q\',\'Lista e të gjitha faqeve speciale.\'); 
- ta[\'ca-nstab-main\'] = new Array(\'c\',\'Shikoni përmbajtjen e atikullit.\'); 
- ta[\'ca-nstab-user\'] = new Array(\'c\',\'Shikoni faqen e përdoruesit\'); 
- ta[\'ca-nstab-media\'] = new Array(\'c\',\'Shikoni faqen e skedës\'); 
- ta[\'ca-nstab-special\'] = new Array(\'\',\'Kjo është një faqe speciale. Ju nuk mundeni ta redaktoni këtë faqe\'); 
- ta[\'ca-nstab-project\'] = new Array(\'c\',\'Shikoni faqen e projektit\'); 
- ta[\'ca-nstab-image\'] = new Array(\'c\',\'Shikoni faqen e figurës\'); 
- ta[\'ca-nstab-mediawiki\'] = new Array(\'c\',\'Shikoni mesazhet e sistemit\'); 
- ta[\'ca-nstab-template\'] = new Array(\'c\',\'Shikoni stampën\'); 
- ta[\'ca-nstab-help\'] = new Array(\'c\',\'Shikoni faqet ndihmëse\'); 
- ta[\'ca-nstab-category\'] = new Array(\'c\',\'Shikoni faqen e kategorisë\');',
+'monobook.js' => '/* Deprecated; use [[MediaWiki:common.js]] */',
+ 
+'accesskey-pt-userpage' => '.',
+'tooltip-pt-userpage' => 'Faqja juaj e përdoruesit',
+'accesskey-pt-anonuserpage' => '.',
+'tooltip-pt-anonuserpage' => 'Faqja e përdoruesve anonim nga kjo adresë IP',
+'accesskey-pt-mytalk' => 'n',
+'tooltip-pt-mytalk' => 'Faqja juaj e diskutimeve',
+'accesskey-pt-anontalk' => 'n',
+'tooltip-pt-anontalk' => 'Faqja e diskutimeve të përdoruesve anonim për këtë adresë IP',
+'accesskey-pt-preferences' => '',
+'tooltip-pt-preferences' => 'Parapëlqimet tuaja',
+'accesskey-pt-watchlist' => 'l',
+'tooltip-pt-watchlist' => 'Lista e faqeve nën mbikqyrjen tuaj.',
+'accesskey-pt-mycontris' => 'y',
+'tooltip-pt-mycontris' => 'Lista e kontributeve tuaja',
+'accesskey-pt-login' => 'o',
+'tooltip-pt-login' => 'Të hysh brenda nuk është e detyrueshme, por ka shumë përparësi.',
+'accesskey-pt-anonlogin' => 'o',
+'tooltip-pt-anonlogin' => 'Të hysh brenda nuk është e detyrueshme, por ka shumë përparësi.',
+'accesskey-pt-logout' => '',
+'tooltip-pt-logout' => 'Dalje',
+'accesskey-ca-talk' => 't',
+'tooltip-ca-talk' => 'Diskuto për përmbajtjen e faqes',
+'accesskey-ca-edit' => 'e',
+'tooltip-ca-edit' => 'Ju mund ta redaktoni këtë faqe. Përdorni butonin >>Trego parapamjen<< para se t\'i kryeni ndryshimet.',
+'accesskey-ca-addsection' => '+',
+'tooltip-ca-addsection' => 'Fillo një temë të re diskutimi.',
+'accesskey-ca-viewsource' => 'e',
+'tooltip-ca-viewsource' => 'Kjo faqe është e mbrojtur. Ju mundeni vetëm ta shikoni burimin e tekstit.',
+'accesskey-ca-history' => 'h',
+'tooltip-ca-history' => 'Versione të mëparshme të artikullit.',
+'accesskey-ca-protect' => '=',
+'tooltip-ca-protect' => 'Mbroje këtë faqe',
+'accesskey-ca-delete' => 'd',
+'tooltip-ca-delete' => 'Grise këtë faqe',
+'accesskey-ca-undelete' => 'd',
+'tooltip-ca-undelete' => 'Faqja u restaurua',
+'accesskey-ca-move' => 'm',
+'tooltip-ca-move' => 'Me anë të zhvendosjes mund ta ndryshoni titullin e artikullit',
+'accesskey-ca-nomove' => '',
+'tooltip-ca-nomove' => 'Ti nuk ke të drejtë ta zhvendosish këtë faqe',
+'accesskey-ca-watch' => 'w',
+'tooltip-ca-watch' => 'Shtoje faqen në lisën e faqeve nën mbikqyrje',
+'accesskey-ca-unwatch' => 'w',
+'tooltip-ca-unwatch' => 'Hiqe faqen nga lista e faqeve nën mbikqyrje.',
+'accesskey-search' => 'f',
+'tooltip-search' => 'Kërko në projekt',
+'accesskey-p-logo' => '',
+'tooltip-p-logo' => 'Figura e Faqes Kryesore',
+'accesskey-n-mainpage' => 'z',
+'tooltip-n-mainpage' => 'Vizitoni Faqen kryesore',
+'accesskey-n-portal' => '',
+'tooltip-n-portal' => 'Mbi projektin, çka mund të bëni për të dhe ku gjenden faqet.',
+'accesskey-n-currentevents' => '',
+'tooltip-n-currentevents' => 'Informacion rreth ngjarjeve aktuale.',
+'accesskey-n-recentchanges' => 'r',
+'tooltip-n-recentchanges' => 'Lista e ndryshimeve së fundmi në projekt',
+'accesskey-n-randompage' => 'x',
+'tooltip-n-randompage' => 'Shikoni një artikull të rastit.',
+'accesskey-n-help' => '',
+'tooltip-n-help' => 'Vendi ku mund të gjeni ndihmë.',
+'accesskey-n-sitesupport' => '',
+'tooltip-n-sitesupport' => 'Përkrahni projektin',
+'accesskey-t-whatlinkshere' => 'j',
+'tooltip-t-whatlinkshere' => 'Lista e faqeve që lidhen tek kjo faqe',
+'accesskey-t-recentchangeslinked' => 'k',
+'tooltip-t-recentchangeslinked' => 'Lista e ndryshimeve të faqeve që lidhen tek kjo faqe',
+'accesskey-feed-rss' => '',
+'tooltip-feed-rss' => 'Burimi ushqyes "RSS" për këtë faqe ',
+'accesskey-feed-atom' => '',
+'tooltip-feed-atom' => 'Burimi ushqyes "Atom" për këtë faqe',
+'accesskey-t-contributions' => '',
+'tooltip-t-contributions' => 'Shiko listën e kontributeve për përdoruesin në fjalë',
+'accesskey-t-emailuser' => '',
+'tooltip-t-emailuser' => 'Dërgoni një email përdoruesit',
+'accesskey-t-upload' => 'u',
+'tooltip-t-upload' => 'Ngarkoni figura ose skeda të tjera',
+'accesskey-t-specialpages' => 'q',
+'tooltip-t-specialpages' => 'Lista e të gjitha faqeve speciale.',
+'accesskey-ca-nstab-main' => 'c',
+'tooltip-ca-nstab-main' => 'Shikoni përmbajtjen e atikullit.',
+'accesskey-ca-nstab-user' => 'c',
+'tooltip-ca-nstab-user' => 'Shikoni faqen e përdoruesit',
+'accesskey-ca-nstab-media' => 'c',
+'tooltip-ca-nstab-media' => 'Shikoni faqen e skedës',
+'accesskey-ca-nstab-special' => '',
+'tooltip-ca-nstab-special' => 'Kjo është një faqe speciale. Ju nuk mundeni ta redaktoni këtë faqe',
+'accesskey-ca-nstab-project' => 'c',
+'tooltip-ca-nstab-project' => 'Shikoni faqen e projektit',
+'accesskey-ca-nstab-image' => 'c',
+'tooltip-ca-nstab-image' => 'Shikoni faqen e figurës',
+'accesskey-ca-nstab-mediawiki' => 'c',
+'tooltip-ca-nstab-mediawiki' => 'Shikoni mesazhet e sistemit',
+'accesskey-ca-nstab-template' => 'c',
+'tooltip-ca-nstab-template' => 'Shikoni stampën',
+'accesskey-ca-nstab-help' => 'c',
+'tooltip-ca-nstab-help' => 'Shikoni faqet ndihmëse',
+'accesskey-ca-nstab-category' => 'c',
+'tooltip-ca-nstab-category' => 'Shikoni faqen e kategorisë',
 'deletedrevision'       => 'Gris versionin e vjetër $1.',
 'previousdiff'          => '← Ndryshimi më para',
 'nextdiff'              => 'Ndryshimi më pas →',

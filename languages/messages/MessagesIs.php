@@ -1,13 +1,8 @@
 <?php
 /** Icelandic (Íslenska)
  *
- * @package MediaWiki
- * @subpackage Language
+ * @addtogroup Language
  */
-
-$quickbarSettings = array(
-	'Sleppa', 'Fast vinstra megin', 'Fast hægra megin', 'Fljótandi til vinstri'
-);
 
 $skinNames = array(
 	'standard'	=> 'Klassískt',
@@ -93,56 +88,104 @@ $messages = array(
 #p-personal ul { text-transform: inherit; } /* notandanfn, spjall, stillingar */
 .portlet h5 { text-transform: inherit;}     /* flakk, leit, verkfæri... */
 #p-cactions li a {text-transform: inherit;} /* notandasíða, spjall... */",
-'monobook.js' => "/* tooltips and access keys */
-var ta = new Object();
-ta['pt-userpage'] = new Array('.','Notendasíðan mín');
-ta['pt-anonuserpage'] = new Array('.','Notendasíðan fyrir IP töluna þína');
-ta['pt-mytalk'] = new Array('n','Spallsíðan mín');
-ta['pt-anontalk'] = new Array('n','Spjallsíðan fyrir þessa IP tölu');
-ta['pt-preferences'] = new Array('','Almennar stillingar');
-ta['pt-watchlist'] = new Array('l','Vaktlistinn.');
-ta['pt-mycontris'] = new Array('y','Listi yfir framlög þín');
-ta['pt-login'] = new Array('o','Þú ert hvattur/hvött til að innskrá þig, það er hinsvegar ekki nauðsynlegt.');
-ta['pt-anonlogin'] = new Array('o','Þú ert hvattur/hvött til að innskrá þig, það er hinsvegar ekki nauðsynlegt.');
-ta['pt-logout'] = new Array('','Útskráning');
-ta['ca-talk'] = new Array('t','Spallsíða þessarar síðu');
-ta['ca-edit'] = new Array('e','Þú getur breytt síðu þessari, vinsamlegast notaðu „forskoða“ hnappinn áður en þú vistar');
-ta['ca-addsection'] = new Array('+','Viðbótarumræða.');
-ta['ca-viewsource'] = new Array('e','Síða þessi er vernduð, þú getur þó skoðað frumkóða hennar.');
-ta['ca-history'] = new Array('h','Eldri útgáfur af síðunni.');
-ta['ca-protect'] = new Array('=','Vernda þessa síðu');
-ta['ca-delete'] = new Array('d','Eyða þessari síðu');
-ta['ca-undelete'] = new Array('d','Endurvekja breytingar á síðu þessari fyrir en henni var tortímt');
-ta['ca-move'] = new Array('m','Færa þessa síðu');
-ta['ca-watch'] = new Array('w','Bæta þessari síðu við á vaktlistann');
-ta['ca-unwatch'] = new Array('w','Fjarlægja þessa síðu af vaktlistanum');
-ta['search'] = new Array('f','Leit');
-ta['p-logo'] = new Array('','Forsíða');
-ta['n-mainpage'] = new Array('z','Forsíða {{SITENAME}}');
-ta['n-portal'] = new Array('','Um verkefnið, hvernig er hægt að hjálpa og hvar á að byrja');
-ta['n-currentevents'] = new Array('','Líðandi stund');
-ta['n-recentchanges'] = new Array('r','Listi yfir nýlegar breytingar.');
-ta['n-randompage'] = new Array('x','Handahófsvalin síða');
-ta['n-help'] = new Array('','Efnisyfirlit yfir hjálparsíður.');
-ta['n-sitesupport'] = new Array('','Fjárframlagssíða');
-ta['t-whatlinkshere'] = new Array('j','Listi yfir síður sem tengjast í þessa');
-ta['t-recentchangeslinked'] = new Array('k','Nýlegar breitingar á ítengdum síðum');
-ta['feed-rss'] = new Array('','RSS fyrir þessa síðu');
-ta['feed-atom'] = new Array('','Atom fyrir þessa síðu');
-ta['t-contributions'] = new Array('','Sýna framlagslista þessa notanda');
-ta['t-emailuser'] = new Array('','Senda notanda þessum póst');
-ta['t-upload'] = new Array('u','Innhlaða myndum eða margmiðlunarskrám');
-ta['t-specialpages'] = new Array('q','Listi yfir kerfissíður');
-ta['ca-nstab-main'] = new Array('c','Sýna síðuna');
-ta['ca-nstab-user'] = new Array('c','Sýna notendasíðuna');
-ta['ca-nstab-media'] = new Array('c','Sýna margmiðlunarsíðuna');
-ta['ca-nstab-special'] = new Array('','Þetta er kerfissíða, þér er óhæft að breyta henni.');
-ta['ca-nstab-project'] = new Array('a','Sýna verkefnasíðuna');
-ta['ca-nstab-image'] = new Array('c','Sýna myndasíðuna');
-ta['ca-nstab-mediawiki'] = new Array('c','Sýna kerfisskilaboðin');
-ta['ca-nstab-template'] = new Array('c','View the template');
-ta['ca-nstab-help'] = new Array('c','Sýna hjálparsíðuna');
-ta['ca-nstab-category'] = new Array('c','Sýna efnisflokkasíðuna');",
+'monobook.js' => '/* Deprecated; use [[MediaWiki:common.js]] */',
+
+'accesskey-pt-userpage' => '.',
+'tooltip-pt-userpage' => 'Notendasíðan mín',
+'accesskey-pt-anonuserpage' => '.',
+'tooltip-pt-anonuserpage' => 'Notendasíðan fyrir IP töluna þína',
+'accesskey-pt-mytalk' => 'n',
+'tooltip-pt-mytalk' => 'Spallsíðan mín',
+'accesskey-pt-anontalk' => 'n',
+'tooltip-pt-anontalk' => 'Spjallsíðan fyrir þessa IP tölu',
+'accesskey-pt-preferences' => '',
+'tooltip-pt-preferences' => 'Almennar stillingar',
+'accesskey-pt-watchlist' => 'l',
+'tooltip-pt-watchlist' => 'Vaktlistinn.',
+'accesskey-pt-mycontris' => 'y',
+'tooltip-pt-mycontris' => 'Listi yfir framlög þín',
+'accesskey-pt-login' => 'o',
+'tooltip-pt-login' => 'Þú ert hvattur/hvött til að innskrá þig, það er hinsvegar ekki nauðsynlegt.',
+'accesskey-pt-anonlogin' => 'o',
+'tooltip-pt-anonlogin' => 'Þú ert hvattur/hvött til að innskrá þig, það er hinsvegar ekki nauðsynlegt.',
+'accesskey-pt-logout' => '',
+'tooltip-pt-logout' => 'Útskráning',
+'accesskey-ca-talk' => 't',
+'tooltip-ca-talk' => 'Spallsíða þessarar síðu',
+'accesskey-ca-edit' => 'e',
+'tooltip-ca-edit' => 'Þú getur breytt síðu þessari, vinsamlegast notaðu „forskoða“ hnappinn áður en þú vistar',
+'accesskey-ca-addsection' => '+',
+'tooltip-ca-addsection' => 'Viðbótarumræða.',
+'accesskey-ca-viewsource' => 'e',
+'tooltip-ca-viewsource' => 'Síða þessi er vernduð, þú getur þó skoðað frumkóða hennar.',
+'accesskey-ca-history' => 'h',
+'tooltip-ca-history' => 'Eldri útgáfur af síðunni.',
+'accesskey-ca-protect' => '=',
+'tooltip-ca-protect' => 'Vernda þessa síðu',
+'accesskey-ca-delete' => 'd',
+'tooltip-ca-delete' => 'Eyða þessari síðu',
+'accesskey-ca-undelete' => 'd',
+'tooltip-ca-undelete' => 'Endurvekja breytingar á síðu þessari fyrir en henni var tortímt',
+'accesskey-ca-move' => 'm',
+'tooltip-ca-move' => 'Færa þessa síðu',
+'accesskey-ca-watch' => 'w',
+'tooltip-ca-watch' => 'Bæta þessari síðu við á vaktlistann',
+'accesskey-ca-unwatch' => 'w',
+'tooltip-ca-unwatch' => 'Fjarlægja þessa síðu af vaktlistanum',
+'accesskey-search' => 'f',
+'tooltip-search' => 'Leit',
+'accesskey-p-logo' => '',
+'tooltip-p-logo' => 'Forsíða',
+'accesskey-n-mainpage' => 'z',
+'tooltip-n-mainpage' => 'Forsíða {{SITENAME}}',
+'accesskey-n-portal' => '',
+'tooltip-n-portal' => 'Um verkefnið, hvernig er hægt að hjálpa og hvar á að byrja',
+'accesskey-n-currentevents' => '',
+'tooltip-n-currentevents' => 'Líðandi stund',
+'accesskey-n-recentchanges' => 'r',
+'tooltip-n-recentchanges' => 'Listi yfir nýlegar breytingar.',
+'accesskey-n-randompage' => 'x',
+'tooltip-n-randompage' => 'Handahófsvalin síða',
+'accesskey-n-help' => '',
+'tooltip-n-help' => 'Efnisyfirlit yfir hjálparsíður.',
+'accesskey-n-sitesupport' => '',
+'tooltip-n-sitesupport' => 'Fjárframlagssíða',
+'accesskey-t-whatlinkshere' => 'j',
+'tooltip-t-whatlinkshere' => 'Listi yfir síður sem tengjast í þessa',
+'accesskey-t-recentchangeslinked' => 'k',
+'tooltip-t-recentchangeslinked' => 'Nýlegar breitingar á ítengdum síðum',
+'accesskey-feed-rss' => '',
+'tooltip-feed-rss' => 'RSS fyrir þessa síðu',
+'accesskey-feed-atom' => '',
+'tooltip-feed-atom' => 'Atom fyrir þessa síðu',
+'accesskey-t-contributions' => '',
+'tooltip-t-contributions' => 'Sýna framlagslista þessa notanda',
+'accesskey-t-emailuser' => '',
+'tooltip-t-emailuser' => 'Senda notanda þessum póst',
+'accesskey-t-upload' => 'u',
+'tooltip-t-upload' => 'Innhlaða myndum eða margmiðlunarskrám',
+'accesskey-t-specialpages' => 'q',
+'tooltip-t-specialpages' => 'Listi yfir kerfissíður',
+'accesskey-ca-nstab-main' => 'c',
+'tooltip-ca-nstab-main' => 'Sýna síðuna',
+'accesskey-ca-nstab-user' => 'c',
+'tooltip-ca-nstab-user' => 'Sýna notendasíðuna',
+'accesskey-ca-nstab-media' => 'c',
+'tooltip-ca-nstab-media' => 'Sýna margmiðlunarsíðuna',
+'accesskey-ca-nstab-special' => '',
+'tooltip-ca-nstab-special' => 'Þetta er kerfissíða, þér er óhæft að breyta henni.',
+'accesskey-ca-nstab-project' => 'a',
+'tooltip-ca-nstab-project' => 'Sýna verkefnasíðuna',
+'accesskey-ca-nstab-image' => 'c',
+'tooltip-ca-nstab-image' => 'Sýna myndasíðuna',
+'accesskey-ca-nstab-mediawiki' => 'c',
+'tooltip-ca-nstab-mediawiki' => 'Sýna kerfisskilaboðin',
+'accesskey-ca-nstab-template' => 'c',
+'tooltip-ca-nstab-template' => 'View the template',
+'accesskey-ca-nstab-help' => 'c',
+'tooltip-ca-nstab-help' => 'Sýna hjálparsíðuna',
+'accesskey-ca-nstab-category' => 'c',
+'tooltip-ca-nstab-category' => 'Sýna efnisflokkasíðuna',
 'about' => "Um",
 'aboutpage' => "Project:Um",
 'aboutsite' => "Um {{SITENAME}}",
@@ -221,7 +264,7 @@ the list of currently operational bans and blocks.",
 'contextchars' => "Stafir í samhengi á hverja línu",
 'contextlines' => "Línur á hverja niðurstöðu",
 'contribslink' => "framlög",
-'contribsub' => "Eftir $1",
+'contribsub2' => "Eftir $1 ($2)",
 'contributions' => "Framlög notanda",
 'copyright' => "Efni síðunnar má nota undir $1.",
 'copyrightpage' => "Project:Höfundarréttur",
@@ -496,6 +539,10 @@ to set user preferences.",
 'protectsub' => "(Vernda „$1“)",
 'qbedit' => "Breyta",
 'qbsettings' => "Valblað",
+'qbsettings-none'	=> 'Sleppa',
+'qbsettings-fixedleft'	=> 'Fast vinstra megin',
+'qbsettings-fixedright'	=> 'Fast hægra megin',
+'qbsettings-floatingleft'	=> 'Fljótandi til vinstri',
 'randompage' => "Handahófsvalin síða",
 'rclinks' => "Sýna síðustu $1 breytingar síðustu $2 daga<br />$3",
 'rclistfrom' => "Sýna breytingar frá og með $1",
@@ -605,11 +652,11 @@ síðan vefurinn var settur up. Það reiknast sem '''$5''' breytingar
 'tog-usenewrc' => "Endurbætt nýjar tengingar (ekki fyrir alla vafra)",
 'tog-watchdefault' => "Bæta síðum sem þú breytir við eftirlitslista",
 'toolbox' => "Verkfæri",
-'tooltip-compareselectedversions' => "Sjá breytingarnar á þessari grein á milli útgáfanna sem þú valdir. [alt-v]",
-'tooltip-minoredit' => "Merktu þessa breytingu sem minniháttar [alt-i]",
-'tooltip-preview' => "Forskoða breytingarnar, vinsamlegast gerðu þetta áður en þú vistar! [alt-p]",
-'tooltip-save' => "Vista breytingarnar [alt-s]",
-'tooltip-search' => "Leit á þessari Wiki [alt-f]",
+'tooltip-compareselectedversions' => "Sjá breytingarnar á þessari grein á milli útgáfanna sem þú valdir.",
+'tooltip-minoredit' => "Merktu þessa breytingu sem minniháttar",
+'tooltip-preview' => "Forskoða breytingarnar, vinsamlegast gerðu þetta áður en þú vistar!",
+'tooltip-save' => "Vista breytingarnar",
+'tooltip-search' => "Leit á þessari Wiki",
 'tuesday' => "þriðjudagur",
 'unblockip' => "Afbanna notanda",
 'unblockiptext' => "Endurvekja skrifréttindi bannaðra notenda eða IP talna.",
@@ -666,6 +713,7 @@ stafrófsröð. Merktu við þær síður sem þú vilt fjarlægja
 af vaktlistanum og ýttu á 'fjarlægja merktar' takkan
 neðst á skjánum.",
 'watchlist' => "Vaktlistinn",
+'mywatchlist' => "Vaktlistinn",
 'watchlistcontains' => "Á vaktlistanum eru $1 síður.",
 'watchmethod-list' => "leita að breytingum í vöktuðum síðum",
 'watchmethod-recent' => "kanna hvort nýlegar breytingar innihalda vaktaðar síður",

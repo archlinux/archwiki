@@ -1,17 +1,15 @@
 <?php
 /**
  * See deferred.txt
- * @package MediaWiki
  */
 
 /**
  *
- * @package MediaWiki
  */
 class SquidUpdate {
 	var $urlArr, $mMaxTitles;
 
-	function SquidUpdate( $urlArr = Array(), $maxTitles = false ) {
+	function __construct( $urlArr = Array(), $maxTitles = false ) {
 		global $wgMaxSquidPurgeTitles;
 		if ( $maxTitles === false ) {
 			$this->mMaxTitles = $wgMaxSquidPurgeTitles;
@@ -29,7 +27,7 @@ class SquidUpdate {
 		wfProfileIn( $fname );
 
 		# Get a list of URLs linking to this page
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->select( array( 'links', 'page' ),
 			array( 'page_namespace', 'page_title' ),
 			array(

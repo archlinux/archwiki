@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Sep 19, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 abstract class ApiFormatBase extends ApiBase {
 
 	private $mIsHtml, $mFormat;
@@ -170,12 +172,13 @@ for more information.
 	}
 
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiFormatBase.php 19434 2007-01-18 02:04:11Z brion $';
+		return __CLASS__ . ': $Id: ApiFormatBase.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 
 /**
  * This printer is used to wrap an instance of the Feed class 
+ * @addtogroup API
  */
 class ApiFormatFeedWrapper extends ApiFormatBase {
 
@@ -226,7 +229,7 @@ class ApiFormatFeedWrapper extends ApiFormatBase {
 	}
 	
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatBase.php 19434 2007-01-18 02:04:11Z brion $';
+		return __CLASS__ . ': $Id: ApiFormatBase.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

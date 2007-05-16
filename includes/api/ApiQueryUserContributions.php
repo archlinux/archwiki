@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Oct 16, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiQueryBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiQueryContributions extends ApiQueryBase {
 
 	public function __construct($query, $moduleName) {
@@ -44,7 +46,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		extract($this->extractRequestParams());
 
 		//Get a database instance
-		$db = & $this->getDB();
+		$db = $this->getDB();
 
 		if (is_null($user))
 			$this->dieUsage("User parameter may not be empty", 'param_user');
@@ -169,7 +171,7 @@ class ApiQueryContributions extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryUserContributions.php 17952 2006-11-27 08:36:57Z nickj $';
+		return __CLASS__ . ': $Id: ApiQueryUserContributions.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

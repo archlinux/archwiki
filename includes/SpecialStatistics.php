@@ -1,8 +1,7 @@
 <?php
 /**
 *
-* @package MediaWiki
-* @subpackage SpecialPage
+* @addtogroup SpecialPage
 */
 
 /**
@@ -14,7 +13,7 @@ function wfSpecialStatistics() {
 
 	$action = $wgRequest->getVal( 'action' );
 
-	$dbr =& wfGetDB( DB_SLAVE );
+	$dbr = wfGetDB( DB_SLAVE );
 
 	$views = SiteStats::views();
 	$edits = SiteStats::edits();
@@ -24,7 +23,7 @@ function wfSpecialStatistics() {
 	$users = SiteStats::users();
 
 	$admins = $dbr->selectField( 'user_groups', 'COUNT(*)', array( 'ug_group' => 'sysop' ), $fname );
-	$numJobs = $dbr->selectField( 'job', 'COUNT(*)', '', $fname );
+	$numJobs = $dbr->estimateRowCount('job');
 
 	if ($action == 'raw') {
 		$wgOut->disable();
@@ -33,7 +32,7 @@ function wfSpecialStatistics() {
 		return;
 	} else {
 		$text = '==' . wfMsg( 'sitestats' ) . "==\n" ;
-		$text .= wfMsg( 'sitestatstext',
+		$text .= wfMsgExt( 'sitestatstext', array ( 'parsemag' ),
 			$wgLang->formatNum( $total ),
 			$wgLang->formatNum( $good ),
 			$wgLang->formatNum( $views ),
@@ -46,7 +45,7 @@ function wfSpecialStatistics() {
 
 		$text .= "\n==" . wfMsg( 'userstats' ) . "==\n";
 
-		$text .= wfMsg( 'userstatstext',
+		$text .= wfMsgExt( 'userstatstext', array ( 'parsemag' ),
 			$wgLang->formatNum( $users ),
 			$wgLang->formatNum( $admins ),
 			'[[' . wfMsgForContent( 'grouppage-sysop' ) . ']]', # TODO somehow remove, kept for backwards compatibility
@@ -64,7 +63,7 @@ function wfSpecialStatistics() {
 			$res = $dbr->query( $sql, $fname );
 			if( $res ) {
 				$wgOut->addHtml( '<h2>' . wfMsgHtml( 'statistics-mostpopular' ) . '</h2>' );
-				$skin =& $wgUser->getSkin();
+				$skin = $wgUser->getSkin();
 				$wgOut->addHtml( '<ol>' );
 				while( $row = $dbr->fetchObject( $res ) ) {
 					$link = $skin->makeKnownLinkObj( Title::makeTitleSafe( $row->page_namespace, $row->page_title ) );
@@ -75,6 +74,10 @@ function wfSpecialStatistics() {
 				$dbr->freeResult( $res );
 			}
 		}
+		
+		$footer = wfMsg( 'statistics-footer' );
+		if( !wfEmptyMsg( 'statistics-footer', $footer ) && $footer != '' )
+			$wgOut->addWikiText( $footer );
 		
 	}
 }

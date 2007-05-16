@@ -26,8 +26,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @author Brion Vibber <brion at pobox.com>
- * @package MediaWiki
- * @subpackage maintenance
+ * @addtogroup maintenance
  */
 
 $options = array( 'missing', 'dry-run' );
@@ -75,9 +74,9 @@ class ImageBuilder extends FiveUpgrade {
 			$portion * 100.0,
 			$this->table,
 			wfTimestamp( TS_DB, intval( $eta ) ),
-			$completed,
+			$completed,   // $completed does not appear to be defined.
 			$this->count,
-			$rate,
+			$rate,        // $rate does not appear to be defined.
 			$updateRate * 100.0 );
 		flush();
 	}

@@ -45,15 +45,14 @@
 * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 * DAMAGE.
 *
-* @category
-* @package     Services_JSON
+* @addtogroup  API
 * @author      Michal Migurski <mike-json@teczno.com>
 * @author      Matt Knapp <mdknapp[at]gmail[dot]com>
 * @author      Brett Stimmerman <brettstimmerman[at]gmail[dot]com>
 * @copyright   2005 Michal Migurski
 * @version     CVS: $Id: JSON.php,v 1.30 2006/03/08 16:10:20 migurski Exp $
 * @license     http://www.opensource.org/licenses/bsd-license.php
-* @link        http://pear.php.net/pepr/pepr-proposal-show.php?id=198
+* @see         http://pear.php.net/pepr/pepr-proposal-show.php?id=198
 */
 
 /**
@@ -92,26 +91,28 @@ define('SERVICES_JSON_LOOSE_TYPE', 16);
 define('SERVICES_JSON_SUPPRESS_ERRORS', 32);
 
 /**
-* Converts to and from JSON format.
-*
-* Brief example of use:
-*
-* <code>
-* // create a new instance of Services_JSON
-* $json = new Services_JSON();
-*
-* // convert a complexe value to JSON notation, and send it to the browser
-* $value = array('foo', 'bar', array(1, 2, 'baz'), array(3, array(4)));
-* $output = $json->encode($value);
-*
-* print($output);
-* // prints: ["foo","bar",[1,2,"baz"],[3,[4]]]
-*
-* // accept incoming POST data, assumed to be in JSON notation
-* $input = file_get_contents('php://input', 1000000);
-* $value = $json->decode($input);
-* </code>
-*/
+ * Converts to and from JSON format.
+ *
+ * Brief example of use:
+ *
+ * <code>
+ * // create a new instance of Services_JSON
+ * $json = new Services_JSON();
+ *
+ * // convert a complexe value to JSON notation, and send it to the browser
+ * $value = array('foo', 'bar', array(1, 2, 'baz'), array(3, array(4)));
+ * $output = $json->encode($value);
+ *
+ * print($output);
+ * // prints: ["foo","bar",[1,2,"baz"],[3,[4]]]
+ *
+ * // accept incoming POST data, assumed to be in JSON notation
+ * $input = file_get_contents('php://input', 1000000);
+ * $value = $json->decode($input);
+ * </code>
+ *
+ * @addtogroup API
+ */
 class Services_JSON
 {
    /**
@@ -813,6 +814,9 @@ class Services_JSON
 
 if (class_exists('PEAR_Error')) {
 
+    /**
+     * @addtogroup API
+     */
     class Services_JSON_Error extends PEAR_Error
     {
         function Services_JSON_Error($message = 'unknown error', $code = null,
@@ -826,6 +830,7 @@ if (class_exists('PEAR_Error')) {
 
     /**
      * @todo Ultimately, this class shall be descended from PEAR_Error
+     * @addtogroup API
      */
     class Services_JSON_Error
     {

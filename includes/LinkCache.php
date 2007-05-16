@@ -1,13 +1,8 @@
 <?php
 /**
  * Cache for article titles (prefixed DB keys) and ids linked from one source
- * @package MediaWiki
- * @subpackage Cache
- */
-
-/**
- * @package MediaWiki
- * @subpackage Cache
+ * 
+ * @addtogroup Cache
  */
 class LinkCache {
 	// Increment $mClassVer whenever old serialized versions of this class
@@ -29,7 +24,7 @@ class LinkCache {
 		return $instance;
 	}
 
-	function LinkCache() {
+	function __construct() {
 		$this->mForUpdate = false;
 		$this->mPageLinks = array();
 		$this->mGoodLinks = array();
@@ -135,14 +130,14 @@ class LinkCache {
 			$id = $wgMemc->get( $key = $this->getKey( $title ) );
 		if( ! is_integer( $id ) ) {
 			if ( $this->mForUpdate ) {
-				$db =& wfGetDB( DB_MASTER );
+				$db = wfGetDB( DB_MASTER );
 				if ( !( $wgAntiLockFlags & ALF_NO_LINK_LOCK ) ) {
 					$options = array( 'FOR UPDATE' );
 				} else {
 					$options = array();
 				}
 			} else {
-				$db =& wfGetDB( DB_SLAVE );
+				$db = wfGetDB( DB_SLAVE );
 				$options = array();
 			}
 

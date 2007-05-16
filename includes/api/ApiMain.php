@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Sep 4, 2006
  *
@@ -31,6 +30,7 @@ if (!defined('MEDIAWIKI')) {
 
 /**
  * This is the main API class, used for both external and internal processing. 
+ * @addtogroup API
  */
 class ApiMain extends ApiBase {
 
@@ -336,7 +336,7 @@ class ApiMain extends ApiBase {
 
 	public function getVersion() {
 		$vers = array ();
-		$vers[] = __CLASS__ . ': $Id: ApiMain.php 17987 2006-11-29 05:45:03Z nickj $';
+		$vers[] = __CLASS__ . ': $Id: ApiMain.php 21402 2007-04-20 08:55:14Z nickj $';
 		$vers[] = ApiBase :: getBaseVersion();
 		$vers[] = ApiFormatBase :: getBaseVersion();
 		$vers[] = ApiQueryBase :: getBaseVersion();
@@ -346,8 +346,9 @@ class ApiMain extends ApiBase {
 }
 
 /**
-* @desc This exception will be thrown when dieUsage is called to stop module execution.
-*/
+ * This exception will be thrown when dieUsage is called to stop module execution.
+ * @addtogroup API
+ */
 class UsageException extends Exception {
 
 	private $mCodestr;

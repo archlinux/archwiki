@@ -1,7 +1,6 @@
 <?php
 /**
  *
- * @package MediaWiki
  */
 
 /**
@@ -39,7 +38,6 @@
  *      numberofWatchingusers
  *
  * @todo document functions and variables
- * @package MediaWiki
  */
 class RecentChange
 {
@@ -49,7 +47,7 @@ class RecentChange
 
 	# Factory methods
 
-	/* static */ function newFromRow( $row )
+	public static function newFromRow( $row )
 	{
 		$rc = new RecentChange;
 		$rc->loadFromRow( $row );
@@ -72,7 +70,7 @@ class RecentChange
 	 * @return RecentChange
 	 */
 	public static function newFromId( $rcid ) {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->select( 'recentchanges', '*', array( 'rc_id' => $rcid ), __METHOD__ );
 		if( $res && $dbr->numRows( $res ) > 0 ) {
 			$row = $dbr->fetchObject( $res );
@@ -118,7 +116,7 @@ class RecentChange
 		global $wgLocalInterwiki, $wgPutIPinRC, $wgRC2UDPAddress, $wgRC2UDPPort, $wgRC2UDPPrefix;
 		$fname = 'RecentChange::save';
 
-		$dbw =& wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_MASTER );
 		if ( !is_array($this->mExtra) ) {
 			$this->mExtra = array();
 		}
@@ -216,7 +214,7 @@ class RecentChange
 	{
 		$fname = 'RecentChange::markPatrolled';
 
-		$dbw =& wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_MASTER );
 
 		$dbw->update( 'recentchanges',
 			array( /* SET */
@@ -504,6 +502,8 @@ class RecentChange
 	function getIRCLine() {
 		global $wgUseRCPatrol;
 
+		// FIXME: Would be good to replace these 2 extract() calls with something more explicit
+		// e.g. list ($rc_type, $rc_id) = array_values ($this->mAttribs); [or something like that]
 		extract($this->mAttribs);
 		extract($this->mExtra);
 

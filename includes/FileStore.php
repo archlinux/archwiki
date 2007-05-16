@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @todo document (needs one-sentence top-level class description).
+ */
 class FileStore {
 	const DELETE_ORIGINAL = 1;
 	
@@ -33,7 +36,7 @@ class FileStore {
 	 * suffer an uncaught error the lock will be released when the
 	 * connection is closed.
 	 *
-	 * @fixme Probably only works on MySQL. Abstract to the Database class?
+	 * @todo Probably only works on MySQL. Abstract to the Database class?
 	 */
 	static function lock() {
 		global $wgDBtype;
@@ -106,7 +109,7 @@ class FileStore {
 	private function copyFile( $sourcePath, $destPath, $flags=0 ) {
 		if( !file_exists( $sourcePath ) ) {
 			// Abort! Abort!
-			throw new FSException( "missing source file '$sourcePath'\n" );
+			throw new FSException( "missing source file '$sourcePath'" );
 		}
 		
 		$transaction = new FSTransaction();
@@ -125,7 +128,7 @@ class FileStore {
 				
 				if( !$ok ) {
 					throw new FSException(
-						"failed to create directory for '$destPath'\n" );
+						"failed to create directory for '$destPath'" );
 				}
 			}
 			
@@ -138,7 +141,7 @@ class FileStore {
 				$transaction->addRollback( FSTransaction::DELETE_FILE, $destPath );
 			} else {
 				throw new FSException(
-					__METHOD__." failed to copy '$sourcePath' to '$destPath'\n" );
+					__METHOD__." failed to copy '$sourcePath' to '$destPath'" );
 			}
 		}
 		
@@ -175,7 +178,7 @@ class FileStore {
 	 * @throws FSException if file can't be deleted
 	 * @return FSTransaction
 	 *
-	 * @fixme Might be worth preliminary permissions check
+	 * @todo Might be worth preliminary permissions check
 	 */
 	static function deleteFile( $path ) {
 		if( file_exists( $path ) ) {
@@ -368,6 +371,9 @@ class FSTransaction {
 	}
 }
 
+/**
+ * @addtogroup Exception
+ */
 class FSException extends MWException { }
 
 ?>

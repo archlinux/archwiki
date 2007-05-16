@@ -25,8 +25,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @author Brion Vibber <brion at pobox.com>
- * @package MediaWiki
- * @subpackage maintenance
+ * @addtogroup maintenance
  */
 
 $options = array( 'fix' );
@@ -95,15 +94,13 @@ class WatchlistCleanup extends FiveUpgrade {
 		$result = $this->dbr->query( $sql, $fname );
 
 		while( $row = $this->dbr->fetchObject( $result ) ) {
-			$updated = call_user_func( $callback, $row );
+			call_user_func( $callback, $row );
 		}
 		$this->log( "Finished $table... $this->updated of $this->processed rows updated" );
 		$this->dbr->freeResult( $result );
 	}
 
 	function processEntry( $row ) {
-		global $wgContLang;
-
 		$current = Title::makeTitle( $row->wl_namespace, $row->wl_title );
 		$display = $current->getPrefixedText();
 
@@ -122,7 +119,7 @@ class WatchlistCleanup extends FiveUpgrade {
 	
 	function removeWatch( $row ) {
 		if( !$this->dryrun) {
-			$dbw =& wfGetDB( DB_MASTER );
+			$dbw = wfGetDB( DB_MASTER );
 			$dbw->delete( 'watchlist', array(
 				'wl_user'      => $row->wl_user,
 				'wl_namespace' => $row->wl_namespace,

@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Oct 13, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ("ApiBase.php");
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiFeedWatchlist extends ApiBase {
 
 	public function __construct($main, $action) {
@@ -119,7 +121,7 @@ class ApiFeedWatchlist extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFeedWatchlist.php 17987 2006-11-29 05:45:03Z nickj $';
+		return __CLASS__ . ': $Id: ApiFeedWatchlist.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

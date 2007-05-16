@@ -1,13 +1,12 @@
 <?php
 /**
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 /**
  * Entry point : initialise variables and call subfunctions.
  * @param $par String: becomes "FOO" when called like Special:Allpages/FOO (default NULL)
- * @param $specialPage @see SpecialPage object.
+ * @param $specialPage See the SpecialPage object.
  */
 function wfSpecialAllpages( $par=NULL, $specialPage ) {
 	global $wgRequest, $wgOut, $wgContLang;
@@ -37,6 +36,10 @@ function wfSpecialAllpages( $par=NULL, $specialPage ) {
 	}
 }
 
+/**
+ * Implements Special:Allpages
+ * @addtogroup SpecialPage
+ */
 class SpecialAllpages {
 	var $maxPerPage=960;
 	var $topLevelMax=50;
@@ -89,7 +92,7 @@ function showToplevel ( $namespace = NS_MAIN, $including = false ) {
 	# TODO: Either make this *much* faster or cache the title index points
 	# in the querycache table.
 
-	$dbr =& wfGetDB( DB_SLAVE );
+	$dbr = wfGetDB( DB_SLAVE );
 	$out = "";
 	$where = array( 'page_namespace' => $namespace );
 
@@ -217,7 +220,7 @@ function showChunk( $namespace = NS_MAIN, $from, $including = false ) {
 	} else {
 		list( $namespace, $fromKey, $from ) = $fromList;
 
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->select( 'page',
 			array( 'page_namespace', 'page_title', 'page_is_redirect' ),
 			array(
@@ -261,31 +264,35 @@ function showChunk( $namespace = NS_MAIN, $from, $including = false ) {
 	if ( $including ) {
 		$out2 = '';
 	} else {
-
-		# Get the last title from previous chunk
-		$dbr =& wfGetDB( DB_SLAVE );
-		$res_prev = $dbr->select(
-			'page',
-			'page_title',
-			array( 'page_namespace' => $namespace, 'page_title < '.$dbr->addQuotes($from) ),
-			$fname,
-			array( 'ORDER BY' => 'page_title DESC', 'LIMIT' => $this->maxPerPage, 'OFFSET' => ($this->maxPerPage - 1 ) )
-		);
-
-		# Get first title of previous complete chunk
-		if( $dbr->numrows( $res_prev ) >= $this->maxPerPage ) {
-			$pt = $dbr->fetchObject( $res_prev );
-			$prevTitle = Title::makeTitle( $namespace, $pt->page_title );
+		if( $from == '' ) {
+			// First chunk; no previous link.
+			$prevTitle = null;
 		} else {
-			# The previous chunk is not complete, need to link to the very first title
-			# available in the database
-			$reallyFirstPage_title = $dbr->selectField( 'page', 'page_title', array( 'page_namespace' => $namespace ), $fname, array( 'LIMIT' => 1) );
+			# Get the last title from previous chunk
+			$dbr = wfGetDB( DB_SLAVE );
+			$res_prev = $dbr->select(
+				'page',
+				'page_title',
+				array( 'page_namespace' => $namespace, 'page_title < '.$dbr->addQuotes($from) ),
+				$fname,
+				array( 'ORDER BY' => 'page_title DESC', 'LIMIT' => $this->maxPerPage, 'OFFSET' => ($this->maxPerPage - 1 ) )
+			);
 
-			# Show the previous link if it s not the current requested chunk
-			if( $from != $reallyFirstPage_title ) {
-				$prevTitle =  Title::makeTitle( $namespace, $reallyFirstPage_title );
+			# Get first title of previous complete chunk
+			if( $dbr->numrows( $res_prev ) >= $this->maxPerPage ) {
+				$pt = $dbr->fetchObject( $res_prev );
+				$prevTitle = Title::makeTitle( $namespace, $pt->page_title );
 			} else {
-				$prevTitle = null;
+				# The previous chunk is not complete, need to link to the very first title
+				# available in the database
+				$reallyFirstPage_title = $dbr->selectField( 'page', 'page_title', array( 'page_namespace' => $namespace ), $fname, array( 'LIMIT' => 1) );
+
+				# Show the previous link if it s not the current requested chunk
+				if( $from != $reallyFirstPage_title ) {
+					$prevTitle =  Title::makeTitle( $namespace, $reallyFirstPage_title );
+				} else {
+					$prevTitle = null;
+				}
 			}
 		}
 

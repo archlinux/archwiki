@@ -1,8 +1,7 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 /**
@@ -11,7 +10,7 @@
 function wfSpecialUserlogin() {
 	global $wgCommandLineMode;
 	global $wgRequest;
-	if( !$wgCommandLineMode && !isset( $_COOKIE[session_name()] )  ) {
+	if( session_id() == '' ) {
 		wfSetupSession();
 	}
 
@@ -20,11 +19,9 @@ function wfSpecialUserlogin() {
 }
 
 /**
- *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * implements Special:Login
+ * @addtogroup SpecialPage
  */
-
 class LoginForm {
 
 	const SUCCESS = 0;
@@ -42,7 +39,7 @@ class LoginForm {
 
 	/**
 	 * Constructor
-	 * @param webrequest $request A webrequest object passed by reference
+	 * @param WebRequest $request A WebRequest object passed by reference
 	 */
 	function LoginForm( &$request ) {
 		global $wgLang, $wgAllowRealName, $wgEnableEmail;
@@ -149,12 +146,12 @@ class LoginForm {
 	 */
 	function addNewAccount() {
 		global $wgUser, $wgEmailAuthentication;
-		
+
 		# Create the account and abort if there's a problem doing so
 		$u = $this->addNewAccountInternal();
 		if( $u == NULL )
 			return;
-			
+
 		# If we showed up language selection links, and one was in use, be
 		# smart (and sensible) and save that language as the user's preference
 		global $wgLoginLanguageSelector;
@@ -231,6 +228,7 @@ class LoginForm {
 			return false;
 		}
 
+		# Check anonymous user ($wgUser) limitations :
 		if (!$wgUser->isAllowedToCreateAccount()) {
 			$this->userNotPrivilegedMessage();
 			return false;
@@ -244,6 +242,7 @@ class LoginForm {
 			return;
 		}
 
+		# Now create a dummy user ($u) and check if it is valid
 		$name = trim( $this->mName );
 		$u = User::newFromName( $name, 'creatable' );
 		if ( is_null( $u ) ) {
@@ -261,7 +260,7 @@ class LoginForm {
 			return false;
 		}
 
-		if ( !$wgUser->isValidPassword( $this->mPassword ) ) {
+		if ( !$u->isValidPassword( $this->mPassword ) ) {
 			$this->mainLoginForm( wfMsg( 'passwordtooshort', $wgMinimalPasswordLength ) );
 			return false;
 		}
@@ -274,7 +273,7 @@ class LoginForm {
 			return false;
 		}
 
-		if ( $wgAccountCreationThrottle ) {
+		if ( $wgAccountCreationThrottle && $wgUser->isPingLimitable() ) {
 			$key = wfMemcKey( 'acctcreate', 'ip', $ip );
 			$value = $wgMemc->incr( $key );
 			if ( !$value ) {
@@ -286,14 +285,10 @@ class LoginForm {
 			}
 		}
 
-		if( !$wgAuth->addUser( $u, $this->mPassword ) ) {
+		if( !$wgAuth->addUser( $u, $this->mPassword, $this->mEmail, $this->mRealName ) ) {
 			$this->mainLoginForm( wfMsg( 'externaldberror' ) );
 			return false;
 		}
-
-		# Update user count
-		$ssUpdate = new SiteStatsUpdate( 0, 0, 0, 0, 1 );
-		$ssUpdate->doUpdate();
 
 		return $this->initUser( $u );
 	}
@@ -307,17 +302,26 @@ class LoginForm {
 	 * @private
 	 */
 	function initUser( $u ) {
+		global $wgAuth;
+
 		$u->addToDatabase();
-		$u->setPassword( $this->mPassword );
+
+		if ( $wgAuth->allowPasswordChange() ) {
+			$u->setPassword( $this->mPassword );
+		}
+
 		$u->setEmail( $this->mEmail );
 		$u->setRealName( $this->mRealName );
 		$u->setToken();
 
-		global $wgAuth;
 		$wgAuth->initUser( $u );
 
 		$u->setOption( 'rememberpassword', $this->mRemember ? 1 : 0 );
 		$u->saveSettings();
+
+		# Update user count
+		$ssUpdate = new SiteStatsUpdate( 0, 0, 0, 0, 1 );
+		$ssUpdate->doUpdate();
 
 		return $u;
 	}
@@ -361,6 +365,7 @@ class LoginForm {
 		}
 
 		if (!$u->checkPassword( $this->mPassword )) {
+		
 			if( $u->checkTemporaryPassword( $this->mPassword ) ) {
 				// The e-mailed temporary password should not be used
 				// for actual logins; that's a very sloppy habit,
@@ -383,7 +388,7 @@ class LoginForm {
 				if( !$u->isEmailConfirmed() ) {
 					$u->confirmEmail();
 				}
-				
+
 				// At this point we just return an appropriate code
 				// indicating that the UI should show a password
 				// reset form; bot interfaces etc will probably just
@@ -393,14 +398,14 @@ class LoginForm {
 			} else {
 				return '' == $this->mPassword ? self::EMPTY_PASS : self::WRONG_PASS;
 			}
-		} else {	
+		} else {
 			$wgAuth->updateUser( $u );
 			$wgUser = $u;
 
 			return self::SUCCESS;
 		}
 	}
-	
+
 	function processLogin() {
 		global $wgUser, $wgAuth;
 
@@ -446,7 +451,7 @@ class LoginForm {
 				wfDebugDieBacktrace( "Unhandled case value" );
 		}
 	}
-	
+
 	function resetLoginForm( $error ) {
 		global $wgOut;
 		$wgOut->addWikiText( "<div class=\"errorbox\">$error</div>" );
@@ -459,19 +464,19 @@ class LoginForm {
 	 */
 	function mailPassword() {
 		global $wgUser, $wgOut, $wgAuth;
-		
+
 		if( !$wgAuth->allowPasswordChange() ) {
 			$this->mainLoginForm( wfMsg( 'resetpass_forbidden' ) );
 			return;
 		}
-		
+
 		# Check against blocked IPs
 		# fixme -- should we not?
 		if( $wgUser->isBlocked() ) {
 			$this->mainLoginForm( wfMsg( 'blocked-mailpassword' ) );
 			return;
 		}
-		
+
 		# Check against the rate limiter
 		if( $wgUser->pingLimiter( 'mailpassword' ) ) {
 			$wgOut->rateLimited();
@@ -496,7 +501,7 @@ class LoginForm {
 		if ( $u->isPasswordReminderThrottled() ) {
 			global $wgPasswordReminderResendTime;
 			# Round the time in hours to 3 d.p., in case someone is specifying minutes or seconds.
-			$this->mainLoginForm( wfMsg( 'throttled-mailpassword', 
+			$this->mainLoginForm( wfMsg( 'throttled-mailpassword',
 				round( $wgPasswordReminderResendTime, 3 ) ) );
 			return;
 		}
@@ -587,7 +592,7 @@ class LoginForm {
 		# haven't bothered to log out before trying to create an account to 
 		# evade it, but we'll leave that to their guilty conscience to figure
 		# out.
-		
+
 		$wgOut->setPageTitle( wfMsg( 'cantcreateaccounttitle' ) );
 		$wgOut->setRobotpolicy( 'noindex,nofollow' );
 		$wgOut->setArticleRelated( false );
@@ -642,7 +647,7 @@ class LoginForm {
 			$q .= $returnto;
 			$linkq .= $returnto;
 		}
-		
+
 		# Pass any language selection on to the mode switch link
 		if( $wgLoginLanguageSelector && $this->mLanguage )
 			$linkq .= '&uselang=' . $this->mLanguage;
@@ -656,7 +661,7 @@ class LoginForm {
 			$template->set( 'link', wfMsgHtml( $linkmsg, $link ) );
 		else
 			$template->set( 'link', '' );
-		
+
 		$template->set( 'header', '' );
 		$template->set( 'name', $this->mName );
 		$template->set( 'password', $this->mPassword );
@@ -673,14 +678,14 @@ class LoginForm {
 		$template->set( 'useemail', $wgEnableEmail );
 		$template->set( 'canreset', $wgAuth->allowPasswordChange() );
 		$template->set( 'remember', $wgUser->getOption( 'rememberpassword' ) or $this->mRemember  );
-				
+
 		# Prepare language selection links as needed
 		if( $wgLoginLanguageSelector ) {
 			$template->set( 'languages', $this->makeLanguageSelector() );
 			if( $this->mLanguage )
 				$template->set( 'uselang', $this->mLanguage );
 		}
-		
+
 		// Give authentication and captcha plugins a chance to modify the form
 		$wgAuth->modifyUITemplate( $template );
 		if ( $this->mType == 'signup' ) {
@@ -694,7 +699,7 @@ class LoginForm {
 		$wgOut->setArticleRelated( false );
 		$wgOut->addTemplate( $template );
 	}
-	
+
 	/**
 	 * @private
 	 */
@@ -709,11 +714,17 @@ class LoginForm {
 	}
 
 	/**
+	 * Check if a session cookie is present.
+	 *
+	 * This will not pick up a cookie set during _this_ request, but is
+	 * meant to ensure that the client is returning the cookie which was
+	 * set on a previous pass through the system.
+	 *
 	 * @private
 	 */
 	function hasSessionCookie() {
-		global $wgDisableCookieCheck;
-		return ( $wgDisableCookieCheck ) ? true : ( isset( $_COOKIE[session_name()] ) );
+		global $wgDisableCookieCheck, $wgRequest;
+		return $wgDisableCookieCheck ? true : $wgRequest->checkSessionCookie();
 	}
 
 	/**
@@ -756,7 +767,7 @@ class LoginForm {
 
 		$wgOut->addWikiText( wfMsg( 'acct_creation_throttle_hit', $limit ) );
 	}
-	
+
 	/**
 	 * Produce a bar of links which allow the user to select another language
 	 * during login/registration but retain "returnto"
@@ -778,7 +789,7 @@ class LoginForm {
 			return '';
 		}
 	}
-	
+
 	/**
 	 * Create a language selector link for a particular language
 	 * Links back to this page preserving type and returnto
@@ -794,9 +805,8 @@ class LoginForm {
 			$attr[] = 'type=signup';
 		if( $this->mReturnTo )
 			$attr[] = 'returnto=' . $this->mReturnTo;
-		$skin =& $wgUser->getSkin();
+		$skin = $wgUser->getSkin();
 		return $skin->makeKnownLinkObj( $self, htmlspecialchars( $text ), implode( '&', $attr ) );
 	}
-	
 }
 ?>

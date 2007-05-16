@@ -2,8 +2,7 @@
 /** Kazakh (Қазақша)
   * converter routines
   *
-  * @package MediaWiki
-  * @subpackage Language
+  * @addtogroup Language
   */
 
 require_once( dirname(__FILE__).'/../LanguageConverter.php' );
@@ -69,23 +68,28 @@ class KkConverter extends LanguageConverter {
 	);
 
 	var $mCyrillicToArabic = array(
-		'ла' => 'لا', 'ЛА' => 'لا', 'Ла' => 'لا',
+		'ла' => 'لا',  'лА' => 'لا',  'ЛА' => 'لا',  'Ла' => 'لا',
 
-		'а' => 'ا',  'ә' => 'ٴا',  'б' => 'ب',  'в' => 'ۆ',  'г' => 'گ',  'ғ' => 'ع',
+		'а' => 'ا',  'ә' => 'ٵ',  'б' => 'ب',  'в' => 'ۆ',  'г' => 'گ',  'ғ' => 'ع',
 		'д' => 'د',  'е' => 'ە',  'ё' => 'يو', 'ж' => 'ج',  'з' => 'ز',  'и' => 'ي',
 		'й' => 'ي',  'к' => 'ك',  'қ' => 'ق',  'л' => 'ل',  'м' => 'م',  'н' => 'ن',
-		'ң' => 'ڭ',  'о' => 'و',  'ө' => 'ٴو',  'п' => 'پ',  'р' => 'ر',  'с' => 'س',
-		'т' => 'ت',  'у' => 'ۋ',  'ұ' => 'ۇ',  'ү' => 'ٴۇ',  'ф' => 'ف',  'х' => 'ح',
+		'ң' => 'ڭ',  'о' => 'و',  'ө' => 'ٶ',  'п' => 'پ',  'р' => 'ر',  'с' => 'س',
+		'т' => 'ت',  'у' => 'ۋ',  'ұ' => 'ۇ',  'ү' => 'ٷ',  'ф' => 'ف',  'х' => 'ح',
 		'һ' => 'ھ',  'ц' => 'تس',  'ч' => 'چ',  'ш' => 'ش',  'щ' => 'شش', 'ъ' => 'ي',
-		'ы' => 'ى',  'ь' => 'ي',  'і' => 'ٴى',  'э' => 'ە',  'ю' => 'يۋ', 'я' => 'يا',
+		'ы' => 'ى',  'ь' => 'ي',  'і' => 'ٸ',  'э' => 'ە',  'ю' => 'يۋ', 'я' => 'يا',
 
-		'А' => 'ا',  'Ә' => 'ٴا',  'Б' => 'ب',  'В' => 'ۆ',  'Г' => 'گ',  'Ғ' => 'ع',
-		'Д' => 'د',  'Е' => 'ە',  'Ё' => 'يو', 'Ж' => 'ج',  'З' => 'ز',  'И' => 'ي',
+		'А' => 'ا',  'Ә' => 'ٵ',  'Б' => 'ب',  'В' => 'ۆ',  'Г' => 'گ',  'Ғ' => 'ع',
+		'Д' => 'د',  'Е' => 'ە',  'Ё' => 'يو',  'Ж' => 'ج',  'З' => 'ز',  'И' => 'ي',
 		'Й' => 'ي',  'К' => 'ك',  'Қ' => 'ق',  'Л' => 'ل',  'М' => 'م',  'Н' => 'ن',
-		'Ң' => 'ڭ',  'О' => 'و',  'Ө' => 'ٴو',  'П' => 'پ',  'Р' => 'ر',  'С' => 'س',
-		'Т' => 'ت',  'У' => 'ۋ',  'Ұ' => 'ۇ',  'Ү' => 'ٴۇ',  'Ф' => 'ف',  'Х' => 'ح',
+		'Ң' => 'ڭ',  'О' => 'و',  'Ө' => 'ٶ',  'П' => 'پ',  'Р' => 'ر',  'С' => 'س',
+		'Т' => 'ت',  'У' => 'ۋ',  'Ұ' => 'ۇ',  'Ү' => 'ٷ',  'Ф' => 'ف',  'Х' => 'ح',
 		'Һ' => 'ھ',  'Ц' => 'تس',  'Ч' => 'چ',  'Ш' => 'ش',  'Щ' => 'شش', 'Ъ' => 'ي',
-		'Ы' => 'ى',  'Ь' => 'ي',  'І' => 'ٴى',  'Э' => 'ە',  'Ю' => 'يۋ', 'Я' => 'يا',
+		'Ы' => 'ى',  'Ь' => 'ي',  'І' => 'ٸ',  'Э' => 'ە',  'Ю' => 'يۋ', 'Я' => 'يا',
+
+		'?' => '؟',
+		'%' => '٪',
+		',' => '،',
+		';' => '؛'
 	);
 
 	function loadDefaultTables() {
@@ -100,7 +104,7 @@ class KkConverter extends LanguageConverter {
 
 	// Do not convert content on talk pages
 	function parserConvert( $text, &$parser ){
-		if(is_object($parser->mTitle) && $parser->mTitle->isTalkPage())
+		if(is_object($parser->getTitle() ) && $parser->getTitle()->isTalkPage())
 			$this->mDoContentConvert=false;
 		else 
 			$this->mDoContentConvert=true;
@@ -109,10 +113,19 @@ class KkConverter extends LanguageConverter {
 	}
 
 	/*
-	 * A function wrapper, if there is no selected variant,
-	 * leave the link names as they were
+	 * A function wrapper:
+	 *   - if there is no selected variant, leave the link 
+	 *     names as they were
+	 *   - do not try to find variants for usernames
 	 */
 	function findVariantLink( &$link, &$nt ) {
+		// check for user namespace
+		if(is_object($nt)){
+			$ns = $nt->getNamespace();
+			if($ns==NS_USER || $ns==NS_USER_TALK)
+				return;
+		}
+
 		$oldlink=$link;
 		parent::findVariantLink($link,$nt);
 		if($this->getPreferredVariant()==$this->mMainLanguageCode)
@@ -135,7 +148,7 @@ class KkConverter extends LanguageConverter {
 	 */
 	function autoConvert($text, $toVariant=false) {
 		global $wgTitle;
-		if($wgTitle->getNameSpace()==NS_IMAGE){
+		if(is_object($wgTitle) && $wgTitle->getNameSpace()==NS_IMAGE){ 
 			$imagename = $wgTitle->getNsText();
 			if(preg_match("/^$imagename:/",$text)) return $text;
 		}
@@ -157,6 +170,9 @@ class KkConverter extends LanguageConverter {
 		$matches = preg_split($reg, $text, -1, PREG_SPLIT_OFFSET_CAPTURE);
 
 		$m = array_shift($matches);
+		if( !isset( $this->mTables[$toVariant] ) ) {
+			throw new MWException( "Broken variant table: " . implode( ',', array_keys( $this->mTables ) ) );
+		}
 		$ret = $this->mTables[$toVariant]->replace( $m[0] );
 		$mstart = $m[1]+strlen($m[0]);
 		foreach($matches as $m) {

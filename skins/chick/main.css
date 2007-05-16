@@ -415,7 +415,7 @@ td.diff-context {
     background:#eeeeee;
     font-size: smaller;
 }
-span.diffchange { color: red; }
+.diffchange { color: red; text-decoration: none; }
 
 a.external { color: #3366bb; }
 
@@ -444,15 +444,6 @@ span.newpage, span.minor {
 span.updatedmarker {
 	color:black;
 	background-color:#00FF00;
-}
-span.newpageletter {
-	font-weight:bold;
-	color:black;
-	background-color:yellow;
-}
-span.minoreditletter {
-	color:black;
-	background-color:#C5FFE6;
 }
 
 table.gallery {
@@ -494,6 +485,11 @@ div.gallerytext {
 
 .templatesUsed { margin-top: 1.5em; }
 
-#toolbar { clear: both; }
-
+/**
+ * Here is some stuff that's ACTUALLY COMMON TO ALL SKINS.
+ * When the day comes, it can be moved to a *real* common.css.
+ */
 .mw-plusminus-null { color: #aaa; }
+.texvc { direction: ltr; unicode-bidi: embed; }
+/* Stop floats from intruding into edit area in previews */
+#toolbar, #wpTextbox1 { clear: both; }

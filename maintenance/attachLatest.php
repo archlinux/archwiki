@@ -21,8 +21,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @package MediaWiki
- * @subpackage Maintenance
+ * @addtogroup Maintenance
  */
 
 require_once( 'commandLine.inc' );
@@ -31,7 +30,7 @@ $fixit = isset( $options['fix'] );
 $fname = 'attachLatest';
 
 echo "Looking for pages with page_latest set to 0...\n";
-$dbw =& wfGetDB( DB_MASTER );
+$dbw = wfGetDB( DB_MASTER );
 $result = $dbw->select( 'page',
 	array( 'page_id', 'page_namespace', 'page_title' ),
 	array( 'page_latest' => 0 ),

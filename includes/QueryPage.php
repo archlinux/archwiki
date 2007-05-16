@@ -1,42 +1,45 @@
 <?php
 /**
  * Contain a class for special pages
- * @package MediaWiki
  */
 
 /**
- * List of query page classes and their associated special pages, for periodic update purposes
+ * List of query page classes and their associated special pages, 
+ * for periodic updates.
+ *
+ * DO NOT CHANGE THIS LIST without testing that 
+ * maintenance/updateSpecialPages.php still works.
  */
 global $wgQueryPages; // not redundant
 $wgQueryPages = array(
 //         QueryPage subclass           Special page name         Limit (false for none, none for the default)
 //----------------------------------------------------------------------------
-	array( 'AncientPagesPage',		'Ancientpages'			),
-	array( 'BrokenRedirectsPage',		'BrokenRedirects'		),
-	array( 'CategoriesPage',		'Categories'			),
-	array( 'DeadendPagesPage',		'Deadendpages'			),
-	array( 'DisambiguationsPage',		'Disambiguations'		),
-	array( 'DoubleRedirectsPage',		'DoubleRedirects'		),
-	array( 'ListUsersPage',			'Listusers'			),
-	array( 'ListredirectsPage', 'Listredirects' ),
-	array( 'LonelyPagesPage',		'Lonelypages'			),
-	array( 'LongPagesPage',			'Longpages'			),
-	array( 'MostcategoriesPage',		'Mostcategories'		),
-	array( 'MostimagesPage',		'Mostimages'			),
-	array( 'MostlinkedCategoriesPage',	'Mostlinkedcategories'		),
-	array( 'MostlinkedPage',		'Mostlinked'			),
-	array( 'MostrevisionsPage',		'Mostrevisions'			),
-	array( 'NewPagesPage',			'Newpages'			),
-	array( 'ShortPagesPage',		'Shortpages'			),
-	array( 'UncategorizedCategoriesPage',	'Uncategorizedcategories'	),
-	array( 'UncategorizedPagesPage',	'Uncategorizedpages'		),
-	array( 'UncategorizedImagesPage', 'Uncategorizedimages' ),
-	array( 'UnusedCategoriesPage',		'Unusedcategories'		),
-	array( 'UnusedimagesPage',		'Unusedimages'			),
-	array( 'WantedCategoriesPage',		'Wantedcategories'		),
-	array( 'WantedPagesPage',		'Wantedpages'			),
-	array( 'UnwatchedPagesPage',		'Unwatchedpages'		),
-	array( 'UnusedtemplatesPage', 'Unusedtemplates' ),
+	array( 'AncientPagesPage',              'Ancientpages'                  ),
+	array( 'BrokenRedirectsPage',           'BrokenRedirects'               ),
+	array( 'DeadendPagesPage',              'Deadendpages'                  ),
+	array( 'DisambiguationsPage',           'Disambiguations'               ),
+	array( 'DoubleRedirectsPage',           'DoubleRedirects'               ),
+	array( 'ListredirectsPage',             'Listredirects'					),
+	array( 'LonelyPagesPage',               'Lonelypages'                   ),
+	array( 'LongPagesPage',                 'Longpages'                     ),
+	array( 'MostcategoriesPage',            'Mostcategories'                ),
+	array( 'MostimagesPage',                'Mostimages'                    ),
+	array( 'MostlinkedCategoriesPage',      'Mostlinkedcategories'          ),
+	array( 'MostlinkedPage',                'Mostlinked'                    ),
+	array( 'MostrevisionsPage',             'Mostrevisions'                 ),
+	array( 'FewestrevisionsPage',           'Fewestrevisions'               ),
+	array( 'NewPagesPage',                  'Newpages'                      ),
+	array( 'ShortPagesPage',                'Shortpages'                    ),
+	array( 'UncategorizedCategoriesPage',   'Uncategorizedcategories'       ),
+	array( 'UncategorizedPagesPage',        'Uncategorizedpages'            ),
+	array( 'UncategorizedImagesPage',       'Uncategorizedimages' 			),
+	array( 'UnusedCategoriesPage',          'Unusedcategories'              ),
+	array( 'UnusedimagesPage',              'Unusedimages'                  ),
+	array( 'WantedCategoriesPage',          'Wantedcategories'              ),
+	array( 'WantedPagesPage',               'Wantedpages'                   ),
+	array( 'UnwatchedPagesPage',            'Unwatchedpages'                ),
+	array( 'UnusedtemplatesPage',           'Unusedtemplates' 				),
+	array( 'WithoutInterwikiPage',			'Withoutinterwiki'				),
 );
 wfRunHooks( 'wgQueryPages', array( &$wgQueryPages ) );
 
@@ -49,8 +52,7 @@ if ( !$wgDisableCounters )
  * This is a class for doing query pages; since they're almost all the same,
  * we factor out some of the functionality into a superclass, and let
  * subclasses derive from it.
- *
- * @package MediaWiki
+ * @addtogroup SpecialPage
  */
 class QueryPage {
 	/**
@@ -59,7 +61,7 @@ class QueryPage {
 	 * @var bool
 	 */
 	var $listoutput = false;
-	
+
 	/**
 	 * The offset and limit in use, as passed to the query() function
 	 *
@@ -197,8 +199,8 @@ class QueryPage {
 	 */
 	function recache( $limit, $ignoreErrors = true ) {
 		$fname = get_class($this) . '::recache';
-		$dbw =& wfGetDB( DB_MASTER );
-		$dbr =& wfGetDB( DB_SLAVE, array( $this->getName(), 'QueryPage::recache', 'vslow' ) );
+		$dbw = wfGetDB( DB_MASTER );
+		$dbr = wfGetDB( DB_SLAVE, array( $this->getName(), 'QueryPage::recache', 'vslow' ) );
 		if ( !$dbw || !$dbr ) {
 			return false;
 		}
@@ -282,7 +284,7 @@ class QueryPage {
 
 		$sname = $this->getName();
 		$fname = get_class($this) . '::doQuery';
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 
 		$wgOut->setSyndicated( $this->isSyndicated() );
 
@@ -306,7 +308,7 @@ class QueryPage {
 					$updated = $wgLang->timeAndDate( $tRow->qci_timestamp, true, true );
 					$cacheNotice = wfMsg( 'perfcachedts', $updated );
 					$wgOut->addMeta( 'Data-Cache-Time', $tRow->qci_timestamp );
-					$wgOut->addScript( '<script language="JavaScript">var dataCacheTime = \'' . $tRow->qci_timestamp . '\';</script>' );
+					$wgOut->addInlineScript( "var dataCacheTime = '{$tRow->qci_timestamp}';" );
 				} else {
 					$cacheNotice = wfMsg( 'perfcached' );
 				}
@@ -330,58 +332,99 @@ class QueryPage {
 		$num = $dbr->numRows($res);
 
 		$this->preprocessResults( $dbr, $res );
-
-		$sk = $wgUser->getSkin( );
-
-		if($shownavigation) {
-			$wgOut->addHTML( $this->getPageHeader() );
-			$top = wfShowingResults( $offset, $num);
-			$wgOut->addHTML( "<p>{$top}\n" );
-
-			# often disable 'next' link when we reach the end
-			$atend = $num < $limit;
-
-			$sl = wfViewPrevNext( $offset, $limit ,
-				$wgContLang->specialPage( $sname ),
-				wfArrayToCGI( $this->linkParameters() ), $atend );
-			$wgOut->addHTML( "<br />{$sl}</p>\n" );
-		}
-		if ( $num > 0 ) {
-			$s = array();
-			if ( ! $this->listoutput )
-				$s[] = $this->openList( $offset );
-
-			# Only read at most $num rows, because $res may contain the whole 1000
-			for ( $i = 0; $i < $num && $obj = $dbr->fetchObject( $res ); $i++ ) {
-				$format = $this->formatResult( $sk, $obj );
-				if ( $format ) {
-					$attr = ( isset ( $obj->usepatrol ) && $obj->usepatrol &&
-										$obj->patrolled == 0 ) ? ' class="not-patrolled"' : '';
-					$s[] = $this->listoutput ? $format : "<li{$attr}>{$format}</li>\n";
-				}
+		$sk = $wgUser->getSkin();
+		
+		# Top header and navigation
+		if( $shownavigation ) {
+			$wgOut->addHtml( $this->getPageHeader() );
+			if( $num > 0 ) {
+				$wgOut->addHtml( '<p>' . wfShowingResults( $offset, $num ) . '</p>' );
+				# Disable the "next" link when we reach the end
+				$paging = wfViewPrevNext( $offset, $limit, $wgContLang->specialPage( $sname ),
+					wfArrayToCGI( $this->linkParameters() ), ( $num < $limit ) );
+				$wgOut->addHtml( '<p>' . $paging . '</p>' );
+			} else {
+				# No results to show, so don't bother with "showing X of Y" etc.
+				# -- just let the user know and give up now
+				$wgOut->addHtml( '<p>' . wfMsgHtml( 'specialpage-empty' ) . '</p>' );
+				return;
 			}
-
-			if($this->tryLastResult()) {
-				// flush the very last result
-				$obj = null;
-				$format = $this->formatResult( $sk, $obj );
-				if( $format ) {
-					$attr = ( isset ( $obj->usepatrol ) && $obj->usepatrol &&
-										$obj->patrolled == 0 ) ? ' class="not-patrolled"' : '';
-					$s[] = "<li{$attr}>{$format}</li>\n";
-				}
-			}
-
-			$dbr->freeResult( $res );
-			if ( ! $this->listoutput )
-				$s[] = $this->closeList();
-			$str = $this->listoutput ? $wgContLang->listToText( $s ) : implode( '', $s );
-			$wgOut->addHTML( $str );
 		}
-		if($shownavigation) {
-			$wgOut->addHTML( "<p>{$sl}</p>\n" );
+		
+		# The actual results; specialist subclasses will want to handle this
+		# with more than a straight list, so we hand them the info, plus
+		# an OutputPage, and let them get on with it
+		$this->outputResults( $wgOut,
+			$wgUser->getSkin(),
+			$dbr, # Should use a ResultWrapper for this
+			$res,
+			$dbr->numRows( $res ),
+			$offset );
+
+		# Repeat the paging links at the bottom
+		if( $shownavigation ) {
+			$wgOut->addHtml( '<p>' . $paging . '</p>' );
 		}
+		
 		return $num;
+	}
+	
+	/**
+	 * Format and output report results using the given information plus
+	 * OutputPage
+	 *
+	 * @param OutputPage $out OutputPage to print to
+	 * @param Skin $skin User skin to use
+	 * @param Database $dbr Database (read) connection to use
+	 * @param int $res Result pointer
+	 * @param int $num Number of available result rows
+	 * @param int $offset Paging offset
+	 */
+	protected function outputResults( $out, $skin, $dbr, $res, $num, $offset ) {
+		global $wgContLang;
+	
+		if( $num > 0 ) {
+			$html = array();
+			if( !$this->listoutput )
+				$html[] = $this->openList( $offset );
+			
+			# $res might contain the whole 1,000 rows, so we read up to
+			# $num [should update this to use a Pager]
+			for( $i = 0; $i < $num && $row = $dbr->fetchObject( $res ); $i++ ) {
+				$line = $this->formatResult( $skin, $row );
+				if( $line ) {
+					$attr = ( isset( $row->usepatrol ) && $row->usepatrol && $row->patrolled == 0 )
+						? ' class="not-patrolled"'
+						: '';
+					$html[] = $this->listoutput
+						? $format
+						: "<li{$attr}>{$line}</li>\n";
+				}
+			}
+			
+			# Flush the final result
+			if( $this->tryLastResult() ) {
+				$row = null;
+				$line = $this->formatResult( $skin, $row );
+				if( $line ) {
+					$attr = ( isset( $row->usepatrol ) && $row->usepatrol && $row->patrolled == 0 )
+						? ' class="not-patrolled"'
+						: '';
+					$html[] = $this->listoutput
+						? $format
+						: "<li{$attr}>{$line}</li>\n";
+				}
+			}
+			
+			if( !$this->listoutput )
+				$html[] = $this->closeList();
+			
+			$html = $this->listoutput
+				? $wgContLang->listToText( $html )
+				: implode( '', $html );
+			
+			$out->addHtml( $html );
+		}
 	}
 	
 	function openList( $offset ) {
@@ -411,7 +454,7 @@ class QueryPage {
 				$this->feedUrl() );
 			$feed->outHeader();
 
-			$dbr =& wfGetDB( DB_SLAVE );
+			$dbr = wfGetDB( DB_SLAVE );
 			$sql = $this->getSQL() . $this->getOrder();
 			$sql = $dbr->limitResult( $sql, $limit, 0 );
 			$res = $dbr->query( $sql, 'QueryPage::doFeed' );
@@ -479,22 +522,6 @@ class QueryPage {
 	function feedUrl() {
 		$title = SpecialPage::getTitleFor( $this->getName() );
 		return $title->getFullURL();
-	}
-}
-
-/**
- * This is a subclass for very simple queries that are just looking for page
- * titles that match some criteria. It formats each result item as a link to
- * that page.
- *
- * @package MediaWiki
- */
-class PageQueryPage extends QueryPage {
-
-	function formatResult( $skin, $result ) {
-		global $wgContLang;
-		$nt = Title::makeTitle( $result->namespace, $result->title );
-		return $skin->makeKnownLinkObj( $nt, htmlspecialchars( $wgContLang->convert( $nt->getPrefixedText() ) ) );
 	}
 }
 

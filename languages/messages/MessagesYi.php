@@ -1,8 +1,7 @@
 <?php
 /** Yiddish (ייִדיש)
   *
-  * @package MediaWiki
-  * @subpackage Language
+  * @addtogroup Language
   */
 $fallback = 'he';
 
@@ -47,10 +46,10 @@ $defaultUserOptionOverrides = array(
 
 /**
  * Magic words.
- * Disabling the Hebrew ones.
+ * Disabling the Hebrew aliases, adding a Yiddish alias for #REDIRECT.
  */
 $magicWords = array(
-	'redirect'               => array( 0,    '#REDIRECT'              ),
+	'redirect'               => array( 0,    '#ווייטערפירן', '#REDIRECT'              ),
 	'notoc'                  => array( 0,    '__NOTOC__'              ),
 	'nogallery'              => array( 0,    '__NOGALLERY__'          ),
 	'forcetoc'               => array( 0,    '__FORCETOC__'           ),
@@ -102,7 +101,6 @@ $magicWords = array(
 	'msg'                    => array( 0,    'MSG:'                   ),
 	'subst'                  => array( 0,    'SUBST:'                 ),
 	'msgnw'                  => array( 0,    'MSGNW:'                 ),
-	'end'                    => array( 0,    '__END__'                ),
 	'img_thumbnail'          => array( 1,    'thumbnail', 'thumb'     ),
 	'img_manualthumb'        => array( 1,    'thumbnail=$1', 'thumb=$1'),
 	'img_right'              => array( 1,    'right'                  ),
@@ -412,6 +410,7 @@ Legend: (cur) = difference with current version,
 'emailmessage'          => 'מעלדונג',
 'emailsend'             => 'שיקן',
 'watchlist'             => 'אַכטונגע ליסט',
+'mywatchlist'             => 'אַכטונגע ליסט',
 'addedwatch'            => 'צוגעלייגט געוואָרן צום "אַכטונגע ליסט"',
 'addedwatchtext'        => 'דער אַרטיקל "[[:$1]]" איז צוגעלײגט געוואָרן צו דײַן [[{{ns:Special}}:Watchlist|אַכטונגע ליסט]].
 
@@ -468,107 +467,109 @@ make it easier to pick out.
 '1movedto2_redir'       => '[[:$1]] באַוועגט צו [[:$2]] פון',
 'revertmove'            => 'צוריקדרייען',
 'allmessagesname'       => 'נאָמען',
-'tooltip-search'        => 'זוכן {{SITENAME}} [alt-f]',
-'tooltip-diff'          => 'Show which changes you made to the text. [alt-v]',
+'tooltip-search'        => 'זוכן {{SITENAME}}',
+'tooltip-diff'          => 'Show which changes you made to the text.',
 'lastmodifiedatby'        => 'די לעצטע ענדערונג פון די בלאט איז געווען $2, $1 ביי $3.',
 'and'                   => 'און',
 'subcategorycount'      => 'ס\'איז דאָ $1 אונטערקאַטעגאָריעס צו די קאַטעגאָריע.',
 'categoryarticlecount'  => 'ס\'איז דאָ $1 אַרטיקלען אין די קאַטעגאָריע.',
-'monobook.js'           => '/* <div style="direction: ltr;"><pre> */
-var ta = new Object();
-ta["pt-userpage"]           = [".", "מיין באניצער בלאט"];
-ta["pt-anonuserpage"]       = [".", "באניצער בלאט פון אנינונימער באניצער"];
-ta["pt-mytalk"]             = ["n", "מיין רעדן בלאט"];
-ta["pt-anontalk"]           = ["n", "רעדן אויף אנינונימע באטייליגען"];
-ta["pt-preferences"]        = ["",  "מיינע פעיווערעטס"];
-ta["pt-watchlist"]          = ["l", "אויפפּאסן בלעטער"];
-ta["pt-mycontris"]          = ["y", "מיינע באטייליגונגן"];
-ta["pt-login"]              = ["o", "ביטע איינשרייבן, אבער עס איז נישט קיין חוב"];
-ta["pt-anonlogin"]          = ["o", "סבעסער איינשרייבן, אבער עס איז נישט קיין חוב"];
-ta["pt-logout"]             = ["", "זיך אויסשרייבן"];
-ta["ca-talk"]               = ["t", "שמועס אויף דעם בלאט"];
-ta["ca-edit"]               = ["e", "קענסט פארעכטן דעם בלאט. ביטע זיך באניצן מיט קנעפל \"פאראויסיגע ווייזונג\" בעפארן אויפהיטן."];
-ta["ca-addsection"]         = ["+", "לייג צו אייער ווארט צו דעם שמועס"];
-ta["ca-viewsource"]         = ["e", "דאס איז א פארשלאסן בלאט, קענסט נאר קוקן איר מקור"];
-ta["ca-history"]            = ["h", "פריערדיגע ווערסיעס פון דעם בלאט."];
-ta["ca-protect"]            = ["=", "הגנו על דף זה"];
-ta["ca-delete"]             = ["d", "אויסמעקן דעם בלאט"];
-ta["ca-undelete"]           = ["d", "צוריק דרייען די ענדערונגען פון דעם בלאט פארן מעקן"];
-ta["ca-move"]               = ["m", "פירט אריבער דעם בלאט"];
-ta["ca-watch"]              = ["w", "לייגט צו דעם בלאט אויפצופאסן"];
-ta["ca-unwatch"]            = ["w", "נעמט אראפ דעם בלאט פון אויפפאסן"];
-ta["search"]                = ["f", "זוכט אינעם סייט"];
-ta["p-logo"]                = ["",  "הויפט זייט"];
-ta["n-mainpage"]            = ["z", "באזוכט דעם הויפט זייט"];
-ta["n-portal"]              = ["",  "גייט אריין אין די געמיינדע צו שמועסן"];
-ta["n-currentevents"]       = ["",  "לעצטע אינפארמאציע איבער טואונגען פון וויקיפעדיע"];
-ta["n-recentchanges"]       = ["r", "ליסטע פון לעצטע ענדערונגען"];
-ta["n-randompage"]          = ["x", "וועלט אויס א צופעליגער בלאט"];
-ta["n-help"]                = ["",  "הילף"];
-ta["n-sitesupport"]         = ["",  "צדקה אויפצוהאלטן דעם סייט"];
-ta["t-whatlinkshere"]       = ["j", "אלע בלעטער וואס פארבינדען צו דעם בלאט"];
-ta["t-recentchangeslinked"] = ["k", "אלע ענדערונגען פון בלעטער וואס זענען אהער פארבינדען"];
-ta["feed-rss"]              = ["",  "לייגט צו אן אטאמאטישער אפדעיט פון אר.עס.עס. RSS"];
-ta["feed-atom"]             = ["",  "לייג צו אן אטאמאטישער אפדעיט דורך אטאם Atom"];
-ta["t-contributions"]       = ["",  "אלע שרייבאכצער פון דעם באנוצער"];
-ta["t-emailuser"]           = ["",  "שיקט אן אימעיל פאר דעם באניצער"];
-ta["t-upload"]              = ["u", "לייגט ארויף פיילס און בילדער"];
-ta["t-specialpages"]        = ["q", "אלע ספעציעלע בלעטער"];
-ta["ca-nstab-main"]         = ["c", "בליקט אינעם אינהאלט בלאט"];
-ta["ca-nstab-user"]         = ["c", "קוקט אין באניצער בלאט"];
-ta["ca-nstab-media"]        = ["c", "קוקט אין די מידיע בלעטער"];
-ta["ca-nstab-special"]      = ["",  "דאס איז א ספעציעלע בלאט, מקען איר נישט ענדערן"];
-ta["ca-nstab-project"]      = ["a", "צפו בדף המיזם"];
-ta["ca-nstab-image"]        = ["c", "צפו בדף תיאור התמונה"];
-ta["ca-nstab-mediawiki"]    = ["c", "צפו בהודעת המערכת"];
-ta["ca-nstab-template"]     = ["c", "צפו בתבנית"];
-ta["ca-nstab-help"]         = ["c", "באזוכט די הילף בלעטער"];
-ta["ca-nstab-category"]     = ["c", "באזוכט די קאטעגאריע בלעטער"];
+'monobook.js' => '/* Deprecated; use [[MediaWiki:common.js]] */',
 
-function bidiSwitchSetup() {
-	var editform = document.getElementById("wpTextbox1");
-	if (editform == null) {
-		return;
-	}
-	
-	bidiAddButton(editform, "Default", function(style) {
-		style.direction = "inherit";
-		style.unicodeBidi = "inherit";
-	});
-	bidiAddButton(editform, "dir=ltr", function(style) {
-		style.direction = "ltr";
-	});
-	bidiAddButton(editform, "dir=rtl", function(style) {
-		style.direction = "rtl";
-	});
-	bidiAddButton(editform, "bidi=normal", function(style) {
-		style.unicodeBidi = "normal";
-	});
-	bidiAddButton(editform, "bidi=override", function(style) {
-		style.unicodeBidi = "bidi-override";
-	});
-}
-
-function bidiAddButton(before, label, action) {
-	var button = document.createElement("input");
-	button.type = "button";
-	button.value = label;
-	button.onclick = function(event) {
-		var box = document.getElementById("wpTextbox1");
-		if (box == null) {
-			alert("Broken! Edit box missing.");
-		} else {
-			//var style = document.getOverrideStyle(box, null);
-			var style = box.style;
-			action(style);
-		}
-	}
-	before.parentNode.insertBefore(button, before);
-}
-
-hookEvent(\'load\', bidiSwitchSetup);
-
-/* </pre></div> */',
+'accesskey-pt-userpage' => '.',
+'tooltip-pt-userpage' => 'מיין באניצער בלאט',
+'accesskey-pt-anonuserpage' => '.',
+'tooltip-pt-anonuserpage' => 'באניצער בלאט פון אנינונימער באניצער',
+'accesskey-pt-mytalk' => 'n',
+'tooltip-pt-mytalk' => 'מיין רעדן בלאט',
+'accesskey-pt-anontalk' => 'n',
+'tooltip-pt-anontalk' => 'רעדן אויף אנינונימע באטייליגען',
+'accesskey-pt-preferences' => '',
+'tooltip-pt-preferences' => 'מיינע פעיווערעטס',
+'accesskey-pt-watchlist' => 'l',
+'tooltip-pt-watchlist' => 'אויפפּאסן בלעטער',
+'accesskey-pt-mycontris' => 'y',
+'tooltip-pt-mycontris' => 'מיינע באטייליגונגן',
+'accesskey-pt-login' => 'o',
+'tooltip-pt-login' => 'ביטע איינשרייבן, אבער עס איז נישט קיין חוב',
+'accesskey-pt-anonlogin' => 'o',
+'tooltip-pt-anonlogin' => 'סבעסער איינשרייבן, אבער עס איז נישט קיין חוב',
+'accesskey-pt-logout' => '',
+'tooltip-pt-logout' => 'זיך אויסשרייבן',
+'accesskey-ca-talk' => 't',
+'tooltip-ca-talk' => 'שמועס אויף דעם בלאט',
+'accesskey-ca-edit' => 'e',
+'tooltip-ca-edit' => ' בעפארן אויפהיטן.',
+'accesskey-ca-addsection' => '+',
+'tooltip-ca-addsection' => 'לייג צו אייער ווארט צו דעם שמועס',
+'accesskey-ca-viewsource' => 'e',
+'tooltip-ca-viewsource' => 'דאס איז א פארשלאסן בלאט, קענסט נאר קוקן איר מקור',
+'accesskey-ca-history' => 'h',
+'tooltip-ca-history' => 'פריערדיגע ווערסיעס פון דעם בלאט.',
+'accesskey-ca-protect' => '=',
+'tooltip-ca-protect' => 'הגנו על דף זה',
+'accesskey-ca-delete' => 'd',
+'tooltip-ca-delete' => 'אויסמעקן דעם בלאט',
+'accesskey-ca-undelete' => 'd',
+'tooltip-ca-undelete' => 'צוריק דרייען די ענדערונגען פון דעם בלאט פארן מעקן',
+'accesskey-ca-move' => 'm',
+'tooltip-ca-move' => 'פירט אריבער דעם בלאט',
+'accesskey-ca-watch' => 'w',
+'tooltip-ca-watch' => 'לייגט צו דעם בלאט אויפצופאסן',
+'accesskey-ca-unwatch' => 'w',
+'tooltip-ca-unwatch' => 'נעמט אראפ דעם בלאט פון אויפפאסן',
+'accesskey-search' => 'f',
+'tooltip-search' => 'זוכט אינעם סייט',
+'accesskey-p-logo' => '',
+'tooltip-p-logo' => 'הויפט זייט',
+'accesskey-n-mainpage' => 'z',
+'tooltip-n-mainpage' => 'באזוכט דעם הויפט זייט',
+'accesskey-n-portal' => '',
+'tooltip-n-portal' => 'גייט אריין אין די געמיינדע צו שמועסן',
+'accesskey-n-currentevents' => '',
+'tooltip-n-currentevents' => 'לעצטע אינפארמאציע איבער טואונגען פון וויקיפעדיע',
+'accesskey-n-recentchanges' => 'r',
+'tooltip-n-recentchanges' => 'ליסטע פון לעצטע ענדערונגען',
+'accesskey-n-randompage' => 'x',
+'tooltip-n-randompage' => 'וועלט אויס א צופעליגער בלאט',
+'accesskey-n-help' => '',
+'tooltip-n-help' => 'הילף',
+'accesskey-n-sitesupport' => '',
+'tooltip-n-sitesupport' => 'צדקה אויפצוהאלטן דעם סייט',
+'accesskey-t-whatlinkshere' => 'j',
+'tooltip-t-whatlinkshere' => 'אלע בלעטער וואס פארבינדען צו דעם בלאט',
+'accesskey-t-recentchangeslinked' => 'k',
+'tooltip-t-recentchangeslinked' => 'אלע ענדערונגען פון בלעטער וואס זענען אהער פארבינדען',
+'accesskey-feed-rss' => '',
+'tooltip-feed-rss' => 'לייגט צו אן אטאמאטישער אפדעיט פון אר.עס.עס. RSS',
+'accesskey-feed-atom' => '',
+'tooltip-feed-atom' => 'לייג צו אן אטאמאטישער אפדעיט דורך אטאם Atom',
+'accesskey-t-contributions' => '',
+'tooltip-t-contributions' => 'אלע שרייבאכצער פון דעם באנוצער',
+'accesskey-t-emailuser' => '',
+'tooltip-t-emailuser' => 'שיקט אן אימעיל פאר דעם באניצער',
+'accesskey-t-upload' => 'u',
+'tooltip-t-upload' => 'לייגט ארויף פיילס און בילדער',
+'accesskey-t-specialpages' => 'q',
+'tooltip-t-specialpages' => 'אלע ספעציעלע בלעטער',
+'accesskey-ca-nstab-main' => 'c',
+'tooltip-ca-nstab-main' => 'בליקט אינעם אינהאלט בלאט',
+'accesskey-ca-nstab-user' => 'c',
+'tooltip-ca-nstab-user' => 'קוקט אין באניצער בלאט',
+'accesskey-ca-nstab-media' => 'c',
+'tooltip-ca-nstab-media' => 'קוקט אין די מידיע בלעטער',
+'accesskey-ca-nstab-special' => '',
+'tooltip-ca-nstab-special' => 'דאס איז א ספעציעלע בלאט, מקען איר נישט ענדערן',
+'accesskey-ca-nstab-project' => 'a',
+'tooltip-ca-nstab-project' => 'צפו בדף המיזם',
+'accesskey-ca-nstab-image' => 'c',
+'tooltip-ca-nstab-image' => 'צפו בדף תיאור התמונה',
+'accesskey-ca-nstab-mediawiki' => 'c',
+'tooltip-ca-nstab-mediawiki' => 'צפו בהודעת המערכת',
+'accesskey-ca-nstab-template' => 'c',
+'tooltip-ca-nstab-template' => 'צפו בתבנית',
+'accesskey-ca-nstab-help' => 'c',
+'tooltip-ca-nstab-help' => 'באזוכט די הילף בלעטער',
+'accesskey-ca-nstab-category' => 'c',
 'previousdiff'          => 'פריעריגע אונטערשייד →',
 'nextdiff'              => 'קומענדיקע אונטערשייד ←',
 'newimages'             => 'גאַלעריע אויף נײַע בילדער',

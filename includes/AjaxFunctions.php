@@ -1,7 +1,13 @@
 <?php
 
-if( !defined( 'MEDIAWIKI' ) )
-        die( 1 );
+/** 
+ * @package MediaWiki
+ * @addtogroup Ajax
+ */
+
+if( !defined( 'MEDIAWIKI' ) ) {
+	die( 1 );
+}
 
 /**
  * Function converts an Javascript escaped string back into a string with
@@ -13,40 +19,39 @@ if( !defined( 'MEDIAWIKI' ) )
  * @return string
  */
 function js_unescape($source, $iconv_to = 'UTF-8') {
-   $decodedStr = '';
-   $pos = 0;
-   $len = strlen ($source);
-   while ($pos < $len) {
-       $charAt = substr ($source, $pos, 1);
-       if ($charAt == '%') {
-           $pos++;
-           $charAt = substr ($source, $pos, 1);
-           if ($charAt == 'u') {
-               // we got a unicode character
-               $pos++;
-               $unicodeHexVal = substr ($source, $pos, 4);
-               $unicode = hexdec ($unicodeHexVal);
-               $decodedStr .= code2utf($unicode);
-               $pos += 4;
-           }
-           else {
-               // we have an escaped ascii character
-               $hexVal = substr ($source, $pos, 2);
-               $decodedStr .= chr (hexdec ($hexVal));
-               $pos += 2;
-           }
-       }
-       else {
-           $decodedStr .= $charAt;
-           $pos++;
-       }
-   }
+	$decodedStr = '';
+	$pos = 0;
+	$len = strlen ($source);
 
-   if ($iconv_to != "UTF-8") {
-       $decodedStr = iconv("UTF-8", $iconv_to, $decodedStr);
-   }
-  
-   return $decodedStr;
+	while ($pos < $len) {
+		$charAt = substr ($source, $pos, 1);
+		if ($charAt == '%') {
+			$pos++;
+			$charAt = substr ($source, $pos, 1);
+			if ($charAt == 'u') {
+				// we got a unicode character
+				$pos++;
+				$unicodeHexVal = substr ($source, $pos, 4);
+				$unicode = hexdec ($unicodeHexVal);
+				$decodedStr .= code2utf($unicode);
+				$pos += 4;
+			} else {
+				// we have an escaped ascii character
+				$hexVal = substr ($source, $pos, 2);
+				$decodedStr .= chr (hexdec ($hexVal));
+				$pos += 2;
+			}
+		} else {
+			$decodedStr .= $charAt;
+			$pos++;
+		}
+	}
+
+	if ($iconv_to != "UTF-8") {
+		$decodedStr = iconv("UTF-8", $iconv_to, $decodedStr);
+	}
+
+	return $decodedStr;
 }
 
 /**
@@ -71,7 +76,7 @@ function code2utf($num){
 function wfSajaxSearch( $term ) {
 	global $wgContLang, $wgOut;
 	$limit = 16;
-	
+
 	$l = new Linker;
 
 	$term = str_replace( ' ', '_', $wgContLang->ucfirst( 
@@ -81,7 +86,7 @@ function wfSajaxSearch( $term ) {
 	if ( strlen( str_replace( '_', '', $term ) )<3 )
 		return;
 
-	$db =& wfGetDB( DB_SLAVE );
+	$db = wfGetDB( DB_SLAVE );
 	$res = $db->select( 'page', 'page_title',
 			array(  'page_namespace' => 0,
 				"page_title LIKE '". $db->strencode( $term) ."%'" ),
@@ -108,8 +113,8 @@ function wfSajaxSearch( $term ) {
 	$subtitlemsg = ( Title::newFromText($term) ? 'searchsubtitle' : 'searchsubtitleinvalid' );
 	$subtitle = $wgOut->parse( wfMsg( $subtitlemsg, wfEscapeWikiText($term) ) ); #FIXME: parser is missing mTitle !
 
-	$term = htmlspecialchars( $term );
-	$html = '<div style="float:right; border:solid 1px black;background:gainsboro;padding:2px;"><a onclick="Searching_Hide_Results();">' 
+	$term = urlencode( $term );
+	$html = '<div style="float:right; border:solid 1px black;background:gainsboro;padding:2px;"><a onclick="Searching_Hide_Results();">'
 		. wfMsg( 'hideresults' ) . '</a></div>'
 		. '<h1 class="firstHeading">'.wfMsg('search')
 		. '</h1><div id="contentSub">'. $subtitle . '</div><ul><li>'
@@ -121,11 +126,11 @@ function wfSajaxSearch( $term ) {
 					"search=$term&go=Go" )
 		. "</li></ul><h2>" . wfMsg( 'articletitles', $term ) . "</h2>"
 		. '<ul>' .$r .'</ul>'.$more;
-		
+
 	$response = new AjaxResponse( $html );
-	
+
 	$response->setCacheDuration( 30*60 );
-		
+
 	return $response;
 }
 
@@ -152,14 +157,14 @@ function wfAjaxWatch($pageID = "", $watch = "") {
 
 	if($watch) {
 		if(!$watching) {
-			$dbw =& wfGetDB(DB_MASTER);
+			$dbw = wfGetDB(DB_MASTER);
 			$dbw->begin();
 			$article->doWatch();
 			$dbw->commit();
 		}
 	} else {
 		if($watching) {
-			$dbw =& wfGetDB(DB_MASTER);
+			$dbw = wfGetDB(DB_MASTER);
 			$dbw->begin();
 			$article->doUnwatch();
 			$dbw->commit();

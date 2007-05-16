@@ -1,15 +1,6 @@
 <?php
 
 /**
- * Special page allows users to request email confirmation message, and handles
- * processing of the confirmation code when the link in the email is followed
- *
- * @package MediaWiki
- * @subpackage Special pages
- * @author Rob Church <robchur@gmail.com>
- */
- 
-/**
  * Main execution point
  *
  * @param $par Parameters passed to the page
@@ -19,6 +10,13 @@ function wfSpecialConfirmemail( $par ) {
 	$form->execute( $par );
 }
 
+/**
+ * Special page allows users to request email confirmation message, and handles
+ * processing of the confirmation code when the link in the email is followed
+ *
+ * @addtogroup SpecialPage
+ * @author Rob Church <robchur@gmail.com>
+ */
 class EmailConfirmation extends SpecialPage {
 	
 	/**

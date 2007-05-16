@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Sep 19, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiLogin extends ApiBase {
 
 	public function __construct($main, $action) {
@@ -116,7 +118,7 @@ class ApiLogin extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiLogin.php 17065 2006-10-17 02:11:29Z yurik $';
+		return __CLASS__ . ': $Id: ApiLogin.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

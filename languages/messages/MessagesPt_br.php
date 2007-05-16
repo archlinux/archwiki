@@ -1,7 +1,6 @@
 <?php
 /** Brazilian Portugese (Portuguêsi do Brasil)
-  * @package MediaWiki
-  * @subpackage Language
+  * @addtogroup Language
   */
 #
 # This translation was made by Yves Marques Junqueira
@@ -601,17 +600,17 @@ O endereço de e-mail que você disponibilizou em suas preferências aparecerá 
 # Watchlist
 #
 "watchlist"     => "Artigos do meu interesse",
+"mywatchlist"     => "Artigos do meu interesse",
 "nowatchlist"   => "Você não está monitorando nenhum artigo.",
 "watchnologin"  => "Não está autenticado",
 "watchnologintext"  => "Você deve estar [[Special:Userlogin|autenticado]]
 para modificar a lista de artigos do seu interesse.",
-/*"addedwatch"    => "Adicionados �  lista",*/
-"addedwatchtext" => "A página \"$1\" foi adicionada à <a href=\"{{localurle:Special:Watchlist}}\">lista de artigos do seu interesse</a>.
+"addedwatchtext" => "A página \"$1\" foi adicionada à [[Special:Watchlist|lista de artigos do seu interesse]].
 Modificações futuras neste artigo e páginas de discussão associadas serão listadas aqui,
-e a página aparecerá <b>em negrito</b> na <a href=\"{{localurle:Special:Recentchanges}}\">lista de mudanças recentes</a> para que
-possa achá-la com maior facilidade.</p>
+e a página aparecerá <b>em negrito</b> na [[Special:Recentchanges|lista de mudanças recentes]] para que
+possa achá-la com maior facilidade.
 
-<p>Se você quiser remover futuramente o artigo da sua lista de artigos vigiados, clique em  \"Desinteressar-se\" na barra lateral.",
+Se você quiser remover futuramente o artigo da sua lista de artigos vigiados, clique em  \"Desinteressar-se\" na barra lateral.",
 "removedwatch"  => "Removida da lista de monitoramento",
 "removedwatchtext" => "A página \"$1\" não é mais de seu interesse e portanto foi removida de sua lista de monitoramento.",
 "watchthispage" => "Interessar-se por esta página",
@@ -686,7 +685,7 @@ Se uma nova página foi criada com o mesmo nome desde a deleção, as revisões 
 #
 "contributions" => "Contribuições de usuários",
 "mycontris" => "Minhas contribuições",
-"contribsub"    => "Para $1",
+"contribsub2"    => "Para $1 ($2)",
 "nocontribs"    => "Não foram encontradas mudanças com este critério.",
 "ucnote"        => "Segue as últimas  <b>$1</b> mudanças nos últimos <b>$2</b> dias do usuário.",
 "uclinks"       => "Ver as últimas $1 mudanças; ver os últimos $2 dias.",

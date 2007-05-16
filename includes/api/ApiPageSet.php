@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Sep 24, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiQueryBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiPageSet extends ApiQueryBase {
 
 	private $mAllPages; // [ns][dbkey] => page_id or 0 when missing
@@ -308,7 +310,7 @@ class ApiPageSet extends ApiQueryBase {
 		if($linkBatch->isEmpty())
 			return;
 			
-		$db = & $this->getDB();
+		$db = $this->getDB();
 		$set = $linkBatch->constructSet('page', $db);
 
 		// Get pageIDs data from the `page` table
@@ -331,7 +333,7 @@ class ApiPageSet extends ApiQueryBase {
 			'page_id' => $pageids
 		);
 
-		$db = & $this->getDB();
+		$db = $this->getDB();
 
 		// Get pageIDs data from the `page` table
 		$this->profileDBIn();
@@ -406,7 +408,7 @@ class ApiPageSet extends ApiQueryBase {
 		if(empty($revids))
 			return;
 			
-		$db = & $this->getDB();
+		$db = $this->getDB();
 		$pageids = array();
 		$remaining = array_flip($revids);
 		
@@ -438,7 +440,7 @@ class ApiPageSet extends ApiQueryBase {
 	private function resolvePendingRedirects() {
 
 		if($this->mResolveRedirects) {
-			$db = & $this->getDB();
+			$db = $this->getDB();
 			$pageFlds = $this->getPageTableFields();
 	
 			// Repeat until all redirects have been resolved
@@ -470,7 +472,7 @@ class ApiPageSet extends ApiQueryBase {
 	private function getRedirectTargets() {
 
 		$linkBatch = new LinkBatch();
-		$db = & $this->getDB();
+		$db = $this->getDB();
 
 		// find redirect targets for all redirect pages
 		$this->profileDBIn();
@@ -592,7 +594,7 @@ class ApiPageSet extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiPageSet.php 17929 2006-11-25 17:11:58Z tstarling $';
+		return __CLASS__ . ': $Id: ApiPageSet.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Sep 7, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 abstract class ApiQueryBase extends ApiBase {
 
 	private $mQueryModule, $tables, $where, $fields, $options;
@@ -337,10 +339,13 @@ abstract class ApiQueryBase extends ApiBase {
 	}
 
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiQueryBase.php 17987 2006-11-29 05:45:03Z nickj $';
+		return __CLASS__ . ': $Id: ApiQueryBase.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 
+/**
+ * @addtogroup API
+ */
 abstract class ApiQueryGeneratorBase extends ApiQueryBase {
 
 	private $mIsGenerator;

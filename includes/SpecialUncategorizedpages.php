@@ -1,14 +1,12 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 /**
- *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * A special page looking for page without any category.
+ * @addtogroup SpecialPage
  */
 class UncategorizedPagesPage extends PageQueryPage {
 	var $requestedNamespace = NS_MAIN;
@@ -27,7 +25,7 @@ class UncategorizedPagesPage extends PageQueryPage {
 	function isSyndicated() { return false; }
 
 	function getSQL() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		list( $page, $categorylinks ) = $dbr->tableNamesN( 'page', 'categorylinks' );
 		$name = $dbr->addQuotes( $this->getName() );
 

@@ -1,9 +1,6 @@
 <?php
 
-if ( defined( 'MEDIAWIKI' ) ) {
-
-global $wgHooks;
-$wgHooks['ArticleSave'][] = 'checkAntiSpamHash';
+$wgHooks['ArticleSave'][] = 'FunnyDot::checkAntiSpamHash';
 
 $wgExtensionCredits['other'][] = array(
     'name' => 'FunnyDot',
@@ -12,13 +9,15 @@ $wgExtensionCredits['other'][] = array(
     'url' => 'http://www.laber-land.de',
 );
 
-function hexVal($in)
+class FunnyDot {
+
+private static function hexVal($in)
 	{
 	$result = preg_replace('/[^0-9a-fA-F]/', '', $in);
 	return (empty($result) ? 0 : $result);
 	}
 
-function checkAntiSpamHash()
+public static function checkAntiSpamHash()
 	{
 	global $wgAntiSpamHash, $wgAntiSpamTimeout, $wgAntiSpamWait;
 
@@ -27,7 +26,7 @@ function checkAntiSpamHash()
 	if (!empty($_COOKIE['AntiSpamTime']) && !empty($_COOKIE['AntiSpamHash']))
 		{
 		$time = intval($_COOKIE['AntiSpamTime']);
-		$hash = hexVal($_COOKIE['AntiSpamHash']);
+		$hash = self::hexVal($_COOKIE['AntiSpamHash']);
 
 		if ($hash != sha1($time.$wgAntiSpamHash))
 			{
@@ -51,5 +50,6 @@ function checkAntiSpamHash()
 	return true;
 	}
 
-} # End invocation guard
+}
+
 ?>

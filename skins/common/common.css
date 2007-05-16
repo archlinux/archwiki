@@ -125,7 +125,11 @@ td.diff-context {
     background:#eeeeee;
     font-size: 94%;
 }
-span.diffchange { color: red; font-weight: bold; }
+.diffchange {
+	color: red;
+	font-weight: bold;
+	text-decoration: none;
+}
 
 img { border: none; }
 img.tex { vertical-align: middle; }
@@ -268,15 +272,6 @@ span.updatedmarker {
 	color:black;
 	background-color:#00FF00;
 }
-span.newpageletter {
-	font-weight:bold;
-	color:black;
-	background-color:yellow;
-}
-span.minoreditletter {
-	color:black;
-	background-color:#C5FFE6;
-}
 
 table.gallery {
         border:  1px solid #cccccc;
@@ -286,7 +281,7 @@ table.gallery {
 }
 
 table.gallery tr {
-        vertical-align:top;
+    vertical-align:top;
 }
 
 table.gallery td {
@@ -410,8 +405,12 @@ table.collapsed tr.collapsable {
   display: none;
 }
 
+/* Keep this temporarily so that cached pages will display right */
 table.gallery td.galleryheader {
-	text-align: center;
+    text-align: center;
+	font-weight: bold;
+}
+table.gallery caption {
 	font-weight: bold;
 }
 
@@ -462,6 +461,34 @@ table.multipageimage td {
 
 .templatesUsed { margin-top: 1em; }
 
-#toolbar { clear: both; }
+/* Convenience links on Special:Ipblocklist */
+p.mw-ipb-conveniencelinks {
+	font-size: 90%;
+	float: right;
+}
 
+/**
+ * Here is some stuff that's ACTUALLY COMMON TO ALL SKINS.
+ * When the day comes, it can be moved to a *real* common.css.
+ */
 .mw-plusminus-null { color: #aaa; }
+.texvc { direction: ltr; unicode-bidi: embed; }
+/* Stop floats from intruding into edit area in previews */
+#toolbar, #wpTextbox1 { clear: both; }
+
+/*
+#file img, .gallerybox .thumb img {
+	background: url(images/Checker-16x16.png) repeat;
+}
+*/
+.MediaTransformError {
+	border: thin solid #777;
+	background-color: #ccc;
+	padding: 0.1em;
+}
+.MediaTransformError td {
+	text-align: center;
+	vertical-align: middle;
+	font-size: 90%;
+}
+

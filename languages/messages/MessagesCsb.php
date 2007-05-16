@@ -1,7 +1,6 @@
 <?php
 /**
- * @package MediaWiki
- * @subpackage Language
+ * @addtogroup Language
  */
 
 $namespaceNames = array(
@@ -43,7 +42,8 @@ $messages = array(
 'badfilename' => 'Miono òbrôzka zmienioné na "$1".',
 'badfiletype' => '".$1" nie je nôlepszim fòrmatã lopka.',
 'badipaddress' => 'IP-adresa nie je richtich pòdónô.',
-'blockedtext' => 'Twòje kònto abò/ ë IP-adresa òstałë zascëgòwóné przez $1.\nPòdónô przëczëna to:<br />$2.<p>Bë wëjasnic sprawã zablokòwaniégò mòżesz skòntaktowac sã z $1 abò jińszim [[{{ns:4}}:Administratorzë|administratorã]].',
+'blockedtext' => 'Twòje kònto abò/ ë IP-adresa òstałë zascëgòwóné przez $1.\nPòdónô przëczëna to:<br />$2.<p>Bë wëjasnic sprawã zablokòwaniégò mòżesz skòntaktowac sã z $1 abò jińszim [[{{MediaWiki:grouppage-sysop}}|administratorã]].',
+'grouppage-sysop' => 'Project:Administratorzë',
 'blockip' => 'Zascëgôj IP-adresã',
 'booksources' => 'Ksążczi',
 'brokenredirects' => 'Zerwóné przeczerowania',
@@ -62,7 +62,7 @@ $messages = array(
 'confirmunprotect' => 'Pòcwierdzë òdzychrowónié',
 'confirmunprotecttext' => 'Jes Të gwës, że chcesz òdzychrowac ną starnã?',
 'contribslink' => 'wkłôd',
-'contribsub' => 'Dlô brëkòwnika $1',
+'contribsub2' => 'Dlô brëkòwnika $1 ($2)',
 'contributions' => 'Wkłôd brëkòwników',
 /*'copyrightwarning' => "Prosymë wdôrzëc, że przëjimô sã, ëż wszelejaczi\nwkłôd do {{SITENAME}} je ùżëczóny wedle reglów <i>GNU Free Documentation License</i>\n(szczegóły w $1).  <br />Jeżle nie chcesz, bë Twój tekst bëł dowòlno zmieniwóny przez kòżdégò ë rozpòmiónowóny bez ògrańczeniów, tej nie dôwôj do niegò  doprzińdzeniô w {{SITENAME}}. Równoczasno òswiôdczôsz, że nen tekst je Twòjim dokazã, abò pòchôdô z materiałów ôrtu <i>public domain</i> abò\n<i>GNU Free Documentation License</i>, abò téż kòmpatibilnégò ôrtu.\n<br /><strong>PROSYMË NIE ÙŻIWAC BEZ ZEZWÒLENIÉGÒ MATERIAŁÓW ÒBJIMNIÃTËCH AUTORSCZIM PRAWÃ!</strong>",*/
 'copyright' => 'Zamkłosc hewòtny starnë je ùżëczónô wedle reglów $1.',
@@ -250,7 +250,8 @@ $messages = array(
 'recentchangescount' => 'Wielëna pòzycëji na lësce slédnëch edicëji',
 'recentchangeslinked' => 'Zmianë w dolënkòwónëch',
 'recentchanges' => 'Slédné edicëje',
-'recentchangestext' => 'Na starna prezentérëje historëjã slédnëch edicëjów w {{SITENAME}}.\n\nWitôj! Jeżle Të jes tuwò dopiérze pierszi rôz, przeczëtôj né starnë: [[{{ns:4}}:FAQ|FAQ]], [[{{ns:4}}:Nazëwizna|konwencëje nazëwaniégò starnów]].',
+# problem with link: [[{{ns:4}}:Nazëwizna|konwencëje nazëwaniégò starnów]]
+'recentchangestext' => 'Na starna prezentérëje historëjã slédnëch edicëjów w {{SITENAME}}.\n\nWitôj! Jeżle Të jes tuwò dopiérze pierszi rôz, przeczëtôj né starnë: [[{{MediaWiki:faqpage}}|FAQ]], [[{{ns:4}}:Nazëwizna|konwencëje nazëwaniégò starnów]].',
 'redirectedfrom' => '(Przeczerowóné z $1)',
 'removedwatch' => 'Rëmóné z lëstë ùzérónëch',
 'returnto' => 'Wôrcë sã do starnë: $1.',
@@ -284,7 +285,7 @@ $messages = array(
 'timezonelegend' => 'Czasowô cona',
 'toc' => 'Spisënk zamkłoscë',
 'toolbox' => 'Przërëchtënczi',
-'tooltip-watch' => 'Dodôj ną starnã do lëstë ùzérónëch [alt-w]',
+'tooltip-watch' => 'Dodôj ną starnã do lëstë ùzérónëch',
 'ucnote' => 'Hewò je lësta slédnëch <b>$1</b> edicëjów dokònónëch przez\nbrëkòwnika òbczôs òstatnëch <b>$2</b> dni.',
 'unprotectcomment' => 'Przëczëna òdzychrowaniô',
 'unprotectedarticle' => 'òdzychrowóny [[$1]]',
@@ -299,7 +300,8 @@ $messages = array(
 'uploadlogpage' => 'Dołączoné',
 'uploadlogpagetext' => 'Hewò je lësta slédno wladowónëch lopków.\nWszëtczé gòdzënë tikają conë ùniwersalnégò czasë (UTC).\n<ul>\n</ul>',
 'uploadnologin' => 'Felënk logòwaniô',
-'uploadtext' => '<strong>STOP!</strong> Nigle wladëjesz jaczi lopk,\nprzeczëtôj [[{{ns:4}}:Regle_wladowaniô_lopków|regle wladowaniô lopków]] ë ùgwësnij sã, że wladëwającë gò òstóniesz z\nnima w zgòdze.\n<p>Jeżle chcesz przezdrzec abò przeszëkac do terô wladowóné lopczi,\nprzeńdzë do [[Specjalnô:Imagelist|lëstë wladowónëch lopków]].\nWszëtczé wladënczi ë rëmania są òdnotérowóné w\nspecjalnëch zestôwkach: [[{{ns:4}}:wladënczi|wladënczi]] ë [[{{ns:4}}:Rëmóné|rëmóné]].\n<p>Bë wëslac nowi lopk do zòbrazowaniô Twòjégò artikla wëzwëskùj \nhewòtny fòrmùlar.\nW wikszoscë przezérników ùzdrzesz knąpã <i>Browse...</i>\nabò <i>Przezérôj...</i>, chtëren ùmożlëwi Cë òtemkniãcé sztandardowégò\nòkna wëbiérkù lopka. Wëbranié lopka sprawi wstôwienié jegò miona\nw tekstowim pòlu kòl knąpë.\nZaznaczającë pasowné pòle, mùszisz téż pòcwierdzëc, ëż sélającë\nlopk nie gwôłcësz nikògò autorsczich praw.\nWladënk zacznie sã pò wcësniãcym <i>Wladëjë lopk</i>.\nTo mòże sztërk zdérowac, òsoblëwò jeżle ni môsz chùtczégò dopùscënkù do internetu.\n<p>Preferowónyma fòrmatama są: JPEG dlô òdjimków, PNG dlô céchùnków\në òbrôzków ze znankama ikònów, ôs OGG dlô zwãków. Bë nie dac przińc do lëchòrozmieniów nadôwôj lopkom miona sparłãczóné z jich zamkłoscą.\nBë wstôwic òbrôzk do artikla, wpiszë lënk:\n<b>[[òbrôzk:miono.jpg]]</b> abò <b>[[òbrôzk:miono.png|òpcjonalny tekst]]</b>.\nDlô zwãkòwëch lopków lënk mdze wëzdrzôł tak: <b>[[media:file.ogg]]</b>.\n<p>Prosymë wdarzëc, ëż tak samò jak w przëtrôfkù zwëczajnëch starnów {{SITENAME}},\njińszi brëkòwnicë mògą editowac abò rëmac wladowóné przez Ce lopczi,\njeżle mdą dbë, że to mdze lepi służëc całi ùdbie {{SITENAME}}.\nTwòje prawò do sélaniégò lopków mòże bëc Cë òdebróné, eżle nadùżëjesz systemë.',
+# problem with link: [[{{ns:4}}:Regle_wladowaniô_lopków|regle wladowaniô lopków]]
+'uploadtext' => '<strong>STOP!</strong> Nigle wladëjesz jaczi lopk,\nprzeczëtôj [[{{ns:4}}:Regle_wladowaniô_lopków|regle wladowaniô lopków]] ë ùgwësnij sã, że wladëwającë gò òstóniesz z\nnima w zgòdze.\n<p>Jeżle chcesz przezdrzec abò przeszëkac do terô wladowóné lopczi,\nprzeńdzë do [[{{ns:special}}:Imagelist|lëstë wladowónëch lopków]].\nWszëtczé wladënczi ë rëmania są òdnotérowóné w\nspecjalnëch zestôwkach: [[{{ns:special}}:Log/upload|wladënczi]] ë [[{{ns:special}}:Log/delete|rëmóné]].\n<p>Bë wëslac nowi lopk do zòbrazowaniô Twòjégò artikla wëzwëskùj \nhewòtny fòrmùlar.\nW wikszoscë przezérników ùzdrzesz knąpã <i>Browse...</i>\nabò <i>Przezérôj...</i>, chtëren ùmożlëwi Cë òtemkniãcé sztandardowégò\nòkna wëbiérkù lopka. Wëbranié lopka sprawi wstôwienié jegò miona\nw tekstowim pòlu kòl knąpë.\nZaznaczającë pasowné pòle, mùszisz téż pòcwierdzëc, ëż sélającë\nlopk nie gwôłcësz nikògò autorsczich praw.\nWladënk zacznie sã pò wcësniãcym <i>Wladëjë lopk</i>.\nTo mòże sztërk zdérowac, òsoblëwò jeżle ni môsz chùtczégò dopùscënkù do internetu.\n<p>Preferowónyma fòrmatama są: JPEG dlô òdjimków, PNG dlô céchùnków\në òbrôzków ze znankama ikònów, ôs OGG dlô zwãków. Bë nie dac przińc do lëchòrozmieniów nadôwôj lopkom miona sparłãczóné z jich zamkłoscą.\nBë wstôwic òbrôzk do artikla, wpiszë lënk:\n<b><nowiki>[[</nowiki>{{ns:image}}<nowiki>:miono.jpg]]</nowiki></b> abò <b><nowiki>[[</nowiki>{{ns:image}}<nowiki>:miono.png|òpcjonalny tekst]]</nowiki></b>.\nDlô zwãkòwëch lopków lënk mdze wëzdrzôł tak: <b><nowiki>[[</nowiki>{{ns:media}}<nowiki>:file.ogg]]</nowiki></b>.\n<p>Prosymë wdarzëc, ëż tak samò jak w przëtrôfkù zwëczajnëch starnów {{SITENAME}},\njińszi brëkòwnicë mògą editowac abò rëmac wladowóné przez Ce lopczi,\njeżle mdą dbë, że to mdze lepi służëc całi ùdbie {{SITENAME}}.\nTwòje prawò do sélaniégò lopków mòże bëc Cë òdebróné, eżle nadùżëjesz systemë.',
 'uploadwarning' => 'Òstrzega ò wladënkù',
 'upload' => 'Wladënk lopka',
 'userlogin' => 'Logòwanié',
@@ -309,6 +311,7 @@ $messages = array(
 'wantedpages' => 'Nônótniészé starnë',
 'watchlistcontains' => 'Wielëna artiklów na Twòji lësce ùzérónëch: $1.',
 'watchlist' => 'Lësta ùzérónëch artiklów',
+'mywatchlist' => 'Lësta ùzérónëch artiklów',
 'watchmethod-list' => 'szëkba ùzérónëch artiklów westrzód pòslédnëch edicëjów',
 'watchnologin' => 'Felënk logòwóniô',
 'watchthispage' => 'Ùzérôj ną starnã',

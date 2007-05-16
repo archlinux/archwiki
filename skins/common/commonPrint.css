@@ -117,7 +117,6 @@ ul {
 #content {
     background: none;
     border: none ! important;
-    font-size: 11pt;
     padding: 0 ! important;
     margin: 0 ! important;
 }
@@ -284,5 +283,8 @@ td.diff-context {
     background:#eeeeee;
     font-size: smaller;
 }
-span.diffchange { color: silver; font-weight: bold; text-decoration: underline; }
-
+.diffchange {
+    color: silver;
+    font-weight: bold;
+    text-decoration: underline;
+}

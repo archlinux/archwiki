@@ -9,8 +9,7 @@
  *  - Sérgio Ribeiro
  * from the Portuguese Wikipedia
  *
- * @package MediaWiki
- * @subpackage Language
+ * @addtogroup Language
  */
 
 $namespaceNames = array(
@@ -43,10 +42,6 @@ $namespaceNames = array(
 	NS_HELP_TALK        => 'Ajuda_Discussão', # 13
 	NS_CATEGORY         => 'Categoria', # 14
 	NS_CATEGORY_TALK    => 'Categoria_Discussão' # 15
-);
-
-$quickbarSettings = array(
-	'Nenhuma', 'Fixo à esquerda', 'Fixo à direita', 'Flutuando à esquerda', 'Flutuando à direita'
 );
 
 $skinNames = array(
@@ -88,7 +83,6 @@ $magicWords = array(
 	'msg'                    => array( 0,    'MSG:'                   ),
 	'subst'                  => array( 0,    'SUBST:'                 ),
 	'msgnw'                  => array( 0,    'MSGNW:'                 ),
-	'end'                    => array( 0,    '__END__'                ),
 	'img_thumbnail'          => array( 1,    'thumbnail', 'thumb'     ),
 	'img_manualthumb'        => array( 1,    'thumbnail=$1', 'thumb=$1'),
 	'img_right'              => array( 1,    'right', 'direita'       ),
@@ -769,6 +763,11 @@ Note que os índices do conteúdo da {{SITENAME}} destes sites podem estar desac
 'prefsnologintext'      => "Precisa estar [[Special:Userlogin|autenticado]] para definir suas preferências.",
 'prefsreset'    => 'Preferências restauradas da base de dados.',
 'qbsettings'    => 'Barra Rápida',
+'qbsettings-none'	=> 'Nenhuma',
+'qbsettings-fixedleft'	=> 'Fixo à esquerda',
+'qbsettings-fixedright'	=> 'Fixo à direita',
+'qbsettings-floatingleft'	=> 'Flutuando à esquerda',
+'qbsettings-floatingright'	=> 'Flutuando à direita',
 'changepassword' => 'Alterar palavra-chave',
 'skin'                  => 'Tema',
 'math'                  => 'Matemática',
@@ -878,7 +877,7 @@ Grupos não seleccionados, não serão alterados. Pode seleccionar ou remover a 
 'reupload'              => 'Recarregar',
 'reuploaddesc'  => 'Voltar ao formulário de carregamento.',
 'uploadnologin' => 'Não autenticado',
-'uploadnologintext'     => "Deve estar <a href=\"{{localurle:Special:Userlogin}}\">autenticado</a>
+'uploadnologintext'     => "Deve estar [[Special:Userlogin|autenticado]]
 para carregar ficheiros.",
 'upload_directory_read_only' => 'A directoria de envio ($1) não tem permissões de escrita pelo servidor Web.',
 'uploaderror'   => 'Erro ao carregar',
@@ -1121,6 +1120,7 @@ para que o destinatário lhe possa responder.',
 # Watchlist
 #
 'watchlist'                     => 'Artigos vigiados',
+'mywatchlist'                     => 'Artigos vigiados',
 'watchlistfor' => "(para '''$1''')",
 'nowatchlist'           => 'Não existem itens na sua lista de artigos vigiados.',
 'watchlistanontext' => 'Por favor $1 para ver ou editar os itens na sua lista de artigos vigiados.',
@@ -1295,7 +1295,7 @@ Consulte o [[Special:Log/delete|registo de eliminações]] para um registo das e
 #
 'contributions' => 'Contribuições do utilizador',
 'mycontris'     => 'Minhas contribuições',
-'contribsub'    => "Para $1",
+'contribsub2'    => "Para $1 ($2)",
 'nocontribs'    => 'Não foram encontradas mudanças com este critério.',
 'ucnote'        => "Segue as últimas <b>$1</b> mudanças nos últimos <b>$2</b> dias deste utilizador.",
 'uclinks'       => "Ver as últimas $1 mudanças; ver os últimos $2 dias.",
@@ -1391,25 +1391,11 @@ Por favor confirme que realmente pretende fazer isso, e que vai destrancar a bas
 'databasenotlocked' => 'A base de dados não encontra-se bloqueada.',
 
 # Make sysop
-'makesysoptitle'        => 'Tornar um utilizador num administrador',
-'makesysoptext'         => 'Este formulário é utilizado por burocratas para tornar utilizadores comuns em administradores.
-Introduza o nome do utilizador na caixa e clique no botão para tornar o utilizador num administrador',
-'makesysopname'         => 'Nome do utilizador:',
-'makesysopsubmit'       => 'Tornar este utilizador num administrador',
-'makesysopok'           => "<b>Utilizador \"$1\" é agora um administrador</b>",
-'makesysopfail'         => "<b>Não foi possível tornar o utilizador \"$1\" num administrador. (Introduziu o nome correctamente?)</b>",
-'setbureaucratflag' => 'Atribuir flag de burocrata',
 'rightslog'         => 'Registo de direitos de utilizador',
 'rightslogtext'     => 'Este é um registo de mudanças nos direitos dos utilizadores.',
 'rightslogentry'    => "Alterado grupo do membro de $1 de $2 para $3",
-'rights'                        => 'Direitos:',
-'set_user_rights'       => 'Definir direitos de utilizador',
-'user_rights_set'       => "<b>Direitos de utilizador para \"$1\" actualizados</b>",
-'set_rights_fail'       => "<b>Direitos de utilizador para \"$1\" não poderam ser definidos. (Introduziu o nome correctamente?)</b>",
-'makesysop'         => 'Tornar um utilizador num administrador',
-'already_sysop'     => 'Este utilizador já é um administrador',
-'already_bureaucrat' => 'Este utilizador já é um burocrata',
 'rightsnone'            => '(nenhum)',
+
 # Move page
 #
 'movepage'              => 'Mover página',
@@ -1428,7 +1414,7 @@ Isto pode ser uma mudança drástica e inesperada para uma página popular; por 
 Nestes casos, você terá que mover ou mesclar a página manualmente, se desejar.',
 'movearticle'   => 'Mover página',
 'movenologin'   => 'Não autenticado',
-'movenologintext' => "Deve ser um utilizador registado e [[Special:Userlogin|autenticado]]</a>
+'movenologintext' => "Deve ser um utilizador registado e [[Special:Userlogin|autenticado]]
 para mover uma página.",
 'newtitle'              => 'Para novo título',
 'movepagebtn'   => 'Mover página',
@@ -1530,13 +1516,13 @@ Todas as acções de importação transwiki são registadas no [[Special:Log/imp
 'accesskey-watch' => 'w',
 
 # tooltip help for some actions, most are in Monobook.js
-'tooltip-search' => 'Pesquisar na {{SITENAME}} [alt-f]',
-'tooltip-minoredit' => 'Marcar como edição menor [alt-i]',
-'tooltip-save' => 'Salvar as alterações [alt-s]',
-'tooltip-preview' => 'Prever as alterações, por favor utilizar antes de salvar! [alt-p]',
-'tooltip-diff' => 'Mostrar alterações que fez a este texto. [alt-v]',
-'tooltip-compareselectedversions' => 'Ver as diferenças entre as duas versões seleccionadas desta página. [alt-v]',
-'tooltip-watch' => 'Adicionar esta página à sua lista de artigos vigiados [alt-w]',
+'tooltip-search' => 'Pesquisar na {{SITENAME}}',
+'tooltip-minoredit' => 'Marcar como edição menor',
+'tooltip-save' => 'Salvar as alterações',
+'tooltip-preview' => 'Prever as alterações, por favor utilizar antes de salvar!',
+'tooltip-diff' => 'Mostrar alterações que fez a este texto.',
+'tooltip-compareselectedversions' => 'Ver as diferenças entre as duas versões seleccionadas desta página.',
+'tooltip-watch' => 'Adicionar esta página à sua lista de artigos vigiados',
 
 # stylesheets
 'common.css' => '/** o código CSS colocado aqui será aplicado a todos os temas */',
@@ -1598,56 +1584,104 @@ Todas as acções de importação transwiki são registadas no [[Special:Log/imp
 'markedaspatrollederrortext' => "Precisa de especificar uma revisão para marcar como verificado.",
 
 # Monobook.js: tooltips and access keys for monobook
-'monobook.js' => '/* tooltips and access keys */
-var ta = new Object();
-ta[\'pt-userpage\'] = new Array(\'.\',\'Minha página de utilizador\');
-ta[\'pt-anonuserpage\'] = new Array(\'.\',\'A página de utilizador para o ip que está a utilizar para editar\');
-ta[\'pt-mytalk\'] = new Array(\'n\',\'Minha página de discussão\');
-ta[\'pt-anontalk\'] = new Array(\'n\',\'Discussão sobre edições deste endereço de ip\');
-ta[\'pt-preferences\'] = new Array(\'\',\'Minhas preferências\');
-ta[\'pt-watchlist\'] = new Array(\'l\',\'Lista de artigos vigiados.\');
-ta[\'pt-mycontris\'] = new Array(\'y\',\'Lista das minhas contribuições\');
-ta[\'pt-login\'] = new Array(\'o\',\'You are encouraged to log in, it is not mandatory however.\');
-ta[\'pt-anonlogin\'] = new Array(\'o\',\'You are encouraged to log in, it is not mandatory however.\');
-ta[\'pt-logout\'] = new Array(\'\',\'Sair\');
-ta[\'ca-talk\'] = new Array(\'t\',\'Discussão sobre o conteúdo da página\');
-ta[\'ca-edit\'] = new Array(\'e\',\'Você pode editar esta página. Por favor, utilize o botão Mostrar Previsão antes de salvar.\');
-ta[\'ca-addsection\'] = new Array(\'+\',\'Adicionar comentário a essa discussão.\');
-ta[\'ca-viewsource\'] = new Array(\'e\',\'Esta página está protegida; você pode exibir seu código, no entanto.\');
-ta[\'ca-history\'] = new Array(\'h\',\'Edições anteriores desta página.\');
-ta[\'ca-protect\'] = new Array(\'=\',\'Proteger esta página\');
-ta[\'ca-delete\'] = new Array(\'d\',\'Apagar esta página\');
-ta[\'ca-undelete\'] = new Array(\'d\',\'Restaurar edições feitas a esta página antes da eliminação\');
-ta[\'ca-move\'] = new Array(\'m\',\'Mover esta página\');
-ta[\'ca-watch\'] = new Array(\'w\',\'Adicionar esta página aos artigos vigiados\');
-ta[\'ca-unwatch\'] = new Array(\'w\',\'Remover esta página dos artigos vigiados\');
-ta[\'search\'] = new Array(\'f\',\'Pesquisar nesta wiki\');
-ta[\'p-logo\'] = new Array(\'\',\'Página principal\');
-ta[\'n-mainpage\'] = new Array(\'z\',\'Visitar a página principal\');
-ta[\'n-portal\'] = new Array(\'\',\'Sobre o projecto\');
-ta[\'n-currentevents\'] = new Array(\'\',\'Informação temática sobre eventos actuais\');
-ta[\'n-recentchanges\'] = new Array(\'r\',\'A lista de mudanças recentes nesta wiki.\');
-ta[\'n-randompage\'] = new Array(\'x\',\'Carregar página aleatória\');
-ta[\'n-help\'] = new Array(\'\',\'Um local reservado para auxílio.\');
-ta[\'n-sitesupport\'] = new Array(\'\',\'Ajude-nos\');
-ta[\'t-whatlinkshere\'] = new Array(\'j\',\'Lista de todas as páginas que ligam-se a esta\');
-ta[\'t-recentchangeslinked\'] = new Array(\'k\',\'Mudanças recentes em páginas relacionadas a esta\');
-ta[\'feed-rss\'] = new Array(\'\',\'Feed RSS desta página\');
-ta[\'feed-atom\'] = new Array(\'\',\'Feed Atom desta página\');
-ta[\'t-contributions\'] = new Array(\'\',\'Ver as contribuições deste utilizador\');
-ta[\'t-emailuser\'] = new Array(\'\',\'Enviar um e-mail a este utilizador\');
-ta[\'t-upload\'] = new Array(\'u\',\'Carregar imagens ou ficheiros media\');
-ta[\'t-specialpages\'] = new Array(\'q\',\'Lista de páginas especiais\');
-ta[\'ca-nstab-main\'] = new Array(\'c\',\'Ver o conteúdo da página\');
-ta[\'ca-nstab-user\'] = new Array(\'c\',\'Ver a página de utilizador\');
-ta[\'ca-nstab-media\'] = new Array(\'c\',\'Ver a página de media\');
-ta[\'ca-nstab-special\'] = new Array(\'\',\'Esta é uma página especial, não pode ser editada.\');
-ta[\'ca-nstab-project\'] = new Array(\'a\',\'Ver a página de projecto\');
-ta[\'ca-nstab-image\'] = new Array(\'c\',\'Ver a página de imagem\');
-ta[\'ca-nstab-mediawiki\'] = new Array(\'c\',\'Ver a mensagem de sistema\');
-ta[\'ca-nstab-template\'] = new Array(\'c\',\'Ver a predefinição\');
-ta[\'ca-nstab-help\'] = new Array(\'c\',\'Ver a página de ajuda\');
-ta[\'ca-nstab-category\'] = new Array(\'c\',\'Ver a página da categoria\');',
+'monobook.js' => '/* Deprecated; use [[MediaWiki:common.js]] */',
+
+'accesskey-pt-userpage' => '.',
+'tooltip-pt-userpage' => 'Minha página de utilizador',
+'accesskey-pt-anonuserpage' => '.',
+'tooltip-pt-anonuserpage' => 'A página de utilizador para o ip que está a utilizar para editar',
+'accesskey-pt-mytalk' => 'n',
+'tooltip-pt-mytalk' => 'Minha página de discussão',
+'accesskey-pt-anontalk' => 'n',
+'tooltip-pt-anontalk' => 'Discussão sobre edições deste endereço de ip',
+'accesskey-pt-preferences' => '',
+'tooltip-pt-preferences' => 'Minhas preferências',
+'accesskey-pt-watchlist' => 'l',
+'tooltip-pt-watchlist' => 'Lista de artigos vigiados.',
+'accesskey-pt-mycontris' => 'y',
+'tooltip-pt-mycontris' => 'Lista das minhas contribuições',
+'accesskey-pt-login' => 'o',
+'tooltip-pt-login' => 'You are encouraged to log in, it is not mandatory however.',
+'accesskey-pt-anonlogin' => 'o',
+'tooltip-pt-anonlogin' => 'You are encouraged to log in, it is not mandatory however.',
+'accesskey-pt-logout' => '',
+'tooltip-pt-logout' => 'Sair',
+'accesskey-ca-talk' => 't',
+'tooltip-ca-talk' => 'Discussão sobre o conteúdo da página',
+'accesskey-ca-edit' => 'e',
+'tooltip-ca-edit' => 'Você pode editar esta página. Por favor, utilize o botão Mostrar Previsão antes de salvar.',
+'accesskey-ca-addsection' => '+',
+'tooltip-ca-addsection' => 'Adicionar comentário a essa discussão.',
+'accesskey-ca-viewsource' => 'e',
+'tooltip-ca-viewsource' => 'Esta página está protegida; você pode exibir seu código, no entanto.',
+'accesskey-ca-history' => 'h',
+'tooltip-ca-history' => 'Edições anteriores desta página.',
+'accesskey-ca-protect' => '=',
+'tooltip-ca-protect' => 'Proteger esta página',
+'accesskey-ca-delete' => 'd',
+'tooltip-ca-delete' => 'Apagar esta página',
+'accesskey-ca-undelete' => 'd',
+'tooltip-ca-undelete' => 'Restaurar edições feitas a esta página antes da eliminação',
+'accesskey-ca-move' => 'm',
+'tooltip-ca-move' => 'Mover esta página',
+'accesskey-ca-watch' => 'w',
+'tooltip-ca-watch' => 'Adicionar esta página aos artigos vigiados',
+'accesskey-ca-unwatch' => 'w',
+'tooltip-ca-unwatch' => 'Remover esta página dos artigos vigiados',
+'accesskey-search' => 'f',
+'tooltip-search' => 'Pesquisar nesta wiki',
+'accesskey-p-logo' => '',
+'tooltip-p-logo' => 'Página principal',
+'accesskey-n-mainpage' => 'z',
+'tooltip-n-mainpage' => 'Visitar a página principal',
+'accesskey-n-portal' => '',
+'tooltip-n-portal' => 'Sobre o projecto',
+'accesskey-n-currentevents' => '',
+'tooltip-n-currentevents' => 'Informação temática sobre eventos actuais',
+'accesskey-n-recentchanges' => 'r',
+'tooltip-n-recentchanges' => 'A lista de mudanças recentes nesta wiki.',
+'accesskey-n-randompage' => 'x',
+'tooltip-n-randompage' => 'Carregar página aleatória',
+'accesskey-n-help' => '',
+'tooltip-n-help' => 'Um local reservado para auxílio.',
+'accesskey-n-sitesupport' => '',
+'tooltip-n-sitesupport' => 'Ajude-nos',
+'accesskey-t-whatlinkshere' => 'j',
+'tooltip-t-whatlinkshere' => 'Lista de todas as páginas que ligam-se a esta',
+'accesskey-t-recentchangeslinked' => 'k',
+'tooltip-t-recentchangeslinked' => 'Mudanças recentes em páginas relacionadas a esta',
+'accesskey-feed-rss' => '',
+'tooltip-feed-rss' => 'Feed RSS desta página',
+'accesskey-feed-atom' => '',
+'tooltip-feed-atom' => 'Feed Atom desta página',
+'accesskey-t-contributions' => '',
+'tooltip-t-contributions' => 'Ver as contribuições deste utilizador',
+'accesskey-t-emailuser' => '',
+'tooltip-t-emailuser' => 'Enviar um e-mail a este utilizador',
+'accesskey-t-upload' => 'u',
+'tooltip-t-upload' => 'Carregar imagens ou ficheiros media',
+'accesskey-t-specialpages' => 'q',
+'tooltip-t-specialpages' => 'Lista de páginas especiais',
+'accesskey-ca-nstab-main' => 'c',
+'tooltip-ca-nstab-main' => 'Ver o conteúdo da página',
+'accesskey-ca-nstab-user' => 'c',
+'tooltip-ca-nstab-user' => 'Ver a página de utilizador',
+'accesskey-ca-nstab-media' => 'c',
+'tooltip-ca-nstab-media' => 'Ver a página de media',
+'accesskey-ca-nstab-special' => '',
+'tooltip-ca-nstab-special' => 'Esta é uma página especial, não pode ser editada.',
+'accesskey-ca-nstab-project' => 'a',
+'tooltip-ca-nstab-project' => 'Ver a página de projecto',
+'accesskey-ca-nstab-image' => 'c',
+'tooltip-ca-nstab-image' => 'Ver a página de imagem',
+'accesskey-ca-nstab-mediawiki' => 'c',
+'tooltip-ca-nstab-mediawiki' => 'Ver a mensagem de sistema',
+'accesskey-ca-nstab-template' => 'c',
+'tooltip-ca-nstab-template' => 'Ver a predefinição',
+'accesskey-ca-nstab-help' => 'c',
+'tooltip-ca-nstab-help' => 'Ver a página de ajuda',
+'accesskey-ca-nstab-category' => 'c',
+'tooltip-ca-nstab-category' => 'Ver a página da categoria',
 
 # image deletion
 'deletedrevision' => 'Apagada versão antiga $1.',

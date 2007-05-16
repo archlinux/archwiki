@@ -1,20 +1,17 @@
 <?php
-/**
- * Simple profiler base class
- * @package MediaWiki
- */
 
-/**
- * @todo document
- * @package MediaWiki
- */
 require_once(dirname(__FILE__).'/Profiler.php');
 
+/**
+ * Simple profiler base class.
+ * @todo document methods (?)
+ * @addtogroup Profiler
+ */
 class ProfilerSimple extends Profiler {
 	var $mMinimumTime = 0;
 	var $mProfileID = false;
 
-	function ProfilerSimple() {
+	function __construct() {
 		global $wgRequestTime,$wgRUstart;
 		if (!empty($wgRequestTime) && !empty($wgRUstart)) {
 			$this->mWorkStack[] = array( '-total', 0, $wgRequestTime,$this->getCpuTime($wgRUstart));
@@ -26,7 +23,6 @@ class ProfilerSimple extends Profiler {
 			if (!is_array($entry)) {
 				$entry = array('cpu'=> 0.0, 'cpu_sq' => 0.0, 'real' => 0.0, 'real_sq' => 0.0, 'count' => 0);
 				$this->mCollated["-setup"] =& $entry;
-				
 			}
 			$entry['cpu'] += $elapsedcpu;
 			$entry['cpu_sq'] += $elapsedcpu*$elapsedcpu;
@@ -57,7 +53,7 @@ class ProfilerSimple extends Profiler {
 		if ($wgDebugFunctionEntry) {
 			$this->debug(str_repeat(' ', count($this->mWorkStack)).'Entering '.$functionname."\n");
 		}
-		$this->mWorkStack[] = array($functionname, count( $this->mWorkStack ), microtime(true), $this->getCpuTime());		
+		$this->mWorkStack[] = array($functionname, count( $this->mWorkStack ), microtime(true), $this->getCpuTime());
 	}
 
 	function profileOut($functionname) {
@@ -87,7 +83,6 @@ class ProfilerSimple extends Profiler {
 			if (!is_array($entry)) {
 				$entry = array('cpu'=> 0.0, 'cpu_sq' => 0.0, 'real' => 0.0, 'real_sq' => 0.0, 'count' => 0);
 				$this->mCollated[$functionname] =& $entry;
-				
 			}
 			$entry['cpu'] += $elapsedcpu;
 			$entry['cpu_sq'] += $elapsedcpu*$elapsedcpu;

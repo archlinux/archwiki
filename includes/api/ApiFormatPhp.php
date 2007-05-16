@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Oct 22, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiFormatBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiFormatPhp extends ApiFormatBase {
 
 	public function __construct($main, $format) {
@@ -48,7 +50,7 @@ class ApiFormatPhp extends ApiFormatBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatPhp.php 17374 2006-11-03 06:53:47Z yurik $';
+		return __CLASS__ . ': $Id: ApiFormatPhp.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

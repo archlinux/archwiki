@@ -3,8 +3,7 @@
 /**
  * Support class for the updateArticleCount.php maintenance script
  *
- * @package MediaWiki
- * @subpackage Maintenance
+ * @addtogroup Maintenance
  * @author Rob Church <robchur@gmail.com>
  */
 
@@ -16,7 +15,7 @@ class ArticleCounter {
 	function ArticleCounter() {
 		global $wgContentNamespaces;
 		$this->namespaces = $wgContentNamespaces;
-		$this->dbr =& wfGetDB( DB_SLAVE );
+		$this->dbr = wfGetDB( DB_SLAVE );
 	}
 	
 	/**
@@ -37,7 +36,7 @@ class ArticleCounter {
 	 * @return string
 	 */
 	function makeSql() {
-		extract( $this->dbr->tableNames( 'page', 'pagelinks' ) );
+		list( $page, $pagelinks ) = $this->dbr->tableNamesN( 'page', 'pagelinks' );
 		$nsset = $this->makeNsSet();
 		return "SELECT DISTINCT page_namespace,page_title FROM $page,$pagelinks " .
 			"WHERE pl_from=page_id and page_namespace IN ( $nsset ) " .

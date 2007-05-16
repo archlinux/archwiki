@@ -1,7 +1,6 @@
 <?php
 /**
  * This file is only included if profiling is enabled
- * @package MediaWiki
  */
 
 $wgProfiling = true;
@@ -41,14 +40,13 @@ if (!function_exists('memory_get_usage')) {
 
 /**
  * @todo document
- * @package MediaWiki
+ * @addtogroup Profiler
  */
 class Profiler {
 	var $mStack = array (), $mWorkStack = array (), $mCollated = array ();
 	var $mCalls = array (), $mTotals = array ();
 
-	function Profiler()
-	{
+	function __construct() {
 		// Push an entry for the pre-profile setup time onto the stack
 		global $wgRequestTime;
 		if ( !empty( $wgRequestTime ) ) {
@@ -57,7 +55,6 @@ class Profiler {
 		} else {
 			$this->profileIn( '-total' );
 		}
-
 	}
 
 	function profileIn($functionname) {
@@ -291,7 +288,7 @@ class Profiler {
 	 * @return Integer
 	 * @private
 	 */
-	function calltreeCount(& $stack, $start) {
+	function calltreeCount($stack, $start) {
 		$level = $stack[$start][1];
 		$count = 0;
 		for ($i = $start -1; $i >= 0 && $stack[$i][1] > $level; $i --) {
@@ -308,7 +305,7 @@ class Profiler {
 		global $wguname, $wgProfilePerHost;
 
 		$fname = 'Profiler::logToDB';
-		$dbw = & wfGetDB(DB_MASTER);
+		$dbw = wfGetDB(DB_MASTER);
 		if (!is_object($dbw))
 			return false;
 		$errorState = $dbw->ignoreErrors( true );

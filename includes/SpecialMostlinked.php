@@ -1,21 +1,16 @@
 <?php
 
 /**
- * A special page to show pages ordered by the number of pages linking to them
+ * A special page to show pages ordered by the number of pages linking to them.
+ * Implements Special:Mostlinked
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  *
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  * @author Rob Church <robchur@gmail.com>
  * @copyright Copyright © 2005, Ævar Arnfjörð Bjarmason
  * @copyright © 2006 Rob Church
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
- */
-
-/**
- * @package MediaWiki
- * @subpackage SpecialPage
  */
 class MostlinkedPage extends QueryPage {
 
@@ -27,7 +22,7 @@ class MostlinkedPage extends QueryPage {
 	 * Note: Getting page_namespace only works if $this->isCached() is false
 	 */
 	function getSQL() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		list( $pagelinks, $page ) = $dbr->tableNamesN( 'pagelinks', 'page' );
 		return
 			"SELECT 'Mostlinked' AS type,

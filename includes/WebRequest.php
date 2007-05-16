@@ -1,7 +1,6 @@
 <?php
 /**
  * Deal with importing all those nasssty globals and things
- * @package MediaWiki
  */
 
 # Copyright (C) 2003 Brion Vibber <brion@pobox.com>
@@ -22,6 +21,15 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # http://www.gnu.org/copyleft/gpl.html
 
+
+/**
+ * Some entry points may use this file without first enabling the 
+ * autoloader.
+ */
+if ( !function_exists( '__autoload' ) ) {
+	require_once( dirname(__FILE__) . '/normal/UtfNormal.php' );
+}
+
 /**
  * The WebRequest class encapsulates getting at data passed in the
  * URL or via a POSTed form, handling remove of "magic quotes" slashes,
@@ -32,19 +40,9 @@
  * you want to pass arbitrary data to some function in place of the web
  * input.
  *
- * @package MediaWiki
  */
-
-/**
- * Some entry points may use this file without first enabling the 
- * autoloader.
- */
-if ( !function_exists( '__autoload' ) ) {
-	require_once( dirname(__FILE__) . '/normal/UtfNormal.php' );
-}
-
 class WebRequest {
-	function WebRequest() {
+	function __construct() {
 		$this->checkMagicQuotes();
 		global $wgUsePathInfo;
 		if ( $wgUsePathInfo ) {
@@ -142,7 +140,9 @@ class WebRequest {
 
 	/**
 	 * Fetch a scalar from the input or return $default if it's not set.
-	 * Returns a string. Arrays are discarded.
+	 * Returns a string. Arrays are discarded. Useful for 
+	 * non-freeform text inputs (e.g. predefined internal text keys 
+	 * selected by a drop-down menu). For freeform input, see getText().
 	 *
 	 * @param string $name
 	 * @param string $default optional default (or NULL)
@@ -252,7 +252,9 @@ class WebRequest {
 	 * Fetch a text string from the given array or return $default if it's not
 	 * set. \r is stripped from the text, and with some language modules there
 	 * is an input transliteration applied. This should generally be used for
-	 * form <textarea> and <input> fields.
+	 * form <textarea> and <input> fields. Used for user-supplied freeform text
+	 * input (for which input transformations may be required - e.g. Esperanto 
+	 * x-coding).
 	 *
 	 * @param string $name
 	 * @param string $default optional
@@ -303,10 +305,15 @@ class WebRequest {
 	 * Returns true if there is a session cookie set.
 	 * This does not necessarily mean that the user is logged in!
 	 *
+	 * If you want to check for an open session, use session_id()
+	 * instead; that will also tell you if the session was opened
+	 * during the current request (in which case the cookie will
+	 * be sent back to the client at the end of the script run).
+	 *
 	 * @return bool
 	 */
 	function checkSessionCookie() {
-		return isset( $_COOKIE[ini_get('session.name')] );
+		return isset( $_COOKIE[session_name()] );
 	}
 
 	/**
@@ -327,6 +334,14 @@ class WebRequest {
 			throw new MWException( "Web server doesn't provide either " .
 				"REQUEST_URI or SCRIPT_NAME. Report details of your " .
 				"web server configuration to http://bugzilla.wikimedia.org/" );
+		}
+		// User-agents should not send a fragment with the URI, but
+		// if they do, and the web server passes it on to us, we
+		// need to strip it or we get false-positive redirect loops
+		// or weird output URLs
+		$hash = strpos( $base, '#' );
+		if( $hash !== false ) {
+			$base = substr( $base, 0, $hash );
 		}
 		if( $base{0} == '/' ) {
 			return $base;
@@ -483,7 +498,6 @@ class WebRequest {
 /**
  * WebRequest clone which takes values from a provided array.
  *
- * @package MediaWiki
  */
 class FauxRequest extends WebRequest {
 	var $data = null;

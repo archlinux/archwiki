@@ -268,7 +268,7 @@ td.diff-deletedline {
     background-color: #f8ffaa;
 }
 
-span.diffchange { background-color: #FFCDF3; }
+.diffchange { background-color: #FFCDF3; text-decoration: none; }
 .autocomment { color:  grey; }
 #pagehistory span.user {
     margin-left: 1.4em;
@@ -437,6 +437,18 @@ table.collapsed tr.collapsable {
 }
 
 .templatesUsed { margin-top: 1.5em; }
-#toolbar { clear: both; }
 
+/**
+ * Here is some stuff that's ACTUALLY COMMON TO ALL SKINS.
+ * When the day comes, it can be moved to a *real* common.css.
+ */
 .mw-plusminus-null { color: #aaa; }
+.texvc { direction: ltr; unicode-bidi: embed; }
+/* Stop floats from intruding into edit area in previews */
+#toolbar, #wpTextbox1 { clear: both; }
+
+/*
+#file img, .gallerybox .thumb img {
+	background: url(../common/images/Checker-16x16.png) repeat;
+}
+*/

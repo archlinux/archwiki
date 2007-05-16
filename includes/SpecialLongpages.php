@@ -1,14 +1,12 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 class LongPagesPage extends ShortPagesPage {
 
@@ -24,13 +22,12 @@ class LongPagesPage extends ShortPagesPage {
 /**
  * constructor
  */
-function wfSpecialLongpages()
-{
-    list( $limit, $offset ) = wfCheckLimits();
+function wfSpecialLongpages() {
+	list( $limit, $offset ) = wfCheckLimits();
 
-    $lpp = new LongPagesPage();
+	$lpp = new LongPagesPage();
 
-    $lpp->doQuery( $offset, $limit );
+	$lpp->doQuery( $offset, $limit );
 }
 
 ?>

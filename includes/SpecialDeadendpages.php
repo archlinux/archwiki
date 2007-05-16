@@ -1,14 +1,12 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 class DeadendPagesPage extends PageQueryPage {
 
@@ -38,18 +36,18 @@ class DeadendPagesPage extends PageQueryPage {
 		return false;
 	}
 
-    /**
+	/**
 	 * @return string an sqlquery
 	 */
 	function getSQL() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		list( $page, $pagelinks ) = $dbr->tableNamesN( 'page', 'pagelinks' );
 		return "SELECT 'Deadendpages' as type, page_namespace AS namespace, page_title as title, page_title AS value " .
 	"FROM $page LEFT JOIN $pagelinks ON page_id = pl_from " .
 	"WHERE pl_from IS NULL " .
 	"AND page_namespace = 0 " .
 	"AND page_is_redirect = 0";
-    }
+	}
 }
 
 /**
@@ -57,11 +55,11 @@ class DeadendPagesPage extends PageQueryPage {
  */
 function wfSpecialDeadendpages() {
 
-    list( $limit, $offset ) = wfCheckLimits();
+	list( $limit, $offset ) = wfCheckLimits();
 
-    $depp = new DeadendPagesPage();
+	$depp = new DeadendPagesPage();
 
-    return $depp->doQuery( $offset, $limit );
+	return $depp->doQuery( $offset, $limit );
 }
 
 ?>

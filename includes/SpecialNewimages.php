@@ -1,18 +1,17 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 /**
  *
  */
 function wfSpecialNewimages( $par, $specialPage ) {
-	global $wgUser, $wgOut, $wgLang, $wgRequest, $wgGroupPermissions;
+	global $wgUser, $wgOut, $wgLang, $wgRequest, $wgGroupPermissions, $wgMiserMode;
 
 	$wpIlMatch = $wgRequest->getText( 'wpIlMatch' );
-	$dbr =& wfGetDB( DB_SLAVE );
+	$dbr = wfGetDB( DB_SLAVE );
 	$sk = $wgUser->getSkin();
 	$shownav = !$specialPage->including();
 	$hidebots = $wgRequest->getBool('hidebots',1);
@@ -75,23 +74,23 @@ function wfSpecialNewimages( $par, $specialPage ) {
 
 	$where = array();
 	$searchpar = '';
-	if ( $wpIlMatch != '' ) {
+	if ( $wpIlMatch != '' && !$wgMiserMode) {
 		$nt = Title::newFromUrl( $wpIlMatch );
 		if($nt ) {
 			$m = $dbr->strencode( strtolower( $nt->getDBkey() ) );
 			$m = str_replace( '%', "\\%", $m );
 			$m = str_replace( '_', "\\_", $m );
-			$where[] = "LCASE(img_name) LIKE '%{$m}%'";
+			$where[] = "LOWER(img_name) LIKE '%{$m}%'";
 			$searchpar = '&wpIlMatch=' . urlencode( $wpIlMatch );
 		}
 	}
 
 	$invertSort = false;
 	if( $until = $wgRequest->getVal( 'until' ) ) {
-		$where[] = 'img_timestamp < ' . $dbr->timestamp( $until );
+		$where[] = "img_timestamp < '" . $dbr->timestamp( $until ) . "'";
 	}
 	if( $from = $wgRequest->getVal( 'from' ) ) {
-		$where[] = 'img_timestamp >= ' . $dbr->timestamp( $from );
+		$where[] = "img_timestamp >= '" . $dbr->timestamp( $from ) . "'";
 		$invertSort = true;
 	}
 	$sql='SELECT img_size, img_name, img_user, img_user_text,'.
@@ -158,12 +157,12 @@ function wfSpecialNewimages( $par, $specialPage ) {
 	$sub = wfMsg( 'ilsubmit' );
 	$titleObj = SpecialPage::getTitleFor( 'Newimages' );
 	$action = $titleObj->escapeLocalURL( $hidebots ? '' : 'hidebots=0' );
-	if ($shownav) {
+	if ($shownav && !$wgMiserMode) {
 		$wgOut->addHTML( "<form id=\"imagesearch\" method=\"post\" action=\"" .
 		  "{$action}\">" .
-		  "<input type='text' size='20' name=\"wpIlMatch\" value=\"" .
-		  htmlspecialchars( $wpIlMatch ) . "\" /> " .
-		  "<input type='submit' name=\"wpIlSubmit\" value=\"{$sub}\" /></form>" );
+			Xml::input( 'wpIlMatch', 20, $wpIlMatch ) . ' ' .
+		  Xml::submitButton( $sub, array( 'name' => 'wpIlSubmit' ) ) .
+		  "</form>" );
 	}
 
 	/**
@@ -178,21 +177,21 @@ function wfSpecialNewimages( $par, $specialPage ) {
 	}
 	$now = wfTimestampNow();
 	$date = $wgLang->timeanddate( $now, true );
-	$dateLink = $sk->makeKnownLinkObj( $titleObj, wfMsg( 'sp-newimages-showfrom', $date ), 'from='.$now.$botpar.$searchpar );
+	$dateLink = $sk->makeKnownLinkObj( $titleObj, wfMsgHtml( 'sp-newimages-showfrom', $date ), 'from='.$now.$botpar.$searchpar );
 
-	$botLink = $sk->makeKnownLinkObj($titleObj, wfMsg( 'showhidebots', ($hidebots ? wfMsg('show') : wfMsg('hide'))),'hidebots='.($hidebots ? '0' : '1').$searchpar);
+	$botLink = $sk->makeKnownLinkObj($titleObj, wfMsgHtml( 'showhidebots', ($hidebots ? wfMsgHtml('show') : wfMsgHtml('hide'))),'hidebots='.($hidebots ? '0' : '1').$searchpar);
 
-	$prevLink = wfMsg( 'prevn', $wgLang->formatNum( $limit ) );
+	$prevLink = wfMsgHtml( 'prevn', $wgLang->formatNum( $limit ) );
 	if( $firstTimestamp && $firstTimestamp != $latestTimestamp ) {
 		$prevLink = $sk->makeKnownLinkObj( $titleObj, $prevLink, 'from=' . $firstTimestamp . $botpar . $searchpar );
 	}
 
-	$nextLink = wfMsg( 'nextn', $wgLang->formatNum( $limit ) );
+	$nextLink = wfMsgHtml( 'nextn', $wgLang->formatNum( $limit ) );
 	if( $shownImages > $limit && $lastTimestamp ) {
 		$nextLink = $sk->makeKnownLinkObj( $titleObj, $nextLink, 'until=' . $lastTimestamp.$botpar.$searchpar );
 	}
 
-	$prevnext = '<p>' . $botLink . ' '. wfMsg( 'viewprevnext', $prevLink, $nextLink, $dateLink ) .'</p>';
+	$prevnext = '<p>' . $botLink . ' '. wfMsgHtml( 'viewprevnext', $prevLink, $nextLink, $dateLink ) .'</p>';
 
 	if ($shownav)
 		$wgOut->addHTML( $prevnext );

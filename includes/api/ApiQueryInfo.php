@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Sep 25, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiQueryBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiQueryInfo extends ApiQueryBase {
 
 	public function __construct($query, $moduleName) {
@@ -79,7 +81,7 @@ class ApiQueryInfo extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryInfo.php 17929 2006-11-25 17:11:58Z tstarling $';
+		return __CLASS__ . ': $Id: ApiQueryInfo.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

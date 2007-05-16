@@ -4,52 +4,92 @@
  * Special page allowing users with the appropriate permissions to view
  * and restore deleted content
  *
- * @package MediaWiki
- * @subpackage Special pages
+ * @addtogroup SpecialPage
  */
 
 /**
- *
+ * Constructor
  */
 function wfSpecialUndelete( $par ) {
-    global $wgRequest;
+	global $wgRequest;
 
 	$form = new UndeleteForm( $wgRequest, $par );
 	$form->execute();
 }
 
 /**
- *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * Used to show archived pages and eventually restore them.
+ * @addtogroup SpecialPage
  */
 class PageArchive {
-	var $title;
+	protected $title;
 
-	function PageArchive( &$title ) {
+	function __construct( $title ) {
 		if( is_null( $title ) ) {
 			throw new MWException( 'Archiver() given a null title.');
 		}
-		$this->title =& $title;
+		$this->title = $title;
 	}
 
 	/**
 	 * List all deleted pages recorded in the archive table. Returns result
 	 * wrapper with (ar_namespace, ar_title, count) fields, ordered by page
-	 * namespace/title. Can be called staticaly.
+	 * namespace/title.
 	 *
 	 * @return ResultWrapper
 	 */
-	/* static */ function listAllPages() {
-		$dbr =& wfGetDB( DB_SLAVE );
-		$archive = $dbr->tableName( 'archive' );
-
-		$sql = "SELECT ar_namespace,ar_title, COUNT(*) AS count FROM $archive " .
-		  "GROUP BY ar_namespace,ar_title ORDER BY ar_namespace,ar_title";
-
-		return $dbr->resultObject( $dbr->query( $sql, 'PageArchive::listAllPages' ) );
+	public static function listAllPages() {
+		$dbr = wfGetDB( DB_SLAVE );
+		return self::listPages( $dbr, '' );
+	}
+	
+	/**
+	 * List deleted pages recorded in the archive table matching the
+	 * given title prefix.
+	 * Returns result wrapper with (ar_namespace, ar_title, count) fields.
+	 *
+	 * @return ResultWrapper
+	 */
+	public static function listPagesByPrefix( $prefix ) {
+		$dbr = wfGetDB( DB_SLAVE );
+		
+		$title = Title::newFromText( $prefix );
+		if( $title ) {
+			$ns = $title->getNamespace();
+			$encPrefix = $dbr->escapeLike( $title->getDbKey() );
+		} else {
+			// Prolly won't work too good
+			// @todo handle bare namespace names cleanly?
+			$ns = 0;
+			$encPrefix = $dbr->escapeLike( $prefix );
+		}
+		$conds = array(
+			'ar_namespace' => $ns,
+			"ar_title LIKE '$encPrefix%'",
+		);
+		return self::listPages( $dbr, $conds );
 	}
 
+	protected static function listPages( $dbr, $condition ) {
+		return $dbr->resultObject(
+			$dbr->select(
+				array( 'archive' ),
+				array(
+					'ar_namespace',
+					'ar_title',
+					'COUNT(*) AS count',
+				),
+				$condition,
+				__METHOD__,
+				array(
+					'GROUP BY' => 'ar_namespace,ar_title',
+					'ORDER BY' => 'ar_namespace,ar_title',
+					'LIMIT' => 100,
+				)
+			)
+		);
+	}
+	
 	/**
 	 * List the revisions of the given page. Returns result wrapper with
 	 * (ar_minor_edit, ar_timestamp, ar_user, ar_user_text, ar_comment) fields.
@@ -57,9 +97,9 @@ class PageArchive {
 	 * @return ResultWrapper
 	 */
 	function listRevisions() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->select( 'archive',
-			array( 'ar_minor_edit', 'ar_timestamp', 'ar_user', 'ar_user_text', 'ar_comment' ),
+			array( 'ar_minor_edit', 'ar_timestamp', 'ar_user', 'ar_user_text', 'ar_comment', 'ar_len' ),
 			array( 'ar_namespace' => $this->title->getNamespace(),
 			       'ar_title' => $this->title->getDBkey() ),
 			'PageArchive::listRevisions',
@@ -74,11 +114,11 @@ class PageArchive {
 	 * if not a file page.
 	 *
 	 * @return ResultWrapper
-	 * @fixme Does this belong in Image for fuller encapsulation?
+	 * @todo Does this belong in Image for fuller encapsulation?
 	 */
 	function listFiles() {
 		if( $this->title->getNamespace() == NS_IMAGE ) {
-			$dbr =& wfGetDB( DB_SLAVE );
+			$dbr = wfGetDB( DB_SLAVE );
 			$res = $dbr->select( 'filearchive',
 				array(
 					'fa_id',
@@ -119,7 +159,7 @@ class PageArchive {
 	 * @return Revision
 	 */
 	function getRevision( $timestamp ) {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$row = $dbr->selectRow( 'archive',
 			array(
 				'ar_rev_id',
@@ -130,7 +170,8 @@ class PageArchive {
 				'ar_timestamp',
 				'ar_minor_edit',
 				'ar_flags',
-				'ar_text_id' ),
+				'ar_text_id',
+				'ar_len' ),
 			array( 'ar_namespace' => $this->title->getNamespace(),
 			       'ar_title' => $this->title->getDbkey(),
 			       'ar_timestamp' => $dbr->timestamp( $timestamp ) ),
@@ -163,7 +204,7 @@ class PageArchive {
 			return Revision::getRevisionText( $row, "ar_" );
 		} else {
 			// New-style: keyed to the text storage backend.
-			$dbr =& wfGetDB( DB_SLAVE );
+			$dbr = wfGetDB( DB_SLAVE );
 			$text = $dbr->selectRow( 'text',
 				array( 'old_text', 'old_flags' ),
 				array( 'old_id' => $row->ar_text_id ),
@@ -182,7 +223,7 @@ class PageArchive {
 	 * @return string
 	 */
 	function getLastRevisionText() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$row = $dbr->selectRow( 'archive',
 			array( 'ar_text', 'ar_flags', 'ar_text_id' ),
 			array( 'ar_namespace' => $this->title->getNamespace(),
@@ -201,7 +242,7 @@ class PageArchive {
 	 * @return bool
 	 */
 	function isDeleted() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$n = $dbr->selectField( 'archive', 'COUNT(ar_title)',
 			array( 'ar_namespace' => $this->title->getNamespace(),
 			       'ar_title' => $this->title->getDBkey() ) );
@@ -282,7 +323,7 @@ class PageArchive {
 
 		$restoreAll = empty( $timestamps );
 		
-		$dbw =& wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_MASTER );
 		$page = $dbw->tableName( 'archive' );
 
 		# Does this page already exist? We'll have to update it...
@@ -333,7 +374,8 @@ class PageArchive {
 				'ar_timestamp',
 				'ar_minor_edit',
 				'ar_flags',
-				'ar_text_id' ),
+				'ar_text_id',
+				'ar_len' ),
 			/* WHERE */ array(
 				'ar_namespace' => $this->title->getNamespace(),
 				'ar_title'     => $this->title->getDBkey(),
@@ -373,6 +415,7 @@ class PageArchive {
 				'timestamp'  => $row->ar_timestamp,
 				'minor_edit' => $row->ar_minor_edit,
 				'text_id'    => $row->ar_text_id,
+				'len'		 => $row->ar_len
 				) );
 			$revision->insertOn( $dbw );
 			$restored++;
@@ -389,8 +432,10 @@ class PageArchive {
 			}
 
 			if( $newid ) {
+				wfRunHooks( 'ArticleUndelete', array( &$this->title, true ) );
 				Article::onArticleCreate( $this->title );
 			} else {
+				wfRunHooks( 'ArticleUndelete', array( &$this->title, false ) );
 				Article::onArticleEdit( $this->title );
 			}
 		} else {
@@ -411,18 +456,19 @@ class PageArchive {
 }
 
 /**
- *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * The HTML form for Special:Undelete, which allows users with the appropriate
+ * permissions to view and restore deleted content.
+ * @addtogroup SpecialPage
  */
 class UndeleteForm {
 	var $mAction, $mTarget, $mTimestamp, $mRestore, $mTargetObj;
 	var $mTargetTimestamp, $mAllowed, $mComment;
 
-	function UndeleteForm( &$request, $par = "" ) {
+	function UndeleteForm( $request, $par = "" ) {
 		global $wgUser;
 		$this->mAction = $request->getVal( 'action' );
 		$this->mTarget = $request->getVal( 'target' );
+		$this->mSearchPrefix = $request->getText( 'prefix' );
 		$time = $request->getVal( 'timestamp' );
 		$this->mTimestamp = $time ? wfTimestamp( TS_MW, $time ) : '';
 		$this->mFile = $request->getVal( 'file' );
@@ -467,9 +513,23 @@ class UndeleteForm {
 	}
 
 	function execute() {
-
+		global $wgOut;
+		if ( $this->mAllowed ) {
+			$wgOut->setPagetitle( wfMsg( "undeletepage" ) );
+		} else {
+			$wgOut->setPagetitle( wfMsg( "viewdeletedpage" ) );
+		}
+		
 		if( is_null( $this->mTargetObj ) ) {
-			return $this->showList();
+			$this->showSearchForm();
+
+			# List undeletable articles
+			if( $this->mSearchPrefix ) {
+				$result = PageArchive::listPagesByPrefix(
+					$this->mSearchPrefix );
+				$this->showList( $result );
+			}
+			return;
 		}
 		if( $this->mTimestamp !== '' ) {
 			return $this->showRevision( $this->mTimestamp );
@@ -483,17 +543,35 @@ class UndeleteForm {
 		return $this->showHistory();
 	}
 
-	/* private */ function showList() {
+	function showSearchForm() {
+		global $wgOut, $wgScript;
+		$wgOut->addWikiText( wfMsg( 'undelete-header' ) );
+		
+		$wgOut->addHtml(
+			Xml::openElement( 'form', array(
+				'method' => 'get',
+				'action' => $wgScript ) ) .
+			'<fieldset>' .
+			Xml::element( 'legend', array(),
+				wfMsg( 'undelete-search-box' ) ) .
+			Xml::hidden( 'title',
+				SpecialPage::getTitleFor( 'Undelete' )->getPrefixedDbKey() ) .
+			Xml::inputLabel( wfMsg( 'undelete-search-prefix' ),
+				'prefix', 'prefix', 20,
+				$this->mSearchPrefix ) .
+			Xml::submitButton( wfMsg( 'undelete-search-submit' ) ) .
+			'</fieldset>' .
+			'</form>' );
+	}
+
+	/* private */ function showList( $result ) {
 		global $wgLang, $wgContLang, $wgUser, $wgOut;
-
-		# List undeletable articles
-		$result = PageArchive::listAllPages();
-
-		if ( $this->mAllowed ) {
-			$wgOut->setPagetitle( wfMsg( "undeletepage" ) );
-		} else {
-			$wgOut->setPagetitle( wfMsg( "viewdeletedpage" ) );
+		
+		if( $result->numRows() == 0 ) {
+			$wgOut->addWikiText( wfMsg( 'undelete-no-results' ) );
+			return;
 		}
+
 		$wgOut->addWikiText( wfMsg( "undeletepagetext" ) );
 
 		$sk = $wgUser->getSkin();
@@ -502,7 +580,10 @@ class UndeleteForm {
 		while( $row = $result->fetchObject() ) {
 			$title = Title::makeTitleSafe( $row->ar_namespace, $row->ar_title );
 			$link = $sk->makeKnownLinkObj( $undelete, htmlspecialchars( $title->getPrefixedText() ), 'target=' . $title->getPrefixedUrl() );
-			$revs = wfMsgHtml( 'undeleterevisions', $wgLang->formatNum( $row->count ) );
+			#$revs = wfMsgHtml( 'undeleterevisions', $wgLang->formatNum( $row->count ) );
+			$revs = wfMsgExt( 'undeleterevisions',
+				array( 'parseinline' ),
+				$wgLang->formatNum( $row->count ) );
 			$wgOut->addHtml( "<li>{$link} ({$revs})</li>\n" );
 		}
 		$result->free();
@@ -513,15 +594,19 @@ class UndeleteForm {
 
 	/* private */ function showRevision( $timestamp ) {
 		global $wgLang, $wgUser, $wgOut;
+		$self = SpecialPage::getTitleFor( 'Undelete' );
+		$skin = $wgUser->getSkin();
 
 		if(!preg_match("/[0-9]{14}/",$timestamp)) return 0;
 
 		$archive = new PageArchive( $this->mTargetObj );
 		$rev = $archive->getRevision( $timestamp );
 		
-		$wgOut->setPagetitle( wfMsg( "undeletepage" ) );
-		$wgOut->addWikiText( "(" . wfMsg( "undeleterevision",
-			$wgLang->timeAndDate( $timestamp ) ) . ")\n" );
+		$wgOut->setPageTitle( wfMsg( 'undeletepage' ) );
+		$link = $skin->makeKnownLinkObj( $self, htmlspecialchars( $this->mTargetObj->getPrefixedText() ),
+					'target=' . $this->mTargetObj->getPrefixedUrl() );
+		$wgOut->addHtml( '<p>' . wfMsgHtml( 'undelete-revision', $link,
+			htmlspecialchars( $wgLang->timeAndDate( $timestamp ) ) ) . '</p>' ); 
 		
 		if( !$rev ) {
 			$wgOut->addWikiText( wfMsg( 'undeleterevision-missing' ) );
@@ -532,12 +617,9 @@ class UndeleteForm {
 		
 		if( $this->mPreview ) {
 			$wgOut->addHtml( "<hr />\n" );
-			$article = new Article ( $archive->title );  # OutputPage wants an Article obj
-			$wgOut->addPrimaryWikiText( $rev->getText(), $article, false );
+			$wgOut->addWikiTextTitleTidy( $rev->getText(), $this->mTargetObj, false );
 		}
-		
-		$self = SpecialPage::getTitleFor( "Undelete" );
-		
+
 		$wgOut->addHtml(
 			wfElement( 'textarea', array(
 					'readonly' => true,
@@ -673,7 +755,7 @@ class UndeleteForm {
 		}
 	
 		$wgOut->addHTML( "<h2>" . htmlspecialchars( wfMsg( "history" ) ) . "</h2>\n" );
-		
+
 		if( $haveRevisions ) {
 			# The page's stored (deleted) history:
 			$wgOut->addHTML("<ul>");
@@ -690,8 +772,16 @@ class UndeleteForm {
 					$pageLink = $wgLang->timeanddate( $ts, true );
 				}
 				$userLink = $sk->userLink( $row->ar_user, $row->ar_user_text ) . $sk->userToolLinks( $row->ar_user, $row->ar_user_text );
+				$stxt = '';
+				if (!is_null($size = $row->ar_len)) {
+					if ($size == 0) {
+						$stxt = wfMsgHtml('historyempty');
+					} else {
+						$stxt = wfMsgHtml('historysize', $wgLang->formatNum( $size ) );
+					}
+				}
 				$comment = $sk->commentBlock( $row->ar_comment );
-				$wgOut->addHTML( "<li>$checkBox $pageLink . . $userLink $comment</li>\n" );
+				$wgOut->addHTML( "<li>$checkBox $pageLink . . $userLink $stxt $comment</li>\n" );
 	
 			}
 			$revisions->free();
@@ -753,7 +843,7 @@ class UndeleteForm {
 				$this->mFileVersions );
 			
 			if( $ok ) {
-				$skin =& $wgUser->getSkin();
+				$skin = $wgUser->getSkin();
 				$link = $skin->makeKnownLinkObj( $this->mTargetObj );
 				$wgOut->addHtml( wfMsgWikiHtml( 'undeletedpage', $link ) );
 				return true;

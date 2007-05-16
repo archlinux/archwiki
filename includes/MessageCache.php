@@ -1,8 +1,7 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage Cache
+ * @addtogroup Cache
  */
 
 /**
@@ -17,7 +16,6 @@ define( 'MSG_CACHE_VERSION', 1 );
  * Message cache
  * Performs various MediaWiki namespace-related functions
  *
- * @package MediaWiki
  */
 class MessageCache {
 	var $mCache, $mUseCache, $mDisable, $mExpiry;
@@ -298,10 +296,10 @@ class MessageCache {
 	 * Loads all or main part of cacheable messages from the database
 	 */
 	function loadFromDB() {
-		global $wgLang, $wgMaxMsgCacheEntrySize;
+		global $wgMaxMsgCacheEntrySize;
 
 		wfProfileIn( __METHOD__ );
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$this->mCache = array();
 
 		# Load titles for all oversized pages in the MediaWiki namespace
@@ -547,7 +545,7 @@ class MessageCache {
 
 				if ( $type == ' ' ) {
 					$message = substr( $entry, 1 );
-					$this->mCache[$title] = $message;
+					$this->mCache[$title] = $entry;
 					return $message;
 				} elseif ( $entry == '!NONEXISTENT' ) {
 					return false;

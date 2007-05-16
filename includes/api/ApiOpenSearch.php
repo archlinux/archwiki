@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Oct 13, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ("ApiBase.php");
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiOpenSearch extends ApiBase {
 
 	public function __construct($main, $action) {
@@ -103,7 +105,7 @@ class ApiOpenSearch extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiOpenSearch.php 17880 2006-11-23 08:25:56Z nickj $';
+		return __CLASS__ . ': $Id: ApiOpenSearch.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

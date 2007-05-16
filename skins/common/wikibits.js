@@ -330,11 +330,12 @@ var mwCustomEditButtons = []; // eg to add in MediaWiki:Common.js
 
 // this function generates the actual toolbar buttons with localized text
 // we use it to avoid creating the toolbar where javascript is not enabled
-function addButton(imageFile, speedTip, tagOpen, tagClose, sampleText) {
+function addButton(imageFile, speedTip, tagOpen, tagClose, sampleText, imageId) {
 	// Don't generate buttons for browsers which don't fully
 	// support it.
 	mwEditButtons[mwEditButtons.length] =
-		{"imageFile": imageFile,
+		{"imageId": imageId,
+		 "imageFile": imageFile,
 		 "speedTip": speedTip,
 		 "tagOpen": tagOpen,
 		 "tagClose": tagClose,
@@ -347,6 +348,8 @@ function mwInsertEditButton(parent, item) {
 	var image = document.createElement("img");
 	image.width = 23;
 	image.height = 22;
+	image.className = "mw-toolbar-editbutton";
+	if (item.imageId) image.id = item.imageId;
 	image.src = item.imageFile;
 	image.border = 0;
 	image.alt = item.speedTip;
@@ -356,7 +359,7 @@ function mwInsertEditButton(parent, item) {
 		insertTags(item.tagOpen, item.tagClose, item.sampleText);
 		return false;
 	};
-	
+
 	parent.appendChild(image);
 	return true;
 }
@@ -367,17 +370,17 @@ function mwSetupToolbar() {
 
 	var textbox = document.getElementById('wpTextbox1');
 	if (!textbox) { return false; }
-	
+
 	// Don't generate buttons for browsers which don't fully
 	// support it.
 	if (!document.selection && textbox.selectionStart === null) {
 		return false;
 	}
-	
-	for (var i in mwEditButtons) {
+
+	for (var i = 0; i < mwEditButtons.length; i++) {
 		mwInsertEditButton(toolbar, mwEditButtons[i]);
 	}
-	for (i in mwCustomEditButtons) {
+	for (var i = 0; i < mwCustomEditButtons.length; i++) {
 		mwInsertEditButton(toolbar, mwCustomEditButtons[i]);
 	}
 	return true;
@@ -473,32 +476,142 @@ function insertTags(tagOpen, tagClose, sampleText) {
 	}
 }
 
+
 /**
- * Set up accesskeys/tooltips.  If doId is specified, only set up for that id.
+ * Set the accesskey prefix based on browser detection.
+ */
+var tooltipAccessKeyPrefix = 'alt-';
+if (is_opera) {
+	tooltipAccessKeyPrefix = 'shift-esc-';
+} else if (is_safari
+	   || navigator.userAgent.toLowerCase().indexOf('mac') != -1
+	   || navigator.userAgent.toLowerCase().indexOf('konqueror') != -1 ) {
+	tooltipAccessKeyPrefix = 'ctrl-';
+} else if (is_ff2_x11 || is_ff2_win) {
+	tooltipAccessKeyPrefix = 'alt-shift-';
+}
+var tooltipAccessKeyRegexp = /\[(ctrl-)?(alt-)?(shift-)?(esc-)?.\]$/;
+
+/**
+ * Add the appropriate prefix to the accesskey shown in the tooltip.
+ * If the nodeList parameter is given, only those nodes are updated;
+ * otherwise, all the nodes that will probably have accesskeys by
+ * default are updated.
+ *
+ * @param Array nodeList -- list of elements to update
+ */
+function updateTooltipAccessKeys( nodeList ) {
+	if ( !nodeList ) {
+		// skins without a "column-one" element don't seem to have links with accesskeys either
+		var columnOne = document.getElementById("column-one");
+		if ( columnOne )
+			updateTooltipAccessKeys( columnOne.getElementsByTagName("a") );
+		// these are rare enough that no such optimization is needed
+		updateTooltipAccessKeys( document.getElementsByTagName("input") );
+		updateTooltipAccessKeys( document.getElementsByTagName("label") );
+		return;
+	}
+
+	for ( var i = 0; i < nodeList.length; i++ ) {
+		var element = nodeList[i];
+		var tip = element.getAttribute("title");
+		var key = element.getAttribute("accesskey");
+		if ( key && tooltipAccessKeyRegexp.exec(tip) ) {
+			tip = tip.replace(tooltipAccessKeyRegexp,
+					  "["+tooltipAccessKeyPrefix+key+"]");
+			element.setAttribute("title", tip );
+		}
+	}
+}
+
+/**
+ * Add a link to one of the portlet menus on the page, including:
+ *
+ * p-cactions: Content actions (shown as tabs above the main content in Monobook)
+ * p-personal: Personal tools (shown at the top right of the page in Monobook)
+ * p-navigation: Navigation
+ * p-tb: Toolbox
+ *
+ * This function exists for the convenience of custom JS authors.  All
+ * but the first three parameters are optional, though providing at
+ * least an id and a tooltip is recommended.
+ *
+ * By default the new link will be added to the end of the list.  To
+ * add the link before a given existing item, pass the DOM node of
+ * that item (easily obtained with document.getElementById()) as the
+ * nextnode parameter; to add the link _after_ an existing item, pass
+ * the node's nextSibling instead.
+ *
+ * @param String portlet -- id of the target portlet ("p-cactions", "p-personal", "p-navigation" or "p-tb")
+ * @param String href -- link URL
+ * @param String text -- link text (will be automatically lowercased by CSS for p-cactions in Monobook)
+ * @param String id -- id of the new item, should be unique and preferably have the appropriate prefix ("ca-", "pt-", "n-" or "t-")
+ * @param String tooltip -- text to show when hovering over the link, without accesskey suffix
+ * @param String accesskey -- accesskey to activate this link (one character, try to avoid conflicts)
+ * @param Node nextnode -- the DOM node before which the new item should be added, should be another item in the same list
+ *
+ * @return Node -- the DOM node of the new item (an LI element) or null
+ */
+function addPortletLink(portlet, href, text, id, tooltip, accesskey, nextnode) {
+	var node = document.getElementById(portlet);
+	if ( !node ) return null;
+	node = node.getElementsByTagName( "ul" )[0];
+	if ( !node ) return null;
+
+	var link = document.createElement( "a" );
+	link.appendChild( document.createTextNode( text ) );
+	link.href = href;
+
+	var item = document.createElement( "li" );
+	item.appendChild( link );
+	if ( id ) item.id = id;
+
+	if ( accesskey ) {
+		link.setAttribute( "accesskey", accesskey );
+		tooltip += " ["+accesskey+"]";
+	}
+	if ( tooltip ) {
+		link.setAttribute( "title", tooltip );
+	}
+	if ( accesskey && tooltip ) {
+		updateTooltipAccessKeys( new Array( link ) );
+	}
+
+	if ( nextnode && nextnode.parentNode == node )
+		node.insertBefore( item, nextnode );
+	else
+		node.appendChild( item );  // IE compatibility (?)
+
+	return item;
+}
+
+
+/**
+ * Set up accesskeys/tooltips from the deprecated ta array.  If doId
+ * is specified, only set up for that id.  Note that this function is
+ * deprecated and will not be supported indefinitely -- use
+ * updateTooltipAccessKey() instead.
  *
  * @param mixed doId string or null
  */
 function akeytt( doId ) {
-	if (typeof ta == "undefined" || !ta) {
-		return;
-	}
+	// A lot of user scripts (and some of the code below) break if
+	// ta isn't defined, so we make sure it is.  Explictly using
+	// window.ta avoids a "ta is not defined" error.
+	if (!window.ta) window.ta = new Array;
 
-	var pref;
-	if (is_opera) {
-		pref = 'shift-esc-';
-	} else if (is_safari || navigator.userAgent.toLowerCase().indexOf('mac') + 1
-		|| navigator.userAgent.toLowerCase().indexOf('konqueror') + 1 ) {
-		pref = 'control-';
-	} else if (is_ff2_win || is_ff2_x11) {
-		pref = 'alt-shift-';
-	} else {
-		pref = 'alt-';
-	}
-
+	// Make a local, possibly restricted, copy to avoid clobbering
+	// the original.
+	var ta;
 	if ( doId ) {
-		ta = [ta[doId]];
+		ta = new Array;
+		ta[doId] = window.ta[doId];
+	} else {
+		ta = window.ta;
 	}
 
+	// Now deal with evil deprecated ta
+	var watchCheckboxExists = document.getElementById( 'wpWatchthis' ) ? true : false;
 	for (var id in ta) {
 		var n = document.getElementById(id);
 		if (n) {
@@ -515,10 +628,9 @@ function akeytt( doId ) {
 				}
 			 	// Don't add an accesskey for the watch tab if the watch
 			 	// checkbox is also available.
-				if (a && ((id != 'ca-watch' && id != 'ca-unwatch') ||
-				!(window.location.search.match(/[\?&](action=edit|action=submit)/i)))) {
+				if (a && ((id != 'ca-watch' && id != 'ca-unwatch') || !watchCheckboxExists)) {
 					a.accessKey = ta[id][0];
-					ak = ' ['+pref+ta[id][0]+']';
+					ak = ' ['+tooltipAccessKeyPrefix+ta[id][0]+']';
 				}
 			} else {
 				// We don't care what type the object is when assigning tooltip
@@ -580,48 +692,35 @@ function addRightClickEditHandler(el) {
 	}
 }
 
+var checkboxes;
+var lastCheckbox;
+
 function setupCheckboxShiftClick() {
-	if (document.getElementsByTagName) {
-		var uls = document.getElementsByTagName('ul');
-		var len = uls.length;
-		for (var i = 0; i < len; ++i) {
-			addCheckboxClickHandlers(uls[i]);
-		}
-	}
+	checkboxes = [];
+	lastCheckbox = null;
+	var inputs = document.getElementsByTagName('input');
+	addCheckboxClickHandlers(inputs);
 }
 
-function addCheckboxClickHandlers(ul, start, finish) {
-	if (ul.checkboxHandlersTimer) {
-		clearInterval(ul.checkboxHandlersTimer);
+function addCheckboxClickHandlers(inputs, start) {
+	if ( !start) start = 0;
+
+	var finish = start + 250;
+	if ( finish > inputs.length )
+		finish = inputs.length;
+
+	for ( var i = start; i < finish; i++ ) {
+		var cb = inputs[i];
+		if ( !cb.type || cb.type.toLowerCase() != 'checkbox' )
+			continue;
+		cb.index = checkboxes.push(cb) - 1;
+		cb.onmouseup = checkboxMouseupHandler;
 	}
-	if ( !ul.childNodes ) {
-		return;
-	}
-	var len = ul.childNodes.length;
-	if (len < 2) {
-		return;
-	}
-	start = start || 0;
-	finish = finish || start + 250;
-	if ( finish > len ) { finish = len; }
-	ul.checkboxes = ul.checkboxes || [];
-	ul.lastCheckbox = ul.lastCheckbox || null;
-	for (var i = start; i<finish; ++i) {
-		var child = ul.childNodes[i];
-		if ( child && child.childNodes && child.childNodes[0] ) {
-			var cb = child.childNodes[0];
-			if ( !cb.nodeName || cb.nodeName.toLowerCase() != 'input' ||
-			     !cb.type || cb.type.toLowerCase() != 'checkbox' ) {
-				return;
-			}
-			cb.index = ul.checkboxes.push(cb) - 1;
-			cb.container = ul;
-			cb.onmouseup = checkboxMouseupHandler;
-		}
-	}
-	if (finish < len) {
-	  var f=function(){ addCheckboxClickHandlers(ul, finish, finish+250); };
-	  ul.checkboxHandlersTimer=setInterval(f, 200);
+
+	if ( finish < inputs.length ) {
+		setTimeout( function () {
+			addCheckboxClickHandlers(inputs, finish);
+		}, 200 );
 	}
 }
 
@@ -629,8 +728,8 @@ function checkboxMouseupHandler(e) {
 	if (typeof e == 'undefined') {
 		e = window.event;
 	}
-	if ( !e.shiftKey || this.container.lastCheckbox === null ) {
-		this.container.lastCheckbox = this.index;
+	if ( !e.shiftKey || lastCheckbox === null ) {
+		lastCheckbox = this.index;
 		return true;
 	}
 	var endState = !this.checked;
@@ -638,17 +737,17 @@ function checkboxMouseupHandler(e) {
 		endState = !endState;
 	}
 	var start, finish;
-	if ( this.index < this.container.lastCheckbox ) {
+	if ( this.index < lastCheckbox ) {
 		start = this.index + 1;
-		finish = this.container.lastCheckbox;
+		finish = lastCheckbox;
 	} else {
-		start = this.container.lastCheckbox;
+		start = lastCheckbox;
 		finish = this.index - 1;
 	}
 	for (var i = start; i <= finish; ++i ) {
-		this.container.checkboxes[i].checked = endState;
+		checkboxes[i].checked = endState;
 	}
-	this.container.lastCheckbox = this.index;
+	lastCheckbox = this.index;
 	return true;
 }
 
@@ -692,27 +791,6 @@ function fillDestFilename(id) {
 	var destFile = document.getElementById('wpDestFile');
 	if (destFile) {
 		destFile.value = fname;
-	}
-}
-
-
-function considerChangingExpiryFocus() {
-	if (!document.getElementById) {
-		return;
-	}
-	var drop = document.getElementById('wpBlockExpiry');
-	if (!drop) {
-		return;
-	}
-	var field = document.getElementById('wpBlockOther');
-	if (!field) {
-		return;
-	}
-	var opt = drop.value;
-	if (opt == 'other') {
-		field.style.display = '';
-	} else {
-		field.style.display = 'none';
 	}
 }
 
@@ -851,12 +929,6 @@ function getElementsByClassName(oElm, strTagName, oClassNames){
 	return (arrReturnElements)
 }
 
-function sortableTables() {
-	if (getElementsByClassName(document, "table", "sortable").length != 0) {
-		document.write('<script type="text/javascript" src="'+stylepath+'/common/sorttable.js?1"></script>');
-	}
-}
-
 function redirectToFragment(fragment) {
 	var match = navigator.userAgent.match(/AppleWebKit\/(\d+)/);
 	if (match) {
@@ -879,26 +951,292 @@ function redirectToFragment(fragment) {
 	}
 }
 
+/*
+ * Table sorting script  by Joost de Valk, check it out at http://www.joostdevalk.nl/code/sortable-table/.
+ * Based on a script from http://www.kryogenix.org/code/browser/sorttable/.
+ * Distributed under the MIT license: http://www.kryogenix.org/code/browser/licence.html .
+ *
+ * Copyright (c) 1997-2006 Stuart Langridge, Joost de Valk.
+ *
+ * @todo don't break on colspans/rowspans (bug 8028)
+ * @todo language-specific digit grouping/decimals (bug 8063)
+ * @todo support all accepted date formats (bug 8226)
+ */
+
+var ts_image_path = stylepath+"/common/images/";
+var ts_image_up = "sort_up.gif";
+var ts_image_down = "sort_down.gif";
+var ts_image_none = "sort_none.gif";
+var ts_europeandate = wgContentLanguage != "en"; // The non-American-inclined can change to "true"
+var ts_alternate_row_colors = true;
+var SORT_COLUMN_INDEX;
+
+function sortables_init() {
+	var idnum = 0;
+	// Find all tables with class sortable and make them sortable
+	var tables = getElementsByClassName(document, "table", "sortable");
+	for (var ti = 0; ti < tables.length ; ti++) {
+		if (!tables[ti].id) {
+			tables[ti].setAttribute('id','sortable_table_id_'+idnum);
+			++idnum;
+		}
+		ts_makeSortable(tables[ti]);
+	}
+}
+
+function ts_makeSortable(table) {
+	var firstRow;
+	if (table.rows && table.rows.length > 0) {
+		if (table.tHead && table.tHead.rows.length > 0) {
+			firstRow = table.tHead.rows[table.tHead.rows.length-1];
+		} else {
+			firstRow = table.rows[0];
+		}
+	}
+	if (!firstRow) return;
+
+	// We have a first row: assume it's the header, and make its contents clickable links
+	for (var i = 0; i < firstRow.cells.length; i++) {
+		var cell = firstRow.cells[i];
+		if ((" "+cell.className+" ").indexOf(" unsortable ") == -1) {
+			cell.innerHTML += '&nbsp;&nbsp;<a href="#" class="sortheader" onclick="ts_resortTable(this);return false;"><span class="sortarrow"><img src="'+ ts_image_path + ts_image_none + '" alt="&darr;"/></span></a>';
+		}
+	}
+	if (ts_alternate_row_colors) {
+		ts_alternate(table);
+	}
+}
+
+function ts_getInnerText(el) {
+	if (typeof el == "string") return el;
+	if (typeof el == "undefined") { return el };
+	if (el.innerText) return el.innerText;	// Not needed but it is faster
+	var str = "";
+
+	var cs = el.childNodes;
+	var l = cs.length;
+	for (var i = 0; i < l; i++) {
+		switch (cs[i].nodeType) {
+			case 1: //ELEMENT_NODE
+				str += ts_getInnerText(cs[i]);
+				break;
+			case 3:	//TEXT_NODE
+				str += cs[i].nodeValue;
+				break;
+		}
+	}
+	return str;
+}
+
+function ts_resortTable(lnk) {
+	// get the span
+	var span = lnk.getElementsByTagName('span')[0];
+
+	var td = lnk.parentNode;
+	var tr = td.parentNode;
+	var column = td.cellIndex;
+
+	var table = tr.parentNode;
+	while (table && !(table.tagName && table.tagName.toLowerCase() == 'table'))
+		table = table.parentNode;
+	if (!table) return;
+
+	// Work out a type for the column
+	if (table.rows.length <= 1) return;
+
+	// Skip the first row if that's where the headings are
+	var rowStart = (table.tHead && table.tHead.rows.length > 0 ? 0 : 1);
+
+	var itm = "";
+	for (var i = rowStart; i < table.rows.length; i++) {
+		if (table.rows[i].cells.length > column) {
+			itm = ts_getInnerText(table.rows[i].cells[column]);
+			itm = itm.replace(/^[\s\xa0]+/, "").replace(/[\s\xa0]+$/, "");
+			if (itm != "") break;
+		}
+	}
+
+	sortfn = ts_sort_caseinsensitive;
+	if (itm.match(/^\d\d[\/. -][a-zA-Z]{3}[\/. -]\d\d\d\d$/))
+		sortfn = ts_sort_date;
+	if (itm.match(/^\d\d[\/.-]\d\d[\/.-]\d\d\d\d$/))
+		sortfn = ts_sort_date;
+	if (itm.match(/^\d\d[\/.-]\d\d[\/.-]\d\d$/))
+		sortfn = ts_sort_date;
+	if (itm.match(/^[\u00a3$\u20ac]/)) // pound dollar euro
+		sortfn = ts_sort_currency;
+	if (itm.match(/^[\d.,]+\%?$/))
+		sortfn = ts_sort_numeric;
+
+	var reverse = (span.getAttribute("sortdir") == 'down');
+
+	var newRows = new Array();
+	for (var j = rowStart; j < table.rows.length; j++) {
+		var row = table.rows[j];
+		var keyText = ts_getInnerText(row.cells[column]);
+		var oldIndex = (reverse ? -j : j);
+
+		newRows[newRows.length] = new Array(row, keyText, oldIndex);
+	}
+
+	newRows.sort(sortfn);
+
+	var arrowHTML;
+	if (reverse) {
+			arrowHTML = '<img src="'+ ts_image_path + ts_image_down + '" alt="&darr;"/>';
+			newRows.reverse();
+			span.setAttribute('sortdir','up');
+	} else {
+			arrowHTML = '<img src="'+ ts_image_path + ts_image_up + '" alt="&uarr;"/>';
+			span.setAttribute('sortdir','down');
+	}
+
+	// We appendChild rows that already exist to the tbody, so it moves them rather than creating new ones
+	// don't do sortbottom rows
+	for (var i = 0; i < newRows.length; i++) {
+		if ((" "+newRows[i][0].className+" ").indexOf(" sortbottom ") == -1)
+			table.tBodies[0].appendChild(newRows[i][0]);
+	}
+	// do sortbottom rows only
+	for (var i = 0; i < newRows.length; i++) {
+		if ((" "+newRows[i][0].className+" ").indexOf(" sortbottom ") != -1)
+			table.tBodies[0].appendChild(newRows[i][0]);
+	}
+
+	// Delete any other arrows there may be showing
+	var spans = getElementsByClassName(tr, "span", "sortarrow");
+	for (var i = 0; i < spans.length; i++) {
+		spans[i].innerHTML = '<img src="'+ ts_image_path + ts_image_none + '" alt="&darr;"/>';
+	}
+	span.innerHTML = arrowHTML;
+
+	ts_alternate(table);		
+}
+
+function ts_dateToSortKey(date) {	
+	// y2k notes: two digit years less than 50 are treated as 20XX, greater than 50 are treated as 19XX
+	if (date.length == 11) {
+		switch (date.substr(3,3).toLowerCase()) {
+			case "jan": var month = "01"; break;
+			case "feb": var month = "02"; break;
+			case "mar": var month = "03"; break;
+			case "apr": var month = "04"; break;
+			case "may": var month = "05"; break;
+			case "jun": var month = "06"; break;
+			case "jul": var month = "07"; break;
+			case "aug": var month = "08"; break;
+			case "sep": var month = "09"; break;
+			case "oct": var month = "10"; break;
+			case "nov": var month = "11"; break;
+			case "dec": var month = "12"; break;
+			// default: var month = "00";
+		}
+		return date.substr(7,4)+month+date.substr(0,2);
+	} else if (date.length == 10) {
+		if (ts_europeandate == false) {
+			return date.substr(6,4)+date.substr(0,2)+date.substr(3,2);
+		} else {
+			return date.substr(6,4)+date.substr(3,2)+date.substr(0,2);
+		}
+	} else if (date.length == 8) {
+		yr = date.substr(6,2);
+		if (parseInt(yr) < 50) { 
+			yr = '20'+yr; 
+		} else { 
+			yr = '19'+yr; 
+		}
+		if (ts_europeandate == true) {
+			return yr+date.substr(3,2)+date.substr(0,2);
+		} else {
+			return yr+date.substr(0,2)+date.substr(3,2);
+		}
+	}
+	return "00000000";
+}
+
+function ts_parseFloat(num) {
+	if (!num) return 0;
+	num = parseFloat(num.replace(/,/, ""));
+	return (isNaN(num) ? 0 : num);
+}
+
+function ts_sort_date(a,b) {
+	var aa = ts_dateToSortKey(a[1]);
+	var bb = ts_dateToSortKey(b[1]);
+	return (aa < bb ? -1 : aa > bb ? 1 : a[2] - b[2]);
+}
+
+function ts_sort_currency(a,b) {
+	var aa = ts_parseFloat(a[1].replace(/[^0-9.]/g,''));
+	var bb = ts_parseFloat(b[1].replace(/[^0-9.]/g,''));
+	return (aa != bb ? aa - bb : a[2] - b[2]);
+}
+
+function ts_sort_numeric(a,b) {
+	var aa = ts_parseFloat(a[1]);
+	var bb = ts_parseFloat(b[1]);
+	return (aa != bb ? aa - bb : a[2] - b[2]);
+}
+
+function ts_sort_caseinsensitive(a,b) {
+	var aa = a[1].toLowerCase();
+	var bb = b[1].toLowerCase();
+	return (aa < bb ? -1 : aa > bb ? 1 : a[2] - b[2]);
+}
+
+function ts_sort_default(a,b) {
+	return (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : a[2] - b[2]);
+}
+
+function ts_alternate(table) {
+	// Take object table and get all it's tbodies.
+	var tableBodies = table.getElementsByTagName("tbody");
+	// Loop through these tbodies
+	for (var i = 0; i < tableBodies.length; i++) {
+		// Take the tbody, and get all it's rows
+		var tableRows = tableBodies[i].getElementsByTagName("tr");
+		// Loop through these rows
+		// Start at 1 because we want to leave the heading row untouched
+		for (var j = 0; j < tableRows.length; j++) {
+			// Check if j is even, and apply classes for both possible results
+			var oldClasses = tableRows[j].className.split(" ");
+			var newClassName = "";
+			for (var k = 0; k < oldClasses.length; k++) {
+				if (oldClasses[k] != "" && oldClasses[k] != "even" && oldClasses[k] != "odd")
+					newClassName += oldClasses[k] + " ";
+			}
+			tableRows[j].className = newClassName + (j % 2 == 0 ? "even" : "odd");
+		}
+	}
+}
+
+/*
+ * End of table sorting code
+ */
+
 function runOnloadHook() {
 	// don't run anything below this for non-dom browsers
 	if (doneOnloadHook || !(document.getElementById && document.getElementsByTagName)) {
 		return;
 	}
 
+	// set this before running any hooks, since any errors below
+	// might cause the function to terminate prematurely
+	doneOnloadHook = true;
+
 	histrowinit();
 	unhidetzbutton();
 	tabbedprefs();
+	updateTooltipAccessKeys( null );
 	akeytt( null );
 	scrollEditBox();
 	setupCheckboxShiftClick();
-	sortableTables();
+	sortables_init();
 
 	// Run any added-on functions
 	for (var i = 0; i < onloadFuncts.length; i++) {
 		onloadFuncts[i]();
 	}
-
-	doneOnloadHook = true;
 }
 
 //note: all skins should call runOnloadHook() at the end of html output,

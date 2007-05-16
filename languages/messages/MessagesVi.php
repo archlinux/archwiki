@@ -1,8 +1,7 @@
 <?php
 /**
   * Based on Language.php 1.645
-  * @package MediaWiki
-  * @subpackage Language
+  * @addtogroup Language
   * Compatible to MediaWiki 1.5
   * Initial translation by Trần Thế Trung and Nguyễn Thanh Quang
   * Last update 28 August 2005 (UTC)
@@ -27,10 +26,6 @@ $namespaceNames = array(
 	NS_HELP_TALK		=> 'Thảo_luận_Trợ_giúp',
 	NS_CATEGORY			=> 'Thể_loại',
 	NS_CATEGORY_TALK	=> 'Thảo_luận_Thể_loại'
-);
-
-$quickbarSettings = array(
-	'Không', 'Trái', 'Phải', 'Nổi bên trái'
 );
 
 $skinNames = array(
@@ -62,7 +57,6 @@ $magicWords = array(
 	'msg'                    => array( 0,    'MSG:'     , 'NHẮN:'              ),
 	'subst'                  => array( 0,    'SUBST:'   ,  'THẾ:'            ),
 	'msgnw'                  => array( 0,    'MSGNW:'    ,  'NHẮNMỚI:'             ),
-	'end'                    => array( 0,    '__END__'    , '__KẾT__'            ),
 	'img_thumbnail'          => array( 1,    'thumbnail', 'thumb' , 'nhỏ'    ),
 	'img_right'              => array( 1,    'right' , 'phải'                 ),
 	'img_left'               => array( 1,    'left'  , 'trái'                ),
@@ -91,9 +85,9 @@ $magicWords = array(
 $datePreferences = array(
 	'default',
 	'vi normal',
-	'vi longmonth',
+	'vi spelloutmonth',
 	'vi shortcolon',
-	'vi short',
+	'vi shorth',
 	'ISO 8601',
 );
 
@@ -101,20 +95,20 @@ $defaultDateFormat = 'vi normal';
 
 $dateFormats = array(
 	'vi normal time' => 'H:i',
-	'vi normal date' => '"ngày" j M "năm" Y',
-	'vi normal both' => 'H:i, "ngày" j M "năm" Y',
+	'vi normal date' => '"ngày" j "tháng" n "năm" Y',
+	'vi normal both' => 'H:i, "ngày" j "tháng" n "năm" Y',
 
-	'vi longmonth time' => 'H:i',
-	'vi longmonth date' => '"ngày" j F "năm" Y',
-	'vi longmonth both' => 'H:i, "ngày" j F "năm" Y',
+	'vi spelloutmonth time' => 'H:i',
+	'vi spelloutmonth date' => '"ngày" j xg "năm" Y',
+	'vi spelloutmonth both' => 'H:i, "ngày" j xg "năm" Y',
 
 	'vi shortcolon time' => 'H:i',
 	'vi shortcolon date' => 'j/n/Y',
 	'vi shortcolon both' => 'H:i, j/n/Y',
 
-	'vi short time' => 'H"h"i',
-	'vi short date' => 'j/n/Y',
-	'vi short both' => 'H"h"i, j/n/Y',
+	'vi shorth time' => 'H"h"i',
+	'vi shorth date' => 'j/n/Y',
+	'vi shorth both' => 'H"h"i, j/n/Y',
 );
 
 $datePreferenceMigrationMap = array(
@@ -171,18 +165,37 @@ $messages = array(
 'thursday' => 'thứ năm',
 'friday' => 'thứ sáu',
 'saturday' => 'thứ bảy',
-'january'   => 'tháng Một',
-'february'  => 'tháng Hai',
-'march'     => 'tháng Ba',
-'april'     => 'tháng Tư',
-'may_long'  => 'tháng Năm',
-'june'      => 'tháng Sáu',
-'july'      => 'tháng Bảy',
-'august'    => 'tháng Tám',
-'september' => 'tháng Chín',
-'october'   => 'tháng Mười',
-'november'  => 'tháng Mười một',
-'december'  => 'tháng Mười hai',
+'sun' => 'chủ nhật',
+'mon' => 'thứ 2',
+'tue' => 'thứ 3',
+'wed' => 'thứ 4',
+'thu' => 'thứ 5',
+'fri' => 'thứ 6',
+'sat' => 'thứ 7',
+'january' => 'tháng 1',
+'february' => 'tháng 2',
+'march' => 'tháng 3',
+'april' => 'tháng 4',
+'may_long' => 'tháng 5',
+'june' => 'tháng 6',
+'july' => 'tháng 7',
+'august' => 'tháng 8',
+'september' => 'tháng 9',
+'october' => 'tháng 10',
+'november' => 'tháng 11',
+'december' => 'tháng 12',
+'january-gen'   => 'tháng Một',
+'february-gen'  => 'tháng Hai',
+'march-gen'     => 'tháng Ba',
+'april-gen'     => 'tháng Tư',
+'may-gen'  => 'tháng Năm',
+'june-gen'      => 'tháng Sáu',
+'july-gen'      => 'tháng Bảy',
+'august-gen'    => 'tháng Tám',
+'september-gen' => 'tháng Chín',
+'october-gen'   => 'tháng Mười',
+'november-gen'  => 'tháng Mười một',
+'december-gen'  => 'tháng Mười hai',
 'jan' => 'tháng 1',
 'feb' => 'tháng 2',
 'mar' => 'tháng 3',
@@ -467,7 +480,7 @@ Bạn vẫn dùng {{SITENAME}} được như người vô danh, hoặc đăng nh
 'editingsection'  => 'Soạn thảo $1',
 'editingcomment'  => 'Soạn thảo $1',
 'editconflict' => 'Sửa đổi mâu thuẫn : $1',
-'explainconflict' => "<b>Trang này có đã được lưu bởi người khác sau khi bạn bắt đầu sửa. Phía trên là bản vừa được lưu. Phía dưới là sửa đổi của bạn. Bạn phải sửa lại từ bản đã lưu.<br />",
+'explainconflict' => "<b>Trang này có đã được lưu bởi người khác sau khi bạn bắt đầu sửa. Phía trên là bản vừa được lưu. Phía dưới là sửa đổi của bạn. Bạn phải sửa lại từ bản đã lưu.</b><br />",
 'yourtext'     => 'Nội dung bạn nhập',
 'storedversion' => 'Phiên bản lưu',
 "editingold"   => "<strong>Chú ý: bạn đang sửa một phiên bản cũ. Nếu bạn lưu, các sửa đổi trên phiên bản mới hơn sẽ mất.</strong>",
@@ -480,7 +493,7 @@ Bạn vẫn dùng {{SITENAME}} được như người vô danh, hoặc đăng nh
 *Mọi đóng góp cho {{SITENAME}} đều tuân theo GNU Free Documentation Licence (Xem $1). Nếu bạn không muốn nội dung bạn nhập bị người khác sửa, đừng viết vào đây. <br /><b>KHÔNG LẤY TÀI LIỆU TỪ NGUỒN KHÁC MÀ CHƯA XIN PHÉP!</b>",
 "longpagewarning" => "<strong>Chú ý : Trang này dài $1 kb; nhiều trình duyệt không tải được trang dài hơn 32 kb. Bạn nên chia nhỏ trang này thành nhiều trang.</strong>",
 "readonlywarning" => "<strong>Chú ý : trang này bị khóa để bảo trì. Bạn chỉ có thể sao nội dung để sửa đổi trên máy cá nhân.</strong>",
-"protectedpagewarning" => "<strong>Chú ý : trang này bị khóa. Chỉ có quản lý viên mới sửa được. Chú ý tuân thủ [[{{ns:4}}:Trang_bị_khóa|quy định về trang bị khóa]].<strong>",
+"protectedpagewarning" => "<strong>Chú ý : trang này bị khóa. Chỉ có quản lý viên mới sửa được. Chú ý tuân thủ [[{{ns:4}}:Trang_bị_khóa|quy định về trang bị khóa]].</strong>",
 
 # History pages
 #
@@ -555,6 +568,10 @@ $2 gồm cả trang đổi hướng &nbsp; Tìm $3 $9",
 'prefsnologintext'  => "Bạn phải [[Đặc_biệt:Userlogin|đăng nhập]] để sửa các Lựa chọn cá nhân của bạn.",
 'prefsreset'        => 'Các Lựa chọn cá nhân đã được mặc định lại.',
 'qbsettings'        => 'Các lựa chọn cho thanh công cụ',
+'qbsettings-none'	=> 'Không',
+'qbsettings-fixedleft'	=> 'Trái',
+'qbsettings-fixedright'	=> 'Phải',
+'qbsettings-floatingleft'	=> 'Nổi bên trái',
 'changepassword'    => 'Đổi mật khẩu',
 'skin'              => 'Ngoại hình',
 'math'				=> 'Công thức toán',
@@ -773,6 +790,7 @@ Con số này không bao gồm các trang [[{{ns:4}}:Trang_thảo_luận|thảo 
 # Watchlist
 #
 'watchlist'	=> 'Trang tôi theo dõi',
+'mywatchlist'	=> 'Trang tôi theo dõi',
 'nowatchlist'	=> "Chưa có gì.",
 'watchnologin'	=> 'Chưa đăng nhập',
 'watchnologintext' => "Bạn phải [[Đặc_biệt:Userlogin|đăng nhập]] mới sửa đổi được danh sách theo dõi.",
@@ -878,9 +896,9 @@ Những sửa đổi đối với trang này và trang thảo luận của nó s
 # Contributions
 'contributions' => 'Đóng góp',
 'mycontris'     => 'Đóng góp của tôi',
-'contribsub'    => "Của $1",
+'contribsub2'    => "Của $1 ($2)",
 'nocontribs'    => 'Không tìm thấy.',
-'ucnote'        => "</b>$1</b> thay đổi mới của người này trong <b>$2</b> ngày qua.",
+'ucnote'        => "<b>$1</b> thay đổi mới của người này trong <b>$2</b> ngày qua.",
 'uclinks'       => "Xem $1 thay đổi mới; xem $2 ngày qua.",
 'uctop'         => '(mới nhất)' ,
 'newbies'       => 'người mới',
@@ -950,21 +968,8 @@ Xin hãy khẳng định đây là điều bạn định làm.',
 <br />Nhớ bỏ khóa sau khi bảo trì xong.',
 'unlockdbsuccesstext' => 'Cơ sở dữ liệu đã được mở khóa.',
 
-# Special:Makesysop
-'makesysoptitle'    => 'Phong một thành viên làm quản lý',
-'makesysoptext'     => 'Mẫu này được các tổng quản lý dùng để phong các thành viên bình thường thành người quản lý.
-Hãy gõ tên của thành viên cần phong quyền quản lý vào ô này và nhấn nút.',
-'makesysopname'     => 'Tên thành viên:',
-'makesysopsubmit'   => 'Phong quyền quản lý cho thành viên này',
-'makesysopok'       => "<b>Thành viên \"$1\" đã thành quản lý</b>",
-'makesysopfail'     => "<b>Thành viên \"$1\" không thể trở thành quản lý được. (Liệu bạn có nhập tên đúng không?)</b>",
-'setbureaucratflag' => 'Đặt cờ tổng quản lý',
+# Rights log
 'rightslogtext'     => 'Đây là nhật trình lưu những thay đổi đối với các quyền hạn thành viên.',
-'rights'            => 'Quyền:',
-'set_user_rights'   => 'Đặt quyền hạn cho thành viên',
-'user_rights_set'   => "<b>Quyền hạn thành viên của \"$1\" đã được cập nhật</b>",
-'set_rights_fail'   => "<b>Quyền hạn thành viên của \"$1\" không thể xác lập được. (Liệu bạn có gõ sai tên không?)</b>",'makesysop'         => 'Phong một thành viên làm quản lý',
-
 
 # Spam
 'spamprotectiontitle' => 'Bộ lọc chống thư rác',
@@ -1054,12 +1059,12 @@ Xin hãy hợp nhất chúng lại.',
 'accesskey-search'			=> 'f',
 
 # tooltip help for the main actions
-'tooltip-search' => 'Tìm kiếm [alt-f]',
-'tooltip-minoredit' => 'Đánh dấu đây là sửa đổi nhỏ [alt-i]',
-'tooltip-save' => 'Lưu lại những thay đổi của bạn [alt-s]',
-'tooltip-preview' => 'Xem thử những thay đổi trước khi lưu! [alt-p]',
-'tooltip-compareselectedversions' => 'Xem khác biệt giữa hai phiên bản của trang này. [alt-v]',
-'tooltip-watch' => 'Cho trang này vào danh sách theo dõi [alt-w]',
+'tooltip-search' => 'Tìm kiếm',
+'tooltip-minoredit' => 'Đánh dấu đây là sửa đổi nhỏ',
+'tooltip-save' => 'Lưu lại những thay đổi của bạn',
+'tooltip-preview' => 'Xem thử những thay đổi trước khi lưu!',
+'tooltip-compareselectedversions' => 'Xem khác biệt giữa hai phiên bản của trang này.',
+'tooltip-watch' => 'Cho trang này vào danh sách theo dõi',
 
 # Metadata
 'nodublincore' => 'Máy chủ không hỗ trợ siêu dữ liệu Dublin Core RDF.',
@@ -1111,57 +1116,106 @@ Nếu không phải bạn, đừng mở địa chỉ này. Mã xác nhận này 
 # stylesheets
 'monobook.css' => '/* edit this file to customize the monobook skin for the entire site */',
 # Monobook.js: tooltips and access keys for monobook
-'monobook.js' => '/* tooltips and access keys */
-var ta = new Object();
-ta[\'pt-userpage\'] = new Array(\'.\',\'Trang của tôi\');
-ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Trang của IP bạn đang dùng\');
-ta[\'pt-mytalk\'] = new Array(\'n\',\'Thảo luận với tôi\');
-ta[\'pt-anontalk\'] = new Array(\'n\',\'Thảo luận với địa chỉ IP này\');
-ta[\'pt-preferences\'] = new Array(\'\',\'Lựa chọn cá nhân của tôi\');
-ta[\'pt-watchlist\'] = new Array(\'l\',\'Thay đổi của các trang tôi theo dõi.\');
-ta[\'pt-mycontris\'] = new Array(\'y\',\'Đóng góp của tôi\');
-ta[\'pt-login\'] = new Array(\'o\',\'Đăng nhập sẽ có lợi hơn, tuy nhiên không bắt buộc.\');
-ta[\'pt-anonlogin\'] = new Array(\'o\',\'Không đăng nhập vẫn tham gia được, tuy nhiên đăng nhập sẽ lợi hơn.\');
-ta[\'pt-logout\'] = new Array(\'\',\'Đăng xuất\');
-ta[\'ca-talk\'] = new Array(\'t\',\'Thảo luận về trang này\');
-ta[\'ca-edit\'] = new Array(\'e\',\'Bạn có thể sửa được trang này. Xin xem thử trước khi lưu.\');
-ta[\'ca-addsection\'] = new Array(\'+\',\'Thêm bình luận vào đây.\');
-ta[\'ca-viewsource\'] = new Array(\'e\',\'Trang này được khóa. Bạn có thể xem mã nguồn.\');
-ta[\'ca-history\'] = new Array(\'h\',\'Những phiên bản cũ của trang này.\');
-ta[\'ca-protect\'] = new Array(\'=\',\'Khóa trang này lại\');
-ta[\'ca-delete\'] = new Array(\'d\',\'Xóa trang này\');
-ta[\'ca-undelete\'] = new Array(\'d\',\'Khôi phục lại những sửa đổi trên trang này trước khi nó bị xóa\');
-ta[\'ca-move\'] = new Array(\'m\',\'Di chuyển trang này\');
-ta[\'ca-nomove\'] = new Array(\'\',\'Bạn không thể di chuyển trang này\');
-ta[\'ca-watch\'] = new Array(\'w\',\'Thêm trang này vào danh sách theo dõi\');
-ta[\'ca-unwatch\'] = new Array(\'w\',\'Bỏ trang này khỏi danh sách theo dõi\');
-ta[\'search\'] = new Array(\'f\',\'Tìm kiếm\');
-ta[\'p-logo\'] = new Array(\'\',\'Trang đầu\');
-ta[\'n-mainpage\'] = new Array(\'z\',\'Trang đầu của dự án mở\');
-ta[\'n-portal\'] = new Array(\'\',\'Giới thiệu dự án, cách sử dụng, tìm kiếm thông tin ở đây\');
-ta[\'n-currentevents\'] = new Array(\'\',\'Xem thời sự\');
-ta[\'n-recentchanges\'] = new Array(\'r\',\'Danh sách các thay đổi gần đây\');
-ta[\'n-randompage\'] = new Array(\'x\',\'Xem trang ngẫu nhiên\');
-ta[\'n-help\'] = new Array(\'\',\'Nơi tìm hiểu thêm cách dùng.\');
-ta[\'n-sitesupport\'] = new Array(\'\',\'Quyên góp xây dựng dự án mở\');
-ta[\'t-whatlinkshere\'] = new Array(\'j\',\'Các trang liên kết đến đây\');
-ta[\'t-recentchangeslinked\'] = new Array(\'k\',\'Thay đổi gần đây của các trang liên kết đến đây\');
-ta[\'feed-rss\'] = new Array(\'\',\'Nạp RSS cho trang này\');
-ta[\'feed-atom\'] = new Array(\'\',\'Nạp Atom cho trang này\');
-ta[\'t-contributions\'] = new Array(\'\',\'Xem đóng góp của người này\');
-ta[\'t-emailuser\'] = new Array(\'\',\'Gửi thư cho người này\');
-ta[\'t-upload\'] = new Array(\'u\',\'Tải hình ảnh hoặc tệp tin lên\');
-ta[\'t-specialpages\'] = new Array(\'q\',\'Danh sách các trang đặc biệt\');
-ta[\'ca-nstab-main\'] = new Array(\'c\',\'Xem trang này\');
-ta[\'ca-nstab-user\'] = new Array(\'c\',\'Xem trang về người này\');
-ta[\'ca-nstab-media\'] = new Array(\'c\',\'Xem trang phương tiện\');
-ta[\'ca-nstab-special\'] = new Array(\'\',\'Đây là một trang dặc biệt, bạn không thể sửa đổi được nó.\');
-ta[\'ca-nstab-project\'] = new Array(\'a\',\'Xem trang dự án\');
-ta[\'ca-nstab-image\'] = new Array(\'c\',\'Xem trang hình\');
-ta[\'ca-nstab-mediawiki\'] = new Array(\'c\',\'Xem thông báo hệ thống\');
-ta[\'ca-nstab-template\'] = new Array(\'c\',\'Xem tiêu bản\');
-ta[\'ca-nstab-help\'] = new Array(\'c\',\'Xem trang trợ giúp\');
-ta[\'ca-nstab-category\'] = new Array(\'c\',\'Xem trang thể loại\');',
+'monobook.js' => '/* Deprecated; use [[MediaWiki:common.js]] */',
+
+'accesskey-pt-userpage' => '.',
+'tooltip-pt-userpage' => 'Trang của tôi',
+'accesskey-pt-anonuserpage' => '.',
+'tooltip-pt-anonuserpage' => 'Trang của IP bạn đang dùng',
+'accesskey-pt-mytalk' => 'n',
+'tooltip-pt-mytalk' => 'Thảo luận với tôi',
+'accesskey-pt-anontalk' => 'n',
+'tooltip-pt-anontalk' => 'Thảo luận với địa chỉ IP này',
+'accesskey-pt-preferences' => '',
+'tooltip-pt-preferences' => 'Lựa chọn cá nhân của tôi',
+'accesskey-pt-watchlist' => 'l',
+'tooltip-pt-watchlist' => 'Thay đổi của các trang tôi theo dõi.',
+'accesskey-pt-mycontris' => 'y',
+'tooltip-pt-mycontris' => 'Đóng góp của tôi',
+'accesskey-pt-login' => 'o',
+'tooltip-pt-login' => 'Đăng nhập sẽ có lợi hơn, tuy nhiên không bắt buộc.',
+'accesskey-pt-anonlogin' => 'o',
+'tooltip-pt-anonlogin' => 'Không đăng nhập vẫn tham gia được, tuy nhiên đăng nhập sẽ lợi hơn.',
+'accesskey-pt-logout' => '',
+'tooltip-pt-logout' => 'Đăng xuất',
+'accesskey-ca-talk' => 't',
+'tooltip-ca-talk' => 'Thảo luận về trang này',
+'accesskey-ca-edit' => 'e',
+'tooltip-ca-edit' => 'Bạn có thể sửa được trang này. Xin xem thử trước khi lưu.',
+'accesskey-ca-addsection' => '+',
+'tooltip-ca-addsection' => 'Thêm bình luận vào đây.',
+'accesskey-ca-viewsource' => 'e',
+'tooltip-ca-viewsource' => 'Trang này được khóa. Bạn có thể xem mã nguồn.',
+'accesskey-ca-history' => 'h',
+'tooltip-ca-history' => 'Những phiên bản cũ của trang này.',
+'accesskey-ca-protect' => '=',
+'tooltip-ca-protect' => 'Khóa trang này lại',
+'accesskey-ca-delete' => 'd',
+'tooltip-ca-delete' => 'Xóa trang này',
+'accesskey-ca-undelete' => 'd',
+'tooltip-ca-undelete' => 'Khôi phục lại những sửa đổi trên trang này trước khi nó bị xóa',
+'accesskey-ca-move' => 'm',
+'tooltip-ca-move' => 'Di chuyển trang này',
+'accesskey-ca-nomove' => '',
+'tooltip-ca-nomove' => 'Bạn không thể di chuyển trang này',
+'accesskey-ca-watch' => 'w',
+'tooltip-ca-watch' => 'Thêm trang này vào danh sách theo dõi',
+'accesskey-ca-unwatch' => 'w',
+'tooltip-ca-unwatch' => 'Bỏ trang này khỏi danh sách theo dõi',
+'accesskey-search' => 'f',
+'tooltip-search' => 'Tìm kiếm',
+'accesskey-p-logo' => '',
+'tooltip-p-logo' => 'Trang đầu',
+'accesskey-n-mainpage' => 'z',
+'tooltip-n-mainpage' => 'Trang đầu của dự án mở',
+'accesskey-n-portal' => '',
+'tooltip-n-portal' => 'Giới thiệu dự án, cách sử dụng, tìm kiếm thông tin ở đây',
+'accesskey-n-currentevents' => '',
+'tooltip-n-currentevents' => 'Xem thời sự',
+'accesskey-n-recentchanges' => 'r',
+'tooltip-n-recentchanges' => 'Danh sách các thay đổi gần đây',
+'accesskey-n-randompage' => 'x',
+'tooltip-n-randompage' => 'Xem trang ngẫu nhiên',
+'accesskey-n-help' => '',
+'tooltip-n-help' => 'Nơi tìm hiểu thêm cách dùng.',
+'accesskey-n-sitesupport' => '',
+'tooltip-n-sitesupport' => 'Quyên góp xây dựng dự án mở',
+'accesskey-t-whatlinkshere' => 'j',
+'tooltip-t-whatlinkshere' => 'Các trang liên kết đến đây',
+'accesskey-t-recentchangeslinked' => 'k',
+'tooltip-t-recentchangeslinked' => 'Thay đổi gần đây của các trang liên kết đến đây',
+'accesskey-feed-rss' => '',
+'tooltip-feed-rss' => 'Nạp RSS cho trang này',
+'accesskey-feed-atom' => '',
+'tooltip-feed-atom' => 'Nạp Atom cho trang này',
+'accesskey-t-contributions' => '',
+'tooltip-t-contributions' => 'Xem đóng góp của người này',
+'accesskey-t-emailuser' => '',
+'tooltip-t-emailuser' => 'Gửi thư cho người này',
+'accesskey-t-upload' => 'u',
+'tooltip-t-upload' => 'Tải hình ảnh hoặc tệp tin lên',
+'accesskey-t-specialpages' => 'q',
+'tooltip-t-specialpages' => 'Danh sách các trang đặc biệt',
+'accesskey-ca-nstab-main' => 'c',
+'tooltip-ca-nstab-main' => 'Xem trang này',
+'accesskey-ca-nstab-user' => 'c',
+'tooltip-ca-nstab-user' => 'Xem trang về người này',
+'accesskey-ca-nstab-media' => 'c',
+'tooltip-ca-nstab-media' => 'Xem trang phương tiện',
+'accesskey-ca-nstab-special' => '',
+'tooltip-ca-nstab-special' => 'Đây là một trang dặc biệt, bạn không thể sửa đổi được nó.',
+'accesskey-ca-nstab-project' => 'a',
+'tooltip-ca-nstab-project' => 'Xem trang dự án',
+'accesskey-ca-nstab-image' => 'c',
+'tooltip-ca-nstab-image' => 'Xem trang hình',
+'accesskey-ca-nstab-mediawiki' => 'c',
+'tooltip-ca-nstab-mediawiki' => 'Xem thông báo hệ thống',
+'accesskey-ca-nstab-template' => 'c',
+'tooltip-ca-nstab-template' => 'Xem tiêu bản',
+'accesskey-ca-nstab-help' => 'c',
+'tooltip-ca-nstab-help' => 'Xem trang trợ giúp',
+'accesskey-ca-nstab-category' => 'c',
+'tooltip-ca-nstab-category' => 'Xem trang thể loại',
 
 
 # EXIF
@@ -1231,8 +1285,6 @@ ta[\'ca-nstab-category\'] = new Array(\'c\',\'Xem trang thể loại\');',
 'allpagesfrom' => 'Xem trang từ:',
 
 # new stuffs
-'already_bureaucrat' => 'Người này đã là tổng quản lý',
-'already_sysop' => 'Người này đã là quản lý',
 'changed' => 'Đã sửa',
 'compareselectedversions' => 'So sánh các bản đã chọn',
 'createarticle' => 'Viết bài mới',
@@ -1303,7 +1355,7 @@ Bài với tên "[[$1]]" đã tồn tại. Bạn có muốn xóa nó để di ch
 
 'templatesused' => 'Các tiêu bản dùng trong trang này',
 'thumbsize' => 'Kích thước thu nhỏ:&nbsp;',
-'tooltip-diff' => 'Xem thay đổi bạn đã thực hiện [alt-v]',
+'tooltip-diff' => 'Xem thay đổi bạn đã thực hiện',
 'tryexact' => 'Thử tìm đoạn văn khớp chính xác với từ khóa',
 'upload_directory_read_only' => 'Thư mục tải lên không ghi vào được',
 'uploadvirus' => 'Tệp tin có virút: $1',

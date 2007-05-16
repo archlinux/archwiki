@@ -1,8 +1,7 @@
 <?php
 /**
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 /**
@@ -51,7 +50,7 @@ function wfSpecialSpecialpages_gen($pages,$heading,$sk) {
 	/** Now output the HTML */
 	$wgOut->addHTML( '<h2>' . wfMsgHtml( $heading ) . "</h2>\n<ul>" );
 	foreach ( $sortedPages as $desc => $title ) {
-		$link = $sk->makeKnownLinkObj( $title, $desc );
+		$link = $sk->makeKnownLinkObj( $title , htmlspecialchars( $desc ) );
 		$wgOut->addHTML( "<li>{$link}</li>\n" );
 	}
 	$wgOut->addHTML( "</ul>\n" );

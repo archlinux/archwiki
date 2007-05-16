@@ -1,14 +1,8 @@
 <?php
 /** Croatian (hrvatski)
   *
-  * @package MediaWiki
-  * @subpackage Language
+  * @addtogroup Language
   */
-
-
-$quickbarSettings = array(
-	'Bez', 'Lijevo nepomično', 'Desno nepomično', 'Lijevo leteće'
-);
 
 $skinNames = array(
 	'standard'  => 'Standardna',
@@ -290,6 +284,7 @@ Funkcija: $1<br />
 Upit: $2',
 'viewsource'            => 'Vidi izvornik',
 'viewsourcefor'         => 'za $1',
+# problem with link: [[{{ns:4}}:Protected page|Zaštićena stranica]]
 'protectedtext'         => 'Ova je stranica zaključana čime je onemogućeno njeno uređivanje; za ovo postoji nekoliko mogućih razloga, molim pogledajte članak [[{{ns:4}}:Protected page|Zaštićena stranica]].
 
 Možete pogledati izvorni kod ove stranice i kopirati ga:',
@@ -406,12 +401,13 @@ Molim unesite ispravno oblikovanu adresu ili ostavite polje praznim.',
 Razlog je:<br />\'\'$2\'\'
 
 Ako želite raspraviti blokiranje
-javite se administratoru $1 ili nekom drugom [[Project:Administrators|administratoru]].
+javite se administratoru $1 ili nekom drugom [[{{MediaWiki:grouppage-sysop}}|administratoru]].
 
 Ne možete se koristiti naredbom "piši suradniku" ako niste
 registrirali valjanu e-mail adresu u svojim [[Special:Preferences|postavkama]].
 
 Vaša IP adresa je $3. Molimo vas da je spomenete u porukama o ovom predmetu.',
+'grouppage-sysop'       => 'Project:Administrators',
 'whitelistedittitle'    => 'Za uređivanje stranice morate se prijaviti',
 'whitelistedittext'     => 'Za uređivanje stranice morate se $1.',
 'whitelistreadtitle'    => 'Za čitanje stranice morate se prijaviti',
@@ -428,9 +424,9 @@ Vaša IP adresa je $3. Molimo vas da je spomenete u porukama o ovom predmetu.',
 'newarticle'            => '(Novo)',
 'newarticletext'        => 'Došli ste na stranicu koja još nema sadržaja.<br />
 *Ako želite unijeti sadržaj, počnite tipkati u prozor ispod ovog teksta.
-*Ako vam treba pomoć, idite na [[Project:Pomoć|stranicu za pomoć]].
+*Ako vam treba pomoć, idite na [[{{MediaWiki:helppage}}|stranicu za pomoć]].
 *Ako ste ovamo dospjeli slučajno, kliknite "Natrag" (Back) u svom programu.',
-'anontalkpagetext'      => '----\'\'Ovo je stranica za razgovor s anonimnim suradnikom koji nije otvorio suradnički račun ili se njime ne koristi. Zbog toga se moramo služiti brojčanom [[IP adresa|IP adresom]] kako bismo ga identificirali. Takvu adresu često koristi više ljudi. Ako ste anonimni suradnik i smatrate da su vam upućeni irelevantni komentari, molimo vas da [[Special:Userlogin|otvorite suradnički račun ili se prijavite]] te tako u budućnosti izbjegnete zamjenu s drugim anonimnim suradnicima.\'\'',
+'anontalkpagetext'      => '----\'\'Ovo je stranica za razgovor s anonimnim suradnikom koji nije otvorio suradnički račun ili se njime ne koristi. Zbog toga se moramo služiti brojčanom IP adresom kako bismo ga identificirali. Takvu adresu često koristi više ljudi. Ako ste anonimni suradnik i smatrate da su vam upućeni irelevantni komentari, molimo vas da [[Special:Userlogin|otvorite suradnički račun ili se prijavite]] te tako u budućnosti izbjegnete zamjenu s drugim anonimnim suradnicima.\'\'',
 'noarticletext'         => '(Trenutno na ovoj stranici nema teksta)',
 'clearyourcache'        => '\'\'\'Napomena:\'\'\' Nakon snimanja trebate očistiti međuspremnik svog preglednika kako biste vidjeli promjene.
 \'\'\'Mozilla / Firefox / Safari:\'\'\' držite \'\'Shift\'\' i pritisnite \'\'Reload\'\', ili pritisnite \'\'Ctrl-Shift-R\'\' (\'\'Cmd-Shift-R\'\' na Apple Macu);
@@ -467,6 +463,7 @@ Molimo razmislite o rastavljanju stranice na manje odjeljke.',
 'longpageerror'         => '<strong>POGRJEŠKA: Tekst koji ste unijeli dug je $1 kilobajta, što je više od maksimalnih $2 kilobajta. Nije ga moguće snimiti.</strong>',
 'readonlywarning'       => '<strong>UPOZORENJE: Baza podataka je zaključana zbog održavanja, pa trenutno ne možete sačuvati svoje
 promjene. Najbolje je da kopirate i zaljepite tekst u tekstualnu datoteku te je snimite za kasnije.</strong>',
+# problem with link: [[Project:Protected_page_guidelines|smjernice o zaključavanju]]
 'protectedpagewarning'  => '<strong>UPOZORENJE: ova stranica je zaključana i mogu je uređivati samo suradnici s administratorskim pravima. Molimo pogledajte [[Project:Protected_page_guidelines|smjernice o zaključavanju]].</strong>',
 'semiprotectedpagewarning'=> '\'\'\'Napomena:\'\'\' Ovu stranicu mogu uređivati samo prijavljeni suradnici.',
 'templatesused'         => 'Predlošci korišteni na ovoj stranici:',
@@ -529,7 +526,7 @@ postavili dodatna ograničenja.',
 'selectolderversionfordiff'=> 'Izaberi stariju inačicu za usporedbu',
 'compareselectedversions'=> 'Usporedi odabrane inačice',
 'searchresults'         => 'Rezultati pretrage',
-'searchresulttext'      => 'Za više obavijesti o pretraživanju projekta {{SITENAME}} vidi [[Project:Tražilica]].',
+'searchresulttext'      => 'Za više obavijesti o pretraživanju projekta {{SITENAME}} vidi [[{{MediaWiki:helppage}}|{{int:help}}]].',
 'searchsubtitle'           => 'Za upit "[[:$1]]"',
 'searchsubtitleinvalid'           => 'Za upit "$1"',
 'badquery'              => 'Loše oblikovan upit',
@@ -562,6 +559,11 @@ $2 Popis se preusmjerava   Traženje za $3 $9',
 za podešavanje korisničkih postavki.',
 'prefsreset'            => 'Postavke su vraćene na prvotne vrijednosti.',
 'qbsettings'            => 'Traka',
+'qbsettings-none'	=> 'Bez',
+'qbsettings-fixedleft'	=> 'Lijevo nepomično',
+'qbsettings-fixedright'	=> 'Desno nepomično',
+'qbsettings-floatingleft'	=> 'Lijevo leteće',
+'qbsettings-floatingright'	=> 'Desno leteće',
 'changepassword'        => 'Promjena lozinke',
 'skin'                  => 'Izgled',
 'math'                  => 'Prikaz matematičkih formula',
@@ -639,9 +641,10 @@ Neoznačene skupine neće se promijeniti. Skupinu možete deselektirati istovrem
 'reupload'              => 'Ponovno postavi',
 'reuploaddesc'          => 'Vratite se u obrazac za postavljanje.',
 'uploadnologin'         => 'Niste prijavljeni',
-'uploadnologintext'     => 'Za postavljanje datoteka morate biti  [[Special:Userlogin|prijavljeni].',
+'uploadnologintext'     => 'Za postavljanje datoteka morate biti  [[Special:Userlogin|prijavljeni]].',
 'upload_directory_read_only'=> 'Server ne može pisati u direktorij za postavljanje ($1).',
 'uploaderror'           => 'Greška kod postavljanja',
+# problem with link: [[Project:Slike|upotrebi slika]]
 'uploadtext'            => '\'\'\'STANITE!\'\'\' Prije nego što postavite sliku pročitajte i slijedite upute
 o [[Project:Slike|upotrebi slika]].
 
@@ -652,9 +655,9 @@ Stavljanjem oznake u odgovarajući kvadratić morate potvrditi da postavljanjem 
 Na kraju pritisnite dugme "Postavi datoteku".
 
 Da biste na stranicu stavili sliku, koristite poveznice tipa
-\'\'\'<nowiki>[[{{ns:6}}:datoteka.jpg]]</nowiki>\'\'\',
-\'\'\'<nowiki>[[{{ns:6}}:datoteka.png|popratni tekst]]</nowiki>\'\'\' ili
-\'\'\'<nowiki>[[{{ns:-2}}:datoteka.ogg]]</nowiki>\'\'\' za izravnu poveznicu na datoteku.',
+\'\'\'<nowiki>[[</nowiki>{{ns:6}}<nowiki>:datoteka.jpg]]</nowiki>\'\'\',
+\'\'\'<nowiki>[[</nowiki>{{ns:6}}<nowiki>:datoteka.png|popratni tekst]]</nowiki>\'\'\' ili
+\'\'\'<nowiki>[[</nowiki>{{ns:-2}}<nowiki>:datoteka.ogg]]</nowiki>\'\'\' za izravnu poveznicu na datoteku.',
 'uploadlog'             => 'evidencija postavljanja',
 'uploadlogpage'         => 'Evidencija_postavljanja',
 'uploadlogpagetext'     => 'Dolje je popis nedavno postavljenih slika.',
@@ -838,6 +841,7 @@ E-mail adresa iz vaših postavki nalazit će se u "From" polju poruke i primatel
 'emailsent'             => 'E-mail poslan',
 'emailsenttext'         => 'Vaša poruka je poslana.',
 'watchlist'             => 'Moj popis praćenja',
+'mywatchlist'             => 'Moj popis praćenja',
 'nowatchlist'           => 'Na vašem popisu praćenja nema nijednog članka.',
 'watchnologin'          => 'Niste prijavljeni',
 'watchnologintext'      => 'Morate biti [[Special:Userlogin|prijavljeni]]
@@ -904,7 +908,7 @@ Za promjene svog popisa praćenja posjetite
 {{fullurl:Special:Watchlist|edit=yes}}
 
 Za pomoć posjetite:
-{{fullurl:Help:Contents}}',
+{{fullurl:{{MediaWiki:helppage}}}}',
 'deletepage'            => 'Izbriši stranicu',
 'confirm'               => 'Potvrdi',
 'excontent'             => 'sadržaj je bio: \'$1\'',
@@ -915,7 +919,8 @@ Za pomoć posjetite:
 'deletesub'             => '(Brišem "$1")',
 'historywarning'        => 'UPOZORENJE: Stranica koju želite obrisati ima prijašnje inačice:',
 'confirmdeletetext'     => 'Zauvijek ćete izbrisati stranicu ili sliku zajedno s prijašnjim inačicama.
-Molim potvrdite svoju namjeru, da razumijete posljedice i da ovo radite u skladu s [[Project:Pravila|pravilima]].',
+Molim potvrdite svoju namjeru, da razumijete posljedice i da ovo radite u skladu s [[{{MediaWiki:policy-url}}|pravilima]].',
+'policy-url'            => 'Project:Pravila',
 'actioncomplete'        => 'Zahvat završen',
 'deletedtext'           => '"$1" je izbrisana.
 Vidi $2 za evidenciju nedavnih brisanja.',
@@ -944,6 +949,7 @@ Posljednju promjenu napravio je suradnik [[User:$3|$3]] ([[User talk:$3|Talk]]).
 kako bi izbjegla zloupotreba. Molimo vas da u pregledniku pritisnete "Natrag" (Back) i ponovno učitate stranicu
 s koje ste stigli.',
 'protectlogpage'        => 'Evidencija zaštićivanja',
+# problem with link: [[Project:Protected page|Zaštićena stranica]]
 'protectlogtext'        => 'Ispod je popis zaštićivanja i uklanjanja zaštite pojedinih stranica.
 Pogledajte članak [[Project:Protected page|Zaštićena stranica]] za više obavijesti na ovu temu.',
 'protectedarticle'      => 'članak "[[$1]]" je zaštićen',
@@ -959,7 +965,7 @@ Pogledajte članak [[Project:Protected page|Zaštićena stranica]] za više obav
 'unprotectcomment'      => 'Razlog za uklanjanje zaštite',
 'protect-unchain'       => 'Otključaj ovlaštenja za premještanje',
 'protect-text'          => 'Ovdje možete pregledati i promijeniti razinu zaštite za stranicu <strong>$1</strong>.
-Molim pripazite da ovo radite u skladu s [[Project:Pravila|pravilima]].',
+Molim pripazite da ovo radite u skladu s [[{{MediaWiki:policy-url}}|pravilima]].',
 'protect-viewtext'      => 'Vaš suradnički račun nema ovlasti
 za promjenu razine zaštite stranice. Ovo su trenutne postavke stranice <strong>$1</strong>:',
 'protect-default'       => '(bez zaštite)',
@@ -985,7 +991,7 @@ Tekst izbrisanih inačica dostupan je samo administratorima.',
 'invert'                => 'Sve osim odabranog',
 'contributions'         => 'Doprinosi suradnika',
 'mycontris'             => 'Moji doprinosi',
-'contribsub'            => 'Za $1',
+'contribsub2'            => 'Za $1 ($2)',
 'nocontribs'            => 'Nema promjena koje udovoljavaju ovim kriterijima.',
 'ucnote'                => 'Ovdje je zadnjih <b>$1</b> promjena ovog suradnika u zadnjih <b>$2</b> dana.',
 'uclinks'               => 'Pogledaj zadnjih $1 promjena; pogledaj zadnjih $2 dana.',
@@ -1007,7 +1013,7 @@ Tekst izbrisanih inačica dostupan je samo administratorima.',
 'blockip'               => 'Blokiraj suradnika',
 'blockiptext'           => 'Koristite donji obrazac za blokiranje pisanja pojedinih suradnika ili IP adresa .
 To biste trebali raditi samo zbog sprječavanja vandalizma i u skladu
-sa [[Project:Policy|smjernicama]].
+sa [[{{MediaWiki:policy-url}}|smjernicama]].
 Upišite i razlog za ovo blokiranje (npr. stranice koje su
 vandalizirane).',
 'ipaddress'             => 'IP adresa',
@@ -1064,22 +1070,9 @@ mijenjanje postavki, uređivanje popisa praćenja i druge stvari koje zahtijevaj
 'lockdbsuccesstext'     => 'Baza podataka je zaključana.
 <br />Ne zaboravite otključati po završetku održavanja.',
 'unlockdbsuccesstext'   => 'Baza podataka je otključana.',
-'makesysoptitle'        => 'Načini suradnika administratorom',
-'makesysoptext'         => 'Ovaj obrazac služi birokratima za dodjeljivanje administratorskih prava pojedinom suradniku. Utipkajte ime suradnika u kućicu i pritisnite dugme kako biste suradniku dali administratorska prava.',
-'makesysopname'         => 'Ime suradnika:',
-'makesysopsubmit'       => 'Učini ovog suradnika administratorom',
-'makesysopok'           => '<b>Suradnik "$1" je postao administrator</b>',
-'makesysopfail'         => '<b>Suradnika "$1" nije se moglo učiniti administratorom. (Jeste li pravilno upisali ime?)</b>',
-'setbureaucratflag'     => 'Postavi oznaku birokrata',
 'rightslogtext'         => 'Ovo je evidencija promjena suradničkih prava.',
-'rights'                => 'Prava:',
-'set_user_rights'       => 'Postavi suradnička prava',
-'user_rights_set'       => '<b>Prava za suradnika "$1" postavljena</b>',
-'set_rights_fail'       => '<b>Prava za suradnika "$1" nisu postavljena. (Jeste li pravilno upisali ime?)</b>',
-'makesysop'             => 'Učini suradnika administratorom',
-'already_sysop'         => 'Ovaj je suradnik već administrator',
-'already_bureaucrat'    => 'Ovaj je suradnik već birokrat',
 'movepage'              => 'Premjesti stranicu',
+# problem with link: [[Special:Maintenance|provjerite]] does not exist in MediaWiki by default
 'movepagetext'          => 'Korištenjem ovog obrasca ćete preimenovati stranicu i premjestiti sve stare izmjene
 na novo ime.
 Stari će se naslov pretvoriti u stranicu koja automatski preusmjerava na novi naslov.
@@ -1136,7 +1129,7 @@ Odredišni članak "[[$1]]" već postoji. Želite li ga obrisati da biste naprav
 
 Za izvoz stranica unesite njihove naslove u polje ispod, jedan naslov po retku, i označite želite li trenutnu inačicu zajedno sa svim prijašnjima, ili samo trenutnu inačicu s informacijom o zadnjoj promjeni.
 
-U potonjem slučaju možete koristiti i poveznicu, npr. [[{{ns:Special}}:Export/Hrvatska]] za članak [[Hrvatska]].',
+U potonjem slučaju možete koristiti i poveznicu, npr. [[{{ns:Special}}:Export/{{MediaWiki:mainpage}}]] za članak [[{{MediaWiki:mainpage}}]].',
 'exportcuronly'         => 'Uključi samo trenutnu inačicu, ne i sve prijašnje',
 'exportnohistory'       => '----
 \'\'\'Napomena:\'\'\' izvoz cjelokupne stranice sa svim prethodnim izmjenama onemogućen je zbog opterećenja poslužitelja.',
@@ -1163,13 +1156,13 @@ U potonjem slučaju možete koristiti i poveznicu, npr. [[{{ns:Special}}:Export/
 'importnosources'       => 'Nije unesen nijedan izvor za transwiki uvoz i neposredno postavljanje povijesti je onemogućeno.',
 'importnofile'          => 'Nije postavljena uvozna datoteka.',
 'importuploaderror'     => 'Postavljanje uvozne datoteke nije uspjelo; možda je datoteka veća od dozvoljene veličine.',
-'tooltip-search'        => 'Pretraži projekt {{SITENAME}} [alt-f]',
-'tooltip-minoredit'     => 'Označi kao manju promjenu [alt-i]',
-'tooltip-save'          => 'Sačuvaj promjene [alt-s]',
-'tooltip-preview'       => 'Prikaži kako će izgledati, molimo koristite prije snimanja! [alt-p]',
-'tooltip-diff'          => 'Prikaži promjene učinjene u tekstu. [alt-v]',
-'tooltip-compareselectedversions'=> 'Prikaži usporedbu izabranih inačica ove stranice. [alt-v]',
-'tooltip-watch'         => 'Dodaj na popis praćenja [alt-w]',
+'tooltip-search'        => 'Pretraži projekt {{SITENAME}}',
+'tooltip-minoredit'     => 'Označi kao manju promjenu',
+'tooltip-save'          => 'Sačuvaj promjene',
+'tooltip-preview'       => 'Prikaži kako će izgledati, molimo koristite prije snimanja!',
+'tooltip-diff'          => 'Prikaži promjene učinjene u tekstu.',
+'tooltip-compareselectedversions'=> 'Prikaži usporedbu izabranih inačica ove stranice.',
+'tooltip-watch'         => 'Dodaj na popis praćenja',
 'monobook.css'          => '/** Ovdje idu izmjene monobook stylesheeta */',
 'nodublincore'          => 'Dublin Core RDF metapodaci su isključeni na ovom serveru.',
 'nocreativecommons'     => 'Creative Commons RDF metapodaci su isključeni na ovom serveru.',
@@ -1212,56 +1205,104 @@ U potonjem slučaju možete koristiti i poveznicu, npr. [[{{ns:Special}}:Export/
 'rcpatroldisabledtext'  => 'Naredba "Nadziri nedavne promjene" trenutno je isključena.',
 'markedaspatrollederror'=> 'Ne mogu označiti za pregledano',
 'markedaspatrollederrortext'=> 'Morate odabrati inačicu koju treba označiti za pregledanu.',
-'monobook.js'           => '/* tooltips and access keys */
-var ta = new Object();
-ta[\'pt-userpage\'] = new Array(\'.\',\'Moja suradnička stranica\');
-ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Suradnička stranica za IP adresu pod kojom uređujete\');
-ta[\'pt-mytalk\'] = new Array(\'n\',\'Moja stranica za razgovor\');
-ta[\'pt-anontalk\'] = new Array(\'n\',\'Razgovor o suradnicima s ove IP adrese\');
-ta[\'pt-preferences\'] = new Array(\'\',\'Moje postavke\');
-ta[\'pt-watchlist\'] = new Array(\'l\',\'Popis stranica koje pratite.\');
-ta[\'pt-mycontris\'] = new Array(\'y\',\'Popis mojih doprinosa\');
-ta[\'pt-login\'] = new Array(\'o\',\'Predlažemo vam da se prijavite, ali nije obvezno.\');
-ta[\'pt-anonlogin\'] = new Array(\'o\',\'Predlažemo vam da se prijavite, ali nije obvezno.\');
-ta[\'pt-logout\'] = new Array(\'\',\'Odjavi se\');
-ta[\'ca-talk\'] = new Array(\'t\',\'Razgovor o stranici\');
-ta[\'ca-edit\'] = new Array(\'e\',\'Možete uređivati ovu stranicu. Koristite Pregled kako će izgledati prije nego što snimite.\');
-ta[\'ca-addsection\'] = new Array(\'+\',\'Dodaj komentar ovom razgovoru.\');
-ta[\'ca-viewsource\'] = new Array(\'e\',\'Ova stranica je zaštićena. Možete pogledati izvorni kod.\');
-ta[\'ca-history\'] = new Array(\'h\',\'Ranije izmjene na ovoj stranici.\');
-ta[\'ca-protect\'] = new Array(\'=\',\'Zaštiti ovu stranicu\');
-ta[\'ca-delete\'] = new Array(\'d\',\'Izbriši ovu stranicu\');
-ta[\'ca-undelete\'] = new Array(\'d\',\'Vrati uređivanja na ovoj stranici prije nego što je izbrisana\');
-ta[\'ca-move\'] = new Array(\'m\',\'Premjesti ovu stranicu\');
-ta[\'ca-watch\'] = new Array(\'w\',\'Dodaj ovu stranicu na svoj popis praćenja\');
-ta[\'ca-unwatch\'] = new Array(\'w\',\'Ukloni ovu stranicu s popisa praćenja\');
-ta[\'search\'] = new Array(\'f\',\'Pretraži ovaj wiki\');
-ta[\'p-logo\'] = new Array(\'\',\'Glavna stranica\');
-ta[\'n-mainpage\'] = new Array(\'z\',\'Posjeti glavnu stranicu\');
-ta[\'n-portal\'] = new Array(\'\',\'O projektu, što možete učiniti, gdje je što\');
-ta[\'n-currentevents\'] = new Array(\'\',\'O trenutnim događajima\');
-ta[\'n-recentchanges\'] = new Array(\'r\',\'Popis nedavnih promjena u wikiju.\');
-ta[\'n-randompage\'] = new Array(\'x\',\'Učitaj slučajnu stranicu\');
-ta[\'n-help\'] = new Array(\'\',\'Mjesto za pomoć suradnicima.\');
-ta[\'n-sitesupport\'] = new Array(\'\',\'Podržite nas materijalno\');
-ta[\'t-whatlinkshere\'] = new Array(\'j\',\'Popis svih stranica koje sadrže poveznice ovamo\');
-ta[\'t-recentchangeslinked\'] = new Array(\'k\',\'Nedavne promjene na stranicama na koje vode ovdašnje poveznice\');
-ta[\'feed-rss\'] = new Array(\'\',\'RSS feed za ovu stranicu\');
-ta[\'feed-atom\'] = new Array(\'\',\'Atom feed za ovu stranicu\');
-ta[\'t-contributions\'] = new Array(\'\',\'Pogledaj popis suradnikovih doprinosa\');
-ta[\'t-emailuser\'] = new Array(\'\',\'Pošalji suradniku e-mail\');
-ta[\'t-upload\'] = new Array(\'u\',\'Postavi slike i druge medije\');
-ta[\'t-specialpages\'] = new Array(\'q\',\'Popis posebnih stranica\');
-ta[\'ca-nstab-main\'] = new Array(\'c\',\'Pogledaj sadržaj\');
-ta[\'ca-nstab-user\'] = new Array(\'c\',\'Pogledaj suradničku stranicu\');
-ta[\'ca-nstab-media\'] = new Array(\'c\',\'Pogledaj stranicu s opisom medija\');
-ta[\'ca-nstab-special\'] = new Array(\'\',\'Ovo je posebna stranica koju nije moguće izravno uređivati.\');
-ta[\'ca-nstab-project\'] = new Array(\'a\',\'Pogledaj stranicu o projektu\');
-ta[\'ca-nstab-image\'] = new Array(\'c\',\'Pogledaj stranicu o slici\');
-ta[\'ca-nstab-mediawiki\'] = new Array(\'c\',\'Pogledaj sistemske poruke\');
-ta[\'ca-nstab-template\'] = new Array(\'c\',\'Pogledaj predložak\');
-ta[\'ca-nstab-help\'] = new Array(\'c\',\'Pogledaj stranicu za pomoć\');
-ta[\'ca-nstab-category\'] = new Array(\'c\',\'Pogledaj stranicu kategorije\');',
+'monobook.js' => '/* Deprecated; use [[MediaWiki:common.js]] */',
+
+'accesskey-pt-userpage' => '.',
+'tooltip-pt-userpage' => 'Moja suradnička stranica',
+'accesskey-pt-anonuserpage' => '.',
+'tooltip-pt-anonuserpage' => 'Suradnička stranica za IP adresu pod kojom uređujete',
+'accesskey-pt-mytalk' => 'n',
+'tooltip-pt-mytalk' => 'Moja stranica za razgovor',
+'accesskey-pt-anontalk' => 'n',
+'tooltip-pt-anontalk' => 'Razgovor o suradnicima s ove IP adrese',
+'accesskey-pt-preferences' => '',
+'tooltip-pt-preferences' => 'Moje postavke',
+'accesskey-pt-watchlist' => 'l',
+'tooltip-pt-watchlist' => 'Popis stranica koje pratite.',
+'accesskey-pt-mycontris' => 'y',
+'tooltip-pt-mycontris' => 'Popis mojih doprinosa',
+'accesskey-pt-login' => 'o',
+'tooltip-pt-login' => 'Predlažemo vam da se prijavite, ali nije obvezno.',
+'accesskey-pt-anonlogin' => 'o',
+'tooltip-pt-anonlogin' => 'Predlažemo vam da se prijavite, ali nije obvezno.',
+'accesskey-pt-logout' => '',
+'tooltip-pt-logout' => 'Odjavi se',
+'accesskey-ca-talk' => 't',
+'tooltip-ca-talk' => 'Razgovor o stranici',
+'accesskey-ca-edit' => 'e',
+'tooltip-ca-edit' => 'Možete uređivati ovu stranicu. Koristite Pregled kako će izgledati prije nego što snimite.',
+'accesskey-ca-addsection' => '+',
+'tooltip-ca-addsection' => 'Dodaj komentar ovom razgovoru.',
+'accesskey-ca-viewsource' => 'e',
+'tooltip-ca-viewsource' => 'Ova stranica je zaštićena. Možete pogledati izvorni kod.',
+'accesskey-ca-history' => 'h',
+'tooltip-ca-history' => 'Ranije izmjene na ovoj stranici.',
+'accesskey-ca-protect' => '=',
+'tooltip-ca-protect' => 'Zaštiti ovu stranicu',
+'accesskey-ca-delete' => 'd',
+'tooltip-ca-delete' => 'Izbriši ovu stranicu',
+'accesskey-ca-undelete' => 'd',
+'tooltip-ca-undelete' => 'Vrati uređivanja na ovoj stranici prije nego što je izbrisana',
+'accesskey-ca-move' => 'm',
+'tooltip-ca-move' => 'Premjesti ovu stranicu',
+'accesskey-ca-watch' => 'w',
+'tooltip-ca-watch' => 'Dodaj ovu stranicu na svoj popis praćenja',
+'accesskey-ca-unwatch' => 'w',
+'tooltip-ca-unwatch' => 'Ukloni ovu stranicu s popisa praćenja',
+'accesskey-search' => 'f',
+'tooltip-search' => 'Pretraži ovaj wiki',
+'accesskey-p-logo' => '',
+'tooltip-p-logo' => 'Glavna stranica',
+'accesskey-n-mainpage' => 'z',
+'tooltip-n-mainpage' => 'Posjeti glavnu stranicu',
+'accesskey-n-portal' => '',
+'tooltip-n-portal' => 'O projektu, što možete učiniti, gdje je što',
+'accesskey-n-currentevents' => '',
+'tooltip-n-currentevents' => 'O trenutnim događajima',
+'accesskey-n-recentchanges' => 'r',
+'tooltip-n-recentchanges' => 'Popis nedavnih promjena u wikiju.',
+'accesskey-n-randompage' => 'x',
+'tooltip-n-randompage' => 'Učitaj slučajnu stranicu',
+'accesskey-n-help' => '',
+'tooltip-n-help' => 'Mjesto za pomoć suradnicima.',
+'accesskey-n-sitesupport' => '',
+'tooltip-n-sitesupport' => 'Podržite nas materijalno',
+'accesskey-t-whatlinkshere' => 'j',
+'tooltip-t-whatlinkshere' => 'Popis svih stranica koje sadrže poveznice ovamo',
+'accesskey-t-recentchangeslinked' => 'k',
+'tooltip-t-recentchangeslinked' => 'Nedavne promjene na stranicama na koje vode ovdašnje poveznice',
+'accesskey-feed-rss' => '',
+'tooltip-feed-rss' => 'RSS feed za ovu stranicu',
+'accesskey-feed-atom' => '',
+'tooltip-feed-atom' => 'Atom feed za ovu stranicu',
+'accesskey-t-contributions' => '',
+'tooltip-t-contributions' => 'Pogledaj popis suradnikovih doprinosa',
+'accesskey-t-emailuser' => '',
+'tooltip-t-emailuser' => 'Pošalji suradniku e-mail',
+'accesskey-t-upload' => 'u',
+'tooltip-t-upload' => 'Postavi slike i druge medije',
+'accesskey-t-specialpages' => 'q',
+'tooltip-t-specialpages' => 'Popis posebnih stranica',
+'accesskey-ca-nstab-main' => 'c',
+'tooltip-ca-nstab-main' => 'Pogledaj sadržaj',
+'accesskey-ca-nstab-user' => 'c',
+'tooltip-ca-nstab-user' => 'Pogledaj suradničku stranicu',
+'accesskey-ca-nstab-media' => 'c',
+'tooltip-ca-nstab-media' => 'Pogledaj stranicu s opisom medija',
+'accesskey-ca-nstab-special' => '',
+'tooltip-ca-nstab-special' => 'Ovo je posebna stranica koju nije moguće izravno uređivati.',
+'accesskey-ca-nstab-project' => 'a',
+'tooltip-ca-nstab-project' => 'Pogledaj stranicu o projektu',
+'accesskey-ca-nstab-image' => 'c',
+'tooltip-ca-nstab-image' => 'Pogledaj stranicu o slici',
+'accesskey-ca-nstab-mediawiki' => 'c',
+'tooltip-ca-nstab-mediawiki' => 'Pogledaj sistemske poruke',
+'accesskey-ca-nstab-template' => 'c',
+'tooltip-ca-nstab-template' => 'Pogledaj predložak',
+'accesskey-ca-nstab-help' => 'c',
+'tooltip-ca-nstab-help' => 'Pogledaj stranicu za pomoć',
+'accesskey-ca-nstab-category' => 'c',
+'tooltip-ca-nstab-category' => 'Pogledaj stranicu kategorije',
 'deletedrevision'       => 'Izbrisana stara inačica $1.',
 'previousdiff'          => '← Usporedba s prethodnom',
 'nextdiff'              => 'Usporedba sa sljedećom →',

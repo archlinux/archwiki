@@ -3,20 +3,18 @@
  * See skin.txt
  *
  * @todo document
- * @package MediaWiki
- * @subpackage Skins
+ * @addtogroup Skins
  */
 
 if( !defined( 'MEDIAWIKI' ) )
 	die( -1 );
 
 /** */
-require_once('MonoBook.php');
+require_once( dirname(__FILE__) . '/MonoBook.php' );
 
 /**
  * @todo document
- * @package MediaWiki
- * @subpackage Skins
+ * @addtogroup Skins
  */
 class SkinMySkin extends SkinTemplate {
 	function initPage( &$out ) {

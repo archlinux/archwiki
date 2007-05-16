@@ -1,7 +1,6 @@
 <?php
 /**
- * @package MediaWiki
- * @subpackage Language
+ * @addtogroup Language
  */
 
 if( !defined( 'MEDIAWIKI' ) ) {
@@ -23,7 +22,7 @@ if( !defined( 'MEDIAWIKI' ) ) {
 
 # Read language names
 global $wgLanguageNames;
-require_once( 'Names.php' );
+require_once( dirname(__FILE__) . '/Names.php' ) ;
 
 global $wgInputEncoding, $wgOutputEncoding;
 
@@ -62,7 +61,7 @@ class Language {
 	var $mConverter, $mVariants, $mCode, $mLoaded = false;
 
 	static public $mLocalisationKeys = array( 'fallback', 'namespaceNames',
-		'quickbarSettings', 'skinNames', 'mathNames', 
+		'skinNames', 'mathNames', 
 		'bookstoreList', 'magicWords', 'messages', 'rtl', 'digitTransformTable', 
 		'separatorTransformTable', 'fallback8bitEncoding', 'linkPrefixExtension',
 		'defaultUserOptionOverrides', 'linkTrail', 'namespaceAliases', 
@@ -163,6 +162,11 @@ class Language {
 		return User::getDefaultOptions();
 	}
 
+	function getFallbackLanguageCode() {
+		$this->load();
+		return $this->fallback;
+	}
+
 	/**
 	 * Exports $wgBookstoreListEn
 	 * @return array
@@ -224,7 +228,22 @@ class Language {
 	}
 
 	/**
-	 * Get a namespace key by value, case insensetive.
+	 * Get a namespace key by value, case insensitive.
+	 * Only matches namespace names for the current language, not the
+	 * canonical ones defined in Namespace.php.
+	 *
+	 * @param string $text
+	 * @return mixed An integer if $text is a valid value otherwise false
+	 */
+	function getLocalNsIndex( $text ) {
+		$this->load();
+		$lctext = $this->lc($text);
+		return isset( $this->mNamespaceIds[$lctext] ) ? $this->mNamespaceIds[$lctext] : false;
+	}
+
+	/**
+	 * Get a namespace key by value, case insensitive.  Canonical namespace
+	 * names override custom ones defined for the current language.
 	 *
 	 * @param string $text
 	 * @return mixed An integer if $text is a valid value otherwise false
@@ -232,6 +251,7 @@ class Language {
 	function getNsIndex( $text ) {
 		$this->load();
 		$lctext = $this->lc($text);
+		if( ( $ns = Namespace::getCanonicalIndex( $lctext ) ) !== null ) return $ns;
 		return isset( $this->mNamespaceIds[$lctext] ) ? $this->mNamespaceIds[$lctext] : false;
 	}
 
@@ -254,8 +274,13 @@ class Language {
 	}
 
 	function getQuickbarSettings() {
-		$this->load();
-		return $this->quickbarSettings;
+		return array(
+			$this->getMessage( 'qbsettings-none' ),
+			$this->getMessage( 'qbsettings-fixedleft' ),
+			$this->getMessage( 'qbsettings-fixedright' ),
+			$this->getMessage( 'qbsettings-floatingleft' ),
+			$this->getMessage( 'qbsettings-floatingright' )
+		);
 	}
 
 	function getSkinNames() {
@@ -316,6 +341,7 @@ class Language {
 		$messageFiles = glob( "$IP/languages/messages/Messages*.php" );
 		$names = array();
 		foreach ( $messageFiles as $file ) {
+			$m = array();
 			if( preg_match( '/Messages([A-Z][a-z_]+)\.php$/', $file, $m ) ) {
 				$code = str_replace( '_', '-', strtolower( $m[1] ) );
 				if ( isset( $wgLanguageNames[$code] ) ) {
@@ -743,6 +769,9 @@ class Language {
 	*/
 	function timeanddate( $ts, $adj = false, $format = true, $timecorrection = false) {
 		$this->load();
+
+		$ts = wfTimestamp( TS_MW, $ts );
+
 		if ( $adj ) { 
 			$ts = $this->userAdjust( $ts, $timecorrection ); 
 		}
@@ -767,7 +796,7 @@ class Language {
 
 	function iconv( $in, $out, $string ) {
 		# For most languages, this is a wrapper for iconv
-		return iconv( $in, $out, $string );
+		return iconv( $in, $out . '//IGNORE', $string );
 	}
 
 	// callback functions for uc(), lc(), ucwords(), ucwordbreaks()
@@ -803,15 +832,17 @@ class Language {
 	}
 
 	function uc( $str, $first = false ) {
-		if ( function_exists( 'mb_strtoupper' ) )
-			if ( $first )
-				if ( self::isMultibyte( $str ) )
+		if ( function_exists( 'mb_strtoupper' ) ) {
+			if ( $first ) {
+				if ( self::isMultibyte( $str ) ) {
 					return mb_strtoupper( mb_substr( $str, 0, 1 ) ) . mb_substr( $str, 1 );
-				else
+				} else {
 					return ucfirst( $str );
-			else
+				}
+			} else {
 				return self::isMultibyte( $str ) ? mb_strtoupper( $str ) : strtoupper( $str );
-		else
+			}
+		} else {
 			if ( self::isMultibyte( $str ) ) {
 				list( $wikiUpperChars ) = $this->getCaseMaps();
 				$x = $first ? '^' : '';
@@ -820,8 +851,10 @@ class Language {
 					array($this,"ucCallback"),
 					$str
 				);
-			} else
+			} else {
 				return $first ? ucfirst( $str ) : strtoupper( $str );
+			}
+		}
 	}
 	
 	function lcfirst( $str ) {
@@ -992,6 +1025,7 @@ class Language {
 	 * @return string
 	 */
 	function firstChar( $s ) {
+		$matches = array();
 		preg_match( '/^([\x00-\x7f]|[\xc0-\xdf][\x80-\xbf]|' .
 		'[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xf7][\x80-\xbf]{3})/', $s, $matches);
 
@@ -1241,6 +1275,7 @@ class Language {
 		if( $length > 0 ) {
 			$string = substr( $string, 0, $length );
 			$char = ord( $string[strlen( $string ) - 1] );
+			$m = array();
 			if ($char >= 0xc0) {
 				# We got the first byte only of a multibyte char; remove it.
 				$string = substr( $string, 0, -1 );
@@ -1298,16 +1333,17 @@ class Language {
 	 * @return string
 	 */
 	function convertPlural( $count, $w1, $w2, $w3, $w4, $w5) {
-		return $count == '1' ? $w1 : $w2;
+		return ( $count == '1' || $count == '-1' ) ? $w1 : $w2;
 	}
 
 	/**
 	 * For translaing of expiry times
 	 * @param string The validated block time in English
+	 * @param $forContent, avoid html?
 	 * @return Somehow translated block time
 	 * @see LanguageFi.php for example implementation
 	 */
-	function translateBlockExpiry( $str ) {
+	function translateBlockExpiry( $str, $forContent=false ) {
 
 		$scBlockExpiryOptions = $this->getMessageFromDB( 'ipboptions' );
 
@@ -1319,9 +1355,12 @@ class Language {
 			if ( strpos($option, ":") === false )
 				continue;
 			list($show, $value) = explode(":", $option);
-			if ( strcmp ( $str, $value) == 0 )
-				return '<span title="' . htmlspecialchars($str). '">' .
-					htmlspecialchars( trim( $show ) ) . '</span>';
+			if ( strcmp ( $str, $value) == 0 ) {
+				if ( $forContent )
+					return htmlspecialchars($str) . htmlspecialchars( trim( $show ) );
+				else
+					return '<span title="' . htmlspecialchars($str). '">' . htmlspecialchars( trim( $show ) ) . '</span>';
+			}
 		}
 
 		return $str;
@@ -1537,11 +1576,9 @@ class Language {
 			$memcKey = wfMemcKey('localisation', $code );
 			$cache = $wgMemc->get( $memcKey );
 			if ( $cache ) {
-				$expired = false;
 				# Check file modification times
 				foreach ( $cache['deps'] as $file => $mtime ) {
 					if ( !file_exists( $file ) || filemtime( $file ) > $mtime ) {
-						$expired = true;
 						break;
 					}
 				}
@@ -1701,7 +1738,7 @@ class Language {
 	 * Do any necessary post-cache-load settings adjustment
 	 */
 	function fixUpSettings() {
-		global $wgExtraNamespaces, $wgMetaNamespace, $wgMetaNamespaceTalk, $wgMessageCache, 
+		global $wgExtraNamespaces, $wgMetaNamespace, $wgMetaNamespaceTalk,
 			$wgNamespaceAliases, $wgAmericanDates;
 		wfProfileIn( __METHOD__ );
 		if ( $wgExtraNamespaces ) {

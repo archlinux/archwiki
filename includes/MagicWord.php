@@ -1,8 +1,7 @@
 <?php
 /**
  * File for magic words
- * @package MediaWiki
- * @subpackage Parser
+ * @addtogroup Parser
  */
 
 /**
@@ -21,7 +20,6 @@
  * magic words which are also Parser variables, add a MagicWordwgVariableIDs
  * hook. Use string keys.
  *
- * @package MediaWiki
  */
 class MagicWord {
 	/**#@+
@@ -55,6 +53,7 @@ class MagicWord {
 		'localhour',
 		'numberofarticles',
 		'numberoffiles',
+		'numberofedits',
 		'sitename',
 		'server',
 		'servername',
@@ -108,7 +107,7 @@ class MagicWord {
 
 	/**#@-*/
 
-	function MagicWord($id = 0, $syn = '', $cs = false) {
+	function __construct($id = 0, $syn = '', $cs = false) {
 		$this->mId = $id;
 		$this->mSynonyms = (array)$syn;
 		$this->mCaseSensitive = $cs;

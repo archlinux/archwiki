@@ -19,20 +19,14 @@
 
 /**
  * Search engine hook for MySQL 4+
- * @package MediaWiki
- * @subpackage Search
- */
-
-/**
- * @package MediaWiki
- * @subpackage Search
+ * @addtogroup Search
  */
 class SearchMySQL4 extends SearchMySQL {
 	var $strictMatching = true;
 
 	/** @todo document */
-	function SearchMySQL4( &$db ) {
-		$this->db =& $db;
+	function SearchMySQL4( $db ) {
+		$this->db = $db;
 	}
 
 	/** @todo document */

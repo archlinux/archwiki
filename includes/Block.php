@@ -1,7 +1,6 @@
 <?php
 /**
  * Blocks and bans object
- * @package MediaWiki
  */
 
 /**
@@ -12,22 +11,24 @@
  * Globals used: $wgAutoblockExpiry, $wgAntiLockFlags
  *
  * @todo This could be used everywhere, but it isn't.
- * @package MediaWiki
  */
 class Block
 {
 	/* public*/ var $mAddress, $mUser, $mBy, $mReason, $mTimestamp, $mAuto, $mId, $mExpiry,
-		            $mRangeStart, $mRangeEnd, $mAnonOnly, $mEnableAutoblock;
+				$mRangeStart, $mRangeEnd, $mAnonOnly, $mEnableAutoblock, $mHideName;
 	/* private */ var $mNetworkBits, $mIntegerAddr, $mForUpdate, $mFromMaster, $mByName;
 	
 	const EB_KEEP_EXPIRED = 1;
 	const EB_FOR_UPDATE = 2;
 	const EB_RANGE_ONLY = 4;
 
-	function Block( $address = '', $user = 0, $by = 0, $reason = '',
-		$timestamp = '' , $auto = 0, $expiry = '', $anonOnly = 0, $createAccount = 0, $enableAutoblock = 0 )
+	function __construct( $address = '', $user = 0, $by = 0, $reason = '',
+		$timestamp = '' , $auto = 0, $expiry = '', $anonOnly = 0, $createAccount = 0, $enableAutoblock = 0, 
+		$hideName = 0 )
 	{
 		$this->mId = 0;
+		# Expand valid IPv6 addresses
+		$address = IP::sanitizeIP( $address );
 		$this->mAddress = $address;
 		$this->mUser = $user;
 		$this->mBy = $by;
@@ -38,6 +39,7 @@ class Block
 		$this->mCreateAccount = $createAccount;
 		$this->mExpiry = self::decodeExpiry( $expiry );
 		$this->mEnableAutoblock = $enableAutoblock;
+		$this->mHideName = $hideName;
 
 		$this->mForUpdate = false;
 		$this->mFromMaster = false;
@@ -58,7 +60,7 @@ class Block
 
 	static function newFromID( $id ) 
 	{
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->resultObject( $dbr->select( 'ipblocks', '*', 
 			array( 'ipb_id' => $id ), __METHOD__ ) );
 		$block = new Block;
@@ -74,7 +76,7 @@ class Block
 		$this->mAddress = $this->mReason = $this->mTimestamp = '';
 		$this->mId = $this->mAnonOnly = $this->mCreateAccount = 
 			$this->mEnableAutoblock = $this->mAuto = $this->mUser = 
-			$this->mBy = 0;
+			$this->mBy = $this->mHideName = 0;
 		$this->mByName = false;
 	}
 
@@ -85,14 +87,14 @@ class Block
 	{
 		global $wgAntiLockFlags;
 		if ( $this->mForUpdate || $this->mFromMaster ) {
-			$db =& wfGetDB( DB_MASTER );
+			$db = wfGetDB( DB_MASTER );
 			if ( !$this->mForUpdate || ($wgAntiLockFlags & ALF_NO_BLOCK_LOCK) ) {
 				$options = array();
 			} else {
 				$options = array( 'FOR UPDATE' );
 			}
 		} else {
-			$db =& wfGetDB( DB_SLAVE );
+			$db = wfGetDB( DB_SLAVE );
 			$options = array();
 		}
 		return $db;
@@ -147,7 +149,7 @@ class Block
 		}
 
 		# Try range block
-		if ( $this->loadRange( $address, $killExpired, $user == 0 ) ) {
+		if ( $this->loadRange( $address, $killExpired, $user ) ) {
 			if ( $user && $this->mAnonOnly ) {
 				$this->clear();
 				return false;
@@ -176,7 +178,8 @@ class Block
 	/**
 	 * Fill in member variables from a result wrapper
 	 */
-	function loadFromResult( ResultWrapper $res, $killExpired = true ) {
+	function loadFromResult( ResultWrapper $res, $killExpired = true ) 
+	{
 		$ret = false;
 		if ( 0 != $res->numRows() ) {
 			# Get first block
@@ -211,7 +214,7 @@ class Block
 	 * Search the database for any range blocks matching the given address, and
 	 * load the row if one is found.
 	 */
-	function loadRange( $address, $killExpired = true )
+	function loadRange( $address, $killExpired = true, $user = 0 )
 	{
 		$iaddr = IP::toHex( $address );
 		if ( $iaddr === false ) {
@@ -230,6 +233,10 @@ class Block
 			"ipb_range_start <= '$iaddr'",
 			"ipb_range_end >= '$iaddr'"
 		);
+		
+		if ( $user ) {
+			$conds['ipb_anon_only'] = 0;
+		}
 
 		$res = $db->resultObject( $db->select( 'ipblocks', '*', $conds, __METHOD__, $options ) );
 		$success = $this->loadFromResult( $res, $killExpired );
@@ -255,6 +262,7 @@ class Block
 		$this->mAnonOnly = $row->ipb_anon_only;
 		$this->mCreateAccount = $row->ipb_create_account;
 		$this->mEnableAutoblock = $row->ipb_enable_autoblock;
+		$this->mHideName = $row->ipb_deleted;
 		$this->mId = $row->ipb_id;
 		$this->mExpiry = self::decodeExpiry( $row->ipb_expiry );
 		if ( isset( $row->user_name ) ) {
@@ -286,7 +294,7 @@ class Block
 
 		$block = new Block();
 		if ( $flags & Block::EB_FOR_UPDATE ) {
-			$db =& wfGetDB( DB_MASTER );
+			$db = wfGetDB( DB_MASTER );
 			if ( $wgAntiLockFlags & ALF_NO_BLOCK_LOCK ) {
 				$options = '';
 			} else {
@@ -294,7 +302,7 @@ class Block
 			}
 			$block->forUpdate( true );
 		} else {
-			$db =& wfGetDB( DB_SLAVE );
+			$db = wfGetDB( DB_SLAVE );
 			$options = '';
 		}
 		if ( $flags & Block::EB_RANGE_ONLY ) {
@@ -341,7 +349,7 @@ class Block
 			throw new MWException( "Block::delete() now requires that the mId member be filled\n" );
 		}
 
-		$dbw =& wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_MASTER );
 		$dbw->delete( 'ipblocks', array( 'ipb_id' => $this->mId ), __METHOD__ );
 		return $dbw->affectedRows() > 0;
 	}
@@ -353,8 +361,7 @@ class Block
 	function insert()
 	{
 		wfDebug( "Block::insert; timestamp {$this->mTimestamp}\n" );
-		$dbw =& wfGetDB( DB_MASTER );
-		$dbw->begin();
+		$dbw = wfGetDB( DB_MASTER );
 
 		# Unset ipb_anon_only for user blocks, makes no sense
 		if ( $this->mUser ) {
@@ -385,6 +392,7 @@ class Block
 				'ipb_expiry' => self::encodeExpiry( $this->mExpiry, $dbw ),
 				'ipb_range_start' => $this->mRangeStart,
 				'ipb_range_end' => $this->mRangeEnd,
+				'ipb_deleted'	=> $this->mHideName
 			), 'Block::insert', array( 'IGNORE' )
 		);
 		$affected = $dbw->affectedRows();
@@ -418,20 +426,20 @@ class Block
 			} else {
 				#Limit is 1, so no loop needed.
 				$retroblockip = $row->rc_ip;
-				return $this->doAutoblock($retroblockip);
+				return $this->doAutoblock( $retroblockip, true );
 			}
 		}
 	}
 
 	/**
 	* Autoblocks the given IP, referring to this Block.
-	* @param $autoblockip The IP to autoblock.
+	* @param string $autoblockip The IP to autoblock.
+	* @param bool $justInserted The main block was just inserted
 	* @return bool Whether or not an autoblock was inserted.
 	*/
-	function doAutoblock( $autoblockip ) {
+	function doAutoblock( $autoblockip, $justInserted = false ) {
 		# Check if this IP address is already blocked
-		$dbw =& wfGetDB( DB_MASTER );
-		$dbw->begin();
+		$dbw = wfGetDB( DB_MASTER );
 
 		# If autoblocks are disabled, go away.
 		if ( !$this->mEnableAutoblock ) {
@@ -480,7 +488,9 @@ class Block
 				return;
 			}
 			# Just update the timestamp
-			$ipblock->updateTimestamp();
+			if ( !$justInserted ) {
+				$ipblock->updateTimestamp();
+			}
 			return;
 		} else {
 			$ipblock = new Block;
@@ -495,6 +505,8 @@ class Block
 		$ipblock->mTimestamp = wfTimestampNow();
 		$ipblock->mAuto = 1;
 		$ipblock->mCreateAccount = $this->mCreateAccount;
+		# Continue suppressing the name if needed
+		$ipblock->mHideName = $this->mHideName;
 
 		# If the user is already blocked with an expiry date, we don't
 		# want to pile on top of that!
@@ -544,7 +556,7 @@ class Block
 			$this->mTimestamp = wfTimestamp();
 			$this->mExpiry = Block::getAutoblockExpiry( $this->mTimestamp );
 
-			$dbw =& wfGetDB( DB_MASTER );
+			$dbw = wfGetDB( DB_MASTER );
 			$dbw->update( 'ipblocks',
 				array( /* SET */
 					'ipb_timestamp' => $dbw->timestamp($this->mTimestamp),
@@ -628,16 +640,36 @@ class Block
 		global $wgAutoblockExpiry;
 		return wfTimestamp( TS_MW, wfTimestamp( TS_UNIX, $timestamp ) + $wgAutoblockExpiry );
 	}
-
-	static function normaliseRange( $range )
-	{
+	
+	/** 
+	 * Gets rid of uneeded numbers in quad-dotted/octet IP strings
+	 * For example, 127.111.113.151/24 -> 127.111.113.0/24
+	 */
+	static function normaliseRange( $range ) {
 		$parts = explode( '/', $range );
 		if ( count( $parts ) == 2 ) {
-			$shift = 32 - $parts[1];
-			$ipint = IP::toUnsigned( $parts[0] );
-			$ipint = $ipint >> $shift << $shift;
-			$newip = long2ip( $ipint );
-			$range = "$newip/{$parts[1]}";
+			// IPv6
+			if ( IP::isIPv6($range) && $parts[1] >= 64 && $parts[1] <= 128 ) {
+				$bits = $parts[1];
+				$ipint = IP::toUnsigned6( $parts[0] );
+				# Native 32 bit functions WONT work here!!!
+				# Convert to a padded binary number
+				$network = wfBaseConvert( $ipint, 10, 2, 128 );
+				# Truncate the last (128-$bits) bits and replace them with zeros
+				$network = str_pad( substr( $network, 0, $bits ), 128, 0, STR_PAD_RIGHT );
+				# Convert back to an integer
+				$network = wfBaseConvert( $network, 2, 10 );
+				# Reform octet address
+				$newip = IP::toOctet( $network );
+				$range = "$newip/{$parts[1]}";
+			} // IPv4
+			else if ( IP::isIPv4($range) && $parts[1] >= 16 && $parts[1] <= 32 ) {
+				$shift = 32 - $parts[1];
+				$ipint = IP::toUnsigned( $parts[0] );
+				$ipint = $ipint >> $shift << $shift;
+				$newip = long2ip( $ipint );
+				$range = "$newip/{$parts[1]}";
+			}
 		}
 		return $range;
 	}
@@ -646,7 +678,7 @@ class Block
 	 * Purge expired blocks from the ipblocks table
 	 */
 	static function purgeExpired() {
-		$dbw =& wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_MASTER );
 		$dbw->delete( 'ipblocks', array( 'ipb_expiry < ' . $dbw->addQuotes( $dbw->timestamp() ) ), __METHOD__ );
 	}
 
@@ -658,7 +690,7 @@ class Block
 		/*
 		static $infinity;
 		if ( !isset( $infinity ) ) {
-			$dbr =& wfGetDB( DB_SLAVE );
+			$dbr = wfGetDB( DB_SLAVE );
 			$infinity = $dbr->bigTimestamp();
 		}
 		return $infinity;

@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Sep 25, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ('ApiQueryBase.php');
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiQueryAllpages extends ApiQueryGeneratorBase {
 
 	public function __construct($query, $moduleName) {
@@ -49,7 +51,7 @@ class ApiQueryAllpages extends ApiQueryGeneratorBase {
 	private function run($resultPageSet = null) {
 
 		wfProfileIn($this->getModuleProfileName() . '-getDB');
-		$db = & $this->getDB();
+		$db = $this->getDB();
 		wfProfileOut($this->getModuleProfileName() . '-getDB');
 
 		wfProfileIn($this->getModuleProfileName() . '-parseParams');
@@ -167,7 +169,7 @@ class ApiQueryAllpages extends ApiQueryGeneratorBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryAllpages.php 17880 2006-11-23 08:25:56Z nickj $';
+		return __CLASS__ . ': $Id: ApiQueryAllpages.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

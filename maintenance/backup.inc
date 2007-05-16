@@ -18,8 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  */
 
 class DumpDBZip2Output extends DumpPipeOutput {
@@ -98,8 +97,9 @@ class BackupDumper {
 		$sink = null;
 		$sinks = array();
 		foreach( $args as $arg ) {
+			$matches = array();
 			if( preg_match( '/^--(.+?)(?:=(.+?)(?::(.+?))?)?$/', $arg, $matches ) ) {
-				@list( $full, $opt, $val, $param ) = $matches;
+				@list( /* $full */ , $opt, $val, $param ) = $matches;
 				switch( $opt ) {
 				case "plugin":
 					$this->loadPlugin( $val, $param );
@@ -174,7 +174,7 @@ class BackupDumper {
 
 		$this->initProgress( $history );
 
-		$db =& $this->backupDb();
+		$db = $this->backupDb();
 		$exporter = new WikiExporter( $db, $history, WikiExporter::STREAM, $text );
 
 		$wrapper = new ExportProgressFilter( $this->sink, $this );
@@ -209,19 +209,23 @@ class BackupDumper {
 		$table = ($history == WikiExporter::CURRENT) ? 'page' : 'revision';
 		$field = ($history == WikiExporter::CURRENT) ? 'page_id' : 'rev_id';
 		
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$this->maxCount = $dbr->selectField( $table, "MAX($field)", '', 'BackupDumper::dump' );
 		$this->startTime = wfTime();
 	}
 
-	function &backupDb() {
+	function backupDb() {
 		global $wgDBadminuser, $wgDBadminpassword;
-		global $wgDBname, $wgDebugDumpSql;
+		global $wgDBname, $wgDebugDumpSql, $wgDBtype;
 		$flags = ($wgDebugDumpSql ? DBO_DEBUG : 0) | DBO_DEFAULT; // god-damn hack
-		$db = new Database( $this->backupServer(), $wgDBadminuser, $wgDBadminpassword, $wgDBname, false, $flags );
-		$timeout = 3600 * 24;
-		$db->query( "SET net_read_timeout=$timeout" );
-		$db->query( "SET net_write_timeout=$timeout" );
+
+		$class = 'Database' . ucfirst($wgDBtype);
+		$db = new $class( $this->backupServer(), $wgDBadminuser, $wgDBadminpassword, $wgDBname, false, $flags );
+		
+		// Discourage the server from disconnecting us if it takes a long time
+		// to read out the big ol' batch query.
+		$db->setTimeout( 3600 * 24 );
+		
 		return $db;
 	}
 

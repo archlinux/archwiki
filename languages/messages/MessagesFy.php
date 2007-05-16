@@ -1,14 +1,9 @@
 <?php
 /** Frisian (Frysk)
  *
- * @package MediaWiki
- * @subpackage Language
+ * @addtogroup Language
  *
  */
-
-$quickbarSettings = array(
-	'Ut', 'Lofts fêst', 'Rjochts fêst', 'Lofts sweevjend'
-);
 
 $skinNames = array(
 	'standard' => 'Standert',
@@ -217,6 +212,7 @@ nei alle gedachten is it foar ûnderhâld, en kinne jo der letter gewoan wer br�
 De behearder hat dizze útlis joen:
 <p>$1</p>",
 
+# problem with link: [[{{ns:project}}:Brekmelding|behearder]]
 "missingarticle" 		=> "De databank kin in side net fine, nammentlik: \"$1\".
 <p>Faak is dit om't in âlde ferskil-, of skiednisside opfreege wurdt fan in side dy't wiske is.
 <p>As dat it hjir net is, dan hawwe jo faaks in brek yn it programa fûn.
@@ -311,6 +307,7 @@ Tink derom, dat \"skriuw nei dizze brûker\" allinich wol as jo in
 e-postadres opjûn hawwe in jo [[{{ns:special}}:Preferences|ynstellings]].",
 
 "newarticle"	=> "(Nij)",
+# problem with link: [[{{ns:project}}:Bewurk-rie|Mear ynformaasje oer bewurkjen]]
 "newarticletext" =>
 "Jo hawwe in keppeling folge nei in side dêr't noch gjin tekst op stiet.
 Om sels tekst te meistjsen kinne jo dy gewoan yntype in dit bewurkingsfjild
@@ -356,6 +353,7 @@ Besykje de side yn lytsere stikken te brekken.</strong>",
 "readonlywarning" => "<strong>Waarskôging: De databank is ôfsletten foar
 ûnderhâld, dus jo kinne jo bewurkings no net fêstlizze.
 It wie baas en nim de tekst foar letter oer yn in tekstbestân.</strong>",
+# problem with link: [[Project:Beskerm-rie|rie oer beskerme siden]]
 "protectedpagewarning" => "<strong>Waarskôging: Dizze side is beskerme, dat
 gewoane brûkers dy net bewurkje kinne. Tink om de
 [[Project:Beskerm-rie|rie oer beskerme siden]].</strong>",
@@ -388,6 +386,7 @@ Gean nei of de keppeling dy jo brûkt hawwe wol goed is.",
 # Search results
 #
 "searchresults" => "Sykresultaat",
+# problem with link: [[Project:Syk-rie|Ynformaasje oer it sykjen|Sykje troch de {{SITENAME}}]]
 "searchresulttext" => "\"[[Project:Syk-rie|Ynformaasje oer it sykjen|Sykje troch de {{SITENAME}}]]\" troch de {{SITENAME}}.",
 "searchsubtitle"	=> "Foar fraach \"[[:$1]]\"",
 "searchsubtitleinvalid"	=> "Foar fraach \"$1\"",
@@ -430,6 +429,11 @@ mooglik. Foar now kinne jo sykje fia Google:</p>",
 
 "prefsreset"		=> "De ynstellings binne tebek set sa't se fêstlein wienen.",
 "qbsettings"		=> "Menu",
+'qbsettings-none'	=> 'Ut',
+'qbsettings-fixedleft'	=> 'Lofts fêst',
+'qbsettings-fixedright'	=> 'Rjochts fêst',
+'qbsettings-floatingleft'	=> 'Lofts sweevjend',
+'qbsettings-floatingright'	=> 'Rjochts sweevjend',
 "changepassword" 		=> "Wachtword feroarje",
 "skin"			=> "Side-oansjen",
 "math"			=> "Formules",
@@ -488,13 +492,14 @@ mooglik. Foar now kinne jo sykje fia Google:</p>",
 "uploadnologintext" => "Jo moatte [[{{ns:special}}:Userlogin|oanmeld]] wêze om in bestân oanbieden te kinnen.",
 
 "uploaderror"	=> "Oanbied-fout",
+# problem with link: [[Project:Ofbyld-rie|regels foar ôfbyldbrûk]]
 "uploadtext"	=> "'''STOP!''' Lês ear't jo eat oanbiede
 de [[Project:Ofbyld-rie|regels foar ôfbyldbrûk]] foar de {{SITENAME}}.
 
 Earder oanbeane ôfbylden, kinne jo fine op de
-[[Project:Imagelist|list of oanbeane ôfbylden]].
+[[Special:Imagelist|list of oanbeane ôfbylden]].
 Wat oanbean en wat wiske wurdt, wurdt delskreaun yn it
-[[Project:Oanbied-loch|lochboek]].
+[[Special:Log/delete|lochboek]].
 
 Om't nije ôfbylden oan te bieden, kieze jo in bestân út sa't dat
 normaal is foar jo blêdzjer en bestjoersysteem.
@@ -506,9 +511,9 @@ Foar de bestânsforam wurdt foto's JPEG oanret, foar tekenings ensfh. PNG, en fo
 lûden OGG. Brûk in dúdlike bestânsnamme, sa't in oar ek wit wat it is.
 
 Om it ôfbyld yn in side op te nimmen, meitsje jo dêr sa'n keppeling:<br />
-'''<nowiki>[[ôfbyld:jo_foto.jpg|omskriuwing]]</nowiki>''' of
-'''<nowiki>[[ôfbyld:jo_logo.png|omskriuwing]]</nowiki>''';
-en foar lûden '''<nowiki>[[media:jo_lûd.ogg]]</nowiki>'''.
+'''<nowiki>[[</nowiki>{{ns:image}}<nowiki>:jo_foto.jpg|omskriuwing]]</nowiki>''' of
+'''<nowiki>[[</nowiki>{{ns:image}}<nowiki>:jo_logo.png|omskriuwing]]</nowiki>''';
+en foar lûden '''<nowiki>[[</nowiki>{{ns:media}}<nowiki>:jo_lûd.ogg]]</nowiki>'''.
 
 Tink derom dat oaren bewurkje kinne wat jo oanbiede, as dat better is foar de {{SITENAME}},
 krekt's sa't dat foar siden jildt, en dat jo útsletten wurde kinne as jo misbrûk
@@ -588,7 +593,8 @@ It tal fan behearders dêrfan is: <b>$2</b>.",
 #
 "disambiguations"		=> "Trochverwizings",
 "disambiguationspage"	=> "{{ns:project}}:trochferwizing",
-"disambiguationstext"	=> "Dizze siden binne keppele fia in
+# problem with link: [[{{ns:project}}:trochferwizing]]
+"disambiguations-text"	=> "Dizze siden binne keppele fia in
 [[{{ns:project}}:trochferwizing]].
 Se soenen mei de side sels keppele wurde moatte.<br />
 (Allinnich siden út deselde nammeromte binne oanjûn.)",
@@ -657,6 +663,7 @@ of hat oanjaan gjin post fan oare brûkers krije te wollen.",
 # Watchlist
 #
 "watchlist"		=> "Folchlist",
+"mywatchlist"		=> "Folchlist",
 "nowatchlist"	=> "Jo hawwe gjin siden op jo folchlist.",
 "watchnologin"	=> "Not oanmeld in",
 "watchnologintext"=> "Jo moatte [[{{ns:special}}:Userlogin|oanmeld]] wêze om jo folchlist te feroarjen.",
@@ -702,6 +709,7 @@ Jou oan hokfoar siden jo net mear folgje wolle, en befêstigje dat ûnderoan de 
 "confirmdelete"	=> "Befestigje wiskjen",
 "deletesub"		=> "(Wiskje \"$1\")",
 "historywarning"	=> "Waarskôging: De side dy't jo wiskje wolle hat skiednis:",
+# problem with link: [[{{ns:project}}:wisk-rie]]
 "confirmdeletetext" => "Jo binne dwaande mei it foar altyd wiskjen fan in side
 of ôfbyld, tegearre mei alle skiednis, út de databank.
 Befêstigje dat jo dat wier dwaan wolle. Befêstigje dat dat is wat jo witte wat it gefolch
@@ -726,10 +734,10 @@ Sjoch \"$2\" foar in list fan wat resint wiske is.",
 "rollbackfailed"	=> "Feroaring tebeksette net slagge",
 "cantrollback"	=> "Disse feroaringt kin net tebek set, om't der mar ien skriuwer is.",
 "alreadyrolled"	=> "Kin de feroaring fan [[:$1]]
-troch [[Brûker:$2|$2]] ([[Brûker oerlis:$2|Oerlis]]) net tebeksette;
+troch [[User:$2|$2]] ([[User talk:$2|Oerlis]]) net tebeksette;
 inoar hat de feroaring tebekset, of oars wat oan de side feroare.
 
-De lêste feroaring wie fan [[Brûker:$3|$3]] ([[Brûker oerlis:$3|Oerlis]]).",
+De lêste feroaring wie fan [[User:$3|$3]] ([[User talk:$3|Oerlis]]).",
 #   only shown if there is an edit comment
 "editcomment"	=> "De gearfetting wie: \"<i>$1</i>\".",
 "revertpage"	=> "Tebek set ta de ferzje fan \"$1\"",
@@ -752,7 +760,7 @@ troch de lêste ferzje út dy weromsette skiednis ferfangen.",
 #
 "contributions"	=> "Brûker bydragen",
 "mycontris"		=> "Myn bydragen",
-"contribsub"	=> "Foar \"$1\"",
+"contribsub2"	=> "Foar \"$1 ($2)\"",
 "nocontribs"	=> "Der binne gjin feroarings fûn dyt't hjirmei oerienkomme.",
 "ucnote"		=> "Dit binne dizze brûker's leste <b>$1</b> feroarings yn de lêste <b>$2</b> dagen.",
 "uclinks"		=> "Besjoch de lêste $1 feroarings; besjoch de lêste $2 dagen.",
@@ -771,6 +779,7 @@ troch de lêste ferzje út dy weromsette skiednis ferfangen.",
 # Block/unblock IP
 #
 "blockip"		=> "Slut brûker út",
+# problem with link: [[{{ns:project}}:Utslut-rie|útslut-rie]]
 "blockiptext"	=> "Brûk dizze fjilden om in brûker fan skriuwtagong út te sluten.
 Dit soe allinnich omwillens fan fandalisme dwaan wurde moatte, sa't de
 [[{{ns:project}}:Utslut-rie|útslut-rie]] it oanjout.

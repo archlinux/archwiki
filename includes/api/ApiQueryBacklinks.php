@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Oct 16, 2006
  *
@@ -29,6 +28,9 @@ if (!defined('MEDIAWIKI')) {
 	require_once ("ApiQueryBase.php");
 }
 
+/**
+ * @addtogroup API
+ */
 class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 
 	private $rootTitle, $contRedirs, $contLevel, $contTitle, $contID;
@@ -122,7 +124,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		if ($redirect)
 			$this->addWhereFld('page_is_redirect', 0);
 
-		$db = & $this->getDB();
+		$db = $this->getDB();
 		if (!is_null($continue)) {
 			$plfrm = intval($this->contID);
 			if ($this->contLevel == 0) {
@@ -352,7 +354,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryBacklinks.php 17880 2006-11-23 08:25:56Z nickj $';
+		return __CLASS__ . ': $Id: ApiQueryBacklinks.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

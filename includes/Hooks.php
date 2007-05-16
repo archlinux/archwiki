@@ -18,7 +18,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  *
  * @author Evan Prodromou <evan@wikitravel.org>
- * @package MediaWiki
  * @see hooks.txt
  */
 
@@ -103,7 +102,7 @@ function wfRunHooks($event, $args = null) {
 		if ( isset( $object ) ) {
 			$func = get_class( $object ) . '::' . $method;
 			$callback = array( $object, $method );
-		} elseif ( false !== ( $pos = strpos( '::', $func ) ) ) {
+		} elseif ( false !== ( $pos = strpos( $func, '::' ) ) ) {
 			$callback = array( substr( $func, 0, $pos ), substr( $func, $pos + 2 ) );
 		} else {
 			$callback = $func;

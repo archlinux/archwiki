@@ -2,17 +2,11 @@
 /**
  * A querypage to show categories ordered in descending order by the pages  in them
  *
- * @package MediaWiki
- * @subpackage SpecialPage
+ * @addtogroup SpecialPage
  *
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  * @copyright Copyright © 2005, Ævar Arnfjörð Bjarmason
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
- */
-
-/**
- * @package MediaWiki
- * @subpackage SpecialPage
  */
 class MostlinkedCategoriesPage extends QueryPage {
 
@@ -21,7 +15,7 @@ class MostlinkedCategoriesPage extends QueryPage {
 	function isSyndicated() { return false; }
 
 	function getSQL() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$categorylinks = $dbr->tableName( 'categorylinks' );
 		$name = $dbr->addQuotes( $this->getName() );
 		return

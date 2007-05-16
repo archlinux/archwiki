@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * Created on Sep 5, 2006
  *
@@ -24,6 +23,10 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+/**
+ * @todo Document - e.g. Provide top-level description of this class.
+ * @addtogroup API
+ */
 abstract class ApiBase {
 
 	// These constants allow modules to specify exactly how to treat incomming parameters.
@@ -527,7 +530,7 @@ abstract class ApiBase {
 	public abstract function getVersion();
 
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiBase.php 17880 2006-11-23 08:25:56Z nickj $';
+		return __CLASS__ . ': $Id: ApiBase.php 21402 2007-04-20 08:55:14Z nickj $';
 	}
 }
 ?>

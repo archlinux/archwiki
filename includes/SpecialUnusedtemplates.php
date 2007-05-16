@@ -1,19 +1,12 @@
 <?php
 
 /**
- * @package MediaWiki
- * @subpackage Special pages
- *
+ * implements Special:Unusedtemplates
  * @author Rob Church <robchur@gmail.com>
  * @copyright © 2006 Rob Church
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
+ * @addtogroup SpecialPage
  */
-
-/**
- * @package MediaWiki
- * @subpackage SpecialPage
- */
-
 class UnusedtemplatesPage extends QueryPage {
 
 	function getName() { return( 'Unusedtemplates' ); }
@@ -22,7 +15,7 @@ class UnusedtemplatesPage extends QueryPage {
 	function sortDescending() { return false; }
 
 	function getSQL() {
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		list( $page, $templatelinks) = $dbr->tableNamesN( 'page', 'templatelinks' );
 		$sql = "SELECT 'Unusedtemplates' AS type, page_title AS title,
 			page_namespace AS namespace, 0 AS value

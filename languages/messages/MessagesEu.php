@@ -1,13 +1,8 @@
 <?php
 /** Basque (Euskara)
  *
- * @package MediaWiki
- * @subpackage Language
+ * @addtogroup Language
  */
-
-$quickbarSettings = array(
-	'Ezein ere', 'Eskuinean', 'Ezkerrean', 'Ezkerrean mugikor'
-);
 
 $skinNames = array(
 	'standard'     => 'Lehenetsia',
@@ -180,7 +175,7 @@ $messages = array(
 'navigation'		=> 'Nabigazioa',
 
 # Metadata in edit box
-'metadata_help' => 'Metadata (ikus [[{{ns:project}}:Metadata]] azalpen baterako):',
+'metadata_help' => 'Metadata:',
 
 'currentevents' => 'Albisteak',
 'currentevents-url' => 'Albisteak',
@@ -188,7 +183,7 @@ $messages = array(
 'disclaimers' => 'Mugaketak',
 'disclaimerpage' => 'Project:Erantzukizunen mugaketa orokorra',
 'privacy' => 'Pribatutasun politika',
-'privacypage' => 'wikimedia:Pribatutsan politika',
+'privacypage' => 'Project:Pribatutsan politika',
 'errorpagetitle' => 'Errorea',
 'returnto'		=> '$1(e)ra itzuli.',
 'tagline'      	=> '{{SITENAME}}(e)tik',
@@ -461,7 +456,7 @@ Helbide horretara beste edozein mezu bidali aurretik, bertan azaltzen diren argi
 'missingsummary' => "'''Gogorarazpena:''' Ez duzu aldaketa laburpen bat zehaztu. Berriz ere gordetzeko aukeratzen baduzu, laburpen mezurik gordeko da.",
 'missingcommenttext' => 'Mesedez, iruzkin bat idatzi jarraian.',
 'blockedtitle'	=> 'Erabiltzailea blokeatuta dago',
-'blockedtext' => "Zure erabiltzaile izena edo IP helbidea $1(e)k blokeatu du. Emandako arrazoia honako hau da: ''$2'' $1 edo Wikipediako beste [[Wikipedia:Administratzaileak|administratzaile]] batekin harremanetan jarri beharko zinateke zure blokeoa eztabaidatzeko. Kontuan izan ezingo duzula \"Erabiltzaile honi e-posta bidali\" aukera erabili zure [[Aparteko:Preferences|Hobespenetan]] baliozko e-posta helbide bat definitu ezean. Zure IP helbidea $3 da. Mesedez, edozein kontsulta egiterakoan, helbide hori aipatu.",
+'blockedtext' => "Zure erabiltzaile izena edo IP helbidea $1(e)k blokeatu du. Emandako arrazoia honako hau da: ''$2'' $1 edo Wikipediako beste [[{{MediaWiki:grouppage-sysop}}|administratzaile]] batekin harremanetan jarri beharko zinateke zure blokeoa eztabaidatzeko. Kontuan izan ezingo duzula \"Erabiltzaile honi e-posta bidali\" aukera erabili zure [[Special:Preferences|Hobespenetan]] baliozko e-posta helbide bat definitu ezean. Zure IP helbidea $3 da. Mesedez, edozein kontsulta egiterakoan, helbide hori aipatu.",
 'blockedoriginalsource' => "Jarraian ikus daiteke '''$1'''(r)en kodea:",
 'blockededitsource' => "Jarraian ikus daitezke '''$1'''(e)n egin dituzun aldaketak:",
 'whitelistedittitle' => 'Saioa hastea beharrezkoa da aldaketak egiteko',
@@ -471,7 +466,7 @@ Helbide horretara beste edozein mezu bidali aurretik, bertan azaltzen diren argi
 'whitelistacctitle' => 'Ez daukazu kontu berri bat sortzeko baimenik',
 'whitelistacctext' => 'Wiki honetan kontu berriak sortu ahal izateko [[Special:Userlogin|saioa hasi]] eta baimena izatea beharrezko da.',
 'confirmedittitle' => 'E-posta egiaztatzea beharrezkoa da aldaketak egiteko',
-'confirmedittext' => 'Orrialdeetan aldaketak egin aurretik zure e-posta helbidea egiaztatu beharra daukazu. Mesedez, zehaztu eta egiaztatu zure e-posta helbidea [[Aparteko:Preferences|hobespenetan]].',
+'confirmedittext' => 'Orrialdeetan aldaketak egin aurretik zure e-posta helbidea egiaztatu beharra daukazu. Mesedez, zehaztu eta egiaztatu zure e-posta helbidea [[Special:Preferences|hobespenetan]].',
 'loginreqtitle'	=> 'Saioa hastea beharrezkoa',
 'loginreqlink' => 'saioa hasi',
 'loginreqpagetext'	=> 'Beste orrialde batzuk ikusteko $1 beharra daukazu..',
@@ -479,8 +474,8 @@ Helbide horretara beste edozein mezu bidali aurretik, bertan azaltzen diren argi
 'accmailtext' => '"$1"(r)en pasahitza $2(e)ra bidali da.',
 'newarticle'	=> '(Berria)',
 'newarticletext' =>
-"Orrialde hau ez da existitzen oraindik. Orrialde sortu nahi baduzu, beheko koadroan idazten hasi zaitezke (ikus [[{{ns:help}}:Contents|laguntza orrialdea]] informazio gehiagorako). Hona nahi gabe etorri bazara, nabigatzaileko '''atzera''' botoian klik egin.",
-'anontalkpagetext' => "----''Honako hau konturik sortu ez edo erabiltzen ez duen erabiltzaile anonimo baten eztabaida orria da. Bere [[IP helbide]]a erabili beharko da beraz identifikatzeko. Erabiltzaile batek baino gehiagok IP bera erabil dezakete ordea. Erabiltzaile anonimoa bazara eta zurekin zerikusirik ez duten mezuak jasotzen badituzu, mesedez [[Aparteko:Userlogin|Izena eman edo saioa hasi]] etorkizunean horrelakoak gerta ez daitezen.''",
+"Orrialde hau ez da existitzen oraindik. Orrialde sortu nahi baduzu, beheko koadroan idazten hasi zaitezke (ikus [[{{MediaWiki:helppage}}|laguntza orrialdea]] informazio gehiagorako). Hona nahi gabe etorri bazara, nabigatzaileko '''atzera''' botoian klik egin.",
+'anontalkpagetext' => "----''Honako hau konturik sortu ez edo erabiltzen ez duen erabiltzaile anonimo baten eztabaida orria da. Bere IP helbidea erabili beharko da beraz identifikatzeko. Erabiltzaile batek baino gehiagok IP bera erabil dezakete ordea. Erabiltzaile anonimoa bazara eta zurekin zerikusirik ez duten mezuak jasotzen badituzu, mesedez [[Special:Userlogin|Izena eman edo saioa hasi]] etorkizunean horrelakoak gerta ez daitezen.''",
 'noarticletext' => 'Oraindik ez dago testurik orrialde honetan; beste orrialde batzuetan [[{{ns:special}}:Search/{{PAGENAME}}|bilatu dezakezu izenburu hau]] edo [{{fullurl:{{FULLPAGENAME}}|action=edit}} berau aldatu ere egin dezakezu].',
 'clearyourcache' => "'''Oharra:''' Gorde ondoren zure nabigatzailearen katxea ekidin beharko duzu aldaketak ikusteko. '''Mozilla / Firefox / Safari:''' ''Shift'' tekla sakatu birkargatzeko momentuan, edo ''Ctrl-Shift-R'' sakatu (''Cmd-Shift-R'' Apple Mac baten); '''IE:''' ''Ctrl'' tekla sakatu birkargatzeko momentuan, edo ''Ctrl-F5'' sakatu; '''Konqueror:''': Birkargatzeko klik egin, edo F5 sakatu, besterik ez; '''Opera''' erabiltzaileek ''Tresnak-Hobespenak'' atalera jo eta katxea garbitzeko aukera hautatu.",
 'usercssjsyoucanpreview' => '<strong>Laguntza:</strong> Zure CSS/JS berria gorde aurretik probatzeko \'Aurrebista erakutsi\' botoia erabili.',
@@ -518,6 +513,7 @@ Era berean, bidaltzen ari zaren edukia zuk zeuk idatzitakoa dela edo jabetza pub
 'longpagewarning' => '<strong>OHARRA: Orrialde honek $1 kilobyteko tamaina du; nabigatzaile batzuek arazoak izan litzakete 32kb-tik gorako testuekin. Mesedez, saiatu orrialdea atal txikiagoetan banatzen.</strong>',
 'longpageerror' => "<strong>ERROREA: Bidali duzun testuak $1 kilobyteko luzera du, eta $2 kilobyteko maximoa baino luzeagoa da. Ezin da gorde.</strong>",
 'readonlywarning' => '<strong>OHARRA: Datu-basea blokeatu egin da mantenu lanak burutzeko, beraz ezingo dituzu orain zure aldaketak gorde. Testua fitxategi baten kopiatu dezakezu, eta beranduago erabiltzeko gorde.</strong>',
+# problem with link: [[Project:Babestutako orria|Babestutako Orria]]
 'protectedpagewarning' => "<strong>OHARRA:  Orri hau blokeaturik dago, administratzaileek soilik eraldatu dezakete. Ikusi [[Project:Babestutako orria|Babestutako Orria]].</strong>",
 'semiprotectedpagewarning' => "<strong>Oharra: Orrialde hau erregistratutako erabiltzaileek bakarrik aldatzeko babestuta dago.</strong>",
 'templatesused'	=> 'Orrialde honetan erabiltzen diren txantiloiak:',
@@ -596,6 +592,7 @@ Wiki honetako beste administratzaileek ezkutuko eduki hau ikusteko aukera izango
 # Search results
 #
 'searchresults' => 'Bilaketaren emaitzak',
+# problem with link: [[Project:Bilaketa|{{SITENAME}}(e)n bilatzen]]
 'searchresulttext' => "{{SITENAME}}(e)n bilaketak egiteko informazio gehiagorako, ikus [[Project:Bilaketa|{{SITENAME}}(e)n bilatzen]].",
 'searchsubtitle' => "'''[[:$1]]''' bilatu duzu",
 'searchsubtitleinvalid' => "'''$1''' bilatu duzu",
@@ -627,6 +624,10 @@ Wiki honetako beste administratzaileek ezkutuko eduki hau ikusteko aukera izango
 'prefsnologintext'	=> "[[Special:Userlogin|Saioa hasi behar duzu]] zure hobespenak ezartzeko.",
 'prefsreset'	=> 'Hobespenak hasieratu egin dira.',
 'qbsettings'	=> 'Laster-barra',
+'qbsettings-none'	=> 'Ezein ere',
+'qbsettings-fixedleft'	=> 'Eskuinean',
+'qbsettings-fixedright'	=> 'Ezkerrean',
+'qbsettings-floatingleft'	=> 'Ezkerrean mugikor',
 'changepassword' => 'Pasahitza aldatu',
 'skin'			=> 'Itxura',
 'math'			=> 'Math',
@@ -734,15 +735,15 @@ Wiki honetako beste administratzaileek ezkutuko eduki hau ikusteko aukera izango
 'reupload'		=> 'Berriz igo',
 'reuploaddesc'	=> 'Igotzeko formulariora itzuli.',
 'uploadnologin' => 'Saioa hasi gabe',
-'uploadnologintext'	=> "Fitxategiak igotzeko [[Aparteko:Userlogin|saioa hasi]] behar duzu.",
+'uploadnologintext'	=> "Fitxategiak igotzeko [[Special:Userlogin|saioa hasi]] behar duzu.",
 'upload_directory_read_only' => 'Web zerbitzariak ez dauka igoera direktorioan ($1) idazteko baimenik.',
 'uploaderror'	=> 'Errorea igotzerakoan',
 'uploadtext'	=> "Fitxategiak igotzeko beheko formularioa erabil dezakezu. Aurretik igotako irudiak ikusi edo bilatzeko [[Special:Imagelist|igotako fitxategien zerrendara]] jo. Igoerak eta ezabatutakoak [[Special:Log/upload|igoera erregistroan]] zerrendatzen dira.
 
 Orrialde baten irudi bat txertatzeko, erabili kode hauetako bat:
-'''<nowiki>[[{{ns:image}}:Fitxategia.jpg]]</nowiki>''',
-'''<nowiki>[[{{ns:image}}:Fitxategia.png|testu alternatiboa]]</nowiki>''' edo
-'''<nowiki>[[{{ns:media}}:Fitxategia.ogg]]</nowiki>''' irudia zuzenean erabiltzeko.",
+'''<nowiki>[[</nowiki>{{ns:image}}<nowiki>:Fitxategia.jpg]]</nowiki>''',
+'''<nowiki>[[</nowiki>{{ns:image}}<nowiki>:Fitxategia.png|testu alternatiboa]]</nowiki>''' edo
+'''<nowiki>[[</nowiki>{{ns:media}}<nowiki>:Fitxategia.ogg]]</nowiki>''' irudia zuzenean erabiltzeko.",
 'uploadlog'		=> 'igoera erregistroa',
 'uploadlogpage' => 'Igoera erregistroa',
 'uploadlogpagetext' => 'Jarraian azken igoeren zerrenda ikus daiteke.',
@@ -767,7 +768,7 @@ Orrialde baten irudi bat txertatzeko, erabili kode hauetako bat:
 'fileexists-forbidden' => 'Badago izen hori daukan fitxategi bat; mesedez, atzera itzuli eta igo fitxategia izen ezberdin batekin. [[Image:$1|thumb|center|$1]]',
 'fileexists-shared-forbidden' => 'Badago izen hori daukan fitxategi bat elkarbanatutako fitxategi-biltegian; mesedez, atzera itzuli eta igo fitxategia izen ezberdin batekin. [[Image:$1|thumb|center|$1]]',
 'successfulupload' => 'Igoera arrakastatsua',
-'fileuploaded'	=> "$1 fitxategia igo da. Mesedez, jarraitu hurrengo lotura hau: jo $2 deskribapen orrialdera eta fitxategiaren inguruko informazioa osatu, hala nola bere jatorria, noiz sortu den eta nork, eta fitxategiaren inguruan jakin beharko litzatekeen beste edozein datu. Hau irudi bat bada, honela txertatu dezakezu: <tt><nowiki>[[Irudi:$1|thumb|Deskribapena]]</nowiki></tt>",
+'fileuploaded'	=> "$1 fitxategia igo da. Mesedez, jarraitu hurrengo lotura hau: jo $2 deskribapen orrialdera eta fitxategiaren inguruko informazioa osatu, hala nola bere jatorria, noiz sortu den eta nork, eta fitxategiaren inguruan jakin beharko litzatekeen beste edozein datu. Hau irudi bat bada, honela txertatu dezakezu: <tt><nowiki>[[Image:$1|thumb|Deskribapena]]</nowiki></tt>",
 'uploadwarning' => 'Igotzeko oharra',
 'savefile'		=> 'Fitxategia gorde',
 'uploadedimage' => "\"[[$1]]\" igo da",
@@ -967,6 +968,7 @@ Horren arabera, '''$5''' aldaketa egin dira orrialde bakoitzeko bataz beste, eta
 
 # Watchlist
 'watchlist'			=> 'Nire jarraipen zerrenda',
+'mywatchlist'			=> 'Nire jarraipen zerrenda',
 'watchlistfor' => "('''$1''')",
 'nowatchlist'		=> 'Zure jarraipen zerrenda hutsik dago.',
 'watchlistanontext' => 'Mesedez $1 zure jarraipen zerrendako orrialdeak ikusi eta aldatu ahal izateko.',
@@ -1037,7 +1039,7 @@ Zure jarraipen zerrendako konfigurazioa aldatzeko, ikus
 {{fullurl:{{ns:special}}:Watchlist/edit}}
 
 Laguntza:
-{{fullurl:{{ns:help}}:Contents}}',
+{{fullurl:{{MediaWiki:helppage}}}}',
 
 # Delete/protect/revert
 #
@@ -1050,7 +1052,8 @@ Laguntza:
 'confirmdelete' => 'Ezabaketa baieztatu',
 'deletesub'		=> "(\"$1\" ezabatzen)",
 'historywarning' => 'Kontuz! Ezabatuko duzun orrialdeak honako historia du:',
-'confirmdeletetext' => "Orrialde edo irudi bat eta beste historia guztia datu-basetik ezabatzear zaude. Mesedez, egiaztatu hori egin nahi duzula, ondorioak zeintzuk diren badakizula, eta [[{{ns:project}}:Politikak|politikak]] errespetatuz egingo duzula.",
+'confirmdeletetext' => "Orrialde edo irudi bat eta beste historia guztia datu-basetik ezabatzear zaude. Mesedez, egiaztatu hori egin nahi duzula, ondorioak zeintzuk diren badakizula, eta [[{{MediaWiki:policy-url}}|politikak]] errespetatuz egingo duzula.",
+'policy-url' => 'Project:Politikak',
 'actioncomplete' => 'Ekintza burutu da',
 'deletedtext'	=> "\"$1\" ezabatu egin da. Ikus $2 azken ezabaketen erregistroa ikusteko.",
 'deletedarticle' => "\"[[$1]]\" ezabatu da",
@@ -1065,7 +1068,7 @@ Laguntza:
 'rollbacklink'	=> 'desegin',
 'rollbackfailed' => 'Desegiteak huts egin dud',
 'cantrollback'	=> 'Ezin da aldaketa desegin; erabiltzaile bakarrak hartu du parte.',
-'alreadyrolled'	=> "Ezin da [[Lankide:$2|$2]](e)k ([[Lankide eztabaida:$2|Eztabaida]]) [[$1]](e)n egindako azken aldaketa desegin; beste norbaitek editatu du edo jada desegin du. Azken aldaketa [[Lankide:$3|$3]](e)k ([[Lankide eztabaida:$3|Eztabaida]]) egin du.",
+'alreadyrolled'	=> "Ezin da [[User:$2|$2]](e)k ([[User talk:$2|Eztabaida]]) [[$1]](e)n egindako azken aldaketa desegin; beste norbaitek editatu du edo jada desegin du. Azken aldaketa [[User:$3|$3]](e)k ([[User talk:$3|Eztabaida]]) egin du.",
 #   only shown if there is an edit comment
 'editcomment' => "Aldaketaren iruzkina: \"<i>$1</i>\".",
 'revertpage'	=> "$2ren aldaketak ezabatu dira, $1ren azken bertsiora itzuliz.",
@@ -1125,7 +1128,7 @@ Laguntza:
 #
 'contributions' => 'Lankidearen ekarpenak',
 'mycontris'     => 'Nire ekarpenak',
-'contribsub'    => "$1",
+'contribsub2'    => "$1 ($2)",
 'nocontribs'    => 'Ez da ezaugarri horiekin bat datorren aldaketarik aurkitu.',
 'ucnote'        => "Behean agertzen dira erabiltzaile honen azken <b>$1</b> aldaketak azken <b>$2</b> egunetan.",
 'uclinks'       => "Azken $1 aldaketak ikusi; azken $2 egunak ikusi.",
@@ -1156,7 +1159,7 @@ Laguntza:
 # Block/unblock IP
 #
 'blockip'		=> 'Erabiltzailea blokeatu',
-'blockiptext'	=> "IP helbide edo erabiltzaile izen bati idazketa baimenak kentzeko beheko formularioa erabil dezakezu. Ekintza hau bandalismoa saihesteko baino ez da burutu behar, eta beti ere [[{{ns:project}}:Politikak|politikak]] errespetatuz. Blokeoaren arrazoi bat ere zehaztu ezazu (adibidez, orrialde batzuk zehaztuz).",
+'blockiptext'	=> "IP helbide edo erabiltzaile izen bati idazketa baimenak kentzeko beheko formularioa erabil dezakezu. Ekintza hau bandalismoa saihesteko baino ez da burutu behar, eta beti ere [[{{MediaWiki:policy-url}}|politikak]] errespetatuz. Blokeoaren arrazoi bat ere zehaztu ezazu (adibidez, orrialde batzuk zehaztuz).",
 'ipaddress'		=> 'IP Helbidea',
 'ipadressorusername' => 'IP Helbidea edo erabiltzaile izena',
 'ipbexpiry'		=> 'Iraungipena',
@@ -1184,9 +1187,9 @@ Laguntza:
 'blocklink'		=> 'blokeatu',
 'unblocklink'	=> 'blokeoa kendu',
 'contribslink'	=> 'ekarpenak',
-'autoblocker'	=> '"[[Lankide:$1|$1]]"(e)k berriki erabili duen IP helbidea duzulako autoblokeatu zaizu. $1(e)k emandako arrazoia zera da: "\'\'\'$2\'\'\'"',
+'autoblocker'	=> '"[[User:$1|$1]]"(e)k berriki erabili duen IP helbidea duzulako autoblokeatu zaizu. $1(e)k emandako arrazoia zera da: "\'\'\'$2\'\'\'"',
 'blocklogpage'	=> 'Blokeo erregistroa',
-'blocklogentry'	=> '"[[Lankide:$1|$1]]" $2(e)ko iraungipenarekin blokeatu da.',
+'blocklogentry'	=> '"[[User:$1|$1]]" $2(e)ko iraungipenarekin blokeatu da.',
 'blocklogtext'	=> 'Erabiltzaileen blokeoen ezarpen eta ezabaketen erregistroa da hau. Ez dira automatikoki blokeatutako IP helbideak zerrendatzen. Ikus [[Special:Ipblocklist|IP blokeoen zerrenda]] aktibo dauden blokeoak aztertzeko.',
 'unblocklogentry'	=> '$1 desblokeatu da',
 'range_block_disabled'	=> 'Administratzaileak IP eremuak blokeatzeko gaitasuna ezgaituta dago.',
@@ -1220,23 +1223,9 @@ Laguntza:
 'databasenotlocked' => 'Datu-basea ez dago blokeatuta.',
 
 # Make sysop
-'makesysoptitle'	=> 'Lankide bat administratzaile egin',
-'makesysoptext'		=> 'Lankide arruntei administratzaile baimenak emateko erabiltzen da orrialde hau. Lankidearen izena ipini laukian eta botoia sakatu.',
-'makesysopname'		=> 'Lankidearen izena:',
-'makesysopsubmit'	=> 'Lankide hau administratzaile egin',
-'makesysopok'		=> "<strong>\"$1\" lankidea administratzailea da orain</strong>",
-'makesysopfail'		=> "<strong>Ezin da \"$1\" lankidea administratzaile egin. (Ziur zaude izena zuzen idatzi duzula?)</strong>",
-'setbureaucratflag' => 'Burokrata egin',
 'rightslog'		=> 'Erabiltzaile eskubideen erregistroa',
 'rightslogtext'		=> 'Erabiltzaile eskubideetan izandako aldaketen erregistroa da hau.',
 'rightslogentry'	=> '$1(r)en partaidetza aldatu da $2(e)tik $3(e)ra',
-'rights'			=> 'Eskubideak:',
-'set_user_rights'	=> 'Erabiltzailearen eskubideak ezarri',
-'user_rights_set'	=> "<strong>\"$1\"(r)en eskubideak eguneratu egin dira</strong>",
-'set_rights_fail'	=> "<strong>Ezin izan dira \"$1\"(r)entzako eskubideak ezarri. (Izena ondo idatzi duzu?)</strong>",
-'makesysop'         => 'Lankide bat administratzaile egin',
-'already_sysop'     => 'Erabiltzaile hau bada administratzailea',
-'already_bureaucrat' => 'Erabiltzaile hau bada burokrata',
 'rightsnone' 		=> '(bat ere ez)',
 
 # Move page
@@ -1353,13 +1342,13 @@ Horrez gain, lotura zuzena ere erabil dezakezu; adibidez, [[{{ns:Special}}:Expor
 'accesskey-watch' => 'w',
 
 # tooltip help for some actions, most are in Monobook.js
-'tooltip-search' => '{{SITENAME}}(e)n bilatu [alt-f]',
-'tooltip-minoredit' => 'Aldaketa txiki bezala markatu hau [alt-i]',
-'tooltip-save' => 'Zure aldaketak gorde [alt-s]',
-'tooltip-preview' => 'Zure aldaketak aurreikusi, mesedez gorde aurretik erabili! [alt-p]',
-'tooltip-diff' => 'Testuari egindako aldaketak erakutsi. [alt-v]',
-'tooltip-compareselectedversions' => 'Orrialde honen bi hautatutako bertsioen arteko ezberdintasunak ikusi. [alt-v]',
-'tooltip-watch' => 'Orrialde hau zure segimendu zerrendan gehitu [alt-w]',
+'tooltip-search' => '{{SITENAME}}(e)n bilatu',
+'tooltip-minoredit' => 'Aldaketa txiki bezala markatu hau',
+'tooltip-save' => 'Zure aldaketak gorde',
+'tooltip-preview' => 'Zure aldaketak aurreikusi, mesedez gorde aurretik erabili!',
+'tooltip-diff' => 'Testuari egindako aldaketak erakutsi.',
+'tooltip-compareselectedversions' => 'Orrialde honen bi hautatutako bertsioen arteko ezberdintasunak ikusi.',
+'tooltip-watch' => 'Orrialde hau zure segimendu zerrendan gehitu',
 
 # stylesheets
 'common.css' => '/** Hemen idatzitako CSS kodeak itxura guztietan izango du eragina */',
@@ -1421,56 +1410,104 @@ Horrez gain, lotura zuzena ere erabil dezakezu; adibidez, [[{{ns:Special}}:Expor
 'markedaspatrollederrortext' => "Patruilatu bezala markatzeko berrikuspen bat hautatu beharra daukazu.",
 
 # Monobook.js: tooltips and access keys for monobook
-'monobook.js' => '/* tooltips and access keys */
-var ta = new Object();
-ta[\'pt-userpage\'] = new Array(\'.\',\'Nire lankide orrialdea\');
-ta[\'pt-anonuserpage\'] = new Array(\'.\',\'Zure IParen lankide orrialdea\');
-ta[\'pt-mytalk\'] = new Array(\'n\',\'Nire eztabaida orrialdea\');
-ta[\'pt-anontalk\'] = new Array(\'n\',\'Zure IParen eztabaida\');
-ta[\'pt-preferences\'] = new Array(\'\',\'Nire hobespenak\');
-ta[\'pt-watchlist\'] = new Array(\'l\',\'Jarraitzen dituzun orrialdeen zerrenda.\');
-ta[\'pt-mycontris\'] = new Array(\'y\',\'Nire ekarpenak\');
-ta[\'pt-login\'] = new Array(\'o\',\'Izen ematera gonbidatzen zaitugu.\');
-ta[\'pt-anonlogin\'] = new Array(\'o\',\'Izen ematera gonbidatzen zaitugu.\');
-ta[\'pt-logout\'] = new Array(\'o\',\'Saioa itxi\');
-ta[\'ca-talk\'] = new Array(\'t\',\'Artikuluari buruzko eztabaida\');
-ta[\'ca-edit\'] = new Array(\'e\',\'Artikulu hau aldatu dezakezu. Mesedez, aurrebista botoia erabil ezazu gorde baino lehen.\');
-ta[\'ca-addsection\'] = new Array(\'+\',\'Eztabaida honetan iruzkin bat erantsi ezazu.\');
-ta[\'ca-viewsource\'] = new Array(\'e\',\'Artikulu hau babesturik dago. Bere kodea soilik ikus dezakezu.\');
-ta[\'ca-history\'] = new Array(\'h\',\'Artikulu honen aurreko bertsioak.\');
-ta[\'ca-protect\'] = new Array(\'=\',\'Artikulu hau babestu\');
-ta[\'ca-delete\'] = new Array(\'d\',\'Artikulu hau ezabatu\');
-ta[\'ca-undelete\'] = new Array(\'d\',\'Ezabatu baino lehenago egindako aldaketak berrezarri.\');
-ta[\'ca-move\'] = new Array(\'m\',\'Orrialde hau mugitu\');
-ta[\'ca-watch\'] = new Array(\'w\',\'Orrialde hau jarraipen zerrendan gehitu\');
-ta[\'ca-unwatch\'] = new Array(\'w\',\'Orrialde hau jarraipen zerrendatik kendu\');
-ta[\'search\'] = new Array(\'f\',\'Wiki honetan bilatu\');
-ta[\'p-logo\'] = new Array(\'\',\'Azala\');
-ta[\'n-mainpage\'] = new Array(\'z\',\'Azala bisitatu\');
-ta[\'n-portal\'] = new Array(\'\',\'Proiektuaren inguruan, zer egin dezakezu, non aurkitu nahi duzuna\');
-ta[\'n-currentevents\'] = new Array(\'\',\'Oraingo gertaeren inguruko informazio gehigarria\');
-ta[\'n-recentchanges\'] = new Array(\'r\',\'Wikiko azken aldaketen zerrenda.\');
-ta[\'n-randompage\'] = new Array(\'x\',\'Ausazko orrialde bat kargatu\');
-ta[\'n-help\'] = new Array(\'\',\'Aurkitzeko lekua.\');
-ta[\'n-sitesupport\'] = new Array(\'\',\'Lagun iezaguzu\');
-ta[\'t-whatlinkshere\'] = new Array(\'j\',\'Hona lotzen duten wiki orrialde guztien zerrenda\');
-ta[\'t-recentchangeslinked\'] = new Array(\'k\',\'Orrialde honetatik lotutako orrialdeen azken aldaketak\');
-ta[\'feed-rss\'] = new Array(\'\',\'Orrialde honen RSS jarioa\');
-ta[\'feed-atom\'] = new Array(\'\',\'Orrialde honen atom jarioa\');
-ta[\'t-contributions\'] = new Array(\'\',\'Lankide honen ekarpen zerrenda ikusi\');
-ta[\'t-emailuser\'] = new Array(\'\',\'Lankide honi e-posta mezua bidali\');
-ta[\'t-upload\'] = new Array(\'u\',\'Irudiak edo media fitxategiak igo\');
-ta[\'t-specialpages\'] = new Array(\'q\',\'Aparteko orrialde guztien zerrenda\');
-ta[\'ca-nstab-main\'] = new Array(\'c\',\'Eduki orrialdea ikusi\');
-ta[\'ca-nstab-user\'] = new Array(\'c\',\'Lankide orrialdea ikusi\');
-ta[\'ca-nstab-media\'] = new Array(\'c\',\'Media orrialdea ikusi\');
-ta[\'ca-nstab-special\'] = new Array(\'\',\'Hau aparteko orrialde bat da, ezin duzu orrialdea aldatu.\');
-ta[\'ca-nstab-project\'] = new Array(\'a\',\'Proiektuaren orrialdea ikusi\');
-ta[\'ca-nstab-image\'] = new Array(\'c\',\'Irudiaren orrialdea ikusi\');
-ta[\'ca-nstab-mediawiki\'] = new Array(\'c\',\'Sistemaren mezua ikusi\');
-ta[\'ca-nstab-template\'] = new Array(\'c\',\'Txantiloia ikusi\');
-ta[\'ca-nstab-help\'] = new Array(\'c\',\'Laguntza orrialdea ikusi\');
-ta[\'ca-nstab-category\'] = new Array(\'c\',\'Kategoria orrialdea ikusi\');',
+'monobook.js' => '/* Deprecated; use [[MediaWiki:common.js]] */',
+
+'accesskey-pt-userpage' => '.',
+'tooltip-pt-userpage' => 'Nire lankide orrialdea',
+'accesskey-pt-anonuserpage' => '.',
+'tooltip-pt-anonuserpage' => 'Zure IParen lankide orrialdea',
+'accesskey-pt-mytalk' => 'n',
+'tooltip-pt-mytalk' => 'Nire eztabaida orrialdea',
+'accesskey-pt-anontalk' => 'n',
+'tooltip-pt-anontalk' => 'Zure IParen eztabaida',
+'accesskey-pt-preferences' => '',
+'tooltip-pt-preferences' => 'Nire hobespenak',
+'accesskey-pt-watchlist' => 'l',
+'tooltip-pt-watchlist' => 'Jarraitzen dituzun orrialdeen zerrenda.',
+'accesskey-pt-mycontris' => 'y',
+'tooltip-pt-mycontris' => 'Nire ekarpenak',
+'accesskey-pt-login' => 'o',
+'tooltip-pt-login' => 'Izen ematera gonbidatzen zaitugu.',
+'accesskey-pt-anonlogin' => 'o',
+'tooltip-pt-anonlogin' => 'Izen ematera gonbidatzen zaitugu.',
+'accesskey-pt-logout' => 'o',
+'tooltip-pt-logout' => 'Saioa itxi',
+'accesskey-ca-talk' => 't',
+'tooltip-ca-talk' => 'Artikuluari buruzko eztabaida',
+'accesskey-ca-edit' => 'e',
+'tooltip-ca-edit' => 'Artikulu hau aldatu dezakezu. Mesedez, aurrebista botoia erabil ezazu gorde baino lehen.',
+'accesskey-ca-addsection' => '+',
+'tooltip-ca-addsection' => 'Eztabaida honetan iruzkin bat erantsi ezazu.',
+'accesskey-ca-viewsource' => 'e',
+'tooltip-ca-viewsource' => 'Artikulu hau babesturik dago. Bere kodea soilik ikus dezakezu.',
+'accesskey-ca-history' => 'h',
+'tooltip-ca-history' => 'Artikulu honen aurreko bertsioak.',
+'accesskey-ca-protect' => '=',
+'tooltip-ca-protect' => 'Artikulu hau babestu',
+'accesskey-ca-delete' => 'd',
+'tooltip-ca-delete' => 'Artikulu hau ezabatu',
+'accesskey-ca-undelete' => 'd',
+'tooltip-ca-undelete' => 'Ezabatu baino lehenago egindako aldaketak berrezarri.',
+'accesskey-ca-move' => 'm',
+'tooltip-ca-move' => 'Orrialde hau mugitu',
+'accesskey-ca-watch' => 'w',
+'tooltip-ca-watch' => 'Orrialde hau jarraipen zerrendan gehitu',
+'accesskey-ca-unwatch' => 'w',
+'tooltip-ca-unwatch' => 'Orrialde hau jarraipen zerrendatik kendu',
+'accesskey-search' => 'f',
+'tooltip-search' => 'Wiki honetan bilatu',
+'accesskey-p-logo' => '',
+'tooltip-p-logo' => 'Azala',
+'accesskey-n-mainpage' => 'z',
+'tooltip-n-mainpage' => 'Azala bisitatu',
+'accesskey-n-portal' => '',
+'tooltip-n-portal' => 'Proiektuaren inguruan, zer egin dezakezu, non aurkitu nahi duzuna',
+'accesskey-n-currentevents' => '',
+'tooltip-n-currentevents' => 'Oraingo gertaeren inguruko informazio gehigarria',
+'accesskey-n-recentchanges' => 'r',
+'tooltip-n-recentchanges' => 'Wikiko azken aldaketen zerrenda.',
+'accesskey-n-randompage' => 'x',
+'tooltip-n-randompage' => 'Ausazko orrialde bat kargatu',
+'accesskey-n-help' => '',
+'tooltip-n-help' => 'Aurkitzeko lekua.',
+'accesskey-n-sitesupport' => '',
+'tooltip-n-sitesupport' => 'Lagun iezaguzu',
+'accesskey-t-whatlinkshere' => 'j',
+'tooltip-t-whatlinkshere' => 'Hona lotzen duten wiki orrialde guztien zerrenda',
+'accesskey-t-recentchangeslinked' => 'k',
+'tooltip-t-recentchangeslinked' => 'Orrialde honetatik lotutako orrialdeen azken aldaketak',
+'accesskey-feed-rss' => '',
+'tooltip-feed-rss' => 'Orrialde honen RSS jarioa',
+'accesskey-feed-atom' => '',
+'tooltip-feed-atom' => 'Orrialde honen atom jarioa',
+'accesskey-t-contributions' => '',
+'tooltip-t-contributions' => 'Lankide honen ekarpen zerrenda ikusi',
+'accesskey-t-emailuser' => '',
+'tooltip-t-emailuser' => 'Lankide honi e-posta mezua bidali',
+'accesskey-t-upload' => 'u',
+'tooltip-t-upload' => 'Irudiak edo media fitxategiak igo',
+'accesskey-t-specialpages' => 'q',
+'tooltip-t-specialpages' => 'Aparteko orrialde guztien zerrenda',
+'accesskey-ca-nstab-main' => 'c',
+'tooltip-ca-nstab-main' => 'Eduki orrialdea ikusi',
+'accesskey-ca-nstab-user' => 'c',
+'tooltip-ca-nstab-user' => 'Lankide orrialdea ikusi',
+'accesskey-ca-nstab-media' => 'c',
+'tooltip-ca-nstab-media' => 'Media orrialdea ikusi',
+'accesskey-ca-nstab-special' => '',
+'tooltip-ca-nstab-special' => 'Hau aparteko orrialde bat da, ezin duzu orrialdea aldatu.',
+'accesskey-ca-nstab-project' => 'a',
+'tooltip-ca-nstab-project' => 'Proiektuaren orrialdea ikusi',
+'accesskey-ca-nstab-image' => 'c',
+'tooltip-ca-nstab-image' => 'Irudiaren orrialdea ikusi',
+'accesskey-ca-nstab-mediawiki' => 'c',
+'tooltip-ca-nstab-mediawiki' => 'Sistemaren mezua ikusi',
+'accesskey-ca-nstab-template' => 'c',
+'tooltip-ca-nstab-template' => 'Txantiloia ikusi',
+'accesskey-ca-nstab-help' => 'c',
+'tooltip-ca-nstab-help' => 'Laguntza orrialdea ikusi',
+'accesskey-ca-nstab-category' => 'c',
+'tooltip-ca-nstab-category' => 'Kategoria orrialdea ikusi',
 
 # image deletion
 'deletedrevision' => '$1 berrikuspen zaharra ezabatu da.',
@@ -1818,7 +1855,7 @@ ta[\'ca-nstab-category\'] = new Array(\'c\',\'Kategoria orrialdea ikusi\');',
 
 # E-mail address confirmation
 'confirmemail' => 'E-posta helbidea egiaztatu',
-'confirmemail_noemail' => 'Ez daukazu e-posta helbiderik zehaztuta zure [[Aparteko:Preferences|hobespenetan]].',
+'confirmemail_noemail' => 'Ez daukazu e-posta helbiderik zehaztuta zure [[Special:Preferences|hobespenetan]].',
 'confirmemail_text' => "Wiki honetan zure e-posta helbidea egiaztatzea beharrezkoa da e-postarekin zerikusia duten ezaugarriak erabili aurretik. Beheko botoia jo zure helbidera egiaztapen mezu bat bidaltzeko. Mezuan kode bat duen lotura bat joango da atxikita; lotura hori zure nabigatzailean ireki ezazu e-posta helbidea egiaztatzeko.",
 'confirmemail_send' => 'Egiaztapen kodea e-postaz bidali',
 'confirmemail_sent' => 'Egiaztapen mezua bidali da.',

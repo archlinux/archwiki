@@ -38,7 +38,7 @@
 	background: white;
 	color: black;
 	border: 1px solid #aaa;
-	border-right: none;
+/* 	border-right: none; */
 	line-height: 1.5em;
 }
 
@@ -611,9 +611,10 @@ td.diff-context {
 	background: #eee;
 	font-size: smaller;
 }
-span.diffchange {
+.diffchange {
 	color: red;
 	font-weight: bold;
+	text-decoration: none;
 }
 
 /*
@@ -824,16 +825,18 @@ special external link styling */
 
 input.searchButton {
 	margin-top: 1px;
-	font-size: 95%;
+	height:20px;
+	width:40px;
+	font-size:10px;
 }
 #searchGoButton {
-	padding-left: .5em;
-	padding-right: .5em;
+	padding-left: 0px;
+	padding-right: 0px;
 	font-weight: bold;
-	display:none;
+	width:70px;
 }
 #searchInput {
-	width: 10.9em;
+	width: 120px;
 	margin: 0;
 	font-size: 95%;
 }
@@ -1057,8 +1060,7 @@ input.searchButton {
 	display: inline;
 	margin: 0 1.3em;
 }
-/* hide from incapable browsers */
-head:first-child+body #footer li { white-space: nowrap; }
+
 #f-poweredbyico, #f-copyrightico {
 	margin: 0 8px;
 	position: relative;
@@ -1308,15 +1310,6 @@ span.updatedmarker {
 	color: black;
 	background-color: #0f0;
 }
-span.newpageletter {
-	font-weight: bold;
-	color: black;
-	background-color: yellow;
-}
-span.minoreditletter {
-	color: black;
-	background-color: #c5ffe6;
-}
 
 table.gallery {
 	border: 1px solid #ccc;
@@ -1339,10 +1332,12 @@ table.gallery td.galleryheader {
 	text-align: center;
 	font-weight: bold;
 }
+table.gallery caption {
+	font-weight: bold;
+}
 
 div.gallerybox {
 	margin: 2px;
-	width:  150px;
 }
 
 div.gallerybox div.thumb {
@@ -1620,7 +1615,7 @@ tr.sv-space td { display: none; }
 .TablePager_nav a { text-decoration: none; }
 .TablePager { border-collapse: collapse; }
 .TablePager, .TablePager td, .TablePager th { 
-       border: 0.15em solid #777777;
+       border: 1px solid #aaaaaa;
        padding: 0 0.15em 0 0.15em;
 }
 .TablePager th { background-color: #eeeeff }
@@ -1637,6 +1632,3 @@ tr.sv-space td { display: none; }
 .mw-summary-preview {
 	margin: 0.1em 0;
 }
-#toolbar { clear: both; }
-
-.mw-plusminus-null { color: #aaa; }

@@ -2,8 +2,8 @@
 
 /**
  * Various core parser functions, registered in Parser::firstCallInit()
+ * @addtogroup Parser
  */
-
 class CoreParserFunctions {
 	static function intFunction( $parser, $part1 = '' /*, ... */ ) {
 		if ( strval( $part1 ) !== '' ) {
@@ -87,7 +87,7 @@ class CoreParserFunctions {
 	static function formatNum( $parser, $num = '' ) {
 		return $parser->getFunctionLang()->formatNum( $num );
 	}
-	
+
 	static function grammar( $parser, $case = '', $word = '' ) {
 		return $parser->getFunctionLang()->convertGrammar( $word, $case );
 	}
@@ -135,6 +135,7 @@ class CoreParserFunctions {
 	static function numberofarticles( $parser, $raw = null ) { return self::statisticsFunction( 'articles', $raw ); }
 	static function numberoffiles( $parser, $raw = null ) { return self::statisticsFunction( 'images', $raw ); }
 	static function numberofadmins( $parser, $raw = null ) { return self::statisticsFunction( 'admins', $raw ); }
+	static function numberofedits( $parser, $raw = null ) { return self::statisticsFunction( 'edits', $raw ); }
 
 	static function pagesinnamespace( $parser, $namespace = 0, $raw = null ) {
 		$count = SiteStats::pagesInNs( intval( $namespace ) );
@@ -151,7 +152,7 @@ class CoreParserFunctions {
 		$lang = $wgContLang->getLanguageName( strtolower( $arg ) );
 		return $lang != '' ? $lang : $arg;
 	}
-	
+
 	static function pad( $string = '', $length = 0, $char = 0, $direction = STR_PAD_RIGHT ) {
 		$length = min( max( $length, 0 ), 500 );
 		$char = substr( $char, 0, 1 );
@@ -159,17 +160,21 @@ class CoreParserFunctions {
 				? str_pad( $string, $length, (string)$char, $direction )
 				: $string;
 	}
-	
+
 	static function padleft( $parser, $string = '', $length = 0, $char = 0 ) {
 		return self::pad( $string, $length, $char, STR_PAD_LEFT );
 	}
-	
+
 	static function padright( $parser, $string = '', $length = 0, $char = 0 ) {
 		return self::pad( $string, $length, $char );
 	}
-	
+
 	static function anchorencode( $parser, $text ) {
-		return strtr( urlencode( $text ) , array( '%' => '.' , '+' => '_' ) );
+		$a = urlencode( $text );
+		$a = strtr( $a, array( '%' => '.', '+' => '_' ) );
+		# leave colons alone, however
+		$a = str_replace( '.3A', ':', $a );
+		return $a;
 	}
 
 	static function special( $parser, $text ) {
@@ -180,14 +185,12 @@ class CoreParserFunctions {
 			return wfMsgForContent( 'nosuchspecialpage' );
 		}
 	}
-	
+
 	public static function defaultsort( $parser, $text ) {
 		$text = trim( $text );
 		if( strlen( $text ) > 0 )
 			$parser->setDefaultSort( $text );
 		return '';
 	}
-	
 }
-
 ?>
