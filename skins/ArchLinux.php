@@ -122,7 +122,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 				<li<?php echo $aurTab; ?>><a href="?title=AUR">AUR</a></li>
 				<li<?php echo $bugsTab; ?>><a href="?title=Bugs">Bugs</a></li>
 				<li<?php echo $wikiTab; ?>><a href="?title=Hauptseite">Wiki</a></li>
-				<li><a href="http://www.laber-land.de/?page=Forums;id=20">Forum</a></li>
+				<li><a href="http://forum.archlinux.de/?page=Forums;id=20">Forum</a></li>
 				<li><a href="http://www.archlinux.de">Start</a></li>
 			</ul>
 		</div>
