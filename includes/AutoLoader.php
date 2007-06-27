@@ -244,6 +244,7 @@ function __autoload($className) {
 		'WikiError' => 'includes/WikiError.php',
 		'WikiErrorMsg' => 'includes/WikiError.php',
 		'WikiXmlError' => 'includes/WikiError.php',
+		'XCacheBagOStuff' => 'includes/BagOStuff.php',
 		'Xml' => 'includes/Xml.php',
 		'ZhClient' => 'includes/ZhClient.php',
 		'memcached' => 'includes/memcached-client.php',

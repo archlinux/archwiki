@@ -516,6 +516,53 @@ class APCBagOStuff extends BagOStuff {
 
 
 /**
+ * Wrapper for XCache object caching functions; identical interface
+ * to the APC wrapper
+ */
+class XCacheBagOStuff extends APCBagOStuff {
+
+	/**
+	 * Get a value from the XCache object cache
+	 *
+	 * @param string $key Cache key
+	 * @return mixed
+	 */
+	public function get( $key ) {
+		$val = xcache_get( $key );
+		if( is_string( $val ) )
+			$val = unserialize( $val );
+		return $val;
+	}
+	
+	/**
+	 * Store a value in the XCache object cache
+	 *
+	 * @param string $key Cache key
+	 * @param mixed $value Object to store
+	 * @param int $expire Expiration time
+	 * @return bool
+	 */
+	public function set( $key, $value, $expire = 0 ) {
+		xcache_set( $key, serialize( $value ), $expire );
+		return true;
+	}
+	
+	/**
+	 * Remove a value from the XCache object cache
+	 *
+	 * @param string $key Cache key
+	 * @param int $time Not used in this implementation
+	 * @return bool
+	 */
+	public function delete( $key, $time = 0 ) {
+		xcache_unset( $key );
+		return true;
+	}
+	
+}
+
+
+/**
  * This is a wrapper for eAccelerator's shared memory functions.
  *
  * This is basically identical to the Turck MMCache version,
