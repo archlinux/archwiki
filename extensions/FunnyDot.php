@@ -20,9 +20,8 @@ public static function checkAntiSpamHash()
 	if (!empty($_COOKIE['AntiSpamTime']) && !empty($_COOKIE['AntiSpamHash']))
 		{
 		$time = intval($_COOKIE['AntiSpamTime']);
-		$hash = self::$_COOKIE['AntiSpamHash'];
 
-		if ($hash != sha1($time.$wgAntiSpamHash))
+		if ($_COOKIE['AntiSpamHash'] != sha1($time.$wgAntiSpamHash))
 			{
 			return false;
 			}
