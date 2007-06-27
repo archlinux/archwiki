@@ -6,16 +6,10 @@ $wgExtensionCredits['other'][] = array(
     'name' => 'FunnyDot',
     'description' => 'Schutz vor Spam-Bots',
     'author' => 'Pierre Schmitz',
-    'url' => 'http://www.laber-land.de',
+    'url' => 'http://www.archlinux.de',
 );
 
 class FunnyDot {
-
-private static function hexVal($in)
-	{
-	$result = preg_replace('/[^0-9a-fA-F]/', '', $in);
-	return (empty($result) ? 0 : $result);
-	}
 
 public static function checkAntiSpamHash()
 	{
@@ -26,7 +20,7 @@ public static function checkAntiSpamHash()
 	if (!empty($_COOKIE['AntiSpamTime']) && !empty($_COOKIE['AntiSpamHash']))
 		{
 		$time = intval($_COOKIE['AntiSpamTime']);
-		$hash = self::hexVal($_COOKIE['AntiSpamHash']);
+		$hash = self::$_COOKIE['AntiSpamHash'];
 
 		if ($hash != sha1($time.$wgAntiSpamHash))
 			{

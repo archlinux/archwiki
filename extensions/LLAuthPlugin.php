@@ -4,9 +4,9 @@ $wgHooks['isValidPassword'][] = 'LLAuthPlugin::isValidPassword';
 
 $wgExtensionCredits['other'][] = array(
     'name' => 'LLAuthPlugin',
-    'description' => 'Authentifizierung am Laber-Land-Forum',
+    'description' => 'Authentifizierung am LL-Forum',
     'author' => 'Pierre Schmitz',
-    'url' => 'http://www.laber-land.de',
+    'url' => 'http://www.archlinux.de',
 );
 
 require_once('includes/AuthPlugin.php');
@@ -55,7 +55,7 @@ class LLAuthPlugin extends AuthPlugin {
 
 	function modifyUITemplate( &$template ) {
 		$template->set( 'usedomain', false );
-		$template->set('link', 'Um Dich hier anzumelden, nutze Deine Konto-Daten aus dem <a href="http://www.laber-land.de/?page=Forums;id=20">archlinux.de-Forum</a>.');
+		$template->set('link', 'Um Dich hier anzumelden, nutze Deine Konto-Daten aus dem <a href="http://forum.archlinux.de/">archlinux.de-Forum</a>.');
 	}
 
 	function setDomain( $domain ) {
