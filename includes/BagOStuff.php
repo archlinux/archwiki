@@ -516,49 +516,36 @@ class APCBagOStuff extends BagOStuff {
 
 
 /**
- * Wrapper for XCache object caching functions; identical interface
- * to the APC wrapper
+ * Wrapper for XCache object caching functions
  */
-class XCacheBagOStuff extends APCBagOStuff {
-
-	/**
-	 * Get a value from the XCache object cache
-	 *
-	 * @param string $key Cache key
-	 * @return mixed
-	 */
+class XCacheBagOStuff extends BagOStuff {
 	public function get( $key ) {
-		$val = xcache_get( $key );
-		if( is_string( $val ) )
-			$val = unserialize( $val );
-		return $val;
+		return xcache_get( $key );
 	}
-	
-	/**
-	 * Store a value in the XCache object cache
-	 *
-	 * @param string $key Cache key
-	 * @param mixed $value Object to store
-	 * @param int $expire Expiration time
-	 * @return bool
-	 */
+
 	public function set( $key, $value, $expire = 0 ) {
-		xcache_set( $key, serialize( $value ), $expire );
-		return true;
+		return xcache_set( $key,  $value, $expire );
 	}
-	
-	/**
-	 * Remove a value from the XCache object cache
-	 *
-	 * @param string $key Cache key
-	 * @param int $time Not used in this implementation
-	 * @return bool
-	 */
+
 	public function delete( $key, $time = 0 ) {
-		xcache_unset( $key );
-		return true;
+		return xcache_unset( $key );
 	}
-	
+
+	function incr($key, $value=1) {
+		return (xcache_isset($key) && xcache_inc($key. $value));
+	}
+
+	function decr($key, $value=1) {
+		return (xcache_isset($key) && xcache_dec($key. $value));
+	}
+
+	function add($key, $value, $exptime=0) {
+		return (!xcache_isset($key) && xcache_set( $key, $value, $expire ));
+	}
+
+	function replace($key, $value, $exptime=0) {
+		return (xcache_isset($key) && xcache_set( $key, $value, $expire ));
+	}
 }
 
 
