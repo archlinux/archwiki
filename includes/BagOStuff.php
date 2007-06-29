@@ -495,28 +495,27 @@ class TurckBagOStuff extends BagOStuff {
  *
  */
 class APCBagOStuff extends BagOStuff {
-	function get($key) {
-		$val = apc_fetch($key);
-		if ( is_string( $val ) ) {
-			$val = unserialize( $val );
-		}
-		return $val;
+	public function get( $key ) {
+		return apc_fetch($key);
 	}
 
-	function set($key, $value, $exptime=0) {
-		apc_store($key, serialize($value), $exptime);
-		return true;
+	public function set( $key, $value, $exptime = 0 ) {
+		return apc_store($key, $value, $exptime);
 	}
 
-	function delete($key, $time=0) {
-		apc_delete($key);
-		return true;
+	public function delete( $key, $time = 0 ) {
+		return apc_delete( $key );
 	}
+
+// 	function add($key, $value, $exptime=0) {
+// 		return apc_add( $key, $value, $exptime );
+// 	}
 }
 
 
 /**
  * Wrapper for XCache object caching functions
+ *
  */
 class XCacheBagOStuff extends BagOStuff {
 	public function get( $key ) {
