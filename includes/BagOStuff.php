@@ -507,9 +507,9 @@ class APCBagOStuff extends BagOStuff {
 		return apc_delete( $key );
 	}
 
-// 	function add($key, $value, $exptime=0) {
-// 		return apc_add( $key, $value, $exptime );
-// 	}
+	function add($key, $value, $exptime=0) {
+		return apc_add( $key, $value, $exptime );
+	}
 }
 
 
