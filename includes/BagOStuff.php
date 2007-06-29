@@ -238,8 +238,8 @@ abstract class SqlBagOStuff extends BagOStuff {
 		}
 		if($row=$this->_fetchobject($res)) {
 			$this->_debug("get: retrieved data; exp time is " . $row->exptime);
-			if ( $row->exptime != $this->_maxdatetime() && 
-			  wfTimestamp( TS_UNIX, $row->exptime ) < time() ) 
+			if ( $row->exptime != $this->_maxdatetime() &&
+			  wfTimestamp( TS_UNIX, $row->exptime ) < time() )
 			{
 				$this->_debug("get: key has expired, deleting");
 				$this->delete($key);
@@ -502,12 +502,12 @@ class APCBagOStuff extends BagOStuff {
 		}
 		return $val;
 	}
-	
+
 	function set($key, $value, $exptime=0) {
 		apc_store($key, serialize($value), $exptime);
 		return true;
 	}
-	
+
 	function delete($key, $time=0) {
 		apc_delete($key);
 		return true;
@@ -520,11 +520,11 @@ class APCBagOStuff extends BagOStuff {
  */
 class XCacheBagOStuff extends BagOStuff {
 	public function get( $key ) {
-		return xcache_get( $key );
+		return unserialize(xcache_get($key));
 	}
 
-	public function set( $key, $value, $expire = 0 ) {
-		return xcache_set( $key,  $value, $expire );
+	public function set( $key, $value, $exptime = 0 ) {
+		return xcache_set($key, serialize($value), $exptime);
 	}
 
 	public function delete( $key, $time = 0 ) {
@@ -540,11 +540,11 @@ class XCacheBagOStuff extends BagOStuff {
 	}
 
 	function add($key, $value, $exptime=0) {
-		return (!xcache_isset($key) && xcache_set( $key, $value, $expire ));
+		return (!xcache_isset($key) && $this->set( $key, $value, $exptime ));
 	}
 
 	function replace($key, $value, $exptime=0) {
-		return (xcache_isset($key) && xcache_set( $key, $value, $expire ));
+		return (xcache_isset($key) && $this->set( $key, $value, $exptime ));
 	}
 }
 
@@ -591,7 +591,7 @@ class eAccelBagOStuff extends BagOStuff {
  */
 class DBABagOStuff extends BagOStuff {
 	var $mHandler, $mFile, $mReader, $mWriter, $mDisabled;
-	
+
 	function __construct( $handler = 'db3', $dir = false ) {
 		if ( $dir === false ) {
 			global $wgTmpDirectory;
@@ -618,7 +618,7 @@ class DBABagOStuff extends BagOStuff {
 		if ( !is_string( $blob ) ) {
 			return array( null, 0 );
 		} else {
-			return array( 
+			return array(
 				unserialize( substr( $blob, 11 ) ),
 				intval( substr( $blob, 0, 10 ) )
 		   	);
@@ -719,5 +719,5 @@ class DBABagOStuff extends BagOStuff {
 		return $ret;
 	}
 }
-	
+
 ?>
