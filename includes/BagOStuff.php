@@ -507,7 +507,7 @@ class APCBagOStuff extends BagOStuff {
 		return apc_delete( $key );
 	}
 
-	function add($key, $value, $exptime=0) {
+	public function add($key, $value, $exptime=0) {
 		return apc_add( $key, $value, $exptime );
 	}
 }
@@ -519,11 +519,7 @@ class APCBagOStuff extends BagOStuff {
  */
 class XCacheBagOStuff extends BagOStuff {
 	public function get( $key ) {
-		$val = xcache_get( $key );
-		if ( is_string( $val ) ) {
-			$val = unserialize( $val );
-		}
-		return $val;
+		return (xcache_isset($key) ? unserialize(xcache_get($key)) : false);
 	}
 
 	public function set( $key, $value, $exptime = 0 ) {
@@ -534,19 +530,19 @@ class XCacheBagOStuff extends BagOStuff {
 		return xcache_unset( $key );
 	}
 
-	function incr($key, $value=1) {
+	public function incr($key, $value=1) {
 		return (xcache_isset($key) && xcache_inc($key. $value));
 	}
 
-	function decr($key, $value=1) {
+	public function decr($key, $value=1) {
 		return (xcache_isset($key) && xcache_dec($key. $value));
 	}
 
-	function add($key, $value, $exptime=0) {
+	public function add($key, $value, $exptime=0) {
 		return (!xcache_isset($key) && $this->set( $key, $value, $exptime ));
 	}
 
-	function replace($key, $value, $exptime=0) {
+	public function replace($key, $value, $exptime=0) {
 		return (xcache_isset($key) && $this->set( $key, $value, $exptime ));
 	}
 }
