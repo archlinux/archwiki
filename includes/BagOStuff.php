@@ -519,7 +519,11 @@ class APCBagOStuff extends BagOStuff {
  */
 class XCacheBagOStuff extends BagOStuff {
 	public function get( $key ) {
-		return unserialize(xcache_get($key));
+		$val = xcache_get( $key );
+		if ( is_string( $val ) ) {
+			$val = unserialize( $val );
+		}
+		return $val;
 	}
 
 	public function set( $key, $value, $exptime = 0 ) {
