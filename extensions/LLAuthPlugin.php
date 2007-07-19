@@ -1,43 +1,60 @@
 <?php
 
-$wgHooks['isValidPassword'][] = 'LLAuthPlugin::isValidPassword';
+$wgHooks['isValidPassword'][]	= 'LLAuthPlugin::isValidPassword';
 
-$wgExtensionCredits['other'][] = array(
-    'name' => 'LLAuthPlugin',
-    'description' => 'Authentifizierung am LL-Forum',
-    'author' => 'Pierre Schmitz',
-    'url' => 'http://www.archlinux.de',
+$wgExtensionCredits['other'][] 	= array(
+	'name' => 'LLAuthPlugin',
+	'description' => 'Authentifizierung am LL-Forum',
+	'author' => 'Pierre Schmitz',
+	'url' => 'http://www.archlinux.de',
 );
 
 require_once('includes/AuthPlugin.php');
 
 class LLAuthPlugin extends AuthPlugin {
 
+	private $dbLink	= null;
+	private $data 	= null;
+
 	public static function isValidPassword($password) {
 		$length = strlen($password);
 		return ($length >= 6 && $length <= 25);
 	}
 
-	private $dbLink = null;
+	function __destruct() 
+		{
+		if (!is_null($this->dbLink))
+			{
+			mysqli_close($this->dbLink);
+			}
+		}
 
-	function __construct() {
+	private function connect()
+		{
 		global $wgDBuser, $wgDBpassword;
-		$this->dbLink = mysqli_connect('localhost', $wgDBuser, $wgDBpassword, 'current');
-	}
 
-	function __destruct() {
-		mysqli_close($this->dbLink);
-	}
+		if (is_null($this->dbLink))
+			{
+			$this->dbLink = mysqli_connect('localhost', $wgDBuser, $wgDBpassword, 'current');
+			}
+		}
 
 	function getUserData($username) {
-		$result = mysqli_query($this->dbLink, 'SELECT id, email, realname FROM users WHERE name = \''.mysqli_escape_string($this->dbLink, $username).'\'');
-		$data = mysqli_fetch_assoc($result);
-		mysqli_free_result($result);
+		if (is_null($this->data))
+			{
+			$this->connect();
+			$result = mysqli_query($this->dbLink, 'SELECT id, name, email, realname FROM users WHERE name = \''.mysqli_escape_string($this->dbLink, $username).'\'');
+			$data = mysqli_fetch_assoc($result);
+			mysqli_free_result($result);
 
-		return $data;
+			$this->data = $data;
+			}
+
+		return $this->data;
 	}
 
 	function userExists( $username ) {
+		$this->connect();
 		$result = mysqli_query($this->dbLink, 'SELECT id FROM users WHERE name = \''.mysqli_escape_string($this->dbLink, $username).'\'');
 		$exists = mysqli_num_rows($result) > 0;
 		mysqli_free_result($result);
@@ -46,6 +63,7 @@ class LLAuthPlugin extends AuthPlugin {
 	}
 
 	function authenticate( $username, $password ) {
+		$this->connect();
 		$result = mysqli_query($this->dbLink, 'SELECT id FROM users WHERE name = \''.mysqli_escape_string($this->dbLink, $username).'\' AND password = \''.mysqli_escape_string($this->dbLink, sha1($password)).'\' ');
 		$authenticated = mysqli_num_rows($result) > 0;
 		mysqli_free_result($result);
@@ -108,7 +126,9 @@ class LLAuthPlugin extends AuthPlugin {
 	}
 
 	function getCanonicalName( $username ) {
-		return $username;
+		// fix bug #122
+		$data = $this->getUserData($username);
+		return $data['name'];
 	}
 }
 
