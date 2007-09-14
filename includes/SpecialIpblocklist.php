@@ -18,30 +18,49 @@ function wfSpecialIpblocklist() {
 
 	$ipu = new IPUnblockForm( $ip, $id, $reason );
 
-	if ( "success" == $action ) {
-		$ipu->showList( $wgOut->parse( wfMsg( 'unblocked', $successip ) ) );
-	} else if ( "submit" == $action && $wgRequest->wasPosted() &&
-		$wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ) ) ) {
-		if ( ! $wgUser->isAllowed('block') ) {
+	if( $action == 'unblock' ) {
+		# Check permissions
+		if( !$wgUser->isAllowed( 'block' ) ) {
 			$wgOut->permissionRequired( 'block' );
 			return;
 		}
-		# Can't unblock when the database is locked
+		# Check for database lock
 		if( wfReadOnly() ) {
 			$wgOut->readOnlyPage();
 			return;
 		}
+		# Show unblock form
+		$ipu->showForm( '' );
+	} elseif( $action == 'submit' && $wgRequest->wasPosted()
+		&& $wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ) ) ) {
+		# Check permissions
+		if( !$wgUser->isAllowed( 'block' ) ) {
+			$wgOut->permissionRequired( 'block' );
+			return;
+		}
+		# Check for database lock
+		if( wfReadOnly() ) {
+			$wgOut->readOnlyPage();
+			return;
+		}
+		# Remove blocks and redirect user to success page
 		$ipu->doSubmit();
-	} else if ( "unblock" == $action ) {
-		# Can't unblock when the database is locked
-		if( wfReadOnly() ) {
-			$wgOut->readOnlyPage();
-			return;
+	} elseif( $action == 'success' ) {
+		# Inform the user of a successful unblock
+		# (No need to check permissions or locks here,
+		# if something was done, then it's too late!)
+		if ( substr( $successip, 0, 1) == '#' ) {
+			// A block ID was unblocked
+			$ipu->showList( $wgOut->parse( wfMsg( 'unblocked-id', $successip ) ) );
+		} else {
+			// A username/IP was unblocked
+			$ipu->showList( $wgOut->parse( wfMsg( 'unblocked', $successip ) ) );
 		}
-		$ipu->showForm( "" );
 	} else {
-		$ipu->showList( "" );
+		# Just show the block list
+		$ipu->showList( '' );
 	}
+
 }
 
 /**
@@ -58,7 +77,7 @@ class IPUnblockForm {
 	}
 
 	function showForm( $err ) {
-		global $wgOut, $wgUser, $wgSysopUserBans;
+		global $wgOut, $wgUser, $wgSysopUserBans, $wgContLang;
 
 		$wgOut->setPagetitle( wfMsg( 'unblockip' ) );
 		$wgOut->addWikiText( wfMsg( 'unblockiptext' ) );
@@ -67,7 +86,8 @@ class IPUnblockForm {
 		$ipr = wfMsgHtml( 'ipbreason' );
 		$ipus = wfMsgHtml( 'ipusubmit' );
 		$titleObj = SpecialPage::getTitleFor( "Ipblocklist" );
-		$action = $titleObj->escapeLocalURL( "action=submit" );
+		$action = $titleObj->getLocalURL( "action=submit" );
+		$alignRight = $wgContLang->isRtl() ? 'left' : 'right';
 
 		if ( "" != $err ) {
 			$wgOut->setSubtitle( wfMsg( "formerror" ) );
@@ -80,39 +100,43 @@ class IPUnblockForm {
 			$block = Block::newFromID( $this->id );
 			if ( $block ) {
 				$encName = htmlspecialchars( $block->getRedactedName() );
-				$encId = htmlspecialchars( $this->id );
-				$addressPart = $encName . "<input type='hidden' name=\"id\" value=\"$encId\" />";
+				$encId = $this->id;
+				$addressPart = $encName . Xml::hidden( 'id', $encId );
 			}
 		}
 		if ( !$addressPart ) {
-			$addressPart = "<input tabindex='1' type='text' size='20' " .
-				"name=\"wpUnblockAddress\" value=\"" . htmlspecialchars( $this->ip ) . "\" />";
+			$addressPart = Xml::input( 'wpUnblockAddress', 20, $this->ip, array( 'type' => 'text', 'tabindex' => '1' ) );
 		}
 
-		$wgOut->addHTML( "
-<form id=\"unblockip\" method=\"post\" action=\"{$action}\">
-	<table border='0'>
-		<tr>
-			<td align='right'>{$ipa}:</td>
-			<td align='left'>
-				{$addressPart}
-			</td>
-		</tr>
-		<tr>
-			<td align='right'>{$ipr}:</td>
-			<td align='left'>
-				<input tabindex='1' type='text' size='40' name=\"wpUnblockReason\" value=\"" . htmlspecialchars( $this->reason ) . "\" />
-			</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td align='left'>
-				<input tabindex='2' type='submit' name=\"wpBlock\" value=\"{$ipus}\" />
-			</td>
-		</tr>
-	</table>
-	<input type='hidden' name='wpEditToken' value=\"{$token}\" />
-</form>\n" );
+		$wgOut->addHTML(
+			Xml::openElement( 'form', array( 'method' => 'post', 'action' => $action, 'id' => 'unblockip' ) ) .
+			Xml::openElement( 'table', array( 'border' => '0' ) ).
+			"<tr>
+				<td align='$alignRight'>
+					{$ipa}
+				</td>
+				<td>
+					{$addressPart}
+				</td>
+			</tr>
+			<tr>
+				<td align='$alignRight'>
+					{$ipr}
+				</td>
+				<td>" .
+					Xml::input( 'wpUnblockReason', 40, $this->reason, array( 'type' => 'text', 'tabindex' => '2' ) ) .
+				"</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>" .
+					Xml::submitButton( $ipus, array( 'name' => 'wpBlock', 'tabindex' => '3' ) ) .
+				"</td>
+			</tr>" .
+			Xml::closeElement( 'table' ) .
+			Xml::hidden( 'wpEditToken', $token ) .
+			Xml::closeElement( 'form' ) . "\n"
+		);
 
 	}
 
@@ -200,46 +224,34 @@ class IPUnblockForm {
 			}
 		}
 
-                # TODO: difference message between
-		#       a) an real empty list and
-		#       b) requested ip/username not on list
 		$pager = new IPBlocklistPager( $this, $conds );
 		if ( $pager->getNumRows() ) {
-			$s = $this->searchForm() .
-				$pager->getNavigationBar();
-			$s .= "<ul>" . 
-				$pager->getBody() .
-				"</ul>";
-			$s .= $pager->getNavigationBar();
+			$wgOut->addHTML(
+				$this->searchForm() .
+				$pager->getNavigationBar() .
+				Xml::tags( 'ul', null, $pager->getBody() ) .
+				$pager->getNavigationBar()
+			);
+		} elseif ( $this->ip != '') {
+			$wgOut->addHTML( $this->searchForm() );
+			$wgOut->addWikiText( wfMsg( 'ipblocklist-no-results' ) );
 		} else {
-			$s = $this->searchForm() .
-				'<p>' . wfMsgHTML( 'ipblocklistempty' ) . '</p>';
+			$wgOut->addWikiText( wfMsg( 'ipblocklist-empty' ) );
 		}
-		$wgOut->addHTML( $s );
 	}
 
 	function searchForm() {
 		global $wgTitle, $wgScript, $wgRequest;
 		return
-			wfElement( 'form', array(
-				'action' => $wgScript ),
-				null ) .
-			wfHidden( 'title', $wgTitle->getPrefixedDbKey() ) .
-			wfElement( 'input', array(
-				'type' => 'hidden',
-				'name' => 'action',
-				'value' => 'search' ) ).
-			wfElement( 'input', array(
-				'type' => 'hidden',
-				'name' => 'limit',
-				'value' => $wgRequest->getText( 'limit' ) ) ) .
-			wfElement( 'input', array(
-				'name' => 'ip',
-				'value' => $this->ip ) ) .
-			wfElement( 'input', array(
-				'type' => 'submit',
-				'value' => wfMsg( 'ipblocklist-submit' ) ) ) .
-			'</form>';
+			Xml::tags( 'form', array( 'action' => $wgScript ),
+				Xml::hidden( 'title', $wgTitle->getPrefixedDbKey() ) .
+				Xml::openElement( 'fieldset' ) .
+				Xml::element( 'legend', null, wfMsg( 'ipblocklist-legend' ) ) .
+				Xml::inputLabel( wfMsg( 'ipblocklist-username' ), 'ip', 'ip', /* size */ false, $this->ip ) .
+				'&nbsp;' .
+				Xml::submitButton( wfMsg( 'ipblocklist-submit' ) ) .
+				Xml::closeElement( 'fieldset' )
+			);
 	}
 
 	/**
@@ -257,7 +269,7 @@ class IPUnblockForm {
 		if( is_null( $msg ) ) {
 			$msg = array();
 			$keys = array( 'infiniteblock', 'expiringblock', 'contribslink', 'unblocklink', 
-				'anononlyblock', 'createaccountblock', 'noautoblockblock' );
+				'anononlyblock', 'createaccountblock', 'noautoblockblock', 'emailblock' );
 			foreach( $keys as $key ) {
 				$msg[$key] = wfMsgHtml( $key );
 			}
@@ -275,8 +287,8 @@ class IPUnblockForm {
 		if( $block->mAuto ) {
 			$target = $block->getRedactedName(); # Hide the IP addresses of auto-blocks; privacy
 		} else {
-			$target = $sk->makeLinkObj( Title::makeTitle( NS_USER, $block->mAddress ), $block->mAddress );
-			$target .= ' (' . $sk->makeKnownLinkObj( SpecialPage::getSafeTitleFor( 'Contributions', $block->mAddress ), $msg['contribslink'] ) . ')';
+			$target = $sk->userLink( $block->mUser, $block->mAddress )
+				. $sk->userToolLinks( $block->mUser, $block->mAddress, false, Linker::TOOL_LINKS_NOBLOCK );
 		}
 		
 		$formattedTime = $wgLang->timeanddate( $block->mTimestamp, true );
@@ -296,6 +308,10 @@ class IPUnblockForm {
 		}
 		if (!$block->mEnableAutoblock && $block->mUser ) {
 			$properties[] = $msg['noautoblockblock'];
+		}
+
+		if ( $block->mBlockEmail && $block->mUser ) {
+			$properties[] = $msg['emailblock'];
 		}
 
 		$properties = implode( ', ', $properties );
@@ -383,4 +399,4 @@ class IPBlocklistPager extends ReverseChronologicalPager {
 	}
 }
 
-?>
+

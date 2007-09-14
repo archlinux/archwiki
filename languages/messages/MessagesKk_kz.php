@@ -60,6 +60,10 @@ $namespaceAliases = array(
 	'Sanat'               => NS_CATEGORY,
 	'Sanat_talqılawı'     => NS_CATEGORY_TALK,
 
+	# Aliases to renamed kk-cn namespaces
+	'ٴۇلگٴى'              => NS_TEMPLATE,
+	'ٴۇلگٴى_تالقىلاۋى'    => NS_TEMPLATE_TALK,
+
 	# Aliases to kk-cn namespaces
 	'تاسپا'              => NS_MEDIA,
 	'ارنايى'              => NS_SPECIAL,
@@ -73,8 +77,6 @@ $namespaceAliases = array(
 	'مەدياۋيكي_تالقىلاۋى' => NS_MEDIAWIKI_TALK,
 	'ٷلگٸ'              => NS_TEMPLATE,
 	'ٷلگٸ_تالقىلاۋى'    => NS_TEMPLATE_TALK,
-	'ٴۇلگٴى'              => NS_TEMPLATE,
-	'ٴۇلگٴى_تالقىلاۋى'    => NS_TEMPLATE_TALK,
 	'انىقتاما'            => NS_HELP,
 	'انىقتاما_تالقىلاۋى'  => NS_HELP_TALK,
 	'سانات'              => NS_CATEGORY,
@@ -85,8 +87,6 @@ $skinNames = array(
 	'standard'    => 'Дағдылы',
 	'nostalgia'   => 'Аңсау',
 	'cologneblue' => 'Көлн зеңгірлігі',
-	'davinci'     => 'Да Винчи',
-	'mono'        => 'Дара',
 	'monobook'    => 'Дара кітап',
 	'myskin'      => 'Өз мәнерім',
 	'chick'       => 'Балапан',
@@ -98,6 +98,7 @@ $datePreferences = array(
 	'mdy',
 	'dmy',
 	'ymd',
+	'yyyy-mm-dd',
 	'ISO 8601',
 );
 
@@ -112,16 +113,20 @@ $datePreferenceMigrationMap = array(
 
 $dateFormats = array(
 	'mdy time' => 'H:i',
-	'mdy date' => 'xg j, Y',
-	'mdy both' => 'H:i, xg j, Y',
+	'mdy date' => 'xg j, Y "ж."',
+	'mdy both' => 'H:i, xg j, Y "ж."',
 
 	'dmy time' => 'H:i',
-	'dmy date' => 'j F, Y',
-	'dmy both' => 'H:i, j F, Y',
+	'dmy date' => 'j F, Y "ж."',
+	'dmy both' => 'H:i, j F, Y "ж."',
 
 	'ymd time' => 'H:i',
 	'ymd date' => 'Y "ж." xg j',
 	'ymd both' => 'H:i, Y "ж." xg j',
+
+	'yyyy-mm-dd time' => 'xnH:xni:xns',
+	'yyyy-mm-dd date' => 'xnY-xnm-xnd',
+	'yyyy-mm-dd both' => 'xnH:xni:xns, xnY-xnm-xnd',
 
 	'ISO 8601 time' => 'xnH:xni:xns',
 	'ISO 8601 date' => 'xnY-xnm-xnd',
@@ -130,7 +135,9 @@ $dateFormats = array(
 
 /**
  * Magic words
- * Customisable syntax for wikitext and elsewhere
+ * Customisable syntax for wikitext and elsewhere.
+ *
+ * IDs must be valid identifiers, they can't contain hyphens. 
  *
  * Note to translators:
  *   Please include the English words as synonyms.  This allows people
@@ -141,13 +148,12 @@ $dateFormats = array(
  */
 $magicWords = array(
 #   ID                                 CASE  SYNONYMS
-	'redirect'               => array( 0,    '#АЙДАУ', '#REDIRECT' ),
+	'redirect'               => array( 0,    '#REDIRECT', '#АЙДАУ' ),
 	'notoc'                  => array( 0,    '__МАЗМҰНСЫЗ__', '__МСЫЗ__', '__NOTOC__' ),
 	'nogallery'              => array( 0,    '__ҚОЙМАСЫЗ__', '__ҚСЫЗ__', '__NOGALLERY__' ),
 	'forcetoc'               => array( 0,    '__МАЗМҰНДАТҚЫЗУ__', '__МҚЫЗУ__', '__FORCETOC__' ),
 	'toc'                    => array( 0,    '__МАЗМҰНЫ__', '__МЗМН__', '__TOC__' ),
 	'noeditsection'          => array( 0,    '__БӨЛІМӨНДЕТКІЗБЕУ__', '__NOEDITSECTION__' ),
-	'start'                  => array( 0,    '__БАСТАУ__', '__START__' ),
 	'currentmonth'           => array( 1,    'АҒЫМДАҒЫАЙ', 'CURRENTMONTH' ),
 	'currentmonthname'       => array( 1,    'АҒЫМДАҒЫАЙАТАУЫ', 'CURRENTMONTHNAME' ),
 	'currentmonthnamegen'    => array( 1,    'АҒЫМДАҒЫАЙІЛІКАТАУЫ', 'CURRENTMONTHNAMEGEN' ),
@@ -161,7 +167,7 @@ $magicWords = array(
 	'localmonth'             => array( 1,    'ЖЕРГІЛІКТІАЙ', 'LOCALMONTH' ),
 	'localmonthname'         => array( 1,    'ЖЕРГІЛІКТІАЙАТАУЫ', 'LOCALMONTHNAME' ),
 	'localmonthnamegen'      => array( 1,    'ЖЕРГІЛІКТІАЙІЛІКАТАУЫ', 'LOCALMONTHNAMEGEN' ),
-	'localmonthabbrev'       => array( 1,    'ЖЕРГІЛІКТІАЙЖИЫР', 'ЖЕРГІЛІКТІАЙҚЫСҚА', 'LOCALMONTHABBREV' ),
+	'localmonthabbrev'       => array( 1,    'ЖЕРГІЛІКТІАЙЖИЫР', 'ЖЕРГІЛІКТІАЙҚЫСҚАША', 'ЖЕРГІЛІКТІАЙҚЫСҚА', 'LOCALMONTHABBREV' ),
 	'localday'               => array( 1,    'ЖЕРГІЛІКТІКҮН', 'LOCALDAY' ),
 	'localday2'              => array( 1,    'ЖЕРГІЛІКТІКҮН2', 'LOCALDAY2'  ),
 	'localdayname'           => array( 1,    'ЖЕРГІЛІКТІКҮНАТАУЫ', 'LOCALDAYNAME' ),
@@ -183,8 +189,8 @@ $magicWords = array(
 	'subjectspacee'          => array( 1,    'ТАҚЫРЫПБЕТІ2', 'МАҚАЛАБЕТІ2', 'SUBJECTSPACEE', 'ARTICLESPACEE' ),
 	'fullpagename'           => array( 1,    'ТОЛЫҚБЕТАТАУЫ', 'FULLPAGENAME' ),
 	'fullpagenamee'          => array( 1,    'ТОЛЫҚБЕТАТАУЫ2', 'FULLPAGENAMEE' ),
-	'subpagename'            => array( 1,    'АСТЫҢҒЫБЕТАТАУЫ', 'SUBPAGENAME' ),
-	'subpagenamee'           => array( 1,    'АСТЫҢҒЫБЕТАТАУЫ2', 'SUBPAGENAMEE' ),
+	'subpagename'            => array( 1,    'БЕТШЕАТАУЫ', 'АСТЫҢҒЫБЕТАТАУЫ', 'SUBPAGENAME' ),
+	'subpagenamee'           => array( 1,    'БЕТШЕАТАУЫ2', 'АСТЫҢҒЫБЕТАТАУЫ2', 'SUBPAGENAMEE' ),
 	'basepagename'           => array( 1,    'НЕГІЗГІБЕТАТАУЫ', 'BASEPAGENAME' ),
 	'basepagenamee'          => array( 1,    'НЕГІЗГІБЕТАТАУЫ2', 'BASEPAGENAMEE' ),
 	'talkpagename'           => array( 1,    'ТАЛҚЫЛАУБЕТАТАУЫ', 'TALKPAGENAME' ),
@@ -202,29 +208,32 @@ $magicWords = array(
 	'img_width'              => array( 1,    '$1 px', '$1px' ),
 	'img_center'             => array( 1,    'ортаға', 'орта', 'center', 'centre' ),
 	'img_framed'             => array( 1,    'сүрмелі', 'framed', 'enframed', 'frame' ),
+	'img_frameless'          => array( 1,    'сүрмесіз', 'frameless' ),
 	'img_page'               => array( 1,    'бет=$1', 'бет $1', 'page=$1', 'page $1' ),
+	'img_upright'            => array( 1,    'тікті', 'тіктік=$1', 'тіктік $1', 'upright', 'upright=$1', 'upright $1' ),
+	'img_border'             => array( 1,    'шекті', 'border' ),
 	'img_baseline'           => array( 1,    'негізжол', 'baseline' ),
 	'img_sub'                => array( 1,    'астылығы', 'аст', 'sub'),
 	'img_super'              => array( 1,    'үстілігі', 'үст', 'sup', 'super', 'sup' ),
 	'img_top'                => array( 1,    'үстіне', 'top' ),
-	'img_text-top'           => array( 1,    'мәтін-үстінде', 'text-top' ),
+	'img_text_top'           => array( 1,    'мәтін-үстінде', 'text-top' ),
 	'img_middle'             => array( 1,    'аралығына', 'middle' ),
 	'img_bottom'             => array( 1,    'астына', 'bottom' ),
-	'img_text-bottom'        => array( 1,    'мәтін-астында', 'text-bottom' ),
+	'img_text_bottom'        => array( 1,    'мәтін-астында', 'text-bottom' ),
 	'int'                    => array( 0,    'ІШКІ:', 'INT:' ),
 	'sitename'               => array( 1,    'ТОРАПАТАУЫ', 'SITENAME' ),
-	'ns'                     => array( 0,    'ЕА:', 'NS:' ),
+	'ns'                     => array( 0,    'ЕА:', 'ЕСІМАЯ:', 'NS:' ),
 	'localurl'               => array( 0,    'ЖЕРГІЛІКТІЖАЙ:', 'LOCALURL:' ),
 	'localurle'              => array( 0,    'ЖЕРГІЛІКТІЖАЙ2:', 'LOCALURLE:' ),
 	'server'                 => array( 0,    'СЕРВЕР', 'SERVER' ),
 	'servername'             => array( 0,    'СЕРВЕРАТАУЫ', 'SERVERNAME' ),
 	'scriptpath'             => array( 0,    'ӘМІРЖОЛЫ', 'SCRIPTPATH' ),
-	'grammar'                => array( 0,    'СЕПТІК:', 'GRAMMAR:' ),
+	'grammar'                => array( 0,    'СЕПТІГІ:', 'СЕПТІК:', 'GRAMMAR:' ),
 	'notitleconvert'         => array( 0,    '__АТАУАЛМАСТЫРҒЫЗБАУ__', '__ААБАУ__', '__NOTITLECONVERT__', '__NOTC__' ),
 	'nocontentconvert'       => array( 0,    '__МАҒЛҰМАТАЛМАСТЫРҒЫЗБАУ__', '__МАБАУ__', '__NOCONTENTCONVERT__', '__NOCC__' ),
-	'currentweek'            => array( 1,    'АҒЫМДАҒЫАПТА', 'CURRENTWEEK' ),
+	'currentweek'            => array( 1,    'АҒЫМДАҒЫАПТАСЫ', 'АҒЫМДАҒЫАПТА', 'CURRENTWEEK' ),
 	'currentdow'             => array( 1,    'АҒЫМДАҒЫАПТАКҮНІ', 'CURRENTDOW' ),
-	'localweek'              => array( 1,    'ЖЕРГІЛІКТІАПТА', 'LOCALWEEK' ),
+	'localweek'              => array( 1,    'ЖЕРГІЛІКТІАПТАСЫ', 'ЖЕРГІЛІКТІАПТА', 'LOCALWEEK' ),
 	'localdow'               => array( 1,    'ЖЕРГІЛІКТІАПТАКҮНІ', 'LOCALDOW' ),
 	'revisionid'             => array( 1,    'НҰСҚАНӨМІРІ', 'REVISIONID' ),
 	'revisionday'            => array( 1,    'НҰСҚАКҮНІ' , 'REVISIONDAY' ),
@@ -232,13 +241,13 @@ $magicWords = array(
 	'revisionmonth'          => array( 1,    'НҰСҚААЙЫ', 'REVISIONMONTH' ),
 	'revisionyear'           => array( 1,    'НҰСҚАЖЫЛЫ', 'REVISIONYEAR' ),
 	'revisiontimestamp'      => array( 1,    'НҰСҚАУАҚЫТТҮЙІНДЕМЕСІ', 'REVISIONTIMESTAMP' ),
-	'plural'                 => array( 0,    'КӨПШЕ:', 'PLURAL:' ),
-	'fullurl'                => array( 0,    'ТОЛЫҚЖАЙ:', 'FULLURL:' ),
-	'fullurle'               => array( 0,    'ТОЛЫҚЖАЙ2:', 'FULLURLE:' ),
-	'lcfirst'                => array( 0,    'КӘ1:', 'LCFIRST:' ),
-	'ucfirst'                => array( 0,    'БӘ1:', 'UCFIRST:' ),
-	'lc'                     => array( 0,    'КӘ:', 'LC:' ),
-	'uc'                     => array( 0,    'БӘ:', 'UC:' ),
+	'plural'                 => array( 0,    'КӨПШЕТҮРІ:','КӨПШЕ:', 'PLURAL:' ),
+	'fullurl'                => array( 0,    'ТОЛЫҚЖАЙЫ:', 'ТОЛЫҚЖАЙ:', 'FULLURL:' ),
+	'fullurle'               => array( 0,    'ТОЛЫҚЖАЙЫ2:', 'ТОЛЫҚЖАЙ2:', 'FULLURLE:' ),
+	'lcfirst'                => array( 0,    'КӘ1:', 'КІШІӘРІППЕН1:', 'LCFIRST:' ),
+	'ucfirst'                => array( 0,    'БӘ1:', 'БАСӘРІППЕН1:', 'UCFIRST:' ),
+	'lc'                     => array( 0,    'КӘ:', 'КІШІӘРІППЕН:', 'LC:' ),
+	'uc'                     => array( 0,    'БӘ:', 'БАСӘРІППЕН:', 'UC:' ),
 	'raw'                    => array( 0,    'ҚАМ:', 'RAW:' ),
 	'displaytitle'           => array( 1,    'КӨРСЕТІЛЕТІНАТАУ', 'DISPLAYTITLE' ),
 	'rawsuffix'              => array( 1,    'Қ', 'R' ),
@@ -254,10 +263,10 @@ $magicWords = array(
 	'pagesinnamespace'       => array( 1,    'ЕСІМАЯБЕТСАНЫ:', 'ЕАБЕТСАНЫ:', 'АЯБЕТСАНЫ:', 'PAGESINNAMESPACE:', 'PAGESINNS:' ),
 	'numberofadmins'         => array( 1,    'ӘКІМШІСАНЫ', 'NUMBEROFADMINS' ),
 	'formatnum'              => array( 0,    'САНПІШІМІ', 'FORMATNUM' ),
-	'padleft'                => array( 0,    'СОЛЫҒЫС', 'PADLEFT' ),
-	'padright'               => array( 0,    'ОҢЫҒЫС', 'PADRIGHT' ),
-	'special'                => array( 0,    'арнайы', 'special',  ),
-	'defaultsort'            => array( 1,    'ӘДЕПКІСҰРЫПТАУ:', 'ӘДЕПКІСҰРЫП:', 'DEFAULTSORT:' ),
+	'padleft'                => array( 0,    'СОЛҒАЫҒЫС', 'СОЛЫҒЫС', 'PADLEFT' ),
+	'padright'               => array( 0,    'ОҢҒАЫҒЫС', 'ОҢЫҒЫС', 'PADRIGHT' ),
+	'special'                => array( 0,    'арнайы', 'special', ),
+	'defaultsort'            => array( 1,    'ӘДЕПКІСҰРЫПТАУ:', 'ӘДЕПКІСАНАТСҰРЫПТАУ:', 'ӘДЕПКІСҰРЫПТАУКІЛТІ:', 'ӘДЕПКІСҰРЫП:', 'DEFAULTSORT:', 'DEFAULTSORTKEY:', 'DEFAULTCATEGORYSORT:' ),
 );
 
 $specialPageAliases = array(
@@ -279,12 +288,14 @@ $specialPageAliases = array(
         'Uncategorizedpages'        => array( 'Санатсыз_беттер' ),
         'Uncategorizedcategories'   => array( 'Санатсыз_санаттар' ),
         'Uncategorizedimages'       => array( 'Санатсыз_суреттер' ),
+        'Uncategorizedtemplates'    => array( 'Санатсыз_үлгілер' ),
         'Unusedcategories'          => array( 'Пайдаланылмаған_санаттар' ),
         'Unusedimages'              => array( 'Пайдаланылмаған_суреттер' ),
-        'Wantedpages'               => array( 'Толтырылмаған_беттер' ),
+        'Wantedpages'               => array( 'Толтырылмаған_беттер', 'Жарамсыз_сілтемелер' ),
         'Wantedcategories'          => array( 'Толтырылмаған_санаттар' ),
         'Mostlinked'                => array( 'Ең_көп_сілтенген_беттер' ),
         'Mostlinkedcategories'      => array( 'Ең_көп_сілтенген_санаттар' ),
+        'Mostlinkedtemplates'       => array( 'Ең_көп_сілтенген_үлгілер' ),
         'Mostcategories'            => array( 'Ең_көп_санаттар_бары' ),
         'Mostimages'                => array( 'Ең_көп_суреттер_бары' ),
         'Mostrevisions'             => array( 'Ең_көп_нұсқалар_бары' ),
@@ -304,7 +315,7 @@ $specialPageAliases = array(
         'Whatlinkshere'             => array( 'Мында_сілтегендер' ),
         'Recentchangeslinked'       => array( 'Сілтенгендердің_өзгерістері' ),
         'Movepage'                  => array( 'Бетті_жылжыту' ),
-        'Blockme'                   => array( 'Өздік_бұғаттау' ),
+        'Blockme'                   => array( 'Өздіктік_бұғаттау', 'Өздік_бұғаттау' ),
         'Booksources'               => array( 'Кітап_қайнарлары' ),
         'Categories'                => array( 'Санаттар' ),
         'Export'                    => array( 'Сыртқа_беру' ),
@@ -340,12 +351,12 @@ $specialPageAliases = array(
 $messages = array(
 # User preference toggles
 'tog-underline'               => 'Сілтемені астынан сыз:',
-'tog-highlightbroken'         => 'Жоқталған сілтемелерді <a href="" class="new">былай</a> пішімде (басқаша: былай <a href="" class="internal">?</a> сияқты).',
+'tog-highlightbroken'         => 'Жарамсыз сілтемелерді <a href="" class="new">былай</a> пішімде (баламасы: былай <a href="" class="internal">?</a> сияқты).',
 'tog-justify'                 => 'Ежелерді ені бойынша туралау',
 'tog-hideminor'               => 'Жуықтағы өзгерістерде шағын түзетуді жасыр',
 'tog-extendwatchlist'         => 'Бақылау тізімді ұлғайт (барлық жарамды өзгерістерді көрсет)',
 'tog-usenewrc'                => 'Кеңейтілген Жуықтағы өзгерістер (JavaScript)',
-'tog-numberheadings'          => 'Бөлім тақырыптарын өздік түрде номірле',
+'tog-numberheadings'          => 'Бөлім тақырыптарын өздіктік түрде номірле',
 'tog-showtoolbar'             => 'Өңдеу қуралдар жолағын көрсет (JavaScript)',
 'tog-editondblclick'          => 'Қос нұқымдап өңдеу (JavaScript)',
 'tog-editsection'             => 'Бөлімдерді [өңдеу] сілтемесімен өңдеуін ендір',
@@ -366,7 +377,7 @@ $messages = array(
 'tog-enotifminoredits'        => 'Шағын түзету туралы да маған хат жібер',
 'tog-enotifrevealaddr'        => 'Е-пошта жайымды ескерту хатта ашық көрсет',
 'tog-shownumberswatching'     => 'Бақылап тұрған қатысушылардың санын көрсет',
-'tog-fancysig'                => 'Қам қолтаңба (өздік сілтемесіз;)',
+'tog-fancysig'                => 'Қам қолтаңба (өздіктік сілтемесіз;)',
 'tog-externaleditor'          => 'Сыртқы өңдеуішті әдепкіден қолдан',
 'tog-externaldiff'            => 'Сыртқы айырмағышты әдепкіден қолдан',
 'tog-showjumplinks'           => '«Өтіп кету» қатынау сілтемелерін ендір',
@@ -441,19 +452,21 @@ $messages = array(
 'categories'            => 'Барлық санат тізімі',
 'pagecategories'        => '{{PLURAL:$1|Санат|Санаттар}}',
 'category_header'       => '«$1» санатындағы беттер',
-'subcategories'         => 'Төменгі санаттар',
-'category-media-header' => '«$1» санатындағы таспалар',
+'subcategories'         => 'Санатшалар',
+'category-media-header' => '«$1» санатындағы таспа',
+'category-empty'        => "''Бұл санатта ағымда еш мақала не таспа жоқ.''",
 
 'linkprefix'        => '/^(.*?)([a-zäçéğıïñöşüýа-яёәіңғүұқөһA-ZÄÇÉĞİÏÑÖŞÜÝА-ЯЁӘІҢҒҮҰҚӨҺʺʹ«„]+)$/sDu',
 'mainpagetext'      => "<big>'''МедиаУики бағдарламасы сәтті орнатылды.'''</big>",
 'mainpagedocfooter' => 'Уики бағдарламасын пайдалану ақпараты үшін [http://meta.wikimedia.org/wiki/Help:Contents Пайдаланушы нұсқауларымен] танысыңыз.
 
-== Бастау ==
+== Бастау үшін ==
 
-* [http://www.mediawiki.org/wiki/Help:Configuration_settings Баптау қалаулары тізімі]
-* [http://www.mediawiki.org/wiki/Help:FAQ МедиаУики ЖҚС]
-* [http://mail.wikimedia.org/mailman/listinfo/mediawiki-announce МедиаУики хат тарату тізімі]',
+* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Баптау қалаулары тізімі]
+* [http://www.mediawiki.org/wiki/Manual:FAQ МедиаУики ЖҚС]
+* [http://lists.wikimedia.org/mailman/listinfo/mediawiki-announce МедиаУики хат тарату тізімі]',
 
+'about'          => 'Біз туралы',
 'article'        => 'Мағлұмат беті',
 'newwindow'      => '(жаңа терезеде ашылады)',
 'cancel'         => 'Болдырмау',
@@ -476,6 +489,7 @@ $messages = array(
 'errorpagetitle'    => 'Қате',
 'returnto'          => '$1 дегенге оралу.',
 'tagline'           => '{{GRAMMAR:ablative|{{SITENAME}}}}',
+'help'              => 'Анықтама',
 'search'            => 'Іздеу',
 'searchbutton'      => 'Іздеу',
 'go'                => 'Өту',
@@ -519,14 +533,13 @@ $messages = array(
 'redirectedfrom'    => '($1 бетінен айдатылған)',
 'redirectpagesub'   => 'Айдату беті',
 'lastmodifiedat'    => 'Бұл беттің өзгертілген соңғы кезі: $2, $1.', # $1 date, $2 time
-'viewcount'         => 'Бұл бет {{plural:$1|бір|$1}} рет қаралған.',
+'viewcount'         => 'Бұл бет {{PLURAL:$1|бір|$1}} рет қатыналған.',
 'protectedpage'     => 'Қорғаулы бет',
 'jumpto'            => 'Мынаған өтіп кету:',
 'jumptonavigation'  => 'бағыттау',
 'jumptosearch'      => 'іздеу',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
-'about'             => 'Біз туралы',
 'aboutsite'         => '{{SITENAME}} туралы',
 'aboutpage'         => '{{ns:project}}:Біз_туралы',
 'bugreports'        => 'Қате есептемелері',
@@ -542,9 +555,9 @@ $messages = array(
 'edithelppage'      => '{{ns:help}}:Өңдеу',
 'faq'               => 'ЖҚС',
 'faqpage'           => '{{ns:project}}:ЖҚС',
-'help'              => 'Анықтама',
 'helppage'          => '{{ns:help}}:Мазмұны',
 'mainpage'          => 'Басты бет',
+'policy-url'        => '{{ns:project}}:Ережелер',
 'portal'            => 'Қауым порталы',
 'portal-url'        => '{{ns:project}}:Қауым_порталы',
 'privacy'           => 'Жеке құпиясын сақтау',
@@ -561,25 +574,24 @@ $messages = array(
 'versionrequired'     => 'MediaWiki $1 нұсқасы қажет',
 'versionrequiredtext' => 'Осы бетті қолдану үшін MediaWiki $1 нұсқасы қажет. [[{{ns:special}}:Version|Жүйе нұсқасы бетін]] қараңыз.',
 
-'ok'                  => 'Жарайды',
-'pagetitle'           => '$1 — {{SITENAME}}',
-'retrievedfrom'       => '«$1» дегеннен алынған',
-'youhavenewmessages'  => 'Сізде $1 бар ($2).',
-'newmessageslink'     => 'жаңа хабарлар',
-'newmessagesdifflink' => 'соңғы өзгерісіне',
-'editsection'         => 'өңдеу',
-'editold'             => 'өңдеу',
-'editsectionhint'     => 'Бөлімді өңдеу: $1',
-'toc'                 => 'Мазмұны',
-'showtoc'             => 'көрсет',
-'hidetoc'             => 'жасыр',
-'thisisdeleted'       => 'Қараймыз ба, не қайтарамыз ба?: $1',
-'viewdeleted'         => 'Қараймыз ба?: $1',
-'restorelink'         => 'жойылған {{PLURAL:$1|бір|$1}} түзету',
-'feedlinks'           => 'Арна:',
-'feed-invalid'        => 'Жарамсыз жазылым арна түрі.',
-'feed-atom'           => 'Atom',
-'feed-rss'            => 'RSS',
+'ok'                      => 'Жарайды',
+'pagetitle'               => '$1 — {{SITENAME}}',
+'retrievedfrom'           => '«$1» дегеннен алынған',
+'youhavenewmessages'      => 'Сізде $1 бар ($2).',
+'newmessageslink'         => 'жаңа хабарлар',
+'newmessagesdifflink'     => 'соңғы өзгерісіне',
+'youhavenewmessagesmulti' => '$1 дегенге жаңа хабарлар түсті',
+'editsection'             => 'өңдеу',
+'editold'                 => 'өңдеу',
+'editsectionhint'         => 'Бөлімді өңдеу: $1',
+'toc'                     => 'Мазмұны',
+'showtoc'                 => 'көрсет',
+'hidetoc'                 => 'жасыр',
+'thisisdeleted'           => 'Қараймыз ба, не қайтарамыз ба?: $1',
+'viewdeleted'             => 'Қараймыз ба?: $1',
+'restorelink'             => 'жойылған {{PLURAL:$1|бір|$1}} түзету',
+'feedlinks'               => 'Арна:',
+'feed-invalid'            => 'Жарамсыз жазылым арна түрі.',
 
 # Short words for each namespace, by default used in the 'article' tab in monobook
 'nstab-main'      => 'Мағлұмат',
@@ -598,7 +610,9 @@ $messages = array(
 'nosuchactiontext'  => 'Осы URL жайымен енгізілген әрекетті
 осы уики жорамалдап білмеді.',
 'nosuchspecialpage' => 'Бұл арнайы бет емес',
-'nospecialpagetext' => 'Сіз сұранысқан арнайы бет жарамсыз. Барлық жарамды арнайы беттерді [[{{ns:special}}:Specialpages|арнайы беттер тізімінде]] таба аласыз.',
+'nospecialpagetext' => "'''<big>Сіз сұранысқан арнайы бет жарамсыз.</big>'''
+
+Жарамды арнайы бет тізімін [[{{ns:special}}:Specialpages]] дегеннен таба аласыз.",
 
 # General errors
 'error'                => 'Қате',
@@ -632,12 +646,15 @@ $1',
 
 Егер бұл болжам дұрыс себеп болмаса, бағдарламамыздағы қатеге тап болуыңыз мүмкін.
 Бұл туралы нақты URL жайын көрсетіп әкімшіге есептеме жіберіңіз.',
-'readonly_lag'         => 'Жетек дерекқор серверлер бастауышпен қадамланғанда осы дерекқор өздік түрінде құлыпталынған',
+'readonly_lag'         => 'Жетек дерекқор серверлер бастауышпен қадамланғанда осы дерекқор өздіктік құлыпталынған',
 'internalerror'        => 'Ішкі қате',
+'internalerror_info'   => 'Ішкі қате: $1',
 'filecopyerror'        => '«$1» файлы «$2» файлына көшірілмеді.',
 'filerenameerror'      => '«$1» файл аты «$2» атына өзгертілмеді.',
 'filedeleteerror'      => '«$1» файлы жойылмайды.',
+'directorycreateerror' => '«$1» қалтасы жасалмады.',
 'filenotfound'         => '«$1» файлы табылмады.',
+'fileexistserror'      => '«$1» файлға жазуға болмайды: осындай файл бар түге',
 'unexpected'           => 'Күтілмеген мағына: «$1» = «$2».',
 'formerror'            => 'Қате: жіберу үлгіті емес',
 'badarticleerror'      => 'Осындай әрекет мына бетте атқарылмайды.',
@@ -645,7 +662,6 @@ $1',
 'badtitle'             => 'Жарамсыз атау',
 'badtitletext'         => 'Сұранысқан бет атауы жарамсыз, бос, тілара сілтемесі не уики-ара атауы мүлтік болған. Атауларда сүемелдемеген бірқатар әріптер болуы мүмкін.',
 'perfdisabled'         => 'Ғафу етіңіз! Осы қасиет, дерекқордың жылдамылығына әсер етіп, ешкімге уикиді пайдалануға бермегесін, уақытша өшірілген.',
-'perfdisabledsub'      => 'Мында $1 бетінің сақталған көшірмесі:', # obsolete?
 'perfcached'           => 'Келесі дерек қосалқы қалтасынан алынған, сондықтан толықтай жаңаланмаған болуы мүмкін.',
 'perfcachedts'         => 'Келесі дерек қосалқы қалтасынан алынған, соңғы жаңаланлған кезі: $1.',
 'querypage-no-updates' => 'Бұл беттің жаңартылуы ағымда өшірілген. Деректері қазір өзгертілмейді.',
@@ -654,12 +670,16 @@ $1',
 Сұраныс: $2',
 'viewsource'           => 'Қайнарын қарау',
 'viewsourcefor'        => '$1 деген үшін',
-'protectedpagetext'    => 'Бұл бет өңдеу болдырмау үшін құлыпталынған.',
+'protectedpagetext'    => 'Өңдеуді қақпайлау үшін бұл бет құлыпталынған.',
 'viewsourcetext'       => 'Бұл беттің қайнарын қарауыңызға және көшіріп алуңызға болады:',
-'protectedinterface'   => 'Бұл бет бағдарламаның тілдесу мәтінін жетістіреді, сондықтан қиянат келтірмеу үшін өзгертуі құлыпталған.',
+'protectedinterface'   => 'Бұл бет бағдарламаның тілдесу мәтінін жетістіреді, сондықтан қиянатты қақпайлау үшін өзгертуі құлыпталған.',
 'editinginterface'     => "'''Назар салыңыз:''' Бағдарламаға тілдесу мәтінін жетістіретін MediaWiki бетін өңдеп жатырсыз. Бұл беттің өзгертуі барлық пайдаланушылар тілдесуіне әсер етеді.",
 'sqlhidden'            => '(SQL сұранысы жасырылды)',
-'cascadeprotected'     => 'Бұл бет өңдеуден қорғалған, себебі: ол мына «баулы» қорғауы ендірілген {{PLURAL:$1|бетке|беттерге}} кіріктірілген:',
+'cascadeprotected'     => 'Бұл бет өңдеуден қорғалған, себебі: ол мына «баулы» қорғауы ендіріліп келесі {{PLURAL:$1|бетке|беттерге}} кіріктірілген:
+$2',
+'namespaceprotected'       => "'''$1''' есім аясындағы беттерді өңдеу үшін рұқсатыңыз жоқ.",
+'customcssjsprotected'     => 'Бұл бетті өңдеуге рұқсатыңыз жоқ, себебі мында басқа қатысушының жеке баптаулары бар.',
+'ns-specialprotected'      => '{{ns:special}} есім аясындағы беттер өңделінбейді',
 
 # Login and logout pages
 'logouttitle'                => 'Қатысушы шығуы',
@@ -672,15 +692,13 @@ $1',
 
 Тіркелгіңіз жасалды. {{SITENAME}} баптауыңызды қалауыңызбен өзгертуді ұмытпаңыз.',
 'loginpagetitle'             => 'Қатысушы кіруі',
-'yourname'                   => 'Қатысушы атыңыз',
-'yourpassword'               => 'Құпия сөзіңіз',
-'yourpasswordagain'          => 'Құпия сөзді қайталап енгізіңіз',
+'yourname'                   => 'Қатысушы атыңыз:',
+'yourpassword'               => 'Құпия сөзіңіз:',
+'yourpasswordagain'          => 'Құпия сөзді қайталаңыз:',
 'remembermypassword'         => 'Менің кіргенімді бұл компьютерде ұмытпа',
-'yourdomainname'             => 'Желі үйшігіңіз',
+'yourdomainname'             => 'Желі үйшігіңіз:',
 'externaldberror'            => 'Осында сыртқы теңдестіру дерекқорында қате болды, немесе сыртқы тіркелгіңізді жаңалауға рұқсат жоқ.',
 'loginproblem'               => '<b>Кіруіңіз кезінде осында қиындыққа тап болдық.</b><br />Тағы да қайталап қараңыз.',
-'alreadyloggedin'            => '<strong>$1 деген қатысушы, кіріпсіз түге!</strong><br />',
-
 'login'                      => 'Кіру',
 'loginprompt'                => '{{SITENAME}} торабына кіру үшін «cookies» қасиетін ендіруіңіз қажет.',
 'userlogin'                  => 'Кіру / Тіркелгі жасау',
@@ -695,19 +713,19 @@ $1',
 'createaccountmail'          => 'е-поштамен',
 'badretype'                  => 'Енгізген құпия сөздеріңіз бір біріне сәйкес емес.',
 'userexists'                 => 'Енгізген қатысушы атыңызды біреу пайдаланып жатыр. Басқа атау тандаңыз.',
-'youremail'                  => 'Е-пошта жайыңыз *:',
+'youremail'                  => 'Е-пошта жайыңыз:',
 'username'                   => 'Қатысушы атыңыз:',
 'uid'                        => 'Қатысушы теңдестіруіңіз:',
-'yourrealname'               => 'Шын атыңыз *:',
+'yourrealname'               => 'Шын атыңыз:',
 'yourlanguage'               => 'Тіліңіз:',
 'yourvariant'                => 'Түрі',
 'yournick'                   => 'Лақап атыңыз:',
 'badsig'                     => 'Қам қолтаңбаңыз жарамсыз; HTML белгішелерін тексеріңіз.',
+'badsiglength'               => 'Лақап атыңыз тым ұзын; $1 нышаннан аспауы қажет.',
 'email'                      => 'Е-поштаңыз',
-'prefs-help-email-enotif'    => 'Егер соны баптасаңыз, осы е-пошта жайы сізге ескерту хат жіберуге қолданылады.',
-'prefs-help-realname'        => '* Шын атыңыз (міндетті емес): енгізсеңіз, шығармаңыздың ауторлығын белгілеуі үшін қолданылады.',
+'prefs-help-realname'        => 'Міндетті емес: Енгізсеңіз, шығармаңыздың ауторлығын белгілеуі үшін қолданылады.',
 'loginerror'                 => 'Кіру қатесі',
-'prefs-help-email'           => '* Е-поштаңыз (міндетті емес): «Қатысушы» немесе «қатысушы талқылау» бетіңіздер арқылы басқаларға байланысу мүмкіндік береді. Өзіңіздің кім екеніңізді білдіртпейді.',
+'prefs-help-email'           => 'Міндетті емес: «Қатысушы» немесе «Қатысушы_талқылауы» деген беттеріңіз арқылы басқаларға байланысу мүмкіндік береді. Өзіңіздің кім екеніңізді білдіртпейді.',
 'nocookiesnew'               => 'Қатысушы тіркелгісі жасалды, тек әлі кірмегенсіз. {{SITENAME}} жобасына қатысушы кіру үшін «cookies» қасиеті қажет. Шолғышыңызда «cookies» қасиеті өшірілген. Соны ендіріңіз де жаңа қатысушы атыңызды және құпия сөзіңізді енгізіп кіріңіз.',
 'nocookieslogin'             => 'Қатысушы кіру үшін {{SITENAME}} жобасы «cookies» қасиетін қолданады. Шолғышыңызда «cookies» қасиеті өшірілген. Соны ендіріңіз де қайталап кіріңіз.',
 'noname'                     => 'Қатысушы атын дұрыс енгізбедіңіз.',
@@ -718,6 +736,7 @@ $1',
 'nouserspecified'            => 'Қатысушы атын енгізіуіңіз қажет.',
 'wrongpassword'              => 'Енгізген құпия сөз жарамсыз. Қайталап көріңіз.',
 'wrongpasswordempty'         => 'Құпия сөз босты бопты. Қайталап көріңіз.',
+'passwordtooshort'           => 'Құпия сөзіңіз жарамсыз не тым қысқа. Ең кемінде $1 әріп және қатысушы атыңыздан басқа болуы қажет.',
 'mailmypassword'             => 'Құпия сөзімді хатпен жібер',
 'passwordremindertitle'      => 'Құпия сөз туралы {{SITENAME}} жобасының ескертуі',
 'passwordremindertext'       => 'Кейбіреу (IP жайы: $1, бәлкім, өзіңіз боларсыз)
@@ -733,12 +752,12 @@ $1',
 тіркелген е-пошта жайына жіберілді.
 Қабылдағаннан кейін кіргенде соны енгізіңіз.',
 'blocked-mailpassword'       => 'IP жайыңыздан өңдеу бұғатталған, сондықтан
-қиянатшылықтан сақтану үшін құпия сөз жіберу қызметінің әрекеті рұқсат етілмейді.',
+қиянатты қақпайлау үшін құпия сөз жіберу қызметінің әрекеті рұқсат етілмейді.',
 'eauthentsent'               => 'Куәландыру хаты аталған е-пошта жайына жіберілді.
 Басқа е-пошта хатын жіберудің алдынан, тіркелгі шынынан сіздікі екенін
 куәландыру үшін хаттағы нұсқауларға еріңіз.',
 'throttled-mailpassword'     => 'Соңғы $1 сағатта құпия сөз ескерту хаты жіберілді түге.
-Қиянатшылыққа кедергі болу үшін, $1 сағат сайын тек бір ғана құпия сөз ескерту
+Қиянатты қақпайлау үшін, $1 сағат сайын тек бір ғана құпия сөз ескерту
 хаты жіберіледі.',
 'mailerror'                  => 'Хат жіберу қатесі: $1',
 'acct_creation_throttle_hit' => 'Ғафу етіңіз, сіз $1 тіркелгі жасапсыз түге. Онан артық істей алмайсыз.',
@@ -751,6 +770,7 @@ $1',
 Дұрыс пішімделген жайды енгізіңіз, не аумақты бос қалдырыңыз.',
 'accountcreated'             => 'Тіркелгі жасалды',
 'accountcreatedtext'         => '$1 үшін қатысушы тіркелгісі жасалды.',
+'loginlanguagelabel'         => 'Тіл: $1',
 
 # Password reset dialog
 'resetpass'               => 'Тіркелгінің құпия сөзін бұрынғы қалыпына келтіру',
@@ -803,13 +823,40 @@ $1',
 'blockedtitle'              => 'Пайдаланушы бұғатталған',
 'blockedtext'               => "<big>'''Қатысушы атыңыз не IP жайыңыз бұғатталған.'''</big>
 
-бұғаттауды $1 істеген. Белгіленген себебі: ''$2''.
+Бұғаттауды $1 істеген. Келтірілген себебі: ''$2''.
 
-Осы бұғаттауды талқылау үшін $1 дегенмен не басқа [[{{{{ns:mediawiki}}:grouppage-sysop}}|әкімшімен]] қатынасуыңызға болады.
-[[{{ns:special}}:Preferences|Тіркелгі баптауларын]] қолданып жарамды е-пошта жайын енгізгенше дейін
-«Қатысушыға хат жазу» қасиетін пайдаланылмайсыз. Ағымдық IP жайыңыз: $3, және бұғатауы нөмірі: $5. Соның біреуін, немесе екеуін де әрбір сұранысыңызға қосыңыз.",
-'blockedoriginalsource'     => "Төменде '''$1''' дегеннің қайнары көрсетіледі:",
-'blockededitsource'         => "Төменде '''$1''' дегенге жасалған '''түзетуңіздің''' мәтіні көрсетіледі:",
+* Бұғаттау басталғаны: $8
+* Бұғаттау бітетіні: $6
+* Бұғаттау мақсаты: $7
+
+Осы бұғаттауды талқылау үшін $1 дегенмен, не басқа [[{{{{ns:mediawiki}}:grouppage-sysop}}|әкімшімен]] қатынасуыңызға болады.
+[[{{ns:special}}:Preferences|Тіркелгі баптауларын]] қолданып жарамды е-пошта жайын енгізгенше дейін және бұны пайдалануы 
+бұғатталмаған болса «Қатысушыға хат жазу» қасиетін қолданбайсыз.
+Ағымдық IP жайыңыз: $3, және бұғатау нөмірі: $5. Соның біреуін, немесе екеуін де әрбір сұранысыңызға қосыңыз.",
+'autoblockedtext'           => "$1 деген бұрын басқа қатысушы пайдаланған болғасын осы IP жайыңыз өздіктік бұғатталған.
+Белгіленген себебі:
+
+:''$2''
+
+* Бұғаттау басталғаны: $8
+* Бұғаттау бітетіні: $6
+
+Осы бұғаттауды талқылау үшін $1 дегенмен,
+не басқа [[{{{{ns:mediawiki}}:grouppage-sysop}}|әкімшімен]] қатынасуыңызға болады.
+
+[[{{ns:special}}:Preferences|Тіркелгі баптауларын]] қолданып жарамды е-пошта жайын енгізгенше 
+дейін және бұны пайдалануы бұғатталмаған болса «Қатысушыға хат жазу» қасиетін қолданбайсыз. 
+
+Бұғатау нөміріңіз: $5. Бұл нөмірді әрбір сұранысыңызға қосыңыз.",
+'blockedtext-concise'       => 'Қатысушы атыңызға не IP жайыңызға сәйкесті $7 дегенді, $1 бұғаттады. Келтірілген себебі: $2. Бұл бұғаттаудың бітетін мерзімі: $6. Бұғаттауды талқылау үшін,
+$1 дегенмен не басқа әкімшімен қатынасуға болады. Тіркелгі баптауыңызда жарамды е-пошта жайыңызды келтіргенше және соны пайдалануы бұғатталмағанша дейін, «Қатысушыға хат жазу» деген қасиетті пайдалана алмайсыз.
+Ағымдық IP жайыңыз: $3, және бұғаттау № $5. Екеуінің қайсысын не барлығын әрбір сұранысқа кірістіріңіз.',
+'autoblockedtext-concise'   => 'IP жайыңызды жуырда бұғаталған пайдаланушы қолданыған. Бұғатауды $1 істеген. Келтірілген себебі: $2. Бұл бұғаттаудың бітетін мерзімі: $6. Бұғаттауды талқылау үшін,
+$1 дегенмен не басқа әкімшімен қатынасуға болады. Тіркелгі баптауыңызда жарамды е-пошта жайыңызды келтіргенше және соны пайдалануы бұғатталмағанша дейін, «Қатысушыға хат жазу» деген қасиетті пайдалана алмайсыз.
+Ағымдық IP жайыңыз: $3, және бұғаттау № $5. Екеуінің қайсысын не барлығын әрбір сұранысқа кірістіріңіз.',
+'blockedoriginalsource'     => "'''$1''' дегеннің қайнары 
+төменде көрсетіледі:",
+'blockededitsource'         => "'''$1''' дегенге жасалған '''түзетулеріңіздің''' мәтіні төменде көрсетіледі:",
 'whitelistedittitle'        => 'Өңдеу үшін кіруіңіз жөн.',
 'whitelistedittext'         => 'Беттерді өңдеу үшін $1 жөн.',
 'whitelistreadtitle'        => 'Оқу үшін кіруіңіз жөн',
@@ -819,7 +866,7 @@ $1',
 'confirmedittitle'          => 'Е-пошта жайын куәландыру хатын қайта өңдеу қажет',
 'confirmedittext'           => 'Беттерді өңдеу үшін алдын ала Е-пошта жайыңызды куәландыруыңыз қажет. Жайыңызды [[{{ns:Special}}:Preferences|қатысушы баптауы]] арқылы енгізіңіз және тексерткіңіз.',
 'nosuchsectiontitle'        => 'Бұл бөлім емес',
-'nosuchsectiontext'         => "Жоқ бөлімді өңдеуді талап етіпсіз. Мында \$1 деген бөлім жоқ екен, өңдеулеріңізді сақтау үшін орын жоқ.",
+'nosuchsectiontext'         => 'Жоқ бөлімді өңдеуді талап етіпсіз. Мында $1 деген бөлім жоқ екен, өңдеулеріңізді сақтау үшін орын жоқ.',
 'loginreqtitle'             => 'Кіруіңіз қажет',
 'loginreqlink'              => 'кіру',
 'loginreqpagetext'          => 'Басқа беттерді көру үшін сіз $1 болуыңыз қажет.',
@@ -827,10 +874,9 @@ $1',
 'accmailtext'               => '$2 жайына «$1» құпия сөзі жіберілді.',
 'newarticle'                => '(Жаңа)',
 'newarticletext'            => 'Сілтемеге еріп әлі басталмаған бетке
-келіпсіз. Бетті бастау үшін, төмендегі аумақта мәтініңізді
-теріңіз (көбірек ақпарат үшін [[{{{{ns:mediawiki}}:helppage}}|анықтама бетін]]
-қараңыз).Егер жаңылғаннан осында келген болсаңыз, шолғышыңыз
-«Артқа» деген түймесін нұқыңыз.',
+келіпсіз. Бетті бастау үшін, төмендегі аумақта мәтініңізді теріңіз
+(көбірек ақпарат үшін [[{{{{ns:mediawiki}}:helppage}}|анықтама бетін]] қараңыз).
+Егер жаңылғаннан осында келген болсаңыз, шолғышыңыз «Артқа» деген түймесін нұқыңыз.',
 'anontalkpagetext'          => "----''Бұл тіркелгісіз (немесе тіркелгісін қолданбаған) пайдаланушының талқылау беті. Осы пайдаланушыны біз тек сандық IP жайымен теңдестіреміз. Осындай IP жайлар бірнеше пайдаланушыға ортақ болуы мүмкін. Егер сіз тіркелгісіз пайдаланушы болсаңыз және сізге қатыссыз мәндемелер жіберілгенін сезсеңіз, басқа тіркелгісіз пайдаланушылармен араластырмауы үшін [[{{ns:special}}:Userlogin|тіркелгі жасаңыз не кіріңіз]].''",
 'noarticletext'             => 'Бұл бетте ағымда еш мәтін жоқ, басқа беттерден осы бет атауын [[{{ns:special}}:Search/{{PAGENAME}}|іздеп көруіңізге]] немесе осы бетті [{{fullurl:{{FULLPAGENAME}}|action=edit}} түзетуіңізге] болады.',
 'clearyourcache'            => "'''Аңғартпа:''' Сақтағаннан кейін өзгерістерді көру үшін шолғыш қосалқы қалтасын босату керегі мүмкін. '''Mozilla  / Safari:''' ''Shift'' пернесін басып тұрып ''Reload'' (''Қайта жүктеу'') түймесін нұқыңыз (не ''Ctrl-Shift-R'' басыңыз); ''IE:'' ''Ctrl-F5'' басыңыз; '''Opera / Konqueror''' ''F5'' пернесін басыңыз.",
@@ -849,7 +895,9 @@ $1',
 ''Осы уикиде қам HTML ендірілген, JavaScript шабуылдардан қорғану үшін алдын ала қарап шығу жасырылған.''
 
 <strong>Егер бұл өңдеу адал талап болса, қайтарып көріңіз. Егер әлі де істемесе, шығып, сосын кері кіріп көріңіз.</strong>",
-'importing'                 => 'Сырттан алуда: $1',
+'token_suffix_mismatch'     => '<strong>Өңдеуіңіз қабылданбады, себебі қолданған бағдарламаңыз мәтіндегі 
+емле нышандарын кескілеп тастады. Мақала мәтіні бүлінбеу үшін түзетуіңіз қабылданбайды. 
+Бұл ғаламторға негізделінген қателі тіркелгісіз прокси-серверді пайдаланғаннван болуы мүмкін.</strong>',
 'editing'                   => 'Өңделуде: $1',
 'editinguser'               => 'Өңделуде: <b>$1</b> деген қатысушы',
 'editingsection'            => 'Өңделуде: $1 (бөлімі)',
@@ -866,7 +914,7 @@ $1',
 'nonunicodebrowser'         => '<strong>АҢҒАРТПА: Шолғышыңыз Unicode белгілеуіне үйлесімді емес, сондықтан латын емес әріптері бар беттерді өңдеу зіл болу мүмкін. Жұмыс істеуге ықтималдық беру үшін, төменгі өңдеу аумағында ASCII емес әріптер оналтылық санымен көрсетіледі</strong>.',
 'editingold'                => '<strong>АҢҒАРТПА: Осы беттің ертерек нұсқасын
 өңдеп жатырсыз.
-Бұны сақтасаңыз, осы нусқадан соңғы барлық түзетулер жойылады.</strong>',
+Бұны сақтасаңыз, осы нусқадан соңғы барлық өзгерістер жойылады.</strong>',
 'yourdiff'                  => 'Айырмалар',
 'copyrightwarning'          => '{{SITENAME}} жобасына қосылған бүкіл үлес $2 (көбірек ақпарат үшін: $1) құжатына сай жіберілген болып саналады. Егер жазуыңыздың еркін көшіріліп түзетілуін қаламасаңыз, мында ұсынбауыңыз жөн.<br />
 Тағы, қосқан үлесіңіз - өзіңіздің жазғанығыз, не ашық ақпарат көздерінен алынған мағлұмат болғанын уәде етесіз.<br />
@@ -895,6 +943,13 @@ $1',
 'nocreatetitle'             => 'Бетті бастау шектелген',
 'nocreatetext'              => 'Бұл торапта жаңа бет бастауы шектелген.
 Кері қайтып бар бетті өңдеуіңізге болады, немесе [[{{ns:special}}:Userlogin|кіруіңізге не тіркелгі жасауға]] болады.',
+'nocreate-loggedin'         => 'Бұл уикиде жаңа бет бастау рұқсатыңыз жоқ.',
+'permissionserrors'         => 'Рұқсат қателері',
+'permissionserrorstext'     => 'Бұны істеуге рұқсатыңыз жоқ, келесі {{PLURAL:$1|себеп|себептер}} бойынша:',
+'recreate-deleted-warn'     => "'''Аңғартпа: Бұрын жойылған бетті қайта бастайын деп тұрыңыз.'''
+
+Бетті одан әрі өңдейін десеңіз тиісті мәліметтерің қарап шығуыңызға жөн.
+Қолайлы болуы үшін бұл беттің жою журналы келтіріледі:",
 
 # "Undo" feature
 'undo-success' => 'Бұл өңдеудің болдырмауы атқарылады. Талабыңызды біліп тұрып алдын ала төмендегі салыстыруды тексеріп шығыңыз да, түзету болдырмауын бітіру үшін төмендегі өзгерістерді сақтаңыз.',
@@ -908,33 +963,33 @@ $1',
 үзбей бұзақылық болғаны.',
 
 # History pages
-'revhistory'                  => 'Нұсқалар тарихы',
-'viewpagelogs'                => 'Осы бетке қатысты журналдарды қарау',
-'nohistory'                   => 'Осы беттінің нұсқалар тарихы жоқ.',
-'revnotfound'                 => 'Нұсқа табылмады',
-'revnotfoundtext'             => 'Осы сұранысқан беттің ескі нұсқасы табылған жоқ.
+'revhistory'          => 'Нұсқалар тарихы',
+'viewpagelogs'        => 'Осы бетке қатысты журналдарды қарау',
+'nohistory'           => 'Осы беттінің нұсқалар тарихы жоқ.',
+'revnotfound'         => 'Нұсқа табылмады',
+'revnotfoundtext'     => 'Осы сұранысқан беттің ескі нұсқасы табылған жоқ.
 Осы бетті ашуға пайдаланған URL жайын қайта тексеріп шығыңыз.',
-'loadhist'                    => 'Бет тарихын жүктеуі',
-'currentrev'                  => 'Ағымдық нұсқасы',
-'revisionasof'                => '$1 кезіндегі нұсқасы',
-'revision-info'               => '$1 кезіндегі $2 жасаған нұсқасы',
-'previousrevision'            => '← Ескілеу нұсқасы',
-'nextrevision'                => 'Жаңалау нұсқасы →',
-'currentrevisionlink'         => 'Ағымдық нұсқасы',
-'cur'                         => 'ағым.',
-'next'                        => 'кел.',
-'last'                        => 'соң.',
-'orig'                        => 'түп.',
-'page_first'                  => 'алғашқысына',
-'page_last'                   => 'соңғысына',
-'histlegend'                  => 'Айырмасын көру: салыстырамын деген нұсқаларды таңдап, не <Enter> пернесін, не төмендегі түймені басыңыз.<br />
+'loadhist'            => 'Бет тарихын жүктеуі',
+'currentrev'          => 'Ағымдық нұсқасы',
+'revisionasof'        => '$1 кезіндегі нұсқасы',
+'revision-info'       => '$1 кезіндегі $2 жасаған нұсқасы',
+'previousrevision'    => '← Ескілеу нұсқасы',
+'nextrevision'        => 'Жаңалау нұсқасы →',
+'currentrevisionlink' => 'Ағымдық нұсқасы',
+'cur'                 => 'ағым.',
+'next'                => 'кел.',
+'last'                => 'соң.',
+'orig'                => 'түп.',
+'page_first'          => 'алғашқысына',
+'page_last'           => 'соңғысына',
+'histlegend'          => 'Айырмасын көру: салыстырамын деген нұсқаларды таңдап, не <Enter> пернесін, не төмендегі түймені басыңыз.<br />
 Шартты белгілер: (ағым.) = ағымдық нұсқамен айырмасы,
 (соң.) = алдыңғы нұсқамен айырмасы, ш = шағын түзету',
-'deletedrev'                  => '[жойылған]',
-'histfirst'                   => 'Ең алғашқысына',
-'histlast'                    => 'Ең соңғысына',
-'historysize'                 => '($1 B)',
-'historyempty'                => '(бос)',
+'deletedrev'          => '[жойылған]',
+'histfirst'           => 'Ең алғашқысына',
+'histlast'            => 'Ең соңғысына',
+'historysize'         => '($1 байт)',
+'historyempty'        => '(бос)',
 
 # Revision feed
 'history-feed-title'          => 'Нұсқа тарихы',
@@ -981,14 +1036,14 @@ $1',
 'revdelete-submit'            => 'Талғанған нұсқаға қолдану',
 'revdelete-logentry'          => '[[$1]] дегеннің нұсқа көрінісін өзгертті',
 'logdelete-logentry'          => '[[$1]] дегеннің жазба көрінісін өзгертті',
-'revdelete-logaction'         => '{{plural:$1|Нұсқаны|$1 нұсқаны}} $2 күйіне қойды',
-'logdelete-logaction'         => '[[$3]] дегеннің {{plural:$1|жазбасын|$1 жазбасын}} $2 күйіне қойды',
+'revdelete-logaction'         => '{{PLURAL:$1|Нұсқаны|$1 нұсқаны}} $2 күйіне қойды',
+'logdelete-logaction'         => '[[$3]] дегеннің {{PLURAL:$1|жазбасын|$1 жазбасын}} $2 күйіне қойды',
 'revdelete-success'           => 'Нұсқа көрінісі сәтті қойылды.',
 'logdelete-success'           => 'Жазба көрінісі сәтті қойылды.',
 
 # Oversight log
-'oversightlog'              => 'Тексеруші журналы',
-'overlogpagetext'           => 'Төменде әкімшілер жасырған мағлұматқа ықпал ететін жуықтағы болған жою және бұғаттау
+'oversightlog'    => 'Нұсқа жасыру журналы',
+'overlogpagetext' => 'Төменде әкімшілер жасырған мағлұматқа ықпал ететін жуықтағы болған жою және бұғаттау
 тізімі беріледі. Ағымдағы амалды бұғаттау мен тиым үшін [[{{ns:special}}:Ipblocklist|IP бұғаттау тізімін]] қараңыз.',
 
 # Diffs
@@ -1000,22 +1055,13 @@ $1',
 'selectolderversionfordiff' => 'Салыстыру үшін ескілеу нұсқасын талғаңыз',
 'compareselectedversions'   => 'Таңдаған нұсқаларды салыстыру',
 'editundo'                  => 'болдырмау',
-'diff-multi'                => '(Арадағы {{plural:$1|бір нұсқа|$1 нұсқа}} көрсетілмеді.)',
+'diff-multi'                => '(Арадағы {{PLURAL:$1|бір нұсқа|$1 нұсқа}} көрсетілмеді.)',
 
 # Search results
 'searchresults'         => 'Іздестіру нәтижелері',
 'searchresulttext'      => '{{SITENAME}} жобасында іздестіру туралы көбірек ақпарат үшін, [[{{{{ns:mediawiki}}:helppage}}|{{int:help}}]] қараңыз.',
 'searchsubtitle'        => "Іздестіру сұранысыңыз: '''[[:$1]]'''",
 'searchsubtitleinvalid' => "Іздестіру сұранысыңыз: '''$1'''",
-'badquery'              => 'Іздестіру сұраныс жарамсыз пішімделген',
-'badquerytext'          => 'Ғафу етіңіз, сұранысыңызды орындай алмадық.
-Бұл үш әріптен кем сөзді іздестіруге талаптанғаныңыздан
-болуға мүмкін, ол әлі де сүйемелденбеген.
-Тағы да бұл сөйлемді дұрыс енгізбегендіктен де болуға мүмкін,
-мысалы, «балық және және қабыршақ».
-Басқа сұраныс жасап көріңіз',
-'matchtotals'           => '«$1» іздестіру сұранысы $2 беттің атауына
-және $3 беттің мәтініне сәйкес.',
 'noexactmatch'          => "'''Осында «$1» атаулы бет жоқ.''' Бұл бетті өзіңіз '''[[:$1|бастай  аласыз]].'''",
 'titlematches'          => 'Бет атауы сәйкесі',
 'notitlematches'        => 'Еш бет атауы сәйкес емес',
@@ -1023,7 +1069,7 @@ $1',
 'notextmatches'         => 'Еш бет мәтіні сәйкес емес',
 'prevn'                 => 'алдыңғы $1',
 'nextn'                 => 'келесі $1',
-'viewprevnext'          => 'Көрсетілуі: ($1) ($2) ($3) жазба.',
+'viewprevnext'          => 'Көрсетілуі: ($1) ($2) ($3) жазба',
 'showingresults'        => "Төменде нөмір '''$2''' орнынан бастап, жеткенше {{PLURAL:$1|'''1''' нәтиже|'''$1''' нәтиже}} көрсетілген.",
 'showingresultsnum'     => "Төменде нөмір '''$2''' орнынан бастап {{PLURAL:$3|'''1''' нәтиже|'''$3''' нәтиже}} көрсетілген.",
 'nonefound'             => "'''Аңғартпа''': Табу сәтсіз бітуі жиі «болған» және «деген» сияқты
@@ -1033,11 +1079,11 @@ $1',
 'powersearch'           => 'Іздеу',
 'powersearchtext'       => 'Мына есім аяларда іздеу:<br />$1<br />$2 Айдатуларды тізімдеу<br />Іздестіру сұранысы: $3 $9',
 'searchdisabled'        => '{{SITENAME}} жобасында ішкі іздеуі өшірілген. Әзірше Google немесе Yahoo! арқылы іздеуге болады. Аңғартпа: {{SITENAME}} мағлұмат тізімідеулері оларда ескірген болуға мүмкін.',
-'blanknamespace'        => '(Негізгі)',
 
 # Preferences page
 'preferences'              => 'Баптаулар',
 'mypreferences'            => 'Баптауым',
+'prefs-edits'              => 'Түзету саны:',
 'prefsnologin'             => 'Кірмегенсіз',
 'prefsnologintext'         => 'Баптауларды қалау үшін алдын ала [[{{ns:special}}:Userlogin|кіруіңіз]] қажет.',
 'prefsreset'               => 'Баптаулар арқаудан қайта орнатылды.',
@@ -1047,7 +1093,7 @@ $1',
 'qbsettings-fixedright'    => 'Оңға бекітілген',
 'qbsettings-floatingleft'  => 'Солға қалқыған',
 'qbsettings-floatingright' => 'Оңға қалқыған',
-'changepassword'           => 'Құпия сөз өзгерту',
+'changepassword'           => 'Құпия сөзді ауыстыру',
 'skin'                     => 'Безендіру',
 'math'                     => 'Математика',
 'dateformat'               => 'Күн-ай пішімі',
@@ -1065,8 +1111,8 @@ $1',
 'prefs-personal'           => 'Жеке деректері',
 'prefs-rc'                 => 'Жуықтағы өзгерістер',
 'prefs-watchlist'          => 'Бақылау',
-'prefs-watchlist-days'     => 'Бақылау тізімінде көрсетерін күн саны:',
-'prefs-watchlist-edits'    => 'Кеңейтілген бақылау тізімі түзету көрсетерін саны:',
+'prefs-watchlist-days'     => 'Бақылау тізімінде көрсетерін ең көп күндері:',
+'prefs-watchlist-edits'    => 'Кеңейтілген бақылау тізімінде көрсетерін ең көп түзетулері:',
 'prefs-misc'               => 'Қосымша',
 'saveprefs'                => 'Сақта',
 'resetprefs'               => 'Таста',
@@ -1080,7 +1126,7 @@ $1',
 'resultsperpage'           => 'Бет сайын нәтиже саны:',
 'contextlines'             => 'Нәтиже сайын жол саны:',
 'contextchars'             => 'Жол сайын әріп саны:',
-'stubthreshold'            => 'Бітеме көрстетуін анықтау табалдырығы:',
+'stub-threshold'           => '<a href="#" class="stub">Бітеме сілтемесін</a> пішімдеу табалдырығы:',
 'recentchangesdays'        => 'Жүықтағы өзгерістердегі көрсетілетін күндер:',
 'recentchangescount'       => 'Жуықтағы өзгерістердегі көрсетілетін түзетулер:',
 'savedprefs'               => 'Баптауларыңыз сақталды.',
@@ -1096,40 +1142,46 @@ $1',
 'files'                    => 'Файлдар',
 
 # User rights
-'userrights-lookup-user'     => 'Қатысушы топтарын меңгеру',
-'userrights-user-editname'   => 'Қатысушы атын енгізіңіз:',
-'editusergroup'              => 'Қатысушы топтарын өңдеу',
-'userrights-editusergroup'   => 'Қатысушы топтарын өңдеу',
-'saveusergroups'             => 'Қатысушы топтарын сақтау',
-'userrights-groupsmember'    => 'Мүшелігі:',
-'userrights-groupsavailable' => 'Қатынаулы топтар:',
-'userrights-groupshelp'      => 'Қатысушыны үстейтін не аластатын топтарды талғаңыз.
+'userrights-lookup-user'      => 'Қатысушы топтарын меңгеру',
+'userrights-user-editname'    => 'Қатысушы атын енгізіңіз:',
+'editusergroup'               => 'Қатысушы топтарын өңдеу',
+'userrights-editusergroup'    => 'Қатысушы топтарын өңдеу',
+'saveusergroups'              => 'Қатысушы топтарын сақтау',
+'userrights-groupsmember'     => 'Мүшелігі:',
+'userrights-groupsavailable'  => 'Жетімді топтар:',
+'userrights-groupshelp'       => 'Қатысушыны үстейтін не аластатын топтарды талғаңыз.
 Талғауы өшірілген топтар өзгертілімейді. Топтардың талғауын CTRL + Сол жақ нұқумен өшіруіңізге болады.',
-'userrights-reason'          => 'Өзгерту себебі:',
+'userrights-reason'           => 'Өзгерту себебі:',
+'userrights-available-none'   => 'Топ мүшелігін өзгерте алмайсыз.',
+'userrights-available-add'    => 'Қатысушыларды $1 тобына үстей аласыз.',
+'userrights-available-remove' => 'Қатысушыларды $1 тобынан аластай аласыз.',
 
 # Groups
-'group'            => 'Топ:',
-'group-bot'        => 'Боттар',
-'group-sysop'      => 'Әкімшілер',
-'group-bureaucrat' => 'Төрешілер',
-'group-all'        => '(барлығы)',
+'group'               => 'Топ:',
+'group-autoconfirmed' => 'Өздікті расталғандар',
+'group-bot'           => 'Боттар',
+'group-sysop'         => 'Әкімшілер',
+'group-bureaucrat'    => 'Төрешілер',
+'group-all'           => '(барлығы)',
 
-'group-bot-member'        => 'бот',
-'group-sysop-member'      => 'әкімші',
-'group-bureaucrat-member' => 'төреші',
+'group-autoconfirmed-member' => 'өздікті расталған',
+'group-bot-member'           => 'бот',
+'group-sysop-member'         => 'әкімші',
+'group-bureaucrat-member'    => 'төреші',
 
-'grouppage-bot'        => '{{ns:project}}:Боттар',
-'grouppage-sysop'      => '{{ns:project}}:Әкімшілер',
-'grouppage-bureaucrat' => '{{ns:project}}:Төрешілер',
+'grouppage-autoconfirmed' => '{{ns:project}}:Өздікті расталғандар',
+'grouppage-bot'           => '{{ns:project}}:Боттар',
+'grouppage-sysop'         => '{{ns:project}}:Әкімшілер',
+'grouppage-bureaucrat'    => '{{ns:project}}:Төрешілер',
 
 # User rights log
-'rightslog'      => 'Қатысушы_құқықтары_журналы',
+'rightslog'      => 'Қатысушы құқықтары журналы',
 'rightslogtext'  => 'Бұл пайдаланушылар құқықтарын өзгерту журналы.',
-'rightslogentry' => ' $1 топ мүшелгін $2 дегеннен $3 дегенге өзгертті',
+'rightslogentry' => '$1 топ мүшелгін $2 дегеннен $3 дегенге өзгертті',
 'rightsnone'     => '(ешқандай)',
 
 # Recent changes
-'nchanges'                          => '{{PLURAL:$1|бір түзету|$1 түзету}}',
+'nchanges'                          => '{{PLURAL:$1|бір өзгеріс|$1 өзгеріс}}',
 'recentchanges'                     => 'Жуықтағы өзгерістер',
 'recentchangestext'                 => 'Бұл бетте осы уикидегі болған жуықтағы өзгерістер байқалады.',
 'recentchanges-feed-description'    => 'Бұл арнаменен уикидегі ең соңғы өзгерістер қадағаланады.',
@@ -1150,15 +1202,15 @@ $1',
 'minoreditletter'                   => 'ш',
 'newpageletter'                     => 'Ж',
 'boteditletter'                     => 'б',
-'sectionlink'                       => '→',
 'number_of_watching_users_pageview' => '[бақылаған $1 қатысушы]',
 'rc_categories'                     => 'Санаттарға шектеу ("|" белгісімен бөліктеңіз)',
 'rc_categories_any'                 => 'Қайсыбір',
 
 # Recent changes linked
-'recentchangeslinked'          => 'Қатысты түзетулер',
+'recentchangeslinked'          => 'Қатысты өзгерістер',
+'recentchangeslinked-title'    => '$1 дегенге қатысты өзгерістер',
 'recentchangeslinked-noresult' => 'Сілтеген беттерде айтылмыш мерзімде ешқандай өзгеріс болмаған.',
-'recentchangeslinked-summary'  => "Бұл арнайы бетте сілтеген беттердегі жуықтағы өзгерістер тізімі беріледі. Бақылау тізіміңіздегі беттер '''жуан''' әрпімен белгіленеді.",
+'recentchangeslinked-summary'  => "Бұл арнайы бетте сілтеген беттердегі жуықтағы өзгерістер тізімі беріледі. Бақылау тізіміңіздегі беттер '''жуан''' әрбімен белгіленеді.",
 
 # Upload
 'upload'                      => 'Файл қотару',
@@ -1187,7 +1239,7 @@ $1',
 'uploadedfiles'               => 'Қотарылған файлдар',
 'ignorewarning'               => 'Назар салуды елемеу және файлды әрдеқашан сақтау.',
 'ignorewarnings'              => 'Әрқайсы назар салуларды елемеу',
-'minlength'                   => 'Файл атында ең кемінде үш әріп болуы керек.',
+'minlength1'                  => 'Файл атауында ең кемінде бір әріп болуы қажет.',
 'illegalfilename'             => '«$1» файл атауында бет атауларында рұқсат етілмеген нышандар бар. Файлды қайта атаңыз, сосын қайта жуктеп көріңіз.',
 'badfilename'                 => 'Файлдың аты «$1» боп өзгертілді.',
 'filetype-badmime'            => '«$1» деген MIME түрі бар файлдарды қотаруға рұқсат етілмейді.',
@@ -1196,27 +1248,24 @@ $1',
 'filetype-missing'            => 'Бұл файлдың («.jpg» сияқты) кеңейтімі жоқ.',
 'large-file'                  => 'Файлды $1 мөлшерден аспауына тырысыңыз; бұл файл мөлшері — $2.',
 'largefileserver'             => 'Осы файлдың мөлшері сервердің қалауынан асып кеткен.',
-'emptyfile'                   => 'Қотарылған файлыңыз бос сияқты. Бұл файл атауы жансақ енгізілгенінен болуы мүмкін. Қотарғыңыз келген файл шынында да осы файл болғанын тексеріп алыңыз.',
-'fileexists'                  => 'Осындай атаулы файл бар түге. Қайта жазудың алдынан $1 тексеріп шығыңыз.',
-'fileexists-extension'        => 'Бұндай атауымен файл бар түге:<br />
+'emptyfile'                   => 'Қотарылған файлыңыз бос сияқты. Бұл файл атауында қате болуы мүмкін. Осы файлды шынайы қотарғыңыз келетін тексеріп шығыңыз.',
+'fileexists'                  => 'Осындай атаулы файл бар түге, егер бұны өзгертуге сеніміңіз жоқ болса <strong><tt>$1</tt></strong> дегенді тексеріп шығыңыз.',
+'fileexists-extension'        => 'Ұқсасты файл атауы бар түге:<br />
 Қотарылатын файл атауы: <strong><tt>$1</tt></strong><br />
 Бар болған файл атауы: <strong><tt>$2</tt></strong><br />
-Айырмашлығы тек кеңейтімі бас/кіші әрпімен жазылуында. Файлдардың бірдейлігін сынап шығыңыз.',
+Басқа атау таңдаңыз.',
 'fileexists-thumb'            => "'''<center>Бар болған сурет</center>'''",
-'fileexists-thumbnail-yes'    => "Осы файл — мөлшері кішірітілген сурет <i>(нобай)</i> сияқты. Бұл <strong><tt>$1</tt></strong> деген файлды сынап шығыңыз.<br />
-Егер сыналған файл түпнұсқалы мөлшері бар дәлме-дәл сурет болса, қосысмша нобайды қотару қажеті жоқ.",
-'file-thumbnail-no'           => "Файл атауы <strong><tt>$1</tt></strong> дегенмен басталады. Бұл — мөлшері кішірітілген сурет <i>(нобай)</i> сияқты.
-Егер толық ажыратылымдығы бар суретіңіз болса, соны қотарыңыз, әйтпесе файл атауын өзгертіңіз.",
+'fileexists-thumbnail-yes'    => 'Осы файл — мөлшері кішірітілген сурет <i>(нобай)</i> сияқты. Бұл <strong><tt>$1</tt></strong> деген файлды сынап шығыңыз.<br />
+Егер сыналған файл түпнұсқалы мөлшері бар дәлме-дәл сурет болса, қосысмша нобайды қотару қажеті жоқ.',
+'file-thumbnail-no'           => 'Файл атауы <strong><tt>$1</tt></strong> дегенмен басталады. Бұл — мөлшері кішірітілген сурет <i>(нобай)</i> сияқты.
+Егер толық ажыратылымдығы бар суретіңіз болса, соны қотарыңыз, әйтпесе файл атауын өзгертіңіз.',
 'fileexists-forbidden'        => 'Осындай атаулы файл бар түге. Кері қайтыңыз да, және осы файлды басқа атымен қотарыңыз. [[{{ns:image}}:$1|thumb|center|$1]]',
 'fileexists-shared-forbidden' => 'Осындай атаулы файл ортақ файл арқауында бар түге. Кері қайтыңыз да, осы файлды жаңа атымен қотарыңыз. [[{{ns:image}}:$1|thumb|center|$1]]',
 'successfulupload'            => 'Қотару сәтті өтті',
-'fileuploaded'                => '«$1» файлы сәтті қотарылды!
-Осы сілтемеге еріп — $2, сипаттама бетіне барыңыз да, және осы файл туралы
-ақпарат толтырыңыз: қайдан алынғанын, қашан жасалғанын, кім жасағанын,
-тағы басқа білетіңізді. Бұл сурет болса, мынадай пішімімен кірістіруге болады: <tt><nowiki>[[</nowiki>{{ns:image}}<nowiki>:$1|thumb|Сипаттамасы]]</nowiki></tt>',
 'uploadwarning'               => 'Қотару туралы назар салу',
 'savefile'                    => 'Файлды сақтау',
 'uploadedimage'               => '«[[$1]]» файлын қотарды',
+'overwroteimage'              => '«[[$1]]» файлын жаңа нұсқасын қотарды',
 'uploaddisabled'              => 'Файл қотаруы өшірілген',
 'uploaddisabledtext'          => 'Осы уикиде файл қотаруы өшірілген.',
 'uploadscripted'              => 'Осы файлда, веб шолғышты ағат түсіндікке келтіретің HTML белгілеу, не скрипт коды бар.',
@@ -1242,30 +1291,33 @@ $1',
 
 'license'            => 'Лицензиясы',
 'nolicense'          => 'Ештеңе талғанбаған',
+'license-nopreview'  => '(Қарап шығу қатыналмайды)',
 'upload_source_url'  => ' (жарамды, баршаға қатынаулы URL жай)',
 'upload_source_file' => ' (компьютеріңіздегі файл)',
 
 # Image list
 'imagelist'                 => 'Файл тізімі',
 'imagelisttext'             => "Төменде ''$2'' сұрыпталған '''$1''' файл тізімі.",
-'imagelistforuser'          => 'Мында тек $1 жүктеген суреттер көрсетіледі.',
 'getimagelist'              => 'файл тізімдеуі',
 'ilsubmit'                  => 'Іздеу',
 'showlast'                  => 'Соңғы $1 файл $2 сұрыптап көрсет.',
-'byname'                    => 'атымен',
-'bydate'                    => 'күн-аймен',
+'byname'                    => 'атауымен',
+'bydate'                    => 'күн-айымен',
 'bysize'                    => 'мөлшерімен',
 'imgdelete'                 => 'жою',
 'imgdesc'                   => 'сипп.',
 'imgfile'                   => 'файл',
-'imglegend'                 => 'Шартты белгілер: (сипп.) — файл сипаттамасын көрсету/өңдеу.',
-'imghistory'                => 'Файл тарихы',
-'revertimg'                 => 'қайт.',
-'deleteimg'                 => 'жою',
-'deleteimgcompletely'       => 'Осы файлдың барлық нұсқаларын жой',
-'imghistlegend'             => 'Шартты белгілер: (ағым.) = ағымдық файл, (жою) = ескі нұсқасын
-жою, (қай.) = ескі нұсқасына қайтару.
-<br /><i>Қотарылған файлды көру үшін күн-айына нұқыңыз</i>.',
+'filehist'                  => 'Файл тарихы',
+'filehist-help'             => 'Файлдың қай уақытта қалай көрінетін үшін Күн-ай/Уақыт дегенді нұқыңыз.',
+'filehist-deleteall'        => 'барлығын жой',
+'filehist-deleteone'        => 'бұны жой',
+'filehist-revert'           => 'қайтар',
+'filehist-current'          => 'ағымдағы',
+'filehist-datetime'         => 'Күн-ай/Уақыт',
+'filehist-user'             => 'Қатысушы',
+'filehist-dimensions'       => 'Өлшемдері',
+'filehist-filesize'         => 'Файл мөлшері',
+'filehist-comment'          => 'Мәндемесі',
 'imagelinks'                => 'Сілтемелері',
 'linkstoimage'              => 'Бұл файлға келесі беттер сілтейді:',
 'nolinkstoimage'            => 'Бұл файлға еш бет сілтемейді.',
@@ -1278,31 +1330,53 @@ $1',
 'imagelist_date'            => 'Күн-айы',
 'imagelist_name'            => 'Атауы',
 'imagelist_user'            => 'Қатысушы',
-'imagelist_size'            => 'Мөлшері (B)',
+'imagelist_size'            => 'Мөлшері',
 'imagelist_description'     => 'Сипаттамасы',
-'imagelist_search_for'      => 'Суретті атымен іздеу:',
+'imagelist_search_for'      => 'Суретті атауымен іздеу:',
+
+# File reversion
+'filerevert'                => '$1 дегенді қайтару',
+'filerevert-legend'         => 'Файлды қайтару',
+'filerevert-intro'          => '<span class="plainlinks">\'\'\'[[{{ns:media}}:$1|$1]]\'\'\' дегенді [$4 $3, $2 кезіндегі нұсқасына] қайтарудасыз.</span>',
+'filerevert-comment'        => 'Мәндемесі:',
+'filerevert-defaultcomment' => '$2, $1 кезіндегі нұсқасына қайтарылды',
+'filerevert-submit'         => 'Қайтару',
+'filerevert-success'        => '<span class="plainlinks">\'\'\'[[{{ns:media}}:$1|$1]]\'\'\' деген [$4 $3, $2 кезіндегі нұсқасына] қайтарылды.</span>',
+'filerevert-badversion'     => 'Келтірілген уақыт белгісімен бұл файлдың алдыңғы жергілікті нұсқасы жоқ.',
+
+# File deletion
+'filedelete'             => '$1 дегенді жою',
+'filedelete-legend'      => 'Файлды жою',
+'filedelete-intro'       => "'''[[{{ns:media}}:$1|$1]]''' дегенді жоюдасыз.",
+'filedelete-intro-old'   => '<span class="plainlinks">\'\'\'[[{{ns:media}}:$1|$1]]\'\'\' дегеннің [$4 $3, $2] кезіндегі нұсқасын жоюдасыз.</span>',
+'filedelete-comment'     => 'Мәндемесі:',
+'filedelete-submit'      => 'Жою',
+'filedelete-success'     => "'''$1''' деген жойылды.",
+'filedelete-success-old' => '<span class="plainlinks">\'\'\'[[{{ns:media}}:$1|$1]]\'\'\' дегеннің $3, $2 кезіндегі нұсқасы жойылды.</span>',
+'filedelete-nofile'      => "'''$1''' деген мына торапта жоқ болды.",
+'filedelete-nofile-old'  => "Келтірілген анықтауыштарымен '''$1''' дегеннің мұрағатталған нұсқасы мында жоқ.",
+'filedelete-iscurrent'   => 'Бұл файлдың ең соңғы нұсқасын жою талап еткенсіз. Алдынан ескі нұсқасына қайтарыңыз.',
 
 # MIME search
 'mimesearch'         => 'Файлды MIME түрімен іздеу',
-'mimesearch-summary' => 'Бұл бет файлдарды MIME түрімен сүзгілеу мүмкіндігін береді. Кірісі: «мағлұмат түрі»/«тарау түрі», мысалы <tt>image/jpeg</tt>.',
+'mimesearch-summary' => 'Бұл бет файлдарды MIME түрімен сүзгілеу мүмкіндігін береді. Кірісі: «мағлұмат түрі»/«түр тарауы», мысалы <tt>image/jpeg</tt>.',
 'mimetype'           => 'MIME түрі:',
 'download'           => 'жүктеу',
 
 # Unwatched pages
-'unwatchedpages'         => 'Бақыланбаған беттер',
+'unwatchedpages' => 'Бақыланылмаған беттер',
 
 # List redirects
-'listredirects'         => 'Айдату бет тізімі',
+'listredirects' => 'Айдату бет тізімі',
 
 # Unused templates
-'unusedtemplates'         => 'Пайдаланылмаған үлгілер',
-'unusedtemplatestext'     => 'Бұл бет басқа бетке кіріcтірілмеген үлгі есім аяысындағы барлық беттерді тізімдейді. Үлгілерді жою алдынан бұның басқа сілтемелерін тексеріп шығуын ұмытпаңыз',
-'unusedtemplateswlh'      => 'басқа сілтемелер',
+'unusedtemplates'     => 'Пайдаланылмаған үлгілер',
+'unusedtemplatestext' => 'Бұл бет басқа бетке кіріcтірілмеген үлгі есім аяысындағы барлық беттерді тізімдейді. Үлгілерді жою алдынан бұның басқа сілтемелерін тексеріп шығуын ұмытпаңыз',
+'unusedtemplateswlh'  => 'басқа сілтемелер',
 
 # Random redirect
 'randomredirect'         => 'Кездейсоқ айдату',
 'randomredirect-nopages' => 'Бұл есім аясында еш айдату жоқ.',
-
 
 # Statistics
 'statistics'             => 'Жоба санағы',
@@ -1321,83 +1395,82 @@ $1',
 Бұның нәтижесінде орта есеппен әрбір бетке '''$5''' рет түзету келеді, және әрбір түзетуге '''$6''' рет қарау келеді.
 
 Ағымдық [http://meta.wikimedia.org/wiki/Help:Job_queue тапсырым кезегі] ұзындылығы: '''$7'''.",
-'userstatstext'          => "Мында {{PLURAL:$1|'''1''' тіркелген қатысушы|'''$1''' тіркелген қатысушы}} бар, соның ішінде
- {{PLURAL:$2|'''1''' қатысушыда|'''$2''' қатысушыда}} (немесе '''$4 %''') $5 құқықтары бар",
+'userstatstext'          => "Мында {{PLURAL:$1|'''1''' тіркелген [[{{ns:special}}:Listusers|қатысушы]]|'''$1''' тіркелген [[{{ns:special}}:Listusers|қатысушы]]}} бар, соның ішінде
+{{PLURAL:$2|'''1''' қатысушыда|'''$2''' қатысушыда}} (немесе '''$4 %''') $5 құқықтары бар",
 'statistics-mostpopular' => 'Ең көп қаралған беттер',
 
-'disambiguations'         => 'Айрықты беттер',
-'disambiguationspage'     => '{{ns:template}}:Disambig',
-'disambiguations-text'    => "Келесі беттер '''айрықты бетке''' сілтейді. Бұның орнына белгілі тақырыпқа сілтеуі қажет.<br />Егер [[{{ns:mediawiki}}:disambiguationspage]] тізіміндегі үлгі қолданылса, бет айрықты деп саналады.",
+'disambiguations'      => 'Айрықты беттер',
+'disambiguationspage'  => '{{ns:template}}:Disambig',
+'disambiguations-text' => "Келесі беттер '''айрықты бетке''' сілтейді. Бұның орнына белгілі тақырыпқа сілтеуі қажет.<br />Егер [[{{ns:mediawiki}}:disambiguationspage]] тізіміндегі үлгі қолданылса, бет айрықты деп саналады.",
 
-'doubleredirects'         => 'Шынжырлы айдатулар',
-'doubleredirectstext'     => 'Әрбір жолдағы бірінші мен екінші айдату сілтемелері бар, сонымен бірге екінші айдату мәтіннің бірінші жолы бар. Әдетте бірінші сілтеме айдайтын «шын» ақырғы беттің атауы болуы қажет.',
+'doubleredirects'     => 'Шынжырлы айдатулар',
+'doubleredirectstext' => 'Бұл бетте басқа айдату беттерге сілтейтін беттер тізімі беріледі. Әрбір жолақта бірінші және екінші айдатуға сілтемелер бар, сонымен бірге екінші айдату нысанасы бар, әдетте бұл бірінші айдату бағыттайтын «шын» нысана бет атауы болуы қажет.',
 
-'brokenredirects'         => 'Еш бетке келтірмейтін айдатулар',
-'brokenredirectstext'     => 'Келесі айдатулар жоқ беттерге сілтейді:',
-'brokenredirects-edit'    => '(өңдеу)',
-'brokenredirects-delete'  => '(жою)',
+'brokenredirects'        => 'Еш бетке келтірмейтін айдатулар',
+'brokenredirectstext'    => 'Келесі айдатулар жоқ беттерге сілтейді:',
+'brokenredirects-edit'   => '(өңдеу)',
+'brokenredirects-delete' => '(жою)',
 
 'withoutinterwiki'        => 'Еш тілге сілтeмеген беттер',
 'withoutinterwiki-header' => 'Келесі беттер басқа тілдерге сілтемейді:',
 
-'fewestrevisions'         => 'Ең аз түзетілген беттер',
-
+'fewestrevisions' => 'Ең аз түзетілген беттер',
 
 # Miscellaneous special pages
-'nbytes'                          => '$1 B',
-'ncategories'                     => '$1 санат',
-'nlinks'                          => '$1 сілтеме',
-'nmembers'                        => '$1 буын',
-'nrevisions'                      => '$1 нұсқа',
-'nviews'                          => '$1 рет қаралған',
-'specialpage-empty'               => 'Бұл бет бос.',
-'lonelypages'                     => 'Еш бет сілтемеген беттер',
-'lonelypagestext'                 => 'Келесі беттерге осы жобадағы басқа беттер сілтемейді.',
-'uncategorizedpages'              => 'Еш санатқа кірмеген беттер',
-'uncategorizedcategories'         => 'Еш санатқа кірмеген санаттар',
-'uncategorizedimages'             => 'Еш санатқа кірмеген суреттер',
-'unusedcategories'                => 'Пайдаланылмаған санаттар',
-'unusedimages'                    => 'Пайдаланылмаған файлдар',
-'popularpages'                    => 'Әйгілі беттер',
-'wantedcategories'                => 'Басталмаған санаттар',
-'wantedpages'                     => 'Басталмаған беттер',
-'mostlinked'                      => 'Ең көп сілтенген беттер',
-'mostlinkedcategories'            => 'Ең көп сілтенген санаттар',
-'mostcategories'                  => 'Ең көп санаттарға кірген беттер',
-'mostimages'                      => 'Ең көп сілтенген суреттер',
-'mostrevisions'                   => 'Ең көп түзетілген беттер',
-'allpages'                        => 'Барлық бет тізімі',
-'prefixindex'                     => 'Бет бастау тізімі',
-'randompage'                      => 'Кездейсоқ бет',
-'randompage-nopages'              => 'Бұл есім аясында беттер жоқ.',
-'shortpages'                      => 'Ең қысқа беттер',
-'longpages'                       => 'Ең үлкен беттер',
-
-'deadendpages'                    => 'Еш бетке сілтемейтін беттер',
-'deadendpagestext'                => 'Келесі беттер осы жобадағы басқа беттерге сілтемейді.',
-'protectedpages'                  => 'Қорғалған беттер',
-'protectedpagestext'              => 'Келесі беттер өңдеуден немесе жылжытудан қорғалған',
-'protectedpagesempty'             => 'Ағымда осындай баптауларымен ешбір бет қорғалмаған',
-'listusers'                       => 'Барлық қатысушы тізімі',
-'specialpages'                    => 'Арнайы беттер',
-'spheading'                       => 'Баршаның арнайы беттері',
-'restrictedpheading'              => 'Шектеулі арнайы беттер',
-'rclsub'                          => '(«$1» бетінен сілтенген беттерге)',
-'newpages'                        => 'Ең жаңа беттер',
-'newpages-username'               => 'Қатысушы аты:',
-'ancientpages'                    => 'Ең ескі беттер',
-'intl'                            => 'Тіларалық сілтемелер',
-'move'                            => 'Жылжыту',
-'movethispage'                    => 'Бетті жылжыту',
-'unusedimagestext'                => '<p>Ескерту: Басқа веб тораптар файлдың
+'nbytes'                  => '{{PLURAL:$1|1 байт|$1 байт}}',
+'ncategories'             => '{{PLURAL:$1|1 санат|$1 санат}}',
+'nlinks'                  => '{{PLURAL:$1|1 сілтеме|$1 сілтеме}}',
+'nmembers'                => '{{PLURAL:$1|1 буын|$1 буын}}',
+'nrevisions'              => '{{PLURAL:$1|1 нұсқа|$1 нұсқа}}',
+'nviews'                  => '{{PLURAL:$1|1 рет|$1 рет}} қаралған',
+'specialpage-empty'       => 'Бұл баянатқа еш нәтиже жоқ.',
+'lonelypages'             => 'Еш бет сілтемеген беттер',
+'lonelypagestext'         => 'Келесі беттерге осы жобадағы басқа беттер сілтемейді.',
+'uncategorizedpages'      => 'Еш санатқа кірмеген беттер',
+'uncategorizedcategories' => 'Еш санатқа кірмеген санаттар',
+'uncategorizedimages'     => 'Еш санатқа кірмеген суреттер',
+'uncategorizedtemplates'  => 'Еш санатқа кірмеген үлгілер',
+'unusedcategories'        => 'Пайдаланылмаған санаттар',
+'unusedimages'            => 'Пайдаланылмаған файлдар',
+'popularpages'            => 'Әйгілі беттер',
+'wantedcategories'        => 'Басталмаған санаттар',
+'wantedpages'             => 'Басталмаған беттер',
+'mostlinked'              => 'Ең көп сілтенген беттер',
+'mostlinkedcategories'    => 'Ең көп сілтенген санаттар',
+'mostlinkedtemplates'     => 'Ең көп сілтенген үлгілер',
+'mostcategories'          => 'Ең көп санаттарға кірген беттер',
+'mostimages'              => 'Ең көп сілтенген суреттер',
+'mostrevisions'           => 'Ең көп түзетілген беттер',
+'allpages'                => 'Барлық бет тізімі',
+'prefixindex'             => 'Бет бастау тізімі',
+'randompage'              => 'Кездейсоқ бет',
+'randompage-nopages'      => 'Бұл есім аясында беттер жоқ.',
+'shortpages'              => 'Ең қысқа беттер',
+'longpages'               => 'Ең үлкен беттер',
+'deadendpages'            => 'Еш бетке сілтемейтін беттер',
+'deadendpagestext'        => 'Келесі беттер осы жобадағы басқа беттерге сілтемейді.',
+'protectedpages'          => 'Қорғалған беттер',
+'protectedpagestext'      => 'Келесі беттер өңдеуден немесе жылжытудан қорғалған',
+'protectedpagesempty'     => 'Ағымда осындай баптауларымен ешбір бет қорғалмаған',
+'listusers'               => 'Барлық қатысушы тізімі',
+'specialpages'            => 'Арнайы беттер',
+'spheading'               => 'Баршаның арнайы беттері',
+'restrictedpheading'      => 'Шектеулі арнайы беттер',
+'rclsub'                  => '(«$1» бетінен сілтенген беттерге)',
+'newpages'                => 'Ең жаңа беттер',
+'newpages-username'       => 'Қатысушы аты:',
+'ancientpages'            => 'Ең ескі беттер',
+'intl'                    => 'Тіларалық сілтемелер',
+'move'                    => 'Жылжыту',
+'movethispage'            => 'Бетті жылжыту',
+'unusedimagestext'        => '<p>Ескерту: Басқа веб тораптар файлдың
 URL жайына тікелей сілтеуі мүмкін. Сондықтан, белсенді пайдалануына аңғармай,
 осы тізімде қалуы мүмкін.</p>',
-'unusedcategoriestext'            => 'Келесі санат беттер бар болып тұр, бірақ оған ешқандай бет, не санат кірмейді.',
+'unusedcategoriestext'    => 'Келесі санат беттер бар болып тұр, бірақ оған ешқандай бет, не санат кірмейді.',
 
 # Book sources
 'booksources'               => 'Кітап қайнарлары',
 'booksources-search-legend' => 'Кітап қайнарларын іздеу',
-'booksources-isbn'          => 'ISBN белгісі:',
 'booksources-go'            => 'Өту',
 'booksources-text'          => 'Төменде жаңа және қолданған кітаптар сататынтораптарының сілтемелері тізімделген.
 Бұл тораптарда ізделген кітаптар туралы былайғы ақпарат болуға мүмкін.',
@@ -1406,14 +1479,14 @@ URL жайына тікелей сілтеуі мүмкін. Сондықтан,
 'data'               => 'Деректер',
 'userrights'         => 'Қатысушылар құқықтарын меңгеру',
 'groups'             => 'Қатысушы топтары',
-'isbn'               => 'ISBN',
 'alphaindexline'     => '$1 — $2',
 'version'            => 'Жүйе нұсқасы',
 
-# Special:Logs
+# Special:Log
 'specialloguserlabel'  => 'Қатысушы:',
 'speciallogtitlelabel' => 'Атау:',
 'log'                  => 'Журналдар',
+'all-logs-page'        => 'Барлық журналдар',
 'log-search-legend'    => 'Журналдардан іздеу',
 'log-search-submit'    => 'Өту',
 'alllogstext'          => '{{SITENAME}} жобасының барлық қатынаулы журналдарын біріктіріп көрсетуі.
@@ -1433,9 +1506,10 @@ URL жайына тікелей сілтеуі мүмкін. Сондықтан,
 'allpagessubmit'    => 'Өту',
 'allpagesprefix'    => 'Мынадан басталған беттерді көрсету:',
 'allpagesbadtitle'  => 'Алынған бет атауы жарамсыз болған, немесе тіл-аралық не уики-аралық бастауы бар болды. Атауда қолдануға болмайтын нышандар болуы мүмкін.',
+'allpages-bad-ns'   => '{{SITENAME}} жобасында «$1» есім аясы жоқ.',
 
 # Special:Listusers
-'listusersfrom' => 'Мына қатысушыдан бастап көрсету:',
+'listusersfrom'      => 'Мына қатысушыдан бастап көрсету:',
 'listusers-submit'   => 'Көрсет',
 'listusers-noresult' => 'Қатысушы табылған жоқ.',
 
@@ -1472,11 +1546,6 @@ URL жайына тікелей сілтеуі мүмкін. Сондықтан,
 'watchlistfor'         => "('''$1''' бақылаулары)",
 'nowatchlist'          => 'Бақылау тізіміңізде ешбір дана жоқ',
 'watchlistanontext'    => 'Бақылау тізіміңіздегі даналарды қарау, не өңдеу үшін $1 қажет.',
-'watchlistcount'       => "'''Бақылау тізіміңізде (талқылау беттерді қоса) $1 дана бар.'''",
-'clearwatchlist'       => 'Бақылау тізімін тазалау',
-'watchlistcleartext'   => 'Соларды толық аластатуға батылсыз ба?',
-'watchlistclearbutton' => 'Бақылау тізімін тазалау',
-'watchlistcleardone'   => 'Бақылау тізіміңіз тазартылды. $1 дана аластатылды.',
 'watchnologin'         => 'Кірмегенсіз',
 'watchnologintext'     => 'Бақылау тізіміңізді өзгерту үшін [[{{ns:special}}:Userlogin|кіруіңіз]] жөн.',
 'addedwatch'           => 'Бақылау тізіміне қосылды',
@@ -1494,20 +1563,12 @@ URL жайына тікелей сілтеуі мүмкін. Сондықтан,
 'unwatchthispage'      => 'Бақылауды тоқтату',
 'notanarticle'         => 'Мағлұмат беті емес',
 'watchnochange'        => 'Көрсетілген мерзімде ешбір бақыланған дана өңделген жоқ.',
-'watchdetails'         => "* Бақылау тізімінде (талқылау беттерісіз) '''$1''' бет бар.
-* [[{{ns:special}}:Watchlist/edit|Бүкіл тізімді қарау және өзгерту]].
-* [[{{ns:special}}:Watchlist/clear|Тізімдегі барлық дана аластату]].",
+'watchlist-details'    => 'Бақылау тізімінде (талқылау беттерісіз) {{PLURAL:$1|1 бет|$1 бет}} бар.',
 'wlheader-enotif'      => '* Ескерту хат жіберуі ендірілген.',
-'wlheader-showupdated' => "* Соңғы кіргенімнен бері түзетілген беттерді '''жуан''' мәтінмен көрсет",
+'wlheader-showupdated' => "* Соңғы кіргенімнен бері өзгертілген беттерді '''жуан''' әрбімен көрсет",
 'watchmethod-recent'   => 'бақылаулы беттердің жуықтағы өзгерістерін тексеру',
 'watchmethod-list'     => 'жуықтағы өзгерістерде бақылаулы беттерді тексеру',
-'removechecked'        => 'Белгіленгенді бақылау тізімінен аластату',
 'watchlistcontains'    => 'Бақылау тізіміңізде {{PLURAL:$1|1 бет|$1 бет}} бар.',
-'watcheditlist'        => "Осында әліппем сұрыпталған бақыланған мағлұмат беттеріңіз тізімделінген.
-Беттерді аластату үшін оның қасындағы қабашақтарды белгілеп, төмендегі ''Белгіленгенді аластат'' түймесін нұқыңыз
-(мағлұмат бетін жойғанда талқылау беті де бірге жойылады).",
-'removingchecked'      => 'Сұранған даналарды бақылау тізімнен аластауы…',
-'couldntremove'        => '«$1» деген дана аластатылмады…',
 'iteminvalidname'      => '«$1» данасының жарамсыз атауынан шатақ туды…',
 'wlnote'               => "Төменде соңғы {{PLURAL:$2|сағатта|'''$2''' сағатта}} болған, {{PLURAL:$1|жуықтағы өзгеріс|жуықтағы '''$1''' өзгеріс}} көрсетілген.",
 'wlshowlast'           => 'Соңғы $1 сағаттағы, $2 күндегі, $3 болған өзгерісті көрсету',
@@ -1518,22 +1579,24 @@ URL жайына тікелей сілтеуі мүмкін. Сондықтан,
 'watchlist-hide-own'   => 'Түзетуімді жасыр',
 'watchlist-show-minor' => 'Шағын түзетуді көрсет',
 'watchlist-hide-minor' => 'Шағын түзетуді жасыр',
-'wldone'               => 'Іс бітті.',
 
 # Displayed when you click the "watch" button and it's in the process of watching
 'watching'   => 'Бақылау…',
 'unwatching' => 'Бақыламау…',
 
-'enotif_mailer'      => '{{SITENAME}} ескерту хат жіберу қызметі',
-'enotif_reset'       => 'Барлық бет каралді деп белгіле',
-'enotif_newpagetext' => 'Мынау жаңа бет.',
-'changed'            => 'өзгертті',
-'created'            => 'жасады',
-'enotif_subject'     => '{{SITENAME}} жобасында $PAGEEDITOR $PAGETITLE атаулы бетті $CHANGEDORCREATED',
-'enotif_lastvisited' => 'Соңғы кіруіңізден бері болған өзгерістер үшін $1 дегенді қараңыз.',
-'enotif_body'        => 'Құрметті $WATCHINGUSERNAME,
+'enotif_mailer'                => '{{SITENAME}} ескерту хат жіберу қызметі',
+'enotif_reset'                 => 'Барлық бет каралді деп белгіле',
+'enotif_newpagetext'           => 'Мынау жаңа бет.',
+'enotif_impersonal_salutation' => '{{SITENAME}} пайдаланушысы',
+'changed'                      => 'өзгертті',
+'created'                      => 'жасады',
+'enotif_subject'               => '{{SITENAME}} жобасында $PAGEEDITOR $PAGETITLE атаулы бетті $CHANGEDORCREATED',
+'enotif_lastvisited'           => 'Соңғы кіруіңізден бері болған өзгерістер үшін $1 дегенді қараңыз.',
+'enotif_lastdiff'              => 'Осы өзгеріс үшін $1 дегенді қараңыз.',
+'enotif_anon_editor'           => 'тіркелгісіз пайдаланушы $1',
+'enotif_body'                  => 'Құрметті $WATCHINGUSERNAME,
 
-{{SITENAME}} жобасыда $PAGEEDITDATE кезінде $PAGEEDITOR $PAGETITLE атаулы бетті $CHANGEDORCREATED, ағымдық нұсқасын $PAGETITLE_URL жайынан қараңыз.
+{{SITENAME}} жобасының $PAGETITLE атаулы бетті $PAGEEDITDATE кезінде $PAGEEDITOR деген $CHANGEDORCREATED, ағымдық нұсқасын $PAGETITLE_URL жайынан қараңыз.
 
 $NEWPAGE
 
@@ -1558,7 +1621,7 @@ $NEWPAGE
 'deletepage'                  => 'Бетті жою',
 'confirm'                     => 'Растау',
 'excontent'                   => 'болған мағлұматы: «$1»',
-'excontentauthor'             => 'болған мағлұматы: «$1» (тек «[[Special:Contributions/$2|$2]]» үлесі)',
+'excontentauthor'             => 'болған мағлұматы (тек «[[{{ns:special}}:Contributions/$2|$2]]» үлесі): «$1»',
 'exbeforeblank'               => 'тазарту алдындағы болған мағлұматы: «$1»',
 'exblank'                     => 'бет босты болды',
 'confirmdelete'               => 'Жоюды растау',
@@ -1569,7 +1632,6 @@ $NEWPAGE
 Бұны жоюдың зардабын түсініп шын ниеттенгеніңізді, және
 [[{{{{ns:mediawiki}}:policy-url}}]] дегенге лайықты деп
 сенгеніңізді растаңыз.',
-'policy-url'                 => '{{ns:project}}:Ережелер',
 'actioncomplete'              => 'Әрекет бітті',
 'deletedtext'                 => '«$1» жойылды.
 Жуықтағы жоюлар туралы жазбаларын $2 дегеннен қараңыз.',
@@ -1579,7 +1641,6 @@ $NEWPAGE
 'deletionlog'                 => 'жою журналы',
 'reverted'                    => 'Ертерек нұсқасына қайтарылған',
 'deletecomment'               => 'Жоюдың себебі',
-'imagereverted'               => 'Ертерек нұсқасына қайтару сәтті өтті.',
 'rollback'                    => 'Түзетулерді қайтару',
 'rollback_short'              => 'Қайтару',
 'rollbacklink'                => 'қайтару',
@@ -1590,26 +1651,23 @@ $NEWPAGE
 
 Соңғы өңдеуді [[{{ns:user}}:$3|$3]] ([[{{ns:user_talk}}:$3|талқылауы]]) дегенді жасаған.',
 'editcomment'                 => 'Түзетудің болған мәндемесі: «<i>$1</i>».', # only shown if there is an edit comment
-'revertpage'                  => '[[{{ns:special}}:Contributions/$2|$2]] ([[{{ns:user_talk}}:$2|талқылауы]]) түзетулерін [[{{ns:user}}:$1|$1]] соңғы нұсқасына қайтарды',
+'revertpage'                  => '[[{{ns:special}}:Contributions/$2|$2]] ([[{{ns:user_talk}}:$2|талқылауы]]) түзетулерінен қайтарған; [[{{ns:user}}:$1|$1]] соңғы нұсқасына өзгертті.',
+'rollback-success'            => '$1 түзетулерінен қайтарған; $2 соңғы нұсқасына өзгертті.',
 'sessionfailure'              => 'Кіру сессиясында шатақ болған сияқты;
 сессияға шабуылдаудардан қорғану үшін, осы әрекет тоқтатылды.
 «Артқа» түймесін басыңыз, және бетті кері жүктеңіз, сосын қайталап көріңіз.',
 'protectlogpage'              => 'Қорғау_журналы',
 'protectlogtext'              => 'Төменде беттердің қорғау/қорғамау тізімі берілген. Ағымдағы қорғау әректтер бар беттер үшін [[{{ns:special}}:Protectedpages|қорғалған бет тізімін]] қараңыз.',
-'protectedarticle'            => '«$1» қорғалды',
+'protectedarticle'            => '«[[$1]]» қорғалды',
+'modifiedarticleprotection'   => '«[[$1]]» дегеннің қорғалу деңгейі өзгерді',
 'unprotectedarticle'          => '«[[$1]]» қорғалмады',
-'protectsub'                  => '(«$1» қорғауда)',
-'confirmprotecttext'          => 'Осы бетті расында да қорғау қажет пе?',
+'protectsub'                  => '(«$1» қорғау деңгейін орнату)',
 'confirmprotect'              => 'Қорғауды растау',
-'protectmoveonly'             => 'Тек жылжытудан қорғау',
-'protectcomment'              => 'Қорғау себебі',
-'protectexpiry'               => 'Бітетін мерзімі',
+'protectcomment'              => 'Мәндемесі:',
+'protectexpiry'               => 'Бітетін мерзімі:',
 'protect_expiry_invalid'      => 'Бітетін уақыты жарамсыз.',
 'protect_expiry_old'          => 'Бітетін уақыты өтіп кеткен.',
 'unprotectsub'                => '(«$1» қорғамауда)',
-'confirmunprotecttext'        => 'Осы бетті растан қорғамау қажет пе?',
-'confirmunprotect'            => 'Қорғамауды растау',
-'unprotectcomment'            => 'Қорғамау себебі',
 'protect-unchain'             => 'Жылжытуға рұқсат беру',
 'protect-text'                => '<strong>$1</strong> бетінің қорғау деңгейін қарай және өзгерте аласыз.',
 'protect-locked-blocked'      => 'Бұғаттауыңыз өшірілгенше дейін қорғау деңгейін өзгерте алмайсыз.
@@ -1620,14 +1678,17 @@ $NEWPAGE
 Мына <strong>$1</strong> беттің ағымдық баптаулары:',
 'protect-cascadeon'           => 'Бұл бет ағымда қорғалған, себебі: осы бет баулы қорғауы бар келесі {{PLURAL:$1|бетке|беттерге}} кірістірілген. Бұл беттің қорғау деңгейін өзгерте аласыз, бірақ бұл баулы қорғауға ықпал етпейді.',
 'protect-default'             => '(әдепкі)',
+'protect-fallback'            => '«$1» рұқсаты қажет болды',
 'protect-level-autoconfirmed' => 'Тіркелгісіз пайдаланушыларға тиым',
 'protect-level-sysop'         => 'Тек әкімшілерге рұқсат',
 'protect-summary-cascade'     => 'баулы',
 'protect-expiring'            => 'бітуі: $1 (UTC)',
-'protect-cascade'             => 'Баулы қорғау — бұл бетке кірістірілген әрқайсы беттерді қорғау.',
-'restriction-type'            => 'Рұқсат',
-'restriction-level'           => 'Рұқсат деңгейі',
-'minimum-size'                => 'Ең аз мөлшері (байт)',
+'protect-cascade'             => 'Бұл бетке кіріктірілген беттерді қорғау (баулы қорғау).',
+'restriction-type'            => 'Рұқсаты:',
+'restriction-level'           => 'Рұқсат шектеу деңгейі:',
+'minimum-size'                => 'Ең аз мөлшері',
+'maximum-size'                => 'Ең көп мөлшері',
+'pagesize'                    => '(байт)',
 
 # Restrictions (nouns)
 'restriction-edit' => 'Өңдеу',
@@ -1639,58 +1700,68 @@ $NEWPAGE
 'restriction-level-all'           => 'әрқайсы деңгейде',
 
 # Undelete
-'undelete'                 => 'Жойылған беттерді қарау',
-'undeletepage'             => 'Жойылған беттерді қарау және қайтару',
-'viewdeletedpage'          => 'Жойылған беттерді қарау',
-'undeletepagetext'         => 'Келесі беттер жойылды деп белгіленген, бірақ мағлұматы мұрағатта жатқан,
+'undelete'                     => 'Жойылған беттерді қарау',
+'undeletepage'                 => 'Жойылған беттерді қарау және қайтару',
+'viewdeletedpage'              => 'Жойылған беттерді қарау',
+'undeletepagetext'             => 'Келесі беттер жойылды деп белгіленген, бірақ мағлұматы мұрағатта жатқан,
 сондықтан кері қайтаруға әзір. Мұрағат мерзім бойынша тазаланып тұруы мүмкін.',
-'undeleteextrahelp'        => "Бүкіл бетті қайтару үшін, барлық қабашақтарды бос қалдырып
+'undeleteextrahelp'            => "Бүкіл бетті қайтару үшін, барлық қабашақтарды бос қалдырып
 '''''Қайтар!''''' түймесін нұқыңыз. Бөлекше қайтару орындау үшін, қайтарайын деген нұсқаларына сәйкес
 қабашақтарын белгілеңіз де, және '''''Қайтар!''''' түймесін нұқыңыз. '''''Таста''''' түймесін
 нұқығанда мәндеме аумағы мен барлық қабашақтар тазаланады.",
-'undeleterevisions'        => '{{PLURAL:$1|Бір нұсқа|$1 нұсқа}} мұрағатталды',
-'undeletehistory'          => 'Егер бет мағлұматын қайтарсаңыз,тарихында барлық нұсқалар да
+'undeleterevisions'            => '{{PLURAL:$1|Бір нұсқа|$1 нұсқа}} мұрағатталды',
+'undeletehistory'              => 'Егер бет мағлұматын қайтарсаңыз,тарихында барлық нұсқалар да
 қайтарылады. Егер жоюдан соң дәл солай атауымен жаңа бет жасалса, қайтарылған нұсқалар
 тарихтың ең адында көрсетіледі, және көрсетіліп тұрған беттің ағымдық нұсқасы
-өздікті алмастырылмайды. Файл нұсқаларының қайтарғанда шектеулері жойылатын ұмытпаңыз.',
-'undeleterevdel'           => 'Егер беттің үстіңгі нұсқасы жарым-жартылай жойылған болса жойылған қайтаруы
+өздіктік алмастырылмайды. Файл нұсқаларының қайтарғанда шектеулері жойылатын ұмытпаңыз.',
+'undeleterevdel'               => 'Егер беттің үстіңгі нұсқасы жарым-жартылай жойылған болса жойылған қайтаруы
  атқарылмайды. Осындай жағдайларда, ең жаңа жойылған нұсқа белгілеуін немесе жасыруын аластатыңыз.
 Көруіңізге рұқсат етілмеген файл нұсқалары қайтарылмайды.',
-'undeletehistorynoadmin'   => 'Бұл бет жойылған. Жою себебі алдындағы өңдеген қатысушылар
+'undeletehistorynoadmin'       => 'Бұл бет жойылған. Жою себебі алдындағы өңдеген қатысушылар
 егжей-тегжейлерімен бірге төмендегі сипаттамасында көрсетілген.
 Осы жойылған нұсқалардың мәтіні тек әкімшілерге қатынаулы.',
-'undelete-revision'        => '$2 кезіндегі $1 дегеннің жойылған нұсқасы:',
-'undeleterevision-missing' => 'Жарамсыз не жоғалған нұсқа. Сілтемеңіз жарамсыз болуы мүмкін, не
+'undelete-revision'            => '$3 жойған $1 дегеннің нұсқасы ($2 кезіндегі):',
+'undeleterevision-missing'     => 'Жарамсыз не жоғалған нұсқа. Сілтемеңіз жарамсыз болуы мүмкін, не
 нұсқа қайтарылған түге немесе мұрағаттан аластатылған.',
-'undeletebtn'              => 'Қайтар!',
-'undeletereset'            => 'Таста',
-'undeletecomment'          => 'Мәндемесі:',
-'undeletedarticle'         => '«[[$1]]» қайтарды',
-'undeletedrevisions'       => '{{plural:$1|Нұсқаны|$1 нұсқаны}} қайтарды',
-'undeletedrevisions-files' => '{{plural:$1|Нұсқаны|$1 нұсқаны}} және {{plural:$2|файлды|$2 файлды}} қайтарды',
-'undeletedfiles'           => '{{plural:$1|1 файл|$1 файл}} қайтарды',
-'cannotundelete'           => 'Қайтару сәтсіз бітті; тағы біреу сізден бұрын сол бетті қайтарған болар.',
-'undeletedpage'            => "<big>'''$1 қайтарылды'''</big>
+'undeletebtn'                  => 'Қайтар!',
+'undeletereset'                => 'Таста',
+'undeletecomment'              => 'Мәндемесі:',
+'undeletedarticle'             => '«[[$1]]» қайтарды',
+'undeletedrevisions'           => '$1 нұсқа қайтарды',
+'undeletedrevisions-files'     => '$1 нұсқа және $2 файл қайтарды',
+'undeletedfiles'               => '$1 файл қайтарды',
+'cannotundelete'               => 'Қайтару сәтсіз бітті; тағы біреу сізден бұрын сол бетті қайтарған болар.',
+'undeletedpage'                => "<big>'''$1 қайтарылды'''</big>
 
 Жуықтағы жою мен қайтару жөнінде [[{{ns:special}}:Log/delete|жою журналын]] қараңыз.",
-'undelete-header'          => 'Жуықтағы жойылған беттер жөнінде [[{{ns:special}}:Log/delete|жою журналын]] қараңыз.',
-'undelete-search-box'      => 'Жойылған беттерді іздеу',
-'undelete-search-prefix'   => 'Мынадан басталған беттерді көрсет:',
-'undelete-search-submit'   => 'Іздеу',
-'undelete-no-results'      => 'Жою мұрағатында ешқандай сәйкес беттер табылмады.',
+'undelete-header'              => 'Жуықтағы жойылған беттер жөнінде [[{{ns:special}}:Log/delete|жою журналын]] қараңыз.',
+'undelete-search-box'          => 'Жойылған беттерді іздеу',
+'undelete-search-prefix'       => 'Мынадан басталған беттерді көрсет:',
+'undelete-search-submit'       => 'Іздеу',
+'undelete-no-results'          => 'Жою мұрағатында ешқандай сәйкес беттер табылмады.',
+'undelete-filename-mismatch'   => 'Файлдың $1 уақыт белгісі бар нұсқасы жойылмады: файл атауы сәйкес емес',
+'undelete-bad-store-key'       => 'Файлдың $1 уақыт белгісі бар нұсқасы жойылмады: файл бұрыннан жоқ.',
+'undelete-cleanup-error'       => 'Пайдаланылмаған «$1» мұрағат файлының жою қатесі.',
+'undelete-missing-filearchive' => '$1 нөмірлі мұрағат файлы қайтарылмайды, себебі ол дерекқорда жоқ.
+Бұл кері қайтарылған мүмкін.',
+'undelete-error-short'         => 'Файлды кері қайтару қатесі: $1',
+'undelete-error-long'          => 'Файлды кері қайтарғанда мына қателер кездесті:\n\n$1\n',
 
 # Namespace form on various pages
-'namespace' => 'Есім аясы:',
-'invert'    => 'Талғауды керілеу',
+'namespace'      => 'Есім аясы:',
+'invert'         => 'Талғауды керілеу',
+'blanknamespace' => '(Негізгі)',
 
 # Contributions
 'contributions' => 'Қатысушы үлесі',
 'mycontris'     => 'Үлесім',
-'contribsub2'    => '$1 ($2) үлесі',
+'contribsub2'   => '$1 ($2) үлесі',
 'nocontribs'    => 'Осы іздеу шартына сәйкес өзгерістер табылған жоқ.',
-'ucnote'        => 'Төменде осы қатысушының соңғы <b>$2</b> күндегі, соңғы <b>$1</b> өзгерісі көрсетледі.',
-'uclinks'       => 'Соңғы $2 күндегі, соңғы $1 өзгерісін қарау.',
+'ucnote'        => 'Төменде осы қатысушы жасаған соңғы <b>$2</b> күндегі, соңғы <b>$1</b> өзгерісі көрсетледі.',
+'uclinks'       => 'Соңғы $2 күндегі, соңғы жасалған $1 өзгерісін қарау.',
 'uctop'         => ' (үсті)',
+'month'         => 'Айдағы (және ертеректен):',
+'year'          => 'Жылдағы (және ертеректен):',
 
 'sp-contributions-newest'      => 'Ең жаңасына',
 'sp-contributions-oldest'      => 'Ең ескісіне',
@@ -1703,44 +1774,37 @@ $NEWPAGE
 'sp-contributions-username'    => 'IP жай не қатысушы аты:',
 'sp-contributions-submit'      => 'Іздеу',
 
-'sp-newimages-showfrom'        => '$1 кезінен бері — жаңа суреттерді көрсет',
+'sp-newimages-showfrom' => '$1 кезінен бері — жаңа суреттерді көрсет',
 
 # What links here
-'whatlinkshere'         => 'Сілтеген беттер',
-'whatlinkshere-barrow'  => '&lt;',
-'notargettitle'         => 'Ақырғы атау жоқ',
-'notargettext'          => 'Осы әрекет орындалатын нысана бет,
-не қатысушы көрсетілмеген.',
-'linklistsub'           => '(Сілтемелер тізімі)',
-'linkshere'             => "'''[[:$1]]''' дегенге мына беттер сілтейді:",
-'nolinkshere'           => "'''[[:$1]]''' дегенге еш бет сілтемейді.",
-'nolinkshere-ns'        => "Талғанған есім аясында '''[[:$1]]''' дегенге ешқандай бет сілтемейді.",
-'isredirect'            => 'айдату беті',
-'istemplate'            => 'кіріктіру',
-'whatlinkshere-prev'    => '{{PLURAL:$1|алдыңғы|алдыңғы $1}}',
-'whatlinkshere-next'    => '{{PLURAL:$1|келесі|келесі $1}}',
+'whatlinkshere'       => 'Сілтеген беттер',
+'whatlinkshere-title' => '$1 дегенге сілтейтін беттер',
+'notargettitle'       => 'Ақырғы атау жоқ',
+'notargettext'        => 'Осы әрекет орындалатын нысана бет, не қатысушы көрсетілмеген.',
+'linklistsub'         => '(Сілтемелер тізімі)',
+'linkshere'           => "'''[[:$1]]''' дегенге мына беттер сілтейді:",
+'nolinkshere'         => "'''[[:$1]]''' дегенге еш бет сілтемейді.",
+'nolinkshere-ns'      => "Талғанған есім аясында '''[[:$1]]''' дегенге ешқандай бет сілтемейді.",
+'isredirect'          => 'айдату беті',
+'istemplate'          => 'кіріктіру',
+'whatlinkshere-prev'  => '{{PLURAL:$1|алдыңғы|алдыңғы $1}}',
+'whatlinkshere-next'  => '{{PLURAL:$1|келесі|келесі $1}}',
+'whatlinkshere-links' => '← сілтемелер',
 
 # Block/unblock
 'blockip'                     => 'Пайдаланушыны бұғаттау',
 'blockiptext'                 => 'Төмендегі үлгіт пайдаланушының жазу 
 рұқсатын белгілі IP жайымен не атауымен бұғаттау үшін қолданылады.
-Бұны тек бұзақылыққа кедергі істеу үшін және де
+Бұны тек бұзақылықты қақпайлау үшін және де
 [[{{{{ns:mediawiki}}:policy-url}}|ережелер]] бойынша атқаруыңыз жөн.
 Төменде тиісті себебін толтырып көрсетіңіз (мысалы, дәйекке бұзақылықпен
 өзгерткен беттерді келтіріп).',
-'ipaddress'                   => 'IP жай',
-'ipadressorusername'          => 'IP жай не аты',
-'ipbexpiry'                   => 'Бітетін мерзімі',
-'ipbreason'                   => 'Себебі',
+'ipaddress'                   => 'IP жайы:',
+'ipadressorusername'          => 'IP жайы не аты:',
+'ipbexpiry'                   => 'Бітетін мерзімі:',
+'ipbreason'                   => 'Себебі:',
 'ipbreasonotherlist'          => 'Басқа себеп',
-
-// These are examples only. They can be translated but should be adjusted via
-// [[MediaWiki:ipbreason-list]] by the local community
-// defines a block reason not part of a group
-// * defines a block reason group in the drow down menu
-// ** defines a block reason
-// To disable this drop down menu enter '-' in [[MediaWiki:ipbreason-dropdown]].
-'ipbreason-dropdown'    => '
+'ipbreason-dropdown'          => '
 * Бұғаттаудың жалпы себебтері 
 ** Бұзақылық: жалған мәлімет енгізу 
 ** Бұзақылық: беттердегі мағлұматты жою 
@@ -1750,13 +1814,14 @@ $NEWPAGE
 ** Көптеген тіркелгілерді жасап қиянаттау 
 ** Қолайсыз қатысушы атауы',
 'ipbanononly'                 => 'Тек тіркелгісіз пайдаланушыларды бұғаттау',
-'ipbcreateaccount'            => 'Тіркелгі жасауын кедергілеу',
-'ipbenableautoblock'          => 'Бұл пайдаланушы соңғы қолданған IP жайы, және кейін түзету істеуге байқап қаралған әрқайсы IP жайлары өздікті бұғатталсын',
+'ipbcreateaccount'            => 'Тіркелгі жасауын қақпайлау',
+'ipbemailban'                 => 'Пайдаланушы е-поштамен хат жіберуін қақпайлау',
+'ipbenableautoblock'          => 'Бұл пайдаланушы соңғы қолданған IP жайы, және кейін түзету істеуге байқап қаралған әрқайсы IP жайлары өздіктік бұғатталсын',
 'ipbsubmit'                   => 'Пайдаланушыны бұғаттау',
-'ipbother'                    => 'Басқа мерзім',
+'ipbother'                    => 'Басқа мерзімі:',
 'ipboptions'                  => '2 сағат:2 hours,1 күн:1 day,3 күн:3 days,1 апта:1 week,2 апта:2 weeks,1 ай:1 month,3 ай:3 months,6 ай:6 months,1 жыл:1 year,мәнгі:infinite',
 'ipbotheroption'              => 'басқа',
-'ipbotherreason'              => 'Басқа/қосымша себеп',
+'ipbotherreason'              => 'Басқа/қосымша себеп:',
 'ipbhidename'                 => 'Бұғаттау журналындағы, белсенді бұғаттау тізіміндегі, қатысушы тізіміннегі аты/IP жасырылсын',
 'badipaddress'                => 'Жарамсыз IP жай',
 'blockipsuccesssub'           => 'Бұғаттау сәтті өтті',
@@ -1768,32 +1833,37 @@ $NEWPAGE
 'ipb-blocklist-addr'          => '$1 үшін бар бұғаттауларды қарау',
 'ipb-blocklist'               => 'Бар бұғаттауларды қарау',
 'unblockip'                   => 'Пайдаланушыны бұғаттамау',
-'unblockiptext'               => 'Төмендегі үлгіт белгілі IP жайымен не атауымен
-бұрын бұғатталған пайдаланушының жазу рұқсатын қайтару үшін қолданылады.',
+'unblockiptext'               => 'Төмендегі үлгіт белгілі IP жайымен не атауымен бұрын бұғатталған пайдаланушының жазу рұқсатын қайтару үшін қолданылады.',
 'ipusubmit'                   => 'Осы жайды бұғаттамау',
 'unblocked'                   => '[[{{ns:user}}:$1|$1]] бұғаттауы өшірілді',
+'unblocked-id'                => '$1 деген бұғаттау аластатылды',
 'ipblocklist'                 => 'Бұғатталған пайдаланушы / IP- жай тізімі',
+'ipblocklist-legend'          => 'Бұғатталған пайдаланушыны табу',
+'ipblocklist-username'        => 'Қатысушы аты не IP жай:',
 'ipblocklist-submit'          => 'Іздеу',
 'blocklistline'               => '$1, $2 «$3» дегенді бұғаттады ($4)',
 'infiniteblock'               => 'мәнгі',
 'expiringblock'               => 'бітуі: $1',
-'anononlyblock'               => 'тек тіркелгісізді',
-'noautoblockblock'            => 'өздік бұғаттау өшіріленген',
+'anononlyblock'               => 'тек тіркелгісіздерді',
+'noautoblockblock'            => 'өздіктік бұғаттау өшірілген',
 'createaccountblock'          => 'тіркелгі жасауы бұғатталған',
-'ipblocklistempty'            => 'Бұғаттау тізімі бос, немесерұранысқан IP жай/қатысушы аты бұғатталған жоқ.',
+'emailblock'                  => 'е-пошта бұғатталған',
+'ipblocklist-empty'           => 'Бұғаттау тізімі бос.',
+'ipblocklist-no-results'      => 'Сұранысқан IP жай не қатысушы аты бұғатталған емес.',
 'blocklink'                   => 'бұғаттау',
 'unblocklink'                 => 'бұғаттамау',
 'contribslink'                => 'үлесі',
-'autoblocker'                 => "IP жайыңызды жуықта «[[{{ns:user}}:1|$1]]» пайдаланған, сондықтан өздік түрде бұғатталған. $1 бұғаттау себебі: «$2».",
+'autoblocker'                 => 'IP жайыңызды жуықта «[[{{ns:user}}:1|$1]]» пайдаланған, сондықтан өздіктік бұғатталған. $1 бұғаттау себебі: «$2».',
 'blocklogpage'                => 'Бұғаттау_журналы',
-'blocklogentry'               => '«[[$1]]» дегенді $2 мерзімге бұғаттады $3',
-'blocklogtext'                => 'Бұл пайдаланушыларды бұғаттау/бұғаттамау әрекеттерінің журналы. Өздік түрде
+'blocklogentry'               => '[[$1]] дегенді $2 мерзімге бұғаттады $3',
+'blocklogtext'                => 'Бұл пайдаланушыларды бұғаттау/бұғаттамау әрекеттерінің журналы. Өздіктік
 бұғатталған IP жайлар осында тізімделгемеген. Ағымдағы белсенді бұғаттауларын
 [[{{ns:special}}:Ipblocklist|IP бұғаттау тізімінен]] қарауға болады.',
 'unblocklogentry'             => '«$1» дегеннің бұғаттауын өшірді',
 'block-log-flags-anononly'    => 'тек тіркелмегендер',
 'block-log-flags-nocreate'    => 'тіркелгі жасау өшірілген',
-'block-log-flags-noautoblock'   => 'өздікті бұғаттағыш өшірілген',
+'block-log-flags-noautoblock' => 'өздіктік бұғаттағыш өшірілген',
+'block-log-flags-noemail'     => 'е-пошта бұғатталған',
 'range_block_disabled'        => 'Ауқым бұғаттауын жасау әкімшілік мүмкіндігі өшірілген.',
 'ipb_expiry_invalid'          => 'Бітетін уақыты жарамсыз.',
 'ipb_already_blocked'         => '«$1» бұғатталған түге',
@@ -1802,7 +1872,6 @@ $NEWPAGE
 'ipb_cant_unblock'            => 'Қате: IP $1 бұғаттауы табылмады. Оның бұғаттауы өшірлген сияқты.',
 'proxyblockreason'            => 'IP жайыңыз ашық прокси серверге жататындықтан бұғатталған. Интернет қызметін жабдықтаушыңызбен, не техникалық медеу қызметімен қатынасыңыз, және оларға осы оте күрделі қауыпсіздік шатақ туралы ақпарат беріңіз.',
 'proxyblocksuccess'           => 'Бітті.',
-'sorbs'                       => 'DNSBL қара тізімі',
 'sorbsreason'                 => 'Сіздің IP жайыңыз осы торапта қолданылған DNSBL қара тізіміндегі ашық прокси-сервер деп табылады.',
 'sorbs_create_account_reason' => 'Сіздің IP жайыңыз осы торапта қолданылған DNSBL қара тізіміндегі ашық прокси-сервер деп табылады. Тіркелгі жасай алмайсыз.',
 
@@ -1836,8 +1905,8 @@ $NEWPAGE
 'movepagetext'            => "Төмендегі үлгітті қолданып беттерді қайта атайды,
 барлық тарихын жаңа атауға жылжытады.
 Бұрынғы бет атауы жаңа атауға айдататын бет болады.
-Ескі атауына сілтейтін  сілтемелер өзгертілмейді; жылжытудан соң
-шынжырлы айдатулар бар-жоғын тексеріңіз.
+Ескі атауына сілтейтін сілтемелер өзгертілмейді; жылжытудан соң
+шынжырлы не жарамсыз айдатулар бар-жоғын тексеріп шығыңыз.
 Сілтемелер бұрынғы жолдауымен былайғы өтуін тексеруіне
 сіз міндетті боласыз.
 
@@ -1848,25 +1917,25 @@ $NEWPAGE
 бірақ бар беттің үстіне жазуға болмайды.
 
 <b>НАЗАР САЛЫҢЫЗ!</b>
-Бұл дәріпті бетке қатаң және кенет өзгеріс жасауға мүмкін;
+Бұл әйгілі бетке қатаң және кенет өзгеріс жасауға мүмкін;
 әрекеттің алдынан осының зардаптарын түсінгеніңізге батыл
 болыңыз.",
-'movepagetalktext'        => "Келесі себептер '''болғанша''' дейін, талқылау беті өздік түрде бірге жылжытылады:
+'movepagetalktext'        => "Келесі себептер '''болғанша''' дейін, талқылау беті өздіктік бірге жылжытылады:
 * Бос емес талқылау беті жаңа атауда болғанда, немесе
 * Төмендегі қабышақта белгіні аластатқанда.
 
 Осы орайда, қалауыңыз болса, бетті қолдан жылжыта не қоса аласыз.",
-'movearticle'             => 'Бетті жылжыту',
+'movearticle'             => 'Бетті жылжыту:',
 'movenologin'             => 'Жүйеге кірмегенсіз',
-'movenologintext'         => 'Бетті жылжыту үшін тіркелген болуыңыз және
- [[{{ns:special}}:Userlogin|кіруіңіз]] қажет.',
-'newtitle'                => 'Жаңа атауға',
+'movenologintext'         => 'Бетті жылжыту үшін тіркелген болуыңыз және [[{{ns:special}}:Userlogin|кіруіңіз]] қажет.',
+'movenotallowed'          => 'Бұл уикиде беттерді жылжыту руқсатыңыз жоқ.',
+'newtitle'                => 'Жаңа атауға:',
 'move-watch'              => 'Бұл бетті бақылау',
 'movepagebtn'             => 'Бетті жылжыт',
 'pagemovedsub'            => 'Жылжыту сәтті аяқталды',
-'pagemovedtext'           => '«[[$1]]» беті «[[$2]]» бетіне жылжытылды.',
-'articleexists'           => 'Былай атаулы бет бар болды, не таңдаған
-атауыңыз жарамды емес.
+'movepage-moved'          => "<big>'''«$1» деген «$2» дегенге жылжытылды'''</big>", # The two titles are passed in plain text as $3 and $4 to allow additional goodies in the message.
+'articleexists'           => 'Былай атаулы бет бар болды, не
+таңдаған атауыңыз жарамды емес.
 Басқа атау тандаңыз',
 'talkexists'              => "'''Беттің өзі сәтті жылжытылды, бірақ талқылау беті бірге жылжытылмады, оның себебі жаңа атаудың талқылау беті бар түге. Бұны қолмен қосыңыз.'''",
 'movedto'                 => 'мынаған жылжытылды:',
@@ -1877,7 +1946,7 @@ $NEWPAGE
 '1movedto2_redir'         => '«[[$1]]» бетін «[[$2]]» айдату бетінің үстіне жылжытты',
 'movelogpage'             => 'Жылжыту журналы',
 'movelogpagetext'         => 'Төменде жылжытылған беттердің тізімі беріліп тұр.',
-'movereason'              => 'Себебі',
+'movereason'              => 'Себебі:',
 'revertmove'              => 'қайтару',
 'delete_and_move'         => 'Жою және жылжыту',
 'delete_and_move_text'    => '==Жою қажет==
@@ -1890,8 +1959,8 @@ $NEWPAGE
 'immobile_namespace'      => 'Қайнар немесе ақырғы атауы арнайы түрінде болды; осындай есім аясы жағына және жағынан беттер жылжытылмайды.',
 
 # Export
-'export'          => 'Беттерді сыртқа беру',
-'exporttext'      => 'XML пішіміне қапталған бөлек бет не беттер бумасы
+'export'            => 'Беттерді сыртқа беру',
+'exporttext'        => 'XML пішіміне қапталған бөлек бет не беттер бумасы
 мәтінің және өңдеу тарихын сыртқа бере аласыз. Осыны, басқа уикиге
 жүйенің [[{{ns:special}}:Import|сырттан алу бетін]] пайдаланып, алуға болады.
 
@@ -1899,13 +1968,14 @@ $NEWPAGE
 бір жолда бір атау, және тандаңыз: не ағымдық нұсқасын, барлық ескі нұсқалары мен
 және тарихы жолдары мен бірге, не дәл ағымдық нұсқасын, соңғы өңдеу туралы ақпараты мен бірге.
 
-Соңғы жағдайда сілтемені де, мысалы {{{{ns:mediawiki}}:mainpage}} беті үшін [[{{ns:special}}:Export/{{MediaWiki:mainpage}}]] қолдануға болады.',
-'exportcuronly'   => 'Толық тарихын емес, тек ағымдық нұсқасын кірістіріңіз',
-'exportnohistory' => "----
+Соңғы жағдайда сілтемені де, мысалы «{{{{ns:mediawiki}}:mainpage}}» беті үшін [[{{ns:special}}:Export/{{MediaWiki:mainpage}}]] қолдануға болады.',
+'exportcuronly'     => 'Толық тарихын емес, тек ағымдық нұсқасын кірістіріңіз',
+'exportnohistory'   => "----
 '''Аңғартпа:''' Өнімділік әсері себептерінен, беттер толық тарихын сыртқа беруі өшірілген.",
-'export-submit'   => 'Сыртқа бер',
+'export-submit'     => 'Сыртқа бер',
 'export-addcattext' => 'Мына санаттағы беттерді үстеу:',
-'export-addcat' => 'Үсте',
+'export-addcat'     => 'Үсте',
+'export-download'   => 'Файл етіп сақтауды ұсыну',
 
 # Namespace 8 related
 'allmessages'               => 'Жүйе хабарлары',
@@ -1913,7 +1983,6 @@ $NEWPAGE
 'allmessagesdefault'        => 'Әдепкі мәтіні',
 'allmessagescurrent'        => 'Ағымдық мәтіні',
 'allmessagestext'           => 'Мында «MediaWiki:» есім аясындағы барлық қатынаулы жүйе хабар тізімі беріліп тұр.',
-'allmessagesnotsupportedUI' => 'Your current interface language <b>$1</b> is not supported by Special:Allmessages at this site.',
 'allmessagesnotsupportedDB' => "'''wgUseDatabaseMessages''' бабы өшірілген себебінен '''{{ns:special}}:AllMessages''' сипаты сүемелденбейді.",
 'allmessagesfilter'         => 'Хабарды атауы бойынша сүзгілеу:',
 'allmessagesmodified'       => 'Тек өзгертілгенді көрсет',
@@ -1927,7 +1996,6 @@ $NEWPAGE
 'djvu_no_xml'              => 'DjVu файлына XML келтіруге болмайды',
 'thumbnail_invalid_params' => 'Нобайдың баптары жарамсыз',
 'thumbnail_dest_directory' => 'Ақырғы қалта жасалмады',
-
 
 # Special:Import
 'import'                     => 'Беттерді сырттан алу',
@@ -1998,8 +2066,10 @@ $NEWPAGE
 'tooltip-feed-atom'               => 'Бұл беттің Atom арнасы',
 'tooltip-t-contributions'         => 'Осы қатысушының үлес тізімін қарау',
 'tooltip-t-emailuser'             => 'Осы қатысушыға email жіберу',
-'tooltip-t-upload'                => 'Сурет не медиа файлдарын қотару',
+'tooltip-t-upload'                => 'Сурет не таспа файлдарын қотару',
 'tooltip-t-specialpages'          => 'Барлық арнайы беттер тізімі',
+'tooltip-t-print'                 => 'Бұл беттің басып шығарышқа арналған нұсқасы',
+'tooltip-t-permalink'             => 'Мына беттің осы нұсқасының тұрақты сілтемесі',
 'tooltip-ca-nstab-main'           => 'Мағлұмат бетін қарау',
 'tooltip-ca-nstab-user'           => 'Қатысушы бетін қарау',
 'tooltip-ca-nstab-media'          => 'Таспа бетін қарау',
@@ -2011,12 +2081,13 @@ $NEWPAGE
 'tooltip-ca-nstab-help'           => 'Анықтыма бетін қарау',
 'tooltip-ca-nstab-category'       => 'Санат бетін қарау',
 'tooltip-minoredit'               => 'Осыны шағын түзету деп белгілеу',
-'tooltip-save'                    => 'Түзетуіңізді сақтау',
-'tooltip-preview'                 => 'Сақтаудың алдынан түзетуіңізді қарап шығыңыз!',
+'tooltip-save'                    => 'Жасаған өзгерістеріңізді сақтау',
+'tooltip-preview'                 => 'Сақтаудың алдынан жасаған өзгерістеріңізді қарап шығыңыз!',
 'tooltip-diff'                    => 'Мәтінге қандай өзгерістерді жасағаныңызды қарау.',
 'tooltip-compareselectedversions' => 'Беттің екі нұсқасының айырмасын қарау.',
 'tooltip-watch'                   => 'Бұл бетті бақылау тізіміңізге үстеу',
 'tooltip-recreate'                => 'Бет жойылғанына қарамастан қайта жасау',
+'tooltip-upload'                  => 'Қотаруды бастау',
 
 # Stylesheets
 'common.css'   => '/* Мындағы CSS әмірлері барлық безендіру мәнеріндерде қолданылады */',
@@ -2024,44 +2095,63 @@ $NEWPAGE
 
 # Scripts
 'common.js'   => '/* Мындағы JavaScript әмірлері әрқайсы бет қаралғанда барлық пайдаланушыларға жүктеледі. */
-
 /* Workaround for language variants */
+var languagevariant;
+var direction; 
+switch(wgUserLanguage){
+    case "kk": 
+         languagevariant = "kk";
+         direction = "ltr";
+         break;
+    case "kk-kz": 
+         languagevariant = "kk-Cyrl";
+         direction = "ltr";
+         break;
+    case "kk-tr": 
+         languagevariant = "kk-Latn";
+         direction = "ltr";
+         break;
+    case "kk-cn": 
+         // workaround for RTL ([[bugzilla:6756]])  and for [[bugzilla:02020]] & [[bugzilla:04295]]
+         languagevariant = "kk-Arab";
+         direction = "rtl";
 
-// Set user-defined "lang" attributes for the document element (from zh)
+         document.getElementsByTagName("body").className = "rtl";
+         document.write(\'<link rel="stylesheet" type="text/css" href="\'+stylepath+\'/common/common_rtl.css">\');
+         document.write(\'<style type="text/css">div#shared-image-desc {direction: ltr;} input#wpUploadFile, input#wpDestFile, input#wpLicense {float: right;} .editsection {float: left !important;} .infobox {float: left !important; clear:left; } div.floatleft, table.floatleft {float:right !important; margin-left:0.5em !important; margin-right:0 !important; } div.floatright, table.floatright {clear:left; float:left !important; margin-left:0 !important; margin-right:0.5em !important;}</style>\');
+
+         if (skin == "monobook"){
+             document.write(\'<link rel="stylesheet" type="text/css" href="\'+stylepath+\'/common/quickbar-right.css">\');
+             document.write(\'<link rel="stylesheet" type="text/css" href="\'+stylepath+\'/monobook/rtl.css">\');
+             document.write(\'<style type="text/css">body{font-size: 75%; letter-spacing: 0.001em;} h3{font-size:110%;} h4 {font-size:100%;} h5{font-size:90%;} html > body div#content ol{clear: left;} ol{margin-left:2.4em; margin-right:2.4em;} ul{margin-left:1.5em; margin-right:1.5em;} .editsection{margin-right:5px; margin-left:0;}  #column-one{padding-top:0; margin-top:0;} #p-navigation{padding-top:0; margin-top:160px;} #catlinks{width:100%;} #userloginForm{float: right !important;} .pBody{-moz-border-radius-topleft: 0.5em; -moz-border-radius-topright: 0em !important;} .portlet h5{clear:right;}</style>\');
+         }
+         break;
+     default: 
+         languagevariant = "kk";
+         direction = "ltr";
+}
+
+// Set user language attributes for the whole document
 var htmlE=document.documentElement;
-if (wgUserLanguage == "kk"){ variant = "kk"; }
-if (wgUserLanguage == "kk-kz"){ variant = "kk-Cyrl"; }
-if (wgUserLanguage == "kk-tr"){ variant = "kk-Latn"; }
-if (wgUserLanguage == "kk-cn"){ variant = "kk-Arab"; htmlE.setAttribute("dir","rtl"); }
-htmlE.setAttribute("lang",variant);
-htmlE.setAttribute("xml:lang",variant);
+htmlE.setAttribute("lang",languagevariant);
+htmlE.setAttribute("xml:lang",languagevariant);
+htmlE.setAttribute("dir",direction); 
 
-// Switch language variants of messages (from zh)
-function wgULS(kz,tr,cn){
-        //
-        kk=kz||tr||cn;
-        kz=kz;
-        tr=tr;
-        cn=cn;
-        switch(wgUserLanguage){
-                case "kk": return kk;
-                case "kk-kz": return kz;
-                case "kk-tr": return tr;
-                case "kk-cn": return cn;
-                default: return "";
-        }
-}
+// Switch language variants of messages
+function wgULS(kz,tr,cn,en){
+    if (!en) { en = ""; }
 
-// workaround for RTL ([[bugzilla:6756]])  and for [[bugzilla:02020]] & [[bugzilla:04295]]
-if (wgUserLanguage == "kk-cn") 
-{
-  document.direction="rtl";
-  document.write(\'<link rel="stylesheet" type="text/css" href="\'+stylepath+\'/common/common_rtl.css">\');
-  document.write(\'<style type="text/css">html {direction:rtl;} body {direction:rtl; unicode-bidi:embed; lang:kk-Arab; font-family:"Arial Unicode MS",Arial,Tahoma; font-size: 75%; letter-spacing: 0.001em;} html > body div#content ol {clear: left;} ol {margin-left:2.4em; margin-right:2.4em;} ul {margin-left:1.5em; margin-right:1.5em;} h1.firstHeading {background-position: bottom right; background-repeat: no-repeat;} h3 {font-size:110%;} h4 {font-size:100%;} h5 {font-size:90%;} #catlinks {width:100%;} #userloginForm {float: right !important;}</style>\');
-
-  if (skin == "monobook"){
-     document.write(\'<link rel="stylesheet" type="text/css" href="\'+stylepath+\'/monobook/rtl.css">\');
-}
+    kk=kz||tr||cn;
+    kz=kz;
+    tr=tr;
+    cn=cn;
+    switch(wgUserLanguage){
+        case "kk": return kk;
+        case "kk-kz": return kz;
+        case "kk-tr": return tr;
+        case "kk-cn": return cn;
+        default: return en;
+    }
 }',
 'monobook.js' => '/* Бостекі болды; орнына мынаны [[MediaWiki:common.js]] пайдалаңыз */',
 
@@ -2085,10 +2175,10 @@ if (wgUserLanguage == "kk-cn")
 'spamprotectiontitle'    => '«Спам»-нан қорғайтын сүзгі',
 'spamprotectiontext'     => 'Бұл беттің сақтауын «спам» сүзгісі бұғаттады. Бұның себебі сыртқы торап сілтемесінен болуы мүмкін.',
 'spamprotectionmatch'    => 'Келесі «спам» мәтіні сүзгіленген: $1',
-'subcategorycount'       => 'Бұл санатта {{PLURAL:$1|бір|$1}} төменгі санат бар.',
+'subcategorycount'       => 'Бұл санатта {{PLURAL:$1|бір|$1}} санатша бар.',
 'categoryarticlecount'   => 'Бұл санатта {{PLURAL:$1|бір|$1}} бет бар.',
 'category-media-count'   => 'Бұл санатта {{PLURAL:$1|бір|$1}} файл бар.',
-'listingcontinuesabbrev' => ' (жалғ.)',
+'listingcontinuesabbrev' => '(жалғ.)',
 'spambot_username'       => 'MediaWiki spam cleanup',
 'spam_reverting'         => '$1 дегенге сілтемесі жоқ соңғы нұсқасына қайтарылды',
 'spam_blanking'          => '$1 дегенге сілтемесі бар барлық нұсқалар тазартылды',
@@ -2118,44 +2208,64 @@ if (wgUserLanguage == "kk-cn")
 'rcpatroldisabledtext'                => 'Жуықтағы өзгерістер Күзеті қасиеті ағымда өшірілген.',
 'markedaspatrollederror'              => 'Күзетте деп белгіленбейді',
 'markedaspatrollederrortext'          => 'Күзетте деп белгілеу үшін нұсқасын енгізіңіз.',
-'markedaspatrollederror-noautopatrol' => 'Өзіңіздің өзгерістеріңізді күзетке қоя алмайсыз.',
+'markedaspatrollederror-noautopatrol' => 'Өзіңіз жасаған өзгерістеріңізді күзетке қоя алмайсыз.',
 
 # Patrol log
 'patrol-log-page' => 'Күзет журналы',
 'patrol-log-line' => '$2 кезінде $1 дегенді күзетте деп белгіледі $3',
-'patrol-log-auto' => '(өздік)',
-'patrol-log-diff' => 'r$1',
+'patrol-log-auto' => '(өздіктік)',
+'patrol-log-diff' => '№ $1',
 
 # Image deletion
-'deletedrevision' => 'Мына ескі нұсқасын жойды: $1.',
+'deletedrevision'                 => 'Мына ескі нұсқасын жойды: $1.',
+'filedeleteerror-short'           => 'Файл жою қатесі: $1',
+'filedeleteerror-long'            => 'Мына файлды жойғанда қателер кездесті:
+
+$1',
+'filedelete-missing'              => '«$1» файлы жойылмайды, себебі ол жоқ.',
+'filedelete-old-unregistered'     => 'Файлдын келтірілген «$1» нұсқасы дерекқорда жоқ.',
+'filedelete-current-unregistered' => 'Келтірілген «$1» файл дерекқорда жоқ.',
+'filedelete-archive-read-only'    => '«$1» деген мұрағат қалтасына вебсервер жаза алмайды.',
 
 # Browsing diffs
 'previousdiff' => '← Алдыңғымен айырмасы',
 'nextdiff'     => 'Келесімен айырмасы →',
 
 # Media information
-'mediawarning'          => "'''Назар салыңыз''': Бұл файл түрінде қаскүнемді әмірдің бар болуы ықтимал; файлды жегіп жүйеңізге зиян келтіруіңіз мүмкін.<hr />",
-'imagemaxsize'          => 'Сурет түйіндеме бетіндегі суреттің мөлшерін шектеуі:',
-'thumbsize'             => 'Нобай мөлшері:',
-'widthheight'           => '$1 × $2',
-'file-info'             => 'Файл мөлшері: $1, MIME түрі: $2',
-'file-info-size'        => '($1 × $2 пиксел, файл мөлшері: $3, MIME түрі: $4)',
-'file-nohires'          => '<small>Жоғары ажыратылымдығы жетімсіз.</small>',
-'file-svg'              => '<small>Бұл шығынсыз созылғыш векторлық суреті. Негізгі мөлшері: $1 × $2 пиксел.</small>',
-'show-big-image'        => 'Жоғары ажыратылымды',
-'show-big-image-thumb'  => '<small>Қарап шығу мөлшері: $1 × $2 пиксел</small>',
+'mediawarning'         => "'''Назар салыңыз''': Бұл файл түрінде қаскүнемді әмірдің бар болуы ықтимал; файлды жегіп жүйеңізге зиян келтіруіңіз мүмкін.<hr />",
+'imagemaxsize'         => 'Сипаттамасы бетіндегі суреттің мөлшерін шектеуі:',
+'thumbsize'            => 'Нобай мөлшері:',
+'widthheight'          => '$1 × $2',
+'widthheightpage'      => '$1 × $2, $3 бет',
+'file-info'            => 'Файл мөлшері: $1, MIME түрі: $2',
+'file-info-size'       => '($1 × $2 пиксел, файл мөлшері: $3, MIME түрі: $4)',
+'file-nohires'         => '<small>Жоғары ажыратылымдығы жетімсіз.</small>',
+'svg-long-desc'        => '(SVG файлы, кесімді $1 × $2 пиксел, файл мөлшері: $3)',
+'show-big-image'       => 'Жоғары ажыратылымды',
+'show-big-image-thumb' => '<small>Қарап шығу мөлшері: $1 × $2 пиксел</small>',
 
-'newimages'         => 'Ең жаңа файлдар қоймасы',
-'showhidebots'      => '(боттарды $1)',
-'noimages'          => 'Көретін ештеңе жоқ.',
+# Special:Newimages
+'newimages'    => 'Ең жаңа файлдар қоймасы',
+'showhidebots' => '(боттарды $1)',
+'noimages'     => 'Көретін ештеңе жоқ.',
+
+# Video information, used by Language::formatTimePeriod() to format lengths in the above messages
+'video-dims'     => '$1, $2 × $3',
+'seconds-abbrev' => 'с',
+'minutes-abbrev' => 'мин',
+'hours-abbrev'   => 'сағ',
+
+# Bad image list
+'bad_image_list' => 'Пішімі төмендегідей:
+
+Тек тізім даналары (* нышанымен басталытын жолдар) есептеледі. Жолдың бірінші сілтемесі жарамсыз суретке сілтеу қажет.
+Сол жолдағы кейінгі әрбір сілтемелер ерен болып есептеледі, мысалы жол ішіндегі кездесетін суреті бар мақалалар.',
 
 # Variants for Kazakh language
 'variantname-kk-tr' => 'Latın',
 'variantname-kk-kz' => 'Кирил',
 'variantname-kk-cn' => 'توتە',
 'variantname-kk'    => 'disable',
-
-'passwordtooshort' => 'Құпия сөзіңіз жарамсыз не тым қысқа. Ең кемінде $1 әріп және қатысушы атыңыздан басқа болуы қажет.',
 
 # Metadata
 'metadata'          => 'Мета-деректері',
@@ -2221,7 +2331,6 @@ if (wgUserLanguage == "kk-cn")
 'exif-exposuretime'                => 'Ұсталым уақыты',
 'exif-exposuretime-format'         => '$1 с ($2)',
 'exif-fnumber'                     => 'Саңылау мөлшері',
-'exif-fnumber-format'              => 'f/$1',
 'exif-exposureprogram'             => 'Ұсталым бағдарламасы',
 'exif-spectralsensitivity'         => 'Спектр бойынша сезгіштігі',
 'exif-isospeedratings'             => 'ISO жылдамдық жарнақтауы (жарық сезгіштігі)',
@@ -2236,7 +2345,6 @@ if (wgUserLanguage == "kk-cn")
 'exif-lightsource'                 => 'Жарық көзі',
 'exif-flash'                       => 'Жарқылдағыш',
 'exif-focallength'                 => 'Шоғырлау алшақтығы',
-'exif-focallength-format'          => '$1 mm',
 'exif-subjectarea'                 => 'Нысана ауқымы',
 'exif-flashenergy'                 => 'Жарқылдағыш қарқыны',
 'exif-spatialfrequencyresponse'    => 'Кеңістік-жиілік әсершілігі',
@@ -2296,12 +2404,8 @@ if (wgUserLanguage == "kk-cn")
 
 # EXIF attributes
 'exif-compression-1' => 'Ұлғайтылған',
-'exif-compression-6' => 'JPEG',
 
 'exif-unknowndate' => 'Белгісіз күн-айы',
-
-'exif-photometricinterpretation-2' => 'RGB',
-'exif-photometricinterpretation-6' => 'YCbCr',
 
 'exif-orientation-1' => 'Қалыпты', # 0th row: top; 0th column: left
 'exif-orientation-2' => 'Дерелей шағылысқан', # 0th row: top; 0th column: right
@@ -2315,19 +2419,7 @@ if (wgUserLanguage == "kk-cn")
 'exif-planarconfiguration-1' => 'талпақ пішім',
 'exif-planarconfiguration-2' => 'тайпақ пішім',
 
-'exif-xyresolution-i' => '$1 dpi',
-'exif-xyresolution-c' => '$1 dpc',
-
-'exif-colorspace-1'      => 'sRGB',
-'exif-colorspace-ffff.h' => 'FFFF.H',
-
 'exif-componentsconfiguration-0' => 'бар болмады',
-'exif-componentsconfiguration-1' => 'Y',
-'exif-componentsconfiguration-2' => 'Cb',
-'exif-componentsconfiguration-3' => 'Cr',
-'exif-componentsconfiguration-4' => 'R',
-'exif-componentsconfiguration-5' => 'G',
-'exif-componentsconfiguration-6' => 'B',
 
 'exif-exposureprogram-0' => 'Анықталмаған',
 'exif-exposureprogram-1' => 'Қолмен',
@@ -2365,10 +2457,6 @@ if (wgUserLanguage == "kk-cn")
 'exif-lightsource-17'  => 'Қалыпты жарық қайнары A',
 'exif-lightsource-18'  => 'Қалыпты жарық қайнары B',
 'exif-lightsource-19'  => 'Қалыпты жарық қайнары C',
-'exif-lightsource-20'  => 'D55',
-'exif-lightsource-21'  => 'D65',
-'exif-lightsource-22'  => 'D75',
-'exif-lightsource-23'  => 'D50',
 'exif-lightsource-24'  => 'Студиялық ISO күнжарықты шам',
 'exif-lightsource-255' => 'Басқа жарық қайнары',
 
@@ -2382,18 +2470,16 @@ if (wgUserLanguage == "kk-cn")
 'exif-sensingmethod-7' => '3-сызықты түссезгіш',
 'exif-sensingmethod-8' => 'Кезекті сызықты түссезгіш',
 
-'exif-filesource-3' => 'DSC',
-
 'exif-scenetype-1' => 'Тікелей түсірілген фотосурет',
 
 'exif-customrendered-0' => 'Қалыпты өңдету',
 'exif-customrendered-1' => 'Қосымша өңдету',
 
-'exif-exposuremode-0' => 'Өздік ұсталымдау',
+'exif-exposuremode-0' => 'Өздіктік ұсталымдау',
 'exif-exposuremode-1' => 'Қолмен ұсталымдау',
-'exif-exposuremode-2' => 'Өздік жарқылдау',
+'exif-exposuremode-2' => 'Өздіктік жарқылдау',
 
-'exif-whitebalance-0' => 'Ақ түсінің өздік тендестіру',
+'exif-whitebalance-0' => 'Ақ түсінің өздіктік тендестіру',
 'exif-whitebalance-1' => 'Ақ түсінің қолмен тендестіру',
 
 'exif-scenecapturetype-0' => 'Қалыпты',
@@ -2441,7 +2527,7 @@ if (wgUserLanguage == "kk-cn")
 # Pseudotags used for GPSSpeedRef and GPSDestDistanceRef
 'exif-gpsspeed-k' => 'km/h',
 'exif-gpsspeed-m' => 'mil/h',
-'exif-gpsspeed-n' => 'Ж. түйін',
+'exif-gpsspeed-n' => 'knot',
 
 # Pseudotags used for GPSTrackRef, GPSImgDirectionRef and GPSDestBearingRef
 'exif-gpsdirection-t' => 'Шын бағыт',
@@ -2454,9 +2540,9 @@ if (wgUserLanguage == "kk-cn")
 # 'all' in various places, this might be different for inflected languages
 'recentchangesall' => 'барлығын',
 'imagelistall'     => 'барлығы',
-'watchlistall1'    => 'барлығы',
 'watchlistall2'    => 'барлық',
 'namespacesall'    => 'барлығы',
+'monthsall'        => 'барлығы',
 
 # E-mail address confirmation
 'confirmemail'            => 'Е-пошта жайын куәландыру',
@@ -2495,11 +2581,6 @@ $3
 Бұл сіздікі '''емес''' болса, сілтемеге ермеңіз. Куәландыру кодының
 мерзімі $4 кезінде бітеді.",
 
-# Inputbox extension, may be useful in other contexts as well
-'tryexact'       => 'Дәл сәйкесін сынап көріңіз',
-'searchfulltext' => 'Толық мәтінімен іздеу',
-'createarticle'  => 'Бетті бастау',
-
 # Scary transclusion
 'scarytranscludedisabled' => '[Уики-ара кірегу өшірілген]',
 'scarytranscludefailed'   => '[$1 бетіне үлгі өңдету сәтсіз бітті; кешіріңіз]',
@@ -2527,20 +2608,16 @@ $1
 'redirectingto' => '[[$1]] бетіне айдатуда…',
 
 # action=purge
-'confirm_purge'        => 'Қосалқы қалтадағы осы бетін тазалаймыз ба?<br /><br />$1',
+'confirm_purge'        => 'Қосалқы қалтадағы осы бетін тазалаймыз ба?
+
+$1',
 'confirm_purge_button' => 'Жарайды',
 
-'youhavenewmessagesmulti' => '$1 дегенге жаңа хабарлар түсті',
-
+# AJAX search
 'searchcontaining' => "Мына сөзі бар бет арасынан іздеу: ''$1''.",
 'searchnamed'      => "Мына атаулы бет арасынан іздеу: ''$1''.",
 'articletitles'    => "Атаулары мынадан басталған беттер: ''$1''",
 'hideresults'      => 'Нәтижелерді жасыр',
-
-# DISPLAYTITLE
-'displaytitle' => '(Бұл беттің сілтемесі: [[$1]])',
-
-'loginlanguagelabel' => 'Тіл: $1',
 
 # Multipage image navigation
 'imgmultipageprev'   => '← алдыңғы бетке',
@@ -2562,12 +2639,12 @@ $1
 
 # Auto-summaries
 'autosumm-blank'   => 'Беттің барлық мағлұматын аластатты',
-'autosumm-replace' => "Бетті «$1» дегенмен алмастырды",
-'autoredircomment' => '[[$1]] дегенге айдады', # This should be changed to the new naming convention, but existed beforehand
+'autosumm-replace' => 'Бетті «$1» дегенмен алмастырды',
+'autoredircomment' => '[[$1]] дегенге айдады',
 'autosumm-new'     => 'Жаңа бетте: $1',
 
 # Size units
-'size-bytes'     => '$1 B',
+'size-bytes'     => '$1 байт',
 'size-kilobytes' => '$1 KB',
 'size-megabytes' => '$1 MB',
 'size-gigabytes' => '$1 GB',
@@ -2575,9 +2652,44 @@ $1
 # Live preview
 'livepreview-loading' => 'Жүктеуде…',
 'livepreview-ready'   => 'Жүктеуде… Дайын!',
-'livepreview-failed'  => "Тура қарап шығу амалы болмады!\nКәдімгі қарап шығу әдісін байқап көріңіз.",
-'livepreview-error'   => "Мынаған қосылу амалы болмады: $1 «$2»\nКәдімгі қарап шығу әдісін байқап көріңіз.",
+'livepreview-failed'  => 'Тура қарап шығу амалы болмады! Кәдімгі қарап шығу әдісін байқап көріңіз.',
+'livepreview-error'   => 'Мынаған қосылу амалы болмады: $1 «$2». Кәдімгі қарап шығу әдісін байқап көріңіз.',
+
+# Friendlier slave lag warnings
+'lag-warn-normal' => '$1 секундтан жаңалау өзгерістер бұл тізімде көрсетілмеуі мүмкін.',
+'lag-warn-high'   => 'Дерекқор сервері зор кешігуі себебінен, $1 секундтан жаңалау өзгерістер бұл тізімде көрсетілмеуі мүмкін.',
+
+# Watchlist editor
+'watchlistedit-numitems'       => 'Бақылау тізіміңізде, талқылау беттерсіз, {{PLURAL:$1|1 атау|$1 атау}} бар.',
+'watchlistedit-noitems'        => 'Бақылау тізіміңізде еш атау жоқ.',
+'watchlistedit-clear-title'    => 'Бақылау тізімді тазалау',
+'watchlistedit-clear-legend'   => 'Бақылау тізімді тазалау',
+'watchlistedit-clear-confirm'  => 'Бұл бақылау тізіміңізден барлық атауларды аластайды. Бұны растан
+істегіңіз келе ме? Тағы да [[{{ns:special}}:Watchlist/edit|жеке атауларды аластай]] аласыз.',
+'watchlistedit-clear-submit'   => 'Тазалау',
+'watchlistedit-clear-done'     => 'Бақылау тізіміңіз тазалатылды. Барлық атаулар аластатылды.',
+'watchlistedit-normal-title'   => 'Бақылау тізімді өңдеу',
+'watchlistedit-normal-legend'  => 'Бақылау тізімдегі атауларды аластау',
+'watchlistedit-normal-explain' => 'Бақылау тізіміңіздегі атаулар төменде көрсетіледі. Атауды аластау үшін, қасындағы
+қабашақты белгілеңіз, және Атауларды аластау дегенді нұқыңыз. Тағы да [[{{ns:special}}:Watchlist/raw|қам тізімді өңдей]],
+немесе [[Special:Watchlist/clear|барлық атауларды аластай]] аласыз.',
+'watchlistedit-normal-submit'  => 'Атауларды аластау',
+'watchlistedit-normal-done'    => '{{PLURAL:$1|1 атау|$1 атау}} бақылау тізіміңізден аласталды:',
+'watchlistedit-raw-title'      => 'Қам бақылау тізімді өңдеу',
+'watchlistedit-raw-legend'     => 'Қам бақылау тізімді өңдеу',
+'watchlistedit-raw-explain'    => 'Бақылау тізіміңіздегі атаулар төменде көрсетіледі, және де тізмден үстеп және
+аластап өңдеуге болады; бір жолда бір атау келеді. Бітіргеннен соң Бақылау тізімді жаңарту дегенді нұқыңыз.
+Тағы да [[Special:Watchlist/edit|қалыпты өңдеуішті пайдалана]] аласыз.',
+'watchlistedit-raw-titles'     => 'Атаулар:',
+'watchlistedit-raw-submit'     => 'Бақылау тізімді жаңарту',
+'watchlistedit-raw-done'       => 'Бақылау тізіміңіз жаңартылды.',
+'watchlistedit-raw-added'      => '{{PLURAL:$1|1 атау|$1 атау}} үстелді:',
+'watchlistedit-raw-removed'    => '{{PLURAL:$1|1 атау|$1 атау}} аластанды:',
+
+# Watchlist editing tools
+'watchlisttools-view'  => 'Қатысты өзгерістерді қарау',
+'watchlisttools-edit'  => 'Бақылау тізімді қарау және өңдеу',
+'watchlisttools-raw'   => 'Қам бақылау тізімді өңдеу',
+'watchlisttools-clear' => 'Бақылау тізімді тазалау',
 
 );
-
-?>

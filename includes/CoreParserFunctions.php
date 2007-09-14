@@ -97,15 +97,20 @@ class CoreParserFunctions {
 		return $parser->getFunctionLang()->convertPlural( $text, $arg0, $arg1, $arg2, $arg3, $arg4 );
 	}
 
-	static function displaytitle( $parser, $param = '' ) {
-		$parserOptions = new ParserOptions;
-		$local_parser = clone $parser;
-		$t2 = $local_parser->parse ( $param, $parser->mTitle, $parserOptions, false );
-		$parser->mOutput->mHTMLtitle = $t2->GetText();
-
-		# Add subtitle
-		$t = $parser->mTitle->getPrefixedText();
-		$parser->mOutput->mSubtitle .= wfMsg('displaytitle', $t);
+	/**
+	 * Override the title of the page when viewed,
+	 * provided we've been given a title which
+	 * will normalise to the canonical title
+	 *
+	 * @param Parser $parser Parent parser
+	 * @param string $text Desired title text
+	 * @return string
+	 */
+	static function displaytitle( $parser, $text = '' ) {
+		$text = trim( Sanitizer::decodeCharReferences( $text ) );
+		$title = Title::newFromText( $text );
+		if( $title instanceof Title && $title->getFragment() == '' && $title->equals( $parser->mTitle ) )
+			$parser->mOutput->setDisplayTitle( $text );
 		return '';
 	}
 
@@ -156,7 +161,7 @@ class CoreParserFunctions {
 	static function pad( $string = '', $length = 0, $char = 0, $direction = STR_PAD_RIGHT ) {
 		$length = min( max( $length, 0 ), 500 );
 		$char = substr( $char, 0, 1 );
-		return ( $string && (int)$length > 0 && strlen( trim( (string)$char ) ) > 0 )
+		return ( $string !== '' && (int)$length > 0 && strlen( trim( (string)$char ) ) > 0 )
 				? str_pad( $string, $length, (string)$char, $direction )
 				: $string;
 	}
@@ -193,4 +198,4 @@ class CoreParserFunctions {
 		return '';
 	}
 }
-?>
+

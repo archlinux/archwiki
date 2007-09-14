@@ -172,7 +172,7 @@ class HashBagOStuff extends BagOStuff {
 	*/
 	var $bag;
 
-	function HashBagOStuff() {
+	function __construct() {
 		$this->bag = array();
 	}
 
@@ -222,7 +222,7 @@ abstract class SqlBagOStuff extends BagOStuff {
 	var $table;
 	var $lastexpireall = 0;
 
-	function SqlBagOStuff($tablename = 'objectcache') {
+	function __construct($tablename = 'objectcache') {
 		$this->table = $tablename;
 	}
 
@@ -238,8 +238,8 @@ abstract class SqlBagOStuff extends BagOStuff {
 		}
 		if($row=$this->_fetchobject($res)) {
 			$this->_debug("get: retrieved data; exp time is " . $row->exptime);
-			if ( $row->exptime != $this->_maxdatetime() &&
-			  wfTimestamp( TS_UNIX, $row->exptime ) < time() )
+			if ( $row->exptime != $this->_maxdatetime() && 
+			  wfTimestamp( TS_UNIX, $row->exptime ) < time() ) 
 			{
 				$this->_debug("get: key has expired, deleting");
 				$this->delete($key);
@@ -253,6 +253,9 @@ abstract class SqlBagOStuff extends BagOStuff {
 	}
 
 	function set($key,$value,$exptime=0) {
+		if ( wfReadOnly() ) {
+			return false;
+		}
 		$exptime = intval($exptime);
 		if($exptime < 0) $exptime = 0;
 		if($exptime == 0) {
@@ -272,6 +275,9 @@ abstract class SqlBagOStuff extends BagOStuff {
 	}
 
 	function delete($key,$time=0) {
+		if ( wfReadOnly() ) {
+			return false;
+		}
 		$this->_query(
 			"DELETE FROM $0 WHERE keyname='$1'", $key );
 		return true; /* ? */
@@ -339,12 +345,18 @@ abstract class SqlBagOStuff extends BagOStuff {
 
 	function expireall() {
 		/* Remove any items that have expired */
+		if ( wfReadOnly() ) {
+			return false;
+		}
 		$now = $this->_fromunixtime( time() );
 		$this->_query( "DELETE FROM $0 WHERE exptime < '$now'" );
 	}
 
 	function deleteall() {
 		/* Clear *all* items from cache table */
+		if ( wfReadOnly() ) {
+			return false;
+		}
 		$this->_query( "DELETE FROM $0" );
 	}
 
@@ -495,55 +507,22 @@ class TurckBagOStuff extends BagOStuff {
  *
  */
 class APCBagOStuff extends BagOStuff {
-	public function get( $key ) {
-		return apc_fetch($key);
+	function get($key) {
+		$val = apc_fetch($key);
+		if ( is_string( $val ) ) {
+			$val = unserialize( $val );
+		}
+		return $val;
 	}
-
-	public function set( $key, $value, $exptime = 0 ) {
-		return apc_store($key, $value, $exptime);
+	
+	function set($key, $value, $exptime=0) {
+		apc_store($key, serialize($value), $exptime);
+		return true;
 	}
-
-	public function delete( $key, $time = 0 ) {
-		return apc_delete( $key );
-	}
-
-	public function add($key, $value, $exptime=0) {
-		return apc_add( $key, $value, $exptime );
-	}
-}
-
-
-/**
- * Wrapper for XCache object caching functions
- *
- */
-class XCacheBagOStuff extends BagOStuff {
-	public function get( $key ) {
-		return (xcache_isset($key) ? unserialize(xcache_get($key)) : false);
-	}
-
-	public function set( $key, $value, $exptime = 0 ) {
-		return xcache_set($key, serialize($value), $exptime);
-	}
-
-	public function delete( $key, $time = 0 ) {
-		return xcache_unset( $key );
-	}
-
-	public function incr($key, $value=1) {
-		return (xcache_isset($key) && xcache_inc($key. $value));
-	}
-
-	public function decr($key, $value=1) {
-		return (xcache_isset($key) && xcache_dec($key. $value));
-	}
-
-	public function add($key, $value, $exptime=0) {
-		return (!xcache_isset($key) && $this->set( $key, $value, $exptime ));
-	}
-
-	public function replace($key, $value, $exptime=0) {
-		return (xcache_isset($key) && $this->set( $key, $value, $exptime ));
+	
+	function delete($key, $time=0) {
+		apc_delete($key);
+		return true;
 	}
 }
 
@@ -586,11 +565,57 @@ class eAccelBagOStuff extends BagOStuff {
 }
 
 /**
+ * Wrapper for XCache object caching functions; identical interface
+ * to the APC wrapper
+ */
+class XCacheBagOStuff extends BagOStuff {
+
+	/**
+	 * Get a value from the XCache object cache
+	 *
+	 * @param string $key Cache key
+	 * @return mixed
+	 */
+	public function get( $key ) {
+		$val = xcache_get( $key );
+		if( is_string( $val ) )
+			$val = unserialize( $val );
+		return $val;
+	}
+	
+	/**
+	 * Store a value in the XCache object cache
+	 *
+	 * @param string $key Cache key
+	 * @param mixed $value Object to store
+	 * @param int $expire Expiration time
+	 * @return bool
+	 */
+	public function set( $key, $value, $expire = 0 ) {
+		xcache_set( $key, serialize( $value ), $expire );
+		return true;
+	}
+	
+	/**
+	 * Remove a value from the XCache object cache
+	 *
+	 * @param string $key Cache key
+	 * @param int $time Not used in this implementation
+	 * @return bool
+	 */
+	public function delete( $key, $time = 0 ) {
+		xcache_unset( $key );
+		return true;
+	}
+	
+}
+
+/**
  * @todo document
  */
 class DBABagOStuff extends BagOStuff {
 	var $mHandler, $mFile, $mReader, $mWriter, $mDisabled;
-
+	
 	function __construct( $handler = 'db3', $dir = false ) {
 		if ( $dir === false ) {
 			global $wgTmpDirectory;
@@ -617,7 +642,7 @@ class DBABagOStuff extends BagOStuff {
 		if ( !is_string( $blob ) ) {
 			return array( null, 0 );
 		} else {
-			return array(
+			return array( 
 				unserialize( substr( $blob, 11 ) ),
 				intval( substr( $blob, 0, 10 ) )
 		   	);
@@ -684,6 +709,7 @@ class DBABagOStuff extends BagOStuff {
 
 	function delete( $key, $time = 0 ) {
 		wfProfileIn( __METHOD__ );
+		wfDebug( __METHOD__."($key)\n" );
 		$handle = $this->getWriter();
 		if ( !$handle ) {
 			return false;
@@ -718,5 +744,5 @@ class DBABagOStuff extends BagOStuff {
 		return $ret;
 	}
 }
+	
 
-?>

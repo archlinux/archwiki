@@ -74,7 +74,8 @@ class LogReader {
 		
 		// XXX This all needs to use Pager, ugly hack for now.
 		global $wgMiserMode;
-		if ($wgMiserMode && ($this->offset >10000)) $this->offset=10000;
+		if( $wgMiserMode )
+			$this->offset = min( $this->offset, 10000 );
 	}
 
 	/**
@@ -123,9 +124,10 @@ class LogReader {
 	function limitTitle( $page , $pattern ) {
 		global $wgMiserMode;
 		$title = Title::newFromText( $page );
-		if( empty( $page ) || is_null( $title )  ) {
+		
+		if( strlen( $page ) == 0 || !$title instanceof Title )
 			return false;
-		}
+
 		$this->title =& $title;
 		$this->pattern = $pattern;
 		$ns = $title->getNamespace();
@@ -215,6 +217,23 @@ class LogReader {
 			return $this->title->getPrefixedText();
 		}
 	}
+	
+	/**
+	 * Is there at least one row?
+	 *
+	 * @return bool
+	 */
+	public function hasRows() {
+		# Little hack...
+		$limit = $this->limit;
+		$this->limit = 1;
+		$res = $this->db->query( $this->getQuery() );
+		$this->limit = $limit;
+		$ret = $this->db->numRows( $res ) > 0;
+		$this->db->freeResult( $res );
+		return $ret;
+	}
+	
 }
 
 /**
@@ -222,19 +241,25 @@ class LogReader {
  * @addtogroup SpecialPage
  */
 class LogViewer {
+	const NO_ACTION_LINK = 1;
+	
 	/**
 	 * @var LogReader $reader
 	 */
 	var $reader;
 	var $numResults = 0;
+	var $flags = 0;
 
 	/**
 	 * @param LogReader &$reader where to get our data from
+	 * @param integer $flags Bitwise combination of flags:
+	 *     self::NO_ACTION_LINK   Don't show restore/unblock/block links
 	 */
-	function LogViewer( &$reader ) {
+	function LogViewer( &$reader, $flags = 0 ) {
 		global $wgUser;
 		$this->skin = $wgUser->getSkin();
 		$this->reader =& $reader;
+		$this->flags = $flags;
 	}
 
 	/**
@@ -325,7 +350,7 @@ class LogViewer {
 	 * @private
 	 */
 	function logLine( $s ) {
-		global $wgLang, $wgUser;;
+		global $wgLang, $wgUser, $wgContLang;
 		$skin = $wgUser->getSkin();
 		$title = Title::makeTitle( $s->log_namespace, $s->log_title );
 		$time = $wgLang->timeanddate( wfTimestamp(TS_MW, $s->log_timestamp), true );
@@ -340,42 +365,47 @@ class LogViewer {
 		}
 
 		$userLink = $this->skin->userLink( $s->log_user, $s->user_name ) . $this->skin->userToolLinksRedContribs( $s->log_user, $s->user_name );
-		$comment = $this->skin->commentBlock( $s->log_comment );
+		$comment = $wgContLang->getDirMark() . $this->skin->commentBlock( $s->log_comment );
 		$paramArray = LogPage::extractParams( $s->log_params );
 		$revert = '';
 		// show revertmove link
-		if ( $s->log_type == 'move' && isset( $paramArray[0] ) ) {
-			$destTitle = Title::newFromText( $paramArray[0] );
-			if ( $destTitle ) {
-				$revert = '(' . $this->skin->makeKnownLinkObj( SpecialPage::getTitleFor( 'Movepage' ),
-					wfMsg( 'revertmove' ),
-					'wpOldTitle=' . urlencode( $destTitle->getPrefixedDBkey() ) .
-					'&wpNewTitle=' . urlencode( $title->getPrefixedDBkey() ) .
-					'&wpReason=' . urlencode( wfMsgForContent( 'revertmove' ) ) .
-					'&wpMovetalk=0' ) . ')';
+		if ( !( $this->flags & self::NO_ACTION_LINK ) ) {
+			if ( $s->log_type == 'move' && isset( $paramArray[0] ) ) {
+				$destTitle = Title::newFromText( $paramArray[0] );
+				if ( $destTitle ) {
+					$revert = '(' . $this->skin->makeKnownLinkObj( SpecialPage::getTitleFor( 'Movepage' ),
+						wfMsg( 'revertmove' ),
+						'wpOldTitle=' . urlencode( $destTitle->getPrefixedDBkey() ) .
+						'&wpNewTitle=' . urlencode( $title->getPrefixedDBkey() ) .
+						'&wpReason=' . urlencode( wfMsgForContent( 'revertmove' ) ) .
+						'&wpMovetalk=0' ) . ')';
+				}
+			// show undelete link
+			} elseif ( $s->log_action == 'delete' && $wgUser->isAllowed( 'delete' ) ) {
+				$revert = '(' . $this->skin->makeKnownLinkObj( SpecialPage::getTitleFor( 'Undelete' ),
+					wfMsg( 'undeletebtn' ) ,
+					'target='. urlencode( $title->getPrefixedDBkey() ) ) . ')';
+			
+			// show unblock link
+			} elseif ( $s->log_action == 'block' && $wgUser->isAllowed( 'block' ) ) {
+				$revert = '(' .  $skin->makeKnownLinkObj( SpecialPage::getTitleFor( 'Ipblocklist' ),
+					wfMsg( 'unblocklink' ),
+					'action=unblock&ip=' . urlencode( $s->log_title ) ) . ')';
+			// show change protection link
+			} elseif ( ( $s->log_action == 'protect' || $s->log_action == 'modify' ) && $wgUser->isAllowed( 'protect' ) ) {
+				$revert = '(' .  $skin->makeKnownLinkObj( $title, wfMsg( 'protect_change' ), 'action=unprotect' ) . ')';
+			// show user tool links for self created users
+			// TODO: The extension should be handling this, get it out of core!
+			} elseif ( $s->log_action == 'create2' ) {
+				if( isset( $paramArray[0] ) ) {
+					$revert = $this->skin->userToolLinks( $paramArray[0], $s->log_title, true );
+				} else {
+					# Fall back to a blue contributions link
+					$revert = $this->skin->userToolLinks( 1, $s->log_title );
+				}
+				# Suppress $comment from old entries, not needed and can contain incorrect links
+				$comment = '';
 			}
-		// show undelete link
-		} elseif ( $s->log_action == 'delete' && $wgUser->isAllowed( 'delete' ) ) {
-			$revert = '(' . $this->skin->makeKnownLinkObj( SpecialPage::getTitleFor( 'Undelete' ),
-				wfMsg( 'undeletebtn' ) ,
-				'target='. urlencode( $title->getPrefixedDBkey() ) ) . ')';
-		
-		// show unblock link
-		} elseif ( $s->log_action == 'block' && $wgUser->isAllowed( 'block' ) ) {
-			$revert = '(' .  $skin->makeKnownLinkObj( SpecialPage::getTitleFor( 'Ipblocklist' ),
-				wfMsg( 'unblocklink' ),
-				'action=unblock&ip=' . urlencode( $s->log_title ) ) . ')';
-		// show change protection link
-		} elseif ( $s->log_action == 'protect' && $wgUser->isAllowed( 'protect' ) ) {
-			$revert = '(' .  $skin->makeKnownLink( $title->getPrefixedDBkey() ,
-				wfMsg( 'protect_change' ),
-				'action=unprotect' ) . ')';
-		// show user tool links for self created users
-		} elseif ( $s->log_action == 'create2' ) {
-			$revert = $this->skin->userToolLinksRedContribs( $s->log_user, $s->log_title );
-			// do not show $comment for self created accounts. It includes wrong user tool links:
-			// 'blockip' for users w/o block allowance and broken links for very long usernames (bug 4756)
-			$comment = '';
 		}
 
 		$action = LogPage::actionText( $s->log_type, $s->log_action, $title, $this->skin, $paramArray, true, true );
@@ -497,4 +527,4 @@ class LogViewer {
 }
 
 
-?>
+

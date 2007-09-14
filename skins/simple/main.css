@@ -10,12 +10,9 @@ h1, h2, h3, h4, h5, h6 { font-weight: bolder }
 
 /* Now the custom parts */
 
-/* Make edit sections (which are inside h# tags) normal-sized
-   and otherwise format */
+/* Make edit sections (which are inside h# tags) normal-sized */
 .editsection {
 	font-weight: normal;
-	float: right;
-	margin-left: 5px;
 }
 h1 .editsection { font-size: 50% }
 h2 .editsection { font-size: 66.7% }
@@ -346,6 +343,9 @@ div.tleft {
     margin-right:0.5em;
     border-width: 0.5em 1.4em 0.8em 0;
 }
+img.thumbborder {
+	border: 1px solid #dddddd;
+}
 
 a.stub { color: #772233; }
 a.new,
@@ -438,17 +438,11 @@ table.collapsed tr.collapsable {
 
 .templatesUsed { margin-top: 1.5em; }
 
-/**
- * Here is some stuff that's ACTUALLY COMMON TO ALL SKINS.
- * When the day comes, it can be moved to a *real* common.css.
- */
-.mw-plusminus-null { color: #aaa; }
-.texvc { direction: ltr; unicode-bidi: embed; }
-/* Stop floats from intruding into edit area in previews */
-#toolbar, #wpTextbox1 { clear: both; }
-
-/*
-#file img, .gallerybox .thumb img {
-	background: url(../common/images/Checker-16x16.png) repeat;
+/* Recreating-deleted-page warning and log entries */
+div#mw-recreate-deleted-warn ul li {
+	font-size: 95%;
 }
-*/
+div.mw-recreate-deleted-control {
+	float: right;
+	font-size: 90%;
+}

@@ -14,13 +14,18 @@ class ParserOutput
 		$mTitleText,        # title text of the chosen language variant
 		$mLinks,            # 2-D map of NS/DBK to ID for the links in the document. ID=zero for broken.
 		$mTemplates,        # 2-D map of NS/DBK to ID for the template references. ID=zero for broken.
+		$mTemplateIds,      # 2-D map of NS/DBK to rev ID for the template references. ID=zero for broken.
 		$mImages,           # DB keys of the images used, in the array key only
 		$mExternalLinks,    # External link URLs, in the key only
-		$mHTMLtitle,        # Display HTML title
-		$mSubtitle,         # Additional subtitle
 		$mNewSection,       # Show a new section link?
 		$mNoGallery,        # No gallery on category page? (__NOGALLERY__)
-		$mHeadItems;        # Items to put in the <head> section
+		$mHeadItems,        # Items to put in the <head> section
+		$mOutputHooks;      # Hook tags as per $wgParserOutputHooks
+	
+	/**
+	 * Overridden title for display
+	 */
+	private $displayTitle = false;
 
 	function ParserOutput( $text = '', $languageLinks = array(), $categoryLinks = array(),
 		$containsOldMagic = false, $titletext = '' )
@@ -36,15 +41,15 @@ class ParserOutput
 		$this->mTemplates = array();
 		$this->mImages = array();
 		$this->mExternalLinks = array();
-		$this->mHTMLtitle = "" ;
-		$this->mSubtitle = "" ;
 		$this->mNewSection = false;
 		$this->mNoGallery = false;
 		$this->mHeadItems = array();
+		$this->mTemplateIds = array();
+		$this->mOutputHooks = array();
 	}
 
 	function getText()                   { return $this->mText; }
-	function &getLanguageLinks()          { return $this->mLanguageLinks; }
+	function &getLanguageLinks()         { return $this->mLanguageLinks; }
 	function getCategoryLinks()          { return array_keys( $this->mCategories ); }
 	function &getCategories()            { return $this->mCategories; }
 	function getCacheTime()              { return $this->mCacheTime; }
@@ -55,6 +60,7 @@ class ParserOutput
 	function &getExternalLinks()         { return $this->mExternalLinks; }
 	function getNoGallery()              { return $this->mNoGallery; }
 	function getSubtitle()               { return $this->mSubtitle; }
+	function getOutputHooks()            { return (array)$this->mOutputHooks; }
 
 	function containsOldMagic()          { return $this->mContainsOldMagic; }
 	function setText( $text )            { return wfSetVar( $this->mText, $text ); }
@@ -63,12 +69,14 @@ class ParserOutput
 	function setContainsOldMagic( $com ) { return wfSetVar( $this->mContainsOldMagic, $com ); }
 	function setCacheTime( $t )          { return wfSetVar( $this->mCacheTime, $t ); }
 	function setTitleText( $t )          { return wfSetVar($this->mTitleText, $t); }
-	function setSubtitle( $st )          { return wfSetVar( $this->mSubtitle, $st ); }
 
 	function addCategory( $c, $sort )    { $this->mCategories[$c] = $sort; }
-	function addImage( $name )           { $this->mImages[$name] = 1; }
 	function addLanguageLink( $t )       { $this->mLanguageLinks[] = $t; }
 	function addExternalLink( $url )     { $this->mExternalLinks[$url] = 1; }
+
+	function addOutputHook( $hook, $data = false ) { 
+		$this->mOutputHooks[] = array( $hook, $data );
+	}
 
 	function setNewSection( $value ) {
 		$this->mNewSection = (bool)$value;
@@ -88,14 +96,22 @@ class ParserOutput
 		}
 		$this->mLinks[$ns][$dbk] = $id;
 	}
+	
+	function addImage( $name ) {
+		$this->mImages[$name] = 1;
+	}
 
-	function addTemplate( $title, $id ) {
+	function addTemplate( $title, $page_id, $rev_id ) {
 		$ns = $title->getNamespace();
 		$dbk = $title->getDBkey();
 		if ( !isset( $this->mTemplates[$ns] ) ) {
 			$this->mTemplates[$ns] = array();
 		}
-		$this->mTemplates[$ns][$dbk] = $id;
+		$this->mTemplates[$ns][$dbk] = $page_id;
+		if ( !isset( $this->mTemplateIds[$ns] ) ) {
+			$this->mTemplateIds[$ns] = array();
+		}
+		$this->mTemplateIds[$ns][$dbk] = $rev_id; // For versioning
 	}
 
 	/**
@@ -128,6 +144,27 @@ class ParserOutput
 			$this->mHeadItems[] = $section;
 		}
 	}
+	
+	/**
+	 * Override the title to be used for display
+	 * -- this is assumed to have been validated
+	 * (check equal normalisation, etc.)
+	 *
+	 * @param string $text Desired title text
+	 */
+	public function setDisplayTitle( $text ) {
+		$this->displayTitle = $text;
+	}
+	
+	/**
+	 * Get the title to be used for display
+	 *
+	 * @return string
+	 */
+	public function getDisplayTitle() {
+		return $this->displayTitle;
+	}
+	
 }
 
-?>
+

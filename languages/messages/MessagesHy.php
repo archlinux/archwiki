@@ -160,7 +160,6 @@ $magicWords = array(
 	'forcetoc'               => array( 0,    '__FORCETOC__', '__ՍՏԻՊԵԼ_ԲՈՎ__'),
 	'toc'                    => array( 0,    '__TOC__' , '__ԲՈՎ__' ),
 	'noeditsection'          => array( 0,    '__NOEDITSECTION__', '__ԱՌԱՆՑ_ԲԱԺՆԻ_ԽՄԲԱԳՐՄԱՆ__' ),
-	'start'                  => array( 0,    '__START__', '__ՍԿԻԶԲ__' ),
 	'currentmonth'           => array( 1,    'CURRENTMONTH', 'ԸՆԹԱՑԻՔ_ԱՄԻՍԸ' ),
 	'currentmonthname'       => array( 1,    'CURRENTMONTHNAME', 'ԸՆԹԱՑԻՔ_ԱՄՍՎԱ_ԱՆՈՒՆԸ' ),
 	'currentmonthnamegen'    => array( 1,    'CURRENTMONTHNAMEGEN', 'ԸՆԹԱՑԻՔ_ԱՄՍՎԱ_ԱՆՈՒՆԸ_ՍԵՌ' ),
@@ -204,9 +203,7 @@ $magicWords = array(
 	'subjectpagename'        => array( 1,    'SUBJECTPAGENAME', 'ARTICLEPAGENAME', 'ՀՈԴՎԱԾԻ_ԷՋԻ_ԱՆՎԱՆՈՒՄԸ' ),
 	'subjectpagenamee'       => array( 1,    'SUBJECTPAGENAMEE', 'ARTICLEPAGENAMEE', 'ՀՈԴՎԱԾԻ_ԷՋԻ_ԱՆՎԱՆՈՒՄԸ_2' ),
 	'msg'                    => array( 0,    'MSG:', 'ՀՈՂՈՐԴ՝' ),
-	'subst'                  => array( 0,    'SUBST:' ),
 	'msgnw'                  => array( 0,    'MSGNW:', 'ՀՈՂՈՐԴ_ԱՌԱՆՑ_ՎԻՔԻԻ՝' ),
-	'end'                    => array( 0,    '__END__','__ԱՎԱՐՏ__' ),
 	'img_thumbnail'          => array( 1,    'thumbnail', 'thumb', 'մինի' ),
 	'img_manualthumb'        => array( 1,    'thumbnail=$1', 'thumb=$1', 'մինի=$1'),
 	'img_right'              => array( 1,    'right', 'աջից' ),
@@ -236,7 +233,6 @@ $magicWords = array(
 	'revisionday2'           => array( 1,    'REVISIONDAY2', 'ՏԱՐԲԵՐԱԿԻ_ՕՐԸ_2' ),
 	'revisionmonth'          => array( 1,    'REVISIONMONTH', 'ՏԱՐԲԵՐԱԿԻ_ԱՄԻՍԸ' ),
 	'revisionyear'           => array( 1,    'REVISIONYEAR', 'ՏԱՐԲԵՐԱԿԻ_ՏԱՐԻՆ' ),
-	'revisiontimestamp'      => array( 1,    'REVISIONTIMESTAMP' ),
 	'plural'                 => array( 0,    'PLURAL:', 'ՀՈԳՆԱԿԻ՝' ),
 	'fullurl'                => array( 0,    'FULLURL:', 'ԼՐԻՎ_ՀԱՍՑԵՆ՝' ),
 	'fullurle'               => array( 0,    'FULLURLE:', 'ԼՐԻՎ_ՀԱՍՑԵՆ_2՝' ),
@@ -244,13 +240,11 @@ $magicWords = array(
 	'ucfirst'                => array( 0,    'UCFIRST:', 'ՄԵԾԱՏԱՌ_ՍԿԶԲՆԱՏԱՌ՝' ),
 	'lc'                     => array( 0,    'LC:', 'ՓՈՔՐԱՏԱՌ՝' ),
 	'uc'                     => array( 0,    'UC:', 'ՄԵԾԱՏԱՌ՝' ),
-	'raw'                    => array( 0,    'RAW:' ),
 	'displaytitle'           => array( 1,    'DISPLAYTITLE', 'ՑՈՒՅՑ_ՏԱԼ_ՎԵՐՆԱԳԻՐԸ' ),
 	'rawsuffix'              => array( 1,    'R', 'Չ' ),
 	'newsectionlink'         => array( 1,    '__NEWSECTIONLINK__', '__ՀՂՈՒՄ_ՆՈՐ_ԲԱԺՆԻ_ՎՐԱ__' ),
 	'currentversion'         => array( 1,    'CURRENTVERSION', 'ԸՆԹԱՑԻՔ_ՏԱՐԲԵՐԱԿԸ' ),
 	'urlencode'              => array( 0,    'URLENCODE:', 'ՄՇԱԿՎԱԾ_ՀԱՍՑԵ՛' ),
-	'anchorencode'           => array( 0,    'ANCHORENCODE' ),
 	'currenttimestamp'       => array( 1,    'CURRENTTIMESTAMP', 'ԸՆԹԱՑԻՔ_ԺԱՄԱՆԱԿԻ_ԴՐՈՇՄ' ),
 	'localtimestamp'         => array( 1,    'LOCALTIMESTAMP', 'ՏԵՂԱԿԱՆ_ԺԱՄԱՆԱԿԻ_ԴՐՈՇՄ' ),
 	'directionmark'          => array( 1,    'DIRECTIONMARK', 'DIRMARK', 'ՆԱՄԱԿԻ_ՈՒՂՂՈՒԹՅՈՒՆԸ' ),
@@ -419,15 +413,14 @@ $messages = array(
 'subcategories'         => 'Ենթակատեգորիաներ',
 'category-media-header' => '"$1" կատեգորիայի մեդիան:',
 
-'linkprefix'        => '/^(.*?)([a-zA-Z\x80-\xff]+)$/sD',
 'mainpagetext'      => "<big>'''MediaWiki-ն բարեհաջող ձայնագրվել է։'''</big>",
 'mainpagedocfooter' => "Տեսեք [http://meta.wikimedia.org/wiki/Help:Contents User's Guide]-ը՝ վիքի ծրագրային ապահովման մասին տեղեկություն ստանալու համար։
 
 == Որոշ ռեսուրսներ ==
 
-* [http://www.mediawiki.org/wiki/Help:Configuration_settings Configuration settings list]
-* [http://www.mediawiki.org/wiki/Help:FAQ MediaWiki FAQ]
-* [http://mail.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]",
+* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Configuration settings list]
+* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki FAQ]
+* [http://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]",
 
 'about'          => 'Նկարագրությունը',
 'article'        => 'Հոդված',
@@ -574,7 +567,6 @@ $messages = array(
 'yourpasswordagain'          => 'Կրկնեք գաղտնաբառը',
 'remembermypassword'         => 'Հիշել իմ մուտքագրված տվյալները',
 'loginproblem'               => '<b>Ձեր գրանցման ժամանակ անորոշ խնդիր է ծագել։</b><br /> Փորձեք կրկին։',
-'alreadyloggedin'            => '<font color=red><b>Մասնակից  $1, դուք արդեն գրանցված եք համակարգի մեջ։</b></font><br />',
 'login'                      => 'Գրանցվել',
 'loginprompt'                => 'Ձեր քուքիները պետք է միացված լինեն՝ {{SITENAME}} մուտք գործելու համար։',
 'userlogin'                  => 'Ստեղծել հաշիվ կամ մուտք գործել համակարգ',
@@ -743,16 +735,14 @@ $messages = array(
 'sourcefilename' => 'Սկզբնական ֆայլի անունը',
 
 # Image list
-'imagelist'           => 'Նկարների ցանկ',
-'ilsubmit'            => 'Որոնել',
-'showlast'            => 'Ցույց տալ վերջին $1 ֆայլերը, դասավորված $2:',
-'byname'              => 'ըստ անվանումի',
-'bydate'              => 'ըստ ամսաթվի',
-'bysize'              => 'ըստ չափի',
-'revertimg'           => 'վերականգնել',
-'deleteimgcompletely' => 'Ջնջել բոլոր փոփոխությունները',
-'linkstoimage'        => 'Հետևյալ էջերը կապ ունեն տվյալ պատկերի հետ.',
-'nolinkstoimage'      => 'Այս պատկերի հետ ընդհանուր կապ ունեցող ոչ մի էջ չկա։',
+'imagelist'      => 'Նկարների ցանկ',
+'ilsubmit'       => 'Որոնել',
+'showlast'       => 'Ցույց տալ վերջին $1 ֆայլերը, դասավորված $2:',
+'byname'         => 'ըստ անվանումի',
+'bydate'         => 'ըստ ամսաթվի',
+'bysize'         => 'ըստ չափի',
+'linkstoimage'   => 'Հետևյալ էջերը կապ ունեն տվյալ պատկերի հետ.',
+'nolinkstoimage' => 'Այս պատկերի հետ ընդհանուր կապ ունեցող ոչ մի էջ չկա։',
 
 # MIME search
 'mimesearch' => 'Որոնում MIME-ով',
@@ -865,36 +855,30 @@ $messages = array(
 'watch'             => 'Հսկել',
 'watchthispage'     => 'Հսկել այս էջը',
 'unwatch'           => 'Հանել հսկումից',
-'watchdetails'      => '*  հսկվում {{PLURAL:$1|է $1 էջ|են $1 էջեր}}` չհաշված քննարկման էջերը
-* [[{{ns:special}}:Watchlist/edit|Ցուցադրել և խմբագրել հսկողության լրիվ ցանկը]]
-* [[{{ns:special}}:Watchlist/clear|Հանել բոլոր էջերը]]',
+'watchlist-details' => ' հսկվում {{PLURAL:$1|է $1 էջ|են $1 էջեր}}` չհաշված քննարկման էջերը.',
 'watchlistcontains' => 'Ձեր հսկողության ցանկում կա  $1 էջ։',
 'wlshowlast'        => 'Ցուցադրել վերջին $1 ժամերը $2 օրերը $3',
 
 # Delete/protect/revert
-'deletepage'           => 'Ջնջել էջը',
-'confirm'              => 'Հաստատել',
-'excontent'            => 'բովանդակությունը սա էր` «$1»',
-'exblank'              => 'էջը դատարկ էր',
-'confirmdelete'        => 'Հաստատել ջնջումը',
-'historywarning'       => 'Զգուշացում. այս էջը, որը դուք պատրաստվում եք ջնջել, պատմություն ունի։',
-'actioncomplete'       => 'Գործողությունը ավարտված  է',
-'deletedarticle'       => 'ջնջված է "$1"',
-'dellogpagetext'       => 'Ստորև կտեսնեք ամենավերջին ջնջումների ցանկը։',
-'deletecomment'        => 'Ջնջելու պատճառը',
-'cantrollback'         => 'Չեմ կարող վերականգնել նախորդ խմբագրման էջը։ Վերջին ուղղում կատարողը այս էջի հեղինակն է։',
-'alreadyrolled'        => 'Չեմ կարող վերականգնել [[User:$2|$2]]–ի վերջին ուղղումը [[$1]]-ի մեջ ([[User talk:$2|Talk]])։ Ինչ-որ մեկն արդեն վերականգնել է  այն կամ ուղղում է կատարել այդ էջում։ 
+'deletepage'     => 'Ջնջել էջը',
+'confirm'        => 'Հաստատել',
+'excontent'      => 'բովանդակությունը սա էր` «$1»',
+'exblank'        => 'էջը դատարկ էր',
+'confirmdelete'  => 'Հաստատել ջնջումը',
+'historywarning' => 'Զգուշացում. այս էջը, որը դուք պատրաստվում եք ջնջել, պատմություն ունի։',
+'actioncomplete' => 'Գործողությունը ավարտված  է',
+'deletedarticle' => 'ջնջված է "$1"',
+'dellogpagetext' => 'Ստորև կտեսնեք ամենավերջին ջնջումների ցանկը։',
+'deletecomment'  => 'Ջնջելու պատճառը',
+'cantrollback'   => 'Չեմ կարող վերականգնել նախորդ խմբագրման էջը։ Վերջին ուղղում կատարողը այս էջի հեղինակն է։',
+'alreadyrolled'  => 'Չեմ կարող վերականգնել [[User:$2|$2]]–ի վերջին ուղղումը [[$1]]-ի մեջ ([[User talk:$2|Talk]])։ Ինչ-որ մեկն արդեն վերականգնել է  այն կամ ուղղում է կատարել այդ էջում։ 
 Վերջին ուղղումն արվել է [[User:$3|$3]]-ի կողմից ([[User talk:$3|Talk]])։',
-'protectlogpage'       => 'Պաշտպանությունների_տեղեկամատյան',
-'protectlogtext'       => 'Ստորև բերված է պաշտպանված և պաշտպանությունից հանված էջերի ցանկը: Մանրամասնությունների համար, տես` [[Պրոյեկտ:Պաշտպանված էջ]]:',
-'protectsub'           => '("$1" էջի պաշտպանում)',
-'confirmprotecttext'   => 'Դուք իրո՞ք  ուզում եք պաշտպանել այս էջը։',
-'confirmprotect'       => 'Հաստատել պաշտպանությունը',
-'protectmoveonly'      => 'Պաշտպանել միայն տեղաշարժերից',
-'protectcomment'       => 'Պաշտպանման պատճառը',
-'confirmunprotecttext' => 'Դուք իրո՞ք ուզում եք պաշտպանությունից հանել այս էջը։',
-'confirmunprotect'     => 'Հաստատել պաշտպանությունից հանելը',
-'protect-text'         => 'Այստեղ դուք կարող եք տեսնել և փոխել [[$1]] էջի պաշտպանության աստիճանը: Խնդրում ենք համոզվեք, որ դուք գործում եք [[{{ns:project}}:Protected page|պրոյեկտի կանոնակարգի]] ներքո:',
+'protectlogpage' => 'Պաշտպանությունների_տեղեկամատյան',
+'protectlogtext' => 'Ստորև բերված է պաշտպանված և պաշտպանությունից հանված էջերի ցանկը: Մանրամասնությունների համար, տես` [[Պրոյեկտ:Պաշտպանված էջ]]:',
+'protectsub'     => '("$1" էջի պաշտպանում)',
+'confirmprotect' => 'Հաստատել պաշտպանությունը',
+'protectcomment' => 'Պաշտպանման պատճառը',
+'protect-text'   => 'Այստեղ դուք կարող եք տեսնել և փոխել [[$1]] էջի պաշտպանության աստիճանը: Խնդրում ենք համոզվեք, որ դուք գործում եք [[{{ns:project}}:Protected page|պրոյեկտի կանոնակարգի]] ներքո:',
 
 # Undelete
 'cannotundelete' => 'Հակաջնջումը չստացվեց, գուցե մեկ ուրիշն արդեն հակաջնջել է տվյալ էջը:',
@@ -902,7 +886,7 @@ $messages = array(
 # Contributions
 'contributions' => 'Մասնակցի խմբագրումները',
 'mycontris'     => 'Իմ խմբագրումները',
-'contribsub2'    => '$1 ($2)-ի համար',
+'contribsub2'   => '$1 ($2)-ի համար',
 
 # What links here
 'whatlinkshere' => 'Այստեղ հղվող էջերը',
@@ -958,7 +942,6 @@ $messages = array(
 'allmessagesdefault'        => 'Լռությամբ տեքստը',
 'allmessagescurrent'        => 'Տվյալ տեքստը',
 'allmessagestext'           => 'Սա ` MediaWiki: անվանական տողերում  առկա  բոլոր համակարգային ուղերձների ցանկն է։',
-'allmessagesnotsupportedUI' => 'Ձեր ընթացիկ ինտերֆեյսի լեզուն  <b>$1</b> չի  ընդունվում  այս կայքի {{ns:special}}:AllMessages համակարգի կողմից։',
 'allmessagesnotsupportedDB' => '{{ns:special}}:AllMessages չի գործում, որովհետև  wgUseDatabaseMessages միացրած չէ:',
 'allmessagesfilter'         => 'Ուղղերձների անվան ֆիլտր.',
 'allmessagesmodified'       => 'Ցույց տալ միայն փոփոխվածները',
@@ -977,21 +960,22 @@ $messages = array(
 # Spam protection
 'categoryarticlecount'   => 'Այս կատեգորիայում կա  $1 հոդված։',
 'category-media-count'   => 'Այս կատեգորիայում {{PLURAL:$1|կա մեկ ֆայլ|կան $1 ֆայլեր}}:',
-'listingcontinuesabbrev' => ' շարունակ.',
+'listingcontinuesabbrev' => 'շարունակ.',
 
 # Image deletion
 'deletedrevision' => 'Ջնջված է հին տարբերակը $1։',
 
+# Special:Newimages
 'newimages' => 'Նոր ֆայլերի սրահ',
 'noimages'  => 'Տեսնելու բան չկա։',
 
 # 'all' in various places, this might be different for inflected languages
-'watchlistall1' => 'բոլորը',
 'watchlistall2' => 'բոլորը',
 
 # Delete conflict
 'deletedwhileediting' => 'Զգուշացում` Այս էջը ջնջվել է ձեր խմբագրման ընթացքում:',
 
+# AJAX search
 'articletitles' => "Հոդվածներ, որոնք սկսվում են ''$1''-ով:",
 
 # Table pager
@@ -1000,9 +984,7 @@ $messages = array(
 # Auto-summaries
 'autosumm-blank'   => 'Ջնջվում է էջի ամբողջ պարունակությունը',
 'autosumm-replace' => "Փոխվում է էջը '$1'-ով",
-'autoredircomment' => 'Վերահղվում է դեպի [[$1]]', # This should be changed to the new naming convention, but existed beforehand
+'autoredircomment' => 'Վերահղվում է դեպի [[$1]]',
 'autosumm-new'     => 'Նոր էջ. $1',
 
 );
-
-?>

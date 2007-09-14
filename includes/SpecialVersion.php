@@ -148,10 +148,14 @@ class SpecialVersion {
 
 	/** Callback to sort extensions by type */
 	function compare( $a, $b ) {
-		if ( $a['name'] === $b['name'] )
+		global $wgLang;
+		if( $a['name'] === $b['name'] ) {
 			return 0;
-		else
-			return Language::lc( $a['name'] ) > Language::lc( $b['name'] ) ? 1 : -1;
+		} else {
+			return $wgLang->lc( $a['name'] ) > $wgLang->lc( $b['name'] )
+				? 1
+				: -1;
+		}
 	}
 
 	function formatCredits( $name, $version = null, $author = null, $url = null, $description = null) {
@@ -250,7 +254,10 @@ class SpecialVersion {
 	 * @return mixed
 	 */
 	function arrayToString( $list ) {
-		if ( ! is_array( $list ) ) {
+		if( is_object( $list ) ) {
+			$class = get_class( $list );
+			return "($class)";
+		} elseif ( ! is_array( $list ) ) {
 			return $list;
 		} else {
 			$class = get_class( $list[0] );
@@ -308,4 +315,4 @@ class SpecialVersion {
 }
 
 /**#@-*/
-?>
+

@@ -269,8 +269,6 @@ function wfSpecialRecentchanges( $par, $specialPage ) {
 }
 
 function rcFilterByCategories ( &$rows , $categories , $any ) {
-	require_once ( 'Categoryfinder.php' ) ;
-	
 	# Filter categories
 	$cats = array () ;
 	foreach ( $categories AS $cat ) {
@@ -685,12 +683,12 @@ function rcFormatDiffRow( $title, $oldid, $newid, $timestamp, $comment ) {
  */
 function rcApplyDiffStyle( $text ) {
 	$styles = array(
-		'diff'             => 'background-color: white;',
-		'diff-otitle'      => 'background-color: white;',
-		'diff-ntitle'      => 'background-color: white;',
-		'diff-addedline'   => 'background: #cfc; font-size: smaller;',
-		'diff-deletedline' => 'background: #ffa; font-size: smaller;',
-		'diff-context'     => 'background: #eee; font-size: smaller;',
+		'diff'             => 'background-color: white; color:black;',
+		'diff-otitle'      => 'background-color: white; color:black;',
+		'diff-ntitle'      => 'background-color: white; color:black;',
+		'diff-addedline'   => 'background: #cfc; color:black; font-size: smaller;',
+		'diff-deletedline' => 'background: #ffa; color:black; font-size: smaller;',
+		'diff-context'     => 'background: #eee; color:black; font-size: smaller;',
 		'diffchange'       => 'color: red; font-weight: bold; text-decoration: none;',
 	);
 	
@@ -702,4 +700,4 @@ function rcApplyDiffStyle( $text ) {
 	return $text;
 }
 
-?>
+

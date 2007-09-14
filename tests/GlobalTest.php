@@ -1,32 +1,21 @@
 <?php
 
-require_once( 'PHPUnit.php' );
-require_once( '../includes/Defines.php' );
-require_once( '../includes/Profiling.php' );
-require_once( '../includes/GlobalFunctions.php' );
-
-class GlobalTest extends PHPUnit_TestCase {
-	function GlobalTest( $name ) {
-		$this->PHPUnit_TestCase( $name );
-	}
-
+class GlobalTest extends PHPUnit_Framework_TestCase {
 	function setUp() {
-		$this->save = array();
-		$saveVars = array( 'wgReadOnlyFile' );
-		foreach( $saveVars as $var ) {
-			if( isset( $GLOBALS[$var] ) ) {
-				$this->save[$var] = $GLOBALS[$var];
-			}
-		}
-		$GLOBALS['wgReadOnlyFile'] = wfTempDir() . '/testReadOnly-' . mt_rand();
+		global $wgReadOnlyFile;
+		$this->originals['wgReadOnlyFile'] = $wgReadOnlyFile;
+		$wgReadOnlyFile = tempnam(wfTempDir(), "mwtest_readonly");
+		unlink( $wgReadOnlyFile );
 	}
-
+	
 	function tearDown() {
-		foreach( $this->save as $var => $data ) {
-			$GLOBALS[$var] = $data;
+		global $wgReadOnlyFile;
+		if( file_exists( $wgReadOnlyFile ) ) {
+			unlink( $wgReadOnlyFile );
 		}
+		$wgReadOnlyFile = $this->originals['wgReadOnlyFile'];
 	}
-
+	
 	function testRandom() {
 		# This could hypothetically fail, but it shouldn't ;)
 		$this->assertFalse(
@@ -40,16 +29,28 @@ class GlobalTest extends PHPUnit_TestCase {
 	}
 
 	function testReadOnlyEmpty() {
+		global $wgReadOnly;
+		$wgReadOnly = null;
+		
+		$this->assertFalse( wfReadOnly() );
 		$this->assertFalse( wfReadOnly() );
 	}
 
 	function testReadOnlySet() {
-		$f = fopen( $GLOBALS['wgReadOnlyFile'], "wt" );
+		global $wgReadOnly, $wgReadOnlyFile;
+		
+		$f = fopen( $wgReadOnlyFile, "wt" );
 		fwrite( $f, 'Message' );
 		fclose( $f );
+		$wgReadOnly = null;
+		
+		$this->assertTrue( wfReadOnly() );
 		$this->assertTrue( wfReadOnly() );
 
-		unlink( $GLOBALS['wgReadOnlyFile'] );
+		unlink( $wgReadOnlyFile );
+		$wgReadOnly = null;
+		
+		$this->assertFalse( wfReadOnly() );
 		$this->assertFalse( wfReadOnly() );
 	}
 
@@ -61,7 +62,7 @@ class GlobalTest extends PHPUnit_TestCase {
 
 	function testTime() {
 		$start = wfTime();
-		$this->assertType( 'double', $start );
+		$this->assertType( 'float', $start );
 		$end = wfTime();
 		$this->assertTrue( $end > $start, "Time is running backwards!" );
 	}
@@ -208,4 +209,4 @@ class GlobalTest extends PHPUnit_TestCase {
 	/* TODO: many more! */
 }
 
-?>
+

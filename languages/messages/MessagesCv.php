@@ -63,7 +63,6 @@ $messages = array(
 'categories'     => 'Категорисем',
 'pagecategories' => 'Категорисем',
 
-'linkprefix' => '/^(.*?)([a-zA-Z\x80-\xff«"]+)$/sD',
 'mainpage'   => 'Тĕп страницă',
 
 'aboutsite'      => '{{SITENAME}} çинчен',
@@ -191,7 +190,6 @@ $messages = array(
 
 # Undelete
 'undelete'           => 'Кăларса пăрахнă страницăсене пăх',
-'undeletearticle'    => 'Кăларса парахнă страницăна каялла тавăр',
 'undeleterevisions'  => 'Архивра пурĕ $1 верси',
 'undeletebtn'        => 'Каялла тавăр!',
 'undeletedarticle'   => '«[[$1]]» каялла тавăрнă',
@@ -250,12 +248,7 @@ $messages = array(
 # Info page
 'numedits' => 'Улшăнусен шучĕ (статьясем): $1',
 
-# Inputbox extension, may be useful in other contexts as well
-'createarticle' => 'Çĕнĕ статья çыр',
-
 # Trackbacks
 'trackbackremove' => ' ([$1 кăларса пăрах])',
 
 );
-
-?>

@@ -56,7 +56,8 @@ class WhatLinksHerePage {
 		}
 		$this->selfTitle = Title::makeTitleSafe( NS_SPECIAL,
 			'Whatlinkshere/' . $this->target->getPrefixedDBkey() );
-		$wgOut->setPagetitle( $this->target->getPrefixedText() );
+			
+		$wgOut->setPageTitle( wfMsg( 'whatlinkshere-title', $this->target->getPrefixedText() ) );
 		$wgOut->setSubtitle( wfMsg( 'linklistsub' ) );
 
 		$wgOut->addHTML( wfMsg( 'whatlinkshere-barrow' ) . ' '  .$this->skin->makeLinkObj($this->target, '', 'redirect=no' )."<br />\n");
@@ -105,25 +106,29 @@ class WhatLinksHerePage {
 		}
 
 		if ( $from ) {
-			$offsetCond = "page_id >= $from";
-		} else {
-			$offsetCond = false;
-		}
-		$options['ORDER BY'] = 'page_id';
+			$from = (int)$from; // just in case
+			$tlConds[] = "tl_from >= $from";
+			$plConds[] = "pl_from >= $from";
+		} 
 
 		// Read an extra row as an at-end check
 		$queryLimit = $limit + 1;
+		
+		// enforce join order, sometimes namespace selector may 
+		// trigger filesorts which are far less efficient than scanning many entries
+		$options[] = 'STRAIGHT_JOIN';
+		
 		$options['LIMIT'] = $queryLimit;
-		if ( $offsetCond ) {
-			$tlConds[] = $offsetCond;
-			$plConds[] = $offsetCond;
-		}
 		$fields = array( 'page_id', 'page_namespace', 'page_title', 'page_is_redirect' );
 
+		$options['ORDER BY'] = 'pl_from';
 		$plRes = $dbr->select( array( 'pagelinks', 'page' ), $fields,
 			$plConds, $fname, $options );
+			
+		$options['ORDER BY'] = 'tl_from';
 		$tlRes = $dbr->select( array( 'templatelinks', 'page' ), $fields,
 			$tlConds, $fname, $options );
+		
 		if ( !$dbr->numRows( $plRes ) && !$dbr->numRows( $tlRes ) ) {
 			if ( 0 == $level && !isset( $this->namespace ) ) {
 				// really no links to here
@@ -226,6 +231,14 @@ class WhatLinksHerePage {
 				$wgOut->addHTML( ' (' . implode( ', ', $props ) . ') ' );
 			}
 
+			# Space for utilities links, with a what-links-here link provided
+			$wlh = $this->skin->makeKnownLinkObj(
+				SpecialPage::getTitleFor( 'Whatlinkshere' ),
+				wfMsgHtml( 'whatlinkshere-links' ),
+				'target=' . $nt->getPrefixedUrl()
+			);
+			$wgOut->addHtml( ' <span class="mw-whatlinkshere-tools">(' . $wlh . ')</span>' );			
+			
 			if ( $row->page_is_redirect ) {
 				if ( $level < 2 ) {
 					$this->showIndirectLinks( $level + 1, $nt, 500 );
@@ -312,4 +325,4 @@ class WhatLinksHerePage {
 
 }
 
-?>
+

@@ -156,7 +156,6 @@ $messages = array(
 'group-all' => '(бөтә)',
 
 # Recent changes
-'changes'           => 'үҙгәрештәр',
 'recentchanges'     => 'Һуңғы үҙгәртеүҙәр',
 'recentchangestext' => '{{grammar:genitive|{{SITENAME}}}}. биттәрендә индерелгән һуңғы үҙгәртеүҙәр исемлеге',
 
@@ -242,10 +241,9 @@ $messages = array(
 # 'all' in various places, this might be different for inflected languages
 'recentchangesall' => 'бөтә',
 'imagelistall'     => 'бөтә',
-'watchlistall1'    => 'бөтә',
 'watchlistall2'    => 'бөтә',
 'namespacesall'    => 'бөтә',
 
 );
 
-?>
+

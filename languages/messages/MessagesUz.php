@@ -16,7 +16,7 @@ $linkPrefixExtension = true;
 $namespaceNames = array(
 	NS_MEDIA            => 'Media',
 	NS_SPECIAL          => 'Maxsus',
-	NS_MAIN             => 'Asosiy',
+	NS_MAIN             => '',
 	NS_TALK             => 'Munozara',
 	NS_USER             => 'Foydalanuvchi',
 	NS_USER_TALK        => 'Foydalanuvchi_munozarasi',
@@ -107,9 +107,9 @@ $messages = array(
 
 == Dastlabki qadamlar ==
 
-* [http://www.mediawiki.org/wiki/Help:Configuration_settings Moslamalar ro'yxati]
-* [http://www.mediawiki.org/wiki/Help:FAQ MediaWiki haqida ko'p so'raladigan savollar]
-* [http://mail.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki yangi versiyasi chiqqanda xabar berish ro'yxati]",
+* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Moslamalar ro'yxati]
+* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki haqida ko'p so'raladigan savollar]
+* [http://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki yangi versiyasi chiqqanda xabar berish ro'yxati]",
 
 'about'          => 'Haqida',
 'newwindow'      => '(yangi oyanada ochiladi)',
@@ -266,7 +266,6 @@ Bundan tashqari, siz ushbu ma'lumotlarni o'zingiz yozgan bo'lishingiz yoki ruxsa
 'minoreditletter'   => 'k',
 'newpageletter'     => 'Y',
 'boteditletter'     => 'b',
-'sectionlink'       => '→',
 
 # Recent changes linked
 'recentchangeslinked' => "Bog'langan o'zgarishlar",
@@ -317,7 +316,6 @@ Agar siz bu sahifani kuzatuv ro'yxatingizdan o'chirmoqchi bo'lsangiz \"Kuzatmasl
 
 # Delete/protect/revert
 'deletecomment'   => "O'chirish sababi",
-'protectmoveonly' => "Faqat ko'chirishdan himoyala",
 
 # Restrictions (nouns)
 'restriction-edit' => 'Tahrirlash',
@@ -411,15 +409,11 @@ Agar siz bu sahifani kuzatuv ro'yxatingizdan o'chirmoqchi bo'lsangiz \"Kuzatmasl
 # 'all' in various places, this might be different for inflected languages
 'recentchangesall' => 'Barchasi',
 'imagelistall'     => 'Barchasi',
-'watchlistall1'    => 'Barcha',
 'watchlistall2'    => 'Barcha',
 'namespacesall'    => 'Barchasi',
-
-# Inputbox extension, may be useful in other contexts as well
-'createarticle' => 'Maqola kiritish',
 
 'unit-pixel' => 'piksel',
 
 );
 
-?>
+

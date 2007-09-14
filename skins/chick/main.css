@@ -52,8 +52,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 .editsection {
 	font-weight: normal;
-	float: right;
-	margin-left: 5px;
 }
 h1 { font-size: 188%; }
 h1 .editsection { font-size: 53.2%; }
@@ -321,12 +319,13 @@ div.tleft {
     margin-right:0.5em;
     border-width: 0.5em 1.4em 0.8em 0;
 }
+img.thumbborder {
+	border: 1px solid #dddddd;
+}
 
 .hiddenStructure {
     display: none;
 }
-img.tex { vertical-align: middle; }
-span.texhtml { font-family: serif; }
 
 /*
 ** classes for special content elements like town boxes
@@ -397,25 +396,6 @@ div.townBox dl dd {
     background-color:#f9f9f9;
     border:1px dashed #aaaaaa;
 }
-/*
-** Diff rendering
-*/
-table.diff { background:white; }
-td.diff-otitle { background:#ffffff; }
-td.diff-ntitle { background:#ffffff; }
-td.diff-addedline {
-    background:#ccffcc;
-    font-size: smaller;
-}
-td.diff-deletedline {
-    background:#ffffaa;
-    font-size: smaller;
-}
-td.diff-context {
-    background:#eeeeee;
-    font-size: smaller;
-}
-.diffchange { color: red; text-decoration: none; }
 
 a.external { color: #3366bb; }
 
@@ -475,6 +455,7 @@ div.gallerybox div.thumb {
 }       
 
 div.gallerytext {
+	overflow: hidden;
         font-size: 94%;
         padding: 2px 4px;
 }       
@@ -485,11 +466,7 @@ div.gallerytext {
 
 .templatesUsed { margin-top: 1.5em; }
 
-/**
- * Here is some stuff that's ACTUALLY COMMON TO ALL SKINS.
- * When the day comes, it can be moved to a *real* common.css.
- */
-.mw-plusminus-null { color: #aaa; }
-.texvc { direction: ltr; unicode-bidi: embed; }
-/* Stop floats from intruding into edit area in previews */
-#toolbar, #wpTextbox1 { clear: both; }
+/* Recreating-deleted-page warning and log entries */
+div#mw-recreate-deleted-warn ul li {
+	font-size: 95%;
+}

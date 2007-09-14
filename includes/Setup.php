@@ -28,8 +28,8 @@ if ( !isset( $wgVersion ) ) {
 }
 
 // Set various default paths sensibly...
-if( $wgScript === false ) $wgScript = "$wgScriptPath/index.php";
-if( $wgRedirectScript === false ) $wgRedirectScript = "$wgScriptPath/redirect.php";
+if( $wgScript === false ) $wgScript = "$wgScriptPath/index$wgScriptExtension";
+if( $wgRedirectScript === false ) $wgRedirectScript = "$wgScriptPath/redirect$wgScriptExtension";
 
 if( $wgArticlePath === false ) {
 	if( $wgUsePathInfo ) {
@@ -53,6 +53,67 @@ if( $wgTmpDirectory === false ) $wgTmpDirectory = "{$wgUploadDirectory}/tmp";
 
 if( $wgReadOnlyFile === false ) $wgReadOnlyFile = "{$wgUploadDirectory}/lock_yBgMBwiR";
 if( $wgFileCacheDirectory === false ) $wgFileCacheDirectory = "{$wgUploadDirectory}/cache";
+
+if ( empty( $wgFileStore['deleted']['directory'] ) ) {
+	$wgFileStore['deleted']['directory'] = "{$wgUploadDirectory}/deleted";
+}
+
+
+/**
+ * Initialise $wgLocalFileRepo from backwards-compatible settings
+ */
+if ( !$wgLocalFileRepo ) {
+	$wgLocalFileRepo = array( 
+		'class' => 'LocalRepo',
+		'name' => 'local',
+		'directory' => $wgUploadDirectory,
+		'url' => $wgUploadBaseUrl ? $wgUploadBaseUrl . $wgUploadPath : $wgUploadPath,
+		'hashLevels' => $wgHashedUploadDirectory ? 2 : 0,
+		'thumbScriptUrl' => $wgThumbnailScriptPath,
+		'transformVia404' => !$wgGenerateThumbnailOnParse,
+		'initialCapital' => $wgCapitalLinks,
+		'deletedDir' => $wgFileStore['deleted']['directory'],
+		'deletedHashLevels' => $wgFileStore['deleted']['hash']
+	);
+}
+/**
+ * Initialise shared repo from backwards-compatible settings
+ */
+if ( $wgUseSharedUploads ) {
+	if ( $wgSharedUploadDBname ) {
+		$wgForeignFileRepos[] = array(
+			'class' => 'ForeignDBRepo',
+			'name' => 'shared',
+			'directory' => $wgSharedUploadDirectory,
+			'url' => $wgSharedUploadPath,
+			'hashLevels' => $wgHashedSharedUploadDirectory ? 2 : 0,
+			'thumbScriptUrl' => $wgSharedThumbnailScriptPath,
+			'transformVia404' => !$wgGenerateThumbnailOnParse,
+			'dbType' => $wgDBtype,
+			'dbServer' => $wgDBserver,
+			'dbUser' => $wgDBuser,
+			'dbPassword' => $wgDBpassword,
+			'dbName' => $wgSharedUploadDBname,
+			'dbFlags' => ($wgDebugDumpSql ? DBO_DEBUG : 0) | DBO_DEFAULT,
+			'tablePrefix' => $wgSharedUploadDBprefix,
+			'hasSharedCache' => $wgCacheSharedUploads,
+			'descBaseUrl' => $wgRepositoryBaseUrl,
+			'fetchDescription' => $wgFetchCommonsDescriptions,
+		);
+	} else {
+		$wgForeignFileRepos[] = array( 
+			'class' => 'FSRepo',
+			'name' => 'shared',
+			'directory' => $wgSharedUploadDirectory,
+			'url' => $wgSharedUploadPath,
+			'hashLevels' => $wgHashedSharedUploadDirectory ? 2 : 0,
+			'thumbScriptUrl' => $wgSharedThumbnailScriptPath,
+			'transformVia404' => !$wgGenerateThumbnailOnParse,
+			'descBaseUrl' => $wgRepositoryBaseUrl,
+			'fetchDescription' => $wgFetchCommonsDescriptions,
+		);
+	}
+}
 
 require_once( "$IP/includes/AutoLoader.php" );
 
@@ -167,6 +228,10 @@ if ( !$wgDBservers ) {
 $wgLoadBalancer = new StubObject( 'wgLoadBalancer', 'LoadBalancer', 
 	array( $wgDBservers, false, $wgMasterWaitTimeout, true ) );
 $wgContLang = new StubContLang;
+
+// Now that variant lists may be available...
+$wgRequest->interpolateTitle();
+
 $wgUser = new StubUser;
 $wgLang = new StubUserLang;
 $wgOut = new StubObject( 'wgOut', 'OutputPage' );
@@ -199,6 +264,9 @@ $wgPostCommitUpdateList = array();
 
 if ( $wgAjaxSearch ) $wgAjaxExportList[] = 'wfSajaxSearch';
 if ( $wgAjaxWatch ) $wgAjaxExportList[] = 'wfAjaxWatch';
+if ( $wgAjaxUploadDestCheck ) $wgAjaxExportList[] = 'UploadForm::ajaxGetExistsWarning';
+if( $wgAjaxLicensePreview )
+	$wgAjaxExportList[] = 'UploadForm::ajaxGetLicensePreview';
 
 wfSeedRandom();
 
@@ -232,4 +300,4 @@ $wgFullyInitialised = true;
 wfProfileOut( $fname.'-extensions' );
 wfProfileOut( $fname );
 
-?>
+

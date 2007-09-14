@@ -5,7 +5,7 @@
  *
  * API for MediaWiki 1.8+
  *
- * Copyright (C) 2006 Yuri Astrakhan <FirstnameLastname@gmail.com>
+ * Copyright (C) 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,9 @@ if (!defined('MEDIAWIKI')) {
 }
 
 /**
+ * A query action to enumerate the recent changes that were done to the wiki.
+ * Various filters are supported.
+ * 
  * @addtogroup API
  */
 class ApiQueryRecentChanges extends ApiQueryBase {
@@ -37,6 +40,10 @@ class ApiQueryRecentChanges extends ApiQueryBase {
 		parent :: __construct($query, $moduleName, 'rc');
 	}
 
+	private $fld_comment = false, $fld_user = false, $fld_flags = false,
+			$fld_timestamp = false, $fld_title = false, $fld_ids = false,
+			$fld_sizes = false;
+	 
 	public function execute() {
 		$limit = $prop = $namespace = $show = $dir = $start = $end = null;
 		extract($this->extractRequestParams());
@@ -44,6 +51,7 @@ class ApiQueryRecentChanges extends ApiQueryBase {
 		$this->addTables('recentchanges');
 		$this->addWhereRange('rc_timestamp', $dir, $start, $end);
 		$this->addWhereFld('rc_namespace', $namespace);
+		$this->addWhereFld('rc_deleted', 0);
 
 		if (!is_null($show)) {
 			$show = array_flip($show);
@@ -62,9 +70,6 @@ class ApiQueryRecentChanges extends ApiQueryBase {
 			'rc_timestamp',
 			'rc_namespace',
 			'rc_title',
-			'rc_cur_id',
-			'rc_this_oldid',
-			'rc_last_oldid',
 			'rc_type',
 			'rc_moved_to_ns',
 			'rc_moved_to_title'
@@ -72,16 +77,27 @@ class ApiQueryRecentChanges extends ApiQueryBase {
 
 		if (!is_null($prop)) {
 			$prop = array_flip($prop);
-			$this->addFieldsIf('rc_comment', isset ($prop['comment']));
-			if (isset ($prop['user'])) {
-				$this->addFields('rc_user');
-				$this->addFields('rc_user_text');
-			}
-			if (isset ($prop['flags'])) {
-				$this->addFields('rc_minor');
-				$this->addFields('rc_bot');
-				$this->addFields('rc_new');
-			}
+
+			$this->fld_comment = isset ($prop['comment']);
+			$this->fld_user = isset ($prop['user']);
+			$this->fld_flags = isset ($prop['flags']);
+			$this->fld_timestamp = isset ($prop['timestamp']);
+			$this->fld_title = isset ($prop['title']);
+			$this->fld_ids = isset ($prop['ids']);
+			$this->fld_sizes = isset ($prop['sizes']);
+			 
+			$this->addFieldsIf('rc_id', $this->fld_ids);			
+			$this->addFieldsIf('rc_cur_id', $this->fld_ids);			
+			$this->addFieldsIf('rc_this_oldid', $this->fld_ids);			
+			$this->addFieldsIf('rc_last_oldid', $this->fld_ids);			
+			$this->addFieldsIf('rc_comment', $this->fld_comment);			
+			$this->addFieldsIf('rc_user', $this->fld_user);
+			$this->addFieldsIf('rc_user_text', $this->fld_user);
+			$this->addFieldsIf('rc_minor', $this->fld_flags);
+			$this->addFieldsIf('rc_bot', $this->fld_flags);
+			$this->addFieldsIf('rc_new', $this->fld_flags);
+			$this->addFieldsIf('rc_old_len', $this->fld_sizes);
+			$this->addFieldsIf('rc_new_len', $this->fld_sizes);
 		}
 
 		$this->addOption('LIMIT', $limit +1);
@@ -91,15 +107,16 @@ class ApiQueryRecentChanges extends ApiQueryBase {
 		$count = 0;
 		$db = $this->getDB();
 		$res = $this->select(__METHOD__);
+		
 		while ($row = $db->fetchObject($res)) {
 			if (++ $count > $limit) {
 				// We've reached the one extra which shows that there are additional pages to be had. Stop here...
-				$this->setContinueEnumParameter('start', $row->rc_timestamp);
+				$this->setContinueEnumParameter('start', wfTimestamp(TS_ISO_8601, $row->rc_timestamp));
 				break;
 			}
 
-			$vals = $this->addRowInfo('rc', $row);
-			if ($vals)
+			$vals = $this->extractRowInfo($row);
+			if($vals)
 				$data[] = $vals;
 		}
 		$db->freeResult($res);
@@ -107,6 +124,59 @@ class ApiQueryRecentChanges extends ApiQueryBase {
 		$result = $this->getResult();
 		$result->setIndexedTagName($data, 'rc');
 		$result->addValue('query', $this->getModuleName(), $data);
+	}
+
+	private function extractRowInfo($row) {
+		$movedToTitle = false;
+		if (!empty($row->rc_moved_to_title))
+			$movedToTitle = Title :: makeTitle($row->rc_moved_to_ns, $row->rc_moved_to_title);
+
+		$title = Title :: makeTitle($row->rc_namespace, $row->rc_title);
+		$vals = array ();
+
+		$vals['type'] = intval($row->rc_type);
+
+		if ($this->fld_title) {
+			ApiQueryBase :: addTitleInfo($vals, $title);
+			if ($movedToTitle)
+				ApiQueryBase :: addTitleInfo($vals, $movedToTitle, "new_");
+		}
+
+		if ($this->fld_ids) {
+			$vals['rcid'] = intval($row->rc_id);
+			$vals['pageid'] = intval($row->rc_cur_id);
+			$vals['revid'] = intval($row->rc_this_oldid);
+			$vals['old_revid'] = intval( $row->rc_last_oldid );
+		}
+
+		if ($this->fld_user) {
+			$vals['user'] = $row->rc_user_text;
+			if(!$row->rc_user)
+				$vals['anon'] = '';
+		}
+
+		if ($this->fld_flags) {
+			if ($row->rc_bot)
+				$vals['bot'] = '';
+			if ($row->rc_new)
+				$vals['new'] = '';
+			if ($row->rc_minor)
+				$vals['minor'] = '';
+		}
+
+		if ($this->fld_sizes) {
+			$vals['oldlen'] = intval($row->rc_old_len);
+			$vals['newlen'] = intval($row->rc_new_len);
+		}
+		
+		if ($this->fld_timestamp)
+			$vals['timestamp'] = wfTimestamp(TS_ISO_8601, $row->rc_timestamp);
+
+		if ($this->fld_comment && !empty ($row->rc_comment)) {
+			$vals['comment'] = $row->rc_comment;
+		}
+
+		return $vals;
 	}
 
 	protected function getAllowedParams() {
@@ -130,10 +200,15 @@ class ApiQueryRecentChanges extends ApiQueryBase {
 			),
 			'prop' => array (
 				ApiBase :: PARAM_ISMULTI => true,
+				ApiBase :: PARAM_DFLT => 'title|timestamp|ids',
 				ApiBase :: PARAM_TYPE => array (
 					'user',
 					'comment',
-					'flags'
+					'flags',
+					'timestamp',
+					'title',
+					'ids',
+					'sizes'
 				)
 			),
 			'show' => array (
@@ -151,7 +226,7 @@ class ApiQueryRecentChanges extends ApiQueryBase {
 				ApiBase :: PARAM_DFLT => 10,
 				ApiBase :: PARAM_TYPE => 'limit',
 				ApiBase :: PARAM_MIN => 1,
-				ApiBase :: PARAM_MAX1 => ApiBase :: LIMIT_BIG1,
+				ApiBase :: PARAM_MAX => ApiBase :: LIMIT_BIG1,
 				ApiBase :: PARAM_MAX2 => ApiBase :: LIMIT_BIG2
 			)
 		);
@@ -183,7 +258,7 @@ class ApiQueryRecentChanges extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryRecentChanges.php 21402 2007-04-20 08:55:14Z nickj $';
+		return __CLASS__ . ': $Id: ApiQueryRecentChanges.php 24100 2007-07-15 01:12:54Z yurik $';
 	}
 }
-?>
+

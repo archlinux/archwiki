@@ -57,14 +57,18 @@ class MediaWiki {
 	}
 
 	function checkMaxLag( $maxLag ) {
-		global $wgLoadBalancer;
+		global $wgLoadBalancer, $wgShowHostnames;
 		list( $host, $lag ) = $wgLoadBalancer->getMaxLag();
 		if ( $lag > $maxLag ) {
 			header( 'HTTP/1.1 503 Service Unavailable' );
 			header( 'Retry-After: ' . max( intval( $maxLag ), 5 ) );
 			header( 'X-Database-Lag: ' . intval( $lag ) );
 			header( 'Content-Type: text/plain' );
-			echo "Waiting for $host: $lag seconds lagged\n";
+			if( $wgShowHostnames ) {
+				echo "Waiting for $host: $lag seconds lagged\n";
+			} else {
+				echo "Waiting for a database server: $lag seconds lagged\n";
+			}
 			return false;
 		} else {
 			return true;
@@ -98,6 +102,14 @@ class MediaWiki {
 				$lang->findVariantLink( $title, $ret );
 
 		}
+		if ( ( $oldid = $request->getInt( 'oldid' ) )
+			&& ( is_null( $ret ) || $ret->getNamespace() != NS_SPECIAL ) ) {
+			// Allow oldid to override a changed or missing title.
+			$rev = Revision::newFromId( $oldid );
+			if( $rev ) {
+				$ret = $rev->getTitle();
+			}
+		}
 		return $ret ;
 	}
 
@@ -106,16 +118,14 @@ class MediaWiki {
 	 */
 	function preliminaryChecks ( &$title, &$output, $request ) {
 
-		# Debug statement for user levels
-		// print_r($wgUser);
-
-		$search = $request->getText( 'search' );
-		if( !is_null( $search ) && $search !== '' ) {
+		if( $request->getCheck( 'search' ) ) {
 			// Compatibility with old search URLs which didn't use Special:Search
+			// Just check for presence here, so blank requests still
+			// show the search page when using ugly URLs (bug 8054).
+			
 			// Do this above the read whitelist check for security...
 			$title = SpecialPage::getTitleFor( 'Search' );
 		}
-		$this->setVal( 'Search', $search );
 
 		# If the user is not logged in, the Namespace:title of the article must be in
 		# the Read array in order for the user to see it. (We have to check here to
@@ -135,13 +145,8 @@ class MediaWiki {
 		global $wgRequest;
 		wfProfileIn( 'MediaWiki::initializeSpecialCases' );
 
-		$search = $this->getVal('Search');
 		$action = $this->getVal('Action');
-		if( !$this->getVal('DisableInternalSearch') && !is_null( $search ) && $search !== '' ) {
-			require_once( 'includes/SpecialSearch.php' );
-			$title = SpecialPage::getTitleFor( 'Search' );
-			wfSpecialSearch();
-		} else if( !$title or $title->getDBkey() == '' ) {
+		if( !$title or $title->getDBkey() == '' ) {
 			$title = SpecialPage::getTitleFor( 'Badtitle' );
 			# Die now before we mess up $wgArticle and the skin stops working
 			throw new ErrorPageError( 'badtitle', 'badtitletext' );
@@ -158,7 +163,7 @@ class MediaWiki {
 				$title = SpecialPage::getTitleFor( 'Badtitle' );
 				throw new ErrorPageError( 'badtitle', 'badtitletext' );
 			}
-		} else if ( ( $action == 'view' ) &&
+		} else if ( ( $action == 'view' ) && !$wgRequest->wasPosted() && 
 			(!isset( $this->GET['title'] ) || $title->getPrefixedDBKey() != $this->GET['title'] ) &&
 			!count( array_diff( array_keys( $this->GET ), array( 'action', 'title' ) ) ) )
 		{
@@ -209,7 +214,7 @@ class MediaWiki {
 	 * @param Title $title
 	 * @return Article
 	 */
-	function articleFromTitle( $title ) {
+	static function articleFromTitle( $title ) {
 		$article = null;
 		wfRunHooks('ArticleFromTitle', array( &$title, &$article ) );
 		if ( $article ) {
@@ -460,4 +465,4 @@ class MediaWiki {
 
 }; /* End of class MediaWiki */
 
-?>
+

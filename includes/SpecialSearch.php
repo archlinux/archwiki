@@ -173,7 +173,8 @@ class SpecialSearch {
 				SpecialPage::getTitleFor( 'Search' ),
 				wfArrayToCGI(
 					$this->powerSearchOptions(),
-					array( 'search' => $term ) ) );
+					array( 'search' => $term ) ),
+					($num < $this->limit) );
 			$wgOut->addHTML( "<br />{$prevnext}\n" );
 		}
 
@@ -184,6 +185,7 @@ class SpecialSearch {
 			} else {
 				$wgOut->addWikiText( '==' . wfMsg( 'notitlematches' ) . "==\n" );
 			}
+			$titleMatches->free();
 		}
 
 		if( $textMatches ) {
@@ -194,6 +196,7 @@ class SpecialSearch {
 				# Don't show the 'no text matches' if we received title matches
 				$wgOut->addWikiText( '==' . wfMsg( 'notextmatches' ) . "==\n" );
 			}
+			$textMatches->free();
 		}
 
 		if ( $num == 0 ) {
@@ -320,6 +323,14 @@ class SpecialSearch {
 		$contextchars = $wgUser->getOption( 'contextchars', 50 );
 
 		$link = $sk->makeKnownLinkObj( $t );
+
+		//If page content is not readable, just return the title.
+		//This is not quite safe, but better than showing excerpts from non-readable pages
+		//Note that hiding the entry entirely would screw up paging.
+		if (!$t->userCanRead()) {
+			return "<li>{$link}</li>\n";
+		}
+
 		$revision = Revision::newFromTitle( $t );
 		$text = $revision->getText();
 		$size = wfMsgExt( 'nbytes', array( 'parsemag', 'escape'),
@@ -403,4 +414,4 @@ class SpecialSearch {
 	}
 }
 
-?>
+

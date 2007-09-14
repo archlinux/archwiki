@@ -429,18 +429,11 @@ function wfMsgReal( $key, $args, $useDB = true, $forContent=false, $transform = 
  * @param $key String:
  */
 function wfMsgWeirdKey ( $key ) {
-	$subsource = str_replace ( ' ' , '_' , $key ) ;
-	$source = wfMsgForContentNoTrans( $subsource ) ;
-	if ( wfEmptyMsg( $subsource, $source) ) {
-		# Try again with first char lower case
-		$subsource = strtolower ( substr ( $subsource , 0 , 1 ) ) . substr ( $subsource , 1 ) ;
-		$source = wfMsgForContentNoTrans( $subsource ) ;
-	}
-	if ( wfEmptyMsg( $subsource, $source ) ) {
-		# Didn't work either, return blank text
-		$source = "" ;
-	}
-	return $source ;
+	$source = wfMsgGetKey( $key, false, true, false );
+	if ( wfEmptyMsg( $key, $source ) )
+		return "";
+	else
+		return $source;
 }
 
 /**
@@ -453,6 +446,17 @@ function wfMsgWeirdKey ( $key ) {
  */
 function wfMsgGetKey( $key, $useDB, $forContent = false, $transform = true ) {
 	global $wgParser, $wgContLang, $wgMessageCache, $wgLang;
+
+	/* <Vyznev> btw, is all that code in wfMsgGetKey() that check
+	 * if the message cache exists of not really necessary, or is
+	 * it just paranoia?
+	 * <TimStarling> Vyznev: it's probably not necessary
+	 * <TimStarling> I think I wrote it in an attempt to report DB
+	 * connection errors properly
+	 * <TimStarling> but eventually we gave up on using the
+	 * message cache for that and just hard-coded the strings
+	 * <TimStarling> it may have other uses, it's not mere paranoia
+	 */
 
 	if ( is_object( $wgMessageCache ) )
 		$transstat = $wgMessageCache->getTransform();
@@ -468,16 +472,18 @@ function wfMsgGetKey( $key, $useDB, $forContent = false, $transform = true ) {
 			$lang = &$wgLang;
 		}
 
-		wfSuppressWarnings();
+		# MessageCache::get() does this already, Language::getMessage() doesn't
+		# ISSUE: Should we try to handle "message/lang" here too?
+		$key = str_replace( ' ' , '_' , $wgContLang->lcfirst( $key ) );
 
+		wfSuppressWarnings();
 		if( is_object( $lang ) ) {
 			$message = $lang->getMessage( $key );
 		} else {
 			$message = false;
 		}
 		wfRestoreWarnings();
-		if($message === false)
-			$message = Language::getMessage($key);
+
 		if ( $transform && strstr( $message, '{{' ) !== false ) {
 			$message = $wgParser->transformMsg($message, $wgMessageCache->getParserOptions() );
 		}
@@ -586,7 +592,7 @@ function wfMsgExt( $key, $options ) {
 	} elseif ( in_array('parseinline', $options) ) {
 		$string = $wgOut->parse( $string, true, true );
 		$m = array();
-		if( preg_match( "~^<p>(.*)\n?</p>$~", $string, $m ) ) {
+		if( preg_match( '/^<p>(.*)\n?<\/p>$/sU', $string, $m ) ) {
 			$string = $m[1];
 		}
 	} elseif ( in_array('parsemag', $options) ) {
@@ -695,14 +701,14 @@ function wfHostname() {
 	 * @return string
 	 */
 	function wfReportTime() {
-		global $wgRequestTime;
+		global $wgRequestTime, $wgShowHostnames;
 
 		$now = wfTime();
 		$elapsed = $now - $wgRequestTime;
 
-		$com = sprintf( "<!-- Served by %s in %01.3f secs. -->",
-		  wfHostname(), $elapsed );
-		return $com;
+		return $wgShowHostnames
+			? sprintf( "<!-- Served by %s in %01.3f secs. -->", wfHostname(), $elapsed )
+			: sprintf( "<!-- Served in %01.3f secs. -->", $elapsed );
 	}
 
 /**
@@ -813,7 +819,7 @@ function wfViewPrevNext( $offset, $limit, $link, $query = '', $atend = false ) {
 		if ( $po < 0 ) { $po = 0; }
 		$q = "limit={$limit}&offset={$po}";
 		if ( '' != $query ) { $q .= '&'.$query; }
-		$plink = '<a href="' . $title->escapeLocalUrl( $q ) . "\">{$prev}</a>";
+		$plink = '<a href="' . $title->escapeLocalUrl( $q ) . "\" class=\"mw-prevlink\">{$prev}</a>";
 	} else { $plink = $prev; }
 
 	$no = $offset + $limit;
@@ -823,7 +829,7 @@ function wfViewPrevNext( $offset, $limit, $link, $query = '', $atend = false ) {
 	if ( $atend ) {
 		$nlink = $next;
 	} else {
-		$nlink = '<a href="' . $title->escapeLocalUrl( $q ) . "\">{$next}</a>";
+		$nlink = '<a href="' . $title->escapeLocalUrl( $q ) . "\" class=\"mw-nextlink\">{$next}</a>";
 	}
 	$nums = wfNumLink( $offset, 20, $title, $query ) . ' | ' .
 	  wfNumLink( $offset, 50, $title, $query ) . ' | ' .
@@ -844,7 +850,7 @@ function wfNumLink( $offset, $limit, &$title, $query = '' ) {
 	$q .= 'limit='.$limit.'&offset='.$offset;
 
 	$fmtLimit = $wgLang->formatNum( $limit );
-	$s = '<a href="' . $title->escapeLocalUrl( $q ) . "\">{$fmtLimit}</a>";
+	$s = '<a href="' . $title->escapeLocalUrl( $q ) . "\" class=\"mw-numlink\">{$fmtLimit}</a>";
 	return $s;
 }
 
@@ -1657,47 +1663,11 @@ function wfTempDir() {
  * Make directory, and make all parent directories if they don't exist
  */
 function wfMkdirParents( $fullDir, $mode = 0777 ) {
-	if ( strval( $fullDir ) === '' ) {
+	if( strval( $fullDir ) === '' )
 		return true;
-	}
-	
-	# Go back through the paths to find the first directory that exists
-	$currentDir = $fullDir;
-	$createList = array();
-	while ( strval( $currentDir ) !== '' && !file_exists( $currentDir ) ) {	
-		# Strip trailing slashes
-		$currentDir = rtrim( $currentDir, '/\\' );
-
-		# Add to create list
-		$createList[] = $currentDir;
-
-		# Find next delimiter searching from the end
-		$p = max( strrpos( $currentDir, '/' ), strrpos( $currentDir, '\\' ) );
-		if ( $p === false ) {
-			$currentDir = false;
-		} else {
-			$currentDir = substr( $currentDir, 0, $p );
-		}
-	}
-	
-	if ( count( $createList ) == 0 ) {
-		# Directory specified already exists
+	if( file_exists( $fullDir ) )
 		return true;
-	} elseif ( $currentDir === false ) {
-		# Went all the way back to root and it apparently doesn't exist
-		return false;
-	}
-	
-	# Now go forward creating directories
-	$createList = array_reverse( $createList );
-	foreach ( $createList as $dir ) {
-		# use chmod to override the umask, as suggested by the PHP manual
-		if ( !mkdir( $dir, $mode ) || !chmod( $dir, $mode ) ) {
-			wfDebugLog( 'mkdir', "Unable to create directory $dir\n" );
-			return false;
-		} 
-	}
-	return true;
+	return mkdir( str_replace( '/', DIRECTORY_SEPARATOR, $fullDir ), $mode, true );
 }
 
 /**
@@ -1761,7 +1731,7 @@ function wfAppendToArrayIfNotDefault( $key, $value, $default, &$changed ) {
  * @return bool
  */
 function wfEmptyMsg( $msg, $wfMsgOut ) {
-	return $wfMsgOut === "&lt;$msg&gt;";
+	return $wfMsgOut === htmlspecialchars( "<$msg>" );
 }
 
 /**
@@ -1902,11 +1872,15 @@ function wfRegexReplacement( $string ) {
  * We'll consider it so always, as we don't want \s in our Unix paths either.
  * 
  * @param string $path
+ * @param string $suffix to remove if present
  * @return string
  */
-function wfBaseName( $path ) {
+function wfBaseName( $path, $suffix='' ) {
+	$encSuffix = ($suffix == '')
+		? ''
+		: ( '(?:' . preg_quote( $suffix, '#' ) . ')?' );
 	$matches = array();
-	if( preg_match( '#([^/\\\\]*)[/\\\\]*$#', $path, $matches ) ) {
+	if( preg_match( "#([^/\\\\]*?){$encSuffix}[/\\\\]*$#", $path, $matches ) ) {
 		return $matches[1];
 	} else {
 		return '';
@@ -2266,4 +2240,84 @@ function &wfGetDB( $db = DB_LAST, $groups = array() ) {
 	$ret = $wgLoadBalancer->getConnection( $db, true, $groups );
 	return $ret;
 }
-?>
+
+/**
+ * Find a file. 
+ * Shortcut for RepoGroup::singleton()->findFile()
+ * @param mixed $title Title object or string. May be interwiki.
+ * @param mixed $time Requested time for an archived image, or false for the 
+ *                    current version. An image object will be returned which 
+ *                    existed at or before the specified time.
+ * @return File, or false if the file does not exist
+ */
+function wfFindFile( $title, $time = false ) {
+	return RepoGroup::singleton()->findFile( $title, $time );
+}
+
+/**
+ * Get an object referring to a locally registered file.
+ * Returns a valid placeholder object if the file does not exist.
+ */
+function wfLocalFile( $title ) {
+	return RepoGroup::singleton()->getLocalRepo()->newFile( $title );
+}
+
+/**
+ * Should low-performance queries be disabled?
+ *
+ * @return bool
+ */
+function wfQueriesMustScale() {
+	global $wgMiserMode;
+	return $wgMiserMode
+		|| ( SiteStats::pages() > 100000
+		&& SiteStats::edits() > 1000000
+		&& SiteStats::users() > 10000 );
+}
+
+/**
+ * Get the path to a specified script file, respecting file
+ * extensions; this is a wrapper around $wgScriptExtension etc.
+ *
+ * @param string $script Script filename, sans extension
+ * @return string
+ */
+function wfScript( $script = 'index' ) {
+	global $wgScriptPath, $wgScriptExtension;
+	return "{$wgScriptPath}/{$script}{$wgScriptExtension}";
+}
+
+/**
+ * Convenience function converts boolean values into "true"
+ * or "false" (string) values
+ *
+ * @param bool $value
+ * @return string
+ */
+function wfBoolToStr( $value ) {
+	return $value ? 'true' : 'false';
+}
+
+/**
+ * Load an extension messages file
+ */
+function wfLoadExtensionMessages( $extensionName ) {
+	global $wgExtensionMessagesFiles, $wgMessageCache;
+	if ( !empty( $wgExtensionMessagesFiles[$extensionName] ) ) {
+		$wgMessageCache->loadMessagesFile( $wgExtensionMessagesFiles[$extensionName] );
+		// Prevent double-loading
+		$wgExtensionMessagesFiles[$extensionName] = false;
+	}
+}
+
+/**
+ * Get a platform-independent path to the null file, e.g.
+ * /dev/null
+ *
+ * @return string
+ */
+function wfGetNull() {
+	return wfIsWindows()
+		? 'NUL'
+		: '/dev/null';
+}

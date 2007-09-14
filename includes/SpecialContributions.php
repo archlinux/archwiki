@@ -9,15 +9,21 @@ class ContribsPager extends IndexPager {
 	var $messages, $target;
 	var $namespace = '', $mDb;
 
-	function __construct( $target, $namespace = false ) {
-		global $wgUser;
-
+	function __construct( $target, $namespace = false, $year = false, $month = false ) {
 		parent::__construct();
 		foreach( explode( ' ', 'uctop diff newarticle rollbacklink diff hist minoreditletter' ) as $msg ) {
 			$this->messages[$msg] = wfMsgExt( $msg, array( 'escape') );
 		}
 		$this->target = $target;
 		$this->namespace = $namespace;
+		
+		$year = intval($year);
+		$month = intval($month);
+		
+		$this->year = ($year > 0 && $year < 10000) ? $year : false;
+		$this->month = ($month > 0 && $month < 13) ? $month : false;
+		$this->getDateCond();
+		
 		$this->mDb = wfGetDB( DB_SLAVE, 'contributions' );
 	}
 
@@ -29,7 +35,7 @@ class ContribsPager extends IndexPager {
 
 	function getQueryInfo() {
 		list( $index, $userCond ) = $this->getUserCond();
-		$conds = array_merge( array( 'page_id=rev_page' ), $userCond, $this->getNamespaceCond() );
+		$conds = array_merge( array('page_id=rev_page'), $userCond, $this->getNamespaceCond() );
 
 		return array(
 			'tables' => array( 'page', 'revision' ),
@@ -39,7 +45,7 @@ class ContribsPager extends IndexPager {
 				'rev_user_text', 'rev_deleted'
 			),
 			'conds' => $conds,
-			'options' => array( 'FORCE INDEX' => $index )
+			'options' => array( 'USE INDEX' => $index )
 		);
 	}
 
@@ -62,6 +68,33 @@ class ContribsPager extends IndexPager {
 			return array( 'page_namespace' => (int)$this->namespace );
 		} else {
 			return array();
+		}
+	}
+	
+	function getDateCond() {
+		if ( $this->year || $this->month ) {
+			// Assume this year if only a month is given
+			if ( $this->year ) {
+				$year_start = $this->year;
+			} else {
+				$year_start = substr( wfTimestampNow(), 0, 4 );
+				$thisMonth = gmdate( 'n' );
+				if( $this->month > $thisMonth ) {
+					// Future contributions aren't supposed to happen. :)
+					$year_start--;
+				}
+			}
+			
+			if ( $this->month ) {
+				$month_end = str_pad($this->month + 1, 2, '0', STR_PAD_LEFT);
+				$year_end = $year_start;
+			} else {
+				$month_end = 0;
+				$year_end = $year_start + 1;
+			}
+			$ts_end = str_pad($year_end . $month_end, 14, '0' );
+
+			$this->mOffset = $ts_end;
 		}
 	}
 
@@ -110,7 +143,7 @@ class ContribsPager extends IndexPager {
 	function formatRow( $row ) {
 		wfProfileIn( __METHOD__ );
 
-		global $wgLang, $wgUser;
+		global $wgLang, $wgUser, $wgContLang;
 
 		$sk = $this->getSkin();
 		$rev = new Revision( $row );
@@ -138,8 +171,15 @@ class ContribsPager extends IndexPager {
 		}
 		$histlink='('.$sk->makeKnownLinkObj( $page, $this->messages['hist'], 'action=history' ) . ')';
 
-		$comment = $sk->revComment( $rev );
+		$comment = $wgContLang->getDirMark() . $sk->revComment( $rev );
 		$d = $wgLang->timeanddate( wfTimestamp( TS_MW, $row->rev_timestamp ), true );
+		
+		if( $this->target == 'newbies' ) {
+			$userlink = ' . . ' . $sk->userLink( $row->rev_user, $row->rev_user_text );
+			$userlink .= ' (' . $sk->userTalkLink( $row->rev_user, $row->rev_user_text ) . ') ';
+		} else {
+			$userlink = '';
+		}
 
 		if( $rev->isDeleted( Revision::DELETED_TEXT ) ) {
 			$d = '<span class="history-deleted">' . $d . '</span>';
@@ -151,7 +191,7 @@ class ContribsPager extends IndexPager {
 			$mflag = '';
 		}
 
-		$ret = "{$d} {$histlink} {$difftext} {$mflag} {$link} {$comment} {$topmarktext}";
+		$ret = "{$d} {$histlink} {$difftext} {$mflag} {$link}{$userlink}{$comment} {$topmarktext}";
 		if( $rev->isDeleted( Revision::DELETED_TEXT ) ) {
 			$ret .= ' ' . wfMsgHtml( 'deletedrev' );
 		}
@@ -159,6 +199,16 @@ class ContribsPager extends IndexPager {
 		wfProfileOut( __METHOD__ );
 		return $ret;
 	}
+	
+	/**
+	 * Get the Database object in use
+	 *
+	 * @return Database
+	 */
+	public function getDatabase() {
+		return $this->mDb;
+	}
+	
 }
 
 /**
@@ -218,16 +268,48 @@ function wfSpecialContributions( $par = null ) {
 	if ( $wgUser->isAllowed( 'rollback' ) && $wgRequest->getBool( 'bot' ) ) {
 		$options['bot'] = '1';
 	}
+	
+	$skip = $wgRequest->getText( 'offset' ) || $wgRequest->getText( 'dir' ) == 'prev';
+	# Offset overrides year/month selection
+	if ( ( $month = $wgRequest->getIntOrNull( 'month' ) ) !== null && $month !== -1 ) {
+		$options['month'] = intval( $month );
+	} else {
+		$options['month'] = '';
+	}
+	if ( ( $year = $wgRequest->getIntOrNull( 'year' ) ) !== null ) {
+		$options['year'] = intval( $year );
+	} else if( $options['month'] ) {
+		$thisMonth = intval( gmdate( 'n' ) );
+		$thisYear = intval( gmdate( 'Y' ) );
+		if( intval( $options['month'] ) > $thisMonth ) {
+			$thisYear--;
+		}
+		$options['year'] = $thisYear;
+	} else {
+		$options['year'] = '';
+	}
 
 	wfRunHooks( 'SpecialContributionsBeforeMainOutput', $id );
 
 	$wgOut->addHTML( contributionsForm( $options ) );
+	# Show original selected options, don't apply them so as to allow paging
+	$_GET['year'] = ''; // hack for Pager
+	$_GET['month'] = ''; // hack for Pager
+	if( $skip ) {
+		$options['year'] = '';
+		$options['month'] = '';
+	}
 
-	$pager = new ContribsPager( $target, $options['namespace'] );
+	$pager = new ContribsPager( $target, $options['namespace'], $options['year'], $options['month'] );
 	if ( !$pager->getNumRows() ) {
 		$wgOut->addWikiText( wfMsg( 'nocontribs' ) );
 		return;
 	}
+
+	# Show a message about slave lag, if applicable
+	if( ( $lag = $pager->getDatabase()->getLag() ) > 0 )
+		$wgOut->showLagWarning( $lag );
+
 	$wgOut->addHTML( 
 		'<p>' . $pager->getNavigationBar() . '</p>' .
 		$pager->getBody() .
@@ -279,6 +361,9 @@ function contributionsSub( $nt, $id ) {
 		}
 		# Other logs link
 		$tools[] = $sk->makeKnownLinkObj( SpecialPage::getTitleFor( 'Log' ), wfMsgHtml( 'log' ), 'user=' . $nt->getPartialUrl() );
+
+		wfRunHooks( 'ContributionsToolLinks', array( $id, $nt, &$tools ) );
+
 		$links = implode( ' | ', $tools );
 	}
 
@@ -314,6 +399,14 @@ function contributionsForm( $options ) {
 	if ( !isset( $options['contribs'] ) ) {
 		$options['contribs'] = 'user';
 	}
+	
+	if ( !isset( $options['year'] ) ) {
+		$options['year'] = '';
+	}
+
+	if ( !isset( $options['month'] ) ) {
+		$options['month'] = '';
+	}
 
 	if ( $options['contribs'] == 'newbie' ) {
 		$options['target'] = '';
@@ -322,7 +415,7 @@ function contributionsForm( $options ) {
 	$f = Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) );
 
 	foreach ( $options as $name => $value ) {
-		if ( in_array( $name, array( 'namespace', 'target', 'contribs' ) ) ) {
+		if ( in_array( $name, array( 'namespace', 'target', 'contribs', 'year', 'month' ) ) ) {
 			continue;
 		}
 		$f .= "\t" . Xml::hidden( $name, $value ) . "\n";
@@ -335,11 +428,19 @@ function contributionsForm( $options ) {
 		Xml::input( 'target', 20, $options['target']) . ' '.
 		Xml::label( wfMsg( 'namespace' ), 'namespace' ) .
 		Xml::namespaceSelector( $options['namespace'], '' ) .
+		Xml::openElement( 'p' ) .
+		Xml::label( wfMsg( 'year' ), 'year' ) . ' '.
+		Xml::input( 'year', 4, $options['year'], array('id' => 'year', 'maxlength' => 4) ) . ' '.
+		Xml::label( wfMsg( 'month' ), 'month' ) . ' '.
+		Xml::monthSelector( $options['month'], -1 ) . ' '.
 		Xml::submitButton( wfMsg( 'sp-contributions-submit' ) ) .
-		'</fieldset>' .
+		Xml::closeElement( 'p' );
+	
+	$explain = wfMsgExt( 'sp-contributions-explain', 'parseinline' );
+	if( !wfEmptyMsg( 'sp-contributions-explain', $explain ) )
+		$f .= "<p>{$explain}</p>";
+		
+	$f .= '</fieldset>' .
 		Xml::closeElement( 'form' );
 	return $f;
 }
-
-
-?>

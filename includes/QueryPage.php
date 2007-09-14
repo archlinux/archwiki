@@ -25,6 +25,7 @@ $wgQueryPages = array(
 	array( 'MostcategoriesPage',            'Mostcategories'                ),
 	array( 'MostimagesPage',                'Mostimages'                    ),
 	array( 'MostlinkedCategoriesPage',      'Mostlinkedcategories'          ),
+	array( 'SpecialMostlinkedtemplates',	'Mostlinkedtemplates'			),
 	array( 'MostlinkedPage',                'Mostlinked'                    ),
 	array( 'MostrevisionsPage',             'Mostrevisions'                 ),
 	array( 'FewestrevisionsPage',           'Fewestrevisions'               ),
@@ -33,6 +34,7 @@ $wgQueryPages = array(
 	array( 'UncategorizedCategoriesPage',   'Uncategorizedcategories'       ),
 	array( 'UncategorizedPagesPage',        'Uncategorizedpages'            ),
 	array( 'UncategorizedImagesPage',       'Uncategorizedimages' 			),
+	array( 'UncategorizedTemplatesPage',	'Uncategorizedtemplates'		),
 	array( 'UnusedCategoriesPage',          'Unusedcategories'              ),
 	array( 'UnusedimagesPage',              'Unusedimages'                  ),
 	array( 'WantedCategoriesPage',          'Wantedcategories'              ),
@@ -332,7 +334,8 @@ class QueryPage {
 		$num = $dbr->numRows($res);
 
 		$this->preprocessResults( $dbr, $res );
-		$sk = $wgUser->getSkin();
+
+		$wgOut->addHtml( XML::openElement( 'div', array('class' => 'mw-spcontent') ) );
 		
 		# Top header and navigation
 		if( $shownavigation ) {
@@ -347,6 +350,7 @@ class QueryPage {
 				# No results to show, so don't bother with "showing X of Y" etc.
 				# -- just let the user know and give up now
 				$wgOut->addHtml( '<p>' . wfMsgHtml( 'specialpage-empty' ) . '</p>' );
+				$wgOut->addHtml( XML::closeElement( 'div' ) );
 				return;
 			}
 		}
@@ -365,6 +369,8 @@ class QueryPage {
 		if( $shownavigation ) {
 			$wgOut->addHtml( '<p>' . $paging . '</p>' );
 		}
+
+		$wgOut->addHtml( XML::closeElement( 'div' ) );
 		
 		return $num;
 	}
@@ -397,7 +403,7 @@ class QueryPage {
 						? ' class="not-patrolled"'
 						: '';
 					$html[] = $this->listoutput
-						? $format
+						? $line
 						: "<li{$attr}>{$line}</li>\n";
 				}
 			}
@@ -411,7 +417,7 @@ class QueryPage {
 						? ' class="not-patrolled"'
 						: '';
 					$html[] = $this->listoutput
-						? $format
+						? $line
 						: "<li{$attr}>{$line}</li>\n";
 				}
 			}
@@ -428,11 +434,11 @@ class QueryPage {
 	}
 	
 	function openList( $offset ) {
-		return "<ol start='" . ( $offset + 1 ) . "' class='special'>";
+		return "\n<ol start='" . ( $offset + 1 ) . "' class='special'>\n";
 	}
 	
 	function closeList() {
-		return '</ol>';
+		return "</ol>\n";
 	}
 
 	/**
@@ -525,4 +531,4 @@ class QueryPage {
 	}
 }
 
-?>
+

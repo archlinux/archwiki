@@ -21,7 +21,7 @@ class LLAuthPlugin extends AuthPlugin {
 		return ($length >= 6 && $length <= 25);
 	}
 
-	function __destruct() 
+	function __destruct()
 		{
 		if (!is_null($this->dbLink))
 			{
@@ -117,7 +117,7 @@ class LLAuthPlugin extends AuthPlugin {
 		return true;
 	}
 
-	function initUser( &$user ) {
+	function initUser( $user, $autocreate=false ) {
 		$data = $this->getUserData($user->getName());
 		$user->setEmail($data['email']);
 		$user->confirmEmail();
@@ -128,7 +128,16 @@ class LLAuthPlugin extends AuthPlugin {
 	function getCanonicalName( $username ) {
 		// fix bug #122
 		$data = $this->getUserData($username);
-		return $data['name'];
+		// needed for update.php
+		if (is_null($data))
+			{
+			return $username;
+			}
+		else
+			{
+			// make sure that first char is uppercase
+			return strtoupper(substr($data['name'], 0, 1)).substr($data['name'], 1);
+			}
 	}
 }
 

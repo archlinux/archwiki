@@ -62,6 +62,7 @@ class PageHistory {
 		 * Setup page variables.
 		 */
 		$wgOut->setPageTitle( $this->mTitle->getPrefixedText() );
+		$wgOut->setPageTitleActionText( wfMsg( 'history_short' ) );
 		$wgOut->setArticleFlag( false );
 		$wgOut->setArticleRelated( true );
 		$wgOut->setRobotpolicy( 'noindex,nofollow' );
@@ -244,8 +245,26 @@ class PageHistory {
 		if( $row->rev_deleted & Revision::DELETED_TEXT ) {
 			$s .= ' ' . wfMsgHtml( 'deletedrev' );
 		}
-		if( $wgUser->isAllowed( 'rollback' ) && $latest ) {
-			$s .= ' '.$this->mSkin->generateRollback( $rev );
+		
+		$tools = array();
+		
+		if ( !is_null( $next ) && is_object( $next ) ) {
+			if( $wgUser->isAllowed( 'rollback' ) && $latest ) {
+				$tools[] = '<span class="mw-rollback-link">'
+					. $this->mSkin->buildRollbackLink( $rev )
+					. '</span>';
+			}
+
+			$undolink = $this->mSkin->makeKnownLinkObj(
+				$this->mTitle,
+				wfMsgHtml( 'editundo' ),
+				'action=edit&undoafter=' . $next->rev_id . '&undo=' . $rev->getId()
+			);
+			$tools[] = "<span class=\"mw-history-undo\">{$undolink}</span>";
+		}
+		
+		if( $tools ) {
+			$s .= ' (' . implode( ' | ', $tools ) . ')';
 		}
 		
 		wfRunHooks( 'PageHistoryLineEnding', array( &$row , &$s ) );
@@ -589,4 +608,5 @@ class PageHistoryPager extends ReverseChronologicalPager {
 	}
 }
 
-?>
+
+

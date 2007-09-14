@@ -24,8 +24,7 @@
 $originalDir = getcwd();
 
 require_once( 'commandLine.inc' );
-require_once( 'SpecialExport.php' );
-require_once( 'maintenance/backup.inc' );
+require_once( 'backup.inc' );
 
 /**
  * Stream wrapper around 7za filter program.
@@ -240,17 +239,23 @@ class TextPassDumper extends BackupDumper {
 		}
 		while( true ) {
 			try {
-				return $this->doGetText( $id );
+				$text = $this->doGetText( $id );
+				$ex = new MWException("Graceful storage failure");
 			} catch (DBQueryError $ex) {
+				$text = false;
+			}
+			if( $text === false ) {
 				$this->failures++;
 				if( $this->failures > $this->maxFailures ) {
 					throw $ex;
 				} else {
 					$this->progress( "Database failure $this->failures " .
-						"of allowed $this->maxFailures! " .
+						"of allowed $this->maxFailures for revision $id! " .
 						"Pausing $this->failureTimeout seconds..." );
 					sleep( $this->failureTimeout );
 				}
+			} else {
+				return $text;
 			}
 		}
 	}
@@ -265,6 +270,9 @@ class TextPassDumper extends BackupDumper {
 			array( 'old_id' => $id ),
 			'TextPassDumper::getText' );
 		$text = Revision::getRevisionText( $row );
+		if( $text === false ) {
+			return false;
+		}
 		$stripped = str_replace( "\r", "", $text );
 		$normalized = UtfNormal::cleanUp( $stripped );
 		return $normalized;
@@ -367,4 +375,4 @@ END
 );
 }
 
-?>
+

@@ -5,7 +5,6 @@
  */
 
 $skinNames = array(
-	'mono' => 'Łáa\'ígíí',
 	'monobook' => 'NaaltsoosŁáa\'ígíí'
 );
 
@@ -68,4 +67,4 @@ $messages = array(
 'dec'                   => 'Ntsx',
 );
 
-?>
+

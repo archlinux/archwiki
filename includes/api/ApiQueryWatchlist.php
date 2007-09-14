@@ -5,7 +5,7 @@
  *
  * API for MediaWiki 1.8+
  *
- * Copyright (C) 2006 Yuri Astrakhan <FirstnameLastname@gmail.com>
+ * Copyright (C) 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,9 @@ if (!defined('MEDIAWIKI')) {
 }
 
 /**
+ * This query action allows clients to retrieve a list of recently modified pages
+ * that are part of the logged-in user's watchlist.
+ * 
  * @addtogroup API
  */
 class ApiQueryWatchlist extends ApiQueryGeneratorBase {
@@ -45,8 +48,13 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		$this->run($resultPageSet);
 	}
 
+	private $fld_ids = false, $fld_title = false, $fld_patrol = false, $fld_flags = false,
+			$fld_timestamp = false, $fld_user = false, $fld_comment = false, $fld_sizes = false;
+	
 	private function run($resultPageSet = null) {
-		global $wgUser;
+		global $wgUser, $wgDBtype;
+
+		$this->selectNamedDB('watchlist', DB_SLAVE, 'watchlist');
 
 		if (!$wgUser->isLoggedIn())
 			$this->dieUsage('You must be logged-in to have a watchlist', 'notloggedin');
@@ -54,17 +62,20 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		$allrev = $start = $end = $namespace = $dir = $limit = $prop = null;
 		extract($this->extractRequestParams());
 
-		$patrol = $timestamp = $user = $comment = false;
-		if (!is_null($prop)) {
-			if (!is_null($resultPageSet))
-				$this->dieUsage('prop parameter may not be used in a generator', 'params');
+		if (!is_null($prop) && is_null($resultPageSet)) {
 
-			$user = (false !== array_search('user', $prop));
-			$comment = (false !== array_search('comment', $prop));
-			$timestamp = (false !== array_search('timestamp', $prop)); // TODO: $timestamp not currently being used.
-			$patrol = (false !== array_search('patrol', $prop));
+			$prop = array_flip($prop);
 
-			if ($patrol) {
+			$this->fld_ids = isset($prop['ids']);
+			$this->fld_title = isset($prop['title']);
+			$this->fld_flags = isset($prop['flags']);
+			$this->fld_user = isset($prop['user']);
+			$this->fld_comment = isset($prop['comment']);
+			$this->fld_timestamp = isset($prop['timestamp']);
+			$this->fld_sizes = isset($prop['sizes']);
+			$this->fld_patrol = isset($prop['patrol']);
+
+			if ($this->fld_patrol) {
 				global $wgUseRCPatrol, $wgUser;
 				if (!$wgUseRCPatrol || !$wgUser->isAllowed('patrol'))
 					$this->dieUsage('patrol property is not available', 'patrol');
@@ -77,15 +88,17 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 				'rc_this_oldid',
 				'rc_namespace',
 				'rc_title',
-				'rc_new',
-				'rc_minor',
 				'rc_timestamp'
 			));
 
-			$this->addFieldsIf('rc_user', $user);
-			$this->addFieldsIf('rc_user_text', $user);
-			$this->addFieldsIf('rc_comment', $comment);
-			$this->addFieldsIf('rc_patrolled', $patrol);
+			$this->addFieldsIf('rc_new', $this->fld_flags);
+			$this->addFieldsIf('rc_minor', $this->fld_flags);
+			$this->addFieldsIf('rc_user', $this->fld_user);
+			$this->addFieldsIf('rc_user_text', $this->fld_user);
+			$this->addFieldsIf('rc_comment', $this->fld_comment);
+			$this->addFieldsIf('rc_patrolled', $this->fld_patrol);
+			$this->addFieldsIf('rc_old_len', $this->fld_sizes);
+			$this->addFieldsIf('rc_new_len', $this->fld_sizes);
 		}
 		elseif ($allrev) {
 			$this->addFields(array (
@@ -114,12 +127,16 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 			'wl_namespace = rc_namespace',
 			'wl_title = rc_title',
 			'rc_cur_id = page_id',
-			'wl_user' => $userId
+			'wl_user' => $userId,
+			'rc_deleted' => 0,
 		));
+
 		$this->addWhereRange('rc_timestamp', $dir, $start, $end);
 		$this->addWhereFld('wl_namespace', $namespace);
 		$this->addWhereIf('rc_this_oldid=page_latest', !$allrev);
-		$this->addWhereIf("rc_timestamp > ''", !isset ($start) && !isset ($end));
+		
+		# This is a index optimization for mysql, as done in the Special:Watchlist page
+		$this->addWhereIf("rc_timestamp > ''", !isset ($start) && !isset ($end) && $wgDBtype == 'mysql');
 
 		$this->addOption('LIMIT', $limit +1);
 
@@ -131,23 +148,19 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		while ($row = $db->fetchObject($res)) {
 			if (++ $count > $limit) {
 				// We've reached the one extra which shows that there are additional pages to be had. Stop here...
-				$this->setContinueEnumParameter('start', $row->rc_timestamp);
+				$this->setContinueEnumParameter('start', wfTimestamp(TS_ISO_8601, $row->rc_timestamp));
 				break;
 			}
 
 			if (is_null($resultPageSet)) {
-				$vals = $this->addRowInfo('rc', $row);
-				if($vals)
+				$vals = $this->extractRowInfo($row);
+				if ($vals)
 					$data[] = $vals;
 			} else {
-				$title = Title :: makeTitle($row->rc_namespace, $row->rc_title);
-				// skip any pages that user has no rights to read
-				if ($title->userCanRead()) {
-					if ($allrev) {
-						$data[] = intval($row->rc_this_oldid);
-					} else {
-						$data[] = intval($row->rc_cur_id);
-					}
+				if ($allrev) {
+					$data[] = intval($row->rc_this_oldid);
+				} else {
+					$data[] = intval($row->rc_cur_id);
 				}
 			}
 		}
@@ -163,6 +176,50 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		} else {
 			$resultPageSet->populateFromPageIDs($data);
 		}
+	}
+
+	private function extractRowInfo($row) {
+
+		$vals = array ();
+
+		if ($this->fld_ids) {
+			$vals['pageid'] = intval($row->rc_cur_id);
+			$vals['revid'] = intval($row->rc_this_oldid); 
+		}
+		
+		if ($this->fld_title)
+			ApiQueryBase :: addTitleInfo($vals, Title :: makeTitle($row->rc_namespace, $row->rc_title));
+
+		if ($this->fld_user) {
+			$vals['user'] = $row->rc_user_text;
+			if (!$row->rc_user)
+				$vals['anon'] = '';
+		}
+
+		if ($this->fld_flags) {
+			if ($row->rc_new)
+				$vals['new'] = '';
+			if ($row->rc_minor)
+				$vals['minor'] = '';
+		}
+
+		if ($this->fld_patrol && isset($row->rc_patrolled))
+			$vals['patrolled'] = '';
+
+		if ($this->fld_timestamp)
+			$vals['timestamp'] = wfTimestamp(TS_ISO_8601, $row->rc_timestamp);
+
+			$this->addFieldsIf('rc_new_len', $this->fld_sizes);
+
+		if ($this->fld_sizes) {
+			$vals['oldlen'] = intval($row->rc_old_len);
+			$vals['newlen'] = intval($row->rc_new_len);
+		}
+
+		if ($this->fld_comment && !empty ($row->rc_comment))
+			$vals['comment'] = $row->rc_comment;
+
+		return $vals;
 	}
 
 	protected function getAllowedParams() {
@@ -189,16 +246,21 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 				ApiBase :: PARAM_DFLT => 10,
 				ApiBase :: PARAM_TYPE => 'limit',
 				ApiBase :: PARAM_MIN => 1,
-				ApiBase :: PARAM_MAX1 => ApiBase :: LIMIT_BIG1,
+				ApiBase :: PARAM_MAX => ApiBase :: LIMIT_BIG1,
 				ApiBase :: PARAM_MAX2 => ApiBase :: LIMIT_BIG2
 			),
 			'prop' => array (
 				APIBase :: PARAM_ISMULTI => true,
+				APIBase :: PARAM_DFLT => 'ids|title|flags',
 				APIBase :: PARAM_TYPE => array (
+					'ids',
+					'title',
+					'flags',
 					'user',
 					'comment',
 					'timestamp',
-					'patrol'
+					'patrol',
+					'sizes',
 				)
 			)
 		);
@@ -223,14 +285,15 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 	protected function getExamples() {
 		return array (
 			'api.php?action=query&list=watchlist',
-			'api.php?action=query&list=watchlist&wlallrev',
+			'api.php?action=query&list=watchlist&wlprop=ids|title|timestamp|user|comment',
+			'api.php?action=query&list=watchlist&wlallrev&wlprop=ids|title|timestamp|user|comment',
 			'api.php?action=query&generator=watchlist&prop=info',
 			'api.php?action=query&generator=watchlist&gwlallrev&prop=revisions&rvprop=timestamp|user'
 		);
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryWatchlist.php 21402 2007-04-20 08:55:14Z nickj $';
+		return __CLASS__ . ': $Id: ApiQueryWatchlist.php 24092 2007-07-14 19:04:31Z yurik $';
 	}
 }
-?>
+

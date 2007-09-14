@@ -69,7 +69,7 @@ $specialPageAliases = array(
         'Ancientpages'              => array( 'Régóta_nem_változott_szócikkek' ),
         'Deadendpages'              => array( 'Zsákutcalapok' ),
         'Allpages'                  => array( 'Az_összes_lap_listája' ),
-        'Prefixindex'               => array( 'Egy_névtérbe_tartozó_lapok_listája', 'Az_összes_lap_listája' ) ,
+        'Prefixindex'               => array( 'Egy_névtérbe_tartozó_lapok_listája' ) ,
         'Ipblocklist'               => array( 'Blokkolt_IP-címek_listája' ),
         'Specialpages'              => array( 'Speciális_lapok' ),
         'Contributions'             => array( 'Szerkesztő_közreműködései' ),
@@ -377,7 +377,6 @@ Az adminisztrátor, aki lezárta az adatbázist, az alábbi magyarázatot adta: 
 'badtitletext'       => 'A kért cím helytelen, üres vagy hibásan hivatkozik
 egy nyelvek közötti vagy wikik közötti címre.',
 'perfdisabled'       => 'Elnézést, de ez a lehetőség átmenetileg nem elérhető, mert annyira lelassítja az adatbázist, hogy senki nem tudja a wikit használni.',
-'perfdisabledsub'    => 'Íme $1 egy elmentett másolata:', # obsolete?
 'perfcached'         => "Az alábbi adatok gyorsítótárból (''cache''-ből) származnak, és ezért lehetséges, hogy nem a legfrissebb változatot mutatják:",
 'perfcachedts'       => "Az alábbi adatok gyorsítótárból (''cache''-ből) származnak, legutóbbi frissítésük ideje $1.",
 'viewsource'         => 'Lapforrás',
@@ -423,7 +422,6 @@ Ne felejtsd el átnézni a személyes {{SITENAME}} beállításaidat.',
 'yourlanguage'               => 'A felület nyelve:',
 'yournick'                   => 'A beceneved (aláírásokhoz):',
 'badsig'                     => 'Rossz aláírás; ellenőrizd a HTML formázást.',
-'prefs-help-email-enotif'    => 'A címet e-mailben küldött figyelmeztetések küldésére is használjuk, ha azokat beállítottad.',
 'prefs-help-realname'        => '* Igazi neved (nem kötelező): ha úgy döntesz, hogy megadod ez lesz használva a munkád szerzőjének megjelölésére.',
 'loginerror'                 => 'Belépési hiba',
 'prefs-help-email'           => '1 E-mail cím (nem kötelező megadni): Lehetővé teszi, hogy más szerkesztők kapcsolatba lépjenek veled a felhasználói vagy vitalapodon keresztül, anélkül, hogy névtelenséged feladnád.',
@@ -691,7 +689,6 @@ beállításaidat rögzíthesd, [[Special:Userlogin|be kell lépned]].',
 'resultsperpage'           => 'Laponként mutatott találatok száma:',
 'contextlines'             => 'Találatonként mutatott sorok száma:',
 'contextchars'             => 'Soronkénti szövegkörnyezet (karakterszám):',
-'stubthreshold'            => 'Csonkok kijelzésének küszöbértéke:',
 'recentchangescount'       => 'Címszavak száma a friss változtatásokban:',
 'savedprefs'               => 'Az új beállításaid érvénybe léptek.',
 'timezonelegend'           => 'Időzóna',
@@ -764,7 +761,6 @@ idő a GMT-től eltér (Magyarországon nyáron 2, télen 1).',
 'uploadedfiles'               => 'Felküldött file-ok',
 'ignorewarning'               => 'Biztosan így akarom feltölteni.',
 'ignorewarnings'              => 'Hagyd figyelmen kívül a figyelmeztetéseket',
-'minlength'                   => 'A kép nevének legalább három betűből kell állnia.',
 'badfilename'                 => 'A kép új neve "$1".',
 'largefileserver'             => 'A fájl mérete meghaladja a kiszolgálón beállított maximális értéket.',
 'fileexists'                  => 'Ezzel a névvel már létezik egy file: $1. Ellenőrizd hogy biztosan felül akarod-e írni azt!',
@@ -772,7 +768,6 @@ idő a GMT-től eltér (Magyarországon nyáron 2, télen 1).',
 'fileexists-shared-forbidden' => 'Egy ugyanilyen nevű fájl már létezik a Commonson; kérlek menj vissza és válassz egy másik nevet a fájlnak.
 [[Image:$1|thumb|center|$1]]',
 'successfulupload'            => 'Sikeresen felküldve',
-'fileuploaded'                => 'A(z) „$1” fájl felküldése sikeres volt. Kérlek, a ($2) linken add meg a fájl adatait és leírását, mint például honnan való, mikor és ki készítette, stb.',
 'uploadwarning'               => 'Felküldési figyelmeztetés',
 'savefile'                    => 'File mentése',
 'uploadedimage'               => '"[[$1]]" felküldve',
@@ -942,15 +937,11 @@ nem kíván másoktól leveleket kapni.',
 
 # Watchlist
 'watchlist'            => 'Figyelőlistám',
-'mywatchlist'            => 'Figyelőlistám',
+'mywatchlist'          => 'Figyelőlistám',
 'watchlistfor'         => "('''$1''' részére)",
 'nowatchlist'          => 'Nincs lap a figyelőlistádon.',
 'watchlistanontext'    => 'A figyelőlistád megtekintéséhez és szerkesztéséhez $1.',
 'watchlistcount'       => "'''$1 lap van a figyelőlistádon, beleértve a vitalapokat is.'''",
-'clearwatchlist'       => 'Figyelőlista törlése',
-'watchlistcleartext'   => 'Biztosan el akarod őket távolítani?',
-'watchlistclearbutton' => 'Figyelőlista törlése',
-'watchlistcleardone'   => 'A figyelőlistád törölve, $1 lap került eltávolításra.',
 'watchnologin'         => 'Nincs belépve',
 'watchnologintext'     => 'Ahhoz, hogy figyelőlistád lehessen, [[Special:Userlogin|be kell lépned]].',
 'addedwatch'           => 'Figyelőlistához hozzáfűzve',
@@ -969,16 +960,12 @@ oldalmenü „{{MediaWiki:unwatchthispage}}” pontjával (vagy a „{{MediaWiki
 'unwatchthispage'      => 'Figyelés vége',
 'notanarticle'         => 'Nem szócikk',
 'watchnochange'        => 'Egyik figyelt lap sem változott a megadott időintervallumon belül.',
-'watchdetails'         => '<strong>$1</strong> lap van a figyelőlistádon (a vitalapokon kívül). A listát [[Special:Watchlist/edit|itt szerkesztheted]] vagy [[Special:Watchlist/clear|törölhetsz róla mindent]].',
+'watchlist-details'    => '<strong>$1</strong> lap van a figyelőlistádon (a vitalapokon kívül).',
 'wlheader-enotif'      => '* Email értesítés engedélyezve.',
 'wlheader-showupdated' => "* Azok a lapok, amelyek megváltoztak, mióta utoljára megnézted őket, '''vastagon''' láthatóak.",
 'watchmethod-recent'   => 'a figyelt lapokon belüli legfrissebb szerkesztések',
 'watchmethod-list'     => 'a legfrissebb szerkesztésekben található figyelt lapok',
-'removechecked'        => 'A kijelölt lapok eltávolítása a figyelésből',
 'watchlistcontains'    => 'A figyelőlistád $1 lapot tartalmaz.',
-'watcheditlist'        => "Íme a figyelőlistádban található lapok betűrendes listája. Ha egyes lapokat el szeretnél távolítani, jelöld ki őket, és válaszd a 'Kijelöltek eltávolítása' gombot a lap alján.",
-'removingchecked'      => 'A kért lapok eltávolítása a figyelőlistáról...',
-'couldntremove'        => "'$1' nem távolítható el...",
 'iteminvalidname'      => "Probléma a '$1' elemmel: érvénytelen név...",
 'wlnote'               => 'Lentebb az utolsó <b>$2</b> óra $1 változtatása látható.',
 'wlshowlast'           => 'Az elmúlt $1 órában | $2 napon | $3 történt változtatások legyenek láthatóak',
@@ -989,7 +976,6 @@ oldalmenü „{{MediaWiki:unwatchthispage}}” pontjával (vagy a „{{MediaWiki
 'watchlist-hide-own'   => 'Saját szerkesztések elrejtése',
 'watchlist-show-minor' => 'Apró módosítások megjelenítése',
 'watchlist-hide-minor' => 'Apró módosítások elrejtése',
-'wldone'               => 'Kész.',
 
 # Displayed when you click the "watch" button and it's in the process of watching
 'watching'   => 'Figyelés...',
@@ -1027,15 +1013,10 @@ A részleteket a [[{{ns:project}}:Lapvédelmi irányelvek|zárt lapok irányelve
 'protectedarticle'            => 'levédte a(z) [[$1]] lapot',
 'unprotectedarticle'          => 'eltávolította a védelmet a(z) "[[$1]]" lapról',
 'protectsub'                  => '(„$1” levédése)',
-'confirmprotecttext'          => 'Tényleg le akarod védeni ezt a lapot?',
 'confirmprotect'              => 'Levédés megerősítése',
-'protectmoveonly'             => 'Csak átmozgatás elleni védelem',
 'protectcomment'              => 'A védelem oka',
 'protectexpiry'               => 'Időtartam',
 'unprotectsub'                => '(„$1” védelmének feloldása)',
-'confirmunprotecttext'        => 'Tényleg fel akarod oldani ezen lap védelmét?',
-'confirmunprotect'            => 'Védelemfeloldás megerősítése',
-'unprotectcomment'            => 'Védelem feloldásának oka',
 'protect-unchain'             => 'Átnevezési jogok állítása külön',
 'protect-text'                => 'Itt megtekintheted és módosíthatod a(z) [[$1]] lap védelmi szintjét. Légy szives, tartsd be a [[{{ns:project}}:Védett lapok|védett lapokkal kapcsolatos előírásokat]].',
 'protect-cascadeon'           => 'A lap le van védve, mert tartalmazzák az alábbi lapok, amelyeken be van kapcsolva a kaszkád védelem. Ezen lap védelmi szintjének a megváltoztatása a kaszkád védelemre nincs hatással.',
@@ -1073,7 +1054,7 @@ Lásd a [[Special:Log/delete|törlési naplót]] a legutóbbi törlések és hel
 # Contributions
 'contributions' => 'Szerkesztő közreműködései',
 'mycontris'     => 'Közreműködéseim',
-'contribsub2'    => '$1 ($2) cikkhez',
+'contribsub2'   => '$1 ($2) cikkhez',
 'nocontribs'    => 'Nem találtam a feltételnek megfelelő módosítást.',
 'ucnote'        => 'Lentebb <b>$1</b> módosításai láthatóak az elmúlt <b>$2</b> napban.',
 'uctop'         => ' (utolsó)',
@@ -1146,9 +1127,6 @@ IP-tartományok blokkolásával kapcsolatban lásd a range blocks szócikket. Bl
 # Move page
 'newtitle'                => 'Az új névre',
 'pagemovedsub'            => 'Átnevezés sikeres',
-'pagemovedtext'           => "A(z) „[[$1]]” lapot átneveztem a(z) „[[$2]]” névre.
-
-'''Kérlek, [[{{ns:Special}}:Whatlinkshere/$2|ellenőrizd]]''', hogy az átnevezés nem hozott-e létre [[{{ns:Special}}:DoubleRedirects|dupla átirányításokat]], és javítsd őket, ha szükséges.",
 'articleexists'           => 'Ilyen névvel már létezik lap, vagy az általad
 választott név érvénytelen.
 Kérlek, válassz egy másik nevet.
@@ -1279,7 +1257,7 @@ Közös (skinfüggetlen) css: [[MediaWiki:Common.css]]*/',
 'subcategorycount'       => 'Ebben a kategóriában $1 alkategória található.',
 'categoryarticlecount'   => 'A kategória lenti listájában $1 szócikk található.',
 'category-media-count'   => '{{PLURAL:$1|Egy fájl|$1 darab fájl}} található ebben a kategóriában.',
-'listingcontinuesabbrev' => ' folyt.',
+'listingcontinuesabbrev' => 'folyt.',
 
 # Math options
 'mw_math_png'    => 'Mindig készítsen PNG-t',
@@ -1346,7 +1324,6 @@ Közös (skinfüggetlen) css: [[MediaWiki:Common.css]]*/',
 # 'all' in various places, this might be different for inflected languages
 'recentchangesall' => 'összes',
 'imagelistall'     => 'összes',
-'watchlistall1'    => 'összes',
 'watchlistall2'    => 'bármikor',
 'namespacesall'    => 'Összes',
 
@@ -1372,9 +1349,6 @@ $3
 
 Ha ez *nem* te vagy, ne kattints a linkre. Ennek a megerősítésre szánt kódnak a felhasználhatósági ideje lejár: $4.',
 
-# Inputbox extension, may be useful in other contexts as well
-'searchfulltext' => 'Teljes szöveg keresése',
-
 # HTML dump
 'redirectingto' => 'Átirányítás a következőre: [[:$1|$1]]...',
 
@@ -1391,4 +1365,4 @@ Ha ez *nem* te vagy, ne kattints a linkre. Ennek a megerősítésre szánt kódn
 
 );
 
-?>
+

@@ -40,12 +40,10 @@ class SearchEngine {
 	 * If an exact title match can be find, or a very slightly close match,
 	 * return the title. If no match, returns NULL.
 	 *
-	 * @static
 	 * @param string $term
 	 * @return Title
-	 * @private
 	 */
-	function getNearMatch( $searchterm ) {
+	public static function getNearMatch( $searchterm ) {
 		global $wgContLang;
 
 		$allSearchTerms = array($searchterm);
@@ -124,8 +122,8 @@ class SearchEngine {
 		# There may have been a funny upload, or it may be on a shared
 		# file repository such as Wikimedia Commons.
 		if( $title->getNamespace() == NS_IMAGE ) {
-			$image = new Image( $title );
-			if( $image->exists() ) {
+			$image = wfFindFile( $title );
+			if( $image ) {
 				return $title;
 			}
 		}
@@ -176,9 +174,8 @@ class SearchEngine {
 	/**
 	 * Make a list of searchable namespaces and their canonical names.
 	 * @return array
-	 * @access public
 	 */
-	function searchableNamespaces() {
+	public static function searchableNamespaces() {
 		global $wgContLang;
 		$arr = array();
 		foreach( $wgContLang->getNamespaces() as $ns => $name ) {
@@ -325,6 +322,14 @@ class SearchResultSet {
 	function next() {
 		return false;
 	}
+	
+	/**
+	 * Frees the result set, if applicable.
+	 * @ access public
+	 */
+	function free() {
+		// ...
+	}
 }
 
 
@@ -366,4 +371,4 @@ class SearchEngineDummy {
 	function searchtitle() {}
 	function searchtext() {}
 }
-?>
+

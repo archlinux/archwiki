@@ -170,8 +170,8 @@ li#ca-watch {
 	margin-right: 13.6em;
 	border-left: 0;
 	border-right: 1px solid #fabd23;
-} 
-* html #column-content { 
+}
+* html #column-content {
 	float: none;
 	margin-left: 0;
 	margin-right: 0;
@@ -218,4 +218,12 @@ input#wpSave, input#wpDiff {
 /* Unblock and Ipblocklist links of Special:Blockip */
 p.mw-ipb-conveniencelinks {
 	float: left;
+}
+
+.toggle {
+	margin-left: 0em;
+	margin-right: 2em;
+}
+table.filehistory th {
+	text-align: right;
 }

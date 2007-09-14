@@ -5,7 +5,7 @@
  *
  * API for MediaWiki 1.8+
  *
- * Copyright (C) 2006 Yuri Astrakhan <FirstnameLastname@gmail.com>
+ * Copyright (C) 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,16 @@
  */
 
 /**
- * @todo Document - e.g. Provide top-level description of this class.
+ * This abstract class implements many basic API functions, and is the base of all API classes.
+ * The class functions are divided into several areas of functionality:
+ * 
+ * Module parameters: Derived classes can define getAllowedParams() to specify which parameters to expect,
+ * 	how to parse and validate them.
+ * 
+ * Profiling: various methods to allow keeping tabs on various tasks and their time costs
+ * 
+ * Self-documentation: code to allow api to document its own state.
+ * 
  * @addtogroup API
  */
 abstract class ApiBase {
@@ -34,24 +43,24 @@ abstract class ApiBase {
 	const PARAM_DFLT = 0;
 	const PARAM_ISMULTI = 1;
 	const PARAM_TYPE = 2;
-	const PARAM_MAX1 = 3;
+	const PARAM_MAX = 3;
 	const PARAM_MAX2 = 4;
 	const PARAM_MIN = 5;
 
-	const LIMIT_BIG1 = 500; // Fast query, user's limit
-	const LIMIT_BIG2 = 5000; // Fast query, bot's limit
-	const LIMIT_SML1 = 50; // Slow query, user's limit
-	const LIMIT_SML2 = 500; // Slow query, bot's limit
+	const LIMIT_BIG1 = 500; // Fast query, std user limit
+	const LIMIT_BIG2 = 5000; // Fast query, bot/sysop limit
+	const LIMIT_SML1 = 50; // Slow query, std user limit
+	const LIMIT_SML2 = 500; // Slow query, bot/sysop limit
 
-	private $mMainModule, $mModuleName, $mParamPrefix;
+	private $mMainModule, $mModuleName, $mModulePrefix;
 
 	/**
 	* Constructor
 	*/
-	public function __construct($mainModule, $moduleName, $paramPrefix = '') {
+	public function __construct($mainModule, $moduleName, $modulePrefix = '') {
 		$this->mMainModule = $mainModule;
 		$this->mModuleName = $moduleName;
-		$this->mParamPrefix = $paramPrefix;
+		$this->mModulePrefix = $modulePrefix;
 	}
 
 	/**
@@ -65,6 +74,13 @@ abstract class ApiBase {
 	public function getModuleName() {
 		return $this->mModuleName;
 	}
+
+	/**
+	 * Get parameter prefix (usually two letters or an empty string). 
+	 */
+	public function getModulePrefix() {
+		return $this->mModulePrefix;
+	}	
 
 	/**
 	 * Get the name of the module as shown in the profiler log 
@@ -106,6 +122,15 @@ abstract class ApiBase {
 	 */
 	public function & getResultData() {
 		return $this->getResult()->getData();
+	}
+
+	/**
+	 * Set warning section for this module. Users should monitor this section to notice any changes in API.
+	 */
+	public function setWarning($warning) {
+		$msg = array();
+		ApiResult :: setContent($msg, $warning);
+		$this->getResult()->addValue('warnings', $this->getModuleName(), $msg);
 	}
 
 	/**
@@ -191,11 +216,38 @@ abstract class ApiBase {
 						$prompt = 'One value: ';
 
 					if (is_array($type)) {
-						$desc .= $paramPrefix . $prompt . implode(', ', $type);
-					}
-					elseif ($type == 'namespace') {
-						// Special handling because namespaces are type-limited, yet they are not given
-						$desc .= $paramPrefix . $prompt . implode(', ', ApiBase :: getValidNamespaces());
+						$choices = array();
+						$nothingPrompt = false;
+						foreach ($type as $t)
+							if ($t=='')
+								$nothingPrompt = 'Can be empty, or ';
+							else
+								$choices[] =  $t;
+						$desc .= $paramPrefix . $nothingPrompt . $prompt . implode(', ', $choices);
+					} else {
+						switch ($type) {
+							case 'namespace':
+								// Special handling because namespaces are type-limited, yet they are not given
+								$desc .= $paramPrefix . $prompt . implode(', ', ApiBase :: getValidNamespaces());
+								break;
+							case 'limit':
+								$desc .= $paramPrefix . "No more than {$paramSettings[self :: PARAM_MAX]} ({$paramSettings[self :: PARAM_MAX2]} for bots) allowed.";
+								break;
+							case 'integer':
+								$hasMin = isset($paramSettings[self :: PARAM_MIN]);
+								$hasMax = isset($paramSettings[self :: PARAM_MAX]);
+								if ($hasMin || $hasMax) {
+									if (!$hasMax)
+										$intRangeStr = "The value must be no less than {$paramSettings[self :: PARAM_MIN]}";
+									elseif (!$hasMin)
+										$intRangeStr = "The value must be no more than {$paramSettings[self :: PARAM_MAX]}";
+									else
+										$intRangeStr = "The value must be between {$paramSettings[self :: PARAM_MIN]} and {$paramSettings[self :: PARAM_MAX]}";
+										
+									$desc .= $paramPrefix . $intRangeStr;
+								}
+								break;
+						}
 					}
 				}
 
@@ -244,7 +296,7 @@ abstract class ApiBase {
 	 * Override this method to change parameter name during runtime 
 	 */
 	public function encodeParamName($paramName) {
-		return $this->mParamPrefix . $paramName;
+		return $this->mModulePrefix . $paramName;
 	}
 
 	/**
@@ -293,7 +345,7 @@ abstract class ApiBase {
 	protected function getParameterFromSettings($paramName, $paramSettings) {
 
 		// Some classes may decide to change parameter names
-		$paramName = $this->encodeParamName($paramName);
+		$encParamName = $this->encodeParamName($paramName);
 
 		if (!is_array($paramSettings)) {
 			$default = $paramSettings;
@@ -316,19 +368,19 @@ abstract class ApiBase {
 		if ($type == 'boolean') {
 			if (isset ($default) && $default !== false) {
 				// Having a default value of anything other than 'false' is pointless
-				ApiBase :: dieDebug(__METHOD__, "Boolean param $paramName's default is set to '$default'");
+				ApiBase :: dieDebug(__METHOD__, "Boolean param $encParamName's default is set to '$default'");
 			}
 
-			$value = $this->getMain()->getRequest()->getCheck($paramName);
+			$value = $this->getMain()->getRequest()->getCheck($encParamName);
 		} else {
-			$value = $this->getMain()->getRequest()->getVal($paramName, $default);
+			$value = $this->getMain()->getRequest()->getVal($encParamName, $default);
 
 			if (isset ($value) && $type == 'namespace')
 				$type = ApiBase :: getValidNamespaces();
 		}
 
 		if (isset ($value) && ($multi || is_array($type)))
-			$value = $this->parseMultiValue($paramName, $value, $multi, is_array($type) ? $type : null);
+			$value = $this->parseMultiValue($encParamName, $value, $multi, is_array($type) ? $type : null);
 
 		// More validation only when choices were not given
 		// choices were validated in parseMultiValue()
@@ -339,32 +391,48 @@ abstract class ApiBase {
 						break;
 					case 'string' : // nothing to do
 						break;
-					case 'integer' : // Force everything using intval()
+					case 'integer' : // Force everything using intval() and optionally validate limits
+
 						$value = is_array($value) ? array_map('intval', $value) : intval($value);
+						$min = isset ($paramSettings[self :: PARAM_MIN]) ? $paramSettings[self :: PARAM_MIN] : null;
+						$max = isset ($paramSettings[self :: PARAM_MAX]) ? $paramSettings[self :: PARAM_MAX] : null;
+						
+						if (!is_null($min) || !is_null($max)) {
+							$values = is_array($value) ? $value : array($value);
+							foreach ($values as $v) {
+								$this->validateLimit($paramName, $v, $min, $max);
+							}
+						}
 						break;
 					case 'limit' :
-						if (!isset ($paramSettings[self :: PARAM_MAX1]) || !isset ($paramSettings[self :: PARAM_MAX2]))
-							ApiBase :: dieDebug(__METHOD__, "MAX1 or MAX2 are not defined for the limit $paramName");
+						if (!isset ($paramSettings[self :: PARAM_MAX]) || !isset ($paramSettings[self :: PARAM_MAX2]))
+							ApiBase :: dieDebug(__METHOD__, "MAX1 or MAX2 are not defined for the limit $encParamName");
 						if ($multi)
-							ApiBase :: dieDebug(__METHOD__, "Multi-values not supported for $paramName");
+							ApiBase :: dieDebug(__METHOD__, "Multi-values not supported for $encParamName");
 						$min = isset ($paramSettings[self :: PARAM_MIN]) ? $paramSettings[self :: PARAM_MIN] : 0;
 						$value = intval($value);
-						$this->validateLimit($paramName, $value, $min, $paramSettings[self :: PARAM_MAX1], $paramSettings[self :: PARAM_MAX2]);
+						$this->validateLimit($paramName, $value, $min, $paramSettings[self :: PARAM_MAX], $paramSettings[self :: PARAM_MAX2]);
 						break;
 					case 'boolean' :
 						if ($multi)
-							ApiBase :: dieDebug(__METHOD__, "Multi-values not supported for $paramName");
+							ApiBase :: dieDebug(__METHOD__, "Multi-values not supported for $encParamName");
 						break;
 					case 'timestamp' :
 						if ($multi)
-							ApiBase :: dieDebug(__METHOD__, "Multi-values not supported for $paramName");
+							ApiBase :: dieDebug(__METHOD__, "Multi-values not supported for $encParamName");
 						$value = wfTimestamp(TS_UNIX, $value);
 						if ($value === 0)
-							$this->dieUsage("Invalid value '$value' for timestamp parameter $paramName", "badtimestamp_{$paramName}");
+							$this->dieUsage("Invalid value '$value' for timestamp parameter $encParamName", "badtimestamp_{$encParamName}");
 						$value = wfTimestamp(TS_MW, $value);
 						break;
+					case 'user' :
+						$title = Title::makeTitleSafe( NS_USER, $value );
+						if ( is_null( $title ) )
+							$this->dieUsage("Invalid value for user parameter $encParamName", "baduser_{$encParamName}");
+						$value = $title->getText();
+						break;
 					default :
-						ApiBase :: dieDebug(__METHOD__, "Param $paramName's type is unknown - $type");
+						ApiBase :: dieDebug(__METHOD__, "Param $encParamName's type is unknown - $type");
 				}
 			}
 
@@ -405,18 +473,25 @@ abstract class ApiBase {
 	/**
 	* Validate the value against the minimum and user/bot maximum limits. Prints usage info on failure.
 	*/
-	function validateLimit($varname, $value, $min, $max, $botMax) {
-		if ($value < $min) {
-			$this->dieUsage("$varname may not be less than $min (set to $value)", $varname);
+	function validateLimit($paramName, $value, $min, $max, $botMax = null) {
+		if (!is_null($min) && $value < $min) {
+			$this->dieUsage($this->encodeParamName($paramName) . " may not be less than $min (set to $value)", $paramName);
 		}
 
-		if ($this->getMain()->isBot()) {
-			if ($value > $botMax) {
-				$this->dieUsage("$varname may not be over $botMax (set to $value) for bots", $varname);
+		// Minimum is always validated, whereas maximum is checked only if not running in internal call mode
+		if ($this->getMain()->isInternalMode())
+			return;
+
+		// Optimization: do not check user's bot status unless really needed -- skips db query
+		// assumes $botMax >= $max
+		if (!is_null($max) && $value > $max) {
+			if (!is_null($botMax) && ($this->getMain()->isBot() || $this->getMain()->isSysop())) {
+				if ($value > $botMax) {
+					$this->dieUsage($this->encodeParamName($paramName) . " may not be over $botMax (set to $value) for bots or sysops", $paramName);
+				}
+			} else {
+				$this->dieUsage($this->encodeParamName($paramName) . " may not be over $max (set to $value) for users", $paramName);
 			}
-		}
-		elseif ($value > $max) {
-			$this->dieUsage("$varname may not be over $max (set to $value) for users", $varname);
 		}
 	}
 
@@ -526,11 +601,19 @@ abstract class ApiBase {
 			ApiBase :: dieDebug(__METHOD__, 'called without calling profileDBOut() first');
 		return $this->mDBTime;
 	}
+	
+	public static function debugPrint($value, $name = 'unknown', $backtrace = false) {
+		print "\n\n<pre><b>Debuging value '$name':</b>\n\n";
+		var_export($value);
+		if ($backtrace)
+			print "\n" . wfBacktrace();
+		print "\n</pre>\n";
+	}
 
 	public abstract function getVersion();
 
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiBase.php 21402 2007-04-20 08:55:14Z nickj $';
+		return __CLASS__ . ': $Id: ApiBase.php 24934 2007-08-20 08:04:12Z nickj $';
 	}
 }
-?>
+

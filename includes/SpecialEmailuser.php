@@ -45,6 +45,13 @@ function wfSpecialEmailuser( $par ) {
 		return;
 	}
 
+	if ( $wgUser->isBlockedFromEmailUser() ) {
+		// User has been blocked from sending e-mail. Show the std blocked form.
+		wfDebug( "User is blocked from sending e-mail.\n" );
+		$wgOut->blockedPage();
+		return;
+	}
+
 	$f = new EmailUserForm( $nu );
 
 	if ( "success" == $action ) {
@@ -108,7 +115,7 @@ class EmailUserForm {
 		$titleObj = SpecialPage::getTitleFor( "Emailuser" );
 		$action = $titleObj->escapeLocalURL( "target=" .
 			urlencode( $this->target->getName() ) . "&action=submit" );
-		$token = $wgUser->editToken();
+		$token = htmlspecialchars( $wgUser->editToken() );
 
 		$wgOut->addHTML( "
 <form id=\"emailuser\" method=\"post\" action=\"{$action}\">
@@ -185,4 +192,4 @@ class EmailUserForm {
 		$wgOut->returnToMain( false, $user->getUserPage() );
 	}
 }
-?>
+

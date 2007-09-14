@@ -37,7 +37,31 @@ $namespaceNames = array(
 	NS_CATEGORY_TALK  => 'Pogovor_o_kategoriji'
 );
 
-$datePreferences = false;
+$datePreferences = array(
+	'default',
+	'dmy short',
+	'dmy full',
+	'ISO 8601',
+);
+
+/**
+ * The date format to use for generated dates in the user interface.
+ * This may be one of the above date preferences, or the special value
+ * "dmy or mdy", which uses mdy if $wgAmericanDates is true, and dmy
+ * if $wgAmericanDates is false.
+ */
+$defaultDateFormat = 'dmy full';
+
+$dateFormats = array(
+	'dmy short time' => 'H:i',
+	'dmy short date' => 'j. F Y',
+	'dmy short both' => 'H:i, j. M Y',
+
+	'dmy full time' => 'H:i',
+	'dmy full date' => 'j. F Y',
+	'dmy full both' => 'H:i, j. F Y',
+);
+
 $fallback8bitEncoding = "iso-8859-2";
 $separatorTransformTable = array(',' => '.', '.' => ',' );
 
@@ -273,7 +297,7 @@ in [http://meta.wikimedia.org/wiki/MediaWiki_User%27s_Guide Uporabniški priroč
 # General errors
 'error'                => 'Napaka',
 'databaseerror'        => 'Napaka zbirke podatkov',
-'dberrortext'          => 'Iskanje ali drugo želeno dejanje je verjetno zahtevalo preveč časa. Mogoči razlogi so: <ul> <li>Iskanje z vsemi besedami v narekovajih. Poskusite najprej iskati brez njih. Kadar to ni zadosti, vpišite še nekaj iskalnih pojmov ali dodajte besedo ali dve zunaj narekovajev, s čimer boste označili splošno predmetno področje. <li>Zelo obsežen spisek nadzorov (verjetno čez 10.000 strani) ob obremenjenih strežnikih. <li>Morda ste poskušali dejanje izvesti ob začasni izredni obremenitvi strežnikov. Ob izrednih obremenitvah lahko pride do nenadnega končanja številnih pomembnih opravil, da se dosežejo običajni odzivni časi. Če se zahtevano dejanje sicer izvede brez težav, poskusite znova v nekaj minutah. </ul> <p>Splošno sporočilo o napaki je: <p> Prišlo je do napake zbirke podatkov. Vzrok bi lahko bil nesprejemljiv iskalni niz (glejte $5) ali programski hrošč. Zadnje poskušano iskanje: <blockquote><tt>$1</tt></blockquote> znotraj funkcije »<tt>$2</tt>«. MySQL je vrnil napako »<tt>$3: $4</tt>«. <p>Če je zgornja napaka 2013, je vaš postopek končal upravljavec podatkovnega bremena. Prosimo, poskusite z ustreznejšim iskanjem ali iskanje ponovite ob manj obremenjenih strežnikih. Opravičujemo se za nevšečnosti.</p>',
+'dberrortext'          => 'Iskanje ali drugo želeno dejanje je verjetno zahtevalo preveč časa. Mogoči razlogi so: <ul> <li>Iskanje z vsemi besedami v narekovajih. Poskusite najprej iskati brez njih. Kadar to ni zadosti, vpišite še nekaj iskalnih pojmov ali dodajte besedo ali dve zunaj narekovajev, s čimer boste označili splošno predmetno področje. <li>Zelo obsežen spisek nadzorov (verjetno čez 10.000 strani) ob obremenjenih strežnikih. <li>Morda ste poskušali dejanje izvesti ob začasni izredni obremenitvi strežnikov. Ob izrednih obremenitvah lahko pride do nenadnega končanja številnih pomembnih opravil, da se dosežejo običajni odzivni časi. Če se zahtevano dejanje sicer izvede brez težav, poskusite znova v nekaj minutah. </ul> <p>Splošno sporočilo o napaki je:</p> <p> Prišlo je do napake zbirke podatkov. Vzrok bi lahko bil nesprejemljiv iskalni niz (glejte $5) ali programski hrošč. Zadnje poskušano iskanje:</p> <blockquote><tt>$1</tt></blockquote> znotraj funkcije »<tt>$2</tt>«. MySQL je vrnil napako »<tt>$3: $4</tt>«. <p>Če je zgornja napaka 2013, je vaš postopek končal upravljavec podatkovnega bremena. Prosimo, poskusite z ustreznejšim iskanjem ali iskanje ponovite ob manj obremenjenih strežnikih. Opravičujemo se za nevšečnosti.</p>',
 'dberrortextcl'        => 'Pri iskanju v zbirki podatkov je prišlo do skladenjske napake. Zadnje iskanje v zbirki podatkov: »$1« iz funkcije »$2«. MySQL je vrnil napako »$3: $4«.',
 'noconnect'            => 'S PB na $1 se ne morem povezati.',
 'nodb'                 => "Zbirke podatkov '$1' ne morem izbrati",
@@ -304,7 +328,6 @@ Kadar to ni tako, ste morda odkrili hrošč v programju. Prosimo, obvestite kate
 'badtitle'             => 'Nepravilen naslov',
 'badtitletext'         => 'Navedeni naslov strani je neveljaven, prazen, napačno povezan k drugim jezikom oziroma wikiprojektom ali pa vsebuje [[Project:Dogovori o poimenovanjih#Previdno s posebnimi znaki|nepodprte znake]].',
 'perfdisabled'         => 'Naveden je shranjeni prepis $1:',
-'perfdisabledsub'      => 'Naveden je shranjeni prepis $1:', # obsolete?
 'perfcached'           => 'Navedeni podatki morda niso popolnoma posodobljeni.',
 'perfcachedts'         => 'Prikazani podatki so shranjeni v predpomnilniku. Čas zadnje osvežitve: $1.',
 'wrong_wfQuery_params' => 'Nepravilni parametri za wfQuery()<br />
@@ -354,7 +377,6 @@ Ustvarili ste račun. Če želite, si lahko prilagodite [[Special:Preferences|na
 'yournick'                   => 'Podpis (uporabite ~~~~):',
 'badsig'                     => 'Neveljaven surovi podpis; preverite oznake HTML.',
 'email'                      => 'E-pošta',
-'prefs-help-email-enotif'    => 'Če ste tako izbrali, se naslov uporablja tudi za pošiljanje sporočil o spremembah.',
 'prefs-help-realname'        => '<!-- ¹ Pravo ime (neobvezno): če se odločite, da ga boste navedli, bo uporabljeno za priznavanje vašega dela. -->',
 'loginerror'                 => 'Napaka ob prijavi',
 'prefs-help-email'           => '<nowiki>*</nowiki>E-pošta (neobvezno): Vpisan e-poštni naslov omogoča drugim, da vam lahko pošiljajo elektronsko pošto brez razkritja vaše istovetnosti.',
@@ -640,7 +662,6 @@ $2 Seznam se preusmerja   Iskanje za $3 $9',
 'resultsperpage'           => 'Prikazanih zadetkov na stran:',
 'contextlines'             => 'Vrstic na zadetek:',
 'contextchars'             => 'Znakov na vrstico:',
-'stubthreshold'            => 'Prag za prikaz škrbin:',
 'recentchangescount'       => 'Število naslovov v zadnjih spremembah:',
 'savedprefs'               => 'Spremembe ste uspešno shranili!',
 'timezonelegend'           => 'Časovni pas',
@@ -739,7 +760,6 @@ ali za neposredno povezavo z datoteko
 'uploadedfiles'               => 'Naložene datoteke',
 'ignorewarning'               => 'Naloži kljub opozorilu',
 'ignorewarnings'              => 'Prezri vsa opozorila',
-'minlength'                   => 'Imena datotek morajo vsebovati vsaj tri črke.',
 'illegalfilename'             => 'Ime datoteke »$1« vsebuje v naslovih strani prepovedane znake. Prosimo, poskusite datoteko naložiti pod drugim imenom.',
 'badfilename'                 => 'Ime datoteke se je samodejno popravilo v »$1«.',
 'largefileserver'             => 'Velikost datoteke presega strežnikove nastavitve.',
@@ -749,8 +769,6 @@ ali za neposredno povezavo z datoteko
 'fileexists-shared-forbidden' => 'Datoteka s tem imenom že obstaja v skupnem repozitoriju datotek. Prosimo, vrnite se in naložite svojo datoteko pod drugim imenom. 
 [[Image:$1|thumb|center|$1]]',
 'successfulupload'            => 'Datoteko ste uspešno naložili',
-'fileuploaded'                => 'Datoteka »$1« se je uspešno naložila.
-Prosimo, sledite povezavi »$2« na opisno stran datoteke in nanjo dodajte naslednje podatke: opis , vir oziroma imetnika avtorskih pravic in licenco datoteke. Če gre za sliko, jo lahko vstavite z naslednjo skladnjo:<br /><nowiki>[[</nowiki>{{ns:Image}}:$1|thumb|Opis<nowiki>]]</nowiki>',
 'uploadwarning'               => 'Opozorilo!',
 'savefile'                    => 'Shrani datoteko',
 'uploadedimage'               => '- naložena datoteka »[[$1]]«',
@@ -927,13 +945,9 @@ Vsaka vrstica vsebuje povezave k prvi in drugi preusmeritvi ter prvo vrstico bes
 
 # Watchlist
 'watchlist'            => 'Spisek nadzorov',
-'mywatchlist'            => 'Spisek nadzorov',
+'mywatchlist'          => 'Spisek nadzorov',
 'nowatchlist'          => 'Vaš spisek nadzorov je prazen.',
 'watchlistcount'       => "'''Na spisku nadzorov imate, vštevši pogovorne strani, $1 {{plural:$1|predmet|predmeta|predmete|predmetov|predmetov}}.'''",
-'clearwatchlist'       => 'Izprazni spisek nadzorov',
-'watchlistcleartext'   => 'Jih resnično želite odstraniti?',
-'watchlistclearbutton' => 'Izprazni spisek nadzorov',
-'watchlistcleardone'   => 'Spisek nadzorov je izpraznjen. Odstranjenih je bilo $1 predmetov.',
 'watchnologin'         => 'Niste prijavljeni',
 'watchnologintext'     => 'Za urejanje spiska nadzorov se [[Special:Userlogin|prijavite]].',
 'addedwatch'           => 'Dodano na spisek nadzorov',
@@ -946,24 +960,16 @@ Vsaka vrstica vsebuje povezave k prvi in drugi preusmeritvi ter prvo vrstico bes
 'unwatchthispage'      => 'Prenehaj opazovati stran',
 'notanarticle'         => 'Ni članek',
 'watchnochange'        => 'V prikazanem časovnem obdobju se ni spremenila nobena med nadzorovanimi stranmi.',
-'watchdetails'         => 'Spremljate <strong>$1</strong> (pogovorne strani niso vštete). Svoj spisek nadzorov lahko [[Special:Watchlist/edit|pregledate in uredite]] ali pa z njega [[Special:Watchlist/clear|odstranite vse predmete]].',
+'watchlist-details'    => 'Spremljate <strong>$1</strong> (pogovorne strani niso vštete).',
 'wlheader-enotif'      => '* Obveščanje po elektronski pošti je omogočeno.',
 'wlheader-showupdated' => "* Od vašega zadnjega ogleda spremenjene strani so prikazanje '''krepko'''.",
 'watchmethod-recent'   => 'med nedavnimi urejanji iščem spremljane strani',
 'watchmethod-list'     => 'med spremljanimi stranmi iščem nedavna urejanja',
-'removechecked'        => 'Odstrani označene strani s spiska nadzorov',
 'watchlistcontains'    => 'Spremljate $1 {{plural:$1|stran|strani|strani|strani|strani}}.',
-'watcheditlist'        => "Na naslednjem seznamu so po abecedi navedene strani na vašem spisku nadzorov. Če želite katero odstraniti, jo označite in kliknite gumb ''Odstrani označene strani s spiska nadzorov'' na dnu strani. Odstranitev strani pomeni tudi odstranitev njene pogovorne strani in obratno. Če je na seznamu katera izmed povezav rdeča, je bila stran izbrisana, vendar jo lahko še vedno spremljate.",
-'removingchecked'      => 'Odstranjevanje označenih strani s spiska nadzorov ...',
-'couldntremove'        => "'$1' ste s svojega spiska nadzorov že odstranili.
-
-Ste osvežili to stran? Če je tako, lahko svoj spisek nadzorov varno osvežite s klikom povezave »spisek nadzorov« na vrhu zaslona.
-<br />",
 'iteminvalidname'      => "Težava z izbiro '$1', neveljavno ime ...",
 'wlnote'               => 'Navedenih je {{plural:$1|zadnja|zadnji|zadnje|zadnjih|zadnjih}} $1 {{plural:$1|sprememba|spremembi|spremembe|sprememb}} v {{plural:$2|zadnji|zadnjih|zadnjih|zadnjih|zadnjih}} <b>$2</b> {{plural:$2|uri|urah|urah|urah|urah}}.',
 'wlshowlast'           => 'Prikaži zadnjih $1 ur; $2 dni; $3;',
 'wlsaved'              => 'To je shranjena različica vašega spiska nadzorov. Da je obremenitev strežnikov čim manjša, se spisek nadzorov osveži enkrat na dan.',
-'wldone'               => 'Končano.',
 
 'enotif_mailer'      => '{{SITENAME}} - obvestilni poštar',
 'enotif_reset'       => 'Označi vse strani kot prebrane',
@@ -1035,14 +1041,9 @@ Zadnja sprememba od uporabnika [[User:$3|$3]] ([[User talk:$3|Pogovor]]).',
 'protectedarticle'            => 'Zaščita strani "[[$1]]"',
 'unprotectedarticle'          => 'Zaščita strani $1 je odstranjena.',
 'protectsub'                  => '(Zaščita strani »$1«)',
-'confirmprotecttext'          => "Ali stran res želite '''zaščititi'''?",
 'confirmprotect'              => 'Potrdite zaščito',
-'protectmoveonly'             => 'Zaščiti LE PRED PREMIKANJEM',
 'protectcomment'              => 'Razlog:',
 'unprotectsub'                => '(Odstranjujem zaščito strani »$1«)',
-'confirmunprotecttext'        => "Ali res želite '''odstraniti''' zaščito strani?",
-'confirmunprotect'            => 'Potrdite odstranitev zaščite',
-'unprotectcomment'            => 'Razlog za odstranitev zaščite',
 'protect-unchain'             => 'Deblokiraj dovoljenja za premikanje',
 'protect-text'                => "Tu si lahko ogledate in spremenite raven zaščitenosti strani '''$1'''.",
 'protect-default'             => 'Omogoči urejanje vsem uporabnikom',
@@ -1084,7 +1085,7 @@ Nedavna brisanja in obnove so zapisani v [[Special:Log/delete|dnevniku brisanja]
 # Contributions
 'contributions' => 'Uporabnikovi prispevki',
 'mycontris'     => 'Prispevki',
-'contribsub2'    => 'Uporabnik: $1 ($2)',
+'contribsub2'   => 'Uporabnik: $1 ($2)',
 'nocontribs'    => 'Ne najdem nobene merilom ustrezajoče spremembe.',
 'ucnote'        => 'Prikazujem {{plural:$1|zadnje|zadnji|zadnje|zadnjih|zadnjih}} <strong>$1</strong> uporabnikovih {{plural:$1|urejanj|urejanji|urejanja|urejanj|urejanj}} v {{plural:$2|zadnjem|zadnjih|zadnjih|zadnjih|zadnjih}} <strong>$2</strong> {{plural:$2|dnevu|dneh|dneh|dneh|dneh}}.',
 'uclinks'       => 'Prikaži {{plural:$1|zadnjo|zadnji|zadnje|zadnjih}} $1 {{plural:spremembo|spremembi|spremembe|sprememb|sprememb}}; prikaži {{plural:$2|zadnji|zadnja|zadnje|zadnjih|zadnjih}} $2 {{plural:$2|dan|dni|dni|dni|dni}}.',
@@ -1117,7 +1118,7 @@ Nedavna brisanja in obnove so zapisani v [[Special:Log/delete|dnevniku brisanja]
 'ipbreason'                   => 'Razlog',
 'ipbsubmit'                   => 'Blokiraj naslov',
 'ipbother'                    => 'Drugačen čas',
-'ipboptions'                  => 'nedoločen čas:indefinite,15 minut:15 minutes,1 uro:1 hour,3 ure:3 hours,1 dan:1 day,2 dni:2 days,3 dni:3 days,1 teden:1 week,2 tedna:2 weeks,1 mesec:1 month,3 mesece:3 months,6 mesecev:6 months,1 leto:1 year,neomejeno dolgo:infinite',
+'ipboptions'                  => 'nedoločen čas:infinite,15 minut:15 minutes,1 uro:1 hour,3 ure:3 hours,1 dan:1 day,2 dni:2 days,3 dni:3 days,1 teden:1 week,2 tedna:2 weeks,1 mesec:1 month,3 mesece:3 months,6 mesecev:6 months,1 leto:1 year,neomejeno dolgo:infinite',
 'ipbotheroption'              => 'drugo',
 'badipaddress'                => 'Neveljaven IP-naslov ali uporabniško ime.',
 'blockipsuccesssub'           => 'Blokiranje je uspelo',
@@ -1135,7 +1136,6 @@ Ne pozabite blokiranemu uporabniku na njegovi [[User talk:$1|pogovorni strani]] 
 'blocklistline'               => '$1, $2 je blokiral(-a) $3 ($4)',
 'infiniteblock'               => 'neomejen čas',
 'expiringblock'               => 'preteče: $1',
-'ipblocklistempty'            => 'Seznam blokiranih uporabnikov je prazen.',
 'blocklink'                   => 'blokiraj',
 'unblocklink'                 => 'deblokiraj',
 'contribslink'                => 'prispevki',
@@ -1150,8 +1150,8 @@ Ne pozabite blokiranemu uporabniku na njegovi [[User talk:$1|pogovorni strani]] 
 'proxyblocker'                => 'Blokator posredniških strežnikov',
 'proxyblockreason'            => 'Ker uporabljate odprti posredniški strežnik, je urejanje z vašega IP-naslova preprečeno. Gre za resno varnostno težavo, o kateri obvestite svojega internetnega ponudnika.',
 'proxyblocksuccess'           => 'Storjeno.',
-'sorbsreason'                 => 'Vaš IP-naslov je v [http://www.sorbs.net SORBS] DNSBL uvrščen med odprte posredniške strežnike.',
-'sorbs_create_account_reason' => 'Vaš IP-naslov je v [http://www.sorbs.net SORBS] DNSBL naveden kot odprti posredniški strežnik. Računa zato žal ne morete ustvariti.',
+'sorbsreason'                 => 'Vaš IP-naslov je v DNSBL uvrščen med odprte posredniške strežnike.',
+'sorbs_create_account_reason' => 'Vaš IP-naslov je v DNSBL naveden kot odprti posredniški strežnik. Računa zato žal ne morete ustvariti.',
 
 # Developer tools
 'lockdb'              => 'Zakleni zbirko podatkov',
@@ -1191,7 +1191,6 @@ Prestavitev strani je lahko za priljubljeno stran velika in nepričakovana sprem
 'newtitle'                => 'Na naslov',
 'movepagebtn'             => 'Prestavi stran',
 'pagemovedsub'            => 'Uspešno prestavljeno',
-'pagemovedtext'           => 'Stran »[[$1]]« ste prestavili na naslov »[[$2]]«.',
 'articleexists'           => "'''Stran ni bilo mogoče prestaviti!''' Izbrano ime je že zasedeno ali pa ni veljavno. Prosimo, izberite drugo ime ali za pomoč prosite katerega izmed [[{{MediaWiki:grouppage-sysop}}|administratorjev]].",
 'talkexists'              => 'Sama stran je bila uspešno prestavljena, pripadajoča pogovorna stran pa ne, ker že obstaja na novem naslovu. Prosimo, združite ju ročno. Če tega ne morete storiti, prosite za pomoč katerega izmed [[{{MediaWiki:grouppage-sysop}}|administratorjev]], nikakor pa tega NE počnite z izrezanjem in prilepljenjem vsebine.',
 'movedto'                 => 'prestavljeno na',
@@ -1336,7 +1335,7 @@ Da boste stran lahko shranili, boste morali odstraniti vse na črni listi navede
 'spamprotectionmatch'    => 'Naslednje besedilo je sprožilo naš filter neželenih sporočil: $1',
 'subcategorycount'       => 'Kategorija {{plural:$1|ima|ima|ima|ima|nima}} $1 {{plural:$1|podkategorijo|podkategoriji|podkategorije|podkategorij|podkategorij}}.',
 'categoryarticlecount'   => 'V tem delu kategorije {{plural:$1|je|sta|so|je|ni}} $1 {{plural:$1|stran|strani|strani|strani|strani}}.',
-'listingcontinuesabbrev' => ' nadalj.',
+'listingcontinuesabbrev' => 'nadalj.',
 'spambot_username'       => 'MediaWiki čiščenje navlake',
 'spam_reverting'         => 'Vračanje na zadnjo redakcijo brez povezav na $1',
 'spam_blanking'          => 'Vse redakcije so vsebovale povezave na $1, izpraznjujem',
@@ -1527,9 +1526,6 @@ Da boste stran lahko shranili, boste morali odstraniti vse na črni listi navede
 'exif-planarconfiguration-1' => 'grudast format',
 'exif-planarconfiguration-2' => 'ravninski format',
 
-'exif-xyresolution-i' => '$1 dpi ({{plural:$1|točka/palec|točki/palec|točke/palec|točk/palec|točk/palec}})',
-'exif-xyresolution-c' => '$1 dpc ({{plural:$1|točka/centimeter|točki/centimeter|točke/centimeter|točk/centimeter|točk/centimeter}})',
-
 'exif-componentsconfiguration-0' => 'ne obstaja',
 
 'exif-exposureprogram-0' => 'Ni določen',
@@ -1651,7 +1647,6 @@ Da boste stran lahko shranili, boste morali odstraniti vse na črni listi navede
 # 'all' in various places, this might be different for inflected languages
 'recentchangesall' => 'vse',
 'imagelistall'     => 'vse',
-'watchlistall1'    => 'vse',
 'watchlistall2'    => 'vse',
 'namespacesall'    => 'vse',
 
@@ -1672,11 +1667,6 @@ Da boste stran lahko shranili, boste morali odstraniti vse na črni listi navede
 $3
 
 Če tega niste napravili vi, povezavi ne sledite. Potrditveno geslo bo poteklo do $4.',
-
-# Inputbox extension, may be useful in other contexts as well
-'tryexact'       => 'Poskusite z natančnim zadetkom',
-'searchfulltext' => 'Preišči vse besedilo',
-'createarticle'  => 'Ustvarite stran',
 
 # Scary transclusion
 'scarytranscludedisabled' => '[prevključevanje med wikiji je onemogočeno]',
@@ -1717,12 +1707,9 @@ $1',
 'articletitles'    => "Članki, ki se začnejo na ''$1''",
 'hideresults'      => 'Skrij zadetke',
 
-# DISPLAYTITLE
-'displaytitle' => '(Poveži na to stran kot [[$1]])',
-
 # Auto-summaries
 'autoredircomment' => 'preusmeritev na [[$1]]', # This should be changed to the new naming convention, but existed beforehand
 
 );
 
-?>
+

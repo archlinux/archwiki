@@ -27,13 +27,12 @@ function writeMessagesToFile( $messages, $code, $write, $listUnknown ) {
 	$contents = file_get_contents( $filename );
 	if ( strpos( $contents, '$messages' ) !== false ) {
 		$contents = explode( '$messages', $contents );
-		if ( $messagesText . "\n?>\n" == '$messages' . $contents[1] ) {
-			echo "Generated messages for language $code. Same to the current file.\n";
+		if ( $messagesText == '$messages' . $contents[1] ) {
+			echo "Generated messages for language $code. Same as the current file.\n";
 		} else {
 			if ( $write ) {
 				$new = $contents[0];
 				$new .= $messagesText;
-				$new .= "\n?>\n";
 				file_put_contents( $filename, $new );
 				echo "Generated and wrote messages for language $code.\n";
 			} else {
@@ -74,7 +73,8 @@ function writeMessagesArray( $messages, $ignoredComments = false ) {
 	}
 
 	# Write all the messages
-	$messagesText = "\$messages = array(\n";
+	$messagesText = "\$messages = array(
+";
 	foreach( $sortedMessages as $block => $messages ) {
 		# Skip if it's the block of unknown messages - handle that in the end of file
 		if ( $block == 'unknown' ) {
@@ -86,7 +86,8 @@ function writeMessagesArray( $messages, $ignoredComments = false ) {
 	}
 	ksort( $sortedMessages['unknown'] );
 	$messagesText .= writeMessagesBlock( 'unknown', 'Unknown messages', $sortedMessages['unknown'], $ignoredComments ); # Write the unknown messages, alphabetically sorted
-	$messagesText .= ");\n";
+	$messagesText .= ");
+";
 
 	return array( $messagesText, $sortedMessages );
 }
@@ -114,9 +115,13 @@ function writeMessagesBlock( $name, $comment, $messages, $ignoredComments ) {
 	# Format the block comment (if exists); check for multiple lines comments
 	if ( !empty( $comment ) ) {
 		if ( strpos( $comment, "\n" ) === false ) {
-			$blockText .= "# $comment\n";
+			$blockText .= "# $comment
+";
 		} else {
-			$blockText .= "/*\n$comment\n*/\n";
+			$blockText .= "/*
+$comment
+*/
+";
 		}
 	}
 
@@ -172,11 +177,13 @@ function writeMessagesBlock( $name, $comment, $messages, $ignoredComments ) {
 		}
 
 		# Newline
-		$blockText .= "\n";
+		$blockText .= "
+";
 	}
 
 	# Newline to end the block
-	$blockText .= "\n";
+	$blockText .= "
+";
 
 	return $blockText;
 }

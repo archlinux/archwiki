@@ -46,7 +46,7 @@ class ExternalEdit {
 			$extension="wiki";
 		} elseif($this->mMode=="file") {
 			$type="Edit file";
-			$image = new Image( $this->mTitle );
+			$image = wfLocalFile( $this->mTitle );
 			$img_url = $image->getURL();
 			if(strpos($img_url,"://")) {
 				$url = $img_url;
@@ -72,4 +72,4 @@ CONTROL;
 		echo $control;
 	}
 }
-?>
+

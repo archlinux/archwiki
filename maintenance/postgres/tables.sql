@@ -128,6 +128,7 @@ CREATE TABLE archive (
   ar_namespace   SMALLINT     NOT NULL,
   ar_title       TEXT         NOT NULL,
   ar_text        TEXT,
+  ar_page_id     INTEGER          NULL,
   ar_comment     TEXT,
   ar_user        INTEGER          NULL  REFERENCES mwuser(user_id) ON DELETE SET NULL,
   ar_user_text   TEXT         NOT NULL,
@@ -140,6 +141,7 @@ CREATE TABLE archive (
   ar_len         INTEGER          NULL
 );
 CREATE INDEX archive_name_title_timestamp ON archive (ar_namespace,ar_title,ar_timestamp);
+CREATE INDEX archive_user_text            ON archive (ar_user_text);
 
 
 CREATE TABLE redirect (
@@ -177,7 +179,7 @@ CREATE TABLE categorylinks (
   cl_timestamp  TIMESTAMPTZ  NOT NULL
 );
 CREATE UNIQUE INDEX cl_from ON categorylinks (cl_from, cl_to);
-CREATE INDEX cl_sortkey     ON categorylinks (cl_to, cl_sortkey);
+CREATE INDEX cl_sortkey     ON categorylinks (cl_to, cl_sortkey, cl_from);
 
 CREATE TABLE externallinks (
   el_from   INTEGER  NOT NULL  REFERENCES page(page_id) ON DELETE CASCADE,
@@ -227,7 +229,9 @@ CREATE TABLE ipblocks (
   ipb_expiry            TIMESTAMPTZ  NOT NULL,
   ipb_range_start       TEXT,
   ipb_range_end         TEXT,
-  ipb_deleted           INTEGER      NOT NULL  DEFAULT 0
+  ipb_deleted           INTEGER      NOT NULL  DEFAULT 0,
+  ipb_block_email       CHAR         NOT NULL  DEFAULT '0'
+
 );
 CREATE INDEX ipb_address ON ipblocks (ipb_address);
 CREATE INDEX ipb_user    ON ipblocks (ipb_user);
@@ -247,10 +251,12 @@ CREATE TABLE image (
   img_description  TEXT      NOT NULL,
   img_user         INTEGER       NULL  REFERENCES mwuser(user_id) ON DELETE SET NULL,
   img_user_text    TEXT      NOT NULL,
-  img_timestamp    TIMESTAMPTZ
+  img_timestamp    TIMESTAMPTZ,
+  img_sha1         TEXT      NOT NULL  DEFAULT ''
 );
 CREATE INDEX img_size_idx      ON image (img_size);
 CREATE INDEX img_timestamp_idx ON image (img_timestamp);
+CREATE INDEX img_sha1          ON image (img_sha1);
 
 CREATE TABLE oldimage (
   oi_name          TEXT         NOT NULL  REFERENCES image(img_name),
@@ -262,9 +268,17 @@ CREATE TABLE oldimage (
   oi_description   TEXT,
   oi_user          INTEGER          NULL  REFERENCES mwuser(user_id) ON DELETE SET NULL,
   oi_user_text     TEXT         NOT NULL,
-  oi_timestamp     TIMESTAMPTZ  NOT NULL
+  oi_timestamp     TIMESTAMPTZ  NOT NULL,
+  oi_metadata      BYTEA        NOT NULL DEFAULT '',
+  oi_media_type    TEXT             NULL,
+  oi_major_mime    TEXT         NOT NULL DEFAULT 'unknown',
+  oi_minor_mime    TEXT         NOT NULL DEFAULT 'unknown',
+  oi_deleted       CHAR         NOT NULL DEFAULT '0',
+  oi_sha1          TEXT         NOT NULL DEFAULT ''
 );
-CREATE INDEX oi_name ON oldimage (oi_name);
+CREATE INDEX oi_name_timestamp    ON oldimage (oi_name,oi_timestamp);
+CREATE INDEX oi_name_archive_name ON oldimage (oi_name,oi_archive_name);
+CREATE INDEX oi_sha1              ON oldimage (oi_sha1);
 
 
 CREATE TABLE filearchive (
@@ -511,6 +525,6 @@ CREATE TABLE mediawiki_version (
 );
 
 INSERT INTO mediawiki_version (type,mw_version,sql_version,sql_date)
-  VALUES ('Creation','??','$LastChangedRevision: 20687 $','$LastChangedDate: 2007-03-25 20:12:26 -0400 (Sun, 25 Mar 2007) $');
+  VALUES ('Creation','??','$LastChangedRevision: 25527 $','$LastChangedDate: 2007-09-05 04:14:18 -0400 (Wed, 05 Sep 2007) $');
 
 

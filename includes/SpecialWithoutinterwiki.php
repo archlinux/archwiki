@@ -12,9 +12,9 @@ class WithoutInterwikiPage extends PageQueryPage {
 	function getName() {
 		return 'Withoutinterwiki';
 	}
-	
+
 	function getPageHeader() {
-		return '<p>' . wfMsgHtml( 'withoutinterwiki-header' ) . '</p>';
+		return '<p>' . wfMsgExt( 'withoutinterwiki-header', array( 'parseinline' ) ) . '</p>';
 	}
 
 	function sortDescending() {
@@ -24,7 +24,7 @@ class WithoutInterwikiPage extends PageQueryPage {
 	function isExpensive() {
 		return true;
 	}
-	
+
 	function isSyndicated() {
 		return false;
 	}
@@ -44,7 +44,7 @@ class WithoutInterwikiPage extends PageQueryPage {
 		      AND page_namespace=" . NS_MAIN . "
 		      AND page_is_redirect = 0";
 	}
-	
+
 }
 
 function wfSpecialWithoutinterwiki() {
@@ -53,4 +53,4 @@ function wfSpecialWithoutinterwiki() {
 	$wip->doQuery( $offset, $limit );
 }
 
-?>
+

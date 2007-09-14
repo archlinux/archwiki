@@ -94,12 +94,14 @@ class SpecialPage
 		'Uncategorizedpages'        => array( 'SpecialPage', 'Uncategorizedpages' ),
 		'Uncategorizedcategories'   => array( 'SpecialPage', 'Uncategorizedcategories' ),
 		'Uncategorizedimages'       => array( 'SpecialPage', 'Uncategorizedimages' ),
+		'Uncategorizedtemplates'	=> array( 'SpecialPage', 'Uncategorizedtemplates' ),
 		'Unusedcategories'          => array( 'SpecialPage', 'Unusedcategories' ),
 		'Unusedimages'              => array( 'SpecialPage', 'Unusedimages' ),
 		'Wantedpages'               => array( 'IncludableSpecialPage', 'Wantedpages' ),
 		'Wantedcategories'          => array( 'SpecialPage', 'Wantedcategories' ),
 		'Mostlinked'                => array( 'SpecialPage', 'Mostlinked' ),
 		'Mostlinkedcategories'      => array( 'SpecialPage', 'Mostlinkedcategories' ),
+		'Mostlinkedtemplates'		=> array( 'SpecialPage', 'Mostlinkedtemplates' ),
 		'Mostcategories'            => array( 'SpecialPage', 'Mostcategories' ),
 		'Mostimages'                => array( 'SpecialPage', 'Mostimages' ),
 		'Mostrevisions'             => array( 'SpecialPage', 'Mostrevisions' ),
@@ -177,7 +179,7 @@ class SpecialPage
 		}
 
 		if( $wgEmailAuthentication ) {
-			self::$mList['Confirmemail'] = array( 'UnlistedSpecialPage', 'Confirmemail' );
+			self::$mList['Confirmemail'] = 'EmailConfirmation';
 		}
 
 		# Add extension special pages
@@ -272,6 +274,30 @@ class SpecialPage
 			self::initList();
 		}
 		unset( self::$mList[$name] );
+	}
+
+	/**
+	 * Check if a given name exist as a special page or as a special page alias
+	 * @param $name string: name of a special page
+	 * @return boolean: true if a special page exists with this name
+	 */
+	static function exists( $name ) {
+		global $wgContLang;
+		if ( !self::$mListInitialised ) {
+			self::initList();
+		}
+		if( !self::$mAliases ) {
+			self::initAliasList();
+		}
+
+		# Remove special pages inline parameters:
+		$bits = explode( '/', $name );
+		$name = $wgContLang->caseFold($bits[0]);
+
+		return
+			array_key_exists( $name, self::$mList )
+			or array_key_exists( $name, self::$mAliases )
+		;
 	}
 
 	/**
@@ -798,4 +824,4 @@ class SpecialMycontributions extends UnlistedSpecialPage {
 	}
 }
 
-?>
+

@@ -9,6 +9,10 @@
  * @addtogroup SpecialPage
  */
 class ProtectedPagesForm {
+
+	protected $IdLevel = 'level';
+	protected $IdType  = 'type';
+
 	function showList( $msg = '' ) {
 		global $wgOut, $wgRequest;
 
@@ -22,14 +26,15 @@ class ProtectedPagesForm {
 			Title::purgeExpiredRestrictions();
 		}
 
-		$type = $wgRequest->getVal( 'type' );
-		$level = $wgRequest->getVal( 'level' );
-		$minsize = $wgRequest->getIntOrNull( 'minsize' );
+		$type = $wgRequest->getVal( $this->IdType );
+		$level = $wgRequest->getVal( $this->IdLevel );
+		$sizetype = $wgRequest->getVal( 'sizetype' );
+		$size = $wgRequest->getIntOrNull( 'size' );
 		$NS = $wgRequest->getIntOrNull( 'namespace' );
 
-		$pager = new ProtectedPagesPager( $this, array(), $type, $level, $NS, $minsize );	
+		$pager = new ProtectedPagesPager( $this, array(), $type, $level, $NS, $sizetype, $size );	
 
-		$wgOut->addHTML( $this->showOptions( $NS, $type, $level, $minsize ) );
+		$wgOut->addHTML( $this->showOptions( $NS, $type, $level, $sizetype, $size ) );
 
 		if ( $pager->getNumRows() ) {
 			$s = $pager->getNavigationBar();
@@ -38,7 +43,7 @@ class ProtectedPagesForm {
 				"</ul>";
 			$s .= $pager->getNavigationBar();
 		} else {
-			$s = '<p>' . wfMsgHTML( 'protectedpagesempty' ) . '</p>';
+			$s = '<p>' . wfMsgHtml( 'protectedpagesempty' ) . '</p>';
 		}
 		$wgOut->addHTML( $s );
 	}
@@ -64,6 +69,10 @@ class ProtectedPagesForm {
 		$protType = wfMsgHtml( 'restriction-level-' . $row->pr_level );
 
 		$description_items[] = $protType;
+
+		if ( $row->pr_cascade ) {
+			$description_items[] = wfMsg( 'protect-summary-cascade' );
+		}
 
 		$expiry_description = ''; $stxt = '';
 
@@ -93,7 +102,7 @@ class ProtectedPagesForm {
 	 * @param $minsize int
 	 * @private
 	 */
-	function showOptions( $namespace, $type='edit', $level, $minsize ) {
+	function showOptions( $namespace, $type='edit', $level, $sizetype, $size ) {
 		global $wgScript;
 		$action = htmlspecialchars( $wgScript );
 		$title = SpecialPage::getTitleFor( 'ProtectedPages' );
@@ -101,26 +110,40 @@ class ProtectedPagesForm {
 		return "<form action=\"$action\" method=\"get\">\n" .
 			'<fieldset>' .
 			Xml::element( 'legend', array(), wfMsg( 'protectedpages' ) ) .
-			Xml::hidden( 'title', $special ) . "\n" .
-			$this->getNamespaceMenu( $namespace ) . "\n" .
-			$this->getTypeMenu( $type ) . "\n" .
+			Xml::hidden( 'title', $special ) . "&nbsp;\n" .
+			$this->getNamespaceMenu( $namespace ) . "&nbsp;\n" .
+			$this->getTypeMenu( $type ) . "&nbsp;\n" .
 			$this->getLevelMenu( $level ) . "<br/>\n" .
-			$this->getSizeLimit( $minsize ) . "\n" .
-			Xml::submitButton( wfMsg( 'allpagessubmit' ) ) . "\n" .
+			$this->getSizeLimit( $sizetype, $size ) . "\n" .
+			"&nbsp;" . Xml::submitButton( wfMsg( 'allpagessubmit' ) ) . "\n" .
 			"</fieldset></form>";
 	}
 	
-	function getNamespaceMenu( $namespace=NULL ) {
-		return "<label for='namespace'>" . wfMsgHtml('namespace') . "</label>" . HTMLnamespaceselector($namespace, '');
+	/**
+	 * Prepare the namespace filter drop-down; standard namespace
+	 * selector, sans the MediaWiki namespace
+	 *
+	 * @param mixed $namespace Pre-select namespace
+	 * @return string
+	 */
+	function getNamespaceMenu( $namespace = null ) {
+		return Xml::label( wfMsg( 'namespace' ), 'namespace' )
+			. '&nbsp;'
+			. Xml::namespaceSelector( $namespace, '' );
 	}
-
+	
 	/**
 	 * @return string Formatted HTML
 	 * @private
 	 */
-	function getSizeLimit( $minsize=0 ) {	
-		$out = Xml::input('minsize', 9, $minsize, array( 'id' => 'minsize' ) );
-		return "<label for='minsize'>" . wfMsgHtml('minimum-size') . "</label>: " . $out;
+	function getSizeLimit( $sizetype, $size ) {	
+		$out = Xml::radio( 'sizetype', 'min', ($sizetype=='min'), array('id' => 'wpmin') );
+		$out .= Xml::label( wfMsg("minimum-size"), 'wpmin' );
+		$out .= "&nbsp;".Xml::radio( 'sizetype', 'max', ($sizetype=='max'), array('id' => 'wpmax') );
+		$out .= Xml::label( wfMsg("maximum-size"), 'wpmax' );
+		$out .= "&nbsp;".Xml::input('size', 9, $size, array( 'id' => 'wpsize' ) );
+		$out .= ' '.wfMsgHtml('pagesize');
+		return $out;
 	}
 		
 	/**
@@ -128,28 +151,28 @@ class ProtectedPagesForm {
 	 * @private
 	 */
 	function getTypeMenu( $pr_type ) {
-		global $wgRestrictionTypes, $wgUser;
+		global $wgRestrictionTypes;
 	
-		$out = "<select name='type'>\n";
 		$m = array(); // Temporary array
+		$options = array();
 
 		// First pass to load the log names
 		foreach( $wgRestrictionTypes as $type ) {
-			$text = wfMsgHtml("restriction-$type");
+			$text = wfMsg("restriction-$type");
 			$m[$text] = $type;
 		}
-
-		// Second pass to sort by name
-		ksort($m);
 
 		// Third pass generates sorted XHTML content
 		foreach( $m as $text => $type ) {
 			$selected = ($type == $pr_type );
-			$out .= Xml::option( $text, $type, $selected ) . "\n";
+			$options[] = Xml::option( $text, $type, $selected ) . "\n";
 		}
 
-		$out .= '</select>';
-		return "<label for='type'>" . wfMsgHtml('restriction-type') . "</label>: " . $out;
+		return
+			Xml::label( wfMsg('restriction-type') , $this->IdType ) . '&nbsp;' .
+			Xml::tags( 'select',
+				array( 'id' => $this->IdType, 'name' => $this->IdType ),
+				implode( "\n", $options ) );
 	}
 
 	/**
@@ -157,30 +180,30 @@ class ProtectedPagesForm {
 	 * @private
 	 */	
 	function getLevelMenu( $pr_level ) {
-		global $wgRestrictionLevels, $wgUser;
-	
-		$out = "<select name='level'>\n";
-		$m = array( wfMsgHtml('restriction-level-all') => 0 ); // Temporary array
+		global $wgRestrictionLevels;
+
+		$m = array( wfMsg('restriction-level-all') => 0 ); // Temporary array
+		$options = array();
 
 		// First pass to load the log names
 		foreach( $wgRestrictionLevels as $type ) {
 			if ( $type !='' && $type !='*') {
-				$text = wfMsgHtml("restriction-level-$type");
+				$text = wfMsg("restriction-level-$type");
 				$m[$text] = $type;
 			}
 		}
 
-		// Second pass to sort by name
-		ksort($m);
-
 		// Third pass generates sorted XHTML content
 		foreach( $m as $text => $type ) {
 			$selected = ($type == $pr_level );
-			$out .= Xml::option( $text, $type, $selected ) . "\n";
+			$options[] = Xml::option( $text, $type, $selected );
 		}
 
-		$out .= '</select>';
-		return "<label for='level'>" . wfMsgHtml('restriction-level') . "</label>: " . $out;
+		return
+			Xml::label( wfMsg('restriction-level') , $this->IdLevel ) . '&nbsp;' .
+			Xml::tags( 'select',
+				array( 'id' => $this->IdLevel, 'name' => $this->IdLevel ),
+				implode( "\n", $options ) );
 	}
 }
 
@@ -188,16 +211,17 @@ class ProtectedPagesForm {
  * @todo document
  * @addtogroup Pager
  */
-class ProtectedPagesPager extends ReverseChronologicalPager {
+class ProtectedPagesPager extends AlphabeticPager {
 	public $mForm, $mConds;
 
-	function __construct( $form, $conds = array(), $type, $level, $namespace, $minsize ) {
+	function __construct( $form, $conds = array(), $type, $level, $namespace, $sizetype='', $size=0 ) {
 		$this->mForm = $form;
 		$this->mConds = $conds;
 		$this->type = ( $type ) ? $type : 'edit';
 		$this->level = $level;
 		$this->namespace = $namespace;
-		$this->minsize = intval($minsize);
+		$this->sizetype = $sizetype;
+		$this->size = intval($size);
 		parent::__construct();
 	}
 
@@ -208,8 +232,7 @@ class ProtectedPagesPager extends ReverseChronologicalPager {
 		$lb = new LinkBatch;
 
 		while ( $row = $this->mResult->fetchObject() ) {
-			$name = str_replace( ' ', '_', $row->page_title );
-			$lb->add( $row->page_namespace, $name );
+			$lb->add( $row->page_namespace, $row->page_title );
 		}
 
 		$lb->execute();
@@ -218,7 +241,6 @@ class ProtectedPagesPager extends ReverseChronologicalPager {
 	}
 	
 	function formatRow( $row ) {
-		$block = new Block;
 		return $this->mForm->formatRow( $row );
 	}
 
@@ -226,17 +248,22 @@ class ProtectedPagesPager extends ReverseChronologicalPager {
 		$conds = $this->mConds;
 		$conds[] = 'pr_expiry>' . $this->mDb->addQuotes( $this->mDb->timestamp() );
 		$conds[] = 'page_id=pr_page';
-		$conds[] = 'page_len>=' . $this->minsize;
 		$conds[] = 'pr_type=' . $this->mDb->addQuotes( $this->type );
-		if ( $this->level )
+		
+		if( $this->sizetype=='min' ) {
+			$conds[] = 'page_len>=' . $this->size;
+		} else if( $this->sizetype=='max' ) {
+			$conds[] = 'page_len<=' . $this->size;
+		}
+		
+		if( $this->level )
 			$conds[] = 'pr_level=' . $this->mDb->addQuotes( $this->level );
-		if ( !is_null($this->namespace) )
+		if( !is_null($this->namespace) )
 			$conds[] = 'page_namespace=' . $this->mDb->addQuotes( $this->namespace );
 		return array(
 			'tables' => array( 'page_restrictions', 'page' ),
-			'fields' => 'max(pr_id) AS pr_id,page_namespace,page_title,page_len,pr_type,pr_level,pr_expiry',
-			'conds' => $conds,
-			'options' => array( 'GROUP BY' => 'page_namespace,page_title,pr_level,pr_expiry,page_len,pr_type' ),
+			'fields' => 'pr_id,page_namespace,page_title,page_len,pr_type,pr_level,pr_expiry,pr_cascade',
+			'conds' => $conds
 		);
 	}
 
@@ -250,11 +277,10 @@ class ProtectedPagesPager extends ReverseChronologicalPager {
  */
 function wfSpecialProtectedpages() {
 
-	list( $limit, $offset ) = wfCheckLimits();
-
 	$ppForm = new ProtectedPagesForm();
 
 	$ppForm->showList();
 }
 
-?>
+
+

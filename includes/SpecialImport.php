@@ -85,7 +85,7 @@ function wfSpecialImport( $page = '' ) {
 		}
 	}
 
-	$action = $wgTitle->escapeLocalUrl( 'action=submit' );
+	$action = $wgTitle->getLocalUrl( 'action=submit' );
 
 	if( $wgUser->isAllowed( 'importupload' ) ) {
 		$wgOut->addWikiText( wfMsg( "importtext" ) );
@@ -209,6 +209,9 @@ class ImportReporter {
 			$nullRevision = Revision::newNullRevision(
 				$dbw, $title->getArticleId(), $comment, true );
 			$nullRevision->insertOn( $dbw );
+			# Update page record
+			$article = new Article( $title );
+			$article->updateRevisionOn( $dbw, $nullRevision );
 		}
 	}
 
@@ -857,13 +860,22 @@ class ImportStreamSource {
 		}
 	}
 
-	function newFromURL( $url ) {
+	function newFromURL( $url, $method = 'GET' ) {
 		wfDebug( __METHOD__ . ": opening $url\n" );
-		# fopen-wrappers are normally turned off for security.
-		ini_set( "allow_url_fopen", true );
-		$ret = ImportStreamSource::newFromFile( $url );
-		ini_set( "allow_url_fopen", false );
-		return $ret;
+		# Use the standard HTTP fetch function; it times out
+		# quicker and sorts out user-agent problems which might
+		# otherwise prevent importing from large sites, such
+		# as the Wikimedia cluster, etc.
+		$data = Http::request( $method, $url );
+		if( $data !== false ) {
+			$file = tmpfile();
+			fwrite( $file, $data );
+			fflush( $file );
+			fseek( $file, 0 );
+			return new ImportStreamSource( $file );
+		} else {
+			return new WikiErrorMsg( 'importcantopen' );
+		}
 	}
 
 	public static function newFromInterwiki( $interwiki, $page, $history=false ) {
@@ -873,10 +885,11 @@ class ImportStreamSource {
 		} else {
 			$params = $history ? 'history=1' : '';
 			$url = $link->getFullUrl( $params );
-			return ImportStreamSource::newFromURL( $url );
+			# For interwikis, use POST to avoid redirects.
+			return ImportStreamSource::newFromURL( $url, "POST" );
 		}
 	}
 }
 
 
-?>
+

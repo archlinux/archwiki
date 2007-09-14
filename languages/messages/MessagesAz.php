@@ -319,7 +319,6 @@ Açıqlama: (hh) = hal-hazırkı versiya ilə olan fərqlər,
 'userrights-user-editname' => 'İstifadəçi adınızı yazın:',
 
 # Recent changes
-'changes'           => 'dəyişiklik',
 'recentchanges'     => 'Son dəyişikliklər',
 'recentchangestext' => "'''Ən son dəyişiklikləri bu səhifədən izləyin.'''",
 'rcnote'            => 'Aşağıdakı son <strong>$1</strong> dəyişiklik son <strong>$2</strong> gün ərzində edilmişdir.',
@@ -450,15 +449,11 @@ Hal-hazırda [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] sayı: ''
 'unwatch'              => 'İzləmə',
 'unwatchthispage'      => 'İzləmə',
 'watchnochange'        => 'Verilən vaxt ərzində heç bir izlədiyiniz səhifə redaktə edilməmişdir.',
-'watchdetails'         => '* müzakirə səhifələri çıxmaq şərtilə $1 səhifəni izləyirsiniz
-* [[Special:Watchlist/edit|İzlədiyiniz səhifələrin tam siyahısının göstərilməsi və redaktəsi]]',
+'watchlist-details'    => 'müzakirə səhifələri çıxmaq şərtilə $1 səhifəni izləyirsiniz',
 'wlheader-showupdated' => "* Son ziyarətinizdən sonra edilən dəyişikliklər '''qalın şriftlərlə''' göstərilmişdir.",
 'watchmethod-recent'   => 'yeni dəyişikliklər izlənilən səhifələr üçün yoxlanılır',
 'watchmethod-list'     => 'izlənilən səhifələr yeni dəyişikliklər üçün yoxlanılır',
-'removechecked'        => 'İşarələnənləri izləmə siyahısından çıxart',
 'watchlistcontains'    => 'İzləmə siyahınızda $1 səhifə var.',
-'watcheditlist'        => "Bunlar izlədiyiniz səhifələrin əlifba sırasına görə siyahısıdır. Siyahıdan çıxartmaq istədiyiniz səhifələrin yanındakı qutuları işarələləyin və ekranın altındakı 'işarələnənləri sıyahıdan çıxart düyməsinə' vurun(məzmun səhifəsini çıxartdıqda əlaqəli müzakirə səhifəsi də (və tərsinə) çıxardılacaqdır).",
-'removingchecked'      => 'İstədikləriniz izləmə siyahısından çıxardılır...',
 'wlnote'               => 'Aşağıdakılar son <b>$2</b> saatdakı son $1 dəyişiklikdir.',
 'wlshowlast'           => 'Bunları göstər: son $1 saatı $2 günü $3',
 'wlsaved'              => 'Bu izləmə siyahınızın qeyd edilmiş halıdır.',
@@ -584,7 +579,6 @@ Hal-hazırda [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] sayı: ''
 
 # 'all' in various places, this might be different for inflected languages
 'imagelistall'  => 'bütün',
-'watchlistall1' => 'hamısını',
 'watchlistall2' => 'hamısını',
 'namespacesall' => 'bütün',
 
@@ -596,9 +590,6 @@ Hal-hazırda [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] sayı: ''
 'confirmemail_loggedin' => 'E-məktubunuz indi təsdiq edildi.',
 'confirmemail_subject'  => '{{SITENAME}} e-məktub təsdiq etme',
 
-# Inputbox extension, may be useful in other contexts as well
-'createarticle' => 'Məqalə yarat',
-
 );
 
-?>
+

@@ -13,6 +13,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 require_once 'convertLinks.inc';
 require_once 'userDupes.inc';
 require_once 'deleteDefaultMessages.php';
+# Extension updates
+require_once( "$IP/includes/Hooks.php" );
 
 $wgRenamedTables = array(
 #           from             to                  patch file
@@ -35,6 +37,7 @@ $wgNewTables = array(
 	array( 'querycache_info', 'patch-querycacheinfo.sql' ),
 	array( 'filearchive',   'patch-filearchive.sql' ),
 	array( 'querycachetwo',	'patch-querycachetwo.sql' ),
+	array( 'redirect', 'patch-redirect.sql' ),
 );
 
 $wgNewFields = array(
@@ -76,7 +79,18 @@ $wgNewFields = array(
 	array( 'archive',	    'ar_len',           'patch-ar_len.sql' ),
  	array( 'revision',	    'rev_parent_id',    'patch-rev_parent_id.sql' ),
 	array( 'page_restrictions', 'pr_id',		'patch-page_restrictions_sortkey.sql' ),
+	array( 'ipblocks',      'ipb_block_email',  'patch-ipb_emailban.sql' ),
+	array( 'oldimage',      'oi_metadata',      'patch-oi_metadata.sql'),
+	array( 'archive',       'ar_page_id',       'patch-archive-page_id.sql'),
+	array( 'image',         'img_sha1',         'patch-img_sha1.sql' ),
 );
+
+# For extensions only, should be populated via hooks
+# $wgDBtype should be checked to specifiy the proper file
+$wgExtNewTables = array(); // table, dir
+$wgExtNewFields = array(); // table, column, dir
+$wgExtPGNewFields = array(); // table, column attributes; for PostgreSQL
+$wgExtNewIndexes = array(); // table, index, dir
 
 function rename_table( $from, $to, $patch ) {
 	global $wgDatabase;
@@ -95,18 +109,22 @@ function rename_table( $from, $to, $patch ) {
 	}
 }
 
-function add_table( $name, $patch ) {
+function add_table( $name, $patch, $fullpath=false ) {
 	global $wgDatabase;
 	if ( $wgDatabase->tableExists( $name ) ) {
 		echo "...$name table already exists.\n";
 	} else {
 		echo "Creating $name table...";
-		dbsource( archive($patch), $wgDatabase );
+		if( $fullpath ) {
+			dbsource( $patch, $wgDatabase );
+		} else {
+			dbsource( archive($patch), $wgDatabase );
+		}
 		echo "ok\n";
 	}
 }
 
-function add_field( $table, $field, $patch ) {
+function add_field( $table, $field, $patch, $fullpath=false ) {
 	global $wgDatabase;
 	if ( !$wgDatabase->tableExists( $table ) ) {
 		echo "...$table table does not exist, skipping new field patch\n";
@@ -114,7 +132,26 @@ function add_field( $table, $field, $patch ) {
 		echo "...have $field field in $table table.\n";
 	} else {
 		echo "Adding $field field to table $table...";
-		dbsource( archive($patch) , $wgDatabase );
+		if( $fullpath ) {
+			dbsource( $patch, $wgDatabase );
+		} else {
+			dbsource( archive($patch), $wgDatabase );
+		}
+		echo "ok\n";
+	}
+}
+
+function add_index( $table, $index, $patch, $fullpath=false ) {
+	global $wgDatabase;
+	if( $wgDatabase->indexExists( $table, $index ) ) {
+		echo "...$index key already set on $table table.\n";
+	} else {
+		echo "Adding $index key to table $table... ";
+		if( $fullpath ) {
+			dbsource( $patch, $wgDatabase );
+		} else {
+			dbsource( archive($patch), $wgDatabase );
+		}
 		echo "ok\n";
 	}
 }
@@ -219,6 +256,38 @@ function do_logging_timestamp_index() {
 	}
 }
 
+function do_archive_user_index() {
+	global $wgDatabase;
+	if( $wgDatabase->indexExists( 'archive', 'usertext_timestamp' ) ) {
+		echo "...usertext,timestamp key on archive already exists.\n";
+	} else {
+		echo "Adding usertext,timestamp key on archive table... ";
+		dbsource( archive("patch-archive-user-index.sql"), $wgDatabase );
+		echo "ok\n";
+	}
+}
+
+function do_image_user_index() {
+	global $wgDatabase;
+	if( $wgDatabase->indexExists( 'image', 'img_usertext_timestamp' ) ) {
+		echo "...usertext,timestamp key on image already exists.\n";
+	} else {
+		echo "Adding usertext,timestamp key on image table... ";
+		dbsource( archive("patch-image-user-index.sql"), $wgDatabase );
+		echo "ok\n";
+	}
+}
+
+function do_oldimage_user_index() {
+	global $wgDatabase;
+	if( $wgDatabase->indexExists( 'oldimage', 'oi_usertext_timestamp' ) ) {
+		echo "...usertext,timestamp key on oldimage already exists.\n";
+	} else {
+		echo "Adding usertext,timestamp key on oldimage table... ";
+		dbsource( archive("patch-oldimage-user-index.sql"), $wgDatabase );
+		echo "ok\n";
+	}
+}
 
 function do_watchlist_update() {
 	global $wgDatabase;
@@ -311,7 +380,7 @@ function do_logging_encoding() {
 		return;
 	$logging = $wgDatabase->tableName( 'logging' );
 	$res = $wgDatabase->query( "SELECT log_title FROM $logging LIMIT 0" );
-	$flags = explode( ' ', mysql_field_flags( $res, 0 ) );
+	$flags = explode( ' ', mysql_field_flags( $res->result, 0 ) );
 	$wgDatabase->freeResult( $res );
 
 	if( in_array( 'binary', $flags ) ) {
@@ -781,32 +850,26 @@ function do_templatelinks_update() {
 	echo "Done. Please run maintenance/refreshLinks.php for a more thorough templatelinks update.\n";
 }
 
-# July 2006
-# Add ( rc_namespace, rc_user_text ) index [R. Church]
+// Add index on ( rc_namespace, rc_user_text ) [Jul. 2006]
+// Add index on ( rc_user_text, rc_timestamp ) [Nov. 2006]
 function do_rc_indices_update() {
 	global $wgDatabase;
 	echo( "Checking for additional recent changes indices...\n" );
-	# See if we can find the index we want
-	$info = $wgDatabase->indexInfo( 'recentchanges', 'rc_ns_usertext', __METHOD__ );
-	if( !$info ) {
-		# None, so create
-		echo( "...index on ( rc_namespace, rc_user_text ) not found; creating\n" );
-		dbsource( archive( 'patch-recentchanges-utindex.sql' ) );
-	} else {
-		# Index seems to exist
-		echo( "...index on ( rc_namespace, rc_user_text ) seems to be ok\n" );
-	}
 
-	#Add (rc_user_text, rc_timestamp) index [A. Garrett], November 2006
-	# See if we can find the index we want
-	$info = $wgDatabase->indexInfo( 'recentchanges', 'rc_user_text', __METHOD__ );
-	if( !$info ) {
-		# None, so create
-		echo( "...index on ( rc_user_text, rc_timestamp ) not found; creating\n" );
-		dbsource( archive( 'patch-rc_user_text-index.sql' ) );
-	} else {
-		# Index seems to exist
-		echo( "...index on ( rc_user_text, rc_timestamp ) seems to be ok\n" );
+	$indexes = array(
+		'rc_ns_usertext' => 'patch-recentchanges-utindex.sql',
+		'rc_user_text' => 'patch-rc_user_text-index.sql',
+	);
+	
+	foreach( $indexes as $index => $patch ) {
+		$info = $wgDatabase->indexInfo( 'recentchanges', $index, __METHOD__ );
+		if( !$info ) {
+			echo( "...index `{$index}` not found; adding..." );
+			dbsource( archive( $patch ) );
+			echo( "done.\n" );
+		} else {
+			echo( "...index `{$index}` seems ok.\n" );
+		}
 	}
 }
 
@@ -833,6 +896,14 @@ function do_backlinking_indices_update() {
 		!index_has_field('imagelinks', 'il_to', 'il_from'))
 	{	
 		dbsource( archive( 'patch-backlinkindexes.sql' ) );
+	}
+}
+
+function do_categorylinks_indices_update() {
+	echo( "Checking for categorylinks indices...\n" );
+	if (!index_has_field('categorylinks', 'cl_sortkey', 'cl_from'))
+	{	
+		dbsource( archive( 'patch-categorylinksindex.sql' ) );
 	}
 }
 
@@ -864,6 +935,8 @@ function purge_cache() {
 function do_all_updates( $shared = false, $purge = true ) {
 	global $wgNewTables, $wgNewFields, $wgRenamedTables, $wgSharedDB, $wgDatabase, $wgDBtype, $IP;
 
+	wfRunHooks('LoadExtensionSchemaUpdates');
+
 	$doUser = !$wgSharedDB || $shared;
 
 	if ($wgDBtype === 'postgres') {
@@ -887,6 +960,25 @@ function do_all_updates( $shared = false, $purge = true ) {
 		if ( $fieldRecord[0] != 'user' || $doUser ) {
 			add_field( $fieldRecord[0], $fieldRecord[1], $fieldRecord[2] );
 		}
+		flush();
+	}
+	
+	global $wgExtNewTables, $wgExtNewFields, $wgExtNewIndexes;
+	# Add missing extension tables
+	foreach ( $wgExtNewTables as $tableRecord ) {
+		add_table( $tableRecord[0], $tableRecord[1], true );
+		flush();
+	}
+	# Add missing extension fields
+	foreach ( $wgExtNewFields as $fieldRecord ) {
+		if ( $fieldRecord[0] != 'user' || $doUser ) {
+			add_field( $fieldRecord[0], $fieldRecord[1], $fieldRecord[2], true );
+		}
+		flush();
+	}
+	# Add missing extension indexes
+	foreach ( $wgExtNewIndexes as $fieldRecord ) {
+		add_index( $fieldRecord[0], $fieldRecord[1], $fieldRecord[2], true );
 		flush();
 	}
 
@@ -927,11 +1019,17 @@ function do_all_updates( $shared = false, $purge = true ) {
 	
 	do_rc_indices_update(); flush();
 
-	add_table( 'redirect', 'patch-redirect.sql' );
-
 	do_backlinking_indices_update(); flush();
 
+	do_categorylinks_indices_update(); flush();
+
 	do_restrictions_update(); flush ();
+	
+	do_archive_user_index(); flush ();
+	
+	do_image_user_index(); flush ();
+	
+	do_oldimage_user_index(); flush ();
 
 	echo "Deleting old default messages (this may take a long time!)..."; flush();
 	deleteDefaultMessages();
@@ -1021,7 +1119,8 @@ function do_restrictions_update() {
 				$wgDatabase->insert( 'page_restrictions', array ( 'pr_page' => $id,
 											'pr_type' => $type,
 											'pr_level' => $level,
-											'pr_cascade' => 0 ),
+											'pr_cascade' => 0,
+											'pr_expiry' => 'infinity' ),
 											__METHOD__ );
 			}
 		}
@@ -1219,7 +1318,10 @@ function do_postgres_updates() {
 
 	$newcols = array(
 		array("archive",       "ar_len",               "INTEGER"),
+		array("archive",       "ar_page_id",           "INTEGER"),
+		array("image",         "img_sha1",             "TEXT NOT NULL DEFAULT ''"),
 		array("ipblocks",      "ipb_anon_only",        "CHAR NOT NULL DEFAULT '0'"),
+		array("ipblocks",      "ipb_block_email",      "CHAR NOT NULL DEFAULT '0'"),
 		array("ipblocks",      "ipb_create_account",   "CHAR NOT NULL DEFAULT '1'"),
 		array("ipblocks",      "ipb_deleted",          "INTEGER NOT NULL DEFAULT 0"),
 		array("ipblocks",      "ipb_enable_autoblock", "CHAR NOT NULL DEFAULT '1'"),
@@ -1229,6 +1331,12 @@ function do_postgres_updates() {
 		array("logging",       "log_params",           "TEXT"),
 		array("mwuser",        "user_editcount",       "INTEGER"),
 		array("mwuser",        "user_newpass_time",    "TIMESTAMPTZ"),
+		array("oldimage",      "oi_deleted",           "CHAR NOT NULL DEFAULT '0'"),
+		array("oldimage",      "oi_metadata",          "BYTEA NOT NULL DEFAULT ''"),
+		array("oldimage",      "oi_media_type",        "TEXT"),
+		array("oldimage",      "oi_major_mime",        "TEXT NOT NULL DEFAULT 'unknown'"),
+		array("oldimage",      "oi_minor_mime",        "TEXT NOT NULL DEFAULT 'unknown'"),
+		array("oldimage",      "oi_sha1",              "TEXT NOT NULL DEFAULT ''"),
 		array("page_restrictions", "pr_id",            "INTEGER NOT NULL UNIQUE DEFAULT nextval('pr_id_val')"),
 		array("recentchanges", "rc_deleted",           "INTEGER NOT NULL DEFAULT 0"),
 		array("recentchanges", "rc_log_action",        "TEXT"),
@@ -1256,7 +1364,10 @@ function do_postgres_updates() {
 	);
 
 	$newindexes = array(
-		array("revision", "rev_text_id_idx", "patch-rev_text_id_idx.sql")
+		array("archive",       "archive_user_text", "(ar_user_text)"),
+		array("image",         "img_sha1",          "(img_sha1)"),
+		array("oldimage",      "oi_sha1",           "(oi_sha1)"),
+		array("revision",      "rev_text_id_idx",   "(rev_text_id)"),
 	);
 
 	$newrules = array(
@@ -1334,7 +1445,8 @@ function do_postgres_updates() {
 			echo "... index $ni[1] on $ni[0] already exists\n";
 			continue;
 		}
-		dbsource(archive($ni[2]));
+		$wgDatabase->query("CREATE INDEX $ni[1] ON $ni[0] $ni[2]");
+		echo "create index $ni[1]\n";
 	}
 
 	foreach ($newrules as $nr) {
@@ -1383,7 +1495,36 @@ function do_postgres_updates() {
 	} else
 		echo "... archive.ar_deleted already exists\n";
 
+	global $wgExtNewTables, $wgExtPGNewFields, $wgExtNewIndexes;
+	# Add missing extension tables
+	foreach ( $wgExtNewTables as $nt ) {
+		if ($wgDatabase->tableExists($nt[0])) {
+			echo "... table $nt[0] already exists\n";
+			continue;
+		}
+
+		echo "... create table $nt[0]\n";
+		dbsource($nt[1]);
+	}
+	# Add missing extension fields
+	foreach ( $wgExtPGNewFields as $nc ) {
+		$fi = $wgDatabase->fieldInfo($nc[0], $nc[1]);
+		if (!is_null($fi)) {
+			echo "... column $nc[0].$nc[1] already exists\n";
+			continue;
+		}
+
+		echo "... add column $nc[0].$nc[1]\n";
+		$wgDatabase->query("ALTER TABLE $nc[0] ADD $nc[1] $nc[2]");
+	}
+	# Add missing extension indexes
+	foreach ( $wgExtNewIndexes as $ni ) {
+		if (pg_index_exists($ni[0], $ni[1])) {
+			echo "... index $ni[1] on $ni[0] already exists\n";
+			continue;
+		}
+		dbsource($ni[2]);
+	}
+
 	return;
 }
-
-?>

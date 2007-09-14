@@ -55,42 +55,52 @@ class LogPage {
 
 		$dbw = wfGetDB( DB_MASTER );
 		$uid = $wgUser->getID();
+		$log_id = $dbw->nextSequenceValue( 'log_log_id_seq' );
 
 		$this->timestamp = $now = wfTimestampNow();
-		$dbw->insert( 'logging',
-			array(
-				'log_type' => $this->type,
-				'log_action' => $this->action,
-				'log_timestamp' => $dbw->timestamp( $now ),
-				'log_user' => $uid,
-				'log_namespace' => $this->target->getNamespace(),
-				'log_title' => $this->target->getDBkey(),
-				'log_comment' => $this->comment,
-				'log_params' => $this->params
-			), $fname
+		$data = array(
+			'log_type' => $this->type,
+			'log_action' => $this->action,
+			'log_timestamp' => $dbw->timestamp( $now ),
+			'log_user' => $uid,
+			'log_namespace' => $this->target->getNamespace(),
+			'log_title' => $this->target->getDBkey(),
+			'log_comment' => $this->comment,
+			'log_params' => $this->params
 		);
+
+		# log_id doesn't exist on Wikimedia servers yet, and it's a tricky 
+		# schema update to do. Hack it for now to ignore the field on MySQL.
+		if ( !is_null( $log_id ) ) {
+			$data['log_id'] = $log_id;
+		}
+		$dbw->insert( 'logging', $data, $fname );
 
 		# And update recentchanges
 		if ( $this->updateRecentChanges ) {
 			$titleObj = SpecialPage::getTitleFor( 'Log', $this->type );
-			$rcComment = $this->actionText;
-			if( '' != $this->comment ) {
-				if ($rcComment == '')
-					$rcComment = $this->comment;
-				else
-					$rcComment .= ': ' . $this->comment;
-			}
-
+			$rcComment = $this->getRcComment();
 			RecentChange::notifyLog( $now, $titleObj, $wgUser, $rcComment, '',
 				$this->type, $this->action, $this->target, $this->comment, $this->params );
 		}
 		return true;
 	}
 
+	public function getRcComment() {
+		$rcComment = $this->actionText;
+		if( '' != $this->comment ) {
+			if ($rcComment == '')
+				$rcComment = $this->comment;
+			else
+				$rcComment .= ': ' . $this->comment;
+		}
+		return $rcComment;
+	}
+
 	/**
 	 * @static
 	 */
-	function validTypes() {
+	public static function validTypes() {
 		global $wgLogTypes;
 		return $wgLogTypes;
 	}
@@ -98,7 +108,7 @@ class LogPage {
 	/**
 	 * @static
 	 */
-	function isLogType( $type ) {
+	public static function isLogType( $type ) {
 		return in_array( $type, LogPage::validTypes() );
 	}
 
@@ -120,7 +130,7 @@ class LogPage {
 	 * @todo handle missing log types
 	 * @static
 	 */
-	function logHeader( $type ) {
+	static function logHeader( $type ) {
 		global $wgLogHeaders;
 		return wfMsg( $wgLogHeaders[$type] );
 	}
@@ -128,7 +138,7 @@ class LogPage {
 	/**
 	 * @static
 	 */
-	function actionText( $type, $action, $title = NULL, $skin = NULL, $params = array(), $filterWikilinks=false, $translate=false ) {
+	static function actionText( $type, $action, $title = NULL, $skin = NULL, $params = array(), $filterWikilinks=false, $translate=false ) {
 		global $wgLang, $wgContLang, $wgLogActions;
 
 		$key = "$type/$action";
@@ -145,14 +155,17 @@ class LogPage {
 					switch( $type ) {
 						case 'move':
 							$titleLink = $skin->makeLinkObj( $title, $title->getPrefixedText(), 'redirect=no' );
-							$params[0] = $skin->makeLinkObj( Title::newFromText( $params[0] ), $params[0] );
+							$params[0] = $skin->makeLinkObj( Title::newFromText( $params[0] ), htmlspecialchars( $params[0] ) );
 							break;
 						case 'block':
 							if( substr( $title->getText(), 0, 1 ) == '#' ) {
 								$titleLink = $title->getText();
 							} else {
-								$titleLink = $skin->makeLinkObj( $title, $title->getText() );
-								$titleLink .= ' (' . $skin->makeKnownLinkObj( SpecialPage::getTitleFor( 'Contributions', $title->getDBkey() ), wfMsg( 'contribslink' ) ) . ')';
+								// TODO: Store the user identifier in the parameters
+								// to make this faster for future log entries
+								$id = User::idFromName( $title->getText() );
+								$titleLink = $skin->userLink( $id, $title->getText() )
+									. $skin->userToolLinks( $id, $title->getText(), false, Linker::TOOL_LINKS_NOBLOCK );
 							}
 							break;
 						case 'rights':
@@ -233,7 +246,7 @@ class LogPage {
 	 * Create a blob from a parameter array
 	 * @static
 	 */
-	function makeParamBlob( $params ) {
+	static function makeParamBlob( $params ) {
 		return implode( "\n", $params );
 	}
 
@@ -241,7 +254,7 @@ class LogPage {
 	 * Extract a parameter array from a blob
 	 * @static
 	 */
-	function extractParams( $blob ) {
+	static function extractParams( $blob ) {
 		if ( $blob === '' ) {
 			return array();
 		} else {
@@ -285,4 +298,4 @@ class LogPage {
 	
 }
 
-?>
+
