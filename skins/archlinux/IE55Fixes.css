@@ -8,8 +8,8 @@
 #column-content #content {
 	position: relative;
 	z-index: 5;
-	margin-left: 12.2em;	
-	margin-top: 6px;
+	margin-left: 12.2em;
+	margin-top: 3em;
 	height: 1%;
 }
 #column-one {
@@ -22,11 +22,6 @@
 #footer {
 	margin-left: 13.6em;
 	border-left: 1px solid #fabd23;
-}
-
-#logo {
-	position: relative;
-	top:-1px;
 }
 
 /*#bodyContent div,

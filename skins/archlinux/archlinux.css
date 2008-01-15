@@ -1,45 +1,143 @@
-#head_container {margin: 0; padding: 0;  height: 140px;}
+body {
+	margin: 0;
+	padding: 0;
+	padding-left: 30px;
+	padding-right: 30px;
+	color: #46494d;
+	background: #ffffff;
+/* 	font-size: 14px; */
+	font-family: sans-serif;
+}
 
-#main_nav ul {
+a {
+	color: #0771a6;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #333333;
+	text-decoration: underline;
+}
+
+a:visited {
+	color: #0771a6;
+}
+
+#logo {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	top: 10px;
+	left: 25px;
+	width: 350px;
+	text-indent: -9999px;
+	background: transparent url("logo.png") top left no-repeat;
+	border:none;
+	width: 350px;
+	height: 103px;
+}
+
+#nav_bar {
+	position: absolute;
+	top: 123px;
+	left:0px;
+	right:0px;
+	background: #333333;
+
+}
+
+#nav {
+	height:26px;
 	list-style: none;
 	margin: 0;
-	padding: 20px;
-	padding-right: 10px;
-	padding-top: 48px;
+	padding: 0;
+	margin-right:30px;
 }
 
-#main_nav ul li {
+#nav li {
 	display: block;
 	float: right;
-	width: 67px;
-	height: 20px;
-	margin: 0;
-	padding-top: 2px;
-	margin-left: 3px;
-	background: url("tab.png") repeat-x bottom left #fbf8f1;
+	margin: 0 3px;
+	padding: 0;
 	text-align: center;
 	font-size: 13px;
+	line-height: 26px;
 }
 
-#main_nav ul li[class~=selected] {
-	background: #fbf8f1;
+#nav li.selected {
+	background: #1793d1;
+	padding: 0 8px;
+	color: #ffffff;
+	font-weight: bold;
 }
 
-#main_nav ul li a {
-color: #35526f;
+#nav li a {
+	display: block;
+	padding: 0 8px;
+	color: #ffffff;
 	font-weight: bold;
 	text-decoration: none;
 }
 
-
-
-#title {margin: 0; padding: 0;
-	height: 140px;
-	float: left;
+#nav li a:hover {
+	background: #1793d1;
 }
 
-#logo {margin: 0; padding: 0;
-	float: left;
-	width: 140px;
-	height: 140px;
+#subnav_bar {
+	position: absolute;
+	top: 149px;
+	left:0px;
+	right:0px;
+	height:26px;
+	background: #1793d1;
+	clear:both;
+}
+
+/* MediaWiki: */
+
+#content {
+	top: 173px;
+}
+
+#column-one {
+	padding-top: 203px;
+}
+
+#column-content {
+	padding-bottom:210px;
+}
+
+#p-cactions {
+	top: 200px;
+	left: 160px;
+}
+
+#content {
+	border-right: 1px solid #aaa;
+}
+
+.pBody {
+	background-color: #F0F0F0;
+}
+
+#footer {
+	background-color: #F0F0F0;
+	border-color: #AAAAAA;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	color: #0771a6;
+}
+
+#bodyContent table {
+	border-collapse: collapse;
+	padding: 4px;
+}
+
+#bodyContent td {
+	padding: 4px;
+}
+
+#bodyContent a.external {
+	color: #49AADB;
 }

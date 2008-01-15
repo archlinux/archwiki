@@ -1,7 +1,6 @@
 /* IE/Mac only fix stylesheet, imported from main.css */
 #portal-column-content {
-	margin: 0 0 4.8em 0;	
-	margin-top: 6px;
+	margin: 0 0 4.8em 0;
 	float: none;
 }
 #portal-column-content #content {

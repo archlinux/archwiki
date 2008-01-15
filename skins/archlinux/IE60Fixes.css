@@ -8,12 +8,12 @@
 }
 #column-content #content {
 	margin-left: 12.2em;
-	margin-top: 6px;
+	margin-top: 3em;
 	height: 1%;
 }
 #column-one {
 	position: absolute;
-	top: 137px;
+	top: 0;
 	left: 0;
 	z-index: 4;
 }
@@ -22,23 +22,10 @@
 	border-left: 1px solid #fabd23;
 }
 
-#logo {
-	position: relative;
-	top:-1px;
-}
-
 /* the tabs */
-
-	#p-personal {
-		position: absolute;
-		left: 50px;
-		top: -40px;
-		z-index: 0;
-	}
 
 #p-cactions {
 	z-index: 3;
-	top:0px;
 }
 
 #p-cactions li {
@@ -63,8 +50,6 @@
 	padding-bottom: 0.17em;
 }
 #p-navigation a {
-
-	top:0px;
 	display: inline-block;
 	width: 100%;
 }

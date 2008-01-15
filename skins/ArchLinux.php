@@ -95,38 +95,35 @@ class ArchLinuxTemplate extends QuickTemplate {
  class="mediawiki <?php $this->text('nsclass') ?> <?php $this->text('dir') ?> <?php $this->text('pageclass') ?>">
 
 	<?php if (empty($_REQUEST['printable'])) {?>
-	<div id="head_container">
-		<div id="title">
-			<div id="logo"><img src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/logo.png" alt="Arch logo" /></div>
-			<img src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/title.png" alt="Arch linux" />
-		</div>
-		<div id="main_nav">
-			<ul>
-				<?php
-					$bugsTab = '';
-					$downloadTab = '';
-					$aurTab = '';
-					$wikiTab = '';
+	<h1 id="logo">Arch Linux</h1>
+	<div id="nav_bar">
+		<ul id="nav">
+			<?php
+				$bugsTab = '';
+				$downloadTab = '';
+				$aurTab = '';
+				$wikiTab = '';
 
-					if ($this->data['title'] == 'Fehler melden') {
-						$bugsTab = ' class="selected"';
-					} elseif ($this->data['title'] == 'Download') {
-						$downloadTab = ' class="selected"';
-					} elseif ($this->data['title'] == 'ArchLinux User-Community Repository') {
-						$aurTab = ' class="selected"';
-					} else {
-						$wikiTab = ' class="selected"';
-					}
-				?>
-				<li<?php echo $downloadTab; ?>><a href="?title=Download">ISOs</a></li>
-				<li<?php echo $aurTab; ?>><a href="?title=AUR">AUR</a></li>
-				<li<?php echo $bugsTab; ?>><a href="?title=Bugs">Bugs</a></li>
-				<li<?php echo $wikiTab; ?>><a href="?title=Hauptseite">Wiki</a></li>
-				<li><a href="http://forum.archlinux.de/?page=Forums;id=20">Forum</a></li>
-				<li><a href="http://www.archlinux.de">Start</a></li>
-			</ul>
-		</div>
+				if ($this->data['title'] == 'Fehler melden') {
+					$bugsTab = ' class="selected"';
+				} elseif ($this->data['title'] == 'Download') {
+					$downloadTab = ' class="selected"';
+				} elseif ($this->data['title'] == 'ArchLinux User-Community Repository') {
+					$aurTab = ' class="selected"';
+				} else {
+					$wikiTab = ' class="selected"';
+				}
+			?>
+			<li<?php echo $downloadTab; ?>><a href="?title=Download">ISOs</a></li>
+			<li<?php echo $aurTab; ?>><a href="?title=AUR">AUR</a></li>
+			<li<?php echo $bugsTab; ?>><a href="?title=Bugs">Bugs</a></li>
+			<li<?php echo $wikiTab; ?>><a href="?title=Hauptseite">Wiki</a></li>
+			<li><a href="http://forum.archlinux.de/?page=Forums;id=20">Forum</a></li>
+			<li><a href="http://www.archlinux.de">Start</a></li>
+		</ul>
 	</div>
+	<div id="subnav_bar"></div>
+	
 	<?php if (!empty($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'submit') ) { ?>
 		<div style="clear:both;background-image:url(FunnyDotImage.php);background-repeat:no-repeat;visibility:hidden;">&nbsp;</div>
 	<?php } else { ?>
