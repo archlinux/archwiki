@@ -5,7 +5,7 @@ body {
 	padding-right: 30px;
 	color: #46494d;
 	background: #ffffff;
-/* 	font-size: 14px; */
+	font-size: 10px;
 	font-family: sans-serif;
 }
 
@@ -96,7 +96,10 @@ a:visited {
 /* MediaWiki: */
 
 #content {
+	background-color: #F0F0F0;
+	color: #333333;
 	top: 173px;
+	border-right: 1px solid #aaa;
 }
 
 #column-one {
@@ -112,12 +115,8 @@ a:visited {
 	left: 160px;
 }
 
-#content {
-	border-right: 1px solid #aaa;
-}
-
 .pBody {
-	background-color: #F0F0F0;
+	background-color: #E0E0E0;
 }
 
 #footer {
@@ -139,7 +138,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #bodyContent a.external {
-	color: #49AADB;
+	color: #1793D1;
 }
 
 #p-personal {
@@ -201,4 +200,52 @@ ul {
 }
 #p-cactions li a {
 	color: #0771a6;
+}
+
+table {
+	background-color: #F0F0F0;
+}
+
+div.townBox {
+	background-color: #F0F0F0;
+}
+
+#p-cactions li {
+	background-color: #F0F0F0;
+}
+
+#p-cactions li.selected a {
+	background-color: #F0F0F0;
+}
+
+div#userloginForm .captcha {
+	background-color: #F0F0F0;
+}
+
+table.gallery {
+	background-color: #F0F0F0;
+}
+
+div#searchTargetContainer {
+	background-color: #F0F0F0;
+}
+
+.editExternally {
+	background-color: #F0F0F0;
+}
+
+.TablePager td {
+	background-color: #F0F0F0
+}
+
+table.diff, td.diff-otitle, td.diff-ntitle {
+	background-color: #F0F0F0;
+}
+
+td.diff-context {
+	background-color: #E0E0E0;
+}
+
+div.noarticletext {
+	background-color: #E0E0E0;
 }
