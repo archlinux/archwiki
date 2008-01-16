@@ -108,7 +108,7 @@ a:visited {
 }
 
 #p-cactions {
-	top: 200px;
+	top: 201px;
 	left: 160px;
 }
 
@@ -140,4 +140,65 @@ h1, h2, h3, h4, h5, h6 {
 
 #bodyContent a.external {
 	color: #49AADB;
+}
+
+#p-personal {
+	top: 154px;
+	font-size:14px;
+	font-weight: bold;
+	line-height: 26px;
+}
+
+li#pt-userpage,
+li#pt-anonuserpage,
+li#pt-login {
+	background: #1793d1;
+}
+
+li#pt-login {
+	padding-right:30px;
+}
+
+#p-personal ul {
+	color: #ffffff;
+	text-transform: none;
+}
+#p-personal li {
+	color: #ffffff;
+}
+#p-personal li a {
+	color: #ffffff;
+	margin-left: 8px;
+}
+#p-personal li a:hover {
+	background-color: #1793d1;
+	color: #DBDBDB;
+}
+#p-personal li.active a:hover {
+	background-color: #1793d1;
+}
+
+#p-personal a.new, #p-personal a.new:visited {
+	color: #DBDBDB;
+}
+
+ul {
+	list-style-image: none;
+	color: #0771a6;
+}
+
+.portlet ul {
+	list-style-image: none;
+	color: #0771a6;
+}
+
+.portlet li {
+	margin: 2px;
+}
+
+#p-cactions li.selected {
+	border-color: #0771a6;
+}
+#p-cactions li a {
+	color: #0771a6;
 }
