@@ -281,3 +281,7 @@ select {
 #searchInput {
 	background-color: #F0F0F0;
 }
+
+div.thumb {
+	border-color: #F0F0F0;
+}
