@@ -249,3 +249,35 @@ td.diff-context {
 div.noarticletext {
 	background-color: #E0E0E0;
 }
+
+#p-cactions li a:hover {
+	background-color: #F0F0F0;
+}
+
+input {
+	color:#333333;
+	background-color:#dbdbdb;
+	border-style:solid;
+	border-width:1px;
+	border-color:#333333;
+}
+
+textarea {
+	color:#333333;
+	background-color:#dbdbdb;
+	border-style:solid;
+	border-width:1px;
+	border-color:#333333;
+}
+
+select {
+	color:#333333;
+	background-color:#dbdbdb;
+	border-style:solid;
+	border-width:1px;
+	border-color:#333333;
+}
+
+#searchInput {
+	background-color: #F0F0F0;
+}
