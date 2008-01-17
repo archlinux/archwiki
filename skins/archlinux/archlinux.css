@@ -14,13 +14,13 @@ a {
 	text-decoration: none;
 }
 
+a:visited {
+	color: #0771a6;
+}
+
 a:hover {
 	color: #333333;
 	text-decoration: underline;
-}
-
-a:visited {
-	color: #0771a6;
 }
 
 #logo {
@@ -168,23 +168,27 @@ li#pt-login {
 	color: #ffffff;
 	text-transform: none;
 }
+
 #p-personal li {
 	color: #ffffff;
 }
+
 #p-personal li a {
 	color: #ffffff;
 	margin-left: 8px;
 }
+
+#p-personal a.new, #p-personal a.new:visited {
+	color: #DBDBDB;
+}
+
 #p-personal li a:hover {
 	background-color: #1793d1;
 	color: #DBDBDB;
 }
+
 #p-personal li.active a:hover {
 	background-color: #1793d1;
-}
-
-#p-personal a.new, #p-personal a.new:visited {
-	color: #DBDBDB;
 }
 
 ul {
