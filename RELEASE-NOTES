@@ -3,6 +3,45 @@
 Security reminder: MediaWiki does not require PHP's register_globals
 setting since version 1.2.0. If you have it on, turn it *off* if you can.
 
+== MediaWiki 1.11.1 ==
+
+January 23, 2008
+
+This is a security and bugfix release of the Fall 2007 snapshot release of
+MediaWiki. A potential XSS injection vector affecting api.php only for
+Microsoft Internet Explorer users has been closed.
+
+Changes in this release:
+
+* (bug 11450) Fix creation of objectcache table on upgrade
+* (bug 11462) Fix typo in LanguageGetSpecialPageAliases hook name
+* Fix regression in LinkBatch.php breaking PHP 5.0
+* Security fix for API on MSIE
+
+
+To work around the vulnerability without upgrading, you may disable the
+API if you don't need it:
+
+  $wgEnableAPI = false;
+
+Not vulnerable versions:
+* 1.12 or later
+* 1.11 >= 1.11.1
+* 1.10 >= 1.10.3
+* 1.9 >= 1.9.5
+* 1.8 any version (if $wgEnableAPI has been left off)
+
+Vulnerable versions:
+* 1.11 <= 1.11.0rc1
+* 1.10 <= 1.10.2
+* 1.9 <= 1.9.4
+* 1.8 any version (if $wgEnableAPI has been switched on)
+
+MediaWiki 1.7 and below are not affected as they do not include
+the API functionality, however the BotQuery extension is similarly
+vulnerable unless updated to the latest SVN version.
+
+
 == MediaWiki 1.11.0 ==
 
 September 10, 2007
@@ -532,6 +571,7 @@ Full API documentation is available at http://www.mediawiki.org/wiki/API
 * (bug 10890) Timestamp support for categorymembers query
 * (bug 10980) Add exclude redirects on backlinks
 * IPv6 titles in User namespace are normalized (run cleanupTitles.php to fix any old stray pages)
+* Sysops now have the same limits on the number of items they can request in a query as bots.
 
 == Maintenance script changes since 1.10 ==
 
@@ -642,6 +682,10 @@ updates.
 
 If upgrading from before 1.7, you may want to run refreshLinks.php to ensure
 new database fields are filled with data.
+
+If upgrading from before 1.11, and you are using a wiki as a commons repository, 
+make sure that it is updated as well. Otherwise, errors may arise due to 
+database schema changes.
 
 If you are upgrading from MediaWiki 1.4.x or earlier, some major database
 changes are made, and there is a slightly higher chance that things could
