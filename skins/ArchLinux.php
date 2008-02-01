@@ -115,6 +115,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 				}
 			?>
 			<li<?php echo $downloadTab; ?>><a href="?title=Download">ISOs</a></li>
+			<li><a href="http://www.archlinux.de/?page=Packages">Pakete</a></li>
 			<li<?php echo $aurTab; ?>><a href="?title=AUR">AUR</a></li>
 			<li<?php echo $bugsTab; ?>><a href="?title=Bugs">Bugs</a></li>
 			<li<?php echo $wikiTab; ?>><a href="?title=Hauptseite">Wiki</a></li>
