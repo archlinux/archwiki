@@ -120,11 +120,11 @@ class ArchLinuxTemplate extends QuickTemplate {
 			<li<?php echo $bugsTab; ?>><a href="?title=Bugs">Bugs</a></li>
 			<li<?php echo $wikiTab; ?>><a href="?title=Hauptseite">Wiki</a></li>
 			<li><a href="http://forum.archlinux.de/?page=Forums;id=20">Forum</a></li>
-			<li><a href="http://www.archlinux.de">Start</a></li>
+			<li><a href="http://www.archlinux.de/?page=Start">Start</a></li>
 		</ul>
 	</div>
 	<div id="subnav_bar"></div>
-	
+
 	<?php if (!empty($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'submit') ) { ?>
 		<div style="clear:both;background-image:url(FunnyDotImage.php);background-repeat:no-repeat;visibility:hidden;">&nbsp;</div>
 	<?php } else { ?>
