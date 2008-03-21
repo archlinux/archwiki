@@ -1,9 +1,32 @@
 <?php
-/** Lao (ພາສາລາວ)
-  *
-  * @addtogroup Language
-  *
-  */
+/** Lao (ລາວ)
+ *
+ * @addtogroup Language
+ *
+ * @author Passawuth
+ */
+
+$namespaceNames = array(
+	NS_MEDIA            => 'ສື່ອ',
+	NS_SPECIAL          => 'ພິເສດ',
+	NS_MAIN             => '',
+	NS_TALK             => 'ສົນທະນາ',
+	NS_USER             => 'ຜູ້ໃຊ້',
+	NS_USER_TALK        => 'ສົນທະນາຂອງຜູ້ໃຊ້',
+	# NS_PROJECT set by $wgMetaNamespace
+	NS_PROJECT_TALK     => 'ສົນທະນາກ່ຽວກັບ$1',
+	NS_IMAGE            => 'ຮູບ',
+	NS_IMAGE_TALK       => 'ສົນທະນາກ່ຽວກັບຮູບ',
+	NS_MEDIAWIKI        => 'ມີເດຍວິກິ',
+	NS_MEDIAWIKI_TALK   => 'ສົນທະນາກ່ຽວກັບມີເດຍວິກິ',
+	NS_TEMPLATE         => 'ແມ່ແບບ',
+	NS_TEMPLATE_TALK    => 'ສົນທະນາກ່ຽວກັບແມ່ແບບ',
+	NS_HELP             => 'ຊ່ວຍເຫຼືອ',
+	NS_HELP_TALK        => 'ສົນທະນາກ່ຽວກັບຊ່ວຍເຫຼືອ',
+	NS_CATEGORY         => 'ໝວດ',
+	NS_CATEGORY_TALK    => 'ສົນທະນາກ່ຽວກັບໝວດ'
+);
+
 $digitTransformTable = array(
 	'0' => '໐', # &#x0ed0;
 	'1' => '໑', # &#x0ed1;
@@ -19,6 +42,7 @@ $digitTransformTable = array(
 
 $messages = array(
 # User preference toggles
+'tog-underline'               => 'ຂີດເສ້ນໃຕ້ລິງຄ໌:',
 'tog-hideminor'               => 'ເຊື່ອງການດັດແກ້ເລັກນ້ອຍ ໃນ ການປ່ຽນແປງຫຼ້າສຸດ',
 'tog-extendwatchlist'         => 'ຂະຫຍາຍ ລາຍການຕິດຕາມ ເພື່ອ ສະແດງທຸກໆການປ່ຽນແປງ',
 'tog-usenewrc'                => 'ສະແດງ ການປ່ຽນແປງຫຼ້າສຸດ ເປັນສີເຂັ້ມ (JavaScript)',
@@ -72,21 +96,26 @@ $messages = array(
 'subcategories'   => 'ໝວດຍ່ອຍ',
 
 'about'          => 'ກ່ຽວກັບ',
-'article'        => 'ໜ້າເນື້ອໃນ',
+'article'        => 'ບົດຄວາມ',
 'newwindow'      => '(ເປີດເປັນ ປ່ອງຢ້ຽມ(ວິນໂດ)ໃໝ່ )',
 'cancel'         => 'ລົບລ້າງ',
+'qbfind'         => 'ຊອກຫາ',
+'qbedit'         => 'ດັດແກ້',
+'qbpageoptions'  => 'ໜ້ານີ້',
 'qbspecialpages' => 'ໜ້າພິເສດ',
 'mypage'         => 'ໜ້າຂ້ອຍ',
 'mytalk'         => 'ສົນທະນາຂ້ອຍ',
 'anontalk'       => 'ສົນທະນາ ສຳຫຼັບ IP ນີ້',
 'navigation'     => 'ນຳທິດ',
+'and'            => 'ແລະ',
 
 'returnto'         => 'ກັບໄປ  $1.',
-'help'             => 'ຊ່ອຍເຫຼືອ',
+'help'             => 'ຊ່ວຍເຫຼືອ',
 'search'           => 'ຊອກຫາ',
 'searchbutton'     => 'ຊອກຫາ',
+'go'               => 'ໄປ',
 'searcharticle'    => 'ໄປ',
-'history'          => 'ປະຫວັດການດັດແກ້',
+'history'          => 'ປະຫວັດ',
 'history_short'    => 'ປະຫວັດການດັດແກ້',
 'printableversion' => 'ສະບັບພິມໄດ້',
 'permalink'        => 'ລິ້ງຄ໌ຖາວອນ',
@@ -111,30 +140,32 @@ $messages = array(
 'jumptosearch'     => 'ຄົ້ນຫາ',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
-'aboutsite'     => 'ກ່ຽວກັບ {{SITENAME}}',
-'aboutpage'     => '{{ns:project}}:ກ່ຽວກັບ',
+'aboutsite'     => 'ກ່ຽວກັບ{{SITENAME}}',
+'aboutpage'     => 'Project:ກ່ຽວກັບ',
 'copyright'     => 'ເນື້ອໃນ ສະໜອງໃຫ້ ພາຍໃຕ້ $1.',
 'copyrightpage' => '{{ns:project}}:ລິຂະສິດ',
-'edithelppage'  => '{{ns:project}}:ການດັດແກ້',
-'helppage'      => '{{ns:project}}:ເນື້ອໃນ',
+'edithelppage'  => 'Help:ການດັດແກ້',
+'helppage'      => 'Help:ເນື້ອໃນ',
 'mainpage'      => 'ໜ້າຫຼັກ',
 'sitesupport'   => 'ບໍລິຈາກ',
 
 'badaccess'        => 'ການອະນຸມັດບໍ່ຖືກຕ້ອງ',
 'badaccess-group0' => 'ທ່ານ ບໍ່ໄດ້ຮັບອະນຸຍາດ ໃຫ້ປະຕິບັດການ ທີ່ ທ່ານ ສັ່ງ.',
 
-'youhavenewmessages'  => 'ທ່ານ ມີ $1 ($2).',
-'newmessageslink'     => 'ຂໍ້ຄວາມໃໝ່',
-'newmessagesdifflink' => 'ການປ່ຽນແປງຫຼ້າສຸດ',
-'editsection'         => 'ດັດແກ້',
-'editold'             => 'ດັດແກ້',
-'editsectionhint'     => 'ດັດແກ້ ພາກ: $1',
-'toc'                 => 'ເນື້ອໃນ',
-'showtoc'             => 'ສະແດງ',
-'hidetoc'             => 'ເຊື່ອງ',
-'viewdeleted'         => 'ເບິ່ງ $1 ບໍ?',
+'youhavenewmessages'      => 'ທ່ານ ມີ $1 ($2).',
+'newmessageslink'         => 'ຂໍ້ຄວາມໃໝ່',
+'newmessagesdifflink'     => 'ການປ່ຽນແປງຫຼ້າສຸດ',
+'youhavenewmessagesmulti' => 'ທ່ານມີຂໍ້ຄວາມໃໝ່ ຢູ່ $1',
+'editsection'             => 'ດັດແກ້',
+'editold'                 => 'ດັດແກ້',
+'editsectionhint'         => 'ດັດແກ້ ພາກ: $1',
+'toc'                     => 'ເນື້ອໃນ',
+'showtoc'                 => 'ສະແດງ',
+'hidetoc'                 => 'ເຊື່ອງ',
+'viewdeleted'             => 'ເບິ່ງ $1 ບໍ?',
+'red-link-title'          => '$1 (ຍັງບໍ່ໄດ້ສ້າງ)',
 
-# Short words for each namespace, by default used in the 'article' tab in monobook
+# Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'ບົດຄວາມ',
 'nstab-user'      => 'ໜ້າຜູ້ໃຊ້',
 'nstab-special'   => 'ພິເສດ',
@@ -170,7 +201,6 @@ $messages = array(
 'yourpasswordagain'          => 'ພິມລະຫັດຜ່ານອີກ',
 'remembermypassword'         => 'ຈົດຈໍາການເຊັນເຂົ້າຂອງຂ້ອຍ ຢູ່ ຄອມພິວເຕີໜ່ວຍນີ້',
 'yourdomainname'             => 'ໂດເມນ ຂອງ ທ່ານ',
-'alreadyloggedin'            => '<strong>ຜູ້ໃຊ້ $1, ທ່ານ ໄດ້ເຊັນເຂົ້າແລ້ວ!</strong><br />',
 'login'                      => 'ເຊັນເຂົ້າ',
 'loginprompt'                => 'ທ່ານ ຕ້ອງ ອະນຸຍາດ cookies ເພື່ອ ຈະເຊັນເຂົ້າ {{SITENAME}}.',
 'userlogin'                  => 'ເຊັນເຂົ້າ / ສ້າງບັນຊີ',
@@ -238,7 +268,7 @@ $messages = array(
 'newarticletext'         => "== Headline text ==
 ທ່ານ ໄດ້ມາຮອດ ໜ້າທີ່ຍັງບໍ່ໄດ້ຖືກສ້າງຂຶ້ນເທື່ອ.
 ທ່ານ ສາມາດເລີ່ມ ສ້າງໜ້າ ໂດຍ ພິມໃສ່ ກັບ ຂ້າງລຸ່ມ.
-(ເບິ່ງລາຍລະອຽດຕື່ມ ທີ່ [[{{MediaWiki:helppage}}|help page]]).
+(ເບິ່ງລາຍລະອຽດຕື່ມ ທີ່ [[{{MediaWiki:Helppage}}|help page]]).
 ຖ້າ ທ່ານ ມາຮອດນີ້ ໂດຍຄວາມຜິດພາດ, ກະລຸນາ ກົດ ປຸ່ມ '''ກັບຄືນ''', ຢູ່ ໂປຣແກຣມ ທ່ອງເວັບ ຂອງທ່ານ.",
 'noarticletext'          => 'ຍັງບໍ່ມີເນື້ອໃນ ຢູ່ ໜ້ານີ້, ທ່ານ ສາມາດ [[Special:Search/{{PAGENAME}}|ຊອກຫາຫົວຂໍ້ໜ້ານີ້​]] ຢູ່ ໜ້າອື່ນ ຫຼື [{{fullurl:{{FULLPAGENAME}}|action=edit}} ຂຽນໜ້ານີ້].',
 'clearyourcache'         => "'''ເອົາໃຈໃສ່:''' ຫຼັງຈາກບັນທຶກ, ທ່ານອາດຈຳເປັນຕ້ອງເວັ້ນຜ່ານ ຂໍ້ມູນເກົ່າທີ່ ໂປແກມທ່ອງເວັບ ຂອງ ທ່ານບັນທຶກໄວ້ເພື່ອເບິ່ງຜົນການປ່ຽນແປງ. '''Mozilla / Firefox / Safari:''' ກົດ ''Shift'' ໃນເວລາຄລິກ ''Reload'', ຫຼືກົດ ''Ctrl-Shift-R'' (''Cmd-Shift-R'' ໃນ ເມັກຄິນທົສ); '''IE:''' ກົດ ''Ctrl'' ໃນເວລາຄລິກ ''Refresh'', ຫຼືກົດ ''Ctrl-F5''; '''Konqueror:''': ກົດປຸ່ມ ''Reload'' , ຫຼື ກົດ ''F5''; '''Opera''' ຜູ້ໃຊ້ອາດຈຳເປັນຕ້ອງລຶບ ຂໍ້ມູນບັນທຶກໂດຍສິ້ນເຊີງ ໃນ ''Tools→Preferences''.",
@@ -263,8 +293,6 @@ $messages = array(
 
 # Account creation failure
 'cantcreateaccounttitle' => 'ບໍ່ສາມາດສ້າງ ບັນຊີ ໄດ້',
-'cantcreateaccounttext'  => 'ການສ້າງບັນຊີ ຈາກ ທີ່ຢູ່ IP (<b>$1</b>) ນີ້​ໄດ້ຖືກຫ້າມ. 
-ອັນນີ້​ ອາດແມ່ນຍ້ອນມີການສ້າງບັນຫາ ຫຼື ຂຽນໂລເລ ຈາກ ໂຮງຮຽນ ຫຼື ຜູ້ສະໜອງການເຂົ້າຫາ ອິນເຕີເນັດ ທີ່ທ່ານໃຊ້.',
 
 # History pages
 'nohistory'  => 'ຍັງບໍ່ມີ ປະຫວັດການດັດແກ້ໜ້ານີ້ເທື່ອ.',
@@ -279,17 +307,12 @@ $messages = array(
 'compareselectedversions' => 'ສົມທຽບ ລະຫວ່າງ ສະບັບເລືອກ',
 
 # Search results
-'searchresulttext' => 'ສຳຫຼັບ ຂໍ້ມູນເພີ່ມເຕີມ ກ່ຽວກັບ ການຊອກຫາ ຢູ່ {{SITENAME}}, ກະລຸນາເບິ່ງ [[{{MediaWiki:helppage}}|{{int:help}}]].',
+'searchresulttext' => 'ສຳຫຼັບ ຂໍ້ມູນເພີ່ມເຕີມ ກ່ຽວກັບ ການຊອກຫາ ຢູ່ {{SITENAME}}, ກະລຸນາເບິ່ງ [[{{MediaWiki:Helppage}}|{{int:help}}]].',
 'searchsubtitle'   => "ທ່ານ ຊອກຫາ '''[[:$1]]'''",
-'badquerytext'     => 'ບໍ່ສາມາດດຳເນີນ ການຄົ້ນຫາ ທີ່ທ່ານກຳນົດໄດ້.
-ອັນນີ້​ ອາດແມ່ນຍ້ອນ ທ່ານພະຍາຍາມ ຄົ້ນຫາໂດຍຄຳສັບທີ່ໜ້ອຍກ່ວາ 3​ ໂຕໜັງສື, ທີ່ພວກເຮົາຍັງບໍ່ສາມາດຕອບສະໜອງໄດ້ເທື່ອ..
-ຫຼື ທ່ານອາດຈະພິມຜິດ ເຊັ່ນ  "ປາ ແລະ ແລະ ຂະໜາດ".
-ກະລຸນາ ທົດລອງ ໂດຍ ຄຳສັບອື່ນໆ.',
 'noexactmatch'     => "'''ຍັງບໍ່ມີໜ້າ ຊື່ວ່າ  \"\$1\".''' ທ່ານ ສາມາດ [[:\$1|ສ້າງໜ້ານີ້ໄດ້]].",
 'nextn'            => '$1 ຕໍ່ໄປ',
 'viewprevnext'     => 'ເບິ່ງ ($1) ($2) ($3).',
 'powersearch'      => 'ຊອກຫາ',
-'blanknamespace'   => '(ຫຼັກ)',
 
 # Preferences page
 'preferences'           => 'ການຕັ້ງຄ່າ',
@@ -375,6 +398,9 @@ $messages = array(
 # Unused templates
 'unusedtemplates' => 'ແມ່ແບບບໍ່ໄດ້ໃຊ້',
 
+# Random page
+'randompage' => 'ໜ້າໃດໜຶ່ງ',
+
 # Random redirect
 'randomredirect' => 'ໂອນໄປໜ້າໃດໜຶ່ງ',
 
@@ -409,7 +435,6 @@ $messages = array(
 'mostrevisions'           => 'ບົດຄວາມ ທີ່ມີການດັດແກ້ຫຼາຍເທື່ອທີ່ສຸດ',
 'allpages'                => 'ທຸກໆໜ້າ',
 'prefixindex'             => 'ດັດຊະນີຄຳນຳໜ້າ',
-'randompage'              => 'ໜ້າໃດໜຶ່ງ',
 'shortpages'              => 'ໜ້າເນື້ອໃນສັ້ນ',
 'longpages'               => 'ໜ້າເນື້ອໃນຍາວ',
 'deadendpages'            => 'ໜ້າບໍ່ການເຊື່ອມຕໍ່ຫາໜ້າອື່ນ',
@@ -508,8 +533,6 @@ $messages = array(
 
 # Delete/protect/revert
 'confirm'        => 'ຢືນຢັນ',
-'confirmdelete'  => 'ຢືນຢັນການລຶບ',
-'deletesub'      => '(ພວມລຶບ "$1")',
 'actioncomplete' => 'ສຳເລັດ',
 'dellogpage'     => 'ບັນທຶກ ການລຶບ',
 'dellogpagetext' => 'ຂ້າງລຸ່ມ ແມ່ນ ລາຍການ ການລຶບຫຼ້າສຸດ.',
@@ -528,7 +551,8 @@ $messages = array(
 'undelete-search-submit' => 'ຊອກຫາ',
 
 # Namespace form on various pages
-'namespace' => 'ຂອບເຂດຊື່:',
+'namespace'      => 'ຂອບເຂດຊື່:',
+'blanknamespace' => '(ຫຼັກ)',
 
 # Contributions
 'contributions' => 'ການປະກອບສ່ວນຂອງຜູ້ໃຊ້ນີ້',
@@ -537,10 +561,6 @@ $messages = array(
 'nocontribs'    => 'ຍັງບໍ່ມີການປ່ຽນແປງ ໃນນີ້.',
 'year'          => 'ແຕ່ປີ (ແລະກ່ອນໜ້ານັ້ນ):',
 
-'sp-contributions-newest'   => 'ໃໝ່ສຸດ',
-'sp-contributions-oldest'   => 'ເກົ່າສຸດ',
-'sp-contributions-newer'    => 'ໃໝ່ກວ່າ $1',
-'sp-contributions-older'    => 'ເກົ່າກວ່າ $1',
 'sp-contributions-newbies'  => 'ສະແດງສະເພາະ ການປະກອບສ່ວນ ໂດຍ ບັນຊີໃໝ່',
 'sp-contributions-blocklog' => 'ບັນທຶກການຫ້າມ',
 'sp-contributions-search'   => 'ຊອກຫາ ການປະກອບສ່ວນ',
@@ -596,7 +616,6 @@ $messages = array(
 
 # Attribution
 'anonymous' => 'ຜູ້ໃຊ້ ບໍ່ສະແດງຊື່ ຈາກ {{SITENAME}}',
-'and'       => 'ແລະ',
 
 # Spam protection
 'subcategorycount'     => 'ມີ $1 ໝວດຍ່ອຍ ໃນ ໝວດນີ້.',
@@ -610,6 +629,7 @@ $messages = array(
 'imagemaxsize' => 'ກຳນົດຄວາມໃຫຍ່ຂອງ ຮູບ ຫຼື ໜ້າອະທິບາຍຮູບ ບໍ່ໃຫ້ກາຍ:',
 'thumbsize'    => 'ຂະໜາດສະແດງ:',
 
+# Special:Newimages
 'newimages' => 'ໄຟລ໌ຮູບໃໝ່',
 
 # EXIF tags
@@ -670,8 +690,7 @@ will expire at $4.',
 # action=purge
 'confirm_purge_button' => 'ຕົກລົງ',
 
-'youhavenewmessagesmulti' => 'ທ່ານມີຂໍ້ຄວາມໃໝ່ ຢູ່ $1',
-
+# AJAX search
 'searchcontaining' => "ຊອກຫາ ບົດຄວາມ ທີ່ປະກອບມີ  ''$1''.",
 'searchnamed'      => "ຊອກຫາ ບົດຄວາມ ຊື່ ''$1''.",
 'articletitles'    => "ບົດຄວາມ ເລີ່ມດ້ວຍ ''$1''",
@@ -685,5 +704,8 @@ will expire at $4.',
 'autosumm-replace' => "ປ່ຽນ ໜ້ານີ້ ໂດຍ  '$1'",
 'autoredircomment' => 'ພວມໂອນໄປ ຫາ [[$1]]',
 'autosumm-new'     => 'ໜ້າໃໝ່: $1',
+
+# Special:Filepath
+'filepath' => 'ທາງໄປຫາໄຟລ໌',
 
 );

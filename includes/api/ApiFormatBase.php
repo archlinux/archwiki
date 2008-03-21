@@ -35,7 +35,7 @@ if (!defined('MEDIAWIKI')) {
  */
 abstract class ApiFormatBase extends ApiBase {
 
-	private $mIsHtml, $mFormat;
+	private $mIsHtml, $mFormat, $mUnescapeAmps, $mHelp;
 
 	/**
 	* Create a new instance of the formatter.
@@ -69,6 +69,18 @@ abstract class ApiFormatBase extends ApiBase {
 	}
 
 	/**
+	 * Specify whether or not ampersands should be escaped to '&amp;' when rendering. This
+	 * should only be set to true for the help message when rendered in the default (xmlfm)
+	 * format. This is a temporary special-case fix that should be removed once the help
+	 * has been reworked to use a fully html interface.
+	 *
+	 * @param boolean Whether or not ampersands should be escaped.
+	 */
+	public function setUnescapeAmps ( $b ) {
+		$this->mUnescapeAmps = $b;
+	}
+
+	/**
 	 * Returns true when an HTML filtering printer should be used.
 	 * The default implementation assumes that formats ending with 'fm' 
 	 * should be formatted in HTML. 
@@ -99,7 +111,11 @@ abstract class ApiFormatBase extends ApiBase {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<title>MediaWiki API</title>
+<?php if ($this->mUnescapeAmps) { 
+?>	<title>MediaWiki API</title>
+<?php } else {
+?>	<title>MediaWiki API Result</title>
+<?php } ?>
 </head>
 <body>
 <?php
@@ -154,13 +170,20 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 	}
 
 	/**
+	* Says pretty-printer that it should use *bold* and $italics$ formatting
+	*/
+	public function setHelp( $help = true ) {
+		$this->mHelp = true;
+	}
+	
+	/**
 	* Prety-print various elements in HTML format, such as xml tags and URLs.
 	* This method also replaces any '<' with &lt;
 	*/
 	protected function formatHTML($text) {
 		// Escape everything first for full coverage
 		$text = htmlspecialchars($text);
-		
+
 		// encode all comments or tags as safe blue strings
 		$text = preg_replace('/\&lt;(!--.*?--|.*?)\&gt;/', '<span style="color:blue;">&lt;\1&gt;</span>', $text);
 		// identify URLs
@@ -168,10 +191,19 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 		$text = ereg_replace("($protos)://[^ \\'\"()<\n]+", '<a href="\\0">\\0</a>', $text);
 		// identify requests to api.php
 		$text = ereg_replace("api\\.php\\?[^ \\()<\n\t]+", '<a href="\\0">\\0</a>', $text);
-		// make strings inside * bold
-		$text = ereg_replace("\\*[^<>\n]+\\*", '<b>\\0</b>', $text);
-		// make strings inside $ italic
-		$text = ereg_replace("\\$[^<>\n]+\\$", '<b><i>\\0</i></b>', $text);
+		if( $this->mHelp ) {
+			// make strings inside * bold
+			$text = ereg_replace("\\*[^<>\n]+\\*", '<b>\\0</b>', $text);
+			// make strings inside $ italic
+			$text = ereg_replace("\\$[^<>\n]+\\$", '<b><i>\\0</i></b>', $text);
+		}
+		
+		/* Temporary fix for bad links in help messages. As a special case,
+		 * XML-escaped metachars are de-escaped one level in the help message
+		 * for legibility. Should be removed once we have completed a fully-html
+		 * version of the help message. */
+		if ( $this->mUnescapeAmps )
+			$text = preg_replace( '/&amp;(amp|quot|lt|gt);/', '&\1;', $text );
 
 		return $text;
 	}
@@ -183,12 +215,12 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 		return 'api.php?action=query&meta=siteinfo&siprop=namespaces&format=' . $this->getModuleName();
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return $this->getIsHtml() ? ' (pretty-print in HTML)' : '';
 	}
 
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiFormatBase.php 25746 2007-09-10 21:36:51Z brion $';
+		return __CLASS__ . ': $Id: ApiFormatBase.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }
 
@@ -250,6 +282,6 @@ class ApiFormatFeedWrapper extends ApiFormatBase {
 	}
 	
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatBase.php 25746 2007-09-10 21:36:51Z brion $';
+		return __CLASS__ . ': $Id: ApiFormatBase.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }

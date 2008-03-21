@@ -1,18 +1,32 @@
 <?php
 /**
- * @todo document
  * @addtogroup Maintenance
  */
 
 /** */
 $optionsWithArgs = array( 'm', 'e' );
+
 require_once( "commandLine.inc" );
 require_once( "refreshLinks.inc" );
+
+if( isset( $options['help'] ) ) {
+	echo <<<TEXT
+Usage: php refreshLinks.php [<start>] [-e <end>] [-m <maxlag>] [--help] 
+
+    --help      : This help message
+    --dfn-only  : Delete links from nonexistent articles only
+    -m <number> : Maximum replication lag
+    <start>     : First page id to refresh
+    -e <number> : Last page id to refresh
+
+TEXT;
+	exit(0);
+}
 
 error_reporting( E_ALL & (~E_NOTICE) );
 
 if ( !$options['dfn-only'] ) {
-	if ($args[0]) {
+	if ( isset( $args[0] ) ) {
 		$start = (int)$args[0];
 	} else {
 		$start = 1;

@@ -2,6 +2,8 @@
 /** Burmese (Myanmasa)
  *
  * @addtogroup Language
+ *
+ * @author Hakka
  */
 
 $messages = array(
@@ -49,6 +51,7 @@ $messages = array(
 'search'           => 'ရှာ​ဖွေ​ရန်​',
 'searchbutton'     => 'ရှာ​ဖွေ​ရန်​',
 'go'               => 'သွား​ပါ​',
+'searcharticle'    => 'သွား​ပါ​',
 'history_short'    => 'မှတ်​တမ်း​',
 'printableversion' => 'ပ​ရင်​တာ​ထုတ်​ရန်​',
 'permalink'        => 'ပုံ​သေ​လိပ်​စာ​',
@@ -63,18 +66,19 @@ $messages = array(
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'currentevents'     => 'လက်​ရှိ​လုပ်​ငန်း​များ​',
-'currentevents-url' => 'လက်​ရှိ​လုပ်​ငန်း​များ​',
+'currentevents-url' => 'Project:လက်​ရှိ​လုပ်​ငန်း​များ​',
 'disclaimers'       => 'သ​တိ​ပေး​ချက်​များ​',
 'edithelp'          => 'ပြင်​ဆင်​ခြင်း​အ​ကူ​အ​ညီ​',
 'mainpage'          => 'ဗ​ဟို​စာ​မျက်​နှာ​',
 'portal'            => 'ပြော​ရေး​ဆို​ရာ​',
 'sitesupport'       => 'လှု​ဒါန်း​မှု​',
 
-'newmessageslink' => 'သ​တင်း​အ​သစ်​',
-'editsection'     => 'ပြင်​ဆင်​ရန်​',
-'editold'         => 'ပြင်​ဆင်​ရန်​',
+'newmessageslink'         => 'သ​တင်း​အ​သစ်​',
+'youhavenewmessagesmulti' => 'သင့်​အ​တွက်​သီ​တင်း​အ​သစ်​ $1 တွင်​ရှိ​သည်​',
+'editsection'             => 'ပြင်​ဆင်​ရန်​',
+'editold'                 => 'ပြင်​ဆင်​ရန်​',
 
-# Short words for each namespace, by default used in the 'article' tab in monobook
+# Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main' => 'စာ​မျက်​နှာ​',
 'nstab-user' => 'မှတ်​ပုံ​တင်​အ​သုံး​ပြု​သူ​၏​စာ​မျက်​နှာ​',
 
@@ -88,6 +92,7 @@ $messages = array(
 'yourpasswordagain'  => 'ပြန်​ရိုက်​ပါ:',
 'remembermypassword' => 'ဤ​ကွန်​ပျူ​တာ​တွင်​ကျွန်​တော့​ကို​မှတ်​ထား​ပါ​',
 'login'              => 'မှတ်​ပုံ​တင်​ဖြင့်​ဝင်​ပါ​',
+'userlogin'          => 'မှတ်​ပုံ​တင်​ဖြင့်​ဝင်​ပါ​ / မှတ်​ပုံ​တင်​ပြု​လုပ်​ပါ​',
 'logout'             => 'ထွက်​ပါ​',
 'userlogout'         => 'ထွက်​ပါ​',
 'notloggedin'        => 'မှတ်​ပုံ​တင်​ဖြင့်​မ​ဝင်​ရ​သေး​ပါ​',
@@ -132,11 +137,13 @@ $messages = array(
 # Image list
 'ilsubmit' => 'ရှာ​ဖွေ​ရန်​',
 
+# Random page
+'randompage' => 'ကျ​ပန်း​စာ​မျက်​နှာ​',
+
 'brokenredirects-edit'   => '(ပြင်​ဆင်​ရန်)',
 'brokenredirects-delete' => '(ဖျက်​ပါ)',
 
 # Miscellaneous special pages
-'randompage'        => 'ကျ​ပန်း​စာ​မျက်​နှာ​',
 'specialpages'      => 'အ​ထူး​စာ​မျက်​နှာ​',
 'newpages-username' => 'မှတ်​ပုံ​တင်​အ​မည်:',
 'move'              => 'ရွေ့​ပြောင်း​ပါ​',
@@ -192,8 +199,6 @@ $messages = array(
 'tooltip-pt-logout' => 'ထွက်​ပါ​',
 'tooltip-ca-move'   => 'ဤ​စာ​မျက်​နှာ​အား​ရွေ့​ပြောင်း​ပါ​',
 
-'youhavenewmessagesmulti' => 'သင့်​အ​တွက်​သီ​တင်း​အ​သစ်​ $1 တွင်​ရှိ​သည်​',
-
 # Multipage image navigation
 'imgmultigo' => 'သွား​ပါ!',
 
@@ -201,5 +206,3 @@ $messages = array(
 'table_pager_limit_submit' => 'သွား​ပါ​',
 
 );
-
-

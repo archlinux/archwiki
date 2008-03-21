@@ -80,6 +80,7 @@ class SpecialPage
 
 		'Userlogin'                 => array( 'SpecialPage', 'Userlogin' ),
 		'Userlogout'                => array( 'UnlistedSpecialPage', 'Userlogout' ),
+		'CreateAccount'             => array( 'SpecialRedirectToSpecial', 'CreateAccount', 'Userlogin', 'signup', array( 'uselang' ) ),
 		'Preferences'               => array( 'SpecialPage', 'Preferences' ),
 		'Watchlist'                 => array( 'SpecialPage', 'Watchlist' ),
 
@@ -89,36 +90,37 @@ class SpecialPage
 		'Newimages'                 => array( 'IncludableSpecialPage', 'Newimages' ),
 		'Listusers'                 => array( 'SpecialPage', 'Listusers' ),
 		'Statistics'                => array( 'SpecialPage', 'Statistics' ),
-		'Randompage'                => array( 'SpecialPage', 'Randompage' ),
+		'Randompage'                => 'Randompage',
 		'Lonelypages'               => array( 'SpecialPage', 'Lonelypages' ),
 		'Uncategorizedpages'        => array( 'SpecialPage', 'Uncategorizedpages' ),
 		'Uncategorizedcategories'   => array( 'SpecialPage', 'Uncategorizedcategories' ),
 		'Uncategorizedimages'       => array( 'SpecialPage', 'Uncategorizedimages' ),
-		'Uncategorizedtemplates'	=> array( 'SpecialPage', 'Uncategorizedtemplates' ),
+		'Uncategorizedtemplates'    => array( 'SpecialPage', 'Uncategorizedtemplates' ),
 		'Unusedcategories'          => array( 'SpecialPage', 'Unusedcategories' ),
 		'Unusedimages'              => array( 'SpecialPage', 'Unusedimages' ),
 		'Wantedpages'               => array( 'IncludableSpecialPage', 'Wantedpages' ),
 		'Wantedcategories'          => array( 'SpecialPage', 'Wantedcategories' ),
 		'Mostlinked'                => array( 'SpecialPage', 'Mostlinked' ),
 		'Mostlinkedcategories'      => array( 'SpecialPage', 'Mostlinkedcategories' ),
-		'Mostlinkedtemplates'		=> array( 'SpecialPage', 'Mostlinkedtemplates' ),
+		'Mostlinkedtemplates'       => array( 'SpecialPage', 'Mostlinkedtemplates' ),
 		'Mostcategories'            => array( 'SpecialPage', 'Mostcategories' ),
 		'Mostimages'                => array( 'SpecialPage', 'Mostimages' ),
 		'Mostrevisions'             => array( 'SpecialPage', 'Mostrevisions' ),
-		'Fewestrevisions'             => array( 'SpecialPage', 'Fewestrevisions' ),
+		'Fewestrevisions'           => array( 'SpecialPage', 'Fewestrevisions' ),
 		'Shortpages'                => array( 'SpecialPage', 'Shortpages' ),
 		'Longpages'                 => array( 'SpecialPage', 'Longpages' ),
 		'Newpages'                  => array( 'IncludableSpecialPage', 'Newpages' ),
 		'Ancientpages'              => array( 'SpecialPage', 'Ancientpages' ),
 		'Deadendpages'              => array( 'SpecialPage', 'Deadendpages' ),
 		'Protectedpages'            => array( 'SpecialPage', 'Protectedpages' ),
+		'Protectedtitles'           => array( 'SpecialPage', 'Protectedtitles' ),
 		'Allpages'                  => array( 'IncludableSpecialPage', 'Allpages' ),
 		'Prefixindex'               => array( 'IncludableSpecialPage', 'Prefixindex' ) ,
 		'Ipblocklist'               => array( 'SpecialPage', 'Ipblocklist' ),
 		'Specialpages'              => array( 'UnlistedSpecialPage', 'Specialpages' ),
 		'Contributions'             => array( 'SpecialPage', 'Contributions' ),
 		'Emailuser'                 => array( 'UnlistedSpecialPage', 'Emailuser' ),
-		'Whatlinkshere'             => array( 'UnlistedSpecialPage', 'Whatlinkshere' ),
+		'Whatlinkshere'             => array( 'SpecialPage', 'Whatlinkshere' ),
 		'Recentchangeslinked'       => array( 'UnlistedSpecialPage', 'Recentchangeslinked' ),
 		'Movepage'                  => array( 'UnlistedSpecialPage', 'Movepage' ),
 		'Blockme'                   => array( 'UnlistedSpecialPage', 'Blockme' ),
@@ -131,23 +133,26 @@ class SpecialPage
 		'Log'                       => array( 'SpecialPage', 'Log' ),
 		'Blockip'                   => array( 'SpecialPage', 'Blockip', 'block' ),
 		'Undelete'                  => array( 'SpecialPage', 'Undelete', 'deletedhistory' ),
-		'Import'                    => array( 'SpecialPage', "Import", 'import' ),
+		'Import'                    => array( 'SpecialPage', 'Import', 'import' ),
 		'Lockdb'                    => array( 'SpecialPage', 'Lockdb', 'siteadmin' ),
 		'Unlockdb'                  => array( 'SpecialPage', 'Unlockdb', 'siteadmin' ),
-		'Userrights'                => array( 'SpecialPage', 'Userrights', 'userrights' ),
+		'Userrights'                => 'UserrightsPage',
 		'MIMEsearch'                => array( 'SpecialPage', 'MIMEsearch' ),
 		'Unwatchedpages'            => array( 'SpecialPage', 'Unwatchedpages', 'unwatchedpages' ),
 		'Listredirects'             => array( 'SpecialPage', 'Listredirects' ),
-		'Revisiondelete'            => array( 'SpecialPage', 'Revisiondelete', 'deleterevision' ),
+		'Revisiondelete'            => array( 'UnlistedSpecialPage', 'Revisiondelete', 'deleterevision' ),
 		'Unusedtemplates'           => array( 'SpecialPage', 'Unusedtemplates' ),
-		'Randomredirect'            => array( 'SpecialPage', 'Randomredirect' ),
-		'Withoutinterwiki'			=> array( 'SpecialPage', 'Withoutinterwiki' ),
+		'Randomredirect'            => 'SpecialRandomredirect',
+		'Withoutinterwiki'          => array( 'SpecialPage', 'Withoutinterwiki' ),
+		'Filepath'                  => array( 'SpecialPage', 'Filepath' ),
 
 		'Mypage'                    => array( 'SpecialMypage' ),
 		'Mytalk'                    => array( 'SpecialMytalk' ),
 		'Mycontributions'           => array( 'SpecialMycontributions' ),
 		'Listadmins'                => array( 'SpecialRedirectToSpecial', 'Listadmins', 'Listusers', 'sysop' ),
-	);
+		'MergeHistory'              => array( 'SpecialPage', 'MergeHistory', 'mergehistory' ),
+		'Listbots'                  => array( 'SpecialRedirectToSpecial', 'Listbots', 'Listusers', 'bot' ),
+		);
 
 	static public $mAliases;
 	static public $mListInitialised = false;
@@ -349,7 +354,7 @@ class SpecialPage
 
 		foreach ( self::$mList as $name => $rec ) {
 			$page = self::getPage( $name );
-			if ( $page->isListed() && $page->getRestriction() == '' ) {
+			if ( $page->isListed() && !$page->isRestricted() ) {
 				$pages[$name] = $page;
 			}
 		}
@@ -370,11 +375,12 @@ class SpecialPage
 
 		foreach ( self::$mList as $name => $rec ) {
 			$page = self::getPage( $name );
-			if ( $page->isListed() ) {
-				$restriction = $page->getRestriction();
-				if ( $restriction != '' && $wgUser->isAllowed( $restriction ) ) {
-					$pages[$name] = $page;
-				}
+			if (
+				$page->isListed()
+				and $page->isRestricted()
+				and $page->userCanExecute( $wgUser )
+			) {
+				$pages[$name] = $page;
 			}
 		}
 		return $pages;
@@ -404,7 +410,6 @@ class SpecialPage
 			$par = $bits[1];
 		}
 		$page = SpecialPage::getPageByAlias( $name );
-
 		# Nonexistent?
 		if ( !$page ) {
 			if ( !$including ) {
@@ -486,6 +491,11 @@ class SpecialPage
 
 	/**
 	 * Get the local name for a specified canonical name
+	 *
+	 * @param $name
+	 * @param mixed $subpage Boolean false, or string
+	 *
+	 * @return string
 	 */
 	static function getLocalNameFor( $name, $subpage = false ) {
 		global $wgContLang;
@@ -603,10 +613,25 @@ class SpecialPage
 	}
 
 	/**
-	 * Checks if the given user (identified by an object) can execute this
-	 * special page (as defined by $mRestriction)
+	 * Can be overridden by subclasses with more complicated permissions
+	 * schemes.
+	 *
+	 * @return bool Should the page be displayed with the restricted-access
+	 *   pages?
 	 */
-	function userCanExecute( &$user ) {
+	public function isRestricted() {
+		return $this->mRestriction != '';
+	}
+
+	/**
+	 * Checks if the given user (identified by an object) can execute this
+	 * special page (as defined by $mRestriction).  Can be overridden by sub-
+	 * classes with more complicated permissions schemes.
+	 *
+	 * @param User $user The user to check
+	 * @return bool Does the user have permission to view the page?
+	 */
+	public function userCanExecute( $user ) {
 		return $user->isAllowed( $this->mRestriction );
 	}
 
@@ -642,7 +667,7 @@ class SpecialPage
 		if ( $this->userCanExecute( $wgUser ) ) {
 			$func = $this->mFunction;
 			// only load file if the function does not exist
-			if(!function_exists($func) and $this->mFile) {
+			if(!is_callable($func) and $this->mFile) {
 				require_once( $this->mFile );
 			}
 			# FIXME: these hooks are broken for extensions and anything else that subclasses SpecialPage. 
@@ -650,7 +675,7 @@ class SpecialPage
 				$this->outputHeader();
 			if ( ! wfRunHooks( 'SpecialPageExecuteBeforePage', array( &$this, &$par, &$func ) ) )
 				return;
-			$func( $par, $this );
+			call_user_func( $func, $par, $this );
 			if ( ! wfRunHooks( 'SpecialPageExecuteAfterPage', array( &$this, &$par, &$func ) ) )
 				return;
 		} else {
@@ -662,9 +687,10 @@ class SpecialPage
 		global $wgOut, $wgContLang;
 
 		$msg = $wgContLang->lc( $this->name() ) . '-summary';
-		$out = wfMsg( $msg );
-		if ( ! wfEmptyMsg( $msg, $out ) and  $out !== '' and ! $this->including() )
+		$out = wfMsgNoTrans( $msg );
+		if ( ! wfEmptyMsg( $msg, $out ) and  $out !== '' and ! $this->including() ) {
 			$wgOut->addWikiText( $out );
+		}
 
 	}
 
@@ -776,7 +802,7 @@ class SpecialRedirectToSpecial extends UnlistedSpecialPage {
 class SpecialMypage extends UnlistedSpecialPage {
 	function __construct() {
 		parent::__construct( 'Mypage' );
-		$this->mAllowedRedirectParams = array( 'action' );
+		$this->mAllowedRedirectParams = array( 'action' , 'preload' , 'editintro', 'section' );
 	}
 
 	function getRedirect( $subpage ) {
@@ -796,7 +822,7 @@ class SpecialMypage extends UnlistedSpecialPage {
 class SpecialMytalk extends UnlistedSpecialPage {
 	function __construct() {
 		parent::__construct( 'Mytalk' );
-		$this->mAllowedRedirectParams = array( 'action' );
+		$this->mAllowedRedirectParams = array( 'action' , 'preload' , 'editintro', 'section' );
 	}
 
 	function getRedirect( $subpage ) {
@@ -823,5 +849,3 @@ class SpecialMycontributions extends UnlistedSpecialPage {
 		return SpecialPage::getTitleFor( 'Contributions', $wgUser->getName() );
 	}
 }
-
-

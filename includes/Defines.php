@@ -260,6 +260,27 @@ define( 'UTF8_FFFF', "\xef\xbf\xbf" /*codepointToUtf8( 0xffff )*/ );
 define( 'UTF8_HEAD', false );
 define( 'UTF8_TAIL', true );
 
+# Hook support constants
+define( 'MW_SUPPORTS_EDITFILTERMERGED', 1 );
+define( 'MW_SUPPORTS_PARSERFIRSTCALLINIT', 1 );
 
+# Allowed values for Parser::$mOutputType
+# Parameter to Parser::startExternalParse().
+define( 'OT_HTML', 1 );
+define( 'OT_WIKI', 2 );
+define( 'OT_PREPROCESS', 3 );
+define( 'OT_MSG' , 3 );  // b/c alias for OT_PREPROCESS
 
+# Flags for Parser::setFunctionHook
+define( 'SFH_NO_HASH', 1 );
+define( 'SFH_OBJECT_ARGS', 2 );
 
+# Flags for Parser::replaceLinkHolders
+define( 'RLH_FOR_UPDATE', 1 );
+
+# Autopromote conditions (must be here and not in Autopromote.php, so that
+# they're loaded for DefaultSettings.php before AutoLoader.php)
+define( 'APCOND_EDITCOUNT', 1 );
+define( 'APCOND_AGE', 2 );
+define( 'APCOND_EMAILCONFIRMED', 3 );
+define( 'APCOND_INGROUPS', 4 );

@@ -48,8 +48,9 @@ class ApiQueryAllUsers extends ApiQueryBase {
 			$prop = array_flip($prop);
 			$fld_editcount = isset($prop['editcount']);
 			$fld_groups = isset($prop['groups']);
+			$fld_registration = isset($prop['registration']);
 		} else {
-			$fld_editcount = $fld_groups = false;
+			$fld_editcount = $fld_groups = $fld_registration = false;
 		}
 
 		$limit = $params['limit'];
@@ -80,6 +81,9 @@ class ApiQueryAllUsers extends ApiQueryBase {
 		} else {
 			$sqlLimit = $limit+1;
 		}
+		
+		if ($fld_registration)
+			$this->addFields('user_registration');
 
 		$this->addOption('LIMIT', $sqlLimit);
 		$this->addTables($tables);
@@ -129,6 +133,8 @@ class ApiQueryAllUsers extends ApiQueryBase {
 				$lastUserData = array( 'name' => $lastUser );
 				if ($fld_editcount)
 					$lastUserData['editcount'] = intval($row->user_editcount);
+				if ($fld_registration)
+					$lastUserData['registration'] = wfTimestamp(TS_ISO_8601, $row->user_registration);
 					
 			}
 			
@@ -152,7 +158,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 		$result->addValue('query', $this->getModuleName(), $data);
 	}
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array (
 			'from' => null,
 			'prefix' => null,
@@ -164,6 +170,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 				ApiBase :: PARAM_TYPE => array (
 					'editcount',
 					'groups',
+					'registration',
 				)
 			),
 			'limit' => array (
@@ -176,7 +183,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'from' => 'The user name to start enumerating from.',
 			'prefix' => 'Search for all page titles that begin with this value.',
@@ -188,7 +195,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'Enumerate all registered users';
 	}
 
@@ -199,6 +206,6 @@ class ApiQueryAllUsers extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryAllUsers.php 24870 2007-08-17 13:01:35Z robchurch $';
+		return __CLASS__ . ': $Id: ApiQueryAllUsers.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }

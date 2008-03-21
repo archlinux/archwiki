@@ -422,21 +422,21 @@ abstract class AlphabeticPager extends IndexPager {
 	 */
 	function getNavigationBar() {
 		global $wgLang;
-		
+
 		$linkTexts = array(
-			'prev' => wfMsgHtml( "prevn", $this->mLimit ),
-			'next' => wfMsgHtml( 'nextn', $this->mLimit ),
-			'first' => wfMsgHtml('page_first'), /* Introduced the message */
+			'prev' => wfMsgHtml( 'prevn', $wgLang->formatNum( $this->mLimit ) ),
+			'next' => wfMsgHtml( 'nextn', $wgLang->formatNum($this->mLimit ) ),
+			'first' => wfMsgHtml( 'page_first' ), /* Introduced the message */
 			'last' => wfMsgHtml( 'page_last' )  /* Introduced the message */
 		);
-		
+
 		$pagingLinks = $this->getPagingLinks( $linkTexts );
 		$limitLinks = $this->getLimitLinks();
 		$limits = implode( ' | ', $limitLinks );
-		
+
 		$this->mNavigationBar = "({$pagingLinks['first']} | {$pagingLinks['last']}) " . wfMsgHtml("viewprevnext", $pagingLinks['prev'], $pagingLinks['next'], $limits);
 		return $this->mNavigationBar;
-		
+
 	}
 }
 
@@ -457,17 +457,18 @@ abstract class ReverseChronologicalPager extends IndexPager {
 		if ( isset( $this->mNavigationBar ) ) {
 			return $this->mNavigationBar;
 		}
+		$nicenumber = $wgLang->formatNum( $this->mLimit );
 		$linkTexts = array(
-			'prev' => wfMsgHtml( "prevn", $this->mLimit ),
-			'next' => wfMsgHtml( 'nextn', $this->mLimit ),
-			'first' => wfMsgHtml('histlast'),
+			'prev' => wfMsgExt( 'pager-newer-n', array( 'parsemag' ), $nicenumber ),
+			'next' => wfMsgExt( 'pager-older-n', array( 'parsemag' ), $nicenumber ),
+			'first' => wfMsgHtml( 'histlast' ),
 			'last' => wfMsgHtml( 'histfirst' )
 		);
 
 		$pagingLinks = $this->getPagingLinks( $linkTexts );
 		$limitLinks = $this->getLimitLinks();
 		$limits = implode( ' | ', $limitLinks );
-		
+
 		$this->mNavigationBar = "({$pagingLinks['first']} | {$pagingLinks['last']}) " . 
 			wfMsgHtml("viewprevnext", $pagingLinks['prev'], $pagingLinks['next'], $limits);
 		return $this->mNavigationBar;
@@ -712,4 +713,3 @@ abstract class TablePager extends IndexPager {
 	 */
 	abstract function getFieldNames();
 }
-

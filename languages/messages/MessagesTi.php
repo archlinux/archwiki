@@ -1,10 +1,11 @@
 <?php
 /** Tigrinya (ትግርኛ)
  *
- * Translators: Blake
- *
  * @addtogroup Language
+ *
+ * @author Blake
  * @author Niklas Laxström
+ * @author Teak
  */
 
 $messages = array(
@@ -46,23 +47,24 @@ $messages = array(
 'jumptosearch'  => 'ድሉይ',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
-'aboutsite' => 'ብዛዕባ {{SITENAME}} ብጠቅላላ',
+'aboutsite' => 'ብዛዕባ ዊኪፒዲያ ብጠቅላላ',
 'mainpage'  => 'መበገሲ ገጽ',
 
-# Short words for each namespace, by default used in the 'article' tab in monobook
+# Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'    => 'ፅሑፍ',
 'nstab-user'    => 'ናይ ፅሑፍ ኣባል',
-'nstab-project' => 'ናይ ፅሑፍ ዊኪፒዲያ',
+'nstab-project' => 'ናይ ፅሑፍ ፕሮጀክት',
 'nstab-image'   => 'ምስሊ',
 
 # General errors
 'viewsourcefor' => 'ን$1',
 
 # Login and logout pages
-'yourname'     => 'ናይ ኣባል ሽም:',
-'youremail'    => 'ኢ-መይል:',
-'yourlanguage' => 'ቋንቋ:',
-'email'        => 'ኢ-መይል',
+'yourname'           => 'ናይ ኣባል ሽም:',
+'youremail'          => 'ኢ-መይል:',
+'yourlanguage'       => 'ቋንቋ:',
+'email'              => 'ኢ-መይል',
+'loginlanguagelabel' => 'ቋንቋ: $1',
 
 # Edit pages
 'savearticle' => 'ፅሑፍ ኣቐምጥ',
@@ -102,7 +104,6 @@ $messages = array(
 'imagelist'      => 'ምስልታት',
 'ilsubmit'       => 'ድሉይ',
 'imgfile'        => 'ምስሊ',
-'imghistory'     => 'ናይ ምስሊ ታሪኽ',
 'imagelist_name' => 'ሽም',
 'imagelist_user' => 'ኣባል',
 
@@ -125,6 +126,7 @@ $messages = array(
 # Special:Allpages
 'nextpage'       => 'ዝቕጽል ፅሑፍ ($1)',
 'prevpage'       => 'ናይ ቀደም ፅሑፍ ($1)',
+'allarticles'    => 'ኵሎም ፅሑፋት',
 'allpagesprev'   => 'ናይ ቀደም',
 'allpagesnext'   => 'ዝቕጽል',
 'allpagessubmit' => 'ኪድ',
@@ -155,8 +157,6 @@ $messages = array(
 # Metadata
 'metadata' => 'ሜታዳታ',
 
-'loginlanguagelabel' => 'ቋንቋ: $1',
-
 # Multipage image navigation
 'imgmultipageprev' => '← ናይ ቀደም ፅሑፍ',
 'imgmultipagenext' => 'ዝቕጽል ፅሑፍ →',
@@ -176,5 +176,3 @@ $messages = array(
 'size-gigabytes' => '$1 ጊጋባይታት',
 
 );
-
-?>

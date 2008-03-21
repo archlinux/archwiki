@@ -94,7 +94,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		}
 	}
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array (
 			'search' => null,
 			'namespace' => array (
@@ -121,7 +121,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'search' => 'Search for all page titles (or content) that has this value.',
 			'namespace' => 'The namespace(s) to enumerate.',
@@ -132,7 +132,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'Perform a full text search';
 	}
 
@@ -145,7 +145,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQuerySearch.php 24453 2007-07-30 08:09:15Z yurik $';
+		return __CLASS__ . ': $Id: ApiQuerySearch.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }
 

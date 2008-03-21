@@ -6,12 +6,18 @@
  * @addtogroup Maintenance
  */
 
+/** Public entry; more passes might come in! :) */
+function rebuildRecentChangesTable() {
+	rebuildRecentChangesTablePass1();
+	rebuildRecentChangesTablePass2();
+	rebuildRecentChangesTablePass3();
+}
+
 /** */
 function rebuildRecentChangesTablePass1()
 {
 	$fname = 'rebuildRecentChangesTablePass1';
 	$dbw = wfGetDB( DB_MASTER );
-	extract( $dbw->tableNames( 'recentchanges', 'cur', 'old' ) );
 
 	$dbw->delete( 'recentchanges', '*' );
 
@@ -103,15 +109,15 @@ function rebuildRecentChangesTablePass3()
 			
 	$dbw = wfGetDB( DB_MASTER );
 	
-	list ($recentchanges, $usergroups) = $dbw->tableNamesN( 'recentchanges', 'user_groups' );
+	list($recentchanges,$usergroups,$user) = $dbw->tableNamesN( 'recentchanges', 'user_groups', 'user' );
 
 	$botgroups = $autopatrolgroups = array();
 	foreach( $wgGroupPermissions as $group => $rights ) {
 		if( isset( $rights['bot'] ) && $rights['bot'] == true ) {
-			$botgroups[] = "'" . $dbw->strencode( $group ) . "'";
+			$botgroups[] = $dbw->addQuotes( $group );
 		}
 		if( $wgUseRCPatrol && isset( $rights['autopatrol'] ) && $rights['autopatrol'] == true ) {
-			$autopatrolgroups[] = "'" . $dbw->strencode( $group ) . "'";
+			$autopatrolgroups[] = $dbw->addQuotes( $group );
 		}
 	}
 	# Flag our recent bot edits
@@ -121,20 +127,19 @@ function rebuildRecentChangesTablePass3()
 
 		print( "Flagging bot account edits...\n" );
 
-		# Find all users in RC that are bots
-		$sql = "SELECT DISTINCT rc_user FROM $recentchanges " .
-			"LEFT JOIN $usergroups ON rc_user=ug_user " . 
-			"WHERE ug_group IN($botwhere)";
+		# Find all users that are bots
+		$sql = "SELECT DISTINCT user_name FROM $usergroups, $user " .
+			"WHERE ug_group IN($botwhere) AND user_id = ug_user";
 		$res = $dbw->query( $sql, DB_MASTER );
 
 		while( $obj = $dbw->fetchObject( $res ) ) {
-			$botusers[] = $obj->rc_user;
+			$botusers[] = $dbw->addQuotes( $obj->user_name );
 		}
 		# Fill in the rc_bot field
 		if( !empty($botusers) ) {
 			$botwhere = implode(',',$botusers);
 			$sql2 = "UPDATE $recentchanges SET rc_bot=1 " .
-				"WHERE rc_user IN($botwhere)";
+				"WHERE rc_user_text IN($botwhere)";
 			$dbw->query( $sql2 );
 		}
 	}
@@ -146,20 +151,19 @@ function rebuildRecentChangesTablePass3()
 		print( "Flagging auto-patrolled edits...\n" );
 
 		# Find all users in RC with autopatrol rights
-		$sql = "SELECT DISTINCT rc_user FROM $recentchanges " .
-			"LEFT JOIN $usergroups ON rc_user=ug_user " . 
-			"WHERE ug_group IN($patrolwhere)";
+		$sql = "SELECT DISTINCT user_name FROM $usergroups, $user " .
+			"WHERE ug_group IN($patrolwhere) AND user_id = ug_user";
 		$res = $dbw->query( $sql, DB_MASTER );
 
 		while( $obj = $dbw->fetchObject( $res ) ) {
-			$patrolusers[] = $obj->rc_user;
+			$patrolusers[] = $dbw->addQuotes( $obj->user_name );
 		}
 		
 		# Fill in the rc_patrolled field
 		if( !empty($patrolusers) ) {
 			$patrolwhere = implode(',',$patrolusers);
 			$sql2 = "UPDATE $recentchanges SET rc_patrolled=1 " .
-				"WHERE rc_user IN($patrolwhere)";
+				"WHERE rc_user_text IN($patrolwhere)";
 			$dbw->query( $sql2 );
 		}
 	}

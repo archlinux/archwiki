@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Deletes all pages in the MediaWiki namespace which were last edited by
+ * Deletes all pages in the MediaWiki namespace which were last edited by 
  * "MediaWiki default".
  */
 
@@ -17,7 +17,7 @@ function deleteDefaultMessages() {
 	global $wgUser;
 	$wgUser = User::newFromName( $user );
 	$wgUser->addGroup( 'bot' );
-
+	
 	$dbr = wfGetDB( DB_SLAVE );
 	$res = $dbr->select( array( 'page', 'revision' ),
 		array( 'page_namespace', 'page_title' ),

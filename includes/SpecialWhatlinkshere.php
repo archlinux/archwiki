@@ -44,23 +44,23 @@ class WhatLinksHerePage {
 
 		$targetString = isset($this->par) ? $this->par : $this->request->getVal( 'target' );
 
-		if (is_null($targetString)) {
-			$wgOut->showErrorPage( 'notargettitle', 'notargettext' );
+		if ( is_null( $targetString ) ) {
+			$wgOut->addHTML( $this->whatlinkshereForm() );
 			return;
 		}
 
 		$this->target = Title::newFromURL( $targetString );
 		if( !$this->target ) {
-			$wgOut->showErrorPage( 'notargettitle', 'notargettext' );
+			$wgOut->addHTML( $this->whatlinkshereForm() );
 			return;
 		}
 		$this->selfTitle = Title::makeTitleSafe( NS_SPECIAL,
 			'Whatlinkshere/' . $this->target->getPrefixedDBkey() );
-			
+
 		$wgOut->setPageTitle( wfMsg( 'whatlinkshere-title', $this->target->getPrefixedText() ) );
 		$wgOut->setSubtitle( wfMsg( 'linklistsub' ) );
 
-		$wgOut->addHTML( wfMsg( 'whatlinkshere-barrow' ) . ' '  .$this->skin->makeLinkObj($this->target, '', 'redirect=no' )."<br />\n");
+		$wgOut->addHTML( wfMsgExt( 'whatlinkshere-barrow', array( 'escapenoentities') ) . ' '  .$this->skin->makeLinkObj($this->target, '', 'redirect=no' )."<br />\n");
 
 		$this->showIndirectLinks( 0, $this->target, $this->limit, $this->from, $this->back );
 	}
@@ -113,34 +113,32 @@ class WhatLinksHerePage {
 
 		// Read an extra row as an at-end check
 		$queryLimit = $limit + 1;
-		
+
 		// enforce join order, sometimes namespace selector may 
 		// trigger filesorts which are far less efficient than scanning many entries
 		$options[] = 'STRAIGHT_JOIN';
-		
+
 		$options['LIMIT'] = $queryLimit;
 		$fields = array( 'page_id', 'page_namespace', 'page_title', 'page_is_redirect' );
 
 		$options['ORDER BY'] = 'pl_from';
 		$plRes = $dbr->select( array( 'pagelinks', 'page' ), $fields,
 			$plConds, $fname, $options );
-			
+
 		$options['ORDER BY'] = 'tl_from';
 		$tlRes = $dbr->select( array( 'templatelinks', 'page' ), $fields,
 			$tlConds, $fname, $options );
-		
+
 		if ( !$dbr->numRows( $plRes ) && !$dbr->numRows( $tlRes ) ) {
-			if ( 0 == $level && !isset( $this->namespace ) ) {
-				// really no links to here
-				$wgOut->addWikiText( wfMsg( 'nolinkshere', $this->target->getPrefixedText() ) );
-			} elseif ( 0 == $level && isset( $this->namespace ) ) {
-				// no links from requested namespace to here
+			if ( 0 == $level ) {
 				$options = array(); // reinitialize for a further namespace search
+				// really no links to here
 				$options['namespace'] = $this->namespace;
 				$options['target'] = $this->target->getPrefixedText();
 				list( $options['limit'], $options['offset']) = wfCheckLimits();
 				$wgOut->addHTML( $this->whatlinkshereForm( $options ) );
-				$wgOut->addWikiText( wfMsg( 'nolinkshere-ns', $this->target->getPrefixedText() ) );
+				$errMsg = isset( $this->namespace ) ? 'nolinkshere-ns' : 'nolinkshere';
+				$wgOut->addWikiMsg( $errMsg, $this->target->getPrefixedText() );
 			}
 			return;
 		}
@@ -157,8 +155,8 @@ class WhatLinksHerePage {
 		$options['offset'] = $this->request->getVal( 'offset' );
 		/* Offset must be an integral. */
 		if ( !strlen( $options['offset'] ) || !preg_match( '/^[0-9]+$/', $options['offset'] ) )
-		$options['offset'] = '';
-		$options['target'] = $this->target->getPrefixedDBkey();
+			$options['offset'] = '';
+		$options['target'] = $this->target->getPrefixedText();
 
 		// Read the rows into an array and remove duplicates
 		// templatelinks comes second so that the templatelinks row overwrites the
@@ -195,12 +193,8 @@ class WhatLinksHerePage {
 
 		if ( $level == 0 ) {
 			$wgOut->addHTML( $this->whatlinkshereForm( $options ) );
-			$wgOut->addWikiText( wfMsg( 'linkshere', $this->target->getPrefixedText() ) );
-		}
-		$isredir = wfMsg( 'isredirect' );
-		$istemplate = wfMsg( 'istemplate' );
+			$wgOut->addWikiMsg( 'linkshere', $this->target->getPrefixedText() );
 
-		if( $level == 0 ) {
 			$prevnext = $this->getPrevNext( $limit, $prevId, $nextId, $options['namespace'] );
 			$wgOut->addHTML( $prevnext );
 		}
@@ -221,14 +215,14 @@ class WhatLinksHerePage {
 			// Display properties (redirect or template)
 			$props = array();
 			if ( $row->page_is_redirect ) {
-				$props[] = $isredir;
+				$props[] = wfMsgHtml( 'isredirect' );
 			}
 			if ( $row->is_template ) {
-				$props[] = $istemplate;
+				$props[] = wfMsgHtml( 'istemplate' );
 			}
 			if ( count( $props ) ) {
-				// FIXME? Cultural assumption, hard-coded punctuation
-				$wgOut->addHTML( ' (' . implode( ', ', $props ) . ') ' );
+				$list = implode( wfMsgHtml( 'semicolon-separator' ), $props );
+				$wgOut->addHTML( " ($list) " );
 			}
 
 			# Space for utilities links, with a what-links-here link provided
@@ -237,7 +231,7 @@ class WhatLinksHerePage {
 				wfMsgHtml( 'whatlinkshere-links' ),
 				'target=' . $nt->getPrefixedUrl()
 			);
-			$wgOut->addHtml( ' <span class="mw-whatlinkshere-tools">(' . $wlh . ')</span>' );			
+			$wgOut->addHtml( ' <span class="mw-whatlinkshere-tools">(' . $wlh . ')</span>' );
 			
 			if ( $row->page_is_redirect ) {
 				if ( $level < 2 ) {
@@ -284,7 +278,7 @@ class WhatLinksHerePage {
 		  $this->numLink( 250, $prevId ) . ' | ' .
 		  $this->numLink( 500, $prevId );
 
-		return wfMsg( 'viewprevnext', $prevLink, $nextLink, $nums );
+		return wfMsgHtml( 'viewprevnext', $prevLink, $nextLink, $nums );
 	}
 
 	function numLink( $limit, $from, $ns = null ) {
@@ -295,24 +289,26 @@ class WhatLinksHerePage {
 		return $this->makeSelfLink( $fmtLimit, $query );
 	}
 
-	function whatlinkshereForm( $options ) {
+	function whatlinkshereForm( $options = array( 'target' => '', 'namespace' => '' ) ) {
 		global $wgScript, $wgTitle;
 
 		$options['title'] = $wgTitle->getPrefixedText();
 
-		$f = Xml::openElement( 'form', array( 'method' => 'get', 'action' => "$wgScript" ) ) .
-			'<fieldset>' .
-			Xml::element( 'legend', array(), wfMsg( 'whatlinkshere' ) );
+		$f = Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) ) .
+			Xml::openElement( 'fieldset' ) .
+			Xml::element( 'legend', array(), wfMsg( 'whatlinkshere' ) ) .
+			Xml::inputLabel( wfMsg( 'whatlinkshere-page' ), 'target', 'mw-whatlinkshere-target', 40, $options['target'] ) . ' ';
 
 		foreach ( $options as $name => $value ) {
-			if( $name === 'namespace') continue;
+			if( $name === 'namespace' || $name === 'target' )
+				continue;
 			$f .= "\t" . Xml::hidden( $name, $value ). "\n";
 		}
 
 		$f .= Xml::label( wfMsg( 'namespace' ), 'namespace' ) . ' ' .
 			Xml::namespaceSelector( $options['namespace'], '' ) .
 			Xml::submitButton( wfMsg( 'allpagessubmit' ) ) .
-			'</fieldset>' .
+			Xml::closeElement( 'fieldset' ) .
 			Xml::closeElement( 'form' ) . "\n";
 
 		return $f;
@@ -324,5 +320,3 @@ class WhatLinksHerePage {
 	}
 
 }
-
-

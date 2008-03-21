@@ -134,7 +134,7 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		}
 	}
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		global $wgUrlProtocols;
 		$protocols = array();
 		foreach ($wgUrlProtocols as $p) {
@@ -173,7 +173,7 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'prop' => 'What pieces of information to include',
 			'offset' => 'Used for paging. Use the value returned for "continue"',
@@ -184,7 +184,7 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'Enumerate pages that contain a given URL';
 	}
 
@@ -195,6 +195,6 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryExtLinksUsage.php 24694 2007-08-09 08:41:58Z yurik $';
+		return __CLASS__ . ': $Id: ApiQueryExtLinksUsage.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }

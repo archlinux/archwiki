@@ -123,7 +123,7 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		$db->freeResult($res);
 	}
 
-	protected function getAllowedParams()
+	public function getAllowedParams()
 	{
 		return array(
 				'namespace' => array(
@@ -133,14 +133,14 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 			);
 	}
 
-	protected function getParamDescription()
+	public function getParamDescription()
 	{
 		return array(
 				'namespace' => "Show {$this->description}s in this namespace(s) only"
 			);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return "Returns all {$this->description}s from the given page(s)";
 	}
 
@@ -156,7 +156,7 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryLinks.php 24092 2007-07-14 19:04:31Z yurik $';
+		return __CLASS__ . ': $Id: ApiQueryLinks.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }
 

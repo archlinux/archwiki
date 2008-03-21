@@ -120,7 +120,7 @@ class ApiQueryCategories extends ApiQueryGeneratorBase {
 		$db->freeResult($res);
 	}
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array (
 			'prop' => array (
 				ApiBase :: PARAM_ISMULTI => true,
@@ -131,13 +131,13 @@ class ApiQueryCategories extends ApiQueryGeneratorBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'prop' => 'Which additional properties to get for each category.',
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'List all categories the page(s) belong to';
 	}
 
@@ -151,7 +151,7 @@ class ApiQueryCategories extends ApiQueryGeneratorBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryCategories.php 24092 2007-07-14 19:04:31Z yurik $';
+		return __CLASS__ . ': $Id: ApiQueryCategories.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }
 

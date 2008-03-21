@@ -51,7 +51,7 @@ class SearchEngine {
 		if($wgContLang->hasVariants()){
 			$allSearchTerms = array_merge($allSearchTerms,$wgContLang->convertLinkToAllVariants($searchterm));
 		}
-
+		
 		foreach($allSearchTerms as $term){
 
 			# Exact match? No need to look further.
@@ -102,6 +102,12 @@ class SearchEngine {
 					return $title;
 				}
 			}
+
+			// Give hooks a chance at better match variants
+			$title = null;
+			if( !wfRunHooks( 'SearchGetNearMatch', array( $term, &$title ) ) ) {
+				return $title;
+			}
 		}
 
 		$title = Title::newFromText( $searchterm );
@@ -109,7 +115,7 @@ class SearchEngine {
 		# Entering an IP address goes to the contributions page
 		if ( ( $title->getNamespace() == NS_USER && User::isIP($title->getText() ) )
 			|| User::isIP( trim( $searchterm ) ) ) {
-			return SpecialPage::getTitleFor( 'Contributions', $title->getDbkey() );
+			return SpecialPage::getTitleFor( 'Contributions', $title->getDBkey() );
 		}
 
 
@@ -336,7 +342,16 @@ class SearchResultSet {
 /**
  * @addtogroup Search
  */
+class SearchResultTooMany {
+	## Some search engines may bail out if too many matches are found
+}
+
+
+/**
+ * @addtogroup Search
+ */
 class SearchResult {
+
 	function SearchResult( $row ) {
 		$this->mTitle = Title::makeTitle( $row->page_namespace, $row->page_title );
 	}

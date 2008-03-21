@@ -23,7 +23,7 @@ $options = array( 'fix', 'suffix', 'help' );
 require_once( 'commandLine.inc' );
 
 if(isset( $options['help'] ) ) {
-print <<<END
+print <<<ENDS
 usage: namespaceDupes.php [--fix] [--suffix=<text>] [--help]
     --help          : this help message
     --fix           : attempt to automatically fix errors
@@ -33,7 +33,7 @@ usage: namespaceDupes.php [--fix] [--suffix=<text>] [--help]
                       in place of the standard namespace list.
     --verbose       : Display output for checked namespaces without conflicts
 
-END;
+ENDS;
 die;
 }
 
@@ -75,14 +75,29 @@ class NamespaceConflictChecker {
 			$spaces[$name] = $ns;
 		}
 		
-		if( !$wgCapitalLinks ) {
-			// We'll need to check for lowercase keys as well,
-			// since we're doing case-sensitive searches in the db.
-			foreach( array_values( $spaces ) as $name => $ns ) {
-				$lcname = $wgContLang->lcfirst( $name );
-				$spaces[$lcname] = $ns;
+		// We'll need to check for lowercase keys as well,
+		// since we're doing case-sensitive searches in the db.
+		foreach( $spaces as $name => $ns ) {
+			$moreNames = array();
+			$moreNames[] = $wgContLang->uc( $name );
+			$moreNames[] = $wgContLang->ucfirst( $wgContLang->lc( $name ) );
+			$moreNames[] = $wgContLang->ucwords( $name );
+			$moreNames[] = $wgContLang->ucwords( $wgContLang->lc( $name ) );
+			$moreNames[] = $wgContLang->ucwordbreaks( $name );
+			$moreNames[] = $wgContLang->ucwordbreaks( $wgContLang->lc( $name ) );
+			if( !$wgCapitalLinks ) {
+				foreach( $moreNames as $altName ) {
+					$moreNames[] = $wgContLang->lcfirst( $altName );
+				}
+				$moreNames[] = $wgContLang->lcfirst( $name );
+			}
+			foreach( array_unique( $moreNames ) as $altName ) {
+				if( $altName !== $name ) {
+					$spaces[$altName] = $ns;
+				}
 			}
 		}
+		
 		ksort( $spaces );
 		asort( $spaces );
 		
@@ -175,11 +190,21 @@ class NamespaceConflictChecker {
 
 	function reportConflict( $row, $suffix ) {
 		$newTitle = Title::makeTitleSafe( $row->namespace, $row->title );
+		if( !$newTitle ) {
+			// Title is also an illegal title...
+			// For the moment we'll let these slide to cleanupTitles or whoever.
+			printf( "... %d (0,\"%s\")\n",
+				$row->id,
+				$row->oldtitle );
+			echo "...  *** cannot resolve automatically; illegal title ***\n";
+			return false;
+		}
+		
 		printf( "... %d (0,\"%s\") -> (%d,\"%s\") [[%s]]\n",
 			$row->id,
 			$row->oldtitle,
 			$newTitle->getNamespace(),
-			$newTitle->getDbKey(),
+			$newTitle->getDBkey(),
 			$newTitle->getPrefixedText() );
 
 		$id = $newTitle->getArticleId();
@@ -193,8 +218,14 @@ class NamespaceConflictChecker {
 
 	function resolveConflict( $row, $resolvable, $suffix ) {
 		if( !$resolvable ) {
+			echo "...  *** old title {$row->title}\n";
 			$row->title .= $suffix;
+			echo "...  *** new title {$row->title}\n";
 			$title = Title::makeTitleSafe( $row->namespace, $row->title );
+			if ( ! $title ) {
+				echo "... !!! invalid title\n";
+				return false;
+			}
 			echo "...  *** using suffixed form [[" . $title->getPrefixedText() . "]] ***\n";
 		}
 		$tables = array( 'page' );
@@ -205,19 +236,18 @@ class NamespaceConflictChecker {
 	}
 
 	function resolveConflictOn( $row, $table ) {
-		$fname = 'NamespaceConflictChecker::resolveConflictOn';
 		echo "... resolving on $table... ";
 		$newTitle = Title::makeTitleSafe( $row->namespace, $row->title );
 		$this->db->update( $table,
 			array(
 				"{$table}_namespace" => $newTitle->getNamespace(),
-				"{$table}_title"     => $newTitle->getDbKey(),
+				"{$table}_title"     => $newTitle->getDBkey(),
 			),
 			array(
 				"{$table}_namespace" => 0,
 				"{$table}_title"     => $row->oldtitle,
 			),
-			$fname );
+			__METHOD__ );
 		echo "ok.\n";
 		return true;
 	}

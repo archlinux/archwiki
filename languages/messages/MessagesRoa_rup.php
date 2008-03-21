@@ -1,12 +1,12 @@
 <?php
 /** Aromanian (Armãneashce)
  *
- * Translators: Hakka (with the help of a native speaker Dumitrachi T. Fundu)
- *
  * @addtogroup Language
+ *
  * @author Niklas Laxström
+ * @author Hakka (with the help of a native speaker Dumitrachi T. Fundu)
+ * @author Hakka
  */
-
 
 $messages = array(
 # Dates
@@ -74,11 +74,12 @@ $messages = array(
 'portal'        => 'Portal-a comunitatiljei',
 'sitesupport'   => 'Donatsiur',
 
-'newmessageslink' => 'dimãndare nao',
-'editsection'     => 'Alãxiri',
-'editold'         => 'Alãxiri',
+'newmessageslink'         => 'dimãndare nao',
+'youhavenewmessagesmulti' => 'Avets nãi dimãndãri pi $1',
+'editsection'             => 'Alãxiri',
+'editold'                 => 'Alãxiri',
 
-# Short words for each namespace, by default used in the 'article' tab in monobook
+# Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'     => 'Articlu',
 'nstab-user'     => 'Frãndza-a ufilizitirolui',
 'nstab-template' => 'Shablon',
@@ -139,11 +140,13 @@ Isape a vostrã ira adratã. Nu agãrshits s-le alãxits alidzerle-a vostre ti {
 # Image list
 'ilsubmit' => 'Caftã',
 
+# Random page
+'randompage' => 'Frãndzã di nipandicã',
+
 'brokenredirects-edit'   => '(Alãxiri)',
 'brokenredirects-delete' => '(Ashcirdzire)',
 
 # Miscellaneous special pages
-'randompage'        => 'Frãndzã di nipandicã',
 'specialpages'      => 'Frãndzã spetsiale',
 'newpages-username' => 'Numa di ufilizitor:',
 'move'              => 'Tradzets',
@@ -202,8 +205,6 @@ Isape a vostrã ira adratã. Nu agãrshits s-le alãxits alidzerle-a vostre ti {
 'tooltip-pt-preferences' => 'Alidzerle-a meale',
 'tooltip-pt-logout'      => 'Disligats-vã',
 'tooltip-p-logo'         => 'Prota frãndzã',
-
-'youhavenewmessagesmulti' => 'Avets nãi dimãndãri pi $1',
 
 # Multipage image navigation
 'imgmultigo' => 'Du-vã!',

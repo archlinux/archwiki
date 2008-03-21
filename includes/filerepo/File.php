@@ -46,7 +46,7 @@ abstract class File {
 	/**
 	 * The following member variables are not lazy-initialised
 	 */
-	var $repo, $title, $lastError;
+	var $repo, $title, $lastError, $redirected;
 
 	/**
 	 * Call this constructor from child classes
@@ -135,19 +135,27 @@ abstract class File {
 
 	/**
 	 * Return the associated title object
-	 * @public
 	 */
-	function getTitle() { return $this->title; }
+	public function getTitle() { return $this->title; }
 
 	/**
 	 * Return the URL of the file
-	 * @public
 	 */
-	function getUrl() { 
+	public function getUrl() { 
 		if ( !isset( $this->url ) ) {
 			$this->url = $this->repo->getZoneUrl( 'public' ) . '/' . $this->getUrlRel();
 		}
 		return $this->url; 
+	}
+	
+	/**
+	 * Return a fully-qualified URL to the file.
+	 * Upload URL paths _may or may not_ be fully qualified, so
+	 * we check. Local paths are assumed to belong on $wgServer.
+	 * @return string
+	 */
+	public function getFullUrl() {
+		return wfExpandUrl( $this->getUrl() );
 	}
 
 	function getViewURL() {
@@ -173,10 +181,8 @@ abstract class File {
 	* or in hashed paths like /images/3/3c.
 	*
 	* May return false if the file is not locally accessible.
-	*
-	* @public
 	*/
-	function getPath() {
+	public function getPath() {
 		if ( !isset( $this->path ) ) {
 			$this->path = $this->repo->getZonePath('public') . '/' . $this->getRel();
 		}
@@ -185,9 +191,8 @@ abstract class File {
 
 	/**
 	* Alias for getPath()
-	* @public
 	*/
-	function getFullPath() {
+	public function getFullPath() {
 		return $this->getPath();
 	}
 
@@ -208,6 +213,14 @@ abstract class File {
 	 * Overridden by LocalFile, UnregisteredLocalFile
 	 */
 	public function getHeight( $page = 1 ) { return false; }
+
+	/**
+	 * Returns ID or name of user who uploaded the file
+	 * STUB
+	 *
+	 * @param $type string 'text' or 'id'
+	 */
+	public function getUser( $type='text' ) { return null; }
 
 	/**
 	 * Get the duration of a media file in seconds
@@ -487,9 +500,11 @@ abstract class File {
 
 			$script = $this->getTransformScript();
 			if ( $script && !($flags & self::RENDER_NOW) ) {
-				// Use a script to transform on client request
+				// Use a script to transform on client request, if possible
 				$thumb = $this->handler->getScriptedTransform( $this, $script, $params );
-				break;
+				if( $thumb ) {
+					break;
+				}
 			}
 
 			$normalisedParams = $params;
@@ -497,7 +512,7 @@ abstract class File {
 			$thumbName = $this->thumbName( $normalisedParams );	
 			$thumbPath = $this->getThumbPath( $thumbName );
 			$thumbUrl = $this->getThumbUrl( $thumbName );
-
+			
 			if ( $this->repo->canTransformVia404() && !($flags & self::RENDER_NOW ) ) {
 				$thumb = $this->handler->getTransform( $this, $thumbPath, $thumbUrl, $params );
 				break;
@@ -585,7 +600,7 @@ abstract class File {
 	 * STUB
 	 * Overridden by LocalFile
 	 */
-	function purgeCache( $archiveFiles = array() ) {}
+	function purgeCache() {}
 
 	/**
 	 * Purge the file description page, but don't go after
@@ -615,6 +630,18 @@ abstract class File {
 			$update = new HTMLCacheUpdate( $title, 'imagelinks' );
 			$update->doUpdate();
 		}
+	}
+
+	/**
+	 * Return a fragment of the history of file.
+	 *
+	 * STUB
+	 * @param $limit integer Limit of rows to return
+	 * @param $start timestamp Only revisions older than $start will be returned
+	 * @param $end timestamp Only revisions newer than $end will be returned
+	 */
+	function getHistory($limit = null, $start = null, $end = null) {
+		return false;
 	}
 
 	/**
@@ -887,7 +914,7 @@ abstract class File {
 	 * STUB
 	 * Overridden by LocalFile
 	 */
-	function delete( $reason, $suppress=false ) {
+	function delete( $reason ) {
 		$this->readOnlyError();
 	}
 
@@ -984,6 +1011,14 @@ abstract class File {
 	}
 
 	/**
+	 * Get discription of file revision
+	 * STUB
+	 */
+	function getDescription() {
+		return null;
+	}
+
+	/**
 	 * Get the 14-character timestamp of the file upload, or false if
 	 * it doesn't exist 
 	 */
@@ -1014,7 +1049,7 @@ abstract class File {
 	}
 
 	/**
-	 * Get an associative array containing information about a file in the local filesystem\
+	 * Get an associative array containing information about a file in the local filesystem.
 	 *
 	 * @param string $path Absolute local filesystem path
 	 * @param mixed $ext The file extension, or true to extract it from the filename. 
@@ -1120,6 +1155,14 @@ abstract class File {
 		} else {
 			return '';
 		}
+	}
+
+	function getRedirected() {
+		return $this->redirected;
+	}
+
+	function redirectedFrom( $from ) {
+		$this->redirected = $from;
 	}
 }
 /**

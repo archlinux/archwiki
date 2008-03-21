@@ -1,11 +1,16 @@
 <?php
-/** Punjabi (Gurmukhi)
-  * @addtogroup Language
-  */
-# This file is dual-licensed under GFDL and GPL.
-#
-# See: http://bugzilla.wikimedia.org/show_bug.cgi?id=1478
-# and http://bugzilla.wikimedia.org/show_bug.cgi?id=11145
+/** Punjabi (ਪੰਜਾਬੀ)
+ *
+ * @addtogroup Language
+ *
+ * @author Sukh
+ * @author Ævar Arnfjörð Bjarmason
+ * @author AS Alam
+ * @license http://www.gnu.org/copyleft/fdl.html GNU Free Documentation License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @see http://bugzilla.wikimedia.org/show_bug.cgi?id=1478
+ * @see http://bugzilla.wikimedia.org/show_bug.cgi?id=11145
+ */
 
 $skinNames = array(
 	'standard'    => 'ਕਲਾਸਿਕ',
@@ -49,7 +54,6 @@ $digitTransformTable = array(
 	'9' => '੯', # &#x0a6f;
 );
 $linkTrail = '/^([ਁਂਃਅਆਇਈਉਊਏਐਓਔਕਖਗਘਙਚਛਜਝਞਟਠਡਢਣਤਥਦਧਨਪਫਬਭਮਯਰਲਲ਼ਵਸ਼ਸਹ਼ਾਿੀੁੂੇੈੋੌ੍ਖ਼ਗ਼ਜ਼ੜਫ਼ੰੱੲੳa-z]+)(.*)$/sDu';
-
 
 $messages = array(
 # User preference toggles
@@ -146,6 +150,7 @@ $messages = array(
 'mytalk'         => 'ਮੇਰੀ ਗੱਲਬਾਤ',
 'anontalk'       => 'ਇਹ IP ਲਈ ਗੱਲਬਾਤ',
 'navigation'     => 'ਨੇਵੀਗੇਸ਼ਨ',
+'and'            => 'ਅਤੇ',
 
 'errorpagetitle'    => 'ਗਲਤੀ',
 'returnto'          => '$1 ਨੇ ਗਲਤੀ ਦਿੱਤੀ',
@@ -162,7 +167,7 @@ $messages = array(
 'printableversion'  => 'ਪਰਿੰਟਯੋਗ ਵਰਜਨ',
 'permalink'         => 'ਪੱਕਾ ਲਿੰਕ',
 'print'             => 'ਪਰਿੰਟ ਕਰੋ',
-'edit'              => 'ਸੋਧ',
+'edit'              => 'ਬਦਲੋ',
 'editthispage'      => 'ਇਹ ਪੇਜ਼ ਸੋਧੋ',
 'delete'            => 'ਹਟਾਓ',
 'deletethispage'    => 'ਇਹ ਪੇਜ਼ ਹਟਾਓ',
@@ -202,29 +207,29 @@ $messages = array(
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'         => '{{SITENAME}} ਬਾਰੇ',
-'aboutpage'         => 'ਪਰੋਜੈਕਟ: ਬਾਰੇ',
+'aboutpage'         => 'Project:ਬਾਰੇ',
 'bugreports'        => 'ਬੱਗ ਰਿਪੋਰਟਾਂ',
-'bugreportspage'    => 'ਪਰੋਜੈਕਟ: ਬੱਗ ਰਿਪੋਰਟ',
+'bugreportspage'    => 'Project:ਬੱਗ ਰਿਪੋਰਟ',
 'copyright'         => 'ਸਮੱਗਰੀ $1 ਹੇਠ ਉਪਲੱਬਧ ਹੈ।',
 'copyrightpagename' => '{{SITENAME}} ਕਾਪੀਰਾਈਟ',
-'copyrightpage'     => 'ਪਰੋਜੈਕਟ: ਕਾਪੀਰਾਈਟ',
+'copyrightpage'     => '{{ns:project}}:ਕਾਪੀਰਾਈਟ',
 'currentevents'     => 'ਮੌਜੂਦਾ ਇਵੈਂਟ',
-'currentevents-url' => 'ਮੌਜੂਦਾ ਈਵੈਂਟ',
+'currentevents-url' => 'Project:ਮੌਜੂਦਾ ਈਵੈਂਟ',
 'disclaimers'       => 'ਦਾਆਵਾ',
-'disclaimerpage'    => 'ਪਰੋਜੈਕਟ: ਆਮ ਡਿਕਲੇਅਮਰ',
+'disclaimerpage'    => 'Project:ਆਮ ਡਿਕਲੇਅਮਰ',
 'edithelp'          => 'ਮੱਦਦ ਐਡੀਟਿੰਗ',
-'edithelppage'      => 'ਮੱਦਦ: ਐਡਟਿੰਗ',
+'edithelppage'      => 'Help:ਐਡਟਿੰਗ',
 'faq'               => 'ਸਵਾਲ-ਜਵਾਬ',
-'faqpage'           => 'ਪਰੋਜੈਕਟ: ਸਵਾਲ-ਜਵਾਬ',
-'helppage'          => 'ਮੱਦਦ: ਸਮੱਗਰੀ',
+'faqpage'           => 'Project:ਸਵਾਲ-ਜਵਾਬ',
+'helppage'          => 'Help:ਸਮੱਗਰੀ',
 'mainpage'          => 'ਮੁੱਖ ਪੇਜ਼',
-'policy-url'        => 'ਪਰੋਜੈਕਟ: ਪਾਲਸੀ',
+'policy-url'        => 'Project:ਪਾਲਸੀ',
 'portal'            => 'ਕਮਿਊਨਟੀ ਪੋਰਟਲ',
-'portal-url'        => 'ਪਰੋਜੈਕਟ: ਕਮਿਊਨਟੀ ਪੋਰਟਲ',
+'portal-url'        => 'Project:ਕਮਿਊਨਟੀ ਪੋਰਟਲ',
 'privacy'           => 'ਪਰਾਈਵੇਸੀ ਪਾਲਸੀ',
-'privacypage'       => 'ਪਰੋਜੈਕਟ: ਪਰਾਈਵੇਸ ਪੇਜ਼',
+'privacypage'       => 'Project:ਪਰਾਈਵੇਸ ਪੇਜ਼',
 'sitesupport'       => 'ਦਾਨ',
-'sitesupport-url'   => 'ਪਰੋਜੈਕਟ: ਸਾਇਟ ਸਹਿਯੋਗ',
+'sitesupport-url'   => 'Project:ਸਾਇਟ ਸਹਿਯੋਗ',
 
 'badaccess'        => 'ਅਧਿਕਾਰ ਗਲਤੀ',
 'badaccess-group0' => 'ਤੁਹਾਨੂੰ ਉਹ ਐਕਸ਼ਨ ਕਰਨ ਦੀ ਮਨਜ਼ੂਰੀ ਨਹੀਂ, ਜਿਸ ਦੀ ਤੁਸੀਂ ਮੰਗ ਕੀਤੀ ਹੈ।',
@@ -245,7 +250,7 @@ $messages = array(
 'viewdeleted'             => '$1 ਵੇਖਣਾ?',
 'feedlinks'               => 'ਫੀਡ:',
 
-# Short words for each namespace, by default used in the 'article' tab in monobook
+# Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'ਲੇਖ',
 'nstab-user'      => 'ਯੂਜ਼ਰ ਪੇਜ਼',
 'nstab-media'     => 'ਮੀਡਿਆ ਪੇਜ਼',
@@ -260,7 +265,7 @@ $messages = array(
 # Main script and global functions
 'nosuchaction'      => 'ਕੋਈ ਇੰਝ ਦਾ ਐਕਸ਼ਨ ਨਹੀਂ',
 'nosuchspecialpage' => 'ਕੋਈ ਇੰਝ ਦਾ ਖਾਸ ਪੇਜ਼ ਨਹੀਂ',
-'nospecialpagetext' => "'''<big>ਤੁਸੀਂ ਇੱਕ ਅਵੈਧ ਖਾਸ ਪੇਜ਼ ਦੀ ਮੰਗ ਕੀਤੀ ਹੈ।</big>'''
+'nospecialpagetext' => "<big>'''ਤੁਸੀਂ ਇੱਕ ਅਵੈਧ ਖਾਸ ਪੇਜ਼ ਦੀ ਮੰਗ ਕੀਤੀ ਹੈ।'''</big>
 
 A list of valid special pages can be found at [[Special:Specialpages]].",
 
@@ -323,7 +328,7 @@ Your account has been created. Don't forget to change your {{SITENAME}} preferen
 'loginsuccesstitle'          => 'ਲਾਗਇਨ ਸਫ਼ਲ ਰਿਹਾ',
 'loginsuccess'               => "'''ਤੁਸੀਂ {{SITENAME}} ਉੱਤੇ \"\$1\" ਵਾਂਗ ਲਾਗਇਨ ਕਰ ਚੁੱਕੇ ਹੋ।'''",
 'nosuchuser'                 => '"$1" ਨਾਂ ਨਾਲ ਕੋਈ ਯੂਜ਼ਰ ਨਹੀਂ ਹੈ। ਆਪਣੇ ਸ਼ਬਦ ਧਿਆਨ ਨਾਲ ਚੈੱਕ ਕਰੋ ਜਾਂ ਨਵਾਂ ਅਕਾਊਂਟ ਬਣਾਓ।',
-'nosuchusershort'            => '"$1" ਨਾਂ ਨਾਲ ਕੋਈ ਵੀ ਯੂਜ਼ਰ ਨਹੀਂ ਹੈ। ਆਪਣੇ ਸ਼ਬਦ ਧਿਆਨ ਨਾਲ ਚੈੱਕ ਕਰੋ।',
+'nosuchusershort'            => '"<nowiki>$1</nowiki>" ਨਾਂ ਨਾਲ ਕੋਈ ਵੀ ਯੂਜ਼ਰ ਨਹੀਂ ਹੈ। ਆਪਣੇ ਸ਼ਬਦ ਧਿਆਨ ਨਾਲ ਚੈੱਕ ਕਰੋ।',
 'nouserspecified'            => 'ਤੁਹਾਨੂੰ ਇੱਕ ਯੂਜ਼ਰ-ਨਾਂ ਦੇਣਾ ਪਵੇਗਾ।',
 'wrongpassword'              => 'ਗਲਤ ਪਾਸਵਰਡ ਦਿੱਤਾ ਹੈ। ਮੁੜ-ਟਰਾਈ ਕਰੋ ਜੀ।',
 'wrongpasswordempty'         => 'ਖਾਲੀ ਪਾਸਵਰਡ ਦਿੱਤਾ ਹੈ। ਮੁੜ-ਟਰਾਈ ਕਰੋ ਜੀ।',
@@ -428,7 +433,6 @@ $1 ਘੰਟੇ ਵਿੱਚ। ਨੁਕਸਾਨ ਤੋਂ ਬਚਣ ਲਈ, $
 'cantcreateaccounttitle' => 'ਅਕਾਊਂਟ ਬਣਾਇਆ ਨਹੀਂ ਜਾ ਸਕਦਾ',
 
 # History pages
-'revhistory'          => 'ਰੀਵਿਜ਼ਨ ਅਤੀਤ',
 'viewpagelogs'        => 'ਇਹ ਪੇਜ਼ ਲਈ ਲਾਗ ਵੇਖੋ',
 'revnotfound'         => 'ਰੀਵਿਜ਼ਨ ਨਹੀਂ ਲੱਭਿਆ',
 'loadhist'            => 'ਪੇਜ਼ ਅਤੀਤ ਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ',
@@ -473,7 +477,7 @@ $1 ਘੰਟੇ ਵਿੱਚ। ਨੁਕਸਾਨ ਤੋਂ ਬਚਣ ਲਈ, $
 
 # Search results
 'searchresults'         => 'ਖੋਜ ਨਤੀਜੇ',
-'searchresulttext'      => '{{SITENAME}} ਖੋਜ ਬਾਰੇ ਹੋਰ ਜਾਣਕਾਰੀ ਲਵੋ, ਵੇਖੋ [[{{MediaWiki:helppage}}|{{int:help}}]].',
+'searchresulttext'      => '{{SITENAME}} ਖੋਜ ਬਾਰੇ ਹੋਰ ਜਾਣਕਾਰੀ ਲਵੋ, ਵੇਖੋ [[{{MediaWiki:Helppage}}|{{int:help}}]].',
 'searchsubtitle'        => "ਤੁਸੀਂ '''[[:$1]]''' ਲਈ ਖੋਜ ਕੀਤੀ।",
 'searchsubtitleinvalid' => "ਤੁਸੀਂ'''$1''' ਲਈ ਖੋਜ ਕੀਤੀ।",
 'noexactmatch'          => "'''\"\$1\"''' ਟਾਇਟਲ ਨਾਲ ਕੋਈ ਪੇਜ਼ ਨਹੀਂ ਹੈ। ਤੁਸੀਂ [[:\$1|ਇਹ ਪੇਜ਼]] ਬਣਾ ਸਕਦੇ ਹੋ।",
@@ -583,7 +587,7 @@ to upload files.',
 ਅੱਪਲੋਡ ਕੀਤੀ ਫਾਇਲ ਦਾ ਨਾਂ: <strong><tt>$1</tt></strong><br />
 ਮੌਜੂਦ ਫਾਇਲ ਦਾ ਨਾਂ: <strong><tt>$2</tt></strong><br />
 ਇੱਕ ਵੱਖਰਾ ਨਾਂ ਚੁਣੋ ਜੀ',
-'fileexists-thumb'     => "'''<center>ਮੌਜੂਦ ਚਿੱਤਰ</center>'''",
+'fileexists-thumb'     => "<center>'''ਮੌਜੂਦ ਚਿੱਤਰ'''</center>",
 'successfulupload'     => 'ਠੀਕ ਤਰ੍ਹਾਂ ਅੱਪਲੋਡ',
 'uploadwarning'        => 'ਅੱਪਲੋਡ ਚੇਤਾਵਨੀ',
 'savefile'             => 'ਫਾਇਲ ਸੰਭਾਲੋ',
@@ -671,6 +675,7 @@ to upload files.',
 'ancientpages'      => 'ਸਭ ਤੋਂ ਪੁਰਾਣੇ ਪੇਜ਼',
 'move'              => 'ਭੇਜੋ',
 'movethispage'      => 'ਇਹ ਪੇਜ਼ ਭੇਜੋ',
+'notargettitle'     => 'ਟਾਰਗੇਟ ਨਹੀਂ',
 
 # Book sources
 'booksources'    => 'ਕਿਤਾਬ ਸਰੋਤ',
@@ -739,8 +744,6 @@ to upload files.',
 'confirm'          => 'ਪੁਸ਼ਟੀ',
 'excontent'        => "ਸਮੱਗਰੀ ਸੀ: '$1'",
 'exblank'          => 'ਪੇਜ਼ ਖਾਲੀ ਹੈ',
-'confirmdelete'    => 'ਹਟਾਓ ਪੁਸ਼ਟੀ',
-'deletesub'        => '("$1" ਹਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ)',
 'actioncomplete'   => 'ਐਕਸ਼ਨ ਪੂਰਾ ਹੋਇਆ',
 'deletedarticle'   => '"[[$1]]" ਹਟਾਇਆ',
 'rollback_short'   => 'ਰੋਲਬੈਕ',
@@ -779,16 +782,11 @@ to upload files.',
 'mycontris'     => 'ਮੇਰਾ ਯੋਗਦਾਨ',
 'contribsub2'   => '$1 ($2) ਲਈ',
 
-'sp-contributions-newest'      => 'ਸਭ ਤੋਂ ਨਵਾਂ',
-'sp-contributions-oldest'      => 'ਸਭ ਤੋਂ ਪੁਰਾਣਾ',
-'sp-contributions-newer'       => 'ਨਵਾਂ $1',
-'sp-contributions-older'       => 'ਪੁਰਾਣਾ $1',
 'sp-contributions-newbies-sub' => 'ਨਵੇਂ ਅਕਾਊਂਟਾਂ ਲਈ',
 'sp-contributions-username'    => 'IP ਐਡਰੈੱਸ ਜਾਂ ਯੂਜ਼ਰ ਨਾਂ:',
 'sp-contributions-submit'      => 'ਖੋਜ',
 
 # What links here
-'notargettitle'       => 'ਟਾਰਗੇਟ ਨਹੀਂ',
 'linklistsub'         => '(ਲਿੰਕਾਂ ਦੀ ਲਿਸਟ)',
 'whatlinkshere-links' => '← ਲਿੰਕ',
 
@@ -850,8 +848,7 @@ to upload files.',
 'allmessagescurrent' => 'ਮੌਜੂਦਾ ਟੈਕਸਟ',
 
 # Thumbnails
-'missingimage' => '<b>ਚਿੱਤਰ ਗੁੰਮ</b><br /><i>$1</i>',
-'filemissing'  => 'ਫਾਇਲ ਗੁੰਮ ਹੈ',
+'filemissing' => 'ਫਾਇਲ ਗੁੰਮ ਹੈ',
 
 # Special:Import
 'import'                  => 'ਪੇਜ਼ ਇੰਪੋਰਟ ਕਰੋ',
@@ -896,7 +893,6 @@ to upload files.',
 'tooltip-upload'             => 'ਅੱਪਲੋਡ ਸਟਾਰਟ ਕਰੋ',
 
 # Attribution
-'and'         => 'ਅਤੇ',
 'others'      => 'ਹੋਰ',
 'siteusers'   => '{{SITENAME}} ਯੂਜ਼ਰ $1',
 'creditspage' => 'ਪੇਜ਼ ਮਾਣ',
@@ -963,12 +959,10 @@ to upload files.',
 'exif-subjectdistancerange-0' => 'ਅਣਜਾਣ',
 'exif-subjectdistancerange-1' => 'ਮਾਈਕਰੋ',
 'exif-subjectdistancerange-2' => 'ਝਲਕ ਬੰਦ ਕਰੋ',
-'exif-subjectdistancerange-3' => 'Distant view',
 
 # Pseudotags used for GPSSpeedRef and GPSDestDistanceRef
 'exif-gpsspeed-k' => 'ਕਿਲੋਮੀਟਰ ਪ੍ਰਤੀ ਘੰਟਾ',
 'exif-gpsspeed-m' => 'ਮੀਲ ਪ੍ਰਤੀ ਘੰਟਾ',
-'exif-gpsspeed-n' => 'Knots',
 
 # E-mail address confirmation
 'confirmemail'          => 'ਈਮੇਲ ਐਡਰੈੱਸ ਪੁਸ਼ਟੀ',

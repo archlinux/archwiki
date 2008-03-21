@@ -71,6 +71,8 @@ class MonoBookTemplate extends QuickTemplate {
 		<?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
                 
 		<script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"><!-- wikibits js --></script>
+		<!-- Head Scripts -->
+<?php $this->html('headscripts') ?>
 <?php	if($this->data['jsvarurl'  ]) { ?>
 		<script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('jsvarurl'  ) ?>"><!-- site js --></script>
 <?php	} ?>
@@ -87,11 +89,9 @@ class MonoBookTemplate extends QuickTemplate {
 		<script type="<?php $this->text('jsmimetype') ?>"><?php $this->html('userjsprev') ?></script>
 <?php	}
 		if($this->data['trackbackhtml']) print $this->data['trackbackhtml']; ?>
-		<!-- Head Scripts -->
-<?php $this->html('headscripts') ?>
 	</head>
-<body <?php if($this->data['body_ondblclick']) { ?>ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
-<?php if($this->data['body_onload'    ]) { ?>onload="<?php     $this->text('body_onload')     ?>"<?php } ?>
+<body<?php if($this->data['body_ondblclick']) { ?> ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
+<?php if($this->data['body_onload'    ]) { ?> onload="<?php     $this->text('body_onload')     ?>"<?php } ?>
  class="mediawiki <?php $this->text('nsclass') ?> <?php $this->text('dir') ?> <?php $this->text('pageclass') ?>">
 	<div id="globalWrapper">
 		<div id="column-content">
@@ -169,8 +169,8 @@ class MonoBookTemplate extends QuickTemplate {
 				<input id="searchInput" name="search" type="text"<?php echo $skin->tooltipAndAccesskey('search');
 					if( isset( $this->data['search'] ) ) {
 						?> value="<?php $this->text('search') ?>"<?php } ?> />
-				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>" />&nbsp;
-				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>" />
+				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $skin->tooltipAndAccesskey( 'search-go' ); ?> />&nbsp;
+				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $skin->tooltipAndAccesskey( 'search-fulltext' ); ?> />
 			</div></form>
 		</div>
 	</div>

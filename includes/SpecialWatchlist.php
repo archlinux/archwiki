@@ -87,19 +87,11 @@ function wfSpecialWatchlist( $par ) {
 	$dbr = wfGetDB( DB_SLAVE, 'watchlist' );
 	list( $page, $watchlist, $recentchanges ) = $dbr->tableNamesN( 'page', 'watchlist', 'recentchanges' );
 
-	$sql = "SELECT COUNT(*) AS n FROM $watchlist WHERE wl_user=$uid";
-	$res = $dbr->query( $sql, $fname );
-	$s = $dbr->fetchObject( $res );
-
-#	Patch *** A1 *** (see A2 below)
-#	adjust for page X, talk:page X, which are both stored separately, but treated together
-	$nitems = floor($s->n / 2);
-#	$nitems = $s->n;
-
-	if($nitems == 0) {
-		$wgOut->addWikiText( wfMsg( 'nowatchlist' ) );
-		return;
-	}
+	$watchlistCount = $dbr->selectField( 'watchlist', 'COUNT(*)',
+		array( 'wl_user' => $uid ), __METHOD__ );
+	// Adjust for page X, talk:page X, which are both stored separately,
+	// but treated together
+	$nitems = floor($watchlistCount / 2);
 
 	if( is_null($days) || !is_numeric($days) ) {
 		$big = 1000; /* The magical big */
@@ -121,6 +113,16 @@ function wfSpecialWatchlist( $par ) {
 	wfAppendToArrayIfNotDefault('hideBots' , (int)$hideBots, $defaults, $nondefaults);
 	wfAppendToArrayIfNotDefault( 'hideMinor', (int)$hideMinor, $defaults, $nondefaults );
 	wfAppendToArrayIfNotDefault('namespace', $nameSpace    , $defaults, $nondefaults);
+
+	$hookSql = "";
+	if( ! wfRunHooks('BeforeWatchlist', array($nondefaults, $wgUser, &$hookSql)) ) {
+		return;
+	}
+	
+	if($nitems == 0) {
+		$wgOut->addWikiMsg( 'nowatchlist' );
+		return;
+	}
 
 	if ( $days <= 0 ) {
 		$andcutoff = '';
@@ -180,8 +182,10 @@ function wfSpecialWatchlist( $par ) {
 			'" /><input type="hidden" name="reset" value="all" /></form>' .
 			"\n\n" );
 	}
-
-	$sql = "SELECT *
+	if ( $wgShowUpdatedMarker ) {
+		$wltsfield=", ${watchlist}.wl_notificationtimestamp ";
+	}
+	$sql = "SELECT ${recentchanges}.* ${wltsfield}
 	  FROM $watchlist,$recentchanges,$page
 	  WHERE wl_user=$uid
 	  AND wl_namespace=rc_namespace
@@ -193,6 +197,7 @@ function wfSpecialWatchlist( $par ) {
 	  $andHideBots
 	  $andHideMinor
 	  $nameSpaceClause
+	  $hookSql
 	  ORDER BY rc_timestamp DESC
 	  $limitWatchlist";
 
@@ -251,7 +256,7 @@ function wfSpecialWatchlist( $par ) {
 
 	# If there's nothing to show, stop here
 	if( $numRows == 0 ) {
-		$wgOut->addWikiText( wfMsgNoTrans( 'watchnochange' ) );
+		$wgOut->addWikiMsg( 'watchnochange' );
 		return;
 	}
 
@@ -286,10 +291,13 @@ function wfSpecialWatchlist( $par ) {
 		}
 
 		if ($wgRCShowWatchingUsers && $wgUser->getOption( 'shownumberswatching' )) {
-			$sql3 = "SELECT COUNT(*) AS n FROM $watchlist WHERE wl_title='" .$dbr->strencode($obj->page_title). "' AND wl_namespace='{$obj->page_namespace}'" ;
-			$res3 = $dbr->query( $sql3, $fname );
-			$x = $dbr->fetchObject( $res3 );
-			$rc->numberofWatchingusers = $x->n;
+			$rc->numberofWatchingusers = $dbr->selectField( 'watchlist',
+				'COUNT(*)',
+				array(
+					'wl_namespace' => $obj->rc_namespace,
+					'wl_title' => $obj->rc_title,
+				),
+				__METHOD__ );
 		} else {
 			$rc->numberofWatchingusers = 0;
 		}

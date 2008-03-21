@@ -45,12 +45,12 @@ class ApiFormatPhp extends ApiFormatBase {
 		$this->printText(serialize($this->getResultData()));
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'Output data in serialized PHP format' . parent :: getDescription();
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatPhp.php 23531 2007-06-29 01:19:14Z simetrical $';
+		return __CLASS__ . ': $Id: ApiFormatPhp.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }
 

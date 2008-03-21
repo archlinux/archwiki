@@ -123,6 +123,7 @@ class LogReader {
 	 */
 	function limitTitle( $page , $pattern ) {
 		global $wgMiserMode;
+		
 		$title = Title::newFromText( $page );
 		
 		if( strlen( $page ) == 0 || !$title instanceof Title )
@@ -182,7 +183,7 @@ class LogReader {
 	 * @return ResultWrapper result object to return the relevant rows
 	 */
 	function getRows() {
-		$res = $this->db->query( $this->getQuery(), 'LogReader::getRows' );
+		$res = $this->db->query( $this->getQuery(), __METHOD__ );
 		return $this->db->resultObject( $res );
 	}
 
@@ -341,7 +342,7 @@ class LogViewer {
 	}
 
 	function showError( &$out ) {
-		$out->addWikiText( wfMsg( 'logempty' ) );
+		$out->addWikiMsg( 'logempty' );
 	}
 
 	/**
@@ -370,7 +371,7 @@ class LogViewer {
 		$revert = '';
 		// show revertmove link
 		if ( !( $this->flags & self::NO_ACTION_LINK ) ) {
-			if ( $s->log_type == 'move' && isset( $paramArray[0] ) ) {
+			if ( $s->log_type == 'move' && isset( $paramArray[0] ) && $wgUser->isAllowed( 'move' ) ) {
 				$destTitle = Title::newFromText( $paramArray[0] );
 				if ( $destTitle ) {
 					$revert = '(' . $this->skin->makeKnownLinkObj( SpecialPage::getTitleFor( 'Movepage' ),
@@ -383,9 +384,8 @@ class LogViewer {
 			// show undelete link
 			} elseif ( $s->log_action == 'delete' && $wgUser->isAllowed( 'delete' ) ) {
 				$revert = '(' . $this->skin->makeKnownLinkObj( SpecialPage::getTitleFor( 'Undelete' ),
-					wfMsg( 'undeletebtn' ) ,
+					wfMsg( 'undeletelink' ) ,
 					'target='. urlencode( $title->getPrefixedDBkey() ) ) . ')';
-			
 			// show unblock link
 			} elseif ( $s->log_action == 'block' && $wgUser->isAllowed( 'block' ) ) {
 				$revert = '(' .  $skin->makeKnownLinkObj( SpecialPage::getTitleFor( 'Ipblocklist' ),
@@ -394,21 +394,21 @@ class LogViewer {
 			// show change protection link
 			} elseif ( ( $s->log_action == 'protect' || $s->log_action == 'modify' ) && $wgUser->isAllowed( 'protect' ) ) {
 				$revert = '(' .  $skin->makeKnownLinkObj( $title, wfMsg( 'protect_change' ), 'action=unprotect' ) . ')';
-			// show user tool links for self created users
-			// TODO: The extension should be handling this, get it out of core!
-			} elseif ( $s->log_action == 'create2' ) {
-				if( isset( $paramArray[0] ) ) {
-					$revert = $this->skin->userToolLinks( $paramArray[0], $s->log_title, true );
-				} else {
-					# Fall back to a blue contributions link
-					$revert = $this->skin->userToolLinks( 1, $s->log_title );
-				}
-				# Suppress $comment from old entries, not needed and can contain incorrect links
-				$comment = '';
+			// Show unmerge link
+			} elseif ( $s->log_action == 'merge' ) {
+				$merge = SpecialPage::getTitleFor( 'Mergehistory' );
+				$revert = '(' .  $this->skin->makeKnownLinkObj( $merge, wfMsg('revertmerge'),
+					wfArrayToCGI( 
+						array('target' => $paramArray[0], 'dest' => $title->getPrefixedText(), 'mergepoint' => $paramArray[1] ) 
+					) 
+				) . ')';
+			} elseif ( wfRunHooks( 'LogLine', array( $s->log_type, $s->log_action, $title, $paramArray, &$comment, &$revert, $s->log_timestamp ) ) ) {
+				// wfDebug( "Invoked LogLine hook for " $s->log_type . ", " . $s->log_action . "\n" );
+				// Do nothing. The implementation is handled by the hook modifiying the passed-by-ref parameters.
 			}
 		}
 
-		$action = LogPage::actionText( $s->log_type, $s->log_action, $title, $this->skin, $paramArray, true, true );
+		$action = LogPage::actionText( $s->log_type, $s->log_action, $title, $this->skin, $paramArray, true );
 		$out = "<li>$time $userLink $action $comment $revert</li>\n";
 		return $out;
 	}
@@ -525,6 +525,3 @@ class LogViewer {
 		$out->addHTML( '<p>' . $html . '</p>' );
 	}
 }
-
-
-

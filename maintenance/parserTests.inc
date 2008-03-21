@@ -95,6 +95,7 @@ class ParserTest {
 		} else {
 			$this->recorder = new TestRecorder( $this->term );
 		}
+		$this->keepUploads = isset( $options['keep-uploads'] );
 
 		$this->hooks = array();
 		$this->functionHooks = array();
@@ -256,6 +257,7 @@ class ParserTest {
 	 * @return bool
 	 */
 	private function runTest( $desc, $input, $result, $opts ) {
+		global $wgParserConf;
 		if( $this->showProgress ) {
 			$this->showTesting( $desc );
 		}
@@ -280,12 +282,14 @@ class ParserTest {
 
 		$noxml = (bool)preg_match( '~\\b noxml \\b~x', $opts );
 
-		$parser = new Parser();
+		$class = $wgParserConf['class'];
+		$parser = new $class( $wgParserConf );
 		foreach( $this->hooks as $tag => $callback ) {
 			$parser->setHook( $tag, $callback );
 		}
-		foreach( $this->functionHooks as $tag => $callback ) {
-			$parser->setFunctionHook( $tag, $callback );
+		foreach( $this->functionHooks as $tag => $bits ) {
+			list( $callback, $flags ) = $bits;
+			$parser->setFunctionHook( $tag, $callback, $flags );
 		}
 		wfRunHooks( 'ParserTestParser', array( &$parser ) );
 
@@ -296,11 +300,11 @@ class ParserTest {
 			$out = $parser->preSaveTransform( $input, $title, $user, $options );
 		} elseif (preg_match('/\\bmsg\\b/i', $opts)) {
 			$out = $parser->transformMsg( $input, $options );
-		} elseif( preg_match( '/\\bsection=(\d+)\b/i', $opts, $matches ) ) {
-			$section = intval( $matches[1] );
+		} elseif( preg_match( '/\\bsection=([\w-]+)\b/i', $opts, $matches ) ) {
+			$section = $matches[1];
 			$out = $parser->getSection( $input, $section );
-		} elseif( preg_match( '/\\breplace=(\d+),"(.*?)"/i', $opts, $matches ) ) {
-			$section = intval( $matches[1] );
+		} elseif( preg_match( '/\\breplace=([\w-]+),"(.*?)"/i', $opts, $matches ) ) {
+			$section = $matches[1];
 			$replace = $matches[2];
 			$out = $parser->replaceSection( $input, $section, $replace );
 		} else {
@@ -424,17 +428,18 @@ class ParserTest {
 	 * Some of these probably aren't necessary.
 	 */
 	private function listTables() {
-		$tables = array('user', 'page', 'page_restrictions', 'revision', 'text',
-			'pagelinks', 'imagelinks', 'categorylinks',
-			'templatelinks', 'externallinks', 'langlinks',
-			'site_stats', 'hitcounter',
-			'ipblocks', 'image', 'oldimage',
-			'recentchanges',
-			'watchlist', 'math', 'searchindex',
-			'interwiki', 'querycache',
-			'objectcache', 'job', 'redirect',
-			'querycachetwo', 'archive', 'user_groups'
+		global $wgDBtype;
+		$tables = array('user', 'page', 'page_restrictions',
+			'protected_titles', 'revision', 'text', 'pagelinks', 'imagelinks',
+			'categorylinks', 'templatelinks', 'externallinks', 'langlinks',
+			'site_stats', 'hitcounter',	'ipblocks', 'image', 'oldimage',
+			'recentchanges', 'watchlist', 'math', 'interwiki',
+			'querycache', 'objectcache', 'job', 'redirect', 'querycachetwo',
+			'archive', 'user_groups'
 		);
+
+		if ($wgDBtype === 'mysql') 
+			array_push( $tables, 'searchindex' );
 		
 		// Allow extensions to add to the list of tables to duplicate;
 		// may be necessary if they hook into page save or other code
@@ -548,7 +553,15 @@ class ParserTest {
 	 */
 	private function setupUploadDir() {
 		global $IP;
-		$dir = wfTempDir() . "/mwParser-" . mt_rand() . "-images";
+		if ( $this->keepUploads ) {
+			$dir = wfTempDir() . '/mwParser-images';
+			if ( is_dir( $dir ) ) {
+				return $dir;
+			}
+		} else {
+			$dir = wfTempDir() . "/mwParser-" . mt_rand() . "-images";
+		}
+
 		wfDebug( "Creating upload directory $dir\n" );
 		mkdir( $dir );
 		mkdir( $dir . '/3' );
@@ -576,6 +589,10 @@ class ParserTest {
 	 * Remove the dummy uploads directory
 	 */
 	private function teardownUploadDir( $dir ) {
+		if ( $this->keepUploads ) {
+			return;
+		}
+
 		// delete the files first, then the dirs.
 		self::deleteFiles(
 			array (
@@ -940,13 +957,17 @@ class DbTestRecorder extends TestRecorder  {
 	 * and all that fun stuff
 	 */
 	function start() {
+		global $wgDBtype;
 		parent::start();
 
 		$this->db->begin();
 
 		if( ! $this->db->tableExists( 'testrun' ) or ! $this->db->tableExists( 'testitem') ) {
 			print "WARNING> `testrun` table not found in database. Trying to create table.\n";
-			dbsource( 'testRunner.sql',  $this->db );
+            if ($wgDBtype === 'postgres')
+				dbsource( dirname(__FILE__) . '/testRunner.postgres.sql',  $this->db );
+			else
+				dbsource( dirname(__FILE__) . '/testRunner.sql',  $this->db );
 			echo "OK, resuming.\n";
 		}
 
@@ -962,7 +983,10 @@ class DbTestRecorder extends TestRecorder  {
 				'tr_uname'       => php_uname()
 			),
 			__METHOD__ );
-		$this->curRun = $this->db->insertId();
+			if ($wgDBtype === 'postgres')
+				$this->curRun = $this->db->currentSequenceValue('testrun_id_seq');
+			else
+				$this->curRun = $this->db->insertId();
 	}
 
 	/**

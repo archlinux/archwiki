@@ -86,6 +86,8 @@ class ApiQueryAllpages extends ApiQueryGeneratorBase {
 			$prlevel = $params['prlevel'];
 			if (!is_null($prlevel) && $prlevel != '' && $prlevel != '*')
 				$this->addWhereFld('pr_level', $prlevel);
+				
+			$this->addOption('DISTINCT');
 
 			$forceNameTitleIndex = false;
 
@@ -93,10 +95,22 @@ class ApiQueryAllpages extends ApiQueryGeneratorBase {
 			$this->dieUsage('prlevel may not be used without prtype', 'params');
 		}
 		
-		$this->addTables('page');
+		if($params['filterlanglinks'] == 'withoutlanglinks') {
+			$pageName = $this->getDB()->tableName('page');
+			$llName = $this->getDB()->tableName('langlinks');
+			$tables = "$pageName LEFT JOIN $llName ON page_id=ll_from";
+			$this->addWhere('ll_from IS NULL');
+			$this->addTables($tables);
+			$forceNameTitleIndex = false;
+		} else if($params['filterlanglinks'] == 'withlanglinks') {
+			$this->addTables(array('page', 'langlinks'));
+			$this->addWhere('page_id=ll_from');
+			$forceNameTitleIndex = false;		
+		} else {
+			$this->addTables('page');
+		}
 		if ($forceNameTitleIndex)
 			$this->addOption('USE INDEX', 'name_title');
-		
 
 		if (is_null($resultPageSet)) {
 			$this->addFields(array (
@@ -110,7 +124,8 @@ class ApiQueryAllpages extends ApiQueryGeneratorBase {
 
 		$limit = $params['limit'];
 		$this->addOption('LIMIT', $limit+1);
-		$this->addOption('ORDER BY', 'page_namespace, page_title');
+		$this->addOption('ORDER BY', 'page_namespace, page_title' .
+						($params['dir'] == 'descending' ? ' DESC' : ''));
 
 		$res = $this->select(__METHOD__);
 
@@ -143,7 +158,7 @@ class ApiQueryAllpages extends ApiQueryGeneratorBase {
 		}
 	}
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		global $wgRestrictionTypes, $wgRestrictionLevels;
 		
 		return array (
@@ -169,9 +184,11 @@ class ApiQueryAllpages extends ApiQueryGeneratorBase {
 			), 
 			'prtype' => array (
 				ApiBase :: PARAM_TYPE => $wgRestrictionTypes,
+				ApiBase :: PARAM_ISMULTI => true
 			),
 			'prlevel' => array (
 				ApiBase :: PARAM_TYPE => $wgRestrictionLevels,
+				ApiBase :: PARAM_ISMULTI => true
 			),
 			'limit' => array (
 				ApiBase :: PARAM_DFLT => 10,
@@ -179,25 +196,42 @@ class ApiQueryAllpages extends ApiQueryGeneratorBase {
 				ApiBase :: PARAM_MIN => 1,
 				ApiBase :: PARAM_MAX => ApiBase :: LIMIT_BIG1,
 				ApiBase :: PARAM_MAX2 => ApiBase :: LIMIT_BIG2
+			),
+			'dir' => array (
+				ApiBase :: PARAM_DFLT => 'ascending',
+				ApiBase :: PARAM_TYPE => array (
+					'ascending',
+					'descending'
+				)
+			),
+			'filterlanglinks' => array(
+				ApiBase :: PARAM_TYPE => array(
+					'withlanglinks',
+					'withoutlanglinks',
+					'all'
+				),
+				ApiBase :: PARAM_DFLT => 'all'
 			)
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'from' => 'The page title to start enumerating from.',
 			'prefix' => 'Search for all page titles that begin with this value.',
 			'namespace' => 'The namespace to enumerate.',
 			'filterredir' => 'Which pages to list.',
+			'dir' => 'The direction in which to list',
 			'minsize' => 'Limit to pages with at least this many bytes',
 			'maxsize' => 'Limit to pages with at most this many bytes',
 			'prtype' => 'Limit to protected pages only',
 			'prlevel' => 'The protection level (must be used with apprtype= parameter)',
+			'filterlanglinks' => 'Filter based on whether a page has langlinks',
 			'limit' => 'How many total pages to return.'
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'Enumerate all pages sequentially in a given namespace';
 	}
 
@@ -215,7 +249,7 @@ class ApiQueryAllpages extends ApiQueryGeneratorBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryAllpages.php 24694 2007-08-09 08:41:58Z yurik $';
+		return __CLASS__ . ': $Id: ApiQueryAllpages.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }
 

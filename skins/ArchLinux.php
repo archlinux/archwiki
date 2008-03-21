@@ -55,7 +55,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 	<head>
 		<meta http-equiv="Content-Type" content="<?php $this->text('mimetype') ?>; charset=<?php $this->text('charset') ?>" />
 		<?php $this->html('headlinks') ?>
-		<title>archlinux.de :: <?php $this->text('pagetitle') ?></title>
+		<title><?php $this->text('pagetitle') ?></title>
 		<style type="text/css" media="screen, projection">/*<![CDATA[*/
 			@import "<?php $this->text('stylepath') ?>/common/shared.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
 			@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/main.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
@@ -70,6 +70,8 @@ class ArchLinuxTemplate extends QuickTemplate {
 		<style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/archlinux.css";</style>
 		<?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
 		<script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"><!-- wikibits js --></script>
+		<!-- Head Scripts -->
+<?php $this->html('headscripts') ?>
 <?php	if($this->data['jsvarurl'  ]) { ?>
 		<script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('jsvarurl'  ) ?>"><!-- site js --></script>
 <?php	} ?>
@@ -86,12 +88,10 @@ class ArchLinuxTemplate extends QuickTemplate {
 		<script type="<?php $this->text('jsmimetype') ?>"><?php $this->html('userjsprev') ?></script>
 <?php	}
 		if($this->data['trackbackhtml']) print $this->data['trackbackhtml']; ?>
-		<!-- Head Scripts -->
-		<?php $this->html('headscripts') ?>
 		<link rel="shortcut icon" href="favicon.ico" />
 	</head>
-<body <?php if($this->data['body_ondblclick']) { ?>ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
-<?php if($this->data['body_onload'    ]) { ?>onload="<?php     $this->text('body_onload')     ?>"<?php } ?>
+<body<?php if($this->data['body_ondblclick']) { ?> ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
+<?php if($this->data['body_onload'    ]) { ?> onload="<?php     $this->text('body_onload')     ?>"<?php } ?>
  class="mediawiki <?php $this->text('nsclass') ?> <?php $this->text('dir') ?> <?php $this->text('pageclass') ?>">
 
 	<?php if (empty($_REQUEST['printable'])) {?>
@@ -203,8 +203,8 @@ class ArchLinuxTemplate extends QuickTemplate {
 				<input id="searchInput" name="search" type="text"<?php echo $skin->tooltipAndAccesskey('search');
 					if( isset( $this->data['search'] ) ) {
 						?> value="<?php $this->text('search') ?>"<?php } ?> />
-				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>" />&nbsp;
-				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>" />
+				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $skin->tooltipAndAccesskey( 'search-go' ); ?> />&nbsp;
+				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $skin->tooltipAndAccesskey( 'search-fulltext' ); ?> />
 			</div></form>
 		</div>
 	</div>

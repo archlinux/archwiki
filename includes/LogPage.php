@@ -116,9 +116,10 @@ class LogPage {
 	 * @static
 	 */
 	public static function logName( $type ) {
-		global $wgLogNames;
+		global $wgLogNames, $wgMessageCache;
 
 		if( isset( $wgLogNames[$type] ) ) {
+			$wgMessageCache->loadAllMessages();
 			return str_replace( '_', ' ', wfMsg( $wgLogNames[$type] ) );
 		} else {
 			// Bogus log types? Perhaps an extension was removed.
@@ -138,7 +139,7 @@ class LogPage {
 	/**
 	 * @static
 	 */
-	static function actionText( $type, $action, $title = NULL, $skin = NULL, $params = array(), $filterWikilinks=false, $translate=false ) {
+	static function actionText( $type, $action, $title = NULL, $skin = NULL, $params = array(), $filterWikilinks=false ) {
 		global $wgLang, $wgContLang, $wgLogActions;
 
 		$key = "$type/$action";
@@ -172,6 +173,11 @@ class LogPage {
 							$text = $wgContLang->ucfirst( $title->getText() );
 							$titleLink = $skin->makeLinkObj( Title::makeTitle( NS_USER, $text ) );
 							break;
+						case 'merge':
+							$titleLink = $skin->makeLinkObj( $title, $title->getPrefixedText(), 'redirect=no' );
+							$params[0] = $skin->makeLinkObj( Title::newFromText( $params[0] ), htmlspecialchars( $params[0] ) );
+							$params[1] = $wgLang->timeanddate( $params[1] );
+							break;
 						default:
 							$titleLink = $skin->makeLinkObj( $title );
 					}
@@ -199,8 +205,10 @@ class LogPage {
 				} else {
 					array_unshift( $params, $titleLink );
 					if ( $key == 'block/block' ) {
-						if ( $translate ) {
-							$params[1] = $wgLang->translateBlockExpiry( $params[1] );
+						if ( $skin ) {
+							$params[1] = '<span title="' . htmlspecialchars( $params[1] ). '">' . $wgLang->translateBlockExpiry( $params[1] ) . '</span>';
+						} else {
+							$params[1] = $wgContLang->translateBlockExpiry( $params[1] );
 						}
 						$params[2] = isset( $params[2] )
 										? self::formatBlockFlags( $params[2] )

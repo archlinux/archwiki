@@ -60,9 +60,12 @@ class ApiQuery extends ApiBase {
 	private $mQueryListModules = array (
 		'allpages' => 'ApiQueryAllpages',
 		'alllinks' => 'ApiQueryAllLinks',
+		'allcategories' => 'ApiQueryAllCategories',
 		'allusers' => 'ApiQueryAllUsers',
 		'backlinks' => 'ApiQueryBacklinks',
+		'blocks' => 'ApiQueryBlocks',
 		'categorymembers' => 'ApiQueryCategoryMembers',
+		'deletedrevs' => 'ApiQueryDeletedrevs',
 		'embeddedin' => 'ApiQueryBacklinks',
 		'imageusage' => 'ApiQueryBacklinks',
 		'logevents' => 'ApiQueryLogEvents',
@@ -71,11 +74,14 @@ class ApiQuery extends ApiBase {
 		'usercontribs' => 'ApiQueryContributions',
 		'watchlist' => 'ApiQueryWatchlist',
 		'exturlusage' => 'ApiQueryExtLinksUsage',
+		'users' => 'ApiQueryUsers',
+		'random' => 'ApiQueryRandom',
 	);
 
 	private $mQueryMetaModules = array (
 		'siteinfo' => 'ApiQuerySiteinfo',
 		'userinfo' => 'ApiQueryUserInfo',
+		'allmessages' => 'ApiQueryAllmessages',
 	);
 
 	private $mSlaveDB = null;
@@ -142,6 +148,13 @@ class ApiQuery extends ApiBase {
 	 */
 	public function getPageSet() {
 		return $this->mPageSet;
+	}
+	
+	/**
+	 * Get the array mapping module names to class names
+	 */
+	function getModules() {
+		return array_merge($this->mQueryPropModules, $this->mQueryListModules, $this->mQueryMetaModules);
 	}
 
 	/**
@@ -375,7 +388,7 @@ class ApiQuery extends ApiBase {
 	 * Returns the list of allowed parameters for this module.
 	 * Qurey module also lists all ApiPageSet parameters as its own. 
 	 */
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array (
 			'prop' => array (
 				ApiBase :: PARAM_ISMULTI => true,
@@ -456,8 +469,13 @@ class ApiQuery extends ApiBase {
 		$psModule = new ApiPageSet($this);
 		return $psModule->makeHelpMsgParameters() . parent :: makeHelpMsgParameters();
 	}
+	
+	// @todo should work correctly
+	public function shouldCheckMaxlag() {
+		return true;
+	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'prop' => 'Which properties to get for the titles/revisions/pageids',
 			'list' => 'Which lists to get',
@@ -468,7 +486,7 @@ class ApiQuery extends ApiBase {
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return array (
 			'Query API module allows applications to get needed pieces of data from the MediaWiki databases,',
 			'and is loosely based on the Query API interface currently available on all MediaWiki servers.',
@@ -485,7 +503,7 @@ class ApiQuery extends ApiBase {
 	public function getVersion() {
 		$psModule = new ApiPageSet($this);
 		$vers = array ();
-		$vers[] = __CLASS__ . ': $Id: ApiQuery.php 24494 2007-07-31 17:53:37Z yurik $';
+		$vers[] = __CLASS__ . ': $Id: ApiQuery.php 30222 2008-01-28 19:05:26Z catrope $';
 		$vers[] = $psModule->getVersion();
 		return $vers;
 	}

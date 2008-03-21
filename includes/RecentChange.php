@@ -221,8 +221,7 @@ class RecentChange
 		if( $wgUseEnotif ) {
 			# this would be better as an extension hook
 			global $wgUser;
-			include_once( "UserMailer.php" );
-			$enotif = new EmailNotification();
+			$enotif = new EmailNotification;
 			$title = Title::makeTitle( $this->mAttribs['rc_namespace'], $this->mAttribs['rc_title'] );
 			$enotif->notifyOnPageChange( $wgUser, $title,
 				$this->mAttribs['rc_timestamp'],
@@ -259,14 +258,9 @@ class RecentChange
 
 	# Makes an entry in the database corresponding to an edit
 	public static function notifyEdit( $timestamp, &$title, $minor, &$user, $comment,
-		$oldId, $lastTimestamp, $bot = "default", $ip = '', $oldSize = 0, $newSize = 0,
+		$oldId, $lastTimestamp, $bot, $ip = '', $oldSize = 0, $newSize = 0,
 		$newId = 0)
 	{
-
-		if ( $bot === 'default' ) {
-			$bot = $user->isAllowed( 'bot' );
-		}
-
 		if ( !$ip ) {
 			$ip = wfGetIP();
 			if ( !$ip ) {
@@ -313,7 +307,7 @@ class RecentChange
 	 * Note: the title object must be loaded with the new id using resetArticleID()
 	 * @todo Document parameters and return
 	 */
-	public static function notifyNew( $timestamp, &$title, $minor, &$user, $comment, $bot = 'default',
+	public static function notifyNew( $timestamp, &$title, $minor, &$user, $comment, $bot,
 	  $ip='', $size = 0, $newId = 0 )
 	{
 		if ( !$ip ) {
@@ -321,9 +315,6 @@ class RecentChange
 			if ( !$ip ) {
 				$ip = '';
 			}
-		}
-		if ( $bot === 'default' ) {
-			$bot = $user->isAllowed( 'bot' );
 		}
 
 		$rc = new RecentChange;
@@ -363,6 +354,8 @@ class RecentChange
 	# Makes an entry in the database corresponding to a rename
 	public static function notifyMove( $timestamp, &$oldTitle, &$newTitle, &$user, $comment, $ip='', $overRedir = false )
 	{
+		global $wgRequest;
+
 		if ( !$ip ) {
 			$ip = wfGetIP();
 			if ( !$ip ) {
@@ -384,7 +377,7 @@ class RecentChange
 			'rc_comment'	=> $comment,
 			'rc_this_oldid'	=> 0,
 			'rc_last_oldid'	=> 0,
-			'rc_bot'	=> $user->isAllowed( 'bot' ) ? 1 : 0,
+			'rc_bot'	=> $user->isAllowed( 'bot' ) ? $wgRequest->getBool( 'bot' , true ) : 0,
 			'rc_moved_to_ns'	=> $newTitle->getNamespace(),
 			'rc_moved_to_title'	=> $newTitle->getDBkey(),
 			'rc_ip'		=> $ip,
@@ -415,6 +408,8 @@ class RecentChange
 	public static function notifyLog( $timestamp, &$title, &$user, $comment, $ip='',
 	   $type, $action, $target, $logComment, $params )
 	{
+		global $wgRequest;
+
 		if ( !$ip ) {
 			$ip = wfGetIP();
 			if ( !$ip ) {
@@ -436,7 +431,7 @@ class RecentChange
 			'rc_comment'	=> $comment,
 			'rc_this_oldid'	=> 0,
 			'rc_last_oldid'	=> 0,
-			'rc_bot'	=> $user->isAllowed( 'bot' ) ? 1 : 0,
+			'rc_bot'	=> $user->isAllowed( 'bot' ) ? $wgRequest->getBool( 'bot' , true ) : 0,
 			'rc_moved_to_ns'	=> 0,
 			'rc_moved_to_title'	=> '',
 			'rc_ip'	=> $ip,
@@ -625,4 +620,5 @@ class RecentChange
 		}
 	}
 }
+
 

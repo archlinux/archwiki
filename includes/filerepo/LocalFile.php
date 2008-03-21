@@ -5,7 +5,7 @@
 /**
  * Bump this number when serialized cache records may be incompatible.
  */
-define( 'MW_FILE_VERSION', 4 );
+define( 'MW_FILE_VERSION', 7 );
 
 /**
  * Class to represent a local file in the wiki's own database
@@ -29,24 +29,26 @@ class LocalFile extends File
 	/**#@+
 	 * @private
 	 */
-	var	$fileExists,    # does the file file exist on disk? (loadFromXxx)
-		$historyLine,	# Number of line to return by nextHistoryLine() (constructor)
-		$historyRes,	# result of the query for the file's history (nextHistoryLine)
-		$width,         # \
-		$height,        #  |
-		$bits,          #   --- returned by getimagesize (loadFromXxx)
-		$attr,          # /
-		$media_type,    # MEDIATYPE_xxx (bitmap, drawing, audio...)
-		$mime,          # MIME type, determined by MimeMagic::guessMimeType
-		$major_mime,    # Major mime type
-		$minor_mime,    # Minor mime type
-		$size,          # Size in bytes (loadFromXxx)
-		$metadata,      # Handler-specific metadata
-		$timestamp,     # Upload timestamp
-		$sha1,          # SHA-1 base 36 content hash
-		$dataLoaded,    # Whether or not all this has been loaded from the database (loadFromXxx)
-		$upgraded,      # Whether the row was upgraded on load
-		$locked;        # True if the image row is locked
+	var	$fileExists,       # does the file file exist on disk? (loadFromXxx)
+		$historyLine, 	   # Number of line to return by nextHistoryLine() (constructor)
+		$historyRes, 	   # result of the query for the file's history (nextHistoryLine)
+		$width,            # \
+		$height,           #  |
+		$bits,             #   --- returned by getimagesize (loadFromXxx)
+		$attr,             # /
+		$media_type,       # MEDIATYPE_xxx (bitmap, drawing, audio...)
+		$mime,             # MIME type, determined by MimeMagic::guessMimeType
+		$major_mime,       # Major mime type
+		$minor_mime,       # Minor mime type
+		$size,             # Size in bytes (loadFromXxx)
+		$metadata,         # Handler-specific metadata
+		$timestamp,        # Upload timestamp
+		$sha1,             # SHA-1 base 36 content hash
+		$user, $user_text, # User, who uploaded the file
+		$description,      # Description of current revision of the file
+		$dataLoaded,       # Whether or not all this has been loaded from the database (loadFromXxx)
+		$upgraded,         # Whether the row was upgraded on load
+		$locked;           # True if the image row is locked
 
 	/**#@-*/
 
@@ -110,12 +112,9 @@ class LocalFile extends File
 			wfDebug( "Pulling file metadata from cache key $key\n" );
 			$this->fileExists = $cachedValues['fileExists'];
 			if ( $this->fileExists ) {
-				unset( $cachedValues['version'] );
-				unset( $cachedValues['fileExists'] );
-				foreach ( $cachedValues as $name => $value ) {
-					$this->$name = $value;
-				}
+				$this->setProps( $cachedValues );
 			}
+			$this->dataLoaded = true;
 		}
 		if ( $this->dataLoaded ) {
 			wfIncrStats( 'image_cache_hit' );
@@ -158,7 +157,7 @@ class LocalFile extends File
 
 	function getCacheFields( $prefix = 'img_' ) {
 		static $fields = array( 'size', 'width', 'height', 'bits', 'media_type', 
-			'major_mime', 'minor_mime', 'metadata', 'timestamp', 'sha1' );
+			'major_mime', 'minor_mime', 'metadata', 'timestamp', 'sha1', 'user', 'user_text', 'description' );
 		static $results = array();
 		if ( $prefix == '' ) {
 			return $fields;
@@ -184,7 +183,7 @@ class LocalFile extends File
 		# Unconditionally set loaded=true, we don't want the accessors constantly rechecking
 		$this->dataLoaded = true;
 
-		$dbr = $this->repo->getSlaveDB();
+		$dbr = $this->repo->getMasterDB();
 
 		$row = $dbr->selectRow( 'image', $this->getCacheFields( 'img_' ),
 			array( 'img_name' => $this->getName() ), $fname );
@@ -294,6 +293,9 @@ class LocalFile extends File
 		$dbw = $this->repo->getMasterDB();
 		list( $major, $minor ) = self::splitMime( $this->mime );
 
+		if ( wfReadOnly() ) {
+			return;
+		}
 		wfDebug(__METHOD__.': upgrading '.$this->getName()." to the current schema\n");
 
 		$dbw->update( 'image',
@@ -313,6 +315,13 @@ class LocalFile extends File
 		wfProfileOut( __METHOD__ );
 	}
 
+	/**
+	 * Set properties in this object to be equal to those given in the 
+	 * associative array $info. Only cacheable fields can be set.
+	 * 
+	 * If 'mime' is given, it will be split into major_mime/minor_mime. 
+	 * If major_mime/minor_mime are given, $this->mime will also be set.
+	 */
 	function setProps( $info ) {
 		$this->dataLoaded = true;
 		$fields = $this->getCacheFields( '' );
@@ -374,6 +383,20 @@ class LocalFile extends File
 			}
 		} else {
 			return $this->height;
+		}
+	}
+
+	/**
+	 * Returns ID or name of user who uploaded the file
+	 *
+	 * @param $type string 'text' or 'id'
+	 */
+	function getUser($type='text') {
+		$this->load();
+		if( $type == 'text' ) {
+			return $this->user_text;
+		} elseif( $type == 'id' ) {
+			return $this->user;
 		}
 	}
 
@@ -555,6 +578,28 @@ class LocalFile extends File
 	/** purgeDescription inherited */
 	/** purgeEverything inherited */
 
+	function getHistory($limit = null, $start = null, $end = null) {
+		$dbr = $this->repo->getSlaveDB();
+		$conds = $opts = array();
+		$conds[] = "oi_name = " . $dbr->addQuotes( $this->title->getDBKey() );
+		if( $start !== null ) {
+			$conds[] = "oi_timestamp <= " . $dbr->addQuotes( $dbr->timestamp( $start ) );
+		}
+		if( $end !== null ) {
+			$conds[] = "oi_timestamp >= " . $dbr->addQuotes( $dbr->timestamp( $end ) );
+		}
+		if( $limit ) {
+			$opts['LIMIT'] = $limit;
+		}
+		$opts['ORDER BY'] = 'oi_timestamp DESC';
+		$res = $dbr->select('oldimage', '*', $conds, __METHOD__, $opts);
+		$r = array();
+		while( $row = $dbr->fetchObject($res) ) {
+			$r[] = OldLocalFile::newFromRow($row, $this->repo);
+		}
+		return $r;
+	}
+	
 	/**
 	 * Return the history of this file, line by line.
 	 * starts with current version, then old versions.
@@ -566,6 +611,9 @@ class LocalFile extends File
 	 * @public
 	 */
 	function nextHistoryLine() {
+		# Polymorphic function name to distinguish foreign and local fetches
+		$fname = get_class( $this ) . '::' . __FUNCTION__;
+
 		$dbr = $this->repo->getSlaveDB();
 
 		if ( $this->historyLine == 0 ) {// called for the first time, return line from cur
@@ -575,7 +623,7 @@ class LocalFile extends File
 					"'' AS oi_archive_name"
 				),
 				array( 'img_name' => $this->title->getDBkey() ),
-				__METHOD__
+				$fname
 			);
 			if ( 0 == $dbr->numRows( $this->historyRes ) ) {
 				$dbr->freeResult($this->historyRes);
@@ -586,7 +634,7 @@ class LocalFile extends File
 			$dbr->freeResult($this->historyRes);
 			$this->historyRes = $dbr->select( 'oldimage', '*', 
 				array( 'oi_name' => $this->title->getDBkey() ),
-				__METHOD__,
+				$fname,
 				array( 'ORDER BY' => 'oi_timestamp DESC' )
 			);
 		}
@@ -678,6 +726,10 @@ class LocalFile extends File
 		if ( !$props ) {
 			$props = $this->repo->getFileProps( $this->getVirtualUrl() );
 		}
+		$props['description'] = $comment;
+		$props['user'] = $wgUser->getID();
+		$props['user_text'] = $wgUser->getName();
+		$props['timestamp'] = wfTimestamp( TS_MW );
 		$this->setProps( $props );
 
 		// Delete thumbnails and refresh the metadata cache
@@ -964,6 +1016,11 @@ class LocalFile extends File
 		return $html;
 	}
 
+	function getDescription() {
+		$this->load();
+		return $this->description;
+	}
+
 	function getTimestamp() {
 		$this->load();
 		return $this->timestamp;
@@ -1188,12 +1245,12 @@ class LocalFileDeleteBatch {
 		list( $oldRels, $deleteCurrent ) = $this->getOldRels();
 
 		if ( $deleteCurrent ) {
+			$concat = $dbw->buildConcat( array( "img_sha1", $encExt ) );
 			$where = array( 'img_name' => $this->file->getName() );
 			$dbw->insertSelect( 'filearchive', 'image',
 				array(
 					'fa_storage_group' => $encGroup,
-					'fa_storage_key'   => "IF(img_sha1='', '', CONCAT(img_sha1,$encExt))",
-
+					'fa_storage_key'   => "CASE WHEN img_sha1='' THEN '' ELSE $concat END",
 					'fa_deleted_user'      => $encUserId,
 					'fa_deleted_timestamp' => $encTimestamp,
 					'fa_deleted_reason'    => $encReason,
@@ -1217,15 +1274,14 @@ class LocalFileDeleteBatch {
 		}
 
 		if ( count( $oldRels ) ) {
+			$concat = $dbw->buildConcat( array( "oi_sha1", $encExt ) );
 			$where = array(
 				'oi_name' => $this->file->getName(),
 				'oi_archive_name IN (' . $dbw->makeList( array_keys( $oldRels ) ) . ')' );
-
 			$dbw->insertSelect( 'filearchive', 'oldimage', 
 				array(
 					'fa_storage_group' => $encGroup,
-					'fa_storage_key'   => "IF(oi_sha1='', '', CONCAT(oi_sha1,$encExt))",
-
+					'fa_storage_key'   => "CASE WHEN oi_sha1='' THEN '' ELSE $concat END",
 					'fa_deleted_user'      => $encUserId,
 					'fa_deleted_timestamp' => $encTimestamp,
 					'fa_deleted_reason'    => $encReason,
@@ -1252,15 +1308,15 @@ class LocalFileDeleteBatch {
 	function doDBDeletes() {
 		$dbw = $this->file->repo->getMasterDB();
 		list( $oldRels, $deleteCurrent ) = $this->getOldRels();
-		if ( $deleteCurrent ) {
-			$dbw->delete( 'image', array( 'img_name' => $this->file->getName() ), __METHOD__ );
-		}
 		if ( count( $oldRels ) ) {
 			$dbw->delete( 'oldimage', 
 				array(
 					'oi_name' => $this->file->getName(),
 					'oi_archive_name IN (' . $dbw->makeList( array_keys( $oldRels ) ) . ')' 
 				), __METHOD__ );
+		}
+		if ( $deleteCurrent ) {
+			$dbw->delete( 'image', array( 'img_name' => $this->file->getName() ), __METHOD__ );
 		}
 	}
 

@@ -24,7 +24,7 @@ class PreferencesForm {
 	var $mRows, $mCols, $mSkin, $mMath, $mDate, $mUserEmail, $mEmailFlag, $mNick;
 	var $mUserLanguage, $mUserVariant;
 	var $mSearch, $mRecent, $mRecentDays, $mHourDiff, $mSearchLines, $mSearchChars, $mAction;
-	var $mReset, $mPosted, $mToggles, $mSearchNs, $mRealName, $mImageSize;
+	var $mReset, $mPosted, $mToggles, $mUseAjaxSearch, $mSearchNs, $mRealName, $mImageSize;
 	var $mUnderline, $mWatchlistEdits;
 
 	/**
@@ -65,6 +65,7 @@ class PreferencesForm {
 		$this->mSuccess = $request->getCheck( 'success' );
 		$this->mWatchlistDays = $request->getVal( 'wpWatchlistDays' );
 		$this->mWatchlistEdits = $request->getVal( 'wpWatchlistEdits' );
+		$this->mUseAjaxSearch = $request->getCheck( 'wpUseAjaxSearch' );
 
 		$this->mSaveprefs = $request->getCheck( 'wpSaveprefs' ) &&
 			$this->mPosted &&
@@ -98,7 +99,7 @@ class PreferencesForm {
 			$this->mUserLanguage = 'nolanguage';
 		}
 
-		wfRunHooks( "InitPreferencesForm", array( $this, $request ) );
+		wfRunHooks( 'InitPreferencesForm', array( $this, $request ) );
 	}
 
 	function execute() {
@@ -207,29 +208,29 @@ class PreferencesForm {
 	function savePreferences() {
 		global $wgUser, $wgOut, $wgParser;
 		global $wgEnableUserEmail, $wgEnableEmail;
-		global $wgEmailAuthentication;
-		global $wgAuth;
+		global $wgEmailAuthentication, $wgRCMaxAge;
+		global $wgAuth, $wgEmailConfirmToEdit;
 
 
 		if ( '' != $this->mNewpass && $wgAuth->allowPasswordChange() ) {
 			if ( $this->mNewpass != $this->mRetypePass ) {
-				wfRunHooks( "PrefsPasswordAudit", array( $wgUser, $this->mNewpass, 'badretype' ) );
+				wfRunHooks( 'PrefsPasswordAudit', array( $wgUser, $this->mNewpass, 'badretype' ) );
 				$this->mainPrefsForm( 'error', wfMsg( 'badretype' ) );
 				return;
 			}
 
 			if (!$wgUser->checkPassword( $this->mOldpass )) {
-				wfRunHooks( "PrefsPasswordAudit", array( $wgUser, $this->mNewpass, 'wrongpassword' ) );
+				wfRunHooks( 'PrefsPasswordAudit', array( $wgUser, $this->mNewpass, 'wrongpassword' ) );
 				$this->mainPrefsForm( 'error', wfMsg( 'wrongpassword' ) );
 				return;
 			}
 			
 			try {
 				$wgUser->setPassword( $this->mNewpass );
-				wfRunHooks( "PrefsPasswordAudit", array( $wgUser, $this->mNewpass, 'success' ) );
+				wfRunHooks( 'PrefsPasswordAudit', array( $wgUser, $this->mNewpass, 'success' ) );
 				$this->mNewpass = $this->mOldpass = $this->mRetypePass = '';
 			} catch( PasswordError $e ) {
-				wfRunHooks( "PrefsPasswordAudit", array( $wgUser, $this->mNewpass, 'error' ) );
+				wfRunHooks( 'PrefsPasswordAudit', array( $wgUser, $this->mNewpass, 'error' ) );
 				$this->mainPrefsForm( 'error', $e->getMessage() );
 				return;
 			}
@@ -250,7 +251,7 @@ class PreferencesForm {
 				wfMsg( 'badsiglength', $wgLang->formatNum( $wgMaxSigChars ) ) );
 			return;
 		} elseif( $this->mToggles['fancysig'] ) {
-			if( Parser::validateSig( $this->mNick ) !== false ) {
+			if( $wgParser->validateSig( $this->mNick ) !== false ) {
 				$this->mNick = $wgParser->cleanSig( $this->mNick );
 			} else {
 				$this->mainPrefsForm( 'error', wfMsg( 'badsig' ) );
@@ -275,7 +276,7 @@ class PreferencesForm {
 		$wgUser->setOption( 'contextlines', $this->validateIntOrNull( $this->mSearchLines ) );
 		$wgUser->setOption( 'contextchars', $this->validateIntOrNull( $this->mSearchChars ) );
 		$wgUser->setOption( 'rclimit', $this->validateIntOrNull( $this->mRecent ) );
-		$wgUser->setOption( 'rcdays', $this->validateInt( $this->mRecentDays, 1, 7 ) );
+		$wgUser->setOption( 'rcdays', $this->validateInt($this->mRecentDays, 1, ceil($wgRCMaxAge / (3600*24))));
 		$wgUser->setOption( 'wllimit', $this->validateIntOrNull( $this->mWatchlistEdits, 0, 1000 ) );
 		$wgUser->setOption( 'rows', $this->validateInt( $this->mRows, 4, 1000 ) );
 		$wgUser->setOption( 'cols', $this->validateInt( $this->mCols, 4, 1000 ) );
@@ -285,6 +286,7 @@ class PreferencesForm {
 		$wgUser->setOption( 'thumbsize', $this->mThumbSize );
 		$wgUser->setOption( 'underline', $this->validateInt($this->mUnderline, 0, 2) );
 		$wgUser->setOption( 'watchlistdays', $this->validateFloat( $this->mWatchlistDays, 0, 7 ) );
+		$wgUser->setOption( 'ajaxsearch', $this->mUseAjaxSearch );
 
 		# Set search namespace options
 		foreach( $this->mSearchNs as $i => $value ) {
@@ -299,20 +301,6 @@ class PreferencesForm {
 		foreach ( $this->mToggles as $tname => $tvalue ) {
 			$wgUser->setOption( $tname, $tvalue );
 		}
-		if (!$wgAuth->updateExternalDB($wgUser)) {
-			$this->mainPrefsForm( 'error', wfMsg( 'externaldberror' ) );
-			return;
-		}
-
-		$msg = '';
-		if ( !wfRunHooks( "SavePreferences", array( $this, $wgUser, &$msg ) ) ) {
-			print "(($msg))";
-			$this->mainPrefsForm( 'error', $msg ); 
-			return;
-		}
-
-		$wgUser->setCookies();
-		$wgUser->saveSettings();
 
 		$error = false;
 		if( $wgEnableEmail ) {
@@ -323,7 +311,6 @@ class PreferencesForm {
 				if( $wgUser->isValidEmailAddr( $newadr ) ) {
 					$wgUser->mEmail = $newadr; # new behaviour: set this new emailaddr from login-page into user database record
 					$wgUser->mEmailAuthenticated = null; # but flag as "dirty" = unauthenticated
-					$wgUser->saveSettings();
 					if ($wgEmailAuthentication) {
 						# Mail a temporary password to the dirty address.
 						# User can come back through the confirmation URL to re-enable email.
@@ -338,17 +325,34 @@ class PreferencesForm {
 					$error = wfMsg( 'invalidemailaddress' );
 				}
 			} else {
+				if( $wgEmailConfirmToEdit && empty( $newadr ) ) {
+					$this->mainPrefsForm( 'error', wfMsg( 'noemailtitle' ) );
+					return;
+				}
 				$wgUser->setEmail( $this->mUserEmail );
-				$wgUser->setCookies();
-				$wgUser->saveSettings();
 			}
 			if( $oldadr != $newadr ) {
-				wfRunHooks( "PrefsEmailAudit", array( $wgUser, $oldadr, $newadr ) );
+				wfRunHooks( 'PrefsEmailAudit', array( $wgUser, $oldadr, $newadr ) );
 			}
 		}
 
+		if (!$wgAuth->updateExternalDB($wgUser)) {
+			$this->mainPrefsForm( 'error', wfMsg( 'externaldberror' ) );
+			return;
+		}
+
+		$msg = '';
+		if ( !wfRunHooks( 'SavePreferences', array( $this, $wgUser, &$msg ) ) ) {
+			print "(($msg))";
+			$this->mainPrefsForm( 'error', $msg );
+			return;
+		}
+
+		$wgUser->setCookies();
+		$wgUser->saveSettings();
+
 		if( $needRedirect && $error === false ) {
-			$title =& SpecialPage::getTitleFor( "Preferences" );
+			$title = SpecialPage::getTitleFor( 'Preferences' );
 			$wgOut->redirect($title->getFullURL('success'));
 			return;
 		}
@@ -393,6 +397,7 @@ class PreferencesForm {
 		$this->mWatchlistEdits = $wgUser->getOption( 'wllimit' );
 		$this->mUnderline = $wgUser->getOption( 'underline' );
 		$this->mWatchlistDays = $wgUser->getOption( 'watchlistdays' );
+		$this->mUseAjaxSearch = $wgUser->getBoolOption( 'ajaxsearch' );
 
 		$togs = User::getToggles();
 		foreach ( $togs as $tname ) {
@@ -406,7 +411,7 @@ class PreferencesForm {
 			}
 		}
 
-		wfRunHooks( "ResetPreferences", array( $this, $wgUser ) );
+		wfRunHooks( 'ResetPreferences', array( $this, $wgUser ) );
 	}
 
 	/**
@@ -510,6 +515,7 @@ class PreferencesForm {
 		global $wgRCShowWatchingUsers, $wgEnotifRevealEditorAddress;
 		global $wgEnableEmail, $wgEnableUserEmail, $wgEmailAuthentication;
 		global $wgContLanguageCode, $wgDefaultSkin, $wgSkipSkins, $wgAuth;
+		global $wgEmailConfirmToEdit, $wgAjaxSearch;
 
 		$wgOut->setPageTitle( wfMsg( 'preferences' ) );
 		$wgOut->setArticleRelated( false );
@@ -518,11 +524,11 @@ class PreferencesForm {
 		$wgOut->disallowUserJs();  # Prevent hijacked user scripts from sniffing passwords etc.
 
 		if ( $this->mSuccess || 'success' == $status ) {
-			$wgOut->addWikitext( '<div class="successbox"><strong>'. wfMsg( 'savedprefs' ) . '</strong></div>' );
+			$wgOut->wrapWikiMsg( '<div class="successbox"><strong>$1</strong></div>', 'savedprefs' );
 		} else	if ( 'error' == $status ) {
-			$wgOut->addWikitext( '<div class="errorbox"><strong>' . $message  . '</strong></div>' );
+			$wgOut->addWikiText( '<div class="errorbox"><strong>' . $message  . '</strong></div>' );
 		} else if ( '' != $status ) {
-			$wgOut->addWikitext( $message . "\n----" );
+			$wgOut->addWikiText( $message . "\n----" );
 		}
 
 		$qbs = $wgLang->getQuickbarSettings();
@@ -619,7 +625,7 @@ class PreferencesForm {
 					Xml::label( wfMsg('youremail'), 'wpUserEmail' ),
 					Xml::input( 'wpUserEmail', 25, $this->mUserEmail, array( 'id' => 'wpUserEmail' ) ),
 					Xml::tags('div', array( 'class' => 'prefsectiontip' ),
-						wfMsgExt( 'prefs-help-email', 'parseinline' )
+						wfMsgExt( $wgEmailConfirmToEdit ? 'prefs-help-email-required' : 'prefs-help-email', 'parseinline' )
 					)
 				)
 			);
@@ -967,7 +973,13 @@ class PreferencesForm {
 		$wgOut->addHtml( '</fieldset>' );
 
 		# Search
+		$ajaxsearch = $wgAjaxSearch ?
+			$this->addRow(
+				wfLabel( wfMsg( 'useajaxsearch' ), 'wpUseAjaxSearch' ),
+				wfCheck( 'wpUseAjaxSearch', $this->mUseAjaxSearch, array( 'id' => 'wpUseAjaxSearch' ) )
+			) : '';
 		$wgOut->addHTML( '<fieldset><legend>' . wfMsg( 'searchresultshead' ) . '</legend><table>' .
+			$ajaxsearch .
 			$this->addRow(
 				wfLabel( wfMsg( 'resultsperpage' ), 'wpSearch' ),
 				wfInput( 'wpSearch', 4, $this->mSearch, array( 'id' => 'wpSearch' ) )
@@ -1010,7 +1022,7 @@ class PreferencesForm {
 		}
 		$wgOut->addHTML( '</fieldset>' );
 
-		wfRunHooks( "RenderPreferencesForm", array( $this, $wgOut ) );
+		wfRunHooks( 'RenderPreferencesForm', array( $this, $wgOut ) );
 
 		$token = htmlspecialchars( $wgUser->editToken() );
 		$skin = $wgUser->getSkin();

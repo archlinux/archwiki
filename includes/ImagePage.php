@@ -19,11 +19,14 @@ class ImagePage extends Article {
 	/* private */ var $repo;
 	var $mExtraDescription = false;
 
-	function __construct( $title ) {
+	function __construct( $title, $time = false ) {
 		parent::__construct( $title );
-		$this->img = wfFindFile( $this->mTitle );
+		$this->img = wfFindFile( $this->mTitle, $time );
 		if ( !$this->img ) {
 			$this->img = wfLocalFile( $this->mTitle );
+			$this->current = $this->img;
+		} else {
+			$this->current = $time ? wfLocalFile( $this->mTitle ) : $this->img;
 		}
 		$this->repo = $this->img->repo;
 	}
@@ -66,14 +69,14 @@ class ImagePage extends Article {
 		} else {
 			# Just need to set the right headers
 			$wgOut->setArticleFlag( true );
-			$wgOut->setRobotpolicy( 'index,follow' );
+			$wgOut->setRobotpolicy( 'noindex,nofollow' );
 			$wgOut->setPageTitle( $this->mTitle->getPrefixedText() );
 			$this->viewUpdates();
 		}
 
 		# Show shared description, if needed
 		if ( $this->mExtraDescription ) {
-			$fol = wfMsg( 'shareddescriptionfollows' );
+			$fol = wfMsgNoTrans( 'shareddescriptionfollows' );
 			if( $fol != '-' && !wfEmptyMsg( 'shareddescriptionfollows', $fol ) ) {
 				$wgOut->addWikiText( $fol );
 			}
@@ -157,7 +160,7 @@ class ImagePage extends Article {
 	}
 
 	function openShowImage() {
-		global $wgOut, $wgUser, $wgImageLimits, $wgRequest, $wgLang;
+		global $wgOut, $wgUser, $wgImageLimits, $wgRequest, $wgLang, $wgContLang;
 
 		$full_url  = $this->img->getURL();
 		$linkAttribs = false;
@@ -176,6 +179,7 @@ class ImagePage extends Article {
 		$maxWidth = $max[0];
 		$maxHeight = $max[1];
 		$sk = $wgUser->getSkin();
+		$dirmark = $wgContLang->getDirMark();
 
 		if ( $this->img->exists() ) {
 			# image
@@ -219,7 +223,7 @@ class ImagePage extends Article {
 					}
 					$msgbig  = wfMsgHtml( 'show-big-image' );
 					$msgsmall = wfMsgExt( 'show-big-image-thumb',
-						array( 'parseinline' ), $width, $height );
+						array( 'parseinline' ), $wgLang->formatNum( $width ), $wgLang->formatNum( $height ) );
 				} else {
 					# Image is small enough to show full size on image page
 					$msgbig = htmlspecialchars( $this->img->getName() );
@@ -235,7 +239,7 @@ class ImagePage extends Article {
 				} else {
 					$anchorclose .= 
 						$msgsmall .
-						'<br />' . Xml::tags( 'a', $linkAttribs,  $msgbig ) . ' ' . $longDesc;
+						'<br />' . Xml::tags( 'a', $linkAttribs,  $msgbig ) . "$dirmark " . $longDesc;
 				}
 
 				if ( $this->img->isMultipage() ) {
@@ -308,10 +312,8 @@ class ImagePage extends Article {
 			if ($showLink) {
 				$filename = wfEscapeWikiText( $this->img->getName() );
 
-				global $wgContLang;
-				$dirmark = $wgContLang->getDirMark();
 				if (!$this->img->isSafeFile()) {
-					$warning = wfMsg( 'mediawarning' );
+					$warning = wfMsgNoTrans( 'mediawarning' );
 					$wgOut->addWikiText( <<<EOT
 <div class="fullMedia">
 <span class="dangerousLink">[[Media:$filename|$filename]]</span>$dirmark
@@ -364,9 +366,8 @@ EOT
 	}
 
 	function getUploadUrl() {
-		global $wgServer;
 		$uploadTitle = SpecialPage::getTitleFor( 'Upload' );
-		return $wgServer . $uploadTitle->getLocalUrl( 'wpDestFile=' . urlencode( $this->img->getName() ) );
+		return $uploadTitle->getFullUrl( 'wpDestFile=' . urlencode( $this->img->getName() ) );
 	}
 
 	/**
@@ -412,25 +413,23 @@ EOT
 
 		$sk = $wgUser->getSkin();
 
-		$line = $this->img->nextHistoryLine();
-
-		if ( $line ) {
-			$list = new ImageHistoryList( $sk, $this->img );
-			$file = $this->repo->newFileFromRow( $line );
+		if ( $this->img->exists() ) {
+			$list = new ImageHistoryList( $sk, $this->current );
+			$file = $this->current;
 			$dims = $file->getDimensionsString();
 			$s = $list->beginImageHistoryList() .
-				$list->imageHistoryLine( true, wfTimestamp(TS_MW, $line->img_timestamp),
-					$this->mTitle->getDBkey(),  $line->img_user,
-					$line->img_user_text, $line->img_size, $line->img_description,
+				$list->imageHistoryLine( true, wfTimestamp(TS_MW, $file->getTimestamp()),
+					$this->mTitle->getDBkey(),  $file->getUser('id'),
+					$file->getUser('text'), $file->getSize(), $file->getDescription(),
 					$dims
 				);
 
-			while ( $line = $this->img->nextHistoryLine() ) {
-				$file = $this->repo->newFileFromRow( $line );
+			$hist = $this->img->getHistory();
+			foreach( $hist as $file ) {
 				$dims = $file->getDimensionsString();
-				$s .= $list->imageHistoryLine( false, $line->oi_timestamp,
-			  		$line->oi_archive_name, $line->oi_user,
-			  		$line->oi_user_text, $line->oi_size, $line->oi_description,
+				$s .= $list->imageHistoryLine( false, wfTimestamp(TS_MW, $file->getTimestamp()),
+			  		$file->getArchiveName(), $file->getUser('id'),
+			  		$file->getUser('text'), $file->getSize(), $file->getDescription(),
 					$dims
 				);
 			}
@@ -563,6 +562,19 @@ class ImageHistoryList {
 		return "</table>\n";
 	}
 
+	/**
+	 * Create one row of file history
+	 *
+	 * @param bool $iscur is this the current file version?
+	 * @param string $timestamp timestamp of file version
+	 * @param string $img filename
+	 * @param int $user ID of uploading user
+	 * @param string $usertext username of uploading user
+	 * @param int $size size of file version
+	 * @param string $description description of file version
+	 * @param string $dims dimensions of file version
+	 * @return string a HTML formatted table row
+	 */
 	public function imageHistoryLine( $iscur, $timestamp, $img, $user, $usertext, $size, $description, $dims ) {
 		global $wgUser, $wgLang, $wgContLang;
 		$local = $this->img->isLocal();
@@ -575,28 +587,28 @@ class ImageHistoryList {
 			$q[] = 'action=delete';
 			if( !$iscur )
 				$q[] = 'oldimage=' . urlencode( $img );
-			$row .= '(' . $this->skin->makeKnownLinkObj(
+			$row .= $this->skin->makeKnownLinkObj(
 				$this->title,
 				wfMsgHtml( $iscur ? 'filehist-deleteall' : 'filehist-deleteone' ),
 				implode( '&', $q )
-			) . ')';
+			);
 			$row .= '</td>';
 		}
 
 		// Reversion link/current indicator
 		$row .= '<td>';
 		if( $iscur ) {
-			$row .= '(' . wfMsgHtml( 'filehist-current' ) . ')';
+			$row .= wfMsgHtml( 'filehist-current' );
 		} elseif( $local && $wgUser->isLoggedIn() && $this->title->userCan( 'edit' ) ) {
 			$q = array();
 			$q[] = 'action=revert';
 			$q[] = 'oldimage=' . urlencode( $img );
 			$q[] = 'wpEditToken=' . urlencode( $wgUser->editToken( $img ) );
-			$row .= '(' . $this->skin->makeKnownLinkObj(
+			$row .= $this->skin->makeKnownLinkObj(
 				$this->title,
 				wfMsgHtml( 'filehist-revert' ),
 				implode( '&', $q )
-			) . ')';
+			);
 		}
 		$row .= '</td>';
 

@@ -19,6 +19,21 @@ function wfSpecialUpload() {
  * @addtogroup SpecialPage
  */
 class UploadForm {
+	const SUCCESS = 0;
+	const BEFORE_PROCESSING = 1;
+	const LARGE_FILE_SERVER = 2;
+	const EMPTY_FILE = 3;
+	const MIN_LENGHT_PARTNAME = 4;
+	const ILLEGAL_FILENAME = 5;
+	const PROTECTED_PAGE = 6;
+	const OVERWRITE_EXISTING_FILE = 7;
+	const FILETYPE_MISSING = 8;
+	const FILETYPE_BADTYPE = 9;
+	const VERIFICATION_ERROR = 10;
+	const UPLOAD_VERIFICATION_ERROR = 11;
+	const UPLOAD_WARNING = 12;
+	const INTERNAL_ERROR = 13;
+
 	/**#@+
 	 * @access private
 	 */
@@ -126,7 +141,8 @@ class UploadForm {
 		$this->mTempPath       = $local_file;
 		$this->mFileSize       = 0; # Will be set by curlCopy
 		$this->mCurlError      = $this->curlCopy( $url, $local_file );
-		$this->mSrcName        = array_pop( explode( '/', $url ) );
+		$pathParts             = explode( '/', $url );
+		$this->mSrcName        = array_pop( $pathParts );
 		$this->mSessionKey     = false;
 		$this->mStashed        = false;
 
@@ -253,34 +269,123 @@ class UploadForm {
 		$this->cleanupTempFile();
 	}
 
-	/* -------------------------------------------------------------- */
+	/**
+	 * Do the upload
+	 * Checks are made in SpecialUpload::execute()
+	 *
+	 * @access private
+	 */
+	function processUpload(){
+		global $wgUser, $wgOut, $wgFileExtensions;
+	 	$details = null;
+	 	$value = null;
+	 	$value = $this->internalProcessUpload( $details );
+		
+	 	switch($value) {
+			case self::SUCCESS:
+				$wgOut->redirect( $this->mLocalFile->getTitle()->getFullURL() );
+				break;
+
+			case self::BEFORE_PROCESSING:
+				break;
+
+			case self::LARGE_FILE_SERVER:
+				$this->mainUploadForm( wfMsgHtml( 'largefileserver' ) );
+				break;
+
+			case self::EMPTY_FILE:
+				$this->mainUploadForm( wfMsgHtml( 'emptyfile' ) );
+				break;
+
+			case self::MIN_LENGHT_PARTNAME:
+				$this->mainUploadForm( wfMsgHtml( 'minlength1' ) );
+				break;
+
+			case self::ILLEGAL_FILENAME:
+				$filtered = $details['filtered'];
+				$this->uploadError( wfMsgWikiHtml( 'illegalfilename', htmlspecialchars( $filtered ) ) );
+				break;
+
+			case self::PROTECTED_PAGE:
+				$this->uploadError( wfMsgWikiHtml( 'protectedpage' ) );
+				break;
+
+			case self::OVERWRITE_EXISTING_FILE:
+				$errorText = $details['overwrite'];
+				$overwrite = new WikiError( $wgOut->parse( $errorText ) );
+				$this->uploadError( $overwrite->toString() );
+				break;
+
+			case self::FILETYPE_MISSING:
+				$this->uploadError( wfMsgExt( 'filetype-missing', array ( 'parseinline' ) ) );
+				break;
+
+			case self::FILETYPE_BADTYPE:
+				$finalExt = $details['finalExt'];
+				$this->uploadError( 
+					wfMsgExt( 'filetype-banned-type',
+						array( 'parseinline' ),
+						htmlspecialchars( $finalExt ),
+						implode(
+							wfMsgExt( 'comma-separator', array( 'escapenoentities' ) ),
+							$wgFileExtensions
+						)
+					)
+				);
+				break;
+
+			case self::VERIFICATION_ERROR:
+				$veri = $details['veri'];
+				$this->uploadError( $veri->toString() );
+				break;
+
+			case self::UPLOAD_VERIFICATION_ERROR:
+				$error = $details['error'];
+				$this->uploadError( $error );
+				break;
+
+			case self::UPLOAD_WARNING:
+				$warning = $details['warning'];
+				$this->uploadWarning( $warning );
+				break;
+
+			case self::INTERNAL_ERROR:
+				$internal = $details['internal'];
+				$this->showError( $internal );
+				break;
+
+			default:
+				throw new MWException( __METHOD__ . ": Unknown value `{$value}`" );
+	 	}
+	}
 
 	/**
 	 * Really do the upload
 	 * Checks are made in SpecialUpload::execute()
+	 *
+	 * @param array $resultDetails contains result-specific dict of additional values
+	 *
 	 * @access private
 	 */
-	function processUpload() {
-		global $wgUser, $wgOut;
+	function internalProcessUpload( &$resultDetails ) {
+		global $wgUser;
 
 		if( !wfRunHooks( 'UploadForm:BeforeProcessing', array( &$this ) ) )
 		{
 			wfDebug( "Hook 'UploadForm:BeforeProcessing' broke processing the file." );
-			return false;
+			return self::BEFORE_PROCESSING;
 		}
 
 		/* Check for PHP error if any, requires php 4.2 or newer */
 		if( $this->mCurlError == 1/*UPLOAD_ERR_INI_SIZE*/ ) {
-			$this->mainUploadForm( wfMsgHtml( 'largefileserver' ) );
-			return;
+			return self::LARGE_FILE_SERVER;
 		}
 
 		/**
 		 * If there was no filename or a zero size given, give up quick.
 		 */
 		if( trim( $this->mSrcName ) == '' || empty( $this->mFileSize ) ) {
-			$this->mainUploadForm( wfMsgHtml( 'emptyfile' ) );
-			return;
+			return self::EMPTY_FILE;
 		}
 
 		# Chop off any directories in the given filename
@@ -311,8 +416,7 @@ class UploadForm {
 		}
 
 		if( strlen( $partname ) < 1 ) {
-			$this->mainUploadForm( wfMsgHtml( 'minlength1' ) );
-			return;
+			return self::MIN_LENGHT_PARTNAME;
 		}
 
 		/**
@@ -322,8 +426,8 @@ class UploadForm {
 		$filtered = preg_replace ( "/[^".Title::legalChars()."]|:/", '-', $filtered );
 		$nt = Title::makeTitleSafe( NS_IMAGE, $filtered );
 		if( is_null( $nt ) ) {
-			$this->uploadError( wfMsgWikiHtml( 'illegalfilename', htmlspecialchars( $filtered ) ) );
-			return;
+			$resultDetails = array( 'filtered' => $filtered );
+			return self::ILLEGAL_FILENAME;
 		}
 		$this->mLocalFile = wfLocalFile( $nt );
 		$this->mDestName = $this->mLocalFile->getName();
@@ -332,27 +436,28 @@ class UploadForm {
 		 * If the image is protected, non-sysop users won't be able
 		 * to modify it by uploading a new revision.
 		 */
-		if( !$nt->userCan( 'edit' ) ) {
-			return $this->uploadError( wfMsgWikiHtml( 'protectedpage' ) );
+		if( !$nt->userCan( 'edit' ) || !$nt->userCan( 'create' ) ) {
+			return self::PROTECTED_PAGE;
 		}
 
 		/**
 		 * In some cases we may forbid overwriting of existing files.
 		 */
 		$overwrite = $this->checkOverwrite( $this->mDestName );
-		if( WikiError::isError( $overwrite ) ) {
-			return $this->uploadError( $overwrite->toString() );
+		if( $overwrite !== true ) {
+			$resultDetails = array( 'overwrite' => $overwrite );
+			return self::OVERWRITE_EXISTING_FILE;
 		}
 
 		/* Don't allow users to override the blacklist (check file extension) */
 		global $wgStrictFileExtensions;
 		global $wgFileExtensions, $wgFileBlacklist;
 		if ($finalExt == '') {
-			return $this->uploadError( wfMsgExt( 'filetype-missing', array ( 'parseinline' ) ) );
+			return self::FILETYPE_MISSING;
 		} elseif ( $this->checkFileExtensionList( $ext, $wgFileBlacklist ) ||
 				($wgStrictFileExtensions && !$this->checkFileExtension( $finalExt, $wgFileExtensions ) ) ) {
-			return $this->uploadError( wfMsgExt( 'filetype-badtype', array ( 'parseinline' ), 
-				htmlspecialchars( $finalExt ), implode ( ', ', $wgFileExtensions ) ) );
+			$resultDetails = array( 'finalExt' => $finalExt );
+			return self::FILETYPE_BADTYPE;
 		}
 
 		/**
@@ -366,7 +471,8 @@ class UploadForm {
 			$veri = $this->verify( $this->mTempPath, $finalExt );
 
 			if( $veri !== true ) { //it's a wiki error...
-				return $this->uploadError( $veri->toString() );
+				$resultDetails = array( 'veri' => $veri );
+				return self::VERIFICATION_ERROR;
 			}
 
 			/**
@@ -375,7 +481,8 @@ class UploadForm {
 			$error = '';
 			if( !wfRunHooks( 'UploadVerification',
 					array( $this->mDestName, $this->mTempPath, &$error ) ) ) {
-				return $this->uploadError( $error );
+				$resultDetails = array( 'error' => $error );
+				return self::UPLOAD_VERIFICATION_ERROR;
 			}
 		}
 
@@ -396,9 +503,16 @@ class UploadForm {
 
 			global $wgCheckFileExtensions;
 			if ( $wgCheckFileExtensions ) {
-				if ( ! $this->checkFileExtension( $finalExt, $wgFileExtensions ) ) {
-					$warning .= '<li>'.wfMsgExt( 'filetype-badtype', array ( 'parseinline' ), 
-						htmlspecialchars( $finalExt ), implode ( ', ', $wgFileExtensions ) ).'</li>';
+				if ( !$this->checkFileExtension( $finalExt, $wgFileExtensions ) ) {
+					$warning .= '<li>' .
+					wfMsgExt( 'filetype-unwanted-type',
+						array( 'parseinline' ),
+						htmlspecialchars( $finalExt ),
+						implode(
+							wfMsgExt( 'comma-separator', array( 'escapenoentities' ) ),
+							$wgFileExtensions
+						)
+					) . '</li>';
 				}
 			}
 
@@ -421,7 +535,8 @@ class UploadForm {
 				 * Stash the file in a temporary location; the user can choose
 				 * to let it through and we'll complete the upload then.
 				 */
-				return $this->uploadWarning( $warning );
+				$resultDetails = array( 'warning' => $warning );
+				return self::UPLOAD_WARNING;
 			}
 		}
 
@@ -432,19 +547,20 @@ class UploadForm {
 		$pageText = self::getInitialPageText( $this->mComment, $this->mLicense,
 			$this->mCopyrightStatus, $this->mCopyrightSource );
 
-		$status = $this->mLocalFile->upload( $this->mTempPath, $this->mComment, $pageText, 
+		$status = $this->mLocalFile->upload( $this->mTempPath, $this->mComment, $pageText,
 			File::DELETE_SOURCE, $this->mFileProps );
 		if ( !$status->isGood() ) {
-			$this->showError( $status->getWikiText() );
+			$resultDetails = array( 'internal' => $status->getWikiText() );
+			return self::INTERNAL_ERROR;
 		} else {
 			if ( $this->mWatchthis ) {
 				global $wgUser;
 				$wgUser->addWatch( $this->mLocalFile->getTitle() );
 			}
 			// Success, redirect to description page
-			$wgOut->redirect( $this->mLocalFile->getTitle()->getFullURL() );
 			$img = null; // @todo: added to avoid passing a ref to null - should this be defined somewhere?
-			wfRunHooks( 'UploadComplete', array( &$img ) );
+			wfRunHooks( 'UploadComplete', array( &$this ) );
+			return self::SUCCESS;
 		}
 	}
 
@@ -455,11 +571,12 @@ class UploadForm {
 	 * Returns an empty string if there is no warning
 	 */
 	static function getExistsWarning( $file ) {
-		global $wgUser;
+		global $wgUser, $wgContLang;
 		// Check for uppercase extension. We allow these filenames but check if an image
 		// with lowercase extension exists already
 		$warning = '';
-		
+		$align = $wgContLang->isRtl() ? 'left' : 'right';
+
 		if( strpos( $file->getName(), '.' ) == false ) {
 			$partname = $file->getName();
 			$rawExtension = '';
@@ -483,28 +600,31 @@ class UploadForm {
 		if( $file->exists() ) {
 			$dlink = $sk->makeKnownLinkObj( $file->getTitle() );
 			if ( $file->allowInlineDisplay() ) {
-				$dlink2 = $sk->makeImageLinkObj( $file->getTitle(), wfMsgExt( 'fileexists-thumb', 'parseinline', $dlink ), 
-					$file->getName(), 'right', array(), false, true );
+				$dlink2 = $sk->makeImageLinkObj( $file->getTitle(), wfMsgExt( 'fileexists-thumb', 'parseinline' ),
+					$file->getName(), $align, array(), false, true );
 			} elseif ( !$file->allowInlineDisplay() && $file->isSafeFile() ) {
 				$icon = $file->iconThumb();
-				$dlink2 = '<div style="float:right" id="mw-media-icon">' . 
+				$dlink2 = '<div style="float:' . $align . '" id="mw-media-icon">' . 
 					$icon->toHtml( array( 'desc-link' => true ) ) . '<br />' . $dlink . '</div>';
 			} else {
 				$dlink2 = '';
 			}
 
-			$warning .= '<li>' . wfMsgExt( 'fileexists', 'parseline', $dlink ) . '</li>' . $dlink2;
+			$warning .= '<li>' . wfMsgExt( 'fileexists', array(), $dlink ) . '</li>' . $dlink2;
 
+		} elseif( $file->getTitle()->getArticleID() ) {
+			$lnk = $sk->makeKnownLinkObj( $file->getTitle(), '', 'redirect=no' );
+			$warning .= '<li>' . wfMsgExt( 'filepageexists', array(), $lnk ) . '</li>';
 		} elseif ( $file_lc && $file_lc->exists() ) {
 			# Check if image with lowercase extension exists.
 			# It's not forbidden but in 99% it makes no sense to upload the same filename with uppercase extension
 			$dlink = $sk->makeKnownLinkObj( $nt_lc );
 			if ( $file_lc->allowInlineDisplay() ) {
-				$dlink2 = $sk->makeImageLinkObj( $nt_lc, wfMsgExt( 'fileexists-thumb', 'parseinline', $dlink ), 
-					$nt_lc->getText(), 'right', array(), false, true );
+				$dlink2 = $sk->makeImageLinkObj( $nt_lc, wfMsgExt( 'fileexists-thumb', 'parseinline' ),
+					$nt_lc->getText(), $align, array(), false, true );
 			} elseif ( !$file_lc->allowInlineDisplay() && $file_lc->isSafeFile() ) {
 				$icon = $file_lc->iconThumb();
-				$dlink2 = '<div style="float:right" id="mw-media-icon">' . 
+				$dlink2 = '<div style="float:' . $align . '" id="mw-media-icon">' . 
 					$icon->toHtml( array( 'desc-link' => true ) ) . '<br />' . $dlink . '</div>';
 			} else {
 				$dlink2 = '';
@@ -523,11 +643,11 @@ class UploadForm {
 				$dlink = $sk->makeKnownLinkObj( $nt_thb);
 				if ( $file_thb->allowInlineDisplay() ) {
 					$dlink2 = $sk->makeImageLinkObj( $nt_thb, 
-						wfMsgExt( 'fileexists-thumb', 'parseinline', $dlink ), 
-						$nt_thb->getText(), 'right', array(), false, true );
+						wfMsgExt( 'fileexists-thumb', 'parseinline' ),
+						$nt_thb->getText(), $align, array(), false, true );
 				} elseif ( !$file_thb->allowInlineDisplay() && $file_thb->isSafeFile() ) {
 					$icon = $file_thb->iconThumb();
-					$dlink2 = '<div style="float:right" id="mw-media-icon">' . 
+					$dlink2 = '<div style="float:' . $align . '" id="mw-media-icon">' . 
 						$icon->toHtml( array( 'desc-link' => true ) ) . '<br />' . 
 						$dlink . '</div>';
 				} else {
@@ -542,9 +662,19 @@ class UploadForm {
 					substr( $partname , 0, strpos( $partname , '-' ) +1 ) ) . '</li>';
 			}
 		}
-		if ( $file->wasDeleted() ) {
+
+		$filenamePrefixBlacklist = self::getFilenamePrefixBlacklist();
+		# Do the match
+		foreach( $filenamePrefixBlacklist as $prefix ) {
+			if ( substr( $partname, 0, strlen( $prefix ) ) == $prefix ) {
+				$warning .= '<li>' . wfMsgExt( 'filename-bad-prefix', 'parseinline', $prefix ) . '</li>';
+				break;
+			}
+		}
+
+		if ( $file->wasDeleted() && !$file->exists() ) {
 			# If the file existed before and was deleted, warn the user of this
-			# Don't bother doing so if the image exists now, however
+			# Don't bother doing so if the file exists now, however
 			$ltitle = SpecialPage::getTitleFor( 'Log' );
 			$llink = $sk->makeKnownLinkObj( $ltitle, wfMsgHtml( 'deletionlog' ), 
 				'type=delete&page=' . $file->getTitle()->getPrefixedUrl() );
@@ -553,6 +683,12 @@ class UploadForm {
 		return $warning;
 	}
 
+	/**
+	 * Get a list of warnings
+	 *
+	 * @param string local filename, e.g. 'file exists', 'non-descriptive filename'
+	 * @return array list of warning messages
+	 */
 	static function ajaxGetExistsWarning( $filename ) {
 		$file = wfFindFile( $filename );
 		if( !$file ) {
@@ -587,6 +723,33 @@ class UploadForm {
 		$output = $wgParser->parse( $text, $title, $options );
 		
 		return $output->getText();
+	}
+
+	/**
+	 * Get a list of blacklisted filename prefixes from [[MediaWiki:filename-prefix-blacklist]]
+	 *
+	 * @return array list of prefixes
+	 */
+	public static function getFilenamePrefixBlacklist() {
+		$blacklist = array();
+		$message = wfMsgForContent( 'filename-prefix-blacklist' );
+		if( $message && !( wfEmptyMsg( 'filename-prefix-blacklist', $message ) || $message == '-' ) ) {
+			$lines = explode( "\n", $message );
+			foreach( $lines as $line ) {
+				// Remove comment lines
+				$comment = substr( trim( $line ), 0, 1 );
+				if ( $comment == '#' || $comment == '' ) {
+					continue;
+				}
+				// Remove additional comments after a prefix
+				$comment = strpos( $line, '#' );
+				if ( $comment > 0 ) {
+					$line = substr( $line, 0, $comment-1 );
+				}
+				$blacklist[] = trim( $line );
+			}
+		}
+		return $blacklist;
 	}
 
 	/**
@@ -752,10 +915,10 @@ class UploadForm {
 
 		$useAjaxDestCheck = $wgUseAjax && $wgAjaxUploadDestCheck;
 		$useAjaxLicensePreview = $wgUseAjax && $wgAjaxLicensePreview;
-		
+
 		$adc = wfBoolToStr( $useAjaxDestCheck );
 		$alp = wfBoolToStr( $useAjaxLicensePreview );
-		
+
 		$wgOut->addScript( "<script type=\"text/javascript\">
 wgAjaxUploadDestCheck = {$adc};
 wgAjaxLicensePreview = {$alp};
@@ -768,26 +931,35 @@ wgAjaxLicensePreview = {$alp};
 			wfDebug( "Hook 'UploadForm:initial' broke output of the upload form" );
 			return false;
 		}
-		
-		if( $this->mDesiredDestName && $wgUser->isAllowed( 'deletedhistory' ) ) {
+
+		if( $this->mDesiredDestName ) {
 			$title = Title::makeTitleSafe( NS_IMAGE, $this->mDesiredDestName );
-			if( $title instanceof Title && ( $count = $title->isDeleted() ) > 0 ) {
+			// Show a subtitle link to deleted revisions (to sysops et al only)
+			if( $title instanceof Title && ( $count = $title->isDeleted() ) > 0 && $wgUser->isAllowed( 'deletedhistory' ) ) {
 				$link = wfMsgExt(
 					$wgUser->isAllowed( 'delete' ) ? 'thisisdeleted' : 'viewdeleted',
 					array( 'parse', 'replaceafter' ),
 					$wgUser->getSkin()->makeKnownLinkObj(
 						SpecialPage::getTitleFor( 'Undelete', $title->getPrefixedText() ),
-						wfMsgHtml( 'restorelink', $count )
+						wfMsgExt( 'restorelink', array( 'parsemag', 'escape' ), $count )
 					)
 				);
 				$wgOut->addHtml( "<div id=\"contentSub2\">{$link}</div>" );
-			}				
+			}
+
+			// Show the relevant lines from deletion log (for still deleted files only)
+			if( $title instanceof Title && $title->isDeleted() > 0 && !$title->exists() ) {
+				$this->showDeletionLog( $wgOut, $title->getPrefixedText() );
+			}
 		}
 
 		$cols = intval($wgUser->getOption( 'cols' ));
-		$ew = $wgUser->getOption( 'editwidth' );
-		if ( $ew ) $ew = " style=\"width:100%\"";
-		else $ew = '';
+
+		if( $wgUser->getOption( 'editwidth' ) ) {
+			$width = " style=\"width:100%\"";
+		} else {
+			$width = '';
+		}
 
 		if ( '' != $msg ) {
 			$sub = wfMsgHtml( 'uploaderror' );
@@ -795,8 +967,34 @@ wgAjaxLicensePreview = {$alp};
 			  "<span class='error'>{$msg}</span>\n" );
 		}
 		$wgOut->addHTML( '<div id="uploadtext">' );
-		$wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
-		$wgOut->addHTML( '</div>' );
+		$wgOut->addWikiMsg( 'uploadtext', $this->mDesiredDestName );
+		$wgOut->addHTML( "</div>\n" );
+
+		# Print a list of allowed file extensions, if so configured.  We ignore
+		# MIME type here, it's incomprehensible to most people and too long.
+		global $wgCheckFileExtensions, $wgStrictFileExtensions,
+		$wgFileExtensions, $wgFileBlacklist;
+		if( $wgCheckFileExtensions ) {
+			$delim = wfMsgExt( 'comma-separator', array( 'escapenoentities' ) );
+			if( $wgStrictFileExtensions ) {
+				# Everything not permitted is banned
+				$wgOut->addHTML(
+					'<div id="mw-upload-permitted">' .
+					wfMsgWikiHtml( 'upload-permitted', implode( $wgFileExtensions, $delim ) ) .
+					"</div>\n"
+				);
+			} else {
+				# We have to list both preferred and prohibited
+				$wgOut->addHTML(
+					'<div id="mw-upload-preferred">' .
+					wfMsgWikiHtml( 'upload-preferred', implode( $wgFileExtensions, $delim ) ) .
+					"</div>\n" .
+					'<div id="mw-upload-prohibited">' .
+					wfMsgWikiHtml( 'upload-prohibited', implode( $wgFileBlacklist, $delim ) ) .
+					"</div>\n"
+				);
+			}
+		}
 
 		$sourcefilename = wfMsgHtml( 'sourcefilename' );
 		$destfilename = wfMsgHtml( 'destfilename' );
@@ -881,7 +1079,7 @@ wgAjaxLicensePreview = {$alp};
 			<td align='$align1'><label for='wpUploadDescription'>{$summary}</label></td>
 			<td align='$align2'>
 				<textarea tabindex='3' name='wpUploadDescription' id='wpUploadDescription' rows='6' 
-					cols='{$cols}'{$ew}>$encComment</textarea>
+					cols='{$cols}'{$width}>$encComment</textarea>
 	   {$this->uploadFormTextAfterSummary}
 			</td>
 		</tr>
@@ -1353,7 +1551,7 @@ EOT
 
 		if( $error ) {
 			$errorText = wfMsg( $error, wfEscapeWikiText( $img->getName() ) );
-			return new WikiError( $wgOut->parse( $errorText ) );
+			return $errorText;
 		}
 
 		// Rockin', go ahead and upload
@@ -1419,5 +1617,30 @@ EOT
 			}
 		}
 		return $pageText;
+	}
+
+	/**
+	 * If there are rows in the deletion log for this file, show them,
+	 * along with a nice little note for the user
+	 *
+	 * @param OutputPage $out
+	 * @param string filename
+	 */
+	private function showDeletionLog( $out, $filename ) {
+		$reader = new LogReader(
+			new FauxRequest(
+				array(
+					'page' => $filename,
+					'type' => 'delete',
+					)
+			)
+		);
+		if( $reader->hasRows() ) {
+			$out->addHtml( '<div id="mw-upload-deleted-warn">' );
+			$out->addWikiMsg( 'upload-wasdeleted' );
+			$viewer = new LogViewer( $reader );
+			$viewer->showList( $out );
+			$out->addHtml( '</div>' );
+		}
 	}
 }

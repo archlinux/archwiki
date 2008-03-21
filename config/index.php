@@ -325,7 +325,7 @@ foreach (array_keys($ourdb) AS $db) {
 }
 print "</li>\n";
 
-if( ini_get( "register_globals" ) ) {
+if( wfIniGetBool( "register_globals" ) ) {
 	?>
 	<li>
 		<div style="font-size:110%">
@@ -339,7 +339,7 @@ if( ini_get( "register_globals" ) ) {
 
 $fatal = false;
 
-if( ini_get( "magic_quotes_runtime" ) ) {
+if( wfIniGetBool( "magic_quotes_runtime" ) ) {
 	$fatal = true;
 	?><li class='error'><strong>Fatal: <a href='http://www.php.net/manual/en/ref.info.php#ini.magic-quotes-runtime'>magic_quotes_runtime</a> is active!</strong>
 	This option corrupts data input unpredictably; you cannot install or use
@@ -347,7 +347,7 @@ if( ini_get( "magic_quotes_runtime" ) ) {
 	<?php
 }
 
-if( ini_get( "magic_quotes_sybase" ) ) {
+if( wfIniGetBool( "magic_quotes_sybase" ) ) {
 	$fatal = true;
 	?><li class='error'><strong>Fatal: <a href='http://www.php.net/manual/en/ref.sybase.php#ini.magic-quotes-sybase'>magic_quotes_sybase</a> is active!</strong>
 	This option corrupts data input unpredictably; you cannot install or use
@@ -355,7 +355,7 @@ if( ini_get( "magic_quotes_sybase" ) ) {
 	<?php
 }
 
-if( ini_get( "mbstring.func_overload" ) ) {
+if( wfIniGetBool( "mbstring.func_overload" ) ) {
 	$fatal = true;
 	?><li class='error'><strong>Fatal: <a href='http://www.php.net/manual/en/ref.mbstring.php#mbstring.overload'>mbstring.func_overload</a> is active!</strong>
 	This option causes errors and may corrupt data unpredictably;
@@ -363,7 +363,7 @@ if( ini_get( "mbstring.func_overload" ) ) {
 	<?php
 }
 
-if( ini_get( "zend.ze1_compatibility_mode" ) ) {
+if( wfIniGetBool( "zend.ze1_compatibility_mode" ) ) {
 	$fatal = true;
 	?><li class="error"><strong>Fatal: <a href="http://www.php.net/manual/en/ini.core.php">zend.ze1_compatibility_mode</a> is active!</strong>
 	This option causes horrible bugs with MediaWiki; you cannot install or use
@@ -376,7 +376,7 @@ if( $fatal ) {
 	dieout( "</ul><p>Cannot install MediaWiki.</p>" );
 }
 
-if( ini_get( "safe_mode" ) ) {
+if( wfIniGetBool( "safe_mode" ) ) {
 	$conf->safeMode = true;
 	?>
 	<li><b class='error'>Warning:</b> <strong>PHP's
@@ -478,6 +478,8 @@ if ( $conf->eaccel ) {
 	print "<li><a href=\"http://eaccelerator.sourceforge.net/\">eAccelerator</a> installed</li>\n";
 }
 
+$conf->dba = function_exists( 'dba_open' );
+
 if( !( $conf->turck || $conf->eaccel || $conf->apc || $conf->xcache ) ) {
 	echo( '<li>Couldn\'t find <a href="http://turck-mmcache.sourceforge.net">Turck MMCache</a>,
 		<a href="http://eaccelerator.sourceforge.net">eAccelerator</a>,
@@ -514,7 +516,7 @@ $conf->ImageMagick = false;
 $imcheck = array( "/usr/bin", "/opt/csw/bin", "/usr/local/bin", "/sw/bin", "/opt/local/bin" );
 foreach( $imcheck as $dir ) {
 	$im = "$dir/convert";
-	if( file_exists( $im ) ) {
+	if( @file_exists( $im ) ) {
 		print "<li>Found ImageMagick: <tt>$im</tt>; image thumbnailing will be enabled if you enable uploads.</li>\n";
 		$conf->ImageMagick = $im;
 		break;
@@ -599,8 +601,8 @@ print "<li style='font-weight:bold;color:green;font-size:110%'>Environment check
 /* Check for validity */
 $errs = array();
 
-if( $conf->Sitename == "" || $conf->Sitename == "MediaWiki" || $conf->Sitename == "Mediawiki" ) {
-	$errs["Sitename"] = "Must not be blank or \"MediaWiki\"";
+if( preg_match( '/^$|^mediawiki$|#/i', $conf->Sitename ) ) {
+	$errs["Sitename"] = "Must not be blank or \"MediaWiki\" and may not contain \"#\"";
 }
 if( $conf->DBuser == "" ) {
 	$errs["DBuser"] = "Must not be blank";
@@ -751,6 +753,8 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 		$wgDBts2schema = $conf->DBts2schema;
 
 		$wgCommandLineMode = true;
+		if (! defined ( 'STDERR' ) )
+			define( 'STDERR', fopen("php://stderr", "wb"));
 		$wgUseDatabaseMessages = false; /* FIXME: For database failure */
 		require_once( "$IP/includes/Setup.php" );
 		chdir( "config" );
@@ -839,6 +843,7 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 					$errs["RootPW"] = "and password";
 					continue;
 				}
+				$wgDatabase->initial_setup($conf->RootPW, 'postgres');
 			}
 			echo( "<li>Attempting to connect to database \"$wgDBname\" as \"$wgDBuser\"..." );
 			$wgDatabase = $dbc->newFromParams($wgDBserver, $wgDBuser, $wgDBpassword, $wgDBname, 1);
@@ -847,6 +852,7 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 			} else {
 				$myver = $wgDatabase->getServerVersion();
 			}
+			$wgDatabase->initial_setup('', $wgDBname);
 		}
 
 		if ( !$wgDatabase->isOpen() ) {
@@ -1010,12 +1016,16 @@ if( $conf->posted && ( 0 == count( $errs ) ) ) {
 
 			print " done.</li>\n";
 
-			print "<li>Initializing data...</li>\n";
+			print "<li>Initializing statistics...</li>\n";
 			$wgDatabase->insert( 'site_stats',
 				array ( 'ss_row_id'        => 1,
 						'ss_total_views'   => 0,
-						'ss_total_edits'   => 0,
-						'ss_good_articles' => 0 ) );
+						'ss_total_edits'   => 1, # Main page first edit
+						'ss_good_articles' => 0, # Main page is not a good article - no internal link
+						'ss_total_pages'   => 1, # Main page
+						'ss_users'         => $conf->SysopName ? 1 : 0, # Sysop account, if created
+						'ss_admins'        => $conf->SysopName ? 1 : 0, # Sysop account, if created
+						'ss_images'        => 0 ) );
 
 			# Set up the "regular user" account *if we can, and if we need to*
 			if( $conf->Root and $conf->DBtype == 'mysql') {
@@ -1198,7 +1208,7 @@ if( count( $errs ) ) {
 	</p>
 
 	<div class="config-input">
-		<label class='column'>Shared memory caching:</label>
+		<label class='column'>Object caching:</label>
 
 		<ul class="plain">
 		<li><?php aField( $conf, "Shm", "No caching", "radio", "none" ); ?></li>
@@ -1223,6 +1233,11 @@ if( count( $errs ) ) {
 				aField( $conf, "Shm", "eAccelerator", "radio", "eaccel" );
 				echo "</li>";
 			}
+			if ( $conf->dba ) {
+				echo "<li>";
+				aField( $conf, "Shm", "DBA (not recommended)", "radio", "dba" );
+				echo "</li>";
+			}
 		?>
 		<li><?php aField( $conf, "Shm", "Memcached", "radio", "memcached" ); ?></li>
 		</ul>
@@ -1234,6 +1249,9 @@ if( count( $errs ) ) {
 		<br /><br />
 		MediaWiki can also detect and support eAccelerator, Turck MMCache, APC, and XCache, but
 		these should not be used if the wiki will be running on multiple application servers.
+		<br/><br/>
+		DBA (Berkeley-style DB) is generally slower than using no cache at all, and is only 
+		recommended for testing.
 	</p>
 </div>
 
@@ -1431,7 +1449,7 @@ window.onload = toggleDBarea('<?php echo $conf->DBtype; ?>',
 /* -------------------------------------------------------------------------------------- */
 function writeSuccessMessage() {
  $script = defined('MW_INSTALL_PHP5_EXT') ? 'index.php5' : 'index.php';
-	if ( ini_get( 'safe_mode' ) && !ini_get( 'open_basedir' ) ) {
+	if ( wfIniGetBool( 'safe_mode' ) && !ini_get( 'open_basedir' ) ) {
 		echo <<<EOT
 <div class="success-box">
 <p>Installation successful!</p>
@@ -1464,6 +1482,9 @@ EOT;
 
 
 function escapePhpString( $string ) {
+	if ( is_array( $string ) || is_object( $string ) ) {
+		return false;
+	}
 	return strtr( $string,
 		array(
 			"\n" => "\\n",
@@ -1492,6 +1513,10 @@ function writeLocalSettings( $conf ) {
 		case 'apc':
 		case 'eaccel':
 			$cacheType = 'CACHE_ACCEL';
+			$mcservers = 'array()';
+			break;
+		case 'dba':
+			$cacheType = 'CACHE_DBA';
 			$mcservers = 'array()';
 			break;
 		default:
@@ -1666,9 +1691,8 @@ if ( \$wgCommandLineMode ) {
 
 # When you make changes to this configuration file, this will make
 # sure that cached pages are cleared.
-\$configdate = gmdate( 'YmdHis', @filemtime( __FILE__ ) );
-\$wgCacheEpoch = max( \$wgCacheEpoch, \$configdate );
-	"; ## End of setting the $localsettings string
+\$wgCacheEpoch = max( \$wgCacheEpoch, gmdate( 'YmdHis', @filemtime( __FILE__ ) ) );
+"; ## End of setting the $localsettings string
 
 	// Keep things in Unix line endings internally;
 	// the system will write out as local text type.
@@ -1790,7 +1814,7 @@ function locate_executable($loc, $names, $versioninfo = false) {
 
 	foreach ($names as $name) {
 		$command = "$loc".DIRECTORY_SEPARATOR."$name";
-		if (file_exists($command)) {
+		if (@file_exists($command)) {
 			if (!$versioninfo)
 				return $command;
 
@@ -1812,7 +1836,6 @@ function testMemcachedServer( $server ) {
 	}
 	if ( !$errstr && count( $hostport ) != 2 ) {
 		$errstr = 'Please specify host and port';
-		var_dump( $hostport );
 	}
 	if ( !$errstr ) {
 		list( $host, $port ) = $hostport;
@@ -1910,7 +1933,7 @@ function printListItem( $item ) {
 			<li><a href="http://meta.wikipedia.org/wiki/MediaWiki_User's_Guide">User's Guide</a></li>
 			<li><a href="http://meta.wikimedia.org/wiki/MediaWiki_FAQ">FAQ</a></li>
 		</ul>
-		<p style="font-size:90%;margin-top:1em">MediaWiki is Copyright &copy; 2001-2007 by Magnus Manske, Brion Vibber, Lee Daniel Crocker, Tim Starling, Erik M&ouml;ller, Gabriel Wicke and others.</p>
+		<p style="font-size:90%;margin-top:1em">MediaWiki is Copyright &copy; 2001-2008 by Magnus Manske, Brion Vibber, Lee Daniel Crocker, Tim Starling, Erik M&ouml;ller, Gabriel Wicke and others.</p>
 	</div></div>
 </div>
 

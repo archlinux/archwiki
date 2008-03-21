@@ -7,13 +7,13 @@
 /**
  * constructor
  */
-function wfSpecialUserlogin() {
+function wfSpecialUserlogin( $par = '' ) {
 	global $wgRequest;
 	if( session_id() == '' ) {
 		wfSetupSession();
 	}
 
-	$form = new LoginForm( $wgRequest );
+	$form = new LoginForm( $wgRequest, $par );
 	$form->execute();
 }
 
@@ -41,11 +41,11 @@ class LoginForm {
 	 * Constructor
 	 * @param WebRequest $request A WebRequest object passed by reference
 	 */
-	function LoginForm( &$request ) {
+	function LoginForm( &$request, $par = '' ) {
 		global $wgLang, $wgAllowRealName, $wgEnableEmail;
 		global $wgAuth;
 
-		$this->mType = $request->getText( 'type' );
+		$this->mType = ( $par == 'signup' ) ? $par : $request->getText( 'type' ); # Check for [[Special:Userlogin/signup]]
 		$this->mName = $request->getText( 'wpName' );
 		$this->mPassword = $request->getText( 'wpPassword' );
 		$this->mRetype = $request->getText( 'wpRetype' );
@@ -123,9 +123,9 @@ class LoginForm {
 		// Wipe the initial password and mail a temporary one
 		$u->setPassword( null );
 		$u->saveSettings();
-		$result = $this->mailPasswordInternal( $u, false );
+		$result = $this->mailPasswordInternal( $u, false, 'createaccount-title', 'createaccount-text' );
 
-		wfRunHooks( 'AddNewAccount', array( $u ) );
+		wfRunHooks( 'AddNewAccount', array( $u, true ) );
 
 		$wgOut->setPageTitle( wfMsg( 'accmailtitle' ) );
 		$wgOut->setRobotpolicy( 'noindex,nofollow' );
@@ -134,7 +134,7 @@ class LoginForm {
 		if( WikiError::isError( $result ) ) {
 			$this->mainLoginForm( wfMsg( 'mailerror', $result->getMessage() ) );
 		} else {
-			$wgOut->addWikiText( wfMsg( 'accmailtext', $u->getName(), $u->getEmail() ) );
+			$wgOut->addWikiMsg( 'accmailtext', $u->getName(), $u->getEmail() );
 			$wgOut->returnToMain( false );
 		}
 		$u = 0;
@@ -164,9 +164,9 @@ class LoginForm {
 			global $wgOut;
 			$error = $u->sendConfirmationMail();
 			if( WikiError::isError( $error ) ) {
-				$wgOut->addWikiText( wfMsg( 'confirmemail_sendfailed', $error->getMessage() ) );
+				$wgOut->addWikiMsg( 'confirmemail_sendfailed', $error->getMessage() );
 			} else {
-				$wgOut->addWikiText( wfMsg( 'confirmemail_oncreate' ) );
+				$wgOut->addWikiMsg( 'confirmemail_oncreate' );
 			}
 		}
 
@@ -189,7 +189,7 @@ class LoginForm {
 			$wgOut->setArticleRelated( false );
 			$wgOut->setRobotPolicy( 'noindex,nofollow' );
 			$wgOut->addHtml( wfMsgWikiHtml( 'accountcreatedtext', $u->getName() ) );
-			$wgOut->returnToMain( $self->getPrefixedText() );
+			$wgOut->returnToMain( false, $self );
 			wfRunHooks( 'AddNewAccount', array( $u ) );
 			return true;
 		}
@@ -203,6 +203,7 @@ class LoginForm {
 		global $wgEnableSorbs, $wgProxyWhitelist;
 		global $wgMemc, $wgAccountCreationThrottle;
 		global $wgAuth, $wgMinimalPasswordLength;
+		global $wgEmailConfirmToEdit;
 
 		// If the user passes an invalid domain, something is fishy
 		if( !$wgAuth->validDomain( $this->mDomain ) ) {
@@ -228,9 +229,12 @@ class LoginForm {
 			return false;
 		}
 
-		# Check anonymous user ($wgUser) limitations :
-		if (!$wgUser->isAllowedToCreateAccount()) {
+		# Check permissions
+		if ( !$wgUser->isAllowed( 'createaccount' ) ) {
 			$this->userNotPrivilegedMessage();
+			return false;
+		} elseif ( $wgUser->isBlockedFromCreateAccount() ) {
+			$this->userBlockedMessage();
 			return false;
 		}
 
@@ -260,11 +264,29 @@ class LoginForm {
 			return false;
 		}
 
+		# check for minimal password length
 		if ( !$u->isValidPassword( $this->mPassword ) ) {
-			$this->mainLoginForm( wfMsg( 'passwordtooshort', $wgMinimalPasswordLength ) );
+			if ( !$this->mCreateaccountMail ) {
+				$this->mainLoginForm( wfMsg( 'passwordtooshort', $wgMinimalPasswordLength ) );
+				return false;
+			} else {
+				# do not force a password for account creation by email
+				# set pseudo password, it will be replaced later by a random generated password
+				$this->mPassword = '-';
+			}
+		}
+
+		# if you need a confirmed email address to edit, then obviously you need an email address.
+		if ( $wgEmailConfirmToEdit && empty( $this->mEmail ) ) {
+			$this->mainLoginForm( wfMsg( 'noemailtitle' ) );
 			return false;
 		}
-		
+
+		if( !empty( $this->mEmail ) && !User::isValidEmailAddr( $this->mEmail ) ) {
+			$this->mainLoginForm( wfMsg( 'invalidemailaddress' ) );
+			return false;
+		}
+
 		# Set some additional data so the AbortNewAccount hook can be
 		# used for more than just username validation
 		$u->setEmail( $this->mEmail );
@@ -449,7 +471,11 @@ class LoginForm {
 				$this->mainLoginForm( wfMsg( 'wrongpassword' ) );
 				break;
 			case self::NOT_EXISTS:
-				$this->mainLoginForm( wfMsg( 'nosuchuser', htmlspecialchars( $this->mName ) ) );
+				if( $wgUser->isAllowed( 'createaccount' ) ){
+					$this->mainLoginForm( wfMsg( 'nosuchuser', htmlspecialchars( $this->mName ) ) );
+				} else {
+					$this->mainLoginForm( wfMsg( 'nosuchusershort', htmlspecialchars( $this->mName ) ) );
+				}
 				break;
 			case self::WRONG_PASS:
 				$this->mainLoginForm( wfMsg( 'wrongpassword' ) );
@@ -469,7 +495,7 @@ class LoginForm {
 		global $wgOut;
 		$wgOut->addWikiText( "<div class=\"errorbox\">$error</div>" );
 		$reset = new PasswordResetForm( $this->mName, $this->mPassword );
-		$reset->execute();
+		$reset->execute( null );
 	}
 
 	/**
@@ -519,7 +545,7 @@ class LoginForm {
 			return;
 		}
 
-		$result = $this->mailPasswordInternal( $u, true );
+		$result = $this->mailPasswordInternal( $u, true, 'passwordremindertitle', 'passwordremindertext' );
 		if( WikiError::isError( $result ) ) {
 			$this->mainLoginForm( wfMsg( 'mailerror', $result->getMessage() ) );
 		} else {
@@ -529,10 +555,14 @@ class LoginForm {
 
 
 	/**
+	 * @param object user
+	 * @param bool throttle
+	 * @param string message name of email title
+	 * @param string message name of email text
 	 * @return mixed true on success, WikiError on failure
 	 * @private
 	 */
-	function mailPasswordInternal( $u, $throttle = true ) {
+	function mailPasswordInternal( $u, $throttle = true, $emailTitle = 'passwordremindertitle', $emailText = 'passwordremindertext' ) {
 		global $wgCookiePath, $wgCookieDomain, $wgCookiePrefix, $wgCookieSecure;
 		global $wgServer, $wgScript;
 
@@ -550,9 +580,9 @@ class LoginForm {
 		$ip = wfGetIP();
 		if ( '' == $ip ) { $ip = '(Unknown)'; }
 
-		$m = wfMsg( 'passwordremindertext', $ip, $u->getName(), $np, $wgServer . $wgScript );
+		$m = wfMsg( $emailText, $ip, $u->getName(), $np, $wgServer . $wgScript );
+		$result = $u->sendMail( wfMsg( $emailTitle ), $m );
 
-		$result = $u->sendMail( wfMsg( 'passwordremindertitle' ), $m );
 		return $result;
 	}
 
@@ -589,14 +619,14 @@ class LoginForm {
 		$wgOut->setRobotpolicy( 'noindex,nofollow' );
 		$wgOut->setArticleRelated( false );
 
-		$wgOut->addWikiText( wfMsg( 'whitelistacctext' ) );
+		$wgOut->addWikiMsg( 'whitelistacctext' );
 
 		$wgOut->returnToMain( false );
 	}
 
 	/** */
 	function userBlockedMessage() {
-		global $wgOut;
+		global $wgOut, $wgUser;
 
 		# Let's be nice about this, it's likely that this feature will be used
 		# for blocking large numbers of innocent people, e.g. range blocks on 
@@ -611,7 +641,10 @@ class LoginForm {
 		$wgOut->setArticleRelated( false );
 
 		$ip = wfGetIP();
-		$wgOut->addWikiText( wfMsg( 'cantcreateaccounttext', $ip ) );
+		$blocker = User::whoIs( $wgUser->mBlock->mBy );
+		$block_reason = $wgUser->mBlock->mReason;
+
+		$wgOut->addWikiMsg( 'cantcreateaccount-text', $ip, $block_reason, $blocker );
 		$wgOut->returnToMain( false );
 	}
 
@@ -621,7 +654,7 @@ class LoginForm {
 	function mainLoginForm( $msg, $msgtype = 'error' ) {
 		global $wgUser, $wgOut, $wgAllowRealName, $wgEnableEmail;
 		global $wgCookiePrefix, $wgAuth, $wgLoginLanguageSelector;
-		global $wgAuth;
+		global $wgAuth, $wgEmailConfirmToEdit;
 
 		if ( $this->mType == 'signup' ) {
 			if ( !$wgUser->isAllowed( 'createaccount' ) ) {
@@ -666,7 +699,7 @@ class LoginForm {
 			$linkq .= '&uselang=' . $this->mLanguage;
 
 		$link = '<a href="' . htmlspecialchars ( $titleObj->getLocalUrl( $linkq ) ) . '">';
-		$link .= wfMsgHtml( $linkmsg . 'link' );
+		$link .= wfMsgHtml( $linkmsg . 'link' ); # Calling either 'gotaccountlink' or 'nologinlink'
 		$link .= '</a>';
 
 		# Don't show a "create account" link if the user can't
@@ -689,6 +722,7 @@ class LoginForm {
 		$template->set( 'createemail', $wgEnableEmail && $wgUser->isLoggedIn() );
 		$template->set( 'userealname', $wgAllowRealName );
 		$template->set( 'useemail', $wgEnableEmail );
+		$template->set( 'emailrequired', $wgEmailConfirmToEdit );
 		$template->set( 'canreset', $wgAuth->allowPasswordChange() );
 		$template->set( 'remember', $wgUser->getOption( 'rememberpassword' ) or $this->mRemember  );
 
@@ -779,7 +813,7 @@ class LoginForm {
 	function throttleHit( $limit ) {
 		global $wgOut;
 
-		$wgOut->addWikiText( wfMsg( 'acct_creation_throttle_hit', $limit ) );
+		$wgOut->addWikiMsg( 'acct_creation_throttle_hit', $limit );
 	}
 
 	/**
@@ -796,7 +830,9 @@ class LoginForm {
 			foreach( $langs as $lang ) {
 				$lang = trim( $lang, '* ' );
 				$parts = explode( '|', $lang );
-				$links[] = $this->makeLanguageSelectorLink( $parts[0], $parts[1] );
+				if (count($parts) >= 2) {
+					$links[] = $this->makeLanguageSelectorLink( $parts[0], $parts[1] );
+				}
 			}
 			return count( $links ) > 0 ? wfMsgHtml( 'loginlanguagelabel', implode( ' | ', $links ) ) : '';
 		} else {
@@ -823,4 +859,5 @@ class LoginForm {
 		return $skin->makeKnownLinkObj( $self, htmlspecialchars( $text ), implode( '&', $attr ) );
 	}
 }
+
 

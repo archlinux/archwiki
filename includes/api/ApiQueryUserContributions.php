@@ -60,7 +60,11 @@ class ApiQueryContributions extends ApiQueryBase {
 		$db = $this->getDB();
 
 		// Prepare query
-		$this->prepareUsername();
+		$this->usernames = array();
+		if(!is_array($this->params['user']))
+			$this->params['user'] = array($this->params['user']);
+		foreach($this->params['user'] as $u)
+			$this->prepareUsername($u);
 		$this->prepareQuery();
 
 		//Do the actual query.
@@ -96,8 +100,7 @@ class ApiQueryContributions extends ApiQueryBase {
 	 * Validate the 'user' parameter and set the value to compare
 	 * against `revision`.`rev_user_text`
 	 */
-	private function prepareUsername() {
-		$user = $this->params['user'];
+	private function prepareUsername($user) {
 		if( $user ) {
 			$name = User::isIP( $user )
 				? $user
@@ -105,7 +108,7 @@ class ApiQueryContributions extends ApiQueryBase {
 			if( $name === false ) {
 				$this->dieUsage( "User name {$user} is not valid", 'param_user' );
 			} else {
-				$this->username = $name;
+				$this->usernames[] = $name;
 			}
 		} else {
 			$this->dieUsage( 'User parameter may not be empty', 'param_user' );
@@ -123,14 +126,11 @@ class ApiQueryContributions extends ApiQueryBase {
 		$this->addTables("$tbl_revision LEFT OUTER JOIN $tbl_page ON page_id=rev_page");
 		
 		$this->addWhereFld('rev_deleted', 0);
-		
-		// We only want pages by the specified user.
-		$this->addWhereFld( 'rev_user_text', $this->username );
-
+		// We only want pages by the specified users.
+		$this->addWhereFld( 'rev_user_text', $this->usernames );
 		// ... and in the specified timeframe.
 		$this->addWhereRange('rev_timestamp', 
 			$this->params['dir'], $this->params['start'], $this->params['end'] );
-
 		$this->addWhereFld('page_namespace', $this->params['namespace']);
 
 		$show = $this->params['show'];
@@ -142,15 +142,16 @@ class ApiQueryContributions extends ApiQueryBase {
 			$this->addWhereIf('rev_minor_edit = 0', isset ($show['!minor']));
 			$this->addWhereIf('rev_minor_edit != 0', isset ($show['minor']));
 		}
-
 		$this->addOption('LIMIT', $this->params['limit'] + 1);
 
 		// Mandatory fields: timestamp allows request continuation
-		// ns+title checks if the user has access rights for this page  
+		// ns+title checks if the user has access rights for this page
+		// user_text is necessary if multiple users were specified  
 		$this->addFields(array(
 			'rev_timestamp',
 			'page_namespace',
 			'page_title',
+			'rev_user_text',
 			));
 				
 		$this->addFieldsIf('rev_page', $this->fld_ids);
@@ -158,8 +159,6 @@ class ApiQueryContributions extends ApiQueryBase {
 		// $this->addFieldsIf('rev_text_id', $this->fld_ids); // Should this field be exposed?
 		$this->addFieldsIf('rev_comment', $this->fld_comment);
 		$this->addFieldsIf('rev_minor_edit', $this->fld_flags);
-
-		// These fields depend only work if the page table is joined
 		$this->addFieldsIf('page_is_new', $this->fld_flags);
 	}
 	
@@ -170,6 +169,7 @@ class ApiQueryContributions extends ApiQueryBase {
 
 		$vals = array();
 
+		$vals['user'] = $row->rev_user_text;
 		if ($this->fld_ids) {
 			$vals['pageid'] = intval($row->rev_page);
 			$vals['revid'] = intval($row->rev_id); 
@@ -196,7 +196,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		return $vals;
 	}
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array (
 			'limit' => array (
 				ApiBase :: PARAM_DFLT => 10,
@@ -212,7 +212,7 @@ class ApiQueryContributions extends ApiQueryBase {
 				ApiBase :: PARAM_TYPE => 'timestamp'
 			),
 			'user' => array (
-				ApiBase :: PARAM_TYPE => 'user'
+				ApiBase :: PARAM_ISMULTI => true
 			),
 			'dir' => array (
 				ApiBase :: PARAM_DFLT => 'older',
@@ -246,7 +246,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'limit' => 'The maximum number of contributions to return.',
 			'start' => 'The start timestamp to return from.',
@@ -259,7 +259,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'Get all edits by a user';
 	}
 
@@ -270,7 +270,7 @@ class ApiQueryContributions extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryUserContributions.php 24754 2007-08-13 18:18:18Z robchurch $';
+		return __CLASS__ . ': $Id: ApiQueryUserContributions.php 30578 2008-02-05 15:40:58Z catrope $';
 	}
 }
 

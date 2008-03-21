@@ -8,18 +8,6 @@ if( !defined( 'MEDIAWIKI' ) ) {
 	exit( 1 );
 }
 
-#
-# In general you should not make customizations in these language files
-# directly, but should use the MediaWiki: special namespace to customize
-# user interface messages through the wiki.
-# See http://meta.wikipedia.org/wiki/MediaWiki_namespace
-#
-# NOTE TO TRANSLATORS: Do not copy this whole file when making translations!
-# A lot of common constants and a base class with inheritable methods are
-# defined here, which should not be redefined. See the other LanguageXx.php
-# files for examples.
-#
-
 # Read language names
 global $wgLanguageNames;
 require_once( dirname(__FILE__) . '/Names.php' ) ;
@@ -102,6 +90,29 @@ class Language {
 		'sep', 'oct', 'nov', 'dec'
 	);
 
+	static public $mIranianCalendarMonthMsgs = array(
+		'iranian-calendar-m1', 'iranian-calendar-m2', 'iranian-calendar-m3',
+		'iranian-calendar-m4', 'iranian-calendar-m5', 'iranian-calendar-m6',
+		'iranian-calendar-m7', 'iranian-calendar-m8', 'iranian-calendar-m9',
+		'iranian-calendar-m10', 'iranian-calendar-m11', 'iranian-calendar-m12'
+	);
+
+	static public $mHebrewCalendarMonthMsgs = array(
+		'hebrew-calendar-m1', 'hebrew-calendar-m2', 'hebrew-calendar-m3',
+		'hebrew-calendar-m4', 'hebrew-calendar-m5', 'hebrew-calendar-m6',
+		'hebrew-calendar-m7', 'hebrew-calendar-m8', 'hebrew-calendar-m9',
+		'hebrew-calendar-m10', 'hebrew-calendar-m11', 'hebrew-calendar-m12',
+		'hebrew-calendar-m6a', 'hebrew-calendar-m6b'
+	);
+
+	static public $mHebrewCalendarMonthGenMsgs = array(
+		'hebrew-calendar-m1-gen', 'hebrew-calendar-m2-gen', 'hebrew-calendar-m3-gen',
+		'hebrew-calendar-m4-gen', 'hebrew-calendar-m5-gen', 'hebrew-calendar-m6-gen',
+		'hebrew-calendar-m7-gen', 'hebrew-calendar-m8-gen', 'hebrew-calendar-m9-gen',
+		'hebrew-calendar-m10-gen', 'hebrew-calendar-m11-gen', 'hebrew-calendar-m12-gen',
+		'hebrew-calendar-m6a-gen', 'hebrew-calendar-m6b-gen'
+	);
+
 	/**
 	 * Create a language object for a given language code
 	 */
@@ -160,6 +171,7 @@ class Language {
 	 * @return array
 	 */
 	function getDefaultUserOptions() {
+		trigger_error( 'Use of ' . __METHOD__ . ' is deprecated', E_USER_NOTICE );
 		return User::getDefaultOptions();
 	}
 
@@ -316,7 +328,12 @@ class Language {
 
 	function getDefaultUserOptionOverrides() {
 		$this->load();
-		return $this->defaultUserOptionOverrides;
+		# XXX - apparently some languageas get empty arrays, didn't get to it yet -- midom
+		if (is_array($this->defaultUserOptionOverrides)) {
+			return $this->defaultUserOptionOverrides;
+		} else {
+			return array();
+		}
 	}
 
 	function getExtraUserToggles() {
@@ -333,9 +350,10 @@ class Language {
 	 * If $customisedOnly is true, only returns codes with a messages file
 	 */
 	public static function getLanguageNames( $customisedOnly = false ) {
-		global $wgLanguageNames;
+		global $wgLanguageNames, $wgExtraLanguageNames;
+		$allNames = $wgExtraLanguageNames + $wgLanguageNames;
 		if ( !$customisedOnly ) {
-			return $wgLanguageNames;
+			return $allNames;
 		}
 		
 		global $IP;
@@ -345,8 +363,8 @@ class Language {
 			$m = array();
 			if( preg_match( '/Messages([A-Z][a-z_]+)\.php$/', $file, $m ) ) {
 				$code = str_replace( '_', '-', strtolower( $m[1] ) );
-				if ( isset( $wgLanguageNames[$code] ) ) {
-					$names[$code] = $wgLanguageNames[$code];
+				if ( isset( $allNames[$code] ) ) {
+					$names[$code] = $allNames[$code];
 				}
 			}
 		}
@@ -373,11 +391,11 @@ class Language {
 	}
 
 	function getLanguageName( $code ) {
-		global $wgLanguageNames;
-		if ( ! array_key_exists( $code, $wgLanguageNames ) ) {
+		$names = self::getLanguageNames();
+		if ( !array_key_exists( $code, $names ) ) {
 			return '';
 		}
-		return $wgLanguageNames[$code];
+		return $names[$code];
 	}
 
 	function getMonthName( $key ) {
@@ -399,6 +417,19 @@ class Language {
 	function getWeekdayAbbreviation( $key ) {
 		return $this->getMessageFromDB( self::$mWeekdayAbbrevMsgs[$key-1] );
 	}
+
+	function getIranianCalendarMonthName( $key ) {
+		return $this->getMessageFromDB( self::$mIranianCalendarMonthMsgs[$key-1] );
+	}
+
+	function getHebrewCalendarMonthName( $key ) {
+		return $this->getMessageFromDB( self::$mHebrewCalendarMonthMsgs[$key-1] );
+	}
+
+	function getHebrewCalendarMonthNameGen( $key ) {
+		return $this->getMessageFromDB( self::$mHebrewCalendarMonthGenMsgs[$key-1] );
+	}
+
 
 	/**
 	 * Used by date() and time() to adjust the time output.
@@ -468,8 +499,24 @@ class Language {
 	 *    xn   Do not translate digits of the next numeric format character
 	 *    xN   Toggle raw digit (xn) flag, stays set until explicitly unset
 	 *    xr   Use roman numerals for the next numeric format character
+	 *    xh   Use hebrew numerals for the next numeric format character
 	 *    xx   Literal x
 	 *    xg   Genitive month name
+	 *
+	 *    xij  j (day number) in Iranian calendar
+	 *    xiF  F (month name) in Iranian calendar
+	 *    xin  n (month number) in Iranian calendar
+	 *    xiY  Y (full year) in Iranian calendar
+	 *
+	 *    xjj  j (day number) in Hebrew calendar
+	 *    xjF  F (month name) in Hebrew calendar
+	 *    xjt  t (days in month) in Hebrew calendar
+	 *    xjx  xg (genitive month name) in Hebrew calendar
+	 *    xjn  n (month number) in Hebrew calendar
+	 *    xjY  Y (full year) in Hebrew calendar
+	 *
+	 *    xkY  Y (full year) in Thai solar calendar. Months and days are
+	 *                       identical to the Gregorian calendar
 	 *
 	 * Characters enclosed in double quotes will be considered literal (with
 	 * the quotes themselves removed). Unmatched quotes will be considered
@@ -492,15 +539,23 @@ class Language {
 		$s = '';
 		$raw = false;
 		$roman = false;
+		$hebrewNum = false;
 		$unix = false;
 		$rawToggle = false;
+		$iranian = false;
+		$hebrew = false;
+		$thai = false;
 		for ( $p = 0; $p < strlen( $format ); $p++ ) {
 			$num = false;
 			$code = $format[$p];
 			if ( $code == 'x' && $p < strlen( $format ) - 1 ) {
 				$code .= $format[++$p];
 			}
-			
+
+			if ( ( $code === 'xi' || $code == 'xj' || $code == 'xk' ) && $p < strlen( $format ) - 1 ) {
+				$code .= $format[++$p];
+			}
+
 			switch ( $code ) {
 				case 'xx':
 					$s .= 'x';
@@ -514,8 +569,15 @@ class Language {
 				case 'xr':
 					$roman = true;
 					break;
+				case 'xh':
+					$hebrewNum = true;
+					break;
 				case 'xg':
 					$s .= $this->getMonthNameGen( substr( $ts, 4, 2 ) );
+					break;
+				case 'xjx':
+					if ( !$hebrew ) $hebrew = self::tsToHebrew( $ts );
+					$s .= $this->getHebrewCalendarMonthNameGen( $hebrew[1] );
 					break;
 				case 'd':
 					$num = substr( $ts, 6, 2 );
@@ -526,6 +588,14 @@ class Language {
 					break;
 				case 'j':
 					$num = intval( substr( $ts, 6, 2 ) );
+					break;
+				case 'xij':
+					if ( !$iranian ) $iranian = self::tsToIranian( $ts );
+					$num = $iranian[2];
+					break;
+				case 'xjj':
+					if ( !$hebrew ) $hebrew = self::tsToHebrew( $ts );
+					$num = $hebrew[2];
 					break;
 				case 'l':
 					if ( !$unix ) $unix = wfTimestamp( TS_UNIX, $ts );
@@ -547,9 +617,17 @@ class Language {
 				case 'W':
 					if ( !$unix ) $unix = wfTimestamp( TS_UNIX, $ts );
 					$num = gmdate( 'W', $unix );
-					break;					
+					break;
 				case 'F':
 					$s .= $this->getMonthName( substr( $ts, 4, 2 ) );
+					break;
+				case 'xiF':
+					if ( !$iranian ) $iranian = self::tsToIranian( $ts );
+					$s .= $this->getIranianCalendarMonthName( $iranian[1] );
+					break;
+				case 'xjF':
+					if ( !$hebrew ) $hebrew = self::tsToHebrew( $ts );
+					$s .= $this->getHebrewCalendarMonthName( $hebrew[1] );
 					break;
 				case 'm':
 					$num = substr( $ts, 4, 2 );
@@ -560,16 +638,40 @@ class Language {
 				case 'n':
 					$num = intval( substr( $ts, 4, 2 ) );
 					break;
+				case 'xin':
+					if ( !$iranian ) $iranian = self::tsToIranian( $ts );
+					$num = $iranian[1];
+					break;
+				case 'xjn':
+					if ( !$hebrew ) $hebrew = self::tsToHebrew( $ts );
+					$num = $hebrew[1];
+					break;
 				case 't':
 					if ( !$unix ) $unix = wfTimestamp( TS_UNIX, $ts );
 					$num = gmdate( 't', $unix );
 					break;
+				case 'xjt':
+					if ( !$hebrew ) $hebrew = self::tsToHebrew( $ts );
+					$num = $hebrew[3];
+					break;
 				case 'L':
 					if ( !$unix ) $unix = wfTimestamp( TS_UNIX, $ts );
 					$num = gmdate( 'L', $unix );
-					break;					
+					break;
 				case 'Y':
 					$num = substr( $ts, 0, 4 );
+					break;
+				case 'xiY':
+					if ( !$iranian ) $iranian = self::tsToIranian( $ts );
+					$num = $iranian[0];
+					break;
+				case 'xjY':
+					if ( !$hebrew ) $hebrew = self::tsToHebrew( $ts );
+					$num = $hebrew[0];
+					break;
+				case 'xkY':
+					if ( !$thai ) $thai = self::tsToThai( $ts );
+					$num = $thai[0];
 					break;
 				case 'y':
 					$num = substr( $ts, 2, 2 );
@@ -646,6 +748,9 @@ class Language {
 				} elseif ( $roman ) {
 					$s .= self::romanNumeral( $num );
 					$roman = false;
+				} elseif( $hebrewNum ) {
+					$s .= self::hebrewNumeral( $num );
+					$hebrewNum = false;
 				} else {
 					$s .= $this->formatNum( $num, true );
 				}
@@ -654,6 +759,256 @@ class Language {
 		}
 		return $s;
 	}
+
+	private static $GREG_DAYS = array( 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 );
+	private static $IRANIAN_DAYS = array( 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29 );
+	/**
+	 * Algorithm by Roozbeh Pournader and Mohammad Toossi to convert 
+	 * Gregorian dates to Iranian dates. Originally written in C, it
+	 * is released under the terms of GNU Lesser General Public
+	 * License. Conversion to PHP was performed by Niklas Laxström.
+	 * 
+	 * Link: http://www.farsiweb.info/jalali/jalali.c
+	 */
+	private static function tsToIranian( $ts ) {
+		$gy = substr( $ts, 0, 4 ) -1600;
+		$gm = substr( $ts, 4, 2 ) -1;
+		$gd = substr( $ts, 6, 2 ) -1;
+
+		# Days passed from the beginning (including leap years)
+		$gDayNo = 365*$gy
+			+ floor(($gy+3) / 4)
+			- floor(($gy+99) / 100)
+			+ floor(($gy+399) / 400);
+
+
+		// Add days of the past months of this year
+		for( $i = 0; $i < $gm; $i++ ) {
+			$gDayNo += self::$GREG_DAYS[$i];
+		}
+
+		// Leap years
+		if ( $gm > 1 && (($gy%4===0 && $gy%100!==0 || ($gy%400==0)))) {
+			$gDayNo++;
+		}
+
+		// Days passed in current month
+		$gDayNo += $gd;
+		
+		$jDayNo = $gDayNo - 79;
+
+		$jNp = floor($jDayNo / 12053);
+		$jDayNo %= 12053;
+
+		$jy = 979 + 33*$jNp + 4*floor($jDayNo/1461);
+		$jDayNo %= 1461;
+
+		if ( $jDayNo >= 366 ) {
+			$jy += floor(($jDayNo-1)/365);
+			$jDayNo = floor(($jDayNo-1)%365);
+		}
+
+		for ( $i = 0; $i < 11 && $jDayNo >= self::$IRANIAN_DAYS[$i]; $i++ ) {
+			$jDayNo -= self::$IRANIAN_DAYS[$i];
+		}
+
+		$jm= $i+1;
+		$jd= $jDayNo+1;
+
+		return array($jy, $jm, $jd);
+	}
+
+	/**
+	 * Converting Gregorian dates to Hebrew dates.
+	 *
+	 * Based on a JavaScript code by Abu Mami and Yisrael Hersch
+	 * (abu-mami@kaluach.net, http://www.kaluach.net), who permitted
+	 * to translate the relevant functions into PHP and release them under
+	 * GNU GPL.
+	 */
+	private static function tsToHebrew( $ts ) {
+		# Parse date
+		$year = substr( $ts, 0, 4 );
+		$month = substr( $ts, 4, 2 );
+		$day = substr( $ts, 6, 2 );
+
+		# Calculate Hebrew year
+		$hebrewYear = $year + 3760;
+
+		# Month number when September = 1, August = 12
+		$month += 4;
+		if( $month > 12 ) {
+			# Next year
+			$month -= 12;
+			$year++;
+			$hebrewYear++;
+		}
+
+		# Calculate day of year from 1 September
+		$dayOfYear = $day;
+		for( $i = 1; $i < $month; $i++ ) {
+			if( $i == 6 ) {
+				# February
+				$dayOfYear += 28;
+				# Check if the year is leap
+				if( $year % 400 == 0 || ( $year % 4 == 0 && $year % 100 > 0 ) ) {
+					$dayOfYear++;
+				}
+			} elseif( $i == 8 || $i == 10 || $i == 1 || $i == 3 ) {
+				$dayOfYear += 30;
+			} else {
+				$dayOfYear += 31;
+			}
+		}
+
+		# Calculate the start of the Hebrew year
+		$start = self::hebrewYearStart( $hebrewYear );
+
+		# Calculate next year's start
+		if( $dayOfYear <= $start ) {
+			# Day is before the start of the year - it is the previous year
+			# Next year's start
+			$nextStart = $start;
+			# Previous year
+			$year--;
+			$hebrewYear--;
+			# Add days since previous year's 1 September
+			$dayOfYear += 365;
+			if( ( $year % 400 == 0 ) || ( $year % 100 != 0 && $year % 4 == 0 ) ) {
+				# Leap year
+				$dayOfYear++;
+			}
+			# Start of the new (previous) year
+			$start = self::hebrewYearStart( $hebrewYear );
+		} else {
+			# Next year's start
+			$nextStart = self::hebrewYearStart( $hebrewYear + 1 );
+		}
+
+		# Calculate Hebrew day of year
+		$hebrewDayOfYear = $dayOfYear - $start;
+
+		# Difference between year's days
+		$diff = $nextStart - $start;
+		# Add 12 (or 13 for leap years) days to ignore the difference between
+		# Hebrew and Gregorian year (353 at least vs. 365/6) - now the
+		# difference is only about the year type
+		if( ( $year % 400 == 0 ) || ( $year % 100 != 0 && $year % 4 == 0 ) ) {
+			$diff += 13;
+		} else {
+			$diff += 12;
+		}
+
+		# Check the year pattern, and is leap year
+		# 0 means an incomplete year, 1 means a regular year, 2 means a complete year
+		# This is mod 30, to work on both leap years (which add 30 days of Adar I)
+		# and non-leap years
+		$yearPattern = $diff % 30;
+		# Check if leap year
+		$isLeap = $diff >= 30;
+
+		# Calculate day in the month from number of day in the Hebrew year
+		# Don't check Adar - if the day is not in Adar, we will stop before;
+		# if it is in Adar, we will use it to check if it is Adar I or Adar II
+		$hebrewDay = $hebrewDayOfYear;
+		$hebrewMonth = 1;
+		$days = 0;
+		while( $hebrewMonth <= 12 ) {
+			# Calculate days in this month
+			if( $isLeap && $hebrewMonth == 6 ) {
+				# Adar in a leap year
+				if( $isLeap ) {
+					# Leap year - has Adar I, with 30 days, and Adar II, with 29 days
+					$days = 30;
+					if( $hebrewDay <= $days ) {
+						# Day in Adar I
+						$hebrewMonth = 13;
+					} else {
+						# Subtract the days of Adar I
+						$hebrewDay -= $days;
+						# Try Adar II
+						$days = 29;
+						if( $hebrewDay <= $days ) {
+							# Day in Adar II
+							$hebrewMonth = 14;
+						}
+					}
+				}
+			} elseif( $hebrewMonth == 2 && $yearPattern == 2 ) {
+				# Cheshvan in a complete year (otherwise as the rule below)
+				$days = 30;
+			} elseif( $hebrewMonth == 3 && $yearPattern == 0 ) {
+				# Kislev in an incomplete year (otherwise as the rule below)
+				$days = 29;
+			} else {
+				# Odd months have 30 days, even have 29
+				$days = 30 - ( $hebrewMonth - 1 ) % 2;
+			}
+			if( $hebrewDay <= $days ) {
+				# In the current month
+				break;
+			} else {
+				# Subtract the days of the current month
+				$hebrewDay -= $days;
+				# Try in the next month
+				$hebrewMonth++;
+			}
+		}
+
+		return array( $hebrewYear, $hebrewMonth, $hebrewDay, $days );
+	}
+
+	/**
+	 * This calculates the Hebrew year start, as days since 1 September.
+	 * Based on Carl Friedrich Gauss algorithm for finding Easter date.
+	 * Used for Hebrew date.
+	 */
+	private static function hebrewYearStart( $year ) {
+		$a = intval( ( 12 * ( $year - 1 ) + 17 ) % 19 );
+		$b = intval( ( $year - 1 ) % 4 );
+		$m = 32.044093161144 + 1.5542417966212 * $a +  $b / 4.0 - 0.0031777940220923 * ( $year - 1 );
+		if( $m < 0 ) {
+			$m--;
+		}
+		$Mar = intval( $m );
+		if( $m < 0 ) {
+			$m++;
+		}
+		$m -= $Mar;
+
+		$c = intval( ( $Mar + 3 * ( $year - 1 ) + 5 * $b + 5 ) % 7);
+		if( $c == 0 && $a > 11 && $m >= 0.89772376543210 ) {
+			$Mar++;
+		} else if( $c == 1 && $a > 6 && $m >= 0.63287037037037 ) {
+			$Mar += 2;
+		} else if( $c == 2 || $c == 4 || $c == 6 ) {
+			$Mar++;
+		}
+
+		$Mar += intval( ( $year - 3761 ) / 100 ) - intval( ( $year - 3761 ) / 400 ) - 24;
+		return $Mar;
+	}
+
+	/**
+	 * Algorithm to convert Gregorian dates to Thai solar dates.
+	 *
+	 * Link: http://en.wikipedia.org/wiki/Thai_solar_calendar
+	 *
+	 * @param string $ts 14-character timestamp
+	 * @return array converted year, month, day
+	 */
+	private static function tsToThai( $ts ) {
+		$gy = substr( $ts, 0, 4 );
+		$gm = substr( $ts, 4, 2 );
+		$gd = substr( $ts, 6, 2 );
+
+		# Add 543 years to the Gregorian calendar
+		# Months and days are identical
+		$gy_thai = $gy + 543;
+
+		return array( $gy_thai, $gm, $gd );
+	}
+
 
 	/**
 	 * Roman number formatting up to 3000
@@ -679,6 +1034,65 @@ class Language {
 			$num = $num % $pow10;
 		}
 		return $s;
+	}
+
+ 	/**
+	 * Hebrew Gematria number formatting up to 9999
+	 */
+	static function hebrewNumeral( $num ) {
+		static $table = array(
+			array( '', 'א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י' ),
+			array( '', 'י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ', 'ק' ),
+			array( '', 'ק', 'ר', 'ש', 'ת', 'תק', 'תר', 'תש', 'תת', 'תתק', 'תתר' ),
+			array( '', 'א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י' )
+		);
+
+		$num = intval( $num );
+		if ( $num > 9999 || $num <= 0 ) {
+			return $num;
+		}
+
+		$s = '';
+		for ( $pow10 = 1000, $i = 3; $i >= 0; $pow10 /= 10, $i-- ) {
+			if ( $num >= $pow10 ) {
+				if ( $num == 15 || $num == 16 ) {
+					$s .= $table[0][9] . $table[0][$num - 9];
+					$num = 0;
+				} else {
+					$s .= $table[$i][intval( ( $num / $pow10 ) )];
+					if( $pow10 == 1000 ) {
+						$s .= "'";
+					}
+				}
+			}
+			$num = $num % $pow10;
+		}
+		if( strlen( $s ) == 2 ) {
+			$str = $s . "'";
+		} else  {
+			$str = substr( $s, 0, strlen( $s ) - 2 ) . '"';
+			$str .= substr( $s, strlen( $s ) - 2, 2 );
+		}
+		$start = substr( $str, 0, strlen( $str ) - 2 );
+		$end = substr( $str, strlen( $str ) - 2 );
+		switch( $end ) {
+			case 'כ':
+				$str = $start . 'ך';
+				break;
+			case 'מ':
+				$str = $start . 'ם';
+				break;
+			case 'נ':
+				$str = $start . 'ן';
+				break;
+			case 'פ':
+				$str = $start . 'ף';
+				break;
+			case 'צ':
+				$str = $start . 'ץ';
+				break;
+		}
+		return $str;
 	}
 
 	/**
@@ -842,7 +1256,9 @@ class Language {
 	}
 
 	function ucfirst( $str ) {
-		return self::uc( $str, true );
+		if ( empty($str) ) return $str;
+		if ( ord($str[0]) < 128 ) return ucfirst($str);
+		else return self::uc($str,true); // fall back to more complex logic in case of multibyte strings
 	}
 
 	function uc( $str, $first = false ) {
@@ -872,7 +1288,13 @@ class Language {
 	}
 	
 	function lcfirst( $str ) {
-		return self::lc( $str, true );
+		if ( empty($str) ) return $str;
+		if ( is_string( $str ) && ord($str[0]) < 128 ) {
+			// editing string in place = cool
+			$str[0]=strtolower($str[0]);
+			return $str;
+		}
+		else return self::lc( $str, true );
 	}
 
 	function lc( $str, $first = false ) {
@@ -1148,9 +1570,10 @@ class Language {
 
 		if( !is_array( $rawEntry ) ) {
 			error_log( "\"$rawEntry\" is not a valid magic thingie for \"$mw->mId\"" );
+		} else {
+			$mw->mCaseSensitive = $rawEntry[0];
+			$mw->mSynonyms = array_slice( $rawEntry, 1 );
 		}
-		$mw->mCaseSensitive = $rawEntry[0];
-		$mw->mSynonyms = array_slice( $rawEntry, 1 );
 	}
 
 	/**
@@ -1162,6 +1585,9 @@ class Language {
 		while ( $code && !in_array( $code, $fallbackChain ) ) {
 			$fallbackChain[] = $code;
 			$code = self::getFallbackFor( $code );
+		}
+		if ( !in_array( 'en', $fallbackChain ) ) {
+			$fallbackChain[] = 'en';
 		}
 		$fallbackChain = array_reverse( $fallbackChain );
 		foreach ( $fallbackChain as $code ) {
@@ -1347,15 +1773,15 @@ class Language {
 	 */
 	function convertGrammar( $word, $case ) {
 		global $wgGrammarForms;
-		if ( isset($wgGrammarForms['en'][$case][$word]) ) {
-			return $wgGrammarForms['en'][$case][$word];
+		if ( isset($wgGrammarForms[$this->getCode()][$case][$word]) ) {
+			return $wgGrammarForms[$this->getCode()][$case][$word];
 		}
 		return $word;
 	}
 
 	/**
 	 * Plural form transformations, needed for some languages.
-	 * For example, where are 3 form of plural in Russian and Polish,
+	 * For example, there are 3 form of plural in Russian and Polish,
 	 * depending on "count mod 10". See [[w:Plural]]
 	 * For English it is pretty simple.
 	 *
@@ -1364,26 +1790,39 @@ class Language {
 	 *
 	 * Example: {{plural:{{NUMBEROFARTICLES}}|article|articles}}
 	 *
-	 * @param integer $count
-	 * @param string $wordform1
-	 * @param string $wordform2
-	 * @param string $wordform3 (optional)
-	 * @param string $wordform4 (optional)
-	 * @param string $wordform5 (optional)
-	 * @return string
+	 * @param integer $count Non-localized number
+	 * @param array $forms Different plural forms
+	 * @return string Correct form of plural for $count in this language
 	 */
-	function convertPlural( $count, $w1, $w2, $w3, $w4, $w5) {
-		return ( $count == '1' || $count == '-1' ) ? $w1 : $w2;
+	function convertPlural( $count, $forms ) {
+		if ( !count($forms) ) { return ''; }
+		$forms = $this->preConvertPlural( $forms, 2 );
+
+		return ( abs($count) == 1 ) ? $forms[0] : $forms[1];
+	}
+
+	/**
+	 * Checks that convertPlural was given an array and pads it to requested
+	 * amound of forms by copying the last one.
+	 *
+	 * @param integer $count How many forms should there be at least
+	 * @param array $forms Array of forms given to convertPlural
+	 * @return array Padded array of forms or an exception if not an array
+	 */
+	protected function preConvertPlural( /* Array */ $forms, $count ) {
+		while ( count($forms) < $count ) {
+			$forms[] = $forms[count($forms)-1];
+		}
+		return $forms;
 	}
 
 	/**
 	 * For translaing of expiry times
 	 * @param string The validated block time in English
-	 * @param $forContent, avoid html?
 	 * @return Somehow translated block time
 	 * @see LanguageFi.php for example implementation
 	 */
-	function translateBlockExpiry( $str, $forContent=false ) {
+	function translateBlockExpiry( $str ) {
 
 		$scBlockExpiryOptions = $this->getMessageFromDB( 'ipboptions' );
 
@@ -1396,10 +1835,7 @@ class Language {
 				continue;
 			list($show, $value) = explode(":", $option);
 			if ( strcmp ( $str, $value) == 0 ) {
-				if ( $forContent )
-					return htmlspecialchars($str) . htmlspecialchars( trim( $show ) );
-				else
-					return '<span title="' . htmlspecialchars($str). '">' . htmlspecialchars( trim( $show ) ) . '</span>';
+				return htmlspecialchars( trim( $show ) );
 			}
 		}
 
@@ -1577,6 +2013,10 @@ class Language {
 		return self::getFileName( "$IP/languages/classes/Language", $code, '.php' );
 	}
 	
+	static function localisationExist( $code ){
+		return ( file_exists( self::getMessagesFileName( $code ) ) || file_exists( self::getClassFileName( $code ) ) );	
+	}
+	
 	static function getLocalisationArray( $code, $disableCache = false ) {
 		self::loadLocalisation( $code, $disableCache );
 		return self::$mLocalisationCache[$code];
@@ -1589,7 +2029,7 @@ class Language {
 	 */
 	static function loadLocalisation( $code, $disableCache = false ) {
 		static $recursionGuard = array();
-		global $wgMemc;
+		global $wgMemc, $wgCheckSerialized;
 
 		if ( !$code ) {
 			throw new MWException( "Invalid language code requested" );
@@ -1606,26 +2046,25 @@ class Language {
 			# Try the serialized directory
 			$cache = wfGetPrecompiledData( self::getFileName( "Messages", $code, '.ser' ) );
 			if ( $cache ) {
-				self::$mLocalisationCache[$code] = $cache;
-				wfDebug( "Language::loadLocalisation(): got localisation for $code from precompiled data file\n" );
-				wfProfileOut( __METHOD__ );
-				return self::$mLocalisationCache[$code]['deps'];
+				if ( $wgCheckSerialized && self::isLocalisationOutOfDate( $cache ) ) {
+					$cache = false;
+					wfDebug( "Language::loadLocalisation(): precompiled data file for $code is out of date\n" );
+				} else {
+					self::$mLocalisationCache[$code] = $cache;
+					wfDebug( "Language::loadLocalisation(): got localisation for $code from precompiled data file\n" );
+					wfProfileOut( __METHOD__ );
+					return self::$mLocalisationCache[$code]['deps'];
+				}
 			}
 
 			# Try the global cache
 			$memcKey = wfMemcKey('localisation', $code );
 			$cache = $wgMemc->get( $memcKey );
 			if ( $cache ) {
-				# Check file modification times
-				foreach ( $cache['deps'] as $file => $mtime ) {
-					if ( !file_exists( $file ) || filemtime( $file ) > $mtime ) {
-						break;
-					}
-				}
 				if ( self::isLocalisationOutOfDate( $cache ) ) {
 					$wgMemc->delete( $memcKey );
 					$cache = false;
-					wfDebug( "Language::loadLocalisation(): localisation cache for $code had expired due to update of $file\n" );
+					wfDebug( "Language::loadLocalisation(): localisation cache for $code had expired\n" );
 				} else {
 					self::$mLocalisationCache[$code] = $cache;
 					wfDebug( "Language::loadLocalisation(): got localisation for $code from cache\n" );
@@ -1700,6 +2139,13 @@ class Language {
 
 		# Replace spaces with underscores in namespace names
 		$cache['namespaceNames'] = str_replace( ' ', '_', $cache['namespaceNames'] );
+
+		# And do the same for specialpage aliases. $page is an array.
+		foreach ( $cache['specialPageAliases'] as &$page ) {
+			$page = str_replace( ' ', '_', $page );
+		}
+		# Decouple the reference to prevent accidental damage
+		unset($page);
 		
 		# Save to both caches
 		self::$mLocalisationCache[$code] = $cache;
@@ -1918,6 +2364,3 @@ class Language {
 		return str_replace( '$1', $this->formatNum( $size ), $text );
 	}
 }
-
-
-

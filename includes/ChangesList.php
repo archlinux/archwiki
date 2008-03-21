@@ -58,7 +58,7 @@ class ChangesList {
 		// Precache various messages
 		if( !isset( $this->message ) ) {
 			foreach( explode(' ', 'cur diff hist minoreditletter newpageletter last '.
-				'blocklink history boteditletter' ) as $msg ) {
+				'blocklink history boteditletter semicolon-separator' ) as $msg ) {
 				$this->message[$msg] = wfMsgExt( $msg, array( 'escape') );
 			}
 		}
@@ -176,13 +176,16 @@ class ChangesList {
 		global $wgContLang;
 		$articlelink .= $wgContLang->getDirMark();
 
+		wfRunHooks('ChangesListInsertArticleLink',
+			array(&$this, &$articlelink, &$s, &$rc, $unpatrolled, $watched));
+		
 		$s .= ' '.$articlelink;
 	}
 
 	function insertTimestamp(&$s, $rc) {
 		global $wgLang;
 		# Timestamp
-		$s .= '; ' . $wgLang->time( $rc->mAttribs['rc_timestamp'], true, true ) . ' . . ';
+		$s .= $this->message['semicolon-separator'] . ' ' . $wgLang->time( $rc->mAttribs['rc_timestamp'], true, true ) . ' . . ';
 	}
 
 	/** Insert links to user page, user talk page and eventually a blocking link */
@@ -453,7 +456,7 @@ class EnhancedChangesList extends ChangesList {
 			array_push( $users, $text );
 		}
 
-		$users = ' <span class="changedby">['.implode('; ',$users).']</span>';
+		$users = ' <span class="changedby">[' . implode( $this->message['semicolon-separator'] . ' ', $users ) . ']</span>';
 
 		# Arrow
 		$rci = 'RCI'.$this->rcCacheIndex;
@@ -546,7 +549,7 @@ class EnhancedChangesList extends ChangesList {
 			$r .= $link;
 			$r .= ' (';
 			$r .= $rcObj->curlink;
-			$r .= '; ';
+			$r .= $this->message['semicolon-separator'] . ' ';
 			$r .= $rcObj->lastlink;
 			$r .= ') . . ';
 
@@ -651,7 +654,7 @@ class EnhancedChangesList extends ChangesList {
 		$r .= $this->maybeWatchedLink( $rcObj->link, $rcObj->watched );
 
 		# Diff
-		$r .= ' ('. $rcObj->difflink .'; ';
+		$r .= ' ('. $rcObj->difflink . $this->message['semicolon-separator'] . ' ';
 
 		# Hist
 		$r .= $this->skin->makeKnownLinkObj( $rcObj->getTitle(), wfMsg( 'hist' ), $curIdEq.'&action=history' ) . ') . . ';
@@ -704,4 +707,3 @@ class EnhancedChangesList extends ChangesList {
 	}
 
 }
-

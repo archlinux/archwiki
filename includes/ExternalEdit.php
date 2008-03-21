@@ -34,6 +34,7 @@ class ExternalEdit {
 		$name=$this->mTitle->getText();
 		$pos=strrpos($name,".")+1;
 		header ( "Content-type: application/x-external-editor; charset=".$this->mCharset );
+		header( "Cache-control: no-cache" );
 
 		# $type can be "Edit text", "Edit file" or "Diff text" at the moment
 		# See the protocol specifications at [[m:Help:External editors/Tech]] for
@@ -47,12 +48,7 @@ class ExternalEdit {
 		} elseif($this->mMode=="file") {
 			$type="Edit file";
 			$image = wfLocalFile( $this->mTitle );
-			$img_url = $image->getURL();
-			if(strpos($img_url,"://")) {
-				$url = $img_url;
-			} else {
-				$url = $wgServer . $img_url;
-			}
+			$url = $image->getFullURL();
 			$extension=substr($name, $pos);
 		}
 		$special=$wgLang->getNsText(NS_SPECIAL);

@@ -117,6 +117,10 @@ class LLAuthPlugin extends AuthPlugin {
 		return true;
 	}
 
+	function strictUserAuth( $username ) {
+		return true;
+	}
+
 	function initUser( $user, $autocreate=false ) {
 		$data = $this->getUserData($user->getName());
 		$user->setEmail($data['email']);

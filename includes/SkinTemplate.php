@@ -219,17 +219,10 @@ class SkinTemplate extends Skin {
 		$tpl->set( 'catlinks', $this->getCategories());
 		if( $wgOut->isSyndicated() ) {
 			$feeds = array();
-			foreach( $wgFeedClasses as $format => $class ) {
-				$linktext = $format;
-				if ( $format == "atom" ) {
-					$linktext = wfMsg( 'feed-atom' );
-				} else if ( $format == "rss" ) {
-					$linktext = wfMsg( 'feed-rss' );
-				}
+			foreach( $wgOut->getSyndicationLinks() as $format => $link ) {
 				$feeds[$format] = array(
-					'text' => $linktext,
-					'href' => $wgRequest->appendQuery( "feed=$format" )
-				);
+					'text' => wfMsg( "feed-$format" ),
+					'href' => $link );
 			}
 			$tpl->setRef( 'feeds', $feeds );
 		} else {
@@ -351,13 +344,16 @@ class SkinTemplate extends Skin {
 				$dbr = wfGetDB( DB_SLAVE );
 				$watchlist = $dbr->tableName( 'watchlist' );
 				$sql = "SELECT COUNT(*) AS n FROM $watchlist
-					WHERE wl_title='" . $dbr->strencode($this->mTitle->getDBKey()) .
+					WHERE wl_title='" . $dbr->strencode($this->mTitle->getDBkey()) .
 					"' AND  wl_namespace=" . $this->mTitle->getNamespace() ;
 				$res = $dbr->query( $sql, 'SkinTemplate::outputPage');
 				$x = $dbr->fetchObject( $res );
 				$numberofwatchingusers = $x->n;
 				if ($numberofwatchingusers > 0) {
-					$tpl->set('numberofwatchingusers', wfMsg('number_of_watching_users_pageview', $numberofwatchingusers));
+					$tpl->set('numberofwatchingusers',
+						wfMsgExt('number_of_watching_users_pageview', array('parseinline'),
+						$wgLang->formatNum($numberofwatchingusers))
+					);
 				} else {
 					$tpl->set('numberofwatchingusers', false);
 				}
@@ -602,6 +598,13 @@ class SkinTemplate extends Skin {
 			global $wgContLang;
 			$text = $wgContLang->getFormattedNsText( Namespace::getSubject( $title->getNamespace() ) );
 		}
+		
+		$result = array();
+		if( !wfRunHooks('SkinTemplateTabAction', array(&$this,
+				$title, $message, $selected, $checkEdit,
+				&$classes, &$query, &$text, &$result)) ) {
+			return $result;
+		}
 
 		return array(
 			'class' => implode( ' ', $classes ),
@@ -638,7 +641,7 @@ class SkinTemplate extends Skin {
 	 * @private
 	 */
 	function buildContentActionUrls () {
-		global $wgContLang, $wgOut;
+		global $wgContLang, $wgLang, $wgOut;
 		$fname = 'SkinTemplate::buildContentActionUrls';
 		wfProfileIn( $fname );
 
@@ -685,7 +688,7 @@ class SkinTemplate extends Skin {
 						'href' => $this->mTitle->getLocalUrl( 'action=edit&section=new' )
 					);
 				}
-			} else {
+			} elseif ( $this->mTitle->exists() || $this->mTitle->isAlwaysKnown() ) {
 				$content_actions['viewsource'] = array(
 					'class' => ($action == 'edit') ? 'selected' : false,
 					'text' => wfMsg('viewsource'),
@@ -703,6 +706,22 @@ class SkinTemplate extends Skin {
 					'href' => $this->mTitle->getLocalUrl( 'action=history')
 				);
 
+				if($wgUser->isAllowed('delete')){
+					$content_actions['delete'] = array(
+						'class' => ($action == 'delete') ? 'selected' : false,
+						'text' => wfMsg('delete'),
+						'href' => $this->mTitle->getLocalUrl( 'action=delete' )
+					);
+				}
+				if ( $this->mTitle->quickUserCan( 'move' ) ) {
+					$moveTitle = SpecialPage::getTitleFor( 'Movepage', $this->thispage );
+					$content_actions['move'] = array(
+						'class' => $this->mTitle->isSpecial( 'Movepage' ) ? 'selected' : false,
+						'text' => wfMsg('move'),
+						'href' => $moveTitle->getLocalUrl()
+					);
+				}
+
 				if ( $this->mTitle->getNamespace() !== NS_MEDIAWIKI && $wgUser->isAllowed( 'protect' ) ) {
 					if(!$this->mTitle->isProtected()){
 						$content_actions['protect'] = array(
@@ -719,35 +738,38 @@ class SkinTemplate extends Skin {
 						);
 					}
 				}
-				if($wgUser->isAllowed('delete')){
-					$content_actions['delete'] = array(
-						'class' => ($action == 'delete') ? 'selected' : false,
-						'text' => wfMsg('delete'),
-						'href' => $this->mTitle->getLocalUrl( 'action=delete' )
-					);
-				}
-				if ( $this->mTitle->quickUserCan( 'move' ) ) {
-					$moveTitle = SpecialPage::getTitleFor( 'Movepage', $this->thispage );
-					$content_actions['move'] = array(
-						'class' => $this->mTitle->isSpecial( 'Movepage' ) ? 'selected' : false,
-						'text' => wfMsg('move'),
-						'href' => $moveTitle->getLocalUrl()
-					);
-				}
 			} else {
 				//article doesn't exist or is deleted
-				if( $wgUser->isAllowed( 'delete' ) ) {
+				if( $wgUser->isAllowed( 'deletedhistory' ) && $wgUser->isAllowed( 'undelete' ) ) {
 					if( $n = $this->mTitle->isDeleted() ) {
 						$undelTitle = SpecialPage::getTitleFor( 'Undelete' );
 						$content_actions['undelete'] = array(
 							'class' => false,
-							'text' => wfMsgExt( 'undelete_short', array( 'parsemag' ), $n ),
+							'text' => wfMsgExt( 'undelete_short', array( 'parsemag' ), $wgLang->formatNum($n) ),
 							'href' => $undelTitle->getLocalUrl( 'target=' . urlencode( $this->thispage ) )
 							#'href' => self::makeSpecialUrl( "Undelete/$this->thispage" )
 						);
 					}
 				}
+
+				if ( $this->mTitle->getNamespace() !== NS_MEDIAWIKI && $wgUser->isAllowed( 'protect' ) ) {
+					if( !$this->mTitle->getRestrictions( 'create' ) ) {
+						$content_actions['protect'] = array(
+							'class' => ($action == 'protect') ? 'selected' : false,
+							'text' => wfMsg('protect'),
+							'href' => $this->mTitle->getLocalUrl( 'action=protect' )
+						);
+
+					} else {
+						$content_actions['unprotect'] = array(
+							'class' => ($action == 'unprotect') ? 'selected' : false,
+							'text' => wfMsg('unprotect'),
+							'href' => $this->mTitle->getLocalUrl( 'action=unprotect' )
+						);
+					}
+				}
 			}
+
 			wfProfileOut( "$fname-live" );
 
 			if( $this->loggedin ) {
@@ -1185,4 +1207,7 @@ class QuickTemplate {
 		return ($msg != '-') && ($msg != ''); # ????
 	}
 }
+
+
+
 

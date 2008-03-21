@@ -4,7 +4,7 @@
  * @addtogroup SpecialPage
  */
 
-class ContribsPager extends IndexPager {
+class ContribsPager extends ReverseChronologicalPager {
 	public $mDefaultDirection = true;
 	var $messages, $target;
 	var $namespace = '', $mDb;
@@ -110,33 +110,13 @@ class ContribsPager extends IndexPager {
 		return "</ul>\n";
 	}
 
-	function getNavigationBar() {
-		if ( isset( $this->mNavigationBar ) ) {
-			return $this->mNavigationBar;
-		}
-		$linkTexts = array(
-			'prev' => wfMsgHtml( "sp-contributions-newer", $this->mLimit ),
-			'next' => wfMsgHtml( 'sp-contributions-older', $this->mLimit ),
-			'first' => wfMsgHtml('sp-contributions-newest'),
-			'last' => wfMsgHtml( 'sp-contributions-oldest' )
-		);
-
-		$pagingLinks = $this->getPagingLinks( $linkTexts );
-		$limitLinks = $this->getLimitLinks();
-		$limits = implode( ' | ', $limitLinks );
-		
-		$this->mNavigationBar = "({$pagingLinks['first']} | {$pagingLinks['last']}) " . 
-			wfMsgHtml("viewprevnext", $pagingLinks['prev'], $pagingLinks['next'], $limits);
-		return $this->mNavigationBar;
-	}
-
 	/**
 	 * Generates each row in the contributions list.
 	 *
 	 * Contributions which are marked "top" are currently on top of the history.
-	 * For these contributions, a [rollback] link is shown for users with sysop
-	 * privileges. The rollback link restores the most recent version that was not
-	 * written by the target user.
+	 * For these contributions, a [rollback] link is shown for users with roll-
+	 * back privileges. The rollback link restores the most recent version that
+	 * was not written by the target user.
 	 *
 	 * @todo This would probably look a lot nicer in a table.
 	 */
@@ -159,7 +139,8 @@ class ContribsPager extends IndexPager {
 				$difftext .= $this->messages['newarticle'];
 			}
 
-			if( $wgUser->isAllowed( 'rollback' ) ) {
+			if( !$page->getUserPermissionsErrors( 'rollback', $wgUser )
+			&&  !$page->getUserPermissionsErrors( 'edit', $wgUser ) ) {
 				$topmarktext .= ' '.$sk->generateRollback( $rev );
 			}
 
@@ -265,7 +246,7 @@ function wfSpecialContributions( $par = null ) {
 	} else {
 		$options['namespace'] = '';
 	}
-	if ( $wgUser->isAllowed( 'rollback' ) && $wgRequest->getBool( 'bot' ) ) {
+	if ( $wgUser->isAllowed( 'markbotedit' ) && $wgRequest->getBool( 'bot' ) ) {
 		$options['bot'] = '1';
 	}
 	
@@ -302,7 +283,7 @@ function wfSpecialContributions( $par = null ) {
 
 	$pager = new ContribsPager( $target, $options['namespace'], $options['year'], $options['month'] );
 	if ( !$pager->getNumRows() ) {
-		$wgOut->addWikiText( wfMsg( 'nocontribs' ) );
+		$wgOut->addWikiMsg( 'nocontribs' );
 		return;
 	}
 
@@ -323,7 +304,7 @@ function wfSpecialContributions( $par = null ) {
 			: 'sp-contributions-footer';
 
 
-		$text = wfMsg( $message, $target );
+		$text = wfMsgNoTrans( $message, $target );
 		if( !wfEmptyMsg( $message, $text ) && $text != '-' ) {
 			$wgOut->addHtml( '<div class="mw-contributions-footer">' );
 			$wgOut->addWikiText( $text );
@@ -426,13 +407,20 @@ function contributionsForm( $options ) {
 		Xml::radioLabel( wfMsgExt( 'sp-contributions-newbies', array( 'parseinline' ) ), 'contribs' , 'newbie' , 'newbie', $options['contribs'] == 'newbie' ? true : false ) . '<br />' .
 		Xml::radioLabel( wfMsgExt( 'sp-contributions-username', array( 'parseinline' ) ), 'contribs' , 'user', 'user', $options['contribs'] == 'user' ? true : false ) . ' ' .
 		Xml::input( 'target', 20, $options['target']) . ' '.
-		Xml::label( wfMsg( 'namespace' ), 'namespace' ) .
+		'<span style="white-space: nowrap">' .
+		Xml::label( wfMsg( 'namespace' ), 'namespace' ) . ' ' .
 		Xml::namespaceSelector( $options['namespace'], '' ) .
+		'</span>' .
 		Xml::openElement( 'p' ) .
+		'<span style="white-space: nowrap">' .
 		Xml::label( wfMsg( 'year' ), 'year' ) . ' '.
-		Xml::input( 'year', 4, $options['year'], array('id' => 'year', 'maxlength' => 4) ) . ' '.
+		Xml::input( 'year', 4, $options['year'], array('id' => 'year', 'maxlength' => 4) ) .
+		'</span>' .
+		' '.
+		'<span style="white-space: nowrap">' .
 		Xml::label( wfMsg( 'month' ), 'month' ) . ' '.
 		Xml::monthSelector( $options['month'], -1 ) . ' '.
+		'</span>' .
 		Xml::submitButton( wfMsg( 'sp-contributions-submit' ) ) .
 		Xml::closeElement( 'p' );
 	

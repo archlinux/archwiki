@@ -40,7 +40,7 @@ class ApiLogin extends ApiBase {
 	 * Time (in seconds) a user must wait after submitting
 	 * a bad login (will be multiplied by the THROTTLE_FACTOR for each bad attempt)
 	 */
-	const THROTTLE_TIME = 1;
+	const THROTTLE_TIME = 5;
 
 	/**
 	 * The factor by which the wait-time in between authentication
@@ -91,10 +91,15 @@ class ApiLogin extends ApiBase {
 			'wpRemember' => ''
 		));
 
+		// Init session if necessary
+		if( session_id() == '' ) {
+			wfSetupSession();
+		}
+
 		$loginForm = new LoginForm($params);
 		switch ($loginForm->authenticateUserData()) {
 			case LoginForm :: SUCCESS :
-				global $wgUser;
+				global $wgUser, $wgCookiePrefix;
 
 				$wgUser->setOption('rememberpassword', 1);
 				$wgUser->setCookies();
@@ -103,6 +108,8 @@ class ApiLogin extends ApiBase {
 				$result['lguserid'] = $_SESSION['wsUserID'];
 				$result['lgusername'] = $_SESSION['wsUserName'];
 				$result['lgtoken'] = $_SESSION['wsToken'];
+				$result['cookieprefix'] = $wgCookiePrefix;
+				$result['sessionid'] = session_id();
 				break;
 
 			case LoginForm :: NO_NAME :
@@ -129,6 +136,7 @@ class ApiLogin extends ApiBase {
 
 		if ($result['result'] != 'Success') {
 			$result['wait'] = $this->cacheBadLogin();
+			$result['details'] = "Please wait " . self::THROTTLE_TIME . " seconds before next log-in attempt";
 		}
 		// if we were allowed to try to login, memcache is fine
 		
@@ -209,8 +217,10 @@ class ApiLogin extends ApiBase {
 	private function getMemCacheKey() {
 		return wfMemcKey( 'apilogin', 'badlogin', 'ip', wfGetIP() );
 	}
+	
+	public function mustBePosted() { return true; }
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array (
 			'name' => null,
 			'password' => null,
@@ -218,7 +228,7 @@ class ApiLogin extends ApiBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'name' => 'User Name',
 			'password' => 'Password',
@@ -226,7 +236,7 @@ class ApiLogin extends ApiBase {
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return array (
 			'This module is used to login and get the authentication tokens. ',
 			'In the event of a successful log-in, a cookie will be attached',
@@ -243,7 +253,7 @@ class ApiLogin extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiLogin.php 24695 2007-08-09 09:53:05Z yurik $';
+		return __CLASS__ . ': $Id: ApiLogin.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }
 

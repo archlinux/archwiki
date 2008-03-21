@@ -76,7 +76,7 @@ class ApiQueryLangLinks extends ApiQueryBase {
 		$db->freeResult($res);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'Returns all interlanguage links from the given page(s)';
 	}
 
@@ -88,7 +88,7 @@ class ApiQueryLangLinks extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryLangLinks.php 23819 2007-07-07 03:05:09Z yurik $';
+		return __CLASS__ . ': $Id: ApiQueryLangLinks.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }
 

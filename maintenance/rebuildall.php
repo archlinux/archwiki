@@ -22,8 +22,7 @@ rebuildTextIndex( $database );
 createTextIndex( $database );
 
 print "\n\n** Rebuilding recentchanges table:\n";
-rebuildRecentChangesTablePass1();
-rebuildRecentChangesTablePass2();
+rebuildRecentChangesTable();
 
 # Doesn't work anymore
 # rebuildLinkTables();

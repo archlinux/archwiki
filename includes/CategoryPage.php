@@ -37,6 +37,19 @@ class CategoryPage extends Article {
 		}
 	}
 
+	/**
+	 * This page should not be cached if 'from' or 'until' has been used
+	 * @return bool
+	 */
+	function isFileCacheable() {
+		global $wgRequest;
+
+		return ( ! Article::isFileCacheable()
+				|| $wgRequest->getVal( 'from' )
+				|| $wgRequest->getVal( 'until' )
+		) ? false : true;
+	}
+
 	function openShowCategory() {
 		# For overloading
 	}
@@ -202,7 +215,7 @@ class CategoryViewer {
 			array( 'page_title', 'page_namespace', 'page_len', 'page_is_redirect', 'cl_sortkey' ),
 			array( $pageCondition,
 			       'cl_from          =  page_id',
-			       'cl_to'           => $this->title->getDBKey()),
+			       'cl_to'           => $this->title->getDBkey()),
 			       #'page_is_redirect' => 0),
 			#+ $pageCondition,
 			__METHOD__,
@@ -410,7 +423,7 @@ class CategoryViewer {
 	 * @private
 	 */
 	function pagingLinks( $title, $first, $last, $limit, $query = array() ) {
-		global $wgUser, $wgLang;
+		global $wgLang;
 		$sk = $this->getSkin();
 		$limitText = $wgLang->formatNum( $limit );
 

@@ -38,11 +38,21 @@ function wfSpecialAllpages( $par=NULL, $specialPage ) {
  * @addtogroup SpecialPage
  */
 class SpecialAllpages {
-	var $maxPerPage=960;
-	var $topLevelMax=50;
-	var $name='Allpages';
-	# Determines, which message describes the input field 'nsfrom' (->SpecialPrefixindex.php)
-	var $nsfromMsg='allpagesfrom';
+	/**
+	 * Maximum number of pages to show on single subpage.
+	 */
+	protected $maxPerPage = 960;
+
+	/**
+	 * Name of this special page. Used to make title objects that reference back
+	 * to this page.
+	 */
+	protected $name = 'Allpages';
+
+	/**
+	 * Determines, which message describes the input field 'nsfrom'.
+	 */
+	protected $nsfromMsg = 'allpagesfrom';
 
 /**
  * HTML for the top form
@@ -63,7 +73,7 @@ function namespaceForm ( $namespace = NS_MAIN, $from = '' ) {
 				Xml::label( wfMsg( $this->nsfromMsg ), 'nsfrom' ) .
 			"</td>
 			<td>" .
-				Xml::input( 'from', 20, htmlspecialchars ( $from ), array( 'id' => 'nsfrom' ) ) .
+				Xml::input( 'from', 20, $from, array( 'id' => 'nsfrom' ) ) .
 			"</td>
 		</tr>
 		<tr>
@@ -86,7 +96,6 @@ function namespaceForm ( $namespace = NS_MAIN, $from = '' ) {
  */
 function showToplevel ( $namespace = NS_MAIN, $including = false ) {
 	global $wgOut, $wgContLang;
-	$fname = "indexShowToplevel";
 	$align = $wgContLang->isRtl() ? 'left' : 'right';
 
 	# TODO: Either make this *much* faster or cache the title index points
@@ -105,7 +114,7 @@ function showToplevel ( $namespace = NS_MAIN, $including = false ) {
 		if ( ! $dbr->implicitOrderby() ) {
 			$options['ORDER BY'] = 'page_title';
 		}
-		$firstTitle = $dbr->selectField( 'page', 'page_title', $where, $fname, $options );
+		$firstTitle = $dbr->selectField( 'page', 'page_title', $where, __METHOD__, $options );
 		$lastTitle = $firstTitle;
 
 		# This array is going to hold the page_titles in order.
@@ -122,7 +131,7 @@ function showToplevel ( $namespace = NS_MAIN, $including = false ) {
 				'page', /* FROM */
 				'page_title', /* WHAT */
 				$where + array( $chunk),
-				$fname,
+				__METHOD__,
 				array ('LIMIT' => 2, 'OFFSET' => $this->maxPerPage - 1, 'ORDER BY' => 'page_title') );
 
 			if ( $s = $dbr->fetchObject( $res ) ) {
@@ -133,7 +142,7 @@ function showToplevel ( $namespace = NS_MAIN, $including = false ) {
 					array(
 						'page_namespace' => $namespace,
 						$chunk
-					), $fname );
+					), __METHOD__ );
 				array_push( $lines, $endTitle );
 				$done = true;
 			}
@@ -214,7 +223,6 @@ function showline( $inpoint, $outpoint, $namespace = NS_MAIN ) {
 function showChunk( $namespace = NS_MAIN, $from, $including = false ) {
 	global $wgOut, $wgUser, $wgContLang;
 
-	$fname = 'indexShowChunk';
 	$sk = $wgUser->getSkin();
 
 	$fromList = $this->getNamespaceKeyAndText($namespace, $from);
@@ -239,7 +247,7 @@ function showChunk( $namespace = NS_MAIN, $from, $including = false ) {
 				'page_namespace' => $namespace,
 				'page_title >= ' . $dbr->addQuotes( $fromKey )
 			),
-			$fname,
+			__METHOD__,
 			array(
 				'ORDER BY'  => 'page_title',
 				'LIMIT'     => $this->maxPerPage + 1,
@@ -261,7 +269,7 @@ function showChunk( $namespace = NS_MAIN, $from, $including = false ) {
 			if( $n % 3 == 0 ) {
 				$out .= '<tr>';
 			}
-			$out .= "<td>$link</td>";
+			$out .= "<td width=\"33%\">$link</td>";
 			$n++;
 			if( $n % 3 == 0 ) {
 				$out .= '</tr>';
@@ -286,7 +294,7 @@ function showChunk( $namespace = NS_MAIN, $from, $including = false ) {
 				'page',
 				'page_title',
 				array( 'page_namespace' => $namespace, 'page_title < '.$dbr->addQuotes($from) ),
-				$fname,
+				__METHOD__,
 				array( 'ORDER BY' => 'page_title DESC', 'LIMIT' => $this->maxPerPage, 'OFFSET' => ($this->maxPerPage - 1 ) )
 			);
 
@@ -301,7 +309,7 @@ function showChunk( $namespace = NS_MAIN, $from, $including = false ) {
 				if ( ! $dbr->implicitOrderby() ) {
 					$options['ORDER BY'] = 'page_title';
 				}
-				$reallyFirstPage_title = $dbr->selectField( 'page', 'page_title', array( 'page_namespace' => $namespace ), $fname, $options );
+				$reallyFirstPage_title = $dbr->selectField( 'page', 'page_title', array( 'page_namespace' => $namespace ), __METHOD__, $options );
 				# Show the previous link if it s not the current requested chunk
 				if( $from != $reallyFirstPage_title ) {
 					$prevTitle =  Title::makeTitle( $namespace, $reallyFirstPage_title );

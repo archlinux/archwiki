@@ -2,7 +2,9 @@
 /** Ossetic (Иронау)
  *
  * @addtogroup Language
+ *
  */
+
 $fallback = 'ru';
 
 $skinNames = array(
@@ -37,7 +39,6 @@ $namespaceNames = array(
 $linkTrail = '/^((?:[a-z]|а|æ|б|в|г|д|е|ё|ж|з|и|й|к|л|м|н|о|п|р|с|т|у|ф|х|ц|ч|ш|щ|ъ|ы|ь|э|ю|я|“|»)+)(.*)$/sDu';
 $fallback8bitEncoding =  'windows-1251';
 
-
 $messages = array(
 # User preference toggles
 'tog-underline' => 'Æрвитæнты бын хахх',
@@ -61,6 +62,7 @@ $messages = array(
 'mypage'         => 'Дæхи фарс',
 'mytalk'         => 'Дæумæ цы дзурынц',
 'navigation'     => 'хъæугæ æрвитæнтæ',
+'and'            => 'æмæ',
 
 'errorpagetitle'   => 'Рæдыд',
 'tagline'          => 'Сæрибар энциклопеди Википедийы æрмæг.',
@@ -85,7 +87,7 @@ $messages = array(
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'currentevents'     => 'Ног хабæрттæ',
-'currentevents-url' => 'Xabar',
+'currentevents-url' => 'Project:Xabar',
 'mainpage'          => 'Сæйраг фарс',
 'portal'            => 'Архайджыты æхсæнад',
 
@@ -96,7 +98,7 @@ $messages = array(
 'showtoc'         => 'равдис',
 'hidetoc'         => 'бамбæхс',
 
-# Short words for each namespace, by default used in the 'article' tab in monobook
+# Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-user'      => 'Архайæджы фарс',
 'nstab-special'   => 'Сæрмагонд фарс',
 'nstab-image'     => 'Ныв',
@@ -135,7 +137,6 @@ $messages = array(
 'newarticle'  => '(Ног)',
 
 # History pages
-'revhistory' => 'Ивддзинæдты истори',
 'last'       => 'раздæры',
 'histlegend' => 'Куыд æй æмбарын: (нырыккон) = нырыккон версийæ хъауджыдæрдзинад, (раздæры) = раздæры версийæ хъауджыдæрдзинад, Ч = чысыл ивддзинад.',
 
@@ -143,12 +144,11 @@ $messages = array(
 'lineno' => 'Рæнхъ $1:',
 
 # Search results
-'searchresults'  => 'Цы ссардæуы',
-'titlematches'   => 'Статьяты сæргæндты æмцаутæ',
-'textmatches'    => 'Статьяты æмцаутæ',
-'prevn'          => '$1 фæстæмæ',
-'nextn'          => '$1 размæ',
-'blanknamespace' => '(Сæйраг)',
+'searchresults' => 'Цы ссардæуы',
+'titlematches'  => 'Статьяты сæргæндты æмцаутæ',
+'textmatches'   => 'Статьяты æмцаутæ',
+'prevn'         => '$1 фæстæмæ',
+'nextn'         => '$1 размæ',
 
 # Preferences page
 'qbsettings-none'         => 'Ма равдис',
@@ -185,8 +185,10 @@ $3',
 'byname'       => 'номмæ гæсгæ',
 'bydate'       => 'рæстæгмæ гæсгæ',
 'bysize'       => 'асмæ гæсгæ',
-'imghistory'   => 'Нывы ивддзинæдты лог',
 'linkstoimage' => 'Ацы нывæй чи пайда кæны, ахæм статьятæ:',
+
+# Random page
+'randompage' => 'Æнæбары æвзæрст фарс',
 
 # Statistics
 'userstatstext' => 'Регистрацигонд æрцыдысты <b>$1</b> архайджыты, уыдонæй <b>$2</b> — админтæ (кæс $3).',
@@ -197,7 +199,6 @@ $3',
 'lonelypages'  => 'Сидзæр фæрстæ',
 'wantedpages'  => 'Хъæугæ фæрстæ',
 'allpages'     => 'Æппæт фæрстæ',
-'randompage'   => 'Æнæбары æвзæрст фарс',
 'shortpages'   => 'Цыбыр фæрстæ',
 'longpages'    => 'Даргъ фæрстæ',
 'listusers'    => 'Архайджыты номхыгъд',
@@ -237,6 +238,9 @@ $3',
 # Delete/protect/revert
 'exblank' => 'фарс афтид уыдис',
 
+# Namespace form on various pages
+'blanknamespace' => '(Сæйраг)',
+
 # Contributions
 'contributions' => 'Йæ бавæрд',
 'mycontris'     => 'Дæ бавæрд',
@@ -261,15 +265,13 @@ $3',
 'importnotext' => 'Афтид у кæнæ текст дзы нæй',
 
 # Attribution
-'and'    => 'æмæ',
 'others' => 'æндæртæ',
 
 # Spam protection
 'subcategorycount'     => 'Ацы категорийы мидæг $1 дæлкатегорийы ис.',
 'categoryarticlecount' => 'Ацы категорийы мидæг $1 статьяйы ис.',
 
+# Special:Newimages
 'newimages' => 'Ног нывты галерей',
 
 );
-
-

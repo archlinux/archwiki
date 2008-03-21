@@ -32,6 +32,13 @@ class RepoGroup {
 	}
 
 	/**
+	 * Set the singleton instance to a given object
+	 */
+	static function setSingleton( $instance ) {
+		self::$instance = $instance;
+	}
+
+	/**
 	 * Construct a group of file repositories. 
 	 * @param array $data Array of repository info arrays. 
 	 *     Each info array is an associative array with the 'class' member 
@@ -47,8 +54,8 @@ class RepoGroup {
 	 * Search repositories for an image.
 	 * You can also use wfGetFile() to do this.
 	 * @param mixed $title Title object or string
-	 * @param mixed $time The 14-char timestamp before which the file should 
-	 *                    have been uploaded, or false for the current version
+	 * @param mixed $time The 14-char timestamp the file should have 
+	 *                    been uploaded, or false for the current version
 	 * @return File object or false if it is not found
 	 */
 	function findFile( $title, $time = false ) {
@@ -70,19 +77,53 @@ class RepoGroup {
 	}
 
 	/**
+	 * Interface for FileRepo::checkRedirect()
+	 */
+	function checkRedirect( $title ) {
+		if ( !$this->reposInitialised ) {
+			$this->initialiseRepos();
+		}
+
+		$redir = $this->localRepo->checkRedirect( $title );
+		if( $redir ) {
+			return $redir;
+		}
+		foreach ( $this->foreignRepos as $repo ) {
+			$redir = $repo->checkRedirect( $title );
+			if ( $redir ) {
+				return $redir;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Get the repo instance with a given key.
 	 */
 	function getRepo( $index ) {
 		if ( !$this->reposInitialised ) {
 			$this->initialiseRepos();
 		}
-		if ( $index == 'local' ) {
+		if ( $index === 'local' ) {
 			return $this->localRepo;
 		} elseif ( isset( $this->foreignRepos[$index] ) ) {
 			return $this->foreignRepos[$index];
 		} else {
 			return false;
 		}
+	}
+	/**
+	 * Get the repo instance by its name
+	 */
+	function getRepoByName( $name ) {
+		if ( !$this->reposInitialised ) {
+			$this->initialiseRepos();
+		}
+		foreach ( $this->foreignRepos as $key => $repo ) {
+			if ( $repo->name == $name)
+				return $repo;
+		}
+		return false;
 	}
 
 	/**

@@ -4,7 +4,15 @@
  * @addtogroup Language
  *
  * @author Niklas Laxström
- *
+ * @author Yyy
+ * @author Knakts
+ * @author לערי ריינהארט
+ * @author Nike
+ * @author Siebrand
+ * @author SPQRobin
+ */
+
+/*
  * @copyright Copyright © 2006, Niklas Laxström
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
@@ -134,6 +142,7 @@ $messages = array(
 'mytalk'         => 'Mana diskusija',
 'anontalk'       => 'Šīs IP adreses diskusija',
 'navigation'     => 'Navigācija',
+'and'            => 'un',
 
 'errorpagetitle'    => 'Kļūda',
 'returnto'          => 'Atgriezties: $1.',
@@ -188,9 +197,9 @@ $messages = array(
 'bugreports'        => 'Kļūdu paziņojumi',
 'copyright'         => 'Saturs ir pieejams saskaņā ar $1.',
 'copyrightpagename' => '{{grammar:ģenitīvs|{{SITENAME}}}} autortiesības',
-'copyrightpage'     => 'Project:Autortiesības',
+'copyrightpage'     => '{{ns:project}}:Autortiesības',
 'currentevents'     => 'Aktualitātes',
-'currentevents-url' => 'Aktualitātes',
+'currentevents-url' => 'Project:Aktualitātes',
 'disclaimers'       => 'Saistību atrunas',
 'edithelp'          => 'Palīdzība izmaiņām',
 'mainpage'          => 'Sākumlapa',
@@ -221,8 +230,9 @@ $messages = array(
 'viewdeleted'         => 'Skatīt $1?',
 'restorelink'         => '$1 dzēstās versijas',
 'feedlinks'           => 'Barotne:',
+'red-link-title'      => '$1 (vēl nav uzrakstīts)',
 
-# Short words for each namespace, by default used in the 'article' tab in monobook
+# Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'Raksts',
 'nstab-user'      => 'Lietotāja lapa',
 'nstab-media'     => 'Multivides lapa',
@@ -310,7 +320,7 @@ Tavs lietotāja konts ir izveidots. Neaizmirsti, ka ir iespējams mainīt ''{{gr
 'loginsuccesstitle'          => 'Ieiešana veiksmīga',
 'loginsuccess'               => 'Tu esi ienācis {{grammar:lokatīvs|{{SITENAME}}}} kā "$1".',
 'nosuchuser'                 => 'Šeit nav lietotāja ar vārdu "$1". Pārbaudi, vai pareizi uzrakstīts, vai arī izveido jaunu kontu.',
-'nosuchusershort'            => 'Šeit nav lietotāja ar vārdu "$1". Pārbaudi vai pareizi uzrakstīts.',
+'nosuchusershort'            => 'Šeit nav lietotāja ar vārdu "<nowiki>$1</nowiki>". Pārbaudi vai pareizi uzrakstīts.',
 'nouserspecified'            => 'Tev jānorāda lietotājvārds.',
 'wrongpassword'              => 'Tu ievadīji nepareizu paroli. Lūdzu, mēģini vēlreiz.',
 'wrongpasswordempty'         => 'Parole bija tukša. Lūdzu mēģini vēlreiz.',
@@ -371,7 +381,7 @@ Ludzu, nomaini paroli, kad esi veiksmigi iekluvis ieksa.',
 'missingsummary'           => "'''Atgādinājums''': Tu neesi norādījis izmaiņu kopsavilkumu. Vēlreiz klikšķinot uz \"Saglabāt lapu\", Tavas izmaiņas tiks saglabātas bez kopsavilkuma.",
 'missingcommenttext'       => 'Lūdzu, ievadi tekstu zemāk redzamajā logā!',
 'blockedtitle'             => 'Lietotājs ir bloķēts.',
-'blockedtext'              => '$1 ir nobloķējis tavu lietotāja vārdu vai IP adresi. Iemesls tam ir:<br />\'\'$2\'\'<br />. Tu vari sazināties ar $1 vai kādu citu [[{{MediaWiki:grouppage-sysop}}|administratoru]] lai apspriestu šo bloku.
+'blockedtext'              => '$1 ir nobloķējis tavu lietotāja vārdu vai IP adresi. Iemesls tam ir:<br />\'\'$2\'\'<br />. Tu vari sazināties ar $1 vai kādu citu [[{{MediaWiki:Grouppage-sysop}}|administratoru]] lai apspriestu šo bloku.
 
 Pievērs uzmanību, tam, ka ja tu neesi norādījis derīgu e-pasta adresi [[Special:Preferences|user preferences]], tev nedarbosies "sūtīt e-pastu" iespēja.
 
@@ -395,7 +405,7 @@ Tava IP adrese ir $3. Lūdzu iekļauj to visos turpmākajos pieprasījumos.',
 ** [[Special:Search/{{PAGENAME}}|spied šeit]], lai meklētu {{grammar:lokatīvs|{{SITENAME}}}} informāciju par jēdzienu \"{{PAGENAME}}\".
 </div>",
 'anontalkpagetext'         => "----''Šī ir diskusiju lapa anonīmam lietotājam, kurš vēl nav kļuvis par reģistrētu lietotāju vai arī neizmanto savu lietotājvārdu. Tādēļ mums ir jāizmanto skaitliskā [[IP adrese]], lai viņu identificētu. Šāda IP adrese var būt vairākiem lietotājiem. Ja tu esi anonīms lietotājs un uzskati, ka tev ir adresēti neatbilstoši komentāri, lūdzu, [[Special:Userlogin|kļūsti par lietotāju vai arī izmanto jau izveidotu lietotājvārdu]], lai izvairītos no turpmākām neskaidrībām un tu netiktu sajaukts ar citiem anonīmiem lietotājiem.''",
-'noarticletext'            => '(Šajā lapā šobrīd nav nekāda teksta)',
+'noarticletext'            => 'Šajā lapā šobrīd nav nekāda teksta',
 'clearyourcache'           => "'''Piezīme:''' Pēc saglabāšanas iztīri pārlūka kešatmiņu, lai pārmaiņas būtu redzamas: Mozilla/Safari/Konqueror: turi nospiestu '''Shift''' un klikšķini '''Reload''' (vai spied '''Ctrl-Shift-r'''), IE: spied '''Ctrl-F5''', Opera: spied '''F5'''.",
 'usercssjsyoucanpreview'   => '<strong>Ieteikums:</strong> Lieto pirmsskata pogu, lai pārbaudītu savu jauno CSS/JS pirms saglabāšanas.',
 'usercsspreview'           => "'''Atceries, ka šis ir tikai tava lietotāja CSS pirmskats, lapa vēl nav saglabāta!'''",
@@ -429,7 +439,6 @@ Tu apliecini, ka šo rakstu esi rakstījis vai papildinājis pats vai izmantojis
 'templatesused'            => '<br />Šajā lapā izmantotās veidnes:',
 
 # History pages
-'revhistory'          => 'Versiju hronoloģija',
 'nohistory'           => 'Šai lapai nav pieejama versiju hronoloģija.',
 'revnotfound'         => 'Versija nav atrasta',
 'revnotfoundtext'     => 'Meklētā vecā lapas versija netika atrasta. Lūdzu pārbaudi lietoto URL.',
@@ -461,16 +470,13 @@ m = maznozīmīgs labojums.',
 'rev-delundel'        => 'rādīt/slēpt',
 
 # Diffs
-'difference'                => '(Atšķirības starp versijām)',
-'loadingrev'                => 'ielādē atšķirību versiju',
-'lineno'                    => '$1. rindiņa:',
-'editcurrent'               => 'Izmainīt šīs lapas pašreizējo versiju',
-'selectolderversionfordiff' => 'Izvēlies vecāku versiju, ar kuru salīdzināt',
-'compareselectedversions'   => 'Salīdzināt izvēlētās versijas',
+'difference'              => '(Atšķirības starp versijām)',
+'lineno'                  => '$1. rindiņa:',
+'compareselectedversions' => 'Salīdzināt izvēlētās versijas',
 
 # Search results
 'searchresults'         => 'Meklēšanas rezultāti',
-'searchresulttext'      => 'Lai iegūtu vairāk informācijas par meklēšanu {{grammar:akuzatīvs|{{SITENAME}}}}, skat. [[Project:Searching|{{grammar:ģenitīvs|{{SITENAME}}}} meklēšana]].',
+'searchresulttext'      => 'Lai iegūtu vairāk informācijas par meklēšanu {{grammar:akuzatīvs|{{SITENAME}}}}, skat. [[{{MediaWiki:Helppage}}|{{grammar:ģenitīvs|{{SITENAME}}}} meklēšana]].',
 'searchsubtitle'        => 'Pieprasījums: [[$1]] [[Special:Allpages/$1|&#x5B;Indekss&#x5D;]]',
 'searchsubtitleinvalid' => 'Pieprasījums: $1',
 'noexactmatch'          => "'''Lapas ar nosaukumu \"\$1\" šeit nav.''' Tu vari to [[:\$1|izveidot]].",
@@ -590,10 +596,10 @@ Ieteicamie formāti ir:
 * OGG - ja tas ir skaņas fails.
 
 Lūdzu, pārliecinies, ka faila nosaukums ir pietiekami aprakstošs, lai izvairītos no neskaidrībām. Lai attēlu pēc tam ievietotu kādā lapā, izmanto šādi noformētu linkus:
-* '''<nowiki>[[</nowiki>{{ns:Image}}<nowiki>:Fails.jpg|paskaidrojošs teksts]]</nowiki>'''
-* '''<nowiki>[[</nowiki>{{ns:Image}}<nowiki>:Fails.png|paskaidrojošs teksts]]</nowiki>'''
+* '''<nowiki>[[</nowiki>{{ns:image}}<nowiki>:Fails.jpg|paskaidrojošs teksts]]</nowiki>'''
+* '''<nowiki>[[</nowiki>{{ns:image}}<nowiki>:Fails.png|paskaidrojošs teksts]]</nowiki>'''
 vai skaņām
-* '''<nowiki>[[</nowiki>{{ns:Media}}<nowiki>:Fails.ogg]]</nowiki>'''
+* '''<nowiki>[[</nowiki>{{ns:media}}<nowiki>:Fails.ogg]]</nowiki>'''
 
 Lūdzu, ņem vērā, ka tāpat kā citas wiki lapas arī tevis augšuplādētos failus citi var mainīt vai dzēst, ja uzskata, ka tas nāktu par labu šim projektam, kā arī atceries, ka tev var tikt liegta augšupielādes iespēja, ja tu šo sistēmu.",
 'uploadlog'            => 'augšupielādes reģistrs',
@@ -653,6 +659,9 @@ Lūdzu, ņem vērā, ka tāpat kā citas wiki lapas arī tevis augšuplādētos 
 'unusedtemplatestext' => 'Šajā lapā ir uzskaitītas visas veidnes, kas nav iekļautas nevienā citā lapā. Pirms dzēšanas jāpārbauda citu veidu saites.',
 'unusedtemplateswlh'  => 'citas saites',
 
+# Random page
+'randompage' => 'Nejauša lapa',
+
 # Statistics
 'statistics'    => 'Statistika',
 'sitestats'     => '{{grammar:ģenitīvs|{{SITENAME}}}} statistika',
@@ -698,7 +707,6 @@ The [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] length is '''\$7''
 'mostrevisions'           => 'Raksti, kuriem ir visvairāk iepriekšēju versiju',
 'allpages'                => 'Visas lapas',
 'prefixindex'             => 'Meklēt pēc virsraksta pirmajiem burtiem',
-'randompage'              => 'Nejauša lapa',
 'shortpages'              => 'Īsākās lapas',
 'longpages'               => 'Garākās lapas',
 'deadendpages'            => 'Lapas bez izejošām saitēm',
@@ -706,7 +714,6 @@ The [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] length is '''\$7''
 'specialpages'            => 'Īpašās lapas',
 'spheading'               => 'Visiem lietotājiem pieejamās īpašās lapas',
 'restrictedpheading'      => 'Ierobežotās īpašās lapas',
-'rclsub'                  => '(lapās, kurās ir norādes uz "$1")',
 'newpages'                => 'Jaunas lapas',
 'ancientpages'            => 'Senākās lapas',
 'move'                    => 'Pārvietot',
@@ -755,11 +762,11 @@ Tu vari sašaurināt aplūkojamo reģistru, izvēloties reģistra veidu, lietot�
 'watchnologin'         => 'Neesi iegājis',
 'watchnologintext'     => 'Tev ir [[Special:Userlogin|jāieiet]], lai mainītu uzraugāmo lapu sarakstu.',
 'addedwatch'           => 'Pievienots uzraugāmo sarakstam.',
-'addedwatchtext'       => "Lapa \"\$1\" ir pievienota [[Special:Watchlist|tevis uzraudzītajām lapām]], kur tiks parādītas izmaiņas, kas izdarītas šajā lapā vai šīs lapas diskusiju lapā, kā arī šī lapa tiks iezīmēta '''pustrekna''' [[Special:Recentchanges|pēdējo izmaiņu lapā]], lai to būtu vieglāk pamanīt.
+'addedwatchtext'       => "Lapa \"<nowiki>\$1</nowiki>\" ir pievienota [[Special:Watchlist|tevis uzraudzītajām lapām]], kur tiks parādītas izmaiņas, kas izdarītas šajā lapā vai šīs lapas diskusiju lapā, kā arī šī lapa tiks iezīmēta '''pustrekna''' [[Special:Recentchanges|pēdējo izmaiņu lapā]], lai to būtu vieglāk pamanīt.
 
 Ja vēlāk pārdomāsi un nevēlēsies vairs uzraudzīt šo lapu, klikšķini uz saites '''neuzraudzīt''' rīku joslā.",
 'removedwatch'         => 'Lapa vairs netiek uzraudzīta',
-'removedwatchtext'     => 'Lapa "$1" ir izņemta no tava uzraugāmo lapu saraksta.',
+'removedwatchtext'     => 'Lapa "<nowiki>$1</nowiki>" ir izņemta no tava uzraugāmo lapu saraksta.',
 'watch'                => 'Uzraudzīt',
 'watchthispage'        => 'Uzraudzīt šo lapu',
 'unwatch'              => 'Neuzraudzīt',
@@ -785,11 +792,10 @@ Ja vēlāk pārdomāsi un nevēlēsies vairs uzraudzīt šo lapu, klikšķini uz
 'excontentauthor'    => 'saturs bija: "$1" (vienīgais autors: [[Special:Contributions/$2|$2]])',
 'exbeforeblank'      => "lapas saturs pirms satura dzēšanas bija šāds: '$1'",
 'exblank'            => 'lapa bija tukša',
-'confirmdelete'      => 'Apstiprināt dzēšanu',
-'deletesub'          => '(Dzēst "$1")',
 'historywarning'     => 'Brīdinājums: Tu dzēsīsi lapu, kurai ir saglabātas iepriekšējas versijas.',
 'confirmdeletetext'  => 'Tu tūlīt no datubāzes dzēsīsi lapu vai attēlu, kā arī to iepriekšējās versijas. Lūdzu, apstiprini, ka tu tiešām to vēlies darīt, ka tu apzinies sekas un ka tu to dari saskaņā ar [[Project:Vadlīnijas|vadlīnijām]].',
-'deletedtext'        => 'Lapa "$1" ir izdzēsta.
+'actioncomplete'     => 'Darbība pabeigta',
+'deletedtext'        => 'Lapa "<nowiki>$1</nowiki>" ir izdzēsta.
 Šeit var apskatīties pēdējos izdzēstos: "$2".',
 'deletedarticle'     => 'izdzēsu "$1"',
 'dellogpage'         => 'Dzēšanas reģistrs',
@@ -805,7 +811,7 @@ Ja vēlāk pārdomāsi un nevēlēsies vairs uzraudzīt šo lapu, klikšķini uz
 'alreadyrolled'      => 'Nav iespējams novērst pēdējās izmaiņas, ko lapā [[$1]] saglabāja [[User:$2|$2]] ([[User talk:$2|Diskusija]]). Kāds cits jau ir rediģējis šo lapu vai novērsis izmaiņas.
 
 Pēdējās izmaiņas saglabāja [[User:$3|$3]] ([[User talk:$3|diskusija]])',
-'revertpage'         => 'Novērsu izmaiņas, ko izdarīja [[Special:Contributions/$2|$2]], atjaunoju versiju, ko saglabāja $1',
+'revertpage'         => 'Novērsu izmaiņas, ko izdarīja [[Special:Contributions/$2|$2]], atjaunoju versiju, ko saglabāja $1', # Additional available: $3: revid of the revision reverted to, $4: timestamp of the revision reverted to, $5: revid of the revision reverted from, $6: timestamp of the revision reverted from
 'sessionfailure'     => "Ir radusies problēma ar sesijas autentifikāciju;
 šī darbība ir atcelta, lai novērstu lietotājvārda iespējami ļaunprātīgu izmantošanu.
 Lūdzu, spied \"''back''\" un atjaunini iepriekšējo lapu. Tad mēģini vēlreiz.",
@@ -840,21 +846,20 @@ Ja pēc dzēšanas ir izveidota jauna lapa ar tādu pašu nosaukumu, atjaunotās
 'nocontribs'    => 'Netika atrastas izmaiņas, kas atbilstu šiem kritērijiem.',
 'uctop'         => '(pēdējā izmaiņa)',
 
-'sp-contributions-newest'   => 'jaunākās',
-'sp-contributions-oldest'   => 'senākās',
-'sp-contributions-newer'    => 'jaunākas $1',
-'sp-contributions-older'    => 'senākas $1',
 'sp-contributions-username' => 'IP adrese vai lietotāja vārds:',
 
 'sp-newimages-showfrom' => 'Rādīt jaunos attēlus sākot no $1',
 
 # What links here
-'whatlinkshere' => 'Norādes uz šo rakstu',
-'linklistsub'   => '(Saišu uzskaitījums)',
-'linkshere'     => 'Šajās lapās ir norādes uz šo lapu:',
-'nolinkshere'   => 'Nevienā lapā nav norāžu uz šo lapu.',
-'isredirect'    => 'pāradresācijas lapa',
-'istemplate'    => 'izsaukts',
+'whatlinkshere'       => 'Norādes uz šo rakstu',
+'linklistsub'         => '(Saišu uzskaitījums)',
+'linkshere'           => 'Šajās lapās ir norādes uz šo lapu:',
+'nolinkshere'         => 'Nevienā lapā nav norāžu uz šo lapu.',
+'isredirect'          => 'pāradresācijas lapa',
+'istemplate'          => 'izsaukts',
+'whatlinkshere-prev'  => '{{PLURAL:$1|iepriekšējo|iepriekšējos $1}}',
+'whatlinkshere-next'  => '{{PLURAL:$1|nākamo|nākamos $1}}',
+'whatlinkshere-links' => '← saites',
 
 # Block/unblock
 'blockip'            => 'Bloķēt lietotāju',
@@ -872,7 +877,7 @@ Norādi konkrētu iemeslu (piemēram, linkus uz vandalizētajām lapām).',
 ** Ievieto nesakarīgus simbolus sakopojumus',
 'ipbsubmit'          => 'Bloķēt šo lietotāju',
 'ipbother'           => 'Cits laiks',
-'ipboptions'         => '2 stundas:2 hours,1 diena:1 day,3 dienas:3 days,1 nedēļa:1 week,2 nedēļas:2 weeks,1 mēnesis:1 month,3 mēneši:3 months,6 mēneši:6 months,1 gads:1 year,uz nenoteiktu laiku:infinite',
+'ipboptions'         => '2 stundas:2 hours,1 diena:1 day,3 dienas:3 days,1 nedēļa:1 week,2 nedēļas:2 weeks,1 mēnesis:1 month,3 mēneši:3 months,6 mēneši:6 months,1 gads:1 year,uz nenoteiktu laiku:infinite', # display1:time1,display2:time2,...
 'ipbotheroption'     => 'cits',
 'badipaddress'       => 'Nederīga IP adrese',
 'blockipsuccesssub'  => 'Nobloķēts veiksmīgi',
@@ -900,7 +905,7 @@ Tev ir jāpārliecinās, vai saites vēl aizvien ved tur, kur tās ir paredzēta
 <b>BRĪDINĀJUMS!</b>
 Populārām lapām tā var būt krasa un negaidīta pārmaiņa; pirms turpināšanas vēlreiz pārdomā, vai tu izproti visas iespējamās sekas.",
 'movepagetalktext' => "Saistītā diskusiju lapa, ja tāda eksistē, tiks automātiski pārvietota, '''izņemot gadījumus, kad''':
-*tu pārvieto lapu uz citu palīglapu (piemēram, [[Project talk:{{SITENAME}}]] uz [[Project:{{SITENAME}}]]),
+*tu pārvieto lapu uz citu palīglapu,
 *ar jauno nosaukumu jau eksistē diskusiju lapa, vai arī
 *atzīmēsi zemāk atrodamo lauciņu.
 
@@ -912,6 +917,7 @@ Ja tomēr vēlēsies, tad tev šī diskusiju lapa būs jāpārvieto vai jāapvie
 'move-watch'       => 'Uzraudzīt šo lapu',
 'movepagebtn'      => 'Pārvietot lapu',
 'pagemovedsub'     => 'Pārvietošana notikusi veiksmīgi',
+'movepage-moved'   => '<big>\'\'\'"$1" tika pārvietots uz "$2"\'\'\'</big>', # The two titles are passed in plain text as $3 and $4 to allow additional goodies in the message.
 'articleexists'    => 'Lapa ar tādu nosaukumu jau pastāv vai arī tevis izvēlētais nosaukums ir nederīgs. Lūdzu, izvēlies citu nosaukumu.',
 'movedto'          => 'pārvietota uz',
 'movetalk'         => 'Pārvietot arī diskusiju lapu, ja tāda ir.',
@@ -933,11 +939,10 @@ Ja tomēr vēlēsies, tad tev šī diskusiju lapa būs jāpārvieto vai jāapvie
 'allmessagesdefault'        => 'Sākotnējais teksts',
 'allmessagescurrent'        => 'Pašreizējais teksts',
 'allmessagestext'           => "Šajā lapā ir visu \"'''Mediawiki:'''\" lapās atrodamo sistēmas paziņojumu uzskaitījums.",
-'allmessagesnotsupportedDB' => 'special:Allmessages not supported because wgUseDatabaseMessages is off.',
+'allmessagesnotsupportedDB' => '{{ns:special}}:Allmessages not supported because wgUseDatabaseMessages is off.',
 
 # Thumbnails
 'thumbnail-more' => 'Palielināt',
-'missingimage'   => '<b>Trūkst attēla</b><br /><i>$1</i>',
 'filemissing'    => 'Trūkst faila',
 
 # Tooltip help for the actions
@@ -999,7 +1004,6 @@ Ja tomēr vēlēsies, tad tev šī diskusiju lapa būs jāpārvieto vai jāapvie
 # Attribution
 'anonymous' => 'Anonīmie {{grammar:ģenitīvs|{{SITENAME}}}} lietotāji(s)',
 'siteuser'  => '{{grammar:ģenitīvs|{{SITENAME}}}} lietotājs $1',
-'and'       => 'un',
 
 # Spam protection
 'subcategorycount'       => 'Šajā kategorijā ir $1 {{PLURAL:$1|apakškategorija|apakškategorijas}}.',
@@ -1092,5 +1096,10 @@ Ja tu *neesi* registrejis sadu lietotaja vardu, nespied uz saites. Si apstiprina
 # Auto-summaries
 'autoredircomment' => 'Pāradresē uz [[$1]]',
 'autosumm-new'     => 'Jauna lapa: $1',
+
+# Special:Filepath
+'filepath'        => 'Failu adreses',
+'filepath-page'   => 'Fails:',
+'filepath-submit' => 'Atrast adresi',
 
 );

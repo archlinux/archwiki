@@ -51,12 +51,20 @@ class CoreParserFunctions {
 
 	static function lc( $parser, $s = '' ) {
 		global $wgContLang;
-		return $wgContLang->lc( $s );
+		if ( is_callable( array( $parser, 'markerSkipCallback' ) ) ) {
+			return $parser->markerSkipCallback( $s, array( $wgContLang, 'lc' ) );
+		} else {
+			return $wgContLang->lc( $s );
+		}
 	}
 
 	static function uc( $parser, $s = '' ) {
 		global $wgContLang;
-		return $wgContLang->uc( $s );
+		if ( is_callable( array( $parser, 'markerSkipCallback' ) ) ) {
+			return $parser->markerSkipCallback( $s, array( $wgContLang, 'uc' ) );
+		} else {
+			return $wgContLang->uc( $s );
+		}
 	}
 
 	static function localurl( $parser, $s = '', $arg = null ) { return self::urlFunction( 'getLocalURL', $s, $arg ); }
@@ -92,9 +100,10 @@ class CoreParserFunctions {
 		return $parser->getFunctionLang()->convertGrammar( $word, $case );
 	}
 
-	static function plural( $parser, $text = '', $arg0 = null, $arg1 = null, $arg2 = null, $arg3 = null, $arg4 = null ) {
+	static function plural( $parser, $text = '') {
+		$forms = array_slice( func_get_args(), 2);
 		$text = $parser->getFunctionLang()->parseFormattedNumber( $text );
-		return $parser->getFunctionLang()->convertPlural( $text, $arg0, $arg1, $arg2, $arg3, $arg4 );
+		return $parser->getFunctionLang()->convertPlural( $text, $forms );
 	}
 
 	/**
@@ -190,12 +199,70 @@ class CoreParserFunctions {
 			return wfMsgForContent( 'nosuchspecialpage' );
 		}
 	}
-
+	
 	public static function defaultsort( $parser, $text ) {
 		$text = trim( $text );
 		if( strlen( $text ) > 0 )
 			$parser->setDefaultSort( $text );
 		return '';
+	}
+	
+	public static function filepath( $parser, $name='', $option='' ) {
+		$file = wfFindFile( $name );
+		if( $file ) {
+			$url = $file->getFullUrl();
+			if( $option == 'nowiki' ) {
+				return "<nowiki>$url</nowiki>";
+			}
+			return $url;
+		} else {
+			return '';
+		}
+	}
+
+	/**
+	 * Parser function to extension tag adaptor
+	 */
+	public static function tagObj( $parser, $frame, $args ) {
+		$xpath = false;
+		if ( !count( $args ) ) {
+			return '';
+		}
+		$tagName = strtolower( trim( $frame->expand( array_shift( $args ) ) ) );
+
+		if ( count( $args ) ) {
+			$inner = $frame->expand( array_shift( $args ) );
+		} else {
+			$inner = null;
+		}
+
+		$stripList = $parser->getStripList();
+		if ( !in_array( $tagName, $stripList ) ) {
+			return '<span class="error">' . 
+				wfMsg( 'unknown_extension_tag', $tagName ) . 
+				'</span>';
+		}
+
+		$attributes = array();
+		foreach ( $args as $arg ) {
+			$bits = $arg->splitArg();
+			if ( strval( $bits['index'] ) === '' ) {
+				$name = $frame->expand( $bits['name'], PPFrame::STRIP_COMMENTS );
+				$value = trim( $frame->expand( $bits['value'] ) );
+				if ( preg_match( '/^(?:["\'](.+)["\']|""|\'\')$/s', $value, $m ) ) {
+					$value = isset( $m[1] ) ? $m[1] : '';
+				}
+				$attributes[$name] = $value;
+			}
+		}
+
+		$params = array(
+			'name' => $tagName,
+			'inner' => $inner,
+			'attributes' => $attributes,
+			'close' => "</$tagName>",
+		);
+		return $parser->extensionSubstitution( $params, $frame );
 	}
 }
 

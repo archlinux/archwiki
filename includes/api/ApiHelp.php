@@ -46,14 +46,18 @@ class ApiHelp extends ApiBase {
 		$this->dieUsage('', 'help');
 	}
 
-	protected function getDescription() {
+	public function shouldCheckMaxlag() {
+		return false;
+	}
+
+	public function getDescription() {
 		return array (
 			'Display this help screen.'
 		);
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiHelp.php 23531 2007-06-29 01:19:14Z simetrical $';
+		return __CLASS__ . ': $Id: ApiHelp.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }
 

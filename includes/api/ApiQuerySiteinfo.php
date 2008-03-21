@@ -53,6 +53,9 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 				case 'namespaces' :
 					$this->appendNamespaces($p);
 					break;
+				case 'namespacealiases' :
+					$this->appendNamespaceAliases($p);
+					break;
 				case 'interwikimap' :
 					$filteriw = isset($params['filteriw']) ? $params['filteriw'] : false; 
 					$this->appendInterwikiMap($p, $filteriw);
@@ -68,7 +71,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	}
 
 	protected function appendGeneralInfo($property) {
-		global $wgSitename, $wgVersion, $wgCapitalLinks, $wgRightsCode, $wgRightsText, $wgLanguageCode;
+		global $wgSitename, $wgVersion, $wgCapitalLinks, $wgRightsCode, $wgRightsText, $wgLanguageCode, $IP;
 		
 		$data = array ();
 		$mainPage = Title :: newFromText(wfMsgForContent('mainpage'));
@@ -76,6 +79,10 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		$data['base'] = $mainPage->getFullUrl();
 		$data['sitename'] = $wgSitename;
 		$data['generator'] = "MediaWiki $wgVersion";
+
+		$svn = SpecialVersion::getSvnRevision ( $IP );
+		if ( $svn ) $data['rev'] = $svn;
+
 		$data['case'] = $wgCapitalLinks ? 'first-letter' : 'case-sensitive'; // 'case-insensitive' option is reserved for future
 		if (isset($wgRightsCode))
 			$data['rightscode'] = $wgRightsCode;
@@ -94,6 +101,22 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 				'id' => $ns
 			);
 			ApiResult :: setContent($data[$ns], $title);
+		}
+		
+		$this->getResult()->setIndexedTagName($data, 'ns');
+		$this->getResult()->addValue('query', $property, $data);
+	}
+	
+	protected function appendNamespaceAliases($property) {
+		global $wgNamespaceAliases;
+		
+		$data = array ();
+		foreach ($wgNamespaceAliases as $title => $ns) {
+			$item = array (
+				'id' => $ns
+			);
+			ApiResult :: setContent($item, strtr($title, '_', ' '));
+			$data[] = $item;
 		}
 		
 		$this->getResult()->setIndexedTagName($data, 'ns');
@@ -177,7 +200,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		$this->getResult()->addValue('query', $property, $data);
 	}	
 	
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array (
 		
 			'prop' => array (
@@ -186,6 +209,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 				ApiBase :: PARAM_TYPE => array (
 					'general',
 					'namespaces',
+					'namespacealiases',
 					'interwikimap',
 					'dbrepllag',
 					'statistics',
@@ -201,12 +225,13 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'prop' => array (
 				'Which sysinfo properties to get:',
 				' "general"      - Overall system information',
 				' "namespaces"   - List of registered namespaces (localized)',
+				' "namespacealiases" - List of registered namespace aliases',
 				' "statistics"   - Returns site statistics',
 				' "interwikimap" - Returns interwiki map (optionally filtered)',
 				' "dbrepllag"    - Returns database server with the highest replication lag',
@@ -216,19 +241,19 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'Return general information about the site.';
 	}
 
 	protected function getExamples() {
 		return array(
-			'api.php?action=query&meta=siteinfo&siprop=general|namespaces|statistics',
+			'api.php?action=query&meta=siteinfo&siprop=general|namespaces|namespacealiases|statistics',
 			'api.php?action=query&meta=siteinfo&siprop=interwikimap&sifilteriw=local',
 			'api.php?action=query&meta=siteinfo&siprop=dbrepllag&sishowalldb',
 			);
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQuerySiteinfo.php 25238 2007-08-28 15:37:31Z robchurch $';
+		return __CLASS__ . ': $Id: ApiQuerySiteinfo.php 30484 2008-02-03 19:29:59Z btongminh $';
 	}
 }

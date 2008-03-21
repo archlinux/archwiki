@@ -16,10 +16,6 @@ class Skin extends Linker {
 	/**#@+
 	 * @private
 	 */
-	var $lastdate, $lastline;
-	var $rc_cache ; # Cache for Enhanced Recent Changes
-	var $rcCacheIndex ; # Recent Changes Cache Counter for visibility toggle
-	var $rcMoveIndex;
 	var $mWatchLinkNum = 0; // Appended to end of watch link id's
 	/**#@-*/
 	protected $mRevisionId; // The revision ID we're looking at, null if not applicable.
@@ -97,8 +93,7 @@ class Skin extends Linker {
 		if( isset( $skinNames[$key] ) ) {
 			return $key;
 		} else {
-			// The old built-in skin
-			return 'standard';
+			return 'monobook';
 		}
 	}
 
@@ -115,23 +110,25 @@ class Skin extends Linker {
 
 		$skinNames = Skin::getSkinNames();
 		$skinName = $skinNames[$key];
+		$className = 'Skin'.ucfirst($key);
 
 		# Grab the skin class and initialise it.
-		// Preload base classes to work around APC/PHP5 bug
-		$deps = "{$wgStyleDirectory}/{$skinName}.deps.php";
-		if( file_exists( $deps ) ) include_once( $deps );
-		require_once( "{$wgStyleDirectory}/{$skinName}.php" );
+		if ( !class_exists( $className ) ) {
+			// Preload base classes to work around APC/PHP5 bug
+			$deps = "{$wgStyleDirectory}/{$skinName}.deps.php";
+			if( file_exists( $deps ) ) include_once( $deps );
+			require_once( "{$wgStyleDirectory}/{$skinName}.php" );
 
-		# Check if we got if not failback to default skin
-		$className = 'Skin'.$skinName;
-		if( !class_exists( $className ) ) {
-			# DO NOT die if the class isn't found. This breaks maintenance
-			# scripts and can cause a user account to be unrecoverable
-			# except by SQL manipulation if a previously valid skin name
-			# is no longer valid.
-			wfDebug( "Skin class does not exist: $className\n" );
-			$className = 'SkinStandard';
-			require_once( "{$wgStyleDirectory}/Standard.php" );
+			# Check if we got if not failback to default skin
+			if( !class_exists( $className ) ) {
+				# DO NOT die if the class isn't found. This breaks maintenance
+				# scripts and can cause a user account to be unrecoverable
+				# except by SQL manipulation if a previously valid skin name
+				# is no longer valid.
+				wfDebug( "Skin class does not exist: $className\n" );
+				$className = 'SkinMonobook';
+				require_once( "{$wgStyleDirectory}/MonoBook.php" );
+			}
 		}
 		$skin = new $className;
 		return $skin;
@@ -156,21 +153,28 @@ class Skin extends Linker {
 	}
 
 	function initPage( &$out ) {
-		global $wgFavicon, $wgScriptPath, $wgSitename, $wgLanguageCode, $wgLanguageNames;
+		global $wgFavicon, $wgAppleTouchIcon, $wgScriptPath, $wgSitename, $wgContLang, $wgScriptExtension;
 
-		$fname = 'Skin::initPage';
-		wfProfileIn( $fname );
+		wfProfileIn( __METHOD__ );
 
 		if( false !== $wgFavicon ) {
 			$out->addLink( array( 'rel' => 'shortcut icon', 'href' => $wgFavicon ) );
 		}
+		
+		if( false !== $wgAppleTouchIcon ) {
+			$out->addLink( array( 'rel' => 'apple-touch-icon', 'href' => $wgAppleTouchIcon ) );
+		} 		
+
+		$code = $wgContLang->getCode();
+		$name = $wgContLang->getLanguageName( $code );
+		$langName = $name ? $name : $code;
 
 		# OpenSearch description link
 		$out->addLink( array( 
 			'rel' => 'search', 
 			'type' => 'application/opensearchdescription+xml',
-			'href' => "$wgScriptPath/opensearch_desc.php",
-			'title' => "$wgSitename ({$wgLanguageNames[$wgLanguageCode]})",
+			'href' => "$wgScriptPath/opensearch_desc{$wgScriptExtension}",
+			'title' => "$wgSitename ($langName)",
 		));
 
 		$this->addMetadataLinks($out);
@@ -179,7 +183,7 @@ class Skin extends Linker {
 		
 		$this->preloadExistence();
 
-		wfProfileOut( $fname );
+		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -298,6 +302,7 @@ class Skin extends Linker {
 		global $wgTitle, $wgCanonicalNamespaceNames, $wgOut, $wgArticle;
 		global $wgBreakFrames, $wgRequest;
 		global $wgUseAjax, $wgAjaxWatch;
+		global $wgVersion, $wgEnableAPI, $wgEnableWriteAPI;
 
 		$ns = $wgTitle->getNamespace();
 		$nsname = isset( $wgCanonicalNamespaceNames[ $ns ] ) ? $wgCanonicalNamespaceNames[ $ns ] : $wgTitle->getNsText();
@@ -310,7 +315,7 @@ class Skin extends Linker {
 			'wgScript' => $wgScript,
 			'wgServer' => $wgServer,
 			'wgCanonicalNamespace' => $nsname,
-			'wgCanonicalSpecialPageName' => SpecialPage::resolveAlias( $wgTitle->getDBKey() ),
+			'wgCanonicalSpecialPageName' => SpecialPage::resolveAlias( $wgTitle->getDBkey() ),
 			'wgNamespaceNumber' => $wgTitle->getNamespace(),
 			'wgPageName' => $wgTitle->getPrefixedDBKey(),
 			'wgTitle' => $wgTitle->getText(),
@@ -325,6 +330,9 @@ class Skin extends Linker {
 			'wgContentLanguage' => $wgContLang->getCode(),
 			'wgBreakFrames' => $wgBreakFrames,
 			'wgCurRevisionId' => isset( $wgArticle ) ? $wgArticle->getLatest() : 0,
+			'wgVersion' => $wgVersion,
+			'wgEnableAPI' => $wgEnableAPI,
+			'wgEnableWriteAPI' => $wgEnableWriteAPI,
 		);
 
 		global $wgLivePreview;
@@ -476,7 +484,7 @@ class Skin extends Linker {
 	function reallyDoGetUserStyles() {
 		global $wgUser;
 		$s = '';
-		if (($undopt = $wgUser->getOption("underline")) != 2) {
+		if (($undopt = $wgUser->getOption("underline")) < 2) {
 			$underline = $undopt ? 'underline' : 'none';
 			$s .= "a { text-decoration: $underline; }\n";
 		}
@@ -487,17 +495,14 @@ class Skin extends Linker {
 a.new, #quickbar a.new,
 a.stub, #quickbar a.stub {
 	color: inherit;
-	text-decoration: inherit;
 }
 a.new:after, #quickbar a.new:after {
 	content: "?";
 	color: #CC2200;
-	text-decoration: $underline;
 }
 a.stub:after, #quickbar a.stub:after {
 	content: "!";
 	color: #772233;
-	text-decoration: $underline;
 }
 END;
 		}
@@ -782,12 +787,12 @@ END;
 	}
 
 	function getUndeleteLink() {
-		global $wgUser, $wgTitle, $wgContLang, $action;
+		global $wgUser, $wgTitle, $wgContLang, $wgLang, $action;
 		if(	$wgUser->isAllowed( 'deletedhistory' ) &&
 			(($wgTitle->getArticleId() == 0) || ($action == "history")) &&
 			($n = $wgTitle->isDeleted() ) )
 		{
-			if ( $wgUser->isAllowed( 'delete' ) ) {
+			if ( $wgUser->isAllowed( 'undelete' ) ) {
 				$msg = 'thisisdeleted';
 			} else {
 				$msg = 'viewdeleted';
@@ -795,7 +800,7 @@ END;
 			return wfMsg( $msg,
 				$this->makeKnownLinkObj(
 					SpecialPage::getTitleFor( 'Undelete', $wgTitle->getPrefixedDBkey() ),
-					wfMsgExt( 'restorelink', array( 'parsemag', 'escape' ), $n ) ) );
+					wfMsgExt( 'restorelink', array( 'parsemag', 'escape' ), $wgLang->formatNum( $n ) ) ) );
 		}
 		return '';
 	}
@@ -836,8 +841,11 @@ END;
 	}
 
 	function subPageSubtitle() {
-		global $wgOut,$wgTitle,$wgNamespacesWithSubpages;
 		$subpages = '';
+		if(!wfRunHooks('SkinSubPageSubtitle', array(&$subpages)))
+			return $retval;
+
+		global $wgOut, $wgTitle, $wgNamespacesWithSubpages;
 		if($wgOut->isArticle() && !empty($wgNamespacesWithSubpages[$wgTitle->getNamespace()])) {
 			$ptext=$wgTitle->getPrefixedText();
 			if(preg_match('/\//',$ptext)) {
@@ -1072,11 +1080,14 @@ END;
 			$dbr = wfGetDB( DB_SLAVE );
 			$watchlist = $dbr->tableName( 'watchlist' );
 			$sql = "SELECT COUNT(*) AS n FROM $watchlist
-				WHERE wl_title='" . $dbr->strencode($wgTitle->getDBKey()) .
+				WHERE wl_title='" . $dbr->strencode($wgTitle->getDBkey()) .
 				"' AND  wl_namespace=" . $wgTitle->getNamespace() ;
 			$res = $dbr->query( $sql, 'Skin::pageStats');
 			$x = $dbr->fetchObject( $res );
-			$s .= ' ' . wfMsg('number_of_watching_users_pageview', $x->n );
+
+			$s .= ' ' . wfMsgExt( 'number_of_watching_users_pageview',
+				array( 'parseinline' ), $wgLang->formatNum($x->n)
+			);
 		}
 
 		return $s . ' ' .  $this->getCopyright();
@@ -1222,7 +1233,8 @@ END;
 			// Otherwise, we display the link for the user, described in their
 			// language (which may or may not be the same as the default language),
 			// but we make the link target be the one site-wide page.
-			return $this->makeKnownLink( wfMsgForContent( $page ), wfMsg( $desc ) );
+			return $this->makeKnownLink( wfMsgForContent( $page ),
+				wfMsgExt( $desc, array( 'parsemag', 'escapenoentities' ) ) );
 		}
 	}
 
@@ -1495,11 +1507,11 @@ END;
 		# If it's present, the link points to this page, otherwise
 		# it points to the talk page
 		if( $wgTitle->isTalkPage() ) {
-			$title =& $wgTitle;
+			$title = $wgTitle;
 		} elseif( $wgOut->showNewSectionLink() ) {
-			$title =& $wgTitle;
+			$title = $wgTitle;
 		} else {
-			$title =& $wgTitle->getTalkPage();
+			$title = $wgTitle->getTalkPage();
 		}
 		
 		return $this->makeKnownLinkObj( $title, wfMsg( 'postcomment' ), 'action=edit&section=new' );
@@ -1590,7 +1602,7 @@ END;
 	 * @private
 	 */
 	function buildSidebar() {
-		global $parserMemc, $wgEnableSidebarCache;
+		global $parserMemc, $wgEnableSidebarCache, $wgSidebarCacheExpiry;
 		global $wgLang, $wgContLang;
 
 		$fname = 'SkinTemplate::buildSidebar';
@@ -1611,6 +1623,7 @@ END;
 
 		$bar = array();
 		$lines = explode( "\n", wfMsgForContent( 'sidebar' ) );
+		$heading = '';
 		foreach ($lines as $line) {
 			if (strpos($line, '*') !== 0)
 				continue;
@@ -1650,7 +1663,7 @@ END;
 			}
 		}
 		if ($cacheSidebar)
-			$parserMemc->set( $key, $bar, 86400 );
+			$parserMemc->set( $key, $bar, $wgSidebarCacheExpiry );
 		wfProfileOut( $fname );
 		return $bar;
 	}

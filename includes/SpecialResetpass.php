@@ -25,7 +25,7 @@ class PasswordResetForm extends SpecialPage {
 	/**
 	 * Main execution point
 	 */
-	function execute( $par='' ) {
+	function execute( $par ) {
 		global $wgUser, $wgAuth, $wgOut, $wgRequest;
 		
 		if( !$wgAuth->allowPasswordChange() ) {
@@ -43,7 +43,7 @@ class PasswordResetForm extends SpecialPage {
 			$retype = $wgRequest->getVal( 'wpRetype' );
 			try {
 				$this->attemptReset( $newpass, $retype );
-				$wgOut->addWikiText( wfMsg( 'resetpass_success' ) );
+				$wgOut->addWikiMsg( 'resetpass_success' );
 				
 				$data = array(
 					'action' => 'submitlogin',

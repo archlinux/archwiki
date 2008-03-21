@@ -62,4 +62,52 @@ class LocalRepo extends FSRepo {
 		}
 		return $status;
 	}
+
+	/**
+	 * Function link Title::getArticleID().
+	 * We can't say Title object, what database it should use, so we duplicate that function here.
+	 */
+	private function getArticleID( $title ) {
+		if( !$title instanceof Title ) {
+			return 0;
+		}
+		$dbr = $this->getSlaveDB();
+		$id = $dbr->selectField(
+			'page',	// Table
+			'page_id',	//Field
+			array(	//Conditions
+				'page_namespace' => $title->getNamespace(),
+				'page_title' => $title->getDbKey(),
+			),
+			__METHOD__	//Function name
+		);
+		return $id;
+	}
+
+	function checkRedirect( $title ) {
+		global $wgFileRedirects;
+		if( !$wgFileRedirects ) {
+			return false;
+		}
+
+		if( $title instanceof Title && $title->getNamespace() == NS_MEDIA ) {
+			$title = Title::makeTitle( NS_IMAGE, $title->getText() );
+		}
+		
+		$id = $this->getArticleID( $title );
+		if( !$id ) {
+			return false;
+		}
+		$dbr = $this->getSlaveDB();
+		$row = $dbr->selectRow(
+			'redirect',
+			array( 'rd_title', 'rd_namespace' ),
+			array( 'rd_from' => $id ),
+			__METHOD__
+		);
+		if( !$row ) {
+			return false;
+		}
+		return Title::makeTitle( $row->rd_namespace, $row->rd_title );
+	}
 }

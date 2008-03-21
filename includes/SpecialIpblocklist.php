@@ -80,7 +80,7 @@ class IPUnblockForm {
 		global $wgOut, $wgUser, $wgSysopUserBans, $wgContLang;
 
 		$wgOut->setPagetitle( wfMsg( 'unblockip' ) );
-		$wgOut->addWikiText( wfMsg( 'unblockiptext' ) );
+		$wgOut->addWikiMsg( 'unblockiptext' );
 
 		$ipa = wfMsgHtml( $wgSysopUserBans ? 'ipadressorusername' : 'ipaddress' );
 		$ipr = wfMsgHtml( 'ipbreason' );
@@ -91,7 +91,7 @@ class IPUnblockForm {
 
 		if ( "" != $err ) {
 			$wgOut->setSubtitle( wfMsg( "formerror" ) );
-			$wgOut->addWikitext( "<span class='error'>{$err}</span>\n" );
+			$wgOut->addWikiText( "<span class='error'>{$err}</span>\n" );
 		}
 		$token = htmlspecialchars( $wgUser->editToken() );
 
@@ -140,49 +140,78 @@ class IPUnblockForm {
 
 	}
 
-	function doSubmit() {
-		global $wgOut;
+	const UNBLOCK_SUCCESS = 0; // Success
+	const UNBLOCK_NO_SUCH_ID = 1; // No such block ID
+	const UNBLOCK_USER_NOT_BLOCKED = 2; // IP wasn't blocked
+	const UNBLOCK_BLOCKED_AS_RANGE = 3; // IP is part of a range block
+	const UNBLOCK_UNKNOWNERR = 4; // Unknown error
 
-		if ( $this->id ) {
-			$block = Block::newFromID( $this->id );
-			if ( $block ) {
-				$this->ip = $block->getRedactedName();
+	/**
+	 * Backend code for unblocking. doSubmit() wraps around this.
+	 * $range is only used when UNBLOCK_BLOCKED_AS_RANGE is returned, in which
+	 * case it contains the range $ip is part of.
+	 * @return array array(message key, parameters) on failure, empty array on success
+	 */
+
+	static function doUnblock(&$id, &$ip, &$reason, &$range = null)
+	{
+		if ( $id ) {
+			$block = Block::newFromID( $id );
+			if ( !$block ) {
+				return array('ipb_cant_unblock', htmlspecialchars($id));
 			}
+			$ip = $block->getRedactedName();
 		} else {
 			$block = new Block();
-			$this->ip = trim( $this->ip );
-			if ( substr( $this->ip, 0, 1 ) == "#" ) {
-				$id = substr( $this->ip, 1 );
+			$ip = trim( $ip );
+			if ( substr( $ip, 0, 1 ) == "#" ) {
+				$id = substr( $ip, 1 );
 				$block = Block::newFromID( $id );
+				if( !$block ) {
+					return array('ipb_cant_unblock', htmlspecialchars($id));
+				}
+				$ip = $block->getRedactedName();
 			} else {
-				$block = Block::newFromDB( $this->ip );
+				$block = Block::newFromDB( $ip );
 				if ( !$block ) { 
-					$block = null;
+					return array('ipb_cant_unblock', htmlspecialchars($id));
+				}
+				if( $block->mRangeStart != $block->mRangeEnd
+						&& !strstr( $ip, "/" ) ) {
+					/* If the specified IP is a single address, and the block is
+					 * a range block, don't unblock the range. */
+					 $range = $block->mAddress;
+					 return array('ipb_blocked_as_range', $ip, $range);
 				}
 			}
 		}
-		$success = false;
-		if ( $block ) {
-			# Delete block
-			if ( $block->delete() ) {
-				# Make log entry
-				$log = new LogPage( 'block' );
-				$log->addEntry( 'unblock', Title::makeTitle( NS_USER, $this->ip ), $this->reason );
-				$success = true;
-			}
+		// Yes, this is really necessary
+		$id = $block->mId;
+
+		# Delete block
+		if ( !$block->delete() ) {
+			return array('ipb_cant_unblock', htmlspecialchars($id));
 		}
 
-		if ( $success ) {
-			# Report to the user
-			$titleObj = SpecialPage::getTitleFor( "Ipblocklist" );
-			$success = $titleObj->getFullURL( "action=success&successip=" . urlencode( $this->ip ) );
-			$wgOut->redirect( $success );
-		} else {
-			if ( !$this->ip && $this->id ) {
-				$this->ip = '#' . $this->id;
-			}
-			$this->showForm( wfMsg( 'ipb_cant_unblock', htmlspecialchars( $this->id ) ) );
+		# Make log entry
+		$log = new LogPage( 'block' );
+		$log->addEntry( 'unblock', Title::makeTitle( NS_USER, $ip ), $reason );
+		return array();
+	}
+
+	function doSubmit() {
+		global $wgOut;
+		$retval = self::doUnblock($this->id, $this->ip, $this->reason, $range);
+		if(!empty($retval))
+		{
+			$key = array_shift($retval);
+			$this->showForm(wfMsgReal($key, $retval));
+			return;
 		}
+		# Report to the user
+		$titleObj = SpecialPage::getTitleFor( "Ipblocklist" );
+		$success = $titleObj->getFullURL( "action=success&successip=" . urlencode( $this->ip ) );
+		$wgOut->redirect( $success );
 	}
 
 	function showList( $msg ) {
@@ -234,9 +263,9 @@ class IPUnblockForm {
 			);
 		} elseif ( $this->ip != '') {
 			$wgOut->addHTML( $this->searchForm() );
-			$wgOut->addWikiText( wfMsg( 'ipblocklist-no-results' ) );
+			$wgOut->addWikiMsg( 'ipblocklist-no-results' );
 		} else {
-			$wgOut->addWikiText( wfMsg( 'ipblocklist-empty' ) );
+			$wgOut->addWikiMsg( 'ipblocklist-empty' );
 		}
 	}
 
@@ -268,13 +297,12 @@ class IPUnblockForm {
 			$sk = $wgUser->getSkin();
 		if( is_null( $msg ) ) {
 			$msg = array();
-			$keys = array( 'infiniteblock', 'expiringblock', 'contribslink', 'unblocklink', 
+			$keys = array( 'infiniteblock', 'expiringblock', 'unblocklink',
 				'anononlyblock', 'createaccountblock', 'noautoblockblock', 'emailblock' );
 			foreach( $keys as $key ) {
 				$msg[$key] = wfMsgHtml( $key );
 			}
 			$msg['blocklistline'] = wfMsg( 'blocklistline' );
-			$msg['contribslink'] = wfMsg( 'contribslink' );
 		}
 
 		# Prepare links to the blocker's user and talk pages

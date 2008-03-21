@@ -63,10 +63,34 @@ abstract class ApiBase {
 		$this->mModulePrefix = $modulePrefix;
 	}
 
+	/*****************************************************************************
+	 * ABSTRACT METHODS                                                          *
+	 *****************************************************************************/
+
 	/**
-	 * Executes this module
+	 * Evaluates the parameters, performs the requested query, and sets up the 
+	 * result. Concrete implementations of ApiBase must override this method to 
+	 * provide whatever functionality their module offers. Implementations must
+	 * not produce any output on their own and are not expected to handle any
+	 * errors. 
+	 *
+	 * The execute method will be invoked directly by ApiMain immediately before
+	 * the result of the module is output. Aside from the constructor, implementations
+	 * should assume that no other methods will be called externally on the module
+	 * before the result is processed.
+	 *
+	 * The result data should be stored in the result object referred to by 
+	 * "getResult()". Refer to ApiResult.php for details on populating a result
+	 * object.
 	 */
 	public abstract function execute();
+
+	/**
+	 * Returns a String that identifies the version of the extending class. Typically
+	 * includes the class name, the svn revision, timestamp, and last author. May
+	 * be severely incorrect in many implementations!
+	 */
+	public abstract function getVersion();
 
 	/**
 	 * Get the name of the module being executed by this instance 
@@ -100,14 +124,16 @@ abstract class ApiBase {
 	}
 
 	/**
-	 * If this module's $this is the same as $this->mMainModule, its the root, otherwise no
+	 * Returns true if this module is the main module ($this === $this->mMainModule), 
+	 * false otherwise.
 	 */
 	public function isMain() {
 		return $this === $this->mMainModule;
 	}
 
 	/**
-	 * Get result object
+	 * Get the result object. Please refer to the documentation in ApiResult.php
+	 * for details on populating and accessing data in a result object.
 	 */
 	public function getResult() {
 		// Main module has getResult() method overriden
@@ -125,7 +151,8 @@ abstract class ApiBase {
 	}
 
 	/**
-	 * Set warning section for this module. Users should monitor this section to notice any changes in API.
+	 * Set warning section for this module. Users should monitor this section to 
+	 * notice any changes in API.
 	 */
 	public function setWarning($warning) {
 		$msg = array();
@@ -196,6 +223,10 @@ abstract class ApiBase {
 		return $msg;
 	}
 
+	/** 
+	 * Generates the parameter descriptions for this module, to be displayed in the
+	 * module's help.
+	 */
 	public function makeHelpMsgParameters() {
 		$params = $this->getAllowedParams();
 		if ($params !== false) {
@@ -208,7 +239,7 @@ abstract class ApiBase {
 				if (is_array($desc))
 					$desc = implode($paramPrefix, $desc);
 
-				@ $type = $paramSettings[self :: PARAM_TYPE];
+				$type = $paramSettings[self :: PARAM_TYPE];
 				if (isset ($type)) {
 					if (isset ($paramSettings[self :: PARAM_ISMULTI]))
 						$prompt = 'Values (separate with \'|\'): ';
@@ -303,13 +334,15 @@ abstract class ApiBase {
 	* Using getAllowedParams(), makes an array of the values provided by the user,
 	* with key being the name of the variable, and value - validated value from user or default.
 	* This method can be used to generate local variables using extract().
+	* limit=max will not be parsed if $parseMaxLimit is set to false; use this
+	* when the max limit is not definite, e.g. when getting revisions.
 	*/
-	public function extractRequestParams() {
+	public function extractRequestParams($parseMaxLimit = true) {
 		$params = $this->getAllowedParams();
 		$results = array ();
 
 		foreach ($params as $paramName => $paramSettings)
-			$results[$paramName] = $this->getParameterFromSettings($paramName, $paramSettings);
+			$results[$paramName] = $this->getParameterFromSettings($paramName, $paramSettings, $parseMaxLimit);
 
 		return $results;
 	}
@@ -323,6 +356,10 @@ abstract class ApiBase {
 		return $this->getParameterFromSettings($paramName, $paramSettings);
 	}
 
+	/**
+	 * Returns an array of the namespaces (by integer id) that exist on the
+	 * wiki. Used primarily in help documentation.
+	 */
 	public static function getValidNamespaces() {
 		static $mValidNamespaces = null;
 		if (is_null($mValidNamespaces)) {
@@ -339,10 +376,12 @@ abstract class ApiBase {
 
 	/**
 	 * Using the settings determine the value for the given parameter
+	 *
 	 * @param $paramName String: parameter name
 	 * @param $paramSettings Mixed: default value or an array of settings using PARAM_* constants.
+	 * @param $parseMaxLimit Boolean: parse limit when max is given?
 	 */
-	protected function getParameterFromSettings($paramName, $paramSettings) {
+	protected function getParameterFromSettings($paramName, $paramSettings, $parseMaxLimit) {
 
 		// Some classes may decide to change parameter names
 		$encParamName = $this->encodeParamName($paramName);
@@ -410,8 +449,17 @@ abstract class ApiBase {
 						if ($multi)
 							ApiBase :: dieDebug(__METHOD__, "Multi-values not supported for $encParamName");
 						$min = isset ($paramSettings[self :: PARAM_MIN]) ? $paramSettings[self :: PARAM_MIN] : 0;
-						$value = intval($value);
-						$this->validateLimit($paramName, $value, $min, $paramSettings[self :: PARAM_MAX], $paramSettings[self :: PARAM_MAX2]);
+						if( $value == 'max' ) {
+							if( $parseMaxLimit ) {
+								$value = $this->getMain()->canApiHighLimits() ? $paramSettings[self :: PARAM_MAX2] : $paramSettings[self :: PARAM_MAX];
+								$this->getResult()->addValue( 'limits', $this->getModuleName(), $value );
+								$this->validateLimit($paramName, $value, $min, $paramSettings[self :: PARAM_MAX], $paramSettings[self :: PARAM_MAX2]);
+							}
+						}
+						else {
+							$value = intval($value);
+							$this->validateLimit($paramName, $value, $min, $paramSettings[self :: PARAM_MAX], $paramSettings[self :: PARAM_MAX2]);
+						}
 						break;
 					case 'boolean' :
 						if ($multi)
@@ -485,7 +533,7 @@ abstract class ApiBase {
 		// Optimization: do not check user's bot status unless really needed -- skips db query
 		// assumes $botMax >= $max
 		if (!is_null($max) && $value > $max) {
-			if (!is_null($botMax) && ($this->getMain()->isBot() || $this->getMain()->isSysop())) {
+			if (!is_null($botMax) && $this->getMain()->canApiHighLimits()) {
 				if ($value > $botMax) {
 					$this->dieUsage($this->encodeParamName($paramName) . " may not be over $botMax (set to $value) for bots or sysops", $paramName);
 				}
@@ -501,6 +549,90 @@ abstract class ApiBase {
 	public function dieUsage($description, $errorCode, $httpRespCode = 0) {
 		throw new UsageException($description, $this->encodeParamName($errorCode), $httpRespCode);
 	}
+	
+	/**
+	 * Array that maps message keys to error messages. $1 and friends are replaced.
+	 */
+	public static $messageMap = array(
+		// This one MUST be present, or dieUsageMsg() will recurse infinitely
+		'unknownerror' => array('code' => 'unknownerror', 'info' => "Unknown error: ``\$1''"),
+		'unknownerror-nocode' => array('code' => 'unknownerror', 'info' => 'Unknown error'),
+		
+		// Messages from Title::getUserPermissionsErrors()
+		'ns-specialprotected' => array('code' => 'unsupportednamespace', 'info' => "Pages in the Special namespace can't be edited"),
+		'protectedinterface' => array('code' => 'protectednamespace-interface', 'info' => "You're not allowed to edit interface messages"),
+		'namespaceprotected' => array('code' => 'protectednamespace', 'info' => "You're not allowed to edit pages in the ``\$1'' namespace"),
+		'customcssjsprotected' => array('code' => 'customcssjsprotected', 'info' => "You're not allowed to edit custom CSS and JavaScript pages"),
+		'cascadeprotected' => array('code' => 'cascadeprotected', 'info' =>"The page you're trying to edit is protected because it's included in a cascade-protected page"),
+		'protectedpagetext' => array('code' => 'protectedpage', 'info' => "The ``\$1'' right is required to edit this page"),
+		'protect-cantedit' => array('code' => 'cantedit', 'info' => "You can't protect this page because you can't edit it"),
+		'badaccess-group0' => array('code' => 'permissiondenied', 'info' => "Permission denied"), // Generic permission denied message
+		'badaccess-group1' => array('code' => 'permissiondenied', 'info' => "Permission denied"), // Can't use the parameter 'cause it's wikilinked
+		'badaccess-group2' => array('code' => 'permissiondenied', 'info' => "Permission denied"),
+		'badaccess-groups' => array('code' => 'permissiondenied', 'info' => "Permission denied"),
+		'titleprotected' => array('code' => 'protectedtitle', 'info' => "This title has been protected from creation"),
+		'nocreate-loggedin' => array('code' => 'cantcreate', 'info' => "You don't have permission to create new pages"),
+		'nocreatetext' => array('code' => 'cantcreate-anon', 'info' => "Anonymous users can't create new pages"),
+		'movenologintext' => array('code' => 'cantmove-anon', 'info' => "Anonymous users can't move pages"),
+		'movenotallowed' => array('code' => 'cantmove', 'info' => "You don't have permission to move pages"),
+		'confirmedittext' => array('code' => 'confirmemail', 'info' => "You must confirm your e-mail address before you can edit"),
+		'blockedtext' => array('code' => 'blocked', 'info' => "You have been blocked from editing"),
+		'autoblockedtext' => array('code' => 'autoblocked', 'info' => "Your IP address has been blocked automatically, because it was used by a blocked user"),
+		
+		// Miscellaneous interface messages
+		'actionthrottledtext' => array('code' => 'ratelimited', 'info' => "You've exceeded your rate limit. Please wait some time and try again"),
+		'alreadyrolled' => array('code' => 'alreadyrolled', 'info' => "The page you tried to rollback was already rolled back"),
+		'cantrollback' => array('code' => 'onlyauthor', 'info' => "The page you tried to rollback only has one author"), 
+		'readonlytext' => array('code' => 'readonly', 'info' => "The wiki is currently in read-only mode"),
+		'sessionfailure' => array('code' => 'badtoken', 'info' => "Invalid token"),
+		'cannotdelete' => array('code' => 'cantdelete', 'info' => "Couldn't delete ``\$1''. Maybe it was deleted already by someone else"),
+		'notanarticle' => array('code' => 'missingtitle', 'info' => "The page you requested doesn't exist"),
+		'selfmove' => array('code' => 'selfmove', 'info' => "Can't move a page to itself"),
+		'immobile_namespace' => array('code' => 'immobilenamespace', 'info' => "You tried to move pages from or to a namespace that is protected from moving"),
+		'articleexists' => array('code' => 'articleexists', 'info' => "The destination article already exists and is not a redirect to the source article"),
+		'protectedpage' => array('code' => 'protectedpage', 'info' => "You don't have permission to perform this move"),
+		'hookaborted' => array('code' => 'hookaborted', 'info' => "The modification you tried to make was aborted by an extension hook"),
+		'cantmove-titleprotected' => array('code' => 'protectedtitle', 'info' => "The destination article has been protected from creation"),
+		// 'badarticleerror' => shouldn't happen
+		// 'badtitletext' => shouldn't happen
+		'ip_range_invalid' => array('code' => 'invalidrange', 'info' => "Invalid IP range"),
+		'range_block_disabled' => array('code' => 'rangedisabled', 'info' => "Blocking IP ranges has been disabled"),
+		'nosuchusershort' => array('code' => 'nosuchuser', 'info' => "The user you specified doesn't exist"),
+		'badipaddress' => array('code' => 'invalidip', 'info' => "Invalid IP address specified"),
+		'ipb_expiry_invalid' => array('code' => 'invalidexpiry', 'info' => "Invalid expiry time"),
+		'ipb_already_blocked' => array('code' => 'alreadyblocked', 'info' => "The user you tried to block was already blocked"),
+		'ipb_blocked_as_range' => array('code' => 'blockedasrange', 'info' => "IP address ``\$1'' was blocked as part of range ``\$2''. You can't unblock the IP invidually, but you can unblock the range as a whole."),
+		'ipb_cant_unblock' => array('code' => 'cantunblock', 'info' => "The block you specified was not found. It may have been unblocked already"),
+		
+		// API-specific messages
+		'missingparam' => array('code' => 'no$1', 'info' => "The \$1 parameter must be set"),
+		'invalidtitle' => array('code' => 'invalidtitle', 'info' => "Bad title ``\$1''"),
+		'invaliduser' => array('code' => 'invaliduser', 'info' => "Invalid username ``\$1''"),
+		'invalidexpiry' => array('code' => 'invalidexpiry', 'info' => "Invalid expiry time"),
+		'pastexpiry' => array('code' => 'pastexpiry', 'info' => "Expiry time is in the past"),
+		'create-titleexists' => array('code' => 'create-titleexists', 'info' => "Existing titles can't be protected with 'create'"),
+		'missingtitle-createonly' => array('code' => 'missingtitle-createonly', 'info' => "Missing titles can only be protected with 'create'"),
+		'cantblock' => array('code' => 'cantblock', 'info' => "You don't have permission to block users"),
+		'canthide' => array('code' => 'canthide', 'info' => "You don't have permission to hide user names from the block log"),
+		'cantblock-email' => array('code' => 'cantblock-email', 'info' => "You don't have permission to block users from sending e-mail through the wiki"),
+		'unblock-notarget' => array('code' => 'notarget', 'info' => "Either the id or the user parameter must be set"),
+		'unblock-idanduser' => array('code' => 'idanduser', 'info' => "The id and user parameters can\'t be used together"),
+		'cantunblock' => array('code' => 'permissiondenied', 'info' => "You don't have permission to unblock users"),
+		'cannotundelete' => array('code' => 'cantundelete', 'info' => "Couldn't undelete: the requested revisions may not exist, or may have been undeleted already"),
+		'permdenied-undelete' => array('code' => 'permissiondenied', 'info' => "You don't have permission to restore deleted revisions"),
+	);
+	
+	/**
+	 * Output the error message related to a certain array
+	 * @param array $error Element of a getUserPermissionsErrors()
+	 */
+	public function dieUsageMsg($error) {
+		$key = array_shift($error);
+		if(isset(self::$messageMap[$key]))
+			$this->dieUsage(wfMsgReplaceArgs(self::$messageMap[$key]['info'], $error), wfMsgReplaceArgs(self::$messageMap[$key]['code'], $error));
+		// If the key isn't present, throw an "unknown error"
+		$this->dieUsageMsg(array('unknownerror', $key));
+	}
 
 	/**
 	 * Internal code errors should be reported with this method
@@ -508,6 +640,28 @@ abstract class ApiBase {
 	protected static function dieDebug($method, $message) {
 		wfDebugDieBacktrace("Internal error in $method: $message");
 	}
+
+	/**
+	 * Indicates if API needs to check maxlag
+	 */
+	public function shouldCheckMaxlag() {
+		return true;
+	}
+
+	/**
+	 * Indicates if this module requires edit mode
+	 */
+	public function isEditMode() {
+		return false;
+	}
+	
+	/**
+	 * Indicates whether this module must be called with a POST request
+	 */
+	public function mustBePosted() {
+		return false;
+	}
+
 
 	/**
 	 * Profiling: total module execution time
@@ -610,10 +764,12 @@ abstract class ApiBase {
 		print "\n</pre>\n";
 	}
 
-	public abstract function getVersion();
 
+	/**
+	 * Returns a String that identifies the version of this class.
+	 */
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiBase.php 24934 2007-08-20 08:04:12Z nickj $';
-	}
+		return __CLASS__ . ': $Id: ApiBase.php 31259 2008-02-25 14:14:55Z catrope $';
+	} 
 }
 

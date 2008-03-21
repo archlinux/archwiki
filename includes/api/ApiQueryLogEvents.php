@@ -198,7 +198,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	}
 
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		global $wgLogTypes;
 		return array (
 			'prop' => array (
@@ -243,8 +243,9 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
+			'prop' => 'Which properties to get',
 			'type' => 'Filter log entries to only this type(s)',
 			'start' => 'The timestamp to start enumerating from.',
 			'end' => 'The timestamp to end enumerating.',
@@ -255,7 +256,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		);
 	}
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'Get events from logs.';
 	}
 
@@ -266,7 +267,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryLogEvents.php 24256 2007-07-18 21:47:09Z robchurch $';
+		return __CLASS__ . ': $Id: ApiQueryLogEvents.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }
 

@@ -20,7 +20,9 @@ class ParserOutput
 		$mNewSection,       # Show a new section link?
 		$mNoGallery,        # No gallery on category page? (__NOGALLERY__)
 		$mHeadItems,        # Items to put in the <head> section
-		$mOutputHooks;      # Hook tags as per $wgParserOutputHooks
+		$mOutputHooks,      # Hook tags as per $wgParserOutputHooks
+		$mWarnings,         # Warning text to be returned to the user. Wikitext formatted.
+		$mSections;         # Table of contents
 	
 	/**
 	 * Overridden title for display
@@ -37,6 +39,7 @@ class ParserOutput
 		$this->mCacheTime = '';
 		$this->mVersion = Parser::VERSION;
 		$this->mTitleText = $titletext;
+		$this->mSections = array();
 		$this->mLinks = array();
 		$this->mTemplates = array();
 		$this->mImages = array();
@@ -46,6 +49,7 @@ class ParserOutput
 		$this->mHeadItems = array();
 		$this->mTemplateIds = array();
 		$this->mOutputHooks = array();
+		$this->mWarnings = array();
 	}
 
 	function getText()                   { return $this->mText; }
@@ -54,6 +58,7 @@ class ParserOutput
 	function &getCategories()            { return $this->mCategories; }
 	function getCacheTime()              { return $this->mCacheTime; }
 	function getTitleText()              { return $this->mTitleText; }
+	function getSections()               { return $this->mSections; }
 	function &getLinks()                 { return $this->mLinks; }
 	function &getTemplates()             { return $this->mTemplates; }
 	function &getImages()                { return $this->mImages; }
@@ -61,6 +66,7 @@ class ParserOutput
 	function getNoGallery()              { return $this->mNoGallery; }
 	function getSubtitle()               { return $this->mSubtitle; }
 	function getOutputHooks()            { return (array)$this->mOutputHooks; }
+	function getWarnings()               { return isset( $this->mWarnings ) ? $this->mWarnings : array(); }
 
 	function containsOldMagic()          { return $this->mContainsOldMagic; }
 	function setText( $text )            { return wfSetVar( $this->mText, $text ); }
@@ -68,11 +74,13 @@ class ParserOutput
 	function setCategoryLinks( $cl )     { return wfSetVar( $this->mCategories, $cl ); }
 	function setContainsOldMagic( $com ) { return wfSetVar( $this->mContainsOldMagic, $com ); }
 	function setCacheTime( $t )          { return wfSetVar( $this->mCacheTime, $t ); }
-	function setTitleText( $t )          { return wfSetVar($this->mTitleText, $t); }
+	function setTitleText( $t )          { return wfSetVar( $this->mTitleText, $t ); }
+	function setSections( $toc )         { return wfSetVar( $this->mSections, $toc ); }
 
 	function addCategory( $c, $sort )    { $this->mCategories[$c] = $sort; }
 	function addLanguageLink( $t )       { $this->mLanguageLinks[] = $t; }
 	function addExternalLink( $url )     { $this->mExternalLinks[$url] = 1; }
+	function addWarning( $s )            { $this->mWarnings[] = $s; }
 
 	function addOutputHook( $hook, $data = false ) { 
 		$this->mOutputHooks[] = array( $hook, $data );
@@ -163,6 +171,17 @@ class ParserOutput
 	 */
 	public function getDisplayTitle() {
 		return $this->displayTitle;
+	}
+	
+	/**
+	 * Fairly generic flag setter thingy.
+	 */
+	public function setFlag( $flag ) {
+		$this->mFlags[$flag] = true;
+	}
+	
+	public function getFlag( $flag ) {
+		return isset( $this->mFlags[$flag] );
 	}
 	
 }

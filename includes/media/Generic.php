@@ -96,6 +96,19 @@ abstract class MediaHandler {
 	 */
 	function isMetadataValid( $image, $metadata ) { return true; }
 
+
+	/**
+	 * Get a MediaTransformOutput object representing an alternate of the transformed
+	 * output which will call an intermediary thumbnail assist script.
+	 *
+	 * Used when the repository has a thumbnailScriptUrl option configured.
+	 *
+	 * Return false to fall back to the regular getTransform().
+	 */
+	function getScriptedTransform( $image, $script, $params ) {
+		return false;
+	}
+
 	/**
 	 * Get a MediaTransformOutput object representing the transformed output. Does not 
 	 * actually do the transform.
@@ -191,7 +204,7 @@ abstract class MediaHandler {
 	 * to do things like visual indication of grouped and chained streams
 	 * in ogg container files.
 	 */
-	function formatMetadata( $image, $metadata ) {
+	function formatMetadata( $image ) {
 		return false;
 	}
 
@@ -224,7 +237,7 @@ abstract class MediaHandler {
 		return wfMsg( 'file-info', $sk->formatSize( $file->getSize() ), $file->getMimeType() );
 	}
 
-	function getDimensionsString() {
+	function getDimensionsString( $file ) {
 		return '';
 	}
 
@@ -372,7 +385,10 @@ abstract class ImageHandler extends MediaHandler {
 		}
 		$url = $script . '&' . wfArrayToCGI( $this->getScriptParams( $params ) );
 		$page = isset( $params['page'] ) ? $params['page'] : false;
-		return new ThumbnailImage( $image, $url, $params['width'], $params['height'], $page );
+		
+		if( $image->mustRender() || $params['width'] < $image->getWidth() ) {
+			return new ThumbnailImage( $image, $url, $params['width'], $params['height'], $page );
+		}
 	}
 
 	function getImageSize( $image, $path ) {
@@ -386,26 +402,24 @@ abstract class ImageHandler extends MediaHandler {
 		global $wgLang;
 		$nbytes = '(' . wfMsgExt( 'nbytes', array( 'parsemag', 'escape' ),
 			$wgLang->formatNum( $file->getSize() ) ) . ')';
-		$widthheight = wfMsgHtml( 'widthheight', $file->getWidth(), $file->getHeight() );
-		
+		$widthheight = wfMsgHtml( 'widthheight', $wgLang->formatNum( $file->getWidth() ) ,$wgLang->formatNum( $file->getHeight() ) );
+
 		return "$widthheight ($nbytes)";
 	}
 
 	function getLongDesc( $file ) {
 		global $wgLang;
-		return wfMsgHtml('file-info-size', $file->getWidth(), $file->getHeight(), 
+		return wfMsgHtml('file-info-size', $wgLang->formatNum( $file->getWidth() ), $wgLang->formatNum( $file->getHeight() ), 
 			$wgLang->formatSize( $file->getSize() ), $file->getMimeType() );
 	}
 
 	function getDimensionsString( $file ) {
+		global $wgLang;
 		$pages = $file->pageCount();
 		if ( $pages > 1 ) {
-			return wfMsg( 'widthheightpage', $file->getWidth(), $file->getHeight(), $pages );
+			return wfMsg( 'widthheightpage', $wgLang->formatNum( $file->getWidth() ), $wgLang->formatNum( $file->getHeight() ), $wgLang->formatNum( $pages ) );
 		} else {
-			return wfMsg( 'widthheight', $file->getWidth(), $file->getHeight() );
+			return wfMsg( 'widthheight', $wgLang->formatNum( $file->getWidth() ), $wgLang->formatNum( $file->getHeight() ) );
 		}
 	}
 }
-
-
-

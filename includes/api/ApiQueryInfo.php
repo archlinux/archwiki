@@ -40,6 +40,7 @@ class ApiQueryInfo extends ApiQueryBase {
 	}
 
 	public function requestExtraData($pageSet) {
+		$pageSet->requestField('page_restrictions');
 		$pageSet->requestField('page_is_redirect');
 		$pageSet->requestField('page_is_new');
 		$pageSet->requestField('page_counter');
@@ -65,11 +66,16 @@ class ApiQueryInfo extends ApiQueryBase {
 			$tok_protect = $this->getTokenFlag($token, 'protect');
 			$tok_move = $this->getTokenFlag($token, 'move');
 		}
+		else
+			// Fix E_NOTICEs about unset variables
+			$token = $tok_edit = $tok_delete = $tok_protect = $tok_move = null;
 		
 		$pageSet = $this->getPageSet();
 		$titles = $pageSet->getGoodTitles();
+		$missing = $pageSet->getMissingTitles();
 		$result = $this->getResult();
 
+		$pageRestrictions = $pageSet->getCustomField('page_restrictions');
 		$pageIsRedir = $pageSet->getCustomField('page_is_redirect');
 		$pageIsNew = $pageSet->getCustomField('page_is_new');
 		$pageCounter = $pageSet->getCustomField('page_counter');
@@ -77,23 +83,46 @@ class ApiQueryInfo extends ApiQueryBase {
 		$pageLatest = $pageSet->getCustomField('page_latest');
 		$pageLength = $pageSet->getCustomField('page_len');
 
-		if ($fld_protection && count($titles) > 0) {
+		$db = $this->getDB();
+		if ($fld_protection && !empty($titles)) {
 			$this->addTables('page_restrictions');
-			$this->addFields(array('pr_page', 'pr_type', 'pr_level', 'pr_expiry'));
+			$this->addFields(array('pr_page', 'pr_type', 'pr_level', 'pr_expiry', 'pr_cascade'));
 			$this->addWhereFld('pr_page', array_keys($titles));
 
-			$db = $this->getDB();
 			$res = $this->select(__METHOD__);
 			while($row = $db->fetchObject($res)) {
-				$protections[$row->pr_page][] = array(
-								'type' => $row->pr_type,
-								'level' => $row->pr_level,
-								'expiry' => Block::decodeExpiry( $row->pr_expiry, TS_ISO_8601 )
-							);
+				$a = array(
+					'type' => $row->pr_type,
+					'level' => $row->pr_level,
+					'expiry' => Block::decodeExpiry( $row->pr_expiry, TS_ISO_8601 )
+				);
+				if($row->pr_cascade)
+					$a['cascade'] = '';
+				$protections[$row->pr_page][] = $a;
 			}
 			$db->freeResult($res);
 		}
-		
+		// We don't need to check for pt stuff if there are no nonexistent titles
+		if($fld_protection && !empty($missing))
+		{
+			$this->resetQueryParams();
+			// Construct a custom WHERE clause that matches all titles in $missing
+			$lb = new LinkBatch($missing);
+			$this->addTables('protected_titles');
+			$this->addFields(array('pt_title', 'pt_namespace', 'pt_create_perm', 'pt_expiry'));
+			$this->addWhere($lb->constructSet('pt', $db));
+			$res = $this->select(__METHOD__);
+			$prottitles = array();
+			while($row = $db->fetchObject($res)) {
+				$prottitles[$row->pt_namespace][$row->pt_title] = array(
+					'type' => 'create',
+					'level' => $row->pt_create_perm,
+					'expiry' => Block::decodeExpiry($row->pt_expiry, TS_ISO_8601)
+				);
+			}
+			$db->freeResult($res);
+		}
+
 		foreach ( $titles as $pageid => $title ) {
 			$pageInfo = array (
 				'touched' => wfTimestamp(TS_ISO_8601, $pageTouched[$pageid]),
@@ -125,7 +154,36 @@ class ApiQueryInfo extends ApiQueryBase {
 					$pageInfo['protection'] = $protections[$pageid];
 					$result->setIndexedTagName($pageInfo['protection'], 'pr');
 				} else {
-					$pageInfo['protection'] = array();
+					# Also check old restrictions
+					if( $pageRestrictions[$pageid] ) {
+						foreach( explode( ':', trim( $pageRestrictions[$pageid] ) ) as $restrict ) {
+							$temp = explode( '=', trim( $restrict ) );
+							if(count($temp) == 1) {
+								// old old format should be treated as edit/move restriction
+								$restriction = trim( $temp[0] );
+								$pageInfo['protection'][] = array(
+									'type' => 'edit',
+									'level' => $restriction,
+									'expiry' => 'infinity',
+								);
+								$pageInfo['protection'][] = array(
+									'type' => 'move',
+									'level' => $restriction,
+									'expiry' => 'infinity',
+								);
+							} else {
+								$restriction = trim( $temp[1] );
+								$pageInfo['protection'][] = array(
+									'type' => $temp[0],
+									'level' => $restriction,
+									'expiry' => 'infinity',
+								);
+							}
+						}
+						$result->setIndexedTagName($pageInfo['protection'], 'pr');
+					} else {
+						$pageInfo['protection'] = array();
+					}
 				}
 			}
 
@@ -135,18 +193,31 @@ class ApiQueryInfo extends ApiQueryBase {
 			), $pageid, $pageInfo);
 		}
 
-		// Get edit tokens for missing titles if requested
-		// Delete, protect and move tokens are N/A for missing titles anyway
-		if($tok_edit)
+		// Get edit/protect tokens and protection data for missing titles if requested
+		// Delete and move tokens are N/A for missing titles anyway
+		if($tok_edit || $tok_protect || $fld_protection)
 		{
-			$missing = $pageSet->getMissingTitles();
-			$res = $result->getData();
-			foreach($missing as $pageid => $title)
-				$res['query']['pages'][$pageid]['edittoken'] = $wgUser->editToken();
+			$res = &$result->getData();
+			foreach($missing as $pageid => $title) {
+				if($tok_edit)
+					$res['query']['pages'][$pageid]['edittoken'] = $wgUser->editToken();
+				if($tok_protect)
+					$res['query']['pages'][$pageid]['protecttoken'] = $wgUser->editToken();
+				if($fld_protection)
+				{
+					// Apparently the XML formatting code doesn't like array(null)
+					// This is painful to fix, so we'll just work around it
+					if(isset($prottitles[$title->getNamespace()][$title->getDBkey()]))
+						$res['query']['pages'][$pageid]['protection'][] = $prottitles[$title->getNamespace()][$title->getDBkey()];
+					else
+						$res['query']['pages'][$pageid]['protection'] = array();
+					$result->setIndexedTagName($res['query']['pages'][$pageid]['protection'], 'pr');
+				}
+			}
 		}
 	}
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array (
 			'prop' => array (
 				ApiBase :: PARAM_DFLT => NULL,
@@ -166,7 +237,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array (
 			'prop' => array (
 				'Which additional properties to get:',
@@ -177,7 +248,7 @@ class ApiQueryInfo extends ApiQueryBase {
 	}
 
 
-	protected function getDescription() {
+	public function getDescription() {
 		return 'Get basic page information such as namespace, title, last touched date, ...';
 	}
 
@@ -189,7 +260,7 @@ class ApiQueryInfo extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryInfo.php 25457 2007-09-03 20:17:53Z catrope $';
+		return __CLASS__ . ': $Id: ApiQueryInfo.php 30222 2008-01-28 19:05:26Z catrope $';
 	}
 }
 

@@ -17,7 +17,7 @@ class SpecialMostlinkedtemplates extends QueryPage {
 	public function getName() {
 		return 'Mostlinkedtemplates';
 	}
-	
+
 	/**
 	 * Is this report expensive, i.e should it be cached?
 	 *
@@ -26,7 +26,7 @@ class SpecialMostlinkedtemplates extends QueryPage {
 	public function isExpensive() {
 		return true;
 	}
-	
+
 	/**
 	 * Is there a feed available?
 	 *
@@ -44,7 +44,7 @@ class SpecialMostlinkedtemplates extends QueryPage {
 	public function sortDescending() {
 		return true;
 	}
-	
+
 	/**
 	 * Generate SQL for the report
 	 *
@@ -60,9 +60,9 @@ class SpecialMostlinkedtemplates extends QueryPage {
 			COUNT(*) AS value
 			FROM {$templatelinks}
 			WHERE tl_namespace = " . NS_TEMPLATE . "
-			GROUP BY 1, 2, 3";			
+			GROUP BY 1, 2, 3";
 	}
-	
+
 	/**
 	 * Pre-cache page existence to speed up link generation
 	 *
@@ -79,7 +79,7 @@ class SpecialMostlinkedtemplates extends QueryPage {
 		if( $dbr->numRows( $res ) > 0 )
 			$dbr->dataSeek( $res, 0 );
 	}
-	
+
 	/**
 	 * Format a result row
 	 *
@@ -99,7 +99,7 @@ class SpecialMostlinkedtemplates extends QueryPage {
 			return "Invalid title in result set; {$tsafe}";
 		}
 	}
-	
+
 	/**
 	 * Make a "what links here" link for a given title
 	 *
@@ -115,7 +115,6 @@ class SpecialMostlinkedtemplates extends QueryPage {
 			$wgLang->formatNum( $result->value ) );
 		return $skin->makeKnownLinkObj( $wlh, $label, 'target=' . $title->getPrefixedUrl() );
 	}
-	
 }
 
 /**
@@ -128,4 +127,3 @@ function wfSpecialMostlinkedtemplates( $par = false ) {
 	$mlt = new SpecialMostlinkedtemplates();
 	$mlt->doQuery( $offset, $limit );
 }
-

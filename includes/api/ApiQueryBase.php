@@ -110,8 +110,9 @@ abstract class ApiQueryBase extends ApiBase {
 
 		if (!is_null($end))
 			$this->addWhere($field . $before . $db->addQuotes($end));
-
-		$this->addOption('ORDER BY', $field . ($isDirNewer ? '' : ' DESC'));
+		
+		if (!isset($this->options['ORDER BY']))
+			$this->addOption('ORDER BY', $field . ($isDirNewer ? '' : ' DESC'));
 	}
 
 	protected function addOption($name, $value = null) {
@@ -230,7 +231,7 @@ abstract class ApiQueryBase extends ApiBase {
 	}
 	
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiQueryBase.php 24533 2007-08-01 22:46:22Z yurik $';
+		return __CLASS__ . ': $Id: ApiQueryBase.php 31484 2008-03-03 05:46:20Z brion $';
 	}
 }
 
