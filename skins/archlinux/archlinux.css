@@ -95,6 +95,10 @@ a:hover {
 
 /* MediaWiki: */
 
+#globalWrapper {
+	padding-top: 13px;
+}
+
 #content {
 	background-color: #F0F0F0;
 	border-right: 1px solid;

@@ -124,13 +124,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 		</ul>
 	</div>
 	<div id="subnav_bar"></div>
-
-	<?php if (!empty($_REQUEST['action']) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'submit') ) { ?>
-		<div style="clear:both;background-image:url(FunnyDotImage.php);background-repeat:no-repeat;visibility:hidden;">&nbsp;</div>
-	<?php } else { ?>
-		<div style="clear:both;visibility:hidden;">&nbsp;</div>
-		<?php }
-	} ?>
+	<?php } ?>
 
 	<div id="globalWrapper">
 		<div id="column-content">

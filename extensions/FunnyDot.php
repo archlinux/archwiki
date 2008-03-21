@@ -1,6 +1,7 @@
 <?php
 
-$wgHooks['ArticleSave'][] = 'FunnyDot::checkAntiSpamHash';
+$wgHooks['EditPage::showEditForm:fields'][] = 'FunnyDot::addAntiSpamCheck';
+$wgHooks['EditFilter'][] = 'FunnyDot::checkAntiSpamHash';
 
 $wgExtensionCredits['other'][] = array(
     'name' => 'FunnyDot',
@@ -11,33 +12,64 @@ $wgExtensionCredits['other'][] = array(
 
 class FunnyDot {
 
-public static function checkAntiSpamHash()
+public static function addAntiSpamCheck($editpage, $outputpage)
 	{
-	global $wgAntiSpamHash, $wgAntiSpamTimeout, $wgAntiSpamWait;
+	global $wgAntiSpamHash, $wgUser;
 
-	$now = time();
-
-	if (!empty($_COOKIE['AntiSpamTime']) && !empty($_COOKIE['AntiSpamHash']))
+	if (!$wgUser->isLoggedIn())
 		{
-		$time = intval($_COOKIE['AntiSpamTime']);
+		$outputpage->addHTML('<div style="background-image:url(FunnyDotImage.php);background-repeat:no-repeat;visibility:hidden;width:1px;height:1px;">&nbsp;</div>');
 
-		if ($_COOKIE['AntiSpamHash'] != sha1($time.$wgAntiSpamHash))
+		$time = time();
+		$hash = sha1($time.$wgAntiSpamHash);
+		setCookie('AlternateAntiSpamTime', $time);
+		setCookie('AlternateAntiSpamHashTail', substr($hash, 4));
+
+		$outputpage->addHTML('<div style="display:none;"><label for="AlternateAntiSpamHashHeadField">Sicherheitscode bestätigen: <strong>'.substr($hash, 0, 4).'</strong></label>&nbsp;<input id="AlternateAntiSpamHashHeadField" type="text" name="AlternateAntiSpamHashHead" size="4" value="" /></div>');
+		}
+
+	return true;
+	}
+
+public static function checkAntiSpamHash($editpage, $text, $section, $error)
+	{
+	global $wgAntiSpamHash, $wgAntiSpamTimeout, $wgAntiSpamWait, $wgUser;
+
+	if (!$wgUser->isLoggedIn())
+		{
+		if (!empty($_COOKIE['AntiSpamTime']) && !empty($_COOKIE['AntiSpamHash']))
 			{
-			return false;
+			$time = $_COOKIE['AntiSpamTime'];
+			$hash = $_COOKIE['AntiSpamHash'];
+			}
+		elseif (!empty($_COOKIE['AlternateAntiSpamTime']) && !empty($_COOKIE['AlternateAntiSpamHashTail']) && !empty($_POST['AlternateAntiSpamHashHead']))
+			{
+			$time = $_COOKIE['AlternateAntiSpamTime'];
+			$hash = $_POST['AlternateAntiSpamHashHead'].$_COOKIE['AlternateAntiSpamHashTail'];
+			}
+		else
+			{
+			sleep($wgAntiSpamWait);
+			$error = '<div class="mw-warning error">Ungültige Formulardaten empfangen. Stelle sicher, daß Cookies für diese Domain angenommen werden.</div>';
+			return true;
 			}
 
-		if ($now - $time > $wgAntiSpamTimeout)
+		$now = time();
+
+		if ($hash != sha1($time.$wgAntiSpamHash))
 			{
-			return false;
+			sleep($wgAntiSpamWait);
+			$error = '<div class="mw-warning error">Fehlerhafte Formulardaten empfangen. Überprüfe den Sicherheitscode!</div>';
+			}
+		elseif ($now - $time > $wgAntiSpamTimeout)
+			{
+			$error = '<div class="mw-warning error">Deine Zeit ist abgelaufen. Schicke das Formular bitte erneut ab, und zwar innherlab der nächsten '.$wgAntiSpamTimeout.' Sekunden.</div>';
 			}
 		elseif ($now - $time < $wgAntiSpamWait)
 			{
-			return false;
+			sleep($wgAntiSpamWait);
+			$error = '<div class="mw-warning error">Du warst zu schnell. Schicke das Formular bitte erneut ab. Laße Dir diesmal mindestens '.$wgAntiSpamWait.' Sekunden Zeit.</div>';
 			}
-		}
-	else
-		{
-		return false;
 		}
 
 	return true;
