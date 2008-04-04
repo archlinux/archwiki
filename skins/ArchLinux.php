@@ -110,10 +110,13 @@ class ArchLinuxTemplate extends QuickTemplate {
 					$downloadTab = ' class="selected"';
 				} elseif ($this->data['title'] == 'ArchLinux User-Community Repository') {
 					$aurTab = ' class="selected"';
+				} elseif ($this->data['title'] == 'Spenden') {
+					$donateTab = ' class="selected"';
 				} else {
 					$wikiTab = ' class="selected"';
 				}
 			?>
+			<li<?php echo $donateTab; ?>><a href="?title=Spenden">Spenden</a></li>
 			<li<?php echo $downloadTab; ?>><a href="?title=Download">ISOs</a></li>
 			<li><a href="http://www.archlinux.de/?page=Packages">Pakete</a></li>
 			<li<?php echo $aurTab; ?>><a href="?title=AUR">AUR</a></li>
