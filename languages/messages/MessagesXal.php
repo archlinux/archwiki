@@ -1,9 +1,9 @@
 <?php
 /** Kalmyk (Хальмг)
  *
- * @addtogroup Language
+ * @ingroup Language
+ * @file
  *
- * @author M.M.S.
  * @author לערי ריינהארט
  */
 
@@ -41,7 +41,8 @@ $messages = array(
 'talkpagelinktext' => 'Ухалвр',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
-'mainpage' => 'Эклц',
+'mainpage'             => 'Эклц',
+'mainpage-description' => 'Эклц',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'     => 'Халх',
@@ -57,7 +58,7 @@ $messages = array(
 # Preferences page
 'preferences' => 'Дурллһн',
 
-# Image list
+# Image description page
 'filehist-user' => 'Орлцач',
 
 # Contributions

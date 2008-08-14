@@ -198,14 +198,14 @@ span.subpages { display: block; }
     color: red;
     font-size: larger;
 }
-#catlinks {
+.catlinks {
     border:1px solid #aaaaaa;
     background-color:#f9f9f9;
     padding: 2px 5px;
     margin: 0.1em 0 0 0;
     clear: both;
 }
-p.catlinks { margin: 0; padding: 0; }
+.catlinks { margin: 0; padding: 0; }
 
 
 /* currently unused, intended to be used by a metadata box
@@ -349,30 +349,6 @@ table.rimage {
     padding:5px;
     font-size: 95%;
 }
-div.townBox {
-    position:relative;
-    float:right;
-    background:White;
-    margin-left:1em;
-    border: 1px solid gray;
-    padding:0.3em;
-    width: 200px;
-    overflow: hidden;
-    clear: right;
-}
-div.townBox dl {
-    padding: 0;
-    margin: 0 0 0.3em 0;
-    font-size: 96%;
-}
-div.townBox dl dt {
-    background: none;
-    margin: 0.4em 0 0 0;
-}
-div.townBox dl dd {
-    margin: 0.1em 0 0 1.1em;
-    background-color: #f3f3f3;
-}
 
 /*
 ** edit views etc
@@ -383,26 +359,9 @@ div.townBox dl dd {
     padding: 0;
 }
 
-/* Page history styling */
-/* the auto-generated edit comments */
-.autocomment { color: gray; }
-#pagehistory span.user {
-    margin-left: 1.4em;
-    margin-right: 0.4em;
-}
-#pagehistory span.minor { font-weight: bold; }
-#pagehistory li { border: 1px solid White; }
-#pagehistory li.selected {
-    background-color:#f9f9f9;
-    border:1px dashed #aaaaaa;
-}
-
 a.external { color: #3366bb; }
-
 div#footer { text-align: center; }
-
 ul#f-list li { list-style: none;  text-align: center; }
-
 div.portlet { margin: 0.5em 0; }
 
 .redirectText {

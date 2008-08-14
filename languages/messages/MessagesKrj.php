@@ -1,14 +1,13 @@
 <?php
 /** Kinaray-a (Kinaray-a)
  *
- * @addtogroup Language
+ * @ingroup Language
+ * @file
  *
- * @author RonaldPanaligan, Harvzsf (September 2007)
- * @author RonaldPanaligan
  * @author Harvzsf
+ * @author Jose77
+ * @author RonaldPanaligan
  */
-
-
 
 $messages = array(
 # User preference toggles
@@ -92,8 +91,7 @@ $messages = array(
 'nov'           => 'Nob',
 'dec'           => 'Dis',
 
-# Bits of text used by many pages
-'categories'            => 'Manga Kategorya',
+# Categories related messages
 'category_header'       => 'Manga artikolo sa "$1"',
 'subcategories'         => "Manga ''subcategory''",
 'category-media-header' => 'Manga midya sa "$1"',
@@ -152,10 +150,10 @@ $messages = array(
 'jumptosearch'      => 'sagap',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
-'bugreports'  => "Mga report kang ''bug''",
-'edithelp'    => 'Panoytoy sa Pag-ilis',
-'mainpage'    => 'Pono nga Pahina',
-'sitesupport' => 'Donasyon',
+'bugreports'           => "Mga report kang ''bug''",
+'edithelp'             => 'Panoytoy sa Pag-ilis',
+'mainpage'             => 'Pono nga Pahina',
+'mainpage-description' => 'Pono nga Pahina',
 
 'badaccess'        => 'Sayup sa lisensya',
 'badaccess-group0' => 'Indi kaw ginpasogtan nga himoon ang lihuk nga ginalaum mo.',
@@ -198,7 +196,95 @@ $messages = array(
 'viewsource'           => 'Turukun ang ginhalinan',
 
 # Login and logout pages
-'nologinlink'   => "Himo ka sangka ''account''",
-'createaccount' => "Himo ka ''account''",
+'remembermypassword' => "Tandaan ang akun nga ''log-in'' sa dya nga ''computer''",
+'nologinlink'        => "Himo ka sangka ''account''",
+'createaccount'      => "Himo ka ''account''",
+'youremail'          => 'E-mail:',
+'email'              => 'E-mail',
+
+# Edit pages
+'preview' => 'Bilid',
+
+# Preferences page
+'searchresultshead' => 'Sagap',
+
+# Recent changes
+'hide' => 'Itago',
+'show' => 'Ipakita',
+
+'upload-file-error' => 'Sayup internal',
+
+# Special:ImageList
+'imgfile' => 'inayap',
+
+# File deletion
+'filedelete-submit' => 'Para',
+
+'brokenredirects-edit'   => '(Iislan)',
+'brokenredirects-delete' => '(para)',
+
+'withoutinterwiki-submit' => 'Ipakita',
+
+# Book sources
+'booksources-go' => 'Agto',
+
+# Special:Log
+'log-search-submit' => 'Agto',
+
+# Special:Categories
+'categories' => 'Manga Kategorya',
+
+# Special:ListUsers
+'listusers-submit' => 'Ipakita',
+
+# E-mail user
+'emailmessage' => 'Mensahe',
+
+# Delete/protect/revert
+'delete-legend' => 'Para',
+
+# Restrictions (nouns)
+'restriction-edit' => 'Iislan',
+
+# Undelete
+'undelete-search-submit' => 'Sagap',
+
+'sp-contributions-submit' => 'Sagap',
+
+# What links here
+'whatlinkshere-page' => 'Pahina:',
+'isredirect'         => 'idaho ang pahina',
+
+# Block/unblock
+'ipblocklist-submit' => 'Sagap',
+
+# Tooltip help for the actions
+'tooltip-ca-protect' => 'Amligan ang dya nga pahina',
+'tooltip-ca-delete'  => 'Paraun ang dya nga Pahina',
+'tooltip-p-logo'     => 'Pono nga Pahina',
+
+# Special:NewImages
+'ilsubmit' => 'Sagap',
+
+# action=purge
+'confirm_purge_button' => 'OK dun',
+
+# Multipage image navigation
+'imgmultigo' => 'Agto!',
+
+# Table pager
+'table_pager_limit_submit' => 'Agto',
+
+# Special:Version
+'version-specialpages' => 'Manga espesyal nga pahina',
+
+# Special:FilePath
+'filepath-page' => 'Inayap:',
+
+# Special:FileDuplicateSearch
+'fileduplicatesearch-submit' => 'Sagap',
+
+# Special:SpecialPages
+'specialpages' => 'Manga espesyal nga pahina',
 
 );

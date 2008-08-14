@@ -1,5 +1,5 @@
 /*
-Right-to-left fixes for MonoBook.
+Right-to-left fixes for Simple.
 Places sidebar on right, tweaks various alignment issues.
 
 Works mostly ok nicely on Safari 1.2.1; fine in Mozilla.
@@ -24,7 +24,6 @@ To test:
 */
 body {
 	direction: rtl;
-/*    unicode-bidi: bidi-override;*/
 	unicode-bidi: embed;
 }
 #column-content {
@@ -67,7 +66,6 @@ div div.thumbcaption {
 }
 
 div.magnify,
-#div.townBox,
 #p-logo {
 	left: auto;
 	right: 0;
@@ -93,14 +91,6 @@ div.tright, div.floatright, table.floatright {
 }
 div.tleft, div.floatleft, table.floatleft {
 	clear: left;
-}
-div.townBox {
-	margin-left: 0;
-	margin-right: 1em;
-}
-div.townBox dl dd {
-	margin-left: 0;
-	margin-right: 1.1em;
 }
 
 /* Fix link icons */
@@ -161,8 +151,8 @@ input#wpSave, input#wpDiff {
 	float: right;
 	margin: 0 0 1em 3em;
 }
-/* Unblock and Ipblocklist links of Special:Blockip */
-p.mw-ipb-conveniencelinks {
+/* Convenience links to edit block and delete reasons */
+p.mw-ipb-conveniencelinks, p.mw-filedelete-editreasons, p.mw-delete-editreasons {
 	float: left;
 }
 
@@ -172,4 +162,14 @@ p.mw-ipb-conveniencelinks {
 }
 table.filehistory th {
 	text-align: right;
+}
+
+/**
+ * Lists:
+ * The following lines don't have a visible effect on non-Gecko browsers
+ * They fix a problem ith Gecko browsers rendering lists to the right of
+ * left-floated objects in an RTL layout.
+ */
+html > body div#bodyContent ul {
+	display: table;
 }

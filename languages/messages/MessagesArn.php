@@ -1,8 +1,10 @@
 <?php
 /** Araucanian (Mapudungun)
  *
- * @addtogroup Language
+ * @ingroup Language
+ * @file
  *
+ * @author Clerc
  * @author Lin linao
  * @author Poquil
  */
@@ -10,6 +12,9 @@
 $fallback = 'es';
 
 $messages = array(
+# User preference toggles
+'tog-editondblclick' => 'Wirin pakina epu klik mew (JavaScript)',
+
 'underline-always' => 'Rumel',
 'underline-never'  => 'Turpu',
 
@@ -65,14 +70,18 @@ $messages = array(
 'nov'           => 'konlu nofiempüre küyeṉ mew',
 'dec'           => 'konlu disiempüre küyeṉ mew',
 
-'qbfind'      => 'Kintun',
-'qbedit'      => 'Wirin',
-'qbmyoptions' => 'tañi nütramkawe',
-'mypage'      => 'tañi nütramkawe',
-'mytalk'      => 'Tañi nütramkawe',
-'and'         => 'ka',
+# Categories related messages
+'listingcontinuesabbrev' => 'ramt.',
 
-'returnto'         => 'Wüñonge $1 püle.',
+'qbfind'        => 'Kintun',
+'qbedit'        => 'Wirin',
+'qbmyoptions'   => 'tañi nütramkawe',
+'moredotdotdot' => 'Doy...',
+'mypage'        => 'tañi nütramkawe',
+'mytalk'        => 'Tañi nütramkawe',
+'and'           => 'ka',
+
+'returnto'         => 'Amutun $1 püle.',
 'tagline'          => '{{SITENAME}} mew',
 'help'             => 'Kellu',
 'search'           => 'Kintun',
@@ -82,9 +91,13 @@ $messages = array(
 'history'          => 'Pünon',
 'history_short'    => 'Pünon',
 'edit'             => 'Wirin',
+'create'           => 'Llitun',
+'editthispage'     => 'Wirin tüfachi página',
 'delete'           => 'Ñamümün',
+'deletethispage'   => 'Ñamümün tüfa pakina',
 'protect'          => 'Elulan ñi wiriael',
 'unprotect'        => 'Elun ñi wiriael',
+'talkpage'         => 'Nütramkafinge tüfachi pakina',
 'talkpagelinktext' => 'Nütramkawe',
 'articlepage'      => 'adkintun artículo',
 'talk'             => 'Nütramkawe',
@@ -102,7 +115,9 @@ $messages = array(
 'jumptosearch'     => 'kintu',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
-'helppage' => 'Help:Kellu',
+'edithelp'     => 'Kellü wirin',
+'edithelppage' => 'Help:Chum wiringekey pakina',
+'helppage'     => 'Help:Kellu',
 
 'ok'                      => 'Feley may',
 'youhavenewmessages'      => 'Elungeymi $1 ($2).',
@@ -126,22 +141,28 @@ $messages = array(
 'badtitle'        => 'Nornongey ta üy',
 
 # Login and logout pages
-'yourname'           => 'Tami lludüchi üy',
-'yourpassword'       => 'Tami konün dungu',
-'login'              => 'Konün',
-'logout'             => 'Tripan',
-'userlogout'         => 'Tripan',
-'notloggedin'        => 'Petu konlaymi.',
-'nologin'            => 'Nielaymi kiñe lludüwe? $1.',
-'nologinlink'        => 'Dewmafinge',
-'gotaccountlink'     => 'Konün',
-'yourrealname'       => 'Tami mupiñ üy *',
-'yourlanguage'       => 'Dungun:',
-'loginlanguagelabel' => 'Dungun: $1',
+'loginpagetitle'          => 'Konün',
+'yourname'                => 'Tami lludüchi üy',
+'yourpassword'            => 'Tami kondungu',
+'login'                   => 'Konün',
+'nav-login-createaccount' => 'Registrarse/Konün',
+'userlogin'               => 'Konün',
+'logout'                  => 'Tripan',
+'userlogout'              => 'Tripan',
+'notloggedin'             => 'Petu konlaymi.',
+'nologin'                 => 'Nielaymi kiñe lludüwe? $1.',
+'nologinlink'             => 'Dewmafinge',
+'gotaccountlink'          => 'Konün',
+'yourrealname'            => 'Tami mupiñ üy *',
+'yourlanguage'            => 'Dungun:',
+'loginlanguagelabel'      => 'Dungun: $1',
 
 # Edit pages
-'subject'    => 'Dungu/üy',
-'newarticle' => '(We)',
+'subject'      => 'Dungu/üy',
+'loginreqlink' => 'Koni',
+'newarticle'   => '(We)',
+'editing'      => 'Wirimekey $1',
+'yourtext'     => 'Tami wirin',
 
 # History pages
 'page_first'   => 'wünen',
@@ -151,15 +172,24 @@ $messages = array(
 'history-feed-item-nocomment' => '$1 $2 mew', # user at time
 
 # Revision deletion
-'rev-delundel' => 'pengelün/ellkan',
+'rev-delundel'  => 'pengelün/ellkan',
+'revdelete-hid' => 'Ellkan $1',
 
 # Diffs
 'lineno'   => 'Wirin $1:',
 'editundo' => 'wüñoeltun',
 
 # Search results
-'viewprevnext' => 'Pen ($1) ($2) ($3).',
-'powersearch'  => 'Kintu',
+'viewprevnext'          => 'Pen ($1) ($2) ($3).',
+'search-interwiki-more' => '(Doy)',
+'searchall'             => 'Fill',
+'powersearch'           => 'Kintu',
+'powersearch-field'     => 'Kintun',
+
+# Preferences page
+'prefsnologin'      => 'Mülelay Konün',
+'textboxsize'       => 'Wirin',
+'searchresultshead' => 'Kintun',
 
 # Groups
 'group'       => 'Kisuwen:',
@@ -176,12 +206,12 @@ $messages = array(
 
 'nolicense' => 'Chemnorume dullinnongey',
 
-# Image list
-'ilsubmit'           => 'Kintu',
-'imgdelete'          => 'ñam',
+# Special:ImageList
+'imagelist_name' => 'Üy',
+
+# Image description page
 'filehist-deleteall' => 'kom ñamümün',
 'filehist-deleteone' => 'tüfa ñamümün',
-'imagelist_name'     => 'Üy',
 
 # File deletion
 'filedelete'         => '$1 ñamümün',
@@ -204,11 +234,11 @@ $messages = array(
 'speciallogtitlelabel' => 'Üy:',
 'log-search-submit'    => 'Amun',
 
-# Special:Allpages
+# Special:AllPages
 'allpagesnext'   => 'Inan',
 'allpagessubmit' => 'Pengelün',
 
-# Special:Listusers
+# Special:ListUsers
 'listusers-submit' => 'Pengelün',
 
 # E-mail user
@@ -221,8 +251,9 @@ $messages = array(
 'unwatchthispage' => 'Llaytuwelan',
 
 # Delete/protect/revert
-'protectexpiry'       => 'Afi:',
-'protect-level-sysop' => 'Pu ngünefe müṯen',
+'protectexpiry'           => 'Afi:',
+'protect-level-sysop'     => 'Pu ngünefe müṯen',
+'protect-summary-cascade' => 'Trayengko',
 
 # Restrictions (nouns)
 'restriction-edit' => 'Pepiwelukay',
@@ -253,11 +284,11 @@ $messages = array(
 'tooltip-pt-mytalk' => 'Tañi nütramkawe',
 'tooltip-pt-logout' => 'Tripan',
 
-# Spam protection
-'listingcontinuesabbrev' => 'ramt.',
-
 # Patrol log
 'patrol-log-diff' => 'ng$1',
+
+# Special:NewImages
+'ilsubmit' => 'Kintu',
 
 # Video information, used by Language::formatTimePeriod() to format lengths in the above messages
 'hours-abbrev' => 'o',
@@ -293,5 +324,8 @@ $messages = array(
 'size-kilobytes' => '$1 Kb',
 'size-megabytes' => '$1 Mb',
 'size-gigabytes' => '$1 Gb',
+
+# Special:SpecialPages
+'specialpages-group-login' => 'Konün',
 
 );

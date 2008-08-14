@@ -1,8 +1,10 @@
 <?php
 /** Azerbaijani (Azərbaycan)
  *
- * @addtogroup Language
+ * @ingroup Language
+ * @file
  *
+ * @author לערי ריינהארט
  */
 
 $namespaceNames = array(
@@ -71,11 +73,11 @@ $messages = array(
 'nov'       => 'Noyabr',
 'dec'       => 'Dekabr',
 
-# Bits of text used by many pages
-'categories'      => 'Kateqoriyalar',
-'pagecategories'  => 'Kateqoriyalar',
-'category_header' => '"$1" kategoriyasındaki məqalələr',
-'subcategories'   => 'Alt kategoriyalar',
+# Categories related messages
+'pagecategories'         => 'Kateqoriyalar',
+'category_header'        => '"$1" kategoriyasındaki məqalələr',
+'subcategories'          => 'Alt kategoriyalar',
+'listingcontinuesabbrev' => '(davam)',
 
 'about'          => 'İzah',
 'article'        => 'Mündəricat Səhifəsi',
@@ -125,23 +127,23 @@ $messages = array(
 'lastmodifiedat'    => 'Bu səhifə sonuncu dəfə $2, $1 tarixində redaktə edilib.', # $1 date, $2 time
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
-'aboutsite'         => '{{SITENAME}} haqqında',
-'aboutpage'         => 'Project:İzah',
-'bugreports'        => "Xəta mə'ruzəsı",
-'bugreportspage'    => "Project:Xəta_mə'ruzəsı",
-'copyright'         => 'Bu məzmun $1 əhatəsindədir.',
-'copyrightpagename' => '{{SITENAME}} müəllif',
-'copyrightpage'     => '{{ns:project}}:Müəllif',
-'currentevents'     => 'Güncəl hadisələr',
-'currentevents-url' => 'Project:Güncəl Hadisələr',
-'disclaimers'       => 'İmtina etmə',
-'edithelp'          => 'Redaktə kömək',
-'edithelppage'      => 'Help:Redaktə',
-'helppage'          => 'Help:Mündəricət',
-'mainpage'          => 'Ana Səhifə',
-'portal'            => 'Kənd Meydani',
-'portal-url'        => 'Project:Kənd Meydani',
-'sitesupport'       => 'Bağışlar',
+'aboutsite'            => '{{SITENAME}} haqqında',
+'aboutpage'            => 'Project:İzah',
+'bugreports'           => "Xəta mə'ruzəsı",
+'bugreportspage'       => "Project:Xəta_mə'ruzəsı",
+'copyright'            => 'Bu məzmun $1 əhatəsindədir.',
+'copyrightpagename'    => '{{SITENAME}} müəllif',
+'copyrightpage'        => '{{ns:project}}:Müəllif',
+'currentevents'        => 'Güncəl hadisələr',
+'currentevents-url'    => 'Project:Güncəl Hadisələr',
+'disclaimers'          => 'İmtina etmə',
+'edithelp'             => 'Redaktə kömək',
+'edithelppage'         => 'Help:Redaktə',
+'helppage'             => 'Help:Mündəricət',
+'mainpage'             => 'Ana Səhifə',
+'mainpage-description' => 'Ana Səhifə',
+'portal'               => 'Kənd Meydani',
+'portal-url'           => 'Project:Kənd Meydani',
 
 'youhavenewmessages' => 'Hal-hazırda $1 var. ($2)',
 'newmessageslink'    => 'yeni mesajlar!',
@@ -206,6 +208,7 @@ $messages = array(
 'noemail'                    => '"$1" adlı istifadəçi e-məktub ünvanı qeyd edmemişdir.',
 'acct_creation_throttle_hit' => 'Siz artıq $1 hesab açmısınız. Daha çox hesab açabilmərsiniz.',
 'emailauthenticated'         => 'E-məktub ünvanınız $1 tarixində təsdiq edilib.',
+'emailnotauthenticated'      => 'Your e-mail address is not yet authenticated. No e-mail will be sent for any of the following features.',
 'emailconfirmlink'           => 'E-məktubunu təsdiq et',
 'invalidemailaddress'        => 'E-məktub ünvanını qeyri düzgün formatda olduğu üçün qəbul edə bilmirik. Xahiş edirik düzgün formatlı ünvan daxil edin və ya bu sahəni boş qoyun.',
 
@@ -216,7 +219,7 @@ $messages = array(
 'italic_tip'      => 'Kursiv mətn',
 'link_sample'     => 'Bağlantı başlığı',
 'link_tip'        => 'Daxili bağlantı',
-'extlink_sample'  => 'http://www.misal.com başlıq',
+'extlink_sample'  => 'http://www.example.com başlıq',
 'extlink_tip'     => 'Xarici səhifə (http:// ekini unutma)',
 'headline_sample' => 'Başlıq metni',
 'headline_tip'    => '2. səviyyə başlıq',
@@ -235,7 +238,6 @@ $messages = array(
 'showdiff'           => 'Dəyişiklikləri göstər',
 'blockedtitle'       => 'İstifadəçi bloklanıb',
 'whitelistedittitle' => 'Redaktə üçün daxil olmalısınız',
-'whitelistreadtitle' => 'Oxumaq üçün daxil olmalısınız',
 'accmailtitle'       => 'Parol göndərildi.',
 'accmailtext'        => '"$1" üçün parol göndərildi bu ünvana : $2.',
 'newarticle'         => '(Yeni)',
@@ -243,7 +245,6 @@ $messages = array(
 'noarticletext'      => "Hal-hazırda bu səhifə boşdur. Başqa səhifələrdə [[Special:Search/{{PAGENAME}}|bu səhifənin adını axtara]] bilər və ya '''[{{fullurl:{{NAMESPACE}}:{{PAGENAME}}|action=edit}} səhifəni siz redaktə edəbilərsiniz]'''.",
 'previewnote'        => '<strong>Bu yalnız sınaq göstərişidir; dəyişikliklər hal-hazırda qeyd edilmemişdir!</strong>',
 'editing'            => 'Redaktə $1',
-'editinguser'        => 'Redaktə $1',
 'yourtext'           => 'Metniniz',
 'yourdiff'           => 'Fərqlər',
 'templatesused'      => 'Bu səhifədə istifadə edilmiş şablonlar:',
@@ -285,6 +286,7 @@ Açıqlama: (hh) = hal-hazırkı versiya ilə olan fərqlər,
 'prefs-rc'           => 'Son dəyişikliklər',
 'prefs-misc'         => 'Digər tərcihlər',
 'saveprefs'          => 'Qeyd et',
+'resetprefs'         => 'Reset',
 'oldpassword'        => 'Köhne parol:',
 'newpassword'        => 'Yeni parol:',
 'retypenew'          => 'Yeni parolu təkrar yazın:',
@@ -303,6 +305,7 @@ Açıqlama: (hh) = hal-hazırkı versiya ilə olan fərqlər,
 # User rights
 'userrights-lookup-user'   => 'İstifadəçi qruplarını idarə et',
 'userrights-user-editname' => 'İstifadəçi adınızı yazın:',
+'editinguser'              => "Redaktə '''[[User:$1|$1]]''' ([[User talk:$1|{{int:talkpagelinktext}}]] | [[Special:Contributions/$1|{{int:contribslink}}]])",
 
 # Recent changes
 'recentchanges'     => 'Son dəyişikliklər',
@@ -324,20 +327,20 @@ Açıqlama: (hh) = hal-hazırkı versiya ilə olan fərqlər,
 'upload'            => 'Qarşıya yüklə',
 'uploadbtn'         => 'Sənəd yüklə',
 'reupload'          => 'Təkrar yüklə',
+'reuploaddesc'      => 'Return to the upload form.',
 'uploaderror'       => 'Yükləyiş xətası',
 'uploadlog'         => 'yükleme kaydı',
 'filename'          => 'Fayl adı',
 'fileuploadsummary' => 'İzahat:',
-'filestatus'        => 'Müəllif statusu',
-'filesource'        => 'Mənbə',
+'filestatus'        => 'Müəllif statusu:',
+'filesource'        => 'Mənbə:',
 'uploadwarning'     => 'Yükləyiş xəbərdarlıqı',
 'savefile'          => 'Faylı qeyd et',
 
-# Image list
-'imagelist'        => 'Fayl siyahısı',
-'byname'           => 'ada görə',
-'bydate'           => 'tarixe görə',
-'bysize'           => 'ölçüye görə',
+# Special:ImageList
+'imagelist' => 'Fayl siyahısı',
+
+# Image description page
 'noimage-linktext' => 'faylı yüklə',
 
 # MIME search
@@ -361,7 +364,7 @@ There have been a total of '''$3''' page views, and '''$4''' page edits
 since the wiki was setup.
 That comes to '''$5''' average edits per page, and '''$6''' views per edit.
 
-Hal-hazırda [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] sayı: '''$7'''.",
+Hal-hazırda [http://www.mediawiki.org/wiki/Manual:Job_queue job queue] sayı: '''$7'''.",
 'userstatstext' => "Hal-hazırda '''$1''' istifadəçi, '''2''' (və ya '''4%''') tanesi idarəçi. (baxınız $3).",
 
 'doubleredirects' => 'İkiqat istiqamətləndirmələr',
@@ -380,13 +383,9 @@ Hal-hazırda [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] sayı: ''
 'wantedpages'             => 'Təlabat olunan səhifələr',
 'mostcategories'          => 'Kateqoriyası ən çox olan məqalələr',
 'mostrevisions'           => 'Ən çox nəzərdən keçirilmiş (versiyalı) məqalələr',
-'allpages'                => 'Bütün səhifələr',
 'shortpages'              => 'Qısa səhifələr',
 'longpages'               => 'Uzun səhifələr',
 'listusers'               => 'İstifadəçi siyahı',
-'specialpages'            => 'Xüsusi səhifələr',
-'spheading'               => 'İstifadəçilər üçün xüsusi səhifələr',
-'restrictedpheading'      => 'İdarəçilər üçün xüsusi səhifələr',
 'newpages'                => 'Yeni səhifələr',
 'ancientpages'            => 'Ən köhnə səhifələr',
 'move'                    => 'Adını dəyişdir',
@@ -395,14 +394,12 @@ Hal-hazırda [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] sayı: ''
 # Book sources
 'booksources' => 'Kitab mənbələri',
 
-'categoriespagetext' => 'Wikide aşağıdaki kateqoriyalar var.',
-'version'            => 'Versiya',
-
 # Special:Log
 'log'         => 'Loglar',
 'alllogstext' => "Qarşıya yükləmə, silmə, qoruma, bloklama ve sistem operatoru loqlarının birləşdirilmiş göstərməsi. Log növü, istifadəçi adı veya tə'sir edilən səhifəni seçib görüntünü kiçildə bilərsiniz.",
 
-# Special:Allpages
+# Special:AllPages
+'allpages'       => 'Bütün səhifələr',
 'nextpage'       => 'Sonrakı səhifə ($1)',
 'allpagesfrom'   => 'Bu mövqedən başlayan səhifeleri göstər:',
 'allarticles'    => 'Bütün məqalələr',
@@ -410,6 +407,10 @@ Hal-hazırda [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] sayı: ''
 'allpagesprev'   => 'Əvvəlki',
 'allpagesnext'   => 'Sonrakı',
 'allpagessubmit' => 'Gətir',
+
+# Special:Categories
+'categories'         => 'Kateqoriyalar',
+'categoriespagetext' => 'Wikide aşağıdaki kateqoriyalar var.',
 
 # E-mail user
 'emailuser'       => 'İstifadəçiyə e-məktub yolla',
@@ -427,7 +428,7 @@ Hal-hazırda [http://meta.wikimedia.org/wiki/Help:Job_queue job queue] sayı: ''
 'mywatchlist'          => 'İzlədiyim səhifələr',
 'watchnologin'         => 'Daxil olmamısınız',
 'addedwatch'           => 'İzləmə siyahısına əlavə edildi.',
-'addedwatchtext'       => '"$1" səhifəsi [[Special:Watchlist|izlədiyiniz səhifələrə]] əlavə edildi. Bu səhifədə və əlaqəli müzakirə səhifəsində olacaq dəyişikliklər orada göstəriləcək və səhifə asanlıqla seçiləbilmək üçün [[Special:Recentchanges|son dəyişikliklər]]-də qalın şriftlərlə görsənəcəkdir.
+'addedwatchtext'       => '"$1" səhifəsi [[Special:Watchlist|izlədiyiniz səhifələrə]] əlavə edildi. Bu səhifədə və əlaqəli müzakirə səhifəsində olacaq dəyişikliklər orada göstəriləcək və səhifə asanlıqla seçiləbilmək üçün [[Special:RecentChanges|son dəyişikliklər]]-də qalın şriftlərlə görsənəcəkdir.
 
 Səhifəni izləmə sıyahınızdan çıxarmaq üçün yan lovhədəki "izləmə" düyməsinə vurun.',
 'removedwatch'         => 'İzləmə siyahısından çıxardılıb',
@@ -442,7 +443,7 @@ Səhifəni izləmə sıyahınızdan çıxarmaq üçün yan lovhədəki "izləmə
 'watchmethod-recent'   => 'yeni dəyişikliklər izlənilən səhifələr üçün yoxlanılır',
 'watchmethod-list'     => 'izlənilən səhifələr yeni dəyişikliklər üçün yoxlanılır',
 'watchlistcontains'    => 'İzləmə siyahınızda $1 səhifə var.',
-'wlnote'               => 'Aşağıdakılar son <b>$2</b> saatdakı son $1 dəyişiklikdir.',
+'wlnote'               => "Aşağıdakılar son '''$2''' saatdakı son $1 dəyişiklikdir.",
 'wlshowlast'           => 'Bunları göstər: son $1 saatı $2 günü $3',
 
 # Delete/protect/revert
@@ -453,7 +454,7 @@ Səhifəni izləmə sıyahınızdan çıxarmaq üçün yan lovhədəki "izləmə
 'deletedarticle' => 'silindi "[[$1]]"',
 'rollback'       => 'Əvvəlki versiya',
 'rollbacklink'   => 'əvvəlki halına qaytar',
-'confirmprotect' => 'Qorumayı təsdiq et',
+'protect-legend' => 'Qorumayı təsdiq et',
 
 # Undelete
 'undelete'        => 'Silinmiş səhifələri göstər',
@@ -479,23 +480,23 @@ Səhifəni izləmə sıyahınızdan çıxarmaq üçün yan lovhədəki "izləmə
 'ipbsubmit'          => 'Bu istifadəçiyi əngəllə',
 'badipaddress'       => 'Yanlış IP',
 'blockipsuccesssub'  => 'bloklandi',
-'blockipsuccesstext' => '[[Special:Contributions/$1| $1]]bloklanıb. <br />See[[Special:Ipblocklist|IP blok siyahisi]] bloklanmış IP lər.',
+'blockipsuccesstext' => '[[Special:Contributions/$1| $1]]bloklanıb. <br />See[[Special:IPBlockList|IP blok siyahisi]] bloklanmış IP lər.',
 'ipblocklist'        => 'Əngəllənmiş istifadəçilər siyahı',
 'blocklink'          => 'blokla',
 'contribslink'       => 'Köməklər',
 'blocklogpage'       => 'Blok qeydı',
 
 # Move page
-'movepage'        => 'Səhifənin adını dəyiş',
-'movearticle'     => 'Səhifənin adını dəyişdir',
-'newtitle'        => 'Yeni başlıq',
-'movepagebtn'     => 'Səhifənin adını dəyiş',
-'movetalk'        => 'Bu səhifənin müzakirə səhifəsinin de adını dəyişdir.',
-'1movedto2'       => '[[$1]] adı dəyişildi. Yeni adı: [[$2]]',
-'1movedto2_redir' => '[[$1]] adı və məsiri dəyişildi : [[$2]]',
-'movereason'      => 'Səbəb',
-'revertmove'      => 'Əvvəlki vəziyyətinə',
-'delete_and_move' => 'Sil və apar',
+'move-page-legend' => 'Səhifənin adını dəyiş',
+'movearticle'      => 'Səhifənin adını dəyişdir',
+'newtitle'         => 'Yeni başlıq',
+'movepagebtn'      => 'Səhifənin adını dəyiş',
+'movetalk'         => 'Bu səhifənin müzakirə səhifəsinin de adını dəyişdir.',
+'1movedto2'        => '[[$1]] adı dəyişildi. Yeni adı: [[$2]]',
+'1movedto2_redir'  => '[[$1]] adı və məsiri dəyişildi : [[$2]]',
+'movereason'       => 'Səbəb',
+'revertmove'       => 'Əvvəlki vəziyyətinə',
+'delete_and_move'  => 'Sil və apar',
 
 # Export
 'export' => 'Səhifələri ixrac et',
@@ -537,7 +538,6 @@ Səhifəni izləmə sıyahınızdan çıxarmaq üçün yan lovhədəki "izləmə
 'tooltip-n-recentchanges'       => 'Bu Wikidə Son dəyişikliklər siyahəsi.',
 'tooltip-n-randompage'          => 'Bir təsadufi, necə gəldi, məqaləyə baxin',
 'tooltip-n-help'                => 'Yardım almaq üçün.',
-'tooltip-n-sitesupport'         => 'Maddi kömək',
 'tooltip-t-whatlinkshere'       => 'Wikidə bu məqaləyə bağlantilar',
 'tooltip-t-recentchangeslinked' => 'Bu məqaləyə ayid başqa səhifələrdə yeni dəyişikliklər',
 'tooltip-t-contributions'       => 'Bu üzvin redaktə etmiş məqalələr siyahəsi',
@@ -545,11 +545,6 @@ Səhifəni izləmə sıyahınızdan çıxarmaq üçün yan lovhədəki "izləmə
 'tooltip-t-upload'              => 'Yeni FILE lar Wikiyə yüklə.',
 'tooltip-t-specialpages'        => 'Xüsusi səhifələrin siyahəsi',
 'tooltip-ca-nstab-help'         => 'Kömək səhifəsi',
-
-# Spam protection
-'subcategorycount'       => 'Bu kategoriyada $1 alt kategoriya var.',
-'categoryarticlecount'   => 'Bu kategoriyada $1 məqalə var.',
-'listingcontinuesabbrev' => '(davam)',
 
 # Browsing diffs
 'previousdiff' => '← Əvvəlki fərq',
@@ -559,8 +554,9 @@ Səhifəni izləmə sıyahınızdan çıxarmaq üçün yan lovhədəki "izləmə
 'imagemaxsize' => 'Limit images on image description pages to:',
 'thumbsize'    => 'Kiçik ölçü:',
 
-# Special:Newimages
+# Special:NewImages
 'newimages' => 'Yeni faylların siyahısı',
+'bydate'    => 'tarixe görə',
 
 # 'all' in various places, this might be different for inflected languages
 'imagelistall'  => 'bütün',
@@ -574,5 +570,11 @@ Səhifəni izləmə sıyahınızdan çıxarmaq üçün yan lovhədəki "izləmə
 'confirmemail_success'  => 'E-məktub ünvanınız indi təsdiq edildi.',
 'confirmemail_loggedin' => 'E-məktubunuz indi təsdiq edildi.',
 'confirmemail_subject'  => '{{SITENAME}} e-məktub təsdiq etme',
+
+# Special:Version
+'version' => 'Versiya', # Not used as normal message but as header for the special page itself
+
+# Special:SpecialPages
+'specialpages' => 'Xüsusi səhifələr',
 
 );
