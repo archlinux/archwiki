@@ -99,28 +99,17 @@ class ArchLinuxTemplate extends QuickTemplate {
 	<div id="nav_bar">
 		<ul id="nav">
 			<?php
-				$bugsTab = '';
-				$downloadTab = '';
-				$aurTab = '';
+				$donateTab = '';
 				$wikiTab = '';
 
-				if ($this->data['title'] == 'Fehler melden') {
-					$bugsTab = ' class="selected"';
-				} elseif ($this->data['title'] == 'Download') {
-					$downloadTab = ' class="selected"';
-				} elseif ($this->data['title'] == 'ArchLinux User-Community Repository') {
-					$aurTab = ' class="selected"';
-				} elseif ($this->data['title'] == 'Spenden') {
+				if ($this->data['title'] == 'Spenden') {
 					$donateTab = ' class="selected"';
 				} else {
 					$wikiTab = ' class="selected"';
 				}
 			?>
 			<li<?php echo $donateTab; ?>><a href="?title=Spenden">Spenden</a></li>
-			<li<?php echo $downloadTab; ?>><a href="?title=Download">ISOs</a></li>
 			<li><a href="http://www.archlinux.de/?page=Packages">Pakete</a></li>
-			<li<?php echo $aurTab; ?>><a href="?title=AUR">AUR</a></li>
-			<li<?php echo $bugsTab; ?>><a href="?title=Bugs">Bugs</a></li>
 			<li<?php echo $wikiTab; ?>><a href="?title=Hauptseite">Wiki</a></li>
 			<li><a href="http://forum.archlinux.de/?page=Forums;id=20">Forum</a></li>
 			<li><a href="http://www.archlinux.de/?page=Start">Start</a></li>
