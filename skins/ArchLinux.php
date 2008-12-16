@@ -114,9 +114,9 @@ class ArchLinuxTemplate extends QuickTemplate {
 					$wikiTab = ' class="selected"';
 				}
 			?>
-			<li<?php echo $donateTab; ?>><a href="?title=Spenden">Spenden</a></li>
+			<li<?php echo $donateTab; ?>><a href="http://wiki.archlinux.de/title/Spenden">Spenden</a></li>
 			<li><a href="http://www.archlinux.de/?page=Packages">Pakete</a></li>
-			<li<?php echo $wikiTab; ?>><a href="?title=Hauptseite">Wiki</a></li>
+			<li<?php echo $wikiTab; ?>><a href="http://wiki.archlinux.de/title/Hauptseite">Wiki</a></li>
 			<li><a href="http://forum.archlinux.de/?page=Forums;id=20">Forum</a></li>
 			<li><a href="http://www.archlinux.de/?page=Start">Start</a></li>
 		</ul>
