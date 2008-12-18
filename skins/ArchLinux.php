@@ -13,9 +13,7 @@ if( !defined( 'MEDIAWIKI' ) )
 /**
  * Inherit main code from SkinTemplate, set the CSS and template filter.
  * @todo document
- * @addtogroup Skins
- * @package MediaWiki
- * @subpackage Skins
+ * @ingroup Skins
  */
 class SkinArchLinux extends SkinTemplate {
 	/** Using archlinux. */
@@ -45,7 +43,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 	 * @access private
 	 */
 	function execute() {
-		global $wgRequest;
+		global $wgRequest, $wgArchNavBar, $wgArchNavBarSelected;
 		$this->skin = $skin = $this->data['skin'];
 		$action = $wgRequest->getText( 'action' );
 
@@ -94,31 +92,29 @@ class ArchLinuxTemplate extends QuickTemplate {
 		<script type="<?php $this->text('jsmimetype') ?>"><?php $this->html('userjsprev') ?></script>
 <?php	}
 		if($this->data['trackbackhtml']) print $this->data['trackbackhtml']; ?>
-		<link rel="shortcut icon" href="favicon.ico" />
 	</head>
 <body<?php if($this->data['body_ondblclick']) { ?> ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
 <?php if($this->data['body_onload']) { ?> onload="<?php $this->text('body_onload') ?>"<?php } ?>
  class="mediawiki <?php $this->text('nsclass') ?> <?php $this->text('dir') ?> <?php $this->text('pageclass') ?>">
 
 	<?php if (empty($_REQUEST['printable'])) {?>
-	<h1 id="logo">Arch Linux</h1>
+	<a id="logo" style="background-image: url(<?php $this->text('logopath') ?>);" <?php
+			?>href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href'])?>"<?php
+			echo $skin->tooltipAndAccesskey('n-mainpage') ?>></a>
 	<div id="nav_bar">
 		<ul id="nav">
 			<?php
-				$donateTab = '';
-				$wikiTab = '';
-
-				if ($this->data['title'] == 'Spenden') {
-					$donateTab = ' class="selected"';
-				} else {
-					$wikiTab = ' class="selected"';
+				if (isset($wgArchNavBar)) {
+					foreach ($wgArchNavBar as $name => $url) {
+						if (isset($wgArchNavBarSelected) && $name == $wgArchNavBarSelected) {
+							$selected = ' class="selected"';
+						} else {
+							$selected = '';
+						}
+						echo '<li'.$selected.'><a href="'.$url.'">'.$name.'</a></li>';
+					}
 				}
 			?>
-			<li<?php echo $donateTab; ?>><a href="http://wiki.archlinux.de/title/Spenden">Spenden</a></li>
-			<li><a href="http://www.archlinux.de/?page=Packages">Pakete</a></li>
-			<li<?php echo $wikiTab; ?>><a href="http://wiki.archlinux.de/title/Hauptseite">Wiki</a></li>
-			<li><a href="http://forum.archlinux.de/?page=Forums;id=20">Forum</a></li>
-			<li><a href="http://www.archlinux.de/?page=Start">Start</a></li>
 		</ul>
 	</div>
 	<div id="subnav_bar"></div>
@@ -188,13 +184,6 @@ class ArchLinuxTemplate extends QuickTemplate {
 			</ul>
 		</div>
 	</div>
-	<!--
-	<div class="portlet" id="p-logo">
-		<a style="background-image: url(<?php $this->text('logopath') ?>);" <?php
-			?>href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href'])?>"<?php
-			echo $skin->tooltipAndAccesskey('n-mainpage') ?>></a>
-	</div>
-	-->
 	<script type="<?php $this->text('jsmimetype') ?>"> if (window.isMSIE55) fixalpha(); </script>
 <?php 
 		$sidebar = $this->data['sidebar'];		
@@ -216,20 +205,6 @@ class ArchLinuxTemplate extends QuickTemplate {
 		</div><!-- end of the left (by default at least) column -->
 			<div class="visualClear"></div>
 			<div id="footer">
-<?php
-		if($this->data['poweredbyico']) { ?>
-				<!--
-				<div id="f-poweredbyico"><?php $this->html('poweredbyico') ?></div>
-				-->
-<?php 	}
-		if($this->data['copyrightico']) { ?>
-				<!--
-				<div id="f-copyrightico"><?php $this->html('copyrightico') ?></div>
-				-->
-<?php	}
-
-		// Generate additional footer links
-?>
 			<ul id="f-list">
 <?php
 		$footerlinks = array(
