@@ -568,5 +568,5 @@ CREATE TABLE mediawiki_version (
 );
 
 INSERT INTO mediawiki_version (type,mw_version,sql_version,sql_date)
-  VALUES ('Creation','??','$LastChangedRevision: 40517 $','$LastChangedDate: 2008-09-06 17:14:20 +1000 (Sat, 06 Sep 2008) $');
+  VALUES ('Creation','??','$LastChangedRevision: 40517 $','$LastChangedDate: 2008-09-06 02:14:20 -0500 (Sat, 06 Sep 2008) $');
 
