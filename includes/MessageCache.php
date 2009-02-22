@@ -25,7 +25,7 @@ class MessageCache {
 	var $mKeys, $mParserOptions, $mParser;
 	var $mExtensionMessages = array();
 	var $mInitialised = false;
-	var $mAllMessagesLoaded; // Extension messages
+	var $mAllMessagesLoaded = array(); // Extension messages
 
 	// Variable for tracking which variables are loaded
 	var $mLoadedLanguages = array();
@@ -44,7 +44,6 @@ class MessageCache {
 
 	/**
 	 * ParserOptions is lazy initialised.
-	 * Access should probably be protected.
 	 */
 	function getParserOptions() {
 		if ( !$this->mParserOptions ) {
@@ -110,7 +109,7 @@ class MessageCache {
 		global $wgLocalMessageCache;
 
 		$filename = "$wgLocalMessageCache/messages-" . wfWikiID() . "-$code";
-		wfMkdirParents( $wgLocalMessageCache, 0777 ); // might fail
+		wfMkdirParents( $wgLocalMessageCache ); // might fail
 
 		wfSuppressWarnings();
 		$file = fopen( $filename, 'w' );
@@ -131,7 +130,7 @@ class MessageCache {
 
 		$filename = "$wgLocalMessageCache/messages-" . wfWikiID() . "-$code";
 		$tempFilename = $filename . '.tmp';
-  	wfMkdirParents( $wgLocalMessageCache, 0777 ); // might fail
+  		wfMkdirParents( $wgLocalMessageCache ); // might fail
 
 		wfSuppressWarnings();
 		$file = fopen( $tempFilename, 'w');
@@ -261,12 +260,23 @@ class MessageCache {
 
 			$this->lock($cacheKey);
 
-			$cache = $this->loadFromDB( $code );
-			$success = $this->setCache( $cache, $code );
+			# Limit the concurrency of loadFromDB to a single process 
+			# This prevents the site from going down when the cache expires
+			$statusKey = wfMemcKey( 'messages', $code, 'status' );
+			$success = $this->mMemc->add( $statusKey, 'loading', MSG_LOAD_TIMEOUT );
 			if ( $success ) {
-				$this->saveToCaches( $cache, true, $code );
+				$cache = $this->loadFromDB( $code );
+				$success = $this->setCache( $cache, $code );
 			}
-
+			if ( $success ) {
+				$success = $this->saveToCaches( $cache, true, $code );
+				if ( $success ) {
+					$this->mMemc->delete( $statusKey );
+				} else {
+					$this->mMemc->set( $statusKey, 'error', 60*5 );
+					wfDebug( "MemCached set error in MessageCache: restart memcached server!\n" );
+				}
+			}
 			$this->unlock($cacheKey);
 		}
 
@@ -414,10 +424,6 @@ class MessageCache {
 		global $wgLocalMessageCache, $wgLocalMessageCacheSerialized;
 
 		$cacheKey = wfMemcKey( 'messages', $code );
-		$statusKey = wfMemcKey( 'messages', $code, 'status' );
-
-		$success = $this->mMemc->add( $statusKey, 'loading', MSG_LOAD_TIMEOUT );
-		if ( !$success ) return true; # Other process should be updating them now
 
 		$i = 0;
 		if ( $memc ) {
@@ -444,11 +450,8 @@ class MessageCache {
 		}
 
 		if ( $i == 20 ) {
-			$this->mMemc->set( $statusKey, 'error', 60*5 );
-			wfDebug( "MemCached set error in MessageCache: restart memcached server!\n" );
 			$success = false;
 		} else {
-			$this->mMemc->delete( $statusKey );
 			$success = true;
 		}
 		wfProfileOut( __METHOD__ );
@@ -498,29 +501,9 @@ class MessageCache {
 	 * @param bool $isFullKey Specifies whether $key is a two part key "lang/msg".
 	 */
 	function get( $key, $useDB = true, $langcode = true, $isFullKey = false ) {
-		global $wgContLanguageCode, $wgContLang, $wgLang;
+		global $wgContLanguageCode, $wgContLang;
 
-		# Identify which language to get or create a language object for.
-		if( $langcode === $wgContLang->getCode() || $langcode === true ) {
-			# $langcode is the language code of the wikis content language object.
-			# or it is a boolean and value is true
-			$lang =& $wgContLang;
-		} elseif( $langcode === $wgLang->getCode() || $langcode === false ) {
-			# $langcode is the language code of user language object.
-			# or it was a boolean and value is false
-			$lang =& $wgLang;
-		} else {
-			$validCodes = array_keys( Language::getLanguageNames() );
-			if( in_array( $langcode, $validCodes ) ) {
-				# $langcode corresponds to a valid language.
-				$lang = Language::factory( $langcode );
-			} else {
-				# $langcode is a string, but not a valid language code; use content language.
-				$lang =& $wgContLang;
-				wfDebug( 'Invalid language code passed to MessageCache::get, falling back to content language.' );
-			}
-		}
-
+		$lang = wfGetLangObj( $langcode );
 		$langcode = $lang->getCode();
 
 		# If uninitialised, someone is trying to call this halfway through Setup.php
@@ -664,23 +647,30 @@ class MessageCache {
 		return $message;
 	}
 
-	function transform( $message, $interface = false ) {
+	function transform( $message, $interface = false, $language = null ) {
 		// Avoid creating parser if nothing to transfrom
 		if( strpos( $message, '{{' ) === false ) {
 			return $message;
 		}
 
-		global $wgParser;
+		global $wgParser, $wgParserConf;
 		if ( !$this->mParser && isset( $wgParser ) ) {
 			# Do some initialisation so that we don't have to do it twice
 			$wgParser->firstCallInit();
 			# Clone it and store it
-			$this->mParser = clone $wgParser;
+			$class = $wgParserConf['class'];
+			if ( $class == 'Parser_DiffTest' ) {
+				# Uncloneable
+				$this->mParser = new $class( $wgParserConf );
+			} else {
+				$this->mParser = clone $wgParser;
+			}
 			#wfDebug( __METHOD__ . ": following contents triggered transform: $message\n" );
 		}
 		if ( $this->mParser ) {
 			$popts = $this->getParserOptions();
 			$popts->setInterfaceMessage( $interface );
+			$popts->setTargetLanguage( $language );
 			$message = $this->mParser->transformMsg( $message, $popts );
 		}
 		return $message;
@@ -781,12 +771,13 @@ class MessageCache {
 		}
 	}
 
-	function loadAllMessages() {
+	function loadAllMessages( $lang = false ) {
 		global $wgExtensionMessagesFiles;
-		if ( $this->mAllMessagesLoaded ) {
+		$key = $lang === false ? '*' : $lang;
+		if ( isset( $this->mAllMessagesLoaded[$key] ) ) {
 			return;
 		}
-		$this->mAllMessagesLoaded = true;
+		$this->mAllMessagesLoaded[$key] = true;
 
 		# Some extensions will load their messages when you load their class file
 		wfLoadAllExtensions();
@@ -794,7 +785,7 @@ class MessageCache {
 		wfRunHooks( 'LoadAllMessages' );
 		# Some register their messages in $wgExtensionMessagesFiles
 		foreach ( $wgExtensionMessagesFiles as $name => $file ) {
-			wfLoadExtensionMessages( $name );
+			wfLoadExtensionMessages( $name, $lang );
 		}
 		# Still others will respond to neither, they are EVIL. We sometimes need to know!
 	}
@@ -855,13 +846,17 @@ class MessageCache {
 
 	public function figureMessage( $key ) {
 		global $wgContLanguageCode;
-		$pieces = explode('/', $key, 2);
+		$pieces = explode( '/', $key );
+		if( count( $pieces ) < 2 )
+			return array( $key, $wgContLanguageCode );
 
-		$key = $pieces[0];
+		$lang = array_pop( $pieces );
+		$validCodes = Language::getLanguageNames();
+		if( !array_key_exists( $lang, $validCodes ) )
+			return array( $key, $wgContLanguageCode );
 
-		# Language the user is translating to
-		$langCode = isset($pieces[1]) ? $pieces[1] : $wgContLanguageCode;
-		return array( $key, $langCode );
+		$message = implode( '/', $pieces );
+		return array( $message, $lang );
 	}
 
 }

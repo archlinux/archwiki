@@ -39,7 +39,7 @@ class LLAuthPlugin extends AuthPlugin {
 			}
 		}
 
-	function getUserData($username) {
+	private function getUserData($username) {
 		if (is_null($this->data))
 			{
 			$this->connect();
@@ -53,7 +53,7 @@ class LLAuthPlugin extends AuthPlugin {
 		return $this->data;
 	}
 
-	function userExists( $username ) {
+	public function userExists( $username ) {
 		$this->connect();
 		$result = mysqli_query($this->dbLink, 'SELECT id FROM users WHERE name = \''.mysqli_escape_string($this->dbLink, $username).'\'');
 		$exists = mysqli_num_rows($result) > 0;
@@ -62,7 +62,7 @@ class LLAuthPlugin extends AuthPlugin {
  		return $exists;
 	}
 
-	function authenticate( $username, $password ) {
+	public function authenticate( $username, $password ) {
 		$this->connect();
 		$result = mysqli_query($this->dbLink, 'SELECT id FROM users WHERE name = \''.mysqli_escape_string($this->dbLink, $username).'\' AND password = \''.mysqli_escape_string($this->dbLink, sha1($password)).'\' ');
 		$authenticated = mysqli_num_rows($result) > 0;
@@ -71,57 +71,57 @@ class LLAuthPlugin extends AuthPlugin {
  		return $authenticated;
 	}
 
-	function modifyUITemplate( &$template ) {
+	public function modifyUITemplate( &$template ) {
 		$template->set( 'usedomain', false );
 		$template->set('link', 'Um Dich hier anzumelden, nutze Deine Konto-Daten aus dem <a href="http://forum.archlinux.de/">archlinux.de-Forum</a>.');
 	}
 
-	function setDomain( $domain ) {
+	public function setDomain( $domain ) {
 		$this->domain = $domain;
 	}
 
-	function validDomain( $domain ) {
+	public function validDomain( $domain ) {
 		return true;
 	}
 
-	function updateUser( &$user ) {
+	public function updateUser( &$user ) {
 		return $this->initUser($user);
 	}
 
-	function autoCreate() {
+	public function autoCreate() {
 		return true;
 	}
 
-	function allowPasswordChange() {
+	public function allowPasswordChange() {
 		return false;
 	}
 
-	function setPassword( $user, $password ) {
+	public function setPassword( $user, $password ) {
 		return false;
 	}
 
-	function updateExternalDB( $user ) {
+	public function updateExternalDB( $user ) {
 		// this way userdata is allways overwritten by external db
 		return $this->initUser($user);
 	}
 
-	function canCreateAccounts() {
+	public function canCreateAccounts() {
 		return false;
 	}
 
-	function addUser( $user, $password, $email = '', $realname = '' ) {
+	public function addUser( $user, $password, $email = '', $realname = '' ) {
 		return false;
 	}
 
-	function strict() {
+	public function strict() {
 		return true;
 	}
 
-	function strictUserAuth( $username ) {
+	public function strictUserAuth( $username ) {
 		return true;
 	}
 
-	function initUser( &$user, $autocreate=false ) {
+	public function initUser( &$user, $autocreate=false ) {
 		$data = $this->getUserData($user->getName());
 		$user->setEmail($data['email']);
 		$user->confirmEmail();
@@ -129,7 +129,7 @@ class LLAuthPlugin extends AuthPlugin {
 		return true;
 	}
 
-	function getCanonicalName( $username ) {
+	public function getCanonicalName( $username ) {
 		// fix bug #122
 		$data = $this->getUserData($username);
 		// needed for update.php

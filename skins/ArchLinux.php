@@ -17,14 +17,31 @@ if( !defined( 'MEDIAWIKI' ) )
  */
 class SkinArchLinux extends SkinTemplate {
 	/** Using archlinux. */
-	function initPage( &$out ) {
-		SkinTemplate::initPage( $out );
+	function initPage( OutputPage $out ) {
+		parent::initPage( $out );
 		$this->skinname  = 'archlinux';
 		$this->stylename = 'archlinux';
 		$this->template  = 'ArchLinuxTemplate';
-		# Bug 14520: skins that just include this file shouldn't load nonexis-
-		# tent CSS fix files.
-		$this->cssfiles = array( 'IE', 'IE50', 'IE55', 'IE60', 'IE70', 'rtl' );
+	}
+
+	function setupSkinUserCss( OutputPage $out ) {
+		global $wgHandheldStyle;
+
+		parent::setupSkinUserCss( $out );
+
+		// Append to the default screen common & print styles...
+		$out->addStyle( 'archlinux/main.css', 'screen' );
+		if( $wgHandheldStyle ) {
+			// Currently in testing... try 'chick/main.css'
+			$out->addStyle( $wgHandheldStyle, 'handheld' );
+		}
+
+		$out->addStyle( 'archlinux/IE50Fixes.css', 'screen', 'lt IE 5.5000' );
+		$out->addStyle( 'archlinux/IE55Fixes.css', 'screen', 'IE 5.5000' );
+		$out->addStyle( 'archlinux/IE60Fixes.css', 'screen', 'IE 6' );
+		$out->addStyle( 'archlinux/IE70Fixes.css', 'screen', 'IE 7' );
+
+		$out->addStyle( 'archlinux/rtl.css', 'screen', '', 'rtl' );
 	}
 }
 
@@ -59,17 +76,11 @@ class ArchLinuxTemplate extends QuickTemplate {
 		<meta http-equiv="Content-Type" content="<?php $this->text('mimetype') ?>; charset=<?php $this->text('charset') ?>" />
 		<?php $this->html('headlinks') ?>
 		<title><?php $this->text('pagetitle') ?></title>
-		<style type="text/css" media="screen, projection">/*<![CDATA[*/
-			@import "<?php $this->text('stylepath') ?>/common/shared.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
-			@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/main.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
-		/*]]>*/</style>
-		<link rel="stylesheet" type="text/css" <?php if(empty($this->data['printable']) ) { ?>media="print"<?php } ?> href="<?php $this->text('printcss') ?>?<?php echo $GLOBALS['wgStyleVersion'] ?>" />
-		<?php if( in_array( 'IE50', $skin->cssfiles ) ) { ?><!--[if lt IE 5.5000]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE50Fixes.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style><![endif]-->
-		<?php } if( in_array( 'IE55', $skin->cssfiles ) ) { ?><!--[if IE 5.5000]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE55Fixes.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style><![endif]-->
-		<?php } if( in_array( 'IE60', $skin->cssfiles ) ) { ?><!--[if IE 6]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE60Fixes.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style><![endif]-->
-		<?php } if( in_array( 'IE70', $skin->cssfiles ) ) { ?><!--[if IE 7]><style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/IE70Fixes.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style><![endif]-->
-		<?php } ?><!--[if lt IE 7]><?php if( in_array( 'IE', $skin->cssfiles ) ) { ?><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/common/IEFixes.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"></script>
-		<?php } ?><meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+		<?php $this->html('csslinks') ?>
+
+		<!--[if lt IE 7]><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/common/IEFixes.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"></script>
+		<meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+
 		<style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/archlinux.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style>
 		<?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
 
@@ -95,7 +106,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 	</head>
 <body<?php if($this->data['body_ondblclick']) { ?> ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
 <?php if($this->data['body_onload']) { ?> onload="<?php $this->text('body_onload') ?>"<?php } ?>
- class="mediawiki <?php $this->text('nsclass') ?> <?php $this->text('dir') ?> <?php $this->text('pageclass') ?>">
+ class="mediawiki <?php $this->text('dir') ?> <?php $this->text('pageclass') ?> <?php $this->text('skinnameclass') ?>">
 
 	<?php if (empty($_REQUEST['printable'])) {?>
 	<a id="logo" style="background-image: url(<?php $this->text('logopath') ?>);" <?php
@@ -125,7 +136,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 	<div id="content">
 		<a name="top" id="top"></a>
 		<?php if($this->data['sitenotice']) { ?><div id="siteNotice"><?php $this->html('sitenotice') ?></div><?php } ?>
-		<h1 class="firstHeading"><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></h1>
+		<h1 id="firstHeading" class="firstHeading"><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></h1>
 		<div id="bodyContent">
 			<h3 id="siteSub"><?php $this->msg('tagline') ?></h3>
 			<div id="contentSub"><?php $this->html('subtitle') ?></div>
@@ -136,6 +147,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 			<?php $this->html('bodytext') ?>
 			<?php if($this->data['catlinks']) { $this->html('catlinks'); } ?>
 			<!-- end content -->
+			<?php if($this->data['dataAfterContent']) { $this->html ('dataAfterContent'); } ?>
 			<div class="visualClear"></div>
 		</div>
 	</div>
@@ -147,7 +159,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 			<ul>
 	<?php		foreach($this->data['content_actions'] as $key => $tab) {
 					echo '
-				 <li id="ca-' . Sanitizer::escapeId($key).'"';
+				 <li id="' . Sanitizer::escapeId( "ca-$key" ) . '"';
 					if( $tab['class'] ) {
 						echo ' class="'.htmlspecialchars($tab['class']).'"';
 					}
@@ -174,7 +186,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 		<div class="pBody">
 			<ul>
 <?php 			foreach($this->data['personal_urls'] as $key => $item) { ?>
-				<li id="pt-<?php echo Sanitizer::escapeId($key) ?>"<?php
+				<li id="<?php echo Sanitizer::escapeId( "pt-$key" ) ?>"<?php
 					if ($item['active']) { ?> class="active"<?php } ?>><a href="<?php
 				echo htmlspecialchars($item['href']) ?>"<?php echo $skin->tooltipAndAccesskey('pt-'.$key) ?><?php
 				if(!empty($item['class'])) { ?> class="<?php
@@ -205,19 +217,30 @@ class ArchLinuxTemplate extends QuickTemplate {
 		</div><!-- end of the left (by default at least) column -->
 			<div class="visualClear"></div>
 			<div id="footer">
-			<ul id="f-list">
 <?php
+		// Generate additional footer links
 		$footerlinks = array(
 			'lastmod', 'viewcount', 'numberofwatchingusers', 'credits', 'copyright',
 			'privacy', 'about', 'disclaimer', 'tagline',
 		);
+		$validFooterLinks = array();
 		foreach( $footerlinks as $aLink ) {
 			if( isset( $this->data[$aLink] ) && $this->data[$aLink] ) {
+			$validFooterLinks[] = $aLink;
+			}
+		}
+		if ( count( $validFooterLinks ) > 0 ) {
+?>			<ul id="f-list">
+<?php
+			foreach( $validFooterLinks as $aLink ) {
+				if( isset( $this->data[$aLink] ) && $this->data[$aLink] ) {
 ?>				<li id="<?php echo$aLink?>"><?php $this->html($aLink) ?></li>
 <?php 		}
 		}
 ?>
 			</ul>
+<?php	}
+?>
 		</div>
 </div>
 <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
@@ -277,7 +300,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 <?php 	}
 		if($this->data['feeds']) { ?>
 			<li id="feedlinks"><?php foreach($this->data['feeds'] as $key => $feed) {
-					?><span id="feed-<?php echo Sanitizer::escapeId($key) ?>"><a href="<?php
+					?><span id="<?php echo Sanitizer::escapeId( "feed-$key" ) ?>"><a href="<?php
 					echo htmlspecialchars($feed['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey('feed-'.$key) ?>><?php echo htmlspecialchars($feed['text'])?></a>&nbsp;</span>
 					<?php } ?></li><?php
 		}
@@ -333,7 +356,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 	/*************************************************************************************************/
 	function customBox( $bar, $cont ) {
 ?>
-	<div class='generated-sidebar portlet' id='p-<?php echo Sanitizer::escapeId($bar) ?>'<?php echo $this->skin->tooltip('p-'.$bar) ?>>
+	<div class='generated-sidebar portlet' id='<?php echo Sanitizer::escapeId( "p-$bar" ) ?>'<?php echo $this->skin->tooltip('p-'.$bar) ?>>
 		<h5><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?></h5>
 		<div class='pBody'>
 <?php   if ( is_array( $cont ) ) { ?>

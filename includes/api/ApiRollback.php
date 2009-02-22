@@ -37,7 +37,6 @@ class ApiRollback extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgUser;
 		$this->getMain()->requestWriteMode();
 		$params = $this->extractRequestParams();
 
@@ -55,7 +54,10 @@ class ApiRollback extends ApiBase {
 		if(!$titleObj->exists())
 			$this->dieUsageMsg(array('notanarticle'));
 
-		$username = User::getCanonicalName($params['user']);
+		#We need to be able to revert IPs, but getCanonicalName rejects them
+		$username = User::isIP($params['user'])
+			? $params['user']
+			: User::getCanonicalName($params['user']);
 		if(!$username)
 			$this->dieUsageMsg(array('invaliduser', $params['user']));
 
@@ -64,20 +66,17 @@ class ApiRollback extends ApiBase {
 		$details = null;
 		$retval = $articleObj->doRollback($username, $summary, $params['token'], $params['markbot'], $details);
 
-		if(!empty($retval))
+		if($retval)
 			// We don't care about multiple errors, just report one of them
 			$this->dieUsageMsg(current($retval));
 
-		$current = $target = $summary = NULL;
-		extract($details);
-
 		$info = array(
 			'title' => $titleObj->getPrefixedText(),
-			'pageid' => $current->getPage(),
-			'summary' => $summary,
+			'pageid' => $details['current']->getPage(),
+			'summary' => $details['summary'],
 			'revid' => $titleObj->getLatestRevID(),
-			'old_revid' => $current->getID(),
-			'last_revid' => $target->getID()
+			'old_revid' => $details['current']->getID(),
+			'last_revid' => $details['target']->getID()
 		);
 
 		$this->getResult()->addValue(null, $this->getModuleName(), $info);
@@ -99,7 +98,7 @@ class ApiRollback extends ApiBase {
 		return array (
 			'title' => 'Title of the page you want to rollback.',
 			'user' => 'Name of the user whose edits are to be rolled back. If set incorrectly, you\'ll get a badtoken error.',
-			'token' => 'A rollback token previously retrieved through prop=info',
+			'token' => 'A rollback token previously retrieved through prop=revisions',
 			'summary' => 'Custom edit summary. If not set, default summary will be used.',
 			'markbot' => 'Mark the reverted edits and the revert as bot edits'
 		);
@@ -107,8 +106,8 @@ class ApiRollback extends ApiBase {
 
 	public function getDescription() {
 		return array(
-				'Undoes the last edit to the page. If the last user who edited the page made multiple edits in a row,',
-				'they will all be rolled back. You need to be logged in as a sysop to use this function, see also action=login.'
+				'Undo the last edit to the page. If the last user who edited the page made multiple edits in a row,',
+				'they will all be rolled back.'
 			);
 	}
 
@@ -120,6 +119,6 @@ class ApiRollback extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiRollback.php 35098 2008-05-20 17:13:28Z ialex $';
+		return __CLASS__ . ': $Id: ApiRollback.php 45043 2008-12-26 04:13:47Z mrzman $';
 	}
 }

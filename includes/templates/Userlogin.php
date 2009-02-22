@@ -16,7 +16,7 @@ class UserloginTemplate extends QuickTemplate {
 ?>
 	<div class="<?php $this->text('messagetype') ?>box">
 		<?php if ( $this->data['messagetype'] == 'error' ) { ?>
-			<h2><?php $this->msg('loginerror') ?>:</h2>
+			<h2><?php $this->msg('loginerror') ?></h2>
 		<?php } ?>
 		<?php $this->html('message') ?>
 	</div>
@@ -54,7 +54,7 @@ class UserloginTemplate extends QuickTemplate {
 			$doms .= "<option>" . htmlspecialchars( $dom ) . "</option>";
 		}
 	?>
-		<tr>
+		<tr id="mw-user-domain-section">
 			<td class="mw-label"><?php $this->msg( 'yourdomainname' ) ?></td>
 			<td class="mw-input">
 				<select name="wpDomain" value="<?php $this->text( 'domain' ) ?>"
@@ -63,7 +63,8 @@ class UserloginTemplate extends QuickTemplate {
 				</select>
 			</td>
 		</tr>
-	<?php } ?>
+	<?php }
+	if( $this->data['canremember'] ) { ?>
 		<tr>
 			<td></td>
 			<td class="mw-input">
@@ -74,6 +75,7 @@ class UserloginTemplate extends QuickTemplate {
 					/> <label for="wpRemember"><?php $this->msg('remembermypassword') ?></label>
 			</td>
 		</tr>
+		<?php } ?>
 		<tr>
 			<td></td>
 			<td class="mw-submit">
@@ -111,7 +113,7 @@ class UsercreateTemplate extends QuickTemplate {
 ?>
 	<div class="<?php $this->text('messagetype') ?>box">
 		<?php if ( $this->data['messagetype'] == 'error' ) { ?>
-			<h2><?php $this->msg('loginerror') ?>:</h2>
+			<h2><?php $this->msg('loginerror') ?></h2>
 		<?php } ?>
 		<?php $this->html('message') ?>
 	</div>
@@ -196,6 +198,7 @@ class UsercreateTemplate extends QuickTemplate {
 					</td>
 			<?php } ?>
 		</tr>
+		<?php if( $this->data['canremember'] ) { ?>
 		<tr>
 			<td></td>
 			<td class="mw-input">
@@ -206,7 +209,8 @@ class UsercreateTemplate extends QuickTemplate {
 					/> <label for="wpRemember"><?php $this->msg('remembermypassword') ?></label>
 			</td>
 		</tr>
-<?php
+<?php   }
+
 		$tabIndex = 8;
 		if ( isset( $this->data['extraInput'] ) && is_array( $this->data['extraInput'] ) ) {
 			foreach ( $this->data['extraInput'] as $inputItem ) { ?>
