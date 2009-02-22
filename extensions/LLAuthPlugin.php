@@ -13,60 +13,46 @@ require_once('includes/AuthPlugin.php');
 
 class LLAuthPlugin extends AuthPlugin {
 
-	private $dbLink	= null;
-	private $data 	= null;
 
 	public static function isValidPassword($password) {
 		$length = strlen($password);
 		return ($length >= 6 && $length <= 25);
 	}
 
-	function __destruct()
-		{
-		if (!is_null($this->dbLink))
-			{
-			mysqli_close($this->dbLink);
-			}
-		}
-
-	private function connect()
-		{
-		global $wgDBuser, $wgDBpassword;
-
-		if (is_null($this->dbLink))
-			{
-			$this->dbLink = mysqli_connect('localhost', $wgDBuser, $wgDBpassword, 'current');
-			}
-		}
-
 	private function getUserData($username) {
-		if (is_null($this->data))
-			{
-			$this->connect();
-			$result = mysqli_query($this->dbLink, 'SELECT id, name, email, realname FROM users WHERE name = \''.mysqli_escape_string($this->dbLink, $username).'\'');
-			$data = mysqli_fetch_assoc($result);
-			mysqli_free_result($result);
+		$dbr = wfGetDB( DB_SLAVE );
 
-			$this->data = $data;
-			}
+		$result = $dbr->safeQuery('SELECT id, name, email, realname FROM current.users WHERE name = ?', $username);
+		$data = $result->fetchRow();
+		$result->free();
 
-		return $this->data;
+		return $data;
 	}
 
 	public function userExists( $username ) {
-		$this->connect();
-		$result = mysqli_query($this->dbLink, 'SELECT id FROM users WHERE name = \''.mysqli_escape_string($this->dbLink, $username).'\'');
-		$exists = mysqli_num_rows($result) > 0;
-		mysqli_free_result($result);
+		$dbr = wfGetDB( DB_SLAVE );
+
+		try {
+			$result = $dbr->safeQuery('SELECT id FROM current.users WHERE name = ?', $username);
+			$exists = ($result->numRows() > 0 ? true : false);
+			$result->free();
+		} catch (Exception $e) {
+			$exists = false;
+		}
 
  		return $exists;
 	}
 
 	public function authenticate( $username, $password ) {
-		$this->connect();
-		$result = mysqli_query($this->dbLink, 'SELECT id FROM users WHERE name = \''.mysqli_escape_string($this->dbLink, $username).'\' AND password = \''.mysqli_escape_string($this->dbLink, sha1($password)).'\' ');
-		$authenticated = mysqli_num_rows($result) > 0;
-		mysqli_free_result($result);
+		$dbr = wfGetDB( DB_SLAVE );
+
+		try {
+			$result = $dbr->safeQuery('SELECT id FROM current.users WHERE name = ? AND password = ?', $username, sha1($password));
+			$authenticated = ($result->numRows() > 0 ? true : false);
+			$result->free();
+		} catch (Exception $e) {
+			$authenticated = false;
+		}
 
  		return $authenticated;
 	}
@@ -122,26 +108,19 @@ class LLAuthPlugin extends AuthPlugin {
 	}
 
 	public function initUser( &$user, $autocreate=false ) {
-		$data = $this->getUserData($user->getName());
-		$user->setEmail($data['email']);
-		$user->confirmEmail();
-		$user->setRealName($data['realname']);
+		try {
+			$data = $this->getUserData($user->getName());
+			$user->setEmail($data['email']);
+			$user->confirmEmail();
+			$user->setRealName($data['realname']);
+		} catch (Exception $e) {
+			return false;
+		}
 		return true;
 	}
 
 	public function getCanonicalName( $username ) {
-		// fix bug #122
-		$data = $this->getUserData($username);
-		// needed for update.php
-		if (is_null($data))
-			{
-			return $username;
-			}
-		else
-			{
-			// make sure that first char is uppercase
-			return strtoupper(substr($data['name'], 0, 1)).substr($data['name'], 1);
-			}
+		return strtoupper(substr($username, 0, 1)).substr($username, 1);
 	}
 }
 
