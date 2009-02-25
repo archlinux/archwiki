@@ -60,7 +60,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 	 * @access private
 	 */
 	function execute() {
-		global $wgRequest, $wgArchNavBar, $wgArchNavBarSelected;
+		global $wgRequest, $wgArchNavBar, $wgArchNavBarSelected, $wgAds;
 		$this->skin = $skin = $this->data['skin'];
 		$action = $wgRequest->getText( 'action' );
 
@@ -128,6 +128,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 			?>
 		</ul>
 	</div>
+	<?php if (isset($wgAds)) {echo $wgAds;} ?>
 	<div id="subnav_bar"></div>
 	<?php } ?>
 
