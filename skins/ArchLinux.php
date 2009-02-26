@@ -81,7 +81,8 @@ class ArchLinuxTemplate extends QuickTemplate {
 		<!--[if lt IE 7]><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/common/IEFixes.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"></script>
 		<meta http-equiv="imagetoolbar" content="no" /><![endif]-->
 
-		<style type="text/css">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/archlinux.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style>
+		<style type="text/css" media="screen">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/archlinux.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style>
+		<!--[if lt IE 7]><style type="text/css">#content{margin-bottom: 185px;} #p-cactions{top: 190px;} #p-personal{height:26px; top:149px;}</style><![endif]-->
 		<?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
 
 		<script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"><!-- wikibits js --></script>

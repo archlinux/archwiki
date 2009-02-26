@@ -84,8 +84,8 @@ a:hover {
 }
 
 #subnav_bar {
-	position: absolute;
-	top: 149px;
+	position:absolute;
+	top:149px;
 	left:0px;
 	right:0px;
 	height:26px;
@@ -121,7 +121,7 @@ a:hover {
 }
 
 .pBody {
-	background-color: #D9D9D9;
+	background-color: #FBFBFB;
 	border-color: #C9C9C9;
 }
 
@@ -156,6 +156,7 @@ h1, h2, h3, h4, h5, h6 {
 	font-size:14px;
 	font-weight: bold;
 	line-height: 26px;
+	background: #1793d1;
 }
 
 li#pt-userpage,
@@ -268,7 +269,7 @@ div.noarticletext {
 	background-color: #F0F0F0;
 }
 
-input {
+/*input {
 	color:#333333;
 	background-color:#dbdbdb;
 	border-style:solid;
@@ -290,11 +291,11 @@ select {
 	border-style:solid;
 	border-width:1px;
 	border-color:#333333;
-}
+}*/
 
-#searchInput {
+/*#searchInput {
 	background-color: #F0F0F0;
-}
+}*/
 
 div.thumb {
 	border-color: #F0F0F0;
