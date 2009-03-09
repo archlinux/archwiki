@@ -1,4 +1,4 @@
-images/
+/images/
 *~
-LocalSettings.php
-AdminSettings.php
+/LocalSettings.php
+/AdminSettings.php
