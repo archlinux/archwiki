@@ -29,6 +29,7 @@ class OutputPage {
 	var $mArticleBodyOnly = false;
 
 	var $mNewSectionLink = false;
+	var $mHideNewSectionLink = false;
 	var $mNoGallery = false;
 	var $mPageTitleActionText = '';
 	var $mParseWarnings = array();
@@ -165,7 +166,7 @@ class OutputPage {
 	 *
 	 * @return bool True iff cache-ok headers was sent.
 	 */
-	function checkLastModified ( $timestamp ) {
+	function checkLastModified( $timestamp ) {
 		global $wgCachePages, $wgCacheEpoch, $wgUser, $wgRequest;
 		
 		if ( !$timestamp || $timestamp == '19700101000000' ) {
@@ -232,6 +233,7 @@ class OutputPage {
 		# Not modified
 		# Give a 304 response code and disable body output 
 		wfDebug( __METHOD__ . ": NOT MODIFIED, $info\n", false );
+		ini_set('zlib.output_compression', 0);
 		$wgRequest->response()->header( "HTTP/1.1 304 Not Modified" );
 		$this->sendCacheControl();
 		$this->disable();
@@ -309,20 +311,20 @@ class OutputPage {
 		}
 	}
 
-	public function setHTMLTitle( $name ) {$this->mHTMLtitle = $name; }
+	public function setHTMLTitle( $name ) { $this->mHTMLtitle = $name; }
 	public function setPageTitle( $name ) {
-		global $action, $wgContLang;
-		$name = $wgContLang->convert($name, true);
+		global $wgContLang;
+		$name = $wgContLang->convert( $name, true );
 		$this->mPagetitle = $name;
-		if(!empty($action)) {
-			$taction =  $this->getPageTitleActionText();
-			if( !empty( $taction ) ) {
-				$name .= ' - '.$taction;
-			}
+
+		$taction =  $this->getPageTitleActionText();
+		if( !empty( $taction ) ) {
+			$name .= ' - '.$taction;
 		}
 
 		$this->setHTMLTitle( wfMsg( 'pagetitle', $name ) );
 	}
+
 	public function getHTMLTitle() { return $this->mHTMLtitle; }
 	public function getPageTitle() { return $this->mPagetitle; }
 	public function setSubtitle( $str ) { $this->mSubtitle = /*$this->parse(*/$str/*)*/; } // @bug 2514
@@ -338,6 +340,7 @@ class OutputPage {
 	public function setOnloadHandler( $js ) { $this->mOnloadHandler = $js; }
 	public function getOnloadHandler() { return $this->mOnloadHandler; }
 	public function disable() { $this->mDoNothing = true; }
+	public function isDisabled() { return $this->mDoNothing; }
 
 	public function setArticleRelated( $v ) {
 		$this->mIsArticleRelated = $v;
@@ -408,7 +411,12 @@ class OutputPage {
 		if ( wfRunHooks( 'OutputPageMakeCategoryLinks', array( &$this, $categories, &$this->mCategoryLinks ) ) ) {
 			$sk = $wgUser->getSkin();
 			foreach ( $categories as $category => $type ) {
+				$origcategory = $category;
 				$title = Title::makeTitleSafe( NS_CATEGORY, $category );
+				$wgContLang->findVariantLink( $category, $title, true );
+				if ( $category != $origcategory )
+					if ( array_key_exists( $category, $categories ) )
+						continue;
 				$text = $wgContLang->convertHtml( $title->getText() );
 				$this->mCategoryLinks[$type][] = $sk->makeLinkObj( $title, $text );
 			}
@@ -511,6 +519,7 @@ class OutputPage {
 		$this->mLanguageLinks += $parserOutput->getLanguageLinks();
 		$this->addCategoryLinks( $parserOutput->getCategories() );
 		$this->mNewSectionLink = $parserOutput->getNewSection();
+		$this->mHideNewSectionLink = $parserOutput->getHideNewSection();
 
 		if( is_null( $wgExemptFromUserRobotsControl ) ) {
 			$bannedNamespaces = $wgContentNamespaces;
@@ -538,9 +547,11 @@ class OutputPage {
 				$this->mTemplateIds[$ns] = $dbks;
 			}
 		}
-		// Display title
+		// Page title
 		if( ( $dt = $parserOutput->getDisplayTitle() ) !== false )
 			$this->setPageTitle( $dt );
+		else if ( ( $title = $parserOutput->getTitleText() ) != '' )
+			$this->setPageTitle( $title );
 
 		// Hooks registered in the object
 		global $wgParserOutputHooks;
@@ -586,7 +597,7 @@ class OutputPage {
 		$popts->setTidy(false);
 		if ( $cache && $article && $parserOutput->getCacheTime() != -1 ) {
 			$parserCache = ParserCache::singleton();
-			$parserCache->save( $parserOutput, $article, $wgUser );
+			$parserCache->save( $parserOutput, $article, $popts);
 		}
 
 		$this->addParserOutput( $parserOutput );
@@ -642,15 +653,27 @@ class OutputPage {
 		return $parserOutput->getText();
 	}
 
+	/** Parse wikitext, strip paragraphs, and return the HTML. */
+	public function parseInline( $text, $linestart = true, $interface = false ) {
+		$parsed = $this->parse( $text, $linestart, $interface );
+
+		$m = array();
+		if ( preg_match( '/^<p>(.*)\n?<\/p>\n?/sU', $parsed, $m ) ) {
+			$parsed = $m[1];
+		}
+
+		return $parsed;
+	}
+
 	/**
 	 * @param Article $article
 	 * @param User    $user
 	 *
 	 * @return bool True if successful, else false.
 	 */
-	public function tryParserCache( &$article, $user ) {
+	public function tryParserCache( &$article ) {
 		$parserCache = ParserCache::singleton();
-		$parserOutput = $parserCache->get( $article, $user );
+		$parserOutput = $parserCache->get( $article, $this->parserOptions() );
 		if ( $parserOutput !== false ) {
 			$this->addParserOutput( $parserOutput );
 			return true;
@@ -917,13 +940,13 @@ class OutputPage {
 					'rel' => 'alternate',
 					'type' => 'application/x-wiki',
 					'title' => wfMsg( 'edit' ),
-					'href' => $wgTitle->getFullURL( 'action=edit' )
+					'href' => $wgTitle->getLocalURL( 'action=edit' )
 				) );
 				// Alternate edit link
 				$this->addLink( array(
 					'rel' => 'edit',
 					'title' => wfMsg( 'edit' ),
-					'href' => $wgTitle->getFullURL( 'action=edit' )
+					'href' => $wgTitle->getLocalURL( 'action=edit' )
 				) );
 			}
 		}
@@ -1132,7 +1155,7 @@ class OutputPage {
 	 * @param string $permission key required
 	 */
 	public function permissionRequired( $permission ) {
-		global $wgUser;
+		global $wgUser, $wgLang;
 
 		$this->setPageTitle( wfMsg( 'badaccess' ) );
 		$this->setHTMLTitle( wfMsg( 'errorpagetitle' ) );
@@ -1144,7 +1167,7 @@ class OutputPage {
 			User::getGroupsWithPermission( $permission ) );
 		if( $groups ) {
 			$this->addWikiMsg( 'badaccess-groups',
-				implode( ', ', $groups ),
+				$wgLang->commaList( $groups ),
 				count( $groups) );
 		} else {
 			$this->addWikiMsg( 'badaccess-group0' );
@@ -1457,7 +1480,7 @@ class OutputPage {
 		$ret = '';
 
 		if( $wgMimeType == 'text/xml' || $wgMimeType == 'application/xhtml+xml' || $wgMimeType == 'application/xml' ) {
-			$ret .= "<?xml version=\"1.0\" encoding=\"$wgOutputEncoding\" ?>\n";
+			$ret .= "<?xml version=\"1.0\" encoding=\"$wgOutputEncoding\" ?" . ">\n";
 		}
 
 		$ret .= "<!DOCTYPE html PUBLIC \"$wgDocType\"\n        \"$wgDTD\">\n";
@@ -1505,7 +1528,7 @@ class OutputPage {
 
 		if ( count( $this->mKeywords ) > 0 ) {
 			$strip = array(
-				"/<.*?>/" => '',
+				"/<.*?" . ">/" => '',
 				"/_/" => ' '
 			);
 			$this->addMeta( 'keywords', preg_replace(array_keys($strip), array_values($strip),implode( ",", $this->mKeywords ) ) );
@@ -1576,7 +1599,7 @@ class OutputPage {
 				foreach( $wgFeedClasses as $format => $class ) {
 					$tags[] = $this->feedLink(
 						$format,
-						$rctitle->getFullURL( "feed={$format}" ),
+						$rctitle->getLocalURL( "feed={$format}" ),
 						wfMsg( "site-{$format}-feed", $wgSitename ) ); # For grep: 'site-rss-feed', 'site-atom-feed'.
 				}
 			}
@@ -1759,6 +1782,15 @@ class OutputPage {
 	}
 
 	/**
+	* Forcibly hide the new section link?
+	*
+	* @return bool
+	*/
+	public function forceHideNewSectionLink() {
+		return $this->mHideNewSectionLink;
+	}
+
+	/**
 	 * Show a warning about slave lag
 	 *
 	 * If the lag is higher than $wgSlaveLagCritical seconds,
@@ -1843,7 +1875,7 @@ class OutputPage {
 				$args = array();
 				$name = $spec;
 			}
-			$s = str_replace( '$' . ($n+1), wfMsgExt( $name, $options, $args ), $s );
+			$s = str_replace( '$' . ( $n + 1 ), wfMsgExt( $name, $options, $args ), $s );
 		}
 		$this->addHTML( $this->parse( $s, /*linestart*/true, /*uilang*/true ) );
 	}

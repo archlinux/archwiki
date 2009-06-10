@@ -1,6 +1,9 @@
 <?php
 /** Min Dong Chinese (Mìng-dĕ̤ng-ngṳ̄)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -563,7 +566,8 @@ Siók-mìng: (dāng) = gâe̤ng dék sĭng bēng-buōng bī-piâng, (sèng) = g�
 'categories' => 'Lôi-biék',
 
 # Special:DeletedContributions
-'deletedcontributions' => 'Ké̤ṳk chēng lâi gì ê̤ṳng-hô góng-hióng',
+'deletedcontributions'       => 'Ké̤ṳk chēng lâi gì ê̤ṳng-hô góng-hióng',
+'deletedcontributions-title' => 'Ké̤ṳk chēng lâi gì ê̤ṳng-hô góng-hióng',
 
 # Special:LinkSearch
 'linksearch-ok' => 'Sìng-tō̤',

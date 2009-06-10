@@ -1,6 +1,9 @@
 <?php
 /** Kurdish (Latin) (Kurdî / كوردی (Latin))
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -637,9 +640,7 @@ Sedemê qedexekirinê ji $3 ev e: ''$2''",
 # Revision deletion
 'rev-deleted-comment'         => '(nivîs hate jêbirin)',
 'rev-deleted-user'            => '(navî bikarhêner hate jêbirin)',
-'rev-deleted-text-permission' => '<div class="mw-warning plainlinks">
-Ev verzyona vê rûpelê hatîye jêbirin. Belkî înformasyon di [{{fullurl:Special:Log/delete|page={{FULLPAGENAMEE}}}} reşahîya jêbirinê] da hebin.
-</div>',
+'rev-deleted-text-permission' => 'Ev verzyona vê rûpelê hatîye jêbirin. Belkî înformasyon di [{{fullurl:Special:Log/delete|page={{FULLPAGENAMEE}}}} reşahîya jêbirinê] da hebin.',
 'rev-delundel'                => 'nîşan bide/veşêre',
 'revisiondelete'              => 'Rêvîsyona jêbibe/dîsa çêke',
 'revdelete-legend'            => 'Guherandina qebûlkirina dîtinê',
@@ -1057,7 +1058,8 @@ Binêre [[Special:WantedCategories|kategorîyên xastî]].',
 'special-categories-sort-abc'   => 'hatîye rêzkirin li gorî alfabeyê',
 
 # Special:DeletedContributions
-'deletedcontributions' => 'Guherandinên bikarhênerekî yê jêbirî',
+'deletedcontributions'       => 'Guherandinên bikarhênerekî yê jêbirî',
+'deletedcontributions-title' => 'Guherandinên bikarhênerekî yê jêbirî',
 
 # Special:LinkSearch
 'linksearch-ok' => 'Lêbigere',
@@ -1699,7 +1701,7 @@ Xêra xwe zanibe ku tu bi rastî dixwazê vê rûpelê dîsa çêkê",
 'specialpages'               => 'Rûpelên taybet',
 'specialpages-note'          => '----
 * Rûpelên taybetî ji her kesan ra
-* <span class="mw-specialpagerestricted">Rûpelên taybetî ji bikarhêneran bi mafên zêdetir ra</span>',
+* <strong class="mw-specialpagerestricted">Rûpelên taybetî ji bikarhêneran bi mafên zêdetir ra</strong>',
 'specialpages-group-other'   => 'Rûpelên taybetî yên din',
 'specialpages-group-login'   => 'Têkevê',
 'specialpages-group-changes' => 'Guherandinên dawî û reşahîyan',

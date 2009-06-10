@@ -96,11 +96,18 @@ class UserrightsPage extends SpecialPage {
 			// save settings
 			if( $wgRequest->getCheck( 'saveusergroups' ) ) {
 				$reason = $wgRequest->getVal( 'user-reason' );
-				if( $wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ), $this->mTarget ) ) {
+				$tok = $wgRequest->getVal( 'wpEditToken' );
+				if( $wgUser->matchEditToken( $tok, $this->mTarget ) ) {
 					$this->saveUserGroups(
 						$this->mTarget,
 						$reason
 					);
+					
+					global $wgOut;
+					
+					$url = $this->getSuccessURL();
+					$wgOut->redirect( $url );
+					return;
 				}
 			}
 		}
@@ -109,6 +116,10 @@ class UserrightsPage extends SpecialPage {
 		if( $this->mTarget ) {
 			$this->editUserGroupsForm( $this->mTarget );
 		}
+	}
+	
+	function getSuccessURL() {
+		return $this->getTitle( $this->mTarget )->getFullURL();
 	}
 
 	/**
@@ -231,9 +242,9 @@ class UserrightsPage extends SpecialPage {
 	 * @return mixed User, UserRightsProxy, or null
 	 */
 	function fetchUser( $username ) {
-		global $wgOut, $wgUser;
+		global $wgOut, $wgUser, $wgUserrightsInterwikiDelimiter;
 
-		$parts = explode( '@', $username );
+		$parts = explode( $wgUserrightsInterwikiDelimiter, $username );
 		if( count( $parts ) < 2 ) {
 			$name = trim( $username );
 			$database = '';

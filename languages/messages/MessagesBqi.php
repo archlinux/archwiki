@@ -1,6 +1,9 @@
 <?php
 /** Bakhtiari (بختياري)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -213,6 +216,7 @@ $1',
 بوین :[[Special:Version|version page]].',
 
 'ok'                      => 'خووه',
+'pagetitle-view-mainpage' => 'سرصفحه',
 'retrievedfrom'           => 'بازیافت از"$1"',
 'youhavenewmessages'      => 'پیام تاره داری $1 ($2).',
 'newmessageslink'         => 'پیام تازه',
@@ -464,7 +468,7 @@ $1',
 'imagelinks'                => 'لینکها',
 'linkstoimage'              => 'ذیل الذکر {{PLURAL:$1|لینکهای صفحه|$1 لینک صفحات}} به ای فایل:',
 'nolinkstoimage'            => 'هیچ صفحه ای نه که لینک وابیده بوه به ای فایل',
-'sharedupload'              => 'ای فایل یک آپلود اشتراکی هده و ممکنه زه طریق  پروژه‌های دیگه  هم قابل دسترسی بوه',
+'sharedupload'              => 'ای فایل یک آپلود اشتراکی هده و ممکنه زه طریق  پروژه‌های دیگه  هم قابل دسترسی بوه', # $1 is the repo name, $2 is shareduploadwiki(-desc)
 'noimage'                   => 'هیچ فایلی با ای نام موجود نه اما ترین $1.',
 'noimage-linktext'          => 'آپلود کنین',
 'uploadnewversion-linktext' => 'آپلود کردن یه نسخه تازه زه ای فایل',
@@ -799,6 +803,7 @@ $2',
 * datetimeoriginal
 * exposuretime
 * fnumber
+* isospeedratings
 * focallength', # Do not translate list items
 
 # External editor support

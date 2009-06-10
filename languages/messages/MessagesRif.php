@@ -1,6 +1,9 @@
 <?php
 /** Tarifit (Tarifit)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -153,7 +156,7 @@ teqqad ad yilli days ca n usekkil war itwagg deg isem .',
 'remembermypassword'      => 'ejj (login) inu deg uselkim a',
 'login'                   => 'Adeff',
 'nav-login-createaccount' => 'Adeff / egg amiḍan',
-'loginprompt'             => "itxessa ad-teṭfed (''cookies'') bac [[Special:UserLogin|ad tadfed ɣar {{SITENAME}}]].",
+'loginprompt'             => "itxessa ad-teṭfed (''cookies'') bac ad tadfed ɣar {{SITENAME}}.",
 'userlogin'               => 'Adeff / egg amiḍan',
 'logout'                  => 'Ffeɣ',
 'userlogout'              => 'Ffeɣ',
@@ -182,7 +185,7 @@ itxessat ad di-s tili {{PLURAL:$1|1 usekkil|$1 isekkilen}} u ad tili temṣebda 
 inna neɣ ada-s-ad nesekk Taguri n wadaf tamaynut i {{SITENAME}} ($4).
 Taguri n wadaf n useqdac "$2" ruxa d "$3".
 ixessa ad tadeffed bac ad tbeddeled ruxa.
-
+ɣar {{PLURAL:$5|one day|$5 days}} at sala taguri n wadaf tamaynut .
 mala war illi d cekk ur tawi x manaya , qim sexdam Taguri n wadaf inecc taqburt.',
 'noemail'                 => 'War illi ca n e-mail ɣar useqdac a "$1".',
 'passwordsent'            => 'Taguri n wadaf tamaynut twassekked i e-mail  "$1".
@@ -371,7 +374,7 @@ Tasniwin di [[Special:Watchlist|Tabdart uḥṭṭu inec]] d '''tizurarin'''.",
 'imagelinks'                => 'Tizdayin',
 'linkstoimage'              => '{{PLURAL:$1|Tasna ya teqn-ad|$1 Tasniwin a qnent-id}} ɣa ufaylu ya :',
 'nolinkstoimage'            => 'war telli ca n Tasna teqqen-d ɣa ufaylu ya.',
-'sharedupload'              => 'Wa d ijj ufaylu itwacrec jar aṭṭas n isenfaren(projects).',
+'sharedupload'              => 'Wa d ijj ufaylu itwacrec jar aṭṭas n isenfaren(projects).', # $1 is the repo name, $2 is shareduploadwiki(-desc)
 'noimage'                   => 'war illi ca n ufaylu s isem a , tzemred ad $1.',
 'noimage-linktext'          => 'Zdem d ijj',
 'uploadnewversion-linktext' => 'Zdem-d tunɣilt d-tamaynut n ufaylu a',
@@ -709,6 +712,7 @@ mayn nniḍn ad itwasenfar.
 * datetimeoriginal
 * exposuretime
 * fnumber
+* isospeedratings
 * focallength', # Do not translate list items
 
 # External editor support

@@ -39,7 +39,7 @@ class FakeConverter {
 	function parserConvert($t, $p) {return $t;}
 	function getVariants() { return array( $this->mLang->getCode() ); }
 	function getPreferredVariant() {return $this->mLang->getCode(); }
-	function findVariantLink(&$l, &$n, $forTemplate = false) {}
+	function findVariantLink(&$l, &$n, $ignoreOtherCond = false) {}
 	function getExtraHashOptions() {return '';}
 	function getParsedTitle() {return '';}
 	function markNoConversion($text, $noParse=false) {return $text;}
@@ -1564,7 +1564,7 @@ class Language {
 			$n = $minLength-1;
 			$out = preg_replace(
 				"/\b(\w{1,$n})\b/",
-				"$1U800",
+				"$1u800",
 				$out );
 		}
 		
@@ -1576,7 +1576,7 @@ class Language {
 		// "example.wikipedia.com" and "192.168.83.1" as well.
 		$out = preg_replace(
 			"/(\w)\.(\w|\*)/u",
-			"$1U82e$2",
+			"$1u82e$2",
 			$out );
 		
 		wfProfileOut( __METHOD__ );
@@ -1589,7 +1589,7 @@ class Language {
 	 * settings or anything else of the sort.
 	 */
 	protected function stripForSearchCallback( $matches ) {
-		return 'U8' . bin2hex( $matches[1] );
+		return 'u8' . bin2hex( $matches[1] );
 	}
 	
 	/**
@@ -1989,7 +1989,19 @@ class Language {
 			$list,
 			wfMsgExt( 'comma-separator', array( 'escapenoentities', 'language' => $this ) ) );
 	}
-	
+
+	/**
+	 * Take a list of strings and build a locale-friendly semicolon-separated
+	 * list, using the local semicolon-separator message.
+	 * @param $list array of strings to put in a semicolon list
+	 * @return string
+	 */
+	function semicolonList( $list ) {
+		return implode(
+			$list,
+			wfMsgExt( 'semicolon-separator', array( 'escapenoentities', 'language' => $this ) ) );
+	}
+
 	/**
 	 * Same as commaList, but separate it with the pipe instead.
 	 * @param $list array of strings to put in a pipe list
@@ -2016,7 +2028,12 @@ class Language {
 	 * @param $ellipsis String to append to the truncated text
 	 * @return string
 	 */
-	function truncate( $string, $length, $ellipsis = "" ) {
+	function truncate( $string, $length, $ellipsis = '...' ) {
+		# Use the localized ellipsis character
+		if( $ellipsis == '...' ) {
+			$ellipsis = wfMsgExt( 'ellipsis', array( 'escapenoentities', 'language' => $this ) );
+		}
+
 		if( $length == 0 ) {
 			return $ellipsis;
 		}
@@ -2033,7 +2050,7 @@ class Language {
 			} elseif( $char >= 0x80 &&
 			          preg_match( '/^(.*)(?:[\xe0-\xef][\x80-\xbf]|' .
 			                      '[\xf0-\xf7][\x80-\xbf]{1,2})$/', $string, $m ) ) {
-			    # We chopped in the middle of a character; remove it
+				# We chopped in the middle of a character; remove it
 				$string = $m[1];
 			}
 			return $string . $ellipsis;
@@ -2062,6 +2079,22 @@ class Language {
 			return $wgGrammarForms[$this->getCode()][$case][$word];
 		}
 		return $word;
+	}
+
+	/**
+	 * Provides an alternative text depending on specified gender.
+	 * Usage {{gender:username|masculine|feminine|neutral}}.
+	 * username is optional, in which case the gender of current user is used,
+	 * but only in (some) interface messages; otherwise default gender is used.
+	 * If second or third parameter are not specified, masculine is used.
+	 * These details may be overriden per language.
+	 */
+	function gender( $gender, $forms ) {
+		if ( !count($forms) ) { return ''; }
+		$forms = $this->preConvertPlural( $forms, 2 );
+		if ( $gender === 'male' ) return $forms[0];
+		if ( $gender === 'female' ) return $forms[1];
+		return isset($forms[2]) ? $forms[2] : $forms[0];
 	}
 
 	/**
@@ -2207,10 +2240,12 @@ class Language {
 	 *
 	 * @param $link String: the name of the link
 	 * @param $nt Mixed: the title object of the link
+	 * @param boolean $ignoreOtherCond: to disable other conditions when
+	 *      we need to transclude a template or update a category's link
 	 * @return null the input parameters may be modified upon return
 	 */
-	function findVariantLink( &$link, &$nt, $forTemplate = false ) {
-		$this->mConverter->findVariantLink($link, $nt, $forTemplate );
+	function findVariantLink( &$link, &$nt, $ignoreOtherCond = false ) {
+		$this->mConverter->findVariantLink( $link, $nt, $ignoreOtherCond );
 	}
 
 	/**
@@ -2218,7 +2253,6 @@ class Language {
 	 * into an array of all possible variants of the text:
 	 *  'variant' => text in that variant
 	 */
-
 	function convertLinkToAllVariants($text){
 		return $this->mConverter->convertLinkToAllVariants($text);
 	}
@@ -2379,6 +2413,12 @@ class Language {
 			$cache = compact( self::$mLocalisationKeys );
 			wfDebug( "Language::loadLocalisation(): got localisation for $code from source\n" );
 		}
+		
+		# Load magic word source file
+		global $IP;
+		$filename = "$IP/includes/MagicWord.php";
+		$newDeps = array( $filename => filemtime( $filename ) );
+		$deps = array_merge( $deps, $newDeps );
 
 		if ( !empty( $fallback ) ) {
 			# Load the fallback localisation, with a circular reference guard
@@ -2454,6 +2494,10 @@ class Language {
 		if ( !is_array( $cache ) ) {
 			self::loadLocalisation( $cache );
 			$cache = self::$mLocalisationCache[$cache];
+		}
+		// At least one language file and the MagicWord file needed
+		if( count($cache['deps']) < 2 ) {
+			return true;
 		}
 		$expired = false;
 		foreach ( $cache['deps'] as $file => $mtime ) {
@@ -2549,16 +2593,8 @@ class Language {
 			$this->namespaceNames[NS_PROJECT_TALK] = $wgMetaNamespaceTalk;
 		} else {
 			$talk = $this->namespaceNames[NS_PROJECT_TALK];
-			$talk = str_replace( '$1', $wgMetaNamespace, $talk );
-
-			# Allow grammar transformations
-			# Allowing full message-style parsing would make simple requests 
-			# such as action=raw much more expensive than they need to be. 
-			# This will hopefully cover most cases.
-			$talk = preg_replace_callback( '/{{grammar:(.*?)\|(.*?)}}/i', 
-				array( &$this, 'replaceGrammarInNamespace' ), $talk );
-			$talk = str_replace( ' ', '_', $talk );
-			$this->namespaceNames[NS_PROJECT_TALK] = $talk;
+			$this->namespaceNames[NS_PROJECT_TALK] =
+				$this->fixVariableInNamespace( $talk );
 		}
 		
 		# The above mixing may leave namespaces out of canonical order.
@@ -2575,6 +2611,11 @@ class Language {
 		}
 		if ( $this->namespaceAliases ) {
 			foreach ( $this->namespaceAliases as $name => $index ) {
+				if ( $index === NS_PROJECT_TALK ) {
+					unset( $this->namespaceAliases[$name] );
+					$name = $this->fixVariableInNamespace( $name );
+					$this->namespaceAliases[$name] = $index;
+				}
 				$this->mNamespaceIds[$this->lc($name)] = $index;
 			}
 		}
@@ -2588,6 +2629,21 @@ class Language {
 			$this->defaultDateFormat = $wgAmericanDates ? 'mdy' : 'dmy';
 		}
 		wfProfileOut( __METHOD__ );
+	}
+
+	function fixVariableInNamespace( $talk ) {
+		if ( strpos( $talk, '$1' ) === false ) return $talk;
+
+		global $wgMetaNamespace;
+		$talk = str_replace( '$1', $wgMetaNamespace, $talk );
+
+		# Allow grammar transformations
+		# Allowing full message-style parsing would make simple requests 
+		# such as action=raw much more expensive than they need to be. 
+		# This will hopefully cover most cases.
+		$talk = preg_replace_callback( '/{{grammar:(.*?)\|(.*?)}}/i', 
+			array( &$this, 'replaceGrammarInNamespace' ), $talk );
+		return str_replace( ' ', '_', $talk );
 	}
 
 	function replaceGrammarInNamespace( $m ) {

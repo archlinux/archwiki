@@ -1,6 +1,9 @@
 <?php
 /** Amharic (አማርኛ)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -471,10 +474,10 @@ $2",
 'resetpass-temp-password'   => 'ኅላፊ (ጊዜያዊ) መግቢያ ቃል፦',
 
 # Edit page toolbar
-'bold_sample'     => 'ጨለማ ጽሕፈት',
-'bold_tip'        => 'ያመለከቱትን ቃላት በጨለማ ጽሕፈት ለማድረግ',
-'italic_sample'   => 'ያንጋደደ ጽሕፈት',
-'italic_tip'      => 'ያመለከቱትን ቃላት ባንጋደደ (ኢታሊክ) ለማድረግ',
+'bold_sample'     => 'ጉልህ ፊደላት',
+'bold_tip'        => 'በጉልህ ፊደላት ይጻፍ',
+'italic_sample'   => 'ያንጋደደ ፊደላት',
+'italic_tip'      => 'ባንጋደደ (ኢታሊክ) ፊደላት ይጻፍ',
 'link_sample'     => 'የመያያዣ ስም',
 'link_tip'        => 'ባመለከቱት ቃላት ላይ የዊኪ-ማያያዣ ለማድረግ',
 'extlink_sample'  => 'http://www.example.com የውጭ መያያዣ',
@@ -727,7 +730,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'diff-hr'                 => "'''አድማሳዊ መስመር'''",
 'diff-dd'                 => "'''ትርጒም'''",
 'diff-a'                  => "'''መያያዣ'''",
-'diff-b'                  => "'''ጨለማ ጽሕፈት'''",
+'diff-b'                  => "'''ጉልህ ፊደላት'''",
 'diff-big'                => "'''ትልቅ'''",
 'diff-del'                => "'''ጠፋ'''",
 
@@ -840,6 +843,8 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'timezoneoffset'            => 'ኦፍ ሰት¹',
 'servertime'                => 'የሰርቨሩ ሰዓት',
 'guesstimezone'             => 'ከኮምፒውተርዎ መዝገብ ልዩነቱ ይገኝ',
+'timezoneregion-africa'     => 'አፍሪካ',
+'timezoneregion-europe'     => 'አውሮፓ',
 'allowemail'                => 'ኢሜል ከሌሎች ተጠቃሚዎች ለመፍቀድ',
 'prefs-searchoptions'       => 'የፍለጋ ምርጫዎች',
 'prefs-namespaces'          => 'ክፍለ-ዊኪዎች',
@@ -984,7 +989,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'recentchangeslinked-noresult' => 'በተመለከተው ጊዜ ውስጥ ከዚህ በተያየዙት ገጾች ላይ ምንም ለውጥ አልነበረም።',
 'recentchangeslinked-summary'  => "ከዚሁ ገጽ የተያየዙት ሌሎች ጽሑፎች ቅርብ ለውጦች ከታች ይዘረዝራሉ።
 
-በሚከታተሉት ገጾች መካከል ያሉት ሁሉ በ'''ጨለማ ጽሕፈት''' ይታያሉ።",
+በሚከታተሉት ገጾች መካከል ያሉት ሁሉ በ'''ጉልህ ፊደላት''' ይታያሉ።",
 'recentchangeslinked-page'     => 'አርዕስት፡',
 'recentchangeslinked-to'       => '(ወዲህ በተያያዙት መጣጥፎች ላይ)',
 
@@ -1089,37 +1094,33 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'listfiles_description' => 'ማጠቃለያ',
 
 # File description page
-'filehist'                       => 'የፋይሉ ታሪክ',
-'filehist-help'                  => 'የቀድሞው ዕትም ካለ ቀን/ሰዓቱን በመጫን መመልከት ይቻላል።',
-'filehist-deleteall'             => 'ሁሉን ለማጥፋት',
-'filehist-deleteone'             => 'ይህን ለማጥፋት',
-'filehist-revert'                => 'ወዲህ ይገለበጥ',
-'filehist-current'               => 'ያሁኑኑ',
-'filehist-datetime'              => 'ቀን /ሰዓት',
-'filehist-thumb'                 => 'ናሙና',
-'filehist-thumbtext'             => 'በ$1 የነበረው ዕትም ናሙና',
-'filehist-nothumb'               => 'ናሙና የለም',
-'filehist-user'                  => 'አቅራቢው',
-'filehist-dimensions'            => 'ክልሉ (በpixel)',
-'filehist-filesize'              => 'መጠን',
-'filehist-comment'               => 'ማጠቃለያ',
-'imagelinks'                     => 'መያያዣዎች',
-'linkstoimage'                   => '{{PLURAL:$1|የሚከተለው ገጽ ወደዚሁ ፋይል ተያይዟል|የሚከተሉ $1 ገጾች ወደዚሁ ፋይል ተያይዘዋል}}፦',
-'nolinkstoimage'                 => 'ወዲህ ፋይል የተያያዘ ገጽ የለም።',
-'morelinkstoimage'               => 'ለዚህ ፋይል [[Special:WhatLinksHere/$1|ተጨማሪ መያያዣዎችን]] ለማየት።',
-'redirectstofile'                => 'ለዚህ ፋይል {{PLURAL:$1|የሚከተለው ፋይል መምሪያ መንገድ አለ|የሚከተሉት $1 ፋይሎች መምሪያ መንገዶች አሉ}}፦',
-'duplicatesoffile'               => '{{PLURAL:$1|የሚከተለው ፋይል የዚህ ፋይል ቅጂ ነው|የሚከተሉት $1 ፋይሎች የዚሁ ፋይል ቅጂዎች ናቸው}}፦',
-'sharedupload'                   => 'ይህ ፋይል ከጋራ ምንጭ (Commons) የተቀሰመ ነው። በማንኛውም ዊኪ ላይ ሊጠቅም ይቻላል።',
-'shareduploadwiki'               => 'በተጨማሪ ለመረዳት $1 ይዩ።',
-'shareduploadwiki-desc'          => 'በዚያ በ$1 የሚታየው መግለጫ እንዲህ ይላል፦',
-'shareduploadwiki-linktext'      => 'ፋይል መግለጫ ገጹ',
-'shareduploadduplicate'          => 'ይህ ፋይል ከጋራ ምንጭ (Commons) የ$1 ቅጂ ነው።',
-'shareduploadduplicate-linktext' => 'ሌላ ፋይል',
-'shareduploadconflict-linktext'  => 'ሌላ ፋይል',
-'noimage'                        => 'በዚህ ስም የሚታወቅ ፋይል የለም፤ እርስዎ ግን $1 ይችላሉ።',
-'noimage-linktext'               => 'ሊልኩት',
-'uploadnewversion-linktext'      => 'ለዚሁ ፋይል አዲስ ዕትም ለመላክ',
-'imagepage-searchdupe'           => 'ለቅጂ ፋይሎች ለመፈለግ',
+'filehist'                  => 'የፋይሉ ታሪክ',
+'filehist-help'             => 'የቀድሞው ዕትም ካለ ቀን/ሰዓቱን በመጫን መመልከት ይቻላል።',
+'filehist-deleteall'        => 'ሁሉን ለማጥፋት',
+'filehist-deleteone'        => 'ይህን ለማጥፋት',
+'filehist-revert'           => 'ወዲህ ይገለበጥ',
+'filehist-current'          => 'ያሁኑኑ',
+'filehist-datetime'         => 'ቀን /ሰዓት',
+'filehist-thumb'            => 'ናሙና',
+'filehist-thumbtext'        => 'በ$1 የነበረው ዕትም ናሙና',
+'filehist-nothumb'          => 'ናሙና የለም',
+'filehist-user'             => 'አቅራቢው',
+'filehist-dimensions'       => 'ክልሉ (በpixel)',
+'filehist-filesize'         => 'መጠን',
+'filehist-comment'          => 'ማጠቃለያ',
+'imagelinks'                => 'መያያዣዎች',
+'linkstoimage'              => '{{PLURAL:$1|የሚከተለው ገጽ ወደዚሁ ፋይል ተያይዟል|የሚከተሉ $1 ገጾች ወደዚሁ ፋይል ተያይዘዋል}}፦',
+'nolinkstoimage'            => 'ወዲህ ፋይል የተያያዘ ገጽ የለም።',
+'morelinkstoimage'          => 'ለዚህ ፋይል [[Special:WhatLinksHere/$1|ተጨማሪ መያያዣዎችን]] ለማየት።',
+'redirectstofile'           => 'ለዚህ ፋይል {{PLURAL:$1|የሚከተለው ፋይል መምሪያ መንገድ አለ|የሚከተሉት $1 ፋይሎች መምሪያ መንገዶች አሉ}}፦',
+'duplicatesoffile'          => '{{PLURAL:$1|የሚከተለው ፋይል የዚህ ፋይል ቅጂ ነው|የሚከተሉት $1 ፋይሎች የዚሁ ፋይል ቅጂዎች ናቸው}}፦',
+'sharedupload'              => 'ይህ ፋይል ከጋራ ምንጭ ($1) የተቀሰመ ነው። በማንኛውም ዊኪ ላይ ሊጠቅም ይቻላል።', # $1 is the repo name, $2 is shareduploadwiki(-desc)
+'shareduploadwiki'          => 'በተጨማሪ ለመረዳት $1 ይዩ።',
+'shareduploadwiki-desc'     => 'በዚያ በ$1 የሚታየው መግለጫ እንዲህ ይላል፦',
+'shareduploadwiki-linktext' => 'ፋይል መግለጫ ገጹ',
+'noimage'                   => 'በዚህ ስም የሚታወቅ ፋይል የለም፤ እርስዎ ግን $1 ይችላሉ።',
+'noimage-linktext'          => 'ሊልኩት',
+'uploadnewversion-linktext' => 'ለዚሁ ፋይል አዲስ ዕትም ለመላክ',
 
 # File reversion
 'filerevert'                => '$1 ማገልበጥ',
@@ -1355,7 +1356,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'watchnologin'         => 'ገና አልገቡም',
 'watchnologintext'     => 'የሚከታተሏቸውን ገጾች ዝርዝር ለመቀየር [[Special:UserLogin|መግባት]] ይኖርብዎታል።',
 'addedwatch'           => 'ወደሚከታተሉት ገጾች ተጨመረ',
-'addedwatchtext'       => "ገጹ «$1» [[Special:Watchlist|ለሚከታተሉት ገጾች]] ተጨምሯል። ወደፊት ይህ ገጽ ወይም የውይይቱ ገጽ ሲቀየር፣ በዚያ ዝርዝር ላይ ይታያል። በተጨማሪም [[Special:RecentChanges|«በቅርብ ጊዜ በተለወጡ» ገጾች]] ዝርዝር፣ በቀላሉ እንዲታይ በ'''ጨለማ ጽህፈት''' ተጽፎ ይገኛል።
+'addedwatchtext'       => "ገጹ «$1» [[Special:Watchlist|ለሚከታተሉት ገጾች]] ተጨምሯል። ወደፊት ይህ ገጽ ወይም የውይይቱ ገጽ ሲቀየር፣ በዚያ ዝርዝር ላይ ይታያል። በተጨማሪም [[Special:RecentChanges|«በቅርብ ጊዜ በተለወጡ» ገጾች]] ዝርዝር፣ በቀላሉ እንዲታይ በ'''ጉልህ ፊደላት''' ተጽፎ ይገኛል።
 
 በኋላ ጊዜ ገጹን ከሚከታተሉት ገጾች ለማስወግድ የፈለጉ እንደሆነ፣ በጫፉ ዳርቻ «አለመከታተል» የሚለውን ይጫኑ።",
 'removedwatch'         => 'ከሚከታተሉት ገጾች ተወገደ',
@@ -1369,7 +1370,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'watchnochange'        => 'ከተካከሉት ገጾች አንዳችም በተወሰነው ጊዜ ውስጥ አልተለወጠም።',
 'watchlist-details'    => 'አሁን በሙሉ {{PLURAL:$1|$1 ገጽ|$1 ገጾች}} እየተከታተሉ ነው።',
 'wlheader-enotif'      => '* የ-ኢሜል ማስታወቂያ እንዲሠራ ተደርጓል።',
-'wlheader-showupdated' => "* መጨረሻ ከጎበኟቸው ጀምሮ የተቀየሩት ገጾች በ'''ጨለማ ጽሕፈት''' ይታያሉ",
+'wlheader-showupdated' => "* መጨረሻ ከጎበኟቸው ጀምሮ የተቀየሩት ገጾች በ'''ጉልህ ፊደላት''' ይታያሉ",
 'watchmethod-recent'   => 'የቅርብ ለውጦችን ለሚከታተሉት ገጾች በመፈለግ',
 'watchmethod-list'     => 'የሚከታተሉትን ገጾች ለቅርብ ለውጦች በመፈለግ',
 'watchlistcontains'    => 'አሁን በሙሉ $1 ገጾች እየተከታተሉ ነው።',
@@ -1553,7 +1554,7 @@ $1',
 'contributions-title' => 'የ$1 አስተዋጽኦች',
 'mycontris'           => 'የኔ አስተዋጽኦች፤',
 'contribsub2'         => 'ለ $1 ($2)',
-'nocontribs'          => 'ምንም አልተገኘም።',
+'nocontribs'          => 'ምንም አልተገኘም።', # Optional parameter: $1 is the user name
 'uctop'               => '(ላይኛ)',
 'month'               => 'እስከዚህ ወር ድረስ፦',
 'year'                => 'እስከዚህ አመት (እ.ኤ.አ.) ድረስ፡-',
@@ -1947,6 +1948,7 @@ $1',
 * datetimeoriginal
 * exposuretime
 * fnumber
+* isospeedratings
 * focallength", # Do not translate list items
 
 # EXIF tags
@@ -1984,29 +1986,29 @@ $1',
 'exif-relatedsoundfile'            => 'የተዛመደ የድምጽ ፋይል',
 'exif-datetimeoriginal'            => 'መረጃው የተፈጠረበት ቀንና ሰዓት',
 'exif-datetimedigitized'           => 'ዲጂታል የተደረገበት ቀንና ሰዓት',
-'exif-exposuretime'                => 'ማንሣት የሚፈጅበት ግዜ',
+'exif-exposuretime'                => 'የግልጠት ግዜ',
 'exif-exposuretime-format'         => '$1 ሴኮንድ ($2)',
 'exif-fnumber'                     => 'የF ቁጥር',
-'exif-exposureprogram'             => 'የማንሣት ፕሮግራም',
-'exif-shutterspeedvalue'           => 'የመዝጊያ ፍጥነት',
-'exif-aperturevalue'               => 'ቀዳዳ',
+'exif-exposureprogram'             => 'የግልጠት ፕሮግራም',
+'exif-shutterspeedvalue'           => 'የከላይ ፍጥነት',
+'exif-aperturevalue'               => 'ክፍተት',
 'exif-brightnessvalue'             => 'ብሩህነት',
-'exif-exposurebiasvalue'           => 'የማንሣት ዝንባሌ',
-'exif-maxaperturevalue'            => 'የየብስ ቀዳዳ ወሰን ቢበዛ',
+'exif-exposurebiasvalue'           => 'የግልጠት ዝንባሌ',
+'exif-maxaperturevalue'            => 'የየብስ ክፍተት ወሰን ቢበዛ',
 'exif-subjectdistance'             => 'የጉዳዩ ርቀት',
 'exif-meteringmode'                => 'የመመተር ዘዴ',
 'exif-lightsource'                 => 'የብርሃን ምንጭ',
 'exif-flash'                       => 'ብልጭታ',
-'exif-focallength'                 => 'የመስተዋት ትኩረት እርዝማኔ',
+'exif-focallength'                 => 'የምስሪት ትኩረት እርዝማኔ',
 'exif-subjectarea'                 => 'የጉዳዩ ክልል',
 'exif-flashenergy'                 => 'የብልጭታ ኅይል',
 'exif-subjectlocation'             => 'የጉዳዩ ሥፍራ',
-'exif-exposureindex'               => 'የማንሣት ማውጫ',
+'exif-exposureindex'               => 'ግልጠት መለኪያ ቁጥር',
 'exif-sensingmethod'               => 'የመሰማት ዘዴ',
 'exif-filesource'                  => 'የፋይል ምንጭ',
 'exif-scenetype'                   => 'የትርኢት አይነት',
 'exif-customrendered'              => 'ልዩ የስዕል አገባብ',
-'exif-exposuremode'                => 'የማንሣት ዘዴ',
+'exif-exposuremode'                => 'የግልጠት ዘዴ',
 'exif-whitebalance'                => 'የነጭ ዝንባሌ',
 'exif-digitalzoomratio'            => 'ቁጥራዊ ማጉላት ውድር',
 'exif-focallengthin35mmfilm'       => 'በ35 mm ፊልም የትኩረት እርዝማኔ',
@@ -2026,8 +2028,8 @@ $1',
 'exif-gpstimestamp'                => 'GPS ሰዓት (አቶማዊ ሰዓት)',
 'exif-gpssatellites'               => 'ለመስፈር የተጠቀሙ ሰው ሰራሽ መንኮራኩር',
 'exif-gpsstatus'                   => 'የተቀባይ ሁኔታ',
-'exif-gpsmeasuremode'              => 'የመስፈር ዘዴ',
-'exif-gpsdop'                      => 'የመስፈር ልክነት',
+'exif-gpsmeasuremode'              => 'የመለኪያ ዘዴ',
+'exif-gpsdop'                      => 'የመለኪያ ልክነት',
 'exif-gpsspeedref'                 => 'የፍጥነት መስፈርያ',
 'exif-gpsspeed'                    => 'የGPS ተቀባይ ፍጥነት',
 'exif-gpstrackref'                 => 'የስዕል እንቅስቃሴ መሰረት',
@@ -2050,7 +2052,7 @@ $1',
 
 'exif-unknowndate' => 'ያልታወቀ ቀን',
 
-'exif-orientation-1' => 'የተለመደ', # 0th row: top; 0th column: left
+'exif-orientation-1' => 'መደበኛ', # 0th row: top; 0th column: left
 'exif-orientation-2' => 'በአድማሱ ላይ ተገለበጠ', # 0th row: top; 0th column: right
 'exif-orientation-3' => '180° የዞረ', # 0th row: bottom; 0th column: right
 'exif-orientation-4' => 'በዋልታው ላይ ተገለበጠ', # 0th row: bottom; 0th column: left
@@ -2059,10 +2061,10 @@ $1',
 
 'exif-exposureprogram-0' => 'አልተወሰነም',
 'exif-exposureprogram-1' => 'በዕጅ',
-'exif-exposureprogram-2' => 'የተለመደ ፕሮግራም',
-'exif-exposureprogram-3' => 'የቀዳዳ ቀዳሚነት',
-'exif-exposureprogram-4' => 'የመዝጊያ ቀዳሚነት',
-'exif-exposureprogram-6' => 'የድርጊት ፕሮግራም (ለፈጣን መዝጊያ ፍጥነት የዘነበለ)',
+'exif-exposureprogram-2' => 'መደበኛ ፕሮግራም',
+'exif-exposureprogram-3' => 'የክፍተት ቀዳሚነት',
+'exif-exposureprogram-4' => 'የከላይ ቀዳሚነት',
+'exif-exposureprogram-6' => 'የድርጊት ፕሮግራም (ለፈጣን ከላይ ፍጥነት የዘነበለ)',
 
 'exif-subjectdistance-value' => '$1 ሜትር',
 
@@ -2079,10 +2081,13 @@ $1',
 'exif-lightsource-9'   => 'መልካም አየር',
 'exif-lightsource-10'  => 'ደመናም አየር',
 'exif-lightsource-11'  => 'ጥላ',
-'exif-lightsource-17'  => 'የተለመደ ብርሃን A',
-'exif-lightsource-18'  => 'የተለመደ ብርሃን B',
-'exif-lightsource-19'  => 'የተለመደ ብርሃን C',
+'exif-lightsource-17'  => 'መደበኛ ብርሃን A',
+'exif-lightsource-18'  => 'መደበኛ ብርሃን B',
+'exif-lightsource-19'  => 'መደበኛ ብርሃን C',
 'exif-lightsource-255' => 'ሌላ የብርሃን ምንጭ',
+
+# Flash modes
+'exif-flash-function-1' => 'የብልጭታ ተግባር የለም',
 
 'exif-focalplaneresolutionunit-2' => 'inches (ኢንች)',
 
@@ -2099,27 +2104,27 @@ $1',
 'exif-customrendered-0' => 'የተለመደ ሂደት',
 'exif-customrendered-1' => 'ልዩ ሂደት',
 
-'exif-exposuremode-0' => 'የቀጥታ ማንሣት',
-'exif-exposuremode-1' => 'በዕጅ ማንሣት',
+'exif-exposuremode-0' => 'የቀጥታ ግልጠት',
+'exif-exposuremode-1' => 'በዕጅ ግልጠት',
 'exif-exposuremode-2' => 'ቀጥተኛ ቅንፍ',
 
 'exif-whitebalance-0' => 'የቀጥታ ነጭ ዝንባሌ',
 'exif-whitebalance-1' => 'በእጅ የተደረገ ነጭ ዝንባሌ',
 
-'exif-scenecapturetype-0' => 'የተለመደ',
+'exif-scenecapturetype-0' => 'መደበኛ',
 'exif-scenecapturetype-1' => 'አግድም',
 'exif-scenecapturetype-2' => 'ቁም',
 'exif-scenecapturetype-3' => 'የሌሊት ትርኢት',
 
 'exif-gaincontrol-0' => 'የለም',
 
-'exif-contrast-0' => 'የተለመደ',
+'exif-contrast-0' => 'መደበኛ',
 'exif-contrast-1' => 'ለስላሳ',
 'exif-contrast-2' => 'ጽኑዕ',
 
-'exif-saturation-0' => 'የተለመደ',
+'exif-saturation-0' => 'መደበኛ',
 
-'exif-sharpness-0' => 'የተለመደ',
+'exif-sharpness-0' => 'መደበኛ',
 'exif-sharpness-1' => 'ለስላሳ',
 'exif-sharpness-2' => 'ጽኑዕ',
 
@@ -2162,7 +2167,7 @@ $1',
 'confirmemail'             => 'ኢ-ሜልዎን ለማረጋገጥ',
 'confirmemail_noemail'     => 'በ[[Special:Preferences|ምርጫዎችዎ]] ትክክለኛ ኢሜል አድራሻ አልሰጡም።',
 'confirmemail_text'        => 'አሁን በ{{SITENAME}} በኩል «ኢ-ሜል» ለመላክም ሆነ ለመቀበል አድራሻዎን ማረጋገጥ ግዴታ ሆኗል። እታች ያለውን በተጫኑ ጊዜ አንድ የማረጋገጫ መልእክት ቀድሞ ወደ ሰጡት ኢሜል አድራሻ በቀጥታ ይላካል። በዚህ መልእክት ልዩ ኮድ ያለበት መያያዣ ይገኝበታል፣ ይህንን መያያዣ ከዚያ ቢጎብኙ ኢ-ሜል አድራሻዎ የዛኔ ይረጋግጣል።',
-'confirmemail_pending'     => '<div class="error">ማረጋገጫ ኮድ ከዚህ በፊት ገና ተልኮልዎታል። ብዕር ስምዎን ያወጡ በቅርብ ጊዜ ከሆነ፣ አዲስ ኮድን ከመጠይቅ በፊት ምናልባት የተላከው እስከሚደርስ ድረስ ጥቂት ደቂቃ መቆየት ይሻላል።</div>',
+'confirmemail_pending'     => 'ማረጋገጫ ኮድ ከዚህ በፊት ገና ተልኮልዎታል። ብዕር ስምዎን ያወጡ በቅርብ ጊዜ ከሆነ፣ አዲስ ኮድን ከመጠይቅ በፊት ምናልባት የተላከው እስከሚደርስ ድረስ ጥቂት ደቂቃ መቆየት ይሻላል።',
 'confirmemail_send'        => 'የማረጋገጫ ኮድ ወደኔ ኢ-ሜል ይላክልኝ',
 'confirmemail_sent'        => 'የማረጋገጫ ኢ-ሜል ቅድም ወደ ሰጡት አድራሻ አሁን ተልኳል!',
 'confirmemail_oncreate'    => 'ማረጋገጫ ኮድ ወደ ኢ-ሜል አድራሻዎ ተልኳል። ይኸው ኮድ ለመግባት አያስፈልግም፤ ነገር ግን የዊኪው ኢ-ሜል ተግባር እንዲሠራ ለማድረግ ያስፈልጋል።',
@@ -2191,7 +2196,7 @@ $3
 'scarytranscludetoolong' => '[URL ከመጠን በላይ የረዘመ ነው]',
 
 # Trackbacks
-'trackbackremove' => ' ([$1 ማጥፋት])',
+'trackbackremove' => '([$1 ማጥፋት])',
 
 # Delete conflict
 'deletedwhileediting' => "'''ማስጠንቀቂያ'''፦ መዘጋጀት ከጀመሩ በኋላ ገጹ ጠፍቷል!",

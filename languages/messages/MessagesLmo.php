@@ -1,6 +1,9 @@
 <?php
 /** Lumbaart (Lumbaart)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -425,7 +428,8 @@ Spiegazziún di símbui: (cur) = difərenza cun la versiún curénta, (ültima) 
 'categories' => 'Categurii',
 
 # Special:DeletedContributions
-'deletedcontributions' => 'Cuntribüziun scancelaa',
+'deletedcontributions'       => 'Cuntribüziun scancelaa',
+'deletedcontributions-title' => 'Cuntribüziun scancelaa',
 
 # E-mail user
 'emailuser' => 'Manda un email al duvrátt',

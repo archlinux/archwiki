@@ -1,10 +1,14 @@
 <?php
 /** Cajun French (Français cadien)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
  * @author JeanVoisin
+ * @author PieRRoMaN
  * @author RoyAlcatraz
  * @author Urhixidur
  * @author Zetud
@@ -172,7 +176,7 @@ $messages = array(
 'talkpagelinktext'  => 'Discuter',
 'specialpage'       => 'Page espéciale',
 'personaltools'     => 'Outils personnels',
-'postcomment'       => 'Additionner un commentaire',
+'postcomment'       => 'Nouvelle section',
 'articlepage'       => "Voir l'article",
 'views'             => 'Vues',
 'toolbox'           => "Boëte d'outils",
@@ -432,7 +436,7 @@ Si quèqu\'une d\'autre a demandé ce mot de passe ou si vous vous rappelez de v
 'anoneditwarning'           => "'''Attention:''' Vous êtes pas connecté.  Votre adresse IP vas être sauvée dans la liste des changements pour cette page.",
 'missingsummary'            => "'''Attention:'''  Vous avez pas mis de description.  Si vous cliquez le bouton \"Sauver\" encore, votre changement va être sauvé sans description.",
 'missingcommenttext'        => 'Mettez donc un commentaire en bas.',
-'missingcommentheader'      => "'''Attention:'''  Vous avez pas pas mis de sujet pour ce commentaire.  Si vous cliquez le bouton \"Sauver\" encore, votre changement va être sauvé sans sujet.",
+'missingcommentheader'      => "'''Attention :''' Vous avez pas mis de sujet pour ce commentaire. Si vous cliquez le bouton \"Sauver\" encore, votre changement va être sauvé sans sujet.",
 'summary-preview'           => "Vue d'avance de la description:",
 'subject-preview'           => "Vue d'avance du sujet:",
 'blockedtitle'              => "L'useur est bloqué",
@@ -572,8 +576,8 @@ Assayez de [[Special:Search|charcher dans le wiki]] pour des nouvelles pages.',
 'rev-deleted-comment'         => '(remarque ôtée)',
 'rev-deleted-user'            => "(nom d'useur ôté)",
 'rev-deleted-event'           => '(message ôté)',
-'rev-deleted-text-permission' => '<div class="mw-warning plainlinks">Cette page a été ôtée de la liste des pages publiques.  Il pourrait y avoir des détails dans les [{{fullurl:Special:Log/delete|page={{FULLPAGENAMEE}}}} notes d\'ôtage]. </div>',
-'rev-deleted-text-view'       => '<div class="mw-warning plainlinks">Cette version de la page a été ôtée de la liste des pages publiques.  Comme administrateur sus ce wiki vous pouvez le voir; il pourrait y avoir des détails dans les [{{fullurl:Special:Log/delete|page={{FULLPAGENAMEE}}}} notes d\'ôtage]. </div>',
+'rev-deleted-text-permission' => "Cette page a été ôtée de la liste des pages publiques.  Il pourrait y avoir des détails dans les [{{fullurl:Special:Log/delete|page={{FULLPAGENAMEE}}}} notes d'ôtage].",
+'rev-deleted-text-view'       => "Cette version de la page a été ôtée de la liste des pages publiques.  Comme administrateur sus ce wiki vous pouvez le voir; il pourrait y avoir des détails dans les [{{fullurl:Special:Log/delete|page={{FULLPAGENAMEE}}}} notes d'ôtage].",
 'rev-delundel'                => 'montrer/cacher',
 'revisiondelete'              => 'Ôter/rétablir les changements',
 'revdelete-nooldid-title'     => 'Aucun changement choisi',

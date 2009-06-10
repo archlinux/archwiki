@@ -49,7 +49,6 @@ class ApiDelete extends ApiBase {
 	 */
 	public function execute() {
 		global $wgUser;
-		$this->getMain()->requestWriteMode();
 		$params = $this->extractRequestParams();
 
 		$this->requireOnlyOneParameter($params, 'title', 'pageid');
@@ -76,14 +75,18 @@ class ApiDelete extends ApiBase {
 			$retval = self::deleteFile($params['token'], $titleObj, $params['oldimage'], $reason, false);
 			if(count($retval))
 				// We don't care about multiple errors, just report one of them
-				$this->dieUsageMsg(current($retval));
+				$this->dieUsageMsg(reset($retval));
 		} else {
 			$articleObj = new Article($titleObj);
+			if($articleObj->isBigDeletion() && !$wgUser->isAllowed('bigdelete')) {
+				global $wgDeleteRevisionsLimit;
+				$this->dieUsageMsg(array('delete-toobig', $wgDeleteRevisionsLimit));
+			}
 			$retval = self::delete($articleObj, $params['token'], $reason);
 			
 			if(count($retval))
 				// We don't care about multiple errors, just report one of them
-				$this->dieUsageMsg(current($retval));
+				$this->dieUsageMsg(reset($retval));
 			
 			if($params['watch'] || $wgUser->getOption('watchdeletion'))
 				$articleObj->doWatch();
@@ -133,9 +136,10 @@ class ApiDelete extends ApiBase {
 			if($reason === false)
 				return array(array('cannotdelete'));
 		}
-		
-		if (!wfRunHooks('ArticleDelete', array(&$article, &$wgUser, &$reason)))
-			$this->dieUsageMsg(array('hookaborted'));
+
+		$error = '';
+		if (!wfRunHooks('ArticleDelete', array(&$article, &$wgUser, &$reason, $error)))
+			$this->dieUsageMsg(array('hookaborted', $error));
 
 		// Luckily, Article.php provides a reusable delete function that does the hard work for us
 		if($article->doDeleteArticle($reason)) {
@@ -172,6 +176,10 @@ class ApiDelete extends ApiBase {
 	}
 	
 	public function mustBePosted() { return true; }
+
+	public function isWriteMode() {
+		return true;
+	}
 
 	public function getAllowedParams() {
 		return array (
@@ -213,6 +221,6 @@ class ApiDelete extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiDelete.php 44541 2008-12-13 21:07:18Z mrzman $';
+		return __CLASS__ . ': $Id: ApiDelete.php 48122 2009-03-07 12:58:41Z catrope $';
 	}
 }

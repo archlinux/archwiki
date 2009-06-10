@@ -1,6 +1,9 @@
 <?php
 /** Bashkir (Башҡорт)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -258,7 +261,8 @@ $messages = array(
 'allpagessubmit'    => 'Үтәргә',
 
 # Special:DeletedContributions
-'deletedcontributions' => 'Ҡулланыусыларҙың юйылған өлөшө',
+'deletedcontributions'       => 'Ҡулланыусыларҙың юйылған өлөшө',
+'deletedcontributions-title' => 'Ҡулланыусыларҙың юйылған өлөшө',
 
 # E-mail user
 'emailuser'    => 'Ҡатнашыусыға хат',

@@ -1,6 +1,9 @@
 <?php
 /** Nepali (नेपाली)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -269,6 +272,7 @@ $messages = array(
 'recentchangescount'    => 'नयाँ परिवर्तित शिर्षकहरु',
 'savedprefs'            => 'तपाँईका अभिरुचिहरू सङ्ग्रहित भयो।',
 'localtime'             => 'स्थानीय समय',
+'timezoneregion-africa' => 'अफ्रिका',
 'allowemail'            => 'अरु प्रयोगकर्ताहरुबाट प्राप्त हुने ईमेल enable गर्नुहोस् ।',
 
 # Groups

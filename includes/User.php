@@ -141,9 +141,11 @@ class User {
 		'createtalk',
 		'delete',
 		'deletedhistory',
+		'deleterevision',
 		'edit',
 		'editinterface',
 		'editusercssjs',
+		'hideuser',
 		'import',
 		'importupload',
 		'ipblock-exempt',
@@ -155,6 +157,7 @@ class User {
 		'move-subpages',
 		'nominornewtalk',
 		'noratelimit',
+		'override-export-depth',
 		'patrol',
 		'protect',
 		'proxyunbannable',
@@ -164,13 +167,17 @@ class User {
 		'reupload-shared',
 		'rollback',
 		'siteadmin',
+		'suppressionlog',
 		'suppressredirect',
+		'suppressrevision',
 		'trackback',
 		'undelete',
 		'unwatchedpages',
 		'upload',
 		'upload_by_url',
 		'userrights',
+		'userrights-interwiki',
+		'writeapi',
 	);
 	/**
 	 * \string Cached results of getAllRights()
@@ -581,11 +588,12 @@ class User {
 	 * @return \bool True or false
 	 */
 	static function isCreatableName( $name ) {
+		global $wgInvalidUsernameCharacters;
 		return
 			self::isUsableName( $name ) &&
 
 			// Registration-time character blacklisting...
-			strpos( $name, '@' ) === false;
+			!preg_match( '/[' . preg_quote( $wgInvalidUsernameCharacters, '/' ) . ']/', $name );
 	}
 
 	/**
@@ -886,6 +894,8 @@ class User {
 		$dbr = wfGetDB( DB_MASTER );
 		$s = $dbr->selectRow( 'user', '*', array( 'user_id' => $this->mId ), __METHOD__ );
 
+		wfRunHooks( 'UserLoadFromDatabase', array( $this, &$s ) );
+
 		if ( $s !== false ) {
 			# Initialise user table data
 			$this->loadFromRow( $s );
@@ -909,7 +919,7 @@ class User {
 		$this->mDataLoaded = true;
 
 		if ( isset( $row->user_id ) ) {
-			$this->mId = $row->user_id;
+			$this->mId = intval( $row->user_id );
 		}
 		$this->mName = $row->user_name;
 		$this->mRealName = $row->user_real_name;
@@ -1013,9 +1023,14 @@ class User {
 	 * @return \type{\arrayof{\string}} Array of user toggle names
 	 */
 	static function getToggles() {
-		global $wgContLang;
+		global $wgContLang, $wgUseRCPatrol;
 		$extraToggles = array();
 		wfRunHooks( 'UserToggles', array( &$extraToggles ) );
+		if( $wgUseRCPatrol ) {
+			$extraToggles[] = 'hidepatrolled';
+			$extraToggles[] = 'newpageshidepatrolled';
+			$extraToggles[] = 'watchlisthidepatrolled';
+		}
 		return array_merge( self::$mToggles, $extraToggles, $wgContLang->getExtraUserToggles() );
 	}
 
@@ -1149,8 +1164,15 @@ class User {
 	 */
 	public function isPingLimitable() {
 		global $wgRateLimitsExcludedGroups;
+		global $wgRateLimitsExcludedIPs;
 		if( array_intersect( $this->getEffectiveGroups(), $wgRateLimitsExcludedGroups ) ) {
 			// Deprecated, but kept for backwards-compatibility config
+			return false;
+		}
+		if( in_array( wfGetIP(), $wgRateLimitsExcludedIPs ) ) {
+			// No other good way currently to disable rate limits
+			// for specific IPs. :P
+			// But this is a crappy hack and should die.
 			return false;
 		}
 		return !$this->isAllowed('noratelimit');
@@ -1306,6 +1328,15 @@ class User {
 	function blockedFor() {
 		$this->getBlockedStatus();
 		return $this->mBlockreason;
+	}
+	
+	/**
+	 * If user is blocked, return the ID for the block
+	 * @return \int Block ID
+	 */
+	function getBlockId() {
+		$this->getBlockedStatus();
+		return ($this->mBlock ? $this->mBlock->mId : false);
 	}
 	
 	/**
@@ -1909,6 +1940,13 @@ class User {
 		}
 		$this->mOptions[$oname] = $val;
 	}
+	
+	/**
+	 * Reset all options to the site defaults
+	 */	
+	function restoreOptions() {
+		$this->mOptions = User::getDefaultOptions();
+	}
 
 	/**
 	 * Get the user's preferred date format.
@@ -1983,7 +2021,7 @@ class User {
 	 * @return \int User'e edit count
 	 */
 	function getEditCount() {
-		if ($this->mId) {
+		if ($this->getId()) {
 			if ( !isset( $this->mEditCount ) ) {
 				/* Populate the count, if it has not been populated yet */
 				$this->mEditCount = User::edits($this->mId);
@@ -2073,11 +2111,15 @@ class User {
 	 * @param $action \string action to be checked
 	 * @return \bool True if action is allowed, else false
 	 */
-	function isAllowed($action='') {
+	function isAllowed( $action = '' ) {
 		if ( $action === '' )
-			// In the spirit of DWIM
-			return true;
-
+			return true; // In the spirit of DWIM
+		# Patrolling may not be enabled
+		if( $action === 'patrol' || $action === 'autopatrol' ) {
+			global $wgUseRCPatrol, $wgUseNPPatrol;
+			if( !$wgUseRCPatrol && !$wgUseNPPatrol )
+				return false;
+		}
 		# Use strict parameter to avoid matching numeric 0 accidentally inserted 
 		# by misconfiguration: 0 == 'foo'
 		return in_array( $action, $this->getRights(), true );
@@ -2705,7 +2747,14 @@ class User {
 	 * @return \bool True if matches, false otherwise
 	 */
 	function checkTemporaryPassword( $plaintext ) {
-		return self::comparePasswords( $this->mNewpassword, $plaintext, $this->getId() );
+		global $wgNewPasswordExpiry;
+		if( self::comparePasswords( $this->mNewpassword, $plaintext, $this->getId() ) ) {
+			$this->load();
+			$expiry = wfTimestamp( TS_UNIX, $this->mNewpassTime ) + $wgNewPasswordExpiry;
+			return ( time() < $expiry );
+		} else {
+			return false;
+		}
 	}
 
 	/**

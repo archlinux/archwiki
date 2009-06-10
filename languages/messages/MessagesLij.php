@@ -1,6 +1,9 @@
 <?php
 /** Líguru (Líguru)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -69,8 +72,8 @@ $specialPageAliases = array(
 	'Mostlinked'                => array( 'Paggine ciû domandæ' ),
 	'Mostlinkedcategories'      => array( 'Categorîe ciû domandæ' ),
 	'Mostlinkedtemplates'       => array( 'Template ciû domandæ' ),
-	'Mostcategories'            => array( 'Paggine con ciû categorîe' ),
 	'Mostimages'                => array( 'Immaggini ciû domandæ' ),
+	'Mostcategories'            => array( 'Paggine con ciû categorîe' ),
 	'Mostrevisions'             => array( 'Paggine con ciû revixoîn' ),
 	'Fewestrevisions'           => array( 'Paggine con meno revixoîn' ),
 	'Shortpages'                => array( 'Paggine ciû cûrte' ),
@@ -644,7 +647,7 @@ E paggine in osservassion son dipinte in '''grascietto'''.",
 'imagelinks'                => "Collegamenti a l'immaggine",
 'linkstoimage'              => "Queste son e pagine che appóntan a st'archivio",
 'nolinkstoimage'            => "No gh'è nisciûnn-a paggina collegâa con 'st'archivvio.",
-'sharedupload'              => "'St'archivvio o l'è condiviso; sajeiva a dî c'o pêu ese dêuviòu da ciû progetti wiki.",
+'sharedupload'              => "'St'archivvio o l'è condiviso; sajeiva a dî c'o pêu ese dêuviòu da ciû progetti wiki.", # $1 is the repo name, $2 is shareduploadwiki(-desc)
 'shareduploadwiki-linktext' => 'pagina da descriçion do papê',
 'noimage'                   => "No gh'è nisciûn archivvio con quello nomme, o se pêu $1.",
 'noimage-linktext'          => 'Caregâlo òua',
@@ -1064,6 +1067,7 @@ L'ingançi succescivi, inscia mæxima riga, van conscideræ comme eccescioîn (p
 * datetimeoriginal
 * exposuretime
 * fnumber
+* isospeedratings
 * focallength", # Do not translate list items
 
 # EXIF tags

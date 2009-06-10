@@ -294,16 +294,22 @@ abstract class FileRepo {
 	 * MediaWiki this means action=render. This should only be called by the
 	 * repository's file class, since it may return invalid results. User code
 	 * should use File::getDescriptionText().
+	 * @param string $name Name of image to fetch
+	 * @param string $lang Language to fetch it in, if any.
 	 */
-	function getDescriptionRenderUrl( $name ) {
+	function getDescriptionRenderUrl( $name, $lang = null ) {
+		$query = 'action=render';
+		if ( !is_null( $lang ) ) {
+			$query .= '&uselang=' . $lang;
+		}
 		if ( isset( $this->scriptDirUrl ) ) {
 			return $this->scriptDirUrl . '/index.php?title=' .
 				wfUrlencode( 'Image:' . $name ) .
-				'&action=render';
+				"&$query";
 		} else {
 			$descUrl = $this->getDescriptionUrl( $name );
 			if ( $descUrl ) {
-				return wfAppendQuery( $descUrl, 'action=render' );
+				return wfAppendQuery( $descUrl, $query );
 			} else {
 				return false;
 			}
@@ -512,24 +518,84 @@ abstract class FileRepo {
 
 	/**
 	 * Checks if there is a redirect named as $title
-	 * STUB
 	 *
 	 * @param Title $title Title of image
 	 */
 	function checkRedirect( $title ) {
-		return false;
+		global $wgMemc;
+
+		if( is_string( $title ) ) {
+			$title = Title::newFromTitle( $title );
+		}
+		if( $title instanceof Title && $title->getNamespace() == NS_MEDIA ) {
+			$title = Title::makeTitle( NS_FILE, $title->getText() );
+		}
+
+		$memcKey = $this->getMemcKey( "image_redirect:" . md5( $title->getPrefixedDBkey() ) );
+		$cachedValue = $wgMemc->get( $memcKey );
+		if( $cachedValue ) {
+			return Title::newFromDbKey( $cachedValue );
+		} elseif( $cachedValue == ' ' ) { # FIXME: ugly hack, but BagOStuff caching seems to be weird and return false if !cachedValue, not only if it doesn't exist
+			return false;
+		}
+
+		$id = $this->getArticleID( $title );
+		if( !$id ) {
+			$wgMemc->set( $memcKey, " ", 9000 );
+			return false;
+		}
+		$dbr = $this->getSlaveDB();
+		$row = $dbr->selectRow(
+			'redirect',
+			array( 'rd_title', 'rd_namespace' ),
+			array( 'rd_from' => $id ),
+			__METHOD__
+		);
+
+		if( $row ) $targetTitle = Title::makeTitle( $row->rd_namespace, $row->rd_title );
+		$wgMemc->set( $memcKey, ($row ? $targetTitle->getPrefixedDBkey() : " "), 9000 );
+		if( !$row ) {
+			return false;
+		}
+		return $targetTitle;
 	}
 
 	/**
 	 * Invalidates image redirect cache related to that image
-	 * STUB
 	 *
 	 * @param Title $title Title of image
-	 */
+	 */	
 	function invalidateImageRedirect( $title ) {
+		global $wgMemc;
+		$memcKey = $this->getMemcKey( "image_redirect:" . md5( $title->getPrefixedDBkey() ) );
+		$wgMemc->delete( $memcKey );
 	}
 	
 	function findBySha1( $hash ) {
 		return array();
+	}
+	
+	/**
+	 * Get the human-readable name of the repo. 
+	 * @return string
+	 */
+	public function getDisplayName() {
+		// We don't name our own repo, return nothing
+		if ( $this->name == 'local' ) {
+			return null;
+		}
+		$repoName = wfMsg( 'shared-repo-name-' . $this->name );
+		if ( !wfEmptyMsg( 'shared-repo-name-' . $this->name, $repoName ) ) {
+			return $repoName;
+		}
+		return wfMsg( 'shared-repo' ); 
+	}
+	
+	function getSlaveDB() {
+		return wfGetDB( DB_SLAVE );
+	}
+
+	function getMasterDB() {
+		return wfGetDB( DB_MASTER );
 	}
 }

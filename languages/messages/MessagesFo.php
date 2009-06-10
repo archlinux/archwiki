@@ -1,6 +1,9 @@
 <?php
 /** Faroese (Føroyskt)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -666,7 +669,7 @@ fyri at leggja fílur upp.',
 'imagelinks'        => 'Slóðir',
 'linkstoimage'      => 'Hesar síður slóða til hesa mynd:',
 'nolinkstoimage'    => 'Ongar síður slóða til hesa myndina.',
-'sharedupload'      => 'This file is a shared upload and may be used by other projects.',
+'sharedupload'      => 'This file is a shared upload and may be used by other projects. $2', # $1 is the repo name, $2 is shareduploadwiki(-desc)
 
 # File deletion
 'filedelete'        => 'Strika $1',

@@ -92,6 +92,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 
 			$this->addFieldsIf('rc_new', $this->fld_flags);
 			$this->addFieldsIf('rc_minor', $this->fld_flags);
+			$this->addFieldsIf('rc_bot', $this->fld_flags);
 			$this->addFieldsIf('rc_user', $this->fld_user);
 			$this->addFieldsIf('rc_user_text', $this->fld_user);
 			$this->addFieldsIf('rc_comment', $this->fld_comment);
@@ -168,7 +169,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 
 		$this->addOption('LIMIT', $params['limit'] +1);
 
-		$data = array ();
+		$ids = array ();
 		$count = 0;
 		$res = $this->select(__METHOD__);
 
@@ -182,13 +183,18 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 
 			if (is_null($resultPageSet)) {
 				$vals = $this->extractRowInfo($row);
-				if ($vals)
-					$data[] = $vals;
+				$fit = $this->getResult()->addValue(array('query', $this->getModuleName()), null, $vals);
+				if(!$fit)
+				{
+					$this->setContinueEnumParameter('start',
+							wfTimestamp(TS_ISO_8601, $row->rc_timestamp));
+					break;
+				}
 			} else {
 				if ($params['allrev']) {
-					$data[] = intval($row->rc_this_oldid);
+					$ids[] = intval($row->rc_this_oldid);
 				} else {
-					$data[] = intval($row->rc_cur_id);
+					$ids[] = intval($row->rc_cur_id);
 				}
 			}
 		}
@@ -196,13 +202,12 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		$db->freeResult($res);
 
 		if (is_null($resultPageSet)) {
-			$this->getResult()->setIndexedTagName($data, 'item');
-			$this->getResult()->addValue('query', $this->getModuleName(), $data);
+			$this->getResult()->setIndexedTagName_internal(array('query', $this->getModuleName()), 'item');
 		}
 		elseif ($params['allrev']) {
-			$resultPageSet->populateFromRevisionIDs($data);
+			$resultPageSet->populateFromRevisionIDs($ids);
 		} else {
-			$resultPageSet->populateFromPageIDs($data);
+			$resultPageSet->populateFromPageIDs($ids);
 		}
 	}
 
@@ -229,6 +234,8 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 				$vals['new'] = '';
 			if ($row->rc_minor)
 				$vals['minor'] = '';
+			if ($row->rc_bot)
+				$vals['bot'] = '';
 		}
 
 		if ($this->fld_patrol && isset($row->rc_patrolled))
@@ -236,8 +243,6 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 
 		if ($this->fld_timestamp)
 			$vals['timestamp'] = wfTimestamp(TS_ISO_8601, $row->rc_timestamp);
-
-			$this->addFieldsIf('rc_new_len', $this->fld_sizes);
 
 		if ($this->fld_sizes) {
 			$vals['oldlen'] = intval($row->rc_old_len);
@@ -338,6 +343,6 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryWatchlist.php 44719 2008-12-17 16:34:01Z catrope $';
+		return __CLASS__ . ': $Id: ApiQueryWatchlist.php 47865 2009-02-27 16:03:01Z catrope $';
 	}
 }

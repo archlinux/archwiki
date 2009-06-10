@@ -340,7 +340,7 @@ class WhatLinksHerePage {
 			$limitLinks[] = $this->makeSelfLink( $prettyLimit, wfArrayToCGI( $overrides, $changed ) );
 		}
 
-		$nums = implode ( ' | ', $limitLinks );
+		$nums = $wgLang->pipeList( $limitLinks );
 
 		return wfMsgHtml( 'viewprevnext', $prev, $next, $nums );
 	}
@@ -389,6 +389,7 @@ class WhatLinksHerePage {
 	}
 
 	function getFilterPanel() {
+		global $wgLang;
 		$show = wfMsgHtml( 'show' );
 		$hide = wfMsgHtml( 'hide' );
 
@@ -405,6 +406,6 @@ class WhatLinksHerePage {
 			$overrides = array( $type => !$chosen );
 			$links[] = $this->makeSelfLink( $msg, wfArrayToCGI( $overrides, $changed ) );
 		}
-		return Xml::fieldset( wfMsg( 'whatlinkshere-filters' ), implode( '&nbsp;|&nbsp;', $links ) );
+		return Xml::fieldset( wfMsg( 'whatlinkshere-filters' ), $wgLang->pipeList( $links ) );
 	}
 }

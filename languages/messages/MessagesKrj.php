@@ -1,6 +1,9 @@
 <?php
 /** Kinaray-a (Kinaray-a)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -172,7 +175,6 @@ $messages = array(
 Lantawa sa [[Special:Version|version kang page]].',
 
 'ok'                      => 'OK dun',
-'pagetitle'               => '$1 - {{SITENAME}}',
 'youhavenewmessages'      => 'May rudyan kaw nga $1 ($2).',
 'newmessageslink'         => 'bag-o nga manga mensahe',
 'newmessagesdifflink'     => 'orihi nga ilis',

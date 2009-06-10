@@ -26,6 +26,7 @@ class Database {
 #------------------------------------------------------------------------------
 
 	protected $mLastQuery = '';
+	protected $mDoneWrites = false;
 	protected $mPHPError = false;
 
 	protected $mServer, $mUser, $mPassword, $mConn = null, $mDBname;
@@ -210,7 +211,14 @@ class Database {
 	 * @return String
 	 */
 	function lastQuery() { return $this->mLastQuery; }
-	
+
+
+	/**
+	 * Returns true if the connection may have been used for write queries.
+	 * Should return true if unsure.
+	 */
+	function doneWrites() { return $this->mDoneWrites; }
+
 	/**
 	 * Is a connection to the database open?
 	 * @return Boolean
@@ -493,6 +501,14 @@ class Database {
 	}
 
 	/**
+	 * Determine whether a query writes to the DB.
+	 * Should return true if unsure.
+	 */
+	function isWriteQuery( $sql ) {
+		return !preg_match( '/^(?:SELECT|BEGIN|COMMIT|SET|SHOW)\b/i', $sql );
+	}
+
+	/**
 	 * Usually aborts on failure.  If errors are explicitly ignored, returns success.
 	 *
 	 * @param  $sql        String: SQL query
@@ -527,6 +543,11 @@ class Database {
 		}
 
 		$this->mLastQuery = $sql;
+		if ( !$this->mDoneWrites && $this->isWriteQuery( $sql ) ) {
+			// Set a flag indicating that writes have been done
+			wfDebug( __METHOD__.": Writes done: $sql\n" );
+			$this->mDoneWrites = true;
+		}
 
 		# Add a comment for easy SHOW PROCESSLIST interpretation
 		#if ( $fname ) {
@@ -566,11 +587,15 @@ class Database {
 			}
 		}
 
+		if ( istainted( $sql ) & TC_MYSQL ) {
+			throw new MWException( 'Tainted query found' );
+		}
+
 		# Do the query and handle errors
 		$ret = $this->doQuery( $commentedSql );
 
 		# Try reconnecting if the connection was lost
-		if ( false === $ret && ( $this->lastErrno() == 2013 || $this->lastErrno() == 2006 ) ) {
+		if ( false === $ret && $this->wasErrorReissuable() ) {
 			# Transaction is gone, like it or not
 			$this->mTrxLevel = 0;
 			wfDebug( "Connection lost, reconnecting...\n" );
@@ -1191,6 +1216,7 @@ class Database {
 		# SHOW INDEX should work for 3.x and up:
 		# http://dev.mysql.com/doc/mysql/en/SHOW_INDEX.html
 		$table = $this->tableName( $table );
+		$index = $this->indexName( $index );
 		$sql = 'SHOW INDEX FROM '.$table;
 		$res = $this->query( $sql, $fname );
 		if ( !$res ) {
@@ -1396,7 +1422,7 @@ class Database {
 				} else {
 					$list .= $field." IN (".$this->makeList($value).") ";
 				}
-			} elseif( is_null($value) ) {
+			} elseif( $value === null ) {
 				if ( $mode == LIST_AND || $mode == LIST_OR ) {
 					$list .= "$field IS ";
 				} elseif ( $mode == LIST_SET ) {
@@ -1574,6 +1600,23 @@ class Database {
 	}
 
 	/**
+	 * Get the name of an index in a given table
+	 */
+	function indexName( $index ) {
+		// Backwards-compatibility hack
+		$renamed = array(
+			'ar_usertext_timestamp'	=> 'usertext_timestamp',
+			'un_user_id'		=> 'user_id',
+			'un_user_ip'		=> 'user_ip',
+		);
+		if( isset( $renamed[$index] ) ) {
+			return $renamed[$index];
+		} else {
+			return $index;
+		}
+	}
+
+	/**
 	 * Wrapper for addslashes()
 	 * @param $s String: to be slashed.
 	 * @return String: slashed string.
@@ -1587,7 +1630,7 @@ class Database {
 	 * Otherwise returns as-is
 	 */
 	function addQuotes( $s ) {
-		if ( is_null( $s ) ) {
+		if ( $s === null ) {
 			return 'NULL';
 		} else {
 			# This will also quote numeric values. This should be harmless,
@@ -1602,6 +1645,7 @@ class Database {
 	 * Escape string for safe LIKE usage
 	 */
 	function escapeLike( $s ) {
+		$s=str_replace('\\','\\\\',$s);
 		$s=$this->strencode( $s );
 		$s=str_replace(array('%','_'),array('\%','\_'),$s);
 		return $s;
@@ -1621,7 +1665,7 @@ class Database {
 	 * PostgreSQL doesn't have them and returns ""
 	 */
 	function useIndexClause( $index ) {
-		return "FORCE INDEX ($index)";
+		return "FORCE INDEX (" . $this->indexName( $index ) . ")";
 	}
 
 	/**
@@ -1814,6 +1858,14 @@ class Database {
 	 */
 	function wasDeadlock() {
 		return $this->lastErrno() == 1213;
+	}
+
+	/**
+	 * Determines if the last query error was something that should be dealt 
+	 * with by pinging the connection and reissuing the query
+	 */
+	function wasErrorReissuable() {
+		return $this->lastErrno() == 2013 || $this->lastErrno() == 2006;
 	}
 
 	/**
@@ -2250,8 +2302,12 @@ class Database {
 		}
 
 		// Table prefixes
-		$ins = preg_replace_callback( '/\/\*(?:\$wgDBprefix|_)\*\/([a-zA-Z_0-9]*)/',
-			array( &$this, 'tableNameCallback' ), $ins );
+		$ins = preg_replace_callback( '!/\*(?:\$wgDBprefix|_)\*/([a-zA-Z_0-9]*)!',
+			array( $this, 'tableNameCallback' ), $ins );
+
+		// Index names
+		$ins = preg_replace_callback( '!/\*i\*/([a-zA-Z_0-9]*)!', 
+			array( $this, 'indexNameCallback' ), $ins );
 		return $ins;
 	}
 
@@ -2261,6 +2317,13 @@ class Database {
 	 */
 	protected function tableNameCallback( $matches ) {
 		return $this->tableName( $matches[1] );
+	}
+
+	/**
+	 * Index name callback
+	 */
+	protected function indexNameCallback( $matches ) {
+		return $this->indexName( $matches[1] );
 	}
 
 	/*
@@ -2480,44 +2543,27 @@ class DBConnectionError extends DBError {
 	}
 
 	function getPageTitle() {
-		global $wgSitename;
-		return "$wgSitename has a problem";
+		global $wgSitename, $wgLang;
+		$header = "$wgSitename has a problem";
+		if ( $wgLang instanceof Language ) {
+			$header = htmlspecialchars( $wgLang->getMessage( 'dberr-header' ) );
+		}
+		
+		return $header;
 	}
 
 	function getHTML() {
-		global $wgTitle, $wgUseFileCache, $title, $wgInputEncoding;
-		global $wgSitename, $wgServer, $wgMessageCache;
+		global $wgLang, $wgMessageCache, $wgUseFileCache;
 
-		# I give up, Brion is right. Getting the message cache to work when there is no DB is tricky.
-		# Hard coding strings instead.
+		$sorry = 'Sorry! This site is experiencing technical difficulties.';
+		$again = 'Try waiting a few minutes and reloading.';
+		$info  = '(Can\'t contact the database server: $1)';
 
-		$noconnect = "<p><strong>Sorry! This site is experiencing technical difficulties.</strong></p><p>Try waiting a few minutes and reloading.</p><p><small>(Can't contact the database server: $1)</small></p>";
-		$mainpage = 'Main Page';
-		$searchdisabled = <<<EOT
-<p style="margin: 1.5em 2em 1em">$wgSitename search is disabled for performance reasons. You can search via Google in the meantime.
-<span style="font-size: 89%; display: block; margin-left: .2em">Note that their indexes of $wgSitename content may be out of date.</span></p>',
-EOT;
-
-		$googlesearch = "
-<!-- SiteSearch Google -->
-<FORM method=GET action=\"http://www.google.com/search\">
-<TABLE bgcolor=\"#FFFFFF\"><tr><td>
-<A HREF=\"http://www.google.com/\">
-<IMG SRC=\"http://www.google.com/logos/Logo_40wht.gif\"
-border=\"0\" ALT=\"Google\"></A>
-</td>
-<td>
-<INPUT TYPE=text name=q size=31 maxlength=255 value=\"$1\">
-<INPUT type=submit name=btnG VALUE=\"Google Search\">
-<font size=-1>
-<input type=hidden name=domains value=\"$wgServer\"><br /><input type=radio name=sitesearch value=\"\"> WWW <input type=radio name=sitesearch value=\"$wgServer\" checked> $wgServer <br />
-<input type='hidden' name='ie' value='$2'>
-<input type='hidden' name='oe' value='$2'>
-</font>
-</td></tr></TABLE>
-</FORM>
-<!-- SiteSearch Google -->";
-		$cachederror = "The following is a cached copy of the requested page, and may not be up to date. ";
+		if ( $wgLang instanceof Language ) {
+			$sorry = htmlspecialchars( $wgLang->getMessage( 'dberr-problems' ) );
+			$again = htmlspecialchars( $wgLang->getMessage( 'dberr-again' ) );
+			$info  = htmlspecialchars( $wgLang->getMessage( 'dberr-info' ) );
+		}
 
 		# No database access
 		if ( is_object( $wgMessageCache ) ) {
@@ -2528,6 +2574,7 @@ border=\"0\" ALT=\"Google\"></A>
 			$this->error = $this->db->getProperty('mServer');
 		}
 
+		$noconnect = "<p><strong>$sorry</strong><br />$again</p><p><small>$info</small></p>";
 		$text = str_replace( '$1', $this->error, $noconnect );
 
 		/*
@@ -2537,38 +2584,95 @@ border=\"0\" ALT=\"Google\"></A>
 				"</p>\n";
 		}*/
 
-		if($wgUseFileCache) {
-			if($wgTitle) {
-				$t =& $wgTitle;
-			} else {
-				if($title) {
-					$t = Title::newFromURL( $title );
-				} elseif (@/**/$_REQUEST['search']) {
-					$search = $_REQUEST['search'];
-					return $searchdisabled .
-					  str_replace( array( '$1', '$2' ), array( htmlspecialchars( $search ),
-					  $wgInputEncoding ), $googlesearch );
-				} else {
-					$t = Title::newFromText( $mainpage );
+		$extra = $this->searchForm();
+
+		if( $wgUseFileCache ) {
+			$cache = $this->fileCachedPage();
+			# Cached version on file system?
+			if( $cache !== null ) {
+				# Hack: extend the body for error messages
+				$cache = str_replace( array('</html>','</body>'), '', $cache );
+				# Add cache notice...
+				$cachederror = "This is a cached copy of the requested page, and may not be up to date. ";
+				# Localize it if possible...
+				if( $wgLang instanceof Language ) {
+					$cachederror = htmlspecialchars( $wgLang->getMessage( 'dberr-cachederror' ) );
 				}
-			}
-
-			$cache = new HTMLFileCache( $t );
-			if( $cache->isFileCached() ) {
-				// @todo, FIXME: $msg is not defined on the next line.
-				$msg = '<p style="color: red"><b>'.$text."<br />\n" .
-					$cachederror . "</b></p>\n";
-
-				$tag = '<div id="article">';
-				$text = str_replace(
-					$tag,
-					$tag . $text,
-					$cache->fetchPageText() );
+				$warning = "<div style='color:red;font-size:150%;font-weight:bold;'>$cachederror</div>";
+				# Output cached page with notices on bottom and re-close body
+				return "{$cache}{$warning}<hr />$text<hr />$extra</body></html>";
 			}
 		}
-
-		return $text;
+		# Headers needed here - output is just the error message
+		return $this->htmlHeader()."$text<hr />$extra".$this->htmlFooter();
 	}
+
+	function searchForm() {
+		global $wgSitename, $wgServer, $wgLang, $wgInputEncoding;
+		$usegoogle = "You can try searching via Google in the meantime.";
+		$outofdate = "Note that their indexes of our content may be out of date.";
+		$googlesearch = "Search";
+
+		if ( $wgLang instanceof Language ) {
+			$usegoogle = htmlspecialchars( $wgLang->getMessage( 'dberr-usegoogle' ) );
+			$outofdate = htmlspecialchars( $wgLang->getMessage( 'dberr-outofdate' ) );
+			$googlesearch  = htmlspecialchars( $wgLang->getMessage( 'searchbutton' ) );
+		}
+
+		$search = htmlspecialchars(@$_REQUEST['search']);
+
+		$trygoogle = <<<EOT
+<div style="margin: 1.5em">$usegoogle<br />
+<small>$outofdate</small></div>
+<!-- SiteSearch Google -->
+<form method="get" action="http://www.google.com/search" id="googlesearch">
+    <input type="hidden" name="domains" value="$wgServer" />
+    <input type="hidden" name="num" value="50" />
+    <input type="hidden" name="ie" value="$wgInputEncoding" />
+    <input type="hidden" name="oe" value="$wgInputEncoding" />
+
+    <img src="http://www.google.com/logos/Logo_40wht.gif" alt="" style="float:left; margin-left: 1.5em; margin-right: 1.5em;" />
+
+    <input type="text" name="q" size="31" maxlength="255" value="$search" />
+    <input type="submit" name="btnG" value="$googlesearch" />
+  <div>
+    <input type="radio" name="sitesearch" id="gwiki" value="$wgServer" checked="checked" /><label for="gwiki">$wgSitename</label>
+    <input type="radio" name="sitesearch" id="gWWW" value="" /><label for="gWWW">WWW</label>
+  </div>
+</form>
+<!-- SiteSearch Google -->
+EOT;
+		return $trygoogle;
+	}
+
+	function fileCachedPage() {
+		global $wgTitle, $title, $wgLang, $wgOut;
+		if( $wgOut->isDisabled() ) return; // Done already?
+		$mainpage = 'Main Page';
+		if ( $wgLang instanceof Language ) {
+			$mainpage    = htmlspecialchars( $wgLang->getMessage( 'mainpage' ) );
+		}
+
+		if($wgTitle) {
+			$t =& $wgTitle;
+		} elseif($title) {
+			$t = Title::newFromURL( $title );
+		} else {
+			$t = Title::newFromText( $mainpage );
+		}
+
+		$cache = new HTMLFileCache( $t );
+		if( $cache->isFileCached() ) {
+			return $cache->fetchPageText();
+		} else {
+			return '';
+		}
+	}
+	
+	function htmlBodyOnly() {
+		return true;
+	}
+
 }
 
 /**
@@ -2656,7 +2760,7 @@ class ResultWrapper implements Iterator {
 	 * Get the number of rows in a result object
 	 */
 	function numRows() {
-		return $this->db->numRows( $this->result );
+		return $this->db->numRows( $this );
 	}
 
 	/**
@@ -2669,7 +2773,7 @@ class ResultWrapper implements Iterator {
 	 * @throws DBUnexpectedError Thrown if the database returns an error
 	 */
 	function fetchObject() {
-		return $this->db->fetchObject( $this->result );
+		return $this->db->fetchObject( $this );
 	}
 
 	/**
@@ -2681,14 +2785,14 @@ class ResultWrapper implements Iterator {
 	 * @throws DBUnexpectedError Thrown if the database returns an error
 	 */
 	function fetchRow() {
-		return $this->db->fetchRow( $this->result );
+		return $this->db->fetchRow( $this );
 	}
 
 	/**
 	 * Free a result object
 	 */
 	function free() {
-		$this->db->freeResult( $this->result );
+		$this->db->freeResult( $this );
 		unset( $this->result );
 		unset( $this->db );
 	}
@@ -2698,7 +2802,7 @@ class ResultWrapper implements Iterator {
 	 * See mysql_data_seek()
 	 */
 	function seek( $row ) {
-		$this->db->dataSeek( $this->result, $row );
+		$this->db->dataSeek( $this, $row );
 	}
 
 	/*********************
@@ -2709,7 +2813,7 @@ class ResultWrapper implements Iterator {
 
 	function rewind() {
 		if ($this->numRows()) {
-			$this->db->dataSeek($this->result, 0);
+			$this->db->dataSeek($this, 0);
 		}
 		$this->pos = 0;
 		$this->currentRow = null;

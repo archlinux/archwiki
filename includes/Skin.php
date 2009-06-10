@@ -401,7 +401,7 @@ class Skin extends Linker {
 			$vars['wgLivepreviewMessageError']   = wfMsg( 'livepreview-error' );
 		}
 
-		if($wgUseAjax && $wgAjaxWatch && $wgUser->isLoggedIn() ) {
+		if ( $wgOut->isArticleRelated() && $wgUseAjax && $wgAjaxWatch && $wgUser->isLoggedIn() ) {
 			$msgs = (object)array();
 			foreach ( array( 'watch', 'unwatch', 'watching', 'unwatching' ) as $msgName ) {
 				$msgs->{$msgName . 'Msg'} = wfMsg( $msgName );
@@ -758,7 +758,7 @@ END;
 		if( count( $wgOut->mCategoryLinks ) == 0 ) return '';
 
 		# Separator
-		$sep = wfMsgHtml( 'catseparator' );
+		$sep = wfMsgExt( 'catseparator', array( 'parsemag', 'escapenoentities' ) );
 
 		// Use Unicode bidi embedding override characters,
 		// to make sure links don't smash each other up in ugly ways.
@@ -890,12 +890,27 @@ END;
 	}
 
 	/**
+	 * Generate debug data HTML for displaying at the bottom of the main content
+	 * area.
+	 * @return String HTML containing debug data, if enabled (otherwise empty).
+	 */
+	protected function generateDebugHTML() {
+		global $wgShowDebug, $wgOut;
+		if ( $wgShowDebug ) {
+			$listInternals = str_replace( "\n", "</li>\n<li>", htmlspecialchars( $wgOut->mDebugtext ) );
+			return "\n<hr>\n<strong>Debug data:</strong><ul style=\"font-family:monospace;\"><li>" .
+				$listInternals . "</li></ul>\n";
+		}
+		return '';
+	}
+
+	/**
 	 * This gets called shortly before the </body> tag.
 	 * @return String HTML to be put before </body>
 	 */
 	function afterContent() {
 		$printfooter = "<div class=\"printfooter\">\n" . $this->printFooter() . "</div>\n";
-		return $printfooter . $this->doAfterContent();
+		return $printfooter . $this->generateDebugHTML() . $this->doAfterContent();
 	}
 
 	/**
@@ -925,20 +940,20 @@ END;
 	function doAfterContent() { return "</div></div>"; }
 
 	function pageTitleLinks() {
-		global $wgOut, $wgTitle, $wgUser, $wgRequest;
+		global $wgOut, $wgTitle, $wgUser, $wgRequest, $wgLang;
 
 		$oldid = $wgRequest->getVal( 'oldid' );
 		$diff = $wgRequest->getVal( 'diff' );
 		$action = $wgRequest->getText( 'action' );
 
-		$s = $this->printableLink();
+		$s[] = $this->printableLink();
 		$disclaimer = $this->disclaimerLink(); # may be empty
 		if( $disclaimer ) {
-			$s .= ' | ' . $disclaimer;
+			$s[] = $disclaimer;
 		}
 		$privacy = $this->privacyLink(); # may be empty too
 		if( $privacy ) {
-			$s .= ' | ' . $privacy;
+			$s[] = $privacy;
 		}
 
 		if ( $wgOut->isArticleRelated() ) {
@@ -948,12 +963,12 @@ END;
 				if( $image ) {
 					$link = htmlspecialchars( $image->getURL() );
 					$style = $this->getInternalLinkAttributes( $link, $name );
-					$s .= " | <a href=\"{$link}\"{$style}>{$name}</a>";
+					$s[] = "<a href=\"{$link}\"{$style}>{$name}</a>";
 				}
 			}
 		}
 		if ( 'history' == $action || isset( $diff ) || isset( $oldid ) ) {
-			$s .= ' | ' . $this->makeKnownLinkObj( $wgTitle,
+			$s[] .= $this->makeKnownLinkObj( $wgTitle,
 					wfMsg( 'currentrev' ) );
 		}
 
@@ -963,7 +978,7 @@ END;
 			if( !$wgTitle->equals( $wgUser->getTalkPage() ) ) {
 				$tl = $this->makeKnownLinkObj( $wgUser->getTalkPage(), wfMsgHtml( 'newmessageslink' ), 'redirect=no' );
 				$dl = $this->makeKnownLinkObj( $wgUser->getTalkPage(), wfMsgHtml( 'newmessagesdifflink' ), 'diff=cur' );
-				$s.= ' | <strong>'. wfMsg( 'youhavenewmessages', $tl, $dl ) . '</strong>';
+				$s[] = '<strong>'. wfMsg( 'youhavenewmessages', $tl, $dl ) . '</strong>';
 				# disable caching
 				$wgOut->setSquidMaxage(0);
 				$wgOut->enableClientCache(false);
@@ -972,9 +987,9 @@ END;
 
 		$undelete = $this->getUndeleteLink();
 		if( !empty( $undelete ) ) {
-			$s .= ' | '.$undelete;
+			$s[] = $undelete;
 		}
-		return $s;
+		return $wgLang->pipeList( $s );
 	}
 
 	function getUndeleteLink() {
@@ -997,18 +1012,19 @@ END;
 	}
 
 	function printableLink() {
-		global $wgOut, $wgFeedClasses, $wgRequest;
+		global $wgOut, $wgFeedClasses, $wgRequest, $wgLang;
 
 		$printurl = $wgRequest->escapeAppendQuery( 'printable=yes' );
 
-		$s = "<a href=\"$printurl\">" . wfMsg( 'printableversion' ) . '</a>';
+		$s[] = "<a href=\"$printurl\" rel=\"alternate\">" . wfMsg( 'printableversion' ) . '</a>';
 		if( $wgOut->isSyndicated() ) {
 			foreach( $wgFeedClasses as $format => $class ) {
 				$feedurl = $wgRequest->escapeAppendQuery( "feed=$format" );
-				$s .= " | <a href=\"$feedurl\">{$format}</a>";
+				$s[] = "<a href=\"$feedurl\" rel=\"alternate\" type=\"application/{$format}+xml\""
+						. " class=\"feedlink\">" . wfMsgHtml( "feed-$format" ) . "</a>";
 			}
 		}
-		return $s;
+		return $wgLang->pipeList( $s );
 	}
 
 	function pageTitle() {
@@ -1053,7 +1069,7 @@ END;
 						$getlink = $this->makeKnownLinkObj( $linkObj, htmlspecialchars( $display ) );
 						$c++;
 						if ($c>1) {
-							$subpages .= ' | ';
+							$subpages .= wfMsgExt( 'pipe-separator' , 'escapenoentities' );
 						} else  {
 							$subpages .= '&lt; ';
 						}
@@ -1116,16 +1132,21 @@ END;
 			$ret .= $this->link( $wgUser->getUserPage(),
 				htmlspecialchars( $wgUser->getName() ) );
 			$ret .= " ($talkLink)<br />";
-			$ret .= $this->link(
-				SpecialPage::getTitleFor( 'Userlogout' ), wfMsg( 'logout' ),
-				array(), array( 'returnto' => $returnTo )
-			);
-			$ret .= ' | ' . $this->specialLink( 'preferences' );
+			$ret .= $wgLang->pipeList( array(
+				$this->link(
+					SpecialPage::getTitleFor( 'Userlogout' ), wfMsg( 'logout' ),
+					array(), array( 'returnto' => $returnTo )
+				),
+				$this->specialLink( 'preferences' ),
+			) );
 		}
-		$ret .= ' | ' . $this->link(
-			Title::newFromText( wfMsgForContent( 'helppage' ) ),
-			wfMsg( 'help' )
-		);
+		$ret = $wgLang->pipeList( array(
+			$ret,
+			$this->link(
+				Title::newFromText( wfMsgForContent( 'helppage' ) ),
+				wfMsg( 'help' )
+			),
+		) );
 
 		return $ret;
 	}
@@ -1140,16 +1161,22 @@ END;
 	}
 
 	function searchForm() {
-		global $wgRequest;
+		global $wgRequest, $wgUseTwoButtonsSearchForm;
 		$search = $wgRequest->getText( 'search' );
 
 		$s = '<form id="searchform'.$this->searchboxes.'" name="search" class="inline" method="post" action="'
 		  . $this->escapeSearchLink() . "\">\n"
 		  . '<input type="text" id="searchInput'.$this->searchboxes.'" name="search" size="19" value="'
 		  . htmlspecialchars(substr($search,0,256)) . "\" />\n"
-		  . '<input type="submit" name="go" value="' . wfMsg ('searcharticle') . '" />&nbsp;'
-		  . '<input type="submit" name="fulltext" value="' . wfMsg ('searchbutton') . "\" />\n</form>";
-
+		  . '<input type="submit" name="go" value="' . wfMsg ('searcharticle') . '" />';
+		
+		if ($wgUseTwoButtonsSearchForm)
+			$s .= '&nbsp;<input type="submit" name="fulltext" value="' . wfMsg ('searchbutton') . "\" />\n";
+		else
+			$s .= ' <a href="' . $this->escapeSearchLink() . '" rel="search">' . wfMsg ('powersearch-legend') . "</a>\n";
+		
+		$s .= '</form>';
+		
 		// Ensure unique id's for search boxes made after the first
 		$this->searchboxes = $this->searchboxes == '' ? 2 : $this->searchboxes + 1;
 		
@@ -1158,23 +1185,29 @@ END;
 
 	function topLinks() {
 		global $wgOut;
-		$sep = " |\n";
 
-		$s = $this->mainPageLink() . $sep
-		  . $this->specialLink( 'recentchanges' );
+		$s = array(
+			$this->mainPageLink(),
+			$this->specialLink( 'recentchanges' )
+		);
 
 		if ( $wgOut->isArticleRelated() ) {
-			$s .=  $sep . $this->editThisPage()
-			  . $sep . $this->historyLink();
+			$s[] = $this->editThisPage();
+			$s[] = $this->historyLink();
 		}
 		# Many people don't like this dropdown box
-		#$s .= $sep . $this->specialPagesList();
+		#$s[] = $this->specialPagesList();
 
-		$s .= $this->variantLinks();
+		if( $this->variantLinks() ) {
+			$s[] = $this->variantLinks();
+		}
 
-		$s .= $this->extensionTabLinks();
+		if( $this->extensionTabLinks() ) {
+			$s[] = $this->extensionTabLinks();
+		}
 
-		return $s;
+		// FIXME: Is using Language::pipeList impossible here? Do not quite understand the use of the newline
+		return implode( $s, wfMsgExt( 'pipe-separator' , 'escapenoentities' ) . "\n" );
 	}
 
 	/**
@@ -1185,14 +1218,23 @@ END;
 	 */
 	function extensionTabLinks() {
 		$tabs = array();
-		$s = '';
+		$out = '';
+		$s = array();
 		wfRunHooks( 'SkinTemplateTabs', array( $this, &$tabs ) );
 		foreach( $tabs as $tab ) {
-			$s .= ' | ' . Xml::element( 'a',
+			$s[] = Xml::element( 'a',
 				array( 'href' => $tab['href'] ),
 				$tab['text'] );
 		}
-		return $s;
+
+		if( count( $s ) ) {
+			global $wgLang;
+
+			$out = wfMsgExt( 'pipe-separator' , 'escapenoentities' );
+			$out .= $wgLang->pipeList( $s );
+		}
+
+		return $out;
 	}
 
 	/**
@@ -1202,14 +1244,14 @@ END;
 	function variantLinks() {
 		$s = '';
 		/* show links to different language variants */
-		global $wgDisableLangConversion, $wgContLang, $wgTitle;
+		global $wgDisableLangConversion, $wgLang, $wgContLang, $wgTitle;
 		$variants = $wgContLang->getVariants();
 		if( !$wgDisableLangConversion && sizeof( $variants ) > 1 ) {
 			foreach( $variants as $code ) {
 				$varname = $wgContLang->getVariantname( $code );
 				if( $varname == 'disable' )
 					continue;
-				$s .= ' | <a href="' . $wgTitle->escapeLocalUrl( 'variant=' . $code ) . '">' . htmlspecialchars( $varname ) . '</a>';
+				$s = $wgLang->pipeList( array( $s, '<a href="' . $wgTitle->escapeLocalUrl( 'variant=' . $code ) . '">' . htmlspecialchars( $varname ) . '</a>' ) );
 			}
 		}
 		return $s;
@@ -1217,21 +1259,21 @@ END;
 
 	function bottomLinks() {
 		global $wgOut, $wgUser, $wgTitle, $wgUseTrackbacks;
-		$sep = " |\n";
+		$sep = wfMsgExt( 'pipe-separator' , 'escapenoentities' ) . "\n";
 
 		$s = '';
 		if ( $wgOut->isArticleRelated() ) {
-			$s .= '<strong>' . $this->editThisPage() . '</strong>';
+			$element[] = '<strong>' . $this->editThisPage() . '</strong>';
 			if ( $wgUser->isLoggedIn() ) {
-				$s .= $sep . $this->watchThisPage();
+				$element[] = $this->watchThisPage();
 			}
-			$s .= $sep . $this->talkLink()
-			  . $sep . $this->historyLink()
-			  . $sep . $this->whatLinksHere()
-			  . $sep . $this->watchPageLinksLink();
+			$element[] = $this->talkLink();
+			$element[] = $this->historyLink();
+			$element[] = $this->whatLinksHere();
+			$element[] = $this->watchPageLinksLink();
 
 			if ($wgUseTrackbacks)
-				$s .= $sep . $this->trackbackLink();
+				$element[] = $this->trackbackLink();
 
 			if ( $wgTitle->getNamespace() == NS_USER
 			    || $wgTitle->getNamespace() == NS_USER_TALK )
@@ -1241,12 +1283,15 @@ END;
 				$ip=User::isIP($wgTitle->getText());
 
 				if($id || $ip) { # both anons and non-anons have contri list
-					$s .= $sep . $this->userContribsLink();
+					$element[] = $this->userContribsLink();
 				}
 				if( $this->showEmailUser( $id ) ) {
-					$s .= $sep . $this->emailUserLink();
+					$element[] = $this->emailUserLink();
 				}
 			}
+			
+			$s = implode( $element, $sep );
+
 			if ( $wgTitle->getArticleId() ) {
 				$s .= "\n<br />";
 				if($wgUser->isAllowed('delete')) { $s .= $this->deleteThisPage(); }
@@ -1255,6 +1300,7 @@ END;
 			}
 			$s .= "<br />\n" . $this->otherLanguages();
 		}
+
 		return $s;
 	}
 
@@ -1566,8 +1612,8 @@ END;
 	function historyLink() {
 		global $wgTitle;
 
-		return $this->makeKnownLinkObj( $wgTitle,
-		  wfMsg( 'history' ), 'action=history' );
+		return $this->link( $wgTitle, wfMsg( 'history' ),
+			array( 'rel' => 'archives' ), array( 'action' => 'history' ) );
 	}
 
 	function whatLinksHere() {
@@ -1632,11 +1678,11 @@ END;
 			return '';
 		}
 
-		$s = wfMsg( 'otherlanguages' ) . ': ';
+		$s = wfMsg( 'otherlanguages' ) . wfMsg( 'colon-separator' );
 		$first = true;
 		if($wgContLang->isRTL()) $s .= '<span dir="LTR">';
 		foreach( $a as $l ) {
-			if ( ! $first ) { $s .= ' | '; }
+			if ( ! $first ) { $s .= wfMsgExt( 'pipe-separator' , 'escapenoentities' ); }
 			$first = false;
 
 			$nt = Title::newFromText( $l );
