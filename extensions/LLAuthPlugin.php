@@ -23,7 +23,7 @@ public static function isValidPassword($password) {
 private function getUserData($username) {
 	$dbr = wfGetDB( DB_SLAVE );
 
-	$result = $dbr->safeQuery('SELECT id, name, email, realname FROM current.users WHERE name = ?', $username);
+	$result = $dbr->safeQuery('SELECT id, name, email, realname FROM ll.users WHERE name = ?', $username);
 	$data = $result->fetchRow();
 	$result->free();
 
@@ -34,7 +34,7 @@ public function userExists( $username ) {
 	$dbr = wfGetDB( DB_SLAVE );
 
 	try {
-		$result = $dbr->safeQuery('SELECT id FROM current.users WHERE name = ?', $username);
+		$result = $dbr->safeQuery('SELECT id FROM ll.users WHERE name = ?', $username);
 		$exists = ($result->numRows() > 0 ? true : false);
 		$result->free();
 	} catch (Exception $e) {
@@ -48,7 +48,7 @@ public function authenticate( $username, $password ) {
 	$dbr = wfGetDB( DB_SLAVE );
 
 	try {
-		$result = $dbr->safeQuery('SELECT id FROM current.users WHERE name = ? AND password = ?', $username, sha1($password));
+		$result = $dbr->safeQuery('SELECT id FROM ll.users WHERE name = ? AND password = ?', $username, sha1($password));
 		$authenticated = ($result->numRows() > 0 ? true : false);
 		$result->free();
 	} catch (Exception $e) {
