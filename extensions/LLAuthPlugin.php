@@ -7,7 +7,7 @@ $wgExtensionCredits['other'][] = array(
 	'version' => '3.2',
 	'description' => 'Authentifizierung am LL-Forum',
 	'author' => 'Pierre Schmitz',
-	'url' => 'http://www.archlinux.de'
+	'url' => 'https://www.archlinux.de'
 );
 
 require_once('includes/AuthPlugin.php');
@@ -60,7 +60,7 @@ public function authenticate( $username, $password ) {
 
 public function modifyUITemplate( &$template ) {
 	$template->set( 'usedomain', false );
-	$template->set('link', 'Um Dich hier anzumelden, nutze Deine Konto-Daten aus dem <a href="http://forum.archlinux.de/">archlinux.de-Forum</a>.');
+	$template->set('link', 'Um Dich hier anzumelden, nutze Deine Konto-Daten aus dem <a href="https://forum.archlinux.de/">archlinux.de-Forum</a>.');
 }
 
 public function setDomain( $domain ) {

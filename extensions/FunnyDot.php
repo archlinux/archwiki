@@ -5,7 +5,7 @@ $wgExtensionCredits['other'][] = array(
 	'version' => '2.0',
 	'description' => 'Automated CAPTCHA',
 	'author' => 'Pierre Schmitz',
-	'url' => 'http://www.archlinux.de'
+	'url' => 'https://www.archlinux.de'
 );
 
 if ($wgGroupPermissions['*']['edit']) {
