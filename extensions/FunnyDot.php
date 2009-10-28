@@ -34,7 +34,7 @@ private static function getFunnyDot() {
 	!isset($wgFunnyDotHash) && $wgFunnyDotHash = '';
 	$time = time();
 	$hash = substr(sha1($time.$wgFunnyDotHash), 0, 4);
-	setCookie('FunnyDotTime', $time);
+	setCookie('FunnyDotTime', $time, 0, '/', null, isset($_SERVER['HTTPS']), true);
 
 	return '<div style="background-image:url('.$wgScript.'?title=Special:FunnyDotImage);visibility:hidden;position:absolute;z-index:-1">
 			<label for="FunnyDotHashField">Please type in the following code: <strong>'.$hash.'</strong></label>
@@ -139,10 +139,10 @@ function execute($par) {
 		$time = $_COOKIE['FunnyDotTime'];
 	} else {
 		$time = time();
-		setCookie('FunnyDotTime', $time);
+		setCookie('FunnyDotTime', $time, 0, '/', null, isset($_SERVER['HTTPS']), true);
 	}
 
-	setCookie('FunnyDotHash', substr(sha1($time.$wgFunnyDotHash), 0, 4));
+	setCookie('FunnyDotHash', substr(sha1($time.$wgFunnyDotHash), 0, 4), 0, '/', null, isset($_SERVER['HTTPS']), true);
 
 	header('HTTP/1.1 200 OK');
 	header("Cache-Control: no-cache, must-revalidate");
