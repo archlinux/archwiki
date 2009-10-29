@@ -2,7 +2,7 @@
 
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FunnyDot',
-	'version' => '2.0',
+	'version' => '2.1',
 	'description' => 'Automated CAPTCHA',
 	'author' => 'Pierre Schmitz',
 	'url' => 'https://www.archlinux.de'
@@ -34,11 +34,11 @@ private static function getFunnyDot() {
 	!isset($wgFunnyDotHash) && $wgFunnyDotHash = '';
 	$time = time();
 	$hash = substr(sha1($time.$wgFunnyDotHash), 0, 4);
-	setCookie('FunnyDotTime', $time, 0, '/', null, isset($_SERVER['HTTPS']), true);
 
-	return '<div style="background-image:url('.$wgScript.'?title=Special:FunnyDotImage);visibility:hidden;position:absolute;z-index:-1">
+	return '<div style="background-image:url('.$wgScript.'?title=Special:FunnyDotImage&amp;FunnyDotTime='.$time.');visibility:hidden;position:absolute;z-index:-1">
 			<label for="FunnyDotHashField">Please type in the following code: <strong>'.$hash.'</strong></label>
 			<input id="FunnyDotHashField" type="text" name="FunnyDotHash" size="4" value="" />
+			<input type="hidden" name="FunnyDotTime" value="'.$time.'" />
 		</div>';
 }
 
@@ -51,9 +51,9 @@ private static function checkFunnyDot() {
 	!isset($wgFunnyDotTimeout) && $wgFunnyDotTimeout = 3600;
 	!isset($wgFunnyDotWait) && $wgFunnyDotWait = 2;
 
-	if (!empty($_COOKIE['FunnyDotTime']) && (!empty($_COOKIE['FunnyDotHash']) || !empty($_POST['FunnyDotHash']))) {
+	if (!empty($_POST['FunnyDotTime']) && (!empty($_COOKIE['FunnyDotHash']) || !empty($_POST['FunnyDotHash']))) {
 		$now = time();
-		$time = $_COOKIE['FunnyDotTime'];
+		$time = $_POST['FunnyDotTime'];
 		$hash = !empty($_POST['FunnyDotHash']) ? $_POST['FunnyDotHash'] : $_COOKIE['FunnyDotHash'];
 	} else {
 		return false;
@@ -133,19 +133,12 @@ function execute($par) {
 
 	!isset($wgFunnyDotHash) && $wgFunnyDotHash = '';
 
-	# FunnyDotTime should be set in the Form
-	# if not just set a new value
-	if (!empty($_COOKIE['FunnyDotTime'])) {
-		$time = $_COOKIE['FunnyDotTime'];
-	} else {
-		$time = time();
-		setCookie('FunnyDotTime', $time, 0, '/', null, isset($_SERVER['HTTPS']), true);
+	if (!empty($_GET['FunnyDotTime'])) {
+		setCookie('FunnyDotHash', substr(sha1($_GET['FunnyDotTime'].$wgFunnyDotHash), 0, 4), 0, '/', null, isset($_SERVER['HTTPS']), true);
 	}
 
-	setCookie('FunnyDotHash', substr(sha1($time.$wgFunnyDotHash), 0, 4), 0, '/', null, isset($_SERVER['HTTPS']), true);
-
 	header('HTTP/1.1 200 OK');
-	header("Cache-Control: no-cache, must-revalidate");
+	header("Cache-Control: no-cache, must-revalidate, no-store");
 	header('Content-Type: image/png');
 	header('Content-Length: 135');
 
