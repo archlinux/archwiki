@@ -121,7 +121,12 @@ public function initUser( &$user, $autocreate=false ) {
 }
 
 public function getCanonicalName( $username ) {
-	return strtoupper(substr($username, 0, 1)).substr($username, 1);
+	try {
+		$data = $this->getUserData($username);
+	} catch (Exception $e) {
+		return false;
+	}
+	return strtoupper(substr($data['name'], 0, 1)).substr($data['name'], 1);
 }
 
 }
