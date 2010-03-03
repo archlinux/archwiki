@@ -60,7 +60,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 	 * @access private
 	 */
 	function execute() {
-		global $wgRequest, $wgArchNavBar, $wgArchNavBarSelected;
+		global $wgRequest, $wgArchNavBar;
 		$this->skin = $skin = $this->data['skin'];
 		$action = $wgRequest->getText( 'action' );
 
