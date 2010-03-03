@@ -1,274 +1,76 @@
-body {
-	margin: 0;
-	padding: 0;
-	padding-left: 30px;
-	padding-right: 30px;
-	color: #46494d;
-	background: #ffffff;
-	font-size: 10px;
-	font-family: sans-serif;
-}
+/*
+ * ARCHWIKI
+ *
+ */
 
-a {
-	color: #0771a6;
-	text-decoration: none;
-}
+/* import the global navbar stylesheet */
+@import url('archnavbar.css');
 
-a:visited {
-	color: #0771a6;
-}
+/* general styling */
+body { background: #eef; }
+body, #content, table { color: #444;}
+h1, h2, h3, h4, h5 { color: #444; }
+h1 { font-weight: bold; }
+pre { border: 1px solid #bdb; background: #dfd; }
+code { font-family: monospace; background-color: #ffc; }
 
-a:hover {
-	color: #333333;
-	text-decoration: underline;
-}
+/* links (including page tabs and personal toolbar) */
+a, #p-cactions li a { text-decoration: none; }
+a:link, #p-cactions li a, #p-personal li a, #bodyContent a.external { color: #07b; }
+a:visited { color: #838; }
+a:hover, #p-personal li a:hover { text-decoration: underline; }
+a:active { color: #e90; }
+a.new, #p-cactions .new a { color: #d00 !important; }
 
-#logo {
-	margin: 0;
-	padding: 0;
-	position: absolute;
-	top: 10px;
-	left: 25px;
-	width: 350px;
-	text-indent: -9999px;
-	background: transparent top left no-repeat;
-	border:none;
-	width: 350px;
-	height: 103px;
-}
+/* lessen eye strain in main edit window */
+textarea#wpTextbox1 {background: #ffc; border: 1px solid #bbb; } 
 
-#nav_bar {
-	position: absolute;
-	top: 123px;
-	left:0px;
-	right:0px;
-	background: #333333;
+/* bump down the personal toolbar (top menu) */
+#p-personal { top: 70px; }
 
-}
+/* bump down the action tabs (page, discuss, edit, etc.) */
+#p-cactions { top: 7.5em; }
+/* first for IE6 */
+#p-cactions { top: 87px; }
+/* and now for the rest */
+html > body #p-cactions { top: 92px; }
 
-#nav {
-	height:26px;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	margin-right:30px;
-}
+/* bump down the main content to make room for navbar */
+#content { margin-top: 3.6em; }
+#content { margin-top: 46px; }
 
-#nav li {
-	display: block;
-	float: right;
-	margin: 0 3px;
-	padding: 0;
-	text-align: center;
-	font-size: 13px;
-	line-height: 26px;
-}
+/* shrink the content just enough to show off the borders */
+#globalWrapper { width: 99%; }
 
-#nav li.selected {
-	background: #1793d1;
-	padding: 0 8px;
-	color: #ffffff;
-	font-weight: bold;
-}
+/* article Table of Contents */
+#toc, .toc, .mw-warning { background-color: #f9faff; border: 1px solid #d7dfe3; }
 
-#nav li a {
-	display: block;
-	padding: 0 8px;
-	color: #ffffff;
-	font-weight: bold;
-	text-decoration: none;
-}
+/* sidebar menus and content borders */
+.pBody { border: 1px solid #ddd; }
+#content { border: 1px solid #ccc; }
 
-#nav li a:hover {
-	background: #1793d1;
-}
+/* disable default mediawiki logo and close the gap it leaves behind */
+#p-logo { display: none !important;}
+/* first for IE6 */
+#column-one { padding-top: 90px; }
+/* and now for the browsers that work like they should  */
+html > body #column-one { padding-top: 36px; }
 
-#subnav_bar {
-	position:absolute;
-	top:149px;
-	left:0px;
-	right:0px;
-	height:26px;
-	background: #1793d1;
-	clear:both;
-}
+/* bold the sidebar headings */
+.portlet h5 { font-weight: bold; }
 
-/* MediaWiki: */
+/* disable footer logos  TODO: see if this can be done in LocalSettings.php */
+#f-poweredbyico, #f-copyrightico { display: none; }
 
-#globalWrapper {
-	padding-top: 12px;
-}
+/* clean up the footer */
+#footer { color: #888; background-color: transparent; border-top: none; border-bottom: none; }
 
-#content {
-	background-color: #F0F0F0;
-	border-right: 1px solid;
-	border-color: #D9D9D9;
-	color: #333333;
-	top: 173px;
-}
+/* bring footer text inline with content */
+/* first for IE6 */
+#footer ul { margin-left: 0; }
+/* and now for the other browsers that work properly */
+html > body #footer ul { margin-left: 170px; }
 
-#column-one {
-	padding-top: 203px;
-}
+/* highlight current website in the navbar */
+#archnavbar ul li#anb-wiki a { color: white !important; }
 
-#column-content {
-	padding-bottom:210px;
-}
-
-#p-cactions {
-	top: 201px;
-	left: 160px;
-}
-
-.pBody {
-	background-color: #FBFBFB;
-	border-color: #C9C9C9;
-}
-
-#footer {
-	border: 1px solid #D9D9D9;
-	background-color: #F0F0F0;
-	margin: 2px 0 2px 0;
-	padding: 2px 0 6px 0;
-	font-size: 10px;
-}
-
-h1, h2, h3, h4, h5, h6 {
-	color: #333333;
-	border-color: #0771a6;
-}
-
-#bodyContent table {
-	border-collapse: collapse;
-	padding: 4px;
-}
-
-#bodyContent td {
-	padding: 4px;
-}
-
-#bodyContent a.external {
-	color: #1793D1;
-}
-
-#p-personal {
-	top: 154px;
-	font-size:14px;
-	font-weight: bold;
-	line-height: 26px;
-	background: #1793d1;
-}
-
-li#pt-userpage,
-li#pt-anonuserpage,
-li#pt-login {
-	background: #1793d1;
-}
-
-li#pt-login {
-	padding-right:30px;
-}
-
-#p-personal ul {
-	color: #ffffff;
-	text-transform: none;
-}
-
-#p-personal li {
-	color: #ffffff;
-}
-
-#p-personal li a {
-	color: #ffffff;
-	margin-left: 8px;
-}
-
-#p-personal a.new, #p-personal a.new:visited {
-	color: #DBDBDB;
-}
-
-#p-personal li a:hover {
-	background-color: #1793d1;
-	color: #DBDBDB;
-}
-
-#p-personal li.active a:hover {
-	background-color: #1793d1;
-}
-
-ul {
-	list-style-image: none;
-}
-
-.portlet ul {
-	list-style-image: none;
-	color: #0771a6;
-}
-
-.portlet li {
-	margin: 2px;
-}
-
-#p-cactions li.selected {
-	border-color: #0771a6;
-}
-#p-cactions li a {
-	color: #0771a6;
-}
-
-table {
-	background-color: #F0F0F0;
-}
-
-div.townBox {
-	background-color: #F0F0F0;
-}
-
-#p-cactions li {
-	background-color: #F0F0F0;
-	border-color: #D9D9D9;
-}
-
-#p-cactions li.selected a {
-	background-color: #F0F0F0;
-}
-
-div#userloginForm .captcha {
-	background-color: #F0F0F0;
-}
-
-table.gallery {
-	background-color: #F0F0F0;
-}
-
-div#searchTargetContainer {
-	background-color: #F0F0F0;
-}
-
-.editExternally {
-	background-color: #F0F0F0;
-}
-
-.TablePager td {
-	background-color: #F0F0F0
-}
-
-table.diff, td.diff-otitle, td.diff-ntitle {
-	background-color: #F0F0F0;
-}
-
-td.diff-context {
-	background-color: #E0E0E0;
-}
-
-div.noarticletext {
-	background-color: #E0E0E0;
-}
-
-#p-cactions li a:hover {
-	background-color: #F0F0F0;
-}
-
-div.thumb {
-	border-color: #F0F0F0;
-}

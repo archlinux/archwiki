@@ -110,26 +110,23 @@ class ArchLinuxTemplate extends QuickTemplate {
  class="mediawiki <?php $this->text('dir') ?> <?php $this->text('pageclass') ?> <?php $this->text('skinnameclass') ?>">
 
 	<?php if (empty($_REQUEST['printable'])) {?>
-	<a id="logo" style="background-image: url(<?php $this->text('logopath') ?>);" <?php
-			?>href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href'])?>"<?php
-			echo $skin->tooltipAndAccesskey('p-logo') ?>></a>
-	<div id="nav_bar">
-		<ul id="nav">
-			<?php
+	<div id="archnavbar"><!-- Arch Linux global navigation bar -->
+		<div id="archnavbarlogo">
+			<p><a id="logo" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href'])?>"<?php
+			echo $skin->tooltipAndAccesskey('p-logo') ?>></a></p>
+		</div>
+		<div id="archnavbarmenu">
+			<ul id="archnavbarlist">
+				<?php
 				if (isset($wgArchNavBar)) {
 					foreach ($wgArchNavBar as $name => $url) {
-						if (isset($wgArchNavBarSelected) && $name == $wgArchNavBarSelected) {
-							$selected = ' class="selected"';
-						} else {
-							$selected = '';
-						}
-						echo '<li'.$selected.'><a href="'.$url.'">'.$name.'</a></li>';
+						echo '<li id="anb-'.strtolower($name).'"><a href="'.$url.'">'.$name.'</a></li>';
 					}
 				}
-			?>
-		</ul>
-	</div>
-	<div id="subnav_bar"></div>
+				?>
+			</ul>
+		</div>
+	</div><!-- #archnavbar -->
 	<?php } ?>
 
 	<div id="globalWrapper">
