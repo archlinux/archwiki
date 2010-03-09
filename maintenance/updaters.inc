@@ -1221,7 +1221,8 @@ function do_populate_parent_id() {
 
 function sqlite_initial_indexes() {
 	global $wgDatabase;
-	if ( update_row_exists( 'initial_indexes' ) ) {
+	// initial-indexes.sql fails if the indexes are already present, so we perform a quick check if our database is newer.
+	if ( update_row_exists( 'initial_indexes' ) || $wgDatabase->indexExists( 'user', 'user_name' ) ) {
 		wfOut( "...have initial indexes\n" );
 		return;
 	}
@@ -1813,8 +1814,8 @@ function do_postgres_updates() {
 			'ctype' => 'U',
 			'mw_version' => $wgVersion,
 			'pg_version' => $version,
-			'sql_version' => '$LastChangedRevision: 51640 $',
-			'sql_date' => '$LastChangedDate: 2009-06-09 22:58:05 +1000 (Tue, 09 Jun 2009) $',
+			'sql_version' => '$LastChangedRevision: 60080 $',
+			'sql_date' => '$LastChangedDate: 2009-12-15 09:24:12 -0800 (Tue, 15 Dec 2009) $',
 		) );
 	return;
 }
