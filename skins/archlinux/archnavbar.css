@@ -16,8 +16,9 @@
 /* and use a proper PNG for all other modern browsers */
 html > body #archnavbarlogo { background: url('archlogo.png') no-repeat !important; }
 
-/* move the paragraph text offscreen */
+/* move the heading/paragraph text offscreen */
 #archnavbarlogo p { margin: 0 !important; padding: 0 !important; text-indent: -9999px !important; }
+#archnavbarlogo h1 { margin: 0 !important; padding: 0 !important; text-indent: -9999px !important; }
 
 /* make the link the same size as the logo */
 #archnavbarlogo a { display: block !important; height: 40px !important; width: 190px !important; }
