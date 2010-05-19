@@ -18,7 +18,7 @@ code { font-family: monospace; background-color: #ffc; }
 a, #p-cactions li a { text-decoration: none; }
 a:link, #p-cactions li a, #p-personal li a, #bodyContent a.external { color: #07b; }
 a:visited { color: #838; }
-a:hover, #p-personal li a:hover { text-decoration: underline; }
+a:hover, #p-personal li a:hover { text-decoration: underline; background-color: transparent; }
 a:active { color: #e90; }
 a.new, #p-cactions .new a { color: #d00 !important; }
 
