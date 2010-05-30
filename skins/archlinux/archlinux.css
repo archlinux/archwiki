@@ -7,9 +7,9 @@
 @import url('archnavbar.css');
 
 /* general styling */
-body { background: #eef; }
-body, #content, table { color: #444;}
-h1, h2, h3, h4, h5 { color: #444; }
+body { background: #e4eeff; }
+body, #content, table { color: #222;}
+h1, h2, h3, h4, h5 { color: #222; }
 h1 { font-weight: bold; }
 pre { border: 1px solid #bdb; background: #dfd; }
 code { font-family: monospace; background-color: #ffc; }
