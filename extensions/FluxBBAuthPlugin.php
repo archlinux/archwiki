@@ -1,29 +1,29 @@
 <?php
 
-$wgHooks['isValidPassword'][] = 'LLAuthPlugin::isValidPassword';
+$wgHooks['isValidPassword'][] = 'FluxBBAuthPlugin::isValidPassword';
 
 $wgExtensionCredits['other'][] = array(
-	'name' => 'LLAuthPlugin',
-	'version' => '3.2',
-	'description' => 'Authentifizierung am LL-Forum',
+	'name' => 'FluxBBAuthPlugin',
+	'version' => '1.0',
+	'description' => 'Use FluxBB accounts in MediaWiki',
 	'author' => 'Pierre Schmitz',
-	'url' => 'https://www.archlinux.de'
+	'url' => 'https://users.archlinux.de/~pierre/'
 );
 
 require_once('includes/AuthPlugin.php');
 
 
-class LLAuthPlugin extends AuthPlugin {
+class FluxBBAuthPlugin extends AuthPlugin {
 
 public static function isValidPassword($password) {
 	$length = strlen($password);
-	return ($length >= 6 && $length <= 25);
+	return ($length >= 4 && $length <= 25);
 }
 
 private function getUserData($username) {
 	$dbr = wfGetDB( DB_SLAVE );
 
-	$result = $dbr->safeQuery('SELECT id, name, email, realname FROM ll.users WHERE name = ?', $username);
+	$result = $dbr->safeQuery('SELECT id, username, email, realname FROM fluxbb.users WHERE username = ?', $username);
 	$data = $result->fetchRow();
 	$result->free();
 
@@ -34,7 +34,7 @@ public function userExists( $username ) {
 	$dbr = wfGetDB( DB_SLAVE );
 
 	try {
-		$result = $dbr->safeQuery('SELECT id FROM ll.users WHERE name = ?', $username);
+		$result = $dbr->safeQuery('SELECT id FROM fluxbb.users WHERE username = ?', $username);
 		$exists = ($result->numRows() > 0 ? true : false);
 		$result->free();
 	} catch (Exception $e) {
@@ -48,7 +48,7 @@ public function authenticate( $username, $password ) {
 	$dbr = wfGetDB( DB_SLAVE );
 
 	try {
-		$result = $dbr->safeQuery('SELECT id FROM ll.users WHERE name = ? AND password = ?', $username, sha1($password));
+		$result = $dbr->safeQuery('SELECT id FROM fluxbb.users WHERE username = ? AND password = ?', $username, sha1($password));
 		$authenticated = ($result->numRows() > 0 ? true : false);
 		$result->free();
 	} catch (Exception $e) {
@@ -60,7 +60,7 @@ public function authenticate( $username, $password ) {
 
 public function modifyUITemplate( &$template ) {
 	$template->set( 'usedomain', false );
-	$template->set('link', 'Um Dich hier anzumelden, nutze Deine Konto-Daten aus dem <a href="https://forum.archlinux.de/">archlinux.de-Forum</a>.');
+	$template->set('link', 'Um Dich hier anzumelden, nutze Deine Konto-Daten aus dem <a href="https://bbs.archlinux.de/">archlinux.de-Forum</a>.');
 }
 
 public function setDomain( $domain ) {
@@ -126,7 +126,7 @@ public function getCanonicalName( $username ) {
 	} catch (Exception $e) {
 		return false;
 	}
-	return strtoupper(substr($data['name'], 0, 1)).substr($data['name'], 1);
+	return strtoupper(substr($data['username'], 0, 1)).substr($data['username'], 1);
 }
 
 }
