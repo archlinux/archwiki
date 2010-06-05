@@ -76,3 +76,7 @@ html > body #footer ul { margin-left: 170px; }
 
 /* don't highlight https links */
 #bodyContent a[href ^="https://"], .link-https { background: none; padding: 0; }
+
+/* make tables prettier */
+#bodyContent table { border-collapse: collapse; padding: 4px; }
+#bodyContent td { padding: 4px; }
