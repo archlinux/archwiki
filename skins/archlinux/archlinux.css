@@ -74,3 +74,5 @@ html > body #footer ul { margin-left: 170px; }
 /* highlight current website in the navbar */
 #archnavbar ul li#anb-wiki a { color: white !important; }
 
+/* don't highlight https links */
+#bodyContent a[href ^="https://"], .link-https { background: none; padding: 0; }
