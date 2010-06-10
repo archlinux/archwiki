@@ -42,6 +42,9 @@ class SkinArchLinux extends SkinTemplate {
 		$out->addStyle( 'archlinux/IE70Fixes.css', 'screen', 'IE 7' );
 
 		$out->addStyle( 'archlinux/rtl.css', 'screen', '', 'rtl' );
+
+		$out->addStyle( 'archlinux/archnavbar.css', 'screen' );
+		$out->addStyle( 'archlinux/arch.css', 'screen' );
 	}
 }
 
@@ -81,7 +84,6 @@ class ArchLinuxTemplate extends QuickTemplate {
 		<!--[if lt IE 7]><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/common/IEFixes.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"></script>
 		<meta http-equiv="imagetoolbar" content="no" /><![endif]-->
 
-		<style type="text/css" media="screen">@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/archlinux.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";</style>
 		<?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
 
 		<script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"><!-- wikibits js --></script>

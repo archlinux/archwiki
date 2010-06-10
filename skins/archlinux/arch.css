@@ -1,29 +1,22 @@
-/*
- * ARCHWIKI
- *
- */
-
-/* import the global navbar stylesheet */
-@import url('archnavbar.css');
-
 /* general styling */
-body { background: #e4eeff; }
+body { background: #f6f9fc; }
 body, #content, table { color: #222;}
 h1, h2, h3, h4, h5 { color: #222; }
 h1 { font-weight: bold; }
-pre { border: 1px solid #bdb; background: #dfd; }
-code { font-family: monospace; background-color: #ffc; }
+pre { border: 1px solid #bcd; background: #ebf1f5; color: #222; }
+code { font-family: monospace; }
 
 /* links (including page tabs and personal toolbar) */
-a, #p-cactions li a { text-decoration: none; }
+a, #p-cactions li a { text-decoration: none; outline: none; }
 a:link, #p-cactions li a, #p-personal li a, #bodyContent a.external { color: #07b; }
-a:visited { color: #549; }
-a:hover, #p-personal li a:hover { text-decoration: underline; background-color: transparent; }
-a:active { color: #e90; }
-a.new, #p-cactions .new a { color: #d00 !important; }
-
-/* lessen eye strain in main edit window */
-textarea#wpTextbox1 {background: #ffc; border: 1px solid #bbb; } 
+#bodyContent p a, #bodyContent li a, #bodyContent td a { font-weight: bold; }
+#bodyContent #toc a, #bodyContent .special li > a,
+#bodyContent #toc a, #bodyContent .special li span a { font-weight: normal; }
+a:visited, #bodyContent a:visited.external { color: #666; }
+a:focus { color: #e90 !important; }
+a:hover, #p-personal li a:hover, #bodyContent #toc a:hover, #bodyContent a:hover.external { text-decoration: underline; background-color: transparent; color: #999; }
+a:active { color: #e90 !important; }
+a.new, #p-cactions .new a { color: #b00 !important; }
 
 /* bump down the personal toolbar (top menu) */
 #p-personal { top: 70px; }
@@ -74,9 +67,19 @@ html > body #footer ul { margin-left: 170px; }
 /* highlight current website in the navbar */
 #archnavbar ul li#anb-wiki a { color: white !important; }
 
+/* highlight main menu links (specific to archlinux.de) */
+.page-Download #archnavbar ul li#anb-download a { color: white !important; }
+.page-Download #archnavbar ul li#anb-wiki a { color: #999 !important; }
+.page-Download #archnavbar ul li#anb-wiki a:hover { color: #fff !important; }
+.page-Spenden #archnavbar ul li#anb-spenden a { color: white !important; }
+.page-Spenden #archnavbar ul li#anb-wiki a { color: #999 !important; }
+.page-Spenden #archnavbar ul li#anb-wiki a:hover { color: #fff !important; }
+
 /* don't highlight https links */
 #bodyContent a[href ^="https://"], .link-https { background: none; padding: 0; }
 
 /* make tables prettier */
-#bodyContent table { border-collapse: collapse; padding: 4px; }
-#bodyContent td { padding: 4px; }
+#bodyContent table { border-collapse: collapse; padding: 2px; }
+#bodyContent td { padding: 2px; }
+
+ul, .portlet ul { list-style-image: none; }
