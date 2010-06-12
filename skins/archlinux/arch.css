@@ -10,8 +10,7 @@ code { font-family: monospace; }
 a, #p-cactions li a { text-decoration: none; outline: none; }
 a:link, #p-cactions li a, #p-personal li a, #bodyContent a.external { color: #07b; }
 #bodyContent p a, #bodyContent li a, #bodyContent td a { font-weight: bold; }
-#bodyContent #toc a, #bodyContent .special li > a,
-#bodyContent #toc a, #bodyContent .special li span a { font-weight: normal; }
+#bodyContent #toc a, #bodyContent .special li > a, #bodyContent .special li span a, #bodyContent #pagehistory a { font-weight: normal; }
 a:visited, #bodyContent a:visited.external { color: #666; }
 a:focus { color: #e90 !important; }
 a:hover, #p-personal li a:hover, #bodyContent #toc a:hover, #bodyContent a:hover.external { text-decoration: underline; background-color: transparent; color: #999; }
