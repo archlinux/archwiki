@@ -48,9 +48,6 @@ html > body #p-cactions { top: 92px; }
 /* and now for the browsers that work like they should  */
 html > body #column-one { padding-top: 36px; }
 
-/* bold the sidebar headings */
-.portlet h5 { font-weight: bold; }
-
 /* disable footer logos  TODO: see if this can be done in LocalSettings.php */
 #f-poweredbyico, #f-copyrightico { display: none; }
 
