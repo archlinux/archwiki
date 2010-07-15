@@ -63,7 +63,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 	 * @access private
 	 */
 	function execute() {
-		global $wgRequest, $wgArchNavBar;
+		global $wgRequest, $wgArchNavBar, $wgArchHome;
 		$this->skin = $skin = $this->data['skin'];
 		$action = $wgRequest->getText( 'action' );
 
@@ -113,8 +113,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 	<?php if (empty($_REQUEST['printable'])) {?>
 	<div id="archnavbar"><!-- Arch Linux global navigation bar -->
 		<div id="archnavbarlogo">
-			<p><a id="logo" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href'])?>"<?php
-			echo $skin->tooltipAndAccesskey('p-logo') ?>></a></p>
+			<p><a id="logo" href="<?php if (isset($wgArchHome)) { echo $wgArchHome; } ?>"></a></p>
 		</div>
 		<div id="archnavbarmenu">
 			<ul id="archnavbarlist">
