@@ -61,15 +61,7 @@ html > body #column-one { padding-top: 36px; }
 html > body #footer ul { margin-left: 170px; }
 
 /* highlight current website in the navbar */
-#archnavbar ul li#anb-wiki a { color: white !important; }
-
-/* highlight main menu links (specific to archlinux.de) */
-.page-Download #archnavbar ul li#anb-download a { color: white !important; }
-.page-Download #archnavbar ul li#anb-wiki a { color: #999 !important; }
-.page-Download #archnavbar ul li#anb-wiki a:hover { color: #fff !important; }
-.page-Spenden #archnavbar ul li#anb-spenden a { color: white !important; }
-.page-Spenden #archnavbar ul li#anb-wiki a { color: #999 !important; }
-.page-Spenden #archnavbar ul li#anb-wiki a:hover { color: #fff !important; }
+#archnavbar ul li.anb-selected a { color: white !important; }
 
 /* don't highlight https links */
 #bodyContent a[href ^="https://"], .link-https { background: none; padding: 0; }

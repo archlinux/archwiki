@@ -63,7 +63,7 @@ class ArchLinuxTemplate extends QuickTemplate {
 	 * @access private
 	 */
 	function execute() {
-		global $wgRequest, $wgArchNavBar, $wgArchHome;
+		global $wgRequest, $wgArchNavBar, $wgArchHome, $wgArchNavBarSelected, $wgArchNavBarSelectedDefault;
 		$this->skin = $skin = $this->data['skin'];
 		$action = $wgRequest->getText( 'action' );
 
@@ -120,7 +120,13 @@ class ArchLinuxTemplate extends QuickTemplate {
 				<?php
 				if (isset($wgArchNavBar)) {
 					foreach ($wgArchNavBar as $name => $url) {
-						echo '<li id="anb-'.strtolower($name).'"><a href="'.$url.'">'.$name.'</a></li>';
+						if ((isset($wgArchNavBarSelected) && $this->data['title'] == $name && in_array($name, $wgArchNavBarSelected))
+						 || (!(isset($wgArchNavBarSelected) && in_array($this->data['title'], $wgArchNavBarSelected)) && isset($wgArchNavBarSelectedDefault) && $name == $wgArchNavBarSelectedDefault)) {
+							$anbClass = ' class="anb-selected"';
+						} else {
+							$anbClass = '';
+						}
+						echo '<li id="anb-'.strtolower($name).'"'.$anbClass.'><a href="'.$url.'">'.$name.'</a></li>';
 					}
 				}
 				?>
