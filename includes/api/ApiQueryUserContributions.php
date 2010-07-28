@@ -287,6 +287,12 @@ class ApiQueryContributions extends ApiQueryBase {
 			wfTimestamp(TS_ISO_8601, $row->rev_timestamp);
 	}
 
+	public function getCacheMode( $params ) {
+		// This module provides access to patrol flags if
+		// the requester is logged in
+		return 'anon-public-user-private';
+	}
+
 	public function getAllowedParams() {
 		return array (
 			'limit' => array (
@@ -370,6 +376,6 @@ class ApiQueryContributions extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryUserContributions.php 47037 2009-02-09 14:07:18Z catrope $';
+		return __CLASS__ . ': $Id: ApiQueryUserContributions.php 69986 2010-07-27 03:57:39Z tstarling $';
 	}
 }
