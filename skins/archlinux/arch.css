@@ -64,7 +64,7 @@ html > body #footer ul { margin-left: 170px; }
 #archnavbar ul li.anb-selected a { color: white !important; }
 
 /* don't highlight https links */
-#bodyContent a[href ^="https://"], .link-https { background: none; padding: 0; }
+#bodyContent a.external[href ^="https://"], .link-https { background: none; padding: 0; }
 
 /* make tables prettier */
 #bodyContent table { border-collapse: collapse; padding: 2px; }
