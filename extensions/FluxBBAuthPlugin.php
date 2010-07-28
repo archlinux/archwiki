@@ -132,12 +132,16 @@ public function initUser( &$user, $autocreate=false ) {
 }
 
 public function getCanonicalName( $username ) {
-	try {
-		$data = $this->getUserData($username);
-	} catch (Exception $e) {
-		return false;
+	if ($username != 'MediaWiki default') {
+		try {
+			$data = $this->getUserData($username);
+			return strtoupper(substr($data['username'], 0, 1)).substr($data['username'], 1);
+		} catch (Exception $e) {
+			return false;
+		}
+	} else {
+		return $username;
 	}
-	return strtoupper(substr($data['username'], 0, 1)).substr($data['username'], 1);
 }
 
 }
