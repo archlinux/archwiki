@@ -64,13 +64,31 @@ $messages = array(
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Акатегориа|Акатегориақәа}}',
 
-'article'        => 'Адаҟьа',
+'article'    => 'Адаҟьа',
+'mytalk'     => 'Сахцәажәара',
+'navigation' => 'Анавигациа',
+
+# Cologne Blue skin
 'qbfind'         => 'Аҧшаара',
 'qbedit'         => 'Ариашара',
 'qbpageoptions'  => 'Ари адаҟьа',
 'qbspecialpages' => 'Цастәи адаҟьақәа',
-'mytalk'         => 'Сахцәажәара',
-'navigation'     => 'Анавигациа',
+
+# Vector skin
+'vector-namespace-category' => 'Акатегориа',
+'vector-namespace-help'     => 'Ацхыраара адаҟьа',
+'vector-namespace-image'    => 'Афаил',
+'vector-namespace-main'     => 'Адаҟьа',
+'vector-namespace-project'  => 'Апроект',
+'vector-namespace-special'  => 'Цастәи адаҟьа',
+'vector-namespace-talk'     => 'Ахцәажәара',
+'vector-namespace-template' => 'Ашаблон',
+'vector-namespace-user'     => 'Иалахә Адаҟьа',
+'vector-view-create'        => 'Арҿиара',
+'vector-view-edit'          => 'Ариашамҭа',
+'vector-view-history'       => 'Аҭоурых',
+'vector-view-view'          => 'Аҧхьара',
+'vector-view-viewsource'    => 'Ахәаҧшра',
 
 'help'             => 'Ацхыраара',
 'search'           => 'Аҧшаара',
@@ -89,7 +107,7 @@ $messages = array(
 'talk'             => 'Ахцәажәара',
 'toolbox'          => 'Амаҵыругақәа',
 'otherlanguages'   => 'Абызшәақәа',
-'lastmodifiedat'   => 'Ацыхәтәантәи аҧсахрақәа абри адаҟьа аҟны: $2, $1.', # $1 date, $2 time
+'lastmodifiedat'   => 'Ацыхәтәантәи аҧсахрақәа абри адаҟьа аҟны: $2, $1.',
 'jumptonavigation' => 'Анавигациа',
 'jumptosearch'     => 'Аҧшаара',
 
@@ -126,8 +144,6 @@ $messages = array(
 'userlogin'               => 'Урдырра/Арегистрациара',
 'logout'                  => 'Асеанс дәылҵра',
 'userlogout'              => 'Асеанс дәылҵра',
-'uid'                     => 'Иалоу ID:',
-'yourlanguage'            => 'Абызшәа:',
 'loginlanguagelabel'      => 'Абызшәа: $1',
 
 # Edit pages
@@ -142,6 +158,8 @@ $messages = array(
 'preferences'       => 'Архиарақәа',
 'mypreferences'     => 'Архиарақәа',
 'searchresultshead' => 'Аҧшаара',
+'uid'               => 'Иалоу ID:',
+'yourlanguage'      => 'Абызшәа:',
 
 # Groups
 'group-user' => 'Иалоуқәа',
@@ -151,11 +169,14 @@ $messages = array(
 'grouppage-sysop' => '{{ns:project}}:Администраторцәа',
 
 # Recent changes
-'recentchanges' => 'Арҽеира ҿыцқәа',
-'newpageletter' => 'Ҿ',
+'recentchanges'                => 'Арҽеира ҿыцқәа',
+'recentchanges-legend-newpage' => '$1 — адаҟьа ҿыц',
+'newpageletter'                => 'Ҿ',
 
 # Recent changes linked
-'recentchangeslinked' => 'Еимадоу ариашарақәа',
+'recentchangeslinked'         => 'Еимадоу ариашарақәа',
+'recentchangeslinked-feed'    => 'Еимадоу ариашарақәа',
+'recentchangeslinked-toolbox' => 'Еимадоу ариашарақәа',
 
 # Upload
 'upload' => 'Афаил аҭагалара',
@@ -165,6 +186,8 @@ $messages = array(
 
 # Random page
 'randompage' => 'Машәырлатәи аҩымҭа',
+
+'brokenredirects-edit' => 'ариашамҭа',
 
 # Miscellaneous special pages
 'newpages-username' => 'Иалахә:',
@@ -189,6 +212,7 @@ $messages = array(
 'mycontris'   => 'Салагала',
 'contribsub2' => 'Алагала $1 ($2)',
 
+'sp-contributions-talk'   => 'ахцәажәара',
 'sp-contributions-submit' => 'Аҧшаара',
 
 # What links here
@@ -197,6 +221,9 @@ $messages = array(
 
 # Block/unblock
 'contribslink' => 'алагала',
+
+# Namespace 8 related
+'allmessages-language' => 'Абызшәа:',
 
 # Special:NewFiles
 'ilsubmit' => 'Аҧшаара',

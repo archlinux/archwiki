@@ -49,16 +49,18 @@ $messages = array(
 'nov'       => 'Ноя',
 'dec'       => 'Дек',
 
-'about'         => 'Тууралуу',
-'cancel'        => 'Жокко чыгаруу',
+'about'      => 'Тууралуу',
+'cancel'     => 'Жокко чыгаруу',
+'mypage'     => 'Барагым',
+'mytalk'     => 'Маегим',
+'navigation' => 'Багыттоо',
+'and'        => '&#32;жана',
+
+# Cologne Blue skin
 'qbedit'        => 'Оңдоо',
 'qbpageoptions' => 'Бул барак',
 'qbpageinfo'    => 'Контекст',
 'qbmyoptions'   => 'Барактарым',
-'mypage'        => 'Барагым',
-'mytalk'        => 'Маегим',
-'navigation'    => 'Багыттоо',
-'and'           => '&#32;жана',
 
 'errorpagetitle'   => 'Жаңылыш',
 'tagline'          => '{{SITENAME}} дан',
@@ -85,7 +87,6 @@ $messages = array(
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => '{{SITENAME}} тууралуу',
 'aboutpage'            => 'Project:тууралуу',
-'copyrightpagename'    => '{{SITENAME}} автордук укугу',
 'copyrightpage'        => '{{ns:project}}:Автордук укуктар',
 'currentevents'        => 'Учурдагы окуялар',
 'currentevents-url'    => 'Project:Учурдагы окуялар',
@@ -129,13 +130,6 @@ $messages = array(
 'logout'             => 'Чыгуу',
 'userlogout'         => 'Чыгуу',
 'createaccountmail'  => 'Электрондук дарек боюнча',
-'youremail'          => 'Электрондук почта:',
-'username'           => 'Колдонуучунун аты:',
-'uid'                => 'Колдонуучунун ID си:',
-'yourrealname'       => 'Анык атыңыз:',
-'yourlanguage'       => 'Тил:',
-'yourvariant'        => 'Вариант:',
-'yournick'           => 'Такма атыңыз:',
 'wrongpassword'      => 'Ката сырсөз киргизилди. Кайтадан аракет кылып көрүңүз.',
 'wrongpasswordempty' => 'Сырсөз киргизилген жок. Кайтадан аракет кылып көрүңүз.',
 'mailmypassword'     => 'Сырсөздү электрондук дарегиме жибер',
@@ -159,9 +153,8 @@ $messages = array(
 'yourdiff'           => 'Айырмалар',
 
 # History pages
-'next'       => 'кийинки',
-'last'       => 'соңку',
-'deletedrev' => '[өчүрүлдү]',
+'next' => 'кийинки',
+'last' => 'соңку',
 
 # Diffs
 'difference' => '(Оңдоолордун айырмасы)',
@@ -170,18 +163,23 @@ $messages = array(
 'powersearch' => 'Издөө',
 
 # Preferences page
-'preferences'        => 'Түзөө',
-'changepassword'     => 'Сырсөздү өзгөртүү',
-'dateformat'         => 'Датанын форматы',
-'datetime'           => 'Дата жана убакыт',
-'math_unknown_error' => 'белгисиз ката',
-'prefs-rc'           => 'Соңку өзгөрүүлөр',
-'prefs-watchlist'    => 'Байкоо тизме',
-'saveprefs'          => 'Сактап кой',
-'textboxsize'        => 'Оңдоо',
-'searchresultshead'  => 'Издөө',
-'localtime'          => 'Жергиликтүү убакыт',
-'files'              => 'Файлдар',
+'preferences'       => 'Түзөө',
+'changepassword'    => 'Сырсөздү өзгөртүү',
+'prefs-datetime'    => 'Дата жана убакыт',
+'prefs-rc'          => 'Соңку өзгөрүүлөр',
+'prefs-watchlist'   => 'Байкоо тизме',
+'saveprefs'         => 'Сактап кой',
+'prefs-editing'     => 'Оңдоо',
+'searchresultshead' => 'Издөө',
+'localtime'         => 'Жергиликтүү убакыт',
+'prefs-files'       => 'Файлдар',
+'youremail'         => 'Электрондук почта:',
+'username'          => 'Колдонуучунун аты:',
+'uid'               => 'Колдонуучунун ID си:',
+'yourrealname'      => 'Анык атыңыз:',
+'yourlanguage'      => 'Тил:',
+'yourvariant'       => 'Вариант:',
+'yournick'          => 'Такма атыңыз:',
 
 # Groups
 'group'            => 'Топ:',
@@ -196,7 +194,9 @@ $messages = array(
 'newpageletter' => 'Ж',
 
 # Recent changes linked
-'recentchangeslinked' => 'Тиешелүү өзгөрүүлөр',
+'recentchangeslinked'         => 'Тиешелүү өзгөрүүлөр',
+'recentchangeslinked-feed'    => 'Тиешелүү өзгөрүүлөр',
+'recentchangeslinked-toolbox' => 'Тиешелүү өзгөрүүлөр',
 
 # Upload
 'upload'            => 'Файл жүктөө',
@@ -206,13 +206,15 @@ $messages = array(
 'uploadedfiles'     => 'Жүктөлгөн файлдар',
 'savefile'          => 'Файлды сактап кой',
 
-'license' => 'Лицензиялоо:',
+'license'        => 'Лицензиялоо:',
+'license-header' => 'Лицензиялоо:',
 
 # Special:ListFiles
 'listfiles' => 'Файлдар тизмеси',
 
 # File description page
-'imagelinks' => 'Шилтемелер',
+'file-anchor-link' => 'Файл',
+'imagelinks'       => 'Шилтемелер',
 
 # Unused templates
 'unusedtemplates'    => 'Колдонулбаган нускалар',
@@ -296,13 +298,15 @@ $messages = array(
 'delete_and_move_confirm' => 'Ооба, бул баракты өчүр',
 
 # Namespace 8 related
-'allmessages'         => 'Система билдирүүлөрү',
-'allmessagesname'     => 'Аталышы',
-'allmessagescurrent'  => 'Учурдагы текст',
-'allmessagesmodified' => 'Өзгөрүүгө учурагандарды гана көрсөт',
+'allmessages'        => 'Система билдирүүлөрү',
+'allmessagesname'    => 'Аталышы',
+'allmessagescurrent' => 'Учурдагы текст',
 
 # Attribution
 'others' => 'башкалар',
+
+# Math errors
+'math_unknown_error' => 'белгисиз ката',
 
 # Browsing diffs
 'nextdiff' => 'Кийинки айырма →',
@@ -330,7 +334,7 @@ $messages = array(
 'confirmemail_loggedin' => 'Электрондук дарегиңиз ырасталды.',
 
 # Special:Version
-'version' => 'Версия', # Not used as normal message but as header for the special page itself
+'version' => 'Версия',
 
 # Special:SpecialPages
 'specialpages' => 'Атайын барактар',

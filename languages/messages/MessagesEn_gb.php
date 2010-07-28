@@ -61,7 +61,7 @@ If the file has been modified from its original state, some details may not full
 'exif-sensingmethod-5' => 'Colour sequential area sensor',
 'exif-sensingmethod-8' => 'Colour sequential linear sensor',
 
-# Pseudotags used for GPSSpeedRef and GPSDestDistanceRef
+# Pseudotags used for GPSSpeedRef
 'exif-gpsspeed-k' => 'Kilometres per hour',
 
 # E-mail address confirmation

@@ -57,7 +57,9 @@ $messages = array(
 'nov'           => 'ЦӀе',
 'dec'           => 'Фaн',
 
-'about'  => 'Хакъиндай',
+'about' => 'Хакъиндай',
+
+# Cologne Blue skin
 'qbfind' => 'Жугъун',
 'qbedit' => 'Дегишарун',
 
@@ -109,9 +111,6 @@ $messages = array(
 # General errors
 'viewsource' => 'Къаларун булах',
 
-# Login and logout pages
-'yourrealname' => 'Xалис тIвар:',
-
 # Edit pages
 'minoredit'      => 'И гъвечIи дегишарун',
 'watchthis'      => 'Гелкъуьн и хъувун',
@@ -129,8 +128,11 @@ $messages = array(
 'lineno' => 'ЦIар $1:',
 
 # Search results
-'viewprevnext' => 'Къаларун ($1) ($2) ($3)',
+'viewprevnext' => 'Къаларун ($1 {{int:pipe-separator}} $2) ($3)',
 'powersearch'  => 'Ахтармишун',
+
+# Preferences page
+'yourrealname' => 'Xалис тIвар:',
 
 # Recent changes
 'diff'            => 'тафават',
@@ -144,6 +146,7 @@ $messages = array(
 'upload' => 'Парвиниз шикил',
 
 # File description page
+'file-anchor-link'  => 'Шикил',
 'filehist'          => 'Шикил тарих',
 'filehist-datetime' => 'Югъ/Заман',
 
@@ -185,6 +188,8 @@ $messages = array(
 
 # Contributions
 'uctop' => '(кIукI)',
+
+'sp-contributions-talk' => 'Рахун',
 
 # Block/unblock
 'blocklink' => 'тIаб',

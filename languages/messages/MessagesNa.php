@@ -22,9 +22,11 @@ $messages = array(
 'friday'    => 'Preidak',
 'saturday'  => 'Tadurdei',
 
-'qbedit'        => 'Kiwiwid',
 'moredotdotdot' => 'Iyuw...',
 'and'           => '&#32;me',
+
+# Cologne Blue skin
+'qbedit' => 'Kiwiwid',
 
 'errorpagetitle' => 'Dairinaiya',
 'help'           => 'Ipuok',
@@ -56,10 +58,9 @@ $messages = array(
 'error' => 'Dairinaiya',
 
 # Login and logout pages
-'login'        => 'Metu',
-'logout'       => 'Meta',
-'userlogout'   => 'Meta',
-'yourlanguage' => 'Edorer',
+'login'      => 'Metu',
+'logout'     => 'Meta',
+'userlogout' => 'Meta',
 
 # Edit page toolbar
 'bold_sample'  => 'Eõ mangiyungiy',
@@ -77,8 +78,9 @@ $messages = array(
 'powersearch'    => 'Anani ko',
 
 # Preferences page
-'skin'              => 'Witsin',
+'prefs-skin'        => 'Witsin',
 'searchresultshead' => 'Anani ko',
+'yourlanguage'      => 'Edorer',
 
 # Recent changes
 'recentchanges' => 'Iwiwidit tsimeduw',

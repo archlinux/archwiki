@@ -55,15 +55,15 @@ function wfSpecialSpecialpages() {
 		$total = count($sortedPages);
 		$count = 0;
 
-		$wgOut->wrapWikiMsg( "<h4 class='mw-specialpagesgroup'>$1</h4>\n", "specialpages-group-$group" );
+		$wgOut->wrapWikiMsg( "<h4 class=\"mw-specialpagesgroup\" id=\"mw-specialpagesgroup-$group\">$1</h4>\n", "specialpages-group-$group" );
 		$wgOut->addHTML( "<table style='width: 100%;' class='mw-specialpages-table'><tr>" );
 		$wgOut->addHTML( "<td width='30%' valign='top'><ul>\n" );
 		foreach( $sortedPages as $desc => $specialpage ) {
 			list( $title, $restricted ) = $specialpage;
-			$link = $sk->makeKnownLinkObj( $title , htmlspecialchars( $desc ) );
+			$link = $sk->linkKnown( $title , htmlspecialchars( $desc ) );
 			if( $restricted ) {
 				$includesRestrictedPages = true;
-				$wgOut->addHTML( "<li class='mw-specialpages-page mw-specialpagerestricted'>{$link}</li>\n" );
+				$wgOut->addHTML( "<li class='mw-specialpages-page mw-specialpagerestricted'><strong>{$link}</strong></li>\n" );
 			} else {
 				$wgOut->addHTML( "<li>{$link}</li>\n" );
 			}

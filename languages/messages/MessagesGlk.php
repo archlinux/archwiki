@@ -14,12 +14,14 @@
 $fallback = 'fa';
 
 $messages = array(
-'qbfind'        => 'یاتن',
-'qbedit'        => 'دچین واچین',
 'moredotdotdot' => 'ویشتر...',
 'mypage'        => 'می هنه‌شر',
 'mytalk'        => 'می گب',
 'anontalk'      => 'اَ آی.پیˇ گب',
+
+# Cologne Blue skin
+'qbfind' => 'یاتن',
+'qbedit' => 'دچین واچین',
 
 'returnto'         => 'واگرد به $1.',
 'search'           => 'واموج',
@@ -67,6 +69,8 @@ $messages = array(
 
 # Special:Categories
 'categories' => 'رجؤن',
+
+'sp-contributions-talk' => 'گب',
 
 # Block/unblock
 'blocklink' => 'دَوَسته ببه',

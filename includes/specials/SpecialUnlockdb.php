@@ -45,7 +45,7 @@ class DBUnlockForm {
 		$wgOut->setPagetitle( wfMsg( "unlockdb" ) );
 		$wgOut->addWikiMsg( "unlockdbtext" );
 
-		if ( "" != $err ) {
+		if ( $err != "" ) {
 			$wgOut->setSubtitle( wfMsg( "formerror" ) );
 			$wgOut->addHTML( '<p class="error">' . htmlspecialchars( $err ) . "</p>\n" );
 		}
@@ -55,7 +55,7 @@ class DBUnlockForm {
 		$action = $titleObj->escapeLocalURL( "action=submit" );
 		$token = htmlspecialchars( $wgUser->editToken() );
 
-		$wgOut->addHTML( <<<END
+		$wgOut->addHTML( <<<HTML
 
 <form id="unlockdb" method="post" action="{$action}">
 <table border="0">
@@ -74,7 +74,7 @@ class DBUnlockForm {
 </table>
 <input type="hidden" name="wpEditToken" value="{$token}" />
 </form>
-END
+HTML
 );
 
 	}

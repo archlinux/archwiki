@@ -4,7 +4,7 @@ $wgHooks['isValidPassword'][] = 'FluxBBAuthPlugin::isValidPassword';
 
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FluxBBAuthPlugin',
-	'version' => '1.0',
+	'version' => '1.1',
 	'description' => 'Use FluxBB accounts in MediaWiki',
 	'author' => 'Pierre Schmitz',
 	'url' => 'https://users.archlinux.de/~pierre/'
@@ -58,7 +58,7 @@ public function authenticate( $username, $password ) {
 	return $authenticated;
 }
 
-public function modifyUITemplate( &$template ) {
+public function modifyUITemplate( &$template, &$type ) {
 	$template->set( 'usedomain', false );
 	$template->set('link', 'Um Dich hier anzumelden, nutze Deine Konto-Daten aus dem <a href="https://bbs.archlinux.de/">archlinux.de-Forum</a>.');
 }
@@ -79,6 +79,17 @@ public function autoCreate() {
 	return true;
 }
 
+public function allowPropChange( $prop = '' ) {
+	if( $prop == 'realname' ) {
+		return false;
+	} elseif( $prop == 'emailaddress' ) {
+		return false;
+	} elseif( $prop == 'nickname' ) {
+		return false;
+	} else {
+		return true;
+	}
+}
 public function allowPasswordChange() {
 	return false;
 }

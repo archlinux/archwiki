@@ -55,6 +55,7 @@ class WikiExporter {
 	 *                   limit: maximum number of rows to return
 	 *                   dir: "asc" or "desc" timestamp order
 	 * @param $buffer Int: one of WikiExporter::BUFFER or WikiExporter::STREAM
+	 * @param $text Int: one of WikiExporter::TEXT or WikiExporter::STUB
 	 */
 	function __construct( &$db, $history = WikiExporter::CURRENT,
 			$buffer = WikiExporter::BUFFER, $text = WikiExporter::TEXT ) {
@@ -155,7 +156,7 @@ class WikiExporter {
 		wfProfileIn( $fname );
 		$this->author_list = "<contributors>";
 		//rev_deleted
-		$nothidden = '(rev_deleted & '.Revision::DELETED_USER.') = 0';
+		$nothidden = '('.$this->db->bitAnd('rev_deleted', Revision::DELETED_USER) . ') = 0';
 
 		$sql = "SELECT DISTINCT rev_user_text,rev_user FROM {$page},{$revision} 
 		WHERE page_id=rev_page AND $nothidden AND " . $cond ;
@@ -197,37 +198,18 @@ class WikiExporter {
 				array( 'ORDER BY' => 'log_id', 'USE INDEX' => array('logging' => 'PRIMARY') )
 			);
 			$wrapper = $this->db->resultObject( $result );
+			$this->outputLogStream( $wrapper );
 			if( $this->buffer == WikiExporter::STREAM ) {
 				$this->db->bufferResults( $prev );
 			}
-			$this->outputLogStream( $wrapper );
 		# For page dumps...
 		} else {
 			$tables = array( 'page', 'revision' );
 			$opts = array( 'ORDER BY' => 'page_id ASC' );
 			$opts['USE INDEX'] = array();
 			$join = array();
-			# Full history dumps...
-			if( $this->history & WikiExporter::FULL ) {
-				$join['revision'] = array('INNER JOIN','page_id=rev_page');
-			# Latest revision dumps...
-			} elseif( $this->history & WikiExporter::CURRENT ) {
-				if( $this->list_authors && $cond != '' )  { // List authors, if so desired
-					list($page,$revision) = $this->db->tableNamesN('page','revision');
-					$this->do_list_authors( $page, $revision, $cond );
-				}
-				$join['revision'] = array('INNER JOIN','page_id=rev_page AND page_latest=rev_id');
-			# "Stable" revision dumps...
-			} elseif( $this->history & WikiExporter::STABLE ) {
-				# Default JOIN, to be overridden...
-				$join['revision'] = array('INNER JOIN','page_id=rev_page AND page_latest=rev_id');
-				# One, and only one hook should set this, and return false
-				if( wfRunHooks( 'WikiExporter::dumpStableQuery', array(&$tables,&$opts,&$join) ) ) {
-					wfProfileOut( __METHOD__ );
-					return new WikiError( __METHOD__." given invalid history dump type." );
-				}
-			# Time offset/limit for all pages/history...
-			} elseif( is_array( $this->history ) ) {
+			if( is_array( $this->history ) ) {
+				# Time offset/limit for all pages/history...
 				$revJoin = 'page_id=rev_page';
 				# Set time order
 				if( $this->history['dir'] == 'asc' ) {
@@ -247,8 +229,27 @@ class WikiExporter {
 				if( !empty( $this->history['limit'] ) ) {
 					$opts['LIMIT'] = intval( $this->history['limit'] );
 				}
-			# Uknown history specification parameter?
+			} elseif( $this->history & WikiExporter::FULL ) {
+				# Full history dumps...
+				$join['revision'] = array('INNER JOIN','page_id=rev_page');
+			} elseif( $this->history & WikiExporter::CURRENT ) {
+				# Latest revision dumps...
+				if( $this->list_authors && $cond != '' )  { // List authors, if so desired
+					list($page,$revision) = $this->db->tableNamesN('page','revision');
+					$this->do_list_authors( $page, $revision, $cond );
+				}
+				$join['revision'] = array('INNER JOIN','page_id=rev_page AND page_latest=rev_id');
+			} elseif( $this->history & WikiExporter::STABLE ) {
+				# "Stable" revision dumps...
+				# Default JOIN, to be overridden...
+				$join['revision'] = array('INNER JOIN','page_id=rev_page AND page_latest=rev_id');
+				# One, and only one hook should set this, and return false
+				if( wfRunHooks( 'WikiExporter::dumpStableQuery', array(&$tables,&$opts,&$join) ) ) {
+					wfProfileOut( __METHOD__ );
+					return new WikiError( __METHOD__." given invalid history dump type." );
+				}
 			} else {
+				# Uknown history specification parameter?
 				wfProfileOut( __METHOD__ );
 				return new WikiError( __METHOD__." given invalid history dump type." );
 			}
@@ -266,6 +267,9 @@ class WikiExporter {
 			if( $this->buffer == WikiExporter::STREAM ) {
 				$prev = $this->db->bufferResults( false );
 			}
+			
+			wfRunHooks( 'ModifyExportQuery',
+						array( $this->db, &$tables, &$cond, &$opts, &$join ) );
 
 			# Do the query!
 			$result = $this->db->select( $tables, '*', $cond, __METHOD__, $opts, $join );
@@ -325,7 +329,6 @@ class WikiExporter {
 			$output .= $this->writer->closePage();
 			$this->sink->writeClosePage( $output );
 		}
-		$resultset->free();
 	}
 	
 	protected function outputLogStream( $resultset ) {
@@ -333,7 +336,6 @@ class WikiExporter {
 			$output = $this->writer->writeLogItem( $row );
 			$this->sink->writeLogItem( $row, $output );
 		}
-		$resultset->free();
 	}
 }
 
@@ -347,7 +349,7 @@ class XmlDumpWriter {
 	 * @return string
 	 */
 	function schemaVersion() {
-		return "0.3"; // FIXME: upgrade to 0.4 when updated XSD is ready, for the revision deletion bits
+		return "0.4";
 	}
 
 	/**
@@ -412,7 +414,11 @@ class XmlDumpWriter {
 		global $wgContLang;
 		$spaces = "<namespaces>\n";
 		foreach( $wgContLang->getFormattedNamespaces() as $ns => $title ) {
-			$spaces .= '      ' . Xml::element( 'namespace', array( 'key' => $ns ), $title ) . "\n";
+			$spaces .= '      ' . 
+				Xml::element( 'namespace', 
+					array(	'key' => $ns,
+							'case' => MWNamespace::isCapitalized( $ns ) ? 'first-letter' : 'case-sensitive',
+					), $title ) . "\n";
 		}
 		$spaces .= "    </namespaces>";
 		return $spaces;
@@ -440,10 +446,16 @@ class XmlDumpWriter {
 		$title = Title::makeTitle( $row->page_namespace, $row->page_title );
 		$out .= '    ' . Xml::elementClean( 'title', array(), $title->getPrefixedText() ) . "\n";
 		$out .= '    ' . Xml::element( 'id', array(), strval( $row->page_id ) ) . "\n";
-		if( '' != $row->page_restrictions ) {
+		if( $row->page_is_redirect ) {
+			$out .= '    ' . Xml::element( 'redirect', array() ) . "\n";
+		}
+		if( $row->page_restrictions != '' ) {
 			$out .= '    ' . Xml::element( 'restrictions', array(),
 				strval( $row->page_restrictions ) ) . "\n";
 		}
+		
+		wfRunHooks( 'XmlDumpWriterOpenPage', array( $this, &$out, $row, $title ) );
+		
 		return $out;
 	}
 
@@ -488,6 +500,7 @@ class XmlDumpWriter {
 			$out .= "      " . Xml::elementClean( 'comment', null, strval( $row->rev_comment ) ) . "\n";
 		}
 
+		$text = '';
 		if( $row->rev_deleted & Revision::DELETED_TEXT ) {
 			$out .= "      " . Xml::element( 'text', array( 'deleted' => 'deleted' ) ) . "\n";
 		} elseif( isset( $row->old_text ) ) {
@@ -502,6 +515,8 @@ class XmlDumpWriter {
 				array( 'id' => $row->rev_text_id ),
 				"" ) . "\n";
 		}
+
+		wfRunHooks( 'XmlDumpWriterWriteRevision', array( &$this, &$out, $row, $text ) );
 
 		$out .= "    </revision>\n";
 

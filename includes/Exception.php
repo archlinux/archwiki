@@ -8,13 +8,13 @@
  * @ingroup Exception
  */
 class MWException extends Exception {
-
 	/**
 	 * Should the exception use $wgOut to output the error ?
 	 * @return bool
 	 */
 	function useOutputPage() {
-		return !empty( $GLOBALS['wgFullyInitialised'] ) &&
+		return $this->useMessageCache() &&
+			!empty( $GLOBALS['wgFullyInitialised'] ) &&
 			( !empty( $GLOBALS['wgArticle'] ) || ( !empty( $GLOBALS['wgOut'] ) && !$GLOBALS['wgOut']->isArticle() ) ) &&
 			!empty( $GLOBALS['wgTitle'] );
 	}
@@ -25,6 +25,11 @@ class MWException extends Exception {
 	 */
 	function useMessageCache() {
 		global $wgLang;
+		foreach ( $this->getTrace() as $frame ) {
+			if ( isset( $frame['class'] ) && $frame['class'] === 'LocalisationCache' ) {
+				return false;
+			}
+		}
 		return is_object( $wgLang );
 	}
 
@@ -202,7 +207,7 @@ class MWException extends Exception {
 			header( 'Pragma: nocache' );
 		}
 		$title = $this->getPageTitle();
-		echo "<html>
+		return "<html>
 		<head>
 		<title>$title</title>
 		</head>
@@ -215,7 +220,7 @@ class MWException extends Exception {
 	 * print the end of the html page if not using $wgOut.
 	 */
 	function htmlFooter() {
-		echo "</body></html>";
+		return "</body></html>";
 	}
 	
 	/**
@@ -297,7 +302,7 @@ function wfReportException( Exception $e ) {
 				wfPrintError( $message );
 			} else {
 				echo nl2br( htmlspecialchars( $message ) ). "\n";
-				}
+			}
 		}
 	} else {
 		$message = "Unexpected non-MediaWiki exception encountered, of type \"" . get_class( $e ) . "\"\n" .
@@ -322,8 +327,7 @@ function wfPrintError( $message ) {
 	#      Try to produce meaningful output anyway. Using echo may corrupt output to STDOUT though.
 	if ( defined( 'STDERR' ) ) {
 		fwrite( STDERR, $message );
-	}
-	else {
+	} else {
 		echo( $message );
 	}
 }
