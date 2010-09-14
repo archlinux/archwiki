@@ -102,19 +102,6 @@ public static function checkFunnyQuestionOnEditPage($editpage, $text, $section, 
 	return true;
 }
 
-
-public static function addFunnyQuestionToUserLoginForm($template) {
-	$template->set('header', self::getFunnyQuestion());
-	return true;
-}
-
-public static function checkFunnyQuestionOnAbortLogin($user, $password, $retval) {
-	# LoginForm::ABBORT is not yet supported by MediaWiki
-	$retval = LoginForm::ILLEGAL;
-	return self::checkFunnyQuestion();
-}
-
-
 public static function addFunnyQuestionToUserCreateForm($template) {
 	$template->set('header', self::getFunnyQuestion());
 	return true;
@@ -122,7 +109,7 @@ public static function addFunnyQuestionToUserCreateForm($template) {
 
 public static function checkFunnyQuestionOnAbortNewAccount($user, $message) {
 	if (!self::checkFunnyQuestion()) {
-		$message = '<div class="errorbox">Your answer was wrong!</div><br clear="all" />';
+		$message = 'Your answer was wrong!';
 		return false;
 	} else {
 		return true;
