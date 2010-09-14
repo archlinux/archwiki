@@ -29,9 +29,9 @@ $wgSpecialPages['FunnyDotImage'] = 'SpecialFunnyDotImage';
 class FunnyDot {
 
 private static function getFunnyDot() {
-	global $wgFunnyDotHash, $wgScript;
+	global $IP, $wgFunnyDotHash, $wgScript;
 
-	!isset($wgFunnyDotHash) && $wgFunnyDotHash = '';
+	!isset($wgFunnyDotHash) && $wgFunnyDotHash = $IP;
 	$time = time();
 	$hash = substr(sha1($time.$wgFunnyDotHash), 0, 4);
 
@@ -43,11 +43,11 @@ private static function getFunnyDot() {
 }
 
 private static function checkFunnyDot() {
-	global $wgFunnyDotHash, $wgFunnyDotTimeout, $wgFunnyDotWait;
+	global $IP, $wgFunnyDotHash, $wgFunnyDotTimeout, $wgFunnyDotWait;
 
 	# set some sane defaults
 	# can be overridden in LocalSettings.php
-	!isset($wgFunnyDotHash) && $wgFunnyDotHash = '';
+	!isset($wgFunnyDotHash) && $wgFunnyDotHash = $IP;
 	!isset($wgFunnyDotTimeout) && $wgFunnyDotTimeout = 3600;
 	!isset($wgFunnyDotWait) && $wgFunnyDotWait = 2;
 
