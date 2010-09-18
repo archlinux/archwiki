@@ -18,7 +18,7 @@ foreach ($messages as $lang => $translations) {
 	if (!empty($wgFunnyQuestions[$lang])) {
 		foreach (array_keys($wgFunnyQuestions[$lang]) as $question) {
 			$messages[$lang]['question-'.sha1($question)] = $question;
-		}		
+		}
 	}
 }
 

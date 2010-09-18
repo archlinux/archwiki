@@ -8,6 +8,7 @@ $wgExtensionCredits['other'][] = array(
 	'url' => 'https://www.archlinux.de'
 );
 
+global $wgFunnyQuestions;
 $wgFunnyQuestions = array(
 	'en' => array("What is the Ultimate Answer to the Ultimate Question of Life, The Universe, and Everything?" => "42"),
 	'de' => array("Was ist die ultimaative Antwort nach dem Leben, dem Universum und dem ganzen Rest?" => "42")

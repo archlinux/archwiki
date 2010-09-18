@@ -8,9 +8,9 @@ class FunnyQuestion {
 	}
 
 	private static function getLang() {
-		global $wgLang;
+		global $wgLang, $wgFunnyQuestions;
 
-		return (!empty($wgFunnyQuestions[$wgLang->getCode()]) ? $wgFunnyQuestions[$wgLang->getCode()] : 'en');
+		return (!empty($wgFunnyQuestions[$wgLang->getCode()]) ? $wgLang->getCode() : 'en');
 	}
 
 	private static function getFunnyQuestion() {
@@ -20,7 +20,7 @@ class FunnyQuestion {
 		$time = time();
 		# make sure the user is not able to tell us the question to answer
 		$hash = sha1($time.$question.$wgFunnyQuestionHash);
-	
+
 		return array('question' => $question, 'time' => $time, 'hash' => $hash);
 	}
 
@@ -85,7 +85,7 @@ class FunnyQuestion {
 
 		if (!$wgUser->isLoggedIn() && !self::hasFunnyCookie()) {
 			$funnyQuestion = self::getFunnyQuestion();
-			$editpage->editFormTextAfterWarn .= 
+			$editpage->editFormTextAfterWarn .=
 				'<div class="editOptions">
 					<label for="FunnyAnswerField"><strong>'
 					.wfMsg('question-'.sha1($funnyQuestion['question'])).'</strong></label>
@@ -128,4 +128,3 @@ class FunnyQuestion {
 }
 
 ?>
-
