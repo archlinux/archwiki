@@ -24,8 +24,28 @@ class FunnyQuestion {
 		return array('question' => $question, 'time' => $time, 'hash' => $hash);
 	}
 
+	private static function setFunnyCookie() {
+		global $wgFunnyQuestionHash, $wgFunnyQuestionRemember, $wgRequest;
+
+		$time = time();
+		$wgRequest->response()->setcookie('FunnyQuestionHash', sha1($time.wfGetIP().$wgFunnyQuestionHash), $time+$wgFunnyQuestionRemember);
+		$wgRequest->response()->setcookie('FunnyQuestionTime', $time, $time+$wgFunnyQuestionRemember);
+	}
+
+	private static function hasFunnyCookie() {
+		global $wgFunnyQuestionHash, $wgFunnyQuestionRemember, $wgCookiePrefix;
+
+		return (!empty($_COOKIE[$wgCookiePrefix.'FunnyQuestionHash']) && !empty($_COOKIE[$wgCookiePrefix.'FunnyQuestionTime'])
+			&& time() - $wgFunnyQuestionRemember <= $_COOKIE[$wgCookiePrefix.'FunnyQuestionTime']
+			&& sha1($_COOKIE[$wgCookiePrefix.'FunnyQuestionTime']. wfGetIP().$wgFunnyQuestionHash) == $_COOKIE[$wgCookiePrefix.'FunnyQuestionHash']);
+	}
+
 	private static function checkFunnyQuestion() {
 		global $wgFunnyQuestionHash, $wgFunnyQuestions, $wgFunnyQuestionTimeout, $wgFunnyQuestionWait;
+
+		if (self::hasFunnyCookie()) {
+			return true;
+		}
 
 		if (!empty($_POST['FunnyQuestionTime'])
 		&& !empty($_POST['FunnyQuestionHash'])
@@ -51,6 +71,7 @@ class FunnyQuestion {
 			foreach ($answers as $answer) {
 				if (self::normalizeAnswer($answer) == $userAnswer
 					&& $hash == sha1($time.$question.$wgFunnyQuestionHash)) {
+					self::setFunnyCookie();
 					return true;
 				}
 			}
@@ -62,7 +83,7 @@ class FunnyQuestion {
 	public static function addFunnyQuestionToEditPage($editpage, $output) {
 		global $wgUser;
 
-		if (!$wgUser->isLoggedIn()) {
+		if (!$wgUser->isLoggedIn() && !self::hasFunnyCookie()) {
 			$funnyQuestion = self::getFunnyQuestion();
 			$editpage->editFormTextAfterWarn .= 
 				'<div class="editOptions">
@@ -86,10 +107,12 @@ class FunnyQuestion {
 	}
 
 	public static function addFunnyQuestionToUserCreateForm($template) {
-		$funnyQuestion = self::getFunnyQuestion();
-		$template->addInputItem('FunnyAnswer', '', 'text', 'question-label', 'question-'.sha1($funnyQuestion['question']));
-		$template->addInputItem('FunnyQuestionTime', $funnyQuestion['time'], 'hidden', '');
-		$template->addInputItem('FunnyQuestionHash', $funnyQuestion['hash'], 'hidden', '');
+		if (!self::hasFunnyCookie()) {
+			$funnyQuestion = self::getFunnyQuestion();
+			$template->addInputItem('FunnyAnswer', '', 'text', 'question-label', 'question-'.sha1($funnyQuestion['question']));
+			$template->addInputItem('FunnyQuestionTime', $funnyQuestion['time'], 'hidden', '');
+			$template->addInputItem('FunnyQuestionHash', $funnyQuestion['hash'], 'hidden', '');
+		}
 		return true;
 	}
 

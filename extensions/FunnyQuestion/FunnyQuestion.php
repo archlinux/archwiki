@@ -2,7 +2,7 @@
 
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FunnyQuestion',
-	'version' => '2.0',
+	'version' => '2.1',
 	'description' => 'Challenge-response authentication',
 	'author' => 'Pierre Schmitz',
 	'url' => 'https://www.archlinux.de'
@@ -15,6 +15,7 @@ $wgFunnyQuestions = array(
 $wgFunnyQuestionHash = '';
 $wgFunnyQuestionTimeout = 3600;
 $wgFunnyQuestionWait = 2;
+$wgFunnyQuestionRemember = 3600*24;
 
 $wgAutoloadClasses['FunnyQuestion'] = dirname(__FILE__) . '/FunnyQuestion.body.php';
 $wgExtensionMessagesFiles['FunnyQuestion'] = dirname( __FILE__ ) . '/FunnyQuestion.i18n.php';
