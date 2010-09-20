@@ -32,4 +32,3 @@ if ($wgGroupPermissions['*']['createaccount'] && (empty($wgAuth) || $wgAuth->can
 }
 
 ?>
-
