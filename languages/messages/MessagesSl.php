@@ -179,8 +179,8 @@ $messages = array(
 'tog-shownumberswatching'     => 'Prikaži število uporabnikov, ki spremljajo temo',
 'tog-oldsig'                  => 'Predogled obstoječega podpisa:',
 'tog-fancysig'                => 'Obravnavaj podpis kot wikibesedilo (brez samodejne povezave)',
-'tog-externaleditor'          => 'Po privzetem uporabljaj zunanji urejevalnik',
-'tog-externaldiff'            => 'Po privzetem uporabljaj zunanje primerjanje',
+'tog-externaleditor'          => 'Po privzetem uporabljaj zunanji urejevalnik (samo za strokovnjake; potrebuje posebne nastavitve na vašem računalniku; [http://www.mediawiki.org/wiki/Manual:External_editors več informacij])',
+'tog-externaldiff'            => 'Po privzetem uporabljaj zunanje primerjanje (samo za strokovnjake; potrebuje posebne nastavitve na vašem računalniku; [http://www.mediawiki.org/wiki/Manual:External_editors več informacij])',
 'tog-showjumplinks'           => 'Prikaži pomožni povezavi »Skoči na«',
 'tog-uselivepreview'          => 'Uporabi hitri predogled (zahteva JavaScript) (preizkusno)',
 'tog-forceeditsummary'        => 'Ob vpisu praznega povzetka urejanja me opozori',
@@ -910,7 +910,7 @@ Morda je bila izbrisana iz wikija ali pa jo je kdo preimenoval.
 Prosimo, poskusite [[Special:Search|poiskati v wikiju]] ustrezajoče nove strani.',
 
 # Revision deletion
-'rev-deleted-comment'         => '(pripomba je bila odstranjena)',
+'rev-deleted-comment'         => '(povzetek urejanja je odstranjen)',
 'rev-deleted-user'            => '(uporabniško ime je bilo odstranjeno)',
 'rev-deleted-event'           => '(dnevniški vnos je odstranjen)',
 'rev-deleted-user-contribs'   => '[uporabniško ime ali IP naslov odstranjeni - urajenje skrito v prispevkih]',
@@ -1515,7 +1515,7 @@ Izgleda, da je to pomanjšana slika ''(thumbnail)''.
 Prosimo, vrnite se in naložite svojo datoteko pod drugim imenom.
 [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'Ta datoteka je dvojnik {{PLURAL:$1|naslednje datoteke|naslednjih datotek}}:',
-'file-deleted-duplicate'      => 'Datoteka je identična tej ([[$1]]), ki je bila predhodno izbrisana.
+'file-deleted-duplicate'      => 'Datoteka je identična tej ([[:$1]]), ki je bila predhodno izbrisana.
 Preverite zgodovino brisanja datoteke, preden jo ponovno naložite.',
 'successfulupload'            => 'Datoteka je bila uspešno naložena',
 'uploadwarning'               => 'Opozorilo!',
@@ -2299,7 +2299,7 @@ Oglejte si [[Special:IPBlockList|seznam blokiranih IP-naslovov]] za pregled blok
 'ipusubmit'                       => 'Odstrani blokado',
 'unblocked'                       => '[[User:$1|$1]] je bil odblokiran',
 'unblocked-id'                    => 'Blokada $1 je odstranjena',
-'ipblocklist'                     => 'Seznam blokiranih IP-naslovov in uporabniških imen',
+'ipblocklist'                     => 'Blokirani uporabniki',
 'ipblocklist-legend'              => 'Najdi blokiranega uporabnika',
 'ipblocklist-username'            => 'Uporabniško ime ali IP-naslov:',
 'ipblocklist-sh-userblocks'       => '$1 blokade računov',
@@ -2535,7 +2535,7 @@ Vsi uvozi med wikiji so zabeleženi v [[Special:Log/import|dnevniku uvozov]].',
 'import-interwiki-namespace' => 'Prenesi strani v imenski prostor:',
 'import-upload-filename'     => 'Ime datoteke:',
 'import-comment'             => 'Komentar:',
-'importtext'                 => 'Prosimo, izvozite datoteko iz izvornega wikija s pomočjo [[Special:Export|orodja za izvoz]].
+'importtext'                 => 'Prosimo, izvozite datoteko z izvornega wikija s pomočjo [[Special:Export|orodja za izvoz]].
 Shranite jo na vaš računalnik in naložite tukaj.',
 'importstart'                => 'Uvažam strani ...',
 'import-revision-count'      => '$1 {{PLURAL:$1|redakcija|redakciji|redakcije|redakcij|redakcij}}',

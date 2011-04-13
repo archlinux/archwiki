@@ -227,8 +227,8 @@ $messages = array(
 'tog-shownumberswatching'     => 'Wys die aantal gebruikers wat dophou',
 'tog-oldsig'                  => 'Voorskou van bestaande handtekening:',
 'tog-fancysig'                => 'Hanteer handtekening as wikiteks (sonder outomatiese skakels)',
-'tog-externaleditor'          => "Gebruik outomaties 'n eksterne redigeringsprogram",
-'tog-externaldiff'            => "Gebruik 'n eksterne vergelykingsprogram (net vir deskundiges - benodig spesiale verstellings op u rekenaar)",
+'tog-externaleditor'          => "Gebruik outomaties 'n eksterne redigeringsprogram (net vir kundiges - benodig spesiale verstellings op u rekenaar. [http://www.mediawiki.org/wiki/Manual:External_editors Meer inligting.])",
+'tog-externaldiff'            => "Gebruik outomaties 'n eksterne vergelykingsprogram (net vir kundiges - benodig spesiale verstellings op u rekenaar)",
 'tog-showjumplinks'           => 'Wys "spring na"-skakels vir toeganklikheid',
 'tog-uselivepreview'          => 'Gebruik lewendige voorskou (JavaScript) (eksperimenteel)',
 'tog-forceeditsummary'        => "Let my daarop as ek nie 'n opsomming van my wysiging gee nie",
@@ -483,7 +483,7 @@ $1",
 'toc'                     => 'Inhoud',
 'showtoc'                 => 'wys',
 'hidetoc'                 => 'versteek',
-'thisisdeleted'           => 'Bekyk of herstel $1?',
+'thisisdeleted'           => 'Wys of herstel $1?',
 'viewdeleted'             => 'Bekyk $1?',
 'restorelink'             => '{{PLURAL:$1|die geskrapte wysiging|$1 geskrapte wysigings}}',
 'feedlinks'               => 'Voer:',
@@ -872,10 +872,10 @@ U kan slegs bestaande bladsye wysig, of u kan [[Special:UserLogin|aanteken of re
 'permissionserrors'                => 'Toestemmings Foute',
 'permissionserrorstext'            => 'U het nie toestemming om hierdie te doen nie, om die volgende {{PLURAL:$1|rede|redes}}:',
 'permissionserrorstext-withaction' => 'U het geen regte om $2, vir die volgende {{PLURAL:$1|rede|redes}}:',
-'recreate-moveddeleted-warn'       => "'''Waarskuwing: U skep 'n bladsy wat vantevore verwyder was.'''
+'recreate-moveddeleted-warn'       => "'''Waarskuwing: U herskep 'n bladsy wat vantevore verwyder is.'''
 
-U moet besluit of dit wys is om voort te gaan en aan die bladsy te werk.
-Die verwyderingslogboek vir die blad word hier onder vertoon vir u gerief:",
+U moet besluit of dit wys is om voort te gaan om aan hierdie bladsy te werk.
+Die skrap- en skuiflogboeke vir die bladsy word vir u gerief hier onder vertoon:",
 'moveddeleted-notice'              => 'Hierdie bladsy is verwyder.
 Die skrap- en skuif-logboeke word hieronder ter inligting weergegee.',
 'log-fulllog'                      => 'Wys volledige logboek',
@@ -949,7 +949,7 @@ Dit was moontlik geskrap of geskuif.
 [[Special:Search|Deursoek die wiki]] vir relevante bladsye.',
 
 # Revision deletion
-'rev-deleted-comment'         => '(opsomming geskrap)',
+'rev-deleted-comment'         => '(opmerking verwyder)',
 'rev-deleted-user'            => '(gebruikersnaam geskrap)',
 'rev-deleted-event'           => '(stawingsaksie verwyder)',
 'rev-deleted-user-contribs'   => '[gebruikersnaam of IP-adres is verwyder - wysiging versteek in bydraes]',
@@ -1561,7 +1561,7 @@ As u steeds die lêer wil oplaai, gebruik asseblief 'n ander naam.
 Indien u die lêer nog wil oplaai, gaan asseblief terug en kies 'n ander naam.
 [[File:$1|thumb|center|$1]]",
 'file-exists-duplicate'       => "Die lêer is 'n duplikaat van die volgende {{PLURAL:$1|lêer|lêers}}:",
-'file-deleted-duplicate'      => "'n Lêer identies aan dié een ([[$1]]) was al voorheen geskrap. <br />
+'file-deleted-duplicate'      => "'n Lêer identies aan dié een ([[:$1]]) was al voorheen geskrap. <br />
 Dit word aanbeveel dat u die lêer se skrapgeskiedenis besigtig voor u poog om dit weer op te laai.",
 'successfulupload'            => 'Laai suksesvol',
 'uploadwarning'               => 'Laaiwaarskuwing',
@@ -2180,7 +2180,7 @@ Hier is die huidige verstellings vir bladsy '''$1''':",
 
 # Undelete
 'undelete'                     => 'Besigtig geskrapte bladsye',
-'undeletepage'                 => 'Bekyk en herstel geskrapte bladsye',
+'undeletepage'                 => 'Kyk na en herstel geskrapte bladsye',
 'undeletepagetitle'            => "'''Hier onder is die verwyderde weergawes van [[:$1]]'''.",
 'viewdeletedpage'              => 'Bekyk geskrapte bladsye',
 'undeletepagetext'             => 'Die volgende {{PLURAL:$1|bladsy|$1 bladsye}} is geskrap, maar is nog in die argief en kan teruggeplaas word. Die argief van geskrapte blaaie kan periodiek skoongemaak word.',
@@ -2201,7 +2201,7 @@ Die verwyderde inhoud is slegs vir administrateurs sigbaar.',
 U mag moontlik 'n foutiewe skakel hê, of die weergawe is reeds herstel of uit die argief verwyder.",
 'undelete-nodiff'              => 'Geen vorige wysigings gevind.',
 'undeletebtn'                  => 'Plaas terug',
-'undeletelink'                 => 'bekyk/herstel',
+'undeletelink'                 => 'wys/herstel',
 'undeleteviewlink'             => 'bekyk',
 'undeletereset'                => 'Herinstel',
 'undeleteinvert'               => 'Omgekeerde seleksie',
@@ -2559,7 +2559,8 @@ Alle transwiki-laaie word opgeteken in die [[Special:Log/import|invoer-logboek]]
 'import-interwiki-namespace' => 'Doelnaamruimte:',
 'import-upload-filename'     => 'Lêernaam:',
 'import-comment'             => 'Opmerking:',
-'importtext'                 => 'Gebruik asseblief die [[Special:Export|eksport-funksie]] van die wiki waar die inligting vandaan kom, stoor die afvoer op u rekenaar, en laai dan hier op.',
+'importtext'                 => 'Gebruik die [[Special:Export|eksport-funksie]] van die wiki waar die inligting vandaan kom.
+Stoor die afvoer op u eie rekenaar, en laai dit hier op.',
 'importstart'                => 'Importeer bladsye...',
 'import-revision-count'      => '$1 {{PLURAL:$1|weergawe|weergawes}}',
 'importnopages'              => 'Geen bladsye om te importeer nie.',
@@ -2717,7 +2718,7 @@ Hierdie situasie was waarskynlik deur 'n skakel na 'n eksterne webtuiste op ons 
 'math_lexing_error'     => 'leksikale fout',
 'math_syntax_error'     => 'sintaksfout',
 'math_image_error'      => 'PNG-omskakeling het gefaal.
-Kontroleer of latex, dvips en gs korrek geïnstalleer is en skakel om',
+Kontroleer of LaTeX en dvipng (of dvips + gs + convert) korrek geïnstalleer is.',
 'math_bad_tmpdir'       => 'Die gids vir tydelike lêers vir wiskundige formules bestaan nie of kan nie geskep word nie',
 'math_bad_output'       => 'Die gids vir lêers met wiskundige formules bestaan nie of kan nie geskep word nie',
 'math_notexvc'          => 'Kan nie die texvc program vind nie;

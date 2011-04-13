@@ -324,7 +324,7 @@ $1',
 'nstab-special'   => 'Pagina speziala',
 'nstab-project'   => 'pagina dal project',
 'nstab-image'     => 'Datoteca',
-'nstab-mediawiki' => 'messadi',
+'nstab-mediawiki' => 'Messadi',
 'nstab-template'  => 'Model',
 'nstab-help'      => 'Agid',
 'nstab-category'  => 'Categoria',
@@ -913,7 +913,7 @@ Fa stim che navigar cun agid da las coalliziuns reinizialisescha tia tscherna.',
 'showingresultsheader'             => "{{PLURAL:$5|Resultat '''$1''' da '''$3'''|Resultats '''$1-$2''' da '''$3'''}} per '''$4'''",
 'nonefound'                        => "'''Remartga''': Sco standard vegn be tschertga en tscherts tips da pagina.
 Scriva il prefix ''all:'' avant il term che ti vuls tschertgar, per tschertgar en tut las paginas (incl. discussiuns, models etc.) u scriva directamain il prefix dal spazi da num en il qual ti vuls tschertgar.",
-'search-nonefound'                 => 'Per il term tschertga èn nagins resultats vegnids chattads.',
+'search-nonefound'                 => 'Per il term tschertgà èn nagins resultats vegnids chattads.',
 'powersearch'                      => 'retschertgar',
 'powersearch-legend'               => 'Tschertga extendida',
 'powersearch-ns'                   => 'Tschertgar en tips da pagina:',
@@ -1287,7 +1287,7 @@ Sche ti vuls anc adina chargiar si tia datoteca, turna per plaschair anavos e ts
 Sche ti vuls anc adina chargiar si tia datoteca, turna anavos e tscherna in auter num.
 [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'Questa datoteca è in duplicat da {{PLURAL:$1|suandanta datoteca|suandantas datotecas}}:',
-'file-deleted-duplicate'      => 'Ina daoteca identica a questa ([[$1]]) è vegnida stizzada pli baud.
+'file-deleted-duplicate'      => 'Ina daoteca identica a questa ([[:$1]]) è vegnida stizzada pli baud.
 Ti duessas controllar la cronologia da stizzar da questa datoteca avant che puspè chargiar si ella.',
 'successfulupload'            => 'Chargia si cun success',
 'uploadwarning'               => 'Attenziun',
@@ -1750,7 +1750,7 @@ Ti pos midar il livel da protecziun da quest\'artitgel, quai na vegn dentant bet
 # Contributions
 'contributions'       => "contribuziuns da l'utilisader",
 'contributions-title' => "Contribuziuns d'utilisader da $1",
-'mycontris'           => 'mias contribuziuns',
+'mycontris'           => 'Mias contribuziuns',
 'contribsub2'         => 'Per $1 ($2)',
 'nocontribs'          => 'Chattà naginas modificaziuns che correspundan a quests criteris.',
 'uctop'               => '(actual)',

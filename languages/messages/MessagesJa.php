@@ -328,8 +328,8 @@ $messages = array(
 'tog-shownumberswatching'     => 'ページをウォッチしている利用者数を表示する',
 'tog-oldsig'                  => '現在の署名のプレビュー：',
 'tog-fancysig'                => '署名をウィキ文として扱う（自動でリンクしない）',
-'tog-externaleditor'          => '既定で編集に外部アプリケーションを使う（上級者向け、コンピューターに特殊な設定が必要）',
-'tog-externaldiff'            => '差分表示に外部アプリケーションを使う（上級者向け、コンピューターに特殊な設定が必要）',
+'tog-externaleditor'          => '既定で編集に外部アプリケーションを使う（上級者向け、コンピューターに特殊な設定が必要。[http://www.mediawiki.org/wiki/Manual:External_editors 詳細]）',
+'tog-externaldiff'            => '差分表示に外部アプリケーションを使う（上級者向け、コンピューターに特殊な設定が必要。[http://www.mediawiki.org/wiki/Manual:External_editors 詳細]）',
 'tog-showjumplinks'           => '利用しやすさ向上のための「{{int:jumpto}}」リンクを有効にする',
 'tog-uselivepreview'          => 'ライブプレビューを使用する（JavaScriptが必要）（試験中の機能）',
 'tog-forceeditsummary'        => '要約欄が空欄の場合に警告する',
@@ -531,8 +531,8 @@ $messages = array(
 'viewtalkpage'      => '議論を表示',
 'otherlanguages'    => '他の言語',
 'redirectedfrom'    => '（$1から転送）',
-'redirectpagesub'   => '転送ページ',
-'lastmodifiedat'    => 'このページは$1$2に最終更新されました。',
+'redirectpagesub'   => 'リダイレクトページ',
+'lastmodifiedat'    => 'このページの最終更新は $1 $2 に行われました。',
 'viewcount'         => 'このページは{{PLURAL:$1|$1回}}アクセスされました。',
 'protectedpage'     => '保護されたページ',
 'jumpto'            => '移動：',
@@ -1078,7 +1078,7 @@ $3による理由は以下の通りです：''$2''",
 [[Special:Search|このウィキの検索]]で関連する新しいページを探してみてください。',
 
 # Revision deletion
-'rev-deleted-comment'         => '（要約は除去されています）',
+'rev-deleted-comment'         => '(要約は除去されています)',
 'rev-deleted-user'            => '（利用者名は除去されています）',
 'rev-deleted-event'           => '（記録は除去されています）',
 'rev-deleted-user-contribs'   => '[利用者名またはIPアドレスは除去されました - その編集は投稿の中から隠されています]',
@@ -1124,7 +1124,7 @@ $3による理由は以下の通りです：''$2''",
 'revdelete-text'              => "'''削除された版や記録はページの履歴や記録に表示され続けますが、一般の利用者はその内容にアクセスできなくなります。'''
 追加の制限がかけられない限り、{{SITENAME}}の他の管理者もこれと同じインターフェースを使って隠された内容にアクセスしたり、復元したりできます。",
 'revdelete-confirm'           => 'この操作を意図して行っていること、その結果を理解していること、[[{{MediaWiki:Policy-url}}|方針]]に沿って行っていることを確認してください。',
-'revdelete-suppress-text'     => "隠蔽は、'''以下の場合に限って'''使用すべきです：
+'revdelete-suppress-text'     => "秘匿は、'''以下の場合に限って'''使用すべきです：
 * 名誉毀損の恐れのある記述
 * 非公開個人情報
 *: ''自宅の住所や電話番号、社会保障番号など''",
@@ -1134,7 +1134,7 @@ $3による理由は以下の通りです：''$2''",
 'revdelete-hide-name'         => '操作および対象を隠す',
 'revdelete-hide-comment'      => '編集の要約を隠す',
 'revdelete-hide-user'         => '投稿者の利用者名またはIPを隠す',
-'revdelete-hide-restricted'   => '他の利用者と同様に管理者からもデータを隠蔽する',
+'revdelete-hide-restricted'   => '他の利用者と同様に管理者からもデータを隠す',
 'revdelete-radio-same'        => '（変更なし）',
 'revdelete-radio-set'         => 'はい',
 'revdelete-radio-unset'       => 'いいえ',
@@ -1156,7 +1156,7 @@ $1",
 'revdelete-content'           => '本文',
 'revdelete-summary'           => '編集内容の要約',
 'revdelete-uname'             => '利用者名',
-'revdelete-restricted'        => '管理者に対する制限を適用しました',
+'revdelete-restricted'        => '管理者に対する制限を適用',
 'revdelete-unrestricted'      => '管理者に対する制限を除去しました',
 'revdelete-hid'               => '$1を隠しました',
 'revdelete-unhid'             => '$1の版指定削除を解除しました',
@@ -1283,7 +1283,7 @@ $1",
 'powersearch'                      => '高度な検索',
 'powersearch-legend'               => '高度な検索',
 'powersearch-ns'                   => '名前空間を指定して検索：',
-'powersearch-redir'                => '転送を表示',
+'powersearch-redir'                => 'リダイレクトを表示',
 'powersearch-field'                => '検索対象：',
 'powersearch-togglelabel'          => 'チェックを入れる：',
 'powersearch-toggleall'            => 'すべて',
@@ -1319,7 +1319,7 @@ $1",
 'prefs-watchlist-days'          => 'ウォッチリストに表示する日数：',
 'prefs-watchlist-days-max'      => '（最大7日間）',
 'prefs-watchlist-edits'         => '拡張ウォッチリストに表示する件数：',
-'prefs-watchlist-edits-max'     => '（最大数：1000）',
+'prefs-watchlist-edits-max'     => '最大数：1000',
 'prefs-watchlist-token'         => 'ウォッチリストのトークン：',
 'prefs-misc'                    => 'その他',
 'prefs-resetpass'               => 'パスワードの変更',
@@ -1421,7 +1421,7 @@ HTMLタグを見直してください。',
 'userrights-editusergroup'     => '利用者グループを編集',
 'saveusergroups'               => '利用者グループを保存',
 'userrights-groupsmember'      => '所属グループ：',
-'userrights-groupsmember-auto' => '暗黙で追加されるグループ：',
+'userrights-groupsmember-auto' => '自動的に付与される権限：',
 'userrights-groups-help'       => 'この利用者が属するグループを変更することができます。
 * チェックが入っているボックスは、この利用者がそのグループに属していることを意味します。
 * チェックが入っていないボックスは、この利用者がそのグループに属していないことを意味します。
@@ -1469,7 +1469,7 @@ HTMLタグを見直してください。',
 'right-move-subpages'         => '下位ページを含めたページの移動',
 'right-move-rootuserpages'    => '利用者ページ本体の移動',
 'right-movefile'              => 'ファイルの移動',
-'right-suppressredirect'      => 'ページの移動時に元のページ名からの転送を作成しない',
+'right-suppressredirect'      => 'ページの移動の際にもとのページ名からのリダイレクトを作成しない',
 'right-upload'                => 'ファイルのアップロード',
 'right-reupload'              => '存在するファイルの上書き',
 'right-reupload-own'          => '自らがアップロードした存在するファイルの上書き',
@@ -1566,7 +1566,7 @@ HTMLタグを見直してください。',
 'nchanges'                          => '$1回の変更',
 'recentchanges'                     => '最近の更新',
 'recentchanges-legend'              => '最近の更新のオプション',
-'recentchangestext'                 => 'このページでそのウィキへの最近の更新を追跡。',
+'recentchangestext'                 => '最近の更新はこのページから確認できます。',
 'recentchanges-feed-description'    => 'このフィードでそのウィキへの最近の更新を追跡。',
 'recentchanges-label-legend'        => '凡例: $1',
 'recentchanges-legend-newpage'      => '$1 - 新しいページ',
@@ -1688,7 +1688,7 @@ HTMLタグを見直してください。',
 アップロードを継続したい場合は、前のページに戻り、別のファイル名を使用してください。
 [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'このファイルは以下の{{PLURAL:$1|ファイル}}と重複しています：',
-'file-deleted-duplicate'      => 'このファイル（[[$1]]）と同一のファイルが以前に削除されています。
+'file-deleted-duplicate'      => 'このファイル（[[:$1]]）と同一のファイルが以前に削除されています。
 再度アップロードをする前に、以前削除されたファイルの削除記録を確認してください。',
 'successfulupload'            => 'アップロード成功',
 'uploadwarning'               => 'アップロード警告',
@@ -1829,7 +1829,7 @@ URLが正しいものであるか、指定したサイトが現在使用可能�
 [[Special:WhatLinksHere/$2|完全な一覧]]も参照してください。',
 'nolinkstoimage'                    => 'このファイルへリンクしているページはありません。',
 'morelinkstoimage'                  => 'このファイルへの[[Special:WhatLinksHere/$1|リンク元を更に]]を表示する。',
-'redirectstofile'                   => '以下の{{PLURAL:$1|ファイル|$1ファイル}}が、このファイルへの転送になっています：',
+'redirectstofile'                   => '以下の{{PLURAL:$1|ファイル|$1ファイル}}は、このファイルへのリダイレクトです：',
 'duplicatesoffile'                  => '以下の$1ファイルが、このファイルと内容が同一です（[[Special:FileDuplicateSearch/$2|詳細]]）：',
 'sharedupload'                      => 'このファイルは$1のものであり、他のプロジェクトで使用されている可能性があります。',
 'sharedupload-desc-there'           => 'このファイルは$1のものであり、他のプロジェクトで使用されている可能性があります。
@@ -1896,7 +1896,7 @@ contenttype/subtypeの形式で指定してください（例：<tt>image/jpeg</
 
 # Random redirect
 'randomredirect'         => 'おまかせリダイレクト',
-'randomredirect-nopages' => '「$1」名前空間には、転送がありません。',
+'randomredirect-nopages' => '「$1」名前空間にリダイレクトはありません。',
 
 # Statistics
 'statistics'                   => '統計',
@@ -1907,7 +1907,7 @@ contenttype/subtypeの形式で指定してください（例：<tt>image/jpeg</
 'statistics-header-hooks'      => 'その他の統計',
 'statistics-articles'          => '記事数',
 'statistics-pages'             => '総ページ数',
-'statistics-pages-desc'        => 'このウィキ内のすべてのページです（トークページや転送などを含む）。',
+'statistics-pages-desc'        => 'トークページやリダイレクトなどを含んだこのウィキ内のすべてのページです。',
 'statistics-files'             => 'アップロードされたファイル数',
 'statistics-edits'             => '{{SITENAME}}が立ち上がってからの編集回数の総計',
 'statistics-edits-average'     => '1ページあたりの編集回数',
@@ -1932,7 +1932,7 @@ contenttype/subtypeの形式で指定してください（例：<tt>image/jpeg</
 'double-redirect-fixer'      => '転送修正係',
 
 'brokenredirects'        => '迷子のリダイレクト',
-'brokenredirectstext'    => '以下の転送は、存在しないページにリンクしています：',
+'brokenredirectstext'    => '以下のページは、存在しないページへのリダイレクトです：',
 'brokenredirects-edit'   => '編集',
 'brokenredirects-delete' => '削除',
 
@@ -1960,11 +1960,11 @@ contenttype/subtypeの形式で指定してください（例：<tt>image/jpeg</
 'unusedcategories'        => '使われていないカテゴリ',
 'unusedimages'            => '使われていないファイル',
 'popularpages'            => '人気のページ',
-'wantedcategories'        => '望まれているカテゴリ',
-'wantedpages'             => '望まれているページ',
+'wantedcategories'        => 'カテゴリページが存在しないカテゴリ',
+'wantedpages'             => 'ページが存在しないリンク',
 'wantedpages-badtitle'    => '結果に不正なページ名が含まれています：$1',
-'wantedfiles'             => '望まれているファイル',
-'wantedtemplates'         => '望まれているテンプレート',
+'wantedfiles'             => 'ファイル情報ページが存在しないファイル',
+'wantedtemplates'         => '呼び出し先が存在しないテンプレート呼び出し',
 'mostlinked'              => '被リンク数の多いページ',
 'mostlinkedcategories'    => '被リンク数の多いカテゴリ',
 'mostlinkedtemplates'     => '使用箇所の多いテンプレート',
@@ -2336,8 +2336,8 @@ $2による最後の版へ変更されました。',
 'undeleterevdel'               => '復帰した結果、版指定削除されているページまたはファイルの版が最新となる場合、復帰は実行されません。
 このような場合、版指定削除されていない版が最新となるようにチェックするか、その版の版指定削除を解除する必要があります。',
 'undeletehistorynoadmin'       => 'このページは削除されています。
-以下に、削除前にこのページを編集していた利用者の詳細情報と共に、この削除の理由が示されています。
-削除された各版の本文は管理者のみが使用可能です。',
+削除の理由は、削除前にこのページを編集していた利用者の詳細情報と共に、以下に表示されています。
+管理者以外の利用者には、削除された各版の本文への制限がかけられています。',
 'undelete-revision'            => '$3によるページ$1の$4$5の削除版：',
 'undeleterevision-missing'     => '不正な、あるいは存在しない版です。
 間違ったリンクを辿ったか、この版は既に復帰されたか、もしくは保存版から除去された可能性があります。',
@@ -2389,9 +2389,9 @@ $1',
 'month'               => 'これ以前の月：',
 'year'                => 'これ以前の年：',
 
-'sp-contributions-newbies'        => '新しいアカウントの投稿のみを表示',
-'sp-contributions-newbies-sub'    => '新しいアカウントのみ',
-'sp-contributions-newbies-title'  => '新しいアカウント利用者の投稿記録',
+'sp-contributions-newbies'        => '新規利用者の投稿のみ表示',
+'sp-contributions-newbies-sub'    => '新規利用者のみ',
+'sp-contributions-newbies-title'  => '新規利用者の投稿記録',
 'sp-contributions-blocklog'       => 'ブロック記録',
 'sp-contributions-deleted'        => '利用者の削除された投稿記録',
 'sp-contributions-logs'           => '記録',
@@ -2416,7 +2416,7 @@ $1',
 'whatlinkshere-prev'       => '{{PLURAL:$1|前|前の$1件}}',
 'whatlinkshere-next'       => '{{PLURAL:$1|次|次の$1件}}',
 'whatlinkshere-links'      => '← リンク',
-'whatlinkshere-hideredirs' => '転送を$1',
+'whatlinkshere-hideredirs' => 'リダイレクトを$1',
 'whatlinkshere-hidetrans'  => '参照読み込みを$1',
 'whatlinkshere-hidelinks'  => 'リンクを$1',
 'whatlinkshere-hideimages' => '画像リンクを$1',
@@ -2441,7 +2441,7 @@ $1',
 ** ページへ無意味な/意味不明な内容の挿入
 ** 威圧的な態度/嫌がらせ
 ** 複数アカウントの不正利用
-** 許可されていない利用者名',
+** 不適切な利用者名',
 'ipbanononly'                     => '匿名利用者のみブロック',
 'ipbcreateaccount'                => 'アカウント作成を禁止する',
 'ipbemailban'                     => 'メール送信を防止',
@@ -2456,9 +2456,9 @@ $1',
 'ipballowusertalk'                => 'この利用者に対して、ブロック中の自身のトークページ編集を許可',
 'ipb-change-block'                => 'これらの設定で、利用者を再びブロック',
 'badipaddress'                    => '不正なIPアドレス',
-'blockipsuccesssub'               => 'ブロックに成功しました',
-'blockipsuccesstext'              => '[[Special:Contributions/$1|$1]]はブロックされました。<br />
-ブロックを確認するには[[Special:IPBlockList|ブロック中のIPアドレスの一覧]]を参照してください。',
+'blockipsuccesssub'               => 'ブロックしました',
+'blockipsuccesstext'              => '[[Special:Contributions/$1|$1]]をブロックしました。<br />
+[[Special:IPBlockList|投稿ブロック中の利用者やIPアドレス]]を参照してください。',
 'ipb-edit-dropdown'               => 'ブロック理由を編集する',
 'ipb-unblock-addr'                => '$1のブロックを解除',
 'ipb-unblock'                     => '利用者またはIPアドレスのブロックを解除する',
@@ -2470,7 +2470,7 @@ $1',
 'ipusubmit'                       => 'この投稿ブロックを解除',
 'unblocked'                       => '[[User:$1|$1]]のブロックを解除しました',
 'unblocked-id'                    => 'ブロック$1は除去されました',
-'ipblocklist'                     => 'ブロック中のIPアドレスや利用者',
+'ipblocklist'                     => 'ブロック中の利用者',
 'ipblocklist-legend'              => 'ブロック中の利用者を検索',
 'ipblocklist-username'            => '利用者名またはIPアドレス：',
 'ipblocklist-sh-userblocks'       => 'アカウントのブロックを$1',
@@ -2499,9 +2499,9 @@ $1のブロックの理由は「$2」です。',
 'blocklog-showlog'                => 'この利用者は以前にブロックされたことがあります。
 参考のため、ブロックの記録を以下に示します：',
 'blocklog-showsuppresslog'        => 'この利用者は以前にブロックされ、隠されたことがあります。
-参考のため、隠蔽記録を以下に示します：',
+参考のため、秘匿記録を以下に示します：',
 'blocklogentry'                   => '[[$1]] を$2ブロックしました。ブロックの詳細$3',
-'reblock-logentry'                => '[[$1]]ブロック設定を$2に変更しました。ブロックの内容は$3です',
+'reblock-logentry'                => '[[$1]]ブロック設定を$2に変更しました。ブロックの詳細$3',
 'blocklogtext'                    => 'このページは利用者のブロックと解除の記録です。
 自動的にブロックされたIPアドレスは表示されていません。
 現時点で有効なブロックは[[Special:IPBlockList|ブロックの一覧]]をご覧ください。',
@@ -2512,10 +2512,10 @@ $1のブロックの理由は「$2」です。',
 'block-log-flags-noemail'         => 'メール送信のブロック',
 'block-log-flags-nousertalk'      => '自身のトークページの編集禁止',
 'block-log-flags-angry-autoblock' => '拡張自動ブロック有効',
-'block-log-flags-hiddenname'      => '利用者名を隠す',
+'block-log-flags-hiddenname'      => '利用者名の秘匿',
 'range_block_disabled'            => '範囲ブロックを作成する管理者機能は無効化されています。',
 'ipb_expiry_invalid'              => '有効期限が不正です。',
-'ipb_expiry_temp'                 => '利用者名秘匿のブロックは、無期限ブロックなります。',
+'ipb_expiry_temp'                 => '利用者名秘匿のブロックは、無期限ブロックになります。',
 'ipb_hide_invalid'                => 'このアカウントを秘匿できません。編集回数が非常に多いためだと思われます。',
 'ipb_already_blocked'             => '「$1」は既にブロックされています',
 'ipb-needreblock'                 => '== すでにブロックされています ==
@@ -2566,17 +2566,14 @@ hideuser権限を持っていないため、この利用者のブロックを閲
 'move-page'                    => '「$1」の移動',
 'move-page-legend'             => 'ページの移動',
 'movepagetext'                 => "下のフォームを利用すると、ページ名が変更され、その履歴も変更先へ移動します。
-古いページは変更先への転送ページとなります。
-変更前のページへの転送は自動的に修正することができます。
-自動的な修正を選択しない場合は、[[Special:DoubleRedirects|二重リダイレクト]]や[[Special:BrokenRedirects|迷子のリダイレクト]]を確認する必要があります。
-リンクを正しく維持するのは移動した人の責任です。
+古いページは変更先へのリダイレクトページとなります。
+変更前のページへのリダイレクトは自動的に修正することができます。
+自動的な修正を選択しない場合は、[[Special:DoubleRedirects|二重リダイレクト]]や[[Special:BrokenRedirects|迷子のリダイレクト]]を確認する必要があります。リンクを正しく維持するのはあなたの責任です。
 
-移動先がすでに存在する場合には、そのページが空またはリダイレクトで、かつ過去の版を持たない場合を除いて移動'''できません'''。
-つまり、間違えてページ名を変更した場合には元に戻せます。また移動によって既存のページを上書きしてしまうことはありません。
+移動先がすでに存在する場合には、そのページが空またはリダイレクトで、かつ過去の版を持たない場合を除いて移動'''できません'''。つまり、間違えてページ名を変更した場合には元に戻せます。また移動によって既存のページを上書きしてしまうことはありません。
 
 '''注意！'''
-よく閲覧されるページや、他の多くのページからリンクされているページを移動すると予期せぬ結果が起こるかもしれません。
-ページの移動に伴う影響をよく考えてから移動してください。",
+よく閲覧されるページや、他の多くのページからリンクされているページを移動すると予期せぬ結果が起こるかもしれません。ページの移動に伴う影響をよく考えてから踏み切るようにしてください。",
 'movepagetalktext'             => '関連付けられたトークページは、自動的に一緒に移動されます。ただしこれは、以下の場合を除きます。
 * 空でないトークページが新しい名前で存在する場合
 * 下のボックスのチェックを消した場合
@@ -2595,15 +2592,15 @@ hideuser権限を持っていないため、この利用者のブロックを閲
 'movepagebtn'                  => 'ページを移動',
 'pagemovedsub'                 => '移動に成功しました',
 'movepage-moved'               => "'''「$1」は「$2」へ移動されました'''",
-'movepage-moved-redirect'      => '転送が作成されました。',
-'movepage-moved-noredirect'    => '転送の作成は抑制されました。',
+'movepage-moved-redirect'      => 'リダイレクトが作成されました。',
+'movepage-moved-noredirect'    => 'リダイレクトは作成されませんでした。',
 'articleexists'                => '指定された移動先には既にページが存在するか、名前が不適切です。
 別の名前を選択してください。',
 'cantmove-titleprotected'      => '新しいページ名が作成保護されているため、この場所にページを移動できません。',
 'talkexists'                   => "'''ページ自身は無事に移動されましたが、トークページは移動先のページが存在したため移動できませんでした。
 手動で統合してください。'''",
 'movedto'                      => '移動先：',
-'movetalk'                     => '関連付けられたトークページを移動',
+'movetalk'                     => '付随するトークページも移動',
 'move-subpages'                => '下位ページも移動する（$1ページまで）',
 'move-talk-subpages'           => 'トークページの下位ページも移動する（$1個まで）',
 'movepage-page-exists'         => 'ページ$1は既に存在するため、自動的に上書きされませんでした。',
@@ -2611,8 +2608,8 @@ hideuser権限を持っていないため、この利用者のブロックを閲
 'movepage-page-unmoved'        => 'ページ$1は$2へ移動できませんでした。',
 'movepage-max-pages'           => '自動的に移動できる{{PLURAL:$1|ページ}}は $1件までで、それ以上は移動されません。',
 '1movedto2'                    => '[[$1]]を[[$2]]へ移動',
-'1movedto2_redir'              => '[[$1]]を、[[$2]]へ移動し転送を上書き',
-'move-redirect-suppressed'     => '転送は非作成',
+'1movedto2_redir'              => '「[[$1]]」をこのページあてのリダイレクト「[[$2]]」へ移動',
+'move-redirect-suppressed'     => 'リダイレクト非作成',
 'movelogpage'                  => '移動記録',
 'movelogpagetext'              => '以下は全てのページの移動一覧です。',
 'movesubpage'                  => '{{PLURAL:$1|下位ページ}}',
@@ -2636,8 +2633,8 @@ hideuser権限を持っていないため、この利用者のブロックを閲
 'imagenocrossnamespace'        => 'ファイル名前空間以外に、ファイルを移動することはできません。',
 'imagetypemismatch'            => '新しいファイルの拡張子がファイルのタイプと一致していません。',
 'imageinvalidfilename'         => '対象ファイル名が不正です',
-'fix-double-redirects'         => '元のページ名への転送を更新',
-'move-leave-redirect'          => '跡地に転送を残す',
+'fix-double-redirects'         => 'このページへのリダイレクトがあればそのリダイレクトを修正する',
+'move-leave-redirect'          => '移動元にリダイレクトを作成する',
 'protectedpagemovewarning'     => "'''警告：'''このページは保護されているため、管理者権限をもつ利用者のみが移動できます。
 参考として以下に一番最後の記録を表示します：",
 'semiprotectedpagemovewarning' => "'''注意：'''このページは保護されているため、登録利用者しか移動できません。
@@ -2709,8 +2706,8 @@ hideuser権限を持っていないため、この利用者のブロックを閲
 'import-interwiki-namespace' => '目的の名前空間：',
 'import-upload-filename'     => 'ファイルの名前：',
 'import-comment'             => 'コメント：',
-'importtext'                 => '書き出し元となるウィキから[[Special:Export|書き出し用機能]]を使ってファイルを書き出してください。
-それをコンピューターに保存した後、ここにアップロードしてください。',
+'importtext'                 => '元のウィキで[[Special:Export|書き出し機能]]を使ってファイルに書き出してください。
+それをコンピューターに保存した後、こちらへアップロードしてください。',
 'importstart'                => 'ページを取り込んでいます・・・',
 'import-revision-count'      => '$1版',
 'importnopages'              => '取り込むページがありません。',
@@ -2771,7 +2768,7 @@ hideuser権限を持っていないため、この利用者のブロックを閲
 'tooltip-ca-watch'                => 'このページをウォッチリストに追加',
 'tooltip-ca-unwatch'              => 'このページをウォッチリストから除去',
 'tooltip-search'                  => '{{SITENAME}}内を検索',
-'tooltip-search-go'               => 'この正確な名前をもつページが存在すれば、そのページへ移動します',
+'tooltip-search-go'               => '厳密に一致する名前のページが存在すれば、そのページへ移動します',
 'tooltip-search-fulltext'         => '入力された文字列が含まれるページを検索します',
 'tooltip-p-logo'                  => 'メインページに移動',
 'tooltip-n-mainpage'              => 'メインページに移動',
@@ -2782,7 +2779,7 @@ hideuser権限を持っていないため、この利用者のブロックを閲
 'tooltip-n-randompage'            => '無作為に抽出されたページの読み込み',
 'tooltip-n-help'                  => '情報を得る場所',
 'tooltip-t-whatlinkshere'         => 'ここにリンクしている全ウィキのページの一覧',
-'tooltip-t-recentchangeslinked'   => 'ここにリンクしている全ウィキのページの最近の変更',
+'tooltip-t-recentchangeslinked'   => 'このページからリンクしているページの最近の更新',
 'tooltip-feed-rss'                => 'このページのRSSフィード',
 'tooltip-feed-atom'               => 'このページのAtomフィード',
 'tooltip-t-contributions'         => 'この利用者の投稿の一覧を表示',
@@ -2805,7 +2802,7 @@ hideuser権限を持っていないため、この利用者のブロックを閲
 'tooltip-save'                    => '変更を保存',
 'tooltip-preview'                 => '変更をプレビューで確認できます。保存前に使用してください！',
 'tooltip-diff'                    => '文章に加えた変更を表示します',
-'tooltip-compareselectedversions' => '選択された二つのこのページの版間の差分を表示します',
+'tooltip-compareselectedversions' => '選択された二つの版の差分を表示します。',
 'tooltip-watch'                   => 'このページをウォッチリストへ追加します',
 'tooltip-recreate'                => '削除されていても、ページを再作成',
 'tooltip-upload'                  => 'アップロードを開始',
@@ -2847,7 +2844,7 @@ hideuser権限を持っていないため、この利用者のブロックを閲
 'anonymous'        => '{{SITENAME}}の匿名{{PLURAL:$1|利用者}}',
 'siteuser'         => '{{SITENAME}}の利用者：$1',
 'anonuser'         => '{{SITENAME}}の匿名利用者：$1',
-'lastmodifiedatby' => 'このページは$1の$2に$3によってページの最終更新されました。',
+'lastmodifiedatby' => 'このページの最終更新は $1 $2 に $3 によって行われました。',
 'othercontribs'    => 'また、最終更新以前に $1 が編集しました。',
 'others'           => 'その他',
 'siteusers'        => '{{SITENAME}}の{{PLURAL:$2|利用者}}$1',
@@ -2987,7 +2984,7 @@ Variants for Chinese language
 # Metadata
 'metadata'          => 'メタデータ',
 'metadata-help'     => 'このファイルは、追加情報を含んでいます（おそらく、デジタルカメラやスキャナーが作成あるいはデジタル化し追加したもの）。
-このファイルが元の状態から変更されている場合、いくつかの項目は、完全には修正されたファイルに反映していないかもしれません。',
+このファイルが元の状態から変更されている場合、いくつかの項目は、修正されたファイルへ完全に反映されていないかもしれません。',
 'metadata-expand'   => '拡張項目を表示',
 'metadata-collapse' => '拡張項目を非表示',
 'metadata-fields'   => 'ここのメッセージにあるEXIFメタデータフィールドは、メタデータ表が折りたたまれている状態のときに画像ページに読み込まれます。
@@ -3353,7 +3350,7 @@ $1',
 # Multipage image navigation
 'imgmultipageprev' => '&larr;前ページ',
 'imgmultipagenext' => '次ページ&rarr;',
-'imgmultigo'       => '表示！',
+'imgmultigo'       => '表示',
 'imgmultigoto'     => '$1へ行く',
 
 # Table pager
@@ -3370,7 +3367,7 @@ $1',
 # Auto-summaries
 'autosumm-blank'   => 'ページの白紙化',
 'autosumm-replace' => 'ページの置換「$1」',
-'autoredircomment' => '[[$1]]への転送',
+'autoredircomment' => '[[$1]]へのリダイレクト',
 'autosumm-new'     => 'ページの作成：「$1」',
 
 # Size units
@@ -3399,8 +3396,8 @@ $1',
 'watchlistedit-normal-explain' => 'ウォッチリストに入っているページ名が以下に表示されています。
 ページ名を除去するには、横にあるボックスにチェックを入れ、「{{int:watchlistedit-normal-submit}}」をクリックしてください。
 また、[[Special:Watchlist/raw|そのままの一覧で編集]]することもできます。',
-'watchlistedit-normal-submit'  => 'ページ名の除去',
-'watchlistedit-normal-done'    => 'ウォッチリストから$1のページ名を除去しました：',
+'watchlistedit-normal-submit'  => 'ページの除去',
+'watchlistedit-normal-done'    => 'ウォッチリストから $1{{PLURAL:$1|件}}を削除しました:',
 'watchlistedit-raw-title'      => 'ウォッチリストをそのまま編集',
 'watchlistedit-raw-legend'     => 'ウォッチリストをそのまま編集',
 'watchlistedit-raw-explain'    => 'ウォッチリストに含まれるページ名が以下に表示されており、この一覧から追加や除去できます。

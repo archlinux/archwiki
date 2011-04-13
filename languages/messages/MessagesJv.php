@@ -77,8 +77,10 @@ $messages = array(
 'tog-shownumberswatching'     => 'Tuduhna cacahé pangawas',
 'tog-oldsig'                  => 'Pratayang tapak asta sing ana:',
 'tog-fancysig'                => 'Anggepen tapak asta minangka teks wiki (tanpa pranala otomatis)',
-'tog-externaleditor'          => 'Nganggoa program pangolah tembung jaba (external wordprocessor)',
-'tog-externaldiff'            => 'Nganggoa program njaba kanggo mirsani prabédan suntingan',
+'tog-externaleditor'          => 'Pigunakaken program pangolah tembung jawi (namung tumrap ahli, perlu pangaturan mligi ing komputer panjenengan. 
+[http://www.mediawiki.org/wiki/Manual:External_editors Informasi sajangkepipun].)',
+'tog-externaldiff'            => 'Pigunakaken diff eksternal sacara bektan (namung tumrap para ahli, perlu pangaturan mligi ing komputer panjenengan.
+[http://www.mediawiki.org/wiki/Manual:External_editors Informasi sajangkepipun].)',
 'tog-showjumplinks'           => 'Aktifna pranala pambiyantu "langsung menyang"',
 'tog-uselivepreview'          => 'Nganggoa pratayang langsung (JavaScript) (eksperimental)',
 'tog-forceeditsummary'        => 'Élingna aku menawa kothak ringkesan suntingan isih kosong',
@@ -435,10 +437,10 @@ Alesané yaiku ''$2''.",
 'virus-unknownscanner' => 'Antivirus ora ditepungi:',
 
 # Login and logout pages
-'logouttext'                 => "'''Panjenengan wis metu (oncat) saka cathetan sistem.'''
+'logouttext'                 => "'''Panjenengan sampun medal (oncat) saking sistem.'''
 
-Panjenengan bisa migunakaké {{SITENAME}} kanthi anonim, utawa panjenengan bisa mlebu manèh .
-Supaya dimangertèni bilih ana kaca sing isih nganggo panjenengan kacathet ing sistém amerga panjenengan durung mbusak <em>cache</em> ''browser'' panjenengan.",
+Panjenengan saged migunakaken {{SITENAME}} kanthi anonim, utawi panjenengan saged [[Special:UserLogin|mlebet malih]] minangka pangangge ingkang sami utawi pangangge sanes.
+Supados dipunmangertosi bilih wonten kaca ingkang nedahaken manawi panjenengan taksih mlebet log ngantos panjenengan mbusak singgahan ing panjelajah web panjenengan.",
 'welcomecreation'            => '== Sugeng rawuh, $1! ==
 
 Akun panjenengan wis kacipta. Aja lali nata konfigurasi [[Special:Preferences|preferensi {{SITENAME}}]] panjenengan.',
@@ -980,9 +982,9 @@ Gunakna tombol radio kanggo nggabungaké révisi-révisi sing digawé sadurungé
 'prefs-rc'                      => 'Owah-owahan pungkasan',
 'prefs-watchlist'               => 'Dhaftar pangawasan',
 'prefs-watchlist-days'          => 'Cacahé dina sing dituduhaké ing dhaftar pangawasan:',
-'prefs-watchlist-days-max'      => '(maksimum 7 dina)',
+'prefs-watchlist-days-max'      => 'Maksimum 7 dina',
 'prefs-watchlist-edits'         => 'Cacahé suntingan maksimum sing dituduhaké ing dhaftar pangawasan sing luwih jangkep:',
-'prefs-watchlist-edits-max'     => '(gunggung maksimum: 1000)',
+'prefs-watchlist-edits-max'     => 'Gunggung maksimum: 1000',
 'prefs-watchlist-token'         => 'Token pantauan:',
 'prefs-misc'                    => 'Liya-liya',
 'prefs-resetpass'               => 'Ganti tembung sandi',
@@ -1335,7 +1337,7 @@ mbalik lan gunakna jeneng liya.
 'fileexists-shared-forbidden' => 'Wis ana berkas liyané mawa jeneng sing padha ing gudhang berkas sing dianggo bebarengan.
 Yèn isih ngersakaké ngunggahaké, mangga berkas diunggahaké manèh mawa jeneng liya. [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'Berkas iki duplikat utawa padha karo {{PLURAL:$1|berkas|berkas-berkas}} ing ngisor:',
-'file-deleted-duplicate'      => 'Sawijining berkas persis berkas iki ([[$1]]) wis tau dibusak. Mangga panjenengan priksani sajarah pambusakan berkas kasebut sadurungé nerusaké ngunggahaké berkas kuwi manèh.',
+'file-deleted-duplicate'      => 'Sawijining berkas persis berkas iki ([[:$1]]) wis tau dibusak. Mangga panjenengan priksani sajarah pambusakan berkas kasebut sadurungé nerusaké ngunggahaké berkas kuwi manèh.',
 'successfulupload'            => 'Kasil diamot',
 'uploadwarning'               => 'Pèngetan pangunggahan berkas',
 'savefile'                    => 'Simpen berkas',
@@ -1598,7 +1600,8 @@ Jeneng sing wis <s>dicorèk</s> tegesé wis rampung didandani.',
 'ancientpages'            => 'Kaca-kaca langkung sepuh',
 'move'                    => 'Pindhahen',
 'movethispage'            => 'Pindhahna kaca iki',
-'unusedimagestext'        => '<p>Gatèkna yèn situs wèb liyané mbok-menawa bisa nyambung ing sawijining berkas sacara langsung, lan berkas-berkas kaya mengkéné iku mbok-menawa ana ing daftar iki senadyan isih dienggo déning situs wèb liya.',
+'unusedimagestext'        => 'Berkas-berkas sing kapacak iki ana nanging ora dienggo ing kaca apa waé.
+Tulung digatèkaké yèn situs wèb liyané mbok-menawa bisa nyambung ing sawijining berkas sacara langsung mawa URL langsung, lan berkas-berkas kaya mengkéné iku mbok-menawa ana ing daftar iki senadyan ora dienggo aktif manèh.',
 'unusedcategoriestext'    => 'Kategori iki ana senadyan ora ana artikel utawa kategori liyané sing nganggo.',
 'notargettitle'           => 'Ora ana sasaran',
 'notargettext'            => 'Panjenengan ora nemtokaké kaca utawa panganggo tujuan fungsi iki.',

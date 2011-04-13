@@ -54,8 +54,10 @@ $messages = array(
 'tog-shownumberswatching'     => "Fa vedè 'u numere de le utinde ca uardene",
 'tog-oldsig'                  => "Andeprime d'a firme esistende:",
 'tog-fancysig'                => "Firma grezze cumme a 'nu teste de Uicchi (senza collegamende automatiche)",
-'tog-externaleditor'          => "Ause n'editore esterne pe default (sulamende pe l'esperte, abbesogne de 'na configurazione speciele sus a 'u combiuter tue)",
-'tog-externaldiff'            => "Ause na differenze esterne pe default (sulamende pe l'esperte, abbesogne de 'na configuraziona speciele sus a 'u computer tue)",
+'tog-externaleditor'          => "Ause n'editore esterne pe default (sulamende pe l'esperte, abbesogne de 'na configurazione speciele sus a 'u combiuter tune. <br />
+[http://www.mediawiki.org/wiki/Manual:External_editors Pe cchiù 'mbormaziune.])",
+'tog-externaldiff'            => "Ause 'na differenze esterne pe default (sulamende pe l'esperte, abbesogne de 'na configuraziona speciele sus a 'u computer tune. <br />
+[http://www.mediawiki.org/wiki/Manual:External_editors More information.])",
 'tog-showjumplinks'           => 'Abbilite "zumbe a" pe accedere a le collegaminde',
 'tog-uselivepreview'          => "Ause l'andeprime da 'u vive (JavaScript) (Sperimendele)",
 'tog-forceeditsummary'        => "Ciercheme conferme quanne stoche a 'nzerische 'nu riepighe vianghe",
@@ -812,7 +814,7 @@ Pò essere ca ha state scangellete da Uicchi o ha state renomenate..
 Pruève a [[Special:Search|cercò sus a Uicchi]] 'mbrà le vosce cchiù rilevande.",
 
 # Revision deletion
-'rev-deleted-comment'         => '(commende scangillete)',
+'rev-deleted-comment'         => "(cangiamnde d'u riepileghe scangellate)",
 'rev-deleted-user'            => '(nome utende scangillete)',
 'rev-deleted-event'           => "(azione de l'archivie scangillete)",
 'rev-deleted-user-contribs'   => '[nome utende o indirizze IP luate - cangiamende scunnute da le condrebbute]',
@@ -1050,9 +1052,9 @@ Però fa attenzione purcè l'indice lore sus a {{SITENAME}} ponne condenè pàgg
 'prefs-rc'                      => 'Cangiaminde recende',
 'prefs-watchlist'               => 'Pàggene condrollete',
 'prefs-watchlist-days'          => "Giurne da fà vedè jndr'à liste de le pàggene condrollete:",
-'prefs-watchlist-days-max'      => '(massime 7 sciurne)',
+'prefs-watchlist-days-max'      => 'Massime 7 sciurne',
 'prefs-watchlist-edits'         => "Numere massime de cangiaminde ca se ponne fa vedè jndr'à liste de le pàggene condrollete spannute:",
-'prefs-watchlist-edits-max'     => '(numere massime: 1000)',
+'prefs-watchlist-edits-max'     => 'Numere massime: 1000',
 'prefs-watchlist-token'         => 'Token de le pàggene condrollate:',
 'prefs-misc'                    => 'Misc',
 'prefs-resetpass'               => "Cange a 'password",
@@ -1419,7 +1421,7 @@ Ce tu vuè angore carecà 'u file tue, pe piacere tuèrne rrete e ause 'nu nome 
 'fileexists-shared-forbidden' => "'Nu file cu stu nome già esiste jndr'à 'u repository condivise de le file.<br />
 ce tu vuè angore carecà stu file, pe piacere tuèrne rrete e ause 'nu nome nuève. [[File:$1|thumb|center|$1]]",
 'file-exists-duplicate'       => "Stu file jè 'na copie {{PLURAL:$1|d'u seguende file|de le seguende file}}:",
-'file-deleted-duplicate'      => "'Nu file uguale a stu file ([[$1]]) ha state scangellate precedendemende.<br />
+'file-deleted-duplicate'      => "'Nu file uguale a stu file ([[:$1]]) ha state scangellate precedendemende.<br />
 Avissa verificà 'a storie d'a scangellazzione d'u file apprime de condinuà a carecarle.",
 'successfulupload'            => 'Carecamende sciute apposte',
 'uploadwarning'               => 'Avvise de carecamende',
@@ -2198,7 +2200,7 @@ Vide [[Special:IPBlockList|'a liste de le IP bloccate]] pe revedè le blocche.",
 'ipusubmit'                       => 'Live stu blocche',
 'unblocked'                       => '[[User:$1|$1]] ha state sblocchete',
 'unblocked-id'                    => 'Blocche $1 ha state luvete',
-'ipblocklist'                     => "'Ndirizze IP e nome utinde blocchete",
+'ipblocklist'                     => 'Utinde bloccate',
 'ipblocklist-legend'              => "Iacchije 'n'utende blocchete",
 'ipblocklist-username'            => 'Nome utende o indirizze IP:',
 'ipblocklist-sh-userblocks'       => '$1 le cunde utinde blocchete',
@@ -2591,7 +2593,7 @@ Stu fatte ha state causate da 'nu collegamende a 'nu site esterne ca appartene a
 'math_lexing_error'     => 'errore de lessiche',
 'math_syntax_error'     => 'errore de sintassi',
 'math_image_error'      => "'A conversione d'u PNG ha fallite;
-condrolle ce l'installazione de latex, dvips, gs e convertitore jè corrette",
+condrolle ce l'installazione de latex e dvips (o dvipg + gs + convertitore) jè corrette",
 'math_bad_tmpdir'       => "Non ge puè scrivere o ccrejà 'na cartelle temboranea de math",
 'math_bad_output'       => "Non ge puè scrivere o ccrejà 'na cartelle de destinazzione de math",
 'math_notexvc'          => 'texvc eseguibbele perdute;

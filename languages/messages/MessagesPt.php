@@ -316,10 +316,10 @@ $messages = array(
 'tog-shownumberswatching'     => 'Mostrar o número de utilizadores a vigiar',
 'tog-oldsig'                  => 'Antevisão da assinatura:',
 'tog-fancysig'                => 'Tratar assinatura como texto wiki (sem link automático)',
-'tog-externaleditor'          => 'Por omissão, utilizar um editor externo (só para utilizadores avançados, exige configurações adicionais no seu computador)',
-'tog-externaldiff'            => 'Por omissão, utilizar diferenças externas (só para utilizadores avançados, exige configurações adicionais no seu computador)',
+'tog-externaleditor'          => 'Por omissão, utilizar um editor externo (só para utilizadores avançados, exige configurações adicionais no seu computador. [http://www.mediawiki.org/wiki/Manual:External_editors Mais informações.])',
+'tog-externaldiff'            => 'Por omissão, utilizar diferenças externas (só para utilizadores avançados, exige configurações adicionais no seu computador. [http://www.mediawiki.org/wiki/Manual:External_editors Mais informações.])',
 'tog-showjumplinks'           => 'Possibilitar links de acessibilidade "{{int:jumpto}}"',
-'tog-uselivepreview'          => 'Usar a antevisão em tempo real (requer JavaScript; é experimental)',
+'tog-uselivepreview'          => 'Usar a antevisão ao vivo (requer JavaScript; é experimental)',
 'tog-forceeditsummary'        => 'Avisar-me ao introduzir um resumo vazio',
 'tog-watchlisthideown'        => 'Esconder as minhas edições ao listar mudanças às páginas vigiadas',
 'tog-watchlisthidebots'       => 'Esconder edições de robôs ao listar mudanças às páginas vigiadas',
@@ -406,7 +406,7 @@ $messages = array(
 'hidden-categories'              => '{{PLURAL:$1|Categoria oculta|Categorias ocultas}}',
 'hidden-category-category'       => 'Categorias ocultas',
 'category-subcat-count'          => '{{PLURAL:$2|Esta categoria só contém a seguinte subcategoria.|Esta categoria contém {{PLURAL:$1|a seguinte subcategoria|as seguintes $1 subcategorias}} (de um total de $2).}}',
-'category-subcat-count-limited'  => 'Esta categoria possui {{PLURAL:$1|a seguinte subcategoria|as $1 subcategorias a seguir}}.',
+'category-subcat-count-limited'  => 'Esta categoria tem {{PLURAL:$1|a seguinte subcategoria|as seguintes $1 subcategorias}}.',
 'category-article-count'         => '{{PLURAL:$2|Esta categoria só contém a seguinte página.|Esta categoria contém {{PLURAL:$1|a seguinte página|as seguintes $1 páginas}} (de um total de $2).}}',
 'category-article-count-limited' => 'Há, nesta categoria, {{PLURAL:$1|a página a seguir|as $1 páginas a seguir}}.',
 'category-file-count'            => '{{PLURAL:$2|Esta categoria só contém o seguinte ficheiro.|Esta categoria contém {{PLURAL:$1|o seguinte ficheiro|os seguintes $1 ficheiros}} (de um total de $2).}}',
@@ -1068,7 +1068,7 @@ Pode ter sido eliminada da wiki ou o nome sido alterado.
 Tente [[Special:Search|pesquisar na wiki]] novas páginas relevantes.',
 
 # Revision deletion
-'rev-deleted-comment'         => '(comentário removido)',
+'rev-deleted-comment'         => '(resumo da edição suprimido)',
 'rev-deleted-user'            => '(nome de utilizador removido)',
 'rev-deleted-event'           => '(entrada removida)',
 'rev-deleted-user-contribs'   => '[nome de utilizador ou IP removido - edição ocultada das contribuições]',
@@ -1212,7 +1212,7 @@ Note que, se usar os links de navegação, os botões de opção voltarão aos v
 'history-title'            => 'Histórico de edições de "$1"',
 'difference'               => '(Diferença entre edições)',
 'lineno'                   => 'Linha $1:',
-'compareselectedversions'  => 'Compare as versões seleccionadas',
+'compareselectedversions'  => 'Comparar as versões seleccionadas',
 'showhideselectedversions' => 'Mostrar/ocultar versões selecionadas',
 'editundo'                 => 'desfazer',
 'diff-multi'               => '({{PLURAL:$1|uma edição intermédia não apresentada|$1 edições intermédias não apresentadas}})',
@@ -1307,9 +1307,9 @@ Note, no entanto, que a indexação da {{SITENAME}} neste motor de busca pode es
 'prefs-rc'                      => 'Mudanças recentes',
 'prefs-watchlist'               => 'Páginas vigiadas',
 'prefs-watchlist-days'          => 'Dias a mostrar nas mudanças às páginas vigiadas:',
-'prefs-watchlist-days-max'      => '(máximo: 7 dias)',
+'prefs-watchlist-days-max'      => 'Máximo: 7 dias',
 'prefs-watchlist-edits'         => 'Número de edições a mostrar na listagem expandida:',
-'prefs-watchlist-edits-max'     => '(máximo: 1000)',
+'prefs-watchlist-edits-max'     => 'Máximo: 1000',
 'prefs-watchlist-token'         => 'Senha secreta da lista de {{lc:{{int:watchlist}}}}:',
 'prefs-misc'                    => 'Diversos',
 'prefs-resetpass'               => 'Alterar palavra-chave',
@@ -1326,7 +1326,7 @@ Note, no entanto, que a indexação da {{SITENAME}} neste motor de busca pode es
 'resultsperpage'                => 'Resultados por página:',
 'contextlines'                  => 'Linhas por resultado:',
 'contextchars'                  => 'Contexto por linha:',
-'stub-threshold'                => 'Links para páginas provisórias \'\'(stubs)\'\' terão <a href="#" class="stub">este formato</a> se elas ocuparem menos de (bytes):',
+'stub-threshold'                => 'Links para páginas curtas terão <a href="#" class="stub">este formato</a> se elas ocuparem menos de (bytes):',
 'recentchangesdays'             => 'Dias a apresentar nas mudanças recentes:',
 'recentchangesdays-max'         => '(máximo: $1 {{PLURAL:$1|dia|dias}})',
 'recentchangescount'            => 'Número de edições a apresentar por omissão:',
@@ -1676,7 +1676,7 @@ Se ainda pretende carregar o seu ficheiro volte atrás e use outro nome, por fav
 'fileexists-shared-forbidden' => 'Já existe um ficheiro com este nome no repositório de ficheiros partilhados.
 Caso deseje, mesmo assim, carregar o seu ficheiro, volte atrás e envie-o com um novo nome. [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'Este ficheiro é um duplicado {{PLURAL:$1|do seguinte|dos seguintes}}:',
-'file-deleted-duplicate'      => 'Um ficheiro idêntico a este ([[$1]]) foi eliminado anteriormente.
+'file-deleted-duplicate'      => 'Um ficheiro idêntico a este ([[:$1]]) foi eliminado anteriormente.
 Verifique o motivo da eliminação do ficheiro antes de prosseguir com o re-envio.',
 'successfulupload'            => 'Envio efectuado com sucesso',
 'uploadwarning'               => 'Aviso de envio',
@@ -1707,7 +1707,7 @@ Para sua conveniência, é apresentado de seguida o registo de eliminação do f
 'filename-bad-prefix'         => "O nome do ficheiro que está a enviar começa por '''\"\$1\"''', um nome pouco explicativo, normalmente originado de forma automática por câmaras digitais. Escolha um nome de ficheiro mais explicativo, por favor.",
 'filename-prefix-blacklist'   => ' #<!-- deixe esta linha exactamente como está --> <pre>
 # A sintaxe é a seguinte:
-#   * Tudo a partir do caractere "#" até ao fim da linha é um comentário
+#   * Tudo a partir do carácter "#" até ao fim da linha é um comentário
 #   * Todas as linhas não vazias são um prefixo para nomes de ficheiros típicos atribuídos automaticamente por câmaras digitais
 CIMG # Casio
 DSC_ # Nikon
@@ -1771,7 +1771,7 @@ Verifique se o endereço está correcto e o site disponível, por favor.',
 'license'            => 'Licença:',
 'license-header'     => 'Licenciamento',
 'nolicense'          => 'Nenhuma seleccionada',
-'license-nopreview'  => '(Antevisão não disponível)',
+'license-nopreview'  => '(Antevisão indisponível)',
 'upload_source_url'  => ' (uma URL válida, publicamente acessível)',
 'upload_source_file' => ' (um ficheiro no seu computador)',
 
@@ -2450,7 +2450,7 @@ Consulte a [[Special:IPBlockList|lista de IPs bloqueados]] para rever os bloquei
 'ipusubmit'                       => 'Remover este bloqueio',
 'unblocked'                       => '[[User:$1|$1]] foi desbloqueado',
 'unblocked-id'                    => 'O bloqueio de $1 foi removido com sucesso',
-'ipblocklist'                     => 'Utilizadores e endereços IP bloqueados',
+'ipblocklist'                     => 'Utilizadores bloqueados',
 'ipblocklist-legend'              => 'Procurar um utilizador bloqueado',
 'ipblocklist-username'            => 'Nome de utilizador ou endereço IP:',
 'ipblocklist-sh-userblocks'       => '$1 bloqueios de contas',
@@ -2463,7 +2463,7 @@ Consulte a [[Special:IPBlockList|lista de IPs bloqueados]] para rever os bloquei
 'infiniteblock'                   => 'infinito',
 'expiringblock'                   => 'expira em $1 às $2',
 'anononlyblock'                   => 'apenas anón.',
-'noautoblockblock'                => 'bloqueio automático impossibilitado',
+'noautoblockblock'                => 'bloqueio automático desactivado',
 'createaccountblock'              => 'criação de conta bloqueada',
 'emailblock'                      => 'correio electrónico bloqueado',
 'blocklist-nousertalk'            => 'impedido de editar a própria página de discussão',
@@ -2487,10 +2487,10 @@ Consulte a [[Special:IPBlockList|lista de IPs bloqueados]] para obter a lista de
 'unblocklogentry'                 => 'desbloqueou $1',
 'block-log-flags-anononly'        => 'apenas utilizadores anónimos',
 'block-log-flags-nocreate'        => 'criação de contas impossibilitada',
-'block-log-flags-noautoblock'     => 'bloqueio automático impossibilitado',
+'block-log-flags-noautoblock'     => 'bloqueio automático desactivado',
 'block-log-flags-noemail'         => 'correio electrónico bloqueado',
 'block-log-flags-nousertalk'      => 'impossibilitado de editar a própria página de discussão',
-'block-log-flags-angry-autoblock' => 'autobloqueio melhorado activado',
+'block-log-flags-angry-autoblock' => 'activado o bloqueio automático melhorado',
 'block-log-flags-hiddenname'      => 'nome de utilizador ocultado',
 'range_block_disabled'            => 'A funcionalidade de administrador para o bloqueio de gamas de IPs está desactivada.',
 'ipb_expiry_invalid'              => 'Tempo de expiração inválido.',
@@ -2584,7 +2584,7 @@ Faça a fusão manual das páginas de discussão, por favor.'''",
 'movepage-page-unmoved'        => 'Não foi possível mover a página $1 para $2.',
 'movepage-max-pages'           => 'O limite de $1 {{PLURAL:$1|página movida|páginas movidas}} foi atingido; não será possível mover mais páginas de forma automática.',
 '1movedto2'                    => 'moveu [[$1]] para [[$2]]',
-'1movedto2_redir'              => 'moveu [[$1]] para [[$2]] com redireccionamento',
+'1movedto2_redir'              => 'moveu [[$1]] para [[$2]] com redirecionamento',
 'move-redirect-suppressed'     => 'redireccionamento suprimido',
 'movelogpage'                  => 'Registo de movimento',
 'movelogpagetext'              => 'Abaixo encontra-se uma lista de páginas movidas.',
@@ -2680,7 +2680,7 @@ Todas as acções de importação transwikis são registadas no [[Special:Log/im
 'import-interwiki-namespace' => 'Espaço nominal de destino:',
 'import-upload-filename'     => 'Nome do ficheiro:',
 'import-comment'             => 'Comentário:',
-'importtext'                 => 'Por favor, exporte o ficheiro da wiki de origem utilizando a página especial [[Special:Export|exportação de páginas]].
+'importtext'                 => 'Exporte o ficheiro da wiki de origem utilizando a página especial [[Special:Export|exportação de páginas]].
 Grave o ficheiro no seu computador e importe-o aqui.',
 'importstart'                => 'Importando páginas...',
 'import-revision-count'      => '{{PLURAL:$1|uma edição|$1 edições}}',
@@ -3270,7 +3270,7 @@ para cancelar a confirmação do endereço de correio electrónico:
 
 $5
 
-Este código de confirmação irá expirar a $4.',
+Este código de confirmação irá expirar às $4.',
 'confirmemail_invalidated' => 'Confirmação de endereço de correio electrónico cancelada',
 'invalidateemail'          => 'Cancelar confirmação de correio electrónico',
 

@@ -8,6 +8,7 @@
  * @file
  *
  * @author Amikeco
+ * @author Amire80
  * @author Bouron
  * @author HalanTul
  * @author לערי ריינהארט
@@ -98,11 +99,11 @@ $messages = array(
 'january'       => 'январь',
 'february'      => 'февраль',
 'march'         => 'мартъи',
-'april'         => 'апрель',
+'april'         => 'апрелы',
 'may_long'      => 'май',
 'june'          => 'июнь',
 'july'          => 'июль',
-'august'        => 'август',
+'august'        => 'августы',
 'september'     => 'сентябрь',
 'october'       => 'октябрь',
 'november'      => 'ноябрь',
@@ -236,6 +237,7 @@ $messages = array(
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => '{{grammar:genitive|{{SITENAME}}}} тыххæй',
 'aboutpage'            => 'Project:Афыст',
+'copyright'            => 'Лицензи: $1.',
 'copyrightpage'        => '{{ns:project}}:Авторы бартæ',
 'currentevents'        => 'Ног хабæрттæ',
 'currentevents-url'    => 'Project:Xabar',
@@ -385,6 +387,7 @@ $messages = array(
 'editingsection'         => 'Ивыс $1 (фарсы хай)',
 'editconflict'           => 'Ивыны конфликт: $1',
 'yourtext'               => 'Дæхи текст',
+'yourdiff'               => 'Хицæндзинæдтæ',
 'longpagewarning'        => "'''РАГФÆДЗАХСТ: Ацы фарсы бæрцуат у $1 килобайты.
 Сæ бæрцуат 32 килобайтæй фылдæр кæмæн у, ахæм фæрстæ иуæй-иу браузерты раст нæ зынынц.
 Кæд ахæм вариант и, уæд ацы фарсæй цалдæр фарсы скæн.'''",
@@ -436,6 +439,7 @@ $messages = array(
 # Diffs
 'difference' => '(Дыууæ верситы ’хсæн хъауджы)',
 'lineno'     => 'Рæнхъ $1:',
+'editundo'   => 'нæ хъæуы',
 
 # Search results
 'searchresults'             => 'Цы ссардæуы',
@@ -458,6 +462,7 @@ $messages = array(
 'powersearch'               => 'Сæрмагонд агуырд',
 'powersearch-legend'        => 'Сæрмагонд агуырд',
 'powersearch-redir'         => 'Рарвыстытæ дæр æвдис',
+'powersearch-field'         => 'Агуырд',
 
 # Quickbar
 'qbsettings'              => 'Навигацион таг',
@@ -514,7 +519,7 @@ $messages = array(
 
 'group-user-member'       => 'архайæг',
 'group-bot-member'        => 'робот',
-'group-sysop-member'      => 'дьаһабыл',
+'group-sysop-member'      => 'админ',
 'group-bureaucrat-member' => 'бюрократ',
 
 'grouppage-user'       => '{{ns:project}}:Архайджытæ',
@@ -655,6 +660,7 @@ $3',
 'specialloguserlabel'  => 'Архайæг:',
 'speciallogtitlelabel' => 'Сæргонд:',
 'log'                  => 'Логтæ',
+'all-logs-page'        => 'Æппæт логтæ',
 
 # Special:AllPages
 'allpages'       => 'Æппæт фæрстæ',
@@ -714,6 +720,8 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'watching'   => 'Цæстдард фæрсты номхыгъдмæ афтауын...',
 'unwatching' => 'Цæстдард фæрсты номхыгъдæй аиуварс кæнын...',
 
+'changed' => 'ивд æрцыд',
+
 # Delete
 'deletepage'            => 'Фарс аппар',
 'exblank'               => 'фарс афтид уыдис',
@@ -736,6 +744,9 @@ Also see [[Special:WantedCategories|wanted categories]].',
 
 # Restrictions (nouns)
 'restriction-edit' => 'Ивын',
+
+# Undelete
+'undeletelink' => 'фен/рацараз',
 
 # Namespace form on various pages
 'namespace'      => 'Нæмтты тыгъдад:',
@@ -825,6 +836,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'tooltip-n-mainpage'             => 'Сæйраг фарсмæ рацу',
 'tooltip-n-mainpage-description' => 'Сæйраг фарсмæ',
 'tooltip-n-portal'               => 'Проекты тыххæй æмæ, дæу цы бон у, уый тыххæй дæр',
+'tooltip-n-currentevents'        => 'Ныры цаутæ',
 'tooltip-n-recentchanges'        => 'Чи æмæ цавæр статьяты баивта',
 'tooltip-n-randompage'           => 'Æнæбары æвзæрст фарс фен',
 'tooltip-n-help'                 => 'Кæд цыдæртæ нæ бамбæрстай',
@@ -835,7 +847,9 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'tooltip-t-specialpages'         => 'Сæрмагонд фæрсты номхыгъд',
 'tooltip-t-print'                => 'Ацы фарс мыхуырмæ цæттæ форматы',
 'tooltip-t-permalink'            => 'Фарсы ацы версимæ æрвитæн (фæрстæ ивынц, ацы верси — никуы)',
+'tooltip-ca-nstab-main'          => 'Фен статья',
 'tooltip-ca-nstab-user'          => 'Архайæджы фарс фен',
+'tooltip-ca-nstab-special'       => 'Ай сæрмагонд фарс у, дæ бон нæу уымæ ивддзинæдтæ хæссын',
 'tooltip-ca-nstab-project'       => 'Проекты фарс',
 'tooltip-ca-nstab-image'         => 'Нывы фарс',
 'tooltip-ca-nstab-category'      => 'Категорийы фарс',

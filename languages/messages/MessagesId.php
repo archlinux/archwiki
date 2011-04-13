@@ -329,8 +329,10 @@ $messages = array(
 'tog-shownumberswatching'     => 'Tunjukkan jumlah pemantau',
 'tog-oldsig'                  => 'Pratayang tanda tangan:',
 'tog-fancysig'                => 'Perlakukan tanda tangan sebagai teks wiki (tanpa suatu pranala otomatis)',
-'tog-externaleditor'          => 'Gunakan perangkat lunak pengolah kata luar',
-'tog-externaldiff'            => 'Gunakan perangkat lunak luar untuk melihat perbedaan suntingan',
+'tog-externaleditor'          => 'Gunakan editor eksternal secara bawaan (hanya untuk ahli, perlu pengaturan khusus pada komputer Anda.
+[http://www.mediawiki.org/wiki/Manual:External_editors Informasi selengkapnya].)',
+'tog-externaldiff'            => 'Gunakan diff eksternal secara bawaan (hanya untuk ahli, perlu pengaturan khusus pada komputer Anda.
+[http://www.mediawiki.org/wiki/Manual:External_editors Informasi selengkapnya].)',
 'tog-showjumplinks'           => 'Aktifkan pranala pembantu "langsung ke"',
 'tog-uselivepreview'          => 'Gunakan pratayang langsung (JavaScript) (eksperimental)',
 'tog-forceeditsummary'        => 'Ingatkan saya bila kotak ringkasan suntingan masih kosong',
@@ -1041,7 +1043,7 @@ Kemungkinan telah dihapus dari wiki, atau diberi nama baru.
 Coba [[Special:Search|lakukan pencarian di wiki]] untuk halaman baru yang relevan.',
 
 # Revision deletion
-'rev-deleted-comment'         => '(komentar dihapus)',
+'rev-deleted-comment'         => '(ringkasan suntingan dihapus)',
 'rev-deleted-user'            => '(nama pengguna dihapus)',
 'rev-deleted-event'           => '(isi dihapus)',
 'rev-deleted-user-contribs'   => '[nama pengguna atau alamat IP dihapus - suntingan disembunyikan pada daftar kontribusi]',
@@ -1276,9 +1278,9 @@ Perlu diingat bahwa indeks Google untuk konten {{SITENAME}} mungkin belum mencak
 'prefs-rc'                      => 'Perubahan terbaru',
 'prefs-watchlist'               => 'Pemantauan',
 'prefs-watchlist-days'          => 'Jumlah hari maksimum yang ditampilkan di daftar pantauan:',
-'prefs-watchlist-days-max'      => '(maksimum 7 hari)',
+'prefs-watchlist-days-max'      => 'Maksimum 7 hari',
 'prefs-watchlist-edits'         => 'Jumlah suntingan maksimum yang ditampilkan di daftar pantauan yang lebih lengkap:',
-'prefs-watchlist-edits-max'     => '(nilai maksimum: 1000)',
+'prefs-watchlist-edits-max'     => 'Nilai maksimum: 1000',
 'prefs-watchlist-token'         => 'Token pantauan:',
 'prefs-misc'                    => 'Lain-lain',
 'prefs-resetpass'               => 'Ganti kata sandi',
@@ -1635,7 +1637,7 @@ Jika Anda masih ingin memuat berkas Anda, silakan kembali dan gunakan nama baru.
 'fileexists-shared-forbidden' => 'Ditemukan berkas lain dengan nama yang sama di repositori bersama.
 Jika Anda tetap ingin memuatkan berkas Anda, harap kembali dan gunakan nama lain. [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'Berkas ini berduplikasi dengan {{PLURAL:$1|berkas|berkas-berkas}} berikut:',
-'file-deleted-duplicate'      => 'Sebuah berkas yang identik dengan berkas ini ([[$1]]) sudah pernah dihapuskan sebelumnya. Anda harus memeriksa sejarah penghapusan berkas tersebut sebelum melanjutkan memuat ulang berkas ini.',
+'file-deleted-duplicate'      => 'Sebuah berkas yang identik dengan berkas ini ([[:$1]]) sudah pernah dihapuskan sebelumnya. Anda harus memeriksa sejarah penghapusan berkas tersebut sebelum melanjutkan memuat ulang berkas ini.',
 'successfulupload'            => 'Berhasil dimuat',
 'uploadwarning'               => 'Peringatan pemuatan',
 'uploadwarning-text'          => 'Mohon perbaiki keterangan berkas di bawah dan coba lagi.',
@@ -1918,7 +1920,7 @@ Nama yang telah <s>dicoret</s> berarti telah dibetulkan.',
 'move'                    => 'Pindahkan',
 'movethispage'            => 'Pindahkan halaman ini',
 'unusedimagestext'        => 'Berkas berikut ada tapi tidak disertakan di halaman manapun.
-Harap perhatikan bahwa situs web lain mungkin memiliki pranala ke suatu berkas dengan URL langsung, dan karenanya masih terdaftar di sini meskiput sudah tidak digunakan aktif.',
+Harap perhatikan bahwa situs web lain mungkin memiliki pranala ke suatu berkas dengan URL langsung, dan karenanya masih terdaftar di sini meskipun sudah tidak digunakan aktif.',
 'unusedcategoriestext'    => 'Kategori berikut ada, walaupun tidak ada halaman atau kategori lain yang menggunakannya.',
 'notargettitle'           => 'Tidak ada sasaran',
 'notargettext'            => 'Anda tidak menentukan halaman atau pengguna tujuan fungsi ini.',

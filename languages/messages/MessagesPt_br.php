@@ -8,6 +8,7 @@
  * @file
  *
  * @author Bani
+ * @author Brion
  * @author BrunaaAa
  * @author Brunoy Anastasiya Seryozhenko
  * @author Capmo
@@ -314,8 +315,8 @@ $messages = array(
 'tog-shownumberswatching'     => 'Mostrar o número de usuários que estão vigiando',
 'tog-oldsig'                  => 'Previsão da assinatura existente:',
 'tog-fancysig'                => 'Tratar assinatura como wikitexto (sem link automático)',
-'tog-externaleditor'          => 'Utilizar editor externo por padrão (apenas para usuários avançados, já que serão necessárias configurações adicionais em seus computadores)',
-'tog-externaldiff'            => 'Utilizar diferenças externas por padrão (apenas para usuários avançados, já que serão necessárias configurações adicionais em seus computadores)',
+'tog-externaleditor'          => 'Utilizar editor externo por padrão (apenas para usuários avançados; requer configurações adicionais em seu computador. [http://www.mediawiki.org/wiki/Manual:External_editors Mais informações.])',
+'tog-externaldiff'            => 'Utilizar comparador de versões externo por padrão (apenas para usuários avançados; requer configurações adicionais em seu computador. [http://www.mediawiki.org/wiki/Manual:External_editors Mais informações.])',
 'tog-showjumplinks'           => 'Ativar hiperligações de acessibilidade "ir para"',
 'tog-uselivepreview'          => 'Utilizar pré-visualização em tempo real (JavaScript) (Experimental)',
 'tog-forceeditsummary'        => 'Avisar-me ao introduzir um sumário vazio',
@@ -1045,7 +1046,7 @@ Poderá ter sido eliminada da wiki ou renomeada.
 Tente [[Special:Search|pesquisar na wiki]] por páginas relevantes.',
 
 # Revision deletion
-'rev-deleted-comment'         => '(comentário removido)',
+'rev-deleted-comment'         => '(resumo da edição suprimido)',
 'rev-deleted-user'            => '(nome de usuário removido)',
 'rev-deleted-event'           => '(entrada removida)',
 'rev-deleted-user-contribs'   => '[nome de usuário ou endereço de IP eliminado - edição ocultada das contribuições]',
@@ -1209,7 +1210,7 @@ Certifique-se de que tal alteração manterá a continuidade das ações.',
 'shown-title'                      => 'Mostrar $1 {{PLURAL:$1|resultado|resultados}} por página',
 'viewprevnext'                     => 'Ver ($1 {{int:pipe-separator}} $2) ($3).',
 'searchmenu-legend'                => 'Opções de pesquisa',
-'searchmenu-exists'                => "*'''Há uma página chamada \"[[\$1]]\" nesta wiki'''",
+'searchmenu-exists'                => "*'''Há uma página chamada \"[[:\$1]]\" nesta wiki'''",
 'searchmenu-new'                   => "'''Criar a página \"[[:\$1|\$1]]\" nesta wiki!'''",
 'searchhelp-url'                   => 'Help:Conteúdos',
 'searchmenu-prefix'                => '[[Special:PrefixIndex/$1|Navegue pelas páginas com este prefixo]]',
@@ -1280,9 +1281,9 @@ Note que os índices do sistema de busca externo poderão conter referências de
 'prefs-rc'                      => 'Mudanças recentes',
 'prefs-watchlist'               => 'Lista de páginas vigiadas',
 'prefs-watchlist-days'          => 'Dias a mostrar na lista de páginas vigiadas:',
-'prefs-watchlist-days-max'      => '(no máximo 7 dias)',
+'prefs-watchlist-days-max'      => 'No máximo 7 dias',
 'prefs-watchlist-edits'         => 'Número de edições mostradas na lista de páginas vigiadas expandida:',
-'prefs-watchlist-edits-max'     => '(número máximo: 1000)',
+'prefs-watchlist-edits-max'     => 'Número máximo: 1000',
 'prefs-watchlist-token'         => 'Senha para a lista de páginas vigiadas:',
 'prefs-misc'                    => 'Diversos',
 'prefs-resetpass'               => 'Alterar senha',
@@ -1641,7 +1642,7 @@ Se ainda pretende carregar o seu arquivo, por favor, volte e use um novo nome. [
 'fileexists-shared-forbidden' => 'Já existe um arquivo com este nome no repositório de arquivos compartilhados.
 Se você ainda quer carregar o seu arquivo, por favor volte e use um novo nome. [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'Esta imagem é uma duplicata do seguinte {{PLURAL:$1|arquivo|arquivos}}:',
-'file-deleted-duplicate'      => 'Um arquivo idêntico a este ([[$1]]) foi eliminado anteriormente. Verifique o motivo da eliminação de tal arquivo antes de prosseguir com o re-envio.',
+'file-deleted-duplicate'      => 'Um arquivo idêntico a este ([[:$1]]) foi eliminado anteriormente. Verifique o motivo da eliminação de tal arquivo antes de prosseguir com o re-envio.',
 'successfulupload'            => 'Envio efetuado com sucesso',
 'uploadwarning'               => 'Aviso',
 'uploadwarning-text'          => 'Por favor modifique a descrição do arquivo abaixo e tente novamente',
@@ -1944,7 +1945,7 @@ Por favor note que outros websites podem apontar para um arquivo através de um 
 'nopagetext'              => 'A página alvo especificada não existe.',
 'pager-newer-n'           => '{{PLURAL:$1|1 recente|$1 recentes}}',
 'pager-older-n'           => '{{PLURAL:$1|1 antiga|$1 antigas}}',
-'suppress'                => 'Visão geral',
+'suppress'                => 'Supervisor',
 
 # Book sources
 'booksources'               => 'Fontes de livros',

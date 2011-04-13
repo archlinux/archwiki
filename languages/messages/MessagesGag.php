@@ -154,6 +154,9 @@ $messages = array(
 'faq'            => 'SSS',
 'faqpage'        => 'Project:SSS',
 
+# Vector skin
+'vector-view-edit' => 'Diiştir',
+
 'errorpagetitle'    => 'Yannış',
 'returnto'          => '$1 dön.',
 'tagline'           => '{{SITENAME}} saydından',
@@ -518,7 +521,7 @@ Nışannar: (bitki) = şindiki versiyalan aradaki fark,
 'search-result-size'        => '$1 ({{PLURAL:$2|1 laf|$2 laf}})',
 'search-redirect'           => '(göndermää $1)',
 'search-section'            => '(bölüm $1)',
-'search-suggest'            => '↓ İstediniz demää: $1',
+'search-suggest'            => 'İstediniz demää: $1',
 'search-interwiki-caption'  => 'Kardaş proyektlär',
 'search-interwiki-default'  => '$1 rezultatlar:',
 'search-interwiki-more'     => '(taa çok)',

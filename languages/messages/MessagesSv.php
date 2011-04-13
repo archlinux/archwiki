@@ -9,6 +9,7 @@
  *
  * @author Ainali
  * @author Boivie
+ * @author EPO
  * @author Fluff
  * @author GameOn
  * @author Grillo
@@ -35,8 +36,10 @@
  * @author Skalman
  * @author StefanB
  * @author Steinninn
+ * @author Tobulos1
  * @author Where next Columbus
  * @author Where next Columbus?
+ * @author WikiPhoenix
  * @author לערי ריינהארט
  */
 
@@ -304,7 +307,7 @@ $messages = array(
 'tog-underline'               => 'Stryk under länkar',
 'tog-highlightbroken'         => 'Formatera trasiga länkar <a href="" class="new">så här</a> (alternativt: <a href="" class="internal">?</a>).',
 'tog-justify'                 => 'Marginaljustera stycken',
-'tog-hideminor'               => 'Visa inte mindre redigeringar i Senaste ändringar',
+'tog-hideminor'               => 'Visa inte mindre redigeringar i senaste ändringar',
 'tog-hidepatrolled'           => 'Dölj patrullerade redigeringar i senaste ändringar',
 'tog-newpageshidepatrolled'   => 'Göm patrullerade sidor från listan över nya sidor',
 'tog-extendwatchlist'         => 'Utöka bevakningslistan till att visa alla ändringar, inte bara den senaste',
@@ -332,8 +335,9 @@ $messages = array(
 'tog-shownumberswatching'     => 'Visa antalet användare som bevakar',
 'tog-oldsig'                  => 'Förhandsvisning av nuvarande signatur:',
 'tog-fancysig'                => 'Rå signatur som wikitext (utan en automatisk länk)',
-'tog-externaleditor'          => 'Använd extern texteditor som standard (avancerat, kräver speciella inställningar i din dator)',
-'tog-externaldiff'            => 'Använd externt diff-verktyg (avancerat, kräver speciella inställningar i din dator)',
+'tog-externaleditor'          => 'Använd extern editor som standard (endast för experter, speciella inställningar på din dator krävs. [Http://www.mediawiki.org/wiki/Manual:External_editors Mer information.])',
+'tog-externaldiff'            => 'Använd externt diff-verktyg som förval(avancerat, kräver speciella inställningar i din dator.
+[http://www.mediawiki.org/wiki/Manual:External_editors Mer information.])',
 'tog-showjumplinks'           => 'Aktivera "hoppa till"-tillgänglighetslänkar',
 'tog-uselivepreview'          => 'Använd direktuppdaterad förhandsgranskning (Javascript, på försöksstadiet)',
 'tog-forceeditsummary'        => 'Påminn mig om jag inte fyller i en redigeringskommentar',
@@ -508,7 +512,7 @@ $messages = array(
 'create'            => 'Skapa',
 'editthispage'      => 'Redigera denna sida',
 'create-this-page'  => 'Skapa denna sida',
-'delete'            => 'radera',
+'delete'            => 'Radera',
 'deletethispage'    => 'Radera denna sida',
 'undelete_short'    => 'Återställ {{PLURAL:$1|en version|$1 versioner}}',
 'protect'           => 'Skrivskydda',
@@ -1057,7 +1061,7 @@ Den kan ha tagits bort från wikin eller bytt namn.
 Prova att [[Special:Search|söka på wikin]] för relevanta nya sidor.',
 
 # Revision deletion
-'rev-deleted-comment'         => '(kommentar borttagen)',
+'rev-deleted-comment'         => '(redigeringssammanfattning togs bort)',
 'rev-deleted-user'            => '(användarnamn borttaget)',
 'rev-deleted-event'           => '(loggåtgärd borttagen)',
 'rev-deleted-user-contribs'   => '[användarnamn eller IP-adress har tagits bort - redigeringen visas ej bland bidragen]',
@@ -1223,7 +1227,7 @@ Se till att sidhistorikens kontinuitet behålls när du sammanfogar historik.',
 'shown-title'                      => 'Visa $1 {{PLURAL:$1|resultat|resultat}} per sida',
 'viewprevnext'                     => 'Visa ($1 {{int:pipe-separator}} $2) ($3)',
 'searchmenu-legend'                => 'Sökalternativ',
-'searchmenu-exists'                => "'''Det finns en sida med namnet \"[[:\$1]]\" på denna wiki'''",
+'searchmenu-exists'                => "'''Det finns en sida med namnet \"[[:\$1]]\" på denna wiki.'''",
 'searchmenu-new'                   => "'''Skapa sidan \"[[:\$1]]\" på denna wiki!'''",
 'searchhelp-url'                   => 'Help:Innehåll',
 'searchmenu-prefix'                => '[[Special:PrefixIndex/$1|Bläddra igenom sidor med detta prefix]]',
@@ -1294,9 +1298,9 @@ Notera dock att deras indexering av {{SITENAME}} kan vara något föråldrad.',
 'prefs-rc'                      => 'Senaste ändringar',
 'prefs-watchlist'               => 'Bevakningslista',
 'prefs-watchlist-days'          => 'Antal dygn som skall visas i bevakningslistan:',
-'prefs-watchlist-days-max'      => '(maximalt 7 dygn)',
+'prefs-watchlist-days-max'      => 'Maximalt 7 dygn',
 'prefs-watchlist-edits'         => 'Maximalt antal redigeringar som visas i utökad bevakningslista:',
-'prefs-watchlist-edits-max'     => '(maximalt antal: 1 000)',
+'prefs-watchlist-edits-max'     => 'Maximalt antal: 1 000',
 'prefs-watchlist-token'         => 'Bevakningslistsnyckel:',
 'prefs-misc'                    => 'Diverse',
 'prefs-resetpass'               => 'Ändra lösenord',
@@ -1657,7 +1661,7 @@ Om du fortfarande vill ladda upp din fil, var god gå tillbaka och välj ett nyt
 'fileexists-shared-forbidden' => 'En fil med detta namn finns redan bland de delade filerna.
 Om du ändå vill ladda upp din fil, gå då tillbaka och använd ett annat namn. [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'Den här filen är en dubblett till följande {{PLURAL:$1|fil|filer}}:',
-'file-deleted-duplicate'      => 'En identisk fil till den här filen ([[$1]]) har tidigare raderats. Du bör kontrollera den filens raderingshistorik innan du fortsätter att återuppladda den.',
+'file-deleted-duplicate'      => 'En identisk fil till den här filen ([[:$1]]) har tidigare raderats. Du bör kontrollera den filens raderingshistorik innan du fortsätter att återuppladda den.',
 'successfulupload'            => 'Uppladdningen lyckades',
 'uploadwarning'               => 'Uppladdningsvarning',
 'uploadwarning-text'          => 'Var god och ändra filbeskrivningen nedanför och försök igen.',
@@ -2341,9 +2345,9 @@ $1',
 'sp-contributions-newbies'        => 'Visa endast bidrag från nya konton',
 'sp-contributions-newbies-sub'    => 'Från nya konton',
 'sp-contributions-newbies-title'  => 'Bidrag från nya konton',
-'sp-contributions-blocklog'       => 'Blockeringslogg',
+'sp-contributions-blocklog'       => 'blockeringslogg',
 'sp-contributions-deleted'        => 'raderade användarbidrag',
-'sp-contributions-logs'           => 'Loggar',
+'sp-contributions-logs'           => 'loggar',
 'sp-contributions-talk'           => 'diskussion',
 'sp-contributions-userrights'     => 'hantering av användarrättigheter',
 'sp-contributions-blocked-notice' => 'Användaren är blockerad.
@@ -2419,7 +2423,7 @@ Ange orsak nedan (exempelvis genom att nämna sidor som blivit vandaliserade).',
 'ipusubmit'                       => 'Upphäv denna blockering',
 'unblocked'                       => 'Blockeringen av [[User:$1|$1]] har hävts',
 'unblocked-id'                    => 'Blockeringen $1 har hävts',
-'ipblocklist'                     => 'Blockerade IP-adresser och användarnamn',
+'ipblocklist'                     => 'Blockerade användare',
 'ipblocklist-legend'              => 'Sök efter en blockerad användare',
 'ipblocklist-username'            => 'Användarnamn eller IP-adress',
 'ipblocklist-sh-userblocks'       => '$1 blockeringar av konton',

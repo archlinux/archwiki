@@ -232,8 +232,8 @@ $messages = array(
 'tog-shownumberswatching'     => 'Mostrar o número de usuarios que están a vixiar',
 'tog-oldsig'                  => 'Vista previa da sinatura actual:',
 'tog-fancysig'                => 'Tratar a sinatura como se fose texto wiki (sen ligazón automática)',
-'tog-externaleditor'          => 'Usar un editor externo por omisión (só para expertos, precisa duns parámetros especiais no seu computador)',
-'tog-externaldiff'            => 'Usar diferenzas externas (dif) por omisión (só para expertos, precisa duns parámetros especiais no seu computador)',
+'tog-externaleditor'          => 'Usar un editor externo por omisión (só para expertos, precisa duns parámetros especiais no seu computador. [http://www.mediawiki.org/wiki/Manual:External_editors Máis información.])',
+'tog-externaldiff'            => 'Usar as diferenzas externas por omisión (só para expertos, precisa duns parámetros especiais no seu computador [http://www.mediawiki.org/wiki/Manual:External_editors Máis información.])',
 'tog-showjumplinks'           => 'Permitir as ligazóns de accesibilidade "ir a"',
 'tog-uselivepreview'          => 'Usar a vista previa en tempo real (necesita JavaScript) (experimental)',
 'tog-forceeditsummary'        => 'Avisádeme cando o campo resumo estea baleiro',
@@ -688,7 +688,7 @@ Como resultado, os visitantes que usen este enderezo IP non poden crear máis co
 'invalidemailaddress'        => 'Non se pode aceptar o enderezo de correo electrónico porque semella ter un formato incorrecto.
 Insira un enderezo cun formato válido ou baleire ese campo.',
 'accountcreated'             => 'Conta creada',
-'accountcreatedtext'         => 'A conta de usuario para $1 foi creada.',
+'accountcreatedtext'         => 'Creouse a conta de usuario para "$1".',
 'createaccount-title'        => 'Creación dunha conta para {{SITENAME}}',
 'createaccount-text'         => 'Alguén creou unha conta chamada "$2" para o seu enderezo de correo electrónico en {{SITENAME}} ($4), e con contrasinal "$3".
 Debe acceder ao sistema e mudar o contrasinal agora.
@@ -862,8 +862,8 @@ Pode mesturar os seus cambios co texto existente.
 'storedversion'                    => 'Versión gardada',
 'nonunicodebrowser'                => "'''ATENCIÓN: o seu navegador non soporta Unicode.'''
 Existe unha solución que lle permite editar páxinas con seguridade: os caracteres non incluídos no ASCII aparecerán na caixa de edición como códigos hexadecimais.",
-'editingold'                       => "'''ATENCIÓN: está editando unha revisión non actualizada desta páxina.
-Se a garda, perderanse os cambios realizados tras esta revisión.'''",
+'editingold'                       => "'''Atención: Está editando unha revisión vella desta páxina.'''
+Se a garda, perderanse os cambios realizados tras esta revisión.",
 'yourdiff'                         => 'Diferenzas',
 'copyrightwarning'                 => "Por favor, teña en conta que todas as contribucións a {{SITENAME}} considéranse publicadas baixo a $2 (vexa $1 para máis detalles). Se non quere que o que escriba se edite sen piedade e se redistribúa sen límites, entón non o envíe aquí.<br />
 Ao mesmo tempo, prométanos que o que escribiu é da súa autoría ou que está copiado dun recurso do dominio público ou que permite unha liberdade semellante.
@@ -980,7 +980,7 @@ Puido borrarse ou moverse a outro nome.
 Probe a [[Special:Search|buscar no wiki]] para atopar as páxinas relacionadas.',
 
 # Revision deletion
-'rev-deleted-comment'         => '(comentario eliminado)',
+'rev-deleted-comment'         => '(resumo de edición eliminado)',
 'rev-deleted-user'            => '(nome de usuario eliminado)',
 'rev-deleted-event'           => '(rexistro de evento eliminado)',
 'rev-deleted-user-contribs'   => '[nome de usuario ou enderezo IP eliminado; edición agochada das contribucións]',
@@ -1216,9 +1216,9 @@ Note que os seus índices do contido de {{SITENAME}} poden estar desactualizados
 'prefs-rc'                      => 'Cambios recentes',
 'prefs-watchlist'               => 'Lista de vixilancia',
 'prefs-watchlist-days'          => 'Días para amosar na lista de vixilancia:',
-'prefs-watchlist-days-max'      => '(máximo 7 días)',
+'prefs-watchlist-days-max'      => 'Máximo 7 días',
 'prefs-watchlist-edits'         => 'Número de edicións para mostrar na lista de vixilancia completa:',
-'prefs-watchlist-edits-max'     => '(número máximo: 1000)',
+'prefs-watchlist-edits-max'     => 'Número máximo: 1000',
 'prefs-watchlist-token'         => 'Pase para a lista de vixilancia:',
 'prefs-misc'                    => 'Preferencias varias',
 'prefs-resetpass'               => 'Cambiar o contrasinal',
@@ -1353,7 +1353,7 @@ Tamén pode deixar que outras persoas se poñan en contacto con vostede desde a 
 'grouppage-bot'           => '{{ns:project}}:Bots',
 'grouppage-sysop'         => '{{ns:project}}:Administradores',
 'grouppage-bureaucrat'    => '{{ns:project}}:Burócratas',
-'grouppage-suppress'      => '{{ns:project}}:Supervisor',
+'grouppage-suppress'      => '{{ns:project}}:Supervisores',
 
 # Rights
 'right-read'                  => 'Ler páxinas',
@@ -1582,7 +1582,7 @@ Se aínda quere cargar o seu ficheiro, por favor, retroceda e use un novo nome. 
 Se aínda quere cargar o seu ficheiro, volva atrás e use outro nome.
 [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'Este ficheiro é un duplicado {{PLURAL:$1|do seguinte|dos seguintes}}:',
-'file-deleted-duplicate'      => 'Un ficheiro idéntico a este ("[[$1]]") foi borrado previamente. Debería comprobar o historial de borrados do ficheiro antes de proceder a cargalo de novo.',
+'file-deleted-duplicate'      => 'Un ficheiro idéntico a este ("[[:$1]]") foi borrado previamente. Debería comprobar o historial de borrados do ficheiro antes de proceder a cargalo de novo.',
 'successfulupload'            => 'A carga realizouse correctamente',
 'uploadwarning'               => 'Advertencia ao cargar o ficheiro',
 'uploadwarning-text'          => 'Por favor, modifique a descrición do ficheiro e inténteo de novo.',
@@ -2310,7 +2310,7 @@ $1',
 'whatlinkshere-filters'    => 'Filtros',
 
 # Block/unblock
-'blockip'                         => 'Bloquear este usuario',
+'blockip'                         => 'Bloquear o usuario',
 'blockip-title'                   => 'Bloquear un usuario',
 'blockip-legend'                  => 'Bloquear un usuario',
 'blockiptext'                     => 'Use o seguinte formulario para bloquear o acceso de escritura desde un enderezo IP ou para bloquear un usuario específico.
@@ -2357,12 +2357,12 @@ Olle a [[Special:IPBlockList|lista de enderezos IP e usuarios bloqueados]] para 
 'ipusubmit'                       => 'Retirar este bloqueo',
 'unblocked'                       => '"[[User:$1|$1]]" foi desbloqueado',
 'unblocked-id'                    => 'O bloqueo $1 foi eliminado',
-'ipblocklist'                     => 'Enderezos IP e usuarios bloqueados',
+'ipblocklist'                     => 'Usuarios bloqueados',
 'ipblocklist-legend'              => 'Buscar un usuario bloqueado',
 'ipblocklist-username'            => 'Nome de usuario ou enderezo IP:',
-'ipblocklist-sh-userblocks'       => '$1 as contas bloqueadas',
+'ipblocklist-sh-userblocks'       => '$1 os bloqueos de contas',
 'ipblocklist-sh-tempblocks'       => '$1 os bloqueos temporais',
-'ipblocklist-sh-addressblocks'    => '$1 os bloqueos únicos a enderezos IP',
+'ipblocklist-sh-addressblocks'    => '$1 os bloqueos a enderezos IP únicos',
 'ipblocklist-submit'              => 'Procurar',
 'ipblocklist-localblock'          => 'Bloqueo local',
 'ipblocklist-otherblocks'         => '{{PLURAL:$1|Outro bloqueo|Outros bloqueos}}',
@@ -2626,7 +2626,7 @@ Gárdeo no seu disco duro e cárgueo aquí.',
 'tooltip-pt-mytalk'               => 'A súa páxina de conversa',
 'tooltip-pt-anontalk'             => 'Conversa acerca de edicións feitas desde este enderezo IP',
 'tooltip-pt-preferences'          => 'As miñas preferencias',
-'tooltip-pt-watchlist'            => 'Lista de páxinas cuxas modificacións estou a seguir',
+'tooltip-pt-watchlist'            => 'A lista de páxinas cuxas modificacións está a seguir',
 'tooltip-pt-mycontris'            => 'Lista das súas contribucións',
 'tooltip-pt-login'                => 'Recoméndaselle que acceda ao sistema, porén, non é obrigatorio.',
 'tooltip-pt-anonlogin'            => 'Recoméndaselle rexistrarse, se ben non é obrigatorio.',
@@ -2678,7 +2678,7 @@ Gárdeo no seu disco duro e cárgueo aquí.',
 'tooltip-save'                    => 'Gravar os seus cambios',
 'tooltip-preview'                 => 'Vista previa dos seus cambios; por favor, úsea antes de gravalos!',
 'tooltip-diff'                    => 'Mostrar os cambios que fixo no texto',
-'tooltip-compareselectedversions' => 'Ver as diferenzas entre as dúas versións seleccionadas desta páxina',
+'tooltip-compareselectedversions' => 'Ver as diferenzas entre dúas versións seleccionadas desta páxina',
 'tooltip-watch'                   => 'Engadir esta páxina á súa lista de vixilancia [alt-w]',
 'tooltip-recreate'                => 'Recrear a páxina a pesar de que foi borrada',
 'tooltip-upload'                  => 'Comezar a enviar',
@@ -3161,8 +3161,8 @@ Pode ser que caducase.',
 'confirmemail_body'        => 'Alguén, probablemente vostede, desde o enderezo IP $1,
 rexistrou a conta "$2" con este enderezo de correo electrónico en {{SITENAME}}.
 
-Para confirmar que esta conta realmente lle pertence e así poder activar
-as funcións de correo electrónico en {{SITENAME}}, abra esta ligazón no seu navegador:
+Para confirmar que realmente esta conta lle pertence a vostede e activar
+as características do correo electrónico en {{SITENAME}}, abra esta ligazón no seu navegador:
 
 $3
 
@@ -3171,7 +3171,7 @@ para cancelar a confirmación do enderezo de correo electrónico:
 
 $5
 
-Este código de confirmación caducará o $6 ás $7.',
+O código de confirmación caduca o $6 ás $7.',
 'confirmemail_invalidated' => 'A confirmación do enderezo de correo electrónico foi cancelada',
 'invalidateemail'          => 'Cancelar a confirmación do correo electrónico',
 

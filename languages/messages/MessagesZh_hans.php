@@ -7,6 +7,7 @@
  * @ingroup Language
  * @file
  *
+ * @author Alebcay
  * @author Bencmq
  * @author Biŋhai
  * @author Chenxiaoqino
@@ -14,6 +15,7 @@
  * @author Gaoxuewei
  * @author Gzdavidwong
  * @author Horacewai2
+ * @author Hydra
  * @author Jidanni
  * @author Jimmy xu wrk
  * @author KaiesTse
@@ -26,6 +28,7 @@
  * @author Shinjiman
  * @author Shizhao
  * @author Tommyang
+ * @author Waihorace
  * @author Wmr89502270
  * @author Wong128hk
  * @author Xiaomingyan
@@ -233,12 +236,12 @@ $messages = array(
 'tog-enotifwatchlistpages'    => '当我的监视列表中的页面改变时发送电子邮件通知我',
 'tog-enotifusertalkpages'     => '当我的讨论页更改时发送电子邮件通知我',
 'tog-enotifminoredits'        => '当页面有小修改时也发送电子邮件通知我',
-'tog-enotifrevealaddr'        => '在通知电子邮件列表中显示我的电子邮件地址',
+'tog-enotifrevealaddr'        => '在通知电子邮件中显示我的电子邮件地址',
 'tog-shownumberswatching'     => '显示监视此页的用户数',
 'tog-oldsig'                  => '原签名预览：',
 'tog-fancysig'                => '将签名以wiki文本对待（不产生自动链接）',
-'tog-externaleditor'          => '默认使用外部编辑器（供高级用户使用，需要在您的计算机上作出一些特别设置）',
-'tog-externaldiff'            => '默认使用外部差异分析（供高级用户使用，需要在您的计算机上作出一些特别设置）',
+'tog-externaleditor'          => '默认使用外部编辑器（供高级用户使用，需要在您的计算机上作出一些特别设置。[http://www.mediawiki.org/wiki/Manual:External_editors 更多信息。]）',
+'tog-externaldiff'            => '默认使用外部差异分析（供高级用户使用，需要在您的计算机上作出一些特别设置。[http://www.mediawiki.org/wiki/Manual:External_editors 更多信息。]）',
 'tog-showjumplinks'           => '启用“跳转到”访问链接',
 'tog-uselivepreview'          => '使用实时预览（Javascript）（试验中）',
 'tog-forceeditsummary'        => '当没有输入摘要时提醒我',
@@ -333,8 +336,8 @@ $messages = array(
 'category-file-count'            => '{{PLURAL:$2|本分类只有下列一个文件。|本分类包含下列$1个文件，共有$2个文件。}}',
 'category-file-count-limited'    => '本分类包含下列$1个文件。',
 'listingcontinuesabbrev'         => '续',
-'index-category'                 => '已做索引的页面',
-'noindex-category'               => '未做索引的页面',
+'index-category'                 => '允许索引的页面',
+'noindex-category'               => '禁止索引的页面',
 
 'mainpagetext'      => "'''已成功安装MediaWiki。'''",
 'mainpagedocfooter' => '请查阅[http://meta.wikimedia.org/wiki/Help:Contents 用户指南]以获取使用本wiki软件的信息！
@@ -653,7 +656,7 @@ $2',
 'noemailcreate'              => '您需要提供一个有效的电子邮件地址',
 'passwordsent'               => '用户"$1"的新密码已经寄往所登记的电子邮件地址。
 请在收到后再登录。',
-'blocked-mailpassword'       => '您的IP地址处于查封状态而不允许编辑，为了安全起见，密码恢复功能已被禁用。',
+'blocked-mailpassword'       => '您的IP地址已被禁止编辑，同时为了防止密码恢复功能被滥用，亦已禁用该功能。',
 'eauthentsent'               => '一封确认信已经发送到推荐的地址。在发送其它邮件到此账户前，您必须首先依照这封信中的指导确认这个电子邮箱真实有效。',
 'throttled-mailpassword'     => '密码提醒已在最近$1小时内发送。为了安全起见，在每$1小时内只能发送一个密码提醒。',
 'mailerror'                  => '发送邮件错误：$1',
@@ -669,7 +672,7 @@ $2',
 'createaccount-text'         => '有人在{{SITENAME}}中利用您的邮箱创建了一个名为 "$2" 的新帐户（$4），密码是 "$3" 。您应该立即登录并更改密码。
 
 如果该账户创建错误的话，您可以忽略此信息。',
-'usernamehasherror'          => '用户名称不可以包含切细字符',
+'usernamehasherror'          => '用户名中不可包含哈希（hash）字符',
 'login-throttled'            => '您已经尝试多次的登录动作。
 请稍等多一会再试。',
 'loginlanguagelabel'         => '语言：$1',
@@ -677,21 +680,19 @@ $2',
 
 # Password reset dialog
 'resetpass'                 => '更改密码',
-'resetpass_announce'        => '您是通过一个临时的发送到邮件中的代码登录的。要完成登录，您必须在这里设定一个新密码：',
+'resetpass_announce'        => '您是通过发送到电子邮箱的临时密码登录的。要完成登录，请设定一个新的密码：',
 'resetpass_text'            => '<!-- 在此处添加文本 -->',
 'resetpass_header'          => '更改账户密码',
 'oldpassword'               => '旧密码：',
 'newpassword'               => '新密码：',
 'retypenew'                 => '确认密码：',
 'resetpass_submit'          => '设定密码并登录',
-'resetpass_success'         => '您的密码已经被成功更改！
-现在正为您登录...',
+'resetpass_success'         => '您已经修改了您的密码！正在为您登录……',
 'resetpass_forbidden'       => '无法更改密码',
 'resetpass-no-info'         => '您必须登录后直接进入这个页面。',
 'resetpass-submit-loggedin' => '更改密码',
 'resetpass-submit-cancel'   => '取消',
-'resetpass-wrong-oldpass'   => '无效的临时或现有的密码。
-您可能已成功地更改了您的密码，或者已经请求一个新的临时密码。',
+'resetpass-wrong-oldpass'   => '临时密码或当前密码无效。您可能已经更改了您的密码，或者请求了新的临时密码。',
 'resetpass-temp-password'   => '临时密码：',
 
 # Edit page toolbar
@@ -731,33 +732,25 @@ $2',
 'missingcommentheader'             => "'''提示：''' 您没有为此评论提供一个标题。如果您再次单击保存，您的编辑将不带标题保存。",
 'summary-preview'                  => '摘要预览：',
 'subject-preview'                  => '标题预览：',
-'blockedtitle'                     => '用户被查封',
-'blockedtext'                      => "你的用户名或IP地址已经被$1查封。
+'blockedtitle'                     => '用户被封禁',
+'blockedtext'                      => "'''您的用户名或IP地址已被封禁。'''
 
-这次查封是由$1所封的。当中的原因是''$2''。
+此次封禁操作由$1完成，封禁原因为''$2''。
 
-* 这次查封开始的时间是：$8
-* 这次查封到期的时间是：$6
-* 对于被查封者：$7
+* 起始时间：$8
+* 终止时间：$6
+* 拟封禁对象：$7
 
-你可以联络$1或者其他的[[{{MediaWiki:Grouppage-sysop}}|管理员]]，讨论这次查封。
-除非你已经在你的[[Special:Preferences|帐号参数设置]]中设置了一个有效的电子邮件地址，否则你是不能使用「电邮这位用户」的功能。当设置定了一个有效的电子邮件地址后，这个功能是不会封锁的。
-
-你的IP地址是$3，而该查封ID是 #$5。 请在你的查询中注明以上所有的资料。",
-'autoblockedtext'                  => "你的IP地址已经被自动查封，由于先前的另一位用户被$1所查封。
-而查封的原因是：
+您可以联系$1或其他的[[{{MediaWiki:Grouppage-sysop}}|管理员]]讨论此次封禁。若您已在[[Special:Preferences|帐号设置]]中配置了一个有效的电子邮件地址，且未被封禁电子邮件功能，则您可通过“发送电子邮件给这位用户”功能来联络相关管理员。您当前的IP地址是$3，此次封禁的ID为#$5。请在您的查询中注明上述所有信息。",
+'autoblockedtext'                  => "您的IP地址因与另一位已封禁用户相同而被自动封禁，该用户是由$1封禁的。封禁原因如下：
 
 :''$2''
 
-* 这次查封的开始时间是：$8
-* 这次查封的到期时间是：$6
-* 对于被查封者：$7
+* 起始时间：$8
+* 终止时间：$6
+* 拟封禁对象：$7
 
-你可以联络$1或者其他的[[{{MediaWiki:Grouppage-sysop}}|管理员]]，讨论这次查封。
-
-除非你已经在你的[[Special:Preferences|帐号参数设置]]中设置了一个有效的电子邮件地址，否则你是不能使用「电邮这位用户」的功能。当设置定了一个有效的电子邮件地址后，这个功能是不会封锁的。
-
-您现时正在使用的 IP 地址是 $3，查封ID是 #$5。 請在你的查詢中註明以上所有的資料。",
+您可以联系$1或其他的[[{{MediaWiki:Grouppage-sysop}}|管理员]]讨论此次封禁。若您已在[[Special:Preferences|帐号设置]]中配置了一个有效的电子邮件地址，且未被封禁电子邮件功能，则您可通过“发送电子邮件给这位用户”功能来联络相关管理员。您当前的IP地址是$3，此次封禁的ID为#$5。请在您的查询中注明上述所有信息。",
 'blockednoreason'                  => '无给出原因',
 'blockedoriginalsource'            => "以下是'''$1'''的源码：",
 'blockededitsource'                => "你对'''$1'''进行'''编辑'''的文字如下:",
@@ -935,7 +928,7 @@ $2',
 尝试[[Special:Search|搜索本站]]获得相关的新建页面。',
 
 # Revision deletion
-'rev-deleted-comment'         => '（注释已移除）',
+'rev-deleted-comment'         => '（编辑删除摘要）',
 'rev-deleted-user'            => '（用户名已移除）',
 'rev-deleted-event'           => '（日志动作已移除）',
 'rev-deleted-user-contribs'   => '[用户名或IP地址已移除 - 从贡献中隐藏编辑]',
@@ -1124,8 +1117,8 @@ $1",
 'searcheverything-enable'          => '在所有名字空间中搜索',
 'searchrelated'                    => '相关',
 'searchall'                        => '所有',
-'showingresults'                   => '下面显示从第<b>$2</b>条开始的<b>$1</b>条结果：',
-'showingresultsnum'                => '下面显示从第<b>$2</b>条开始的<b>$3</b>条结果：',
+'showingresults'                   => "下面显示从第'''$2'''条开始的'''{{PLURAL:$1|1|$1}}'''条结果。",
+'showingresultsnum'                => "下面显示从第'''$2'''条开始的'''{{PLURAL:$3|1|$3}}'''条结果。",
 'showingresultsheader'             => "对'''$4'''的{{PLURAL:$5|第'''$1'''至第'''$3'''项结果|第'''$1－$2'''项，共'''$3'''项结果}}",
 'nonefound'                        => "'''注意'''：只有部分名字空间的页面会被默认搜索。尝试在您的搜索语句前添加“all:”前缀，这样可以搜索全部页面（包括讨论页、模板等），或者亦可使用所需名字空间作为前缀。",
 'search-nonefound'                 => '找不到和查询相匹配的结果。',
@@ -1164,7 +1157,7 @@ $1",
 'prefs-rc'                      => '最近更改',
 'prefs-watchlist'               => '监视列表',
 'prefs-watchlist-days'          => '监视列表中显示记录的天数：',
-'prefs-watchlist-days-max'      => '最多7天',
+'prefs-watchlist-days-max'      => '最多 7 天',
 'prefs-watchlist-edits'         => '在增强的监视列表中显示最多更改次数：',
 'prefs-watchlist-edits-max'     => '最多数量：1000',
 'prefs-watchlist-token'         => '监视列表权标：',
@@ -1185,7 +1178,7 @@ $1",
 'contextchars'                  => '每行显示字数：',
 'stub-threshold'                => '<a href="#" class="stub">短页面链接</a>格式门槛值（字节）：',
 'recentchangesdays'             => '最近更改中的显示日数：',
-'recentchangesdays-max'         => '最大 $1 日',
+'recentchangesdays-max'         => '最多 $1 {{PLURAL:$1|天|天}}',
 'recentchangescount'            => '默认显示的编辑数：',
 'prefs-help-recentchangescount' => '这个包括最近更改、页面历史以及日志。',
 'prefs-help-watchlist-token'    => '此栏填写的密钥可以生成您监视列表的RSS源。任何知晓本栏密钥的人都能阅读您的监视列表，因此请使用安全的数值。这里已提供了一个随机生成的数值供您选择：$1',
@@ -1519,7 +1512,7 @@ $1",
 'fileexists-shared-forbidden' => '在共享文件库中已存在此名称的文件。
 如果你仍然想去上传它的话，请返回并用一个新的名称来上传此文件。[[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => '这个文件与以下{{PLURAL:$1|一|多}}个文件重复：',
-'file-deleted-duplicate'      => '一个相同名称的文件 （[[$1]]） 在先前删除过。您应该在重新上传之前检查一下该文件之删除纪录。',
+'file-deleted-duplicate'      => '一个相同名称的文件 （[[:$1]]） 在先前删除过。您应该在重新上传之前检查一下该文件之删除纪录。',
 'successfulupload'            => '上传成功',
 'uploadwarning'               => '上传警告',
 'uploadwarning-text'          => '请修改以下的文件描述并重试。',
@@ -1812,6 +1805,7 @@ Template:消除歧義',
 # Book sources
 'booksources'               => '网络书源',
 'booksources-search-legend' => '搜索网络书源',
+'booksources-isbn'          => '国际书号:',
 'booksources-go'            => '转到',
 'booksources-text'          => '以下是一些网络书店的链接列表，其中可能有您要找的书籍的更多信息：',
 'booksources-invalid-isbn'  => '提供的ISBN号码并不正确，请检查原始复制来源号码是否有误。',
@@ -2074,12 +2068,9 @@ $UNWATCHURL
 'protect_expiry_old'          => '终止时间已过去。',
 'protect-unchain-permissions' => '解除锁定更多的保护选项',
 'protect-text'                => '你可以在这里浏览和修改对页面<strong><nowiki>$1</nowiki></strong>的保护级别。',
-'protect-locked-blocked'      => '您不能在被查封时更改保护级别。
-以下是<strong>$1</strong>现时的保护级别：',
-'protect-locked-dblock'       => '在数据库被锁定时无法更改保护级别。
-以下是<strong>$1</strong>现时的保护级别：',
-'protect-locked-access'       => '您的帐户权限不能修改保护级别。
-以下是<strong>$1</strong>现时的保护级别：',
+'protect-locked-blocked'      => "您不能在被封禁时更改保护级别。以下是页面'''$1'''的当前设置：",
+'protect-locked-dblock'       => "您不能在数据库锁定时更改保护级别。以下是页面'''$1'''的当前设置：",
+'protect-locked-access'       => "您的帐户没有足够的权限去更改保护级别。以下是页面'''$1'''的当前设置：",
 'protect-cascadeon'           => '以下的{{PLURAL:$1|一个|多个}}页面包含  本页面的同时，启动了连锁保护，因此本页面目前也被保护，未能编辑。您可以设置本页面的保护级别，但这并不会对连锁保护有所影响。',
 'protect-default'             => '容许所有用户',
 'protect-fallback'            => '需要“$1”的许可',
@@ -2177,7 +2168,7 @@ $1',
 'mycontris'           => '贡献',
 'contribsub2'         => '$1的贡献 （$2）',
 'nocontribs'          => '没有找到符合特征的更改。',
-'uctop'               => '（最新修改）',
+'uctop'               => '(最新修改)',
 'month'               => '从该月份 （或更早）：',
 'year'                => '从该年份 （或更早）：',
 
@@ -2237,8 +2228,8 @@ $1',
 'ipbanononly'                     => '仅阻止匿名用户',
 'ipbcreateaccount'                => '阻止创建新账号',
 'ipbemailban'                     => '阻止用户发送电邮',
-'ipbenableautoblock'              => '自动查封此用户最后所用的IP地址，以及后来试图编辑所用的所有地址',
-'ipbsubmit'                       => '查封该地址',
+'ipbenableautoblock'              => '自动封禁该用户最后使用的IP地址，以及他们随后试图用于编辑的所有IP地址',
+'ipbsubmit'                       => '封禁该用户',
 'ipbother'                        => '其它时间：',
 'ipboptions'                      => '2小时:2 hours,1天:1 day,3天:3 days,1周:1 week,2周:2 weeks,1个月:1 month,3个月:3 months,6个月:6 months,1年:1 year,永久:infinite',
 'ipbotheroption'                  => '其他',
@@ -2262,7 +2253,7 @@ $1',
 'ipusubmit'                       => '解除此封禁',
 'unblocked'                       => '[[User:$1|$1]]已经被解封',
 'unblocked-id'                    => '封禁$1已被解除',
-'ipblocklist'                     => '已封禁IP地址和用户名',
+'ipblocklist'                     => '被阻止的用户',
 'ipblocklist-legend'              => '查找已封禁用户',
 'ipblocklist-username'            => '用户名或IP地址：',
 'ipblocklist-sh-userblocks'       => '$1账户封禁',
@@ -2293,7 +2284,7 @@ $1被封禁的理由是：“$2”',
 'blocklogentry'                   => '[[$1]]已被封禁，终止时间为$2 $3',
 'reblock-logentry'                => '更改[[$1]]的封禁终止时间 $2 $3',
 'blocklogtext'                    => '此处给出了封禁和解封用户的操作日志，被自动封禁的IP地址不在此表。请查看[[Special:IPBlockList|封禁列表]]获知当前被封禁的用户和IP地址。',
-'unblocklogentry'                 => '$1已被解除封禁',
+'unblocklogentry'                 => '已解封 $1',
 'block-log-flags-anononly'        => '仅限匿名用户',
 'block-log-flags-nocreate'        => '创建账户已禁用',
 'block-log-flags-noautoblock'     => '禁用自动封禁',
@@ -2649,6 +2640,7 @@ $1已被封禁。您是否想更改封禁设置？',
 'skinname-standard'    => '标准',
 'skinname-nostalgia'   => '怀旧',
 'skinname-cologneblue' => '科隆香水蓝',
+'skinname-simple'      => '简单',
 'skinname-modern'      => '现代',
 
 # Math options
@@ -2665,10 +2657,10 @@ $1已被封禁。您是否想更改封禁设置？',
 'math_unknown_function' => '未知函数',
 'math_lexing_error'     => '句法错误',
 'math_syntax_error'     => '语法错误',
-'math_image_error'      => 'PNG转换失败；请检查是否正确安装了latex、dvips、gs和convert',
+'math_image_error'      => 'PNG 转换失败 ；检查正确安装的 latex 和 dvipng （或 dvips + gs + convert）',
 'math_bad_tmpdir'       => '无法写入或建立数学公式临时目录',
 'math_bad_output'       => '无法写入或建立数学公式输出目录',
-'math_notexvc'          => '无法执行texvc；请参照math/README进行配置。',
+'math_notexvc'          => '"texvc"执行文件遗失；请参照math/README进行配置。',
 
 # Patrolling
 'markaspatrolleddiff'                 => '标记为已巡查',
@@ -2750,6 +2742,12 @@ Variants for Chinese language
 'variantname-zh-hk'   => '香港繁体',
 'variantname-zh-sg'   => '新加坡简体',
 'variantname-zh'      => '不转换',
+
+# Variants for Gan language
+'variantname-gan-hans' => '简体中文',
+
+# Variants for Kazakh language
+'variantname-kk-cyrl' => '西里尔',
 
 # Metadata
 'metadata'          => '元数据',
@@ -2890,6 +2888,7 @@ Variants for Chinese language
 
 # EXIF attributes
 'exif-compression-1' => '未压缩',
+'exif-compression-6' => '联合图像专家组格',
 
 'exif-unknowndate' => '未知的日期',
 
@@ -3063,15 +3062,15 @@ Variants for Chinese language
 'confirmemail_loggedin'    => '您的邮箱地址现在已被确认。',
 'confirmemail_error'       => '你的确认过程发生错误。',
 'confirmemail_subject'     => '{{SITENAME}}邮箱地址确认',
-'confirmemail_body'        => '来自IP地址$1的用户（可能是您）在{{SITENAME}}上创建了账户“$2”，并提交了您的电子邮箱地址。
+'confirmemail_body'        => '来自IP地址$1的用户（可能是您）在{{SITENAME}}上创建了账户“$2”，并提交了您
+的电子邮箱地址。
 
-请确认这个账户是属于您的，并同时激活在{{SITENAME}}上的
-电子邮件功能。请在浏览器中打开下面的链接：
+请确认这个账户是属于您的，并同时激活在{{SITENAME}}上的电子邮件功能。请在浏
+览器中打开下面的链接：
 
 $3
 
-如果您*未曾*注册账户，
-请打开下面的链接去取消电子邮件确认：
+如果您*未曾*注册账户，请打开下面的链接去取消电子邮件确认：
 
 $5
 
@@ -3264,19 +3263,19 @@ $1',
 'dberr-header'      => '本wiki出现了问题',
 'dberr-problems'    => '抱歉！
 本网站出现了一些技术问题。',
-'dberr-again'       => '请尝试等待数分钟后，然后再试。',
+'dberr-again'       => '请等待几分钟后重试。',
 'dberr-info'        => '（无法连接到数据库服务器：$1）',
-'dberr-usegoogle'   => '在此时您可以尝试通过Google搜索。',
+'dberr-usegoogle'   => '在此期间您可以尝试用Google来搜索。',
 'dberr-outofdate'   => '须注意他们索引出来的内容可能不是最新的。',
 'dberr-cachederror' => '这是所请求页面的缓存副本，可能不是最新的。',
 
 # HTML forms
 'htmlform-invalid-input'       => '您输入的内容存在问题',
-'htmlform-select-badoption'    => '您所指定的值不是有效的选项。',
-'htmlform-int-invalid'         => '您所指定的值不是一个整数。',
-'htmlform-float-invalid'       => '您所指定的值不是一个数字。',
-'htmlform-int-toolow'          => '您所指定的值低于最小值$1',
-'htmlform-int-toohigh'         => '您所指定的值高于最大值$1',
+'htmlform-select-badoption'    => '您指定的值不是有效选项。',
+'htmlform-int-invalid'         => '您指定的值不是整数。',
+'htmlform-float-invalid'       => '您指定的值不是数字。',
+'htmlform-int-toolow'          => '您指定的值小于最小值$1',
+'htmlform-int-toohigh'         => '您指定的值大于最大值$1',
 'htmlform-submit'              => '提交',
 'htmlform-reset'               => '撤销更改',
 'htmlform-selectorother-other' => '其他',

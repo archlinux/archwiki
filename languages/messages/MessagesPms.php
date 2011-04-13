@@ -71,8 +71,8 @@ dj'artìcoj ancó pa scrit",
 'tog-shownumberswatching'     => "Smon ël nùmer d'utent che as ten-o la pàgina sot euj",
 'tog-oldsig'                  => 'Anteprima dla firma esistenta:',
 'tog-fancysig'                => "Trata la firma com test wiki (sensa n'anliura automàtica)",
-'tog-externaleditor'          => "Dovré coma stàndard n'editor estern (mach për espert, a-i é dabzògn d'ampostassion speciaj dzora a sò ordinator)",
-'tog-externaldiff'            => "Dovré për stàndard un programa comparator estern (mach për espert, a-i é dabzògn d'ampostassion speciaj ansima a sò ordinator)",
+'tog-externaleditor'          => "Dovré coma stàndard n'editor estern (mach për espert, a-i é dabzògn d'ampostassion speciaj dzora a sò ordinator. [http://www.mediawiki.org/wiki/Manual:External_editors Për savèjne ëd pi.])",
+'tog-externaldiff'            => "Dovré për stàndard un programa comparator estern (mach për espert, a-i é dabzògn d'ampostassion speciaj ansima a sò ordinator [http://www.mediawiki.org/wiki/Manual:External_editors Për savèjne ëd pi.])",
 'tog-showjumplinks'           => 'Dovré j\'anliure d\'acessibilità dla sòrt "Va a"',
 'tog-uselivepreview'          => "Dovré la fonsion ''Preuva dal viv'' (a-i va JavaScript e a l'é mach sperimental)",
 'tog-forceeditsummary'        => "Ciama conferma se ël somari dla modìfica a l'é veujd",
@@ -799,7 +799,7 @@ Legenda: (cor) = diferense con la version corenta,
 Che a verìfica con la [[Special:Search|pàgina d'arserca]] se a-i fusso mai dj'àutre pàgine che a podèisso andeje bin.",
 
 # Revision deletion
-'rev-deleted-comment'         => '(coment gavà)',
+'rev-deleted-comment'         => '(resumé dla modìfica gavà)',
 'rev-deleted-user'            => '(stranòm gavà)',
 'rev-deleted-event'           => '(assion dël registr gavà)',
 'rev-deleted-user-contribs'   => '[nòm utent o adrëssa IP gavà - modìfica stërmà ai contributor]',
@@ -1397,7 +1397,7 @@ Se a veul ancó cariè sò archivi, për piasì ch'a torna andré e ch'a deuvra 
 'fileexists-shared-forbidden' => "Belavans n'archivi con ës nòm-sì ant la diretris dj'archivi condivis a-i é già.
 Se a veul ancó carié sò archivi, për piasì ch'a torna andré e ch'a deuvra un nòm diferent. [[File:$1|thumb|center|$1]]",
 'file-exists-duplicate'       => "S'archivi a l'é un duplicà ëd {{PLURAL:$1|cost-sì|costi-sì}}:",
-'file-deleted-duplicate'      => "N'archivi idéntich a cost-sì ([[$1]]) a l'é scàit ëscancelà an passà.
+'file-deleted-duplicate'      => "N'archivi idéntich a cost-sì ([[:$1]]) a l'é scàit ëscancelà an passà.
 A dovrìa controlé la stòria djë scancelament ëd l'archivi prima ëd carielo torna.",
 'successfulupload'            => 'Carià complet',
 'uploadwarning'               => 'Avis che i soma dapress a carié',
@@ -1704,17 +1704,17 @@ Për piasì, ch'a nòta che d'àutri sit an sl'aragnà a peulo coleghesse a n'ar
 'notargettitle'           => 'A manco ij dat',
 'notargettext'            => "A l'ha pa dit a che pàgina ò Utent apliché l'operassion ciamà.",
 'nopagetitle'             => 'La pàgina ëd destinassion a-i é pa',
-'nopagetext'              => "La pàgina che it l'has spessificà a esist pa.",
+'nopagetext'              => "La pàgina che a l'ha spessificà a esist pa.",
 'pager-newer-n'           => '{{PLURAL:$1|1|$1}} pì neuv',
 'pager-older-n'           => '{{PLURAL:$1|1|$1}} pì vej',
-'suppress'                => 'Oversight',
+'suppress'                => 'Supervisor',
 
 # Book sources
 'booksources'               => 'Andoa trové dij lìber',
-'booksources-search-legend' => 'Sërca dle sorgiss ëd lìber',
-'booksources-go'            => 'Va',
-'booksources-text'          => "Ambelessì sota a-i é na lista d'àotri sit che a vendo lìber neuv e dë sconda man, e che a peulo ëdcò smon-e dj'anformassion rësgoard a ij test che a l'é antramentr che al sërca:",
-'booksources-invalid-isbn'  => "L'ISBN dàit a smija che a sia pa vàlid; contròla për eror an copiand da la sorziss original.",
+'booksources-search-legend' => "Sërché antra ij lìber d'arferiment",
+'booksources-go'            => 'Andé',
+'booksources-text'          => "Ambelessì sota a-i é na lista d'àotri sit che a vendo dij lìber neuv e dë sconda man, e che a peulo ëdcò smon-e dj'anformassion rësgoard ai test che a l'é antramentr che a sërca:",
+'booksources-invalid-isbn'  => "L'ISBN dàit a smija che a sia pa vàlid; ch'a contròla s'a-i é n'eror an copiand da la sorgiss original.",
 
 # Special:Log
 'specialloguserlabel'  => 'Utent:',
@@ -1722,33 +1722,33 @@ Për piasì, ch'a nòta che d'àutri sit an sl'aragnà a peulo coleghesse a n'ar
 'log'                  => 'Registr',
 'all-logs-page'        => 'Tùit ij registr pùblich',
 'alllogstext'          => 'Visualisassion combinà ëd tùit ij registr ëd {{SITENAME}}.
-It peule strenze la visualisassion an selessionand la sòrt ëd registr, ël nòm utent (sensìbil a majuscol/minuscol), e la pàgina antëressà (sensìbil a majuscol/minuscol).',
-'logempty'             => 'Pa gnun element parej che a sia trovasse ant ij registr.',
-'log-title-wildcard'   => "Sërca ant ij tìtoj ch'as anandio për",
+A peul arstrenze la visualisassion an selessionand la sòrt ëd registr, lë stranòm utent (sensìbil a majùscol/minùscol), e la pàgina anteressà (sensìbil a majùscol/minùscol).',
+'logempty'             => 'Pa gnun element parèj che a sia trovasse ant ij registr.',
+'log-title-wildcard'   => "Sërché ant ij tìtoj ch'as anandio për",
 
 # Special:AllPages
 'allpages'          => 'Tute le pàgine',
 'alphaindexline'    => '$1 a $2',
 'nextpage'          => 'Pàgina che a-i ven ($1)',
 'prevpage'          => 'Pàgina anans ($1)',
-'allpagesfrom'      => 'Most-me la pàgine ën partend da:',
-'allpagesto'        => 'Mosta jë pàgine fin a:',
+'allpagesfrom'      => 'Smon-e le pàgine ën partend da:',
+'allpagesto'        => 'Smon-e le pàgine fin-a a:',
 'allarticles'       => "Tùit j'artìcoj",
 'allinnamespace'    => 'Tute le pàgine (spassi nominal $1)',
 'allnotinnamespace' => 'Tute le pàgine (che a son nen ant lë spassi nominal $1)',
 'allpagesprev'      => 'Cole prima',
 'allpagesnext'      => 'Cole che a ven-o',
-'allpagessubmit'    => 'Va',
-'allpagesprefix'    => "Most-me la pàgine che a l'ha prefiss:",
+'allpagessubmit'    => 'Andé',
+'allpagesprefix'    => "Smon-e le pàgine che a l'han ël prefiss:",
 'allpagesbadtitle'  => "Ël tìtol che a l'ha daje a la pàgina a va nen bin, ò pura a l'ha andrinta un prefiss inter-lenga ò inter-wiki. A peul esse ëdcò che a l'abia andrinta dij caràter che as peulo nen dovresse ant ij tìtoj.",
 'allpages-bad-ns'   => '{{SITENAME}} a l\'ha pa gnun ëspassi nominal "$1".',
 
 # Special:Categories
 'categories'                    => 'Categorìe',
 'categoriespagetext'            => "{{PLURAL:$1|Costa categorìa a conten|Coste categorìe a conten-o}} dle pàgine ò dj'archivi.
-[[Special:UnusedCategories|Le categorìe non dovrà]] A son pa mostà ambelessì.
-Varda ëdcò [[Special:WantedCategories|Categorìe ciamà]].",
-'categoriesfrom'                => 'Mosta le categorìe an partend da:',
+[[Special:UnusedCategories|Le categorìe nen dovrà]] a son pa mostrà ambelessì.
+Ch'a bèica ëdcò [[Special:WantedCategories|le categorìe domandà]].",
+'categoriesfrom'                => 'Smon-e le categorìe an partend da:',
 'special-categories-sort-count' => 'ordiné për nùmer',
 'special-categories-sort-abc'   => 'òrdiné për alfabétich',
 
@@ -2403,7 +2403,7 @@ Tute le amportassion antra wiki diferente a resto marcà ant ël [[Special:Log/i
 'import-interwiki-namespace' => 'Spassi nominal ëd destinassion:',
 'import-upload-filename'     => 'Nòm dël file:',
 'import-comment'             => 'Oget:',
-'importtext'                 => "Për piasì, che as espòrta l'archivi da 'nt la sorgiss wiki esterna ën dovrand l'utiss  Special:Esportassion, che as lo salva ansima a sò disch e peui che a lo caria ambelessì.",
+'importtext'                 => "Për piasì, che as espòrta l'archivi da 'nt la sorgiss wiki esterna ën dovrand l'utiss  Special:Export, che as lo salva ansima a sò disch e peui che a lo caria ambelessì.",
 'importstart'                => 'I soma antramentr che amportoma le pàgine...',
 'import-revision-count'      => '{{PLURAL:$1|Na|$1}} revision',
 'importnopages'              => 'Pa gnun-a pàgina da amporté',
@@ -2558,7 +2558,7 @@ Sòn a l'é motobin belfé che a sia rivà përchè a-i era n'anliura a un sit e
 'math_unknown_function' => 'funsion che as sa pa lòn che a la sia',
 'math_lexing_error'     => 'eror ëd léssich',
 'math_syntax_error'     => 'eror ëd sintassi',
-'math_image_error'      => "Conversion a PNG falà; che a contròla l'ùltima instalassion ëd latex e dvipng (o dvips + gs + convert)",
+'math_image_error'      => "La conversion an PNG a l'é falìa; che a contròla l'ùltima instalassion ëd latex e dvipng (o dvips + gs + convert)",
 'math_bad_tmpdir'       => "Ël sistema a-i la fa pa a creé la diretriss '''math temp''', ò pura a-i la fa nen a scriv-je andrinta",
 'math_bad_output'       => "Ël sistema a-i la fa pa a creé la diretriss '''math output''', ò pura a-i la fa nen a scriv-je andrinta",
 'math_notexvc'          => 'Pa gnun texvc executable; për piasì, che a contròla math/README për la configurassion.',

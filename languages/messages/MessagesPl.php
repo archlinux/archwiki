@@ -31,6 +31,7 @@
  * @author ToSter
  * @author Wpedzich
  * @author Ymar
+ * @author Žekřil71pl
  * @author לערי ריינהארט
  */
 
@@ -258,8 +259,8 @@ $messages = array(
 'tog-shownumberswatching'     => 'Pokaż liczbę użytkowników obserwujących stronę',
 'tog-oldsig'                  => 'Obecny wygląd Twojego podpisu',
 'tog-fancysig'                => 'Traktuj podpis jako wikikod (nie linkuj automatycznie całości)',
-'tog-externaleditor'          => 'Domyślnie używaj zewnętrznego edytora (dla użytkowników zaawansowanych; wymaga specjalnych ustawień dla komputera)',
-'tog-externaldiff'            => 'Domyślnie używaj zewnętrznego programu pokazującego zmiany (dla użytkowników zaawansowanych; wymaga specjalnych ustawień dla komputera)',
+'tog-externaleditor'          => 'Domyślnie używaj zewnętrznego edytora (tylko dla zaawansowanych użytkowników; wymaga odpowiedniego skonfigurowania komputera)',
+'tog-externaldiff'            => 'Domyślnie używaj zewnętrznego programu pokazującego zmiany (tylko dla zaawansowanych użytkowników; wymaga odpowiedniego skonfigurowania komputera)',
 'tog-showjumplinks'           => 'Włącz odnośniki „skocz do”',
 'tog-uselivepreview'          => 'Używaj dynamicznego podglądu (JavaScript; eksperymentalny)',
 'tog-forceeditsummary'        => 'Informuj o niewypełnieniu opisu zmian',
@@ -491,8 +492,8 @@ $1',
 'policy-url'           => 'Project:Zasady',
 'portal'               => 'Portal społeczności',
 'portal-url'           => 'Project:Portal społeczności',
-'privacy'              => 'Zasady ochrony prywatności',
-'privacypage'          => 'Project:Zasady ochrony prywatności',
+'privacy'              => 'Zasady zachowania poufności',
+'privacypage'          => 'Project:Zasady zachowania poufności',
 
 'badaccess'        => 'Niewłaściwe uprawnienia',
 'badaccess-group0' => 'Nie masz uprawnień wymaganych do wykonania tej operacji.',
@@ -531,7 +532,7 @@ $1',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'Strona',
-'nstab-user'      => 'Strona użytkownika',
+'nstab-user'      => '{{GENDER:{{BASEPAGENAME}}|Strona użytkownika|Strona użytkowniczki}}',
 'nstab-media'     => 'Pliki',
 'nstab-special'   => 'Strona specjalna',
 'nstab-project'   => 'Strona projektu',
@@ -1001,7 +1002,7 @@ Mogła zostać usunięta lub jej nazwa została zmieniona.
 Spróbuj [[Special:Search|poszukać]] tej strony.',
 
 # Revision deletion
-'rev-deleted-comment'         => '(komentarz usunięty)',
+'rev-deleted-comment'         => '(usunięto opis zmian)',
 'rev-deleted-user'            => '(nazwa użytkownika usunięta)',
 'rev-deleted-event'           => '(wpis usunięty)',
 'rev-deleted-user-contribs'   => '[nazwa użytkownika lub adres IP usunięte – edycja ukryta we wkładzie]',
@@ -1010,7 +1011,7 @@ Szczegółowe informacje mogą znajdować się w [{{fullurl:{{#Special:Log}}/del
 'rev-deleted-text-unhide'     => "Ta wersja strony została '''usunięta'''.
 Szczegółowe informacje mogą znajdować się w [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} rejestrze usunięć].
 Jako administrator możesz [$1 obejrzeć tę wersję].",
-'rev-suppressed-text-unhide'  => "Ta wersja strony została '''utajniona'''.
+'rev-suppressed-text-unhide'  => "Ta wersja strony została '''ukryta'''.
 Szczegółowe informacje mogą znajdować się w [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} rejestrze utajniania].
 Jako administrator możesz [$1 obejrzeć tę wersję].",
 'rev-deleted-text-view'       => "Ta wersja strony została '''usunięta'''.
@@ -1020,19 +1021,19 @@ Jako administrator możesz ją obejrzeć. Szczegółowe informacje mogą znajdow
 'rev-deleted-no-diff'         => "Nie możesz zobaczyć porównania wersji, ponieważ jedna z nich została '''usunięta'''.
 Szczegółowe informacje mogą znajdować się w [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} rejestrze usunięć].",
 'rev-suppressed-no-diff'      => "Nie można wyświetlić różnic, ponieważ jedna z wersji została '''usunięta'''.",
-'rev-deleted-unhide-diff'     => "Jedna z wersji tej strony została '''usunięta'''.
+'rev-deleted-unhide-diff'     => "Jedna z porównywanych wersji została '''usunięta'''.
 Szczegółowe informacje mogą znajdować się w [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} rejestrze usunięć].
 Jako administrator możesz [$1 obejrzeć porównanie wersji].",
 'rev-suppressed-unhide-diff'  => "Jedna z porównywanych wersji została '''ukryta'''.
 Szczegółowe informacje mogą znajdować się w [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} rejestrze ukrywania].
-Ponieważ jesteś administratorem możesz [$1 obejrzeć to porównanie wersji].",
+Jako administrator możesz [$1 obejrzeć to porównanie wersji].",
 'rev-deleted-diff-view'       => "Jedna z wersji użytych w porównaniu została '''usunięta'''.
 Jako administrator możesz zobaczyć porównanie. Szczegóły mogą znajdować się w [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} rejestrze usunięć].",
 'rev-suppressed-diff-view'    => "Jedna z wersji użytych w porównaniu została '''ukryta'''.
 Jako administrator możesz zobaczyć porównanie. Szczegóły mogą znajdować się w [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} rejestrze ukrywania].",
 'rev-delundel'                => 'pokaż/ukryj',
 'rev-showdeleted'             => 'pokaż',
-'revisiondelete'              => 'Usuń/przywróć wersje',
+'revisiondelete'              => 'Usuń/odtwórz wersje',
 'revdelete-nooldid-title'     => 'Nieprawidłowa wersja do przeprowadzenia operacji',
 'revdelete-nooldid-text'      => 'Nie wybrano wersji, na których ma zostać wykonana ta operacja,
 wybrana wersja nie istnieje lub próbowano ukryć wersję bieżącą.',
@@ -1047,7 +1048,7 @@ wybrana wersja nie istnieje lub próbowano ukryć wersję bieżącą.',
 'logdelete-selected'          => "'''Zaznaczone {{PLURAL:$1|zdarzenie|zdarzenia}} z rejestru:'''",
 'revdelete-text'              => "'''Usunięte wersje i czynności będą nadal widoczne w historii strony i rejestrach, ale ich treść nie będzie publicznie dostępna.'''
 Inni administratorzy {{GRAMMAR:D.lp|{{SITENAME}}}} nadal będą mieć dostęp do ukrytych treści oraz będą mogli je odtworzyć używając standardowych mechanizmów, chyba że nałożono dodatkowe ograniczenia.",
-'revdelete-confirm'           => 'Potwierdzić, że chcesz to zrobić, rozumiesz konsekwencje oraz że robisz to zgodnie z [[{{MediaWiki:Policy-url}}|zasadami]].',
+'revdelete-confirm'           => 'Potwierdź, że chcesz to zrobić, rozumiesz konsekwencje oraz że robisz to zgodnie z [[{{MediaWiki:Policy-url}}|zasadami]].',
 'revdelete-suppress-text'     => "Ukrywanie powinno być używane '''wyłącznie''' w sytuacji:
 * Ujawnienie danych osobowych
 *: ''adres domowy, numer telefonu, numer PESEL itp''",
@@ -1081,7 +1082,7 @@ $1",
 'revdelete-uname'             => 'nazwę użytkownika',
 'revdelete-restricted'        => 'ustaw ograniczenia dla administratorów',
 'revdelete-unrestricted'      => 'usuń ograniczenia dla administratorów',
-'revdelete-hid'               => 'ukryj $1',
+'revdelete-hid'               => 'ukryto $1',
 'revdelete-unhid'             => 'nie ukrywaj $1',
 'revdelete-log-message'       => '$1 – $2 {{PLURAL:$2|wersja|wersje|wersji}}',
 'logdelete-log-message'       => '$1 – $2 {{PLURAL:$2|zdarzenie|zdarzenia|zdarzeń}}',
@@ -1235,9 +1236,9 @@ Jednak informacje o treści {{GRAMMAR:D.lp|{{SITENAME}}}} mogą być w Google ni
 'prefs-rc'                      => 'Ostatnie zmiany',
 'prefs-watchlist'               => 'Obserwowane',
 'prefs-watchlist-days'          => 'Liczba dni widocznych na liście obserwowanych',
-'prefs-watchlist-days-max'      => '(maksimum 7 dni)',
+'prefs-watchlist-days-max'      => 'Maksimum 7 dni',
 'prefs-watchlist-edits'         => 'Liczba edycji pokazywanych w rozszerzonej liście obserwowanych',
-'prefs-watchlist-edits-max'     => '(maksymalna liczba: 1000)',
+'prefs-watchlist-edits-max'     => 'Maksymalnie 1000',
 'prefs-watchlist-token'         => 'Identyfikator listy obserwowanych',
 'prefs-misc'                    => 'Ustawienia różne',
 'prefs-resetpass'               => 'Zmień hasło',
@@ -1599,7 +1600,8 @@ Jeśli chcesz przesłać plik cofnij się i prześlij go pod inną nazwą. [[Fil
 'fileexists-shared-forbidden' => 'Plik o tej nazwie już istnieje we współdzielonym repozytorium plików.
 Cofnij się i załaduj plik pod inną nazwą. [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'Ten plik jest kopią {{PLURAL:$1|pliku|następujących plików:}}',
-'file-deleted-duplicate'      => 'Identyczny do tego plik ([[$1]]) został wcześniej usunięty. Sprawdź historię usunięć tamtego pliku zanim prześlesz go ponownie.',
+'file-deleted-duplicate'      => 'Identyczny do tego plik ([[:$1]]) został wcześniej usunięty.
+Sprawdź historię usunięć tamtego pliku zanim prześlesz go ponownie.',
 'successfulupload'            => 'Przesłanie pliku powiodło się',
 'uploadwarning'               => 'Ostrzeżenie o przesyłaniu',
 'uploadwarning-text'          => 'Zmień poniższy opis pliku i spróbuj ponownie.',
@@ -2292,8 +2294,8 @@ $1',
 'contribsub2'         => 'Dla użytkownika $1 ($2)',
 'nocontribs'          => 'Brak zmian odpowiadających tym kryteriom.',
 'uctop'               => ' (jako ostatnia)',
-'month'               => 'Przed miesiącem (włącznie)',
-'year'                => 'Przed rokiem (włącznie)',
+'month'               => 'Do miesiąca (włącznie)',
+'year'                => 'Do roku (włącznie)',
 
 'sp-contributions-newbies'        => 'Pokaż wyłącznie wkład nowych użytkowników',
 'sp-contributions-newbies-sub'    => 'Dla nowych użytkowników',
@@ -2377,7 +2379,7 @@ Przejdź do [[Special:IPBlockList|listy zablokowanych adresów IP]], by przejrze
 'ipusubmit'                       => 'Odblokuj',
 'unblocked'                       => '[[User:$1|$1]] {{GENDER:$1|został odblokowany|została odblokowana|został odblokowany}}.',
 'unblocked-id'                    => 'Blokada $1 została zdjęta',
-'ipblocklist'                     => 'Lista zablokowanych adresów IP i użytkowników',
+'ipblocklist'                     => 'Zablokowani użytkownicy',
 'ipblocklist-legend'              => 'Znajdź zablokowanego użytkownika',
 'ipblocklist-username'            => 'Nazwa użytkownika lub adres IP',
 'ipblocklist-sh-userblocks'       => '$1 blokady kont',
@@ -2741,7 +2743,7 @@ Pozwala na wpisanie powodu w opisie zmian.',
 
 # Attribution
 'anonymous'        => '{{PLURAL:$1|Anonimowy użytkownik|Anonimowi użytkownicy}} {{GRAMMAR:D.lp|{{SITENAME}}}}',
-'siteuser'         => 'użytkownik {{GRAMMAR:D.lp|{{SITENAME}}}} – $1',
+'siteuser'         => '{{GENDER:$2|użytkownik|użytkowniczka}} {{GRAMMAR:D.lp|{{SITENAME}}}} – $1',
 'anonuser'         => 'niezalogowany użytkownik {{GRAMMAR:D.lp|{{SITENAME}}}} – $1',
 'lastmodifiedatby' => 'Ostatnia edycja tej strony: $2, $1 (autor zmian: $3)',
 'othercontribs'    => 'Inni autorzy: $1.',
