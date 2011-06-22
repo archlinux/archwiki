@@ -25,9 +25,6 @@ class Category {
 	 * @return bool True on success, false on failure.
 	 */
 	protected function initialize() {
-		if ( $this->mName === null && $this->mTitle )
-			$this->mName = $title->getDBkey();
-
 		if ( $this->mName === null && $this->mID === null ) {
 			throw new MWException( __METHOD__ . ' has both names and IDs null' );
 		} elseif ( $this->mID === null ) {
@@ -248,27 +245,32 @@ class Category {
 		if ( wfReadOnly() ) {
 			return false;
 		}
-		$dbw = wfGetDB( DB_MASTER );
-		$dbw->begin();
+
 		# Note, we must use names for this, since categorylinks does.
 		if ( $this->mName === null ) {
 			if ( !$this->initialize() ) {
 				return false;
 			}
-		} else {
-			# Let's be sure that the row exists in the table.  We don't need to
-			# do this if we got the row from the table in initialization!
-			$seqVal = $dbw->nextSequenceValue( 'category_cat_id_seq' );
-			$dbw->insert(
-				'category',
-				array(
-					'cat_id' => $seqVal,
-					'cat_title' => $this->mName
-				),
-				__METHOD__,
-				'IGNORE'
-			);
 		}
+
+		$dbw = wfGetDB( DB_MASTER );
+		$dbw->begin();
+
+		# Insert the row if it doesn't exist yet (e.g., this is being run via
+		# update.php from a pre-1.16 schema).  TODO: This will cause lots and
+		# lots of gaps on some non-MySQL DBMSes if you run populateCategory.php
+		# repeatedly.  Plus it's an extra query that's unneeded almost all the
+		# time.  This should be rewritten somehow, probably.
+		$seqVal = $dbw->nextSequenceValue( 'category_cat_id_seq' );
+		$dbw->insert(
+			'category',
+			array(
+				'cat_id' => $seqVal,
+				'cat_title' => $this->mName
+			),
+			__METHOD__,
+			'IGNORE'
+		);
 
 		$cond1 = $dbw->conditional( 'page_namespace=' . NS_CATEGORY, 1, 'NULL' );
 		$cond2 = $dbw->conditional( 'page_namespace=' . NS_FILE, 1, 'NULL' );

@@ -21,7 +21,9 @@
  * @todo document
  * @ingroup Maintenance
  *
- * @author Ashar Voultoiz <thoane@altern.org>
+ * @author Ashar Voultoiz <hashar at free dot fr>
+ * @author Brion Vibber
+ * @author Alexandre Emsenhuber
  * @version first release
  */
 
@@ -29,16 +31,13 @@
 # Variables / Configuration
 #
 
-if( php_sapi_name() != 'cli' ) {
+if ( php_sapi_name() != 'cli' ) {
 	echo 'Run me from the command line.';
 	die( -1 );
 }
 
 /** Figure out the base directory for MediaWiki location */
 $mwPath = dirname( dirname( __FILE__ ) ) . DIRECTORY_SEPARATOR;
-
-/** Global variable: temporary directory */
-$tmpPath = '/tmp/';
 
 /** doxygen binary script */
 $doxygenBin = 'doxygen';
@@ -50,14 +49,14 @@ $doxygenTemplate = $mwPath . 'maintenance/Doxyfile';
 $svnstat = $mwPath . 'bin/svnstat';
 
 /** where Phpdoc should output documentation */
-#$doxyOutput = '/var/www/mwdoc/';
+# $doxyOutput = '/var/www/mwdoc/';
 $doxyOutput = $mwPath . 'docs' . DIRECTORY_SEPARATOR ;
 
 /** MediaWiki subpaths */
-$mwPathI = $mwPath.'includes/';
-$mwPathL = $mwPath.'languages/';
-$mwPathM = $mwPath.'maintenance/';
-$mwPathS = $mwPath.'skins/';
+$mwPathI = $mwPath . 'includes/';
+$mwPathL = $mwPath . 'languages/';
+$mwPathM = $mwPath . 'maintenance/';
+$mwPathS = $mwPath . 'skins/';
 
 /** Variable to get user input */
 $input = '';
@@ -67,11 +66,14 @@ $exclude = '';
 # Functions
 #
 
+define( 'MEDIAWIKI', true );
+require_once( "$mwPath/includes/GlobalFunctions.php" );
+
 /**
  * Read a line from the shell
  * @param $prompt String
  */
-function readaline( $prompt = '' ){
+function readaline( $prompt = '' ) {
 	print $prompt;
 	$fp = fopen( "php://stdin", "r" );
 	$resp = trim( fgets( $fp, 1024 ) );
@@ -88,27 +90,27 @@ function getSvnRevision( $dir ) {
 	// http://svnbook.red-bean.com/nightly/en/svn.developer.insidewc.html
 	$entries = $dir . '/.svn/entries';
 
-	if( !file_exists( $entries ) ) {
+	if ( !file_exists( $entries ) ) {
 		return false;
 	}
 
 	$content = file( $entries );
 
 	// check if file is xml (subversion release <= 1.3) or not (subversion release = 1.4)
-	if( preg_match( '/^<\?xml/', $content[0] ) ) {
+	if ( preg_match( '/^<\?xml/', $content[0] ) ) {
 		// subversion is release <= 1.3
-		if( !function_exists( 'simplexml_load_file' ) ) {
+		if ( !function_exists( 'simplexml_load_file' ) ) {
 			// We could fall back to expat... YUCK
 			return false;
 		}
 
 		$xml = simplexml_load_file( $entries );
 
-		if( $xml ) {
-			foreach( $xml->entry as $entry ) {
-				if( $xml->entry[0]['name'] == '' ) {
+		if ( $xml ) {
+			foreach ( $xml->entry as $entry ) {
+				if ( $xml->entry[0]['name'] == '' ) {
 					// The directory entry should always have a revision marker.
-					if( $entry['revision'] ) {
+					if ( $entry['revision'] ) {
 						return intval( $entry['revision'] );
 					}
 				}
@@ -129,15 +131,14 @@ function getSvnRevision( $dir ) {
  * @param $currentVersion String: Version number of the software
  * @param $svnstat String: path to the svnstat file
  * @param $input String: Path to analyze.
- * @param $exclude String: Additionals path regex to exlcude 
- *                 (LocalSettings.php, AdminSettings.php and .svn directories are always excluded)
+ * @param $exclude String: Additionals path regex to exlcude
+ *                 (LocalSettings.php, AdminSettings.php, .svn and .git directories are always excluded)
  */
-function generateConfigFile( $doxygenTemplate, $outputDirectory, $stripFromPath, $currentVersion, $svnstat, $input, $exclude ){
-	global $tmpPath;
+function generateConfigFile( $doxygenTemplate, $outputDirectory, $stripFromPath, $currentVersion, $svnstat, $input, $exclude ) {
 
 	$template = file_get_contents( $doxygenTemplate );
 
-	// Replace template placeholders by correct values.	
+	// Replace template placeholders by correct values.
 	$replacements = array(
 		'{{OUTPUT_DIRECTORY}}' => $outputDirectory,
 		'{{STRIP_FROM_PATH}}'  => $stripFromPath,
@@ -147,8 +148,8 @@ function generateConfigFile( $doxygenTemplate, $outputDirectory, $stripFromPath,
 		'{{EXCLUDE}}'          => $exclude,
 	);
 	$tmpCfg = str_replace( array_keys( $replacements ), array_values( $replacements ), $template );
-	$tmpFileName = $tmpPath . 'mwdocgen'. rand() .'.tmp';
-	file_put_contents( $tmpFileName , $tmpCfg ) or die("Could not write doxygen configuration to file $tmpFileName\n");
+	$tmpFileName = tempnam( wfTempDir(), 'mwdocgen-' );
+	file_put_contents( $tmpFileName , $tmpCfg ) or die( "Could not write doxygen configuration to file $tmpFileName\n" );
 
 	return $tmpFileName;
 }
@@ -159,7 +160,7 @@ function generateConfigFile( $doxygenTemplate, $outputDirectory, $stripFromPath,
 
 unset( $file );
 
-if( is_array( $argv ) && isset( $argv[1] ) ) {
+if ( is_array( $argv ) && isset( $argv[1] ) ) {
 	switch( $argv[1] ) {
 	case '--all':         $input = 0; break;
 	case '--includes':    $input = 1; break;
@@ -168,7 +169,7 @@ if( is_array( $argv ) && isset( $argv[1] ) ) {
 	case '--skins':       $input = 4; break;
 	case '--file':
 		$input = 5;
-		if( isset( $argv[2] ) ) {
+		if ( isset( $argv[2] ) ) {
 			$file = $argv[2];
 		}
 		break;
@@ -178,7 +179,7 @@ if( is_array( $argv ) && isset( $argv[1] ) ) {
 
 // TODO : generate a list of paths ))
 
-if( $input === '' ) {
+if ( $input === '' ) {
 	echo <<<OPTIONS
 Several documentation possibilities:
  0 : whole documentation (1 + 2 + 3 + 4)
@@ -189,33 +190,33 @@ Several documentation possibilities:
  5 : only a given file
  6 : all but the extensions directory
 OPTIONS;
-	while ( !is_numeric($input) )
+	while ( !is_numeric( $input ) )
 	{
 		$input = readaline( "\nEnter your choice [0]:" );
-		if($input == '') {
+		if ( $input == '' ) {
 			$input = 0;
 		}
 	}
 }
 
-switch ($input) {
+switch ( $input ) {
 case 0: $input = $mwPath;  break;
 case 1: $input = $mwPathI; break;
 case 2: $input = $mwPathL; break;
 case 3: $input = $mwPathM; break;
 case 4: $input = $mwPathS; break;
 case 5:
-	if( !isset( $file ) ) {
+	if ( !isset( $file ) ) {
 		$file = readaline( "Enter file name $mwPath" );
 	}
-	$input = $mwPath.$file;
+	$input = $mwPath . $file;
 case 6:
 	$input = $mwPath;
 	$exclude = 'extensions';
 }
 
 $versionNumber = getSvnRevision( $input );
-if( $versionNumber === false ){ #Not using subversion ?
+if ( $versionNumber === false ) { # Not using subversion ?
 	$svnstat = ''; # Not really useful if subversion not available
 	$version = 'trunk'; # FIXME
 } else {

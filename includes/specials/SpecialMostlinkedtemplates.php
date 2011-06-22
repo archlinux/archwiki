@@ -1,7 +1,25 @@
 <?php
 /**
+ * Implements Special:Mostlinkedtemplates
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup SpecialPage
+ * @author Rob Church <robchur@gmail.com>
  */
  
 /**
@@ -9,7 +27,6 @@
  * transclusion links, i.e. "most used" templates
  *
  * @ingroup SpecialPage
- * @author Rob Church <robchur@gmail.com>
  */
 class SpecialMostlinkedtemplates extends QueryPage {
 
@@ -75,7 +92,7 @@ class SpecialMostlinkedtemplates extends QueryPage {
 	 */
 	public function preprocessResults( $db, $res ) {
 		$batch = new LinkBatch();
-		while( $row = $db->fetchObject( $res ) ) {
+		foreach ( $res as $row ) {
 			$batch->add( $row->namespace, $row->title );
 		}
 		$batch->execute();
@@ -110,8 +127,8 @@ class SpecialMostlinkedtemplates extends QueryPage {
 	private function makeWlhLink( $title, $skin, $result ) {
 		global $wgLang;
 		$wlh = SpecialPage::getTitleFor( 'Whatlinkshere' );
-		$label = wfMsgExt( 'nlinks', array( 'parsemag', 'escape' ),
-		$wgLang->formatNum( $result->value ) );
+		$label = wfMsgExt( 'ntransclusions', array( 'parsemag', 'escape' ),
+			$wgLang->formatNum( $result->value ) );
 		return $skin->link( $wlh, $label, array(), array( 'target' => $title->getPrefixedText() ) );
 	}
 }

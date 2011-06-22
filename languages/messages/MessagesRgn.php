@@ -29,7 +29,7 @@ $messages = array(
 'tog-editsection'             => "S't'vù l'abilitaziòn ad'cambié al seziòn cum e' link [mudèfica]",
 'tog-editsectiononrightclick' => "S't'vù l'abilitaziòn ad cambié al seziòn <br />scjazénd e tast a dèstra sora e titul (u j vò JavaScript)",
 'tog-showtoc'                 => "Fam avdé l'indiz (sol par al pàgin cun piò d'3 seziòn)",
-'tog-rememberpassword'        => "Arcurdam la parola d'ordin, par piasé",
+'tog-rememberpassword'        => "Arcurdam la parola d'ordin, par piasé (fèn a un masum $1 {{PLURAL:$1|dè|dè}})",
 'tog-watchcreations'          => "Mett insèn al pàgin ch't'e' fat adès, intla lèsta da tní sot'occ",
 'tog-watchdefault'            => "Mett insèn al pàgin ch'a j ò lavurè sora int la lèsta dal pàgin da tnì sot'òcc",
 'tog-watchmoves'              => "Mett insèn al pàgin ch'a j ò spustè int la lèsta dal pàgin da tnì sot'òcc",
@@ -263,7 +263,7 @@ Par piasé, fa raport a un [[Special:ListUsers/sysop|aministrador]] cun la nota 
 # Login and logout pages
 'yourname'                => 'Soranòm:',
 'yourpassword'            => 'Paróla segreta:',
-'remembermypassword'      => "Regèstra la mi parola d'ordin sora ste computer",
+'remembermypassword'      => "Regèstra la mi parola d'ordin sora ste computer (for a maximum of $1 {{PLURAL:$1|day|days}})",
 'login'                   => 'Va dentar',
 'nav-login-createaccount' => 'Va dentar / Èla la prèma volta?',
 'userlogin'               => 'Vèn dentar/A sit nov?',
@@ -492,7 +492,6 @@ $1 {{PLURAL:$1|elemént|elemént}}',
 # Watchlist
 'watchlist'         => "Pàgin ch'a ten d'öcc",
 'mywatchlist'       => "Pàgin ch'a ten d'öcc",
-'watchlistfor'      => "(da '''$1''')",
 'addedwatch'        => "Mett insem a la lèsta d'pàgin sot öcc",
 'addedwatchtext'    => "La pàgina \"[[:\$1]]\" adès l'è int la lèsta dal [[Special:Watchlist|pàgin da tnì d'öcc]]. D'ôra inenz t'pù avdé tòt al mudèfic a sta pàgina e a la pàgina d'cunversaziòn int la [[Special:RecentChanges|lèsta d'j cambiamént rezent]], in '''gros''', acsè j 's'pò guardè mej.
 Se in un sgond temp t'vu cavé la pàgina dala lèsta da tnì d'öcc, s-cjaza un'ètra volta sora e' butòn \"ten d'öcc\".",
@@ -703,9 +702,9 @@ Par piasé, met insem al du pàgin te, fasend copia e incola.",
 'nextdiff'     => 'Mudèfica piò nova →',
 
 # Media information
-'file-info-size'       => "($1 × $2 pixel, amsùra d'e' file: $3, tipo MIME: $4)",
+'file-info-size'       => "$1 × $2 pixel, amsùra d'e' file: $3, tipo MIME: $4",
 'file-nohires'         => "<small>U n' è pusèbil d'avdé cun òna risoluziòn piò élta. </small>",
-'svg-long-desc'        => "(file d'taja SVG, dimensiòn numinèli $1 × $2 pixel, dimensiòn d'e' file: $3)",
+'svg-long-desc'        => "file d'taja SVG, dimensiòn numinèli $1 × $2 pixel, dimensiòn d'e' file: $3",
 'show-big-image'       => 'Versiòn ad amsura pina',
 'show-big-image-thumb' => "<small>Amsùra d'sta versiòn: $1 × $2 pixel</small>",
 

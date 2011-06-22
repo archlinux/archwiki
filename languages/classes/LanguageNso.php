@@ -1,5 +1,6 @@
 <?php
 /**
+ * Northern Sotho (Sesotho sa Leboa)
  *
  * @ingroup Language
  */
@@ -8,9 +9,9 @@ class LanguageNso extends Language {
 	 * Use singular form for zero
 	 */
 	function convertPlural( $count, $forms ) {
-		if ( !count($forms) ) { return ''; }
+		if ( !count( $forms ) ) { return ''; }
 		$forms = $this->preConvertPlural( $forms, 2 );
 
-		return ($count <= 1) ? $forms[0] : $forms[1];
+		return ( $count <= 1 ) ? $forms[0] : $forms[1];
 	}
 }

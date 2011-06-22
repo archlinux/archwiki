@@ -111,8 +111,7 @@ $messages = array(
 'tog-editsection'             => 'Betara va gabot kan "[Betara]" gluyasiki',
 'tog-editsectiononrightclick' => 'Betara va gabot talton vulegason<br /> va gabotvergumvelt',
 'tog-showtoc'                 => 'Nedira va ugak<br /> (icde teliz dem lo 3 gabot)',
-'tog-rememberpassword'        => 'Va jinaf remravlem setiker (cookie)',
-'tog-editwidth'               => 'Betaxo mantanhon nediwer',
+'tog-rememberpassword'        => 'Va jinaf remravlem setiker (cookie) (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => 'Kosuzdasikira va jinon betayan bueem',
 'tog-watchdefault'            => 'Va jinon reduyun ik betayan telizeem suzdá',
 'tog-watchmoves'              => 'Kosuzdasikira va jinon arrundayan bueem',
@@ -430,7 +429,7 @@ Me vulkul da rupeson va "Lodamaceem" bu va intaf {{SITENAME}} rotuilkal.',
 'yourname'                   => 'Rinaf favesikyolt',
 'yourpassword'               => 'Rinaf remravlem',
 'yourpasswordagain'          => 'Va rinaf remravlem tolon bazel',
-'remembermypassword'         => 'Setikera va jinaf remravlem (cookie)',
+'remembermypassword'         => 'Setikera va jinaf remravlem (cookie) (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'             => 'Rinaf ind',
 'externaldberror'            => 'Ont divefa origakrokla va pilkomodara ont va rinafa divefa pata me ronuskel.',
 'login'                      => 'Pilkomodá',
@@ -601,7 +600,6 @@ Dere, kan rinaf suteks ik suteks male sangiskafa nuyafa klita, anton webel !
 'copyrightwarning2'                => "Vay stragal da kot webeks va {{SITENAME}} gan ar webesik zo robetar ike zo roataler ike zo rosular. Ede me djumel da rinaf suteks yo zo robetad, vaon batliz me staksel !<br />
 Rin dere abdiplekul da va webeks miv suteyel ike mal sangiskafa ok gundafa nuyafa klita ksudal (va $1 loon wil).
 '''VA COPYRIGHT SUTEKS ARIEKON MERICTANON VOL WEBEL !'''",
-'longpagewarning'                  => "'''WALZERA : batu bu tir kaikasu va $1 ko; konaki exulesiki va bu pokefu ok kaikefu gu 32 ko bak sutelara pofejed. Ton lopinaf gabot yo va bu rotir gosolparsal.'''",
 'longpageerror'                    => "'''ROKLA : Atoen krent tir $1 kilobytes. Batcoba tir lodabrotcafa dam $2 kilobytes cuge. In tir merogiwan.'''",
 'readonlywarning'                  => "'''OBRAL : batu bu kiewaginon zo abdinendar, acum va betara dure me rogiwatal. Ko iyeltak ta radimifa giwara va krent roksudal.'''",
 'protectedpagewarning'             => "'''WALZERA : batu bu zo nendar. Antaf ristus favesik vaon robetar.'''",
@@ -1077,7 +1075,6 @@ Ede va man iyeltak soe co-djukalvajal, vay dimpil ise va warzaf yolt favel.
 'fileexists-shared-forbidden' => 'Koe pakano iyeltakxo milyoltaf iyeltak ixam tir.
 Ede va man iyeltak soe co-djukalvajal, vay dimpil ise va warzaf yolt favel. [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'Bat iyeltak tir jontolaca ke {{PLURAL:$1|iyeltak|iyeltak}}:',
-'successfulupload'            => 'Ksudanhara',
 'uploadwarning'               => 'Obral !',
 'savefile'                    => 'Giwara va iyeltak',
 'uploadedimage'               => '« [[$1]] » ksudayan mo zanisiko',
@@ -1094,6 +1091,7 @@ Ede va man iyeltak soe co-djukalvajal, vay dimpil ise va warzaf yolt favel. [[Fi
 
 Gokrafial ede tolkalvajara va bat iyeltak tir vodanhafa.
 Sulara \"log\" va batu bu krafiason batlize zo nedir :",
+'upload-success-subj'         => 'Ksudanhara',
 
 'upload-proto-error'     => 'Kitsendaj',
 'upload-file-error'      => 'Koefa rokla',
@@ -1379,7 +1377,6 @@ L'adresse électronique que vous avez indiquée dans vos préférences apparaît
 # Watchlist
 'watchlist'            => 'Suzdasiki',
 'mywatchlist'          => 'Jinafi suzdasiki',
-'watchlistfor'         => "(tori '''$1''')",
 'nowatchlist'          => 'Rinafi suzdasiki va nedoy teliz ruldar.',
 'watchlistanontext'    => 'Ta wira ik betara va ra ke rinafi suzdasiki vay $1.',
 'watchnologin'         => 'Dogluyariskaf',
@@ -1639,7 +1636,6 @@ Va lazavanha (tulon ozwason va cidayanu bu se) vlevon bazel !',
 'ipb-edit-dropdown'        => 'Betara va elekaralazava',
 'ipb-unblock-addr'         => 'Va $1 dimelekara',
 'ipb-unblock'              => 'Dimelekara va favesikyolt ok IP mane',
-'ipb-blocklist-addr'       => 'Tis elekareem va $1',
 'ipb-blocklist'            => 'Wira va tis elekareem',
 'ipb-blocklist-contribs'   => 'Webereem ke $1',
 'unblockip'                => 'Grielekara va IP mane',
@@ -1964,10 +1960,10 @@ $1',
 # Media information
 'thumbsize'            => 'Aluklum :',
 'widthheightpage'      => '$1×$2, $3 {{PLURAL:$3|bu|bu}}',
-'file-info'            => '(iyeltakaldo : $1, MIME ord : $2)',
-'file-info-size'       => '($1 × $2 pixel, iyeltakaldo : $3, MIME ord : $4)',
+'file-info'            => 'iyeltakaldo : $1, MIME ord : $2',
+'file-info-size'       => '$1 × $2 pixel, iyeltakaldo : $3, MIME ord : $4',
 'file-nohires'         => '<small>Me roderaykan logijaf lum.</small>',
-'svg-long-desc'        => '(SVG iyeltak, prekson $1 × $2 pixels, iyeltakaldo : $3)',
+'svg-long-desc'        => 'SVG iyeltak, prekson $1 × $2 pixels, iyeltakaldo : $3',
 'show-big-image'       => 'Geltraf lum',
 'show-big-image-thumb' => '<small>Lum ke bata abdinedira : $1 × $2 pixels</small>',
 

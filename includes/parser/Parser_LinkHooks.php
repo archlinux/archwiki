@@ -1,5 +1,11 @@
 <?php
 /**
+ * Modified version of the PHP parser with hooks for wiki links; experimental
+ *
+ * @file
+ */
+
+/**
  * Parser with LinkHooks experiment
  * @ingroup Parser
  */
@@ -78,9 +84,9 @@ class Parser_LinkHooks extends Parser
 	 *
 	 * @public
 	 *
-	 * @param integer|string $ns The Namespace ID or regex pattern if SLH_PATTERN is set
-	 * @param mixed $callback The callback function (and object) to use
-	 * @param integer $flags a combination of the following flags:
+	 * @param $ns Integer or String: the Namespace ID or regex pattern if SLH_PATTERN is set
+	 * @param $callback Mixed: the callback function (and object) to use
+	 * @param $flags Integer: a combination of the following flags:
 	 *     SLH_PATTERN   Use a regex link pattern rather than a namespace
 	 *
 	 * @return The old callback function for this name, if any
@@ -111,8 +117,6 @@ class Parser_LinkHooks extends Parser
 	 * @private
 	 */
 	function replaceInternalLinks2( &$s ) {
-		global $wgContLang;
-
 		wfProfileIn( __METHOD__ );
 
 		wfProfileIn( __METHOD__.'-setup' );
@@ -128,7 +132,6 @@ class Parser_LinkHooks extends Parser
 			$titleRegex = "/^([{$tc}]+)$/sD";
 		}
 
-		$sk = $this->mOptions->getSkin();
 		$holders = new LinkHolderArray( $this );
 		
 		if( is_null( $this->mTitle ) ) {
@@ -136,13 +139,7 @@ class Parser_LinkHooks extends Parser
 			wfProfileOut( __METHOD__.'-setup' );
 			throw new MWException( __METHOD__.": \$this->mTitle is null\n" );
 		}
-		$nottalk = !$this->mTitle->isTalkPage();
-		
-		if($wgContLang->hasVariants()) {
-			$selflink = $wgContLang->convertLinkToAllVariants($this->mTitle->getPrefixedText());
-		} else {
-			$selflink = array($this->mTitle->getPrefixedText());
-		}
+
 		wfProfileOut( __METHOD__.'-setup' );
 		
 		$offset = 0;
@@ -268,9 +265,10 @@ class Parser_LinkHooks extends Parser
 		if( $return === false ) {
 			# False (no link) was returned, output plain wikitext
 			# Build it again as the hook is allowed to modify $paramText
-			return isset($paramText) ? "[[$titleText|$paramText]]" : "[[$titleText]]";
+			$return = isset($paramText) ? "[[$titleText|$paramText]]" : "[[$titleText]]";
 		}
 		# Content was returned, return it
+		wfProfileOut( __METHOD__ );
 		return $return;
 	}
 	

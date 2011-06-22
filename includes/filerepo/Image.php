@@ -1,8 +1,14 @@
 <?php
+/**
+ * Backward compatibility code for MW < 1.11
+ *
+ * @file
+ */
 
 /**
  * Backwards compatibility class
- * @deprecated
+ *
+ * @deprecated. Will be removed in 1.18!
  * @ingroup FileRepo
  */
 class Image extends LocalFile {
@@ -17,7 +23,7 @@ class Image extends LocalFile {
 	 * Do not use in core code.
 	 * @deprecated
 	 */
-	static function newFromTitle( $title, $time = false ) {
+	static function newFromTitle( $title, $repo, $time = null ) {
 		wfDeprecated( __METHOD__ );
 		$img = wfFindFile( $title, array( 'time' => $time ) );
 		if ( !$img ) {
@@ -30,7 +36,7 @@ class Image extends LocalFile {
 	 * Wrapper for wfFindFile(), for backwards-compatibility only.
 	 * Do not use in core code.
 	 *
-	 * @param string $name name of the image, used to create a title object using Title::makeTitleSafe
+	 * @param $name String: name of the image, used to create a title object using Title::makeTitleSafe
 	 * @return image object or null if invalid title
 	 * @deprecated
 	 */
@@ -55,8 +61,8 @@ class Image extends LocalFile {
 	 * Note that fromSharedDirectory will only use the shared path for files
 	 * that actually exist there now, and will return local paths otherwise.
 	 *
-	 * @param string $name	Name of the image, without the leading "Image:"
-	 * @param boolean $fromSharedDirectory	Should this be in $wgSharedUploadPath?
+	 * @param $name String: name of the image, without the leading "Image:"
+	 * @param $fromSharedDirectory Boolean: Should this be in $wgSharedUploadPath?
 	 * @return string URL of $name image
 	 * @deprecated
 	 */

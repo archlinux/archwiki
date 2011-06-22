@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Maintenance script to create an account and grant it administrator rights
  *
@@ -18,11 +17,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @ingroup Maintenance
  * @author Rob Church <robchur@gmail.com>
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class CreateAndPromote extends Maintenance {
 
@@ -35,41 +35,41 @@ class CreateAndPromote extends Maintenance {
 	}
 
 	public function execute() {
-		$username = $this->getArg(0);
-		$password = $this->getArg(1);
-		
+		$username = $this->getArg( 0 );
+		$password = $this->getArg( 1 );
+
 		$this->output( wfWikiID() . ": Creating and promoting User:{$username}..." );
-		
+
 		$user = User::newFromName( $username );
-		if( !is_object( $user ) ) {
+		if ( !is_object( $user ) ) {
 			$this->error( "invalid username.", true );
-		} elseif( 0 != $user->idForName() ) {
+		} elseif ( 0 != $user->idForName() ) {
 			$this->error( "account exists.", true );
 		}
 
 		# Try to set the password
 		try {
 			$user->setPassword( $password );
-		} catch( PasswordError $pwe ) {
+		} catch ( PasswordError $pwe ) {
 			$this->error( $pwe->getText(), true );
 		}
 
 		# Insert the account into the database
 		$user->addToDatabase();
 		$user->saveSettings();
-	
+
 		# Promote user
 		$user->addGroup( 'sysop' );
-		if( $this->hasOption( 'bureaucrat' ) )
+		if ( $this->hasOption( 'bureaucrat' ) )
 			$user->addGroup( 'bureaucrat' );
-	
+
 		# Increment site_stats.ss_users
 		$ssu = new SiteStatsUpdate( 0, 0, 0, 0, 1 );
 		$ssu->doUpdate();
-	
+
 		$this->output( "done.\n" );
 	}
 }
 
 $maintClass = "CreateAndPromote";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );

@@ -36,6 +36,21 @@ $namespaceAliases = array(
 	'Ọ̀rọ̀_àwòrán' => NS_FILE_TALK,
 );
 
+$specialPageAliases = array(
+	'Userlogin'                 => array( 'ÌwọléOníse' ),
+	'Userlogout'                => array( 'Ìbọ̀sódeOníṣe' ),
+	'Preferences'               => array( 'ÀwọnÌfẹ́ràn' ),
+	'Recentchanges'             => array( 'ÀwọnÀtúnṣeTuntun' ),
+	'Newpages'                  => array( 'ÀwọnOjúewéTuntun' ),
+	'Allpages'                  => array( 'GbogboÀwọnOjúewé' ),
+	'Specialpages'              => array( 'ÀwọnOjúewéPàtàkì' ),
+	'Contributions'             => array( 'ÀwọnÀfikún' ),
+	'Categories'                => array( 'ÀwọnẸ̀ka' ),
+	'Mypage'                    => array( 'OjúwéMi' ),
+	'Mytalk'                    => array( 'Ọ̀rọ̀Mi' ),
+	'Mycontributions'           => array( 'ÀwọnÀfikúnMi' ),
+);
+
 $messages = array(
 # User preference toggles
 'tog-underline'               => 'Fàlàsí àwọn ijápọ̀:',
@@ -52,8 +67,7 @@ $messages = array(
 'tog-editsection'             => 'Jọ̀wọ́ àtúnṣe abala láti inú àwọn ìjápọ̀',
 'tog-editsectiononrightclick' => 'Ìgbàláyè àtúnṣe abala nípa klííkì ọ̀tún lórí àkọlé abala (JavaScript pọndandan)',
 'tog-showtoc'                 => 'Ìfihàn tábìlì àkóónú (fún àwọn ojúewé tó ní ju orí ọ̀rọ̀ 3 lọ)',
-'tog-rememberpassword'        => "Sè'rántí ọ̀rọ̀ìpamí mi lórí kọmputa yi",
-'tog-editwidth'               => 'Fífẹ àpótí àtúnṣe kó gba gbogbo ààyè ojúìran',
+'tog-rememberpassword'        => "Ṣè'rántí àkọọ́lẹ̀ ìwọlé mi lórí agbétàkùn yìí (fún {{PLURAL:$1|ọjọ́|ọjọ́}} $1 pípẹ́jùlọ)",
 'tog-watchcreations'          => "Ṣ'àfikún ojúewé tí mo dá mọ́ ìmójútó mi",
 'tog-watchdefault'            => "S'àfikún ojúewé tí mo s'àtúnse mọ́ ìmójútó mi",
 'tog-watchmoves'              => "S'àfikún ojúewé tí mo yípò mọ́ ìmójútó mi",
@@ -195,30 +209,19 @@ $messages = array(
 'faqpage'        => 'Project:FAQ',
 
 # Vector skin
-'vector-action-addsection'   => 'Àfikún orí-ọ̀rọ̀',
-'vector-action-delete'       => 'Ìparẹ́',
-'vector-action-move'         => 'Ìyípòdà',
-'vector-action-protect'      => 'Àbò',
-'vector-action-undelete'     => 'Ìmúkúrò ìparẹ́',
-'vector-action-unprotect'    => 'Ìjáwọ́ àbò',
-'vector-namespace-category'  => 'Ẹ̀ka',
-'vector-namespace-help'      => 'Ojúewé ìrànwọ́',
-'vector-namespace-image'     => 'Fáìlì',
-'vector-namespace-main'      => 'Ojúewé',
-'vector-namespace-media'     => 'Ojúewé amóhùnmáwòrán',
-'vector-namespace-mediawiki' => 'Ìránṣẹ́',
-'vector-namespace-project'   => 'Ojúewé iṣẹ́-ọwọ́',
-'vector-namespace-special'   => 'Ojúewé pàtàkì',
-'vector-namespace-talk'      => 'Ìfọ̀rọ̀wérọ̀',
-'vector-namespace-template'  => 'Àdàkọ',
-'vector-namespace-user'      => 'Ojúewé oníṣe',
-'vector-view-create'         => "Ṣ'èdá",
-'vector-view-edit'           => 'Àtúnṣe',
-'vector-view-history'        => 'Wo ìtàn',
-'vector-view-view'           => 'Kíkà',
-'vector-view-viewsource'     => 'Wo àmìọ̀rọ̀',
-'actions'                    => 'Àwọn ìgbéṣe',
-'namespaces'                 => 'Àwọn orúkọàyè',
+'vector-action-addsection' => 'Àfikún orí-ọ̀rọ̀',
+'vector-action-delete'     => 'Ìparẹ́',
+'vector-action-move'       => 'Ìyípòdà',
+'vector-action-protect'    => 'Àbò',
+'vector-action-undelete'   => 'Ìmúkúrò ìparẹ́',
+'vector-action-unprotect'  => 'Ìjáwọ́ àbò',
+'vector-view-create'       => "Ṣ'èdá",
+'vector-view-edit'         => 'Àtúnṣe',
+'vector-view-history'      => 'Wo ìtàn',
+'vector-view-view'         => 'Kíkà',
+'vector-view-viewsource'   => 'Wo àmìọ̀rọ̀',
+'actions'                  => 'Àwọn ìgbéṣe',
+'namespaces'               => 'Àwọn orúkọàyè',
 
 'errorpagetitle'    => 'Àsìṣe',
 'returnto'          => 'Padà sí $1.',
@@ -280,6 +283,7 @@ $messages = array(
 Ẹ jọ̀wọ́ ẹ dúro ná díẹ̀ kí ẹ tó tún gbìyànjú láti wo ojúewé yìí.
 
 $1',
+'pool-errorunknown' => 'Àsìṣe àwámárìdí',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => 'Nípa {{SITENAME}}',
@@ -432,7 +436,8 @@ A ti ṣ'èdá àpamọ́ yín.
 'yourname'                   => 'Orúkọ oníṣe (username):',
 'yourpassword'               => 'Ọ̀rọ̀ìpamọ́:',
 'yourpasswordagain'          => 'Kọ ọ̀rọ̀ìpamọ́ lẹ́ẹ̀kansí:',
-'remembermypassword'         => "Sè'rántí ọ̀rọ̀ìpamí mi lórí kọmputa yi (cookies)",
+'remembermypassword'         => "Ṣè'rántí ìwọlé mi lórí kọ̀mpútà yìí (fún ó pẹ́ jù {{PLURAL:$1|ọjọ́|ọjọ́}} $1)",
+'securelogin-stick-https'    => 'Ìwàní sísopọ̀ mọ́ HTTPS lẹ́yín ìwọlé',
 'yourdomainname'             => 'Domain yín:',
 'externaldberror'            => 'Bóyá àsìṣe ìfidájú ibùdó dátà ló ṣẹlẹ̀ tàbí ẹ kò jẹ́ gbígbà ní ààyè láti sọ àpamọ́ òde yín di ọ̀tun.',
 'login'                      => 'Ìwọlé',
@@ -449,6 +454,7 @@ A ti ṣ'èdá àpamọ́ yín.
 'gotaccount'                 => "Ṣé ẹ ti ní àpamọ́ tẹ́lẹ̀? '''$1'''.",
 'gotaccountlink'             => "Ẹ w'ọlé",
 'createaccountmail'          => 'pẹ̀lú e-mail',
+'createaccountreason'        => 'Ìdíẹ̀:',
 'badretype'                  => 'Àwọn ọ̀rọ̀ìpamọ́ tí ẹ kọ kò jọ ra wọn.',
 'userexists'                 => 'Orúkọ oníṣe tí ẹ mú jẹ́ ti ẹlòmíràn.
 Ẹjọ̀wọ́ ẹ yan orúkọ mìíràn tó yàtọ̀.',
@@ -517,6 +523,9 @@ E-mail kankan kò ní jẹ́ fífiránṣẹ́ fún ìkankan nínú àwọn ìn�
 Ẹ jọ̀wọ́ ẹ dúró ná kí ẹ tó gbìyànjú lẹ́ẹ̀kan síi.',
 'loginlanguagelabel'         => 'Èdè: $1',
 
+# E-mail sending
+'php-mail-error-unknown' => 'Àsìṣe àìmọ̀ nínú ìgbéṣe mail() ti PHP',
+
 # Password reset dialog
 'resetpass'                 => 'Ìyípadà ọ̀rọ̀ìpamọ́',
 'resetpass_announce'        => 'Ẹ ti wọlé pẹ̀lú àmìọ̀rọ̀ e-mail ìgbàdíẹ̀.
@@ -567,11 +576,12 @@ Láti parí ìmúwọlẹ́, ẹ gbọ́dọ̀ ṣètò ọ̀rọ̀ìpamọ́ tu
 'showdiff'                         => 'Ìfihàn àwọn àtúnṣe',
 'anoneditwarning'                  => "'''Ìkìlọ̀:''' Ẹ kò tíì wọlé.
 Àdírẹ́ẹ̀sì IP yín yíò jẹ́ kíkọpamọ́ sínú ìwé ìtàn àtúnṣe ojúewé yìí.",
+'anonpreviewwarning'               => "''Ẹ kò tíì wọlé. Àdírẹ́ẹ̀sì IP yín yíò jẹ́ kíkọsílẹ̀ sínú ìwé ìtàn àtúnṣe ojúewé yìí tí ẹ bá ṣàmúpamọ́ rẹ̀.''",
 'missingsummary'                   => "'''Ìránlétí:''' Ẹ kò pèsè àkótán fún àtúnṣe yìí
 Tí ẹ bá tẹ Ìmúpamọ́ lẹ́ẹ̀kansi, àtúnṣe yín yíò jẹ̀ mímúpamọ́ láìní kankan.",
 'missingcommenttext'               => 'Ẹjọ̀wọ́ ẹ ṣe áríwí ní ìsàlẹ̀',
-'missingcommentheader'             => "'''Ìránlétí:''' Ẹ kò pèsè àkọlé kankan fún àríwí yìí.
-Tí ẹ bá tẹ Ìmúpamọ́ lẹ́ẹ̀kansi, àtúnṣe yín yíò jẹ́ mímúpamọ́ láìní kankan.",
+'missingcommentheader'             => "'''Ìránlétí:''' Ẹ kò pèsè àkọlé/oríọ̀rọ̀ kankan fún àríwí yìí.
+Tí ẹ bá tẹ \"{{int:savearticle}}\" lẹ́ẹ̀kansi, àtúnṣe yín yíò jẹ́ mímúpamọ́ láìní kankan.",
 'summary-preview'                  => 'Àkọ́yẹ̀wò àkótán:',
 'subject-preview'                  => 'Àyẹ̀wò àkọlé',
 'blockedtitle'                     => 'Ìdínà oníṣe',
@@ -647,6 +657,12 @@ T'óbá sepé àsìse ló gbé yin dé bi, ẹ kọn bọ́tìnì ìpadàsẹ́y
 '''Kò tíì jẹ́ mímúpamọ́!'''",
 'userjspreview'                    => "''''Ẹ mọ́ gbàgbé pé àdánwò/àkọ́yẹ̀wò JavaScript oníṣe yín nìyí.'''
 '''Kò tíì jẹ́ mímúpamọ́!'''",
+'sitecsspreview'                   => "'''Ẹ rántí pé àkọ́yẹ̀wò CSS nìyí.'''
+'''Kò tíì jẹ́ mímúpamọ!'''",
+'sitejspreview'                    => "'''Ẹ rántí pé àkọ́yẹ̀wò àmìọ̀rọ̀ JavaScript nìyí.'''
+'''Kò tíì jẹ́ mímúpamọ!'''",
+'userinvalidcssjstitle'            => "'''Ìkìlọ̀:''' Kò sí awọ-ìbojú \"\$1\".
+Ẹ rántí pé àwọn ojúewé àkànṣe .css àti .js únlo àkọlé onílẹ́tà kékeré, f.a. {{ns:user}}:Foo/vector.css yàtò sí {{ns:user}}:Foo/Vector.css.",
 'updated'                          => '(Sísọdọ̀tun)',
 'note'                             => "'''Àkíyèsí:'''",
 'previewnote'                      => "'''Ẹ rántí pé àyẹ̀wò lásán nì yí.'''
@@ -671,9 +687,6 @@ Tí kò bá ṣiṣẹ́ síbẹ̀, ẹ gbìyànjú láti [[Special:UserLogout|j
 Tí ẹ kò bá fẹ́ kí ìkọọ́lẹ̀ yín ó jẹ́ títúnṣe tàbí kì ó jẹ́ pípìn kiri lọ́ná tí kò wù yín, ẹ mọ́ mù wá síbí.<br />
 Bákannà ẹ tún ṣèlérí fún wa wípé ẹ̀yin lẹkọ́ fúnra arayín, tàbí ẹ wòókọ láti agbègbè ìgboro tàbí irú ìtìlẹ́yín ọ̀fẹ́ bíi bẹ́ẹ̀.
 '''Ẹ MỌ́ MÚ IṢẸ́ TÓ NÍ Ẹ̀TỌ́ÀWÒKỌ SÍLẸ̀ LÁÌ GBÀṢẸ!'''",
-'longpagewarning'                  => "'''ÌKILỌ̀: Ojúewé yìí jẹ́ $1 kilobytes ní gúngùn;
-àwọn browsers míràn le è ní ṣòro láti ṣ'àtúnṣe àwọn ojúewé tó tó tàbí tògùnju 32 kb lọ.
-Ẹ jọ̀wọ́ ẹ rò ó wò bóyá ẹ lè fọ́ ojúewé ọ̀ún sí abala kéékèké.'''",
 'longpageerror'                    => "'''Àsìṣe: Ìkọ̀wé tí ẹ fisílẹ̀ gùn tó $1 Kilobytes, èyí gùn ju $2 kilobytes lọ tó jẹ́ àjà.'''
 Kò ṣe é múpamọ́.",
 'protectedpagewarning'             => "'''Ìkìlọ̀: Ojúewé yìí ti jẹ́ títìpa, nítoríẹ̀ àwọn alámòjútó nìkan ni wọ́n ní ẹ̀tọ́ láti ṣàtúnṣe rẹ̀.'''
@@ -816,6 +829,8 @@ Gẹ́gẹ́ bíi olùmójútó ẹ ṣì le wo ìyàtọ̀ yìí; ẹ̀kúnrẹ
 'revdelete-log'               => 'Ìdíẹ̀:',
 'revdelete-submit'            => 'Ṣe é sí {{PLURAL:$1|àtúnyẹ̀wò|àwọn àtúnyẹ̀wò}} ṣíṣàyàn',
 'revdel-restore'              => 'ìyípadà ìríran',
+'revdel-restore-deleted'      => 'àwọn àtúnyẹ̀wò píparẹ́',
+'revdel-restore-visible'      => 'àwọn àtúnyẹ̀wò aṣeéfojúrí',
 'pagehist'                    => 'Ìtàn ojúewé',
 'deletedhist'                 => 'Ìtàn ìparẹ́',
 'revdelete-content'           => 'àkóónú',
@@ -860,10 +875,13 @@ Gẹ́gẹ́ bíi olùmójútó ẹ ṣì le wo ìyàtọ̀ yìí; ẹ̀kúnrẹ
 # Diffs
 'history-title'            => 'Ìtàn àtúnyẹ̀wò fún "$1"',
 'difference'               => '(Ìyàtọ̀ láàrin àwọn àtúnyẹ́wò)',
+'difference-multipage'     => '(Ìyàtọ̀ láàrin àwọn ojúewé)',
 'lineno'                   => 'Ìlà $1:',
 'compareselectedversions'  => 'Ìfiwéra àwọn àtúnṣe ìṣàyàn',
 'showhideselectedversions' => 'Ìfihàn/ìbòmọ́lẹ̀ àwọn àtúnyẹ̀wò ṣíṣàyàn',
 'editundo'                 => 'dápadà',
+'diff-multi'               => '({{PLURAL:$1|Àtúnyẹ̀wò inú àrin kan|Àwọn àtúnyẹ̀wò inú àrin $1}} látọwọ́ {{PLURAL:$2|oníṣe kan|àwọn oníṣe $2}} kò jẹ́ fífihàn)',
+'diff-multi-manyusers'     => '({{PLURAL:$1|Àtúnyẹ̀wò inú àrin kan|Àwọn àtúnyẹ̀wò inú àrin $1}} látọwọ́ {{PLURAL:$2|oníṣe|àwọn oníṣe}} tó pọ̀ju $2 lọ kò jẹ́ fífihàn)',
 
 # Search results
 'searchresults'                    => 'Àwọn èsì àwárí',
@@ -970,6 +988,7 @@ Ní báyìí ná ẹ le ṣàwárí lọ́dọ̀ Google.
 'searchresultshead'           => 'Àwárí',
 'resultsperpage'              => 'Àwọn èsì ní ojúewé kọ̀ọ̀kan:',
 'contextlines'                => 'Ìye ìlà lórí èsì kọ̀ọ̀kan:',
+'stub-threshold-disabled'     => 'Dídálẹ́kun',
 'recentchangesdays'           => 'Iye ọjọ́ láti fihàn nínú àwọn àtúnṣe tuntun:',
 'recentchangesdays-max'       => '{{PLURAL:$1|Ọjọ́|Ọjọ́}} $1 púpọ̀jùlọ',
 'recentchangescount'          => 'Iye àtúnṣe láti fihàn látìbẹ̀rẹ̀:',
@@ -1029,7 +1048,7 @@ Bákannáà ẹ le è yàn láti jẹ́ kí àwọn ẹlòmíràn kó báyiín s
 'prefs-advancedrendering'     => 'Àwọn àṣàyàn onígíga',
 'prefs-advancedsearchoptions' => 'Àwọn àṣàyàn onígíga',
 'prefs-advancedwatchlist'     => 'Àwọn àṣàyàn onígíga',
-'prefs-display'               => 'Ìfihàn àwọn àṣàyàn',
+'prefs-displayrc'             => 'Ìfihàn àwọn àṣàyàn',
 'prefs-diffs'                 => 'Àwọn ìyàtọ̀',
 
 # User rights
@@ -1093,6 +1112,7 @@ Bákannáà ẹ le è yàn láti jẹ́ kí àwọn ẹlòmíràn kó báyiín s
 'right-block'                 => 'Ìdínà àwọn oníṣe yìókù láti ṣàtúnṣe',
 'right-blockemail'            => 'Ìdínà oníṣe kan láti fi e-mail ránṣẹ́',
 'right-hideuser'              => 'Ìdínà orúkọ oníṣe kan, ìbòmọ́lẹ̀ rẹ̀ kúrò ní ìgboro',
+'right-unblockself'           => 'Ìmúkúrò ìdínà ara wọn',
 'right-editinterface'         => 'Àtúnṣe ìfojúkojú oníṣe',
 'right-editusercssjs'         => 'Àtúnṣe àwọn fáìlì CSS àti JS ti àwọn oníṣe mìíràn',
 'right-editusercss'           => 'Àtúnṣe àwọn fáìlì CSS ti àwọn oníṣe mìíràn',
@@ -1143,12 +1163,8 @@ Bákannáà ẹ le è yàn láti jẹ́ kí àwọn ẹlòmíràn kó báyiín s
 'recentchanges'                     => 'Àwọn àtúnṣe tuntun',
 'recentchanges-legend'              => 'Àwọn àṣàyàn fún àtúnṣe tuntun',
 'recentchanges-feed-description'    => 'Ẹ tẹ̀ lé àwọn àtúnṣe àìpẹ́ ọjọ́ sí wiki nínú àkótán feed yìí.',
-'recentchanges-label-legend'        => 'Àlàyé: $1.',
-'recentchanges-legend-newpage'      => '$1 - ojúewé tuntun',
 'recentchanges-label-newpage'       => 'Àtúnṣe yìí dá ojúewé tuntun',
-'recentchanges-legend-minor'        => '$1 - àtúnṣe kékeré',
 'recentchanges-label-minor'         => 'Àtùnṣe kékeré nìyí',
-'recentchanges-legend-bot'          => '$1 - àtúnṣe bọt',
 'recentchanges-label-bot'           => 'Rọ́bọ́ọ̀tì ni ó ṣe àtúnṣe yìí',
 'rcnote'                            => "Lábẹ́ ni {{PLURAL:$1|àtúnṣe '''kan'''|àwọn àtúnṣe '''$1''' tí wọn gbẹ̀yìn}} láàrin {{PLURAL:$2|ọjọ́ kan|ọjọ́ '''$2'''}} sẹ́yìn ní ago $5, lọ́jọ́ $4.",
 'rcnotefrom'                        => "Àwọn àtúnṣe láti ''''$2''' (títí dé '''$1''' hàn) lábẹ́.",
@@ -1210,6 +1226,11 @@ Bákannáà ẹ le è yàn láti jẹ́ kí àwọn ẹlòmíràn kó báyiín s
 'minlength1'            => 'Ó kéréjù àwọn orúkọ fáìlì gbọdọ̀ jẹ́ lẹ́tà kan.',
 'badfilename'           => 'Orúkọ fáìlì ti yípadà sí "$1".',
 'filetype-badmime'      => 'Àwọn fáìlì MIME irú "$1" kò jẹ́ gbígbà láyè láti rù wọ́n sókè.',
+'empty-file'            => 'Fáílì tí ẹ fúnsílẹ̀ jẹ́ òfo nínú.',
+'file-too-large'        => 'Fáílì tí ẹ fúnsílẹ̀ jẹ́ títóbijù',
+'filename-tooshort'     => 'Orúkọ fáílì jẹ́ kíkéréjú.',
+'filetype-banned'       => 'Irú fáílì yìí ti jẹ́ dídí lọ́nà.',
+'illegal-filename'      => 'Orúkọ fáílì yìí kò jẹ́ gbígbàláàyè.',
 'fileexists'            => "Fáìlì kan tilẹ̀ wà pẹ̀lú orúkọ yìí, ẹ jọ̀wọ́ ẹ yẹ '''<tt>[[:$1]]</tt>''' wò tí kò bá dá yín lójú pé ẹ fẹ́ yipadà.
 [[$1|thumb]]",
 'fileexists-extension'  => "Fáìlì kan wà pẹ̀lú orúkọ tó jọra: [[$2|thumb]]
@@ -1217,7 +1238,6 @@ Bákannáà ẹ le è yàn láti jẹ́ kí àwọn ẹlòmíràn kó báyiín s
 * Orúkọ fáìlì tó wà: '''<tt>[[:$2]]</tt>'''
 Ẹ jọ̀wọ́ ẹ mú orúkọ tó yàtọ̀.",
 'file-exists-duplicate' => 'Fáìlì yìí jẹ́ àwòkọ kan {{PLURAL:$1|fáìlì yìí|àwọn fáìlì wọ̀nyí}}:',
-'successfulupload'      => 'Ìjásírere ìrùsókè',
 'uploadwarning'         => 'Ìkìlọ̀ ìrùsókè',
 'savefile'              => 'Ìmúpamọ́ fáìlì',
 'uploadedimage'         => '"[[$1]]" ti jẹ́rírùsókè',
@@ -1234,6 +1254,14 @@ Bákannáà ẹ le è yàn láti jẹ́ kí àwọn ẹlòmíràn kó báyiín s
 'upload-description'    => 'Ìjúwe fáìlì',
 'upload-options'        => 'Àwọn àṣàyàn ìrùsókè',
 'watchthisupload'       => "M'ójútó fáilì yìí",
+'upload-success-subj'   => 'Ìjásírere ìrùsókè',
+'upload-success-msg'    => 'Ìrùsókè yín láti [$2] ti jásírere. Ó ṣeéwò níbí: [[:{{ns:file}}:$1]]',
+'upload-failure-subj'   => 'Ìṣòro ìrùsókè',
+'upload-failure-msg'    => 'Ìṣòro kan wà pẹ̀lú fọ́ọ̀mù ìrùsókè yín [$2]:
+
+$1',
+'upload-warning-subj'   => 'Ìkìlọ̀ ìrùsókè',
+'upload-warning-msg'    => 'Ìṣòro kan wà pẹ̀lú ìrùsókè yín láti [$2]. Ẹ le padà sí orí [[Special:Upload/stash/$1|fọ́ọ́mù ìrùsókè]] láti ṣàtúnṣe ìṣòro náà.',
 
 'upload-proto-error'        => 'Prótókólù àìtọ́',
 'upload-file-error'         => 'Àsiṣe ínú',
@@ -1355,7 +1383,6 @@ Bákannáà ẹ le è yàn láti jẹ́ kí àwọn ẹlòmíràn kó báyiín s
 'statistics-edits-average'     => 'Iye àtúnṣe apínlàrin fún ojúewé kọ̀ọ̀kan',
 'statistics-views-total'       => 'Àpapọ̀ iye ìwò',
 'statistics-views-peredit'     => 'Iye ìwò fún àtúnṣe kọ̀ọ̀kan',
-'statistics-jobqueue'          => 'Ìgùn [http://www.mediawiki.org/wiki/Manual:Job_queue ìlà iṣẹ́ gbígbíṣe]',
 'statistics-users'             => '[[Special:ListUsers|Àwọn oníṣe]] ajẹ́fífilórúkọsílẹ̀',
 'statistics-users-active'      => 'Àwọn oníṣe agbéṣe',
 'statistics-users-active-desc' => 'Àwọn oníṣe tí wọ́n ti ṣe ìgbéṣe kan ní {{PLURAL:$1|ọjọ́ kan|ọjọ́ $1}} sẹ́yìn',
@@ -1518,7 +1545,7 @@ Bákannáà ẹ le è yàn láti jẹ́ kí àwọn ẹlòmíràn kó báyiín s
 # Watchlist
 'watchlist'            => 'Ìmójútó mi',
 'mywatchlist'          => 'Ìmójútó mi',
-'watchlistfor'         => "(fún '''$1''')",
+'watchlistfor2'        => 'Fún $1 $2',
 'nowatchlist'          => 'Ẹ kò ní ohun kankan nínú ìmójútó yín.',
 'watchlistanontext'    => 'Ẹ jọ̀wọ́ $1 láti wò tàbí ṣàtúnṣe àwọn ohun inú ìmójútó yín.',
 'watchnologin'         => 'Ẹ kò tíì wọlé',
@@ -1722,6 +1749,7 @@ $1',
 Àkọsílẹ̀ ìdínà àìpẹ́ nìyí nísàlẹ̀ fún ìtọ́kasí:',
 'sp-contributions-search'         => 'Àwáàrí fún àwọn àfikún',
 'sp-contributions-username'       => 'Àdírẹ́ẹ̀sì IP tàbí orúkọ oníṣe:',
+'sp-contributions-toponly'        => 'Ìfihàn àwọn àtúnṣe tí wọn jẹ́ àtúnyẹ̀wò àìpẹ́ nìkan',
 'sp-contributions-submit'         => 'Ṣàwárí',
 
 # What links here
@@ -1972,6 +2000,7 @@ Ojúewé àdésí "[[:$1]]" wà tẹ́lẹ̀tẹ́lẹ̀.
 'tooltip-upload'                  => 'Bẹ̀rẹ̀ ìrùsókè',
 'tooltip-rollback'                => '"Ìyíṣẹ́yìn" ún ṣe ìdápadà àwọn àtúnṣe sí ojúewé yìí',
 'tooltip-undo'                    => '"Dápadà" ṣèyíṣẹ́yìn àtúnṣe yìí, yíò ṣí fọ́ọ̀mù àtúnṣe bíi àkọ́bojúwò. Ó gba ààyè láti sọ ìdí nínú àkótán.',
+'tooltip-preferences-save'        => 'Ìmúpamọ́ àwọn ìfẹ́ràn',
 
 # Attribution
 'anonymous'        => '{{PLURAL:$1|Oníṣe|Àwọn oníṣe}} aláìlórúkọ ti {{SITENAME}}',
@@ -2009,13 +2038,14 @@ Ojúewé àdésí "[[:$1]]" wà tẹ́lẹ̀tẹ́lẹ̀.
 # Media information
 'thumbsize'            => 'Ìtóbi àwòrán kékeré:',
 'widthheightpage'      => '$1×$2, $3 {{PLURAL:$3|ojúewé|àwọn ojúewé}}',
-'file-info'            => '(ìtóbi faili: $1, irú MIME: $2)',
-'file-info-size'       => '($1 × $2 pixel, ìtóbi faili: $3, irú MIME: $4)',
+'file-info'            => 'ìtóbi faili: $1, irú MIME: $2',
+'file-info-size'       => '$1 × $2 pixel, ìtóbi faili: $3, irú MIME: $4',
 'file-nohires'         => '<small>Kò sí ìgbéhàn gíga jù báun lọ.</small>',
-'svg-long-desc'        => '(faili SVG, pẹ̀lú $1 × $2 pixels, ìtòbi faili: $3)',
+'svg-long-desc'        => 'faili SVG, pẹ̀lú $1 × $2 pixels, ìtòbi faili: $3',
 'show-big-image'       => 'Pẹ̀lú ìgbéhàn gíga',
 'show-big-image-thumb' => '<small>Ìtóbi àkọ́kọ́yẹ̀wò yìí: $1 × $2 pixels</small>',
 'file-info-gif-looped' => 'lílọ́po',
+'file-info-png-looped' => 'lílọ́po',
 
 # Special:NewFiles
 'newimages'             => 'Ọ̀dẹ̀dẹ̀ àwòrán àwọn faili tuntun',
@@ -2181,6 +2211,13 @@ Tóbájẹ́pé fáìlì ọ̀hún ti jẹ́ títúnṣe sí bóṣewà ní bẹ
 'tags-title'    => 'Àwọn àlẹ̀mọ́',
 'tags-edit'     => 'àtúnṣe',
 'tags-hitcount' => '{{PLURAL:$1|Àtúnṣe|Àwọn àtúnṣe}} $1',
+
+# Special:ComparePages
+'compare-page1'  => 'Ojúewé 1',
+'compare-page2'  => 'Ojúewé 2',
+'compare-rev1'   => 'Àtúnyẹ̀wò 1',
+'compare-rev2'   => 'Àtúnyẹ̀wò 2',
+'compare-submit' => 'Ṣàfiwé',
 
 # Database error messages
 'dberr-header' => 'Wiki yìí ní ìsòro',

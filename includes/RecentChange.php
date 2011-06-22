@@ -2,6 +2,7 @@
 
 /**
  * Utility class for creating new RC entries
+ *
  * mAttribs:
  *  rc_id           id of the row in the recentchanges table
  *  rc_timestamp    time the entry was made
@@ -73,7 +74,6 @@ class RecentChange {
 		$res = $dbr->select( 'recentchanges', '*', array( 'rc_id' => $rcid ), __METHOD__ );
 		if( $res && $dbr->numRows( $res ) > 0 ) {
 			$row = $dbr->fetchObject( $res );
-			$dbr->freeResult( $res );
 			return self::newFromRow( $row );
 		} else {
 			return null;
@@ -115,6 +115,10 @@ class RecentChange {
 		$this->mExtra = $extra;
 	}
 
+	/**
+	 *
+	 * @return Title
+	 */
 	public function &getTitle() {
 		if( $this->mTitle === false ) {
 			$this->mTitle = Title::makeTitle( $this->mAttribs['rc_namespace'], $this->mAttribs['rc_title'] );
@@ -208,24 +212,27 @@ class RecentChange {
 	}
 
 	/**
-	 * Send some text to UDP
+	 * Send some text to UDP.
+	 * @see RecentChange::cleanupForIRC
 	 * @param $line String: text to send
-	 * @param $prefix String
-	 * @param $address String: address
+	 * @param $address String: defaults to $wgRC2UDPAddress.
+	 * @param $prefix String: defaults to $wgRC2UDPPrefix.
+	 * @param $port Int: defaults to $wgRC2UDPPort. (Since 1.17)
 	 * @return Boolean: success
 	 */
-	public static function sendToUDP( $line, $address = '', $prefix = '' ) {
+	public static function sendToUDP( $line, $address = '', $prefix = '', $port = '' ) {
 		global $wgRC2UDPAddress, $wgRC2UDPPrefix, $wgRC2UDPPort;
 		# Assume default for standard RC case
 		$address = $address ? $address : $wgRC2UDPAddress;
 		$prefix = $prefix ? $prefix : $wgRC2UDPPrefix;
+		$port = $port ? $port : $wgRC2UDPPort;
 		# Notify external application via UDP
 		if( $address ) {
 			$conn = socket_create( AF_INET, SOCK_DGRAM, SOL_UDP );
 			if( $conn ) {
 				$line = $prefix . $line;
 				wfDebug( __METHOD__ . ": sending UDP line: $line\n" );
-				socket_sendto( $conn, $line, strlen($line), 0, $address, $wgRC2UDPPort );
+				socket_sendto( $conn, $line, strlen($line), 0, $address, $port );
 				socket_close( $conn );
 				return true;
 			} else {
@@ -249,7 +256,7 @@ class RecentChange {
 	 *
 	 * @param $change Mixed: RecentChange or corresponding rc_id
 	 * @param $auto Boolean: for automatic patrol
-	 * @return See doMarkPatrolled(), or null if $change is not an existing rc_id
+	 * @return Array See doMarkPatrolled(), or null if $change is not an existing rc_id
 	 */
 	public static function markPatrolled( $change, $auto = false ) {
 		$change = $change instanceof RecentChange
@@ -576,7 +583,7 @@ class RecentChange {
 	/**
 	 * Get an attribute value
 	 *
-	 * @param $name Attribute name
+	 * @param $name String Attribute name
 	 * @return mixed
 	 */
 	public function getAttribute( $name ) {
@@ -667,7 +674,7 @@ class RecentChange {
 			$flag .= ($rc_new ? "N" : "") . ($rc_minor ? "M" : "") . ($rc_bot ? "B" : "");
 		}
 
-		if ( $wgRC2UDPInterwikiPrefix === true ) {
+		if ( $wgRC2UDPInterwikiPrefix === true && $wgLocalInterwiki !== false ) {
 			$prefix = $wgLocalInterwiki;
 		} elseif ( $wgRC2UDPInterwikiPrefix ) {
 			$prefix = $wgRC2UDPInterwikiPrefix;

@@ -1,7 +1,10 @@
 <?php
 /**
+ * External editors support
+ *
  * License: Public domain
  *
+ * @file
  * @author Erik Moeller <moeller@scireview.de>
  */
 
@@ -15,7 +18,6 @@
  * and save the modified data back to the server.
  *
  */
-
 class ExternalEdit {
 
 	function __construct( $article, $mode ) {
@@ -51,6 +53,11 @@ class ExternalEdit {
 		}
 		$special=$wgLang->getNsText(NS_SPECIAL);
 		$control = <<<CONTROL
+; You're seeing this file because you're using Mediawiki's External Editor
+; feature. This is probably because you selected use external editor
+; in your preferences. To edit normally, either disable that preference
+; or go to the URL $url .
+; See http://www.mediawiki.org/wiki/Manual:External_editors for details.
 [Process]
 Type=$type
 Engine=MediaWiki

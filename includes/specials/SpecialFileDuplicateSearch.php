@@ -1,24 +1,37 @@
 <?php
 /**
- * A special page to search for files by hash value as defined in the
- * img_sha1 field in the image table
+ * Implements Special:FileDuplicateSearch
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  * @ingroup SpecialPage
- *
  * @author Raimond Spekking, based on Special:MIMESearch by Ævar Arnfjörð Bjarmason
- * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
 
 /**
  * Searches the database for files of the requested hash, comparing this with the
  * 'img_sha1' field in the image table.
+ *
  * @ingroup SpecialPage
  */
 class FileDuplicateSearchPage extends QueryPage {
 	var $hash, $filename;
 
-	function FileDuplicateSearchPage( $hash, $filename ) {
+	function __construct( $hash, $filename ) {
 		$this->hash = $hash;
 		$this->filename = $filename;
 	}
@@ -72,7 +85,7 @@ function wfSpecialFileDuplicateSearch( $par = null ) {
 	$hash = '';
 	$filename =  isset( $par ) ?  $par : $wgRequest->getText( 'filename' );
 
-	$title = Title::newFromText( $filename );
+	$title = Title::makeTitleSafe( NS_FILE, $filename );
 	if( $title && $title->getText() != '' ) {
 		$dbr = wfGetDB( DB_SLAVE );
 		$image = $dbr->tableName( 'image' );
@@ -83,13 +96,12 @@ function wfSpecialFileDuplicateSearch( $par = null ) {
 		if( $row !== false ) {
 			$hash = $row[0];
 		}
-		$dbr->freeResult( $res );
 	}
 
 	# Create the input form
 	$wgOut->addHTML(
 		Xml::openElement( 'form', array( 'id' => 'fileduplicatesearch', 'method' => 'get', 'action' => $wgScript ) ) .
-		Xml::hidden( 'title', SpecialPage::getTitleFor( 'FileDuplicateSearch' )->getPrefixedDbKey() ) .
+		Html::hidden( 'title', SpecialPage::getTitleFor( 'FileDuplicateSearch' )->getPrefixedDbKey() ) .
 		Xml::openElement( 'fieldset' ) .
 		Xml::element( 'legend', null, wfMsg( 'fileduplicatesearch-legend' ) ) .
 		Xml::inputLabel( wfMsg( 'fileduplicatesearch-filename' ), 'filename', 'filename', 50, $filename ) . ' ' .

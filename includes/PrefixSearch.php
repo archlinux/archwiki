@@ -1,5 +1,4 @@
 <?php
-
 /**
  * PrefixSearch - Handles searching prefixes of titles and finding any page
  * names that match. Used largely by the OpenSearch implementation.
@@ -23,6 +22,7 @@ class PrefixSearch {
 		}
 		$namespaces = self::validateNamespaces( $namespaces );
 
+		// Find a Title which is not an interwiki and is in NS_MAIN
 		$title = Title::newFromText( $search );
 		if( $title && $title->getInterwiki() == '' ) {
 			$ns = array($title->getNamespace());
@@ -77,6 +77,10 @@ class PrefixSearch {
 	 */
 	protected static function specialSearch( $search, $limit ) {
 		global $wgContLang;
+
+		# normalize searchKey, so aliases with spaces can be found - bug 25675
+		$search = str_replace( ' ', '_', $search );
+
 		$searchKey = $wgContLang->caseFold( $search );
 
 		// Unlike SpecialPage itself, we want the canonical forms of both
@@ -87,9 +91,11 @@ class PrefixSearch {
 		foreach( array_keys( SpecialPage::$mList ) as $page ) {
 			$keys[$wgContLang->caseFold( $page )] = $page;
 		}
+
 		foreach( $wgContLang->getSpecialPageAliases() as $page => $aliases ) {
-			if( !array_key_exists( $page, SpecialPage::$mList ) ) # bug 20885
+			if( !array_key_exists( $page, SpecialPage::$mList ) ) {# bug 20885
 				continue;
+			}
 
 			foreach( $aliases as $alias ) {
 				$keys[$wgContLang->caseFold( $alias )] = $alias;
@@ -100,12 +106,20 @@ class PrefixSearch {
 		$srchres = array();
 		foreach( $keys as $pageKey => $page ) {
 			if( $searchKey === '' || strpos( $pageKey, $searchKey ) === 0 ) {
-				$srchres[] = Title::makeTitle( NS_SPECIAL, $page )->getPrefixedText();
+				wfSuppressWarnings();
+				// bug 27671: Don't use SpecialPage::getTitleFor() here because it
+				// localizes its input leading to searches for e.g. Special:All
+				// returning Spezial:MediaWiki-Systemnachrichten and returning
+				// Spezial:Alle_Seiten twice when $wgLanguageCode == 'de'
+				$srchres[] = Title::makeTitleSafe( NS_SPECIAL, $page )->getPrefixedText();
+				wfRestoreWarnings();
 			}
+
 			if( count( $srchres ) >= $limit ) {
 				break;
 			}
 		}
+
 		return $srchres;
 	}
 
@@ -156,10 +170,12 @@ class PrefixSearch {
 	 * Validate an array of numerical namespace indexes
 	 *
 	 * @param $namespaces Array
-	 * @return Array
+	 * @return Array (default: contains only NS_MAIN)
 	 */
 	protected static function validateNamespaces($namespaces){
 		global $wgContLang;
+
+		// We will look at each given namespace against wgContLang namespaces
 		$validNamespaces = $wgContLang->getNamespaces();
 		if( is_array($namespaces) && count($namespaces)>0 ){
 			$valid = array();
@@ -167,8 +183,9 @@ class PrefixSearch {
 				if( is_numeric($ns) && array_key_exists($ns, $validNamespaces) )
 					$valid[] = $ns;
 			}
-			if( count($valid) > 0 )
+			if( count($valid) > 0 ) {
 				return $valid;
+			}
 		}
 
 		return array( NS_MAIN );

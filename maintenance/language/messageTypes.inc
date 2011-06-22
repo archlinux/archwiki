@@ -69,11 +69,18 @@ $wgIgnoredMessages = array(
 	'accesskey-compareselectedversions',
 	'accesskey-watch',
 	'accesskey-upload',
+	'accesskey-preferences-save',
+	'accesskey-summary',
+	'accesskey-userrights-set',
+	'accesskey-blockip-block',
+	'accesskey-export',
+	'accesskey-import',
 	'addsection',
 	'talkpageheader',
 	'anonnotice',
 	'autoblock_whitelist',
 	'searchmenu-help',
+	'searchmenu-new-nocreate',
 	'googlesearch',
 	'opensearch-desc',
 	'exif-make-value',
@@ -84,6 +91,8 @@ $wgIgnoredMessages = array(
 	'loginstart',
 	'loginend',
 	'loginlanguagelinks',
+	'pear-mail-error',
+	'php-mail-error',
 	'markaspatrolledlink',
 	'newarticletextanon',
 	'newsectionheaderdefaultlevel',
@@ -94,13 +103,13 @@ $wgIgnoredMessages = array(
 	'pubmedurl',
 	'randompage-url',
 	'recentchanges-url',
-	'cantcreateaccount-nonblock-text',
 	'revision-info-current',
 	'revision-nav',
 	'rfcurl',
 	'shareddescriptionfollows',
 	'signature',
 	'signature-anon',
+	'signupstart',
 	'signupend',
 	'sitenotice',
 	'sitesubtitle',
@@ -160,6 +169,7 @@ $wgIgnoredMessages = array(
 	'editpage-tos-summary',
 	'addsection-preload',
 	'addsection-editintro',
+	'longpage-hint',
 );
 
 /** Optional messages, which may be translated only if changed in the target language. */
@@ -257,7 +267,6 @@ $wgOptionalMessages = array(
 	'exif-lightsource-21',
 	'exif-lightsource-22',
 	'exif-lightsource-23',
-	'exif-filesource-3',
 	'booksources-isbn',
 	'sp-contributions-explain',
 	'sorbs',
@@ -353,6 +362,8 @@ $wgOptionalMessages = array(
 	'prefs-registration-date-time',
 	'prefs-memberingroups-type',
 	'shared-repo-name-wikimediacommons',
+	'usermessage-template',
+	'filepage.css',
 );
 
 /** EXIF messages, which may be set as optional in several checks, but are generally mandatory */
@@ -589,4 +600,5 @@ $wgEXIFMessages = array(
 	'exif-gpsdestdistance-n',
 	'exif-gpsdirection-t',
 	'exif-gpsdirection-m',
+	'exif-objectname',
 );

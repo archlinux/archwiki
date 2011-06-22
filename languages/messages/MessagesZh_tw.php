@@ -25,16 +25,20 @@ $specialPageAliases = array(
 	'Disambiguations'           => array( '消歧義頁' ),
 	'Recentchanges'             => array( '近期變動' ),
 	'Ancientpages'              => array( '最舊頁面' ),
+	'Unblock'                   => array( '解除封鎖' ),
 	'Blockme'                   => array( '封禁我' ),
 	'Blockip'                   => array( '查封用戶' ),
 	'Lockdb'                    => array( '鎖定數據庫' ),
 	'Unlockdb'                  => array( '解除數據庫鎖定' ),
+	'Userrights'                => array( '用戶權限' ),
+	'MIMEsearch'                => array( 'MIME搜索' ),
 	'FileDuplicateSearch'       => array( '搜索重復文件' ),
 	'Unwatchedpages'            => array( '未被監視的頁面' ),
 	'Listredirects'             => array( '重定向頁面列表' ),
 	'Revisiondelete'            => array( '刪除或恢復版本' ),
 	'Randomredirect'            => array( '隨機重定向頁面' ),
 	'Withoutinterwiki'          => array( '沒有跨語言鏈接的頁面' ),
+	'Invalidateemail'           => array( '無法識別的電郵地址' ),
 	'LinkSearch'                => array( '搜索網頁鏈接' ),
 );
 
@@ -106,8 +110,6 @@ $messages = array(
 'tog-usenewrc'             => '使用強化的近期變動 (需要JavaScript)',
 'tog-numberheadings'       => '自動編號標題',
 'tog-showtoolbar'          => '顯示編輯工具欄 （需要JavaScript）',
-'tog-rememberpassword'     => '記住我在這台電腦上的登入',
-'tog-editwidth'            => '將編輯欄位拓寬到整個螢幕的大小',
 'tog-watchcreations'       => '將我建立的頁面加進我的監視列表',
 'tog-watchdefault'         => '將我更改的頁面添加到我的監視列表中',
 'tog-minordefault'         => '預設將編輯設定為細微修改',
@@ -345,7 +347,6 @@ $messages = array(
 'nonunicodebrowser'          => "'''警告: 您的瀏覽器不相容Unicode編碼。這裡有一個工作區將使您能安全地編輯頁面: 非ASCII字元將以十六進製編碼模式出現在編輯框中。'''",
 'editingold'                 => "'''警告：你正在編輯的是本頁的舊版本。
 如果你保存它的話，在本版本之後的任何修改都會遺失。'''",
-'longpagewarning'            => "'''警告: 本頁長度達$1 kB；一些瀏覽器將無法編輯長過32KB頁面。請考慮將本文切割成幾個小段落。'''",
 'longpageerror'              => "'''錯誤: 您所提交的文字長度有$1KB，這大於$2KB的最大值。該文字不能被儲存。'''",
 'protectedpagewarning'       => "'''警告: 本頁已經被保護，只有擁有管理員許可權的使用者才可修改。'''",
 'semiprotectedpagewarning'   => "'''注意:''' 本頁面被鎖定，僅限註冊使用者編輯。",
@@ -508,6 +509,7 @@ $messages = array(
 'ignorewarning'               => '忽略警告並儲存檔案。',
 'illegalfilename'             => '檔案名"$1"包含有頁面標題所禁止的字符。請改名後重新上傳。',
 'badfilename'                 => '檔案名已被改為"$1"。',
+'hookaborted'                 => '您所嘗試的修改被擴展鉤捨棄。',
 'fileexists-thumbnail-yes'    => "這個檔案好像是一幅圖片的縮圖版本''(縮圖)''。 [[$1|thumb]]
 請檢查清楚該檔案'''<tt>[[:$1]]</tt>'''。
 如果檢查後的檔案是同原本圖片的大小是一樣的話，就不用再上載多一幅縮圖。",
@@ -588,9 +590,6 @@ $messages = array(
 # Special:Log
 'specialloguserlabel' => '使用者:',
 'alllogstext'         => '綜合顯示 {{SITENAME}} 的上傳、刪除、保護、查封以及站務日誌。',
-
-# Special:Categories
-'categoriespagetext' => '以下列出所有的頁面分類。',
 
 # Special:ListUsers
 'listusersfrom'      => '給定顯示使用者條件:',

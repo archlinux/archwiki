@@ -32,20 +32,30 @@ class ImageGallery
 	 */
 	private $contextTitle = false;
 
-	private $mPerRow = 4; // How many images wide should the gallery be?
-	private $mWidths = 120, $mHeights = 120; // How wide/tall each thumbnail should be
-
 	private $mAttribs = array();
+
+	/**
+	 * Fixed margins
+	 */
+	const THUMB_PADDING = 30;
+	const GB_PADDING = 5;
+	//2px borders on each side + 2px implied padding on each side
+	const GB_BORDERS = 8;
 
 	/**
 	 * Create a new image gallery object.
 	 */
 	function __construct( ) {
+		global $wgGalleryOptions;
 		$this->mImages = array();
-		$this->mShowBytes = true;
+		$this->mShowBytes = $wgGalleryOptions['showBytes'];
 		$this->mShowFilename = true;
 		$this->mParser = false;
 		$this->mHideBadImages = false;
+		$this->mPerRow = $wgGalleryOptions['imagesPerRow'];
+		$this->mWidths = $wgGalleryOptions['imageWidth'];
+		$this->mHeights = $wgGalleryOptions['imageHeight'];
+		$this->mCaptionLength = $wgGalleryOptions['captionLength'];
 	}
 
 	/**
@@ -74,7 +84,7 @@ class ImageGallery
 	/**
 	 * Set the caption (as HTML)
 	 *
-	 * @param $caption Caption
+	 * @param $caption String: Caption
 	 */
 	public function setCaptionHtml( $caption ) {
 		$this->mCaption = $caption;
@@ -83,10 +93,11 @@ class ImageGallery
 	/**
 	 * Set how many images will be displayed per row.
 	 *
-	 * @param int $num > 0; invalid numbers will be rejected
+	 * @param $num Integer >= 0; If perrow=0 the gallery layout will adapt to screensize
+	 * invalid numbers will be rejected
 	 */
 	public function setPerRow( $num ) {
-		if ($num > 0) {
+		if ($num >= 0) {
 			$this->mPerRow = (int)$num;
 		}
 	}
@@ -94,7 +105,7 @@ class ImageGallery
 	/**
 	 * Set how wide each image will be, in pixels.
 	 *
-	 * @param int $num > 0; invalid numbers will be ignored
+	 * @param $num Integer > 0; invalid numbers will be ignored
 	 */
 	public function setWidths( $num ) {
 		if ($num > 0) {
@@ -105,7 +116,7 @@ class ImageGallery
 	/**
 	 * Set how high each image will be, in pixels.
 	 *
-	 * @param int $num > 0; invalid numbers will be ignored
+	 * @param $num Integer > 0; invalid numbers will be ignored
 	 */
 	public function setHeights( $num ) {
 		if ($num > 0) {
@@ -153,11 +164,11 @@ class ImageGallery
 	}
 
 	/**
- 	* Add an image at the beginning of the gallery.
- 	*
- 	* @param $title Title object of the image that is added to the gallery
- 	* @param $html  String:  Additional HTML text to be shown. The name and size of the image are always shown.
- 	*/
+	* Add an image at the beginning of the gallery.
+	*
+	* @param $title Title object of the image that is added to the gallery
+	* @param $html  String:  Additional HTML text to be shown. The name and size of the image are always shown.
+	*/
 	function insert( $title, $html='' ) {
 		if ( $title instanceof File ) {
 			// Old calling convention
@@ -181,7 +192,7 @@ class ImageGallery
 	 * @param $f Boolean: set to false to disable.
 	 */
 	function setShowBytes( $f ) {
-		$this->mShowBytes = ( $f == true);
+		$this->mShowBytes = (bool)$f;
 	}
 
 	/**
@@ -191,17 +202,17 @@ class ImageGallery
 	 * @param $f Boolean: set to false to disable.
 	 */
 	function setShowFilename( $f ) {
-		$this->mShowFilename = ( $f == true);
+		$this->mShowFilename = (bool)$f;
 	}
 
 	/**
 	 * Set arbitrary attributes to go on the HTML gallery output element.
-	 * Should be suitable for a &lt;table&gt; element.
+	 * Should be suitable for a <ul> element.
 	 *
 	 * Note -- if taking from user input, you should probably run through
 	 * Sanitizer::validateAttributes() first.
 	 *
-	 * @param array of HTML attribute pairs
+	 * @param $attribs Array of HTML attribute pairs
 	 */
 	function setAttributes( $attribs ) {
 		$this->mAttribs = $attribs;
@@ -222,15 +233,20 @@ class ImageGallery
 
 		$sk = $this->getSkin();
 
+		if ( $this->mPerRow > 0 ) {
+			$maxwidth = $this->mPerRow * ( $this->mWidths + self::THUMB_PADDING + self::GB_PADDING + self::GB_BORDERS );
+			$oldStyle = isset( $this->mAttribs['style'] ) ? $this->mAttribs['style'] : ""; 
+			$this->mAttribs['style'] = "max-width: {$maxwidth}px;_width: {$maxwidth}px;" . $oldStyle;
+		}
+
 		$attribs = Sanitizer::mergeAttributes(
 			array(
-				'class' => 'gallery',
-				'cellspacing' => '0',
-				'cellpadding' => '0' ),
+				'class' => 'gallery'),
 			$this->mAttribs );
-		$s = Xml::openElement( 'table', $attribs );
-		if( $this->mCaption )
-			$s .= "\n\t<caption>{$this->mCaption}</caption>";
+		$s = Xml::openElement( 'ul', $attribs );
+		if ( $this->mCaption ) {
+			$s .= "\n\t<li class='gallerycaption'>{$this->mCaption}</li>";
+		}
 
 		$params = array( 'width' => $this->mWidths, 'height' => $this->mHeights );
 		$i = 0;
@@ -242,15 +258,19 @@ class ImageGallery
 			$time = $descQuery = false;
 			wfRunHooks( 'BeforeGalleryFindFile', array( &$this, &$nt, &$time, &$descQuery ) );
 
-			$img = wfFindFile( $nt, array( 'time' => $time ) );
+			if ( $nt->getNamespace() == NS_FILE ) {
+				$img = wfFindFile( $nt, array( 'time' => $time ) );
+			} else {
+				$img = false;
+			}
 
-			if( $nt->getNamespace() != NS_FILE || !$img ) {
+			if( !$img ) {
 				# We're dealing with a non-image, spit out the name and be done with it.
-				$thumbhtml = "\n\t\t\t".'<div style="height: '.($this->mHeights*1.25+2).'px;">'
+				$thumbhtml = "\n\t\t\t".'<div style="height: '.(self::THUMB_PADDING + $this->mHeights).'px;">'
 					. htmlspecialchars( $nt->getText() ) . '</div>';
 			} elseif( $this->mHideBadImages && wfIsBadImage( $nt->getDBkey(), $this->getContextTitle() ) ) {
 				# The image is blacklisted, just show it as a text link.
-				$thumbhtml = "\n\t\t\t".'<div style="height: '.($this->mHeights*1.25+2).'px;">' .
+				$thumbhtml = "\n\t\t\t".'<div style="height: '.(self::THUMB_PADDING + $this->mHeights).'px;">' .
 					$sk->link(
 						$nt,
 						htmlspecialchars( $nt->getText() ),
@@ -261,10 +281,14 @@ class ImageGallery
 					'</div>';
 			} elseif( !( $thumb = $img->transform( $params ) ) ) {
 				# Error generating thumbnail.
-				$thumbhtml = "\n\t\t\t".'<div style="height: '.($this->mHeights*1.25+2).'px;">'
+				$thumbhtml = "\n\t\t\t".'<div style="height: '.(self::THUMB_PADDING + $this->mHeights).'px;">'
 					. htmlspecialchars( $img->getLastError() ) . '</div>';
 			} else {
-				$vpad = floor( ( 1.25*$this->mHeights - $thumb->height ) /2 ) - 2;
+				//We get layout problems with the margin, if the image is smaller 
+				//than the line-height, so we less margin in these cases.
+				$minThumbHeight =  $thumb->height > 17 ? $thumb->height : 17;
+				$vpad = floor(( self::THUMB_PADDING + $this->mHeights - $minThumbHeight ) /2);
+				
 				
 				$imageParameters = array(
 					'desc-link' => true,
@@ -274,13 +298,14 @@ class ImageGallery
 				if ( $text == '' ) {
 					$imageParameters['alt'] = $nt->getText();
 				}
-
+				
+				# Set both fixed width and min-height.
 				$thumbhtml = "\n\t\t\t".
-					'<div class="thumb" style="padding: ' . $vpad . 'px 0; width: ' .($this->mWidths+30).'px;">'
+					'<div class="thumb" style="width: ' .($this->mWidths + self::THUMB_PADDING).'px;">'
 					# Auto-margin centering for block-level elements. Needed now that we have video
 					# handlers since they may emit block-level elements as opposed to simple <img> tags.
 					# ref http://css-discuss.incutio.com/?page=CenteringBlockElement
-					. '<div style="margin-left: auto; margin-right: auto; width: ' .$this->mWidths.'px;">'
+					. '<div style="margin:'.$vpad.'px auto;">'
 					. $thumb->toHtml( $imageParameters ) . '</div></div>';
 
 				// Call parser transform hook
@@ -308,7 +333,7 @@ class ImageGallery
 			$textlink = $this->mShowFilename ?
 				$sk->link(
 					$nt,
-					htmlspecialchars( $wgLang->truncate( $nt->getText(), 20 ) ),
+					htmlspecialchars( $wgLang->truncate( $nt->getText(), $this->mCaptionLength ) ),
 					array(),
 					array(),
 					array( 'known', 'noclasses' )
@@ -319,31 +344,25 @@ class ImageGallery
 			# in version 4.8.6 generated crackpot html in its absence, see:
 			# http://bugzilla.wikimedia.org/show_bug.cgi?id=1765 -Ævar
 
-			if ( $i % $this->mPerRow == 0 ) {
-				$s .= "\n\t<tr>";
-			}
+			# Weird double wrapping in div needed due to FF2 bug
+			# Can be safely removed if FF2 falls completely out of existance
 			$s .=
-				"\n\t\t" . '<td><div class="gallerybox" style="width: '.($this->mWidths+35).'px;">'
+				"\n\t\t" . '<li class="gallerybox" style="width: ' . ( $this->mWidths + self::THUMB_PADDING + self::GB_PADDING ) . 'px">'
+					. '<div style="width: ' . ( $this->mWidths + self::THUMB_PADDING + self::GB_PADDING ) . 'px">'
 					. $thumbhtml
 					. "\n\t\t\t" . '<div class="gallerytext">' . "\n"
 						. $textlink . $text . $nb
 					. "\n\t\t\t</div>"
-				. "\n\t\t</div></td>";
-			if ( $i % $this->mPerRow == $this->mPerRow - 1 ) {
-				$s .= "\n\t</tr>";
-			}
+				. "\n\t\t</div></li>";
 			++$i;
 		}
-		if( $i % $this->mPerRow != 0 ) {
-			$s .= "\n\t</tr>";
-		}
-		$s .= "\n</table>";
+		$s .= "\n</ul>";
 
 		return $s;
 	}
 
 	/**
-	 * @return int Number of images in the gallery
+	 * @return Integer: number of images in the gallery
 	 */
 	public function count() {
 		return count( $this->mImages );
@@ -352,7 +371,7 @@ class ImageGallery
 	/**
 	 * Set the contextual title
 	 *
-	 * @param Title $title Contextual title
+	 * @param $title Title: contextual title
 	 */
 	public function setContextTitle( $title ) {
 		$this->contextTitle = $title;

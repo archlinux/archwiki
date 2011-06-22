@@ -1,4 +1,9 @@
 <?php
+/**
+ * Native CDB file reader and writer
+ *
+ * @file
+ */
 
 /**
  * Read from a CDB file.
@@ -93,7 +98,7 @@ class CdbReader_DBA {
 	function __construct( $fileName ) {
 		$this->handle = dba_open( $fileName, 'r-', 'cdb' );
 		if ( !$this->handle ) {
-			throw new MWException( 'Unable to open DB file "' . $fileName . '"' );
+			throw new MWException( 'Unable to open CDB file "' . $fileName . '"' );
 		}
 	}
 
@@ -120,7 +125,7 @@ class CdbWriter_DBA {
 		$this->tmpFileName = $fileName . '.tmp.' . mt_rand( 0, 0x7fffffff );
 		$this->handle = dba_open( $this->tmpFileName, 'n', 'cdb_make' );
 		if ( !$this->handle ) {
-			throw new MWException( 'Unable to open DB file for write "' . $fileName . '"' );
+			throw new MWException( 'Unable to open CDB file for write "' . $fileName . '"' );
 		}
 	}
 

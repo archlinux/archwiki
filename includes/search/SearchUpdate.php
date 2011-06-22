@@ -1,6 +1,16 @@
 <?php
 /**
+ * Search index updater
+ *
  * See deferred.txt
+ *
+ * @file
+ * @ingroup Search
+ */
+
+/**
+ * Database independant search index updater
+ *
  * @ingroup Search
  */
 class SearchUpdate {
@@ -8,7 +18,7 @@ class SearchUpdate {
 	/* private */ var $mId = 0, $mNamespace, $mTitle, $mText;
 	/* private */ var $mTitleWords;
 
-	function SearchUpdate( $id, $title, $text = false ) {
+	function __construct( $id, $title, $text = false ) {
 		$nt = Title::newFromText( $title );
 		if( $nt ) {
 			$this->mId = $id;
@@ -29,23 +39,23 @@ class SearchUpdate {
 		if( $wgDisableSearchUpdate || !$this->mId ) {
 			return false;
 		}
-		$fname = 'SearchUpdate::doUpdate';
-		wfProfileIn( $fname );
+
+		wfProfileIn( __METHOD__ );
 
 		$search = SearchEngine::create();
 		$lc = SearchEngine::legalSearchChars() . '&#;';
 
 		if( $this->mText === false ) {
 			$search->updateTitle($this->mId,
-				Title::indexTitle( $this->mNamespace, $this->mTitle ));
-			wfProfileOut( $fname );
+				$search->normalizeText( Title::indexTitle( $this->mNamespace, $this->mTitle ) ) );
+			wfProfileOut( __METHOD__ );
 			return;
 		}
 
 		# Language-specific strip/conversion
 		$text = $wgContLang->normalizeForSearch( $this->mText );
 
-		wfProfileIn( $fname.'-regexps' );
+		wfProfileIn( __METHOD__ . '-regexps' );
 		$text = preg_replace( "/<\\/?\\s*[A-Za-z][^>]*?>/",
 			' ', $wgContLang->lc( " " . $text . " " ) ); # Strip HTML markup
 		$text = preg_replace( "/(^|\\n)==\\s*([^\\n]+)\\s*==(\\s)/sD",
@@ -92,20 +102,21 @@ class SearchUpdate {
 
 		# Strip wiki '' and '''
 		$text = preg_replace( "/''[']*/", " ", $text );
-		wfProfileOut( "$fname-regexps" );
+		wfProfileOut( __METHOD__ . '-regexps' );
 
 		wfRunHooks( 'SearchUpdate', array( $this->mId, $this->mNamespace, $this->mTitle, &$text ) );
 
 		# Perform the actual update
-		$search->update($this->mId, Title::indexTitle( $this->mNamespace, $this->mTitle ),
-				$text);
+		$search->update($this->mId, $search->normalizeText( Title::indexTitle( $this->mNamespace, $this->mTitle ) ),
+				$search->normalizeText( $text ) );
 
-		wfProfileOut( $fname );
+		wfProfileOut( __METHOD__ );
 	}
 }
 
 /**
  * Placeholder class
+ *
  * @ingroup Search
  */
 class SearchUpdateMyISAM extends SearchUpdate {

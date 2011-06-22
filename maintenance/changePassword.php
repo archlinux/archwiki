@@ -2,6 +2,8 @@
 /**
  * Change the password of a given user
  *
+ * Copyright © 2005, Ævar Arnfjörð Bjarmason
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,13 +19,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
- * @copyright Copyright © 2005, Ævar Arnfjörð Bjarmason
- * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class ChangePassword extends Maintenance {
 	public function __construct() {
@@ -32,21 +33,21 @@ class ChangePassword extends Maintenance {
 		$this->addOption( "password", "The password to use", true, true );
 		$this->mDescription = "Change a user's password";
 	}
-	
+
 	public function execute() {
-		$user = User::newFromName( $this->getOption('user') );
-		if( !$user->getId() ) {
-			$this->error( "No such user: " . $this->getOption('user'), true );
+		$user = User::newFromName( $this->getOption( 'user' ) );
+		if ( !$user->getId() ) {
+			$this->error( "No such user: " . $this->getOption( 'user' ), true );
 		}
 		try {
-			$user->setPassword( $this->getOption('password') );
+			$user->setPassword( $this->getOption( 'password' ) );
 			$user->saveSettings();
 			$this->output( "Password set for " . $user->getName() . "\n" );
-		} catch( PasswordError $pwe ) {
+		} catch ( PasswordError $pwe ) {
 			$this->error( $pwe->getText(), true );
 		}
 	}
 }
 
 $maintClass = "ChangePassword";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );

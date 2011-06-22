@@ -9,6 +9,7 @@
 # {{INPUT}}
 #
 # A number of MediaWiki-specific aliases are near the end of this file.
+# To generate documentation run: php mwdocgen.php --no-extensions
 
 #---------------------------------------------------------------------------
 # Project related configuration options
@@ -39,7 +40,6 @@ STRIP_FROM_INC_PATH    =
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = YES
 MULTILINE_CPP_IS_BRIEF = NO
-DETAILS_AT_TOP         = NO
 INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 8
@@ -76,6 +76,7 @@ ENABLED_SECTIONS       =
 MAX_INITIALIZER_LINES  = 30
 SHOW_USED_FILES        = YES
 SHOW_DIRECTORIES       = NO
+SHOW_NAMESPACES        = NO
 FILE_VERSION_FILTER    = {{SVNSTAT}}
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
@@ -135,7 +136,7 @@ FILE_PATTERNS          = *.c \
 RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = YES
-EXCLUDE_PATTERNS       = LocalSettings.php AdminSettings.php .svn {{EXCLUDE}}
+EXCLUDE_PATTERNS       = LocalSettings.php AdminSettings.php StartProfiler.php .svn */.git/* {{EXCLUDE}}
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
@@ -245,7 +246,7 @@ SKIP_FUNCTION_MACROS   = YES
 # Configuration::additions related to external references   
 #---------------------------------------------------------------------------
 TAGFILES               = 
-GENERATE_TAGFILE       = 
+GENERATE_TAGFILE       = {{OUTPUT_DIRECTORY}}/html/tagfile.xml
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
 PERL_PATH              = /usr/bin/perl
@@ -284,13 +285,16 @@ ALIASES =	"type{1}=<b> \1 </b>:" \
 		"arrayof{2}=<b> Array </b> of \2" \
 		"null=\type{Null}" \
 		"boolean=\type{Boolean}" \
-		"bool=\boolean" \
+		"bool=\type{Boolean}" \
 		"integer=\type{Integer}" \
-		"int=\integer" \
+		"int=\type{Integer}" \
 		"string=\type{String}" \
-		"str=\string" \
+		"str=\type{String}" \
 		"mixed=\type{Mixed}" \
 		"access=\par Access:\n" \
 		"private=\access private" \
 		"protected=\access protected" \
-		"public=\access public"
+		"public=\access public" \
+                "copyright=\note" \
+                "license=\note"
+

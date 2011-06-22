@@ -10,6 +10,8 @@
 if( !defined( 'MEDIAWIKI' ) )
 	die( -1 );
 
+require( dirname(__FILE__) . '/MonoBook.php' );
+
 /**
  * Inherit main code from SkinTemplate, set the CSS and template filter.
  * @todo document
@@ -19,18 +21,7 @@ class SkinModern extends SkinTemplate {
 	var $skinname = 'modern', $stylename = 'modern',
 		$template = 'ModernTemplate', $useHeadElement = true;
 
-	/*
-	 * We don't like the default getPoweredBy, the icon clashes with the
-	 * skin L&F.
-	 */
-	function getPoweredBy() {
-		global	$wgVersion;
-		return "<div class='mw_poweredby'>Powered by MediaWiki $wgVersion</div>";
-	}
-
 	function setupSkinUserCss( OutputPage $out ){
-		global $wgStyleVersion, $wgJsMimeType, $wgStylePath;
-
 		// Do not call parent::setupSkinUserCss(), we have our own print style
 		$out->addStyle( 'common/shared.css', 'screen' );
 		$out->addStyle( 'modern/main.css', 'screen' );
@@ -43,7 +34,7 @@ class SkinModern extends SkinTemplate {
  * @todo document
  * @ingroup Skins
  */
-class ModernTemplate extends QuickTemplate {
+class ModernTemplate extends MonoBookTemplate {
 	var $skin;
 	/**
 	 * Template filter callback for Modern skin.
@@ -54,12 +45,24 @@ class ModernTemplate extends QuickTemplate {
 	 * @access private
 	 */
 	function execute() {
-		global $wgRequest, $wgOut;
+		global $wgRequest;
 		$this->skin = $skin = $this->data['skin'];
 		$action = $wgRequest->getText( 'action' );
 
 		// Suppress warnings to prevent notices about missing indexes in $this->data
 		wfSuppressWarnings();
+
+		// Generate additional footer links
+		$footerlinks = $this->data["footerlinks"];
+		// fold footerlinks into a single array using a bit of trickery
+		$footerlinks = call_user_func_array('array_merge', array_values($footerlinks));
+		// Generate additional footer icons
+		$footericons = $this->data["footericons"];
+		// Unset copyright.copyright since we don't need the icon and already output a copyright from footerlinks
+		unset($footericons["copyright"]["copyright"]);
+		if ( count($footericons["copyright"]) <= 0 ) {
+			unset($footericons["copyright"]);
+		}
 
 		$this->html( 'headelement' );
 ?>
@@ -180,10 +183,6 @@ class ModernTemplate extends QuickTemplate {
 	<div id="footer"<?php $this->html('userlangattributes') ?>>
 			<ul id="f-list">
 <?php
-		$footerlinks = array(
-			'lastmod', 'viewcount', 'numberofwatchingusers', 'credits', 'copyright',
-			'privacy', 'about', 'disclaimer', 'tagline',
-		);
 		foreach( $footerlinks as $aLink ) {
 			if( isset( $this->data[$aLink] ) && $this->data[$aLink] ) {
 ?>				<li id="<?php echo$aLink?>"><?php $this->html($aLink) ?></li>
@@ -191,7 +190,19 @@ class ModernTemplate extends QuickTemplate {
 		}
 ?>
 			</ul>
-		<?php echo $this->html("poweredbyico"); ?>
+<?php
+		foreach ( $footericons as $blockName => $footerIcons ) { ?>
+			<div id="mw_<?php echo htmlspecialchars($blockName); ?>">
+<?php
+			foreach ( $footerIcons as $icon ) { ?>
+				<?php echo $this->skin->makeFooterIcon( $icon, 'withoutImage' ); ?>
+
+<?php
+			} ?>
+			</div>
+<?php
+		}
+?>
 	</div>
 
 	<?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
@@ -205,134 +216,6 @@ class ModernTemplate extends QuickTemplate {
 <?php
 	wfRestoreWarnings();
 	} // end of execute() method
-
-	/*************************************************************************************************/
-	function searchBox() {
-		global $wgUseTwoButtonsSearchForm;
-?>
-	<!-- search -->
-	<div id="p-search" class="portlet">
-		<h5><label for="searchInput"><?php $this->msg('search') ?></label></h5>
-		<div id="searchBody" class="pBody">
-			<form action="<?php $this->text('wgScript') ?>" id="searchform">
-				<input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-				<input id="searchInput" name="search" type="text"<?php echo $this->skin->tooltipAndAccesskey('search');
-					if( isset( $this->data['search'] ) ) {
-						?> value="<?php $this->text('search') ?>"<?php } ?> />
-				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> /><?php if ($wgUseTwoButtonsSearchForm) { ?>&nbsp;
-				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> /><?php } else { ?>
-
-				<div><a href="<?php $this->text('searchaction') ?>" rel="search"><?php $this->msg('powersearch-legend') ?></a></div><?php } ?>
-
-			</form>
-		</div>
-	</div>
-<?php
-	}
-
-	/*************************************************************************************************/
-	function toolbox() {
-?>
-	<!-- toolbox -->
-	<div class="portlet" id="p-tb">
-		<h5><?php $this->msg('toolbox') ?></h5>
-		<div class="pBody">
-			<ul>
-<?php
-		if($this->data['notspecialpage']) { ?>
-				<li id="t-whatlinkshere"><a href="<?php
-				echo htmlspecialchars($this->data['nav_urls']['whatlinkshere']['href'])
-				?>"<?php echo $this->skin->tooltipAndAccesskey('t-whatlinkshere') ?>><?php $this->msg('whatlinkshere') ?></a></li>
-<?php
-			if( $this->data['nav_urls']['recentchangeslinked'] ) { ?>
-				<li id="t-recentchangeslinked"><a href="<?php
-				echo htmlspecialchars($this->data['nav_urls']['recentchangeslinked']['href'])
-				?>"<?php echo $this->skin->tooltipAndAccesskey('t-recentchangeslinked') ?>><?php $this->msg('recentchangeslinked-toolbox') ?></a></li>
-<?php 		}
-		}
-		if(isset($this->data['nav_urls']['trackbacklink'])) { ?>
-			<li id="t-trackbacklink"><a href="<?php
-				echo htmlspecialchars($this->data['nav_urls']['trackbacklink']['href'])
-				?>"<?php echo $this->skin->tooltipAndAccesskey('t-trackbacklink') ?>><?php $this->msg('trackbacklink') ?></a></li>
-<?php 	}
-		if($this->data['feeds']) { ?>
-			<li id="feedlinks"><?php foreach($this->data['feeds'] as $key => $feed) {
-					?><a id="<?php echo Sanitizer::escapeId( "feed-$key" ) ?>" href="<?php
-					echo htmlspecialchars($feed['href']) ?>" rel="alternate" type="application/<?php echo $key ?>+xml" class="feedlink"<?php echo $this->skin->tooltipAndAccesskey('feed-'.$key) ?>><?php echo htmlspecialchars($feed['text'])?></a>&nbsp;
-					<?php } ?></li><?php
-		}
-
-		foreach( array('contributions', 'log', 'blockip', 'emailuser', 'upload', 'specialpages') as $special ) {
-
-			if($this->data['nav_urls'][$special]) {
-				?><li id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href'])
-				?>"<?php echo $this->skin->tooltipAndAccesskey('t-'.$special) ?>><?php $this->msg($special) ?></a></li>
-<?php		}
-		}
-
-		if(!empty($this->data['nav_urls']['print']['href'])) { ?>
-				<li id="t-print"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['print']['href'])
-				?>" rel="alternate"<?php echo $this->skin->tooltipAndAccesskey('t-print') ?>><?php $this->msg('printableversion') ?></a></li><?php
-		}
-
-		if(!empty($this->data['nav_urls']['permalink']['href'])) { ?>
-				<li id="t-permalink"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['permalink']['href'])
-				?>"<?php echo $this->skin->tooltipAndAccesskey('t-permalink') ?>><?php $this->msg('permalink') ?></a></li><?php
-		} elseif ($this->data['nav_urls']['permalink']['href'] === '') { ?>
-				<li id="t-ispermalink"<?php echo $this->skin->tooltip('t-ispermalink') ?>><?php $this->msg('permalink') ?></li><?php
-		}
-
-		wfRunHooks( 'SkinTemplateToolboxEnd', array( &$this ) );
-?>
-			</ul>
-		</div>
-	</div>
-<?php
-	}
-
-	/*************************************************************************************************/
-	function languageBox() {
-		if( $this->data['language_urls'] ) {
-?>
-	<div id="p-lang" class="portlet">
-		<h5><?php $this->msg('otherlanguages') ?></h5>
-		<div class="pBody">
-			<ul>
-<?php		foreach($this->data['language_urls'] as $langlink) { ?>
-				<li class="<?php echo htmlspecialchars($langlink['class'])?>"><?php
-				?><a href="<?php echo htmlspecialchars($langlink['href']) ?>"><?php echo $langlink['text'] ?></a></li>
-<?php		} ?>
-			</ul>
-		</div>
-	</div>
-<?php
-		}
-	}
-
-	/*************************************************************************************************/
-	function customBox( $bar, $cont ) {
-?>
-		<div class='generated-sidebar portlet' id='<?php echo Sanitizer::escapeId( "p-$bar" ) ?>'<?php echo $this->skin->tooltip('p-'.$bar) ?>>
-		<h5><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?></h5>
-		<div class='pBody'>
-<?php   if ( is_array( $cont ) ) { ?>
-			<ul>
-<?php 			foreach($cont as $key => $val) { ?>
-				<li id="<?php echo Sanitizer::escapeId($val['id']) ?>"<?php
-					if ( $val['active'] ) { ?> class="active" <?php }
-				?>><a href="<?php echo htmlspecialchars($val['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey($val['id']) ?>><?php echo htmlspecialchars($val['text']) ?></a></li>
-<?php			} ?>
-			</ul>
-<?php   } else {
-			# allow raw HTML block to be defined by extensions
-			print $cont;
-		}
-?>
-		</div>
-	</div>
-<?php
-	}
-
 } // end of class
 
 

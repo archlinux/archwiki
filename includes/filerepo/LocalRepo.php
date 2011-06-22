@@ -1,12 +1,22 @@
 <?php
 /**
+ * Local repository that stores files in the local filesystem and registers them
+ * in the wiki's own database.
+ *
+ * @file
+ * @ingroup FileRepo
+ */
+
+/**
  * A repository that stores files in the local filesystem and registers them
  * in the wiki's own database. This is the most commonly used repository class.
  * @ingroup FileRepo
  */
 class LocalRepo extends FSRepo {
 	var $fileFactory = array( 'LocalFile', 'newFromTitle' );
+	var $fileFactoryKey = array( 'LocalFile', 'newFromKey' );
 	var $oldFileFactory = array( 'OldLocalFile', 'newFromTitle' );
+	var $oldFileFactoryKey = array( 'OldLocalFile', 'newFromKey' );
 	var $fileFromRowFactory = array( 'LocalFile', 'newFromRow' );
 	var $oldFileFromRowFactory = array( 'OldLocalFile', 'newFromRow' );
 
@@ -71,7 +81,7 @@ class LocalRepo extends FSRepo {
 	/**
 	 * Checks if there is a redirect named as $title
 	 *
-	 * @param Title $title Title of image
+	 * @param $title Title of file
 	 */
 	function checkRedirect( $title ) {
 		global $wgMemc;
@@ -156,9 +166,11 @@ class LocalRepo extends FSRepo {
 		);
 		
 		$result = array();
-		while ( $row = $res->fetchObject() )
+		foreach ( $res as $row ) {
 			$result[] = $this->newFileFromRow( $row );
+		}
 		$res->free();
+
 		return $result;
 	}
 
@@ -189,8 +201,8 @@ class LocalRepo extends FSRepo {
 	/**
 	 * Invalidates image redirect cache related to that image
 	 *
-	 * @param Title $title Title of image
-	 */	
+	 * @param $title Title of page
+	 */
 	function invalidateImageRedirect( $title ) {
 		global $wgMemc;
 		$memcKey = $this->getSharedCacheKey( 'image_redirect', md5( $title->getDBkey() ) );

@@ -23,7 +23,7 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class HttpSessionDownload extends Maintenance {
 	public function __construct() {
@@ -34,10 +34,10 @@ class HttpSessionDownload extends Maintenance {
 	}
 
 	public function execute() {
-		wfProfileIn(__METHOD__);
+		wfProfileIn( __METHOD__ );
 
-		//run the download:
-		Http::doSessionIdDownload( $this->getOption('sid'), $this->getOption('usk') );
+		// run the download:
+		Http::doSessionIdDownload( $this->getOption( 'sid' ), $this->getOption( 'usk' ) );
 
 		// close up shop:
 		// Execute any deferred updates
@@ -49,9 +49,9 @@ class HttpSessionDownload extends Maintenance {
 		// Shut down the database before exit
 		wfGetLBFactory()->shutdown();
 
-		wfProfileOut(__METHOD__);
+		wfProfileOut( __METHOD__ );
 	}
 }
 
 $maintClass = "HttpSessionDownload";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );

@@ -1,6 +1,29 @@
 <?php
 /**
+ * Implements Special:Allmessages
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup SpecialPage
+ */
+
+/**
  * Use this special page to get a list of the MediaWiki system messages.
+ *
  * @file
  * @ingroup SpecialPage
  */
@@ -58,7 +81,7 @@ class SpecialAllmessages extends SpecialPage {
 
 		$out  = Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript, 'id' => 'mw-allmessages-form' ) ) .
 			Xml::fieldset( wfMsg( 'allmessages-filter-legend' ) ) .
-			Xml::hidden( 'title', $this->getTitle() ) .
+			Html::hidden( 'title', $this->getTitle()->getPrefixedText() ) .
 			Xml::openElement( 'table', array( 'class' => 'mw-allmessages-table' ) ) . "\n" .
 			'<tr>
 				<td class="mw-label">' .
@@ -77,19 +100,19 @@ class SpecialAllmessages extends SpecialPage {
 						'filter',
 						'unmodified',
 						'mw-allmessages-form-filter-unmodified',
-						( $this->filter == 'unmodified' ? true : false )
+						( $this->filter == 'unmodified' )
 					) .
 					Xml::radioLabel( wfMsg( 'allmessages-filter-all' ),
 						'filter',
 						'all',
 						'mw-allmessages-form-filter-all',
-						( $this->filter == 'all' ? true : false )
+						( $this->filter == 'all' )
 					) .
 					Xml::radioLabel( wfMsg( 'allmessages-filter-modified' ),
 						'filter',
 						'modified',
 						'mw-allmessages-form-filter-modified',
-					( $this->filter == 'modified' ? true : false )
+					( $this->filter == 'modified' )
 				) .
 				"</td>\n
 			</tr>
@@ -101,7 +124,7 @@ class SpecialAllmessages extends SpecialPage {
 					Xml::openElement( 'select', array( 'id' => 'mw-allmessages-form-lang', 'name' => 'lang' ) );
 
 		foreach( $languages as $lang => $name ) {
-			$selected = $lang == $this->langCode ? true : false;
+			$selected = $lang == $this->langCode;
 			$out .= Xml::option( $lang . ' - ' . $name, $lang, $selected ) . "\n";
 		}
 		$out .= Xml::closeElement( 'select' ) .
@@ -134,10 +157,7 @@ class AllmessagesTablePager extends TablePager {
 		$this->mPage = $page;
 		$this->mConds = $conds;
 		$this->mDefaultDirection = true; // always sort ascending
-		// We want to have an option for people to view *all* the messages, 
-		// so they can use Ctrl+F to search them.  5000 is the maximum that 
-		// will get through WebRequest::getLimitOffset().
-		$this->mLimitsShown = array( 20, 50, 100, 250, 500, 5000 => wfMsg('limitall') );
+		$this->mLimitsShown = array( 20, 50, 100, 250, 500, 5000 );
 
 		global $wgLang, $wgContLang, $wgRequest;
 
@@ -182,8 +202,8 @@ class AllmessagesTablePager extends TablePager {
 
 		// Normalise message names so they look like page titles
 		$messageNames = array_map( array( $this->lang, 'ucfirst' ), $messageNames );
-		wfProfileIn( __METHOD__ );
 
+		wfProfileOut( __METHOD__ );
 		return $messageNames;
 	}
 
@@ -207,7 +227,7 @@ class AllmessagesTablePager extends TablePager {
 
 		$pageFlags = $talkFlags = array();
 		
-		while( $s = $dbr->fetchObject( $res ) ) {
+		foreach ( $res as $s ) {
 			if( $s->page_namespace == NS_MEDIAWIKI ) {
 				if( $this->foreign ) {
 					$title = explode( '/', $s->page_title );
@@ -223,7 +243,6 @@ class AllmessagesTablePager extends TablePager {
 				$talkFlags[$s->page_title] = true;
 			}
 		}
-		$dbr->freeResult( $res );
 
 		wfProfileOut( __METHOD__ . '-db' );
 
@@ -327,7 +346,7 @@ class AllmessagesTablePager extends TablePager {
 			$s .= Xml::openElement( 'tr', $this->getRowAttrs( $row, true ) );
 			$formatted = strval( $this->formatValue( 'am_actual', $row->am_actual ) );
 			if ( $formatted == '' ) {
-				$formatted = '&nbsp;';
+				$formatted = '&#160;';
 			}
 			$s .= Xml::tags( 'td', $this->getCellAttrs( 'am_actual', $row->am_actual ), $formatted )
 				. "</tr>\n";
@@ -375,43 +394,4 @@ class AllmessagesTablePager extends TablePager {
 		return '';
 	}
 }
-/* Overloads the relevant methods of the real ResultsWrapper so it
- * doesn't go anywhere near an actual database.
- */
-class FakeResultWrapper extends ResultWrapper {
 
-	var $result     = array();
-	var $db         = null;	// And it's going to stay that way :D
-	var $pos        = 0;
-	var $currentRow = null;
-
-	function __construct( $array ){
-		$this->result = $array;
-	}
-
-	function numRows() {
-		return count( $this->result );
-	}
-
-	function fetchRow() {
-		$this->currentRow = $this->result[$this->pos++];
-		return $this->currentRow;
-	}
-
-	function seek( $row ) {
-		$this->pos = $row;
-	}
-
-	function free() {}
-
-	// Callers want to be able to access fields with $this->fieldName
-	function fetchObject(){
-		$this->currentRow = $this->result[$this->pos++];
-		return (object)$this->currentRow;
-	}
-
-	function rewind() {
-		$this->pos = 0;
-		$this->currentRow = null;
-	}
-}

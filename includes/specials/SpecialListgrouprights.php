@@ -1,4 +1,25 @@
 <?php
+/**
+ * Implements Special:Listgrouprights
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup SpecialPage
+ */
 
 /**
  * This special page lists all defined user groups and the associated rights.
@@ -24,10 +45,9 @@ class SpecialListGroupRights extends SpecialPage {
 	 * Show the special page
 	 */
 	public function execute( $par ) {
-		global $wgOut, $wgImplicitGroups, $wgMessageCache;
+		global $wgOut, $wgImplicitGroups;
 		global $wgGroupPermissions, $wgRevokePermissions, $wgAddGroups, $wgRemoveGroups;
 		global $wgGroupsAddToSelf, $wgGroupsRemoveFromSelf;
-		$wgMessageCache->loadAllMessages();
 
 		$this->setHeaders();
 		$this->outputHeader();
@@ -40,8 +60,23 @@ class SpecialListGroupRights extends SpecialPage {
 				'</tr>'
 		);
 
-		foreach( $wgGroupPermissions as $group => $permissions ) {
-			$groupname = ( $group == '*' ) ? 'all' : $group; // Replace * with a more descriptive groupname
+		$allGroups = array_unique( array_merge( 
+			array_keys( $wgGroupPermissions ),
+			array_keys( $wgRevokePermissions ),
+			array_keys( $wgAddGroups ),
+			array_keys( $wgRemoveGroups ),
+			array_keys( $wgGroupsAddToSelf ),
+			array_keys( $wgGroupsRemoveFromSelf )
+		) );
+		asort( $allGroups );
+				
+		foreach ( $allGroups as $group ) {
+			$permissions = isset( $wgGroupPermissions[$group] ) 
+				? $wgGroupPermissions[$group] 
+				: array();
+			$groupname = ( $group == '*' ) // Replace * with a more descriptive groupname
+				? 'all' 
+				: $group; 
 
 			$msg = wfMsg( 'group-' . $groupname );
 			if ( wfEmptyMsg( 'group-' . $groupname, $msg ) || $msg == '' ) {
@@ -59,11 +94,11 @@ class SpecialListGroupRights extends SpecialPage {
 
 			if( $group == '*' ) {
 				// Do not make a link for the generic * group
-				$grouppage = htmlspecialchars($groupnameLocalized);
+				$grouppage = htmlspecialchars( $groupnameLocalized );
 			} else {
 				$grouppage = $this->skin->link(
 					Title::newFromText( $grouppageLocalized ),
-					htmlspecialchars($groupnameLocalized)
+					htmlspecialchars( $groupnameLocalized )
 				);
 			}
 
@@ -95,16 +130,15 @@ class SpecialListGroupRights extends SpecialPage {
 			$addgroupsSelf = isset( $wgGroupsAddToSelf[$group] ) ? $wgGroupsAddToSelf[$group] : array();
 			$removegroupsSelf = isset( $wgGroupsRemoveFromSelf[$group] ) ? $wgGroupsRemoveFromSelf[$group] : array();
 
-			$wgOut->addHTML(
-				'<tr>
-					<td>' .
-						$grouppage . $grouplink .
-					'</td>
-					<td>' .
+			$id = $group == '*' ? false : Sanitizer::escapeId( $group );
+			$wgOut->addHTML( Html::rawElement( 'tr', array( 'id' => $id ),
+				"
+				<td>$grouppage$grouplink</td>
+					<td>" .
 						self::formatPermissions( $permissions, $revoke, $addgroups, $removegroups, $addgroupsSelf, $removegroupsSelf ) .
 					'</td>
-				</tr>'
-			);
+				'
+			) );
 		}
 		$wgOut->addHTML(
 			Xml::closeElement( 'table' ) . "\n<br /><hr />\n"

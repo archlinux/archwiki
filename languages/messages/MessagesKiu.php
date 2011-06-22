@@ -29,8 +29,7 @@ href="" class="internal"}?{/a}) basne.',
 'tog-editsection'             => 'Vurnaena qısımi ebe gireunê [bıvurne] ra feal ke',
 'tog-editsectiononrightclick' => 'Qısımu be teqnaena serrêze ra ebe gozaga raste bıvurne (JavaScript lazımo)',
 'tog-showtoc'                 => 'Tabloê tedeesteu basne (de pelunê be hirê sernustu ra jêdêri de)',
-'tog-rememberpassword'        => 'Parola mı bia ho viri',
-'tog-editwidth'               => 'Warê nustey hira ke, ke verıniya pela cıdaena nustey tam baso',
+'tog-rememberpassword'        => 'Parola mı nê cıcêraoği de bia ho viri (serba tewr jêde $1 {{PLURAL:$1|roze|rozu}}).',
 'tog-watchcreations'          => 'Pelê ke mı afernê, lista mına şêrkerdişi ke',
 'tog-watchdefault'            => 'Pelê ke mı vurnê, lista mına şêrkerdişi ke',
 'tog-watchmoves'              => 'Pelê ke mı kırısnê, lista mına şêrkerdişi ke',
@@ -175,31 +174,21 @@ href="" class="internal"}?{/a}) basne.',
 'faqpage'        => 'Project:PZP',
 
 # Vector skin
-'vector-action-addsection'   => 'Mewzu ilawe ke',
-'vector-action-delete'       => 'Bestere',
-'vector-action-move'         => 'Bere',
-'vector-action-protect'      => 'Bısevekne',
-'vector-action-undelete'     => 'Esterıtene peyser bıcê',
-'vector-action-unprotect'    => 'Rake',
-'vector-namespace-category'  => 'Kategoriye',
-'vector-namespace-help'      => 'Pela phoşti',
-'vector-namespace-image'     => 'Dosya',
-'vector-namespace-main'      => 'Pele',
-'vector-namespace-media'     => 'Pela weseti',
-'vector-namespace-mediawiki' => 'Mesac',
-'vector-namespace-project'   => 'Pela procey',
-'vector-namespace-special'   => 'Pela xususiye',
-'vector-namespace-talk'      => 'Hurênais',
-'vector-namespace-template'  => 'Şablon',
-'vector-namespace-user'      => 'Pela karberi',
-'vector-view-create'         => 'Vıraze',
-'vector-view-edit'           => 'Bıvurne',
-'vector-view-history'        => 'Tarixi basne',
-'vector-view-view'           => 'Bıwane',
-'vector-view-viewsource'     => 'Çımey bıvêne',
-'actions'                    => 'Kerdey',
-'namespaces'                 => 'Caê namey',
-'variants'                   => 'Varyanti',
+'vector-action-addsection'       => 'Mewzu ilawe ke',
+'vector-action-delete'           => 'Bestere',
+'vector-action-move'             => 'Bere',
+'vector-action-protect'          => 'Bısevekne',
+'vector-action-undelete'         => 'Esterıtene peyser bıcê',
+'vector-action-unprotect'        => 'Rake',
+'vector-simplesearch-preference' => 'Tewsiyunê cıcêraişiê raverberdu rake (Teyna vector skin de)',
+'vector-view-create'             => 'Vıraze',
+'vector-view-edit'               => 'Bıvurne',
+'vector-view-history'            => 'Tarixi basne',
+'vector-view-view'               => 'Bıwane',
+'vector-view-viewsource'         => 'Çımey bıvêne',
+'actions'                        => 'Kerdey',
+'namespaces'                     => 'Caê namey',
+'variants'                       => 'Varyanti',
 
 'errorpagetitle'    => 'Xeta',
 'returnto'          => 'Peyser so $1.',
@@ -260,6 +249,9 @@ Hedê ho ra jêde karberi kenê ke şêrê na pele bıkerê.
 Sıma rê zamet, tenê vınderê, hata ke reyna kenê ke na pele kuyê.
 
 $1',
+'pool-timeout'      => 'Kilıtbiyaene sero waxtê vınetişi',
+'pool-queuefull'    => 'Rêza hewze pırra',
+'pool-errorunknown' => 'Xeta nêzanıtiye',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => 'Heqa {{SITENAME}} de',
@@ -421,71 +413,74 @@ Sebebê ho ''$2'' dero.",
 'virus-unknownscanner' => "''antivirus''o nêzanıte:",
 
 # Login and logout pages
-'logouttext'              => "'''Sıma nıka cı ra veciyê.'''
+'logouttext'               => "'''Sıma nıka cı ra veciyê.'''
 
 Sıma şikinê dızdêni {{SITENAME}} de dewam kerê, ya jê eyni karberi ya ki jê jüyê de bini [[Special:UserLogin|oncia cıkuyê]].
 Beno ke taê peli sıma hona cıkote asnenê, hata ke sıma ''browser cache''ê ho kerd pak.",
-'welcomecreation'         => '== Xêr amê, $1! ==
+'welcomecreation'          => '== Xêr amê, $1! ==
 Hesabê sıma vıraciya.
 Vurnaena [[Special:Preferences|melumatanê {{SITENAME}}]] ho vira mekerê.',
-'yourname'                => 'Namê karberi:',
-'yourpassword'            => 'Parola:',
-'yourpasswordagain'       => 'Parola tekrar ke:',
-'remembermypassword'      => 'Mı na komputeri de biya ho viri',
-'yourdomainname'          => 'Bandıra sıma:',
-'externaldberror'         => 'Cıfeteliyaisê naskerdene de ya xeta esta ya ki tebera vırastena hesabê sıma rê destur çino.',
-'login'                   => 'Cıkuye',
-'nav-login-createaccount' => 'Cıkuye / hesab vıraze',
-'loginprompt'             => "Cıkotena {{SITENAME}} rê gunê ''cookies'' akerdey bê.",
-'userlogin'               => 'Cıkuye / hesab vıraze',
-'userloginnocreate'       => 'Cıkuye',
-'logout'                  => 'Veciye',
-'userlogout'              => 'Veciye',
-'notloggedin'             => 'Cı nêkota',
-'nologin'                 => "Hesabê sıma çino? '''$1'''.",
-'nologinlink'             => 'Jü hesab rake',
-'createaccount'           => 'Hesab vıraze',
-'gotaccount'              => "Hesabê sıma ke esto? '''$1'''.",
-'gotaccountlink'          => 'Cıkuye',
-'createaccountmail'       => 'e-poste sera',
-'badretype'               => 'Parola sıma nêvêrena.',
-'userexists'              => 'No namê karberi guretiyo.
+'yourname'                 => 'Namê karberi:',
+'yourpassword'             => 'Parola:',
+'yourpasswordagain'        => 'Parola tekrar ke:',
+'remembermypassword'       => 'Cıkotena mı na komputeri de bia ho viri ($1 {{PLURAL:$1|roze|rozu}} ra seba zu zêdêrêni)',
+'securelogin-stick-https'  => 'Cıkotene ra dıme HTTPS rê giredae bımane',
+'yourdomainname'           => 'Bandıra sıma:',
+'externaldberror'          => 'Cıfeteliyaisê naskerdene de ya xeta esta ya ki tebera vırastena hesabê sıma rê destur çino.',
+'login'                    => 'Cıkuye',
+'nav-login-createaccount'  => 'Cıkuye / hesab vıraze',
+'loginprompt'              => "Cıkotena {{SITENAME}} rê gunê ''cookies'' akerdey bê.",
+'userlogin'                => 'Cıkuye / hesab vıraze',
+'userloginnocreate'        => 'Cıkuye',
+'logout'                   => 'Veciye',
+'userlogout'               => 'Veciye',
+'notloggedin'              => 'Cı nêkota',
+'nologin'                  => "Hesabê sıma çino? '''$1'''.",
+'nologinlink'              => 'Jü hesab rake',
+'createaccount'            => 'Hesab vıraze',
+'gotaccount'               => "Hesabê sıma ke esto? '''$1'''.",
+'gotaccountlink'           => 'Cıkuye',
+'createaccountmail'        => 'e-poste sera',
+'createaccountreason'      => 'Sebeb:',
+'badretype'                => 'Parola sıma nêvêrena.',
+'userexists'               => 'No namê karberi guretiyo.
 Kerem ke, namêna weçine.',
-'loginerror'              => 'Xeta cıkotene',
-'createaccounterror'      => 'Hesab nêvırajino: $1',
-'nocookiesnew'            => 'Hesabê karberi vıraziya, hama sıma nêşikiyay cı kuyê.
+'loginerror'               => 'Xeta cıkotene',
+'createaccounterror'       => 'Hesab nêvırajino: $1',
+'nocookiesnew'             => 'Hesabê karberi vıraziya, hama sıma nêşikiyay cı kuyê.
 Serba rakerdena hesabi çerezê {{SITENAME}}i gurêninê.
 Sıma çerezi qapan kerdi.
 Ravêri ine rakerê, dıma be name u parola sımawa newiye cı kuyê.',
-'nocookieslogin'          => 'Serba rakerdena hesabi çerezê {{SITENAME}}i gurêninê.
+'nocookieslogin'           => 'Serba rakerdena hesabi çerezê {{SITENAME}}i gurêninê.
 Sıma çerezi qapan kerdi.
 Ravêri ine rakerê u reyna bıcerrebnê.',
-'noname'                  => 'Ebe namê do vêrdoği ra cınêkota.',
-'loginsuccesstitle'       => 'Cıkotene biye ra',
-'loginsuccess'            => "'''Sıta {{SITENAME}} de ebe namê karberi \"\$1\" kota cı.'''",
-'nosuchuser'              => 'Ebe namê "$1"i jü karber çino.
+'noname'                   => 'Ebe namê do vêrdoği ra cınêkota.',
+'loginsuccesstitle'        => 'Cıkotene biye ra',
+'loginsuccess'             => "'''Sıta {{SITENAME}} de ebe namê karberi \"\$1\" kota cı.'''",
+'nosuchuser'               => 'Ebe namê "$1"i jü karber çino.
 Nustena namunê karberu de herfa pil u qıze rê diqet kerê.
 Nustena ho qonrol kerê, ya ki [[Special:UserLogin/signup|jü hesabo newe rakerê]].',
-'nosuchusershort'         => 'Karberê do ebe namê "<nowiki>$1</nowiki>" çino.
+'nosuchusershort'          => 'Karberê do ebe namê "<nowiki>$1</nowiki>" çino.
 Nustena cı qontrol ke.',
-'nouserspecified'         => 'Gunê namê jü karberi bıdekernê.',
-'login-userblocked'       => 'No karber engel biyo. Cıkotene rê mısade cı nêdino.',
-'wrongpassword'           => 'Parola ğelete kota cı.
+'nouserspecified'          => 'Gunê namê jü karberi bıdekernê.',
+'login-userblocked'        => 'No karber engel biyo. Cıkotene rê mısade cı nêdino.',
+'wrongpassword'            => 'Parola ğelete kota cı.
 Kerem ke, oncia bıcerrebne.',
-'wrongpasswordempty'      => 'Parola thale kota cı.
+'wrongpasswordempty'       => 'Parola thale kota cı.
 Kerem ke, oncia bıcerrebne.',
-'passwordtooshort'        => 'Paroley tewr senık ebe {{PLURAL:$1|1 karakter|$1 karakteru}} gunê derg bê.',
-'password-name-match'     => 'Parola sıma namê sımaê karberi ra gunê ferqın bo.',
-'mailmypassword'          => 'E-mail sera parola newiye bırusne',
-'passwordremindertitle'   => 'Serba {{SITENAME}} parola newiya vêrdoğe',
-'noemail'                 => 'Adresa de e-posteya ke ebe namê karberi "$1" beqeyda, çina.',
-'mailerror'               => 'Xeta rusnaena e-postey: $1',
-'emailconfirmlink'        => 'Adresa e-postê ho tesdiq ke',
-'accountcreated'          => 'Hesab vırajiya',
-'accountcreatedtext'      => 'Serba $1i hesabê karberi vırajiya.',
-'createaccount-title'     => 'Serba {{SITENAME}}i vırajiyaene hesabê karberi',
-'usernamehasherror'       => 'Namê karberi de karakteri gunê têwerte ra mebê',
-'loginlanguagelabel'      => 'Zon: $1',
+'passwordtooshort'         => 'Paroley tewr senık ebe {{PLURAL:$1|1 karakter|$1 karakteru}} gunê derg bê.',
+'password-name-match'      => 'Parola sıma namê sımaê karberi ra gunê ferqın bo.',
+'password-login-forbidden' => 'Namê nê karberi u gurenaena parola qedeğen biya.',
+'mailmypassword'           => 'E-mail sera parola newiye bırusne',
+'passwordremindertitle'    => 'Serba {{SITENAME}} parola newiya vêrdoğe',
+'noemail'                  => 'Adresa de e-posteya ke ebe namê karberi "$1" beqeyda, çina.',
+'mailerror'                => 'Xeta rusnaena e-postey: $1',
+'emailconfirmlink'         => 'Adresa e-postê ho tesdiq ke',
+'accountcreated'           => 'Hesab vırajiya',
+'accountcreatedtext'       => 'Serba $1i hesabê karberi vırajiya.',
+'createaccount-title'      => 'Serba {{SITENAME}}i vırajiyaene hesabê karberi',
+'usernamehasherror'        => 'Namê karberi de karakteri gunê têwerte ra mebê',
+'loginlanguagelabel'       => 'Zon: $1',
 
 # Password reset dialog
 'resetpass'                 => 'Parola bıvurne',
@@ -559,6 +554,8 @@ ya ki [{{fullurl:{{FULLPAGENAME}}|action=edit}} na pele bıvurnê]</span>.',
 'userpage-userdoesnotexist'        => 'Hesabê karberi "$1" qeyd nêbiyo.
 Kerem ke, tı ke wazena na pele vırazê/bıvurnê, qontrol ke.',
 'userpage-userdoesnotexist-view'   => 'Hesabê karberi "$1" qeyd nêbiyo.',
+'userinvalidcssjstitle'            => "'''Teme:''' Mewzuyê \"\$1\" çino.
+Dosyunê ebe namê .css u .js'y de herfa hurdiye bıgurêne, mesela hurêndia {{ns:user}}:Foo/Vector.css'i de {{ns:user}}:Foo/vector.css bınuse.",
 'updated'                          => '(Bi rozane)',
 'note'                             => "'''Not:'''",
 'previewnote'                      => "'''Bıfıkıriye ke no teyna jü verqayto.'''
@@ -884,10 +881,6 @@ Sıma ke ney bıgurenê, karê sıma de no namdarêni dano.',
 'recentchanges'                  => 'Vurnaisê peyêni',
 'recentchanges-legend'           => 'Alternatifê vurnaisunê peyênu',
 'recentchanges-feed-description' => 'Na weiyekerdena wiki de vurnaisê tewrpeyêne ke biyê ine teqib ke.',
-'recentchanges-label-legend'     => 'Arezekerdeni: $1.',
-'recentchanges-legend-newpage'   => '$1 - pela newiye',
-'recentchanges-legend-minor'     => '$1 vurnaiso qızkek',
-'recentchanges-legend-bot'       => '$1 - vurnaisê boti',
 'rcnote'                         => "Cêr {{PLURAL:$1|'''1''' vurnaiso peyên|'''$1''' vurnaisê peyêni}} be {{PLURAL:$2|roza peyêne|'''$2''' rozunê peyênunê}} $5, $4 ra estê.",
 'rclistfrom'                     => '$1 ra hata nıka vurnaisunê newu bıasne',
 'rcshowhideminor'                => '$1 vurnaisê qızkeki',
@@ -1070,7 +1063,6 @@ Sıma ke ney bıgurenê, karê sıma de no namdarêni dano.',
 # Watchlist
 'watchlist'         => 'Pela mına şêrkerdene',
 'mywatchlist'       => 'Lista mına şêrkerdışi',
-'watchlistfor'      => "(serba '''$1''')",
 'addedwatch'        => 'Kerd be lista şêrkerdişi ser',
 'addedwatchtext'    => "Pela \"[[:\$1]]\"i ilawe biye be [[Special:Watchlist|pela şêrkerdişi]].
 Nara dıme, vurnaisê na pele u pela hurênaisê dawa alaqedare ita bena lista, u pele [[Special:RecentChanges|lista vurnaisunê peyênu]] de '''qolınd''' asena ke cı ra asan weçiniyo.",
@@ -1337,9 +1329,9 @@ Serba areze-kerdene qaytê ''math/README''y ke.",
 'nextdiff'     => 'Vurnaena newêre →',
 
 # Media information
-'file-info-size'       => '($1 × $2 piksel, gırsênia dosya: $3, MIME tipê cı: $4)',
+'file-info-size'       => '$1 × $2 piksel, gırsênia dosya: $3, MIME tipê cı: $4',
 'file-nohires'         => '<small>Tewrêna berz rovıleşiyaene nêbena.</small>',
-'svg-long-desc'        => '(Dosya SVGy, seha ke $1 × $2 pixels, gırşênia dosya: $3)',
+'svg-long-desc'        => 'Dosya SVGy, seha ke $1 × $2 pixels, gırşênia dosya: $3',
 'show-big-image'       => 'Rovıleşiyaena tame',
 'show-big-image-thumb' => '<small>Gırsênia verqayti: $1 × $2 piksel</small>',
 
@@ -1462,5 +1454,9 @@ Eke dosya de peydêna vuriyais biyo ki, beno ke taê melumati gorê vurnaisê ne
 
 # Special:BlankPage
 'blankpage' => 'Pela thale',
+
+# Special:ComparePages
+'compare-page1' => 'Pele 1',
+'compare-page2' => 'Pele 2',
 
 );

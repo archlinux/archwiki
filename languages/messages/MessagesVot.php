@@ -161,7 +161,7 @@ Kui tšüsümüssessä ebõõ rootšittu tšültši, võib õlla õlõttõ löü
 # Login and logout pages
 'yourname'                => 'Tšäüttijänimi:',
 'yourpassword'            => 'Salasõna',
-'remembermypassword'      => 'Mäleht minuu',
+'remembermypassword'      => 'Mäleht minuu (enintään $1 {{PLURAL:$1|päivä|päivää}})',
 'login'                   => 'Tširjut süäme',
 'nav-login-createaccount' => 'Tširjut süäme vai registriiroit tšäüttijässi',
 'userlogin'               => 'Tširjut süäme',
@@ -388,7 +388,6 @@ Tšüľľed, kummad õmad teďďellä [[Special:Watchlist|kattsõspiizgalla]] on
 # Watchlist
 'watchlist'         => 'Minu kattsõspiiska',
 'mywatchlist'       => 'Minu kattsõspiiska',
-'watchlistfor'      => '$1',
 'addedwatch'        => 'Lisättü kattsospiizgallõ',
 'addedwatchtext'    => "Tšültši \"[[:\$1]]\" on lisättü Teďďee [[Special:Watchlist|kattsospiizgallõ]].
 Tšültšese ja sene juttutšültšese tehäväd tulõvaizõd muutuhsõd leeväd tšisloitõtud siäll.
@@ -596,9 +595,9 @@ Toož, võittõ tširjutta väänteüssee süü.',
 'nextdiff'     => 'Uuvvõpi muutuz →',
 
 # Media information
-'file-info-size'       => '($1 × $2 px, $3, MIME-sortta: $4)',
+'file-info-size'       => '$1 × $2 px, $3, MIME-sortta: $4',
 'file-nohires'         => '<small>Suurõpaa kuva ebõõ.</small>',
-'svg-long-desc'        => '(SVG-faili $1 × $2 px, failii suuruz: $3)',
+'svg-long-desc'        => 'SVG-faili $1 × $2 px, failii suuruz: $3',
 'show-big-image'       => 'Kõrka-rezoľuuttsiin verzija',
 'show-big-image-thumb' => '<small>Prestavľeńńaa suuruz: $1 × $2 px</small>',
 

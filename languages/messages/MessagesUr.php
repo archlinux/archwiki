@@ -13,6 +13,7 @@
  * @author Reedy
  * @author Wisesabre
  * @author לערי ריינהארט
+ * @author سمرقندی
  * @author محبوب عالم
  */
 
@@ -62,8 +63,7 @@ $messages = array(
 'tog-editsection'             => '[ترمیم] روابط کے ذریعے سطری ترمیم کاری فعال کرو',
 'tog-editsectiononrightclick' => 'سطری عنوانات پر دایاں طق کے ذریعے سطری ترمیم کاری فعال بناؤ',
 'tog-showtoc'                 => 'فہرستِ مندرجات دکھاؤ (3 سے زیادہ سرخیوں والے صفحات کیلئے)',
-'tog-rememberpassword'        => 'اِس شمارندہ پر میری داخلہ کاری معلومات یاد رکھو',
-'tog-editwidth'               => 'تدوینی خانہ کو اتنا چوڑا کرو کہ یہ پوری سکرین پر محیط ہوجائے',
+'tog-rememberpassword'        => 'اِس شمارندہ پر میری داخلہ کاری معلومات یاد رکھو (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => 'میرے مرتب شدہ صفحات کو میری زیرِنظرفہرست میں شامل کیا کرو',
 'tog-watchdefault'            => 'میرے ترمیم شدہ صفحات کو میری زیرِنظرفہرست میں شامل کیا کرو',
 'tog-watchmoves'              => 'میں جن صفحات کو منتقل کرتا ہوں، اُن کو میری زیرِنظرفہرست میں شامل کیا کرو',
@@ -99,8 +99,9 @@ $messages = array(
 'underline-default' => 'متصفح کا طے شدہ',
 
 # Font style option in Special:Preferences
-'editfont-style'   => 'خانۂ تدوین کا اندازِ تحریر:',
-'editfont-default' => 'متصفح کا طے شدہ',
+'editfont-style'     => 'خانۂ تدوین کا اندازِ تحریر:',
+'editfont-default'   => 'متصفح کا طے شدہ',
+'editfont-monospace' => 'یکفضائی نویسہ',
 
 # Dates
 'sunday'        => 'اتوار',
@@ -191,29 +192,18 @@ $messages = array(
 'faqpage'        => 'Project:معلوماتِ عامہ',
 
 # Vector skin
-'vector-action-addsection'   => 'نیا موضوع',
-'vector-action-delete'       => 'حذف کرو',
-'vector-action-move'         => 'منتقل کرو',
-'vector-action-protect'      => 'محفوظ کرو',
-'vector-action-unprotect'    => 'غیر محفوظ',
-'vector-namespace-category'  => 'زمرہ',
-'vector-namespace-help'      => 'صفحۂ مدد',
-'vector-namespace-image'     => 'ملف',
-'vector-namespace-main'      => 'صفحہ',
-'vector-namespace-media'     => 'صفحۂ وسیط',
-'vector-namespace-mediawiki' => 'پیغام',
-'vector-namespace-project'   => 'صفحۂ منصوبہ',
-'vector-namespace-special'   => 'خاص صفحہ',
-'vector-namespace-talk'      => 'تبادلہٴ خیال',
-'vector-namespace-template'  => 'سانچہ',
-'vector-namespace-user'      => 'صفحۂ صارف',
-'vector-view-create'         => 'تخلیق',
-'vector-view-edit'           => 'ترمیم',
-'vector-view-history'        => 'تاریخچہ',
-'vector-view-view'           => 'پڑھیں',
-'vector-view-viewsource'     => 'مسودہ',
-'actions'                    => 'ایکشنز',
-'namespaces'                 => 'جائے نام',
+'vector-action-addsection' => 'نیا موضوع',
+'vector-action-delete'     => 'حذف کرو',
+'vector-action-move'       => 'منتقل کرو',
+'vector-action-protect'    => 'محفوظ کرو',
+'vector-action-unprotect'  => 'غیر محفوظ',
+'vector-view-create'       => 'تخلیق',
+'vector-view-edit'         => 'ترمیم',
+'vector-view-history'      => 'تاریخچہ',
+'vector-view-view'         => 'پڑھیں',
+'vector-view-viewsource'   => 'مسودہ',
+'actions'                  => 'ایکشنز',
+'namespaces'               => 'جائے نام',
 
 'errorpagetitle'    => 'خطاء',
 'returnto'          => 'واپس $1۔',
@@ -436,7 +426,7 @@ Warning: Page may not contain recent updates.',
 'yourname'                   => 'اسمِ رکنیت',
 'yourpassword'               => 'کلمۂ شناخت',
 'yourpasswordagain'          => 'کلمۂ شناخت دوبارہ لکھیں',
-'remembermypassword'         => 'مجھے یاد رکھیں',
+'remembermypassword'         => 'مجھے یاد رکھیں (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'             => 'آپکا ڈومین',
 'externaldberror'            => 'یا تو توثیقی ڈیٹابیس میں خطا واقع ہوئی اور یا آپ کو بیرونی کھاتہ بتاریخ کرنے کی اِجازت نہیں ہے.',
 'login'                      => 'داخل ہوں',
@@ -453,6 +443,7 @@ Warning: Page may not contain recent updates.',
 'gotaccount'                 => "پہلے سے کھاتہ بنا ہوا ہے? '''$1'''.",
 'gotaccountlink'             => 'داخل ہوجائیے',
 'createaccountmail'          => 'بذریعۂ برقی ڈاک',
+'createaccountreason'        => 'وجہ:',
 'badretype'                  => 'درج شدہ کلمۂ شناخت اصل سے مطابقت نہیں رکھتا۔',
 'userexists'                 => 'درج شدہ اسمِ صارف پہلے سے زیرِاستعمال ہے.
 براہِ کرم، کوئی دوسرا اسمِ صارف استعمال کریں.',
@@ -1118,7 +1109,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Watchlist
 'watchlist'         => 'میری زیرنظرفہرست',
 'mywatchlist'       => 'میری زیرنظرفہرست',
-'watchlistfor'      => "(براۓ '''$1''')",
 'addedwatch'        => 'زیر نظر فہرست میں اندراج کردیاگیا',
 'addedwatchtext'    => "یہ صفحہ \"<nowiki>\$1</nowiki>\" آپکی [[Special:Watchlist|زیرنظر]] فہرست میں شامل کردیا گیا ہے۔ اب مستقل میں اس صفحے اور اس سے ملحقہ تبادلہ خیال کا صفحے میں کی جانے والی تبدیلوں کا اندراج کیا جاتا رہے گا، اور ان صفحات کی شناخت کو سہل بنانے کے لیۓ [[Special:حالیہ تبدیلیاں|حالیہ تبدیلیوں کی فہرست]] میں انکو '''مُتَجَل''' (bold) تحریر کیا جاۓ گا۔ <p> اگر آپ کسی وقت اس صفحہ کو زیرنظرفہرست سے خارج کرنا چاہیں تو اوپر دیۓ گۓ \"زیرنظرمنسوخ\" پر ٹک کیجیۓ۔",
 'removedwatch'      => 'زیرنظرفہرست سے خارج کر دیا گیا',

@@ -1,10 +1,14 @@
 <?php
 /**
+ * Handler for DjVu images
+ *
  * @file
  * @ingroup Media
  */
  
 /**
+ * Handler for DjVu images
+ *
  * @ingroup Media
  */
 class DjVuHandler extends ImageHandler {
@@ -104,6 +108,7 @@ class DjVuHandler extends ImageHandler {
 		$cmd .= ' > ' . wfEscapeShellArg($dstPath) . ') 2>&1';
 		wfProfileIn( 'ddjvu' );
 		wfDebug( __METHOD__.": $cmd\n" );
+		$retval = '';
 		$err = wfShellExec( $cmd, $retval );
 		wfProfileOut( 'ddjvu' );
 
@@ -181,7 +186,7 @@ class DjVuHandler extends ImageHandler {
 		return $this->getDjVuImage( $image, $path )->getImageSize();
 	}
 
-	function getThumbType( $ext, $mime ) {
+	function getThumbType( $ext, $mime, $params = null ) {
 		global $wgDjvuOutputExtension;
 		static $mime;
 		if ( !isset( $mime ) ) {

@@ -26,7 +26,7 @@ $messages = array(
 'tog-editsection'             => "Emiko ku mpapula gibengako enyunzi eza '[kyusa]' ezikuggusa w'osobolera okugikyusiza.",
 'tog-editsectiononrightclick' => "Okunyiga ku omutwe gw'omuko ku lupapula n'eppeesa erya ddyo kubikkulenga w'ogukyusiza (kyetaagisa 'JavaScript')",
 'tog-showtoc'                 => 'Teekawo endagiriro (singa ku lupapula kubaako emitwe gisukka mu esatu)',
-'tog-rememberpassword'        => 'Ekigambo kyange ekikuumi kitereke ku kompyuta eno',
+'tog-rememberpassword'        => 'Tereka ekigambo kyange ekikuumi ku kompyuta eno (okumala {{PLURAL:$1|olunaku|ennaku ezitasukka mu}} $1)',
 'tog-watchcreations'          => "Empapula zenkolawo ziteekebwenga ku lukalala lw'ezo zengoberera",
 'tog-watchdefault'            => "Empapula zenkyusamu ziteekebwenga ku lukalala lw'ezo zengoberera",
 'tog-watchmoves'              => "Empapula zenkyusa erinnya ziteekebwenga ku lukalala lw'ezo zengoberera",
@@ -168,20 +168,20 @@ $messages = array(
 'faqpage'        => 'Project:Ebitera okubuuzibwa ku',
 
 # Vector skin
-'vector-action-addsection' => 'Tandikawo emboozi endala',
-'vector-action-delete'     => 'Gyawo olupapula luno',
-'vector-action-move'       => 'Simbuliza',
-'vector-action-protect'    => 'Ssiba',
-'vector-action-undelete'   => 'Zawo',
-'vector-action-unprotect'  => 'Gyako ebikugizo',
-'vector-namespace-main'    => 'Lupapula',
-'vector-view-create'       => 'Lukolewo',
-'vector-view-edit'         => 'Kyusa',
-'vector-view-history'      => 'Ennanda ya fayiro eno',
-'vector-view-view'         => 'Soma',
-'vector-view-viewsource'   => "Kebera obulambike obw'ennono obw'olupapula luno",
-'actions'                  => "By'oyinza okukola",
-'namespaces'               => 'Makuŋaanyizo',
+'vector-action-addsection'       => 'Tandikawo emboozi endala',
+'vector-action-delete'           => 'Gyawo olupapula luno',
+'vector-action-move'             => 'Simbuliza',
+'vector-action-protect'          => 'Ssiba',
+'vector-action-undelete'         => 'Zawo',
+'vector-action-unprotect'        => 'Gyako ebikugizo',
+'vector-simplesearch-preference' => "Wiki esobole okukuwa amagezi ku by'onoonya (kino kikolera mu ndabika ya Vector yokka)",
+'vector-view-create'             => 'Lukolewo',
+'vector-view-edit'               => 'Kyusa',
+'vector-view-history'            => 'Ennanda ya fayiro eno',
+'vector-view-view'               => 'Soma',
+'vector-view-viewsource'         => "Kebera obulambike obw'ennono obw'olupapula luno",
+'actions'                        => "By'oyinza okukola",
+'namespaces'                     => 'Makuŋaanyizo',
 
 'errorpagetitle'    => 'Kiremya',
 'returnto'          => 'Dda ku $1.',
@@ -242,6 +242,9 @@ Olw'obungi bw'abakebera olupapula olwo, kompyuta zaffe tezisobola kwongerako mul
 Lindako akaseera oddemu ogezeeko okulukebera.
 
 $1",
+'pool-timeout'      => "Obudde obugere obw'okulinda okufuna obuyinza obw'okulukozesa buweddeko",
+'pool-queuefull'    => "Olukalala lw'emirimu egirinda okukolebwako lujjudde",
+'pool-errorunknown' => 'Ekireesewo kiremya tekitegeerese',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => 'Okutangaaza ku {{SITENAME}}',
@@ -412,7 +415,8 @@ Tewerabira kwetereereza [[Special:Preferences|enteekateeka yo ey'oku {{SITENAME}
 'yourname'                   => "Ery'obwa memba",
 'yourpassword'               => 'Ekigambo ekikuumi',
 'yourpasswordagain'          => 'Ddamu ekigambo ekikuumi',
-'remembermypassword'         => 'Tereka ekigambo kyange ekikuumi ku kompyuta eno',
+'remembermypassword'         => 'Tereka ekigambo kyange ekikuumi ku kompyuta eno (okumala {{PLURAL:$1|olunaku|ennaku ezitasukka mu}} $1)',
+'securelogin-stick-https'    => "Sigala ku mukutu gwa kika kya HTTPS ng'omaze okuyingira",
 'yourdomainname'             => 'Linnya lya twale lya kayungirizi lyo:',
 'externaldberror'            => "Waliwo kiremya mu ggwanika lya data ekozesebwa okukakasa bamemba oba tokkirizibwa okukyusa ku akawunti yo ey'awalala.",
 'login'                      => 'Yingira',
@@ -429,6 +433,7 @@ Tewerabira kwetereereza [[Special:Preferences|enteekateeka yo ey'oku {{SITENAME}
 'gotaccount'                 => "Akawunti wafuna? '''$1'''.",
 'gotaccountlink'             => 'Yingira',
 'createaccountmail'          => 'Akawunti gikole ne E-mail',
+'createaccountreason'        => 'Ekikukozesezawo akawunti:',
 'badretype'                  => "Ebigambo ebikuumi by'owandise tebifaanagana.",
 'userexists'                 => "Ery'obwa memba ly'owandise wali omulala alirina.<br />
 Londa eddala.",
@@ -457,6 +462,7 @@ Ddamu ogezeeko.",
 Ddamu ogezeeko.',
 'passwordtooshort'           => 'Ekigambo ekikuumi kiteekwa okubaamu {{PLURAL:$1|akabonero wakiri kamu|obubonero obutakka wansi wa $1}}.',
 'password-name-match'        => "Tokkirizibwa kukozesa linnya lyo ery'obwa memba ng'ekigambo ekikuumi.",
+'password-login-forbidden'   => "Ebigambo bino tebikkirizibwa kukozesebwa ng'amannya g'obwa memba oba bigambo bikuumi.",
 'mailmypassword'             => 'Nsindikira ekigambo ekikuumi ekipya',
 'passwordremindertitle'      => "Ekigambo ekikuumi eky'oku {{SITENAME}} ekipya. Kya kiseerabuseera.",
 'passwordremindertext'       => 'Waliwo eyayimidde ku ndagiriro eya IP $1 (tusuubiri nti ye ggwe) n\'asaba ekigambo ekikuumi eky\'oku {{SITENAME}} ($4) ekipya.<br />
@@ -498,6 +504,9 @@ Sooka olindeko akaseera okuddamu n'ate.",
 'loginlanguagelabel'         => 'Lulimi: $1',
 'suspicious-userlogout'      => "Sisitemu ezize ekiragiro kyo eky'okugivaamu kubanga kirabise nga ekivudde mu kalambulanetti enfu<br />
 oba mu puloguramu etereka n'eddamu okuyisa ebiragiro ebivudde awalala.",
+
+# E-mail sending
+'php-mail-error-unknown' => "Wazzewo kiremya atategeerese mu mukolo mail() ogw'omu PHP",
 
 # Password reset dialog
 'resetpass'                 => 'Kyusa ekigambo ekikuumi',
@@ -550,9 +559,12 @@ Oyinz'okuba nga wamaze okutegeka ekya ddala ekipya oba nga wakasabayo eky'ekisee
 'showdiff'                         => 'Ndaga bwe bikyuse',
 'anoneditwarning'                  => "'''Kulabula:''' Owandika toyingidde mu sisitemu. Tujjakuwandika endagiriro eya kompyuta kwosinzidde
 mu lukalala lw'enkuykakyuka ez'omu lupapula luno.",
+'anonpreviewwarning'               => "''Okola toyingidde sisitemu. Bw'on'okaza by'okola nga sisitemu ewandika n'endagiriro yo eya IP mu lukalala lw'enkyukakyuka lw'olupapula luno.''",
 'missingsummary'                   => "'''Okujjukiza:''' Towandise ebinnyonyola enkyukakyuka z'okoze.<br />
 Bw'oddamu okunyiga \"{{int:savearticle}}\", by'okoze tebijjakubaako okunnyonyola.",
 'missingcommenttext'               => 'Wandika ebigambo byo wano awaddako.',
+'missingcommentheader'             => "'''Okujjukiza:''' Ebigambo byo tobiwadde omutwe.<br />
+Bw'oddamu okunyiga \"{{int:savearticle}}\", by'okoze tebijjakubaako omutwe ogubyanjula.",
 'summary-preview'                  => 'Kuno kwe kunnyonyola kwo:',
 'subject-preview'                  => 'Omutwe bwe gunaafaanana:',
 'blockedtitle'                     => 'Ono agaanidwa',
@@ -637,6 +649,13 @@ aka ''Reload'', oba nyigira okumu amapeesa aga ''Ctrl'' ne ''F5'' oba aga ''Ctrl
 '''Tannakazibwa.'''",
 'userjspreview'                    => "'''Jukira nti JavaScript gw'otegese omugezesamubugezesa oba omulozakobulozi.'''<br />
 '''Tannakazibwa.'''",
+'sitecsspreview'                   => "'''Jukira nti CSS ono omulozakobulozi.'''<br />
+'''Tannakazibwa.'''",
+'sitejspreview'                    => "'''Jukira nti JavaScript ono omulozakobulozi.'''<br />
+'''Tannakazibwa.'''",
+'userinvalidcssjstitle'            => "'''Kulabula:''' Tewali endabika eyitibwa \"\$1\".<br />
+Empapula eza .css ne .js bamemba ze b'ekoledde, amannya ga zo ennukuta za mu<br />
+zonna ziteekwa okuba ntono, okugeza ''{{ns:user}}:Foo/vector.css'' so ssi ''{{ns:user}}:Foo/Vector.css''.",
 'updated'                          => '(Ebituukanisidwa)',
 'note'                             => "'''Okunnyonyola:'''",
 'previewnote'                      => "'''Kuno kugezaamubugeza; by'okoze tebinnakazibwa!'''",
@@ -752,6 +771,8 @@ Agumenti ezo sistemu tezikozesezza.",
 'currentrevisionlink'    => 'Oluwandika oluliwo kakati',
 'cur'                    => 'ebiriwo',
 'last'                   => 'ebyasookawo bino',
+'page_first'             => 'Olusooka',
+'page_last'              => 'Olusembayo',
 'histlegend'             => "'''Ebyokugerageranizibwa:''' nyiga obutonnyeze ku likooda zoyagala okugerageranya olyoke onyige eppeesa erya 'Enter'<br />
 oba ku gano agali ku lupapula luno.<br />
 '''Ebigambo:''' (erw) = enjawulo ku ebiriwo, (eku) = enjawulo ku egikulembera, N = enkyukakyuka entono.",
@@ -1272,9 +1293,9 @@ Ob'oyagala okuyamba ku kuvvuunula eby'omu MediaWiki yonna, kebera ku [http://www
 'nextdiff'     => 'Enkyukakyuka ezaddako okukolebwa→',
 
 # Media information
-'file-info-size'       => '(pikseli $1 ku $2 , bunene bwa fayiro: $3, kika kya MIME: $4)',
+'file-info-size'       => 'pikseli $1 ku $2 , bunene bwa fayiro: $3, kika kya MIME: $4',
 'file-nohires'         => '<small>Tewali kisingako wano.</small>',
-'svg-long-desc'        => '(Fayiro ya kika  kya SVG, ya pikselo $1 ku $2 awamu, ya obunene bwa: $3)',
+'svg-long-desc'        => 'Fayiro ya kika  kya SVG, ya pikselo $1 ku $2 awamu, ya obunene bwa: $3',
 'show-big-image'       => 'Laga ekifaananyi ekijjuvu',
 'show-big-image-thumb' => '<small>Okulagako kuno kwa pikiseli: $1 ku $2</small>',
 

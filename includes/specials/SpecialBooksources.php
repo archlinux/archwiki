@@ -1,4 +1,25 @@
 <?php
+/**
+ * Implements Special:Booksources
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup SpecialPage
+ */
 
 /**
  * Special page outputs information on sourcing a book with a particular ISBN
@@ -35,7 +56,7 @@ class SpecialBookSources extends SpecialPage {
 		$wgOut->addHTML( $this->makeForm() );
 		if( strlen( $this->isbn ) > 0 ) {
 			if( !self::isValidISBN( $this->isbn ) ) {
-				$wgOut->wrapWikiMsg( "<div class=\"error\">\n$1</div>", 'booksources-invalid-isbn' );
+				$wgOut->wrapWikiMsg( "<div class=\"error\">\n$1\n</div>", 'booksources-invalid-isbn' );
 			}
 			$this->showList();
 		}
@@ -48,7 +69,6 @@ class SpecialBookSources extends SpecialPage {
 	public static function isValidISBN( $isbn ) {
 		$isbn = self::cleanIsbn( $isbn );
 		$sum = 0;
-		$check = -1;
 		if( strlen( $isbn ) == 13 ) {
 			for( $i = 0; $i < 12; $i++ ) {
 				if($i % 2 == 0) {
@@ -78,7 +98,6 @@ class SpecialBookSources extends SpecialPage {
 		return false;
 	}
 
-
 	/**
 	 * Trim ISBN and remove characters which aren't required
 	 *
@@ -99,9 +118,9 @@ class SpecialBookSources extends SpecialPage {
 		$title = self::getTitleFor( 'Booksources' );
 		$form  = '<fieldset><legend>' . wfMsgHtml( 'booksources-search-legend' ) . '</legend>';
 		$form .= Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) );
-		$form .= Xml::hidden( 'title', $title->getPrefixedText() );
+		$form .= Html::hidden( 'title', $title->getPrefixedText() );
 		$form .= '<p>' . Xml::inputLabel( wfMsg( 'booksources-isbn' ), 'isbn', 'isbn', 20, $this->isbn );
-		$form .= '&nbsp;' . Xml::submitButton( wfMsg( 'booksources-go' ) ) . '</p>';
+		$form .= '&#160;' . Xml::submitButton( wfMsg( 'booksources-go' ) ) . '</p>';
 		$form .= Xml::closeElement( 'form' );
 		$form .= '</fieldset>';
 		return $form;
@@ -147,6 +166,6 @@ class SpecialBookSources extends SpecialPage {
 	 */
 	private function makeListItem( $label, $url ) {
 		$url = str_replace( '$1', $this->isbn, $url );
-		return '<li><a href="' . htmlspecialchars( $url ) . '">' . htmlspecialchars( $label ) . '</a></li>';
+		return '<li><a href="' . htmlspecialchars( $url ) . '" class="external">' . htmlspecialchars( $label ) . '</a></li>';
 	}
 }

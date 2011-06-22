@@ -1,5 +1,27 @@
 <?php
 /**
+ * Implements Special:DeletedContributions
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup SpecialPage
+ */
+
+/**
  * Implements Special:DeletedContributions to display archived revisions
  * @ingroup SpecialPage
  */
@@ -258,7 +280,7 @@ class DeletedContributionsPage extends SpecialPage {
 			return;
 		}
 
-		global $wgOut, $wgLang, $wgRequest;
+		global $wgOut, $wgRequest;
 
 		$wgOut->setPageTitle( wfMsgExt( 'deletedcontributions-title', array( 'parsemag' ) ) );
 
@@ -328,8 +350,8 @@ class DeletedContributionsPage extends SpecialPage {
 
 	/**
 	 * Generates the subheading with links
-	 * @param Title $nt @see Title object for the target
-	 * @param integer $id User ID for the target
+	 * @param $nt Title object for the target
+	 * @param $id Integer: User ID for the target
 	 * @return String: appropriately-escaped HTML to be output literally
 	 * @todo Fixme: almost the same as contributionsSub in SpecialContributions.php. Could be combined.
 	 */
@@ -445,7 +467,7 @@ class DeletedContributionsPage extends SpecialPage {
 	 * @param $options Array: the options to be included.
 	 */
 	function getForm( $options ) {
-		global $wgScript, $wgRequest;
+		global $wgScript;
 
 		$options['title'] = SpecialPage::getTitleFor( 'DeletedContributions' )->getPrefixedText();
 		if ( !isset( $options['target'] ) ) {
@@ -472,7 +494,7 @@ class DeletedContributionsPage extends SpecialPage {
 			if ( in_array( $name, array( 'namespace', 'target', 'contribs' ) ) ) {
 				continue;
 			}
-			$f .= "\t" . Xml::hidden( $name, $value ) . "\n";
+			$f .= "\t" . Html::hidden( $name, $value ) . "\n";
 		}
 
 		$f .=  Xml::openElement( 'fieldset' ) .

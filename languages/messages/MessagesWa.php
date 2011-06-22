@@ -58,9 +58,9 @@ $namespaceNames = array(
 # definixha del cogne po les limeros
 # (number format definition)
 # en: 12,345.67 -> wa: 12 345,67
-$separatorTransformTable = array(',' => "\xc2\xa0", '.' => ',' );
+$separatorTransformTable = array( ',' => "\xc2\xa0", '.' => ',' );
 
-#$linkTrail = '/^([a-zåâêîôûçéèA-ZÅÂÊÎÔÛÇÉÈ]+)(.*)$/sDu';
+# $linkTrail = '/^([a-zåâêîôûçéèA-ZÅÂÊÎÔÛÇÉÈ]+)(.*)$/sDu';
 $linkTrail = '/^([a-zåâêîôûçéè]+)(.*)$/sDu';
 
 #
@@ -83,8 +83,7 @@ $messages = array(
 'tog-editsection'             => "Eployî les loyéns «[candjî]» po candjî rén k' ene seccion",
 'tog-editsectiononrightclick' => 'Candjî les seccions avou on dobe-clitch sol tite (JavaScript)',
 'tog-showtoc'                 => "Mostrer l' tåvlea d' ådvins<br />(po ls årtikes avou pus di 3 seccions)",
-'tog-rememberpassword'        => 'Rimimbrer li scret inte les sessions',
-'tog-editwidth'               => "Li boesse d' aspougnaedje prind tote li lårdjeu",
+'tog-rememberpassword'        => 'Rimimbrer li scret inte les sessions (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => "Mete les pådjes ki dj' askepeye dins l' djivêye des pådjes shuvowes",
 'tog-watchdefault'            => "Shuve les årtikes ki dj' fwai ou ki dj' candje",
 'tog-watchmoves'              => "Radjouter a m' djivêye des shuvous les pådjes ki dji displaece",
@@ -364,7 +363,7 @@ Vosse conte a stî ahivé.
 'yourname'                   => "Vosse no d' elodjaedje",
 'yourpassword'               => 'Vosse sicret',
 'yourpasswordagain'          => 'Ritapez vosse sicret',
-'remembermypassword'         => "Rimimbrer m' sicret inte les sessions.",
+'remembermypassword'         => "Rimimbrer m' sicret inte les sessions (nén dpus ki po $1 {{PLURAL:$1|djoû|djoûs}})",
 'yourdomainname'             => 'Vosse dominne',
 'login'                      => "S' elodjî",
 'nav-login-createaccount'    => "Ahiver on conte, udon-bén s' elodjî",
@@ -488,7 +487,7 @@ Si vos n' voloz nén scrire cisse pådje chal, clitchîz simplumint sol boton ''
 'userjsyoucanpreview'        => "'''Racsegne:''' eployîz l' boton «Vey divant» po sayî vosse novea JS divant del schaper.",
 'usercsspreview'             => "'''Èn rovyîz nén ki c' est djusse on prévoeyaedje di vosse stîle CSS d' uzeu, i n' a nén co stî schapé!'''",
 'userjspreview'              => "'''Èn rovyîz nén ki c' est djusse on prévoeyaedje/saye di vosse JavaScript d' uzeu, i n' a nén co stî schapé!'''",
-'userinvalidcssjstitle'      => "'''Asteme:''' I n' a pont d' pea lomêye «$1». Tuzez ki les pådjes .css eyet .js des uzeus eployèt des tite e ptitès letes, metans {{ns:user}}:Toto/monobook.css et nén {{ns:user}}:Toto/Monobook.css.",
+'userinvalidcssjstitle'      => "'''Asteme:''' I n' a pont d' pea lomêye «$1». Tuzez ki les pådjes .css eyet .js des uzeus eployèt des tite e ptitès letes, metans {{ns:user}}:Toto/vector.css et nén {{ns:user}}:Toto/Vector.css.",
 'updated'                    => '(Ramidré)',
 'previewnote'                => "'''Èn rovyîz nén ki c' est djusse on prévoeyaedje, li pådje n' est nén co schapêye!'''",
 'previewconflict'            => 'Ci prévoeyaedje ci mostere kimint kel tecse del boesse di tecse do dzeu sereut håyné si vos decidez di clitchî so «schaper».',
@@ -524,10 +523,6 @@ Vos nos acertinez eto ki vos avoz scrît l' tecse vos-minme, oudonbén l' avoz c
 Si vos n' voloz nén scrire des årtikes ki polèt esse candjîs pa des ôtes, adon nels evoyîz nén chal.<br />
 Vos nos acertinez eto ki vos avoz scrît l' tecse vos-minme, oudonbén l' avoz copyî d' on sourdant libe (voeyoz $1 po pus di racsegnes).
 '''N' EVOYÎZ NÉN DES TECSES DIZO ABONDROETS SINS PERMISSION!'''",
-'longpagewarning'            => "'''ASTEME: Cisse pådje fwait $1 kilo-octets; des
-betchteus waibes k' i gn a polèt aveut des rujhes po-z aspougnî
-des pådjes k' aprepièt ou di pus di 32 ko.
-Vos dvrîz tuzer a pårti l' pådje e pus ptits bokets.'''",
 'longpageerror'              => "'''AROKE: Li tecse ki vos avoz evoyî fwait di pus d' $1 kilo-octets, çou k' est pus ki l' macsimom di $2 kilo-octets. C' est nén possible del schaper sol sierveu.'''",
 'readonlywarning'            => "'''ASTEME: On-z overe sol båze di dnêyes pol moumint, ey elle a stî metowe e mode seulmint-lére.
 Do côp, vos n' såroz schaper vos candjmints asteure; motoit vos dvrîz copyî et aclaper l' tecse dins on fitchî da vosse pol poleur rimete pus tård.'''",
@@ -803,7 +798,6 @@ ou co po les sons
 [[$1|thumb]]",
 'fileexists-forbidden'        => "I gn a ddja on fitchî avou ç' no la; rivnoz s' i vs plait en erî et s' reberwetez l' fitchî dizo èn ôte no. [[File:$1|thumb|center|$1]]",
 'fileexists-shared-forbidden' => "I gn a ddja on fitchî avou ç' no la e ridant des fitchîs pårtaedjîs; rivnoz s' i vs plait en erî et s' reberwetez l' fitchî dizo èn ôte no. [[File:$1|thumb|center|$1]]",
-'successfulupload'            => "L' eberwetaedje a stî comifåt",
 'uploadwarning'               => "Adviertixhmint so l' eberwetaedje",
 'savefile'                    => "Schaper l' fitchî",
 'uploadedimage'               => 'eberwetaedje di «[[$1]]»',
@@ -814,6 +808,7 @@ ou co po les sons
 'sourcefilename'              => "No d' fitchî so vosse copiutrece:",
 'destfilename'                => "No d' fitchî a eployî so {{SITENAME}}:",
 'filewasdeleted'              => "On fitchî avou ç' no la a ddja stî disfacé. Vos dvrîz loukî å $1 divant d' continouwer.",
+'upload-success-subj'         => "L' eberwetaedje a stî comifåt",
 
 'upload-file-error' => 'Divintrinne aroke',
 
@@ -1001,7 +996,6 @@ Do côp, c' est nén possibe di lyi evoyî èn emile.",
 # Watchlist
 'watchlist'            => 'Pådjes shuvowes',
 'mywatchlist'          => 'Pådjes shuvowes',
-'watchlistfor'         => "(po l' uzeu «'''$1'''»)",
 'nowatchlist'          => 'Vosse djivêye des pådjes a shuve est vude.',
 'watchlistanontext'    => 'I vs fåt $1 po vey ou candjî les cayets di vosse djivêye des shuvous.',
 'watchnologin'         => "Vos n' estoz nén elodjî",
@@ -1427,7 +1421,7 @@ Totes les accions di rcopiaedje eterwiki sont metowes e [[Special:Log/import|djo
 'mediawarning'         => "'''Asteme''': Ci fitchî chal pôreut esse evirussé, si vos l' enondez vos pôrîz infecter l' sistinme da vosse.",
 'imagemaxsize'         => "Limite pol håynaedje ezès pådjes d' imådje:",
 'thumbsize'            => 'Grandeu po les imådjetes (thumb):',
-'file-info-size'       => '($1 × $2 picsels, groxheur do fitchî: $3, del sôre "MIME": $4)',
+'file-info-size'       => '$1 × $2 picsels, groxheur do fitchî: $3, del sôre "MIME": $4',
 'show-big-image'       => 'Pus grande imådje',
 'show-big-image-thumb' => '<small>Grandeur di ci prevoeyaedje ci : $1 × $2 picsels</small>',
 

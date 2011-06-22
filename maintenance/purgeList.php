@@ -20,29 +20,30 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class PurgeList extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Send purge requests for listed pages to squid";
+		$this->addOption( 'purge', 'Whether to update page touched.' , false, false );
 	}
 
 	public function execute() {
 		$stdin = $this->getStdin();
 		$urls = array();
 
-		while( !feof( $stdin ) ) {
+		while ( !feof( $stdin ) ) {
 			$page = trim( fgets( $stdin ) );
 			if ( substr( $page, 0, 7 ) == 'http://' ) {
 				$urls[] = $page;
-			} elseif( $page !== '' ) {
+			} elseif ( $page !== '' ) {
 				$title = Title::newFromText( $page );
-				if( $title ) {
+				if ( $title ) {
 					$url = $title->getFullUrl();
 					$this->output( "$url\n" );
 					$urls[] = $url;
-					if( isset( $options['purge'] ) ) {
+					if ( $this->getOptions( 'purge' ) ) {
 						$title->invalidateCache();
 					}
 				} else {
@@ -60,4 +61,4 @@ class PurgeList extends Maintenance {
 }
 
 $maintClass = "PurgeList";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );

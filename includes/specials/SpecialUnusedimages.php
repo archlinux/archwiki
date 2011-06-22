@@ -1,11 +1,29 @@
 <?php
 /**
+ * Implements Special:Unusedimages
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup SpecialPage
  */
 
 /**
- * implements Special:Unusedimages
+ * A special page that lists unused images
+ *
  * @ingroup SpecialPage
  */
 class UnusedimagesPage extends ImageQueryPage {
@@ -22,22 +40,11 @@ class UnusedimagesPage extends ImageQueryPage {
 	function isSyndicated() { return false; }
 
 	function getSQL() {
-		global $wgCountCategorizedImagesAsUsed, $wgDBtype;
+		global $wgCountCategorizedImagesAsUsed;
+
 		$dbr = wfGetDB( DB_SLAVE );
 
-		switch ($wgDBtype) {
-			case 'mysql': 
-				$epoch = 'UNIX_TIMESTAMP(img_timestamp)'; 
-				break;
-			case 'oracle': 
-				$epoch = '((trunc(img_timestamp) - to_date(\'19700101\',\'YYYYMMDD\')) * 86400)'; 
-				break;
-			case 'sqlite':
-				$epoch = 'img_timestamp';
-				break;
-			default:
-				$epoch = 'EXTRACT(epoch FROM img_timestamp)';
-		}
+		$epoch = $dbr->unixTimestamp( 'img_timestamp' );
 
 		if ( $wgCountCategorizedImagesAsUsed ) {
 			list( $page, $image, $imagelinks, $categorylinks ) = $dbr->tableNamesN( 'page', 'image', 'imagelinks', 'categorylinks' );

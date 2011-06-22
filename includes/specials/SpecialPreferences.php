@@ -1,5 +1,31 @@
 <?php
+/**
+ * Implements Special:Preferences
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup SpecialPage
+ */
 
+/**
+ * A special page that allows users to change their preferences
+ *
+ * @ingroup SpecialPage
+ */
 class SpecialPreferences extends SpecialPage {
 	function __construct() {
 		parent::__construct( 'Preferences' );
@@ -25,18 +51,19 @@ class SpecialPreferences extends SpecialPage {
 			$this->showResetForm();
 			return;
 		}
-		
-		$wgOut->addScriptFile( 'prefs.js' );
+
+		$wgOut->addModules( 'mediawiki.legacy.prefs' );
+		$wgOut->addModules( 'mediawiki.special.preferences' );
 
 		if ( $wgRequest->getCheck( 'success' ) ) {
 			$wgOut->wrapWikiMsg(
-				'<div class="successbox"><strong>$1</strong></div><div id="mw-pref-clear"></div>',
+				"<div class=\"successbox\"><strong>\n$1\n</strong></div><div id=\"mw-pref-clear\"></div>",
 				'savedprefs'
 			);
 		}
 		
 		if ( $wgRequest->getCheck( 'eauth' ) ) {
-			$wgOut->wrapWikiMsg( "<div class='error' style='clear: both;'>\n$1</div>",
+			$wgOut->wrapWikiMsg( "<div class='error' style='clear: both;'>\n$1\n</div>",
 									'eauthentsent', $wgUser->getName() );
 		}
 

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Advanced generator of database load balancing objects for wiki farms
+ *
  * @file
  * @ingroup Database
  */
@@ -85,7 +87,7 @@ class LBFactory_Multi extends LBFactory {
 		if ( $this->lastWiki === $wiki ) {
 			return $this->lastSection;
 		}
-		list( $dbName, $prefix ) = $this->getDBNameAndPrefix( $wiki );
+		list( $dbName, ) = $this->getDBNameAndPrefix( $wiki );
 		if ( isset( $this->sectionsByDB[$dbName] ) ) {
 			$section = $this->sectionsByDB[$dbName];
 		} else {
@@ -97,7 +99,7 @@ class LBFactory_Multi extends LBFactory {
 	}
 
 	function newMainLB( $wiki = false ) {
-		list( $dbName, $prefix ) = $this->getDBNameAndPrefix( $wiki );
+		list( $dbName, ) = $this->getDBNameAndPrefix( $wiki );
 		$section = $this->getSectionForWiki( $wiki );
 		$groupLoads = array();
 		if ( isset( $this->groupLoadsByDB[$dbName] ) ) {

@@ -119,7 +119,6 @@ class ChangeTags {
 		}
 
 		// Figure out which conditions can be done.
-		$join_field = '';
 		if ( in_array( 'recentchanges', $tables ) ) {
 			$join_cond = 'rc_id';
 		} elseif( in_array( 'logging', $tables ) ) {
@@ -168,10 +167,10 @@ class ChangeTags {
 			return $data;
 		}
 
-		$html = implode( '&nbsp;', $data );
+		$html = implode( '&#160;', $data );
 		$html .= "\n" . Xml::element( 'input', array( 'type' => 'submit', 'value' => wfMsg( 'tag-filter-submit' ) ) );
-		$html .= "\n" . Xml::hidden( 'title', $wgTitle-> getPrefixedText() );
-		$html = Xml::tags( 'form', array( 'action' => $wgTitle->getLocalURL(), 'method' => 'get' ), $html );
+		$html .= "\n" . Html::hidden( 'title', $title->getPrefixedText() );
+		$html = Xml::tags( 'form', array( 'action' => $title->getLocalURL(), 'method' => 'get' ), $html );
 
 		return $html;
 	}
@@ -181,16 +180,17 @@ class ChangeTags {
 		// Caching...
 		global $wgMemc;
 		$key = wfMemcKey( 'valid-tags' );
-
-		if ( $tags = $wgMemc->get( $key ) )
+		$tags = $wgMemc->get( $key );
+		if ( $tags ) {
 			return $tags;
+		}
 
 		$emptyTags = array();
 
 		// Some DB stuff
 		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->select( 'valid_tag', 'vt_tag', array(), __METHOD__ );
-		while( $row = $res->fetchObject() ) {
+		foreach ( $res as $row ) {
 			$emptyTags[] = $row->vt_tag;
 		}
 

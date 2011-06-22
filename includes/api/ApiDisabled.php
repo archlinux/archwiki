@@ -1,8 +1,8 @@
 <?php
-
 /**
- * Created on Sep 25, 2008
  * API for MediaWiki 1.8+
+ *
+ * Created on Sep 25, 2008
  *
  * Copyright © 2008 Roan Kattouw <Firstname>.<Lastname>@home.nl
  *
@@ -18,8 +18,10 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
@@ -60,9 +62,7 @@ class ApiDisabled extends ApiBase {
 	}
 
 	public function getDescription() {
-		return array(
-			'This module has been disabled.'
-		);
+		return 'This module has been disabled';
 	}
 
 	protected function getExamples() {
@@ -70,6 +70,6 @@ class ApiDisabled extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiDisabled.php 62783 2010-02-21 18:09:00Z ashley $';
+		return __CLASS__ . ': $Id: ApiDisabled.php 70647 2010-08-07 19:59:42Z ialex $';
 	}
 }

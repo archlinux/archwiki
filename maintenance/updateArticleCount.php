@@ -18,11 +18,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @ingroup Maintenance
  * @author Rob Church <robchur@gmail.com>
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class UpdateArticleCount extends Maintenance {
 
@@ -40,10 +41,10 @@ class UpdateArticleCount extends Maintenance {
 		$this->namespaces = $wgContentNamespaces;
 		$this->output( "Counting articles..." );
 		$result = $this->count();
-	
-		if( $result !== false ) {
+
+		if ( $result !== false ) {
 			$this->output( "found {$result}.\n" );
-			if( $this->hasOption( 'update' ) ) {
+			if ( $this->hasOption( 'update' ) ) {
 				$this->output( "Updating site statistics table... " );
 				$dbw = wfGetDB( DB_MASTER );
 				$dbw->update( 'site_stats', array( 'ss_good_articles' => $result ), array( 'ss_row_id' => 1 ), __METHOD__ );
@@ -63,7 +64,7 @@ class UpdateArticleCount extends Maintenance {
 	 * @return string
 	 */
 	private function makeNsSet() {
-		foreach( $this->namespaces as $namespace )
+		foreach ( $this->namespaces as $namespace )
 			$namespaces[] = intval( $namespace );
 		return implode( ', ', $namespaces );
 	}
@@ -92,10 +93,9 @@ class UpdateArticleCount extends Maintenance {
 		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->query( $this->makeSql( $dbr ), __METHOD__ );
 		$row = $dbr->fetchObject( $res );
-		$dbr->freeResult( $res );
 		return $row ? $row->pagecount : false;
 	}
 }
 
 $maintClass = "UpdateArticleCount";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );

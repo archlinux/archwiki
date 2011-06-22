@@ -3,10 +3,11 @@
 /**
  * Backwards-compatibility wrapper for old-style maintenance scripts
  */
-require( dirname(__FILE__) . '/Maintenance.php' );
+require( dirname( __FILE__ ) . '/Maintenance.php' );
 
+global $optionsWithArgs;
 if ( !isset( $optionsWithArgs ) ) {
-    $optionsWithArgs = array();
+	$optionsWithArgs = array();
 }
 
 class CommandLineInc extends Maintenance {
@@ -42,5 +43,5 @@ class CommandLineInc extends Maintenance {
 }
 
 $maintClass = 'CommandLineInc';
-require( DO_MAINTENANCE );
+require( RUN_MAINTENANCE_IF_MAIN );
 

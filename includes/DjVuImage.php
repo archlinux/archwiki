@@ -1,8 +1,8 @@
 <?php
-
 /**
+ * DjVu image handler
  *
- * Copyright (C) 2006 Brion Vibber <brion@pobox.com>
+ * Copyright © 2006 Brion Vibber <brion@pobox.com>
  * http://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  */
 
 /**
@@ -225,6 +226,8 @@ class DjVuImage {
 	 */
 	function retrieveMetaData() {
 		global $wgDjvuToXML, $wgDjvuDump, $wgDjvuTxt;
+		wfProfileIn( __METHOD__ );
+		
 		if ( isset( $wgDjvuDump ) ) {
 			# djvudump is faster as of version 3.5
 			# http://sourceforge.net/tracker/index.php?func=detail&aid=1704049&group_id=32953&atid=406583
@@ -247,26 +250,36 @@ class DjVuImage {
 			wfProfileIn( 'djvutxt' );
 			$cmd = wfEscapeShellArg( $wgDjvuTxt ) . ' --detail=page ' . wfEscapeShellArg( $this->mFilename ) ;
 			wfDebug( __METHOD__.": $cmd\n" );
+			$retval = '';
 			$txt = wfShellExec( $cmd, $retval );
 			wfProfileOut( 'djvutxt' );
 			if( $retval == 0) {
-				# Get rid of invalid UTF-8, strip control characters
-				if( is_callable( 'iconv' ) ) {
-					wfSuppressWarnings();
-					$txt = iconv( "UTF-8","UTF-8//IGNORE", $txt );
-					wfRestoreWarnings();
-				} else {
-					$txt = UtfNormal::cleanUp( $txt );
-				}
+				# Strip some control characters
 				$txt = preg_replace( "/[\013\035\037]/", "", $txt );
-				$txt = htmlspecialchars($txt);
-				$txt = preg_replace( "/\((page\s[\d-]*\s[\d-]*\s[\d-]*\s[\d-]*\s*\&quot;([^<]*?)\&quot;\s*|)\)/s", "<PAGE value=\"$2\" />", $txt  );
+				$reg = <<<EOR
+					/\(page\s[\d-]*\s[\d-]*\s[\d-]*\s[\d-]*\s*"
+					((?>    # Text to match is composed of atoms of either:
+					  \\\\. # - any escaped character 
+					  |     # - any character different from " and \
+					  [^"\\\\]+
+					)*?)
+					"\s*\)
+					| # Or page can be empty ; in this case, djvutxt dumps ()
+					\(\s*()\)/sx
+EOR;
+				$txt = preg_replace_callback( $reg, array( $this, 'pageTextCallback' ), $txt );
 				$txt = "<DjVuTxt>\n<HEAD></HEAD>\n<BODY>\n" . $txt . "</BODY>\n</DjVuTxt>\n";
 				$xml = preg_replace( "/<DjVuXML>/", "<mw-djvu><DjVuXML>", $xml );
 				$xml = $xml . $txt. '</mw-djvu>' ;
 			}
 		}
+		wfProfileOut( __METHOD__ );
 		return $xml;
+	}
+
+	function pageTextCallback( $matches ) {
+		# Get rid of invalid UTF-8, strip control characters
+		return '<PAGE value="' . htmlspecialchars( UtfNormal::cleanUp( $matches[1] ) ) . '" />';
 	}
 
 	/**

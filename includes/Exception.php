@@ -1,10 +1,17 @@
 <?php
 /**
+ * Exception class and handler
+ *
+ * @file
+ */
+
+/**
  * @defgroup Exception Exception
  */
 
 /**
  * MediaWiki exception
+ *
  * @ingroup Exception
  */
 class MWException extends Exception {
@@ -25,37 +32,45 @@ class MWException extends Exception {
 	 */
 	function useMessageCache() {
 		global $wgLang;
+
 		foreach ( $this->getTrace() as $frame ) {
 			if ( isset( $frame['class'] ) && $frame['class'] === 'LocalisationCache' ) {
 				return false;
 			}
 		}
+
 		return is_object( $wgLang );
 	}
 
 	/**
 	 * Run hook to allow extensions to modify the text of the exception
 	 *
-	 * @param String $name class name of the exception
-	 * @param Array $args arguments to pass to the callback functions
-	 * @return mixed string to output or null if any hook has been called
+	 * @param $name String: class name of the exception
+	 * @param $args Array: arguments to pass to the callback functions
+	 * @return Mixed: string to output or null if any hook has been called
 	 */
 	function runHooks( $name, $args = array() ) {
 		global $wgExceptionHooks;
-		if( !isset( $wgExceptionHooks ) || !is_array( $wgExceptionHooks ) )
+
+		if ( !isset( $wgExceptionHooks ) || !is_array( $wgExceptionHooks ) ) {
 			return;	// Just silently ignore
-		if( !array_key_exists( $name, $wgExceptionHooks ) || !is_array( $wgExceptionHooks[ $name ] ) )
+		}
+
+		if ( !array_key_exists( $name, $wgExceptionHooks ) || !is_array( $wgExceptionHooks[ $name ] ) ) {
 			return;
+		}
+
 		$hooks = $wgExceptionHooks[ $name ];
 		$callargs = array_merge( array( $this ), $args );
 
-		foreach( $hooks as $hook ) {
-			if( is_string( $hook ) || ( is_array( $hook ) && count( $hook ) >= 2 && is_string( $hook[0] ) ) ) {	//'function' or array( 'class', hook' )
+		foreach ( $hooks as $hook ) {
+			if ( is_string( $hook ) || ( is_array( $hook ) && count( $hook ) >= 2 && is_string( $hook[0] ) ) ) {	// 'function' or array( 'class', hook' )
 				$result = call_user_func_array( $hook, $callargs );
 			} else {
 				$result = null;
 			}
-			if( is_string( $result ) )
+
+			if ( is_string( $result ) )
 				return $result;
 		}
 	}
@@ -63,14 +78,15 @@ class MWException extends Exception {
 	/**
 	 * Get a message from i18n
 	 *
-	 * @param String $key message name
-	 * @param String $fallback default message if the message cache can't be
-	 *                         called by the exception
+	 * @param $key String: message name
+	 * @param $fallback String: default message if the message cache can't be
+	 *                  called by the exception
 	 * The function also has other parameters that are arguments for the message
 	 * @return String message with arguments replaced
 	 */
 	function msg( $key, $fallback /*[, params...] */ ) {
 		$args = array_slice( func_get_args(), 2 );
+
 		if ( $this->useMessageCache() ) {
 			return wfMsgReal( $key, $args );
 		} else {
@@ -87,7 +103,8 @@ class MWException extends Exception {
 	 */
 	function getHTML() {
 		global $wgShowExceptionDetails;
-		if( $wgShowExceptionDetails ) {
+
+		if ( $wgShowExceptionDetails ) {
 			return '<p>' . nl2br( htmlspecialchars( $this->getMessage() ) ) .
 				'</p><p>Backtrace:</p><p>' . nl2br( htmlspecialchars( $this->getTraceAsString() ) ) .
 				"</p>\n";
@@ -104,7 +121,8 @@ class MWException extends Exception {
 	 */
 	function getText() {
 		global $wgShowExceptionDetails;
-		if( $wgShowExceptionDetails ) {
+
+		if ( $wgShowExceptionDetails ) {
 			return $this->getMessage() .
 				"\nBacktrace:\n" . $this->getTraceAsString() . "\n";
 		} else {
@@ -119,6 +137,7 @@ class MWException extends Exception {
 			return wfMsg( 'internalerror' );
 		} else {
 			global $wgSitename;
+
 			return "$wgSitename error";
 		}
 	}
@@ -127,13 +146,15 @@ class MWException extends Exception {
 	 * Return the requested URL and point to file and line number from which the
 	 * exception occured
 	 *
-	 * @return string
+	 * @return String
 	 */
 	function getLogMessage() {
 		global $wgRequest;
+
 		$file = $this->getFile();
 		$line = $this->getLine();
 		$message = $this->getMessage();
+
 		if ( isset( $wgRequest ) ) {
 			$url = $wgRequest->getRequestURL();
 			if ( !$url ) {
@@ -149,6 +170,7 @@ class MWException extends Exception {
 	/** Output the exception report using HTML */
 	function reportHTML() {
 		global $wgOut;
+
 		if ( $this->useOutputPage() ) {
 			$wgOut->setPageTitle( $this->getPageTitle() );
 			$wgOut->setRobotPolicy( "noindex,nofollow" );
@@ -156,16 +178,21 @@ class MWException extends Exception {
 			$wgOut->enableClientCache( false );
 			$wgOut->redirect( '' );
 			$wgOut->clearHTML();
-			if( $hookResult = $this->runHooks( get_class( $this ) ) ) {
+
+			$hookResult = $this->runHooks( get_class( $this ) );
+			if ( $hookResult ) {
 				$wgOut->addHTML( $hookResult );
 			} else {
 				$wgOut->addHTML( $this->getHTML() );
 			}
+
 			$wgOut->output();
 		} else {
-			if( $hookResult = $this->runHooks( get_class( $this ) . "Raw" ) ) {
+			$hookResult = $this->runHooks( get_class( $this ) . "Raw" );
+			if ( $hookResult ) {
 				die( $hookResult );
 			}
+
 			if ( defined( 'MEDIAWIKI_INSTALL' ) || $this->htmlBodyOnly() ) {
 				echo $this->getHTML();
 			} else {
@@ -182,9 +209,11 @@ class MWException extends Exception {
 	 */
 	function report() {
 		$log = $this->getLogMessage();
+
 		if ( $log ) {
 			wfDebugLog( 'exception', $log );
 		}
+
 		if ( self::isCommandLine() ) {
 			wfPrintError( $this->getText() );
 		} else {
@@ -197,22 +226,25 @@ class MWException extends Exception {
 	 * $wgOut to output the exception.
 	 */
 	function htmlHeader() {
-		global $wgLogo, $wgSitename, $wgOutputEncoding;
+		global $wgLogo, $wgOutputEncoding;
 
 		if ( !headers_sent() ) {
 			header( 'HTTP/1.0 500 Internal Server Error' );
-			header( 'Content-type: text/html; charset='.$wgOutputEncoding );
+			header( 'Content-type: text/html; charset=' . $wgOutputEncoding );
 			/* Don't cache error pages!  They cause no end of trouble... */
 			header( 'Cache-control: none' );
 			header( 'Pragma: nocache' );
 		}
-		$title = $this->getPageTitle();
+
+		$logo = htmlspecialchars( $wgLogo, ENT_QUOTES );
+		$title = htmlspecialchars( $this->getPageTitle() );
+
 		return "<html>
 		<head>
 		<title>$title</title>
 		</head>
 		<body>
-		<h1><img src='$wgLogo' style='float:left;margin-right:1em' alt=''/>$title</h1>
+		<h1><img src='$logo' style='float:left;margin-right:1em' alt=''/>$title</h1>
 		";
 	}
 
@@ -222,7 +254,7 @@ class MWException extends Exception {
 	function htmlFooter() {
 		return "</body></html>";
 	}
-	
+
 	/**
 	 * headers handled by subclass?
 	 */
@@ -267,6 +299,7 @@ class ErrorPageError extends MWException {
 
 	function report() {
 		global $wgOut;
+
 		$wgOut->showErrorPage( $this->title, $this->msg );
 		$wgOut->output();
 	}
@@ -283,7 +316,10 @@ function wfInstallExceptionHandler() {
  * Report an exception to the user
  */
 function wfReportException( Exception $e ) {
+	global $wgShowExceptionDetails;
+
 	$cmdLine = MWException::isCommandLine();
+
 	if ( $e instanceof MWException ) {
 		try {
 			$e->report();
@@ -292,28 +328,36 @@ function wfReportException( Exception $e ) {
 			// Show a simpler error message for the original exception,
 			// don't try to invoke report()
 			$message = "MediaWiki internal error.\n\n";
-			if ( $GLOBALS['wgShowExceptionDetails'] )
-				$message .= "Original exception: " . $e->__toString();
-			$message .= "\n\nException caught inside exception handler";
-			if ( $GLOBALS['wgShowExceptionDetails'] )
-				$message .= ": " . $e2->__toString();
+
+			if ( $wgShowExceptionDetails ) {
+				$message .= 'Original exception: ' . $e->__toString() . "\n\n" .
+					'Exception caught inside exception handler: ' . $e2->__toString();
+			} else {
+				$message .= "Exception caught inside exception handler.\n\n" .
+					"Set \$wgShowExceptionDetails = true; at the bottom of LocalSettings.php " .
+					"to show detailed debugging information.";
+			}
+
 			$message .= "\n";
+
 			if ( $cmdLine ) {
 				wfPrintError( $message );
 			} else {
-				echo nl2br( htmlspecialchars( $message ) ). "\n";
+				echo nl2br( htmlspecialchars( $message ) ) . "\n";
 			}
 		}
 	} else {
 		$message = "Unexpected non-MediaWiki exception encountered, of type \"" . get_class( $e ) . "\"\n" .
 			$e->__toString() . "\n";
-		if ( $GLOBALS['wgShowExceptionDetails'] ) {
-			$message .= "\n" . $e->getTraceAsString() ."\n";
+
+		if ( $wgShowExceptionDetails ) {
+			$message .= "\n" . $e->getTraceAsString() . "\n";
 		}
+
 		if ( $cmdLine ) {
 			wfPrintError( $message );
 		} else {
-			echo nl2br( htmlspecialchars( $message ) ). "\n";
+			echo nl2br( htmlspecialchars( $message ) ) . "\n";
 		}
 	}
 }
@@ -323,7 +367,7 @@ function wfReportException( Exception $e ) {
  * Use this in command line mode only (see isCommandLine)
  */
 function wfPrintError( $message ) {
-	#NOTE: STDERR may not be available, especially if php-cgi is used from the command line (bug #15602).
+	# NOTE: STDERR may not be available, especially if php-cgi is used from the command line (bug #15602).
 	#      Try to produce meaningful output anyway. Using echo may corrupt output to STDOUT though.
 	if ( defined( 'STDERR' ) ) {
 		fwrite( STDERR, $message );
@@ -345,9 +389,10 @@ function wfPrintError( $message ) {
  */
 function wfExceptionHandler( $e ) {
 	global $wgFullyInitialised;
+
 	wfReportException( $e );
 
-	// Final cleanup, similar to wfErrorExit()
+	// Final cleanup
 	if ( $wgFullyInitialised ) {
 		try {
 			wfLogProfilingData(); // uses $wgRequest, hence the $wgFullyInitialised condition

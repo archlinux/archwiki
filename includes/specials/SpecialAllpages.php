@@ -1,7 +1,29 @@
 <?php
-
 /**
  * Implements Special:Allpages
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup SpecialPage
+ */
+ 
+/**
+ * Implements Special:Allpages
+ *
  * @ingroup SpecialPage
  */
 class SpecialAllpages extends IncludableSpecialPage {
@@ -32,8 +54,8 @@ class SpecialAllpages extends IncludableSpecialPage {
 
 	/**
 	 * Entry point : initialise variables and call subfunctions.
+	 *
 	 * @param $par String: becomes "FOO" when called like Special:Allpages/FOO (default NULL)
-	 * @param $specialPage See the SpecialPage object.
 	 */
 	function execute( $par ) {
 		global $wgRequest, $wgOut, $wgContLang;
@@ -66,9 +88,10 @@ class SpecialAllpages extends IncludableSpecialPage {
 
 	/**
 	 * HTML for the top form
-	 * @param integer $namespace A namespace constant (default NS_MAIN).
-	 * @param string $from dbKey we are starting listing at.
-	 * @param string $to dbKey we are ending listing at.
+	 *
+	 * @param $namespace Integer: a namespace constant (default NS_MAIN).
+	 * @param $from String: dbKey we are starting listing at.
+	 * @param $to String: dbKey we are ending listing at.
 	 */
 	function namespaceForm( $namespace = NS_MAIN, $from = '', $to = '' ) {
 		global $wgScript;
@@ -76,7 +99,7 @@ class SpecialAllpages extends IncludableSpecialPage {
 	
 		$out  = Xml::openElement( 'div', array( 'class' => 'namespaceoptions' ) );
 		$out .= Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) );
-		$out .= Xml::hidden( 'title', $t->getPrefixedText() );
+		$out .= Html::hidden( 'title', $t->getPrefixedText() );
 		$out .= Xml::openElement( 'fieldset' );
 		$out .= Xml::element( 'legend', null, wfMsg( 'allpages' ) );
 		$out .= Xml::openElement( 'table', array( 'id' => 'nsselect', 'class' => 'allpages' ) );
@@ -113,7 +136,9 @@ class SpecialAllpages extends IncludableSpecialPage {
 	}
 
 	/**
-	 * @param integer $namespace (default NS_MAIN)
+	 * @param $namespace Integer (default NS_MAIN)
+	 * @param $from String: list all pages from this name
+	 * @param $to String: list all pages to this name
 	 */
 	function showToplevel( $namespace = NS_MAIN, $from = '', $to = '' ) {
 		global $wgOut;
@@ -164,7 +189,8 @@ class SpecialAllpages extends IncludableSpecialPage {
 					array ('LIMIT' => 2, 'OFFSET' => $maxPerSubpage - 1, 'ORDER BY' => 'page_title ASC')
 				);
 
-				if( $s = $dbr->fetchObject( $res ) ) {
+				$s = $dbr->fetchObject( $res );
+				if( $s ) {
 					array_push( $lines, $s->page_title );
 				} else {
 					// Final chunk, but ended prematurely. Go back and find the end.
@@ -174,7 +200,8 @@ class SpecialAllpages extends IncludableSpecialPage {
 					array_push( $lines, $endTitle );
 					$done = true;
 				}
-				if( $s = $res->fetchObject() ) {
+				$s = $res->fetchObject();
+				if( $s ) {
 					array_push( $lines, $s->page_title );
 					$lastTitle = $s->page_title;
 				} else {
@@ -234,9 +261,10 @@ class SpecialAllpages extends IncludableSpecialPage {
 
 	/**
 	 * Show a line of "ABC to DEF" ranges of articles
-	 * @param string $inpoint Lower limit of pagenames
-	 * @param string $outpout Upper limit of pagenames
-	 * @param integer $namespace (Default NS_MAIN)
+	 *
+	 * @param $inpoint String: lower limit of pagenames
+	 * @param $outpoint String: upper limit of pagenames
+	 * @param $namespace Integer (Default NS_MAIN)
 	 */
 	function showline( $inpoint, $outpoint, $namespace = NS_MAIN ) {
 		global $wgContLang;
@@ -258,9 +286,9 @@ class SpecialAllpages extends IncludableSpecialPage {
 	}
 
 	/**
-	 * @param integer $namespace (Default NS_MAIN)
-	 * @param string $from list all pages from this name (default FALSE)
-	 * @param string $to list all pages to this name (default FALSE)
+	 * @param $namespace Integer (Default NS_MAIN)
+	 * @param $from String: list all pages from this name (default FALSE)
+	 * @param $to String: list all pages to this name (default FALSE)
 	 */
 	function showChunk( $namespace = NS_MAIN, $from = false, $to = false ) {
 		global $wgOut, $wgUser, $wgContLang, $wgLang;
@@ -280,7 +308,7 @@ class SpecialAllpages extends IncludableSpecialPage {
 			$namespace = NS_MAIN;
 		} else {
 			list( $namespace, $fromKey, $from ) = $fromList;
-			list( $namespace2, $toKey, $to ) = $toList;
+			list( , $toKey, $to ) = $toList;
 
 			$dbr = wfGetDB( DB_SLAVE );
 			$conds = array(
@@ -316,7 +344,7 @@ class SpecialAllpages extends IncludableSpecialPage {
 					if( $n % 3 == 0 ) {
 						$out .= '<tr>';
 					}
-					$out .= "<td width=\"33%\">$link</td>";
+					$out .= "<td style=\"width:33%\">$link</td>";
 					$n++;
 					if( $n % 3 == 0 ) {
 						$out .= "</tr>\n";
@@ -437,8 +465,8 @@ class SpecialAllpages extends IncludableSpecialPage {
 	}
 
 	/**
-	 * @param int $ns the namespace of the article
-	 * @param string $text the name of the article
+	 * @param $ns Integer: the namespace of the article
+	 * @param $text String: the name of the article
 	 * @return array( int namespace, string dbkey, string pagename ) or NULL on error
 	 * @static (sort of)
 	 * @access private

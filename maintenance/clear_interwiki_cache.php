@@ -18,10 +18,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class ClearInterwikiCache extends Maintenance {
 
@@ -42,7 +43,7 @@ class ClearInterwikiCache extends Maintenance {
 		foreach ( $wgLocalDatabases as $db ) {
 			$this->output( "$db..." );
 			foreach ( $prefixes as $prefix ) {
-				$wgMemc->delete("$db:interwiki:$prefix");
+				$wgMemc->delete( "$db:interwiki:$prefix" );
 			}
 			$this->output( "done\n" );
 		}
@@ -50,4 +51,4 @@ class ClearInterwikiCache extends Maintenance {
 }
 
 $maintClass = "ClearInterwikiCache";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );

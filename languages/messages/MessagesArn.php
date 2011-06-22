@@ -96,15 +96,11 @@ $messages = array(
 'faqpage'        => 'Project:FAQ',
 
 # Vector skin
-'vector-action-delete'       => 'Ñamümün',
-'vector-namespace-main'      => 'Pakina',
-'vector-namespace-mediawiki' => 'Yefalzugu',
-'vector-namespace-talk'      => 'Nvxamkawvn',
-'vector-namespace-user'      => 'Kellufe',
-'vector-view-create'         => 'Zewmape',
-'vector-view-edit'           => 'Pepikan',
-'vector-view-history'        => 'Pegelpe rupañmael',
-'vector-view-view'           => 'Chillkatun',
+'vector-action-delete' => 'Ñamümün',
+'vector-view-create'   => 'Zewmape',
+'vector-view-edit'     => 'Pepikan',
+'vector-view-history'  => 'Pegelpe rupañmael',
+'vector-view-view'     => 'Chillkatun',
 
 'returnto'         => 'Amutun $1 püle.',
 'tagline'          => '{{SITENAME}} mew',
@@ -302,8 +298,6 @@ $messages = array(
 'action-undelete'      => 'Namümlay tüfachi pakina',
 
 # Recent changes
-'recentchanges-legend-newpage'      => '$1 - We Pakina',
-'recentchanges-legend-minor'        => '$1 pichi wirin',
 'rcshowhideminor'                   => '$1 pichi wirin',
 'rcshowhidemine'                    => '$1 tañi wirin',
 'hist'                              => 'rupañ',
@@ -388,7 +382,6 @@ $messages = array(
 'emailsend'    => 'Werkün',
 
 # Watchlist
-'watchlistfor'    => "('''$1''')",
 'watchnologin'    => 'Petu konlaymi',
 'watch'           => 'Llaytun',
 'watchthispage'   => 'Llaytun tüfachi pakina',

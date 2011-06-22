@@ -31,18 +31,18 @@ $namespaceNames = array(
 	NS_SPECIAL          => 'شا',
 	NS_TALK             => 'گپ',
 	NS_USER             => 'کارور',
-	NS_USER_TALK        => 'کارور گپ',
-	NS_PROJECT_TALK     => '$1 گپ',
+	NS_USER_TALK        => 'کارور_گپ',
+	NS_PROJECT_TALK     => '$1_گپ',
 	NS_FILE             => 'پرونده',
-	NS_FILE_TALK        => 'پرونده گپ',
+	NS_FILE_TALK        => 'پرونده_گپ',
 	NS_MEDIAWIKI        => 'مه‌دیاویکی',
-	NS_MEDIAWIKI_TALK   => 'مه‌دیاویکی گپ',
+	NS_MEDIAWIKI_TALK   => 'مه‌دیاویکی_گپ',
 	NS_TEMPLATE         => 'شابلون',
-	NS_TEMPLATE_TALK    => 'شابلون گپ',
+	NS_TEMPLATE_TALK    => 'شابلون_گپ',
 	NS_HELP             => 'رانه‌ما',
-	NS_HELP_TALK        => 'رانه‌مائه گپ',
+	NS_HELP_TALK        => 'رانه‌مائه_گپ',
 	NS_CATEGORY         => 'رج',
-	NS_CATEGORY_TALK    => 'رج گپ',
+	NS_CATEGORY_TALK    => 'رج_گپ',
 );
 
 $namespaceAliases = array(
@@ -71,7 +71,7 @@ $namespaceAliases = array(
 
 $magicWords = array(
 	'redirect'              => array( '0', '#بور', '#تغییرمسیر', '#REDIRECT' ),
-	'numberofpages'         => array( '1', 'تعدادصفحه‌ها', 'تعداد_صفحه‌ها', 'ولگ‌ئون نمره', 'وألگ‌ئون نومره', 'NUMBEROFPAGES' ),
+	'numberofpages'         => array( '1', 'تعدادصفحه‌ها', 'تعداد_صفحه‌ها', 'ولگ‌ئون_نمره', 'وألگ‌ئون_نومره', 'NUMBEROFPAGES' ),
 );
 
 $messages = array(
@@ -90,6 +90,7 @@ $messages = array(
 'tog-editsection'             => 'به کار دمبدائن تیکه‌ئون دچی‌ین از طریق پیوندون [دچی‌ین]',
 'tog-editsectiononrightclick' => 'به کار دمبدائن دچی‌ین قسمت‌ئون با راست کیلیک<br />عناوین قسمت‌ئون ِرو (جاوااسکریپت)',
 'tog-showtoc'                 => 'نیمایش محتوا<br />(برای مقاله‌ئون با بیشته از ۳ سرفصل)',
+'tog-rememberpassword'        => 'مه رمز ره (تا حداکثر $1 {{PLURAL:$1|روز|روز}}) این کامپیتر دله ته ره یاد دواشه',
 'tog-watchcreations'          => 'ایضافه بین صفحه‌ئونی که من دِرِس هاکردمه به پیگیری‌ئون ِرج.',
 'tog-watchdefault'            => 'اضافه هاکردن صفحه‌هایی که چیمبه به منه پیگری ِرج',
 'tog-watchmoves'              => 'صفحه‌ئونی که کشمبه ره منه پِگیری ِرج دله بنویس',
@@ -220,24 +221,21 @@ $messages = array(
 'faqpage'        => 'Project:FAQ',
 
 # Vector skin
-'vector-action-addsection'  => 'ایضافه هکردن عونوان',
-'vector-action-delete'      => 'پاک هاکردن',
-'vector-action-move'        => 'دکش هاکردن',
-'vector-action-protect'     => 'موحافظت',
-'vector-action-undelete'    => 'دباره بنویشته بیّن',
-'vector-action-unprotect'   => 'موحافظت نکاردن',
-'vector-namespace-category' => 'رج',
-'vector-namespace-help'     => 'راهنما ِصفحه',
-'vector-namespace-image'    => 'پرونده',
-'vector-namespace-main'     => 'صحفه',
-'vector-view-create'        => 'بساتن',
-'vector-view-edit'          => 'دچی‌ین',
-'vector-view-history'       => 'تاریخچه ره بَدی‌ین',
-'vector-view-view'          => 'بأخـونـه‌سـه‌ن',
-'vector-view-viewsource'    => 'چـه‌شــمـه ئـه‌شـه‌نـه‌ن',
-'actions'                   => 'عملکاردون',
-'namespaces'                => 'ایسم فضائون',
-'variants'                  => 'گویش‌ئون',
+'vector-action-addsection'       => 'ایضافه هکردن عونوان',
+'vector-action-delete'           => 'پاک هاکردن',
+'vector-action-move'             => 'دکش هاکردن',
+'vector-action-protect'          => 'موحافظت',
+'vector-action-undelete'         => 'دباره بنویشته بیّن',
+'vector-action-unprotect'        => 'موحافظت نکاردن',
+'vector-simplesearch-preference' => 'فعال هاکردن پیشنهادون بگردستن پیشرفته (فقط پوسته برداری دله)',
+'vector-view-create'             => 'بساتن',
+'vector-view-edit'               => 'دچی‌ین',
+'vector-view-history'            => 'تاریخچه ره بَدی‌ین',
+'vector-view-view'               => 'بأخـونـه‌سـه‌ن',
+'vector-view-viewsource'         => 'چـه‌شــمـه ئـه‌شـه‌نـه‌ن',
+'actions'                        => 'عملکاردون',
+'namespaces'                     => 'ایسم فضائون',
+'variants'                       => 'گویش‌ئون',
 
 'errorpagetitle'    => 'خطا!',
 'returnto'          => 'بردگستن تا $1',
@@ -294,6 +292,7 @@ $2، $1',
 'jumpto'            => 'کپّل بیّن به:',
 'jumptonavigation'  => 'بگردستن',
 'jumptosearch'      => 'بخوندستن',
+'pool-errorunknown' => 'خطای ناشناخته',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => '{{SITENAME}} درباره',
@@ -384,7 +383,7 @@ $2، $1',
 'yourname'                => 'شمه کاروری‌نوم:',
 'yourpassword'            => 'شمه پسورد',
 'yourpasswordagain'       => 'پسورد ره دِباره بنویس',
-'remembermypassword'      => 'مـه کاروری نوم ئو پـأس‌واجه ره، ای کـامـپـیـوتـه‌ر ده‌لـه وه‌سـه، شـه یـاد بیـه‌ل',
+'remembermypassword'      => 'مـه کاروری نوم ئو پـأس‌واجه ره، ای کـامـپـیـوتـه‌ر ده‌لـه وه‌سـه، شـه یـاد بیـه‌ل (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'          => 'شمه کاروری نوم',
 'login'                   => 'دله بوردن',
 'nav-login-createaccount' => 'دله بوردن / عضو بیّن',
@@ -400,6 +399,7 @@ $2، $1',
 'gotaccount'              => 'عضو هسنی؟ $1.',
 'gotaccountlink'          => 'بورین دله',
 'createaccountmail'       => 'ایمیل ِهمراه',
+'createaccountreason'     => 'دلیل:',
 'badretype'               => 'دِتا پسوردی که بنویشتی اتجور نینه',
 'userexists'              => 'این کاروری نوم وجود داشته.
 لطفأ ات نوم دیگه انتخاب هاکنین.',
@@ -823,8 +823,9 @@ $2، $1',
 'nextdiff'     => 'ته‌رنه دأچیه‌ن ←',
 
 # Media information
-'thumbsize'      => 'أنـگـوسـی گأتی:',
-'file-info-size' => '($1 × $2 پـیـکـسه‌ل, فـایـل گـأتـی: $3, MIME مـونـد: $4)',
+'thumbsize'            => 'أنـگـوسـی گأتی:',
+'file-info-size'       => '$1 × $2 پـیـکـسه‌ل, فـایـل گـأتـی: $3, MIME مـونـد: $4',
+'file-info-png-frames' => '$1 {{PLURAL:$1|قاب|قاب}}',
 
 # Special:NewFiles
 'newimages'             => 'گالری نو عکس‌ئون',
@@ -861,6 +862,19 @@ $2، $1',
 'watchlistall2' => 'هـأمـه',
 'namespacesall' => 'هأمه',
 'monthsall'     => 'هـأمـه',
+
+# E-mail address confirmation
+'confirmemail_body_changed' => 'ات نفر، احتمالأ خاد شمِا، از نشونی آی‌پی $1 نشونی پوست ایلکتورونیک حیساب «$2» {{SITENAME}} ره تغییر هدائه.
+
+برای تایید این که این حیساب واقعاً شمه شه و فعال هکردن دبارهٔ ویژگی پوست ایلکتورونیک {{SITENAME}}، پیوند زیر دله ره شه مرورگر دله وا هکنین:
+
+$3
+
+اگه این حساب شه مه نی‌یه، پیوند زیر ره دنبال هکنین تا تغییر پوست ایلیکتورونیک ره لغو هکنین:
+
+$5
+
+این تایید یه در $4 منقضی وانه.',
 
 # Multipage image navigation
 'imgmultigo' => 'بور!',

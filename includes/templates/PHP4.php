@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template used when the installer detects that this is PHP 4
+ *
  * @file
  * @ingroup Templates
  */
@@ -17,7 +19,7 @@ if( isset( $_SERVER['SCRIPT_NAME'] ) ) {
 } else {
 	$scriptUrl = '';
 }
-if ( preg_match( '!^(.*)/config/[^/]*.php$!', $scriptUrl, $m ) ) {
+if ( preg_match( '!^(.*)/(mw-)?config/[^/]*.php$!', $scriptUrl, $m ) ) {
 	$baseUrl = $m[1];
 } elseif ( preg_match( '!^(.*)/[^/]*.php$!', $scriptUrl, $m ) ) {
 	$baseUrl = $m[1];
@@ -56,7 +58,7 @@ if ( preg_match( '!^(.*)/config/[^/]*.php$!', $scriptUrl, $m ) ) {
 		<h1>MediaWiki <?php echo htmlspecialchars( $wgVersion ); ?></h1>
 		<div class='error'>
 <p>
-			MediaWiki requires PHP 5.0.0 or higher. You are running PHP
+			MediaWiki requires PHP 5.1.x or higher. You are running PHP
 			<?php echo htmlspecialchars( phpversion() ); ?>.
 </p>
 <?php

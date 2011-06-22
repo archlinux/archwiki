@@ -1,4 +1,9 @@
 <?php
+/**
+ * Date formatter
+ *
+ * @file
+ */
 
 /**
  * Date formatter, recognises dates in plain text and formats them accoding to user preferences.
@@ -29,7 +34,7 @@ class DateFormatter
 	/**
 	 * @todo document
 	 */
-	function DateFormatter() {
+	function __construct() {
 		global $wgContLang;
 
 		$this->monthNames = $this->getMonthRegex();
@@ -116,6 +121,7 @@ class DateFormatter
 	/**
 	 * @param $preference String: User preference
 	 * @param $text String: Text to reformat
+	 * @param $options Array: can contain 'linked' and/or 'match-whole'
 	 */
 	function reformat( $preference, $text, $options = array('linked') ) {
 	
@@ -265,7 +271,7 @@ class DateFormatter
 			$isoBits[] = $bits['y'];
 		$isoBits[] = $bits['m'];
 		$isoBits[] = $bits['d'];
-		$isoDate = implode( '-', $isoBits );;
+		$isoDate = implode( '-', $isoBits );
 		
 		// Output is not strictly HTML (it's wikitext), but <span> is whitelisted.
 		$text = Html::rawElement( 'span',

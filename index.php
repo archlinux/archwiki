@@ -16,7 +16,8 @@
  * Copyright (C) 2001-2010 Magnus Manske, Brion Vibber, Lee Daniel Crocker,
  * Tim Starling, Erik Möller, Gabriel Wicke, Ævar Arnfjörð Bjarmason,
  * Niklas Laxström, Domas Mituzas, Rob Church, Yuri Astrakhan, Aryeh Gregor,
- * Aaron Schulz and others.
+ * Aaron Schulz, Andrew Garrett, Raimond Spekking, Alexandre Emsenhuber
+ * Siebrand Mazeland, Chad Horohoe, Roan Kattouw and others.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,13 +37,11 @@
  * @file
  */
 
-
 # Initialise common code
 $preIP = dirname( __FILE__ );
 require_once( "$preIP/includes/WebStart.php" );
 
 # Initialize MediaWiki base class
-require_once( "$preIP/includes/Wiki.php" );
 $mediaWiki = new MediaWiki();
 
 wfProfileIn( 'main-misc-setup' );
@@ -102,10 +101,8 @@ if( $wgUseFileCache && isset( $wgTitle ) ) {
 
 # Setting global variables in mediaWiki
 $mediaWiki->setVal( 'action', $action );
-$mediaWiki->setVal( 'CommandLineMode', $wgCommandLineMode );
 $mediaWiki->setVal( 'DisabledActions', $wgDisabledActions );
 $mediaWiki->setVal( 'DisableHardRedirects', $wgDisableHardRedirects );
-$mediaWiki->setVal( 'DisableInternalSearch', $wgDisableInternalSearch );
 $mediaWiki->setVal( 'EnableCreativeCommonsRdf', $wgEnableCreativeCommonsRdf );
 $mediaWiki->setVal( 'EnableDublinCoreRdf', $wgEnableDublinCoreRdf );
 $mediaWiki->setVal( 'JobRunRate', $wgJobRunRate );
@@ -115,10 +112,7 @@ $mediaWiki->setVal( 'UseExternalEditor', $wgUseExternalEditor );
 $mediaWiki->setVal( 'UsePathInfo', $wgUsePathInfo );
 
 $mediaWiki->performRequestForTitle( $wgTitle, $wgArticle, $wgOut, $wgUser, $wgRequest );
-$mediaWiki->finalCleanup( $wgDeferredUpdateList, $wgOut );
-
-# Not sure when $wgPostCommitUpdateList gets set, so I keep this separate from finalCleanup
-$mediaWiki->doUpdates( $wgPostCommitUpdateList );
+$mediaWiki->finalCleanup( $wgOut );
 
 $mediaWiki->restInPeace();
 

@@ -52,8 +52,7 @@ $messages = array(
 'tog-editsection'             => 'Eǧǧ abeddel n umur s yizdayen [beddel]',
 'tog-editsectiononrightclick' => 'Eǧǧ abeddel n umur mi wekkiɣ ɣef uyeffus<br /> ɣef yizwal n umur (JavaScript)',
 'tog-showtoc'                 => 'Ssken agbur (i isebtar i yesɛan kter n 3 izwalen)',
-'tog-rememberpassword'        => 'Cfu ɣef yisem n wemseqdac inu di uselkim-agi',
-'tog-editwidth'               => 'Tankult n ubeddel tesɛa tehri ettmam',
+'tog-rememberpassword'        => 'Cfu ɣef yisem n wemseqdac inu di uselkim-agi (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => 'Rnu isebtar i xelqeɣ deg wumuɣ n uɛessi inu',
 'tog-watchdefault'            => 'Rnu isebtar i ttbeddileɣ deg wumuɣ n uɛessi inu',
 'tog-watchmoves'              => 'Rnu isebtar i smimḍeɣ deg wumuɣ n uɛessi inu',
@@ -336,7 +335,7 @@ Isem n wemseqdac inek yettwaxleq. Ur tettuḍ ara ad tbeddleḍ Isemyifiyen n {{
 'yourname'                   => 'Isem n wemseqdac',
 'yourpassword'               => 'Awal n tbaḍnit',
 'yourpasswordagain'          => 'Ɛiwed ssekcem awal n tbaḍnit',
-'remembermypassword'         => 'Cfu ɣef wawal n tbaḍnit inu di uselkim-agi.',
+'remembermypassword'         => 'Cfu ɣef wawal n tbaḍnit inu di uselkim-agi (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'             => 'Taɣult inek',
 'externaldberror'            => 'Yella ugul aberrani n database neɣ ur tettalaseḍ ara ad tbeddleḍ isem an wemseqdac aberrani inek.',
 'login'                      => 'Kcem',
@@ -475,7 +474,7 @@ Ma tɣelṭeḍ, wekki kan ɣef tqeffalt "Back/Précédent" n browser/explorateu
 'userjsyoucanpreview'       => "'''Tixidest:''' Sseqdec taqeffalt 'Ssken pre-timeẓriwt' iwakken ad tɛerḍeḍ JS amynut inek uqbel ad tesmektiḍ.",
 'usercsspreview'            => "'''Smekti belli aql-ak twaliḍ CSS inek kan, mazal ur yettusmekti ara!'''",
 'userjspreview'             => "'''Smekti belli aql-ak tɛerḍeḍ JavaScript inek kan, mazal ur yettusmekti ara!'''",
-'userinvalidcssjstitle'     => '\'\'\'Aɣtal:\'\'\' Aglim "$1" ulac-it. Ur tettuḍ ara belli isebtar ".css" d ".js" i txedmeḍ sseqdacen azwel i yesɛan isekkilen imecṭuḥen, s umedya: {{ns:user}}:Foo/monobook.css akk d {{ns:user}}:Foo/Monobook.css.',
+'userinvalidcssjstitle'     => '\'\'\'Aɣtal:\'\'\' Aglim "$1" ulac-it. Ur tettuḍ ara belli isebtar ".css" d ".js" i txedmeḍ sseqdacen azwel i yesɛan isekkilen imecṭuḥen, s umedya: {{ns:user}}:Foo/vector.css akk d {{ns:user}}:Foo/Vector.css.',
 'updated'                   => '(Yettubeddel)',
 'note'                      => "'''Tamawt:'''",
 'previewnote'               => "'''Tagi d pre-timeẓriwt kan, ibeddlen mazal ur ttusmektin ara!'''",
@@ -508,8 +507,6 @@ Aqlak teggaleḍ belli tureḍ wagi d kečč, neɣ teddmiḍ-t seg taɣult azaye
 'copyrightwarning2'         => "Ssen belli akk tikkin deg {{SITENAME}} zemren ad ttubeddlen neɣ ttumḥan sɣur imdanen wiyaḍ. Lukan ur tebɣiḍ ara aru inek yettubeddel neɣ yettwazen u yettwaru deg imkanen nniḍen, ihi ur t-tazneḍ ara dagi.<br />
 Aqlak teggaleḍ belli tureḍ wagi d kečč, neɣ teddmiḍ-t seg taɣult azayez neɣ iɣbula tilelliyin (ẓer $1 akken ad tessneḍ kter).
 '''UR TEFKIḌ ARA AXDAM S COPYRIGHT MEBLA TURAGT!'''",
-'longpagewarning'           => "'''AƔTAL: Asebter-agi yesɛa $1 kilobytes/kilooctets; kra n browsers/explorateur ur zemren ara ad beddlen isebtar i yesɛan 32 kB/ko neɣ kter.
-G leɛnayek frec asebter-nni.'''",
 'longpageerror'             => "'''AGUL: Aḍris i tefkiḍ yesɛa $1 kB/ko, tiddi-yagi kter n $2 kB/ko, ur yezmir ara ad yesmekti.'''",
 'readonlywarning'           => "'''AƔTAL: Database d tamsekker akken ad teddwaxdem,
 ihi ur tezmireḍ ara ad tesmektiḍ ibeddlen inek tura. Smekti aḍris inek
@@ -785,7 +782,6 @@ Ma llant kif-kif ur tt-taznepd ara.",
 Ma tesɛiḍ tugna-nni s resolution tameqqrant, azen-it, ma ulac beddel isem-is.",
 'fileexists-forbidden'        => 'Tugna s yisem kif-kif tewǧed yagi; g leɛnayek uɣal u beddel isem-is. [[File:$1|thumb|center|$1]]',
 'fileexists-shared-forbidden' => 'Tugna s yisem kif-kif tewǧed yagi; g leɛnayek uɣal u beddel isem-is. [[File:$1|thumb|center|$1]]',
-'successfulupload'            => 'Azen yekfa',
 'uploadwarning'               => 'Aɣtal deg wazan n ufayluwen',
 'savefile'                    => 'Smekti afaylu',
 'uploadedimage'               => '"[[$1]]" yettwazen',
@@ -797,6 +793,7 @@ Ma tesɛiḍ tugna-nni s resolution tameqqrant, azen-it, ma ulac beddel isem-is.
 'destfilename'                => 'Anda iruḥ afaylu',
 'watchthisupload'             => 'Ɛass asebter-agi',
 'filewasdeleted'              => 'Afaylu s yisem-agi yettwazen umbeɛd yettumḥa. Ssenqed $1 qbel ad tazniḍ tikelt nniḍen.',
+'upload-success-subj'         => 'Azen yekfa',
 
 'upload-proto-error'      => 'Agul deg protokol',
 'upload-proto-error-text' => 'Assekcam yenṭerr URL i yebdan s <code>http://</code> neɣ <code>ftp://</code>.',
@@ -994,7 +991,6 @@ deg « Expéditeur» n izen inek iwakken amseqdac-nni yezmer a k-yerr.',
 # Watchlist
 'watchlist'            => 'Umuɣ n uɛessi inu',
 'mywatchlist'          => 'Umuɣ n uɛessi inu',
-'watchlistfor'         => "(n '''$1''')",
 'nowatchlist'          => 'Umuɣ n uɛessi inek d ilem.',
 'watchlistanontext'    => 'G leɛnaya-k $1 iwakken ad twalaḍ neɣ tbeddleḍ iferdas deg wumuɣ n uɛessi inek.',
 'watchnologin'         => 'Ur tekcimeḍ ara',
@@ -1078,9 +1074,11 @@ Tadhelt:
 'deletecomment'   => 'Ayɣer',
 
 # Rollback
-'cantrollback'   => 'Ur yezmir ara ad yessuɣal; yella yiwen kan amseqdac iwumi ibeddel/yexleq asebter-agi.',
-'editcomment'    => "Agzul n ubeddel yella: \"''\$1''\".",
-'revertpage'     => 'Yessuɣal ibeddlen n [[Special:Contributions/$2|$2]] ([[User talk:$2|Meslay]]); yettubeddel ɣer tasiwelt taneggarut n [[User:$1|$1]]',
+'cantrollback' => 'Ur yezmir ara ad yessuɣal; yella yiwen kan amseqdac iwumi ibeddel/yexleq asebter-agi.',
+'editcomment'  => "Agzul n ubeddel yella: \"''\$1''\".",
+'revertpage'   => 'Yessuɣal ibeddlen n [[Special:Contributions/$2|$2]] ([[User talk:$2|Meslay]]); yettubeddel ɣer tasiwelt taneggarut n [[User:$1|$1]]',
+
+# Edit tokens
 'sessionfailure' => 'Yella ugul akk d takmect inek;
 Axdam-agi yebṭel axaṭer waqila yella wemdan nniḍen i yeddem isem n wemseqdac inek.
 G leɛnayek wekki ɣef taqeffalt "Back/Précédent" n browser/explorateur inek, umbeɛd wekki ɣef "Actualiser/reload" akk ad tɛerḍeḍ tikelt nniḍen.',
@@ -1381,8 +1379,8 @@ Please visit [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation]
 'mediawarning'         => "'''Aɣtal''': Waqila afaylu-yagi yesɛa angal aḥraymi, lukan a t-tesseqdceḍ yezmer ad ixesser aselkim inek.",
 'imagemaxsize'         => 'Ḥedded tiddi n tugniwin deg yiglamen n tugniwim i:',
 'thumbsize'            => 'Tiddi n tugna tamecṭuḥt:',
-'file-info'            => '(tiddi n ufaylu: $1, anaw n MIME: $2)',
-'file-info-size'       => '($1 × $2 pixel, tiddi n ufaylu: $3, anaw n MIME: $4)',
+'file-info'            => 'tiddi n ufaylu: $1, anaw n MIME: $2',
+'file-info-size'       => '$1 × $2 pixel, tiddi n ufaylu: $3, anaw n MIME: $4',
 'file-nohires'         => '<small>Ulac resolution i tameqqrant fell-as.</small>',
 'show-big-image'       => 'Resolution tameqqrant',
 'show-big-image-thumb' => '<small>Tiddi n pre-timeẓriwt-agi: $1 × $2 pixels</small>',

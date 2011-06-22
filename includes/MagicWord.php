@@ -1,6 +1,7 @@
 <?php
 /**
  * File for magic words
+ *
  * See docs/magicword.txt
  *
  * @file
@@ -60,6 +61,7 @@ class MagicWord {
 		'numberofarticles',
 		'numberoffiles',
 		'numberofedits',
+		'articlepath',
 		'sitename',
 		'server',
 		'servername',
@@ -79,6 +81,7 @@ class MagicWord {
 		'revisionday',
 		'revisionday2',
 		'revisionmonth',
+		'revisionmonth1',
 		'revisionyear',
 		'revisiontimestamp',
 		'revisionuser',
@@ -175,7 +178,7 @@ class MagicWord {
 
 	/**#@-*/
 
-	function __construct($id = 0, $syn = '', $cs = false) {
+	function __construct($id = 0, $syn = array(), $cs = false) {
 		$this->mId = $id;
 		$this->mSynonyms = (array)$syn;
 		$this->mCaseSensitive = $cs;
@@ -269,13 +272,13 @@ class MagicWord {
 	 * @private
 	 */
 	function initRegex() {
-		#$variableClass = Title::legalChars();
-		# This was used for matching "$1" variables, but different uses of the feature will have
-		# different restrictions, which should be checked *after* the MagicWord has been matched,
-		# not here. - IMSoP
+		// Sort the synonyms by length, descending, so that the longest synonym
+		// matches in precedence to the shortest
+		$synonyms = $this->mSynonyms;
+		usort( $synonyms, array( $this, 'compareStringLength' ) );
 
 		$escSyn = array();
-		foreach ( $this->mSynonyms as $synonym )
+		foreach ( $synonyms as $synonym )
 			// In case a magic word contains /, like that's going to happen;)
 			$escSyn[] = preg_quote( $synonym, '/' );
 		$this->mBaseRegex = implode( '|', $escSyn );
@@ -286,6 +289,23 @@ class MagicWord {
 		$this->mVariableRegex = str_replace( "\\$1", "(.*?)", $this->mRegex );
 		$this->mVariableStartToEndRegex = str_replace( "\\$1", "(.*?)",
 			"/^(?:{$this->mBaseRegex})$/{$case}" );
+	}
+
+	/**
+	 * A comparison function that returns -1, 0 or 1 depending on whether the 
+	 * first string is longer, the same length or shorter than the second 
+	 * string.
+	 */
+	function compareStringLength( $s1, $s2 ) {
+		$l1 = strlen( $s1 );
+		$l2 = strlen( $s2 );
+		if ( $l1 < $l2 ) {
+			return 1;
+		} elseif ( $l1 > $l2 ) {
+			return -1;
+		} else {
+			return 0;
+		}
 	}
 
 	/**
@@ -513,7 +533,6 @@ class MagicWordArray {
 	 * Add a magic word by name
 	 */
 	public function add( $name ) {
-		global $wgContLang;
 		$this->names[] = $name;
 		$this->hash = $this->baseRegex = $this->regex = null;
 	}
@@ -646,7 +665,6 @@ class MagicWordArray {
 		}
 		// This shouldn't happen either
 		throw new MWException( __METHOD__.': parameter not found' );
-		return array( false, false );
 	}
 
 	/**
@@ -656,7 +674,6 @@ class MagicWordArray {
 	 * Both elements are false if there was no match.
 	 */
 	public function matchVariableStartToEnd( $text ) {
-		global $wgContLang;
 		$regexes = $this->getVariableStartToEndRegex();
 		foreach ( $regexes as $regex ) {
 			if ( $regex !== '' ) {
@@ -720,7 +737,7 @@ class MagicWordArray {
 				continue;
 			}
 			if ( preg_match( $regex, $text, $m ) ) {
-				list( $id, $param ) = $this->parseMatch( $m );
+				list( $id, ) = $this->parseMatch( $m );
 				if ( strlen( $m[0] ) >= strlen( $text ) ) {
 					$text = '';
 				} else {

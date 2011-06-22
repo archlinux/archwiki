@@ -1,11 +1,27 @@
 <?php
 /**
+ * Implements Special:LinkSearch
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup SpecialPage
- *
  * @author Brion Vibber
- * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
+ 
 
 /**
  * Special:LinkSearch to search the external-links table.
@@ -13,7 +29,7 @@
 function wfSpecialLinkSearch( $par ) {
 
 	list( $limit, $offset ) = wfCheckLimits();
-	global $wgOut, $wgRequest, $wgUrlProtocols, $wgMiserMode, $wgLang;
+	global $wgOut, $wgUrlProtocols, $wgMiserMode, $wgLang;
 	$target = $GLOBALS['wgRequest']->getVal( 'target', $par );
 	$namespace = $GLOBALS['wgRequest']->getIntorNull( 'namespace', null );
 
@@ -44,19 +60,18 @@ function wfSpecialLinkSearch( $par ) {
 		$protocol = '';
 	}
 
-	$wgOut->allowClickjacking();
-
 	$self = Title::makeTitle( NS_SPECIAL, 'Linksearch' );
-	
+
+	$wgOut->allowClickjacking();
 	$wgOut->addWikiMsg( 'linksearch-text', '<nowiki>' . $wgLang->commaList( $wgUrlProtocols ) . '</nowiki>' );
-	$s =	Xml::openElement( 'form', array( 'id' => 'mw-linksearch-form', 'method' => 'get', 'action' => $GLOBALS['wgScript'] ) ) .
-		Xml::hidden( 'title', $self->getPrefixedDbKey() ) .
+	$s = Xml::openElement( 'form', array( 'id' => 'mw-linksearch-form', 'method' => 'get', 'action' => $GLOBALS['wgScript'] ) ) .
+		Html::hidden( 'title', $self->getPrefixedDbKey() ) .
 		'<fieldset>' .
 		Xml::element( 'legend', array(), wfMsg( 'linksearch' ) ) .
 		Xml::inputLabel( wfMsg( 'linksearch-pat' ), 'target', 'target', 50, $target ) . ' ';
 	if ( !$wgMiserMode ) {
 		$s .= Xml::label( wfMsg( 'linksearch-ns' ), 'namespace' ) . ' ' .
-			XML::namespaceSelector( $namespace, '' );
+			Xml::namespaceSelector( $namespace, '' );
 	}
 	$s .=	Xml::submitButton( wfMsg( 'linksearch-ok' ) ) .
 		'</fieldset>' .
@@ -73,6 +88,9 @@ function wfSpecialLinkSearch( $par ) {
 	}
 }
 
+/**
+ * @ingroup SpecialPage
+ */
 class LinkSearchPage extends QueryPage {
 	function setParams( $params ) {
 		$this->mQuery = $params['query'];
@@ -98,8 +116,9 @@ class LinkSearchPage extends QueryPage {
 		$field = 'el_index';
 		$rv = LinkFilter::makeLikeArray( $query , $prot );
 		if ($rv === false) {
-			//makeLike doesn't handle wildcard in IP, so we'll have to munge here.
+			// LinkFilter doesn't handle wildcard in IP, so we'll have to munge here.
 			if (preg_match('/^(:?[0-9]{1,3}\.)+\*\s*$|^(:?[0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]*\*\s*$/', $query)) {
+				$dbr = wfGetDB( DB_SLAVE );
 				$rv = array( $prot . rtrim($query, " \t*"), $dbr->anyString() );
 				$field = 'el_to';
 			}
@@ -162,7 +181,7 @@ class LinkSearchPage extends QueryPage {
 	 */
 	function doQuery( $offset, $limit, $shownavigation=true ) {
 		global $wgOut;
-		list( $this->mMungedQuery, $clause ) = LinkSearchPage::mungeQuery( $this->mQuery, $this->mProt );
+		list( $this->mMungedQuery,  ) = LinkSearchPage::mungeQuery( $this->mQuery, $this->mProt );
 		if( $this->mMungedQuery === false ) {
 			$wgOut->addWikiMsg( 'linksearch-error' );
 		} else {

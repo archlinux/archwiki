@@ -205,7 +205,7 @@ $messages = array(
 # Login and logout pages
 'yourname'                => 'Nuhtjiennomme:',
 'yourpassword'            => 'Loevesbaakoe:',
-'remembermypassword'      => 'Måjhtije mov loggesïjse nille dïhte daatovre',
+'remembermypassword'      => 'Måjhtije mov loggesïjse nille dïhte daatovre (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'          => 'Dov domäne:',
 'login'                   => 'Logge sïjse',
 'nav-login-createaccount' => 'Logge sïjse / skaepede nuhtjien',
@@ -290,9 +290,6 @@ Gïemhpes logge sïjse vihth männgan datne åtna låhka dïhte.',
 'copyrightwarning'       => "Tjaeleste gaajhke värrhtoedimmieh gåajkoe {{SITENAME}} lea ahte gïehtjele goh maam buektedh nuelesne $2 (vuajna $1 ihke detaaljeh). Bïjre datne ijje sïjhtedh dov tjaalege galka värrhtoedimmieh jallh kåpieeres minngesne jeatjebh daerpies voete, galka datne ijje tjaala daesnie.<br />
 Datne luhpede mijjieh aaj datne tjaala tjaalege jïjtje, jallh kåpieeret raejeste gaaltjie goh ijje vaarjele dejstie bäjjesereaktah, jallh plïerehke.<br />
 '''LISSEHTE IJJE OLKESE BÄJJESEREAKTAHVAARJELE ÏEBNE NAMHTAH LUHPIE!'''",
-'longpagewarning'        => "'''VAAROEHTIDH: Dïhte bielie lea $1 kilobyteh guhkie; såemies
-gaskeviermie-låhkoeh åtna tsagkeseh värrhtoedimmie bielih stoerre jallh guhkies enn 32 kb.
-Joekedidh värrhtoedimmie sïjse unnebe sektiovneh.'''",
 'templatesused'          => '{{PLURAL:$1|Maal|Maler}}Maaleh nuhtjie nille dïhte bielie:',
 'templatesusedpreview'   => '{{PLURAL:$1|Maal|Maaleh}} nuhtjie sïjse dïhte åvte-vuesiehtidh:',
 'template-protected'     => '(vaarjeleme)',
@@ -555,7 +552,6 @@ Dov dorje värrhtoedimmie gååvnese bielieh, jallh [[Special:UserLogin|logge s�
 # Watchlist
 'watchlist'         => 'Mov sïektjedhlästoe',
 'mywatchlist'       => 'Mov sïektjedhlästoe',
-'watchlistfor'      => "(ihke '''$1''')",
 'addedwatch'        => 'Lissiehtidh gåajkoe sïektjedhlästoe',
 'removedwatch'      => 'Sihkojuvvon raejeste sïektjedhlästoe',
 'removedwatchtext'  => 'Bielie "[[:$1]]" lea sihkojuvvon raejeste [[Special:Watchlist|dov sïektjedhlästoe]].',
@@ -785,10 +781,10 @@ Gïemhpes veeljeme jeatjebh nomme.',
 'nextdiff'     => 'Minngebe joekehts →',
 
 # Media information
-'file-info'            => '(baalka stoerre: $1, MIME-vuekie: $2)',
-'file-info-size'       => '($1 × $2 pixel, baalka stoerre: $3, MIME-vuekie: $4)',
+'file-info'            => 'baalka stoerre: $1, MIME-vuekie: $2',
+'file-info-size'       => '$1 × $2 pixel, baalka stoerre: $3, MIME-vuekie: $4',
 'file-nohires'         => '<small>Ijje jïlle bäjjeselöösninge jaksoes.</small>',
-'svg-long-desc'        => '(SVG baalka, maadth-stoerre $1 × $2 pixel, baalka stoerre: $3)',
+'svg-long-desc'        => 'SVG baalka, maadth-stoerre $1 × $2 pixel, baalka stoerre: $3',
 'show-big-image'       => 'Dïeves stoerre',
 'show-big-image-thumb' => '<small>Stoerre ihke dïhte vuesiehtidh: $1 × $2 pixel</small>',
 

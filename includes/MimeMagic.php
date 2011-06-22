@@ -1,15 +1,31 @@
 <?php
-/** Module defining helper functions for detecting and dealing with mime types.
+/**
+ * Module defining helper functions for detecting and dealing with mime types.
  *
+ * @file
  */
 
- /** Defines a set of well known mime types
+/**
+ * Defines a set of well known mime types
  * This is used as a fallback to mime.types files.
  * An extensive list of well known mime types is provided by
  * the file mime.types in the includes directory.
+ * 
+ * This list concatenated with mime.types is used to create a mime <-> ext
+ * map. Each line contains a mime type followed by a space separated list of
+ * extensions. If multiple extensions for a single mime type exist or if 
+ * multiple mime types exist for a single extension then in most cases
+ * MediaWiki assumes that the first extension following the mime type is the
+ * canonical extension, and the first time a mime type appears for a certain
+ * extension is considered the canonical mime type.
+ * 
+ * (Note that appending $wgMimeTypeFile to the end of MM_WELL_KNOWN_MIME_TYPES
+ * sucks because you can't redefine canonical types. This could be fixed by 
+ * appending MM_WELL_KNOWN_MIME_TYPES behind $wgMimeTypeFile, but who knows
+ * what will break? In practice this probably isn't a problem anyway -- Bryan)
  */
 define('MM_WELL_KNOWN_MIME_TYPES',<<<END_STRING
-application/ogg ogg ogm ogv
+application/ogg ogx ogg ogm ogv oga spx
 application/pdf pdf
 application/vnd.oasis.opendocument.chart odc
 application/vnd.oasis.opendocument.chart-template otc
@@ -33,24 +49,28 @@ audio/midi mid midi kar
 audio/mpeg mpga mpa mp2 mp3
 audio/x-aiff aif aiff aifc
 audio/x-wav wav
-audio/ogg ogg
+audio/ogg oga spx ogg
 image/x-bmp bmp
 image/gif gif
 image/jpeg jpeg jpg jpe
 image/png png
-image/svg+xml image/svg svg
+image/svg+xml svg 
+image/svg svg
 image/tiff tiff tif
-image/vnd.djvu image/x.djvu image/x-djvu djvu
+image/vnd.djvu djvu
+image/x.djvu djvu
+image/x-djvu djvu
 image/x-portable-pixmap ppm
 image/x-xcf xcf
 text/plain txt
 text/html html htm
-video/ogg ogm ogg ogv
+video/ogg ogv ogm ogg
 video/mpeg mpg mpeg
 END_STRING
 );
 
- /** Defines a set of well known mime info entries
+/**
+ * Defines a set of well known mime info entries
  * This is used as a fallback to mime.info files.
  * An extensive list of well known mime types is provided by
  * the file mime.info in the includes directory.
@@ -80,7 +100,7 @@ audio/x-aiff [AUDIO]
 audio/x-wav [AUDIO]
 audio/mp3 audio/mpeg [AUDIO]
 application/ogg audio/ogg video/ogg [MULTIMEDIA]
-image/x-bmp image/bmp [BITMAP]
+image/x-bmp image/x-ms-bmp image/bmp [BITMAP]
 image/gif [BITMAP]
 image/jpeg [BITMAP]
 image/png [BITMAP]
@@ -102,7 +122,7 @@ END_STRING
 global $wgLoadFileinfoExtension;
 
 if ($wgLoadFileinfoExtension) {
-	if(!extension_loaded('fileinfo')) dl('fileinfo.' . PHP_SHLIB_SUFFIX);
+	wfDl( 'fileinfo' );
 }
 
 /**
@@ -396,7 +416,9 @@ class MimeMagic {
 			'xbm',
 
 			// Formats we recognize magic numbers for
-			'djvu', 'ogg', 'ogv', 'mid', 'pdf', 'wmf', 'xcf',
+			'djvu', 'ogx', 'ogg', 'ogv', 'oga', 'spx',
+			'mid', 'pdf', 'wmf', 'xcf', 'webm', 'mkv', 'mka',
+			'webp',
 
 			// XML formats we sure hope we recognize reliably
 			'svg',
@@ -404,18 +426,73 @@ class MimeMagic {
 		return in_array( strtolower( $extension ), $types );
 	}
 
+	/** improves a mime type using the file extension. Some file formats are very generic,
+	* so their mime type is not very meaningful. A more useful mime type can be derived 
+	* by looking at the file extension. Typically, this method would be called on the 
+	* result of guessMimeType().
+	* 
+	* Currently, this method does the following:
+	*
+	* If $mime is "unknown/unknown" and isRecognizableExtension( $ext ) returns false,
+	* return the result of guessTypesForExtension($ext). 
+	*
+	* If $mime is "application/x-opc+zip" and isMatchingExtension( $ext, $mime )
+	* gives true, return the result of guessTypesForExtension($ext). 
+	*
+	* @param $mime String: the mime type, typically guessed from a file's content.
+	* @param $ext String: the file extension, as taken from the file name
+	*
+	* @return string the mime type
+	*/
+	function improveTypeFromExtension( $mime, $ext ) {
+		if ( $mime === "unknown/unknown" ) {
+			if( $this->isRecognizableExtension( $ext ) ) {
+				wfDebug( __METHOD__. ": refusing to guess mime type for .$ext file, " .
+					"we should have recognized it\n" );
+			} else {
+				/* Not something we can detect, so simply 
+				* trust the file extension */
+				$mime = $this->guessTypesForExtension( $ext );
+			}
+		}
+		else if ( $mime === "application/x-opc+zip" ) {
+			if ( $this->isMatchingExtension( $ext, $mime ) ) {
+				/* A known file extension for an OPC file,
+				* find the proper mime type for that file extension */
+				$mime = $this->guessTypesForExtension( $ext );
+			} else {
+				wfDebug( __METHOD__. ": refusing to guess better type for $mime file, " . 
+					".$ext is not a known OPC extension.\n" );
+				$mime = "application/zip";
+			}
+		}
+
+		if ( isset( $this->mMimeTypeAliases[$mime] ) ) {
+			$mime = $this->mMimeTypeAliases[$mime];
+		}
+
+		wfDebug(__METHOD__.": improved mime type for .$ext: $mime\n");
+		return $mime;
+	}
 
 	/** mime type detection. This uses detectMimeType to detect the mime type of the file,
 	* but applies additional checks to determine some well known file formats that may be missed
-	* or misinterpreter by the default mime detection (namely xml based formats like XHTML or SVG).
+	* or misinterpreter by the default mime detection (namely XML based formats like XHTML or SVG,
+	* as well as ZIP based formats like OPC/ODF files).
 	*
-	* @param string $file The file to check
-	* @param mixed $ext The file extension, or true to extract it from the filename.
-	*                   Set it to false to ignore the extension.
+	* @param $file String: the file to check
+	* @param $ext Mixed: the file extension, or true (default) to extract it from the filename.
+	*             Set it to false to ignore the extension. DEPRECATED! Set to false, use 
+	*             improveTypeFromExtension($mime, $ext) later to improve mime type.
 	*
 	* @return string the mime type of $file
 	*/
 	function guessMimeType( $file, $ext = true ) {
+		if( $ext ) { # TODO: make $ext default to false. Or better, remove it.
+			wfDebug( __METHOD__.": WARNING: use of the \$ext parameter is deprecated. " .
+				"Use improveTypeFromExtension(\$mime, \$ext) instead.\n" );
+		}
+
 		$mime = $this->doGuessMimeType( $file, $ext );
 
 		if( !$mime ) {
@@ -427,11 +504,11 @@ class MimeMagic {
 			$mime = $this->mMimeTypeAliases[$mime];
 		}
 
-		wfDebug(__METHOD__.": final mime type of $file: $mime\n");
+		wfDebug(__METHOD__.": guessed mime type of $file: $mime\n");
 		return $mime;
 	}
 
-	function doGuessMimeType( $file, $ext = true ) {
+	private function doGuessMimeType( $file, $ext ) { # TODO: remove $ext param
 		// Read a chunk of the file
 		wfSuppressWarnings();
 		$f = fopen( $file, "rt" );
@@ -441,6 +518,8 @@ class MimeMagic {
 		fseek( $f, -65558, SEEK_END );
 		$tail = fread( $f, 65558 ); // 65558 = maximum size of a zip EOCDR
 		fclose( $f );
+
+		wfDebug( __METHOD__ . ": analyzing head and tail of $file for magic numbers.\n" );
 
 		// Hardcode a few magic number checks...
 		$headers = array(
@@ -466,6 +545,30 @@ class MimeMagic {
 				wfDebug( __METHOD__ . ": magic header in $file recognized as $candidate\n" );
 				return $candidate;
 			}
+		}
+
+		/* Look for WebM and Matroska files */
+		if( strncmp( $head, pack( "C4", 0x1a, 0x45, 0xdf, 0xa3 ), 4 ) == 0 ) {
+			$doctype = strpos( $head, "\x42\x82" );
+			if( $doctype ) {
+				// Next byte is datasize, then data (sizes larger than 1 byte are very stupid muxers)
+				$data = substr($head, $doctype+3, 8);
+				if( strncmp( $data, "matroska", 8 ) == 0 ) {
+					wfDebug( __METHOD__ . ": recognized file as video/x-matroska\n" );
+					return "video/x-matroska";
+				} else if ( strncmp( $data, "webm", 4 ) == 0 ) {
+					wfDebug( __METHOD__ . ": recognized file as video/webm\n" );
+					return "video/webm";
+				}
+			}
+			wfDebug( __METHOD__ . ": unknown EBML file\n" );
+			return "unknown/unknown";
+		}
+
+		/* Look for WebP */
+		if( strncmp( $head, "RIFF", 4 ) == 0 && strncmp( substr( $head, 8, 8), "WEBPVP8 ", 8 ) == 0 ) {
+			wfDebug( __METHOD__ . ": recognized file as image/webp\n" );
+			return "image/webp";
 		}
 
 		/*
@@ -545,10 +648,10 @@ class MimeMagic {
 			}
 		}
 
-		// Check for ZIP (before getimagesize)
+		// Check for ZIP variants (before getimagesize)
 		if ( strpos( $tail, "PK\x05\x06" ) !== false ) {
-			wfDebug( __METHOD__.": ZIP header present at end of $file\n" );
-			return $this->detectZipType( $head );
+			wfDebug( __METHOD__.": ZIP header present in $file\n" );
+			return $this->detectZipType( $head, $tail, $ext );
 		}
 
 		wfSuppressWarnings();
@@ -573,13 +676,24 @@ class MimeMagic {
 	
 	/**
 	 * Detect application-specific file type of a given ZIP file from its
-	 * header data.  Currently works for OpenDocument types...
+	 * header data.  Currently works for OpenDocument and OpenXML types...
 	 * If can't tell, returns 'application/zip'.
 	 *
-	 * @param string $header Some reasonably-sized chunk of file header
+	 * @param $header String: some reasonably-sized chunk of file header
+	 * @param $tail   String: the tail of the file
+	 * @param $ext Mixed: the file extension, or true to extract it from the filename.
+	 *             Set it to false (default) to ignore the extension. DEPRECATED! Set to false, 
+	 *             use improveTypeFromExtension($mime, $ext) later to improve mime type.
+	 *
 	 * @return string
 	 */
-	function detectZipType( $header ) {
+	function detectZipType( $header, $tail = null, $ext = false ) {
+		if( $ext ) { # TODO: remove $ext param
+			wfDebug( __METHOD__.": WARNING: use of the \$ext parameter is deprecated. " .
+				"Use improveTypeFromExtension(\$mime, \$ext) instead.\n" );
+		}
+
+		$mime = 'application/zip';
 		$opendocTypes = array(
 			'chart-template',
 			'chart',
@@ -601,16 +715,62 @@ class MimeMagic {
 		// http://lists.oasis-open.org/archives/office/200505/msg00006.html
 		$types = '(?:' . implode( '|', $opendocTypes ) . ')';
 		$opendocRegex = "/^mimetype(application\/vnd\.oasis\.opendocument\.$types)/";
-		wfDebug( __METHOD__.": $opendocRegex\n" );
-		
+
+		$openxmlRegex = "/^\[Content_Types\].xml/";
+
 		if( preg_match( $opendocRegex, substr( $header, 30 ), $matches ) ) {
 			$mime = $matches[1];
 			wfDebug( __METHOD__.": detected $mime from ZIP archive\n" );
-			return $mime;
+		} elseif( preg_match( $openxmlRegex, substr( $header, 30 ) ) ) {
+			$mime = "application/x-opc+zip";
+			# TODO: remove the block below, as soon as improveTypeFromExtension is used everywhere 
+			if( $ext !== true && $ext !== false ) { 
+				/** This is the mode used by getPropsFromPath
+				* These mime's are stored in the database, where we don't really want
+				* x-opc+zip, because we use it only for internal purposes
+				*/
+				if( $this->isMatchingExtension( $ext, $mime) ) {
+					/* A known file extension for an OPC file,
+					* find the proper mime type for that file extension */
+					$mime = $this->guessTypesForExtension( $ext );
+				} else {
+					$mime = "application/zip";
+				}
+			}
+			wfDebug( __METHOD__.": detected an Open Packaging Conventions archive: $mime\n" );
+		} else if( substr( $header, 0, 8 ) == "\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1" && 
+				($headerpos = strpos( $tail, "PK\x03\x04" ) ) !== false &&
+				preg_match( $openxmlRegex, substr( $tail, $headerpos + 30 ) ) ) {
+			if( substr( $header, 512, 4) == "\xEC\xA5\xC1\x00" ) {
+				$mime = "application/msword";
+			} 
+			switch( substr( $header, 512, 6) ) {
+				case "\xEC\xA5\xC1\x00\x0E\x00":
+				case "\xEC\xA5\xC1\x00\x1C\x00":
+				case "\xEC\xA5\xC1\x00\x43\x00":
+					$mime = "application/vnd.ms-powerpoint";
+					break;
+				case "\xFD\xFF\xFF\xFF\x10\x00":
+				case "\xFD\xFF\xFF\xFF\x1F\x00":
+				case "\xFD\xFF\xFF\xFF\x22\x00":
+				case "\xFD\xFF\xFF\xFF\x23\x00":
+				case "\xFD\xFF\xFF\xFF\x28\x00":
+				case "\xFD\xFF\xFF\xFF\x29\x00":
+				case "\xFD\xFF\xFF\xFF\x10\x02":
+				case "\xFD\xFF\xFF\xFF\x1F\x02":
+				case "\xFD\xFF\xFF\xFF\x22\x02":
+				case "\xFD\xFF\xFF\xFF\x23\x02":
+				case "\xFD\xFF\xFF\xFF\x28\x02":
+				case "\xFD\xFF\xFF\xFF\x29\x02":
+					$mime = "application/vnd.msexcel";
+					break;
+			}
+
+			wfDebug( __METHOD__.": detected a MS Office document with OPC trailer\n");
 		} else {
 			wfDebug( __METHOD__.": unable to identify type of ZIP archive\n" );
-			return 'application/zip';
 		}
+		return $mime;
 	}
 
 	/** Internal mime type detection, please use guessMimeType() for application code instead.
@@ -621,15 +781,20 @@ class MimeMagic {
 	* If the mime type is still unknown, getimagesize is used to detect the mime type if the file is an image.
 	* If no mime type can be determined, this function returns "unknown/unknown".
 	*
-	* @param string $file The file to check
-	* @param mixed $ext The file extension, or true to extract it from the filename.
-	*                   Set it to false to ignore the extension.
+	* @param $file String: the file to check
+	* @param $ext Mixed: the file extension, or true (default) to extract it from the filename.
+	*             Set it to false to ignore the extension. DEPRECATED! Set to false, use 
+	*             improveTypeFromExtension($mime, $ext) later to improve mime type.
 	*
 	* @return string the mime type of $file
 	* @access private
 	*/
-	function detectMimeType( $file, $ext = true ) {
+	private function detectMimeType( $file, $ext = true ) {
 		global $wgMimeDetectorCommand;
+
+		if( $ext ) { # TODO:  make $ext default to false. Or better, remove it.
+			wfDebug( __METHOD__.": WARNING: use of the \$ext parameter is deprecated. Use improveTypeFromExtension(\$mime, \$ext) instead.\n" );
+		}
 
 		$m = null;
 		if ( $wgMimeDetectorCommand ) {
@@ -717,9 +882,9 @@ class MimeMagic {
 	* @todo analyse file if need be
 	* @todo look at multiple extension, separately and together.
 	*
-	* @param string $path full path to the image file, in case we have to look at the contents
+	* @param $path String: full path to the image file, in case we have to look at the contents
 	*        (if null, only the mime type is used to determine the media type code).
-	* @param string $mime mime type. If null it will be guessed using guessMimeType.
+	* @param $mime String: mime type. If null it will be guessed using guessMimeType.
 	*
 	* @return (int?string?) a value to be used with the MEDIATYPE_xxx constants.
 	*/
@@ -756,7 +921,6 @@ class MimeMagic {
 		}
 
 		# Check for entry for file extension
-		$e = null;
 		if ( $path ) {
 			$i = strrpos( $path, '.' );
 			$e = strtolower( $i ? substr( $path, $i + 1 ) : '' );
@@ -819,9 +983,9 @@ class MimeMagic {
 	 * Get the MIME types that various versions of Internet Explorer would 
 	 * detect from a chunk of the content.
 	 *
-	 * @param string $fileName The file name (unused at present)
-	 * @param string $chunk The first 256 bytes of the file
-	 * @param string $proposed The MIME type proposed by the server
+	 * @param $fileName String: the file name (unused at present)
+	 * @param $chunk String: the first 256 bytes of the file
+	 * @param $proposed String: the MIME type proposed by the server
 	 */
 	public function getIEMimeTypes( $fileName, $chunk, $proposed ) {
 		$ca = $this->getIEContentAnalyzer();

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Exif metadata reader
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -618,7 +620,7 @@ class FormatExif {
 	 * @param $exif Array: the Exif data to format ( as returned by
 	 *                    Exif::getFilteredData() )
 	 */
-	function FormatExif( $exif ) {
+	function __construct( $exif ) {
 		$this->mExif = $exif;
 	}
 
@@ -1146,15 +1148,3 @@ class FormatExif {
 		return $a;
 	}
 }
-
-/**
- * MW 1.6 compatibility
- */
-define( 'MW_EXIF_BYTE', Exif::BYTE );
-define( 'MW_EXIF_ASCII', Exif::ASCII );
-define( 'MW_EXIF_SHORT', Exif::SHORT );
-define( 'MW_EXIF_LONG', Exif::LONG );
-define( 'MW_EXIF_RATIONAL', Exif::RATIONAL );
-define( 'MW_EXIF_UNDEFINED', Exif::UNDEFINED );
-define( 'MW_EXIF_SLONG', Exif::SLONG );
-define( 'MW_EXIF_SRATIONAL', Exif::SRATIONAL );

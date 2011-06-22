@@ -12,7 +12,7 @@ addOnloadHook( function() {
 	}
 } );
 
-var htmlforms = {
+window.htmlforms = {
 	'selectOrOtherSelectChanged' : function( e ) {
 		var select;
 		if ( !e ) {
@@ -36,5 +36,5 @@ var htmlforms = {
 			textbox.disabled = true;
 		}
 	}
-}
+};
 

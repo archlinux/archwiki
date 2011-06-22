@@ -69,7 +69,8 @@ body {
 }
 
 #p-personal li {
-	display: block; float: left;
+	display: block;
+	float: left;
 	height: 1.5em;
 	margin: 0 0 0 0;
 	vertical-align: middle;
@@ -301,27 +302,27 @@ hr {
 }
 
 a {
-        text-decoration: none;
-        color: #003366;
-        background: none;
+	text-decoration: none;
+	color: #003366;
+	background: none;
 }
 a:visited {
-        color: #5a3696;
+	color: #5a3696;
 }
 a:active {
-        color: #faa700;
+	color: #faa700;
 }
 a:hover {
-        text-decoration: underline;
+	text-decoration: underline;
 }
 a.stub {
-        color: #772233;
+	color: #772233;
 }
 a.new {
-        color: #ba0000;
+	color: #ba0000;
 }
 a.new:visited {
-        color: #a55858;
+	color: #a55858;
 }
 
 span.editsection {
@@ -330,6 +331,10 @@ span.editsection {
 
 h1, h2 {
 	border-bottom: solid 1px #003366;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	overflow: hidden;
 }
 
 #preftoc {
@@ -402,33 +407,33 @@ h1, h2 {
 
 #mw_content a.external,
 #mw_content a[href ^="gopher://"] {
-        background: url(external.png) center right no-repeat;
-        padding-right: 13px;
+	background: url(external.png) center right no-repeat;
+	padding-right: 13px;
 }
 #mw_content a[href ^="https://"],
 .link-https {
-        background: url(lock_icon.gif) center right no-repeat;
-        padding-right: 16px;
+	background: url(lock_icon.gif) center right no-repeat;
+	padding-right: 16px;
 }
 #mw_content a[href ^="mailto:"],
 .link-mailto {
-        background: url(mail_icon.gif) center right no-repeat;
-        padding-right: 18px;
+	background: url(mail_icon.gif) center right no-repeat;
+	padding-right: 18px;
 }
 #mw_content a[href ^="news://"] {
-        background: url(news_icon.png) center right no-repeat;
-        padding-right: 18px;
+	background: url(news_icon.png) center right no-repeat;
+	padding-right: 18px;
 }
 #mw_content a[href ^="ftp://"],
 .link-ftp {
-        background: url(file_icon.gif) center right no-repeat;
-        padding-right: 18px;
+	background: url(file_icon.gif) center right no-repeat;
+	padding-right: 18px;
 }
 #mw_content a[href ^="irc://"],
 #mw_content a.extiw[href ^="irc://"],
 .link-irc {
-        background: url(discussionitem_icon.gif) center right no-repeat;
-        padding-right: 18px;
+	background: url(discussionitem_icon.gif) center right no-repeat;
+	padding-right: 18px;
 }
 
 #mw_content a.external[href $=".ogg"], #mw_content a.external[href $=".OGG"],
@@ -438,23 +443,23 @@ h1, h2 {
 #mw_content a.external[href $=".wav"], #mw_content a.external[href $=".WAV"],
 #mw_content a.external[href $=".wma"], #mw_content a.external[href $=".WMA"],
 .link-audio {
-        background: url("audio.png") center right no-repeat;
-        padding-right: 13px;
+	background: url("audio.png") center right no-repeat;
+	padding-right: 13px;
 }
 #mw_content a.external[href $=".ogm"], #mw_content a.external[href $=".OGM"],
 #mw_content a.external[href $=".avi"], #mw_content a.external[href $=".AVI"],
 #mw_content a.external[href $=".mpeg"], #mw_content a.external[href $=".MPEG"],
 #mw_content a.external[href $=".mpg"], #mw_content a.external[href $=".MPG"],
 .link-video {
-        background: url("video.png") center right no-repeat;
-        padding-right: 13px;
+	background: url("video.png") center right no-repeat;
+	padding-right: 13px;
 }
 #mw_content a.external[href $=".pdf"], #mw_content a.external[href $=".PDF"],
 #mw_content a.external[href *=".pdf#"], #mw_content a.external[href *=".PDF#"],
 #mw_content a.external[href *=".pdf?"], #mw_content a.external[href *=".PDF?"],
 .link-document {
-        background: url("document.png") center right no-repeat;
-        padding-right: 12px;
+	background: url("document.png") center right no-repeat;
+	padding-right: 12px;
 }
 
 /* images */
@@ -486,8 +491,6 @@ div.floatleft p { font-style: italic; }
 /* thumbnails */
 div.thumb {
 	margin-bottom: .5em;
-	border-style: solid;
-	border-color: white;
 	width: auto;
 }
 div.thumbinner {
@@ -521,13 +524,12 @@ div.magnify a, div.magnify img {
 div.tright {
 	clear: right;
 	float: right;
-	border-width: .5em 0 .8em 1.4em;
+	margin: .5em 0 .8em 1.4em;
 }
 div.tleft {
 	float: left;
 	clear: left;
-	margin-right: .5em;
-	border-width: .5em 1.4em .8em 0;
+	margin: .5em 1.4em .8em 0;
 }
 img.thumbborder {
 	border: 1px solid #dddddd;
@@ -695,30 +697,6 @@ input#wpSave, input#wpDiff {
 	font-weight: bold;
 }
 
-/* Classes for article validation */
-
-table.revisionform_default {
-	border: 1px solid #000000;
-}
-
-table.revisionform_focus {
-	border: 1px solid #000000;
-	background-color:#00BBFF;
-}
-
-tr.revision_tr_default {
-	background-color:#EEEEEE;
-}
-
-tr.revision_tr_first {
-	background-color:#DDDDDD;
-}
-
-p.revision_saved {
-	color: green;
-	font-weight:bold;
-}
-
 /* noarticletext */
 div.noarticletext {
 	border: 1px solid #ccc;
@@ -751,55 +729,32 @@ div#searchTarget ul li:before {
 }
 
 div#searchTargetHide {
-	float:right;
-	border:solid 1px black;
-	background:gainsboro;
-	padding:2px;
+	float: right;
+	border: solid 1px black;
+	background: gainsboro;
+	padding: 2px;
 }
 
 div.multipageimagenavbox {
-   border: solid 1px silver;
-   padding: 4px;
-   margin: 1em;
-   background: #f0f0f0;
+	border: solid 1px silver;
+	padding: 4px;
+	margin: 1em;
+	background: #f0f0f0;
 }
 
 div.multipageimagenavbox div.thumb {
-   border: none;
-   margin-left: 2em;
-   margin-right: 2em;
+	border: none;
+	margin-left: 2em;
+	margin-right: 2em;
 }
 
 div.multipageimagenavbox hr {
-   margin: 6px;
+	margin: 6px;
 }
 
 table.multipageimage td {
-   text-align: center;
+	text-align: center;
 }
-
-/*
-  Table pager (e.g. Special:Imagelist)
-  - remove underlines from the navigation link
-  - collapse borders
-  - set the borders to outsets (similar to Special:Allmessages)
-  - remove line wrapping for all td and th, set background color
-  - restore line wrapping for the last two table cells (description and size)
-*/
-.TablePager_nav a { text-decoration: none; }
-.TablePager { border-collapse: collapse; }
-.TablePager, .TablePager td, .TablePager th {
-	border: 1px solid #aaaaaa;
-	padding: 0 0.15em 0 0.15em;
-}
-.TablePager th { background-color: #eeeeff }
-.TablePager td { background-color: #ffffff }
-.TablePager tr:hover td { background-color: #eeeeff }
-
-.imagelist td, .imagelist th { white-space: nowrap }
-.imagelist .TablePager_col_links { background-color: #eeeeff }
-.imagelist .TablePager_col_img_description { white-space: normal }
-.imagelist th.TablePager_sort { background-color: #ccccff }
 
 .templatesUsed { margin-top: 1.5em; }
 
@@ -890,8 +845,8 @@ pre {
 }
 
 .mw-topbox {
-        color: black;
-        font-weight: bold;
+	color: black;
+	font-weight: bold;
 	margin: 0 0 0 0;
 	padding: 0 1em 0 1em;
 	vertical-align: middle;
@@ -905,19 +860,24 @@ pre {
 
 /* emulate center */
 .center {
-     width:100%;
-     text-align:center;
+	width: 100%;
+	text-align: center;
 }
 *.center * {
-     margin-left:auto;
-     margin-right:auto;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 /* table standards */
 .toccolours {
-    border:1px solid #bbbbbb;
-    background-color:#f0f0f0;
-    border-spacing:0pt;
-    margin:0pt;
-    padding:0pt;
+	border: 1px solid #bbbbbb;
+	background-color: #f0f0f0;
+	border-spacing: 0pt;
+	margin: 0pt;
+	padding: 0pt;
+}
+
+/* Tooltips are outside of the normal body code, so this helps make the size of the text sensible */
+.tipsy {
+	font-size: 130%;
 }

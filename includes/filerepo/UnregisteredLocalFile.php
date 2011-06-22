@@ -1,4 +1,10 @@
 <?php
+/**
+ * File without associated database record
+ *
+ * @file
+ * @ingroup FileRepo
+ */
 
 /**
  * A file object referring to either a standalone local file, or a file in a
@@ -94,7 +100,7 @@ class UnregisteredLocalFile extends File {
 
 	function getURL() {
 		if ( $this->repo ) {
-			return $this->repo->getZoneUrl( 'public' ) . '/' . $this->repo->getHashPath( $this->name ) . urlencode( $this->name );
+			return $this->repo->getZoneUrl( 'public' ) . '/' . $this->repo->getHashPath( $this->name ) . rawurlencode( $this->name );
 		} else {
 			return false;
 		}

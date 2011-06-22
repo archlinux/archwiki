@@ -88,7 +88,7 @@ $namespaceAliases = array(
 	'ارنايى'              => NS_SPECIAL,
 	'تالقىلاۋ'            => NS_TALK,
 	'قاتىسۋشى'          => NS_USER,
-	'قاتىسۋشى_تالقىلاۋى'=> NS_USER_TALK,
+	'قاتىسۋشى_تالقىلاۋى' => NS_USER_TALK,
 	'$1_تالقىلاۋى'        => NS_PROJECT_TALK,
 	'سۋرەت'              => NS_FILE,
 	'سۋرەت_تالقىلاۋى'    => NS_FILE_TALK,
@@ -141,9 +141,9 @@ $dateFormats = array(
 	'yyyy-mm-dd both' => 'xnH:xni:xns, xnY-xnm-xnd',
 
 	'persian time' => 'H:i',
-	'persian date' => 'xij xiF xiY', 
+	'persian date' => 'xij xiF xiY',
 	'persian both' => 'xij xiF xiY, H:i',
-	
+
 	'hebrew time' => 'H:i',
 	'hebrew date' => 'xjj xjF xjY',
 	'hebrew both' => 'H:i, xjj xjF xjY',
@@ -377,8 +377,7 @@ $messages = array(
 'tog-editsection'             => 'Bölimderdi [öñdew] siltemesimen öñdewin qos',
 'tog-editsectiononrightclick' => 'Bölim taqırıbın oñ nuqwmen öñdewin qos (JavaScript)',
 'tog-showtoc'                 => 'Mazmunın körset (3-ten arta bölimi barılarğa)',
-'tog-rememberpassword'        => 'Kirgenimdi osı komp′ywterde umıtpa',
-'tog-editwidth'               => 'Kiristirw ornı tolıq enimen',
+'tog-rememberpassword'        => 'Kirgenimdi osı komp′ywterde umıtpa (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => 'Men bastağan betterdi baqılaw tizimime üste',
 'tog-watchdefault'            => 'Men öñdegen betterdi baqılaw tizimime üste',
 'tog-watchmoves'              => 'Men jıljıtqan betterdi baqılaw tizimime üste',
@@ -718,7 +717,7 @@ Jaña tirkelgiñiz jasaldı.
 'yourname'                   => 'Qatıswşı atıñız:',
 'yourpassword'               => 'Qupïya söziñiz:',
 'yourpasswordagain'          => 'Qupïya sözdi qaýtalañız:',
-'remembermypassword'         => 'Meniñ kirgenimdi bul komp′ywterde umıtpa',
+'remembermypassword'         => 'Meniñ kirgenimdi bul komp′ywterde umıtpa (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'             => 'Jeli üýşigiñiz:',
 'externaldberror'            => 'Osı arada ne şettik rastaw derekqorında qate boldı, nemese şettik tirkelgiñizdi jañalaw ruqsatı joq.',
 'login'                      => 'Kirw',
@@ -898,7 +897,7 @@ Eger siz tirkelgisiz qatıswşı bolsañız jäne sizge qatıssız mändemeler j
 'usercsspreview'                   => "'''Mınaw CSS mätinin tek qarap şığw ekenin umıtpañız, ol äli saqtalğan joq!'''",
 'userjspreview'                    => "'''Mınaw JavaScript qatıswşı bağdarlamasın tekserw/qarap şığw ekenin umıtpañız, ol äli saqtalğan joq!'''",
 'userinvalidcssjstitle'            => "'''Qulaqtandırw:''' Osı arada «$1» degen eş mäner joq.
-Qatıswşınıñ .css jäne .js faýl atawı kişi äripppen jazılw tïisti ekenin umıtpañız, mısalğa {{ns:user}}:Foo/monobook.css degendi {{ns:user}}:Foo/Monobook.css degenmen salıstırıp qarañız.",
+Qatıswşınıñ .css jäne .js faýl atawı kişi äripppen jazılw tïisti ekenin umıtpañız, mısalğa {{ns:user}}:Foo/vector.css degendi {{ns:user}}:Foo/Vector.css degenmen salıstırıp qarañız.",
 'updated'                          => '(Jañartılğan)',
 'note'                             => "'''Añğartpa:'''",
 'previewnote'                      => "'''Mınaw tek qarap şığw ekenin umıtpañız;
@@ -938,9 +937,6 @@ Tağı da, bul mağlumat öziñiz jazğanıñızğa, ne qoğam qazınasınan nem
 Eger jazwıñızdıñ erkin öñdelwin qalamasañız, mında jarïyalamawıñız jön.<br />
 Tağı da, bul mağlumat öziñiz jazğanıñızğa, ne qoğam qazınasınan nemese sondaý aşıq qorlardan köşirilgenine bizge wäde beresiz (köbirek aqparat üşin $1 qwjatın qarañız).
 '''AWTORLIQ QUQIQPEN QORĞAWLI MAĞLUMATTI RUQSATSIZ JARÏYALAMAÑIZ!'''",
-'longpagewarning'                  => "'''QULAQTANDIRW: Bul bettiñ mölşeri — $1 kB;
-keýbir şolğıştarda bet mölşeri 32 kB jetse ne onı assa öñdew kürdeli bolwı mümkin.
-Betti birneşe kişkin bölimderge bölip köriñiz.'''",
 'longpageerror'                    => "'''QATELİK: Jöneltpek mätiniñizdin mölşeri — $1 KB, eñ köbi $2 KB ruqsat etilgen mölşerinen asqan.
 Bul saqtaý alınbaýdı.'''",
 'readonlywarning'                  => "'''QULAQTANDIRW: Derekqor baptaw üşin qulıptalğan, sondıqtan däl qazir öñdemeñizdi saqtaý almaýsız.
@@ -1426,7 +1422,6 @@ keri qaýtıñız da, osı faýldı jaña atımen qotarıp beriñiz. [[File:$1|t
 'fileexists-shared-forbidden' => 'Osılaý atalğan faýl ortaq qoýmada aldaqaşan bar;
 keri qaýtıñız da, osı faýldı jaña atımen qotarıp beriñiz. [[File:$1|thumb|center|$1]]',
 'file-exists-duplicate'       => 'Bul faýl kelesi {{PLURAL:$1|faýldıñ|faýldarınıñ}} telnusqası:',
-'successfulupload'            => 'Sätti qotarıp berildi',
 'uploadwarning'               => 'Qotarıp berw jöninde qulaqtandırw',
 'savefile'                    => 'Faýldı saqtaw',
 'uploadedimage'               => '«[[$1]]» faýlın qotarıp berdi',
@@ -1447,6 +1442,7 @@ Bul faýldı qotarıp berwin jalğastırw üşin bunıñ ıñğaýlığın tekse
 Qolaýlı bolwı üşin bul faýldıñ joyw jwrnalı keltirilgen:",
 'filename-bad-prefix'         => "Qotarıp bermek faýlıñızdıñ atawı '''«$1» ''' dep bastaladı, mınadaý sïpattawsız atawdı ädette sandıq kameralar özdiktik beredi.
 Faýlıñızğa sïpattılaw atawdı tañdañız.",
+'upload-success-subj'         => 'Sätti qotarıp berildi',
 
 'upload-proto-error'      => 'Burıs xattama',
 'upload-proto-error-text' => 'Şetten qotarıp berw üşin URL jaýları <code>http://</code> nemese <code>ftp://</code> degenderden bastalw jön.',
@@ -1742,7 +1738,6 @@ Qatıswşı baptawıñızda engizgen e-poşta mekenjaýıñız «Kimnen» degen 
 # Watchlist
 'watchlist'            => 'Baqılaw tizimi',
 'mywatchlist'          => 'Baqılawım',
-'watchlistfor'         => "('''$1''' baqılawları)",
 'nowatchlist'          => 'Baqılaw tizimiñizde eş dana joq',
 'watchlistanontext'    => 'Baqılaw tizimiñizdegi danalardı qaraw, ne öñdew üşin $1 kerek.',
 'watchnologin'         => 'Kirmegensiz',
@@ -1858,7 +1853,9 @@ soñğı öñdemesin [[{{ns:user}}:$3|$3]] ([[{{ns:user_talk}}:$3|talqılawı]])
 'revertpage'       => '[[{{#special:Contributions}}/$2|$2]] ([[{{ns:user_talk}}:$2|talqılawı]]) öñdemelerinen [[{{ns:user}}:$1|$1]] soñğı nusqasına qaýtardı',
 'rollback-success' => '$1 öñdemelerinen qaýtarğan;
 $2 soñğı nusqasına özgertti.',
-'sessionfailure'   => 'Kirw sessïyasında şataq bolğan sïyaqtı;
+
+# Edit tokens
+'sessionfailure' => 'Kirw sessïyasında şataq bolğan sïyaqtı;
 sessïyağa şabwıldawdardan qorğanw üşin, osı äreket toqtatıldı.
 «Artqa» degendi basıñız, jäne betti qaýta jükteñiz de, qaýta baýqap köriñiz.',
 
@@ -2041,7 +2038,6 @@ Buğattardı şolıp şığw üşin [[{{#special:Ipblocklist}}|IP buğattaw tizi
 'ipb-edit-dropdown'           => 'Buğattaw sebepterin öñdew',
 'ipb-unblock-addr'            => '$1 degendi buğattamaw',
 'ipb-unblock'                 => 'Qatıswşı atın nemese IP mekenjaýın buğattamaw',
-'ipb-blocklist-addr'          => '$1 üşin bar buğattawlardı qaraw',
 'ipb-blocklist'               => 'Bar buğattawlardı qaraw',
 'unblockip'                   => 'Qatıswşını buğattamaw',
 'unblockiptext'               => 'Tömendegi pişindi aldındağı IP mekenjaýımen ne atımen buğattalğan qatıswşığa jazw qatınawın qalpına keltiriwi üşin qoldanıñız.',
@@ -2433,9 +2429,9 @@ $1',
 'widthheight'          => '$1 × $2',
 'widthheightpage'      => '$1 × $2, $3 bet',
 'file-info'            => 'Faýl mölşeri: $1, MIME türi: $2',
-'file-info-size'       => '($1 × $2 nükte, faýl mölşeri: $3, MIME türi: $4)',
+'file-info-size'       => '$1 × $2 nükte, faýl mölşeri: $3, MIME türi: $4',
 'file-nohires'         => '<small>Joğarı ajıratılımdığı jetimsiz.</small>',
-'svg-long-desc'        => '(SVG faýlı, kesimdi $1 × $2 nükte, faýl mölşeri: $3)',
+'svg-long-desc'        => 'SVG faýlı, kesimdi $1 × $2 nükte, faýl mölşeri: $3',
 'show-big-image'       => 'Joğarı ajıratılımdı',
 'show-big-image-thumb' => '<small>Qarap şığw mölşeri: $1 × $2 nükte</small>',
 

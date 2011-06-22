@@ -37,7 +37,7 @@ $messages = array(
 'tog-extendwatchlist'      => "Na'ladångkolu i listan pinilan para u na'annok i manaplikayon na tinilaika siha",
 'tog-usenewrc'             => "I manmana'lamaolek na tinilaika (JavaScript)",
 'tog-showtoc'              => "Na'annok i fañodda'an (annai guåha mas ki 3 na titulo gi påhina)",
-'tog-rememberpassword'     => 'Hasso iyo-ku login gi este na komputadora.',
+'tog-rememberpassword'     => 'Hasso iyo-ku login gi este na komputadora (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'       => "Po'lo i påhina siha ni fina'tinas-hu gi iyo-ku listan pinilan.",
 'tog-watchdefault'         => "Po'lo i påhina siha ni hu tulaika gi iyo-ku listan pinilan.",
 'tog-watchmoves'           => "Po'lo i påhina siha ni hu muebi gi iyo-ku listan pinilan.",
@@ -150,9 +150,6 @@ $messages = array(
 'qbpageinfo'     => 'Kontekstu',
 'qbmyoptions'    => 'Påhina-hu siha',
 'qbspecialpages' => 'Manespesiat na påhina',
-
-# Vector skin
-'vector-namespace-template' => 'Plantiya',
 
 'errorpagetitle'    => 'Linachi',
 'returnto'          => 'Hånao tåtte para $1.',
@@ -316,7 +313,7 @@ Munga mamalefa tumulaika ga'ña-mu {{SITENAME}}.",
 'yourname'                   => "Nå'an ni muna'setbi:",
 'yourpassword'               => 'Password:',
 'yourpasswordagain'          => "Taip ta'lo i password:",
-'remembermypassword'         => "Na'hasso iyo-ku login gi este na komputer",
+'remembermypassword'         => "Na'hasso iyo-ku login gi este na komputer (for a maximum of $1 {{PLURAL:$1|day|days}})",
 'yourdomainname'             => 'Lugat-mu:',
 'login'                      => 'Log in',
 'nav-login-createaccount'    => "Hålom / fa'tinas kuenta-mu",
@@ -911,7 +908,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Watchlist
 'watchlist'         => 'Listan pinilan-hu',
 'mywatchlist'       => 'Listan pinilan-hu',
-'watchlistfor'      => "(para '''$1''')",
 'addedwatch'        => "Mapo'lo gi listan pinilan",
 'addedwatchtext'    => "Mana'suha i påhina \"[[:\$1]]\" para iyo-mu [[Special:Watchlist|Listan pinilan]].
 I tinilaika siha mo'na gi tiempo kontodu i påhinan kombetsasion siha para u fana'lista guihi, yan para u '''na'potpot''' i påhina gi halom [[Special:RecentChanges|i listan tinilaika gi halacha]] para un ayek ha' mas libianu.",
@@ -1119,9 +1115,9 @@ Ayek fan otru nå'an-ña.",
 'nextdiff'     => "Mamaila' na dif →",
 
 # Media information
-'file-info-size'       => '($1 × $2 na pixel, mineddong atkibu: $3, MIME klåsi: $4)',
+'file-info-size'       => '$1 × $2 na pixel, mineddong atkibu: $3, MIME klåsi: $4',
 'file-nohires'         => "<small>Tåya' mas takhilo' na risolusion.</small>",
-'svg-long-desc'        => '(Atkibu SVG, $1 × $2 na pixels, mineddong atkibu: $3)',
+'svg-long-desc'        => 'Atkibu SVG, $1 × $2 na pixels, mineddong atkibu: $3',
 'show-big-image'       => 'Magåhet mineddong-ña',
 'show-big-image-thumb' => '<small>Mineddong i ripasu: $1 × $2 pixels</small>',
 

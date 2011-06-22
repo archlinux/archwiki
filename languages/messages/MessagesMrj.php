@@ -8,6 +8,7 @@
  * @file
  *
  * @author Amdf
+ * @author Andrijko Z.
  */
 
 $fallback = 'ru';
@@ -17,18 +18,27 @@ $namespaceNames = array(
 	NS_SPECIAL          => 'Спецӹлӹштӓш',
 	NS_TALK             => 'Кӓнгӓшӹмӓш',
 	NS_USER             => 'Сирӹшӹ',
-	NS_USER_TALK        => 'Сирӹшӹн кӓнгӓшӹмӓшӹжӹ',
-	NS_PROJECT_TALK     => '$1 кӓнгӓшӹмӓш',
+	NS_USER_TALK        => 'Сирӹшӹм_кӓнгӓшӹмӓш',
+	NS_PROJECT_TALK     => '$1_кӓнгӓшӹмӓш',
 	NS_FILE             => 'Файл',
-	NS_FILE_TALK        => 'Файл кӓнгӓшӹмӓш',
+	NS_FILE_TALK        => 'Файлым_кӓнгӓшӹмӓш',
 	NS_MEDIAWIKI        => 'MediaWiki',
-	NS_MEDIAWIKI_TALK   => 'MediaWiki кӓнгӓшӹмӓш',
+	NS_MEDIAWIKI_TALK   => 'MediaWiki-м_кӓнгӓшӹмӓш',
 	NS_TEMPLATE         => 'Шаблон',
-	NS_TEMPLATE_TALK    => 'Шаблон кӓнгӓшӹмӓш',
+	NS_TEMPLATE_TALK    => 'Шаблоным_кӓнгӓшӹмӓш',
 	NS_HELP             => 'Палшык',
-	NS_HELP_TALK        => 'Палшыкын кӓнгӓшӹмӓш',
+	NS_HELP_TALK        => 'Палшыкым_кӓнгӓшӹмӓш',
 	NS_CATEGORY         => 'Категори',
-	NS_CATEGORY_TALK    => 'Категори кӓнгӓшӹмӓш',
+	NS_CATEGORY_TALK    => 'Категорим_кӓнгӓшӹмӓш',
+);
+
+$namespaceAliases = array(
+	'Сирӹшӹн_кӓнгӓшӹмӓшӹжӹ' => NS_USER_TALK,
+	'Файл_кӓнгӓшӹмӓш'       => NS_FILE_TALK,
+	'MediaWiki_кӓнгӓшӹмӓш'  => NS_MEDIAWIKI_TALK,
+	'Шаблон_кӓнгӓшӹмӓш'     => NS_TEMPLATE_TALK,
+	'Палшыкын_кӓнгӓшӹмӓш'   => NS_HELP_TALK,
+	'Категори_кӓнгӓшӹмӓш'   => NS_CATEGORY_TALK,
 );
 
 $messages = array(
@@ -47,8 +57,7 @@ $messages = array(
 'tog-editsection'             => '«Тӧрлӓш» ажедмӓшӹм м цилӓ секцилӓнок анжыкташ',
 'tog-editsectiononrightclick' => 'Секцим тӧрлӹмӹ годым артикль лӹмӹм каля доно вургымлашты темдӓлӓш (JavaScript)',
 'tog-showtoc'                 => 'Кӧргӹштӹш лӹмвлӓм анжыкташ (3 гӹц шукырак артикль лӹмӓн ӹлӹштӓшвлӓштӹ)',
-'tog-rememberpassword'        => 'Мӹньӹн шотыш нäлмӹ сирмäшем ти компьютерӹштӹ äштäш',
-'tog-editwidth'               => 'Тöрлӹмӹ паштек цилä экран кымдык',
+'tog-rememberpassword'        => 'Мӹньӹн шотыш нӓлмӹ сирмӓшем ти компьютерӹштӹ ӓштӓш (максимум $1 {{PLURAL:$1|кечы|кечы}})',
 'tog-watchcreations'          => 'Мӹньӹн ӹштӹмӹ ӹлӹштӓшвлӓэм вӓнгӹмӹ списокыш пырташ',
 'tog-watchdefault'            => 'Мӹньӹн вашталтымы ӹлӹштӓшвлӓэм вӓнгӹмӹ списокыш пырташ',
 'tog-watchmoves'              => 'Мӹньӹн лӹмӹм вашталтымы ӹлӹштӓшвлӓэм вӓнгӹмӹ списокыш пырташ',
@@ -259,7 +268,7 @@ $messages = array(
 # Login and logout pages
 'yourname'                => 'Сирӹшӹн лӹмжӹ:',
 'yourpassword'            => 'Пароль:',
-'remembermypassword'      => 'Ти компьютерӹштӹ мӹньӹн учетный сирмӓшем ӓштӓш',
+'remembermypassword'      => 'Ти компьютерӹштӹ мӹньӹн учетный сирмӓшем ӓштӓш (максимум $1 {{PLURAL:$1|кечы|кечы}})',
 'login'                   => 'Системыш сирӓлтдӓ',
 'nav-login-createaccount' => 'Коргӹшкӹ сирӓлтдӓ/регистрируялтда',
 'userlogin'               => 'Кӧргӹшкӹ сирӓлтдӓ ӓль регистрируялтда',
@@ -487,7 +496,6 @@ $messages = array(
 # Watchlist
 'watchlist'         => 'Вӓнгӹмӹ список',
 'mywatchlist'       => 'Вӓнгӹмӹ сирмӓш, список',
-'watchlistfor'      => "(сирӹшӹн '''$1''')",
 'addedwatch'        => 'Вӓнгӹмӓш списокыш пыртымы',
 'addedwatchtext'    => 'Ӹлӹштӓшӹм«[[:$1]]» тӓмдӓн вӓнгӹмӹ [[Special:Watchlist|ӹлӹштӓшӹшкӹдӓ пыртымы]]. Тидӹ паштек ӹштӹмӹ ӹлӹштӓшӹн вашталтымашвлӓ  ти списокышты анжыктымы дӓ тенгеок кӹжгӹ буквавлӓ доно у вашталтымашвлӓн списокышты пӓлдӹртӹмӹ лиэш[[Special:RecentChanges| пӓлдӹртӹмӹ лит]] нӹнӹм  айыраш куштылгырак лижӹ манын.',
 'removedwatch'      => 'Вӓнгӹмӹ список гӹц карангдымы',
@@ -684,9 +692,9 @@ $messages = array(
 'nextdiff'     => 'Вес тӧрлӹмӓш →',
 
 # Media information
-'file-info-size'       => '($1 × $2 пиксел,  файлын размержӹ: $3, MIME-тип: $4)',
+'file-info-size'       => '$1 × $2 пиксел,  файлын размержӹ: $3, MIME-тип: $4',
 'file-nohires'         => '<small>Кого разрешени доно верси уке.</small>',
-'svg-long-desc'        => '(SVG-файл, номинально $1 × $2 пиксель,  файлын размержӹ: $3)',
+'svg-long-desc'        => 'SVG-файл, номинально $1 × $2 пиксель,  файлын размержӹ: $3',
 'show-big-image'       => 'Кӱкшӹрӓк разрешениӓн изображени',
 'show-big-image-thumb' => '<small>Размер анзыц анжымы годым: $1 × $2 пиксель</small>',
 

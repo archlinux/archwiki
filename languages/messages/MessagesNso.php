@@ -51,8 +51,7 @@ $messages = array(
 'tog-editsection'             => 'Dumella go fetola sekgao ka [fetola] hlomaganyo',
 'tog-editsectiononrightclick' => 'Dumella go fetola sekgao ka thathapa ka lagoja thaetlele ya sekgao (JavaScript)',
 'tog-showtoc'                 => 'Bontšha Tatelano ya dikagare (go matlakala a goba le dihlogo tša go feta 3)',
-'tog-rememberpassword'        => 'Gopola sedi ya go tsena yaka go khomphutha ye',
-'tog-editwidth'               => 'Lepokisi la diphetogo lebe le bophara ba go tlala',
+'tog-rememberpassword'        => 'Gopola sedi yaka ya go tsena khomphutha ye (bogolo bja  $1 bja {{PLURAL:$1| ya letšatši le|ya matšatši}})',
 'tog-watchcreations'          => 'Tsenya matlaka a mafsa ao ke a ngwalago go lenano laka la ditlhapetšo',
 'tog-watchdefault'            => 'Tsenya matlaka ao ke a fetolago go lenano laka la ditlhapetšo',
 'tog-watchmoves'              => 'Tsenya matlaka ao ke a hudušago go lenano laka la ditlhapetšo',
@@ -156,9 +155,6 @@ $messages = array(
 'qbpageoptions'  => 'Letlakala le',
 'qbmyoptions'    => 'Matlakala a ka',
 'qbspecialpages' => 'Matlakala a itšego',
-
-# Vector skin
-'vector-namespace-main' => 'Letlakala',
 
 'errorpagetitle'    => 'Phošo',
 'returnto'          => 'Boela go $1.',
@@ -311,7 +307,7 @@ Tšhupaleloko (''account'') ya gago e tlhodilwe. O seke wa lebala go fetola [[Sp
 'yourname'                   => 'Leina la mošomiši:',
 'yourpassword'               => 'Ditlhaka-tša-siphiri:',
 'yourpasswordagain'          => 'Tlanya ditlhaka-tša-siphiri gape:',
-'remembermypassword'         => 'Gopola sedi yaka ya go tsena khômphutha ye',
+'remembermypassword'         => 'Gopola sedi yaka ya go tsena khomphutha ye (bogolo bja  $1 ya {{PLURAL:$1| letšatši le|matšatši a}})',
 'login'                      => 'Tsena',
 'nav-login-createaccount'    => "Tsena / Tlhola tšhupaleloko (''account'')",
 'loginprompt'                => "O swanela ke go dumella ''cookies'' go ''browser'' go tsena go {{SITENAME}}.",
@@ -325,6 +321,7 @@ Tšhupaleloko (''account'') ya gago e tlhodilwe. O seke wa lebala go fetola [[Sp
 'gotaccount'                 => "O šetše o nale tšhupaleloko? '''$1'''.",
 'gotaccountlink'             => 'Tsena',
 'createaccountmail'          => 'ka e-mail',
+'createaccountreason'        => 'Lebaka:',
 'badretype'                  => 'Ditlhaka-tša-siphiri tše o di šomišitšego ga di swane.',
 'noname'                     => 'Gawa fana ka leina la mošomiši la go loka.',
 'loginsuccesstitle'          => 'O tsene ka katlego',
@@ -454,10 +451,6 @@ oka [[Special:Search/{{PAGENAME}}|fetleka liena la letlakala]] matlakaleng a man
 'copyrightwarning'                 => "Diabe kamoka go {{SITENAME}} di akanywa go ngwadiwa tlase ga $2 (lebelela $1 go hwetša taba ka bophara). Ge o sa nyake gore mengwalo ya gago e fetolwe ntle le kgaugelo goba e phatlalatšwe ntle le tumello ya gago, o seke wa fana ka mengwalo mo.<br />
 Gape o re holofetša  gore mengwalo ye e ngwadile ke wena, goba o e kopiša mothapong wa pepeneneng goba  ke mahala.
 '''O SE TSENYE MEŠOMO YA BATHO BA BANGWE NTLE LE TUMELLO YA BONA!'''",
-'longpagewarning'                  => "'''TEMOŠO: Letlakala le le $1 kilobytes ka botelele;
-di-''browser'' tše dingwe dika ba le bothata go fetola matlakala a golena goba gofeta 32 kb.
-
-Ka kgopela akanya ka go roba letlakala le goba le dikgaoe tše nnyenyane.'''",
 'templatesused'                    => '"{{PLURAL:$1|Template yeo e|Di-Template tšeo di}}\'\' šomišitšwego letlakaleng le:',
 'templatesusedpreview'             => '{{PLURAL:$1|"Template" yeo e|"DiTemplate" tšeo di}} šomišitšwego go taetšo ya sebopego sa letlakala:',
 'template-protected'               => '(e lotilwe)',
@@ -833,7 +826,6 @@ Matlakala ago ba [[Special:Watchlist|lenanong la gago la matlakala ditlhapetšo]
 # Watchlist
 'watchlist'         => 'Lenano la ditlhapetšo tša ka',
 'mywatchlist'       => 'Lenano la ditlhapetšo tša ka',
-'watchlistfor'      => "(ya '''$1''')",
 'addedwatch'        => 'Loketšwe go lenano la ditlhapetšo',
 'addedwatchtext'    => "Letlakala \"[[:\$1]]\" le tsene go [[Special:Watchlist|watchlist]] ya gago.
 Go tloga bjale, diphetogo letlakaleng le, le letlakaleng la dipoledišano la gona, di tla bontšhwa ka mongalo wa '''bold''' gare ga [[Special:RecentChanges|list of recent changes]] gore go be bonolo gore oa bone.
@@ -1128,9 +1120,9 @@ $1',
 
 # Media information
 'widthheightpage'      => '$1×$2, $3 {{PLURAL:$3|letlakala|matlakala}}',
-'file-info-size'       => '($1 × $2 pixel, bogolo ba faele: $3, Mohuta wa MIME: $4)',
+'file-info-size'       => '$1 × $2 pixel, bogolo ba faele: $3, Mohuta wa MIME: $4',
 'file-nohires'         => "<small>Gago ''resolution'' ya go feta mo.</small>",
-'svg-long-desc'        => '(SVG faele, nominally $1 × $2 pixels, bogolo ba faele: $3)',
+'svg-long-desc'        => 'SVG faele, nominally $1 × $2 pixels, bogolo ba faele: $3',
 'show-big-image'       => "''resolution'' ya gofella",
 'show-big-image-thumb' => '<small>Bogolo ba pono: $1 × $2 pixels</small>',
 

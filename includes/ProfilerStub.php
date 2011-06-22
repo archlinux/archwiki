@@ -7,6 +7,7 @@
 
 /** backward compatibility */
 $wgProfiling = false;
+$wgProfiler = null;
 
 /** is setproctitle function available ? */
 $haveProctitle = function_exists( 'setproctitle' );
@@ -29,12 +30,15 @@ function wfProfileIn( $fn = '' ) {
  */
 function wfProfileOut( $fn = '' ) {
 	global $hackwhere, $wgDBname, $haveProctitle;
-	if( !$haveProctitle )
+	if( !$haveProctitle ) {
 		return;
-	if( count( $hackwhere ) )
+	}
+	if( count( $hackwhere ) ) {
 		array_pop( $hackwhere );
-	if( count( $hackwhere ) )
+	}
+	if( count( $hackwhere ) ) {
 		setproctitle( $hackwhere[count( $hackwhere )-1] . " [$wgDBname]" );
+	}
 }
 
 /**

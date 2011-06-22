@@ -17,13 +17,14 @@
  * @return mixed Array of filenames on success, or false on failure
  */
 function findFiles( $dir, $exts ) {
-	if( is_dir( $dir ) ) {
-		if( $dhl = opendir( $dir ) ) {
+	if ( is_dir( $dir ) ) {
+		$dhl = opendir( $dir );
+		if ( $dhl ) {
 			$files = array();
-			while( ( $file = readdir( $dhl ) ) !== false ) {
-				if( is_file( $dir . '/' . $file ) ) {
+			while ( ( $file = readdir( $dhl ) ) !== false ) {
+				if ( is_file( $dir . '/' . $file ) ) {
 					list( /* $name */, $ext ) = splitFilename( $dir . '/' . $file );
-					if( array_search( strtolower( $ext ), $exts ) !== false )
+					if ( array_search( strtolower( $ext ), $exts ) !== false )
 						$files[] = $dir . '/' . $file;
 				}
 			}
@@ -51,10 +52,10 @@ function splitFilename( $filename ) {
 }
 
 /**
- * Find an auxilliary file with the given extension, matching 
- * the give base file path. $maxStrip determines how many extensions 
+ * Find an auxilliary file with the given extension, matching
+ * the give base file path. $maxStrip determines how many extensions
  * may be stripped from the original file name before appending the
- * new extension. For example, with $maxStrip = 1 (the default), 
+ * new extension. For example, with $maxStrip = 1 (the default),
  * file files acme.foo.bar.txt and acme.foo.txt would be auxilliary
  * files for acme.foo.bar and the extension ".txt". With $maxStrip = 2,
  * acme.txt would also be acceptable.
@@ -90,23 +91,23 @@ function findAuxFile( $file, $auxExtension, $maxStrip = 1 ) {
 }
 
 # FIXME: Access the api in a saner way and performing just one query (preferably batching files too).
-function getFileCommentFromSourceWiki($wiki_host, $file) {
-    $url = $wiki_host . '/api.php?action=query&format=xml&titles=File:' . rawurlencode( $file ) . '&prop=imageinfo&&iiprop=comment';
-    $body = Http::get($url);
-    if (preg_match('#<ii comment="([^"]*)" />#', $body, $matches) == 0) {
-        return false;
-    }
+function getFileCommentFromSourceWiki( $wiki_host, $file ) {
+	$url = $wiki_host . '/api.php?action=query&format=xml&titles=File:' . rawurlencode( $file ) . '&prop=imageinfo&&iiprop=comment';
+	$body = Http::get( $url );
+	if ( preg_match( '#<ii comment="([^"]*)" />#', $body, $matches ) == 0 ) {
+		return false;
+	}
 
-    return html_entity_decode( $matches[1] );
+	return html_entity_decode( $matches[1] );
 }
 
-function getFileUserFromSourceWiki($wiki_host, $file) {
-    $url = $wiki_host . '/api.php?action=query&format=xml&titles=File:' . rawurlencode( $file ) . '&prop=imageinfo&&iiprop=user';
-    $body = Http::get($url);
-    if (preg_match('#<ii user="([^"]*)" />#', $body, $matches) == 0) {
-        return false;
-    }
+function getFileUserFromSourceWiki( $wiki_host, $file ) {
+	$url = $wiki_host . '/api.php?action=query&format=xml&titles=File:' . rawurlencode( $file ) . '&prop=imageinfo&&iiprop=user';
+	$body = Http::get( $url );
+	if ( preg_match( '#<ii user="([^"]*)" />#', $body, $matches ) == 0 ) {
+		return false;
+	}
 
-    return html_entity_decode( $matches[1] );
+	return html_entity_decode( $matches[1] );
 }
 

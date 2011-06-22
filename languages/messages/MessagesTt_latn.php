@@ -107,6 +107,7 @@ $messages = array(
 'tog-editsection'             => 'Här bülektä «üzgärtü» sıltaması kürsätelsen',
 'tog-editsectiononrightclick' => 'Bülek isemenä tıçqannıñ uñ çirttermäse belän törtkäç üzgärtü bite açılsın (JavaScript kiräk)',
 'tog-showtoc'                 => 'Eçtälek kürsätelsen (3 tän kübräk başlamlı bitlärdä)',
+'tog-rememberpassword'        => 'Xisap yazmamnı bu brauzerda saqlansın (iñ küp $1 {{PLURAL:$1|kön|kön|kön}}gä qädär)',
 'tog-watchcreations'          => 'Tözegän bitlärem küzätü isemlegemä östälsen',
 'tog-watchdefault'            => 'Üzgärtkän bitlärem küzätü isemlegemä östälsen',
 'tog-watchmoves'              => 'Küçergän bitlärem küzätü isemlegemä östälsen',
@@ -252,20 +253,21 @@ $messages = array(
 'faqpage'        => 'Project:YBS',
 
 # Vector skin
-'vector-action-addsection' => 'Yaña tema östäw',
-'vector-action-delete'     => 'Beterü',
-'vector-action-move'       => 'Küçerü',
-'vector-action-protect'    => 'Yaqlaw',
-'vector-action-undelete'   => 'Qaytaru',
-'vector-action-unprotect'  => 'Yaqlawnı beterü',
-'vector-view-create'       => 'Tözü',
-'vector-view-edit'         => 'Üzgärtü',
-'vector-view-history'      => 'Tarixın qaraw',
-'vector-view-view'         => 'Uqu',
-'vector-view-viewsource'   => 'Çığanağın qaraw',
-'actions'                  => 'Xäräkät',
-'namespaces'               => 'İsemnär mäydanı',
-'variants'                 => 'Törlär',
+'vector-action-addsection'       => 'Yaña tema östäw',
+'vector-action-delete'           => 'Beterü',
+'vector-action-move'             => 'Küçerü',
+'vector-action-protect'          => 'Yaqlaw',
+'vector-action-undelete'         => 'Qaytaru',
+'vector-action-unprotect'        => 'Yaqlawnı beterü',
+'vector-simplesearch-preference' => 'Ezläw öçen kiñäytelgän yärdäm xäbärlären kürsätü («Vektorlı» bizäleşe öçen genä qullanılıa)',
+'vector-view-create'             => 'Tözü',
+'vector-view-edit'               => 'Üzgärtü',
+'vector-view-history'            => 'Tarixın qaraw',
+'vector-view-view'               => 'Uqu',
+'vector-view-viewsource'         => 'Çığanağın qaraw',
+'actions'                        => 'Xäräkät',
+'namespaces'                     => 'İsemnär mäydanı',
+'variants'                       => 'Törlär',
 
 'errorpagetitle'    => 'Xata',
 'returnto'          => '$1 bitenä qaytu.',
@@ -326,6 +328,9 @@ Bu bitne qararğa teläwçelär artıq küp.
 Bu bitkä soñaraq kerüegez sorala.
 
 $1',
+'pool-timeout'      => 'Qısılunıñ  waqıtı uzdı',
+'pool-queuefull'    => 'Sorawlarnı saqlaw  bite tulı',
+'pool-errorunknown' => 'Bilgesez  xata',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => '{{SITENAME}} turında',
@@ -492,7 +497,8 @@ Saytnıñ şäxsi [[Special:Preferences|köylänmälären]] qararğa onıtmağı
 'yourname'                   => 'Qullanuçı iseme:',
 'yourpassword'               => 'Sersüz:',
 'yourpasswordagain'          => 'Sersüzne qabat kertü:',
-'remembermypassword'         => 'Tanı mine kergändä.',
+'remembermypassword'         => 'Xisap yazmamnı bu brauzerda saqlansın (iñ küp $1 {{PLURAL:$1|kön|kön|kön}}gä qädär)',
+'securelogin-stick-https'    => 'Kerüdän soñ HTTPS buyınça totaştırunı däwam itärgä',
 'yourdomainname'             => 'Sezneñ domenığız:',
 'externaldberror'            => 'Tışqı mäğlümat bazası yärdämendä awtentifikatsiä ütkändä xata çıqtı, yäisä tışqı xisap yazmağızğa üzgäreşlär kertü xoquqığız yuq.',
 'login'                      => 'Kerü',
@@ -509,6 +515,7 @@ Saytnıñ şäxsi [[Special:Preferences|köylänmälären]] qararğa onıtmağı
 'gotaccount'                 => "Sez inde terkäldegezme? '''$1'''.",
 'gotaccountlink'             => 'Kerü',
 'createaccountmail'          => 'elektron poçta aşa',
+'createaccountreason'        => 'Säbäp:',
 'badretype'                  => 'Kertelgän sersüzlär ber ük tügel.',
 'userexists'                 => 'Kertelgän isem qullanıla.
 Zinhar, başqa isem saylağız.',
@@ -612,8 +619,11 @@ Sez sersüzegezne üzgärtkän yäisä yaña waqıtlı sersüz soratqan bulırğ
 'showlivepreview'                  => 'Tiz aldan qaraw',
 'showdiff'                         => 'Kertelgän üzgärtülär',
 'anoneditwarning'                  => "'''İğtibar''': Sez sistemağa kermägänsez. IP adresığız bu bitneñ tarixına yazılaçaq.",
+'anonpreviewwarning'               => "''Sez sistemada terkälmädegez.Sezneñ taraftan eşlängän barlıq üzgärtülär dä sezneñ IP-yullamağıznı saqlawğa kiterä.''",
 'missingsummary'                   => "'''İskärtü.''' Sez üzgärtügä qısqaça taswirlaw yazmadığız. Sez «Bitne saqlaw» töymäsenä tağın ber tapqır bassağız, üzgärtülär taswirlamasız saqlanaçaq.",
 'missingcommenttext'               => 'Asqa taswirlama yazuığız sorala.',
+'missingcommentheader'             => "''İskärtü:''' Sez taswirlamağa isem birmädegez.
+«{{int:savearticle}}» töymäsenä qabat bassağız, üzgärtülär isemsez yazılaçaq.",
 'summary-preview'                  => 'Taswirlamanı aldan qaraw:',
 'subject-preview'                  => 'Başisemne aldan qaraw:',
 'blockedtitle'                     => 'Qullanuçı tıyıldı',
@@ -684,6 +694,7 @@ Monı '''Mozilla / Firefox''': ''Ctrl+Shift+R'', '''Safari''': ''Cmd+Shift+R'', 
 'userjsyoucanpreview'              => "'''Yärdäm:''' \"{{int:showpreview}}\" töymäsenä basıp, yaña JS-faylnı tikşerep bula.",
 'usercsspreview'                   => "'''Bu barı tik CSS-faylnı aldan qaraw ğına, ul äle saqlanmağan!'''",
 'userjspreview'                    => "'''Bu barı tik JavaScript faylın aldan qaraw ğına, ul äle saqlanmağan!'''",
+'userinvalidcssjstitle'            => "'''İğtibar:''' \"\$1\" bizäw teması tabılmadı. Qullanuçınıñ .css häm .js bitläre isemnäre barı tik keçkenä (yul) xäreflärdän genä torırğa tieş ikänen onıtmağız. Misalğa: {{ns:user}}:Foo/vector.css, ä {{ns:user}}:Foo/Vector.css tügel!",
 'updated'                          => '(Yañartıldı)',
 'note'                             => "'''İskärmä:'''",
 'previewnote'                      => "'''Bu fäqät aldan qaraw ğına, üzgärtüläregez äle saqlanmağan!'''",
@@ -723,9 +734,6 @@ Sez östämälärneñ avtorı bulırğa yäisä mäğlümatnıñ irekle çığan
 Ägär alarnıñ üzgärtelüen telämäsägez, monda östämäwegez sorala.<br />
 Sez östämälärneñ avtorı bulırğa yäisä mäğlümatnıñ irekle çığanaqlardan alınuın kürsätergä tieş (qarağız: $1).
 '''MAXSUS RÖXSÄTTÄN BAŞQA AVTORLIQ XOQUQI BUYINÇA SAQLANUÇI MÄĞLÜMATLAR URNAŞTIRMAĞIZ!'''",
-'longpagewarning'                  => "'''Kisätü:''' Bu bitneñ zurlığı - $1 kilobayt.
-32 Kb yäisä annan zurraq bitlär qayber brauzerlarda yalğış kürenergä mömkin.
-Tekstnı berniçä öleşkä bülärgä täğdim itelä.",
 'longpageerror'                    => "'''XATA: saqlanuçı tekst zurlığı - $1 kilobayt, bu $2 kilobayt çigennän kübräk. Bit saqlana almıy.'''",
 'readonlywarning'                  => "'''Kisätü: mäğlümatlar bazasında texnik eşlär başqarıla, sezneñ üzgärtülär xäzer ük saqlana almıy.
 Tekst yuğalmasın öçen anı kompyuterığızğa saqlap tora alasız.'''
@@ -870,6 +878,8 @@ Sez idaräçe bulu säbäple, [$1 yäşerelgän yuramanı qarıy alasız]",
 'revdelete-radio-set'         => 'Äye',
 'revdelete-radio-unset'       => 'Yuq',
 'revdel-restore'              => 'kürenüçänlekne üzgärtü',
+'revdel-restore-deleted'      => 'beterelgän yuramalar',
+'revdel-restore-visible'      => 'kürsätelgän yuramalar',
 'pagehist'                    => 'bitneñ tarixı',
 'deletedhist'                 => 'Beterülär tarixı',
 'revdelete-content'           => 'eçtälek',
@@ -1005,6 +1015,7 @@ Barlıq alannarda (bäxäs bitläre, ürnäklär, h.b.) ezläw öçen ''all'' s�
 'contextlines'                  => 'Härber tabıldıqta kürsätelüçe yullar sanı:',
 'contextchars'                  => 'Ber yulğa turı kilgän tamğalar:',
 'stub-threshold'                => '<a href="#" class="stub">Yasalma sıltamalarnıñ</a> bizäleşe buyınça çikläwlär (baytlarda):',
+'stub-threshold-disabled'       => 'Yabılğan',
 'recentchangesdays'             => 'Soñğı üzgärtülärne kürsätüçe könnär sanı:',
 'recentchangesdays-max'         => '( $1 {{PLURAL:$1|könnän}} dä artıq bulmasqa tieş)',
 'recentchangescount'            => 'Töp bularaq qullanuçı üzgärtülär sanı:',
@@ -1036,6 +1047,7 @@ Barlıq alannarda (bäxäs bitläre, ürnäklär, h.b.) ezläw öçen ''all'' s�
 'prefs-files'                   => 'Fayllar',
 'prefs-custom-css'              => 'Üzemneñ CSS',
 'prefs-custom-js'               => 'Üzemneñ JS',
+'prefs-common-css-js'           => 'Barlıq bizäleşlär öçen ğomumi CSS/JS:',
 'prefs-reset-intro'             => 'Bu bit sezneñ köylänmäläregezne beterü öçen qullanıla. Bu eşne başqaru näticäsendä sez yañadan üz köylänmälärne yañadan qaytara almıysız.',
 'prefs-emailconfirm-label'      => 'E-mail raslaw',
 'prefs-textboxsize'             => 'Üzgärtü täräzäseneñ zurlığı',
@@ -1073,6 +1085,9 @@ Ul $1 {{PLURAL:$1|xäreftän}} kübräk bulırğa tieş tügel.',
 'prefs-advancedrendering'       => 'Kiñäytelgän köyläwlär',
 'prefs-advancedsearchoptions'   => 'Kiñäytelgän köyläwlär',
 'prefs-advancedwatchlist'       => 'Kiñäytelgän köyläwlär',
+'prefs-displayrc'               => 'Kürsätü köylänmäläre',
+'prefs-displaysearchoptions'    => 'Kürsätü köylänmäläre',
+'prefs-displaywatchlist'        => 'Kürsätü köylänmäläre',
 'prefs-diffs'                   => 'Yuramalar ayırması',
 
 # User rights
@@ -1197,6 +1212,7 @@ Ul $1 {{PLURAL:$1|xäreftän}} kübräk bulırğa tieş tügel.',
 'upload_directory_missing'   => '$1 Yöklänü direktoriäse yuq',
 'upload_directory_read_only' => 'Moña Sezneñ xoquqlarığız yuq häm web-server $1 papqasını yökli almıy.',
 'uploaderror'                => 'Faylnı yökläwdä xata',
+'upload-recreate-warning'    => "'''İğtibar: Mondıy isemle fayl beterelgän yäki iseme almaştırılğan '''",
 'uploadtext'                 => "Bu formanı qullanıp serverğa fayllar yökli alasız. Elegräk yöklänelgän fayllarnı qaraw öçen [[Special:FileList|Yöklänelgän fayllar isemlegenä]] märäcäğät itegez. Şulay uq ul [[Special:Log/upload|yöklänmälär isemlegenä]] häm [[Special:Log/delete|beterelgän fayllar]] isemlegenä dä yazıla.
 
 Faylnı mäqälägä yökläw öçen Sez menä bu ürnäklärne qullana alasız:
@@ -1230,12 +1246,18 @@ Faylnı mäqälägä yökläw öçen Sez menä bu ürnäklärne qullana alasız:
 'filetype-banned-type'       => "'''\".\$1\"''' — tıyılğan fayl töre.
 {{PLURAL:\$3|Kiñäytelgän fayl töre bulıp|Kiñäytelgän  fayl töre:}} \$2.",
 'filetype-missing'           => "Faylnıñ kiñäytelmäse yuq ''(mäsälän,«.jpg»)''.",
-'successfulupload'           => 'Yökläw uñışlı uzdı',
+'empty-file'                 => 'Sezneñ taraftan cibärelgän fayl buş.',
+'file-too-large'             => 'Sezneñ taraftan cibärelgän fayl artıq zur.',
+'filename-tooshort'          => 'Faylnıñ iseme artıq qısqa.',
+'filetype-banned'            => 'Bu fayl töre tıyılğan.',
+'verification-error'         => 'Bu fayl älegä tikşerü uzmağan.',
 'uploadwarning'              => 'Yökläw kisätmäse',
 'savefile'                   => 'Faylnı saqlaw',
 'uploadedimage'              => '«[[$1]]» yöklängän',
 'overwroteimage'             => '«[[$1]]» faylınıñ yaña yuraması yöklänelde',
 'uploaddisabled'             => 'Yökläw tıyılğan',
+'copyuploaddisabled'         => 'URL adresı buyınça yökläw yabılğan.',
+'uploadfromurl-queued'       => 'Sezneñ yökläwegez çiratqa quyıldı.',
 'uploaddisabledtext'         => 'Fayllarnı yökläw yabılğan.',
 'upload-source'              => 'Faylnıñ çığanağı',
 'sourcefilename'             => 'Faylnıñ çığanağı:',
@@ -1265,6 +1287,7 @@ JD # Jenoptik
 MGP # Pentax
 PICT # törle
  #</pre> <!-- niçek bar şulay qaldırığız -->',
+'upload-success-subj'        => 'Yökläw äybät ütte',
 
 'license'            => 'Litsenziäse:',
 'license-header'     => 'Litsenziäse',
@@ -1907,6 +1930,8 @@ Zinhar başqa isem saylağız.',
 'tooltip-upload'                  => 'Yökläwne başlaw',
 'tooltip-rollback'                => "\"Kire qaytaru\" soñğı qullanuçınıñ bu bittä yasağan '''barlıq''' üzgärtülären beterä.",
 'tooltip-undo'                    => 'Bu üzgärtüne aldan qarap ütkärmäw. Şulay uq ütkärmäwneñ säbäben yazıp bula.',
+'tooltip-preferences-save'        => 'Köylänmäläregezne saqlaw',
+'tooltip-summary'                 => 'Qısqa isemen kertü',
 
 # Stylesheets
 'common.css' => '/*  Monda urnaştırılğan CSS başqalarında da urnaşaçaq */',
@@ -1981,7 +2006,10 @@ $1',
 'thumbsize'            => 'Räsemneñ keçeräytelgän yuraması öçen:',
 'widthheight'          => '$1 × $2',
 'widthheightpage'      => '$1 × $2, $3{{PLURAL:$1|bit|bitlär}}',
+'file-info'            => 'fayl zurlığı: $1, MIME-tip: $2',
+'file-info-size'       => '$1 × $2 noqta, faylnıñ zurlığı: $3, MIME tibı: $4',
 'file-nohires'         => '<small>Yuğarı açıqlıq belän yurama yuq.</small>',
+'svg-long-desc'        => 'SVG faylı, şartlı $1 × $2 noqta, faylnıñ zurlığı: $3',
 'show-big-image'       => 'Tulı açıqlıq',
 'show-big-image-thumb' => '<small>Aldan qaraw zurlığı: $1 × $2 noqta</small>',
 
@@ -2220,6 +2248,9 @@ Yulnıñ berençe sıltaması quyma öçen tıyılğan räsemgä sıltama bulır
 # Special:Tags
 'tag-filter-submit' => 'Filtrlaw',
 'tags-edit'         => 'üzgärtü',
+
+# Special:ComparePages
+'compare-submit' => 'Çağıştır',
 
 # Database error messages
 'dberr-header'   => 'Bu wiki awırlıq kiçerä',

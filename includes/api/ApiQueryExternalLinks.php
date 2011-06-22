@@ -1,11 +1,10 @@
 <?php
-
-/*
- * Created on May 13, 2007
- *
+/**
  * API for MediaWiki 1.8+
  *
- * Copyright (C) 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Created on May 13, 2007
+ *
+ * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +18,15 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
 	// Eclipse helper - will be ignored in production
-	require_once ( "ApiQueryBase.php" );
+	require_once( "ApiQueryBase.php" );
 }
 
 /**
@@ -36,15 +37,16 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class ApiQueryExternalLinks extends ApiQueryBase {
 
 	public function __construct( $query, $moduleName ) {
-		parent :: __construct( $query, $moduleName, 'el' );
+		parent::__construct( $query, $moduleName, 'el' );
 	}
 
 	public function execute() {
-		if ( $this->getPageSet()->getGoodTitleCount() == 0 )
+		if ( $this->getPageSet()->getGoodTitleCount() == 0 ) {
 			return;
+		}
 
 		$params = $this->extractRequestParams();
-		$this->addFields( array (
+		$this->addFields( array(
 			'el_from',
 			'el_to'
 		) );
@@ -53,18 +55,19 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		$this->addWhereFld( 'el_from', array_keys( $this->getPageSet()->getGoodTitles() ) );
 
 		// Don't order by el_from if it's constant in the WHERE clause
-		if ( count( $this->getPageSet()->getGoodTitles() ) != 1 )
+		if ( count( $this->getPageSet()->getGoodTitles() ) != 1 ) {
 			$this->addOption( 'ORDER BY', 'el_from' );
+		}
 
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
-		if ( !is_null( $params['offset'] ) )
+		if ( !is_null( $params['offset'] ) ) {
 			$this->addOption( 'OFFSET', $params['offset'] );
+		}
 
-		$db = $this->getDB();
 		$res = $this->select( __METHOD__ );
 
 		$count = 0;
-		while ( $row = $db->fetchObject( $res ) ) {
+		foreach ( $res as $row ) {
 			if ( ++$count > $params['limit'] ) {
 				// We've reached the one extra which shows that
 				// there are additional pages to be had. Stop here...
@@ -72,15 +75,13 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 				break;
 			}
 			$entry = array();
-			ApiResult :: setContent( $entry, $row->el_to );
+			ApiResult::setContent( $entry, $row->el_to );
 			$fit = $this->addPageSubItem( $row->el_from, $entry );
-			if ( !$fit )
-			{
+			if ( !$fit ) {
 				$this->setContinueEnumParameter( 'offset', @$params['offset'] + $count - 1 );
 				break;
 			}
 		}
-		$db->freeResult( $res );
 	}
 
 	public function getCacheMode( $params ) {
@@ -89,18 +90,18 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 
 	public function getAllowedParams() {
 		return array(
-				'limit' => array(
-					ApiBase :: PARAM_DFLT => 10,
-					ApiBase :: PARAM_TYPE => 'limit',
-					ApiBase :: PARAM_MIN => 1,
-					ApiBase :: PARAM_MAX => ApiBase :: LIMIT_BIG1,
-					ApiBase :: PARAM_MAX2 => ApiBase :: LIMIT_BIG2
-				),
-				'offset' => null,
+			'limit' => array(
+				ApiBase::PARAM_DFLT => 10,
+				ApiBase::PARAM_TYPE => 'limit',
+				ApiBase::PARAM_MIN => 1,
+				ApiBase::PARAM_MAX => ApiBase::LIMIT_BIG1,
+				ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2
+			),
+			'offset' => null,
 		);
 	}
 
-	public function getParamDescription () {
+	public function getParamDescription() {
 		return array(
 			'limit' => 'How many links to return',
 			'offset' => 'When more results are available, use this to continue',
@@ -112,13 +113,13 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 	}
 
 	protected function getExamples() {
-		return array (
-				"Get a list of external links on the [[Main Page]]:",
-				"  api.php?action=query&prop=extlinks&titles=Main%20Page",
-			);
+		return array(
+			'Get a list of external links on the [[Main Page]]:',
+			'  api.php?action=query&prop=extlinks&titles=Main%20Page',
+		);
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryExternalLinks.php 69932 2010-07-26 08:03:21Z tstarling $';
+		return __CLASS__ . ': $Id: ApiQueryExternalLinks.php 70647 2010-08-07 19:59:42Z ialex $';
 	}
 }

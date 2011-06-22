@@ -15,21 +15,18 @@
 $specialPageAliases = array(
 	'Uncategorizedpages'        => array( 'UncategorisedPages' ),
 	'Uncategorizedcategories'   => array( 'UncategorisedCategories' ),
-	'Uncategorizedimages'       => array( 'UncategorisedImages' ),
+	'Uncategorizedimages'       => array( 'UncategorisedFiles', 'UncategorisedImages' ),
 	'Uncategorizedtemplates'    => array( 'UncategorisedTemplates' ),
 );
 
 $messages = array(
-# Main script and global functions
-'nosuchactiontext' => 'The action specified by the URL is not recognised by the wiki',
-
 # Miscellaneous special pages
 'uncategorizedpages'      => 'Uncategorised pages',
 'uncategorizedcategories' => 'Uncategorised categories',
 'uncategorizedimages'     => 'Uncategorised files',
 'uncategorizedtemplates'  => 'Uncategorised templates',
 
-# Rollback
+# Edit tokens
 'sessionfailure' => 'There seems to be a problem with your login session;
 this action has been cancelled as a precaution against session hijacking.
 Go back to the previous page, reload that page and then try again.',

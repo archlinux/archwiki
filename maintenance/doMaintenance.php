@@ -2,7 +2,7 @@
 /**
  * We want to make this whole thing as seamless as possible to the
  * end-user. Unfortunately, we can't do _all_ of the work in the class
- * because A) included files are not in global scope, but in the scope 
+ * because A) included files are not in global scope, but in the scope
  * of their caller, and B) MediaWiki has way too many globals. So instead
  * we'll kinda fake it, and do the requires() inline. <3 PHP
  *
@@ -26,18 +26,21 @@
  * @ingroup Maintenance
  */
 
-if ( !defined( 'DO_MAINTENANCE' ) ) {
+if ( !defined( 'RUN_MAINTENANCE_IF_MAIN' ) ) {
 	echo "This file must be included after Maintenance.php\n";
 	exit( 1 );
 }
 
-if( !$maintClass || !class_exists( $maintClass ) ) {
-	echo "\$maintClass is not set or is set to a non-existent class.\n";
-	exit( 1 );
+// Wasn't included from the file scope, halt execution (probably wanted the class)
+// If a class is using commandLine.inc (old school maintenance), they definitely
+// cannot be included and will proceed with execution
+if( !Maintenance::shouldExecute() && $maintClass != 'CommandLineInc' ) {
+	return;
 }
 
-if( defined( 'MW_NO_SETUP' ) ) {
-	return;
+if ( !$maintClass || !class_exists( $maintClass ) ) {
+	echo "\$maintClass is not set or is set to a non-existent class.\n";
+	exit( 1 );
 }
 
 // Get an object to start us off
@@ -51,6 +54,7 @@ $maintenance->setup();
 $self = $maintenance->getName();
 
 # Setup the profiler
+global $IP;
 if ( file_exists( "$IP/StartProfiler.php" ) ) {
 	require_once( "$IP/StartProfiler.php" );
 } else {
@@ -60,10 +64,19 @@ if ( file_exists( "$IP/StartProfiler.php" ) ) {
 // Some other requires
 require_once( "$IP/includes/AutoLoader.php" );
 require_once( "$IP/includes/Defines.php" );
+require_once( "$IP/includes/DefaultSettings.php" );
 
-// Load settings, using wikimedia-mode if needed
-// Fixme: replace this hack with general farm-friendly code
-if( file_exists( "$IP/wmf-config/wikimedia-mode" ) ) {
+if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
+	# Use a callback function to configure MediaWiki
+	$callback = MW_CONFIG_CALLBACK;
+	# PHP 5.1 doesn't support "class::method" for call_user_func, so split it
+	if ( strpos( $callback, '::' ) !== false ) {
+		$callback = explode( '::', $callback, 2 );
+	}
+	call_user_func( $callback );
+} elseif ( file_exists( "$IP/wmf-config/wikimedia-mode" ) ) {
+	// Load settings, using wikimedia-mode if needed
+	// Fixme: replace this hack with general farm-friendly code
 	# TODO FIXME! Wikimedia-specific stuff needs to go away to an ext
 	# Maybe a hook?
 	global $cluster;
@@ -72,10 +85,11 @@ if( file_exists( "$IP/wmf-config/wikimedia-mode" ) ) {
 	require_once( "$IP/includes/SiteConfiguration.php" );
 	require( "$IP/wmf-config/wgConf.php" );
 	$maintenance->loadWikimediaSettings();
-	require( $IP.'/wmf-config/CommonSettings.php' );
+	require( $IP . '/wmf-config/CommonSettings.php' );
 } else {
 	require_once( $maintenance->loadSettings() );
 }
+
 if ( $maintenance->getDbType() === Maintenance::DB_ADMIN &&
 		is_readable( "$IP/AdminSettings.php" ) )
 {
@@ -87,7 +101,7 @@ require_once( "$IP/includes/Setup.php" );
 require_once( "$IP/maintenance/install-utils.inc" );
 
 // Much much faster startup than creating a title object
-$wgTitle = null; 
+$wgTitle = null;
 
 // Do the work
 try {
@@ -95,7 +109,7 @@ try {
 
 	// Potentially debug globals
 	$maintenance->globals();
-} catch( MWException $mwe ) {
+} catch ( MWException $mwe ) {
 	echo( $mwe->getText() );
 	exit( 1 );
 }

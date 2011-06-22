@@ -6,7 +6,7 @@
  * @ingroup Language
  */
 class LanguageJa extends Language {
-	function wordSegmentation( $string ) {
+	function segmentByWord( $string ) {
 		// Strip known punctuation ?
 		// $s = preg_replace( '/\xe3\x80[\x80-\xbf]/', '', $s ); # U3000-303f
 
@@ -21,14 +21,6 @@ class LanguageJa extends Language {
 		$reg = "/({$hiragana}+|{$katakana}+|{$kanji}+)/";
 		$s = self::insertSpace( $string, $reg );
 		return $s;
-	}
-
-	function normalizeForSearch( $string ) {
-		// Double-width roman characters
-		$s = self::convertDoubleWidth( $string );
-		
-		# Do general case folding and UTF-8 armoring
-		return parent::normalizeForSearch( $s );
 	}
 
 	# Italic is not appropriate for Japanese script

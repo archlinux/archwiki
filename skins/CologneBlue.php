@@ -26,7 +26,6 @@ class SkinCologneBlue extends Skin {
 	}
 
 	function doBeforeContent() {
-		$qb = $this->qbSetting();
 		$mainPageObj = Title::newMainPage();
 
 		$s = "\n<div id='content'>\n<div id='topbar'>" .
@@ -107,32 +106,38 @@ class SkinCologneBlue extends Skin {
 		return $s;
 	}
 
-	function reallyGenerateUserStylesheet() {
-		$s = parent::reallyGenerateUserStylesheet();
+	function setupSkinUserCss( OutputPage $out ){
+		global $wgContLang;
 		$qb = $this->qbSetting();
+		$rules = array();
 
 		if ( 2 == $qb ) { # Right
-			$s .= "#quickbar { position: absolute; right: 4px; }\n" .
-				"#article { margin-left: 4px; margin-right: 148px; }\n";
+			$rules[] = "#quickbar { position: absolute; right: 4px; }";
+			$rules[] = "#article { margin-left: 4px; margin-right: 148px; }";
 		} elseif ( 1 == $qb ) {
-			$s .= "#quickbar { position: absolute; left: 4px; }\n" .
-				"#article { margin-left: 148px; margin-right: 4px; }\n";
+			$rules[] = "#quickbar { position: absolute; left: 4px; }";
+			$rules[] = "#article { margin-left: 148px; margin-right: 4px; }";
 		} elseif ( 3 == $qb ) { # Floating left
-			$s .= "#quickbar { position:absolute; left:4px } \n" .
-				"#topbar { margin-left: 148px }\n" .
-				"#article { margin-left:148px; margin-right: 4px; } \n" .
-				"body>#quickbar { position:fixed; left:4px; top:4px; overflow:auto ;bottom:4px;} \n"; # Hides from IE
+			$rules[] = "#quickbar { position:absolute; left:4px }";
+			$rules[] = "#topbar { margin-left: 148px }";
+			$rules[] = "#article { margin-left:148px; margin-right: 4px; }";
+			$rules[] = "body>#quickbar { position:fixed; left:4px; top:4px; overflow:auto ;bottom:4px;}"; # Hides from IE
 		} elseif ( 4 == $qb ) { # Floating right
-			$s .= "#quickbar { position: fixed; right: 4px; } \n" .
-				"#topbar { margin-right: 148px }\n" .
-				"#article { margin-right: 148px; margin-left: 4px; } \n" .
-				"body>#quickbar { position: fixed; right: 4px; top: 4px; overflow: auto ;bottom:4px;} \n"; # Hides from IE
+			$rules[] = "#quickbar { position: fixed; right: 4px; }";
+			$rules[] = "#topbar { margin-right: 148px }";
+			$rules[] = "#article { margin-right: 148px; margin-left: 4px; }";
+			$rules[] = "body>#quickbar { position: fixed; right: 4px; top: 4px; overflow: auto ;bottom:4px;}"; # Hides from IE
 		}
-		return $s;
+		$style = implode( "\n", $rules );
+ 		if ( $wgContLang->getDir() === 'rtl' ) {
+ 			$style = CSSJanus::transform( $style, true, false );
+		}
+		$out->addInlineStyle( $style );
+		parent::setupSkinUserCss( $out );
 	}
 
 	function sysLinks() {
-		global $wgUser, $wgLang, $wgContLang;
+		global $wgUser, $wgLang;
 		$li = SpecialPage::getTitleFor( 'Userlogin' );
 		$lo = SpecialPage::getTitleFor( 'Userlogout' );
 
@@ -157,7 +162,7 @@ class SkinCologneBlue extends Skin {
 				Title::newFromText( wfMsgForContent( 'faqpage' ) ),
 				wfMsg( 'faq' )
 			),
-			$this->specialLink( 'specialpages' )
+			$this->specialLink( 'Specialpages' )
 		);
 
 		/* show links to different language variants */
@@ -191,7 +196,7 @@ class SkinCologneBlue extends Skin {
 	 * @access private
 	 */
 	function quickBar(){
-		global $wgOut, $wgUser, $wgEnableUploads;
+		global $wgOut, $wgUser;
 
 		$tns = $this->mTitle->getNamespace();
 
@@ -272,7 +277,6 @@ class SkinCologneBlue extends Skin {
 
 		$s .= $this->menuHead( 'qbmyoptions' );
 		if ( $wgUser->isLoggedIn() ) {
-			$name = $wgUser->getName();
 			$tl = $this->link(
 				$wgUser->getTalkPage(),
 				wfMsg( 'mytalk' ),
@@ -290,7 +294,7 @@ class SkinCologneBlue extends Skin {
 					array(),
 					array(),
 					array( 'known', 'noclasses' )
-				) . $sep . $tl . $sep . $this->specialLink( 'watchlist' )
+				) . $sep . $tl . $sep . $this->specialLink( 'Watchlist' )
 					. $sep .
 				$this->link(
 					SpecialPage::getSafeTitleFor( 'Contributions', $wgUser->getName() ),
@@ -298,18 +302,18 @@ class SkinCologneBlue extends Skin {
 					array(),
 					array(),
 					array( 'known', 'noclasses' )
-				) . $sep . $this->specialLink( 'preferences' )
-				. $sep . $this->specialLink( 'userlogout' );
+				) . $sep . $this->specialLink( 'Preferences' )
+				. $sep . $this->specialLink( 'Userlogout' );
 		} else {
-			$s .= $this->specialLink( 'userlogin' );
+			$s .= $this->specialLink( 'Userlogin' );
 		}
 
 		$s .= $this->menuHead( 'qbspecialpages' )
-			. $this->specialLink( 'newpages' )
-			. $sep . $this->specialLink( 'listfiles' )
-			. $sep . $this->specialLink( 'statistics' );
-		if ( $wgUser->isLoggedIn() && $wgEnableUploads ) {
-			$s .= $sep . $this->specialLink( 'upload' );
+			. $this->specialLink( 'Newpages' )
+			. $sep . $this->specialLink( 'Listfiles' )
+			. $sep . $this->specialLink( 'Statistics' );
+		if( UploadBase::isEnabled() && UploadBase::isAllowed( $wgUser ) === true ) {
+			$s .= $sep . $this->getUploadLink();
 		}
 
 		global $wgSiteSupportPage;

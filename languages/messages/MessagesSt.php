@@ -85,7 +85,7 @@ $messages = array(
 
 # Login and logout pages
 'yourpasswordagain'  => 'Ngola lepetjo hape',
-'remembermypassword' => 'O nkgopole',
+'remembermypassword' => 'O nkgopole (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'nologinlink'        => 'Ingodisetse',
 'createaccount'      => 'Ingodisetse',
 'gotaccount'         => "O se o ingodisitse? '''$1'''.",

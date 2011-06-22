@@ -1,6 +1,7 @@
 <?php
 /**
- * Metadata.php -- provides DublinCore and CreativeCommons metadata
+ * Provides DublinCore and CreativeCommons metadata
+ *
  * Copyright 2004, Evan Prodromou <evan@wikitravel.org>.
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -18,6 +19,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  *
  * @author Evan Prodromou <evan@wikitravel.org>
+ * @file
  */
 
 abstract class RdfMetaData {
@@ -27,7 +29,7 @@ abstract class RdfMetaData {
 	 * Constructor
 	 * @param $article Article object
 	 */
-	public function __construct( Article $article ){
+	public function __construct( Article $article ) {
 		$this->mArticle = $article;
 	}
 
@@ -61,11 +63,11 @@ abstract class RdfMetaData {
 	}
 
 	protected function basics() {
-		global $wgContLanguageCode, $wgSitename;
+		global $wgLanguageCode, $wgSitename;
 
 		$this->element( 'title', $this->mArticle->mTitle->getText() );
 		$this->pageOrString( 'publisher', wfMsg( 'aboutpage' ), $wgSitename );
-		$this->element( 'language', $wgContLanguageCode );
+		$this->element( 'language', $wgLanguageCode );
 		$this->element( 'type', 'Text' );
 		$this->element( 'format', 'text/html' );
 		$this->element( 'identifier', $this->reallyFullUrl() );
@@ -92,7 +94,7 @@ abstract class RdfMetaData {
 		  . substr($timestamp, 6, 2);
 	}
 
-	protected function pageOrString( $name, $page, $str ){
+	protected function pageOrString( $name, $page, $str ) {
 		if( $page instanceof Title )
 			$nt = $page;
 		else
@@ -105,7 +107,7 @@ abstract class RdfMetaData {
 		}
 	}
 
-	protected function page( $name, $title ){
+	protected function page( $name, $title ) {
 		$this->url( $name, $title->getFullUrl() );
 	}
 
@@ -114,15 +116,17 @@ abstract class RdfMetaData {
 		print "\t\t<dc:{$name} rdf:resource=\"{$url}\" />\n";
 	}
 
-	protected function person($name, User $user ){
-		global $wgContLang;
-
+	protected function person( $name, User $user ) {
 		if( $user->isAnon() ){
 			$this->element( $name, wfMsgExt( 'anonymous', array( 'parsemag' ), 1 ) );
-		} else if( $real = $user->getRealName() ) {
-			$this->element( $name, $real );
 		} else {
-			$this->pageOrString( $name, $user->getUserPage(), wfMsg( 'siteuser', $user->getName() ) );
+			$real = $user->getRealName();
+			if( $real ) {
+				$this->element( $name, $real );
+			} else {
+				$userName = $user->getName();
+				$this->pageOrString( $name, $user->getUserPage(), wfMsgExt( 'siteuser', 'parsemag', $userName, $userName ) );
+			}
 		}
 	}
 

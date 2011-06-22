@@ -12,6 +12,25 @@
  * @author Jureits
  */
 
+$namespaceNames = array(
+	NS_MEDIA            => 'Medeja',
+	NS_SPECIAL          => 'Seviškuo',
+	NS_TALK             => 'Sprīža',
+	NS_USER             => 'Lītuotuojs',
+	NS_USER_TALK        => 'Sprīža_ap_lītuotuoju',
+	NS_PROJECT_TALK     => 'Sprīža_ap_{{GRAMMAR:accusative|$1}}',
+	NS_FILE             => 'Fails',
+	NS_FILE_TALK        => 'Sprīža_ap_failu',
+	NS_MEDIAWIKI        => 'MediaWiki',
+	NS_MEDIAWIKI_TALK   => 'Sprīža_ap_MediaWiki',
+	NS_TEMPLATE         => 'Taiss',
+	NS_TEMPLATE_TALK    => 'Sprīža_ap_taisu',
+	NS_HELP             => 'Paleigs',
+	NS_HELP_TALK        => 'Sprīža_ap_paleigu',
+	NS_CATEGORY         => 'Kategoreja',
+	NS_CATEGORY_TALK    => 'Sprīža_ap_kategoreju',
+);
+
 $fallback = 'lv';
 
 $messages = array(
@@ -107,23 +126,16 @@ $messages = array(
 'faqpage'        => 'Project:BUV',
 
 # Vector skin
-'vector-action-addsection'   => 'Dalikt padaļu',
-'vector-action-delete'       => 'Iztreit',
-'vector-action-move'         => 'Puorceļt',
-'vector-action-protect'      => 'Apsorguot',
-'vector-action-unprotect'    => 'Nūjimt apsardzeibu',
-'vector-namespace-category'  => 'Kategoreja',
-'vector-namespace-image'     => 'Fails',
-'vector-namespace-mediawiki' => 'Viestejums',
-'vector-namespace-project'   => 'Projekta puslopa',
-'vector-namespace-special'   => 'Specialuo puslopa',
-'vector-namespace-talk'      => 'Sprīža',
-'vector-namespace-template'  => 'Taiss',
-'vector-view-edit'           => 'Pataiseit',
-'vector-view-history'        => 'Viesture',
-'vector-view-view'           => 'Vērtīs',
-'namespaces'                 => 'Vuordu pluoti',
-'variants'                   => 'Varianti',
+'vector-action-addsection' => 'Dalikt padaļu',
+'vector-action-delete'     => 'Iztreit',
+'vector-action-move'       => 'Puorceļt',
+'vector-action-protect'    => 'Apsorguot',
+'vector-action-unprotect'  => 'Nūjimt apsardzeibu',
+'vector-view-edit'         => 'Pataiseit',
+'vector-view-history'      => 'Viesture',
+'vector-view-view'         => 'Vērtīs',
+'namespaces'               => 'Vuordu pluoti',
+'variants'                 => 'Varianti',
 
 'errorpagetitle'   => 'Klaida',
 'returnto'         => 'Grīztīs da puslopys $1.',
@@ -238,7 +250,7 @@ Par to var ziņuot [[Special:ListUsers/sysop|kaidam administratoram]], nūruodū
 # Login and logout pages
 'yourname'                => 'Slāgvuords:',
 'yourpassword'            => 'Paroļs:',
-'remembermypassword'      => 'Atguoduot munu paroli iz ituo datora',
+'remembermypassword'      => 'Atguoduot muni  iz ituo datora (na vaira kai $1 {{PLURAL:$1|dīnu|dīnom|dīnom}})',
 'login'                   => 'Dasaslāgt',
 'nav-login-createaccount' => 'Dasaslāgt / sataiseit jaunu lītuotuoju',
 'userlogin'               => 'Dasaslāgt / sataiseit jaunu lītuotuoju',
@@ -248,6 +260,7 @@ Par to var ziņuot [[Special:ListUsers/sysop|kaidam administratoram]], nūruodū
 'nologinlink'             => 'Registrētīs',
 'createaccount'           => 'Sataiseit jaunu lītuotuoju',
 'gotaccountlink'          => 'Dasaslāgt',
+'createaccountreason'     => 'Īmesle:',
 'mailmypassword'          => 'Atsyuteit maņ jaunu paroli',
 'loginlanguagelabel'      => 'Volūda: $1',
 
@@ -573,7 +586,6 @@ Lopys, kas ir tovā [[Special:Watchlist|puorraugamūs rokstu sarokstā]] ir '''r
 # Watchlist
 'watchlist'         => 'Muns davēris saroksts',
 'mywatchlist'       => 'Muns davēris saroksts',
-'watchlistfor'      => "(deļ '''$1''')",
 'addedwatch'        => 'Davīnuots puorraugamū sarokstam.',
 'addedwatchtext'    => "Lopa \"[[:\$1]]\" ir davīnuota [[Special:Watchlist|tevis puorraugamajom lopom]], kur tiks paruodeitys izmainis, kas izdareitys itymā lopā voi ituos lopys sarunu lopā, kai ari itei lopa tiks īzeimāta '''pusrasna''' [[Special:RecentChanges|pādejūs izmaiņu lopā]], lai itū byutu vīgluok pamaneit.
 
@@ -813,9 +825,9 @@ Tys ļaun davīnuot pamatuojumu kūpsavylkumā.',
 'nextdiff'     => 'Jaunuokuo verseja →',
 
 # Media information
-'file-info-size'       => '($1 × $2 pikseli, faila izmārs: $3, MIME tips: $4)',
+'file-info-size'       => '$1 × $2 pikseli, faila izmārs: $3, MIME tips: $4',
 'file-nohires'         => '<small>Augstuoka izškirtspieja nav pīejama.</small>',
-'svg-long-desc'        => '(SVG fails, definātais lelums $1 × $2 pikseli, faila lelums: $3)',
+'svg-long-desc'        => 'SVG fails, definātais lelums $1 × $2 pikseli, faila lelums: $3',
 'show-big-image'       => 'Pylnā lelumā',
 'show-big-image-thumb' => '<small>Ituo pyrmsskota lelums: $1 × $2 pikseli</small>',
 
@@ -863,6 +875,7 @@ Puorejī lauki, piec nūklusiejuma, byus nūglobuoti.
 'version-specialpages'     => 'Specialuos puslopys',
 'version-version'          => '(Verseja $1)',
 'version-license'          => 'Liceņceja',
+'version-poweredby-others' => 'cyti',
 'version-software-product' => 'Produkts',
 'version-software-version' => 'Verseja',
 

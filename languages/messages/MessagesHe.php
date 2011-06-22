@@ -9,11 +9,13 @@
  *
  * @author Agbad
  * @author Amire80
+ * @author Drorsnir
  * @author Ijon
  * @author Rotem Dan (July 2003)
  * @author Rotem Liss (March 2006 on)
  * @author Rotemliss
  * @author YaronSh
+ * @author ערן
  * @author שומבלע
  */
 
@@ -152,6 +154,7 @@ $magicWords = array(
 	'nse'                   => array( '0', 'מרחב שם מקודד:', 'NSE:' ),
 	'localurl'              => array( '0', 'כתובת יחסית:', 'LOCALURL:' ),
 	'localurle'             => array( '0', 'כתובת יחסית מקודד:', 'LOCALURLE:' ),
+	'articlepath'           => array( '0', 'נתיב הדפים', 'ARTICLEPATH' ),
 	'server'                => array( '0', 'כתובת השרת', 'שרת', 'SERVER' ),
 	'servername'            => array( '0', 'שם השרת', 'SERVERNAME' ),
 	'scriptpath'            => array( '0', 'נתיב הקבצים', 'SCRIPTPATH' ),
@@ -168,6 +171,7 @@ $magicWords = array(
 	'revisionday'           => array( '1', 'יום גרסה', 'REVISIONDAY' ),
 	'revisionday2'          => array( '1', 'יום גרסה 2', 'REVISIONDAY2' ),
 	'revisionmonth'         => array( '1', 'חודש גרסה', 'REVISIONMONTH' ),
+	'revisionmonth1'        => array( '1', 'חודש גרסה 1', 'REVISIONMONTH1' ),
 	'revisionyear'          => array( '1', 'שנת גרסה', 'REVISIONYEAR' ),
 	'revisiontimestamp'     => array( '1', 'זמן גרסה', 'REVISIONTIMESTAMP' ),
 	'revisionuser'          => array( '1', 'כותב גרסה', 'REVISIONUSER' ),
@@ -209,6 +213,9 @@ $magicWords = array(
 	'staticredirect'        => array( '1', '__הפניה_קבועה__', '__STATICREDIRECT__' ),
 	'protectionlevel'       => array( '1', 'רמת הגנה', 'PROTECTIONLEVEL' ),
 	'formatdate'            => array( '0', 'עיצוב תאריך', 'formatdate', 'dateformat' ),
+	'url_path'              => array( '0', 'נתיב', 'PATH' ),
+	'url_wiki'              => array( '0', 'ויקי', 'WIKI' ),
+	'url_query'             => array( '0', 'שאילתה', 'QUERY' ),
 );
 
 $specialPageAliases = array(
@@ -222,6 +229,7 @@ $specialPageAliases = array(
 	'Watchlist'                 => array( 'רשימת_המעקב', 'רשימת_מעקב', 'רשימת_המעקב_שלי' ),
 	'Recentchanges'             => array( 'שינויים_אחרונים' ),
 	'Upload'                    => array( 'העלאה', 'העלאת_קובץ_לשרת' ),
+	'UploadStash'               => array( 'מאגר_העלאות' ),
 	'Listfiles'                 => array( 'רשימת_קבצים', 'רשימת_תמונות', 'קבצים', 'תמונות' ),
 	'Newimages'                 => array( 'קבצים_חדשים', 'תמונות_חדשות', 'גלריית_קבצים_חדשים', 'גלריית_תמונות_חדשות' ),
 	'Listusers'                 => array( 'רשימת_משתמשים', 'משתמשים' ),
@@ -256,6 +264,7 @@ $specialPageAliases = array(
 	'Allpages'                  => array( 'כל_הדפים' ),
 	'Prefixindex'               => array( 'דפים_המתחילים_ב' ),
 	'Ipblocklist'               => array( 'רשימת_חסומים', 'רשימת_משתמשים_חסומים', 'משתמשים_חסומים' ),
+	'Unblock'                   => array( 'שחרור_חסימה' ),
 	'Specialpages'              => array( 'דפים_מיוחדים' ),
 	'Contributions'             => array( 'תרומות', 'תרומות_המשתמש' ),
 	'Emailuser'                 => array( 'שליחת_דואר_למשתמש' ),
@@ -300,6 +309,9 @@ $specialPageAliases = array(
 	'DeletedContributions'      => array( 'תרומות_מחוקות' ),
 	'Tags'                      => array( 'תגיות' ),
 	'Activeusers'               => array( 'משתמשים_פעילים' ),
+	'ComparePages'              => array( 'השוואת_דפים' ),
+	'Badtitle'                  => array( 'כותרת_שגויה' ),
+	'DisableAccount'            => array( 'ביטול_חשבון' ),
 );
 
 $namespaceNames = array(
@@ -342,8 +354,7 @@ $messages = array(
 'tog-editsection'             => 'עריכת פסקאות באמצעות קישורים מהצורה [עריכה]',
 'tog-editsectiononrightclick' => 'עריכת פסקאות על ידי לחיצה ימנית על כותרות הפסקאות (דרוש JavaScript)',
 'tog-showtoc'                 => 'הצגת תוכן עניינים (עבור דפים עם יותר מ־3 כותרות)',
-'tog-rememberpassword'        => 'זכירת הכניסה שלי במחשב זה',
-'tog-editwidth'               => 'הרחבת תיבת העריכה כך שתמלא את החלון כולו',
+'tog-rememberpassword'        => 'זכירת הכניסה שלי בדפדפן זה (למשך עד {{PLURAL:$1|יום אחד|$1 ימים|יומיים}})',
 'tog-watchcreations'          => 'מעקב אחרי דפים שיצרתי',
 'tog-watchdefault'            => 'מעקב אחרי דפים שערכתי',
 'tog-watchmoves'              => 'מעקב אחרי דפים שהעברתי',
@@ -358,7 +369,7 @@ $messages = array(
 'tog-enotifrevealaddr'        => 'חשיפת כתובת הדוא"ל שלך בהודעות דואר',
 'tog-shownumberswatching'     => 'הצגת מספר המשתמשים העוקבים אחרי הדף',
 'tog-oldsig'                  => 'תצוגה מקדימה של החתימה הקיימת:',
-'tog-fancysig'                => 'לפרש את החתימה כקוד ויקי (ללא קישור אוטומטי)',
+'tog-fancysig'                => 'פירוש החתימה כקוד ויקי (ללא קישור אוטומטי)',
 'tog-externaleditor'          => 'שימוש בעורך חיצוני כברירת מחדל (למשתמשים מומחים בלבד, דורש הגדרות מיוחדות במחשב. [http://www.mediawiki.org/wiki/Manual:External_editors למידע נוסף.])',
 'tog-externaldiff'            => 'שימוש בתוכנת השוואת הגרסאות החיצונית כברירת מחדל (למשתמשים מומחים בלבד, דורש הגדרות מיוחדות במחשב. [http://www.mediawiki.org/wiki/Manual:External_editors למידע נוסף.])',
 'tog-showjumplinks'           => 'הצגת קישורי נגישות מסוג "קפוץ אל"',
@@ -489,31 +500,21 @@ $messages = array(
 'faqpage'        => 'Project:שאלות ותשובות',
 
 # Vector skin
-'vector-action-addsection'   => 'הוספת נושא',
-'vector-action-delete'       => 'מחיקה',
-'vector-action-move'         => 'העברה',
-'vector-action-protect'      => 'הגנה',
-'vector-action-undelete'     => 'ביטול מחיקה',
-'vector-action-unprotect'    => 'הסרת הגנה',
-'vector-namespace-category'  => 'קטגוריה',
-'vector-namespace-help'      => 'דף עזרה',
-'vector-namespace-image'     => 'קובץ',
-'vector-namespace-main'      => 'דף',
-'vector-namespace-media'     => 'דף מדיה',
-'vector-namespace-mediawiki' => 'הודעה',
-'vector-namespace-project'   => 'דף מיזם',
-'vector-namespace-special'   => 'דף מיוחד',
-'vector-namespace-talk'      => 'שיחה',
-'vector-namespace-template'  => 'תבנית',
-'vector-namespace-user'      => 'דף משתמש',
-'vector-view-create'         => 'יצירה',
-'vector-view-edit'           => 'עריכה',
-'vector-view-history'        => 'הצגת היסטוריה',
-'vector-view-view'           => 'קריאה',
-'vector-view-viewsource'     => 'הצגת מקור',
-'actions'                    => 'פעולות',
-'namespaces'                 => 'מרחבי שם',
-'variants'                   => 'גרסאות שפה',
+'vector-action-addsection'       => 'הוספת נושא',
+'vector-action-delete'           => 'מחיקה',
+'vector-action-move'             => 'העברה',
+'vector-action-protect'          => 'הגנה',
+'vector-action-undelete'         => 'ביטול מחיקה',
+'vector-action-unprotect'        => 'הסרת הגנה',
+'vector-simplesearch-preference' => 'הפעלת הצעות החיפוש המשופרות (בעיצוב וקטור בלבד)',
+'vector-view-create'             => 'יצירה',
+'vector-view-edit'               => 'עריכה',
+'vector-view-history'            => 'הצגת היסטוריה',
+'vector-view-view'               => 'קריאה',
+'vector-view-viewsource'         => 'הצגת מקור',
+'actions'                        => 'פעולות',
+'namespaces'                     => 'מרחבי שם',
+'variants'                       => 'גרסאות שפה',
 
 'errorpagetitle'    => 'שגיאה',
 'returnto'          => 'חזרה לדף $1.',
@@ -574,6 +575,9 @@ $messages = array(
 אנא המתינו זמן מה לפני שתנסו שוב לצפות בדף.
 
 $1',
+'pool-timeout'      => 'זמן ההמתנה לסיום הנעילה עבר',
+'pool-queuefull'    => 'התור מלא',
+'pool-errorunknown' => 'שגיאה בלתי ידועה',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => 'אודות {{SITENAME}}',
@@ -734,7 +738,8 @@ $2',
 'yourname'                   => 'שם משתמש:',
 'yourpassword'               => 'סיסמה:',
 'yourpasswordagain'          => 'הקש סיסמה שנית:',
-'remembermypassword'         => 'זכירת הכניסה במחשב זה',
+'remembermypassword'         => 'זכירת הכניסה שלי בדפדפן הזה (ל{{PLURAL:$1|יום אחד|־$1 ימים|יומיים}} לכל היותר)',
+'securelogin-stick-https'    => 'המשך שימוש ב־HTTPS אחרי הכניסה',
 'yourdomainname'             => 'התחום שלך:',
 'externaldberror'            => 'הייתה שגיאה בבסיס הנתונים של ההזדהות, או שאינכם רשאים לעדכן את חשבונכם החיצוני.',
 'login'                      => 'כניסה לחשבון',
@@ -751,6 +756,7 @@ $2',
 'gotaccount'                 => 'כבר נרשמתם? $1.',
 'gotaccountlink'             => 'כניסה לחשבון',
 'createaccountmail'          => 'באמצעות דוא"ל',
+'createaccountreason'        => 'סיבה:',
 'badretype'                  => 'הסיסמאות שהזנתם אינן מתאימות.',
 'userexists'                 => 'שם המשתמש שבחרתם נמצא בשימוש.
 אנא בחרו שם אחר.',
@@ -775,6 +781,7 @@ $2',
 'wrongpasswordempty'         => 'הסיסמה שהקלדתם ריקה. אנא נסו שוב.',
 'passwordtooshort'           => 'סיסמאות חייבות להיות באורך {{PLURAL:$1|תו אחד|$1 תווים}} לפחות.',
 'password-name-match'        => 'סיסמתכם חייבת להיות שונה משם המשתמש שלכם.',
+'password-login-forbidden'   => 'השימוש בשם המשתמש והסיסמה האלה נאסר.',
 'mailmypassword'             => 'שלחו לי סיסמה חדשה',
 'passwordremindertitle'      => 'סיסמה זמנית חדשה מ{{grammar:תחילית|{{SITENAME}}}}',
 'passwordremindertext'       => 'מישהו (ככל הנראה אתם, מכתובת ה־IP מספר $1) ביקש סיסמה
@@ -789,7 +796,8 @@ $2',
 'passwordsent'               => 'סיסמה חדשה נשלחה לכתובת הדואר האלקטרוני הרשומה עבור "$1".
 אנא היכנסו חזרה לאתר אחרי שתקבלו אותה.',
 'blocked-mailpassword'       => 'כתובת ה־IP שלכם חסומה מעריכה, ולפיכך אינכם מורשים להשתמש באפשרות שחזור הסיסמה כדי למנוע ניצול לרעה של התכונה.',
-'eauthentsent'               => 'דוא"ל אימות נשלח לכתובת הדוא"ל שקבעת. לפני שדברי דוא"ל אחרים נשלחים לחשבון הזה, תצטרך לפעול לפי ההוראות בדוא"ל כדי לוודא שהדוא"ל הוא אכן שלך.',
+'eauthentsent'               => 'דוא"ל אימות נשלח לכתובת הדוא"ל שקבעת.
+לפני שדברי דוא"ל אחרים יישלחו לחשבון הזה, יהיה עליך לפעול לפי ההוראות בדוא"ל, כדי לאשר שהחשבון אכן שייך לך.',
 'throttled-mailpassword'     => 'כבר נעשה שימוש באפשרות שחזור הסיסמה ב{{PLURAL:$1|שעה האחרונה|־$1 השעות האחרונות}}. כדי למנוע ניצול לרעה, רק דואר אחד כזה יכול להישלח כל {{PLURAL:$1|שעה אחת|$1 שעות}}.',
 'mailerror'                  => 'שגיאה בשליחת דואר: $1',
 'acct_creation_throttle_hit' => 'מבקרים באתר זה דרך כתובת ה־IP שלכם כבר יצרו {{PLURAL:$1|חשבון אחד|$1 חשבונות}} ביום האחרון. זהו המקסימום המותר בתקופה זו.
@@ -811,6 +819,9 @@ $2',
 אנא המתינו לפני שתנסו שוב.',
 'loginlanguagelabel'         => 'שפה: $1',
 'suspicious-userlogout'      => 'בקשתכם לצאת מהחשבון נדחתה כיוון שנראה שהיא נשלחה על ידי דפדפן שבור או שרת פרוקסי עם זיכרון מטמון.',
+
+# E-mail sending
+'php-mail-error-unknown' => 'שגיאה לא ידועה בפונקציה mail() של PHP',
 
 # Password reset dialog
 'resetpass'                 => 'שינוי סיסמה',
@@ -862,10 +873,12 @@ $2',
 'showlivepreview'                  => 'תצוגה מקדימה מהירה',
 'showdiff'                         => 'הצגת שינויים',
 'anoneditwarning'                  => "'''אזהרה:''' אינכם מחוברים לחשבון. כתובת ה־IP שלכם תירשם בהיסטוריית העריכות של הדף.",
+'anonpreviewwarning'               => "''אינכם מחוברים לחשבון. שמירה תגרום לכתובת ה־IP שלכם להירשם בהיסטוריית העריכות של הדף.''",
 'missingsummary'                   => "'''תזכורת:''' לא הזנתם תקציר עריכה.
 אם תלחצו שוב על הכפתור \"{{int:savearticle}}\", עריכתכם תישמר בלעדיו.",
 'missingcommenttext'               => 'אנא הקלידו את ההודעה למטה.',
-'missingcommentheader'             => "'''תזכורת:''' לא הזנתם נושא/כותרת להודעה זו. אם תלחצו שוב על כפתור השמירה, עריכתכם תישמר בלעדיו.",
+'missingcommentheader'             => "'''תזכורת:''' לא הזנתם נושא/כותרת להודעה זו.
+אם תלחצו שוב על הכפתור \"{{int:savearticle}}\", עריכתכם תישמר בלעדיו.",
 'summary-preview'                  => 'תצוגה מקדימה של התקציר:',
 'subject-preview'                  => 'תצוגה מקדימה של הנושא/הכותרת:',
 'blockedtitle'                     => 'המשתמש חסום',
@@ -940,7 +953,12 @@ $2',
 '''הוא טרם נשמר!'''",
 'userjspreview'                    => "'''זכרו שזו רק בדיקה/תצוגה מקדימה של סקריפט ה־JavaScript שלכם.'''
 '''הוא טרם נשמר!'''",
-'userinvalidcssjstitle'            => "'''אזהרה''': העיצוב \"\$1\" אינו קיים. זכרו שדפי CSS ו־JavaScript מותאמים אישית משתמשים בכותרת עם אותיות קטנות – למשל, {{ns:user}}:דוגמה/monobook.css ולא {{ns:user}}:דוגמה/Monobook.css. כמו כן, יש להקפיד על שימוש ב־/ ולא ב־\\.",
+'sitecsspreview'                   => "'''זכרו שזו רק תצוגה מקדימה של גליון ה־CSS הזה.'''
+'''הוא טרם נשמר!'''",
+'sitejspreview'                    => "'''זכרו שזו רק תצוגה מקדימה של קוד ה־JavaScript הזה.'''
+'''הוא טרם נשמר!'''",
+'userinvalidcssjstitle'            => "'''אזהרה''': העיצוב \"\$1\" אינו קיים.
+דפי .css ו־.js מותאמים אישית משתמשים בכותרת עם אותיות קטנות – למשל, {{ns:user}}:דוגמה/vector.css ולא {{ns:user}}:דוגמה/Vector.css.",
 'updated'                          => '(מעודכן)',
 'note'                             => "'''הערה:'''",
 'previewnote'                      => "'''זכרו שזו רק תצוגה מקדימה.'''
@@ -976,9 +994,6 @@ $2',
 'yourdiff'                         => 'הבדלים',
 'copyrightwarning'                 => "'''שימו לב:''' תרומתכם ל{{grammar:תחילית|{{SITENAME}}}} תפורסם תחת תנאי הרישיון $2 (ראו $1 לפרטים נוספים). אם אינכם רוצים שעבודתכם תהיה זמינה לעריכה על ידי אחרים, שתופץ לעיני כל, ושאחרים יוכלו להעתיק ממנה בציון המקור – אל תפרסמו אותה פה. כמו־כן, אתם מבטיחים לנו כי כתבתם את הטקסט הזה בעצמכם, או העתקתם אותו ממקור שאינו מוגן על ידי זכויות יוצרים. '''אל תעשו שימוש בחומר המוגן בזכויות יוצרים ללא רשות!'''",
 'copyrightwarning2'                => "'''שימו לב:''' תורמים אחרים עשויים לערוך או אף להסיר את תרומתכם ל{{grammar:תחילית|{{SITENAME}}}}. אם אינכם רוצים שעבודתכם תהיה זמינה לעריכה על ידי אחרים, אל תפרסמו אותה פה. כמו־כן, אתם מבטיחים לנו כי כתבתם את הטקסט הזה בעצמכם, או העתקתם אותו ממקור שאינו מוגן על ידי זכויות יוצרים (ראו $1 לפרטים נוספים). '''אל תעשו שימוש בחומר המוגן בזכויות יוצרים ללא רשות!'''",
-'longpagewarning'                  => "'''אזהרה:''' גודל דף זה הוא $1 קילובייטים.
-בדפדפנים מסוימים יהיו בעיות בעריכת דף הגדול מ־32 קילובייטים.
-אנא שיקלו לחלק דף זה לדפים קטנים יותר.",
 'longpageerror'                    => "'''שגיאה: הטקסט ששלחתם הוא באורך $1 קילובייטים, אך אסור לו להיות ארוך יותר מהמקסימום של $2 קילובייטים.'''
 לא ניתן לשומרו.",
 'readonlywarning'                  => "'''אזהרה: בסיס הנתונים ננעל לצורך תחזוקה. בזמן זה אי אפשר לשמור את הטקסט הערוך.'''
@@ -1009,7 +1024,7 @@ $2',
 'permissionserrorstext-withaction' => 'אינכם מורשים $2, {{PLURAL:$1|מהסיבה הבאה|מהסיבות הבאות}}:',
 'recreate-moveddeleted-warn'       => "'''אזהרה: הנכם יוצרים דף חדש שנמחק בעבר.'''
 
-אנא שקלו אם יהיה זה נכון להמשיך לערוך את הדף.
+כדאי לשקול אם יהיה זה נכון להמשיך לערוך את הדף.
 יומני המחיקות וההעברות של הדף מוצגים להלן:",
 'moveddeleted-notice'              => 'דף זה נמחק.
 יומני המחיקות וההעברות של הדף מוצגים להלן.',
@@ -1154,6 +1169,8 @@ $1",
 'logdelete-failure'           => "'''לא ניתן היה לבצע את הסתרת פעולת היומן:'''
 $1",
 'revdel-restore'              => 'שינוי ההצגה',
+'revdel-restore-deleted'      => 'גרסאות מחוקות',
+'revdel-restore-visible'      => 'גרסאות גלויות',
 'pagehist'                    => 'היסטוריית הדף',
 'deletedhist'                 => 'הגרסאות המחוקות',
 'revdelete-content'           => 'התוכן',
@@ -1223,11 +1240,13 @@ $1",
 # Diffs
 'history-title'            => 'היסטוריית הגרסאות של $1',
 'difference'               => '(הבדלים בין גרסאות)',
+'difference-multipage'     => '(הבדלים בין דפים)',
 'lineno'                   => 'שורה $1:',
 'compareselectedversions'  => 'השוואת הגרסאות שנבחרו',
 'showhideselectedversions' => 'הצגת/הסתרת הגרסאות שנבחרו',
 'editundo'                 => 'ביטול',
-'diff-multi'               => '({{PLURAL:$1|גרסת ביניים אחת אינה מוצגת|$1 גרסאות ביניים אינן מוצגות}})',
+'diff-multi'               => '({{PLURAL:$1|גרסת ביניים אחת|$1 גרסאות ביניים}} של {{PLURAL:$2|משתמש אחד|$2 משתמשים}} {{PLURAL:$1|אינה מוצגת|אינן מוצגות}})',
+'diff-multi-manyusers'     => '({{PLURAL:$1|גרסת ביניים אחת|$1 גרסאות ביניים}} של יותר מ{{PLURAL:$2|משתמש אחד|־$2 משתמשים}} אינן מוצגות)',
 
 # Search results
 'searchresults'                    => 'תוצאות החיפוש',
@@ -1262,6 +1281,7 @@ $1",
 'searchprofile-everything-tooltip' => 'חיפוש בכל התוכן (למעט דפי השיחה)',
 'searchprofile-advanced-tooltip'   => 'חיפוש במרחבי שם מותאמים אישית',
 'search-result-size'               => '$1 ({{PLURAL:$2|מילה אחת|$2 מילים}})',
+'search-result-category-size'      => '{{PLURAL:$1|חבר אחד|$1 חברים}} ({{PLURAL:$2|קטגוריית משנה אחת|$2 קטגוריות משנה}}, {{PLURAL:$3|קובץ אחד|$3 קבצים}})',
 'search-result-score'              => 'רלוונטיות: $1%',
 'search-redirect'                  => '(הפניה $1)',
 'search-section'                   => '(פסקה $1)',
@@ -1336,6 +1356,7 @@ $1",
 'contextlines'                  => 'שורות לכל תוצאה:',
 'contextchars'                  => 'מספר תווי קונטקסט בשורה:',
 'stub-threshold'                => 'סף לעיצוב <a href="#" class="stub">קישורים</a> לקצרמרים (בתים):',
+'stub-threshold-disabled'       => 'מבוטל',
 'recentchangesdays'             => 'מספר הימים שיוצגו בדף השינויים האחרונים:',
 'recentchangesdays-max'         => 'לכל היותר {{PLURAL:$1|יום אחד|$1 ימים}}',
 'recentchangescount'            => 'מספר העריכות שיוצגו כברירת מחדל:',
@@ -1369,6 +1390,7 @@ $1",
 'prefs-files'                   => 'קבצים',
 'prefs-custom-css'              => 'קובץ CSS מותאם אישית',
 'prefs-custom-js'               => 'קובץ JavaScript מותאם אישית',
+'prefs-common-css-js'           => 'קובצי CSS/JavaScript משותפים לכל העיצובים:',
 'prefs-reset-intro'             => 'באפשרותכם להשתמש בדף זה כדי להחזיר את ההעדפות שלכם להגדרות ברירת המחדל של האתר.
 לא ניתן לבטל פעולה זו.',
 'prefs-emailconfirm-label'      => 'אימות כתובת דוא"ל:',
@@ -1408,8 +1430,14 @@ $1",
 'prefs-advancedrendering'       => 'אפשרויות מתקדמות',
 'prefs-advancedsearchoptions'   => 'אפשרויות מתקדמות',
 'prefs-advancedwatchlist'       => 'אפשרויות מתקדמות',
-'prefs-display'                 => 'אפשרויות תצוגה',
+'prefs-displayrc'               => 'אפשרויות תצוגה',
+'prefs-displaysearchoptions'    => 'אפשרויות תצוגה',
+'prefs-displaywatchlist'        => 'אפשרויות תצוגה',
 'prefs-diffs'                   => 'הבדלים בין גרסאות',
+
+# User preference: e-mail validation using jQuery
+'email-address-validity-valid'   => 'כתובת הדואר האלקטרוני נראית תקינה',
+'email-address-validity-invalid' => 'יש להקליד כתובת דואר אלקטרוני תקינה',
 
 # User rights
 'userrights'                   => 'ניהול הרשאות משתמש',
@@ -1494,6 +1522,7 @@ $1",
 'right-hideuser'              => 'חסימת שם משתמש תוך הסתרתו מהציבור',
 'right-ipblock-exempt'        => 'עקיפת חסימות של כתובת IP, חסימות אוטומטיות וחסימות טווח',
 'right-proxyunbannable'       => 'עקיפת חסימות אוטומטיות של שרתי פרוקסי',
+'right-unblockself'           => 'שחרור חסימה של עצמם',
 'right-protect'               => 'שינוי רמות הגנה ועריכת דפים מוגנים',
 'right-editprotected'         => 'עריכת דפים מוגנים (ללא הגנה מדורגת)',
 'right-editinterface'         => 'עריכת ממשק המשתמש',
@@ -1516,7 +1545,6 @@ $1",
 'right-siteadmin'             => 'נעילת וביטול נעילת בסיס הנתונים',
 'right-reset-passwords'       => 'איפוס סיסמאות של משתמשים אחרים',
 'right-override-export-depth' => 'ייצוא דפים כולל דפים מקושרים עד עומק של חמישה',
-'right-versiondetail'         => 'צפייה במידע המורחב על גרסת התוכנה',
 'right-sendemail'             => 'שליחת דואר אלקטרוני למשתמשים אחרים',
 
 # User rights log
@@ -1567,14 +1595,9 @@ $1",
 'recentchanges-legend'              => 'אפשרויות בשינויים האחרונים',
 'recentchangestext'                 => 'ניתן לעקוב אחרי השינויים האחרונים באתר בדף זה.',
 'recentchanges-feed-description'    => 'ניתן לעקוב אחרי השינויים האחרונים באתר בדף זה.',
-'recentchanges-label-legend'        => 'מקרא: $1',
-'recentchanges-legend-newpage'      => '$1 - דף חדש',
 'recentchanges-label-newpage'       => 'בעריכה זו נוצר דף חדש',
-'recentchanges-legend-minor'        => '$1 - עריכה משנית',
 'recentchanges-label-minor'         => 'זוהי עריכה משנית',
-'recentchanges-legend-bot'          => '$1 - עריכה של בוט',
 'recentchanges-label-bot'           => 'עריכה זו בוצעה על ידי בוט',
-'recentchanges-legend-unpatrolled'  => '$1 - עריכה שלא נבדקה',
 'recentchanges-label-unpatrolled'   => 'עריכה זו טרם נבדקה',
 'rcnote'                            => "להלן {{PLURAL:$1|השינוי האחרון|'''$1''' השינויים האחרונים}} {{PLURAL:$2|ביום האחרון|ב־$2 הימים האחרונים}}, עד $5, $4:",
 'rcnotefrom'                        => 'להלן <b>$1</b> השינויים האחרונים שבוצעו החל מתאריך <b>$2</b>:',
@@ -1623,6 +1646,9 @@ $1",
 'upload_directory_missing'    => 'שרת האינטרנט אינו יכול ליצור את תיקיית ההעלאות ($1) החסרה.',
 'upload_directory_read_only'  => 'שרת האינטרנט אינו יכול לכתוב בתיקיית ההעלאות ($1).',
 'uploaderror'                 => 'שגיאה בהעלאת הקובץ',
+'upload-recreate-warning'     => "'''אזהרה: קובץ בשם זה נמחק או הועבר.'''
+
+יומני המחיקות וההעברות של הדף מוצגים להלן:",
 'uploadtext'                  => "השתמשו בטופס להלן כדי להעלות קבצים.
 כדי לראות או לחפש קבצים שהועלו בעבר אנא פנו ל[[Special:FileList|רשימת הקבצים שהועלו]], וכמו כן, העלאות (כולל העלאות של גרסה חדשה) מוצגות ב[[Special:Log/upload|יומן ההעלאות]], ומחיקות ב[[Special:Log/delete|יומן המחיקות]].
 
@@ -1656,9 +1682,20 @@ $1",
 {{PLURAL:\$3|סוג הקובץ המומלץ הוא|סוגי הקבצים המומלצים הם}} \$2.",
 'filetype-banned-type'        => "'''\".\$1\"''' הוא סוג קובץ אסור להעלאה. {{PLURAL:\$3|סוג הקובץ המותר הוא|סוגי הקבצים המותרים הם}} \$2.",
 'filetype-missing'            => 'לקובץ אין סיומת (כדוגמת ".jpg").',
+'empty-file'                  => 'הקובץ ששלחת היה ריק',
+'file-too-large'              => 'הקובץ ששלחת היה גדול מדי',
+'filename-tooshort'           => 'שם הקובץ קצר מדי',
+'filetype-banned'             => 'סוג הקובץ הזה אסור להעלאה',
+'verification-error'          => 'קובץ זה לא עבר את תהליך אימות הקבצים',
+'hookaborted'                 => 'השינוי שניסית לבצע הופסק על ידי מבנה Hook של הרחבה',
+'illegal-filename'            => 'שם הקובץ אינו מותר להעלאה',
+'overwrite'                   => 'דריסת קובץ קיים אינה מותרת',
+'unknown-error'               => 'אירעה שגיאה בלתי ידועה',
+'tmp-create-error'            => 'לא ניתן ליצור קובץ זמני',
+'tmp-write-error'             => 'שגיאה בכתיבה לקובץ הזמני',
 'large-file'                  => 'מומלץ שהקבצים לא יהיו גדולים יותר מ־$1 (גודל הקובץ שהעליתם הוא $2).',
 'largefileserver'             => 'גודל הקובץ שהעליתם חורג ממגבלת השרת.',
-'emptyfile'                   => 'הקובץ שהעליתם ריק. ייתכן שהסיבה לכך היא שגיאת הקלדה בשם הקובץ. אנא ודאו שזהו הקובץ שברצונך להעלות.',
+'emptyfile'                   => 'נראה שהקובץ שהעליתם ריק. ייתכן שהסיבה לכך היא שגיאת הקלדה בשם הקובץ. אנא ודאו שזהו הקובץ שברצונכם להעלות.',
 'fileexists'                  => "קובץ בשם זה כבר קיים, אנא בדקו את '''<tt>[[:$1]]</tt>''' אם אינכם בטוחים שברצונכם להחליף אותו.
 [[$1|thumb]]",
 'filepageexists'              => "דף תיאור הקובץ עבור קובץ זה כבר נוצר ב'''<tt>[[:$1]]</tt>''', אך לא קיים קובץ בשם זה.
@@ -1682,13 +1719,14 @@ $1",
 'file-exists-duplicate'       => 'קובץ זה זהה {{PLURAL:$1|לקובץ הבא|לקבצים הבאים}}:',
 'file-deleted-duplicate'      => 'קובץ זהה לקובץ זה ([[:$1]]) נמחק בעבר.
 אנא בדקו את היסטוריית המחיקה של הקובץ לפני שתעלו אותו מחדש.',
-'successfulupload'            => 'העלאת הקובץ הושלמה בהצלחה',
 'uploadwarning'               => 'אזהרת העלאת קבצים',
 'uploadwarning-text'          => 'אנא שנו את תיאור הקובץ שלמטה ונסו שוב.',
 'savefile'                    => 'שמירת קובץ',
 'uploadedimage'               => 'העלה את הקובץ [[$1]]',
 'overwroteimage'              => 'העלה גרסה חדשה של הקובץ [[$1]]',
 'uploaddisabled'              => 'העלאת קבצים מבוטלת.',
+'copyuploaddisabled'          => 'העלאת קבצים מכתובת URL מבוטלת.',
+'uploadfromurl-queued'        => 'העלאתכם הועברה לתור המשימות.',
 'uploaddisabledtext'          => 'אפשרות העלאת הקבצים מבוטלת.',
 'php-uploaddisabledtext'      => 'אפשרות העלאת הקבצים מבוטלת ברמת PHP. אנא בדקו את ההגדרה file_uploads.',
 'uploadscripted'              => 'הקובץ כולל קוד סקריפט או HTML שעשוי להתפרש או להתבצע בטעות על ידי הדפדפן.',
@@ -1722,6 +1760,14 @@ JD # Jenoptik
 MGP # Pentax
 PICT # שונות
  #</pre> <!-- נא להשאיר שורה זו בדיוק כפי שהיא -->',
+'upload-success-subj'         => 'ההעלאה הושלמה בהצלחה',
+'upload-success-msg'          => 'ההעלאה מהכתובת [$2] הושלמה בהצלחה. הקובץ שהעליתם זמין כאן: [[:{{ns:file}}:$1]]',
+'upload-failure-subj'         => 'בעיה בהעלאה',
+'upload-failure-msg'          => 'הייתה בעיה עם הקובץ שהעליתם מהכתובת [$2]:
+
+$1',
+'upload-warning-subj'         => 'אזהרה בהעלאה',
+'upload-warning-msg'          => 'הייתה בעיה עם הקובץ שהעליתם מהכתובת [$2]. באפשרותכם לחזור ל[[Special:Upload/stash/$1|טופס ההעלאה]] כדי לתקן בעיה זו.',
 
 'upload-proto-error'        => 'פרוטוקול שגוי',
 'upload-proto-error-text'   => 'בהעלאה מרוחקת, יש להשתמש בכתובות URL המתחילות עם <code>http://</code> או <code>ftp://</code>.',
@@ -1783,6 +1829,7 @@ PICT # שונות
 'listfiles_search_for'  => 'חיפוש קובץ מדיה בשם:',
 'imgfile'               => 'קובץ',
 'listfiles'             => 'רשימת קבצים',
+'listfiles_thumb'       => 'תמונה ממוזערת',
 'listfiles_date'        => 'תאריך',
 'listfiles_name'        => 'שם',
 'listfiles_user'        => 'משתמש',
@@ -1827,6 +1874,7 @@ PICT # שונות
 'shared-repo-from'                  => 'מתוך $1',
 'shared-repo'                       => 'מקום איחסון משותף',
 'shared-repo-name-wikimediacommons' => 'ויקישיתוף',
+'filepage.css'                      => '/* הסגנונות הנכתבים כאן יוכללו בדף תיאור הקובץ, כולל באתרי ויקי זרים */',
 
 # File reversion
 'filerevert'                => 'שחזור $1',
@@ -1900,8 +1948,8 @@ PICT # שונות
 'statistics-edits'             => 'העריכות מאז תחילת הפעולה של {{SITENAME}}',
 'statistics-edits-average'     => 'מספר העריכות הממוצע לדף',
 'statistics-views-total'       => 'מספר הצפיות הכולל',
+'statistics-views-total-desc'  => 'צפיות בדפים שאינם קיימים ובדפים מיוחדים אינן כלולות',
 'statistics-views-peredit'     => 'מספר הצפיות לעריכה',
-'statistics-jobqueue'          => 'אורך [http://www.mediawiki.org/wiki/Manual:Job_queue תור המשימות]',
 'statistics-users'             => 'ה[[Special:ListUsers|משתמשים]] הרשומים',
 'statistics-users-active'      => 'המשתמשים הפעילים',
 'statistics-users-active-desc' => 'משתמשים שביצעו פעולה כלשהי ב{{PLURAL:$1|יום האחרון|־$1 הימים האחרונים}}',
@@ -1916,7 +1964,7 @@ PICT # שונות
 'doubleredirects'            => 'הפניות כפולות',
 'doubleredirectstext'        => 'ההפניות הבאות מפנות לדפי הפניה אחרים.
 כל שורה מכילה קישור להפניות הראשונה והשנייה, וכן את היעד של ההפניה השנייה, שהיא לרוב היעד ה"אמיתי" של ההפניה, אליו אמורה ההפניה הראשונה להצביע.
-ערכים <s>מחוקים</s> כבר תוקנו.',
+ערכים <del>מחוקים</del> כבר תוקנו.',
 'double-redirect-fixed-move' => '[[$1]] הועבר. כעת הוא הפניה לדף [[$2]].',
 'double-redirect-fixer'      => 'מתקן הפניות',
 
@@ -1939,6 +1987,8 @@ PICT # שונות
 'nmembers'                => '{{PLURAL:$1|דף אחד|$1 דפים}}',
 'nrevisions'              => '{{PLURAL:$1|גרסה אחת|$1 גרסאות}}',
 'nviews'                  => '{{PLURAL:$1|צפייה אחת|$1 צפיות}}',
+'nimagelinks'             => 'בשימוש ב{{PLURAL:$1|דף אחד|־$1 דפים}}',
+'ntransclusions'          => 'בשימוש ב{{PLURAL:$1|דף אחד|־$1 דפים}}',
 'specialpage-empty'       => 'אין תוצאות.',
 'lonelypages'             => 'דפים יתומים',
 'lonelypagestext'         => 'הדפים הבאים אינם מקושרים מדפים אחרים באתר זה ואינם מוכללים בהם.',
@@ -2095,34 +2145,40 @@ PICT # שונות
 'listgrouprights-removegroup-self-all' => 'הסרת כל הקבוצות מהחשבון האישי',
 
 # E-mail user
-'mailnologin'      => 'אין כתובת לשליחה',
-'mailnologintext'  => 'עליכם [[Special:UserLogin|להיכנס לחשבון]] ולהגדיר לעצמכם כתובת דואר אלקטרוני תקינה ב[[Special:Preferences|העדפות המשתמש]] שלכם כדי לשלוח דואר למשתמש אחר.',
-'emailuser'        => 'שליחת דואר אלקטרוני למשתמש זה',
-'emailpage'        => 'שליחת דואר למשתמש',
-'emailpagetext'    => 'ניתן להשתמש בטופס כדי לשלוח הודעת דואר אלקטרוני למשתמש זה.
+'mailnologin'          => 'אין כתובת לשליחה',
+'mailnologintext'      => 'עליכם [[Special:UserLogin|להיכנס לחשבון]] ולהגדיר לעצמכם כתובת דואר אלקטרוני תקינה ב[[Special:Preferences|העדפות המשתמש]] שלכם כדי לשלוח דואר למשתמש אחר.',
+'emailuser'            => 'שליחת דואר אלקטרוני למשתמש זה',
+'emailpage'            => 'שליחת דואר למשתמש',
+'emailpagetext'        => 'ניתן להשתמש בטופס כדי לשלוח הודעת דואר אלקטרוני למשתמש זה.
 כתובת הדואר האלקטרוני שכתבתם ב[[Special:Preferences|העדפות המשתמש שלכם]] תופיע ככתובת ממנה נשלחה ההודעה, כדי לאפשר תגובה ישירה למכתב.',
-'usermailererror'  => 'אובייקט הדואר החזיר שגיאה:',
-'defemailsubject'  => 'דוא"ל {{SITENAME}}',
-'noemailtitle'     => 'אין כתובת דואר אלקטרוני',
-'noemailtext'      => 'משתמש זה לא הזין כתובת דואר אלקטרוני חוקית.',
-'nowikiemailtitle' => 'שליחת דוא"ל אינה אפשרית',
-'nowikiemailtext'  => 'משתמש זה בחר שלא לקבל דואר אלקטרוני ממשתמשים אחרים.',
-'email-legend'     => 'שליחת דואר אלקטרוני למשתמש אחר של {{SITENAME}}',
-'emailfrom'        => 'מאת:',
-'emailto'          => 'אל:',
-'emailsubject'     => 'נושא:',
-'emailmessage'     => 'הודעה:',
-'emailsend'        => 'שליחה',
-'emailccme'        => 'נא לשלוח לי בדואר האלקטרוני העתק של הודעתי.',
-'emailccsubject'   => 'העתק של הודעתך למשתמש $1: $2',
-'emailsent'        => 'הדואר נשלח',
-'emailsenttext'    => 'הודעת הדואר האלקטרוני שלך נשלחה.',
-'emailuserfooter'  => 'דואר זה נשלח על ידי $1 למשתמש $2 באמצעות תכונת "שליחת דואר אלקטרוני למשתמש זה" ב{{grammar:תחילית|{{SITENAME}}}}.',
+'usermailererror'      => 'אובייקט הדואר החזיר שגיאה:',
+'defemailsubject'      => 'דוא"ל {{SITENAME}}',
+'usermaildisabled'     => 'שליחת דוא"ל למשתמשים מבוטלת',
+'usermaildisabledtext' => 'אינכם רשאים לשלוח דואר אלקטרוני למשתמשים אחרים באתר זה',
+'noemailtitle'         => 'אין כתובת דואר אלקטרוני',
+'noemailtext'          => 'משתמש זה לא הזין כתובת דואר אלקטרוני חוקית.',
+'nowikiemailtitle'     => 'שליחת דוא"ל אינה אפשרית',
+'nowikiemailtext'      => 'משתמש זה בחר שלא לקבל דואר אלקטרוני ממשתמשים אחרים.',
+'email-legend'         => 'שליחת דואר אלקטרוני למשתמש אחר של {{SITENAME}}',
+'emailfrom'            => 'מאת:',
+'emailto'              => 'אל:',
+'emailsubject'         => 'נושא:',
+'emailmessage'         => 'הודעה:',
+'emailsend'            => 'שליחה',
+'emailccme'            => 'נא לשלוח לי בדואר האלקטרוני העתק של הודעתי.',
+'emailccsubject'       => 'העתק של הודעתך למשתמש $1: $2',
+'emailsent'            => 'הדואר נשלח',
+'emailsenttext'        => 'הודעת הדואר האלקטרוני שלך נשלחה.',
+'emailuserfooter'      => 'דואר זה נשלח על ידי $1 למשתמש $2 באמצעות תכונת "שליחת דואר אלקטרוני למשתמש זה" ב{{grammar:תחילית|{{SITENAME}}}}.',
+
+# User Messenger
+'usermessage-summary' => 'השארת הודעת מערכת.',
+'usermessage-editor'  => 'שולח הודעות המערכת',
 
 # Watchlist
 'watchlist'            => 'רשימת המעקב שלי',
 'mywatchlist'          => 'רשימת המעקב שלי',
-'watchlistfor'         => "(עבור '''$1''')",
+'watchlistfor2'        => 'עבור $1 $2',
 'nowatchlist'          => 'אין דפים ברשימת המעקב.',
 'watchlistanontext'    => 'עליכם $1 כדי לצפות או לערוך פריטים ברשימת המעקב.',
 'watchnologin'         => 'לא נכנסתם לחשבון',
@@ -2182,6 +2238,9 @@ $NEWPAGE
              מערכת ההודעות של {{SITENAME}}
 
 --
+כדי לשנות את ההגדרות של הודעות הדוא"ל הנשלחות אליכם, בקרו בדף
+{{fullurl:{{#special:Preferences}}}}
+
 כדי לשנות את הגדרות רשימת המעקב, בקרו בדף
 {{fullurl:{{#special:Watchlist}}/edit}}
 
@@ -2238,7 +2297,10 @@ $UNWATCHURL
 'revertpage'        => 'שוחזר מעריכות של [[Special:Contributions/$2|$2]] ([[User talk:$2|שיחה]]) לעריכה האחרונה של [[User:$1|$1]]',
 'revertpage-nouser' => 'שוחזר מעריכות של (שם המשתמש הוסר) לעריכה האחרונה של [[User:$1|$1]]',
 'rollback-success'  => 'שוחזר מעריכה של $1 לעריכה האחרונה של $2',
-'sessionfailure'    => 'נראה שיש בעיה בחיבורכם לאתר;
+
+# Edit tokens
+'sessionfailure-title' => 'בעיה בחיבור',
+'sessionfailure'       => 'נראה שיש בעיה בחיבורכם לאתר;
 פעולתכם בוטלה כאמצעי זהירות נגד התחזות לתקשורת ממחשבכם.
 אנא חזרו לדף הקודם, העלו אותו מחדש ונסו שוב.',
 
@@ -2368,19 +2430,23 @@ $1',
 'month'               => 'עד החודש:',
 'year'                => 'עד השנה:',
 
-'sp-contributions-newbies'        => 'הצגת תרומות של משתמשים חדשים בלבד',
-'sp-contributions-newbies-sub'    => 'עבור משתמשים חדשים',
-'sp-contributions-newbies-title'  => 'תרומות של משתמשים חדשים',
-'sp-contributions-blocklog'       => 'יומן חסימות',
-'sp-contributions-deleted'        => 'תרומות משתמש מחוקות',
-'sp-contributions-logs'           => 'יומנים',
-'sp-contributions-talk'           => 'שיחה',
-'sp-contributions-userrights'     => 'ניהול הרשאות משתמש',
-'sp-contributions-blocked-notice' => 'משתמש זה חסום כרגע.
+'sp-contributions-newbies'             => 'הצגת תרומות של משתמשים חדשים בלבד',
+'sp-contributions-newbies-sub'         => 'עבור משתמשים חדשים',
+'sp-contributions-newbies-title'       => 'תרומות של משתמשים חדשים',
+'sp-contributions-blocklog'            => 'יומן חסימות',
+'sp-contributions-deleted'             => 'תרומות משתמש מחוקות',
+'sp-contributions-uploads'             => 'העלאות',
+'sp-contributions-logs'                => 'יומנים',
+'sp-contributions-talk'                => 'שיחה',
+'sp-contributions-userrights'          => 'ניהול הרשאות משתמש',
+'sp-contributions-blocked-notice'      => 'משתמש זה חסום כרגע.
 הפעולה האחרונה ביומן החסימות מוצגת להלן:',
-'sp-contributions-search'         => 'חיפוש תרומות',
-'sp-contributions-username'       => 'שם משתמש או כתובת IP:',
-'sp-contributions-submit'         => 'חיפוש',
+'sp-contributions-blocked-notice-anon' => 'כתובת IP זו חסומה כרגע.
+הפעולה האחרונה ביומן החסימות מוצגת להלן:',
+'sp-contributions-search'              => 'חיפוש תרומות',
+'sp-contributions-username'            => 'שם משתמש או כתובת IP:',
+'sp-contributions-toponly'             => 'הצגת עריכות שהן הגרסאות האחרונות בלבד',
+'sp-contributions-submit'              => 'חיפוש',
 
 # What links here
 'whatlinkshere'            => 'דפים המקושרים לכאן',
@@ -2445,7 +2511,6 @@ $1',
 'ipb-edit-dropdown'               => 'עריכת סיבות החסימה',
 'ipb-unblock-addr'                => 'הסרת חסימה של $1',
 'ipb-unblock'                     => 'הסרת חסימה של שם משתמש או כתובת IP',
-'ipb-blocklist-addr'              => 'החסימות הנוכחיות של $1',
 'ipb-blocklist'                   => 'הצגת החסימות הנוכחיות',
 'ipb-blocklist-contribs'          => 'התרומות של $1',
 'unblockip'                       => 'שחרור חסימה',
@@ -2514,6 +2579,8 @@ $1 כבר נחסם. האם ברצונכם לשנות את הגדרות החסי�
 'sorbs_create_account_reason'     => 'כתובת ה־IP שלכם רשומה ככתובת פרוקסי פתוחה ב־DNSBL שאתר זה משתמש בו. אינכם יכולים ליצור חשבון.',
 'cant-block-while-blocked'        => 'אינכם יכולים לחסום משתמשים אחרים כשאתם חסומים.',
 'cant-see-hidden-user'            => 'המשתמש שאתם מנסים לחסום כבר נחסם והוסתר. כיוון שאין לכם את ההרשאה לחסימת משתמש והסתרתו, אינכם רשאים לצפות בחסימת המשתמש או לערוך אותה.',
+'ipbblocked'                      => 'אינכם יכולים לחסום או לשחרר את חסימתם של משתמשים אחרים, כיוון שאתם עצמכם חסומים',
+'ipbnounblockself'                => 'אינכם רשאים לשחרר את חסימתכם',
 
 # Developer tools
 'lockdb'              => 'נעילת בסיס נתונים',
@@ -2545,6 +2612,17 @@ $1 כבר נחסם. האם ברצונכם לשנות את הגדרות החסי�
 השם הישן יהפוך לדף הפניה אל הדף עם השם החדש.
 באפשרותכם לעדכן אוטומטית דפי הפניה לכותרת המקורית.
 אם תבחרו לא לעשות זאת, אנא ודאו שאין [[Special:DoubleRedirects|הפניות כפולות]] או [[Special:BrokenRedirects|שבורות]].
+אתם אחראים לוודא שכל הקישורים ימשיכו להצביע למקום שאליו הם אמורים להצביע.
+
+שימו לב: הדף '''לא''' יועבר אם כבר יש דף תחת השם החדש, אלא אם הדף הזה ריק, או שהוא הפניה, ואין לו היסטוריית עריכות קודמות.
+פירוש הדבר שאפשר לשנות חזרה את שמו של דף לשם המקורי אם נעשתה טעות, ושלא ניתן לדרוס דף קיים.
+
+'''אזהרה!'''
+שינוי זה עשוי להיות שינוי דרסטי ובלתי צפוי לדף פופולרי;
+אנא ודאו שאתם מבינים את השלכות המעשה לפני שאתם ממשיכים.",
+'movepagetext-noredirectfixer' => "שימוש בטופס שלהלן ישנה את שמו של דף, ויעביר את כל ההיסטוריה שלו לשם חדש.
+השם הישן יהפוך לדף הפניה אל הדף עם השם החדש.
+אנא ודאו שאין [[Special:DoubleRedirects|הפניות כפולות]] או [[Special:BrokenRedirects|שבורות]].
 אתם אחראים לוודא שכל הקישורים ימשיכו להצביע למקום שאליו הם אמורים להצביע.
 
 שימו לב: הדף '''לא''' יועבר אם כבר יש דף תחת השם החדש, אלא אם הדף הזה ריק, או שהוא הפניה, ואין לו היסטוריית עריכות קודמות.
@@ -2607,6 +2685,7 @@ $1 כבר נחסם. האם ברצונכם לשנות את הגדרות החסי�
 'immobile-source-page'         => 'דף זה אינו ניתן להעברה.',
 'immobile-target-page'         => 'לא ניתן להעביר אל כותרת יעד זו.',
 'imagenocrossnamespace'        => 'לא ניתן להעביר קובץ למרחב שם אחר',
+'nonfile-cannot-move-to-file'  => 'לא ניתן להעביר דף שאינו קובץ למרחב קובץ',
 'imagetypemismatch'            => 'סיומת הקובץ החדשה אינה מתאימה לסוג הקובץ',
 'imageinvalidfilename'         => 'שם קובץ היעד אינו תקין',
 'fix-double-redirects'         => 'עדכון הפניות לכותרת הדף המקורית',
@@ -2688,6 +2767,7 @@ $1 כבר נחסם. האם ברצונכם לשנות את הגדרות החסי�
 'importstart'                => 'מייבא דפים…',
 'import-revision-count'      => '{{PLURAL:$1|גרסה אחת|$1 גרסאות}}',
 'importnopages'              => 'אין דפים לייבוא.',
+'imported-log-entries'       => '{{PLURAL:$1|יובאה פעולת יומן אחת|יובאו $1 פעולות יומן}}.',
 'importfailed'               => 'הייבוא נכשל: <nowiki>$1</nowiki>',
 'importunknownsource'        => 'סוג ייבוא בלתי ידוע',
 'importcantopen'             => 'פתיחת קובץ הייבוא נכשלה',
@@ -2780,6 +2860,8 @@ $1 כבר נחסם. האם ברצונכם לשנות את הגדרות החסי�
 'tooltip-upload'                  => 'התחלת ההעלאה',
 'tooltip-rollback'                => 'שחזור בלחיצה אחת של העריכה או העריכות של התורם האחרון לדף זה',
 'tooltip-undo'                    => 'פתיחת חלון העריכה במצב תצוגה מקדימה כדי לשחזר את העריכה, תוך אפשרות להוספת סיבה בתקציר העריכה',
+'tooltip-preferences-save'        => 'שמירת ההעדפות',
+'tooltip-summary'                 => 'להכנסת תקציר קצר',
 
 # Stylesheets
 'common.css'      => '/* הסגנונות הנכתבים כאן ישפיעו על כל העיצובים */',
@@ -2911,14 +2993,17 @@ $1',
 'imagemaxsize'         => 'גודל תמונה מרבי:<br />(לדפי תיאור קובץ)',
 'thumbsize'            => 'הקטנה לגודל של:',
 'widthheightpage'      => '$1×$2, {{PLURAL:$3|דף אחד|$3 דפים}}',
-'file-info'            => '(גודל הקובץ: $1, סוג MIME: $2)',
-'file-info-size'       => '($1 × $2 פיקסלים, גודל הקובץ: $3, סוג MIME: $4)',
+'file-info'            => 'גודל הקובץ: $1, סוג MIME: $2',
+'file-info-size'       => '$1 × $2 פיקסלים, גודל הקובץ: $3, סוג MIME: $4',
 'file-nohires'         => '<small>אין גרסת רזולוציה גבוהה יותר.</small>',
-'svg-long-desc'        => '(קובץ SVG, הגודל המקורי: $1 × $2 פיקסלים, גודל הקובץ: $3)',
+'svg-long-desc'        => 'קובץ SVG, הגודל המקורי: $1 × $2 פיקסלים, גודל הקובץ: $3',
 'show-big-image'       => 'תמונה ברזולוציה גבוהה יותר',
 'show-big-image-thumb' => '<small>גודל התצוגה הזו: $1 × $2 פיקסלים</small>',
 'file-info-gif-looped' => 'בלולאה',
 'file-info-gif-frames' => '{{PLURAL:$1|תמונה אחת|$1 תמונות}}',
+'file-info-png-looped' => 'בלולאה',
+'file-info-png-repeat' => 'הוצג {{PLURAL:$1|פעם אחת|$1 פעמים|פעמיים}}',
+'file-info-png-frames' => '{{PLURAL:$1|תמונה אחת|$1 תמונות}}',
 
 # Special:NewFiles
 'newimages'             => 'גלריית קבצים חדשים',
@@ -3073,6 +3158,7 @@ $1',
 'exif-gpsareainformation'          => 'שם אזור ה־GPS',
 'exif-gpsdatestamp'                => 'תאריך ה־GPS',
 'exif-gpsdifferential'             => 'תיקון דיפרנציאלי של ה־GPS',
+'exif-objectname'                  => 'כותרת קצרה',
 
 # EXIF attributes
 'exif-compression-1' => 'לא דחוס',
@@ -3232,25 +3318,25 @@ $1',
 'limitall'         => 'הכול',
 
 # E-mail address confirmation
-'confirmemail'             => 'אימות כתובת דוא"ל',
-'confirmemail_noemail'     => 'אין לכם כתובת דוא"ל תקפה המוגדרת ב[[Special:Preferences|העדפות המשתמש]] שלכם.',
-'confirmemail_text'        => 'אתר זה דורש שתאמתו את כתובת הדוא"ל שלכם לפני שתשתמשו בשירותי הדוא"ל. לחצו על הכפתור למטה כדי לשלוח דוא"ל עם קוד אימות לכתובת הדוא"ל שהזנתם. טענו את הקישור בדפדפן שלכם כדי לאשר שכתובת הדוא"ל תקפה.',
-'confirmemail_pending'     => 'קוד אימות דוא"ל כבר נשלח אליכם; אם יצרתם את החשבון לאחרונה, ייתכן שתרצו לחכות מספר דקות עד שיגיע לפני שתנסו לבקש קוד חדש.',
-'confirmemail_send'        => 'לשלוח קוד אימות',
-'confirmemail_sent'        => 'הדוא"ל עם קוד האימות נשלח.',
-'confirmemail_oncreate'    => 'קוד אימות דוא"ל נשלח לכתובת הדוא"ל שלכם. הקוד הזה אינו נדרש לכניסה, אך תצטרכו לספקו כדי להשתמש בכל תכונה מבוססת דוא"ל באתר זה.',
-'confirmemail_sendfailed'  => '{{SITENAME}} לא הצליח לשלוח לכם הודעת דוא"ל עם קוד האימות.
+'confirmemail'              => 'אימות כתובת דוא"ל',
+'confirmemail_noemail'      => 'אין לכם כתובת דוא"ל תקפה המוגדרת ב[[Special:Preferences|העדפות המשתמש]] שלכם.',
+'confirmemail_text'         => 'אתר זה דורש שתאמתו את כתובת הדוא"ל שלכם לפני שתשתמשו בשירותי הדוא"ל. לחצו על הכפתור למטה כדי לשלוח דוא"ל עם קוד אימות לכתובת הדוא"ל שהזנתם. טענו את הקישור בדפדפן שלכם כדי לאשר שכתובת הדוא"ל תקפה.',
+'confirmemail_pending'      => 'קוד אימות דוא"ל כבר נשלח אליכם; אם יצרתם את החשבון לאחרונה, ייתכן שתרצו לחכות מספר דקות עד שיגיע לפני שתנסו לבקש קוד חדש.',
+'confirmemail_send'         => 'לשלוח קוד אימות',
+'confirmemail_sent'         => 'הדוא"ל עם קוד האימות נשלח.',
+'confirmemail_oncreate'     => 'קוד אימות דוא"ל נשלח לכתובת הדוא"ל שלכם. הקוד הזה אינו נדרש לכניסה, אך תצטרכו לספקו כדי להשתמש בכל תכונה מבוססת דוא"ל באתר זה.',
+'confirmemail_sendfailed'   => '{{SITENAME}} לא הצליח לשלוח לכם הודעת דוא"ל עם קוד האימות.
 אנא בדקו שאין תווים שגויים בכתובת הדוא"ל.
 
 תוכנת שליחת הדוא"ל החזירה את ההודעה הבאה: $1',
-'confirmemail_invalid'     => 'קוד האימות שגוי. ייתכן שפג תוקפו.',
-'confirmemail_needlogin'   => 'עליכם לבצע $1 כדי לאמת את כתובת הדוא"ל שלכם.',
-'confirmemail_success'     => 'כתובת הדוא"ל שלכם אושרה.
+'confirmemail_invalid'      => 'קוד האימות שגוי. ייתכן שפג תוקפו.',
+'confirmemail_needlogin'    => 'עליכם לבצע $1 כדי לאמת את כתובת הדוא"ל שלכם.',
+'confirmemail_success'      => 'כתובת הדוא"ל שלכם אושרה.
 כעת באפשרותכם [[Special:UserLogin|להיכנס לחשבון שלכם]] וליהנות מהאתר.',
-'confirmemail_loggedin'    => 'כתובת הדוא"ל שלכם אושרה כעת.',
-'confirmemail_error'       => 'שגיאה בשמירת קוד האימות.',
-'confirmemail_subject'     => 'קוד אימות דוא"ל מ{{grammar:תחילית|{{SITENAME}}}}',
-'confirmemail_body'        => 'מישהו, כנראה אתם (מכתובת ה־IP הזו: $1),
+'confirmemail_loggedin'     => 'כתובת הדוא"ל שלכם אושרה כעת.',
+'confirmemail_error'        => 'שגיאה בשמירת קוד האימות.',
+'confirmemail_subject'      => 'קוד אימות דוא"ל מ{{grammar:תחילית|{{SITENAME}}}}',
+'confirmemail_body'         => 'מישהו, כנראה אתם (מכתובת ה־IP הזו: $1),
 רשם את החשבון "$2" עם כתובת הדוא"ל הזו ב{{grammar:תחילית|{{SITENAME}}}}.
 
 כדי לאמת שחשבון זה באמת שייך לכם ולהפעיל את שירותי הדוא"ל באתר, אנא פתחו את הכתובת הבאה בדפדפן שלכם:
@@ -3262,8 +3348,32 @@ $3
 $5
 
 קוד האימות יפקע ב־$4.',
-'confirmemail_invalidated' => 'אימות כתובת הדוא"ל בוטל',
-'invalidateemail'          => 'ביטול האימות של כתובת הדוא"ל',
+'confirmemail_body_changed' => 'מישהו, כנראה אתם (מכתובת ה־IP הזו: $1),
+שינה את כתובת הדוא"ל של החשבון "$2" לכתובת הזו ב{{grammar:תחילית|{{SITENAME}}}}.
+
+כדי לאמת שחשבון זה באמת שייך לכם ולהפעיל מחדש את שירותי הדוא"ל באתר, אנא פתחו את הכתובת הבאה בדפדפן שלכם:
+
+$3
+
+אם החשבון *אינו* שייך לכם, השתמשו בקישור הבא כדי לבטל את אימות כתובת הדוא"ל:
+
+$5
+
+קוד האימות יפקע ב־$4.',
+'confirmemail_body_set'     => 'מישהו, כנראה אתם (מכתובת ה־IP הזו: $1),
+הגדיר את כתובת הדוא"ל של החשבון "$2" לכתובת הזו ב{{grammar:תחילית|{{SITENAME}}}}.
+
+כדי לאמת שחשבון זה באמת שייך לכם ולהפעיל מחדש את שירותי הדוא"ל באתר, אנא פתחו את הכתובת הבאה בדפדפן שלכם:
+
+$3
+
+אם החשבון *אינו* שייך לכם, השתמשו בקישור הבא כדי לבטל את אימות כתובת הדוא"ל:
+
+$5
+
+קוד האימות יפקע ב־$4.',
+'confirmemail_invalidated'  => 'אימות כתובת הדוא"ל בוטל',
+'invalidateemail'           => 'ביטול האימות של כתובת הדוא"ל',
 
 # Scary transclusion
 'scarytranscludedisabled' => '[הכללת דפים בין אתרים מבוטלת]',
@@ -3303,6 +3413,7 @@ $1',
 'table_pager_first'        => 'הדף הראשון',
 'table_pager_last'         => 'הדף האחרון',
 'table_pager_limit'        => 'הצגת $1 פריטים בדף',
+'table_pager_limit_label'  => 'מספר פריטים בדף:',
 'table_pager_limit_submit' => 'הצגה',
 'table_pager_empty'        => 'ללא תוצאות',
 
@@ -3423,6 +3534,7 @@ $1',
 'version-specialpages'             => 'דפים מיוחדים',
 'version-parserhooks'              => 'הרחבות מפענח',
 'version-variables'                => 'משתנים',
+'version-skins'                    => 'עיצובים',
 'version-other'                    => 'אחר',
 'version-mediahandlers'            => 'מציגי מדיה',
 'version-hooks'                    => 'מבני Hook',
@@ -3434,6 +3546,13 @@ $1',
 'version-hook-subscribedby'        => 'הפונקציה הרושמת',
 'version-version'                  => '(גרסה $1)',
 'version-license'                  => 'רישיון',
+'version-poweredby-credits'        => "אתר הוויקי הזה מופעל על ידי '''[http://www.mediawiki.org/ מדיה־ויקי]''', © 2001-$1 $2.",
+'version-poweredby-others'         => 'אחרים',
+'version-license-info'             => "מדיה־ויקי היא תוכנה חופשית; באפשרותכם להפיץ אותה מחדש ו/או לשנות אותה לפי תנאי הרישיון הציבורי הכללי של גנו המפורסם על ידי המוסד לתוכנה חופשית: גרסה 2 של רישיון זה, או (לפי בחירתכם) כל גרסה מאוחרת יותר.
+
+מדיה־ויקי מופצת בתקווה שהיא תהיה שימושית, אך '''ללא כל הבטחה לאחריות'''; אפילו לא אחריות משתמעת של '''יכולת להיסחר''' או '''התאמה לרישיון מסוים'''. ראו את הרישיון הציבורי הכללי של גנו לפרטים נוספים.
+
+הייתם צריכים לקבל [{{SERVER}}{{SCRIPTPATH}}/COPYING העתק של הרישיון הציבורי הכללי של גנו] יחד עם תוכנה זו; אם לא, כתבו למוסד לתוכנה חופשית: Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA או [http://www.gnu.org/licenses/old-licenses/gpl-2.0.html קראו אותו ברשת].",
 'version-software'                 => 'תוכנות מותקנות',
 'version-software-product'         => 'תוכנה',
 'version-software-version'         => 'גרסה',
@@ -3504,6 +3623,15 @@ $1',
 'tags-edit'               => 'עריכה',
 'tags-hitcount'           => '{{PLURAL:$1|שינוי אחד|$1 שינויים}}',
 
+# Special:ComparePages
+'comparepages'     => 'השוואת דפים',
+'compare-selector' => 'השוואת גרסאות של דפים',
+'compare-page1'    => 'דף 1',
+'compare-page2'    => 'דף 2',
+'compare-rev1'     => 'גרסה 1',
+'compare-rev2'     => 'גרסה 2',
+'compare-submit'   => 'השוואה',
+
 # Database error messages
 'dberr-header'      => 'בעיה בוויקי',
 'dberr-problems'    => 'מצטערים! קיימת בעיה טכנית באתר זה.',
@@ -3520,8 +3648,13 @@ $1',
 'htmlform-float-invalid'       => 'הערך שציינתם אינו מספר.',
 'htmlform-int-toolow'          => 'הערך שציינתם הוא מתחת למינימום, $1',
 'htmlform-int-toohigh'         => 'הערך שציינתם הוא מעל למקסימום, $1',
+'htmlform-required'            => 'ערך זה דרוש',
 'htmlform-submit'              => 'שליחה',
 'htmlform-reset'               => 'ביטול השינויים',
 'htmlform-selectorother-other' => 'אחר',
+
+# SQLite database support
+'sqlite-has-fts' => '$1 עם תמיכה בחיפוש בטקסט מלא',
+'sqlite-no-fts'  => '$1 ללא תמיכה בחיפוש בטקסט מלא',
 
 );

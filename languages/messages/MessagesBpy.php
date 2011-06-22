@@ -11,7 +11,7 @@
  * @author Uttam Singha, Dec 2006
  */
 
-$fallback='bn';
+$fallback = 'bn';
 
 $digitTransformTable = array(
 	'0' => '০',
@@ -61,8 +61,7 @@ $messages = array(
 'tog-editsection'             => '[পতিক] লিঙ্ক এহান্ন পরিচ্ছদ পতানি অক',
 'tog-editsectiononrightclick' => 'পরিচ্ছদ পতানির য়্যাথাঙহান বাতেদের গোথামগ <br /> পরিচ্ছদর চিঙনাঙর গজে যাতিলে দে (জাভাস্ক্রিপ্ট)',
 'tog-showtoc'                 => 'বিষয়র মাঠেলহানি দেহাদে (যে পাতারতা ৩হানর গজে চিঙনাঙ আসে)',
-'tog-rememberpassword'        => 'কম্পিউটার এহাত মর লগইন নিঙশিঙে থ',
-'tog-editwidth'               => 'আস্তা পর্দাহান বুজানিরকা পতানির বাক্সগ সালকর',
+'tog-rememberpassword'        => 'আহার গজে সেশনর কা খন্তাচাবি মনে থ(সর্বোচ্চ $1 {{PLURAL:$1|দিনর|দিনর}} কা)',
 'tog-watchcreations'          => 'যে পতাহানি মি ইকরিসু অতা মর তালাবির তালিকাত থ',
 'tog-watchdefault'            => 'যে পতাহানি মি পতাসু অতা মর তালাবির তালিকাত থ',
 'tog-watchmoves'              => 'যে পতাহানি মি থেইকরিসু অতা মর তালাবির তালিকাত থ',
@@ -208,31 +207,21 @@ $messages = array(
 'faqpage'        => 'Project:আঙলাক',
 
 # Vector skin
-'vector-action-addsection'   => 'বিষয় তিলকর',
-'vector-action-delete'       => 'পুসে বেলা',
-'vector-action-move'         => 'থেইকর',
-'vector-action-protect'      => 'লুকর',
-'vector-action-undelete'     => 'নাপুসি',
-'vector-action-unprotect'    => 'নালুকরি',
-'vector-namespace-category'  => 'বিষয়র থাক',
-'vector-namespace-help'      => 'পাঙলাক পাতা',
-'vector-namespace-image'     => 'ফাইল',
-'vector-namespace-main'      => 'পাতা',
-'vector-namespace-media'     => 'মিডিয়া পাতা',
-'vector-namespace-mediawiki' => 'পৌ',
-'vector-namespace-project'   => 'প্রকল্প পাতা',
-'vector-namespace-special'   => 'বিশেষ পাতা',
-'vector-namespace-talk'      => 'য়্যারি',
-'vector-namespace-template'  => 'মডেল',
-'vector-namespace-user'      => 'আতাকুরার পাতা',
-'vector-view-create'         => 'হঙকরিক',
-'vector-view-edit'           => 'পতানি',
-'vector-view-history'        => 'ইতিহাস চেইক',
-'vector-view-view'           => 'পাকরিক',
-'vector-view-viewsource'     => 'সোর্স চেইক',
-'actions'                    => 'কার্যক্রম',
-'namespaces'                 => 'নাঙরলাম',
-'variants'                   => 'ভেরিয়েন্টহানি',
+'vector-action-addsection'       => 'বিষয় তিলকর',
+'vector-action-delete'           => 'পুসে বেলা',
+'vector-action-move'             => 'থেইকর',
+'vector-action-protect'          => 'লুকর',
+'vector-action-undelete'         => 'নাপুসি',
+'vector-action-unprotect'        => 'নালুকরি',
+'vector-simplesearch-preference' => 'বিসারানির কা পরামর্শ থা করেই (হুদ্দা ভেক্টর স্কিনর কা)',
+'vector-view-create'             => 'হঙকরিক',
+'vector-view-edit'               => 'পতানি',
+'vector-view-history'            => 'ইতিহাস চেইক',
+'vector-view-view'               => 'পাকরিক',
+'vector-view-viewsource'         => 'সোর্স চেইক',
+'actions'                        => 'কার্যক্রম',
+'namespaces'                     => 'নাঙরলাম',
+'variants'                       => 'ভেরিয়েন্টহানি',
 
 'errorpagetitle'    => 'লাল',
 'returnto'          => '$1-ত আলথকে যাগা।',
@@ -453,7 +442,7 @@ $2',
 'yourname'                   => 'আতাকুরার নাংহান (Username)',
 'yourpassword'               => 'খন্তাচাবিগ (password)',
 'yourpasswordagain'          => 'খন্তাচাবিগ (password) আরাকমু ইকর',
-'remembermypassword'         => 'এরে কম্পিউটার এহাত্ত সাইট এহাত মর হমানিহান মনে থ',
+'remembermypassword'         => 'আহার গজে সেশনর কা খন্তাচাবি মনে থ(সর্বোচ্চ $1 {{PLURAL:$1|দিনর|দিনর}} কা)',
 'yourdomainname'             => 'তর ডোমেইনগ',
 'externaldberror'            => 'ডাটেবেজর মা বেসেপ আহান ইসে নাইলে তরতা বারেদের একাউন্ট বদালানির য়্যাথাং নেই।',
 'login'                      => 'হমানি',
@@ -470,6 +459,7 @@ $2',
 'gotaccount'                 => "মান্নাপা একাউন্ট আহান আগেত্তর আসে? '''$1'''।",
 'gotaccountlink'             => 'লগইন',
 'createaccountmail'          => 'ই-মেইলন',
+'createaccountreason'        => 'কারণ:',
 'badretype'                  => 'খন্তাচাবি (password) দ্বিয়গি না মিলের।',
 'userexists'                 => 'এরে আতাকুরার নাঙ এহান আরাক আগই আগে ব্যবহার করিসে। তি আরাক নাঙ আহান বাছ।',
 'loginerror'                 => 'লগইনে লালুইসে',
@@ -649,7 +639,7 @@ $2',
 'userjspreview'                    => "'''তি মনে থইস এহান তর জাভাস্ক্রিপ্টর পরীক্ষা/আগচাহান।'''
 '''এহান এপাগাউ ইতু নাইসে!'''",
 'userinvalidcssjstitle'            => "'''সিঙুইস:''' \"\$1\" নাঙর কোন সর নেই।
-মনে থইস .css বারো .js পাতার নাঙ এতা রূহিবৃত্তির মাতুঙে হুরকা আতর ইকার মেয়েকল অরতাহে, যেসাদে {{ns:user}}:Foo/monobook.css; কিন্তু এসাদে চিঙনাঙ নাইব: {{ns:user}}:Foo/Monobook.css",
+মনে থইস .css বারো .js পাতার নাঙ এতা রূহিবৃত্তির মাতুঙে হুরকা আতর ইকার মেয়েকল অরতাহে, যেসাদে {{ns:user}}:Foo/vector.css; কিন্তু এসাদে চিঙনাঙ নাইব: {{ns:user}}:Foo/Vector.css",
 'updated'                          => '(আপডেট)',
 'note'                             => "'''নোট:'''",
 'previewnote'                      => "'''এহান হুদ্দা আগচাহান;
@@ -681,8 +671,6 @@ $2',
 'copyrightwarning'                 => "দয়া করিয়া খিয়াল কর {{SITENAME}}-ত হারি অবদান $2-র মাতুঙে পাসিতা (আরাকউ হবাকরে $1-ত চা)। তর জমা দিয়াসত লেখা যেগউ বে-রিদয় ইয়া পতিতে পারে বারো যেসারে খুশি অসারে বিলিতে পারে। তি যদি এহানর বারে একমত নার, অতা ইলে তর লেখা এহাত জমা নাদি।<br />
 তি আরাকউ ৱাশাক করর যে, এরে লেখা এহান তি নিজে ইকিসতহান, নাইলে  হাব্বির কা উন্মুক্ত কোন উৎস আহাত্ত পাসতহান।
 '''স্বত্ব সংরক্ষিত অসে অসাদে কোন লেখা স্বত্বাধিকারীর য়্যাথাঙ না লুইয়া এহাত জমা না দিস!'''",
-'longpagewarning'                  => "'''সিঙুইস: এরে পাতা এহান $1 কিলোবাইট ডাঙর; ব্রাউজার আকেইগত ৩২ কিলোবাইটর গজে ডাঙর পাতানিত বেরা ইতে পারে।
-দয়া করিয়া পাতা এহানরে হুরকা হুরকা কত অংশত খেইকরানির হতনা কর।'''",
 'templatesused'                    => 'পাতাহাত বরাসি {{PLURAL:$1|মডেল|মডেলহানি}}:',
 'templatesusedpreview'             => 'আগচা এহানাত মিহিসে {{PLURAL:$1|মডেল|মডেলহানি}}:',
 'templatesusedsection'             => 'এহাত {{PLURAL:$1|মডেল|মডেলহানি}} তিলুইসে:',
@@ -921,6 +909,7 @@ $2',
 'prefs-files'               => 'ফাইল',
 'prefs-custom-css'          => 'স্বনির্ধারিত CSS',
 'prefs-custom-js'           => 'স্বনির্ধারিত JS',
+'prefs-common-css-js'       => 'হাব্বি স্কিনর কা শেয়ারড CSS/JavaScript:',
 'youremail'                 => 'ই-মেইল *:',
 'yourrealname'              => 'আৱৈপা নাংহান *:',
 'yourlanguage'              => 'ঠারহান:',
@@ -934,7 +923,7 @@ $2',
 'prefs-advancedrc'          => 'উচ্চতর অপশন',
 'prefs-advancedrendering'   => 'উচ্চতর অপশন',
 'prefs-advancedwatchlist'   => 'উচ্চতর অপশন',
-'prefs-display'             => 'দেহাদেনার অপশন',
+'prefs-displayrc'           => 'দেহাদেনার অপশন',
 'prefs-diffs'               => 'ফারাক',
 
 # User rights
@@ -1247,7 +1236,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Watchlist
 'watchlist'         => 'মর তালাবি',
 'mywatchlist'       => 'মর তালাবি',
-'watchlistfor'      => "('''$1'''-র কা)",
 'addedwatch'        => 'তালাবির তালিকাহাত থনা ইল',
 'addedwatchtext'    => "\"<nowiki>\$1</nowiki>\" পাতা এহান তর [[Special:Watchlist|আহির-আরুম তালিকা]]-ত তিলকরানি ইল। পিসেদে এরে পাতা এহান বারো পাতা এহানর লগে সাকেই আসে য়্যারী পাতাত অইতই হারি জাতর পতানি এহানাত তিলকরানি অইতই। অতাবাদেউ [[Special:RecentChanges|হাদি এহানর পতানিহানি]]-ত পাতা এহানরে '''গাঢ়করা''' মেয়েকে দেহা দেনা অইতই যাতে তি নুঙিকরে পাতা এহান চিনে পারবেতা।
 
@@ -1561,9 +1549,9 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'nextdiff'     => 'নুৱা পতা →',
 
 # Media information
-'file-info-size'       => '($1 × $2 পিক্সেল, ফাইলর সাইজহান: $3, এমআইএমই-র অংতা: $4)',
+'file-info-size'       => '$1 × $2 পিক্সেল, ফাইলর সাইজহান: $3, এমআইএমই-র অংতা: $4',
 'file-nohires'         => '<small>এহাত্ত গজর রিজরিউশন নেই।</small>',
-'svg-long-desc'        => '(SVG ফাইল, সাধারনত $1 × $2 পিক্সেল, ফাইলর সাইজহান: $3)',
+'svg-long-desc'        => 'SVG ফাইল, সাধারনত $1 × $2 পিক্সেল, ফাইলর সাইজহান: $3',
 'show-big-image'       => 'পুল্লাপ রিজলিউশন',
 'show-big-image-thumb' => '<small>আগচা হানর সাইজহান: $1 × $2 পিক্সেলস</small>',
 

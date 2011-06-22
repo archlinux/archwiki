@@ -1,34 +1,42 @@
 <?php
 /**
- * Special page allowing users with the appropriate permissions to
- * merge article histories, with some restrictions
+ * Implements Special:MergeHistory
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  * @ingroup SpecialPage
  */
 
 /**
- * Constructor
- */
-function wfSpecialMergehistory( $par ) {
-	global $wgRequest;
-
-	$form = new MergehistoryForm( $wgRequest, $par );
-	$form->execute();
-}
-
-/**
- * The HTML form for Special:MergeHistory, which allows users with the appropriate
- * permissions to view and restore deleted content.
+ * Special page allowing users with the appropriate permissions to
+ * merge article histories, with some restrictions
+ *
  * @ingroup SpecialPage
  */
-class MergehistoryForm {
+class SpecialMergeHistory extends SpecialPage {
 	var $mAction, $mTarget, $mDest, $mTimestamp, $mTargetID, $mDestID, $mComment;
 	var $mTargetObj, $mDestObj;
 
-	function MergehistoryForm( $request, $par = "" ) {
-		global $wgUser;
+	public function __construct() {
+		parent::__construct( 'MergeHistory', 'mergehistory' );
+	}
 
+	private function loadRequestParams( $request ) {
+		global $wgUser;
 		$this->mAction = $request->getVal( 'action' );
 		$this->mTarget = $request->getVal( 'target' );
 		$this->mDest = $request->getVal( 'dest' );
@@ -51,7 +59,6 @@ class MergehistoryForm {
 			$this->mTargetObj = null;
 			$this->mDestObj = null;
 		}
-
 		$this->preCacheMessages();
 	}
 
@@ -62,14 +69,27 @@ class MergehistoryForm {
 	function preCacheMessages() {
 		// Precache various messages
 		if( !isset( $this->message ) ) {
-			$this->message['last'] = wfMsgExt( 'last', array( 'escape') );
+			$this->message['last'] = wfMsgExt( 'last', array( 'escape' ) );
 		}
 	}
 
-	function execute() {
-		global $wgOut;
+	function execute( $par ) {
+		global $wgOut, $wgRequest, $wgUser;
 
-		$wgOut->setPagetitle( wfMsgHtml( "mergehistory" ) );
+		if ( wfReadOnly() ) {
+			$wgOut->readOnlyPage();
+			return;
+		}
+
+		if( !$this->userCanExecute( $wgUser ) ) {
+			$this->displayRestrictionError();
+			return;
+		}
+
+		$this->loadRequestParams( $wgRequest );
+
+		$this->setHeaders();
+		$this->outputHeader();
 
 		if( $this->mTargetID && $this->mDestID && $this->mAction=="submit" && $this->mMerge ) {
 			return $this->merge();
@@ -122,10 +142,9 @@ class MergehistoryForm {
 			'<fieldset>' .
 			Xml::element( 'legend', array(),
 				wfMsg( 'mergehistory-box' ) ) .
-			Xml::hidden( 'title',
-				SpecialPage::getTitleFor( 'Mergehistory' )->getPrefixedDbKey() ) .
-			Xml::hidden( 'submitted', '1' ) .
-			Xml::hidden( 'mergepoint', $this->mTimestamp ) .
+			Html::hidden( 'title', $this->getTitle()->getPrefixedDbKey() ) .
+			Html::hidden( 'submitted', '1' ) .
+			Html::hidden( 'mergepoint', $this->mTimestamp ) .
 			Xml::openElement( 'table' ) .
 			"<tr>
 				<td>".Xml::label( wfMsg( 'mergehistory-from' ), 'target' )."</td>
@@ -142,7 +161,7 @@ class MergehistoryForm {
 	}
 
 	private function showHistory() {
-		global $wgLang, $wgUser, $wgOut;
+		global $wgUser, $wgOut;
 
 		$this->sk = $wgUser->getSkin();
 
@@ -154,7 +173,7 @@ class MergehistoryForm {
 		$revisions = new MergeHistoryPager( $this, array(), $this->mTargetObj, $this->mDestObj );
 		$haveRevisions = $revisions && $revisions->getNumRows() > 0;
 
-		$titleObj = SpecialPage::getTitleFor( "Mergehistory" );
+		$titleObj = $this->getTitle();
 		$action = $titleObj->getLocalURL( array( 'action' => 'submit' ) );
 		# Start the form here
 		$top = Xml::openElement( 'form', array( 'method' => 'post', 'action' => $action, 'id' => 'merge' ) );
@@ -177,7 +196,7 @@ class MergehistoryForm {
 						"</td>
 					</tr>
 					<tr>
-						<td>&nbsp;</td>
+						<td>&#160;</td>
 						<td class='mw-submit'>" .
 							Xml::submitButton( wfMsg( 'mergehistory-submit' ), array( 'name' => 'merge', 'id' => 'mw-merge-submit' ) ) .
 						"</td>
@@ -206,11 +225,11 @@ class MergehistoryForm {
 
 		# When we submit, go by page ID to avoid some nasty but unlikely collisions.
 		# Such would happen if a page was renamed after the form loaded, but before submit
-		$misc = Xml::hidden( 'targetID', $this->mTargetObj->getArticleID() );
-		$misc .= Xml::hidden( 'destID', $this->mDestObj->getArticleID() );
-		$misc .= Xml::hidden( 'target', $this->mTarget );
-		$misc .= Xml::hidden( 'dest', $this->mDest );
-		$misc .= Xml::hidden( 'wpEditToken', $wgUser->editToken() );
+		$misc = Html::hidden( 'targetID', $this->mTargetObj->getArticleID() );
+		$misc .= Html::hidden( 'destID', $this->mDestObj->getArticleID() );
+		$misc .= Html::hidden( 'target', $this->mTarget );
+		$misc .= Html::hidden( 'dest', $this->mDest );
+		$misc .= Html::hidden( 'wpEditToken', $wgUser->editToken() );
 		$misc .= Xml::closeElement( 'form' );
 		$wgOut->addHTML( $misc );
 
@@ -419,7 +438,7 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 		$batch = new LinkBatch();
 		# Give some pointers to make (last) links
 		$this->mForm->prevId = array();
-		while( $row = $this->mResult->fetchObject() ) {
+		foreach ( $this->mResult as $row ) {
 			$batch->addObj( Title::makeTitleSafe( NS_USER, $row->rev_user_text ) );
 			$batch->addObj( Title::makeTitleSafe( NS_USER_TALK, $row->rev_user_text ) );
 
@@ -440,7 +459,6 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 	}
 
 	function formatRow( $row ) {
-		$block = new Block;
 		return $this->mForm->formatRevisionRow( $row );
 	}
 

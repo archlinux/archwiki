@@ -6,7 +6,7 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class Undelete extends Maintenance {
 	public function __construct() {
@@ -37,4 +37,4 @@ class Undelete extends Maintenance {
 }
 
 $maintClass = "Undelete";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );

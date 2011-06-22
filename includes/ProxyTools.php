@@ -1,6 +1,7 @@
 <?php
 /**
  * Functions for dealing with proxies
+ *
  * @file
  */
 
@@ -67,15 +68,15 @@ function wfGetAgent() {
  * @return string
  */
 function wfGetIP() {
-	global $wgIP, $wgUsePrivateIPs, $wgCommandLineMode;
+	global $wgUsePrivateIPs, $wgCommandLineMode;
+	static $ip = false;
 
 	# Return cached result
-	if ( !empty( $wgIP ) ) {
-		return $wgIP;
+	if ( !empty( $ip ) ) {
+		return $ip;
 	}
 
 	$ipchain = array();
-	$ip = false;
 
 	/* collect the originating ips */
 	# Client connecting to this webserver
@@ -111,12 +112,14 @@ function wfGetIP() {
 		}
 	}
 
+	# Allow extensions to improve our guess
+	wfRunHooks( 'GetIP', array( &$ip ) );
+
 	if( !$ip ) {
 		throw new MWException( "Unable to determine IP" );
 	}
 
 	wfDebug( "IP: $ip\n" );
-	$wgIP = $ip;
 	return $ip;
 }
 
@@ -183,9 +186,12 @@ function wfProxyCheck() {
 
 /**
  * Convert a network specification in CIDR notation to an integer network and a number of bits
+ *
+ * @deprecated Call IP::parseCIDR() directly, will be removed in 1.19
  * @return array(string, int)
  */
 function wfParseCIDR( $range ) {
+	wfDeprecated( __FUNCTION__ );
 	return IP::parseCIDR( $range );
 }
 

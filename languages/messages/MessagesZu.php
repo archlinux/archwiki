@@ -125,7 +125,7 @@ ikhawundi lakho liyadalwa. musa ukukhohlwa ukuguqula amakhethelo a-{{SITENAME}} 
 'yourname'                => 'Isiga',
 'yourpassword'            => 'Izwi elingenangozi',
 'yourpasswordagain'       => 'Bhala izwi elingenangozi lakho kabusha',
-'remembermypassword'      => 'Ngikhumbule',
+'remembermypassword'      => 'Ngikhumbule (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'login'                   => 'Ngena',
 'nav-login-createaccount' => 'Ngena / Dala ikhawundi',
 'userlogin'               => 'Ngena / Dala ikhawundi',
@@ -209,11 +209,11 @@ ikhawundi lakho liyadalwa. musa ukukhohlwa ukuguqula amakhethelo a-{{SITENAME}} 
 'recentchangeslinked-toolbox' => 'Izinguquko ezilandiweyo',
 
 # Upload
-'upload'           => 'Layisha ifayili',
-'uploadbtn'        => 'Layisha ifayili',
-'filesource'       => 'Umthombo:',
-'ignorewarnings'   => 'Duba imiyalo',
-'successfulupload' => 'Ukulayisha okuchumile',
+'upload'              => 'Layisha ifayili',
+'uploadbtn'           => 'Layisha ifayili',
+'filesource'          => 'Umthombo:',
+'ignorewarnings'      => 'Duba imiyalo',
+'upload-success-subj' => 'Ukulayisha okuchumile',
 
 'nolicense' => 'Ubekhetha lutho',
 

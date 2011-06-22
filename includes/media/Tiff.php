@@ -1,10 +1,14 @@
 <?php
 /**
+ * Handler for Tiff images.
+ *
  * @file
  * @ingroup Media
  */
 
 /**
+ * Handler for Tiff images.
+ *
  * @ingroup Media
  */
 class TiffHandler extends BitmapHandler {
@@ -26,7 +30,7 @@ class TiffHandler extends BitmapHandler {
 		return true;
 	}
 
-	function getThumbType( $ext, $mime ) {
+	function getThumbType( $ext, $mime, $params = null ) {
 		global $wgTiffThumbnailType;
 		return $wgTiffThumbnailType;
 	}

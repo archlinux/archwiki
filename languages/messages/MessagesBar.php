@@ -12,6 +12,8 @@
  * @author Merlissimo
  * @author Metalhead64
  * @author Mucalexx
+ * @author The Evil IP address
+ * @author Wikifan
  * @author bar.wikipedia.org administrators
  * @author ✓
  */
@@ -34,7 +36,7 @@ $messages = array(
 'tog-editsection'             => 'Links zum beorweiten vo dé oazlnen Obschnitt åzoang',
 'tog-editsectiononrightclick' => 'Oazlne Obschnitt mid am Rechtsdruckerrer beorweiten (JavaScript werd braucht)',
 'tog-showtoc'                 => 'Ozeign vum Inhaltsvazeichnis bei Saitn mid mer ois drei Übaschriftn',
-'tog-editwidth'               => "Eingåbeföid erweitan, damid's in gãnzn Büidschiam ausfüid",
+'tog-rememberpassword'        => 'Mid dem Browser drauerhoft ågmoydt bleim (maximaal $1 {{PLURAL:$1|Tog|Tog}})',
 'tog-watchcreations'          => 'Vo mir soywer eigstoyde Seiten autómaatisch bówochten',
 'tog-watchdefault'            => 'Vo mir soywer genderde Seiten autómaatisch bówochten',
 'tog-watchmoves'              => 'Vo mir soywer vaschówane Seiten autómaatisch bówochten',
@@ -159,30 +161,29 @@ $messages = array(
 'mytalk'        => 'Aigane Diskussion',
 'anontalk'      => 'Dischkrirsaiten vo derer IP-Adress',
 'navigation'    => 'Navigazion',
-'and'           => '&#32;und',
 
 # Cologne Blue skin
 'qbfind'         => 'Finden',
 'qbedit'         => 'werkln',
 'qbmyoptions'    => 'Maine Saiten',
 'qbspecialpages' => 'Speziaalsaiten',
-'faq'            => 'FAQ',
 
 # Vector skin
-'vector-action-addsection' => 'Obschnit dazuafyng',
-'vector-action-delete'     => 'leschn',
-'vector-action-move'       => 'Vaschiam',
-'vector-action-protect'    => 'Schytzen',
-'vector-action-undelete'   => 'Wiaderherstöin',
-'vector-action-unprotect'  => 'Fraigeem',
-'vector-view-create'       => 'Erstöin',
-'vector-view-edit'         => 'Werkln',
-'vector-view-history'      => 'Versionsgschicht',
-'vector-view-view'         => 'Leesn',
-'vector-view-viewsource'   => 'Quöitext åzong',
-'actions'                  => 'Akzionen',
-'namespaces'               => 'Nåmensraim',
-'variants'                 => 'Variantn',
+'vector-action-addsection'       => 'Obschnit dazuafyng',
+'vector-action-delete'           => 'leschn',
+'vector-action-move'             => 'Vaschiam',
+'vector-action-protect'          => 'Schytzen',
+'vector-action-undelete'         => 'Wiaderherstöin',
+'vector-action-unprotect'        => 'Fraigeem',
+'vector-simplesearch-preference' => 'Daweiterte Suachvurschläg aktivirn (netter Vector)',
+'vector-view-create'             => 'Erstöin',
+'vector-view-edit'               => 'Werkln',
+'vector-view-history'            => 'Versionsgschicht',
+'vector-view-view'               => 'Leesn',
+'vector-view-viewsource'         => 'Quöitext åzong',
+'actions'                        => 'Akzionen',
+'namespaces'                     => 'Nåmensraim',
+'variants'                       => 'Variantn',
 
 'errorpagetitle'    => 'Feeler',
 'returnto'          => 'Zruck zur Saiten $1.',
@@ -358,7 +359,7 @@ Vagiss bittschee ned, daine [[Special:Preferences|{{SITENAME}}-Aistellungen]] å
 'yourname'                   => 'Benytzernåm:',
 'yourpassword'               => 'Posswort:',
 'yourpasswordagain'          => 'Posswort no amoi',
-'remembermypassword'         => 'auf dem Computer dauerhoft åmöiden',
+'remembermypassword'         => 'Mid dem Browser dauerhoft ågmöidt blaim (maximaal $1 {{PLURAL:$1|Dog|Dog}})',
 'yourdomainname'             => 'Eanerne Domain:',
 'externaldberror'            => 'Entweder es ligt a Feeler bai da externen Authentifiziarung vur oder du derfst dai externs Benytzerkonto ned aktualisirn.',
 'login'                      => 'Åmöiden',
@@ -375,6 +376,7 @@ Vagiss bittschee ned, daine [[Special:Preferences|{{SITENAME}}-Aistellungen]] å
 'gotaccount'                 => "Du host scho a Benutzerkonto? '''$1'''.",
 'gotaccountlink'             => 'Åmöiden',
 'createaccountmail'          => 'per E-Mäil',
+'createaccountreason'        => 'Grund',
 'badretype'                  => 'De zwoa Posswerter stimman ned ywerai.',
 'userexists'                 => 'Da Benytzernåm is scho vageem. Bittschee nimm an åndern her.',
 'loginerror'                 => 'Feeler bai da Åmöidung',
@@ -456,7 +458,6 @@ Du kååst an Titl vo derer Saiten auf de åndern Saiten [[Special:Search/{{PAGE
 'blocked-notice-logextract'        => "{{GENDER:$1|Der Benutzer|De Benutzarin|Der Benutzer do}} is zurzeid gesperrd.
 Zua da Informazion foigt a aktueller Auszug aus 'm Benutzersperr-Logbiache:",
 'updated'                          => '(Gendert)',
-'note'                             => "'''Hinweis:'''",
 'previewnote'                      => "'''Des is netter a Vurschau, d' Saiten is nu ned gspaichert worn!'''",
 'previewconflict'                  => "De Vurschau gibt an Inhoit vom owern Textföidl wiader. So werd d' Saiten ausschaun, wånn du jetzad spaichertst.",
 'session_fail_preview'             => "'''Daine Beorwaitungen håm ned gspaichert wern kenna, wail Sitzungsdaaten valurn gånga san.'''
@@ -476,8 +477,6 @@ Bittschee fiag daine Enderungen ins owere Textföidl ai.
 
 Du gibst uns dodamid dai Zuasog, dass du dén Text '''söiwer vafosst''' host, das da Text a Oigmoaguat '''(public domain)''' is, óder das da '''Urhéwer''' sai '''Zuastimmung''' geem hod. Fois der Text beraits irngdwó ånderst vaéffmtlécht worn is, moch bittschee an Hiwais in da Diskussiónssaitn.
 <i>Bittschee beochtt, das olle {{SITENAME}}-Baitrég autómaatésch unter da „$2“ steengan (schau unter $1 fyr Details). Fois du néd mechst, das dai Orwait do vo ånderne vaéndert und vabroatt werd, dånn druck néd auf „Saiten spaichern“.</i>",
-'longpagewarning'                  => "'''Wornung:''' De Saiten is $1 kB grouss; ned a jeeder Browser kå Saiten beorwaiten, de greesser ois wia 32 kB san.
-Ywerleeg da bittschee, ob a Auftailung vo derer Saiten in koanare Obschnit meglich is.",
 'semiprotectedpagewarning'         => "'''Hoibsperrung:''' De Saiten is aso gsperrt worn, das netter registriarde Benytzer de endern kenna.",
 'titleprotectedwarning'            => "'''Ochtung: De Saitenerstöiung is aso gschytzt worn, das netter Benytzer mid [[Special:ListGroupRights|speziöie Rechte]] de Saiten erstöin kennan.'''
 Zur Informazion foigt da aktuöie Logbuachaitrog:",
@@ -609,17 +608,11 @@ Mid ånderne Benutzer kåst du aa ywer de Benutzerdischkrirsaiten an Kontakt auf
 
 'group-user-member'          => 'Benutza',
 'group-autoconfirmed-member' => 'Bestätigta Benutza',
-'group-bot-member'           => 'Bot',
-'group-sysop-member'         => 'Administrator',
-'group-bureaucrat-member'    => 'Bürokrat',
-'group-suppress-member'      => 'Oversighter',
 
 'grouppage-user'          => '{{ns:project}}:Benutza',
 'grouppage-autoconfirmed' => '{{ns:project}}:Bestätigte Benutza',
-'grouppage-bot'           => '{{ns:project}}:Bots',
 'grouppage-sysop'         => '{{ns:project}}:Administratoan',
 'grouppage-bureaucrat'    => '{{ns:project}}:Bürokratn',
-'grouppage-suppress'      => '{{ns:project}}:Oversighter',
 
 # Rights
 'right-read'  => 'Seitn lesn',
@@ -666,26 +659,26 @@ Mid ånderne Benutzer kåst du aa ywer de Benutzerdischkrirsaiten an Kontakt auf
 'recentchangeslinked-to'      => 'Zoagt Éndarungen auf Saiten, dé doher valinken',
 
 # Upload
-'upload'            => 'Auffeloon',
-'uploadnologin'     => 'Ned ågmöidt',
-'uploadnologintext' => "Sie miassn [[Special:UserLogin|ogmeidt sei]], wenn S' Dateien hoachladn wolln.",
-'uploadlog'         => 'Datei-Logbuach',
-'uploadlogpage'     => 'Datei-Logbuach',
-'uploadlogpagetext' => 'Des is des Logbuach vo de hoachgladna Dateien, schaug aa unta [[Special:NewFiles|neie Dateien]].',
-'uploadedfiles'     => 'Hoachgladene Dateien',
-'badfilename'       => "Da Dateinam is in „$1“ g'ändat won.",
-'large-file'        => 'De Dateigreß sollat nach Möglichkeit $1 net überschreitn. De Datei is $2 groaß.',
-'emptyfile'         => "De hochgladene Datei is laar. Da Grund konn a Tippfehler im Dateinam sei. Bitte kontrollieren'S, ob Sie de Datei wirklich hochladn woin.",
-'successfulupload'  => 'Erfolgreich hoachgladn',
-'uploadwarning'     => 'Obacht',
-'uploadedimage'     => 'håd „[[$1]]“ aufeglådn',
-'uploaddisabled'    => "'tschuldigung, as Hochladn is deaktiviert.",
-'uploadscripted'    => 'De Datei enthalt HTML- oda Scriptcode, der irrtümlichaweis von am Webbrowser ausgführt wern kinnat.',
-'watchthisupload'   => 'De Saiten beowochten',
-'filewasdeleted'    => 'A Datei mit dem Nama is scho oamoi hochgladn worn und zwischenzeitlich wieda glöscht worn. Bitte schaug erscht den Eintrag im $1 oo, bevor du de Datei wirklich speicherst.',
-'upload-wasdeleted' => "'''Obacht: Du ladst aa Datei hoach, de scho friara glöscht worn is.'''
+'upload'              => 'Auffeloon',
+'uploadnologin'       => 'Ned ågmöidt',
+'uploadnologintext'   => "Sie miassn [[Special:UserLogin|ogmeidt sei]], wenn S' Dateien hoachladn wolln.",
+'uploadlog'           => 'Datei-Logbuach',
+'uploadlogpage'       => 'Datei-Logbuach',
+'uploadlogpagetext'   => 'Des is des Logbuach vo de hoachgladna Dateien, schaug aa unta [[Special:NewFiles|neie Dateien]].',
+'uploadedfiles'       => 'Hoachgladene Dateien',
+'badfilename'         => "Da Dateinam is in „$1“ g'ändat won.",
+'large-file'          => 'De Dateigreß sollat nach Möglichkeit $1 net überschreitn. De Datei is $2 groaß.',
+'emptyfile'           => "De hochgladene Datei is laar. Da Grund konn a Tippfehler im Dateinam sei. Bitte kontrollieren'S, ob Sie de Datei wirklich hochladn woin.",
+'uploadwarning'       => 'Obacht',
+'uploadedimage'       => 'håd „[[$1]]“ aufeglådn',
+'uploaddisabled'      => "'tschuldigung, as Hochladn is deaktiviert.",
+'uploadscripted'      => 'De Datei enthalt HTML- oda Scriptcode, der irrtümlichaweis von am Webbrowser ausgführt wern kinnat.',
+'watchthisupload'     => 'De Saiten beowochten',
+'filewasdeleted'      => 'A Datei mit dem Nama is scho oamoi hochgladn worn und zwischenzeitlich wieda glöscht worn. Bitte schaug erscht den Eintrag im $1 oo, bevor du de Datei wirklich speicherst.',
+'upload-wasdeleted'   => "'''Obacht: Du ladst aa Datei hoach, de scho friara glöscht worn is.'''
 Bittschee prüf gnau, ob as erneite Hoachladn de Richtlinien entspricht.
 Zu deina Information folgt des Lösch-Logbuach mit da Begründung fia de vorherige Löschung:",
+'upload-success-subj' => 'Erfolgreich hoachgladn',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
 'upload-curl-error6' => 'URL is net erreichbar',
@@ -743,7 +736,6 @@ A [[Special:WhatLinksHere/$2|voiständige Listn]] gibt's aa.",
 'statistics'             => 'Statistik',
 'statistics-mostpopular' => 'Am meistn bsuachte Seitn',
 
-'disambiguationspage'  => 'Template:Begriffsklärung',
 'disambiguations-text' => 'De folgenden Seitn valinkn auf a Seitn zur Begriffsklärung.
 Sie solltn stattdessn auf de eigentlich gemoante Seitn valinkn.<br />A Seitn werd ois Begriffsklärungsseitn behandelt, wenn [[MediaWiki:Disambiguationspage]] auf sie valinkt.<br />
 Links aus Namensräume wern da net aufglistet.',
@@ -826,7 +818,6 @@ Links aus Namensräume wern da net aufglistet.',
 # Watchlist
 'watchlist'         => 'Beobachtungslistn',
 'mywatchlist'       => 'Beowochtungslisten',
-'watchlistfor'      => "(fia '''$1''')",
 'watchlistanontext' => 'Sie miaßn si $1, um Eanane Beobachtungslistn zum seng oda Einträge auf ihr zum bearbatn.',
 'watchnologin'      => 'Sie san net ogmeidt',
 'addedwatch'        => 'Zua Beobachtungslistn dazuado',
@@ -1001,7 +992,6 @@ Zur da Aufheewung vo da Sperrn schau unter da [[Special:IPBlockList|Listen vo ol
 'ipb-edit-dropdown'            => 'Sperrgrynd beorwaiten',
 'ipb-unblock-addr'             => '„$1“ fraigeem',
 'ipb-unblock'                  => 'IP-Adress/Benytzer fraigeem',
-'ipb-blocklist-addr'           => 'Aktuelle Sperrn fyr „$1“ åzoang',
 'ipb-blocklist'                => 'Olle aktuöin Sperrn åzaang',
 'ipb-blocklist-contribs'       => 'Benytzerbaiträg vo „$1“',
 'unblockip'                    => 'IP-Adress fraigeem',
@@ -1180,9 +1170,9 @@ Vorschau der Änderungen an dieser Seite. Bitte vor dem Speichern benutzen!",
 'nextdiff'     => 'zum nextn Untaschied in de Veasionen →',
 
 # Media information
-'file-info-size'       => '($1 × $2 Pixl, Dateigreßn: $3, MIME-Typ: $4)',
+'file-info-size'       => '$1 × $2 Pixl, Dateigreßn: $3, MIME-Typ: $4',
 'file-nohires'         => '<small>Es gibt ka hechane Auflösung.</small>',
-'svg-long-desc'        => '(SVG-Datei, Basisgreß: $1 × $2 Pixl, Dateigreß: $3)',
+'svg-long-desc'        => 'SVG-Datei, Basisgreß: $1 × $2 Pixl, Dateigreß: $3',
 'show-big-image'       => 'Version in hechana Auflösung',
 'show-big-image-thumb' => '<small>Greßn vu da Voaãnsicht: $1 × $2 Pixl</small>',
 

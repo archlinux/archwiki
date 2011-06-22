@@ -28,7 +28,8 @@ $wgCanonicalNamespaceNames = array(
 	NS_CATEGORY_TALK    => 'Category_talk',
 );
 
-if( isset( $wgExtraNamespaces ) && is_array( $wgExtraNamespaces ) ) {
+/// @todo UGLY UGLY
+if( is_array( $wgExtraNamespaces ) ) {
 	$wgCanonicalNamespaceNames = $wgCanonicalNamespaceNames + $wgExtraNamespaces;
 }
 
@@ -112,21 +113,40 @@ class MWNamespace {
 	 * Returns whether the specified namespace exists
 	 */
 	public static function exists( $index ) {
-		global $wgCanonicalNamespaceNames;
-		return isset( $wgCanonicalNamespaceNames[$index] );
+		$nslist = self::getCanonicalNamespaces();
+		return isset( $nslist[$index] );
 	}
 
+	/**
+	 * Returns array of all defined namespaces with their canonical
+	 * (English) names.
+	 *
+	 * @return \array
+	 * @since 1.17
+	 */
+	public static function getCanonicalNamespaces() {
+		static $namespaces = null;
+		if ( $namespaces === null ) {
+			global $wgExtraNamespaces, $wgCanonicalNamespaceNames;
+			$namespaces = array( NS_MAIN => '' ) + $wgCanonicalNamespaceNames;
+			if ( is_array( $wgExtraNamespaces ) ) {
+				$namespaces += $wgExtraNamespaces;
+			}
+			wfRunHooks( 'CanonicalNamespaces', array( &$namespaces ) );
+		}
+		return $namespaces;
+	}
 
 	/**
-	 * Returns the canonical (English Wikipedia) name for a given index
+	 * Returns the canonical (English) name for a given index
 	 *
 	 * @param $index Int: namespace index
 	 * @return string or false if no canonical definition.
 	 */
 	public static function getCanonicalName( $index ) {
-		global $wgCanonicalNamespaceNames;
-		if( isset( $wgCanonicalNamespaceNames[$index] ) ) {
-			return $wgCanonicalNamespaceNames[$index];
+		$nslist = self::getCanonicalNamespaces();
+		if( isset( $nslist[$index] ) ) {
+			return $nslist[$index];
 		} else {
 			return false;
 		}
@@ -140,11 +160,10 @@ class MWNamespace {
 	 * @return int
 	 */
 	public static function getCanonicalIndex( $name ) {
-		global $wgCanonicalNamespaceNames;
 		static $xNamespaces = false;
 		if ( $xNamespaces === false ) {
 			$xNamespaces = array();
-			foreach ( $wgCanonicalNamespaceNames as $i => $text ) {
+			foreach ( self::getCanonicalNamespaces() as $i => $text ) {
 				$xNamespaces[strtolower($text)] = $i;
 			}
 		}
@@ -153,6 +172,25 @@ class MWNamespace {
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * Returns an array of the namespaces (by integer id) that exist on the
+	 * wiki. Used primarily by the api in help documentation.
+	 * @return array
+	 */
+	public static function getValidNamespaces() {
+		static $mValidNamespaces = null;
+
+		if ( is_null( $mValidNamespaces ) ) {
+			foreach ( array_keys( self::getCanonicalNamespaces() ) as $ns ) {
+				if ( $ns >= 0 ) {
+					$mValidNamespaces[] = $ns;
+				}
+			}
+		}
+
+		return $mValidNamespaces;
 	}
 
 	/**

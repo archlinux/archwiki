@@ -26,8 +26,7 @@ $messages = array(
 'tog-editsection'             => 'A lamunta gyara sashe ta hanyar zaruruwan [gyarawa]',
 'tog-editsectiononrightclick' => 'A lamunta gyara shashe da kilikin dama a kan kanun shashe (ana buƙatar JavaScript)',
 'tog-showtoc'                 => 'A nuna jadawalin kanu (cikin shafuna masu fiye da kanu 3)',
-'tog-rememberpassword'        => 'A adana bayanan loginkina a wannan kwamfyuta',
-'tog-editwidth'               => 'A faɗaɗa sararin gyarawa ya cika duka bangon',
+'tog-rememberpassword'        => 'A adana bayanan loginkina a wannan kwamfyuta (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => 'A daɗa shafunan da na ƙirƙira a cikin jerina na kan ido',
 'tog-watchdefault'            => 'A daɗa shafunan da na gyara a cikin jerina na kan ido',
 'tog-watchmoves'              => 'A daɗa shafunan da na gusar a cikin jerina na kan ido',
@@ -142,12 +141,10 @@ $messages = array(
 'qbspecialpages' => 'Shafuna na musamman',
 
 # Vector skin
-'vector-action-delete'      => 'Soke',
-'vector-action-move'        => 'Gusarwa',
-'vector-action-protect'     => 'A kare',
-'vector-namespace-category' => 'Rukuni',
-'vector-namespace-main'     => 'Shafi',
-'vector-view-create'        => 'Ƙirƙira',
+'vector-action-delete'  => 'Soke',
+'vector-action-move'    => 'Gusarwa',
+'vector-action-protect' => 'A kare',
+'vector-view-create'    => 'Ƙirƙira',
 
 'errorpagetitle'   => 'Tangarɗa',
 'returnto'         => 'Koma $1',
@@ -239,13 +236,14 @@ Tana yiyuwa yana da harafi ko haruffa da ba su karɓuwa cikin kanu.",
 # Login and logout pages
 'yourname'                => "Sunan ma'aikaci:",
 'yourpassword'            => 'Kalmar sirri:',
-'remembermypassword'      => 'Adana bayannan logina a wannan kwafyuta',
+'remembermypassword'      => 'Adana bayannan logina a wannan kwafyuta (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'login'                   => 'Logi',
 'nav-login-createaccount' => 'logi / sabon akwanti',
 'userlogin'               => 'Logi / sabon akwanti',
 'logout'                  => 'Ban kwana',
 'userlogout'              => 'Ban kwana',
 'nologinlink'             => 'Buɗa sabon akwanti',
+'createaccountreason'     => 'Dalili:',
 'mailmypassword'          => 'Aiken kalmar sirri ta Imel',
 
 # Password reset dialog
@@ -504,7 +502,6 @@ Ku gwada tare da amfani da \"all:\" don bincikar duka shafunan (har da shafunan 
 # Watchlist
 'watchlist'         => 'Jerina na bin sawu',
 'mywatchlist'       => 'Jerina na bin sawu',
-'watchlistfor'      => "(na '''$1''')",
 'addedwatch'        => 'An daɗa a cikin jerin bin sawu',
 'addedwatchtext'    => "An daɗa shafin \"[[:\$1]]\" a cikin [[Special:Watchlist|jerinku na bin sawu]].
 A nan ne kuma za a yi rajistan dukkan sauye-sauye ga shafin ko shafinsa na muhawara, kuma sunan shafin zai kasance '''mai gwaɓi''' a cikin [[Special:RecentChanges|jerin sauye-sauyen baya-bayan nan]] don sauƙin gani.",
@@ -728,9 +725,9 @@ Tana ba da damar bayyana dalilin soke gyaran.',
 'nextdiff'     => 'Gyaran gaba →',
 
 # Media information
-'file-info-size'       => '(pikisal $1 × $2, girman fayil: $3, irin MIME: $4)',
+'file-info-size'       => 'pikisal $1 × $2, girman fayil: $3, irin MIME: $4',
 'file-nohires'         => '<small>Babu wata babbar saƙa.</small>',
-'svg-long-desc'        => '(Fayil kin SVG, saƙar fikisal $1 x $2, girman fayil: $3)',
+'svg-long-desc'        => 'Fayil kin SVG, saƙar fikisal $1 x $2, girman fayil: $3',
 'show-big-image'       => 'Cikakkar saƙa',
 'show-big-image-thumb' => '<small>Girman wanna rigya-gani: pikisal $1 × $2</small>',
 

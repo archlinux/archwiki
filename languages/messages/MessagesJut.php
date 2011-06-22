@@ -28,8 +28,7 @@ $messages = array(
 'tog-editsection'             => 'Redigær åfsnet ve hjælp åf [redigær]-henvesnenger',
 'tog-editsectiononrightclick' => 'Redigær åfsnet ve at klikke på deres titler (JavaScript)',
 'tog-showtoc'                 => 'Ves endholtsførtegnelse (i artikler ve mære end tre åfsnet)',
-'tog-rememberpassword'        => 'Husk adgengskode til næste besøĝ frå denne kompjuter',
-'tog-editwidth'               => 'Redigærengsboksen har fuld bredde',
+'tog-rememberpassword'        => 'Husk adgengskode til næste besøĝ frå denne kompjuter (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => 'Tilføj sider a åpretter til miin åvervågnengsliste',
 'tog-watchdefault'            => 'Tilføj sider a redigærer til miin åvervågnengsliste',
 'tog-watchmoves'              => 'Tilføj sider a flytter til miin åvervågnengsliste',
@@ -314,7 +313,7 @@ Førespørgsel: $2',
 # Login and logout pages
 'yourname'                => 'Dit brugernav',
 'yourpassword'            => 'Din adgangskode',
-'remembermypassword'      => 'Husk min adgangskode til næste gang.',
+'remembermypassword'      => 'Husk min adgangskode til næste gang (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'login'                   => 'Loĝ på',
 'nav-login-createaccount' => 'Åpret æ konto æller loĝ på',
 'loginprompt'             => 'Du skal have cookies slået til før at kunne loĝge på {{SITENAME}}.',
@@ -409,8 +408,6 @@ Du ken ekke bruge æ funksje 'e-mail til denne bruger' vemendre der er ångevet 
 'copyrightwarning'           => "'''Husk: åpskrev engen websider, søm ekke tilhører dig selv, brug engen åphavsretsligt beskyttede værker uden tilladelse frå'n ejer!'''<br />
 Du lover os hermed, at du selv '''har skrevet skrevselenger''', at skrevselenger tilhører ålmenheden, er ('''åpværer hus'''), æller at æ '''åphavsrets-endehaver''' har gevet sen '''tilladelse'''. Ves denne skrevselenger ålerede er åfentliggkort andre steder, skrev det venligst på æ diskusjesside.
 <i>Bemærk venligst, at ål {{SITENAME}}-ertikler åtomatisk står under „$2“ (se $1 før lileskrevselenger). Ves du ekke vel, at dit arbejde her ændres og udbredes åf andre, så tryk ekke på „Gem“.</i>",
-'longpagewarning'            => "'''ADVARSEL: Denne side er $1 kilobyte stor; nogle browsere ken have pårblæmer ve at redigære sider der nærmer sig æller er større end 32 kb.
-Åvervej æ side'm ken åpdeles i mendre dæle.'''",
 'templatesused'              => 'Skablåner der er brugt på denne side:',
 'templatesusedpreview'       => 'Følgende skablåner bruges åf denne ertikelførhåndsvesnenge:',
 'template-protected'         => '(skrevebeskyttet)',
@@ -631,7 +628,6 @@ hersenenge, (førge) = førskel til den førge hersenenge, l = lile til mendre �
 # Watchlist
 'watchlist'         => 'Åvervågnengsliste',
 'mywatchlist'       => 'Åvervågnengsliste',
-'watchlistfor'      => "(før '''$1''')",
 'addedwatch'        => 'Tilføjet til din åvervågnengsliste',
 'addedwatchtext'    => "Æ side \"[[:\$1]]\" er blevet tilføjet til din [[Special:Watchlist|åvervågningsliste]]. Fremtidige ændrenger til denne side og den tilhørende diskusjeside hvil bleve listet der, og æ side hvil fremstå '''fremhævet''' i'n [[Special:RecentChanges|liste ve de seneste ændrenger]] før at gøre det lettere at finde den. Hves du senere hvilst fjerne'n side frå din åvervågningsliste, så klik \"Fjern åvervågnenge\".",
 'removedwatch'      => 'Fjernet frå åvervågnengsliste',
@@ -821,9 +817,9 @@ navn du harst valgt er ekke gyldegt. Vælg et andet navn.',
 'nextdiff'     => 'Gå til næste førskel →',
 
 # Media information
-'file-info-size'       => '($1 × $2 pixel, gøretstørrelse: $3, MIME-senenge: $4)',
+'file-info-size'       => '$1 × $2 pixel, gøretstørrelse: $3, MIME-senenge: $4',
 'file-nohires'         => '<small>Engen højere åpløsnenge fundet.</small>',
-'svg-long-desc'        => '(SVG gøret, wønetstørrelse $1 × $2 pixel, gøretstørrelse: $3)',
+'svg-long-desc'        => 'SVG gøret, wønetstørrelse $1 × $2 pixel, gøretstørrelse: $3',
 'show-big-image'       => 'Hersenenge i større åpløsnenge',
 'show-big-image-thumb' => '<small>Størrelse åf førhåndsvesnenge: $1 × $2 pixel</small>',
 

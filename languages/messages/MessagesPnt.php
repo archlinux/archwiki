@@ -168,30 +168,19 @@ $messages = array(
 'faqpage'        => 'Project:Πολλά ερωτήσεις (FAQ)',
 
 # Vector skin
-'vector-action-delete'       => 'Σβήσον',
-'vector-action-move'         => 'Ετεροχλάεμαν',
-'vector-action-protect'      => 'Ασπάλιγμαν',
-'vector-action-undelete'     => 'Κλώσιμον',
-'vector-action-unprotect'    => 'Άνοιγμαν',
-'vector-namespace-category'  => 'Κατηγορίαν',
-'vector-namespace-help'      => 'Σελίδα βοήθειας',
-'vector-namespace-image'     => 'Αρχείον',
-'vector-namespace-main'      => 'Σελίδαν',
-'vector-namespace-media'     => 'Σελίδα μεσίων',
-'vector-namespace-mediawiki' => 'Μένεμαν',
-'vector-namespace-project'   => 'Σχετικά με',
-'vector-namespace-special'   => 'Ειδικόν σελίδαν',
-'vector-namespace-talk'      => 'Καλάτσεμαν',
-'vector-namespace-template'  => 'Πρότυπον',
-'vector-namespace-user'      => 'Σελίδαν χρήστε',
-'vector-view-create'         => 'Ποίσον',
-'vector-view-edit'           => 'Άλλαξον',
-'vector-view-history'        => 'Τερέστεν ιστορίαν',
-'vector-view-view'           => 'Δεάβασον',
-'vector-view-viewsource'     => 'Τερέστεν κωδικόν',
-'actions'                    => 'Ενέργειας',
-'namespaces'                 => 'Περιοχάς',
-'variants'                   => 'Παραλλαγάς',
+'vector-action-delete'    => 'Σβήσον',
+'vector-action-move'      => 'Ετεροχλάεμαν',
+'vector-action-protect'   => 'Ασπάλιγμαν',
+'vector-action-undelete'  => 'Κλώσιμον',
+'vector-action-unprotect' => 'Άνοιγμαν',
+'vector-view-create'      => 'Ποίσον',
+'vector-view-edit'        => 'Άλλαξον',
+'vector-view-history'     => 'Τερέστεν ιστορίαν',
+'vector-view-view'        => 'Δεάβασον',
+'vector-view-viewsource'  => 'Τερέστεν κωδικόν',
+'actions'                 => 'Ενέργειας',
+'namespaces'              => 'Περιοχάς',
+'variants'                => 'Παραλλαγάς',
 
 'errorpagetitle'    => 'Λάθος',
 'returnto'          => 'Επιστροφήν σο $1.',
@@ -359,7 +348,7 @@ $messages = array(
 'yourname'                   => 'Όνεμαν χρήστε:',
 'yourpassword'               => 'Σημάδι:',
 'yourpasswordagain'          => "Ξαν' γράψτεν το σημάδι:",
-'remembermypassword'         => "Αποθήκεμαν τη σημαδίμ σ' αβούτον τον υπολογιστήν",
+'remembermypassword'         => "Αποθήκεμαν τη σημαδίμ σ' αβούτον τον υπολογιστήν (για μέγιστον $1 {{PLURAL:$1|ημέραν|ημέρας}})",
 'yourdomainname'             => 'Το domain εσούν:',
 'login'                      => 'Εμπάτε',
 'nav-login-createaccount'    => 'Εμπάτεν / ποισέστεν λογαρίαν',
@@ -375,6 +364,7 @@ $messages = array(
 'gotaccount'                 => "Λογαρίαν έχετε; '''$1'''.",
 'gotaccountlink'             => 'Εμπάτε',
 'createaccountmail'          => 'με ελεκτρονικόν μένεμαν',
+'createaccountreason'        => 'Λόγον:',
 'badretype'                  => "Τα σημάδε ντ' εγράψετεν 'κ ταιριάζνε.",
 'userexists'                 => "Τ' όνεμαν έχ' ατό άλλος χρήστες.
 Βαλέστε άλλον όνεμαν.",
@@ -535,7 +525,6 @@ $messages = array(
 Εάν 'κ θέλετε ατό να ίνεται, να μην εφτάτε το αποθήκεμαν.<br />
 Καμίαν κι ανασπάλλετε: Αδακά 'κ εν ο τόπον για να θέκουμε γράψιμον ντ' έγραψαν αλλ. Βαλέστε άρθρα όνταν κατέχετε τα δικαιώματα πνευματί μαναχόν.
 '''ΚΑΜΙΑΝ 'Κ ΘΕΚΕΤΕ ΓΡΑΨΙΜΟΝ ΑΔΑΚΑ ΟΝΤΕΣ 'Κ ΕΧΕΤΕ ΤΑ ΔΙΚΑΙΩΜΑΤΑ ΠΝΕΥΜΑΤΙ!'''",
-'longpagewarning'                  => "'''ΩΡΙΑ: Αβούτεν η σελίδαν έχ' μέγεθος $1 kb. Μερικά browser 'κ επορούν ν' επεξεργάσκουνταν σελίδας ντ' έχνε 32 kb κιαν. Επορείτε να λύετε το πρόβλημαν αν εφτάτεν ατέναν μικρά κομμάται.'''",
 'templatesused'                    => "{{PLURAL:$1|Πρότυπον|Πρότυπα}} το μεταχειρίσκουνταν σ' αβούτεν την σελίδαν:",
 'templatesusedpreview'             => "{{PLURAL:$1|Πρότυπον|Πρότυπα}} σ' αβούτον το πρώτον τέρεμαν:",
 'template-protected'               => '(ασπαλιγμένον)',
@@ -992,7 +981,6 @@ $messages = array(
 # Watchlist
 'watchlist'         => "Σελίδας ντ' ωριάζω",
 'mywatchlist'       => "Σελίδας ντ' ωριάζω",
-'watchlistfor'      => "(για '''$1''')",
 'watchnologin'      => "'Κ είστουν συνδεμένος",
 'addedwatch'        => 'Εθέκεν σην λίσταν ωριαγματί',
 'addedwatchtext'    => "Η σελίδαν \"[[:\$1]]\" επήγεν σον [[Special:Watchlist|κατάλογον οριαγματί]] εσούν.
@@ -1314,9 +1302,9 @@ $messages = array(
 
 # Media information
 'widthheightpage'      => '$1×$2, $3 {{PLURAL:$3|σελίδα|σελίδας}}',
-'file-info-size'       => '($1 × $2 εικονοστοιχεία, μέγεθος αρχείου: $3, MIME τύπον: $4)',
+'file-info-size'       => '$1 × $2 εικονοστοιχεία, μέγεθος αρχείου: $3, MIME τύπον: $4',
 'file-nohires'         => "<small>'Κ εχ κι άλλο ψηλόν ανάλυσην.</small>",
-'svg-long-desc'        => "(Αρχείον SVG, κατ' όνομα $1 × $2 εικονοστοιχεία, μέγεθος αρχεί: $3)",
+'svg-long-desc'        => "Αρχείον SVG, κατ' όνομα $1 × $2 εικονοστοιχεία, μέγεθος αρχεί: $3",
 'show-big-image'       => 'Τζιπ τρανόν ανάλυση',
 'show-big-image-thumb' => "<small>Μέγεθος τη πρώτ' τερεματί: $1 × $2 εικονοστοιχεία</small>",
 

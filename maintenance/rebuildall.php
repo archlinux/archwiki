@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class RebuildAll extends Maintenance {
 	public function __construct() {
@@ -47,10 +47,10 @@ class RebuildAll extends Maintenance {
 		$this->output( "\n\n** Rebuilding links tables -- this can take a long time. It should be safe to abort via ctrl+C if you get bored.\n" );
 		$rebuildLinks = $this->runChild( 'RefreshLinks', 'refreshLinks.php' );
 		$rebuildLinks->execute();
-		
+
 		$this->output( "Done.\n" );
 	}
 }
 
 $maintClass = "RebuildAll";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );

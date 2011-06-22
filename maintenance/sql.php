@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class MwSql extends Maintenance {
 	public function __construct() {
@@ -39,7 +39,7 @@ class MwSql extends Maintenance {
 			$promptObject = new SqlPromptPrinter( "> " );
 			$promptCallback = $promptObject->cb();
 		}
-	
+
 		if ( !$file )
 			$this->error( "Unable to open input file", true );
 
@@ -69,7 +69,7 @@ class MwSql extends Maintenance {
 			$this->output( "Query OK, $affected row(s) affected\n" );
 		}
 	}
-	
+
 	public function getDbType() {
 		return Maintenance::DB_ADMIN;
 	}
@@ -90,4 +90,4 @@ class SqlPromptPrinter {
 }
 
 $maintClass = "MwSql";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );

@@ -35,6 +35,7 @@ $messages = array(
 'tog-usenewrc'              => 'ཡར་རྒྱས་ཅན་གྱི་ཉེ་བའི་བཟོ་བཅོས་བེད་སྤྱོད་པ།(Java ཡི་བརྡ་ཆད་དགོས)',
 'tog-showtoolbar'           => 'རྩོམ་སྒྲིག་ལག་ཆ་སྟོན།(Java ཡི་བརྡ་ཆད་དགོས།)',
 'tog-editondblclick'        => 'ཤོག་ངོས་རྩོམ་སྒྲིག་བྱེད་པར་ལན་གཉིས་རྡེབ།(Java ཡི་བརྡ་ཆད་དགོས།)',
+'tog-rememberpassword'      => 'ངའི་ནང་འཛུལ་བཤར་ལྟ་ཆས་འདི་རུ་མང་མཐའ་ཉིན $1 {{PLURAL:$1}} དྲན་པར་མཛོད།',
 'tog-watchcreations'        => 'ངའི་ལྟ་ཐོའི་གྲས་སུ་གསར་བཟོ་བྱས་པ་ལ་ཤོག་ངོས་ཁ་སྣོན།',
 'tog-watchdefault'          => 'ངའི་ལྟ་ཐོའི་གྲས་སུ་རྩོམ་སྒྲིག་བྱས་པ་ལ་ཤོག་ངོས་ཁ་སྣོན།',
 'tog-watchmoves'            => 'ངའི་ལྟ་ཐོའི་གྲས་སུ་སྤོར་བ་ལ་ཤོག་ངོས་ཁ་སྣོན།',
@@ -123,6 +124,7 @@ $messages = array(
 'hidden-category-category' => 'སྦས་བའི་སྡེ་ཚན།',
 
 'about'         => 'སྐོར།',
+'article'       => 'ནང་དོན་ཤོག་ངོས།',
 'newwindow'     => '(སྒེའུ་ཁུང་གསར་བར་ཕྱེ་བ།)',
 'cancel'        => 'རྩིས་མེད།',
 'moredotdotdot' => 'དེ་ལས་མང་བ་་་',
@@ -135,6 +137,7 @@ $messages = array(
 'qbfind'         => 'འཚོལ་བ།',
 'qbedit'         => 'རྩོམ་སྒྲིག',
 'qbpageoptions'  => 'ཤོག་ངོས་འདི།',
+'qbpageinfo'     => 'འབྲེལ་ཆགས།',
 'qbmyoptions'    => 'ངའི་ཤོག་ངོས།',
 'qbspecialpages' => 'དམིཊ་བསལ་གྱི་བཟོ་བཅོས།',
 'faq'            => 'རྒྱུན་ལྡན་དྲི་བ།',
@@ -180,6 +183,7 @@ $messages = array(
 'protect'           => 'སྲུང་བ།',
 'protect_change'    => 'སྒྱུར་བཅོས།',
 'protectthispage'   => 'ཤོག་ངོས་འདི་སྲུང་བ།',
+'unprotect'         => 'ཉེན་སྲུང་མེད་པ།',
 'unprotectthispage' => 'ཤོག་ངོས་འདི་སྲུང་བ་དོར་བ།',
 'newpage'           => 'ཤོག་ངོས་གསར་བ།',
 'talkpage'          => 'ཤོག་ངོས་འདིར་གྲོས་སྡུར།',
@@ -187,6 +191,7 @@ $messages = array(
 'specialpage'       => 'དམིགས་གསལ་ཤོག་ངོས།',
 'personaltools'     => 'སྒེར་ཀྱི་ལག་ཆ།',
 'postcomment'       => 'སྡེ་ཚན་གསར་བ།',
+'articlepage'       => 'ནང་དོན་ཤོག་ངོས་ལ་ལྟ་བ།',
 'talk'              => 'གྲོས་བསྡུར།',
 'views'             => 'མཐོང་རིས།',
 'toolbox'           => 'ལག་ཆའི་སྒྲོམ།',
@@ -200,11 +205,13 @@ $messages = array(
 'viewtalkpage'      => 'གྲོས་མོལ་ལ་ལྟ་བ།',
 'otherlanguages'    => 'སྐད་རིགས་གཞན།',
 'redirectedfrom'    => '$1 ནས་ཁ་ཕྱོགས་བསྐྱར་དུ་བཟོས་པ།',
+'redirectpagesub'   => 'རིམ་འགྲེམ་ཤོག་ངོས།',
 'lastmodifiedat'    => 'དྲ་ངོས་འདི་ཡི་བཟོ་བཅོས་མཐའ་མ་$1$2སྟེང་རེད།',
 'protectedpage'     => 'སྲུང་སྐྱོབ་བྱས་པའི་ཤོག་ངོས།',
 'jumpto'            => 'གནས་སྤོ།',
 'jumptonavigation'  => 'ཕྱོགས་ཁྲིད།',
 'jumptosearch'      => 'འཚོལ།',
+'pool-errorunknown' => 'ངོས་མ་ཟིན་པའི་ནོར་འཁྲུལ།',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => '{{SITENAME}}ངེད་ཀྱི་སྐོར།',
@@ -244,6 +251,8 @@ $messages = array(
 'viewdeleted'             => ' $1 ལ་ལྟའམ།',
 'site-rss-feed'           => '$1 ཡི་RSS འབྱུང་ཁུངས།',
 'site-atom-feed'          => '$1 ཡི་Atom འབྱུང་ཁུངས།',
+'page-rss-feed'           => '$1 ཡི་RSS འབྱུང་ཁུངས།',
+'page-atom-feed'          => '$1 ཡི་Atom འབྱུང་ཁུངས།',
 'red-link-title'          => '$1 ( ཤོག་ངོས་མེད་པ།)',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
@@ -258,18 +267,23 @@ $messages = array(
 'nstab-category'  => 'དཀར་ཆག',
 
 # Main script and global functions
-'nosuchaction' => 'བྱ་འགུལ་འདི་འདྲ་མེད།',
+'nosuchaction'      => 'བྱ་འགུལ་འདི་འདྲ་མེད།',
+'nosuchspecialpage' => 'དམིགས་བསལ་ཤོག་ངོས་འདི་འདྲ་ཞིག་མི་འདུག',
 
 # General errors
-'error'              => 'ནོར་འཁྲུལ།',
-'readonly'           => 'གཞི་གྲངས་མཛོད་ཟྭ་བརྒྱབ་པ།',
-'internalerror'      => 'ནང་ལོག་ནོར་སྐྱོན།',
-'internalerror_info' => 'ནང་ལོགས་ནོར་སྐྱོན། $1',
-'filecopyerror'      => '"$1" "$2"ལ་འདྲ་བཤུ་བྱེད་མ་ཐུབ།',
-'filedeleteerror'    => '"$1"ཟེར་བ་སུབ་མ་ཐུབ།',
-'filenotfound'       => '"$1"ཟེར་བའི་ཡིག་ཆ་མ་རྙེད་པ།',
-'badtitle'           => 'ཁ་བྱང་སྐྱོན་ཅན།',
-'viewsource'         => 'ཁོངས་ལ་ལྟ་བ།',
+'error'                => 'ནོར་འཁྲུལ།',
+'readonly'             => 'གཞི་གྲངས་མཛོད་ཟྭ་བརྒྱབ་པ།',
+'internalerror'        => 'ནང་ལོག་ནོར་སྐྱོན།',
+'internalerror_info'   => 'ནང་ལོགས་ནོར་སྐྱོན། $1',
+'filecopyerror'        => '"$1" "$2"ལ་འདྲ་བཤུ་བྱེད་མ་ཐུབ།',
+'filedeleteerror'      => '"$1"ཟེར་བ་སུབ་མ་ཐུབ།',
+'filenotfound'         => '"$1"ཟེར་བའི་ཡིག་ཆ་མ་རྙེད་པ།',
+'badtitle'             => 'ཁ་བྱང་སྐྱོན་ཅན།',
+'viewsource'           => 'ཁོངས་ལ་ལྟ་བ།',
+'actionthrottled'      => 'བྱ་འགུལ་ཁེགས་སོང་།',
+'namespaceprotected'   => "ཁྱེད་ལ་'''$1''' མིང་གནས་ནང་གི་ཤོག་ངོས་བཟོ་བཅོས་ཀྱི་ཆོག་མཆན་མེད།",
+'customcssjsprotected' => 'ཤོག་ངོས་འདིར་སྤྱོད་མི་གཞན་པའི་སྒེར་གྱི་སྒྲིག་འཇུག་ཚུད་ཡོད་པས་ཁྱེད་ལ་བཟོ་བཅོས་ཀྱི་ཆོག་མཆན་མེད།',
+'ns-specialprotected'  => 'དམིགས་བསམ་ཤོག་ངོས་རྣམས་བཟོ་བཅོས་བྱེད་མི་ཐུབ།',
 
 # Virus scanner
 'virus-unknownscanner' => 'ངོས་མ་ཟིན་པའི་དྲ་འབུ།',
@@ -278,7 +292,7 @@ $messages = array(
 'yourname'                => 'སྤྱོད་མིང་།',
 'yourpassword'            => 'ལམ་ཡིག',
 'yourpasswordagain'       => 'ལམ་ཡིག་སྐྱར་གཏགས་བྱོས།',
-'remembermypassword'      => 'ངའི་དྲ་མིང་འདིར་གསོག་པ།',
+'remembermypassword'      => 'ངའི་ལམ་ཡིག་འདིར་(མང་མཐའ་ཉིན $1 {{PLURAL:$1}}) དྲན་པར་བྱས།',
 'login'                   => 'ནང་འཛུལ།',
 'nav-login-createaccount' => 'ནང་འཛུལ། / ཐོ་འགོད།',
 'userlogin'               => 'ནང་འཛུལ། / ཐོ་འགོད།',
@@ -290,6 +304,7 @@ $messages = array(
 'createaccount'           => 'ཐོ་འགོད།',
 'gotaccountlink'          => 'ནང་འཛུལ།',
 'createaccountmail'       => 'གློག་འཕྲིན་སྤྱད་དེ།',
+'createaccountreason'     => 'རྒྱུ་མཚན།',
 'badretype'               => 'ལམ་ཡིག་གང་བཅུག་པ་ཐོ་ཐུག་མ་བྱུང་།',
 'userexists'              => 'མིང་འདི་བེད་སྤྱོད་བྱས་ཟིན་པས་མིང་གཞན་ཞིག་གདམ་རོགས།',
 'loginerror'              => 'ནང་འཛུལ་ནོར་སྐྱོན།',
@@ -341,6 +356,7 @@ $messages = array(
 'showlivepreview'       => 'ད་ཡོད་སྔོན་ལྟ།',
 'showdiff'              => 'བཟོས་བཅོས་སྟོན།',
 'anoneditwarning'       => "'''གསལ་བརྡ།''' ཁྱེད་ཐོ་འཛུལ་བྱས་མི་འདུག ཁྱེད་ཀྱི་ IP ཁ་བྱང་ཤོག་ངོས་འདིའི་རྩོམ་སྒྲིག་ལོ་རྒྱུས་སུ་ཉར་ཚགས་བྱས་པར་འགྱུར།",
+'anonpreviewwarning'    => '༼ཁྱེད་རང་ཐོ་འཛུལ་བྱས་མི་འདུག ཉར་ཚགས་ཀྱིས་ཁྱེད་ཀྱི་ IP ཁ་བྱང་ཤོག་ངོས་འདིའི་རྩོམ་སྒྲིག་ལོ་རྒྱུས་སུ་ཉར་ཚགས་བྱས་པར་འགྱུར།༽',
 'summary-preview'       => 'བསྡུས་དོན་སྔོན་ལྟ།',
 'subject-preview'       => 'བརྗོད་གཞི་དང་འགོ་བརྗོད་སྔོན་ལྟ།',
 'blockedtitle'          => 'སྤྱོད་མི་བཀག་ཟིན།',
@@ -409,7 +425,7 @@ $messages = array(
 'searchprofile-project-tooltip'  => '$1ནང་དུ་འཚོལ་བ།',
 'searchprofile-images-tooltip'   => 'ཡིག་ཆ་འཚོལ་བ།',
 'search-result-size'             => '$1({{PLURAL:$2|1 word|$2 words}})',
-'search-redirect'                => 'ཁ་ཕྱོགས་བསྐྱར་བཟོ།',
+'search-redirect'                => '($1རིམ་འགྲེམ།)',
 'search-section'                 => '(ཚན་པ $1)',
 'search-suggest'                 => '$1 ལ་ཟེར་བ་ཡིན་ནམ།',
 'search-interwiki-caption'       => 'སྲིང་མོའི་ལས་འཆར།',
@@ -502,6 +518,7 @@ $messages = array(
 'rclistfrom'                  => '$1 ལས་འགོ་བཙུགས་ཏེ་འགྱུར་བཅོས་གསར་བ་སྟོན་ཅིག',
 'rcshowhideminor'             => '$1 རྩོམ་སྒྲིག་ཕལ་བ།',
 'rcshowhideliu'               => 'ཐོ་འཛུལ་བྱས་པའི་སྤྱོད་མི་ $1',
+'rcshowhideanons'             => 'མིང་མེད་སྤྱོད་མི $1',
 'rcshowhidemine'              => '$1ངའི་རྩོམ་སྒྲིག',
 'rclinks'                     => 'འདས་བའི་ཉིན་ $2 <br />$3 ནང་ཚུན་གྱི་བཟོ་བཅོས་གཞུག་མ་ $1 སྟོན་ཅིག',
 'diff'                        => 'མི་འདྲ་ས།',
@@ -536,6 +553,9 @@ $messages = array(
 'ignorewarning'       => 'ཉེན་བརྡ་སྣང་མེད་བཏང་ནས་ཡིག་ཆ་ཉོར་ཅིག',
 'ignorewarnings'      => 'ཉེན་བརྡ་ཅི་ཡོད་སྣང་མེད་ཐོངས་ཤིག',
 'badfilename'         => 'ཡིག་ཆའི་མིང་"$1"ལ་བསྒྱུར་ཟིན།',
+'filename-tooshort'   => 'ཡིག་ཆའི་མིང་ཐུང་དྲགས་འདུག',
+'filetype-banned'     => 'ཡིག་ཆ་འདིའི་རིགས་བཀག་སྡོམ་བྱས་འདུག',
+'illegal-filename'    => 'ཡིག་ཆའི་མིང་འདི་ལ་ཆོག་མཆན་མི་འདུག',
 'uploadwarning'       => 'ཡར་འཇུག་སྔོན་བརྡ།',
 'savefile'            => 'ཡིག་ཆ་ཉོར་ཅིག',
 'uploadedimage'       => '"[[$1]]"ཡར་འཇུག་བྱས་ཟིན།',
@@ -675,6 +695,7 @@ $messages = array(
 'protect-level-sysop'         => 'དོ་དམ་པ་ཁོ་ནར།',
 'protect-cantedit'            => 'ཁྱོད་ལ་ཤོག་ངོས་འདི་རྩོམ་སྒྲིག་གི་ཆོག་མཆན་མེད་པས་ངོས་འདི་ཡི་སྲུང་སྐྱོབ་རིམ་པ་ལ་བཟོ་བཅོས་བྱེད་མི་ཆོག',
 'restriction-type'            => 'ཆོག་མཆན།',
+'restriction-level'           => 'དམ་བསྒྲགས་ཚད་རིམ།',
 
 # Restrictions (nouns)
 'restriction-edit' => 'རྩོམ་སྒྲིག',
@@ -771,6 +792,8 @@ $messages = array(
 'tooltip-n-help'                 => 'གང་དུ་འཚོལ་བའི་གནས།',
 'tooltip-t-whatlinkshere'        => 'འདི་ལ་སྦྲེལ་བའི་ཝེ་ཁེ་ཤོག་ངོས་ཡོངས་རྫོགས།',
 'tooltip-t-recentchangeslinked'  => 'ངོས་འདི་དང་འབྲེལ་བའི་ཉེ་བའི་བཟོ་བཅོས།',
+'tooltip-feed-rss'               => 'ཤོག་ངོས་འདིའི་RSS འབྱུང་ཁུངས།',
+'tooltip-feed-atom'              => 'ཤོག་ངོས་འདིའི་Atom འབྱུང་ཁུངས།',
 'tooltip-t-contributions'        => 'བཀོལ་མི་འདིའི་བྱས་རྗེས་སྟོན།',
 'tooltip-t-emailuser'            => 'སྤྱོད་མི་འདིར་དྲ་འཕྲིན་སྐུར་བ།',
 'tooltip-t-upload'               => 'ཡིག་ཆ་ཡར་འཇུག',
@@ -792,6 +815,9 @@ $messages = array(
 # Browsing diffs
 'previousdiff' => '← རྩོམ་སྒྲིག་རྙིང་བ།',
 'nextdiff'     => 'རྩོམ་སྒྲིག་གསར་གྲས། →',
+
+# Media information
+'show-big-image' => 'གཏན་འབེབ་ཆ་ཚང་།',
 
 # Special:NewFiles
 'ilsubmit' => 'འཚོལ།',

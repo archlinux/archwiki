@@ -1,6 +1,7 @@
 <?php
 /**
- * Hooks.php -- a tool for running hook functions
+ * A tool for running hook functions.
+ *
  * Copyright 2004, 2005 Evan Prodromou <evan@wikitravel.org>.
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -24,9 +25,15 @@
 
 
 /**
+ * Call hook functions defined in $wgHooks
+ *
  * Because programmers assign to $wgHooks, we need to be very
  * careful about its contents. So, there's a lot more error-checking
  * in here than would normally be necessary.
+ *
+ * @param $event String: event name
+ * @param $args Array: parameters passed to hook functions
+ * @return Boolean
  */
 function wfRunHooks($event, $args = array()) {
 
@@ -39,12 +46,10 @@ function wfRunHooks($event, $args = array()) {
 
 	if (!is_array($wgHooks)) {
 		throw new MWException("Global hooks array is not an array!\n");
-		return false;
 	}
 
 	if (!is_array($wgHooks[$event])) {
 		throw new MWException("Hooks array for event '$event' is not an array!\n");
-		return false;
 	}
 
 	foreach ($wgHooks[$event] as $index => $hook) {
@@ -55,6 +60,7 @@ function wfRunHooks($event, $args = array()) {
 		$data = null;
 		$have_data = false;
 		$closure = false;
+		$badhookmsg = false;
 
 		/* $hook can be: a function, an object, an array of $function and $data,
 		 * an array of just a function, an array of object and method, or an
@@ -128,13 +134,35 @@ function wfRunHooks($event, $args = array()) {
 		// Run autoloader (workaround for call_user_func_array bug)
 		is_callable( $callback );
 
-		/* Call the hook. */
+		/* Call the hook. The documentation of call_user_func_array clearly
+		 * states that FALSE is returned on failure. However this is not
+		 * case always. In some version of PHP if the function signature
+		 * does not match the call signature, PHP will issue an warning:
+		 * Param y in x expected to be a reference, value given.
+		 *
+		 * In that case the call will also return null. The following code
+		 * catches that warning and provides better error message. The
+		 * function documentation also says that:
+		 *     In other words, it does not depend on the function signature
+		 *     whether the parameter is passed by a value or by a reference. 
+		 * There is also PHP bug http://bugs.php.net/bug.php?id=47554 which
+		 * is unsurprisingly marked as bogus. In short handling of failures
+		 * with call_user_func_array is a failure, the documentation for that
+		 * function is wrong and misleading and PHP developers don't see any
+		 * problem here.
+		 */
+		$retval = null;
+		set_error_handler( 'hookErrorHandler' );
 		wfProfileIn( $func );
-		$retval = call_user_func_array( $callback, $hook_args );
+		try {
+			$retval = call_user_func_array( $callback, $hook_args );
+		} catch ( MWHookException $e ) {
+			$badhookmsg = $e->getMessage();
+		}
 		wfProfileOut( $func );
+		restore_error_handler();
 
 		/* String return is an error; false return means stop processing. */
-
 		if ( is_string( $retval ) ) {
 			global $wgOut;
 			$wgOut->showFatalError( $retval );
@@ -152,9 +180,14 @@ function wfRunHooks($event, $args = array()) {
 			} else {
 				$prettyFunc = strval( $callback );
 			}
-			throw new MWException( "Detected bug in an extension! " .
-				"Hook $prettyFunc failed to return a value; " .
-				"should return true to continue hook processing or false to abort." );
+			if ( $badhookmsg ) {
+				throw new MWException( "Detected bug in an extension! " .
+				"Hook $prettyFunc has invalid call signature; " . $badhookmsg );
+			} else {
+				throw new MWException( "Detected bug in an extension! " .
+					"Hook $prettyFunc failed to return a value; " .
+					"should return true to continue hook processing or false to abort." );
+			}
 		} else if ( !$retval ) {
 			return false;
 		}
@@ -162,3 +195,12 @@ function wfRunHooks($event, $args = array()) {
 
 	return true;
 }
+
+function hookErrorHandler( $errno, $errstr ) {
+	if ( strpos( $errstr, 'expected to be a reference, value given' ) !== false ) {
+		throw new MWHookException( $errstr );
+	}
+	return false;
+}
+
+class MWHookException extends MWException {}

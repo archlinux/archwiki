@@ -1,10 +1,29 @@
 <?php
 /**
+ * Implements Special:Newimages
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup SpecialPage
- * FIXME: this code is crap, should use Pager and Database::select().
  */
 
+/**
+ * @todo FIXME: this code is crap, should use Pager and Database::select().
+ */
 function wfSpecialNewimages( $par, $specialPage ) {
 	global $wgUser, $wgOut, $wgLang, $wgRequest, $wgMiserMode;
 
@@ -49,16 +68,14 @@ function wfSpecialNewimages( $par, $specialPage ) {
 	} else {
 		$ts = false;
 	}
-	$dbr->freeResult( $res );
-	$sql = '';
 
 	# If we were clever, we'd use this to cache.
 	$latestTimestamp = wfTimestamp( TS_MW, $ts );
 
 	# Hardcode this for now.
 	$limit = 48;
-
-	if ( $parval = intval( $par ) ) {
+	$parval = intval( $par );
+	if ( $parval ) {
 		if ( $parval <= $limit && $parval > 0 ) {
 			$limit = $parval;
 		}
@@ -75,14 +92,16 @@ function wfSpecialNewimages( $par, $specialPage ) {
 	}
 
 	$invertSort = false;
-	if( $until = $wgRequest->getVal( 'until' ) ) {
+	$until = $wgRequest->getVal( 'until' );
+	if( $until ) {
 		$where[] = "img_timestamp < '" . $dbr->timestamp( $until ) . "'";
 	}
-	if( $from = $wgRequest->getVal( 'from' ) ) {
+	$from = $wgRequest->getVal( 'from' );
+	if( $from ) {
 		$where[] = "img_timestamp >= '" . $dbr->timestamp( $from ) . "'";
 		$invertSort = true;
 	}
-	$sql='SELECT img_size, img_name, img_user, img_user_text,'.
+	$sql = 'SELECT img_size, img_name, img_user, img_user_text,'.
 	     "img_description,img_timestamp FROM $image";
 
 	if( $hidebotsql ) {
@@ -100,14 +119,13 @@ function wfSpecialNewimages( $par, $specialPage ) {
 	 * We have to flip things around to get the last N after a certain date
 	 */
 	$images = array();
-	while ( $s = $dbr->fetchObject( $res ) ) {
+	foreach ( $res as $s ) {
 		if( $invertSort ) {
 			array_unshift( $images, $s );
 		} else {
 			array_push( $images, $s );
 		}
 	}
-	$dbr->freeResult( $res );
 
 	$gallery = new ImageGallery();
 	$firstTimestamp = null;
@@ -214,9 +232,9 @@ function wfSpecialNewimages( $par, $specialPage ) {
 	}
 
 	$nextLink = wfMsgExt( 'pager-older-n', $opts, $wgLang->formatNum( $limit ) );
-	if( $shownImages > $limit && $lastTimestamp ) {
+	if( $invertSort || ( $shownImages > $limit && $lastTimestamp ) ) {
 		$query = array_merge(
-			array( 'until' => $lastTimestamp ),
+			array( 'until' => ( $lastTimestamp ? $lastTimestamp : "" ) ),
 			$botpar,
 			$searchpar
 		);

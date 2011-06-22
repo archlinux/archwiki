@@ -33,14 +33,14 @@ $namespaceNames = array(
 );
 
 $namespaceAliases = array(
-	'Perdoruesi' => NS_USER,
+	'Perdoruesi'          => NS_USER,
 	'Perdoruesi_diskutim' => NS_USER_TALK,
-	'Përdoruesi' => NS_USER,
+	'Përdoruesi'          => NS_USER,
 	'Përdoruesi_diskutim' => NS_USER_TALK,
-	'Figura' => NS_FILE,
-	'Figura_diskutim' => NS_FILE_TALK,
-	'Kategori' => NS_CATEGORY,
-	'Kategori_Diskutim' => NS_CATEGORY_TALK
+	'Figura'              => NS_FILE,
+	'Figura_diskutim'     => NS_FILE_TALK,
+	'Kategori'            => NS_CATEGORY,
+	'Kategori_Diskutim'   => NS_CATEGORY_TALK
 );
 
 $specialPageAliases = array(
@@ -77,8 +77,7 @@ $messages = array(
 'tog-editsection'             => 'Lejo redaktimin e seksioneve me opcionin [redakto]',
 'tog-editsectiononrightclick' => 'Lejo redaktimin e seksioneve tue klikue me të djathtë mbi titull (JavaScript)',
 'tog-showtoc'                 => 'Trego përmbajtjen<br />(për faqet me mâ shum se 3 tituj)',
-'tog-rememberpassword'        => 'Ruej fjalëkalimin në këtë kompjuter',
-'tog-editwidth'               => 'Zgjâno kutinë për redaktim sa krejt ekrani',
+'tog-rememberpassword'        => 'Ruej fjalëkalimin tem në këtë shfletues (për $1 {{PLURAL:$1|ditë|ditë}})',
 'tog-watchcreations'          => 'Shtoji në listë mbikëqyrëse faqet që i krijoj vetë',
 'tog-watchdefault'            => 'Shtoji në listë mbikëqyrëse faqet që i redaktoj',
 'tog-watchmoves'              => 'Shtoji në listë mbikëqyrëse faqet që i zhvendosi',
@@ -226,31 +225,21 @@ $messages = array(
 'faqpage'        => 'Project:Pyetjet e shpeshta',
 
 # Vector skin
-'vector-action-addsection'   => 'Shto temë',
-'vector-action-delete'       => 'Fshij',
-'vector-action-move'         => 'Zhvendos',
-'vector-action-protect'      => 'Mbroj',
-'vector-action-undelete'     => 'Kthe fshimjen mbrapsht',
-'vector-action-unprotect'    => 'Hiq mbrojtjen',
-'vector-namespace-category'  => 'Kategoria',
-'vector-namespace-help'      => 'Faqja e ndihmës',
-'vector-namespace-image'     => 'Skeda',
-'vector-namespace-main'      => 'Faqja',
-'vector-namespace-media'     => 'Faqja e mediave',
-'vector-namespace-mediawiki' => 'Mesazhi',
-'vector-namespace-project'   => 'Faqja e projektit',
-'vector-namespace-special'   => 'Faqja speciale',
-'vector-namespace-talk'      => 'Diskutimi',
-'vector-namespace-template'  => 'Shablloni',
-'vector-namespace-user'      => 'Faqja e përdoruesit',
-'vector-view-create'         => 'Krijo',
-'vector-view-edit'           => 'Redakto',
-'vector-view-history'        => 'Shih historinë',
-'vector-view-view'           => 'Lexo',
-'vector-view-viewsource'     => 'Shih kodin',
-'actions'                    => 'Veprimet',
-'namespaces'                 => 'Hapësinat',
-'variants'                   => 'Variantet',
+'vector-action-addsection'       => 'Shto temë',
+'vector-action-delete'           => 'Fshij',
+'vector-action-move'             => 'Zhvendos',
+'vector-action-protect'          => 'Mbroj',
+'vector-action-undelete'         => 'Kthe fshimjen mbrapsht',
+'vector-action-unprotect'        => 'Hiq mbrojtjen',
+'vector-simplesearch-preference' => 'Aktivizo sugjerime të avancueme në kërkim (vetëm për Vector skin)',
+'vector-view-create'             => 'Krijo',
+'vector-view-edit'               => 'Redakto',
+'vector-view-history'            => 'Shih historinë',
+'vector-view-view'               => 'Lexo',
+'vector-view-viewsource'         => 'Shih kodin',
+'actions'                        => 'Veprimet',
+'namespaces'                     => 'Hapësinat',
+'variants'                       => 'Variantet',
 
 'errorpagetitle'    => 'Gabim',
 'returnto'          => 'Kthehu te $1.',
@@ -481,7 +470,7 @@ Mos harroni me i ndryshue [[Special:Preferences|parapëlqimet për {{SITENAME}}]
 'yourname'                   => 'Nofka:',
 'yourpassword'               => 'Fjalëkalimi:',
 'yourpasswordagain'          => 'Fjalëkalimi përsëdyti:',
-'remembermypassword'         => 'Mbaj mend fjalëkalimin tem në këtë kompjuter.',
+'remembermypassword'         => 'Mbaj mend fjalëkalimin tem në këtë shfletues (për $1 {{PLURAL:$1|ditë|ditë}})',
 'yourdomainname'             => 'Domena juej:',
 'externaldberror'            => 'Ose pat gabim në databazën e autentifikimit, ose nuk lejoheni me ndryshue llogarinë tuej të jashtme.',
 'login'                      => 'Kyçu',
@@ -498,6 +487,7 @@ Mos harroni me i ndryshue [[Special:Preferences|parapëlqimet për {{SITENAME}}]
 'gotaccount'                 => "Ke llogari? '''$1'''.",
 'gotaccountlink'             => 'Kyçu',
 'createaccountmail'          => 'me email',
+'createaccountreason'        => 'Arsyeja:',
 'badretype'                  => 'Fjalëkalimet nuk janë të njêjta.',
 'userexists'                 => 'Nofka keni zgjedhë âsht në përdorim.
 Zgjedh nji emën tjetër.',
@@ -622,6 +612,7 @@ Ndoshta tashmâ e keni ndryshue fjalëkalimin me sukses, apo keni kërkue nji fj
 'showdiff'                         => 'Trego ndryshimet',
 'anoneditwarning'                  => "'''Kujdes:''' Ju nuk jeni i kyçun.
 Adresa juej IP do të regjistrohet në historikun e redaktimit të kësaj faqeje.",
+'anonpreviewwarning'               => "''Nuk jeni i kyçun. Regjistrimi ka me marrë shenim IP adresën tuej në histori të faqes.''",
 'missingsummary'                   => "'''Vini re:''' Nuk keni specifikue përmbledhje të redaktimit.
 Nëse klikoni prap në regjistro, redaktimi do të ruhet pa tê.",
 'missingcommenttext'               => 'Ju lutemi shtoni nji koment mâ poshtë.',
@@ -700,7 +691,7 @@ Ju lutemi kontrolloni nëse doni me krijue/redaktue këtë faqe.',
 'userjspreview'                    => "'''Vini re, jeni tue testue/pâ veç parapâmjen e JavaScriptit tuej.'''
 '''Ende nuk e keni ruejtë!'''",
 'userinvalidcssjstitle'            => "'''Kujdes:''' Nuk ka pâmje me emën \"\$1\".
-Vini re që faqet .css dhe .js përdorin vetëm titull me germa të vogla, psh. {{ns:user}}:Foo/monobook.css për dallim prej {{ns:user}}:Foo/Monobook.css.",
+Vini re që faqet .css dhe .js përdorin vetëm titull me germa të vogla, psh. {{ns:user}}:Foo/vector.css për dallim prej {{ns:user}}:Foo/Vector.css.",
 'updated'                          => '(E ndryshueme)',
 'note'                             => "'''Shenim:'''",
 'previewnote'                      => "'''Kjo asht vetëm parapamje.'''
@@ -742,9 +733,6 @@ Gjithashtu po premtoni se këtë e keni shkrue vetë, ose e keni kopjue prej dom
 Nëse nuk doni që shkrimet tueja me u redaktue pamëshirshëm dhe me u shpërnda arbitrarisht, atëherë mâ mirë mos publikoni këtu.<br />
 Gjithashtu po premtoni se këtë e keni shkrue vetë, ose e keni kopjue prej domenës publike apo ndonji burimi tjetër të lirë (shih $1 për detaje).
 '''Mos publikoni vepra që janë e drejtë autoriale pa leje!'''",
-'longpagewarning'                  => "'''Kujdes:''' Kjo faqe i ka $1 kilobyte;
-disa shfletues mujnë me pasë problem me redaktue faqe që janë afër apo mâ shumë se 32kb.
-Konsideroni mundësinë me dâ faqen në sekcione mâ të vogla.",
 'longpageerror'                    => "'''Gabim: Teksti që po redaktoni i ka $1 kilobyte, që âsht mâ shumë se maksimumi prej $2 kilobytësh.'''
 Nuk mundet me u ruejtë.",
 'readonlywarning'                  => "'''Kujdes: Baza e të dhânave âsht mshelë për mirëmbajtje, kështuqë tashpërtash nuk keni me mujtë me i ruejtë redaktimet tueja.'''
@@ -1328,7 +1316,6 @@ Faqet në [[Special:Watchlist|listën tuej të mbikëqyrjes]] janë '''të theks
 # Watchlist
 'watchlist'         => 'Mbikëqyrjet e mija',
 'mywatchlist'       => 'Lista mbikqyrëse',
-'watchlistfor'      => "(për '''$1''')",
 'addedwatch'        => 'U shtu te lista mbikqyrëse',
 'addedwatchtext'    => "Faqja \"[[:\$1]]\" iu shtue [[Special:Watchlist|listës suej të mbikëqyrjes]].
 Ndryshimet e ardhshme të kësaj faqeje dhe të faqes gjegjëse të diskutimit kanë me u listue këte, dhe faqja do të tregohet '''e theksueme''' në [[Special:RecentChanges|listën e ndryshimeve të fundit]] për me râ në sy.",
@@ -1599,9 +1586,9 @@ Lejon dhânien e arsyes në përmbledhje.',
 'nextdiff'     => 'Redaktim ma i ri →',
 
 # Media information
-'file-info-size'       => '($1 × $2 pixela, madhësia e skedës: $3, tipi MIME: $4)',
+'file-info-size'       => '$1 × $2 pixela, madhësia e skedës: $3, tipi MIME: $4',
 'file-nohires'         => '<small>Rezolucioni i plotë.</small>',
-'svg-long-desc'        => '(skeda SVG, $1 × $2 pixela, madhësia: $3)',
+'svg-long-desc'        => 'skeda SVG, $1 × $2 pixela, madhësia: $3',
 'show-big-image'       => 'Rezolucion i plotë',
 'show-big-image-thumb' => '<small>Madhësia e parapâmjes: $1 × $2 pixela</small>',
 

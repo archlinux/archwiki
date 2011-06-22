@@ -7,7 +7,6 @@
  * @ingroup Language
  * @file
  *
- * @author Horacewai2
  * @author PhiLiP
  * @author Philip
  * @author Wong128hk
@@ -51,8 +50,8 @@ $namespaceAliases = array(
 	'用户讨论' => NS_USER_TALK,
 	'用戶討論' => NS_USER_TALK,
 	# This has never worked so it's unlikely to annoy anyone if I disable it -- TS
-	#'{{SITENAME}}_对话' => NS_PROJECT_TALK
-	#"{{SITENAME}}_對話" => NS_PROJECT_TALK
+	# '{{SITENAME}}_对话' => NS_PROJECT_TALK
+	# "{{SITENAME}}_對話" => NS_PROJECT_TALK
 	'图像' => NS_FILE,
 	'圖像' => NS_FILE,
 	'档案' => NS_FILE,
@@ -89,9 +88,9 @@ $namespaceAliases = array(
 	'幫助討論' => NS_HELP_TALK,
 	'分类'	=> NS_CATEGORY,
 	'分類'  => NS_CATEGORY,
-	'分类对话'=> NS_CATEGORY_TALK,
+	'分类对话' => NS_CATEGORY_TALK,
 	'分類對話' => NS_CATEGORY_TALK,
-	'分类讨论'=> NS_CATEGORY_TALK,
+	'分类讨论' => NS_CATEGORY_TALK,
 	'分類討論' => NS_CATEGORY_TALK,
 );
 
@@ -178,10 +177,6 @@ $messages = array(
 
 # Move page
 'move-redirect-suppressed' => '已禁止重新定向',
-
-# Patrolling
-'markaspatrolleddiff' => '标记为已巡查',
-'markaspatrolledtext' => '标记此页面为已巡查',
 
 /*
 Short names for language variants used for language conversion links.

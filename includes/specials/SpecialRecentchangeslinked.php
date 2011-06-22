@@ -1,15 +1,36 @@
 <?php
+/**
+ * Implements Special:Recentchangeslinked
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup SpecialPage
+ */
 
 /**
  * This is to display changes made to all articles linked in an article.
+ *
  * @ingroup SpecialPage
  */
-class SpecialRecentchangeslinked extends SpecialRecentchanges {
+class SpecialRecentchangeslinked extends SpecialRecentChanges {
 	var $rclTargetTitle;
 
 	function __construct(){
-		SpecialPage::SpecialPage( 'Recentchangeslinked' );
-		$this->includable( true );
+		parent::__construct( 'Recentchangeslinked' );
 	}
 
 	public function getDefaultOptions() {
@@ -52,7 +73,7 @@ class SpecialRecentchangeslinked extends SpecialRecentchanges {
 		}
 		$title = Title::newFromURL( $target );
 		if( !$title || $title->getInterwiki() != '' ){
-			$wgOut->wrapWikiMsg( "<div class=\"errorbox\">\n$1</div><br style=\"clear: both\" />", 'allpagesbadtitle' );
+			$wgOut->wrapWikiMsg( "<div class=\"errorbox\">\n$1\n</div><br style=\"clear: both\" />", 'allpagesbadtitle' );
 			return false;
 		}
 
@@ -78,7 +99,8 @@ class SpecialRecentchangeslinked extends SpecialRecentchanges {
 		$query_options = array();
 
 		// left join with watchlist table to highlight watched rows
-		if( $uid = $wgUser->getId() ) {
+		$uid = $wgUser->getId();
+		if( $uid ) {
 			$tables[] = 'watchlist';
 			$select[] = 'wl_user';
 			$join_conds['watchlist'] = array( 'LEFT JOIN', "wl_user={$uid} AND wl_title=rc_title AND wl_namespace=rc_namespace" );
@@ -88,12 +110,13 @@ class SpecialRecentchangeslinked extends SpecialRecentchanges {
 			$join_conds['page'] = array('LEFT JOIN', 'rc_cur_id=page_id');
 			$select[] = 'page_latest';
 		}
+		if ( !$this->including() ) { // bug 23293
+			ChangeTags::modifyDisplayQuery( $tables, $select, $conds, $join_conds,
+				$query_options, $opts['tagfilter'] );
+		}
 
-		ChangeTags::modifyDisplayQuery( $tables, $select, $conds, $join_conds,
-			$query_options, $opts['tagfilter'] );
-
-		// XXX: parent class does this, should we too?
-		// wfRunHooks('SpecialRecentChangesQuery', array( &$conds, &$tables, &$join_conds, $opts ) );
+		if ( !wfRunHooks( 'SpecialRecentChangesQuery', array( &$conds, &$tables, &$join_conds, $opts, &$query_options, &$select ) ) )
+			return false;
 
 		if( $ns == NS_CATEGORY && !$showlinkedto ) {
 			// special handling for categories

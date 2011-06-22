@@ -27,8 +27,8 @@ class ChangesFeed {
 	 * @return ChannelFeed subclass or false on failure
 	 */
 	public function getFeedObject( $title, $description ) {
-		global $wgSitename, $wgContLanguageCode, $wgFeedClasses, $wgTitle;
-		$feedTitle = "$wgSitename  - {$title} [$wgContLanguageCode]";
+		global $wgSitename, $wgLanguageCode, $wgFeedClasses, $wgTitle;
+		$feedTitle = "$wgSitename  - {$title} [$wgLanguageCode]";
 		if( !isset($wgFeedClasses[$this->format] ) )
 			return false;
 		return new $wgFeedClasses[$this->format](
@@ -45,18 +45,17 @@ class ChangesFeed {
 	 * @return null or true
 	 */
 	public function execute( $feed, $rows, $lastmod, $opts ) {
-		global $messageMemc, $wgFeedCacheTimeout;
-		global $wgSitename, $wgLang;
+		global $wgLang, $wgRenderHashAppend;
 
 		if ( !FeedUtils::checkFeedOutput( $this->format ) ) {
 			return;
 		}
 
-		$timekey = wfMemcKey( $this->type, $this->format, 'timestamp' );
-		$optionsHash = md5( serialize( $opts->getAllValues() ) );
+		$optionsHash = md5( serialize( $opts->getAllValues() ) ) . $wgRenderHashAppend;
+		$timekey = wfMemcKey( $this->type, $this->format, $wgLang->getCode(), $optionsHash, 'timestamp' );
 		$key = wfMemcKey( $this->type, $this->format, $wgLang->getCode(), $optionsHash );
 
-		FeedUtils::checkPurge($timekey, $key);
+		FeedUtils::checkPurge( $timekey, $key );
 
 		/*
 		* Bumping around loading up diffs can be pretty slow, so where
@@ -102,7 +101,8 @@ class ChangesFeed {
 	 * @return feed's content on cache hit or false on cache miss
 	 */
 	public function loadFromCache( $lastmod, $timekey, $key ) {
-		global $wgFeedCacheTimeout, $messageMemc;
+		global $wgFeedCacheTimeout, $wgOut, $messageMemc;
+
 		$feedLastmod = $messageMemc->get( $timekey );
 
 		if( ( $wgFeedCacheTimeout > 0 ) && $feedLastmod ) {
@@ -119,6 +119,9 @@ class ChangesFeed {
 
 			if( $feedAge < $wgFeedCacheTimeout || $feedLastmodUnix > $lastmodUnix) {
 				wfDebug( "RC: loading feed from cache ($key; $feedLastmod; $lastmod)...\n" );
+				if ( $feedLastmodUnix < $lastmodUnix ) {
+					$wgOut->setLastModified( $feedLastmod ); // bug 21916
+				}
 				return $messageMemc->get( $key );
 			} else {
 				wfDebug( "RC: cached feed timestamp check failed ($feedLastmod; $lastmod)\n" );

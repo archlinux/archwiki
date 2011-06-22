@@ -1,8 +1,8 @@
 <?php
-
 /**
- * Created on Sep 4, 2007
  * API for MediaWiki 1.8+
+ *
+ * Created on Sep 4, 2007
  *
  * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@home.nl
  *
@@ -18,8 +18,10 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
@@ -58,11 +60,15 @@ class ApiBlock extends ApiBase {
 			return;
 		}
 
-		if ( is_null( $params['user'] ) ) {
-			$this->dieUsageMsg( array( 'missingparam', 'user' ) );
-		}
 		if ( !$wgUser->isAllowed( 'block' ) ) {
 			$this->dieUsageMsg( array( 'cantblock' ) );
+		}
+		# bug 15810: blocked admins should have limited access here
+		if ( $wgUser->isBlocked() ) {
+			$status = IPBlockForm::checkUnblockSelf( $params['user'] );
+			if ( $status !== true ) {
+				$this->dieUsageMsg( array( $status ) );
+			}
 		}
 		if ( $params['hidename'] && !$wgUser->isAllowed( 'hideuser' ) ) {
 			$this->dieUsageMsg( array( 'canthide' ) );
@@ -128,7 +134,10 @@ class ApiBlock extends ApiBase {
 
 	public function getAllowedParams() {
 		return array(
-			'user' => null,
+			'user' => array(
+				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_REQUIRED => true
+			),
 			'token' => null,
 			'gettoken' => false,
 			'expiry' => 'never',
@@ -161,20 +170,19 @@ class ApiBlock extends ApiBase {
 	}
 
 	public function getDescription() {
-		return array(
-			'Block a user.'
-		);
+		return 'Block a user';
 	}
-	
+
 	public function getPossibleErrors() {
 		return array_merge( parent::getPossibleErrors(), array(
-			array( 'missingparam', 'user' ),
 			array( 'cantblock' ),
 			array( 'canthide' ),
 			array( 'cantblock-email' ),
+			array( 'ipbblocked' ),
+			array( 'ipbnounblockself' ),
 		) );
 	}
-	
+
 	public function needsToken() {
 		return true;
 	}
@@ -186,11 +194,11 @@ class ApiBlock extends ApiBase {
 	protected function getExamples() {
 		return array(
 			'api.php?action=block&user=123.5.5.12&expiry=3%20days&reason=First%20strike',
-			'api.php?action=block&user=Vandal&expiry=never&reason=Vandalism&nocreate&autoblock&noemail'
+			'api.php?action=block&user=Vandal&expiry=never&reason=Vandalism&nocreate=&autoblock=&noemail='
 		);
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiBlock.php 74217 2010-10-03 15:53:07Z reedy $';
+		return __CLASS__ . ': $Id: ApiBlock.php 77192 2010-11-23 22:05:27Z btongminh $';
 	}
 }

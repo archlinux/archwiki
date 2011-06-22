@@ -1,6 +1,8 @@
 <?php
 /**
- * Copyright (C) 2005 Brion Vibber <brion@pobox.com>
+ * Page protection
+ *
+ * Copyright © 2005 Brion Vibber <brion@pobox.com>
  * http://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,6 +19,8 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  */
 
 /**
@@ -71,7 +75,9 @@ class ProtectionForm {
 		$this->loadData();
 	}
 	
-	// Loads the current state of protection into the object.
+	/**
+	 * Loads the current state of protection into the object.
+	 */
 	function loadData() {
 		global $wgRequest, $wgUser;
 		global $wgRestrictionLevels;
@@ -140,7 +146,8 @@ class ProtectionForm {
 
 	/**
 	 * Get the expiry time for a given action, by combining the relevant inputs.
-	 * Returns a 14-char timestamp or "infinity", or false if the input was invalid
+	 *
+	 * @return 14-char timestamp or "infinity", or false if the input was invalid
 	 */
 	function getExpiry( $action ) {
 		if ( $this->mExpirySelection[$action] == 'existing' ) {
@@ -166,6 +173,9 @@ class ProtectionForm {
 		return $time;
 	}
 
+	/**
+	 * Main entry point for action=protect and action=unprotect
+	 */
 	function execute() {
 		global $wgRequest, $wgOut;
 		if( $wgRequest->wasPosted() ) {
@@ -178,6 +188,11 @@ class ProtectionForm {
 		}
 	}
 
+	/**
+	 * Show the input form with optional error message
+	 *
+	 * @param $err String: error message or null if there's no error
+	 */
 	function show( $err = null ) {
 		global $wgOut, $wgUser;
 
@@ -228,8 +243,14 @@ class ProtectionForm {
 		$this->showLogExtract( $wgOut );
 	}
 
+	/**
+	 * Save submitted protection form
+	 *
+	 * @return Boolean: success
+	 */
 	function save() {
 		global $wgRequest, $wgUser;
+
 		# Permission check!
 		if ( $this->disabled ) {
 			$this->show();
@@ -306,21 +327,21 @@ class ProtectionForm {
 	/**
 	 * Build the input form
 	 *
-	 * @return $out string HTML form
+	 * @return String: HTML form
 	 */
 	function buildForm() {
-		global $wgUser, $wgLang;
+		global $wgUser, $wgLang, $wgOut;
 
 		$mProtectreasonother = Xml::label( wfMsg( 'protectcomment' ), 'wpProtectReasonSelection' );
 		$mProtectreason = Xml::label( wfMsg( 'protect-otherreason' ), 'mwProtect-reason' );
 
 		$out = '';
 		if( !$this->disabled ) {
-			$out .= $this->buildScript();
+			$wgOut->addModules( 'mediawiki.legacy.protect' );
 			$out .= Xml::openElement( 'form', array( 'method' => 'post',
 				'action' => $this->mTitle->getLocalUrl( 'action=protect' ),
 				'id' => 'mw-Protect-Form', 'onsubmit' => 'ProtectionForm.enableUnchainedInputs(true)' ) );
-			$out .= Xml::hidden( 'wpEditToken',$wgUser->editToken() );
+			$out .= Html::hidden( 'wpEditToken',$wgUser->editToken() );
 		}
 
 		$out .= Xml::openElement( 'fieldset' ) .
@@ -487,13 +508,20 @@ class ProtectionForm {
 		}
 
 		if ( !$this->disabled ) {
-			$out .= Xml::closeElement( 'form' ) .
-				$this->buildCleanupScript();
+			$out .= Xml::closeElement( 'form' );
+			$wgOut->addScript( $this->buildCleanupScript() );
 		}
 
 		return $out;
 	}
 
+	/**
+	 * Build protection level selector
+	 *
+	 * @param $action String: action to protect
+	 * @param $selected String: current protection level
+	 * @return String: HTML fragment
+	 */
 	function buildSelector( $action, $selected ) {
 		global $wgRestrictionLevels, $wgUser;
 
@@ -530,8 +558,8 @@ class ProtectionForm {
 	/**
 	 * Prepare the label for a protection selector option
 	 *
-	 * @param string $permission Permission required
-	 * @return string
+	 * @param $permission String: permission required
+	 * @return String
 	 */
 	private function getOptionLabel( $permission ) {
 		if( $permission == '' ) {
@@ -544,14 +572,7 @@ class ProtectionForm {
 			return $msg;
 		}
 	}
-
-	function buildScript() {
-		global $wgStylePath, $wgStyleVersion;
-		return Xml::tags( 'script', array(
-			'type' => 'text/javascript',
-			'src' => $wgStylePath . "/common/protect.js?$wgStyleVersion.1" ), '' );
-	}
-
+	
 	function buildCleanupScript() {
 		global $wgRestrictionLevels, $wgGroupPermissions;
 		$script = 'var wgCascadeableLevels=';
@@ -571,11 +592,13 @@ class ProtectionForm {
 		$encOptions = Xml::encodeJsVar( $options );
 
 		$script .= "ProtectionForm.init($encOptions)";
-		return Xml::tags( 'script', array( 'type' => 'text/javascript' ), $script );
+		return Html::inlineScript( "if ( window.mediaWiki ) { $script }" );
 	}
 
 	/**
-	 * @param OutputPage $out
+	 * Show protection long extracts for this page
+	 *
+	 * @param $out OutputPage
 	 * @access private
 	 */
 	function showLogExtract( &$out ) {

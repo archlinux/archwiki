@@ -1,32 +1,65 @@
 <?php
 /**
+ * Implements regular file uploads
+ *
  * @file
  * @ingroup upload
- *
  * @author Bryan Tong Minh
- *
- * Implements regular file uploads
  */
-class UploadFromFile extends UploadBase {
 
+class UploadFromFile extends UploadBase {
+	protected $mUpload = null;
 
 	function initializeFromRequest( &$request ) {
+		$upload = $request->getUpload( 'wpUploadFile' );		
 		$desiredDestName = $request->getText( 'wpDestFile' );
 		if( !$desiredDestName )
-			$desiredDestName = $request->getFileName( 'wpUploadFile' );
-		return $this->initializePathInfo(
-			$desiredDestName,
-			$request->getFileTempName( 'wpUploadFile' ),
-			$request->getFileSize( 'wpUploadFile' )
-		);
+			$desiredDestName = $upload->getName();
+			
+		return $this->initialize( $desiredDestName, $upload );
 	}
+	
 	/**
-	 * Entry point for upload from file.
+	 * Initialize from a filename and a WebRequestUpload
 	 */
-	function initialize( $name, $tempPath, $fileSize ) {
-		 return $this->initializePathInfo( $name, $tempPath, $fileSize );
+	function initialize( $name, $webRequestUpload ) {
+		$this->mUpload = $webRequestUpload;
+		return $this->initializePathInfo( $name, 
+			$this->mUpload->getTempName(), $this->mUpload->getSize() );
 	}
 	static function isValidRequest( $request ) {
-		return (bool)$request->getFileTempName( 'wpUploadFile' );
+		# Allow all requests, even if no file is present, so that an error
+		# because a post_max_size or upload_max_filesize overflow
+		return true;
 	}
+	
+	public function verifyUpload() {
+		# Check for a post_max_size or upload_max_size overflow, so that a 
+		# proper error can be shown to the user
+		if ( is_null( $this->mTempPath ) || $this->isEmptyFile() ) {
+			if ( $this->mUpload->isIniSizeOverflow() ) {
+				global $wgMaxUploadSize;
+				return array( 
+					'status' => UploadBase::FILE_TOO_LARGE,
+					'max' => min( 
+						$wgMaxUploadSize, 
+						wfShorthandToInteger( ini_get( 'upload_max_filesize' ) ), 
+						wfShorthandToInteger( ini_get( 'post_max_size' ) )
+					),
+				);
+			}
+		}
+		
+		return parent::verifyUpload();
+	}
+
+	/** 
+	 * Get the path to the file underlying the upload
+	 * @return String path to file
+	 */
+	public function getFileTempname() {
+		return $this->mUpload->getTempname();
+	}
+
+	
 }

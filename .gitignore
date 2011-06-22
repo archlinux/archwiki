@@ -1,5 +1,5 @@
 /images/
 /cache/
 *~
-/LocalSettings.php
-/AdminSettings.php
+/LocalSettings.php*
+/AdminSettings.php*

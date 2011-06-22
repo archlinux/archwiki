@@ -170,7 +170,7 @@ $messages = array(
 Vu pove kontinua usa {{SITENAME}} anonimim, o vu pove riensignata kom li sami o altri usere.",
 'yourname'                   => 'Usere-nome:',
 'yourpassword'               => 'Pasa-vorde:',
-'remembermypassword'         => 'Memora men pasa-vorde (kun kuke)',
+'remembermypassword'         => 'Memora men pasa-vorde (kun kuke) (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'login'                      => 'Ensignata',
 'loginprompt'                => 'Vu mus lasa cookies de ensignata en {{SITENAME}}.',
 'userlogin'                  => 'Ensignata / krea usere-registre',

@@ -111,15 +111,13 @@ $messages = array(
 'qbspecialpages' => 'Specioale bloadn',
 
 # Vector skin
-'vector-action-delete'     => 'Wegdoen',
-'vector-action-move'       => 'Ernoemn',
-'vector-namespace-project' => 'Projectblad',
-'vector-namespace-special' => 'Specioal blad',
-'vector-view-create'       => 'Anmoakn',
-'vector-view-edit'         => 'Bewerkn',
-'vector-view-history'      => 'Geschiedenisse bekykn',
-'vector-view-view'         => 'Leezn',
-'vector-view-viewsource'   => 'Brontekst bekykn',
+'vector-action-delete'   => 'Wegdoen',
+'vector-action-move'     => 'Ernoemn',
+'vector-view-create'     => 'Anmoakn',
+'vector-view-edit'       => 'Bewerkn',
+'vector-view-history'    => 'Geschiedenisse bekykn',
+'vector-view-view'       => 'Leezn',
+'vector-view-viewsource' => 'Brontekst bekykn',
 
 'tagline'           => 'Van {{SITENAME}}',
 'help'              => 'Ulpe',

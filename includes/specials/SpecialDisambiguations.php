@@ -1,10 +1,29 @@
 <?php
 /**
+ * Implements Special:Disambiguations
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup SpecialPage
  */
 
 /**
+ * A special page that lists pages containing links to disambiguations pages
+ *
  * @ingroup SpecialPage
  */
 class DisambiguationsPage extends PageQueryPage {
@@ -22,6 +41,8 @@ class DisambiguationsPage extends PageQueryPage {
 	}
 
 	function getSQL() {
+		global $wgContentNamespaces;
+
 		$dbr = wfGetDB( DB_SLAVE );
 
 		$dMsgText = wfMsgForContent('disambiguationspage');
@@ -48,11 +69,9 @@ class DisambiguationsPage extends PageQueryPage {
 						'page_namespace' => $disPageObj->getNamespace(), 'page_title' => $disPageObj->getDBkey()),
 					__METHOD__ );
 
-				while ( $row = $dbr->fetchObject( $res ) ) {
+				foreach ( $res as $row ) {
 					$linkBatch->addObj( Title::makeTitle( NS_TEMPLATE, $row->pl_title ));
 				}
-
-				$dbr->freeResult( $res );
 		}
 
 		$set = $linkBatch->constructSet( 'lb.tl', $dbr );
@@ -64,12 +83,18 @@ class DisambiguationsPage extends PageQueryPage {
 
 		list( $page, $pagelinks, $templatelinks) = $dbr->tableNamesN( 'page', 'pagelinks', 'templatelinks' );
 
+		if ( $wgContentNamespaces ) {
+			$nsclause = 'IN (' . $dbr->makeList( $wgContentNamespaces ) . ')';
+		} else {
+			$nsclause = '= ' . NS_MAIN;
+		}
+
 		$sql = "SELECT 'Disambiguations' AS \"type\", pb.page_namespace AS namespace,"
 			." pb.page_title AS title, la.pl_from AS value"
 			." FROM {$templatelinks} AS lb, {$page} AS pb, {$pagelinks} AS la, {$page} AS pa"
 			." WHERE $set"  # disambiguation template(s)
 			.' AND pa.page_id = la.pl_from'
-			.' AND pa.page_namespace = ' . NS_MAIN  # Limit to just articles in the main namespace
+			.' AND pa.page_namespace ' . $nsclause
 			.' AND pb.page_id = lb.tl_from'
 			.' AND pb.page_namespace = la.pl_namespace'
 			.' AND pb.page_title = la.pl_title'

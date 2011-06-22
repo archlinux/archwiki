@@ -1,11 +1,10 @@
 <?php
-
-/*
- * Created on Sep 19, 2006
- *
+/**
  * API for MediaWiki 1.8+
  *
- * Copyright (C) 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Created on Sep 19, 2006
+ *
+ * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +18,15 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
 	// Eclipse helper - will be ignored in production
-	require_once ( 'ApiBase.php' );
+	require_once( 'ApiBase.php' );
 }
 
 /**
@@ -36,7 +37,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 abstract class ApiFormatBase extends ApiBase {
 
 	private $mIsHtml, $mFormat, $mUnescapeAmps, $mHelp, $mCleared;
-	private $mBufferResult = false, $mBuffer;
+	private $mBufferResult = false, $mBuffer, $mDisabled = false;
 
 	/**
 	 * Constructor
@@ -45,13 +46,14 @@ abstract class ApiFormatBase extends ApiBase {
 	 * @param $format string Format name
 	 */
 	public function __construct( $main, $format ) {
-		parent :: __construct( $main, $format );
+		parent::__construct( $main, $format );
 
 		$this->mIsHtml = ( substr( $format, - 2, 2 ) === 'fm' ); // ends with 'fm'
-		if ( $this->mIsHtml )
+		if ( $this->mIsHtml ) {
 			$this->mFormat = substr( $format, 0, - 2 ); // remove ending 'fm'
-		else
+		} else {
 			$this->mFormat = $format;
+		}
 		$this->mFormat = strtoupper( $this->mFormat );
 		$this->mCleared = false;
 	}
@@ -113,20 +115,36 @@ abstract class ApiFormatBase extends ApiBase {
 	}
 
 	/**
+	 * Disable the formatter completely. This causes calls to initPrinter(),
+	 * printText() and closePrinter() to be ignored.
+	 */
+	public function disable() {
+		$this->mDisabled = true;
+	}
+
+	public function isDisabled() {
+		return $this->mDisabled;
+	}
+
+	/**
 	 * Initialize the printer function and prepare the output headers, etc.
 	 * This method must be the first outputing method during execution.
 	 * A help screen's header is printed for the HTML-based output
 	 * @param $isError bool Whether an error message is printed
 	 */
 	function initPrinter( $isError ) {
+		if ( $this->mDisabled ) {
+			return;
+		}
 		$isHtml = $this->getIsHtml();
 		$mime = $isHtml ? 'text/html' : $this->getMimeType();
 		$script = wfScript( 'api' );
 
 		// Some printers (ex. Feed) do their own header settings,
 		// in which case $mime will be set to null
-		if ( is_null( $mime ) )
+		if ( is_null( $mime ) ) {
 			return; // skip any initialization
+		}
 
 		header( "Content-Type: $mime; charset=utf-8" );
 
@@ -170,6 +188,9 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 	 * Finish printing. Closes HTML tags.
 	 */
 	public function closePrinter() {
+		if ( $this->mDisabled ) {
+			return;
+		}
 		if ( $this->getIsHtml() ) {
 ?>
 
@@ -189,6 +210,9 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 	 * @param $text string
 	 */
 	public function printText( $text ) {
+		if ( $this->mDisabled ) {
+			return;
+		}
 		if ( $this->mBufferResult ) {
 			$this->mBuffer = $text;
 		} elseif ( $this->getIsHtml() ) {
@@ -197,8 +221,7 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 			// For non-HTML output, clear all errors that might have been
 			// displayed if display_errors=On
 			// Do this only once, of course
-			if ( !$this->mCleared )
-			{
+			if ( !$this->mCleared ) {
 				ob_clean();
 				$this->mCleared = true;
 			}
@@ -224,15 +247,15 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 	 * @param $help bool
 	 */
 	public function setHelp( $help = true ) {
-		$this->mHelp = true;
+		$this->mHelp = $help;
 	}
 
 	/**
-	* Prety-print various elements in HTML format, such as xml tags and
-	* URLs. This method also escapes characters like <
-	* @param $text string
-	* @return string
-	*/
+	 * Pretty-print various elements in HTML format, such as xml tags and
+	 * URLs. This method also escapes characters like <
+	 * @param $text string
+	 * @return string
+	 */
 	protected function formatHTML( $text ) {
 		global $wgUrlProtocols;
 
@@ -254,12 +277,15 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 			$text = preg_replace( "#\\$[^<>\n]+\\$#", '<b><i>\\0</i></b>', $text );
 		}
 
-		/* Temporary fix for bad links in help messages. As a special case,
+		/**
+		 * Temporary fix for bad links in help messages. As a special case,
 		 * XML-escaped metachars are de-escaped one level in the help message
-		 * for legibility. Should be removed once we have completed a fully-html
-		 * version of the help message. */
-		if ( $this->mUnescapeAmps )
+		 * for legibility. Should be removed once we have completed a fully-HTML
+		 * version of the help message.
+		 */
+		if ( $this->mUnescapeAmps ) {
 			$text = preg_replace( '/&amp;(amp|quot|lt|gt);/', '&\1;', $text );
+		}
 
 		return $text;
 	}
@@ -273,7 +299,7 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 	}
 
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiFormatBase.php 62367 2010-02-12 14:09:42Z siebrand $';
+		return __CLASS__ . ': $Id: ApiFormatBase.php 75970 2010-11-04 00:55:30Z reedy $';
 	}
 }
 
@@ -284,7 +310,7 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 class ApiFormatFeedWrapper extends ApiFormatBase {
 
 	public function __construct( $main ) {
-		parent :: __construct( $main, 'feed' );
+		parent::__construct( $main, 'feed' );
 	}
 
 	/**
@@ -326,13 +352,14 @@ class ApiFormatFeedWrapper extends ApiFormatBase {
 	 */
 	public function execute() {
 		$data = $this->getResultData();
-		if ( isset ( $data['_feed'] ) && isset ( $data['_feeditems'] ) ) {
+		if ( isset( $data['_feed'] ) && isset( $data['_feeditems'] ) ) {
 			$feed = $data['_feed'];
 			$items = $data['_feeditems'];
 
 			$feed->outHeader();
-			foreach ( $items as & $item )
+			foreach ( $items as & $item ) {
 				$feed->outItem( $item );
+			}
 			$feed->outFooter();
 		} else {
 			// Error has occured, print something useful
@@ -341,6 +368,6 @@ class ApiFormatFeedWrapper extends ApiFormatBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatBase.php 62367 2010-02-12 14:09:42Z siebrand $';
+		return __CLASS__ . ': $Id: ApiFormatBase.php 75970 2010-11-04 00:55:30Z reedy $';
 	}
 }

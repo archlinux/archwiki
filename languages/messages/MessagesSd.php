@@ -253,24 +253,13 @@ $messages = array(
 'faqpage'        => 'Project:ڪپوس',
 
 # Vector skin
-'vector-action-delete'       => 'ڊاھيو',
-'vector-action-move'         => 'چوريو',
-'vector-action-protect'      => 'تحفظيو',
-'vector-action-unprotect'    => 'اڻتحفظيو',
-'vector-namespace-category'  => 'زمرو',
-'vector-namespace-help'      => 'امدادي صفحو',
-'vector-namespace-image'     => 'فائيل',
-'vector-namespace-main'      => 'صفحو',
-'vector-namespace-media'     => 'ذريعاتي صفحو',
-'vector-namespace-mediawiki' => 'نياپو',
-'vector-namespace-project'   => 'رٿائي صفحو',
-'vector-namespace-special'   => 'خاص صفحو',
-'vector-namespace-talk'      => 'بحث',
-'vector-namespace-template'  => 'سانچو',
-'vector-namespace-user'      => 'تعارفي صفحو',
-'vector-view-create'         => 'سرجيو',
-'vector-view-edit'           => 'سنواريو',
-'vector-view-viewsource'     => 'ڪوڊ ڏسو',
+'vector-action-delete'    => 'ڊاھيو',
+'vector-action-move'      => 'چوريو',
+'vector-action-protect'   => 'تحفظيو',
+'vector-action-unprotect' => 'اڻتحفظيو',
+'vector-view-create'      => 'سرجيو',
+'vector-view-edit'        => 'سنواريو',
+'vector-view-viewsource'  => 'ڪوڊ ڏسو',
 
 'errorpagetitle'    => 'چُڪَ',
 'returnto'          => '$1 ڏانهن وَرو.',
@@ -402,7 +391,7 @@ $messages = array(
 # Login and logout pages
 'yourname'                   => 'يُوزرنانءُ:',
 'yourpassword'               => 'ڳجھو لفظ:',
-'remembermypassword'         => 'هن ڳڻپيوڪر تي مون کي ياد رکو',
+'remembermypassword'         => 'هن ڳڻپيوڪر تي مون کي ياد رکو (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'login'                      => 'لاگ اِن',
 'nav-login-createaccount'    => 'لاگ اِن ٿيو / کاتو کوليو',
 'loginprompt'                => '{{SITENAME}} ۾ لاگ اِن ٿيڻ لاءِ ڪوڪيز جي قبوليت لازمي آهي.',
@@ -493,7 +482,6 @@ $messages = array(
 'copyrightwarning'           => "ياد رکندا ته {{SITENAME}} لاءِ سموريون ڀاڱيداريون $2 تحت پڌريون ڪجن ٿيون (تفصيلن لاءِ $1 ڏسندا). اوهان جي تحرير کي {{SITENAME}} جي قائدن تحت ترميمي سگهجي ٿو. جيڪڏهن اوهان نه ٿا چاهيو ته اوهان جي لکڻين کي بي رحميءَ سان ترميميو وڃي يا ورهائي عام ڪيو وڃي ته پوءِ پنهنجي لکڻي هتي جمع نه ڪرايو. پنهنجو مواد هتي جمع ڪرڻ جو مطلب هوندو ته توهان کي جمع ڪرايل مواد جي مفت فراهمي ۽ کُليل تبديليءَ تي ڪو به اعتراز ناهي.<br />
 توهان اهڙي پڪ ڏيڻ جا پابند پڻ آهيو ته توهان جو جمع ڪرايل مواد توهان جو پنهنجو لکيل آهي يا وري توهان ڪنهن مفت وسيلي تان ڪاپي ڪيو آهي.
 '''تحفظيل حق ۽ واسطا رکندڙ مواد واسطيدار مالڪ کان اڳواٽ اجازت وٺڻ کان سواءِ هتي جمع نه ڪريو.'''",
-'longpagewarning'            => "'''خبردار: هيءُ صفحو $1 ڪلوٻاٽڻيون وڏو آهي؛ 32 ڪلوٻاٽڻين کان وڏا صفحا سنواريندي ڪن جھانگوئن سان مسئلا ٿين ٿا. مهرباني ڪري هن صفحي کي ننڍن سيڪشنز ۾ ٽوڙڻ تي ويچاريندا.'''",
 'templatesused'              => 'هن صفحي تي استعمال ٿيندڙ سانچا:',
 'templatesusedpreview'       => 'هن پيش نگاهه ۾ استعمال ٿيل سانچا:',
 'template-protected'         => '(تحفظيل)',
@@ -715,7 +703,6 @@ $1 {{PLURAL:$1|اکر|اکرن}} کان ننڍي هوڻ گھرجي.',
 # Watchlist
 'watchlist'         => 'منهنجي ٽيٽ فهرست',
 'mywatchlist'       => 'منهنجي ٽيٽ فهرست',
-'watchlistfor'      => "(براءِ '''$1''')",
 'addedwatch'        => 'ٽيٽ فھرست ۾ شامل ڪيو ويو.',
 'addedwatchtext'    => "صفحو بعنوان \"[[:\$1]]\" اوهان جي [[Special:Watchlist|ٽيٽ فهرست]] ۾ شامل ٿي ويو. استقبالي تبديليون هتي درج ٿينديون وينديون. اهو صفحو [[Special:RecentChanges|تازين تبديلين]] واري صفحي تي '''گهرن''' اکرن ۾ نمايان ڪري ڏيکاريو ويندو. جيڪڏهن اوهان اهو سڀ نه ٿا چاهيو ته '''اڻ ٽيٽيو''' تي ڪلڪ ڪريو.",
 'removedwatch'      => 'ٽيٽ فهرست مان هٽايو ويو',
@@ -918,9 +905,9 @@ $1 {{PLURAL:$1|اکر|اکرن}} کان ننڍي هوڻ گھرجي.',
 'nextdiff'     => 'نئون تفاوت -->',
 
 # Media information
-'file-info-size'       => '($1 × $2 عڪسلون، فائيل سائيز: $3، MIME ٽائيپ: $4)',
+'file-info-size'       => '$1 × $2 عڪسلون، فائيل سائيز: $3، MIME ٽائيپ: $4',
 'file-nohires'         => '<small>اڃا سنهو تحلل ميسر ناهي.</small>',
-'svg-long-desc'        => '(ايس وي جي فائيل، اٽڪل $1 × $2 عڪسلون، فائيل سائيز: $3)',
+'svg-long-desc'        => 'ايس وي جي فائيل، اٽڪل $1 × $2 عڪسلون، فائيل سائيز: $3',
 'show-big-image'       => 'سنهو ترين تحلل',
 'show-big-image-thumb' => '<small>هن پيش نگاهه جي ماپ: $1 × $2 عڪسلون</small>',
 

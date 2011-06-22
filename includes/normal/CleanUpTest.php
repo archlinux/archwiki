@@ -1,21 +1,28 @@
 <?php
-# Copyright (C) 2004 Brion Vibber <brion@pobox.com>
-# http://www.mediawiki.org/
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-# http://www.gnu.org/copyleft/gpl.html
+/**
+ * Tests for UtfNormal::cleanUp() function.
+ *
+ * Copyright © 2004 Brion Vibber <brion@pobox.com>
+ * http://www.mediawiki.org/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup UtfNormal
+ */
 
 
 if( php_sapi_name() != 'cli' ) {
@@ -29,7 +36,14 @@ if( isset( $_SERVER['argv'] ) && in_array( '--icu', $_SERVER['argv'] ) ) {
 
 #ini_set( 'memory_limit', '40M' );
 
-require_once 'PHPUnit/Framework.php';
+require_once( 'PHPUnit/Runner/Version.php' );
+if( version_compare( PHPUnit_Runner_Version::id(), '3.5.0', '>=' ) ) {
+    # PHPUnit 3.5.0 introduced a nice autoloader based on class name
+    require_once( 'PHPUnit/Autoload.php' );
+} else {
+	# Keep the old pre PHPUnit 3.5.0 behaviour for compatibility
+	require_once 'PHPUnit/Framework.php';
+}
 require_once 'PHPUnit/TextUI/TestRunner.php';
 
 require_once 'UtfNormal.php';
@@ -85,7 +99,6 @@ class CleanUpTest extends PHPUnit_Framework_TestCase {
 	 */
 	function XtestAllChars() {
 		$rep = UTF8_REPLACEMENT;
-		global $utfCanonicalComp, $utfCanonicalDecomp;
 		for( $i = 0x0; $i < UNICODE_MAX; $i++ ) {
 			$char = codepointToUtf8( $i );
 			$clean = UtfNormal::cleanUp( $char );
@@ -97,7 +110,7 @@ class CleanUpTest extends PHPUnit_Framework_TestCase {
 			    ($i > 0x001f && $i < UNICODE_SURROGATE_FIRST) ||
 			    ($i > UNICODE_SURROGATE_LAST && $i < 0xfffe ) ||
 			    ($i > 0xffff && $i <= UNICODE_MAX ) ) {
-				if( isset( $utfCanonicalComp[$char] ) || isset( $utfCanonicalDecomp[$char] ) ) {
+				if( isset( UtfNormal::$utfCanonicalComp[$char] ) || isset( UtfNormal::$utfCanonicalDecomp[$char] ) ) {
 				    $comp = UtfNormal::NFC( $char );
 					$this->assertEquals(
 						bin2hex( $comp ),

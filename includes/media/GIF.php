@@ -1,5 +1,7 @@
 <?php
 /**
+ * Handler for GIF images.
+ *
  * @file
  * @ingroup Media
  */
@@ -12,7 +14,7 @@
 class GIFHandler extends BitmapHandler {
 	
 	function getMetadata( $image, $filename ) {
-		if ( !isset($image->parsedGIFMetadata) ) {
+		if ( !isset( $image->parsedGIFMetadata ) ) {
 			try {
 				$image->parsedGIFMetadata = GIFMetadataExtractor::getMetadata( $filename );
 			} catch( Exception $e ) {
@@ -22,7 +24,7 @@ class GIFHandler extends BitmapHandler {
 			}
 		}
 
-		return serialize($image->parsedGIFMetadata);
+		return serialize( $image->parsedGIFMetadata );
 
 	}
 	
@@ -39,22 +41,41 @@ class GIFHandler extends BitmapHandler {
 			return $width * $height;
 		}
 	}
+
+	function isAnimatedImage( $image ) {
+		$ser = $image->getMetadata();
+		if ($ser) {
+			$metadata = unserialize($ser);
+			if( $metadata['frameCount'] > 1 ) return true;
+		}
+		return false;
+	}
 	
 	function getMetadataType( $image ) {
 		return 'parsed-gif';
 	}
 	
+	function isMetadataValid( $image, $metadata ) {
+		wfSuppressWarnings();
+		$data = unserialize( $metadata );
+		wfRestoreWarnings();
+		return (boolean) $data;
+	}
+
 	function getLongDesc( $image ) {
-		global $wgUser, $wgLang;
-		$sk = $wgUser->getSkin();
+		global $wgLang;
+
+		$original = parent::getLongDesc( $image );
+
+		wfSuppressWarnings();
+		$metadata = unserialize($image->getMetadata());
+		wfRestoreWarnings();
 		
-		$metadata = @unserialize($image->getMetadata());
-		
-		if (!$metadata) return parent::getLongDesc( $image );
+		if (!$metadata || $metadata['frameCount'] <=  1)
+			return $original;
 		
 		$info = array();
-		$info[] = $image->getMimeType();
-		$info[] = $sk->formatSize( $image->getSize() );
+		$info[] = $original;
 		
 		if ($metadata['looped'])
 			$info[] = wfMsgExt( 'file-info-gif-looped', 'parseinline' );
@@ -65,8 +86,6 @@ class GIFHandler extends BitmapHandler {
 		if ($metadata['duration'])
 			$info[] = $wgLang->formatTimePeriod( $metadata['duration'] );
 		
-		$infoString = $wgLang->commaList( $info );
-		
-		return "($infoString)";
+		return $wgLang->commaList( $info );
 	}
 }

@@ -1,7 +1,7 @@
 // JS specific to Special:Search
 
 // change the search link to what user entered
-function mwSearchHeaderClick( obj ) {
+window.mwSearchHeaderClick = function( obj ) {
 	var searchbox = document.getElementById( 'searchText' );
 	if( searchbox === null ) {
 		searchbox = document.getElementById( 'powerSearchText' );
@@ -11,7 +11,7 @@ function mwSearchHeaderClick( obj ) {
 	}
 
 	var searchterm = searchbox.value;
-	var parts = obj.href.split( 'search=' );
+	var parts = obj.getAttribute( 'href', 2).split( 'search=' );
 	var lastpart = '';
 	var prefix = 'search=';
 	if( parts.length > 1 && parts[1].indexOf('&') >= 0 ) {
@@ -20,9 +20,9 @@ function mwSearchHeaderClick( obj ) {
 		prefix = '&search=';
 	}
 	obj.href = parts[0] + prefix + encodeURIComponent( searchterm ) + lastpart;
-}
+};
 
-function mwToggleSearchCheckboxes( btn ) {
+window.mwToggleSearchCheckboxes = function( btn ) {
 	if( !document.getElementById ) {
 		return;
 	}
@@ -47,4 +47,4 @@ function mwToggleSearchCheckboxes( btn ) {
 			}
 		}
 	}
-}
+};

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Old file in the in the oldimage table
+ *
+ * @file
+ * @ingroup FileRepo
+ */
 
 /**
  * Class to represent a file in the oldimage table
@@ -30,14 +36,12 @@ class OldLocalFile extends LocalFile {
 	}
 	
 	static function newFromKey( $sha1, $repo, $timestamp = false ) {
-		# Polymorphic function name to distinguish foreign and local fetches
-		$fname = get_class( $this ) . '::' . __FUNCTION__;
-
 		$conds = array( 'oi_sha1' => $sha1 );
 		if( $timestamp ) {
 			$conds['oi_timestamp'] = $timestamp;
 		}
-		$row = $dbr->selectRow( 'oldimage', $this->getCacheFields( 'oi_' ), $conds, $fname );
+		$dbr = $repo->getSlaveDB();
+		$row = $dbr->selectRow( 'oldimage', self::selectFields(), $conds, __METHOD__ );
 		if( $row ) {
 			return self::newFromRow( $row, $repo );
 		} else {
@@ -70,10 +74,10 @@ class OldLocalFile extends LocalFile {
 	}
 
 	/**
-	 * @param Title $title
-	 * @param FileRepo $repo
-	 * @param string $time Timestamp or null to load by archive name
-	 * @param string $archiveName Archive name or null to load by timestamp
+	 * @param $title Title
+	 * @param $repo FileRepo
+	 * @param $time String: timestamp or null to load by archive name
+	 * @param $archiveName String: archive name or null to load by timestamp
 	 */
 	function __construct( $title, $repo, $time, $archiveName ) {
 		parent::__construct( $title, $repo );
@@ -135,7 +139,7 @@ class OldLocalFile extends LocalFile {
 	}
 
 	function getUrlRel() {
-		return 'archive/' . $this->getHashPath() . urlencode( $this->getArchiveName() );
+		return 'archive/' . $this->getHashPath() . rawurlencode( $this->getArchiveName() );
 	}
 
 	function upgradeRow() {
@@ -172,8 +176,8 @@ class OldLocalFile extends LocalFile {
 	}
 
 	/**
-	 * int $field one of DELETED_* bitfield constants
-	 * for file or revision rows
+	 * @param $field Integer: one of DELETED_* bitfield constants
+	 *               for file or revision rows
 	 * @return bool
 	 */
 	function isDeleted( $field ) {
@@ -193,7 +197,8 @@ class OldLocalFile extends LocalFile {
 	/**
 	 * Determine if the current user is allowed to view a particular
 	 * field of this image file, if it's marked as deleted.
-	 * @param int $field
+	 *
+	 * @param $field Integer
 	 * @return bool
 	 */
 	function userCan( $field ) {

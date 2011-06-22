@@ -62,7 +62,7 @@ $messages = array(
 'tog-hideminor'          => 'Сөөлгү өскерлиишкиннер арында бичии өскерлиишкиннерни чажырар',
 'tog-showtoolbar'        => 'Өскертир херекселдерни көргүзер (JavaScript)',
 'tog-editondblclick'     => 'Арынны өскертирде ийи катап базар (JavaScript)',
-'tog-rememberpassword'   => 'Мени сактып алыр',
+'tog-rememberpassword'   => 'Remember my login on this computer (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchlisthideown'   => 'Хайгаарылга даңзызындан мээң өскерлиишкиннерымны чажырары',
 'tog-watchlisthidebots'  => 'Хайгаарылга даңзызындан роботтарның өскерлиишкиннерын чажырары',
 'tog-watchlisthideminor' => 'Хайгаарылга даңзызындан бичии өскерлиишкиннерны чажырары',
@@ -147,13 +147,12 @@ $messages = array(
 'qbspecialpages' => 'Тускай арыннар',
 
 # Vector skin
-'vector-action-delete'      => 'Ырадыры',
-'vector-action-move'        => 'Шимчээри',
-'vector-action-protect'     => 'Камгалаары',
-'vector-namespace-category' => 'Бөлүк',
-'vector-view-edit'          => 'Өскертири',
-'vector-view-history'       => 'Төөгүнү көөрү',
-'vector-view-view'          => 'Номчууру',
+'vector-action-delete'  => 'Ырадыры',
+'vector-action-move'    => 'Шимчээри',
+'vector-action-protect' => 'Камгалаары',
+'vector-view-edit'      => 'Өскертири',
+'vector-view-history'   => 'Төөгүнү көөрү',
+'vector-view-view'      => 'Номчууру',
 
 'errorpagetitle'    => 'Алдаг',
 'returnto'          => '$1 деп арынже эглири.',
@@ -271,7 +270,7 @@ $messages = array(
 # Login and logout pages
 'yourname'                => 'Aжыглакчының ады',
 'yourpassword'            => 'Чажыт сөс',
-'remembermypassword'      => 'Адымны сактып алыры',
+'remembermypassword'      => 'Мени бо компютерде сактып алыры (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'login'                   => 'Кирери',
 'nav-login-createaccount' => 'Кирери / бүрүткел бижикти бүдүрери',
 'userlogin'               => 'Кирери / бүрүткел бижикти бүдүрери',
@@ -483,8 +482,6 @@ The password for this new account can be changed on the ''[[Special:ChangePasswo
 # Recent changes
 'nchanges'                          => '$1 {{PLURAL:$1|өскерлиишкин}}',
 'recentchanges'                     => 'Амгы өскерлиишкиннер',
-'recentchanges-legend-newpage'      => '$1 — чаа арын',
-'recentchanges-legend-minor'        => '$1 — бичии өскерлиишкин',
 'recentchanges-label-minor'         => 'Бо өскерлиишкин биче-дир',
 'rcshowhideminor'                   => 'Бичии өскерлиишкиннерни $1',
 'rcshowhidebots'                    => 'Роботтарну $1',
@@ -921,6 +918,10 @@ The password for this new account can be changed on the ''[[Special:ChangePasswo
 # Special:Tags
 'tag-filter-submit' => 'Шүүрү',
 'tags-edit'         => 'өскертири',
+
+# Special:ComparePages
+'compare-page1' => 'Арын 1',
+'compare-page2' => 'Арын 2',
 
 # HTML forms
 'htmlform-submit' => 'Күүcедири',

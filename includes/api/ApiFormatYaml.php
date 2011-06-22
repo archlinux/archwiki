@@ -1,11 +1,10 @@
 <?php
-
-/*
- * Created on Sep 19, 2006
- *
+/**
  * API for MediaWiki 1.8+
  *
- * Copyright (C) 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Created on Sep 19, 2006
+ *
+ * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,22 +18,25 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
 	// Eclipse helper - will be ignored in production
-	require_once ( 'ApiFormatBase.php' );
+	require_once( 'ApiFormatBase.php' );
 }
 
 /**
+ * API YAML output formatter
  * @ingroup API
  */
 class ApiFormatYaml extends ApiFormatBase {
 
 	public function __construct( $main, $format ) {
-		parent :: __construct( $main, $format );
+		parent::__construct( $main, $format );
 	}
 
 	public function getMimeType() {
@@ -42,14 +44,14 @@ class ApiFormatYaml extends ApiFormatBase {
 	}
 
 	public function execute() {
-		$this->printText( Spyc :: YAMLDump( $this->getResultData() ) );
+		$this->printText( Spyc::YAMLDump( $this->getResultData() ) );
 	}
 
 	public function getDescription() {
-		return 'Output data in YAML format' . parent :: getDescription();
+		return 'Output data in YAML format' . parent::getDescription();
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatYaml.php 60930 2010-01-11 15:55:52Z simetrical $';
+		return __CLASS__ . ': $Id: ApiFormatYaml.php 70647 2010-08-07 19:59:42Z ialex $';
 	}
 }

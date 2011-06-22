@@ -18,12 +18,11 @@ function compressOldPages( $start = 0, $extdb = '' ) {
 			break;
 		}
 		$last = $start;
-		while( $row = $dbw->fetchObject( $res ) ) {
+		foreach ( $res as $row ) {
 			# print "  {$row->old_id} - {$row->old_namespace}:{$row->old_title}\n";
 			compressPage( $row, $extdb );
 			$last = $row->old_id;
 		}
-		$dbw->freeResult( $res );
 		$start = $last + 1; # Deletion may leave long empty stretches
 		print "$start...\n";
 	} while( true );
@@ -67,7 +66,7 @@ define( 'LS_INDIVIDUAL', 0 );
 define( 'LS_CHUNKED', 1 );
 
 /** @todo document */
-function compressWithConcat( $startId, $maxChunkSize, $beginDate, 
+function compressWithConcat( $startId, $maxChunkSize, $beginDate,
 	$endDate, $extdb="", $maxPageId = false )
 {
 	$fname = 'compressWithConcat';
@@ -94,12 +93,12 @@ function compressWithConcat( $startId, $maxChunkSize, $beginDate,
 		$pageConds[] = 'page_namespace<>0';
 	}
 	if ( $queryExtra ) {
-                $pageConds[] = $queryExtra;
+				$pageConds[] = $queryExtra;
 	}
 	 */
 
 	# For each article, get a list of revisions which fit the criteria
-	
+
 	# No recompression, use a condition on old_flags
 	# Don't compress object type entities, because that might produce data loss when
 	# overwriting bulk storage concat rows. Don't compress external references, because
@@ -142,10 +141,10 @@ function compressWithConcat( $startId, $maxChunkSize, $beginDate,
 		wfWaitForSlaves( 5 );
 
 		# Wake up
-		$dbr->ping();		
+		$dbr->ping();
 
 		# Get the page row
-		$pageRes = $dbr->select( 'page', 
+		$pageRes = $dbr->select( 'page',
 			array('page_id', 'page_namespace', 'page_title','page_latest'),
 			$pageConds + array('page_id' => $pageId), $fname );
 		if ( $dbr->numRows( $pageRes ) == 0 ) {
@@ -159,10 +158,10 @@ function compressWithConcat( $startId, $maxChunkSize, $beginDate,
 
 		# Load revisions
 		$revRes = $dbw->select( $tables, $fields,
-			array_merge( array( 
-				'rev_page' => $pageRow->page_id, 
+			array_merge( array(
+				'rev_page' => $pageRow->page_id,
 				# Don't operate on the current revision
-				# Use < instead of <> in case the current revision has changed 
+				# Use < instead of <> in case the current revision has changed
 				# since the page select, which wasn't locking
 				'rev_id < ' . $pageRow->page_latest
 			), $conds ),
@@ -170,7 +169,7 @@ function compressWithConcat( $startId, $maxChunkSize, $beginDate,
 			$revLoadOptions
 		);
 		$revs = array();
-		while ( $revRow = $dbw->fetchObject( $revRes ) ) {
+		foreach ( $revRes as $revRow ) {
 			$revs[] = $revRow;
 		}
 

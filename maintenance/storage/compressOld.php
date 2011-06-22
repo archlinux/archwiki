@@ -25,10 +25,10 @@
  */
 
 $optionsWithArgs = array( 't', 'c', 's', 'f', 'h', 'extdb', 'endid', 'e' );
-require_once( dirname(__FILE__) . '/../commandLine.inc' );
+require_once( dirname( __FILE__ ) . '/../commandLine.inc' );
 require_once( "compressOld.inc" );
 
-if( !function_exists( "gzdeflate" ) ) {
+if ( !function_exists( "gzdeflate" ) ) {
 	print "You must enable zlib support in PHP to compress old revisions!\n";
 	print "Please see http://www.php.net/manual/en/ref.zlib.php\n\n";
 	wfDie();
@@ -39,9 +39,9 @@ $defaults = array(
 	'c' => 20,
 	's' => 0,
 	'b' => '',
-    'e' => '',
-    'extdb' => '',
-    'endid' => false,
+	'e' => '',
+	'extdb' => '',
+	'endid' => false,
 );
 
 $options = $options + $defaults;
@@ -51,15 +51,15 @@ if ( $options['t'] != 'concat' && $options['t'] != 'gzip' ) {
 }
 
 if ( $options['extdb'] != '' ) {
-	print "Compressing database $wgDBname to external cluster {$options['extdb']}\n" . str_repeat('-', 76) . "\n\n";
+	print "Compressing database $wgDBname to external cluster {$options['extdb']}\n" . str_repeat( '-', 76 ) . "\n\n";
 } else {
-	print "Compressing database $wgDBname\n" . str_repeat('-', 76) . "\n\n";
+	print "Compressing database $wgDBname\n" . str_repeat( '-', 76 ) . "\n\n";
 }
 
 $success = true;
 if ( $options['t'] == 'concat' ) {
-    $success = compressWithConcat( $options['s'], $options['c'], $options['b'],
-        $options['e'], $options['extdb'], $options['endid'] );
+	$success = compressWithConcat( $options['s'], $options['c'], $options['b'],
+		$options['e'], $options['extdb'], $options['endid'] );
 } else {
 	compressOldPages( $options['s'], $options['extdb'] );
 }
@@ -68,6 +68,6 @@ if ( $success ) {
 	print "Done.\n";
 }
 
-exit(0);
+exit( 0 );
 
 

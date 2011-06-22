@@ -27,8 +27,7 @@ $messages = array(
 'tog-editsection'             => 'Pagbalinen ti panagedit iti benneg babaen ti [edit] a panilpo',
 'tog-editsectiononrightclick' => 'Pagmayaten ti section editing babaen ti panang-right click kadagiti section titles (JavaScript)',
 'tog-showtoc'                 => 'Ipakita dagiti linaon (para kadagiti panid nga addaan ad-adu ngem 3 a headings)',
-'tog-rememberpassword'        => 'Laglagipen ti iseserrekko kadaytoy a kompiuter',
-'tog-editwidth'               => 'Ti kahon ti edit ket addaan sibubukel a kaakaba',
+'tog-rememberpassword'        => 'Laglagipen ti iseserrekko kadaytoy a kompiuter (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => 'Inayon dagiti inaramidko a pampanid iti listaan ti bambantayak',
 'tog-watchdefault'            => 'Inayon dagiti ed-editek a pampanid iti listaan ti bambantayak',
 'tog-watchmoves'              => 'Inayon dagiti inyakarko a pampanid iti listaan ti bambantayak',
@@ -345,7 +344,7 @@ Dimo liplipatan a sukatan dagiti preferenciam iti [[Special:Preferences|{{SITENA
 'yourname'                   => 'Nagan:',
 'yourpassword'               => 'Pasesbalikas:',
 'yourpasswordagain'          => 'Uliten ti pasesbalikas',
-'remembermypassword'         => 'Laglagipennak',
+'remembermypassword'         => 'Laglagipennak (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'             => 'Ti bukodmo a domain:',
 'login'                      => 'Sumrek',
 'nav-login-createaccount'    => 'Mangaramid iti account wenno ag-login',
@@ -494,9 +493,6 @@ Ti agdama nga IP addressmo ket $3, ket ti block ID ket #$5. Pangngaasim ta irama
 No dimo kayat a ti sinuratmo ket maedit wenno mabalbaliwan nga awanan-asi ken maiwaras nga awan sungsungbatan kenka, saanmo laengen nga ip-ipan wenno ipabpablaak ditoy.<br />
 Kasta met nga ikarim kadakami a bukodmo a sinurat wenno gapuanan daytoy, wenno kinopiam ngem iti maysa a nawaya a pagtagikuaan ti publiko wenno pumadmad a libre a pagtaudan (kitaen ti $1 para iti detalie).
 '''SAAN A MANGIPAN ITI ADDAAN COPYRIGHT NGA OBRA NO AWANAN PAMMALUBOS!'''",
-'longpagewarning'                  => "'''BALLAAG: Agatiddog daytoy a panid iti $1 a kilobytes;
-amangan ta sumagmamano a browsers ket agparikut iti panagedit iti pampanid a dandani 32 kb, wenno ad-adu pay, ti kaatiddogna.
-Pangngaasim ta padasem a pasetpasetem ti panid iti babbabassit a benneg.'''",
 'longpageerror'                    => "'''BIDDUT: Ti texto nga insumitem ket agatiddog iti $1 a kilobytes, nga at-atiddog nga amang ngem ti maximum a $2 a kilobytes.
 Isut' gapuna a saan a maidulin.'''",
 'protectedpagewarning'             => "'''BALLAAG:  Daytoy a panid ket nabalunetan tapno dagiti laeng agar-aramat nga addaan previlehio a sysop wenno administrador ti makabalbaliw itoy.'''",
@@ -825,7 +821,6 @@ Dagiti panid iti [[Special:Watchlist|listaan ti bambantayam]] ket '''naipuskol''
 'filetype-badmime'       => 'Dagiti files a kas MIME type "$1" ket saan a mapalubosan a maipan.',
 'filetype-unwanted-type' => "Ti '''\".\$1\"''' ket di mabalin a file type. Dagiti mayat a file types ket \$2.",
 'filetype-banned-type'   => "Ti '''\".\$1\"''' ket saan a mapalubosan a file type. Dagiti mabalin a file types ket \$2.",
-'successfulupload'       => 'Balligi ti panag-upload',
 'uploadwarning'          => 'Ballaag iti panagipan',
 'savefile'               => 'Idulin ti file',
 'uploadedimage'          => 'naipanen ti "[[$1]]"',
@@ -837,6 +832,7 @@ Dagiti panid iti [[Special:Watchlist|listaan ti bambantayam]] ket '''naipuskol''
 'destfilename'           => 'Destinasion a filename:',
 'upload-maxfilesize'     => 'Maximum a file size: $1',
 'watchthisupload'        => 'Bantayan daytoy a panid',
+'upload-success-subj'    => 'Balligi ti panag-upload',
 
 'upload-proto-error'      => 'Saan a husto a protocol',
 'upload-proto-error-text' => 'Dagiti remote upload ket kasapulan a dagiti URLs ket mangrugi iti <code>http://</code> wenno <code>ftp://</code>.',
@@ -1060,7 +1056,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Watchlist
 'watchlist'         => 'Dagiti bambantayak',
 'mywatchlist'       => 'Dagiti bambantayak',
-'watchlistfor'      => "(para ken ni '''$1''')",
 'nowatchlist'       => 'Awan ti pampanid iti listaan dagiti bambantayam.',
 'watchnologin'      => 'Saan a nakastrek',
 'watchnologintext'  => 'Nasken a [[Special:UserLogin|naka-loginka]] tapno mabaliwam dagiti bambantayam a panid.',
@@ -1494,10 +1489,10 @@ itsek ti husto a panangikapet iti latex, dvips, gs, samo i-convert',
 # Media information
 'thumbsize'            => 'Kakasla kuko a rukod:',
 'widthheightpage'      => '$1×$2, $3 a {{PLURAL:$3|panid|pampanid}}',
-'file-info'            => '(kadakkel ti file: $1, MIME type: $2)',
-'file-info-size'       => '($1 × $2 a pixel, kadakkel ti file: $3, MIME type: $4)',
+'file-info'            => 'kadakkel ti file: $1, MIME type: $2',
+'file-info-size'       => '$1 × $2 a pixel, kadakkel ti file: $3, MIME type: $4',
 'file-nohires'         => '<small>Awan mabalin a nangatngato a resolusion.</small>',
-'svg-long-desc'        => '(SVG a file, babassit ngem $1 × $2 pixels, kadakkel ti file: $3)',
+'svg-long-desc'        => 'SVG a file, babassit ngem $1 × $2 pixels, kadakkel ti file: $3',
 'show-big-image'       => 'Sibubukel a resolusion',
 'show-big-image-thumb' => '<small>Rukod daytoy a preview: $1 × $2 a pixels</small>',
 

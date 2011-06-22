@@ -1,10 +1,10 @@
 <?php
-
-/*
- * Created on Sep 25, 2008
+/**
  * API for MediaWiki 1.8+
  *
- * Copyright (C) 2008 Roan Kattouw <Firstname>.<Lastname>@home.nl
+ * Created on Sep 25, 2008
+ *
+ * Copyright © 2008 Roan Kattouw <Firstname>.<Lastname>@home.nl
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,19 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
 	// Eclipse helper - will be ignored in production
-	require_once ( "ApiBase.php" );
+	require_once( "ApiBase.php" );
 }
 
-
 /**
- * API module that does nothing 
+ * API module that does nothing
  *
  * Use this to disable core modules with e.g.
  * $wgAPIPropModules['modulename'] = 'ApiQueryDisabled';
@@ -41,7 +42,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class ApiQueryDisabled extends ApiQueryBase {
 
 	public function __construct( $main, $action ) {
-		parent :: __construct( $main, $action );
+		parent::__construct( $main, $action );
 	}
 
 	public function execute() {
@@ -49,11 +50,11 @@ class ApiQueryDisabled extends ApiQueryBase {
 	}
 
 	public function getAllowedParams() {
-		return array ();
+		return array();
 	}
 
 	public function getParamDescription() {
-		return array ();
+		return array();
 	}
 
 	public function getDescription() {
@@ -63,10 +64,10 @@ class ApiQueryDisabled extends ApiQueryBase {
 	}
 
 	protected function getExamples() {
-		return array ();
+		return array();
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryDisabled.php 60930 2010-01-11 15:55:52Z simetrical $';
+		return __CLASS__ . ': $Id: ApiQueryDisabled.php 70647 2010-08-07 19:59:42Z ialex $';
 	}
 }

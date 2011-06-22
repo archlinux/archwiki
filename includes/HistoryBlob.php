@@ -11,12 +11,15 @@ interface HistoryBlob
 	 * Adds an item of text, returns a stub object which points to the item.
 	 * You must call setLocation() on the stub object before storing it to the
 	 * database
-	 * Returns the key for getItem()
+	 *
+	 * @return String: the key for getItem()
 	 */
 	public function addItem( $text );
 
 	/**
 	 * Get item by key, or false if the key is not present
+	 *
+	 * @return String or false
 	 */
 	public function getItem( $key );
 
@@ -32,6 +35,8 @@ interface HistoryBlob
 
 	/**
 	 * Get default text. This is called from Revision::getRevisionText()
+	 *
+	 * @return String
 	 */
 	function getText();
 }
@@ -132,27 +137,27 @@ class ConcatenatedGzipHistoryBlob implements HistoryBlob
 }
 
 
-/**
- * One-step cache variable to hold base blobs; operations that
- * pull multiple revisions may often pull multiple times from
- * the same blob. By keeping the last-used one open, we avoid
- * redundant unserialization and decompression overhead.
- */
-global $wgBlobCache;
-$wgBlobCache = array();
 
 
 /**
  * Pointer object for an item within a CGZ blob stored in the text table.
  */
 class HistoryBlobStub {
+	/**
+	 * One-step cache variable to hold base blobs; operations that
+	 * pull multiple revisions may often pull multiple times from
+	 * the same blob. By keeping the last-used one open, we avoid
+	 * redundant unserialization and decompression overhead.
+	 */
+	protected static $blobCache = array();
+
 	var $mOldId, $mHash, $mRef;
 
 	/**
-	 * @param string $hash The content hash of the text
-	 * @param integer $oldid The old_id for the CGZ object
+	 * @param $hash Strng: the content hash of the text
+	 * @param $oldid Integer: the old_id for the CGZ object
 	 */
-	function HistoryBlobStub( $hash = '', $oldid = 0 ) {
+	function __construct( $hash = '', $oldid = 0 ) {
 		$this->mHash = $hash;
 	}
 
@@ -180,9 +185,9 @@ class HistoryBlobStub {
 
 	function getText() {
 		$fname = 'HistoryBlobStub::getText';
-		global $wgBlobCache;
-		if( isset( $wgBlobCache[$this->mOldId] ) ) {
-			$obj = $wgBlobCache[$this->mOldId];
+
+		if( isset( self::$blobCache[$this->mOldId] ) ) {
+			$obj = self::$blobCache[$this->mOldId];
 		} else {
 			$dbr = wfGetDB( DB_SLAVE );
 			$row = $dbr->selectRow( 'text', array( 'old_flags', 'old_text' ), array( 'old_id' => $this->mOldId ) );
@@ -220,7 +225,7 @@ class HistoryBlobStub {
 			// Save this item for reference; if pulling many
 			// items in a row we'll likely use it again.
 			$obj->uncompress();
-			$wgBlobCache = array( $this->mOldId => $obj );
+			self::$blobCache = array( $this->mOldId => $obj );
 		}
 		return $obj->getItem( $this->mHash );
 	}
@@ -246,9 +251,9 @@ class HistoryBlobCurStub {
 	var $mCurId;
 
 	/**
-	 * @param integer $curid The cur_id pointed to
+	 * @param $curid Integer: the cur_id pointed to
 	 */
-	function HistoryBlobCurStub( $curid = 0 ) {
+	function __construct( $curid = 0 ) {
 		$this->mCurId = $curid;
 	}
 

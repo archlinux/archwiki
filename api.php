@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
@@ -34,6 +34,9 @@
  * in the URL.
  */
 
+// So extensions (and other code) can check whether they're running in API mode
+define( 'MW_API', true );
+
 // Initialise common code
 require ( dirname( __FILE__ ) . '/includes/WebStart.php' );
 
@@ -41,18 +44,7 @@ wfProfileIn( 'api.php' );
 $starttime = microtime( true );
 
 // URL safety checks
-//
-// See RawPage.php for details; summary is that MSIE can override the
-// Content-Type if it sees a recognized extension on the URL, such as
-// might be appended via PATH_INFO after 'api.php'.
-//
-// Some data formats can end up containing unfiltered user-provided data
-// which will end up triggering HTML detection and execution, hence
-// XSS injection and all that entails.
-//
-if ( $wgRequest->isPathInfoBad() ) {
-	wfHttpError( 403, 'Forbidden',
-		'Invalid file extension found in PATH_INFO or QUERY_STRING.' );
+if ( !$wgRequest->checkUrlExtension() ) {
 	return;
 }
 
@@ -97,9 +89,6 @@ if ( $wgCrossSiteAJAXdomains && isset( $_SERVER['HTTP_ORIGIN'] ) ) {
 		}
 	}
 }
-
-// So extensions can check whether they're running in API mode
-define( 'MW_API', true );
 
 // Set a dummy $wgTitle, because $wgTitle == null breaks various things
 // In a perfect world this wouldn't be necessary

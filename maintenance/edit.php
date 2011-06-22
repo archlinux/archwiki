@@ -20,7 +20,7 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class EditCLI extends Maintenance {
 	public function __construct() {
@@ -36,7 +36,7 @@ class EditCLI extends Maintenance {
 	}
 
 	public function execute() {
-		global $wgUser, $wgTitle, $wgArticle;
+		global $wgUser, $wgTitle;
 
 		$userName = $this->getOption( 'u', 'Maintenance script' );
 		$summary = $this->getOption( 's', '' );
@@ -44,7 +44,7 @@ class EditCLI extends Maintenance {
 		$bot = $this->hasOption( 'b' );
 		$autoSummary = $this->hasOption( 'a' );
 		$noRC = $this->hasOption( 'no-rc' );
-		
+
 		$wgUser = User::newFromName( $userName );
 		if ( !$wgUser ) {
 			$this->error( "Invalid username", true );
@@ -52,22 +52,22 @@ class EditCLI extends Maintenance {
 		if ( $wgUser->isAnon() ) {
 			$wgUser->addToDatabase();
 		}
-	
+
 		$wgTitle = Title::newFromText( $this->getArg() );
 		if ( !$wgTitle ) {
 			$this->error( "Invalid title", true );
 		}
-	
-		$wgArticle = new Article( $wgTitle );
-	
+
+		$article = new Article( $wgTitle );
+
 		# Read the text
 		$text = $this->getStdin( Maintenance::STDIN_ALL );
-		
+
 		# Do the edit
 		$this->output( "Saving... " );
-		$status = $wgArticle->doEdit( $text, $summary, 
+		$status = $article->doEdit( $text, $summary,
 			( $minor ? EDIT_MINOR : 0 ) |
-			( $bot ? EDIT_FORCE_BOT : 0 ) | 
+			( $bot ? EDIT_FORCE_BOT : 0 ) |
 			( $autoSummary ? EDIT_AUTOSUMMARY : 0 ) |
 			( $noRC ? EDIT_SUPPRESS_RC : 0 ) );
 		if ( $status->isOK() ) {
@@ -85,5 +85,5 @@ class EditCLI extends Maintenance {
 }
 
 $maintClass = "EditCLI";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );
 

@@ -1,31 +1,33 @@
 <?php
-
-# Copyright (C) 2004 Brion Vibber <brion@pobox.com>
-# http://www.mediawiki.org/
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-# http://www.gnu.org/copyleft/gpl.html
-
 /**
- * @defgroup Feed Feed
- *
  * Basic support for outputting syndication feeds in RSS, other formats.
+ *
  * Contain a feed class as well as classes to build rss / atom ... feeds
  * Available feeds are defined in Defines.php
  *
+ * Copyright © 2004 Brion Vibber <brion@pobox.com>
+ * http://www.mediawiki.org/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
+ */
+
+/**
+ * @defgroup Feed Feed
  */
 
 /**
@@ -99,7 +101,7 @@ class FeedItem {
 	 */
 	public function setUniqueId($uniqueId, $RSSisPermalink = False) {
 		$this->UniqueId = $uniqueId;
-		$this->RSSIsPermalink = $isPermalink;
+		$this->RSSIsPermalink = $RSSisPermalink;
 	}
 
 	/**
@@ -135,8 +137,8 @@ class FeedItem {
 	 * @return String
 	 */
 	public function getLanguage() {
-		global $wgContLanguageCode;
-		return $wgContLanguageCode;
+		global $wgLanguageCode;
+		return $wgLanguageCode;
 	}
 
 	/**
@@ -303,7 +305,7 @@ class RSSFeed extends ChannelFeed {
 		<item>
 			<title><?php print $item->getTitle() ?></title>
 			<link><?php print $item->getUrl() ?></link>
-			<guid<?php if( $item->RSSIsPermalink ) print ' isPermaLink="true"' ?>><?php print $item->getUniqueId() ?></guid>
+			<guid<?php if( !$item->RSSIsPermalink ) print ' isPermaLink="false"' ?>><?php print $item->getUniqueId() ?></guid>
 			<description><?php print $item->getDescription() ?></description>
 			<?php if( $item->getDate() ) { ?><pubDate><?php print $this->formatTime( $item->getDate() ) ?></pubDate><?php } ?>
 			<?php if( $item->getAuthor() ) { ?><dc:creator><?php print $item->getAuthor() ?></dc:creator><?php }?>

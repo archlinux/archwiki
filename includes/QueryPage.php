@@ -228,8 +228,6 @@ class QueryPage {
 			return false;
 		}
 
-		$querycache = $dbr->tableName( 'querycache' );
-
 		if ( $ignoreErrors ) {
 			$ignoreW = $dbw->ignoreErrors( true );
 			$ignoreR = $dbr->ignoreErrors( true );
@@ -264,12 +262,8 @@ class QueryPage {
 			if ( count( $vals ) ) {
 				if ( !$dbw->insert( 'querycache', $vals, __METHOD__ ) ) {
 					// Set result to false to indicate error
-					$dbr->freeResult( $res );
 					$res = false;
 				}
-			}
-			if ( $res ) {
-				$dbr->freeResult( $res );
 			}
 			if ( $ignoreErrors ) {
 				$dbw->ignoreErrors( $ignoreW );
@@ -349,7 +343,7 @@ class QueryPage {
 
 		$this->preprocessResults( $dbr, $res );
 
-		$wgOut->addHTML( XML::openElement( 'div', array('class' => 'mw-spcontent') ) );
+		$wgOut->addHTML( Xml::openElement( 'div', array('class' => 'mw-spcontent') ) );
 
 		# Top header and navigation
 		if( $shownavigation ) {
@@ -364,7 +358,7 @@ class QueryPage {
 				# No results to show, so don't bother with "showing X of Y" etc.
 				# -- just let the user know and give up now
 				$wgOut->addHTML( '<p>' . wfMsgHtml( 'specialpage-empty' ) . '</p>' );
-				$wgOut->addHTML( XML::closeElement( 'div' ) );
+				$wgOut->addHTML( Xml::closeElement( 'div' ) );
 				return;
 			}
 		}
@@ -384,7 +378,7 @@ class QueryPage {
 			$wgOut->addHTML( '<p>' . $paging . '</p>' );
 		}
 
-		$wgOut->addHTML( XML::closeElement( 'div' ) );
+		$wgOut->addHTML( Xml::closeElement( 'div' ) );
 
 		return $num;
 	}
@@ -488,11 +482,12 @@ class QueryPage {
 			$sql = $this->getSQL() . $this->getOrder();
 			$sql = $dbr->limitResult( $sql, $limit, 0 );
 			$res = $dbr->query( $sql, 'QueryPage::doFeed' );
-			while( $obj = $dbr->fetchObject( $res ) ) {
+			foreach ( $res as $obj ) {
 				$item = $this->feedResult( $obj );
-				if( $item ) $feed->outItem( $item );
+				if( $item ) {
+					$feed->outItem( $item );
+				}
 			}
-			$dbr->freeResult( $res );
 
 			$feed->outFooter();
 			return true;
@@ -539,10 +534,10 @@ class QueryPage {
 	}
 
 	function feedTitle() {
-		global $wgContLanguageCode, $wgSitename;
+		global $wgLanguageCode, $wgSitename;
 		$page = SpecialPage::getPage( $this->getName() );
 		$desc = $page->getDescription();
-		return "$wgSitename - $desc [$wgContLanguageCode]";
+		return "$wgSitename - $desc [$wgLanguageCode]";
 	}
 
 	function feedDesc() {
@@ -574,8 +569,9 @@ abstract class WantedQueryPage extends QueryPage {
 	 */
 	function preprocessResults( $db, $res ) {
 		$batch = new LinkBatch;
-		while ( $row = $db->fetchObject( $res ) )
+		foreach ( $res as $row ) {
 			$batch->add( $row->namespace, $row->title );
+		}
 		$batch->execute();
 
 		// Back to start for display
@@ -584,6 +580,17 @@ abstract class WantedQueryPage extends QueryPage {
 			$db->dataSeek( $res, 0 );
 	}
 	
+	/**
+	 * Should formatResult() always check page existence, even if
+	 * the results are fresh?  This is a (hopefully temporary)
+	 * kluge for Special:WantedFiles, which may contain false
+	 * positives for files that exist e.g. in a shared repo (bug
+	 * 6220).
+	 */
+	function forceExistenceCheck() {
+		return false;
+	}
+
 	/**
 	 * Format an individual result
 	 *
@@ -594,9 +601,9 @@ abstract class WantedQueryPage extends QueryPage {
 	public function formatResult( $skin, $result ) {
 		$title = Title::makeTitleSafe( $result->namespace, $result->title );
 		if( $title instanceof Title ) {
-			if( $this->isCached() ) {
-				$pageLink = $title->exists()
-					? '<s>' . $skin->link( $title ) . '</s>'
+			if( $this->isCached() || $this->forceExistenceCheck() ) {
+				$pageLink = $title->isKnown()
+					? '<del>' . $skin->link( $title ) . '</del>'
 					: $skin->link(
 						$title,
 						null,

@@ -49,8 +49,7 @@ $messages = array(
 'tog-editsection'             => 'Tugoti in seksyon nga pagliwat pinaagi hin [igliwat] nga mga sumpay',
 'tog-editsectiononrightclick' => 'Tugoti in pagliwat hin seksyon ha pag klik-ha-tuo dida hin mga ngaran o titulo hin seksyon (nakinahanglan hin JavaScript)',
 'tog-showtoc'                 => 'Igpakita in tabla hin sulod (para hin mga pakli nga sobra hin 3 ka titulo o pagngaran)',
-'tog-rememberpassword'        => 'Hinumdomi an akon pan-sakob dinhi nga komputadora',
-'tog-editwidth'               => 'Igpahaluag an kahon hin pagliwat agod magamitan an bug-os nga pabyon o pantalya',
+'tog-rememberpassword'        => 'Hinumdomi an akon pan-sakob dinhi nga komputadora (para hin maximum nga $1 {{PLURAL:$1|nga adlaw|nga mga adlaw}})',
 'tog-watchcreations'          => 'Igdugang in mga pakli nga akon ginhimo ngadto han akon angay timan-an',
 'tog-watchdefault'            => 'Igdugang in mga pakli nga akon ginliwat ngadto han akon angay timan-an',
 'tog-watchmoves'              => 'Igdugang in mga pakli nga akon ginpamalhin ngadto han akon angay timan-an',
@@ -183,31 +182,20 @@ $messages = array(
 'faqpage'        => 'Project:AGG',
 
 # Vector skin
-'vector-action-addsection'   => 'Igdugang hin himangrawon',
-'vector-action-delete'       => 'Para-a',
-'vector-action-move'         => 'Balhina',
-'vector-action-protect'      => 'Panalipda',
-'vector-action-undelete'     => 'Igbalik an ginpara',
-'vector-action-unprotect'    => 'Kuhaa an panalipod',
-'vector-namespace-category'  => 'Kaarangay',
-'vector-namespace-help'      => 'Pagbulig nga pakli',
-'vector-namespace-image'     => 'Fayl',
-'vector-namespace-main'      => 'Pakli',
-'vector-namespace-media'     => 'Pakli hin medya',
-'vector-namespace-mediawiki' => 'Mensahe',
-'vector-namespace-project'   => 'Proyekto nga pakli',
-'vector-namespace-special'   => 'Nalalain nga pakli',
-'vector-namespace-talk'      => 'Hiruhimangraw',
-'vector-namespace-template'  => 'Plantilya',
-'vector-namespace-user'      => 'Pakli hin nágámit',
-'vector-view-create'         => 'Himo-a',
-'vector-view-edit'           => 'Igliwat',
-'vector-view-history'        => 'Kitaa an kaagi',
-'vector-view-view'           => 'Basaha',
-'vector-view-viewsource'     => 'Kitaa an ginkuhaan',
-'actions'                    => 'Mga buhat',
-'namespaces'                 => "Mga ngaran-lat'ang",
-'variants'                   => 'Mga pagkadirudilain',
+'vector-action-addsection' => 'Igdugang hin himangrawon',
+'vector-action-delete'     => 'Para-a',
+'vector-action-move'       => 'Balhina',
+'vector-action-protect'    => 'Panalipda',
+'vector-action-undelete'   => 'Igbalik an ginpara',
+'vector-action-unprotect'  => 'Kuhaa an panalipod',
+'vector-view-create'       => 'Himo-a',
+'vector-view-edit'         => 'Igliwat',
+'vector-view-history'      => 'Kitaa an kaagi',
+'vector-view-view'         => 'Basaha',
+'vector-view-viewsource'   => 'Kitaa an ginkuhaan',
+'actions'                  => 'Mga buhat',
+'namespaces'               => "Mga ngaran-lat'ang",
+'variants'                 => 'Mga pagkadirudilain',
 
 'errorpagetitle'    => 'Sayop',
 'returnto'          => 'Balik ngadto ha $1.',
@@ -268,6 +256,8 @@ Damo nga nagamit in gusto sinmulod hini nga pakli.
 Alayon paghulat makadali san-o ka inmutro pagsulod hin nga pakli utro.
 
 $1',
+'pool-queuefull'    => 'Puno an katitirok nga pila',
+'pool-errorunknown' => 'Waray kasabti nga kasaypanan',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => 'Mahitungod han {{SITENAME}}',
@@ -404,6 +394,7 @@ Ayaw paghingalimot hin pagbalyo han imo [[Special:Preferences|{{SITENAME}} mga g
 'gotaccount'              => '¿Mayda kana akawnt? $1.',
 'gotaccountlink'          => 'Sakob',
 'createaccountmail'       => 'Ha e-mail',
+'createaccountreason'     => 'Rason:',
 'badretype'               => 'Diri naangay an mga tigaman-pagsulod nga im ginbutang',
 'userexists'              => 'An agnay-hit-nagamit nga im ginbutang in gingamit na.
 Alayon pagpili hin lain nga ngaran.',
@@ -838,6 +829,7 @@ Kitaa an $2 para hin talaan han mga gibag-ohi nga mga ginpamara.',
 'tooltip-save'                   => 'Ig-seyb an imo mga pagbabag-o',
 
 # Media information
+'file-info-size' => '$1 × $2 nga pixel, kadako han fayl: $3, MIME nga tipo: $4',
 'show-big-image' => 'Bug-os nga resolusyon',
 
 # Special:NewFiles

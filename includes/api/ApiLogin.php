@@ -1,9 +1,8 @@
 <?php
-
 /**
- * Created on Sep 19, 2006
- *
  * API for MediaWiki 1.8+
+ *
+ * Created on Sep 19, 2006
  *
  * Copyright © 2006-2007 Yuri Astrakhan <Firstname><Lastname>@gmail.com,
  * Daniel Cannon (cannon dot danielc at gmail dot com)
@@ -20,8 +19,10 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
@@ -68,10 +69,11 @@ class ApiLogin extends ApiBase {
 		}
 
 		$loginForm = new LoginForm( $req );
+
+		global $wgCookiePrefix, $wgUser, $wgPasswordAttemptThrottle;
+
 		switch ( $authRes = $loginForm->authenticateUserData() ) {
 			case LoginForm::SUCCESS:
-				global $wgUser, $wgCookiePrefix;
-
 				$wgUser->setOption( 'rememberpassword', 1 );
 				$wgUser->setCookies();
 
@@ -87,15 +89,14 @@ class ApiLogin extends ApiBase {
 				$result['cookieprefix'] = $wgCookiePrefix;
 				$result['sessionid'] = session_id();
 				break;
-			
+
 			case LoginForm::NEED_TOKEN:
-				global $wgCookiePrefix;
 				$result['result'] = 'NeedToken';
 				$result['token'] = $loginForm->getLoginToken();
 				$result['cookieprefix'] = $wgCookiePrefix;
 				$result['sessionid'] = session_id();
 				break;
-			
+
 			case LoginForm::WRONG_TOKEN:
 				$result['result'] = 'WrongToken';
 				break;
@@ -131,7 +132,6 @@ class ApiLogin extends ApiBase {
 				break;
 
 			case LoginForm::THROTTLED:
-				global $wgPasswordAttemptThrottle;
 				$result['result'] = 'Throttled';
 				$result['wait'] = intval( $wgPasswordAttemptThrottle['seconds'] );
 				break;
@@ -179,7 +179,7 @@ class ApiLogin extends ApiBase {
 			'In the event of a successful log-in, a cookie will be attached',
 			'to your session. In the event of a failed log-in, you will not ',
 			'be able to attempt another log-in through this method for 5 seconds.',
-			'This is to prevent password guessing by automated password crackers.'
+			'This is to prevent password guessing by automated password crackers'
 		);
 	}
 
@@ -206,6 +206,6 @@ class ApiLogin extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiLogin.php 64697 2010-04-07 09:05:05Z catrope $';
+		return __CLASS__ . ': $Id: ApiLogin.php 76080 2010-11-05 11:54:35Z catrope $';
 	}
 }

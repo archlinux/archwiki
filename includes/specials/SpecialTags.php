@@ -1,8 +1,34 @@
 <?php
+/**
+ * Implements Special:Tags
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup SpecialPage
+ */
 
 if (!defined('MEDIAWIKI'))
 	die;
 
+/**
+ * A special page that lists tags for edits
+ *
+ * @ingroup SpecialPage
+ */
 class SpecialTags extends SpecialPage {
 
 	function __construct() {
@@ -10,16 +36,12 @@ class SpecialTags extends SpecialPage {
 	}
 
 	function execute( $par ) {
-		global $wgOut, $wgUser, $wgMessageCache;
+		global $wgOut;
 
-		$wgMessageCache->loadAllMessages();
-
-		$sk = $wgUser->getSkin();
 		$wgOut->setPageTitle( wfMsg( 'tags-title' ) );
-		$wgOut->wrapWikiMsg( "<div class='mw-tags-intro'>\n$1</div>", 'tags-intro' );
+		$wgOut->wrapWikiMsg( "<div class='mw-tags-intro'>\n$1\n</div>", 'tags-intro' );
 
 		// Write the headers
-		$html = '';
 		$html = Xml::tags( 'tr', null, Xml::tags( 'th', null, wfMsgExt( 'tags-tag', 'parseinline' ) ) .
 				Xml::tags( 'th', null, wfMsgExt( 'tags-display-header', 'parseinline' ) ) .
 				Xml::tags( 'th', null, wfMsgExt( 'tags-description-header', 'parseinline' ) ) .
@@ -28,7 +50,7 @@ class SpecialTags extends SpecialPage {
 		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->select( 'change_tag', array( 'ct_tag', 'count(*) as hitcount' ), array(), __METHOD__, array( 'GROUP BY' => 'ct_tag', 'ORDER BY' => 'hitcount DESC' ) );
 
-		while ( $row = $res->fetchObject() ) {
+		foreach ( $res as $row ) {
 			$html .= $this->doTagRow( $row->ct_tag, $row->hitcount );
 		}
 

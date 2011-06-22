@@ -20,7 +20,7 @@ $messages = array(
 # User preference toggles
 'tog-underline'        => "Link'iş tude kogu3’uxaçki:",
 'tog-highlightbroken'  => 'Upşu linkepe <a href="" class="new">am şekilite</a> (alternatifi: am şekilite<a href="" class="internal">?</a>) ko3\'iri.',
-'tog-rememberpassword' => 'Parola-skani goişini',
+'tog-rememberpassword' => 'Parola-skani goişini (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-showhiddencats'   => "Şinaxeri k'at'egorepe ko3'iri",
 
 'underline-always' => "P'anda",
@@ -119,14 +119,8 @@ $messages = array(
 'qbspecialpages' => 'Doxmeli sayfape',
 
 # Vector skin
-'vector-action-delete'       => 'Jili',
-'vector-namespace-category'  => "K'at'egori",
-'vector-namespace-help'      => "Meşvelaş t'aba",
-'vector-namespace-image'     => 'Dosya',
-'vector-namespace-mediawiki' => 'Mesaji',
-'vector-namespace-project'   => "P'rojeşi t'aba",
-'vector-namespace-special'   => 'Doxmeli sayfa',
-'vector-view-edit'           => 'Doktiri',
+'vector-action-delete' => 'Jili',
+'vector-view-edit'     => 'Doktiri',
 
 'errorpagetitle'   => 'Çilata',
 'returnto'         => '$1 butʼkʼaşa goikti.',
@@ -226,7 +220,7 @@ Dudicoxopes oxmaruşi yasaği na ren ar, varna daha dido kʼarakʼtʼeri uğun.'
 # Login and logout pages
 'yourname'                => 'Skani maxmare-coxo:',
 'yourpassword'            => 'Pʼarola-skani:',
-'remembermypassword'      => 'Parola-skani goişini',
+'remembermypassword'      => 'Parola-skani goişini (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'login'                   => 'Sitʼeşa amaxti',
 'nav-login-createaccount' => 'Sitʼeşa amaxti / hesabi dokʼidi',
 'userlogin'               => 'Sitʼeşa amaxti / hesabi dokʼidi',
@@ -489,7 +483,6 @@ Ogoruşi dudis '''all:''' pʼrefiksi okʼatute doloçʼareli na ren iri şeyi (o
 # Watchlist
 'watchlist'         => 'çkimi gotxozu listʼe',
 'mywatchlist'       => 'Çkimi gotxozu listʼe',
-'watchlistfor'      => "('''$1''' şeni)",
 'addedwatch'        => 'Skani gotxozu listʼeşa ikʼayitʼinu.',
 'addedwatchtext'    => '"<nowiki>[[:$1]]</nowiki>" coxoni butʼkʼa [[Special:Watchlist|gotxozu listʼes]] ikʼayitʼinu.
 
@@ -705,9 +698,9 @@ Mu iqʼven başka coxo doçʼari.',
 'nextdiff'     => 'Ukʼaçxineri versiyoni kʼala na ren farkʼi →',
 
 # Media information
-'file-info-size'       => '($1 × $2 pikseli, dosyaşi didinoba: $3, MIME type: $4)',
+'file-info-size'       => '$1 × $2 pikseli, dosyaşi didinoba: $3, MIME type: $4',
 'file-nohires'         => '<small>Çkva kʼai ozʼiramuşis na uğun versiyoni va ren.</small>',
-'svg-long-desc'        => '(SVG dosya, coxoten $1 × $2 pʼikʼseli, dosyaşi didinoba: $3)',
+'svg-long-desc'        => 'SVG dosya, coxoten $1 × $2 pʼikʼseli, dosyaşi didinoba: $3',
 'show-big-image'       => 'Tam ozʼiramuşi',
 'show-big-image-thumb' => '<small>"Evvelişen i3ʼkʼedi" fonkʼsionişi didinoba: $1 × $2 pikseli</small>',
 

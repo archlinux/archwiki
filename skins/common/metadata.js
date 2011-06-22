@@ -5,7 +5,7 @@
 //
 // attachMetadataToggle('mw_metadata', 'More...', 'Fewer...');
 
-function attachMetadataToggle( tableId, showText, hideText ) {
+window.attachMetadataToggle = function( tableId, showText, hideText ) {
 	if ( document.createTextNode ) {
 		var box = document.getElementById( tableId );
 		if ( !box ) {
@@ -46,4 +46,8 @@ function attachMetadataToggle( tableId, showText, hideText ) {
 		return true;
 	}
 	return false;
-}
+};
+
+$( document ).ready( function() { 
+	attachMetadataToggle( 'mw_metadata', mediaWiki.msg( 'metadata-expand' ), mediaWiki.msg( 'metadata-collapse' ) );
+} );

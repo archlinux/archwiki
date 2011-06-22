@@ -1,10 +1,9 @@
 <?php
 /**
- * @file
- * @ingroup upload
- *
  * Implements uploading from previously stored file.
  *
+ * @file
+ * @ingroup upload
  * @author Bryan Tong Minh
  */
 
@@ -14,13 +13,13 @@ class UploadFromStash extends UploadBase {
 			is_array( $sessionData ) &&
 			isset( $sessionData[$key] ) &&
 			isset( $sessionData[$key]['version'] ) &&
-			$sessionData[$key]['version'] == self::SESSION_VERSION;
+			$sessionData[$key]['version'] == UploadBase::SESSION_VERSION;
 	}
 
 	public static function isValidRequest( $request ) {
-		$sessionData = $request->getSessionData( 'wsUploadData' );
+		$sessionData = $request->getSessionData( UploadBase::SESSION_KEYNAME );
 		return self::isValidSessionKey(
-			$request->getInt( 'wpSessionKey' ),
+			$request->getText( 'wpSessionKey' ),
 			$sessionData
 		);
 	}
@@ -45,8 +44,8 @@ class UploadFromStash extends UploadBase {
 	}
 
 	public function initializeFromRequest( &$request ) {
-		$sessionKey = $request->getInt( 'wpSessionKey' );
-		$sessionData = $request->getSessionData('wsUploadData');
+		$sessionKey = $request->getText( 'wpSessionKey' );
+		$sessionData = $request->getSessionData( UploadBase::SESSION_KEYNAME );
 
 		$desiredDestName = $request->getText( 'wpDestFile' );
 		if( !$desiredDestName )
@@ -65,7 +64,7 @@ class UploadFromStash extends UploadBase {
 	/**
 	 * There is no need to stash the image twice
 	 */
-	public function stashSession() {
+	public function stashSession( $key = null ) {
 		if ( !empty( $this->mSessionKey ) )
 			return $this->mSessionKey;
 		return parent::stashSession();

@@ -104,13 +104,9 @@ $messages = array(
 'faqpage'        => 'Project:отир сё юасьö',
 
 # Vector skin
-'vector-action-delete'      => 'Чышкыны',
-'vector-namespace-category' => 'Категория',
-'vector-namespace-help'     => 'Отсасян листбок',
-'vector-namespace-image'    => 'Файл',
-'vector-namespace-main'     => 'Листбок',
-'vector-view-view'          => 'Лыддьöтны',
-'variants'                  => 'Варианттэз',
+'vector-action-delete' => 'Чышкыны',
+'vector-view-view'     => 'Лыддьöтны',
+'variants'             => 'Варианттэз',
 
 'errorpagetitle'   => 'Сорасьöм',
 'returnto'         => 'Бертны $1-öдз.',
@@ -214,7 +210,7 @@ $messages = array(
 'yourname'                => 'Уджкерисьлöн пыран ним:',
 'yourpassword'            => 'Пароль:',
 'yourpasswordagain'       => 'Мöдпöвсьöтны пароль',
-'remembermypassword'      => 'Видзны менчим пыран ним этiя компьютер тöдвылын',
+'remembermypassword'      => 'Видзны менчим пыран ним этiя компьютер тöдвылын (не дыржык {{PLURAL:$1| лунся|лунся}})',
 'login'                   => 'Пырны ним увтын',
 'nav-login-createaccount' => 'Пыран / гижöтчан',
 'userlogin'               => 'Висьтасьны нето гижöтчыны',
@@ -225,6 +221,7 @@ $messages = array(
 'createaccount'           => 'Лöсьöт аслыт уджкерисьлiсь ним',
 'gotaccountlink'          => 'Пырны ним увтын',
 'createaccountmail'       => 'Электрон поштаöн',
+'createaccountreason'     => 'Мыля:',
 'loginerror'              => 'Пырöмыт эз аркмы',
 'loginsuccesstitle'       => 'Пырöмыт аркмис',
 'mailmypassword'          => 'Ыстыны виль пароль',
@@ -323,6 +320,7 @@ $messages = array(
 # Diffs
 'history-title'           => '$1 вильмöтан история',
 'difference'              => '(Неöткодьыс версияэз коласын)',
+'difference-multipage'    => 'Неöткодьыс листбоккез коласын',
 'lineno'                  => 'Визёк $1:',
 'compareselectedversions' => 'Ордчаöтны бöрйöм версияэз',
 'editundo'                => 'керны важмоз',
@@ -511,7 +509,6 @@ $messages = array(
 # Watchlist
 'watchlist'         => 'Синмаланнэз',
 'mywatchlist'       => 'Синмаланнэзö',
-'watchlistfor'      => "('''$1''' понда)",
 'addedwatch'        => 'Синмалан нимлёдзö содтöм',
 'addedwatchtext'    => '«[[:$1]]» листбок вöлi содтöм [[Special:Watchlist|синмалан нимлёдзат]].
 Быдöс, мый пондас вежсьыны листбок вылас да сыкöт йитчöм сёрнитанын, позяс адзыны этiя нимлёдзись; сiя лоас сiдзжо кызжыка тöдчöтöм [[Special:RecentChanges|виль вежсьöммез сьöртi нимлёдзын]], медбы позис кокнитжыка казявны.',
@@ -724,9 +721,9 @@ $messages = array(
 'nextdiff'     => 'Сыбöрся вильмöтöтöм →',
 
 # Media information
-'file-info-size'       => '($1 × $2 пиксел, файллöн ыжда: $3, MIME-тип: $4)',
+'file-info-size'       => '$1 × $2 пиксел, файллöн ыжда: $3, MIME-тип: $4',
 'file-nohires'         => '<small>Буржыка тыдалан версия абу.</small>',
-'svg-long-desc'        => '(SVG-файл, гижöм сьöртi $1 × $2 пиксел,  файллöн ыжда: $3)',
+'svg-long-desc'        => 'SVG-файл, гижöм сьöртi $1 × $2 пиксел,  файллöн ыжда: $3',
 'show-big-image'       => 'Буржыка тыдалан серпас',
 'show-big-image-thumb' => '<small>Одзвыв нёджжалан ыжда: $1 × $2 пиксел</small>',
 

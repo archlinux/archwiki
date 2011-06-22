@@ -68,15 +68,36 @@ class MonoBookTemplate extends QuickTemplate {
 		// Suppress warnings to prevent notices about missing indexes in $this->data
 		wfSuppressWarnings();
 
+		// Generate additional footer links
+		$footerlinks = $this->data["footerlinks"];
+		// fold footerlinks into a single array using a bit of trickery
+		$footerlinks = call_user_func_array('array_merge', array_values($footerlinks));
+		// Generate additional footer icons
+		$footericons = $this->data["footericons"];
+		// Unset any icons which don't have an image
+		foreach ( $footericons as $footerIconsKey => &$footerIconsBlock ) {
+			foreach ( $footerIconsBlock as $footerIconKey => $footerIcon ) {
+				if ( !is_string($footerIcon) && !isset($footerIcon["src"]) ) {
+					unset($footerIconsBlock[$footerIconKey]);
+				}
+			}
+		}
+		// Redo removal of any empty blocks
+		foreach ( $footericons as $footerIconsKey => &$footerIconsBlock ) {
+			if ( count($footerIconsBlock) <= 0 ) {
+				unset($footericons[$footerIconsKey]);
+			}
+		}
+
 		$this->html( 'headelement' );
 ?><div id="globalWrapper">
-<div id="column-content"><div id="content" <?php $this->html("specialpageattributes") ?>>
+<div id="column-content"><div id="content"<?php $this->html("specialpageattributes") ?>>
 	<a id="top"></a>
 	<?php if($this->data['sitenotice']) { ?><div id="siteNotice"><?php $this->html('sitenotice') ?></div><?php } ?>
 
 	<h1 id="firstHeading" class="firstHeading"><?php $this->html('title') ?></h1>
 	<div id="bodyContent">
-		<h3 id="siteSub"><?php $this->msg('tagline') ?></h3>
+		<div id="siteSub"><?php $this->msg('tagline') ?></div>
 		<div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
 <?php if($this->data['undelete']) { ?>
 		<div id="contentSub2"><?php $this->html('undelete') ?></div>
@@ -164,19 +185,17 @@ class MonoBookTemplate extends QuickTemplate {
 </div><!-- end of the left (by default at least) column -->
 <div class="visualClear"></div>
 <div id="footer"<?php $this->html('userlangattributes') ?>>
-<?php
-if($this->data['poweredbyico']) { ?>
-	<div id="f-poweredbyico"><?php $this->html('poweredbyico') ?></div>
+<?php foreach ( $footericons as $blockName => $footerIcons ) { ?>
+	<div id="f-<?php echo htmlspecialchars($blockName); ?>ico">
+<?php foreach ( $footerIcons as $icon ) { ?>
+		<?php echo $this->skin->makeFooterIcon( $icon ); ?>
+
 <?php }
-if($this->data['copyrightico']) { ?>
-	<div id="f-copyrightico"><?php $this->html('copyrightico') ?></div>
+?>
+	</div>
 <?php }
 
 		// Generate additional footer links
-		$footerlinks = array(
-			'lastmod', 'viewcount', 'numberofwatchingusers', 'credits', 'copyright',
-			'privacy', 'about', 'disclaimer', 'tagline',
-		);
 		$validFooterLinks = array();
 		foreach( $footerlinks as $aLink ) {
 			if( isset( $this->data[$aLink] ) && $this->data[$aLink] ) {
@@ -204,10 +223,11 @@ if($this->data['copyrightico']) { ?>
 <?php $this->text( 'debug' ); ?>
 
 -->
-<?php endif; ?>
-</body></html>
-<?php
-	wfRestoreWarnings();
+<?php endif;
+
+		echo Html::closeElement( 'body' );
+		echo Html::closeElement( 'html' );
+		wfRestoreWarnings();
 	} // end of execute() method
 
 	/*************************************************************************************************/
@@ -228,7 +248,7 @@ if($this->data['copyrightico']) { ?>
 				'accesskey' => $this->skin->accesskey( 'search' )
 			) ); ?>
 
-				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> /><?php if ($wgUseTwoButtonsSearchForm) { ?>&nbsp;
+				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> /><?php if ($wgUseTwoButtonsSearchForm) { ?>&#160;
 				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> /><?php } else { ?>
 
 				<div><a href="<?php $this->text('searchaction') ?>" rel="search"><?php $this->msg('powersearch-legend') ?></a></div><?php } ?>
@@ -266,7 +286,7 @@ if($this->data['copyrightico']) { ?>
 		if($this->data['feeds']) { ?>
 			<li id="feedlinks"><?php foreach($this->data['feeds'] as $key => $feed) {
 					?><a id="<?php echo Sanitizer::escapeId( "feed-$key" ) ?>" href="<?php
-					echo htmlspecialchars($feed['href']) ?>" rel="alternate" type="application/<?php echo $key ?>+xml" class="feedlink"<?php echo $this->skin->tooltipAndAccesskey('feed-'.$key) ?>><?php echo htmlspecialchars($feed['text'])?></a>&nbsp;
+					echo htmlspecialchars($feed['href']) ?>" rel="alternate" type="application/<?php echo $key ?>+xml" class="feedlink"<?php echo $this->skin->tooltipAndAccesskey('feed-'.$key) ?>><?php echo htmlspecialchars($feed['text'])?></a>&#160;
 					<?php } ?></li><?php
 		}
 
@@ -309,7 +329,8 @@ if($this->data['copyrightico']) { ?>
 			<ul>
 <?php		foreach($this->data['language_urls'] as $langlink) { ?>
 				<li class="<?php echo htmlspecialchars($langlink['class'])?>"><?php
-				?><a href="<?php echo htmlspecialchars($langlink['href']) ?>"><?php echo $langlink['text'] ?></a></li>
+				?><a href="<?php echo htmlspecialchars($langlink['href']) ?>" title="<?php
+				echo htmlspecialchars($langlink['title']) ?>"><?php echo $langlink['text'] ?></a></li>
 <?php		} ?>
 			</ul>
 		</div>
@@ -326,7 +347,7 @@ if($this->data['copyrightico']) { ?>
 		<div class='pBody'>
 <?php   if ( is_array( $cont ) ) { ?>
 			<ul>
-<?php 			foreach($cont as $key => $val) { ?>
+<?php 			foreach($cont as $val) { ?>
 				<li id="<?php echo Sanitizer::escapeId($val['id']) ?>"<?php
 					if ( $val['active'] ) { ?> class="active" <?php }
 				?>><a href="<?php echo htmlspecialchars($val['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey($val['id']) ?>><?php echo htmlspecialchars($val['text']) ?></a></li>

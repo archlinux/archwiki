@@ -82,9 +82,8 @@ $messages = array(
 'qbmyoptions' => 'Mai Saide',
 
 # Vector skin
-'vector-action-move'    => 'Verschiewe',
-'vector-namespace-user' => 'Benutzersaid',
-'vector-view-edit'      => 'Bearwaide',
+'vector-action-move' => 'Verschiewe',
+'vector-view-edit'   => 'Bearwaide',
 
 'errorpagetitle'   => 'Fehler',
 'returnto'         => 'Zrick zu $1.',
@@ -187,7 +186,7 @@ S kann sai, dass es ää odder meh Zaiche drin hot, wu im Titel vun de Said nid 
 # Login and logout pages
 'yourname'                => 'Benutzername:',
 'yourpassword'            => 'Passwort:',
-'remembermypassword'      => 'Mai Passwort uff dem Computer merke',
+'remembermypassword'      => 'Mai Passwort uff dem Computer merke (hechschtens fer $1 {{PLURAL:$1|Dach|Dach}})',
 'login'                   => 'Omelde',
 'nav-login-createaccount' => 'Aamelde / Benutzerkonto aaleche',
 'userlogin'               => 'Omelde / Benutzerkonto anleche',
@@ -455,7 +454,6 @@ Saide uff [[Special:Watchlist|Dainer Beowachdungslischt]] sin '''fett'''.",
 # Watchlist
 'watchlist'         => 'Beowachdungslischd',
 'mywatchlist'       => 'Mai Beowachdungslischd',
-'watchlistfor'      => "(fer '''$1''')",
 'addedwatch'        => 'Zu de Beowachdungslischt zufieche',
 'addedwatchtext'    => "Die Said \"[[:\$1]]\" isch zu Dainer [[Special:Watchlist|Beowachdungslischt]] zugefiecht worre.
 Zukimftiche Ännerunge an derre Said un de Dischbediersaid, wu dezu ghert, werre doo aagezaicht, un d Said werd '''fett''' aagezaicht in de [[Special:RecentChanges|Letschte Ännerunge]] fer dass es ääfacher isch zum finne.",
@@ -695,9 +693,9 @@ Du kannscht e Grund in dr Zammfassung aagewwe',
 'nextdiff'     => 'Naiere Bearwaidung →',
 
 # Media information
-'file-info-size'       => '($1 × $2 Pixels, Dateigreß: $3, MIME-Type: $4)',
+'file-info-size'       => '$1 × $2 Pixels, Dateigreß: $3, MIME-Type: $4',
 'file-nohires'         => '<small>Ke hechere Ufflesung verfiechbar.</small>',
-'svg-long-desc'        => '(SVG-Datei, Basisgreß $1 × $2 Pixels, Dateigreß: $3)',
+'svg-long-desc'        => 'SVG-Datei, Basisgreß $1 × $2 Pixels, Dateigreß: $3',
 'show-big-image'       => 'Gsamte Ergebnis',
 'show-big-image-thumb' => '<small>Greß vun derre Vorschau: $1 × $2 Pixels</small>',
 

@@ -1,13 +1,29 @@
 <?php
 /**
- * @todo Use some variant of Pager or something; the pagination here is lousy.
+ * Implements Special:Whatlinkshere
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
+ * @todo Use some variant of Pager or something; the pagination here is lousy.
  */
 
 /**
- * implements Special:Whatlinkshere
+ * Implements Special:Whatlinkshere
+ *
  * @ingroup SpecialPage
  */
 class SpecialWhatLinksHere extends SpecialPage {
@@ -60,7 +76,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 			return;
 		}
 
-		$this->selfTitle = SpecialPage::getTitleFor( 'Whatlinkshere', $this->target->getPrefixedDBkey() );
+		$this->selfTitle = $this->getTitle( $this->target->getPrefixedDBkey() );
 
 		$wgOut->setPageTitle( wfMsg( 'whatlinkshere-title', $this->target->getPrefixedText() ) );
 		$wgOut->setSubtitle( wfMsg( 'whatlinkshere-backlink', $this->skin->link( $this->target, $this->target->getPrefixedText(), array(), array( 'redirect' => 'no'  ) ) ) );
@@ -171,29 +187,25 @@ class SpecialWhatLinksHere extends SpecialPage {
 		// templatelinks comes second so that the templatelinks row overwrites the
 		// pagelinks row, so we get (inclusion) rather than nothing
 		if( $fetchlinks ) {
-			while ( $row = $dbr->fetchObject( $plRes ) ) {
+			foreach ( $plRes as $row ) {
 				$row->is_template = 0;
 				$row->is_image = 0;
 				$rows[$row->page_id] = $row;
 			}
-			$dbr->freeResult( $plRes );
-
 		}
 		if( !$hidetrans ) {
-			while ( $row = $dbr->fetchObject( $tlRes ) ) {
+			foreach ( $tlRes as $row ) {
 				$row->is_template = 1;
 				$row->is_image = 0;
 				$rows[$row->page_id] = $row;
 			}
-			$dbr->freeResult( $tlRes );
 		}
 		if( !$hideimages ) {
-			while ( $row = $dbr->fetchObject( $ilRes ) ) {
+			foreach ( $ilRes as $row ) {
 				$row->is_template = 0;
 				$row->is_image = 1;
 				$rows[$row->page_id] = $row;
 			}
-			$dbr->freeResult( $ilRes );
 		}
 
 		// Sort by key and then change the keys to 0-based indices
@@ -224,7 +236,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 			$wgOut->addHTML( $prevnext );
 		}
 
-		$wgOut->addHTML( $this->listStart() );
+		$wgOut->addHTML( $this->listStart( $level ) );
 		foreach ( $rows as $row ) {
 			$nt = Title::makeTitle( $row->page_namespace, $row->page_title );
 
@@ -244,8 +256,8 @@ class SpecialWhatLinksHere extends SpecialPage {
 		}
 	}
 
-	protected function listStart() {
-		return Xml::openElement( 'ul', array ( 'id' => 'mw-whatlinkshere-list' ) );
+	protected function listStart( $level ) {
+		return Xml::openElement( 'ul', ( $level ? array() : array( 'id' => 'mw-whatlinkshere-list' ) ) );
 	}
 
 	protected function listItem( $row, $nt, $notClose = false ) {
@@ -303,7 +315,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 	protected function wlhLink( Title $target, $text ) {
 		static $title = null;
 		if ( $title === null )
-			$title = SpecialPage::getTitleFor( 'Whatlinkshere' );
+			$title = $this->getTitle();
 
 		return $this->skin->linkKnown(
 			$title,
@@ -368,9 +380,9 @@ class SpecialWhatLinksHere extends SpecialPage {
 		$f = Xml::openElement( 'form', array( 'action' => $wgScript ) );
 		
 		# Values that should not be forgotten
-		$f .= Xml::hidden( 'title', SpecialPage::getTitleFor( 'Whatlinkshere' )->getPrefixedText() );
+		$f .= Html::hidden( 'title', $this->getTitle()->getPrefixedText() );
 		foreach ( $this->opts->getUnconsumedValues() as $name => $value ) {
-			$f .= Xml::hidden( $name, $value );
+			$f .= Html::hidden( $name, $value );
 		}
 
 		$f .= Xml::fieldset( wfMsg( 'whatlinkshere' ) );
@@ -382,7 +394,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 		$f .= ' ';
 
 		# Namespace selector
-		$f .= Xml::label( wfMsg( 'namespace' ), 'namespace' ) . '&nbsp;' .
+		$f .= Xml::label( wfMsg( 'namespace' ), 'namespace' ) . '&#160;' .
 			Xml::namespaceSelector( $namespace, '' );
 
 		$f .= ' ';

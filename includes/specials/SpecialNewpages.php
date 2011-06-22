@@ -1,10 +1,32 @@
 <?php
-
 /**
- * implements Special:Newpages
+ * Implements Special:Newpages
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  * @ingroup SpecialPage
  */
-class SpecialNewpages extends SpecialPage {
+
+/**
+ * A special page that list newly created pages
+ *
+ * @ingroup SpecialPage
+ */
+class SpecialNewpages extends IncludableSpecialPage {
 
 	// Stored objects
 	protected $opts, $skin;
@@ -14,7 +36,6 @@ class SpecialNewpages extends SpecialPage {
 
 	public function __construct() {
 		parent::__construct( 'Newpages' );
-		$this->includable( true );	
 	}
 
 	protected function setup( $par ) {
@@ -85,11 +106,11 @@ class SpecialNewpages extends SpecialPage {
 	/**
 	 * Show a form for filtering namespace and username
 	 *
-	 * @param string $par
-	 * @return string
+	 * @param $par String
+	 * @return String
 	 */
 	public function execute( $par ) {
-		global $wgLang, $wgOut;
+		global $wgOut;
 
 		$this->setHeaders();
 		$this->outputHeader();
@@ -136,6 +157,7 @@ class SpecialNewpages extends SpecialPage {
 		);
 
 		// Disable some if needed
+		# FIXME: throws E_NOTICEs if not set; and doesn't obey hooks etc
 		if ( $wgGroupPermissions['*']['createpage'] !== true )
 			unset($filters['hideliu']);
 
@@ -174,7 +196,7 @@ class SpecialNewpages extends SpecialPage {
 		// Store query values in hidden fields so that form submission doesn't lose them
 		$hidden = array();
 		foreach ( $this->opts->getUnconsumedValues() as $key => $value ) {
-			$hidden[] = Xml::hidden( $key, $value );
+			$hidden[] = Html::hidden( $key, $value );
 		}
 		$hidden = implode( "\n", $hidden );
 
@@ -183,7 +205,7 @@ class SpecialNewpages extends SpecialPage {
 			list( $tagFilterLabel, $tagFilterSelector ) = $tagFilter;
 
 		$form = Xml::openElement( 'form', array( 'action' => $wgScript ) ) .
-			Xml::hidden( 'title', $this->getTitle()->getPrefixedDBkey() ) .
+			Html::hidden( 'title', $this->getTitle()->getPrefixedDBkey() ) .
 			Xml::fieldset( wfMsg( 'newpages' ) ) .
 			Xml::openElement( 'table', array( 'id' => 'mw-newpages-table' ) ) .
 			"<tr>
@@ -239,9 +261,8 @@ class SpecialNewpages extends SpecialPage {
 	/**
 	 * Format a row, providing the timestamp, links to the page/history, size, user links, and a comment
 	 *
-	 * @param $skin Skin to use
 	 * @param $result Result row
-	 * @return string
+	 * @return String
 	 */
 	public function formatRow( $result ) {
 		global $wgLang, $wgContLang;
@@ -251,7 +272,9 @@ class SpecialNewpages extends SpecialPage {
 		$dm = $wgContLang->getDirMark();
 
 		$title = Title::makeTitleSafe( $result->rc_namespace, $result->rc_title );
-		$time = htmlspecialchars( $wgLang->timeAndDate( $result->rc_timestamp, true ) );
+		$time = Html::element( 'span', array( 'class' => 'mw-newpages-time' ),
+			$wgLang->timeAndDate( $result->rc_timestamp, true )
+		);
 
 		$query = array( 'redirect' => 'no' );
 
@@ -261,38 +284,53 @@ class SpecialNewpages extends SpecialPage {
 		$plink = $this->skin->linkKnown(
 			$title,
 			null,
-			array(),
-			$query
+			array( 'class' => 'mw-newpages-pagename' ),
+			$query,
+			array( 'known' ) // Set explicitly to avoid the default of 'known','noclasses'. This breaks the colouration for stubs
 		);
-		$hist = $this->skin->linkKnown(
+		$histLink = $this->skin->linkKnown(
 			$title,
 			wfMsgHtml( 'hist' ),
 			array(),
 			array( 'action' => 'history' )
 		);
-		$length = wfMsgExt( 'nbytes', array( 'parsemag', 'escape' ),
-			$wgLang->formatNum( $result->length ) );
+		$hist = Html::rawElement( 'span', array( 'class' => 'mw-newpages-history' ), wfMsg( 'parentheses', $histLink ) );
+
+		$length = Html::rawElement( 'span', array( 'class' => 'mw-newpages-length' ),
+				'[' . wfMsgExt( 'nbytes', array( 'parsemag', 'escape' ), $wgLang->formatNum( $result->length ) ) .
+				']'
+		);
 		$ulink = $this->skin->userLink( $result->rc_user, $result->rc_user_text ) . ' ' .
 			$this->skin->userToolLinks( $result->rc_user, $result->rc_user_text );
 		$comment = $this->skin->commentBlock( $result->rc_comment );
 		
-		if ( $this->patrollable( $result ) )
+		if ( $this->patrollable( $result ) ) {
 			$classes[] = 'not-patrolled';
+		}
 
-		# Tags, if any.
-		list( $tagDisplay, $newClasses ) = ChangeTags::formatSummaryRow( $result->ts_tags, 'newpages' );
-		$classes = array_merge( $classes, $newClasses );
+		# Add a class for zero byte pages
+		if ( $result->length == 0 ) {
+			$classes[] = 'mw-newpages-zero-byte-page';
+		}
+
+		# Tags, if any. check for including due to bug 23293
+		if ( !$this->including() ) {
+			list( $tagDisplay, $newClasses ) = ChangeTags::formatSummaryRow( $result->ts_tags, 'newpages' );
+			$classes = array_merge( $classes, $newClasses );
+		} else {
+			$tagDisplay = '';
+		}
 
 		$css = count($classes) ? ' class="'.implode( " ", $classes).'"' : '';
 
-		return "<li{$css}>{$time} {$dm}{$plink} ({$hist}) {$dm}[{$length}] {$dm}{$ulink} {$comment} {$tagDisplay}</li>\n";
+		return "<li{$css}>{$time} {$dm}{$plink} {$hist} {$dm}{$length} {$dm}{$ulink} {$comment} {$tagDisplay}</li>\n";
 	}
 
 	/**
 	 * Should a specific result row provide "patrollable" links?
 	 *
 	 * @param $result Result row
-	 * @return bool
+	 * @return Boolean
 	 */
 	protected function patrollable( $result ) {
 		global $wgUser;
@@ -301,19 +339,18 @@ class SpecialNewpages extends SpecialPage {
 
 	/**
 	 * Output a subscription feed listing recent edits to this page.
-	 * @param string $type
+	 *
+	 * @param $type String
 	 */
 	protected function feed( $type ) {
-		global $wgFeed, $wgFeedClasses, $wgFeedLimit;
+		global $wgFeed, $wgFeedClasses, $wgFeedLimit, $wgOut;
 
 		if ( !$wgFeed ) {
-			global $wgOut;
 			$wgOut->addWikiMsg( 'feed-unavailable' );
 			return;
 		}
 
 		if( !isset( $wgFeedClasses[$type] ) ) {
-			global $wgOut;
 			$wgOut->addWikiMsg( 'feed-invalid' );
 			return;
 		}
@@ -329,7 +366,7 @@ class SpecialNewpages extends SpecialPage {
 
 		$feed->outHeader();
 		if( $pager->getNumRows() > 0 ) {
-			while( $row = $pager->mResult->fetchObject() ) {
+			foreach ( $pager->mResult as $row ) {
 				$feed->outItem( $this->feedItem( $row ) );
 			}
 		}
@@ -337,10 +374,10 @@ class SpecialNewpages extends SpecialPage {
 	}
 
 	protected function feedTitle() {
-		global $wgContLanguageCode, $wgSitename;
+		global $wgLanguageCode, $wgSitename;
 		$page = SpecialPage::getPage( 'Newpages' );
 		$desc = $page->getDescription();
-		return "$wgSitename - $desc [$wgContLanguageCode]";
+		return "$wgSitename - $desc [$wgLanguageCode]";
 	}
 
 	protected function feedItem( $row ) {
@@ -434,6 +471,9 @@ class NewPagesPager extends ReverseChronologicalPager {
 		if ( $this->opts->getValue( 'hideredirs' ) ) {
 			$conds['page_is_redirect'] = 0;
 		}
+  
+		// Allow changes to the New Pages query
+		wfRunHooks('SpecialNewpagesConditions', array(&$this, $this->opts, &$conds));
 
 		$info = array(
 			'tables' => array( 'recentchanges', 'page' ),
@@ -471,7 +511,7 @@ class NewPagesPager extends ReverseChronologicalPager {
 	function getStartBody() {
 		# Do a batch existence check on pages
 		$linkBatch = new LinkBatch();
-		while( $row = $this->mResult->fetchObject() ) {
+		foreach ( $this->mResult as $row ) {
 			$linkBatch->add( NS_USER, $row->rc_user_text );
 			$linkBatch->add( NS_USER_TALK, $row->rc_user_text );
 			$linkBatch->add( $row->rc_namespace, $row->rc_title );

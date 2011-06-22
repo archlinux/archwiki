@@ -4,10 +4,20 @@
  * another, but don't ignore the poor non-Monobook users either.
  */
 
+/* Default style for semantic tags */
+abbr, acronym, .explain {
+	border-bottom: 1px dotted black;
+	cursor: help;
+}
+
 /* Colored watchlist and recent changes numbers */
 .mw-plusminus-pos { color: #006400; } /* dark green */
 .mw-plusminus-neg { color: #8b0000; } /* dark red */
 .mw-plusminus-null { color: #aaa; } /* gray */
+
+/* Links to redirects appear italicized on [[Special:AllPages]], [[Special:PrefixIndex]],
+   [[Special:Watchlist/edit]] and in category listings */
+.allpagesredirect, .redirect-in-category, .watchlistredir { font-style: italic; }
 
 /* Comment and username portions of RC entries */
 span.comment {
@@ -19,7 +29,10 @@ span.changedby {
 }
 
 /* Math */
-.texvc { direction: ltr; unicode-bidi: embed; }
+.texvc {
+	direction: ltr;
+	unicode-bidi: embed;
+}
 img.tex { vertical-align: middle; }
 span.texhtml { font-family: serif; }
 
@@ -28,7 +41,9 @@ span.texhtml { font-family: serif; }
 #wikiPreview.ontop { margin-bottom: 1em; }
 
 /* Stop floats from intruding into edit area in previews */
-#editform, #toolbar, #wpTextbox1 { clear: both; }
+#editform, #toolbar, #wpTextbox1 {
+	clear: both;
+}
 
 div#mw-js-message {
 	margin: 1em 5%;
@@ -52,14 +67,14 @@ h2#filehistory {
 
 table.filehistory th,
 table.filehistory td {
-	vertical-align:top;
+	vertical-align: top;
 }
 table.filehistory th {
 	text-align: left;
 }
 table.filehistory td.mw-imagepage-filesize,
 table.filehistory th.mw-imagepage-filesize {
-	white-space:nowrap;
+	white-space: nowrap;
 }
 
 table.filehistory td.filehistory-selected {
@@ -95,28 +110,32 @@ div.patrollink {
 /**
  * Forms
  */
-body.ltr td.mw-label { text-align: right; }
-body.ltr td.mw-input { text-align: left; }
-body.ltr td.mw-submit { text-align: left; }
-body.rtl td.mw-label { text-align: left; }
-body.rtl td.mw-input { text-align: right; }
-body.rtl td.mw-submit { text-align: right; }
+td.mw-label { text-align: right; }
+td.mw-input { text-align: left; }
+td.mw-submit { text-align: left; }
 
 td.mw-label { vertical-align: top; }
 .prefsection td.mw-label { width: 20%; }
 .prefsection table { width: 100%; }
 td.mw-submit { white-space: nowrap; }
 
-table.mw-htmlform-nolabel td.mw-label { width: 0 !important; }
+table.mw-htmlform-nolabel td.mw-label {
+	width: 0 !important;
+}
+
+tr.mw-htmlform-vertical-label td.mw-label {
+	text-align: left !important;
+}
+
+input#wpSummary {
+	width: 80%;
+}
 
 /**
  * Image captions
  */
-body.rtl .thumbcaption { text-align:right; }
-body.rtl .magnify { float:left; }
-
-body.ltr .thumbcaption { text-align:left; }
-body.ltr .magnify { float:right; }
+.thumbcaption { text-align: left; }
+.magnify { float: right; }
 
 /**
  * Hidden categories
@@ -144,7 +163,7 @@ p.mw-revdel-editreasons {
 
 div.searchresult {
 	font-size: 95%;
-	width:38em;
+	width: 38em;
 }
 
 .mw-search-results {
@@ -153,8 +172,8 @@ div.searchresult {
 
 .mw-search-results li {
 	padding-bottom: 1em;
-	list-style:none;
-	list-style-image:none;
+	list-style: none;
+	list-style-image: none;
 }
 .mw-search-results li a {
 	font-size: 108%;
@@ -171,11 +190,8 @@ div.searchresult {
 	border: 1px solid silver;
 }
 .mw-search-formheader div.search-types {
-	float:left;
+	float: left;
 	padding-left: 0.25em;
-}
-.rtl .mw-search-formheader div.search-types {
-	float: right;
 }
 .mw-search-formheader div.search-types ul {
 	margin: 0 !important;
@@ -232,14 +248,8 @@ fieldset#mw-searchoptions h4 {
 	margin: 0;
 	float: left;
 }
-.rtl fieldset#mw-searchoptions h4 {
-	float: right;
-}
 fieldset#mw-searchoptions div#mw-search-togglebox {
 	float: right;
-}
-.rtl fieldset#mw-searchoptions div#mw-search-togglebox {
-	float: left;
 }
 
 fieldset#mw-searchoptions div#mw-search-togglebox label {
@@ -254,15 +264,6 @@ fieldset#mw-searchoptions table {
 }
 fieldset#mw-searchoptions table td {
 	padding-right: 1em;
-}
-.rtl fieldset#mw-searchoptions table td {
-	padding-left: 1em;
-	padding-right: 0;
-}
-body.rtl fieldset#mw-searchoptions table {
-	margin-right: 0;
-	margin-left: 3em;
-	float: right;
 }
 fieldset#mw-searchoptions div.divider {
 	clear: both;
@@ -285,10 +286,6 @@ div#mw-search-interwiki {
 	margin-top: 2ex;
 }
 
-.rtl div#mw-search-interwiki {
-	float: left;
-}
-
 div#mw-search-interwiki li {
 	font-size: 95%;
 }
@@ -296,10 +293,6 @@ div#mw-search-interwiki li {
 .mw-search-interwiki-more {
 	float: right;
 	font-size: 90%;
-}
-
-.rtl .mw-search-interwiki-more {
-	float: left;
 }
 
 div#mw-search-interwiki-caption {
@@ -315,12 +308,8 @@ div#mw-search-interwiki-caption {
 	padding-right: 0.15em;
 	padding-bottom: 0.2em;
 	padding-top: 0.15em;
-	background-color:#ececec;
-	border-top:1px solid #BBBBBB;
-}
-
-.rtl .mw-search-interwiki-project {
-	text-align: right;
+	background-color: #ececec;
+	border-top: 1px solid #BBBBBB;
 }
 
 span.searchalttitle {
@@ -342,27 +331,21 @@ div.searchdidyoumean em {
 	font-weight: bold;
 }
 
-table#mw-search-top-table {
-	background-color: transparent;
-}
-
 
 /*
  * Advanced PowerSearch box
  */
-
 td#mw-search-togglebox {
-        text-align: right;
+	text-align: right;
 }
 
 table#mw-search-powertable {
-	width:100%;
+	width: 100%;
 }
 
 form#powersearch {
 	clear: both;
 }
-
 
 /*
  * UserRights stuff
@@ -439,14 +422,18 @@ table.os-suggest-results {
 /* the auto-generated edit comments */
 .autocomment { color: gray; }
 #pagehistory .history-user {
-    margin-left: 0.4em;
-    margin-right: 0.2em;
+	margin-left: 0.4em;
+	margin-right: 0.2em;
 }
-#pagehistory span.minor { font-weight: bold; }
-#pagehistory li { border: 1px solid white; }
+#pagehistory span.minor {
+	font-weight: bold;
+}
+#pagehistory li {
+	border: 1px solid white;
+}
 #pagehistory li.selected {
-    background-color: #f9f9f9;
-    border: 1px dashed #aaa;
+	background-color: #f9f9f9;
+	border: 1px dashed #aaa;
 }
 
 /** Generic minor/bot/newpage styling */
@@ -460,10 +447,12 @@ table.os-suggest-results {
 }
 
 /* Special:ListGroupRights styling */
-table.mw-listgrouprights-table tr  {
+table.mw-listgrouprights-table tr {
 	vertical-align: top;
 }
-.listgrouprights-revoked { text-decoration: line-through; }
+.listgrouprights-revoked {
+	text-decoration: line-through;
+}
 
 /* Special:Statistics styling */
 td.mw-statistics-numbers {
@@ -493,11 +482,7 @@ td#mw-emailuser-sender, td#mw-emailuser-recipient {
 }
 
 /* Special:Allpages styling */
-table.allpageslist {
-	background-color: transparent;
-}
 table.mw-allpages-table-form, table.mw-allpages-table-chunk {
-	background-color: transparent;
 	width: 100%;
 }
 td.mw-allpages-alphaindexline {
@@ -508,7 +493,7 @@ td.mw-allpages-nav, p.mw-allpages-nav {
 	font-size: smaller;
 	margin-bottom: 1em;
 }
-table.mw-allpages-table-form tr  {
+table.mw-allpages-table-form tr {
 	vertical-align: top;
 }
 
@@ -516,9 +501,8 @@ table.mw-allpages-table-form tr  {
 table#mw-prefixindex-list-table,
 table#mw-prefixindex-nav-table {
 	width: 98%;
-	background-color: transparent;
 }
-td#mw-prefixindex-nav-form  {
+td#mw-prefixindex-nav-form {
 	font-size: smaller;
 	margin-bottom: 1em;
 	text-align: right;
@@ -558,34 +542,38 @@ td.mw-revdel-checkbox, th.mw-revdel-checkbox {
 
 /* feed links */
 a.feedlink {
+	/* @embed */
 	background: url("images/feed-icon.png") center left no-repeat;
 	padding-left: 16px;
 }
 
-/* Plainlinks - this can be used to switch 
+/* Plainlinks - this can be used to switch
  * off special external link styling */
 .plainlinks a {
-		background: none !important;
-		padding: 0 !important;
+	background: none !important;
+	padding: 0 !important;
 }
 
-/* wikitable class for skinning normal tables */
+/* wikitable class for skinning normal tables
+ * keep on sync with commonPrint.css
+ */
 table.wikitable {
-    margin: 1em 1em 1em 0;
-    background: #f9f9f9;
-    border: 1px #aaa solid;
-    border-collapse: collapse;
+	margin: 1em 1em 1em 0;
+	background: #f9f9f9;
+	border: 1px #aaa solid;
+	border-collapse: collapse;
+	color: black;
 }
 .wikitable th, .wikitable td {
-    border: 1px #aaa solid;
-    padding: 0.2em;
+	border: 1px #aaa solid;
+	padding: 0.2em;
 }
 .wikitable th {
-    background: #f2f2f2;
-    text-align: center;
+	background: #f2f2f2;
+	text-align: center;
 }
 .wikitable caption {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 /* hide initially collapsed collapsable tables */
@@ -626,6 +614,17 @@ table.collapsed tr.collapsable {
 	border: none;
 }
 
+/* Note on preview page */
+.previewnote {
+	color: #c00;
+	margin-bottom: 1em;
+}
+
+.previewnote p {
+	text-indent: 3em;
+	margin: 0.8em 0;
+}
+
 .visualClear {
 	clear: both;
 }
@@ -637,28 +636,46 @@ table.collapsed tr.collapsable {
 }
 
 /*
-  Table pager (e.g. Special:Imagelist)
-  - remove underlines from the navigation link
-  - collapse borders
-  - set the borders to outsets (similar to Special:Allmessages)
-  - remove line wrapping for all td and th, set background color
-  - restore line wrapping for the last two table cells (description and size)
+	Table pager (e.g. Special:ListFiles)
+	- remove underlines from the navigation link
+	- collapse borders
+	- set the borders to outsets (similar to Special:AllMessages)
+	- remove line wrapping for all td and th, set background color
+	- restore line wrapping for the last two table cells (description and size)
 */
-.TablePager { min-width: 80%; }
-.TablePager_nav a { text-decoration: none; }
-.TablePager { border-collapse: collapse; }
-.TablePager, .TablePager td, .TablePager th { 
+.TablePager {
+	min-width: 80%;
+	border-collapse: collapse;
+}
+.TablePager_nav a {
+	text-decoration: none;
+}
+.TablePager, .TablePager td, .TablePager th {
 	border: 1px solid #aaaaaa;
 	padding: 0 0.15em 0 0.15em;
 }
-.TablePager th { background-color: #eeeeff }
-.TablePager td { background-color: #ffffff }
-.TablePager tr:hover td { background-color: #eeeeff }
+.TablePager th {
+	background-color: #eeeeff;
+}
+.TablePager td {
+	background-color: #ffffff;
+}
+.TablePager tr:hover td {
+	background-color: #eeeeff;
+}
 
-.imagelist td, .imagelist th { white-space: nowrap }
-.imagelist .TablePager_col_links { background-color: #eeeeff }
-.imagelist .TablePager_col_img_description { white-space: normal }
-.imagelist th.TablePager_sort { background-color: #ccccff }
+.imagelist td, .imagelist th {
+	white-space: nowrap;
+}
+.imagelist .TablePager_col_links {
+	background-color: #eeeeff;
+}
+.imagelist .TablePager_col_img_description {
+	white-space: normal;
+}
+.imagelist th.TablePager_sort {
+	background-color: #ccccff;
+}
 
  /* Allmessages table */
 #mw-allmessagestable .allmessages-customised td.am_default {
@@ -736,31 +753,35 @@ table.mw_metadata td {
 }
 
 /* Galleries */
-table.gallery {
-	border: 1px solid #ccc;
-	margin: 2px;
-	padding: 2px;
-	background-color: white;
-}
-
-table.gallery tr {
-	vertical-align: top;
-}
-
-table.gallery td {
+/* These display attributes look nonsensical, but are needed to support IE and FF2 */
+/* Don't forget to update commonPrint.css */
+li.gallerybox {
 	vertical-align: top;
 	background-color: #f9f9f9;
 	border: solid 2px white;
-}
-table.gallery caption {
-	font-weight: bold;
+	display: -moz-inline-box;
 }
 
-div.gallerybox {
+ul.gallery, li.gallerybox {
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+}
+
+ul.gallery {
 	margin: 2px;
+	padding: 2px;
+	display: block;
 }
 
-div.gallerybox div.thumb {
+li.gallerycaption {
+	font-weight: bold;
+	text-align: center;
+	display: block;
+	word-wrap: break-word;
+}
+
+li.gallerybox div.thumb {
 	text-align: center;
 	border: 1px solid #ccc;
 	margin: 2px;
@@ -770,6 +791,7 @@ div.gallerytext {
 	overflow: hidden;
 	font-size: 94%;
 	padding: 2px 4px;
+	word-wrap: break-word;
 }
 
 table.mw-enhanced-rc {
@@ -788,27 +810,30 @@ td.mw-enhanced-rc {
 	display: inline;
 	margin-left: 1em;
 }
- 
+
 #mw-addcategory-prompt input {
 	margin-left: 0.5em;
 	margin-right: 0.5em;
 }
- 
+
 .mw-remove-category {
 	padding: 8px;
+	/* @embed */
 	background-image: url(images/remove.png);
 	background-position: center center;
 	background-repeat: no-repeat;
 }
- 
+
 .mw-ajax-addcategory {
 	padding-left: 20px;
+	/* @embed */
 	background-image: url(images/add.png);
 	background-position: left center;
 	background-repeat: no-repeat;
 }
 
 .mw-ajax-loader {
+	/* @embed */
 	background-image: url(images/ajax-loader.gif);
 	background-position: center center;
 	background-repeat: no-repeat;
@@ -820,6 +845,7 @@ td.mw-enhanced-rc {
 .mw-small-spinner {
 	padding: 10px !important;
 	margin-right: 0.6em;
+	/* @embed */
 	background-image: url(images/spinner.gif);
 	background-position: center center;
 	background-repeat: no-repeat;
@@ -829,3 +855,58 @@ td.mw-enhanced-rc {
 a.sortheader {
 	margin: 0 0.3em;
 }
+
+/* Localised ordered list numbering for some languages */
+ol:lang(bcc) li,
+ol:lang(bqi) li,
+ol:lang(fa) li,
+ol:lang(glk) li,
+ol:lang(kk-arab) li,
+ol:lang(mzn) li {
+	list-style-type: -moz-persian;
+	list-style-type: persian;
+}
+
+ol:lang(ckb) li {
+	list-style-type: -moz-arabic-indic;
+	list-style-type: arabic-indic;
+}
+
+ol:lang(bn) li {
+	list-style-type: -moz-bengali;
+	list-style-type: bengali;
+}
+
+/* tooltip styles */
+.mw-help-field-hint {
+	display: none;
+	padding: 0px;
+	padding-left: 15px;
+	margin-left: 2px;
+	margin-bottom: -8px;
+	/* @embed */
+	background-image: url('images/help-question.gif');
+	background-position: left center;
+	background-repeat: no-repeat;
+	color: #0645ad;
+	text-decoration: underline;
+	cursor: pointer;
+	font-size: .8em;
+}
+.mw-help-field-hint:hover {
+	/* @embed */
+	background-image: url('images/help-question-hover.gif');
+}
+.mw-help-field-data {
+	display: block;
+	background-color: #d6f3ff;
+	padding:5px 8px 4px 8px;
+	border: 1px solid #5dc9f4;
+	margin-left: 20px;
+}
+.tipsy { padding: 5px 5px 10px; font-size: 12px; position: absolute; z-index: 100000; overflow: visible; }
+.tipsy-inner { padding: 5px 8px 4px 8px; background-color: #d6f3ff; color: black; border: 1px solid #5dc9f4; max-width: 300px; text-align: left; }
+.tipsy-arrow { position: absolute; /* @embed */ background: url( 'images/tipsy-arrow.gif' ) no-repeat top left; width: 13px; height: 13px; }
+.tipsy-se .tipsy-arrow { bottom: -2px; right: 10px; background-position: 0% 100%; }
+
+

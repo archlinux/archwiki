@@ -1,5 +1,22 @@
 <?php
 /**
+ * Implements Special:Shortpages
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup SpecialPage
  */
@@ -7,6 +24,7 @@
 /**
  * SpecialShortpages extends QueryPage. It is used to return the shortest
  * pages in the database.
+ *
  * @ingroup SpecialPage
  */
 class ShortPagesPage extends QueryPage {
@@ -54,11 +72,13 @@ class ShortPagesPage extends QueryPage {
 		# the page must exist for it to have been pulled out of the table
 		if( $this->isCached() ) {
 			$batch = new LinkBatch();
-			while( $row = $db->fetchObject( $res ) )
+			foreach ( $res as $row ) {
 				$batch->add( $row->namespace, $row->title );
+			}
 			$batch->execute();
-			if( $db->numRows( $res ) > 0 )
+			if ( $db->numRows( $res ) > 0 ) {
 				$db->dataSeek( $res, 0 );
+			}
 		}
 	}
 
@@ -83,11 +103,11 @@ class ShortPagesPage extends QueryPage {
 		$plink = $this->isCached()
 					? $skin->link( $title )
 					: $skin->linkKnown( $title );
-		$size = wfMsgExt( 'nbytes', array( 'parsemag', 'escape' ), $wgLang->formatNum( htmlspecialchars( $result->value ) ) );
+		$size = wfMessage( 'nbytes', $wgLang->formatNum( $result->value ) )->escaped();
 
 		return $title->exists()
 				? "({$hlink}) {$dm}{$plink} {$dm}[{$size}]"
-				: "<s>({$hlink}) {$dm}{$plink} {$dm}[{$size}]</s>";
+				: "<del>({$hlink}) {$dm}{$plink} {$dm}[{$size}]</del>";
 	}
 }
 

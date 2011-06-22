@@ -1,4 +1,9 @@
 <?php
+/**
+ * Parser functions provided by MediaWiki core
+ *
+ * @file
+ */
 
 /**
  * Various core parser functions, registered in Parser::firstCallInit()
@@ -11,7 +16,7 @@ class CoreParserFunctions {
 		# Syntax for arguments (see self::setFunctionHook):
 		#  "name for lookup in localized magic words array",
 		#  function callback,
-		#  optional SFH_NO_HASH to omit the hash from calls (e.g. {{int:...}
+		#  optional SFH_NO_HASH to omit the hash from calls (e.g. {{int:...}}
 		#    instead of {{#int:...}})
 
 		$parser->setFunctionHook( 'int',              array( __CLASS__, 'intFunction'      ), SFH_NO_HASH );
@@ -81,7 +86,7 @@ class CoreParserFunctions {
 	static function intFunction( $parser, $part1 = '' /*, ... */ ) {
 		if ( strval( $part1 ) !== '' ) {
 			$args = array_slice( func_get_args(), 2 );
-			$message = wfMsgGetKey( $part1, true, false, false );
+			$message = wfMsgGetKey( $part1, true, $parser->getOptions()->getUserLang(), false );
 			$message = wfMsgReplaceArgs( $message, $args );
 			$message = $parser->replaceVariables( $message ); // like $wgMessageCache->transform()
 			return $message;
@@ -95,7 +100,7 @@ class CoreParserFunctions {
 
 		$date = trim( $date );
 
-		$pref = $parser->mOptions->getDateFormat();
+		$pref = $parser->getOptions()->getDateFormat();
 
 		// Specify a different default date format other than the the normal default
 		// iff the user has 'default' for their setting
@@ -124,8 +129,37 @@ class CoreParserFunctions {
 		return wfUrlencode( str_replace( ' ', '_', self::ns( $parser, $part1 ) ) );
 	}
 
-	static function urlencode( $parser, $s = '' ) {
-		return urlencode( $s );
+	/**
+	 * urlencodes a string according to one of three patterns: (bug 22474)
+	 *
+	 * By default (for HTTP "query" strings), spaces are encoded as '+'.
+	 * Or to encode a value for the HTTP "path", spaces are encoded as '%20'.
+	 * For links to "wiki"s, or similar software, spaces are encoded as '_',
+	 *
+	 * @param $parser Parser object
+	 * @param $s String: The text to encode.
+	 * @param $arg String (optional): The type of encoding.
+	 */
+	static function urlencode( $parser, $s = '', $arg = null ) {
+		static $magicWords = null;
+		if ( is_null( $magicWords ) ) {
+			$magicWords = new MagicWordArray( array( 'url_path', 'url_query', 'url_wiki' ) );
+		}
+		switch( $magicWords->matchStartToEnd( $arg ) ) {
+
+			// Encode as though it's a wiki page, '_' for ' '.
+			case 'url_wiki':
+				return wfUrlencode( str_replace( ' ', '_', $s ) );
+
+			// Encode for an HTTP Path, '%20' for ' '.
+			case 'url_path':
+				return rawurlencode( $s );
+
+			// Encode for HTTP query, '+' for ' '.
+			case 'url_query':
+			default:
+				return urlencode( $s );
+		}
 	}
 
 	static function lcfirst( $parser, $s = '' ) {
@@ -214,7 +248,7 @@ class CoreParserFunctions {
 		$user = User::newFromName( $user );
 		if ( $user ) {
 			$gender = $user->getOption( 'gender' );
-		} elseif ( $parser->mOptions->getInterfaceMessage() ) {
+		} elseif ( $parser->getOptions()->getInterfaceMessage() ) {
 			global $wgUser;
 			$gender = $wgUser->getOption( 'gender' );
 		}
@@ -553,17 +587,14 @@ class CoreParserFunctions {
 	}
 
 	static function anchorencode( $parser, $text ) {
-		$a = urlencode( $text );
-		$a = strtr( $a, array( '%' => '.', '+' => '_' ) );
-		# leave colons alone, however
-		$a = str_replace( '.3A', ':', $a );
-		return $a;
+		return substr( $parser->guessSectionNameFromWikiText( $text ), 1);
 	}
 
 	static function special( $parser, $text ) {
-		$title = SpecialPage::getTitleForAlias( $text );
-		if ( $title ) {
-			return $title->getPrefixedText();
+		list( $page, $subpage ) = SpecialPage::resolveAliasWithSubpage( $text );
+		if ( $page ) {
+			$title = SpecialPage::getTitleFor( $page, $subpage );
+			return $title;
 		} else {
 			return wfMsgForContent( 'nosuchspecialpage' );
 		}
@@ -579,7 +610,7 @@ class CoreParserFunctions {
 			return '';
 		else
 			return( '<span class="error">' .
-				wfMsg( 'duplicate-defaultsort',
+				wfMsgForContent( 'duplicate-defaultsort',
 						 htmlspecialchars( $old ),
 						 htmlspecialchars( $text ) ) .
 				'</span>' );
@@ -602,7 +633,6 @@ class CoreParserFunctions {
 	 * Parser function to extension tag adaptor
 	 */
 	public static function tagObj( $parser, $frame, $args ) {
-		$xpath = false;
 		if ( !count( $args ) ) {
 			return '';
 		}
@@ -617,7 +647,7 @@ class CoreParserFunctions {
 		$stripList = $parser->getStripList();
 		if ( !in_array( $tagName, $stripList ) ) {
 			return '<span class="error">' .
-				wfMsg( 'unknown_extension_tag', $tagName ) .
+				wfMsgForContent( 'unknown_extension_tag', $tagName ) .
 				'</span>';
 		}
 

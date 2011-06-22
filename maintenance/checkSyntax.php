@@ -17,9 +17,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @ingroup Maintenance
  */
- 
+
 require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class CheckSyntax extends Maintenance {
@@ -33,8 +34,8 @@ class CheckSyntax extends Maintenance {
 		$this->mDescription = "Check syntax for all PHP files in MediaWiki";
 		$this->addOption( 'with-extensions', 'Also recurse the extensions folder' );
 		$this->addOption( 'path', 'Specific path (file or directory) to check, either with absolute path or relative to the root of this MediaWiki installation',
-			false, true);
-		$this->addOption( 'list-file', 'Text file containing list of files or directories to check', false, true);
+			false, true );
+		$this->addOption( 'list-file', 'Text file containing list of files or directories to check', false, true );
 		$this->addOption( 'modified', 'Check only files that were modified (requires SVN command-line client)' );
 		$this->addOption( 'syntax-only', 'Check for syntax validity only, skip code style warnings' );
 	}
@@ -49,16 +50,16 @@ class CheckSyntax extends Maintenance {
 		// ParseKit is broken on PHP 5.3+, disabled until this is fixed
 		$useParseKit = function_exists( 'parsekit_compile_file' ) && version_compare( PHP_VERSION, '5.3', '<' );
 
-		$str = 'Checking syntax (using ' . ( $useParseKit ? 
-			'parsekit)' : ' php -l, this can take a long time)' );
+		$str = 'Checking syntax (using ' . ( $useParseKit ?
+			'parsekit' : ' php -l, this can take a long time' ) . ")\n";
 		$this->output( $str );
-		foreach( $this->mFiles as $f ) {
-			if( $useParseKit ) {
+		foreach ( $this->mFiles as $f ) {
+			if ( $useParseKit ) {
 				$this->checkFileWithParsekit( $f );
 			} else {
 				$this->checkFileWithCli( $f );
 			}
-			if( !$this->hasOption( 'syntax-only' ) ) {
+			if ( !$this->hasOption( 'syntax-only' ) ) {
 				$this->checkForMistakes( $f );
 			}
 		}
@@ -76,18 +77,17 @@ class CheckSyntax extends Maintenance {
 		$this->mIgnorePaths = array(
 			// Compat stuff, explodes on PHP 5.3
 			"includes/NamespaceCompat.php$",
-			"DiscussionThreading/REV",
 			);
-	
+
 		$this->mNoStyleCheckPaths = array(
 			// Third-party code we don't care about
 			"/activemq_stomp/",
-			"EmailPage/phpMailer",
+			"EmailPage/PHPMailer",
 			"FCKeditor/fckeditor/",
 			'\bphplot-',
 			"/svggraph/",
 			"\bjsmin.php$",
-			"OggHandler/PEAR/",
+			"PEAR/File_Ogg/",
 			"QPoll/Excel/",
 			"/geshi/",
 			"/smarty/",
@@ -105,7 +105,8 @@ class CheckSyntax extends Maintenance {
 			if ( !$f ) {
 				$this->error( "Can't open file $file\n", true );
 			}
-			while( $path = trim( fgets( $f ) ) ) {
+			$path = trim( fgets( $f ) );
+			while ( $path ) {
 				$this->addPath( $path );
 			}
 			fclose( $f );
@@ -113,6 +114,7 @@ class CheckSyntax extends Maintenance {
 		} elseif ( $this->hasOption( 'modified' ) ) {
 			$this->output( "Retrieving list from Subversion... " );
 			$parentDir = wfEscapeShellArg( dirname( __FILE__ ) . '/..' );
+			$retval = null;
 			$output = wfShellExec( "svn status --ignore-externals $parentDir", $retval );
 			if ( $retval ) {
 				$this->error( "Error retrieving list from Subversion!\n", true );
@@ -122,7 +124,7 @@ class CheckSyntax extends Maintenance {
 
 			preg_match_all( '/^\s*[AM].{7}(.*?)\r?$/m', $output, $matches );
 			foreach ( $matches[1] as $file ) {
-				if ( self::isSuitableFile( $file ) && !is_dir( $file ) ) {
+				if ( $this->isSuitableFile( $file ) && !is_dir( $file ) ) {
 					$this->mFiles[] = $file;
 				}
 			}
@@ -131,20 +133,20 @@ class CheckSyntax extends Maintenance {
 
 		$this->output( 'Building file list...', 'listfiles' );
 
-		// Only check files in these directories. 
+		// Only check files in these directories.
 		// Don't just put $IP, because the recursive dir thingie goes into all subdirs
-		$dirs = array( 
+		$dirs = array(
 			$IP . '/includes',
 			$IP . '/config',
 			$IP . '/languages',
 			$IP . '/maintenance',
 			$IP . '/skins',
 		);
-		if( $this->hasOption( 'with-extensions' ) ) {
+		if ( $this->hasOption( 'with-extensions' ) ) {
 			$dirs[] = $IP . '/extensions';
 		}
 
-		foreach( $dirs as $d ) {
+		foreach ( $dirs as $d ) {
 			$this->addDirectoryContent( $d );
 		}
 
@@ -158,15 +160,16 @@ class CheckSyntax extends Maintenance {
 
 		$this->output( 'done.', 'listfiles' );
 	}
-	
+
 	/**
 	 * Returns true if $file is of a type we can check
 	 */
 	private function isSuitableFile( $file ) {
+		$file = str_replace( '\\', '/', $file );
 		$ext = pathinfo( $file, PATHINFO_EXTENSION );
 		if ( $ext != 'php' && $ext != 'inc' && $ext != 'php5' )
 			return false;
-		foreach( $this->mIgnorePaths as $regex ) {
+		foreach ( $this->mIgnorePaths as $regex ) {
 			$m = array();
 			if ( preg_match( "~{$regex}~", $file, $m ) )
 				return false;
@@ -203,7 +206,7 @@ class CheckSyntax extends Maintenance {
 	 */
 	private function addDirectoryContent( $dir ) {
 		$iterator = new RecursiveIteratorIterator(
-			new RecursiveDirectoryIterator( $dir ), 
+			new RecursiveDirectoryIterator( $dir ),
 			RecursiveIteratorIterator::SELF_FIRST
 		);
 		foreach ( $iterator as $file ) {
@@ -248,8 +251,8 @@ class CheckSyntax extends Maintenance {
 	 * @return boolean
 	 */
 	private function checkFileWithCli( $file ) {
-		$res = exec( 'php -l ' . wfEscapeShellArg( $file ) ); 
-		if( strpos( $res, 'No syntax errors detected' ) === false ) {
+		$res = exec( 'php -l ' . wfEscapeShellArg( $file ) );
+		if ( strpos( $res, 'No syntax errors detected' ) === false ) {
 			$this->mFailures[$file] = $res;
 			$this->output( $res . "\n" );
 			return false;
@@ -265,7 +268,7 @@ class CheckSyntax extends Maintenance {
 	 * @return boolean
 	 */
 	private function checkForMistakes( $file ) {
-		foreach( $this->mNoStyleCheckPaths as $regex ) {
+		foreach ( $this->mNoStyleCheckPaths as $regex ) {
 			$m = array();
 			if ( preg_match( "~{$regex}~", $file, $m ) )
 				return;
@@ -292,5 +295,5 @@ class CheckSyntax extends Maintenance {
 }
 
 $maintClass = "CheckSyntax";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );
 

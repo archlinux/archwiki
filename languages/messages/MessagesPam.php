@@ -29,8 +29,7 @@ $messages = array(
 Pabusten ing pamanaliling dake kapamilatan [alilan] ning suglung',
 'tog-editsectiononrightclick' => "Paganan ya ing pamag-edit seksiyon (section editing) kapamilata'ning pamag right click kareng pamagat da reng seksiyon (JavaScript)",
 'tog-showtoc'                 => 'Pakit ya ing kalamnan [table of contents] (kareng bulung a maki 3 o mas dakal a pamagat)',
-'tog-rememberpassword'        => 'Tandanan ya ing kanakung login keng computer a ini',
-'tog-editwidth'               => 'Palaparan ya ing edit box ba neng sapakan ing mabilug a screen',
+'tog-rememberpassword'        => 'Tandanan ya ing kanakung login keng computer a ini (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => 'Idagdag la deng bulung a lelengan ku kareng babanten',
 'tog-watchdefault'            => 'Idagdag la reng bulung a inalilan ku kareng babanten',
 'tog-watchmoves'              => 'Idagdag la reng bulung a inalis ku kareng babanten',
@@ -163,16 +162,10 @@ Pabusten ing pamanaliling dake kapamilatan [alilan] ning suglung',
 'faqpage'        => 'Project:MAK',
 
 # Vector skin
-'vector-action-move'        => 'Iyalis',
-'vector-action-protect'     => 'Protectan/kambilan',
-'vector-action-undelete'    => 'Isubli/iurung ya pangabura',
-'vector-action-unprotect'   => 'Idayu ya panga-protecta',
-'vector-namespace-category' => 'Categoria',
-'vector-namespace-help'     => 'Bulung ning saup',
-'vector-namespace-image'    => "Simpan (''file'')",
-'vector-namespace-main'     => 'Bulung',
-'vector-namespace-media'    => 'Bulung media',
-'vector-namespace-project'  => 'Bulung a pang-proyectu',
+'vector-action-move'      => 'Iyalis',
+'vector-action-protect'   => 'Protectan/kambilan',
+'vector-action-undelete'  => 'Isubli/iurung ya pangabura',
+'vector-action-unprotect' => 'Idayu ya panga-protecta',
 
 'errorpagetitle'    => 'Mali',
 'returnto'          => 'Magbalik king $1.',
@@ -383,7 +376,7 @@ Melalang ne ing kekang account. E mo kakalingwan alilan deng kekang piniling {{S
 'yourname'                   => 'Lagyung talagamit (Username):',
 'yourpassword'               => 'Kekang password:',
 'yourpasswordagain'          => 'Pakisulat meng pasibayu ing password:',
-'remembermypassword'         => 'Tandanan me ing login ku king computer a ini',
+'remembermypassword'         => 'Tandanan me ing login ku king computer a ini (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'             => 'Ing kekang karinan (domain):',
 'externaldberror'            => 'Mapalyaring mika pamagkamali king external authentication (pamagpatutung panlual) ning database, o ala kang paintulut a i-update ya ing kekang account a panlual (external account).',
 'login'                      => 'Mag log in',
@@ -562,7 +555,7 @@ o [{{fullurl:{{FULLPAGENAME}}|action=edit}} i-edit ing bulung a ini]</span>.',
 'usercsspreview'                   => "'''Tandanan mung pi-preview me mu ing kekang user CSS, e ya pa me-save!'''",
 'userjspreview'                    => "'''Tandanan mung susubukan/pi-preview me pamu ing kekang user JavaScript, e ya pa me-save iti!'''",
 'userinvalidcssjstitle'            => "'''Kapiadian:''' Alang pabalat (skin) a \"\$1\".
-Tandanan mung deng pasadiang bulung (custom pages) a .css ampong .js, gagamit lang bansag a mababang letra (lowercase), alm. (alimbawa), {{ns:user}}:Foo/monobook.css, at e {{ns:user}}:Foo/Monobook.css.",
+Tandanan mung deng pasadiang bulung (custom pages) a .css ampong .js, gagamit lang bansag a mababang letra (lowercase), alm. (alimbawa), {{ns:user}}:Foo/vector.css, at e {{ns:user}}:Foo/Vector.css.",
 'updated'                          => '(Mibayu)',
 'note'                             => "'''Kapabaluan:'''",
 'previewnote'                      => "'''Preview ya mu ini;
@@ -604,9 +597,6 @@ Mangaku ka mu naman a ika mismu ing sinulat kaniti, o acopia me ketang metung a 
 Nung e mu buri ing alilan deng alang patugut at alang lunus ing kekang sinulat, e me duduang keni.<br />
 Mangaku ka mu naman a ika mismu ing sinulat kaniti, o akopia me ketang metung a pikuanan a mipaintulutan king malda o aliwa pang libring pikukuanan (lon me ing $1 para kareng detalle).
 '''E KA MANAMBAG OBRANG MAKI COPYRIGHT NUNG ALANG PAINTULUT!",
-'longpagewarning'                  => "'''KAPIADIAN: Maki kaba yang $1 kilobyte ining bulung;
-mágkasákit lang mag-edit bulung a maigit 32 kb deng aliwang browser.
-Nung maliari, pakipitnan me kareng adua o maigit pang dake.'''",
 'longpageerror'                    => "'''MALI: Miras yang $1 kilobyte ing kekang sinulat; sobra ya ketang $2 a pekamakabang maliaring iyambag. E ya ma-save iti.'''",
 'readonlywarning'                  => "'''BABALA: Makasara ya ing database uling sasamasan de iti, ania e mo a-save ngeni detang kekang in-edit.
 Maliari meng i-\"cut-n-paste\" ing sinulat mu king metung a text file, at i-save mu ne mu para king tutuki.'''",
@@ -1081,7 +1071,6 @@ Nung atyu keka ining larawan king bersion a pekamalino (full resolution), ilulan
 mibalik ka at ilulan (upload) me king lalam ning bayung lagyu. [[File:$1|thumb|center|$1]]',
 'fileexists-shared-forbidden' => 'Atin nang simpan (file) a maki lagyung anti kaniti king abe-abeng simpanan (shared file repository);
 mibalik ka at ilulan (upload) me king lalam ning bayung lagyu. [[File:$1|thumb|center|$1]]',
-'successfulupload'            => 'Melaus ing pamaglulan',
 'uploadwarning'               => 'Babala king pamaglulan',
 'savefile'                    => 'I-save ya ing simpan (file)',
 'uploadedimage'               => 'milulan ya ing "[[$1]]"',
@@ -1102,6 +1091,7 @@ Pakaisipan mu sa nung ustu ing isundu mu ing pamaglulan kaniti.
 Makabili ya keni ing tala da reng mengabura ba meng asuri:",
 'filename-bad-prefix'         => "Magumpisa ya king '''\"\$1\"''' ing lagyu ning simpan (file) a kekang lululan. Iti metung yang lagyung tambing dang bibie deng digital camera, at ala yang kaugnayan ketang letratu.
 Mamili ka sanang lagyung mas maglarawan keng kekang simpan.",
+'upload-success-subj'         => 'Melaus ing pamaglulan',
 
 'upload-proto-error'      => 'E ustung protocol',
 'upload-proto-error-text' => 'Mangailangan yang URL a magumpisa king <code>http://</code> o <code>ftp://</code> ing pang-malaut a pamaglulan (remote upload).',
@@ -1381,7 +1371,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Watchlist
 'watchlist'            => 'Deng kanakung babanten',
 'mywatchlist'          => 'Deng kakung babanten',
-'watchlistfor'         => "(para '''$1''')",
 'nowatchlist'          => 'Ala yang laman ing kekang tala ring babanten (watchlist).',
 'watchlistanontext'    => 'Paki $1 ba mong akit o a-edit deng laman ning kekang tala ring babanten (watchlist).',
 'watchnologin'         => 'E maka-login',
@@ -1501,7 +1490,9 @@ I [[User:$3|$3]] ([[User talk:$3|Talk]]) ing tawling menalili.',
 binalik neng [[User:$1|$1]] king tauling bersion',
 'rollback-success' => 'Deng edit nang $1 a miurung;
 binalik nong $2 king sadiang bersion.',
-'sessionfailure'   => 'Balamu ating prublema king kekang login session;
+
+# Edit tokens
+'sessionfailure' => 'Balamu ating prublema king kekang login session;
 mituknang ya ing kimut (action) a ini bang milisia king session hijacking (pamaniamsam session).
 Pakitimid me ing "mibalik" ("back") at luban meng pasibayu ing bulung a penibatan mu, potang kai subukan mung pasibayu.',
 
@@ -1681,7 +1672,6 @@ mu nung sanu retang bulung a sinira da).',
 'ipb-edit-dropdown'           => 'Sangkan ning pamaniabat king pamag-edit',
 'ipb-unblock-addr'            => 'Ilako ya pangasabat ing $1',
 'ipb-unblock'                 => 'Ilako ya pangasabat ing lagyungtalagamit (username) o IP address',
-'ipb-blocklist-addr'          => 'Lon la reng kasalungsungang makasabat para $1',
 'ipb-blocklist'               => 'Lon la reng kasalungsungang makasabat',
 'unblockip'                   => 'Ilako ya pangasabat ing talagamit',
 'unblockiptext'               => 'Gamitan me ing form king lalam ba mung ibalik ing paintulut a sumulat (write access) king IP address o lagyungtalagamit a sadiang makasabat.',
@@ -2039,10 +2029,10 @@ $1',
 'imagemaxsize'         => 'E la dapat migit king bilang a iti deng larawan kareng bulung pamilarawan simpan (file description pages):',
 'thumbsize'            => 'Kasindagul kuku (thumbnail size):',
 'widthheightpage'      => '$1×$2, $3 bulung',
-'file-info'            => '(dagul ning simpan [file]: $1, MIME type: $2)',
-'file-info-size'       => '($1 × $2 pixel, sukad ning simpan: $3, MIME type: $4)',
+'file-info'            => 'dagul ning simpan [file]: $1, MIME type: $2',
+'file-info-size'       => '$1 × $2 pixel, sukad ning simpan: $3, MIME type: $4',
 'file-nohires'         => '<small>Ala nang mas malino pa.</small>',
-'svg-long-desc'        => '(SVG file, masasabing $1 × $2 pixels, dagul ning simpan: $3)',
+'svg-long-desc'        => 'SVG file, masasabing $1 × $2 pixels, dagul ning simpan: $3',
 'show-big-image'       => 'Pekamalino',
 'show-big-image-thumb' => '<small>Dagul na niting preview: $1 × $2 pixels</small>',
 

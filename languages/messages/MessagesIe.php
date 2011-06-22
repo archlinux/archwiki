@@ -205,7 +205,7 @@ Ne oblivia de mutar tui [[Special:Preferences|preferenties de {{SITENAME}}]].',
 'yourname'                   => 'Nómine de usator:',
 'yourpassword'               => 'Parol-clave:',
 'yourpasswordagain'          => 'Parol-clave denov:',
-'remembermypassword'         => 'Memorar mi passa-parol (per cookie)',
+'remembermypassword'         => 'Memorar mi passa-parol (per cookie) (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'             => 'Tui dominia:',
 'login'                      => 'Aperter session',
 'nav-login-createaccount'    => 'Crear un conto o intrar',
@@ -370,13 +370,43 @@ Tui changes ancor ne ha esset conservat!",
 'recentchangeslinked-toolbox' => 'Changes referet',
 
 # Upload
-'upload'          => 'Cargar file',
-'uploadbtn'       => 'Cargar file',
-'uploadlogpage'   => 'Diarium de cargament',
-'filedesc'        => 'Descrition',
-'savefile'        => 'Conservar file',
-'uploadedimage'   => 'cargat "[[$1]]"',
-'watchthisupload' => 'Vigilar ti file',
+'upload'              => 'Cargar file',
+'uploadbtn'           => 'Cargar file',
+'upload-permitted'    => 'Tipes de file permisset: $1.',
+'upload-preferred'    => 'Tipes de file preferet: $1.',
+'upload-prohibited'   => 'Tipes de file prohibit: $1.',
+'uploadlogpage'       => 'Diarium de cargament',
+'filedesc'            => 'Descrition',
+'unknown-error'       => 'Un errore desconosset ocurret.',
+'savefile'            => 'Conservar file',
+'uploadedimage'       => 'cargat "[[$1]]"',
+'upload-maxfilesize'  => 'Mesura maxim de file: $1',
+'upload-description'  => 'Descrition de file',
+'upload-options'      => 'Optiones de cargament',
+'watchthisupload'     => 'Vigilar ti file',
+'upload-failure-subj' => 'Problema de cargament',
+'upload-failure-msg'  => 'Ta esset un problema che tui cargament:
+$1',
+
+'upload-proto-error'      => 'Protocol incorect',
+'upload-proto-error-text' => 'Cargament distant exige comense che <code>http://</code> o <code>ftp://</code>.',
+'upload-file-error'       => 'Errore intern',
+'upload-file-error-text'  => 'Un errore intern ocurret quande atentant crear un file temporari in li servitor.
+Pleser parla che un [[Special:ListUsers/sysop|administrator]].',
+'upload-misc-error'       => 'Errore desconosset de cargament',
+'upload-misc-error-text'  => 'Un errore desconosset ocurret durante li cargament.
+Pleser verificar que li URL es valid e accessibil e prova denov.
+Si li problema persister, parla che un [[Special:ListUsers/sysop|administrator]].',
+'upload-http-error'       => 'Un errore HTTP ocurret: $1',
+
+# Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
+'upload-curl-error6'       => 'Ne esset possibil ear in li URL',
+'upload-curl-error6-text'  => 'Li URL preferet ne esset visitat.
+Pleser vide denov que li URL es corect e si li loc es disponibil.',
+'upload-curl-error28'      => 'For de témpor por cargament de files',
+'upload-curl-error28-text' => 'Ti loc demorat mult témpor por responder.
+Pleser vider se li loc es disponibil, atende un témpor e prova denov.
+Vu posse provar in un témpor minu activ.',
 
 # Special:ListFiles
 'imgfile'   => 'archive',
@@ -653,6 +683,8 @@ Tui changes ancor ne ha esset conservat!",
 'tooltip-upload'                  => 'Comensar cargament de file',
 'tooltip-rollback'                => '"Rollback" reverte redaction(es) de ti págine executet per li ultim contributor in un claccar',
 'tooltip-undo'                    => '"Undo" reverte ti redaction e inaugura li forme de redaction in modo de prevision. It concede adjuntent un rason in li summarium.',
+'tooltip-preferences-save'        => 'Conservar preferenties',
+'tooltip-summary'                 => 'Intrar un summarium curt',
 
 # Browsing diffs
 'previousdiff' => '← Redaction anteriori',

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Functions to get cache objects
+ *
  * @file
  * @ingroup Cache
  */
@@ -66,6 +68,8 @@ function &wfGetCache( $inputType ) {
 				$wgCaches[CACHE_ACCEL] = new APCBagOStuff;
 			} elseif( function_exists( 'xcache_get' ) ) {
 				$wgCaches[CACHE_ACCEL] = new XCacheBagOStuff();
+			} elseif( function_exists( 'wincache_ucache_get' ) ) {
+				$wgCaches[CACHE_ACCEL] = new WinCacheBagOStuff();
 			} else {
 				$wgCaches[CACHE_ACCEL] = false;
 			}

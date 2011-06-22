@@ -91,8 +91,7 @@ $messages = array(
 'tog-hideminor'            => 'E hūnā i nā ho‘opololei iki ma nā loli hou',
 'tog-editondblclick'       => 'Ho‘opololei i nā ‘ao‘ao ma ke kōmi pālua (JavaScript)',
 'tog-showtoc'              => 'Hō‘ike i ka papa kuhikuhi',
-'tog-rememberpassword'     => 'Hoʻomanaʻo iaʻu',
-'tog-editwidth'            => 'Hoʻolaulā ka pahu loli i ke ākea holoʻokoʻa o ka papakaumaka',
+'tog-rememberpassword'     => 'Hoʻomanaʻo iaʻu ma kēia lolo uila (no ka palena nui o $1 {{PLURAL:$1|lā|mau lā}})',
 'tog-watchcreations'       => 'Ho‘ohui i nā ‘ao‘ao i hana ai au i ka‘u papa nānā pono',
 'tog-watchdefault'         => 'Ho‘ohui i nā ‘ao‘ao i ho‘opololei ai au i ka‘u papa nānā pono',
 'tog-watchmoves'           => 'Ho‘ohui i nā ‘ao‘ao i ne‘e ai au i ka‘u papa nānā pono',
@@ -332,7 +331,7 @@ Mai poina e hoʻololi i [[Special:Preferences|kāu makemake ma {{SITENAME}}]].',
 'yourname'                => "Inoa mea ho'ohana",
 'yourpassword'            => 'ʻŌlelo hūnā:',
 'yourpasswordagain'       => "Hua'ōlelo huna hou",
-'remembermypassword'      => 'Hoʻomanaʻo iaʻu',
+'remembermypassword'      => 'Hoʻomanaʻo iaʻu ma kēia lolo uila (no ka palena nui o $1 {{PLURAL:$1|lā|mau lā}})',
 'login'                   => 'ʻEʻe',
 'nav-login-createaccount' => 'ʻEʻe / E kāinoa',
 'loginprompt'             => 'Pono ʻoe e hoʻā i nā makana (cookies) no ka ʻeʻe ʻana i {{SITENAME}}.',
@@ -347,6 +346,7 @@ Mai poina e hoʻololi i [[Special:Preferences|kāu makemake ma {{SITENAME}}]].',
 'gotaccount'              => "He moʻokāki kāu? '''$1'''.",
 'gotaccountlink'          => 'ʻEʻe',
 'createaccountmail'       => 'no ka leka uila',
+'createaccountreason'     => 'Kumu:',
 'badretype'               => 'ʻAʻole like nā ʻōlelo hūnā āu i hoʻokomo ai',
 'userexists'              => 'Lilo ka inoa mea ho‘ohana.
 E koho i kekahi inoa, ke ‘olu‘olu.',
@@ -662,7 +662,6 @@ E ʻoluʻolu, e hōʻoia i ka hoʻokūkū ʻana i lalo, a laila, e mālama i nā
 # Watchlist
 'watchlist'         => 'Kaʻu papa nānā pono',
 'mywatchlist'       => 'Ka‘u papa nānā pono',
-'watchlistfor'      => "(no '''$1''')",
 'removedwatch'      => 'Wehe ʻia mai kāu papa nānā pono',
 'removedwatchtext'  => 'Wehe ʻia ʻo "[[:$1]]" mai [[Special:Watchlist|kāu papa nānā pono]].',
 'watch'             => 'E kia‘i',
@@ -832,6 +831,7 @@ Hiki iā ʻoe ke ʻikena i kāna molekumu.',
 'nextdiff' => 'Hoʻololi hou aʻe →',
 
 # Media information
+'file-info-size' => '$1 x $2 kiʻiʻuku, nui faila: $3, ʻano MIME: $4',
 'show-big-image' => 'Miomio piha',
 
 # Special:NewFiles

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Base code for files.
+ *
+ * @file
+ * @ingroup FileRepo
+ */
 
 /**
  * Implements some public methods and some protected utility functions which
@@ -177,7 +183,8 @@ abstract class File {
 	 * Return a fully-qualified URL to the file.
 	 * Upload URL paths _may or may not_ be fully qualified, so
 	 * we check. Local paths are assumed to belong on $wgServer.
-	 * @return string
+	 *
+	 * @return String
 	 */
 	public function getFullUrl() {
 		return wfExpandUrl( $this->getUrl() );
@@ -258,6 +265,19 @@ abstract class File {
 			return 0;
 		}
 	}
+
+	/**
+         *  Return true if the file is vectorized
+         */
+        public function isVectorized() {
+                $handler = $this->getHandler();
+                if ( $handler ) {
+                        return $handler->isVectorized( $this );
+                } else {
+                        return false;
+                }
+        }
+
 
 	/**
 	 * Get handler-specific metadata
@@ -437,26 +457,21 @@ abstract class File {
 	/**
 	 * Get a ThumbnailImage which is the same size as the source
 	 */
-	function getUnscaledThumb( $page = false ) {
+	function getUnscaledThumb( $handlerParams = array() ) {
+		$hp =& $handlerParams;
+		$page = isset( $hp['page'] ) ? $hp['page'] : false;
 		$width = $this->getWidth( $page );
 		if ( !$width ) {
 			return $this->iconThumb();
 		}
-		if ( $page ) {
-			$params = array(
-				'page' => $page,
-				'width' => $this->getWidth( $page )
-			);
-		} else {
-			$params = array( 'width' => $this->getWidth() );
-		}
-		return $this->transform( $params );
+		$hp['width'] = $width;
+		return $this->transform( $hp );
 	}
 
 	/**
 	 * Return the file name of a thumbnail with the specified parameters
 	 *
-	 * @param array $params Handler-specific parameters
+	 * @param $params Array: handler-specific parameters
 	 * @private -ish
 	 */
 	function thumbName( $params ) {
@@ -464,7 +479,7 @@ abstract class File {
 			return null;
 		}
 		$extension = $this->getExtension();
-		list( $thumbExt, $thumbMime ) = $this->handler->getThumbType( $extension, $this->getMimeType() );
+		list( $thumbExt, $thumbMime ) = $this->handler->getThumbType( $extension, $this->getMimeType(), $params );
 		$thumbName = $this->handler->makeParamString( $params ) . '-' . $this->getName();
 		if ( $thumbExt != $extension ) {
 			$thumbName .= ".$thumbExt";
@@ -484,8 +499,8 @@ abstract class File {
 	 * specified, the generated image will be no bigger than width x height,
 	 * and will also have correct aspect ratio.
 	 *
-	 * @param integer $width	maximum width of the generated thumbnail
-	 * @param integer $height	maximum height of the image (optional)
+	 * @param $width Integer: maximum width of the generated thumbnail
+	 * @param $height Integer: maximum height of the image (optional)
 	 */
 	public function createThumb( $width, $height = -1 ) {
 		$params = array( 'width' => $width );
@@ -500,19 +515,20 @@ abstract class File {
 	/**
 	 * As createThumb, but returns a ThumbnailImage object. This can
 	 * provide access to the actual file, the real size of the thumb,
-	 * and can produce a convenient <img> tag for you.
+	 * and can produce a convenient \<img\> tag for you.
 	 *
 	 * For non-image formats, this may return a filetype-specific icon.
 	 *
-	 * @param integer $width	maximum width of the generated thumbnail
-	 * @param integer $height	maximum height of the image (optional)
-	 * @param boolean $render	Deprecated
+	 * @param $width Integer: maximum width of the generated thumbnail
+	 * @param $height Integer: maximum height of the image (optional)
+	 * @param $render Integer: Deprecated
 	 *
 	 * @return ThumbnailImage or null on failure
 	 *
 	 * @deprecated use transform()
 	 */
 	public function getThumbnail( $width, $height=-1, $render = true ) {
+		wfDeprecated( __METHOD__ );
 		$params = array( 'width' => $width );
 		if ( $height != -1 ) {
 			$params['height'] = $height;
@@ -523,10 +539,10 @@ abstract class File {
 	/**
 	 * Transform a media file
 	 *
-	 * @param array $params An associative array of handler-specific parameters. Typical
-	 *                      keys are width, height and page.
-	 * @param integer $flags A bitfield, may contain self::RENDER_NOW to force rendering
-	 * @return MediaTransformOutput
+	 * @param $params Array: an associative array of handler-specific parameters.
+	 *                Typical keys are width, height and page.
+	 * @param $flags Integer: a bitfield, may contain self::RENDER_NOW to force rendering
+	 * @return MediaTransformOutput | false
 	 */
 	function transform( $params, $flags = 0 ) {
 		global $wgUseSquid, $wgIgnoreImageErrors, $wgThumbnailEpoch, $wgServer;
@@ -560,7 +576,7 @@ abstract class File {
 			$thumbPath = $this->getThumbPath( $thumbName );
 			$thumbUrl = $this->getThumbUrl( $thumbName );
 
-			if ( $this->repo->canTransformVia404() && !($flags & self::RENDER_NOW ) ) {
+			if ( $this->repo && $this->repo->canTransformVia404() && !($flags & self::RENDER_NOW ) ) {
 				$thumb = $this->handler->getTransform( $this, $thumbPath, $thumbUrl, $params );
 				break;
 			}
@@ -842,19 +858,18 @@ abstract class File {
 
 	/**
 	 * Move or copy a file to its public location. If a file exists at the
-	 * destination, move it to an archive. Returns the archive name on success
-	 * or an empty string if it was a new file, and a wikitext-formatted
-	 * WikiError object on failure.
+	 * destination, move it to an archive. Returns a FileRepoStatus object with
+	 * the archive name in the "value" member on success.
 	 *
 	 * The archive name should be passed through to recordUpload for database
 	 * registration.
 	 *
-	 * @param string $sourcePath Local filesystem path to the source image
-	 * @param integer $flags A bitwise combination of:
+	 * @param $srcPath String: local filesystem path to the source image
+	 * @param $flags Integer: a bitwise combination of:
 	 *     File::DELETE_SOURCE    Delete the source file, i.e. move
 	 *         rather than copy
-	 * @return The archive name on success or an empty string if it was a new
-	 *     file, and a wikitext-formatted WikiError object on failure.
+	 * @return FileRepoStatus object. On success, the value member contains the
+	 *     archive name, or an empty string if it was a new file.
 	 *
 	 * STUB
 	 * Overridden by LocalFile
@@ -872,6 +887,7 @@ abstract class File {
 	 * @deprecated Use HTMLCacheUpdate, this function uses too much memory
 	 */
 	function getLinksTo( $options = array() ) {
+		wfDeprecated( __METHOD__ );
 		wfProfileIn( __METHOD__ );
 
 		// Note: use local DB not repo DB, we want to know local links
@@ -884,21 +900,21 @@ abstract class File {
 
 		$encName = $db->addQuotes( $this->getName() );
 		$res = $db->select( array( 'page', 'imagelinks'), 
-							array( 'page_namespace', 'page_title', 'page_id', 'page_len', 'page_is_redirect' ),
-							array( 'page_id' => 'il_from', 'il_to' => $encName ),
+							array( 'page_namespace', 'page_title', 'page_id', 'page_len', 'page_is_redirect', 'page_latest' ),
+							array( 'page_id=il_from', 'il_to' => $encName ),
 							__METHOD__,
 							$options );
 
 		$retVal = array();
 		if ( $db->numRows( $res ) ) {
-			while ( $row = $db->fetchObject( $res ) ) {
-				if ( $titleObj = Title::newFromRow( $row ) ) {
-					$linkCache->addGoodLinkObj( $row->page_id, $titleObj, $row->page_len, $row->page_is_redirect );
+			foreach ( $res as $row ) {
+				$titleObj = Title::newFromRow( $row );
+				if ( $titleObj ) {
+					$linkCache->addGoodLinkObj( $row->page_id, $titleObj, $row->page_len, $row->page_is_redirect, $row->page_latest );
 					$retVal[] = $titleObj;
 				}
 			}
 		}
-		$db->freeResult( $res );
 		wfProfileOut( __METHOD__ );
 		return $retVal;
 	}
@@ -916,7 +932,8 @@ abstract class File {
 	 * @return bool
 	 */
 	function isLocal() {
-		return $this->getRepoName() == 'local';
+		$repo = $this->getRepo();
+		return $repo && $repo->isLocal();
 	}
 
 	/**
@@ -992,8 +1009,8 @@ abstract class File {
 	 *
 	 * Cache purging is done; logging is caller's responsibility.
 	 *
-	 * @param $reason
-	 * @param $suppress, hide content from sysops?
+	 * @param $reason String
+	 * @param $suppress Boolean: hide content from sysops?
 	 * @return true on success, false on some kind of failure
 	 * STUB
 	 * Overridden by LocalFile
@@ -1010,7 +1027,7 @@ abstract class File {
 	 *
 	 * @param $versions set of record ids of deleted items to restore,
 	 *                    or empty to restore all revisions.
-	 * @param $unsuppress, remove restrictions on content upon restoration?
+	 * @param $unsuppress remove restrictions on content upon restoration?
 	 * @return the number of file revisions restored if successful,
 	 *         or false on failure
 	 * STUB
@@ -1032,7 +1049,7 @@ abstract class File {
 	}
 
 	/**
-	 * Returns the number of pages of a multipage document, or NULL for
+	 * Returns the number of pages of a multipage document, or false for
 	 * documents which aren't multipage documents
 	 */
 	function pageCount() {
@@ -1059,11 +1076,11 @@ abstract class File {
 	}
 
 	/**
-	 * Get an image size array like that returned by getimagesize(), or false if it
+	 * Get an image size array like that returned by getImageSize(), or false if it
 	 * can't be determined.
 	 *
-	 * @param string $fileName The filename
-	 * @return array
+	 * @param $fileName String: The filename
+	 * @return Array
 	 */
 	function getImageSize( $fileName ) {
 		if ( !$this->getHandler() ) {
@@ -1156,8 +1173,8 @@ abstract class File {
 	 * Determine if the current user is allowed to view a particular
 	 * field of this file, if it's marked as deleted.
 	 * STUB
-	 * @param int $field
-	 * @return bool
+	 * @param $field Integer
+	 * @return Boolean
 	 */
 	function userCan( $field ) {
 		return true;
@@ -1166,9 +1183,9 @@ abstract class File {
 	/**
 	 * Get an associative array containing information about a file in the local filesystem.
 	 *
-	 * @param string $path Absolute local filesystem path
-	 * @param mixed $ext The file extension, or true to extract it from the filename.
-	 *                   Set it to false to ignore the extension.
+	 * @param $path String: absolute local filesystem path
+	 * @param $ext Mixed: the file extension, or true to extract it from the filename.
+	 *             Set it to false to ignore the extension.
 	 */
 	static function getPropsFromPath( $path, $ext = true ) {
 		wfProfileIn( __METHOD__ );
@@ -1180,7 +1197,16 @@ abstract class File {
 		if ( $info['fileExists'] ) {
 			$magic = MimeMagic::singleton();
 
-			$info['mime'] = $magic->guessMimeType( $path, $ext );
+			if ( $ext === true ) {
+				$i = strrpos( $path, '.' );
+				$ext = strtolower( $i ? substr( $path, $i + 1 ) : '' );
+			}
+
+			# mime type according to file contents
+			$info['file-mime'] = $magic->guessMimeType( $path, false );
+			# logical mime type
+			$info['mime'] = $magic->improveTypeFromExtension( $info['file-mime'], $ext );
+
 			list( $info['major_mime'], $info['minor_mime'] ) = self::splitMime( $info['mime'] );
 			$info['media_type'] = $magic->getMediaType( $path, $info['mime'] );
 

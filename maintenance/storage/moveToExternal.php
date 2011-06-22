@@ -9,10 +9,8 @@
 define( 'REPORTING_INTERVAL', 1 );
 
 if ( !defined( 'MEDIAWIKI' ) ) {
-	$optionsWithArgs = array( 'e', 's' );
-
-	require_once( dirname(__FILE__) . '/../commandLine.inc' );
-	require_once( 'ExternalStoreDB.php' );
+	require_once( dirname( __FILE__ ) . '/../commandLine.inc' );
+	require_once( dirname( __FILE__ ) . '/../../includes/ExternalStoreDB.php' );
 	require_once( 'resolveStubs.php' );
 
 	$fname = 'moveToExternal';
@@ -35,8 +33,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	moveToExternal( $cluster, $maxID, $minID );
 }
 
-
-
 function moveToExternal( $cluster, $maxID, $minID = 1 ) {
 	$fname = 'moveToExternal';
 	$dbw = wfGetDB( DB_MASTER );
@@ -48,23 +44,22 @@ function moveToExternal( $cluster, $maxID, $minID = 1 ) {
 	print "Moving text rows from $minID to $maxID to external storage\n";
 	$ext = new ExternalStoreDB;
 	$numMoved = 0;
-	$numStubs = 0;
-	
+
 	for ( $block = 0; $block < $numBlocks; $block++ ) {
 		$blockStart = $block * $blockSize + $minID;
 		$blockEnd = $blockStart + $blockSize - 1;
-		
-		if ( !($block % REPORTING_INTERVAL) ) {
+
+		if ( !( $block % REPORTING_INTERVAL ) ) {
 			print "oldid=$blockStart, moved=$numMoved\n";
 			wfWaitForSlaves( 2 );
 		}
-		
+
 		$res = $dbr->select( 'text', array( 'old_id', 'old_flags', 'old_text' ),
 			array(
 				"old_id BETWEEN $blockStart AND $blockEnd",
 				'old_flags NOT ' . $dbr->buildLike( $dbr->anyString(), 'external', $dbr->anyString() ),
 			), $fname );
-		while ( $row = $dbr->fetchObject( $res ) ) {
+		foreach ( $res as $row ) {
 			# Resolve stubs
 			$text = $row->old_text;
 			$id = $row->old_id;
@@ -73,13 +68,13 @@ function moveToExternal( $cluster, $maxID, $minID = 1 ) {
 			} else {
 				$flags = "{$row->old_flags},external";
 			}
-			
+
 			if ( strpos( $flags, 'object' ) !== false ) {
 				$obj = unserialize( $text );
 				$className = strtolower( get_class( $obj ) );
 				if ( $className == 'historyblobstub' ) {
-					#resolveStub( $id, $row->old_text, $row->old_flags );
-					#$numStubs++;
+					# resolveStub( $id, $row->old_text, $row->old_flags );
+					# $numStubs++;
 					continue;
 				} elseif ( $className == 'historyblobcurstub' ) {
 					$text = gzdeflate( $obj->getText() );
@@ -99,8 +94,8 @@ function moveToExternal( $cluster, $maxID, $minID = 1 ) {
 				continue;
 			}
 
-			#print "Storing "  . strlen( $text ) . " bytes to $url\n";
-			#print "old_id=$id\n";
+			# print "Storing "  . strlen( $text ) . " bytes to $url\n";
+			# print "old_id=$id\n";
 
 			$url = $ext->store( $cluster, $text );
 			if ( !$url ) {
@@ -112,7 +107,6 @@ function moveToExternal( $cluster, $maxID, $minID = 1 ) {
 				array( 'old_id' => $id ), $fname );
 			$numMoved++;
 		}
-		$dbr->freeResult( $res );
 	}
 }
 

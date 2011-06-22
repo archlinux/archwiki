@@ -15,11 +15,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @ingroup Maintenance
  * @see wfWaitForSlaves()
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class WaitForSlave extends Maintenance {
 	public function __construct() {
@@ -31,4 +32,4 @@ class WaitForSlave extends Maintenance {
 }
 
 $maintClass = "WaitForSlave";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );

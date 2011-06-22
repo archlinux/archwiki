@@ -349,11 +349,10 @@ U to indirizzu IP serà registratu indu a cronolugia di ista pagina.",
 'emailsend'    => 'Invià',
 
 # Watchlist
-'watchlist'    => 'Articuli seguitati',
-'mywatchlist'  => 'Articuli seguitati',
-'watchlistfor' => "(di l'ultizatore '''$1''')",
-'addedwatch'   => "Aghjuntu à u listinu di l'articuli seguitati",
-'watch'        => 'Seguità',
+'watchlist'   => 'Articuli seguitati',
+'mywatchlist' => 'Articuli seguitati',
+'addedwatch'  => "Aghjuntu à u listinu di l'articuli seguitati",
+'watch'       => 'Seguità',
 
 'enotif_reset'       => 'Marcà tutte e pagine visitate',
 'enotif_newpagetext' => 'Ista hè una pagina nova.',
@@ -463,7 +462,7 @@ U to indirizzu IP serà registratu indu a cronolugia di ista pagina.",
 'tooltip-ca-nstab-user'  => 'Vede a pagina di utilizatore',
 
 # Attribution
-'anonymous' => 'Utilizatore(/i) anonimu(/i) di {{SITENAME}}',
+'anonymous' => '{{PLURAL:$1|Utilizatore anonimu|Utilizatori anonimi}} di {{SITENAME}}',
 'others'    => 'altri',
 
 # Math errors

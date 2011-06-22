@@ -23,7 +23,7 @@
  * @ingroup Wikimedia
  */
 
-require_once( dirname(__FILE__) . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class RenameWiki extends Maintenance {
 	public function __construct() {
@@ -32,7 +32,7 @@ class RenameWiki extends Maintenance {
 		$this->addArg( 'olddb', 'Old DB name' );
 		$this->addArg( 'newdb', 'New DB name' );
 	}
-	
+
 	public function getDbType() {
 		return Maintenance::DB_ADMIN;
 	}
@@ -45,7 +45,7 @@ class RenameWiki extends Maintenance {
 		$to = $this->getArg( 1 );
 		$this->output( "Renaming blob tables in ES from $from to $to...\n" );
 		$this->output( "Sleeping 5 seconds...\n" );
-		sleep(5);
+		sleep( 5 );
 
 		# Initialise external storage
 		if ( is_array( $wgDefaultExternalStore ) ) {
@@ -57,20 +57,20 @@ class RenameWiki extends Maintenance {
 		}
 
 		if ( count( $stores ) ) {
-			$this->output( "Initialising external storage $store...\n" );
+			$this->output( "Initialising external storage...\n" );
 			global $wgDBuser, $wgDBpassword, $wgExternalServers;
 			foreach ( $stores as $storeURL ) {
 				$m = array();
 				if ( !preg_match( '!^DB://(.*)$!', $storeURL, $m ) ) {
 					continue;
 				}
-	
+
 				$cluster = $m[1];
-	
+
 				# Hack
 				$wgExternalServers[$cluster][0]['user'] = $wgDBuser;
 				$wgExternalServers[$cluster][0]['password'] = $wgDBpassword;
-	
+
 				$store = new ExternalStoreDB;
 				$extdb =& $store->getMaster( $cluster );
 				$extdb->query( "SET table_type=InnoDB" );
@@ -86,4 +86,4 @@ class RenameWiki extends Maintenance {
 }
 
 $maintClass = "RenameWiki";
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );

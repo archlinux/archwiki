@@ -45,8 +45,7 @@ $messages = array(
 'tog-editsection'             => 'Soim ol [senisim] link long wanwan hap bilong ol pes',
 'tog-editsectiononrightclick' => 'Senisim ol hap bilong pes taim yu paitim nem bilong hap<br />wantaim raithan-klik (i nidim Javascript)',
 'tog-showtoc'                 => 'Soim ol nem bilong hap insait long liklik bokis, taim igat antap long 3 hap long pes',
-'tog-rememberpassword'        => 'Holim nem bilong yusa bilong mi long dispela kompiuta',
-'tog-editwidth'               => 'Larim bokis bilong senisim igo bikpela olgeta',
+'tog-rememberpassword'        => 'Holim nem bilong yusa bilong mi long dispela kompiuta (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => 'Putim ol nupela pes mi wokim long lukautbuk',
 'tog-watchdefault'            => 'Putim ol pes mi senisim long lukautbuk bilong mi',
 'tog-watchmoves'              => 'Putim ol pes mi surikim long lukautbuk bilong mi',
@@ -152,20 +151,14 @@ $messages = array(
 'qbspecialpages' => 'Ol sipesol pes',
 
 # Vector skin
-'vector-action-delete'       => 'Rausim',
-'vector-action-move'         => 'Surikim',
-'vector-action-protect'      => 'Tambuim',
-'vector-namespace-category'  => 'Grup',
-'vector-namespace-image'     => 'Fail',
-'vector-namespace-mediawiki' => 'Mesej',
-'vector-namespace-special'   => 'Sipesol pes',
-'vector-namespace-talk'      => 'Toktok',
-'vector-namespace-template'  => 'Templet',
-'vector-view-create'         => 'Kirapim',
-'vector-view-edit'           => 'Senisim',
-'vector-view-history'        => 'Ol senis',
-'vector-view-view'           => 'Rit',
-'vector-view-viewsource'     => 'Lukim as tok',
+'vector-action-delete'   => 'Rausim',
+'vector-action-move'     => 'Surikim',
+'vector-action-protect'  => 'Tambuim',
+'vector-view-create'     => 'Kirapim',
+'vector-view-edit'       => 'Senisim',
+'vector-view-history'    => 'Ol senis',
+'vector-view-view'       => 'Rit',
+'vector-view-viewsource' => 'Lukim as tok',
 
 'errorpagetitle'   => 'Samting i kranki',
 'returnto'         => 'Go bek long $1',
@@ -271,14 +264,15 @@ $messages = array(
 'viewsourcefor' => 'bilong $1',
 
 # Login and logout pages
-'yourname'           => 'Yusanem:',
-'yourpassword'       => 'Paswot:',
-'logout'             => 'Logaut',
-'userlogout'         => 'Logaut',
-'gotaccountlink'     => 'Log in',
-'createaccountmail'  => 'Long e-mel',
-'mailmypassword'     => 'E-mel nupela paswot',
-'loginlanguagelabel' => 'Tokples: $1',
+'yourname'            => 'Yusanem:',
+'yourpassword'        => 'Paswot:',
+'logout'              => 'Logaut',
+'userlogout'          => 'Logaut',
+'gotaccountlink'      => 'Log in',
+'createaccountmail'   => 'Long e-mel',
+'createaccountreason' => 'As bilong en:',
+'mailmypassword'      => 'E-mel nupela paswot',
+'loginlanguagelabel'  => 'Tokples: $1',
 
 # Edit page toolbar
 'link_sample'    => 'Link taitel',
@@ -607,7 +601,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Watchlist
 'watchlist'            => 'Lukautbuk bilong mi',
 'mywatchlist'          => 'Lukautbuk bilong mi',
-'watchlistfor'         => "(bilong '''$1''')",
+'watchlistfor2'        => 'Bilong $1 $2',
 'nowatchlist'          => 'Nogat wanpela samting istap long lukautbuk bilong yu.',
 'watchlistanontext'    => 'Yu mas $1 long lukim o senisim ol samting long lukautbuk bilong yu.',
 'watchnologintext'     => 'Yu mas [[Special:UserLogin|login]] long senisim lukautbuk bilong yu.',
@@ -845,8 +839,9 @@ Yu inap lukim as tok bilong em',
 'watchlisttools-raw'  => 'Senisim lukautbuk insait long wanpela bokis',
 
 # Special:Version
-'version-other'   => 'Narapela',
-'version-license' => 'Laisens',
+'version-other'            => 'Narapela',
+'version-license'          => 'Laisens',
+'version-poweredby-others' => 'ol narapela',
 
 # Special:FilePath
 'filepath-page'   => 'Fail:',
@@ -864,6 +859,10 @@ Yu inap lukim as tok bilong em',
 
 # Special:Tags
 'tags-edit' => 'senisim',
+
+# Special:ComparePages
+'compare-page1' => 'Pes 1',
+'compare-page2' => 'Pes 2',
 
 # HTML forms
 'htmlform-selectorother-other' => 'Narapela',

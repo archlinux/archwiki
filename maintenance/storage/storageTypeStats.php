@@ -1,6 +1,6 @@
 <?php
 
-require_once( dirname(__FILE__).'/../Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/../Maintenance.php' );
 
 class StorageTypeStats extends Maintenance {
 	function execute() {
@@ -12,7 +12,6 @@ class StorageTypeStats extends Maintenance {
 			exit( 1 );
 		}
 
-		$rangeStart = 0;
 		$binSize = intval( pow( 10, floor( log10( $endId ) ) - 3 ) );
 		if ( $binSize < 100 ) {
 			$binSize = 100;
@@ -86,7 +85,7 @@ SQL;
 		echo str_repeat( '-', 120 ) . "\n";
 		foreach ( $stats as $flags => $flagStats ) {
 			foreach ( $flagStats as $class => $entry ) {
-				printf( $format, $flags, $class, $entry['count'], 
+				printf( $format, $flags, $class, $entry['count'],
 					sprintf( "%-13d - %-13d", $entry['first'], $entry['last'] ) );
 			}
 		}
@@ -94,5 +93,5 @@ SQL;
 }
 
 $maintClass = 'StorageTypeStats';
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );
 

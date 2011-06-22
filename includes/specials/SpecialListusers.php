@@ -1,27 +1,26 @@
 <?php
-
-# Copyright (C) 2004 Brion Vibber, lcrocker, Tim Starling,
-# Domas Mituzas, Ashar Voultoiz, Jens Frank, Zhengzhu.
-#
-# © 2006 Rob Church <robchur@gmail.com>
-#
-# http://www.mediawiki.org/
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-# http://www.gnu.org/copyleft/gpl.html
 /**
+ * Implements Special:Listusers
+ *
+ * Copyright © 2004 Brion Vibber, lcrocker, Tim Starling,
+ * Domas Mituzas, Ashar Voultoiz, Jens Frank, Zhengzhu,
+ * 2006 Rob Church <robchur@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup SpecialPage
  */
@@ -120,16 +119,18 @@ class UsersPager extends AlphabeticPager {
 	function formatRow( $row ) {
 		global $wgLang;
 
+		if ($row->user_id == 0) #Bug 16487
+			return '';
+
 		$userPage = Title::makeTitle( NS_USER, $row->user_name );
 		$name = $this->getSkin()->link( $userPage, htmlspecialchars( $userPage->getText() ) );
 
-		if( $row->numgroups > 1 || ( $this->requestedGroup && $row->numgroups == 1 ) ) {
+		$groups_list = self::getGroups( $row->user_id );
+		if( count( $groups_list ) > 0 ) {
 			$list = array();
-			foreach( self::getGroups( $row->user_id ) as $group )
+			foreach( $groups_list as $group )
 				$list[] = self::buildGroupLink( $group );
 			$groups = $wgLang->commaList( $list );
-		} elseif( $row->numgroups == 1 ) {
-			$groups = self::buildGroupLink( $row->singlegroup );
 		} else {
 			$groups = '';
 		}
@@ -166,7 +167,7 @@ class UsersPager extends AlphabeticPager {
 		}
 		$this->mResult->rewind();
 		$batch = new LinkBatch;
-		while ( $row = $this->mResult->fetchObject() ) {
+		foreach ( $this->mResult as $row ) {
 			$batch->addObj( Title::makeTitleSafe( NS_USER, $row->user_name ) );
 		}
 		$batch->execute();
@@ -175,13 +176,13 @@ class UsersPager extends AlphabeticPager {
 	}
 
 	function getPageHeader( ) {
-		global $wgScript, $wgRequest;
+		global $wgScript;
 		$self = $this->getTitle();
 
 		# Form tag
 		$out  = Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript, 'id' => 'mw-listusers-form' ) ) .
 			Xml::fieldset( wfMsg( 'listusers' ) ) .
-			Xml::hidden( 'title', $self->getPrefixedDbKey() );
+			Html::hidden( 'title', $self->getPrefixedDbKey() );
 
 		# Username field
 		$out .= Xml::label( wfMsg( 'listusersfrom' ), 'offset' ) . ' ' .
@@ -195,14 +196,14 @@ class UsersPager extends AlphabeticPager {
 			$out .= Xml::option( $groupText, $group, $group == $this->requestedGroup );
 		$out .= Xml::closeElement( 'select' ) . '<br />';
 		$out .= Xml::checkLabel( wfMsg('listusers-editsonly'), 'editsOnly', 'editsOnly', $this->editsOnly );
-		$out .= '&nbsp;';
+		$out .= '&#160;';
 		$out .= Xml::checkLabel( wfMsg('listusers-creationsort'), 'creationSort', 'creationSort', $this->creationSort );
 		$out .= '<br />';
 
 		wfRunHooks( 'SpecialListusersHeaderForm', array( $this, &$out ) );
 
 		# Submit button and form bottom
-		$out .= Xml::hidden( 'limit', $this->mLimit );
+		$out .= Html::hidden( 'limit', $this->mLimit );
 		$out .= Xml::submitButton( wfMsg( 'allpagessubmit' ) );
 		wfRunHooks( 'SpecialListusersHeader', array( $this, &$out ) );
 		$out .= Xml::closeElement( 'fieldset' ) .
@@ -269,13 +270,13 @@ class UsersPager extends AlphabeticPager {
  * $par string (optional) A group to list users from
  */
 function wfSpecialListusers( $par = null ) {
-	global $wgRequest, $wgOut;
+	global $wgOut;
 
 	$up = new UsersPager($par);
 
 	# getBody() first to check, if empty
 	$usersbody = $up->getBody();
-	$s = XML::openElement( 'div', array('class' => 'mw-spcontent') );
+	$s = Xml::openElement( 'div', array('class' => 'mw-spcontent') );
 	$s .= $up->getPageHeader();
 	if( $usersbody ) {
 		$s .=	$up->getNavigationBar();
@@ -284,6 +285,6 @@ function wfSpecialListusers( $par = null ) {
 	} else {
 		$s .=	'<p>' . wfMsgHTML('listusers-noresult') . '</p>';
 	};
-	$s .= XML::closeElement( 'div' );
+	$s .= Xml::closeElement( 'div' );
 	$wgOut->addHTML( $s );
 }

@@ -26,6 +26,7 @@ class SquidUpdate {
 	}
 
 	static function newFromLinksTo( &$title ) {
+		global $wgMaxSquidPurgeTitles;
 		wfProfileIn( __METHOD__ );
 
 		# Get a list of URLs linking to this page
@@ -38,14 +39,12 @@ class SquidUpdate {
 				'pl_from=page_id' ),
 			__METHOD__ );
 		$blurlArr = $title->getSquidURLs();
-		if ( $dbr->numRows( $res ) <= $this->mMaxTitles ) {
-			while ( $BL = $dbr->fetchObject ( $res ) )
-			{
+		if ( $dbr->numRows( $res ) <= $wgMaxSquidPurgeTitles ) {
+			foreach ( $res as $BL ) {
 				$tobj = Title::makeTitle( $BL->page_namespace, $BL->page_title ) ;
 				$blurlArr[] = $tobj->getInternalURL();
 			}
 		}
-		$dbr->freeResult ( $res ) ;
 
 		wfProfileOut( __METHOD__ );
 		return new SquidUpdate( $blurlArr );

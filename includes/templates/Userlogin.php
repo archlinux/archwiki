@@ -1,9 +1,15 @@
 <?php
 /**
- * @defgroup Templates Templates
+ * Html forms for user login and account creation
+ *
  * @file
  * @ingroup Templates
  */
+
+/**
+ * @defgroup Templates Templates
+ */
+
 if( !defined( 'MEDIAWIKI' ) ) die( -1 );
 
 /**
@@ -61,7 +67,7 @@ class UserloginTemplate extends QuickTemplate {
 
 			</td>
 		</tr>
-	<?php if( $this->data['usedomain'] ) {
+	<?php if( isset( $this->data['usedomain'] ) && $this->data['usedomain'] ) {
 		$doms = "";
 		foreach( $this->data['domainnames'] as $dom ) {
 			$doms .= "<option>" . htmlspecialchars( $dom ) . "</option>";
@@ -77,17 +83,41 @@ class UserloginTemplate extends QuickTemplate {
 			</td>
 		</tr>
 	<?php }
+
+	if( $this->haveData( 'extrafields' ) ) {
+		echo $this->data['extrafields'];
+	}
+
 	if( $this->data['canremember'] ) { ?>
 		<tr>
 			<td></td>
 			<td class="mw-input">
 				<?php
-		echo Html::input( 'wpRemember', '1', 'checkbox', array(
-			'tabindex' => '4',
-			'id' => 'wpRemember'
-		) + ( $this->data['remember'] ? array( 'checked' ) : array() ) ); ?>
-
-				<label for="wpRemember"><?php $this->msg('remembermypassword') ?></label>
+				global $wgCookieExpiration, $wgLang;
+				echo Xml::checkLabel(
+					wfMsgExt( 'remembermypassword', 'parsemag', $wgLang->formatNum( ceil( $wgCookieExpiration / ( 3600 * 24 ) ) ) ),
+					'wpRemember',
+					'wpRemember',
+					$this->data['remember'],
+					array( 'tabindex' => '8' )
+				)
+				?>
+			</td>
+		</tr>
+<?php } ?>
+<?php if( $this->data['cansecurelogin'] ) { ?>
+		<tr>
+			<td></td>
+			<td class="mw-input">
+			<?php
+			echo Xml::checkLabel(
+				wfMsg( 'securelogin-stick-https' ),
+				'wpStickHTTPS',
+				'wpStickHTTPS',
+				$this->data['stickHTTPS'],
+				array( 'tabindex' => '9' )
+			);
+		?>
 			</td>
 		</tr>
 <?php } ?>
@@ -97,13 +127,13 @@ class UserloginTemplate extends QuickTemplate {
 				<?php
 		echo Html::input( 'wpLoginAttempt', wfMsg( 'login' ), 'submit', array(
 			'id' => 'wpLoginAttempt',
-			'tabindex' => '5'
+			'tabindex' => '9'
 		) );
 		if ( $this->data['useemail'] && $this->data['canreset'] ) {
-			echo '&nbsp;';
+			echo '&#160;';
 			echo Html::input( 'wpMailmypassword', wfMsg( 'mailmypassword' ), 'submit', array(
 				'id' => 'wpMailmypassword',
-				'tabindex' => '6'
+				'tabindex' => '10'
 			) );
 		} ?>
 
@@ -145,6 +175,8 @@ class UsercreateTemplate extends QuickTemplate {
 	</div>
 	<div class="visualClear"></div>
 <?php } ?>
+
+<div id="signupstart"><?php $this->msgWiki( 'signupstart' ); ?></div>
 <div id="userlogin">
 
 <form name="userlogin2" id="userlogin2" method="post" action="<?php $this->text('action') ?>">
@@ -240,21 +272,36 @@ class UsercreateTemplate extends QuickTemplate {
 						</div>
 					</td>
 			<?php } ?>
+			<?php if( $this->data['usereason'] ) { ?>
+				</tr>
+				<tr>
+					<td class="mw-label"><label for='wpReason'><?php $this->msg('createaccountreason') ?></label></td>
+					<td class="mw-input">
+						<input type='text' class='loginText' name="wpReason" id="wpReason"
+							tabindex="7"
+							value="<?php $this->text('reason') ?>" size='20' />
+					</td>
+			<?php } ?>
 		</tr>
 		<?php if( $this->data['canremember'] ) { ?>
 		<tr>
 			<td></td>
 			<td class="mw-input">
-				<input type='checkbox' name="wpRemember"
-					tabindex="7"
-					value="1" id="wpRemember"
-					<?php if( $this->data['remember'] ) { ?>checked="checked"<?php } ?>
-					/> <label for="wpRemember"><?php $this->msg('remembermypassword') ?></label>
+				<?php
+				global $wgCookieExpiration, $wgLang;
+				echo Xml::checkLabel(
+					wfMsgExt( 'remembermypassword', 'parsemag', $wgLang->formatNum( ceil( $wgCookieExpiration / ( 3600 * 24 ) ) ) ),
+					'wpRemember',
+					'wpRemember',
+					$this->data['remember'],
+					array( 'tabindex' => '8' )
+				)
+				?>
 			</td>
 		</tr>
 <?php   }
 
-		$tabIndex = 8;
+		$tabIndex = 9;
 		if ( isset( $this->data['extraInput'] ) && is_array( $this->data['extraInput'] ) ) {
 			foreach ( $this->data['extraInput'] as $inputItem ) { ?>
 		<tr>

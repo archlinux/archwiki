@@ -12,10 +12,24 @@ class LinkBatch {
 	 */
 	var $data = array();
 
+	/**
+	 * For debugging which method is using this class.
+	 */
+	protected $caller;
+
 	function __construct( $arr = array() ) {
 		foreach( $arr as $item ) {
 			$this->addObj( $item );
 		}
+	}
+
+	/**
+	 * Use ->setCaller( __METHOD__ ) to indicate which code is using this
+	 * class. Only used in debugging output.
+	 * @since 1.17
+	 */
+	public function setCaller( $caller ) {
+		$this->caller = $caller;
 	}
 
 	public function addObj( $title ) {
@@ -95,9 +109,9 @@ class LinkBatch {
 
 		$ids = array();
 		$remaining = $this->data;
-		while ( $row = $res->fetchObject() ) {
+		foreach ( $res as $row ) {
 			$title = Title::makeTitle( $row->page_namespace, $row->page_title );
-			$cache->addGoodLinkObj( $row->page_id, $title, $row->page_len, $row->page_is_redirect );
+			$cache->addGoodLinkObj( $row->page_id, $title, $row->page_len, $row->page_is_redirect, $row->page_latest );
 			$ids[$title->getPrefixedDBkey()] = $row->page_id;
 			unset( $remaining[$row->page_namespace][$row->page_title] );
 		}
@@ -122,19 +136,19 @@ class LinkBatch {
 		}
 		wfProfileIn( __METHOD__ );
 
-		// Construct query
-		// This is very similar to Parser::replaceLinkHolders
+		// This is similar to LinkHolderArray::replaceInternal
 		$dbr = wfGetDB( DB_SLAVE );
-		$page = $dbr->tableName( 'page' );
-		$set = $this->constructSet( 'page', $dbr );
-		if ( $set === false ) {
-			wfProfileOut( __METHOD__ );
-			return false;
-		}
-		$sql = "SELECT page_id, page_namespace, page_title, page_len, page_is_redirect FROM $page WHERE $set";
+		$table = 'page';
+		$fields = array( 'page_id', 'page_namespace', 'page_title', 'page_len',
+			'page_is_redirect', 'page_latest' );
+		$conds = $this->constructSet( 'page', $dbr );
 
 		// Do query
-		$res = $dbr->query( $sql, __METHOD__ );
+		$caller = __METHOD__;
+		if ( strval( $this->caller ) !== '' ) {
+			$caller .= " (for {$this->caller})";
+		}
+		$res = $dbr->select( $table, $fields, $conds, $caller );
 		wfProfileOut( __METHOD__ );
 		return $res;
 	}
@@ -142,50 +156,11 @@ class LinkBatch {
 	/**
 	 * Construct a WHERE clause which will match all the given titles.
 	 *
-	 * @param string $prefix the appropriate table's field name prefix ('page', 'pl', etc)
-	 * @return string
-	 * @public
+	 * @param $prefix String: the appropriate table's field name prefix ('page', 'pl', etc)
+	 * @param $db DatabaseBase object to use
+	 * @return mixed string with SQL where clause fragment, or false if no items.
 	 */
-	public function constructSet( $prefix, &$db ) {
-		$first = true;
-		$firstTitle = true;
-		$sql = '';
-		foreach ( $this->data as $ns => $dbkeys ) {
-			if ( !count( $dbkeys ) ) {
-				continue;
-			}
-
-			if ( $first ) {
-				$first = false;
-			} else {
-				$sql .= ' OR ';
-			}
-
-			if (count($dbkeys)==1) { // avoid multiple-reference syntax if simple equality can be used
-				$singleKey = array_keys($dbkeys);
-				$sql .= "({$prefix}_namespace=$ns AND {$prefix}_title=".
-					$db->addQuotes($singleKey[0]).
-					")";
-			} else {
-				$sql .= "({$prefix}_namespace=$ns AND {$prefix}_title IN (";
-
-				$firstTitle = true;
-				foreach( $dbkeys as $dbkey => $unused ) {
-					if ( $firstTitle ) {
-						$firstTitle = false;
-					} else {
-						$sql .= ',';
-					}
-					$sql .= $db->addQuotes( $dbkey );
-				}
-				$sql .= '))';
-			}
-		}
-		if ( $first && $firstTitle ) {
-			# No titles added
-			return false;
-		} else {
-			return $sql;
-		}
+	public function constructSet( $prefix, $db ) {
+		return $db->makeWhereFrom2d( $this->data, "{$prefix}_namespace", "{$prefix}_title" );
 	}
 }

@@ -1,10 +1,10 @@
 <?php
-
-/*
- * Created on Sep 7, 2007
+/**
  * API for MediaWiki 1.8+
  *
- * Copyright (C) 2007 Roan Kattouw <Firstname>.<Lastname>@home.nl
+ * Created on Sep 7, 2007
+ *
+ * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@home.nl
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,15 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
 	// Eclipse helper - will be ignored in production
-	require_once ( "ApiBase.php" );
+	require_once( "ApiBase.php" );
 }
 
 /**
@@ -36,7 +38,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class ApiUnblock extends ApiBase {
 
 	public function __construct( $main, $action ) {
-		parent :: __construct( $main, $action );
+		parent::__construct( $main, $action );
 	}
 
 	/**
@@ -46,27 +48,37 @@ class ApiUnblock extends ApiBase {
 		global $wgUser;
 		$params = $this->extractRequestParams();
 
-		if ( $params['gettoken'] )
-		{
+		if ( $params['gettoken'] ) {
 			$res['unblocktoken'] = $wgUser->editToken();
 			$this->getResult()->addValue( null, $this->getModuleName(), $res );
 			return;
 		}
 
-		if ( is_null( $params['id'] ) && is_null( $params['user'] ) )
+		if ( is_null( $params['id'] ) && is_null( $params['user'] ) ) {
 			$this->dieUsageMsg( array( 'unblock-notarget' ) );
-		if ( !is_null( $params['id'] ) && !is_null( $params['user'] ) )
+		}
+		if ( !is_null( $params['id'] ) && !is_null( $params['user'] ) ) {
 			$this->dieUsageMsg( array( 'unblock-idanduser' ) );
+		}
 
-		if ( !$wgUser->isAllowed( 'block' ) )
+		if ( !$wgUser->isAllowed( 'block' ) ) {
 			$this->dieUsageMsg( array( 'cantunblock' ) );
+		}
+		# bug 15810: blocked admins should have limited access here
+		if ( $wgUser->isBlocked() ) {
+			$status = IPBlockForm::checkUnblockSelf( $params['user'] );
+			if ( $status !== true ) {
+				$this->dieUsageMsg( array( $status ) );
+			}
+		}
 
 		$id = $params['id'];
 		$user = $params['user'];
 		$reason = ( is_null( $params['reason'] ) ? '' : $params['reason'] );
 		$retval = IPUnblockForm::doUnblock( $id, $user, $reason, $range );
-		if ( $retval )
+		if ( $retval ) {
 			$this->dieUsageMsg( $retval );
+		}
 
 		$res['id'] = intval( $id );
 		$res['user'] = $user;
@@ -83,7 +95,7 @@ class ApiUnblock extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		return array (
+		return array(
 			'id' => null,
 			'user' => null,
 			'token' => null,
@@ -93,29 +105,30 @@ class ApiUnblock extends ApiBase {
 	}
 
 	public function getParamDescription() {
-		return array (
-			'id' => 'ID of the block you want to unblock (obtained through list=blocks). Cannot be used together with user',
-			'user' => 'Username, IP address or IP range you want to unblock. Cannot be used together with id',
-			'token' => 'An unblock token previously obtained through the gettoken parameter or prop=info',
+		$p = $this->getModulePrefix();
+		return array(
+			'id' => "ID of the block you want to unblock (obtained through list=blocks). Cannot be used together with {$p}user",
+			'user' => "Username, IP address or IP range you want to unblock. Cannot be used together with {$p}id",
+			'token' => "An unblock token previously obtained through the gettoken parameter or {$p}prop=info",
 			'gettoken' => 'If set, an unblock token will be returned, and no other action will be taken',
 			'reason' => 'Reason for unblock (optional)',
 		);
 	}
 
 	public function getDescription() {
-		return array(
-			'Unblock a user.'
-		);
+		return 'Unblock a user';
 	}
-	
-    public function getPossibleErrors() {
+
+	public function getPossibleErrors() {
 		return array_merge( parent::getPossibleErrors(), array(
 			array( 'unblock-notarget' ),
 			array( 'unblock-idanduser' ),
 			array( 'cantunblock' ),
-        ) );
+			array( 'ipbblocked' ),
+			array( 'ipbnounblockself' ),
+		) );
 	}
-	
+
 	public function needsToken() {
 		return true;
 	}
@@ -125,13 +138,13 @@ class ApiUnblock extends ApiBase {
 	}
 
 	protected function getExamples() {
-		return array (
+		return array(
 			'api.php?action=unblock&id=105',
 			'api.php?action=unblock&user=Bob&reason=Sorry%20Bob'
 		);
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiUnblock.php 74217 2010-10-03 15:53:07Z reedy $';
+		return __CLASS__ . ': $Id: ApiUnblock.php 74098 2010-10-01 20:12:50Z reedy $';
 	}
 }

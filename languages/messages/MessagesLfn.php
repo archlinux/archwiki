@@ -48,8 +48,7 @@ $messages = array(
 'tog-editsection'             => 'Engrana la edita de sesion via lias de {edita}.',
 'tog-editsectiononrightclick' => 'Engrana la edita de sesion par clica a la destra a titulos de sesion (JavaScript)',
 'tog-showtoc'                 => 'Mostra la table de contenis (per pajes con plu ce tre titulos)',
-'tog-rememberpassword'        => 'Memora me sinia per entra a esta computador',
-'tog-editwidth'               => 'La caxa de editas ave la longia masima',
+'tog-rememberpassword'        => 'Memora me sinia per entra a esta computador (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => 'Junta la pajes ce me ia creada a me lista de pajes oservada',
 'tog-watchdefault'            => 'Junta pajes ce me ia edita a me lista de pajes oservada',
 'tog-watchmoves'              => 'Junta pajes ce me ia moveda a me lista de pajes oservada',
@@ -289,7 +288,7 @@ $messages = array(
 'yourname'                => 'Nom de usor:',
 'yourpassword'            => 'Sinia de entra:',
 'yourpasswordagain'       => 'Retape la sinia:',
-'remembermypassword'      => 'Memora me sinia de entra a esta computador',
+'remembermypassword'      => 'Memora me sinia de entra a esta computador (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'          => 'Tu domina:',
 'login'                   => 'Identifia',
 'nav-login-createaccount' => 'Sinia per entra',
@@ -400,8 +399,6 @@ o [{{fullurl:{{FULLPAGENAME}}|action=edit}} edita esta paje]</span>.',
 'copyrightwarning'           => "Per favore nota ce tota labora a {{SITENAME}} es judida ce el es relasada su la $2 (vide $1 per detalias). Si tu no desira ce tu scrives ta es editada sin compati e redistribui sin tu permite, no sumita el asi!<br />
 Tu ance promete a nos ce tu ia scriveda esta par tu mesma, o copiada esta de un domina publica o otra orijin libre.
 '''NO SUMITA LABORA SU DIRETOS DE AUTOR SIN PERMITE!!'''",
-'longpagewarning'            => "'''AVISA: Esta paje usa $1 kilotetas; alga surfadores pote ave problemes con la edita de pajes plu grande ce 32 ko.
-Per favore, considera parti la paje en pesos plu poca.'''",
 'templatesused'              => '{{PLURAL:$1|Modele|Modeles}} usada en esta paje:',
 'templatesusedpreview'       => '{{PLURAL:$1|Modele|Modeles}} usada en esta previde:',
 'template-protected'         => '(protejeda)',
@@ -691,7 +688,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Watchlist
 'watchlist'         => 'Pajes oservada',
 'mywatchlist'       => 'Me lista de pajes oservada',
-'watchlistfor'      => "(per '''$1''')",
 'nowatchlist'       => 'Tu ave no cosas en tu lista oservada',
 'addedwatch'        => 'Juntada a la lista de pajes oservada',
 'addedwatchtext'    => "La paje \"[[:\$1]]\" ia es juntada a tu [[Special:Watchlist|lista de pajes oservada]].
@@ -921,9 +917,9 @@ En esta casos, tu va nesesa move o fusa la paje per mano, si desirada.",
 
 # Media information
 'widthheightpage'      => '$1×$2, $3 {{PLURAL:$3|paje|pajes}}',
-'file-info-size'       => '($1 × $2 pixel, grandia de fix: $3, MIME tipo: $4)',
+'file-info-size'       => '$1 × $2 pixel, grandia de fix: $3, MIME tipo: $4',
 'file-nohires'         => '<small>No plu densia posable.</small>',
-'svg-long-desc'        => '(SVG fix, per nom $1 × $2 pixeles, grandia de fix: $3)',
+'svg-long-desc'        => 'SVG fix, per nom $1 × $2 pixeles, grandia de fix: $3',
 'show-big-image'       => 'Densia masima',
 'show-big-image-thumb' => '<small>Grandia de eesta previde: $1 × $2 pixeles</small>',
 

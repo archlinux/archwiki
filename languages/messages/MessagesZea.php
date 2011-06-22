@@ -56,8 +56,7 @@ $messages = array(
 'tog-editsection'             => "Bewerken van deêlpahina's meuhlijk maeken via [bewerken]-koppeliengen",
 'tog-editsectiononrightclick' => "Bewerken van deêlpahina's meulijk maeken mie een rechtermuusklik op een tussenkopje (JavaScript vereist)",
 'tog-showtoc'                 => "Inoudsopgaeve weerheven (voe pahina's mie minstes 3 tussenkopjes)",
-'tog-rememberpassword'        => 'Wachtwoôrd ontouwe',
-'tog-editwidth'               => 'Bewerkiengsveld over de volle breêdte',
+'tog-rememberpassword'        => 'Wachtwoôrd ontouwe (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => "Pahina's die ak anmik automaotisch volhen",
 'tog-watchdefault'            => "Pahina's die ak bewerk automaotisch volhen",
 'tog-watchmoves'              => "Pahina's die ak verplekke automaotisch volhen",
@@ -385,7 +384,7 @@ Vergeet nie je [[Special:Preferences|vòkeuren voe {{SITENAME}}]] an te passen.'
 'yourname'                   => 'Gebrukersnaem',
 'yourpassword'               => 'Wachtwoôrd',
 'yourpasswordagain'          => 'Heef je wachtwoôrd opnieuw in:',
-'remembermypassword'         => 'Anmeldhehevens ontouwen',
+'remembermypassword'         => 'Anmeldhehevens ontouwen (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'             => 'Je domein:',
 'externaldberror'            => "Der is een fout opetreeën bie 't anmelden bie de database of je ei hin toestemmieng jen externe gebruker bie te werken.",
 'login'                      => 'Anmelden',
@@ -563,7 +562,7 @@ Je kan [[Special:Search/{{PAGENAME}}|ni deêze term zoeken]] in aore pagina\'s o
 'userjsyoucanpreview'        => "'''Tip:''' Gebruuk de knoppe 'Naekieken' om je nieuwe JS te tessen voe da je opsli.",
 'usercsspreview'             => "'''Dit is alleên een voeôvertonieng van je persoônlijke CSS, dezen is nog nie opeslogen!'''",
 'userjspreview'              => "'''Let op: je test noe je persoônlijke JavaScript. De pagina is nie opeslogen!'''",
-'userinvalidcssjstitle'      => "'''Waerschuwieng:''' der is hin skin \"\$1\". Let op: jen eihen .css- en .js-pagina's behunnen mie een kleine letter, buvobbeld {{ns:user}}:Naem/monobook.css in plekke van {{ns:user}}:Naem/Monobook.css.",
+'userinvalidcssjstitle'      => "'''Waerschuwieng:''' der is hin skin \"\$1\". Let op: jen eihen .css- en .js-pagina's behunnen mie een kleine letter, buvobbeld {{ns:user}}:Naem/vector.css in plekke van {{ns:user}}:Naem/Vector.css.",
 'updated'                    => '(Biehewerkt)',
 'note'                       => "'''Opmerkieng:'''",
 'previewnote'                => "'''Let op: dit is een controlepagina; je tekst is nie opeslogen!'''",
@@ -603,7 +602,6 @@ Ierbie beloof je ons ok da je deêze tekst zelf eschreven ei, of overenomen uut 
 A je nie wil dan je teksen rihoreus anepast worn deur aore, plek ze ier dan nie.<br />
 Je beloof ok da je de oôrspronkelijke auteur bin van dit materiaol, of da je 't ei ekopieerd uut een bron in 't publieke domein, of een soôrthelieke vrieë bron (zie $1 voor details).
 '''GEBRUUK HIN MATERIAOL DAT A BESCHERMD WOR DEUR AUTEURSRECHT, TENZIE A JE DIVOE TOESTEMMIENG EI!'''",
-'longpagewarning'            => "'''WAERSCHUWIENG: Deêze pagina is $1 kilobyte hroôt; sommihe browsers èn probleemn mie 't bewerken van pagina's die an hrotter zien dan 32 kb. Misschien kan deêze pagina esplitst worn in kleinere deêln.'''",
 'longpageerror'              => "'''FOUT: de tekst die a je ei toe'evoegd is $1 kilobyte hroôt, wat a hrotter is dan 't maximum van $2 kilobyte.
 Opslaene is nie meuhlijk.'''",
 'readonlywarning'            => "'''WAERSCHUWIENG: de database is eblokkeerd voe onderoud, dus je kan dezen noe nie opslaen.
@@ -1026,7 +1024,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Watchlist
 'watchlist'         => 'Volglieste',
 'mywatchlist'       => 'Mien volglieste',
-'watchlistfor'      => "(vò '''$1''')",
 'watchnologin'      => 'Je bin nie angemolde.',
 'watchnologintext'  => 'Je moe [[Special:UserLogin|angemolde]] weze om je volglieste an te passen.',
 'addedwatch'        => 'An de volglieste toegevoegd',

@@ -137,7 +137,7 @@ $specialPageAliases = array(
 	'Filepath'                  => array( 'Triempad' ),
 );
 
-$separatorTransformTable = array(',' => '.', '.' => ',' );
+$separatorTransformTable = array( ',' => '.', '.' => ',' );
 $linkTrail = '/^([a-zàáèéìíòóùúâêîôûäëïöü]+)(.*)$/sDu';
 
 $messages = array(
@@ -156,8 +156,7 @@ $messages = array(
 'tog-editsection'             => 'Jou [bewurk]-keppelings foar seksjebewurking',
 'tog-editsectiononrightclick' => 'Rjochtsklik op sekjsetitels jout seksjebewurking (freget JavaScript)',
 'tog-showtoc'                 => 'Ynhâldsopjefte, foar siden mei mear as twa koppen',
-'tog-rememberpassword'        => 'Oare kear fansels oanmelde',
-'tog-editwidth'               => 'Bewurkingsfjild oer folsleine breedte fan it skerm sjen litte',
+'tog-rememberpassword'        => 'Oare kear fansels oanmelde (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => "Set siden dy't jo begjinne yn jo folchlist",
 'tog-watchdefault'            => "Sides dy't jo feroare hawwe folgje",
 'tog-watchmoves'              => "Siden dy't jo werneamd hawwe folgje",
@@ -300,29 +299,18 @@ $messages = array(
 'faqpage'        => 'Project:Faak stelde fragen',
 
 # Vector skin
-'vector-action-delete'       => 'Fuortsmite',
-'vector-action-move'         => 'Werneam',
-'vector-action-protect'      => 'Beskermje',
-'vector-action-undelete'     => 'Tebeksette',
-'vector-action-unprotect'    => 'Beskerming fuorthelje',
-'vector-namespace-category'  => 'Kategory',
-'vector-namespace-help'      => 'Helpside',
-'vector-namespace-image'     => 'Triem',
-'vector-namespace-main'      => 'Side',
-'vector-namespace-media'     => 'Mediaside',
-'vector-namespace-mediawiki' => 'Berjocht',
-'vector-namespace-project'   => 'Projektside',
-'vector-namespace-special'   => 'Bysûndere siden',
-'vector-namespace-talk'      => 'Oerlis',
-'vector-namespace-template'  => 'Berjocht',
-'vector-namespace-user'      => 'Meidogger',
-'vector-view-create'         => 'Oanmeitsje',
-'vector-view-edit'           => 'Wizigje',
-'vector-view-history'        => 'Skiednis sjen litte',
-'vector-view-view'           => 'Lês',
-'vector-view-viewsource'     => 'Besjoch de boarne',
-'namespaces'                 => 'Nammeromten',
-'variants'                   => 'Farianten',
+'vector-action-delete'    => 'Fuortsmite',
+'vector-action-move'      => 'Werneam',
+'vector-action-protect'   => 'Beskermje',
+'vector-action-undelete'  => 'Tebeksette',
+'vector-action-unprotect' => 'Beskerming fuorthelje',
+'vector-view-create'      => 'Oanmeitsje',
+'vector-view-edit'        => 'Wizigje',
+'vector-view-history'     => 'Skiednis sjen litte',
+'vector-view-view'        => 'Lês',
+'vector-view-viewsource'  => 'Besjoch de boarne',
+'namespaces'              => 'Nammeromten',
+'variants'                => 'Farianten',
 
 'errorpagetitle'    => 'Fout',
 'returnto'          => 'Werom nei "$1".',
@@ -537,7 +525,7 @@ Ferjit net se oan jo foarkar oan te passen.',
 'yourname'                   => 'Jo meidochnamme:',
 'yourpassword'               => 'Jo wachtwurd',
 'yourpasswordagain'          => 'Jo wachtwurd (nochris)',
-'remembermypassword'         => 'Oare kear fansels oanmelde.',
+'remembermypassword'         => 'Oare kear fansels oanmelde (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'             => 'Jo domein:',
 'externaldberror'            => 'Der is in fout by it oanmelden by de database of jo hawwe gjin tastimming om jo ekstern account by te wurkjen.',
 'login'                      => 'Oanmelde',
@@ -712,7 +700,7 @@ Kontrolearje oft jo dizze side wol oanmeitsje/bewurkje wolle.',
 'userjsyoucanpreview'              => "'''Tip:''' Brûk de knop 'Earst oerlêze' om jo nije JS te testen foar it fêstlizzen.",
 'usercsspreview'                   => "'''Dit is allinne mar it oerlêzen fan jo persoanlike CSS. Hy is noch net fêstlein!'''",
 'userjspreview'                    => "'''Tink derom: jo besjogge no jo persoanlike JavaScript. De side is net fêstlein!'''",
-'userinvalidcssjstitle'            => "'''Warskôging:''' der is gjin skin \"\$1\". Tink derom: jo eigen .css- en .js-siden begjinne mei in lytse letter, bygelyks {{ns:user}}:Namme/monobook.css ynsté fan {{ns:user}}:Namme/Monobook.css.",
+'userinvalidcssjstitle'            => "'''Warskôging:''' der is gjin skin \"\$1\". Tink derom: jo eigen .css- en .js-siden begjinne mei in lytse letter, bygelyks {{ns:user}}:Namme/vector.css ynsté fan {{ns:user}}:Namme/Vector.css.",
 'updated'                          => '(Bewurke)',
 'note'                             => "'''Opmerking:'''",
 'previewnote'                      => "'''Tink der om dat dizze side noch net fêstlein is!'''",
@@ -751,9 +739,6 @@ Hjirby sizze jo tagelyk ta, dat jo dizze tekst sels skreaun hawwe, of oernommen 
 As jo net wolle dat jo teksten yngeand oanpast wurde troch oaren, set se hjir dan net.<br />
 Jo sizze ek ta dat jo de oarspronklike auteur binne fan dit materiaal, of dat jo it kopiearre hawwe út in boarne yn it publike domein, of in soartgelikense frije boarne (sjuch $1 foar details).
 '''BRUK GJIN MATERIAAL DAT BESKERME WURDT TROCH AUTEURSRJOCHT, OF JO MOATTE DER TASTIMMING FOAR HAWWE!'''",
-'longpagewarning'                  => "'''Warskôging: Dizze side is $1 kilobyte lang;
-der binne blêders dy't problemen hawwe mei siden fan tsjin de 32 kb of langer.
-Besykje de side yn lytsere stikken te brekken.'''",
 'longpageerror'                    => "'''FOUT: de tekst dy't jo tafoege hawwe is $1 kilobyte grut, wat grutter is as it maksimum fan $2 kilobytes.
 Bewarjen is net mûglik.'''",
 'readonlywarning'                  => "'''Warskôging: De databank is ôfsletten foar ûnderhâld, dus jo kinne jo bewurkings no net fêstlizze. Bewarje de tekst foar lettere pleatsing yn in teksttriem.'''
@@ -1207,7 +1192,6 @@ Jo kinne ek oaren de mûglikheid jaan kontakt mei jo op te nimmen troch in ferwi
 'right-siteadmin'             => 'De database blokkearje en wer frij jaan',
 'right-reset-passwords'       => "Wachtwurden fan oare meidoggers op 'e nij ynstelle",
 'right-override-export-depth' => 'Alle siden oant en mei in keppelingsdjipte fan fiif fuortskriuwe',
-'right-versiondetail'         => 'Utwreide ferzjeynformaasje sjenlitte',
 
 # User rights log
 'rightslog'      => 'Rjochten-loch',
@@ -1257,13 +1241,9 @@ Jo kinne ek oaren de mûglikheid jaan kontakt mei jo op te nimmen troch in ferwi
 'recentchanges-legend'              => 'Opsjes foar resinte feroarings',
 'recentchangestext'                 => 'De lêste feroarings fan de {{SITENAME}}.',
 'recentchanges-feed-description'    => 'Mei dizze feed kinne jo de nijste feroarings yn dizze wiki besjen.',
-'recentchanges-legend-newpage'      => '$1 - nije side',
 'recentchanges-label-newpage'       => 'Mei dizze wiziging is in nije side makke',
-'recentchanges-legend-minor'        => '$1 - tekstwiziging',
 'recentchanges-label-minor'         => 'Dit is in tekstwiziging',
-'recentchanges-legend-bot'          => '$1 - robotbewurking',
 'recentchanges-label-bot'           => 'Dizze wiziging is troch in robot makke',
-'recentchanges-legend-unpatrolled'  => '$1 - ûnkontrolearre wiziging',
 'recentchanges-label-unpatrolled'   => 'Dizze wiziging is noch net neisjûn',
 'rcnote'                            => "Dit {{PLURAL:$1|is de lêste feroaring|binne de lêste '''$1''' feroarings}} yn de lêste {{PLURAL:$2|dei|'''$2''' dagen}}, fan $4 $5.",
 'rcnotefrom'                        => 'Dit binne de feroarings sûnt <b>$2</b> (maksimaal <b>$1</b>).',
@@ -1372,7 +1352,6 @@ As jo de triem dochs noch oanbiede wolle, gean dan werom en kies in oare namme.
 'file-exists-duplicate'       => 'Dizze triem is idintyk oan {{PLURAL:$1|de folgjende triem|de folgjende triemmen}}:',
 'file-deleted-duplicate'      => "In bestân idintyk oan dit bestân ([[:$1]]) is foarhinne fuorthelle.
 Rieplachtsje it fuorthel-logboek foar't jo fierder geane.",
-'successfulupload'            => 'Oanbieden slagge.',
 'uploadwarning'               => 'Oanbied-warskôging',
 'savefile'                    => 'Lis triem fêst',
 'uploadedimage'               => ' "[[$1]]" oanbean',
@@ -1407,6 +1386,7 @@ JD # Jenoptik
 MGP # Pentax
 PICT # ferskaat
  #</pre> <!-- lit dizze line exakt sa't er is -->",
+'upload-success-subj'         => 'Oanbieden slagge.',
 
 'upload-proto-error'      => 'Ferkeard protokol',
 'upload-proto-error-text' => "Oanbieden mei dizze metoade freget URL's dy't begjinne mei <code>http://</code> of <code>ftp://</code>.",
@@ -1551,7 +1531,6 @@ Ferjit net de "Wat is hjirmei keppele" nei te gean foar it fuortheljen fan dit s
 'statistics-edits-average'     => 'Trochstrings tal bewurkings per side',
 'statistics-views-total'       => 'Totaal oantal werjûne siden',
 'statistics-views-peredit'     => 'Werjûne siden per bewurking',
-'statistics-jobqueue'          => '[http://www.mediawiki.org/wiki/Manual:Job_queue Job-queue-langte]',
 'statistics-users'             => 'Registrearre [[Special:ListUsers|brûkers]]',
 'statistics-users-active'      => 'Aktive brûkers',
 'statistics-users-active-desc' => "Brûkers dy't yn 'e ôfrûne {{PLURAL:$1|dei|$1 dagen}} in hanneling útfierd hawwe",
@@ -1756,7 +1735,6 @@ De ûntfanger kin dus daliks nei jo reagearje.',
 # Watchlist
 'watchlist'          => 'Folchlist',
 'mywatchlist'        => 'Folchlist',
-'watchlistfor'       => "(foar '''$1''')",
 'nowatchlist'        => 'Jo hawwe gjin siden op jo folchlist.',
 'watchnologin'       => 'Net oanmeld yn',
 'watchnologintext'   => 'Jo moatte [[Special:UserLogin|oanmeld]] wêze om jo folchlist te feroarjen.',
@@ -2006,7 +1984,6 @@ Meld de krekte reden! Neam bygelyks de siden dy't oantaaste waarden.",
 (List fan [[Special:IPBlockList|útslette meidoggers]].)',
 'ipb-unblock-addr'     => 'Lit $1 yn',
 'ipb-unblock'          => 'Lit in meidogger of IP-adres yn',
-'ipb-blocklist-addr'   => 'Besteande útsluting foar $1 besjen',
 'ipb-blocklist'        => 'Besteande útslutings besjen',
 'unblockip'            => 'Lit meidogger wer ta',
 'unblockiptext'        => 'Brûk dizze fjilden om in meidogger wer skriuwtagong te jaan.',
@@ -2245,10 +2222,10 @@ Gean nei oft latex, dvips, en gs goed ynstallearre binne en set om',
 # Media information
 'imagemaxsize'         => 'Behein ôfmjittings fan ôfbyld op beskriuwingsside ta:',
 'thumbsize'            => 'Mjitte fan miniatueren:',
-'file-info'            => '(triemgrutte: $1, MIME-type: $2)',
-'file-info-size'       => '($1 × $2 pixel, triemgrutte: $3, MIME type: $4)',
+'file-info'            => 'triemgrutte: $1, MIME-type: $2',
+'file-info-size'       => '$1 × $2 pixel, triemgrutte: $3, MIME type: $4',
 'file-nohires'         => '<small>Gjin hegere resolúsje beskikber.</small>',
-'svg-long-desc'        => '(SVG-triem, nominaal $1 × $2 pixels, triemgrutte: $3)',
+'svg-long-desc'        => 'SVG-triem, nominaal $1 × $2 pixels, triemgrutte: $3',
 'show-big-image'       => 'Hegere resolúsje',
 'show-big-image-thumb' => '<small>Grutte fan dizze ôfbylding: $1 × $2 pixels</small>',
 

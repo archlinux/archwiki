@@ -1,11 +1,29 @@
 <?php
 /**
+ * Implements Special:Resetpass
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup SpecialPage
  */
 
 /**
  * Let users recover their password.
+ *
  * @ingroup SpecialPage
  */
 class SpecialResetpass extends SpecialPage {
@@ -19,6 +37,11 @@ class SpecialResetpass extends SpecialPage {
 	function execute( $par ) {
 		global $wgUser, $wgAuth, $wgOut, $wgRequest;
 
+		if ( wfReadOnly() ) {
+			$wgOut->readOnlyPage();
+			return;
+		}
+
 		$this->mUserName = $wgRequest->getVal( 'wpName' );
 		$this->mOldpass = $wgRequest->getVal( 'wpPassword' );
 		$this->mNewpass = $wgRequest->getVal( 'wpNewPassword' );
@@ -26,6 +49,7 @@ class SpecialResetpass extends SpecialPage {
 		
 		$this->setHeaders();
 		$this->outputHeader();
+		$wgOut->disallowUserJs();
 
 		if( !$wgAuth->allowPasswordChange() ) {
 			$this->error( wfMsg( 'resetpass_forbidden' ) );
@@ -84,18 +108,18 @@ class SpecialResetpass extends SpecialPage {
 	function showForm() {
 		global $wgOut, $wgUser, $wgRequest;
 
-		$wgOut->disallowUserJs();
-
-		$self = SpecialPage::getTitleFor( 'Resetpass' );
+		$self = $this->getTitle();
 		if ( !$this->mUserName ) {
 			$this->mUserName = $wgUser->getName();
 		}
 		$rememberMe = '';
 		if ( !$wgUser->isLoggedIn() ) {
+			global $wgCookieExpiration, $wgLang;
 			$rememberMe = '<tr>' .
 				'<td></td>' .
 				'<td class="mw-input">' .
-					Xml::checkLabel( wfMsg( 'remembermypassword' ),
+					Xml::checkLabel( 
+						wfMsgExt( 'remembermypassword', 'parsemag', $wgLang->formatNum( ceil( $wgCookieExpiration / ( 3600 * 24 ) ) ) ),
 						'wpRemember', 'wpRemember',
 						$wgRequest->getCheck( 'wpRemember' ) ) .
 				'</td>' .
@@ -113,9 +137,9 @@ class SpecialResetpass extends SpecialPage {
 					'method' => 'post',
 					'action' => $self->getLocalUrl(),
 					'id' => 'mw-resetpass-form' ) ) . "\n" .
-			Xml::hidden( 'token', $wgUser->editToken() ) . "\n" .
-			Xml::hidden( 'wpName', $this->mUserName ) . "\n" .
-			Xml::hidden( 'returnto', $wgRequest->getVal( 'returnto' ) ) . "\n" .
+			Html::hidden( 'token', $wgUser->editToken() ) . "\n" .
+			Html::hidden( 'wpName', $this->mUserName ) . "\n" .
+			Html::hidden( 'returnto', $wgRequest->getVal( 'returnto' ) ) . "\n" .
 			wfMsgExt( 'resetpass_text', array( 'parse' ) ) . "\n" .
 			Xml::openElement( 'table', array( 'id' => 'mw-resetpass-table' ) ) . "\n" .
 			$this->pretty( array(
@@ -196,7 +220,6 @@ class SpecialResetpass extends SpecialPage {
 		} catch( PasswordError $e ) {
 			wfRunHooks( 'PrefsPasswordAudit', array( $user, $newpass, 'error' ) );
 			throw new PasswordError( $e->getMessage() );
-			return;
 		}
 		
 		$user->setCookies();

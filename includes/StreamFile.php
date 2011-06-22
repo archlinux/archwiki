@@ -1,5 +1,9 @@
 <?php
-/** */
+/**
+ * Functions related to the output of file content
+ *
+ * @file
+ */
 
 /** */
 function wfStreamFile( $fname, $headers = array() ) {
@@ -37,8 +41,8 @@ function wfStreamFile( $fname, $headers = array() ) {
 		return;
 	}
 
-	global $wgContLanguageCode;
-	header( "Content-Disposition: inline;filename*=utf-8'$wgContLanguageCode'" . urlencode( basename( $fname ) ) );
+	global $wgLanguageCode;
+	header( "Content-Disposition: inline;filename*=utf-8'$wgLanguageCode'" . urlencode( basename( $fname ) ) );
 
 	foreach ( $headers as $header ) {
 		header( $header );
@@ -91,8 +95,8 @@ function wfGetType( $filename, $safe = true ) {
 	 */
 	if ( $safe ) {
 		global $wgFileBlacklist, $wgCheckFileExtensions, $wgStrictFileExtensions, 
-			$wgFileExtensions, $wgVerifyMimeType, $wgMimeTypeBlacklist, $wgRequest;
-		list( $partName, $extList ) = UploadBase::splitExtensions( $filename );
+			$wgFileExtensions, $wgVerifyMimeType, $wgMimeTypeBlacklist;
+		list( , $extList ) = UploadBase::splitExtensions( $filename );
 		if ( UploadBase::checkFileExtensionList( $extList, $wgFileBlacklist ) ) {
 			return 'unknown/unknown';
 		}
