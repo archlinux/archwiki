@@ -23,13 +23,13 @@ a.new, #p-cactions .new a { color: #b00 !important; }
 /* bump down the action tabs (page, discuss, edit, etc.) */
 #p-cactions { top: 7.5em; }
 /* first for IE6 */
-#p-cactions { top: 87px; }
+#p-cactions { top: 97px; }
 /* and now for the rest */
 html > body #p-cactions { top: 92px; }
 
 /* bump down the main content to make room for navbar */
-#content { margin-top: 3.6em; }
-#content { margin-top: 46px; }
+#content { top: .8em; }
+#content { top: 10px; }
 
 /* shrink the content just enough to show off the borders */
 #globalWrapper { width: 99%; }
