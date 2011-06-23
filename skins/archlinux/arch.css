@@ -32,14 +32,14 @@ html > body #p-cactions { top: 92px; }
 #content { top: 10px; }
 
 /* shrink the content just enough to show off the borders */
-#globalWrapper { width: 99%; }
+div#globalWrapper { width: 99%; }
 
 /* article Table of Contents */
 #toc, .toc, .mw-warning { background-color: #f9faff; border: 1px solid #d7dfe3; }
 
 /* sidebar menus and content borders */
 .pBody { border: 1px solid #ddd; }
-#content { border: 1px solid #ccc; }
+div#content { border: 1px solid #ccc; }
 
 /* disable default mediawiki logo and close the gap it leaves behind */
 #p-logo { display: none !important;}
@@ -52,7 +52,7 @@ html > body #column-one { padding-top: 36px; }
 #f-poweredbyico, #f-copyrightico { display: none; }
 
 /* clean up the footer */
-#footer { color: #888; background-color: transparent; border-top: none; border-bottom: none; }
+div#footer { color: #888; background-color: transparent; border-top: none; border-bottom: none; }
 
 /* bring footer text inline with content */
 /* first for IE6 */
