@@ -35,7 +35,9 @@
  * @author Mzm5zbC3
  * @author Ohgi
  * @author Penn Station
+ * @author Schu
  * @author Suisui
+ * @author VZP10224
  * @author Vigorous action
  * @author W.CC
  * @author Web comic
@@ -371,7 +373,7 @@ $messages = array(
 'tog-enotifminoredits'        => '細部の編集でもメールを受け取る',
 'tog-enotifrevealaddr'        => '通知メールで自分のメールアドレスを明示する',
 'tog-shownumberswatching'     => 'ページをウォッチしている利用者数を表示する',
-'tog-oldsig'                  => '現在の署名のプレビュー：',
+'tog-oldsig'                  => '既存の署名：',
 'tog-fancysig'                => '署名をウィキ文として扱う（自動でリンクしない）',
 'tog-externaleditor'          => '既定で編集に外部アプリケーションを使う（上級者向け、コンピューターに特殊な設定が必要。[http://www.mediawiki.org/wiki/Manual:External_editors 詳細]）',
 'tog-externaldiff'            => '差分表示に外部アプリケーションを使う（上級者向け、コンピューターに特殊な設定が必要。[http://www.mediawiki.org/wiki/Manual:External_editors 詳細]）',
@@ -384,7 +386,7 @@ $messages = array(
 'tog-watchlisthideliu'        => 'ウォッチリストにログイン利用者の編集を表示しない',
 'tog-watchlisthideanons'      => 'ウォッチリストに匿名利用者の編集を表示しない',
 'tog-watchlisthidepatrolled'  => 'ウォッチリストに巡回済みの編集を表示しない',
-'tog-nolangconversion'        => '変種言語の変換を無効にする',
+'tog-nolangconversion'        => '言語変種変換を無効にする',
 'tog-ccmeonemails'            => '他の利用者に送信したメールの控えを自分にも送る',
 'tog-diffonly'                => '差分表示の下にページの内容を表示しない',
 'tog-showhiddencats'          => '隠しカテゴリを表示する',
@@ -508,7 +510,7 @@ $messages = array(
 'vector-action-move'             => '移動',
 'vector-action-protect'          => '保護',
 'vector-action-undelete'         => '復帰',
-'vector-action-unprotect'        => '保護解除',
+'vector-action-unprotect'        => '保護の変更',
 'vector-simplesearch-preference' => '検索語の提案機能を拡張する（ベクター外装のみ）',
 'vector-view-create'             => '作成',
 'vector-view-edit'               => '編集',
@@ -544,8 +546,8 @@ $messages = array(
 'protect'           => '保護',
 'protect_change'    => '設定変更',
 'protectthispage'   => 'このページを保護',
-'unprotect'         => '保護解除',
-'unprotectthispage' => 'このページの保護を解除',
+'unprotect'         => '保護の設定変更',
+'unprotectthispage' => 'このページの保護を変更',
 'newpage'           => '新規ページ',
 'talkpage'          => 'このページについて話し合う',
 'talkpagelinktext'  => 'トーク',
@@ -724,7 +726,7 @@ URLを間違って打ったか、不正なリンクを辿った可能性があ�
 このページの変更はすべての利用者のユーザーインタフェースに影響します。
 翻訳をする場合、MediaWikiの地域化プロジェクト[http://translatewiki.net/wiki/Main_Page?setlang=ja translatewiki.net]の利用を検討してください。",
 'sqlhidden'            => '（SQLクエリ非表示）',
-'cascadeprotected'     => 'このページは、「連続」選択肢が有効な状態で保護されている以下の{{PLURAL:$1|ページ}}で読み込まれているため、編集できないように保護されています：
+'cascadeprotected'     => 'このページは、「カスケード保護」が指定された状態で保護されている以下の{{PLURAL:$1|ページ}}で読み込まれているため、編集できないように保護されています。
 $2',
 'namespaceprotected'   => "'''$1'''名前空間にあるページを編集する権限がありません。",
 'customcssjsprotected' => 'このページは他の利用者の個人設定を含んでいるため、編集する権限がありません。',
@@ -768,7 +770,7 @@ $2',
 'createaccountmail'          => 'メールで送信',
 'createaccountreason'        => '理由：',
 'badretype'                  => '入力したパスワードが一致しません。',
-'userexists'                 => '入力された利用者名はすでに使われています。
+'userexists'                 => '入力された利用者名はすでに使用されています。
 ほかの名前を選んでください。',
 'loginerror'                 => 'ログインのエラー',
 'createaccounterror'         => 'アカウントを作成できませんでした： $1',
@@ -850,7 +852,7 @@ $2',
 'retypenew'                 => '新しいパスワードを再入力:',
 'resetpass_submit'          => '再設定してログイン',
 'resetpass_success'         => 'パスワードの変更に成功しました！
-ログインしています・・・',
+ログインしています…',
 'resetpass_forbidden'       => 'パスワードは変更できません',
 'resetpass-no-info'         => 'このページに直接アクセスするためにはログインしている必要があります。',
 'resetpass-submit-loggedin' => 'パスワードを変更',
@@ -874,8 +876,9 @@ $2',
 'math_tip'        => '数式 (LaTeX)',
 'nowiki_sample'   => 'ここにマークアップを無効にするテキストを入力します',
 'nowiki_tip'      => 'ウィキ書式を無視',
+'image_sample'    => 'サンプル.jpg',
 'image_tip'       => 'ファイルの埋め込み',
-'media_sample'    => '例.ogg',
+'media_sample'    => 'サンプル.ogg',
 'media_tip'       => 'ファイルへのリンク',
 'sig_tip'         => '時刻印つきの署名',
 'hr_tip'          => '水平線を挿入（利用は控えめに）',
@@ -964,12 +967,13 @@ IPアドレスは複数の利用者の間で共有されていることがあり
 'userpage-userdoesnotexist-view'   => '利用者アカウント「$1」は登録されていません。',
 'blocked-notice-logextract'        => 'この利用者は現在ブロックされています。
 参考のために最新のブロック記録を以下に表示します。',
-'clearyourcache'                   => "'''注意：'''保存した後、変更を確認するには、ブラウザのキャッシュをクリアする必要があります。'''
-'''Mozilla/Firefox/Safari：'''''Shift''を押しながら''再読み込み''をクリック、または ''Ctrl-F5''か''Ctrl-R''を押してください（Macintoshでは''Command-R''）。
-'''Konqueror：'''''再読み込み''をクリック、または''F5''を押してください。
-'''Opera：'''''ツール→設定''からキャッシュをクリアしてください。
-'''Internet Explorer：'''''Ctrl''を押しながら''更新''をクリック、またはCtrl-F5を押してください。",
-'usercssyoucanpreview'             => "''ヒント：'''「{{int:showpreview}}」ボタンを使うと、保存前に新しいスタイルシートを試験できます。",
+'clearyourcache'                   => "'''注意:''' 保存後、変更を確認するにはブラウザのキャッシュをクリアする必要がある場合があります。
+* '''Firefox / Safari:''' ''Shift'' を押しながら ''再読み込み'' をクリックする、もしくは ''Ctrl-F5'' か ''Ctrl-R'' を押してください (Macでは ''Command-R'' )
+* '''Google Chrome:''' ''Ctrl-Shift-R'' を押してください (Macでは ''Command-Shift-R'' )
+* '''Internet Explorer:''' ''Ctrl'' を押しながら ''最新の情報に更新'' をクリックする、もしくは ''Ctrl-F5'' を押してください
+* '''Konqueror:''' ''再読み込み'' をクリックするか、 ''F5'' を押してください。
+* '''Opera:''' ''ツール → 設定'' からキャッシュをクリアしてください。",
+'usercssyoucanpreview'             => "'''ヒント：'''「{{int:showpreview}}」ボタンを使うと、保存前に新しいスタイルシートを試験できます。",
 'userjsyoucanpreview'              => "'''ヒント:''' 「{{int:showpreview}}」ボタンを使うと、保存前に新しいスクリプトを試験できます。",
 'usercsspreview'                   => "'''利用者CSSをプレビューしています。'''
 '''まだ保存されていません！'''",
@@ -1032,7 +1036,7 @@ IPアドレスは複数の利用者の間で共有されていることがあり
 参考として以下に一番最後の記録を表示します：",
 'semiprotectedpagewarning'         => "'''注意：'''このページは保護されているため、登録利用者しか編集できません。
 参考として以下に一番最後の記録を表示します：",
-'cascadeprotectedwarning'          => "'''警告：'''このページは連続保護されている以下の{{PLURAL:$1|ページ}}から読み込まれているため保護されており、そのため管理者権限を持つ利用者しか編集できません。",
+'cascadeprotectedwarning'          => "'''警告：'''このページはカスケード保護されている以下の{{PLURAL:$1|ページ}}から読み込まれているため、管理者権限を持つ利用者しか編集できないように保護されています。",
 'titleprotectedwarning'            => "'''警告：このページは保護されているため、作成には[[Special:ListGroupRights|特定の権限]]が必要です。'''
 参考として以下に一番最後の記録を表示します：",
 'templatesused'                    => 'このページで使われている{{PLURAL:$1|テンプレート}}：',
@@ -1438,7 +1442,7 @@ $1",
 'prefs-registration'            => '登録日時：',
 'yourrealname'                  => '本名：',
 'yourlanguage'                  => '使用言語：',
-'yourvariant'                   => '言語変種：',
+'yourvariant'                   => 'コンテンツ言語変種：',
 'yournick'                      => '新しい署名：',
 'prefs-help-signature'          => 'トークページ上での発言には「<nowiki>~~~~</nowiki>」と付けて署名するべきです。これは自分の署名に時刻印を付加したものに変換されます。',
 'badsig'                        => '署名用のソースが正しくありません。
@@ -1493,7 +1497,7 @@ HTMLタグを見直してください。',
 'userrights-no-interwiki'      => '他ウィキ上における利用者権限の編集権限はありません。',
 'userrights-nodatabase'        => 'データベース$1は存在しないか、ローカル上にありません。',
 'userrights-nologin'           => '利用者権限が割り当てられている管理者権限アカウントで[[Special:UserLogin|ログイン]]する必要があります。',
-'userrights-notallowed'        => '利用者権限を変更する権限がありません。',
+'userrights-notallowed'        => 'あなたのアカウントには利用者権限を追加又は削除する権限はありません。',
 'userrights-changeable-col'    => '変更可能なグループ',
 'userrights-unchangeable-col'  => '変更できないグループ',
 
@@ -1560,7 +1564,7 @@ HTMLタグを見直してください。',
 'right-proxyunbannable'       => 'プロキシの自動ブロックを回避',
 'right-unblockself'           => '自分自身に対するブロックを解除',
 'right-protect'               => '保護レベルの変更と保護されたページの編集',
-'right-editprotected'         => '保護ページの編集（連続保護を除く）',
+'right-editprotected'         => '保護ページの編集（カスケード保護を除く）',
 'right-editinterface'         => 'ユーザーインターフェースの編集',
 'right-editusercssjs'         => '他利用者のCSSとJavaScriptファイルの編集',
 'right-editusercss'           => '他利用者のCSSファイルの編集',
@@ -1629,7 +1633,7 @@ HTMLタグを見直してください。',
 'nchanges'                          => '$1回の変更',
 'recentchanges'                     => '最近の更新',
 'recentchanges-legend'              => '最近の更新のオプション',
-'recentchangestext'                 => '最近の更新はこのページから確認できます。',
+'recentchangestext'                 => 'このウィキにおける最近の更新はこのページから確認できます。',
 'recentchanges-feed-description'    => 'このフィードでそのウィキへの最近の更新を追跡。',
 'recentchanges-label-newpage'       => 'この編集で新しいページが作成されました',
 'recentchanges-label-minor'         => 'これは細部の編集です',
@@ -1875,8 +1879,7 @@ URLが正しいものであるか、指定したサイトが現在使用可能�
 
 # Special:ListFiles
 'listfiles-summary'     => 'この特別ページでは、アップロードされたすべてのファイルを表示します。
-既定では一番最近にアップロードされたファイルが一覧の上部に表示されていまます。
-各列のヘッダ部分をクリックすると、並び順を変更できます。',
+利用者によりフィルタ処理された場合、その利用者がアップロードした最新バージョンのファイルのみが表示されます。',
 'listfiles_search_for'  => 'メディア名で検索：',
 'imgfile'               => 'ファイル',
 'listfiles'             => 'ファイル一覧',
@@ -1905,7 +1908,7 @@ URLが正しいものであるか、指定したサイトが現在使用可能�
 'filehist-filesize'                 => 'ファイルサイズ',
 'filehist-comment'                  => 'コメント',
 'filehist-missing'                  => 'ファイルがみつかりません',
-'imagelinks'                        => 'ファイルリンク',
+'imagelinks'                        => 'ファイルの使用状況',
 'linkstoimage'                      => '以下の{{PLURAL:$1|ページ|$1ページ}}が、このファイルへリンクしています：',
 'linkstoimage-more'                 => '$1より多いページが、このファイルにリンクしています。
 以下の一覧は、このファイルにリンクしている最初の$1ページのみを表示しています。
@@ -1924,6 +1927,7 @@ URLが正しいものであるか、指定したサイトが現在使用可能�
 'shared-repo-from'                  => '$1より',
 'shared-repo'                       => '共有リポジトリ',
 'shared-repo-name-wikimediacommons' => 'ウィキメディア・コモンズ',
+'filepage.css'                      => '/* ここに記述したCSSはファイル解説ページにて読み込まれます。また外部のクライアントウィキにも影響します */',
 
 # File reversion
 'filerevert'                => '$1を差し戻す',
@@ -1992,7 +1996,7 @@ contenttype/subtypeの形式で指定してください（例：<tt>image/jpeg</
 'statistics-pages'             => '総ページ数',
 'statistics-pages-desc'        => 'トークページやリダイレクトなどを含んだこのウィキ内のすべてのページです。',
 'statistics-files'             => 'アップロードされたファイル数',
-'statistics-edits'             => '{{SITENAME}}が立ち上がってからの編集回数の総計',
+'statistics-edits'             => '{{SITENAME}}が開設されてからの編集回数の総計',
 'statistics-edits-average'     => '1ページあたりの編集回数',
 'statistics-views-total'       => '総閲覧回数',
 'statistics-views-total-desc'  => '存在しないページと特別ページに対する閲覧は含まれていません',
@@ -2360,7 +2364,7 @@ $2による最後の版へ変更されました。',
 
 # Protect
 'protectlogpage'              => '保護記録',
-'protectlogtext'              => '以下はページの保護の保護解除の記録です。
+'protectlogtext'              => '以下はページ保護に対する変更の記録です。
 現在、保護レベルを変更できるページについては[[Special:ProtectedPages|保護ページ一覧]]を参照してください。',
 'protectedarticle'            => '「[[$1]]」を保護しました',
 'modifiedarticleprotection'   => '「[[$1]]」の保護レベルを変更しました',
@@ -2381,8 +2385,8 @@ $2による最後の版へ変更されました。',
 ページ'''$1'''の現在の状態は以下の通りです：",
 'protect-locked-access'       => "アカウントに、ページの保護レベルを変更する権限がありません。
 ページ'''$1'''の現在の状態は以下の通りです：",
-'protect-cascadeon'           => 'このページは現在、連続保護が有効になっている以下の{{PLURAL:$1|ページ}}から読み込まれているため、保護されています。
-このページの保護制限を変更することは可能ですが、連続保護には影響しません。',
+'protect-cascadeon'           => 'このページは現在、カスケード保護が有効になっている以下の{{PLURAL:$1|ページ}}から読み込まれているため、保護されています。
+このページの保護制限を変更することは可能ですが、カスケード保護には影響しません。',
 'protect-default'             => 'すべての利用者を許可',
 'protect-fallback'            => '「$1」権限が必要',
 'protect-level-autoconfirmed' => '新規利用者と匿名利用者を禁止',
@@ -2390,7 +2394,7 @@ $2による最後の版へ変更されました。',
 'protect-summary-cascade'     => '連続',
 'protect-expiring'            => '$1(UTC)で自動的に解除',
 'protect-expiry-indefinite'   => '無期限',
-'protect-cascade'             => 'このページに読み込まれているページを保護する（連続保護）',
+'protect-cascade'             => 'このページに読み込まれているページを保護する（カスケード保護）',
 'protect-cantedit'            => 'このページの編集権限がないため、保護レベルを変更できません。',
 'protect-othertime'           => 'その他の期間：',
 'protect-othertime-op'        => 'その他の期間',
@@ -2486,7 +2490,7 @@ $1',
 'mycontris'           => '自分の投稿記録',
 'contribsub2'         => '利用者:$1（$2）',
 'nocontribs'          => 'これらの条件に一致する変更は見つかりませんでした。',
-'uctop'               => '（最新）',
+'uctop'               => '(最新)',
 'month'               => 'これ以前の月：',
 'year'                => 'これ以前の年：',
 
@@ -2517,7 +2521,7 @@ $1',
 'nolinkshere-ns'           => "選択された名前空間中で、'''[[:$1]]'''にリンクしているページはありません。",
 'isredirect'               => '転送ページ',
 'istemplate'               => '参照読み込み',
-'isimage'                  => '画像リンク',
+'isimage'                  => 'ファイルへのリンク',
 'whatlinkshere-prev'       => '{{PLURAL:$1|前|前の$1件}}',
 'whatlinkshere-next'       => '{{PLURAL:$1|次|次の$1件}}',
 'whatlinkshere-links'      => '← リンク',
@@ -2880,7 +2884,7 @@ hideuser権限を持っていないため、この利用者のブロックを閲
 ページのソースを閲覧できます。',
 'tooltip-ca-history'              => 'このページの過去の版',
 'tooltip-ca-protect'              => 'このページを保護',
-'tooltip-ca-unprotect'            => 'このページの保護を解除',
+'tooltip-ca-unprotect'            => 'このページの保護を変更',
 'tooltip-ca-delete'               => 'このページを削除',
 'tooltip-ca-undelete'             => '削除される前になされた編集を復元',
 'tooltip-ca-move'                 => 'このページを移動',
@@ -3056,9 +3060,10 @@ $1',
 
 # Media information
 'mediawarning'         => "'''警告：'''このファイルは悪意のあるコードを含んでいる可能性があります。
-実行するとシステムが棄権にさらされる可能性があります。",
+実行するとシステムが危険にさらされる可能性があります。",
 'imagemaxsize'         => "画像のサイズ制限：<br />''（ファイルページに対する）''",
 'thumbsize'            => 'サムネイルの大きさ：',
+'widthheight'          => '$1 × $2',
 'widthheightpage'      => '$1×$2、$3ページ',
 'file-info'            => 'ファイルサイズ：$1、MIMEタイプ：$2',
 'file-info-size'       => '$1×$2ピクセル、ファイルサイズ：$3、MIMEタイプ：$4',
@@ -3084,6 +3089,9 @@ $1',
 'bydate'                => '日付順',
 'sp-newimages-showfrom' => '$1の$2以降の新しいファイルを表示',
 
+# Video information, used by Language::formatTimePeriod() to format lengths in the above messages
+'video-dims' => '$1、 $2 × $3',
+
 # Bad image list
 'bad_image_list' => '書式は以下の通りです：
 
@@ -3102,8 +3110,39 @@ Variants for Chinese language
 'variantname-zh-cn'   => '中国簡体',
 'variantname-zh-tw'   => '台湾正体',
 'variantname-zh-hk'   => '香港正体',
+'variantname-zh-mo'   => '中国(マカオ)',
 'variantname-zh-sg'   => 'シンガポール簡体',
-'variantname-zh'      => '無変換',
+'variantname-zh-my'   => '中国(マレーシア)',
+'variantname-zh'      => '中文',
+
+# Variants for Gan language
+'variantname-gan-hans' => 'ガガウズ(hans)',
+'variantname-gan-hant' => 'ガガウズ(hant)',
+'variantname-gan'      => 'ガガウズ',
+
+# Variants for Serbian language
+'variantname-sr-ec' => 'セルビア(キリル)',
+'variantname-sr-el' => 'セルビア(ラテン)',
+'variantname-sr'    => 'セルビア',
+
+# Variants for Kazakh language
+'variantname-kk-kz'   => 'カザフ(カザフスタン)',
+'variantname-kk-tr'   => 'カザフ(トルコ)',
+'variantname-kk-cn'   => 'カザフ(中国)',
+'variantname-kk-cyrl' => 'カザフ(キリル)',
+'variantname-kk-latn' => 'カザフ(ラテン)',
+'variantname-kk-arab' => 'カザフ(アラブ)',
+'variantname-kk'      => 'カザフ',
+
+# Variants for Kurdish language
+'variantname-ku-arab' => 'クルド(アラブ)',
+'variantname-ku-latn' => 'クルド(ラテン)',
+'variantname-ku'      => 'クルド',
+
+# Variants for Tajiki language
+'variantname-tg-cyrl' => 'タジク(キリル)',
+'variantname-tg-latn' => 'タジク(ラテン)',
+'variantname-tg'      => 'タジク',
 
 # Metadata
 'metadata'          => 'メタデータ',
@@ -3253,9 +3292,9 @@ Variants for Chinese language
 'exif-orientation-3' => '180°回転',
 'exif-orientation-4' => '上下反転',
 'exif-orientation-5' => '反時計回りに90°回転 上下反転',
-'exif-orientation-6' => '時計回りに90°回転',
+'exif-orientation-6' => '90° 回転 CCW',
 'exif-orientation-7' => '時計回りに90°回転 上下反転',
-'exif-orientation-8' => '反時計回りに90°回転',
+'exif-orientation-8' => '90° 回転 CW',
 
 'exif-planarconfiguration-1' => '点順次フォーマット',
 'exif-planarconfiguration-2' => '面順次フォーマット',
@@ -3664,9 +3703,7 @@ MediaWikiは、有用であることを期待して配布されていますが�
 'filepath'         => 'ファイルパス',
 'filepath-page'    => 'ファイル：',
 'filepath-submit'  => '取得',
-'filepath-summary' => 'この特別ページは、ファイルへの完全なパスを返します。画像は最大解像度で表示され、他のファイルタイプは関連付けされたプログラムが直接起動します。
-
-ファイル名は接頭辞「{{ns:file}}:」を付けずに入力してください。',
+'filepath-summary' => 'この特別ページは、ファイルへの完全なパスを返します。画像は最大解像度で表示され、他のファイルタイプは関連付けされたプログラムが直接起動します。',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch'          => '重複ファイルの検索',

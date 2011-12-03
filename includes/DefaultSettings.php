@@ -34,7 +34,7 @@ if ( !defined( 'MW_PHP4' ) ) {
 /** @endcond */
 
 /** MediaWiki version number */
-$wgVersion = '1.17.0';
+$wgVersion = '1.17.1';
 
 /** Name of the site. It must be changed in LocalSettings.php */
 $wgSitename         = 'MediaWiki';
@@ -2926,11 +2926,6 @@ $wgPasswordSalt = true;
  * words are allowed.
  */
 $wgMinimalPasswordLength = 1;
-
-/**
- * Enabes or disables JavaScript-based suggestions of password strength
- */
-$wgLivePasswordStrengthChecks = false;
 
 /**
  * Maximum number of Unicode characters in signature

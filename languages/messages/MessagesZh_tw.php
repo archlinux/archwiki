@@ -10,11 +10,13 @@
  * @author Alexsh
  * @author Andrew971218
  * @author BobChao
+ * @author Ianbu
  * @author Jidanni
  * @author Mark85296341
  * @author Pbdragonwang
  * @author PhiLiP
  * @author Roc michael
+ * @author Shizhao
  * @author Urhixidur
  * @author Wong128hk
  * @author Zerng07
@@ -211,15 +213,16 @@ $messages = array(
 
 'badaccess-groups' => '您剛才的請求只有{{PLURAL:$2|這個|這些}}使用者組的使用者才能使用: $1',
 
-'editold'        => '編輯',
-'showtoc'        => '顯示',
-'hidetoc'        => '隱藏',
-'thisisdeleted'  => '檢視或復原$1?',
-'site-rss-feed'  => '訂閱 $1 的 RSS 資料來源',
-'site-atom-feed' => '訂閱 $1 的 Atom 資料來源',
-'page-rss-feed'  => '訂閱「$1」的 RSS 資料來源',
-'page-atom-feed' => '訂閱「$1」的 Atom 資料來源',
-'red-link-title' => '$1 (頁面不存在)',
+'editold'         => '編輯',
+'editsectionhint' => '编辑段落：$1',
+'showtoc'         => '顯示',
+'hidetoc'         => '隱藏',
+'thisisdeleted'   => '檢視或復原$1?',
+'site-rss-feed'   => '訂閱 $1 的 RSS 資料來源',
+'site-atom-feed'  => '訂閱 $1 的 Atom 資料來源',
+'page-rss-feed'   => '訂閱「$1」的 RSS 資料來源',
+'page-atom-feed'  => '訂閱「$1」的 Atom 資料來源',
+'red-link-title'  => '$1 (頁面不存在)',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => '頁面',
@@ -342,6 +345,7 @@ $messages = array(
 'session_fail_preview_html'  => "'''很抱歉！部份資料已遺失，我們無法處理您的編輯。''''''如果這個編輯過程沒有問題，請再試一次。如果仍然有問題，請登出後再重新登入一次。'''",
 'token_suffix_mismatch'      => "'''由於您使用者端中的編輯信符毀損了一些標點符號字元，為防止編輯的文字損壞，您的編輯已經被拒絕。
 這種情況通常出現於使用含有很多臭蟲、以網路為主的匿名代理服務的時候。'''",
+'editing'                    => '正在编辑 $1',
 'editingcomment'             => '正在編輯$1（新段落）',
 'storedversion'              => '已保存版本',
 'nonunicodebrowser'          => "'''警告: 您的瀏覽器不相容Unicode編碼。這裡有一個工作區將使您能安全地編輯頁面: 非ASCII字元將以十六進製編碼模式出現在編輯框中。'''",

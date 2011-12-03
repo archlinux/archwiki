@@ -234,7 +234,7 @@ $messages = array(
 'tog-enotifminoredits'        => 'Stuur ook e-pos vir klein bladsywysigings',
 'tog-enotifrevealaddr'        => 'Stel my e-posadres bloot in kennisgewingspos',
 'tog-shownumberswatching'     => 'Wys die aantal gebruikers wat dophou',
-'tog-oldsig'                  => 'Voorskou van bestaande handtekening:',
+'tog-oldsig'                  => 'Bestaande handtekening:',
 'tog-fancysig'                => 'Hanteer handtekening as wikiteks (sonder outomatiese skakels)',
 'tog-externaleditor'          => "Gebruik outomaties 'n eksterne redigeringsprogram (net vir kundiges - benodig spesiale verstellings op u rekenaar. [http://www.mediawiki.org/wiki/Manual:External_editors Meer inligting.])",
 'tog-externaldiff'            => "Gebruik outomaties 'n eksterne vergelykingsprogram (net vir kundiges - benodig spesiale verstellings op u rekenaar)",
@@ -369,7 +369,7 @@ $messages = array(
 'vector-action-move'             => 'Skuif',
 'vector-action-protect'          => 'Beskerm',
 'vector-action-undelete'         => 'Ontskrap',
-'vector-action-unprotect'        => 'Verwyder beskerming',
+'vector-action-unprotect'        => 'Wysig beskerming',
 'vector-simplesearch-preference' => 'Aktiveer verbeterde soek-voorstelle (slegs vir die Vektor omslag)',
 'vector-view-create'             => 'Skep',
 'vector-view-edit'               => 'Wysig',
@@ -405,8 +405,8 @@ $messages = array(
 'protect'           => 'Beskerm',
 'protect_change'    => 'wysig',
 'protectthispage'   => 'Beskerm hierdie bladsy',
-'unprotect'         => 'Verwyder beskerming',
-'unprotectthispage' => 'Verwyder beskerming vir die bladsy',
+'unprotect'         => 'Wysig beskerming',
+'unprotectthispage' => 'Verander beskerming vir die bladsy',
 'newpage'           => 'Nuwe bladsy',
 'talkpage'          => 'Bespreek hierdie bladsy',
 'talkpagelinktext'  => 'Besprekings',
@@ -809,7 +809,12 @@ of [{{fullurl:{{FULLPAGENAME}}|action=edit}} hierdie bladsy wysig]</span>.',
 'userpage-userdoesnotexist-view'   => 'Die gebruiker "$1" is nie geregistreer nie.',
 'blocked-notice-logextract'        => 'Hierdie gebruiker is tans geblokkeer.
 Die laaste inskrywing in die blokkeerlogboek word hieronder vertoon:',
-'clearyourcache'                   => "'''Let wel''': Na die voorkeure gestoor is, moet u blaaier se kasgeheue verfris word om die veranderinge te sien: '''Mozilla:''' klik ''Reload'' (of ''Ctrl-R''), '''IE / Opera:''' ''Ctrl-F5'', '''Safari:''' ''Cmd-R'', '''Konqueror''' ''Ctrl-R''.",
+'clearyourcache'                   => "'''Let wel''': Na die voorkeure gestoor is, moet u blaaier se kasgeheue verfris word om die veranderinge te sien:
+* '''Firefox / Safari:''' hou ''Shift'' en kliek ''Reload'', of druk ''Ctrl-F5'' of ''Ctrl-R'' (''Command-R'' op 'n Mac)
+* '''Google Chrome:''' druk ''Ctrl-Shift-R'' (''Command-Shift-R'' op 'n Mac)
+* '''Internet Explorer:''' hou ''Ctrl'' en kliek ''Refresh'', of druk ''Ctrl-F5''
+* '''Konqueror:''' kliek ''Reload'' of druk ''F5''
+* '''Opera:''' maak die kas skoon by ''Tools → Preferences''",
 'usercssyoucanpreview'             => "'''Wenk:''' Gebruik die \"{{int:showpreview}}\"-knoppie om u nuwe CSS te toets voor u dit stoor.",
 'userjsyoucanpreview'              => "'''Wenk:''' Gebruik die \"{{int:showpreview}}\"-knoppie om u nuwe JS te toets voor u dit stoor.",
 'usercsspreview'                   => "'''Onthou hierdie is slegs 'n voorskou van u persoonlike CSS.'''
@@ -968,8 +973,8 @@ Dit was moontlik geskrap of geskuif.
 'rev-deleted-text-permission' => "Die weergawe van die bladsy is '''verwyder'''.
 Vir meer besonderhede, raadpleeg die [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} skrapingslogboek].",
 'rev-deleted-text-unhide'     => "Hierdie weergawe van die bladsy is '''verwyder'''.
-Details kan moontlik in die [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} skraplogboek] aanwesig wees.
-As administrateur kan u, as u wil, na [$1 die weergawe kyk].",
+Details kan in die [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} skraplogboek] gevind word.
+U kan steeds na [$1 die weergawe kyk] as u wil voortgaan.",
 'rev-suppressed-text-unhide'  => "Hierdie weergawe van die blad word '''onderdruk'''.
 Details kan moontlik in die [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} logboek van onderdrukte weergawes] gesien word.
 As administrateur kan u, as u wil, na [$1 die verskille kyk].",
@@ -1695,9 +1700,9 @@ U kan miskien selfs tydens 'n minder besige tyd weer probeer.",
 'upload_source_file' => " ('n lêer op u rekenaar)",
 
 # Special:ListFiles
-'listfiles-summary'     => 'Die spesiale bladsy wys al die opgelaaide lêers.
-Die nuutste lêer word eerste vertoon.
-Klik op die opskrifte om die tabel anders te sorteer.',
+'listfiles-summary'     => 'Hierdie spesiale bladsy wys al die opgelaaide lêers.
+Die nuutste lêers word heel bo vertoon.
+Kliek op die opskrifte om die tabel te hersorteer.',
 'listfiles_search_for'  => 'Soek vir medianaam:',
 'imgfile'               => 'lêer',
 'listfiles'             => 'Lêerlys',
@@ -1893,7 +1898,7 @@ Elke ry bevat skakels na die eerste en die tweede aanstuur, asook die eerste re�
 'listusers-editsonly'     => 'Slegs gebruikers met wysigings',
 'listusers-creationsort'  => 'Sorteer volgens registrasiedatum',
 'usereditcount'           => '$1 {{PLURAL:$1|wysiging|wysigings}}',
-'usercreated'             => 'geskep op $1 om $2',
+'usercreated'             => '{{GENDER:$3|Geregistreer}} op $1 om $2',
 'newpages'                => 'Nuwe bladsye',
 'newpages-username'       => 'Gebruikersnaam:',
 'ancientpages'            => 'Oudste bladsye',
@@ -2175,14 +2180,14 @@ Gaan een bladsy terug, herlaai die bladsy en probeer dan weer.",
 
 # Protect
 'protectlogpage'              => 'Beskermlogboek',
-'protectlogtext'              => "Hieronder is 'n lys van bladsye wat onlangs beveilig is, of waarvan die beveiliging opgehef is.
+'protectlogtext'              => "Hieronder is 'n lys van veranderinge wat aan die beveilig van bladsye aangebring is.
 Sien die [[Special:ProtectedPages|lys van beveiligde bladsye]] vir alle bladsye wat tans operasioneel beveilig is.",
 'protectedarticle'            => 'het [[$1]] beskerm',
 'modifiedarticleprotection'   => 'Die beskermingsvlak vir "[[$1]]" is gewysig',
 'unprotectedarticle'          => 'het beskerming van [[$1]] verwyder',
 'movedarticleprotection'      => 'het beskermings-instellings vanaf "[[$2]]" na "[[$1]]" geskuif',
 'protect-title'               => 'Beskerm "$1"',
-'prot_1movedto2'              => '[[$1]] geskuif na [[$2]]',
+'prot_1movedto2'              => 'het [[$1]] geskuif na [[$2]]',
 'protect-legend'              => 'Bevestig beskerming',
 'protectcomment'              => 'Rede:',
 'protectexpiry'               => 'Verval:',
@@ -2534,8 +2539,8 @@ Kies asseblief 'n ander naam.",
 'movepage-page-moved'          => 'Die bladsy $1 was na $2 geskuif.',
 'movepage-page-unmoved'        => 'Die bladsy $1 kon nie na $2 geskuif word nie.',
 'movepage-max-pages'           => 'Die maksimum van $1 {{PLURAL:$1|bladsy|bladsye}} is geskuif. Die oorblywende bladsye na nie outomaties geskuif word nie.',
-'1movedto2'                    => '[[$1]] geskuif na [[$2]]',
-'1movedto2_redir'              => '[[$1]] geskuif na [[$2]] oor bestaande aanstuur',
+'1movedto2'                    => 'het [[$1]] geskuif na [[$2]]',
+'1movedto2_redir'              => 'het [[$1]] geskuif na [[$2]] oor bestaande aanstuur',
 'move-redirect-suppressed'     => 'aanstuur is onderdruk',
 'movelogpage'                  => 'Skuiflogboek',
 'movelogpagetext'              => "Hier onder is 'n lys van geskuifde bladsye.",
@@ -2686,7 +2691,7 @@ Die lêer is slegs gedeeltelik opgelaai.',
 'tooltip-ca-viewsource'           => 'Hierdie bladsy is beskerm. U kan die bronteks besigtig.',
 'tooltip-ca-history'              => 'Ouer weergawes van hierdie bladsy.',
 'tooltip-ca-protect'              => 'Beskerm hierdie bladsy',
-'tooltip-ca-unprotect'            => 'Verwyder beskerming vir die bladsy',
+'tooltip-ca-unprotect'            => 'Wysig beskerming van die bladsy',
 'tooltip-ca-delete'               => 'Skrap hierdie bladsy',
 'tooltip-ca-undelete'             => 'Herstel die bydraes aan hierdie bladsy voordat dit geskrap is',
 'tooltip-ca-move'                 => 'Skuif hierdie bladsy',
@@ -2939,9 +2944,9 @@ Ander velde sal versteek wees.
 'exif-spectralsensitivity'         => 'Spektrale gevoeligheid',
 'exif-isospeedratings'             => 'ISO/ASA-waarde',
 'exif-oecf'                        => 'Opto-elektroniese konversiefaktor',
-'exif-shutterspeedvalue'           => 'Sluitersnelheid',
-'exif-aperturevalue'               => 'Diafragma',
-'exif-brightnessvalue'             => 'Helderheid',
+'exif-shutterspeedvalue'           => 'Sluitersnelheid in APEX',
+'exif-aperturevalue'               => 'Diafragma in APEX',
+'exif-brightnessvalue'             => 'Helderheid in APEX',
 'exif-exposurebiasvalue'           => 'Beligtingskompensasie',
 'exif-maxaperturevalue'            => 'Maksimale diafragma-opening',
 'exif-subjectdistance'             => 'Afstand na onderwerp',
@@ -3352,10 +3357,8 @@ Saam met die program moes u \'n [{{SERVER}}{{SCRIPTPATH}}/COPYING kopie van van 
 'filepath'         => 'Lêerpad',
 'filepath-page'    => 'Lêer:',
 'filepath-submit'  => 'OK',
-'filepath-summary' => 'Die spesiale bladsy wys die volledige pad vir \'n lêer.
-Beelde word in hulle volle resolusie gewys. Ander lêertipes word direk met hulle MIME-geskakelde programme geopen.
-
-Sleutel die lêernaam in sonder die "{{ns:file}}:" voorvoegsel.',
+'filepath-summary' => "Die spesiale bladsy wys die volledige pad vir 'n lêer.
+Beelde word in hulle volle resolusie gewys. Ander lêertipes word direk met hulle MIME-geskakelde programme geopen.",
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch'          => 'Soek duplikaat lêers',

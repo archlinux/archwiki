@@ -18,6 +18,7 @@
  * @author Harald Khan
  * @author Jon Harald Søby
  * @author Jorunn
+ * @author Marinsb
  * @author Najami
  * @author Nghtwlkr
  * @author Olve Utne
@@ -309,10 +310,11 @@ $messages = array(
 'tog-enotifminoredits'        => 'Send e-post også for småplukk',
 'tog-enotifrevealaddr'        => 'Vis e-postadressa mi i endrings-e-post',
 'tog-shownumberswatching'     => 'Vis kor mange som overvakar sida',
-'tog-oldsig'                  => 'Førehandsvisning av noverande signatur:',
+'tog-oldsig'                  => 'Noverande signatur:',
 'tog-fancysig'                => 'Handsam signaturar som wikitekst (utan automatisk lenking)',
-'tog-externaleditor'          => 'Eksternt handsamingsprogram som standard',
-'tog-externaldiff'            => 'Eksternt skilnadprogram som standard',
+'tog-externaleditor'          => 'Bruk eit eksternt handsamingsprogram som standard (berre for vidarekomne, krev eit spesielt oppsett på maskina di. [http://www.mediawiki.org/wiki/Manual:External_editors Meir informasjon.])',
+'tog-externaldiff'            => 'Bruk eit eksternt skilnadprogram som standard (berre for vidarekomne, krev eit spesielt oppsett på maskina di.
+[http://www.mediawiki.org/wiki/Manual:External_editors Meir informasjon.])',
 'tog-showjumplinks'           => 'Slå på «gå til»-lenkjer',
 'tog-uselivepreview'          => 'Bruk levande førehandsvising (eksperimentelt JavaScript)',
 'tog-forceeditsummary'        => 'Spør meg når eg ikkje har skrive noko i endringssamandraget',
@@ -447,7 +449,7 @@ $messages = array(
 'vector-action-move'             => 'Flytt',
 'vector-action-protect'          => 'Vern',
 'vector-action-undelete'         => 'Gjenopprett',
-'vector-action-unprotect'        => 'Opphev vern',
+'vector-action-unprotect'        => 'Endra vern',
 'vector-simplesearch-preference' => 'Slå på betra søkjeframlegg (einast i Vector-drakta)',
 'vector-view-create'             => 'Opprett',
 'vector-view-edit'               => 'Endre',
@@ -483,8 +485,8 @@ $messages = array(
 'protect'           => 'Vern',
 'protect_change'    => 'endre',
 'protectthispage'   => 'Vern denne sida',
-'unprotect'         => 'Fjern vern',
-'unprotectthispage' => 'Fjern vern av denne sida',
+'unprotect'         => 'Endra vern',
+'unprotectthispage' => 'Endra vernet av sida',
 'newpage'           => 'Ny side',
 'talkpage'          => 'Diskuter sida',
 'talkpagelinktext'  => 'Diskusjon',
@@ -528,8 +530,8 @@ $1',
 'copyrightpage'        => '{{ns:project}}:Opphavsrett',
 'currentevents'        => 'Aktuelt',
 'currentevents-url'    => 'Project:Aktuelt',
-'disclaimers'          => 'Vilkår',
-'disclaimerpage'       => 'Project:Vilkår',
+'disclaimers'          => 'Atterhald',
+'disclaimerpage'       => 'Project:Atterhald',
 'edithelp'             => 'Hjelp til endring',
 'edithelppage'         => 'Help:Endring',
 'helppage'             => 'Help:Innhald',
@@ -671,7 +673,7 @@ Hugs at du kan endre på [[Special:Preferences|innstillingane]] dine.',
 'yourname'                   => 'Brukarnamn:',
 'yourpassword'               => 'Passord:',
 'yourpasswordagain'          => 'Skriv opp att passordet',
-'remembermypassword'         => 'Hugs innlogginga mi på denne datamaskinen (i høgst {{PLURAL:$1|éin dag|$1 dagar}})',
+'remembermypassword'         => 'Hugs innlogginga mi på denne datamaskinen (høgst {{PLURAL:$1|éin dag|$1 dagar}})',
 'securelogin-stick-https'    => 'Fortset HTTPS-tilkopling etter innlogging.',
 'yourdomainname'             => 'Domenet ditt',
 'externaldberror'            => 'Det var anten ein ekstern databasefeil i tilgjengekontrollen, eller du har ikkje løyve til å oppdatere den eksterne kontoen din.',
@@ -691,7 +693,7 @@ Hugs at du kan endre på [[Special:Preferences|innstillingane]] dine.',
 'createaccountmail'          => 'over e-post',
 'createaccountreason'        => 'Årsak:',
 'badretype'                  => 'Passorda du skreiv inn er ikkje like.',
-'userexists'                 => 'Brukarnamnet er alt i bruk. Vel eit anna.',
+'userexists'                 => 'Brukarnamnet er alt i bruk. Vel eit anna brukarnamn.',
 'loginerror'                 => 'Innloggingsfeil',
 'createaccounterror'         => 'Kunne ikkje oppretta kontoen:  $1',
 'nocookiesnew'               => 'Brukarkontoen vart oppretta, men du er ikkje innlogga. {{SITENAME}} bruker informasjonskapslar for å logge inn brukarar,
@@ -862,7 +864,7 @@ eller <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}
 'userpage-userdoesnotexist-view'   => 'Brukarkontoen «$1» er ikkje oppretta.',
 'blocked-notice-logextract'        => 'Denne brukaren er for tida blokkert.
 Det siste elementet i blokkeringsloggen er oppgjeve nedanfor:',
-'clearyourcache'                   => "'''Merk: Etter lagring vil det kanskje vera naudsynt at nettlesaren slettar mellomlageret sitt for at endringane skal tre i kraft.''' '''Firefox og Safari:''' Hald ''Shift'' nede medan du trykkjer anten ''Ctrl-F5'' eller ''Ctrl-R'' (''Command-R'' på Mac). '''Konqueror:''' Trykk ''Oppdater'' eller på ''F5''. '''Opera:''' Tøm mellomlageret i ''Verktøy → Innstillingar''. '''Internet Explorer:''' Hald nede ''Ctrl'' medan du trykkjer ''Oppdater'', eler trykk ''Ctrl-F5.''",
+'clearyourcache'                   => "Merk: Etter lagring vil det kanskje vera naudsynt at nettlesaren slettar mellomlageret sitt for at endringane skal tre i kraft.''' '''Firefox og Safari:''' Hald ''Shift'' nede medan du trykkjer anten ''Ctrl-F5'' eller ''Ctrl-R'' (''Command-R'' på Mac). '''Konqueror:''' Trykk ''Oppdater'' eller på ''F5''. '''Opera:''' Tøm mellomlageret i ''Verktøy → Innstillingar''. '''Internet Explorer:''' Hald nede ''Ctrl'' medan du trykkjer ''Oppdater'', eler trykk ''Ctrl-F5.''",
 'usercssyoucanpreview'             => "'''Tips:''' Bruk «{{int:showpreview}}»-knappen for å teste den nye CSS- eller JavaScript-koden din før du lagrar.",
 'userjsyoucanpreview'              => "''Tips:''' Bruk «{{int:showpreview}}»-knappen for å teste den nye CSS- eller JavaScript-koden din før du lagrar.",
 'usercsspreview'                   => "'''Hugs at dette berre er ei førehandsvising av din eigen CSS og at han ikkje er lagra enno!'''",
@@ -976,7 +978,7 @@ Desse parameterane har vorte utelatne.',
 Grunnen som vart gjeven av $3 er ''$2''",
 
 # History pages
-'viewpagelogs'           => 'Vis loggane for denne sida',
+'viewpagelogs'           => 'Vis loggane for sida',
 'nohistory'              => 'Det finst ikkje nokon historikk for denne sida.',
 'currentrev'             => 'Versjonen no',
 'currentrev-asof'        => 'Versjonen no frå $1',
@@ -1014,12 +1016,12 @@ Det kan vere detaljar i [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}
 'rev-deleted-text-unhide'     => "Denne sideversjonen er vorten '''sletta'''.
 Det finst kanskje detaljar i [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} sletteloggen].
 Som administrator kan du framleis [$1 sjå denne versjonen] om du ynskjer å halde fram.",
-'rev-suppressed-text-unhide'  => "Denne versjonen har vorten '''utelatt'''.
+'rev-suppressed-text-unhide'  => "Denne versjonen har vorten '''gøymd'''.
 Det finst kanskje meir informasjon i [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} utelatingsloggen].
 Som administrator kan du framleis [$1 sjå versjonen] om du ynskjer å halde fram.",
 'rev-deleted-text-view'       => "Denne sideversjonen er vorten '''sletta'''.
 Som administrator kan du sjå han. Det finst kanskje detaljar i [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} sletteloggen].",
-'rev-suppressed-text-view'    => "Denne sideversjonen har vorten '''utelatt'''.
+'rev-suppressed-text-view'    => "Denne sideversjonen har vorten '''gøymd'''.
 Som administrator kan du sjå han. Det finst kanskje meir informasjon i [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} utelatingsloggen].",
 'rev-deleted-no-diff'         => "Du kan ikkje vise denne skilnaden fordi ein av versjonane er vorten '''sletta'''.
 Det finst kanskje detaljar i [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} sletteloggen].",
@@ -1055,7 +1057,7 @@ Andre administratorar på {{SITENAME}} kan framleis sjå det gøymde innhaldet o
 * Upassanda personleg informasjon
 *: ''heimeadresser og -telefonnummer,  personnummer, osb.''",
 'revdelete-legend'            => 'Vel avgrensing for synlegdom',
-'revdelete-hide-text'         => 'Gøym endringssamandraga',
+'revdelete-hide-text'         => 'Gøym versjonsteksten',
 'revdelete-hide-image'        => 'Skjul filinnhald',
 'revdelete-hide-name'         => 'Gøym handling og sidenamn',
 'revdelete-hide-comment'      => 'Gøym endringssamandraga',
@@ -1312,7 +1314,7 @@ Dette kan ikke tilbakestillast.',
 'prefs-registration'            => 'Registreringstid:',
 'yourrealname'                  => 'Verkeleg namn:',
 'yourlanguage'                  => 'Språk:',
-'yourvariant'                   => 'Språkvariant',
+'yourvariant'                   => 'Språkvariant for innhald:',
 'yournick'                      => 'Signatur:',
 'prefs-help-signature'          => 'Kommentarar på diskusjonssider bør alltid signerast med «<nowiki>~~~~</nowiki>», som vil konverterast til signaturen din med tidspunkt.',
 'badsig'                        => 'Ugyldig råsignatur, sjekk HTML-kodinga.',
@@ -1515,7 +1517,7 @@ Du kan òg velje å la andre brukarar kontakte deg på e-post via brukarsida di 
 'rcshowhideanons'                   => '$1 anonyme brukarar',
 'rcshowhidepatr'                    => '$1 godkjende endringar',
 'rcshowhidemine'                    => '$1 endringane mine',
-'rclinks'                           => 'Vis siste $1 endringar dei siste $2 dagane<br />$3',
+'rclinks'                           => 'Vis dei siste $1 endringane dei siste $2 dagane<br />$3',
 'diff'                              => 'skil',
 'hist'                              => 'hist',
 'hide'                              => 'Gøym',
@@ -1750,7 +1752,7 @@ For best tryggleik, er img_auth.php sett ut av funksjon.',
 'filehist-filesize'         => 'Filstorleik',
 'filehist-comment'          => 'Kommentar',
 'filehist-missing'          => 'Fila manglar',
-'imagelinks'                => 'Fillenkjer',
+'imagelinks'                => 'Filbruk',
 'linkstoimage'              => '{{PLURAL:$1|Den følgjande sida|Dei følgjande $1 sidene}} har lenkjer til denne fila:',
 'linkstoimage-more'         => 'Meir enn $1 {{PLURAL:$1|side|sider}} lenkjer til denne fila.
 Følgjande liste viser {{PLURAL:$1|den første sida|dei $1 første sidene}}.
@@ -2178,7 +2180,8 @@ Den siste endringa vart gjort av [[User:$3|$3]] ([[User talk:$3|brukardiskusjon]
 
 # Protect
 'protectlogpage'              => 'Vernelogg',
-'protectlogtext'              => 'Dette er ei liste over sider som er vortne verna eller har fått fjerna vern. [[Special:ProtectedPages|Verna side]] for meir info.',
+'protectlogtext'              => 'Nedanfor er ei liste over endringar i vern.
+Sjå [[Special:ProtectedPages|lista over verna sider]] for lista over vern som nett no er verksame.',
 'protectedarticle'            => 'verna «[[$1]]»',
 'modifiedarticleprotection'   => 'endra nivået på vernet av «[[$1]]»',
 'unprotectedarticle'          => 'fjerna vern av «[[$1]]»',
@@ -2494,7 +2497,7 @@ I desse falla lyt du flytte eller flette saman sida manuelt.",
 'newtitle'                     => 'Til ny tittel:',
 'move-watch'                   => 'Overvak denne sida',
 'movepagebtn'                  => 'Flytt side',
-'pagemovedsub'                 => 'Flyttinga er gjennomført',
+'pagemovedsub'                 => 'Flyttinga er gjennomførd',
 'movepage-moved'               => "'''«$1» er flytt til «$2»'''",
 'movepage-moved-redirect'      => 'Det er oppretta ei omdirigering.',
 'movepage-moved-noredirect'    => 'Det vart ikkje oppretta ei omdirigering.',
@@ -2656,7 +2659,7 @@ Vitja [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation] og [ht
 'tooltip-ca-viewsource'           => 'Denne sida er verna, men du kan sjå kjeldeteksten.',
 'tooltip-ca-history'              => 'Eldre versjonar av denne sida',
 'tooltip-ca-protect'              => 'Vern denne sida',
-'tooltip-ca-unprotect'            => 'Ta vekk skrivevernet for denne sida',
+'tooltip-ca-unprotect'            => 'Endra vernet av sida',
 'tooltip-ca-delete'               => 'Slett denne sida',
 'tooltip-ca-undelete'             => 'Attopprett denne sida',
 'tooltip-ca-move'                 => 'Flytt denne sida',
@@ -2794,7 +2797,7 @@ Vitja [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation] og [ht
 
 # Patrolling
 'markaspatrolleddiff'                 => 'Merk som patruljert',
-'markaspatrolledtext'                 => 'Merk denne innhaldssida som patruljert',
+'markaspatrolledtext'                 => 'Merk innhaldssida som patruljert',
 'markedaspatrolled'                   => 'Merk som patruljert',
 'markedaspatrolledtext'               => 'Den valde versjonen av [[:$1]] er vorten merkt som patruljert.',
 'rcpatroldisabled'                    => 'Siste-endringar-patruljering er deaktivert',
@@ -2930,9 +2933,9 @@ Dei andre felta er gøymde som standard.
 'exif-spectralsensitivity'         => 'Spektralsensitivitet',
 'exif-isospeedratings'             => 'Lyskjensle (ISO)',
 'exif-oecf'                        => 'Optoelektronisk omregningsfaktor',
-'exif-shutterspeedvalue'           => 'Lukkarfart',
-'exif-aperturevalue'               => 'Blendartal',
-'exif-brightnessvalue'             => 'Lysstyrke',
+'exif-shutterspeedvalue'           => 'APEX-lukkarfart',
+'exif-aperturevalue'               => 'APEX-blendartal',
+'exif-brightnessvalue'             => 'APEX-lysstyrke',
 'exif-exposurebiasvalue'           => 'Eksponeringsinnstilling',
 'exif-maxaperturevalue'            => 'Maksimal blendar',
 'exif-subjectdistance'             => 'Motivavstand',
@@ -3008,9 +3011,9 @@ Dei andre felta er gøymde som standard.
 'exif-orientation-3' => 'Rotert 180°',
 'exif-orientation-4' => 'Spegla loddrett',
 'exif-orientation-5' => 'Rotert 90° motsols og spegla vassrett',
-'exif-orientation-6' => 'Rotert 90° medsols',
+'exif-orientation-6' => 'Rotert 90° motsols',
 'exif-orientation-7' => 'Rotert 90° medsols og spegla loddrett',
-'exif-orientation-8' => 'Rotert 90° motsols',
+'exif-orientation-8' => 'Rotert 90° medsols',
 
 'exif-planarconfiguration-1' => 'grovformat',
 'exif-planarconfiguration-2' => 'planærformat',
@@ -3211,7 +3214,7 @@ Du må stadfeste at du verkeleg vil nyopprette denne sida.",
 'recreate'            => 'Attopprett',
 
 # action=purge
-'confirm_purge_button' => 'Ja',
+'confirm_purge_button' => 'OK',
 'confirm-purge-top'    => 'Vil du slette tenarane sin mellomlagra versjon av denne sida?',
 'confirm-purge-bottom' => 'Reinsing av ei side slettar mellomlageret og tvinger fram den nyaste versjonen.',
 
@@ -3286,6 +3289,7 @@ Du kan òg [[Special:Watchlist/edit|nytte standardverktøyet]].',
 'version-specialpages'             => 'Spesialsider',
 'version-parserhooks'              => 'Parsertillegg',
 'version-variables'                => 'Variablar',
+'version-skins'                    => 'Draktar',
 'version-other'                    => 'Anna',
 'version-mediahandlers'            => 'Mediahandsamarar',
 'version-hooks'                    => 'Tilleggsuttrykk',

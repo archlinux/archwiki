@@ -24,6 +24,7 @@
  * @author Byrial
  * @author Claudia Hattitten
  * @author Codex Sinaiticus
+ * @author Crt
  * @author Dalibor Bosits
  * @author Darth Kule
  * @author Deadelf
@@ -46,6 +47,7 @@
  * @author Kizito
  * @author Klenje
  * @author Klutzy
+ * @author Krinkle
  * @author Kwj2772
  * @author Leinad
  * @author Lejonel
@@ -67,6 +69,7 @@
  * @author Nike
  * @author Node ue
  * @author Octahedron80
+ * @author Od1n
  * @author Onecountry
  * @author OsamaK
  * @author PhiLiP
@@ -100,85 +103,87 @@
  * @author Vinhtantran
  * @author Waldir
  * @author Whym
+ * @author Yekrats
  * @author Yyy
+ * @author Žekřil71pl
  * @author פוילישער
  */
 
 $messages = array(
 # User preference toggles
-'tog-underline'               => "[[Special:Preferences]], tab 'Misc'. Offers user a choice how to underline links.",
-'tog-highlightbroken'         => "[[Special:Preferences]], tab 'Appearance'. Offers user a choice how format internal links to non-existing pages. As red links or with a trailing question mark.",
-'tog-justify'                 => "[[Special:Preferences]], tab 'Appearance'. Offers user a choice to justify paragraphs or not.",
-'tog-hideminor'               => "[[Special:Preferences]], tab 'Recent changes'. Offers user to hide minor edits in recent changes or not.",
-'tog-hidepatrolled'           => 'Option in Recent changes tab of [[Special:Preferences]] (if [[mw:Manual:$wgUseRCPatrol|$wgUseRCPatrol]] is enabled)',
-'tog-newpageshidepatrolled'   => 'Toggle in [[Special:Preferences]], section "Recent changes" (if [[mw:Manual:$wgUseRCPatrol|$wgUseRCPatrol]] is enabled)',
-'tog-extendwatchlist'         => "[[Special:Preferences]], tab 'Watchlist'. Offers user to show all applicable changes in watchlist (by default only the last change to a page on the watchlist is shown).",
-'tog-usenewrc'                => "[[Special:Preferences]], tab 'Recent changes'. Offers user to use alternative reprsentation of [[Special:RecentChanges]].",
-'tog-numberheadings'          => "[[Special:Preferences]], tab 'Misc'. Offers numbered headings on content pages to user.",
-'tog-showtoolbar'             => "[[Special:Preferences]], tab 'Edit'. Offers user to show edit toolbar in page edit screen.
+'tog-underline'               => "[[Special:Preferences]], tab 'Misc'. Offers user a choice how to underline links. {{Gender}}",
+'tog-highlightbroken'         => "[[Special:Preferences]], tab 'Appearance'. Offers user a choice how format internal links to non-existing pages. As red links or with a trailing question mark. {{Gender}}",
+'tog-justify'                 => "[[Special:Preferences]], tab 'Appearance'. Offers user a choice to justify paragraphs or not. {{Gender}}",
+'tog-hideminor'               => "[[Special:Preferences]], tab 'Recent changes'. Offers user to hide minor edits in recent changes or not. {{Gender}}",
+'tog-hidepatrolled'           => 'Option in Recent changes tab of [[Special:Preferences]] (if [[mw:Manual:$wgUseRCPatrol|$wgUseRCPatrol]] is enabled). {{Gender}}',
+'tog-newpageshidepatrolled'   => 'Toggle in [[Special:Preferences]], section "Recent changes" (if [[mw:Manual:$wgUseRCPatrol|$wgUseRCPatrol]] is enabled). {{Gender}}',
+'tog-extendwatchlist'         => "[[Special:Preferences]], tab 'Watchlist'. Offers user to show all applicable changes in watchlist (by default only the last change to a page on the watchlist is shown). {{Gender}}",
+'tog-usenewrc'                => "[[Special:Preferences]], tab 'Recent changes'. Offers user to use alternative reprsentation of [[Special:RecentChanges]]. {{Gender}}",
+'tog-numberheadings'          => "[[Special:Preferences]], tab 'Misc'. Offers numbered headings on content pages to user. {{Gender}}",
+'tog-showtoolbar'             => "[[Special:Preferences]], tab 'Edit'. Offers user to show edit toolbar in page edit screen. {{Gender}}
 
 This is the toolbar: [[Image:Toolbar.png]]",
-'tog-editondblclick'          => "[[Special:Preferences]], tab 'Edit'. Offers user to open edit page on double click.",
-'tog-editsection'             => "[[Special:Preferences]], tab 'Edit'. Offers user to add links in sub headings for editing sections.",
-'tog-editsectiononrightclick' => "[[Special:Preferences]], tab 'Edit'. Offers user to edit a section by clicking on a section title.",
-'tog-showtoc'                 => "[[Special:Preferences]], tab 'Misc'. Offers user to show a table of contents automatically if a page has more than three headings.",
-'tog-rememberpassword'        => "{{Identical|Remember my login on this computer}}[[Special:Preferences]], tab 'User profile', section 'Change password'. Offers user remember login details. Parameters:
+'tog-editondblclick'          => "[[Special:Preferences]], tab 'Edit'. Offers user to open edit page on double click. {{Gender}}",
+'tog-editsection'             => "[[Special:Preferences]], tab 'Edit'. Offers user to add links in sub headings for editing sections. {{Gender}}",
+'tog-editsectiononrightclick' => "[[Special:Preferences]], tab 'Edit'. Offers user to edit a section by clicking on a section title. {{Gender}}",
+'tog-showtoc'                 => "[[Special:Preferences]], tab 'Misc'. Offers user to show a table of contents automatically if a page has more than three headings. {{Gender}}",
+'tog-rememberpassword'        => "{{Identical|Remember my login on this computer}}[[Special:Preferences]], tab 'User profile', section 'Change password'. Offers user remember login details.  {{Gender}} Parameters:
 * $1 is the number of days the login details are remembered.",
-'tog-watchcreations'          => "[[Special:Preferences]], tab 'Watchlist'. Offers user to add created pages to watchlist.",
-'tog-watchdefault'            => "[[Special:Preferences]], tab 'Watchlist'. Offers user to add edited pages to watchlist.",
-'tog-watchmoves'              => "[[Special:Preferences]], tab 'Watchlist'. Offers user to add moved pages to watchlist.",
-'tog-watchdeletion'           => "[[Special:Preferences]], tab 'Watchlist'. Offers user to add deleted pages to watchlist.",
-'tog-minordefault'            => "[[Special:Preferences]], tab 'Edit'. Offers user to mark all edits minor by default.",
-'tog-previewontop'            => 'Toggle option used in [[Special:Preferences]].',
-'tog-previewonfirst'          => 'Toggle option used in [[Special:Preferences]].',
-'tog-nocache'                 => "[[Special:Preferences]], tab 'Misc.'. Offers the user the option of disabling caching of pages in the browser",
-'tog-enotifwatchlistpages'    => 'Option in [[Special:Preferences]] > {{int:prefs-personal}} > {{int:email}}.',
-'tog-enotifusertalkpages'     => 'Option in [[Special:Preferences]] > {{int:prefs-personal}} > {{int:email}}.',
-'tog-enotifminoredits'        => 'Option in [[Special:Preferences]] > {{int:prefs-personal}} > {{int:email}}.
+'tog-watchcreations'          => "[[Special:Preferences]], tab 'Watchlist'. Offers user to add created pages to watchlist. {{Gender}}",
+'tog-watchdefault'            => "[[Special:Preferences]], tab 'Watchlist'. Offers user to add edited pages to watchlist. {{Gender}}",
+'tog-watchmoves'              => "[[Special:Preferences]], tab 'Watchlist'. Offers user to add moved pages to watchlist. {{Gender}}",
+'tog-watchdeletion'           => "[[Special:Preferences]], tab 'Watchlist'. Offers user to add deleted pages to watchlist. {{Gender}}",
+'tog-minordefault'            => "[[Special:Preferences]], tab 'Edit'. Offers user to mark all edits minor by default.  {{Gender}}",
+'tog-previewontop'            => 'Toggle option used in [[Special:Preferences]]. {{Gender}}',
+'tog-previewonfirst'          => 'Toggle option used in [[Special:Preferences]]. {{Gender}}',
+'tog-nocache'                 => "[[Special:Preferences]], tab 'Misc.'. Offers the user the option of disabling caching of pages in the browser. {{Gender}}",
+'tog-enotifwatchlistpages'    => 'Option in [[Special:Preferences]] > {{int:prefs-personal}} > {{int:email}}. {{Gender}}',
+'tog-enotifusertalkpages'     => 'Option in [[Special:Preferences]] > {{int:prefs-personal}} > {{int:email}}. {{Gender}}',
+'tog-enotifminoredits'        => 'Option in [[Special:Preferences]] > {{int:prefs-personal}} > {{int:email}}. {{Gender}}
 
 Is only shown if {{msg-mw|tog-enotifusertalkpages}} or/and {{msg-mw|tog-enotifwatchlistpages}} are shown.',
-'tog-enotifrevealaddr'        => 'Toggle option used in [[Special:Preferences]] > {{int:prefs-personal}} > {{int:email}}.',
-'tog-shownumberswatching'     => 'Toggle option used in [[Special:Preferences]], in the section for recent changes. When this option is activated, the entries in recent changes includes the number of users who watch pages.',
-'tog-oldsig'                  => 'Used in [[Special:Preferences]], tab User profile.',
-'tog-fancysig'                => 'In user preferences under the signature box',
-'tog-externaleditor'          => "[[Special:Preferences]], tab 'Edit'. Offers user to use an external editor by default.",
-'tog-externaldiff'            => "[[Special:Preferences]], tab 'Edit'. Offers user to use an external diff program by default.",
-'tog-showjumplinks'           => 'Toggle option used in [[Special:Preferences]]. The "jump to" part should be the same with {{msg-mw|jumpto}} (or you can use <nowiki>{{int:jumpto}}</nowiki>). Thess links are shown in some of the older skins as "jump to: navigation, search" but they are hidden by default (you can enable them with this option).',
-'tog-uselivepreview'          => 'Toggle option used in [[Special:Preferences]]. Live preview is an experimental feature (unavailable by default) to use edit preview without loading the page again.',
-'tog-forceeditsummary'        => "Toggle option used in [[Special:Preferences]] to force an edit ''{{msg-mw|summary}}''.",
-'tog-watchlisthideown'        => "[[Special:Preferences]], tab 'Watchlist'. Offers user to hide own edits from watchlist.",
-'tog-watchlisthidebots'       => "[[Special:Preferences]], tab 'Watchlist'. Offers user to hide bot edits from watchlist.",
-'tog-watchlisthideminor'      => "[[Special:Preferences]], tab 'Watchlist'. Offers user to hide minor edits from watchlist.",
-'tog-watchlisthideliu'        => "Option in tab 'Watchlist' of [[Special:Preferences]]",
-'tog-watchlisthideanons'      => "Option in tab 'Watchlist' of [[Special:Preferences]]",
-'tog-watchlisthidepatrolled'  => 'Option in Watchlist tab of [[Special:Preferences]]',
+'tog-enotifrevealaddr'        => 'Toggle option used in [[Special:Preferences]] > {{int:prefs-personal}} > {{int:email}}. {{Gender}}',
+'tog-shownumberswatching'     => 'Toggle option used in [[Special:Preferences]], in the section for recent changes. When this option is activated, the entries in recent changes includes the number of users who watch pages. {{Gender}}',
+'tog-oldsig'                  => 'Used in [[Special:Preferences]], tab User profile. {{Gender}}',
+'tog-fancysig'                => 'In user preferences under the signature box.  {{Gender}}',
+'tog-externaleditor'          => "[[Special:Preferences]], tab 'Edit'. Offers user to use an external editor by default. {{Gender}}",
+'tog-externaldiff'            => "[[Special:Preferences]], tab 'Edit'. Offers user to use an external diff program by default. {{Gender}}",
+'tog-showjumplinks'           => 'Toggle option used in [[Special:Preferences]]. The "jump to" part should be the same with {{msg-mw|jumpto}} (or you can use <nowiki>{{int:jumpto}}</nowiki>). Thess links are shown in some of the older skins as "jump to: navigation, search" but they are hidden by default (you can enable them with this option). {{Gender}}',
+'tog-uselivepreview'          => 'Toggle option used in [[Special:Preferences]]. Live preview is an experimental feature (unavailable by default) to use edit preview without loading the page again. {{Gender}}',
+'tog-forceeditsummary'        => "Toggle option used in [[Special:Preferences]] to force an edit ''{{msg-mw|summary}}''. {{Gender}}",
+'tog-watchlisthideown'        => "[[Special:Preferences]], tab 'Watchlist'. Offers user to hide own edits from watchlist. {{Gender}}",
+'tog-watchlisthidebots'       => "[[Special:Preferences]], tab 'Watchlist'. Offers user to hide bot edits from watchlist. {{Gender}}",
+'tog-watchlisthideminor'      => "[[Special:Preferences]], tab 'Watchlist'. Offers user to hide minor edits from watchlist. {{Gender}}",
+'tog-watchlisthideliu'        => "Option in tab 'Watchlist' of [[Special:Preferences]]. {{Gender}}",
+'tog-watchlisthideanons'      => "Option in tab 'Watchlist' of [[Special:Preferences]]. {{Gender}}",
+'tog-watchlisthidepatrolled'  => 'Option in Watchlist tab of [[Special:Preferences]]. {{Gender}}',
 'tog-nolangconversion'        => 'In user preferences.',
-'tog-ccmeonemails'            => 'Option in [[Special:Preferences]] > {{int:prefs-personal}} > {{int:email}}.',
-'tog-diffonly'                => 'Toggle option used in [[Special:Preferences]].',
-'tog-showhiddencats'          => 'Toggle option used in [[Special:Preferences]].',
+'tog-ccmeonemails'            => 'Option in [[Special:Preferences]] > {{int:prefs-personal}} > {{int:email}}. {{Gender}}',
+'tog-diffonly'                => 'Toggle option used in [[Special:Preferences]]. {{Gender}}',
+'tog-showhiddencats'          => 'Toggle option used in [[Special:Preferences]]. {{Gender}}',
 'tog-noconvertlink'           => "{{optional}}
 
 ''(the message is considered optional because it is only used in wikis with language variants)''",
-'tog-norollbackdiff'          => "Option in [[Special:Preferences]], 'Misc' tab. Only shown for users with the rollback right. By default a diff is shown below the return screen of a rollback. Checking this preference toggle will suppress that.
+'tog-norollbackdiff'          => "Option in [[Special:Preferences]], 'Misc' tab. Only shown for users with the rollback right. By default a diff is shown below the return screen of a rollback. Checking this preference toggle will suppress that. {{Gender}}
 {{Identical|Rollback}}",
 
-'underline-always'  => 'Used in [[Special:Preferences]] (under "Misc"). This option means "always underline links", there are also options "never" and "browser default".
+'underline-always'  => 'Used in [[Special:Preferences]] (under "Misc"). This option means "always underline links", there are also options "never" and "browser default". {{Gender}}
 {{Identical|Always}}',
-'underline-never'   => 'Used in [[Special:Preferences]] (under "Misc"). This option means "never underline links", there are also options "always" and "browser default".
+'underline-never'   => 'Used in [[Special:Preferences]] (under "Misc"). This option means "never underline links", there are also options "always" and "browser default". {{Gender}}
 
 {{Identical|Never}}',
-'underline-default' => 'Used in [[Special:Preferences]] (under "Misc"). This option means "underline links as in your browser", there are also options "never" and "always".
+'underline-default' => 'Used in [[Special:Preferences]] (under "Misc"). This option means "underline links as in your browser", there are also options "never" and "always". {{Gender}}
 
 {{Identical|Browser default}}',
 
 # Font style option in Special:Preferences
-'editfont-style'     => 'Used in [[Special:Preferences]], tab Editing.',
-'editfont-default'   => 'Option used in [[Special:Preferences]], tab Editing.
+'editfont-style'     => 'Used in [[Special:Preferences]], tab Editing. {{Gender}}',
+'editfont-default'   => 'Option used in [[Special:Preferences]], tab Editing. {{Gender}}
 
 {{identical|Browser default}}',
-'editfont-monospace' => 'Option used in [[Special:Preferences]], tab Editing.',
-'editfont-sansserif' => 'Option used in [[Special:Preferences]], tab Editing.',
-'editfont-serif'     => 'Option used in [[Special:Preferences]], tab Editing.',
+'editfont-monospace' => 'Option used in [[Special:Preferences]], tab Editing. {{Gender}}',
+'editfont-sansserif' => 'Option used in [[Special:Preferences]], tab Editing. {{Gender}}',
+'editfont-serif'     => 'Option used in [[Special:Preferences]], tab Editing. {{Gender}}',
 
 # Dates
 'sunday'        => 'Name of the day of the week.',
@@ -251,36 +256,33 @@ Is only shown if {{msg-mw|tog-enotifusertalkpages}} or/and {{msg-mw|tog-enotifwa
 'jun'           => 'Abbreviation of June, the sixth month of the Gregorian calendar',
 'jul'           => 'Abbreviation of July, the seventh month of the Gregorian calendar',
 'aug'           => 'Abbreviation of August, the eighth month of the Gregorian calendar',
-'sep'           => 'Abbreviation of September, the nineth month of the Gregorian calendar',
+'sep'           => 'Abbreviation of September, the ninth month of the Gregorian calendar',
 'oct'           => 'Abbreviation of October, the tenth month of the Gregorian calendar',
 'nov'           => 'Abbreviation of November, the eleventh month of the Gregorian calendar',
 'dec'           => 'Abbreviation of December, the twelfth month of the Gregorian calendar',
 
 # Categories related messages
+'pagecategories'                 => 'Used in the categories section of pages. Is followed by a colon and a list of categories.',
 'category_header'                => 'In category description page',
+'subcategories'                  => 'Used as a header on category pages that have subcategories.',
 'category-media-header'          => 'In category description page',
 'category-empty'                 => 'The text displayed in category page when that category is empty',
+'hidden-categories'              => 'Used in the categories section of pages. Is followed by a colon and a list of categories.',
 'hidden-category-category'       => 'Name of the category where hidden categories will be listed.',
-'category-subcat-count'          => 'This message is displayed at the top of a category page showing the number of pages in the category.
-
+'category-subcat-count'          => 'This message is displayed at the top of a category page showing the number of pages in the category. Parameters:
 * $1: number of subcategories shown
 * $2: total number of subcategories in category',
-'category-subcat-count-limited'  => 'This message is displayed at the top of a category page showing the number of pages in the category when not all pages in a category are counted.
-
+'category-subcat-count-limited'  => 'This message is displayed at the top of a category page showing the number of pages in the category when not all pages in a category are counted. Parameters:
 * $1: number of subcategories shown',
-'category-article-count'         => 'This message is used on category pages.
-
+'category-article-count'         => 'This message is used on category pages. Parameters:
 * $1: number of pages shown
 * $2: total number of pages in category',
-'category-article-count-limited' => 'This message is displayed at the top of a category page showing the number of pages in the category when not all pages in a category are counted.
-
+'category-article-count-limited' => 'This message is displayed at the top of a category page showing the number of pages in the category when not all pages in a category are counted. Parameters:
 * $1: number of pages shown',
-'category-file-count'            => 'This message is displayed at the top of a category page showing the number of pages in the category.
-
+'category-file-count'            => 'This message is displayed at the top of a category page showing the number of pages in the category. Parameters:
 * $1: number of files shown
 * $2: total number of files in category',
-'category-file-count-limited'    => 'This message is displayed at the top of a category page showing the number of pages in the category when not all pages in a category are counted.
-
+'category-file-count-limited'    => 'This message is displayed at the top of a category page showing the number of pages in the category when not all pages in a category are counted. Parameters:
 * $1: number of files shown',
 'listingcontinuesabbrev'         => 'Shown in contiuation of each first letter group.
 See http://test.wikipedia.org/wiki/Category:Test_ko?uselang={{SUBPAGENAME}}, for example.',
@@ -305,7 +307,9 @@ Possible alternatives to the word 'content' are 'subject matter' or 'wiki subjec
 'moredotdotdot' => '{{Identical|More...}}',
 'mytalk'        => 'In the personal urls page section - right upper corner.',
 'anontalk'      => 'Link to the talk page appearing in [[mw:Help:Navigation#User_Links|user links]] for each anonymous users when [[mw:Manual:$wgShowIPinHeader|$wgShowIPinHeader]] is true.',
-'navigation'    => '{{Identical|Navigation}}',
+'navigation'    => 'This is shown as a section header in the sidebar of most skins.
+
+{{Identical|Navigation}}',
 'and'           => 'The translation for "and" appears in the [[Special:Version]] page, between the last two items of a list. If a comma is needed, add it at the beginning without a gap between it and the "&". <nowiki>&#32;</nowiki> is a blank space, one character long. Please leave it as it is.
 
 This can also appear in the credits page if the credits feature is enabled,for example [http://translatewiki.net/wiki/Support&action=credits the credits of the support page]. (To view any credits page type <nowiki>&action=credits</nowiki> at the end of any URL in the address bar.)
@@ -355,7 +359,7 @@ This can also appear in the credits page if the credits feature is enabled,for e
 
 {{Identical|Error}}',
 'returnto'          => '{{Identical|Return to $1}}',
-'tagline'           => 'Used to idenify the source of copied information. Do not change <nowiki>{{SITENAME}}</nowiki>.',
+'tagline'           => 'Used to identify the source of copied information. Do not change <nowiki>{{SITENAME}}</nowiki>.',
 'help'              => 'General text (noun) used in the sidebar (by default).
 
 See also [[MediaWiki:Helppage/{{SUBPAGENAME}}|{{int:helppage}}]] and [[MediaWiki:Edithelp/{{SUBPAGENAME}}|{{int:edithelp}}]].
@@ -390,13 +394,13 @@ Also used as title of [[Special:Search]] page in [[Special:SpecialPages]].
 'editthispage'      => 'This is the "edit" link as used in the skins Classic/Standard, Cologne Blue and Nostalgia. See {{msg|create-this-page}} for when the page does not exist.',
 'create-this-page'  => 'In the skins Classic/Standard, Cologne Blue and Nostalgia this is the text for the link leading to the edit form on pages that have not yet been created. See {{msg|editthispage}} for when the page already exists.
 {{Identical|Createpage}}',
-'delete'            => 'Name of the Delete tab shown for admins. Should be in the imperative mood.
+'delete'            => 'Name of the Delete tab shown for admins. Should be in the infinitive mood.
 
 {{Identical|Delete}}',
 'deletethispage'    => 'In the skins Classic/Standard, Cologne Blue and Nostalgia this is the text for link to delete the page in admin view.
 {{Identical|Delete this page}}',
 'undelete_short'    => "It is tab label. It's really can be named ''nstab-undelete''.",
-'protect'           => 'Name of protect tab displayed for admins
+'protect'           => 'Name of protect tab displayed for admins. Should be in the infinitive mood.
 
 {{Identical|Protect}}',
 'protect_change'    => 'Text on links for each entry in [[Special:ProtectedPages]] to change the protection of pages (only displayed to admins).
@@ -406,7 +410,7 @@ Also used as title of [[Special:Search]] page in [[Special:SpecialPages]].
 'unprotect'         => 'Name of unprotect tab displayed for admins
 
 {{Identical|Unprotect}}',
-'unprotectthispage' => 'In the skins Classic/Standard, Cologne Blue and Nostalgia this is the text for link to unprotect the page in admin view.
+'unprotectthispage' => 'In the skins Classic/Standard, Cologne Blue and Nostalgia this is the anchor text for the link to unprotect the page in admin view.
 {{Identical|Unprotect this page}}',
 'newpage'           => '{{Identical|New page}}',
 'talkpage'          => 'In the skins Classic/Standard, Cologne Blue and Nostalgia this is the text for link to discuss the page.',
@@ -518,7 +522,7 @@ The format is: "{{int:youhavenewmessagesmulti| [[MediaWiki:Newmessageslink/{{SUB
 'editsection-brackets'    => '{{optional}}',
 'editold'                 => '{{Identical|Edit}}',
 'viewsourceold'           => '{{Identical|View source}}',
-'editlink'                => 'Text dari pranala yang terlihat disebelah setiap templat yang dapat disunting (tidak di proteksi) pada daftar templat dibawah jendela penyuntingan. Lihat juga {{msg-mw|Viewsourcelink}}.
+'editlink'                => 'Teks dari pranala yang terlihat di sebelah setiap templat yang dapat disunting (tidak diproteksi) pada daftar templat di bawah jendela penyuntingan. Lihat juga {{msg-mw|Viewsourcelink}}.
 
 {{Identical|Edit}}',
 'viewsourcelink'          => 'Text of the link shown next to every uneditable (protected) template in the list of used templates below the edit window. See also {{msg-mw|Editlink}}.
@@ -749,7 +753,7 @@ Parameters:
 
 {{Identical|Reset password}}',
 'oldpassword'               => "Used on the 'User profile' tab of 'my preferences'. This is the text next to an entry box for the old password in the 'change password' section.",
-'newpassword'               => 'ନୂଆ ପାସବାର୍ଡ଼:',
+'newpassword'               => '{{Identical|New password}}',
 'retypenew'                 => "Appears on the 'User profile' tab of the 'Preferences' special page in the 'Change password' section. It appears next to the text box for entering the new password a second time.",
 'resetpass_submit'          => 'Submit button on [[Special:ChangePassword]]',
 'resetpass-submit-loggedin' => 'Button on [[Special:ResetPass]] to submit new password.
@@ -864,7 +868,8 @@ Parameters:
 See also {{msg-mw|Noarticletext-nopermission}}.',
 'noarticletext-nopermission'       => 'See also {{msg-mw|Noarticletext}}.',
 'userpage-userdoesnotexist'        => 'Error message displayed when trying to edit or create a page or a subpage that belongs to a user who is not registered on the wiki',
-'userpage-userdoesnotexist-view'   => 'Shown in user pages of non existing users. See for example [http://translatewiki.net/wiki/User:Foo User:Foo].',
+'userpage-userdoesnotexist-view'   => 'Shown in user pages of non existing users. See for example [http://translatewiki.net/wiki/User:Foo User:Foo]. Parameters:
+* $1 is a username.',
 'blocked-notice-logextract'        => 'Parameters:
 * $1 is the name of the blocked user (optional). Can be used for GENDER.',
 'clearyourcache'                   => 'Text at the top of .js/.css pages',
@@ -1072,8 +1077,16 @@ Possible alternative message - 'Restrictions could not be set on the visibility 
 'revdelete-uname'             => 'This message is used as parameter $1 in {{msg|revdelete-hid}} and {{msg|revdelete-unhid}} when hiding or unhiding the username for a revision or event.
 
 {{Identical|Username}}',
-'revdelete-restricted'        => 'This message is used as parameter $1 in {{msg|revdelete-log-message}} when setting visibility restrictions for administrators.',
-'revdelete-unrestricted'      => 'This message is used as parameter $1 in {{msg|revdelete-log-message}} when removing visibility restrictions for administrators.',
+'revdelete-restricted'        => 'This message is used as parameter $4 when setting visibility restrictions for administrators in:
+* {{msg-mw|logentry-delete-event}}
+* {{msg-mw|logentry-delete-revision}}
+* {{msg-mw|logentry-suppress-event}}
+* {{msg-mw|logentry-suppress-event}}',
+'revdelete-unrestricted'      => 'This message is used as parameter $4 when setting visibility restrictions for administrators in:
+* {{msg-mw|logentry-delete-event}}
+* {{msg-mw|logentry-delete-revision}}
+* {{msg-mw|logentry-suppress-event}}
+* {{msg-mw|logentry-suppress-event}}',
 'revdelete-hid'               => 'This message is used as parameter $1 in {{msg|revdelete-log-message}} when hiding revisions, and {{msg|logdelete-log-message}} when hiding information in the log entry about hiding revisions.
 
 Parameter $1 is either {{msg|revdelete-content}} (when hiding the page content), {{msg|revdelete-summary}} (when hiding the edit summary), {{msg|revdelete-uname}} (when hiding the user name), or a combination of these three messages.',
@@ -1279,7 +1292,8 @@ This is a search result (and I guess search engine) dependent messages. I do not
 'prefsnologin'                  => '{{Identical|Not logged in}}',
 'changepassword'                => "Section heading on [[Special:Preferences]], tab 'User profile'.
 {{Identical|Change password}}",
-'prefs-skin'                    => 'Used in user preferences.',
+'prefs-skin'                    => 'Used in user preferences.
+{{Identical|Skin}}',
 'skin-preview'                  => 'The link beside each skin name in [[Special:Preferences|your user preferences]], tab "skin".
 
 {{Identical|Preview}}',
@@ -1357,8 +1371,7 @@ Used in [[Special:Preferences]]. Parameters are:
 {{Identical|Real name}}',
 'yourlanguage'                  => 'Used in [[Special:Preferences]], first tab.
 {{Identical|Language}}',
-'yourvariant'                   => 'Used in [[Special:Preferences]], first tab, when the wiki content language has variants only.
-{{optional}}',
+'yourvariant'                   => 'Used in [[Special:Preferences]], first tab, when the wiki content language has variants only.',
 'yournick'                      => 'Used in [[Special:Preferences]], first tab.
 
 {{Identical|Signature}}',
@@ -1367,7 +1380,7 @@ Used in [[Special:Preferences]]. Parameters are:
 'badsiglength'                  => 'Warning message that is displayed on [[Special:Preferences]] when trying to save a signature that is too long. Parameter $1 is the maximum number of characters that is allowed in a signature (multi-byte characters are counted as one character).',
 'yourgender'                    => 'Used in [[Special:Preferences]], first tab.
 {{Identical|Gender}}',
-'gender-unknown'                => 'Used in [[Special:Preferences]], first tab, as one of the selectable options of the {{msg-mw|gender}} prompt. Choosing it indicates that the grammatical gender of the user name is not to be made public, or cannot be determined, or matches none of the other choices preset in the select.',
+'gender-unknown'                => 'Used in [[Special:Preferences]], first tab, as one of the selectable options of the {{msg-mw|gender}} prompt. Choosing it indicates that the grammatical gender of the user name is not to be made public, cannot be determined, or matches none of the other choices preset in the select.',
 'gender-male'                   => 'Used in [[Special:Preferences]], first tab, as one of the selectable options of the {{msg-mw|gender}} prompt. Choosing it indicates that the grammatical gender of the user name should be "male" for those languages having a "normal" male grammatical gender.
 {{Identical|Male}}',
 'gender-female'                 => 'Used in [[Special:Preferences]], first tab, as one of the selectable options of the {{msg-mw|gender}} prompt. Choosing it indicates that the grammatical gender of the user name should be "female" for those languages having a "normal" female grammatical gender.
@@ -1377,6 +1390,7 @@ Used in [[Special:Preferences]]. Parameters are:
 {{Identical|Real name attribution}}',
 'prefs-help-email'              => 'Shown as explanation text on [[Special:Preferences]] > {{int:prefs-personal}} > {{int:email}}.',
 'prefs-info'                    => "Header for the box giving basic information on the user account, displayed on the 'user profile' tab of the [[Special:Preferences|user preferences]] special page.",
+'prefs-i18n'                    => 'Field set legend for user preferences regarding the interface language',
 'prefs-signature'               => '{{Identical|Signature}}',
 'prefs-dateformat'              => 'Used in [[Special:Preferences]], tab "Date and time".',
 'prefs-timeoffset'              => 'Used in [[Special:Preferences]], tab "Date and time".',
@@ -1446,15 +1460,16 @@ Parameters:
 
 # Groups
 'group'               => '{{Identical|Group}}',
-'group-user'          => 'Name of group
+'group-user'          => '{{doc-group|user}}
 {{Identical|User}}',
-'group-autoconfirmed' => 'Name of group. On Wikimedia sites autoconfirmed users are users which are older than 4 days. After those 4 days, they have more rights.',
-'group-bot'           => 'Name of group',
-'group-sysop'         => 'Name of group',
-'group-bureaucrat'    => 'Name of group',
-'group-suppress'      => 'This is an optional (disabled by default) user group, meant for the [[mw:RevisionDelete|RevisionDelete]] feature, to change the visibility of revisions through [[Special:RevisionDelete]].
+'group-autoconfirmed' => '{{doc-group|autoconfirmed}}
+On Wikimedia sites autoconfirmed users are users which are older than 4 days. After those 4 days, they have more rights.',
+'group-bot'           => '{{doc-group|bot}}',
+'group-sysop'         => '{{doc-group|sysop}}',
+'group-bureaucrat'    => '{{doc-group|bureaucrat}}',
+'group-suppress'      => '{{doc-group|suppress}}
+This is an optional (disabled by default) user group, meant for the [[mw:RevisionDelete|RevisionDelete]] feature, to change the visibility of revisions through [[Special:RevisionDelete]].
 
-* See also: {{msg-mw|Group-suppress-member|pl=yes}} for a member of this group.
 {{Identical|Oversight}}',
 'group-all'           => 'The name of the user group that contains all users, including anonymous users
 
@@ -1470,56 +1485,56 @@ Parameters:
 * See also: {{msg|Group-suppress|pl=yes}} for the name of the group.
 {{Identical|Oversight}}',
 
-'grouppage-user'          => 'Link to group page on wiki',
-'grouppage-autoconfirmed' => 'Link to group page on wiki.',
-'grouppage-bot'           => 'Link to project page of this group, displayed on [[Special:ListUsers/bot]].',
-'grouppage-sysop'         => 'Link to project page of this group, displayed on [[Special:ListUsers/sysop]].',
-'grouppage-bureaucrat'    => 'Name of project page of this group, linked to from [[Special:ListUsers/bureaucrat]], [[Special:ListGroupRights]], and some other special pages.',
-'grouppage-suppress'      => 'Link to project page of this group, displayed on [[Special:ListUsers/suppress]].
-
+'grouppage-user'          => '{{doc-group|user|page}}',
+'grouppage-autoconfirmed' => '{{doc-group|autoconfirmed|page}}',
+'grouppage-bot'           => '{{doc-group|bot|page}}',
+'grouppage-sysop'         => '{{doc-group|sysop|page}}',
+'grouppage-bureaucrat'    => '{{doc-group|bureaucrat|page}}',
+'grouppage-suppress'      => '{{doc-group|suppress|page}}
 {{Identical|Oversight}}',
 
 # Rights
-'right-read'                  => '{{doc-right}}
+'right-read'                  => '{{doc-right|read}}
 Basic right to read any page.',
-'right-edit'                  => '{{doc-right}}
+'right-edit'                  => '{{doc-right|edit}}
 Basic right to edit pages that are not protected.',
-'right-createpage'            => '{{doc-right}}
+'right-createpage'            => '{{doc-right|createpage}}
 Basic right to create pages. The right to edit discussion/talk pages is {{msg|right-createtalk|pl=yes}}.',
-'right-createtalk'            => '{{doc-right}}
+'right-createtalk'            => '{{doc-right|createtalk}}
 Basic right to create discussion/talk pages. The right to edit other pages is {{msg|right-createpage|pl=yes}}.',
-'right-createaccount'         => '{{doc-right}}
+'right-createaccount'         => '{{doc-right|createaccount}}
 The right to [[Special:CreateAccount|create a user account]].',
-'right-minoredit'             => '{{doc-right}}
+'right-minoredit'             => '{{doc-right|minoredit}}
 The right to use the "This is a minor edit" checkbox. See {{msg|minoredit|pl=yes}} for the message used for that checkbox.',
-'right-move'                  => '{{doc-right}}
+'right-move'                  => '{{doc-right|move}}
 The right to move any page that is not protected from moving.',
 'right-move-subpages'         => '{{doc-right|move-subpages}}',
-'right-move-rootuserpages'    => '{{doc-right}}',
-'right-movefile'              => '{{doc-right}}',
+'right-move-rootuserpages'    => '{{doc-right|move-rootuserpages}}',
+'right-movefile'              => '{{doc-right|movefile}}',
 'right-suppressredirect'      => '{{doc-right|suppressredirect}}',
-'right-upload'                => '{{doc-right}}
+'right-upload'                => '{{doc-right|upload}}
 The right to [[Special:Upload|upload]] a file (this includes images, media, audio, ...).',
-'right-reupload'              => '{{doc-right}}
+'right-reupload'              => '{{doc-right|reupload}}
 The right to upload a file under a file name that already exists. Related messages: {{msg|right-upload|pl=yes}}, {{msg|right-reupload-own|pl=yes}} and {{msg|right-reupload-shared|pl=yes}}.',
-'right-reupload-own'          => '{{doc-right}}
+'right-reupload-own'          => '{{doc-right|reupload-own}}
 Right to upload a file under a file name that already exists, and that the same user has uploaded. Related messages: {{msg|right-upload|pl=yes}} and {{msg|right-reupload|pl=yes}}.',
-'right-reupload-shared'       => '{{doc-right}}
+'right-reupload-shared'       => '{{doc-right|reupload-shared}}
 The right to upload a file locally under a file name that already exists in a shared database (for example Commons). Related messages: {{msg|right-upload|pl=yes}} and {{msg|right-reupload|pl=yes}}.',
 'right-upload_by_url'         => '{{doc-right|upload by url}}',
-'right-purge'                 => '{{doc-right}}
+'right-purge'                 => '{{doc-right|purge}}
 The right to use <tt>&action=purge</tt> in the URL, without needing to confirm it (by default, anonymous users need to confirm it).',
-'right-autoconfirmed'         => "{{doc-right}}
+'right-autoconfirmed'         => "{{doc-right|autoconfirmed}}
 If your account is older than [[mw:Manual:\$wgAutoConfirmAge|wgAutoConfirmAge]] and if you have at least [[mw:Manual:\$wgAutoConfirmCount|\$wgAutoConfirmCount]] edits, you are in the '''group \"autoconfirmed\"''' (note that you can't see this group at [[Special:ListUsers]]).
 If you are in that group, you have (by default) the '''right \"autoconfirmed\"'''. With this right, you can for example <!-- I think this right includes more things --> edit semi-protected pages.",
 'right-bot'                   => '{{doc-right|bot}}',
-'right-nominornewtalk'        => '{{doc-right}}
+'right-nominornewtalk'        => '{{doc-right|nominornewtalk}}
 If someone with this right (bots by default) edits a user talk page and marks it as minor (requires {{msg|right-minoredit|pl=yes}}), the user will not get a notification "You have new messages".',
 'right-apihighlimits'         => '{{doc-right|apihighlimits}}',
-'right-writeapi'              => '{{doc-right}}',
+'right-writeapi'              => '{{doc-right|writeapi}}',
 'right-delete'                => '{{doc-right|delete}}',
 'right-bigdelete'             => '{{doc-right|bigdelete}}',
-'right-deleterevision'        => 'This is a user right that is part of the [[mw:RevisionDelete|RevisionDelete]] feature.
+'right-deleterevision'        => '{{doc-right|deleterevision}}
+This user right is part of the [[mw:RevisionDelete|RevisionDelete]] feature.
 It can be given to the group {{msg|group-sysop|pl=yes}}, although this right is disabled by default.
 
 See also
@@ -1530,14 +1545,16 @@ See also
 'right-deletedtext'           => '{{doc-right|deletedtext}}',
 'right-browsearchive'         => '{{doc-right|browsearchive}}',
 'right-undelete'              => '{{doc-right|undelete}}',
-'right-suppressrevision'      => 'This is a user right that is part of the [[mw:RevisionDelete|RevisionDelete]] feature.
+'right-suppressrevision'      => '{{doc-right|suppressrevision}}
+This user right is part of the [[mw:RevisionDelete|RevisionDelete]] feature.
 It can be given to the group {{msg|group-suppress|pl=yes}}, although that group is disabled by default.
 
 See also
 * {{msg|right-suppressionlog|pl=yes}}
 * {{msg|right-hideuser|pl=yes}}
 * {{msg|right-deleterevision|pl=yes}}',
-'right-suppressionlog'        => 'This is a user right that is part of the [[mw:RevisionDelete|RevisionDelete]] feature.
+'right-suppressionlog'        => '{{doc-right|suppressionlog}}
+This user right is part of the [[mw:RevisionDelete|RevisionDelete]] feature.
 It can be given to the group {{msg|group-suppress|pl=yes}}, although that group is disabled by default.
 
 See also
@@ -1546,15 +1563,16 @@ See also
 * {{msg|right-deleterevision|pl=yes}}',
 'right-block'                 => '{{doc-right|block}}',
 'right-blockemail'            => '{{doc-right|blockemail}}',
-'right-hideuser'              => 'This is a user right that is part of the [[mw:RevisionDelete|RevisionDelete]] feature.
+'right-hideuser'              => '{{doc-right|hideuser}}
+This user right is part of the [[mw:RevisionDelete|RevisionDelete]] feature.
 It can be given to the group {{msg|group-suppress|pl=yes}}, although that group is disabled by default.
 
 See also
 * {{msg|right-suppressionlog|pl=yes}}
 * {{msg|right-suppressrevision|pl=yes}}
 * {{msg|right-deleterevision|pl=yes}}',
-'right-ipblock-exempt'        => 'This user automatically
-bypasses IP blocks, auto-blocks and range blocks - so I presume - but I am uncertain',
+'right-ipblock-exempt'        => '{{doc-right|ipblock-exempt}}
+This user automatically bypasses IP blocks, auto-blocks and range blocks - so I presume - but I am uncertain',
 'right-proxyunbannable'       => '{{doc-right|proxyunbannable}}',
 'right-unblockself'           => '{{doc-right|unblockself}}',
 'right-protect'               => '{{doc-right|protect}}',
@@ -1563,18 +1581,19 @@ bypasses IP blocks, auto-blocks and range blocks - so I presume - but I am uncer
 'right-editusercssjs'         => '{{doc-right|editusercssjs}}',
 'right-editusercss'           => '{{doc-right|editusercss}}',
 'right-edituserjs'            => '{{doc-right|edituserjs}}',
-'right-rollback'              => '{{Identical|Rollback}}',
-'right-markbotedits'          => '{{doc-right}}
+'right-rollback'              => '{{doc-right|rollback}}
+{{Identical|Rollback}}',
+'right-markbotedits'          => '{{doc-right|markbotedits}}
 A user with this right can mark a roll-back edit as a bot edit by adding <tt>&bot=1</tt> to the URL (not by default).',
-'right-noratelimit'           => '{{doc-right}}
+'right-noratelimit'           => '{{doc-right|noratelimit}}
 The rate limits have no effect on the groups that have this right. Rate limits is a restriction that you can only do X actions (edits, moves, etc.) in Y number of seconds (set by [[mw:Manual:$wgRateLimits|$wgRateLimits]]).',
-'right-import'                => '{{doc-right}}',
-'right-importupload'          => '{{doc-right}}',
-'right-patrol'                => '{{doc-right}}',
+'right-import'                => '{{doc-right|import}}',
+'right-importupload'          => '{{doc-right|importupload}}',
+'right-patrol'                => '{{doc-right|patrol}}',
 'right-autopatrol'            => '{{doc-right|autopatrol}}',
 'right-patrolmarks'           => '{{doc-right|patrolmarks}}',
 'right-unwatchedpages'        => '{{doc-right|unwatchedpages}}',
-'right-trackback'             => '{{doc-right}}
+'right-trackback'             => '{{doc-right|trackback}}
 
 "Submit" in this instance means that something called [[:wikipedia:trackback|trackback]] is being sent to the wiki, and the wiki accepts it. When the right is not given to the user, the wiki rejects, or ignores it. There is a nice description at [http://cruftbox.com/cruft/docs/trackback.html How TrackBack Works]. In MediaWiki it is one of those obscure features that probably nobody uses (it is a huge spam trap).
 
@@ -1583,9 +1602,9 @@ An alternative wording for translators could be \'Get the wiki to accept a track
 'right-userrights'            => '{{doc-right|userrights}}',
 'right-userrights-interwiki'  => '{{doc-right|userrights-interwiki}}',
 'right-siteadmin'             => '{{doc-right|siteadmin}}',
-'right-reset-passwords'       => '{{doc-right}}',
+'right-reset-passwords'       => '{{doc-right|reset-passwords}}',
 'right-override-export-depth' => '{{doc-right|override-export-depth}}',
-'right-sendemail'             => '{{doc-right}}',
+'right-sendemail'             => '{{doc-right|sendemail}}',
 
 # User rights log
 'rightslog'      => 'In [[Special:Log]]',
@@ -1603,44 +1622,44 @@ Similar to {{msg-mw|Gur-rightslog-entry}}',
 {{Identical|None}}',
 
 # Associated actions - in the sentence "You do not have permission to X"
-'action-read'                 => '{{Doc-action}}',
-'action-edit'                 => '{{Doc-action}}',
-'action-createpage'           => '{{Doc-action}}',
-'action-createtalk'           => '{{Doc-action}}',
-'action-createaccount'        => '{{Doc-action}}',
-'action-minoredit'            => '{{Doc-action}}',
-'action-move'                 => '{{Doc-action}}',
-'action-move-subpages'        => '{{Doc-action}}',
-'action-move-rootuserpages'   => '{{Doc-action}}',
-'action-movefile'             => '{{doc-action}}',
-'action-upload'               => '{{Doc-action}}',
-'action-reupload'             => '{{Doc-action}}',
-'action-reupload-shared'      => '{{Doc-action}}',
+'action-read'                 => '{{Doc-action|read}}',
+'action-edit'                 => '{{Doc-action|edit}}',
+'action-createpage'           => '{{Doc-action|createpage}}',
+'action-createtalk'           => '{{Doc-action|createtalk}}',
+'action-createaccount'        => '{{Doc-action|createaccount}}',
+'action-minoredit'            => '{{Doc-action|minoredit}}',
+'action-move'                 => '{{Doc-action|move}}',
+'action-move-subpages'        => '{{Doc-action|move-subpages}}',
+'action-move-rootuserpages'   => '{{Doc-action|move-rootuserpages}}',
+'action-movefile'             => '{{doc-action|movefile}}',
+'action-upload'               => '{{Doc-action|upload}}',
+'action-reupload'             => '{{Doc-action|reupload}}',
+'action-reupload-shared'      => '{{Doc-action|reupload-shared}}',
 'action-upload_by_url'        => '{{Doc-action|upload by url}}',
-'action-writeapi'             => '{{Doc-action}}
+'action-writeapi'             => '{{Doc-action|writeapi}}
 
 API is an abbreviation for [http://en.wikipedia.org/wiki/API application programming interface].',
-'action-delete'               => '{{Doc-action}}',
-'action-deleterevision'       => '{{Doc-action}}',
-'action-deletedhistory'       => '{{Doc-action}}',
-'action-browsearchive'        => '{{Doc-action}}',
-'action-undelete'             => '{{Doc-action}}',
-'action-suppressrevision'     => '{{Doc-action}}',
+'action-delete'               => '{{Doc-action|delete}}',
+'action-deleterevision'       => '{{Doc-action|deleterevision}}',
+'action-deletedhistory'       => '{{Doc-action|deletedhistory}}',
+'action-browsearchive'        => '{{Doc-action|browsearchive}}',
+'action-undelete'             => '{{Doc-action|undelete}}',
+'action-suppressrevision'     => '{{Doc-action|suppressrevision}}',
 'action-suppressionlog'       => '{{Doc-action|suppressionlog}}',
-'action-block'                => '{{Doc-action}}',
-'action-protect'              => '{{Doc-action}}',
-'action-import'               => '{{Doc-action}}',
-'action-importupload'         => '{{Doc-action}}',
-'action-patrol'               => '{{Doc-action}}',
-'action-autopatrol'           => '{{Doc-action}}',
-'action-unwatchedpages'       => '{{Doc-action}}',
-'action-trackback'            => '{{Doc-action}}',
-'action-mergehistory'         => '{{Doc-action}}',
-'action-userrights'           => '{{Doc-action}}
+'action-block'                => '{{Doc-action|block}}',
+'action-protect'              => '{{Doc-action|protect}}',
+'action-import'               => '{{Doc-action|import}}',
+'action-importupload'         => '{{Doc-action|importupload}}',
+'action-patrol'               => '{{Doc-action|patrol}}',
+'action-autopatrol'           => '{{Doc-action|autopatrol}}',
+'action-unwatchedpages'       => '{{Doc-action|unwatchedpages}}',
+'action-trackback'            => '{{Doc-action|trackback}}',
+'action-mergehistory'         => '{{Doc-action|mergehistory}}',
+'action-userrights'           => '{{Doc-action|userrights}}
 
 This action allows editing of all of the "user rights", not just the rights of the group "all users".',
-'action-userrights-interwiki' => '{{Doc-action}}',
-'action-siteadmin'            => '{{Doc-action}}',
+'action-userrights-interwiki' => '{{Doc-action|userrights-interwiki}}',
+'action-siteadmin'            => '{{Doc-action|siteadmin}}',
 
 # Recent changes
 'nchanges'                        => 'Appears on the [[Special:RecentChanges]] special page in brackets after pages having more than one change on that date. $1 is the number of changes on that day.',
@@ -1883,7 +1902,7 @@ Example: [[:Image:Addon-icn.png]]',
 'filehist-comment'                  => 'In file description page
 
 {{Identical|Comment}}',
-'imagelinks'                        => 'In top header of the image description page, see for example [[:Image:Yes.png]].',
+'imagelinks'                        => 'In top header of the image description page, see for example [[:Image:Yes.png]]. Shows a list of pages where this file is used.',
 'linkstoimage'                      => 'Used on image description, see for example [[:Image:Yes.png#filelinks]].
 * Parameter $1 is the number of pages that link to the file/image.',
 'linkstoimage-more'                 => 'Shown on an image description page when a file is used/linked more than 100 times on other pages.
@@ -2012,14 +2031,15 @@ A 'content page' is a page that forms part of the purpose of the wiki. It includ
 Possible alternatives to the word 'content' are 'subject matter' or 'wiki subject' or 'wiki purpose'.
 
 {{Identical|Content page}}",
-'statistics-pages'             => 'Used in [[Special:Statistics]]',
+'statistics-pages'             => 'Used in [[Special:Statistics]]
+{{Identical|Pages}}',
 'statistics-pages-desc'        => "Tooltip shown over ''Pages'' (or as a note below it) in [[Special:Statistics]]",
 'statistics-files'             => 'Used in [[Special:Statistics]]',
 'statistics-edits'             => 'Used in [[Special:Statistics]]',
 'statistics-edits-average'     => 'Used in [[Special:Statistics]]',
 'statistics-views-total'       => 'Used in [[Special:Statistics]]',
 'statistics-views-peredit'     => 'Used in [[Special:Statistics]]',
-'statistics-users'             => 'Used in [[Special:Statistics]]',
+'statistics-users'             => 'Used in [[Special:Statistics]]. Do not change "Special:ListUsers"!',
 'statistics-users-active'      => 'Used in [[Special:Statistics]]',
 'statistics-users-active-desc' => "Description shown beneath ''Active users'' in [[Special:Statistics]]
 
@@ -2107,7 +2127,8 @@ $1 is a page title",
 'usereditcount'           => 'Shown behind every username on [[Special:ListUsers]].',
 'usercreated'             => 'Used in [[Special:ListUsers]].
 * <code>$1</code> is a date
-* <code>$2</code> is a time',
+* <code>$2</code> is a time
+* <code>$3</code> is the name of the user, for use in GENDER',
 'newpages'                => 'Name of special page displayed in [[Special:SpecialPages]]
 {{Identical|New page}}',
 'newpages-username'       => '{{Identical|Username}}',
@@ -2272,8 +2293,12 @@ See also {{msg|listgrouprights-removegroup}}.',
 * $1 is an enumeration of group names.
 * $2 is the number of group names in $1.
 See also {{msg|listgrouprights-addgroup}}.',
-'listgrouprights-addgroup-all'     => '{{doc-right}}',
-'listgrouprights-removegroup-all'  => '{{doc-right}}',
+'listgrouprights-addgroup-all'     => 'Used on [[Special:ListGroupRights]].
+
+See also {{msg-mw|listgrouprights-removegroup-all}}.',
+'listgrouprights-removegroup-all'  => 'Used on [[Special:ListGroupRights]].
+
+See also {{msg-mw|listgrouprights-addgroup-all}}.',
 'listgrouprights-addgroup-self'    => 'This is an individual right for groups, used on [[Special:ListGroupRights]].
 * $1 are the group names.
 * $2 is the number of group names in $1.',
@@ -2551,7 +2576,9 @@ This message was something like "unlock move protection" in the past.',
 
 # Contributions
 'contributions'       => "Display name for the 'User contributions', shown in the sidebar menu of all user pages and user talk pages. Also the page name of the target page. The target page shows an overview of the most recent contributions by a user.",
-'contributions-title' => 'The page title in your browser bar, but not the page title. See also {{msg|contributions}}. Parameter $1 is the username.',
+'contributions-title' => 'The page title in your browser bar, but not the page title. See also {{msg|contributions}}. Parameter $1 is the username.
+
+{{Gender}}',
 'mycontris'           => 'In the personal urls page section - right upper corner.',
 'contribsub2'         => 'Contributions for "user" (links)',
 'nocontribs'          => 'Optional parameter: $1 is the user name',
@@ -2570,7 +2597,8 @@ This message was something like "unlock move protection" in the past.',
 'sp-contributions-logs'                => "Appears as an action link in the header of the Special:Contributions/''Username'' pages (e.g. \"For Somebody (talk | block log | logs)\").",
 'sp-contributions-talk'                => "This is a link anchor used in the [[Special:Contributions]]/''usernamename'' pages.
 The link appears in a list of similar ones separated by {{msg-mw|pipe-separator}}, e.g. like this:<br />
-( talk | block log | logs | deleted contributions | rights management )",
+( talk | block log | logs | deleted contributions | rights management )
+{{Identical|Talk}}",
 'sp-contributions-userrights'          => "This is a link anchor used in [[Special:Contributions]]/''name'', if the user viewing the page has the right to set or alter user rights.",
 'sp-contributions-blocked-notice'      => 'Shown on top of contributions special page of currently blocked users. Parameters:
 * $1 is the blocked user. Can be used for GENDER (optional)
@@ -2582,6 +2610,7 @@ Anon version: {{msg-mw|Sp-contributions-blocked-notice-anon}}',
 {{Identical/IP address or username}}',
 'sp-contributions-toponly'             => '"top revision" means the "latest revision"',
 'sp-contributions-submit'              => '{{Identical|Search}}',
+'sp-contributions-explain'             => '{{optional}}',
 
 # What links here
 'whatlinkshere'            => 'The text of the link in the toolbox (on the left, below the search menu) going to [[Special:WhatLinksHere]].',
@@ -2722,7 +2751,7 @@ See also {{msg-mw|Blocklistline}}.',
 'reblock-logentry'             => 'This is the text of an entry in the Block log (and Recent Changes), after hour (and date, only in the Block log) and sysop name:
 * $1 is the user being reblocked
 * $2 is the expiry time of the block
-* $3 is the reason for the block',
+* $3 are extra parameters like "account creation blocked" (they are automatically between brackets)',
 'blocklogtext'                 => 'Appears on top of [[Special:Log/block]].',
 'unblocklogentry'              => 'This is the text of an entry in the Block log (and Recent Changes), after hour (and date, only in the Block log) and sysop name:
 * $1 is the user being unblocked',
@@ -2979,8 +3008,7 @@ This message appears at the very end of the list of names in the message [[Media
 Parameters:
 * $1 is a link to a user page with the user name as link text
 * $2 is a user name for use with GENDER (optional)",
-'anonuser'         => "This message is shown when viewing the credits of a page (example: {{fullurl:Main Page|action=credits}}). Note that this action is disabled by default (currently enabled on translatewiki.net).
-
+'anonuser'         => "This message is shown when viewing the credits of a page (example: {{fullurl:Main Page|action=credits}}). Note that this action is enabled by default but disabled on Wikimedia wikis.
 This message is the variable $3 in the message {{msg-mw|lastmodifiedatby}}. This message only appears if the user is anonymous. The variable $1 in this message is a link to the user's contributions.
 
 See also {{msg-mw|Anonusers}} and {{msg-mw|Siteuser}}.",
@@ -3225,7 +3253,9 @@ The sentences are for explanation only and are not shown to the user.",
 
 This field labels what the compression of the image is. It is commonly seen in Tiff images. It uses messages like {{msg-mw|exif-compression-1}} for the value. http://en.wikipedia.org/wiki/TIFF#TIFF_Compression_Tag has information about this field.',
 'exif-photometricinterpretation'   => 'Exif is a format for storing metadata in image files. See this [http://en.wikipedia.org/wiki/Exchangeable_image_file_format Wikipedia article] and the example at the bottom of [http://commons.wikimedia.org/wiki/File:Phalacrocorax-auritus-020.jpg this page on Commons]. The tags are explained [http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif.html briefly] and [http://www.kodak.com/global/plugins/acrobat/en/service/digCam/exifStandard2.pdf in further detail].',
-'exif-orientation'                 => 'Exif is a format for storing metadata in image files. See this [http://en.wikipedia.org/wiki/Exchangeable_image_file_format Wikipedia article] and the example at the bottom of [http://commons.wikimedia.org/wiki/File:Phalacrocorax-auritus-020.jpg this page on Commons]. The tags are explained [http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif.html briefly] and [http://www.kodak.com/global/plugins/acrobat/en/service/digCam/exifStandard2.pdf in further detail].',
+'exif-orientation'                 => 'Exif is a format for storing metadata in image files. See this [http://en.wikipedia.org/wiki/Exchangeable_image_file_format Wikipedia article] and the example at the bottom of [http://commons.wikimedia.org/wiki/File:Phalacrocorax-auritus-020.jpg this page on Commons]. The tags are explained [http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif.html briefly] and [http://www.kodak.com/global/plugins/acrobat/en/service/digCam/exifStandard2.pdf in further detail].
+
+For specific information on the orientation tag, see http://sylvana.net/jpegcrop/exif_orientation.html',
 'exif-samplesperpixel'             => 'Exif is a format for storing metadata in image files. See this [http://en.wikipedia.org/wiki/Exchangeable_image_file_format Wikipedia article] and the example at the bottom of [http://commons.wikimedia.org/wiki/File:Phalacrocorax-auritus-020.jpg this page on Commons]. The tags are explained [http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif.html briefly] and [http://www.kodak.com/global/plugins/acrobat/en/service/digCam/exifStandard2.pdf in further detail].',
 'exif-planarconfiguration'         => 'Exif is a format for storing metadata in image files. See this [http://en.wikipedia.org/wiki/Exchangeable_image_file_format Wikipedia article] and the example at the bottom of [http://commons.wikimedia.org/wiki/File:Phalacrocorax-auritus-020.jpg this page on Commons]. The tags are explained [http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif.html briefly] and [http://www.kodak.com/global/plugins/acrobat/en/service/digCam/exifStandard2.pdf in further detail].',
 'exif-ycbcrsubsampling'            => 'Exif is a format for storing metadata in image files. See this [http://en.wikipedia.org/wiki/Exchangeable_image_file_format Wikipedia article] and the example at the bottom of [http://commons.wikimedia.org/wiki/File:Phalacrocorax-auritus-020.jpg this page on Commons]. The tags are explained [http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif.html briefly] and [http://www.kodak.com/global/plugins/acrobat/en/service/digCam/exifStandard2.pdf in further detail].',
@@ -3465,13 +3495,13 @@ This property is extracted based on XMP's dc:title property ( http://www.adobe.c
 CCW is an abbreviation for counter-clockwise',
 'exif-orientation-6' => '0th row: right; 0th column: top
 
-CW is an abbreviation for clockwise',
+CCW is an abbreviation for counter-clockwise.',
 'exif-orientation-7' => '0th row: right; 0th column: bottom
 
 CW is an abbreviation for clockwise',
 'exif-orientation-8' => '0th row: left; 0th column: bottom
 
-CCW is an abbreviation for counter-clockwise.',
+CW is an abbreviation for clockwise.',
 
 'exif-xyresolution-i' => '{{Optional}} Used to format {{msg-mw|exif-xresolution}} and {{msg-mw|exif-yresolution}} if the unit is dots per inch. $1 is the number of dots/in.',
 'exif-xyresolution-c' => '{{Optional}} Used to format {{msg-mw|exif-xresolution}} and {{msg-mw|exif-yresolution}} if the unit is dots per centimetre. $1 is the number of dots/cm.',
@@ -3659,7 +3689,7 @@ Do \'\'not\'\' change the leading ;  and the first : as it is wiki markup.
 
 * $1: title of the trackback
 * $2: URL of the trackback
-* <font style="color:grey;">$3: unused in this message, see [[MediaWiki:trackbackexcerpt]] instead</font>
+* <span style="color:grey;">$3: unused in this message, see [[MediaWiki:trackbackexcerpt]] instead</span>
 * $4: name of the trackback
 * $5: a link to delete the trackback. The content of [[MediaWiki:Trackbackremove]] is injected here.',
 'trackbackexcerpt' => "{{optional}}
@@ -3678,16 +3708,18 @@ Do ''not'' change the leading ;  and the first : as it is wiki markup.
 'confirm_purge_button' => '{{Identical|OK}}',
 
 # Separators for various lists, etc.
-'comma-separator' => '{{optional}}',
-'colon-separator' => "Optional message. Change it only if your language uses another character for ':' or it needs an extra space before the colon.",
-'pipe-separator'  => '{{optional}}',
-'word-separator'  => 'This is a string which is (usually) put between words of the language. It is used, e.g. when messages are concatenated (appended to each other). Note that you must express a space as html entity &amp;#32; because the editing and updating process strips leading and trailing spaces from messages.
+'semicolon-separator' => '{{optional}}',
+'comma-separator'     => '{{optional}}',
+'colon-separator'     => "{{optional}}
+Change it only if your language uses another character for ':' or it needs an extra space before the colon.",
+'autocomment-prefix'  => '{{optional}}',
+'pipe-separator'      => '{{optional}}',
+'word-separator'      => '{{optional}}
+This is a string which is (usually) put between words of the language. It is used, e.g. when messages are concatenated (appended to each other). Note that you must express a space as html entity &amp;#32; because the editing and updating process strips leading and trailing spaces from messages.
 
-Most languages use a space, but some Asian languages, such as Thai and Chinese, do not.
-
-{{optional}}',
-'percent'         => '{{optional}}',
-'parentheses'     => '{{optional}}',
+Most languages use a space, but some Asian languages, such as Thai and Chinese, do not.',
+'percent'             => '{{optional}}',
+'parentheses'         => '{{optional}}',
 
 # Multipage image navigation
 'imgmultipageprev' => '{{Identical|Previous page}}',
@@ -3705,7 +3737,7 @@ Most languages use a space, but some Asian languages, such as Thai and Chinese, 
 # Auto-summaries
 'autosumm-blank'   => 'The auto summary when blanking the whole page. This is not the same as deleting the page.',
 'autosumm-replace' => 'The auto summary when a user removes a lot of characters in the page.',
-'autoredircomment' => 'The auto summary when making a redirect. $1 is the page where it redirects to.',
+'autoredircomment' => 'The auto summary when making a redirect. $1 is the page where it redirects to. $2 is the first X number of characters of the redirect ($2 is usually only used when end users customize the message)',
 'autosumm-new'     => 'The auto summary when creating a new page. $1 are the first X number of characters of the new page.',
 
 # Size units
@@ -3878,6 +3910,7 @@ Name of month in Hebrew calender.',
 {{Identical|Special pages}}',
 'version-parserhooks'              => 'This message is a heading at [[Special:Version]] for extensions that modifies the parser of wikitext.',
 'version-variables'                => '{{Identical|Variable}}',
+'version-skins'                    => '{{Identical|Skin}}',
 'version-other'                    => '{{Identical|Other}}',
 'version-mediahandlers'            => 'Used in [[Special:Version]]. It is the title of a section for media handler extensions (e.g. [[mw:Extension:OggHandler]]).
 There are no such extensions here, so look at [[wikipedia:Special:Version]] for an example.',

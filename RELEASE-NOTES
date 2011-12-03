@@ -3,11 +3,20 @@
 Security reminder: MediaWiki does not require PHP's register_globals
 setting since version 1.2.0. If you have it on, turn it '''off''' if you can.
 
-== MediaWiki 1.17.0 ==
+== MediaWiki 1.17.1 ==
 
-2011-06-22
+2011-11-24
 
-This is the first stable release of the MediaWiki 1.17 branch.
+This a maintenance and security release of the MediaWiki 1.17 branch.
+
+=== Security changes ===
+* (bug 32276) Skins were generating output using the internal page title which
+  would allow anonymous users to determine wheter a page exists, potentially
+  leaking private data. In fact, the curid and oldid request parameters would
+  allow page titles to be enumerated even when they are not guessable.
+* (bug 32616) action=ajax requests were dispatched to the relevant internal
+  functions without any read permission checks being done. This could lead to
+  data leakage on private wikis.
 
 === Summary of selected changes in 1.17 ===
 
@@ -36,6 +45,37 @@ Selected changes since MediaWiki 1.16 that may be of interest:
 * The lowest supported version of PHP is now 5.2.3. If necessary, please
   upgrade PHP prior to upgrading MediaWiki.
 
+=== Changes since 1.17.0 ===
+
+* (bug 29535) Added missing Creative Commons CC0 icon.
+* (bug 29726) Fixed failure to load internationalization messages in 
+  client-side scripts on WebKit-based browsers.
+* Fixed a bug in message transformation where the previous language could leak 
+  into later transformations in the UI language.
+* (bug 29091) Fixed form of native name for Ossetic language (Иронау -> Ирон)
+* Fixed maintenance scripts upgrade1_5.php and rebuildImages.php, they did not
+  work at all since 1.17 beta 1.
+* (bug 29531) Fixed img_auth.php for thumbnails and other filenames with 
+  multiple dots, was broken by the fix for bug 28840.
+* In the maintenance script purgeList.php, fixed a fatal error when a page 
+  title is given, instead of a URL.
+* (bug 19514) Unordered list list-style-image should be IE6-compatible (8-bit).
+* Installer checked for magic_quotes_runtime instead of register_globals.
+* $wgSVGMaxSize is now applied to the smaller of width or height, making very
+  wide pano/timeline/diagram SVGs renderable at saner sizes.
+* (bug 29959) Installer fatal when cURL and allow_url_fopen is disabled and user
+  tries to subsribe to mediawiki-announce.
+* Installer checked for magic_quotes_runtime instead of register_globals
+* (bug 30131) XCache with variable caching disabled no longer used for variable
+  caching (CACHE_ACCEL)
+* (bug 30264) Changed installer-generated LocalSettings.php to use require_once()
+  instead require() for included extensions.
+* (bug 26486) ResourceLoader modules with paths to nonexistent files cause PHP
+  warnings/notices to be thrown
+* (bug 30907) Special:Unusedcategories should sort ascendingly.
+* (bug 30219) The page shown when LocalSettings.php does not exist was broken on
+  Windows servers.
+
 === Changes since 1.17.0rc1 ===
 
 * Fixed syntax error in generated LocalSettings.php when a non-default user
@@ -49,6 +89,10 @@ Selected changes since MediaWiki 1.16 that may be of interest:
   redirect.
 * (bug 29408) Fixed uploads of files with MIME types that aren't detected by 
   MediaWiki.
+* Removed DEFAULT '' NOT NULL field definitions from Oracle DB schema because 
+  using the DEFAULT value ('') in DML broke Oracle backend as it treats an 
+  empty VARCHAR2 value as NULL. Indexes on Oracle do not require NOT NULL
+  fields.
 
 === Changes since 1.17 beta 1 ===
 

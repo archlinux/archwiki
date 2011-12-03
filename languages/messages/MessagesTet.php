@@ -199,8 +199,8 @@ $messages = array(
 'protect'           => 'Proteje',
 'protect_change'    => 'muda',
 'protectthispage'   => "Proteje pájina ne'e",
-'unprotect'         => 'La proteje',
-'unprotectthispage' => "La proteje pájina ne'e",
+'unprotect'         => 'Muda protesaun',
+'unprotectthispage' => "Muda protesaun pájina ne'e nian",
 'newpage'           => 'Pájina foun',
 'talkpage'          => "Diskusaun kona-ba pájina ne'e",
 'talkpagelinktext'  => 'Diskusaun',
@@ -309,7 +309,8 @@ La haluha muda Ita-nia [[Special:Preferences|preferénsia]].",
 'createaccount'           => "Registrar uza-na'in",
 'gotaccount'              => "Ó iha konta ona? '''$1'''.",
 'gotaccountlink'          => 'Log in',
-'userexists'              => "Uza-na'in ne'e ona iha wiki. Favór ida lori naran seluk.",
+'userexists'              => "Naran uza-na'in ne'e ona iha wiki.
+Favór ida lori naran seluk.",
 'nosuchuser'              => 'Konta uza-na\'in (naran "$1") la iha.
 User names are case sensitive.
 Check your spelling, ka [[Special:UserLogin/signup|kria konta foun]].',
@@ -535,7 +536,7 @@ Check your spelling, ka [[Special:UserLogin/signup|kria konta foun]].',
 'filehist-datetime'  => 'Loron/Tempu',
 'filehist-user'      => "Uza-na'in",
 'filehist-comment'   => 'Komentáriu',
-'imagelinks'         => 'Ligasaun',
+'imagelinks'         => "Pájina iha ne'ebá fixeiru ne'e",
 
 # File reversion
 'filerevert-comment' => 'Razaun:',
@@ -598,7 +599,8 @@ Check your spelling, ka [[Special:UserLogin/signup|kria konta foun]].',
 'allpagesprefix'    => 'Hatudu pájina sira ho prefiksu:',
 
 # Special:Categories
-'categories' => 'Kategoria sira',
+'categories'                  => 'Kategoria sira',
+'special-categories-sort-abc' => 'tau tuir alfabetu',
 
 # Special:LinkSearch
 'linksearch-ns' => 'Espasu pájina nian:',
@@ -606,6 +608,10 @@ Check your spelling, ka [[Special:UserLogin/signup|kria konta foun]].',
 
 # Special:ListUsers
 'listusers-submit' => 'Hatudu',
+
+# Special:ActiveUsers
+'activeusers-hidebots'   => 'Subar bot sira',
+'activeusers-hidesysops' => 'Subar administradór sira',
 
 # Special:Log/newusers
 'newuserlogpage'           => "Lista kria uza-na'in",
@@ -719,7 +725,7 @@ Check your spelling, ka [[Special:UserLogin/signup|kria konta foun]].',
 'whatlinkshere-title'     => 'Pájina sira ne\'ebé bá "$1".',
 'whatlinkshere-page'      => 'Pájina:',
 'linkshere'               => "Pájina sira ne'e link ba '''[[:$1]]''':",
-'isimage'                 => 'ligasaun ba imajen ida',
+'isimage'                 => 'ligasaun ba fixeiru',
 'whatlinkshere-prev'      => '{{PLURAL:$1|oinmai|oinmai $1}}',
 'whatlinkshere-next'      => '{{PLURAL:$1|molok|molok $1}}',
 'whatlinkshere-links'     => '← ligasaun',

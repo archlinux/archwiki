@@ -20,6 +20,7 @@
  * @author Ragimiri
  * @author Reaperman
  * @author Urhixidur
+ * @author Utar
  * @author לערי ריינהארט
  */
 
@@ -372,7 +373,7 @@ $messages = array(
 'tog-enotifminoredits'        => 'Poslat e-mail i pro menší editace (které jinak nezpůsobují odeslání e-mailu)',
 'tog-enotifrevealaddr'        => 'Prozradit mou e-mailovou adresu v upozorňujících e-mailech',
 'tog-shownumberswatching'     => 'Zobrazovat počet sledujících uživatelů',
-'tog-oldsig'                  => 'Náhled stávajícího podpisu:',
+'tog-oldsig'                  => 'Stávající podpis:',
 'tog-fancysig'                => 'Používat v podpisu wikitext (bez automatického odkazu)',
 'tog-externaleditor'          => 'Implicitně používat externí editor (pouze pro pokročilé, vyžaduje speciální nastavení počítače; [http://www.mediawiki.org/wiki/Manual:External_editors další informace])',
 'tog-externaldiff'            => 'Implicitně používat externí porovnávací program (pouze pro pokročilé, vyžaduje speciální nastavení počítače; [http://www.mediawiki.org/wiki/Manual:External_editors další informace])',
@@ -510,7 +511,7 @@ $messages = array(
 'vector-action-move'             => 'Přesunout',
 'vector-action-protect'          => 'Zamknout',
 'vector-action-undelete'         => 'Obnovit',
-'vector-action-unprotect'        => 'Odemknout',
+'vector-action-unprotect'        => 'Změnit zámek',
 'vector-simplesearch-preference' => 'Zapnout rozšířené návrhy hledání (pouze vzhled Vektor)',
 'vector-view-create'             => 'Založit',
 'vector-view-edit'               => 'Editovat',
@@ -546,8 +547,8 @@ $messages = array(
 'protect'           => 'Zamknout',
 'protect_change'    => 'změnit',
 'protectthispage'   => 'Zamknout stránku',
-'unprotect'         => 'Odemknout',
-'unprotectthispage' => 'Odemknout stránku',
+'unprotect'         => 'Změnit zámek',
+'unprotectthispage' => 'Změnit zámek této stránky',
 'newpage'           => 'Nová stránka',
 'talkpage'          => 'Diskusní stránka',
 'talkpagelinktext'  => 'diskuse',
@@ -764,7 +765,8 @@ Nezapomeňte si upravit své [[Special:Preferences|nastavení {{grammar:2sg|{{SI
 'createaccountmail'          => 'pomocí e-mailu',
 'createaccountreason'        => 'Důvod:',
 'badretype'                  => 'Vámi napsaná hesla nesouhlasí.',
-'userexists'                 => 'Uživatel se stejným jménem je už registrován. Zvolte jiné jméno.',
+'userexists'                 => 'Zadané uživatelské jméno se již používá.
+Zvolte si prosím jiné jméno.',
 'loginerror'                 => 'Chyba při přihlašování',
 'createaccounterror'         => 'Nepodařilo se vytvořit uživatelský účet: $1',
 'nocookiesnew'               => 'Uživatelský účet byl vytvořen, ale nejste přihlášeni. {{SITENAME}} používá cookies k přihlášení uživatelů. Vy máte cookies vypnuty. Prosím zapněte je a přihlaste se znovu s vaším novým uživatelským jménem a heslem.',
@@ -940,7 +942,11 @@ Můžete [[Special:Search/{{PAGENAME}}|zkusit tento název vyhledat]] na jiných
 'userpage-userdoesnotexist-view'   => 'Uživatelský účet „$1“ není zaregistrován.',
 'blocked-notice-logextract'        => 'Tento uživatel je momentálně zablokován.
 Zde je pro přehled zobrazen nejnovější záznam z knihy zablokování:',
-'clearyourcache'                   => "'''Poznámka:''' Po uložení musíte smazat cache vašeho prohlížeče, jinak změny neuvidíte: '''Mozilla / Firefox:''' ''Ctrl-Shift-R'', '''IE:''' ''Ctrl-F5'', '''Safari:''' ''Cmd-Shift-R'', '''Konqueror''': ''F5''.",
+'clearyourcache'                   => "'''Poznámka: Po uložení musíte smazat cache vašeho prohlížeče, jinak změny neuvidíte.'''
+'''Mozilla / Firefox / Safari:''' při kliknutí na ''Aktualizovat'' držte ''Shift'', nebo stiskněte ''Ctrl-F5'' nebo ''Ctrl-R'' (na Macintoshi ''Command-R'');
+'''Konqueror''': klikněte na ''Aktualizovat'' nebo stiskněte ''F5'';
+'''Opera:''' smažte obsah cache v menu ''Nástroje → Nastavení'';
+'''Internet Explorer:''' při kliknutí na ''Aktualizovat'' držte ''Ctrl'', nebo stiskněte ''Ctrl-F5''.",
 'usercssyoucanpreview'             => "'''Tip:''' Použijte tlačítko „{{int:showpreview}}“ k testování vašeho nového CSS před uložením.",
 'userjsyoucanpreview'              => "'''Tip:''' Použijte tlačítko „{{int:showpreview}}“ k testování vašeho nového JavaScriptu před uložením.",
 'usercsspreview'                   => "'''Pamatujte, že si prohlížíte jen náhled vašeho uživatelského CSS.'''
@@ -1094,27 +1100,27 @@ Zkuste [[Special:Search|hledání]].',
 Podrobnosti mohou být uvedeny v [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} knize smazaných stránek].",
 'rev-deleted-text-unhide'     => "Tato revize byla '''smazána'''.
 Podrobnosti mohou být uvedeny v [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} knize smazaných stránek].
-Jako správce si však můžete [$1 tuto revizi prohlédnout], pokud chcete.",
+Pokud chcete, můžete si přesto [$1 tuto revizi prohlédnout].",
 'rev-suppressed-text-unhide'  => "Tato revize byla '''utajena'''.
 Podrobnosti mohou být uvedeny v [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} záznamu utajení].
-Jako správce si však můžete [$1 tuto revizi prohlédnout], pokud chcete.",
+Pokud chcete, můžete si přesto [$1 tuto revizi prohlédnout].",
 'rev-deleted-text-view'       => "Tato revize byla '''smazána'''.
-Jako správce si ji můžete prohlédnout; podrobnosti mohou být uvedeny v [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} knize smazaných stránek].",
+Můžete si ji prohlédnout; podrobnosti jsou uvedeny v [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} knize smazaných stránek].",
 'rev-suppressed-text-view'    => "Tato revize byla '''utajena'''.
-Jako správce si ji můžete prohlédnout; podrobnosti mohou být uvedeny v [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} záznamu utajení].",
+Můžete si ji prohlédnout; podrobnosti jsou uvedeny v [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} knize utajení].",
 'rev-deleted-no-diff'         => "Tento rozdíl si nemůžete prohlédnout, protože jedna z&nbsp;revizí byla '''smazána'''.
 Podrobnosti mohou být uvedeny v&nbsp;[{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} knize smazaných stránek].",
 'rev-suppressed-no-diff'      => "Tento rozdíl si nemůžete prohlédnout, protože jedna z revizí byla '''smazána'''.",
 'rev-deleted-unhide-diff'     => "Jedna z revizí k tomuto porovnání byla '''smazána'''.
 Podrobnosti mohou být uvedeny v [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} knize smazaných stránek].
-Jako správce si však můžete [$1 tento rozdíl prohlédnout], pokud chcete.",
+Pokud chcete, můžete si přesto [$1 tuto revizi prohlédnout].",
 'rev-suppressed-unhide-diff'  => "Jedna z revizí k tomuto porovnání byla '''utajena'''.
 Podrobnosti mohou být uvedeny v [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} záznamu utajení].
-Jako správce si však můžete [$1 tento rozdíl prohlédnout], pokud chcete.",
+Pokud chcete, můžete si přesto [$1 tuto revizi prohlédnout].",
 'rev-deleted-diff-view'       => "Jedna z revizí k tomuto porovnání byla '''smazána'''.
-Jako správce si můžete tento rozdíl prohlédnout; podrobnosti mohou být uvedeny v [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} knize smazaných stránek].",
+Můžete si toto porovnání prohlédnout; podrobnosti jsou uvedeny v [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} knize smazaných stránek].",
 'rev-suppressed-diff-view'    => "Jedna z revizí k tomuto porovnání byla '''utajena'''.
-Jako správce si můžete tento rozdíl prohlédnout; podrobnosti mohou být uvedeny v [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} knize smazaných stránek].",
+Můžete si toto porovnání prohlédnout; podrobnosti jsou uvedeny v [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} knize utajení].",
 'rev-delundel'                => 'skrýt/zobrazit',
 'rev-showdeleted'             => 'zobrazit',
 'revisiondelete'              => 'Smazat/obnovit revize',
@@ -1392,7 +1398,7 @@ Tuto operaci nelze vrátit zpět.',
 'prefs-registration'            => 'Čas registrace:',
 'yourrealname'                  => 'Vaše skutečné jméno:',
 'yourlanguage'                  => 'Jazyk rozhraní:',
-'yourvariant'                   => 'Jazyková varianta',
+'yourvariant'                   => 'Varianta jazyka obsahu:',
 'yournick'                      => 'Podpis:',
 'prefs-help-signature'          => 'Komentáře v diskusích by se měly podepisovat pomocí „<nowiki>~~~~</nowiki>“, což se změní na váš podpis a aktuální čas.',
 'badsig'                        => 'Chybný podpis, zkontrolujte syntaxi HTML.',
@@ -1444,7 +1450,7 @@ Také můžete dovolit ostatním uživatelům vás prostřednictvím uživatelsk
 'userrights-no-interwiki'      => 'Nemáte povoleno měnit uživatelská práva na jiných wiki.',
 'userrights-nodatabase'        => 'Databáze $1 neexistuje nebo není místní.',
 'userrights-nologin'           => 'Musíte se [[Special:UserLogin|přihlásit]] k účtu správce, abyste mohli měnit uživatelská práva.',
-'userrights-notallowed'        => 'Tento účet nemá povoleno měnit uživatelská práva.',
+'userrights-notallowed'        => 'Váš účet nemá oprávnění měnit uživatelská práva.',
 'userrights-changeable-col'    => 'Skupiny, které můžete měnit',
 'userrights-unchangeable-col'  => 'Skupiny, které nemůžete měnit',
 
@@ -1479,8 +1485,8 @@ Také můžete dovolit ostatním uživatelům vás prostřednictvím uživatelsk
 'right-createtalk'            => 'Zakládání diskusních stránek',
 'right-createaccount'         => 'Vytváření nových uživatelských účtů',
 'right-minoredit'             => 'Označování editací jako malé',
-'right-move'                  => 'Přesun stránek',
-'right-move-subpages'         => 'Přesunování stránek i s jejich podstránkami',
+'right-move'                  => 'Přesouvání stránek',
+'right-move-subpages'         => 'Přesouvání stránek i s jejich podstránkami',
 'right-move-rootuserpages'    => 'Přesouvání kořenových uživatelských stránek',
 'right-movefile'              => 'Přesouvání souborů',
 'right-suppressredirect'      => 'Nevytváření přesměrování po přesunu stránky',
@@ -1803,8 +1809,7 @@ Z bezpečnostních důvodů je img_auth.php vypnuto.',
 
 # Special:ListFiles
 'listfiles-summary'     => 'Tato speciální stránka zobrazuje všechny načtené soubory.
-Ve výchozím stavu je poslední načtený soubor nahoře.
-Kliknutím na hlavičku sloupce můžete změnit řazení.',
+Při filtrování podle uživatele se zobrazují jen soubory, u kterých tento uživatel načetl aktuální verzi.',
 'listfiles_search_for'  => 'Hledat soubor podle názvu:',
 'imgfile'               => 'soubor',
 'listfiles'             => 'Seznam souborů',
@@ -1833,7 +1838,7 @@ Kliknutím na hlavičku sloupce můžete změnit řazení.',
 'filehist-filesize'         => 'Velikost souboru',
 'filehist-comment'          => 'Komentář',
 'filehist-missing'          => 'Soubor chybí',
-'imagelinks'                => 'Odkazy na soubor',
+'imagelinks'                => 'Využití souboru',
 'linkstoimage'              => 'Na soubor {{PLURAL:$1|odkazuje tato stránka|odkazují tyto $1 stránky|odkazuje těchto $1 stránek}}:',
 'linkstoimage-more'         => 'Na tento soubor {{PLURAL:$1|odkazuje více stránek|odkazují více než $1 stránky|odkazuje více než $1 stránek}}.
 Následující seznam zobrazuje pouze {{PLURAL:$1|tu první|první $1|prvních $1}}.
@@ -1999,7 +2004,7 @@ Každý řádek obsahuje odkaz na první a druhé přesměrování a k tomu cíl
 'listusers-editsonly'     => 'Zobrazit pouze uživatele s editacemi',
 'listusers-creationsort'  => 'Seřadit podle data registrace',
 'usereditcount'           => '$1 {{PLURAL:$1|editace|editace|editací}}',
-'usercreated'             => 'Registrován(a) $1 v $2',
+'usercreated'             => '{{GENDER:$3|Registrován|Registrována|Registrován(a)}} $1 v $2',
 'newpages'                => 'Nejnovější stránky',
 'newpages-username'       => 'Uživatelské jméno:',
 'ancientpages'            => 'Nejdéle needitované stránky',
@@ -2275,7 +2280,8 @@ Stiskněte tlačítko „zpět“, obnovte stránku, ze které jste přišli a z
 
 # Protect
 'protectlogpage'              => 'Kniha zamčení',
-'protectlogtext'              => 'Níže je uveden seznam všech zamčení a odemčení stránek.',
+'protectlogtext'              => 'Níže je uveden seznam všech změn zámků stránek.
+Můžete si prohlédnout též [[Special:ProtectedPages|seznam aktuálně platných zámků]].',
 'protectedarticle'            => 'zamyká „[[$1]]“',
 'modifiedarticleprotection'   => 'mění zámek stránky „[[$1]]“',
 'unprotectedarticle'          => 'odemyká „[[$1]]“',
@@ -2296,7 +2302,7 @@ Současné nastavení pro tuto stránku je: '''$1''':",
 Současné nastavení pro tuto stránku je: '''$1''':",
 'protect-cascadeon'           => 'Tato stránka je právě zamčena, protože je vložena do {{PLURAL:$1|následující stránky zamčené|následujících stránek zamčených|následujících stránek zamčených}} kaskádovým zámkem. Můžete změnit zámky pro tuto stránku, ale nebude to mít žádný vliv na kaskádové zamčení.',
 'protect-default'             => 'Povolit všem',
-'protect-fallback'            => 'Vyžaduje povolení "$1"',
+'protect-fallback'            => 'Vyžaduje oprávnění „$1“',
 'protect-level-autoconfirmed' => 'Zakázat novým a neregistrovaným uživatelům',
 'protect-level-sysop'         => 'Pouze správci',
 'protect-summary-cascade'     => 'kaskádový',
@@ -2420,7 +2426,7 @@ Zde je pro přehled zobrazen nejnovější záznam z knihy zablokování:',
 'nolinkshere-ns'           => "Ve zvoleném jmenném prostoru na '''[[:$1]]''' neodkazuje žádná stránka.",
 'isredirect'               => 'přesměrování',
 'istemplate'               => 'vložení',
-'isimage'                  => 'vložení souboru',
+'isimage'                  => 'odkaz na soubor',
 'whatlinkshere-prev'       => '{{PLURAL:$1|předchozí|předchozí $1|předchozích $1}}',
 'whatlinkshere-next'       => '{{PLURAL:$1|následující|následující $1|následujících $1}}',
 'whatlinkshere-links'      => '← odkazy',
@@ -2760,7 +2766,7 @@ Uložte jej na svůj disk a nahrajte ho sem.',
 'tooltip-ca-viewsource'           => 'Tato stránka je zamčena. Můžete si prohlédnout její zdrojový kód.',
 'tooltip-ca-history'              => 'Starší verze této stránky.',
 'tooltip-ca-protect'              => 'Zamknout tuto stránku.',
-'tooltip-ca-unprotect'            => 'Odemknout tuto stránku.',
+'tooltip-ca-unprotect'            => 'Změnit zámek této stránky.',
 'tooltip-ca-delete'               => 'Smazat tuto stránku.',
 'tooltip-ca-undelete'             => 'Obnovit editace této stránky provedené před jejím smazáním.',
 'tooltip-ca-move'                 => 'Přesunout tuto stránku',
@@ -2798,9 +2804,9 @@ Uložte jej na svůj disk a nahrajte ho sem.',
 'tooltip-ca-nstab-help'           => 'Zobrazit stránku nápovědy.',
 'tooltip-ca-nstab-category'       => 'Zobrazit kategorii.',
 'tooltip-minoredit'               => 'Označit změnu jako malou editaci',
-'tooltip-save'                    => 'Kliknutím na toto tlačítko uložíte na trvalo své změny',
-'tooltip-preview'                 => 'Kliknutím na toto tlačítko zobrazíte náhled svých změn; používejte ho, prosíme, před uložením!',
-'tooltip-diff'                    => 'Zobrazit, jaké změny jste v textu provedli.',
+'tooltip-save'                    => 'Uložit vaše změny',
+'tooltip-preview'                 => 'Zobrazit náhled vašich změn; prosíme, zobrazte si ho před uložením!',
+'tooltip-diff'                    => 'Zobrazit, jaké změny jste v textu provedli',
 'tooltip-compareselectedversions' => 'Podívat se na rozdíly mezi dvěma vybranými verzemi této stránky.',
 'tooltip-watch'                   => 'Přidat stránku do seznamu sledovaných',
 'tooltip-recreate'                => 'Obnovit stánku i když byla smazána',
@@ -3113,9 +3119,9 @@ Obsahuje pouze seznam s odrážkami (řádka začíná s *). První odkaz na ř�
 'exif-orientation-3' => 'Otočeno o 180°',
 'exif-orientation-4' => 'Svisle převráceno',
 'exif-orientation-5' => 'Otočeno o 90° proti směru hodinových ručiček a svisle převráceno',
-'exif-orientation-6' => 'Otočeno o 90° ve směru hodinových ručiček',
+'exif-orientation-6' => 'Otočeno o 90° proti směru hodinových ručiček',
 'exif-orientation-7' => 'Otočeno o 90° ve směru hodinových ručiček a svisle převráceno',
-'exif-orientation-8' => 'Otočeno o 90° proti směru hodinových ručiček',
+'exif-orientation-8' => 'Otočeno o 90° po směru hodinových ručiček',
 
 'exif-planarconfiguration-1' => 'chunky',
 'exif-planarconfiguration-2' => 'planar',
@@ -3505,9 +3511,8 @@ MediaWiki je distribuována v naději, že bude užitečná, avšak BEZ JAKÉKOL
 'filepath'         => 'Cesta k souboru',
 'filepath-page'    => 'Soubor:',
 'filepath-submit'  => 'Přejít',
-'filepath-summary' => 'Tato speciální stránka vrátí úplnou cestu k souboru. Obrázky se zobrazí v plném rozlišení, jiné typy souborů se otevřenou v  přiřazených programech.
-
-Jméno souboru vkládejte bez označení "{{ns:file}}:" .',
+'filepath-summary' => 'Tato speciální stránka vrátí úplnou cestu k souboru.
+Obrázky se zobrazí v plném rozlišení, jiné typy souborů se otevřenou v přiřazených programech.',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch'          => 'Hledání duplicitních souborů',

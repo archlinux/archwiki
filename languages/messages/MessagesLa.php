@@ -12,6 +12,7 @@
  * @author Esteban97
  * @author LeighvsOptimvsMaximvs
  * @author McDutchie
+ * @author MissPetticoats
  * @author Omnipaedista
  * @author OrbiliusMagister
  * @author Ornil
@@ -183,10 +184,10 @@ $messages = array(
 'tog-enotifminoredits'        => 'Mittere mihi litteras electronicas etiam pro recensionibus minoribus',
 'tog-enotifrevealaddr'        => 'Monstrare inscriptio mea electronica in nuntiis notificantibus',
 'tog-shownumberswatching'     => 'Numerum usorum custodientium monstrare',
-'tog-oldsig'                  => 'Praevisum subscriptionis ad tempus adhibitae:',
+'tog-oldsig'                  => 'Subscriptio ad tempus adhibita:',
 'tog-fancysig'                => 'Subscriptio vicitext (sine nexu automatico)',
-'tog-externaleditor'          => 'Utere editore externo semper',
-'tog-externaldiff'            => 'Utere dissimilitudine externa semper',
+'tog-externaleditor'          => 'Utere editore externo semper (pro peritus solo, requirat speciales optiones in calculone. [http://www.mediawiki.org/wiki/Manual:External_editors More information.])',
+'tog-externaldiff'            => 'Utere editore dissimilitudine externa semper (pro peritus solo, requirat speciales optiones in calculone. [http://www.mediawiki.org/wiki/Manial:External_editors More information.])',
 'tog-showjumplinks'           => 'Sinere nexus ostendi forma "salire ad" monstrata',
 'tog-uselivepreview'          => 'Praevisum viventem adhibere (JavaScript)',
 'tog-forceeditsummary'        => 'Si recensionem non summatim descripsero, me roga si continuare velim',
@@ -300,7 +301,7 @@ $messages = array(
 'vector-action-move'       => 'Movere',
 'vector-action-protect'    => 'Protegere',
 'vector-action-undelete'   => 'Restituere',
-'vector-action-unprotect'  => 'Deprotegere',
+'vector-action-unprotect'  => 'Protectionem mutare',
 'vector-view-create'       => 'Creare',
 'vector-view-edit'         => 'Recensere',
 'vector-view-history'      => 'Historiam inspicere',
@@ -334,8 +335,8 @@ $messages = array(
 'protect'           => 'Protegere',
 'protect_change'    => 'mutare',
 'protectthispage'   => 'Protegere hanc paginam',
-'unprotect'         => 'Deprotegere',
-'unprotectthispage' => 'Deprotegere hanc paginam',
+'unprotect'         => 'Protectionem mutare',
+'unprotectthispage' => 'Protectionem huius paginae mutare',
 'newpage'           => 'Nova pagina',
 'talkpage'          => 'Disputare hanc paginam',
 'talkpagelinktext'  => 'Disputatio',
@@ -500,6 +501,7 @@ Noli oblivisci [[Special:Preferences|praeferentias tuas]] apud {{grammar:accusat
 'nav-login-createaccount'    => 'Conventum aperire / conventum creare',
 'loginprompt'                => 'Cookies potestatem facere debes ut conventum aperire.',
 'userlogin'                  => 'Conventum aperire / conventum creare',
+'userloginnocreate'          => 'Conventum aperire',
 'logout'                     => 'Conventum concludere',
 'userlogout'                 => 'Conventum concludere',
 'notloggedin'                => 'Conventum non est apertum',
@@ -509,6 +511,7 @@ Noli oblivisci [[Special:Preferences|praeferentias tuas]] apud {{grammar:accusat
 'gotaccount'                 => "Habesne iam rationem? '''$1'''.",
 'gotaccountlink'             => 'Conventum aperi',
 'createaccountmail'          => 'ab inscriptione electronica',
+'createaccountreason'        => 'Causa:',
 'badretype'                  => 'Tesserae quas scripsisti inter se non congruunt.',
 'userexists'                 => 'Nomen usoris quod selegisti iam est.
 Nomen usoris alium selige.',
@@ -579,7 +582,7 @@ Hunc nuntium ignorare potes, si nolis hac ratione uti.',
 'image_sample'    => 'Exemplum.jpg',
 'image_tip'       => 'Fasciculus in pagina impositus',
 'media_sample'    => 'Exemplum.ogg',
-'media_tip'       => 'Nexus ad fasciculum mediorum',
+'media_tip'       => 'Nexus ad fasciculum',
 'sig_tip'         => 'Subscriptio tua cum indicatione temporis',
 'hr_tip'          => 'Linea horizontalis (noli saepe uti)',
 
@@ -759,6 +762,9 @@ Titulus: '''({{int:cur}})''' = dissimilis ab emendatione novissima,
 'revdelete-hide-text'        => 'Celare textum emendationis',
 'revdelete-hide-image'       => 'Celare contentum fasciculi',
 'revdelete-hide-comment'     => 'Celare summarium emendationis',
+'revdelete-radio-same'       => 'non mutare',
+'revdelete-radio-set'        => 'Ita vero',
+'revdelete-radio-unset'      => 'Minime',
 'revdelete-log'              => 'Causa:',
 'revdelete-logentry'         => 'mutavit visibilitatem emendationis paginae [[$1]]',
 'revdel-restore'             => 'visibilitatem mutare',
@@ -934,7 +940,7 @@ Conare praefixare tua inquisitionem cum ''all:'' ut quaeras contenta omnia (pagi
 'prefs-registration'        => 'Dies creationis rationis:',
 'yourrealname'              => 'Nomen verum:',
 'yourlanguage'              => 'Lingua:',
-'yourvariant'               => 'Differentia:',
+'yourvariant'               => 'Differentia linguae contentorum:',
 'yournick'                  => 'Subscriptio nova:',
 'badsig'                    => 'Subscriptio cruda non est valida; scrutina affixa HTML.',
 'badsiglength'              => 'Subscriptio tua nimis longa est.
@@ -1463,6 +1469,7 @@ Inscriptio electronica quam in [[Special:Preferences|praeferentiis tuis]] dedis 
 # Watchlist
 'watchlist'          => 'Paginae custoditae',
 'mywatchlist'        => 'Paginae custoditae',
+'watchlistfor2'      => 'Pro $1 $2',
 'nowatchlist'        => 'Nullas paginas custodis.',
 'watchlistanontext'  => 'Necesse est $1 ad indicem paginarum custoditarum inspiciendum vel recensendum.',
 'watchnologin'       => 'Conventum non est apertum',

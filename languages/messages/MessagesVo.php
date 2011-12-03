@@ -269,7 +269,7 @@ $messages = array(
 'vector-action-move'       => 'Topätükön',
 'vector-action-protect'    => 'Jelön',
 'vector-action-undelete'   => 'Sämoükön',
-'vector-action-unprotect'  => 'Säjelön',
+'vector-action-unprotect'  => 'Votükön jeli',
 'vector-view-create'       => 'Jafön',
 'vector-view-edit'         => 'Redakön',
 'vector-view-history'      => 'Logön jenotemi',
@@ -303,8 +303,8 @@ $messages = array(
 'protect'           => 'Jelön',
 'protect_change'    => 'votükön',
 'protectthispage'   => 'Jelön padi at',
-'unprotect'         => 'säjelön',
-'unprotectthispage' => 'Säjelolöd padi at',
+'unprotect'         => 'Votükön jeli',
+'unprotectthispage' => 'Votükön jeli pada at',
 'newpage'           => 'Pad nulik',
 'talkpage'          => 'Bespikolöd padi at',
 'talkpagelinktext'  => 'Bespik',
@@ -389,7 +389,7 @@ $messages = array(
 'red-link-title'          => '$1 (pad no dabinon)',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
-'nstab-main'      => 'Yeged',
+'nstab-main'      => 'Pad',
 'nstab-user'      => 'Gebanapad',
 'nstab-media'     => 'Nünamakanädapad',
 'nstab-special'   => 'Pad patik',
@@ -511,7 +511,8 @@ No glömolöd ad votükön [[Special:Preferences|buükamis olik in {{SITENAME}}]
 'createaccountmail'          => 'me pot leäktronik',
 'createaccountreason'        => 'Kod:',
 'badretype'                  => 'Letavöds fa ol pepenöls no leigons.',
-'userexists'                 => 'Gebananem at ya dabinon. Välolös, begö! nemik votik.',
+'userexists'                 => 'Gebananem at ya pagebon.
+Välolös, begö! nemi votik.',
 'loginerror'                 => 'Nunädamapöl',
 'createaccounterror'         => 'Kal no pejafon: $1',
 'nocookiesnew'               => 'Gebanakal pejafon, ab no enunädol oli. {{SITENAME}} gebon „kekilis“ pö nunädam gebanas. Pö bevüresodanaföm olik ye geb kekilas penemogükon. Mogükolös oni e nunädolös oli me gebananem e letavöd nuliks ola.',
@@ -664,7 +665,7 @@ Kanol [[Special:Search/{{PAGENAME}}|sukön padatiädi at]] su pads votik, <span 
 'userpage-userdoesnotexist'        => 'Gebanakal: "$1" no peregistaron. Fümükolös, va vilol jäfön/redakön padi at.',
 'userpage-userdoesnotexist-view'   => 'Gebenakal: "$1" no peregistaron.',
 'clearyourcache'                   => "'''Prudö!''' Pos dakip buükamas, mögos, das ozesüdos ad nedemön memi nelaidüpik bevüresodatävöma ad logön votükamis.
-'''Mozilla / Firefox / Safari:''' kipolöd klavi: ''Shift'' dono e välolöd eli ''Reload'' (= dönulodön) me mugaparat, u dränolöd klävis: ''Ctrl-F5'' u ''Ctrl-R'' (''Command-R'' if labol eli Macintosh);
+'''Mozilla / Firefox / Safari:''' kipolöd klavi: ''Shift'' dono e välolöd eli ''Reload'' (= dönulodön) me mugaparat, u dränolöd klävis: ''Ctrl-F5'' u ''Ctrl-R'' (''Command-R'' if labol eli Mac);
 '''Konqueror:''' välolöd eli ''Reload'' (= dönulodön) me mugaparat, u dränolöd klavi: ''F5'';
 '''Opera:''' vagükolöd lölöfiko memi nelaidüpik me ''Tools → Preferences'' (Stumem → Buükams).
 '''Internet Explorer:''' kipolöd klavi: ''Ctrl'' dono e välolöd eli ''Refresh'' (= flifädükön) me mugaparat, u dränolöd klavis: ''Ctrl-F5''.",
@@ -1345,6 +1346,9 @@ Fümedolös, begö! das el URL lonöfon e kanon palogön, e poso steifülolös n
 If säkäd at laibinon, kosikolös ko [[Special:ListUsers/sysop|guvan]] tefü on.',
 'upload-unknown-size'     => 'Gretot nesevädik',
 
+# img_auth script messages
+'img-auth-nofile' => 'Ragiv: "$1" no dabinon.',
+
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
 'upload-curl-error6'       => 'No eplöpos ad rivön eli URL',
 'upload-curl-error6-text'  => 'No eplöpos ad rivön eli URL at. Kontrololös, va el URL veräton e bevüresodatopäd dabinon.',
@@ -1679,6 +1683,7 @@ Ba dabinons [[{{MediaWiki:Listgrouprights-helppage}}|nüns pluik]] tefü gebanag
 # Watchlist
 'watchlist'            => 'Galädalised obik',
 'mywatchlist'          => 'Galädalised obik',
+'watchlistfor2'        => 'Ela $1 $2',
 'nowatchlist'          => 'Labol nosi in galädalised olik.',
 'watchlistanontext'    => '$1 ad logön u redakön lienis galädaliseda olik',
 'watchnologin'         => 'No enunädon oki',
@@ -1928,6 +1933,7 @@ $1',
 'sp-contributions-newbies-title' => 'Gebanakeblünots pro kals nulik',
 'sp-contributions-blocklog'      => 'Jenotalised blokamas',
 'sp-contributions-deleted'       => 'gebanakeblünots pemoüköl',
+'sp-contributions-logs'          => 'jenotaliseds',
 'sp-contributions-talk'          => 'bespik',
 'sp-contributions-userrights'    => 'guvam gebanagitätas',
 'sp-contributions-search'        => 'Sukön keblünotis',
@@ -1943,7 +1949,7 @@ $1',
 'nolinkshere-ns'           => "Pads nonik yumons lü pad: '''[[:$1]]''' in nemaspad pevälöl.",
 'isredirect'               => 'lüodükömapad',
 'istemplate'               => 'ninükam',
-'isimage'                  => 'yüm magoda',
+'isimage'                  => 'yüm ragiva',
 'whatlinkshere-prev'       => '{{PLURAL:$1|büik|büik $1}}',
 'whatlinkshere-next'       => '{{PLURAL:$1|sököl|sököl $1}}',
 'whatlinkshere-links'      => '← yüms',
@@ -2162,17 +2168,19 @@ Ad seveigön padis, penolös tiädis in penamaspad dono, tiädi bal a kedet, e v
 'export-templates'  => 'Keninükön samafomotis',
 
 # Namespace 8 related
-'allmessages'               => 'Sitanuns',
-'allmessagesname'           => 'Nem',
-'allmessagesdefault'        => 'Vödem rigädik',
-'allmessagescurrent'        => 'Vödem nuik',
-'allmessagestext'           => 'Is binon lised sitanunas valik lonöföl in nemaspad: Sitanuns.
+'allmessages'                   => 'Sitanuns',
+'allmessagesname'               => 'Nem',
+'allmessagesdefault'            => 'Vödem rigädik',
+'allmessagescurrent'            => 'Vödem nuik',
+'allmessagestext'               => 'Is binon lised sitanunas valik lonöföl in nemaspad: Sitanuns.
 Gebolös [http://www.mediawiki.org/wiki/Localisation Topükami ela MediaWiki] ed el [http://translatewiki.net translatewiki.net] if vilol keblünön topükame valemik ela MediaWiki.',
-'allmessagesnotsupportedDB' => "Pad at no kanon pagebön bi el '''\$wgUseDatabaseMessages''' penemögükon.",
-'allmessages-filter-legend' => 'Sul',
-'allmessages-filter-all'    => 'Valik',
-'allmessages-language'      => 'Pük:',
-'allmessages-filter-submit' => 'Golön',
+'allmessagesnotsupportedDB'     => "Pad at no kanon pagebön bi el '''\$wgUseDatabaseMessages''' penemögükon.",
+'allmessages-filter-legend'     => 'Sul',
+'allmessages-filter-unmodified' => 'Penevotüköl',
+'allmessages-filter-all'        => 'Valik',
+'allmessages-filter-modified'   => 'Pevotüköl',
+'allmessages-language'          => 'Pük:',
+'allmessages-filter-submit'     => 'Golön',
 
 # Thumbnails
 'thumbnail-more'           => 'Gretükön',
@@ -2245,6 +2253,7 @@ Dakipolös oni su nünöm olik e löpükolös oni isio.',
 'tooltip-ca-viewsource'           => 'Pad at pejelon. Kanol logön fonätakoti onik.',
 'tooltip-ca-history'              => 'Fomams büik pada at.',
 'tooltip-ca-protect'              => 'Jelön padi at',
+'tooltip-ca-unprotect'            => 'Votükön jeli pada at',
 'tooltip-ca-delete'               => 'Moükön padi at',
 'tooltip-ca-undelete'             => 'Gegetön redakamis pada at büä pämoükon',
 'tooltip-ca-move'                 => 'Topätükön padi at',
@@ -2463,8 +2472,8 @@ Te lisedaliens (liens me * primöl) pabevobons. Yüm balid liena muton binön y�
 'exif-colorspace'                  => 'Kölaspad',
 'exif-componentsconfiguration'     => 'Sinif komponena alik',
 'exif-compressedbitsperpixel'      => 'Mod kobopedama magoda',
-'exif-pixelydimension'             => 'Magodavidot lonöföl',
-'exif-pixelxdimension'             => 'Magodageilot lonöföl',
+'exif-pixelydimension'             => 'Magodavidot',
+'exif-pixelxdimension'             => 'Magodageilot',
 'exif-makernote'                   => 'Penets fabrikana',
 'exif-usercomment'                 => 'Küpets gebana',
 'exif-relatedsoundfile'            => 'Tonaragiv tefik',
@@ -2479,9 +2488,9 @@ Te lisedaliens (liens me * primöl) pabevobons. Yüm balid liena muton binön y�
 'exif-exposureprogram'             => 'Jonamaprogram',
 'exif-spectralsensitivity'         => 'Senöfik späktrumik',
 'exif-isospeedratings'             => 'Senöf (ISO)',
-'exif-shutterspeedvalue'           => 'Färmikamavifot',
-'exif-aperturevalue'               => 'Maifamagrad',
-'exif-brightnessvalue'             => 'Litöf',
+'exif-shutterspeedvalue'           => 'Färmikamavifot: APEX',
+'exif-aperturevalue'               => 'Maifamagrad: APEX',
+'exif-brightnessvalue'             => 'Litöf: APEX',
 'exif-exposurebiasvalue'           => 'Gudükumam jonama',
 'exif-maxaperturevalue'            => 'Maifikam maxumik',
 'exif-subjectdistance'             => 'Fagot zeila',
@@ -2807,9 +2816,8 @@ Kanol i [[Special:Watchlist/edit|gebön redakametodi kösömik]].',
 'filepath'         => 'Ragivaluveg',
 'filepath-page'    => 'Ragiv:',
 'filepath-submit'  => 'Gololöd',
-'filepath-summary' => 'Pad patik at tuvon luvegi lölöfik ragiva. Magods pajonons ma fomät gudikün, ragivasots votik pamaifükons stedöfo kobü programs onsik.
-
-Penolös ragivanemi nen foyümot: „{{ns:file}}:“',
+'filepath-summary' => 'Pad patik at tuvon luvegi lölöfik ragiva.
+Magods pajonons ma fomät gudikün, ragivasots votik pamaifükons stedöfo kobü programs onsik.',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch'          => 'Sukön ragivis petelüköl',

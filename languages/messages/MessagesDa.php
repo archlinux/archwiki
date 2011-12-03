@@ -209,7 +209,7 @@ $messages = array(
 'tog-enotifminoredits'        => 'Send mig også en e-mail ved mindre ændringer af overvågede sider',
 'tog-enotifrevealaddr'        => 'Vis min e-mail-adresse i mails med besked om ændringer',
 'tog-shownumberswatching'     => 'Vis antal brugere, der overvåger',
-'tog-oldsig'                  => 'Forhåndsvisning af nuværende signatur',
+'tog-oldsig'                  => 'Nuværende signatur:',
 'tog-fancysig'                => 'Behandl signatur som wikitekst uden automatisk henvisning',
 'tog-externaleditor'          => 'Brug ekstern editor automatisk (kun for rutinerede brugere, da det kræver særlige indstillinger på din computer. [http://www.mediawiki.org/wiki/Manual:External_editors Flere oplysninger.])',
 'tog-externaldiff'            => 'Brug ekstern forskelsvisning automatisk (kun for rutinerede brugere, da det kræver særlige indstillinger på din computer. [http://www.mediawiki.org/wiki/Manual:External_editors Flere oplysninger.])',
@@ -340,7 +340,7 @@ $messages = array(
 'vector-action-move'             => 'Flyt',
 'vector-action-protect'          => 'Beskyt',
 'vector-action-undelete'         => 'Gendan',
-'vector-action-unprotect'        => 'Fjern beskyttelse',
+'vector-action-unprotect'        => 'Ændr beskyttelse',
 'vector-simplesearch-preference' => 'Aktivér forbedrede søgeforslag (kun Vector-udseendet)',
 'vector-view-create'             => 'Opret',
 'vector-view-edit'               => 'Redigér',
@@ -376,8 +376,8 @@ $messages = array(
 'protect'           => 'Beskyt',
 'protect_change'    => 'ændr',
 'protectthispage'   => 'Beskyt side',
-'unprotect'         => 'Fjern beskyttelse',
-'unprotectthispage' => 'Frigiv side',
+'unprotect'         => 'Ændr beskyttelse',
+'unprotectthispage' => 'Ændr beskyttelsen af denne side',
 'newpage'           => 'Ny side',
 'talkpage'          => 'Diskussion',
 'talkpagelinktext'  => 'diskussion',
@@ -550,7 +550,7 @@ Forespørgsel: $2',
 'protectedinterface'   => 'Denne side indeholder tekst til softwarens sprog-interface og er skrivebeskyttet for at forhindre misbrug.',
 'editinginterface'     => "'''Advarsel:''' Du redigerer en side som bruges i programmets grænseflade. Ændringer på denne side vil påvirke udseendet af grænsefladen for andre brugere.
 For oversættelser bedes du venligst overveje at bruge [http://translatewiki.net/wiki/Main_Page?setlang=da translatewiki.net], projektet for oversættelse af MediaWiki.",
-'sqlhidden'            => '(SQL forespørgsel gemt)',
+'sqlhidden'            => '(SQL forespørgsel skjult)',
 'cascadeprotected'     => 'Denne side er skrivebeskyttet, da den er indeholdt i nedenstående {{PLURAL:$1|side|sider}}, som er skrivebeskyttet med tilvalg af "nedarvende sidebeskyttelse":
 $2',
 'namespaceprotected'   => 'Du har ikke rettigheder til at redigere sider i $1-navnerummet.',
@@ -594,7 +594,8 @@ Din konto er blevet oprettet. Glem ikke at personliggøre dine [[Special:Prefere
 'createaccountmail'          => 'via e-mail',
 'createaccountreason'        => 'Begrundelse:',
 'badretype'                  => 'De indtastede adgangskoder er ikke ens.',
-'userexists'                 => 'Det brugernavn du har valgt er allerede i brug. Vælg venligst et andet brugernavn.',
+'userexists'                 => 'Det brugernavn, du har valgt, er allerede i brug.
+Vælg venligst et andet brugernavn.',
 'loginerror'                 => 'Logon mislykket',
 'createaccounterror'         => 'Kunne ikke oprette konto: $1',
 'nocookiesnew'               => 'Din brugerkonto er nu oprettet, men du er ikke logget på. {{SITENAME}} bruger cookies til at logge brugere på. Du har slået cookies fra. Vær venlig at slå cookies til, og derefter kan du logge på med dit nye brugernavn og kodeord.',
@@ -780,11 +781,12 @@ eller <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}
 'userpage-userdoesnotexist-view'   => 'Brugerkontoen "$1" er ikke oprettet.',
 'blocked-notice-logextract'        => 'Denne bruger er i øjeblikket blokeret.
 Loggen over den seneste blokering ses nedenfor:',
-'clearyourcache'                   => "'''Bemærk: Efter at have gemt er du nødt til at tømme din browsers cache for at kunne se ændringerne.'''
-'''Mozilla / Firefox / Safari''': Hold ''shifttasten'' nede og klik på ''reload'', eller tryk enten ''Ctrl-F5'' eller ''Ctrl-Shift-r'' (Mac: ''cmd-shift-r'');
-'''Konqueror''': Klik på ''reload'' eller tryk på ''F5'';
-'''Opera''': Tøm cachen i ''Tools → Preferences'';
-'''Internet Explorer''': hold ''controltasten'' nede og klik på ''refresh'' eller tryk på ''control-F5''.",
+'clearyourcache'                   => "'''Bemærk:''' Efter at have gemt er du måske nødt til at tømme din browsers cache for at kunne se ændringerne.
+* '''Firefox / Safari:''' Hold ''shifttasten'' nede og klik på ''reload'', eller tryk enten ''Ctrl-F5'' eller ''Ctrl-Shift-r'' (''Cmd-R'' på en Mac).
+* '''Google Chrome:''' Tryk ''Ctrl-Shift-R'' (''Cmd-Shift-R'' på en Mac).
+* '''Internet Explorer:''' hold ''controltasten'' nede og klik på ''refresh'' eller tryk på ''Ctrl-F5''.
+* '''Konqueror:''' Klik på ''reload'' eller tryk på ''F5''.
+* '''Opera:''' Tøm cachen i ''Tools → Preferences''.",
 'usercssyoucanpreview'             => "'''Tip:''' Brug \"{{int:showpreview}}\"-knappen for at teste dit nye CSS inden du gemmer.",
 'userjsyoucanpreview'              => "'''Tip:''' Brug \"{{int:showpreview}}\"-knappen for at teste dit nye JavaScript inden du gemmer.",
 'usercsspreview'                   => "'''Husk at dette kun er en forhåndsvisning af dit eget css.
@@ -933,29 +935,27 @@ version, (forrige) = forskel til den forrige version, M = mindre ændring',
 Der er måske flere detaljer i [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} sletteloggen].",
 'rev-deleted-text-unhide'     => "Denne version af siden er '''slettet'''.
 Der er måske flere detaljer i [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} sletningsloggen].
-Som administrator kan du stadig [$1 se versionen] hvis du ønsker at fortsætte.",
+Du kan du stadig [$1 se versionen], hvis du ønsker at fortsætte.",
 'rev-suppressed-text-unhide'  => "Denne version af siden er '''skjult'''.
 Der er måske flere detaljer i [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} skjulningsloggen].
-Som administrator kan du stadig [$1 se versionen] hvis du ønsker at fortsætte.",
+Du kan stadig [$1 se versionen], hvis du ønsker at fortsætte.",
 'rev-deleted-text-view'       => "Denne version af siden er '''slettet'''.
-Som administrator kan du se den.
-Der er måske flere detaljer i [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} sletningsloggen].",
+Du kan du se den. Der er måske flere detaljer i [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} sletningsloggen].",
 'rev-suppressed-text-view'    => "Denne version af siden er '''skjult'''.
-Som administrator kan du se den.
-Der er måske flere detaljer i [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} skjulningsloggen].",
+Du kan se den. Der er måske flere detaljer i [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} skjulningsloggen].",
 'rev-deleted-no-diff'         => "Du kan ikke vise denne forskel fordi en af versionerne er '''slettet'''
 Der er måske flere detaljer i [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} sletningsloggen].",
 'rev-suppressed-no-diff'      => "Du kan ikke se denne forskel, fordi en af revisionerne er blevet '''slettet'''.",
 'rev-deleted-unhide-diff'     => "En af versionerne for denne forskel er '''slettet'''.
 Der er måske flere detaljer i [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} sletningsloggen].
-Som administrator kan du stadig [$1 se forskellen] hvis du ønsker at fortsætte.",
+Du kan stadig [$1 se forskellen], hvis du ønsker at fortsætte.",
 'rev-suppressed-unhide-diff'  => "En af sideversionerne i denne forskel er blevet '''skjult'''.
 Der kan være detaljer i [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} skjulningsloggen].
-Som en administrator kan du stadig [$1 se denne forskel] hvis du ønsker det.",
+Du kan stadig [$1 se denne forskel], hvis du ønsker det.",
 'rev-deleted-diff-view'       => "En af revisionerne i denne forskel er blevet '''slettet'''.
-Som administrator kan du se denne forskel; detaljer kan findes i [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} sletningsloggen].",
+Du kan se denne forskel; detaljer kan findes i [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} sletningsloggen].",
 'rev-suppressed-diff-view'    => "En af revisionerne i denne forskel er blevet '''skjult'''.
-Som administrator kan du se denne forskel; der kan findes detaljer i [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} skjulningsloggen].",
+Du kan se denne forskel; der kan findes detaljer i [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} skjulningsloggen].",
 'rev-delundel'                => 'vise/skjule',
 'rev-showdeleted'             => 'vis',
 'revisiondelete'              => 'Slette/gendanne versioner',
@@ -1192,8 +1192,8 @@ Du kan prøve at bruge \"all:\" som præfiks for at søge i alt indhold (inkl. d
 'recentchangesdays-max'         => '(maks. $1 {{PLURAL:$1|dag|dage}})',
 'recentchangescount'            => 'Antal redigeringer som skal vises som standard:',
 'prefs-help-recentchangescount' => 'Det gælder for seneste ændringer, historikker og logger.',
-'prefs-help-watchlist-token'    => 'Hvis du udfylder dette felt med en hemmelig værdi, vil der laves et RSS-feed for din overvågingsliste.
-Alle som kender nøglen i feltet vil være i stand til at læse din overvågingsliste, så vælg en sikker værdi.
+'prefs-help-watchlist-token'    => 'Hvis du udfylder dette felt med en hemmelig værdi, vil der laves et RSS-feed for din overvågningsliste.
+Alle som kender nøglen i feltet vil være i stand til at læse din overvågningsliste, så vælg en sikker værdi.
 Her er en tilfældig genereret værdi som du kan bruge: $1',
 'savedprefs'                    => 'Dine indstillinger er blevet gemt.',
 'timezonelegend'                => 'Tidszone:',
@@ -1233,7 +1233,7 @@ Det kan ikke gøres om.',
 'prefs-registration'            => 'Registreringstidspunkt:',
 'yourrealname'                  => 'Dit rigtige navn:',
 'yourlanguage'                  => 'Sprog:',
-'yourvariant'                   => 'Sprogvariant:',
+'yourvariant'                   => 'Sprogvariant for indhold:',
 'yournick'                      => 'Signatur:',
 'prefs-help-signature'          => 'Kommentarer på diskussionssider bør signeres med "<nowiki>~~~~</nowiki>" som vil blive konverteret til din signatur og et tidsstempel.',
 'badsig'                        => 'Syntaksen i underskriften er ugyldig; kontroller venligst den brugte HTML.',
@@ -1286,7 +1286,7 @@ Du kan også vælge at lade andre brugere kontakte dig gennem din bruger- eller 
 'userrights-no-interwiki'      => 'Du kan ikke ændre brugerrettigheder på andre wikier.',
 'userrights-nodatabase'        => 'Databasen $1 eksisterer ikke lokalt.',
 'userrights-nologin'           => 'Du skal [[Special:UserLogin|logge på]] med en administrativ konto, før du kan ændre brugerettigheder.',
-'userrights-notallowed'        => 'Din konto har ikke adgang til at ændre brugerrettigheder.',
+'userrights-notallowed'        => 'Din konto har ikke adgang til at tilføje eller fjerne brugerrettigheder.',
 'userrights-changeable-col'    => 'Redigerbare grupper',
 'userrights-unchangeable-col'  => 'Uredigerbare grupper',
 
@@ -1634,7 +1634,8 @@ For optimal sikkerhed er img_auth.php deaktiveret.",
 'upload_source_file' => ' (en fil på din computer)',
 
 # Special:ListFiles
-'listfiles-summary'     => 'Denne specialside viser alle oplagte filer. Standardmæssigt vises de sidst oplagte filer først. Med et klik på spalteoverskriften kan sorteringen vendes om, eller der kan sorteres efter en anden spalte.',
+'listfiles-summary'     => 'Denne specialside viser alle oplagte filer.
+Når der filtreres efter bruger, vil kun filer, hvor den pågældende bruger lagde den seneste version af filen op, blive vist.',
 'listfiles_search_for'  => 'Søge efter fil:',
 'imgfile'               => 'Fil',
 'listfiles'             => 'Filliste',
@@ -1663,7 +1664,7 @@ For optimal sikkerhed er img_auth.php deaktiveret.",
 'filehist-filesize'         => 'Filstørrelse',
 'filehist-comment'          => 'Kommentar',
 'filehist-missing'          => 'Fil mangler',
-'imagelinks'                => 'Filhenvisninger',
+'imagelinks'                => 'Filanvendelse',
 'linkstoimage'              => '{{Plural:$1|Den følgende side|De følgende $1 sider}} henviser til denne fil:',
 'linkstoimage-more'         => 'Flere end $1 {{PLURAL:$1|side|sider}} henviser til denne fil.
 Den følgende liste viser kun {{PLURAL:$1|den første henvisning|de $1 første henvisninger}}.
@@ -1830,7 +1831,7 @@ Hver linje indeholder henvisninger til den første og den anden omdirigering, s�
 'listusers-editsonly'     => 'Vis kun brugere med redigeringer',
 'listusers-creationsort'  => 'Sorter efter oprettelsesdato',
 'usereditcount'           => '{{PLURAL:$1|én redigering|$1 redigeringer}}',
-'usercreated'             => 'Oprettet den $1 $2',
+'usercreated'             => '{{GENDER:$3|Oprettet}} den $1 $2',
 'newpages'                => 'Nyeste sider',
 'newpages-username'       => 'Brugernavn:',
 'ancientpages'            => 'Ældste sider',
@@ -2107,10 +2108,11 @@ og den seneste version af $2 er gendannet.',
 
 # Protect
 'protectlogpage'              => 'Skrivebeskyttelseslog',
-'protectlogtext'              => 'Herunder er en liste med sider der er blevet beskyttet/har fået fjernet beskyttelsen.',
+'protectlogtext'              => 'Herunder er en liste over ændringer til sidebeskyttelser.
+Se [[Special:ProtectedPages|listen over beskyttede sider]] for listen over sidebeskyttelser, der er i kraft i øjeblikket.',
 'protectedarticle'            => '[[$1]] beskyttet',
 'modifiedarticleprotection'   => 'ændrede beskyttelsen af "[[$1]]"',
-'unprotectedarticle'          => 'fjernet beskyttelse af [[$1]]',
+'unprotectedarticle'          => 'fjernede beskyttelse af "[[$1]]"',
 'movedarticleprotection'      => 'flyttede beskyttelsesindstillinger fra "[[$2]]" til "[[$1]]"',
 'protect-title'               => 'Ændr beskyttelse af "$1"',
 'prot_1movedto2'              => '$1 flyttet til $2',
@@ -2324,7 +2326,7 @@ Se [[Special:IPBlockList|IP-blokeringslisten]] for alle blokeringer.',
 'ipblocklist-localblock'          => 'Lokal blokering',
 'ipblocklist-otherblocks'         => '{{PLURAL:$1|Øvrig blokering|Øvrige blokeringer}}',
 'blocklistline'                   => '$1, $2 blokerede $3 ($4)',
-'infiniteblock'                   => 'udløber infinite',
+'infiniteblock'                   => 'udløber ikke',
 'expiringblock'                   => 'udløber $1 $2',
 'anononlyblock'                   => 'kun anonyme',
 'noautoblockblock'                => 'Autoblok deaktiveret',
@@ -2364,7 +2366,7 @@ Skjulningsloggen vises nedenfor som reference:',
 $1 er allerede blokkeret. Vil du ændre indstillingene?',
 'ipb-otherblocks-header'          => 'Yderligere {{PLURAL:$1|blokering|blokeringer}}',
 'ipb_cant_unblock'                => 'Fejl: Spærre-ID $1 ikke fundet. Spærringen er allerede ophævet.',
-'ipb_blocked_as_range'            => 'Fejl: IP-adressen $1 er ikke dirkete blokeret. Derfor kan en blokering ikke ophæves. Adressen er blokeret som en del af intervallet $2. Denne blokering kan ophæves.',
+'ipb_blocked_as_range'            => 'Fejl: IP-adressen $1 er ikke direkte blokeret. Derfor kan en blokering ikke ophæves. Adressen er blokeret som en del af intervallet $2. Denne blokering kan ophæves.',
 'ip_range_invalid'                => 'Ugyldigt IP-interval.',
 'ip_range_toolarge'               => 'Blokeringer af IP-serier større end /$1 er ikke tilladte.',
 'blockme'                         => 'Bloker mig',
@@ -2592,7 +2594,7 @@ Alle Transwiki import-aktioner protokolleres i [[Special:Log/import|import-logge
 Du kan se på kildeteksten.',
 'tooltip-ca-history'              => 'Tidligere versioner af denne side',
 'tooltip-ca-protect'              => 'Beskyt denne side',
-'tooltip-ca-unprotect'            => 'Fjern beskyttelsen af siden',
+'tooltip-ca-unprotect'            => 'Ændr beskyttelsen af denne side',
 'tooltip-ca-delete'               => 'Slet denne side',
 'tooltip-ca-undelete'             => 'Gendan de redigeringer der blev lavet på denne side før den blev slettet',
 'tooltip-ca-move'                 => 'Flyt denne side',
@@ -2649,7 +2651,7 @@ Det giver mulighed for at tilføje en begrundelse i beskrivelsen.',
 
 # Scripts
 'common.js'   => '/* Javascript inkluderet her vil være aktivt for alle brugere. */',
-'monobook.js' => '/* Udgået; brug [[MediaWiki:common.js]] */',
+'monobook.js' => '/* JavaScript i denne fil vil indlæses for brugere af udseendet MonoBook */',
 
 # Metadata
 'nodublincore'      => 'Dublin Core RDF-metadata er slået fra på denne server.',
@@ -2931,9 +2933,9 @@ Kun indholdet af lister (linjer startende med *) bliver brugt. Den første henvi
 'exif-orientation-3' => 'Drejet 180°',
 'exif-orientation-4' => 'Vertikalt spejlet',
 'exif-orientation-5' => 'Drejet 90° mod uret og spejlet vertikalt',
-'exif-orientation-6' => 'Drejet 90° med uret',
+'exif-orientation-6' => 'Drejet 90° mod uret',
 'exif-orientation-7' => 'Drejet 90° med uret og spejlet vertikalt',
-'exif-orientation-8' => 'Drejet 90° mod uret',
+'exif-orientation-8' => 'Drejet 90° med uret',
 
 'exif-planarconfiguration-1' => 'Grovformat',
 'exif-planarconfiguration-2' => 'Planformat',
@@ -3260,9 +3262,7 @@ Du skulle have modtaget [{{SERVER}}{{SCRIPTPATH}}/COPYING en kopi af GNU General
 'filepath-page'    => 'Fil:',
 'filepath-submit'  => 'Vis sti',
 'filepath-summary' => 'Denne specialside giver et direkte link til en fil.
-Billeder vises i fuld opløsning, og andre mediatyper vil blive aktiveret med deres tilhørende program.
-
-Angiv filnavnet uden "{{ns:file}}:"-præfiks.',
+Billeder vises i fuld opløsning, og andre mediatyper vil blive aktiveret med deres tilhørende program.',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch'          => 'Find dubletfiler',
@@ -3313,8 +3313,7 @@ Angiv filnavnet uden "{{ns:file}}:"-præfikset.',
 'tag-filter'              => '[[Special:Tags|tag]]filter:',
 'tag-filter-submit'       => 'Filtrér',
 'tags-title'              => 'Tags',
-'tags-intro'              => 'This page lists the tags that the software may mark an edit with, and their meaning.
-Denne side oplister de tags som programmet kan mærke en redigering med, og deres betydning.',
+'tags-intro'              => 'Denne side oplister de tags som programmet kan mærke en redigering med, og deres betydning.',
 'tags-tag'                => 'Tagnavn',
 'tags-display-header'     => 'Udseende på ændringslister',
 'tags-description-header' => 'Beskrivelse af betydning',

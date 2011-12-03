@@ -643,7 +643,7 @@ abstract class Installer {
 	 * Environment check for register_globals.
 	 */
 	protected function envCheckRegisterGlobals() {
-		if( wfIniGetBool( "magic_quotes_runtime" ) ) {
+		if( wfIniGetBool( 'register_globals' ) ) {
 			$this->showMessage( 'config-register-globals' );
 		}
 	}
@@ -782,6 +782,9 @@ abstract class Installer {
 		$caches = array();
 		foreach ( $this->objectCaches as $name => $function ) {
 			if ( function_exists( $function ) ) {
+				if ( $name == 'xcache' && !wfIniGetBool( 'xcache.var_size' ) ) {
+					continue;
+				}
 				$caches[$name] = true;
 			}
 		}
@@ -1441,10 +1444,14 @@ abstract class Installer {
 			$params['language'] = $myLang;
 		}
 
-		$res = MWHttpRequest::factory( $this->mediaWikiAnnounceUrl,
-			array( 'method' => 'POST', 'postData' => $params ) )->execute();
-		if( !$res->isOK() ) {
-			$s->warning( 'config-install-subscribe-fail', $res->getMessage() );
+		if( MWHttpRequest::canMakeRequests() ) {
+			$res = MWHttpRequest::factory( $this->mediaWikiAnnounceUrl,
+				array( 'method' => 'POST', 'postData' => $params ) )->execute();
+			if( !$res->isOK() ) {
+				$s->warning( 'config-install-subscribe-fail', $res->getMessage() );
+			}
+		} else {
+			$s->warning( 'config-install-subscribe-notpossible' );
 		}
 	}
 
