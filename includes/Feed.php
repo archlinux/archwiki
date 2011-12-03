@@ -36,9 +36,8 @@
  * @ingroup Feed
  */
 class FeedItem {
-	/**#@+
-	 * @var string
-	 * @private
+	/**
+	 * @var Title
 	 */
 	var $Title = 'Wiki';
 	var $Description = '';
@@ -47,12 +46,11 @@ class FeedItem {
 	var $Author = '';
 	var $UniqueId = '';
 	var $RSSIsPermalink;
-	/**#@-*/
 
 	/**
 	 * Constructor
 	 *
-	 * @param $Title String: Item's title
+	 * @param $Title String|Title Item's title
 	 * @param $Description String
 	 * @param $Url String: URL uniquely designating the item.
 	 * @param $Date String: Item's date
@@ -68,6 +66,15 @@ class FeedItem {
 		$this->Date = $Date;
 		$this->Author = $Author;
 		$this->Comments = $Comments;
+	}
+
+	/**
+	 * Get the last touched timestamp
+	 *
+	 * @return String last-touched timestamp
+	 */
+	public function getLastMod() {
+		return $this->Title->getTouched();
 	}
 
 	/**
@@ -99,7 +106,7 @@ class FeedItem {
 	 * @param $uniqueId String: unique id for the item
 	 * @param $RSSisPermalink Boolean: set to true if the guid (unique id) is a permalink (RSS feeds only)
 	 */
-	public function setUniqueId($uniqueId, $RSSisPermalink = False) {
+	public function setUniqueId($uniqueId, $RSSisPermalink = false) {
 		$this->UniqueId = $uniqueId;
 		$this->RSSIsPermalink = $RSSisPermalink;
 	}
@@ -111,6 +118,16 @@ class FeedItem {
 	 */
 	public function getTitle() {
 		return $this->xmlEncode( $this->Title );
+	}
+
+	/**
+	 * Get the DB prefixed title
+	 *
+	 * @return String the prefixed title, with underscores and
+	 *  any interwiki and namespace prefixes
+	 */
+	public function getDBPrefixedTitle() {
+		return $this->Title->getPrefixedDBKey();
 	}
 
 	/**
@@ -222,12 +239,15 @@ class ChannelFeed extends FeedItem {
 	 * but can also be called separately.
 	 */
 	public function httpHeaders() {
-		global $wgOut;
+		global $wgOut, $wgVaryOnXFP;
 
 		# We take over from $wgOut, excepting its cache header info
 		$wgOut->disable();
 		$mimetype = $this->contentType();
 		header( "Content-type: $mimetype; charset=UTF-8" );
+		if ( $wgVaryOnXFP ) {
+			$wgOut->addVaryHeader( 'X-Forwarded-Proto' );
+		}
 		$wgOut->sendCacheControl();
 
 	}
@@ -256,7 +276,7 @@ class ChannelFeed extends FeedItem {
 		$this->httpHeaders();
 		echo '<?xml version="1.0"?>' . "\n";
 		echo '<?xml-stylesheet type="text/css" href="' .
-			htmlspecialchars( wfExpandUrl( "$wgStylePath/common/feed.css?$wgStyleVersion" ) ) .
+			htmlspecialchars( wfExpandUrl( "$wgStylePath/common/feed.css?$wgStyleVersion", PROTO_CURRENT ) ) .
 			'"?' . ">\n";
 	}
 }
@@ -288,7 +308,7 @@ class RSSFeed extends ChannelFeed {
 		?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 	<channel>
 		<title><?php print $this->getTitle() ?></title>
-		<link><?php print $this->getUrl() ?></link>
+		<link><?php print wfExpandUrl( $this->getUrl(), PROTO_CURRENT ) ?></link>
 		<description><?php print $this->getDescription() ?></description>
 		<language><?php print $this->getLanguage() ?></language>
 		<generator>MediaWiki <?php print $wgVersion ?></generator>
@@ -304,12 +324,12 @@ class RSSFeed extends ChannelFeed {
 	?>
 		<item>
 			<title><?php print $item->getTitle() ?></title>
-			<link><?php print $item->getUrl() ?></link>
+			<link><?php print wfExpandUrl( $item->getUrl(), PROTO_CURRENT ) ?></link>
 			<guid<?php if( !$item->RSSIsPermalink ) print ' isPermaLink="false"' ?>><?php print $item->getUniqueId() ?></guid>
 			<description><?php print $item->getDescription() ?></description>
 			<?php if( $item->getDate() ) { ?><pubDate><?php print $this->formatTime( $item->getDate() ) ?></pubDate><?php } ?>
 			<?php if( $item->getAuthor() ) { ?><dc:creator><?php print $item->getAuthor() ?></dc:creator><?php }?>
-			<?php if( $item->getComments() ) { ?><comments><?php print $item->getComments() ?></comments><?php }?>
+			<?php if( $item->getComments() ) { ?><comments><?php print wfExpandUrl( $item->getComments(), PROTO_CURRENT ) ?></comments><?php }?>
 		</item>
 <?php
 	}
@@ -348,8 +368,8 @@ class AtomFeed extends ChannelFeed {
 		?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="<?php print $this->getLanguage() ?>">
 		<id><?php print $this->getFeedId() ?></id>
 		<title><?php print $this->getTitle() ?></title>
-		<link rel="self" type="application/atom+xml" href="<?php print $this->getSelfUrl() ?>"/>
-		<link rel="alternate" type="text/html" href="<?php print $this->getUrl() ?>"/>
+		<link rel="self" type="application/atom+xml" href="<?php print wfExpandUrl( $this->getSelfUrl(), PROTO_CURRENT ) ?>"/>
+		<link rel="alternate" type="text/html" href="<?php print wfExpandUrl( $this->getUrl(), PROTO_CURRENT ) ?>"/>
 		<updated><?php print $this->formatTime( wfTimestampNow() ) ?>Z</updated>
 		<subtitle><?php print $this->getDescription() ?></subtitle>
 		<generator>MediaWiki <?php print $wgVersion ?></generator>
@@ -390,7 +410,7 @@ class AtomFeed extends ChannelFeed {
 	<entry>
 		<id><?php print $item->getUniqueId() ?></id>
 		<title><?php print $item->getTitle() ?></title>
-		<link rel="alternate" type="<?php print $wgMimeType ?>" href="<?php print $item->getUrl() ?>"/>
+		<link rel="alternate" type="<?php print $wgMimeType ?>" href="<?php print wfExpandUrl( $item->getUrl(), PROTO_CURRENT ) ?>"/>
 		<?php if( $item->getDate() ) { ?>
 		<updated><?php print $this->formatTime( $item->getDate() ) ?>Z</updated>
 		<?php } ?>
@@ -399,9 +419,9 @@ class AtomFeed extends ChannelFeed {
 		<?php if( $item->getAuthor() ) { ?><author><name><?php print $item->getAuthor() ?></name></author><?php }?>
 	</entry>
 
-<?php /* FIXME need to add comments
+<?php /* @todo FIXME: Need to add comments
 	<?php if( $item->getComments() ) { ?><dc:comment><?php print $item->getComments() ?></dc:comment><?php }?>
-      */
+	  */
 	}
 
 	/**

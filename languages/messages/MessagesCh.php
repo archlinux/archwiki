@@ -162,7 +162,6 @@ $messages = array(
 'history'           => 'Historian påhina',
 'history_short'     => 'Historia',
 'updatedmarker'     => "maribisa desde i må'pos na bisita-hu",
-'info_short'        => 'Infotmasion',
 'printableversion'  => 'Ribision imprentayon',
 'permalink'         => 'Inachetton petmanente',
 'print'             => 'Imprenta',
@@ -344,7 +343,7 @@ Pot fabot na'sedi ha'.",
 'loginsuccess'               => "'''Esta ma'log in hao gi {{SITENAME}}: \"\$1\".'''",
 'nosuchuser'                 => 'Tåya\' na muna\'sesetbi as "$1".
 Chek fan i dineletrea, pat fa\'tinas un kuenta nuebu.',
-'nosuchusershort'            => 'Tåya\' na muna\'sesetbi as "<nowiki>$1</nowiki>".
+'nosuchusershort'            => 'Tåya\' na muna\'sesetbi as "$1".
 Chek fan i dineletrea.',
 'nouserspecified'            => "Un nesita manayek i na'an muna'sesetbi.",
 'wrongpassword'              => "Lachi i password ni tinige'-mu. Pot fabot, chagi fan ta'lo.",
@@ -377,7 +376,7 @@ Ti para u na'hanao ni sigienti na inayek siha.",
 'createaccount-title'        => "Nina'huyong kuenta nu {{SITENAME}}",
 'loginlanguagelabel'         => 'Lengguahe: $1',
 
-# Password reset dialog
+# Change password dialog
 'oldpassword'      => 'Password bihu:',
 'newpassword'      => 'Password nuebu:',
 'retypenew'        => "Na'tekla nuebu na password:",
@@ -394,8 +393,6 @@ Ti para u na'hanao ni sigienti na inayek siha.",
 'extlink_tip'     => 'Inachetton sanhiyong (munga mamalefa ni http://)',
 'headline_sample' => "Tinige' i titulo mo'na",
 'headline_tip'    => "Titulon nibet mina'dos",
-'math_sample'     => "Po'lo i fotmula mågi",
-'math_tip'        => 'Fotmulan matematika (LaTeX)',
 'nowiki_tip'      => 'Iknora i estrokturan wiki',
 'image_tip'       => "Mana'halom na atkibu",
 'media_tip'       => 'Inachetton atkibu',
@@ -471,7 +468,7 @@ Buente ha' na guåha unos kuantos na muna'sesetbi ni ma u'usa i enao na IP.
 An un muna'sesetbi taina'an hao ya manñiente hao na guåha na kommentu ti prisisu ni manadirihiyi hao, pot fabot [[Special:UserLogin|fa'tinas kuenta-mu pat log in]] para mansuhayi yinaoyao yan i otru na muna'sesetbi siha.''",
 'noarticletext'                    => 'Tåya\' tinige\'-ña este na påhina gi este na momento.
 Siña un [[Special:Search/{{PAGENAME}}|aligao este na titulon påhina]] gi halom otro na påhina siha, <span class="plainlinks">[{{fullurl:{{FULLPAGENAME}}|action=edit}} tulaika este na påhina]</span>.',
-'userpage-userdoesnotexist'        => 'Ti marehistra i kuenata muna\'sesetbi "$1". Pot fabot chek kao malago\' hao un fa\'tinas/tulaika este na påhina.',
+'userpage-userdoesnotexist'        => 'Ti marehistra i kuenata muna\'sesetbi "<nowiki>$1</nowiki>". Pot fabot chek kao malago\' hao un fa\'tinas/tulaika este na påhina.',
 'usercsspreview'                   => "'''Hasso fan na un ripapasa iyo-mu CSS muna'sesetbi, trabiha ti masåtba ha'!'''",
 'userjspreview'                    => "'''Hasso fan na un chachagi/ripapasa iyo-mu JavaScript muna'sesetbi, trabiha ti masåtba ha'!'''",
 'note'                             => "'''Fanapunta:'''",
@@ -697,7 +694,6 @@ Fanapunta na fana'an ti gus nuebu i listan-ñiha i guinahan {{SITENAME}}.",
 'changepassword'            => 'Tulaika password',
 'prefs-skin'                => 'Låssas',
 'skin-preview'              => "Na'annok",
-'prefs-math'                => 'Math',
 'datedefault'               => "Tåya' prifirensia",
 'prefs-datetime'            => 'Fecha yan ora',
 'prefs-personal'            => "Botta muna'sesetbi",
@@ -713,8 +709,6 @@ Fanapunta na fana'an ti gus nuebu i listan-ñiha i guinahan {{SITENAME}}.",
 'columns'                   => 'Kolumna siha:',
 'searchresultshead'         => 'Aligao',
 'resultsperpage'            => 'Dinanche siha kada påhina:',
-'contextlines'              => 'Liña siha kada dinanche:',
-'contextchars'              => 'Guinaha kada liña:',
 'recentchangesdays'         => "Diha siha na para u na'annok gi i tinilaika gi halacha:",
 'recentchangescount'        => "Kunatu na tinilaika para u na'annok gi i tinilaika gi halacha:",
 'savedprefs'                => "Manmaasåtba i ga'ña-mu siha.",
@@ -908,10 +902,8 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Watchlist
 'watchlist'         => 'Listan pinilan-hu',
 'mywatchlist'       => 'Listan pinilan-hu',
-'addedwatch'        => "Mapo'lo gi listan pinilan",
 'addedwatchtext'    => "Mana'suha i påhina \"[[:\$1]]\" para iyo-mu [[Special:Watchlist|Listan pinilan]].
 I tinilaika siha mo'na gi tiempo kontodu i påhinan kombetsasion siha para u fana'lista guihi, yan para u '''na'potpot''' i påhina gi halom [[Special:RecentChanges|i listan tinilaika gi halacha]] para un ayek ha' mas libianu.",
-'removedwatch'      => "Mana'suha gi listan pinilan",
 'removedwatchtext'  => 'Mana\'suha i påhinan "[[:$1]]" gi [[Special:Watchlist|listan pinilan-mu]].',
 'watch'             => 'Pulan',
 'watchthispage'     => 'Pulan este na påhina',
@@ -929,7 +921,7 @@ I tinilaika siha mo'na gi tiempo kontodu i påhinan kombetsasion siha para u fan
 'confirmdeletetext'     => "Para un na'suha i påhina kontodu i historia-ña.
 Konfotme fan na este i malago'-mu, na kumonprende hao hiniyong-ña, yan tumattiyi [[{{MediaWiki:Policy-url}}|i polisia]] ni bidada-mu.",
 'actioncomplete'        => 'Funhayan i aksion',
-'deletedtext'           => 'Mana\'suha "<nowiki>$1</nowiki>".
+'deletedtext'           => 'Mana\'suha "$1".
 Chek $2 para i historian muna\'suha gi halacha.',
 'deletedarticle'        => 'Mana\'suha "[[$1]]"',
 'dellogpage'            => "Historian muna'suha",
@@ -947,7 +939,7 @@ Chek $2 para i historian muna\'suha gi halacha.',
 'protectexpiry'               => 'Munhåyan:',
 'protect_expiry_invalid'      => 'Lachi i oran funhåyan.',
 'protect_expiry_old'          => 'Esta maloffan i oran funhåyan.',
-'protect-text'                => "Siña un tulaika i nibet proteksion ni påhina '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "Siña un tulaika i nibet proteksion ni påhina '''$1'''.",
 'protect-locked-access'       => "Ti nahong i petmisu kuenta-mu tumulaika nibet proteksion ni påhina siha.
 Estague taiguini i nibet i påhina '''$1''':",
 'protect-fallback'            => 'Afuetsas "$1" na petmisu',
@@ -1103,23 +1095,15 @@ Ayek fan otru nå'an-ña.",
 'tooltip-compareselectedversions' => "Na'annok i diferensia siha gi i dos ma'ayek na tinilaika ni påhina.",
 'tooltip-watch'                   => "Po'lo i påhina gi listan pinilan-mu",
 
-# Math errors
-'math_failure'          => 'Lachi ma parse',
-'math_unknown_error'    => "linachi ti matungo'",
-'math_unknown_function' => "fonksion ti matungo'",
-'math_lexing_error'     => 'linachi lexing',
-'math_syntax_error'     => 'linachi syntax',
-
 # Browsing diffs
 'previousdiff' => "← I må'pos na dif",
 'nextdiff'     => "Mamaila' na dif →",
 
 # Media information
-'file-info-size'       => '$1 × $2 na pixel, mineddong atkibu: $3, MIME klåsi: $4',
-'file-nohires'         => "<small>Tåya' mas takhilo' na risolusion.</small>",
-'svg-long-desc'        => 'Atkibu SVG, $1 × $2 na pixels, mineddong atkibu: $3',
-'show-big-image'       => 'Magåhet mineddong-ña',
-'show-big-image-thumb' => '<small>Mineddong i ripasu: $1 × $2 pixels</small>',
+'file-info-size' => '$1 × $2 na pixel, mineddong atkibu: $3, MIME klåsi: $4',
+'file-nohires'   => "<small>Tåya' mas takhilo' na risolusion.</small>",
+'svg-long-desc'  => 'Atkibu SVG, $1 × $2 na pixels, mineddong atkibu: $3',
+'show-big-image' => 'Magåhet mineddong-ña',
 
 # Special:NewFiles
 'newimages' => 'Galarian atkibu mannuebu siha',
@@ -1139,7 +1123,7 @@ Ti mantattiyi i areklo ni sigienten ina'chetton siha gi mismo liña, i.e. i påh
 
 # External editor support
 'edit-externally'      => 'Tulaika i atkibu yan un aplikasion sanhiyong',
-'edit-externally-help' => 'Hånao para [http://www.mediawiki.org/wiki/Manual:External_editors i plantan chinachalani] para mas infotmasion.',
+'edit-externally-help' => 'Hånao para [//www.mediawiki.org/wiki/Manual:External_editors i plantan chinachalani] para mas infotmasion.',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'todu',

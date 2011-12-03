@@ -66,20 +66,25 @@ $.suggestions = {
 	},
 	/**
 	 * Ask the user-specified callback for new suggestions. Any previous delayed call to this function still pending
-	 * will be canceled.  If the value in the textbox hasn't changed since the last time suggestions were fetched, this
+	 * will be canceled.  If the value in the textbox is empty or hasn't changed since the last time suggestions were fetched, this
 	 * function does nothing.
 	 * @param {Boolean} delayed Whether or not to delay this by the currently configured amount of time
 	 */
 	update: function( context, delayed ) {
-		// Only fetch if the value in the textbox changed
+		// Only fetch if the value in the textbox changed and is not empty
+		// if the textbox is empty then clear the result div, but leave other settings intouched
 		function maybeFetch() {
-			if ( context.data.$textbox.val() !== context.data.prevText ) {
-				context.data.prevText = context.data.$textbox.val();
+			if ( context.data.$textbox.val().length == 0 ) {
+				context.data.$container.hide();
+				context.data.prevText = '';
+			} else if ( context.data.$textbox.val() !== context.data.prevText ) {
 				if ( typeof context.config.fetch == 'function' ) {
+     					context.data.prevText = context.data.$textbox.val();
 					context.config.fetch.call( context.data.$textbox, context.data.$textbox.val() );
 				}
 			}
 		}
+
 		// Cancel previous call
 		if ( context.data.timerID != null ) {
 			clearTimeout( context.data.timerID );
@@ -224,7 +229,7 @@ $.suggestions = {
 				} else {
 					result = selected.prev();
 					if ( selected.length == 0 ) {
-						// we are at the begginning, so lets jump to the last item
+						// we are at the beginning, so lets jump to the last item
 						if ( context.data.$container.find( '.suggestions-special' ).html() != "" ) {
 							result = context.data.$container.find( '.suggestions-special' );
 						} else {
@@ -517,5 +522,4 @@ $.fn.suggestions = function() {
 	} );
 	return returnValue !== null ? returnValue : $(this);
 };
-
 } )( jQuery );

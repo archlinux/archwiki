@@ -26,7 +26,7 @@ Bitte versuche es in ein paar Minuten erneut.',
 'nosuchuser' => 'Der Benutzername „$1“ existiert nicht.
 Überprüfe die Schreibweise (Gross-/Kleinschreibung beachten) oder [[Special:UserLogin/signup|melde dich als neuer Benutzer an]].',
 
-# Password reset dialog
+# Change password dialog
 'resetpass_announce' => 'Anmeldung mit dem per E-Mail zugesandten Code. Um die Anmeldung abzuschliessen, musst du jetzt ein neues Passwort wählen.',
 
 # Edit pages
@@ -106,12 +106,11 @@ Die Ausgabe kann durch die Auswahl des Logbuchtyps, des Benutzers oder des Seite
 'importuploaderrorsize'      => 'Das Hochladen der Importdatei ist fehlgeschlagen. Die Datei ist grösser als die maximal erlaubte Dateigrösse.',
 
 # Media information
-'imagemaxsize'         => "Maximale Bildgrösse:<br />''(für Dateibeschreibungsseiten)''",
-'thumbsize'            => 'Standardgrösse der Vorschaubilder (Thumbnails):',
-'file-info'            => 'Dateigrösse: $1, MIME-Typ: $2',
-'file-info-size'       => '$1 × $2 Pixel, Dateigrösse: $3, MIME-Typ: $4',
-'svg-long-desc'        => 'SVG-Datei, Basisgrösse: $1 × $2 Pixel, Dateigrösse: $3',
-'show-big-image-thumb' => '<small>Grösse der Voransicht: $1 × $2 Pixel</small>',
+'imagemaxsize'   => "Maximale Bildgrösse:<br />''(für Dateibeschreibungsseiten)''",
+'thumbsize'      => 'Standardgrösse der Vorschaubilder (Thumbnails):',
+'file-info'      => 'Dateigrösse: $1, MIME-Typ: $2',
+'file-info-size' => '$1 × $2 Pixel, Dateigrösse: $3, MIME-Typ: $4',
+'svg-long-desc'  => 'SVG-Datei, Basisgrösse: $1 × $2 Pixel, Dateigrösse: $3',
 
 # Metadata
 'metadata-fields' => 'Die folgenden Felder der EXIF-Metadaten in diesem MediaWiki-Systemtext werden auf Bildbeschreibungsseiten angezeigt; weitere standardmässig „eingeklappte“ Details können angezeigt werden.
@@ -121,10 +120,15 @@ Die Ausgabe kann durch die Auswahl des Logbuchtyps, des Benutzers oder des Seite
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
-'exif-resolutionunit'              => 'Masseinheit der Auflösung',
 'exif-jpeginterchangeformatlength' => 'Grösse der JPEG-Daten in Bytes',
 'exif-referenceblackwhite'         => 'Schwarz/Weiss-Referenzpunkte',
 'exif-maxaperturevalue'            => 'Grösste Blende',
@@ -140,7 +144,7 @@ Die Ausgabe kann durch die Auswahl des Logbuchtyps, des Benutzers oder des Seite
 
 MediaWiki wird in der Hoffnung verteilt, dass es nützlich sein wird, allerdings OHNE JEGLICHE GARANTIE und sogar ohne die implizierte Garantie einer MARKTGÄNGIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Hierzu sind weitere Hinweise in der ''GNU General Public License'' enthalten.
 
-Eine [{{SERVER}}{{SCRIPTPATH}}/COPYING Kopie der ''GNU General Public License''] sollte zusammen mit diesem Programm verteilt worden sein. Sofern dies nicht der Fall war, kann eine Kopie bei der Free Software Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA, schriftlich angefordert oder auf deren Website [http://www.gnu.org/licenses/old-licenses/gpl-2.0.html online gelesen] werden.",
+Eine [{{SERVER}}{{SCRIPTPATH}}/COPYING Kopie der ''GNU General Public License''] sollte zusammen mit diesem Programm verteilt worden sein. Sofern dies nicht der Fall war, kann eine Kopie bei der Free Software Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA, schriftlich angefordert oder auf deren Website [//www.gnu.org/licenses/old-licenses/gpl-2.0.html online gelesen] werden.",
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-info' => '$1 × $2 Pixel<br />Dateigrösse: $3<br />MIME-Typ: $4',

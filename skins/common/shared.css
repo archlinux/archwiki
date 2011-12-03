@@ -1,8 +1,22 @@
 /**
  * CSS in this file is used by *all* skins (that have any CSS at all).  Be
  * careful what you put in here, since what looks good in one skin may not in
- * another, but don't ignore the poor non-Monobook users either.
+ * another, but don't ignore the poor pre-Monobook users either.
  */
+
+/* GENERAL CLASSES FOR DIRECTIONALITY SUPPORT */
+/* These classes should be used for text depending on the content direction.
+Content stuff like editsection, ul/ol and TOC depend on this. */
+ /* @noflip */.mw-content-ltr { direction: ltr; }
+/* @noflip */.mw-content-rtl { direction: rtl; }
+/* Most input fields should be in site direction */
+/* @noflip */.sitedir-ltr textarea, .sitedir-ltr input { direction: ltr; }
+/* @noflip */.sitedir-rtl textarea, .sitedir-rtl input { direction: rtl; }
+/* Input types that should follow user direction, like buttons */
+input[type="submit"], input[type="button"], input[type="reset"], input[type="file"] { direction: ltr; }
+/* Override default values */
+/* @noflip */textarea[dir="ltr"], input[dir="ltr"] { direction: ltr; }
+/* @noflip */textarea[dir="rtl"], input[dir="rtl"] { direction: rtl; }
 
 /* Default style for semantic tags */
 abbr, acronym, .explain {
@@ -17,7 +31,10 @@ abbr, acronym, .explain {
 
 /* Links to redirects appear italicized on [[Special:AllPages]], [[Special:PrefixIndex]],
    [[Special:Watchlist/edit]] and in category listings */
-.allpagesredirect, .redirect-in-category, .watchlistredir { font-style: italic; }
+.allpagesredirect, .redirect-in-category, .watchlistredir {
+	font-style: italic;
+}
+
 
 /* Comment and username portions of RC entries */
 span.comment {
@@ -44,7 +61,9 @@ span.texhtml { font-family: serif; }
 #editform, #toolbar, #wpTextbox1 {
 	clear: both;
 }
-
+#toolbar img {
+	cursor: pointer;
+}
 div#mw-js-message {
 	margin: 1em 5%;
 	padding: 0.5em 2.5%;
@@ -57,7 +76,9 @@ div#mw-js-message {
 	float: right;
 	margin-left: 5px;
 }
-
+/* Correct directionality when page dir is different from site/user dir */
+/* @noflip */.mw-content-ltr .editsection, .mw-content-rtl .mw-content-ltr .editsection { float: right; }
+/* @noflip */.mw-content-rtl .editsection, .mw-content-ltr .mw-content-rtl .editsection { float: left; }
 /**
  * File histories
  */
@@ -127,6 +148,15 @@ tr.mw-htmlform-vertical-label td.mw-label {
 	text-align: left !important;
 }
 
+.mw-htmlform-invalid-input td.mw-input input {
+	border-color: red;
+}
+.mw-htmlform-multiselect-flatlist div.mw-htmlform-multiselect-item {
+	display: inline;
+	margin-right: 1em;
+	white-space: nowrap;
+}
+
 input#wpSummary {
 	width: 80%;
 }
@@ -138,6 +168,40 @@ input#wpSummary {
 .magnify { float: right; }
 
 /**
+ * Categories
+ */
+#catlinks {
+	/**
+	 * Overrides text justification (user preference)
+	 * See bug 31990
+	 */
+	text-align: left;
+}
+#catlinks ul {
+	display:inline;
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+	list-style-type: none;
+	list-style-image: none;
+	vertical-align: middle !ie;
+}
+
+#catlinks li {
+	display:inline-block;
+	line-height: 1.35em;
+	padding: 0 .7em;
+	border-left: 1px solid #AAA;
+	margin: 0.3em 0;
+	zoom: 1;
+	display:inline !ie;
+}
+
+#catlinks li:first-child {
+	padding-left: .4em;
+	border-left: none;
+}
+/**
  * Hidden categories
  */
 .mw-hidden-cats-hidden { display: none; }
@@ -148,214 +212,7 @@ p.mw-ipb-conveniencelinks, p.mw-protect-editreasons,
 p.mw-filedelete-editreasons, p.mw-delete-editreasons,
 p.mw-revdel-editreasons {
 	font-size: 90%;
-	float: right;
-}
-
-/* Search results */
-.searchresults {
-}
-
-.searchresults p {
-	margin-left: 0.4em;
-	margin-top: 1em;
-	margin-bottom: 1.2em;
-}
-
-div.searchresult {
-	font-size: 95%;
-	width: 38em;
-}
-
-.mw-search-results {
-	margin-left: 0.4em;
-}
-
-.mw-search-results li {
-	padding-bottom: 1em;
-	list-style: none;
-	list-style-image: none;
-}
-.mw-search-results li a {
-	font-size: 108%;
-}
-
-.mw-search-result-data {
-	color: green;
-	font-size: 97%;
-}
-
-.mw-search-formheader {
-	background-color: #f3f3f3;
-	margin-top: 1em;
-	border: 1px solid silver;
-}
-.mw-search-formheader div.search-types {
-	float: left;
-	padding-left: 0.25em;
-}
-.mw-search-formheader div.search-types ul {
-	margin: 0 !important;
-	padding: 0 !important;
-	list-style: none !important;
-}
-.mw-search-formheader div.search-types ul li {
-	float: left;
-	margin: 0;
-	padding: 0;
-}
-.mw-search-formheader div.search-types ul li a {
-	display: block;
-	padding: 0.5em;
-}
-.mw-search-formheader div.search-types ul li.current a {
-	color: #333333;
-	cursor: default;
-}
-.mw-search-formheader div.search-types ul li.current a:hover {
-	text-decoration: none;
-}
-.mw-search-formheader div.results-info {
-	float: right;
-	padding: 0.5em;
-	padding-right: 0.75em;
-}
-.mw-search-formheader div.results-info ul {
-	margin: 0 !important;
-	padding: 0 !important;
-	list-style: none !important;
-}
-.mw-search-formheader div.results-info ul li {
-	float: right;
-	margin: 0;
-	padding: 0;
-}
-fieldset#mw-searchoptions {
-	margin: 0;
-	padding-left: 0.75em !important;
-	padding-right: 0.75em !important;
-	padding-bottom: 0.5em !important;
-	padding-top: 0.5em !important;
-	border: none;
-	background-color: #f9f9f9;
-	border: 1px solid silver !important;
-	border-top-width: 0 !important;
-}
-fieldset#mw-searchoptions legend {
-	display: none;
-}
-fieldset#mw-searchoptions h4 {
-	padding: 0;
-	margin: 0;
-	float: left;
-}
-fieldset#mw-searchoptions div#mw-search-togglebox {
-	float: right;
-}
-
-fieldset#mw-searchoptions div#mw-search-togglebox label {
-	margin-right: 0.25em;
-}
-fieldset#mw-searchoptions div#mw-search-togglebox input {
-	margin-left: 0.25em;
-}
-fieldset#mw-searchoptions table {
-	float: left;
-	margin-right: 3em;
-}
-fieldset#mw-searchoptions table td {
-	padding-right: 1em;
-}
-fieldset#mw-searchoptions div.divider {
-	clear: both;
-	border-bottom: 1px solid #DDDDDD;
-	padding-top: 0.5em;
-	margin-bottom: 0.5em;
-}
-
-td#mw-search-menu {
-	padding-left:6em;
-	font-size:85%;
-}
-
-div#mw-search-interwiki {
-	float: right;
-	width: 18em;
-	border-style: solid;
-	border-color: #AAAAAA;
-	border-width: 1px;
-	margin-top: 2ex;
-}
-
-div#mw-search-interwiki li {
-	font-size: 95%;
-}
-
-.mw-search-interwiki-more {
-	float: right;
-	font-size: 90%;
-}
-
-div#mw-search-interwiki-caption {
-	text-align: center;
-	font-weight: bold;
-	font-size: 95%;
-}
-
-.mw-search-interwiki-project {
-	font-size: 97%;
-	text-align: left;
-	padding-left: 0.2em;
-	padding-right: 0.15em;
-	padding-bottom: 0.2em;
-	padding-top: 0.15em;
-	background-color: #ececec;
-	border-top: 1px solid #BBBBBB;
-}
-
-span.searchalttitle {
-	font-size: 95%;
-}
-
-div.searchdidyoumean {
-	font-size: 127%;
-	margin-top: 0.8em;
-	/* Note that this color won't affect the link, as desired. */
-	color: #c00;
-}
-
-div.searchdidyoumean em {
-	font-weight: bold;
-}
-
-.searchmatch {
-	font-weight: bold;
-}
-
-
-/*
- * Advanced PowerSearch box
- */
-td#mw-search-togglebox {
 	text-align: right;
-}
-
-table#mw-search-powertable {
-	width: 100%;
-}
-
-form#powersearch {
-	clear: both;
-}
-
-/*
- * UserRights stuff
- */
-.mw-userrights-disabled {
-	color: #888;
-}
-
-table.mw-userrights-groups * td,table.mw-userrights-groups * th {
-	padding-right: 1.5em;
 }
 
 /*
@@ -436,77 +293,17 @@ table.os-suggest-results {
 	border: 1px dashed #aaa;
 }
 
+.mw-history-revisiondelete-button, #mw-fileduplicatesearch-icon {
+	float: right;
+}
+
 /** Generic minor/bot/newpage styling */
 .newpage, .minor, .bot {
 	font-weight: bold;
 }
 
-/* Special:Contributions styling */
-.mw-uctop {
-	font-weight: bold;
-}
-
-/* Special:ListGroupRights styling */
-table.mw-listgrouprights-table tr {
-	vertical-align: top;
-}
-.listgrouprights-revoked {
-	text-decoration: line-through;
-}
-
-/* Special:Statistics styling */
-td.mw-statistics-numbers {
-	text-align: right;
-}
-
-/* Special:SpecialPages styling */
-h4.mw-specialpagesgroup {
-	background-color: #dcdcdc;
-	padding: 2px;
-	margin: .3em 0em 0em 0em;
-}
-.mw-specialpagerestricted {
-	font-weight: bold;
-}
-
 #shared-image-dup, #shared-image-conflict {
 	font-style: italic;
-}
-
-/* Special:EmailUser styling */
-table.mw-emailuser-table {
-	width: 98%;
-}
-td#mw-emailuser-sender, td#mw-emailuser-recipient {
-	font-weight: bold;
-}
-
-/* Special:Allpages styling */
-table.mw-allpages-table-form, table.mw-allpages-table-chunk {
-	width: 100%;
-}
-td.mw-allpages-alphaindexline {
-	text-align: right;
-}
-td.mw-allpages-nav, p.mw-allpages-nav {
-	text-align: right;
-	font-size: smaller;
-	margin-bottom: 1em;
-}
-table.mw-allpages-table-form tr {
-	vertical-align: top;
-}
-
-/* Special:Prefixindex styling */
-table#mw-prefixindex-list-table,
-table#mw-prefixindex-nav-table {
-	width: 98%;
-}
-td#mw-prefixindex-nav-form {
-	font-size: smaller;
-	margin-bottom: 1em;
-	text-align: right;
-	vertical-align: top;
 }
 
 /*
@@ -553,6 +350,11 @@ a.feedlink {
 	background: none !important;
 	padding: 0 !important;
 }
+/* External URLs should always be treated as LTR (bug 4330) */
+/* @noflip */ .rtl a.external.free, .rtl a.external.autonumber {
+	direction: ltr;
+	unicode-bidi: embed;
+}
 
 /* wikitable class for skinning normal tables
  * keep on sync with commonPrint.css
@@ -586,11 +388,15 @@ table.collapsed tr.collapsable {
 	color: green;
 	font-size: larger;
 }
+.warning {
+	color: #FFA500; /* orange */
+	font-size: larger;
+}
 .error {
 	color: red;
 	font-size: larger;
 }
-.errorbox, .successbox {
+.errorbox, .warningbox, .successbox {
 	font-size: larger;
 	border: 2px solid;
 	padding: .5em 1em;
@@ -602,16 +408,38 @@ table.collapsed tr.collapsable {
 	border-color: red;
 	background-color: #fff2f2;
 }
+.warningbox {
+	border-color: #FF8C00; /* darkorange */
+	background-color: #FFFFC0;
+}
 .successbox {
 	border-color: green;
 	background-color: #dfd;
 }
-.errorbox h2, .successbox h2 {
+.errorbox h2, .warningbox h2, .successbox h2 {
 	font-size: 1em;
 	font-weight: bold;
 	display: inline;
 	margin: 0 .5em 0 0;
 	border: none;
+}
+
+/* general info/warning box for SP */
+.mw-infobox {
+	border: 2px solid #ff7f00;
+	margin: 0.5em;
+	clear: left;
+	overflow: hidden;
+}
+
+.mw-infobox-left {
+	margin: 7px;
+	float: left;
+	width: 35px;
+}
+
+.mw-infobox-right {
+	margin: 0.5em 0.5em 0.5em 49px;
 }
 
 /* Note on preview page */
@@ -647,6 +475,13 @@ table.collapsed tr.collapsable {
 	min-width: 80%;
 	border-collapse: collapse;
 }
+.TablePager_nav {
+	margin: 0 auto;
+}
+.TablePager_nav td {
+	padding: 3px;
+	text-align: center;
+}
 .TablePager_nav a {
 	text-decoration: none;
 }
@@ -677,23 +512,6 @@ table.collapsed tr.collapsable {
 	background-color: #ccccff;
 }
 
- /* Allmessages table */
-#mw-allmessagestable .allmessages-customised td.am_default {
-	background-color: #fcffc4;
-}
-
-#mw-allmessagestable tr.allmessages-customised:hover td.am_default {
-	background-color: #faff90;
-}
-
-#mw-allmessagestable td.am_actual {
-	background-color: #e2ffe2;
-}
-
-#mw-allmessagestable tr.allmessages-customised:hover + tr.allmessages-customised td.am_actual {
-	background-color: #b1ffb1;
-}
-
 /* filetoc */
 ul#filetoc {
 	text-align: center;
@@ -717,7 +535,7 @@ table.mw_metadata {
 	font-size: 0.8em;
 	margin-left: 0.5em;
 	margin-bottom: 0.5em;
-	width: 300px;
+	width: 400px;
 }
 
 table.mw_metadata caption {
@@ -740,8 +558,8 @@ table.mw_metadata {
 table.mw_metadata td, table.mw_metadata th {
 	text-align: center;
 	border: 1px solid #aaaaaa;
-	padding-left: 0.1em;
-	padding-right: 0.1em;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 table.mw_metadata th {
@@ -752,18 +570,65 @@ table.mw_metadata td {
 	background-color: #fcfcfc;
 }
 
+table.mw_metadata ul.metadata-langlist {
+	list-style-type: none;
+	list-style-image: none;
+	padding-right: 5px;
+	padding-left: 5px;
+	margin: 0;
+}
+
+/* Correct directionality when page dir is different from site/user dir */
+.mw-content-ltr ul,
+.mw-content-rtl .mw-content-ltr ul {
+	/* @noflip */
+	margin: 0.3em 0 0 1.5em;
+	padding: 0;
+}
+.mw-content-rtl ul,
+.mw-content-ltr .mw-content-rtl ul {
+	/* @noflip */
+	margin: 0.3em 1.5em 0 0;
+	padding: 0;
+}
+.mw-content-ltr ol,
+.mw-content-rtl .mw-content-ltr ol {
+	/* @noflip */
+	margin: 0.3em 0 0 3.2em;
+	padding: 0;
+}
+.mw-content-rtl ol,
+.mw-content-ltr .mw-content-rtl ol {
+	/* @noflip */
+	margin: 0.3em 3.2em 0 0;
+	padding: 0;
+}
+
+/* Correct directionality when page dir is different from site/user dir */
+/* @noflip */.mw-content-ltr ul, .mw-content-rtl .mw-content-ltr ul {
+	margin: .3em 0 0 1.5em;
+}
+/* @noflip */.mw-content-rtl ul, .mw-content-ltr .mw-content-rtl ul {
+	margin: .3em 1.5em 0 0;
+}
+/* @noflip */.mw-content-ltr ol, .mw-content-rtl .mw-content-ltr ol {
+	margin: .3em 0 0 3.2em;
+}
+/* @noflip */.mw-content-rtl ol, .mw-content-ltr .mw-content-rtl ol {
+	margin: .3em 3.2em 0 0;
+}
+
 /* Galleries */
 /* These display attributes look nonsensical, but are needed to support IE and FF2 */
 /* Don't forget to update commonPrint.css */
 li.gallerybox {
 	vertical-align: top;
-	background-color: #f9f9f9;
 	border: solid 2px white;
 	display: -moz-inline-box;
+	display: inline-block;
 }
 
 ul.gallery, li.gallerybox {
-	display: inline-block;
 	zoom: 1;
 	*display: inline;
 }
@@ -784,7 +649,13 @@ li.gallerycaption {
 li.gallerybox div.thumb {
 	text-align: center;
 	border: 1px solid #ccc;
+	background-color: #f9f9f9;
 	margin: 2px;
+}
+
+li.gallerybox div.thumb img {
+	display: block;
+	margin: 0 auto;
 }
 
 div.gallerytext {
@@ -792,44 +663,6 @@ div.gallerytext {
 	font-size: 94%;
 	padding: 2px 4px;
 	word-wrap: break-word;
-}
-
-table.mw-enhanced-rc {
-	background: none;
-	border:0;
-	border-spacing:0;
-}
-td.mw-enhanced-rc {
-	white-space:nowrap;
-	padding:0;
-	vertical-align:top;
-	font-family:monospace
-}
-
-#mw-addcategory-prompt {
-	display: inline;
-	margin-left: 1em;
-}
-
-#mw-addcategory-prompt input {
-	margin-left: 0.5em;
-	margin-right: 0.5em;
-}
-
-.mw-remove-category {
-	padding: 8px;
-	/* @embed */
-	background-image: url(images/remove.png);
-	background-position: center center;
-	background-repeat: no-repeat;
-}
-
-.mw-ajax-addcategory {
-	padding-left: 20px;
-	/* @embed */
-	background-image: url(images/add.png);
-	background-position: left center;
-	background-repeat: no-repeat;
 }
 
 .mw-ajax-loader {
@@ -851,11 +684,6 @@ td.mw-enhanced-rc {
 	background-repeat: no-repeat;
 }
 
-/* Sort arrows added by SortableTables */
-a.sortheader {
-	margin: 0 0.3em;
-}
-
 /* Localised ordered list numbering for some languages */
 ol:lang(bcc) li,
 ol:lang(bqi) li,
@@ -872,26 +700,60 @@ ol:lang(ckb) li {
 	list-style-type: arabic-indic;
 }
 
+ol:lang(as) li,
 ol:lang(bn) li {
 	list-style-type: -moz-bengali;
 	list-style-type: bengali;
 }
 
+ol:lang(or) li {
+	list-style-type: -moz-oriya;
+	list-style-type: oriya;
+}
+
+#toc ul, .toc ul {
+	margin: .3em 0;
+}
+
+/* Correct directionality when page dir is different from site/user dir */
+/* @noflip */.mw-content-ltr .toc ul, .mw-content-ltr #toc ul,
+.mw-content-rtl .mw-content-ltr .toc ul, .mw-content-rtl .mw-content-ltr #toc ul {
+	text-align: left;
+}
+/* @noflip */.mw-content-rtl .toc ul, .mw-content-rtl #toc ul,
+.mw-content-ltr .mw-content-rtl .toc ul, .mw-content-ltr .mw-content-rtl #toc ul {
+	text-align: right;
+}
+/* @noflip */.mw-content-ltr .toc ul ul, .mw-content-ltr #toc ul ul,
+.mw-content-rtl .mw-content-ltr .toc ul ul, .mw-content-rtl .mw-content-ltr #toc ul ul {
+	margin: 0 0 0 2em;
+}
+/* @noflip */.mw-content-rtl .toc ul ul, .mw-content-rtl #toc ul ul,
+.mw-content-ltr .mw-content-rtl .toc ul ul, .mw-content-ltr .mw-content-rtl #toc ul ul {
+	margin: 0 2em 0 0;
+}
+
+#toc #toctitle,
+.toc #toctitle,
+#toc .toctitle,
+.toc .toctitle {
+	direction: ltr;
+}
+
 /* tooltip styles */
 .mw-help-field-hint {
 	display: none;
-	padding: 0px;
-	padding-left: 15px;
 	margin-left: 2px;
 	margin-bottom: -8px;
+	padding: 0px 0px 0px 15px;
 	/* @embed */
 	background-image: url('images/help-question.gif');
 	background-position: left center;
 	background-repeat: no-repeat;
-	color: #0645ad;
-	text-decoration: underline;
 	cursor: pointer;
 	font-size: .8em;
+	text-decoration: underline;
+	color: #0645ad;
 }
 .mw-help-field-hint:hover {
 	/* @embed */
@@ -904,9 +766,94 @@ ol:lang(bn) li {
 	border: 1px solid #5dc9f4;
 	margin-left: 20px;
 }
-.tipsy { padding: 5px 5px 10px; font-size: 12px; position: absolute; z-index: 100000; overflow: visible; }
-.tipsy-inner { padding: 5px 8px 4px 8px; background-color: #d6f3ff; color: black; border: 1px solid #5dc9f4; max-width: 300px; text-align: left; }
-.tipsy-arrow { position: absolute; /* @embed */ background: url( 'images/tipsy-arrow.gif' ) no-repeat top left; width: 13px; height: 13px; }
-.tipsy-se .tipsy-arrow { bottom: -2px; right: 10px; background-position: 0% 100%; }
+.tipsy {
+	padding: 5px 5px 10px;
+	font-size: 12px;
+	position: absolute;
+	z-index: 100000;
+	overflow: visible;
+}
+.tipsy-inner {
+	padding: 5px 8px 4px 8px;
+	background-color: #d6f3ff;
+	color: black;
+	border: 1px solid #5dc9f4;
+	max-width: 300px;
+	text-align: left;
+}
+.tipsy-arrow {
+	position: absolute;
+	/* @embed */
+	background: url(images/tipsy-arrow.gif) no-repeat top left;
+	width: 13px;
+	height: 13px;
+}
+.tipsy-se .tipsy-arrow {
+	bottom: -2px;
+	right: 10px;
+	background-position: 0% 100%;
+}
+/* Table Sorting */
+table.sortable th.headerSort {
+	background-image: url(images/sort_both.gif);
+	cursor: pointer;
+	background-repeat: no-repeat;
+	background-position: center right;
+	padding-right: 21px;
+}
+table.sortable th.headerSortUp {
+	background-image: url(images/sort_up.gif);
+}
+table.sortable th.headerSortDown {
+	background-image: url(images/sort_down.gif);
+}
 
+/* LTR content in RTL layout */
+.ltr {
+	/* @noflip */
+	direction: ltr;
+	unicode-bidi: embed;
+}
 
+#mw-clearyourcache, #mw-sitecsspreview, #mw-sitejspreview, #mw-usercsspreview, #mw-userjspreview {
+	direction: ltr;
+	unicode-bidi: embed;
+}
+
+/* Correct user & content directionality when viewing a diff */
+.diff-currentversion-title, .diff {
+	direction: ltr;
+	unicode-bidi: embed;
+}
+/* @noflip */ .diff-contentalign-right td {
+	direction: rtl;
+	unicode-bidi: embed;
+}
+/* @noflip */ .diff-contentalign-left td {
+	direction: ltr;
+	unicode-bidi: embed;
+}
+.diff-otitle, .diff-ntitle, .diff-lineno {
+	direction: ltr !important;
+	unicode-bidi: embed;
+}
+
+#mw-revision-info, #mw-revision-nav {
+	direction: ltr;
+}
+
+/* Images */
+/* @noflip */div.tright, div.floatright, table.floatright {
+	clear: right;
+	float: right;
+}
+/* @noflip */div.tleft, div.floatleft, table.floatleft {
+	float: left;
+	clear: left;
+}
+div.floatright, table.floatright, div.floatleft, table.floatleft {
+	position: relative;
+}
+
+/* bug 12205 */
+#mw-credits a { unicode-bidi: embed; }

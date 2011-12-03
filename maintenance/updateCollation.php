@@ -1,5 +1,24 @@
 <?php
 /**
+ * Script will find all rows in the categorylinks table whose collation is
+ * out-of-date (cl_collation != $wgCategoryCollation) and repopulate cl_sortkey
+ * using the page title and cl_sortkey_prefix.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Maintenance
  * @author Aryeh Gregor (Simetrical)
@@ -10,7 +29,8 @@
 require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class UpdateCollation extends Maintenance {
-	const BATCH_SIZE = 50;
+	const BATCH_SIZE = 50; // Number of rows to process in one batch
+	const SYNC_INTERVAL = 20; // Wait for slaves after this many batches
 
 	public function __construct() {
 		parent::__construct();
@@ -25,33 +45,32 @@ TEXT;
 
 		$this->addOption( 'force', 'Run on all rows, even if the collation is ' . 
 			'supposed to be up-to-date.' );
-	}
-	
-	public function syncDBs() {
-		$lb = wfGetLB();
-		// bug 27975 - Don't try to wait for slaves if there are none
-		// Prevents permission error when getting master position
-		if ( $lb->getServerCount() > 1 ) {
-			$dbw = $lb->getConnection( DB_MASTER );
-			$pos = $dbw->getMasterPos();
-			$lb->waitForAll( $pos );
-		}
+		$this->addOption( 'previous-collation', 'Set the previous value of ' .
+			'$wgCategoryCollation here to speed up this script, especially if your ' .
+			'categorylinks table is large. This will only update rows with that ' .
+			'collation, though, so it may miss out-of-date rows with a different, ' .
+			'even older collation.', false, true );
 	}
 
 	public function execute() {
 		global $wgCategoryCollation, $wgMiserMode;
 
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = $this->getDB( DB_MASTER );
 		$force = $this->getOption( 'force' );
 
-		$options = array( 'LIMIT' => self::BATCH_SIZE );
+		$options = array( 'LIMIT' => self::BATCH_SIZE, 'STRAIGHT_JOIN' );
 
 		if ( $force ) {
 			$options['ORDER BY'] = 'cl_from, cl_to';
 			$collationConds = array();
 		} else {
-			$collationConds = array( 0 => 
-				'cl_collation != ' . $dbw->addQuotes( $wgCategoryCollation ) );
+			if ( $this->hasOption( 'previous-collation' ) ) {
+				$collationConds['cl_collation'] = $this->getOption( 'previous-collation' );
+			} else {
+				$collationConds = array( 0 =>
+					'cl_collation != ' . $dbw->addQuotes( $wgCategoryCollation )
+				);
+			}
 
 			if ( !$wgMiserMode ) {
 				$count = $dbw->selectField(
@@ -70,10 +89,10 @@ TEXT;
 		}
 
 		$count = 0;
-		$row = false;
+		$batchCount = 0;
 		$batchConds = array();
 		do {
-			$this->output( 'Processing next ' . self::BATCH_SIZE . ' rows... ');
+			$this->output( "Selecting next " . self::BATCH_SIZE . " rows..." );
 			$res = $dbw->select(
 				array( 'categorylinks', 'page' ),
 				array( 'cl_from', 'cl_to', 'cl_sortkey_prefix', 'cl_collation',
@@ -83,6 +102,7 @@ TEXT;
 				__METHOD__,
 				$options
 			);
+			$this->output( " processing..." );
 
 			$dbw->begin();
 			foreach ( $res as $row ) {
@@ -136,7 +156,11 @@ TEXT;
 			$count += $res->numRows();
 			$this->output( "$count done.\n" );
 			
-			$this->syncDBs();
+			if ( ++$batchCount % self::SYNC_INTERVAL == 0 ) {
+				$this->output( "Waiting for slaves ... " );
+				wfWaitForSlaves();
+				$this->output( "done\n" );
+			}
 		} while ( $res->numRows() == self::BATCH_SIZE );
 	}
 }

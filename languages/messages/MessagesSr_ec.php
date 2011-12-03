@@ -34,10 +34,10 @@ $namespaceNames = array(
 	NS_USER             => 'Корисник',
 	NS_USER_TALK        => 'Разговор_са_корисником',
 	NS_PROJECT_TALK     => 'Разговор_о_$1',
-	NS_FILE             => 'Слика',
-	NS_FILE_TALK        => 'Разговор_о_слици',
-	NS_MEDIAWIKI        => 'МедијаВики',
-	NS_MEDIAWIKI_TALK   => 'Разговор_о_МедијаВикију',
+	NS_FILE             => 'Датотека',
+	NS_FILE_TALK        => 'Разговор_о_датотеци',
+	NS_MEDIAWIKI        => 'Медијавики',
+	NS_MEDIAWIKI_TALK   => 'Разговор_о_Медијавикију',
 	NS_TEMPLATE         => 'Шаблон',
 	NS_TEMPLATE_TALK    => 'Разговор_о_шаблону',
 	NS_HELP             => 'Помоћ',
@@ -46,8 +46,8 @@ $namespaceNames = array(
 	NS_CATEGORY_TALK    => 'Разговор_о_категорији',
 );
 
-# Aliases to latin namespaces
 $namespaceAliases = array(
+        # Aliases for Latin script namespaces
 	"Medija"                  => NS_MEDIA,
 	"Posebno"                 => NS_SPECIAL,
 	"Razgovor"                => NS_TALK,
@@ -61,9 +61,14 @@ $namespaceAliases = array(
 	'Šablon'                  => NS_TEMPLATE,
 	'Razgovor_o_šablonu'      => NS_TEMPLATE_TALK,
 	'Pomoć'                   => NS_HELP,
-	'Razgovor_o_pomoći'      => NS_HELP_TALK,
+	'Razgovor_o_pomoći'       => NS_HELP_TALK,
 	'Kategorija'              => NS_CATEGORY,
 	'Razgovor_o_kategoriji'   => NS_CATEGORY_TALK,
+
+	'Слика'                   => NS_FILE,
+	'Разговор_о_слици'        => NS_FILE_TALK,
+	'МедијаВики'              => NS_MEDIAWIKI,
+	'Разговор_о_МедијаВикију' => NS_MEDIAWIKI_TALK,
 );
 
 
@@ -88,64 +93,82 @@ $datePreferenceMigrationMap = array(
 );
 
 $specialPageAliases = array(
-	'DoubleRedirects'           => array( 'Двострука_преусмерења' ),
-	'BrokenRedirects'           => array( 'Покварена_преусмерења' ),
+	'Activeusers'               => array( 'АктивниКорисници', 'Активни_корисници' ),
+	'Allmessages'               => array( 'СвеПоруке', 'Све_поруке' ),
+	'Allpages'                  => array( 'Све_странице' ),
+	'Ancientpages'              => array( 'НајстаријиЧланци' ),
+	'Block'                     => array( 'Блокирај', 'БлокирајИП', 'БлокирајКорисника' ),
+	'Blockme'                   => array( 'БлокирајМе', 'Блокирај_ме' ),
+	'BrokenRedirects'           => array( 'Покварена_преусмерења', 'Неисправна_преусмерења' ),
+	'Categories'                => array( 'Категорије' ),
+	'ComparePages'              => array( 'Упореди_странице' ),
+	'Confirmemail'              => array( 'ПотврдиЕ-пошту', 'Потврда_е-поште' ),
+	'Contributions'             => array( 'Доприноси', 'Прилози' ),
+	'CreateAccount'             => array( 'ОтвориНалог', 'Отвори_налог' ),
 	'Disambiguations'           => array( 'Вишезначне_одреднице' ),
-	'CreateAccount'             => array( 'ОтвориНалог' ),
-	'Preferences'               => array( 'Подешавања' ),
-	'Watchlist'                 => array( 'СписакНадгледања' ),
-	'Recentchanges'             => array( 'СкорашњеИзмене' ),
-	'Upload'                    => array( 'Пошаљи' ),
-	'Listfiles'                 => array( 'СписакСлика' ),
-	'Newimages'                 => array( 'НовиФајлови', 'НовеСлике' ),
-	'Listusers'                 => array( 'СписакКорисника', 'КорисничкиСписак' ),
-	'Listgrouprights'           => array( 'СписакКорисничкихПрава' ),
-	'Statistics'                => array( 'Статистике' ),
-	'Randompage'                => array( 'СлучајнаСтрана' ),
+	'DoubleRedirects'           => array( 'Двострука_преусмерења' ),
+	'Export'                    => array( 'Извези' ),
+	'Fewestrevisions'           => array( 'ЧланциСаНајмањеРевизија' ),
+	'Filepath'                  => array( 'Путања_датотеке' ),
+	'Import'                    => array( 'Увези' ),
+	'Listadmins'                => array( 'ПописАдминистратора', 'Списак_администратора' ),
+	'Listbots'                  => array( 'ПописБотова', 'Списак_ботова' ),
+	'Listfiles'                 => array( 'СписакСлика', 'Списак_датотека' ),
+	'Listgrouprights'           => array( 'СписакКорисничкихПрава', 'Списак_корисничких_права' ),
+	'Listredirects'             => array( 'СписакПреусмерења', 'Списак_преусмерења' ),
+	'Listusers'                 => array( 'СписакКорисника', 'КорисничкиСписак', 'Списак_корисника', 'Кориснички_списак' ),
+	'Lockdb'                    => array( 'ЗакључајБазу', 'Закључај_базу' ),
+	'Log'                       => array( 'Извештај', 'Извештаји' ),
 	'Lonelypages'               => array( 'Сирочићи' ),
-	'Uncategorizedpages'        => array( 'ЧланциБезКатегорија' ),
-	'Uncategorizedcategories'   => array( 'КатегоријеБезКатегорија' ),
-	'Uncategorizedimages'       => array( 'СликеБезКатегорија', 'ФајловиБезКатегорија' ),
-	'Uncategorizedtemplates'    => array( 'ШаблониБезКатегорија' ),
-	'Unusedcategories'          => array( 'НеискоришћенеКатегорије' ),
-	'Unusedimages'              => array( 'НеискоришћенеСлике', 'НеискоришћениФајлови' ),
-	'Wantedpages'               => array( 'ТраженеСтране' ),
-	'Wantedcategories'          => array( 'ТраженеКатегорије' ),
-	'Wantedfiles'               => array( 'ТраженеСлике' ),
-	'Wantedtemplates'           => array( 'ТражениШаблони' ),
+	'Longpages'                 => array( 'ДугачкеСтране' ),
+	'MergeHistory'              => array( 'Споји_историју' ),
+	'MIMEsearch'                => array( 'MIME_претрага' ),
+	'Mostcategories'            => array( 'ЧланциСаНајвишеКатегорија' ),
+	'Mostimages'                => array( 'НајповезанијеСлике' ),
 	'Mostlinked'                => array( 'НајповезанијеСтране' ),
 	'Mostlinkedcategories'      => array( 'НајповезанијеКатегорије' ),
 	'Mostlinkedtemplates'       => array( 'НајповезанијиШаблони' ),
-	'Mostimages'                => array( 'НајповезанијеСлике' ),
-	'Mostcategories'            => array( 'ЧланциСаНајвишеКатегорија' ),
 	'Mostrevisions'             => array( 'ЧланциСаНајвишеРевизија' ),
-	'Fewestrevisions'           => array( 'ЧланциСаНајмањеРевизија' ),
-	'Shortpages'                => array( 'КраткиЧланци' ),
-	'Longpages'                 => array( 'ДугачкеСтране' ),
+	'Movepage'                  => array( 'Преусмери', 'Премести_страницу' ),
+	'Mycontributions'           => array( 'МојиДоприноси', 'Моји_доприноси', 'Моји_прилози' ),
+	'Mypage'                    => array( 'МојаСтраница', 'Моја_страница' ),
+	'Mytalk'                    => array( 'МојРазговор', 'Мој_разговор' ),
+	'Myuploads'                 => array( 'Моја_слања' ),
+	'Newimages'                 => array( 'НовиФајлови', 'Нове_датотеке', 'НовеСлике' ),
 	'Newpages'                  => array( 'НовеСтране' ),
-	'Ancientpages'              => array( 'НајстаријиЧланци' ),
-	'Protectedpages'            => array( 'ЗаштићенеСтранице' ),
-	'Specialpages'              => array( 'СпецијалнеСтране' ),
-	'Contributions'             => array( 'Доприноси' ),
-	'Confirmemail'              => array( 'ПотврдиЕ-пошту' ),
-	'Movepage'                  => array( 'Преусмери' ),
-	'Blockme'                   => array( 'БлокирајМе' ),
-	'Categories'                => array( 'Категорије' ),
-	'Export'                    => array( 'Извези' ),
-	'Version'                   => array( 'Верзија' ),
-	'Allmessages'               => array( 'СвеПоруке' ),
-	'Blockip'                   => array( 'Блокирај', 'БлокирајИП', 'БлокирајКорисника' ),
-	'Import'                    => array( 'Увези' ),
-	'Lockdb'                    => array( 'ЗакључајБазу' ),
-	'Unlockdb'                  => array( 'ОткључајБазу' ),
-	'Listredirects'             => array( 'СписакПреусмерења' ),
-	'Mypage'                    => array( 'МојаСтраница' ),
-	'Mytalk'                    => array( 'МојРазговор' ),
-	'Mycontributions'           => array( 'МојиДоприноси' ),
-	'Listadmins'                => array( 'ПописАдминистратора' ),
-	'Listbots'                  => array( 'ПописБотова' ),
+	'PermanentLink'             => array( 'Привремена_веза' ),
+	'Popularpages'              => array( 'Популарне_странице' ),
+	'Preferences'               => array( 'Подешавања', 'Поставке' ),
+	'Protectedpages'            => array( 'ЗаштићенеСтранице', 'Заштићене_странице' ),
+	'Protectedtitles'           => array( 'Заштићени_наслови' ),
+	'Randompage'                => array( 'СлучајнаСтрана', 'Насумична_страница' ),
+	'Recentchanges'             => array( 'СкорашњеИзмене', 'Скорашње_измене' ),
+	'RevisionMove'              => array( 'Премести_измену' ),
 	'Search'                    => array( 'Претражи' ),
-	'Activeusers'               => array( 'АктивниКорисници' ),
+	'Shortpages'                => array( 'КраткиЧланци' ),
+	'Specialpages'              => array( 'СпецијалнеСтране', 'Посебне_странице' ),
+	'Statistics'                => array( 'Статистике' ),
+	'Tags'                      => array( 'Ознаке' ),
+	'Uncategorizedcategories'   => array( 'КатегоријеБезКатегорија', 'Несврстане_категорије' ),
+	'Uncategorizedimages'       => array( 'СликеБезКатегорија', 'ФајловиБезКатегорија' ),
+	'Uncategorizedpages'        => array( 'ЧланциБезКатегорија', 'Чланци_без_категорија' ),
+	'Uncategorizedtemplates'    => array( 'ШаблониБезКатегорија' ),
+	'Undelete'                  => array( 'Врати' ),
+	'Unlockdb'                  => array( 'ОткључајБазу', 'Откључај_базу' ),
+	'Unusedcategories'          => array( 'НеискоришћенеКатегорије' ),
+	'Unusedimages'              => array( 'НеискоришћенеСлике', 'НеискоришћениФајлови' ),
+	'Upload'                    => array( 'Пошаљи' ),
+	'UploadStash'               => array( 'Складиште' ),
+	'Userlogin'                 => array( 'Корисничка_пријава' ),
+	'Userlogout'                => array( 'Корисничка_одјава' ),
+	'Version'                   => array( 'Верзија', 'Издање' ),
+	'Wantedcategories'          => array( 'ТраженеКатегорије' ),
+	'Wantedfiles'               => array( 'ТраженеСлике' ),
+	'Wantedpages'               => array( 'ТраженеСтране' ),
+	'Wantedtemplates'           => array( 'ТражениШаблони' ),
+	'Watchlist'                 => array( 'СписакНадгледања', 'Списак_надгледања' ),
+	'Whatlinkshere'             => array( 'Шта_је_повезано_овде' ),
+	'Withoutinterwiki'          => array( 'Без_међувикије' ),
 );
 
 $datePreferences = array(
@@ -225,59 +248,150 @@ $dateFormats = array(
 
 /* NOT USED IN STABLE VERSION */
 $magicWords = array(
-	'redirect'              => array( '0', '#Преусмери', '#redirect', '#преусмери', '#ПРЕУСМЕРИ', '#REDIRECT' ),
-	'notoc'                 => array( '0', '__БЕЗСАДРЖАЈА__', '__NOTOC__' ),
-	'forcetoc'              => array( '0', '__ФОРСИРАНИСАДРЖАЈ__', '__FORCETOC__' ),
+	'redirect'              => array( '0', '#Преусмери', '#преусмери', '#ПРЕУСМЕРИ', '#Преусмјери', '#преусмјери', '#ПРЕУСМЈЕРИ', '#redirect', '#REDIRECT' ),
+	'notoc'                 => array( '0', '__БЕЗСАДРЖАЈА__', '__БЕЗ_САДРЖАЈА__', '__NOTOC__' ),
+	'nogallery'             => array( '0', '__БЕЗГАЛЕРИЈЕ__', '__БЕЗ_ГАЛЕРИЈЕ__', '__NOGALLERY__' ),
+	'forcetoc'              => array( '0', '__ФОРСИРАНИСАДРЖАЈ__', '__ФОРСИРАНИ_САДРЖАЈ__', '__ПРИМОРАНИСАДРЖАЈ__', '__ПРИМОРАНИ_САДРЖАЈ__', '__FORCETOC__' ),
 	'toc'                   => array( '0', '__САДРЖАЈ__', '__TOC__' ),
-	'noeditsection'         => array( '0', '__БЕЗ_ИЗМЕНА__', '__БЕЗИЗМЕНА__', '__NOEDITSECTION__' ),
-	'currentmonth'          => array( '1', 'ТРЕНУТНИМЕСЕЦ', 'CURRENTMONTH', 'CURRENTMONTH2' ),
-	'currentmonthname'      => array( '1', 'ТРЕНУТНИМЕСЕЦИМЕ', 'CURRENTMONTHNAME' ),
-	'currentmonthnamegen'   => array( '1', 'ТРЕНУТНИМЕСЕЦГЕН', 'CURRENTMONTHNAMEGEN' ),
-	'currentmonthabbrev'    => array( '1', 'ТРЕНУТНИМЕСЕЦСКР', 'CURRENTMONTHABBREV' ),
-	'currentday'            => array( '1', 'ТРЕНУТНИДАН', 'CURRENTDAY' ),
-	'currentdayname'        => array( '1', 'ТРЕНУТНИДАНИМЕ', 'CURRENTDAYNAME' ),
-	'currentyear'           => array( '1', 'ТРЕНУТНАГОДИНА', 'CURRENTYEAR' ),
-	'currenttime'           => array( '1', 'ТРЕНУТНОВРЕМЕ', 'CURRENTTIME' ),
-	'numberofarticles'      => array( '1', 'БРОЈЧЛАНАКА', 'NUMBEROFARTICLES' ),
-	'numberoffiles'         => array( '1', 'БРОЈДАТОТЕКА', 'БРОЈФАЈЛОВА', 'NUMBEROFFILES' ),
-	'pagename'              => array( '1', 'СТРАНИЦА', 'PAGENAME' ),
-	'pagenamee'             => array( '1', 'СТРАНИЦЕ', 'PAGENAMEE' ),
-	'namespace'             => array( '1', 'ИМЕНСКИПРОСТОР', 'NAMESPACE' ),
-	'namespacee'            => array( '1', 'ИМЕНСКИПРОСТОРИ', 'NAMESPACEE' ),
-	'fullpagename'          => array( '1', 'ПУНОИМЕСТРАНЕ', 'FULLPAGENAME' ),
-	'fullpagenamee'         => array( '1', 'ПУНОИМЕСТРАНЕЕ', 'FULLPAGENAMEE' ),
+	'noeditsection'         => array( '0', '__БЕЗИЗМЕНА__', '__БЕЗ_ИЗМЕНА__', '__БЕЗИЗМЈЕНА__', '__БЕЗ_ИЗМЈЕНА__', '__NOEDITSECTION__' ),
+	'noheader'              => array( '0', '__БЕЗЗАГЛАВЉА__', '__БЕЗ_ЗАГЛАВЉА__', '__NOHEADER__' ),
+	'currentmonth'          => array( '1', 'ТРЕНУТНИМЕСЕЦ', 'ТРЕНУТНИ_МЕСЕЦ', 'ТЕКУЋИМЕСЕЦ', 'ТЕКУЋИ_МЕСЕЦ', 'CURRENTMONTH', 'CURRENTMONTH2' ),
+	'currentmonth1'         => array( '1', 'ТРЕНУТНИМЕСЕЦ1', 'ТРЕНУТНИ_МЕСЕЦ1', 'ТЕКУЋИМЕСЕЦ1', 'ТЕКУЋИ_МЕСЕЦ1', 'CURRENTMONTH1' ),
+	'currentmonthname'      => array( '1', 'ТРЕНУТНИМЕСЕЦИМЕ', 'ИМЕТЕКУЋЕГМЕСЕЦА', 'ИМЕ_ТЕКУЋЕГ_МЕСЕЦА', 'CURRENTMONTHNAME' ),
+	'currentmonthnamegen'   => array( '1', 'ТРЕНУТНИМЕСЕЦГЕН', 'ТЕКУЋИМЕСЕЦГЕН', 'ТЕКУЋИ_МЕСЕЦ_ГЕН', 'CURRENTMONTHNAMEGEN' ),
+	'currentmonthabbrev'    => array( '1', 'ТРЕНУТНИМЕСЕЦСКР', 'ТЕКУЋИМЕСЕЦСКР', 'ТЕКУЋИ_МЕСЕЦ_СКР', 'CURRENTMONTHABBREV' ),
+	'currentday'            => array( '1', 'ТРЕНУТНИДАН', 'ТЕКУЋИДАН', 'ТЕКУЋИ_ДАН', 'CURRENTDAY' ),
+	'currentday2'           => array( '1', 'ТЕКУЋИДАН2', 'ТЕКУЋИ_ДАН_2', 'CURRENTDAY2' ),
+	'currentdayname'        => array( '1', 'ТРЕНУТНИДАНИМЕ', 'ИМЕТЕКУЋЕГДАНА', 'ИМЕ_ТЕКУЋЕГ_ДАНА', 'CURRENTDAYNAME' ),
+	'currentyear'           => array( '1', 'ТРЕНУТНАГОДИНА', 'ТЕКУЋАГОДИНА', 'ТЕКУЋА_ГОДИНА', 'CURRENTYEAR' ),
+	'currenttime'           => array( '1', 'ТРЕНУТНОВРЕМЕ', 'ТЕКУЋЕВРЕМЕ', 'ТЕКУЋЕ_ВРЕМЕ', 'CURRENTTIME' ),
+	'currenthour'           => array( '1', 'ТЕКУЋИСАТ', 'ТЕКУЋИ_САТ', 'CURRENTHOUR' ),
+	'localmonth'            => array( '1', 'ЛОКАЛНИМЕСЕЦ', 'ЛОКАЛНИ_МЕСЕЦ', 'LOCALMONTH', 'LOCALMONTH2' ),
+	'localmonth1'           => array( '1', 'ЛОКАЛНИМЕСЕЦ2', 'ЛОКАЛНИ_МЕСЕЦ2', 'LOCALMONTH1' ),
+	'localmonthname'        => array( '1', 'ИМЕЛОКАЛНОГМЕСЕЦА', 'ИМЕ_ЛОКАЛНОГ_МЕСЕЦА', 'LOCALMONTHNAME' ),
+	'localmonthnamegen'     => array( '1', 'ЛОКАЛНИМЕСЕЦГЕН', 'ЛОКАЛНИ_МЕСЕЦ_ГЕН', 'LOCALMONTHNAMEGEN' ),
+	'localmonthabbrev'      => array( '1', 'ЛОКАЛНИМЕСЕЦСКР', 'ЛОКАЛНИ_МЕСЕЦ_СКР', 'LOCALMONTHABBREV' ),
+	'localday'              => array( '1', 'ЛОКАЛНИДАН', 'ЛОКАЛНИ_ДАН', 'LOCALDAY' ),
+	'localday2'             => array( '1', 'ЛОКАЛНИДАН2', 'ЛОКАЛНИ_ДАН2', 'LOCALDAY2' ),
+	'localdayname'          => array( '1', 'ИМЕЛОКАЛНОГДАНА', 'ИМЕ_ЛОКАЛНОГ_ДАНА', 'LOCALDAYNAME' ),
+	'localyear'             => array( '1', 'ЛОКАЛНАГОДИНА', 'ЛОКАЛНА_ГОДИНА', 'LOCALYEAR' ),
+	'localtime'             => array( '1', 'ЛОКАЛНОВРЕМЕ', 'ЛОКАЛНО_ВРЕМЕ', 'LOCALTIME' ),
+	'localhour'             => array( '1', 'ЛОКАЛНИСАТ', 'ЛОКАЛНИ_САТ', 'LOCALHOUR' ),
+	'numberofpages'         => array( '1', 'БРОЈСТРАНИЦА', 'БРОЈ_СТРАНИЦА', 'NUMBEROFPAGES' ),
+	'numberofarticles'      => array( '1', 'БРОЈЧЛАНАКА', 'БРОЈ_ЧЛАНАКА', 'NUMBEROFARTICLES' ),
+	'numberoffiles'         => array( '1', 'БРОЈДАТОТЕКА', 'БРОЈ_ДАТОТЕКА', 'БРОЈФАЈЛОВА', 'БРОЈ_ФАЈЛОВА', 'NUMBEROFFILES' ),
+	'numberofusers'         => array( '1', 'БРОЈКОРИСНИКА', 'БРОЈ_КОРИСНИКА', 'NUMBEROFUSERS' ),
+	'numberofactiveusers'   => array( '1', 'БРОЈАКТИВНИХКОРИСНИКА', 'БРОЈ_АКТИВНИХ_КОРИСНИКА', 'NUMBEROFACTIVEUSERS' ),
+	'numberofedits'         => array( '1', 'БРОЈИЗМЕНА', 'БРОЈ_ИЗМЕНА', 'NUMBEROFEDITS' ),
+	'numberofviews'         => array( '1', 'БРОЈПРЕГЛЕДА', 'БРОЈ_ПРЕГЛЕДА', 'NUMBEROFVIEWS' ),
+	'pagename'              => array( '1', 'ИМЕСТРАНИЦЕ', 'ИМЕ_СТРАНИЦЕ', 'СТРАНИЦА', 'PAGENAME' ),
+	'pagenamee'             => array( '1', 'ИМЕНАСТРАНИЦА', 'ИМЕНА_СТРАНИЦА', 'СТРАНИЦЕ', 'PAGENAMEE' ),
+	'namespace'             => array( '1', 'ИМЕНСКИПРОСТОР', 'ИМЕНСКИ_ПРОСТОР', 'NAMESPACE' ),
+	'namespacee'            => array( '1', 'ИМЕНСКИПРОСТОРИ', 'ИМЕНСКИ_ПРОСТОРИ', 'NAMESPACEE' ),
+	'talkspace'             => array( '1', 'РАЗГОВОР', 'TALKSPACE' ),
+	'talkspacee'            => array( '1', 'РАЗГОВОРИ', 'TALKSPACEE' ),
+	'subjectspace'          => array( '1', 'ИМЕНСКИПРОСТОРЧЛАНКА', 'ИМЕНСКИ_ПРОСТОР_ЧЛАНКА', 'SUBJECTSPACE', 'ARTICLESPACE' ),
+	'subjectspacee'         => array( '1', 'ИМЕНСКИПРОСТОРЧЛАНАКА', 'ИМЕНСКИ_ПРОСТОР_ЧЛАНАКА', 'SUBJECTSPACEE', 'ARTICLESPACEE' ),
+	'fullpagename'          => array( '1', 'ПУНОИМЕСТРАНИЦЕ', 'ПУНОИМЕСТРАНЕ', 'ПУНО_ИМЕ_СТРАНИЦЕ', 'ПУНО_ИМЕ_СТРАНЕ', 'FULLPAGENAME' ),
+	'fullpagenamee'         => array( '1', 'ПУНАИМЕНАСТРАНИЦА', 'ПУНАИМЕНАСТРАНА', 'ПУНА_ИМЕНА_СТРАНИЦА', 'ПУНА_ИМЕНА_СТРАНА', 'FULLPAGENAMEE' ),
+	'subpagename'           => array( '1', 'ИМЕПОДСТРАНИЦЕ', 'ИМЕПОДСТРАНЕ', 'ИМЕ_ПОДСТРАНИЦЕ', 'ИМЕ_ПОДСТРАНЕ', 'SUBPAGENAME' ),
+	'subpagenamee'          => array( '1', 'ИМЕНАПОДСТРАНИЦА', 'ИМЕНАПОДСТРАНА', 'ИМЕНА_ПОДСТРАНИЦА', 'ИМЕНА_ПОДСТРАНА', 'SUBPAGENAMEE' ),
+	'basepagename'          => array( '1', 'ИМЕОСНОВЕ', 'ИМЕ_ОСНОВЕ', 'BASEPAGENAME' ),
+	'basepagenamee'         => array( '1', 'ИМЕНАОСНОВА', 'ИМЕНА_ОСНОВА', 'BASEPAGENAMEE' ),
+	'talkpagename'          => array( '1', 'ИМЕРАЗГОВОРА', 'ИМЕ_РАЗГОВОРА', 'TALKPAGENAME' ),
+	'talkpagenamee'         => array( '1', 'ИМЕНАРАЗГОВОРА', 'ИМЕНА_РАЗГОВОРА', 'TALKPAGENAMEE' ),
+	'subjectpagename'       => array( '1', 'ИМЕЧЛАНКА', 'ИМЕ_ЧЛАНКА', 'SUBJECTPAGENAME', 'ARTICLEPAGENAME' ),
+	'subjectpagenamee'      => array( '1', 'ИМЕНАЧЛАНАКА', 'ИМЕНА_ЧЛАНАКА', 'SUBJECTPAGENAMEE', 'ARTICLEPAGENAMEE' ),
 	'msg'                   => array( '0', 'ПОР:', 'MSG:' ),
-	'subst'                 => array( '0', 'ЗАМЕНИ:', 'SUBST:' ),
+	'subst'                 => array( '0', 'ЗАМЕНИ:', 'ЗАМЕНА:', 'SUBST:' ),
+	'safesubst'             => array( '0', 'БЕЗБЕДНАЗАМЕНА', 'БЕЗБЕДНА_ЗАМЕНА', 'SAFESUBST:' ),
 	'msgnw'                 => array( '0', 'НВПОР:', 'MSGNW:' ),
-	'img_thumbnail'         => array( '1', 'мини', 'thumbnail', 'thumb' ),
-	'img_manualthumb'       => array( '1', 'мини=$1', 'thumbnail=$1', 'thumb=$1' ),
+	'img_thumbnail'         => array( '1', 'мини', 'умањено', 'thumbnail', 'thumb' ),
+	'img_manualthumb'       => array( '1', 'мини=$1', 'умањено=$1', 'thumbnail=$1', 'thumb=$1' ),
 	'img_right'             => array( '1', 'десно', 'д', 'right' ),
 	'img_left'              => array( '1', 'лево', 'л', 'left' ),
-	'img_none'              => array( '1', 'н', 'без', 'none' ),
+	'img_none'              => array( '1', 'без', 'н', 'none' ),
 	'img_width'             => array( '1', '$1пискел', '$1п', '$1px' ),
 	'img_center'            => array( '1', 'центар', 'ц', 'center', 'centre' ),
 	'img_framed'            => array( '1', 'оквир', 'рам', 'framed', 'enframed', 'frame' ),
+	'img_frameless'         => array( '1', 'безоквира', 'без_оквира', 'безрама', 'без_рама', 'frameless' ),
+	'img_page'              => array( '1', 'страница=$1', 'страна=$1', 'страница_$1', 'страна_$1', 'page=$1', 'page $1' ),
+	'img_upright'           => array( '1', 'усправно', 'усправно=$1', 'усправно_$1', 'upright', 'upright=$1', 'upright $1' ),
+	'img_border'            => array( '1', 'ивица', 'border' ),
+	'img_baseline'          => array( '1', 'основа', 'baseline' ),
+	'img_sub'               => array( '1', 'под', 'sub' ),
+	'img_super'             => array( '1', 'супер', 'super', 'sup' ),
+	'img_top'               => array( '1', 'врх', 'top' ),
+	'img_text_top'          => array( '1', 'врхтекста', 'врх_текста', 'text-top' ),
+	'img_middle'            => array( '1', 'средина', 'middle' ),
+	'img_bottom'            => array( '1', 'дно', 'bottom' ),
+	'img_text_bottom'       => array( '1', 'срединатекста', 'средина_текста', 'text-bottom' ),
+	'img_link'              => array( '1', 'веза=$1', 'link=$1' ),
+	'img_alt'               => array( '1', 'алт=$1', 'alt=$1' ),
 	'int'                   => array( '0', 'ИНТ:', 'INT:' ),
 	'sitename'              => array( '1', 'ИМЕСАЈТА', 'SITENAME' ),
 	'ns'                    => array( '0', 'ИП:', 'NS:' ),
-	'localurl'              => array( '0', 'ЛОКАЛНААДРЕСА:', 'LOCALURL:' ),
-	'localurle'             => array( '0', 'ЛОКАЛНЕАДРЕСЕ:', 'LOCALURLE:' ),
+	'localurl'              => array( '0', 'ЛОКАЛНААДРЕСА:', 'ЛОКАЛНА_АДРЕСА:', 'LOCALURL:' ),
+	'localurle'             => array( '0', 'ЛОКАЛНЕАДРЕСЕ:', 'ЛОКАЛНЕ_АДРЕСЕ:', 'LOCALURLE:' ),
+	'articlepath'           => array( '0', 'ПУТАЊАЧЛАНКА', 'ПУТАЊА_ЧЛАНКА', 'ARTICLEPATH' ),
 	'server'                => array( '0', 'СЕРВЕР', 'SERVER' ),
-	'servername'            => array( '0', 'ИМЕСЕРВЕРА', 'SERVERNAME' ),
+	'servername'            => array( '0', 'ИМЕСЕРВЕРА', 'ИМЕ_СЕРВЕРА', 'SERVERNAME' ),
 	'scriptpath'            => array( '0', 'СКРИПТА', 'SCRIPTPATH' ),
+	'stylepath'             => array( '0', 'ПУТАЊАСТИЛА', 'ПУТАЊА_СТИЛА', 'STYLEPATH' ),
 	'grammar'               => array( '0', 'ГРАМАТИКА:', 'GRAMMAR:' ),
+	'gender'                => array( '0', 'РОД:', 'ЛИЦЕ:', 'GENDER:' ),
 	'notitleconvert'        => array( '0', '__БЕЗКН__', '__BEZKN__', '__NOTITLECONVERT__', '__NOTC__' ),
 	'nocontentconvert'      => array( '0', '__БЕЗЦЦ__', '__NOCONTENTCONVERT__', '__NOCC__' ),
-	'currentweek'           => array( '1', 'ТРЕНУТНАНЕДЕЉА', 'CURRENTWEEK' ),
-	'currentdow'            => array( '1', 'ТРЕНУТНИДОВ', 'CURRENTDOW' ),
-	'revisionid'            => array( '1', 'ИДРЕВИЗИЈЕ', 'REVISIONID' ),
+	'currentweek'           => array( '1', 'ТРЕНУТНАНЕДЕЉА', 'ТРЕНУТНА_НЕДЕЉА', 'ТЕКУЋАНЕДЕЉА', 'ТЕКУЋА_НЕДЕЉА', 'CURRENTWEEK' ),
+	'currentdow'            => array( '1', 'ТРЕНУТНИДОВ', 'ТЕКУЋИДУН', 'CURRENTDOW' ),
+	'localweek'             => array( '1', 'ЛОКАЛНАНЕДЕЉА', 'ЛОКАЛНА_НЕДЕЉА', 'LOCALWEEK' ),
+	'localdow'              => array( '1', 'ЛОКАЛНИДУН', 'LOCALDOW' ),
+	'revisionid'            => array( '1', 'ИДРЕВИЗИЈЕ', 'ИД_РЕВИЗИЈЕ', 'REVISIONID' ),
+	'revisionday'           => array( '1', 'ДАНИЗМЕНЕ', 'ДАН_ИЗМЕНЕ', 'REVISIONDAY' ),
+	'revisionday2'          => array( '1', 'ДАНИЗМЕНЕ2', 'ДАН_ИЗМЕНЕ2', 'REVISIONDAY2' ),
+	'revisionmonth'         => array( '1', 'МЕСЕЦИЗМЕНЕ', 'МЕСЕЦ_ИЗМЕНЕ', 'REVISIONMONTH' ),
+	'revisionmonth1'        => array( '1', 'МЕСЕЦИЗМЕНЕ1', 'МЕСЕЦ_ИЗМЕНЕ1', 'REVISIONMONTH1' ),
+	'revisionyear'          => array( '1', 'ГОДИНАИЗМЕНЕ', 'ГОДИНА_ИЗМЕНЕ', 'REVISIONYEAR' ),
+	'revisiontimestamp'     => array( '1', 'ВРЕМЕИЗМЕНЕ', 'ВРЕМЕ_ИЗМЕНЕ', 'REVISIONTIMESTAMP' ),
+	'revisionuser'          => array( '1', 'КОРИСНИКИЗМЕНЕ', 'КОРИСНИК_ИЗМЕНЕ', 'REVISIONUSER' ),
 	'plural'                => array( '0', 'МНОЖИНА:', 'PLURAL:' ),
-	'fullurl'               => array( '0', 'ПУНУРЛ:', 'FULLURL:' ),
-	'fullurle'              => array( '0', 'ПУНУРЛЕ:', 'FULLURLE:' ),
+	'fullurl'               => array( '0', 'ПУНУРЛ:', 'ЦЕЛААДРЕСА', 'ЦЕЛА_АДРЕСА', 'FULLURL:' ),
+	'fullurle'              => array( '0', 'ПУНУРЛЕ:', 'ЦЕЛЕАДРЕСЕ', 'ЦЕЛЕ_АДРЕСЕ', 'FULLURLE:' ),
 	'lcfirst'               => array( '0', 'ЛЦПРВИ:', 'LCFIRST:' ),
 	'ucfirst'               => array( '0', 'УЦПРВИ:', 'UCFIRST:' ),
 	'lc'                    => array( '0', 'ЛЦ:', 'LC:' ),
 	'uc'                    => array( '0', 'УЦ:', 'UC:' ),
+	'raw'                   => array( '0', 'ЧИСТ:', 'RAW:' ),
+	'displaytitle'          => array( '1', 'НАЗИВПРИКАЗА', 'НАЗИВ_ПРИКАЗА', 'DISPLAYTITLE' ),
+	'rawsuffix'             => array( '1', 'Р', 'R' ),
+	'newsectionlink'        => array( '1', '__НОВАВЕЗАОДЕЉКА__', '__НОВА_ВЕЗА_ОДЕЉКА__', '__NEWSECTIONLINK__' ),
+	'nonewsectionlink'      => array( '1', '__БЕЗНОВЕВЕЗЕОДЕЉКА__', '__БЕЗ_НОВЕ_ВЕЗЕ_ОДЕЉКА__', '__NONEWSECTIONLINK__' ),
+	'currentversion'        => array( '1', 'ТЕКУЋЕИЗДАЊЕ', 'ТЕКУЋЕ_ИЗДАЊЕ', 'CURRENTVERSION' ),
+	'urlencode'             => array( '0', 'КОДИРАЊЕАДРЕСЕ', 'КОДИРАЊЕ_АДРЕСЕ', 'URLENCODE:' ),
+	'anchorencode'          => array( '0', 'КОДИРАЊЕВЕЗЕ', 'КОДИРАЊЕ_ВЕЗЕ', 'ANCHORENCODE' ),
+	'currenttimestamp'      => array( '1', 'ТЕКУЋИОТИСАКВРЕМЕНА', 'ТЕКУЋИ_ОТИСАК_ВРЕМЕНА', 'CURRENTTIMESTAMP' ),
+	'localtimestamp'        => array( '1', 'ОТИСАКВРЕМЕНА', 'ОТИСАК_ВРЕМЕНА', 'LOCALTIMESTAMP' ),
+	'directionmark'         => array( '1', 'СМЕРОЗНАКЕ', 'СМЕР	_ОЗНАКЕ', 'DIRECTIONMARK', 'DIRMARK' ),
+	'contentlanguage'       => array( '1', 'ЈЕЗИКСАДРЖАЈА', 'ЈЕЗИК_САДРЖАЈА', 'CONTENTLANGUAGE', 'CONTENTLANG' ),
+	'pagesinnamespace'      => array( '1', 'СТРАНИЦАУИМЕНСКОМПРОСТОРУ', 'СТРАНАУИМЕНСКОМПРОСТОРУ', 'СТРАНИЦА_У_ИМЕНСКОМ_ПРОСТОРУ', 'СТРАНА_У_ИМЕНСКОМ_ПРОСТОРУ', 'PAGESINNAMESPACE:', 'PAGESINNS:' ),
+	'numberofadmins'        => array( '1', 'БРОЈАДМИНА', 'БРОЈ_АДМИНА', 'NUMBEROFADMINS' ),
+	'padleft'               => array( '0', 'ПОРАВНАЈЛЕВО', 'ПОРАВНАЈ_ЛЕВО', 'PADLEFT' ),
+	'padright'              => array( '0', 'ПОРАВНАЈДЕСНО', 'ПОРАВНАЈ_ДЕСНО', 'PADRIGHT' ),
+	'special'               => array( '0', 'посебно', 'special' ),
+	'filepath'              => array( '0', 'ПУТАЊАДАТОТЕКЕ', 'ПУТАЊА_ДАТОТЕКЕ', 'FILEPATH:' ),
+	'tag'                   => array( '0', 'ознака', 'tag' ),
+	'hiddencat'             => array( '1', '__САКРИВЕНАКАТ__', '__HIDDENCAT__' ),
+	'pagesincategory'       => array( '1', 'СТРАНИЦАУКАТЕГОРИЈИ', 'СТРАНАУКАТЕГОРИЈИ', 'СТРАНИЦА_У_КАТЕГОРИЈИ', 'СТРАНА_У_КАТЕГОРИЈИ', 'PAGESINCATEGORY', 'PAGESINCAT' ),
+	'pagesize'              => array( '1', 'ВЕЛИЧИНАСТРАНИЦЕ', 'ВЕЛИЧИНАСТРАНЕ', 'ВЕЛИЧИНА_СТРАНИЦЕ', 'ВЕЛИЧИНА_СТРАНЕ', 'PAGESIZE' ),
+	'index'                 => array( '1', '__ИНДЕКС__', '__INDEX__' ),
+	'noindex'               => array( '1', '__БЕЗИНДЕКСА__', '__БЕЗ_ИНДЕКСА__', '__NOINDEX__' ),
+	'numberingroup'         => array( '1', 'БРОЈУГРУПИ', 'БРОЈ_У_ГРУПИ', 'NUMBERINGROUP', 'NUMINGROUP' ),
+	'staticredirect'        => array( '1', '__СТАТИЧКОПРЕУСМЕРЕЊЕ__', 'СТАТИЧКО_ПРЕУСМЕРЕЊЕ', '__STATICREDIRECT__' ),
+	'protectionlevel'       => array( '1', 'НИВОЗАШТИТЕ', 'НИВО_ЗАШТИТЕ', 'PROTECTIONLEVEL' ),
+	'formatdate'            => array( '0', 'форматдатума', 'формат_датума', 'formatdate', 'dateformat' ),
+	'url_path'              => array( '0', 'ПУТАЊА', 'PATH' ),
+	'url_wiki'              => array( '0', 'ВИКИ', 'WIKI' ),
+	'url_query'             => array( '0', 'РЕДОСЛЕД', 'QUERY' ),
 );
 $separatorTransformTable = array( ',' => '.', '.' => ',' );
 
@@ -411,15 +525,9 @@ $messages = array(
 'listingcontinuesabbrev'         => 'наст.',
 'index-category'                 => 'Пописане странице',
 'noindex-category'               => 'Непописане странице',
+'broken-file-category'           => 'Странице с неисправним везама до датотека',
 
-'linkprefix'        => '/^(.*?)([a-zA-Z\\x80-\\xff]+)$/sD',
-'mainpagetext'      => "'''Медијавики је успешно инсталиран.'''",
-'mainpagedocfooter' => 'Погледајте [http://meta.wikimedia.org/wiki/Help:Contents кориснички водич] за коришћење програма.
-
-== Увод ==
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Помоћ у вези са подешавањима]
-* [http://www.mediawiki.org/wiki/Manual:FAQ Често постављена питања]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Дописна листа о издањима Медијавикија]',
+'linkprefix' => '/^(.*?)([a-zA-Z\\x80-\\xff]+)$/sD',
 
 'about'         => 'О нама',
 'article'       => 'Страница са садржајем',
@@ -471,10 +579,10 @@ $messages = array(
 'history'           => 'Историја странице',
 'history_short'     => 'Историја',
 'updatedmarker'     => 'ажурирано од моје последње посете',
-'info_short'        => 'Подаци',
 'printableversion'  => 'Издање за штампу',
 'permalink'         => 'Трајна веза',
 'print'             => 'Штампај',
+'view'              => 'Погледај',
 'edit'              => 'Уреди',
 'create'            => 'Направи',
 'editthispage'      => 'Уреди ову страницу',
@@ -482,6 +590,7 @@ $messages = array(
 'delete'            => 'Обриши',
 'deletethispage'    => 'Обриши ову страницу',
 'undelete_short'    => 'Врати {{PLURAL:$1|једну обрисану измену|$1 обрисане измене|$1 обрисаних измена}}',
+'viewdeleted_short' => 'Погледај {{PLURAL:$1|обрисану измену|$1 обрисане измене|$1 обрисаних измена}}',
 'protect'           => 'Заштити',
 'protect_change'    => 'промени',
 'protectthispage'   => 'Заштити ову страницу',
@@ -569,6 +678,8 @@ $1',
 'toc'                     => 'Садржај',
 'showtoc'                 => 'прикажи',
 'hidetoc'                 => 'сакриј',
+'collapsible-collapse'    => 'скупи',
+'collapsible-expand'      => 'прошири',
 'thisisdeleted'           => 'Погледати или вратити $1?',
 'viewdeleted'             => 'Погледати $1?',
 'restorelink'             => '{{PLURAL:$1|обрисану измену|$1 обрисане измене|$1 обрисаних измена}}',
@@ -582,6 +693,8 @@ $1',
 'feed-atom'               => 'Атом',
 'feed-rss'                => 'RSS',
 'red-link-title'          => '$1 (страница не постоји)',
+'sort-descending'         => 'Поређај опадајуће',
+'sort-ascending'          => 'Поређај растуће',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'Страница',
@@ -668,12 +781,13 @@ $1',
 'protectedinterface'   => 'Ова страница је заштићена јер садржи текст корисничког сучеља програма.',
 'editinginterface'     => "'''Упозорење:''' уређујете страницу која се користи за приказивање текста сучеља.
 Измене на овој страници ће утицати на све кориснике.
-Посетите [http://translatewiki.net/wiki/Main_Page?setlang=sr_ec Транслејтвики], пројекат намењен за превођење Медијавикија.",
+Посетите [//translatewiki.net/wiki/Main_Page?setlang=sr_ec Транслејтвики], пројекат намењен за превођење Медијавикија.",
 'sqlhidden'            => '(SQL упит је сакривен)',
 'cascadeprotected'     => 'Ова страница је закључана јер садржи {{PLURAL:$1|следећу страницу која је заштићена|следеће странице које су заштићене}} „преносивом“ заштитом:
 $2',
 'namespaceprotected'   => "Немате дозволу да уређујете странице у именском простору '''$1'''.",
-'customcssjsprotected' => 'Немате дозволу да мењате ову страницу јер садржи личне поставке другог корисника.',
+'customcssprotected'   => 'Немате дозволу да мењате ову CSS страницу јер садржи личне поставке другог корисника.',
+'customjsprotected'    => 'Немате дозволу да мењате ову страницу јаваскрипта јер садржи личне поставке другог корисника.',
 'ns-specialprotected'  => 'Посебне странице се не могу уређивати.',
 'titleprotected'       => "Овај наслов је {{GENDER:$1|заштитио корисник|заштитила корисница|заштитио корисник}} [[User:$1|$1]].
 Наведени разлог: ''$2''.",
@@ -712,6 +826,7 @@ $2',
 'createaccount'              => 'Отвори налог',
 'gotaccount'                 => "Имате налог? Идите на страницу ''$1''.",
 'gotaccountlink'             => 'Пријава',
+'userlogin-resetlink'        => 'Заборавили сте податке за пријаву?',
 'createaccountmail'          => 'Е-поштом',
 'createaccountreason'        => 'Разлог:',
 'badretype'                  => 'Лозинке које сте унели се не поклапају.',
@@ -723,13 +838,16 @@ $2',
 Омогућите их, па се онда пријавите са својим корисничким именом и лозинком.',
 'nocookieslogin'             => 'Овај вики користи колачиће за пријављивање чланова.
 Вама су колачићи онемогућени. Омогућите их и покушајте поново.',
+'nocookiesfornew'            => 'Кориснички налог није отворен јер његов извор није потврђен.
+Омогућите колачиће на прегледачу и поново учитајте страницу.',
+'nocookiesforlogin'          => '{{int:nocookieslogin}}',
 'noname'                     => 'Нисте изабрали исправно корисничко име.',
 'loginsuccesstitle'          => 'Успешно пријављивање',
 'loginsuccess'               => "'''Пријављени сте као „$1“.'''",
 'nosuchuser'                 => 'Не постоји корисник с именом „$1“.
 Корисничка имена су осетљива на мала и велика слова.
 Проверите да ли сте га добро унели или [[Special:UserLogin/signup|отворите нови налог]].',
-'nosuchusershort'            => 'Корисник с именом „<nowiki>$1</nowiki>“ не постоји.
+'nosuchusershort'            => 'Корисник с именом „$1“ не постоји.
 Проверите да ли сте га добро унели.',
 'nouserspecified'            => 'Морате навести корисничко име.',
 'login-userblocked'          => '{{GENDER:$1|Овај корисник је блокиран|Ова корисница је блокирана|Овај корисник је блокиран}}. Пријава није дозвољена.',
@@ -775,13 +893,14 @@ $2',
 'usernamehasherror'          => 'Корисничко име не може садржати тарабе',
 'login-throttled'            => 'Превише пута сте покушали да се пријавите.
 Сачекајте неколико минута и покушајте поново.',
+'login-abort-generic'        => 'Неуспешна пријава – прекинуто',
 'loginlanguagelabel'         => 'Језик: $1',
 'suspicious-userlogout'      => 'Ваш захтев за одјаву је одбијен јер је послат од стране неисправног прегледача или посредника.',
 
 # E-mail sending
 'php-mail-error-unknown' => 'Непозната грешка у функцији PHP mail().',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Промена лозинке',
 'resetpass_announce'        => 'Пријављени сте с привременом лозинком.
 Да бисте завршили пријаву, подесите нову лозинку овде:',
@@ -801,6 +920,34 @@ $2',
 Можда сте већ променили лозинку или сте затражили нову привремену лозинку.',
 'resetpass-temp-password'   => 'Привремена лозинка:',
 
+# Special:PasswordReset
+'passwordreset'                => 'Обнављање лозинке',
+'passwordreset-text'           => 'Попуните овај образац да бисте примили е-поруку са својим подацима за пријаву.',
+'passwordreset-legend'         => 'Поништи лозинку',
+'passwordreset-disabled'       => 'Обнављање лозинке је онемогућено на овом викију.',
+'passwordreset-pretext'        => '{{PLURAL:$1||Унесите један од делова података испод}}',
+'passwordreset-username'       => 'Корисничко име:',
+'passwordreset-domain'         => 'Домен:',
+'passwordreset-email'          => 'Е-адреса:',
+'passwordreset-emailtitle'     => 'Детаљи налога на викију {{SITENAME}}',
+'passwordreset-emailtext-ip'   => 'Неко, вероватно ви, са ИП адресе $1 је затражио нову лозинку на викију {{SITENAME}} ($4).
+Следећи {{PLURAL:$3|кориснички налог је повезан|кориснички налози су повезани}} с овом е-адресом:
+
+$2
+
+{{PLURAL:$3|Привремена лозинка истиче|Привремене лозинке истичу}} за {{PLURAL:$5|један дан|$5 дана|$5 дана}}.
+Пријавите се и изаберите нову лозинку. Ако је неко други захтевао ову радњу или сте се сетили лозинке и не желите да је мењате, занемарите ову поруку.',
+'passwordreset-emailtext-user' => '{{GENDER:$1|Корисник|Корисница|Корисник}} $1 је затражио подсетник о подацима за пријаву на викију {{SITENAME}} ($4).
+Следећи {{PLURAL:$3|кориснички налог је повезан|кориснички налози су повезани}} с овом е-адресом:
+
+$2
+
+{{PLURAL:$3|Привремена лозинка истиче|Привремене лозинке истичу}} за {{PLURAL:$5|један дан|$5 дана|$5 дана}}.
+Пријавите се и изаберите нову лозинку. Ако је неко други захтевао ову радњу или сте се сетили лозинке и не желите да је мењате, занемарите ову поруку.',
+'passwordreset-emailelement'   => 'Корисничко име: $1
+Привремена лозинка: $2',
+'passwordreset-emailsent'      => 'Подсетник о лозинци је послат на вашу адресу.',
+
 # Edit page toolbar
 'bold_sample'     => 'Подебљан текст',
 'bold_tip'        => 'Подебљан текст',
@@ -812,8 +959,6 @@ $2',
 'extlink_tip'     => "Спољна веза (с предметком ''http://'')",
 'headline_sample' => 'Наслов',
 'headline_tip'    => 'Поднаслов',
-'math_sample'     => 'Овде унесите формулу',
-'math_tip'        => 'Математичка формула (LaTeX)',
 'nowiki_sample'   => 'Убаците необликован текст овде',
 'nowiki_tip'      => 'Занемари вики обликовање',
 'image_sample'    => 'Пример.jpg',
@@ -902,7 +1047,7 @@ $2',
 <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} претражити сродне извештаје] или [{{fullurl:{{FULLPAGENAME}}|action=edit}} уредити страницу]</span>.',
 'noarticletext-nopermission'       => 'На овој страници тренутно нема садржаја.
 Можете [[Special:Search/{{PAGENAME}}|потражити овај наслов]] на другим страницама или <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} претражити сродне извештаје]</span>.',
-'userpage-userdoesnotexist'        => 'Налог „$1“ није отворен.
+'userpage-userdoesnotexist'        => 'Налог „<nowiki>$1</nowiki>“ није отворен.
 Размислите да ли желите да направите или измените ову страницу.',
 'userpage-userdoesnotexist-view'   => 'Кориснички налог „$1“ није отворен.',
 'blocked-notice-logextract'        => 'Овај корисник је тренутно блокиран.
@@ -941,6 +1086,7 @@ $2',
 Ако и даље не ради, покушајте да се [[Special:UserLogout|одјавите]] и поново пријавите.'''",
 'token_suffix_mismatch'            => "'''Ваша измена је одбачена јер је ваш прегледач убацио знакове интерпункције у новчић уређивања.
 То се понекад догађа када се користи неисправан посредник.'''",
+'edit_form_incomplete'             => "'''Неки делови обрасца за уређивање нису достигли до сервера. Проверите да ли су измене промењене и покушајте поново.'''",
 'editing'                          => 'Уређујете $1',
 'editingsection'                   => 'Уређујете $1 (одељак)',
 'editingcomment'                   => 'Уређујете $1 (нови одељак)',
@@ -984,6 +1130,7 @@ $2',
 'template-semiprotected'           => '(полузаштићено)',
 'hiddencategories'                 => 'Ова страница је члан {{PLURAL:$1|једне скривене категорије|$1 скривене категорије|$1 скривених категорија}}:',
 'edittools'                        => '<!-- Овај текст ће бити приказан испод обрасца за уређивање и отпремање. -->',
+'edittools-upload'                 => '-',
 'nocreatetitle'                    => 'Прављење странице је ограничено',
 'nocreatetext'                     => 'На овом викију је ограничено прављење нових страница.
 Можете се вратити и уредити постојећу страницу, или се [[Special:UserLogin|пријавите или отворите налог]].',
@@ -1151,8 +1298,8 @@ $1",
 'revdelete-content'           => 'садржај',
 'revdelete-summary'           => 'опис измене',
 'revdelete-uname'             => 'корисничко име',
-'revdelete-restricted'        => 'ограничења за администраторе су примењена',
-'revdelete-unrestricted'      => 'ограничења за администраторе су уклоњена',
+'revdelete-restricted'        => 'примењена ограничења за администраторе',
+'revdelete-unrestricted'      => 'уклоњена ограничења за администраторе',
 'revdelete-hid'               => 'сакривено: $1',
 'revdelete-unhid'             => 'откривено: $1',
 'revdelete-log-message'       => '$1 за $2 {{PLURAL:$2|измену|измене|измена}}',
@@ -1179,7 +1326,7 @@ $1",
 
 # Suppression log
 'suppressionlog'     => 'Историја сакривања',
-'suppressionlogtext' => 'Испод се налази списак блокова и обрисаних страница који су сакривени од администратора. Погледај [[Special:IPBlockList|списак блокираних ИП адреса]] за списак тренутно важећих банова и блокова.',
+'suppressionlogtext' => 'Испод се налази списак брисања и блокирања који укључује садржај сакривен од администратора. Погледајте [[Special:BlockList|списак блокираних IP адреса]] за преглед важећих забрана и блокирања.',
 
 # History merging
 'mergehistory'                     => 'Споји историје страница',
@@ -1291,12 +1438,13 @@ $1",
 Упамтите да његови пописи овог викија могу бити застарели.',
 
 # Quickbar
-'qbsettings'               => 'Бочна палета',
-'qbsettings-none'          => 'Ништа',
-'qbsettings-fixedleft'     => 'Причвршћена лево',
-'qbsettings-fixedright'    => 'Причвршћена десно',
-'qbsettings-floatingleft'  => 'Плутајућа лево',
-'qbsettings-floatingright' => 'Плутајућа десно',
+'qbsettings'                => 'Бочна палета',
+'qbsettings-none'           => 'Ништа',
+'qbsettings-fixedleft'      => 'Причвршћена лево',
+'qbsettings-fixedright'     => 'Причвршћена десно',
+'qbsettings-floatingleft'   => 'Плутајућа лево',
+'qbsettings-floatingright'  => 'Плутајућа десно',
+'qbsettings-directionality' => 'Фиксно, у зависности од смера писања вашег језика',
 
 # Preferences page
 'preferences'                   => 'Подешавања',
@@ -1307,9 +1455,10 @@ $1",
 'changepassword'                => 'Промени лозинку',
 'prefs-skin'                    => 'Тема',
 'skin-preview'                  => 'Прегледај',
-'prefs-math'                    => 'Приказ математичких формула',
 'datedefault'                   => 'Свеједно',
+'prefs-beta'                    => 'Бета могућности',
 'prefs-datetime'                => 'Датум и време',
+'prefs-labs'                    => 'Пробне могућности',
 'prefs-personal'                => 'Профил',
 'prefs-rc'                      => 'Скорашње измене',
 'prefs-watchlist'               => 'Списак надгледања',
@@ -1331,8 +1480,6 @@ $1",
 'columns'                       => 'Колона',
 'searchresultshead'             => 'Претрага',
 'resultsperpage'                => 'Погодака по страници:',
-'contextlines'                  => 'Линија по поготку:',
-'contextchars'                  => 'Знакова по линији:',
 'stub-threshold'                => 'Праг за обликовање <a href="#" class="stub">везе као клице</a> (у бајтовима):',
 'stub-threshold-disabled'       => 'Онемогућено',
 'recentchangesdays'             => 'Број дана у скорашњим изменама:',
@@ -1345,7 +1492,7 @@ $1",
 'savedprefs'                    => 'Ваша подешавања су сачувана.',
 'timezonelegend'                => 'Временска зона:',
 'localtime'                     => 'Локално време:',
-'timezoneuseserverdefault'      => 'подразумеване вредности',
+'timezoneuseserverdefault'      => 'подразумеване вредности ($1)',
 'timezoneuseoffset'             => 'друго (унесите одступање)',
 'timezoneoffset'                => 'Одступање¹:',
 'servertime'                    => 'Време на серверу:',
@@ -1398,7 +1545,8 @@ $1",
 'email'                         => 'Е-адреса',
 'prefs-help-realname'           => 'Право име није обавезно.
 Ако изаберете да га унесете, оно ће бити коришћено за приписивање вашег рада.',
-'prefs-help-email'              => 'Е-пошта је опциона, али омогућује осталима да вас контактирају преко ваше корисничке стране или стране разговора са корисником без потребе да одајете свој идентитет.',
+'prefs-help-email'              => 'Е-адреса није обавезна, али је потребна у случају да заборавите лозинку.',
+'prefs-help-email-others'       => 'Можете је користити и да омогућите другима да вас контактирају преко корисничке странице или странице за разговор, без откривања свог идентитета.',
 'prefs-help-email-required'     => 'Е-адреса је потребна.',
 'prefs-info'                    => 'Основни подаци',
 'prefs-i18n'                    => 'Интернационализација',
@@ -1524,19 +1672,19 @@ $1",
 'right-userrights'            => 'уређивање свих корисничких права',
 'right-userrights-interwiki'  => 'уређивање корисничких права на другим викијима',
 'right-siteadmin'             => 'закључавање и откључавање базе података',
-'right-reset-passwords'       => 'поништавање туђих лозинки',
 'right-override-export-depth' => 'извоз страница укључујући и повазене странице до дубине од пет веза',
 'right-sendemail'             => 'слање е-порука другим корисницима',
 
 # User rights log
-'rightslog'      => 'Историја корисничких права',
-'rightslogtext'  => 'Ово је историја измена корисничких права.',
-'rightslogentry' => '{{GENDER:|је променио|је променила|је променио}} права за члана $1 из $2 у $3',
-'rightsnone'     => '(ништа)',
+'rightslog'                  => 'Историја корисничких права',
+'rightslogtext'              => 'Ово је историја измена корисничких права.',
+'rightslogentry'             => '{{GENDER:|је променио|је променила|је променио}} права за члана $1 из $2 у $3',
+'rightslogentry-autopromote' => 'је унапређен из $2 у $3',
+'rightsnone'                 => '(ништа)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read'                 => 'читање ове странице',
-'action-edit'                 => 'прављење ове странице',
+'action-edit'                 => 'уређивање ове странице',
 'action-createpage'           => 'прављење страница',
 'action-createtalk'           => 'прављење страница за разговор',
 'action-createaccount'        => 'прављење овог корисничког налога',
@@ -1659,13 +1807,13 @@ $1",
 'illegalfilename'             => 'Датотека „$1“ садржи знакове који нису дозвољени у називима страница.
 Промените назив датотеке и поново је пошаљите.',
 'badfilename'                 => 'Назив датотеке је промењен у „$1“.',
-'filetype-mime-mismatch'      => 'Екстензија датотеке не одговара MIME типу.',
+'filetype-mime-mismatch'      => 'Екстензија „.$1“ не одговара препознатој врсти MIME датотеке ($2).',
 'filetype-badmime'            => 'Датотеке MIME врсте „$1“ није дозвољено слати.',
 'filetype-bad-ie-mime'        => 'Ова датотека се не може послати зато што би је Интернет експлорер уочио као „$1“, а то је забрањена и опасна врста датотеке.',
 'filetype-unwanted-type'      => '„.$1“ је непожељна врста датотеке.
 {{PLURAL:$3|Пожељна врста датотеке је|Пожељне врсте датотека су}} $2.',
-'filetype-banned-type'        => '„.$1“ је забрањен тип датотеке.
-{{PLURAL:$3|Пожељна врста датотеке је|Пожељне врсте датотека су}} $2.',
+'filetype-banned-type'        => '\'\'\'".$1"\'\'\' {{PLURAL:$4|је забрањена врста датотеке|су забрањене врсте датотека}}.
+{{PLURAL:$3|Дозвољена врста датотеке је|Дозвољене врсте датотека су}} $2.',
 'filetype-missing'            => 'Ова датотека нема екстензију.',
 'empty-file'                  => 'Послата датотека је празна.',
 'file-too-large'              => 'Послата датотека је превелика.',
@@ -1683,6 +1831,7 @@ $1",
 'emptyfile'                   => 'Датотека коју сте послали је празна.
 Узрок може бити грешка у називу датотеке.
 Проверите да ли заиста желите да је пошаљете.',
+'windows-nonascii-filename'   => 'Овај вики не подржава називе датотека с посебним знацима.',
 'fileexists'                  => "Датотека с овим називом већ постоји. Погледајте '''<tt>[[:$1]]</tt>''' ако нисте сигурни да ли желите да је промените.
 [[$1|thumb]]",
 'filepageexists'              => "Страница с описом ове датотеке је већ направљена овде '''<tt>[[:$1]]</tt>''', иако датотека не постоји.
@@ -1723,6 +1872,8 @@ $1",
 'uploadscripted'              => 'Датотека садржи HTML или скриптни код који може бити погрешно протумачен од стране прегледача.',
 'uploadvirus'                 => 'Датотека садржи вирус!
 Детаљи: $1',
+'uploadjava'                  => 'Датотека је формата ZIP који садржи јава .class елемент.
+Слање јава датотека није дозвољено јер оне могу изазвати заобилажење сигурносних ограничења.',
 'upload-source'               => 'Изворна датотека',
 'sourcefilename'              => 'Назив изворне датотеке:',
 'sourceurl'                   => 'Адреса извора:',
@@ -1733,10 +1884,6 @@ $1",
 'watchthisupload'             => 'Надгледај ову датотеку',
 'filewasdeleted'              => 'Датотека с овим називом је раније послата, али је обрисана.
 Проверите $1 пре него што наставите с поновним слањем.',
-'upload-wasdeleted'           => "'''Упозорење: шаљете датотеку која је претходно обрисана.'''
-
-Размотрите да ли желите да наставите са слањем.
-Разлог брисања ове датотеке:",
 'filename-bad-prefix'         => "Назив датотеке коју шаљете почиње са '''\"\$1\"''', а њега обично додељују дигитални фотоапарати.
 Изаберите назив датотеке који описује њен садржај.",
 'filename-prefix-blacklist'   => ' #<!-- оставите овај ред онаквим какав јесте --> <pre>
@@ -1775,12 +1922,29 @@ $1',
 'upload-unknown-size'       => 'Непозната величина',
 'upload-http-error'         => 'Дошло је до HTTP грешке: $1',
 
+# ZipDirectoryReader
+'zip-file-open-error' => 'Дошло је до грешке при отварању датотеке за проверу ZIP архиве.',
+'zip-wrong-format'    => 'Наведена датотека није формата ZIP.',
+'zip-bad'             => 'Датотека је оштећена или је нечитљива ZIP датотека.
+Безбедносна провера не може да се изврши како треба.',
+'zip-unsupported'     => 'Датотека је формата ZIP који користи могућности које не подржава Медијавики.
+Безбедносна провера не може да се изврши како треба.',
+
+# Special:UploadStash
+'uploadstash'          => 'Тајно складиште',
+'uploadstash-summary'  => 'Ова страница пружа приступ датотекама које су послате (или се шаљу), али још нису објављене. Ове датотеке су видљиве само кориснику који га је послао.',
+'uploadstash-clear'    => 'Очисти сакривене датотеке',
+'uploadstash-nofiles'  => 'Немате сакривене датотеке.',
+'uploadstash-badtoken' => 'Извршавање дате радње није успело. Разлог томе може бити истек времена за уређивање. Покушајте поново.',
+'uploadstash-errclear' => 'Чишћење датотека није успело.',
+'uploadstash-refresh'  => 'Освежи списак датотека',
+
 # img_auth script messages
 'img-auth-accessdenied'     => 'Приступ је одбијен',
 'img-auth-nopathinfo'       => 'Недостаје PATH_INFO.
 Ваш сервер није подешен да прослеђује овакве податке.
 Можда је заснован на CGI-ју који не подржава img_auth.
-Погледајте http://www.mediawiki.org/wiki/Manual:Image_Authorization.',
+Погледајте [//www.mediawiki.org/wiki/Manual:Image_Authorization?uselang=sr-ec одобравање слика.]',
 'img-auth-notindir'         => 'Захтевана путања није у подешеној фасцикли за слање.',
 'img-auth-badtitle'         => 'Не могу да створим исправан наслов за „$1“.',
 'img-auth-nologinnWL'       => 'Нисте пријављени и „$1“ није на списку дозвољених.',
@@ -1845,7 +2009,7 @@ $1',
 'filehist-datetime'                 => 'Датум/време',
 'filehist-thumb'                    => 'Умањени приказ',
 'filehist-thumbtext'                => 'Умањени приказ за издање од $1',
-'filehist-nothumb'                  => 'Без умањеног приказа',
+'filehist-nothumb'                  => 'Нема минијатуре',
 'filehist-user'                     => 'Корисник',
 'filehist-dimensions'               => 'Димензије',
 'filehist-filesize'                 => 'Величина датотеке',
@@ -1858,7 +2022,7 @@ $1',
 Доступан је и [[Special:WhatLinksHere/$2|потпуни списак]].',
 'nolinkstoimage'                    => 'Нема страница које користе ову датотеку.',
 'morelinkstoimage'                  => 'Погледајте [[Special:WhatLinksHere/$1|више веза]] до ове датотеке.',
-'redirectstofile'                   => '{{PLURAL:$1|Следећа датотека се преусмерава|Следеће $1 датотеке се преусмеравају|Следећих $1 датотека се преусмерава}} до ове датотеке:',
+'linkstoimage-redirect'             => '$1 (преусмерење датотеке) $2',
 'duplicatesoffile'                  => '{{PLURAL:$1|Следећа датотека је дупликат|Следеће $1 датотеке су дупликати|Следећих $1 датотека су дупликати}} ове датотеке ([[Special:FileDuplicateSearch/$2|детаљније]]):',
 'sharedupload'                      => 'Ова датотека се налази на $1 и може се користити и на другим пројектима.',
 'sharedupload-desc-there'           => 'Ова датотека се налази на $1 и може се користити и на другим пројектима.
@@ -1952,19 +2116,20 @@ $1',
 'statistics-users-active-desc' => 'Корисници који су извршили бар једну радњу {{PLURAL:$1|претходни дан|у последња $1 дана|у последњих $1 дана}}',
 'statistics-mostpopular'       => 'Најпосећеније странице',
 
-'disambiguations'      => 'Странице за вишезначне одреднице',
+'disambiguations'      => 'Странице до вишезначних одредница',
 'disambiguationspage'  => 'Template:Вишезначна одредница',
 'disambiguations-text' => "Следеће странице су повезане с '''вишезначном одредницом'''.
 Оне би требало бити упућене ка одговарајућем чланку.
 Страница се сматра вишезначном одредницом ако користи шаблон који је повезан са списком [[MediaWiki:Disambiguationspage]].",
 
-'doubleredirects'            => 'Двострука преусмерења',
-'doubleredirectstext'        => 'Ова страница приказује странице које преусмеравају на друга преусмерења.
+'doubleredirects'                   => 'Двострука преусмерења',
+'doubleredirectstext'               => 'Ова страница приказује странице које преусмеравају на друга преусмерења.
 Сваки ред садржи везе према првом и другом преусмерењу, као и одредишну страницу другог преусмерења која је обично „прави“ чланак на кога прво преусмерење треба да упућује.
 <del>Прецртани</del> уноси су већ решени.',
-'double-redirect-fixed-move' => '[[$1]] је премештен.
+'double-redirect-fixed-move'        => '[[$1]] је премештен.
 Сада је преусмерење на [[$2]].',
-'double-redirect-fixer'      => 'Исправљач преусмерења',
+'double-redirect-fixed-maintenance' => 'Исправљање двоструких преусмерења из [[$1]] у [[$2]].',
+'double-redirect-fixer'             => 'Исправљач преусмерења',
 
 'brokenredirects'        => 'Покварена преусмерења',
 'brokenredirectstext'    => 'Следећа преусмерења упућују на непостојеће странице:',
@@ -2041,6 +2206,7 @@ $1',
 'pager-newer-n'           => '{{PLURAL:$1|новији 1|новија $1|новијих $1}}',
 'pager-older-n'           => '{{PLURAL:$1|старији 1|старија $1|старијих $1}}',
 'suppress'                => 'Ревизор',
+'querypage-disabled'      => 'Ова посебна страница је онемогућена ради побољшања перформанси.',
 
 # Book sources
 'booksources'               => 'Штампани извори',
@@ -2051,8 +2217,8 @@ $1',
 'booksources-invalid-isbn'  => 'Наведени ISBN број није исправан. Проверите да није дошло до грешке при умножавању из првобитног извора.',
 
 # Special:Log
-'specialloguserlabel'  => 'Корисник:',
-'speciallogtitlelabel' => 'Наслов:',
+'specialloguserlabel'  => 'Извршилац:',
+'speciallogtitlelabel' => 'Циљ (наслов или корисник):',
 'log'                  => 'Протоколи',
 'all-logs-page'        => 'Све јавне историје',
 'alllogstext'          => 'Скупни приказ свих доступних историја овог викија.
@@ -2093,12 +2259,13 @@ $1',
 'sp-deletedcontributions-contribs' => 'прилози',
 
 # Special:LinkSearch
-'linksearch'       => 'Спољне везе',
+'linksearch'       => 'Претрага спољних веза',
 'linksearch-pat'   => 'Образац претраге:',
 'linksearch-ns'    => 'Именски простор:',
 'linksearch-ok'    => 'Претражи',
-'linksearch-text'  => 'Џокери попут „*.wikipedia.org“ се могу користити.<br />
-Подржани протоколи: <tt>$1</tt>',
+'linksearch-text'  => 'Могу се користити џокери попут „*.wikipedia.org“.<br />
+Потребан је највиши домен, као „*.org“.<br />
+Подржани протоколи: <tt>$1</tt> (не стављајте у претрагу)',
 'linksearch-line'  => 'страница $1 је повезана са странице $2',
 'linksearch-error' => 'Џокери се могу појавити само на почетку адресе.',
 
@@ -2161,6 +2328,10 @@ $1',
 'noemailtext'          => 'Овај корисник није навео исправну е-адресу.',
 'nowikiemailtitle'     => 'Е-пошта није дозвољена',
 'nowikiemailtext'      => 'Овај корисник је одлучио да не прима е-поруке од других корисника.',
+'emailnotarget'        => 'Непостојеће или неисправно корисничко име примаоца.',
+'emailtarget'          => 'Унос корисничког имена примаоца',
+'emailusername'        => 'Корисничко име:',
+'emailusernamesubmit'  => 'Пошаљи',
 'email-legend'         => 'Слање е-порука другом кориснику',
 'emailfrom'            => 'Од:',
 'emailto'              => 'За:',
@@ -2186,12 +2357,12 @@ $1',
 'watchlistanontext'    => 'Морате бити $1 да бисте гледали и уређивали ставке на вашем списку надгледања.',
 'watchnologin'         => 'Нисте пријављени',
 'watchnologintext'     => 'Морате бити [[Special:UserLogin|пријављени]] да бисте мењали списак надгледања.',
-'addedwatch'           => 'Додато на списак надгледања',
+'addwatch'             => 'Додај на списак надгледања',
 'addedwatchtext'       => 'Страница „[[:$1]]“ је додата на ваш [[Special:Watchlist|списак надгледања]].
 Будуће измене ове странице и њене странице за разговор биће наведене овде, а страница ће бити <b>подебљана</b> у [[Special:RecentChanges|списку скорашњих измена]] да би се лакше уочила.
 
 Уколико будете желели да уклоните страницу са списка надгледања, кликните опет на звездицу у горњој палети.',
-'removedwatch'         => 'Уклоњено са списка надгледања',
+'removewatch'          => 'Уклони са списка надгледања',
 'removedwatchtext'     => 'Страница „[[:$1]]“ је уклоњена с вашег [[Special:Watchlist|списка надгледања]].',
 'watch'                => 'Надгледај',
 'watchthispage'        => 'Надгледај ову страницу',
@@ -2212,8 +2383,9 @@ $1',
 'watchlist-options'    => 'Поставке списка надгледања',
 
 # Displayed when you click the "watch" button and it is in the process of watching
-'watching'   => 'Надгледање…',
-'unwatching' => 'Прекидање надгледања…',
+'watching'       => 'Надгледање…',
+'unwatching'     => 'Прекидање надгледања…',
+'watcherrortext' => 'Дошло је до грешке при промени поставки вашег списка надгледања за „$1“.',
 
 'enotif_mailer'                => '{{SITENAME}} е-обавештење',
 'enotif_reset'                 => 'Означи све странице као посећене',
@@ -2232,7 +2404,7 @@ $1',
 
 $NEWPAGE
 
-Сажетак: $PAGESUMMARY $PAGEMINOREDIT
+Опис: $PAGESUMMARY $PAGEMINOREDIT
 
 Контакт:
 е-адреса: $PAGEEDITOR_EMAIL
@@ -2244,17 +2416,17 @@ $NEWPAGE
 Срдачан поздрав, {{SITENAME}}
 
 --
-Да бисте променили поставке у вези с е-обавештењима, посетите
-{{fullurl:{{#special:Preferences}}}}
+Да бисте променили поставке у вези са е-обавештењима, посетите
+{{canonicalurl:{{#special:Preferences}}}}
 
 Да бисте променили поставке у вези са списком надгледања, посетите
-{{fullurl:{{#special:Watchlist}}/edit}}
+{{canonicalurl:{{#special:EditWatchlist}}}}
 
 Да бисте уклонили ову страницу са списка надгледања, посетите
 $UNWATCHURL
 
 Подршка и даља помоћ:
-{{fullurl:{{MediaWiki:Helppage}}}}',
+{{canonicalurl:{{MediaWiki:Helppage}}}}',
 
 # Delete
 'deletepage'             => 'Обриши страницу',
@@ -2271,8 +2443,8 @@ $UNWATCHURL
 Потврдите своју намеру, да разумете последице и да ово радите у складу с [[{{MediaWiki:Policy-url}}|правилима]].',
 'actioncomplete'         => 'Акција је завршена',
 'actionfailed'           => 'Акција није успела',
-'deletedtext'            => "Страница „<nowiki>$1</nowiki>“ је обрисана.
-Погледајте страницу ''$2'' за више детаља.",
+'deletedtext'            => "Страница „$1“ је обрисана.
+Погледајте ''$2'' за више детаља.",
 'deletedarticle'         => 'је обрисао „[[$1]]“',
 'suppressedarticle'      => '{{GENDER:|је сакрио|је сакрила|је сакрио}} „[[$1]]“',
 'dellogpage'             => 'историја брисања',
@@ -2331,7 +2503,7 @@ $UNWATCHURL
 'protect_expiry_invalid'      => 'Време истека није исправно.',
 'protect_expiry_old'          => 'Време истека је у прошлости.',
 'protect-unchain-permissions' => 'Откључај даљње поставке заштите',
-'protect-text'                => "Овде можете погледати и променити степен заштите странице '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "Овде можете погледати и променити степен заштите странице '''$1'''.",
 'protect-locked-blocked'      => "Не можете мењати степене заштите док сте блокирани.
 Ово су тренутне поставке странице '''$1''':",
 'protect-locked-dblock'       => "Степени заштите се не могу мењати јер је активна база података закључана.
@@ -2387,8 +2559,7 @@ $UNWATCHURL
 Архива се повремено чисти од оваквих страница.',
 'undelete-fieldset-title'      => 'Враћање измена',
 'undeleteextrahelp'            => "Да бисте вратили целу историју странице, оставите све кућице неозначене и кликните на дугме '''''{{int:undeletebtn}}'''''.
-Ако желите да вратите одређене измене, означите их и кликните на '''''{{int:undeletebtn}}'''''.
-Дугме '''''{{int:undeletereset}}''''' ће очистити поље за коментар и све кућице.",
+Ако желите да вратите одређене измене, означите их и кликните на '''''{{int:undeletebtn}}'''''.",
 'undeleterevisions'            => '$1 {{PLURAL:$1|измена је архивирана|измене су архивиране|измена је архивирано}}',
 'undeletehistory'              => 'Ако вратите страницу, све измене ће бити враћене њеној историји.
 Ако је у међувремену направљена нова страница с истим називом, враћене измене ће се појавити у ранијом историји.',
@@ -2433,9 +2604,12 @@ $1',
 'undelete-show-file-submit'    => 'Да',
 
 # Namespace form on various pages
-'namespace'      => 'Именски простор:',
-'invert'         => 'Обрни избор',
-'blanknamespace' => '(Главно)',
+'namespace'                     => 'Именски простор:',
+'invert'                        => 'Обрни избор',
+'tooltip-invert'                => 'Означите ову кућицу да бисте сакрили измене на страницама у одабраном именском простору (и повезаним именским просторима, ако је означено)',
+'namespace_association'         => 'Повезани именски простор',
+'tooltip-namespace_association' => 'Означите ову кућицу да бисте укључили и разговор или именски простор теме која је повезана с одабраним именским простором',
+'blanknamespace'                => '(Главно)',
 
 # Contributions
 'contributions'       => 'Прилози корисника',
@@ -2486,6 +2660,9 @@ $1',
 'whatlinkshere-filters'    => 'Филтери',
 
 # Block/unblock
+'autoblockid'                     => 'Самоблокирање #$1',
+'block'                           => 'Блокирај корисника',
+'unblock'                         => 'Деблокирај корисника',
 'blockip'                         => 'Блокирај корисника',
 'blockip-title'                   => 'Блокирај корисника',
 'blockip-legend'                  => 'Блокирај корисника',
@@ -2495,7 +2672,6 @@ $1',
 са [[{{MediaWiki:Policy-url}}|смерницама]].
 Унесите конкретан разлог испод (на пример, наводећи које
 странице су вандализоване).',
-'ipaddress'                       => 'IP адреса:',
 'ipadressorusername'              => 'ИП адреса или корисничко име:',
 'ipbexpiry'                       => 'Трајање',
 'ipbreason'                       => 'Разлог:',
@@ -2508,7 +2684,7 @@ $1',
 ** Непожељно понашање
 ** Употреба више налога
 ** Непожељно корисничко име',
-'ipbanononly'                     => 'Блокирај само анонимне кориснике',
+'ipb-hardblock'                   => 'Забрани пријављеним корисницима да уређују с ове ИП адресе',
 'ipbcreateaccount'                => 'Спречи прављење налога',
 'ipbemailban'                     => 'Забрани члану слање е-порука',
 'ipbenableautoblock'              => 'Аутоматски блокирај последњу ИП адресу овог корисника, и сваку следећу адресу са које се покуша уређивање.',
@@ -2519,12 +2695,15 @@ $1',
 'ipbotherreason'                  => 'Други/додатни разлог:',
 'ipbhidename'                     => 'Сакриј корисничко име са измена и спискова',
 'ipbwatchuser'                    => 'надгледање корисничке странице и странице за разговор овог корисника',
-'ipballowusertalk'                => 'Омогућите овом кориснику да мења сопствену страну за разговор током блока',
+'ipb-disableusertalk'             => 'Забрани овом кориснику да уређује своју страницу за разговор док је блокиран',
 'ipb-change-block'                => 'Поново блокирај корисника с овим поставкама',
+'ipb-confirm'                     => 'Потврди блокирање',
 'badipaddress'                    => 'Неисправна IP адреса',
 'blockipsuccesssub'               => 'Блокирање је успело',
-'blockipsuccesstext'              => '"[[Special:Contributions/$1|$1]]" је {{GENDER:|блокиран|блокирана|блокиран}}.<br />
-Погледајте [[Special:IPBlockList|списак блокираних ИП адреса]] за преглед блокирања.',
+'blockipsuccesstext'              => '[[Special:Contributions/$1|$1]] је {{GENDER:$1|блокиран|блокирана|блокиран}}.<br />
+Погледајте [[Special:BlockList|списак блокираних ИП адреса]] за преглед блокирања.',
+'ipb-blockingself'                => 'Овом радњом ћете блокирати себе! Јесте ли сигурни да то желите?',
+'ipb-confirmhideuser'             => 'Управо ћете блокирати корисника с укљученом могућношћу „сакриј корисника“. Овим ће корисничко име бити сакривено у свим списковима и извештајима. Желите ли то да урадите?',
 'ipb-edit-dropdown'               => 'Уреди разлоге блокирања',
 'ipb-unblock-addr'                => 'Деблокирај $1',
 'ipb-unblock'                     => 'Деблокирај корисничко име или IP адресу',
@@ -2534,17 +2713,23 @@ $1',
 'unblockiptext'                   => 'Користите образац испод да бисте вратили право писања блокираној IP адреси или корисничком имену.',
 'ipusubmit'                       => 'Деблокирај',
 'unblocked'                       => '[[User:$1|$1]] је деблокиран',
+'unblocked-range'                 => '$1 је {{GENDER:$1|деблокиран|деблокирана|деблокиран}}',
 'unblocked-id'                    => 'Блокирање $1 је уклоњено',
+'blocklist'                       => 'Блокирани корисници',
 'ipblocklist'                     => 'Блокирани корисници',
 'ipblocklist-legend'              => 'Проналажење блокираног корисника',
-'ipblocklist-username'            => 'Корисничко име или ИП адреса:',
-'ipblocklist-sh-userblocks'       => '$1 забрањене налоге',
-'ipblocklist-sh-tempblocks'       => '$1 привремене забране',
-'ipblocklist-sh-addressblocks'    => '$1 IP забране',
+'blocklist-userblocks'            => 'Сакриј блокирања налога',
+'blocklist-tempblocks'            => 'Сакриј привремена блокирања',
+'blocklist-addressblocks'         => 'Сакриј појединачна блокирања ИП адресе',
+'blocklist-timestamp'             => 'Време',
+'blocklist-target'                => 'Корисник',
+'blocklist-expiry'                => 'Истиче',
+'blocklist-by'                    => 'Блокирао',
+'blocklist-params'                => 'Забрањене радње',
+'blocklist-reason'                => 'Разлог',
 'ipblocklist-submit'              => 'Претражи',
 'ipblocklist-localblock'          => 'Локално блокирање',
 'ipblocklist-otherblocks'         => '{{PLURAL:$1|Друго блокирање|Друга блокирања}}',
-'blocklistline'                   => '$1, $2 је {{GENDER:$2|блокирао|блокирала|је блокирао}} {{GENDER:$3|корисника|корисницу|корисника}} $3 (истиче $4)',
 'infiniteblock'                   => 'никада',
 'expiringblock'                   => 'истиче дана $1 у $2',
 'anononlyblock'                   => 'само анонимни',
@@ -2569,7 +2754,7 @@ $1',
 'reblock-logentry'                => 'је променио подешавања блока за [[$1]] са временом истека $2 ($3)',
 'blocklogtext'                    => 'Ово је историја блокирања корисника.
 Аутоматски забрањене IP адресе нису исписане овде.
-Погледајте [[Special:IPBlockList|забрањене IP адресе]] за списак тренутних блокова.',
+Погледајте [[Special:BlockList|забрањене IP адресе]] за списак тренутних блокова.',
 'unblocklogentry'                 => '{{GENDER:|је деблокирао|је деблокирала|је деблокирао}} „$1“',
 'block-log-flags-anononly'        => 'само анонимни корисници',
 'block-log-flags-nocreate'        => 'онемогућено отварање налога',
@@ -2583,9 +2768,9 @@ $1',
 'ipb_expiry_temp'                 => 'Сакривени блокови корисничких имена морају бити стални.',
 'ipb_hide_invalid'                => 'Није било могуће сакрити овај налог; Мора да има превише измена.',
 'ipb_already_blocked'             => '"$1" је већ блокиран',
-'ipb-needreblock'                 => '== Већ блокиран ==
-$1 је већ блокиран. Да ли желите да промените подешавања?',
+'ipb-needreblock'                 => '$1 је већ блокиран. Да ли желите да промените подешавања?',
 'ipb-otherblocks-header'          => 'Други {{PLURAL:$1|блок|блокови}}',
+'unblock-hideuser'                => 'Не можете деблокирати овог корисника јер је његово корисничко име сакривено.',
 'ipb_cant_unblock'                => 'Грешка: ID блока $1 није нађен.
 Могуће је да је већ деблокиран.',
 'ipb_blocked_as_range'            => 'Грешка: IP $1 није директно блокиран и не може бити деблокиран.
@@ -2631,6 +2816,7 @@ $1 је већ блокиран. Да ли желите да промените 
 'lockfilenotwritable' => 'Датотека за закључавање базе није отворена за писање.
 Да бисте закључали и откључали базу, датотека мора бити доступна за писање од стране мрежног сервера.',
 'databasenotlocked'   => 'База података није закључана.',
+'lockedbyandtime'     => '(од $1 дана $2 у $3)',
 
 # Move page
 'move-page'                    => 'Премештање „$1“',
@@ -2756,7 +2942,7 @@ $1 је већ блокиран. Да ли желите да промените 
 'allmessagesdefault'            => 'Стандардни текст',
 'allmessagescurrent'            => 'Текст поруке',
 'allmessagestext'               => 'Ово је списак системских порука доступних у именском простору Медијавикија.
-Посетите [http://translatewiki.net TranslateWiki] уколико желите да помогнете у превођењу.',
+Посетите [//translatewiki.net TranslateWiki] уколико желите да помогнете у превођењу.',
 'allmessagesnotsupportedDB'     => "Ова страница не може бити употребљена зато што је '''\$wgUseDatabaseMessages''' искључен.",
 'allmessages-filter-legend'     => 'Филтер',
 'allmessages-filter'            => 'Филтрирај по стању:',
@@ -2896,35 +3082,42 @@ $1 је већ блокиран. Да ли желите да промените 
 'tooltip-summary'                 => 'Унесите кратак опис',
 
 # Stylesheets
-'common.css'      => '/** CSS постављен овде ће се одразити на све теме */',
-'standard.css'    => '/* CSS постављен овде ће утицати на све кориснике теме „Стандардно“ */',
-'nostalgia.css'   => '/* CSS постављен овде ће утицати на све кориснике теме „Носталгија“ */',
-'cologneblue.css' => '/* CSS постављен овде ће утицати на све кориснике теме „Келнско плава“ */',
-'monobook.css'    => '/* CSS постављен овде ће утицати на све кориснике теме „Монобук“ */',
-'myskin.css'      => '/* CSS постављен овде ће утицати на све кориснике теме „Моја тема“ */',
-'chick.css'       => '/* CSS постављен овде ће утицати на све кориснике теме „Шик“ */',
-'simple.css'      => '/* CSS постављен овде ће утицати на све кориснике теме „Просто“ */',
-'modern.css'      => '/* CSS постављен овде ће утицати на све кориснике теме „Савремено“ */',
-'vector.css'      => '/* CSS постављен овде ће утицати на све кориснике теме „Векторско“ */',
-'print.css'       => '/* CSS постављен овде ће утицати на издање за штампу */',
-'handheld.css'    => '/* CSS постављен овде ће утицати на ручне уређаје с темом прилагођеном у $wgHandheldStyle */',
+'common.css'              => '/** CSS постављен овде ће се одразити на све теме */',
+'standard.css'            => '/* CSS постављен овде ће утицати на све кориснике теме „Стандардно“ */',
+'nostalgia.css'           => '/* CSS постављен овде ће утицати на све кориснике теме „Носталгија“ */',
+'cologneblue.css'         => '/* CSS постављен овде ће утицати на све кориснике теме „Келнско плава“ */',
+'monobook.css'            => '/* CSS постављен овде ће утицати на све кориснике теме „Монобук“ */',
+'myskin.css'              => '/* CSS постављен овде ће утицати на све кориснике теме „Моја тема“ */',
+'chick.css'               => '/* CSS постављен овде ће утицати на све кориснике теме „Шик“ */',
+'simple.css'              => '/* CSS постављен овде ће утицати на све кориснике теме „Просто“ */',
+'modern.css'              => '/* CSS постављен овде ће утицати на све кориснике теме „Савремено“ */',
+'vector.css'              => '/* CSS постављен овде ће утицати на све кориснике теме „Векторско“ */',
+'print.css'               => '/* CSS постављен овде ће утицати на издање за штампу */',
+'handheld.css'            => '/* CSS постављен овде ће утицати на ручне уређаје с темом прилагођеном у $wgHandheldStyle */',
+'noscript.css'            => '/* CSS постављен овде ће утицати на све кориснике којима је онемогућен јаваскрипт */',
+'group-autoconfirmed.css' => '/* CSS постављен овде ће утицати на самопотврђене кориснике */',
+'group-bot.css'           => '/* CSS постављен овде ће утицати само на ботове */',
+'group-sysop.css'         => '/* CSS постављен овде ће утицати само на системске операторе */',
+'group-bureaucrat.css'    => '/* CSS постављен овде ће утицати само на бирократе */',
 
 # Scripts
-'common.js'      => '/* Јаваскрипт постављен овде ће се користити за све кориснике при отварању сваке странице. */',
-'standard.js'    => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Стандардно“ */',
-'nostalgia.js'   => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Носталгија“ */',
-'cologneblue.js' => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Келнско плава“ */',
-'monobook.js'    => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Монобук“ */',
-'myskin.js'      => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе „Моју тему“ */',
-'chick.js'       => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Шик“ */',
-'simple.js'      => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Просто“ */',
-'modern.js'      => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Савремено“ */',
-'vector.js'      => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Векторско“ */',
+'common.js'              => '/* Јаваскрипт постављен овде ће се користити за све кориснике при отварању сваке странице. */',
+'standard.js'            => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Стандардно“ */',
+'nostalgia.js'           => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Носталгија“ */',
+'cologneblue.js'         => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Келнско плава“ */',
+'monobook.js'            => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Монобук“ */',
+'myskin.js'              => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе „Моју тему“ */',
+'chick.js'               => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Шик“ */',
+'simple.js'              => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Просто“ */',
+'modern.js'              => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Савремено“ */',
+'vector.js'              => '/* Јаваскрипт постављен овде ће се учитати за све оне који користе тему „Векторско“ */',
+'group-autoconfirmed.js' => '/* Јаваскрипт постављен овде ће се учитати за самопотврђене кориснике */',
+'group-bot.js'           => '/* Јаваскрипт постављен овде ће се учитати само за ботове */',
+'group-sysop.js'         => '/* Јаваскрипт постављен овде ће се учитати само за системске операторе */',
+'group-bureaucrat.js'    => '/* Јаваскрипт постављен овде ће се учитати само за бирократе */',
 
 # Metadata
-'nodublincore'      => 'Dublin Core RDF метаподаци онемогућени за овај сервер.',
-'nocreativecommons' => 'Creative Commons RDF метаподаци онемогућени за овај сервер.',
-'notacceptable'     => 'Вики сервер не може да пружи податке у оном формату који ваш клијент може да прочита.',
+'notacceptable' => 'Вики сервер не може да пружи податке у оном формату који ваш клијент може да прочита.',
 
 # Attribution
 'anonymous'        => 'Анонимни {{PLURAL:$1|корисник|корисници}} на {{SITENAME}}',
@@ -2948,12 +3141,17 @@ $1 је већ блокиран. Да ли желите да промените 
 'spam_blanking'       => 'Све измене које садрже везе до $1, бришем',
 
 # Info page
-'infosubtitle'   => 'Подаци о страници',
-'numedits'       => 'Број промена (чланак): $1',
-'numtalkedits'   => 'Број промена (страница за разговор): $1',
-'numwatchers'    => 'Број корисника који надгледају: $1',
-'numauthors'     => 'Број различитих аутора (чланак): $1',
-'numtalkauthors' => 'Број различитих аутора (страница за разговор): $1',
+'pageinfo-title'            => 'Подаци о „$1“',
+'pageinfo-header-edits'     => 'Измена',
+'pageinfo-header-watchlist' => 'Списак надгледања',
+'pageinfo-header-views'     => 'Прегледа',
+'pageinfo-subjectpage'      => 'Страница',
+'pageinfo-talkpage'         => 'Страница за разговор',
+'pageinfo-watchers'         => 'Број прегледача',
+'pageinfo-edits'            => 'Број измена',
+'pageinfo-authors'          => 'Број различитих аутора',
+'pageinfo-views'            => 'Број прегледа',
+'pageinfo-viewsperedit'     => 'Прегледа по измени',
 
 # Skin names
 'skinname-standard'    => 'Класично',
@@ -2965,25 +3163,6 @@ $1 је већ блокиран. Да ли желите да промените 
 'skinname-simple'      => 'Просто',
 'skinname-modern'      => 'Савремено',
 'skinname-vector'      => 'Векторско',
-
-# Math options
-'mw_math_png'    => 'Увек прикажи као PNG',
-'mw_math_simple' => 'Ако је једноставно – HTML, иначе PNG',
-'mw_math_html'   => 'Ако је могуће – HTML, иначе PNG',
-'mw_math_source' => 'Остави у формату ТеХ (за текстуалне прегледаче)',
-'mw_math_modern' => 'Препоручено за савремене прегледаче',
-'mw_math_mathml' => 'Ако је могуће, MathML (пробна фаза)',
-
-# Math errors
-'math_failure'          => 'Рашчлањивање није успело',
-'math_unknown_error'    => 'непозната грешка',
-'math_unknown_function' => 'непозната функција',
-'math_lexing_error'     => 'речничка грешка',
-'math_syntax_error'     => 'синтаксна грешка',
-'math_image_error'      => 'Претварање у формат PNG није успело. Проверите да ли су добро инсталирани latex, dvips, gs и convert',
-'math_bad_tmpdir'       => 'Стварање или писање у привремену фасциклу за математику није успело',
-'math_bad_output'       => 'Стварање или писање у одредишној фасцикли за математику није успело',
-'math_notexvc'          => 'Недостаје извршна датотека texvc-а. Погледајте math/README за подешавање.',
 
 # Patrolling
 'markaspatrolleddiff'                 => 'Означи као патролиран',
@@ -3020,23 +3199,26 @@ $1',
 'nextdiff'     => 'Новија измена →',
 
 # Media information
-'mediawarning'         => "'''Упозорење''': ова врста датотеке може садржати штетан код.
+'mediawarning'           => "'''Упозорење''': ова врста датотеке може садржати штетан код.
 Ако га покренете, ваш рачунар може бити угрожен.",
-'imagemaxsize'         => "Ограничење величине слике:<br />''(на страницама за опис датотека)''",
-'thumbsize'            => 'Величина умањеног приказа :',
-'widthheight'          => '$1×$2',
-'widthheightpage'      => '$1×$2, $3 {{PLURAL:$3|страница|странице|страница}}',
-'file-info'            => 'величина: $1, MIME тип: $2',
-'file-info-size'       => '$1×$2 пиксела, величина: $3, MIME тип: $4',
-'file-nohires'         => '<small>Није доступна већа величина.</small>',
-'svg-long-desc'        => 'SVG датотека, номинално $1×$2 тачака, величина: $3',
-'show-big-image'       => 'Пуна величина',
-'show-big-image-thumb' => '<small>Величина овог приказа: $1×$2 пиксела</small>',
-'file-info-gif-looped' => 'петља',
-'file-info-gif-frames' => '$1 {{PLURAL:$1|кадар|кадра|кадрова}}',
-'file-info-png-looped' => 'петља',
-'file-info-png-repeat' => 'поновљено $1 {{PLURAL:$1|пут|пута|пута}}',
-'file-info-png-frames' => '$1 {{PLURAL:$1|кадар|кадра|кадрова}}',
+'imagemaxsize'           => "Ограничење величине слике:<br />''(на страницама за опис датотека)''",
+'thumbsize'              => 'Величина умањеног приказа :',
+'widthheight'            => '$1×$2',
+'widthheightpage'        => '$1×$2, $3 {{PLURAL:$3|страница|странице|страница}}',
+'file-info'              => 'величина: $1, MIME тип: $2',
+'file-info-size'         => '$1×$2 пиксела, величина: $3, MIME тип: $4',
+'file-info-size-pages'   => '$1 × $2 пиксела, величина: $3, MIME врста: $4, $5 {{PLURAL:$5|страница|странице|страница}}',
+'file-nohires'           => '<small>Није доступна већа величина.</small>',
+'svg-long-desc'          => 'SVG датотека, номинално $1×$2 тачака, величина: $3',
+'show-big-image'         => 'Пуна величина',
+'show-big-image-preview' => '<small>Величина овог приказа: $1.</small>',
+'show-big-image-other'   => '<small>Остале величине: $1.</small>',
+'show-big-image-size'    => '$1×$2 пиксела',
+'file-info-gif-looped'   => 'петља',
+'file-info-gif-frames'   => '$1 {{PLURAL:$1|кадар|кадра|кадрова}}',
+'file-info-png-looped'   => 'петља',
+'file-info-png-repeat'   => 'поновљено $1 {{PLURAL:$1|пут|пута|пута}}',
+'file-info-png-frames'   => '$1 {{PLURAL:$1|кадар|кадра|кадрова}}',
 
 # Special:NewFiles
 'newimages'             => 'Галерија нових слика',
@@ -3105,20 +3287,33 @@ Variants for Chinese language
 'variantname-tg-latn' => 'tg-Latn',
 'variantname-tg'      => 'tg',
 
+# Variants for Inuktitut language
+'variantname-ike-cans' => 'ike-Cans',
+'variantname-ike-latn' => 'ike-Latn',
+'variantname-iu'       => 'iu',
+
 # Metadata
-'metadata'          => 'Метаподаци',
-'metadata-help'     => 'Ова датотека садржи додатне податке који вероватно долазе од дигигалних фотоапарата или скенера.
+'metadata'                  => 'Метаподаци',
+'metadata-help'             => 'Ова датотека садржи додатне податке који вероватно долазе од дигигалних фотоапарата или скенера.
 Ако је првобитно стање датотеке промењено, могуће је да неки детаљи не описују измењену датотеку.',
-'metadata-expand'   => 'Прикажи детаље',
-'metadata-collapse' => 'Сакриј детаље',
-'metadata-fields'   => 'Поља EXIF метаподатака наведена у овој поруци ће бити убачена на страну о слици када се рашири табела за метаподатке. Остала ће бити сакривена по подразумеваном.
+'metadata-expand'           => 'Прикажи детаље',
+'metadata-collapse'         => 'Сакриј детаље',
+'metadata-fields'           => 'Поља за метаподатке слике наведена у овој поруци ће бити укључена на страници за слике када се скупи табела метаподатака. Остала поља ће бити сакривена по подразумеваним поставкама.
 * make
 * model
 * datetimeoriginal
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
+'metadata-langitem'         => "'''$2:''' $1",
+'metadata-langitem-default' => '$1',
 
 # EXIF tags
 'exif-imagewidth'                  => 'Ширина',
@@ -3133,13 +3328,11 @@ Variants for Chinese language
 'exif-ycbcrpositioning'            => 'Размештај компонената Y и C',
 'exif-xresolution'                 => 'Хоризонатална резолуција',
 'exif-yresolution'                 => 'Вертикална резолуција',
-'exif-resolutionunit'              => 'Јединица резолуције',
 'exif-stripoffsets'                => 'Положај блока података',
 'exif-rowsperstrip'                => 'Број редова по линији',
 'exif-stripbytecounts'             => 'Величина компресованог блока',
 'exif-jpeginterchangeformat'       => 'Почетак JPEG прегледа',
 'exif-jpeginterchangeformatlength' => 'Бајтови JPEG података',
-'exif-transferfunction'            => 'Функција преобликовања колор простора',
 'exif-whitepoint'                  => 'Хромацитет беле тачке',
 'exif-primarychromaticities'       => 'Хромацитет примарних боја',
 'exif-ycbcrcoefficients'           => 'Матрични коефицијенти трансформације колор простора',
@@ -3158,7 +3351,6 @@ Variants for Chinese language
 'exif-compressedbitsperpixel'      => 'Мод компресије слике',
 'exif-pixelydimension'             => 'Ширина слике',
 'exif-pixelxdimension'             => 'Висина слике',
-'exif-makernote'                   => 'Напомене произвођача',
 'exif-usercomment'                 => 'Кориснички коментар',
 'exif-relatedsoundfile'            => 'Повезани звучни запис',
 'exif-datetimeoriginal'            => 'Датум и време сликања',
@@ -3173,7 +3365,6 @@ Variants for Chinese language
 'exif-exposureprogram'             => 'Програм експозиције',
 'exif-spectralsensitivity'         => 'Спектрална осетљивост',
 'exif-isospeedratings'             => 'ИСО вредност',
-'exif-oecf'                        => 'Оптоелектронски фактор конверзије',
 'exif-shutterspeedvalue'           => 'Брзина затварача',
 'exif-aperturevalue'               => 'Отвор бленде',
 'exif-brightnessvalue'             => 'Осветљеност',
@@ -3187,7 +3378,6 @@ Variants for Chinese language
 'exif-focallength-format'          => '$1 мм',
 'exif-subjectarea'                 => 'Положај и површина објекта снимка',
 'exif-flashenergy'                 => 'Енергија блица',
-'exif-spatialfrequencyresponse'    => 'Просторна фреквенцијска карактеристика',
 'exif-focalplanexresolution'       => 'Водоравна резолуција фокусне равни',
 'exif-focalplaneyresolution'       => 'Хоризонатлна резолуција фокусне равни',
 'exif-focalplaneresolutionunit'    => 'Јединица резолуције фокусне равни',
@@ -3196,7 +3386,6 @@ Variants for Chinese language
 'exif-sensingmethod'               => 'Тип сензора',
 'exif-filesource'                  => 'Изворна датотека',
 'exif-scenetype'                   => 'Тип сцене',
-'exif-cfapattern'                  => 'CFA шаблон',
 'exif-customrendered'              => 'Прилагођена обрада слика',
 'exif-exposuremode'                => 'Режим експозиције',
 'exif-whitebalance'                => 'Баланс беле боје',
@@ -3241,11 +3430,99 @@ Variants for Chinese language
 'exif-gpsareainformation'          => 'Име GPS подручја',
 'exif-gpsdatestamp'                => 'GPS датум',
 'exif-gpsdifferential'             => 'GPS диференцијална исправка',
+'exif-coordinate-format'           => '$1° $2′ $3″ $4',
+'exif-jpegfilecomment'             => 'Коментар на датотеку JPEG',
+'exif-keywords'                    => 'Кључне речи',
+'exif-worldregioncreated'          => 'Област света где је сликана фотографија',
+'exif-countrycreated'              => 'Земља где је сликана фотографија',
+'exif-countrycodecreated'          => 'Код земље где је слика направљена',
+'exif-provinceorstatecreated'      => 'Покрајина или држава где је сликана фотографија',
+'exif-citycreated'                 => 'Град где је сликана фотографија',
+'exif-sublocationcreated'          => 'Област града где је сликана фотографија',
+'exif-worldregiondest'             => 'Приказана област света',
+'exif-countrydest'                 => 'Приказана земља',
+'exif-countrycodedest'             => 'Код приказане земље',
+'exif-provinceorstatedest'         => 'Приказана покрајина или држава',
+'exif-citydest'                    => 'Приказани град',
+'exif-sublocationdest'             => 'Приказана област града',
 'exif-objectname'                  => 'Кратак наслов',
+'exif-specialinstructions'         => 'Посебна упутства',
+'exif-headline'                    => 'Наслов',
+'exif-credit'                      => 'Заслуге/пружалац услуга',
+'exif-source'                      => 'Извор',
+'exif-editstatus'                  => 'Уреднички статус слике',
+'exif-urgency'                     => 'Хитност',
+'exif-fixtureidentifier'           => 'Назив рубрике',
+'exif-locationdest'                => 'Приказана локација',
+'exif-locationdestcode'            => 'Код приказаног места',
+'exif-objectcycle'                 => 'Доба дана за који је медиј намењен',
+'exif-contact'                     => 'Подаци за контакт',
+'exif-writer'                      => 'Писац',
+'exif-languagecode'                => 'Језик',
+'exif-iimversion'                  => 'IIM издање',
+'exif-iimcategory'                 => 'Категорија',
+'exif-iimsupplementalcategory'     => 'Допунске категорије',
+'exif-datetimeexpires'             => 'Не користи након',
+'exif-datetimereleased'            => 'Објављено',
+'exif-originaltransmissionref'     => 'Изворни пренос кôда локације',
+'exif-identifier'                  => 'Ознака',
+'exif-lens'                        => 'Коришћени објектив',
+'exif-serialnumber'                => 'Серијски број камере',
+'exif-cameraownername'             => 'Власник камере',
+'exif-label'                       => 'Назив',
+'exif-datetimemetadata'            => 'Датум последње измене метаподатака',
+'exif-nickname'                    => 'Неформалан назив слике',
+'exif-rating'                      => 'Оцена (од 1 до 5)',
+'exif-rightscertificate'           => 'Потврда за управљање правима',
+'exif-copyrighted'                 => 'Статус ауторског права',
+'exif-copyrightowner'              => 'Носилац ауторског права',
+'exif-usageterms'                  => 'Правила коришћења',
+'exif-webstatement'                => 'Изјава о ауторском праву',
+'exif-originaldocumentid'          => 'Јединствени ИБ изворног документа',
+'exif-licenseurl'                  => 'Адреса лиценце за ауторска права',
+'exif-morepermissionsurl'          => 'Резервни подаци о лиценцирању',
+'exif-attributionurl'              => 'При поновном коришћењу овог рада, користите везу до',
+'exif-preferredattributionname'    => 'При поновном коришћењу овог рада, поставите заслуге',
+'exif-pngfilecomment'              => 'Коментар на датотеку PNG',
+'exif-disclaimer'                  => 'Одрицање одговорности',
+'exif-contentwarning'              => 'Упозорење о садржају',
+'exif-giffilecomment'              => 'Коментар на датотеку GIF',
+'exif-intellectualgenre'           => 'Врста ставке',
+'exif-subjectnewscode'             => 'Код предмета',
+'exif-scenecode'                   => 'IPTC код сцене',
+'exif-event'                       => 'Приказани догађај',
+'exif-organisationinimage'         => 'Приказана организација',
+'exif-personinimage'               => 'Приказана особа',
+'exif-originalimageheight'         => 'Висина слике пре исецања',
+'exif-originalimagewidth'          => 'Ширина слике пре исецања',
+
+# Make & model, can be wikified in order to link to the camera and model name
+'exif-contact-value'         => '$1
+
+$2
+<div class="adr">
+$3
+
+$4, $5, $6 $7
+</div>
+$8',
+'exif-subjectnewscode-value' => '$2 ($1)',
 
 # EXIF attributes
-'exif-compression-1' => 'Несажето',
-'exif-compression-6' => 'JPEG',
+'exif-compression-1'     => 'Несажето',
+'exif-compression-2'     => 'CCITT Group 3 1 – Димензионално измењено Хафманово кодирање по дужини',
+'exif-compression-3'     => 'CCITT Group 3 факс кодирање',
+'exif-compression-4'     => 'CCITT Group 4 факс кодирање',
+'exif-compression-5'     => 'LZW',
+'exif-compression-6'     => 'JPEG (стари)',
+'exif-compression-7'     => 'JPEG',
+'exif-compression-8'     => 'Deflate (Адоби)',
+'exif-compression-32773' => 'PackBits (Макинтош RLE)',
+'exif-compression-32946' => 'Deflate (PKZIP)',
+'exif-compression-34712' => 'JPEG2000',
+
+'exif-copyrighted-true'  => 'Заштићено ауторским правом',
+'exif-copyrighted-false' => 'Јавно власништво',
 
 'exif-photometricinterpretation-2' => 'RGB',
 'exif-photometricinterpretation-6' => 'YCbCr',
@@ -3267,7 +3544,8 @@ Variants for Chinese language
 'exif-xyresolution-i' => '$1 тпи',
 'exif-xyresolution-c' => '$1 тпц',
 
-'exif-colorspace-1' => 'sRGB',
+'exif-colorspace-1'     => 'sRGB',
+'exif-colorspace-65535' => 'Дештеловано',
 
 'exif-componentsconfiguration-0' => 'не постоји',
 'exif-componentsconfiguration-1' => 'Y',
@@ -3392,6 +3670,10 @@ Variants for Chinese language
 'exif-gpslongitude-e' => 'Исток',
 'exif-gpslongitude-w' => 'Запад',
 
+# Pseudotags used for GPSAltitudeRef
+'exif-gpsaltitude-above-sealevel' => '$1 {{PLURAL:$1|метар|метра|метара}} надморске висине',
+'exif-gpsaltitude-below-sealevel' => '$1 {{PLURAL:$1|метар|метра|метара}} испод нивоа мора',
+
 'exif-gpsstatus-a' => 'Мерење у току',
 'exif-gpsstatus-v' => 'Спреман за пренос',
 
@@ -3403,21 +3685,75 @@ Variants for Chinese language
 'exif-gpsspeed-m' => 'Миље на час',
 'exif-gpsspeed-n' => 'Чворови',
 
+# Pseudotags used for GPSDestDistanceRef
+'exif-gpsdestdistance-k' => 'Километара',
+'exif-gpsdestdistance-m' => 'Миља',
+'exif-gpsdestdistance-n' => 'Наутичких миља',
+
+'exif-gpsdop-excellent' => 'Одлично ($1)',
+'exif-gpsdop-good'      => 'Добро ($1)',
+'exif-gpsdop-moderate'  => 'Умерено ($1)',
+'exif-gpsdop-fair'      => 'Задовољавајуће ($1)',
+'exif-gpsdop-poor'      => 'Лоше ($1)',
+
+'exif-objectcycle-a' => 'Само ујутру',
+'exif-objectcycle-p' => 'Само увече',
+'exif-objectcycle-b' => 'И ујутру и увече',
+
 # Pseudotags used for GPSTrackRef, GPSImgDirectionRef and GPSDestBearingRef
 'exif-gpsdirection-t' => 'Прави правац',
 'exif-gpsdirection-m' => 'Магнетни правац',
 
+'exif-ycbcrpositioning-1' => 'Центрирано',
+'exif-ycbcrpositioning-2' => 'Упоредо',
+
+'exif-dc-contributor' => 'Доприносиоци',
+'exif-dc-coverage'    => 'Просторни или временски опсег медија',
+'exif-dc-date'        => 'Датум',
+'exif-dc-publisher'   => 'Издавач',
+'exif-dc-relation'    => 'Сродни медији',
+'exif-dc-rights'      => 'Права',
+'exif-dc-source'      => 'Извор медија',
+'exif-dc-type'        => 'Врста медија',
+
+'exif-rating-rejected' => 'Одбијено',
+
+'exif-isospeedratings-overflow' => 'Веће од 65535',
+
+'exif-maxaperturevalue-value' => '$1 APEX (f/$2)',
+
+'exif-iimcategory-ace' => 'Уметност, култура и забава',
+'exif-iimcategory-clj' => 'Криминал и закон',
+'exif-iimcategory-dis' => 'Катастрофе и несреће',
+'exif-iimcategory-fin' => 'Економија и посао',
+'exif-iimcategory-edu' => 'Образовање',
+'exif-iimcategory-evn' => 'Околина',
+'exif-iimcategory-hth' => 'Здравље',
+'exif-iimcategory-hum' => 'Занимање',
+'exif-iimcategory-lab' => 'Рад',
+'exif-iimcategory-lif' => 'Начин живота и слободно време',
+'exif-iimcategory-pol' => 'Политика',
+'exif-iimcategory-rel' => 'Религија и веровања',
+'exif-iimcategory-sci' => 'Наука и технологија',
+'exif-iimcategory-soi' => 'Друштвена питања',
+'exif-iimcategory-spo' => 'Спорт',
+'exif-iimcategory-war' => 'Рат, сукоби и немири',
+'exif-iimcategory-wea' => 'Време',
+
+'exif-urgency-normal' => 'Нормално ($1)',
+'exif-urgency-low'    => 'Ниско ($1)',
+'exif-urgency-high'   => 'Високо ($1)',
+'exif-urgency-other'  => 'Прилагођени приоритет ($1)',
+
 # External editor support
 'edit-externally'      => 'Измени ову датотеку користећи спољашњи програм',
-'edit-externally-help' => '(Погледајте [http://www.mediawiki.org/wiki/Manual:External_editors упутство за подешавање] за више информација)',
+'edit-externally-help' => '(Погледајте [//www.mediawiki.org/wiki/Manual:External_editors упутство за подешавање] за више информација)',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'све',
-'imagelistall'     => 'све',
-'watchlistall2'    => 'све',
-'namespacesall'    => 'сви',
-'monthsall'        => 'све',
-'limitall'         => 'све',
+'watchlistall2' => 'све',
+'namespacesall' => 'сви',
+'monthsall'     => 'све',
+'limitall'      => 'све',
 
 # E-mail address confirmation
 'confirmemail'              => 'Потврда е-адресе',
@@ -3495,11 +3831,12 @@ $1',
 'trackbackdeleteok' => 'Повратна тачка је успешно обрисана.',
 
 # Delete conflict
-'deletedwhileediting' => "'''Упозорење''': ова страница је обрисана након што сте почели с уређивањем!",
-'confirmrecreate'     => "[[User:$1|$1]] ([[User talk:$1|разговор]]) {{GENDER:$1|је обрисао|је обрисала|обриса}} ову страницу након што сте почели да је уређујете, са следећим разлогом:
+'deletedwhileediting'      => "'''Упозорење''': ова страница је обрисана након што сте почели с уређивањем!",
+'confirmrecreate'          => "[[User:$1|$1]] ([[User talk:$1|разговор]]) {{GENDER:$1|је обрисао|је обрисала|обриса}} ову страницу након што сте почели да је уређујете, са следећим разлогом:
 : ''$2''
 Потврдите да стварно желите да направите страницу.",
-'recreate'            => 'Поново направи',
+'confirmrecreate-noreason' => 'Корисник [[User:$1|$1]] ([[User talk:$1|разговор]]) је обрисао ову страницу након што сте почели да га уређујете. Потврдите да стварно желите да поново направите ову страницу.',
+'recreate'                 => 'Поново направи',
 
 'unit-pixel' => 'px',
 
@@ -3507,6 +3844,12 @@ $1',
 'confirm_purge_button' => 'У реду',
 'confirm-purge-top'    => 'Очистити привремену меморију ове стране?',
 'confirm-purge-bottom' => 'Ова радња чисти привремену меморију и приказује најновију измену.',
+
+# action=watch/unwatch
+'confirm-watch-button'   => 'У реду',
+'confirm-watch-top'      => 'Додати ову страницу у списак надгледања?',
+'confirm-unwatch-button' => 'У реду',
+'confirm-unwatch-top'    => 'Уклонити ову страницу са списка надгледања?',
 
 # Separators for various lists, etc.
 'semicolon-separator' => ';&#32;',
@@ -3568,7 +3911,7 @@ $1',
 'watchlistedit-normal-legend'  => 'Уклањање наслова са списка надгледања',
 'watchlistedit-normal-explain' => 'Наслови на вашем списку надгледања су приказани испод.
 Да бисте уклонили наслов, означите кућицу до њега и кликните на „{{int:Watchlistedit-normal-submit}}“.
-Можете и да [[Special:Watchlist/raw|измените сиров списак]].',
+Можете и да [[Special:EditWatchlist/raw|измените сиров списак]].',
 'watchlistedit-normal-submit'  => 'Уклони наслове',
 'watchlistedit-normal-done'    => '{{PLURAL:$1|Једна страница је уклоњена|$1 странице су уклоњене|$1 страница је уклоњено}} с вашег списка надгледања:',
 'watchlistedit-raw-title'      => 'Напредно уређивање списка надгледања',
@@ -3576,7 +3919,7 @@ $1',
 'watchlistedit-raw-explain'    => 'Наслови са списка надгледања су приказани испод и могу се мењати додавањем или уклањањем;
 Уносите један наслов по линији.
 Када завршите, кликните на „{{int:Watchlistedit-raw-submit}}“.
-Можете и да [[Special:Watchlist/edit|користите стандардан уређивач списка]].',
+Можете и да [[Special:EditWatchlist|користите стандардан уређивач списка]].',
 'watchlistedit-raw-titles'     => 'Наслови:',
 'watchlistedit-raw-submit'     => 'Ажурирај списак',
 'watchlistedit-raw-done'       => 'Ваш списак надгледања је ажуриран.',
@@ -3654,34 +3997,35 @@ $1',
 'duplicate-defaultsort' => "'''Упозорење:''' подразумевани кључ сврставања „$2“ мења некадашњи кључ „$1“.",
 
 # Special:Version
-'version'                          => 'Издање',
-'version-extensions'               => 'Инсталирана проширења',
-'version-specialpages'             => 'Посебне странице',
-'version-parserhooks'              => 'Куке рашчлањивача',
-'version-variables'                => 'Променљиве',
-'version-skins'                    => 'Теме',
-'version-other'                    => 'Остало',
-'version-mediahandlers'            => 'Руководиоци медијима',
-'version-hooks'                    => 'Куке',
-'version-extension-functions'      => 'Функције',
-'version-parser-extensiontags'     => 'Ознаке',
-'version-parser-function-hooks'    => 'Куке',
-'version-skin-extension-functions' => 'Функције прикључка теме',
-'version-hook-name'                => 'Назив куке',
-'version-hook-subscribedby'        => 'Пријављен од',
-'version-version'                  => '(издање $1)',
-'version-svn-revision'             => '(изм. $2)',
-'version-license'                  => 'Лиценца',
-'version-poweredby-credits'        => "Овај вики покреће '''[http://www.mediawiki.org/ Медијавики]''', ауторска права © 2001-$1 $2.",
-'version-poweredby-others'         => 'остали',
-'version-license-info'             => 'Медијавики је слободан софтвер; можете га расподељивати и мењати под условима ГНУ-ове опште јавне лиценце (ОЈЛ) коју је објавила Задужбина за слободан софтвер, било да је у питању друго или новије издање лиценце.
+'version'                       => 'Издање',
+'version-extensions'            => 'Инсталирана проширења',
+'version-specialpages'          => 'Посебне странице',
+'version-parserhooks'           => 'Куке рашчлањивача',
+'version-variables'             => 'Променљиве',
+'version-antispam'              => 'Спречавање непожељних порука',
+'version-skins'                 => 'Теме',
+'version-api'                   => 'АПИ',
+'version-other'                 => 'Остало',
+'version-mediahandlers'         => 'Руководиоци медијима',
+'version-hooks'                 => 'Куке',
+'version-extension-functions'   => 'Функције',
+'version-parser-extensiontags'  => 'Ознаке',
+'version-parser-function-hooks' => 'Куке',
+'version-hook-name'             => 'Назив куке',
+'version-hook-subscribedby'     => 'Пријављен од',
+'version-version'               => '(издање $1)',
+'version-svn-revision'          => '(изм. $2)',
+'version-license'               => 'Лиценца',
+'version-poweredby-credits'     => "Овај вики покреће '''[//www.mediawiki.org/ Медијавики]''', ауторска права © 2001-$1 $2.",
+'version-poweredby-others'      => 'остали',
+'version-license-info'          => 'Медијавики је слободан софтвер; можете га расподељивати и мењати под условима ГНУ-ове опште јавне лиценце (ОЈЛ) коју је објавила Задужбина за слободан софтвер, било да је у питању друго или новије издање лиценце.
 
 Медијавики се расподељује у нади да ће бити користан, али БЕЗ ИКАКВЕ ГАРАНЦИЈЕ; чак и без имплицитне гаранције о ПРОДАЈИ или ПОГОДНОСТИ ЗА ОДРЕЂЕНЕ НАМЕНЕ. Погледајте ГНУ-ову општу јавну лиценцу за више детаља.
 
-Требало би да сте примили [{{SERVER}}{{SCRIPTPATH}}/COPYING примерак ГНУ-ове опште јавне лиценце] заједно с овим програмом. Ако нисте, пишите Задужбини за слободан софтвер, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA или [http://www.gnu.org/licenses/old-licenses/gpl-2.0.html прочитајте на мрежи].',
-'version-software'                 => 'Инсталиран софтвер',
-'version-software-product'         => 'Производ',
-'version-software-version'         => 'Издање',
+Требало би да сте примили [{{SERVER}}{{SCRIPTPATH}}/COPYING примерак ГНУ-ове опште јавне лиценце] заједно с овим програмом. Ако нисте, пишите Задужбини за слободан софтвер, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA или [//www.gnu.org/licenses/old-licenses/gpl-2.0.html прочитајте на мрежи].',
+'version-software'              => 'Инсталиран софтвер',
+'version-software-product'      => 'Производ',
+'version-software-version'      => 'Издање',
 
 # Special:FilePath
 'filepath'         => 'Путања датотеке',
@@ -3691,22 +4035,22 @@ $1',
 Слике су приказане у пуној величини, а друге врсте датотека се покрећу помоћу њима придруженим програмима.',
 
 # Special:FileDuplicateSearch
-'fileduplicatesearch'          => 'Претрага дупликата',
-'fileduplicatesearch-summary'  => 'Тражење дупликата датотека према њихових вредностима дисперзије.
-
-Унесите назив датотеке без „{{ns:file}}:“ префикса.',
-'fileduplicatesearch-legend'   => 'Претрага дупликата',
-'fileduplicatesearch-filename' => 'Назив датотеке:',
-'fileduplicatesearch-submit'   => 'Претражи',
-'fileduplicatesearch-info'     => '$1×$2 пиксела<br />Величина: $3<br />MIME тип: $4',
-'fileduplicatesearch-result-1' => 'Датотека „$1“ нема идентичних дупликата.',
-'fileduplicatesearch-result-n' => 'Датотека „$1“ има {{PLURAL:$2|идентичан дупликат|$2 идентична дупликата|$2 идентичних дупликата}}.',
+'fileduplicatesearch'           => 'Претрага дупликата',
+'fileduplicatesearch-summary'   => 'Тражење дупликата датотека према њихових вредностима дисперзије.',
+'fileduplicatesearch-legend'    => 'Претрага дупликата',
+'fileduplicatesearch-filename'  => 'Назив датотеке:',
+'fileduplicatesearch-submit'    => 'Претражи',
+'fileduplicatesearch-info'      => '$1×$2 пиксела<br />Величина: $3<br />MIME тип: $4',
+'fileduplicatesearch-result-1'  => 'Датотека „$1“ нема идентичних дупликата.',
+'fileduplicatesearch-result-n'  => 'Датотека „$1“ има {{PLURAL:$2|идентичан дупликат|$2 идентична дупликата|$2 идентичних дупликата}}.',
+'fileduplicatesearch-noresults' => 'Датотека под називом „$1“ није пронађена.',
 
 # Special:SpecialPages
 'specialpages'                   => 'Посебне странице',
 'specialpages-note'              => '----
 * обичне посебне странице
-* <strong class="mw-specialpagerestricted">ограничене посебне странице</strong>',
+* <span class="mw-specialpagerestricted">ограничене посебне странице</span>
+* <span class="mw-specialpagecached">привремено меморисане посебне странице</span>',
 'specialpages-group-maintenance' => 'Извештаји одржавања',
 'specialpages-group-other'       => 'Остале посебне странице',
 'specialpages-group-login'       => 'Отварање налога и пријављивање',
@@ -3735,11 +4079,11 @@ $1',
 #Додајте све одломке регуларних израза изнад овог реда. Овај ред не дирајте</pre>',
 
 # Special:Tags
-'tags'                    => 'Дозвољене ознаке измена',
+'tags'                    => 'Важеће ознаке измена',
 'tag-filter'              => 'Филтер за [[Special:Tags|ознаке]]:',
 'tag-filter-submit'       => 'Филтрирај',
 'tags-title'              => 'Ознаке',
-'tags-intro'              => 'Списак и значење ознака којима софтвер може да означи неку измену.',
+'tags-intro'              => 'На овој страници је наведен списак ознака с којима програм може да означи измене и његово значење.',
 'tags-tag'                => 'Назив ознаке',
 'tags-display-header'     => 'Изглед на списковима измена',
 'tags-description-header' => 'Опис значења',
@@ -3757,10 +4101,10 @@ $1',
 'compare-submit'   => 'Упореди',
 
 # Database error messages
-'dberr-header'      => 'Овај вики има проблем',
+'dberr-header'      => 'Овај вики не ради како треба',
 'dberr-problems'    => 'Дошло је до техничких проблема.',
 'dberr-again'       => 'Сачекајте неколико минута пре него што поново учитате страницу.',
-'dberr-info'        => '(приступ серверу базе података није успостављен: $1)',
+'dberr-info'        => '(не могу да се повежем са сервером базе: $1)',
 'dberr-usegoogle'   => 'У међувремену, покушајте да претражите помоћу Гугла.',
 'dberr-outofdate'   => 'Имајте на уму да њихови примерци нашег садржаја могу бити застарели.',
 'dberr-cachederror' => 'Ово је привремено меморисан примерак стране који можда није ажуран.',
@@ -3772,13 +4116,13 @@ $1',
 'htmlform-float-invalid'       => 'Наведена вредност није број.',
 'htmlform-int-toolow'          => 'Наведена вредност је испод минимума од $1',
 'htmlform-int-toohigh'         => 'Наведена вредност је изнад максимума од $1',
-'htmlform-required'            => 'Ова вредност се мора навести',
+'htmlform-required'            => 'Ова вредност је обавезна',
 'htmlform-submit'              => 'Пошаљи',
 'htmlform-reset'               => 'Врати измене',
 'htmlform-selectorother-other' => 'Друго',
 
 # SQLite database support
-'sqlite-has-fts' => '$1 с подршком претраге пуног текста',
-'sqlite-no-fts'  => '$1 без подршке претраге пуног текста',
+'sqlite-has-fts' => '$1 с подршком претраге целог текста',
+'sqlite-no-fts'  => '$1 без подршке претраге целог текста',
 
 );

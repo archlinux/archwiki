@@ -165,10 +165,6 @@ div#mw-head h5 {
 		height: 1.9em;
 		padding-left: 0.5em;
 		padding-right: 0.5em;
-		/* @embed */
-		background-image: url(images/tab-break.png);
-		background-position: bottom right;
-		background-repeat: no-repeat;
 		color: #0645ad;
 		cursor: pointer;
 		font-size: 0.8em;
@@ -176,6 +172,10 @@ div#mw-head h5 {
 	/* IGNORED BY IE6 */
 	div.vectorTabs li > a {
 		display: block;
+	}
+	div.vectorTabs li.icon a {
+		background-position: bottom right;
+		background-repeat: no-repeat;
 	}
 	/* OVERRIDDEN BY COMPLIANT BROWSERS */
 	div.vectorTabs span a  {
@@ -187,6 +187,13 @@ div#mw-head h5 {
 	div.vectorTabs span > a {
 		float: left;
 		display: block;
+	}
+	div.vectorTabs span {
+		display: inline-block;
+		/* @embed */
+		background-image: url(images/tab-break.png);
+		background-position: bottom right;
+		background-repeat: no-repeat;
 	}
 	div.vectorTabs li.selected a,
 	div.vectorTabs li.selected a:visited{
@@ -204,9 +211,14 @@ div#mw-head h5 {
 		float: left;
 		/* @embed */
 		background-image: url(images/arrow-down-icon.png);
-		background-position: 100% 60%;
+		background-position: 0px 60%;
 		background-repeat: no-repeat;
 		cursor: pointer;
+	}
+	div.vectorMenuFocus {
+		/* @embed */
+		background-image: url(images/arrow-down-focus-icon.png);
+		background-position: 100% 60%;
 	}
 	/* @noflip */
 	body.rtl div.vectorMenu {
@@ -280,7 +292,8 @@ div#mw-head h5 {
 	x:-moz-any-link {
 		margin-left: 23px;
 	}
-	div.vectorMenu:hover div.menu {
+	/* Enable forcing showing of the menu for accessibility */
+	div.vectorMenu:hover div.menu, div.vectorMenu div.menuForceShow {
 		display: block;
 	}
 	div.vectorMenu ul {
@@ -411,13 +424,14 @@ div#mw-head h5 {
 		right: 0;
 		top: 0;
 		padding: 0;
-		padding-top: 0.2em;
+		padding-top: 0.3em;
 		padding-bottom: 0.2em;
 		padding-right: 0.4em;
 		margin: 0;
 		border: none;
 		cursor: pointer;
 		background-color: transparent;
+		background-image: none;
 	}
 	/* OVERRIDDEN BY COMPLIANT BROWSERS */
 	div#simpleSearch button#searchButton img {
@@ -522,6 +536,7 @@ div#footer #footer-icons li {
 	float: left;
 	margin-left: 0.5em;
 	line-height: 2em;
+	text-align: right;
 }
 div#footer #footer-places li {
 	float: left;
@@ -617,14 +632,14 @@ div#footer #footer-places li {
 	/* @embed */
 	background-image: url(images/preferences-base.png);
 }
+#preferences fieldset {
+	border: none;
+	border-top: solid 1px #cccccc;
+}
 #preferences fieldset.prefsection {
 	border: none;
 	padding: 0;
 	margin: 1em;
-}
-#preferences fieldset.prefsection fieldset {
-	border: none;
-	border-top: solid 1px #cccccc;
 }
 #preferences legend {
 	color: #666666;
@@ -781,7 +796,7 @@ pre {
 	border: 1px dashed #2f6fab;
 	color: black;
 	background-color: #f9f9f9;
-	line-height: 1.1em;
+	line-height: 1.3em;
 }
 ul {
 	line-height: 1.5em;
@@ -871,7 +886,7 @@ select {
 	list-style-type: none;
 	list-style-image: none;
 	margin-left: 0;
-	padding-left: 0;
+	padding: 0;
 	text-align: left;
 }
 #toc ul ul,
@@ -883,18 +898,12 @@ select {
 	font-size: 94%;
 }
 /* Images */
-div.floatright, table.floatright {
-	clear: right;
-	float: right;
-	position: relative;
+/* @noflip */div.floatright, table.floatright {
 	margin: 0 0 .5em .5em;
 	border: 0;
 }
 div.floatright p { font-style: italic; }
-div.floatleft, table.floatleft {
-	float: left;
-	clear: left;
-	position: relative;
+/* @noflip */div.floatleft, table.floatleft {
 	margin: 0 .5em .5em 0;
 	border: 0;
 }
@@ -933,23 +942,14 @@ div.magnify a, div.magnify img {
 	border: none !important;
 	background: none !important;
 }
-/* @noflip */
-div.tright {
-	clear: right;
-	float: right;
+/* @noflip */div.tright {
 	margin: .5em 0 1.3em 1.4em;
 }
-/* @noflip */
-div.tleft {
-	float: left;
-	clear: left;
+/* @noflip */div.tleft {
 	margin: .5em 1.4em 1.3em 0;
 }
 img.thumbborder {
 	border: 1px solid #dddddd;
-}
-.hiddenStructure {
-	display: none;
 }
 /* Warning */
 .mw-warning {
@@ -1012,7 +1012,7 @@ span.subpages {
 	margin-right: auto;
 }
 /* Small for tables and similar */
-.small, .small * {
+.small {
 	font-size: 94%;
 }
 table.small {
@@ -1035,36 +1035,36 @@ h3, h4, h5 {
 	padding-bottom: 0;
 }
 div#content a.external,
-div#content a[href ^="gopher://"] {
+div#content a.external[href ^="gopher://"] {
 	/* @embed */
 	background: url(images/external-link-ltr-icon.png) center right no-repeat;
 	padding-right: 13px;
 }
-div#content a[href ^="https://"],
+div#content a.external[href ^="https://"],
 .link-https {
 	/* @embed */
 	background: url(images/lock-icon.png) center right no-repeat;
 	padding-right: 13px;
 }
-div#content a[href ^="mailto:"],
+div#content a.external[href ^="mailto:"],
 .link-mailto {
 	/* @embed */
 	background: url(images/mail-icon.png) center right no-repeat;
 	padding-right: 13px;
 }
-div#content a[href ^="news://"] {
+div#content a.external[href ^="news://"] {
 	/* @embed */
 	background: url(images/news-icon.png) center right no-repeat;
 	padding-right: 13px;
 }
-div#content a[href ^="ftp://"],
+div#content a.external[href ^="ftp://"],
 .link-ftp {
 	/* @embed */
 	background: url(images/file-icon.png) center right no-repeat;
 	padding-right: 13px;
 }
-div#content a[href ^="irc://"],
-div#content a.extiw[href ^="irc://"],
+div#content a.external[href ^="irc://"],
+div#content a.external[href ^="ircs://"],
 .link-irc {
 	/* @embed */
 	background: url(images/talk-icon.png) center right no-repeat;
@@ -1098,16 +1098,34 @@ div#content a.external[href *=".pdf?"], div#content a.external[href *=".PDF?"],
 	background: url("images/document-icon.png?2") center right no-repeat;
 	padding-right: 13px;
 }
-/* Interwiki Styling  (Disabled) */
+
+/* Interwiki Styling */
 div#content a.extiw,
 div#content a.extiw:active {
 	color: #36b;
+	/* Don't show icons for interwiki links */
 	background: none;
 	padding: 0;
 }
+div#content a.extiw:visited {
+	color: #636;
+}
+div#content a.extiw:active {
+	color: #b63;
+}
+
+/* External links */
 div#content a.external {
 	color: #36b;
 }
+div#content a.external:visited {
+	color: #636; /* bug 3112 */
+}
+div#content a.external:active {
+	color: #b63;
+}
+
+
 div#content .printfooter {
 	display: none;
 }
@@ -1119,6 +1137,14 @@ div#content .printfooter {
 	background: url(images/user-icon.png) left top no-repeat;
 	padding-left: 15px !important;
 	text-transform: none;
+}
+
+.redirectText {
+	font-size: 140%;
+}
+
+.redirectMsg img {
+	vertical-align: text-bottom;
 }
 
 .toccolours {
@@ -1139,10 +1165,6 @@ div#bodyContent {
 }
 
 /* Watch/Unwatch Icon Styling */
-#ca-unwatch.icon,
-#ca-watch.icon {
-	margin-right:1px;
-}
 #ca-unwatch.icon a,
 #ca-watch.icon a {
 	margin: 0;
@@ -1189,12 +1211,6 @@ div.vectorTabs ul {
 	background-image:url(images/tab-break.png);
 	background-position:right bottom;
 	background-repeat:no-repeat;
-}
-
-/* Convenience links to edit block, delete and protect reasons */
-p.mw-ipb-conveniencelinks, p.mw-protect-editreasons,
-p.mw-filedelete-editreasons, p.mw-delete-editreasons {
-	float: right;
 }
 
 /* Tooltips are outside of the normal body code, so this helps make the size of the text sensible */

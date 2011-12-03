@@ -24,15 +24,19 @@ class ChangesFeed {
 	 *
 	 * @param $title String: feed's title
 	 * @param $description String: feed's description
+	 * @param $url String: url of origin page
 	 * @return ChannelFeed subclass or false on failure
 	 */
-	public function getFeedObject( $title, $description ) {
-		global $wgSitename, $wgLanguageCode, $wgFeedClasses, $wgTitle;
-		$feedTitle = "$wgSitename  - {$title} [$wgLanguageCode]";
-		if( !isset($wgFeedClasses[$this->format] ) )
+	public function getFeedObject( $title, $description, $url ) {
+		global $wgSitename, $wgLanguageCode, $wgFeedClasses;
+
+		if ( !isset( $wgFeedClasses[$this->format] ) ) {
 			return false;
+		}
+
+		$feedTitle = "$wgSitename  - {$title} [$wgLanguageCode]";
 		return new $wgFeedClasses[$this->format](
-			$feedTitle, htmlspecialchars( $description ), $wgTitle->getFullUrl() );
+			$feedTitle, htmlspecialchars( $description ), $url );
 	}
 
 	/**
@@ -57,11 +61,11 @@ class ChangesFeed {
 
 		FeedUtils::checkPurge( $timekey, $key );
 
-		/*
-		* Bumping around loading up diffs can be pretty slow, so where
-		* possible we want to cache the feed output so the next visitor
-		* gets it quick too.
-		*/
+		/**
+		 * Bumping around loading up diffs can be pretty slow, so where
+		 * possible we want to cache the feed output so the next visitor
+		 * gets it quick too.
+		 */
 		$cachedFeed = $this->loadFromCache( $lastmod, $timekey, $key );
 		if( is_string( $cachedFeed ) ) {
 			wfDebug( "RC: Outputting cached feed\n" );
@@ -106,12 +110,12 @@ class ChangesFeed {
 		$feedLastmod = $messageMemc->get( $timekey );
 
 		if( ( $wgFeedCacheTimeout > 0 ) && $feedLastmod ) {
-			/*
-			* If the cached feed was rendered very recently, we may
-			* go ahead and use it even if there have been edits made
-			* since it was rendered. This keeps a swarm of requests
-			* from being too bad on a super-frequently edited wiki.
-			*/
+		    /**
+			 * If the cached feed was rendered very recently, we may
+			 * go ahead and use it even if there have been edits made
+			 * since it was rendered. This keeps a swarm of requests
+			 * from being too bad on a super-frequently edited wiki.
+			 */
 
 			$feedAge = time() - wfTimestamp( TS_UNIX, $feedLastmod );
 			$feedLastmodUnix = wfTimestamp( TS_UNIX, $feedLastmod );
@@ -145,6 +149,7 @@ class ChangesFeed {
 		$n = 0;
 		foreach( $rows as $obj ) {
 			if( $n > 0 &&
+				$obj->rc_type == RC_EDIT &&
 				$obj->rc_namespace >= 0 &&
 				$obj->rc_cur_id == $sorted[$n-1]->rc_cur_id &&
 				$obj->rc_user_text == $sorted[$n-1]->rc_user_text ) {
@@ -157,16 +162,27 @@ class ChangesFeed {
 
 		foreach( $sorted as $obj ) {
 			$title = Title::makeTitle( $obj->rc_namespace, $obj->rc_title );
-			$talkpage = $title->getTalkPage();
+			$talkpage = MWNamespace::canTalk( $obj->rc_namespace ) ? $title->getTalkPage()->getFullUrl() : '';
 			// Skip items with deleted content (avoids partially complete/inconsistent output)
 			if( $obj->rc_deleted ) continue;
+
+			if ( $obj->rc_this_oldid ) {
+				$url = $title->getFullURL(
+					'diff=' . $obj->rc_this_oldid .
+					'&oldid=' . $obj->rc_last_oldid
+				);
+			} else {
+				// log entry or something like that.
+				$url = $title->getFullURL();
+			}
+
 			$item = new FeedItem(
 				$title->getPrefixedText(),
 				FeedUtils::formatDiff( $obj ),
-				$obj->rc_this_oldid ? $title->getFullURL( 'diff=' . $obj->rc_this_oldid . '&oldid=prev' ) : $title->getFullURL(),
+				$url,
 				$obj->rc_timestamp,
 				($obj->rc_deleted & Revision::DELETED_USER) ? wfMsgHtml('rev-deleted-user') : $obj->rc_user_text,
-				$talkpage->getFullURL()
+				$talkpage
 			);
 			$feed->outItem( $item );
 		}

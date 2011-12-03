@@ -40,19 +40,25 @@ class SpecialFilepath extends SpecialPage {
 
 		$file = !is_null( $par ) ? $par : $wgRequest->getText( 'file' );
 
-		$title = Title::makeTitleSafe( NS_FILE, $file );
+		$title = Title::newFromText( $file, NS_FILE );
 
 		if ( ! $title instanceof Title || $title->getNamespace() != NS_FILE ) {
 			$this->showForm( $title );
 		} else {
 			$file = wfFindFile( $title );
+
 			if ( $file && $file->exists() ) {
+				// Default behaviour: Use the direct link to the file.
 				$url = $file->getURL();
 				$width = $wgRequest->getInt( 'width', -1 );
 				$height = $wgRequest->getInt( 'height', -1 );
+
+				// If a width is requested...
 				if ( $width != -1 ) {
 					$mto = $file->transform( array( 'width' => $width, 'height' => $height ) );
+					// ... and we can
 					if ( $mto && !$mto->isError() ) {
+						// ... change the URL to point to a thumbnail.
 						$url = $mto->getURL();
 					}
 				}
@@ -64,6 +70,9 @@ class SpecialFilepath extends SpecialPage {
 		}
 	}
 
+	/**
+	 * @param $title Title
+	 */
 	function showForm( $title ) {
 		global $wgOut, $wgScript;
 

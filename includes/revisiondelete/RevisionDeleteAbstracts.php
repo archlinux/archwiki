@@ -1,63 +1,28 @@
 <?php
 
 /**
- * Abstract base class for a list of deletable items
+ * Abstract base class for a list of deletable items. The list class
+ * needs to be able to make a query from a set of identifiers to pull
+ * relevant rows, to return RevDel_Item subclasses wrapping them, and
+ * to wrap bulk update operations.
  */
-abstract class RevDel_List {
-	var $special, $title, $ids, $res, $current;
-	var $type = null; // override this
-	var $idField = null; // override this
-	var $dateField = false; // override this
-	var $authorIdField = false; // override this
-	var $authorNameField = false; // override this
-
-	/**
-	 * @param $special The parent SpecialPage
-	 * @param $title The target title
-	 * @param $ids Array of IDs
-	 */
-	public function __construct( $special, $title, $ids ) {
-		$this->special = $special;
-		$this->title = $title;
+abstract class RevDel_List extends Rev_List {
+	function __construct( IContextSource $context, Title $title, array $ids ) {
+		parent::__construct( $context, $title );
 		$this->ids = $ids;
 	}
 
 	/**
-	 * Get the internal type name of this list. Equal to the table name.
+	 * Get the DB field name associated with the ID list.
+	 * This used to populate the log_search table for finding log entries.
+	 * Override this function.
 	 */
-	public function getType() {
-		return $this->type;
+	public static function getRelationType() {
+		return null;
 	}
 
 	/**
-	 * Get the DB field name associated with the ID list
-	 */
-	public function getIdField() {
-		return $this->idField;
-	}
-
-	/**
-	 * Get the DB field name storing timestamps
-	 */
-	public function getTimestampField() {
-		return $this->dateField;
-	}
-
-	/**
-	 * Get the DB field name storing user ids
-	 */
-	public function getAuthorIdField() {
-		return $this->authorIdField;
-	}
-
-	/**
-	 * Get the DB field name storing user names
-	 */
-	public function getAuthorNameField() {
-		return $this->authorNameField;
-	}
-	/**
-	 * Set the visibility for the revisions in this list. Logging and 
+	 * Set the visibility for the revisions in this list. Logging and
 	 * transactions are done here.
 	 *
 	 * @param $params Associative array of parameters. Members are:
@@ -118,7 +83,7 @@ abstract class RevDel_List {
 				$status->warning( 'revdelete-only-restricted', $item->formatDate(), $item->formatTime() );
 				$status->failCount++;
 				continue;
-			} 
+			}
 
 			// Update the revision
 			$ok = $item->setBits( $newBits );
@@ -128,7 +93,7 @@ abstract class RevDel_List {
 				$status->successCount++;
 				if( $item->getAuthorId() > 0 ) {
 					$authorIds[] = $item->getAuthorId();
-				} else if( IP::isIPAddress( $item->getAuthorName() ) ) {
+				} elseif( IP::isIPAddress( $item->getAuthorName() ) ) {
 					$authorIPs[] = $item->getAuthorName();
 				}
 			} else {
@@ -149,7 +114,7 @@ abstract class RevDel_List {
 			return $status;
 		}
 
-		// Save success count 
+		// Save success count
 		$successCount = $status->successCount;
 
 		// Move files, if there are any
@@ -162,9 +127,9 @@ abstract class RevDel_List {
 
 		// Log it
 		$this->updateLog( array(
-			'title' => $this->title, 
-			'count' => $successCount, 
-			'newBits' => $newBits, 
+			'title' => $this->title,
+			'count' => $successCount,
+			'newBits' => $newBits,
 			'oldBits' => $oldBits,
 			'comment' => $comment,
 			'ids' => $idsForLog,
@@ -191,7 +156,7 @@ abstract class RevDel_List {
 	 * Record a log entry on the action
 	 * @param $params Associative array of parameters:
 	 *     newBits:         The new value of the *_deleted bitfield
-	 *     oldBits:         The old value of the *_deleted bitfield. 
+	 *     oldBits:         The old value of the *_deleted bitfield.
 	 *     title:           The target title
 	 *     ids:             The ID list
 	 *     comment:         The log comment
@@ -244,66 +209,13 @@ abstract class RevDel_List {
 	}
 
 	/**
-	 * Initialise the current iteration pointer
-	 */
-	protected function initCurrent() {
-		$row = $this->res->current();
-		if ( $row ) {
-			$this->current = $this->newItem( $row );
-		} else {
-			$this->current = false;
-		}
-	}
-
-	/**
-	 * Start iteration. This must be called before current() or next(). 
-	 * @return First list item
-	 */
-	public function reset() {
-		if ( !$this->res ) {
-			$this->res = $this->doQuery( wfGetDB( DB_SLAVE ) );
-		} else {
-			$this->res->rewind();
-		}
-		$this->initCurrent();
-		return $this->current;
-	}
-
-	/**
-	 * Get the current list item, or false if we are at the end
-	 */
-	public function current() {
-		return $this->current;
-	}
-
-	/**
-	 * Move the iteration pointer to the next list item, and return it.
-	 */
-	public function next() {
-		$this->res->next();
-		$this->initCurrent();
-		return $this->current;
-	}
-	
-	/**
-	 * Get the number of items in the list.
-	 */
-	public function length() {
-		if( !$this->res ) {
-			return 0;
-		} else {
-			return $this->res->numRows();
-		}
-	}
-
-	/**
 	 * Clear any data structures needed for doPreCommitUpdates() and doPostCommitUpdates()
 	 * STUB
 	 */
 	public function clearFileOps() {
 	}
 
-	/** 
+	/**
 	 * A hook for setVisibility(): do batch updates pre-commit.
 	 * STUB
 	 * @return Status
@@ -313,25 +225,13 @@ abstract class RevDel_List {
 	}
 
 	/**
-	 * A hook for setVisibility(): do any necessary updates post-commit. 
+	 * A hook for setVisibility(): do any necessary updates post-commit.
 	 * STUB
-	 * @return Status 
+	 * @return Status
 	 */
 	public function doPostCommitUpdates() {
 		return Status::newGood();
 	}
-
-	/**
-	 * Create an item object from a DB result row
-	 * @param $row stdclass
-	 */
-	abstract public function newItem( $row );
-
-	/**
-	 * Do the DB query to iterate through the objects.
-	 * @param $db Database object to use for the query
-	 */
-	abstract public function doQuery( $db );
 
 	/**
 	 * Get the integer value of the flag used for suppression
@@ -342,75 +242,8 @@ abstract class RevDel_List {
 /**
  * Abstract base class for deletable items
  */
-abstract class RevDel_Item {
-	/** The parent SpecialPage */
-	var $special;
-
-	/** The parent RevDel_List */
-	var $list;
-
-	/** The DB result row */
-	var $row;
-
-	/** 
-	 * @param $list RevDel_List
-	 * @param $row DB result row
-	 */
-	public function __construct( $list, $row ) {
-		$this->special = $list->special;
-		$this->list = $list;
-		$this->row = $row;
-	}
-
+abstract class RevDel_Item extends Rev_Item {
 	/**
-	 * Get the ID, as it would appear in the ids URL parameter
-	 */
-	public function getId() {
-		$field = $this->list->getIdField();
-		return $this->row->$field;
-	}
-
-	/**
-	 * Get the date, formatted with $wgLang
-	 */
-	public function formatDate() {
-		global $wgLang;
-		return $wgLang->date( $this->getTimestamp() );
-	}
-
-	/**
-	 * Get the time, formatted with $wgLang
-	 */
-	public function formatTime() {
-		global $wgLang;
-		return $wgLang->time( $this->getTimestamp() );
-	}
-
-	/**
-	 * Get the timestamp in MW 14-char form
-	 */
-	public function getTimestamp() {
-		$field = $this->list->getTimestampField();
-		return wfTimestamp( TS_MW, $this->row->$field );
-	}
-	
-	/**
-	 * Get the author user ID
-	 */	
-	public function getAuthorId() {
-		$field = $this->list->getAuthorIdField();
-		return intval( $this->row->$field );
-	}
-
-	/**
-	 * Get the author user name
-	 */	
-	public function getAuthorName() {
-		$field = $this->list->getAuthorNameField();
-		return strval( $this->row->$field );
-	}
-
-	/** 
 	 * Returns true if the item is "current", and the operation to set the given
 	 * bits can't be executed for that reason
 	 * STUB
@@ -420,32 +253,16 @@ abstract class RevDel_Item {
 	}
 
 	/**
-	 * Returns true if the current user can view the item
-	 */
-	abstract public function canView();
-	
-	/**
-	 * Returns true if the current user can view the item text/file
-	 */
-	abstract public function canViewContent();
-
-	/**
 	 * Get the current deletion bitfield value
 	 */
 	abstract public function getBits();
 
 	/**
-	 * Get the HTML of the list item. Should be include <li></li> tags.
-	 * This is used to show the list in HTML form, by the special page.
-	 */
-	abstract public function getHTML();
-
-	/**
 	 * Set the visibility of the item. This should do any necessary DB queries.
 	 *
 	 * The DB update query should have a condition which forces it to only update
-	 * if the value in the DB matches the value fetched earlier with the SELECT. 
-	 * If the update fails because it did not match, the function should return 
+	 * if the value in the DB matches the value fetched earlier with the SELECT.
+	 * If the update fails because it did not match, the function should return
 	 * false. This prevents concurrency problems.
 	 *
 	 * @return boolean success

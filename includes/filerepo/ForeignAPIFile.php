@@ -15,7 +15,13 @@
 class ForeignAPIFile extends File {
 	
 	private $mExists;
-	
+
+	/**
+	 * @param  $title
+	 * @param  $repo ForeignApiRepo
+	 * @param  $info
+	 * @param bool $exists
+	 */
 	function __construct( $title, $repo, $info, $exists = false ) {
 		parent::__construct( $title, $repo );
 		$this->mInfo = $info;
@@ -23,7 +29,6 @@ class ForeignAPIFile extends File {
 	}
 
 	/**
-	 * @static
 	 * @param  $title Title
 	 * @param  $repo ForeignApiRepo
 	 * @return ForeignAPIFile|null
@@ -32,7 +37,9 @@ class ForeignAPIFile extends File {
 		$data = $repo->fetchImageQuery( array(
                         'titles' => 'File:' . $title->getDBKey(),
                         'iiprop' => self::getProps(),
-                        'prop' => 'imageinfo' ) );
+                        'prop' => 'imageinfo',
+			'iimetadataversion' => MediaHandler::getMetadataVersion()
+			 ) );
 
 		$info = $repo->getImageInfo( $data );
 
@@ -76,20 +83,26 @@ class ForeignAPIFile extends File {
 			// show icon
 			return parent::transform( $params, $flags );
 		}
+
+		// Note, the this->canRender() check above implies
+		// that we have a handler, and it can do makeParamString.
+		$otherParams = $this->handler->makeParamString( $params );
+
 		$thumbUrl = $this->repo->getThumbUrlFromCache(
 			$this->getName(),
 			isset( $params['width'] ) ? $params['width'] : -1,
-			isset( $params['height'] ) ? $params['height'] : -1 );
+			isset( $params['height'] ) ? $params['height'] : -1,
+			$otherParams );
 		return $this->handler->getTransform( $this, 'bogus', $thumbUrl, $params );
 	}
 
 	// Info we can get from API...
 	public function getWidth( $page = 1 ) {
-		return intval( @$this->mInfo['width'] );
+		return isset( $this->mInfo['width'] ) ? intval( $this->mInfo['width'] ) : 0;
 	}
 	
 	public function getHeight( $page = 1 ) {
-		return intval( @$this->mInfo['height'] );
+		return isset( $this->mInfo['height'] ) ? intval( $this->mInfo['height'] ) : 0;
 	}
 	
 	public function getMetadata() {
@@ -148,7 +161,7 @@ class ForeignAPIFile extends File {
 		return $this->mInfo['mime'];
 	}
 	
-	/// @todo Fixme: may guess wrong on file types that can be eg audio or video
+	/// @todo FIXME: May guess wrong on file types that can be eg audio or video
 	function getMediaType() {
 		$magic = MimeMagic::singleton();
 		return $magic->getMediaType( null, $this->getMimeType() );
@@ -182,7 +195,7 @@ class ForeignAPIFile extends File {
 			$handle = opendir( $dir );
 			if ( $handle ) {
 				while ( false !== ( $file = readdir($handle) ) ) {
-					if ( $file{0} != '.'  ) {
+					if ( $file[0] != '.'  ) {
 						$files[] = $file;
 					}
 				}

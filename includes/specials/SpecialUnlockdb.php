@@ -33,12 +33,13 @@ class SpecialUnlockdb extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		global $wgUser, $wgOut, $wgRequest;
+		global $wgUser, $wgRequest;
 
 		$this->setHeaders();
 
-		if( !$wgUser->isAllowed( 'siteadmin' ) ) {
-			$wgOut->permissionRequired( 'siteadmin' );
+		# Permission check
+		if( !$this->userCanExecute( $wgUser ) ) {
+			$this->displayRestrictionError();
 			return;
 		}
 
@@ -48,7 +49,7 @@ class SpecialUnlockdb extends SpecialPage {
 
 		if ( $action == 'success' ) {
 			$this->showSuccess();
-		} else if ( $action == 'submit' && $wgRequest->wasPosted() &&
+		} elseif ( $action == 'submit' && $wgRequest->wasPosted() &&
 			$wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ) ) ) {
 			$this->doSubmit();
 		} else {
@@ -104,7 +105,12 @@ class SpecialUnlockdb extends SpecialPage {
 			$this->showForm( wfMsg( 'locknoconfirm' ) );
 			return;
 		}
-		if ( @!unlink( $wgReadOnlyFile ) ) {
+
+		wfSuppressWarnings();
+		$res = unlink( $wgReadOnlyFile );
+		wfRestoreWarnings();
+
+		if ( !$res ) {
 			$wgOut->showFileDeleteError( $wgReadOnlyFile );
 			return;
 		}

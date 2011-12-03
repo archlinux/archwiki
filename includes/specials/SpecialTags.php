@@ -48,7 +48,8 @@ class SpecialTags extends SpecialPage {
 				Xml::tags( 'th', null, wfMsgExt( 'tags-hitcount-header', 'parseinline' ) )
 			);
 		$dbr = wfGetDB( DB_SLAVE );
-		$res = $dbr->select( 'change_tag', array( 'ct_tag', 'count(*) as hitcount' ), array(), __METHOD__, array( 'GROUP BY' => 'ct_tag', 'ORDER BY' => 'hitcount DESC' ) );
+		$res = $dbr->select( 'change_tag', array( 'ct_tag', 'count(*) AS hitcount' ),
+			array(), __METHOD__, array( 'GROUP BY' => 'ct_tag', 'ORDER BY' => 'hitcount DESC' ) );
 
 		foreach ( $res as $row ) {
 			$html .= $this->doTagRow( $row->ct_tag, $row->hitcount );
@@ -62,10 +63,9 @@ class SpecialTags extends SpecialPage {
 	}
 
 	function doTagRow( $tag, $hitcount ) {
-		static $sk=null, $doneTags=array();
-		if (!$sk) {
-			global $wgUser;
-			$sk = $wgUser->getSkin();
+		static $sk = null, $doneTags = array();
+		if ( !$sk ) {
+			$sk = $this->getSkin();
 		}
 
 		if ( in_array( $tag, $doneTags ) ) {
@@ -73,7 +73,7 @@ class SpecialTags extends SpecialPage {
 		}
 
 		global $wgLang;
-		
+
 		$newRow = '';
 		$newRow .= Xml::tags( 'td', null, Xml::element( 'tt', null, $tag ) );
 
@@ -81,8 +81,8 @@ class SpecialTags extends SpecialPage {
 		$disp .= ' (' . $sk->link( Title::makeTitle( NS_MEDIAWIKI, "Tag-$tag" ), wfMsgHtml( 'tags-edit' ) ) . ')';
 		$newRow .= Xml::tags( 'td', null, $disp );
 
-		$desc = wfMsgExt( "tag-$tag-description", 'parseinline' );
-		$desc = wfEmptyMsg( "tag-$tag-description", $desc ) ? '' : $desc;
+		$msg = wfMessage( "tag-$tag-description" );
+		$desc = !$msg->exists() ? '' : $msg->parse();
 		$desc .= ' (' . $sk->link( Title::makeTitle( NS_MEDIAWIKI, "Tag-$tag-description" ), wfMsgHtml( 'tags-edit' ) ) . ')';
 		$newRow .= Xml::tags( 'td', null, $desc );
 

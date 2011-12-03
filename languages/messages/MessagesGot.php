@@ -108,6 +108,7 @@ $messages = array(
 'history_short'     => '𐌰𐌹𐍂𐌹𐍃 𐌼𐌰𐌹𐌳𐌴𐌹𐌽𐍃',
 'printableversion'  => '𐌳𐍂𐌹𐌿𐍃𐌰𐌽 𐍃𐌴𐌹𐌳𐍉',
 'permalink'         => '𐌰𐍅𐌴𐌹𐌽𐍃 𐍄𐌰𐌹𐌺𐌽𐌾𐌰𐌱𐌰𐌽𐌳𐌹',
+'view'              => 'Saíhvan',
 'edit'              => '𐌼𐌰𐌹𐌳𐌾𐌰𐌽',
 'create'            => 'Skapjan',
 'editthispage'      => '𐌼𐌰𐌹𐌳𐌾𐌰 𐌸𐍉 𐍃𐌴𐌹𐌳𐍉',
@@ -203,8 +204,6 @@ $messages = array(
 'extlink_tip'     => 'Uta táikjabandi (maúdjan http://)',
 'headline_sample' => 'Háubidawaúrda',
 'headline_tip'    => 'Háuhs háubidaboka 2',
-'math_sample'     => 'Lagjan formula her',
-'math_tip'        => 'Maþemateikaleiks formula (LaTeX)',
 'media_tip'       => 'Táikjabandjis feilanis',
 'hr_tip'          => 'Ráihtsbáurd (brukjan miþ niufarussus)',
 
@@ -496,11 +495,9 @@ $messages = array(
 'metadata' => 'Ufardata',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'allis',
-'imagelistall'     => 'allis',
-'watchlistall2'    => 'allis',
-'namespacesall'    => 'allis',
-'monthsall'        => '𐌰𐌻𐌻𐌹𐍃',
+'watchlistall2' => 'allis',
+'namespacesall' => 'allis',
+'monthsall'     => '𐌰𐌻𐌻𐌹𐍃',
 
 # Multipage image navigation
 'imgmultigo' => 'Afgaggan!',

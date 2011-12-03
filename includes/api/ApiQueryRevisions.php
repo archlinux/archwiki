@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Sep 7, 2006
  *
@@ -39,7 +39,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class ApiQueryRevisions extends ApiQueryBase {
 
 	private $diffto, $difftotext, $expandTemplates, $generateXML, $section,
-		$token;
+		$token, $parseContent;
 
 	public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'rv' );
@@ -73,6 +73,12 @@ class ApiQueryRevisions extends ApiQueryBase {
 		return $this->tokenFunctions;
 	}
 
+	/**
+	 * @param $pageid
+	 * @param $title Title
+	 * @param $rev Revision
+	 * @return bool|String
+	 */
 	public static function getRollbackToken( $pageid, $title, $rev ) {
 		global $wgUser;
 		if ( !$wgUser->isAllowed( 'rollback' ) ) {
@@ -119,8 +125,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 				$params['diffto'] = 0;
 			}
 			if ( ( !ctype_digit( $params['diffto'] ) || $params['diffto'] < 0 )
-					&& $params['diffto'] != 'prev' && $params['diffto'] != 'next' )
-			{
+					&& $params['diffto'] != 'prev' && $params['diffto'] != 'next' ) {
 				$this->dieUsage( 'rvdiffto must be set to a non-negative number, "prev", "next" or "cur"', 'diffto' );
 			}
 			// Check whether the revision exists and is readable,
@@ -169,7 +174,6 @@ class ApiQueryRevisions extends ApiQueryBase {
 			$this->getResult()->setParsedLimit( $this->getModuleName(), $limit );
 		}
 
-		
 		if ( !is_null( $this->token ) || $pageCount > 0 ) {
 			$this->addFields( Revision::selectPageFields() );
 		}
@@ -224,9 +228,8 @@ class ApiQueryRevisions extends ApiQueryBase {
 			}
 		}
 
-		//Bug 24166 - API error when using rvprop=tags
+		// Bug 24166 - API error when using rvprop=tags
 		$this->addTables( 'revision' );
-
 
 		if ( $enumRevMode ) {
 			// This is mostly to prevent parameter errors (and optimize SQL?)
@@ -249,14 +252,14 @@ class ApiQueryRevisions extends ApiQueryBase {
 			// one row with the same timestamp for the same page.
 			// The order needs to be the same as start parameter to avoid SQL filesort.
 			if ( is_null( $params['startid'] ) && is_null( $params['endid'] ) ) {
-				$this->addWhereRange( 'rev_timestamp', $params['dir'],
+				$this->addTimestampWhereRange( 'rev_timestamp', $params['dir'],
 					$params['start'], $params['end'] );
 			} else {
 				$this->addWhereRange( 'rev_id', $params['dir'],
 					$params['startid'], $params['endid'] );
 				// One of start and end can be set
 				// If neither is set, this does nothing
-				$this->addWhereRange( 'rev_timestamp', $params['dir'],
+				$this->addTimestampWhereRange( 'rev_timestamp', $params['dir'],
 					$params['start'], $params['end'], false );
 			}
 
@@ -479,27 +482,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 				$text = $wgParser->preprocess( $text, $title, new ParserOptions() );
 			}
 			if ( $this->parseContent ) {
-				global $wgEnableParserCache;
-			
-				$popts = new ParserOptions();
-				$popts->setTidy( true );
-				
-				$articleObj = new Article( $title );
-
-				$p_result = false;
-				$pcache = ParserCache::singleton();
-				if ( $wgEnableParserCache ) {
-					$p_result = $pcache->get( $articleObj, $popts );
-				}
-				if ( !$p_result ) {
-					$p_result = $wgParser->parse( $text, $title, $popts );
-
-					if ( $wgEnableParserCache ) {
-						$pcache->save( $p_result, $articleObj, $popts );
-					}
-				}
-				
-				$text = $p_result->getText();
+				$text = $wgParser->parse( $text, $title, new ParserOptions() )->getText();
 			}
 			ApiResult::setContent( $vals, $text );
 		} elseif ( $this->fld_content ) {
@@ -627,9 +610,9 @@ class ApiQueryRevisions extends ApiQueryBase {
 			'endid' => 'Stop revision enumeration on this revid (enum)',
 			'start' => 'From which revision timestamp to start enumeration (enum)',
 			'end' => 'Enumerate up to this timestamp (enum)',
-			'dir' => 'Direction of enumeration - towards "newer" or "older" revisions (enum)',
-			'user' => 'Only include revisions made by user',
-			'excludeuser' => 'Exclude revisions made by user',
+			'dir' => $this->getDirectionDescription( $p, ' (enum)' ),
+			'user' => 'Only include revisions made by user (enum)',
+			'excludeuser' => 'Exclude revisions made by user (enum)',
 			'expandtemplates' => 'Expand templates in revision content',
 			'generatexml' => 'Generate XML parse tree for revision content',
 			'parse' => 'Parse revision content. For performance reasons if this option is used, rvlimit is enforced to 1.',
@@ -647,7 +630,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 	public function getDescription() {
 		return array(
 			'Get revision information',
-			'This module may be used in several ways:',
+			'May be used in several ways:',
 			' 1) Get data about a set of pages (last revision), by setting titles or pageids parameter',
 			' 2) Get revisions for one given page, by using titles/pageids with start/end/limit params',
 			' 3) Get data about a set of revisions by setting their IDs with revids parameter',
@@ -685,7 +668,11 @@ class ApiQueryRevisions extends ApiQueryBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Properties#revisions_.2F_rv';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryRevisions.php 75521 2010-10-27 11:50:20Z catrope $';
+		return __CLASS__ . ': $Id: ApiQueryRevisions.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

@@ -163,18 +163,25 @@ class MysqlUpdater extends DatabaseUpdater {
 			// 1.17
 			array( 'addTable', 'iwlinks',                           'patch-iwlinks.sql' ),
 			array( 'addIndex', 'iwlinks', 'iwl_prefix_title_from',  'patch-rename-iwl_prefix.sql' ),
-			array( 'addField', 'updatelog', 'ul_value',              'patch-ul_value.sql' ),
+			array( 'addField', 'updatelog',     'ul_value',         'patch-ul_value.sql' ),
 			array( 'addField', 'interwiki',     'iw_api',           'patch-iw_api_and_wikiid.sql' ),
-			array( 'dropIndex', 'iwlinks', 'iwl_prefix',  'patch-kill-iwl_prefix.sql' ),
-			array( 'dropIndex', 'iwlinks', 'iwl_prefix_from_title', 'patch-kill-iwl_pft.sql' ),
-			array( 'addField', 'categorylinks', 'cl_collation', 'patch-categorylinks-better-collation.sql' ),
+			array( 'dropIndex', 'iwlinks',      'iwl_prefix',       'patch-kill-iwl_prefix.sql' ),
+			array( 'dropIndex', 'iwlinks',      'iwl_prefix_from_title', 'patch-kill-iwl_pft.sql' ),
+			array( 'addField', 'categorylinks', 'cl_collation',     'patch-categorylinks-better-collation.sql' ),
 			array( 'doClFieldsUpdate' ),
 			array( 'doCollationUpdate' ),
 			array( 'addTable', 'msg_resource',                      'patch-msg_resource.sql' ),
 			array( 'addTable', 'module_deps',                       'patch-module_deps.sql' ),
-			array( 'dropIndex', 'archive', 'ar_page_revid',         'patch-archive_kill_ar_page_revid.sql' ),
-			array( 'addIndex', 'archive', 'ar_revid',               'patch-archive_ar_revid.sql' ),
+			array( 'dropIndex', 'archive',      'ar_page_revid',    'patch-archive_kill_ar_page_revid.sql' ),
+			array( 'addIndex', 'archive',       'ar_revid',         'patch-archive_ar_revid.sql' ),
 			array( 'doLangLinksLengthUpdate' ),
+
+			// 1.18
+			array( 'doUserNewTalkTimestampNotNull' ),
+			array( 'addIndex', 'user',          'user_email',       'patch-user_email_index.sql' ),
+			array( 'modifyField', 'user_properties', 'up_property', 'patch-up_property.sql' ),
+			array( 'addTable', 'uploadstash',                       'patch-uploadstash.sql' ),
+			array( 'addTable', 'user_former_groups',                'patch-user_former_groups.sql'),
 		);
 	}
 
@@ -246,6 +253,9 @@ class MysqlUpdater extends DatabaseUpdater {
 	 */
 	protected function doIndexUpdate() {
 		$meta = $this->db->fieldInfo( 'recentchanges', 'rc_timestamp' );
+		if ( $meta === false ) {
+			throw new MWException( 'Missing rc_timestamp field of recentchanges table. Should not happen.' );
+		}
 		if ( $meta->isMultipleKey() ) {
 			$this->output( "...indexes seem up to 20031107 standards\n" );
 			return;
@@ -649,7 +659,7 @@ class MysqlUpdater extends DatabaseUpdater {
 			foreach ( $res as $row ) {
 				$count = ( $count + 1 ) % 100;
 				if ( $count == 0 ) {
-					wfWaitForSlaves( 10 );
+					wfWaitForSlaves();
 				}
 				$this->db->insert( 'templatelinks',
 					array(
@@ -828,5 +838,17 @@ class MysqlUpdater extends DatabaseUpdater {
 		} else {
 			$this->output( "...ll_lang is up-to-date.\n" );
 		}
+	}
+
+	protected function doUserNewTalkTimestampNotNull() {
+		$info = $this->db->fieldInfo( 'user_newtalk', 'user_last_timestamp' );
+		if ( $info->isNullable() ) {
+			$this->output( "...user_last_timestamp is already nullable.\n" );
+			return;
+		}
+
+		$this->output( "Making user_last_timestamp nullable... " );
+		$this->applyPatch( 'patch-user-newtalk-timestamp-null.sql' );
+		$this->output( "done.\n" );
 	}
 }

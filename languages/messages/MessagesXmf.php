@@ -155,7 +155,6 @@ $messages = array(
 'searcharticle'    => 'გინულა',
 'history'          => 'ხასილაშ ისტორია',
 'history_short'    => 'ისტორია',
-'info_short'       => 'ინფორმაცია',
 'printableversion' => 'ობეშტალი ვერსია',
 'permalink'        => 'პერმანენტული რცხუ',
 'print'            => 'დობეშტი',
@@ -267,6 +266,7 @@ $messages = array(
 'createaccount'           => 'ანგარიშიშ გონწყუმა',
 'gotaccount'              => "უკვე რეგისტრირებული რეთო? '''$1'''",
 'gotaccountlink'          => 'მინულა',
+'userlogin-resetlink'     => 'გუგოჭყორდესო მიშაულარო საჭირო ინფორმაციაქ?',
 'loginsuccess'            => "'''ასე მიშულირ რეთ {{SITENAME}}-ს მუჭოთ \"\$1\".'''",
 'nouserspecified'         => 'საჭირო რე მახვარებუშ ჯოხოშ მიშაჭარუა.',
 'mailmypassword'          => 'ახალ პაროლიშ მოჯღონა',
@@ -284,8 +284,6 @@ $messages = array(
 'extlink_tip'     => 'გალენი რცხუ (ქორშუდანი http:// პრეფიქსი)',
 'headline_sample' => 'დუდლანდარიშ ტექსტი',
 'headline_tip'    => 'მაჟირა დონეშ დუდლანდარი',
-'math_sample'     => 'ქინახუნეთ ფორმულა თაქ',
-'math_tip'        => 'მათემატიკურ ფორმულა (LaTeX)',
 'nowiki_sample'   => 'ქინახუნეთ უგუფორმატაფუ ტექსტი თაქ',
 'nowiki_tip'      => 'ვიკიშ ფორმატირაფაშ იგნორირაფა',
 'image_tip'       => 'დინოხუნაფილი ფაილი',
@@ -454,11 +452,13 @@ $messages = array(
 'powersearch-field'                => 'დოგორი ათენა',
 
 # Preferences page
-'preferences'   => 'კონფიგურაცია',
-'mypreferences' => 'ჩქიმ კონფიგურაციეფი',
-'youremail'     => 'ელ-ფოშტა:',
-'yourrealname'  => 'ნანდულ სახელ *',
-'yourlanguage'  => 'ნინა:',
+'preferences'             => 'კონფიგურაცია',
+'mypreferences'           => 'ჩქიმ კონფიგურაციეფი',
+'youremail'               => 'ელ-ფოშტა:',
+'yourrealname'            => 'ნანდულ სახელ *',
+'yourlanguage'            => 'ნინა:',
+'prefs-help-email'        => 'ელ-ფოშტაშ მიოწურაფუ ვა რე უციო, მარა ოხვილაფუ რე პაროლიშ ეიორსხებელო პაროლი გიჭყოლიდეთუ̂-და.',
+'prefs-help-email-others' => 'თქვა შეილებუნა ალობა მეჩათ შხვეფს დჷგეკონტაქტან ელ-ფოშტათ თქვან ანგარიშის ვარა ოჩიებელ ხასჷლაშ ლინკიშ გეჸუნათ. თქვანი ელ-ფოშტაშ მიოწურაფუ ვანკორჩქინდჷ მუჟამს შხვა მახვარებუეფი დჷგეკავშირებუნანი.',
 
 # Groups
 'group-user'  => 'მახვარებუეფი',
@@ -623,10 +623,8 @@ $messages = array(
 'watchlist'         => 'ჩქიმ ოკონტროლებულეფიშ ერკებულ',
 'mywatchlist'       => 'ჩქიმ კონტროლიშ ერკებულ',
 'watchlistfor2'     => '$1 $2-ს',
-'addedwatch'        => 'გეძინელ რე კონტროლიშ ერკებულშა',
 'addedwatchtext'    => "\"[[:\$1]]\" ხასილაქ გეძინელქ იყ’უ თქვან [[Special:Watchlist|watchlist]]–შა.
 თე ხასილაშა დო თეწკუმა ასოცირებულ სხუნუაშ ხასილაშა მუმაულარ თირაფეფ მოჩამილ იყ’ი თექ დო თქვა გეგეადვილან თიშ გიშაგორუაქინ, ხასილა გუმორჩქინდუ '''რუმეთ'''  [[Special:RecentChanges|list of recent changes]]–ს.\"",
-'removedwatch'      => 'მონწყუმილ რე კონტროლიშ ერკებულშე',
 'removedwatchtext'  => 'ათე ხასილაქ "[[:$1]]" ლასირქ იყ’უ  [[Special:Watchlist|თქვნ კონტროლიშ ერკებულშე]].',
 'watch'             => 'გაკონტროლი',
 'watchthispage'     => 'თე ხასილაშ კონტროლ',
@@ -645,7 +643,7 @@ $messages = array(
 დადასტურით, ნამდა თქვა ნანდულო გოკონა თეშ ღოლამა დო ნამუდა თქვა გარჩქილენა თე ქიმინჯალაშ მოღალუეფ დო მუჭოთ თქვა თეს ორთუთ [[{{MediaWiki:Policy-url}}|წესეფიშ]] მეხუჯაფილო.',
 'actioncomplete'        => 'მოქმედალა რსულებულ რე',
 'actionfailed'          => 'მოქმედალაქ დემარცხჷ',
-'deletedtext'           => '"<nowiki>$1</nowiki>\\" ლასირქ იყ’უ.
+'deletedtext'           => '"$1\\" ლასირქ იყ’უ.
 ასერდე ლასირ ხასილეფიშ ერკებულ ქოძირით $2–ს.',
 'deletedarticle'        => '"[[$1]]" ლასირ რე',
 'dellogpage'            => 'ლასირეფიშ ერკებულ',
@@ -665,7 +663,7 @@ $messages = array(
 'protectexpiry'               => 'ვადა გიშალე',
 'protect_expiry_invalid'      => 'ვადაშ გიშულაშ თარიღ რე ჩილათირ',
 'protect_expiry_old'          => 'ვადაშ გიშულაშ თარიღ რე ულირ ბორჯის',
-'protect-text'                => "'''<nowiki>$1</nowiki>''' ხასილაშო თხილუაშ დონეშ ძირაფა დო თირაფა შეგილებუნა თაქ.",
+'protect-text'                => "'''$1''' ხასილაშო თხილუაშ დონეშ ძირაფა დო თირაფა შეგილებუნა თაქ.",
 'protect-locked-access'       => "თქვა ვა გიღუნა ხასილაშ თხილუაშ დონეშ თირუაშ ალობა. 
 ათაქ რე '''$1''' ხასილაშ ასეიან გენწყილობეფ.",
 'protect-cascadeon'           => 'ათე ხასილა ასე თხილერ რე, თიშენ ნამდა თენა მიშულირ რე {{PLURAL:$1|ხასილაშა, ნამდგასით|ხასილეფშა, ნამდგეფსით}} ჩართულ აფუ კასკადურ თხილუა.
@@ -867,11 +865,10 @@ $messages = array(
 'nextdiff'     => 'უახალაშ თირაფა →',
 
 # Media information
-'file-info-size'       => '$1 × $2 პიქსელ, ფაილიშ ზომა: $3, MIME ტიპ: $4',
-'file-nohires'         => '<small> უმოს მაღალ გიშაგორანჯალა ვა რე შელებუან.</small>',
-'svg-long-desc'        => 'SVG ფაილ, ნომინალურო $1×$2 პიქსელ, ფაილიშ ზიმა: $3',
-'show-big-image'       => 'რსული გიშაგორანჯალა',
-'show-big-image-thumb' => '<small>ზომა გიწოთოლორაფაშ ბორჯის: $1 × $2 პიქსელ</small>',
+'file-info-size' => '$1 × $2 პიქსელ, ფაილიშ ზომა: $3, MIME ტიპ: $4',
+'file-nohires'   => '<small> უმოს მაღალ გიშაგორანჯალა ვა რე შელებუან.</small>',
+'svg-long-desc'  => 'SVG ფაილ, ნომინალურო $1×$2 პიქსელ, ფაილიშ ზიმა: $3',
+'show-big-image' => 'რსული გიშაგორანჯალა',
 
 # Special:NewFiles
 'newimages' => 'ახალ სურათეფ',
@@ -887,7 +884,7 @@ $messages = array(
 'metadata-help'     => 'თე ფაილს ოხოლუ გეძინელ ინფორმაცია, ნამუთ ოეგებიეთ თი ციფრულ კამერაშე ვარა სკანერშე რე გეძინელ, ნამუთ რდუ გუმორინაფილ თე ფაილიშ ოქიმინჯალო ვარა დაციფრებელო. ფაილიშ ორიგინალ თირელ ქორენ-და, შილებე კანკალე დეტალ ვა გიშაძირუანდას ფაილშა მიშაღალირ თირაფეფს.',
 'metadata-expand'   => 'დეტალეფიშ გოძინელ ძირაფა',
 'metadata-collapse' => 'გოძინელ დეტალეფიშ ტყობინაფა',
-'metadata-fields'   => 'ათე მესიჯის შინაფილ EXIF მეტა მოჩამილოფეფიშ ოფირჩეფ ეკოროცხილ იყ’ი ნახანტიშ ხასილაშ დისფლეის მუჟამსით მეტა მოჩამილოფეფიშ ერკებულ იყ’ი გითოფაჩილინ 
+'metadata-fields'   => 'ათე მესიჯის შინაფილ მეტა მოჩამილოფეფიშ ოფირჩეფ ეკოროცხილ იჸი ნახანტიშ ხასილაშ დისფლეის მუჟამსით მეტა მოჩამილოფეფიშ ერკებულ იჸი გითოფაჩილინ 
 შხვეფ, მუჭოთ წესინ, ტყობინაფილ იყ’ი.
 * make
 * model
@@ -895,7 +892,13 @@ $messages = array(
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-imagewidth'  => 'სიგანე',
@@ -903,7 +906,7 @@ $messages = array(
 
 # External editor support
 'edit-externally'      => 'თე ფაილიშ ორედაქტირაფალო გიმირინეთ გალენ პროგრამა',
-'edit-externally-help' => '(უმოს ინფორმაციაშო ქოძირით [http://www.mediawiki.org/wiki/Manual:External_editors])',
+'edit-externally-help' => '(უმოს ინფორმაციაშო ქოძირით [//www.mediawiki.org/wiki/Manual:External_editors])',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'არძა',

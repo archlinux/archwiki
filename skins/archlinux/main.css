@@ -41,10 +41,13 @@ div#content {
 
 body {
 	font: x-small sans-serif;
+	/* @embed */
 	background: #f9f9f9 url(headbg.jpg) 0 0 no-repeat;
 	color: black;
 	margin: 0;
 	padding: 0;
+	direction: ltr; /* Needed for RTL flipping */
+	unicode-bidi: embed;
 }
 
 /* scale back up to a sane default */
@@ -136,6 +139,7 @@ ul {
 	list-style-type: square;
 	margin: .3em 0 0 1.5em;
 	padding: 0;
+	/* @embed */
 	list-style-image: url(bullet.gif);
 }
 ol {
@@ -263,6 +267,7 @@ span.subpages {
 	vertical-align: middle;
 }
 #siteNotice {
+	position: relative;
 	text-align: center;
 	font-size: 95%;
 	padding: 0 0.9em;
@@ -306,7 +311,7 @@ in the bottom-right corner of the content area */
 	margin-right: auto;
 }
 /* small for tables and similar */
-.small, .small * {
+.small {
 	font-size: 94%;
 }
 table.small {
@@ -344,7 +349,7 @@ table.small {
 	list-style-type: none;
 	list-style-image: none;
 	margin-left: 0;
-	padding-left: 0;
+	padding: 0;
 	text-align: left;
 }
 #toc ul ul,
@@ -363,10 +368,7 @@ table.small {
 }
 
 /* images */
-div.floatright, table.floatright {
-	clear: right;
-	float: right;
-	position: relative;
+/* @noflip */div.floatright, table.floatright {
 	margin: 0 0 .5em .5em;
 	border: 0;
 /*
@@ -375,10 +377,7 @@ div.floatright, table.floatright {
 */
 }
 div.floatright p { font-style: italic; }
-div.floatleft, table.floatleft {
-	float: left;
-	clear: left;
-	position: relative;
+/* @noflip */div.floatleft, table.floatleft {
 	margin: 0 .5em .5em 0;
 	border: 0;
 /*
@@ -421,21 +420,14 @@ div.magnify a, div.magnify img {
 	border: none !important;
 	background: none !important;
 }
-div.tright {
-	clear: right;
-	float: right;
+/* @noflip */div.tright {
 	margin: .5em 0 1.3em 1.4em;
 }
-div.tleft {
-	float: left;
-	clear: left;
+/* @noflip */div.tleft {
 	margin: .5em 1.4em 1.3em 0;
 }
 img.thumbborder {
 	border: 1px solid #dddddd;
-}
-.hiddenStructure {
-	display: none;
 }
 
 /*
@@ -476,36 +468,39 @@ table.rimage {
 */
 #bodyContent a.external,
 #bodyContent a.external[href ^="gopher://"] {
-	background: url(external.png) center right no-repeat;
-	padding: 0 13px;
-}
-.rtl #bodyContent a.external,
-.rtl #bodyContent a.external[href ^="gopher://"] {
-	background-image: url(external-rtl.png);
+	/* @embed */
+	background: url(external-ltr.png) center right no-repeat;
+	padding-right: 13px;
 }
 #bodyContent a.external[href ^="https://"],
 .link-https {
+	/* @embed */
 	background: url(lock_icon.gif) center right no-repeat;
-	padding: 0 16px;
+	padding-right: 16px;
 }
 #bodyContent a.external[href ^="mailto:"],
 .link-mailto {
+	/* @embed */
 	background: url(mail_icon.gif) center right no-repeat;
-	padding: 0 18px;
+	padding-right: 18px;
 }
 #bodyContent a.external[href ^="news://"] {
+	/* @embed */
 	background: url(news_icon.png) center right no-repeat;
-	padding: 0 18px;
+	padding-right: 18px;
 }
 #bodyContent a.external[href ^="ftp://"],
 .link-ftp {
+	/* @embed */
 	background: url(file_icon.gif) center right no-repeat;
-	padding: 0 18px;
+	padding-right: 18px;
 }
 #bodyContent a.external[href ^="irc://"],
+#bodyContent a.external[href ^="ircs://"],
 .link-irc {
+	/* @embed */
 	background: url(discussionitem_icon.gif) center right no-repeat;
-	padding: 0 18px;
+	padding-right: 18px;
 }
 #bodyContent a.external[href $=".ogg"], #bodyContent a.external[href $=".OGG"],
 #bodyContent a.external[href $=".mid"], #bodyContent a.external[href $=".MID"],
@@ -514,49 +509,54 @@ table.rimage {
 #bodyContent a.external[href $=".wav"], #bodyContent a.external[href $=".WAV"],
 #bodyContent a.external[href $=".wma"], #bodyContent a.external[href $=".WMA"],
 .link-audio {
+	/* @embed */
 	background: url("audio.png") center right no-repeat;
-	padding: 0 13px;
+	padding-right: 13px;
 }
 #bodyContent a.external[href $=".ogm"], #bodyContent a.external[href $=".OGM"],
 #bodyContent a.external[href $=".avi"], #bodyContent a.external[href $=".AVI"],
 #bodyContent a.external[href $=".mpeg"], #bodyContent a.external[href $=".MPEG"],
 #bodyContent a.external[href $=".mpg"], #bodyContent a.external[href $=".MPG"],
 .link-video {
+	/* @embed */
 	background: url("video.png") center right no-repeat;
-	padding: 0 13px;
+	padding-right: 13px;
 }
 #bodyContent a.external[href $=".pdf"], #bodyContent a.external[href $=".PDF"],
 #bodyContent a.external[href *=".pdf#"], #bodyContent a.external[href *=".PDF#"],
 #bodyContent a.external[href *=".pdf?"], #bodyContent a.external[href *=".PDF?"],
 .link-document {
+	/* @embed */
 	background: url("document.png") center right no-repeat;
-	padding: 0 12px;
+	padding-right: 12px;
 }
-
-/* for rtl wikis */
-.rtl #bodyContent a.external {
-	background-position: left;
-	padding-right: 0;
-}
-.rtl a.feedlink {
-	background-position: right;
-	padding-right: 16px;
-	padding-left: 0;
-}
-
-/* correction for ltr wikis */
-.ltr #bodyContent a.external {
-	padding-left: 0;
-}
-
-/* disable interwiki styling */
+ 
+/* Interwiki Styling */
 #bodyContent a.extiw,
 #bodyContent a.extiw:active {
 	color: #36b;
+	/* Don't show icons for interwiki links */
+	background: none;
+	padding: 0;
 }
+#bodyContent a.extiw:visited {
+	color: #636;
+}
+#bodyContent a.extiw:active {
+	color: #b63;
+}
+
+/* External links */
 #bodyContent a.external {
 	color: #36b;
 }
+#bodyContent a.external:visited {
+	color: #636; /* bug 3112 */
+}
+#bodyContent a.external:active {
+	color: #b63;
+}
+
 /*
 ** Structural Elements
 */
@@ -617,6 +617,7 @@ table.rimage {
 .portlet ul {
 	line-height: 1.5em;
 	list-style-type: square;
+	/* @embed */
 	list-style-image: url(bullet.gif);
 	font-size: 95%;
 }
@@ -753,6 +754,7 @@ in bg url to hide it from iemac */
 li#pt-userpage,
 li#pt-anonuserpage,
 li#pt-login {
+	/* @embed */
 	background: url(user.gif) top left no-repeat;
 	padding-left: 20px;
 	text-transform: none;
@@ -847,9 +849,6 @@ li#ca-watch, li#ca-unwatch, li#ca-varlang-0, li#ca-print {
 	border-collapse: inherit;
 	border: 0;
 	padding: 0;
-}
-#p-cactions .hiddenStructure {
-	display: none;
 }
 #p-cactions li a {
 	text-transform: lowercase;
@@ -1007,10 +1006,6 @@ div#userlogin form#userlogin2 {
 	background-color: #f9f9f9;
 	float: left;
 }
-.rtl div#userloginForm form,
-.rtl div#userlogin form#userlogin2 {
-	float: right;
-}
 
 div#userloginForm table,
 div#userlogin form#userlogin2 table {
@@ -1080,7 +1075,6 @@ div#userloginForm .captcha {
 	display: inline;
 	margin-bottom: 0;
 }
-* html div.editsection { font-size: smaller; }
 #pagehistory li.selected { position: relative; }
 
 /* Mac IE 5.0 fix; floated content turns invisible */

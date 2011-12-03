@@ -70,16 +70,20 @@ class SpecialProtectedtitles extends SpecialPage {
 
 	/**
 	 * Callback function to output a restriction
+	 *
+	 * @return string
 	 */
 	function formatRow( $row ) {
-		global $wgUser, $wgLang;
+		global $wgLang;
 
 		wfProfileIn( __METHOD__ );
 
-		static $skin=null;
+		static $skin =  null, $infinity = null;
 
-		if( is_null( $skin ) )
-			$skin = $wgUser->getSkin();
+		if( is_null( $skin ) ){
+			$skin = $this->getSkin();
+			$infinity = wfGetDB( DB_SLAVE )->getInfinity();
+		}
 
 		$title = Title::makeTitleSafe( $row->pt_namespace, $row->pt_title );
 		$link = $skin->link( $title );
@@ -90,19 +94,17 @@ class SpecialProtectedtitles extends SpecialPage {
 
 		$description_items[] = $protType;
 
-		$stxt = '';
-
-		if ( $row->pt_expiry != 'infinity' && strlen($row->pt_expiry) ) {
-			$expiry = Block::decodeExpiry( $row->pt_expiry );
+		$expiry = strlen( $row->pt_expiry ) ? $wgLang->formatExpiry( $row->pt_expiry, TS_MW ) : $infinity;
+		if( $expiry != $infinity ) {
 
 			$expiry_description = wfMsg( 'protect-expiring', $wgLang->timeanddate( $expiry ) , $wgLang->date( $expiry ) , $wgLang->time( $expiry ) );
 
-			$description_items[] = $expiry_description;
+			$description_items[] = htmlspecialchars($expiry_description);
 		}
 
 		wfProfileOut( __METHOD__ );
 
-		return '<li>' . wfSpecialList( $link . $stxt, implode( $description_items, ', ' ) ) . "</li>\n";
+		return '<li>' . wfSpecialList( $link, implode( $description_items, ', ' ) ) . "</li>\n";
 	}
 
 	/**
@@ -203,6 +205,10 @@ class ProtectedTitlesPager extends AlphabeticPager {
 		$lb->execute();
 		wfProfileOut( __METHOD__ );
 		return '';
+	}
+
+	function getTitle() {
+		return SpecialPage::getTitleFor( 'Protectedtitles' );
 	}
 
 	function formatRow( $row ) {

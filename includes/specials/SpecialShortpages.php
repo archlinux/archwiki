@@ -29,10 +29,11 @@
  */
 class ShortPagesPage extends QueryPage {
 
-	function getName() {
-		return 'Shortpages';
+	function __construct( $name = 'Shortpages' ) {
+		parent::__construct( $name );
 	}
 
+	// inexpensive?
 	/**
 	 * This query is indexed as of 1.5
 	 */
@@ -44,29 +45,27 @@ class ShortPagesPage extends QueryPage {
 		return false;
 	}
 
-	function getSQL() {
-		global $wgContentNamespaces;
-
-		$dbr = wfGetDB( DB_SLAVE );
-		$page = $dbr->tableName( 'page' );
-		$name = $dbr->addQuotes( $this->getName() );
-
-		$forceindex = $dbr->useIndexClause("page_len");
-
-		if ($wgContentNamespaces)
-			$nsclause = "page_namespace IN (" . $dbr->makeList($wgContentNamespaces) . ")";
-		else
-			$nsclause = "page_namespace = " . NS_MAIN;
-
-		return
-			"SELECT $name as type,
-				page_namespace as namespace,
-			        page_title as title,
-			        page_len AS value
-			FROM $page $forceindex
-			WHERE $nsclause AND page_is_redirect=0";
+	function getQueryInfo() {
+		return array (
+			'tables' => array ( 'page' ),
+			'fields' => array ( 'page_namespace AS namespace',
+					'page_title AS title',
+					'page_len AS value' ),
+			'conds' => array ( 'page_namespace' => MWNamespace::getContentNamespaces(),
+					'page_is_redirect' => 0 ),
+			'options' => array ( 'USE INDEX' => 'page_len' )
+		);
 	}
 
+	function getOrderFields() {
+		return array( 'page_len' );
+	}
+
+	/**
+	 * @param $db DatabaseBase
+	 * @param $res
+	 * @return void
+	 */
 	function preprocessResults( $db, $res ) {
 		# There's no point doing a batch check if we aren't caching results;
 		# the page must exist for it to have been pulled out of the table
@@ -87,10 +86,10 @@ class ShortPagesPage extends QueryPage {
 	}
 
 	function formatResult( $skin, $result ) {
-		global $wgLang, $wgContLang;
-		$dm = $wgContLang->getDirMark();
+		global $wgLang;
+		$dm = $wgLang->getDirMark();
 
-		$title = Title::makeTitleSafe( $result->namespace, $result->title );
+		$title = Title::makeTitle( $result->namespace, $result->title );
 		if ( !$title ) {
 			return '<!-- Invalid title ' .  htmlspecialchars( "{$result->namespace}:{$result->title}" ). '-->';
 		}
@@ -109,15 +108,4 @@ class ShortPagesPage extends QueryPage {
 				? "({$hlink}) {$dm}{$plink} {$dm}[{$size}]"
 				: "<del>({$hlink}) {$dm}{$plink} {$dm}[{$size}]</del>";
 	}
-}
-
-/**
- * constructor
- */
-function wfSpecialShortpages() {
-	list( $limit, $offset ) = wfCheckLimits();
-
-	$spp = new ShortPagesPage();
-
-	return $spp->doQuery( $offset, $limit );
 }

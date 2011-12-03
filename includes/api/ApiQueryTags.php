@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Jul 9, 2009
  *
@@ -36,7 +36,12 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  */
 class ApiQueryTags extends ApiQueryBase {
 
-	private $limit, $result;
+	/**
+	 * @var ApiResult
+	 */
+	private $result;
+
+	private $limit;
 	private $fld_displayname = false, $fld_description = false,
 			$fld_hitcount = false;
 
@@ -59,9 +64,7 @@ class ApiQueryTags extends ApiQueryBase {
 		$this->addTables( 'change_tag' );
 		$this->addFields( 'ct_tag' );
 
-		if ( $this->fld_hitcount ) {
-			$this->addFields( 'count(*) AS hitcount' );
-		}
+		$this->addFieldsIf( 'count(*) AS hitcount', $this->fld_hitcount );
 
 		$this->addOption( 'LIMIT', $this->limit + 1 );
 		$this->addOption( 'GROUP BY', 'ct_tag' );
@@ -110,9 +113,8 @@ class ApiQueryTags extends ApiQueryBase {
 		}
 
 		if ( $this->fld_description ) {
-			$msg = wfMsg( "tag-$tagName-description" );
-			$msg = wfEmptyMsg( "tag-$tagName-description", $msg ) ? '' : $msg;
-			$tag['description'] = $msg;
+			$msg = wfMessage( "tag-$tagName-description" );
+			$tag['description'] = $msg->exists() ? $msg->text() : '';
 		}
 
 		if ( $this->fld_hitcount ) {
@@ -183,6 +185,6 @@ class ApiQueryTags extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryTags.php 73858 2010-09-28 01:21:15Z reedy $';
+		return __CLASS__ . ': $Id: ApiQueryTags.php 90542 2011-06-21 20:05:00Z ialex $';
 	}
 }

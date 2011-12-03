@@ -62,7 +62,7 @@ class StubObject {
 	 * Create a new object to replace this stub object.
 	 */
 	function _newObject() {
-		return wfCreateObject( $this->mClass, $this->mParams );
+		return MWFunction::newObj( $this->mClass, $this->mParams );
 	}
 
 	/**
@@ -110,6 +110,8 @@ class StubObject {
 /**
  * Stub object for the content language of this wiki. This object have to be in
  * $wgContLang global.
+ *
+ * @deprecated since 1.18
  */
 class StubContLang extends StubObject {
 
@@ -146,22 +148,6 @@ class StubUserLang extends StubObject {
 	}
 
 	function _newObject() {
-		global $wgLanguageCode, $wgRequest, $wgUser, $wgContLang;
-		$code = $wgRequest->getVal( 'uselang', $wgUser->getOption( 'language' ) );
-		// BCP 47 - letter case MUST NOT carry meaning
-		$code = strtolower( $code );
-
-		# Validate $code
-		if( empty( $code ) || !Language::isValidCode( $code ) || ( $code === 'qqq' ) ) {
-			wfDebug( "Invalid user language code\n" );
-			$code = $wgLanguageCode;
-		}
-
-		if( $code === $wgLanguageCode ) {
-			return $wgContLang;
-		} else {
-			$obj = Language::factory( $code );
-			return $obj;
-		}
+		return RequestContext::getMain()->getLang();
 	}
 }

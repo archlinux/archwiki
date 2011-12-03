@@ -33,28 +33,28 @@ $namespaceNames = array(
 );
 
 $specialPageAliases = array(
+	'Allmessages'               => array( 'Ôlâ_Nôôchrichdâ' ),
+	'Allpages'                  => array( 'Ôlâ_Sajdâ' ),
+	'Categories'                => array( 'Gadâgoriin' ),
+	'Confirmemail'              => array( 'Iimäjl_bschdädigâ' ),
+	'Contributions'             => array( 'Bajdräächâ' ),
 	'DoubleRedirects'           => array( 'Dobâldâ_Wajdârlajdungân' ),
+	'Emailuser'                 => array( 'Iimäjlâ' ),
+	'Export'                    => array( 'Ägsbordiirn' ),
+	'Import'                    => array( 'Imbordiirn' ),
+	'Movepage'                  => array( 'Sajdâ_färschiibâ' ),
+	'Newpages'                  => array( 'Nojâ_Sajdâ' ),
+	'Preferences'               => array( 'Ôischtälungâ' ),
+	'Prefixindex'               => array( 'Indägs' ),
+	'Recentchanges'             => array( 'Lädsdâ_Änârungâ' ),
+	'Specialpages'              => array( 'Schbädsjaalsajdâ' ),
+	'Statistics'                => array( 'Schdadisdign' ),
+	'Undelete'                  => array( 'Wiidârhärschdälâ' ),
+	'Unwatchedpages'            => array( 'Unbäoobôchdâdâ_Sajdn' ),
+	'Upload'                    => array( 'Hoochlaadâ' ),
 	'Userlogin'                 => array( 'Ôômäldâ' ),
 	'Userlogout'                => array( 'Ôbmäldâ' ),
-	'Preferences'               => array( 'Ôischtälungâ' ),
 	'Watchlist'                 => array( 'Bäoobôchdungslisdâ' ),
-	'Recentchanges'             => array( 'Lädsdâ_Änârungâ' ),
-	'Upload'                    => array( 'Hoochlaadâ' ),
-	'Statistics'                => array( 'Schdadisdign' ),
-	'Newpages'                  => array( 'Nojâ_Sajdâ' ),
-	'Allpages'                  => array( 'Ôlâ_Sajdâ' ),
-	'Prefixindex'               => array( 'Indägs' ),
-	'Specialpages'              => array( 'Schbädsjaalsajdâ' ),
-	'Contributions'             => array( 'Bajdräächâ' ),
-	'Emailuser'                 => array( 'Iimäjlâ' ),
-	'Confirmemail'              => array( 'Iimäjl_bschdädigâ' ),
-	'Movepage'                  => array( 'Sajdâ_färschiibâ' ),
-	'Categories'                => array( 'Gadâgoriin' ),
-	'Export'                    => array( 'Ägsbordiirn' ),
-	'Allmessages'               => array( 'Ôlâ_Nôôchrichdâ' ),
-	'Undelete'                  => array( 'Wiidârhärschdälâ' ),
-	'Import'                    => array( 'Imbordiirn' ),
-	'Unwatchedpages'            => array( 'Unbäoobôchdâdâ_Sajdn' ),
 );
 
 $messages = array(
@@ -187,7 +187,6 @@ ausghenn, mr mus dâdsuu ufm ajchnen rächnâr was âjrichdn ghenn)',
 'history'           => 'Wärsjoonsfolche',
 'history_short'     => 'Wärsjoonsfolche',
 'updatedmarker'     => "is gändârd wôrn sajde ds'ledschd dôô wôôr",
-'info_short'        => 'Infôrmadsjoon',
 'printableversion'  => 'Drug-wärsjoon',
 'permalink'         => 'Beschdendichä lingh',
 'print'             => 'Ausdrugâ',
@@ -357,8 +356,6 @@ Wen's des ned is, bisd womeeglich iwa ân feela in dr sofdwäâr gschdolbäd. In
 'extlink_tip'     => 'Lingg nach ausârhalb (achdung, „http://“ ghäärd fôrnewäch dâdsu)',
 'headline_sample' => 'Iiwârschrifd 2. ôrdnung',
 'headline_tip'    => 'Iiwârschrifd 2. ôrdnung',
-'math_sample'     => 'Dô dii fôrml  (in TEX) nâjschrajm',
-'math_tip'        => 'Mademaadische Fôrml (in LATEX)',
 'nowiki_sample'   => 'Dô än uunfôrmadiirdn dhägsd nâjschrajm',
 'nowiki_tip'      => 'Uufôrmadiirdâr dhägsd',
 'image_tip'       => 'Âjbedâde dadaj',
@@ -507,7 +504,6 @@ Hirmid sagsd, das Du den dhägsd '''selbâr gschriim''' hasd, das däär dhägsd
 'changepassword'            => "S'bhaswôrd ändârn",
 'prefs-skin'                => 'Schaale',
 'skin-preview'              => 'Môôl schbign',
-'prefs-math'                => 'TeX',
 'datedefault'               => 'Nôrmaal',
 'prefs-datetime'            => 'Daadum un dsajd',
 'prefs-personal'            => 'Benudsâr-daadn',
@@ -531,8 +527,6 @@ Hirmid sagsd, das Du den dhägsd '''selbâr gschriim''' hasd, das däär dhägsd
 'columns'                   => 'Soofiil schbaldn',
 'searchresultshead'         => 'Suuchn',
 'resultsperpage'            => 'Broo rudsch dsajchn:',
-'contextlines'              => 'Dsajln fir jeedn fund:',
-'contextchars'              => 'Soofiil dsjachn broo dsjaln:',
 'recentchangesdays'         => 'Wiifiil dääch dsrig baj  „Ledschdn ändrungn“',
 'recentchangesdays-max'     => 'Hegschdns $1 {{PLURAL:$1|daach|dääch}}',
 'recentchangescount'        => 'Wiifiil ändrungn dsrig baj „Ledschdn ändrungn“',
@@ -619,7 +613,6 @@ Dii lisdn undn dsajch dâfâu nôr äärschd môôl {{PLURAL:$1|an|$1}} fârwajs
 S'gajd awâr aa â [[Special:WhatLinksHere/$2|lisdn mid alâ fârwajs]].",
 'nolinkstoimage'            => 'Diâ dadaj wärd närchends benudsd.',
 'morelinkstoimage'          => '[[Special:WhatLinksHere/$1|Diâ folchende]] fârwajs uf diâ dadaj.',
-'redirectstofile'           => 'Diâ {{PLURAL:$1|folchende dadaj schigd|folchende $1 dadajâ schigâ}} uf diâ dadaj wajdâr:',
 'duplicatesoffile'          => 'Dii {{PLURAL:$1|folchende dadaj is â dublighaad|folchende $1 dadajâ sn dublighaade}} fon dâr dadaj ([[Special:FileDuplicateSearch/$2|wajdâre ôôndlshajdâ]]):',
 'sharedupload'              => 'Dii dadaj ghumd fo $1, un mär däf se fär annäre brojägd aa ´heernemâ.',
 'sharedupload-desc-there'   => 'Dii dadaj ghumd fon $1, un mr däf se fir andârâ brojägd aa nemâ. Genauârs schded uf dr [$2 beschrajwungssajdâ fon dr dadaj].',
@@ -672,14 +665,12 @@ S'gajd awâr aa â [[Special:WhatLinksHere/$2|lisdn mid alâ fârwajs]].",
 # Watchlist
 'watchlist'         => 'Maj beoobachdungs-lisdn',
 'mywatchlist'       => 'Mâj beoobachdungslisdn',
-'addedwatch'        => 'Wärd ab jeds beoobachd',
 'addedwatchtext'    => "Di sajdn „[[:$1]]“ schdäd eds mid af dajnâr [[Special:Watchlist|beoobachdungs-lisdn]] .
 
 Wen sich af der sajdn oda iirâr disghusjoons-sajdn was duud, wärd se ab eds
  af di „[[Special:RecentChanges|Ledsdn ändrunga]]“ fäd dâdsuugschriim.
 
 Wenns'd dii sajdn irchendwan amôl nimä fârfolchn wilsd, musd bloos af „{{int:Unwatch}}“ glign.",
-'removedwatch'      => 'Wärd eds nimä´ beoobachd',
 'removedwatchtext'  => 'Dii sajdn „[[:$1]]“ is fo Dajnâr [[Special:Watchlist|beoobachdungslisdn]] nundârgnumma.',
 'watch'             => 'Beoobachdn',
 'watchthispage'     => 'Dii sajdn undâr beoobachdung nämâ',
@@ -696,7 +687,7 @@ Wenns'd dii sajdn irchendwan amôl nimä fârfolchn wilsd, musd bloos af „{{in
 'deletepage'             => 'Sajdn leschn',
 'confirmdeletetext'      => "Duu bisd grôd dâbaj, â sajdn midsamd alle dsugheeriche alde wärsjoona ds'leschn. Bide beschdäädich, das De wasd, was des als bewirgd, un das De Dich dâbaj aa an d'[[{{MediaWiki:Policy-url}}|richliinjen]] fo dem wighi hiir häldsd.",
 'actioncomplete'         => 'Erleedichd',
-'deletedtext'            => '„<nowiki>$1</nowiki>“ is gleschd wôrn. Im $2 findsd â lisdn mid dâ ledsdn leschunga.',
+'deletedtext'            => '„$1“ is gleschd wôrn. Im $2 findsd â lisdn mid dâ ledsdn leschunga.',
 'deletedarticle'         => 'had „[[$1]]“ gleschd',
 'dellogpage'             => 'Logbuch fo di leschunga',
 'deletecomment'          => 'Grund:',
@@ -724,7 +715,7 @@ Wenns'd dii sajdn irchendwan amôl nimä fârfolchn wilsd, musd bloos af „{{in
 'protectexpiry'               => 'Schbär-dauâr:',
 'protect_expiry_invalid'      => 'Dii ôôgeemne schbärdsajd is uugildich.',
 'protect_expiry_old'          => 'Dii schbärdsajd is scho ausglofn.',
-'protect-text'                => 'Dôô koosd dii fârschiida schbärn fon där sajdn „<nowiki>$1</nowiki>“ ôôschaua un ändârn.',
+'protect-text'                => 'Dôô koosd dii fârschiida schbärn fon där sajdn „$1“ ôôschaua un ändârn.',
 'protect-locked-access'       => "Duu hôsd nach Dajm Ôôgmäldnschdand (fgl. Daj ghondo)  ned des odâr diâ rechd, um an där schbäre fon derär sajdn was ds'ändârn. Däärdsajd sin dii gsedsdn schbärn fir dii sajdn '''„$1“:'''",
 'protect-cascadeon'           => 'Dii sajdn is däärdsajd daal fon âm reghursiifâ schbärn. Des ged iwâr {{PLURAL:$1|folchende sajdn|dii folchendn sajdn}} wech, un wal dii reghursiif gschbärd {{PLURAL:$1|is|san}}, isâs aa dii sajdn hiir. Ob mr jeds hiir loghaal schbärd odr endschbärd, des endârd alâs nigs drôô, was an schbärung fon da heer iwârghomd.',
 'protect-default'             => 'Ale benudsâr',
@@ -923,11 +914,10 @@ Bidde gug's mi´m foorschau-gnobf ôô fôrm schbajchan",
 'nextdiff'     => 'Undârschiid fo där nägsdn ändrung →',
 
 # Media information
-'file-info-size'       => '$1 × $2 pigsl, dadajgrääsn: $3, MIME-tib: $4',
-'file-nohires'         => "<small>A he´äre aafleesung gibd's ghaane.</small>",
-'svg-long-desc'        => 'SVG-dadaj, ufleesung: $1 × $2 pigsl, dadajgreesn: $3',
-'show-big-image'       => 'Bild in hegsdâr aufleesung',
-'show-big-image-thumb' => '<small>Greäs fo där schbigg-ôôsichd: $1 × $2 bhigsl</small>',
+'file-info-size' => '$1 × $2 pigsl, dadajgrääsn: $3, MIME-tib: $4',
+'file-nohires'   => "<small>A he´äre aafleesung gibd's ghaane.</small>",
+'svg-long-desc'  => 'SVG-dadaj, ufleesung: $1 × $2 pigsl, dadajgreesn: $3',
+'show-big-image' => 'Bild in hegsdâr aufleesung',
 
 # Bad image list
 'bad_image_list' => 'Fôrmaad:
@@ -946,7 +936,13 @@ Bloos  dsajln, dii mi´m dsajchn * ôôfanga, wärn berigsichdichd. Un dä ärsc
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-imagewidth'  => 'brajdn',
@@ -954,7 +950,7 @@ Bloos  dsajln, dii mi´m dsajchn * ôôfanga, wärn berigsichdichd. Un dä ärsc
 
 # External editor support
 'edit-externally'      => 'Dii dadaj mid an ägsdärna brogram ändârn',
-'edit-externally-help' => '(Määr un genauârs dâdsuu baj den [http://www.mediawiki.org/wiki/Manual:External_editors Inschdaladsjoonsanwajsungn])',
+'edit-externally-help' => '(Määr un genauârs dâdsuu baj den [//www.mediawiki.org/wiki/Manual:External_editors Inschdaladsjoonsanwajsungn])',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'ale',

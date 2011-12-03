@@ -44,7 +44,16 @@
  */
 class RecentChange {
 	var $mAttribs = array(), $mExtra = array();
-	var $mTitle = false, $mMovedToTitle = false;
+
+	/**
+	 * @var Title
+	 */
+	var $mTitle = false;
+
+	/**
+	 * @var Title
+	 */
+	var $mMovedToTitle = false;
 	var $numberofWatchingusers = 0 ; # Dummy to prevent error message in SpecialRecentchangeslinked
 
 	# Factory methods
@@ -66,7 +75,7 @@ class RecentChange {
 	/**
 	 * Obtain the recent change with a given rc_id value
 	 *
-	 * @param $rcid rc_id value to retrieve
+	 * @param $rcid Int rc_id value to retrieve
 	 * @return RecentChange
 	 */
 	public static function newFromId( $rcid ) {
@@ -192,7 +201,7 @@ class RecentChange {
 				$editor = ($wgUser->getName() == $this->mAttribs['rc_user_text']) ? 
 					$wgUser : User::newFromName( $this->mAttribs['rc_user_text'], false );
 			}
-			# FIXME: this would be better as an extension hook
+			# @todo FIXME: This would be better as an extension hook
 			$enotif = new EmailNotification();
 			$title = Title::makeTitle( $this->mAttribs['rc_namespace'], $this->mAttribs['rc_title'] );
 			$enotif->notifyOnPageChange( $editor, $title,
@@ -259,24 +268,28 @@ class RecentChange {
 	 * @return Array See doMarkPatrolled(), or null if $change is not an existing rc_id
 	 */
 	public static function markPatrolled( $change, $auto = false ) {
+		global $wgUser;
+
 		$change = $change instanceof RecentChange
 			? $change
 			: RecentChange::newFromId($change);
+
 		if( !$change instanceof RecentChange ) {
 			return null;
 		}
-		return $change->doMarkPatrolled( $auto );
+		return $change->doMarkPatrolled( $wgUser, $auto );
 	}
 	
 	/**
 	 * Mark this RecentChange as patrolled
 	 *
 	 * NOTE: Can also return 'rcpatroldisabled', 'hookaborted' and 'markedaspatrollederror-noautopatrol' as errors
+	 * @param $user User object doing the action
 	 * @param $auto Boolean: for automatic patrol
 	 * @return array of permissions errors, see Title::getUserPermissionsErrors()
 	 */
-	public function doMarkPatrolled( $auto = false ) {
-		global $wgUser, $wgUseRCPatrol, $wgUseNPPatrol;
+	public function doMarkPatrolled( User $user, $auto = false ) {
+		global $wgUseRCPatrol, $wgUseNPPatrol;
 		$errors = array();
 		// If recentchanges patrol is disabled, only new pages
 		// can be patrolled
@@ -285,13 +298,13 @@ class RecentChange {
 		}
 		// Automatic patrol needs "autopatrol", ordinary patrol needs "patrol"
 		$right = $auto ? 'autopatrol' : 'patrol';
-		$errors = array_merge( $errors, $this->getTitle()->getUserPermissionsErrors( $right, $wgUser ) );
-		if( !wfRunHooks('MarkPatrolled', array($this->getAttribute('rc_id'), &$wgUser, false)) ) {
+		$errors = array_merge( $errors, $this->getTitle()->getUserPermissionsErrors( $right, $user ) );
+		if( !wfRunHooks('MarkPatrolled', array($this->getAttribute('rc_id'), &$user, false)) ) {
 			$errors[] = array('hookaborted');
 		}
 		// Users without the 'autopatrol' right can't patrol their
 		// own revisions
-		if( $wgUser->getName() == $this->getAttribute('rc_user_text') && !$wgUser->isAllowed('autopatrol') ) {
+		if( $user->getName() == $this->getAttribute('rc_user_text') && !$user->isAllowed('autopatrol') ) {
 			$errors[] = array('markedaspatrollederror-noautopatrol');
 		}
 		if( $errors ) {
@@ -305,7 +318,7 @@ class RecentChange {
 		$this->reallyMarkPatrolled();
 		// Log this patrol event
 		PatrolLog::record( $this, $auto );
-		wfRunHooks( 'MarkPatrolledComplete', array($this->getAttribute('rc_id'), &$wgUser, false) );
+		wfRunHooks( 'MarkPatrolledComplete', array($this->getAttribute('rc_id'), &$user, false) );
 		return array();
 	}
 	
@@ -328,10 +341,26 @@ class RecentChange {
 		return $dbw->affectedRows();
 	}
 
-	# Makes an entry in the database corresponding to an edit
+	/**
+	 * Makes an entry in the database corresponding to an edit
+	 *
+	 * @param $timestamp
+	 * @param $title Title
+	 * @param $minor
+	 * @param $user User
+	 * @param $comment
+	 * @param $oldId
+	 * @param $lastTimestamp
+	 * @param $bot
+	 * @param $ip string
+	 * @param $oldSize int
+	 * @param $newSize int
+	 * @param $newId int
+	 * @param $patrol int
+	 * @return RecentChange
+	 */
 	public static function notifyEdit( $timestamp, &$title, $minor, &$user, $comment, $oldId,
-		$lastTimestamp, $bot, $ip='', $oldSize=0, $newSize=0, $newId=0, $patrol=0 )
-	{
+		$lastTimestamp, $bot, $ip='', $oldSize=0, $newSize=0, $newId=0, $patrol=0 ) {
 		if( !$ip ) {
 			$ip = wfGetIP();
 			if( !$ip ) $ip = '';
@@ -380,10 +409,21 @@ class RecentChange {
 	 * Makes an entry in the database corresponding to page creation
 	 * Note: the title object must be loaded with the new id using resetArticleID()
 	 * @todo Document parameters and return
+	 *
+	 * @param $timestamp
+	 * @param $title Title
+	 * @param $minor
+	 * @param $user User
+	 * @param $comment
+	 * @param $bot
+	 * @param $ip string
+	 * @param $size int
+	 * @param $newId int
+	 * @param $patrol int
+	 * @return RecentChange
 	 */
 	public static function notifyNew( $timestamp, &$title, $minor, &$user, $comment, $bot,
-		$ip='', $size=0, $newId=0, $patrol=0 )
-	{
+		$ip='', $size=0, $newId=0, $patrol=0 ) {
 		if( !$ip ) {
 			$ip = wfGetIP();
 			if( !$ip ) $ip = '';
@@ -429,8 +469,19 @@ class RecentChange {
 	}
 
 	# Makes an entry in the database corresponding to a rename
-	public static function notifyMove( $timestamp, &$oldTitle, &$newTitle, &$user, $comment, $ip='', $overRedir = false )
-	{
+
+	/**
+	 * @param $timestamp
+	 * @param $oldTitle Title
+	 * @param $newTitle Title
+	 * @param $user User
+	 * @param $comment
+	 * @param $ip string
+	 * @param $overRedir bool
+	 * @return void
+	 */
+	public static function notifyMove( $timestamp, &$oldTitle, &$newTitle, &$user, $comment, $ip='',
+		$overRedir = false ) {
 		global $wgRequest;
 		if( !$ip ) {
 			$ip = wfGetIP();
@@ -496,13 +547,28 @@ class RecentChange {
 		return true;
 	}
 
+	/**
+	 * @param $timestamp
+	 * @param $title Title
+	 * @param $user User
+	 * @param $actionComment
+	 * @param $ip string
+	 * @param $type
+	 * @param $action
+	 * @param $target Title
+	 * @param $logComment
+	 * @param $params
+	 * @param $newId int
+	 * @return RecentChange
+	 */
 	public static function newLogEntry( $timestamp, &$title, &$user, $actionComment, $ip='',
-		$type, $action, $target, $logComment, $params, $newId=0 )
-	{
+		$type, $action, $target, $logComment, $params, $newId=0 ) {
 		global $wgRequest;
 		if( !$ip ) {
 			$ip = wfGetIP();
-			if( !$ip ) $ip = '';
+			if( !$ip ) {
+				$ip = '';
+			}
 		}
 
 		$rc = new RecentChange;
@@ -614,41 +680,36 @@ class RecentChange {
 	}
 
 	public function getIRCLine() {
-		global $wgUseRCPatrol, $wgUseNPPatrol, $wgRC2UDPInterwikiPrefix, $wgLocalInterwiki;
+		global $wgUseRCPatrol, $wgUseNPPatrol, $wgRC2UDPInterwikiPrefix, $wgLocalInterwiki,
+			$wgCanonicalServer, $wgScript;
 
-		// FIXME: Would be good to replace these 2 extract() calls with something more explicit
-		// e.g. list ($rc_type, $rc_id) = array_values ($this->mAttribs); [or something like that]
-		extract($this->mAttribs);
-		extract($this->mExtra);
-
-		if( $rc_type == RC_LOG ) {
-			$titleObj = Title::newFromText( "Log/$rc_log_type", NS_SPECIAL );
+		if( $this->mAttribs['rc_type'] == RC_LOG ) {
+			$titleObj = Title::newFromText( 'Log/' . $this->mAttribs['rc_log_type'], NS_SPECIAL );
 		} else {
 			$titleObj =& $this->getTitle();
 		}
 		$title = $titleObj->getPrefixedText();
 		$title = self::cleanupForIRC( $title );
 
-		if( $rc_type == RC_LOG ) {
+		if( $this->mAttribs['rc_type'] == RC_LOG ) {
 			$url = '';
 		} else {
-			if( $rc_type == RC_NEW ) {
-				$url = "oldid=$rc_this_oldid";
+			$url = $wgCanonicalServer . $wgScript;
+			if( $this->mAttribs['rc_type'] == RC_NEW ) {
+				$query = '?oldid=' . $this->mAttribs['rc_this_oldid'];
 			} else {
-				$url = "diff=$rc_this_oldid&oldid=$rc_last_oldid";
+				$query = '?diff=' . $this->mAttribs['rc_this_oldid'] . '&oldid=' . $this->mAttribs['rc_last_oldid'];
 			}
-			if( $wgUseRCPatrol || ($rc_type == RC_NEW && $wgUseNPPatrol) ) {
-				$url .= "&rcid=$rc_id";
+			if ( $wgUseRCPatrol || ( $this->mAttribs['rc_type'] == RC_NEW && $wgUseNPPatrol ) ) {
+				$query .= '&rcid=' . $this->mAttribs['rc_id'];
 			}
-			// XXX: *HACK* this should use getFullURL(), hacked for SSL madness --brion 2005-12-26
-			// XXX: *HACK^2* the preg_replace() undoes much of what getInternalURL() does, but we 
-			// XXX: need to call it so that URL paths on the Wikimedia secure server can be fixed
-			// XXX: by a custom GetInternalURL hook --vyznev 2008-12-10
-			$url = preg_replace( '/title=[^&]*&/', '', $titleObj->getInternalURL( $url ) );
+			// HACK: We need this hook for WMF's secure server setup
+			wfRunHooks( 'IRCLineURL', array( &$url, &$query ) );
+			$url .= $query;
 		}
 
-		if( isset( $oldSize ) && isset( $newSize ) ) {
-			$szdiff = $newSize - $oldSize;
+		if( isset( $this->mExtra['oldSize'] ) && isset( $this->mExtra['newSize'] ) ) {
+			$szdiff = $this->mExtra['newSize'] - $this->mExtra['oldSize'];
 			if($szdiff < -500) {
 				$szdiff = "\002$szdiff\002";
 			} elseif($szdiff >= 0) {
@@ -659,19 +720,19 @@ class RecentChange {
 			$szdiff = '';
 		}
 
-		$user = self::cleanupForIRC( $rc_user_text );
+		$user = self::cleanupForIRC( $this->mAttribs['rc_user_text'] );
 
-		if( $rc_type == RC_LOG ) {
+		if ( $this->mAttribs['rc_type'] == RC_LOG ) {
 			$targetText = $this->getTitle()->getPrefixedText();
-			$comment = self::cleanupForIRC( str_replace("[[$targetText]]","[[\00302$targetText\00310]]",$actionComment) );
-			$flag = $rc_log_action;
+			$comment = self::cleanupForIRC( str_replace( "[[$targetText]]", "[[\00302$targetText\00310]]", $this->mExtra['actionComment'] ) );
+			$flag = $this->mAttribs['rc_log_action'];
 		} else {
-			$comment = self::cleanupForIRC( $rc_comment );
+			$comment = self::cleanupForIRC( $this->mAttribs['rc_comment'] );
 			$flag = '';
-			if( !$rc_patrolled && ($wgUseRCPatrol || $rc_new && $wgUseNPPatrol) ) {
+			if ( !$this->mAttribs['rc_patrolled'] && ( $wgUseRCPatrol || $this->mAttribs['rc_new'] && $wgUseNPPatrol ) ) {
 				$flag .= '!';
 			}
-			$flag .= ($rc_new ? "N" : "") . ($rc_minor ? "M" : "") . ($rc_bot ? "B" : "");
+			$flag .= ( $this->mAttribs['rc_new'] ? "N" : "" ) . ( $this->mAttribs['rc_minor'] ? "M" : "" ) . ( $this->mAttribs['rc_bot'] ? "B" : "" );
 		}
 
 		if ( $wgRC2UDPInterwikiPrefix === true && $wgLocalInterwiki !== false ) {

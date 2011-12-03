@@ -98,7 +98,7 @@ abstract class ExternalUser {
 	 * This is a wrapper around newFromId().
 	 *
 	 * @param $user User
-	 * @return mixed ExternalUser or false
+	 * @return ExternalUser|false
 	 */
 	public static function newFromUser( $user ) {
 		global $wgExternalAuthType;
@@ -293,7 +293,7 @@ abstract class ExternalUser {
 	 * @return Mixed User if the account is linked, Null otherwise.
 	 */
 	public final function getLocalUser(){
-		$dbr = wfGetDb( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$row = $dbr->selectRow(
 			'external_user',
 			'*',

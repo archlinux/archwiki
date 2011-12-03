@@ -55,7 +55,7 @@ class SVGReader {
 		$size = filesize( $source );
 		if ( $size === false ) {
 			throw new MWException( "Error getting filesize of SVG." );
-		} 
+		}
 
 		if ( $size > $wgSVGMetadataCutoff ) {
 			$this->debug( "SVG is $size bytes, which is bigger than $wgSVGMetadataCutoff. Truncating." );
@@ -84,14 +84,14 @@ class SVGReader {
 		wfRestoreWarnings();
 	}
 
-	/*
+	/**
 	 * @return Array with the known metadata
 	 */
 	public function getMetadata() {
 		return $this->metadata;
 	}
 
-	/*
+	/**
 	 * Read the SVG
 	 */
 	public function read() {
@@ -139,10 +139,12 @@ class SVGReader {
 			$keepReading = $this->reader->next();
 		}
 
+		$this->reader->close();
+
 		return true;
 	}
 
-	/*
+	/**
 	 * Read a textelement from an element
 	 *
 	 * @param String $name of the element that we are reading from
@@ -155,7 +157,7 @@ class SVGReader {
 		}
 		$keepReading = $this->reader->read();
 		while( $keepReading ) {
-			if( $this->reader->localName == $name && $this->namespaceURI == self::NS_SVG && $this->reader->nodeType == XmlReader::END_ELEMENT ) {
+			if( $this->reader->localName == $name && $this->reader->namespaceURI == self::NS_SVG && $this->reader->nodeType == XmlReader::END_ELEMENT ) {
 				break;
 			} elseif( $this->reader->nodeType == XmlReader::TEXT ){
 				$this->metadata[$metafield] = trim( $this->reader->value );
@@ -175,18 +177,25 @@ class SVGReader {
 			return;
 		}
 		// TODO: find and store type of xml snippet. metadata['metadataType'] = "rdf"
-		$this->metadata[$metafield] = trim( $this->reader->readInnerXML() );
+		if( method_exists( $this->reader, 'readInnerXML' ) ) {
+			$this->metadata[$metafield] = trim( $this->reader->readInnerXML() );
+		} else {
+			throw new MWException( "The PHP XMLReader extension does not come with readInnerXML() method. Your libxml is probably out of date (need 2.6.20 or later)." );
+		}
 		$this->reader->next();
 	}
 
-	/*
+	/**
 	 * Filter all children, looking for animate elements
 	 *
 	 * @param String $name of the element that we are reading from
 	 */
 	private function animateFilter( $name ) {
-		$this->debug ( "animate filter" );
+		$this->debug ( "animate filter for tag $name" );
 		if( $this->reader->nodeType != XmlReader::ELEMENT ) {
+			return;
+		}
+		if ( $this->reader->isEmptyElement ) {
 			return;
 		}
 		$exitDepth =  $this->reader->depth;
@@ -230,7 +239,7 @@ class SVGReader {
 		wfDebug( "SVGReader WARN: $data\n" );
 	}
 
-	/*
+	/**
 	 * Parse the attributes of an SVG element
 	 *
 	 * The parser has to be in the start element of <svg>

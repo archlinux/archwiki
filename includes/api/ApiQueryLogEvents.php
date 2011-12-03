@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Oct 16, 2006
  *
@@ -86,13 +86,10 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			'log_deleted',
 		) );
 
-		$this->addFieldsIf( 'log_id', $this->fld_ids );
-		$this->addFieldsIf( 'page_id', $this->fld_ids );
-		$this->addFieldsIf( 'log_user', $this->fld_user );
-		$this->addFieldsIf( 'user_name', $this->fld_user );
+		$this->addFieldsIf( array( 'log_id', 'page_id' ), $this->fld_ids );
+		$this->addFieldsIf( array( 'log_user', 'user_name' ), $this->fld_user );
 		$this->addFieldsIf( 'user_id', $this->fld_userid );
-		$this->addFieldsIf( 'log_namespace', $this->fld_title || $this->fld_parsedcomment );
-		$this->addFieldsIf( 'log_title', $this->fld_title || $this->fld_parsedcomment );
+		$this->addFieldsIf( array( 'log_namespace', 'log_title' ), $this->fld_title || $this->fld_parsedcomment );
 		$this->addFieldsIf( 'log_comment', $this->fld_comment || $this->fld_parsedcomment );
 		$this->addFieldsIf( 'log_params', $this->fld_details );
 
@@ -114,13 +111,12 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			list( $type, $action ) = explode( '/', $params['action'] );
 			$this->addWhereFld( 'log_type', $type );
 			$this->addWhereFld( 'log_action', $action );
-		}
-		else if ( !is_null( $params['type'] ) ) {
+		} elseif ( !is_null( $params['type'] ) ) {
 			$this->addWhereFld( 'log_type', $params['type'] );
 			$index['logging'] = 'type_time';
 		}
 
-		$this->addWhereRange( 'log_timestamp', $params['dir'], $params['start'], $params['end'] );
+		$this->addTimestampWhereRange( 'log_timestamp', $params['dir'], $params['start'], $params['end'] );
 
 		$limit = $params['limit'];
 		$this->addOption( 'LIMIT', $limit + 1 );
@@ -148,6 +144,22 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			$index['logging'] = is_null( $user ) ? 'page_time' : array( 'page_time', 'user_time' );
 		}
 
+		$prefix = $params['prefix'];
+
+		if ( !is_null( $prefix ) ) {
+			global $wgMiserMode;
+			if ( $wgMiserMode ) {
+				$this->dieUsage( 'Prefix search disabled in Miser Mode', 'prefixsearchdisabled' );
+			}
+
+			$title = Title::newFromText( $prefix );
+			if ( is_null( $title ) ) {
+				$this->dieUsage( "Bad title value '$prefix'", 'param_prefix' );
+			}
+			$this->addWhereFld( 'log_namespace',  $title->getNamespace() );
+			$this->addWhere( 'log_title ' . $db->buildLike( $title->getDBkey(), $db->anyString() ) );
+		}
+
 		$this->addOption( 'USE INDEX', $index );
 
 		// Paranoia: avoid brute force searches (bug 17342)
@@ -160,6 +172,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 
 		$count = 0;
 		$res = $this->select( __METHOD__ );
+		$result = $this->getResult();
 		foreach ( $res as $row ) {
 			if ( ++ $count > $limit ) {
 				// We've reached the one extra which shows that there are additional pages to be had. Stop here...
@@ -171,25 +184,25 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			if ( !$vals ) {
 				continue;
 			}
-			$fit = $this->getResult()->addValue( array( 'query', $this->getModuleName() ), null, $vals );
+			$fit = $result->addValue( array( 'query', $this->getModuleName() ), null, $vals );
 			if ( !$fit ) {
 				$this->setContinueEnumParameter( 'start', wfTimestamp( TS_ISO_8601, $row->log_timestamp ) );
 				break;
 			}
 		}
-		$this->getResult()->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), 'item' );
+		$result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), 'item' );
 	}
 
 	/**
-	 * @static
 	 * @param $result ApiResult
-	 * @param $vals
-	 * @param $params
-	 * @param $type
+	 * @param $vals array
+	 * @param $params string
+	 * @param $type string
+	 * @param $action string
 	 * @param $ts
 	 * @return array
 	 */
-	public static function addLogParams( $result, &$vals, $params, $type, $ts ) {
+	public static function addLogParams( $result, &$vals, $params, $type, $action, $ts ) {
 		$params = explode( "\n", $params );
 		switch ( $type ) {
 			case 'move':
@@ -219,11 +232,14 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				$params = null;
 				break;
 			case 'block':
+				if ( $action == 'unblock' ) {
+					break;
+				}
 				$vals2 = array();
 				list( $vals2['duration'], $vals2['flags'] ) = $params;
 
 				// Indefinite blocks have no expiry time
-				if ( Block::parseExpiryInput( $params[0] ) !== Block::infinity() ) {
+				if ( SpecialBlock::parseExpiryInput( $params[0] ) !== wfGetDB( DB_SLAVE )->getInfinity() ) {
 					$vals2['expiry'] = wfTimestamp( TS_ISO_8601,
 						strtotime( $params[0], wfTimestamp( TS_UNIX, $ts ) ) );
 				}
@@ -268,8 +284,11 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				$vals['actionhidden'] = '';
 			} else {
 				self::addLogParams(
-					$this->getResult(), $vals,
-					$row->log_params, $row->log_type,
+					$this->getResult(),
+					$vals,
+					$row->log_params,
+					$row->log_type,
+					$row->log_action,
 					$row->log_timestamp
 				);
 			}
@@ -285,7 +304,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				if ( $this->fld_userid ) {
 					$vals['userid'] = $row->user_id;
 				}
-				
+
 				if ( !$row->log_user ) {
 					$vals['anon'] = '';
 				}
@@ -372,6 +391,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			),
 			'user' => null,
 			'title' => null,
+			'prefix' => null,
 			'tag' => null,
 			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
@@ -384,27 +404,29 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	}
 
 	public function getParamDescription() {
+		$p = $this->getModulePrefix();
 		return array(
 			'prop' => array(
 				'Which properties to get',
-				' ids            - Adds the id of the log event',
+				' ids            - Adds the ID of the log event',
 				' title          - Adds the title of the page for the log event',
 				' type           - Adds the type of log event',
 				' user           - Adds the user responsible for the log event',
-				' userid         - Adds the user id who was responsible for the log event',
+				' userid         - Adds the user ID who was responsible for the log event',
 				' timestamp      - Adds the timestamp for the event',
 				' comment        - Adds the comment of the event',
 				' parsedcomment  - Adds the parsed comment of the event',
 				' details        - Lists addtional details about the event',
 				' tags           - Lists tags for the event',
 			),
-			'type' => 'Filter log entries to only this type(s)',
-			'action' => "Filter log actions to only this type. Overrides {$this->getModulePrefix()}type",
+			'type' => 'Filter log entries to only this type',
+			'action' => "Filter log actions to only this type. Overrides {$p}type",
 			'start' => 'The timestamp to start enumerating from',
 			'end' => 'The timestamp to end enumerating',
-			'dir' => 'In which direction to enumerate',
+			'dir' => $this->getDirectionDescription( $p ),
 			'user' => 'Filter entries to those made by the given user',
 			'title' => 'Filter entries to those related to a page',
+			'prefix' => 'Filter entries that start with this prefix. Disabled in Miser Mode',
 			'limit' => 'How many total event entries to return',
 			'tag' => 'Only list event entries tagged with this tag',
 		);
@@ -418,6 +440,8 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		return array_merge( parent::getPossibleErrors(), array(
 			array( 'code' => 'param_user', 'info' => 'User name $user not found' ),
 			array( 'code' => 'param_title', 'info' => 'Bad title value \'title\'' ),
+			array( 'code' => 'param_prefix', 'info' => 'Bad title value \'prefix\'' ),
+			array( 'code' => 'prefixsearchdisabled', 'info' => 'Prefix search disabled in Miser Mode' ),
 		) );
 	}
 
@@ -427,7 +451,11 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Logevents';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryLogEvents.php 74535 2010-10-09 00:01:45Z reedy $';
+		return __CLASS__ . ': $Id: ApiQueryLogEvents.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

@@ -10,6 +10,7 @@
  * @author Dark Eagle
  * @author Gleb Borisov
  * @author Jureits
+ * @author Reedy
  */
 
 $namespaceNames = array(
@@ -148,10 +149,10 @@ $messages = array(
 'searcharticle'    => 'Īt',
 'history'          => 'Puslopys viesture',
 'history_short'    => 'Viesture',
-'info_short'       => 'Informaceja',
 'printableversion' => 'Verseja drukavuošonai',
 'permalink'        => 'Nūtaleja nūruode',
 'print'            => 'Drukavuot',
+'view'             => 'Vērtīs',
 'edit'             => 'Pataiseit',
 'create'           => 'Sataiseit',
 'editthispage'     => 'Pataiseit itū puslopu',
@@ -265,10 +266,14 @@ Par to var ziņuot [[Special:ListUsers/sysop|kaidam administratoram]], nūruodū
 'mailmypassword'          => 'Atsyuteit maņ jaunu paroli',
 'loginlanguagelabel'      => 'Volūda: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass_text'            => '<!-- Dalikt tekstu ite -->',
 'resetpass-submit-loggedin' => 'Puormeit paroļu',
 'resetpass-submit-cancel'   => 'Atsaukt',
+
+# Special:PasswordReset
+'passwordreset-username' => 'Slāgvuords:',
+'passwordreset-email'    => 'E-posta adress:',
 
 # Edit page toolbar
 'bold_sample'     => 'Pamalnais roksts',
@@ -281,8 +286,6 @@ Par to var ziņuot [[Special:ListUsers/sysop|kaidam administratoram]], nūruodū
 'extlink_tip'     => 'Uorejuo saite (naaizmierst suokumā dalikt "http://")',
 'headline_sample' => 'Viersroksta teksts',
 'headline_tip'    => '2 leidzīņa viersroksts',
-'math_sample'     => 'Formulu īrokst ite',
-'math_tip'        => 'Matematiska formula (LaTeX)',
 'nowiki_sample'   => 'Ite rokst naformatietu tekstu',
 'nowiki_tip'      => 'Najimt vārā wiki formatiejumu',
 'image_sample'    => 'Paraugs.jpg',
@@ -602,11 +605,9 @@ Lopys, kas ir tovā [[Special:Watchlist|puorraugamūs rokstu sarokstā]] ir '''r
 # Watchlist
 'watchlist'         => 'Muns davēris saroksts',
 'mywatchlist'       => 'Muns davēris saroksts',
-'addedwatch'        => 'Davīnuots puorraugamū sarokstam.',
 'addedwatchtext'    => "Lopa \"[[:\$1]]\" ir davīnuota [[Special:Watchlist|tevis puorraugamajom lopom]], kur tiks paruodeitys izmainis, kas izdareitys itymā lopā voi ituos lopys sarunu lopā, kai ari itei lopa tiks īzeimāta '''pusrasna''' [[Special:RecentChanges|pādejūs izmaiņu lopā]], lai itū byutu vīgluok pamaneit.
 
 Ka vāluok puordūmuosi i nagribiesi vairs puorraudzeit itū lopu, spīd iz saitis '''napuorraudzeit''' reiku jūslā.",
-'removedwatch'      => 'Lopa vairs nateik puorraudzeita',
 'removedwatchtext'  => 'Lopa "[[:$1]]" ir izjimta nu tova [[Special:Watchlist|puorraugamūs lopu saroksta]].',
 'watch'             => 'Puorraudzeit',
 'watchthispage'     => 'Puorraudzeit itū lopu',
@@ -625,7 +626,7 @@ Ka vāluok puordūmuosi i nagribiesi vairs puorraudzeit itū lopu, spīd iz sait
 'excontentauthor'       => 'turīņs beja: "$1" (vīneigais autors: [[Special:Contributions/$2|$2]])',
 'confirmdeletetext'     => 'Tu tagad nu datu bazys iztreisi lopu voi biļdi, kai ari tūs īprīškejuos versejis. Lyudzu, apstypryni, ka tu pa eistam tū gribi dareit, ka tu saprūt, ka tū dori i atbylstūši [[{{MediaWiki:Policy-url}}|nūsacejumim]].',
 'actioncomplete'        => 'Darbeiba pabeigta',
-'deletedtext'           => '"<nowiki>$1</nowiki>" beja iztreits.
+'deletedtext'           => '"$1" beja iztreits.
 Kab apsavērtu pādejuo iztreitū sarokstu, verīs $2.',
 'deletedarticle'        => 'dzāsts "[[$1]]"',
 'dellogpage'            => 'Iztreišonys registris',
@@ -645,7 +646,7 @@ Kab apsavērtu pādejuo iztreitū sarokstu, verīs $2.',
 'protectexpiry'               => 'Izabeidz:',
 'protect_expiry_invalid'      => 'Beigu termiņš ir nadereigs.',
 'protect_expiry_old'          => 'Beigu termiņš jau paguojs.',
-'protect-text'                => "Ite var apsavērt i izmaineit lopys '''<nowiki>$1</nowiki>''' aizsardzeibys leimini.",
+'protect-text'                => "Ite var apsavērt i izmaineit lopys '''$1''' aizsardzeibys leimini.",
 'protect-locked-access'       => "Jiusu kontam nav atļuovis maineit lopys aizsardzeibys pakuopi.
 Pašreizejī lopys '''$1''' īstatejumi ir:",
 'protect-cascadeon'           => 'Itei lopa niu ir aizsorguota, deļ tam ka tei ir īlykta {{PLURAL:$1|itadā lopā|itaiduos lopuos}} (mainūt ituos lopys aizsardzeibys leimini tuos aizsardzeiba nabyus nūjimta):',
@@ -841,11 +842,10 @@ Tys ļaun davīnuot pamatuojumu kūpsavylkumā.',
 'nextdiff'     => 'Jaunuokuo verseja →',
 
 # Media information
-'file-info-size'       => '$1 × $2 pikseli, faila izmārs: $3, MIME tips: $4',
-'file-nohires'         => '<small>Augstuoka izškirtspieja nav pīejama.</small>',
-'svg-long-desc'        => 'SVG fails, definātais lelums $1 × $2 pikseli, faila lelums: $3',
-'show-big-image'       => 'Pylnā lelumā',
-'show-big-image-thumb' => '<small>Ituo pyrmsskota lelums: $1 × $2 pikseli</small>',
+'file-info-size' => '$1 × $2 pikseli, faila izmārs: $3, MIME tips: $4',
+'file-nohires'   => '<small>Augstuoka izškirtspieja nav pīejama.</small>',
+'svg-long-desc'  => 'SVG fails, definātais lelums $1 × $2 pikseli, faila lelums: $3',
+'show-big-image' => 'Pylnā lelumā',
 
 # Special:NewFiles
 'newimages-legend' => 'Fiļtris',
@@ -867,19 +867,23 @@ Puorejī lauki, piec nūklusiejuma, byus nūglobuoti.
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # External editor support
 'edit-externally'      => 'Izmaineit itū failu ar uoreju programu',
-'edit-externally-help' => '(Verīs [http://www.mediawiki.org/wiki/Manual:External_editors instrukcijas] Mediawiki.org, kab dabuotu vaira informacejis).',
+'edit-externally-help' => '(Verīs [//www.mediawiki.org/wiki/Manual:External_editors instrukcijas] Mediawiki.org, kab dabuotu vaira informacejis).',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'vysi',
-'imagelistall'     => 'vysi',
-'watchlistall2'    => 'vysys',
-'namespacesall'    => 'vysys',
-'monthsall'        => 'vysi',
-'limitall'         => 'vysys',
+'watchlistall2' => 'vysys',
+'namespacesall' => 'vysys',
+'monthsall'     => 'vysi',
+'limitall'      => 'vysys',
 
 # Watchlist editing tools
 'watchlisttools-view' => 'Apsavērt atbylstūšuos izmainis',

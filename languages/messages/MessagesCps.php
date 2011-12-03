@@ -141,15 +141,6 @@ $messages = array(
 'index-category'                 => 'Na-index nga mga pahina',
 'noindex-category'               => 'Wala na-index nga mga pahina',
 
-'mainpagetext'      => "'''Madalag-on nga na-install ang MediaWiki.'''",
-'mainpagedocfooter' => 'Kunsultahon ang [http://meta.wikimedia.org/wiki/Help:Pagtuytoy sa Manug-usar] para sa impormasyon sa paggamit sang wiki nga "software".
-
-==Pag-umpisa==
-
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Lista sang mga setting sang konpigurayon]
-* [http://www.mediawiki.org/wiki/Manual:FAQ Mga perme napangkot sa MediaWiki]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Lista sang mga ginapadal-an sang sulat sang MediaWiki]',
-
 'about'         => 'Nahanungod sa',
 'article'       => 'Pahina sang ka-undan',
 'newwindow'     => '(gabukas sa bag-o nga bintana)',
@@ -199,7 +190,6 @@ $messages = array(
 'history'           => 'Kasaysayan sang pahina',
 'history_short'     => 'Kasaysayan',
 'updatedmarker'     => 'na-update halin sang san-o ko lang nga pagbisita',
-'info_short'        => 'Impormasyon',
 'printableversion'  => 'Pang-imprinta nga bersyon',
 'permalink'         => 'Permanente nga link',
 'print'             => 'I-imprinta',
@@ -378,7 +368,6 @@ Pwede nga naga-unod mini sang isa ukon madamo pa nga mga karakter nga indi pwede
 'sqlhidden'            => '(nakatago ang pamangkot sang SQL)',
 'cascadeprotected'     => '',
 'namespaceprotected'   => "Wala ka sang permiso nga magliwat sang mga pahina nga ara sa namespace nga '''$1'''.",
-'customcssjsprotected' => 'Wala ka sang permiso nga bag-uhon ang ini nga pahina, tungod naga-unod ni sang mga pangkina-ugalingon nga gusto sang iban nga manug-usar.',
 'ns-specialprotected'  => 'Indi pwede bag-uhon ang mga pinasahi nga pahina.',
 'titleprotected'       => 'Naprotektahan ang mini nga titulo halin sa pag-ubra ni [[User:$1|$1]].
 Mini ang ginhatag nga kabangdanan "\'\'$2\'\'".',
@@ -439,7 +428,7 @@ Palihog tistingan liwat.',
 'usernamehasherror'       => 'Ang ngalan sang manug-usar indi dapat mag-unod sang mga labay-labay nga mga karakter.',
 'loginlanguagelabel'      => 'Lingguahe:',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'               => 'Islan ang password',
 'resetpass_header'        => 'Islan ang password sang account',
 'oldpassword'             => 'Luma nga password:',
@@ -461,8 +450,6 @@ Palihog tistingan liwat.',
 'extlink_tip'     => 'Halin sa gwa nga link (tandaan ang http:// nga prefiks)',
 'headline_sample' => 'Teksto sang pangulong-dinalan',
 'headline_tip'    => 'Lebel 2 pangulong-dinalan',
-'math_sample'     => 'Isulod ang diya pormula',
-'math_tip'        => 'Pormula nga pangmatematika (LaTeX)',
 'nowiki_sample'   => 'Isal-ot ang wala na-format nga teksto diya',
 'nowiki_tip'      => 'Pabay-an ang wiki nga sulundan',
 'image_tip'       => 'Ginpilit nga file',
@@ -672,10 +659,8 @@ Mga Pahina sa [[Special:Watchlist|imo watchlist]]  '''madukot'''.",
 # Watchlist
 'watchlist'         => 'Mga akon ginabantayan',
 'mywatchlist'       => 'Akon ginabantayan',
-'addedwatch'        => 'Gindugang sa lista sang ginabantayan',
 'addedwatchtext'    => "Ang pahina nga \"[[:\$1]]\" gindugang na sa imo [[Special:Watchlist|ginabantayan]].
 Ang mga pagbag-o sa buwas-damlag kag mga kaangot nga pahina sang istoryahanay pagalistahon diya, kag ang pahina maggwa nga '''madukot''' sa [[Special:RecentChanges|lista sang mga nagligad nga pagbag-o]] para mas mahapos makita.",
-'removedwatch'      => 'Ginkuha na sa lista sang ginabanatayan',
 'removedwatchtext'  => 'Ang pahina nga "[[:$1]]" ginkakas halin sa [[Special:Watchlist|imo lista sang ginabantayan]].',
 'watch'             => 'Bantayan',
 'watchthispage'     => 'Bantayan ang mini nga pahina',
@@ -693,7 +678,7 @@ Ang mga pagbag-o sa buwas-damlag kag mga kaangot nga pahina sang istoryahanay pa
 'confirmdeletetext'     => 'Imo na pagapanason ang isa ka pahina kaupod sang iya mga kasaysayan.
 Palihog kumpirmahon nga intensyon mo nga himu-on mini, nga na-intindihan mo ang abtan, kag gina-ubra mo mini nga nagasunod sa [[{{MediaWiki:Policy-url}}|patakaran]].',
 'actioncomplete'        => 'Tapos na ang aksyon',
-'deletedtext'           => 'Napanas na ang "<nowiki>$1</nowiki>".
+'deletedtext'           => 'Napanas na ang "$1".
 Tan-awon ang $2 para sa nalista sang mga bag-o lang napanas.',
 'deletedarticle'        => 'ginpanas ang "[[$1]]"',
 'dellogpage'            => 'Lista sang pagpanas',
@@ -712,7 +697,7 @@ Tan-awon ang $2 para sa nalista sang mga bag-o lang napanas.',
 'protectexpiry'               => 'Maga-ekspayr sa:',
 'protect_expiry_invalid'      => 'Indi pwede ang oras sang pag-ekspayr.',
 'protect_expiry_old'          => 'Sang nagligad pa ang oras sang pag-ekspayr.',
-'protect-text'                => "Pwede mo malantaw kag mabag-o ang lebel sang proteksiyon diya para sa pahina nga '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "Pwede mo malantaw kag mabag-o ang lebel sang proteksiyon diya para sa pahina nga '''$1'''.",
 'protect-locked-access'       => "Ang imo account wala nakala-ong para magpangbag-o sang proteksyon nga lebel sang pahina.
 Ari ang mga mga settings yanda para sa pahina nga '''$1''':",
 'protect-cascadeon'           => 'Protektado ang mini nga pahina kay nasakop mini sa mga gasunod nga {{PLURAL:$1|pahina, nga may|mga pahina, nga may}} pasunod nga proteksiyon nga naga-andar.
@@ -885,11 +870,10 @@ Ginapasugtan sa pagdugang sang rason sa kabilugan.',
 'nextdiff'     => 'Mas bag-o nga gin-islan →',
 
 # Media information
-'file-info-size'       => '$1 × $2 piksel, kadakuon sang file: $3, klase sang MIME: $4',
-'file-nohires'         => '<small>Wala na sang mas mataas pa nga resolusyon (katin-aw).</small>',
-'svg-long-desc'        => 'SVG file, nga ara sa $1 × $2 ka piksels, kadakuon sang file: $3',
-'show-big-image'       => 'Bilog nga resolusyon (katin-aw)',
-'show-big-image-thumb' => '<small>Kadakuon sang mini nga prebyu: $1 × $2 piksels</small>',
+'file-info-size' => '$1 × $2 piksel, kadakuon sang file: $3, klase sang MIME: $4',
+'file-nohires'   => '<small>Wala na sang mas mataas pa nga resolusyon (katin-aw).</small>',
+'svg-long-desc'  => 'SVG file, nga ara sa $1 × $2 ka piksels, kadakuon sang file: $3',
+'show-big-image' => 'Bilog nga resolusyon (katin-aw)',
 
 # Bad image list
 'bad_image_list' => 'Ang pormat nga pagasundon:
@@ -912,11 +896,17 @@ Ang iban ay pagataguon sang default.
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # External editor support
 'edit-externally'      => 'Islan ang mini nga file gamit ang panluwas nga aplikasyon',
-'edit-externally-help' => '(Tan-awa ang [http://www.mediawiki.org/wiki/Manual:External_editors mga pama-agi sa paghanda kag pag-ayos] para sa mga dugang nga impormasyon)',
+'edit-externally-help' => '(Tan-awa ang [//www.mediawiki.org/wiki/Manual:External_editors mga pama-agi sa paghanda kag pag-ayos] para sa mga dugang nga impormasyon)',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'tanan',

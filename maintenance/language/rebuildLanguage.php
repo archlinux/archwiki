@@ -2,6 +2,21 @@
 /**
  * Rewrite the messages array in the files languages/messages/MessagesXx.php.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup MaintenanceLanguage
  * @defgroup MaintenanceLanguage MaintenanceLanguage
@@ -14,11 +29,12 @@ require_once( 'writeMessagesArray.inc' );
 /**
  * Rewrite a messages array.
  *
+ * @param $languages
  * @param $code The language code.
- * @param $write Write to the messages file?
- * @param $listUnknown List the unknown messages?
- * @param $removeUnknown Remove the unknown messages?
- * @param $removeDupes Remove the duplicated messages?
+ * @param bool $write Write to the messages file?
+ * @param bool $listUnknown List the unknown messages?
+ * @param bool $removeUnknown Remove the unknown messages?
+ * @param bool $removeDupes Remove the duplicated messages?
  * @param $dupeMsgSource The source file intended to remove from the array.
  */
 function rebuildLanguage( $languages, $code, $write, $listUnknown, $removeUnknown, $removeDupes, $dupeMsgSource ) {
@@ -35,7 +51,7 @@ function rebuildLanguage( $languages, $code, $write, $listUnknown, $removeUnknow
  *
  * @param $oldMsgArray The input message array.
  * @param $dupeMsgSource The source file path for duplicates.
- * @return $newMsgArray The output message array, with duplicates removed.
+ * @return Array $newMsgArray The output message array, with duplicates removed.
  */
 function removeDupes( $oldMsgArray, $dupeMsgSource ) {
 	if ( file_exists( $dupeMsgSource ) ) {

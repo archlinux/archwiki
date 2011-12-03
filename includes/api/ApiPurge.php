@@ -49,6 +49,9 @@ class ApiPurge extends ApiBase {
 				!$this->getMain()->getRequest()->wasPosted() ) {
 			$this->dieUsageMsg( array( 'mustbeposted', $this->getModuleName() ) );
 		}
+
+		$forceLinkUpdate = $params['forcelinkupdate'];
+
 		$result = array();
 		foreach ( $params['titles'] as $t ) {
 			$r = array();
@@ -65,13 +68,39 @@ class ApiPurge extends ApiBase {
 				$result[] = $r;
 				continue;
 			}
-			$article = MediaWiki::articleFromTitle( $title );
+			$context = $this->createContext();
+			$context->setTitle( $title );
+			$article = Article::newFromTitle( $title, $context );
 			$article->doPurge(); // Directly purge and skip the UI part of purge().
 			$r['purged'] = '';
+
+			if( $forceLinkUpdate ) {
+				if ( !$wgUser->pingLimiter() ) {
+					global $wgParser, $wgEnableParserCache;
+					$popts = new ParserOptions();
+					$p_result = $wgParser->parse( $article->getContent(), $title, $popts );
+
+					# Update the links tables
+					$u = new LinksUpdate( $title, $p_result );
+					$u->doUpdate();
+
+					$r['linkupdate'] = '';
+
+					if ( $wgEnableParserCache ) {
+						$pcache = ParserCache::singleton();
+						$pcache->save( $p_result, $article, $popts );
+					}
+				} else {
+					$this->setWarning( $this->parseMsg( array( 'actionthrottledtext' ) ) );
+					$forceLinkUpdate = false;
+				}
+			}
+
 			$result[] = $r;
 		}
-		$this->getResult()->setIndexedTagName( $result, 'page' );
-		$this->getResult()->addValue( null, $this->getModuleName(), $result );
+		$apiResult = $this->getResult();
+		$apiResult->setIndexedTagName( $result, 'page' );
+		$apiResult->addValue( null, $this->getModuleName(), $result );
 	}
 
 	public function isWriteMode() {
@@ -83,19 +112,21 @@ class ApiPurge extends ApiBase {
 			'titles' => array(
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_REQUIRED => true
-			)
+			),
+			'forcelinkupdate' => false,
 		);
 	}
 
 	public function getParamDescription() {
 		return array(
 			'titles' => 'A list of titles',
+			'forcelinkupdate' => 'Update the links tables',
 		);
 	}
 
 	public function getDescription() {
 		return array( 'Purge the cache for the given titles.',
-			'This module requires a POST request if the user is not logged in.'
+			'Requires a POST request if the user is not logged in.'
 		);
 	}
 
@@ -111,7 +142,11 @@ class ApiPurge extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Purge';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiPurge.php 74944 2010-10-18 09:19:20Z catrope $';
+		return __CLASS__ . ': $Id: ApiPurge.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

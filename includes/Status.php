@@ -17,7 +17,9 @@ class Status {
 	var $value;
 
 	/** Counters for batch operations */
-	var $successCount = 0, $failCount = 0;
+	public $successCount = 0, $failCount = 0;
+	/** Array to indicate which items of the batch operations were successful */
+	public $success = array();
 
 	/*semi-private*/ var $errors = array();
 	/*semi-private*/ var $cleanCallback = false;
@@ -125,6 +127,10 @@ class Status {
 		$this->cleanCallback = false;
 	}
 
+	/**
+	 * @param $params array
+	 * @return array
+	 */
 	protected function cleanParams( $params ) {
 		if ( !$this->cleanCallback ) {
 			return $params;
@@ -136,20 +142,25 @@ class Status {
 		return $cleanParams;
 	}
 
+	/**
+	 * @param $item
+	 * @return string
+	 */
 	protected function getItemXML( $item ) {
 		$params = $this->cleanParams( $item['params'] );
 		$xml = "<{$item['type']}>\n" .
 			Xml::element( 'message', null, $item['message'] ) . "\n" .
-			Xml::element( 'text', null, wfMsgReal( $item['message'], $params ) ) ."\n";
+			Xml::element( 'text', null, wfMsg( $item['message'], $params ) ) ."\n";
 		foreach ( $params as $param ) {
 			$xml .= Xml::element( 'param', null, $param );
 		}
-		$xml .= "</{$this->type}>\n";
+		$xml .= "</{$item['type']}>\n";
 		return $xml;
 	}
 
 	/**
 	 * Get the error list as XML
+	 * @return string
 	 */
 	function getXML() {
 		$xml = "<errors>\n";
@@ -209,17 +220,15 @@ class Status {
 	protected function getWikiTextForError( $error ) {
 		if ( is_array( $error ) ) {
 			if ( isset( $error['message'] ) && isset( $error['params'] ) ) {
-				return wfMsgReal( $error['message'],
-					array_map( 'wfEscapeWikiText', $this->cleanParams( $error['params'] ) ),
-					true, false, false );
+				return wfMsgNoTrans( $error['message'],
+					array_map( 'wfEscapeWikiText', $this->cleanParams( $error['params'] ) )  );
 			} else {
 				$message = array_shift($error);
-				return wfMsgReal( $message,
-					array_map( 'wfEscapeWikiText', $this->cleanParams( $error ) ),
-					true, false, false );
+				return wfMsgNoTrans( $message,
+					array_map( 'wfEscapeWikiText', $this->cleanParams( $error ) ) );
 			}
 		} else {
-			return wfMsgReal( $error, array(), true, false, false);
+			return wfMsgNoTrans( $error );
 		}
 	}
 
@@ -235,7 +244,7 @@ class Status {
 	/**
 	 * Merge another status object into this one
 	 *
-	 * @param $other Other Status object
+	 * @param $other Status Other Status object
 	 * @param $overwriteValue Boolean: whether to override the "value" member
 	 */
 	function merge( $other, $overwriteValue = false ) {
@@ -279,12 +288,31 @@ class Status {
 				if( $error['params'] ) {
 					$result[] = array_merge( array( $error['message'] ), $error['params'] );
 				} else {
-					$result[] = $error['message'];
+					$result[] = array( $error['message'] );
 				}
 			}
 		}
 		return $result;
 	}
+	
+	/**
+	 * Returns a list of status messages of the given type, with message and
+	 * params left untouched, like a sane version of getStatusArray
+	 * 
+	 * @param $type String
+	 *
+	 * @return Array
+	 */
+	public function getErrorsByType( $type ) {
+		$result = array();
+		foreach ( $this->errors as $error ) {
+			if ( $error['type'] === $type ) {
+				$result[] = $error;
+			}		
+		}
+		return $result;
+	}
+
 	/**
 	 * Returns true if the specified message is present as a warning or error
 	 *
@@ -305,6 +333,8 @@ class Status {
 	 * destination message, but keep the same parameters as in the original error.
 	 *
 	 * Return true if the replacement was done, false otherwise.
+	 *
+	 * @return bool
 	 */
 	function replaceMessage( $source, $dest ) {
 		$replaced = false;

@@ -152,14 +152,7 @@ $messages = array(
 'category-file-count-limited'    => 'Ку категоринче $1 файл.',
 'listingcontinuesabbrev'         => '(малалли)',
 
-'linkprefix'        => '/^(.*?)([a-zA-Z\\x80-\\xff«"]+)$/sD',
-'mainpagetext'      => "'''«MediaWiki» вики-движока лартасси ăнăçлă вĕçленчĕ.'''",
-'mainpagedocfooter' => 'Ку википе ĕçлеме пулăшакан информацине [http://meta.wikimedia.org/wiki/%D0%9F%D0%BE%D0%BC%D0%BE%D1%89%D1%8C:%D0%A1%D0%BE%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D0%BD%D0%B8%D0%B5 усăç руководствинче] тупма пултаратăр.
-
-== Пулăшма пултарĕç ==
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Ĕнерлевсен списокĕ];
-* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki тăрăх час-часах ыйтакан ыйтусемпе хуравсем];
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki çĕнĕ верси тухнине пĕлтерекен рассылка].',
+'linkprefix' => '/^(.*?)([a-zA-Z\\x80-\\xff«"]+)$/sD',
 
 'about'         => 'Ăнлантаркăч',
 'article'       => 'Статья',
@@ -204,7 +197,6 @@ $messages = array(
 'history'           => 'Истори',
 'history_short'     => 'Истори',
 'updatedmarker'     => 'эпĕ юлашки хут кĕнĕ хыççăн çĕнелнĕ',
-'info_short'        => 'Информаци',
 'printableversion'  => 'Пичетлемелли верси',
 'permalink'         => 'Яланхи вырăн',
 'print'             => 'Пичетле',
@@ -375,7 +367,6 @@ $1',
 'protectedinterface'   => "Ку страница çинче MediaWiki'н системлă çырăвĕ вырнаçнă, ăна проект администраторĕсем çеç улăштарма пултараççĕ.",
 'sqlhidden'            => '(SQL ыйтăва пытарнă)',
 'namespaceprotected'   => 'Сирĕн «$1» ят уçлăхĕнчи статьясене тӳрлетмелли май çук..',
-'customcssjsprotected' => 'Ку страницăра тепĕр хутшăнаканăн ятарлă ĕнерлевĕсем вырнаçнă, çавна май эсир ăна тӳрлетейместĕр.',
 'ns-specialprotected'  => '«{{ns:special}}» ят уçлăхĕнчи страницăсене эсир тӳрлетейместĕр.',
 'titleprotected'       => "Ку ятлă страницăна хатĕрлессине [[Хутшăнакан:$1|$1]] хутшăнакан чарса хунă.
 Çак сăлтава кăтартнă: ''$2''.",
@@ -439,7 +430,7 @@ $1',
 'createaccount-title'        => '{{SITENAME}}: хутшăнакана хушасси',
 'loginlanguagelabel'         => 'Чĕлхе: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'               => 'Хутшăнаканăн вăрттăн сăмахне çĕнетесси',
 'resetpass_header'        => 'Пароле пăрахăçла',
 'oldpassword'             => 'Кивě пароль',
@@ -460,8 +451,6 @@ $1',
 'extlink_tip'     => 'Тулаш каçи (http:// префикс çинчен ан манăр)',
 'headline_sample' => 'Пуçелĕк',
 'headline_tip'    => 'Иккĕмĕш шайри ят',
-'math_sample'     => 'Формулăна кунта кĕртĕр',
-'math_tip'        => 'Математика формули (LaTeX форматпа)',
 'nowiki_sample'   => 'Кунта фотматламан текста кĕртĕр.',
 'nowiki_tip'      => 'Вики-ĕрешлевне пăхмалла мар',
 'image_tip'       => 'Кĕртсе лартнă ӳкерчĕк',
@@ -924,10 +913,8 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'nowatchlist'      => 'Эсир пăхса тăракан страницăсен списокĕ пушă.',
 'watchnologin'     => 'Системăна хăвăр ята каламалла',
 'watchnologintext' => 'Сăнав списокне улăштармашкăн сирĕн системăна [[Special:UserLogin|хăвăр ята каламалла]].',
-'addedwatch'       => 'Сăнамалли шутне кĕртрĕмĕр',
 'addedwatchtext'   => '«[[:$1]]» страницăна сирĕн [[Special:Watchlist|сăнав списока]] хушрăмăр. Малашне [[Special:RecentChanges|юлашки улшăнусене кăтартакан страницăра]] унпа çыхăннă улшăнусене хылăм шрифтпа курăнĕç.
 Енчен те сирĕн ку страницăна сăнас кăмăл пĕтсен, «ан сăна» пускăч çине пусăр.',
-'removedwatch'     => 'Сăнамалли списокран кăларса пăрахнă',
 'removedwatchtext' => '«[[:$1]]» страницăна сирĕн сăнамалли списокран кăларса пăрахнă.',
 'watch'            => 'Сăна',
 'watchthispage'    => 'Ку страницăна сăнаса тăр',
@@ -1024,7 +1011,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'unblockip'                => 'IP-адреса блокировкăран калар',
 'unblocked-id'             => '$1 чарса лартнине ирĕке кăларнă',
 'ipblocklist'              => 'Чарнă IP-адрессемпе хутшăнакансен списокĕ',
-'ipblocklist-username'     => 'Хутшăнакан ячĕ, е IP-адрес:',
 'ipblocklist-submit'       => 'Туп',
 'ipblocklist-empty'        => 'Чару списокĕ пушă.',
 'blocklink'                => 'ĕçлеме чар',
@@ -1117,22 +1103,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Spam protection
 'spambot_username' => 'MediaWiki спамран тасатни',
 
-# Info page
-'infosubtitle'   => 'Страница çинчен',
-'numedits'       => 'Улшăнусен шучĕ (статьясем): $1',
-'numtalkedits'   => 'Улшăнусен шучĕ (сӳтсе явмалли страница): $1',
-'numwatchers'    => 'Сăнакансен шучĕ: $1',
-'numtalkauthors' => 'Тĕрлĕ авторсен шучĕ (çӳтсе явмалли страница): $1',
-
-# Math options
-'mw_math_png'    => 'Яланах PNG хатĕрлемелле',
-'mw_math_simple' => 'Ахаль чухне HTML, урăхла чухне PNG',
-'mw_math_html'   => 'май пулсан HTML, май çук пулсан — PNG',
-'mw_math_modern' => 'Хальхи браузерсемпе усă курмашкăн сĕннĕ пек',
-
-# Math errors
-'math_syntax_error' => 'синтаксис йăнăшĕ',
-
 # Patrolling
 'markaspatrolleddiff'   => 'Тĕрĕсленĕ тесе палăрт',
 'markaspatrolledtext'   => 'Ку статьяна тĕрĕсленĕ тесе палăртмалла',
@@ -1174,10 +1144,8 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'edit-externally' => 'Ку файла тулашри программăна усă курса тӳрлет',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'пурте',
-'imagelistall'     => 'Пурте',
-'watchlistall2'    => 'пурте',
-'namespacesall'    => 'пурте',
+'watchlistall2' => 'пурте',
+'namespacesall' => 'пурте',
 
 # E-mail address confirmation
 'confirmemail_sent'     => 'Çирĕплетмелли ыйтуллă çырăва ятăмăр.',

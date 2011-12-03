@@ -16,9 +16,9 @@
  */
 
 $specialPageAliases = array(
-	'Uncategorizedpages'        => array( 'UncategorisedPages' ),
 	'Uncategorizedcategories'   => array( 'UncategorisedCategories' ),
 	'Uncategorizedimages'       => array( 'UncategorisedFiles', 'UncategorisedImages' ),
+	'Uncategorizedpages'        => array( 'UncategorisedPages' ),
 	'Uncategorizedtemplates'    => array( 'UncategorisedTemplates' ),
 );
 
@@ -109,8 +109,15 @@ If the file has been modified from its original state, some details may not full
 'exif-sensingmethod-5' => 'Colour sequential area sensor',
 'exif-sensingmethod-8' => 'Colour sequential linear sensor',
 
+# Pseudotags used for GPSAltitudeRef
+'exif-gpsaltitude-above-sealevel' => '$1 {{PLURAL:$1|metre|metres}} above sea level',
+'exif-gpsaltitude-below-sealevel' => '$1 {{PLURAL:$1|metre|metres}} below sea level',
+
 # Pseudotags used for GPSSpeedRef
 'exif-gpsspeed-k' => 'Kilometres per hour',
+
+# Pseudotags used for GPSDestDistanceRef
+'exif-gpsdestdistance-k' => 'Kilometres',
 
 # E-mail address confirmation
 'confirmemail_invalidated' => 'E-mail address confirmation cancelled',
@@ -120,6 +127,6 @@ If the file has been modified from its original state, some details may not full
 
 MediaWiki is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public Licence for more details.
 
-You should have received [{{SERVER}}{{SCRIPTPATH}}/COPYING a copy of the GNU General Public Licence] along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA or [http://www.gnu.org/licenses/old-licenses/gpl-2.0.html read it online].',
+You should have received [{{SERVER}}{{SCRIPTPATH}}/COPYING a copy of the GNU General Public Licence] along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA or [//www.gnu.org/licenses/old-licenses/gpl-2.0.html read it online].',
 
 );

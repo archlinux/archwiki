@@ -38,58 +38,53 @@ class ApiQueryStashImageInfo extends ApiQueryImageInfo {
 		$prop = array_flip( $params['prop'] );
 
 		$scale = $this->getScale( $params );
-		
+
 		$result = $this->getResult();
-		
+
+		if ( !$params['filekey'] && !$params['sessionkey'] ) {
+			$this->dieUsage( "One of filekey or sessionkey must be supplied", 'nofilekey');
+		}
+
 		try {
 			$stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash();
-		
-			foreach ( $params['sessionkey'] as $sessionkey ) {	
-				$file = $stash->getFile( $sessionkey );
-				$imageInfo = self::getInfo( $file, $prop, $result, $scale );
+
+			foreach ( $params['filekey'] as $filekey ) {
+				$file = $stash->getFile( $filekey );
+				$finalThumbParam = $this->mergeThumbParams( $file, $scale, $params['urlparam'] );
+				$imageInfo = ApiQueryImageInfo::getInfo( $file, $prop, $result, $finalThumbParam );
 				$result->addValue( array( 'query', $this->getModuleName() ), null, $imageInfo );
 				$result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), $modulePrefix );
 			}
-
+		//TODO: update exception handling here to understand current getFile exceptions
 		} catch ( UploadStashNotAvailableException $e ) {
 			$this->dieUsage( "Session not available: " . $e->getMessage(), "nosession" );
 		} catch ( UploadStashFileNotFoundException $e ) {
 			$this->dieUsage( "File not found: " . $e->getMessage(), "invalidsessiondata" );
 		} catch ( UploadStashBadPathException $e ) {
 			$this->dieUsage( "Bad path: " . $e->getMessage(), "invalidsessiondata" );
-		}	
-
+		}
 	}
 
-	/**
-	 * Returns all valid parameters to siiprop
-	 */
-	public static function getPropertyNames() {
-		return array(
-			'timestamp',
-			'url',
-			'size',
-			'dimensions', // For backwards compatibility with Allimages
-			'sha1',
-			'mime',
-			'thumbmime',
-			'metadata',
-			'bitdepth',
-		);
-	}
-
+	private $propertyFilter = array(
+		'user', 'userid', 'comment', 'parsedcomment',
+		'mediatype', 'archivename',
+	);
 
 	public function getAllowedParams() {
 		return array(
-			'sessionkey' => array( 
+			'filekey' => array(
 				ApiBase::PARAM_ISMULTI => true,
-				ApiBase::PARAM_REQUIRED => true,
+				ApiBase::PARAM_DFLT => null
+			),
+			'sessionkey' => array(
+				ApiBase::PARAM_ISMULTI => true,
+				ApiBase::PARAM_DEPRECATED => true,
 				ApiBase::PARAM_DFLT => null
 			),
 			'prop' => array(
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_DFLT => 'timestamp|url',
-				ApiBase::PARAM_TYPE => self::getPropertyNames()
+				ApiBase::PARAM_TYPE => self::getPropertyNames( $this->propertyFilter )
 			),
 			'urlwidth' => array(
 				ApiBase::PARAM_TYPE => 'integer',
@@ -98,32 +93,28 @@ class ApiQueryStashImageInfo extends ApiQueryImageInfo {
 			'urlheight' => array(
 				ApiBase::PARAM_TYPE => 'integer',
 				ApiBase::PARAM_DFLT => -1
-			)
+			),
+			'urlparam' => array(
+				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_DFLT => '',
+			),
 		);
 	}
 
 	/**
 	 * Return the API documentation for the parameters.
-	 * @return {Array} parameter documentation.
+	 * @return Array parameter documentation.
 	 */
 	public function getParamDescription() {
 		$p = $this->getModulePrefix();
 		return array(
-			'prop' => array(
-				'What image information to get:',
-				' timestamp    - Adds timestamp for the uploaded version',
-				' url          - Gives URL to the image and the description page',
-				' size         - Adds the size of the image in bytes and the height and width',
-				' dimensions   - Alias for size',
-				' sha1         - Adds sha1 hash for the image',
-				' mime         - Adds MIME of the image',
-				' thumbmime    - Adss MIME of the image thumbnail (requires url)',
-				' metadata     - Lists EXIF metadata for the version of the image',
-				' bitdepth     - Adds the bit depth of the version',
-			),
-			'sessionkey' => 'Session key that identifies a previous upload that was stashed temporarily.',
+			'prop' => self::getPropertyDescriptions( $this->propertyFilter ),
+			'filekey' => 'Key that identifies a previous upload that was stashed temporarily.',
+			'sessionkey' => 'Alias for filekey, for backward compatibility.',
 			'urlwidth' => "If {$p}prop=url is set, a URL to an image scaled to this width will be returned.",
-			'urlheight' => "Similar to {$p}urlwidth. Cannot be used without {$p}urlwidth"
+			'urlheight' => "Similar to {$p}urlwidth. Cannot be used without {$p}urlwidth",
+			'urlparam' => array( "A handler specific parameter string. For example, pdf's ",
+				"might use 'page15-100px'. {$p}urlwidth must be used and be consistent with {$p}urlparam" ),
 		);
 	}
 
@@ -131,21 +122,15 @@ class ApiQueryStashImageInfo extends ApiQueryImageInfo {
 		return 'Returns image information for stashed images';
 	}
 
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'code' => 'siiurlwidth', 'info' => 'siiurlheight cannot be used without iiurlwidth' ),
-		) );
-	}
-
 	protected function getExamples() {
 		return array(
-			'api.php?action=query&prop=stashimageinfo&siisessionkey=124sd34rsdf567',
-			'api.php?action=query&prop=stashimageinfo&siisessionkey=b34edoe3|bceffd4&siiurlwidth=120&siiprop=url',
+			'api.php?action=query&prop=stashimageinfo&siifilekey=124sd34rsdf567',
+			'api.php?action=query&prop=stashimageinfo&siifilekey=b34edoe3|bceffd4&siiurlwidth=120&siiprop=url',
 		);
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryStashImageInfo.php 81000 2011-01-25 22:49:34Z catrope $';
+		return __CLASS__ . ': $Id: ApiQueryStashImageInfo.php 92459 2011-07-18 19:31:38Z raindrift $';
 	}
 
 }

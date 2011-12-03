@@ -25,8 +25,6 @@
  * @ingroup UtfNormal
  */
 
-require_once dirname(__FILE__).'/UtfNormalDefines.php';
-
 /**
  * Return UTF-8 sequence for a given Unicode code point.
  * May die if fed out of range data.
@@ -93,7 +91,7 @@ function utf8ToHexSequence( $str ) {
  */
 function utf8ToCodepoint( $char ) {
 	# Find the length
-	$z = ord( $char{0} );
+	$z = ord( $char[0] );
 	if ( $z & 0x80 ) {
 		$length = 0;
 		while ( $z & 0x80 ) {
@@ -118,7 +116,7 @@ function utf8ToCodepoint( $char ) {
 	# Add in the free bits from subsequent bytes
 	for ( $i=1; $i<$length; $i++ ) {
 		$z <<= 6;
-		$z |= ord( $char{$i} ) & 0x3f;
+		$z |= ord( $char[$i] ) & 0x3f;
 	}
 
 	return $z;

@@ -1,10 +1,10 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Feb 2, 2009
  *
- * Copyright © 2009 Roan Kattouw <Firstname>.<Lastname>@home.nl
+ * Copyright © 2009 Roan Kattouw <Firstname>.<Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class ApiFormatRaw extends ApiFormatBase {
 	/**
 	 * Constructor
 	 * @param $main ApiMain object
-	 * @param $errorFallback Formatter object to fall back on for errors
+	 * @param $errorFallback ApiFormatBase object to fall back on for errors
 	 */
 	public function __construct( $main, $errorFallback ) {
 		parent::__construct( $main, 'raw' );
@@ -73,6 +73,6 @@ class ApiFormatRaw extends ApiFormatBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatRaw.php 70647 2010-08-07 19:59:42Z ialex $';
+		return __CLASS__ . ': $Id: ApiFormatRaw.php 82429 2011-02-19 00:30:18Z reedy $';
 	}
 }

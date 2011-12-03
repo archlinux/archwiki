@@ -16,8 +16,13 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  * @ingroup JobQueue
  */
 abstract class Job {
+
+	/**
+	 * @var Title
+	 */
+	var $title;
+
 	var $command,
-		$title,
 		$params,
 		$id,
 		$removeDuplicates,
@@ -41,21 +46,28 @@ abstract class Job {
 	 * Pop a job of a certain type.  This tries less hard than pop() to
 	 * actually find a job; it may be adversely affected by concurrent job
 	 * runners.
+	 *
+	 * @param $type string
+	 *
+	 * @return Job
 	 */
 	static function pop_type( $type ) {
 		wfProfilein( __METHOD__ );
 
 		$dbw = wfGetDB( DB_MASTER );
 
+		$dbw->begin();
+
 		$row = $dbw->selectRow(
 			'job',
 			'*',
 			array( 'job_cmd' => $type ),
 			__METHOD__,
-			array( 'LIMIT' => 1 )
+			array( 'LIMIT' => 1, 'FOR UPDATE' )
 		);
 
 		if ( $row === false ) {
+			$dbw->commit();
 			wfProfileOut( __METHOD__ );
 			return false;
 		}
@@ -63,20 +75,21 @@ abstract class Job {
 		/* Ensure we "own" this row */
 		$dbw->delete( 'job', array( 'job_id' => $row->job_id ), __METHOD__ );
 		$affected = $dbw->affectedRows();
+		$dbw->commit();
 
 		if ( $affected == 0 ) {
 			wfProfileOut( __METHOD__ );
 			return false;
 		}
 
+		wfIncrStats( 'job-pop' );
 		$namespace = $row->job_namespace;
 		$dbkey = $row->job_title;
 		$title = Title::makeTitleSafe( $namespace, $dbkey );
 		$job = Job::factory( $row->job_cmd, $title, Job::extractBlob( $row->job_params ),
 			$row->job_id );
 
-		$dbw->delete( 'job', $job->insertFields(), __METHOD__ );
-		$dbw->commit();
+		$job->removeDuplicates();
 
 		wfProfileOut( __METHOD__ );
 		return $job;
@@ -89,6 +102,7 @@ abstract class Job {
 	 * @return Job or false if there's no jobs
 	 */
 	static function pop( $offset = 0 ) {
+		global $wgJobTypesExcludedFromDefaultQueue;
 		wfProfileIn( __METHOD__ );
 
 		$dbr = wfGetDB( DB_SLAVE );
@@ -99,17 +113,27 @@ abstract class Job {
 			NB: If random fetch previously was used, offset
 				will always be ahead of few entries
 		*/
+		$conditions = array();
+		if ( count( $wgJobTypesExcludedFromDefaultQueue ) != 0 ) {
+			foreach ( $wgJobTypesExcludedFromDefaultQueue as $cmdType ) {
+				$conditions[] = "job_cmd != " . $dbr->addQuotes( $cmdType );
+			}
+		}
+		$offset = intval( $offset );
+		$options = array( 'ORDER BY' => 'job_id', 'USE INDEX' => 'PRIMARY' );
 
-		$row = $dbr->selectRow( 'job', '*', "job_id >= ${offset}", __METHOD__,
-			array( 'ORDER BY' => 'job_id', 'LIMIT' => 1 ) );
+		$row = $dbr->selectRow( 'job', '*',
+			array_merge( $conditions, array( "job_id >= $offset" ) ),
+			__METHOD__,
+			$options
+		);
 
 		// Refetching without offset is needed as some of job IDs could have had delayed commits
 		// and have lower IDs than jobs already executed, blame concurrency :)
 		//
 		if ( $row === false ) {
 			if ( $offset != 0 ) {
-				$row = $dbr->selectRow( 'job', '*', '', __METHOD__,
-					array( 'ORDER BY' => 'job_id', 'LIMIT' => 1 ) );
+				$row = $dbr->selectRow( 'job', '*', $conditions, __METHOD__, $options );
 			}
 
 			if ( $row === false ) {
@@ -158,16 +182,14 @@ abstract class Job {
 
 		// If execution got to here, there's a row in $row that has been deleted from the database
 		// by this thread. Hence the concurrent pop was successful.
+		wfIncrStats( 'job-pop' );
 		$namespace = $row->job_namespace;
 		$dbkey = $row->job_title;
 		$title = Title::makeTitleSafe( $namespace, $dbkey );
 		$job = Job::factory( $row->job_cmd, $title, Job::extractBlob( $row->job_params ), $row->job_id );
 
 		// Remove any duplicates it may have later in the queue
-		// Deadlock prone section
-		$dbw->begin();
-		$dbw->delete( 'job', $job->insertFields(), __METHOD__ );
-		$dbw->commit();
+		$job->removeDuplicates();
 
 		wfProfileOut( __METHOD__ );
 		return $job;
@@ -272,6 +294,12 @@ abstract class Job {
 	 * Non-static functions
 	 *------------------------------------------------------------------------*/
 
+	/**
+	 * @param $command
+	 * @param $title
+	 * @param $params array
+	 * @param int $id
+	 */
 	function __construct( $command, $title, $params = false, $id = 0 ) {
 		$this->command = $command;
 		$this->title = $title;
@@ -298,6 +326,7 @@ abstract class Job {
 				return;
 			}
 		}
+		wfIncrStats( 'job-insert' );
 		return $dbw->insert( 'job', $fields, __METHOD__ );
 	}
 
@@ -310,6 +339,27 @@ abstract class Job {
 			'job_title' => $this->title->getDBkey(),
 			'job_params' => Job::makeBlob( $this->params )
 		);
+	}
+
+	/**
+	 * Remove jobs in the job queue which are duplicates of this job.
+	 * This is deadlock-prone and so starts its own transaction.
+	 */
+	function removeDuplicates() {
+		if ( !$this->removeDuplicates ) {
+			return;
+		}
+
+		$fields = $this->insertFields();
+		unset( $fields['job_id'] );
+		$dbw = wfGetDB( DB_MASTER );
+		$dbw->begin();
+		$dbw->delete( 'job', $fields, __METHOD__ );
+		$affected = $dbw->affectedRows();
+		$dbw->commit();
+		if ( $affected ) {
+			wfIncrStats( 'job-dup-delete', $affected );
+		}
 	}
 
 	function toString() {

@@ -13,13 +13,17 @@
  */
 class DoubleRedirectJob extends Job {
 	var $reason, $redirTitle, $destTitleText;
+
+	/**
+	 * @var User
+	 */
 	static $user;
 
 	/** 
 	 * Insert jobs into the job queue to fix redirects to the given title
 	 * @param $reason String: the reason for the fix, see message double-redirect-fixed-<reason>
 	 * @param $redirTitle Title: the title which has changed, redirects pointing to this title are fixed
-	 * @param $destTitle Not used
+	 * @param $destTitle bool Not used
 	 */
 	public static function fixRedirects( $reason, $redirTitle, $destTitle = false ) {
 		# Need to use the master to get the redirect table updated in the same transaction
@@ -53,6 +57,7 @@ class DoubleRedirectJob extends Job {
 		}
 		Job::batchInsert( $jobs );
 	}
+
 	function __construct( $title, $params = false, $id = 0 ) {
 		parent::__construct( 'fixDoubleRedirect', $title, $params, $id );
 		$this->reason = $params['reason'];
@@ -128,6 +133,9 @@ class DoubleRedirectJob extends Job {
 
 	/**
 	 * Get the final destination of a redirect
+	 *
+	 * @param $title Title
+	 *
 	 * @return false if the specified title is not a redirect, or if it is a circular redirect
 	 */
 	public static function getFinalDestination( $title ) {

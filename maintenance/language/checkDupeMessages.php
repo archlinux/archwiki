@@ -1,6 +1,22 @@
 <?php
 /**
- * @todo document
+ * Script to print out duplicates in message array
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup MaintenanceLanguage
  */
@@ -18,9 +34,9 @@ if ( isset( $options['lang'] ) && isset( $options['clang'] ) ) {
 	} else {
 		if ( !strcmp( $options['mode'], 'wiki' ) ) {
 			$runMode = 'wiki';
-		} else if ( !strcmp( $options['mode'], 'php' ) ) {
+		} elseif ( !strcmp( $options['mode'], 'php' ) ) {
 			$runMode = 'php';
-		} else if ( !strcmp( $options['mode'], 'raw' ) ) {
+		} elseif ( !strcmp( $options['mode'], 'raw' ) ) {
 			$runMode = 'raw';
 		} else {
 		}
@@ -61,7 +77,7 @@ if ( $runTest ) {
 if ( $run ) {
 	if ( !strcmp( $runMode, 'wiki' ) ) {
 		$runMode = 'wiki';
-	} else if ( !strcmp( $runMode, 'raw' ) ) {
+	} elseif ( !strcmp( $runMode, 'raw' ) ) {
 		$runMode = 'raw';
 	}
 	include( $messagesFile );
@@ -86,9 +102,9 @@ if ( $run ) {
 					if ( ( !strcmp( $key, $ckey ) ) && ( !strcmp( $value, $cvalue ) ) ) {
 						if ( !strcmp( $runMode, 'raw' ) ) {
 							print( "$key\n" );
-						} else if ( !strcmp( $runMode, 'php' ) ) {
+						} elseif ( !strcmp( $runMode, 'php' ) ) {
 							print( "'$key' => '',\n" );
-						} else if ( !strcmp( $runMode, 'wiki' ) ) {
+						} elseif ( !strcmp( $runMode, 'wiki' ) ) {
 							$uKey = ucfirst( $key );
 							print( "* MediaWiki:$uKey/$langCode\n" );
 						} else {

@@ -53,52 +53,49 @@ $maintenance->setup();
 // to $maintenance->mSelf. Keep that here for b/c
 $self = $maintenance->getName();
 
-# Setup the profiler
-global $IP;
-if ( file_exists( "$IP/StartProfiler.php" ) ) {
-	require_once( "$IP/StartProfiler.php" );
+// Detect compiled mode
+if ( isset( $_SERVER['MW_COMPILED'] ) ) {
+	define( 'MW_COMPILED', 1 );
 } else {
-	require_once( "$IP/includes/ProfilerStub.php" );
+	# Get the MWInit class
+	require_once( "$IP/includes/Init.php" );
+	require_once( "$IP/includes/AutoLoader.php" );
 }
 
+# Stub the profiler
+require_once( MWInit::compiledPath( 'includes/profiler/Profiler.php' ) );
+
 // Some other requires
-require_once( "$IP/includes/AutoLoader.php" );
-require_once( "$IP/includes/Defines.php" );
-require_once( "$IP/includes/DefaultSettings.php" );
+if ( !defined( 'MW_COMPILED' ) ) {
+	require_once( "$IP/includes/Defines.php" );
+}
+require_once( MWInit::compiledPath( 'includes/DefaultSettings.php' ) );
 
 if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
 	# Use a callback function to configure MediaWiki
-	$callback = MW_CONFIG_CALLBACK;
-	# PHP 5.1 doesn't support "class::method" for call_user_func, so split it
-	if ( strpos( $callback, '::' ) !== false ) {
-		$callback = explode( '::', $callback, 2 );
-	}
-	call_user_func( $callback );
-} elseif ( file_exists( "$IP/wmf-config/wikimedia-mode" ) ) {
+	MWFunction::call( MW_CONFIG_CALLBACK );
+} elseif ( file_exists( "$IP/../wmf-config/wikimedia-mode" ) ) {
 	// Load settings, using wikimedia-mode if needed
-	// Fixme: replace this hack with general farm-friendly code
-	# TODO FIXME! Wikimedia-specific stuff needs to go away to an ext
+	// @todo FIXME: Replace this hack with general farm-friendly code
+	# @todo FIXME: Wikimedia-specific stuff needs to go away to an ext
 	# Maybe a hook?
 	global $cluster;
-	$wgWikiFarm = true;
 	$cluster = 'pmtpa';
-	require_once( "$IP/includes/SiteConfiguration.php" );
-	require( "$IP/wmf-config/wgConf.php" );
+	require( MWInit::interpretedPath( '../wmf-config/wgConf.php' ) );
 	$maintenance->loadWikimediaSettings();
-	require( $IP . '/wmf-config/CommonSettings.php' );
+	require( MWInit::interpretedPath( '../wmf-config/CommonSettings.php' ) );
 } else {
 	require_once( $maintenance->loadSettings() );
 }
 
 if ( $maintenance->getDbType() === Maintenance::DB_ADMIN &&
-		is_readable( "$IP/AdminSettings.php" ) )
+	is_readable( "$IP/AdminSettings.php" ) )
 {
-	require( "$IP/AdminSettings.php" );
+	require( MWInit::interpretedPath( 'AdminSettings.php' ) );
 }
 $maintenance->finalSetup();
 // Some last includes
-require_once( "$IP/includes/Setup.php" );
-require_once( "$IP/maintenance/install-utils.inc" );
+require_once( MWInit::compiledPath( 'includes/Setup.php' ) );
 
 // Much much faster startup than creating a title object
 $wgTitle = null;

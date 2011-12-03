@@ -5,9 +5,14 @@
  * @file
  */
 
-/** */
+/**
+ * @param $fname string
+ * @param $headers array
+ */
 function wfStreamFile( $fname, $headers = array() ) {
-	$stat = @stat( $fname );
+	wfSuppressWarnings();
+	$stat = stat( $fname );
+	wfRestoreWarnings();
 	if ( !$stat ) {
 		header( 'HTTP/1.0 404 Not Found' );
 		header( 'Cache-Control: no-cache' );
@@ -63,7 +68,11 @@ function wfStreamFile( $fname, $headers = array() ) {
 	readfile( $fname );
 }
 
-/** */
+/**
+ * @param $filename string
+ * @param $safe bool
+ * @return null|string
+ */
 function wfGetType( $filename, $safe = true ) {
 	global $wgTrivialMimeDetection;
 

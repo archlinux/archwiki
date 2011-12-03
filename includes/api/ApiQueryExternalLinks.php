@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on May 13, 2007
  *
@@ -46,6 +46,10 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		}
 
 		$params = $this->extractRequestParams();
+
+		$query = $params['query'];
+		$protocol = ApiQueryExtLinksUsage::getProtocolPrefix( $params['protocol'] );
+
 		$this->addFields( array(
 			'el_from',
 			'el_to'
@@ -54,13 +58,25 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		$this->addTables( 'externallinks' );
 		$this->addWhereFld( 'el_from', array_keys( $this->getPageSet()->getGoodTitles() ) );
 
+		$whereQuery = $this->prepareUrlQuerySearchString( $query, $protocol );
+
+		if ( $whereQuery !== null ) {
+			$this->addWhere( $whereQuery );
+		}
+
 		// Don't order by el_from if it's constant in the WHERE clause
 		if ( count( $this->getPageSet()->getGoodTitles() ) != 1 ) {
 			$this->addOption( 'ORDER BY', 'el_from' );
 		}
 
+		// If we're querying all protocols, use DISTINCT to avoid repeating protocol-relative links twice
+		if ( $protocol === null ) {
+			$this->addOption( 'DISTINCT' );
+		}
+
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
-		if ( !is_null( $params['offset'] ) ) {
+		$offset = isset( $params['offset'] ) ? $params['offset'] : 0;
+		if ( $offset ) {
 			$this->addOption( 'OFFSET', $params['offset'] );
 		}
 
@@ -71,14 +87,15 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 			if ( ++$count > $params['limit'] ) {
 				// We've reached the one extra which shows that
 				// there are additional pages to be had. Stop here...
-				$this->setContinueEnumParameter( 'offset', @$params['offset'] + $params['limit'] );
+				$this->setContinueEnumParameter( 'offset', $offset + $params['limit'] );
 				break;
 			}
 			$entry = array();
+			// We *could* run this through wfExpandUrl() but I think it's better to output the link verbatim, even if it's protocol-relative --Roan
 			ApiResult::setContent( $entry, $row->el_to );
 			$fit = $this->addPageSubItem( $row->el_from, $entry );
 			if ( !$fit ) {
-				$this->setContinueEnumParameter( 'offset', @$params['offset'] + $count - 1 );
+				$this->setContinueEnumParameter( 'offset', $offset + $count - 1 );
 				break;
 			}
 		}
@@ -97,19 +114,38 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 				ApiBase::PARAM_MAX => ApiBase::LIMIT_BIG1,
 				ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2
 			),
-			'offset' => null,
+			'offset' => array(
+				ApiBase::PARAM_TYPE => 'integer'
+			),
+			'protocol' => array(
+				ApiBase::PARAM_TYPE => ApiQueryExtLinksUsage::prepareProtocols(),
+				ApiBase::PARAM_DFLT => '',
+			),
+			'query' => null,
 		);
 	}
 
 	public function getParamDescription() {
+		$p = $this->getModulePrefix();
 		return array(
 			'limit' => 'How many links to return',
 			'offset' => 'When more results are available, use this to continue',
+			'protocol' => array(
+				"Protocol of the url. If empty and {$p}query set, the protocol is http.",
+				"Leave both this and {$p}query empty to list all external links"
+			),
+			'query' => 'Search string without protocol. Useful for checking whether a certain page contains a certain external url',
 		);
 	}
 
 	public function getDescription() {
 		return 'Returns all external urls (not interwikies) from the given page(s)';
+	}
+
+	public function getPossibleErrors() {
+		return array_merge( parent::getPossibleErrors(), array(
+			array( 'code' => 'bad_query', 'info' => 'Invalid query' ),
+		) );
 	}
 
 	protected function getExamples() {
@@ -119,7 +155,11 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Properties#extlinks_.2F_el';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryExternalLinks.php 70647 2010-08-07 19:59:42Z ialex $';
+		return __CLASS__ . ': $Id: ApiQueryExternalLinks.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

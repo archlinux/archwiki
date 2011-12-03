@@ -14,6 +14,8 @@
  * @author לערי ריינהארט
  */
 
+$linkTrail = '/^(:?[a-zàáâçčʒǯđðéèêëǧǥȟíìîïıǩŋñóòôõßšŧúùûýÿüžþæøåäö]+)(.*)$/sDu';
+
 $messages = array(
 # User preference toggles
 'tog-underline'               => 'Liŋkkaid vuolláisárgun',
@@ -146,7 +148,6 @@ $messages = array(
 'history'           => 'Historjá',
 'history_short'     => 'Historjá',
 'updatedmarker'     => 'beaiváduvvon du ovddit fitnama maŋŋá',
-'info_short'        => 'Diđoštus',
 'printableversion'  => 'Prentenveršuvdna',
 'permalink'         => 'Bissovaš liŋka',
 'print'             => 'Prente',
@@ -300,7 +301,7 @@ Du geavaheaddjidovddaldat lea dál anus.
 'loginsuccesstitle'          => 'Sisačállin lihkosmuvai',
 'loginsuccess'               => 'Leat čálligoahtan sisa geavaheaddjidovddaldagain $1.',
 'nosuchuser'                 => 'Geavaheaddjidovddaldat ”$1” ii dihtto. Dárkis čálletgo dovddaldaga riekta dahke geavat skovi vuolábealde ja ráhkat ođđa geavaheaddjidovddaldaga.',
-'nosuchusershort'            => 'Geavaheaddjidovddaldat ”<nowiki>$1</nowiki>” ii dihtto. Čálletgo dovddaldaga riekta?',
+'nosuchusershort'            => 'Geavaheaddjidovddaldat ”$1” ii dihtto. Čálletgo dovddaldaga riekta?',
 'nouserspecified'            => 'Geavaheaddjidovddaldat ii leat meroštallojuvvon.',
 'wrongpassword'              => 'Suollemassátni, man čállet, ii leat riekta. Leage buorre ja iska ođđasit.',
 'wrongpasswordempty'         => 'It čállán suollemassáni. Iska ođđasit.',
@@ -324,7 +325,7 @@ Du geavaheaddjidovddaldat lea dál anus.
 'accountcreatedtext'         => 'Geavaheaddji $1 geavaheaddjidovddaldat ráhkaduvvui.',
 'loginlanguagelabel'         => 'Giella: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Suollemassáni gurren',
 'resetpass_announce'        => 'Čálligohtet sisa e-poasttain sáddejuvvon suollemassánin. Fertet addit ođđa suollemassáni dasa:',
 'resetpass_text'            => '<!-- Lasit dasa teavstta -->',
@@ -348,7 +349,6 @@ Du geavaheaddjidovddaldat lea dál anus.
 'extlink_tip'     => 'Wiki olggobeal liŋka (muite http:// ovddas)',
 'headline_sample' => 'Bájilčálateaksta',
 'headline_tip'    => 'Bajilčála',
-'math_sample'     => 'Lasit dasa formula',
 'nowiki_sample'   => 'Lasit rievdatkeahtes teavstta dasa',
 'nowiki_tip'      => 'Teaksta, man wiki ii rievdda',
 'image_sample'    => 'Ovdamearka.jpg',
@@ -501,7 +501,6 @@ $1 {{int:pipe-separator}} $2',
 'changepassword'        => 'Suollemassáni molson',
 'prefs-skin'            => 'Olggosoaidnu',
 'skin-preview'          => 'ovdalgihtii geahččan...',
-'prefs-math'            => 'Matematihkká',
 'datedefault'           => 'Eai válljemat',
 'prefs-datetime'        => 'Áigi ja beaivemearri',
 'prefs-personal'        => 'Geavaheaddjidieđut',
@@ -516,8 +515,6 @@ $1 {{int:pipe-separator}} $2',
 'columns'               => 'Kolumnat',
 'searchresultshead'     => 'Ohcan',
 'resultsperpage'        => 'Bohtosa juohke siiddus',
-'contextlines'          => 'Bohtosa gurgadasaid mearri',
-'contextchars'          => 'Sisdoalu mearkkaid mearri juohke gurgadasas',
 'recentchangescount'    => 'Siiddui mearri varas rievdadusain',
 'savedprefs'            => 'Du ásahusid vurken lihkosmuvai.',
 'timezonelegend'        => 'Áigeavádat',
@@ -853,9 +850,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'watchlistanontext'    => 'Don fertet $1, jus hálidat geavahit čuovvunlisttu.',
 'watchnologin'         => 'It leat čálligoahtán sisa',
 'watchnologintext'     => 'Don fertet [[Special:UserLogin|čálligoahtit sisa]], jus hálidat geavahit du čuovvunlisttu.',
-'addedwatch'           => 'Lasihuvvon čuovvunlistui',
 'addedwatchtext'       => "Siidu '''<nowiki>$1</nowiki>''' lea lasihuvvon [[Special:Watchlist|čuovvunlisttui]]. Boahtevuođas siiddu ja siiddu ságastallansiiddu rievdadusat almmuhuvvo dáppe. Siidu lea '''buidon''' [[Special:RecentChanges|varas rievdadusat -listtus]], vai fuomašat dan álkit. Jus hálidat heaiti čuovvumis dan siiddu, deaddil liŋkka ''heaite čuovvumis'' siiddu ravddas.",
-'removedwatch'         => 'Sihkojuvvon čuovvunlisttus',
 'removedwatchtext'     => "Siidu '''[[:$1]]''' lea sihkojuvvon du čuovvunlisttus.",
 'watch'                => 'Čuovo',
 'watchthispage'        => 'Čuovo dán siiddu',
@@ -897,7 +892,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'historywarning'    => 'Siiddu, man aiggot sihkut, lea rievdaduvvon dávjit go oktii:',
 'confirmdeletetext' => 'Leat sihkumin siiddu dahje fiilla ja buot dan historjjá. Ádde dagu váikkuhsaid ja sihko {{GRAMMAR:genitive|{{SITENAME}}}} [[{{MediaWiki:Policy-url}}|geavahaid]] mielde.',
 'actioncomplete'    => 'Doaibma lea dahkkon',
-'deletedtext'       => '"<nowiki>$1</nowiki>" lea sihkojuvvon.
+'deletedtext'       => '"$1" lea sihkojuvvon.
 Siiddus $2 lea listu maŋimus sihkomiin.',
 'deletedarticle'    => 'sihkoi siiddu [[$1]]',
 'dellogpage'        => 'Sihkkunlogga',
@@ -1000,13 +995,12 @@ Siiddus $2 lea listu maŋimus sihkomiin.',
 'whatlinkshere-links' => 'liŋkkat',
 
 # Block/unblock
-'blockip'              => 'Eastte rievdadusaid',
-'ipaddress'            => 'IP-čujuhus',
-'ipadressorusername'   => 'IP-čujuhus dahje geavaheaddjidovddaldat',
-'ipbexpiry'            => 'Guhkkodat',
-'ipbreason'            => 'Sivva',
-'ipbreasonotherlist'   => 'Eará sivva',
-'ipbreason-dropdown'   => '*Dábálas cakkastallansivat
+'blockip'            => 'Eastte rievdadusaid',
+'ipadressorusername' => 'IP-čujuhus dahje geavaheaddjidovddaldat',
+'ipbexpiry'          => 'Guhkkodat',
+'ipbreason'          => 'Sivva',
+'ipbreasonotherlist' => 'Eará sivva',
+'ipbreason-dropdown' => '*Dábálas cakkastallansivat
 ** Boasto dieđuid lasiheapmi
 ** Sisdoalu sihkkun
 ** Reklámaliŋkkaid lasiheapmi
@@ -1014,27 +1008,25 @@ Siiddus $2 lea listu maŋimus sihkomiin.',
 ** Hehtten
 ** Maŋgga geavaheaddjidovddaldaga geaveaheapmi boastut
 ** Fasttes geavaheaddjidovddaldat',
-'ipbanononly'          => 'Easte beare anonyma geavaheddjiid',
-'ipbcreateaccount'     => 'Eastte dovddaldagaid ráhkadeami',
-'ipbemailban'          => 'Eastte geavaheaddji sáddemis e-poastta',
-'ipbenableautoblock'   => 'Eastte maŋimus IP-čujuhus, mas geavaheaddji lea ráhkadan rievdadusaid, ja maid daid čujuhusaid, main son vel iska rievdadit.',
-'ipbsubmit'            => 'Eastte',
-'ipbother'             => 'Eará áigi',
-'ipboptions'           => '2 diimma:2 hours,1 beaivi:1 day,3 beaivve:3 days,1 vahkku:1 week,2 vahkku:2 weeks,1 mánotbádji:1 month,3 mánotbaji:3 months,6 mánotbaji:6 months,1 jahki:1 year,bissovaš:infinite',
-'ipbotheroption'       => 'Eará',
-'ipbotherreason'       => 'Eará sivva',
-'badipaddress'         => 'IP-čujuhus lea boastut.',
-'blockipsuccesssub'    => 'Easttan lihkosmuvai',
-'blockipsuccesstext'   => "Geavaheaddji dahje IP-čujuhus '''$1''' lea eston.<br />Dálá easttut gávdnot [[Special:IPBlockList|easttolisttus]].",
-'ipb-edit-dropdown'    => 'Rievdat siivaid',
-'ipb-unblock-addr'     => 'Sihko geavaheaddji $1 estema',
-'ipb-unblock'          => 'Sihko geavaheaddji dahje IP-čujuhusa rievdadaneasttu',
-'ipblocklist-username' => 'Geavaheaddjidovddaldat dahje IP-čujuhus:',
-'ipblocklist-submit'   => 'Oza',
-'infiniteblock'        => 'bissovaččat',
-'expiringblock'        => 'boarásnuvvá $1 $2',
-'contribslink'         => 'rievdadusat',
-'proxyblocksuccess'    => 'Gárvvis.',
+'ipbcreateaccount'   => 'Eastte dovddaldagaid ráhkadeami',
+'ipbemailban'        => 'Eastte geavaheaddji sáddemis e-poastta',
+'ipbenableautoblock' => 'Eastte maŋimus IP-čujuhus, mas geavaheaddji lea ráhkadan rievdadusaid, ja maid daid čujuhusaid, main son vel iska rievdadit.',
+'ipbsubmit'          => 'Eastte',
+'ipbother'           => 'Eará áigi',
+'ipboptions'         => '2 diimma:2 hours,1 beaivi:1 day,3 beaivve:3 days,1 vahkku:1 week,2 vahkku:2 weeks,1 mánotbádji:1 month,3 mánotbaji:3 months,6 mánotbaji:6 months,1 jahki:1 year,bissovaš:infinite',
+'ipbotheroption'     => 'Eará',
+'ipbotherreason'     => 'Eará sivva',
+'badipaddress'       => 'IP-čujuhus lea boastut.',
+'blockipsuccesssub'  => 'Easttan lihkosmuvai',
+'blockipsuccesstext' => "Geavaheaddji dahje IP-čujuhus '''$1''' lea eston.<br />Dálá easttut gávdnot [[Special:IPBlockList|easttolisttus]].",
+'ipb-edit-dropdown'  => 'Rievdat siivaid',
+'ipb-unblock-addr'   => 'Sihko geavaheaddji $1 estema',
+'ipb-unblock'        => 'Sihko geavaheaddji dahje IP-čujuhusa rievdadaneasttu',
+'ipblocklist-submit' => 'Oza',
+'infiniteblock'      => 'bissovaččat',
+'expiringblock'      => 'boarásnuvvá $1 $2',
+'contribslink'       => 'rievdadusat',
+'proxyblocksuccess'  => 'Gárvvis.',
 
 # Developer tools
 'lockdb'             => 'Gidde diehtovuođu',
@@ -1145,19 +1137,6 @@ Siiddus $2 lea listu maŋimus sihkomiin.',
 'siteusers'   => '{{GRAMMAR:genitive|{{SITENAME}}}} geavaheaddji(t) $1',
 'creditspage' => 'Siiddu dahkkit',
 
-# Info page
-'infosubtitle' => 'Dieđut siiddus',
-'numedits'     => 'Siiddu rievdadusaid mearri: $1',
-'numtalkedits' => 'Ságastallansiiddu rievdadusaid mearri: $1',
-'numwatchers'  => 'Čuovvujeddjiid mearri: $1',
-
-# Math options
-'mw_math_png' => 'Čájet álo PNG:n',
-
-# Math errors
-'math_unknown_error'    => 'Dovdameahtun feaila',
-'math_unknown_function' => 'Dovdameahtun funkšuvdna',
-
 # Patrolling
 'markaspatrolleddiff'   => 'Merke dárkistuvvon',
 'markaspatrolledtext'   => 'Merke, ahte rievdadus lea dárkistuvvon',
@@ -1237,11 +1216,9 @@ Siiddus $2 lea listu maŋimus sihkomiin.',
 'exif-gpsspeed-n' => 'čuolmma',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'buot',
-'imagelistall'     => 'buot',
-'watchlistall2'    => ', olles historjjá',
-'namespacesall'    => 'buot',
-'monthsall'        => 'buot',
+'watchlistall2' => ', olles historjjá',
+'namespacesall' => 'buot',
+'monthsall'     => 'buot',
 
 # E-mail address confirmation
 'confirmemail'          => 'Sihkaraste e-poastačujuhusa',

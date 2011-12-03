@@ -63,9 +63,7 @@ class DeleteDefaultMessages extends Maintenance {
 		$dbw = wfGetDB( DB_MASTER );
 
 		foreach ( $res as $row ) {
-			if ( function_exists( 'wfWaitForSlaves' ) ) {
-				wfWaitForSlaves( 5 );
-			}
+			wfWaitForSlaves();
 			$dbw->ping();
 			$title = Title::makeTitle( $row->page_namespace, $row->page_title );
 			$article = new Article( $title );

@@ -2,7 +2,7 @@
  * Implementation for mediaWiki.log stub
  */
 
-(function ($, mw) {
+(function( $ ) {
 
 	/**
 	 * Log output to the console.
@@ -13,16 +13,16 @@
 	 *
 	 * @author Michael Dale <mdale@wikimedia.org>
 	 * @author Trevor Parscal <tparscal@wikimedia.org>
-	 * @param {string} string Message to output to console
+	 * @param logmsg string Message to output to console.
 	 */
-	mediaWiki.log = function( string ) {
-		// Allow log messages to use a configured prefix
+	mw.log = function( logmsg ) {
+		// Allow log messages to use a configured prefix to identify the source window (ie. frame)
 		if ( mw.config.exists( 'mw.log.prefix' ) ) {
-			string = mw.config.get( 'mw.log.prefix' ) + '> ' + string;
+			logmsg = mw.config.get( 'mw.log.prefix' ) + '> ' + logmsg;
 		}
 		// Try to use an existing console
-		if ( typeof window.console !== 'undefined' && typeof window.console.log == 'function' ) {
-			window.console.log( string );
+		if ( window.console !== undefined && $.isFunction( window.console.log ) ) {
+			window.console.log( logmsg );
 		} else {
 			// Set timestamp
 			var d = new Date();
@@ -35,7 +35,7 @@
 			if ( !$log.length ) {
 				$log = $( '<div id="mw-log-console"></div>' )
 					.css( {
-						'position': 'absolute',
+						'position': 'fixed',
 						'overflow': 'auto',
 						'z-index': 500,
 						'bottom': '0px',
@@ -44,8 +44,10 @@
 						'height': '150px',
 						'background-color': 'white',
 						'border-top': 'solid 2px #ADADAD'
-					} )
-					.appendTo( 'body' );
+					} );
+				$( 'body' )
+					.css( 'padding-bottom', '150px' ) // don't hide anything
+					.append( $log );
 			}
 			$log.append(
 				$( '<div></div>' )
@@ -53,12 +55,13 @@
 						'border-bottom': 'solid 1px #DDDDDD',
 						'font-size': 'small',
 						'font-family': 'monospace',
+						'white-space': 'pre-wrap',
 						'padding': '0.125em 0.25em'
 					} )
-					.text( string )
-					.append( '<span style="float:right">[' + time + ']</span>' )
+					.text( logmsg )
+					.prepend( '<span style="float:right">[' + time + ']</span>' )
 			);
 		}
 	};
 
-})(jQuery, mediaWiki);
+})(jQuery);

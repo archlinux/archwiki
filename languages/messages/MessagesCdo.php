@@ -115,7 +115,6 @@ $messages = array(
 'searcharticle'    => 'Kó̤',
 'history'          => 'Hiĕk-miêng lĭk-sṳ̄',
 'history_short'    => 'Lĭk-sṳ̄',
-'info_short'       => 'Séng-sék',
 'printableversion' => 'Kō̤ páh-éng bēng-buōng',
 'permalink'        => 'Īng-giū lièng-giék',
 'print'            => 'Páh-éng',
@@ -236,7 +235,7 @@ Nṳ̄ gì dióng-hô̤ ī-gĭng kŭi hō̤ lāu. Dāng nṳ̄ â̤-sāi siŭ-g�
 'loginsuccesstitle'          => 'Láuk-diē sìng-gŭng',
 'loginsuccess'               => "'''Nṳ̄ hiêng-câi ī-gĭng ī \"\$1\" gì sĭng-hông láuk diē {{SITENAME}} lāu.'''",
 'nosuchuser'                 => 'Mò̤ cūng-kuāng gì ê̤ṳng-hô-miàng "$1". Giēng-chă nṳ̄ gì pĭng-siā, hĕ̤k-ciā kŭi 1 ciáh sĭng dióng-hô̤.',
-'nosuchusershort'            => 'Mò̤ cūng-kuāng gì ê̤ṳng-hô-miàng "<nowiki>$1</nowiki>". Giēng-chă nṳ̄ gì pĭng-siā',
+'nosuchusershort'            => 'Mò̤ cūng-kuāng gì ê̤ṳng-hô-miàng "$1". Giēng-chă nṳ̄ gì pĭng-siā',
 'wrongpassword'              => 'Mĭk-mā dâng gó̤. Chiāng gái ché siŏh â.',
 'wrongpasswordempty'         => 'Muôi sṳ̆-ĭk mĭk-mā. Chiāng gái ché siŏh â.',
 'passwordtooshort'           => 'Nṳ̄ gì mĭk-mā kák dōi gó̤. Có̤i kī-mā diŏh ô $1 bĭk cê-mō̤.',
@@ -250,7 +249,7 @@ Siŭ gáu hâiu, chiāng gái láuk diē siŏh làu.',
 'accountcreatedtext'         => '$1 gì ê̤ṳng-hô dióng-hô̤ ī-gĭng châung-gióng lāu.',
 'loginlanguagelabel'         => 'Ngṳ̄-ngiòng: $1',
 
-# Password reset dialog
+# Change password dialog
 'oldpassword' => 'Gô mĭk-mā:',
 'newpassword' => 'Sĭng mĭk-mā:',
 'retypenew'   => 'Káuk-nêng sĭng mĭk-mā:',
@@ -372,7 +371,6 @@ Siók-mìng: (dāng) = gâe̤ng dék sĭng bēng-buōng bī-piâng, (sèng) = g�
 'prefs-edits'        => 'Siŭ-gāi ché̤ṳ-só:',
 'changepassword'     => 'Gāi-biéng mĭk-mā',
 'prefs-skin'         => 'Puòi-hŭ',
-'prefs-math'         => 'Só-hŏk',
 'datedefault'        => 'Mò̤ siék-diâng',
 'prefs-datetime'     => 'Nĭk-gĭ gâe̤ng sì-găng',
 'prefs-personal'     => 'Ê̤ṳng-hô cṳ̆-lâiu',
@@ -591,11 +589,9 @@ Siók-mìng: (dāng) = gâe̤ng dék sĭng bēng-buōng bī-piâng, (sèng) = g�
 'mywatchlist'       => 'Nguāi gì gáng-sê-dăng',
 'nowatchlist'       => 'Nṳ̄ gì gáng-sê-dăng gà̤-dēng mò̤ dèu-mĕ̤k.',
 'watchnologin'      => 'Mò̤ láuk diē',
-'addedwatch'        => 'Gă-tiĕng gáu gáng-sê-dăng',
 'addedwatchtext'    => "\"[[:\$1]]\" ī-gĭng gă-tiĕng gáu nṳ̄ gì [[Special:Watchlist|gáng-sê-dăng]] lāu. Â-nĭk, ciā hiĕk gâe̤ng ĭ tō̤-lâung hiĕk gì gāi-biéng cêu â̤ hiēng-sê diŏh hē̤-nē̤; bêng-chiā, nṳ̄ gáng-sê gì hiĕk găk \"[[Special:RecentChanges|Có̤i-gê̤ṳng gì gāi-biéng]]\" dăng-dăng gà̤-dēng gì cê-tā̤ â̤ có̤ '''chŭ-chŭ-nuóh'''.
 
 Iŏk-sṳ̄ nṳ̄ buóh-siōng téng nṳ̄ gáng-sê-dăng gà̤-dēng dṳ̀ lâi ciā hiĕk, áik kóng-cié-dèu (''sidebar'') siông gì \"ng-sāi gáng-sê\", cêu â̤-sāi lāu.",
-'removedwatch'      => 'Téng gáng-sê-dăng dṳ̀ lâi lāu',
 'removedwatchtext'  => '"[[:$1]]" hiĕk ī-gĭng téng nṳ̄ gì gáng-sê-dăng gà̤-dēng chēng lâi gó̤.',
 'watch'             => 'Gáng-sê',
 'watchthispage'     => 'Gáng-sê ciā hiĕk',
@@ -618,7 +614,7 @@ Iŏk-sṳ̄ nṳ̄ buóh-siōng téng nṳ̄ gáng-sê-dăng gà̤-dēng dṳ̀ 
 'historywarning'    => 'Gīng-gó̤: Nṳ̄ buóh-ái chēng lâi gì hiĕk-miêng ô lĭk-sṳ̄:',
 'confirmdeletetext' => 'Nṳ̄ cūng-bê ciŏng ciā hiĕk-miêng hĕ̤k ùng-giông lièng ĭ găk só-gé̤ṳ-kó gì lĭk-sṳ̄ ciòng-buô chēng lâi. Chiāng nṳ̄ káuk-nêng: nṳ̄ dŏng-cĭng buóh siōng cūng-kuāng có̤, nṳ̄ liēu-gāi cūng-kuāng có̤ gì hâiu-guō, bêng-chiā nṳ̄ cūng-kuāng có̤ sê hù-hăk [[{{MediaWiki:Policy-url}}]].',
 'actioncomplete'    => 'Cék-hèng sìng-gŭng',
-'deletedtext'       => '"<nowiki>$1</nowiki>" ī-gĭng ké̤ṳk chēng lâi go̤ lāu. Cī-bŏng chēng hiĕk gì gé-liŏh dŭ gé diŏh $2.',
+'deletedtext'       => '"$1" ī-gĭng ké̤ṳk chēng lâi go̤ lāu. Cī-bŏng chēng hiĕk gì gé-liŏh dŭ gé diŏh $2.',
 'deletedarticle'    => 'chēng lâi "[[$1]]"',
 'dellogpage'        => 'Chēng hiĕk nĭk-cé',
 'dellogpagetext'    => 'Â-dā̤ sê gé-liŏh cī-bŏng chēng hiĕk gì dăng-dăng.',
@@ -705,7 +701,6 @@ Có̤i âu gì siŭ-gāi sê [[User:$3|$3]] ([[User talk:$3|Tō̤-lâung]]) sū 
 # Block/unblock
 'blockip'                  => 'Hŭng-sō̤ ê̤ṳng-hô',
 'blockiptext'              => 'Sāi-ê̤ṳng â-dā̤ gì dăng-dăng lì hŭng-sō̤ IP dê-cī hĕ̤k-ciā ê̤ṳng-hô-miàng gì siā guòng-âing. Cuòi nâ sê ôi lāu huòng-cī nè̤ng cáuk-ták wiki, bêng-chiā găi-dŏng hù-hăk [[{{MediaWiki:Policy-url}}|céng-cháik]]. Chiāng diŏh â-dā̤ siā giâ hŭng-sō̤ gì nguòng-ĭng (pī-ṳ̀-gōng, īng-ê̤ṳng ké̤ṳk cáuk-ták gì hiĕk-miêng).',
-'ipaddress'                => 'IP dê-cī:',
 'ipadressorusername'       => 'IP dê-cī hĕ̤k ê̤ṳng-hô-miàng:',
 'ipbexpiry'                => 'Guó-gĭ:',
 'ipbreason'                => 'Nguòng-ĭng',
@@ -718,7 +713,6 @@ Có̤i âu gì siŭ-gāi sê [[User:$3|$3]] ([[User talk:$3|Tō̤-lâung]]) sū 
 ** Có̤-hák / lièu-sê̤ṳ
 ** Luâng kŭi dŏ̤ dióng-hô̤
 ** Luâng kī ê̤ṳng-hô-miàng',
-'ipbanononly'              => 'Nâ hŭng-sō̤ mò̤-miàng ê̤ṳng-hô',
 'ipbcreateaccount'         => 'Huòng-cī kŭi dióng-hô̤',
 'ipbemailban'              => 'Huòng-cī ê̤ṳng-hô gié diêng-piĕ',
 'ipbenableautoblock'       => 'Cê̤ṳ-dông hŭng-sō̤ ciā ê̤ṳng-hô siā-ê̤ṳng gì IP dê-cī',
@@ -739,7 +733,6 @@ Có̤i âu gì siŭ-gāi sê [[User:$3|$3]] ([[User talk:$3|Tō̤-lâung]]) sū 
 'unblocked'                => '[[User:$1|$1]] ī-gĭng ké̤ṳk gāi-hŭng lāu',
 'ipblocklist'              => 'Ké̤ṳk hŭng-sō̤ gì IP dê-cī gâe̤ng ê̤ṳng-hô-miàng gì dăng-dăng',
 'ipblocklist-legend'       => 'Tō̤ siŏh ciáh ké̤ṳk hŭng-sō̤ gì ê̤ṳng-hô',
-'ipblocklist-username'     => 'Ê̤ṳng-hô-miàng hĕ̤k IP dê-cī:',
 'ipblocklist-submit'       => 'Sìng-tō̤',
 'infiniteblock'            => 'īng-uōng',
 'anononlyblock'            => 'nâ mò̤-miàng ê̤ṳng-hô',
@@ -809,10 +802,6 @@ Nâ cūng-kuāng, nṳ̄ â̤-sāi cê-gă iè-dông hĕ̤k-ciā sê hăk-biáng
 'anonymous'        => '{{SITENAME}} gì mò̤ miàng ê̤ṳng-hô.',
 'lastmodifiedatby' => 'Ciā hiĕk-miêng sê diŏh $2, $1, iù  $3 có̤i-hâiu siŭ-gāi gì.',
 
-# Math errors
-'math_unknown_error'    => 'muôi báik gì dâng',
-'math_unknown_function' => 'muôi báik hàng-só',
-
 # Image deletion
 'deletedrevision' => 'Ī-gĭng chēng lâi gì bēng-buōng $1.',
 
@@ -841,14 +830,12 @@ Nâ cūng-kuāng, nṳ̄ â̤-sāi cê-gă iè-dông hĕ̤k-ciā sê hăk-biáng
 
 # External editor support
 'edit-externally'      => 'Sāi nguôi-buô tiàng-sê̤ṳ piĕng-cék ciā ùng-giông',
-'edit-externally-help' => 'Chăng-kō̤ [http://www.mediawiki.org/wiki/Manual:External_editors setup instructions] liēu-gāi gáing sâ̤ séng-sék.',
+'edit-externally-help' => 'Chăng-kō̤ [//www.mediawiki.org/wiki/Manual:External_editors setup instructions] liēu-gāi gáing sâ̤ séng-sék.',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'sū-iū',
-'imagelistall'     => 'cuòng-buô',
-'watchlistall2'    => 'sū-iū',
-'namespacesall'    => 'sū-iū',
-'monthsall'        => 'gó̤-lòng nièng',
+'watchlistall2' => 'sū-iū',
+'namespacesall' => 'sū-iū',
+'monthsall'     => 'gó̤-lòng nièng',
 
 # E-mail address confirmation
 'confirmemail'           => 'Káuk-nêng diêng-piĕ dê-cī',

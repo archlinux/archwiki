@@ -101,7 +101,9 @@ class CheckSyntax extends Maintenance {
 			return; // process only this path
 		} elseif ( $this->hasOption( 'list-file' ) ) {
 			$file = $this->getOption( 'list-file' );
-			$f = @fopen( $file, 'r' );
+			wfSuppressWarnings();
+			$f = fopen( $file, 'r' );
+			wfRestoreWarnings();
 			if ( !$f ) {
 				$this->error( "Can't open file $file\n", true );
 			}
@@ -137,7 +139,7 @@ class CheckSyntax extends Maintenance {
 		// Don't just put $IP, because the recursive dir thingie goes into all subdirs
 		$dirs = array(
 			$IP . '/includes',
-			$IP . '/config',
+			$IP . '/mw-config',
 			$IP . '/languages',
 			$IP . '/maintenance',
 			$IP . '/skins',
@@ -275,7 +277,9 @@ class CheckSyntax extends Maintenance {
 		}
 
 		$text = file_get_contents( $file );
+		$tokens = token_get_all( $text );
 
+		$this->checkEvilToken( $file, $tokens, '@', 'Error supression operator (@)');
 		$this->checkRegex( $file, $text, '/^[\s\r\n]+<\?/', 'leading whitespace' );
 		$this->checkRegex( $file, $text, '/\?>[\s\r\n]*$/', 'trailing ?>' );
 		$this->checkRegex( $file, $text, '/^[\xFF\xFE\xEF]/', 'byte-order mark' );
@@ -283,6 +287,18 @@ class CheckSyntax extends Maintenance {
 
 	private function checkRegex( $file, $text, $regex, $desc ) {
 		if ( !preg_match( $regex, $text ) ) {
+			return;
+		}
+
+		if ( !isset( $this->mWarnings[$file] ) ) {
+			$this->mWarnings[$file] = array();
+		}
+		$this->mWarnings[$file][] = $desc;
+		$this->output( "Warning in file $file: $desc found.\n" );
+	}
+
+	private function checkEvilToken( $file, $tokens, $evilToken, $desc ) {
+		if ( !in_array( $evilToken, $tokens ) ) {
 			return;
 		}
 

@@ -23,8 +23,9 @@ $fallback = 'zh-hant';
 $fallback8bitEncoding = 'Big5-HKSCS';
 
 $specialPageAliases = array(
-	'Unblock'                   => array( '解除封禁' ),
 	'ComparePages'              => array( '頁面比較' ),
+	'RevisionMove'              => array( '移動版本' ),
+	'Unblock'                   => array( '解除封禁' ),
 );
 
 $messages = array(
@@ -44,13 +45,6 @@ $messages = array(
 'october'   => '十月',
 'november'  => '十一月',
 'december'  => '十二月',
-
-'mainpagedocfooter' => '請參閱[http://meta.wikimedia.org/wiki/Help:Contents 用戶手冊]以獲得使用此 wiki 軟件的訊息！
-
-== 入門 ==
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings MediaWiki 配置設定清單]
-* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki 常見問題解答]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki 發佈郵件清單]',
 
 'mytalk' => '我的討論頁',
 

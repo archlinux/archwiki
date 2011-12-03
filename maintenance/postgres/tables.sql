@@ -9,6 +9,21 @@
 BEGIN;
 SET client_min_messages = 'ERROR';
 
+DROP SEQUENCE IF EXISTS user_user_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS page_page_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS revision_rev_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS page_restrictions_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS ipblocks_ipb_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS recentchanges_rc_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS logging_log_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS trackbacks_tb_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS job_job_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS category_cat_id_seq CASCADE;
+DROP FUNCTION IF EXISTS page_deleted() CASCADE;
+DROP FUNCTION IF EXISTS ts2_page_title() CASCADE;
+DROP FUNCTION IF EXISTS ts2_page_text() CASCADE;
+DROP FUNCTION IF EXISTS add_interwiki(TEXT,INT,SMALLINT) CASCADE;
+
 CREATE SEQUENCE user_user_id_seq MINVALUE 0 START WITH 0;
 CREATE TABLE mwuser ( -- replace reserved word 'user'
   user_id                   INTEGER  NOT NULL  PRIMARY KEY DEFAULT nextval('user_user_id_seq'),
@@ -39,6 +54,12 @@ CREATE TABLE user_groups (
 );
 CREATE UNIQUE INDEX user_groups_unique ON user_groups (ug_user, ug_group);
 
+CREATE TABLE user_former_groups (
+  ufg_user   INTEGER      NULL  REFERENCES mwuser(user_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+  ufg_group  TEXT     NOT NULL
+);
+CREATE UNIQUE INDEX ufg_user_group ON user_former_groups (ufg_user, ufg_group);
+
 CREATE TABLE user_newtalk (
   user_id              INTEGER      NOT NULL  REFERENCES mwuser(user_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
   user_ip              TEXT             NULL,
@@ -63,12 +84,12 @@ CREATE TABLE page (
   page_len           INTEGER        NOT NULL
 );
 CREATE UNIQUE INDEX page_unique_name ON page (page_namespace, page_title);
-CREATE INDEX page_main_title         ON page (page_title) WHERE page_namespace = 0;
-CREATE INDEX page_talk_title         ON page (page_title) WHERE page_namespace = 1;
-CREATE INDEX page_user_title         ON page (page_title) WHERE page_namespace = 2;
-CREATE INDEX page_utalk_title        ON page (page_title) WHERE page_namespace = 3;
-CREATE INDEX page_project_title      ON page (page_title) WHERE page_namespace = 4;
-CREATE INDEX page_mediawiki_title    ON page (page_title) WHERE page_namespace = 8;
+CREATE INDEX page_main_title         ON page (page_title text_pattern_ops) WHERE page_namespace = 0;
+CREATE INDEX page_talk_title         ON page (page_title text_pattern_ops) WHERE page_namespace = 1;
+CREATE INDEX page_user_title         ON page (page_title text_pattern_ops) WHERE page_namespace = 2;
+CREATE INDEX page_utalk_title        ON page (page_title text_pattern_ops) WHERE page_namespace = 3;
+CREATE INDEX page_project_title      ON page (page_title text_pattern_ops) WHERE page_namespace = 4;
+CREATE INDEX page_mediawiki_title    ON page (page_title text_pattern_ops) WHERE page_namespace = 8;
 CREATE INDEX page_random_idx         ON page (page_random);
 CREATE INDEX page_len_idx            ON page (page_len);
 
@@ -383,14 +404,6 @@ CREATE TABLE watchlist (
 );
 CREATE UNIQUE INDEX wl_user_namespace_title ON watchlist (wl_namespace, wl_title, wl_user);
 CREATE INDEX wl_user ON watchlist (wl_user);
-
-CREATE TABLE math (
-  math_inputhash              BYTEA     NOT NULL  UNIQUE,
-  math_outputhash             BYTEA     NOT NULL,
-  math_html_conservativeness  SMALLINT  NOT NULL,
-  math_html                   TEXT,
-  math_mathml                 TEXT
-);
 
 
 CREATE TABLE interwiki (

@@ -122,8 +122,6 @@ $messages = array(
 'category-file-count-limited'    => "{{PLURAL:$1|Ech fichié d'apré est|Chés $1 fichiés d'apré sont}} dins l'catégorie-lo.",
 'listingcontinuesabbrev'         => 'cont.',
 
-'mainpagetext' => "'''MediaWiki o té instalé aveuc victoère.'''",
-
 'about'         => 'À pérpos',
 'article'       => 'Étnu del pache',
 'newwindow'     => '(ouvrir din eune nouvèle fernéte)',
@@ -174,10 +172,10 @@ $messages = array(
 'history'           => 'Historique deul pache',
 'history_short'     => 'Histoère',
 'updatedmarker'     => 'Cangé édpui em darinne visite',
-'info_short'        => 'Informachion',
 'printableversion'  => 'Imprimabe vérchon',
 'permalink'         => 'Loïen pérmanint',
 'print'             => 'Imprimer',
+'view'              => 'Vir',
 'edit'              => 'Éditer',
 'create'            => 'Créer',
 'editthispage'      => "Éditer chl'pache-lo",
@@ -185,6 +183,7 @@ $messages = array(
 'delete'            => 'Défacer',
 'deletethispage'    => "Défacer chl'pache lo",
 'undelete_short'    => 'Déface poin {{PLURAL:$1|un édite|$1 édites}}',
+'viewdeleted_short' => '{{PLURAL:$1|eune édition défacée|$1  éditions défacées}}',
 'protect'           => 'Garantir',
 'protect_change'    => 'canger',
 'protectthispage'   => "Défènner l'pache",
@@ -347,7 +346,7 @@ j'm'escuse mais i feut prinde un aute nom.",
 'accountcreatedtext'      => "Ech conpte d'uzeu pou $1 o té créé.",
 'loginlanguagelabel'      => 'Langache: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => "Canger ch'mot d'passe",
 'resetpass_header'          => "Canger ch'mot d'passe dech conpte",
 'oldpassword'               => "Anthiu mot d'passe:",
@@ -366,8 +365,6 @@ j'm'escuse mais i feut prinde un aute nom.",
 'extlink_tip'     => "Éstérne loïen ( n'obliez mie ech préfix http:// )",
 'headline_sample' => 'Teske dechl in-téte',
 'headline_tip'    => 'In-téte nivieu 2',
-'math_sample'     => "Mètte l'formule ichi",
-'math_tip'        => 'Formule matématike (LaTeX)',
 'nowiki_sample'   => "Placher ch'teske non-formaté ichi",
 'nowiki_tip'      => "Poin d'format wiki",
 'image_tip'       => 'fichié incorporé',
@@ -613,9 +610,7 @@ Ale doét mie éte pu longue éq $1 {{PLURAL:$1|caracter|caractéres}}.',
 # Watchlist
 'watchlist'         => 'Em lisse à suire',
 'mywatchlist'       => "M'lisse à suire",
-'addedwatch'        => "Rajouté su l'lisse à suire",
 'addedwatchtext'    => "L' pache « [[:$1]] » o té rajoutée à vote [[Special:Watchlist|lisse à suire]].<br /> Chés  canjemints à vnir del pache-lo pi del page éd pérlache sront mis din l'lisse. L'pache sro '''in cros''' din el [[Special:RecentChanges|lisse d'chés darins canjemints]] pou les értreuver fachilmint. Pou értirer chol pache del ''lisse à suire'', bukez su « {{MediaWiki:Unwatch}} ».",
-'removedwatch'      => 'Értiré del lisse à suire',
 'removedwatchtext'  => "L'pache « [[:$1]] » o té értirée éd vote [[Special:Watchlist|lisse à suire]].",
 'watch'             => 'Suire',
 'watchthispage'     => "Suire l'pache-lo",
@@ -632,7 +627,7 @@ Ale doét mie éte pu longue éq $1 {{PLURAL:$1|caracter|caractéres}}.',
 'deletepage'            => "Défacer l'pache",
 'confirmdeletetext'     => "Vos alez défacer eune pache ou un fichié aveuc toutes chés antieusses vérchons.<br /> Confreumer éq ch'est cho éq vos voulez foaire, éq vos conprindez chés consécanches et pi éq ch'est bin s'lon el [[{{MediaWiki:Policy-url}}|politique éd MédiaWiki]].",
 'actioncomplete'        => 'Plònne acchon',
-'deletedtext'           => "« <nowiki>$1</nowiki> » o té défacé.
+'deletedtext'           => "« $1 » o té défacé.
 Vir $2 pou eune lisse d'chés darinnes défachons.",
 'deletedarticle'        => 'défacé "[[$1]]"',
 'dellogpage'            => 'jornal éd chés défacions',
@@ -658,7 +653,7 @@ L' passèie édition del pache étoait par  [[User:$3|$3]] ([[User talk:$3|Talk]
 'protectexpiry'               => "Date d'éspirachon:",
 'protect_expiry_invalid'      => "L'date d'éspirachon ale n'est mie possibe.",
 'protect_expiry_old'          => "L'date d'éspirachon ale est déjo érpassée.",
-'protect-text'                => "Os pouvez vir pi canger ech nivieu d'protécchon ichi pou l'pache-lo '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "Os pouvez vir pi canger ech nivieu d'protécchon ichi pou l'pache-lo '''$1'''.",
 'protect-locked-access'       => "Vos n’avez poin chés droés pou canger chés nivieus d'protécchon des paches.<br />
 Vlo chés réglages del pache '''$1''' à ch'momint-chi:",
 'protect-cascadeon'           => "L'pache-lo ale est garantie ker ale est incluse din {{PLURAL:$1|eune pache qu'o té garantie|des paches éq ont té garanties}} aveuc l'option « protécchon in cascate» écanillée. <br /> Os povez canger ch'nivieu d'garantie del pache mais el garantie in cascate n'sro poin cangée.",
@@ -829,19 +824,15 @@ Os pouvez vir l'source",
 'tooltip-undo'                    => "« Undo » ( ''démangler'' ) értire ch'canjemint-lo pi ouvre l' fénéte d'édichon din ch'mode ''prévir''. <br /> In put mette un motif din ch'résumé.",
 'tooltip-preferences-save'        => 'Warder chés préférinches.',
 
-# Info page
-'numedits' => 'Nombe ed canjemints (pache) : $1',
-
 # Browsing diffs
 'previousdiff' => '← Pu vieille édition',
 'nextdiff'     => 'Nouvèle édichon →',
 
 # Media information
-'file-info-size'       => '$1 × $2 picséls, diminchon dech fichié: $3, MIME tipe: $4',
-'file-nohires'         => '<small>Poin éd pu grande résoluchon possibe.</small>',
-'svg-long-desc'        => 'Fichié SVG, résoluchon éd $1 × $2 picsels, diminchon: $3',
-'show-big-image'       => 'Plinne résoluchon',
-'show-big-image-thumb' => '<small>Diminchon del intérvue-lo : $1 × $2 picséls</small>',
+'file-info-size' => '$1 × $2 picséls, diminchon dech fichié: $3, MIME tipe: $4',
+'file-nohires'   => '<small>Poin éd pu grande résoluchon possibe.</small>',
+'svg-long-desc'  => 'Fichié SVG, résoluchon éd $1 × $2 picsels, diminchon: $3',
+'show-big-image' => 'Plinne résoluchon',
 
 # Bad image list
 'bad_image_list' => "Ch'format ch'est:
@@ -861,11 +852,17 @@ Chés eutes cans is s'ront muchés pèr défeut.
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength",
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude",
 
 # External editor support
 'edit-externally'      => "Éditer ch'fichié-lo aveuc eune éstérne aplicachon",
-'edit-externally-help' => '(Vir [http://www.mediawiki.org/wiki/Manual:External_editors/fr chés instruccions d’installachon] pou pus d’informachons)',
+'edit-externally-help' => '(Vir [//www.mediawiki.org/wiki/Manual:External_editors/fr chés instruccions d’installachon] pou pus d’informachons)',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'tertous',

@@ -159,14 +159,6 @@ $messages = array(
 'index-category'                 => 'Ȝebēacniende trametas',
 'noindex-category'               => 'Unȝebēacniende trametas',
 
-'mainpagetext'      => "'''MediaǷiki hafaþ ȝeƿorden spēdiȝe inseted.'''",
-'mainpagedocfooter' => 'Þeahta þone [http://meta.wikimedia.org/wiki/Help:Contents Brūcenda Lǣdend]  on helpe mid þǣre nytte of ƿikisōftƿare.
-
-== Beȝinnunȝ ==
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Onfæstnunȝa ȝesetednessa ȝetæl]
-* [http://www.mediawiki.org/wiki/Manual:FAQ Ȝetæl oft ascodra ascunȝa ymb MediaǷiki]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Ǣrendunȝȝetæl nīƿra MediaǷiki forþsendnessa]',
-
 'about'         => 'Ymbe',
 'article'       => 'Innunȝsīde',
 'newwindow'     => '(openaþ in nīƿum ēaȝþyrelum)',
@@ -217,7 +209,6 @@ $messages = array(
 'history'           => 'Sīdan stǣr',
 'history_short'     => 'Stǣr',
 'updatedmarker'     => 'nīƿod æfter ic cōm hider ǣror',
-'info_short'        => 'Cȳþþu',
 'printableversion'  => 'Ūtmǣlendlicu fadunȝ',
 'permalink'         => 'Fæst hlenċe',
 'print'             => 'Ūtmǣl',
@@ -406,14 +397,14 @@ Bidde þē, lǣt hīe tō twyrcenne, and þǣræfter inmelda þurh þīnne nīwa
 'nosuchuser'                 => 'Þǣr nis nān brūcere þe hæfþ þone naman "$1".
 Stafena micelnesse sind hefige and ānlica on brūcendnamum.
 Scēawa þīne wrītunge eft, oþþe brūc þā cartan þe is hērunder tō [[Special:UserLogin/signup|settene nīwne brūcendreccend]].',
-'nosuchusershort'            => 'Þǣr is nān brūcend mid þǣm naman "<nowiki>$1</nowiki>".  Edscēawa on þīne wrītunge.',
+'nosuchusershort'            => 'Þǣr is nān brūcend mid þǣm naman "$1".  Edscēawa on þīne wrītunge.',
 'passwordtooshort'           => 'Gelēafword sculon habban læst {{PLURAL:$1|1 stafan|$1 stafan}}.',
 'mailmypassword'             => 'Nīƿe þafungƿord bȳ e-mail sendan',
 'acct_creation_throttle_hit' => 'Hwæt, þu hæfst gēo geseted {{PLURAL:$1|1 hordcleofan|$1 -}}. Þu ne canst settan ǣnige māran.',
 'accountcreated'             => 'Hordcleofan ȝescapen',
 'loginlanguagelabel'         => 'Sprǣċ: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Þafungƿord hƿeorfan',
 'oldpassword'               => 'Eald þafungƿord:',
 'newpassword'               => 'Nīƿu þafungƿord:',
@@ -432,8 +423,6 @@ Scēawa þīne wrītunge eft, oþþe brūc þā cartan þe is hērunder tō [[Sp
 'extlink_tip'     => 'Ūtanƿeard hlenċe (ȝemune http:// foredǣl)',
 'headline_sample' => 'Hēafodlīnan traht',
 'headline_tip'    => 'Emnet 2 hēafodlīn',
-'math_sample'     => 'Ƿiċunge hēr ēacian',
-'math_tip'        => 'Rīmcræftisc ƿiċung (LaTeX)',
 'nowiki_sample'   => 'Unȝeƿorhtne traht hēr stellan',
 'nowiki_tip'      => 'Ƿiki ȝeƿeorc forȝietan',
 'image_sample'    => 'Bisen.jpg',
@@ -608,7 +597,6 @@ folcliċum āgnunge oþþe ȝelīċum frēom horde (sēo $1 for āscungum).
 'prefsnologin'       => 'Ne inȝemelded',
 'prefs-skin'         => 'Scynn',
 'skin-preview'       => 'Forescēaƿian',
-'prefs-math'         => 'Rīmcræft',
 'prefs-datetime'     => 'Tælmearc and tīd',
 'prefs-rc'           => 'Nīƿe hƿearfas',
 'prefs-watchlist'    => 'Ƿæccȝetalu',
@@ -617,7 +605,6 @@ folcliċum āgnunge oþþe ȝelīċum frēom horde (sēo $1 for āscungum).
 'columns'            => 'Sȳla:',
 'searchresultshead'  => 'Sōcnfintan',
 'resultsperpage'     => 'Tōhīgunga tō īewenne for tramete',
-'contextlines'       => 'Līnan tō īewenne in tōhīgunge',
 'recentchangescount' => 'Hū mæniȝ ādihtas to scēaƿenne ȝeþēaƿe:',
 'savedprefs'         => 'Þīna foreberunga ƿurdon ȝespared.',
 'timezonelegend'     => 'Tīdstell',
@@ -757,7 +744,6 @@ Cnæpp on sƿeorhēafde hƿeorfþ þā endebyrdnessa.',
 'linkstoimage'              => 'Þā folgendan {{PLURAL:$1|sīde hæfþ hlenċe|sīdan habbaþ hlenċan}} for þissum fīle:',
 'nolinkstoimage'            => 'Þǣr sind nāne trametas þe bindaþ tō þissum biliðe.',
 'morelinkstoimage'          => '[[Special:WhatLinksHere/$1|Mā hlenċan]] sēon tō þissum fīle.',
-'redirectstofile'           => '{{PLURAL:$1|Þēos fīl edlǣdeþ|$1 Þās fīlan hēr edlǣdaþ}} tō þissum  fīle:',
 'duplicatesoffile'          => '{{PLURAL:$1|Sēo folgende fīl is ȝelīċnes|Þā folgende fīlan sind ȝelīċnessa}} þisses fīles (sēo [[Special:FileDuplicateSearch/$2|mā ȝeƿitnesse hērymb]]):',
 'sharedupload'              => 'Þēos fīl is fram $1 and man mæȝ hīe brūcan on ōðrum ƿeorcum.',
 'uploadnewversion-linktext' => 'Nīƿe fadunge þisse fīlan forþsendan',
@@ -887,8 +873,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Watchlist
 'watchlist'         => 'Mīnu ƿæcceȝetalu',
 'mywatchlist'       => 'Mīnu ƿæcceȝetalu',
-'addedwatch'        => 'To ƿæcceȝetale ēacod',
-'removedwatch'      => 'Fornōm fram ƿæccȝetale',
 'removedwatchtext'  => 'Sēo sīde "[[:$1]]" ƿæs fram [[Special:Watchlist|þīnre ƿæccȝetale]] fornōm.',
 'watch'             => 'Ƿæccan',
 'watchthispage'     => 'Þās sīdan ƿæccan',
@@ -943,7 +927,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'protectexpiry'               => 'Endaþ:',
 'protect_expiry_invalid'      => 'Endende tīde is unriht.',
 'protect_expiry_old'          => 'Endende tīde is in ȝēara dagum.',
-'protect-text'                => "Þū meaht þæt beorges emnet sēon and hƿeorfan hēr for þǣre sīdan '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "Þū meaht þæt beorges emnet sēon and hƿeorfan hēr for þǣre sīdan '''$1'''.",
 'protect-default'             => 'Eall brūcendas þafian',
 'protect-fallback'            => '"$1" þafunge ābiddan',
 'protect-level-autoconfirmed' => 'Nīƿe and unbōcen brūcendas fortȳnan',
@@ -1143,14 +1127,6 @@ Bidde cēos ōðerne naman.',
 'others'    => 'ōðru',
 'anonusers' => '{{SITENAME}} {{PLURAL:$2|uncūþ brūcend|uncūðe brūcendas}} $1',
 
-# Info page
-'numedits'     => 'Hū mæniȝ ādihtas (sīde): $1',
-'numtalkedits' => 'Hū mæniȝ ādihtas (ȝespreċsīde): $1',
-'numwatchers'  => 'Hū mæniȝ ƿæcceras: $1',
-
-# Math errors
-'math_unknown_error' => 'uncūþ ƿōh',
-
 # Patrol log
 'patrol-log-auto' => '(selffremmende)',
 'patrol-log-diff' => 'nīƿung $1',
@@ -1160,13 +1136,12 @@ Bidde cēos ōðerne naman.',
 'nextdiff'     => 'Nīƿra ādiht',
 
 # Media information
-'imagemaxsize'         => 'Settan biliðu on biliþgemearcungtrametum tō:',
-'thumbsize'            => 'Þumannæglmicelnes:',
-'file-info-size'       => '$1 × $2 pixels, fīlmiċelu: $3, MIMEcynn: $4',
-'file-nohires'         => '<small>Þǣr nis nǣniȝ mā miċelu.</small>',
-'svg-long-desc'        => 'SVG fīl, rihte $1 × $2 pixels, fīlmiċelu: $3',
-'show-big-image'       => 'Fulmiċelu',
-'show-big-image-thumb' => '<small>Þēos forescēaƿe miċelu: $1 × $2 pixels</small>',
+'imagemaxsize'   => 'Settan biliðu on biliþgemearcungtrametum tō:',
+'thumbsize'      => 'Þumannæglmicelnes:',
+'file-info-size' => '$1 × $2 pixels, fīlmiċelu: $3, MIMEcynn: $4',
+'file-nohires'   => '<small>Þǣr nis nǣniȝ mā miċelu.</small>',
+'svg-long-desc'  => 'SVG fīl, rihte $1 × $2 pixels, fīlmiċelu: $3',
+'show-big-image' => 'Fulmiċelu',
 
 # Special:NewFiles
 'imagelisttext' => 'Under is getalu $1 biliða gedæfted $2.',
@@ -1244,15 +1219,13 @@ Bidde cēos ōðerne naman.',
 'exif-gpsdirection-t' => 'Sōþ rihtung',
 
 # External editor support
-'edit-externally-help' => '(Þā [http://www.mediawiki.org/wiki/Manual:External_editors ȝearƿunga tyhtas] sēon for mā cȳþþe)',
+'edit-externally-help' => '(Þā [//www.mediawiki.org/wiki/Manual:External_editors ȝearƿunga tyhtas] sēon for mā cȳþþe)',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'eall',
-'imagelistall'     => 'eall',
-'watchlistall2'    => 'eall',
-'namespacesall'    => 'eall',
-'monthsall'        => 'eall',
-'limitall'         => 'eall',
+'watchlistall2' => 'eall',
+'namespacesall' => 'eall',
+'monthsall'     => 'eall',
+'limitall'      => 'eall',
 
 # E-mail address confirmation
 'confirmemail_body' => 'Hwilchwega, gewēne þu of IP stōwe $1, hæfþ in namanbēc gestt ǣnne hordcleofan

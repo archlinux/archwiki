@@ -76,14 +76,16 @@ class SpecialProtectedpages extends SpecialPage {
 	 * @return string Formatted <li> element
 	 */
 	public function formatRow( $row ) {
-		global $wgUser, $wgLang, $wgContLang;
+		global $wgUser, $wgLang;
 
 		wfProfileIn( __METHOD__ );
 
-		static $skin=null;
+		static $skin = null, $infinity = null;
 
-		if( is_null( $skin ) )
+		if( is_null( $skin ) ){
 			$skin = $wgUser->getSkin();
+			$infinity = wfGetDB( DB_SLAVE )->getInfinity();
+		}
 
 		$title = Title::makeTitleSafe( $row->page_namespace, $row->page_title );
 		$link = $skin->link( $title );
@@ -100,17 +102,21 @@ class SpecialProtectedpages extends SpecialPage {
 
 		$stxt = '';
 
-		if( $row->pr_expiry != 'infinity' && strlen($row->pr_expiry) ) {
-			$expiry = Block::decodeExpiry( $row->pr_expiry );
+		$expiry = $wgLang->formatExpiry( $row->pr_expiry, TS_MW );
+		if( $expiry != $infinity ) {
 
-			$expiry_description = wfMsg( 'protect-expiring' , $wgLang->timeanddate( $expiry ) , 
-				$wgLang->date( $expiry ) , $wgLang->time( $expiry ) );
+			$expiry_description = wfMsg(
+				'protect-expiring',
+				$wgLang->timeanddate( $expiry ),
+				$wgLang->date( $expiry ),
+				$wgLang->time( $expiry )
+			);
 
 			$description_items[] = htmlspecialchars($expiry_description);
 		}
 
 		if(!is_null($size = $row->page_len)) {
-			$stxt = $wgContLang->getDirMark() . ' ' . $skin->formatRevisionSize( $size );
+			$stxt = $wgLang->getDirMark() . ' ' . $skin->formatRevisionSize( $size );
 		}
 
 		# Show a link to the change protection form for allowed users otherwise a link to the protection log
@@ -139,7 +145,7 @@ class SpecialProtectedpages extends SpecialPage {
 		return Html::rawElement(
 			'li',
 			array(),
-			wfSpecialList( $link . $stxt, $wgLang->commaList( $description_items ) ) . $changeProtection ) . "\n";
+			wfSpecialList( $link . $stxt, $wgLang->commaList( $description_items ), false ) . $changeProtection ) . "\n";
 	}
 
 	/**
@@ -193,7 +199,7 @@ class SpecialProtectedpages extends SpecialPage {
 		return
 			Xml::checkLabel( wfMsg('protectedpages-indef'), 'indefonly', 'indefonly', $indefOnly ) . "\n";
 	}
-	
+
 	/**
 	 * @return string Formatted HTML
 	 */
@@ -288,7 +294,7 @@ class ProtectedPagesPager extends AlphabeticPager {
 	public $mForm, $mConds;
 	private $type, $level, $namespace, $sizetype, $size, $indefonly;
 
-	function __construct( $form, $conds = array(), $type, $level, $namespace, $sizetype='', $size=0, 
+	function __construct( $form, $conds = array(), $type, $level, $namespace, $sizetype='', $size=0,
 		$indefonly = false, $cascadeonly = false )
 	{
 		$this->mForm = $form;
@@ -313,6 +319,10 @@ class ProtectedPagesPager extends AlphabeticPager {
 		return '';
 	}
 
+	function getTitle() {
+		return SpecialPage::getTitleFor( 'Protectedpages' );
+	}
+
 	function formatRow( $row ) {
 		return $this->mForm->formatRow( $row );
 	}
@@ -323,15 +333,16 @@ class ProtectedPagesPager extends AlphabeticPager {
 				'OR pr_expiry IS NULL)';
 		$conds[] = 'page_id=pr_page';
 		$conds[] = 'pr_type=' . $this->mDb->addQuotes( $this->type );
-		
+
 		if( $this->sizetype=='min' ) {
 			$conds[] = 'page_len>=' . $this->size;
-		} else if( $this->sizetype=='max' ) {
+		} elseif( $this->sizetype=='max' ) {
 			$conds[] = 'page_len<=' . $this->size;
 		}
 
 		if( $this->indefonly ) {
-			$conds[] = "pr_expiry = 'infinity' OR pr_expiry IS NULL";
+			$db = wfGetDB( DB_SLAVE );
+			$conds[] = "pr_expiry = {$db->addQuotes( $db->getInfinity() )} OR pr_expiry IS NULL";
 		}
 		if( $this->cascadeonly ) {
 			$conds[] = "pr_cascade = '1'";

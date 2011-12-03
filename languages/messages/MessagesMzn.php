@@ -21,12 +21,6 @@ $linkPrefixExtension = true;
 $fallback8bitEncoding = 'windows-1256';
 
 $rtl = true;
-$defaultUserOptionOverrides = array(
-	# Swap sidebar to right side by default
-	'quickbar' => 2,
-	# Underlines seriously harm legibility. Force off:
-	'underline' => 0,
-);
 
 $namespaceNames = array(
 	NS_MEDIA            => 'مه‌دیا',
@@ -199,6 +193,7 @@ $messages = array(
 'listingcontinuesabbrev'   => '(دمباله)',
 'index-category'           => 'صفحه‌ئون نمایه بَیی',
 'noindex-category'         => 'صفحه‌ئون نمایه نَیی',
+'broken-file-category'     => 'صفحه‌ئونی که اتا عکس اسا وشون سر دنی‌یه',
 
 'about'         => 'درباره',
 'article'       => 'صفحه‌ی بنویشته‌ئون',
@@ -250,10 +245,10 @@ $messages = array(
 'history'           => 'صفحه‌ی تاریخچه',
 'history_short'     => 'تاریخچه',
 'updatedmarker'     => 'عوض بَیی پس از آخرین بار که بی‌یمومه',
-'info_short'        => 'اطیلاعات',
 'printableversion'  => 'پرینت‌هاکردنی صفحه',
 'permalink'         => 'بموندستنی لینک',
 'print'             => 'پرینت',
+'view'              => 'نمایش',
 'edit'              => 'دچی‌ین',
 'create'            => 'بساتن',
 'editthispage'      => 'این صفحه ره دچی‌ین',
@@ -261,6 +256,7 @@ $messages = array(
 'delete'            => 'پاک هاکردن',
 'deletethispage'    => 'این صفحه ره پاک هاکردن',
 'undelete_short'    => 'احیای {{PLURAL:$1|ات دچی‌یه|$1 دچی‌یه}}',
+'viewdeleted_short' => 'نمایش {{PLURAL:$1|اتا دچی‌یه حذف بَیی|$1 دچی‌یه حذف بَیی}}',
 'protect'           => 'زلفن بزوئن',
 'protect_change'    => 'دگاردنی‌ین',
 'protectthispage'   => 'این صفحه ره زلفن بزن',
@@ -340,6 +336,8 @@ $2، $1',
 'toc'                     => 'دله',
 'showtoc'                 => 'نشون هاده',
 'hidetoc'                 => 'فرو بور',
+'collapsible-collapse'    => 'دوستن',
+'collapsible-expand'      => 'گت هاکردن',
 'thisisdeleted'           => 'نیمایش یا دِباره دربیاردنِ $1؟',
 'viewdeleted'             => 'نمایش $1؟',
 'restorelink'             => '{{PLURAL:$1|$1|$1}} دچی‌ین پاک بیّه',
@@ -351,6 +349,8 @@ $2، $1',
 'page-rss-feed'           => '"$1" RSS خه‌راک',
 'page-atom-feed'          => '"$1" Atom خه‌راک',
 'red-link-title'          => '$1 (این صفحه دَنی‌یه)',
+'sort-descending'         => 'مرتب‌ساجی نزولی',
+'sort-ascending'          => 'مرتب‌ساجی صعودی',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'صفحه',
@@ -463,7 +463,7 @@ $2، $1',
 'accountcreated'          => 'کاروری نوم دِرِس بیّه',
 'accountcreatedtext'      => 'کاروری نوم، $1 بساته بیّه.',
 
-# Password reset dialog
+# Change password dialog
 'newpassword' => 'نو پسورد:',
 
 # Edit page toolbar
@@ -477,8 +477,6 @@ $2، $1',
 'extlink_tip'     => 'بیرون بگردستن (پیشوند http://‎ ره یادنکانین)',
 'headline_sample' => 'متن عنوان',
 'headline_tip'    => 'عنوان بند ۲',
-'math_sample'     => 'فورمـول ره ایجـه دأکـه‌ن',
-'math_tip'        => 'ریاضی فورمول',
 'nowiki_sample'   => 'شه بی فورمت بنویشته ره اینجه دکانین',
 'nowiki_tip'      => 'فورمت سر چش ره کوریک بَیره',
 'media_tip'       => 'فایل لینک',

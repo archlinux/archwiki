@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Sep 19, 2006
  *
@@ -72,13 +72,15 @@ class ApiLogin extends ApiBase {
 
 		global $wgCookiePrefix, $wgUser, $wgPasswordAttemptThrottle;
 
-		switch ( $authRes = $loginForm->authenticateUserData() ) {
+		$authRes = $loginForm->authenticateUserData();
+		switch ( $authRes ) {
 			case LoginForm::SUCCESS:
 				$wgUser->setOption( 'rememberpassword', 1 );
-				$wgUser->setCookies();
+				$wgUser->setCookies( $this->getMain()->getRequest() );
 
-				// Run hooks. FIXME: split back and frontend from this hook.
-				// FIXME: This hook should be placed in the backend
+				// Run hooks.
+				// @todo FIXME: Split back and frontend from this hook.
+				// @todo FIXME: This hook should be placed in the backend
 				$injected_html = '';
 				wfRunHooks( 'UserLoginComplete', array( &$wgUser, &$injected_html ) );
 
@@ -140,6 +142,11 @@ class ApiLogin extends ApiBase {
 				$result['result'] = 'Blocked';
 				break;
 
+			case LoginForm::ABORTED:
+				$result['result'] = 'Aborted';
+				$result['reason'] =  $loginForm->mAbortLoginErrorMsg;
+				break;
+
 			default:
 				ApiBase::dieDebug( __METHOD__, "Unhandled case value: {$authRes}" );
 		}
@@ -175,7 +182,7 @@ class ApiLogin extends ApiBase {
 
 	public function getDescription() {
 		return array(
-			'This module is used to login and get the authentication tokens. ',
+			'Log in and get the authentication tokens. ',
 			'In the event of a successful log-in, a cookie will be attached',
 			'to your session. In the event of a failed log-in, you will not ',
 			'be able to attempt another log-in through this method for 5 seconds.',
@@ -205,7 +212,11 @@ class ApiLogin extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Login';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiLogin.php 76080 2010-11-05 11:54:35Z catrope $';
+		return __CLASS__ . ': $Id: ApiLogin.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

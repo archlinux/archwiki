@@ -157,7 +157,7 @@ abstract class DatabaseInstaller {
 		$this->db->setFlag( DBO_DDLMODE ); // For Oracle's handling of schema files
 		$this->db->begin( __METHOD__ );
 
-		$error = $this->db->sourceFile( $this->db->getSchema() );
+		$error = $this->db->sourceFile( $this->db->getSchemaPath() );
 		if( $error !== true ) {
 			$this->db->reportQueryError( $error, 0, '', __METHOD__ );
 			$this->db->rollback( __METHOD__ );
@@ -181,26 +181,9 @@ abstract class DatabaseInstaller {
 		if ( !$status->isOK() ) {
 			return $status;
 		}
-		$updater = DatabaseUpdater::newForDB( $this->db );
-		$extensionUpdates = $updater->getNewExtensions();
-
-		$ourExtensions = array_map( 'strtolower', $this->getVar( '_Extensions' ) );
-
-		foreach( $ourExtensions as $ext ) {
-			if( isset( $extensionUpdates[$ext] ) ) {
-				$this->db->begin( __METHOD__ );
-				$error = $this->db->sourceFile( $extensionUpdates[$ext] );
-				if( $error !== true ) {
-					$this->db->rollback( __METHOD__ );
-					$status->warning( 'config-install-tables-failed', $error );
-				} else {
-					$this->db->commit( __METHOD__ );
-				}
-			}
-		}
 
 		// Now run updates to create tables for old extensions
-		$updater->doUpdates( array( 'extensions' ) );
+		DatabaseUpdater::newForDB( $this->db )->doUpdates( array( 'extensions' ) );
 
 		return $status;
 	}
@@ -361,6 +344,8 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Get a labelled text box to configure a local variable.
+	 *
+	 * @return string
 	 */
 	public function getTextBox( $var, $label, $attribs = array(), $helpData = "" ) {
 		$name = $this->getName() . '_' . $var;
@@ -381,6 +366,8 @@ abstract class DatabaseInstaller {
 	/**
 	 * Get a labelled password box to configure a local variable.
 	 * Implements password hiding.
+	 *
+	 * @return string
 	 */
 	public function getPasswordBox( $var, $label, $attribs = array(), $helpData = "" ) {
 		$name = $this->getName() . '_' . $var;
@@ -400,6 +387,8 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Get a labelled checkbox to configure a local boolean variable.
+	 *
+	 * @return string
 	 */
 	public function getCheckBox( $var, $label, $attribs = array(), $helpData = "" ) {
 		$name = $this->getName() . '_' . $var;

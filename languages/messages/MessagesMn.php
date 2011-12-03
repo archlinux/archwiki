@@ -168,14 +168,6 @@ $messages = array(
 'index-category'                 => 'Индекслэгдсэн хуудсууд',
 'noindex-category'               => 'Индекслэгдээгүй хуудсууд',
 
-'mainpagetext'      => "'''МедиаВики амжилттай суулаа.'''",
-'mainpagedocfooter' => 'Вики программыг хэрэглэх талаар заавар авахын тулд [http://meta.wikimedia.org/wiki/Help:Contents хэрэглэгчийн гарын авлага]-г үзнэ үү.
-
-== Эхлэх ==
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Тохиргоо]
-* [http://www.mediawiki.org/wiki/Manual:FAQ МедиаВикигийн тогтмол тавигддаг асуултууд]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce МедиаВикигийн мэдээний мэйл явуулах жагсаалт]',
-
 'about'         => 'Тухай',
 'article'       => 'Өгүүлэл',
 'newwindow'     => '（шинэ цонх нээгдэнэ）',
@@ -226,7 +218,6 @@ $messages = array(
 'history'           => 'Хуудасны түүх',
 'history_short'     => 'Түүх',
 'updatedmarker'     => 'сүүлд зочилсноос хойш шинэчлэгдсэн',
-'info_short'        => 'Мэдээлэл',
 'printableversion'  => 'Хэвлэх хувилбар',
 'permalink'         => 'Байнгын холбоос',
 'print'             => 'Хэвлэх',
@@ -415,12 +406,11 @@ $1',
 'protectedinterface'   => 'Энэ хуудас программын харагдах байдалд ашиглагддаг текстийг агуулдаг тул түгжигдсэн байна.',
 'editinginterface'     => "'''Анхаар''': Та программын харагдах байдалд ашиглагддаг текстийг агуулсан хуудсыг засварлах гэж байна.
 Энэ хуудсанд өөрчлөлт оруулснаар бусад хэрэглэгчдийн программын харагдах байдалд нөлөөлөх болно.
-Орчуулга хийх гэж байгаа бол МедиаВикигийн орчуулгын төсөл болох, [http://translatewiki.net/wiki/Main_Page?setlang=mn Бетавики]-г хэрэглэхийг санал болгож байна.",
+Орчуулга хийх гэж байгаа бол МедиаВикигийн орчуулгын төсөл болох, [//translatewiki.net/wiki/Main_Page?setlang=mn Бетавики]-г хэрэглэхийг санал болгож байна.",
 'sqlhidden'            => '（SQL илэрц харагдахгүй байна）',
 'cascadeprotected'     => 'Энэ хуудас нь давхар хамгаалалттай дараах {{PLURAL:$1|хуудсанд|хуудсуудад}} орсон тул засварлагдахаас хамгаалагдсан байна:
 $2',
 'namespaceprotected'   => "Таньд '''$1''' нэрний зай дахь хуудсуудыг засварлах зөвшөөрөл байхгүй байна.",
-'customcssjsprotected' => 'Энэ хуудас өөр хэрэглэгчийн хувийн тохиргоог агуулдаг тул та засварлах эрхгүй.',
 'ns-specialprotected'  => 'Тусгай хуудсуудыг засварлах боломжгүй.',
 'titleprotected'       => "[[User:$1|$1]] нь энэ хуудсыг үүсгэх явдыг хорьжээ.
 Шалтгаан нь: ''$2''.",
@@ -477,7 +467,7 @@ $2',
 'nosuchuser'                 => '"$1" нэртэй хэрэглэгч олдсонгүй.
 Хэрэглэгчийн нэрийн үсгүүд том жижгээр бичсэн байдлаар өөр байна.
 Та зөв бичсэн эсэхээ шалгах, эсвэл [[Special:UserLogin/signup| шинээр бүртгүүлнэ үү]].',
-'nosuchusershort'            => '"<nowiki>$1</nowiki>" гэсэн нэртэй хэрэглэгч байхгүй байна.
+'nosuchusershort'            => '"$1" гэсэн нэртэй хэрэглэгч байхгүй байна.
 Үсгийн алдаагаа шалгана уу.',
 'nouserspecified'            => 'Та хэрэглэгчийн нэрээ зааж өгөх хэрэгтэй.',
 'login-userblocked'          => 'Энэхүү хэрэглэгчийг түгжсэн байна. Нэвтрэх боломжгүй.',
@@ -525,7 +515,7 @@ $2',
 'loginlanguagelabel'         => 'Хэл: $1',
 'suspicious-userlogout'      => 'Таны гарах хүсэлт нь эвдэрхий хөтөч буюу кэшлэгч проксигоор явуулсан мэт харагдаж байгаа тул зөвшөөрсөнгүй.',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Нууц үгээ солих',
 'resetpass_announce'        => 'Та мэйлээр илгээгдсэн түр зуурын нууц үгээр нэвтэрч орсон байна
 Бүрэн нэвтэрэхэд та энд шинэ нууц үгээ оруулах хэрэгтэй:',
@@ -543,6 +533,9 @@ $2',
 Та аль хэдийнээ нууц үгээ сольсон эсвэл түр зуурын нууц үг хүссэн байна.',
 'resetpass-temp-password'   => 'Түр зуурын нууц үг:',
 
+# Special:PasswordReset
+'passwordreset-username' => 'Хэрэглэгчийн нэр:',
+
 # Edit page toolbar
 'bold_sample'     => 'Тодруулсан бичиг',
 'bold_tip'        => 'Тодруулсан бичиг',
@@ -554,8 +547,6 @@ $2',
 'extlink_tip'     => 'Гадны холбоос (эхэнд нь http:// бичихээ мартуузай)',
 'headline_sample' => 'Гарчигийн текст',
 'headline_tip'    => '2-р түвшний гарчиг',
-'math_sample'     => 'Энд томъёогоо оруулна уу',
-'math_tip'        => 'Математикийн томъёо （LaTeX）',
 'nowiki_sample'   => 'Энд хэлбэршүүлээгүй текстээ оруулна уу',
 'nowiki_tip'      => 'Вики форматыг хэрэглэхгүй байх',
 'image_sample'    => 'жишээ.jpg',
@@ -641,7 +632,7 @@ $2',
 эсвэл [{{fullurl:{{FULLPAGENAME}}|action=edit}} энэ хуудсыг засварлаж болно]</span>.',
 'noarticletext-nopermission'       => 'Одоогийн байдлаар энэ хуудсанд текст алга.
 Та энэхүү [[Special:Search/{{PAGENAME}}|гарчигийг бусад хуудсуудаас хайх]],  эсвэл <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} холбогдох логуудаас хайж болно]</span>.',
-'userpage-userdoesnotexist'        => '"$1" хэрэглэгчийн бүртгэл бүртгэгдээгүй байна. Та энэ хуудсыг үүсгэх/засварлах тухайгаа дахин тунгааж бодно уу.',
+'userpage-userdoesnotexist'        => '"<nowiki>$1</nowiki>" хэрэглэгчийн бүртгэл бүртгэгдээгүй байна. Та энэ хуудсыг үүсгэх/засварлах тухайгаа дахин тунгааж бодно уу.',
 'userpage-userdoesnotexist-view'   => '"$1" гэсэн хэрэглэгч бүртгэгдээгүй байна.',
 'blocked-notice-logextract'        => 'Энэхүү хэрэглэгч одоогоор түгжигдсэн байна.
 Лавлагааны зориулалтаар түгжээний лог дээрх хамгийн сүүлийн нэмэлтийг доор оруулав:',
@@ -1037,7 +1028,6 @@ $1",
 'changepassword'                => 'Нууц үгээ солих',
 'prefs-skin'                    => 'Арьс',
 'skin-preview'                  => 'Урьдчилж харах',
-'prefs-math'                    => 'Томъёонууд',
 'datedefault'                   => 'Анхны байдал',
 'prefs-datetime'                => 'Огноо ба цаг',
 'prefs-personal'                => 'Хувийн тохируулга',
@@ -1061,8 +1051,6 @@ $1",
 'columns'                       => 'Багана:',
 'searchresultshead'             => 'Хайлт',
 'resultsperpage'                => 'Хуудас тус бүр дээрх илэрцийн тоо:',
-'contextlines'                  => 'Илэрц тус бүр дэх мөрийн тоо:',
-'contextchars'                  => 'Нэг мөр тус бүр дэх үгийн тоо:',
 'stub-threshold'                => '<a href="#" class="stub">Түүхий холбоосийг</a> форматлах босго （байт）:',
 'stub-threshold-disabled'       => 'Идэвхигүйжүүлсэн',
 'recentchangesdays'             => 'Сүүлийн өөрчлөлтүүдэд үзүүлэх өдрийн тоо:',
@@ -1244,7 +1232,6 @@ $1 тэмдэгтээс богино байх ёстой.',
 'right-userrights'            => 'Хэрэглэгчийн эрхүүдийг засварлах',
 'right-userrights-interwiki'  => 'Бусад вики дээрх хэрэглэгчдийн эрхүүдийг засварлах',
 'right-siteadmin'             => 'Мэдээллийн баазыг түгжих буюу нээх',
-'right-reset-passwords'       => 'Бусад хэрэглэгчдийн нууц үгсийг дахин тогтоох',
 'right-override-export-depth' => '5 хүртэлх гүний хуудсуудыг холбогдсон хуудсуудтай хамт гаргах',
 'right-sendemail'             => 'Бусад хэрэглэгчид руу и-мэйл явуулах',
 
@@ -1446,10 +1433,6 @@ file_uploads тохиргоогоо шалгана уу.',
 'watchthisupload'             => 'Энэ файлыг хянах',
 'filewasdeleted'              => 'Өмнө нь ийм нэртэй файл оруулагдсан бөгөөд дараа нь устгагдсан байна.
 Та үүнийг дахин оруулахын өмнө $1-г шалгаж үзнэ үү.',
-'upload-wasdeleted'           => "'''Анхаар: Та өмнө нь устгагдсан файлыг дахин оруулах гэж байна.'''
-
-Энэ файлыг дахин оруулах нь зүйтэй эсэхийг та бодож үзнэ үү.
-Файлын устгалын лог энд байна:",
 'filename-bad-prefix'         => "Таны оруулж байгаа файлын нэр '''\"\$1\"'''-р эхэлж байна. Энэ нь файлыг тодорхойлойлоогүй, голдуу дижитал аппаратын автоматаар гаргадаг нэр болно.
 Файланд түүнийг илүү сайн тодорхойлсон нэр өгнө үү.",
 'upload-success-subj'         => 'Файлыг амжилттай орууллаа',
@@ -1556,7 +1539,6 @@ URL нь зөв болон сайт ажиллагаатай байгаа эсэ
 [[Special:WhatLinksHere/$2|Бүтэн жагсаалт]] мөн байгаа.',
 'nolinkstoimage'            => 'Энэ файлд холбогдсон хуудас байхгүй байна.',
 'morelinkstoimage'          => 'Энэ файлд руух [[Special:WhatLinksHere/$1|илүү олон холбоос]] үзэх.',
-'redirectstofile'           => 'Дараах {{PLURAL:$1|чиглүүлэгч|$1 чиглүүлэгч}} энэ файлд холбогдоно:',
 'duplicatesoffile'          => 'Дараах {{PLURAL:$1|файл|$1 файл}} нь энэ файлтай яг ижилхэн байна （[[Special:FileDuplicateSearch/$2|дэлгэрэнгүй мэдээлэл]]）:',
 'sharedupload'              => 'Энэ файл нь $1-ийнх бөгөөд бусад төслүүдэд ашиглах боломжтой',
 'sharedupload-desc-there'   => 'Энэ файл нь $1-нх бөгөөд бусад төслүүд үүнийг хэрэглэх боломжтой.
@@ -1869,10 +1851,8 @@ URL нь зөв болон сайт ажиллагаатай байгаа эсэ
 'watchlistanontext'    => 'Та өөрийн хянах листийг өөрчлөх буюу үзэхийг хүсвэл $1 хэрэгтэй.',
 'watchnologin'         => 'Нэвтрээгүй байна.',
 'watchnologintext'     => 'Та өөрийн хянаж буй хуудаснуудын жагсаалтыг өөрчлөхийн тулд [[Special:UserLogin|нэвтэрсэн байх]] шаардлагатай.',
-'addedwatch'           => 'Хянах жагсаалтанд нэмэгдлээ',
 'addedwatchtext'       => "\"[[:\$1]]\" гэсэн хуудас таны [[Special:Watchlist|хянах жагсаалтанд]] нэмэгдлээ.
 Энэ хуудас эсвэл түүний хэлэлцүүлгийн хуудас засварлагдахад тэдгээр нь [[Special:RecentChanges|сүүлийн засваруудын жагсаалтад]] '''тодруулалттай''' харагдах болно.",
-'removedwatch'         => 'Хянах жагсаалтнаас хасагдлаа',
 'removedwatchtext'     => '"[[:$1]]" хуудас таны [[Special:Watchlist|хяналтын жагсаалтаас]] хасагдлаа.',
 'watch'                => 'Хянах',
 'watchthispage'        => 'Энэ хуудсыг хяна',
@@ -1925,10 +1905,10 @@ $NEWPAGE
 
 --
 Хянаж буй хуудсуудынхаа тохиргоог өөрчлөхийн тулд дараах хуудаст зочилно уу:
-{{fullurl:{{#special:Watchlist}}/edit}}
+{{canonicalurl:{{#special:EditWatchlist}}}}
 
 Дэлгэрэнгүй мэдээлэл:
-{{fullurl:{{MediaWiki:Helppage}}}}',
+{{canonicalurl:{{MediaWiki:Helppage}}}}',
 
 # Delete
 'deletepage'             => 'Хуудсыг устга',
@@ -1944,7 +1924,7 @@ $NEWPAGE
 Энэхүү үйлдлийг хийснээр ямар үр дүнд хүрэхийг бүрэн гүйцэд ойлгож хийж байгаа гэдгээ, мөн [[{{MediaWiki:Policy-url}}|дүрэм журмынх нь дагуу]] хийж байнаагаа илтгэнэ үү.',
 'actioncomplete'         => 'Үйлдлийг гүйцэтгэлээ.',
 'actionfailed'           => 'Үйлдлийг гүйцэтгэж чадсангүй',
-'deletedtext'            => '"<nowiki>$1</nowiki>" нь устгагдлаа.
+'deletedtext'            => '"$1" нь устгагдлаа.
 Сүүлд устгагдсан зүйлсийг $2-с харна уу.',
 'deletedarticle'         => '"[[$1]]" нь устгагдлаа',
 'suppressedarticle'      => '"[[$1]]"-г далдаллаа',
@@ -2002,7 +1982,7 @@ $NEWPAGE
 'protect_expiry_invalid'      => 'Дуусах хугацаа хүчингүй байна.',
 'protect_expiry_old'          => 'Дуусах хугацаа өнгөрсөн цагт байна.',
 'protect-unchain-permissions' => 'Хамгаалах бусад тохиргоог нээх',
-'protect-text'                => "Та '''<nowiki>$1</nowiki>''' хуудасны хамгаалалтын түвшинг харж, өөрчлөх боломжтой.",
+'protect-text'                => "Та '''$1''' хуудасны хамгаалалтын түвшинг харж, өөрчлөх боломжтой.",
 'protect-locked-blocked'      => "Түгжигдсэн байхад хамгаалалтын түвшинг өөрчилж болохгүй.
 '''$1''' хуудасны одоогийн тохиргоо энд байна:",
 'protect-locked-dblock'       => "Мэдээллийн санг түгжсэн байгаа тул хамгаалалтын түвшинг өөрчилж болохгүй.
@@ -2155,7 +2135,6 @@ $1',
 'blockiptext'                     => 'Доорх маягтыг ашиглан тодорхой IP хаяг эсвэл хэрэглэгчийн нэрийг засвар хийхээс түгжинэ үү.
 Энэ нь зөвхөн вандализм үйлдэх явдлаас сэргийлэхийн тулд, [[{{MediaWiki:Policy-url}}|бодлого, баримтлалын]] дагуу хийгдэх ёстой.
 Доор тодорхой шалтгаанаа бичнэ үү.',
-'ipaddress'                       => 'IP хаяг',
 'ipadressorusername'              => 'IP хаяг буюу хэрэглэгчийн нэр',
 'ipbexpiry'                       => 'Түгжээ нь нээгдэх хугацаа',
 'ipbreason'                       => 'Шалтгаан:',
@@ -2168,7 +2147,6 @@ $1',
 ** Сүрдүүлсэн/зовоосон ааш авиртай
 ** Олон бүртгэлийг буруу хэргээр ашигласан
 ** Зөвшөөршгүй хэрэглэгчийн нэртэй',
-'ipbanononly'                     => 'Зөвхөн бүртгэлгүй хэрэглэгчдийг л түгжих',
 'ipbcreateaccount'                => 'Бүртгэл нээхээс хамгаалах',
 'ipbemailban'                     => 'Хэрэглэгчийг мэйл явуулахаас саатуулах',
 'ipbenableautoblock'              => 'Энэ хэрэглэгчийн сүүлийн IP хаягийг түгж. Дээр нь дахин оролдого хийж болох хаягуудыг ч мөн түгжих.',
@@ -2179,7 +2157,6 @@ $1',
 'ipbotherreason'                  => 'Өөр/нэмэлт шалтгаан:',
 'ipbhidename'                     => 'Хэрэглэгчийн нэрийг түгжээний лог, одоо хэрэгжиж буй түгжээний жагсаалт болон хэрэглэгчийн жагсаалтаас нууцлах',
 'ipbwatchuser'                    => 'Энэ хэрэглэгчийн хэрэглэгчийн ба ярианы хуудсуудыг хянах',
-'ipballowusertalk'                => 'Энэ хэрэглэгч түгжигдсэн үед өөрийн ярианы хуудсаа засварлахыг зөвшөөрөх',
 'ipb-change-block'                => 'Эдгээр тохиргоотойгоор энэ хэрэглэгчийг дахин түгжих',
 'badipaddress'                    => 'Хүчингүй IP хаяг',
 'blockipsuccesssub'               => 'Түгжээ амжилттай боллоо.',
@@ -2197,14 +2174,9 @@ $1',
 'unblocked-id'                    => '$1 түгжээг авч хаялаа',
 'ipblocklist'                     => 'Түгжигдсэн хэрэглэгчид болон IP хаягнууд',
 'ipblocklist-legend'              => 'Түгжигдсэн хэрэглэгчийг хайх',
-'ipblocklist-username'            => 'Хэрэглэгчийн нэр эсвэл IP хаяг:',
-'ipblocklist-sh-userblocks'       => 'Бүртгэлүүдийн түгжээг $1',
-'ipblocklist-sh-tempblocks'       => 'Түр зуурын түгжээг $1',
-'ipblocklist-sh-addressblocks'    => 'Ганц IP-н түгжээг $1',
 'ipblocklist-submit'              => 'Хайх',
 'ipblocklist-localblock'          => 'Дотоодын түгжилт',
 'ipblocklist-otherblocks'         => 'Бусад {{PLURAL:$1|түгжээ|түгжээ}}',
-'blocklistline'                   => '$1, $2 нь $3 ($4)-г түгжив',
 'infiniteblock'                   => 'тодорхойгүй',
 'expiringblock'                   => '$1-ний $2-д хугацаа нь дуусна',
 'anononlyblock'                   => 'зөвхөн бүртгэгдээгүйг',
@@ -2228,7 +2200,7 @@ $1',
 'reblock-logentry'                => '[[$1]]-н түгжээний тохиргоог $2 $3 хугацаатай болгож өөрчилсөн',
 'blocklogtext'                    => 'Энэ нь хэрэглэгчийг түгжсэн болон тайлсан үйлдлийн лог юм.
 Автоматаар түгжигдсэн IP хаягууд жагсаагдаагүй.
-[[Special:IPBlockList|IP хаягийн түгжээний жагсаалтыг]] харж одоо түгжигдсэн хаягуудыг харна уу.',
+[[Special:BlockList|IP хаягийн түгжээний жагсаалтыг]] харж одоо түгжигдсэн хаягуудыг харна уу.',
 'unblocklogentry'                 => '$1 идэвхтэй',
 'block-log-flags-anononly'        => 'зөвхөн нэргүй хэрэглэгчид',
 'block-log-flags-nocreate'        => 'Бүртгэл үүсгэх боломжгүй',
@@ -2242,8 +2214,7 @@ $1',
 'ipb_expiry_temp'                 => 'Нуугдсан хэрэглэгийн нэрсийн түгжээ нь үүрдийн байх ёстой',
 'ipb_hide_invalid'                => 'Энэхүү бүртгэлийг далдлах боломжгүй байна; хэтэрхий олон засвар үйлдсэн байж болзошгүй.',
 'ipb_already_blocked'             => '"$1" нь аль хэдийн түгжигдсэн байна.',
-'ipb-needreblock'                 => '== Аль хэдийнээ түгжигдсэн ==
-$1 нь аль хэдийнээ түгжигдсэн байна.
+'ipb-needreblock'                 => '$1 нь аль хэдийнээ түгжигдсэн байна.
 Та тохиргоог өөрчилмөөр байна уу?',
 'ipb-otherblocks-header'          => ' Бусад {{PLURAL:$1|түгжээ|түгжээ}}',
 'ipb_cant_unblock'                => 'Алдаа: Түгжигдсэн ID $1 нь олдохгүй байна. Түгжээ нь аль хэдийн тайлагдсан байж болзошгүй.',
@@ -2393,7 +2364,7 @@ $1 нь аль хэдийнээ түгжигдсэн байна.
 'allmessagesdefault'            => 'Анхны',
 'allmessagescurrent'            => 'Одоогийн',
 'allmessagestext'               => 'Энэ бол МедиаВики дахь системийн мэдэгдлүүдийн жагсаалт юм.
-МедиаВикиг орчуулах тухай мэдээллийг [http://www.mediawiki.org/wiki/Localisation МедиаВикигийн орчуулга], мөн [http://translatewiki.net translatewiki.net]-с авна уу.',
+МедиаВикиг орчуулах тухай мэдээллийг [//www.mediawiki.org/wiki/Localisation МедиаВикигийн орчуулга], мөн [//translatewiki.net translatewiki.net]-с авна уу.',
 'allmessagesnotsupportedDB'     => "'''\$wgUseDatabaseMessages''' нь унтарсан байгаа тул '''Special:Allmessages'''-г хэрэглэж болохгүй.",
 'allmessages-filter-legend'     => 'Шүүлтүүр',
 'allmessages-filter'            => 'Өөрийн болгосон байдлаар нь шүүх:',
@@ -2538,9 +2509,7 @@ $1 нь аль хэдийнээ түгжигдсэн байна.
 'common.js' => '/* Энд байгаа ЖаваСкрипт хэрэглэгч бүрд ямар нэгэн хуудас нээж үзэх болгонд дуудагдах болно. */',
 
 # Metadata
-'nodublincore'      => 'Энэ серверт Dublin Core RDF мэдээллийг идэвхжүүлээгүй байна.',
-'nocreativecommons' => 'Энэ серверт Creative Commons RDF мэдээллийг идэвхжүүлээгүй байна.',
-'notacceptable'     => 'Вики сервер нь мэдээллийг таны клиентийн уншиж чадах хэлбэрт олгох боломжгүй байна.',
+'notacceptable' => 'Вики сервер нь мэдээллийг таны клиентийн уншиж чадах хэлбэрт олгох боломжгүй байна.',
 
 # Attribution
 'anonymous'        => '{{SITENAME}}-н бүртгүүлээгүй {{PLURAL:$1|хэрэглэгч|хэрэглэгчид}}',
@@ -2562,35 +2531,6 @@ $1 нь аль хэдийнээ түгжигдсэн байна.
 'spambot_username'    => 'МедиаВикигийн спамыг цэвэрлэх',
 'spam_reverting'      => '$1 руух холбоосгүй хамгийн сүүлийн хувилбар руу шилжүүлж байна',
 'spam_blanking'       => 'Бүх засварууд $1 руу холбоостой тул хуудсыг хоосолж байна',
-
-# Info page
-'infosubtitle'   => 'Хуудасны мэдээлэл',
-'numedits'       => 'засварласан тоо （Өгүүлэл）: $1',
-'numtalkedits'   => 'засварласан тоо （Хэлэлцүүлэгийн хуудас）: $1',
-'numwatchers'    => 'Хянагчдын тоо: $1',
-'numauthors'     => 'Ялгаатай зохиогчдын тоо （Бичлэг）: $1',
-'numtalkauthors' => 'Ялгаатай зохиогчдын тоо （Хэлэлцүүлэгийн хуудас）: $1',
-
-# Math options
-'mw_math_png'    => 'Байнга PNG болго',
-'mw_math_simple' => 'Хялбар бол HTML, үгүй бол PNG',
-'mw_math_html'   => 'Болвол HTML, үгүй бол PNG',
-'mw_math_source' => 'TeX хэвээр үлдээх （текстэн броузеруудад）',
-'mw_math_modern' => 'Сүүлийн үеийн браузер хэрэглэхийг зөвлөж байна/Интернет хөтлөгчийн шинэ хувилбаруудад зориулсан.',
-'mw_math_mathml' => 'Бололцоотой бол MathML （туршилт）',
-
-# Math errors
-'math_failure'          => 'Задлан ялгал хийж чадсангүй',
-'math_unknown_error'    => 'үл мэдэгдэх алдаа',
-'math_unknown_function' => 'үл мэдэгдэх функц',
-'math_lexing_error'     => 'лекслэхэд алдаа гарлаа',
-'math_syntax_error'     => 'синтаксийн алдаа',
-'math_image_error'      => 'PNG руух хувиргал амжилтгүй боллоо;
-latex, dvips, gs, convert-г зөв суулгасан эсэхийг шалгана уу',
-'math_bad_tmpdir'       => 'Математикийн түр зуурын каталогыг үүсгэх, эсвэл түүн руу хуулж чадсангүй',
-'math_bad_output'       => 'Математикийн гадагшлуулах каталогыг үүсгэх, эсвэл түүн руу хуулж чадсангүй',
-'math_notexvc'          => 'texvc программ олдохгүй байна;
-math/README-г уншиж тохируулна уу.',
 
 # Patrolling
 'markaspatrolleddiff'                 => 'Хяналтанд авъя',
@@ -2636,7 +2576,6 @@ $1',
 'file-nohires'         => '<small>Илүү чанартай хувилбар байхгүй байна.</small>',
 'svg-long-desc'        => 'SVG файл, $1 × $2 пиксэл, файлын хэмжээ: $3',
 'show-big-image'       => 'Хамгийн сайн чанартай хувилбар',
-'show-big-image-thumb' => '<small>Файлын одоогоор харагдаж буй хэмжээ: $1 × $2 пиксел</small>',
 'file-info-gif-looped' => 'эргэлдсэн',
 'file-info-gif-frames' => '$1 {{PLURAL:$1|фрэйм}}',
 'file-info-png-looped' => 'эргэлдсэн',
@@ -2676,7 +2615,13 @@ $1',
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-imagewidth'                  => 'Өргөн',
@@ -2691,13 +2636,11 @@ $1',
 'exif-ycbcrpositioning'            => 'Y and C-н байршил',
 'exif-xresolution'                 => 'Зургийн хөндлөн чанар',
 'exif-yresolution'                 => 'Зургийн босоо чанар',
-'exif-resolutionunit'              => 'X ба Y чанарын нэгж',
 'exif-stripoffsets'                => 'Зургийн мэдээллийн байршил',
 'exif-rowsperstrip'                => 'Зурвас тус бүр дэх мөрийн тоо',
 'exif-stripbytecounts'             => 'Шахагдсан зурвас тус бүр дэх байт',
 'exif-jpeginterchangeformat'       => 'JPEG SOI руу шилжүүлэх',
 'exif-jpeginterchangeformatlength' => 'JPEG өгөгдлийн байт',
-'exif-transferfunction'            => 'Шилжүүлгийн функц',
 'exif-whitepoint'                  => 'Цагаан цэгийн хромат байдал',
 'exif-ycbcrcoefficients'           => 'Өнгөний орон зайн хувиргалтын матрицийн коэффициентүүд',
 'exif-referenceblackwhite'         => 'Хар цагаан лавлагааны хоёр хэмжээс',
@@ -2715,7 +2658,6 @@ $1',
 'exif-compressedbitsperpixel'      => 'Зургийн файлыг шахах арга',
 'exif-pixelydimension'             => 'Зургийн хүчинтэй өргөн',
 'exif-pixelxdimension'             => 'Зургийн хүчинтэй өндөр',
-'exif-makernote'                   => 'Үйлдвэрлэгчийн тэмдэглэлүүд',
 'exif-usercomment'                 => 'Хэрэглэгчдийн тэмдэглэл',
 'exif-relatedsoundfile'            => 'Холбоотой дуун файл',
 'exif-datetimeoriginal'            => 'Мэдээллийг үүсгэсэн огноо ба цаг',
@@ -2729,7 +2671,6 @@ $1',
 'exif-exposureprogram'             => 'Гэрэл өгөх хугацааны программ',
 'exif-spectralsensitivity'         => 'Спектралийн мэдрэмтгий байдал',
 'exif-isospeedratings'             => 'ISO хурдны үнэлгээ',
-'exif-oecf'                        => 'Оптоэлектроник хувилгалтын хүчин зүйл',
 'exif-shutterspeedvalue'           => 'Хөшигний хурд',
 'exif-aperturevalue'               => 'Дурангийн өрц',
 'exif-brightnessvalue'             => 'Гэрэлтэлт',
@@ -2742,7 +2683,6 @@ $1',
 'exif-focallength'                 => 'Линзний фокусын урт',
 'exif-subjectarea'                 => 'Субъектийн талбай',
 'exif-flashenergy'                 => 'Гэрэл цацагчын энерги',
-'exif-spatialfrequencyresponse'    => 'Орон зайн давтамжийн хариу',
 'exif-focalplanexresolution'       => 'X фокусын хавтгайн чанар',
 'exif-focalplaneyresolution'       => 'Y фокусын хавтгайн чанар',
 'exif-focalplaneresolutionunit'    => 'Фокусын хавтгайн чанарын нэгж',
@@ -2751,7 +2691,6 @@ $1',
 'exif-sensingmethod'               => 'Мэдрэх арга',
 'exif-filesource'                  => 'Файлыг эх үүсвэр',
 'exif-scenetype'                   => 'Үзэгдлийн төрөл',
-'exif-cfapattern'                  => 'CFA загвар',
 'exif-customrendered'              => 'Зураг боловсруулах дурын процесс',
 'exif-exposuremode'                => 'Гэрэл өгөх арга',
 'exif-whitebalance'                => 'Цагаан өнгийн тэнцвэр',
@@ -2915,15 +2854,13 @@ $1',
 
 # External editor support
 'edit-externally'      => 'Гадны программыг ашиглан энэ файлыг засварлах',
-'edit-externally-help' => '(Нэмэлт мэдээллийг [http://www.mediawiki.org/wiki/Manual:External_editors тохируулгын зааврын] хуудаснаас харна уу)',
+'edit-externally-help' => '(Нэмэлт мэдээллийг [//www.mediawiki.org/wiki/Manual:External_editors тохируулгын зааврын] хуудаснаас харна уу)',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'Бүгдийг',
-'imagelistall'     => 'бүгдийг',
-'watchlistall2'    => 'бүгдийг',
-'namespacesall'    => 'бүгдийг',
-'monthsall'        => 'бүгдийг',
-'limitall'         => 'бүгдийг',
+'watchlistall2' => 'бүгдийг',
+'namespacesall' => 'бүгдийг',
+'monthsall'     => 'бүгдийг',
+'limitall'      => 'бүгдийг',
 
 # E-mail address confirmation
 'confirmemail'              => 'Мэйл хаягийг баталгаажуулах',
@@ -3039,14 +2976,14 @@ $1',
 'watchlistedit-normal-legend'  => 'Хянаж буй хуудсуудын жагсаалтаас зүйлс хасах',
 'watchlistedit-normal-explain' => 'Хянаж буй хуудсуудын жагсаалт дахь зүйлсийг доор үзүүлэв.
 Зүйлийг авч хаяхын тулд үүний хажуу дахь хайрцгийг сонгоод "{{int:Watchlistedit-normal-submit}}" дээр дарна уу.
-Мөн гар аргаар [[Special:Watchlist/raw|жагсаалтад засвар хийж болно]].',
+Мөн гар аргаар [[Special:EditWatchlist/raw|жагсаалтад засвар хийж болно]].',
 'watchlistedit-normal-submit'  => 'Хуудсуудыг авч хаях',
 'watchlistedit-normal-done'    => 'Таны хянаж буй хуудсуудын жагсаалтаас {{PLURAL:$1|1 хуудсыг|$1 хуудсыг}} авч хаялаа:',
 'watchlistedit-raw-title'      => 'Түүхий хянах жагсаалтыг засварлах',
 'watchlistedit-raw-legend'     => 'Түүхий хянах жагсаалтыг засварлах',
 'watchlistedit-raw-explain'    => 'Таны хянаж буй хуудсуудын жагсаалт дахь зүйлсийг доор үзүүлэв, жагсаалтад зүйлс нэмж, үүнээс хасах маягаар засварлаж болно; ингэхдээ мөр бүрд ганц л зүйлийг засварлана.
 Дууссаныхаа дараа "{{int:Watchlistedit-raw-submit}}" дээр дарна уу.
-Та мөн [[Special:Watchlist/edit|стандарт засварлагчийг]] ашиглаж болно.',
+Та мөн [[Special:EditWatchlist|стандарт засварлагчийг]] ашиглаж болно.',
 'watchlistedit-raw-titles'     => 'Гарчигууд:',
 'watchlistedit-raw-submit'     => 'Хянаж буй хуудсуудын жагсаалтыг шинэчлэх',
 'watchlistedit-raw-done'       => 'Таны хянаж буй хуудсуудын жагсаалтыг шинэчлэлээ.',
@@ -3063,27 +3000,26 @@ $1',
 'duplicate-defaultsort' => '\'\'\'Анхаар:\'\'\' "$2" гэсэн default sort key нь "$1" гэсэн өмнөх key-н дээгүүр бичигдэх болж байна.',
 
 # Special:Version
-'version'                          => 'Хувилбар',
-'version-extensions'               => 'Суулгасан өргөтгөлүүд',
-'version-specialpages'             => 'Тусгай хуудсууд',
-'version-parserhooks'              => 'Парсер хүүкүүд',
-'version-variables'                => 'Хувьсагчууд',
-'version-other'                    => 'Бусад',
-'version-mediahandlers'            => 'Медиа боловсруулагч',
-'version-hooks'                    => 'Хүүкүүд',
-'version-extension-functions'      => 'Өргөтгөлүүдийн функцууд',
-'version-parser-extensiontags'     => 'Парсер нэмэлт тагууд',
-'version-parser-function-hooks'    => 'Парсер функцийн тагууд',
-'version-skin-extension-functions' => 'Скины өргөтгөлийн функцууд',
-'version-hook-name'                => 'Хүүкийн нэр',
-'version-hook-subscribedby'        => 'Захиалсан:',
-'version-version'                  => '(Хувилбар $1)',
-'version-license'                  => 'Лиценз',
-'version-poweredby-credits'        => "Энэхүү викиг '''[http://www.mediawiki.org/ MediaWiki]''' програмаар ажиллуулдаг, зохиогчийн эрх © 2001-$1 $2.",
-'version-poweredby-others'         => 'бусад',
-'version-software'                 => 'Суулгасан программ',
-'version-software-product'         => 'Бүтээгдэхүүн',
-'version-software-version'         => 'Хувилбар',
+'version'                       => 'Хувилбар',
+'version-extensions'            => 'Суулгасан өргөтгөлүүд',
+'version-specialpages'          => 'Тусгай хуудсууд',
+'version-parserhooks'           => 'Парсер хүүкүүд',
+'version-variables'             => 'Хувьсагчууд',
+'version-other'                 => 'Бусад',
+'version-mediahandlers'         => 'Медиа боловсруулагч',
+'version-hooks'                 => 'Хүүкүүд',
+'version-extension-functions'   => 'Өргөтгөлүүдийн функцууд',
+'version-parser-extensiontags'  => 'Парсер нэмэлт тагууд',
+'version-parser-function-hooks' => 'Парсер функцийн тагууд',
+'version-hook-name'             => 'Хүүкийн нэр',
+'version-hook-subscribedby'     => 'Захиалсан:',
+'version-version'               => '(Хувилбар $1)',
+'version-license'               => 'Лиценз',
+'version-poweredby-credits'     => "Энэхүү викиг '''[//www.mediawiki.org/ MediaWiki]''' програмаар ажиллуулдаг, зохиогчийн эрх © 2001-$1 $2.",
+'version-poweredby-others'      => 'бусад',
+'version-software'              => 'Суулгасан программ',
+'version-software-product'      => 'Бүтээгдэхүүн',
+'version-software-version'      => 'Хувилбар',
 
 # Special:FilePath
 'filepath'         => 'Файлын зам',
@@ -3094,9 +3030,7 @@ $1',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch'          => 'Давхардсан файлуудыг хайх',
-'fileduplicatesearch-summary'  => 'Хэш кодыг ашиглан давхардсан файлуудын хайна.
-
-Файлын нэрийг "{{ns:file}}:" угтваргүйгээр оруулна уу.',
+'fileduplicatesearch-summary'  => 'Хэш кодыг ашиглан давхардсан файлуудын хайна.',
 'fileduplicatesearch-legend'   => 'Давхардалтыг хайх',
 'fileduplicatesearch-filename' => 'Файлын нэр:',
 'fileduplicatesearch-submit'   => 'Хайх',

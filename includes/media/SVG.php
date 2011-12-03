@@ -32,6 +32,10 @@ class SvgHandler extends ImageHandler {
 		return true;
 	}
 
+	/**
+	 * @param $file File
+	 * @return bool
+	 */
 	function isAnimatedImage( $file ) {
 		# TODO: detect animated SVGs
 		$metadata = $file->getMetadata();
@@ -44,14 +48,17 @@ class SvgHandler extends ImageHandler {
 		return false;
 	}
 
+	/**
+	 * @param $image File
+	 * @param  $params
+	 * @return bool
+	 */
 	function normaliseParams( $image, &$params ) {
 		global $wgSVGMaxSize;
 		if ( !parent::normaliseParams( $image, $params ) ) {
 			return false;
 		}
 		# Don't make an image bigger than wgMaxSVGSize on the smaller side
-		$params['physicalWidth'] = $params['width'];
-		$params['physicalHeight'] = $params['height'];
 		if ( $params['physicalWidth'] <= $params['physicalHeight'] ) {
 			if ( $params['physicalWidth'] > $wgSVGMaxSize ) {
 				$srcWidth = $image->getWidth( $params['page'] );
@@ -70,6 +77,14 @@ class SvgHandler extends ImageHandler {
 		return true;
 	}
 
+	/**
+	 * @param $image File
+	 * @param  $dstPath
+	 * @param  $dstUrl
+	 * @param  $params
+	 * @param int $flags
+	 * @return bool|MediaTransformError|ThumbnailImage|TransformParameterError
+	 */
 	function doTransform( $image, $dstPath, $dstUrl, $params, $flags = 0 ) {
 		if ( !$this->normaliseParams( $image, $params ) ) {
 			return new TransformParameterError( $params );
@@ -97,7 +112,7 @@ class SvgHandler extends ImageHandler {
 		}
 	}
 
-	/*
+	/**
 	* Transform an SVG file to PNG
 	* This function can be called outside of thumbnail contexts
 	* @param string $srcPath
@@ -111,19 +126,32 @@ class SvgHandler extends ImageHandler {
 		$err = false;
 		$retval = '';
 		if ( isset( $wgSVGConverters[$wgSVGConverter] ) ) {
-			$cmd = str_replace(
-				array( '$path/', '$width', '$height', '$input', '$output' ),
-				array( $wgSVGConverterPath ? wfEscapeShellArg( "$wgSVGConverterPath/" ) : "",
-					   intval( $width ),
-					   intval( $height ),
-					   wfEscapeShellArg( $srcPath ),
-					   wfEscapeShellArg( $dstPath ) ),
-				$wgSVGConverters[$wgSVGConverter]
-			) . " 2>&1";
-			wfProfileIn( 'rsvg' );
-			wfDebug( __METHOD__.": $cmd\n" );
-			$err = wfShellExec( $cmd, $retval );
-			wfProfileOut( 'rsvg' );
+			if ( is_array( $wgSVGConverters[$wgSVGConverter] ) ) {
+				// This is a PHP callable
+				$func = $wgSVGConverters[$wgSVGConverter][0];
+				$args = array_merge( array( $srcPath, $dstPath, $width, $height ), 
+					array_slice( $wgSVGConverters[$wgSVGConverter], 1 ) );
+				if ( !is_callable( $func ) ) {
+					throw new MWException( "$func is not callable" );
+				}
+				$err = call_user_func_array( $func, $args );
+				$retval = (bool)$err;
+			} else {
+				// External command
+				$cmd = str_replace(
+					array( '$path/', '$width', '$height', '$input', '$output' ),
+					array( $wgSVGConverterPath ? wfEscapeShellArg( "$wgSVGConverterPath/" ) : "",
+						   intval( $width ),
+						   intval( $height ),
+						   wfEscapeShellArg( $srcPath ),
+						   wfEscapeShellArg( $dstPath ) ),
+					$wgSVGConverters[$wgSVGConverter]
+				) . " 2>&1";
+				wfProfileIn( 'rsvg' );
+				wfDebug( __METHOD__.": $cmd\n" );
+				$err = wfShellExec( $cmd, $retval );
+				wfProfileOut( 'rsvg' );
+			}
 		}
 		$removed = $this->removeBadFile( $dstPath, $retval );
 		if ( $retval != 0 || $removed ) {
@@ -133,7 +161,27 @@ class SvgHandler extends ImageHandler {
 		}
 		return true;
 	}
+	
+	public static function rasterizeImagickExt( $srcPath, $dstPath, $width, $height ) {
+		$im = new Imagick( $srcPath );
+		$im->setImageFormat( 'png' );
+		$im->setBackgroundColor( 'transparent' );
+		$im->setImageDepth( 8 );
+		
+		if ( !$im->thumbnailImage( intval( $width ), intval( $height ), /* fit */ false ) ) {
+			return 'Could not resize image';
+		}
+		if ( !$im->writeImage( $dstPath ) ) {
+			return "Could not write to $dstPath";
+		}
+	}
 
+	/**
+	 * @param $file File
+	 * @param  $path
+	 * @param bool $metadata
+	 * @return array
+	 */
 	function getImageSize( $file, $path, $metadata = false ) {
 		if ( $metadata === false ) {
 			$metadata = $file->getMetaData();
@@ -150,6 +198,10 @@ class SvgHandler extends ImageHandler {
 		return array( 'png', 'image/png' );
 	}
 
+	/**
+	 * @param $file File
+	 * @return string
+	 */
 	function getLongDesc( $file ) {
 		global $wgLang;
 		return wfMsgExt( 'svg-long-desc', 'parseinline',
@@ -171,7 +223,9 @@ class SvgHandler extends ImageHandler {
 	}
 
 	function unpackMetadata( $metadata ) {
-		$unser = @unserialize( $metadata );
+		wfSuppressWarnings();
+		$unser = unserialize( $metadata );
+		wfRestoreWarnings();
 		if ( isset( $unser['version'] ) && $unser['version'] == self::SVG_METADATA_VERSION ) {
 			return $unser;
 		} else {
@@ -192,6 +246,10 @@ class SvgHandler extends ImageHandler {
 		return $fields;
 	}
 
+	/**
+	 * @param $file File
+	 * @return array|bool
+	 */
 	function formatMetadata( $file ) {
 		$result = array(
 			'visible' => array(),

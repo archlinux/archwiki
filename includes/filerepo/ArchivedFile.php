@@ -16,7 +16,6 @@ class ArchivedFile {
 	 * @private
 	 */
 	var $id, # filearchive row ID
-		$title, # image title
 		$name, # image name
 		$group,	# FileStore storage group
 		$key, # FileStore sha1 key
@@ -32,10 +31,27 @@ class ArchivedFile {
 		$user_text, # user name of uploader
 		$timestamp, # time of upload
 		$dataLoaded, # Whether or not all this has been loaded from the database (loadFromXxx)
-		$deleted; # Bitfield akin to rev_deleted
+		$deleted, # Bitfield akin to rev_deleted
+		$pageCount,
+		$archive_name;
+
+	/**
+	 * @var MediaHandler
+	 */
+	var $handler;
+	/**
+	 * @var Title
+	 */
+	var $title; # image title
 
 	/**#@-*/
 
+	/**
+	 * @throws MWException
+	 * @param Title $title
+	 * @param int $id
+	 * @param string $key
+	 */
 	function __construct( $title, $id=0, $key='' ) {
 		$this->id = -1;
 		$this->title = false;
@@ -57,19 +73,22 @@ class ArchivedFile {
 		$this->dataLoaded = false;
 		$this->exists = false;
 
-		if( is_object($title) ) {
+		if( is_object( $title ) ) {
 			$this->title = $title;
 			$this->name = $title->getDBkey();
 		}
 
-		if ($id)
+		if ($id) {
 			$this->id = $id;
+		}
 
-		if ($key)
+		if ($key) {
 			$this->key = $key;
+		}
 
-		if (!$id && !$key && !is_object($title))
+		if ( !$id && !$key && !is_object( $title ) ) {
 			throw new MWException( "No specifications provided to ArchivedFile constructor." );
+		}
 	}
 
 	/**
@@ -82,17 +101,20 @@ class ArchivedFile {
 		}
 		$conds = array();
 
-		if( $this->id > 0 )
+		if( $this->id > 0 ) {
 			$conds['fa_id'] = $this->id;
+		}
 		if( $this->key ) {
 			$conds['fa_storage_group'] = $this->group;
 			$conds['fa_storage_key'] = $this->key;
 		}
-		if( $this->title )
+		if( $this->title ) {
 			$conds['fa_name'] = $this->title->getDBkey();
+		}
 
-		if( !count($conds))
+		if( !count($conds)) {
 			throw new MWException( "No specific information for retrieving archived file" );
+		}
 
 		if( !$this->title || $this->title->getNamespace() == NS_FILE ) {
 			$dbr = wfGetDB( DB_SLAVE );
@@ -119,8 +141,7 @@ class ArchivedFile {
 				$conds,
 				__METHOD__,
 				array( 'ORDER BY' => 'fa_timestamp DESC' ) );
-
-			if ( $dbr->numRows( $res ) == 0 ) {
+			if ( $res == false || $dbr->numRows( $res ) == 0 ) {
 			// this revision does not exist?
 				return;
 			}
@@ -274,6 +295,32 @@ class ArchivedFile {
 	public function getMimeType() {
 		$this->load();
 		return $this->mime;
+	}
+
+	/**
+	 * Get a MediaHandler instance for this file
+	 * @return MediaHandler
+	 */
+	function getHandler() {
+		if ( !isset( $this->handler ) ) {
+			$this->handler = MediaHandler::getHandler( $this->getMimeType() );
+		}
+		return $this->handler;
+	}
+
+	/**
+	 * Returns the number of pages of a multipage document, or false for
+	 * documents which aren't multipage documents
+	 */
+	function pageCount() {
+		if ( !isset( $this->pageCount ) ) {
+			if ( $this->getHandler() && $this->handler->isMultiPage( $this ) ) {
+				$this->pageCount = $this->handler->pageCount( $this );
+			} else {
+				$this->pageCount = false;
+			}
+		}
+		return $this->pageCount;
 	}
 
 	/**

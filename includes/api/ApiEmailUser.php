@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on June 1, 2008
  *
@@ -144,7 +144,11 @@ class ApiEmailUser extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:E-mail';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiEmailUser.php 85354 2011-04-04 18:25:31Z demon $';
+		return __CLASS__ . ': $Id: ApiEmailUser.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

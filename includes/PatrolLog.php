@@ -35,14 +35,14 @@ class PatrolLog {
 	 *
 	 * @param $title Title of the page that was patrolled
 	 * @param $params Array: log parameters (from logging.log_params)
-	 * @param $skin Skin to use for building links, etc.
+	 * @param $lang Language object to use, or false
 	 * @return String
 	 */
-	public static function makeActionText( $title, $params, $skin ) {
+	public static function makeActionText( $title, $params, $lang ) {
 		list( $cur, /* $prev */, $auto ) = $params;
-		if( is_object( $skin ) ) {
+		if( is_object( $lang ) ) {
 			# Standard link to the page in question
-			$link = $skin->link( $title );
+			$link = Linker::link( $title );
 			if( $title->exists() ) {
 				# Generate a diff link
 				$query = array(
@@ -50,9 +50,9 @@ class PatrolLog {
 					'diff' => 'prev'
 				);
 
-				$diff = $skin->link(
+				$diff = Linker::link(
 					$title,
-					htmlspecialchars( wfMsg( 'patrol-log-diff', $cur ) ),
+					htmlspecialchars( wfMsg( 'patrol-log-diff', $lang->formatNum( $cur, true ) ) ),
 					array(),
 					$query,
 					array( 'known', 'noclasses' )

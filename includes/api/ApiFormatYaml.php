@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Sep 19, 2006
  *
@@ -33,18 +33,10 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  * API YAML output formatter
  * @ingroup API
  */
-class ApiFormatYaml extends ApiFormatBase {
-
-	public function __construct( $main, $format ) {
-		parent::__construct( $main, $format );
-	}
+class ApiFormatYaml extends ApiFormatJson {
 
 	public function getMimeType() {
 		return 'application/yaml';
-	}
-
-	public function execute() {
-		$this->printText( Spyc::YAMLDump( $this->getResultData() ) );
 	}
 
 	public function getDescription() {
@@ -52,6 +44,6 @@ class ApiFormatYaml extends ApiFormatBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatYaml.php 70647 2010-08-07 19:59:42Z ialex $';
+		return __CLASS__ . ': $Id: ApiFormatYaml.php 86302 2011-04-18 11:42:44Z reedy $';
 	}
 }

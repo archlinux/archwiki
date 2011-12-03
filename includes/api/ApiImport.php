@@ -1,10 +1,10 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Feb 4, 2009
  *
- * Copyright © 2009 Roan Kattouw <Firstname>.<Lastname>@home.nl
+ * Copyright © 2009 Roan Kattouw <Firstname>.<Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +42,14 @@ class ApiImport extends ApiBase {
 
 	public function execute() {
 		global $wgUser;
-		if ( !$wgUser->isAllowed( 'import' ) ) {
-			$this->dieUsageMsg( array( 'cantimport' ) );
-		}
+
 		$params = $this->extractRequestParams();
 
 		$isUpload = false;
 		if ( isset( $params['interwikisource'] ) ) {
+			if ( !$wgUser->isAllowed( 'import' ) ) {
+				$this->dieUsageMsg( 'cantimport' );
+			}
 			if ( !isset( $params['interwikipage'] ) ) {
 				$this->dieUsageMsg( array( 'missingparam', 'interwikipage' ) );
 			}
@@ -61,7 +62,7 @@ class ApiImport extends ApiBase {
 		} else {
 			$isUpload = true;
 			if ( !$wgUser->isAllowed( 'importupload' ) ) {
-				$this->dieUsageMsg( array( 'cantimport-upload' ) );
+				$this->dieUsageMsg( 'cantimport-upload' );
 			}
 			$source = ImportStreamSource::newFromUpload( 'xml' );
 		}
@@ -87,8 +88,9 @@ class ApiImport extends ApiBase {
 		}
 
 		$resultData = $reporter->getData();
-		$this->getResult()->setIndexedTagName( $resultData, 'page' );
-		$this->getResult()->addValue( null, $this->getModuleName(), $resultData );
+		$result = $this->getResult();
+		$result->setIndexedTagName( $resultData, 'page' );
+		$result->addValue( null, $this->getModuleName(), $resultData );
 	}
 
 	public function mustBePosted() {
@@ -131,7 +133,11 @@ class ApiImport extends ApiBase {
 	}
 
 	public function getDescription() {
-		return 'Import a page from another wiki, or an XML file';
+		return array(
+			'Import a page from another wiki, or an XML file.' ,
+			'Note that the HTTP POST must be done as a file upload (i.e. using multipart/form-data) when',
+			'sending a file for the "xml" parameter.'
+		);
 	}
 
 	public function getPossibleErrors() {
@@ -159,8 +165,12 @@ class ApiImport extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Import';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiImport.php 77800 2010-12-05 14:22:49Z ialex $';
+		return __CLASS__ . ': $Id: ApiImport.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }
 
@@ -171,6 +181,14 @@ class ApiImport extends ApiBase {
 class ApiImportReporter extends ImportReporter {
 	private $mResultArr = array();
 
+	/**
+	 * @param $title Title
+	 * @param $origTitle Title
+	 * @param $revisionCount int
+	 * @param $successCount int
+	 * @param $pageInfo
+	 * @return void
+	 */
 	function reportPage( $title, $origTitle, $revisionCount, $successCount, $pageInfo ) {
 		// Add a result entry
 		$r = array();

@@ -62,79 +62,79 @@ $namespaceAliases = array(
 );
 
 $specialPageAliases = array(
-	'DoubleRedirects'           => array( 'Dûbele trochferwizings', 'Dûbeletrochferwizings' ),
+	'Allmessages'               => array( 'Alle wikiberjochten' ),
+	'Allpages'                  => array( 'Alle titels', 'Alle siden' ),
+	'Ancientpages'              => array( 'Alde siden', 'Âlde siden', 'Siden dy\'t lang net feroare binne' ),
+	'Block'                     => array( 'Slút brûker út', 'Slút meidogger út' ),
+	'Booksources'               => array( 'Boekynformaasje' ),
 	'BrokenRedirects'           => array( 'Misse trochferwizings', 'Missetrochferwizings' ),
-	'Disambiguations'           => array( 'Betsjuttingssiden', 'Trochferwizings' ),
-	'Userlogin'                 => array( 'Oanmelde', 'Oanmeld' ),
-	'Userlogout'                => array( 'Ofmelde', 'Ofmeld', 'Ôfmelde', 'Ôfmeld' ),
+	'Categories'                => array( 'Kategoryen', 'Rubriken' ),
+	'Confirmemail'              => array( 'Befêstigjen netpostadres' ),
+	'Contributions'             => array( 'Meidogger-bydragen', 'Meidogger bydragen', 'Bydragen', 'Brûker bydragen' ),
 	'CreateAccount'             => array( 'Nije ynstellings oanmeitsje', 'Nijeynstellingsoanmeitsje' ),
-	'Preferences'               => array( 'Ynstellings', 'Ynsteld' ),
-	'Watchlist'                 => array( 'Folchlist', 'Jo Folchlist' ),
-	'Recentchanges'             => array( 'Koartlyn feroare', 'Koarts feroare' ),
-	'Upload'                    => array( 'Bied triem oan', 'Oanbied', 'Bied bestân oan' ),
+	'Deadendpages'              => array( 'Siden sûnder keppelings', 'Siden sûnder ferwizings', 'Siden sûnder links' ),
+	'Disambiguations'           => array( 'Betsjuttingssiden', 'Trochferwizings' ),
+	'DoubleRedirects'           => array( 'Dûbele trochferwizings', 'Dûbeletrochferwizings' ),
+	'Emailuser'                 => array( 'Skriuw meidogger', 'Skriuw dizze brûker', 'Skriuw dizze meidogger' ),
+	'Export'                    => array( 'Eksportearje' ),
+	'Fewestrevisions'           => array( 'Siden mei de minste bewurkings', 'Siden mei de minste ferzjes', 'Siden mei de minste wizigings' ),
+	'Filepath'                  => array( 'Triempad' ),
+	'Import'                    => array( 'Ymport' ),
+	'BlockList'                 => array( 'List fan útsletten Ynternet-adressen en brûkersnammen', 'List fan útsletten ynternet-adressen en meidochnammen', 'Útslette brûkers', 'Utslette brûkers', 'Útsletten meidoggers', 'Utsletten meidoggers' ),
+	'Listadmins'                => array( 'Meidoggerlist Behearders' ),
+	'Listbots'                  => array( 'Meidoggerlist Bots' ),
 	'Listfiles'                 => array( 'Ofbyld list', 'Ofbyldlist' ),
-	'Newimages'                 => array( 'Nije ôfbylden', 'Nije ôfbyldings', 'Nije ôfbyldingen', 'List mei nije ôfbylden', 'Nije Ofbylden' ),
+	'Listredirects'             => array( 'List fan trochferwizings' ),
 	'Listusers'                 => array( 'Meidoggerlist', 'Brûkerlist' ),
-	'Statistics'                => array( 'Statistyk' ),
-	'Randompage'                => array( 'Samar in side' ),
+	'Lockdb'                    => array( 'Meitsje de database \'Net-skriuwe\'', 'Meitsje de databank \'Net-skriuwe\'' ),
+	'Log'                       => array( 'Loch', 'Logboek', 'Logboeken', 'Lochs' ),
 	'Lonelypages'               => array( 'Lossteande siden' ),
-	'Uncategorizedpages'        => array( 'Siden sûnder rubryk', 'Siden sûnder kategory', 'Net-kategorisearre siden' ),
-	'Uncategorizedcategories'   => array( 'Kategoryen sûnder kategory', 'Rubriken sûnder rubryk', 'Net-kategorisearre kategoryen' ),
-	'Uncategorizedimages'       => array( 'Net-kategorisearre ôfbyldings', 'Ofbylden sûnder kategory', 'Ofbylden sûnder rubryk' ),
-	'Uncategorizedtemplates'    => array( 'Net-kategorisearre sjabloanen', 'Net-kategorisearre berjochten', 'Berjochten sûnder rubryk', 'Berjochten sûnder kategory' ),
-	'Unusedcategories'          => array( 'Net-brûkte kategoryen', 'Lege kategoryen' ),
-	'Unusedimages'              => array( 'Lossteande ôfbylden' ),
-	'Wantedpages'               => array( 'Nedige siden' ),
-	'Wantedcategories'          => array( 'Nedige kategoryen', 'Net-besteande kategoryen dêr\'t it meast nei ferwiisd wurdt' ),
+	'Longpages'                 => array( 'Lange siden' ),
+	'MIMEsearch'                => array( 'Sykje op MIME-type' ),
+	'Mostcategories'            => array( 'Siden mei de measte rubriken', 'Siden mei de measte kategoryen' ),
+	'Mostimages'                => array( 'Ofbylden dy\'t it meast brûkt wurde', 'Meast brûkte ôfbyldings' ),
 	'Mostlinked'                => array( 'Siden wêr it meast mei keppele is', 'Siden dêr\'t it meast nei ferwiisd wurdt' ),
 	'Mostlinkedcategories'      => array( 'Kategoryen dy\'t it meast brûkt wurde', 'Kategoryen dêr\'t it meast nei ferwiisd wurdt' ),
 	'Mostlinkedtemplates'       => array( 'Meast brûkte sjabloanen', 'Meast brûkte berjochten' ),
-	'Mostimages'                => array( 'Ofbylden dy\'t it meast brûkt wurde', 'Meast brûkte ôfbyldings' ),
-	'Mostcategories'            => array( 'Siden mei de measte rubriken', 'Siden mei de measte kategoryen' ),
 	'Mostrevisions'             => array( 'Siden mei de measte wizigings', 'Siden mei de measte bewurkings' ),
-	'Fewestrevisions'           => array( 'Siden mei de minste bewurkings', 'Siden mei de minste ferzjes', 'Siden mei de minste wizigings' ),
-	'Shortpages'                => array( 'Koarte siden' ),
-	'Longpages'                 => array( 'Lange siden' ),
-	'Newpages'                  => array( 'Nije siden' ),
-	'Ancientpages'              => array( 'Alde siden', 'Âlde siden', 'Siden dy\'t lang net feroare binne' ),
-	'Deadendpages'              => array( 'Siden sûnder keppelings', 'Siden sûnder ferwizings', 'Siden sûnder links' ),
-	'Protectedpages'            => array( 'Befeilige siden', 'Skoattele siden' ),
-	'Allpages'                  => array( 'Alle titels', 'Alle siden' ),
-	'Prefixindex'               => array( 'Alle siden neffens foarheaksel' ),
-	'Ipblocklist'               => array( 'List fan útsletten Ynternet-adressen en brûkersnammen', 'List fan útsletten ynternet-adressen en meidochnammen', 'Útslette brûkers', 'Utslette brûkers', 'Útsletten meidoggers', 'Utsletten meidoggers' ),
-	'Specialpages'              => array( 'Bysûndere siden' ),
-	'Contributions'             => array( 'Meidogger-bydragen', 'Meidogger bydragen', 'Bydragen', 'Brûker bydragen' ),
-	'Emailuser'                 => array( 'Skriuw meidogger', 'Skriuw dizze brûker', 'Skriuw dizze meidogger' ),
-	'Confirmemail'              => array( 'Befêstigjen netpostadres' ),
-	'Whatlinkshere'             => array( 'Wat is hjirmei keppele', 'Wat is hjirmei keppele?', 'List fan alle siden dy\'t nei dizze side ferwize' ),
-	'Recentchangeslinked'       => array( 'Folgje keppelings' ),
 	'Movepage'                  => array( 'Werneam side' ),
-	'Booksources'               => array( 'Boekynformaasje' ),
-	'Categories'                => array( 'Kategoryen', 'Rubriken' ),
-	'Export'                    => array( 'Eksportearje' ),
-	'Version'                   => array( 'Ferzje', 'Programmatuerferzje' ),
-	'Allmessages'               => array( 'Alle wikiberjochten' ),
-	'Log'                       => array( 'Loch', 'Logboek', 'Logboeken', 'Lochs' ),
-	'Blockip'                   => array( 'Slút brûker út', 'Slút meidogger út' ),
-	'Undelete'                  => array( 'Side werom set' ),
-	'Import'                    => array( 'Ymport' ),
-	'Lockdb'                    => array( 'Meitsje de database \'Net-skriuwe\'', 'Meitsje de databank \'Net-skriuwe\'' ),
-	'Unlockdb'                  => array( 'Meitsje de databank skriuwber' ),
-	'Userrights'                => array( 'Meidoggerrjochten', 'Behear fan meidoggerrjochten' ),
-	'MIMEsearch'                => array( 'Sykje op MIME-type' ),
-	'Unwatchedpages'            => array( 'Siden dy\'t net op in folchlist steane' ),
-	'Listredirects'             => array( 'List fan trochferwizings' ),
-	'Unusedtemplates'           => array( 'Net brûkte sjabloanen', 'Net brûkte berjochten' ),
-	'Randomredirect'            => array( 'Samar in trochferwizing' ),
+	'Mycontributions'           => array( 'Myn bydragen' ),
 	'Mypage'                    => array( 'Myn side' ),
 	'Mytalk'                    => array( 'Myn oerlis' ),
-	'Mycontributions'           => array( 'Myn bydragen' ),
-	'Listadmins'                => array( 'Meidoggerlist Behearders' ),
-	'Listbots'                  => array( 'Meidoggerlist Bots' ),
+	'Newimages'                 => array( 'Nije ôfbylden', 'Nije ôfbyldings', 'Nije ôfbyldingen', 'List mei nije ôfbylden', 'Nije Ofbylden' ),
+	'Newpages'                  => array( 'Nije siden' ),
 	'Popularpages'              => array( 'Populêre siden', 'Grage siden' ),
+	'Preferences'               => array( 'Ynstellings', 'Ynsteld' ),
+	'Prefixindex'               => array( 'Alle siden neffens foarheaksel' ),
+	'Protectedpages'            => array( 'Befeilige siden', 'Skoattele siden' ),
+	'Randompage'                => array( 'Samar in side' ),
+	'Randomredirect'            => array( 'Samar in trochferwizing' ),
+	'Recentchanges'             => array( 'Koartlyn feroare', 'Koarts feroare' ),
+	'Recentchangeslinked'       => array( 'Folgje keppelings' ),
 	'Search'                    => array( 'Sykje' ),
+	'Shortpages'                => array( 'Koarte siden' ),
+	'Specialpages'              => array( 'Bysûndere siden' ),
+	'Statistics'                => array( 'Statistyk' ),
+	'Uncategorizedcategories'   => array( 'Kategoryen sûnder kategory', 'Rubriken sûnder rubryk', 'Net-kategorisearre kategoryen' ),
+	'Uncategorizedimages'       => array( 'Net-kategorisearre ôfbyldings', 'Ofbylden sûnder kategory', 'Ofbylden sûnder rubryk' ),
+	'Uncategorizedpages'        => array( 'Siden sûnder rubryk', 'Siden sûnder kategory', 'Net-kategorisearre siden' ),
+	'Uncategorizedtemplates'    => array( 'Net-kategorisearre sjabloanen', 'Net-kategorisearre berjochten', 'Berjochten sûnder rubryk', 'Berjochten sûnder kategory' ),
+	'Undelete'                  => array( 'Side werom set' ),
+	'Unlockdb'                  => array( 'Meitsje de databank skriuwber' ),
+	'Unusedcategories'          => array( 'Net-brûkte kategoryen', 'Lege kategoryen' ),
+	'Unusedimages'              => array( 'Lossteande ôfbylden' ),
+	'Unusedtemplates'           => array( 'Net brûkte sjabloanen', 'Net brûkte berjochten' ),
+	'Unwatchedpages'            => array( 'Siden dy\'t net op in folchlist steane' ),
+	'Upload'                    => array( 'Bied triem oan', 'Oanbied', 'Bied bestân oan' ),
+	'Userlogin'                 => array( 'Oanmelde', 'Oanmeld' ),
+	'Userlogout'                => array( 'Ofmelde', 'Ofmeld', 'Ôfmelde', 'Ôfmeld' ),
+	'Userrights'                => array( 'Meidoggerrjochten', 'Behear fan meidoggerrjochten' ),
+	'Version'                   => array( 'Ferzje', 'Programmatuerferzje' ),
+	'Wantedcategories'          => array( 'Nedige kategoryen', 'Net-besteande kategoryen dêr\'t it meast nei ferwiisd wurdt' ),
+	'Wantedpages'               => array( 'Nedige siden' ),
+	'Watchlist'                 => array( 'Folchlist', 'Jo Folchlist' ),
+	'Whatlinkshere'             => array( 'Wat is hjirmei keppele', 'Wat is hjirmei keppele?', 'List fan alle siden dy\'t nei dizze side ferwize' ),
 	'Withoutinterwiki'          => array( 'Siden sûnder links nei oare talen', 'Siden sûnder ferwizings nei oare talen', 'Siden sûnder keppelings nei oare talen' ),
-	'Filepath'                  => array( 'Triempad' ),
 );
 
 $separatorTransformTable = array( ',' => '.', '.' => ',' );
@@ -267,15 +267,6 @@ $messages = array(
 'category-file-count-limited'    => 'Dizze kategory befettet {{PLURAL:$1|de folgjende triem|de folgjende $1 triemmen}}.',
 'listingcontinuesabbrev'         => '(ferfolch)',
 
-'mainpagetext'      => "'''MediaWiki-program goed ynstallearre.'''",
-'mainpagedocfooter' => "Rieplachtsje de [http://meta.wikimedia.org/wiki/Help:Ynhâldsopjefte hantlieding] foar ynformaasje oer it gebrûk fan 'e wikisoftware.
-
-== Mear help oer Mediawiki ==
-
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings List mei ynstellings]
-* [http://www.mediawiki.org/wiki/Manual:FAQ Faak stelde fragen (FAQ)]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Mailinglist foar oankundigings fan nije ferzjes]",
-
 'about'         => 'Ynfo',
 'article'       => 'Ynhâld side',
 'newwindow'     => '(nij finster)',
@@ -323,7 +314,6 @@ $messages = array(
 'history'           => 'Sideskiednis',
 'history_short'     => 'Skiednis',
 'updatedmarker'     => 'bewurke sûnt myn lêste besite',
-'info_short'        => 'Ynformaasje',
 'printableversion'  => 'Ofdruk-ferzje',
 'permalink'         => 'Fêste keppeling',
 'print'             => 'Ofdrukke',
@@ -501,11 +491,10 @@ Query: $2',
 'protectedpagetext'    => 'Dizze side is befeilige. Bewurkjen is net mûglik.',
 'viewsourcetext'       => 'Jo kinne de boarnetekst fan dizze side besjen en kopiearje:',
 'protectedinterface'   => "Dizze side befettet tekst foar berjochten fan 'e software en is befeilige om misbrûk tefoaren te kommen.",
-'editinginterface'     => "'''Warskôging;''' Jo bewurkje in side dy't brûkt wurdt troch software. Bewurkings op dizze side beynfloedzje de gebrûksynterface fan elkenien. Oerweagje foar oersettings [http://translatewiki.net/wiki/Main_Page?setlang=fy translatewiki.net] te brûken, it oersetprojekt foar MediaWiki.",
+'editinginterface'     => "'''Warskôging;''' Jo bewurkje in side dy't brûkt wurdt troch software. Bewurkings op dizze side beynfloedzje de gebrûksynterface fan elkenien. Oerweagje foar oersettings [//translatewiki.net/wiki/Main_Page?setlang=fy translatewiki.net] te brûken, it oersetprojekt foar MediaWiki.",
 'sqlhidden'            => '(SQL query ferburgen)',
 'cascadeprotected'     => 'Dizze side is skoattele tsjin wizigjen, om\'t der in ûnderdiel útmakket fan de neikommende {{PLURAL:$1|side|siden}}, dy\'t skoattele {{PLURAL:$1|is|binne}} mei de "ûnderlizzende siden" opsje ynskeakele: $2',
 'namespaceprotected'   => "Jo hawwe gjin rjochten om siden yn'e nammerûmte '''$1''' te bewurkjen.",
-'customcssjsprotected' => "Jo kinne dizze side net bewurkje, om't er persoanlike ynstellings fan in oare brûker befettet.",
 'ns-specialprotected'  => "Siden yn'e nammerûmte {{ns:special}} kinne net bewurke wurde.",
 'titleprotected'       => "It oanmeitsjen fan dizze side is befeilige troch [[User:$1|$1]].
 De oanfierde reden is ''$2''.",
@@ -593,7 +582,7 @@ Negearje it berjocht as dizze brûker sûnder jo meiwitten oanmakke is.',
 Jo moatte efkes wachtsje foar't jo it op'e nij besykje kinne.",
 'loginlanguagelabel'         => 'Taal: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Wachtwurd feroarje',
 'resetpass_announce'        => "Jo binne oanmeld mei in tydlike koade dy't jo per e-mail tastjoerd is. Fier in nij wachtwurd yn om it oanmelden ôf te meitsjen.",
 'resetpass_header'          => 'Wachtwurd feroarje',
@@ -609,6 +598,9 @@ Jo moatte efkes wachtsje foar't jo it op'e nij besykje kinne.",
 Mûglik hawwe Jo Jo wachtwurd al feroare of in nij tydlik wachtwurd oanfrege.',
 'resetpass-temp-password'   => 'Tydlik wachtwurd:',
 
+# Special:PasswordReset
+'passwordreset-username' => 'Meidoggernamme',
+
 # Edit page toolbar
 'bold_sample'     => 'Fette tekst',
 'bold_tip'        => 'Fette tekst',
@@ -620,8 +612,6 @@ Mûglik hawwe Jo Jo wachtwurd al feroare of in nij tydlik wachtwurd oanfrege.',
 'extlink_tip'     => 'Eksterne link (ferjit http:// net)',
 'headline_sample' => 'Koptekst',
 'headline_tip'    => 'Underkopke',
-'math_sample'     => 'Foechje hjir in formule yn',
-'math_tip'        => 'Wiskundige formule (LaTeX)',
 'nowiki_sample'   => 'Foechje hjir platte tekst yn',
 'nowiki_tip'      => 'Negearje it wiki formaat',
 'image_tip'       => 'Mediatriem',
@@ -691,7 +681,7 @@ Oars kinne jo tebek mei de tebek-knop fan jo blêder.",
 'anontalkpagetext'                 => "----''Dit is de oerlisside fan in ûnbekende meidogger; in meidogger dy't him/har net oanmeld hat. Om't der gjin namme bekend is, wurdt it ynternet-adres brûkt om oan te jaan wa. Mar faak is it sa dat sa'n adres net altyd troch deselde persoan brûkt wurdt. As jo it idee hawwe dat jo as ûnbekende meidogger opmerkings foar in oar krije, dan kinne jo jo [[Special:UserLogin/signup|registrearje]], of jo [[Special:UserLogin|oanmelde]]. Fan in oanmelde meidogger is it ynternet-adres net sichtber, en as oanmelde meidogger krije jo allinnich opmerkings dy't foar josels bedoeld binne.''",
 'noarticletext'                    => 'Der stjit noch gjin tekst op dizze side. Jo kinne
 [[Special:Search/{{PAGENAME}}|hjirboppe nei dy tekst sykje]], of [{{fullurl:{{FULLPAGENAME}}|action=edit}} de side skriuwe].',
-'userpage-userdoesnotexist'        => 'Jo bewurkje in brûkersside fan in brûker dy\'t net bestiet (brûker "$1").
+'userpage-userdoesnotexist'        => 'Jo bewurkje in brûkersside fan in brûker dy\'t net bestiet (brûker "<nowiki>$1</nowiki>").
 Kontrolearje oft jo dizze side wol oanmeitsje/bewurkje wolle.',
 'clearyourcache'                   => "'''Opmerking:''' Nei it fêstlizzen kin it nedich wêze de oerslach fan dyn blêder te leegjen foardat de wizigings te sjen binne.
 
@@ -1011,7 +1001,6 @@ Jo kinne ek in nammerûmte as foarheaksel brûke.",
 'changepassword'            => 'Wachtwurd feroarje',
 'prefs-skin'                => 'Side-oansjen',
 'skin-preview'              => 'Proefbyld',
-'prefs-math'                => 'Formules',
 'datedefault'               => 'Gjin foarkar',
 'prefs-datetime'            => 'Datum en tiid',
 'prefs-personal'            => 'Persoanlike gegevens',
@@ -1032,8 +1021,6 @@ Jo kinne ek in nammerûmte as foarheaksel brûke.",
 'columns'                   => 'Kolommen',
 'searchresultshead'         => 'Sykje',
 'resultsperpage'            => 'Treffers de side',
-'contextlines'              => 'Rigels ynhâld de treffer:',
-'contextchars'              => 'Tekens fan de ynhâld de rigel:',
 'stub-threshold'            => 'Drompel foar markearring <a href="#" class="stub">stobbe</a> (bytes):',
 'recentchangesdays'         => 'Dagen om sjen te litten yn Koartlyn feroare:',
 'recentchangesdays-max'     => '(maksimaal $1 {{PLURAL:$1|dei|dagen}})',
@@ -1190,7 +1177,6 @@ Jo kinne ek oaren de mûglikheid jaan kontakt mei jo op te nimmen troch in ferwi
 'right-userrights'            => 'Alle meidoggerrjochten bywurkje',
 'right-userrights-interwiki'  => "Wizigje meidoggerrjochten fan meidoggers yn oare wiki's",
 'right-siteadmin'             => 'De database blokkearje en wer frij jaan',
-'right-reset-passwords'       => "Wachtwurden fan oare meidoggers op 'e nij ynstelle",
 'right-override-export-depth' => 'Alle siden oant en mei in keppelingsdjipte fan fiif fuortskriuwe',
 
 # User rights log
@@ -1367,10 +1353,6 @@ Rieplachtsje it fuorthel-logboek foar't jo fierder geane.",
 'watchthisupload'             => 'Folgje dizze side',
 'filewasdeleted'              => "Der is earder in triem mei dizze namme fuorthelle.
 Rieplachtsje it $1 foar't jo him op'e nij tafoegje.",
-'upload-wasdeleted'           => "'''Warskôging: jo binne in triem oan it oanbieden, dy't earder fuorthelle wie.'''
-
-Kontrolearje oft it wier jo bedoeling is de triem oan te bieden.
-It fuorthellogboek fan dizze triem kinne jo hjir sjen:",
 'filename-bad-prefix'         => "De namme fan de triem dy't jo oanbiede begjint mei '''\"\$1\"''', dit wiist op in namme dy't automatysk troch in digitale kamera oanmakke wurdt. Feroarje de namme as jo wolle yn ien dy't in omskriuwing jout fan de triem.",
 'filename-prefix-blacklist'   => " #<!-- lit dizze line exakt sa't er is --> <pre>
 # Syntax is as folget:
@@ -1454,7 +1436,6 @@ De folgjende list jout allinne de earste {{PLURAL:$1|ferwizing|$1 ferwizings}} n
 Der is ek in [[Special:WhatLinksHere/$2|folsleine list]].',
 'nolinkstoimage'            => 'Der binne gjin siden oan dit ôfbyld keppele.',
 'morelinkstoimage'          => '[[Special:WhatLinksHere/$1|Mear ferwizings]] nei dizze triem besjen.',
-'redirectstofile'           => '{{PLURAL:$1|De folgjende triem ferwiist|De folgjende $1 triemmen ferwize}} troch nei dizze triem:',
 'duplicatesoffile'          => '{{PLURAL:$1|De folgjende triem is|De folgjende $1 triemmen binne}} idintyk oan dizze triem:',
 'sharedupload'              => 'Dizze triem is in dielde oanbieding en kin ek troch oare projekten brûkt wurde.',
 'filepage-nofile'           => "Der bestiet gjin triem mei sa'n namme.",
@@ -1738,11 +1719,9 @@ De ûntfanger kin dus daliks nei jo reagearje.',
 'nowatchlist'        => 'Jo hawwe gjin siden op jo folchlist.',
 'watchnologin'       => 'Net oanmeld yn',
 'watchnologintext'   => 'Jo moatte [[Special:UserLogin|oanmeld]] wêze om jo folchlist te feroarjen.',
-'addedwatch'         => 'Oan folchlist tafoege',
 'addedwatchtext'     => "De side \"'''[[:\$1]]'''\" is tafoege oan jo [[Special:Watchlist|folchlist]]. Bewurkings fan dizze side en oerlisside wurde yn de takomst op jo folchlist oanjûn. Hja wurde foar jo ek '''fet''' printe op [[Special:RecentChanges|Koartlyn feroare]].
 
 At jo letter in side net mear folgje wolle, dan brûke jo op dy side de keppeling \"Ferjit dizze side.\" Jo [[Special:Watchlist|folchlist]] hat ek in keppeling \"Jo folchlist bewurkje,\" foar at jo mear as ien side \"ferjitte\" wolle.",
-'removedwatch'       => 'Net mear folgje',
 'removedwatchtext'   => 'De side "[[:$1]]" stiet net mear op jo folchlist.',
 'watch'              => 'Folgje',
 'watchthispage'      => 'Folgje dizze side',
@@ -1784,11 +1763,11 @@ Fierdere meldings wurde jo net tastjoerd, oant jo de side lêzen hawwe. Op jo fo
                  Jo freonlike {{SITENAME}}-meldingssysteem.
 
 --
-Gean nei {{fullurl:{{#special:Watchlist}}/edit}}
+Gean nei {{canonicalurl:{{#special:EditWatchlist}}}}
 om jo folchlistynstellings te feroarjen.
 
 Reaksjes en fierdere help:
-{{fullurl:{{MediaWiki:Helppage}}}}',
+{{canonicalurl:{{MediaWiki:Helppage}}}}',
 
 # Delete
 'deletepage'            => 'Wisk side',
@@ -1805,7 +1784,7 @@ of ôfbyld, tegearre mei alle skiednis, út de databank.
 Befêstigje dat jo dat wier dwaan wolle. Befêstigje dat dat is wat jo witte wat it gefolch
 is en dat jo dit dogge neffens de [[{{MediaWiki:Policy-url}}]].',
 'actioncomplete'        => 'Dien',
-'deletedtext'           => '"<nowiki>$1</nowiki>" is wiske.
+'deletedtext'           => '"$1" is wiske.
 Sjoch "$2" foar in list fan wat resint wiske is.',
 'deletedarticle'        => '"[[$1]]" is wiske',
 'dellogpage'            => 'Wiskloch',
@@ -1849,7 +1828,7 @@ Sjoch [[Special:ProtectedPages|Skoattele side]] foar mear ynformaasje.',
 'protectexpiry'               => 'Ferrint nei',
 'protect_expiry_invalid'      => 'Tiid fan ferrinnen is net jildich.',
 'protect_expiry_old'          => 'Tiid fan ferrinnen leit yn it ferline.',
-'protect-text'                => "Hjir kin jo it nivo fan skoatteljen sjen en oanpasse foar de side '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "Hjir kin jo it nivo fan skoatteljen sjen en oanpasse foar de side '''$1'''.",
 'protect-locked-blocked'      => "Jo kinne it befeiligingsnivo net feroarje wylst jo blokkearre binne.
 Hjir binne de hjoeddeiske ynstellings foar de side '''$1''':",
 'protect-locked-dblock'       => "It befeiligingsnivo kin net feroare wurde om't de database sletten is.
@@ -1951,18 +1930,17 @@ Dit binne de rinnende ynstellings foar de side '''$1''':",
 'whatlinkshere-hidelinks'  => '$1 keppelings',
 
 # Block/unblock
-'blockip'              => 'Slút meidogger út',
-'blockip-legend'       => 'Slút brûker út',
-'blockiptext'          => "Brûk dizze fjilden om in meidogger fan skriuwtagong út te sluten.
+'blockip'             => 'Slút meidogger út',
+'blockip-legend'      => 'Slút brûker út',
+'blockiptext'         => "Brûk dizze fjilden om in meidogger fan skriuwtagong út te sluten.
 Dat soe allinnich fanwege fandalisme dien wurde moatte, sa't de
 [[{{MediaWiki:Policy-url}}|útslut-rie]] it oanjout.
 Meld de krekte reden! Neam bygelyks de siden dy't oantaaste waarden.",
-'ipaddress'            => 'Meidochnamme of ynternet-adres',
-'ipadressorusername'   => 'IP Adres of meidoggernamme:',
-'ipbexpiry'            => 'Ferrint nei:',
-'ipbreason'            => 'Reden:',
-'ipbreasonotherlist'   => 'Oare reden',
-'ipbreason-dropdown'   => '*Faak foarkommende redenen foar blokkades
+'ipadressorusername'  => 'IP Adres of meidoggernamme:',
+'ipbexpiry'           => 'Ferrint nei:',
+'ipbreason'           => 'Reden:',
+'ipbreasonotherlist'  => 'Oare reden',
+'ipbreason-dropdown'  => '*Faak foarkommende redenen foar blokkades
 ** Ferkearde ynformaasje ynfiere
 ** Fuortheljen fan ynformaasje út siden
 ** Spamferwizing nei eksterne websites
@@ -1970,42 +1948,39 @@ Meld de krekte reden! Neam bygelyks de siden dy't oantaaste waarden.",
 ** Yntimidearjend gedrach
 ** Misbrûk troch meardere brûkers
 ** Unakseptabele brûkersnamme',
-'ipbanononly'          => 'Slút allinich anonyme meidoggers út',
-'ipbcreateaccount'     => 'Blokkearje it oanmeitsjen fan in nij profyl',
-'ipbenableautoblock'   => "Automatysk de lêste IP adressen útslute dy't troch dizze meidogger brûkt binne.",
-'ipbsubmit'            => 'Slút dizze meidogger út',
-'ipbother'             => 'In oare tiid:',
-'ipboptions'           => '2 oeren:2 hours,1 dei:1 day,3 dagen:3 days,1 wike:1 week,2 wiken:2 weeks,1 moanne:1 month,3 moanne:3 months,6 moanne:6 months,1 jier:1 year,ûnbeheind:infinite',
-'ipbotheroption'       => 'oare tiid',
-'ipbotherreason'       => 'Oare/eventuele reden:',
-'badipaddress'         => 'Gjin jildige IP-adres',
-'blockipsuccesssub'    => 'Utsluting slagge',
-'blockipsuccesstext'   => 'Meidogger [[Special:Contributions/$1|$1]] is útsletten.<br />
+'ipbcreateaccount'    => 'Blokkearje it oanmeitsjen fan in nij profyl',
+'ipbenableautoblock'  => "Automatysk de lêste IP adressen útslute dy't troch dizze meidogger brûkt binne.",
+'ipbsubmit'           => 'Slút dizze meidogger út',
+'ipbother'            => 'In oare tiid:',
+'ipboptions'          => '2 oeren:2 hours,1 dei:1 day,3 dagen:3 days,1 wike:1 week,2 wiken:2 weeks,1 moanne:1 month,3 moanne:3 months,6 moanne:6 months,1 jier:1 year,ûnbeheind:infinite',
+'ipbotheroption'      => 'oare tiid',
+'ipbotherreason'      => 'Oare/eventuele reden:',
+'badipaddress'        => 'Gjin jildige IP-adres',
+'blockipsuccesssub'   => 'Utsluting slagge',
+'blockipsuccesstext'  => 'Meidogger [[Special:Contributions/$1|$1]] is útsletten.<br />
 (List fan [[Special:IPBlockList|útslette meidoggers]].)',
-'ipb-unblock-addr'     => 'Lit $1 yn',
-'ipb-unblock'          => 'Lit in meidogger of IP-adres yn',
-'ipb-blocklist'        => 'Besteande útslutings besjen',
-'unblockip'            => 'Lit meidogger wer ta',
-'unblockiptext'        => 'Brûk dizze fjilden om in meidogger wer skriuwtagong te jaan.',
-'ipusubmit'            => 'Lit dizze meidogger wer ta.',
-'ipblocklist'          => 'List fan útsletten ynternet-adressen en meidochnammen',
-'ipblocklist-username' => 'Meidoggernamme of IP-adres:',
-'ipblocklist-submit'   => 'Sykje',
-'blocklistline'        => '"$3", troch "$2" op $1 ($4)',
-'infiniteblock'        => 'trochgeand',
-'blocklink'            => 'slút út',
-'unblocklink'          => 'lit yn',
-'change-blocklink'     => 'blokkade feroarje',
-'contribslink'         => 'bydragen',
-'autoblocker'          => 'Jo wiene útsletten om\'t jo ynternet-adres oerienkomt mei dat fan "[[User:$1|$1]]". Foar it útsluten fan dy meidogger waard dizze reden jûn: "$2".',
-'blocklogpage'         => 'Utslútloch',
-'blocklogentry'        => '"[[$1]]" útsletten foar $2 $3',
-'blocklogtext'         => 'Dit is in loch fan it útsluten en talitten fan meidoggers. Fansels útsletten net-adressen binne net opnaam. Sjoch de [[Special:IPBlockList|útsletlist]] foar de no jildende utslettings.',
-'unblocklogentry'      => 'hat de blokkade fan $1 fuorthelle',
-'ipb_expiry_invalid'   => 'Tiid fan ferrinnen is net goed.',
-'ipb_already_blocked'  => '"$1" is al útsluten',
-'ipb_cant_unblock'     => 'Flater: It útsluten fan ID $1 kin net fûn wurde. It is miskien al net mear útsluten.',
-'proxyblocksuccess'    => 'Dien.',
+'ipb-unblock-addr'    => 'Lit $1 yn',
+'ipb-unblock'         => 'Lit in meidogger of IP-adres yn',
+'ipb-blocklist'       => 'Besteande útslutings besjen',
+'unblockip'           => 'Lit meidogger wer ta',
+'unblockiptext'       => 'Brûk dizze fjilden om in meidogger wer skriuwtagong te jaan.',
+'ipusubmit'           => 'Lit dizze meidogger wer ta.',
+'ipblocklist'         => 'List fan útsletten ynternet-adressen en meidochnammen',
+'ipblocklist-submit'  => 'Sykje',
+'infiniteblock'       => 'trochgeand',
+'blocklink'           => 'slút út',
+'unblocklink'         => 'lit yn',
+'change-blocklink'    => 'blokkade feroarje',
+'contribslink'        => 'bydragen',
+'autoblocker'         => 'Jo wiene útsletten om\'t jo ynternet-adres oerienkomt mei dat fan "[[User:$1|$1]]". Foar it útsluten fan dy meidogger waard dizze reden jûn: "$2".',
+'blocklogpage'        => 'Utslútloch',
+'blocklogentry'       => '"[[$1]]" útsletten foar $2 $3',
+'blocklogtext'        => 'Dit is in loch fan it útsluten en talitten fan meidoggers. Fansels útsletten net-adressen binne net opnaam. Sjoch de [[Special:BlockList|útsletlist]] foar de no jildende utslettings.',
+'unblocklogentry'     => 'hat de blokkade fan $1 fuorthelle',
+'ipb_expiry_invalid'  => 'Tiid fan ferrinnen is net goed.',
+'ipb_already_blocked' => '"$1" is al útsluten',
+'ipb_cant_unblock'    => 'Flater: It útsluten fan ID $1 kin net fûn wurde. It is miskien al net mear útsluten.',
+'proxyblocksuccess'   => 'Dien.',
 
 # Developer tools
 'lockdb'              => "Meitsje de database 'Net-skriuwe'",
@@ -2082,7 +2057,7 @@ De doelside "[[:$1]]" is der al. Moat dy wiske wurde om plak te meitsjen foar it
 'allmessagesdefault' => 'Standerttekst',
 'allmessagescurrent' => 'Tekst yn de nijste ferzje',
 'allmessagestext'    => 'Dit is in list fan alle systeemberjochten beskikber yn de MediaWiki-nammeromte.
-Sjoch: [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation], [http://translatewiki.net translatewiki.net].',
+Sjoch: [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation], [//translatewiki.net translatewiki.net].',
 
 # Thumbnails
 'thumbnail-more'           => 'Fergrutsje',
@@ -2179,32 +2154,9 @@ Sjoch: [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation], [htt
 'spamprotectiontext'  => "De side dy't jo fêstlizze woene is blokkearre troch in spam filter. Dit wurdt wierskynlik feroarsake troch in ferwizing nei in ekstern webstee.",
 'spamprotectionmatch' => 'De neikommende tekst hat it spam filter aktivearre: $1',
 
-# Info page
-'infosubtitle' => 'Ynformaasje foar side',
-
 # Skin names
 'skinname-standard'  => 'Standert',
 'skinname-nostalgia' => 'Nostalgy',
-
-# Math options
-'mw_math_png'    => 'Altiten as PNG ôfbyldzje',
-'mw_math_simple' => 'HTML foar ienfâldiche formules, oars PNG',
-'mw_math_html'   => 'HTML as mooglik, oars PNG',
-'mw_math_source' => 'Lit de TeX ferzje stean (foar tekstblêders)',
-'mw_math_modern' => 'Oanbefelle foar resinte blêders',
-'mw_math_mathml' => 'MathML',
-
-# Math errors
-'math_failure'          => 'Untsjutbere formule',
-'math_unknown_error'    => 'Unbekinde fout',
-'math_unknown_function' => 'Unbekinde funksje',
-'math_lexing_error'     => 'Unbekind wurd',
-'math_syntax_error'     => 'Sinboufout',
-'math_image_error'      => 'PNG-omsetting is mislearre.
-Gean nei oft latex, dvips, en gs goed ynstallearre binne en set om',
-'math_bad_tmpdir'       => 'De tydlike formulepad kin net skreaun of makke wêze.',
-'math_bad_output'       => 'De formulepad kin net skreaun of makke wêze.',
-'math_notexvc'          => 'It programma texvc net fûn; sjoch math/README te ynstallearjen.',
 
 # Patrolling
 'markaspatrolleddiff'                 => 'Markearje as kontroleare',
@@ -2220,14 +2172,13 @@ Gean nei oft latex, dvips, en gs goed ynstallearre binne en set om',
 'nextdiff'     => 'Neikommende ferskillen →',
 
 # Media information
-'imagemaxsize'         => 'Behein ôfmjittings fan ôfbyld op beskriuwingsside ta:',
-'thumbsize'            => 'Mjitte fan miniatueren:',
-'file-info'            => 'triemgrutte: $1, MIME-type: $2',
-'file-info-size'       => '$1 × $2 pixel, triemgrutte: $3, MIME type: $4',
-'file-nohires'         => '<small>Gjin hegere resolúsje beskikber.</small>',
-'svg-long-desc'        => 'SVG-triem, nominaal $1 × $2 pixels, triemgrutte: $3',
-'show-big-image'       => 'Hegere resolúsje',
-'show-big-image-thumb' => '<small>Grutte fan dizze ôfbylding: $1 × $2 pixels</small>',
+'imagemaxsize'   => 'Behein ôfmjittings fan ôfbyld op beskriuwingsside ta:',
+'thumbsize'      => 'Mjitte fan miniatueren:',
+'file-info'      => 'triemgrutte: $1, MIME-type: $2',
+'file-info-size' => '$1 × $2 pixel, triemgrutte: $3, MIME type: $4',
+'file-nohires'   => '<small>Gjin hegere resolúsje beskikber.</small>',
+'svg-long-desc'  => 'SVG-triem, nominaal $1 × $2 pixels, triemgrutte: $3',
+'show-big-image' => 'Hegere resolúsje',
 
 # Special:NewFiles
 'newimages'        => 'Nije ôfbylden',
@@ -2256,7 +2207,13 @@ Alle folgjende links dy't op deselde rigel steane, wurde behannele as útsûnder
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-samplesperpixel'        => 'Oantal komponinten',
@@ -2267,7 +2224,6 @@ Alle folgjende links dy't op deselde rigel steane, wurde behannele as útsûnder
 'exif-artist'                 => 'Auteur',
 'exif-colorspace'             => 'Kleurromte',
 'exif-compressedbitsperpixel' => 'Ofbylding kompresjemetoade',
-'exif-makernote'              => 'Opmerkings fan makker',
 'exif-usercomment'            => 'Opmerkings',
 'exif-relatedsoundfile'       => 'Besibbe audiotriem',
 'exif-exposuretime-format'    => '$1 sek ($2)',
@@ -2311,14 +2267,12 @@ Alle folgjende links dy't op deselde rigel steane, wurde behannele as útsûnder
 
 # External editor support
 'edit-externally'      => 'Wizigje dizze triem mei in ekstern programma',
-'edit-externally-help' => 'Sjoch de [http://www.mediawiki.org/wiki/Manual:External_editors ynstel-hantlieding] foar mear ynformaasje.',
+'edit-externally-help' => 'Sjoch de [//www.mediawiki.org/wiki/Manual:External_editors ynstel-hantlieding] foar mear ynformaasje.',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'alle',
-'imagelistall'     => 'alle',
-'watchlistall2'    => 'alles',
-'namespacesall'    => 'alles',
-'monthsall'        => 'alle',
+'watchlistall2' => 'alles',
+'namespacesall' => 'alles',
+'monthsall'     => 'alle',
 
 # E-mail address confirmation
 'confirmemail'            => 'Befêstigjen netpostadres',

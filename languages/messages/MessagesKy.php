@@ -168,7 +168,7 @@ $messages = array(
 'accountcreated'          => 'Катталды',
 'loginlanguagelabel'      => 'Тил: $1',
 
-# Password reset dialog
+# Change password dialog
 'oldpassword' => 'Эски сырсөз:',
 'newpassword' => 'Жаңы сырсөз:',
 
@@ -307,7 +307,6 @@ $messages = array(
 # Watchlist
 'watchlist'         => 'Байкоо тизмем',
 'watchnologin'      => 'Катталган жок',
-'addedwatch'        => 'Байкоо тизмеге кошумчаланды',
 'watch'             => 'Байкоо',
 'watchlistcontains' => 'Байкоо тизмеңизде $1 {{PLURAL:$1|барак бар|барак бар}}.',
 'wlshowlast'        => 'Соңку $1 саат $2 күн $3 көрсөт.',
@@ -337,7 +336,6 @@ $messages = array(
 'whatlinkshere' => 'Жетелеме шилтемелер',
 
 # Block/unblock
-'ipaddress'      => 'IP дареги',
 'ipbreason'      => 'Себеп',
 'ipbotheroption' => 'башка',
 'contribslink'   => 'салымдары',
@@ -375,9 +373,6 @@ $messages = array(
 # Attribution
 'others' => 'башкалар',
 
-# Math errors
-'math_unknown_error' => 'белгисиз ката',
-
 # Browsing diffs
 'nextdiff' => 'Жаңы түзөтүү →',
 
@@ -396,9 +391,8 @@ $messages = array(
 'exif-focalplaneresolutionunit-2' => 'дюйм',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'баары',
-'watchlistall2'    => 'баары',
-'namespacesall'    => 'баары',
+'watchlistall2' => 'баары',
+'namespacesall' => 'баары',
 
 # E-mail address confirmation
 'confirmemail'          => 'Электрондук даректи ырастоо',

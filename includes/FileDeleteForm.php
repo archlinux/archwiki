@@ -118,25 +118,21 @@ class FileDeleteForm {
 		} else {
 			$id = $title->getArticleID( Title::GAID_FOR_UPDATE );
 			$article = new Article( $title );
-			$error = '';
 			$dbw = wfGetDB( DB_MASTER );
 			try {
-				if( wfRunHooks( 'ArticleDelete', array( &$article, &$wgUser, &$reason, &$error ) ) ) {
-					// delete the associated article first
-					if( $article->doDeleteArticle( $reason, $suppress, $id, false ) ) {
-						global $wgRequest;
-						if( $wgRequest->getCheck( 'wpWatch' ) && $wgUser->isLoggedIn() ) {
-							$article->doWatch();
-						} elseif( $title->userIsWatching() ) {
-							$article->doUnwatch();
-						}
-						$status = $file->delete( $reason, $suppress );
-						if( $status->ok ) {
-							$dbw->commit();
-							wfRunHooks( 'ArticleDeleteComplete', array( &$article, &$wgUser, $reason, $id ) );
-						} else {
-							$dbw->rollback();
-						}
+				// delete the associated article first
+				if( $article->doDeleteArticle( $reason, $suppress, $id, false ) ) {
+					global $wgRequest;
+					if ( $wgRequest->getCheck( 'wpWatch' ) && $wgUser->isLoggedIn() ) {
+						WatchAction::doWatch( $title, $wgUser );
+					} elseif ( $title->userIsWatching() ) {
+						WatchAction::doUnwatch( $title, $wgUser );
+					}
+					$status = $file->delete( $reason, $suppress );
+					if( $status->ok ) {
+						$dbw->commit();
+					} else {
+						$dbw->rollback();
 					}
 				}
 			} catch ( MWException $e ) {
@@ -257,15 +253,15 @@ class FileDeleteForm {
 			return wfMsgExt(
 				"{$message}-old", # To ensure grep will find them: 'filedelete-intro-old', 'filedelete-nofile-old', 'filedelete-success-old'
 				'parse',
-				$this->title->getText(),
+				wfEscapeWikiText( $this->title->getText() ),
 				$wgLang->date( $this->getTimestamp(), true ),
 				$wgLang->time( $this->getTimestamp(), true ),
-				wfExpandUrl( $this->file->getArchiveUrl( $this->oldimage ) ) );
+				wfExpandUrl( $this->file->getArchiveUrl( $this->oldimage ), PROTO_CURRENT ) );
 		} else {
 			return wfMsgExt(
 				$message,
 				'parse',
-				$this->title->getText()
+				wfEscapeWikiText( $this->title->getText() )
 			);
 		}
 	}

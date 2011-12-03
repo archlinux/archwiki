@@ -1,10 +1,10 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Jun 30, 2007
  *
- * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@home.nl
+ * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ class ApiDelete extends ApiBase {
 			}
 		}
 		if ( !$titleObj->exists() ) {
-			$this->dieUsageMsg( array( 'notanarticle' ) );
+			$this->dieUsageMsg( 'notanarticle' );
 		}
 
 		$reason = ( isset( $params['reason'] ) ? $params['reason'] : null );
@@ -146,22 +146,17 @@ class ApiDelete extends ApiBase {
 		}
 
 		$error = '';
-		if ( !wfRunHooks( 'ArticleDelete', array( &$article, &$wgUser, &$reason, &$error ) ) ) {
-			return array( array( 'hookaborted', $error ) );
-		}
-
 		// Luckily, Article.php provides a reusable delete function that does the hard work for us
-		if ( $article->doDeleteArticle( $reason ) ) {
-			wfRunHooks( 'ArticleDeleteComplete', array( &$article, &$wgUser, $reason, $article->getId() ) );
+		if ( $article->doDeleteArticle( $reason, false, 0, true, $error ) ) {
 			return array();
+		} else {
+			return array( array( 'cannotdelete', $article->getTitle()->getPrefixedText() ) );
 		}
-		return array( array( 'cannotdelete', $article->mTitle->getPrefixedText() ) );
 	}
 
 	/**
-	 * @static
 	 * @param $token
-	 * @param $title
+	 * @param $title Title
 	 * @param $oldimage
 	 * @param $reason
 	 * @param $suppress bool
@@ -255,12 +250,15 @@ class ApiDelete extends ApiBase {
 	}
 
 	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'invalidtitle', 'title' ),
-			array( 'nosuchpageid', 'pageid' ),
-			array( 'notanarticle' ),
-			array( 'hookaborted', 'error' ),
-		) );
+		return array_merge( parent::getPossibleErrors(),
+			$this->getRequireOnlyOneParameterErrorMessages( array( 'title', 'pageid' ) ),
+			array(
+				array( 'invalidtitle', 'title' ),
+				array( 'nosuchpageid', 'pageid' ),
+				array( 'notanarticle' ),
+				array( 'hookaborted', 'error' ),
+			)
+		);
 	}
 
 	public function needsToken() {
@@ -278,7 +276,11 @@ class ApiDelete extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Delete';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiDelete.php 77141 2010-11-23 10:04:38Z ialex $';
+		return __CLASS__ . ': $Id: ApiDelete.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

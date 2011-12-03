@@ -198,32 +198,32 @@ pre {
 h1.firstHeading, h2 {
   border-bottom: solid 1px black;
 }
-#bodyContent a[href ^="http://"],
-#bodyContent a[href ^="gopher://"] {
+#bodyContent a.external,
+#bodyContent a.external[href ^="gopher://"] {
     background: url("external.png") center right no-repeat;
     padding-right: 13px;
 }
-#bodyContent a[href ^="https://"],
+#bodyContent a.external[href ^="https://"],
 .link-https {
     background: url("lock_icon.gif") center right no-repeat;
     padding-right: 16px;
 }
-#bodyContent a[href ^="mailto:"],
+#bodyContent a.external[href ^="mailto:"],
 .link-mailto {
     background: url("mail_icon.gif") center right no-repeat;
     padding-right: 18px;
 }
-#bodyContent a[href ^="news://"] {
+#bodyContent a.external[href ^="news://"] {
     background: url("news_icon.png") center right no-repeat;
     padding-right: 18px;
 }
-#bodyContent a[href ^="ftp://"],
+#bodyContent a.external[href ^="ftp://"],
 .link-ftp {
     background: url("file_icon.gif") center right no-repeat;
     padding-right: 18px;
 }
-#bodyContent a[href ^="irc://"],
-#bodyContent a.extiw[href ^="irc://"],
+#bodyContent a.external[href ^="irc://"],
+#bodyContent a.external[href ^="ircs://"],
 .link-irc {
     background: url("discussionitem_icon.gif")  center right no-repeat;
     padding-right: 18px;
@@ -232,8 +232,6 @@ h1.firstHeading, h2 {
 #bodyContent a.extiw,
 #bodyContent a.extiw:active {
   color: #5E7CFF;
-  background: none;
-  padding: 0;
 }
 
 td.diff-addedline {
@@ -257,19 +255,13 @@ div.tocindent {
   border-bottom: solid 1px black;
 }
 
-div.floatright, table.floatright {
-    clear: right;
-    float: right;
+/* @noflip */div.floatright, table.floatright {
     margin: 0;
-    position: relative;
     border-width: 0.5em 0 0.8em 1.4em;
 }
 div.floatright p { font-style: italic; }
-div.floatleft, table.floatleft {
-    float: left;
-    clear: left;
+/* @noflip */div.floatleft, table.floatleft {
     margin: 0.3em 0.5em 0.5em 0;
-    position: relative;
     border-width: 0.5em 1.4em 0.8em 0;
 }
 div.floatleft p { font-style: italic; }
@@ -300,14 +292,10 @@ div.magnify a, div.magnify img {
     border: none !important;
     background: none !important;
 }
-div.tright {
-    clear: right;
-    float: right;
+/* @noflip */div.tright {
     border-width: 0.5em 0 0.8em 1.4em;
 }
-div.tleft {
-    float: left;
-    clear: left;
+/* @noflip */div.tleft {
     margin-right:0.5em;
     border-width: 0.5em 1.4em 0.8em 0;
 }
@@ -322,6 +310,13 @@ a.new,
 }
 li.new {
 	text-decoration: line-through;
+}
+/**
+ * Overrides text justification (user preference)
+ * See bug 31990
+ */
+#catlinks {
+	text-align: center;
 }
 .catlinks {
   text-align: center;

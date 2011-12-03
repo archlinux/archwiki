@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on August 8, 2010
  *
@@ -59,6 +59,6 @@ class ApiFormatDump extends ApiFormatBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id$';
+		return __CLASS__ . ': $Id: ApiFormatDump.php 79969 2011-01-10 22:36:26Z reedy $';
 	}
 }

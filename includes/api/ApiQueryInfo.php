@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Sep 25, 2006
  *
@@ -41,12 +41,23 @@ class ApiQueryInfo extends ApiQueryBase {
 		$fld_readable = false, $fld_watched = false,
 		$fld_preload = false, $fld_displaytitle = false;
 
+	private $params, $titles, $missing, $everything, $pageCounter;
+
+	private $pageRestrictions, $pageIsRedir, $pageIsNew, $pageTouched,
+		$pageLatest, $pageLength;
+
+	private $protections, $watched, $talkids, $subjectids, $displaytitles;
+
 	private $tokenFunctions;
 
 	public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'in' );
 	}
 
+	/**
+	 * @param $pageSet ApiPageSet
+	 * @return void
+	 */
 	public function requestExtraData( $pageSet ) {
 		global $wgDisableCounters;
 
@@ -87,6 +98,7 @@ class ApiQueryInfo extends ApiQueryBase {
 			'unblock' => array( 'ApiQueryInfo', 'getUnblockToken' ),
 			'email' => array( 'ApiQueryInfo', 'getEmailToken' ),
 			'import' => array( 'ApiQueryInfo', 'getImportToken' ),
+			'watch' => array( 'ApiQueryInfo', 'getWatchToken'),
 		);
 		wfRunHooks( 'APIQueryInfoTokens', array( &$this->tokenFunctions ) );
 		return $this->tokenFunctions;
@@ -193,7 +205,7 @@ class ApiQueryInfo extends ApiQueryBase {
 
 	public static function getImportToken( $pageid, $title ) {
 		global $wgUser;
-		if ( !$wgUser->isAllowed( 'import' ) ) {
+		if ( !$wgUser->isAllowedAny( 'import', 'importupload' ) ) {
 			return false;
 		}
 
@@ -204,6 +216,21 @@ class ApiQueryInfo extends ApiQueryBase {
 
 		$cachedImportToken = $wgUser->editToken();
 		return $cachedImportToken;
+	}
+
+	public static function getWatchToken( $pageid, $title ) {
+		global $wgUser;
+		if ( !$wgUser->isLoggedIn() ) {
+			return false;
+		}
+
+		static $cachedWatchToken = null;
+		if ( !is_null( $cachedWatchToken ) ) {
+			return $cachedWatchToken;
+		}
+
+		$cachedWatchToken = $wgUser->editToken( 'watch' );
+		return $cachedWatchToken;
 	}
 
 	public function execute() {
@@ -353,8 +380,8 @@ class ApiQueryInfo extends ApiQueryBase {
 		}
 
 		if ( $this->fld_url ) {
-			$pageInfo['fullurl'] = $title->getFullURL();
-			$pageInfo['editurl'] = $title->getFullURL( 'action=edit' );
+			$pageInfo['fullurl'] = wfExpandUrl( $title->getFullURL(), PROTO_CURRENT );
+			$pageInfo['editurl'] = wfExpandUrl( $title->getFullURL( 'action=edit' ), PROTO_CURRENT );
 		}
 		if ( $this->fld_readable && $title->userCanRead() ) {
 			$pageInfo['readable'] = '';
@@ -386,6 +413,7 @@ class ApiQueryInfo extends ApiQueryBase {
 	 * Get information about protections and put it in $protections
 	 */
 	private function getProtectionInfo() {
+		global $wgContLang;
 		$this->protections = array();
 		$db = $this->getDB();
 
@@ -404,7 +432,7 @@ class ApiQueryInfo extends ApiQueryBase {
 				$a = array(
 					'type' => $row->pr_type,
 					'level' => $row->pr_level,
-					'expiry' => Block::decodeExpiry( $row->pr_expiry, TS_ISO_8601 )
+					'expiry' => $wgContLang->formatExpiry( $row->pr_expiry, TS_ISO_8601 )
 				);
 				if ( $row->pr_cascade ) {
 					$a['cascade'] = '';
@@ -461,7 +489,7 @@ class ApiQueryInfo extends ApiQueryBase {
 				$this->protections[$row->pt_namespace][$row->pt_title][] = array(
 					'type' => 'create',
 					'level' => $row->pt_create_perm,
-					'expiry' => Block::decodeExpiry( $row->pt_expiry, TS_ISO_8601 )
+					'expiry' => $wgContLang->formatExpiry( $row->pt_expiry, TS_ISO_8601 )
 				);
 			}
 		}
@@ -495,7 +523,7 @@ class ApiQueryInfo extends ApiQueryBase {
 				$this->protections[$row->tl_namespace][$row->tl_title][] = array(
 					'type' => $row->pr_type,
 					'level' => $row->pr_level,
-					'expiry' => Block::decodeExpiry( $row->pr_expiry, TS_ISO_8601 ),
+					'expiry' => $wgContLang->formatExpiry( $row->pr_expiry, TS_ISO_8601 ),
 					'source' => $source->getPrefixedText()
 				);
 			}
@@ -518,7 +546,7 @@ class ApiQueryInfo extends ApiQueryBase {
 				$this->protections[NS_FILE][$row->il_to][] = array(
 					'type' => $row->pr_type,
 					'level' => $row->pr_level,
-					'expiry' => Block::decodeExpiry( $row->pr_expiry, TS_ISO_8601 ),
+					'expiry' => $wgContLang->formatExpiry( $row->pr_expiry, TS_ISO_8601 ),
 					'source' => $source->getPrefixedText()
 				);
 			}
@@ -700,7 +728,11 @@ class ApiQueryInfo extends ApiQueryBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Properties#info_.2F_in';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryInfo.php 78439 2010-12-15 14:23:46Z catrope $';
+		return __CLASS__ . ': $Id: ApiQueryInfo.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

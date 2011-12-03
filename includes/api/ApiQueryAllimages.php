@@ -38,16 +38,19 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  */
 class ApiQueryAllimages extends ApiQueryGeneratorBase {
 
+	protected $mRepo;
+
 	public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'ai' );
 		$this->mRepo = RepoGroup::singleton()->getLocalRepo();
 	}
 
 	/**
-	 * Overide parent method to make sure to make sure the repo's DB is used
+	 * Override parent method to make sure to make sure the repo's DB is used
 	 * which may not necesarilly be the same as the local DB.
 	 *
 	 * TODO: allow querying non-local repos.
+	 * @return DatabaseBase
 	 */
 	protected function getDB() {
 		return $this->mRepo->getSlaveDB();
@@ -61,6 +64,10 @@ class ApiQueryAllimages extends ApiQueryGeneratorBase {
 		return 'public';
 	}
 
+	/**
+	 * @param $resultPageSet ApiPageSet
+	 * @return void
+	 */
 	public function executeGenerator( $resultPageSet ) {
 		if ( $resultPageSet->isResolvingRedirects() ) {
 			$this->dieUsage( 'Use "gaifilterredir=nonredirects" option instead of "redirects" when using allimages as a generator', 'params' );
@@ -69,6 +76,10 @@ class ApiQueryAllimages extends ApiQueryGeneratorBase {
 		$this->run( $resultPageSet );
 	}
 
+	/**
+	 * @param $resultPageSet ApiPageSet
+	 * @return void
+	 */
 	private function run( $resultPageSet = null ) {
 		$repo = $this->mRepo;
 		if ( !$repo instanceof LocalRepo ) {
@@ -98,12 +109,30 @@ class ApiQueryAllimages extends ApiQueryGeneratorBase {
 
 		$sha1 = false;
 		if ( isset( $params['sha1'] ) ) {
+			if ( !$this->validateSha1Hash( $params['sha1'] ) ) {
+				$this->dieUsage( 'The SHA1 hash provided is not valid', 'invalidsha1hash' );
+			}
 			$sha1 = wfBaseConvert( $params['sha1'], 16, 36, 31 );
 		} elseif ( isset( $params['sha1base36'] ) ) {
 			$sha1 = $params['sha1base36'];
+			if ( !$this->validateSha1Base36Hash( $sha1 ) ) {
+				$this->dieUsage( 'The SHA1Base36 hash provided is not valid', 'invalidsha1base36hash' );
+			}
 		}
 		if ( $sha1 ) {
-			$this->addWhere( 'img_sha1=' . $db->addQuotes( $sha1 ) );
+			$this->addWhereFld( 'img_sha1', $sha1 );
+		}
+
+		if ( !is_null( $params['mime'] ) ) {
+			global $wgMiserMode;
+			if ( $wgMiserMode  ) {
+				$this->dieUsage( 'MIME search disabled in Miser Mode', 'mimesearchdisabled' );
+			}
+
+			list( $major, $minor ) = File::splitMime( $params['mime'] );
+
+			$this->addWhereFld( 'img_major_mime', $major );
+			$this->addWhereFld( 'img_minor_mime', $minor );
 		}
 
 		$this->addTables( 'image' );
@@ -133,6 +162,8 @@ class ApiQueryAllimages extends ApiQueryGeneratorBase {
 				$file = $repo->newFileFromRow( $row );
 				$info = array_merge( array( 'name' => $row->img_name ),
 					ApiQueryImageInfo::getInfo( $file, $prop, $result ) );
+				self::addTitleInfo( $info, $file->getTitle() );
+
 				$fit = $result->addValue( array( 'query', $this->getModuleName() ), null, $info );
 				if ( !$fit ) {
 					$this->setContinueEnumParameter( 'from', $this->keyToTitle( $row->img_name ) );
@@ -178,10 +209,11 @@ class ApiQueryAllimages extends ApiQueryGeneratorBase {
 			'sha1' => null,
 			'sha1base36' => null,
 			'prop' => array(
-				ApiBase::PARAM_TYPE => ApiQueryImageInfo::getPropertyNames(),
+				ApiBase::PARAM_TYPE => ApiQueryImageInfo::getPropertyNames( $this->propertyFilter ),
 				ApiBase::PARAM_DFLT => 'timestamp|url',
 				ApiBase::PARAM_ISMULTI => true
-			)
+			),
+			'mime' => null,
 		);
 	}
 
@@ -196,23 +228,12 @@ class ApiQueryAllimages extends ApiQueryGeneratorBase {
 			'limit' => 'How many images in total to return',
 			'sha1' => "SHA1 hash of image. Overrides {$this->getModulePrefix()}sha1base36",
 			'sha1base36' => 'SHA1 hash of image in base 36 (used in MediaWiki)',
-			'prop' => array(
-				'Which properties to get',
-				' timestamp    - Adds the timestamp when the image was upload',
-				' user         - Adds the username of the last uploader',
-				' userid       - Adds the user id of the last uploader',
-				' comment      - Adds the comment of the last upload',
-				' url          - Adds the URL of the image and its description page',
-				' size         - Adds the size of the image in bytes and its height and width',
-				' dimensions   - Alias of size',
-				' sha1         - Adds the sha1 of the image',
-				' mime         - Adds the MIME of the image',
-				' thumbmime    - Adds the MIME of the tumbnail for the image',
-				' archivename  - Adds the file name of the archive version for non-latest versions',
-				' bitdepth     - Adds the bit depth of the version',
-			),
+			'prop' => ApiQueryImageInfo::getPropertyDescriptions( $this->propertyFilter ),
+			'mime' => 'What MIME type to search for. e.g. image/jpeg. Disabled in Miser Mode',
 		);
 	}
+
+	private $propertyFilter = array( 'archivename' );
 
 	public function getDescription() {
 		return 'Enumerate all images sequentially';
@@ -222,6 +243,9 @@ class ApiQueryAllimages extends ApiQueryGeneratorBase {
 		return array_merge( parent::getPossibleErrors(), array(
 			array( 'code' => 'params', 'info' => 'Use "gaifilterredir=nonredirects" option instead of "redirects" when using allimages as a generator' ),
 			array( 'code' => 'unsupportedrepo', 'info' => 'Local file repository does not support querying all images' ),
+			array( 'code' => 'mimesearchdisabled', 'info' => 'MIME search disabled in Miser Mode' ),
+			array( 'code' => 'invalidsha1hash', 'info' => 'The SHA1 hash provided is not valid' ),
+			array( 'code' => 'invalidsha1base36hash', 'info' => 'The SHA1Base36 hash provided is not valid' ),
 		) );
 	}
 
@@ -236,7 +260,11 @@ class ApiQueryAllimages extends ApiQueryGeneratorBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Allimages';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryAllimages.php 71838 2010-08-28 01:18:18Z reedy $';
+		return __CLASS__ . ': $Id: ApiQueryAllimages.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

@@ -5,6 +5,21 @@
  * configuration, and optionally loads Setup.php depending on whether
  * MW_NO_SETUP is defined.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  */
 
@@ -42,6 +57,11 @@ if ( ini_get( 'register_globals' ) ) {
 	}
 }
 
+# bug 15461: Make IE8 turn off content sniffing. Everbody else should ignore this
+# We're adding it here so that it's *always* set, even for alternate entry
+# points and when $wgOut gets disabled or overridden.
+header( 'X-Content-Type-Options: nosniff' );
+
 $wgRequestTime = microtime(true);
 # getrusage() does not exist on the Microsoft Windows platforms, catching this
 if ( function_exists ( 'getrusage' ) ) {
@@ -67,45 +87,41 @@ if ( $IP === false ) {
 	$IP = realpath( '.' );
 }
 
-
-# Start profiler
-if( file_exists("$IP/StartProfiler.php") ) {
-	require_once( "$IP/StartProfiler.php" );
+if ( isset( $_SERVER['MW_COMPILED'] ) ) {
+	define( 'MW_COMPILED', 1 );
 } else {
-	require_once( "$IP/includes/ProfilerStub.php" );
+	# Get MWInit class
+	require_once( "$IP/includes/Init.php" );
+
+	# Start the autoloader, so that extensions can derive classes from core files
+	require_once( "$IP/includes/AutoLoader.php" );
+
+	# Load the profiler
+	require_once( "$IP/includes/profiler/Profiler.php" );
+
+	# Load up some global defines.
+	require_once( "$IP/includes/Defines.php" );
 }
+
+# Start the profiler
+$wgProfiler = array();
+if ( file_exists( "$IP/StartProfiler.php" ) ) {
+	require( "$IP/StartProfiler.php" );
+}
+
 wfProfileIn( 'WebStart.php-conf' );
 
-# Load up some global defines.
-require_once( "$IP/includes/Defines.php" );
-
-# Check for PHP 5
-if ( !function_exists( 'version_compare' ) 
-	|| version_compare( phpversion(), '5.0.0' ) < 0
-) {
-	define( 'MW_PHP4', '1' );
-	require( "$IP/includes/DefaultSettings.php" );
-	require( "$IP/includes/templates/PHP4.php" );
-	exit;
-}
-
-# Start the autoloader, so that extensions can derive classes from core files
-require_once( "$IP/includes/AutoLoader.php" );
 # Load default settings
-require_once( "$IP/includes/DefaultSettings.php" );
+require_once( MWInit::compiledPath( "includes/DefaultSettings.php" ) );
 
 if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
 	# Use a callback function to configure MediaWiki
-	$callback = MW_CONFIG_CALLBACK;
-	# PHP 5.1 doesn't support "class::method" for call_user_func, so split it
-	if ( strpos( $callback, '::' ) !== false ) {
-		$callback = explode( '::', $callback, 2);
-	}
-	call_user_func( $callback );
+	MWFunction::call( MW_CONFIG_CALLBACK );
 } else {
-	if ( !defined('MW_CONFIG_FILE') )
-		define('MW_CONFIG_FILE', "$IP/LocalSettings.php");
-	
+	if ( !defined( 'MW_CONFIG_FILE' ) ) {
+		define('MW_CONFIG_FILE', MWInit::interpretedPath( 'LocalSettings.php' ) );
+	}
+
 	# LocalSettings.php is the per site customization file. If it does not exist
 	# the wiki installer needs to be launched or the generated file uploaded to
 	# the root wiki directory
@@ -119,7 +135,7 @@ if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
 }
 
 if ( $wgEnableSelenium ) {
-	require_once( "$IP/includes/SeleniumWebSettings.php" );
+	require_once( MWInit::compiledPath( "includes/SeleniumWebSettings.php" ) );
 }
 
 wfProfileOut( 'WebStart.php-conf' );
@@ -130,12 +146,14 @@ wfProfileIn( 'WebStart.php-ob_start' );
 # that would cause us to potentially mix gzip and non-gzip output, creating a
 # big mess.
 if ( !defined( 'MW_NO_OUTPUT_BUFFER' ) && ob_get_level() == 0 ) {
-	require_once( "$IP/includes/OutputHandler.php" );
+	if ( !defined( 'MW_COMPILED' ) ) {
+		require_once( "$IP/includes/OutputHandler.php" );
+	}
 	ob_start( 'wfOutputHandler' );
 }
 wfProfileOut( 'WebStart.php-ob_start' );
 
 if ( !defined( 'MW_NO_SETUP' ) ) {
-	require_once( "$IP/includes/Setup.php" );
+	require_once( MWInit::compiledPath( "includes/Setup.php" ) );
 }
 

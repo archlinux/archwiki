@@ -175,10 +175,10 @@ $messages = array(
 'history'           => 'ཤོག་ངོས་ལོ་རྒྱུས།',
 'history_short'     => 'ལོ་རྒྱུས།',
 'updatedmarker'     => 'ཐེངས་སྔོན་མའི་ལྟ་ཀློག་རྗེས་ཀྱི་བཟོ་བཅོས།',
-'info_short'        => 'གནས་ཚུལ།',
 'printableversion'  => 'དཔར་ཐུབ་པ།',
 'permalink'         => 'རྟག་བརྟན་གྱི་དྲ་འབྲེལ།',
 'print'             => 'དཔར་བ།',
+'view'              => 'ལྟ་བ།',
 'edit'              => 'རྩོམ་སྒྲིག',
 'create'            => 'གསར་སྐྲུན།',
 'editthispage'      => 'ངོས་འདི་བཟོ་བཅོས་བྱེད་པ།',
@@ -186,6 +186,7 @@ $messages = array(
 'delete'            => 'སུབས།',
 'deletethispage'    => 'ཤོག་ངོས་འདི་འདོར་བ།',
 'undelete_short'    => '{{PLURAL:$1|one edit|$1edits}} མ་འདོར་ཞིག',
+'viewdeleted_short' => '{{བསུབས་པའི་རྩོམ་སྒྲིག PLURAL:$1|བསུབས་པའི་རྩོམ་སྒྲིག $1}}ལ་ལྟ་བ།',
 'protect'           => 'སྲུང་བ།',
 'protect_change'    => 'སྒྱུར་བཅོས།',
 'protectthispage'   => 'ཤོག་ངོས་འདི་སྲུང་བ།',
@@ -254,6 +255,7 @@ $messages = array(
 'toc'                     => 'ཟུར་མཆན།',
 'showtoc'                 => 'སྟོན།',
 'hidetoc'                 => 'སྦས།',
+'collapsible-collapse'    => 'རྡིབ་སྐྱོན།',
 'viewdeleted'             => ' $1 ལ་ལྟའམ།',
 'site-rss-feed'           => '$1 ཡི་RSS འབྱུང་ཁུངས།',
 'site-atom-feed'          => '$1 ཡི་Atom འབྱུང་ཁུངས།',
@@ -277,19 +279,18 @@ $messages = array(
 'nosuchspecialpage' => 'དམིགས་བསལ་ཤོག་ངོས་འདི་འདྲ་ཞིག་མི་འདུག',
 
 # General errors
-'error'                => 'ནོར་འཁྲུལ།',
-'readonly'             => 'གཞི་གྲངས་མཛོད་ཟྭ་བརྒྱབ་པ།',
-'internalerror'        => 'ནང་ལོག་ནོར་སྐྱོན།',
-'internalerror_info'   => 'ནང་ལོགས་ནོར་སྐྱོན། $1',
-'filecopyerror'        => '"$1" "$2"ལ་འདྲ་བཤུ་བྱེད་མ་ཐུབ།',
-'filedeleteerror'      => '"$1"ཟེར་བ་སུབ་མ་ཐུབ།',
-'filenotfound'         => '"$1"ཟེར་བའི་ཡིག་ཆ་མ་རྙེད་པ།',
-'badtitle'             => 'ཁ་བྱང་སྐྱོན་ཅན།',
-'viewsource'           => 'ཁོངས་ལ་ལྟ་བ།',
-'actionthrottled'      => 'བྱ་འགུལ་ཁེགས་སོང་།',
-'namespaceprotected'   => "ཁྱེད་ལ་'''$1''' མིང་གནས་ནང་གི་ཤོག་ངོས་བཟོ་བཅོས་ཀྱི་ཆོག་མཆན་མེད།",
-'customcssjsprotected' => 'ཤོག་ངོས་འདིར་སྤྱོད་མི་གཞན་པའི་སྒེར་གྱི་སྒྲིག་འཇུག་ཚུད་ཡོད་པས་ཁྱེད་ལ་བཟོ་བཅོས་ཀྱི་ཆོག་མཆན་མེད།',
-'ns-specialprotected'  => 'དམིགས་བསམ་ཤོག་ངོས་རྣམས་བཟོ་བཅོས་བྱེད་མི་ཐུབ།',
+'error'               => 'ནོར་འཁྲུལ།',
+'readonly'            => 'གཞི་གྲངས་མཛོད་ཟྭ་བརྒྱབ་པ།',
+'internalerror'       => 'ནང་ལོག་ནོར་སྐྱོན།',
+'internalerror_info'  => 'ནང་ལོགས་ནོར་སྐྱོན། $1',
+'filecopyerror'       => '"$1" "$2"ལ་འདྲ་བཤུ་བྱེད་མ་ཐུབ།',
+'filedeleteerror'     => '"$1"ཟེར་བ་སུབ་མ་ཐུབ།',
+'filenotfound'        => '"$1"ཟེར་བའི་ཡིག་ཆ་མ་རྙེད་པ།',
+'badtitle'            => 'ཁ་བྱང་སྐྱོན་ཅན།',
+'viewsource'          => 'ཁོངས་ལ་ལྟ་བ།',
+'actionthrottled'     => 'བྱ་འགུལ་ཁེགས་སོང་།',
+'namespaceprotected'  => "ཁྱེད་ལ་'''$1''' མིང་གནས་ནང་གི་ཤོག་ངོས་བཟོ་བཅོས་ཀྱི་ཆོག་མཆན་མེད།",
+'ns-specialprotected' => 'དམིགས་བསམ་ཤོག་ངོས་རྣམས་བཟོ་བཅོས་བྱེད་མི་ཐུབ།',
 
 # Virus scanner
 'virus-unknownscanner' => 'ངོས་མ་ཟིན་པའི་དྲ་འབུ།',
@@ -315,7 +316,7 @@ $messages = array(
 'userexists'              => 'མིང་འདི་བེད་སྤྱོད་བྱས་ཟིན་པས་མིང་གཞན་ཞིག་གདམ་རོགས།',
 'loginerror'              => 'ནང་འཛུལ་ནོར་སྐྱོན།',
 'loginsuccesstitle'       => 'ནང་འཛུལ་བདེ་བར་གྲུབ།',
-'nosuchusershort'         => 'སྤྱོད་མི་"<nowiki>$1</nowiki>"ཟེར་བ་མི་འདུག དག་ཆར་བསྐྱར་ཞིབ་བྱོས།',
+'nosuchusershort'         => 'སྤྱོད་མི་"$1"ཟེར་བ་མི་འདུག དག་ཆར་བསྐྱར་ཞིབ་བྱོས།',
 'nouserspecified'         => 'བཀོལ་མིང་ཞིག་ངེས་པར་དགོས།',
 'login-userblocked'       => 'སྤྱོད་མི་འདི་བཀག་འགོག་བྱས་པས་ནང་འཛུལ་གྱི་ཆོག་མཆན་མེད།',
 'wrongpassword'           => 'ལམ་ཡིག་ནོར་འདུག བསྐྱར་དུ་ཚོད་ལྟ་བྱོས།',
@@ -323,7 +324,7 @@ $messages = array(
 'mailmypassword'          => 'གློག་འཕྲིན་ལམ་ཡིག་གསར་བ།',
 'loginlanguagelabel'      => 'སྐད་རིགས། $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'ལམ་ཡིག་བརྗེ་བ།',
 'resetpass_announce'        => 'ཁྱེད་ཀྱིས་ང་ཚོས་བཏང་བའི་གནས་སྐབས་ལམ་ཡིག་ལ་བརྟེན་ནས་ནང་འཛུལ་བྱས་འདུག ནང་འཛུལ་ཆ་ཚང་བ་བྱེད་པར་འདིར་ངེས་པར་དུ་ལམ་ཡིག་གསར་བ་འཇུག་དགོས།',
 'oldpassword'               => 'ལམ་ཡིག་རྙིང་བ།',
@@ -335,6 +336,10 @@ $messages = array(
 'resetpass-submit-loggedin' => 'ལམ་ཡིག་བརྗེ་བ།',
 'resetpass-submit-cancel'   => 'རྩིས་མེད་ཐོངས།',
 'resetpass-temp-password'   => 'གནས་སྐབས་ལམ་ཡིག',
+
+# Special:PasswordReset
+'passwordreset-username' => 'སྤྱོད་མིང་།',
+'passwordreset-email'    => 'དྲ་འཕྲིན་ཁ་བྱང་།',
 
 # Edit page toolbar
 'bold_sample'     => 'ཡིག་གཟུགས་སྦོམ་པོ།',
@@ -670,8 +675,6 @@ $messages = array(
 'watchlist'         => 'ངའི་མཉམ་འཇོག་ཐོ།',
 'mywatchlist'       => 'ངའི་མཉམ་འཇོག་ཐོ།',
 'watchnologin'      => 'ནང་འཛུལ་བྱས་མེད།',
-'addedwatch'        => 'མཉམ་འཇོག་ཐོར་བཅུག་ཟིན།',
-'removedwatch'      => 'ལྟ་ཐོ་ལས་འཐེན་ཟིན།',
 'watch'             => 'མཉམ་འཇོག་ཐོ།',
 'watchthispage'     => 'དྲ་ངོས་འདི་ལ་གཟིགས།',
 'unwatch'           => 'མི་བལྟ་བ།',

@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on May 13, 2007
  *
@@ -119,7 +119,11 @@ class ApiQueryCategoryInfo extends ApiQueryBase {
 		return 'api.php?action=query&prop=categoryinfo&titles=Category:Foo|Category:Bar';
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Properties#categoryinfo_.2F_ci';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryCategoryInfo.php 70647 2010-08-07 19:59:42Z ialex $';
+		return __CLASS__ . ': $Id: ApiQueryCategoryInfo.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

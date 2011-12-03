@@ -1,11 +1,11 @@
 <?php
 
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Mar 24, 2009
  *
- * Copyright © 2009 Roan Kattouw <Firstname>.<Lastname>@home.nl
+ * Copyright © 2009 Roan Kattouw <Firstname>.<Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,9 +53,10 @@ class ApiUserrights extends ApiBase {
 				$user, (array)$params['add'],
 				(array)$params['remove'], $params['reason'] );
 
-		$this->getResult()->setIndexedTagName( $r['added'], 'group' );
-		$this->getResult()->setIndexedTagName( $r['removed'], 'group' );
-		$this->getResult()->addValue( null, $this->getModuleName(), $r );
+		$result = $this->getResult();
+		$result->setIndexedTagName( $r['added'], 'group' );
+		$result->setIndexedTagName( $r['removed'], 'group' );
+		$result->addValue( null, $this->getModuleName(), $r );
 	}
 
 	/**
@@ -138,7 +139,11 @@ class ApiUserrights extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:User_group_membership';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiUserrights.php 75602 2010-10-28 00:04:48Z reedy $';
+		return __CLASS__ . ': $Id: ApiUserrights.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

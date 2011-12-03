@@ -51,7 +51,7 @@ interface Pager {
  *
  *  Subclassing the pager to implement concrete functionality should be fairly
  *  simple, please see the examples in HistoryPage.php and
- *  SpecialIpblocklist.php. You just need to override formatRow(),
+ *  SpecialBlockList.php. You just need to override formatRow(),
  *  getQueryInfo() and getIndexField(). Don't forget to call the parent
  *  constructor if you override it.
  *
@@ -93,6 +93,8 @@ abstract class IndexPager implements Pager {
 
 	/**
 	 * Result object for the query. Warning: seek before use.
+	 *
+	 * @var ResultWrapper
 	 */
 	public $mResult;
 
@@ -140,7 +142,7 @@ abstract class IndexPager implements Pager {
 	 * has been kept minimal to make it overridable if necessary, to allow for
 	 * result sets formed from multiple DB queries.
 	 */
-	function doQuery() {
+	public function doQuery() {
 		# Use the child class name for profiling
 		$fname = __METHOD__ . ' (' . get_class( $this ) . ')';
 		wfProfileIn( $fname );
@@ -197,7 +199,7 @@ abstract class IndexPager implements Pager {
 			# Remove any table prefix from index field
 			$parts = explode( '.', $this->mIndexField );
 			$indexColumn = end( $parts );
-			
+
 			$row = $res->fetchRow();
 			$firstIndex = $row[$indexColumn];
 
@@ -415,8 +417,10 @@ abstract class IndexPager implements Pager {
 	 * @return Associative array
 	 */
 	function getDefaultQuery() {
+		global $wgRequest;
+
 		if ( !isset( $this->mDefaultQuery ) ) {
-			$this->mDefaultQuery = $_GET;
+			$this->mDefaultQuery = $wgRequest->getQueryValues();
 			unset( $this->mDefaultQuery['title'] );
 			unset( $this->mDefaultQuery['dir'] );
 			unset( $this->mDefaultQuery['offset'] );
@@ -703,7 +707,9 @@ abstract class ReverseChronologicalPager extends IndexPager {
 	function getNavigationBar() {
 		global $wgLang;
 
-		if ( !$this->isNavigationBarShown() ) return '';
+		if ( !$this->isNavigationBarShown() ) {
+			return '';
+		}
 
 		if ( isset( $this->mNavigationBar ) ) {
 			return $this->mNavigationBar;
@@ -815,7 +821,7 @@ abstract class TablePager extends IndexPager {
 		$tableClass = htmlspecialchars( $this->getTableClass() );
 		$sortClass = htmlspecialchars( $this->getSortHeaderClass() );
 
-		$s = "<table border='1' class=\"$tableClass\"><thead><tr>\n";
+		$s = "<table style='border:1;' class=\"$tableClass\"><thead><tr>\n";
 		$fields = $this->getFieldNames();
 
 		# Make table header
@@ -829,13 +835,13 @@ abstract class TablePager extends IndexPager {
 					# Prepare a link that goes in the other sort order
 					if ( $this->mDefaultDirection ) {
 						# Descending
-						$image = 'Arr_u.png';
+						$image = 'Arr_d.png';
 						$query['asc'] = '1';
 						$query['desc'] = '';
 						$alt = htmlspecialchars( wfMsg( 'descending_abbrev' ) );
 					} else {
 						# Ascending
-						$image = 'Arr_d.png';
+						$image = 'Arr_u.png';
 						$query['asc'] = '';
 						$query['desc'] = '1';
 						$alt = htmlspecialchars( wfMsg( 'ascending_abbrev' ) );
@@ -941,7 +947,7 @@ abstract class TablePager extends IndexPager {
 	 * A navigation bar with images
 	 */
 	function getNavigationBar() {
-		global $wgStylePath, $wgContLang;
+		global $wgStylePath, $wgLang;
 
 		if ( !$this->isNavigationBarShown() ) {
 			return '';
@@ -966,7 +972,7 @@ abstract class TablePager extends IndexPager {
 			'next' => 'arrow_disabled_right_25.png',
 			'last' => 'arrow_disabled_last_25.png',
 		);
-		if( $wgContLang->isRTL() ) {
+		if( $wgLang->isRTL() ) {
 			$keys = array_keys( $labels );
 			$images = array_combine( $keys, array_reverse( $images ) );
 			$disabledImages = array_combine( $keys, array_reverse( $disabledImages ) );
@@ -982,10 +988,10 @@ abstract class TablePager extends IndexPager {
 		$links = $this->getPagingLinks( $linkTexts, $disabledTexts );
 
 		$navClass = htmlspecialchars( $this->getNavClass() );
-		$s = "<table class=\"$navClass\" align=\"center\" cellpadding=\"3\"><tr>\n";
-		$cellAttrs = 'valign="top" align="center" width="' . 100 / count( $links ) . '%"';
+		$s = "<table class=\"$navClass\"><tr>\n";
+		$width = 100 / count( $links ) . '%';
 		foreach ( $labels as $type => $label ) {
-			$s .= "<td $cellAttrs>{$links[$type]}</td>\n";
+			$s .= "<td style='width:$width;'>{$links[$type]}</td>\n";
 		}
 		$s .= "</tr></table>\n";
 		return $s;
@@ -998,7 +1004,7 @@ abstract class TablePager extends IndexPager {
 	 */
 	function getLimitSelect() {
 		global $wgLang;
-		
+
 		# Add the current limit from the query string
 		# to avoid that the limit is lost after clicking Go next time
 		if ( !in_array( $this->mLimit, $this->mLimitsShown ) ) {
@@ -1025,14 +1031,16 @@ abstract class TablePager extends IndexPager {
 
 	/**
 	 * Get <input type="hidden"> elements for use in a method="get" form.
-	 * Resubmits all defined elements of the $_GET array, except for a
+	 * Resubmits all defined elements of the query string, except for a
 	 * blacklist, passed in the $blacklist parameter.
 	 *
 	 * @return String: HTML fragment
 	 */
 	function getHiddenFields( $blacklist = array() ) {
+		global $wgRequest;
+
 		$blacklist = (array)$blacklist;
-		$query = $_GET;
+		$query = $wgRequest->getQueryValues();
 		foreach ( $blacklist as $name ) {
 			unset( $query[$name] );
 		}

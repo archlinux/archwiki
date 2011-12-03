@@ -31,62 +31,58 @@
  */
 class UnwatchedpagesPage extends QueryPage {
 
-	function getName() { return 'Unwatchedpages'; }
+	function __construct( $name = 'Unwatchedpages' ) {
+		parent::__construct( $name, 'unwatchedpages' );
+	}
+
 	function isExpensive() { return true; }
 	function isSyndicated() { return false; }
 
-	function getSQL() {
-		$dbr = wfGetDB( DB_SLAVE );
-		list( $page, $watchlist ) = $dbr->tableNamesN( 'page', 'watchlist' );
-		$mwns = NS_MEDIAWIKI;
-		return
-			"
-			SELECT
-				'Unwatchedpages' as type,
-				page_namespace as namespace,
-				page_title as title,
-				page_namespace as value
-			FROM $page
-			LEFT JOIN $watchlist ON wl_namespace = page_namespace AND page_title = wl_title
-			WHERE wl_title IS NULL AND page_is_redirect = 0 AND page_namespace<>$mwns
-			";
+	function getQueryInfo() {
+		return array (
+			'tables' => array ( 'page', 'watchlist' ),
+			'fields' => array ( 'page_namespace AS namespace',
+					'page_title AS title',
+					'page_namespace AS value' ),
+			'conds' => array ( 'wl_title IS NULL',
+					'page_is_redirect' => 0,
+					"page_namespace != '" . NS_MEDIAWIKI .
+					"'" ),
+			'join_conds' => array ( 'watchlist' => array (
+				'LEFT JOIN', array ( 'wl_title = page_title',
+					'wl_namespace = page_namespace' ) ) )
+		);
 	}
 
 	function sortDescending() { return false; }
 
+	function getOrderFields() {
+		return array( 'page_namespace', 'page_title' );
+	}
+
+	/**
+	 * @param $skin Skin
+	 * @param $result
+	 * @return string
+	 */
 	function formatResult( $skin, $result ) {
 		global $wgContLang;
 
 		$nt = Title::makeTitle( $result->namespace, $result->title );
 		$text = $wgContLang->convert( $nt->getPrefixedText() );
 
-		$plink = $skin->linkKnown(
+		$plink = Linker::linkKnown(
 			$nt,
 			htmlspecialchars( $text )
 		);
-		$wlink = $skin->linkKnown(
+		$token = WatchAction::getWatchToken( $nt, $this->getUser() );
+		$wlink = Linker::linkKnown(
 			$nt,
 			wfMsgHtml( 'watch' ),
 			array(),
-			array( 'action' => 'watch' )
+			array( 'action' => 'watch', 'token' => $token )
 		);
 
 		return wfSpecialList( $plink, $wlink );
 	}
-}
-
-/**
- * constructor
- */
-function wfSpecialUnwatchedpages() {
-	global $wgUser, $wgOut;
-
-	if ( ! $wgUser->isAllowed( 'unwatchedpages' ) )
-		return $wgOut->permissionRequired( 'unwatchedpages' );
-
-	list( $limit, $offset ) = wfCheckLimits();
-
-	$wpp = new UnwatchedpagesPage();
-
-	$wpp->doQuery( $offset, $limit );
 }

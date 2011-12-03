@@ -29,7 +29,6 @@ class BatchedQueryRunner extends Maintenance {
 		parent::__construct();
 		$this->mDescription = "Run a query repeatedly until it affects 0 rows, and wait for slaves in between.\n" .
 				"NOTE: You need to set a LIMIT clause yourself.";
-		$this->addOption( 'wait', "Wait for replication lag to go down to this value. Default: 5", false, true );
 	}
 
 	public function execute() {
@@ -39,14 +38,14 @@ class BatchedQueryRunner extends Maintenance {
 		$query = $this->getArg();
 		$wait = $this->getOption( 'wait', 5 );
 		$n = 1;
-		$dbw = wfGetDb( DB_MASTER );
+		$dbw = wfGetDB( DB_MASTER );
 		do {
 			$this->output( "Batch $n: " );
 			$n++;
 			$dbw->query( $query, __METHOD__ );
 			$affected = $dbw->affectedRows();
 			$this->output( "$affected rows\n" );
-			wfWaitForSlaves( $wait );
+			wfWaitForSlaves();
 		} while ( $affected > 0 );
 	}
 

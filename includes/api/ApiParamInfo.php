@@ -1,10 +1,10 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Dec 01, 2007
  *
- * Copyright © 2008 Roan Kattouw <Firstname>.<Lastname>@home.nl
+ * Copyright © 2008 Roan Kattouw <Firstname>.<Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +70,7 @@ class ApiParamInfo extends ApiBase {
 				$obj = new $qmodArr[$qm]( $this, $qm );
 				$a = $this->getClassInfo( $obj );
 				$a['name'] = $qm;
+				$a['querytype'] = $queryObj->getModuleType( $qm );
 				$r['querymodules'][] = $a;
 			}
 			$result->setIndexedTagName( $r['querymodules'], 'module' );
@@ -84,11 +85,16 @@ class ApiParamInfo extends ApiBase {
 		$result->addValue( null, $this->getModuleName(), $r );
 	}
 
+	/**
+	 * @param $obj ApiBase
+	 * @return ApiResult
+	 */
 	function getClassInfo( $obj ) {
 		$result = $this->getResult();
 		$retval['classname'] = get_class( $obj );
 		$retval['description'] = implode( "\n", (array)$obj->getDescription() );
-		$retval['examples'] = implode( "\n", (array)$obj->getExamples() );
+		$examples = (array)$obj->getExamples();
+		$retval['examples'] = implode( "\n", $examples );
 		$retval['version'] = implode( "\n", (array)$obj->getVersion() );
 		$retval['prefix'] = $obj->getModulePrefix();
 
@@ -110,6 +116,18 @@ class ApiParamInfo extends ApiBase {
 			return $retval;
 		}
 
+		$retval['helpurls'] = (array)$obj->getHelpUrls();
+		if ( isset( $retval['helpurls'][0] ) && $retval['helpurls'][0] === false ) {
+			$retval['helpurls'] = array();
+		}
+		$result->setIndexedTagName( $retval['helpurls'], 'helpurl' );
+
+		$retval['allexamples'] = $examples;
+		if ( isset( $retval['allexamples'][0] ) && $retval['allexamples'][0] === false ) {
+			$retval['allexamples'] = array();
+		}
+		$result->setIndexedTagName( $retval['allexamples'], 'example' );
+
 		$retval['parameters'] = array();
 		$paramDesc = $obj->getFinalParamDescription();
 		foreach ( $allowedParams as $n => $p ) {
@@ -117,6 +135,26 @@ class ApiParamInfo extends ApiBase {
 			if ( isset( $paramDesc[$n] ) ) {
 				$a['description'] = implode( "\n", (array)$paramDesc[$n] );
 			}
+
+			//handle shorthand
+			if( !is_array( $p ) ) {
+				$p = array(
+					ApiBase::PARAM_DFLT => $p,
+				);
+			}
+
+			//handle missing type
+			if ( !isset( $p[ApiBase::PARAM_TYPE] ) ) {
+				$dflt = isset( $p[ApiBase::PARAM_DFLT] ) ? $p[ApiBase::PARAM_DFLT] : null;
+				if ( is_bool( $dflt ) ) {
+					$p[ApiBase::PARAM_TYPE] = 'boolean';
+				} elseif ( is_string( $dflt ) || is_null( $dflt ) ) {
+					$p[ApiBase::PARAM_TYPE] = 'string';
+				} elseif ( is_int( $dflt ) ) {
+					$p[ApiBase::PARAM_TYPE] = 'integer';
+				}
+			}
+
 			if ( isset( $p[ApiBase::PARAM_DEPRECATED] ) && $p[ApiBase::PARAM_DEPRECATED] ) {
 				$a['deprecated'] = '';
 			}
@@ -124,29 +162,25 @@ class ApiParamInfo extends ApiBase {
 				$a['required'] = '';
 			}
 
-			if ( !is_array( $p ) ) {
-				if ( is_bool( $p ) ) {
-					$a['type'] = 'bool';
-					$a['default'] = ( $p ? 'true' : 'false' );
-				} elseif ( is_string( $p ) || is_null( $p ) ) {
-					$a['type'] = 'string';
-					$a['default'] = strval( $p );
-				} elseif ( is_int( $p ) ) {
-					$a['type'] = 'integer';
-					$a['default'] = intval( $p );
-				}
-				$retval['parameters'][] = $a;
-				continue;
-			}
-
 			if ( isset( $p[ApiBase::PARAM_DFLT] ) ) {
-				$a['default'] = $p[ApiBase::PARAM_DFLT];
+				$type = $p[ApiBase::PARAM_TYPE];
+				if( $type === 'boolean' ) {
+					$a['default'] = ( $p[ApiBase::PARAM_DFLT] ? 'true' : 'false' );
+				} elseif( $type === 'string' ) {
+					$a['default'] = strval( $p[ApiBase::PARAM_DFLT] );
+				} elseif( $type === 'integer' ) {
+					$a['default'] = intval( $p[ApiBase::PARAM_DFLT] );
+				} else {
+					$a['default'] = $p[ApiBase::PARAM_DFLT];
+				}
 			}
 			if ( isset( $p[ApiBase::PARAM_ISMULTI] ) && $p[ApiBase::PARAM_ISMULTI] ) {
 				$a['multi'] = '';
 				$a['limit'] = $this->getMain()->canApiHighLimits() ?
-						ApiBase::LIMIT_SML2 :
-						ApiBase::LIMIT_SML1;
+					ApiBase::LIMIT_SML2 :
+					ApiBase::LIMIT_SML1;
+				$a['lowlimit'] = ApiBase::LIMIT_SML1;
+				$a['highlimit'] = ApiBase::LIMIT_SML2;
 			}
 
 			if ( isset( $p[ApiBase::PARAM_ALLOW_DUPLICATES] ) && $p[ApiBase::PARAM_ALLOW_DUPLICATES] ) {
@@ -175,7 +209,6 @@ class ApiParamInfo extends ApiBase {
 
 		// Errors
 		$retval['errors'] = $this->parseErrors( $obj->getPossibleErrors() );
-
 		$result->setIndexedTagName( $retval['errors'], 'error' );
 
 		return $retval;
@@ -217,7 +250,11 @@ class ApiParamInfo extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Parameter_information';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiParamInfo.php 87170 2011-04-30 16:57:22Z catrope $';
+		return __CLASS__ . ': $Id: ApiParamInfo.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

@@ -10,8 +10,12 @@ class LanguageKk_cyrl extends Language {
 	# Invoked with {{GRAMMAR:case|word}}
 	/**
 	 * Cases: genitive, dative, accusative, locative, ablative, comitative + possessive forms
+	 *
+	 * @param $word string
+	 * @param $case stirng
+	 *
+	 * @return string
 	 */
-
 	function convertGrammarKk_cyrl( $word, $case ) {
 		global $wgGrammarForms;
 		if ( isset( $wgGrammarForms['kk-kz'][$case][$word] ) ) {
@@ -232,6 +236,11 @@ class LanguageKk_cyrl extends Language {
 		return $word;
 	}
 
+	/**
+	 * @param $word string
+	 * @param $case string
+	 * @return string
+	 */
 	function convertGrammarKk_latn( $word, $case ) {
 		global $wgGrammarForms;
 		if ( isset( $wgGrammarForms['kk-tr'][$case][$word] ) ) {
@@ -452,6 +461,11 @@ class LanguageKk_cyrl extends Language {
 		return $word;
 	}
 
+	/**
+	 * @param $word string
+	 * @param $case string
+	 * @return string
+	 */
 	function convertGrammarKk_arab( $word, $case ) {
 		global $wgGrammarForms;
 		if ( isset( $wgGrammarForms['kk-cn'][$case][$word] ) ) {
@@ -672,6 +686,11 @@ class LanguageKk_cyrl extends Language {
 		return $word;
 	}
 
+	/**
+	 * @param $word string
+	 * @param $allVowels array
+	 * @return array
+	 */
 	function lastLetter( $word, $allVowels ) {
 		$lastLetter = array();
 
@@ -708,6 +727,10 @@ class LanguageKk_cyrl extends Language {
 
 	/**
 	 * Avoid grouping whole numbers between 0 to 9999
+	 *
+	 * @param $_ string
+	 *
+	 * @return string
 	 */
 	function commafy( $_ ) {
 		if ( !preg_match( '/^\d{1,4}$/', $_ ) ) {

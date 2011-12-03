@@ -1,3 +1,4 @@
+application/acad dwg
 application/andrew-inset ez
 application/mac-binhex40 hqx
 application/mac-compactpro cpt
@@ -79,6 +80,7 @@ image/bmp bmp
 image/cgm cgm
 image/gif gif
 image/ief ief
+image/jp2 j2k jp2 jpg2
 image/jpeg jpeg jpg jpe
 image/png png apng
 image/svg+xml svg

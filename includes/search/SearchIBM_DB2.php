@@ -91,7 +91,7 @@ class SearchIBM_DB2 extends SearchEngine {
 	 * Return a LIMIT clause to limit results on the query.
 	 * @return String
 	 */
-	function queryLimit($sql) {
+	function queryLimit( $sql ) {
 		return $this->db->limitResult($sql, $this->limit, $this->offset);
 	}
 
@@ -151,7 +151,7 @@ class SearchIBM_DB2 extends SearchEngine {
 		$lc = SearchEngine::legalSearchChars();
 		$this->searchTerms = array();
 
-		# FIXME: This doesn't handle parenthetical expressions.
+		# @todo FIXME: This doesn't handle parenthetical expressions.
 		$m = array();
 		$q = array();
 

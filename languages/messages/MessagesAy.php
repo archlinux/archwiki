@@ -140,7 +140,6 @@ $messages = array(
 'searcharticle'     => 'Saraña',
 'history'           => 'Nayra qillqata',
 'history_short'     => 'Nayra qillqata',
-'info_short'        => "Uñt'ayawi",
 'edit'              => 'Turkaña',
 'create'            => 'Uñstayaña',
 'editthispage'      => 'Aka uñstawi turkaña',

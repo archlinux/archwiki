@@ -114,7 +114,7 @@ class DatabaseIbm_db2 extends DatabaseBase {
 	protected $mPHPError = false;
 
 	protected $mServer, $mUser, $mPassword, $mConn = null, $mDBname;
-	protected $mOut, $mOpened = false;
+	protected $mOpened = false;
 
 	protected $mTablePrefix;
 	protected $mFlags;
@@ -144,7 +144,7 @@ class DatabaseIbm_db2 extends DatabaseBase {
 	public $mStmtOptions = array();
 
 	/** Default schema */
-	const USE_GLOBAL = 'mediawiki';
+	const USE_GLOBAL = 'get from global';
 
 	/** Option that applies to nothing */
 	const NONE_OPTION = 0x00;
@@ -268,6 +268,10 @@ class DatabaseIbm_db2 extends DatabaseBase {
 		}
 
 		// configure the connection and statement objects
+		/*
+		$this->setDB2Option( 'cursor', 'DB2_SCROLLABLE',
+			self::CONN_OPTION | self::STMT_OPTION );
+		*/
 		$this->setDB2Option( 'db2_attr_case', 'DB2_CASE_LOWER',
 			self::CONN_OPTION | self::STMT_OPTION );
 		$this->setDB2Option( 'deferred_prepare', 'DB2_DEFERRED_PREPARE_ON',
@@ -321,27 +325,17 @@ class DatabaseIbm_db2 extends DatabaseBase {
 	 * @return a fresh connection
 	 */
 	public function open( $server, $user, $password, $dbName ) {
-		// Load the port number
-		global $wgDBport;
 		wfProfileIn( __METHOD__ );
 
-		// Load IBM DB2 driver if missing
+		# Load IBM DB2 driver if missing
 		wfDl( 'ibm_db2' );
 
-		// Test for IBM DB2 support, to avoid suppressed fatal error
+		# Test for IBM DB2 support, to avoid suppressed fatal error
 		if ( !function_exists( 'db2_connect' ) ) {
-			$error = <<<ERROR
-DB2 functions missing, have you enabled the ibm_db2 extension for PHP?
-
-ERROR;
-			$this->installPrint( $error );
-			$this->reportConnectionError( $error );
+			throw new DBConnectionError( $this, "DB2 functions missing, have you enabled the ibm_db2 extension for PHP?" );
 		}
 
-		if ( strlen( $user ) < 1 ) {
-			wfProfileOut( __METHOD__ );
-			return null;
-		}
+		global $wgDBport;
 
 		// Close existing connection
 		$this->close();
@@ -354,23 +348,25 @@ ERROR;
 
 		$this->openUncataloged( $dbName, $user, $password, $server, $port );
 
-		// Apply connection config
-		db2_set_option( $this->mConn, $this->mConnOptions, 1 );
-		// Some MediaWiki code is still transaction-less (?).
-		// The strategy is to keep AutoCommit on for that code
-		//  but switch it off whenever a transaction is begun.
-		db2_autocommit( $this->mConn, DB2_AUTOCOMMIT_ON );
-
 		if ( !$this->mConn ) {
 			$this->installPrint( "DB connection error\n" );
 			$this->installPrint(
 				"Server: $server, Database: $dbName, User: $user, Password: "
 				. substr( $password, 0, 3 ) . "...\n" );
 			$this->installPrint( $this->lastError() . "\n" );
-
 			wfProfileOut( __METHOD__ );
-			return null;
+			wfDebug( "DB connection error\n" );
+			wfDebug( "Server: $server, Database: $dbName, User: $user, Password: " . substr( $password, 0, 3 ) . "...\n" );
+			wfDebug( $this->lastError() . "\n" );
+			throw new DBConnectionError( $this, $this->lastError() );
 		}
+
+		// Apply connection config
+		db2_set_option( $this->mConn, $this->mConnOptions, 1 );
+		// Some MediaWiki code is still transaction-less (?).
+		// The strategy is to keep AutoCommit on for that code
+		//  but switch it off whenever a transaction is begun.
+		db2_autocommit( $this->mConn, DB2_AUTOCOMMIT_ON );
 
 		$this->mOpened = true;
 		$this->applySchema();
@@ -383,7 +379,9 @@ ERROR;
 	 * Opens a cataloged database connection, sets mConn
 	 */
 	protected function openCataloged( $dbName, $user, $password ) {
-		@$this->mConn = db2_pconnect( $dbName, $user, $password );
+		wfSuppressWarnings();
+		$this->mConn = db2_pconnect( $dbName, $user, $password );
+		wfRestoreWarnings();
 	}
 
 	/**
@@ -391,16 +389,10 @@ ERROR;
 	 */
 	protected function openUncataloged( $dbName, $user, $password, $server, $port )
 	{
-		$str = "DRIVER={IBM DB2 ODBC DRIVER};";
-		$str .= "DATABASE=$dbName;";
-		$str .= "HOSTNAME=$server;";
-		// port was formerly validated to not be 0
-		$str .= "PORT=$port;";
-		$str .= "PROTOCOL=TCPIP;";
-		$str .= "UID=$user;";
-		$str .= "PWD=$password;";
-
-		@$this->mConn = db2_pconnect( $str, $user, $password );
+		$dsn = "DRIVER={IBM DB2 ODBC DRIVER};DATABASE=$dbName;CHARSET=UTF-8;HOSTNAME=$server;PORT=$port;PROTOCOL=TCPIP;UID=$user;PWD=$password;";
+		wfSuppressWarnings();
+		$this->mConn = db2_pconnect($dsn, "", "", array());
+		wfRestoreWarnings();
 	}
 
 	/**
@@ -417,23 +409,6 @@ ERROR;
 		} else {
 			return true;
 		}
-	}
-
-	/**
-	 * Returns a fresh instance of this class
-	 *
-	 * @param $server String: hostname of database server
-	 * @param $user String: username
-	 * @param $password String
-	 * @param $dbName String: database name on the server
-	 * @param $flags Integer: database behaviour flags (optional, unused)
-	 * @return DatabaseIbm_db2 object
-	 */
-	static function newFromParams( $server, $user, $password, $dbName,
-		$flags = 0 )
-	{
-		return new DatabaseIbm_db2( $server, $user, $password, $dbName,
-			$flags );
 	}
 
 	/**
@@ -482,15 +457,19 @@ ERROR;
 	 * The DBMS-dependent part of query()
 	 * @param  $sql String: SQL query.
 	 * @return object Result object for fetch functions or false on failure
-	 * @access private
 	 */
-	/*private*/
-	public function doQuery( $sql ) {
+	protected function doQuery( $sql ) {
 		$this->applySchema();
-
+		
+		// Needed to handle any UTF-8 encoding issues in the raw sql
+		// Note that we fully support prepared statements for DB2
+		// prepare() and execute() should be used instead of doQuery() whenever possible
+		$sql = utf8_decode($sql);
+		
 		$ret = db2_exec( $this->mConn, $sql, $this->mStmtOptions );
 		if( $ret == false ) {
 			$error = db2_stmt_errormsg();
+			
 			$this->installPrint( "<pre>$sql</pre>" );
 			$this->installPrint( $error );
 			throw new DBUnexpectedError( $this, 'SQL error: '
@@ -515,17 +494,18 @@ ERROR;
 	 */
 	public function tableExists( $table ) {
 		$schema = $this->mSchema;
-		$sql = <<< EOF
-SELECT COUNT( * ) FROM SYSIBM.SYSTABLES ST
-WHERE ST.NAME = '$table' AND ST.CREATOR = '$schema'
-EOF;
+		
+		$sql = "SELECT COUNT( * ) FROM SYSIBM.SYSTABLES ST WHERE ST.NAME = '" . 
+			strtoupper( $table ) .
+			"' AND ST.CREATOR = '" .
+			strtoupper( $schema ) . "'";
 		$res = $this->query( $sql );
 		if ( !$res ) {
 			return false;
 		}
 
 		// If the table exists, there should be one of it
-		@$row = $this->fetchRow( $res );
+		$row = $this->fetchRow( $res );
 		$count = $row[0];
 		if ( $count == '1' || $count == 1 ) {
 			return true;
@@ -547,7 +527,9 @@ EOF;
 		if ( $res instanceof ResultWrapper ) {
 			$res = $res->result;
 		}
-		@$row = db2_fetch_object( $res );
+		wfSuppressWarnings();
+		$row = db2_fetch_object( $res );
+		wfRestoreWarnings();
 		if( $this->lastErrno() ) {
 			throw new DBUnexpectedError( $this, 'Error in fetchObject(): '
 				. htmlspecialchars( $this->lastError() ) );
@@ -567,51 +549,17 @@ EOF;
 		if ( $res instanceof ResultWrapper ) {
 			$res = $res->result;
 		}
-		@$row = db2_fetch_array( $res );
-		if ( $this->lastErrno() ) {
-			throw new DBUnexpectedError( $this, 'Error in fetchRow(): '
-				. htmlspecialchars( $this->lastError() ) );
+		if ( db2_num_rows( $res ) > 0) {
+			wfSuppressWarnings();
+			$row = db2_fetch_array( $res );
+			wfRestoreWarnings();
+			if ( $this->lastErrno() ) {
+				throw new DBUnexpectedError( $this, 'Error in fetchRow(): '
+					. htmlspecialchars( $this->lastError() ) );
+			}
+			return $row;
 		}
-		return $row;
-	}
-
-	/**
-	 * Create tables, stored procedures, and so on
-	 */
-	public function setup_database() {
-		try {
-			// TODO: switch to root login if available
-
-			// Switch into the correct namespace
-			$this->applySchema();
-			$this->begin();
-
-			$res = $this->sourceFile( "../maintenance/ibm_db2/tables.sql" );
-			if ( $res !== true ) {
-				print ' <b>FAILED</b>: ' . htmlspecialchars( $res ) . '</li>';
-			} else {
-				print ' done</li>';
-			}
-			$res = $this->sourceFile( "../maintenance/ibm_db2/foreignkeys.sql" );
-			if ( $res !== true ) {
-				print ' <b>FAILED</b>: ' . htmlspecialchars( $res ) . '</li>';
-			} else {
-				print '<li>Foreign keys done</li>';
-			}
-
-			// TODO: populate interwiki links
-
-			if ( $this->lastError() ) {
-				$this->installPrint(
-					'Errors encountered during table creation -- rolled back' );
-				$this->installPrint( 'Please install again' );
-				$this->rollback();
-			} else {
-				$this->commit();
-			}
-		} catch ( MWException $mwe ) {
-			print "<br><pre>$mwe</pre><br>";
-		}
+		return false;
 	}
 
 	/**
@@ -797,9 +745,10 @@ EOF;
 	 * Handle reserved keyword replacement in table names
 	 *
 	 * @param $name Object
+	 * @param $name Boolean
 	 * @return String
 	 */
-	public function tableName( $name ) {
+	public function tableName( $name, $quoted = true ) {
 		// we want maximum compatibility with MySQL schema
 		return $name;
 	}
@@ -915,9 +864,9 @@ EOF;
 		} else {
 			$sql .= '( ?' . str_repeat( ',?', $key_count-1 ) . ' )';
 		}
-		//$this->installPrint( "Preparing the following SQL:" );
-		//$this->installPrint( "$sql" );
-		//$this->installPrint( print_r( $args, true ));
+		$this->installPrint( "Preparing the following SQL:" );
+		$this->installPrint( "$sql" );
+		$this->installPrint( print_r( $args, true ));
 		$stmt = $this->prepare( $sql );
 
 		// start a transaction/enter transaction mode
@@ -990,18 +939,22 @@ EOF;
 	 */
 	private function removeNullPrimaryKeys( $table, $args ) {
 		$schema = $this->mSchema;
+		
 		// find out the primary keys
-		$keyres = db2_primary_keys( $this->mConn, null, strtoupper( $schema ),
-			strtoupper( $table )
-		);
+		$keyres = $this->doQuery( "SELECT NAME FROM SYSIBM.SYSCOLUMNS WHERE TBNAME = '" 
+		  . strtoupper( $table ) 
+		  . "' AND TBCREATOR = '" 
+		  . strtoupper( $schema ) 
+		  . "' AND KEYSEQ > 0" );
+		
 		$keys = array();
 		for (
-			$row = $this->fetchObject( $keyres );
+			$row = $this->fetchRow( $keyres );
 			$row != null;
-			$row = $this->fetchObject( $keyres )
+			$row = $this->fetchRow( $keyres )
 		)
 		{
-			$keys[] = strtolower( $row->column_name );
+			$keys[] = strtolower( $row[0] );
 		}
 		// remove primary keys
 		foreach ( $args as $ai => $row ) {
@@ -1084,66 +1037,6 @@ EOF;
 	}
 
 	/**
-	 * Simulates REPLACE with a DELETE followed by INSERT
-	 * @param $table Object
-	 * @param $uniqueIndexes Array consisting of indexes and arrays of indexes
-	 * @param $rows Array: rows to insert
-	 * @param $fname String: name of the function for profiling
-	 * @return nothing
-	 */
-	function replace( $table, $uniqueIndexes, $rows,
-		$fname = 'DatabaseIbm_db2::replace' )
-	{
-		$table = $this->tableName( $table );
-
-		if ( count( $rows )==0 ) {
-			return;
-		}
-
-		# Single row case
-		if ( !is_array( reset( $rows ) ) ) {
-			$rows = array( $rows );
-		}
-
-		foreach( $rows as $row ) {
-			# Delete rows which collide
-			if ( $uniqueIndexes ) {
-				$sql = "DELETE FROM $table WHERE ";
-				$first = true;
-				foreach ( $uniqueIndexes as $index ) {
-					if ( $first ) {
-						$first = false;
-						$sql .= '( ';
-					} else {
-						$sql .= ' ) OR ( ';
-					}
-					if ( is_array( $index ) ) {
-						$first2 = true;
-						foreach ( $index as $col ) {
-							if ( $first2 ) {
-								$first2 = false;
-							} else {
-								$sql .= ' AND ';
-							}
-							$sql .= $col . '=' . $this->addQuotes( $row[$col] );
-						}
-					} else {
-						$sql .= $index . '=' . $this->addQuotes( $row[$index] );
-					}
-				}
-				$sql .= ' )';
-				$this->query( $sql, $fname );
-			}
-
-			# Now insert the row
-			$sql = "INSERT INTO $table ( "
-				. $this->makeList( array_keys( $row ), LIST_NAMES )
-				.' ) VALUES ( ' . $this->makeList( $row, LIST_COMMA ) . ' )';
-			$this->query( $sql, $fname );
-		}
-	}
-
-	/**
 	 * Returns the number of rows in the result set
 	 * Has to be called right after the corresponding select query
 	 * @param $res Object result set
@@ -1153,6 +1046,7 @@ EOF;
 		if ( $res instanceof ResultWrapper ) {
 			$res = $res->result;
 		}
+		
 		if ( $this->mNumRows ) {
 			return $this->mNumRows;
 		} else {
@@ -1186,7 +1080,10 @@ EOF;
 		if ( $res instanceof ResultWrapper ) {
 			$res = $res->result;
 		}
-		if ( !@db2_free_result( $res ) ) {
+		wfSuppressWarnings();
+		$ok = db2_free_result( $res );
+		wfRestoreWarnings();
+		if ( !$ok ) {
 			throw new DBUnexpectedError( $this, "Unable to free DB2 result\n" );
 		}
 	}
@@ -1365,14 +1262,6 @@ EOF;
 	######################################
 	/**
 	 * Not implemented
-	 * @return string ''
-	 */
-	public function getStatus( $which = '%' ) {
-		$this->installPrint( 'Not implemented for DB2: getStatus()' );
-		return '';
-	}
-	/**
-	 * Not implemented
 	 * @return string $sql
 	 */
 	public function limitResultForUpdate( $sql, $num ) {
@@ -1493,39 +1382,6 @@ SQL;
 		$row = $this->fetchObject( $res );
 		$size = $row->size;
 		return $size;
-	}
-
-	/**
-	 * DELETE where the condition is a join
-	 * @param $delTable String: deleting from this table
-	 * @param $joinTable String: using data from this table
-	 * @param $delVar String: variable in deleteable table
-	 * @param $joinVar String: variable in data table
-	 * @param $conds Array: conditionals for join table
-	 * @param $fname String: function name for profiling
-	 */
-	public function deleteJoin( $delTable, $joinTable, $delVar, $joinVar,
-		$conds, $fname = "DatabaseIbm_db2::deleteJoin" )
-	{
-		if ( !$conds ) {
-			throw new DBUnexpectedError( $this,
-				'DatabaseIbm_db2::deleteJoin() called with empty $conds' );
-		}
-
-		$delTable = $this->tableName( $delTable );
-		$joinTable = $this->tableName( $joinTable );
-		$sql = <<<SQL
-DELETE FROM $delTable
-WHERE $delVar IN (
-  SELECT $joinVar FROM $joinTable
-
-SQL;
-		if ( $conds != '*' ) {
-			$sql .= 'WHERE ' . $this->makeList( $conds, LIST_AND );
-		}
-		$sql .= ' )';
-
-		$this->query( $sql, $fname );
 	}
 
 	/**

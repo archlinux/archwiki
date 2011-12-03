@@ -19,21 +19,32 @@ $fallback = 'ru';
 $namespaceNames = array(
 	NS_MEDIA            => 'Media',
 	NS_SPECIAL          => 'Сæрмагонд',
-	NS_TALK             => 'Дискусси',
+	NS_TALK             => 'Тæрхон',
 	NS_USER             => 'Архайæг',
-	NS_USER_TALK        => 'Архайæджы_дискусси',
+	NS_USER_TALK        => 'Архайæджы_ныхас',
 	NS_PROJECT_TALK     => 'Дискусси_$1',
 	NS_FILE             => 'Ныв',
-	NS_FILE_TALK        => 'Нывы_тыххæй_дискусси',
+	NS_FILE_TALK        => 'Нывы_тæрхон',
 	NS_MEDIAWIKI        => 'MediaWiki',
-	NS_MEDIAWIKI_TALK   => 'Дискусси_MediaWiki',
+	NS_MEDIAWIKI_TALK   => 'Тæрхон_MediaWiki',
 	NS_TEMPLATE         => 'Шаблон',
-	NS_TEMPLATE_TALK    => 'Шаблоны_тыххæй_дискусси',
+	NS_TEMPLATE_TALK    => 'Шаблоны_тæрхон',
 	NS_HELP             => 'Æххуыс',
-	NS_HELP_TALK        => 'Æххуысы_тыххæй_дискусси',
+	NS_HELP_TALK        => 'Æххуысы_тæрхон',
 	NS_CATEGORY         => 'Категори',
-	NS_CATEGORY_TALK    => 'Категорийы_тыххæй_дискусси',
+	NS_CATEGORY_TALK    => 'Категорийы_тæрхон',
 );
+
+$namespaceAliases = array(
+	'Дискусси'                    => NS_TALK,
+	'Архайæджы_дискусси'          => NS_USER_TALK,
+	'Нывы_тыххæй_дискусси'        => NS_FILE_TALK,
+	'Дискусси_MediaWiki'          => NS_MEDIAWIKI_TALK,
+	'Шаблоны_тыххæй_дискусси'     => NS_TEMPLATE_TALK,
+	'Æххуысы_тыххæй_дискусси'     => NS_HELP_TALK,
+	'Категорийы_тыххæй_дискусси'  => NS_CATEGORY_TALK,
+);
+
 
 $magicWords = array(
 	'redirect'              => array( '0', '#РАРВЫСТ', '#перенаправление', '#перенапр', '#REDIRECT' ),
@@ -151,8 +162,7 @@ $messages = array(
 'listingcontinuesabbrev'         => '(дарддæргонд)',
 'index-category'                 => 'Индексгонд фæрстæ',
 'noindex-category'               => 'Нæиндексгонд фæрстæ',
-
-'mainpagetext' => "'''Вики-скрипт «MediaWiki» æнтыстджынæй æвæрд æрцыд.'''",
+'broken-file-category'           => 'Файлтæм саст æрвитæнтæ кæм ис, ахæм фæрстæ',
 
 'about'         => 'Афыст',
 'article'       => 'Статья',
@@ -199,10 +209,10 @@ $messages = array(
 'searcharticle'     => 'Агурын',
 'history'           => 'Фарсы истори',
 'history_short'     => 'Истори',
-'info_short'        => 'Информаци',
 'printableversion'  => 'Мыхурмæ верси',
 'permalink'         => 'Ацы версимæ æрвитæн',
 'print'             => 'Мыхуыр',
+'view'              => 'Æркæст',
 'edit'              => 'Ивын',
 'create'            => 'Скæнын',
 'editthispage'      => 'Ивын ацы фарс',
@@ -352,6 +362,7 @@ $messages = array(
 'createaccount'           => 'Регистраци кæнын',
 'gotaccount'              => 'Регистрацигонд дæ? $1.',
 'gotaccountlink'          => 'Бахизын',
+'userlogin-resetlink'     => 'Ферох дæ сты дæ бахизæнтæ?',
 'createaccountmail'       => 'адрисмæ гæсгæ',
 'badretype'               => 'Дыууæ хатты иу пароль хъуамæ ныффыстаис',
 'loginsuccess'            => "'''Ныр ды дæ хыст {{grammar:genitive|{{SITENAME}}}} куыд \"\$1\".'''",
@@ -366,7 +377,7 @@ $messages = array(
 'emailconfirmlink'        => 'Дæ электронон посты адрис сфидар кæн',
 'loginlanguagelabel'      => 'Æвзаг: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass_text'            => '<!-- Бахæсс дæ текст ам -->',
 'oldpassword'               => 'Раздæры пароль:',
 'newpassword'               => 'Нæуæг пароль:',
@@ -374,6 +385,12 @@ $messages = array(
 'resetpass-submit-loggedin' => 'Пароль фæивын',
 'resetpass-submit-cancel'   => 'Ныууадзын',
 'resetpass-temp-password'   => 'Рæстæгмæ пароль:',
+
+# Special:PasswordReset
+'passwordreset-username'     => 'Архайæджы ном:',
+'passwordreset-email'        => 'Электрон посты адрис:',
+'passwordreset-emailelement' => 'Архайæджы ном: $1
+Рæстæгмæ пароль: $2',
 
 # Edit page toolbar
 'bold_sample'     => 'Бæзджын текст',
@@ -386,8 +403,6 @@ $messages = array(
 'extlink_tip'     => 'Æддаг æрвитæн (префикс http:// ма рох кæн)',
 'headline_sample' => 'Сæргонд текст',
 'headline_tip'    => 'Бæрц 2 сæргонд',
-'math_sample'     => 'Ныффысс формулæ',
-'math_tip'        => 'Математикон формулæ (формат LaTeX)',
 'nowiki_sample'   => 'Батысс нæформатгонд текст ардæм',
 'nowiki_tip'      => 'Ницæмæ дарын вики формат',
 'image_tip'       => 'Æфтыд файл',
@@ -586,6 +601,7 @@ $messages = array(
 'gender-male'               => 'нæлгоймаг',
 'gender-female'             => 'сылгоймаг',
 'email'                     => 'Эл. посты адрис',
+'prefs-help-email'          => 'E-mail адрес фæндонæй у, фæлæ дæ дæ пароль куы ферох уа, уæд хъæуджæнис нæуæг пароль æвæрынæн.',
 'prefs-help-email-required' => 'Электронон посты адрис хъæуы.',
 
 # User rights
@@ -645,7 +661,7 @@ $messages = array(
 'rclistfrom'                      => 'Равдисын ивдтытæ амæй фæстæ: $1',
 'rcshowhideminor'                 => '$1 чысыл ивдтытæ',
 'rcshowhidebots'                  => '$1 роботты куыст',
-'rcshowhideliu'                   => '$1 ырбахизгæ архайджыты',
+'rcshowhideliu'                   => '$1, йæхи чи бацамыдта, уыцы архайджыты',
 'rcshowhideanons'                 => '$1 æнæном архайджыты',
 'rcshowhidemine'                  => '$1 мæ ивдтытæ',
 'rclinks'                         => 'Фæстаг $1 ивдтытæ (афæстаг $2 боны дæргъы чи ’рцыдысты) равдис;
@@ -826,8 +842,6 @@ $3',
 'nowatchlist'       => 'Иу статьямæ дæр дæ цæст нæ дарыс.',
 'watchnologin'      => 'Системæйæн дæхи нæ бацамыдтай',
 'watchnologintext'  => 'Ацы номхыгъд ивынмæ [[Special:UserLogin|хъуамæ дæхи бацамонай системæйæн]].',
-'addedwatch'        => 'Дæ цæст кæмæ дарыс, уыцы статьятæм бафтыд.',
-'removedwatch'      => 'Нал дарыс дæ цæст',
 'removedwatchtext'  => 'Фарсмæ «[[:$1]]» нал [[Special:Watchlist|дарыс дæ цæст]].',
 'watch'             => 'Цæст æрдарын',
 'watchthispage'     => 'Цæст дарын ацы фарсмæ',
@@ -938,7 +952,6 @@ $3',
 'ipb-blocklist-contribs'   => '$1, зæгъгæ, уыцы архайæджы бавæрд',
 'ipblocklist'              => 'Хъодыгонд архайджытæ',
 'ipblocklist-legend'       => 'Хъодыгонд архайæджы ацагур',
-'blocklistline'            => '$1, $2 бахъоды кодта $3 ($4)',
 'ipblocklist-empty'        => 'Хъодыгæндты номхыгъд афтид у.',
 'blocklink'                => 'бахъоды кæн',
 'unblocklink'              => 'хъоды айс',
@@ -1054,10 +1067,6 @@ $3',
 'skinname-myskin'      => 'Мæхи',
 'skinname-chick'       => 'Карк',
 
-# Math errors
-'math_unknown_function' => 'нæзонгæ функци',
-'math_syntax_error'     => 'синтаксисы рæдыд',
-
 # Patrol log
 'patrol-log-line' => 'банысан кодта $1 $2 фарсæй патрулгондæй $3',
 'patrol-log-auto' => '(автоматон)',
@@ -1092,22 +1101,21 @@ $3',
 'metadata-expand' => 'Фылдæр детальтæ равдис',
 
 # EXIF tags
-'exif-imagewidth'  => 'Уæрх',
-'exif-imagelength' => 'Бæрзæнд',
-'exif-artist'      => 'Чи йæ систа',
+'exif-imagewidth'   => 'Уæрх',
+'exif-imagelength'  => 'Бæрзæнд',
+'exif-artist'       => 'Чи йæ систа',
+'exif-languagecode' => 'Æвзаг',
 
 'exif-gaincontrol-0' => 'Нæй',
 
 # External editor support
 'edit-externally'      => 'Ивын ацы файл æддаг программæйæ',
-'edit-externally-help' => '(Кæс [http://www.mediawiki.org/wiki/Manual:External_editors сывæрыны уагæвæрдтæ] фылдæр базонынæн)',
+'edit-externally-help' => '(Кæс [//www.mediawiki.org/wiki/Manual:External_editors сывæрыны уагæвæрдтæ] фылдæр базонынæн)',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'æппæт',
-'imagelistall'     => 'æппæт',
-'watchlistall2'    => 'иууылдæр',
-'namespacesall'    => 'иууылдæр',
-'monthsall'        => 'иууылдæр',
+'watchlistall2' => 'иууылдæр',
+'namespacesall' => 'иууылдæр',
+'monthsall'     => 'иууылдæр',
 
 # action=purge
 'confirm_purge_button' => 'Афтæ уæд!',

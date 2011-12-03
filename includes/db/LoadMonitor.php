@@ -14,12 +14,14 @@
 interface LoadMonitor {
 	/**
 	 * Construct a new LoadMonitor with a given LoadBalancer parent
+	 *
+	 * @param LoadBalancer $parent
 	 */
 	function __construct( $parent );
-	
+
 	/**
 	 * Perform pre-connection load ratio adjustment.
-	 * @param $loads Array
+	 * @param $loads array
 	 * @param $group String: the selected query group
 	 * @param $wiki String
 	 */
@@ -28,13 +30,13 @@ interface LoadMonitor {
 	/**
 	 * Perform post-connection backoff.
 	 *
-	 * If the connection is in overload, this should return a backoff factor 
-	 * which will be used to control polling time. The number of threads 
+	 * If the connection is in overload, this should return a backoff factor
+	 * which will be used to control polling time. The number of threads
 	 * connected is a good measure.
 	 *
 	 * If there is no overload, zero can be returned.
 	 *
-	 * A threshold thread count is given, the concrete class may compare this 
+	 * A threshold thread count is given, the concrete class may compare this
 	 * to the running thread count. The threshold may be false, which indicates
 	 * that the sysadmin has not configured this feature.
 	 *
@@ -45,8 +47,28 @@ interface LoadMonitor {
 
 	/**
 	 * Return an estimate of replication lag for each server
+	 *
+	 * @param $serverIndexes
+	 * @param $wiki
+	 *
+	 * @return array
 	 */
 	function getLagTimes( $serverIndexes, $wiki );
+}
+
+class LoadMonitor_Null implements LoadMonitor {
+	function __construct( $parent ) {
+	}
+
+	function scaleLoads( &$loads, $group = false, $wiki = false ) {
+	}
+
+	function postConnectionBackoff( $conn, $threshold ) {
+	}
+
+	function getLagTimes( $serverIndexes, $wiki ) {
+		return array_fill_keys( $serverIndexes, 0 );
+	}
 }
 
 
@@ -57,16 +79,38 @@ interface LoadMonitor {
  * @ingroup Database
  */
 class LoadMonitor_MySQL implements LoadMonitor {
-	var $parent; // LoadBalancer
 
+	/**
+	 * @var LoadBalancer
+	 */
+	var $parent;
+
+	/**
+	 * @param LoadBalancer $parent
+	 */
 	function __construct( $parent ) {
 		$this->parent = $parent;
 	}
 
+	/**
+	 * @param $loads
+	 * @param $group bool
+	 * @param $wiki bool
+	 */
 	function scaleLoads( &$loads, $group = false, $wiki = false ) {
 	}
 
+	/**
+	 * @param $serverIndexes
+	 * @param $wiki
+	 * @return array
+	 */
 	function getLagTimes( $serverIndexes, $wiki ) {
+		if ( count( $serverIndexes ) == 1 && reset( $serverIndexes ) == 0 ) {
+			// Single server only, just return zero without caching
+			return array( 0 => 0 );
+		}
+
 		wfProfileIn( __METHOD__ );
 		$expiry = 5;
 		$requestRate = 10;
@@ -74,7 +118,7 @@ class LoadMonitor_MySQL implements LoadMonitor {
 		global $wgMemc;
 		if ( empty( $wgMemc ) )
 			$wgMemc = wfGetMainCache();
-		
+
 		$masterName = $this->parent->getServerName( 0 );
 		$memcKey = wfMemcKey( 'lag_times', $masterName );
 		$times = $wgMemc->get( $memcKey );
@@ -117,12 +161,19 @@ class LoadMonitor_MySQL implements LoadMonitor {
 		return $lagTimes;
 	}
 
+	/**
+	 * @param $conn DatabaseBase
+	 * @param $threshold
+	 * @return int
+	 */
 	function postConnectionBackoff( $conn, $threshold ) {
 		if ( !$threshold ) {
 			return 0;
 		}
-		$status = $conn->getStatus("Thread%");
+		$status = $conn->getMysqlStatus("Thread%");
 		if ( $status['Threads_running'] > $threshold ) {
+			$server = $conn->getProperty( 'mServer' );
+			wfLogDBError( "LB backoff from $server - Threads_running = {$status['Threads_running']}\n" );
 			return $status['Threads_connected'];
 		} else {
 			return 0;

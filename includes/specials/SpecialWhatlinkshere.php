@@ -28,23 +28,27 @@
  */
 class SpecialWhatLinksHere extends SpecialPage {
 
-	// Stored objects
-	protected $opts, $target, $selfTitle;
+	/**
+	 * @var FormOptions
+	 */
+	protected $opts;
 
-	// Stored globals
-	protected $skin;
+	protected $selfTitle;
+
+	/**
+	 * @var Title
+	 */
+	protected $target;
 
 	protected $limits = array( 20, 50, 100, 250, 500 );
 
 	public function __construct() {
 		parent::__construct( 'Whatlinkshere' );
-		global $wgUser;
-		$this->skin = $wgUser->getSkin();
 	}
 
 	function execute( $par ) {
-		global $wgOut, $wgRequest;
-
+		$out = $this->getOutput();
+		
 		$this->setHeaders();
 
 		$opts = new FormOptions();
@@ -59,7 +63,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 		$opts->add( 'hidelinks', false );
 		$opts->add( 'hideimages', false );
 
-		$opts->fetchValuesFromRequest( $wgRequest );
+		$opts->fetchValuesFromRequest( $this->getRequest() );
 		$opts->validateIntBounds( 'limit', 0, 5000 );
 
 		// Give precedence to subpage syntax
@@ -72,29 +76,32 @@ class SpecialWhatLinksHere extends SpecialPage {
 
 		$this->target = Title::newFromURL( $opts->getValue( 'target' ) );
 		if( !$this->target ) {
-			$wgOut->addHTML( $this->whatlinkshereForm() );
+			$out->addHTML( $this->whatlinkshereForm() );
 			return;
 		}
 
+		$this->getSkin()->setRelevantTitle( $this->target );
+
+
 		$this->selfTitle = $this->getTitle( $this->target->getPrefixedDBkey() );
 
-		$wgOut->setPageTitle( wfMsg( 'whatlinkshere-title', $this->target->getPrefixedText() ) );
-		$wgOut->setSubtitle( wfMsg( 'whatlinkshere-backlink', $this->skin->link( $this->target, $this->target->getPrefixedText(), array(), array( 'redirect' => 'no'  ) ) ) );
+		$out->setPageTitle( wfMsg( 'whatlinkshere-title', $this->target->getPrefixedText() ) );
+		$out->setSubtitle( wfMsg( 'whatlinkshere-backlink', Linker::link( $this->target, $this->target->getPrefixedText(), array(), array( 'redirect' => 'no'  ) ) ) );
 
 		$this->showIndirectLinks( 0, $this->target, $opts->getValue( 'limit' ),
 			$opts->getValue( 'from' ), $opts->getValue( 'back' ) );
 	}
 
 	/**
-	 * @param $level  int     Recursion level
+	 * @param $level int     Recursion level
 	 * @param $target Title   Target title
-	 * @param $limit  int     Number of entries to display
-	 * @param $from   Title   Display from this article ID
-	 * @param $back   Title   Display from this article ID at backwards scrolling
-	 * @private
+	 * @param $limit int     Number of entries to display
+	 * @param $from Title   Display from this article ID
+	 * @param $back Title   Display from this article ID at backwards scrolling
 	 */
 	function showIndirectLinks( $level, $target, $limit, $from = 0, $back = 0 ) {
-		global $wgOut, $wgMaxRedirectLinksRetrieved;
+		global $wgMaxRedirectLinksRetrieved;
+		$out = $this->getOutput();
 		$dbr = wfGetDB( DB_SLAVE );
 		$options = array();
 
@@ -171,14 +178,14 @@ class SpecialWhatLinksHere extends SpecialPage {
 
 		if( ( !$fetchlinks || !$dbr->numRows($plRes) ) && ( $hidetrans || !$dbr->numRows($tlRes) ) && ( $hideimages || !$dbr->numRows($ilRes) ) ) {
 			if ( 0 == $level ) {
-				$wgOut->addHTML( $this->whatlinkshereForm() );
+				$out->addHTML( $this->whatlinkshereForm() );
 
 				// Show filters only if there are links
 				if( $hidelinks || $hidetrans || $hideredirs || $hideimages )
-					$wgOut->addHTML( $this->getFilterPanel() );
+					$out->addHTML( $this->getFilterPanel() );
 
 				$errMsg = is_int($namespace) ? 'nolinkshere-ns' : 'nolinkshere';
-				$wgOut->addWikiMsg( $errMsg, $this->target->getPrefixedText() );
+				$out->addWikiMsg( $errMsg, $this->target->getPrefixedText() );
 			}
 			return;
 		}
@@ -228,31 +235,31 @@ class SpecialWhatLinksHere extends SpecialPage {
 		$prevId = $from;
 
 		if ( $level == 0 ) {
-			$wgOut->addHTML( $this->whatlinkshereForm() );
-			$wgOut->addHTML( $this->getFilterPanel() );
-			$wgOut->addWikiMsg( 'linkshere', $this->target->getPrefixedText() );
+			$out->addHTML( $this->whatlinkshereForm() );
+			$out->addHTML( $this->getFilterPanel() );
+			$out->addWikiMsg( 'linkshere', $this->target->getPrefixedText() );
 
 			$prevnext = $this->getPrevNext( $prevId, $nextId );
-			$wgOut->addHTML( $prevnext );
+			$out->addHTML( $prevnext );
 		}
 
-		$wgOut->addHTML( $this->listStart( $level ) );
+		$out->addHTML( $this->listStart( $level ) );
 		foreach ( $rows as $row ) {
 			$nt = Title::makeTitle( $row->page_namespace, $row->page_title );
 
 			if ( $row->page_is_redirect && $level < 2 ) {
-				$wgOut->addHTML( $this->listItem( $row, $nt, true ) );
+				$out->addHTML( $this->listItem( $row, $nt, true ) );
 				$this->showIndirectLinks( $level + 1, $nt, $wgMaxRedirectLinksRetrieved );
-				$wgOut->addHTML( Xml::closeElement( 'li' ) );
+				$out->addHTML( Xml::closeElement( 'li' ) );
 			} else {
-				$wgOut->addHTML( $this->listItem( $row, $nt ) );
+				$out->addHTML( $this->listItem( $row, $nt ) );
 			}
 		}
 
-		$wgOut->addHTML( $this->listEnd() );
+		$out->addHTML( $this->listEnd() );
 
 		if( $level == 0 ) {
-			$wgOut->addHTML( $prevnext );
+			$out->addHTML( $prevnext );
 		}
 	}
 
@@ -261,6 +268,9 @@ class SpecialWhatLinksHere extends SpecialPage {
 	}
 
 	protected function listItem( $row, $nt, $notClose = false ) {
+		global $wgLang;
+		$dirmark = $wgLang->getDirMark();
+
 		# local message cache
 		static $msgcache = null;
 		if ( $msgcache === null ) {
@@ -278,7 +288,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 			$query = array();
 		}
 
-		$link = $this->skin->linkKnown(
+		$link = Linker::linkKnown(
 			$nt,
 			null,
 			array(),
@@ -304,8 +314,8 @@ class SpecialWhatLinksHere extends SpecialPage {
 		$wlh = Xml::wrapClass( "($wlhLink)", 'mw-whatlinkshere-tools' );
 
 		return $notClose ?
-			Xml::openElement( 'li' ) . "$link $propsText $wlh\n" :
-			Xml::tags( 'li', null, "$link $propsText $wlh" ) . "\n";
+			Xml::openElement( 'li' ) . "$link $propsText $dirmark $wlh\n" :
+			Xml::tags( 'li', null, "$link $propsText $dirmark $wlh" ) . "\n";
 	}
 
 	protected function listEnd() {
@@ -317,7 +327,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 		if ( $title === null )
 			$title = $this->getTitle();
 
-		return $this->skin->linkKnown(
+		return Linker::linkKnown(
 			$title,
 			$text,
 			array(),
@@ -326,7 +336,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 	}
 
 	function makeSelfLink( $text, $query ) {
-		return $this->skin->linkKnown(
+		return Linker::linkKnown(
 			$this->selfTitle,
 			$text,
 			array(),
@@ -378,7 +388,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 
 		# Build up the form
 		$f = Xml::openElement( 'form', array( 'action' => $wgScript ) );
-		
+
 		# Values that should not be forgotten
 		$f .= Html::hidden( 'title', $this->getTitle()->getPrefixedText() );
 		foreach ( $this->opts->getUnconsumedValues() as $name => $value ) {
@@ -410,7 +420,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 
 	/**
 	 * Create filter panel
-	 * 
+	 *
 	 * @return string HTML fieldset and filter panel with the show/hide links
 	 */
 	function getFilterPanel() {

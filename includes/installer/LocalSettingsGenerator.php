@@ -39,7 +39,7 @@ class LocalSettingsGenerator {
 
 		$confItems = array_merge(
 			array(
-				'wgScriptPath', 'wgScriptExtension',
+				'wgServer', 'wgScriptPath', 'wgScriptExtension',
 				'wgPasswordSender', 'wgImageMagickConvertCommand', 'wgShellLocale',
 				'wgLanguageCode', 'wgEnableEmail', 'wgEnableUserEmail', 'wgDiff3',
 				'wgEnotifUserTalk', 'wgEnotifWatchlist', 'wgEmailAuthentication',
@@ -129,7 +129,7 @@ class LocalSettingsGenerator {
 
 			foreach( $this->extensions as $extName ) {
 				$encExtName = self::escapePhpString( $extName );
-				$localSettings .= "require_once( \"extensions/$encExtName/$encExtName.php\" );\n";
+				$localSettings .= "require_once( \"\$IP/extensions/$encExtName/$encExtName.php\" );\n";
 			}
 		}
 
@@ -249,6 +249,9 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 \$wgScriptPath       = \"{$this->values['wgScriptPath']}\";
 \$wgScriptExtension  = \"{$this->values['wgScriptExtension']}\";
 
+## The protocol and server name to use in fully-qualified URLs
+\$wgServer           = \"{$this->values['wgServer']}\";
+
 ## The relative URL path to the skins directory
 \$wgStylePath        = \"\$wgScriptPath/skins\";
 
@@ -301,16 +304,12 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 ## this, if it's not already uncommented:
 {$hashedUploads}\$wgHashedUploadDirectory = false;
 
-## If you have the appropriate support software installed
-## you can enable inline LaTeX equations:
-\$wgUseTeX           = false;
-
 ## Set \$wgCacheDirectory to a writable directory on the web server
 ## to make your wiki go slightly faster. The directory should not
 ## be publically accessible from the web.
 #\$wgCacheDirectory = \"\$IP/cache\";
 
-# Site language code, should be one of ./languages/Language(.*).php
+# Site language code, should be one of the list in ./languages/Names.php
 \$wgLanguageCode = \"{$this->values['wgLanguageCode']}\";
 
 \$wgSecretKey = \"{$this->values['wgSecretKey']}\";
@@ -326,7 +325,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
 ## License and Creative Commons licenses are supported so far.
-{$rightsUrl}\$wgEnableCreativeCommonsRdf = true;
 \$wgRightsPage = \"\"; # Set to the title of a wiki page that describes your license/copyright
 \$wgRightsUrl  = \"{$this->values['wgRightsUrl']}\";
 \$wgRightsText = \"{$this->values['wgRightsText']}\";
@@ -336,14 +334,13 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 # Path to the GNU diff3 utility. Used for conflict resolution.
 \$wgDiff3 = \"{$this->values['wgDiff3']}\";
 
-{$groupRights}
-
 # Query string length limit for ResourceLoader. You should only set this if
 # your web server has a query string length limit (then set it to that limit),
 # or if you have suhosin.get.max_value_length set in php.ini (then set it to
 # that value)
 \$wgResourceLoaderMaxQueryLength = {$this->values['wgResourceLoaderMaxQueryLength']};
-";
+
+{$groupRights}";
 	}
 
 }

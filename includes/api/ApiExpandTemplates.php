@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Oct 05, 2007
  *
@@ -61,6 +61,10 @@ class ApiExpandTemplates extends ApiBase {
 		global $wgParser;
 		$options = new ParserOptions();
 
+		if ( $params['includecomments'] ) {
+			$options->setRemoveComments( false );
+		}
+
 		if ( $params['generatexml'] ) {
 			$wgParser->startExternalParse( $title_obj, $options, OT_PREPROCESS );
 			$dom = $wgParser->preprocessToDom( $params['text'] );
@@ -86,8 +90,12 @@ class ApiExpandTemplates extends ApiBase {
 			'title' => array(
 				ApiBase::PARAM_DFLT => 'API',
 			),
-			'text' => null,
+			'text' => array(
+				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_REQUIRED => true,
+			),
 			'generatexml' => false,
+			'includecomments' => false,
 		);
 	}
 
@@ -96,11 +104,12 @@ class ApiExpandTemplates extends ApiBase {
 			'text' => 'Wikitext to convert',
 			'title' => 'Title of page',
 			'generatexml' => 'Generate XML parse tree',
+			'includecomments' => 'Whether to include HTML comments in the output',
 		);
 	}
 
 	public function getDescription() {
-		return 'This module expand all templates in wikitext';
+		return 'Expands all templates in wikitext';
 	}
 
 	protected function getExamples() {
@@ -109,7 +118,11 @@ class ApiExpandTemplates extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Parsing_wikitext#expandtemplates';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiExpandTemplates.php 70647 2010-08-07 19:59:42Z ialex $';
+		return __CLASS__ . ': $Id: ApiExpandTemplates.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

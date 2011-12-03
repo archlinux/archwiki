@@ -23,12 +23,12 @@ class RawPage {
 	var $mSmaxage, $mMaxage;
 	var $mContentType, $mExpandTemplates;
 
-	function __construct( Article $article, $request = false ) {
-		global $wgRequest, $wgInputEncoding, $wgSquidMaxage, $wgJsMimeType, $wgGroupPermissions;
+	function __construct( Page $article, $request = false ) {
+		global $wgRequest, $wgSquidMaxage, $wgJsMimeType, $wgGroupPermissions;
 
 		$allowedCTypes = array( 'text/x-wiki', $wgJsMimeType, 'text/css', 'application/x-zope-edit' );
 		$this->mArticle = $article;
-		$this->mTitle = $article->mTitle;
+		$this->mTitle = $article->getTitle();
 
 		if( $request === false ) {
 			$this->mRequest = $wgRequest;
@@ -60,7 +60,7 @@ class RawPage {
 				if( !$oldid ) {
 					# get the current revision so we can get the penultimate one
 					$this->mArticle->getTouched();
-					$oldid = $this->mArticle->mLatest;
+					$oldid = $this->mArticle->getLatest();
 				}
 				$prev = $this->mTitle->getPreviousRevisionId( $oldid );
 				$oldid = $prev ? $prev : -1 ;
@@ -89,7 +89,7 @@ class RawPage {
 		} else {
 			$this->mGen = false;
 		}
-		$this->mCharset = $wgInputEncoding;
+		$this->mCharset = 'UTF-8';
 
 		# Force caching for CSS and JS raw content, default: 5 minutes
 		if( is_null( $smaxage ) && ( $ctype == 'text/css' || $ctype == $wgJsMimeType ) ) {
@@ -151,7 +151,7 @@ class RawPage {
 	}
 
 	function getRawText() {
-		global $wgUser, $wgOut;
+		global $wgOut, $wgUser;
 		if( $this->mGen ) {
 			$sk = $wgUser->getSkin();
 			if( !StubObject::isRealObject( $wgOut ) ) {
@@ -160,7 +160,7 @@ class RawPage {
 			$sk->initPage( $wgOut );
 			if( $this->mGen == 'css' ) {
 				return $sk->generateUserStylesheet();
-			} else if( $this->mGen == 'js' ) {
+			} elseif( $this->mGen == 'js' ) {
 				return $sk->generateUserJs();
 			}
 		} else {
@@ -175,11 +175,9 @@ class RawPage {
 			// If it's a MediaWiki message we can just hit the message cache
 			if( $this->mUseMessageCache && $this->mTitle->getNamespace() == NS_MEDIAWIKI ) {
 				$key = $this->mTitle->getDBkey();
-				$text = wfMsgForContentNoTrans( $key );
+				$msg = wfMessage( $key )->inContentLanguage();
 				# If the message doesn't exist, return a blank
-				if( wfEmptyMsg( $key, $text ) ) {
-					$text = '';
-				}
+				$text = !$msg->exists() ? '' : $msg->plain();
 				$found = true;
 			} else {
 				// Get it from the DB
@@ -208,23 +206,13 @@ class RawPage {
 			header( 'HTTP/1.0 404 Not Found' );
 		}
 
-		// Special-case for empty CSS/JS
-		//
-		// Internet Explorer for Mac handles empty files badly;
-		// particularly so when keep-alive is active. It can lead
-		// to long timeouts as it seems to sit there waiting for
-		// more data that never comes.
-		//
-		// Give it a comment...
-		if( strlen( $text ) == 0 &&
-			( $this->mContentType == 'text/css' ||
-				$this->mContentType == 'text/javascript' ) ) {
-			return '/* Empty */';
-		}
-
 		return $this->parseArticleText( $text );
 	}
 
+	/**
+	 * @param $text
+	 * @return string
+	 */
 	function parseArticleText( $text ) {
 		if( $text === '' ) {
 			return '';

@@ -16,6 +16,8 @@
  * @author Zetud
  */
 
+$fallback = 'fr';
+
 $messages = array(
 # User preference toggles
 'tog-underline'               => 'Souligner les liens:',
@@ -125,15 +127,6 @@ $messages = array(
 'subcategories'         => 'Sous-classes',
 'category-media-header' => 'Média dans classe "$1"',
 'category-empty'        => "''À présent, cette classe a ni articles ni média.''",
-
-'mainpagetext'      => "'''Vous avez bien installé MediaWiki.'''",
-'mainpagedocfooter' => 'Lisez la [http://meta.wikimedia.org/wiki/Help:Contents Guide des Useurs] pour apprendre à user le wiki software.
-
-== Pour Commencer ==
-
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Réglage]
-* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki: Questions Souvent Posées]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki Liste à Malle]',
 
 'about'         => 'Info',
 'article'       => 'Page des matières',
@@ -328,7 +321,6 @@ Demande: $2',
 'cascadeprotected'     => 'Cette page est protégée parce qu’elle est incluse par {{PLURAL:$1|la page suivante, qui est protégée|les pages suivantes, qui sont protégées}} avec l’option « protection en cascade » activée :
 $2',
 'namespaceprotected'   => 'Vous avez pas la permission de changer les pages dans l\'espace de noms "$1".',
-'customcssjsprotected' => "Vous avez pas la permission de changer cette page parce qu'alle contient le réglage d'un autre useur.",
 'ns-specialprotected'  => "Vous pouvez pas changer les pages dans l'espace de noms {{ns:special}}.",
 
 # Login and logout pages
@@ -357,17 +349,19 @@ Votre compte a été créé.  Oubliez pas de changer votre réglage sus {{SITENA
 'createaccount'              => 'Créer un compte',
 'gotaccount'                 => "Vous avez un compte déjà? '''$1'''.",
 'gotaccountlink'             => 'Connectez',
+'userlogin-resetlink'        => 'Oublié vôtre détailes de log in?',
 'createaccountmail'          => 'par e-mail',
 'badretype'                  => 'Les mots de passe que vous avez mis sont pas pareils.',
 'userexists'                 => "Le nom d'useur choisi est déjà usé.  Choissez donc un autre nom.",
 'loginerror'                 => "Erreur d'identification",
 'nocookiesnew'               => "Votre compte a été créé, mais vous êtes pas connecté.  {{SITENAME}} use les cookies pour connecter les useurs.  Partez les cookies et connectez avec votre nouveau nom d'useur et votre mot de passe, s'il vous plaît.",
 'nocookieslogin'             => '{{SITENAME}} use les cookies pour connecter les useurs.  Partez donc les cookies et assayez encore.',
+'nocookiesfornew'            => "Le conte d'useur n'était pas fait, à cause qu'on pouvait pas confirmer la source.  Ensurer que tu as des cookies, reload ce page et essayer encore.",
 'noname'                     => "Vous avez pas mis un bon nom d'useur.",
 'loginsuccesstitle'          => 'Vous êtes connecté',
 'loginsuccess'               => "'''Asteur vous êtes connecté à {{SITENAME}} comme \"\$1\".'''",
 'nosuchuser'                 => 'Y a aucun utilisateur avec le nom "$1".  Les noms d\'utilisateur respectent les majuscules et minuscules. Vérifiez l\'orthographe, ou créez un nouveau compte.',
-'nosuchusershort'            => 'Y a aucun useur avec le nom "<nowiki>$1</nowiki>".  Regardez donc l\'espellage.',
+'nosuchusershort'            => 'Y a aucun useur avec le nom "$1".  Regardez donc l\'espellage.',
 'nouserspecified'            => "Il faut mettre un nom d'useur.",
 'login-userblocked'          => 'Cet useur est blockée.  Log in pas accépté.',
 'wrongpassword'              => "Mauvais mot de passe.  Assayez encore s'il vous plaît.",
@@ -394,7 +388,7 @@ Si quèqu\'une d\'autre a demandé ce mot de passe ou si vous vous rappelez de v
 'accountcreatedtext'         => "Le compte d'useur pour $1 a été créé.",
 'loginlanguagelabel'         => 'Langue: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'           => 'Rétablir le mot de passe du compte',
 'resetpass_announce'  => "Pour le moment, vous êtes connecté avec un mot de passe qu'a été envoyé par e-mail.  Pour finir de vous connecter, il faut créer un nouveau mot de passe ici:",
 'resetpass_text'      => '<!-- Mettez du texte ici -->',
@@ -414,8 +408,6 @@ Si quèqu\'une d\'autre a demandé ce mot de passe ou si vous vous rappelez de v
 'extlink_tip'     => 'Lien extérieur (Oubliez pas de mettre http:// avant.)',
 'headline_sample' => 'Sujet',
 'headline_tip'    => 'Sujet niveau 2',
-'math_sample'     => 'Mettez la formule ici',
-'math_tip'        => "Formule d'arithmitique (LaTeX)",
 'nowiki_sample'   => 'Mettez du texte non-préparé ici',
 'nowiki_tip'      => 'Ignorez le code wiki',
 'image_sample'    => 'Exemple.jpg',

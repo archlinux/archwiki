@@ -13,10 +13,6 @@
 
 $fallback = 'fr';
 
-$defaultUserOptionOverrides = array(
-	'editfont' => 'sans-serif', # poor font support
-);
-
 $linkPrefixExtension = true;
 
 # Same as the French (bug 8485)
@@ -126,10 +122,10 @@ $messages = array(
 'searcharticle'     => 'Kokɛndɛ',
 'history'           => 'Mokóló mwa lonkásá',
 'history_short'     => 'Mokóló',
-'info_short'        => 'Liyébisi',
 'printableversion'  => 'Mpɔ̂ na kofínela',
 'permalink'         => 'Ekangeli ya ntángo yɔ́nsɔ',
 'print'             => 'kobimisa nkomá',
+'view'              => 'Komɔ́nisa',
 'edit'              => 'kobɔngisa',
 'create'            => 'Kokela',
 'editthispage'      => 'Kokoma lonkásá óyo',
@@ -250,10 +246,14 @@ Ezalí listɛ́ ya nkásá gudi bizalí  na [[Special:SpecialPages|{{int:special
 'mailmypassword'          => 'Kotíndisa liloba-nzelá lya sika na mɛ́lɛ',
 'loginlanguagelabel'      => 'Lokótá: $1',
 
-# Password reset dialog
+# Change password dialog
 'oldpassword'             => 'Banda kala',
 'newpassword'             => 'Banda sika',
 'resetpass-submit-cancel' => 'Kozóngela',
+
+# Special:PasswordReset
+'passwordreset-username' => 'Nkómbó ya mosáleli:',
+'passwordreset-email'    => 'Adɛlɛ́sɛ-ímɛ́lɛ:',
 
 # Edit page toolbar
 'bold_sample'     => 'Nkomá ya mbinga',
@@ -488,9 +488,7 @@ Ezalí listɛ́ ya nkásá gudi bizalí  na [[Special:SpecialPages|{{int:special
 # Watchlist
 'watchlist'         => 'Nkásá nalandí',
 'mywatchlist'       => 'Nkásá nalandí',
-'addedwatch'        => 'Ebakísámí na nkásá olandí',
 'addedwatchtext'    => "Lonkásá «[[:$1]]» lobakísámí na [[Special:Watchlist|nkásá olandí]]. Mbóngwana o lonkásá loye mpé o lonkásá la ntembe ikomɔ́nisama áwa, ikokɔ́mana '''mbinga''' o [[Special:RecentChanges|Lístɛ ya mbóngwana ya nsúka]] mpɔ̂ na mpási tɛ̂.",
-'removedwatch'      => 'Elongólámí na nkásá olandí',
 'watch'             => 'Kolanda',
 'watchthispage'     => 'Kolanda lonkásá óyo',
 'unwatch'           => 'Kolanda tɛ́',

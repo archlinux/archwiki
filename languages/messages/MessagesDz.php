@@ -187,7 +187,7 @@ $messages = array(
 'loginsuccess'            => "'''ད་འབདན་ཁྱོད་  {{SITENAME}} ནང་ \"\$1\" སྦེ་ ནང་བསྐྱོད་འབད་ཡོདཔ།'''",
 'nosuchuser'              => 'མིང་ "$1" བཟུམ་གྱི་ལག་ལེན་པ་མེད།
 སྡེབ་དཔྱད་འབད་ ཡང་ན་ རྩིས་ཐོ་གསརཔ་ཅིག་བཟོ།',
-'nosuchusershort'         => 'མིང་ "<nowiki>$1</nowiki>" བཟུམ་གྱི་ལག་ལེན་པ་མེད།
+'nosuchusershort'         => 'མིང་ "$1" བཟུམ་གྱི་ལག་ལེན་པ་མེད།
 སྡེབ་དཔྱད་འབད།',
 'nouserspecified'         => 'ལག་ལེན་པའི་མིང་ གསལ་བཀོད་འབད་དགོ།',
 'wrongpassword'           => 'མ་བདེན་པའི་ཆོག་ཡིག་བཙུགས་ཡོདཔ། ལོག་འབད་རྩོལ་བསྐྱེད།',
@@ -208,7 +208,7 @@ $messages = array(
 'eauthentsent'            => 'ངེས་དཔྱད་གློག་འཕྲིན་འདི་ གདམ་ཁ་བརྐྱབས་ཡོད་པའི་གློག་འཕྲིན་ཁ་བྱང་ལུ་ བཏང་ཡོདཔ།
 གཞན་གློག་འཕྲིན་གང་རུང་ རྩིས་ཐོ་ནང་མ་གཏང་པའི་ཧེ་མ་ རྩིས་ཐོ་འདི་ཁྱོད་ར་གི་ཨིན་པའི་ངེས་དཔྱད་འབད་ནི་ལུ་ གློག་འཕྲིན་ནང་གི་བཀོད་རྒྱ་དང་འཁྲིལ་དགོཔ་ཨིན།',
 
-# Password reset dialog
+# Change password dialog
 'retypenew' => 'ཆོག་ཡིག་གསརཔ་ལོག་ཡིག་དཔར་རྐྱབས:',
 
 # Edit page toolbar
@@ -222,8 +222,6 @@ $messages = array(
 'extlink_tip'     => 'ཕྱིའི་འབྲེལ་ལམ་ (http:// prefix སེམས་ཁར་བཞག)',
 'headline_sample' => 'གཙོ་དོན་ཚིག་ཡིག།',
 'headline_tip'    => 'གནས་རིམ་ ༢ གཙོ་དོན།',
-'math_sample'     => 'ནཱ་ལུ་ ཐབས་རྟགས་བཙུགས།',
-'math_tip'        => 'ཨང་རྩིས་ཐབས་རྟགས་ (LaTeX)',
 'nowiki_sample'   => 'ནཱ་ལུ་ རྩ་སྒྲིག་མ་འབད་བའི་ཚིག་ཡིག་བཙུགས།',
 'nowiki_tip'      => 'ཝི་ཀི་རྩ་སྒྲིག་ སྣང་མེད་བཞག།',
 'image_tip'       => 'གནས་འདྲེན་ཡིག་སྣོད།',
@@ -466,10 +464,8 @@ $messages = array(
 # Watchlist
 'watchlist'         => 'ངེ་གི་བལྟ་ཞིབ་ཐོ་ཡིག།',
 'mywatchlist'       => 'ངེ་གི་བལྟ་ཞིབ་ཐོ་ཡིག།',
-'addedwatch'        => 'བལྟ་ཞིབ་ཐོ་ཡིག་ལུ་ཁ་སྐོང་རྐྱབ་ཅི།',
 'addedwatchtext'    => "ཤོག་ལེབ་  \"[[:\$1]]\" འདི་ ཁྱོད་རའི་ [[Special:Watchlist|watchlist]] ལུ་ ཁ་སྐོང་བརྐྱབས་ནུག།\\n
 ཤོག་ལེབ་དེ་ལུ་མ་འོངས་བསྒྱུར་བཅོས་དང་ དེ་གི་འབྲེལ་ཡོད་བློ་ཤོག་འདི་ དེ་ཁར་ཐོ་བཀོད་འབད་ནི་དང་ འཇམ་ཏོང་ཏོ་སྦེ་གདམ་ཁ་བརྐྱབ་ཚུགས་ནི་གི་དོན་ལུ་  ཤོག་ལེབ་འདི་ [[Special:RecentChanges|list of recent changes]] ནང་ལུ་ '''མངོན་གསལ་''' སྦེ་འབྱུང་འོང་།",
-'removedwatch'      => 'བལྟ་ཞིབ་ཐོ་ཡིག་ནང་ལས་བཏོན་བཀོག་ཡོདཔ།',
 'removedwatchtext'  => 'ཤོག་ལེབ་  "[[:$1]]" འདི་ [[Special:Watchlist|your watchlist]] ལས་ བཏོན་བཀོག་ནུག།',
 'watch'             => 'བལྟ་ཞིབ་འབད།',
 'watchthispage'     => 'ཤོག་ལེབ་འདི་ལྟ།',
@@ -487,7 +483,7 @@ $messages = array(
 'confirmdeletetext'     => 'ཁྱོད་ཀྱིས་ ཤོག་ལེབ་དང་དེའི་སྤྱོད་ཤུལ་ བཏོན་གཏང་ནི་འབད་དོ།
 ཁྱོད་ཀྱིས་འདི་འབད་ནི་དང་ དེ་འབད་བ་ཅིན་ དེ་གི་འབྲེལ་འབྱུང་ དེ་ལས་ ཁྱོད་ཀྱིས་འབད་མི་འདི་  [[{{MediaWiki:Policy-url}}| སྲིད་བྱུས་]] དང་འཁྲིལ་ཏེ་ཨིན་པའི་ངེས་དཔྱད་འབད་གནང་།',
 'actioncomplete'        => 'བྱ་ལས་མཇུག་བསྡུ།',
-'deletedtext'           => '"<nowiki>$1</nowiki>" འདི་ བཏོན་བཀོག་ནུག།
+'deletedtext'           => '"$1" འདི་ བཏོན་བཀོག་ནུག།
 འཕྲལ་ཁམས་ལུ་བཏོན་བཀོག་མི་ཐོ་གི་དོན་ལུ་ $2 ལུ་བལྟ།',
 'deletedarticle'        => '"[[$1]]" བཏོན་གཏང་ཡོདཔ།',
 'dellogpage'            => 'བཏོན་གཏང་ཡོད་པའི་ལོག།',
@@ -505,7 +501,7 @@ $messages = array(
 'protectexpiry'               => 'དུས་ཡོལ:',
 'protect_expiry_invalid'      => 'དུས་ཡོལ་དུས་ཚོད་འདི་ ནུས་མེད་ཨིན་པས།',
 'protect_expiry_old'          => 'དུས་ཡོལ་དུས་ཚོད་འདི་ཚར་ནུག།',
-'protect-text'                => "ཁྱོད་ཀྱིས་ ནཱ་ལུ་ ཤོག་ལེབ་ '''<nowiki>$1</nowiki>''' གི་དོན་ལུ་ ཉེན་སྐྱོབ་གནས་རིམ་འདི་བསྒྱུར་བཅོས་རྐྱབ་བཏུབ།",
+'protect-text'                => "ཁྱོད་ཀྱིས་ ནཱ་ལུ་ ཤོག་ལེབ་ '''$1''' གི་དོན་ལུ་ ཉེན་སྐྱོབ་གནས་རིམ་འདི་བསྒྱུར་བཅོས་རྐྱབ་བཏུབ།",
 'protect-locked-access'       => "ཁྱོད་ཀྱི་རྩིས་ཐོ་ནང་ ཤོག་ལེབ་ཉེན་སྐྱོབ་གནས་རིམ་བསྒྱུར་བཅོས་འབད་ནིའི་གནང་བ་མིན་འདུག།
 ད་ལྟོ་ནཱ་ལུ་ཡོད་པའི་སྒྲིག་སྟངས་འདི་ ཤོག་ལེབ་ '''$1''' གི་དོན་ལུ་ཨིན་:",
 'protect-cascadeon'           => 'འོག་གི་ཀསི་ཀེ་ཌིངཉེན་སྐྱོབ་ཤུགས་ཅན་བཟོ་ཡོད་པའི་ {{PLURAL:$1|ཤོག་ལེབ| ཤོག་ལེབ་་ཚུ་}} གི་གྲངས་སུ་ཚུད་ཡོདཔ་ལས་ ཤོག་ལེབ་འདི་ ད་ལྟོ་ཉེན་སྐྱོབ་འབད་དེ་འདུག།
@@ -655,11 +651,10 @@ $messages = array(
 'nextdiff'     => 'ཤུལ་མམ་གྱི་ཁྱད་པར་ →',
 
 # Media information
-'file-info-size'       => '$1 × $2 པིག་སེལ་  ཡིག་སྣོད་ཀྱི་ཚད་: $3 མའིམ་དབྱེ་བ་: $4',
-'file-nohires'         => '<small>ཧུམ་ཆ་ལེགས་ཤོམ་མིན་འདུག།</small>',
-'svg-long-desc'        => 'ཨེསི་བི་ཇི་ཡིག་སྣོད་  $1 × $2 པིག་སེལསི་ཆུང་སུ་ཅིག་  ཡིག་སྣོད་ཚད་: $3',
-'show-big-image'       => 'ཧུམ་ཆ་གང་།',
-'show-big-image-thumb' => '<small>སྔོན་ལྟའི་ཚད་: $1 × $2 པིག་སེལསི་</small>',
+'file-info-size' => '$1 × $2 པིག་སེལ་  ཡིག་སྣོད་ཀྱི་ཚད་: $3 མའིམ་དབྱེ་བ་: $4',
+'file-nohires'   => '<small>ཧུམ་ཆ་ལེགས་ཤོམ་མིན་འདུག།</small>',
+'svg-long-desc'  => 'ཨེསི་བི་ཇི་ཡིག་སྣོད་  $1 × $2 པིག་སེལསི་ཆུང་སུ་ཅིག་  ཡིག་སྣོད་ཚད་: $3',
+'show-big-image' => 'ཧུམ་ཆ་གང་།',
 
 # Special:NewFiles
 'newimages' => 'ཡིག་སྣོད་གསར་པའི་སྟོན་ཁང་།',
@@ -685,11 +680,17 @@ $messages = array(
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # External editor support
 'edit-externally'      => 'ཕྱིའི་གློག་རིམ་ལག་ལེན་འཐབ་ཐོག་ལས་ ཡིག་སྣོད་འདི་ཞུན་དག་འབད།',
-'edit-externally-help' => 'བརྡ་དོན་ཁ་གསལ་གྱི་དོན་ལུ་ [http://www.mediawiki.org/wiki/Manual:External_editors setup instructions] ལུ་ལྟ།',
+'edit-externally-help' => 'བརྡ་དོན་ཁ་གསལ་གྱི་དོན་ལུ་ [//www.mediawiki.org/wiki/Manual:External_editors setup instructions] ལུ་ལྟ།',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'ཆ་མཉམ།',

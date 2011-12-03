@@ -143,8 +143,6 @@ $messages = array(
 'index-category'                 => 'Συντεταγμένα σελίδας',
 'noindex-category'               => 'Ασύντακτα σελίδας',
 
-'mainpagetext' => "'''To λογισμικόν MediaWiki εθέκεν.'''",
-
 'about'         => 'Περί',
 'article'       => 'Σελίδαν',
 'newwindow'     => "(ανοίγ' σ' άλλον παραθύρ)",
@@ -193,7 +191,6 @@ $messages = array(
 'history'           => 'Ιστορίαν τη σελίδας',
 'history_short'     => 'Ιστορίαν',
 'updatedmarker'     => 'αλλαγάς ασο τελευταίον το τέρεμαμ κι αδά μερέαν',
-'info_short'        => 'Πληροφορίας',
 'printableversion'  => 'Μορφή εκτύπωσης',
 'permalink'         => 'Σκιρόν σύνδεσμος',
 'print'             => 'Τύπωμαν',
@@ -335,7 +332,6 @@ $messages = array(
 'viewsourcetext'       => "Επορείτε να τερείτε και ν' αντιγράφετε το κείμενον τ' ατεινές τη σελίδας:",
 'protectedinterface'   => "Αβούτη σελίδαν έχ' απές κείμενον για το interface τη software και για τ' ατό εν ασπαλιγμένον.",
 'namespaceprotected'   => "'Κ επορείτε να αλλάζετε σελίδας σην περιοχἠν ονοματίων '''$1'''.",
-'customcssjsprotected' => "'Κ επορείτε να αλλάζετε αβούτο τη σελίδαν. Ατουπές, άλλος χρήστες έχ' τα προσωπικά τ'αγαπεμένα τ'.",
 'ns-specialprotected'  => "Τα ειδικά τα σελίδας 'κ επορούν ν' επεξεργάσκουνταν.",
 
 # Virus scanner
@@ -383,7 +379,7 @@ $messages = array(
 'nosuchuser'                 => 'Αδαπές \'κ εχ\' χρήστεν με τ\' όνομαν "$1".
 Τερέστεν τα γράμματα τη ονοματί, τερέστεν τα τρανογράμματα και τα μικρογράμματα να είναι τογρία.
 Τερέστεν την ορθογραφίαν ή [[Special:UserLogin/signup|ποισέστεν καινούρεον λογαρίαν]].',
-'nosuchusershort'            => "Αδαπές 'κ εχ' χρήστεν με τ' όνομαν \"<nowiki>\$1</nowiki>\".
+'nosuchusershort'            => "Αδαπές 'κ εχ' χρήστεν με τ' όνομαν \"\$1\".
 Τ'όνομαν γραφέστεν ατο τογρία.",
 'nouserspecified'            => "Πρέπ' να ψιλίζετε έναν όνεμαν.",
 'login-userblocked'          => "Το χρήστεν έδεξαν ατον. Να εμπαίν 'κ ίνεται.",
@@ -414,7 +410,7 @@ $messages = array(
 'createaccount-title'        => 'Δημιουργίαν λογαρίας για {{SITENAME}}',
 'loginlanguagelabel'         => 'Γλώσσαν: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Νέον σημάδιν',
 'resetpass_header'          => "Άλλαξον σημάδ'",
 'oldpassword'               => 'Παλαιόν σημάδιν:',
@@ -442,8 +438,6 @@ $messages = array(
 'extlink_tip'     => 'Εξωτερικόν σύνδεσμον (να μην ανασπάλλετε το πρόθεμαν http:// )',
 'headline_sample' => 'Κείμενον τίτλονος',
 'headline_tip'    => 'Δεύτερον τίτλος (επίπεδον 2)',
-'math_sample'     => 'Αδά εισάγετε την φόρμουλαν',
-'math_tip'        => 'Μαθεματικόν φόρμουλα (LaTeX)',
 'nowiki_sample'   => 'Αδακά πα να εισάγετε το μη μορφοποιημένον κείμενον.',
 'nowiki_tip'      => "Ξάι 'κ να τερείται η μορφοποίηση Wiki.",
 'image_tip'       => 'Ενσωματωμένον εικόνα',
@@ -642,7 +636,6 @@ $messages = array(
 'changepassword'            => 'Άλλαξον σημάδιν',
 'prefs-skin'                => 'Όψην',
 'skin-preview'              => 'Πρώτον τέρεμαν',
-'prefs-math'                => 'Απόδοσην μαθηματικίων',
 'prefs-datetime'            => 'Ημερομηνίαν και ώραν',
 'prefs-rc'                  => 'Υστερνά αλλαγάς',
 'prefs-watchlist'           => 'Κατάλογον ωριαγματί',
@@ -982,10 +975,8 @@ $messages = array(
 'watchlist'         => "Σελίδας ντ' ωριάζω",
 'mywatchlist'       => "Σελίδας ντ' ωριάζω",
 'watchnologin'      => "'Κ είστουν συνδεμένος",
-'addedwatch'        => 'Εθέκεν σην λίσταν ωριαγματί',
 'addedwatchtext'    => "Η σελίδαν \"[[:\$1]]\" επήγεν σον [[Special:Watchlist|κατάλογον οριαγματί]] εσούν.
 Μελλούμενα αλλαγάς τ' ατεινές τη σελίδας θα γράφκουνταν καικά, και η σελίδαν θ' ευρίεται με γράμματα '''χοντρά''' σ' [[Special:RecentChanges|υστερνά τ' αλλαγάς]] για να τερείτετα καλίον.",
-'removedwatch'      => 'Αση λίσταν επάρθεν',
 'removedwatchtext'  => 'Η σελίδαν "[[:$1]]" ενεσβύεν ασ\' [[Special:Watchlist|τ\'εσόν τον κατάλογον]].',
 'watch'             => 'Ωρίαγμαν',
 'watchthispage'     => 'Ωρίαν τη σελίδαν',
@@ -1013,7 +1004,7 @@ $messages = array(
 'confirmdeletetext'     => "Είστουν σουμά σο σβήσεμαν είνος σελίδας και ούλ' τ' ιστορίασατς εντάμαν.
 Παρακαλούμε σας να δείτε το τελικόν τη βεβαίωσην το θέλετε να εφτάτε το σβήσεμαν, τ' εγροικάτε τα συνέπειας τ' ατεινές τη πράξης και τ' εφτάτ' ατεν με βάσην [[{{MediaWiki:Policy-url}}|τη πολιτικήν]].",
 'actioncomplete'        => 'Η ενέργειαν ετελέθεν',
-'deletedtext'           => 'Το "<nowiki>$1</nowiki>" εσβήγανατο.
+'deletedtext'           => 'Το "$1" εσβήγανατο.
 Τερέστεν το $2 και δεαβάστεν για τα υστερνά τα σβησίματα.',
 'deletedarticle'        => 'ενεσβύεν η "[[$1]]"',
 'dellogpage'            => "Κατάλογον με τ' ατά ντ' ενεσβύγαν",
@@ -1036,7 +1027,7 @@ $messages = array(
 'protectexpiry'               => 'Τελείται:',
 'protect_expiry_invalid'      => "Ο χρόνον τελεματί 'κ εν σωστόν.",
 'protect_expiry_old'          => 'Ο χρόνον τελεματί πέρνιξον.',
-'protect-text'                => "Αδά επορείτε να τερείτε και ν' αλλάζετε τ' επίπεδον τη προστασίας για τη σελίδαν '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "Αδά επορείτε να τερείτε και ν' αλλάζετε τ' επίπεδον τη προστασίας για τη σελίδαν '''$1'''.",
 'protect-locked-access'       => "Η λογαρίανεσουν 'κ έχ' το δικαίωμαν να αλλάζ' τ' ασπάλιγμαν τη σελίδας.
 Αδά έχ' τ' ατωριζνά τα νομς για τη σελίδαν '''$1''':",
 'protect-cascadeon'           => "Αβούτη η σελίδα ατώρα εν ασπαλιγμένον: Εν απές {{PLURAL:$1|σ' ακόλουθουν τη σελίδαν, ντο έχ'|σ' ακόλουθα τα σελίδας, τ' έχνε}} ενεργοποιημένον το διαδοχικόν τ' ασπάλιγμαν. Πορείτε ν' ελλάζετε το επίπεδον ασπαλιγματί τη σελίδας, άμα αβούτο ξάι 'κ θ' αλλάζ' το διαδοχικόν τ' ασπάλιγμαν.",
@@ -1117,7 +1108,6 @@ $messages = array(
 'ipbexpiry'                => 'Τέλεμαν:',
 'ipbreason'                => 'Αιτία:',
 'ipbreasonotherlist'       => 'Άλλον αιτία',
-'ipbanononly'              => "Ασπάλισον τ'ανώνυμους τη χρήστες μαναχόν",
 'ipbsubmit'                => 'Ασπάλισον τον χρήστεν',
 'ipbother'                 => 'Άλλον ώρα:',
 'ipboptions'               => '2 ώρας:2 hours,1 ημέρα:1 day,3 ημέρας:3 days,1 εβδομάδα:1 week,2 εβδομάδας:2 weeks,1 μήνα:1 month,3 μήνας:3 months,6 μήνας:6 months,1 χρόνο:1 year,αόριστα:infinite',
@@ -1288,11 +1278,6 @@ $messages = array(
 # Spam protection
 'spamprotectiontitle' => 'Φίλτρον προστασίας ασό σπαμ',
 
-# Math errors
-'math_unknown_function' => 'άγνωρος συνάρτησην',
-'math_lexing_error'     => 'σφάλμαν λεξικής ανάλυσης',
-'math_syntax_error'     => 'σφάλμαν σύνταξης',
-
 # Patrol log
 'patrol-log-auto' => '(αυτόματον)',
 
@@ -1301,12 +1286,11 @@ $messages = array(
 'nextdiff'     => 'Άλλον διαφορά →',
 
 # Media information
-'widthheightpage'      => '$1×$2, $3 {{PLURAL:$3|σελίδα|σελίδας}}',
-'file-info-size'       => '$1 × $2 εικονοστοιχεία, μέγεθος αρχείου: $3, MIME τύπον: $4',
-'file-nohires'         => "<small>'Κ εχ κι άλλο ψηλόν ανάλυσην.</small>",
-'svg-long-desc'        => "Αρχείον SVG, κατ' όνομα $1 × $2 εικονοστοιχεία, μέγεθος αρχεί: $3",
-'show-big-image'       => 'Τζιπ τρανόν ανάλυση',
-'show-big-image-thumb' => "<small>Μέγεθος τη πρώτ' τερεματί: $1 × $2 εικονοστοιχεία</small>",
+'widthheightpage' => '$1×$2, $3 {{PLURAL:$3|σελίδα|σελίδας}}',
+'file-info-size'  => '$1 × $2 εικονοστοιχεία, μέγεθος αρχείου: $3, MIME τύπον: $4',
+'file-nohires'    => "<small>'Κ εχ κι άλλο ψηλόν ανάλυσην.</small>",
+'svg-long-desc'   => "Αρχείον SVG, κατ' όνομα $1 × $2 εικονοστοιχεία, μέγεθος αρχεί: $3",
+'show-big-image'  => 'Τζιπ τρανόν ανάλυση',
 
 # Special:NewFiles
 'newimages'        => 'Τερέστεν τα καινούρεα φωτογραφίας',
@@ -1336,7 +1320,13 @@ $messages = array(
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength",
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude",
 
 # EXIF tags
 'exif-imagewidth'                  => 'Πλάτος',
@@ -1350,12 +1340,10 @@ $messages = array(
 'exif-ycbcrpositioning'            => 'Ρύθμιζμαν φωτεινότητας και χρωματί',
 'exif-xresolution'                 => 'Οριζόντιον ανάλυση',
 'exif-yresolution'                 => 'Κατακόρυφον ανάλυση',
-'exif-resolutionunit'              => 'Μονάδα μέτρησης ανάλυσης X και Y',
 'exif-stripoffsets'                => 'Τοποθέτηση δογμενίων εικόνας',
 'exif-stripbytecounts'             => 'Bytes ανά συμπιεσμένον λωρίδα',
 'exif-jpeginterchangeformat'       => 'Μετάθεση σε JPEG SOI',
 'exif-jpeginterchangeformatlength' => 'Bytes δογμενίων JPEG',
-'exif-transferfunction'            => 'Λειτουργία μεταφοράς',
 'exif-whitepoint'                  => "Χρωματικόν προσδιορισμός τ' άσπρου",
 'exif-primarychromaticities'       => 'Πρωτεύοντες χρωματισμοί',
 'exif-imagedescription'            => 'Τίτλος εικόνας',
@@ -1392,14 +1380,12 @@ $messages = array(
 
 # External editor support
 'edit-externally'      => "Αλλαγήν τ' αρχείου με προγράμματα ασα εξ μερέα",
-'edit-externally-help' => '(Τερέστεν τα [http://www.mediawiki.org/wiki/Manual:External_editors setup instructions] και θα ευρίετε κι άλλα πληροφορίας)',
+'edit-externally-help' => '(Τερέστεν τα [//www.mediawiki.org/wiki/Manual:External_editors setup instructions] και θα ευρίετε κι άλλα πληροφορίας)',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'ούλαι',
-'imagelistall'     => 'ούλαι',
-'watchlistall2'    => 'ούλαι',
-'namespacesall'    => 'ούλαι',
-'monthsall'        => 'ούλαι',
+'watchlistall2' => 'ούλαι',
+'namespacesall' => 'ούλαι',
+'monthsall'     => 'ούλαι',
 
 # Trackbacks
 'trackbackremove' => '([$1 Σβήσον])',

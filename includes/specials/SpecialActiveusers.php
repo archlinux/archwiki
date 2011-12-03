@@ -32,6 +32,16 @@
  */
 class ActiveUsersPager extends UsersPager {
 
+	/**
+	 * @var FormOptions
+	 */
+	protected $opts;
+
+	/**
+	 * @var Array
+	 */
+	protected $groups;
+
 	function __construct( $group = null ) {
 		global $wgRequest, $wgActiveUserDays;
 		$this->RCMaxAge = $wgActiveUserDays;
@@ -47,6 +57,10 @@ class ActiveUsersPager extends UsersPager {
 		$this->setupOptions();
 
 		parent::__construct();
+	}
+
+	function getTitle() {
+		return SpecialPage::getTitleFor( 'Activeusers' );
 	}
 
 	public function setupOptions() {

@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Jan 4, 2008
  *
@@ -64,7 +64,7 @@ class ApiLogout extends ApiBase {
 	}
 
 	public function getDescription() {
-		return 'This module is used to logout and clear session data';
+		return 'Log out and clear session data';
 	}
 
 	protected function getExamples() {
@@ -73,7 +73,11 @@ class ApiLogout extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Logout';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiLogout.php 70647 2010-08-07 19:59:42Z ialex $';
+		return __CLASS__ . ': $Id: ApiLogout.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

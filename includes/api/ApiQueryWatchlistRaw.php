@@ -1,10 +1,10 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Oct 4, 2008
  *
- * Copyright © 2008 Roan Kattouw <Firstname>.<Lastname>@home.nl
+ * Copyright © 2008 Roan Kattouw <Firstname>.<Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,10 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 		$this->run( $resultPageSet );
 	}
 
+	/**
+	 * @param $resultPageSet ApiPageSet
+	 * @return void
+	 */
 	private function run( $resultPageSet = null ) {
 		$this->selectNamedDB( 'watchlist', DB_SLAVE, 'watchlist' );
 
@@ -59,7 +63,7 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 		$prop = array_flip( (array)$params['prop'] );
 		$show = array_flip( (array)$params['show'] );
 		if ( isset( $show['changed'] ) && isset( $show['!changed'] ) ) {
-			$this->dieUsageMsg( array( 'show' ) );
+			$this->dieUsageMsg( 'show' );
 		}
 
 		$this->addTables( 'watchlist' );
@@ -201,6 +205,6 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryWatchlistRaw.php 70647 2010-08-07 19:59:42Z ialex $';
+		return __CLASS__ . ': $Id: ApiQueryWatchlistRaw.php 88416 2011-05-19 17:51:16Z hashar $';
 	}
 }

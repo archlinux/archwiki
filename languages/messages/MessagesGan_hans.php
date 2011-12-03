@@ -160,15 +160,6 @@ $messages = array(
 'index-category'                 => '做正索引𠮶页面',
 'noindex-category'               => '冇做索引𠮶页面',
 
-'mainpagetext'      => "'''安装正MediaWiki喽。'''",
-'mainpagedocfooter' => '参看[http://meta.wikimedia.org/wiki/Help:Contents 用户指南]里头会话到啷用wiki软件
-
-== 开始使用 ==
-
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings MediaWiki 配置设定列表]
-* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki 平常问题解答]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki 发布email清单]',
-
 'about'         => '关于',
 'article'       => '文章',
 'newwindow'     => '（开只新窗口）',
@@ -218,7 +209,6 @@ $messages = array(
 'history'           => '文章历史',
 'history_short'     => '历史',
 'updatedmarker'     => '最末道浏览后𠮶改动',
-'info_short'        => '消息',
 'printableversion'  => '可打印版本',
 'permalink'         => '永久链接',
 'print'             => '打印',
@@ -398,7 +388,6 @@ MySQL回到错误“$3: $4”。',
 'cascadeprotected'     => '个页已拖保护，因为佢拖“联锁保护”𠮶{{PLURAL:$1|一只|几只}}拖保护页包到：
 $2',
 'namespaceprotected'   => "倷冇权编写'''$1'''空间里度𠮶页面。",
-'customcssjsprotected' => '倷冇权编写个页，佢含到别𠮶用户𠮶个人设定。',
 'ns-specialprotected'  => '编写伓正{{ns:special}}空间𠮶页面。',
 
 # Virus scanner
@@ -469,7 +458,7 @@ $2',
 要系帐户创建不对𠮶话，倷就莫搭个只消息。',
 'loginlanguagelabel'         => '语言: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => '设过帐户密码',
 'resetpass_announce'        => '倷系用到临时email𠮶代码登入𠮶。要登正入，倷要到个首设定只新密码:',
 'resetpass_header'          => '设过密码',
@@ -493,8 +482,6 @@ $2',
 'extlink_tip'     => '外部链接（头上加 http://）',
 'headline_sample' => '标题文字',
 'headline_tip'    => '二级标题',
-'math_sample'     => '到个首扻入数学公式',
-'math_tip'        => '数学公式 （LaTeX）',
 'nowiki_sample'   => '到个首扻入非格式文本',
 'nowiki_tip'      => '扻入非格式文本',
 'image_tip'       => '扻进文件',
@@ -776,7 +763,6 @@ $2',
 'changepassword'            => '改过密码',
 'prefs-skin'                => '皮',
 'skin-preview'              => '（预览）',
-'prefs-math'                => '数学公式',
 'datedefault'               => '默认项目',
 'prefs-datetime'            => '日期同到时间',
 'prefs-personal'            => '用户介绍',
@@ -792,8 +778,6 @@ $2',
 'columns'                   => '竖:',
 'searchresultshead'         => '设置寻到𠮶结果',
 'resultsperpage'            => '设置寻到𠮶链接数',
-'contextlines'              => '设置寻到𠮶行数:',
-'contextchars'              => '设置寻到𠮶字数:',
 'stub-threshold'            => '<a href="#" class="stub">细文链接</a>格式门槛:',
 'recentchangesdays'         => '最近更改中𠮶显示日数:',
 'recentchangescount'        => '最近更改中𠮶编辑数:',
@@ -962,10 +946,6 @@ $2',
 'destfilename'                => '目标档案名:',
 'watchthisupload'             => '眏到个页',
 'filewasdeleted'              => '先前有只同名档案上传后又拖删吥嘞。上传个只档案之前倷非要检查$1。',
-'upload-wasdeleted'           => "'''警告: 倷于今上传𠮶档案系先前删过𠮶。'''
-
-倷要想正系真𠮶上传个只档案。
-为到方便起见，个只档案𠮶删除记录到下底提供嘞:",
 'filename-bad-prefix'         => "倷上传𠮶档案名系以'''\"\$1\"'''做开头𠮶，通常个种冇意义𠮶名字系数码相机度𠮶自动编排。请到倷𠮶档案拣过只更加有意义𠮶名字。",
 'upload-success-subj'         => '上传正嘞',
 
@@ -1245,9 +1225,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'watchlistanontext'    => '请$1眵吖或改吖倷𠮶监视列表。',
 'watchnologin'         => '冇登入',
 'watchnologintext'     => '倷要[[Special:UserLogin|登入]]起才改得正倷𠮶监视列表。',
-'addedwatch'           => '加到嘞监视列表',
 'addedwatchtext'       => "页面\"[[:\$1]]\" 加到嘞倷𠮶[[Special:Watchlist|监视列表]]。个页同佢𠮶讨论页𠮶全部改动以后都会列到许首，佢会用'''粗体''' 列到[[Special:RecentChanges|最近更改]]让倷更加容易识别。 倷以后要系拿佢到监视列表删卟佢𠮶话，就到导航条点吖“莫眏到”。",
-'removedwatch'         => '莫眏到',
 'removedwatchtext'     => '页面"$1"到倷𠮶监视列表删卟嘞。',
 'watch'                => '眏到',
 'watchthispage'        => '眏到个页',
@@ -1290,9 +1268,9 @@ $NEWPAGE
 
 本站: $PAGEEDITOR_WIKI 今后伓会通知倷将来𠮶改动，除非接到来到个页。倷也能设过倷全部监视页𠮶通知标记。
 
-{{SITENAME}}通知系统 – 会改卟倷𠮶监视列表设置，请去 {{fullurl:{{#special:Watchlist}}/edit}}
+{{SITENAME}}通知系统 – 会改卟倷𠮶监视列表设置，请去 {{canonicalurl:{{#special:EditWatchlist}}}}
 
-回馈同到别𠮶说明: {{fullurl:{{MediaWiki:Helppage}}}}',
+回馈同到别𠮶说明: {{canonicalurl:{{MediaWiki:Helppage}}}}',
 
 # Delete
 'deletepage'            => '删卟页面',
@@ -1468,7 +1446,6 @@ $1',
 # Block/unblock
 'blockip'                     => '封到IP地址',
 'blockiptext'                 => '用下底𠮶表格去阻止某一IP𠮶修改权限。除非倷系为到怕佢乱扤，接到非要符合[[{{MediaWiki:Policy-url}}|守则]]𠮶条件下才能啖做。请到下底话只确切原因（比如引用一只拖破坏𠮶页面）。',
-'ipaddress'                   => 'IP地址:',
 'ipadressorusername'          => 'IP地址或用户名:',
 'ipbexpiry'                   => '期限:',
 'ipbreason'                   => '原因:',
@@ -1481,7 +1458,6 @@ $1',
 ** 吓人／骚扰别𠮶
 ** 滥用帐号
 ** 乱起用户名',
-'ipbanononly'                 => '光防到匿名用户',
 'ipbcreateaccount'            => '防止开新帐号',
 'ipbemailban'                 => '防止用户发email',
 'ipbenableautoblock'          => '自动封锁个只用户最晏𠮶IP，同后来佢编写用过𠮶地址',
@@ -1505,9 +1481,7 @@ $1',
 'unblocked-id'                => '封禁$1拖删卟嘞',
 'ipblocklist'                 => '拖封IP列表',
 'ipblocklist-legend'          => '寻吖拖封锁𠮶用户',
-'ipblocklist-username'        => '用户名或IP地址:',
 'ipblocklist-submit'          => '寻',
-'blocklistline'               => '$1，$2封到$3 （$4）',
 'infiniteblock'               => '伓限期',
 'expiringblock'               => '$1 $2到期',
 'anononlyblock'               => '单限制匿名用户',
@@ -1523,7 +1497,7 @@ $1',
 'autoblocker'                 => '倷同"[[$1]]"共用一只IP，故系倷也拖自动锁到嘞。$1封锁𠮶缘故系"$2"。',
 'blocklogpage'                => '封锁日志',
 'blocklogentry'               => '[[$1]]拖封到$3 ，结束时间到$2',
-'blocklogtext'                => '个系用户封锁同解封操作𠮶日志。拖自动封锁𠮶IP冇列出。请参看[[Special:IPBlockList|拖封IP地址列表]]。',
+'blocklogtext'                => '个系用户封锁同解封操作𠮶日志。拖自动封锁𠮶IP冇列出。请参看[[Special:BlockList|拖封IP地址列表]]。',
 'unblocklogentry'             => '$1 拖解封嘞',
 'block-log-flags-anononly'    => '单限制匿名用户',
 'block-log-flags-nocreate'    => '禁止个只IP/用户新开帐户',
@@ -1625,7 +1599,7 @@ $1',
 'allmessagesdefault'        => '默认文字',
 'allmessagescurrent'        => '眼前𠮶文字',
 'allmessagestext'           => '个首列到全部制定得正𠮶系统界面。
-Please visit [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and [http://translatewiki.net translatewiki.net] if you wish to contribute to the generic MediaWiki localisation.',
+Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and [//translatewiki.net translatewiki.net] if you wish to contribute to the generic MediaWiki localisation.',
 'allmessagesnotsupportedDB' => "'''{{ns:special}}:系统界面功能'''关卟嘞（'''\$wgUseDatabaseMessages'''）。",
 
 # Thumbnails
@@ -1748,9 +1722,7 @@ Please visit [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation]
 'monobook.js' => '/* 伓再使用；请用[[MediaWiki:common.js]] */',
 
 # Metadata
-'nodublincore'      => 'Dublin Core RDF metadata到个只服务器用伓正。',
-'nocreativecommons' => 'Creative Commons RDF metadata到个只服务器用伓正。',
-'notacceptable'     => '个只网站服务器提供伓正倷𠮶用户端认得𠮶格式。',
+'notacceptable' => '个只网站服务器提供伓正倷𠮶用户端认得𠮶格式。',
 
 # Attribution
 'anonymous'        => '{{SITENAME}}𠮶匿名用户',
@@ -1771,33 +1743,6 @@ Please visit [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation]
 'spambot_username'    => 'MediaWiki 广告清除',
 'spam_reverting'      => '返回到伓包连到$1最晏𠮶版本',
 'spam_blanking'       => '全部包含连到$1𠮶改动，留空',
-
-# Info page
-'infosubtitle'   => '页面𠮶信息',
-'numedits'       => '编辑数 （文章）: $1',
-'numtalkedits'   => '编辑数 （讨论页）: $1',
-'numwatchers'    => '监视人数: $1',
-'numauthors'     => '作者人数 （文章）: $1',
-'numtalkauthors' => '作者人数 （讨论页）: $1',
-
-# Math options
-'mw_math_png'    => '全部使用PNG图像',
-'mw_math_simple' => '要系简单𠮶话都用HTML，不然就用PNG图像',
-'mw_math_html'   => '可以𠮶话都用HTML，不然就用PNG图像',
-'mw_math_source' => '显示系TeX代码 （文字浏览器用）',
-'mw_math_modern' => '新版浏览器𠮶建议',
-'mw_math_mathml' => '尽可能用MathML （试验中）',
-
-# Math errors
-'math_failure'          => '分析失败',
-'math_unknown_error'    => '未知错误',
-'math_unknown_function' => '未知函数',
-'math_lexing_error'     => '句法错误',
-'math_syntax_error'     => '文法错误',
-'math_image_error'      => 'PNG转换失败；请检查系否装正嘞latex, dvips, gs同到convert',
-'math_bad_tmpdir'       => '写伓正或建伓正数学公式临时目录',
-'math_bad_output'       => '写伓正或建伓正数学公式输出目录',
-'math_notexvc'          => '执行伓正"texvc"；请参看 math/README 再配置过。',
 
 # Patrolling
 'markaspatrolleddiff'                 => '标到系检查过𠮶',
@@ -1831,16 +1776,15 @@ $1',
 'nextdiff'     => '下一只差异→',
 
 # Media information
-'mediawarning'         => "'''警告''': 话伓定个只档案含到恶意代码，执行佢话伓定会损坏倷𠮶系统。",
-'imagemaxsize'         => '档案解释页𠮶图像大细限制到:',
-'thumbsize'            => '缩略图大细:',
-'widthheightpage'      => '$1×$2,$3页',
-'file-info'            => '档案大细: $1, MIME 类型: $2',
-'file-info-size'       => '$1 × $2 像素，档案大细：$3 ，MIME类型：$4',
-'file-nohires'         => '<small>冇更高分辨率𠮶图像。</small>',
-'svg-long-desc'        => 'SVG档案，表面大细： $1 × $2 像素，档案大细：$3',
-'show-big-image'       => '完整分辨率',
-'show-big-image-thumb' => '<small>个幅缩略图𠮶分辨率: $1 × $2 像素</small>',
+'mediawarning'    => "'''警告''': 话伓定个只档案含到恶意代码，执行佢话伓定会损坏倷𠮶系统。",
+'imagemaxsize'    => '档案解释页𠮶图像大细限制到:',
+'thumbsize'       => '缩略图大细:',
+'widthheightpage' => '$1×$2,$3页',
+'file-info'       => '档案大细: $1, MIME 类型: $2',
+'file-info-size'  => '$1 × $2 像素，档案大细：$3 ，MIME类型：$4',
+'file-nohires'    => '<small>冇更高分辨率𠮶图像。</small>',
+'svg-long-desc'   => 'SVG档案，表面大细： $1 × $2 像素，档案大细：$3',
+'show-big-image'  => '完整分辨率',
 
 # Special:NewFiles
 'newimages'             => '新建图像画廊',
@@ -1870,7 +1814,13 @@ $1',
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-imagewidth'                  => '阔',
@@ -1885,13 +1835,11 @@ $1',
 'exif-ycbcrpositioning'            => '黄色同洋红配置',
 'exif-xresolution'                 => '横分辨率',
 'exif-yresolution'                 => '直分辨率',
-'exif-resolutionunit'              => 'X轴同Y轴𠮶分辨率单位',
 'exif-stripoffsets'                => '图像资料位置',
 'exif-rowsperstrip'                => '每带行数',
 'exif-stripbytecounts'             => '每压缩带byte数',
 'exif-jpeginterchangeformat'       => 'JPEG SOI𠮶偏移量',
 'exif-jpeginterchangeformatlength' => 'JPEG𠮶byte数',
-'exif-transferfunction'            => '转移功能',
 'exif-whitepoint'                  => '白点色度',
 'exif-primarychromaticities'       => '主要𠮶色度',
 'exif-ycbcrcoefficients'           => '颜色空间转换矩阵系数',
@@ -1910,7 +1858,6 @@ $1',
 'exif-compressedbitsperpixel'      => '图像压缩模式',
 'exif-pixelydimension'             => '有效图像𠮶阔',
 'exif-pixelxdimension'             => '有效图像𠮶高',
-'exif-makernote'                   => '厂商摘要',
 'exif-usercomment'                 => '用户摘要',
 'exif-relatedsoundfile'            => '相关𠮶声气资料',
 'exif-datetimeoriginal'            => '资料创作时间',
@@ -1924,7 +1871,6 @@ $1',
 'exif-exposureprogram'             => '曝光模式',
 'exif-spectralsensitivity'         => '感光度',
 'exif-isospeedratings'             => 'ISO速率',
-'exif-oecf'                        => '光电转换因子',
 'exif-shutterspeedvalue'           => '快门速度',
 'exif-aperturevalue'               => '光圈',
 'exif-brightnessvalue'             => '亮度',
@@ -1937,7 +1883,6 @@ $1',
 'exif-focallength'                 => '焦距',
 'exif-subjectarea'                 => '主体区域',
 'exif-flashenergy'                 => '闪光灯强度',
-'exif-spatialfrequencyresponse'    => '空间频率反应',
 'exif-focalplanexresolution'       => '焦平面X轴𠮶分辨率',
 'exif-focalplaneyresolution'       => '焦平面Y轴𠮶分辨率',
 'exif-focalplaneresolutionunit'    => '焦平面𠮶分辨率单位',
@@ -1946,7 +1891,6 @@ $1',
 'exif-sensingmethod'               => '感光模式',
 'exif-filesource'                  => '档案来源',
 'exif-scenetype'                   => '场景类型',
-'exif-cfapattern'                  => 'CFA模式',
 'exif-customrendered'              => '自定义图像处理',
 'exif-exposuremode'                => '曝光模式',
 'exif-whitebalance'                => '白平衡',
@@ -2125,14 +2069,12 @@ $1',
 
 # External editor support
 'edit-externally'      => '用外部程式来编辑个只档案',
-'edit-externally-help' => '请参看[http://www.mediawiki.org/wiki/Manual:External_editors 设置步骤]了解别𠮶内容。',
+'edit-externally-help' => '请参看[//www.mediawiki.org/wiki/Manual:External_editors 设置步骤]了解别𠮶内容。',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => '全部',
-'imagelistall'     => '全部',
-'watchlistall2'    => '全部',
-'namespacesall'    => '全部',
-'monthsall'        => '全部',
+'watchlistall2' => '全部',
+'namespacesall' => '全部',
+'monthsall'     => '全部',
 
 # E-mail address confirmation
 'confirmemail'            => '确认email地址',
@@ -2224,12 +2166,12 @@ $1',
 'watchlistedit-noitems'        => '倷𠮶监视列表冇标题。',
 'watchlistedit-normal-title'   => '编写监视列表',
 'watchlistedit-normal-legend'  => '到监视列表移卟标题',
-'watchlistedit-normal-explain' => '倷𠮶监视列表𠮶标题会到下底显到。想移卟只标题，到佢前头勾吖，跟到按吖移除标题。倷也能[[Special:Watchlist/raw|编辑原始监视列表]]或[[Special:Watchlist/clear|移除所全部标题]]。',
+'watchlistedit-normal-explain' => '倷𠮶监视列表𠮶标题会到下底显到。想移卟只标题，到佢前头勾吖，跟到按吖移除标题。倷也能[[Special:EditWatchlist/raw|编辑原始监视列表]]或[[Special:Watchlist/clear|移除所全部标题]]。',
 'watchlistedit-normal-submit'  => '移除标题',
 'watchlistedit-normal-done'    => '$1只标题从倷𠮶监视列表移卟嘞:',
 'watchlistedit-raw-title'      => '编写原始监视列表',
 'watchlistedit-raw-legend'     => '编写原始监视列表',
-'watchlistedit-raw-explain'    => '倷𠮶监视列表𠮶标题会到下底显到，哈能利用个只表去加进同到移除标题；一行一只标题。扤完后，按更新监视列表。倷也能[[Special:Watchlist/edit|标准编辑器]]。',
+'watchlistedit-raw-explain'    => '倷𠮶监视列表𠮶标题会到下底显到，哈能利用个只表去加进同到移除标题；一行一只标题。扤完后，按更新监视列表。倷也能[[Special:EditWatchlist|标准编辑器]]。',
 'watchlistedit-raw-titles'     => '标题:',
 'watchlistedit-raw-submit'     => '更新监视列表',
 'watchlistedit-raw-done'       => '倷𠮶监视列表更新正嘞。',
@@ -2245,22 +2187,21 @@ $1',
 'unknown_extension_tag' => '伓认得𠮶扩展标签 "$1"',
 
 # Special:Version
-'version'                          => '版本',
-'version-extensions'               => '装正𠮶插件',
-'version-specialpages'             => '特别𠮶页面',
-'version-parserhooks'              => '解析器钩子',
-'version-variables'                => '变量',
-'version-other'                    => '别𠮶',
-'version-mediahandlers'            => '媒体处理程序',
-'version-extension-functions'      => '扩展功能',
-'version-parser-extensiontags'     => '解析器扩展标签',
-'version-skin-extension-functions' => '封皮插件功能',
-'version-hook-name'                => '钩子名',
-'version-hook-subscribedby'        => '订阅人',
-'version-version'                  => '（版本 $1）',
-'version-license'                  => '许可证',
-'version-software'                 => '装正𠮶软件',
-'version-software-version'         => '版本',
+'version'                      => '版本',
+'version-extensions'           => '装正𠮶插件',
+'version-specialpages'         => '特别𠮶页面',
+'version-parserhooks'          => '解析器钩子',
+'version-variables'            => '变量',
+'version-other'                => '别𠮶',
+'version-mediahandlers'        => '媒体处理程序',
+'version-extension-functions'  => '扩展功能',
+'version-parser-extensiontags' => '解析器扩展标签',
+'version-hook-name'            => '钩子名',
+'version-hook-subscribedby'    => '订阅人',
+'version-version'              => '（版本 $1）',
+'version-license'              => '许可证',
+'version-software'             => '装正𠮶软件',
+'version-software-version'     => '版本',
 
 # Special:FilePath
 'filepath'        => '文件路径',

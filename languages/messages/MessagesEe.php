@@ -491,7 +491,6 @@ Zã [[Special:Search|nuwo didi le wiki sia dzi]] kpɔ na axa yeyeawo.',
 'ipb-blocklist-contribs'   => '$1 ƒe nuŋɔŋlɔwo',
 'ipusubmit'                => 'Ɖe mɔxexe sia ɖa',
 'ipblocklist-submit'       => 'Dii',
-'blocklistline'            => '$1, $2 xemɔ na $3 ($4)',
 'infiniteblock'            => 'tegbee',
 'expiringblock'            => 'ewunu le gaƒoƒo $2 le ŋkeke $1 dzi',
 'createaccountblock'       => 'woxe mɔ na ŋkɔa ŋɔŋlɔ',
@@ -571,14 +570,12 @@ Wòateŋu akpɔ alesi woŋlɔe.',
 'ilsubmit'  => 'Dii',
 
 # External editor support
-'edit-externally-help' => '(Kpɔ [http://www.mediawiki.org/wiki/Manual:External_editors gɔmedzedze sewo] na kpekpeɖeŋu bubuwo.)',
+'edit-externally-help' => '(Kpɔ [//www.mediawiki.org/wiki/Manual:External_editors gɔmedzedze sewo] na kpekpeɖeŋu bubuwo.)',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'wokatã',
-'imagelistall'     => 'wokatã',
-'watchlistall2'    => 'katã',
-'namespacesall'    => 'wokatã',
-'monthsall'        => 'wokatã',
+'watchlistall2' => 'katã',
+'namespacesall' => 'wokatã',
+'monthsall'     => 'wokatã',
 
 # Multipage image navigation
 'imgmultipagenext' => 'axa yometɔ',

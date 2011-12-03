@@ -54,7 +54,7 @@ class PopulateSha1 extends Maintenance {
 		$imageTable = $dbw->tableName( 'image' );
 
 		if ( $method == 'pipe' ) {
-			// @fixme kill this and replace with a second unbuffered DB connection.
+			// @todo FIXME: Kill this and replace with a second unbuffered DB connection.
 			global $wgDBuser, $wgDBserver, $wgDBpassword, $wgDBname;
 			$cmd = 'mysql -u' . wfEscapeShellArg( $wgDBuser ) .
 				' -h' . wfEscapeShellArg( $wgDBserver ) .
@@ -68,7 +68,7 @@ class PopulateSha1 extends Maintenance {
 		foreach ( $res as $row ) {
 			if ( $i % 100 == 0 ) {
 				$this->output( sprintf( "Done %d of %d, %5.3f%%  \r", $i, $numRows, $i / $numRows * 100 ) );
-				wfWaitForSlaves( 5 );
+				wfWaitForSlaves();
 			}
 			$file = wfLocalFile( $row->img_name );
 			if ( !$file ) {

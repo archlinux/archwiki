@@ -23,7 +23,18 @@
  *
  */
 
-require ( dirname( __FILE__ ) . '/includes/WebStart.php' );
+// Bail if PHP is too low
+if ( !function_exists( 'version_compare' ) || version_compare( phpversion(), '5.2.3' ) < 0 ) {
+	require( dirname( __FILE__ ) . '/includes/PHPVersionError.php' );
+	wfPHPVersionError( 'load.php' );
+}
+
+if ( isset( $_SERVER['MW_COMPILED'] ) ) {
+	require ( 'phase3/includes/WebStart.php' );
+} else {
+	require ( dirname( __FILE__ ) . '/includes/WebStart.php' );
+}
+
 wfProfileIn( 'load.php' );
 
 // URL safety checks
@@ -38,5 +49,7 @@ $resourceLoader->respond( new ResourceLoaderContext( $resourceLoader, $wgRequest
 wfProfileOut( 'load.php' );
 wfLogProfilingData();
 
-// Shut down the database
-wfGetLBFactory()->shutdown();
+// Shut down the database.  foo()->bar() syntax is not supported in PHP4, and this file
+// needs to *parse* in PHP4, although we'll never get down here to worry about = vs =&
+$lb = wfGetLBFactory();
+$lb->shutdown();

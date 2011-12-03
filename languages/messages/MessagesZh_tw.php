@@ -24,24 +24,24 @@
  */
 
 $specialPageAliases = array(
-	'Disambiguations'           => array( '消歧義頁' ),
-	'Recentchanges'             => array( '近期變動' ),
 	'Ancientpages'              => array( '最舊頁面' ),
-	'Unblock'                   => array( '解除封鎖' ),
+	'Block'                     => array( '查封用戶' ),
 	'Blockme'                   => array( '封禁我' ),
-	'Blockip'                   => array( '查封用戶' ),
-	'Lockdb'                    => array( '鎖定數據庫' ),
-	'Unlockdb'                  => array( '解除數據庫鎖定' ),
-	'Userrights'                => array( '用戶權限' ),
-	'MIMEsearch'                => array( 'MIME搜索' ),
+	'Disambiguations'           => array( '消歧義頁' ),
 	'FileDuplicateSearch'       => array( '搜索重復文件' ),
-	'Unwatchedpages'            => array( '未被監視的頁面' ),
-	'Listredirects'             => array( '重定向頁面列表' ),
-	'Revisiondelete'            => array( '刪除或恢復版本' ),
-	'Randomredirect'            => array( '隨機重定向頁面' ),
-	'Withoutinterwiki'          => array( '沒有跨語言鏈接的頁面' ),
 	'Invalidateemail'           => array( '無法識別的電郵地址' ),
 	'LinkSearch'                => array( '搜索網頁鏈接' ),
+	'Listredirects'             => array( '重定向頁面列表' ),
+	'Lockdb'                    => array( '鎖定數據庫' ),
+	'MIMEsearch'                => array( 'MIME搜索' ),
+	'Randomredirect'            => array( '隨機重定向頁面' ),
+	'Recentchanges'             => array( '近期變動' ),
+	'Revisiondelete'            => array( '刪除或恢復版本' ),
+	'Unblock'                   => array( '解除封鎖' ),
+	'Unlockdb'                  => array( '解除數據庫鎖定' ),
+	'Unwatchedpages'            => array( '未被監視的頁面' ),
+	'Userrights'                => array( '用戶權限' ),
+	'Withoutinterwiki'          => array( '沒有跨語言鏈接的頁面' ),
 );
 
 $fallback = 'zh-hant';
@@ -170,14 +170,6 @@ $messages = array(
 # Categories related messages
 'subcategories' => '子分類',
 
-'mainpagedocfooter' => '請參閱 [http://meta.wikimedia.org/wiki/Help:Contents 使用者手冊] 以獲得使用此 wiki 軟體的訊息！
-
-== 入門 ==
-
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings MediaWiki 配置設定清單]
-* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki 常見問題解答]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki 發佈郵件清單]',
-
 # Cologne Blue skin
 'qbfind' => '尋找',
 
@@ -238,16 +230,15 @@ $messages = array(
 這也可能是{{SITENAME}}所使用的軟件出現了錯誤。',
 
 # General errors
-'readonlytext'         => '資料庫目前禁止輸入新內容及更改，
+'readonlytext'        => '資料庫目前禁止輸入新內容及更改，
 這很可能是由於資料庫正在維修，之後即可復原。
 管理員有如下解釋:
 <p>$1</p>',
-'cannotdelete'         => '無法刪除選定的頁面或圖片（它可能已經被其他人刪除了）。',
-'actionthrottledtext'  => '系統因為反垃圾編輯的考量，禁止如此頻繁地修改資料，請數分鐘後再嘗試。',
-'viewsourcetext'       => '你可以檢視並複製本頁面的原始碼。',
-'editinginterface'     => "'''警告：''' 您正在編輯的頁面是正用在軟體上的介面文字。改變此頁將影響其他用戶的介面外觀。如要翻譯，請考慮使用 [http://translatewiki.net/wiki/Main_Page?setlang=zh-hant translatewiki.net]，一個用來為MediaWiki軟體本地化的計畫。",
-'customcssjsprotected' => '您並無許可權去編輯這個頁面，因為它包含了另一位使用者的個人設定。',
-'ns-specialprotected'  => '在{{ns:special}}名字空間中的頁面是不可以編輯的。',
+'cannotdelete'        => '無法刪除選定的頁面或圖片（它可能已經被其他人刪除了）。',
+'actionthrottledtext' => '系統因為反垃圾編輯的考量，禁止如此頻繁地修改資料，請數分鐘後再嘗試。',
+'viewsourcetext'      => '你可以檢視並複製本頁面的原始碼。',
+'editinginterface'    => "'''警告：''' 您正在編輯的頁面是正用在軟體上的介面文字。改變此頁將影響其他用戶的介面外觀。如要翻譯，請考慮使用 [//translatewiki.net/wiki/Main_Page?setlang=zh-hant translatewiki.net]，一個用來為MediaWiki軟體本地化的計畫。",
+'ns-specialprotected' => '在{{ns:special}}名字空間中的頁面是不可以編輯的。',
 
 # Login and logout pages
 'logouttext'                 => '您現在已經登出。
@@ -276,7 +267,7 @@ $messages = array(
 'loginsuccess'               => '你現在以 "$1"的身份登入{{SITENAME}}。',
 'nosuchuser'                 => '找不到使用者 "$1"。
 檢查您的拼寫，或者用下面的表格[[Special:UserLogin/signup|建立一個新帳號]]。',
-'nosuchusershort'            => '沒有一個名為「<nowiki>$1</nowiki>」的使用者。請檢查您輸入的文字是否有錯誤。',
+'nosuchusershort'            => '沒有一個名為「$1」的使用者。請檢查您輸入的文字是否有錯誤。',
 'nouserspecified'            => '你需要指定一個使用者帳號。',
 'passwordtooshort'           => '您的密碼不正確或太短，不能少於$1個字元，而且必須跟使用者名不同。',
 'passwordremindertitle'      => '{{SITENAME}}密碼提醒',
@@ -305,7 +296,7 @@ $messages = array(
 
 如果該帳號建立錯誤的話，您可以忽略此訊息。',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'           => '更換密碼',
 'resetpass_announce'  => '您是透過臨時發送到郵件中的代碼登入的。要完成登入，您必須在這裡設定一個新密碼:',
 'resetpass_header'    => '更換帳號密碼',
@@ -334,7 +325,7 @@ $messages = array(
 'noarticletext'              => '此頁目前沒有內容，您可以在其它頁[[Special:Search/{{PAGENAME}}|搜索此頁標題]]，
 <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} 搜索有關日誌]，
 或[{{fullurl:{{FULLPAGENAME}}|action=edit}} 編輯此頁]</span>。',
-'userpage-userdoesnotexist'  => '使用者帳號「$1」未曾建立。請在建立／編輯這個頁面前先檢查一下。',
+'userpage-userdoesnotexist'  => '使用者帳號「<nowiki>$1</nowiki>」未曾建立。請在建立／編輯這個頁面前先檢查一下。',
 'clearyourcache'             => "'''注意:''' 在儲存以後, 您必須清除瀏覽器的快取才能看到所作出的改變。 '''Mozilla / Firefox / Safari:''' 按著 ''Shift'' 再點擊''重新整理''(或按下''Ctrl-Shift-R''，在蘋果Mac上按下''Cmd-Shift-R'')；'''IE:''' 按著 ''Ctrl'' 再點擊 ''重新整理''，或按下 ''Ctrl-F5''；'''Konqueror:''' 只需點擊 ''重新整理''；'''Opera:''' 使用者需要在 ''工具-設定'' 中完整地清除它們的快取。",
 'usercsspreview'             => "'''注意您只是在預覽您的個人 CSS, 還沒有儲存﹗'''",
 'userjspreview'              => "'''注意您只是在測試／預覽您的個人 JavaScript，還沒有儲存﹗'''",
@@ -645,15 +636,15 @@ $NEWPAGE
 
 --
 要改變您的監視列表設定，請參閱
-{{fullurl:{{#special:Watchlist}}/edit}}
+{{canonicalurl:{{#special:EditWatchlist}}}}
 
 回饋和進一步的說明:
-{{fullurl:{{MediaWiki:Helppage}}}}',
+{{canonicalurl:{{MediaWiki:Helppage}}}}',
 
 # Delete
 'confirmdeletetext' => '您即將從資料庫中永遠刪除一個頁面或圖片以及其歷史。
 請確定您要進行此項操作，並且了解其後果，同時您的行為符合[[{{MediaWiki:Policy-url}}]]。',
-'deletedtext'       => '「<nowiki>$1</nowiki>」已經被刪除。
+'deletedtext'       => '「$1」已經被刪除。
 最近刪除的紀錄請參見$2。',
 'deletedarticle'    => '已刪除「[[$1]]」',
 'dellogpagetext'    => '以下是最近刪除的紀錄列表。
@@ -733,7 +724,6 @@ $NEWPAGE
 ** 無禮的行為、攻擊／騷擾別人
 ** 濫用多個帳號
 ** 不能接受的使用者名',
-'ipbanononly'                 => '僅阻止匿名使用者',
 'ipbcreateaccount'            => '阻止建立新帳號',
 'ipbemailban'                 => '阻止使用者傳送E-mail',
 'ipbenableautoblock'          => '自動封鎖此使用者最後所用的IP位址，以及後來試圖編輯所用的所有位址',
@@ -752,7 +742,6 @@ $NEWPAGE
 'unblocked'                   => '[[User:$1|$1]] 的封鎖已經解除。',
 'unblocked-id'                => '封鎖 $1 已經被移除',
 'ipblocklist-legend'          => '搜尋一位已經被封鎖的使用者',
-'ipblocklist-username'        => '使用者名稱或IP地址:',
 'anononlyblock'               => '僅限匿名使用者',
 'noautoblockblock'            => '禁用自動封鎖',
 'createaccountblock'          => '禁止建立帳號',
@@ -760,7 +749,7 @@ $NEWPAGE
 'ipblocklist-no-results'      => '所要求的IP地址/使用者名沒有被封鎖。',
 'blocklink'                   => '禁封',
 'blocklogentry'               => '[[$1]]已被封鎖 $3 ，終止時間為$2',
-'blocklogtext'                => '這是關於使用者封鎖和解除封鎖操作的記錄。被自動封鎖的IP地址沒有被列出。請參閱[[Special:IPBlockList|被封鎖的IP地址和使用者列表]]。',
+'blocklogtext'                => '這是關於使用者封鎖和解除封鎖操作的記錄。被自動封鎖的IP地址沒有被列出。請參閱[[Special:BlockList|被封鎖的IP地址和使用者列表]]。',
 'block-log-flags-anononly'    => '僅限匿名使用者',
 'block-log-flags-nocreate'    => '禁止此IP/使用者建立新帳號',
 'block-log-flags-noautoblock' => '停用自動封鎖',
@@ -864,11 +853,6 @@ $NEWPAGE
 'spamprotectiontext' => '垃圾過濾器禁止保存您剛才提交的頁面，這可能是由於您所加入的外部網站連結所產生的問題。',
 'spam_reverting'     => '復原到不包含連結至$1的最近版本',
 
-# Math options
-'mw_math_png'    => '永遠使用PNG圖片',
-'mw_math_simple' => '如果是簡單的公式使用HTML，否則使用PNG圖片',
-'mw_math_html'   => '如果可以用HTML，否則用PNG圖片',
-
 # Patrolling
 'markedaspatrolledtext' => '選定的版本已被標記為已檢查.',
 
@@ -881,10 +865,9 @@ $NEWPAGE
 'nextdiff'     => '下一個→',
 
 # Media information
-'imagemaxsize'         => '在圖片描述頁對圖片大小限制為:',
-'file-nohires'         => '<small>無更高解析度可提供。</small>',
-'show-big-image'       => '完整解析度',
-'show-big-image-thumb' => '<small>這幅縮圖的解析度: $1 × $2 像素</small>',
+'imagemaxsize'   => '在圖片描述頁對圖片大小限制為:',
+'file-nohires'   => '<small>無更高解析度可提供。</small>',
+'show-big-image' => '完整解析度',
 
 # Special:NewFiles
 'newimages'     => '新建圖片畫廊',
@@ -917,7 +900,6 @@ Variants for Chinese language
 'exif-samplesperpixel'           => '像素數',
 'exif-xresolution'               => '水準解析度',
 'exif-yresolution'               => '垂直解析度',
-'exif-resolutionunit'            => 'X 軸與 Y 軸解析度單位',
 'exif-stripoffsets'              => '圖片數據區',
 'exif-imagedescription'          => '圖片標題',
 'exif-compressedbitsperpixel'    => '圖片壓縮模式',
@@ -939,7 +921,7 @@ Variants for Chinese language
 'exif-lightsource-15' => '白色螢光 （WW 3200    3700K）',
 
 # External editor support
-'edit-externally-help' => '請參見[http://www.mediawiki.org/wiki/Manual:External_editors 設定步驟]了解詳細資訊。',
+'edit-externally-help' => '請參見[//www.mediawiki.org/wiki/Manual:External_editors 設定步驟]了解詳細資訊。',
 
 # E-mail address confirmation
 'confirmemail'            => '確認電子郵件地址',

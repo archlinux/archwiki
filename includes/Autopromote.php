@@ -8,7 +8,7 @@ class Autopromote {
 	/**
 	 * Get the groups for the given user based on $wgAutopromote.
 	 *
-	 * @param $user The user to get the groups for
+	 * @param $user User The user to get the groups for
 	 * @return array Array of groups to promote to.
 	 */
 	public static function getAutopromoteGroups( User $user ) {
@@ -28,8 +28,47 @@ class Autopromote {
 	}
 
 	/**
+	 * Get the groups for the given user based on the given criteria.
+	 *
+	 * Does not return groups the user already belongs to or has once belonged.
+	 *
+	 * @param $user The user to get the groups for
+	 * @param $event String key in $wgAutopromoteOnce (each one has groups/criteria)
+	 *
+	 * @return array Groups the user should be promoted to.
+	 *
+	 * @see $wgAutopromoteOnce
+	 */
+	public static function getAutopromoteOnceGroups( User $user, $event ) {
+		global $wgAutopromoteOnce;
+
+		$promote = array();
+
+		if ( isset( $wgAutopromoteOnce[$event] ) && count( $wgAutopromoteOnce[$event] ) ) {
+			$currentGroups = $user->getGroups();
+			$formerGroups = $user->getFormerGroups();
+			foreach ( $wgAutopromoteOnce[$event] as $group => $cond ) {
+				// Do not check if the user's already a member
+				if ( in_array( $group, $currentGroups ) ) {
+					continue;
+				}
+				// Do not autopromote if the user has belonged to the group
+				if ( in_array( $group, $formerGroups ) ) {
+					continue;
+				}
+				// Finally - check the conditions
+				if ( self::recCheckCondition( $cond, $user ) ) {
+					$promote[] = $group;
+				}
+			}
+		}
+
+		return $promote;
+	}
+
+	/**
 	 * Recursively check a condition.  Conditions are in the form
-	 *   array( '&' or '|' or '^', cond1, cond2, ... )
+	 *   array( '&' or '|' or '^' or '!', cond1, cond2, ... )
 	 * where cond1, cond2, ... are themselves conditions; *OR*
 	 *   APCOND_EMAILCONFIRMED, *OR*
 	 *   array( APCOND_EMAILCONFIRMED ), *OR*
@@ -40,7 +79,7 @@ class Autopromote {
 	 * self::checkCondition for evaluation of the latter type.
 	 *
 	 * @param $cond Mixed: a condition, possibly containing other conditions
-	 * @param $user The user to check the conditions against
+	 * @param $user User The user to check the conditions against
 	 * @return bool Whether the condition is true
 	 */
 	private static function recCheckCondition( $cond, User $user ) {
@@ -48,7 +87,7 @@ class Autopromote {
 
 		if ( is_array( $cond ) && count( $cond ) >= 2 && in_array( $cond[0], $validOps ) ) {
 			# Recursive condition
-			if ( $cond[0] == '&' ) {
+			if ( $cond[0] == '&' ) { // AND (all conds pass)
 				foreach ( array_slice( $cond, 1 ) as $subcond ) {
 					if ( !self::recCheckCondition( $subcond, $user ) ) {
 						return false;
@@ -56,7 +95,7 @@ class Autopromote {
 				}
 
 				return true;
-			} elseif ( $cond[0] == '|' ) {
+			} elseif ( $cond[0] == '|' ) { // OR (at least one cond passes)
 				foreach ( array_slice( $cond, 1 ) as $subcond ) {
 					if ( self::recCheckCondition( $subcond, $user ) ) {
 						return true;
@@ -64,18 +103,13 @@ class Autopromote {
 				}
 
 				return false;
-			} elseif ( $cond[0] == '^' ) {
-				$res = null;
-				foreach ( array_slice( $cond, 1 ) as $subcond ) {
-					if ( is_null( $res ) ) {
-						$res = self::recCheckCondition( $subcond, $user );
-					} else {
-						$res = ( $res xor self::recCheckCondition( $subcond, $user ) );
-					}
+			} elseif ( $cond[0] == '^' ) { // XOR (exactly one cond passes)
+				if ( count( $cond ) > 3 ) {
+					wfWarn( 'recCheckCondition() given XOR ("^") condition on three or more conditions. Check your $wgAutopromote and $wgAutopromoteOnce settings.' );
 				}
-
-				return $res;
-			} elseif ( $cond[0] == '!' ) {
+				return self::recCheckCondition( $cond[1], $user )
+					xor self::recCheckCondition( $cond[2], $user );
+			} elseif ( $cond[0] == '!' ) { // NOT (no conds pass)
 				foreach ( array_slice( $cond, 1 ) as $subcond ) {
 					if ( self::recCheckCondition( $subcond, $user ) ) {
 						return false;
@@ -101,7 +135,7 @@ class Autopromote {
 	 * ates them.
 	 *
 	 * @param $cond Array: A condition, which must not contain other conditions
-	 * @param $user The user to check the condition against
+	 * @param $user User The user to check the condition against
 	 * @return bool Whether the condition is true for the user
 	 */
 	private static function checkCondition( $cond, User $user ) {
@@ -112,7 +146,7 @@ class Autopromote {
 
 		switch( $cond[0] ) {
 			case APCOND_EMAILCONFIRMED:
-				if ( User::isValidEmailAddr( $user->getEmail() ) ) {
+				if ( Sanitizer::validateEmail( $user->getEmail() ) ) {
 					if ( $wgEmailAuthentication ) {
 						return (bool)$user->getEmailAuthenticationTimestamp();
 					} else {
@@ -137,6 +171,8 @@ class Autopromote {
 				return IP::isInRange( wfGetIP(), $cond[1] );
 			case APCOND_BLOCKED:
 				return $user->isBlocked();
+			case APCOND_ISBOT:
+				return in_array( 'bot', User::getGroupPermissions( $user->getGroups() ) );
 			default:
 				$result = null;
 				wfRunHooks( 'AutopromoteCondition', array( $cond[0], array_slice( $cond, 1 ), $user, &$result ) );

@@ -95,16 +95,21 @@ class SpecialLog extends SpecialPage {
 	}
 
 	private function show( FormOptions $opts, array $extraConds ) {
-		global $wgOut, $wgUser;
+		global $wgOut;
 
 		# Create a LogPager item to get the results and a LogEventsList item to format them...
-		$loglist = new LogEventsList( $wgUser->getSkin(), $wgOut, 0 );
+		$loglist = new LogEventsList( $this->getSkin(), $wgOut, 0 );
 		$pager = new LogPager( $loglist, $opts->getValue( 'type' ), $opts->getValue( 'user' ),
 			$opts->getValue( 'page' ), $opts->getValue( 'pattern' ), $extraConds, $opts->getValue( 'year' ),
 			$opts->getValue( 'month' ), $opts->getValue( 'tagfilter' ) );
 
 		# Set title and add header
 		$loglist->showHeader( $pager->getType() );
+
+		# Set relevant user
+		if ( $pager->getUser() ) {
+			$this->getSkin()->setRelevantUser( User::newFromName( $pager->getUser() ) );
+		}
 
 		# Show form options
 		$loglist->showOptions( $pager->getType(), $pager->getUser(), $pager->getPage(), $pager->getPattern(),

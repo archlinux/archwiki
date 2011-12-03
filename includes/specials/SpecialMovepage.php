@@ -27,6 +27,10 @@
  * @ingroup SpecialPage
  */
 class MovePageForm extends UnlistedSpecialPage {
+
+	/**
+	 * @var Title
+	 */
 	var $oldTitle, $newTitle; # Objects
 	var $reason; # Text input
 	var $moveTalk, $deleteAndMove, $moveSubpages, $fixRedirects, $leaveRedirect, $moveOverShared; # Checks
@@ -70,7 +74,9 @@ class MovePageForm extends UnlistedSpecialPage {
 		# Check rights
 		$permErrors = $this->oldTitle->getUserPermissionsErrors( 'move', $wgUser );
 		if( !empty( $permErrors ) ) {
-			$wgOut->showPermissionsErrorPage( $permErrors );
+			// Auto-block user's IP if the account was "hard" blocked
+			$user->spreadAnyEditBlock();
+			$this->getOutput()->showPermissionsErrorPage( $permErrors );
 			return;
 		}
 
@@ -103,12 +109,14 @@ class MovePageForm extends UnlistedSpecialPage {
 	function showForm( $err ) {
 		global $wgOut, $wgUser, $wgContLang, $wgFixDoubleRedirects;
 
-		$skin = $wgUser->getSkin();
+		$skin = $this->getSkin();
 
 		$oldTitleLink = $skin->link( $this->oldTitle );
 
 		$wgOut->setPagetitle( wfMsg( 'move-page', $this->oldTitle->getPrefixedText() ) );
-		$wgOut->setSubtitle( wfMsg( 'move-page-backlink', $oldTitleLink ) );
+		$skin->setRelevantTitle( $this->oldTitle );
+
+		$wgOut->addModules( 'mediawiki.special.movePage' );
 
 		$newTitle = $this->newTitle;
 
@@ -211,7 +219,7 @@ class MovePageForm extends UnlistedSpecialPage {
 			 Xml::element( 'legend', null, wfMsg( 'move-page-legend' ) ) .
 			 Xml::openElement( 'table', array( 'border' => '0', 'id' => 'mw-movepage-table' ) ) .
 			 "<tr>
-			 	<td class='mw-label'>" .
+				<td class='mw-label'>" .
 					wfMsgHtml( 'movearticle' ) .
 				"</td>
 				<td class='mw-input'>
@@ -233,7 +241,7 @@ class MovePageForm extends UnlistedSpecialPage {
 				"</td>
 				<td class='mw-input'>" .
 					Html::element( 'textarea', array( 'name' => 'wpReason', 'id' => 'wpReason', 'cols' => 60, 'rows' => 2,
-					'maxlength' => 200 ), $this->reason ) .
+					'maxlength' => 200 ), $this->reason ) . // maxlength byte limit is enforce in mediawiki.special.movePage.js
 				"</td>
 			</tr>"
 		);
@@ -398,7 +406,7 @@ class MovePageForm extends UnlistedSpecialPage {
 		# Do the actual move.
 		$error = $ot->moveTo( $nt, true, $this->reason, $createRedirect );
 		if ( $error !== true ) {
-			# FIXME: show all the errors in a list, not just the first one
+			# @todo FIXME: Show all the errors in a list, not just the first one
 			$this->showForm( reset( $error ) );
 			return;
 		}
@@ -407,7 +415,7 @@ class MovePageForm extends UnlistedSpecialPage {
 			DoubleRedirectJob::fixRedirects( 'move', $ot, $nt );
 		}
 
-		wfRunHooks( 'SpecialMovepageAfterMove', array( &$this , &$ot , &$nt ) )	;
+		wfRunHooks( 'SpecialMovepageAfterMove', array( &$this, &$ot, &$nt ) );
 
 		$wgOut->setPagetitle( wfMsg( 'pagemovedsub' ) );
 
@@ -442,10 +450,10 @@ class MovePageForm extends UnlistedSpecialPage {
 		#
 		# If the target namespace doesn't allow subpages, moving with subpages
 		# would mean that you couldn't move them back in one operation, which
-		# is bad.  FIXME: A specific error message should be given in this
-		# case.
+		# is bad.
+		# @todo FIXME: A specific error message should be given in this case.
 
-		// FIXME: Use Title::moveSubpages() here
+		// @todo FIXME: Use Title::moveSubpages() here
 		$dbr = wfGetDB( DB_MASTER );
 		if( $this->moveSubpages && (
 			MWNamespace::hasSubpages( $nt->getNamespace() ) || (
@@ -486,7 +494,7 @@ class MovePageForm extends UnlistedSpecialPage {
 		}
 
 		$extraOutput = array();
-		$skin = $wgUser->getSkin();
+		$skin = $this->getSkin();
 		$count = 1;
 		foreach( $extraPages as $oldSubpage ) {
 			if( $ot->equals( $oldSubpage ) ) {
@@ -561,7 +569,7 @@ class MovePageForm extends UnlistedSpecialPage {
 
 		# Re-clear the file redirect cache, which may have been polluted by
 		# parsing in messages above. See CR r56745.
-		# FIXME: needs a more robust solution inside FileRepo.
+		# @todo FIXME: Needs a more robust solution inside FileRepo.
 		if( $ot->getNamespace() == NS_FILE ) {
 			RepoGroup::singleton()->getLocalRepo()->invalidateImageRedirect( $ot );
 		}
@@ -573,7 +581,7 @@ class MovePageForm extends UnlistedSpecialPage {
 	}
 
 	function showSubpages( $title, $out ) {
-		global $wgUser, $wgLang;
+		global $wgLang;
 
 		if( !MWNamespace::hasSubpages( $title->getNamespace() ) )
 			return;
@@ -590,7 +598,7 @@ class MovePageForm extends UnlistedSpecialPage {
 		}
 
 		$out->addWikiMsg( 'movesubpagetext', $wgLang->formatNum( $count ) );
-		$skin = $wgUser->getSkin();
+		$skin = $this->getSkin();
 		$out->addHTML( "<ul>\n" );
 
 		foreach( $subpages as $subpage ) {

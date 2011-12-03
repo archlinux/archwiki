@@ -31,13 +31,18 @@ class ParserCache {
 	 *
 	 * @param $memCached Object
 	 */
-	function __construct( $memCached ) {
+	protected function __construct( $memCached ) {
 		if ( !$memCached ) {
 			throw new MWException( "Tried to create a ParserCache with an invalid memcached" );
 		}
 		$this->mMemc = $memCached;
 	}
 
+	/**
+	 * @param $article Article
+	 * @param $hash string
+	 * @return mixed|string
+	 */
 	protected function getParserOutputKey( $article, $hash ) {
 		global $wgRequest;
 
@@ -49,6 +54,10 @@ class ParserCache {
 		return $key;
 	}
 
+	/**
+	 * @param $article Article
+	 * @return mixed|string
+	 */
 	protected function getOptionsKey( $article ) {
 		$pageid = $article->getID();
 		return wfMemcKey( 'pcache', 'idoptions', "{$pageid}" );
@@ -63,6 +72,9 @@ class ParserCache {
 	 * $article. For example give a Chinese interface to a user with
 	 * English preferences. That's why we take into account *all* user
 	 * options. (r70809 CR)
+	 *
+	 * @param $article Article
+	 * @param $popts ParserOptions
 	 */
 	function getETag( $article, $popts ) {
 		return 'W/"' . $this->getParserOutputKey( $article,
@@ -72,6 +84,9 @@ class ParserCache {
 
 	/**
 	 * Retrieve the ParserOutput from ParserCache, even if it's outdated.
+	 * @param $article Article
+	 * @param $popts ParserOptions
+	 * @return ParserOutput|false
 	 */
 	public function getDirty( $article, $popts ) {
 		$value = $this->get( $article, $popts, true );
@@ -82,6 +97,9 @@ class ParserCache {
 	 * Used to provide a unique id for the PoolCounter.
 	 * It would be preferable to have this code in get()
 	 * instead of having Article looking in our internals.
+	 *
+	 * @param $article Article
+	 * @param $popts ParserOptions
 	 */
 	public function getKey( $article, $popts, $useOutdated = true ) {
 		global $wgCacheEpoch;
@@ -116,6 +134,12 @@ class ParserCache {
 	/**
 	 * Retrieve the ParserOutput from ParserCache.
 	 * false if not found or outdated.
+	 *
+	 * @param $article Article
+	 * @param $popts ParserOptions
+	 * @param $useOutdated
+	 *
+	 * @return ParserOutput|false
 	 */
 	public function get( $article, $popts, $useOutdated = false ) {
 		global $wgCacheEpoch;
@@ -150,6 +174,11 @@ class ParserCache {
 		}
 
 		wfDebug( "Found.\n" );
+		
+		// The edit section preference may not be the appropiate one in 
+		// the ParserOutput, as we are not storing it in the parsercache 
+		// key. Force it here. See bug 31445.
+		$value->setEditSectionTokens( $popts->getEditSection() );
 
 		if ( !$useOutdated && $value->expired( $touched ) ) {
 			wfIncrStats( "pcache_miss_expired" );
@@ -157,9 +186,6 @@ class ParserCache {
 			wfDebug( "ParserOutput key expired, touched $touched, epoch $wgCacheEpoch, cached $cacheTime\n" );
 			$value = false;
 		} else {
-			if ( isset( $value->mTimestamp ) ) {
-				$article->mTimestamp = $value->mTimestamp;
-			}
 			wfIncrStats( "pcache_hit" );
 		}
 
@@ -167,7 +193,12 @@ class ParserCache {
 		return $value;
 	}
 
-
+	/**
+	 * @param $parserOutput ParserOutput
+	 * @param $article Article
+	 * @param $popts ParserOptions
+	 * @return void
+	 */
 	public function save( $parserOutput, $article, $popts ) {
 		$expire = $parserOutput->getCacheExpiry();
 
@@ -183,7 +214,8 @@ class ParserCache {
 
 			$optionsKey->setContainsOldMagic( $parserOutput->containsOldMagic() );
 
-			$parserOutputKey = $this->getParserOutputKey( $article, $popts->optionsHash( $optionsKey->mUsedOptions ) );
+			$parserOutputKey = $this->getParserOutputKey( $article,
+				$popts->optionsHash( $optionsKey->mUsedOptions ) );
 
 			// Save the timestamp so that we don't have to load the revision row on view
 			$parserOutput->mTimestamp = $article->getTimestamp();

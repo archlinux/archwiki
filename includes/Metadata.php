@@ -1,6 +1,5 @@
 <?php
 /**
- * Provides DublinCore and CreativeCommons metadata
  *
  * Copyright 2004, Evan Prodromou <evan@wikitravel.org>.
  *
@@ -29,15 +28,12 @@ abstract class RdfMetaData {
 	 * Constructor
 	 * @param $article Article object
 	 */
-	public function __construct( Article $article ) {
+	public function __construct( Page $article ) {
 		$this->mArticle = $article;
 	}
 
 	public abstract function show();
 
-	/**
-	 *
-	 */
 	protected function setup() {
 		global $wgOut, $wgRequest;
 
@@ -55,9 +51,6 @@ abstract class RdfMetaData {
 		}
 	}
 
-	/**
-	 *
-	 */
 	protected function reallyFullUrl() {
 		return $this->mArticle->getTitle()->getFullURL();
 	}
@@ -65,7 +58,7 @@ abstract class RdfMetaData {
 	protected function basics() {
 		global $wgLanguageCode, $wgSitename;
 
-		$this->element( 'title', $this->mArticle->mTitle->getText() );
+		$this->element( 'title', $this->mArticle->getTitle()->getText() );
 		$this->pageOrString( 'publisher', wfMsg( 'aboutpage' ), $wgSitename );
 		$this->element( 'language', $wgLanguageCode );
 		$this->element( 'type', 'Text' );
@@ -95,10 +88,11 @@ abstract class RdfMetaData {
 	}
 
 	protected function pageOrString( $name, $page, $str ) {
-		if( $page instanceof Title )
+		if( $page instanceof Title ) {
 			$nt = $page;
-		else
+		} else {
 			$nt = Title::newFromText( $page );
+		}
 
 		if( !$nt || $nt->getArticleID() == 0 ){
 			$this->element( $name, $str );
@@ -107,6 +101,10 @@ abstract class RdfMetaData {
 		}
 	}
 
+	/**
+	 * @param $name string
+	 * @param $title Title
+	 */
 	protected function page( $name, $title ) {
 		$this->url( $name, $title->getFullUrl() );
 	}
@@ -140,9 +138,9 @@ abstract class RdfMetaData {
 		if( $wgRightsPage && ( $nt = Title::newFromText( $wgRightsPage ) )
 			&& ($nt->getArticleID() != 0)) {
 			$this->page('rights', $nt);
-		} else if( $wgRightsUrl ){
+		} elseif( $wgRightsUrl ){
 			$this->url('rights', $wgRightsUrl);
-		} else if( $wgRightsText ){
+		} elseif( $wgRightsText ){
 			$this->element( 'rights', $wgRightsText );
 		}
 	}
@@ -198,125 +196,3 @@ abstract class RdfMetaData {
 	}
 }
 
-class DublinCoreRdf extends RdfMetaData {
-
-	public function show(){
-		if( $this->setup() ){
-			$this->prologue();
-			$this->basics();
-			$this->epilogue();
-		}
-	}
-
-	/**
-	 * begin of the page
-	 */
-	protected function prologue() {
-		global $wgOutputEncoding;
-
-		$url = htmlspecialchars( $this->reallyFullUrl() );
-		print <<<PROLOGUE
-<?xml version="1.0" encoding="{$wgOutputEncoding}" ?>
-<!DOCTYPE rdf:RDF PUBLIC "-//DUBLIN CORE//DCMES DTD 2002/07/31//EN" "http://dublincore.org/documents/2002/07/31/dcmes-xml/dcmes-xml-dtd.dtd">
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:dc="http://purl.org/dc/elements/1.1/">
-	<rdf:Description rdf:about="{$url}">
-
-PROLOGUE;
-	}
-
-	/**
-	 * end of the page
-	 */
-	protected function epilogue() {
-		print <<<EPILOGUE
-	</rdf:Description>
-</rdf:RDF>
-EPILOGUE;
-	}
-}
-
-class CreativeCommonsRdf extends RdfMetaData {
-
-	public function show(){
-		if( $this->setup() ){
-			global $wgRightsUrl;
-
-			$url = $this->reallyFullUrl();
-
-			$this->prologue();
-			$this->subPrologue('Work', $url);
-
-			$this->basics();
-			if( $wgRightsUrl ){
-				$url = htmlspecialchars( $wgRightsUrl );
-				print "\t\t<cc:license rdf:resource=\"$url\" />\n";
-			}
-
-			$this->subEpilogue('Work');
-
-			if( $wgRightsUrl ){
-				$terms = $this->getTerms( $wgRightsUrl );
-				if( $terms ){
-					$this->subPrologue( 'License', $wgRightsUrl );
-					$this->license( $terms );
-					$this->subEpilogue( 'License' );
-				}
-			}
-		}
-
-		$this->epilogue();
-	}
-
-	protected function prologue() {
-		global $wgOutputEncoding;
-		echo <<<PROLOGUE
-<?xml version='1.0'  encoding="{$wgOutputEncoding}" ?>
-<rdf:RDF xmlns:cc="http://web.resource.org/cc/"
-	xmlns:dc="http://purl.org/dc/elements/1.1/"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-
-PROLOGUE;
-	}
-
-	protected function subPrologue( $type, $url ){
-		$url = htmlspecialchars( $url );
-		echo "\t<cc:{$type} rdf:about=\"{$url}\">\n";
-	}
-
-	protected function subEpilogue($type) {
-		echo "\t</cc:{$type}>\n";
-	}
-
-	protected function license($terms) {
-
-		foreach( $terms as $term ){
-			switch( $term ) {
-			 case 're':
-				$this->term('permits', 'Reproduction'); break;
-			 case 'di':
-				$this->term('permits', 'Distribution'); break;
-			 case 'de':
-				$this->term('permits', 'DerivativeWorks'); break;
-			 case 'nc':
-				$this->term('prohibits', 'CommercialUse'); break;
-			 case 'no':
-				$this->term('requires', 'Notice'); break;
-			 case 'by':
-				$this->term('requires', 'Attribution'); break;
-			 case 'sa':
-				$this->term('requires', 'ShareAlike'); break;
-			 case 'sc':
-				$this->term('requires', 'SourceCode'); break;
-			}
-		}
-	}
-
-	protected function term( $term, $name ){
-		print "\t\t<cc:{$term} rdf:resource=\"http://web.resource.org/cc/{$name}\" />\n";
-	}
-
-	protected function epilogue() {
-		echo "</rdf:RDF>\n";
-	}
-}

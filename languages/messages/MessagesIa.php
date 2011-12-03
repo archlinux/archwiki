@@ -41,95 +41,96 @@ $namespaceAliases = array(
 );
 
 $specialPageAliases = array(
-	'DoubleRedirects'           => array( 'Redirectiones_duple' ),
+	'Activeusers'               => array( 'Usatores_active' ),
+	'Allmessages'               => array( 'Tote_le_messages' ),
+	'Allpages'                  => array( 'Tote_le_paginas' ),
+	'Ancientpages'              => array( 'Paginas_ancian' ),
+	'Blankpage'                 => array( 'Pagina_vacue' ),
+	'Block'                     => array( 'Blocar', 'Blocar_IP', 'Blocar_usator' ),
+	'Blockme'                   => array( 'Blocar_me' ),
+	'Booksources'               => array( 'Fontes_de_libros' ),
 	'BrokenRedirects'           => array( 'Redirectiones_rupte' ),
-	'Disambiguations'           => array( 'Disambiguationes' ),
-	'Userlogin'                 => array( 'Aperir_session', 'Identificar' ),
-	'Userlogout'                => array( 'Clauder_session', 'Disconnecter' ),
+	'Categories'                => array( 'Categorias' ),
+	'ChangePassword'            => array( 'Cambiar_contrasigno' ),
+	'ComparePages'              => array( 'Comparar_paginas' ),
+	'Confirmemail'              => array( 'Confirmar_e-mail' ),
+	'Contributions'             => array( 'Contributiones' ),
 	'CreateAccount'             => array( 'Crear_conto' ),
-	'Preferences'               => array( 'Preferentias' ),
-	'Watchlist'                 => array( 'Observatorio' ),
-	'Recentchanges'             => array( 'Modificationes_recente' ),
-	'Upload'                    => array( 'Incargar', 'Cargar' ),
+	'Deadendpages'              => array( 'Paginas_sin_exito' ),
+	'DeletedContributions'      => array( 'Contributiones_delite' ),
+	'Disambiguations'           => array( 'Disambiguationes' ),
+	'DoubleRedirects'           => array( 'Redirectiones_duple' ),
+	'Emailuser'                 => array( 'Inviar_e-mail_a_un_usator' ),
+	'Export'                    => array( 'Exportar' ),
+	'Fewestrevisions'           => array( 'Le_minus_versiones' ),
+	'FileDuplicateSearch'       => array( 'Recerca_de_files_duplice' ),
+	'Filepath'                  => array( 'Cammino_al_file' ),
+	'Import'                    => array( 'Importar' ),
+	'Invalidateemail'           => array( 'Invalidar_e-mail' ),
+	'BlockList'                 => array( 'Lista_de_blocadas', 'Lista_de_blocadas_IP' ),
+	'LinkSearch'                => array( 'Recerca_de_ligamines' ),
+	'Listadmins'                => array( 'Lista_de_administratores' ),
+	'Listbots'                  => array( 'Lista_de_robots' ),
 	'Listfiles'                 => array( 'Lista_de_files', 'Lista_de_imagines' ),
-	'Newimages'                 => array( 'Nove_files', 'Nove_imagines' ),
-	'Listusers'                 => array( 'Lista_de_usatores' ),
 	'Listgrouprights'           => array( 'Lista_del_derectos_de_gruppos' ),
-	'Statistics'                => array( 'Statisticas' ),
-	'Randompage'                => array( 'Aleatori', 'Pagina_aleatori' ),
+	'Listredirects'             => array( 'Lista_de_redirectiones' ),
+	'Listusers'                 => array( 'Lista_de_usatores' ),
+	'Lockdb'                    => array( 'Blocar_BDD' ),
+	'Log'                       => array( 'Registro', 'Registros' ),
 	'Lonelypages'               => array( 'Paginas_orphanate' ),
-	'Uncategorizedpages'        => array( 'Paginas_non_categorisate' ),
-	'Uncategorizedcategories'   => array( 'Categorias_non_categorisate' ),
-	'Uncategorizedimages'       => array( 'Files_non_categorisate', 'Imagines_non_categorisate' ),
-	'Uncategorizedtemplates'    => array( 'Patronos_non_categorisate' ),
-	'Unusedcategories'          => array( 'Categorias_non_usate' ),
-	'Unusedimages'              => array( 'Files_non_usate', 'Imagines_non_usate' ),
-	'Wantedpages'               => array( 'Paginas_desirate', 'Ligamines_rupte' ),
-	'Wantedcategories'          => array( 'Categorias_desirate' ),
-	'Wantedfiles'               => array( 'Files_desirate' ),
-	'Wantedtemplates'           => array( 'Patronos_desirate' ),
+	'Longpages'                 => array( 'Paginas_longe' ),
+	'MergeHistory'              => array( 'Fusionar_historia' ),
+	'MIMEsearch'                => array( 'Recerca_MIME' ),
+	'Mostcategories'            => array( 'Le_plus_categorias' ),
+	'Mostimages'                => array( 'Files_le_plus_ligate', 'Le_plus_files', 'Le_plus_imagines' ),
 	'Mostlinked'                => array( 'Paginas_le_plus_ligate', 'Le_plus_ligate' ),
 	'Mostlinkedcategories'      => array( 'Categorias_le_plus_ligate', 'Categorias_le_plus_usate' ),
 	'Mostlinkedtemplates'       => array( 'Patronos_le_plus_ligate', 'Patronos_le_plus_usate' ),
-	'Mostimages'                => array( 'Files_le_plus_ligate', 'Le_plus_files', 'Le_plus_imagines' ),
-	'Mostcategories'            => array( 'Le_plus_categorias' ),
 	'Mostrevisions'             => array( 'Le_plus_versiones' ),
-	'Fewestrevisions'           => array( 'Le_minus_versiones' ),
-	'Shortpages'                => array( 'Paginas_curte' ),
-	'Longpages'                 => array( 'Paginas_longe' ),
-	'Newpages'                  => array( 'Paginas_nove', 'Nove_paginas' ),
-	'Ancientpages'              => array( 'Paginas_ancian' ),
-	'Deadendpages'              => array( 'Paginas_sin_exito' ),
-	'Protectedpages'            => array( 'Paginas_protegite' ),
-	'Protectedtitles'           => array( 'Titulos_protegite' ),
-	'Allpages'                  => array( 'Tote_le_paginas' ),
-	'Prefixindex'               => array( 'Indice_de_prefixos' ),
-	'Ipblocklist'               => array( 'Lista_de_blocadas', 'Lista_de_blocadas_IP' ),
-	'Specialpages'              => array( 'Paginas_special' ),
-	'Contributions'             => array( 'Contributiones' ),
-	'Emailuser'                 => array( 'Inviar_e-mail_a_un_usator' ),
-	'Confirmemail'              => array( 'Confirmar_e-mail' ),
-	'Whatlinkshere'             => array( 'Referentias_a_iste_pagina' ),
-	'Recentchangeslinked'       => array( 'Modificationes_recente_ligate', 'Modificationes_connexe' ),
 	'Movepage'                  => array( 'Renominar_pagina' ),
-	'Blockme'                   => array( 'Blocar_me' ),
-	'Booksources'               => array( 'Fontes_de_libros' ),
-	'Categories'                => array( 'Categorias' ),
-	'Export'                    => array( 'Exportar' ),
-	'Allmessages'               => array( 'Tote_le_messages' ),
-	'Log'                       => array( 'Registro', 'Registros' ),
-	'Blockip'                   => array( 'Blocar', 'Blocar_IP', 'Blocar_usator' ),
-	'Undelete'                  => array( 'Restaurar' ),
-	'Import'                    => array( 'Importar' ),
-	'Lockdb'                    => array( 'Blocar_BDD' ),
-	'Unlockdb'                  => array( 'Disblocar_BDD' ),
-	'Userrights'                => array( 'Derectos_de_usatores' ),
-	'MIMEsearch'                => array( 'Recerca_MIME' ),
-	'FileDuplicateSearch'       => array( 'Recerca_de_files_duplice' ),
-	'Unwatchedpages'            => array( 'Paginas_non_observate' ),
-	'Listredirects'             => array( 'Lista_de_redirectiones' ),
-	'Revisiondelete'            => array( 'Deletion_de_versiones' ),
-	'Unusedtemplates'           => array( 'Patronos_non_usate' ),
-	'Randomredirect'            => array( 'Redirection_aleatori' ),
+	'Mycontributions'           => array( 'Mi_contributiones' ),
 	'Mypage'                    => array( 'Mi_pagina' ),
 	'Mytalk'                    => array( 'Mi_discussion' ),
-	'Mycontributions'           => array( 'Mi_contributiones' ),
-	'Listadmins'                => array( 'Lista_de_administratores' ),
-	'Listbots'                  => array( 'Lista_de_robots' ),
+	'Newimages'                 => array( 'Nove_files', 'Nove_imagines' ),
+	'Newpages'                  => array( 'Paginas_nove', 'Nove_paginas' ),
+	'PasswordReset'             => array( 'Reinitialisar_contrasigno' ),
 	'Popularpages'              => array( 'Paginas_popular' ),
+	'Preferences'               => array( 'Preferentias' ),
+	'Prefixindex'               => array( 'Indice_de_prefixos' ),
+	'Protectedpages'            => array( 'Paginas_protegite' ),
+	'Protectedtitles'           => array( 'Titulos_protegite' ),
+	'Randompage'                => array( 'Aleatori', 'Pagina_aleatori' ),
+	'Randomredirect'            => array( 'Redirection_aleatori' ),
+	'Recentchanges'             => array( 'Modificationes_recente' ),
+	'Recentchangeslinked'       => array( 'Modificationes_recente_ligate', 'Modificationes_connexe' ),
+	'Revisiondelete'            => array( 'Deletion_de_versiones' ),
+	'RevisionMove'              => array( 'Displaciar_versiones' ),
 	'Search'                    => array( 'Recerca' ),
-	'Resetpass'                 => array( 'Cambiar_contrasigno' ),
-	'Withoutinterwiki'          => array( 'Sin_interwiki' ),
-	'MergeHistory'              => array( 'Fusionar_historia' ),
-	'Filepath'                  => array( 'Cammino_al_file' ),
-	'Invalidateemail'           => array( 'Invalidar_e-mail' ),
-	'Blankpage'                 => array( 'Pagina_vacue' ),
-	'LinkSearch'                => array( 'Recerca_de_ligamines' ),
-	'DeletedContributions'      => array( 'Contributiones_delite' ),
+	'Shortpages'                => array( 'Paginas_curte' ),
+	'Specialpages'              => array( 'Paginas_special' ),
+	'Statistics'                => array( 'Statisticas' ),
 	'Tags'                      => array( 'Etiquettas' ),
-	'Activeusers'               => array( 'Usatores_active' ),
-	'ComparePages'              => array( 'Comparar_paginas' ),
-	'Badtitle'                  => array( 'Titulo_invalide' ),
+	'Uncategorizedcategories'   => array( 'Categorias_non_categorisate' ),
+	'Uncategorizedimages'       => array( 'Files_non_categorisate', 'Imagines_non_categorisate' ),
+	'Uncategorizedpages'        => array( 'Paginas_non_categorisate' ),
+	'Uncategorizedtemplates'    => array( 'Patronos_non_categorisate' ),
+	'Undelete'                  => array( 'Restaurar' ),
+	'Unlockdb'                  => array( 'Disblocar_BDD' ),
+	'Unusedcategories'          => array( 'Categorias_non_usate' ),
+	'Unusedimages'              => array( 'Files_non_usate', 'Imagines_non_usate' ),
+	'Unusedtemplates'           => array( 'Patronos_non_usate' ),
+	'Unwatchedpages'            => array( 'Paginas_non_observate' ),
+	'Upload'                    => array( 'Incargar', 'Cargar' ),
+	'Userlogin'                 => array( 'Aperir_session', 'Identificar' ),
+	'Userlogout'                => array( 'Clauder_session', 'Disconnecter' ),
+	'Userrights'                => array( 'Derectos_de_usatores' ),
+	'Wantedcategories'          => array( 'Categorias_desirate' ),
+	'Wantedfiles'               => array( 'Files_desirate' ),
+	'Wantedpages'               => array( 'Paginas_desirate', 'Ligamines_rupte' ),
+	'Wantedtemplates'           => array( 'Patronos_desirate' ),
+	'Watchlist'                 => array( 'Observatorio' ),
+	'Whatlinkshere'             => array( 'Referentias_a_iste_pagina' ),
+	'Withoutinterwiki'          => array( 'Sin_interwiki' ),
 );
 
 $messages = array(
@@ -164,8 +165,8 @@ $messages = array(
 'tog-shownumberswatching'     => 'Monstrar le numero de usatores que observa le pagina',
 'tog-oldsig'                  => 'Signatura existente:',
 'tog-fancysig'                => 'Tractar signatura como wikitexto (sin ligamine automatic)',
-'tog-externaleditor'          => 'Usar un editor externe qua standard (pro expertos solmente, necessita configuration special in tu computator. [http://www.mediawiki.org/wiki/Manual:External_editors Plus informationes.])',
-'tog-externaldiff'            => "Usar un programma ''diff'' externe qua standard (pro expertos solmente, necessita configuration special in tu computator. [http://www.mediawiki.org/wiki/Manual:External_editors Plus informationes.])",
+'tog-externaleditor'          => 'Usar un editor externe qua standard (pro expertos solmente, necessita configuration special in tu computator. [//www.mediawiki.org/wiki/Manual:External_editors Plus informationes.])',
+'tog-externaldiff'            => "Usar un programma ''diff'' externe qua standard (pro expertos solmente, necessita configuration special in tu computator. [//www.mediawiki.org/wiki/Manual:External_editors Plus informationes.])",
 'tog-showjumplinks'           => 'Activar ligamines de accessibilitate "saltar a"',
 'tog-uselivepreview'          => 'Usar previsualisation in directo (require JavaScript) (experimental)',
 'tog-forceeditsummary'        => 'Avisar me si io non entra un summario de modification',
@@ -262,14 +263,7 @@ $messages = array(
 'listingcontinuesabbrev'         => 'cont.',
 'index-category'                 => 'Paginas indexate',
 'noindex-category'               => 'Paginas non indexate',
-
-'mainpagetext'      => "'''MediaWiki ha essite installate con successo.'''",
-'mainpagedocfooter' => 'Consulta le [http://meta.wikimedia.org/wiki/Help:Contents Guida del usator] pro informationes super le uso del software wiki.
-
-== Pro initiar ==
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Lista de configurationes]
-* [http://www.mediawiki.org/wiki/Manual:FAQ FAQ a proposito de MediaWiki]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Lista de diffusion pro annuncios de nove versiones de MediaWiki]',
+'broken-file-category'           => 'Paginas con ligamines rupte a files',
 
 'about'         => 'A proposito',
 'article'       => 'Pagina de contento',
@@ -316,15 +310,15 @@ $messages = array(
 'help'              => 'Adjuta',
 'search'            => 'Recerca',
 'searchbutton'      => 'Cercar',
-'go'                => 'Ir',
-'searcharticle'     => 'Ir',
+'go'                => 'Va',
+'searcharticle'     => 'Va',
 'history'           => 'Historia del pagina',
 'history_short'     => 'Historia',
 'updatedmarker'     => 'actualisate post mi ultime visita',
-'info_short'        => 'Information',
 'printableversion'  => 'Version imprimibile',
 'permalink'         => 'Ligamine permanente',
 'print'             => 'Imprimer',
+'view'              => 'Leger',
 'edit'              => 'Modificar',
 'create'            => 'Crear',
 'editthispage'      => 'Modificar iste pagina',
@@ -332,6 +326,7 @@ $messages = array(
 'delete'            => 'Deler',
 'deletethispage'    => 'Deler iste pagina',
 'undelete_short'    => 'Restaurar {{PLURAL:$1|un modification|$1 modificationes}}',
+'viewdeleted_short' => 'Vider {{PLURAL:$1|un modification|$1 modificationes}} delite',
 'protect'           => 'Proteger',
 'protect_change'    => 'cambiar',
 'protectthispage'   => 'Proteger iste pagina',
@@ -415,6 +410,8 @@ $1',
 'toc'                     => 'Contento',
 'showtoc'                 => 'revelar',
 'hidetoc'                 => 'celar',
+'collapsible-collapse'    => 'Plicar',
+'collapsible-expand'      => 'Displicar',
 'thisisdeleted'           => 'Vider o restaurar $1?',
 'viewdeleted'             => 'Vider $1?',
 'restorelink'             => '{{PLURAL:$1|un modification|$1 modificationes}} delite',
@@ -426,6 +423,8 @@ $1',
 'page-rss-feed'           => 'Syndication RSS de "$1"',
 'page-atom-feed'          => 'Syndication Atom de "$1"',
 'red-link-title'          => '$1 (pagina non existe)',
+'sort-descending'         => 'Mitter in ordine descendente',
+'sort-ascending'          => 'Mitter in ordine ascendente',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'Pagina',
@@ -513,12 +512,13 @@ Per favor reprova post alcun minutas.',
 'protectedinterface'   => 'Iste pagina contine texto pro le interfacie del software, e es protegite pro impedir le abuso.',
 'editinginterface'     => "'''Attention:''' Le texto de iste pagina face parte del interfacie pro le software.
 Omne modification a iste pagina cambiara le apparentia del interfacie pro altere usatores.
-Pro traductiones, per favor considera usar [http://translatewiki.net/wiki/Main_Page?setlang=ia translatewiki.net], le projecto pro localisar MediaWiki.",
+Pro traductiones, per favor considera usar [//translatewiki.net/wiki/Main_Page?setlang=ia translatewiki.net], le projecto pro localisar MediaWiki.",
 'sqlhidden'            => '(Consulta SQL non monstrate)',
 'cascadeprotected'     => 'Iste pagina ha essite protegite contra modificationes, proque illo es includite in le sequente {{PLURAL:$1|pagina, le qual|paginas, le quales}} es protegite usante le option "cascada":
 $2',
 'namespaceprotected'   => "Tu non ha le permission de modificar paginas in le spatio de nomines '''$1'''.",
-'customcssjsprotected' => 'Tu non ha le permission de modificar iste pagina perque illo contine le configuration personal de un altere usator.',
+'customcssprotected'   => 'Tu non ha le permission de modificar iste pagina de CSS perque illo contine le configuration personal de un altere usator.',
+'customjsprotected'    => 'Tu non ha le permission de modificar iste pagina de JavaScript perque illo contine le configuration personal de un altere usator.',
 'ns-specialprotected'  => 'Le paginas special non es modificabile.',
 'titleprotected'       => "Iste titulo ha essite protegite contra creation per [[User:$1|$1]].
 Le motivo specificate es ''$2''.",
@@ -556,6 +556,7 @@ Non oblida personalisar tu [[Special:Preferences|preferentias in {{SITENAME}}]].
 'createaccount'              => 'Crear conto',
 'gotaccount'                 => "Tu jam ha un conto? '''$1'''.",
 'gotaccountlink'             => 'Aperir session',
+'userlogin-resetlink'        => 'Datos de authentication oblidate?',
 'createaccountmail'          => 'per e-mail',
 'createaccountreason'        => 'Motivo:',
 'badretype'                  => 'Le duo contrasignos que tu scribeva non es identic.',
@@ -570,13 +571,15 @@ Per favor activa lo, postea aperi un session con tu nove nomine de usator e cont
 'nocookieslogin'             => "{{SITENAME}} usa ''cookies'' pro mantener le sessiones del usatores.
 Tu ha disactivate le functionalitate del ''cookies''.
 Per favor activa lo e reprova.",
+'nocookiesfornew'            => 'Le conto de usator non esseva create, proque nos non poteva confirmar su origine.
+Verifica que tu ha activate le "cookies", recarga iste pagina e reproba.',
 'noname'                     => 'Tu non specificava un nomine de usator valide.',
 'loginsuccesstitle'          => 'Session aperite con successo',
 'loginsuccess'               => "'''Tu es ora authenticate in {{SITENAME}} como \"\$1\".'''",
 'nosuchuser'                 => 'Non existe un usator con le nomine "$1".
 In le nomines de usator se distingue inter majusculas e minusculas.
 Verifica le orthographia, o [[Special:UserLogin/signup|crea un nove conto]].',
-'nosuchusershort'            => 'Non existe un usator con le nomine "<nowiki>$1</nowiki>".
+'nosuchusershort'            => 'Non existe un usator con le nomine "$1".
 Verifica le orthographia.',
 'nouserspecified'            => 'Tu debe specificar un nomine de usator.',
 'login-userblocked'          => 'Iste usator es blocate. Apertura de session non permittite.',
@@ -627,13 +630,14 @@ Tu pote ignorar iste message si iste conto ha essite create in error.',
 'usernamehasherror'          => 'Le nomine de usator non pote continer grillias/cardinales/signos de numero ("#")',
 'login-throttled'            => 'Tu ha facite troppo de tentativas de identification.
 Per favor attende ante de probar lo novemente.',
+'login-abort-generic'        => 'Apertura de session non succedite - Abortate',
 'loginlanguagelabel'         => 'Lingua: $1',
 'suspicious-userlogout'      => 'Le requesta de clauder le session ha essite refusate proque illo pare haber essite inviate per un navigator o proxy de cache defectuose.',
 
 # E-mail sending
 'php-mail-error-unknown' => 'Error incognite in le function mail() de PHP',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Cambiar contrasigno',
 'resetpass_announce'        => 'Tu ha aperite un session con un codice temporari que tu recipeva in e-mail.
 Pro completar le accesso, tu debe definir un nove contrasigno hic:',
@@ -652,6 +656,41 @@ Pro completar le accesso, tu debe definir un nove contrasigno hic:',
 Es possibile que tu ha ja cambiate tu contrasigno o requestate un nove contrasigno temporari.',
 'resetpass-temp-password'   => 'Contrasigno temporari:',
 
+# Special:PasswordReset
+'passwordreset'                => 'Reinitialisar contrasigno',
+'passwordreset-text'           => 'Complete iste formulario pro reciper un rememoration in e-mail del datos de tu conto.',
+'passwordreset-legend'         => 'Reinitialisar contrasigno',
+'passwordreset-disabled'       => 'Le reinitialisation de contrasignos ha essite disactivate in iste wiki.',
+'passwordreset-pretext'        => '{{PLURAL:$1||Entra un del elementos de datos hic infra}}',
+'passwordreset-username'       => 'Nomine de usator:',
+'passwordreset-domain'         => 'Dominio:',
+'passwordreset-email'          => 'Adresse de e-mail:',
+'passwordreset-emailtitle'     => 'Detalios del conto in {{SITENAME}}',
+'passwordreset-emailtext-ip'   => 'Un persona (probabilemente tu, ab le adresse IP $1) requestava un rememoration del
+detalios de tu conto in {{SITENAME}} ($4). Le {{PLURAL:$3|conto|contos}} de usator sequente es
+associate con iste adresse de e-mail:
+
+$2
+
+Iste {{PLURAL:$3|contrasigno|contrasignos}} temporari expirara post {{PLURAL:$5|un die|$5 dies}}.
+Tu deberea ora aperir session e eliger un nove contrasigno. Si un altere persona faceva iste
+requesta, o si tu te ha rememorate tu contrasigno original e non plus
+vole cambiar lo, tu pote ignorar iste message e continuar a usar le ancian
+contrasigno.',
+'passwordreset-emailtext-user' => 'Le usator $1 in {{SITENAME}} requestava un rememoration del detalios de tu conto in {{SITENAME}}
+($4). Le {{PLURAL:$3|conto|contos}} de usator sequente es associate con iste adresse de e-mail:
+
+$2
+
+Iste {{PLURAL:$3|contrasigno|contrasignos}} temporari expirara post {{PLURAL:$5|un die|$5 dies}}.
+Tu deberea ora aperir session e eliger un nove contrasigno. Si un altere persona faceva iste
+requesta, o si tu te ha rememorate tu contrasigno original e non plus
+vole cambiar lo, tu pote ignorar iste message e continuar a usar le ancian
+contrasigno.',
+'passwordreset-emailelement'   => 'Nomine de usator: $1
+Contrasigno temporari: $2',
+'passwordreset-emailsent'      => 'Un e-mail de rememoration ha essite inviate.',
+
 # Edit page toolbar
 'bold_sample'     => 'Texto grasse',
 'bold_tip'        => 'Texto grasse',
@@ -663,8 +702,6 @@ Es possibile que tu ha ja cambiate tu contrasigno o requestate un nove contrasig
 'extlink_tip'     => 'Ligamine externe (non oblida le prefixo http://)',
 'headline_sample' => 'Texto del titulo',
 'headline_tip'    => 'Titulo de nivello 2',
-'math_sample'     => 'Inserer formula hic',
-'math_tip'        => 'Formula mathematic (LaTeX)',
 'nowiki_sample'   => 'Inserer texto non formatate hic',
 'nowiki_tip'      => 'Ignorar formatation wiki',
 'image_sample'    => 'Exemplo.jpg',
@@ -755,7 +792,7 @@ o [{{fullurl:{{FULLPAGENAME}}|action=edit}} modificar iste pagina]</span>.',
 'noarticletext-nopermission'       => 'Al momento il non ha texto in iste pagina.
 Tu pote [[Special:Search/{{PAGENAME}}|cercar le titulo de iste pagina]] in altere paginas,
 o <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} cercar in le registros pertinente].</span>',
-'userpage-userdoesnotexist'        => 'Le conto de usator "$1" non es registrate. Per favor verifica que tu vole crear/modificar iste pagina.',
+'userpage-userdoesnotexist'        => 'Le conto de usator "<nowiki>$1</nowiki>" non es registrate. Per favor verifica que tu vole crear/modificar iste pagina.',
 'userpage-userdoesnotexist-view'   => 'Le conto de usator "$1" non es registrate.',
 'blocked-notice-logextract'        => 'Iste usator es actualmente blocate.
 Le ultime entrata del registro de blocadas es reproducite ci infra pro information:',
@@ -795,6 +832,7 @@ Si illo ancora non va, prova [[Special:UserLogout|clauder tu session]] e aperir 
 'token_suffix_mismatch'            => "'''Tu modification ha essite refusate proque tu cliente corrumpeva le characteres de punctuation in le indicio de modification.
 Iste refusa es pro evitar le corruption del texto del pagina.
 Isto pote occurrer quando tu usa un servicio problematic de ''proxy'' anonyme a base de web.'''",
+'edit_form_incomplete'             => "'''Certe partes del formulario de modification non attingeva le servitor; re-verifica que tu modificationes es intacte e reproba.'''",
 'editing'                          => 'Modification de $1',
 'editingsection'                   => 'Modification de $1 (section)',
 'editingcomment'                   => 'Modification de $1 (nove section)',
@@ -1033,7 +1071,7 @@ Per favor verifica le registros.',
 # Suppression log
 'suppressionlog'     => 'Registro de suppressiones',
 'suppressionlogtext' => 'Infra es un lista de deletiones e blocadas que involve contento que es celate de administratores.
-Vide le [[Special:IPBlockList|lista de blocadas IP]] pro le lista de bannimentos e blocadas actualmente in operation.',
+Vide le [[Special:BlockList|lista de blocadas IP]] pro le lista de bannimentos e blocadas actualmente in operation.',
 
 # History merging
 'mergehistory'                     => 'Fusionar historias del paginas',
@@ -1145,12 +1183,13 @@ Tu pote cercar via Google in le interim.
 Nota que lor indices del contento de {{SITENAME}} pote esser obsolete.',
 
 # Quickbar
-'qbsettings'               => 'Barra rapide',
-'qbsettings-none'          => 'Necun',
-'qbsettings-fixedleft'     => 'Fixe a sinistra',
-'qbsettings-fixedright'    => 'Fixe a dextra',
-'qbsettings-floatingleft'  => 'Flottante a sinistra',
-'qbsettings-floatingright' => 'Flottante a dextra',
+'qbsettings'                => 'Barra rapide',
+'qbsettings-none'           => 'Necun',
+'qbsettings-fixedleft'      => 'Fixe a sinistra',
+'qbsettings-fixedright'     => 'Fixe a dextra',
+'qbsettings-floatingleft'   => 'Flottante a sinistra',
+'qbsettings-floatingright'  => 'Flottante a dextra',
+'qbsettings-directionality' => 'Fixe, dependente del direction de scriptura de tu lingua',
 
 # Preferences page
 'preferences'                   => 'Preferentias',
@@ -1161,9 +1200,10 @@ Nota que lor indices del contento de {{SITENAME}} pote esser obsolete.',
 'changepassword'                => 'Cambiar contrasigno',
 'prefs-skin'                    => 'Apparentia',
 'skin-preview'                  => 'Previsualisation',
-'prefs-math'                    => 'Mathematica',
 'datedefault'                   => 'Nulle preferentia',
+'prefs-beta'                    => 'Functiones beta',
 'prefs-datetime'                => 'Data e hora',
+'prefs-labs'                    => 'Functiones experimental',
 'prefs-personal'                => 'Profilo del usator',
 'prefs-rc'                      => 'Modificationes recente',
 'prefs-watchlist'               => 'Observatorio',
@@ -1185,8 +1225,6 @@ Nota que lor indices del contento de {{SITENAME}} pote esser obsolete.',
 'columns'                       => 'Columnas:',
 'searchresultshead'             => 'Recerca',
 'resultsperpage'                => 'Resultatos per pagina:',
-'contextlines'                  => 'Lineas per resultato:',
-'contextchars'                  => 'Characteres de contexto per linea:',
 'stub-threshold'                => 'Limite pro formatar le ligamines in <a href="#" class="stub">stilo de peciettas</a> (bytes):',
 'stub-threshold-disabled'       => 'Disactivate',
 'recentchangesdays'             => 'Numero de dies a monstrar in modificationes recente:',
@@ -1199,7 +1237,7 @@ Ecce un valor aleatorimente generate que tu pote usar: $1',
 'savedprefs'                    => 'Tu preferentias ha essite confirmate.',
 'timezonelegend'                => 'Fuso horari:',
 'localtime'                     => 'Hora local:',
-'timezoneuseserverdefault'      => 'Usar le hora del servitor',
+'timezoneuseserverdefault'      => 'Usar le valor predefinite del wiki ($1)',
 'timezoneuseoffset'             => 'Altere (specifica le differentia)',
 'timezoneoffset'                => 'Differentia¹:',
 'servertime'                    => 'Hora del servitor:',
@@ -1248,7 +1286,8 @@ Illo debe haber minus de $1 {{PLURAL:$1|character|characteres}}.',
 'email'                         => 'E-mail',
 'prefs-help-realname'           => 'Le nomine real es optional.
 Si tu opta pro dar lo, isto essera usate pro dar te attribution pro tu contributiones.',
-'prefs-help-email'              => 'Le adresse de e-mail es optional, ma es necessari pro le reinitialisation de tu contrasigno, in caso que tu lo oblida. Tu pote etiam optar pro permitter que altere personas te contacta via tu pagina de usator o de discussion, sin necessitate de revelar tu identitate.',
+'prefs-help-email'              => 'Le adresse de e-mail es optional, ma es necessari pro le reinitialisation de tu contrasigno, in caso que tu lo oblida.',
+'prefs-help-email-others'       => 'Tu pote etiam optar pro permitter que altere personas te contacta via tu pagina de usator o de discussion, sin necessitate de revelar tu identitate.',
 'prefs-help-email-required'     => 'Le adresse de e-mail es requirite.',
 'prefs-info'                    => 'Informationes de base',
 'prefs-i18n'                    => 'Internationalisation',
@@ -1373,15 +1412,15 @@ Si tu opta pro dar lo, isto essera usate pro dar te attribution pro tu contribut
 'right-userrights'            => 'Modificar tote le derectos de usator',
 'right-userrights-interwiki'  => 'Modificar le derectos de usatores in altere wikis',
 'right-siteadmin'             => 'Blocar e disblocar le base de datos',
-'right-reset-passwords'       => 'Redefinir le contrasigno de altere usatores',
 'right-override-export-depth' => 'Exportar paginas includente paginas ligate usque a un profunditate de 5',
 'right-sendemail'             => 'Inviar e-mail a altere usatores',
 
 # User rights log
-'rightslog'      => 'Registro de derectos de usator',
-'rightslogtext'  => 'Isto es un registro de cambios in derectos de usator.',
-'rightslogentry' => 'cambiava le gruppos del quales $1 es membro de $2 a $3',
-'rightsnone'     => '(nulle)',
+'rightslog'                  => 'Registro de derectos de usator',
+'rightslogtext'              => 'Isto es un registro de cambios in derectos de usator.',
+'rightslogentry'             => 'cambiava le gruppos del quales $1 es membro de $2 a $3',
+'rightslogentry-autopromote' => 'ha essite automaticamente promovite de $2 a $3',
+'rightsnone'                 => '(nulle)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read'                 => 'leger iste pagina',
@@ -1504,13 +1543,13 @@ Vide le [[Special:NewFiles|galeria de nove files]] pro un presentation plus visu
 'illegalfilename'             => 'Le nomine de file "$1" contine characteres que non es permittite in le titulos de paginas.
 Per favor renomina le file e tenta re-incargar lo.',
 'badfilename'                 => 'Le nomine del imagine esseva cambiate a "$1".',
-'filetype-mime-mismatch'      => 'Le extension del nomine del file non corresponde al typo MIME.',
+'filetype-mime-mismatch'      => 'Le extension del nomine del file ".$1" non corresponde a su typo MIME detegite ($2).',
 'filetype-badmime'            => 'Non es permittite incargar files del typo MIME "$1".',
 'filetype-bad-ie-mime'        => 'Non pote incargar iste file proque Internet Explorer lo detegerea como "$1", le qual es un typo de file prohibite e potentialmente periculose.',
 'filetype-unwanted-type'      => "'''\".\$1\"''' es un typo de file non desirate.
 Le {{PLURAL:\$3|typo|typos}} de file preferite es \$2.",
-'filetype-banned-type'        => "Le typo de file '''\".\$1\"''' non es permittite.
-Le {{PLURAL:\$3|typo|typos}} de file permittite es \$2.",
+'filetype-banned-type'        => '\'\'\'".$1"\'\'\' non es {{PLURAL:$4|un typo|typos}} de file permittite.
+Le {{PLURAL:$3|typo|typos}} de file permittite es $2.',
 'filetype-missing'            => 'Le nomine del file non ha un extension (como ".jpg").',
 'empty-file'                  => 'Le file submittite es vacue',
 'file-too-large'              => 'Le file submittite es troppo grande',
@@ -1529,6 +1568,7 @@ iste file occupa $2.',
 'emptyfile'                   => 'Le file que tu incargava pare esser vacue.
 Isto pote esser debite a un error in le nomine del file.
 Per favor verifica que tu realmente vole incargar iste file.',
+'windows-nonascii-filename'   => 'Iste wiki non supporta nomines de file con characteres special.',
 'fileexists'                  => "Un file con iste nomine existe ja.
 Per favor verifica '''<tt>[[:$1]]</tt>''' si tu non es secur de voler cambiar lo.
 [[$1|thumb]]",
@@ -1564,6 +1604,8 @@ Si tu vole totevia incargar iste file, per favor retorna e usa un nove nomine. [
 'php-uploaddisabledtext'      => 'Le incargamento de files PHP es disactivate. Per favor verifica le configuration file_uploads.',
 'uploadscripted'              => 'Iste file contine codice de HTML o de script que pote esser interpretate erroneemente per un navigator del web.',
 'uploadvirus'                 => 'Le file contine un virus! Detalios: $1',
+'uploadjava'                  => 'Iste file es un archivo ZIP que contine un file .class de Java.
+Non es permittite incargar files Java, proque istes pote contornar le restrictiones de securitate.',
 'upload-source'               => 'File de origine',
 'sourcefilename'              => 'Nomine del file de origine:',
 'sourceurl'                   => 'URL de origine:',
@@ -1574,10 +1616,6 @@ Si tu vole totevia incargar iste file, per favor retorna e usa un nove nomine. [
 'watchthisupload'             => 'Observar iste file',
 'filewasdeleted'              => 'Un file con iste nomine ha anteriormente essite incargate e postea delite.
 Tu debe verificar le $1 ante de re-incargar lo de novo.',
-'upload-wasdeleted'           => "'''Attention: Tu es super le puncto de incargar un file que esseva anteriormente delite.'''
-
-Tu deberea considerar si es appropriate continuar a incargar iste file.
-Pro major commoditate se trova hic le registro de deletiones correspondente a iste file:",
 'filename-bad-prefix'         => "Le nomine del file que tu es super le puncto de incargar comencia con '''\"\$1\"''', le qual es un nomine non descriptive, typicamente assignate automaticamente per le cameras digital.
 Per favor selige un nomine plus descriptive pro tu file.",
 'filename-prefix-blacklist'   => ' #<!-- non modificar de alcun modo iste linea --> <pre>
@@ -1616,12 +1654,29 @@ Si le problema persiste, contacta un [[Special:ListUsers/sysop|administrator]].'
 'upload-unknown-size'       => 'Dimension incognite',
 'upload-http-error'         => 'Un error HTTP occurreva: $1',
 
+# ZipDirectoryReader
+'zip-file-open-error' => 'Un error esseva incontrate durante le apertura del file pro verification de ZIP.',
+'zip-wrong-format'    => 'Le file specificate non es un file ZIP.',
+'zip-bad'             => 'Iste file es un archivo ZIP defectuose o alteremente illegibile.
+Un verification correcte de su securitate es impossibile.',
+'zip-unsupported'     => 'Iste file es un archivo ZIP que usa functionalitate de ZIP non supportate per MediaWiki.
+Un verification correcte de su securitate es impossibile.',
+
+# Special:UploadStash
+'uploadstash'          => 'Pila de files incargate',
+'uploadstash-summary'  => 'Iste pagina forni accesso al files que ha essite incargate (o que es in le processo de incargamento) ma non es ancora publicate in le wiki. Iste files es solmente visibile pro le usator qui los incargava.',
+'uploadstash-clear'    => 'Rader le pila de files incargate',
+'uploadstash-nofiles'  => 'Il non ha files in le pila.',
+'uploadstash-badtoken' => 'Le execution de iste action non succedeva, forsan proque le datos del session expirava. Tenta lo de novo.',
+'uploadstash-errclear' => 'Le radimento del files non succedeva.',
+'uploadstash-refresh'  => 'Refrescar le lista de files',
+
 # img_auth script messages
 'img-auth-accessdenied'     => 'Accesso refusate',
-'img-auth-nopathinfo'       => 'PATH_INFO mancante.
+'img-auth-nopathinfo'       => 'PATH_INFO manca.
 Le servitor non ha essite configurate pro passar iste information.
 Illo pote esser basate super CGI e non pote supportar img_auth.
-Vide http://www.mediawiki.org/wiki/Manual:Image_Authorization .',
+[//www.mediawiki.org/wiki/Manual:Image_Authorization Vide: Autorisation de imagines.]',
 'img-auth-notindir'         => 'Le cammino requestate non es in le directorio de incargamentos configurate.',
 'img-auth-badtitle'         => 'Impossibile construer un titulo valide ex "$1".',
 'img-auth-nologinnWL'       => 'Tu non ha aperite un session e "$1" non es in le lista blanc.',
@@ -1699,7 +1754,7 @@ Le sequente lista monstra le {{PLURAL:$1|prime pagina|prime $1 paginas}} que pun
 Un [[Special:WhatLinksHere/$2|lista complete]] es disponibile.',
 'nolinkstoimage'            => 'Nulle pagina usa iste file.',
 'morelinkstoimage'          => 'Vider [[Special:WhatLinksHere/$1|plus ligamines]] a iste file.',
-'redirectstofile'           => 'Le sequente {{PLURAL:$1|file|$1 files}} se redirige a iste file:',
+'linkstoimage-redirect'     => '$1 (redirection de file) $2',
 'duplicatesoffile'          => 'Le sequente {{PLURAL:$1|file es un duplicato|$1 files es duplicatos}} de iste file ([[Special:FileDuplicateSearch/$2|plus detalios]]):',
 'sharedupload'              => 'Iste file proveni de $1 e pote esser usate per altere projectos.',
 'sharedupload-desc-there'   => 'Iste file proveni de $1 e pote esser usate per altere projectos.
@@ -1789,18 +1844,19 @@ Memora verificar que non existe altere ligamines al patronos ante que tu los del
 'statistics-users-active-desc' => 'Usatores qui ha facite un action durante le {{PLURAL:$1|die|$1 dies}} passate',
 'statistics-mostpopular'       => 'Le paginas plus visitate',
 
-'disambiguations'      => 'Paginas de disambiguation',
+'disambiguations'      => 'Paginas con ligamines a paginas de disambiguation',
 'disambiguationspage'  => 'Template:Disambiguation',
 'disambiguations-text' => "Le sequente paginas ha ligamines a un '''pagina de disambiguation'''.
 Istes deberea esser reimplaciate con ligamines al topicos appropriate.<br />
 Un pagina se tracta como pagina de disambiguation si illo usa un patrono al qual [[MediaWiki:Disambiguationspage]] ha un ligamine.",
 
-'doubleredirects'            => 'Redirectiones duple',
-'doubleredirectstext'        => 'Iste pagina lista paginas de redirection verso altere paginas de redirection.
+'doubleredirects'                   => 'Redirectiones duple',
+'doubleredirectstext'               => 'Iste pagina lista paginas de redirection verso altere paginas de redirection.
 Cata linea contine ligamines al prime e al secunde redirection, con le destination del secunde redirection. Iste es normalmente le "ver" pagina de destination, al qual le prime redirection tamben deberea punctar.
 Le entratas <del>cancellate</del> ha essite resolvite.',
-'double-redirect-fixed-move' => '[[$1]] ha essite renominate, illo es ora un redirection verso [[$2]]',
-'double-redirect-fixer'      => 'Corrector de redirectiones',
+'double-redirect-fixed-move'        => '[[$1]] ha essite renominate, illo es ora un redirection verso [[$2]]',
+'double-redirect-fixed-maintenance' => 'Corrige redirection duple de [[$1]] a [[$2]].',
+'double-redirect-fixer'             => 'Corrector de redirectiones',
 
 'brokenredirects'        => 'Redirectiones rupte',
 'brokenredirectstext'    => 'Le sequente redirectiones mena a paginas non existente:',
@@ -1878,17 +1934,18 @@ executar iste function.',
 'pager-newer-n'           => '{{PLURAL:$1|1 plus recente|$1 plus recente}}',
 'pager-older-n'           => '{{PLURAL:$1|1 minus recente|$1 minus recente}}',
 'suppress'                => 'Supervisor',
+'querypage-disabled'      => 'Iste pagina special es disactivate pro evitar de supercargar le systema.',
 
 # Book sources
 'booksources'               => 'Fontes de libros',
 'booksources-search-legend' => 'Cercar fontes de libros',
-'booksources-go'            => 'Ir',
+'booksources-go'            => 'Va',
 'booksources-text'          => 'Infra es un lista de ligamines a altere sitos que vende libros nove e usate, e pote etiam haber altere informationes super libros que tu cerca:',
 'booksources-invalid-isbn'  => 'Le ISBN date non pare esser valide; verifica que tu non ha facite errores copiante lo del fonte original.',
 
 # Special:Log
-'specialloguserlabel'  => 'Usator:',
-'speciallogtitlelabel' => 'Titulo:',
+'specialloguserlabel'  => 'Executor:',
+'speciallogtitlelabel' => 'Objectivo (titulo o usator):',
 'log'                  => 'Registros',
 'all-logs-page'        => 'Tote le registros public',
 'alllogstext'          => 'Presentation combinate de tote le registros disponibile de {{SITENAME}}.
@@ -1908,7 +1965,7 @@ Pro restringer le presentation, selige un typo de registro, le nomine de usator 
 'allnotinnamespace' => 'Tote le paginas (non in le spatio de nomines $1)',
 'allpagesprev'      => 'Previe',
 'allpagesnext'      => 'Sequente',
-'allpagessubmit'    => 'Ir',
+'allpagessubmit'    => 'Va',
 'allpagesprefix'    => 'Monstrar le paginas con prefixo:',
 'allpagesbadtitle'  => 'Le titulo de pagina date es invalide o ha un prefixo interlingual o interwiki.
 Es possibile que illo contine un o plus characteres que non pote esser usate in titulos.',
@@ -1929,12 +1986,13 @@ Vide etiam le [[Special:WantedCategories|categorias desirate]].',
 'sp-deletedcontributions-contribs' => 'contributiones',
 
 # Special:LinkSearch
-'linksearch'       => 'Ligamines externe',
+'linksearch'       => 'Recerca de ligamines externe',
 'linksearch-pat'   => 'Patrono a cercar:',
 'linksearch-ns'    => 'Spatio de nomines:',
 'linksearch-ok'    => 'Cercar',
-'linksearch-text'  => 'Es possibile usar metacharacteres como in "*.wikipedia.org".<br />
-Protocollos supportate: <tt>$1</tt>',
+'linksearch-text'  => 'Es possibile usar metacharacteres como in "*.wikipedia.org".
+Necessita al minus un dominio de nivello superior, per exemplo "*.org".<br />
+Protocollos supportate: <tt>$1</tt> (non include alcun de istes in tu recerca).',
 'linksearch-line'  => '$1 ligate ab $2',
 'linksearch-error' => 'Le metacharacteres pote apparer solmente al initio del nomine de host.',
 
@@ -1998,6 +2056,10 @@ como le adresse del expeditor del e-mail, de modo que le destinatario pote respo
 'noemailtext'          => 'Iste usator non ha specificate un adresse de e-mail valide.',
 'nowikiemailtitle'     => 'E-mail non permittite',
 'nowikiemailtext'      => 'Iste usator ha optate pro non reciper e-mail de altere usatores.',
+'emailnotarget'        => 'Nomine de usator inexistente o invalide pro le destinatario.',
+'emailtarget'          => 'Entra le nomine de usator del destinatario.',
+'emailusername'        => 'Nomine de usator:',
+'emailusernamesubmit'  => 'Submitter',
 'email-legend'         => 'Inviar e-mail a un altere usator de {{SITENAME}}',
 'emailfrom'            => 'Expeditor:',
 'emailto'              => 'Destinatario:',
@@ -2022,12 +2084,12 @@ como le adresse del expeditor del e-mail, de modo que le destinatario pote respo
 'watchlistanontext'    => 'Tu debe $1 pro poter vider o modificar entratas in tu observatorio.',
 'watchnologin'         => 'Tu non ha aperite un session',
 'watchnologintext'     => 'Tu debe [[Special:UserLogin|aperir un session]] pro modificar tu observatorio.',
-'addedwatch'           => 'Addite al observatorio',
+'addwatch'             => 'Adder al observatorio',
 'addedwatchtext'       => "Le pagina \"[[:\$1]]\" ha essite addite a tu [[Special:Watchlist|observatorio]].
 Le modificationes futur in iste pagina e in su pagina de discussion essera listate ibi,
 e le pagina apparera '''in litteras grasse''' in le [[Special:RecentChanges|lista de modificationes recente]] pro
 render lo plus facile de deteger.",
-'removedwatch'         => 'Removite del observatorio',
+'removewatch'          => 'Remover del observatorio',
 'removedwatchtext'     => 'Le pagina "[[:$1]]" ha essite removite de [[Special:Watchlist|tu observatorio]].',
 'watch'                => 'Observar',
 'watchthispage'        => 'Observar iste pagina',
@@ -2048,8 +2110,9 @@ render lo plus facile de deteger.",
 'watchlist-options'    => 'Optiones del observatorio',
 
 # Displayed when you click the "watch" button and it is in the process of watching
-'watching'   => 'Observation in curso...',
-'unwatching' => 'Disobservation in curso...',
+'watching'       => 'Observation in curso...',
+'unwatching'     => 'Disobservation in curso...',
+'watcherrortext' => 'Un error occurreva durante le modification del configuration de tu observatorio pro "$1".',
 
 'enotif_mailer'                => 'Systema de notification via e-mail de {{SITENAME}}',
 'enotif_reset'                 => 'Marcar tote le paginas como visitate',
@@ -2081,16 +2144,16 @@ Como alternativa tu pote reinitialisar le optiones de notification pro tote le p
 
 -- 
 Pro configurar le notification per e-mail, visita
-{{fullurl:{{#special:Preferences}}}}
+{{canonicalurl:{{#special:Preferences}}}}
 
 Pro configurar le observatorio, visita
-{{fullurl:{{#special:Watchlist}}/edit}}
+{{canonicalurl:{{#special:EditWatchlist}}}}
 
 Pro retirar le pagina de tu observatorio, visita
 $UNWATCHURL
 
 Feedback e ulterior assistentia:
-{{fullurl:{{MediaWiki:Helppage}}}}',
+{{canonicalurl:{{MediaWiki:Helppage}}}}',
 
 # Delete
 'deletepage'             => 'Deler pagina',
@@ -2106,7 +2169,7 @@ Feedback e ulterior assistentia:
 Per favor confirma que tu ha le intention de facer isto, que tu comprende le consequentias, e que tu face isto in accordo con [[{{MediaWiki:Policy-url}}|le politicas]].',
 'actioncomplete'         => 'Action complete',
 'actionfailed'           => 'Action fallite',
-'deletedtext'            => '"<nowiki>$1</nowiki>" ha essite delite.
+'deletedtext'            => '"$1" ha essite delite.
 Vide $2 pro un registro de deletiones recente.',
 'deletedarticle'         => 'deleva "[[$1]]"',
 'suppressedarticle'      => 'supprimeva "[[$1]]"',
@@ -2168,7 +2231,7 @@ Vide le [[Special:ProtectedPages|lista de paginas protegite]] pro le lista de pr
 'protect_expiry_invalid'      => 'Le tempore de expiration es invalide.',
 'protect_expiry_old'          => 'Le tempore de expiration es in le passato.',
 'protect-unchain-permissions' => 'Disblocar ulterior optiones de protection',
-'protect-text'                => "In basso tu pote vider e modificar le nivello de protection del pagina '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "In basso tu pote vider e modificar le nivello de protection del pagina '''$1'''.",
 'protect-locked-blocked'      => "Tu non pote cambiar le nivellos de protection durante que tu es blocate.
 Ecce le configurationes actual del pagina '''$1''':",
 'protect-locked-dblock'       => "Le nivellos de protection non pote esser cambiate proque es active un blocada del base de datos.
@@ -2223,9 +2286,8 @@ Tu pote cambiar le nivello de protection de iste pagina, ma isto non cambiara le
 'undeletepagetext'             => 'Le {{PLURAL:$1|pagina|paginas}} sequente ha essite delite, sed es ancora in le archivo e pote esser restaurate.
 Le archivo pote esser vacuate periodicamente.',
 'undelete-fieldset-title'      => 'Restaurar versiones',
-'undeleteextrahelp'            => "Pro restaurar le historia integre del pagina, lassa tote le quadratos dismarcate e clicca '''''Restaurar'''''.
-Pro executar un restauration selective, marca le quadratos correspondente al versiones pro restaurar, e clicca '''''Restaurar'''''.
-Le button '''''Reinitialisar''''' face rader le campo de commento e tote le quadratos.",
+'undeleteextrahelp'            => "Pro restaurar le historia integre del pagina, lassa tote le quadratos dismarcate e clicca super '''''{{int:undeletebtn}}'''''.
+Pro executar un restauration selective, marca le quadratos correspondente al versiones a restaurar, e clicca super '''''{{int:undeletebtn}}'''''.",
 'undeleterevisions'            => '$1 {{PLURAL:$1|version|versiones}} archivate',
 'undeletehistory'              => 'Si tu restaura un pagina, tote le versiones essera restaurate al historia.
 Si un nove pagina con le mesme nomine ha essite create post le deletion, le versiones
@@ -2272,9 +2334,12 @@ $1',
 'undelete-show-file-submit'    => 'Si',
 
 # Namespace form on various pages
-'namespace'      => 'Spatio de nomine:',
-'invert'         => 'Inverter selection',
-'blanknamespace' => '(Principal)',
+'namespace'                     => 'Spatio de nomine:',
+'invert'                        => 'Inverter selection',
+'tooltip-invert'                => 'Marca iste quadrato pro celar le modificationes in paginas intra le spatio de nomines seligite (e le spatio de nomines associate, si tal option es seligite)',
+'namespace_association'         => 'Spatio de nomines associate',
+'tooltip-namespace_association' => 'Marca iste quadrato pro includer anque le spatio de nomines de discussion o de subjecto associate al spatio de nomines seligite',
+'blanknamespace'                => '(Principal)',
 
 # Contributions
 'contributions'       => 'Contributiones del usator',
@@ -2323,6 +2388,9 @@ Le ultime entrata del registro de blocadas es reproducite hic infra pro informat
 'whatlinkshere-filters'    => 'Filtros',
 
 # Block/unblock
+'autoblockid'                     => 'Auto-blocada №$1',
+'block'                           => 'Blocar usator',
+'unblock'                         => 'Disblocar usator',
 'blockip'                         => 'Blocar usator',
 'blockip-title'                   => 'Blocar usator',
 'blockip-legend'                  => 'Blocar usator',
@@ -2332,7 +2400,6 @@ Isto debe esser facite solmente pro impedir vandalismo, e de
 accordo con le [[{{MediaWiki:Policy-url}}|politica de {{SITENAME}}]].
 Scribe un motivo specific infra (per exemplo, citante paginas
 specific que ha essite vandalisate).',
-'ipaddress'                       => 'Adresse IP:',
 'ipadressorusername'              => 'Adresse IP o nomine de usator:',
 'ipbexpiry'                       => 'Expiration:',
 'ipbreason'                       => 'Motivo:',
@@ -2345,7 +2412,7 @@ specific que ha essite vandalisate).',
 ** Comportamento intimidatori/molestation
 ** Abuso de contos multiple
 ** Nomine de usator inacceptabile",
-'ipbanononly'                     => 'Blocar solmente usatores anonyme',
+'ipb-hardblock'                   => 'Impedir le usatores authenticate de facer modificationes ab iste adresse IP',
 'ipbcreateaccount'                => 'Impedir creation de contos',
 'ipbemailban'                     => 'Impedir que le usator invia e-mail',
 'ipbenableautoblock'              => 'Blocar automaticamente le adresse IP usate le plus recentemente per iste usator, e omne IPs successive desde le quales ille/-a tenta facer modificationes',
@@ -2356,12 +2423,15 @@ specific que ha essite vandalisate).',
 'ipbotherreason'                  => 'Motivo altere/additional:',
 'ipbhidename'                     => 'Celar le nomine del usator del modificationes e del listas',
 'ipbwatchuser'                    => 'Observar le paginas de usator e de discussion de iste usator',
-'ipballowusertalk'                => 'Permitter que iste usator modifica su proprie pagina de discussion in despecto de esser blocate',
+'ipb-disableusertalk'             => 'Impedir iste usator de modificar su proprie pagina de discussion durante que ille es blocate',
 'ipb-change-block'                => 'Reblocar le usator con iste configurationes',
+'ipb-confirm'                     => 'Confirmar blocada',
 'badipaddress'                    => 'Adresse IP mal formate.',
 'blockipsuccesssub'               => 'Blocada succedite',
 'blockipsuccesstext'              => '[[Special:Contributions/$1|$1]] ha essite blocate.<br />
 Vide le [[Special:IPBlockList|lista de adresses IP blocate]] pro revider le blocadas.',
+'ipb-blockingself'                => 'Tu sta super le puncto de blocar te mesme! Es tu secur de voler facer isto?',
+'ipb-confirmhideuser'             => 'Tu es super le puncto de blocar un usator con le option "celar usator" activate. Isto supprimera le nomine del usator in tote le listas e entratas de registro. Es tu secur de voler facer isto?',
 'ipb-edit-dropdown'               => 'Modificar le motivos pro blocar',
 'ipb-unblock-addr'                => 'Disblocar $1',
 'ipb-unblock'                     => 'Disblocar un nomine de usator o un adresse IP',
@@ -2372,17 +2442,23 @@ Vide le [[Special:IPBlockList|lista de adresses IP blocate]] pro revider le bloc
 a un adresse IP blocate previemente.',
 'ipusubmit'                       => 'Cancellar iste blocada',
 'unblocked'                       => '[[User:$1|$1]] ha essite disblocate',
+'unblocked-range'                 => '$1 ha essite disblocate',
 'unblocked-id'                    => 'Le blocada $1 ha essite eliminate',
+'blocklist'                       => 'Usatores blocate',
 'ipblocklist'                     => 'Usatores blocate',
 'ipblocklist-legend'              => 'Cercar un usator blocate',
-'ipblocklist-username'            => 'Nomine de usator o adresse IP:',
-'ipblocklist-sh-userblocks'       => '$1 blocadas de contos',
-'ipblocklist-sh-tempblocks'       => '$1 blocadas temporari',
-'ipblocklist-sh-addressblocks'    => '$1 blocadas de singule adresses IP',
+'blocklist-userblocks'            => 'Celar blocadas de conto',
+'blocklist-tempblocks'            => 'Celar blocadas temporari',
+'blocklist-addressblocks'         => 'Celar blocadas de singule adresse IP',
+'blocklist-timestamp'             => 'Data e hora',
+'blocklist-target'                => 'Objectivo',
+'blocklist-expiry'                => 'Expira',
+'blocklist-by'                    => 'Blocate per',
+'blocklist-params'                => 'Parametros del blocada',
+'blocklist-reason'                => 'Motivo',
 'ipblocklist-submit'              => 'Cercar',
 'ipblocklist-localblock'          => 'Blocada local',
 'ipblocklist-otherblocks'         => 'Altere {{PLURAL:$1|blocada|blocadas}}',
-'blocklistline'                   => '$1, $2 blocava $3 ($4)',
 'infiniteblock'                   => 'infinite',
 'expiringblock'                   => 'expira le $1 a $2',
 'anononlyblock'                   => 'anon. solmente',
@@ -2405,7 +2481,7 @@ Le motivo specificate pro le blocada de $1 es: "$2"',
 'reblock-logentry'                => 'cambiava configurationes de blocada pro [[$1]] con un tempore de expiration de $2 $3',
 'blocklogtext'                    => 'Isto es un registro de blocadas e disblocadas de usatores.
 Le adresses IP automaticamente blocate non es includite.
-Vide le [[Special:IPBlockList|lista de blocadas IP]] pro le lista de bannimentos e blocadas actualmente in operation.',
+Vide le [[Special:BlockList|lista de blocadas IP]] pro le lista de bannimentos e blocadas actualmente in operation.',
 'unblocklogentry'                 => 'disblocava $1',
 'block-log-flags-anononly'        => 'usatores anonyme solmente',
 'block-log-flags-nocreate'        => 'creation de contos disactivate',
@@ -2419,9 +2495,9 @@ Vide le [[Special:IPBlockList|lista de blocadas IP]] pro le lista de bannimentos
 'ipb_expiry_temp'                 => 'Le blocadas de nomines de usator celate debe esser permanente.',
 'ipb_hide_invalid'                => 'Impossibile supprimer iste conto; illo pote haber troppo de modificationes.',
 'ipb_already_blocked'             => '"$1" es ja blocate',
-'ipb-needreblock'                 => '== Ja blocate ==
-$1 es ja blocate. Esque tu vole cambiar le configurationes?',
+'ipb-needreblock'                 => '$1 es ja blocate. Esque tu vole cambiar le configurationes?',
 'ipb-otherblocks-header'          => 'Altere {{PLURAL:$1|blocada|blocadas}}',
+'unblock-hideuser'                => 'Tu non pote disblocar iste usator, proque su nomine de usator ha essite celate.',
 'ipb_cant_unblock'                => 'Error: ID de blocada $1 non trovate. Es possibile que illo ha ja essite disblocate.',
 'ipb_blocked_as_range'            => 'Error: Le IP $1 non es blocate directemente e non pote esser disblocate.
 Illo es, nonobstante, blocate como parte del intervallo $2, le qual pote esser disblocate.',
@@ -2466,6 +2542,7 @@ Per favor confirma que isto es tu intention.',
 'lockfilenotwritable' => 'Impossibile scriber al file de blocada del base de datos.
 Pro blocar o disblocar le base de datos, le servitor web debe poter scriber a iste file.',
 'databasenotlocked'   => 'Le base de datos non es blocate.',
+'lockedbyandtime'     => '(per $1 le $2 a $3)',
 
 # Move page
 'move-page'                    => 'Renominar $1',
@@ -2588,7 +2665,7 @@ In le secunde caso tu pote etiam usar un ligamine, p.ex. [[{{#Special:Export}}/{
 'allmessagesdefault'            => 'Texto predefinite',
 'allmessagescurrent'            => 'Texto actual',
 'allmessagestext'               => 'Isto es un lista de messages de systema disponibile in le spatio de nomines MediaWiki.
-Per favor visita [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation] e [http://translatewiki.net translatewiki.net] si tu desira contribuer al localisation general de MediaWiki.',
+Per favor visita [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] e [//translatewiki.net translatewiki.net] si tu desira contribuer al localisation general de MediaWiki.',
 'allmessagesnotsupportedDB'     => "Iste pagina non pote esser usate proque '''\$wgUseDatabaseMessages''' ha essite disactivate.",
 'allmessages-filter-legend'     => 'Filtro',
 'allmessages-filter'            => 'Filtrar per stato de personalisation:',
@@ -2597,7 +2674,7 @@ Per favor visita [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisat
 'allmessages-filter-modified'   => 'Modificate',
 'allmessages-prefix'            => 'Filtrar per prefixo:',
 'allmessages-language'          => 'Lingua:',
-'allmessages-filter-submit'     => 'Ir',
+'allmessages-filter-submit'     => 'Va',
 
 # Thumbnails
 'thumbnail-more'           => 'Aggrandir',
@@ -2754,9 +2831,7 @@ Es possibile adder un motivo in le summario.',
 'vector.js'      => '/* Omne JavaScript hic se executara pro le usatores del apparentia Vector */',
 
 # Metadata
-'nodublincore'      => 'Le metadatos Dublin Core RDF ha essite disactivate in iste servitor.',
-'nocreativecommons' => 'Le metadatos Creative Commons RDF ha essite disactivate in iste servitor.',
-'notacceptable'     => 'Le servitor wiki non pote provider datos in un formato que tu cliente sape leger.',
+'notacceptable' => 'Le servitor wiki non pote provider datos in un formato que tu cliente sape leger.',
 
 # Attribution
 'anonymous'        => '{{PLURAL:$1|Usator|Usatores}} anonyme de {{SITENAME}}',
@@ -2780,12 +2855,17 @@ Le causa es probabilemente un ligamine verso un sito externe que es presente in 
 'spam_blanking'       => 'Tote le versiones contineva ligamines a $1. Le pagina ha essite vacuate.',
 
 # Info page
-'infosubtitle'   => 'Informationes del pagina',
-'numedits'       => 'Numero de modificationes (pagina): $1',
-'numtalkedits'   => 'Numero de modificationes (pagina de discussion): $1',
-'numwatchers'    => 'Numero de observatores: $1',
-'numauthors'     => 'Numero de autores distincte (pagina): $1',
-'numtalkauthors' => 'Numero de autores distincte (pagina de discussion): $1',
+'pageinfo-title'            => 'Informationes pro "$1"',
+'pageinfo-header-edits'     => 'Modificationes',
+'pageinfo-header-watchlist' => 'Observatorio',
+'pageinfo-header-views'     => 'Visitas',
+'pageinfo-subjectpage'      => 'Pagina',
+'pageinfo-talkpage'         => 'Discussion',
+'pageinfo-watchers'         => 'Numero de observatores',
+'pageinfo-edits'            => 'Numero de modificationes',
+'pageinfo-authors'          => 'Numero de autores distincte',
+'pageinfo-views'            => 'Numero de visitas',
+'pageinfo-viewsperedit'     => 'Visitas per modification',
 
 # Skin names
 'skinname-standard'    => 'Classic',
@@ -2796,27 +2876,6 @@ Le causa es probabilemente un ligamine verso un sito externe que es presente in 
 'skinname-chick'       => 'Chique',
 'skinname-simple'      => 'Simple',
 'skinname-modern'      => 'Moderne',
-
-# Math options
-'mw_math_png'    => 'Sempre producer PNG',
-'mw_math_simple' => 'HTML si multo simple, alteremente PNG',
-'mw_math_html'   => 'HTML si possibile, alteremente PNG',
-'mw_math_source' => 'Lassa lo como TeX (pro navigatores in modo texto)',
-'mw_math_modern' => 'Recommendate pro navigatores moderne',
-'mw_math_mathml' => 'MathML',
-
-# Math errors
-'math_failure'          => 'Error durante le analyse del syntaxe',
-'math_unknown_error'    => 'error incognite',
-'math_unknown_function' => 'function incognite',
-'math_lexing_error'     => 'error lexic',
-'math_syntax_error'     => 'error de syntaxe',
-'math_image_error'      => 'Le conversion in PNG ha fallite;
-verifica le installation del programmas \'\'latex" e "dvipng" (o "dvips" + "gs" + \'\'convert\'\').',
-'math_bad_tmpdir'       => 'Non pote scriber in o crear le directorio temporari "math".',
-'math_bad_output'       => 'Non pote scriber in o crear le directorio de output "math".',
-'math_notexvc'          => "Le executabile ''texvc'' manca;
-per favor vide math/README pro configurar lo.",
 
 # Patrolling
 'markaspatrolleddiff'                 => 'Marcar como patruliate',
@@ -2853,22 +2912,25 @@ $1',
 'nextdiff'     => 'Version plus nove →',
 
 # Media information
-'mediawarning'         => "'''Attention''': Iste typo de file pote continer codice maligne.
+'mediawarning'           => "'''Attention''': Iste typo de file pote continer codice maligne.
 Le execution de illo pote compromitter le securitate de tu systema.",
-'imagemaxsize'         => "Dimension maxime de imagines:<br />''(pro paginas de description de files)''",
-'thumbsize'            => 'Dimension del miniaturas:',
-'widthheightpage'      => '$1×$2, $3 {{PLURAL:$3|pagina|paginas}}',
-'file-info'            => 'grandor del file: $1, typo MIME: $2',
-'file-info-size'       => '$1 × $2 pixel, grandor del file: $3, typo MIME: $4',
-'file-nohires'         => '<small>Non disponibile in resolution plus alte.</small>',
-'svg-long-desc'        => 'File SVG, dimensiones nominal: $1 × $2 pixels, grandor del file: $3',
-'show-big-image'       => 'Plen resolution',
-'show-big-image-thumb' => '<small>Dimensiones de iste previsualisation: $1 × $2 pixels</small>',
-'file-info-gif-looped' => 'repetente',
-'file-info-gif-frames' => '$1 {{PLURAL:$1|photogramma|photogrammas}}',
-'file-info-png-looped' => 'repetente',
-'file-info-png-repeat' => 'repetite $1 {{PLURAL:$1|vice|vices}}',
-'file-info-png-frames' => '$1 {{PLURAL:$1|photogramma|photogrammas}}',
+'imagemaxsize'           => "Dimension maxime de imagines:<br />''(pro paginas de description de files)''",
+'thumbsize'              => 'Dimension del miniaturas:',
+'widthheightpage'        => '$1×$2, $3 {{PLURAL:$3|pagina|paginas}}',
+'file-info'              => 'grandor del file: $1, typo MIME: $2',
+'file-info-size'         => '$1 × $2 pixel, grandor del file: $3, typo MIME: $4',
+'file-info-size-pages'   => '$1 × $2 pixels, dimension del file: $3, typo MIME: $4, $5 {{PLURAL:$5|pagina|paginas}}',
+'file-nohires'           => '<small>Non disponibile in resolution plus alte.</small>',
+'svg-long-desc'          => 'File SVG, dimensiones nominal: $1 × $2 pixels, grandor del file: $3',
+'show-big-image'         => 'Plen resolution',
+'show-big-image-preview' => '<small> Dimension de iste previsualisation: $1.</small>',
+'show-big-image-other'   => '<small>Altere resolutiones: $1.</small>',
+'show-big-image-size'    => '$1 × $2 pixels',
+'file-info-gif-looped'   => 'repetente',
+'file-info-gif-frames'   => '$1 {{PLURAL:$1|photogramma|photogrammas}}',
+'file-info-png-looped'   => 'repetente',
+'file-info-png-repeat'   => 'repetite $1 {{PLURAL:$1|vice|vices}}',
+'file-info-png-frames'   => '$1 {{PLURAL:$1|photogramma|photogrammas}}',
 
 # Special:NewFiles
 'newimages'             => 'Galeria de nove files',
@@ -2895,7 +2957,7 @@ Omne ligamines posterior in le mesme linea es considerate como exceptiones, i.e.
 Si le file ha essite modificate ab su stato original, es possibile que alcun detalios non reflecte completemente le file modificate.',
 'metadata-expand'   => 'Revelar detalios extense',
 'metadata-collapse' => 'Celar detalios extense',
-'metadata-fields'   => 'Le campos de metadatos EXIF listate in iste message essera includite in le visualisation del pagina de imagine quando le tabula de metadatos es collabite.
+'metadata-fields'   => 'Le campos de metadatos de imagine listate in iste message essera includite in le visualisation del pagina de imagine quando le tabula de metadatos es plicate.
 Le alteres essera initialmente celate.
 * make
 * model
@@ -2903,7 +2965,13 @@ Le alteres essera initialmente celate.
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-imagewidth'                  => 'Latitude',
@@ -2918,13 +2986,11 @@ Le alteres essera initialmente celate.
 'exif-ycbcrpositioning'            => 'Positionamento Y e C',
 'exif-xresolution'                 => 'Resolution horizontal',
 'exif-yresolution'                 => 'Resolution vertical',
-'exif-resolutionunit'              => 'Unitate de resolution X e Y',
 'exif-stripoffsets'                => 'Location del datos del imagine',
 'exif-rowsperstrip'                => 'Numero de lineas per banda',
 'exif-stripbytecounts'             => 'Bytes per banda comprimite',
 'exif-jpeginterchangeformat'       => 'Position de JPEG SOI',
 'exif-jpeginterchangeformatlength' => 'Bytes del datos JPEG',
-'exif-transferfunction'            => 'Function de transferimento',
 'exif-whitepoint'                  => 'Chromaticitate del puncto blanc',
 'exif-primarychromaticities'       => 'Chromaticitates del colores primari',
 'exif-ycbcrcoefficients'           => 'Coefficientes del matrice de transformation del spatio de colores',
@@ -2943,7 +3009,6 @@ Le alteres essera initialmente celate.
 'exif-compressedbitsperpixel'      => 'Modo de compression del imagine',
 'exif-pixelydimension'             => 'Latitude del imagine',
 'exif-pixelxdimension'             => 'Altitude del imagine',
-'exif-makernote'                   => 'Notas del fabricante',
 'exif-usercomment'                 => 'Commentos del usator',
 'exif-relatedsoundfile'            => 'File audio connexe',
 'exif-datetimeoriginal'            => 'Data e hora del generation del datos',
@@ -2957,7 +3022,6 @@ Le alteres essera initialmente celate.
 'exif-exposureprogram'             => 'Programma de exposition',
 'exif-spectralsensitivity'         => 'Sensibilitate spectral',
 'exif-isospeedratings'             => 'Classification de velocitate ISO',
-'exif-oecf'                        => 'Factor de conversion optoelectronic',
 'exif-shutterspeedvalue'           => 'Velocitate del obturator in unitates APEX',
 'exif-aperturevalue'               => 'Latitude del apertura in unitates APEX',
 'exif-brightnessvalue'             => 'Luminositate in unitates APEX',
@@ -2970,7 +3034,6 @@ Le alteres essera initialmente celate.
 'exif-focallength'                 => 'Longitude focal del lente',
 'exif-subjectarea'                 => 'Area de subjecto',
 'exif-flashenergy'                 => 'Energia del flash',
-'exif-spatialfrequencyresponse'    => 'Responsa de frequentia spatial',
 'exif-focalplanexresolution'       => 'Resolution X del plano focal',
 'exif-focalplaneyresolution'       => 'Resolution Y del plano focal',
 'exif-focalplaneresolutionunit'    => 'Unitate del resolution del plano focal',
@@ -2979,7 +3042,6 @@ Le alteres essera initialmente celate.
 'exif-sensingmethod'               => 'Methodo de sensor',
 'exif-filesource'                  => 'Origine del file',
 'exif-scenetype'                   => 'Typo de scena',
-'exif-cfapattern'                  => 'Patrono CFA',
 'exif-customrendered'              => 'Processamento de imagines personalisate',
 'exif-exposuremode'                => 'Modo de exposition',
 'exif-whitebalance'                => 'Balancia de blanc',
@@ -3024,10 +3086,79 @@ Le alteres essera initialmente celate.
 'exif-gpsareainformation'          => 'Nomine de area GPS',
 'exif-gpsdatestamp'                => 'Data GPS',
 'exif-gpsdifferential'             => 'Correction differential GPS',
+'exif-jpegfilecomment'             => 'Commento del file JPEG',
+'exif-keywords'                    => 'Parolas-clave',
+'exif-worldregioncreated'          => 'Region del mundo ubi le photo esseva prendite',
+'exif-countrycreated'              => 'Pais ubi le photo esseva prendite',
+'exif-countrycodecreated'          => 'Codice pro le pais ubi le photo esseva prendite',
+'exif-provinceorstatecreated'      => 'Provincia o stato ubi le photo esseva prendite',
+'exif-citycreated'                 => 'Citate ubi le photo esseva prendite',
+'exif-sublocationcreated'          => 'Sublocalitate del citate ubi le photo esseva prendite',
+'exif-worldregiondest'             => 'Region del mundo monstrate',
+'exif-countrydest'                 => 'Pais monstrate',
+'exif-countrycodedest'             => 'Codice pro pais monstrate',
+'exif-provinceorstatedest'         => 'Provincia o stato monstrate',
+'exif-citydest'                    => 'Citate monstrate',
+'exif-sublocationdest'             => 'Sublocalitate del citate monstrate',
 'exif-objectname'                  => 'Titulo curte',
+'exif-specialinstructions'         => 'Instructiones special',
+'exif-headline'                    => 'Titulo',
+'exif-credit'                      => 'Credito/Fornitor',
+'exif-source'                      => 'Origine',
+'exif-editstatus'                  => 'Stato redactorial del imagine',
+'exif-urgency'                     => 'Urgentia',
+'exif-fixtureidentifier'           => 'Nomine del rubrica',
+'exif-locationdest'                => 'Loco representate',
+'exif-locationdestcode'            => 'Codice del loco representate',
+'exif-objectcycle'                 => 'Horas del die a que iste objecto es destinate',
+'exif-contact'                     => 'Informationes de contacto',
+'exif-writer'                      => 'Scriptor',
+'exif-languagecode'                => 'Lingua',
+'exif-iimversion'                  => 'Version de IIM',
+'exif-iimcategory'                 => 'Categoria',
+'exif-iimsupplementalcategory'     => 'Categorias supplementari',
+'exif-datetimeexpires'             => 'Non usar post',
+'exif-datetimereleased'            => 'Data de publication',
+'exif-originaltransmissionref'     => 'Codice de localitate del transmission original',
+'exif-identifier'                  => 'Identificator',
+'exif-lens'                        => 'Objectivo usate',
+'exif-serialnumber'                => 'Numero de serie del camera',
+'exif-cameraownername'             => 'Proprietario del camera',
+'exif-label'                       => 'Etiquetta',
+'exif-datetimemetadata'            => 'Data del ultime modification del metadatos',
+'exif-nickname'                    => 'Nomine informal del imagine',
+'exif-rating'                      => 'Evalutation (1-5)',
+'exif-rightscertificate'           => 'Certificato de gestion de derectos',
+'exif-copyrighted'                 => 'Stato de copyright',
+'exif-copyrightowner'              => 'Titular del copyright',
+'exif-usageterms'                  => 'Conditiones de uso',
+'exif-webstatement'                => 'Declaration in linea de copyright',
+'exif-originaldocumentid'          => 'ID unic del documento original',
+'exif-licenseurl'                  => 'URL pro licentia de copyright',
+'exif-morepermissionsurl'          => 'Information alternative de licentia',
+'exif-attributionurl'              => 'Si tu re-usa iste obra, per favor insere un ligamine a',
+'exif-preferredattributionname'    => 'Si tu re-usa iste obra, per favor da recognoscentia a',
+'exif-pngfilecomment'              => 'Commento del file PNG',
+'exif-disclaimer'                  => 'Repudiation',
+'exif-contentwarning'              => 'Advertimento de contento',
+'exif-giffilecomment'              => 'Commento del file GIF',
+'exif-intellectualgenre'           => 'Typo de elemento',
+'exif-subjectnewscode'             => 'Codice de subjecto',
+'exif-scenecode'                   => 'Codice de scena IPTC',
+'exif-event'                       => 'Evento representate',
+'exif-organisationinimage'         => 'Organisation representate',
+'exif-personinimage'               => 'Persona representate',
+'exif-originalimageheight'         => 'Altitude del imagine ante taliar',
+'exif-originalimagewidth'          => 'Latitude del imagine ante taliar',
 
 # EXIF attributes
 'exif-compression-1' => 'Non comprimite',
+'exif-compression-2' => 'CCITT Group 3 1-Dimensional Modified Huffman run length encoding',
+'exif-compression-3' => 'CCITT Group 3 codification fax',
+'exif-compression-4' => 'CCITT Group 4 codification fax',
+
+'exif-copyrighted-true'  => 'Sub copyright',
+'exif-copyrighted-false' => 'Dominio public',
 
 'exif-unknowndate' => 'Data incognite',
 
@@ -3042,6 +3173,8 @@ Le alteres essera initialmente celate.
 
 'exif-planarconfiguration-1' => 'formato a blocos (chunky)',
 'exif-planarconfiguration-2' => 'formato planar',
+
+'exif-colorspace-65535' => 'Non calibrate',
 
 'exif-componentsconfiguration-0' => 'non existe',
 
@@ -3156,6 +3289,10 @@ Le alteres essera initialmente celate.
 'exif-gpslongitude-e' => 'Longitude est',
 'exif-gpslongitude-w' => 'Longitude west',
 
+# Pseudotags used for GPSAltitudeRef
+'exif-gpsaltitude-above-sealevel' => '$1 {{PLURAL:$1|metro|metros}} super le nivello del mar',
+'exif-gpsaltitude-below-sealevel' => '$1 {{PLURAL:$1|metro|metros}} sub le nivello del mar',
+
 'exif-gpsstatus-a' => 'Mesura in curso',
 'exif-gpsstatus-v' => 'Interoperabilitate del mesura',
 
@@ -3167,21 +3304,73 @@ Le alteres essera initialmente celate.
 'exif-gpsspeed-m' => 'Millias per hora',
 'exif-gpsspeed-n' => 'Nodos',
 
+# Pseudotags used for GPSDestDistanceRef
+'exif-gpsdestdistance-k' => 'Kilometros',
+'exif-gpsdestdistance-m' => 'Millias',
+'exif-gpsdestdistance-n' => 'Millias nautic',
+
+'exif-gpsdop-excellent' => 'Excellente ($1)',
+'exif-gpsdop-good'      => 'Bon ($1)',
+'exif-gpsdop-moderate'  => 'Moderate ($1)',
+'exif-gpsdop-fair'      => 'Acceptabile ($1)',
+'exif-gpsdop-poor'      => 'Mal ($1)',
+
+'exif-objectcycle-a' => 'Matino solmente',
+'exif-objectcycle-p' => 'Vespere solmente',
+'exif-objectcycle-b' => 'Matino e vespere',
+
 # Pseudotags used for GPSTrackRef, GPSImgDirectionRef and GPSDestBearingRef
 'exif-gpsdirection-t' => 'Direction real',
 'exif-gpsdirection-m' => 'Direction magnetic',
 
+'exif-ycbcrpositioning-1' => 'Centrate',
+'exif-ycbcrpositioning-2' => 'Co-situate',
+
+'exif-dc-contributor' => 'Contributores',
+'exif-dc-coverage'    => 'Scopo spatial o temporal del objecto',
+'exif-dc-date'        => 'Data(s)',
+'exif-dc-publisher'   => 'Editor',
+'exif-dc-relation'    => 'Objectos connexe',
+'exif-dc-rights'      => 'Derectos',
+'exif-dc-source'      => 'Objecto original',
+'exif-dc-type'        => 'Typo de objecto',
+
+'exif-rating-rejected' => 'Rejectate',
+
+'exif-isospeedratings-overflow' => 'Superior a 65535',
+
+'exif-iimcategory-ace' => 'Arte, cultura e intertenimento',
+'exif-iimcategory-clj' => 'Crimine e lege',
+'exif-iimcategory-dis' => 'Catastrophes e accidentes',
+'exif-iimcategory-fin' => 'Economia e negotios',
+'exif-iimcategory-edu' => 'Education',
+'exif-iimcategory-evn' => 'Ambiente',
+'exif-iimcategory-hth' => 'Sanitate',
+'exif-iimcategory-hum' => 'Interesse human',
+'exif-iimcategory-lab' => 'Labor',
+'exif-iimcategory-lif' => 'Stilo de vita e tempore libere',
+'exif-iimcategory-pol' => 'Politica',
+'exif-iimcategory-rel' => 'Religion e credentia',
+'exif-iimcategory-sci' => 'Scientia e technologia',
+'exif-iimcategory-soi' => 'Questiones social',
+'exif-iimcategory-spo' => 'Sport',
+'exif-iimcategory-war' => 'Guerra, conflicto e perturbation',
+'exif-iimcategory-wea' => 'Meteo',
+
+'exif-urgency-normal' => 'Normal ($1)',
+'exif-urgency-low'    => 'Basse ($1)',
+'exif-urgency-high'   => 'Alte ($1)',
+'exif-urgency-other'  => 'Prioritate definite per usator ($1)',
+
 # External editor support
 'edit-externally'      => 'Modificar iste file con un programma externe',
-'edit-externally-help' => '(Vide le [http://www.mediawiki.org/wiki/Manual:External_editors instructiones de configuration] pro ulterior informationes)',
+'edit-externally-help' => '(Vide le [//www.mediawiki.org/wiki/Manual:External_editors instructiones de configuration] pro ulterior informationes)',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'totes',
-'imagelistall'     => 'totes',
-'watchlistall2'    => 'totes',
-'namespacesall'    => 'totes',
-'monthsall'        => 'totes',
-'limitall'         => 'totes',
+'watchlistall2' => 'totes',
+'namespacesall' => 'totes',
+'monthsall'     => 'totes',
+'limitall'      => 'totes',
 
 # E-mail address confirmation
 'confirmemail'              => 'Confirmar adresse de e-mail',
@@ -3266,16 +3455,23 @@ $1',
 'trackbackdeleteok' => 'Le retroligamine ha essite delite con successo.',
 
 # Delete conflict
-'deletedwhileediting' => "'''Attention:''' Iste pagina esseva delite post que tu comenciava a modificar lo!",
-'confirmrecreate'     => "Le usator [[User:$1|$1]] ([[User talk:$1|discussion]]) ha delite iste pagina post que tu comenciava a modificar lo, dante le motivo:
+'deletedwhileediting'      => "'''Attention:''' Iste pagina esseva delite post que tu comenciava a modificar lo!",
+'confirmrecreate'          => "Le usator [[User:$1|$1]] ([[User talk:$1|discussion]]) ha delite iste pagina post que tu comenciava a modificar lo, dante le motivo:
 : ''$2''
 Per favor confirma que tu realmente vole recrear iste pagina.",
-'recreate'            => 'Recrear',
+'confirmrecreate-noreason' => 'Le usator [[User:$1|$1]] ([[User talk:$1|discussion]]) ha delite iste pagina post que tu comenciava a modificar lo. Per favor confirma que tu realmente vole recrear iste pagina.',
+'recreate'                 => 'Recrear',
 
 # action=purge
 'confirm_purge_button' => 'OK',
 'confirm-purge-top'    => 'Rader le cache de iste pagina?',
 'confirm-purge-bottom' => 'Purgar un pagina vacua le cache e fortia que appare le version le plus recente.',
+
+# action=watch/unwatch
+'confirm-watch-button'   => 'OK',
+'confirm-watch-top'      => 'Adder iste pagina a tu observatorio?',
+'confirm-unwatch-button' => 'OK',
+'confirm-unwatch-top'    => 'Remover iste pagina de tu observatorio?',
 
 # Multipage image navigation
 'imgmultipageprev' => '← precedente pagina',
@@ -3292,7 +3488,7 @@ Per favor confirma que tu realmente vole recrear iste pagina.",
 'table_pager_last'         => 'Ultime pagina',
 'table_pager_limit'        => 'Monstrar $1 entratas per pagina',
 'table_pager_limit_label'  => 'Elementos per pagina:',
-'table_pager_limit_submit' => 'Ir',
+'table_pager_limit_submit' => 'Va',
 'table_pager_empty'        => 'Nulle resultato',
 
 # Auto-summaries
@@ -3318,7 +3514,7 @@ Per favor confirma que tu realmente vole recrear iste pagina.",
 'watchlistedit-normal-legend'  => 'Remover titulos del observatorio',
 'watchlistedit-normal-explain' => 'Le titulos in tu observatorio es monstrate hic infra.
 Pro eliminar un titulo, marca le quadrato correspondente, e clicca "{{int:Watchlistedit-normal-submit}}".
-Tu pote etiam [[Special:Watchlist/raw|modificar le lista in forma crude]].',
+Tu pote etiam [[Special:EditWatchlist/raw|modificar le lista in forma crude]].',
 'watchlistedit-normal-submit'  => 'Remover titulos',
 'watchlistedit-normal-done'    => '{{PLURAL:$1|1 titulo|$1 titulos}} ha essite removite de tu observatorio:',
 'watchlistedit-raw-title'      => 'Modification del observatorio in forma crude',
@@ -3326,7 +3522,7 @@ Tu pote etiam [[Special:Watchlist/raw|modificar le lista in forma crude]].',
 'watchlistedit-raw-explain'    => 'Le titulos in tu observatorio es monstrate hic infra, e pote esser modificate per adder e eliminar entratas del lista;
 un titulo per linea.
 Quando tu ha finite, clicca super "{{int:Watchlistedit-raw-submit}}".
-Tu pote etiam [[Special:Watchlist/edit|usar le editor standard]].',
+Tu pote etiam [[Special:EditWatchlist|usar le editor standard]].',
 'watchlistedit-raw-titles'     => 'Titulos:',
 'watchlistedit-raw-submit'     => 'Actualisar observatorio',
 'watchlistedit-raw-done'       => 'Tu observatorio ha essite actualisate.',
@@ -3343,58 +3539,58 @@ Tu pote etiam [[Special:Watchlist/edit|usar le editor standard]].',
 'duplicate-defaultsort' => 'Attention: Le clave de ordination predefinite "$2" supplanta le anterior clave de ordination predefinite "$1".',
 
 # Special:Version
-'version'                          => 'Version',
-'version-extensions'               => 'Extensiones installate',
-'version-specialpages'             => 'Paginas special',
-'version-parserhooks'              => 'Uncinos del analysator syntactic',
-'version-variables'                => 'Variabiles',
-'version-skins'                    => 'Apparentias',
-'version-other'                    => 'Altere',
-'version-mediahandlers'            => 'Executores de media',
-'version-hooks'                    => 'Uncinos',
-'version-extension-functions'      => 'Functiones de extensiones',
-'version-parser-extensiontags'     => 'Etiquettas de extension del analysator syntactic',
-'version-parser-function-hooks'    => 'Uncinos de functiones del analysator syntactic',
-'version-skin-extension-functions' => 'Functiones de extension de stilos',
-'version-hook-name'                => 'Nomine del uncino',
-'version-hook-subscribedby'        => 'Subscribite per',
-'version-version'                  => '(Version $1)',
-'version-license'                  => 'Licentia',
-'version-poweredby-credits'        => "Iste wiki es actionate per '''[http://www.mediawiki.org/ MediaWiki]''', copyright © 2001-$1 $2.",
-'version-poweredby-others'         => 'alteres',
-'version-license-info'             => 'MediaWiki es software libere; vos pote redistribuer lo e/o modificar lo sub le conditiones del Licentia Public General de GNU publicate per le Free Software Foundation; version 2 del Licentia, o (a vostre option) qualcunque version posterior.
+'version'                       => 'Version',
+'version-extensions'            => 'Extensiones installate',
+'version-specialpages'          => 'Paginas special',
+'version-parserhooks'           => 'Uncinos del analysator syntactic',
+'version-variables'             => 'Variabiles',
+'version-antispam'              => 'Prevention de spam',
+'version-skins'                 => 'Apparentias',
+'version-other'                 => 'Altere',
+'version-mediahandlers'         => 'Executores de media',
+'version-hooks'                 => 'Uncinos',
+'version-extension-functions'   => 'Functiones de extensiones',
+'version-parser-extensiontags'  => 'Etiquettas de extension del analysator syntactic',
+'version-parser-function-hooks' => 'Uncinos de functiones del analysator syntactic',
+'version-hook-name'             => 'Nomine del uncino',
+'version-hook-subscribedby'     => 'Subscribite per',
+'version-version'               => '(Version $1)',
+'version-license'               => 'Licentia',
+'version-poweredby-credits'     => "Iste wiki es actionate per '''[//www.mediawiki.org/ MediaWiki]''', copyright © 2001-$1 $2.",
+'version-poweredby-others'      => 'alteres',
+'version-license-info'          => 'MediaWiki es software libere; vos pote redistribuer lo e/o modificar lo sub le conditiones del Licentia Public General de GNU publicate per le Free Software Foundation; version 2 del Licentia, o (a vostre option) qualcunque version posterior.
 
 Iste programma es distribuite in le sperantia que illo sia utile, ma SIN GARANTIA; sin mesmo le implicite garantia de COMMERCIALISATION o APTITUDE PRO UN PROPOSITO PARTICULAR. Vide le Licentia Public General de GNU pro plus detalios.
 
-Vos deberea haber recipite [{{SERVER}}{{SCRIPTPATH}}/COPYING un exemplar del Licentia Public General de GNU] con iste programma; si non, scribe al Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA, o [http://www.gnu.org/copyleft/gpl.html lege lo in linea].',
-'version-software'                 => 'Software installate',
-'version-software-product'         => 'Producto',
-'version-software-version'         => 'Version',
+Vos deberea haber recipite [{{SERVER}}{{SCRIPTPATH}}/COPYING un exemplar del Licentia Public General de GNU] con iste programma; si non, scribe al Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA, o [//www.gnu.org/copyleft/gpl.html lege lo in linea].',
+'version-software'              => 'Software installate',
+'version-software-product'      => 'Producto',
+'version-software-version'      => 'Version',
 
 # Special:FilePath
 'filepath'         => 'Cammino del file',
 'filepath-page'    => 'File:',
-'filepath-submit'  => 'Ir',
+'filepath-submit'  => 'Va',
 'filepath-summary' => 'Iste pagina special retorna le cammino complete de un file.
 Le imagines se monstra in plen resolution, le altere typos de file se executa directemente con lor programmas associate.',
 
 # Special:FileDuplicateSearch
-'fileduplicatesearch'          => 'Cercar files duplicate',
-'fileduplicatesearch-summary'  => "Cercar files duplicate a base de lor summas de verification ''(hash).''
-
-Entra le nomine del file sin le prefixo \"{{ns:file}}:\".",
-'fileduplicatesearch-legend'   => 'Cercar un duplicato',
-'fileduplicatesearch-filename' => 'Nomine del file:',
-'fileduplicatesearch-submit'   => 'Cercar',
-'fileduplicatesearch-info'     => '$1 × $2 pixel<br />Grandor del file: $3<br />Typo MIME: $4',
-'fileduplicatesearch-result-1' => 'Le file "$1" ha nulle duplicato identic.',
-'fileduplicatesearch-result-n' => 'Le file "$1" ha {{PLURAL:$2|1 duplicato|$2 duplicatos}} identic.',
+'fileduplicatesearch'           => 'Cercar files duplicate',
+'fileduplicatesearch-summary'   => "Cercar files duplicate a base de lor summas de verification ''(hash).''",
+'fileduplicatesearch-legend'    => 'Cercar un duplicato',
+'fileduplicatesearch-filename'  => 'Nomine del file:',
+'fileduplicatesearch-submit'    => 'Cercar',
+'fileduplicatesearch-info'      => '$1 × $2 pixel<br />Grandor del file: $3<br />Typo MIME: $4',
+'fileduplicatesearch-result-1'  => 'Le file "$1" ha nulle duplicato identic.',
+'fileduplicatesearch-result-n'  => 'Le file "$1" ha {{PLURAL:$2|1 duplicato|$2 duplicatos}} identic.',
+'fileduplicatesearch-noresults' => 'Nulle file con nomine "$1" trovate.',
 
 # Special:SpecialPages
 'specialpages'                   => 'Paginas special',
 'specialpages-note'              => '----
 * Paginas special normal.
-* <strong class="mw-specialpagerestricted">Paginas special restringite.</strong>',
+* <span class="mw-specialpagerestricted">Paginas special restringite.</span>
+* <span class="mw-specialpagecached">Paginas special del cache (poterea esser obsolete).</span>',
 'specialpages-group-maintenance' => 'Reportos de mantenentia',
 'specialpages-group-other'       => 'Altere paginas special',
 'specialpages-group-login'       => 'Aperir session / crear conto',

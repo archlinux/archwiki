@@ -31,6 +31,7 @@ class RunJobs extends Maintenance {
 		parent::__construct();
 		$this->mDescription = "Run pending jobs";
 		$this->addOption( 'maxjobs', 'Maximum number of jobs to run', false, true );
+		$this->addOption( 'maxtime', 'Maximum amount of wall-clock time', false, true );
 		$this->addOption( 'type', 'Type of job to run', false, true );
 		$this->addOption( 'procs', 'Number of processes to use', false, true );
 	}
@@ -48,11 +49,13 @@ class RunJobs extends Maintenance {
 				$this->error( "Invalid argument to --procs", true );
 			}
 			$fc = new ForkController( $procs );
-			if ( $fc->start( $procs ) != 'child' ) {
+			if ( $fc->start() != 'child' ) {
 				exit( 0 );
 			}
 		}
-		$maxJobs = $this->getOption( 'maxjobs', 10000 );
+		$maxJobs = $this->getOption( 'maxjobs', false );
+		$maxTime = $this->getOption( 'maxtime', false );
+		$startTime = time();
 		$type = $this->getOption( 'type', false );
 		$wgTitle = Title::newFromText( 'RunJobs.php' );
 		$dbw = wfGetDB( DB_MASTER );
@@ -69,7 +72,7 @@ class RunJobs extends Maintenance {
 				if ( !$job )
 					break;
 
-				wfWaitForSlaves( 5 );
+				wfWaitForSlaves();
 				$t = microtime( true );
 				$offset = $job->id;
 				$status = $job->run();
@@ -80,7 +83,11 @@ class RunJobs extends Maintenance {
 				} else {
 					$this->runJobsLog( $job->toString() . " t=$timeMs good" );
 				}
+
 				if ( $maxJobs && ++$n > $maxJobs ) {
+					break 2;
+				}
+				if ( $maxTime && time() - $startTime > $maxTime ) {
 					break 2;
 				}
 			}

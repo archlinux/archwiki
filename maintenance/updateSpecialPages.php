@@ -33,8 +33,8 @@ class UpdateSpecialPages extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP, $wgOut, $wgSpecialPageCacheUpdates, $wgQueryPages, $wgQueryCacheLimit, $wgDisableQueryPageUpdate;
-		$wgOut->disable();
+		global $IP, $wgSpecialPageCacheUpdates, $wgQueryPages, $wgQueryCacheLimit, $wgDisableQueryPageUpdate;
+
 		$dbw = wfGetDB( DB_MASTER );
 
 		foreach ( $wgSpecialPageCacheUpdates as $special => $call ) {
@@ -58,14 +58,15 @@ class UpdateSpecialPages extends Maintenance {
 			}
 			$this->output( sprintf( "completed in %.2fs\n", $seconds ) );
 			# Wait for the slave to catch up
-			wfWaitForSlaves( 5 );
+			wfWaitForSlaves();
 		}
 
 		// This is needed to initialise $wgQueryPages
 		require_once( "$IP/includes/QueryPage.php" );
 
 		foreach ( $wgQueryPages as $page ) {
-			@list( $class, $special, $limit ) = $page;
+			list( $class, $special ) = $page;
+			$limit = isset( $page[2] ) ? $page[2] : null;
 
 			# --list : just show the name of pages
 			if ( $this->hasOption( 'list' ) ) {
@@ -78,16 +79,20 @@ class UpdateSpecialPages extends Maintenance {
 				continue;
 			}
 
-			$specialObj = SpecialPage::getPage( $special );
+			$specialObj = SpecialPageFactory::getPage( $special );
 			if ( !$specialObj ) {
 				$this->output( "No such special page: $special\n" );
 				exit;
 			}
-			if ( !class_exists( $class ) ) {
-				$file = $specialObj->getFile();
-				require_once( $file );
+			if ( $specialObj instanceof QueryPage ) {
+				$queryPage = $specialObj;
+			} else {
+				if ( !class_exists( $class ) ) {
+					$file = $specialObj->getFile();
+					require_once( $file );
+				}
+				$queryPage = new $class;
 			}
-			$queryPage = new $class;
 
 			if ( !$this->hasOption( 'only' ) || $this->getOption( 'only' ) == $queryPage->getName() ) {
 				$this->output( sprintf( '%-30s ',  $special ) );
@@ -126,7 +131,7 @@ class UpdateSpecialPages extends Maintenance {
 						$dbw->commit();
 					}
 					# Wait for the slave to catch up
-					wfWaitForSlaves( 5 );
+					wfWaitForSlaves();
 				} else {
 					$this->output( "cheap, skipped\n" );
 				}

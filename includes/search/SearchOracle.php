@@ -123,18 +123,22 @@ class SearchOracle extends SearchEngine {
 
 	/**
 	 * Return a LIMIT clause to limit results on the query.
+	 *
+	 * @param string
+	 *
 	 * @return String
 	 */
-	function queryLimit($sql) {
+	function queryLimit( $sql ) {
 		return $this->db->limitResult($sql, $this->limit, $this->offset);
 	}
 
 	/**
 	 * Does not do anything for generic search engine
 	 * subclasses may define this though
+	 *
 	 * @return String
 	 */
-	function queryRanking($filteredTerm, $fulltext) {
+	function queryRanking( $filteredTerm, $fulltext ) {
 		return ' ORDER BY score(1)';
 	}
 
@@ -186,7 +190,7 @@ class SearchOracle extends SearchEngine {
 		$lc = SearchEngine::legalSearchChars();
 		$this->searchTerms = array();
 
-		# FIXME: This doesn't handle parenthetical expressions.
+		# @todo FIXME: This doesn't handle parenthetical expressions.
 		$m = array();
 		$searchon = '';
 		if (preg_match_all('/([-+<>~]?)(([' . $lc . ']+)(\*?)|"[^"]*")/',
@@ -253,9 +257,9 @@ class SearchOracle extends SearchEngine {
 		//     ALTER SESSION SET CURRENT_SCHEMA = ...
 		// was used.
 		$dbw->query( "CALL ctx_ddl.sync_index(" . 
-			$dbw->addQuotes( $dbw->getDBname() . '.' . trim( $dbw->tableName( 'si_text_idx' ),  '"' ) ) . ")" );
+			$dbw->addQuotes( $dbw->getDBname() . '.' . $dbw->tableName( 'si_text_idx', false ) ) . ")" );
 		$dbw->query( "CALL ctx_ddl.sync_index(" . 
-			$dbw->addQuotes( $dbw->getDBname() . '.' . trim( $dbw->tableName( 'si_title_idx' ),  '"' ) ) . ")" );
+			$dbw->addQuotes( $dbw->getDBname() . '.' . $dbw->tableName( 'si_title_idx', false ) ) . ")" );
 	}
 
 	/**

@@ -184,8 +184,6 @@ Kui tšüsümüssessä ebõõ rootšittu tšültši, võib õlla õlõttõ löü
 'extlink_tip'     => 'Eräpooliin linkki (mäleht http:// prefiksi)',
 'headline_sample' => 'Zagolofkka-teksti',
 'headline_tip'    => 'Zagolofkka',
-'math_sample'     => 'Lissä formula tänne',
-'math_tip'        => 'Matematillin formula (LaTeX)',
 'nowiki_sample'   => 'Lissä formattimatoo teksti tänne',
 'nowiki_tip'      => 'Ignoriiroit viki formatti',
 'image_tip'       => 'Kuva',
@@ -390,11 +388,9 @@ Tšüľľed, kummad õmad teďďellä [[Special:Watchlist|kattsõspiizgalla]] on
 # Watchlist
 'watchlist'         => 'Minu kattsõspiiska',
 'mywatchlist'       => 'Minu kattsõspiiska',
-'addedwatch'        => 'Lisättü kattsospiizgallõ',
 'addedwatchtext'    => "Tšültši \"[[:\$1]]\" on lisättü Teďďee [[Special:Watchlist|kattsospiizgallõ]].
 Tšültšese ja sene juttutšültšese tehäväd tulõvaizõd muutuhsõd leeväd tšisloitõtud siäll.
 Tšültši leeb tširjutõttu '''pimmiässi''' [[Special:RecentChanges|spiizgall viimeizije muutuhsijõ]].",
-'removedwatch'      => 'Pantu kattsõspiizgalt poiz',
 'removedwatchtext'  => 'Tšültši "[[:$1]]" on pantu [[Special:Watchlist|teďďee kattsõspiizgalt]] poiz.',
 'watch'             => 'Katso',
 'watchthispage'     => 'Katso sitä tšültšiä',
@@ -411,7 +407,7 @@ Tšültši leeb tširjutõttu '''pimmiässi''' [[Special:RecentChanges|spiizgall
 'deletepage'            => 'Pühi tšültši',
 'confirmdeletetext'     => 'Õlõtta pühtšimässä tšüľľee vai failii ja kõigõ sene istorii. Õlka nii üvä, kõvissõga jot tahotta sitä tehä, jot saatta arvoa sledstvijäd jot pühtšimüz on [[{{MediaWiki:Policy-url}}|poolissaa]] mukka.',
 'actioncomplete'        => 'Töö tehtü lõppuu',
-'deletedtext'           => '"<nowiki>$1</nowiki>" on pühittü.
+'deletedtext'           => '"$1" on pühittü.
 Tšüľľellä $2 on spiiska viimeiziss pühtšimühsiiss.',
 'deletedarticle'        => 'roottšiz tšüľľee [[$1]]',
 'dellogpage'            => 'Pühitüd tšüľľed',
@@ -430,7 +426,7 @@ Tšüľľellä $2 on spiiska viimeiziss pühtšimühsiiss.',
 'protectexpiry'               => 'Lõpub:',
 'protect_expiry_invalid'      => 'Lõppuaika eb kõlpa.',
 'protect_expiry_old'          => 'Lõppuaika on meneväz.',
-'protect-text'                => "Võitta kattsoa ja muuttaa tšüľľee '''<nowiki>$1</nowiki>''' lupoit.",
+'protect-text'                => "Võitta kattsoa ja muuttaa tšüľľee '''$1''' lupoit.",
 'protect-locked-access'       => "Että või muuttaa tšüľľee varjauztasoa. All on tšüľľee \"'''\$1'''\" nütšüized varjauztazod:",
 'protect-cascadeon'           => 'Kase tšültši on varjõttu, ku on sisällütettü all {{PLURAL:$1|õlõvaa jadgotussi varjõttuhõõ tšültšese|õlõvii jadgotussi varjõttuisõ tšültšiise}}. Võitta muuttaa sene tšüľľee varjuztasoa, mutta se eb vaikuta jadgotõttuu varjuhsiise.',
 'protect-default'             => 'Salli kõik tšäüttijäd',
@@ -597,11 +593,10 @@ Toož, võittõ tširjutta väänteüssee süü.',
 'nextdiff'     => 'Uuvvõpi muutuz →',
 
 # Media information
-'file-info-size'       => '$1 × $2 px, $3, MIME-sortta: $4',
-'file-nohires'         => '<small>Suurõpaa kuva ebõõ.</small>',
-'svg-long-desc'        => 'SVG-faili $1 × $2 px, failii suuruz: $3',
-'show-big-image'       => 'Kõrka-rezoľuuttsiin verzija',
-'show-big-image-thumb' => '<small>Prestavľeńńaa suuruz: $1 × $2 px</small>',
+'file-info-size' => '$1 × $2 px, $3, MIME-sortta: $4',
+'file-nohires'   => '<small>Suurõpaa kuva ebõõ.</small>',
+'svg-long-desc'  => 'SVG-faili $1 × $2 px, failii suuruz: $3',
+'show-big-image' => 'Kõrka-rezoľuuttsiin verzija',
 
 # Bad image list
 'bad_image_list' => 'Spiizgaa formatti on:
@@ -623,11 +618,17 @@ Kui faili on muutõttu, siiz detaaľid võivad õlla kahõllaizõd muutõtull fa
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # External editor support
 'edit-externally'      => 'Muuttaa sitä failia ulkopoolizõõ prograammiikaa.',
-'edit-externally-help' => '(Kattsoga [http://www.mediawiki.org/wiki/Manual:External_editors praavilõd], kui tahotta lisäinformaattsia.)',
+'edit-externally-help' => '(Kattsoga [//www.mediawiki.org/wiki/Manual:External_editors praavilõd], kui tahotta lisäinformaattsia.)',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'koko istori',

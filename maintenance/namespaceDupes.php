@@ -30,10 +30,10 @@ class NamespaceConflictChecker extends Maintenance {
 		parent::__construct();
 		$this->mDescription = "";
 		$this->addOption( 'fix', 'Attempt to automatically fix errors' );
-		$this->addOption( 'suffix', "Dupes will be renamed with correct namespace with\n" .
-									"\t\t<text> Appended after the article name", false, true );
-		$this->addOption( 'prefix', "Do an explicit check for the given title prefix\n" .
-									"\t\tappended after the article name", false, true );
+		$this->addOption( 'suffix', "Dupes will be renamed with correct namespace with " .
+									"<text> appended after the article name", false, true );
+		$this->addOption( 'prefix', "Do an explicit check for the given title prefix " .
+									"appended after the article name", false, true );
 	}
 
 	public function execute() {
@@ -66,8 +66,7 @@ class NamespaceConflictChecker extends Maintenance {
 	 * @param $suffix String: suffix to append to renamed articles
 	 */
 	private function checkAll( $fix, $suffix = '' ) {
-		global $wgContLang, $wgNamespaceAliases, $wgCanonicalNamespaceNames;
-		global $wgCapitalLinks;
+		global $wgContLang, $wgNamespaceAliases, $wgCapitalLinks;
 
 		$spaces = array();
 
@@ -79,7 +78,7 @@ class NamespaceConflictChecker extends Maintenance {
 		}
 
 		// Now pull in all canonical and alias namespaces...
-		foreach ( $wgCanonicalNamespaceNames as $ns => $name ) {
+		foreach ( MWNamespace::getCanonicalNamespaces() as $ns => $name ) {
 			// This includes $wgExtraNamespaces
 			if ( $name !== '' ) {
 				$spaces[$name] = $ns;

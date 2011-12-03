@@ -15,6 +15,7 @@
  * @author NamwikiTL
  * @author Nayvik
  * @author Omshivaprakash
+ * @author Shankar
  * @author Shushruth
  * @author The Evil IP address
  * @author לערי ריינהארט
@@ -173,15 +174,6 @@ $messages = array(
 'category-file-count-limited'    => 'ಪ್ರಸಕ್ತ ವರ್ಗದಲ್ಲಿ ಈ ಕೆಳಗಿನ {{PLURAL:$1|ಫೈಲು ಇದೆ|$1 ಫೈಲುಗಳು ಇವೆ}}.',
 'listingcontinuesabbrev'         => 'ಮುಂದು.',
 
-'mainpagetext'      => "'''ವಿಕಿ ತಂತ್ರಾಂಶವನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಅನುಸ್ಥಾಪಿಸಲಾಯಿತು.'''",
-'mainpagedocfooter' => 'ವಿಕಿ ತಂತ್ರಾಂಶವನ್ನು ಬಳಸುವ ಬಗ್ಗೆ ಮಾಹಿತಿಗೆ [http://meta.wikimedia.org/wiki/Help:Contents ಬಳಕೆದಾರರಿಗೆ ನಿರ್ದೇಶನ ಪುಟ] ನೋಡಿ.
-
-== ಪ್ರಾರಂಭಿಸುವುದು ==
-
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Configuration settings list]
-* [http://www.mediawiki.org/wiki/Manual:FAQ ಮೀಡಿಯವಿಕಿ FAQ]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]',
-
 'about'         => 'ನಮ್ಮ ಬಗ್ಗೆ',
 'article'       => 'ಲೇಖನ ಪುಟ',
 'newwindow'     => '(ಹೊಸ ಕಿಟಕಿಯನ್ನು ತೆರೆಯುತ್ತದೆ)',
@@ -229,7 +221,6 @@ $messages = array(
 'history'           => 'ಪುಟದ ಚರಿತ್ರೆ',
 'history_short'     => 'ಇತಿಹಾಸ',
 'updatedmarker'     => 'ನನ್ನ ಕೊನೆಯ ವೀಕ್ಷಣೆಯ ನಂತರ ಬದಲಾಗಿರುವವು',
-'info_short'        => 'ಮಾಹಿತಿ',
 'printableversion'  => 'ಪ್ರಿಂಟ್ ಆವೃತ್ತಿ',
 'permalink'         => 'ಸ್ಥಿರ ಸಂಪರ್ಕ',
 'print'             => 'ಮುದ್ರಿಸು',
@@ -402,11 +393,10 @@ MySQL ಹಿಂದಿರುಗಿಸಿದ ದೋಷ "$3: $4"',
 'protectedinterface'   => 'ಈ ಪುಟವು ತಂತ್ರಾಂಶವು ಉಪಯೋಗಿಸುವ ಪಠ್ಯವನ್ನು ದೊರಕಿಸುತ್ತದೆ. ದುರುಪಯೋಗ ಆಗದಿರಲೆಂದು ಇದನ್ನು ಸಂರಕ್ಷಿಸಲಾಗಿದೆ.',
 'editinginterface'     => "'''ಎಚ್ಚರಿಕೆ:''' ನೀವು ತಂತ್ರಾಂಶವು ತಾಣವನ್ನು ಪ್ರದರ್ಶಿಸಲು ಉಪಯೋಗಿಸುವ ಪಠ್ಯವನ್ನು ಹೊಂದಿರುವ ಪುಟವೊಂದನ್ನು ಸಂಪಾದಿಸುತ್ತಿರುವಿರಿ.
 ಈ ಪುಟದಲ್ಲಾಗುವ ಬದಲಾವಣೆಗಳು ಇತರ ಬಳಕೆದಾರರಿಗೆ ತಾಣವು ಕಾಣುವ ರೀತಿಯನ್ನು ಬದಲಾಯಿಸುತ್ತದೆ.
-ಅನುವಾದಗಳನ್ನು ಮಾಡುತ್ತಿದ್ದರೆ, ದಯವಿಟ್ಟು ಮೀಡಿಯವಿಕಿಯ ಪ್ರಾಂತೀಯತೆ ಯೋಜನೆ [http://translatewiki.net/wiki/Main_Page?setlang=kn ಬೀಟವಿಕಿಯಲ್ಲಿ] ಮಾಡಿ.",
+ಅನುವಾದಗಳನ್ನು ಮಾಡುತ್ತಿದ್ದರೆ, ದಯವಿಟ್ಟು ಮೀಡಿಯವಿಕಿಯ ಪ್ರಾಂತೀಯತೆ ಯೋಜನೆ [//translatewiki.net/wiki/Main_Page?setlang=kn ಬೀಟವಿಕಿಯಲ್ಲಿ] ಮಾಡಿ.",
 'cascadeprotected'     => 'ಈ ಪುಟವು ಸಂಪಾದನೆ ಮಾಡಲಾಗದಂತೆ ಸಂರಕ್ಷಿಸಲಾಗಿದೆ. ಇದಕ್ಕೆ ಕಾರಣ ಈ ಪುಟವನ್ನು ಈ ಕೆಳಗಿನ ತಡಸಲು-ಸಂರಕ್ಷಣೆ ಅಳವಡಿಸಲಾದ {{PLURAL:$1|ಪುಟದಲ್ಲಿ|ಪುಟಗಳಲ್ಲಿ}} ಉಪಯೋಗಿಸಲಾಗಿದೆ:
 $2',
 'namespaceprotected'   => "ನಿಮಗೆ '''$1''' ಪುಟಪ್ರಬೇಧಕ್ಕೆ ಸೇರಿರುವ ಪುಟಗಳನ್ನು ಸಂಪಾದಿಸುವ ಅನುಮತಿ ಇಲ್ಲ.",
-'customcssjsprotected' => 'ಈ ಪುಟದಲ್ಲಿ ಬೇರೆ ಬಳಕೆದಾರರ ವಯಕ್ತಿಕ ನಿದರ್ಶನಗಳು ಇರುವುದರಿಂದ ನಿಮಗೆ ಈ ಪುಟವನ್ನು ಸಂಪಾದಿಸುವ ಅನುಮತಿ ಇಲ್ಲ.',
 'ns-specialprotected'  => 'ವಿಶೇಷ ಪುಟಗಳನ್ನು ಸಂಪಾದಿಸಲು ಆಗುವುದಿಲ್ಲ.',
 'titleprotected'       => "ಈ ಹೆಸರಿನ ಪುಟವನ್ನು ಸೃಷ್ಟಿಸಲಾಗದಂತೆ [[User:$1|$1]] ಅವರು ಸಂರಕ್ಷಿಸಿದ್ದಾರೆ.
 ಸಂರಕ್ಷಣೆಗೆ ನೀಡಿರುವ ಕಾರಣ: ''$2''.",
@@ -456,7 +446,7 @@ $2',
 'loginsuccess'               => 'ನೀವು ಈಗ "$1" ಆಗಿ ವಿಕಿಪೀಡಿಯಕ್ಕೆ ಲಾಗಿನ್ ಆಗಿದ್ದೀರಿ.',
 'nosuchuser'                 => '"$1" ಹೆಸರಿನ ಯಾವ ಸದಸ್ಯರೂ ಇಲ್ಲ.
 ಕಾಗುಣಿತವನ್ನು ಪರೀಕ್ಷಿಸಿ, ಅಥವಾ [[Special:UserLogin/signup|ಹೊಸ ಸದಸ್ಯತ್ವ ಖಾತೆಯನ್ನು ಸೃಷ್ಟಿಸಿ]].',
-'nosuchusershort'            => '"<nowiki>$1</nowiki>" ಹೆಸರಿನ ಸದಸ್ಯರು ಯಾರೂ ಇಲ್ಲ.
+'nosuchusershort'            => '"$1" ಹೆಸರಿನ ಸದಸ್ಯರು ಯಾರೂ ಇಲ್ಲ.
 ಹೆಸರಲ್ಲಿ ಕಾಗುಣಿತ ತಪ್ಪಿದೆಯೆ ಎಂದು ಪರೀಕ್ಷಿಸಿ.',
 'nouserspecified'            => 'ನೀವು ಒಂದು ಸದಸ್ಯತ್ವದ ಹೆಸರನ್ನು ಸೂಚಿಸಬೇಕು.',
 'wrongpassword'              => 'ತಪ್ಪು ಪ್ರವೇಶ ಪದ ನೀಡಿರುವಿರಿ. ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.',
@@ -496,7 +486,7 @@ $2',
 ಆ ಖಾತೆ ತಪ್ಪಾಗಿ ತೆಗೆದಿದ್ದಲ್ಲಿ, ಈ ಸಂದೇಶವನ್ನು ನೀವು ಅಲಕ್ಷಿಸಬಹುದು.',
 'loginlanguagelabel'         => 'ಭಾಷೆ: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'ಪ್ರವೇಶಪದವನ್ನು ಬದಲಾಯಿಸಿ',
 'resetpass_announce'        => 'ನೀವು ತಾತ್ಕಾಲಿಕ ಇ-ಅಂಚೆ ಕೋಡ್ ಅನ್ನು ಉಪಯೋಗಿಸಿ ಲಾಗ್ ಇನ್ ಆಗಿರುವಿರಿ.
 ಲಾಗ್ ಇನ್ ಪೂರ್ಣಗೊಳಿಸಲು ನೀವಿಲ್ಲ ಹೊಸ ಪ್ರವೇಶಪದ ನೀಡಬೇಕು:',
@@ -522,8 +512,6 @@ $2',
 'extlink_tip'     => 'ಬಾಹ್ಯ ಸಂಪರ್ಕ (http:// ಇಂದ ಶುರು ಮಾಡಿ)',
 'headline_sample' => 'ಶಿರೋಲೇಖ',
 'headline_tip'    => '೨ನೇ ಮಟ್ಟದ ತಲೆಬರಹ',
-'math_sample'     => 'ಇಲ್ಲಿ ಸೂತ್ರವನ್ನು ಅಳವಡಿಸಿ',
-'math_tip'        => 'ಗಣಿತ ಸೂತ್ರ (LaTeX)',
 'nowiki_sample'   => 'ಈ ಜಾಗದಲ್ಲಿ ಬರೆಯಲ್ಪಟ್ಟದ್ದು ವಿಕೀಕರಣ ಆಗುವುದಿಲ್ಲ',
 'nowiki_tip'      => 'ವಿಕಿ ರಚನಕ್ರಮವನ್ನು ಅಲಕ್ಷಿಸು',
 'image_tip'       => 'ಅಳವಡಿಸಲ್ಪಟ್ಟ ಫೈಲು',
@@ -603,7 +591,7 @@ $2',
 ನೀವು ಇತರ ಪುಟಗಳಲ್ಲಿ [[Special:Search/{{PAGENAME}}|ಈ ಹೆಸರನ್ನು ಹುಡುಕಬಹುದು]],
 <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} ಸಂಬಂಧಿತ ದಾಖಲೆಗಳನ್ನು ಹುಡುಕಬಹುದು],
 ಅಥವ [{{fullurl:{{FULLPAGENAME}}|action=edit}} ಈ ಪುಟವನ್ನು ಸಂಪಾದಿಸಬಹುದು]</span>.',
-'userpage-userdoesnotexist'        => 'ಬಳಕೆದಾರ ಖಾತೆ "$1" ದಾಖಲಾಗಿಲ್ಲ. ನೀವು ಇದೇ ಪುಟವನ್ನು ಸೃಷ್ಟಿ/ಸಂಪಾದನೆ ಮಾಡಬೇಕೆಂದಿರುವಿರಿ ಎಂದು ಖಾತ್ರಿ ಮಾಡಿಕೊಳ್ಳಿ.',
+'userpage-userdoesnotexist'        => 'ಬಳಕೆದಾರ ಖಾತೆ "<nowiki>$1</nowiki>" ದಾಖಲಾಗಿಲ್ಲ. ನೀವು ಇದೇ ಪುಟವನ್ನು ಸೃಷ್ಟಿ/ಸಂಪಾದನೆ ಮಾಡಬೇಕೆಂದಿರುವಿರಿ ಎಂದು ಖಾತ್ರಿ ಮಾಡಿಕೊಳ್ಳಿ.',
 'usercssyoucanpreview'             => "'''ಗಮನಿಸಿ:''' ಉಳಿಸುವ ಮುನ್ನ 'ಮುನ್ನೋಟ' ಗುಂಡಿಯನ್ನು ಉಪಯೋಗಿಸಿ ನಿಮ್ಮ ಹೊಸ CSS ಅನ್ನು ಪ್ರಯೋಗ ಮಾಡಿ.",
 'userjsyoucanpreview'              => "'''ಗಮನಿಸಿ:''' ಉಳಿಸುವ ಮುನ್ನ 'ಮುನ್ನೋಟ' ಗುಂಡಿಯನ್ನು ಉಪಯೋಗಿಸಿ ನಿಮ್ಮ ಹೊಸ JS ಅನ್ನು ಪ್ರಯೋಗ ಮಾಡಿ.",
 'usercsspreview'                   => "'''ನೆನಪಿಡಿ: ನೀವು ಇಲ್ಲಿ ಕೇವಲ ನಿಮ್ಮ ಬಳಕೆದಾರ CSSನ ಮುನ್ನೋಟ ನೋಡುತ್ತಿರುವಿರಿ.'''
@@ -785,51 +773,53 @@ $2',
 'diff-multi'               => '(ಮಧ್ಯದಲ್ಲಿ ಆಗಿರುವ {{PLURAL:$1|೧ ಬದಲಾವಣೆಯನ್ನು|$1 ಬದಲಾವಣೆಗಳನ್ನು}} ತೋರಿಸಲಾಗಿಲ್ಲ.)',
 
 # Search results
-'searchresults'             => 'ಶೋಧನೆಯ ಫಲಿತಾಂಶಗಳು',
-'searchresults-title'       => '"$1" ಅನ್ನು ಹುಡುಕಿದ ಫಲಿತಾಂಶಗಳು',
-'searchresulttext'          => '{{SITENAME}} ಅಲ್ಲಿ ಹುಡುಕಾಟ ನಡೆಸುವ ಬಗ್ಗೆ ಹೆಚ್ಚಿನ ಮಾಹಿತಿಗೆ [[{{MediaWiki:Helppage}}|{{int:help}}]] ಅನ್ನು ನೋಡಿ.',
-'searchsubtitle'            => 'ನೀವು \'\'\'[[:$1]]\'\'\' ಅನ್ನು ಹುಡುಕಿದಿರಿ ([[Special:Prefixindex/$1|"$1" ಇಂದ ಪ್ರಾರಂಭವಾಗುವ ಎಲ್ಲಾ ಪುಟಗಳು]]{{int:pipe-separator}}[[Special:WhatLinksHere/$1|"$1" ಗೆ ಸಂಪರ್ಕ ಹೊಂದಿರುವ ಎಲ್ಲಾ ಪುಟಗಳು]])',
-'searchsubtitleinvalid'     => "'''$1''' ಅನ್ನು ಹುಡುಕಿದಿರಿ",
-'toomanymatches'            => 'ತುಂಬಾ ಫಲಿತಾಂಶಗಳು ದೊರೆತಿವೆ, ದಯವಿಟ್ಟು ಬೇರೆ ಪದಪುಂಜವನ್ನು ಪ್ರಯತ್ನಿಸಿ',
-'titlematches'              => 'ಹೊಂದಿಕೆಯಿರುವ ಪುಟ ಶೀರ್ಷಿಕೆಗಳು',
-'notitlematches'            => 'ಯಾವ ಪುಟ ಶೀರ್ಷಿಕೆಗಳೂ ಹೊಂದಿಕೆ ತೋರಲಿಲ್ಲ',
-'textmatches'               => 'ಪುಟದ ಪಠ್ಯದಲ್ಲಿನ ಹೋಲಿಕೆಗಳು',
-'notextmatches'             => 'ಯಾವ ಪುಟದ ಪಠ್ಯದಲ್ಲೂ ಹೋಲಿಕೆಗಳಿಲ್ಲ',
-'prevn'                     => 'ಹಿಂದಿನ {{PLURAL:$1|$1}}',
-'nextn'                     => 'ಮುಂದಿನ {{PLURAL:$1|$1}}',
-'viewprevnext'              => 'ವೀಕ್ಷಿಸು ($1 {{int:pipe-separator}} $2) ($3)',
-'searchmenu-new'            => "'''''[[:$1]]'' ಪುಟವನ್ನು ಈ ವಿಕಿಯಲ್ಲಿ ಸೃಷ್ಟಿಸಿ!'''",
-'searchhelp-url'            => 'Help:ಪರಿವಿಡಿ',
-'searchprofile-project'     => 'ಸಹಾಯ ಮತ್ತು ಯೋಜನೆ ಪುಟಗಳು',
-'searchprofile-images'      => 'ಬಹುಮಾಧ್ಯಮ',
-'searchprofile-everything'  => 'ಪ್ರತಿಯೊಂದು',
-'searchprofile-advanced'    => 'ಪರಿಣತ',
-'search-result-size'        => '$1 ({{PLURAL:$2|೧ ಪದ|$2 ಪದಗಳು}})',
-'search-result-score'       => 'ಸಂಬದ್ಧತೆ: $1%',
-'search-redirect'           => '(ಪುನರ್ನಿರ್ದೇಶನ $1)',
-'search-section'            => '(ವಿಭಾಗ $1)',
-'search-suggest'            => 'ನೀವು ಇದನ್ನು ಹುಡುಕುತ್ತಿರುವಿರೆ: $1',
-'search-interwiki-caption'  => 'ಬಳಗದ ಇತರ ಯೋಜನೆಗಳು',
-'search-interwiki-default'  => '$1 ಫಲಿತಾಂಶಗಳು:',
-'search-interwiki-more'     => '(ಹೆಚ್ಚು)',
-'search-mwsuggest-enabled'  => 'ಸಲಹೆಗಳೊಂದಿಗೆ',
-'search-mwsuggest-disabled' => 'ಯಾವುದೇ ಸಲಹೆಗಳಿಲ್ಲ',
-'search-relatedarticle'     => 'ಸಂಬಂಧಿತ',
-'mwsuggest-disable'         => 'AJAX ಸಲಹೆಗಳನ್ನು ತೋರದಿರು',
-'searchrelated'             => 'ಸಂಬಂಧಿತ',
-'searchall'                 => 'ಎಲ್ಲಾ',
-'showingresults'            => "ಕೆಳಗೆ #'''$2''' ಇಂದ ಶುರುವಾದ {{PLURAL:$1|'''೧''' ಫಲಿತಾಂಶದ|'''$1''' ಫಲಿತಾಂಶಗಳ}}ವರೆಗೂ ತೋರಿಸಲಾಗುತ್ತಿದೆ.",
-'showingresultsnum'         => "ಕೆಳಗೆ #'''$2''' ಇಂದ ಶುರುವಾಗಿ {{PLURAL:$3|'''೧''' ಫಲಿತಾಂಶವನ್ನು|'''$3''' ಫಲಿತಾಂಶಗಳನ್ನು}} ತೋರಿಸಲಾಗುತ್ತಿದೆ.",
-'nonefound'                 => "'''ಸೂಚನೆ''': ಕೆಲವೊಂದು ನೇಮ್ ಸ್ಪೇಸ್ ಗಳನ್ನು ಮಾತ್ರ ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಹುಡುಕಲಾಗುತ್ತದೆ.
+'searchresults'                  => 'ಶೋಧನೆಯ ಫಲಿತಾಂಶಗಳು',
+'searchresults-title'            => '"$1" ಅನ್ನು ಹುಡುಕಿದ ಫಲಿತಾಂಶಗಳು',
+'searchresulttext'               => '{{SITENAME}} ಅಲ್ಲಿ ಹುಡುಕಾಟ ನಡೆಸುವ ಬಗ್ಗೆ ಹೆಚ್ಚಿನ ಮಾಹಿತಿಗೆ [[{{MediaWiki:Helppage}}|{{int:help}}]] ಅನ್ನು ನೋಡಿ.',
+'searchsubtitle'                 => 'ನೀವು \'\'\'[[:$1]]\'\'\' ಅನ್ನು ಹುಡುಕಿದಿರಿ ([[Special:Prefixindex/$1|"$1" ಇಂದ ಪ್ರಾರಂಭವಾಗುವ ಎಲ್ಲಾ ಪುಟಗಳು]]{{int:pipe-separator}}[[Special:WhatLinksHere/$1|"$1" ಗೆ ಸಂಪರ್ಕ ಹೊಂದಿರುವ ಎಲ್ಲಾ ಪುಟಗಳು]])',
+'searchsubtitleinvalid'          => "'''$1''' ಅನ್ನು ಹುಡುಕಿದಿರಿ",
+'toomanymatches'                 => 'ತುಂಬಾ ಫಲಿತಾಂಶಗಳು ದೊರೆತಿವೆ, ದಯವಿಟ್ಟು ಬೇರೆ ಪದಪುಂಜವನ್ನು ಪ್ರಯತ್ನಿಸಿ',
+'titlematches'                   => 'ಹೊಂದಿಕೆಯಿರುವ ಪುಟ ಶೀರ್ಷಿಕೆಗಳು',
+'notitlematches'                 => 'ಯಾವ ಪುಟ ಶೀರ್ಷಿಕೆಗಳೂ ಹೊಂದಿಕೆ ತೋರಲಿಲ್ಲ',
+'textmatches'                    => 'ಪುಟದ ಪಠ್ಯದಲ್ಲಿನ ಹೋಲಿಕೆಗಳು',
+'notextmatches'                  => 'ಯಾವ ಪುಟದ ಪಠ್ಯದಲ್ಲೂ ಹೋಲಿಕೆಗಳಿಲ್ಲ',
+'prevn'                          => 'ಹಿಂದಿನ {{PLURAL:$1|$1}}',
+'nextn'                          => 'ಮುಂದಿನ {{PLURAL:$1|$1}}',
+'shown-title'                    => 'ಪ್ರತಿ ಪುಟದಲ್ಲಿಯೂ $1 {{PLURAL:$1|result|results}} ತೋರಿಸು',
+'viewprevnext'                   => 'ವೀಕ್ಷಿಸು ($1 {{int:pipe-separator}} $2) ($3)',
+'searchmenu-new'                 => "'''''[[:$1]]'' ಪುಟವನ್ನು ಈ ವಿಕಿಯಲ್ಲಿ ಸೃಷ್ಟಿಸಿ!'''",
+'searchhelp-url'                 => 'Help:ಪರಿವಿಡಿ',
+'searchprofile-project'          => 'ಸಹಾಯ ಮತ್ತು ಯೋಜನೆ ಪುಟಗಳು',
+'searchprofile-images'           => 'ಬಹುಮಾಧ್ಯಮ',
+'searchprofile-everything'       => 'ಪ್ರತಿಯೊಂದು',
+'searchprofile-advanced'         => 'ಪರಿಣತ',
+'searchprofile-articles-tooltip' => '$1 ನಲ್ಲಿ ಹುಡುಕಿ',
+'search-result-size'             => '$1 ({{PLURAL:$2|೧ ಪದ|$2 ಪದಗಳು}})',
+'search-result-score'            => 'ಸಂಬದ್ಧತೆ: $1%',
+'search-redirect'                => '(ಪುನರ್ನಿರ್ದೇಶನ $1)',
+'search-section'                 => '(ವಿಭಾಗ $1)',
+'search-suggest'                 => 'ನೀವು ಇದನ್ನು ಹುಡುಕುತ್ತಿರುವಿರೆ: $1',
+'search-interwiki-caption'       => 'ಬಳಗದ ಇತರ ಯೋಜನೆಗಳು',
+'search-interwiki-default'       => '$1 ಫಲಿತಾಂಶಗಳು:',
+'search-interwiki-more'          => '(ಹೆಚ್ಚು)',
+'search-mwsuggest-enabled'       => 'ಸಲಹೆಗಳೊಂದಿಗೆ',
+'search-mwsuggest-disabled'      => 'ಯಾವುದೇ ಸಲಹೆಗಳಿಲ್ಲ',
+'search-relatedarticle'          => 'ಸಂಬಂಧಿತ',
+'mwsuggest-disable'              => 'AJAX ಸಲಹೆಗಳನ್ನು ತೋರದಿರು',
+'searchrelated'                  => 'ಸಂಬಂಧಿತ',
+'searchall'                      => 'ಎಲ್ಲಾ',
+'showingresults'                 => "ಕೆಳಗೆ #'''$2''' ಇಂದ ಶುರುವಾದ {{PLURAL:$1|'''೧''' ಫಲಿತಾಂಶದ|'''$1''' ಫಲಿತಾಂಶಗಳ}}ವರೆಗೂ ತೋರಿಸಲಾಗುತ್ತಿದೆ.",
+'showingresultsnum'              => "ಕೆಳಗೆ #'''$2''' ಇಂದ ಶುರುವಾಗಿ {{PLURAL:$3|'''೧''' ಫಲಿತಾಂಶವನ್ನು|'''$3''' ಫಲಿತಾಂಶಗಳನ್ನು}} ತೋರಿಸಲಾಗುತ್ತಿದೆ.",
+'nonefound'                      => "'''ಸೂಚನೆ''': ಕೆಲವೊಂದು ನೇಮ್ ಸ್ಪೇಸ್ ಗಳನ್ನು ಮಾತ್ರ ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಹುಡುಕಲಾಗುತ್ತದೆ.
 ನಿಮ್ಮ ಹುಡುಕುಪದದ ಹಿಂದೆ ''all:'' ಬಳಸಿ, ವಿಷಯವನ್ನು ಹುಡುಕಿ (ಚರ್ಚೆ, ಟೆಂಪ್ಲೇಟು, ಇತ್ಯಾದಿ ಪುಟಗಳನ್ನೊಳಗೊಂಡು), ಅಥವಾ ನಿಮಗೆ ಇಷ್ಟ ಬಂದ ನೇಮ್ ಸ್ಪೇಸ್ ಅನ್ನು ಪೂರ್ವಪ್ರತ್ಯಯವನ್ನಾಗಿ ಬಳಸಿ.",
-'powersearch'               => 'ಹುಡುಕಿ',
-'powersearch-legend'        => 'ಮುಂದುವರೆದ ಹುಡುಕಾಟ',
-'powersearch-ns'            => 'ಈ ಪುಟ ಪ್ರಬೇಧಗಳಲ್ಲಿ ಹುಡುಕು:',
-'powersearch-redir'         => 'ಪುನರ್ನಿರ್ದೇಶನಗಳ ಪಟ್ಟಿ',
-'powersearch-field'         => 'ಇದನ್ನು ಹುಡುಕು',
-'powersearch-toggleall'     => 'ಎಲ್ಲಾ',
-'search-external'           => 'ಬಾಹ್ಯ ಹುಡುಕಾಟ',
-'searchdisabled'            => '{{SITENAME}} ಹುಡುಕಾಟ ಸದ್ಯಕ್ಕೆ ಸ್ಥಗಿತವಾಗಿದೆ.
+'powersearch'                    => 'ಹುಡುಕಿ',
+'powersearch-legend'             => 'ಮುಂದುವರೆದ ಹುಡುಕಾಟ',
+'powersearch-ns'                 => 'ಈ ಪುಟ ಪ್ರಬೇಧಗಳಲ್ಲಿ ಹುಡುಕು:',
+'powersearch-redir'              => 'ಪುನರ್ನಿರ್ದೇಶನಗಳ ಪಟ್ಟಿ',
+'powersearch-field'              => 'ಇದನ್ನು ಹುಡುಕು',
+'powersearch-toggleall'          => 'ಎಲ್ಲಾ',
+'search-external'                => 'ಬಾಹ್ಯ ಹುಡುಕಾಟ',
+'searchdisabled'                 => '{{SITENAME}} ಹುಡುಕಾಟ ಸದ್ಯಕ್ಕೆ ಸ್ಥಗಿತವಾಗಿದೆ.
 ಈ ವೇಳೆಯಲ್ಲಿ ನೀವು ಗೂಗಲ್ ಉಪಯೋಗಿಸಿ ಹುಡುಕಾಟ ನಡೆಸಬಹುದು.
 ಗಮನಿಸಿ: ಅವರ {{SITENAME}} ಮಾಹಿತಿಯು ಪ್ರಸಕ್ತವಾಗಿಲ್ಲದಿರಬಹುದು.',
 
@@ -847,7 +837,6 @@ $2',
 'changepassword'              => 'ಪ್ರವೇಶ ಪದ ಬದಲಾಯಿಸಿ',
 'prefs-skin'                  => 'ಚರ್ಮ',
 'skin-preview'                => 'ಮುನ್ನೋಟ',
-'prefs-math'                  => 'ಗಣಿತ',
 'datedefault'                 => 'ಯಾವುದೇ ಪ್ರಾಶಸ್ತ್ಯ ಇಲ್ಲ',
 'prefs-datetime'              => 'ದಿನ ಮತ್ತು ಸಮಯ',
 'prefs-personal'              => 'ಬಳಕೆದಾರರ ಬಗ್ಗೆ',
@@ -1101,10 +1090,6 @@ $2',
 'watchthisupload'             => 'ಈ ಪುಟವನ್ನು ವೀಕ್ಷಿಸಿ',
 'filewasdeleted'              => 'ಈ ಹೆಸರಿನ ಫೈಲು ಮುಂಚೆ ಅಪ್ಲೋಡ್ ಮಾಡಲಾಗಿ ಅದನ್ನು ಆನಂತರ ಅಳಿಸಲಾಗಿತ್ತು.
 ಇದನ್ನು ಮತ್ತೊಮ್ಮೆ ಅಪ್ಲೋಡ್ ಮಾಡುವ ಮುನ್ನ ನೀವು $1 ಅನ್ನು ಪರೀಕ್ಷಿಸಬೇಕು.',
-'upload-wasdeleted'           => "'''ಎಚ್ಚರಿಕೆ: ನೀವು ಮುಂಚೆ ಅಳಿಸಲ್ಪಟ್ಟ ಫೈಲೊಂದನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡುತ್ತಿರುವಿರಿ.'''
-
-ನೀವು ಈ ಫೈಲನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡುವುದು ಸರಿಯೇ ಎಂದು ಮತ್ತೊಮ್ಮೆ ಪರೀಕ್ಷಿಸಿ.
-ತೀರ್ಮಾನಕ್ಕೆ ಪೂರಕವಾಗಲು ಈ ಫೈಲಿನ ಅಳಿಸುವಿಕೆ ದಾಖಲೆಯನ್ನು ನೀಡಲಾಗಿದೆ:",
 'upload-success-subj'         => 'ಯಶಸ್ವಿ ಅಪ್ಲೋಡ್',
 
 'upload-file-error'      => 'ಆಂತರಿಕ ದೋಷ',
@@ -1371,11 +1356,9 @@ $2',
 'watchlistanontext'    => 'ನಿಮ್ಮ ವೀಕ್ಷಣಾಪಟ್ಟಿಯನ್ನು ನೋಡಲು ಅಥವ ಸಂಪಾದಿಸಲು ದಯವಿಟ್ಟು $1 ಮಾಡಿ.',
 'watchnologin'         => 'ಲಾಗಿನ್ ಆಗಿಲ್ಲ',
 'watchnologintext'     => 'ನಿಮ್ಮ ವೀಕ್ಷಣಾಪಟ್ಟಿಯನ್ನು ಬದಲಾಯಿಸಲು ನೀವು [[Special:UserLogin|ಲಾಗಿನ್]] ಆಗಿರಬೇಕು.',
-'addedwatch'           => 'ವೀಕ್ಷಣಾ ಪಟ್ಟಿಗೆ ಸೇರಿಸಲಾಯಿತು',
 'addedwatchtext'       => '"[[:$1]]" ಪುಟವನ್ನು ನಿಮ್ಮ [[Special:Watchlist|ವೀಕ್ಷಣಾಪಟ್ಟಿಗೆ]] ಸೇರಿಸಲಾಗಿದೆ. ಈ ಪುಟದ ಮತ್ತು ಇದರ ಚರ್ಚಾ ಪುಟದ ಮುಂದಿನ ಬದಲಾವಣೆಗಳು ವೀಕ್ಷಣಾ ಪಟ್ಟಿಯಲ್ಲಿ ಕಾಣಸಿಗುತ್ತವೆ, ಮತ್ತು [[Special:RecentChanges|ಇತ್ತೀಚೆಗಿನ ಬದಲಾವಣೆಗಳ]] ಪಟ್ಟಿಯಲ್ಲಿ ಈ ಪುಟಗಳನ್ನು ದಪ್ಪಕ್ಷರಗಳಲ್ಲಿ ಕಾಣಿಸಲಾಗುವುದು.
 
 <p>ಈ ಪುಟವನ್ನು ವೀಕ್ಷಣಾ ಪಟ್ಟಿಯಿಂದ ತೆಗೆಯಬಯಸಿದಲ್ಲಿ, ಮೇಲ್ಪಟ್ಟಿಯಲ್ಲಿ ಕಾಣಿಸಿರುವ "ವೀಕ್ಷಣಾ ಪುಟದಿಂದ ತೆಗೆ" ಅನ್ನು ಕ್ಲಿಕ್ಕಿಸಿ.',
-'removedwatch'         => 'ವೀಕ್ಷಣಾಪಟ್ಟಿಯಿಂದ ತೆಗೆಯಲಾಗಿದೆ',
 'removedwatchtext'     => '"[[:$1]]" ಪುಟವನ್ನು ನಿಮ್ಮ [[Special:Watchlist|ವೀಕ್ಷಣಾಪಟ್ಟಿಯಿಂದ]] ತೆಗೆಯಲಾಗಿದೆ.',
 'watch'                => 'ವೀಕ್ಷಿಸಿ',
 'watchthispage'        => 'ಈ ಪುಟವನ್ನು ವೀಕ್ಷಿಸಿ',
@@ -1412,7 +1395,7 @@ $2',
 'confirmdeletetext'      => 'ಒಂದು ಪುಟವನ್ನು ಮತ್ತು ಅದರ ಸಂಪೂರ್ಣ ಇತಿಹಾಸವನ್ನು ನೀವು ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಿಹಾಕುತ್ತಿರುವಿರಿ.
 ಇದನ್ನು ನೀವು ಮಾಡಬಯಸುವಿರಿ, ಇದರ ಪರಿಣಾಮಗಳನ್ನು ಬಲ್ಲಿರಿ, ಮತ್ತು [[{{MediaWiki:Policy-url}}|ಕಾರ್ಯನೀತಿಗಳ]] ಅನುಸಾರ ಇದನ್ನು ಮಾಡುತ್ತಿದ್ದೀರಿ ಎಂದು ದೃಢಪಡಿಸಿ.',
 'actioncomplete'         => 'ಕಾರ್ಯ ಸಂಪೂರ್ಣ',
-'deletedtext'            => '"<nowiki>$1</nowiki>" ಅನ್ನು ಅಳಿಸಲಾಯಿತು.
+'deletedtext'            => '"$1" ಅನ್ನು ಅಳಿಸಲಾಯಿತು.
 ಇತ್ತೀಚೆಗಿನ ಅಳಿಸುವಿಕೆಗಳ ಪಟ್ಟಿಗಾಗಿ $2 ಅನ್ನು ನೋಡಿ.',
 'deletedarticle'         => '"$1" ಅಳಿಸಲಾಯಿತು',
 'dellogpage'             => 'ಅಳಿಸುವಿಕೆ ದಾಖಲೆ',
@@ -1443,7 +1426,7 @@ $2',
 'protectexpiry'               => 'ಮುಕ್ತಾಯ:',
 'protect_expiry_invalid'      => 'ಮುಕ್ತಾಯದ ಕಾಲ ಸಿಂಧುವಲ್ಲ.',
 'protect_expiry_old'          => 'ಮುಕ್ತಾಯದ ಕಾಲ ಭೂತಕಾಲದಲ್ಲಿ ಇದೆ.',
-'protect-text'                => "ನೀವು ಇಲ್ಲಿ '''<nowiki>$1</nowiki>''' ಪುಟದ ಸಂರಕ್ಷಣೆ ಮಟ್ಟವನ್ನು ವೀಕ್ಷಿಸಬಹುದು ಮತ್ತು ಬದಲಾಯಿಸಬಹುದು.",
+'protect-text'                => "ನೀವು ಇಲ್ಲಿ '''$1''' ಪುಟದ ಸಂರಕ್ಷಣೆ ಮಟ್ಟವನ್ನು ವೀಕ್ಷಿಸಬಹುದು ಮತ್ತು ಬದಲಾಯಿಸಬಹುದು.",
 'protect-locked-access'       => "ನಿಮ್ಮ ಖಾತೆಗೆ ಪುಟ ಸಂರಕ್ಷಣ ಮಟ್ಟಗಳನ್ನು ಬದಲಾಯಿಸುವ ಅನುಮತಿ ಇಲ್ಲ.
 ಈ ಪುಟದ ಪ್ರಸಕ್ತ ವಸ್ತುಸ್ಥಿತಿ ಹೀಗಿದೆ: '''$1''':",
 'protect-cascadeon'           => 'ಈ ಕೆಳಗಿನ ತಡಸಲು ಸಂರಕ್ಷಣೆ (cascading protection) ಹೊಂದಿರುವ {{PLURAL:$1|ಪುಟದಲ್ಲಿ|ಪುಟಗಳಲ್ಲಿ}} ಸೇರ್ಪಡೆ ಆಗಿರುವುದರಿಂದ ಈ ಪುಟವೂ ಸಂರಕ್ಷಿತವಾಗಿದೆ.
@@ -1541,7 +1524,6 @@ $2',
 # Block/unblock
 'blockip'                  => 'ಈ ಸದಸ್ಯನನ್ನು ತಡೆ ಹಿಡಿಯಿರಿ',
 'blockip-legend'           => 'ಬಳಕೆದಾರನನ್ನು ತಡೆಹಿಡಿ',
-'ipaddress'                => 'IP ವಿಳಾಸ:',
 'ipadressorusername'       => 'IP ವಿಳಾಸ ಅಥವ ಬಳಕೆಯ ಹೆಸರು:',
 'ipbexpiry'                => 'ಅಂತ್ಯ:',
 'ipbreason'                => 'ಕಾರಣ:',
@@ -1554,7 +1536,6 @@ $2',
 ** ಬೇರೆಯವರನ್ನು ಬೆದರಿಸುವ/ಕಾಡುವ ವರ್ತನೆ
 ** ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು ಖಾತೆಗಳ ದುರುಪಯೋಗ
 ** ಒಪ್ಪಿಗೆಯಿರದಂತಹ ಬಳಕೆಯ ಹೆಸರು',
-'ipbanononly'              => 'ಅನಾಮಧೇಯ ಬಳಕೆದಾರರನ್ನು ಮಾತ್ರ ತಡೆ ಹಿಡಿ',
 'ipbcreateaccount'         => 'ಖಾತೆ ಸೃಷ್ಟಿಯನ್ನು ನಿರ್ಬಂಧಿಸು',
 'ipbemailban'              => 'ಬಳಕೆದಾರನು ಇ-ಅಂಚೆ ಕಳುಹಿಸುವುದನ್ನು ತಡೆಗಟ್ಟು',
 'ipbsubmit'                => 'ಈ ಸದಸ್ಯರನ್ನು ತಡೆಹಿಡಿಯಿರಿ',
@@ -1575,7 +1556,6 @@ $2',
 'unblocked-id'             => '$1 ತಡೆಯನ್ನು ತೆಗೆಯಲಾಗಿದೆ',
 'ipblocklist'              => 'ನಿರ್ಬಂಧಿಸಲಾಗಿರುವ IP ವಿಳಾಸಗಳು ಹಾಗೂ ಬಳಕೆಯ ಹೆಸರುಗಳು',
 'ipblocklist-legend'       => 'ತಡೆಹಿಡಿಯಲಾದ ಬಳಕೆದಾರನನ್ನು ಹುಡುಕು',
-'ipblocklist-username'     => 'ಬಳಕೆಯ ಹೆಸರು ಅಥವ IP ವಿಳಾಸ:',
 'ipblocklist-submit'       => 'ಹುಡುಕು',
 'infiniteblock'            => 'ಅನಂತ',
 'anononlyblock'            => 'ಅನಾಮಧೇಯ ಮಾತ್ರ',
@@ -1776,22 +1756,6 @@ $2',
 'siteusers'     => '{{SITENAME}} {{PLURAL:$2|ಸದಸ್ಯ|ಸದಸ್ಯರು}} $1',
 'creditspage'   => 'ಪುಟದ ಗೌರವಗಳು',
 
-# Info page
-'infosubtitle' => 'ಪುಟದ ಬಗ್ಗೆ ಮಾಹಿತಿ',
-'numedits'     => 'ಸಂಪಾದನೆಗಳ ಸಂಖ್ಯೆ (ಪುಟ): $1',
-'numtalkedits' => 'ಸಂಪಾದನೆಗಳ ಸಂಖ್ಯೆ (ಚರ್ಚೆ ಪುಟ): $1',
-'numwatchers'  => 'ವೀಕ್ಷಿಸುತ್ತಿರುವವರ ಸಂಖ್ಯೆ: $1',
-
-# Math options
-'mw_math_png'    => 'ಯಾವಾಗಲೂ PNG ಪ್ರಕಾರ ತೋರಿಸು',
-'mw_math_simple' => 'ಸರಳವಾಗಿದ್ದಲ್ಲಿ HTML ಇಲ್ಲದಿದ್ದಲ್ಲಿ PNG',
-'mw_math_html'   => 'ಸಾಧ್ಯವಾದಲ್ಲಿ HTML ಇಲ್ಲದಿದ್ದರೆ PNG',
-
-# Math errors
-'math_unknown_error' => 'ತಿಳಿದಿಲ್ಲದ ದೋಷ',
-'math_image_error'   => 'PNGಗೆ ಬದಲಾವಣೆ ವಿಫಲವಾಯಿತು;
-latex, dvips, gs, ಸರಿಯಾಗಿ ಸ್ಥಾಪಿತವಾಗಿದೆಯೆ ಎಂದು ಖಾತ್ರಿ ಮಾಡಿ ಬದಲಾಯಿಸಿ',
-
 # Patrol log
 'patrol-log-diff' => 'ಆವೃತ್ತಿ $1',
 
@@ -1808,14 +1772,13 @@ $1',
 'nextdiff'     => 'ನಂತರದ ಸಂಪಾದನೆ →',
 
 # Media information
-'thumbsize'            => 'ಕಿರುನೋಟದ ಗಾತ್ರ:',
-'widthheightpage'      => '$1×$2, $3 {{PLURAL:$3|ಪುಟ|ಪುಟಗಳು}}',
-'file-info'            => 'ಫೈಲಿನ ಗಾತ್ರ: $1, MIME ಪ್ರಕಾರ: $2',
-'file-info-size'       => '$1 × $2 ಚಿತ್ರಬಿಂದು, ಫೈಲಿನ ಗಾತ್ರ: $3, MIME ಪ್ರಕಾರ: $4',
-'file-nohires'         => '<small>ಇದಕ್ಕಿಂತ ಹೆಚ್ಚಿನ ವಿವರವಾದ ನೋಟ ಇಲ್ಲ.</small>',
-'svg-long-desc'        => 'SVG ಫೈಲು, ಸುಮಾರಾಗಿ $1 × $2 ಚಿತ್ರಬಿಂದುಗಳು, ಫೈಲಿನ ಗಾತ್ರ: $3',
-'show-big-image'       => 'ಅತಿ ಹೆಚ್ಚು ವಿವರವಾದ ನೋಟ',
-'show-big-image-thumb' => '<small>ಈ ಮುನ್ನೋಟದ ಅಳತೆ: $1 × $2 ಚಿತ್ರಬಿಂದುಗಳು</small>',
+'thumbsize'       => 'ಕಿರುನೋಟದ ಗಾತ್ರ:',
+'widthheightpage' => '$1×$2, $3 {{PLURAL:$3|ಪುಟ|ಪುಟಗಳು}}',
+'file-info'       => 'ಫೈಲಿನ ಗಾತ್ರ: $1, MIME ಪ್ರಕಾರ: $2',
+'file-info-size'  => '$1 × $2 ಚಿತ್ರಬಿಂದು, ಫೈಲಿನ ಗಾತ್ರ: $3, MIME ಪ್ರಕಾರ: $4',
+'file-nohires'    => '<small>ಇದಕ್ಕಿಂತ ಹೆಚ್ಚಿನ ವಿವರವಾದ ನೋಟ ಇಲ್ಲ.</small>',
+'svg-long-desc'   => 'SVG ಫೈಲು, ಸುಮಾರಾಗಿ $1 × $2 ಚಿತ್ರಬಿಂದುಗಳು, ಫೈಲಿನ ಗಾತ್ರ: $3',
+'show-big-image'  => 'ಅತಿ ಹೆಚ್ಚು ವಿವರವಾದ ನೋಟ',
 
 # Special:NewFiles
 'newimages'             => 'ಹೊಸ ಫೈಲುಗಳ ಪ್ರದರ್ಶನ',
@@ -1848,7 +1811,13 @@ $1',
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-imagewidth'                => 'ಅಗಲ',
@@ -1867,7 +1836,6 @@ $1',
 'exif-exifversion'               => 'Exif ಆವೃತ್ತಿ',
 'exif-pixelydimension'           => 'ಸಿಂಧುವಾದ ಚಿತ್ರದ ಅಗಲ',
 'exif-pixelxdimension'           => 'ಸಿಂಧುವಾದ ಚಿತ್ರದ ಎತ್ತರ',
-'exif-makernote'                 => 'ತಯಾರಕರ ಟಿಪ್ಪಣಿಗಳು',
 'exif-usercomment'               => 'ಬಳಕೆದಾರನ ಟಿಪ್ಪಣಿ',
 'exif-relatedsoundfile'          => 'ಸಂಬಂಧಿತ ಧ್ವನಿ ಫೈಲು',
 'exif-datetimeoriginal'          => 'ಮಾಹಿತಿ ಸೃಷ್ಟಿಯಾದ ದಿನಾಂಕ ಮತ್ತು ಕಾಲ',
@@ -1939,15 +1907,13 @@ $1',
 
 # External editor support
 'edit-externally'      => 'ಬಾಹ್ಯ ತಂತ್ರಾಂಶವನ್ನು ಉಪಯೋಗಿಸಿ ಇದನ್ನು ಸಂಪಾದಿಸಿ',
-'edit-externally-help' => '(ಹೆಚ್ಚಿನ ಮಾಹಿತಿಗೆ [http://www.mediawiki.org/wiki/Manual:External_editors ಸ್ಥಾಪನೆಯ ನಿರ್ದೇಶಗಳನ್ನು] ನೋಡಿ)',
+'edit-externally-help' => '(ಹೆಚ್ಚಿನ ಮಾಹಿತಿಗೆ [//www.mediawiki.org/wiki/Manual:External_editors ಸ್ಥಾಪನೆಯ ನಿರ್ದೇಶಗಳನ್ನು] ನೋಡಿ)',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'ಎಲ್ಲಾ',
-'imagelistall'     => 'ಎಲ್ಲಾ',
-'watchlistall2'    => 'ಎಲ್ಲಾ',
-'namespacesall'    => 'ಎಲ್ಲಾ',
-'monthsall'        => 'ಎಲ್ಲಾ',
-'limitall'         => 'ಎಲ್ಲಾ',
+'watchlistall2' => 'ಎಲ್ಲಾ',
+'namespacesall' => 'ಎಲ್ಲಾ',
+'monthsall'     => 'ಎಲ್ಲಾ',
+'limitall'      => 'ಎಲ್ಲಾ',
 
 # E-mail address confirmation
 'confirmemail'             => 'ಇ-ಅಂಚೆ ವಿಳಾಸವನ್ನು ಖಾತ್ರಿ ಮಾಡಿ',
@@ -2034,7 +2000,7 @@ $5
 'watchlistedit-normal-legend'  => 'ವೀಕ್ಷಣಾಪಟ್ಟಿಯಿಂದ ಶೀರ್ಷಿಕೆಗಳನ್ನು ತೆಗೆ',
 'watchlistedit-normal-explain' => 'ನಿಮ್ಮ ವೀಕ್ಷಣಾಪಟ್ಟಿಯಲ್ಲಿ ಇರುವ ಶೀರ್ಷಿಕೆಗಳನ್ನು ಕೆಳಗೆ ತೋರಿಸಲಾಗಿದೆ.
 ಯಾವುದೇ ಶೀರ್ಷಿಕೆಯನ್ನು ತಗೆಯಲು, ಅದರ ಪಕ್ಕದಲ್ಲಿರುವ ಚೌಕವನ್ನು ಗುರುತು ಮಾಡಿ ಮತ್ತು "ಶೀರ್ಷಿಕೆಗಳನ್ನು ತೆಗೆ" ಗುಂಡಿಯನ್ನು ಒತ್ತಿ.
-ನೀವು ವೀಕ್ಷಣಾಪಟ್ಟಿಯನ್ನು [[Special:Watchlist/raw|ನೇರವಾಗಿ ಸಂಪಾದಿಸಬಹುದು]] ಕೂಡ.',
+ನೀವು ವೀಕ್ಷಣಾಪಟ್ಟಿಯನ್ನು [[Special:EditWatchlist/raw|ನೇರವಾಗಿ ಸಂಪಾದಿಸಬಹುದು]] ಕೂಡ.',
 'watchlistedit-normal-submit'  => 'ಶೀರ್ಷಿಕೆಗಳನ್ನು ತೆಗೆ',
 'watchlistedit-normal-done'    => 'ನಿಮ್ಮ ವೀಕ್ಷಣಾಪಟ್ಟಿಯಿಂದ {{PLURAL:$1|೧ ಶೀರ್ಷಿಕೆಯನ್ನು|$1 ಶೀರ್ಷಿಕೆಗಳನ್ನು}} ತೆಗೆಯಲಾಯಿತು:',
 'watchlistedit-raw-title'      => 'ಮೂಲ ವೀಕ್ಷಣಾಪಟ್ಟಿಯನ್ನು ಸಂಪಾದಿಸು',

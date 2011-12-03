@@ -145,7 +145,6 @@ $messages = array(
 'searcharticle'    => 'Tassunngarit',
 'history'          => 'Oqaluttuassartaa',
 'history_short'    => 'Oqaluttuassartaa',
-'info_short'       => 'Paasissutissat',
 'printableversion' => 'Naqikkuminartoq',
 'permalink'        => 'Ataavartumik innersuut',
 'edit'             => 'Aaqqissoruk',
@@ -244,7 +243,7 @@ $messages = array(
 'acct_creation_throttle_hit' => 'Konto-mik pilersitsereersimagavit pilersitseqqissinnaanngilatit, IP-adressit malillugu.
 Taamaattumik maannakkorpiaq kontomik pilersitsisinnaanngilatit.',
 
-# Password reset dialog
+# Change password dialog
 'oldpassword' => 'Isissutissatoqaq:',
 'newpassword' => 'Isissutissaq nutaaq:',
 'retypenew'   => 'Isissutissaq nutaaq allaqqiuk',
@@ -422,7 +421,6 @@ Aamma takuuk [[Special:WantedCategories|sunut atassusinut kissaatigineqartut]].'
 # Watchlist
 'watchlist'      => 'Ersersimasut',
 'mywatchlist'    => 'Nuisatiffikka',
-'addedwatch'     => 'Nakkutilliinermi allattorsimaffimmut ilanngunneqarsimavoq',
 'addedwatchtext' => 'Una qupperneq "[[:$1]]" ersersimatitannut ilanngunneqarpoq. Siunissami allannguutit ilinnut malugeqquneqartassapput aamma [[Special:RecentChanges|allannguutini kingullerni]] issusuumik allanneqartuusassallutik. Ersersimatikkusunngikkukku [[Special:Watchlist|piiginnassavat]] ersersimasuutitanni.',
 'watch'          => 'Ersilli',
 'watchthispage'  => 'Qupperneq ersersimatiguk',
@@ -482,7 +480,6 @@ Aamma takuuk [[Special:WantedCategories|sunut atassusinut kissaatigineqartut]].'
 'ipadressorusername' => 'IP adresse imalt. atuisoq:',
 'ipboptions'         => '2 tiimit:2 hours,ulloq 1:1 day,ullut 3:3 days,sap akunn 1:1 week,sap akunn 2:2 weeks,qaammat 1:1 month,qaammatit 3:3 months,qaammatit 6:6 months,ukioq 1:1 year,killeqanngitsoq:infinite',
 'ipblocklist-submit' => 'Ujarlerit',
-'blocklistline'      => '$1, $2 asserpaa $3 ($4)',
 'infiniteblock'      => 'killeqanngitsoq',
 'expiringblock'      => 'atorunnaassaaq $1 $2-nngoruni',
 'blocklink'          => 'assersoruk',
@@ -551,9 +548,8 @@ Aamma takuuk [[Special:WantedCategories|sunut atassusinut kissaatigineqartut]].'
 'ilsubmit' => 'Ujarlerit',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'tamarmik',
-'namespacesall'    => 'tamarmik',
-'monthsall'        => 'tamarmik',
+'namespacesall' => 'tamarmik',
+'monthsall'     => 'tamarmik',
 
 # Auto-summaries
 'autosumm-new' => "Qupperneq pilersippaa '$1'",

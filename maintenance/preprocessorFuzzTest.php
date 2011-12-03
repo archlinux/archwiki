@@ -1,5 +1,22 @@
 <?php
 /**
+ * Performs fuzz-style testing of MediaWiki's preprocessor.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Maintenance
  */
@@ -85,7 +102,6 @@ class PPFuzzTester {
 				file_put_contents( $filename, "Input:\n$testReport\n" );*/
 			}
 		}
-		wfLogProfilingData();
 	}
 
 	function makeInputText( $max = false ) {
@@ -138,6 +154,9 @@ class PPFuzzTest {
 		$this->templates = array();
 	}
 
+	/**
+	 * @param $title Title
+	 */
 	function templateHook( $title ) {
 		$titleText = $title->getPrefixedDBkey();
 
@@ -173,10 +192,10 @@ class PPFuzzTest {
 		$wgUser->mFrom = 'name';
 		$wgUser->ppfz_test = $this;
 
-		$options = new ParserOptions;
+		$options = ParserOptions::newFromUser( $wgUser );
 		$options->setTemplateCallback( array( $this, 'templateHook' ) );
 		$options->setTimestamp( wfTimestampNow() );
-		$this->output = call_user_func( array( $wgParser, $this->entryPoint ), $this->mainText, $this->title->getPrefixedText(), $options );
+		$this->output = call_user_func( array( $wgParser, $this->entryPoint ), $this->mainText, $this->title, $options );
 		return $this->output;
 	}
 
@@ -200,7 +219,7 @@ class PPFuzzTest {
 }
 
 class PPFuzzUser extends User {
-	var $ppfz_test;
+	var $ppfz_test, $mDataLoaded;
 
 	function load() {
 		if ( $this->mDataLoaded ) {
@@ -210,13 +229,13 @@ class PPFuzzUser extends User {
 		$this->loadDefaults( $this->mName );
 	}
 
-	function getOption( $option, $defaultOverride = '' ) {
-		if ( $option === 'fancysig' ) {
+	function getOption( $oname, $defaultOverride = null, $ignoreHidden = false ) {
+		if ( $oname === 'fancysig' ) {
 			return $this->ppfz_test->fancySig;
-		} elseif ( $option === 'nickname' ) {
+		} elseif ( $oname === 'nickname' ) {
 			return $this->ppfz_test->nickname;
 		} else {
-			return parent::getOption( $option, $defaultOverride );
+			return parent::getOption( $oname, $defaultOverride, $ignoreHidden );
 		}
 	}
 }

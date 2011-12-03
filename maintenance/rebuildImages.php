@@ -33,8 +33,18 @@
 require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class ImageBuilder extends Maintenance {
+
+	/**
+	 * @var DatabaseBase
+	 */
+	protected $dbw;
+
 	function __construct() {
 		parent::__construct();
+
+		global $wgUpdateCompatibleMetadata;
+		//make sure to update old, but compatible img_metadata fields.
+		$wgUpdateCompatibleMetadata = true;
 
 		$this->mDescription = 'Script to update image metadata records';
 
@@ -57,6 +67,9 @@ class ImageBuilder extends Maintenance {
 		}
 	}
 
+	/**
+	 * @return FileRepo
+	 */
 	function getRepo() {
 		if ( !isset( $this->repo ) ) {
 			$this->repo = RepoGroup::singleton()->getLocalRepo();

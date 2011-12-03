@@ -9,6 +9,21 @@
  * much older versions, etc.
  * Run this, FOLLOWED BY update.php, for upgrading from 1.4.5 release to 1.5.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Maintenance
  */
@@ -86,7 +101,6 @@ class FiveUpgrade extends Maintenance {
 
 		$this->cleanupSwaps = array();
 		$this->emailAuth = false; # don't preauthenticate emails
-		$this->maxLag    = 10; # if slaves are lagged more than 10 secs, wait
 		$this->step      = $this->getOption( 'step', null );
 	}
 
@@ -125,12 +139,10 @@ class FiveUpgrade extends Maintenance {
 	 * @access private
 	 */
 	function streamConnection() {
-		global $wgDBtype;
-
 		$timeout = 3600 * 24;
 		$db = $this->newConnection();
 		$db->bufferResults( false );
-		if ( $wgDBtype == 'mysql' ) {
+		if ( $db->getType() == 'mysql' ) {
 			$db->query( "SET net_read_timeout=$timeout" );
 			$db->query( "SET net_write_timeout=$timeout" );
 		}
@@ -303,10 +315,16 @@ class FiveUpgrade extends Maintenance {
 	 */
 	function insertChunk( &$chunk ) {
 		// Give slaves a chance to catch up
-		wfWaitForSlaves( $this->maxLag );
+		wfWaitForSlaves();
 		$this->dbw->insert( $this->chunkTable, $chunk, $this->chunkFunction, $this->chunkOptions );
 	}
 
+	/**
+	 * Helper function for copyTable array_filter
+	 */
+	static private function notUpgradeNull( $x ) {
+		return $x !== MW_UPGRADE_NULL;
+	}
 
 	/**
 	 * Copy and transcode a table to table_temp.
@@ -336,8 +354,7 @@ class FiveUpgrade extends Maintenance {
 		$this->setChunkScale( 100, $numRecords, $name_temp, __METHOD__ );
 
 		// Pull all records from the second, streaming database connection.
-		$sourceFields = array_keys( array_filter( $fields,
-			create_function( '$x', 'return $x !== MW_UPGRADE_NULL;' ) ) );
+		$sourceFields = array_keys( array_filter( $fields, 'FiveUpgrade::notUpgradeNull' ) );
 		$result = $this->dbr->select( $name,
 			$sourceFields,
 			'',

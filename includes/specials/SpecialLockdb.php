@@ -34,12 +34,13 @@ class SpecialLockdb extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		global $wgUser, $wgOut, $wgRequest;
+		global $wgUser, $wgRequest;
 
 		$this->setHeaders();
 
-		if( !$wgUser->isAllowed( 'siteadmin' ) ) {
-			$wgOut->permissionRequired( 'siteadmin' );
+		# Permission check
+		if( !$this->userCanExecute( $wgUser ) ) {
+			$this->displayRestrictionError();
 			return;
 		}
 
@@ -57,7 +58,7 @@ class SpecialLockdb extends SpecialPage {
 
 		if ( $action == 'success' ) {
 			$this->showSuccess();
-		} else if ( $action == 'submit' && $wgRequest->wasPosted() &&
+		} elseif ( $action == 'submit' && $wgRequest->wasPosted() &&
 			$wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ) ) ) {
 			$this->doSubmit();
 		} else {
@@ -109,7 +110,10 @@ class SpecialLockdb extends SpecialPage {
 			$this->showForm( wfMsg( 'locknoconfirm' ) );
 			return;
 		}
-		$fp = @fopen( $wgReadOnlyFile, 'w' );
+
+		wfSuppressWarnings();
+		$fp = fopen( $wgReadOnlyFile, 'w' );
+		wfRestoreWarnings();
 
 		if ( false === $fp ) {
 			# This used to show a file not found error, but the likeliest reason for fopen()
@@ -119,8 +123,14 @@ class SpecialLockdb extends SpecialPage {
 			return;
 		}
 		fwrite( $fp, $this->reason );
-		fwrite( $fp, "\n<p>(by " . $wgUser->getName() . " at " .
-		  $wgContLang->timeanddate( wfTimestampNow() ) . ")</p>\n" );
+		$timestamp = wfTimestampNow();
+		fwrite( $fp, "\n<p>" . wfMsgExt(
+			'lockedbyandtime',
+			array( 'content', 'parsemag' ),
+			$wgUser->getName(),
+			$wgContLang->date( $timestamp ),
+			$wgContLang->time( $timestamp )
+		) . "</p>\n" );
 		fclose( $fp );
 
 		$wgOut->redirect( $this->getTitle()->getFullURL( 'action=success' ) );

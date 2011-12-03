@@ -47,6 +47,11 @@ class ApiQueryIWLinks extends ApiQueryBase {
 		}
 
 		$params = $this->extractRequestParams();
+
+		if ( isset( $params['title'] ) && !isset( $params['prefix'] ) ) {
+			$this->dieUsageMsg( array( 'missingparam', 'prefix' ) );
+		}
+
 		$this->addFields( array(
 			'iwl_from',
 			'iwl_prefix',
@@ -74,12 +79,23 @@ class ApiQueryIWLinks extends ApiQueryBase {
 			);
 		}
 
-		// Don't order by iwl_from if it's constant in the WHERE clause
-		if ( count( $this->getPageSet()->getGoodTitles() ) == 1 ) {
-			$this->addOption( 'ORDER BY', 'iwl_prefix' );
+		if ( isset( $params['prefix'] ) ) {
+			$this->addWhereFld( 'iwl_prefix', $params['prefix'] );
+			if ( isset( $params['title'] ) ) {
+				$this->addWhereFld( 'iwl_title', $params['title'] );
+				$this->addOption( 'ORDER BY', 'iwl_from' );
+			} else {
+				$this->addOption( 'ORDER BY', 'iwl_title, iwl_from' );
+			}
 		} else {
-			$this->addOption( 'ORDER BY', 'iwl_from, iwl_prefix' );
+			// Don't order by iwl_from if it's constant in the WHERE clause
+			if ( count( $this->getPageSet()->getGoodTitles() ) == 1 ) {
+				$this->addOption( 'ORDER BY', 'iwl_prefix' );
+			} else {
+				$this->addOption( 'ORDER BY', 'iwl_from, iwl_prefix' );
+			}
 		}
+
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
 		$res = $this->select( __METHOD__ );
 
@@ -96,7 +112,7 @@ class ApiQueryIWLinks extends ApiQueryBase {
 			if ( !is_null( $params['url'] ) ) {
 				$title = Title::newFromText( "{$row->iwl_prefix}:{$row->iwl_title}" );
 				if ( $title ) {
-					$entry['url'] = $title->getFullURL();
+					$entry['url'] = wfExpandUrl( $title->getFullURL(), PROTO_CURRENT );
 				}
 			}
 
@@ -124,6 +140,8 @@ class ApiQueryIWLinks extends ApiQueryBase {
 				ApiBase::PARAM_MAX2 => ApiBase::LIMIT_BIG2
 			),
 			'continue' => null,
+			'prefix' => null,
+			'title' => null,
 		);
 	}
 
@@ -132,6 +150,8 @@ class ApiQueryIWLinks extends ApiQueryBase {
 			'url' => 'Whether to get the full URL',
 			'limit' => 'How many interwiki links to return',
 			'continue' => 'When more results are available, use this to continue',
+			'prefix' => 'Prefix for the interwiki',
+			'title' => "Interwiki link to search for. Must be used with {$this->getModulePrefix()}prefix",
 		);
 	}
 
@@ -141,6 +161,7 @@ class ApiQueryIWLinks extends ApiQueryBase {
 
 	public function getPossibleErrors() {
 		return array_merge( parent::getPossibleErrors(), array(
+			array( 'missingparam', 'prefix' ),
 			array( 'code' => '_badcontinue', 'info' => 'Invalid continue param. You should pass the original value returned by the previous query' ),
 		) );
 	}
@@ -153,6 +174,6 @@ class ApiQueryIWLinks extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryIWLinks.php 77080 2010-11-21 17:27:13Z reedy $';
+		return __CLASS__ . ': $Id: ApiQueryIWLinks.php 96475 2011-09-07 19:37:56Z catrope $';
 	}
 }

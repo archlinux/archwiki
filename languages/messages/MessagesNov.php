@@ -104,7 +104,6 @@ $messages = array(
 'searcharticle'    => 'Vada',
 'history'          => 'Historie del pagine',
 'history_short'    => 'Historie',
-'info_short'       => 'Informatione',
 'printableversion' => 'Printindi versione',
 'permalink'        => 'Permananti linke',
 'print'            => 'Printa',
@@ -349,7 +348,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'mywatchlist'     => 'Men liste de observos',
 'nowatchlist'     => 'Vu have nuli koses in vun liste de observos.',
 'watchnologin'    => 'Non ensignatat',
-'addedwatch'      => 'Adit a observa-liste',
 'addedwatchtext'  => "Li pagine \"[[:\$1]]\" ha bli adi a vun [[Special:Watchlist|observa-liste]].
 Futuri chanjos a disi pagine e lun asosiati Parla-pagine sal bli lista tilok, e li pagine sal apari '''diki''' in li [[Special:RecentChanges|liste de resenti chanjos]] por ke on trova lu plu fasilim.
 
@@ -429,9 +427,6 @@ Si vu voli plu tardim ekarta li pagine fro vun observa-liste, klikta \"Desobserv
 'tooltip-pt-logout'      => 'Eksignata',
 'tooltip-p-logo'         => 'Chefi pagine',
 
-# Info page
-'infosubtitle' => 'Informatione pri pagine',
-
 # Special:NewFiles
 'ilsubmit' => 'Sercha',
 'bydate'   => 'segun date',
@@ -441,9 +436,6 @@ Si vu voli plu tardim ekarta li pagine fro vun observa-liste, klikta \"Desobserv
 'exif-imagelength'      => 'Alteso',
 'exif-imagedescription' => 'Title de imaje',
 'exif-imageuniqueid'    => 'Unik imaje ID',
-
-# 'all' in various places, this might be different for inflected languages
-'imagelistall' => 'omnes',
 
 # Auto-summaries
 'autosumm-replace' => "Remplasant pagine kun '$1'",

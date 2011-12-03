@@ -28,42 +28,56 @@
  * @ingroup SpecialPage
  */
 class BrokenRedirectsPage extends PageQueryPage {
-	var $targets = array();
 
-	function getName() {
-		return 'BrokenRedirects';
+	function __construct( $name = 'BrokenRedirects' ) {
+		parent::__construct( $name );
 	}
 
-	function isExpensive( ) { return true; }
+	function isExpensive() { return true; }
 	function isSyndicated() { return false; }
+	function sortDescending() { return false; }
 
-	function getPageHeader( ) {
+	function getPageHeader() {
 		return wfMsgExt( 'brokenredirectstext', array( 'parse' ) );
 	}
 
-	function getSQL() {
-		$dbr = wfGetDB( DB_SLAVE );
-		list( $page, $redirect ) = $dbr->tableNamesN( 'page', 'redirect' );
-
-		$sql = "SELECT 'BrokenRedirects'  AS type,
-		                p1.page_namespace AS namespace,
-		                p1.page_title     AS title,
-		                rd_namespace,
-		                rd_title
-		           FROM $redirect AS rd
-		      JOIN $page p1 ON (rd.rd_from=p1.page_id)
-		      LEFT JOIN $page AS p2 ON (rd_namespace=p2.page_namespace AND rd_title=p2.page_title )
-				  WHERE rd_namespace >= 0
-				    AND p2.page_namespace IS NULL";
-		return $sql;
+	function getQueryInfo() {
+		return array(
+			'tables' => array( 'redirect', 'p1' => 'page',
+					'p2' => 'page' ),
+			'fields' => array( 'p1.page_namespace AS namespace',
+					'p1.page_title AS title',
+					'rd_namespace',
+					'rd_title'
+			),
+			'conds' => array( 'rd_namespace >= 0',
+					'p2.page_namespace IS NULL'
+			),
+			'join_conds' => array( 'p1' => array( 'JOIN', array(
+						'rd_from=p1.page_id',
+					) ),
+					'p2' => array( 'LEFT JOIN', array(
+						'rd_namespace=p2.page_namespace',
+						'rd_title=p2.page_title'
+					) )
+			)
+		);
 	}
 
-	function getOrder() {
-		return '';
+	/**
+	 * @return array
+	 */
+	function getOrderFields() {
+		return array ( 'rd_namespace', 'rd_title', 'rd_from' );
 	}
 
+	/**
+	 * @param $skin Skin
+	 * @param $result
+	 * @return String
+	 */
 	function formatResult( $skin, $result ) {
-		global $wgUser, $wgContLang, $wgLang;
+		global $wgUser, $wgLang;
 
 		$fromObj = Title::makeTitle( $result->namespace, $result->title );
 		if ( isset( $result->rd_title ) ) {
@@ -95,14 +109,14 @@ class BrokenRedirectsPage extends PageQueryPage {
 			array(),
 			array( 'action' => 'edit' )
 		);
-		$to   = $skin->link(
+		$to = $skin->link(
 			$toObj,
 			null,
 			array(),
 			array(),
 			array( 'broken' )
 		);
-		$arr = $wgContLang->getArrow();
+		$arr = $wgLang->getArrow();
 
 		$out = $from . wfMsg( 'word-separator' );
 
@@ -119,15 +133,4 @@ class BrokenRedirectsPage extends PageQueryPage {
 		$out .= " {$arr} {$to}";
 		return $out;
 	}
-}
-
-/**
- * constructor
- */
-function wfSpecialBrokenRedirects() {
-	list( $limit, $offset ) = wfCheckLimits();
-
-	$sbr = new BrokenRedirectsPage();
-
-	return $sbr->doQuery( $offset, $limit );
 }

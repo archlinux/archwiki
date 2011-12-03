@@ -30,7 +30,7 @@ class PopulateRevisionLength extends Maintenance {
 	}
 
 	public function execute() {
-		$db = wfGetDB( DB_MASTER );
+		$db = $this->getDB( DB_MASTER );
 		if ( !$db->tableExists( 'revision' ) ) {
 			$this->error( "revision table does not exist", true );
 		}
@@ -78,7 +78,7 @@ class PopulateRevisionLength extends Maintenance {
 			}
 			$blockStart += $this->mBatchSize;
 			$blockEnd += $this->mBatchSize;
-			wfWaitForSlaves( 5 );
+			wfWaitForSlaves();
 		}
 		$logged = $db->insert( 'updatelog',
 			array( 'ul_key' => 'populate rev_len' ),

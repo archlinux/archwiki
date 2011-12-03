@@ -3,6 +3,9 @@
 abstract class Collation {
 	static $instance;
 
+	/**
+	 * @return Collation
+	 */
 	static function singleton() {
 		if ( !self::$instance ) {
 			global $wgCategoryCollation;
@@ -11,13 +14,30 @@ abstract class Collation {
 		return self::$instance;
 	}
 
+	/**
+	 * @throws MWException
+	 * @param $collationName string
+	 * @return Collation
+	 */
 	static function factory( $collationName ) {
 		switch( $collationName ) {
 			case 'uppercase':
 				return new UppercaseCollation;
+			case 'identity':
+				return new IdentityCollation;
 			case 'uca-default':
 				return new IcuCollation( 'root' );
 			default:
+				# Provide a mechanism for extensions to hook in.
+
+				$collationObject = null;
+				wfRunHooks( 'Collation::factory', array( $collationName, &$collationObject ) );
+
+				if ( $collationObject instanceof Collation ) {
+					return $collationObject;
+				}
+
+				// If all else fails...
 				throw new MWException( __METHOD__.": unknown collation type \"$collationName\"" );
 		}
 	}
@@ -80,6 +100,30 @@ class UppercaseCollation extends Collation {
 		return $this->lang->ucfirst( $this->lang->firstChar( $string ) );
 	}
 }
+
+/**
+ * Collation class that's essentially a no-op.
+ *
+ * Does sorting based on binary value of the string.
+ * Like how things were pre 1.17.
+ */
+class IdentityCollation extends Collation {
+
+	function getSortKey( $string ) {
+		return $string;
+	}
+
+	function getFirstLetter( $string ) {
+		global $wgContLang;
+		// Copied from UppercaseCollation.
+		// I'm kind of unclear on when this could happen...
+		if ( $string[0] == "\0" ) {
+			$string = substr( $string, 1 );
+		}
+		return $wgContLang->firstChar( $string );
+	}
+}
+
 
 class IcuCollation extends Collation {
 	var $primaryCollator, $mainCollator, $locale;
@@ -259,13 +303,13 @@ class IcuCollation extends Collation {
 	 * Do a binary search, and return the index of the largest item that sorts 
 	 * less than or equal to the target value.
 	 *
-	 * @param $valueCallback A function to call to get the value with 
+	 * @param $valueCallback array A function to call to get the value with
 	 *     a given array index.
-	 * @param $valueCount The number of items accessible via $valueCallback, 
+	 * @param $valueCount int The number of items accessible via $valueCallback,
 	 *     indexed from 0 to $valueCount - 1
-	 * @param $comparisonCallback A callback to compare two values, returning 
+	 * @param $comparisonCallback array A callback to compare two values, returning
 	 *     -1, 0 or 1 in the style of strcmp().
-	 * @param $target The target value to find.
+	 * @param $target string The target value to find.
 	 *
 	 * @return The item index of the lower bound, or false if the target value
 	 *     sorts before all items.

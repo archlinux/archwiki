@@ -31,12 +31,16 @@ require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class AddWiki extends Maintenance {
 	public function __construct() {
+		global $wgNoDBParam;
+
 		parent::__construct();
 		$this->mDescription = "Add a new wiki to the family. Wikimedia specific!";
 		$this->addArg( 'language', 'Language code of new site, e.g. en' );
 		$this->addArg( 'site', 'Type of site, e.g. wikipedia' );
 		$this->addArg( 'dbname', 'Name of database to create, e.g. enwiki' );
 		$this->addArg( 'domain', 'Domain name of the wiki, e.g. en.wikipedia.org' );
+
+		$wgNoDBParam = true;
 	}
 
 	public function getDbType() {
@@ -44,9 +48,11 @@ class AddWiki extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP, $wgDefaultExternalStore, $wgNoDBParam;
+		global $IP, $wgDefaultExternalStore, $wgVersionNumber;
+		if ( !$wgVersionNumber ) { // set in CommonSettings.php
+			$this->error( '$wgVersionNumber is not set, please use MWScript.php wrapper.', true );
+		}
 
-		$wgNoDBParam = true;
 		$lang = $this->getArg( 0 );
 		$site = $this->getArg( 1 );
 		$dbName = $this->getArg( 2 );
@@ -54,7 +60,7 @@ class AddWiki extends Maintenance {
 		$languageNames = Language::getLanguageNames();
 
 		if ( !isset( $languageNames[$lang] ) ) {
-			$this->error( "Language $lang not found in \$wgLanguageNames", true );
+			$this->error( "Language $lang not found in Names.php", true );
 		}
 		$name = $languageNames[$lang];
 
@@ -78,12 +84,11 @@ class AddWiki extends Maintenance {
 		$dbw->sourceFile( "$IP/extensions/Oversight/hidden.sql" );
 		$dbw->sourceFile( "$IP/extensions/GlobalBlocking/localdb_patches/setup-global_block_whitelist.sql" );
 		$dbw->sourceFile( "$IP/extensions/AbuseFilter/abusefilter.tables.sql" );
-		$dbw->sourceFile( "$IP/extensions/UsabilityInitiative/PrefStats/PrefStats.sql" );
+		$dbw->sourceFile( "$IP/extensions/PrefStats/patches/PrefStats.sql" );
 		$dbw->sourceFile( "$IP/extensions/ProofreadPage/ProofreadPage.sql" );
-		$dbw->sourceFile( "$IP/extensions/UsabilityInitiative/ClickTracking/ClickTrackingEvents.sql" );
-		$dbw->sourceFile( "$IP/extensions/UsabilityInitiative/ClickTracking/ClickTracking.sql" );
-		$dbw->sourceFile( "$IP/extensions/UsabilityInitiative/UserDailyContribs/UserDailyContribs.sql" );
-		$dbw->sourceFile( "$IP/extensions/UsabilityInitiative/OptIn/OptIn.sql" );
+		$dbw->sourceFile( "$IP/extensions/ClickTracking/patches/ClickTrackingEvents.sql" );
+		$dbw->sourceFile( "$IP/extensions/ClickTracking/patches/ClickTracking.sql" );
+		$dbw->sourceFile( "$IP/extensions/UserDailyContribs/patches/UserDailyContribs.sql" );
 
 		$dbw->query( "INSERT INTO site_stats(ss_row_id) VALUES (1)" );
 
@@ -126,13 +131,12 @@ class AddWiki extends Maintenance {
 			}
 		}
 
-		global $wgTitle, $wgArticle;
-		$wgTitle = Title::newFromText( wfMsgWeirdKey( "mainpage/$lang" ) );
-		$this->output( "Writing main page to " . $wgTitle->getPrefixedDBkey() . "\n" );
-		$wgArticle = new Article( $wgTitle );
+		$title = Title::newFromText( wfMessage( 'mainpage' )->inLanguage( $lang )->useDatabase( false )->plain() );
+		$this->output( "Writing main page to " . $title->getPrefixedDBkey() . "\n" );
+		$article = new Article( $title );
 		$ucsite = ucfirst( $site );
 
-		$wgArticle->insertNewArticle( $this->getFirstArticle( $ucsite, $name ), '', false, false );
+		$article->doEdit( $this->getFirstArticle( $ucsite, $name ), '', EDIT_NEW | EDIT_AUTOSUMMARY );
 
 		$this->output( "Adding to dblists\n" );
 
@@ -143,6 +147,13 @@ class AddWiki extends Maintenance {
 
 		# Update the sublists
 		shell_exec( "cd $common && ./refresh-dblist" );
+
+		# Add to wikiversions.dat
+		$file = fopen( "$common/wikiversions.dat", "a" );
+		fwrite( $file, "$dbName php-$wgVersionNumber\n" );
+		fclose( $file );
+		# Rebuild wikiversions.cdb
+		shell_exec( "cd $common/multiversion && ./refreshWikiversionsCDB" );
 
 		# print "Constructing interwiki SQL\n";
 		# Rebuild interwiki tables
@@ -387,9 +398,9 @@ See Wikimedia's [[m:|Meta-Wiki]] for the coordination of these projects.
 [[rmy:]]
 [[rn:]]
 [[ro:]]
-[[roa-rup:]]
 [[roa-tara:]]
 [[ru:]]
+[[rup:]]
 [[rw:]]
 [[sa:]]
 [[sah:]]

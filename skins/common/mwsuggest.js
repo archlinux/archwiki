@@ -52,14 +52,16 @@ window.os_enabled = true;
 /**
  * <datalist> is a new HTML5 element that allows you to manually supply
  * suggestion lists and have them rendered according to the right platform
- * conventions.  However, the only shipping browser as of early 2010 is Opera,
- * and that has a fatal problem: the suggestion lags behind what the user types
- * by one keypress.  (Reported as DSK-276870 to Opera's secret bug tracker.)
- * The code here otherwise seems to work, though, so this can be flipped on
- * (maybe with a UA check) when some browser has a better implementation.
+ * conventions.  Opera as of version 11 has a fatal problem: the suggestion
+ * lags behind what the user types by one keypress.  (Reported as DSK-276870 to
+ * Opera's secret bug tracker.)  However, Firefox 4 supports it without
+ * problems, so Opera is just blacklisted here.  Ideally we wouldn't blacklist
+ * future versions, in case they fix it, but the fallback isn't bad at all and
+ * the failure if they don't fix it is very annoying, so in this case we'll
+ * blacklist future versions too.
  */
-// var os_use_datalist = 'list' in document.createElement( 'input' );
-window.os_use_datalist = false;
+window.os_use_datalist = 'list' in document.createElement( 'input' )
+	&& $.client.profile().name != 'opera';
 
 /** Timeout timer class that will fetch the results */
 window.os_Timer = function( id, r, query ) {
@@ -750,36 +752,28 @@ window.os_getElementPosition = function( elemID ) {
 };
 
 /** Create the container div that will hold the suggested titles */
-window.os_createContainer = function(r) {
-	var c = document.createElement('div');
-	var s = document.getElementById(r.searchbox);
-	var pos = os_getElementPosition(r.searchbox);
+window.os_createContainer = function( r ) {
+	var c = document.createElement( 'div' );
+	var s = document.getElementById( r.searchbox );
+	var pos = os_getElementPosition( r.searchbox );
 	var left = pos.left;
 	var top = pos.top + s.offsetHeight;
 	c.className = 'os-suggest';
-	c.setAttribute('id', r.container);
-	document.body.appendChild(c);
+	c.setAttribute( 'id', r.container );
+	document.body.appendChild( c );
 
 	// dynamically generated style params
 	// IE workaround, cannot explicitely set "style" attribute
-	c = document.getElementById(r.container);
+	c = document.getElementById( r.container );
 	c.style.top = top + 'px';
 	c.style.left = left + 'px';
 	c.style.width = s.offsetWidth + 'px';
 
 	// mouse event handlers
-	c.onmouseover = function(event) {
-		os_eventMouseover(r.searchbox, event);
-	};
-	c.onmousemove = function(event) {
-		os_eventMousemove(r.searchbox, event);
-	};
-	c.onmousedown = function(event) {
-		return os_eventMousedown(r.searchbox, event);
-	};
-	c.onmouseup = function(event) {
-		os_eventMouseup(r.searchbox, event);
-	};
+	c.onmouseover = function( event ) { os_eventMouseover( r.searchbox, event ); };
+	c.onmousemove = function( event ) { os_eventMousemove( r.searchbox, event ); };
+	c.onmousedown = function( event ) { return os_eventMousedown( r.searchbox, event ); };
+	c.onmouseup = function( event ) { os_eventMouseup( r.searchbox, event ); };
 	return c;
 };
 

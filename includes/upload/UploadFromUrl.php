@@ -12,9 +12,13 @@ class UploadFromUrl extends UploadBase {
 	protected $mAsync, $mUrl;
 	protected $mIgnoreWarnings = true;
 
+	protected $mTempPath;
+
 	/**
 	 * Checks if the user is allowed to use the upload-by-URL feature. If the
 	 * user is allowed, pass on permissions checking to the parent.
+	 *
+	 * @param $user User
 	 */
 	public static function isAllowed( $user ) {
 		if ( !$user->isAllowed( 'upload_by_url' ) )
@@ -45,6 +49,9 @@ class UploadFromUrl extends UploadBase {
 
 		$this->mUrl = $url;
 		$this->mAsync = $wgAllowAsyncCopyUploads ? $async : false;
+		if ( $async ) {
+			throw new MWException( 'Asynchronous copy uploads are no longer possible as of r81612.' );
+		}
 
 		$tempPath = $this->mAsync ? null : $this->makeTemporaryFile();
 		# File size and removeTempFile will be filled in later
@@ -53,7 +60,7 @@ class UploadFromUrl extends UploadBase {
 
 	/**
 	 * Entry point for SpecialUpload
-	 * @param $request Object: WebRequest object
+	 * @param $request WebRequest object
 	 */
 	public function initializeFromRequest( &$request ) {
 		$desiredDestName = $request->getText( 'wpDestFile' );
@@ -61,13 +68,13 @@ class UploadFromUrl extends UploadBase {
 			$desiredDestName = $request->getText( 'wpUploadFileURL' );
 		return $this->initialize(
 			$desiredDestName,
-			$request->getVal( 'wpUploadFileURL' ),
+			trim( $request->getVal( 'wpUploadFileURL' ) ),
 			false
 		);
 	}
 
 	/**
-	 * @param $request Object: WebRequest object
+	 * @param $request WebRequest object
 	 */
 	public static function isValidRequest( $request ) {
 		global $wgUser;
@@ -78,6 +85,7 @@ class UploadFromUrl extends UploadBase {
 			&& $wgUser->isAllowed( 'upload_by_url' );
 	}
 
+	public function getSourceType() { return 'url'; }
 
 	public function fetchFile() {
 		if ( !Http::isValidURI( $this->mUrl ) ) {
@@ -137,7 +145,9 @@ class UploadFromUrl extends UploadBase {
 		$this->mRemoveTempFile = true;
 		$this->mFileSize = 0;
 
-		$req = MWHttpRequest::factory( $this->mUrl );
+		$req = MWHttpRequest::factory( $this->mUrl, array(
+			'followRedirects' => true
+		) );
 		$req->setCallback( array( $this, 'saveTempFileChunk' ) );
 		$status = $req->execute();
 
@@ -184,11 +194,11 @@ class UploadFromUrl extends UploadBase {
 	 * Wrapper around the parent function in order to defer checking protection
 	 * until we are sure that the file can actually be uploaded
 	 */
-	public function verifyPermissions( $user ) {
+	public function verifyTitlePermissions( $user ) {
 		if ( $this->mAsync ) {
 			return true;
 		}
-		return parent::verifyPermissions( $user );
+		return parent::verifyTitlePermissions( $user );
 	}
 
 	/**
@@ -207,7 +217,13 @@ class UploadFromUrl extends UploadBase {
 		return parent::performUpload( $comment, $pageText, $watch, $user );
 	}
 
-
+	/**
+	 * @param  $comment
+	 * @param  $pageText
+	 * @param  $watch
+	 * @param  $user User
+	 * @return
+	 */
 	protected function insertJob( $comment, $pageText, $watch, $user ) {
 		$sessionKey = $this->stashSession();
 		$job = new UploadFromUrlJob( $this->getTitle(), array(
@@ -225,6 +241,5 @@ class UploadFromUrl extends UploadBase {
 		$job->insert();
 		return $sessionKey;
 	}
-
 
 }

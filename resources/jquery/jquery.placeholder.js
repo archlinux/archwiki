@@ -10,7 +10,7 @@
  */
 ( function( $ ) {
 
-jQuery.fn.placeholder = function() {
+$.fn.placeholder = function() {
 
 	return this.each( function() {
 
@@ -19,11 +19,11 @@ jQuery.fn.placeholder = function() {
 			return;
 		}
 
-		var placeholder = this.getAttribute('placeholder');
-		var $input = jQuery(this);
+		var placeholder = this.getAttribute( 'placeholder' );
+		var $input = $(this);
 
 		// Show initially, if empty
-		if ( this.value === '' || this.value == placeholder ) {
+		if ( this.value === '' || this.value === placeholder ) {
 			$input.addClass( 'placeholder' ).val( placeholder );
 		}
 
@@ -40,7 +40,7 @@ jQuery.fn.placeholder = function() {
 			// Also listen for other events in case $input was
 			// already focused when the events were bound
 			.bind( 'focus drop keydown paste', function( e ) {
-				if ($input.hasClass('placeholder')) {
+				if ( $input.hasClass( 'placeholder' ) ) {
 					if ( e.type == 'drop' && e.originalEvent.dataTransfer ) {
 						// Support for drag&drop. Instead of inserting the dropped
 						// text somewhere in the middle of the placeholder string,
@@ -69,16 +69,18 @@ jQuery.fn.placeholder = function() {
 			} );
 
 		// Blank on submit -- prevents submitting with unintended value
-		this.form && $( this.form ).submit( function() {
-			// $input.trigger( 'focus' ); would be problematic
-			// because it actually focuses $input, leading
-			// to nasty behavior in mobile browsers
-			if ( $input.hasClass('placeholder') ) {
-				$input
-					.val( '' )
-					.removeClass( 'placeholder' );
-			}
-		});
+		if ( this.form ) {
+			$( this.form ).submit( function() {
+				// $input.trigger( 'focus' ); would be problematic
+				// because it actually focuses $input, leading
+				// to nasty behavior in mobile browsers
+				if ( $input.hasClass( 'placeholder' ) ) {
+					$input
+						.val( '' )
+						.removeClass( 'placeholder' );
+				}
+			});
+		}
 
 	});
 };

@@ -25,13 +25,13 @@ class ForeignAPIRepo extends FileRepo {
 	/* This version string is used in the user agent for requests and will help
 	 * server maintainers in identify ForeignAPI usage.
 	 * Update the version every time you make breaking or significant changes. */
-	const VERSION = "2.0";
+	const VERSION = "2.1";
 
 	var $fileFactory = array( 'ForeignAPIFile', 'newFromTitle' );
 	/* Check back with Commons after a day */
-	var $apiThumbCacheExpiry = 86400;
+	var $apiThumbCacheExpiry = 86400; /* 24*60*60 */
 	/* Redownload thumbnail files after a month */
-	var $fileCacheExpiry = 2629743;
+	var $fileCacheExpiry = 2592000; /* 86400*30 */
 	/* Local image directory */
 	var $directory;
 	var $thumbDir;
@@ -75,6 +75,8 @@ class ForeignAPIRepo extends FileRepo {
 	/**
 	 * Per docs in FileRepo, this needs to return false if we don't support versioned
 	 * files. Well, we don't.
+	 *
+	 * @return File
 	 */
 	function newFile( $title, $time = false ) {
 		if ( $time ) {
@@ -83,25 +85,33 @@ class ForeignAPIRepo extends FileRepo {
 		return parent::newFile( $title, $time );
 	}
 
-/**
- * No-ops
- */
+	/**
+	 * No-ops
+	 */
+
 	function storeBatch( $triplets, $flags = 0 ) {
 		return false;
 	}
+
 	function storeTemp( $originalName, $srcPath ) {
 		return false;
 	}
+
 	function append( $srcPath, $toAppendPath, $flags = 0 ){
 		return false;
 	}
-	function publishBatch( $triplets, $flags = 0 ) {
-		return false;
-	}
-	function deleteBatch( $sourceDestPairs ) {
+
+	function appendFinish( $toAppendPath ){
 		return false;
 	}
 
+	function publishBatch( $triplets, $flags = 0 ) {
+		return false;
+	}
+
+	function deleteBatch( $sourceDestPairs ) {
+		return false;
+	}
 
 	function fileExistsBatch( $files, $flags = 0 ) {
 		$results = array();
@@ -110,7 +120,7 @@ class ForeignAPIRepo extends FileRepo {
 				$results[$k] = true;
 				unset( $files[$k] );
 			} elseif( self::isVirtualUrl( $f ) ) {
-				# TODO! FIXME! We need to be able to handle virtual
+				# @todo FIXME: We need to be able to handle virtual
 				# URLs better, at least when we know they refer to the
 				# same repo.
 				$results[$k] = false;
@@ -129,6 +139,7 @@ class ForeignAPIRepo extends FileRepo {
 		}
 		return $results;
 	}
+
 	function getFileProps( $virtualUrl ) {
 		return false;
 	}
@@ -197,12 +208,13 @@ class ForeignAPIRepo extends FileRepo {
 		return $ret;
 	}
 
-	function getThumbUrl( $name, $width=-1, $height=-1, &$result=NULL ) {
+	function getThumbUrl( $name, $width = -1, $height = -1, &$result = null, $otherParams = '' ) {
 		$data = $this->fetchImageQuery( array(
 			'titles' => 'File:' . $name,
 			'iiprop' => 'url|timestamp',
 			'iiurlwidth' => $width,
 			'iiurlheight' => $height,
+			'iiurlparam'  => $otherParams,
 			'prop' => 'imageinfo' ) );
 		$info = $this->getImageInfo( $data );
 
@@ -215,7 +227,7 @@ class ForeignAPIRepo extends FileRepo {
 		}
 	}
 
-	/*
+	/**
 	 * Return the imageurl from cache if possible
 	 *
 	 * If the url has been requested today, get it from cache
@@ -224,15 +236,17 @@ class ForeignAPIRepo extends FileRepo {
 	 * @param $name String is a dbkey form of a title
 	 * @param $width
 	 * @param $height
+	 * @param String $param Other rendering parameters (page number, etc) from handler's makeParamString.
 	 */
-	function getThumbUrlFromCache( $name, $width, $height ) {
+	function getThumbUrlFromCache( $name, $width, $height, $params="" ) {
 		global $wgMemc;
 
 		if ( !$this->canCacheThumbs() ) {
-			return $this->getThumbUrl( $name, $width, $height );
+			$result = null; // can't pass "null" by reference, but it's ok as default value
+			return $this->getThumbUrl( $name, $width, $height, $result, $params );
 		}
 		$key = $this->getLocalCacheKey( 'ForeignAPIRepo', 'ThumbUrl', $name );
-		$sizekey = "$width:$height";
+		$sizekey = "$width:$height:$params";
 
 		/* Get the array of urls that we already know */
 		$knownThumbUrls = $wgMemc->get($key);
@@ -241,14 +255,15 @@ class ForeignAPIRepo extends FileRepo {
 			$knownThumbUrls = array();
 		} else {
 			if( isset( $knownThumbUrls[$sizekey] ) ) {
-				wfDebug("Got thumburl from local cache. {$knownThumbUrls[$sizekey]} \n");
+				wfDebug( __METHOD__ . ': Got thumburl from local cache: ' .
+					"{$knownThumbUrls[$sizekey]} \n");
 				return $knownThumbUrls[$sizekey];
 			}
 			/* This size is not yet known */
 		}
 
 		$metadata = null;
-		$foreignUrl = $this->getThumbUrl( $name, $width, $height, $metadata );
+		$foreignUrl = $this->getThumbUrl( $name, $width, $height, $metadata, $params );
 
 		if( !$foreignUrl ) {
 			wfDebug( __METHOD__ . " Could not find thumburl\n" );
@@ -273,7 +288,7 @@ class ForeignAPIRepo extends FileRepo {
 			$diff = abs( $modified - $current );
 			if( $remoteModified < $modified && $diff < $this->fileCacheExpiry ) {
 				/* Use our current and already downloaded thumbnail */
-				$knownThumbUrls["$width:$height"] = $localUrl;
+				$knownThumbUrls[$sizekey] = $localUrl;
 				$wgMemc->set( $key, $knownThumbUrls, $this->apiThumbCacheExpiry );
 				return $localUrl;
 			}
@@ -291,7 +306,7 @@ class ForeignAPIRepo extends FileRepo {
 			}
 		}
 
-		# FIXME: Delete old thumbs that aren't being used. Maintenance script?
+		# @todo FIXME: Delete old thumbs that aren't being used. Maintenance script?
 		wfSuppressWarnings();
 		if( !file_put_contents( $localFilename, $thumb ) ) {
 			wfRestoreWarnings();
@@ -355,7 +370,7 @@ class ForeignAPIRepo extends FileRepo {
 	public static function httpGet( $url, $timeout = 'default', $options = array() ) {
 		$options['timeout'] = $timeout;
 		/* Http::get */
-		$url = wfExpandUrl( $url );
+		$url = wfExpandUrl( $url, PROTO_HTTP );
 		wfDebug( "ForeignAPIRepo: HTTP GET: $url\n" );
 		$options['method'] = "GET";
 

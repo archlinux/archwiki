@@ -36,7 +36,7 @@ class UserloginTemplate extends QuickTemplate {
 	<p id="userloginlink"><?php $this->html('link') ?></p>
 	<?php $this->html('header'); /* pre-table point for form plugins... */ ?>
 	<div id="userloginprompt"><?php  $this->msgWiki('loginprompt') ?></div>
-	<?php if( @$this->haveData( 'languages' ) ) { ?><div id="languagelinks"><p><?php $this->html( 'languages' ); ?></p></div><?php } ?>
+	<?php if( $this->haveData( 'languages' ) ) { ?><div id="languagelinks"><p><?php $this->html( 'languages' ); ?></p></div><?php } ?>
 	<table>
 		<tr>
 			<td class="mw-label"><label for='wpName1'><?php $this->msg('yourname') ?></label></td>
@@ -130,21 +130,29 @@ class UserloginTemplate extends QuickTemplate {
 			'tabindex' => '9'
 		) );
 		if ( $this->data['useemail'] && $this->data['canreset'] ) {
-			echo '&#160;';
-			echo Html::input( 'wpMailmypassword', wfMsg( 'mailmypassword' ), 'submit', array(
-				'id' => 'wpMailmypassword',
-				'tabindex' => '10'
-			) );
+			if( $this->data['resetlink'] === true ){
+				echo '&#160;';
+				echo Linker::link(
+					SpecialPage::getTitleFor( 'PasswordReset' ),
+					wfMessage( 'userlogin-resetlink' )
+				);
+			} elseif( $this->data['resetlink'] === null ) {
+				echo '&#160;';
+				echo Html::input( 'wpMailmypassword', wfMsg( 'mailmypassword' ), 'submit', array(
+					'id' => 'wpMailmypassword',
+					'tabindex' => '10'
+				) );
+			}
 		} ?>
 
 			</td>
 		</tr>
 	</table>
-<?php if( @$this->haveData( 'uselang' ) ) { ?><input type="hidden" name="uselang" value="<?php $this->text( 'uselang' ); ?>" /><?php } ?>
-<?php if( @$this->haveData( 'token' ) ) { ?><input type="hidden" name="wpLoginToken" value="<?php $this->text( 'token' ); ?>" /><?php } ?>
+<?php if( $this->haveData( 'uselang' ) ) { ?><input type="hidden" name="uselang" value="<?php $this->text( 'uselang' ); ?>" /><?php } ?>
+<?php if( $this->haveData( 'token' ) ) { ?><input type="hidden" name="wpLoginToken" value="<?php $this->text( 'token' ); ?>" /><?php } ?>
 </form>
 </div>
-<div id="loginend"><?php $this->msgWiki( 'loginend' ); ?></div>
+<div id="loginend"><?php $this->html( 'loginend' ); ?></div>
 <?php
 
 	}
@@ -183,7 +191,7 @@ class UsercreateTemplate extends QuickTemplate {
 	<h2><?php $this->msg('createaccount') ?></h2>
 	<p id="userloginlink"><?php $this->html('link') ?></p>
 	<?php $this->html('header'); /* pre-table point for form plugins... */ ?>
-	<?php if( @$this->haveData( 'languages' ) ) { ?><div id="languagelinks"><p><?php $this->html( 'languages' ); ?></p></div><?php } ?>
+	<?php if( $this->haveData( 'languages' ) ) { ?><div id="languagelinks"><p><?php $this->html( 'languages' ); ?></p></div><?php } ?>
 	<table>
 		<tr>
 			<td class="mw-label"><label for='wpName2'><?php $this->msg('yourname') ?></label></td>
@@ -251,11 +259,15 @@ class UsercreateTemplate extends QuickTemplate {
 			'size' => '20'
 		) ); ?>
 					<div class="prefsectiontip">
-						<?php if( $this->data['emailrequired'] ) {
-									$this->msgWiki('prefs-help-email-required');
-						      } else {
-									$this->msgWiki('prefs-help-email');
-						      } ?>
+						<?php  // duplicated in Preferences.php profilePreferences()
+							if( $this->data['emailrequired'] ) {
+								$this->msgWiki('prefs-help-email-required');
+							} else {
+								$this->msgWiki('prefs-help-email');
+							}
+							if( $this->data['emailothers'] ) {
+								$this->msgWiki('prefs-help-email-others');
+							} ?>
 					</div>
 				</td>
 			<?php } ?>
@@ -361,11 +373,11 @@ class UsercreateTemplate extends QuickTemplate {
 			</td>
 		</tr>
 	</table>
-<?php if( @$this->haveData( 'uselang' ) ) { ?><input type="hidden" name="uselang" value="<?php $this->text( 'uselang' ); ?>" /><?php } ?>
-<?php if( @$this->haveData( 'token' ) ) { ?><input type="hidden" name="wpCreateaccountToken" value="<?php $this->text( 'token' ); ?>" /><?php } ?>
+<?php if( $this->haveData( 'uselang' ) ) { ?><input type="hidden" name="uselang" value="<?php $this->text( 'uselang' ); ?>" /><?php } ?>
+<?php if( $this->haveData( 'token' ) ) { ?><input type="hidden" name="wpCreateaccountToken" value="<?php $this->text( 'token' ); ?>" /><?php } ?>
 </form>
 </div>
-<div id="signupend"><?php $this->msgWiki( 'signupend' ); ?></div>
+<div id="signupend"><?php $this->html( 'signupend' ); ?></div>
 <?php
 
 	}

@@ -64,7 +64,7 @@ class UpdateRestrictions extends Maintenance {
 						// old old format should be treated as edit/move restriction
 						$oldRestrictions["edit"] = trim( $temp[0] );
 						$oldRestrictions["move"] = trim( $temp[0] );
-					} else if ( $temp[1] ) {
+					} elseif ( $temp[1] ) {
 						$oldRestrictions[$temp[0]] = trim( $temp[1] );
 					}
 				}
@@ -96,7 +96,7 @@ class UpdateRestrictions extends Maintenance {
 			}
 			$blockStart += $this->mBatchSize - 1;
 			$blockEnd += $this->mBatchSize - 1;
-			wfWaitForSlaves( 5 );
+			wfWaitForSlaves();
 		}
 		$this->output( "...removing dead rows from page_restrictions\n" );
 		// Kill any broken rows from previous imports

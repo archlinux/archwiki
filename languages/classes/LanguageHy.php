@@ -6,8 +6,15 @@
  * @author Ruben Vardanyan (Me@RubenVardanyan.com)
  */
 class LanguageHy extends Language {
-	# Convert from the nominative form of a noun to some other case
-	# Invoked with {{grammar:case|word}}
+
+	/**
+	 * Convert from the nominative form of a noun to some other case
+	 * Invoked with {{grammar:case|word}}
+	 *
+	 * @param $word string
+	 * @param $case string
+	 * @return string
+	 */
 	function convertGrammar( $word, $case ) {
 		global $wgGrammarForms;
 		if ( isset( $wgGrammarForms['hy'][$case][$word] ) ) {
@@ -48,6 +55,12 @@ class LanguageHy extends Language {
 		return $word;
 	}
 
+	/**
+	 * @param $count int
+	 * @param $forms array
+	 *
+	 * @return string
+	 */
 	function convertPlural( $count, $forms ) {
 		if ( !count( $forms ) ) { return ''; }
 		$forms = $this->preConvertPlural( $forms, 2 );
@@ -55,10 +68,13 @@ class LanguageHy extends Language {
 		return ( abs( $count ) <= 1 ) ? $forms[0] : $forms[1];
 	}
 
-	/*
+	/**
 	 * Armenian numeric format is "12 345,67" but "1234,56"
+	 *
+	 * @param $_ string
+	 *
+	 * @return string
 	 */
-
 	function commafy( $_ ) {
 		if ( !preg_match( '/^\d{1,4}$/', $_ ) ) {
 			return strrev( (string)preg_replace( '/(\d{3})(?=\d)(?!\d*\.)/', '$1,', strrev( $_ ) ) );

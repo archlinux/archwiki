@@ -68,9 +68,12 @@ class GenerateCollationData extends Maintenance {
 	}
 
 	function charCallback( $data ) {
-		// Skip non-printable characters
+		// Skip non-printable characters,
+		// but do not skip a normal space (U+0020) since
+		// people like to use that as a fake no header symbol.
 		$category = substr( $data['gc'], 0, 1 );
-		if ( strpos( 'LNPS', $category ) === false ) {
+		if ( strpos( 'LNPS', $category ) === false 
+			&& $data['cp'] !== '0020' ) {
 			return;
 		}
 		$cp = hexdec( $data['cp'] );
@@ -193,7 +196,7 @@ class GenerateCollationData extends Maintenance {
 		// portion equal to the first character, then remove the second 
 		// character. This avoids having characters like U+A732 (double A)
 		// polluting the basic latin sort area.
-		$prevWeights = array();
+
 		foreach ( $this->groups as $weight => $group ) {
 			if ( preg_match( '/(\.[0-9A-F]*)\./', $weight, $m ) ) {
 				if ( isset( $this->groups[$m[1]] ) ) {
@@ -377,5 +380,5 @@ class UcdXmlReader {
 }
 
 $maintClass = 'GenerateCollationData';
-require_once( DO_MAINTENANCE );
+require_once( RUN_MAINTENANCE_IF_MAIN );
 

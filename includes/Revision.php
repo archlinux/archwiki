@@ -25,7 +25,7 @@ class Revision {
 	public static function newFromId( $id ) {
 		return Revision::newFromConds(
 			array( 'page_id=rev_page',
-			       'rev_id' => intval( $id ) ) );
+				   'rev_id' => intval( $id ) ) );
 	}
 
 	/**
@@ -34,13 +34,13 @@ class Revision {
 	 * to that title, will return null.
 	 *
 	 * @param $title Title
-	 * @param $id Integer
+	 * @param $id Integer (optional)
 	 * @return Revision or null
 	 */
 	public static function newFromTitle( $title, $id = 0 ) {
-		$conds = array( 
-			'page_namespace' => $title->getNamespace(), 
-			'page_title' => $title->getDBkey()
+		$conds = array(
+			'page_namespace' => $title->getNamespace(),
+			'page_title' 	 => $title->getDBkey()
 		);
 		if ( $id ) {
 			// Use the specified ID
@@ -50,8 +50,7 @@ class Revision {
 			$dbw = wfGetDB( DB_MASTER );
 			$latest = $dbw->selectField( 'page', 'page_latest', $conds, __METHOD__ );
 			if ( $latest === false ) {
-				// Page does not exist
-				return null;
+				return null; // page does not exist
 			}
 			$conds['rev_id'] = $latest;
 		} else {
@@ -63,9 +62,42 @@ class Revision {
 	}
 
 	/**
+	 * Load either the current, or a specified, revision
+	 * that's attached to a given page ID.
+	 * Returns null if no such revision can be found.
+	 *
+	 * @param $revId Integer
+	 * @param $pageId Integer (optional)
+	 * @return Revision or null
+	 */
+	public static function newFromPageId( $pageId, $revId = 0 ) {
+		$conds = array( 'page_id' => $pageId );
+		if ( $revId ) {
+			$conds['rev_id'] = $revId;
+		} elseif ( wfGetLB()->getServerCount() > 1 ) {
+			// Get the latest revision ID from the master
+			$dbw = wfGetDB( DB_MASTER );
+			$latest = $dbw->selectField( 'page', 'page_latest', $conds, __METHOD__ );
+			if ( $latest === false ) {
+				return null; // page does not exist
+			}
+			$conds['rev_id'] = $latest;
+		} else {
+			$conds[] = 'rev_id = page_latest';
+		}
+		$conds[] = 'page_id=rev_page';
+		return Revision::newFromConds( $conds );
+	}
+
+	/**
 	 * Make a fake revision object from an archive table row. This is queried
 	 * for permissions or even inserted (as in Special:Undelete)
-	 * @todo Fixme: should be a subclass for RevisionDelete. [TS]
+	 * @todo FIXME: Should be a subclass for RevisionDelete. [TS]
+	 *
+	 * @param $row
+	 * @param $overrides array
+	 *
+	 * @return Revision
 	 */
 	public static function newFromArchiveRow( $row, $overrides = array() ) {
 		$attribs = $overrides + array(
@@ -90,6 +122,14 @@ class Revision {
 	}
 
 	/**
+	 * @param $row
+	 * @return Revision
+	 */
+	public static function newFromRow( $row ) {
+		return new self( $row );
+	}
+
+	/**
 	 * Load a page revision from a given revision ID number.
 	 * Returns null if no such revision can be found.
 	 *
@@ -100,7 +140,7 @@ class Revision {
 	public static function loadFromId( $db, $id ) {
 		return Revision::loadFromConds( $db,
 			array( 'page_id=rev_page',
-			       'rev_id' => intval( $id ) ) );
+				   'rev_id' => intval( $id ) ) );
 	}
 
 	/**
@@ -142,9 +182,9 @@ class Revision {
 		return Revision::loadFromConds(
 			$db,
 			array( "rev_id=$matchId",
-			       'page_id=rev_page',
-			       'page_namespace' => $title->getNamespace(),
-			       'page_title'     => $title->getDBkey() ) );
+				   'page_id=rev_page',
+				   'page_namespace' => $title->getNamespace(),
+				   'page_title'     => $title->getDBkey() ) );
 	}
 
 	/**
@@ -152,7 +192,7 @@ class Revision {
 	 * WARNING: Timestamps may in some circumstances not be unique,
 	 * so this isn't the best key to use.
 	 *
-	 * @param $db Database
+	 * @param $db DatabaseBase
 	 * @param $title Title
 	 * @param $timestamp String
 	 * @return Revision or null
@@ -161,9 +201,9 @@ class Revision {
 		return Revision::loadFromConds(
 			$db,
 			array( 'rev_timestamp'  => $db->timestamp( $timestamp ),
-			       'page_id=rev_page',
-			       'page_namespace' => $title->getNamespace(),
-			       'page_title'     => $title->getDBkey() ) );
+				   'page_id=rev_page',
+				   'page_namespace' => $title->getNamespace(),
+				   'page_title'     => $title->getDBkey() ) );
 	}
 
 	/**
@@ -186,7 +226,7 @@ class Revision {
 	 * Given a set of conditions, fetch a revision from
 	 * the given database connection.
 	 *
-	 * @param $db Database
+	 * @param $db DatabaseBase
 	 * @param $conditions Array
 	 * @return Revision or null
 	 */
@@ -216,9 +256,9 @@ class Revision {
 		return Revision::fetchFromConds(
 			wfGetDB( DB_SLAVE ),
 			array( 'rev_id=page_latest',
-			       'page_namespace' => $title->getNamespace(),
-			       'page_title'     => $title->getDBkey(),
-			       'page_id=rev_page' ) );
+				   'page_namespace' => $title->getNamespace(),
+				   'page_title'     => $title->getDBkey(),
+				   'page_id=rev_page' ) );
 	}
 
 	/**
@@ -226,7 +266,7 @@ class Revision {
 	 * which will return matching database rows with the
 	 * fields necessary to build Revision objects.
 	 *
-	 * @param $db Database
+	 * @param $db DatabaseBase
 	 * @param $conditions Array
 	 * @return ResultWrapper
 	 */
@@ -235,21 +275,19 @@ class Revision {
 		$fields[] = 'page_namespace';
 		$fields[] = 'page_title';
 		$fields[] = 'page_latest';
-		$res = $db->select(
+		return $db->select(
 			array( 'page', 'revision' ),
 			$fields,
 			$conditions,
 			__METHOD__,
 			array( 'LIMIT' => 1 ) );
-		$ret = $db->resultObject( $res );
-		return $ret;
 	}
 
 	/**
 	 * Return the list of revision fields that should be selected to create
 	 * a new revision.
 	 */
-	static function selectFields() {
+	public static function selectFields() {
 		return array(
 			'rev_id',
 			'rev_page',
@@ -264,9 +302,9 @@ class Revision {
 			'rev_parent_id'
 		);
 	}
-	
+
 	/**
-	 * Return the list of text fields that should be selected to read the 
+	 * Return the list of text fields that should be selected to read the
 	 * revision text
 	 */
 	static function selectTextFields() {
@@ -412,11 +450,11 @@ class Revision {
 			array( 'page', 'revision' ),
 			array( 'page_namespace', 'page_title' ),
 			array( 'page_id=rev_page',
-			       'rev_id' => $this->mId ),
+				   'rev_id' => $this->mId ),
 			'Revision::getTitle' );
 		if( $row ) {
 			$this->mTitle = Title::makeTitle( $row->page_namespace,
-			                                  $row->page_title );
+											  $row->page_title );
 		}
 		return $this->mTitle;
 	}
@@ -441,7 +479,7 @@ class Revision {
 
 	/**
 	 * Fetch revision's user id if it's available to the specified audience.
-	 * If the specified audience does not have access to it, zero will be 
+	 * If the specified audience does not have access to it, zero will be
 	 * returned.
 	 *
 	 * @param $audience Integer: one of:
@@ -473,7 +511,7 @@ class Revision {
 
 	/**
 	 * Fetch revision's username if it's available to the specified audience.
-	 * If the specified audience does not have access to the username, an 
+	 * If the specified audience does not have access to the username, an
 	 * empty string will be returned.
 	 *
 	 * @param $audience Integer: one of:
@@ -504,7 +542,7 @@ class Revision {
 
 	/**
 	 * Fetch revision comment if it's available to the specified audience.
-	 * If the specified audience does not have access to the comment, an 
+	 * If the specified audience does not have access to the comment, an
 	 * empty string will be returned.
 	 *
 	 * @param $audience Integer: one of:
@@ -539,7 +577,7 @@ class Revision {
 	public function isMinor() {
 		return (bool)$this->mMinorEdit;
 	}
-	
+
 	/**
 	 * @return Integer rcid of the unpatrolled row, zero if there isn't one
 	 */
@@ -579,14 +617,13 @@ class Revision {
 
 	/**
 	 * Fetch revision text if it's available to the specified audience.
-	 * If the specified audience does not have the ability to view this 
+	 * If the specified audience does not have the ability to view this
 	 * revision, an empty string will be returned.
 	 *
 	 * @param $audience Integer: one of:
 	 *      Revision::FOR_PUBLIC       to be displayed to all users
 	 *      Revision::FOR_THIS_USER    to be displayed to $wgUser
 	 *      Revision::RAW              get the text regardless of permissions
-	 *
 	 *
 	 * @return String
 	 */
@@ -603,10 +640,11 @@ class Revision {
 	/**
 	 * Alias for getText(Revision::FOR_THIS_USER)
 	 *
-	 * @deprecated
+	 * @deprecated since 1.17
 	 * @return String
 	 */
 	public function revText() {
+		wfDeprecated( __METHOD__ );
 		return $this->getText( self::FOR_THIS_USER );
 	}
 
@@ -724,8 +762,8 @@ class Revision {
 		# Use external methods for external objects, text in table is URL-only then
 		if ( in_array( 'external', $flags ) ) {
 			$url = $text;
-			@list(/* $proto */, $path ) = explode( '://', $url, 2 );
-			if( $path == '' ) {
+			$parts = explode( '://', $url, 2 );
+			if( count( $parts ) == 1 || $parts[1] == '' ) {
 				wfProfileOut( __METHOD__ );
 				return false;
 			}
@@ -753,15 +791,15 @@ class Revision {
 			}
 
 			global $wgLegacyEncoding;
-			if( $text !== false && $wgLegacyEncoding 
-				&& !in_array( 'utf-8', $flags ) && !in_array( 'utf8', $flags ) ) 
+			if( $text !== false && $wgLegacyEncoding
+				&& !in_array( 'utf-8', $flags ) && !in_array( 'utf8', $flags ) )
 			{
 				# Old revisions kept around in a legacy encoding?
 				# Upconvert on demand.
 				# ("utf8" checked for compatibility with some broken
 				#  conversion scripts 2008-12-30)
-				global $wgInputEncoding, $wgContLang;
-				$text = $wgContLang->iconv( $wgLegacyEncoding, $wgInputEncoding, $text );
+				global $wgContLang;
+				$text = $wgContLang->iconv( $wgLegacyEncoding, 'UTF-8', $text );
 			}
 		}
 		wfProfileOut( __METHOD__ );
@@ -941,7 +979,7 @@ class Revision {
 	 * @param $pageId Integer: ID number of the page to read from
 	 * @param $summary String: revision's summary
 	 * @param $minor Boolean: whether the revision should be considered as minor
-	 * @return Mixed: Revision, or null on error
+	 * @return Revision|null on error
 	 */
 	public static function newNullRevision( $dbw, $pageId, $summary, $minor ) {
 		wfProfileIn( __METHOD__ );

@@ -49,8 +49,8 @@ $specialPageAliases = array(
 );
 
 $magicWords = array(
-	'currentmonth'          => array( '1', 'MUEJIAKTUAL', 'MUEJIAKTUAL2', 'MUAJIMOMENTAL', 'CURRENTMONTH', 'CURRENTMONTH2' ),
-	'currentmonth1'         => array( '1', 'MUEJIAKTUAL1', 'CURRENTMONTH1' ),
+	'currentmonth'          => array( '1', 'MUEJIAKTUAL', 'MUEJIAKTUAL2', 'MUAJIMOMENTAL', 'MUAJIMOMENTAL2', 'CURRENTMONTH', 'CURRENTMONTH2' ),
+	'currentmonth1'         => array( '1', 'MUEJIAKTUAL1', 'MUAJIMOMENTAL1', 'CURRENTMONTH1' ),
 	'currentmonthname'      => array( '1', 'EMNIMUEJITAKTUAL', 'EMRIIMUAJITMOMENTAL', 'CURRENTMONTHNAME' ),
 	'currenttime'           => array( '1', 'KOHATASH', 'KOHATANI', 'CURRENTTIME' ),
 	'currenthour'           => array( '1', 'ORATASH', 'ORATANI', 'CURRENTHOUR' ),
@@ -192,16 +192,6 @@ $messages = array(
 'index-category'                 => 'Faqe e indeksume',
 'noindex-category'               => 'Faqe e paindeksume',
 
-'mainpagetext'      => "'''MediaWiki software u instalue me sukses.'''",
-'mainpagedocfooter' => 'Për mâ shumë informata rreth përdorimit të softwareit wiki, ju lutem shikoni [http://meta.wikimedia.org/wiki/Help:Contents dokumentacionin].
-
-
-== Për fillim ==
-
-* [http://www.mediawiki.org/wiki/Help:Configuration_settings Konfigurimi i MediaWikit]
-* [http://www.mediawiki.org/wiki/Help:FAQ Pyetjet e shpeshta rreth MediaWikit]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Njoftime rreth MediaWikit]',
-
 'about'         => 'Rreth',
 'article'       => 'Artikulli',
 'newwindow'     => '(çelet në nji dritare të re)',
@@ -252,7 +242,6 @@ $messages = array(
 'history'           => 'Historiku i faqes',
 'history_short'     => 'Të përparshmet',
 'updatedmarker'     => 'ndryshue nga vizita jeme e fundit',
-'info_short'        => 'Informacion',
 'printableversion'  => 'Version për shtyp',
 'permalink'         => 'Vegëz e përhershme',
 'print'             => 'Shtyp',
@@ -443,12 +432,11 @@ Ju lutemi provoni prap mbas disa minutave.',
 'protectedinterface'   => 'Kjo faqe përmban tekst të interfaceit të softwareit dhe âsht e mbrojtun për me pengue keqpërdorimin.',
 'editinginterface'     => "'''Kujdes:''' Po redaktoni nji faqe që përdoret për me ofrue tekst të interfaceit të softwareit.
 Ndryshimet në këtë faqe do të prekin pamjen e interfaceit për të gjithë përdoruesit tjerë.
-Për përkthim, konsideroni ju lutem përdorimin e [http://translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net], projektin e MediaWiki për përshtatje gjuhësore.",
+Për përkthim, konsideroni ju lutem përdorimin e [//translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net], projektin e MediaWiki për përshtatje gjuhësore.",
 'sqlhidden'            => '(Kërkesa SQL e msheftë)',
 'cascadeprotected'     => 'Kjo faqe âsht e mbrojtun prej redaktimit, për shkak se âsht e përfshime në {{PLURAL:$1|faqen, e cila âsht e mbrojtun|faqet, të cilat janë të mbrojtuna}} me opcionin "zinxhir" të zgjedhun:
 $2',
 'namespaceprotected'   => "Nuk keni tagër me redaktue faqe në hapësinën '''$1'''.",
-'customcssjsprotected' => 'Nuk keni tagër me redaktue këtë faqe, sepse përmban përcaktime personale të nji përdoruesi tjetër.',
 'ns-specialprotected'  => 'Faqet speciale nuk mujnë me u redaktue.',
 'titleprotected'       => 'Ky titull âsht i mbrojtun për krijim prej përdoruesit [[User:$1|$1]].
 Arsyeja e dhânë âsht "\'\'$2\'\'".',
@@ -506,7 +494,7 @@ Të lutem aktivizoji dhe provo prap.',
 'nosuchuser'                 => 'Nuk ka përdorues me emnin "$1".
 Emnat janë senzitiv në madhësi të germës.
 Kontrollo drejtshkrimin ose [[Special:UserLogin/signup|krijo llogari]].',
-'nosuchusershort'            => 'Nuk ka përdorues me emnin "<nowiki>$1</nowiki>".
+'nosuchusershort'            => 'Nuk ka përdorues me emnin "$1".
 Kontrollo drejtshkrimin.',
 'nouserspecified'            => 'Duhesh me dhânë nji nofkë.',
 'login-userblocked'          => 'Ky përdorues është bllokuar. Identifikohu nuk lejohet',
@@ -559,7 +547,7 @@ Ju lutemi pritni pak për me provue prap.',
 'loginlanguagelabel'         => 'Gjuha: $1',
 'suspicious-userlogout'      => 'Kërkesa juaj për të shkëputet u mohua sepse duket sikur është dërguar nga një shfletues të thyer ose caching proxy',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Ndrysho fjalëkalimin',
 'resetpass_announce'        => 'Jeni kyçë me nji kod të përkohshëm të dërguem me email.
 Për me krye kyçjen, specifikoni fjalëkalimin e ri këtu:',
@@ -578,6 +566,10 @@ Për me krye kyçjen, specifikoni fjalëkalimin e ri këtu:',
 Ndoshta tashmâ e keni ndryshue fjalëkalimin me sukses, apo keni kërkue nji fjalëkalim të përkohshëm.',
 'resetpass-temp-password'   => 'Fjalëkalimi i përkohshëm:',
 
+# Special:PasswordReset
+'passwordreset'          => 'reset Fjalëkalimi',
+'passwordreset-username' => 'Emri i përdoruesit:',
+
 # Edit page toolbar
 'bold_sample'     => 'Tekst i trashë',
 'bold_tip'        => 'Tekst i nximë',
@@ -589,8 +581,6 @@ Ndoshta tashmâ e keni ndryshue fjalëkalimin me sukses, apo keni kërkue nji fj
 'extlink_tip'     => 'Vegëz e jashtme (mos e harro prefiksin http://)',
 'headline_sample' => 'Teksti i kryetitullit',
 'headline_tip'    => 'Kryetitull i nivelit 2',
-'math_sample'     => 'Vendos formulën këtu',
-'math_tip'        => 'Formulë matematikore (LaTeX)',
 'nowiki_sample'   => 'Vendos tekst të paformatueshëm këtu',
 'nowiki_tip'      => 'Shpërfille formatimin wiki',
 'image_sample'    => 'Shembull.jpg',
@@ -677,7 +667,7 @@ Nëse jeni përdorues anonim dhe keni përshtypjen se po ju drejtohen komente jo
 Ju mundeni [[Special:Search/{{PAGENAME}}|me kërkue këtë titull]] në faqe tjera,
 <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} me kërkue në regjistrat tematikisht të afërm],
 apo [{{fullurl:{{FULLPAGENAME}}|action=edit}} me redaktue këtë faqe]</span>.',
-'userpage-userdoesnotexist'        => 'Llogaria e përdoruesit "$1" nuk âsht regjistrue.
+'userpage-userdoesnotexist'        => 'Llogaria e përdoruesit "<nowiki>$1</nowiki>" nuk âsht regjistrue.
 Ju lutemi kontrolloni nëse doni me krijue/redaktue këtë faqe.',
 'clearyourcache'                   => "'''Shenim - Mbas ruejtjes, ka mundësi që duheni me shmângë memorizimin në cache për me i pâ ndryshimet.'''
 '''Mozilla / Firefox / Safari:''' mbani ''Shift'' tue klikue në ''Reload'', ose trusni ''Ctrl-F5'' ose ''Ctrl-R'' (''Command-R'' në Mac);
@@ -995,9 +985,10 @@ Vini re se indeksat e tyne të përmbajtjes së {{SITENAME}} munden me qenë të
 'changepassword'                => 'Ndërrimi i fjalëkalimit',
 'prefs-skin'                    => 'Doka',
 'skin-preview'                  => 'Parapâmja',
-'prefs-math'                    => 'Formulë',
 'datedefault'                   => "S'ka parapëlqim",
+'prefs-beta'                    => 'karakteristika Beta',
 'prefs-datetime'                => 'Data dhe ora',
+'prefs-labs'                    => 'Laboratorë karakteristika',
 'prefs-personal'                => 'Profili i përdoruesit',
 'prefs-rc'                      => 'Ndryshimet e freskëta',
 'prefs-watchlist'               => 'Lista e mbikëqyrjeve',
@@ -1018,8 +1009,6 @@ Vini re se indeksat e tyne të përmbajtjes së {{SITENAME}} munden me qenë të
 'columns'                       => 'Kolona:',
 'searchresultshead'             => 'Kërkimi',
 'resultsperpage'                => 'Gjetje për faqe:',
-'contextlines'                  => 'Rreshta për gjetje:',
-'contextchars'                  => 'Konteksti për rresht:',
 'stub-threshold'                => 'Pragu për formatimin e <a href="#" class="stub">vegzave të cungueme</a> në (byte):',
 'recentchangesdays'             => 'Numri i ditëve për me i tregue te ndryshimet e freskëta:',
 'recentchangesdays-max'         => '(maksimum $1 {{PLURAL:$1|ditë|ditë}})',
@@ -1316,10 +1305,8 @@ Faqet në [[Special:Watchlist|listën tuej të mbikëqyrjes]] janë '''të theks
 # Watchlist
 'watchlist'         => 'Mbikëqyrjet e mija',
 'mywatchlist'       => 'Lista mbikqyrëse',
-'addedwatch'        => 'U shtu te lista mbikqyrëse',
 'addedwatchtext'    => "Faqja \"[[:\$1]]\" iu shtue [[Special:Watchlist|listës suej të mbikëqyrjes]].
 Ndryshimet e ardhshme të kësaj faqeje dhe të faqes gjegjëse të diskutimit kanë me u listue këte, dhe faqja do të tregohet '''e theksueme''' në [[Special:RecentChanges|listën e ndryshimeve të fundit]] për me râ në sy.",
-'removedwatch'      => 'U hjek nga lista mibkqyrëse',
 'removedwatchtext'  => 'Faqja "[[:$1]]" âsht hjekë prej [[Special:Watchlist|listës së mbikëqyrjes]].',
 'watch'             => 'Mbikqyre',
 'watchthispage'     => 'Mbikëqyr këtë faqe',
@@ -1337,7 +1324,7 @@ Ndryshimet e ardhshme të kësaj faqeje dhe të faqes gjegjëse të diskutimit k
 'confirmdeletetext'     => 'Jeni tue fshi nji faqe bashkë me krejt historikun e saj.
 Ju lutemi konfirmoni që kjo âsht ajo që deshtët me bâ, që i keni të njoftuna konsekuencat, dhe që këtë jeni tue e bâ në përputhje me [[{{MediaWiki:Policy-url}}|politikat]].',
 'actioncomplete'        => 'Veprimi u kry',
-'deletedtext'           => '"<nowiki>$1</nowiki>" âsht fshi.
+'deletedtext'           => '"$1" âsht fshi.
 Shih $2 për regjistrin e fshimjeve të fundit.',
 'deletedarticle'        => 'grisi "[[$1]]"',
 'dellogpage'            => 'Regjistri i fshimjeve',
@@ -1357,7 +1344,7 @@ Shih $2 për regjistrin e fshimjeve të fundit.',
 'protectexpiry'               => 'Afáti',
 'protect_expiry_invalid'      => 'Data e skadimit asht e pasaktë.',
 'protect_expiry_old'          => 'Data e skadimit asht në kohën kalueme.',
-'protect-text'                => "Këtu muneni me shiku dhe me ndryshu nivelin e mbrojtjes për faqen '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "Këtu muneni me shiku dhe me ndryshu nivelin e mbrojtjes për faqen '''$1'''.",
 'protect-locked-access'       => "Llogaria juej nuk ka privilegjet e nevojitme për me ndryshu nivelin e mbrojtjes. Kufizimet e kësaj faqe janë '''$1''':",
 'protect-cascadeon'           => 'Kjo faqe aktualisht âsht e mbrojtun sepse përfshihet në {{PLURAL:$1|faqen që ka|faqet, të cilat kanë}} mbrojtje të përfshimjes.
 Mundeni me ndryshue nivelin e mbrojtjes për këtë faqe, por kjo nuk ka me prekë mbrojtjen e përfshimjes.',
@@ -1568,9 +1555,7 @@ Lejon dhânien e arsyes në përmbledhje.',
 'vector.js'      => '/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen Vector */',
 
 # Metadata
-'nodublincore'      => 'Dublin Core RDF metadata nuk janë aktivizue në këtë server.',
-'nocreativecommons' => 'Creative Commons RDF metadata nuk janë aktivizue në këtë server.',
-'notacceptable'     => 'Serveri i wikit nuk mundet me i ofrue të dhânat në formatin që kish mujtë me i lexue klienti juej.',
+'notacceptable' => 'Serveri i wikit nuk mundet me i ofrue të dhânat në formatin që kish mujtë me i lexue klienti juej.',
 
 # Attribution
 'anonymous'        => '{{PLURAL:$1|Përdorues|Përdorues}} anonim të {{SITENAME}}',
@@ -1586,11 +1571,10 @@ Lejon dhânien e arsyes në përmbledhje.',
 'nextdiff'     => 'Redaktim ma i ri →',
 
 # Media information
-'file-info-size'       => '$1 × $2 pixela, madhësia e skedës: $3, tipi MIME: $4',
-'file-nohires'         => '<small>Rezolucioni i plotë.</small>',
-'svg-long-desc'        => 'skeda SVG, $1 × $2 pixela, madhësia: $3',
-'show-big-image'       => 'Rezolucion i plotë',
-'show-big-image-thumb' => '<small>Madhësia e parapâmjes: $1 × $2 pixela</small>',
+'file-info-size' => '$1 × $2 pixela, madhësia e skedës: $3, tipi MIME: $4',
+'file-nohires'   => '<small>Rezolucioni i plotë.</small>',
+'svg-long-desc'  => 'skeda SVG, $1 × $2 pixela, madhësia: $3',
+'show-big-image' => 'Rezolucion i plotë',
 
 # Bad image list
 'bad_image_list' => 'Formati asht si vijon:
@@ -1625,11 +1609,17 @@ Tjerat kanë me mbetë të mshefuna.
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # External editor support
 'edit-externally'      => 'Ndryshoni kët figurë/skedë me një mjet të jashtëm',
-'edit-externally-help' => '(Shih [http://www.mediawiki.org/wiki/Manual:External_editors udhëzimet e instalimit] për mâ shumë informata)',
+'edit-externally-help' => '(Shih [//www.mediawiki.org/wiki/Manual:External_editors udhëzimet e instalimit] për mâ shumë informata)',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'krejt',

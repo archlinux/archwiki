@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Sep 4, 2006
  *
@@ -249,6 +249,12 @@ class ApiResult extends ApiBase {
 	 * Path is an indexed array, each element specifying the branch at which to add the new value
 	 * Setting $path to array('a','b','c') is equivalent to data['a']['b']['c'] = $value
 	 * If $name is empty, the $value is added as a next list element data[] = $value
+	 *
+	 * @param $path
+	 * @param $name string
+	 * @param $value mixed
+	 * @param $overwrite bool
+	 *
 	 * @return bool True if $value fits in the result, false if not
 	 */
 	public function addValue( $path, $name, $value, $overwrite = false ) {
@@ -257,6 +263,9 @@ class ApiResult extends ApiBase {
 		if ( $this->mCheckingSize ) {
 			$newsize = $this->mSize + self::size( $value );
 			if ( $newsize > $wgAPIMaxResultSize ) {
+				$this->setWarning(
+					"This result was truncated because it would otherwise be larger than the " .
+							"limit of {$wgAPIMaxResultSize} bytes" );
 				return false;
 			}
 			$this->mSize = $newsize;
@@ -327,6 +336,8 @@ class ApiResult extends ApiBase {
 
 	/**
 	 * Callback function for cleanUpUTF8()
+	 *
+	 * @param $s string
 	 */
 	private static function cleanUp_helper( &$s ) {
 		if ( !is_string( $s ) ) {
@@ -336,11 +347,31 @@ class ApiResult extends ApiBase {
 		$s = $wgContLang->normalize( $s );
 	}
 
+	/**
+	 * Converts a Status object to an array suitable for addValue
+	 * @param Status $status
+	 * @param string $errorType
+	 * @return array
+	 */
+	public function convertStatusToArray( $status, $errorType = 'error' ) {
+		if ( $status->isGood() ) {
+			return array();
+		}
+
+		$result = array();
+		foreach ( $status->getErrorsByType( $errorType ) as $error ) {
+			$this->setIndexedTagName( $error['params'], 'param' );
+			$result[] = $error;
+		}
+		$this->setIndexedTagName( $result, $errorType );
+		return $result;
+	}
+
 	public function execute() {
 		ApiBase::dieDebug( __METHOD__, 'execute() is not supported on Result object' );
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiResult.php 74230 2010-10-03 19:07:11Z reedy $';
+		return __CLASS__ . ': $Id: ApiResult.php 91144 2011-06-29 23:46:39Z reedy $';
 	}
 }

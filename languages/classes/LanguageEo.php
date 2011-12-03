@@ -42,7 +42,7 @@ class LanguageEo extends Language {
 			return preg_replace_callback (
 				'/([cghjsu]x?)((?:xx)*)(?!x)/i',
 				array( $this, 'strrtxuCallback' ), $string	);
-		} else if ( strcasecmp( $in, 'UTF-8' ) == 0 && strcasecmp( $out, 'x' ) == 0 ) {
+		} elseif ( strcasecmp( $in, 'UTF-8' ) == 0 && strcasecmp( $out, 'x' ) == 0 ) {
 			# Double Xs only if they follow cxapelutaj literoj.
 			return preg_replace_callback(
 				'/((?:[cghjsu]|\xc4[\x88\x89\x9c\x9d\xa4\xa5\xb4\xb5]|\xc5[\x9c\x9d\xac\xad])x*)/i',
@@ -51,6 +51,10 @@ class LanguageEo extends Language {
 		return parent::iconv( $in, $out, $string );
 	}
 
+	/**
+	 * @param $matches array
+	 * @return string
+	 */
 	function strrtuxCallback( $matches ) {
 		static $ux = array (
 			'x' => 'xx' , 'X' => 'Xx' ,
@@ -64,6 +68,10 @@ class LanguageEo extends Language {
 		return strtr( $matches[1], $ux );
 	}
 
+	/**
+	 * @param $matches array
+	 * @return string
+	 */
 	function strrtxuCallback( $matches ) {
 		static $xu = array (
 			'xx' => 'x' , 'xX' => 'x' ,
@@ -84,6 +92,10 @@ class LanguageEo extends Language {
 		return strtr( $matches[1], $xu ) . strtr( $matches[2], $xu );
 	}
 
+	/**
+	 * @param $s string
+	 * @return string
+	 */
 	function checkTitleEncoding( $s ) {
 		# Check for X-system backwards-compatibility URLs
 		$ishigh = preg_match( '/[\x80-\xff]/', $s );

@@ -45,8 +45,8 @@ $messages = array(
 'tog-enotifrevealaddr'        => 'ЗӀы хоамаш тӀа са фоштмоттиг хьахьокха',
 'tog-shownumberswatching'     => 'Ший теркама дагарченгахь оагӀув чулаьца бола дакъалаьцархой таьрах хьахьокха',
 'tog-fancysig'                => 'Ший кулга яздара вики-хоамбаккхам (ший лоӀаме Ӏинка йоацаш)',
-'tog-externaleditor'          => 'Арена гӀалатнийсдарца болх бе (ший болх ховш болачара мара мегаш дац, хьамлоархара ший-тайпара оттам эша; [http://www.mediawiki.org/wiki/Manual:External_editors хьажа эша])',
-'tog-externaldiff'            => 'Арена бӀасакхосса болхоагӀувца болх бе (ший болх ховш болачара мара мегаш дац, хьамлоархара ший-тайпара оттам эша; [http://www.mediawiki.org/wiki/Manual:External_editors хьажа эша])',
+'tog-externaleditor'          => 'Арена гӀалатнийсдарца болх бе (ший болх ховш болачара мара мегаш дац, хьамлоархара ший-тайпара оттам эша; [//www.mediawiki.org/wiki/Manual:External_editors хьажа эша])',
+'tog-externaldiff'            => 'Арена бӀасакхосса болхоагӀувца болх бе (ший болх ховш болачара мара мегаш дац, хьамлоархара ший-тайпара оттам эша; [//www.mediawiki.org/wiki/Manual:External_editors хьажа эша])',
 'tog-showjumplinks'           => '"Дехьадала" яха новкъостала Ӏинк хьахьокха',
 'tog-uselivepreview'          => 'Сиха бӀарахьажар (JavaScript) (Экспериментально)',
 'tog-forceeditsummary'        => 'Хоам бе, хувцамий лоацам белгал даь деци',
@@ -132,6 +132,7 @@ $messages = array(
 'category-file-count-limited'    => 'Укх цатегчоахь {{PLURAL:$1|$1 паьл|$1 паьлаш}}.',
 'listingcontinuesabbrev'         => 'дӀахо',
 'noindex-category'               => 'Моттигза оагӀувнаш',
+'broken-file-category'           => 'Болхбеш йоаца паьла Ӏинкашца оагӀувнаш',
 
 'about'         => 'Лоацам',
 'article'       => 'Йоазув',
@@ -183,10 +184,10 @@ $messages = array(
 'history'           => 'искар',
 'history_short'     => 'Искар',
 'updatedmarker'     => 'Со ханача денца хувцамаш хиннaй',
-'info_short'        => 'Лоаца маIандар',
 'printableversion'  => 'Каьхати зарба бӀаса',
 'permalink'         => 'Даим латта Ӏинк',
 'print'             => 'Каьхат арадаккха',
+'view'              => 'БӀаргтассар',
 'edit'              => 'Хувца',
 'create'            => 'Хьаде',
 'editthispage'      => 'Ер оагӀув хувца',
@@ -194,6 +195,7 @@ $messages = array(
 'delete'            => 'ДӀадаккха',
 'deletethispage'    => 'Ер оагӀув дӀаяккха',
 'undelete_short'    => 'Меттаоттае {{PLURAL:$1|хувцам|$1 хувцамаш}}',
+'viewdeleted_short' => 'БӀаргтасса {{PLURAL:$1|дӀадаьккха хувцам тӀа|$1 дӀадаьккха хувцамаш тӀа}}',
 'protect'           => 'Лораде',
 'protect_change'    => 'хувца',
 'protectthispage'   => 'Лорае ер оагӀув',
@@ -271,6 +273,8 @@ $messages = array(
 'toc'                     => 'Чулоацам',
 'showtoc'                 => 'хьахокха',
 'hidetoc'                 => 'къайладаккха',
+'collapsible-collapse'    => 'чудерзаде',
+'collapsible-expand'      => 'хьадоаржаде',
 'thisisdeleted'           => '$1 бӀаргтасса е юхаметтаоттаде?',
 'viewdeleted'             => '$1 бӀаргтасса?',
 'restorelink'             => '{{PLURAL:$1|дӀаяккха хувцам|$1 дӀаяккха хувцамаш}}',
@@ -331,17 +335,22 @@ $messages = array(
 'createaccount'           => 'Керда дакъалаьцархо кхолла',
 'gotaccount'              => "Укхаза дӀаязабенна дий шо? '''$1'''.",
 'gotaccountlink'          => 'Чувала/яла',
+'userlogin-resetlink'     => 'Чувала/яла цӀеи доагӀеи дийцаденнадий?',
 'createaccountmail'       => 'Д-фоштаца',
 'createaccountreason'     => 'Бахьан:',
 'mailmypassword'          => 'Керда къайладоагӀа хьаэца',
 'loginlanguagelabel'      => 'Мотт: $1',
 
-# Password reset dialog
+# Change password dialog
 'oldpassword'               => 'Къаьна къайладоагӀ:',
 'newpassword'               => 'Керда къайладоагӀ:',
 'retypenew'                 => 'Керда къайладоагӀа юха Ӏоязаде:',
 'resetpass-submit-loggedin' => 'КъайладогӀа дӀахувца',
 'resetpass-submit-cancel'   => 'Юхавал/ялa',
+
+# Special:PasswordReset
+'passwordreset-username' => 'Дакъалаьцархочунна цӀи:',
+'passwordreset-email'    => 'Д-фошта моттиг:',
 
 # Edit page toolbar
 'bold_sample'     => 'Сома яздам',
@@ -576,6 +585,8 @@ $messages = array(
 'gender-male'               => 'МаIа',
 'gender-female'             => 'Кхал',
 'email'                     => 'Д-фошт',
+'prefs-help-email'          => 'Д-фоштий моттиг ала эшаш дац, амма новка даца, наггах санна къайладоагIа шоан дийцалой, цу тIа хьатIадайтаргда.',
+'prefs-help-email-others'   => 'Кхыбола дакъалаьцархоша шоаца бувзам я йийшхургья шун оагIува тIа гIолла, д-фошт хьаела ца езаш.',
 'prefs-signature'           => 'Кулгяздар',
 
 # User rights
@@ -779,10 +790,8 @@ $messages = array(
 'watchlist'         => 'Теркама дагарче',
 'mywatchlist'       => 'Теркама дагарче',
 'watchlistfor2'     => '$1 $2 царна',
-'addedwatch'        => 'Теркама оагIув тIа дIатIаяккха я',
 'addedwatchtext'    => '"[[:$1]]" оагIув, шун [[Special:Watchlist|теркама дагаршкахь]] чуяккха я. 
 Техьара мел йола укх оагIувни хувцамаш цу дагаршкахь хоам беш хургья. Вешта [[Special:RecentChanges|керда хувцама дагаршкаехь]] сома къоалмаца хьакъоастлуш хургья.',
-'removedwatch'      => 'Теркама дагарчера дIаяккха я',
 'removedwatchtext'  => '"[[:$1]]" оагIув, шун [[Special:Watchlist|теркама дарагчера]] дIаяккха хиннай.',
 'watch'             => 'Тохкам бе',
 'watchthispage'     => 'Укх оагIува теркам бе',
@@ -801,7 +810,7 @@ $messages = array(
 Дехар да, жоп дала, шоай из бокъонцахь де безам болаш да, шоай даьчоахь хургдолчоахь кхеташ долга, [[{{MediaWiki:Policy-url}}]] декъамачу Iоязадаь дола адаташ ца из деш долга.',
 'actioncomplete'        => 'Дулархам баьб',
 'actionfailed'          => 'Оттам даьдац',
-'deletedtext'           => '"<nowiki>$1</nowiki>" дIаяккха хиннай.
+'deletedtext'           => '"$1" дIаяккха хиннай.
 ТIехьара дIадаьккха дагарчена хьожаргволаш/хьожаргьйолаш, $2 хьажа.',
 'deletedarticle'        => ' "[[$1]]" дIадаьккхад',
 'dellogpage'            => 'ДIадаккхара тептар',
@@ -820,7 +829,7 @@ $messages = array(
 'protectexpiry'               => 'Кхоачалуш латта:',
 'protect_expiry_invalid'      => 'Чаккхабоала лорама харца ха',
 'protect_expiry_old'          => 'Чаккхайоала ха - яха зама я.',
-'protect-text'                => "'''<nowiki>$1</nowiki>''' укхаз шоана шоай оагIув лорамлагIа хувца a бIаргтасса a йийш хургья.",
+'protect-text'                => "'''$1''' укхаз шоана шоай оагIув лорамлагIа хувца a бIаргтасса a йийш хургья.",
 'protect-locked-access'       => "Шун лархама йоазуви нидза кхоачаш бац оагIувни лорама лагIа хувца. '''$1''' оагIувни дIаоттамаш:",
 'protect-cascadeon'           => '{{PLURAL:$1|КIалхахь хьагойташ йола оагIувчу|КIалхахь хьагойташ йола оагIувнашчу}} ер оагIув чуяккха халарахь, лорам Iоттая я, хурхала лорам Iоттая я. Укх оагIувни лорама лагIа хувца йийш йолаш я, амма хурхала лорам хувцлургдац.',
 'protect-default'             => 'Лорамза',
@@ -1043,6 +1052,20 @@ $messages = array(
 'metadata-help'     => 'Паьлас чулоаца, кхыдола хIамаш, таьрахьа суртдоаккхаргца е тIагIолладоаккхаргца чудаккхаш дола. Хьая паьл, гIалатахь мукъадаьккха хинна дале, хьахокхаш дола сурт, деррига хIамаш чулоацаргдац.',
 'metadata-expand'   => 'Кхыдола хIамаш хьахокха',
 'metadata-collapse' => 'Кхыдола хIамаш къайладаккха',
+'metadata-fields'   => 'Укх дагарченгахь дагaрадаь метахIамаша суртий мугIаш, сурт оагIув тIа хьахекха хургья, чуерзая метахIамашийца. Вож мугIанаш ха йоалаш къайла хургья.
+* make
+* model
+* datetimeoriginal
+* exposuretime
+* fnumber
+* isospeedratings
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-imagewidth'       => 'Шерал',
@@ -1052,21 +1075,33 @@ $messages = array(
 'exif-colorspace'       => 'Басара аре',
 'exif-pixelydimension'  => 'Сурти шерал',
 'exif-pixelxdimension'  => 'Сурти лакхал',
+'exif-writer'           => 'Яздама да',
+'exif-languagecode'     => 'Мотт',
+'exif-iimcategory'      => 'Цатег',
 
 'exif-scenecapturetype-1' => 'ЛаьттабIаса',
 'exif-scenecapturetype-2' => 'Сурт',
 
+'exif-iimcategory-edu' => 'Дешар',
+'exif-iimcategory-evn' => 'Арена буне',
+'exif-iimcategory-hth' => 'Могар',
+'exif-iimcategory-hum' => 'Адамий искараш',
+'exif-iimcategory-rel' => 'Динеи тешареи',
+'exif-iimcategory-sci' => 'Iилмеи кулгболхеи',
+'exif-iimcategory-soi' => 'Сагий хаттараш',
+'exif-iimcategory-spo' => 'Нидзоамал',
+'exif-iimcategory-war' => 'ТIомаш, кховсамашеи латтарашеи',
+'exif-iimcategory-wea' => 'Хаоттам',
+
 # External editor support
 'edit-externally'      => 'Йола болхоагIувца паьла гIалатахь мукъаяккха',
-'edit-externally-help' => '(ма даррачунга хьажа [http://www.mediawiki.org/wiki/Manual:External_editors хьаоттама кулгалхо])',
+'edit-externally-help' => '(ма даррачунга хьажа [//www.mediawiki.org/wiki/Manual:External_editors хьаоттама кулгалхо])',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'деррига',
-'imagelistall'     => 'деррига',
-'watchlistall2'    => 'деррига',
-'namespacesall'    => 'деррига',
-'monthsall'        => 'деррига',
-'limitall'         => 'деррига',
+'watchlistall2' => 'деррига',
+'namespacesall' => 'деррига',
+'monthsall'     => 'деррига',
+'limitall'      => 'деррига',
 
 # action=purge
 'confirm_purge_button' => 'ХIаа',

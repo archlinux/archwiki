@@ -18,7 +18,7 @@ class RevisionDeleter {
 	 * enabled / disabled.
 	 * @param $field Integer: the bitmask describing the single option.
 	 * @param $diff Integer: the xor of the old and new bitfields.
-	 * @param $new Integer: the new bitfield 
+	 * @param $new Integer: the new bitfield
 	 * @param $arr Array: the array to update.
 	 */
 	protected static function checkItem( $desc, $field, $diff, $new, &$arr ) {
@@ -29,10 +29,10 @@ class RevisionDeleter {
 
 	/**
 	 * Gets an array of message keys describing the changes made to the visibility
-	 * of the revision. If the resulting array is $arr, then $arr[0] will contain an 
-	 * array of strings describing the items that were hidden, $arr[2] will contain 
-	 * an array of strings describing the items that were unhidden, and $arr[3] will 
-	 * contain an array with a single string, which can be one of "applied 
+	 * of the revision. If the resulting array is $arr, then $arr[0] will contain an
+	 * array of strings describing the items that were hidden, $arr[2] will contain
+	 * an array of strings describing the items that were unhidden, and $arr[3] will
+	 * contain an array with a single string, which can be one of "applied
 	 * restrictions to sysops", "removed restrictions from sysops", or null.
 	 *
 	 * @param $n Integer: the new bitfield.
@@ -67,48 +67,39 @@ class RevisionDeleter {
 	 * @param $count Integer: The number of effected revisions.
 	 * @param $nbitfield Integer: The new bitfield for the revision.
 	 * @param $obitfield Integer: The old bitfield for the revision.
+	 * @param $language Language object to use
 	 * @param $isForLog Boolean
-	 * @param $forContent Boolean
 	 */
-	public static function getLogMessage( $count, $nbitfield, $obitfield, $isForLog = false, $forContent = false ) {
-		global $wgLang, $wgContLang;
-		
-		$lang = $forContent ? $wgContLang : $wgLang;
-		$msgFunc = $forContent ? "wfMsgForContent" : "wfMsg";
-		
+	public static function getLogMessage( $count, $nbitfield, $obitfield, $language, $isForLog = false ) {
 		$changes = self::getChanges( $nbitfield, $obitfield );
-		array_walk($changes, 'RevisionDeleter::expandMessageArray', $forContent);
-		
+		array_walk( $changes, array( __CLASS__, 'expandMessageArray' ), $language );
+
 		$changesText = array();
-		
+
 		if( count( $changes[0] ) ) {
-			$changesText[] = $msgFunc( 'revdelete-hid', $lang->commaList( $changes[0] ) );
+			$changesText[] = wfMsgExt( 'revdelete-hid', array( 'parsemag', 'language' => $language ), $language->commaList( $changes[0] ) );
 		}
 		if( count( $changes[1] ) ) {
-			$changesText[] = $msgFunc( 'revdelete-unhid', $lang->commaList( $changes[1] ) );
+			$changesText[] = wfMsgExt( 'revdelete-unhid', array( 'parsemag', 'language' => $language ), $language->commaList( $changes[1] ) );
 		}
-		
-		$s = $lang->semicolonList( $changesText );
+
+		$s = $language->semicolonList( $changesText );
 		if( count( $changes[2] ) ) {
 			$s .= $s ? ' (' . $changes[2][0] . ')' : ' ' . $changes[2][0];
 		}
-		
+
 		$msg = $isForLog ? 'logdelete-log-message' : 'revdelete-log-message';
-		return wfMsgExt( $msg, $forContent ? array( 'parsemag', 'content' ) : array( 'parsemag' ), $s, $lang->formatNum($count) );
+		return wfMsgExt( $msg, array( 'parsemag', 'language' => $language ), $s, $language->formatNum($count) );
 	}
-	
-	private static function expandMessageArray(& $msg, $key, $forContent) {
-		if ( is_array ($msg) ) {
-			array_walk($msg, 'RevisionDeleter::expandMessageArray', $forContent);
+
+	private static function expandMessageArray( &$msg, $key, $language ) {
+		if ( is_array ( $msg ) ) {
+			array_walk( $msg, array( __CLASS__, 'expandMessageArray' ), $language );
 		} else {
-			if ( $forContent ) {
-				$msg = wfMsgForContent($msg);
-			} else {
-				$msg = wfMsg($msg);
-			}
+			$msg = wfMsgExt( $msg, array( 'parsemag', 'language' => $language ) );
 		}
 	}
-	
+
 	// Get DB field name for URL param...
 	// Future code for other things may also track
 	// other types of revision-specific changes.
@@ -119,75 +110,62 @@ class RevisionDeleter {
 		}
 		if ( isset( SpecialRevisionDelete::$allowedTypes[$typeName] ) ) {
 			$class = SpecialRevisionDelete::$allowedTypes[$typeName]['list-class'];
-			$list = new $class( null, null, null );
-			return $list->getIdField();
+			return call_user_func( array( $class, 'getRelationType' ) );
 		} else {
 			return null;
 		}
 	}
-	
-	// Checks if a revision still exists in the revision table.
-	//  If it doesn't, returns the corresponding ar_timestamp field
-	//  so that this key can be used instead.
+
+	/**
+	 * Checks if a revision still exists in the revision table.
+	 * If it doesn't, returns the corresponding ar_timestamp field
+	 * so that this key can be used instead.
+	 *
+	 * @param $title Title
+	 * @param  $revid
+	 * @return bool|mixed
+	 */
 	public static function checkRevisionExistence( $title, $revid ) {
 		$dbr = wfGetDB( DB_SLAVE );
 		$exists = $dbr->selectField( 'revision', '1',
 				array( 'rev_id' => $revid ), __METHOD__ );
-				
+
 		if ( $exists ) {
 			return true;
 		}
-		
+
 		$timestamp = $dbr->selectField( 'archive', 'ar_timestamp',
 				array( 'ar_namespace' => $title->getNamespace(),
 					'ar_title' => $title->getDBkey(),
 					'ar_rev_id' => $revid ), __METHOD__ );
-		
+
 		return $timestamp;
 	}
-	
-	// Creates utility links for log entries.
+
+	/**
+	 * Creates utility links for log entries.
+	 *
+	 * @param $title Title
+	 * @param $paramArray Array
+	 * @param $skin Skin
+	 * @param $messages
+	 * @return String
+	 */
 	public static function getLogLinks( $title, $paramArray, $skin, $messages ) {
 		global $wgLang;
-		
-		if( count($paramArray) >= 2 ) {
+
+		if ( count( $paramArray ) >= 2 ) {
 			// Different revision types use different URL params...
 			$originalKey = $key = $paramArray[0];
 			// $paramArray[1] is a CSV of the IDs
 			$Ids = explode( ',', $paramArray[1] );
 
 			$revert = array();
-			
-			// For if undeleted revisions are found amidst deleted ones.
-			$undeletedRevisions = array();
-			
-			// This is not going to work if some revs are deleted and some
-			//  aren't.
-			if ($key == 'revision') {
-				foreach( $Ids as $k => $id ) {
-					$existResult =
-						self::checkRevisionExistence( $title, $id );
-					
-					if ($existResult !== true) {
-						$key = 'archive';
-						$Ids[$k] = $existResult;
-					} else {
-						// Undeleted revision amidst deleted ones
-						unset($Ids[$k]);
-						$undeletedRevisions[] = $id;
-					}
-				}
-				
-				if ( $key == $originalKey ) {
-					$Ids = $undeletedRevisions;
-					$undeletedRevisions = array();
-				}
-			}
-			
+
 			// Diff link for single rev deletions
-			if( count($Ids) == 1 && !count($undeletedRevisions) ) {
+			if ( count( $Ids ) == 1 ) {
 				// Live revision diffs...
-				if( in_array( $key, array( 'oldid', 'revision' ) ) ) {
+				if ( in_array( $key, array( 'oldid', 'revision' ) ) ) {
 					$revert[] = $skin->link(
 						$title,
 						$messages['diff'],
@@ -199,10 +177,10 @@ class RevisionDeleter {
 						array( 'known', 'noclasses' )
 					);
 				// Deleted revision diffs...
-				} else if( in_array( $key, array( 'artimestamp','archive' ) ) ) {
+				} elseif ( in_array( $key, array( 'artimestamp','archive' ) ) ) {
 					$revert[] = $skin->link(
 						SpecialPage::getTitleFor( 'Undelete' ),
-						$messages['diff'], 
+						$messages['diff'],
 						array(),
 						array(
 							'target'    => $title->getPrefixedDBKey(),
@@ -213,55 +191,20 @@ class RevisionDeleter {
 					);
 				}
 			}
-			
+
 			// View/modify link...
-			if ( count($undeletedRevisions) ) {
-				// FIXME THIS IS A HORRIBLE HORRIBLE HACK AND SHOULD DIE
-				// It's not possible to pass a list of both deleted and
-				// undeleted revisions to SpecialRevisionDelete, so we're
-				// stuck with two links. See bug 23363.
-				$restoreLinks = array();
-				
-				$restoreLinks[] = $skin->link(
-					SpecialPage::getTitleFor( 'Revisiondelete' ),
-					$messages['revdel-restore-visible'],
-					array(),
-					array(
-						'target' => $title->getPrefixedText(),
-						'type' => $originalKey,
-						'ids' => implode(',', $undeletedRevisions),
-					),
-					array( 'known', 'noclasses' )
-				);
-				
-				$restoreLinks[] = $skin->link(
-					SpecialPage::getTitleFor( 'Revisiondelete' ),
-					$messages['revdel-restore-deleted'],
-					array(),
-					array(
-						'target' => $title->getPrefixedText(),
-						'type' => $key,
-						'ids' => implode(',', $Ids),
-					),
-					array( 'known', 'noclasses' )
-				);
-				
-				$revert[] = $messages['revdel-restore'] . ' [' .
-						$wgLang->pipeList( $restoreLinks ) . ']';
-			} else {
-				$revert[] = $skin->link(
-					SpecialPage::getTitleFor( 'Revisiondelete' ),
-					$messages['revdel-restore'],
-					array(),
-					array(
-						'target' => $title->getPrefixedText(),
-						'type' => $key,
-						'ids' => implode(',', $Ids),
-					),
-					array( 'known', 'noclasses' )
-				);
-			}
-			
+			$revert[] = $skin->link(
+				SpecialPage::getTitleFor( 'Revisiondelete' ),
+				$messages['revdel-restore'],
+				array(),
+				array(
+					'target' => $title->getPrefixedText(),
+					'type' => $key,
+					'ids' => implode(',', $Ids),
+				),
+				array( 'known', 'noclasses' )
+			);
+
 			// Pipe links
 			return wfMsg( 'parentheses', $wgLang->pipeList( $revert ) );
 		}

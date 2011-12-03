@@ -69,14 +69,18 @@ class CategoryPager extends AlphabeticPager {
 			$this->mOffset = $from;
 		}
 	}
-	
+
 	function getQueryInfo() {
 		return array(
 			'tables' => array( 'category' ),
 			'fields' => array( 'cat_title','cat_pages' ),
-			'conds' => array( 'cat_pages > 0' ), 
+			'conds' => array( 'cat_pages > 0' ),
 			'options' => array( 'USE INDEX' => 'cat_title' ),
 		);
+	}
+
+	function getTitle() {
+		return SpecialPage::getTitleFor( 'Categories' );
 	}
 
 	function getIndexField() {
@@ -116,19 +120,18 @@ class CategoryPager extends AlphabeticPager {
 	function formatRow($result) {
 		global $wgLang;
 		$title = Title::makeTitle( NS_CATEGORY, $result->cat_title );
-		$titleText = $this->getSkin()->link( $title, htmlspecialchars( $title->getText() ) );
+		$titleText = Linker::link( $title, htmlspecialchars( $title->getText() ) );
 		$count = wfMsgExt( 'nmembers', array( 'parsemag', 'escape' ),
 				$wgLang->formatNum( $result->cat_pages ) );
-		return Xml::tags('li', null, "$titleText ($count)" ) . "\n";
+		return Xml::tags('li', null, wfSpecialList( $titleText, $count ) ) . "\n";
 	}
-	
+
 	public function getStartForm( $from ) {
 		global $wgScript;
-		$t = SpecialPage::getTitleFor( 'Categories' );
-	
+
 		return
 			Xml::tags( 'form', array( 'method' => 'get', 'action' => $wgScript ),
-				Html::hidden( 'title', $t->getPrefixedText() ) .
+				Html::hidden( 'title', $this->getTitle()->getPrefixedText() ) .
 				Xml::fieldset( wfMsg( 'categories' ),
 					Xml::inputLabel( wfMsg( 'categoriesfrom' ),
 						'from', 'from', 20, $from ) .

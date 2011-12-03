@@ -14,9 +14,15 @@
 
 class LanguageBe extends Language {
 
+	/**
+	 * @param $count int
+	 * @param $forms array
+	 *
+	 * @return string
+	 */
 	function convertPlural( $count, $forms ) {
 		if ( !count( $forms ) ) { return ''; }
-		// FIXME: CLDR defines 4 plural forms instead of 3
+		// @todo FIXME: CLDR defines 4 plural forms instead of 3
 		//        http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html
 		$forms = $this->preConvertPlural( $forms, 3 );
 

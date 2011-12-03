@@ -227,7 +227,7 @@ $messages = array(
 'mailmypassword'          => 'Ыстыны виль пароль',
 'loginlanguagelabel'      => 'Кыв: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Вежны пароль',
 'oldpassword'               => 'Важ пароль',
 'newpassword'               => 'Виль пароль',
@@ -247,8 +247,6 @@ $messages = array(
 'extlink_tip'     => 'Вики сайö ыстöт (эн вунöт содтыны http:// )',
 'headline_sample' => 'Юрнимлöн текст',
 'headline_tip'    => 'Мöд тшупöта юрним',
-'math_sample'     => 'Пырт татчö формула',
-'math_tip'        => 'Математикаись формула',
 'nowiki_sample'   => 'Пырт татчö форматируйттöм текст',
 'nowiki_tip'      => 'Игнорируйтны вики-форматируйтöм',
 'image_tip'       => 'Пыртöм файл',
@@ -509,10 +507,8 @@ $messages = array(
 # Watchlist
 'watchlist'         => 'Синмаланнэз',
 'mywatchlist'       => 'Синмаланнэзö',
-'addedwatch'        => 'Синмалан нимлёдзö содтöм',
 'addedwatchtext'    => '«[[:$1]]» листбок вöлi содтöм [[Special:Watchlist|синмалан нимлёдзат]].
 Быдöс, мый пондас вежсьыны листбок вылас да сыкöт йитчöм сёрнитанын, позяс адзыны этiя нимлёдзись; сiя лоас сiдзжо кызжыка тöдчöтöм [[Special:RecentChanges|виль вежсьöммез сьöртi нимлёдзын]], медбы позис кокнитжыка казявны.',
-'removedwatch'      => 'Синмалан нимлёдзись вештöм',
 'removedwatchtext'  => 'Листбок «[[:$1]]» вöлi вештöм [[Special:Watchlist|синмалан нимлёдзсит]].',
 'watch'             => 'Синмав',
 'watchthispage'     => 'Синмавны этiйö листбок',
@@ -532,7 +528,7 @@ $messages = array(
 'delete-legend'         => 'Чышкыны',
 'confirmdeletetext'     => 'Тэ мöдан быдсöн чышкыны листбок (нето серпас) да  сылiсь история. Былись я тэ мöдан сiйö керны,  вежöртан я бура, мыйö этö вермас вайöтны,  и керан я этiйö [[{{MediaWiki:Policy-url}}]] туйдöттэз сьöртi',
 'actioncomplete'        => 'Керсьöм',
-'deletedtext'           => '«<nowiki>$1</nowiki>» чышкöм. Видзöт $2-ись медбöрья чышкöммесö.',
+'deletedtext'           => '«$1» чышкöм. Видзöт $2-ись медбöрья чышкöммесö.',
 'deletedarticle'        => 'чышкис "[[$1]]"',
 'dellogpage'            => 'Шупкан чукöр',
 'deletecomment'         => 'Мыля:',
@@ -550,7 +546,7 @@ $messages = array(
 'protectexpiry'               => 'Помасьö:',
 'protect_expiry_invalid'      => 'Памасян кадыс соралöм',
 'protect_expiry_old'          => 'Помасян кад — чулалöмын.',
-'protect-text'                => "Татöн тэ верман видзöтны да вежны '''<nowiki>$1</nowiki>''' листбок понда дорьян тшупöт.",
+'protect-text'                => "Татöн тэ верман видзöтны да вежны '''$1''' листбок понда дорьян тшупöт.",
 'protect-locked-access'       => "Уджкерисьлöн нимыт оз тырмы, мед вежны листбокыслiсь дорьян тшупöт.
 Öння лöсьöтаннэз '''$1''' листбок понда:",
 'protect-cascadeon'           => 'Этiя листбокыс дорйöм, мыля сiя пыртöм улынжык висьталöм {{PLURAL:$1|листбокö|листбокö}}, кытчö лöсьöтöм каскад нёж дорьян.
@@ -721,11 +717,10 @@ $messages = array(
 'nextdiff'     => 'Сыбöрся вильмöтöтöм →',
 
 # Media information
-'file-info-size'       => '$1 × $2 пиксел, файллöн ыжда: $3, MIME-тип: $4',
-'file-nohires'         => '<small>Буржыка тыдалан версия абу.</small>',
-'svg-long-desc'        => 'SVG-файл, гижöм сьöртi $1 × $2 пиксел,  файллöн ыжда: $3',
-'show-big-image'       => 'Буржыка тыдалан серпас',
-'show-big-image-thumb' => '<small>Одзвыв нёджжалан ыжда: $1 × $2 пиксел</small>',
+'file-info-size' => '$1 × $2 пиксел, файллöн ыжда: $3, MIME-тип: $4',
+'file-nohires'   => '<small>Буржыка тыдалан версия абу.</small>',
+'svg-long-desc'  => 'SVG-файл, гижöм сьöртi $1 × $2 пиксел,  файллöн ыжда: $3',
+'show-big-image' => 'Буржыка тыдалан серпас',
 
 # Bad image list
 'bad_image_list' => 'Формат лöсьöтiкö видз тöд вылын: Уджавны пондасö токö нимлёдзись визёккез (кöдналöн пондöтчанын эм *). Визёклöн медодзза ыстöт ась лоö йитöм неуджалан файлкöт.  Мöдiк ыстöттэз сiя жö визёкын огö пыртö сы лыдö,  м.ш. гижöттэз, кытчö медиа-файл позьö пыртны.',
@@ -742,7 +737,13 @@ $messages = array(
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-imagewidth'  => 'Пасьта',
@@ -750,15 +751,13 @@ $messages = array(
 
 # External editor support
 'edit-externally'      => 'Редактируйтны этiйö файлсö мöд программа пыр',
-'edit-externally-help' => '(унажык видзöт: [http://www.mediawiki.org/wiki/Manual:External_editors удж кежö лöсьöтны туйдöтан])',
+'edit-externally-help' => '(унажык видзöт: [//www.mediawiki.org/wiki/Manual:External_editors удж кежö лöсьöтны туйдöтан])',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'быдöс',
-'imagelistall'     => 'быдöс',
-'watchlistall2'    => 'быдöс',
-'namespacesall'    => 'быдöс',
-'monthsall'        => 'быдöс',
-'limitall'         => 'быдöс',
+'watchlistall2' => 'быдöс',
+'namespacesall' => 'быдöс',
+'monthsall'     => 'быдöс',
+'limitall'      => 'быдöс',
 
 # Watchlist editing tools
 'watchlisttools-view' => 'Видзöт лöсялана вильмöтöммез',

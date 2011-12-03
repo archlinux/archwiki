@@ -12,6 +12,14 @@
  * @ingroup Media
  */
 class BitmapHandler extends ImageHandler {
+
+	/**
+	 * @param $image File
+	 * @param $params array Transform parameters. Entries with the keys 'width'
+	 * and 'height' are the respective screen width and height, while the keys
+	 * 'physicalWidth' and 'physicalHeight' indicate the thumbnail dimensions.
+	 * @return bool
+	 */
 	function normaliseParams( $image, &$params ) {
 		global $wgMaxImageArea;
 		if ( !parent::normaliseParams( $image, $params ) ) {
@@ -19,25 +27,26 @@ class BitmapHandler extends ImageHandler {
 		}
 
 		$mimeType = $image->getMimeType();
+		# Obtain the source, pre-rotation dimensions
 		$srcWidth = $image->getWidth( $params['page'] );
 		$srcHeight = $image->getHeight( $params['page'] );
 
 		# Don't make an image bigger than the source
-		$params['physicalWidth'] = $params['width'];
-		$params['physicalHeight'] = $params['height'];
-
 		if ( $params['physicalWidth'] >= $srcWidth ) {
 			$params['physicalWidth'] = $srcWidth;
 			$params['physicalHeight'] = $srcHeight;
-			# Skip scaling limit checks if no scaling is required
-			if ( !$image->mustRender() )
-				return true;
-		}
 
+			# Skip scaling limit checks if no scaling is required
+			# due to requested size being bigger than source.
+			if ( !$image->mustRender() ) {
+				return true;
+			}
+		}
+		
 		# Don't thumbnail an image so big that it will fill hard drives and send servers into swap
 		# JPEG has the handy property of allowing thumbnailing without full decompression, so we make
 		# an exception for it.
-		# FIXME: This actually only applies to ImageMagick
+		# @todo FIXME: This actually only applies to ImageMagick
 		if ( $mimeType !== 'image/jpeg' &&
 			$srcWidth * $srcHeight > $wgMaxImageArea )
 		{
@@ -45,6 +54,30 @@ class BitmapHandler extends ImageHandler {
 		}
 
 		return true;
+	}
+	
+	/**
+	 * Extracts the width/height if the image will be scaled before rotating
+	 * 
+	 * This will match the physical size/aspect ratio of the original image
+	 * prior to application of the rotation -- so for a portrait image that's
+	 * stored as raw landscape with 90-degress rotation, the resulting size
+	 * will be wider than it is tall.
+	 *
+	 * @param $params array Parameters as returned by normaliseParams
+	 * @param $rotation int The rotation angle that will be applied
+	 * @return array ($width, $height) array
+	 */
+	public function extractPreRotationDimensions( $params, $rotation ) {
+		if ( $rotation == 90 || $rotation == 270 ) {
+			# We'll resize before rotation, so swap the dimensions again
+			$width = $params['physicalHeight'];
+			$height = $params['physicalWidth'];
+		} else {
+			$width = $params['physicalWidth'];
+			$height = $params['physicalHeight'];
+		}
+		return array( $width, $height );
 	}
 
 
@@ -54,10 +87,15 @@ class BitmapHandler extends ImageHandler {
 		return $width * $height;
 	}
 
+	/**
+	 * @param $image File
+	 * @param  $dstPath
+	 * @param  $dstUrl
+	 * @param  $params
+	 * @param int $flags
+	 * @return MediaTransformError|ThumbnailImage|TransformParameterError
+	 */
 	function doTransform( $image, $dstPath, $dstUrl, $params, $flags = 0 ) {
-		global $wgUseImageMagick;
-		global $wgCustomConvertCommand, $wgUseImageResize;
-
 		if ( !$this->normaliseParams( $image, $params ) ) {
 			return new TransformParameterError( $params );
 		}
@@ -79,6 +117,7 @@ class BitmapHandler extends ImageHandler {
 			'mimeType' => $image->getMimeType(),
 			'srcPath' => $image->getPath(),
 			'dstPath' => $dstPath,
+			'dstUrl' => $dstUrl,
 		);
 
 		wfDebug( __METHOD__ . ": creating {$scalerParams['physicalDimensions']} thumbnail at $dstPath\n" );
@@ -93,20 +132,7 @@ class BitmapHandler extends ImageHandler {
 		}
 
 		# Determine scaler type
-		if ( !$dstPath ) {
-			# No output path available, client side scaling only
-			$scaler = 'client';
-		} elseif ( !$wgUseImageResize ) {
-			$scaler = 'client';
-		} elseif ( $wgUseImageMagick ) {
-			$scaler = 'im';
-		} elseif ( $wgCustomConvertCommand ) {
-			$scaler = 'custom';
-		} elseif ( function_exists( 'imagecreatetruecolor' ) ) {
-			$scaler = 'gd';
-		} else {
-			$scaler = 'client';
-		}
+		$scaler = self::getScalerType( $dstPath );
 		wfDebug( __METHOD__ . ": scaler $scaler\n" );
 
 		if ( $scaler == 'client' ) {
@@ -127,12 +153,27 @@ class BitmapHandler extends ImageHandler {
 			return $this->getClientScalingThumbnailImage( $image, $scalerParams );
 		}
 
+		# Try a hook
+		$mto = null;
+		wfRunHooks( 'BitmapHandlerTransform', array( $this, $image, &$scalerParams, &$mto ) );
+		if ( !is_null( $mto ) ) {
+			wfDebug( __METHOD__ . ": Hook to BitmapHandlerTransform created an mto\n" );
+			$scaler = 'hookaborted';
+		}
+
 		switch ( $scaler ) {
+			case 'hookaborted':
+				# Handled by the hook above
+				$err = $mto->isError() ? $mto : false;
+				break;
 			case 'im':
 				$err = $this->transformImageMagick( $image, $scalerParams );
 				break;
 			case 'custom':
 				$err = $this->transformCustom( $image, $scalerParams );
+				break;
+			case 'imext':
+				$err = $this->transformImageMagickExt( $image, $scalerParams );
 				break;
 			case 'gd':
 			default:
@@ -149,10 +190,47 @@ class BitmapHandler extends ImageHandler {
 			# Thumbnail was zero-byte and had to be removed
 			return new MediaTransformError( 'thumbnail_error',
 				$scalerParams['clientWidth'], $scalerParams['clientHeight'] );
+		} elseif ( $mto ) {
+			return $mto;
 		} else {
 			return new ThumbnailImage( $image, $dstUrl, $scalerParams['clientWidth'],
 				$scalerParams['clientHeight'], $dstPath );
 		}
+	}
+
+	/**
+	 * Returns which scaler type should be used. Creates parent directories
+	 * for $dstPath and returns 'client' on error
+	 *
+	 * @return string client,im,custom,gd
+	 */
+	protected static function getScalerType( $dstPath, $checkDstPath = true ) {
+		global $wgUseImageResize, $wgUseImageMagick, $wgCustomConvertCommand;
+
+		if ( !$dstPath && $checkDstPath ) {
+			# No output path available, client side scaling only
+			$scaler = 'client';
+		} elseif ( !$wgUseImageResize ) {
+			$scaler = 'client';
+		} elseif ( $wgUseImageMagick ) {
+			$scaler = 'im';
+		} elseif ( $wgCustomConvertCommand ) {
+			$scaler = 'custom';
+		} elseif ( function_exists( 'imagecreatetruecolor' ) ) {
+			$scaler = 'gd';
+		} elseif ( class_exists( 'Imagick' ) ) {
+			$scaler = 'imext';
+		} else {
+			$scaler = 'client';
+		}
+
+		if ( $scaler != 'client' && $dstPath ) {
+			if ( !wfMkdirParents( dirname( $dstPath ) ) ) {
+				# Unable to create a path for the thumbnail
+				return 'client';
+			}
+		}
+		return $scaler;
 	}
 
 	/**
@@ -162,6 +240,8 @@ class BitmapHandler extends ImageHandler {
 	 * @param $image File File associated with this thumbnail
 	 * @param $params array Array with scaler params
 	 * @return ThumbnailImage
+	 *
+	 * @fixme no rotation support
 	 */
 	protected function getClientScalingThumbnailImage( $image, $params ) {
 		return new ThumbnailImage( $image, $image->getURL(),
@@ -215,7 +295,7 @@ class BitmapHandler extends ImageHandler {
 				// We optimize the output, but -optimize is broken,
 				// use optimizeTransparency instead (bug 11822)
 				if ( version_compare( $this->getMagickVersion(), "6.3.5" ) >= 0 ) {
-					$animation_post = '-fuzz 5% -layers optimizeTransparency +map';
+					$animation_post = '-fuzz 5% -layers optimizeTransparency';
 				}
 			}
 		}
@@ -225,6 +305,9 @@ class BitmapHandler extends ImageHandler {
 		if ( strval( $wgImageMagickTempDir ) !== '' ) {
 			$env['MAGICK_TMPDIR'] = $wgImageMagickTempDir;
 		}
+		
+		$rotation = $this->getRotation( $image );
+		list( $width, $height ) = $this->extractPreRotationDimensions( $params, $rotation );
 
 		$cmd  =
 			wfEscapeShellArg( $wgImageMagickConvertCommand ) .
@@ -237,12 +320,13 @@ class BitmapHandler extends ImageHandler {
 			// For the -thumbnail option a "!" is needed to force exact size,
 			// or ImageMagick may decide your ratio is wrong and slice off
 			// a pixel.
-			" -thumbnail " . wfEscapeShellArg( "{$params['physicalDimensions']}!" ) .
+			" -thumbnail " . wfEscapeShellArg( "{$width}x{$height}!" ) .
 			// Add the source url as a comment to the thumb, but don't add the flag if there's no comment
 			( $params['comment'] !== ''
 				? " -set comment " . wfEscapeShellArg( $this->escapeMagickProperty( $params['comment'] ) )
 				: '' ) .
-			" -depth 8 $sharpen" .
+			" -depth 8 $sharpen " .
+			" -rotate -$rotation " .
 			" {$animation_post} " .
 			wfEscapeShellArg( $this->escapeMagickOutput( $params['dstPath'] ) ) . " 2>&1";
 
@@ -258,6 +342,84 @@ class BitmapHandler extends ImageHandler {
 		}
 
 		return false; # No error
+	}
+
+	/**
+	 * Transform an image using the Imagick PHP extension
+	 *
+	 * @param $image File File associated with this thumbnail
+	 * @param $params array Array with scaler params
+	 *
+	 * @return MediaTransformError Error object if error occured, false (=no error) otherwise
+	 */
+	protected function transformImageMagickExt( $image, $params ) {
+		global $wgSharpenReductionThreshold, $wgSharpenParameter, $wgMaxAnimatedGifArea;
+
+		try {
+			$im = new Imagick();
+			$im->readImage( $params['srcPath'] );
+
+			if ( $params['mimeType'] == 'image/jpeg' ) {
+				// Sharpening, see bug 6193
+				if ( ( $params['physicalWidth'] + $params['physicalHeight'] )
+						/ ( $params['srcWidth'] + $params['srcHeight'] )
+						< $wgSharpenReductionThreshold ) {
+					// Hack, since $wgSharpenParamater is written specifically for the command line convert
+					list( $radius, $sigma ) = explode( 'x', $wgSharpenParameter );
+					$im->sharpenImage( $radius, $sigma );
+				}
+				$im->setCompressionQuality( 80 );
+			} elseif( $params['mimeType'] == 'image/png' ) {
+				$im->setCompressionQuality( 95 );
+			} elseif ( $params['mimeType'] == 'image/gif' ) {
+				if ( $this->getImageArea( $image, $params['srcWidth'],
+						$params['srcHeight'] ) > $wgMaxAnimatedGifArea ) {
+					// Extract initial frame only; we're so big it'll
+					// be a total drag. :P
+					$im->setImageScene( 0 );
+				} elseif ( $this->isAnimatedImage( $image ) ) {
+					// Coalesce is needed to scale animated GIFs properly (bug 1017).
+					$im = $im->coalesceImages();
+				}
+			}
+
+			$rotation = $this->getRotation( $image );
+			list( $width, $height ) = $this->extractPreRotationDimensions( $params, $rotation );
+
+			$im->setImageBackgroundColor( new ImagickPixel( 'white' ) );
+
+			// Call Imagick::thumbnailImage on each frame
+			foreach ( $im as $i => $frame ) {
+				if ( !$frame->thumbnailImage( $width, $height, /* fit */ false ) ) {
+					return $this->getMediaTransformError( $params, "Error scaling frame $i" );
+				}
+			}
+			$im->setImageDepth( 8 );
+
+			if ( $rotation ) {
+				if ( !$im->rotateImage( new ImagickPixel( 'white' ), 360 - $rotation ) ) {
+					return $this->getMediaTransformError( $params, "Error rotating $rotation degrees" );
+				}
+			}
+
+			if ( $this->isAnimatedImage( $image ) ) {
+				wfDebug( __METHOD__ . ": Writing animated thumbnail\n" );
+				// This is broken somehow... can't find out how to fix it
+				$result = $im->writeImages( $params['dstPath'], true );
+			} else {
+				$result = $im->writeImage( $params['dstPath'] );
+			}
+			if ( !$result ) {
+				return $this->getMediaTransformError( $params,
+					"Unable to write thumbnail to {$params['dstPath']}" );
+			}
+
+		} catch ( ImagickException $e ) {
+			return $this->getMediaTransformError( $params, $e->getMessage() );
+		}
+
+		return false;
+
 	}
 
 	/**
@@ -306,12 +468,12 @@ class BitmapHandler extends ImageHandler {
 	}
 	/**
 	 * Get a MediaTransformError with error 'thumbnail_error'
-	 * 
+	 *
 	 * @param $params array Parameter array as passed to the transform* functions
 	 * @param $errMsg string Error message
 	 * @return MediaTransformError
 	 */
-	protected function getMediaTransformError( $params, $errMsg ) {
+	public function getMediaTransformError( $params, $errMsg ) {
 		return new MediaTransformError( 'thumbnail_error', $params['clientWidth'],
 					$params['clientHeight'], $errMsg );
 	}
@@ -360,8 +522,10 @@ class BitmapHandler extends ImageHandler {
 		}
 
 		$src_image = call_user_func( $loader, $params['srcPath'] );
-		$dst_image = imagecreatetruecolor( $params['physicalWidth'],
-			$params['physicalHeight'] );
+
+		$rotation = function_exists( 'imagerotate' ) ? $this->getRotation( $image ) : 0;
+		list( $width, $height ) = $this->extractPreRotationDimensions( $params, $rotation );
+		$dst_image = imagecreatetruecolor( $width, $height );
 
 		// Initialise the destination image to transparent instead of
 		// the default solid black, to support PNG and GIF transparency nicely
@@ -374,13 +538,19 @@ class BitmapHandler extends ImageHandler {
 			// It may just uglify them, and completely breaks transparency.
 			imagecopyresized( $dst_image, $src_image,
 				0, 0, 0, 0,
-				$params['physicalWidth'], $params['physicalHeight'],
+				$width, $height,
 				imagesx( $src_image ), imagesy( $src_image ) );
 		} else {
 			imagecopyresampled( $dst_image, $src_image,
 				0, 0, 0, 0,
-				$params['physicalWidth'], $params['physicalHeight'],
+				$width, $height,
 				imagesx( $src_image ), imagesy( $src_image ) );
+		}
+
+		if ( $rotation % 360 != 0 && $rotation % 90 == 0 ) {
+			$rot_image = imagerotate( $dst_image, $rotation, 0 );
+			imagedestroy( $dst_image );
+			$dst_image = $rot_image;
 		}
 
 		imagesavealpha( $dst_image, true );
@@ -508,98 +678,57 @@ class BitmapHandler extends ImageHandler {
 		imagejpeg( $dst_image, $thumbPath, 95 );
 	}
 
-
-	function getMetadata( $image, $filename ) {
-		global $wgShowEXIF;
-		if ( $wgShowEXIF && file_exists( $filename ) ) {
-			$exif = new Exif( $filename );
-			$data = $exif->getFilteredData();
-			if ( $data ) {
-				$data['MEDIAWIKI_EXIF_VERSION'] = Exif::version();
-				return serialize( $data );
-			} else {
-				return '0';
-			}
-		} else {
-			return '';
-		}
-	}
-
-	function getMetadataType( $image ) {
-		return 'exif';
-	}
-
-	function isMetadataValid( $image, $metadata ) {
-		global $wgShowEXIF;
-		if ( !$wgShowEXIF ) {
-			# Metadata disabled and so an empty field is expected
-			return true;
-		}
-		if ( $metadata === '0' ) {
-			# Special value indicating that there is no EXIF data in the file
-			return true;
-		}
-		wfSuppressWarnings();
-		$exif = unserialize( $metadata );
-		wfRestoreWarnings();
-		if ( !isset( $exif['MEDIAWIKI_EXIF_VERSION'] ) ||
-			$exif['MEDIAWIKI_EXIF_VERSION'] != Exif::version() )
-		{
-			# Wrong version
-			wfDebug( __METHOD__ . ": wrong version\n" );
-			return false;
-		}
-		return true;
+	/**
+	 * On supporting image formats, try to read out the low-level orientation
+	 * of the file and return the angle that the file needs to be rotated to
+	 * be viewed.
+	 *
+	 * This information is only useful when manipulating the original file;
+	 * the width and height we normally work with is logical, and will match
+	 * any produced output views.
+	 *
+	 * The base BitmapHandler doesn't understand any metadata formats, so this
+	 * is left up to child classes to implement.
+	 *
+	 * @param $file File
+	 * @return int 0, 90, 180 or 270
+	 */
+	public function getRotation( $file ) {
+		return 0;
 	}
 
 	/**
-	 * Get a list of EXIF metadata items which should be displayed when
-	 * the metadata table is collapsed.
+	 * Returns whether the current scaler supports rotation (im and gd do)
 	 *
-	 * @return array of strings
-	 * @access private
+	 * @return bool
 	 */
-	function visibleMetadataFields() {
-		$fields = array();
-		$lines = explode( "\n", wfMsgForContent( 'metadata-fields' ) );
-		foreach ( $lines as $line ) {
-			$matches = array();
-			if ( preg_match( '/^\\*\s*(.*?)\s*$/', $line, $matches ) ) {
-				$fields[] = $matches[1];
-			}
+	public static function canRotate() {
+		$scaler = self::getScalerType( null, false );
+		switch ( $scaler ) {
+			case 'im':
+				# ImageMagick supports autorotation
+				return true;
+			case 'imext':
+				# Imagick::rotateImage
+				return true;
+			case 'gd':
+				# GD's imagerotate function is used to rotate images, but not
+				# all precompiled PHP versions have that function
+				return function_exists( 'imagerotate' );
+			default:
+				# Other scalers don't support rotation
+				return false;
 		}
-		$fields = array_map( 'strtolower', $fields );
-		return $fields;
 	}
 
-	function formatMetadata( $image ) {
-		$result = array(
-			'visible' => array(),
-			'collapsed' => array()
-		);
-		$metadata = $image->getMetadata();
-		if ( !$metadata ) {
-			return false;
-		}
-		$exif = unserialize( $metadata );
-		if ( !$exif ) {
-			return false;
-		}
-		unset( $exif['MEDIAWIKI_EXIF_VERSION'] );
-		$format = new FormatExif( $exif );
-
-		$formatted = $format->getFormattedData();
-		// Sort fields into visible and collapsed
-		$visibleFields = $this->visibleMetadataFields();
-		foreach ( $formatted as $name => $value ) {
-			$tag = strtolower( $name );
-			self::addMeta( $result,
-				in_array( $tag, $visibleFields ) ? 'visible' : 'collapsed',
-				'exif',
-				$tag,
-				$value
-			);
-		}
-		return $result;
+	/**
+	 * Rerurns whether the file needs to be rendered. Returns true if the
+	 * file requires rotation and we are able to rotate it.
+	 *
+	 * @param $file File
+	 * @return bool
+	 */
+	public function mustRender( $file ) {
+		return self::canRotate() && $this->getRotation( $file ) != 0;
 	}
 }

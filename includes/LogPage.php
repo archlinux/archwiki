@@ -38,7 +38,18 @@ class LogPage {
 	const SUPPRESSED_USER = 12;
 	const SUPPRESSED_ACTION = 9;
 	/* @access private */
-	var $type, $action, $comment, $params, $target, $doer;
+	var $type, $action, $comment, $params;
+
+	/**
+	 * @var User
+	 */
+	var $doer;
+
+	/**
+	 * @var Title
+	 */
+	var $target;
+
 	/* @acess public */
 	var $updateRecentChanges, $sendToUDP;
 
@@ -56,6 +67,9 @@ class LogPage {
 		$this->sendToUDP = ( $udp == 'UDP' );
 	}
 
+	/**
+	 * @return bool|int|null
+	 */
 	protected function saveContent() {
 		global $wgLogRestrictions;
 
@@ -193,26 +207,32 @@ class LogPage {
 	{
 		global $wgLang, $wgContLang, $wgLogActions;
 
+		if ( is_null( $skin ) ) {
+			$langObj = $wgContLang;
+			$langObjOrNull = null;
+		} else {
+			$langObj = $wgLang;
+			$langObjOrNull = $wgLang;
+		}
+
 		$key = "$type/$action";
 		# Defer patrol log to PatrolLog class
 		if( $key == 'patrol/patrol' ) {
-			return PatrolLog::makeActionText( $title, $params, $skin );
+			return PatrolLog::makeActionText( $title, $params, $langObjOrNull );
 		}
 		if( isset( $wgLogActions[$key] ) ) {
 			if( is_null( $title ) ) {
-				$rv = wfMsgHtml( $wgLogActions[$key] );
+				$rv = wfMsgExt( $wgLogActions[$key], array( 'parsemag', 'escape', 'language' => $langObj ) );
 			} else {
-				$titleLink = self::getTitleLink( $type, $skin, $title, $params );
-				if( $key == 'rights/rights' ) {
+				$titleLink = self::getTitleLink( $type, $langObjOrNull, $title, $params );
+				if( preg_match( '/^rights\/(rights|autopromote)/', $key ) ) {
+					$rightsnone = wfMsgExt( 'rightsnone', array( 'parsemag', 'language' => $langObj ) );
 					if( $skin ) {
-						$rightsnone = wfMsg( 'rightsnone' );
 						foreach ( $params as &$param ) {
 							$groupArray = array_map( 'trim', explode( ',', $param ) );
 							$groupArray = array_map( array( 'User', 'getGroupMember' ), $groupArray );
 							$param = $wgLang->listToText( $groupArray );
 						}
-					} else {
-						$rightsnone = wfMsgForContent( 'rightsnone' );
 					}
 					if( !isset( $params[0] ) || trim( $params[0] ) == '' ) {
 						$params[0] = $rightsnone;
@@ -222,11 +242,7 @@ class LogPage {
 					}
 				}
 				if( count( $params ) == 0 ) {
-					if ( $skin ) {
-						$rv = wfMsgHtml( $wgLogActions[$key], $titleLink );
-					} else {
-						$rv = wfMsgExt( $wgLogActions[$key], array( 'parsemag', 'escape', 'replaceafter', 'content' ), $titleLink );
-					}
+					$rv = wfMsgExt( $wgLogActions[$key], array( 'parsemag', 'escape', 'replaceafter', 'language' => $langObj ), $titleLink );
 				} else {
 					$details = '';
 					array_unshift( $params, $titleLink );
@@ -239,33 +255,25 @@ class LogPage {
 							$params[1] = $wgContLang->translateBlockExpiry( $params[1] );
 						}
 						$params[2] = isset( $params[2] ) ?
-							self::formatBlockFlags( $params[2], is_null( $skin ) ) : '';
+							self::formatBlockFlags( $params[2], $langObj ) : '';
 
 					// Page protections
 					} elseif ( $type == 'protect' && count($params) == 3 ) {
 						// Restrictions and expiries
 						if( $skin ) {
-							$details .= htmlspecialchars( " {$params[1]}" );
+							$details .= $wgLang->getDirMark() . htmlspecialchars( " {$params[1]}" );
 						} else {
 							$details .= " {$params[1]}";
 						}
 						// Cascading flag...
 						if( $params[2] ) {
-							if ( $skin ) {
-								$details .= ' [' . wfMsg( 'protect-summary-cascade' ) . ']';
-							} else {
-								$details .= ' [' . wfMsgForContent( 'protect-summary-cascade' ) . ']';
-							}
+							$details .= ' [' . wfMsgExt( 'protect-summary-cascade', array( 'parsemag', 'language' => $langObj ) ) . ']';
 						}
 
 					// Page moves
 					} elseif ( $type == 'move' && count( $params ) == 3 ) {
 						if( $params[2] ) {
-							if ( $skin ) {
-								$details .= ' [' . wfMsg( 'move-redirect-suppressed' ) . ']';
-							} else {
-								$details .= ' [' . wfMsgForContent( 'move-redirect-suppressed' ) . ']';
-							}
+							$details .= ' [' . wfMsgExt( 'move-redirect-suppressed', array( 'parsemag', 'language' => $langObj ) ) . ']';
 						}
 
 					// Revision deletion
@@ -273,21 +281,17 @@ class LogPage {
 						$count = substr_count( $params[2], ',' ) + 1; // revisions
 						$ofield = intval( substr( $params[3], 7 ) ); // <ofield=x>
 						$nfield = intval( substr( $params[4], 7 ) ); // <nfield=x>
-						$details .= ': ' . RevisionDeleter::getLogMessage( $count, $nfield, $ofield, false, is_null( $skin ) );
+						$details .= ': ' . RevisionDeleter::getLogMessage( $count, $nfield, $ofield, $langObj, false );
 
 					// Log deletion
 					} elseif ( preg_match( '/^(delete|suppress)\/event$/', $key ) && count( $params ) == 4 ) {
 						$count = substr_count( $params[1], ',' ) + 1; // log items
 						$ofield = intval( substr( $params[2], 7 ) ); // <ofield=x>
 						$nfield = intval( substr( $params[3], 7 ) ); // <nfield=x>
-						$details .= ': ' . RevisionDeleter::getLogMessage( $count, $nfield, $ofield, true, is_null( $skin ) );
+						$details .= ': ' . RevisionDeleter::getLogMessage( $count, $nfield, $ofield, $langObj, true );
 					}
 
-					if ( $skin ) {
-						$rv = wfMsgHtml( $wgLogActions[$key], $params ) . $details;
-					} else {
-						$rv = wfMsgExt( $wgLogActions[$key], array( 'parsemag', 'escape', 'replaceafter', 'content' ), $params ) . $details;
-					}
+					$rv = wfMsgExt( $wgLogActions[$key], array( 'parsemag', 'escape', 'replaceafter', 'language' => $langObj ), $params ) . $details;
 				}
 			}
 		} else {
@@ -318,14 +322,22 @@ class LogPage {
 		return $rv;
 	}
 
-	protected static function getTitleLink( $type, $skin, $title, &$params ) {
-		global $wgLang, $wgContLang, $wgUserrightsInterwikiDelimiter;
-		if( !$skin ) {
+	/**
+	 * TODO document
+	 * @param  $type String
+	 * @param  $lang Language or null
+	 * @param  $title Title
+	 * @param  $params Array
+	 * @return String
+	 */
+	protected static function getTitleLink( $type, $lang, $title, &$params ) {
+		global $wgContLang, $wgUserrightsInterwikiDelimiter;
+		if( !$lang ) {
 			return $title->getPrefixedText();
 		}
 		switch( $type ) {
 			case 'move':
-				$titleLink = $skin->link(
+				$titleLink = Linker::link(
 					$title,
 					htmlspecialchars( $title->getPrefixedText() ),
 					array(),
@@ -336,7 +348,7 @@ class LogPage {
 					# Workaround for broken database
 					$params[0] = htmlspecialchars( $params[0] );
 				} else {
-					$params[0] = $skin->link(
+					$params[0] = Linker::link(
 						$targetTitle,
 						htmlspecialchars( $params[0] )
 					);
@@ -349,8 +361,8 @@ class LogPage {
 					// TODO: Store the user identifier in the parameters
 					// to make this faster for future log entries
 					$id = User::idFromName( $title->getText() );
-					$titleLink = $skin->userLink( $id, $title->getText() )
-						. $skin->userToolLinks( $id, $title->getText(), false, Linker::TOOL_LINKS_NOBLOCK );
+					$titleLink = Linker::userLink( $id, $title->getText() )
+						. Linker::userToolLinks( $id, $title->getText(), false, Linker::TOOL_LINKS_NOBLOCK );
 				}
 				break;
 			case 'rights':
@@ -363,32 +375,32 @@ class LogPage {
 						break;
 					}
 				}
-				$titleLink = $skin->link( Title::makeTitle( NS_USER, $text ) );
+				$titleLink = Linker::link( Title::makeTitle( NS_USER, $text ) );
 				break;
 			case 'merge':
-				$titleLink = $skin->link(
+				$titleLink = Linker::link(
 					$title,
 					$title->getPrefixedText(),
 					array(),
 					array( 'redirect' => 'no' )
 				);
-				$params[0] = $skin->link(
+				$params[0] = Linker::link(
 					Title::newFromText( $params[0] ),
 					htmlspecialchars( $params[0] )
 				);
-				$params[1] = $wgLang->timeanddate( $params[1] );
+				$params[1] = $lang->timeanddate( $params[1] );
 				break;
 			default:
 				if( $title->getNamespace() == NS_SPECIAL ) {
-					list( $name, $par ) = SpecialPage::resolveAliasWithSubpage( $title->getDBkey() );
+					list( $name, $par ) = SpecialPageFactory::resolveAlias( $title->getDBkey() );
 					# Use the language name for log titles, rather than Log/X
 					if( $name == 'Log' ) {
-						$titleLink = '(' . $skin->link( $title, LogPage::logName( $par ) ) . ')';
+						$titleLink = '(' . Linker::link( $title, LogPage::logName( $par ) ) . ')';
 					} else {
-						$titleLink = $skin->link( $title );
+						$titleLink = Linker::link( $title );
 					}
 				} else {
-					$titleLink = $skin->link( $title );
+					$titleLink = Linker::link( $title );
 				}
 		}
 		return $titleLink;
@@ -485,19 +497,16 @@ class LogPage {
 	 * into a more readable (and translated) form
 	 *
 	 * @param $flags Flags to format
-	 * @param $forContent Whether to localize the message depending of the user
-	 *                    language
+	 * @param $lang Language object to use
 	 * @return String
 	 */
-	public static function formatBlockFlags( $flags, $forContent = false ) {
-		global $wgLang;
-
+	public static function formatBlockFlags( $flags, $lang ) {
 		$flags = explode( ',', trim( $flags ) );
 		if( count( $flags ) > 0 ) {
 			for( $i = 0; $i < count( $flags ); $i++ ) {
-				$flags[$i] = self::formatBlockFlag( $flags[$i], $forContent );
+				$flags[$i] = self::formatBlockFlag( $flags[$i], $lang );
 			}
-			return '(' . $wgLang->commaList( $flags ) . ')';
+			return '(' . $lang->commaList( $flags ) . ')';
 		} else {
 			return '';
 		}
@@ -506,21 +515,19 @@ class LogPage {
 	/**
 	 * Translate a block log flag if possible
 	 *
-	 * @param $flag Flag to translate
-	 * @param $forContent Whether to localize the message depending of the user
-	 *                    language
+	 * @param $flag int Flag to translate
+	 * @param $lang Language object to use
 	 * @return String
 	 */
-	public static function formatBlockFlag( $flag, $forContent = false ) {
+	public static function formatBlockFlag( $flag, $lang ) {
 		static $messages = array();
 		if( !isset( $messages[$flag] ) ) {
-			$k = 'block-log-flags-' . $flag;
-			if( $forContent ) {
-				$msg = wfMsgForContent( $k );
-			} else {
-				$msg = wfMsg( $k );
+			$messages[$flag] = htmlspecialchars( $flag ); // Fallback
+
+			$msg = wfMessage( 'block-log-flags-' . $flag )->inLanguage( $lang );
+			if ( $msg->exists() ) {
+				$messages[$flag] = $msg->escaped();
 			}
-			$messages[$flag] = htmlspecialchars( wfEmptyMsg( $k, $msg ) ? $flag : $msg );
 		}
 		return $messages[$flag];
 	}

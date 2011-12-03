@@ -33,6 +33,8 @@ class SquidPurgeClient {
 	/**
 	 * Open a socket if there isn't one open already, return it.
 	 * Returns false on error.
+	 *
+	 * @return false|resource
 	 */
 	protected function getSocket() {
 		if ( $this->socket !== null ) {
@@ -64,6 +66,7 @@ class SquidPurgeClient {
 
 	/**
 	 * Get read socket array for select()
+	 * @return array
 	 */
 	public function getReadSocketsForSelect() {
 		if ( $this->readState == 'idle' ) {
@@ -78,6 +81,7 @@ class SquidPurgeClient {
 
 	/**
 	 * Get write socket array for select()
+	 * @return array
 	 */
 	public function getWriteSocketsForSelect() {
 		if ( !strlen( $this->writeBuffer ) ) {
@@ -139,6 +143,8 @@ class SquidPurgeClient {
 
 	/**
 	 * Queue a purge operation
+	 *
+	 * @param $url string
 	 */
 	public function queuePurge( $url ) {
 		$url = str_replace( "\n", '', $url );
@@ -151,6 +157,9 @@ class SquidPurgeClient {
 		}
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isIdle() {
 		return strlen( $this->writeBuffer ) == 0 && $this->readState == 'idle';
 	}
@@ -220,6 +229,10 @@ class SquidPurgeClient {
 		while ( $this->socket && $this->processReadBuffer() === 'continue' );
 	}
 
+	/**
+	 * @throws MWException
+	 * @return string
+	 */
 	protected function processReadBuffer() {
 		switch ( $this->readState ) {
 		case 'idle':
@@ -259,6 +272,10 @@ class SquidPurgeClient {
 		}
 	}
 
+	/**
+	 * @param $line
+	 * @return
+	 */
 	protected function processStatusLine( $line ) {
 		if ( !preg_match( '!^HTTP/(\d+)\.(\d+) (\d{3}) (.*)$!', $line, $m ) ) {
 			$this->log( 'invalid status line' );
@@ -275,6 +292,9 @@ class SquidPurgeClient {
 		$this->readState = 'header';
 	}
 
+	/**
+	 * @param $line string
+	 */
 	protected function processHeaderLine( $line ) {
 		if ( preg_match( '/^Content-Length: (\d+)$/i', $line, $m ) ) {
 			$this->bodyRemaining = intval( $m[1] );
@@ -305,6 +325,10 @@ class SquidPurgeClient {
 }
 
 class SquidPurgeClientPool {
+
+	/**
+	 * @var array of SquidPurgeClient
+	 */
 	var $clients = array();
 	var $timeout = 5;
 
@@ -314,6 +338,10 @@ class SquidPurgeClientPool {
 		}
 	}
 
+	/**
+	 * @param $client SquidPurgeClient
+	 * @return void
+	 */
 	public function addClient( $client ) {
 		$this->clients[] = $client;
 	}

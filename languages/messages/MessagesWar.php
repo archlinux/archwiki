@@ -14,23 +14,23 @@
  */
 
 $specialPageAliases = array(
-	'Watchlist'                 => array( 'Angay Timan-an' ),
-	'Upload'                    => array( 'Pagkarga' ),
-	'Statistics'                => array( 'Mga Estadistika' ),
-	'Randompage'                => array( 'Bisan Ano', 'BisanAnongaPakli' ),
-	'Mostlinked'                => array( 'Gidamo-iHinSumpay' ),
-	'Shortpages'                => array( 'HaglipotngamgaPakli' ),
-	'Longpages'                 => array( 'HaglabangamgaPakli' ),
-	'Newpages'                  => array( 'Bag-ongamgaPakli' ),
 	'Allpages'                  => array( 'NgatananngaPakli' ),
-	'Specialpages'              => array( 'MgaIspisyalngaPakli' ),
-	'Contributions'             => array( 'Mga Ámot' ),
-	'Movepage'                  => array( 'BalhinaAnPakli' ),
 	'Categories'                => array( 'Mga Kategorya' ),
-	'Version'                   => array( 'Bersyon' ),
+	'Contributions'             => array( 'Mga Ámot' ),
+	'Longpages'                 => array( 'HaglabangamgaPakli' ),
+	'Mostlinked'                => array( 'Gidamo-iHinSumpay' ),
+	'Movepage'                  => array( 'BalhinaAnPakli' ),
 	'Mypage'                    => array( 'AkonPakli' ),
 	'Mytalk'                    => array( 'AkonHiruhimangraw' ),
+	'Newpages'                  => array( 'Bag-ongamgaPakli' ),
+	'Randompage'                => array( 'Bisan Ano', 'BisanAnongaPakli' ),
 	'Search'                    => array( 'Bilnga' ),
+	'Shortpages'                => array( 'HaglipotngamgaPakli' ),
+	'Specialpages'              => array( 'MgaIspisyalngaPakli' ),
+	'Statistics'                => array( 'Mga Estadistika' ),
+	'Upload'                    => array( 'Pagkarga' ),
+	'Version'                   => array( 'Bersyon' ),
+	'Watchlist'                 => array( 'Angay Timan-an' ),
 );
 
 $messages = array(
@@ -150,14 +150,7 @@ $messages = array(
 'category-file-count-limited'    => 'An mga nasunod nga {{PLURAL:$1|ka fayl|$1 ka mga faly aada}} han yana nga kaarangay.',
 'listingcontinuesabbrev'         => 'pdyn.',
 
-'linkprefix'        => '/^(.*?)([a-zA-Z\\x80-\\xff]+)$/sD',
-'mainpagetext'      => "'''Malinamposon an pag-instalar han MediaWiki.'''",
-'mainpagedocfooter' => "Kitaa an [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] para hin impormasyon ha paggamit han wiki nga softweyr.
-
-== Ha pagtikang==
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Configuration settings list]
-* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki FAQ]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]",
+'linkprefix' => '/^(.*?)([a-zA-Z\\x80-\\xff]+)$/sD',
 
 'about'         => 'Mahitungod han',
 'article'       => 'Pakli hin sulod',
@@ -208,10 +201,10 @@ $messages = array(
 'history'           => 'Kaagi han pakli',
 'history_short'     => 'Kaagi',
 'updatedmarker'     => 'ginbag-ohan tikang han akon urhi nga pagbisita',
-'info_short'        => 'Impormasyon',
 'printableversion'  => 'Maipapatik nga bersyon',
 'permalink'         => 'Sumpay nga unob',
 'print'             => 'Igpatik',
+'view'              => 'Kitaa',
 'edit'              => 'Igliwat',
 'create'            => 'Himo-a',
 'editthispage'      => 'Igliwat ini nga pakli',
@@ -219,6 +212,7 @@ $messages = array(
 'delete'            => 'Para-a',
 'deletethispage'    => 'Para-a ini nga pakli',
 'undelete_short'    => 'Igkansela an pagpara {{PLURAL:$1|usa nga pagliwat|$1 nga mga pagliwat}}',
+'viewdeleted_short' => '{{PLURAL:$1|usa nga ginpara nga pagliwat|$1 ka ginpara nga mga pagliwat}}',
 'protect'           => 'Panalipdi',
 'protect_change'    => 'balyo-a',
 'protectthispage'   => 'Panalipdi ini nga pakli',
@@ -304,6 +298,8 @@ $1',
 'toc'                     => 'Sulod',
 'showtoc'                 => 'igpakita',
 'hidetoc'                 => 'tago-a',
+'collapsible-collapse'    => 'Rumpag',
+'collapsible-expand'      => 'Latag',
 'thisisdeleted'           => '¿Kitaa o balika in $1?',
 'viewdeleted'             => '¿Kitaa in $1?',
 'restorelink'             => '{{PLURAL:$1|usa nga ginpara nga pagliwat|$1 ka ginpara nga mga pagliwat}}',
@@ -400,7 +396,7 @@ Ayaw paghingalimot hin pagbalyo han imo [[Special:Preferences|{{SITENAME}} mga g
 Alayon pagpili hin lain nga ngaran.',
 'loginerror'              => 'Sayop hin pagsakob',
 'loginsuccesstitle'       => 'Malinamposon an pagsulod',
-'nosuchusershort'         => 'Waray nagamit it may ngaran nga "<nowiki>$1</nowiki>".
+'nosuchusershort'         => 'Waray nagamit it may ngaran nga "$1".
 Kitaa kun amo it im pagbaybay.',
 'nouserspecified'         => 'Dapat nim magbutang hin agnay hit gumaramit.',
 'wrongpassword'           => 'Sayop nga tigaman-pagsulod an nahibutang.
@@ -415,13 +411,16 @@ Alayon pagutro pagbutang.',
 'accountcreated'          => 'Nahimo an akawnt',
 'loginlanguagelabel'      => 'Yinaknan: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'           => 'Igliwat an tigaman-pagsulod',
 'resetpass_header'    => 'Igliwan an akawnt nga tigaman-pagsulod',
 'oldpassword'         => 'Daan nga tigaman-pagsulod:',
 'newpassword'         => 'Bag-o nga tigaman-pagsulod:',
 'retypenew'           => 'Utroha pagbutang an bag-o nga tigaman-pagsulod:',
 'resetpass_forbidden' => 'Diri mababalyoan an mga tigaman-pagsulod',
+
+# Special:PasswordReset
+'passwordreset-emailsent' => 'Ginpadara hin usa ka pahinumdom nga e-mail.',
 
 # Edit page toolbar
 'bold_sample' => 'dakmola an agi',
@@ -556,7 +555,6 @@ Aada na ito.',
 'columns'                   => 'Mga rumbay patindog:',
 'searchresultshead'         => 'Bilnga',
 'resultsperpage'            => 'Mga igo kada pakli:',
-'contextlines'              => 'Mga bagis kada igo:',
 'savedprefs'                => 'Gintipig an im karuyag.',
 'timezonelegend'            => 'Zona hin oras',
 'localtime'                 => 'Oras nga lokal',
@@ -815,7 +813,7 @@ Alayon pagkita han [$2 nga pakli hin pagpahayag mahitungod hini nga fayl] para h
 'exblank'        => 'waray sulod an pakli',
 'delete-confirm' => 'Igpara "$1"',
 'delete-legend'  => 'Igpara',
-'deletedtext'    => 'Ginpara an "<nowiki>$1</nowiki>".
+'deletedtext'    => 'Ginpara an "$1".
 Kitaa an $2 para hin talaan han mga gibag-ohi nga mga ginpamara.',
 'deletedarticle' => 'napara "[[$1]]"',
 'deletecomment'  => 'Katadungan:',
@@ -864,6 +862,7 @@ Kitaa an $2 para hin talaan han mga gibag-ohi nga mga ginpamara.',
 'whatlinkshere-hidelinks' => '$1 an mga sumpay',
 
 # Block/unblock
+'block'              => 'Pugngi an gumaramit',
 'blockip'            => 'Pugngi an gumaramit',
 'blockip-title'      => 'Pugngi an gumaramit',
 'blockip-legend'     => 'Pugngi an gumaramit',
@@ -933,6 +932,10 @@ Kitaa an $2 para hin talaan han mga gibag-ohi nga mga ginpamara.',
 'tooltip-minoredit'              => 'Tigamni ini nga gamay nga pagliwat',
 'tooltip-save'                   => 'Ig-seyb an imo mga pagbabag-o',
 
+# Info page
+'pageinfo-subjectpage' => 'Pakli',
+'pageinfo-talkpage'    => 'Hiruhimangraw nga pakli',
+
 # Browsing diffs
 'nextdiff' => 'Burubag-o nga pagliwat',
 
@@ -951,20 +954,32 @@ Kitaa an $2 para hin talaan han mga gibag-ohi nga mga ginpamara.',
 # EXIF tags
 'exif-imagewidth'  => 'Kahaluag',
 'exif-imagelength' => 'Kahitaas',
+'exif-headline'    => 'Katukiban',
+'exif-iimcategory' => 'Kaarangay',
+
+'exif-objectcycle-a' => 'Aga la',
+'exif-objectcycle-p' => 'Gab-i la',
+
+'exif-dc-date'   => '(Mga) petsa',
+'exif-dc-rights' => 'Mga katungod',
+
+'exif-rating-rejected' => 'Waray karawta',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'ngatanan',
-'imagelistall'     => 'ngatanan',
-'watchlistall2'    => 'ngatanan',
-'namespacesall'    => 'ngatanan',
-'monthsall'        => 'ngatanan',
-'limitall'         => 'ngatanan',
+'watchlistall2' => 'ngatanan',
+'namespacesall' => 'ngatanan',
+'monthsall'     => 'ngatanan',
+'limitall'      => 'ngatanan',
 
 # Delete conflict
 'recreate' => 'Himo-a utro',
 
 # action=purge
 'confirm_purge_button' => 'OK',
+
+# action=watch/unwatch
+'confirm-watch-button'   => 'OK',
+'confirm-unwatch-button' => 'OK',
 
 # Multipage image navigation
 'imgmultipageprev' => '← naha-una nga pakli',

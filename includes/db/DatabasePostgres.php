@@ -9,8 +9,14 @@
 class PostgresField implements Field {
 	private $name, $tablename, $type, $nullable, $max_length, $deferred, $deferrable, $conname;
 
-	static function fromText($db, $table, $field) {
-	global $wgDBmwschema;
+	/**
+	 * @param $db DatabaseBase
+	 * @param  $table
+	 * @param  $field
+	 * @return null|PostgresField
+	 */
+	static function fromText( $db, $table, $field ) {
+		global $wgDBmwschema;
 
 		$q = <<<SQL
 SELECT
@@ -33,7 +39,7 @@ AND relname=%s
 AND attname=%s;
 SQL;
 
-		$table = $db->tableName( $table );
+		$table = $db->tableName( $table, false );
 		$res = $db->query(
 			sprintf( $q,
 				$db->addQuotes( $wgDBmwschema ),
@@ -137,10 +143,6 @@ class DatabasePostgres extends DatabaseBase {
 		return $this->numRows( $res );
 	}
 
-	static function newFromParams( $server, $user, $password, $dbName, $flags = 0 ) {
-		return new DatabasePostgres( $server, $user, $password, $dbName, $flags );
-	}
-
 	/**
 	 * Usually aborts on failure
 	 */
@@ -155,9 +157,10 @@ class DatabasePostgres extends DatabaseBase {
 		if ( !strlen( $user ) ) { # e.g. the class is being loaded
 			return;
 		}
+
 		$this->close();
 		$this->mServer = $server;
-		$this->mPort = $port = $wgDBport;
+		$port = $wgDBport;
 		$this->mUser = $user;
 		$this->mPassword = $password;
 		$this->mDBname = $dbName;
@@ -194,19 +197,32 @@ class DatabasePostgres extends DatabaseBase {
 			$this->doQuery( "SET client_min_messages = 'ERROR'" );
 		}
 
-		$this->doQuery( "SET client_encoding='UTF8'" );
+		$this->query( "SET client_encoding='UTF8'", __METHOD__ );
+		$this->query( "SET datestyle = 'ISO, YMD'", __METHOD__ );
+		$this->query( "SET timezone = 'GMT'", __METHOD__ );
 
-		global $wgDBmwschema, $wgDBts2schema;
-		if ( isset( $wgDBmwschema ) && isset( $wgDBts2schema )
-			&& $wgDBmwschema !== 'mediawiki'
-			&& preg_match( '/^\w+$/', $wgDBmwschema )
-			&& preg_match( '/^\w+$/', $wgDBts2schema )
-		) {
+		global $wgDBmwschema;
+		if ( $this->schemaExists( $wgDBmwschema ) ) {
 			$safeschema = $this->addIdentifierQuotes( $wgDBmwschema );
-			$this->doQuery( "SET search_path = $safeschema, $wgDBts2schema, public" );
+			$this->doQuery( "SET search_path = $safeschema" );
+		} else {
+			$this->doQuery( "SET search_path = public" );
 		}
 
 		return $this->mConn;
+	}
+
+	/**
+	 * Postgres doesn't support selectDB in the same way MySQL does. So if the
+	 * DB name doesn't match the open connection, open a new one
+	 * @return
+	 */
+	function selectDB( $db ) {
+		if ( $this->mDBname !== $db ) {
+			return (bool)$this->open( $this->mServer, $this->mUser, $this->mPassword, $db );
+		} else {
+			return true;
+		}
 	}
 
 	function makeConnectionString( $vars ) {
@@ -230,7 +246,7 @@ class DatabasePostgres extends DatabaseBase {
 		}
 	}
 
-	function doQuery( $sql ) {
+	protected function doQuery( $sql ) {
 		if ( function_exists( 'mb_convert_encoding' ) ) {
 			$sql = mb_convert_encoding( $sql, 'UTF-8' );
 		}
@@ -247,7 +263,10 @@ class DatabasePostgres extends DatabaseBase {
 		if ( $res instanceof ResultWrapper ) {
 			$res = $res->result;
 		}
-		if ( !@pg_free_result( $res ) ) {
+		wfSuppressWarnings();
+		$ok = pg_free_result( $res );
+		wfRestoreWarnings();
+		if ( !$ok ) {
 			throw new DBUnexpectedError( $this, "Unable to free Postgres result\n" );
 		}
 	}
@@ -256,11 +275,12 @@ class DatabasePostgres extends DatabaseBase {
 		if ( $res instanceof ResultWrapper ) {
 			$res = $res->result;
 		}
-		@$row = pg_fetch_object( $res );
-		# FIXME: HACK HACK HACK HACK debug
+		wfSuppressWarnings();
+		$row = pg_fetch_object( $res );
+		wfRestoreWarnings();
+		# @todo FIXME: HACK HACK HACK HACK debug
 
-		# TODO:
-		# hashar : not sure if the following test really trigger if the object
+		# @todo hashar: not sure if the following test really trigger if the object
 		#          fetching failed.
 		if( pg_last_error( $this->mConn ) ) {
 			throw new DBUnexpectedError( $this, 'SQL error: ' . htmlspecialchars( pg_last_error( $this->mConn ) ) );
@@ -272,7 +292,9 @@ class DatabasePostgres extends DatabaseBase {
 		if ( $res instanceof ResultWrapper ) {
 			$res = $res->result;
 		}
-		@$row = pg_fetch_array( $res );
+		wfSuppressWarnings();
+		$row = pg_fetch_array( $res );
+		wfRestoreWarnings();
 		if( pg_last_error( $this->mConn ) ) {
 			throw new DBUnexpectedError( $this, 'SQL error: ' . htmlspecialchars( pg_last_error( $this->mConn ) ) );
 		}
@@ -283,7 +305,9 @@ class DatabasePostgres extends DatabaseBase {
 		if ( $res instanceof ResultWrapper ) {
 			$res = $res->result;
 		}
-		@$n = pg_num_rows( $res );
+		wfSuppressWarnings();
+		$n = pg_num_rows( $res );
+		wfRestoreWarnings();
 		if( pg_last_error( $this->mConn ) ) {
 			throw new DBUnexpectedError( $this, 'SQL error: ' . htmlspecialchars( pg_last_error( $this->mConn ) ) );
 		}
@@ -529,7 +553,7 @@ class DatabasePostgres extends DatabaseBase {
 	 * Source items may be literals rather then field names, but strings should be quoted with Database::addQuotes()
 	 * $conds may be "*" to copy the whole table
 	 * srcTable may be an array of tables.
-	 * @todo FIXME: implement this a little better (seperate select/insert)?
+	 * @todo FIXME: Implement this a little better (seperate select/insert)?
 	 */
 	function insertSelect( $destTable, $srcTable, $varMap, $conds, $fname = 'DatabasePostgres::insertSelect',
 		$insertOptions = array(), $selectOptions = array() )
@@ -598,7 +622,7 @@ class DatabasePostgres extends DatabaseBase {
 		return $res;
 	}
 
-	function tableName( $name ) {
+	function tableName( $name, $quoted = true ) {
 		# Replace reserved words with better ones
 		switch( $name ) {
 			case 'user':
@@ -606,7 +630,7 @@ class DatabasePostgres extends DatabaseBase {
 			case 'text':
 				return 'pagecontent';
 			default:
-				return $name;
+				return parent::tableName( $name, $quoted );
 		}
 	}
 
@@ -630,83 +654,6 @@ class DatabasePostgres extends DatabaseBase {
 		$row = $this->fetchRow( $res );
 		$currval = $row[0];
 		return $currval;
-	}
-
-	/**
-	 * REPLACE query wrapper
-	 * Postgres simulates this with a DELETE followed by INSERT
-	 * $row is the row to insert, an associative array
-	 * $uniqueIndexes is an array of indexes. Each element may be either a
-	 * field name or an array of field names
-	 *
-	 * It may be more efficient to leave off unique indexes which are unlikely to collide.
-	 * However if you do this, you run the risk of encountering errors which wouldn't have
-	 * occurred in MySQL
-	 */
-	function replace( $table, $uniqueIndexes, $rows, $fname = 'DatabasePostgres::replace' ) {
-		$table = $this->tableName( $table );
-
-		if ( count( $rows ) == 0 ) {
-			return;
-		}
-
-		# Single row case
-		if ( !is_array( reset( $rows ) ) ) {
-			$rows = array( $rows );
-		}
-
-		foreach( $rows as $row ) {
-			# Delete rows which collide
-			if ( $uniqueIndexes ) {
-				$sql = "DELETE FROM $table WHERE ";
-				$first = true;
-				foreach ( $uniqueIndexes as $index ) {
-					if ( $first ) {
-						$first = false;
-						$sql .= '(';
-					} else {
-						$sql .= ') OR (';
-					}
-					if ( is_array( $index ) ) {
-						$first2 = true;
-						foreach ( $index as $col ) {
-							if ( $first2 ) {
-								$first2 = false;
-							} else {
-								$sql .= ' AND ';
-							}
-							$sql .= $col.'=' . $this->addQuotes( $row[$col] );
-						}
-					} else {
-						$sql .= $index.'=' . $this->addQuotes( $row[$index] );
-					}
-				}
-				$sql .= ')';
-				$this->query( $sql, $fname );
-			}
-
-			# Now insert the row
-			$sql = "INSERT INTO $table (" . $this->makeList( array_keys( $row ), LIST_NAMES ) .') VALUES (' .
-				$this->makeList( $row, LIST_COMMA ) . ')';
-			$this->query( $sql, $fname );
-		}
-	}
-
-	# DELETE where the condition is a join
-	function deleteJoin( $delTable, $joinTable, $delVar, $joinVar, $conds, $fname = 'DatabasePostgres::deleteJoin' ) {
-		if ( !$conds ) {
-			throw new DBUnexpectedError( $this, 'DatabasePostgres::deleteJoin() called with empty $conds' );
-		}
-
-		$delTable = $this->tableName( $delTable );
-		$joinTable = $this->tableName( $joinTable );
-		$sql = "DELETE FROM $delTable WHERE $delVar IN (SELECT $joinVar FROM $joinTable ";
-		if ( $conds != '*' ) {
-			$sql .= 'WHERE ' . $this->makeList( $conds, LIST_AND );
-		}
-		$sql .= ')';
-
-		$this->query( $sql, $fname );
 	}
 
 	# Returns the size of a text field, or -1 for "unlimited"
@@ -735,6 +682,8 @@ class DatabasePostgres extends DatabaseBase {
 	}
 
 	function duplicateTableStructure( $oldName, $newName, $temporary = false, $fname = 'DatabasePostgres::duplicateTableStructure' ) {
+		$newName = $this->addIdentifierQuotes( $newName );
+		$oldName = $this->addIdentifierQuotes( $oldName );
 		return $this->query( 'CREATE ' . ( $temporary ? 'TEMPORARY ' : '' ) . " TABLE $newName (LIKE $oldName INCLUDING DEFAULTS)", $fname );
 	}
 
@@ -788,6 +737,7 @@ class DatabasePostgres extends DatabaseBase {
 		if ( !$schema ) {
 			$schema = $wgDBmwschema;
 		}
+		$table = $this->tableName( $table, false );
 		$etable = $this->addQuotes( $table );
 		$eschema = $this->addQuotes( $schema );
 		$SQL = "SELECT 1 FROM pg_catalog.pg_class c, pg_catalog.pg_namespace n "
@@ -899,6 +849,10 @@ SQL;
 		return $sql;
 	}
 
+	/**
+	 * @param $b
+	 * @return Blob
+	 */
 	function encodeBlob( $b ) {
 		return new Blob( pg_escape_bytea( $this->mConn, $b ) );
 	}
@@ -914,6 +868,10 @@ SQL;
 		return pg_escape_string( $this->mConn, $s );
 	}
 
+	/**
+	 * @param $s null|bool|Blob
+	 * @return int|string
+	 */
 	function addQuotes( $s ) {
 		if ( is_null( $s ) ) {
 			return 'NULL';
@@ -971,13 +929,21 @@ SQL;
 		}
 
 		if ( isset( $options['GROUP BY'] ) ) {
-			$preLimitTail .= ' GROUP BY ' . $options['GROUP BY'];
+			$gb = is_array( $options['GROUP BY'] )
+				? implode( ',', $options['GROUP BY'] )
+				: $options['GROUP BY'];
+			$preLimitTail .= " GROUP BY {$gb}";
 		}
+
 		if ( isset( $options['HAVING'] ) ) {
 			$preLimitTail .= " HAVING {$options['HAVING']}";
 		}
+
 		if ( isset( $options['ORDER BY'] ) ) {
-			$preLimitTail .= ' ORDER BY ' . $options['ORDER BY'];
+			$ob = is_array( $options['ORDER BY'] )
+				? implode( ',', $options['ORDER BY'] )
+				: $options['ORDER BY'];
+			$preLimitTail .= " ORDER BY {$ob}";
 		}
 
 		//if ( isset( $options['LIMIT'] ) ) {

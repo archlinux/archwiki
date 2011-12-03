@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on July 6, 2007
  *
@@ -108,17 +108,21 @@ class ApiQueryImageInfo extends ApiQueryBase {
 					break;
 				}
 
+				// Check if we can make the requested thumbnail, and get transform parameters.
+				$finalThumbParams = $this->mergeThumbParams( $img, $scale, $params['urlparam'] );
+
 				// Get information about the current version first
 				// Check that the current version is within the start-end boundaries
 				$gotOne = false;
 				if (
 					( is_null( $start ) || $img->getTimestamp() <= $start ) &&
 					( is_null( $params['end'] ) || $img->getTimestamp() >= $params['end'] )
-				)
-				{
+				) {
 					$gotOne = true;
+
 					$fit = $this->addPageSubItem( $pageId,
-						self::getInfo( $img, $prop, $result, $scale ) );
+						self::getInfo( $img, $prop, $result,
+							$finalThumbParams, $params['metadataversion'] ) );
 					if ( !$fit ) {
 						if ( count( $pageIds[NS_IMAGE] ) == 1 ) {
 							// See the 'the user is screwed' comment above
@@ -147,7 +151,8 @@ class ApiQueryImageInfo extends ApiQueryBase {
 						break;
 					}
 					$fit = $this->addPageSubItem( $pageId,
-						self::getInfo( $oldie, $prop, $result ) );
+						self::getInfo( $oldie, $prop, $result,
+							$finalThumbParams, $params['metadataversion'] ) );
 					if ( !$fit ) {
 						if ( count( $pageIds[NS_IMAGE] ) == 1 ) {
 							$this->setContinueEnumParameter( 'start',
@@ -179,14 +184,16 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	}
 
 	/**
-	 * From parameters, construct a 'scale' array 
-	 * @param $params Array: 
+	 * From parameters, construct a 'scale' array
+	 * @param $params Array: Parameters passed to api.
 	 * @return Array or Null: key-val array of 'width' and 'height', or null
-	 */	
+	 */
 	public function getScale( $params ) {
 		$p = $this->getModulePrefix();
+
+		// Height and width.
 		if ( $params['urlheight'] != -1 && $params['urlwidth'] == -1 ) {
-			$this->dieUsage( "${p}urlheight cannot be used without {$p}urlwidth", "{$p}urlwidth" );
+			$this->dieUsage( "{$p}urlheight cannot be used without {$p}urlwidth", "{$p}urlwidth" );
 		}
 
 		if ( $params['urlwidth'] != -1 ) {
@@ -195,10 +202,63 @@ class ApiQueryImageInfo extends ApiQueryBase {
 			$scale['height'] = $params['urlheight'];
 		} else {
 			$scale = null;
+			if ( $params['urlparam'] ) {
+				$this->dieUsage( "{$p}urlparam requires {$p}urlwidth", "urlparam_no_width" );
+			}
+			return $scale;
 		}
+
 		return $scale;
 	}
 
+	/** Validate and merge scale parameters with handler thumb parameters, give error if invalid.
+	 *
+	 * We do this later than getScale, since we need the image
+	 * to know which handler, since handlers can make their own parameters.
+	 * @param File $image Image that params are for.
+	 * @param Array $thumbParams thumbnail parameters from getScale
+	 * @param String $otherParams of otherParams (iiurlparam).
+	 * @return Array of parameters for transform.
+	 */
+	protected function mergeThumbParams ( $image, $thumbParams, $otherParams ) {
+		if ( !$otherParams ) {
+			return $thumbParams;
+		}
+		$p = $this->getModulePrefix();
+
+		$h = $image->getHandler();
+		if ( !$h ) {
+			$this->setWarning( 'Could not create thumbnail because ' .
+				$image->getName() . ' does not have an associated image handler' );
+			return $thumbParams;
+		}
+
+		$paramList = $h->parseParamString( $otherParams );
+		if ( !$paramList ) {
+			// Just set a warning (instead of dieUsage), as in many cases
+			// we could still render the image using width and height parameters,
+			// and this type of thing could happen between different versions of
+			// handlers.
+			$this->setWarning( "Could not parse {$p}urlparam for " . $image->getName()
+				. '. Using only width and height' );
+			return $thumbParams;
+		}
+
+		if ( isset( $paramList['width'] ) ) {
+			if ( intval( $paramList['width'] ) != intval( $thumbParams['width'] ) ) {
+				$this->dieUsage( "{$p}urlparam had width of {$paramList['width']} but "
+					. "{$p}urlwidth was {$thumbParams['width']}", "urlparam_urlwidth_mismatch" );
+			}
+		}
+
+		foreach ( $paramList as $name => $value ) {
+			if ( !$h->validateParam( $name, $value ) ) {
+				$this->dieUsage( "Invalid value for {$p}urlparam ($name=$value)", "urlparam" );
+			}
+		}
+
+		return $thumbParams + $paramList;
+	}
 
 	/**
 	 * Get result information for an image revision
@@ -206,10 +266,11 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	 * @param $file File object
 	 * @param $prop Array of properties to get (in the keys)
 	 * @param $result ApiResult object
-	 * @param $scale Array containing 'width' and 'height' items, or null
+	 * @param $thumbParams Array containing 'width' and 'height' items, or null
+	 * @param $version string Version of image metadata (for things like jpeg which have different versions).
 	 * @return Array: result array
 	 */
-	static function getInfo( $file, $prop, $result, $scale = null ) {
+	static function getInfo( $file, $prop, $result, $thumbParams = null, $version = 'latest' ) {
 		$vals = array();
 		// Timestamp is shown even if the file is revdelete'd in interface
 		// so do same here.
@@ -242,7 +303,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 			$vals['size'] = intval( $file->getSize() );
 			$vals['width'] = intval( $file->getWidth() );
 			$vals['height'] = intval( $file->getHeight() );
-			
+
 			$pageCount = $file->pageCount();
 			if ( $pageCount !== false ) {
 				$vals['pagecount'] = $pageCount;
@@ -271,10 +332,11 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		$sha1 = isset( $prop['sha1'] );
 		$meta = isset( $prop['metadata'] );
 		$mime = isset( $prop['mime'] );
+		$mediatype = isset( $prop['mediatype'] );
 		$archive = isset( $prop['archivename'] );
 		$bitdepth = isset( $prop['bitdepth'] );
 
-		if ( ( $url || $sha1 || $meta || $mime || $archive || $bitdepth )
+		if ( ( $url || $sha1 || $meta || $mime || $mediatype || $archive || $bitdepth )
 				&& $file->isDeleted( File::DELETED_FILE ) ) {
 			$vals['filehidden'] = '';
 
@@ -283,10 +345,10 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		}
 
 		if ( $url ) {
-			if ( !is_null( $scale ) && !$file->isOld() ) {
-				$mto = $file->transform( array( 'width' => $scale['width'], 'height' => $scale['height'] ) );
+			if ( !is_null( $thumbParams ) ) {
+				$mto = $file->transform( $thumbParams );
 				if ( $mto && !$mto->isError() ) {
-					$vals['thumburl'] = wfExpandUrl( $mto->getUrl() );
+					$vals['thumburl'] = wfExpandUrl( $mto->getUrl(), PROTO_CURRENT );
 
 					// bug 23834 - If the URL's are the same, we haven't resized it, so shouldn't give the wanted
 					// thumbnail sizes for the thumbnail actual size
@@ -299,30 +361,37 @@ class ApiQueryImageInfo extends ApiQueryBase {
 					}
 
 					if ( isset( $prop['thumbmime'] ) && $file->getHandler() ) {
-						list( $ext, $mime ) = $file->getHandler()->getThumbType( 
-							substr( $mto->getPath(), strrpos( $mto->getPath(), '.' ) + 1 ), 
+						list( $ext, $mime ) = $file->getHandler()->getThumbType(
+							substr( $mto->getPath(), strrpos( $mto->getPath(), '.' ) + 1 ),
 							$file->getMimeType(), $thumbParams );
 						$vals['thumbmime'] = $mime;
 					}
-				} else if ( $mto && $mto->isError() ) {
+				} elseif ( $mto && $mto->isError() ) {
 					$vals['thumberror'] = $mto->toText();
 				}
 			}
-			$vals['url'] = $file->getFullURL();
-			$vals['descriptionurl'] = wfExpandUrl( $file->getDescriptionUrl() );
+			$vals['url'] = wfExpandUrl( $file->getFullURL(), PROTO_CURRENT );
+			$vals['descriptionurl'] = wfExpandUrl( $file->getDescriptionUrl(), PROTO_CURRENT );
 		}
-		
+
 		if ( $sha1 ) {
 			$vals['sha1'] = wfBaseConvert( $file->getSha1(), 36, 16, 40 );
 		}
 
 		if ( $meta ) {
-			$metadata = $file->getMetadata();
-			$vals['metadata'] = $metadata ? self::processMetaData( unserialize( $metadata ), $result ) : null;
+			$metadata = unserialize( $file->getMetadata() );
+			if ( $version !== 'latest' ) {
+				$metadata = $file->convertMetadataVersion( $metadata, $version );
+			}
+			$vals['metadata'] = $metadata ? self::processMetaData( $metadata, $result ) : null;
 		}
 
 		if ( $mime ) {
 			$vals['mime'] = $file->getMimeType();
+		}
+
+		if ( $mediatype ) {
+			$vals['mediatype'] = $file->getMediaType();
 		}
 
 		if ( $archive && $file->isOld() ) {
@@ -336,7 +405,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		return $vals;
 	}
 
-	/*
+	/**
 	 *
 	 * @param $metadata Array
 	 * @param $result ApiResult
@@ -363,6 +432,10 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		return 'public';
 	}
 
+	/**
+	 * @param $img File
+	 * @return string
+	 */
 	private function getContinueStr( $img ) {
 		return $img->getOriginalTitle()->getText() .
 			'|' .  $img->getTimestamp();
@@ -396,63 +469,86 @@ class ApiQueryImageInfo extends ApiQueryBase {
 				ApiBase::PARAM_TYPE => 'integer',
 				ApiBase::PARAM_DFLT => -1
 			),
+			'metadataversion' => array(
+				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_DFLT => '1',
+			),
+			'urlparam' => array(
+				ApiBase::PARAM_DFLT => '',
+				ApiBase::PARAM_TYPE => 'string',
+			),
 			'continue' => null,
 		);
 	}
 
 	/**
 	 * Returns all possible parameters to iiprop
+	 *
+	 * @param array $filter List of properties to filter out
+	 *
+	 * @return Array
 	 */
-	public static function getPropertyNames() {
+	public static function getPropertyNames( $filter = array() ) {
+		return array_diff( array_keys( self::getProperties() ), $filter );
+	}
+
+	/**
+	 * Returns array key value pairs of properties and their descriptions
+	 *
+	 * @return array
+	 */
+	private static function getProperties() {
 		return array(
-			'timestamp',
-			'user',
-			'userid',
-			'comment',
-			'parsedcomment',
-			'url',
-			'size',
-			'dimensions', // For backwards compatibility with Allimages
-			'sha1',
-			'mime',
-			'thumbmime',
-			'metadata',
-			'archivename',
-			'bitdepth',
+			'timestamp' =>      ' timestamp     - Adds timestamp for the uploaded version',
+			'user' =>           ' user          - Adds the user who uploaded the image version',
+			'userid' =>         ' userid        - Add the user ID that uploaded the image version',
+			'comment' =>        ' comment       - Comment on the version',
+			'parsedcomment' =>  ' parsedcomment - Parse the comment on the version',
+			'url' =>            ' url           - Gives URL to the image and the description page',
+			'size' =>           ' size          - Adds the size of the image in bytes and the height, width and page count (if applicable)',
+			'dimensions' =>     ' dimensions    - Alias for size', // For backwards compatibility with Allimages
+			'sha1' =>           ' sha1          - Adds SHA-1 hash for the image',
+			'mime' =>           ' mime          - Adds MIME type of the image',
+			'thumbmime' =>      ' thumbmime     - Adds MIME type of the image thumbnail (requires url)',
+			'mediatype' =>      ' mediatype     - Adds the media type of the image',
+			'metadata' =>       ' metadata      - Lists EXIF metadata for the version of the image',
+			'archivename' =>    ' archivename   - Adds the file name of the archive version for non-latest versions',
+			'bitdepth' =>       ' bitdepth      - Adds the bit depth of the version',
 		);
 	}
 
+	/**
+	 * Returns the descriptions for the properties provided by getPropertyNames()
+	 *
+	 * @param array $filter List of properties to filter out
+	 *
+	 * @return array
+	 */
+	public static function getPropertyDescriptions( $filter = array() ) {
+		return array_merge(
+			array( 'What image information to get:' ),
+			array_values( array_diff_key( self::getProperties(), array_flip( $filter ) ) )
+		);
+	}
 
 	/**
-	 * Return the API documentation for the parameters. 
-	 * @return {Array} parameter documentation.
+	 * Return the API documentation for the parameters.
+	 * @return Array parameter documentation.
 	 */
 	public function getParamDescription() {
 		$p = $this->getModulePrefix();
 		return array(
-			'prop' => array(
-				'What image information to get:',
-				' timestamp     - Adds timestamp for the uploaded version',
-				' user          - Adds the user who uploaded the image version',
-				' userid        - Add the user id that uploaded the image version',
-				' comment       - Comment on the version',
-				' parsedcomment - Parse the comment on the version',
-				' url           - Gives URL to the image and the description page',
-				' size          - Adds the size of the image in bytes and the height and width',
-				' dimensions    - Alias for size',
-				' sha1          - Adds sha1 hash for the image',
-				' mime          - Adds MIME of the image',
-				' thumbmime     - Adss MIME of the image thumbnail (requires url)',
-				' metadata      - Lists EXIF metadata for the version of the image',
-				' archivename   - Adds the file name of the archive version for non-latest versions',
-				' bitdepth      - Adds the bit depth of the version',
-			),
+			'prop' => self::getPropertyDescriptions(),
 			'urlwidth' => array( "If {$p}prop=url is set, a URL to an image scaled to this width will be returned.",
 					    'Only the current version of the image can be scaled' ),
 			'urlheight' => "Similar to {$p}urlwidth. Cannot be used without {$p}urlwidth",
+			'urlparam' => array( "A handler specific parameter string. For example, pdf's ",
+				"might use 'page15-100px'. {$p}urlwidth must be used and be consistent with {$p}urlparam" ),
 			'limit' => 'How many image revisions to return',
 			'start' => 'Timestamp to start listing from',
 			'end' => 'Timestamp to stop listing at',
+			'metadataversion' => array( "Version of metadata to use. if 'latest' is specified, use latest version.",
+						"Defaults to '1' for backwards compatibility" ),
 			'continue' => 'If the query response includes a continue value, use it here to get another page of results'
 		);
 	}
@@ -462,8 +558,13 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	}
 
 	public function getPossibleErrors() {
+		$p = $this->getModulePrefix();
 		return array_merge( parent::getPossibleErrors(), array(
-			array( 'code' => 'iiurlwidth', 'info' => 'iiurlheight cannot be used without iiurlwidth' ),
+			array( 'code' => "{$p}urlwidth", 'info' => "{$p}urlheight cannot be used without {$p}urlwidth" ),
+			array( 'code' => 'urlparam', 'info' => "Invalid value for {$p}urlparam" ),
+			array( 'code' => 'urlparam_no_width', 'info' => "{$p}urlparam requires {$p}urlwidth" ),
+			array( 'code' => 'urlparam_urlwidth_mismatch', 'info' => "The width set in {$p}urlparm doesnt't " .
+				"match the one in {$p}urlwidth" ),
 		) );
 	}
 
@@ -474,7 +575,11 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Properties#imageinfo_.2F_ii';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryImageInfo.php 85435 2011-04-05 14:00:08Z demon $';
+		return __CLASS__ . ': $Id: ApiQueryImageInfo.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

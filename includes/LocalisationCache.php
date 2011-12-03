@@ -8,8 +8,8 @@ define( 'MW_LC_VERSION', 1 );
  *
  * An instance of this class is available using Language::getLocalisationCache().
  *
- * The values retrieved from here are merged, containing items from extension 
- * files, core messages files and the language fallback sequence (e.g. zh-cn -> 
+ * The values retrieved from here are merged, containing items from extension
+ * files, core messages files and the language fallback sequence (e.g. zh-cn ->
  * zh-hans -> en ). Some common errors are corrected, for example namespace
  * names with spaces instead of underscores, but heavyweight processing, such
  * as grammatical transformation, is done by the caller.
@@ -78,31 +78,24 @@ class LocalisationCache {
 	var $recachedLangs = array();
 
 	/**
-	 * Data added by extensions using the deprecated $wgMessageCache->addMessages() 
-	 * interface.
-	 */
-	var $legacyData = array();
-
-	/**
 	 * All item keys
 	 */
 	static public $allKeys = array(
-		'fallback', 'namespaceNames', 'mathNames', 'bookstoreList',
+		'fallback', 'namespaceNames', 'bookstoreList',
 		'magicWords', 'messages', 'rtl', 'capitalizeAllNouns', 'digitTransformTable',
 		'separatorTransformTable', 'fallback8bitEncoding', 'linkPrefixExtension',
-		'defaultUserOptionOverrides', 'linkTrail', 'namespaceAliases',
+		'linkTrail', 'namespaceAliases',
 		'dateFormats', 'datePreferences', 'datePreferenceMigrationMap',
 		'defaultDateFormat', 'extraUserToggles', 'specialPageAliases',
-		'imageFiles', 'preloadedMessages',
+		'imageFiles', 'preloadedMessages', 'namespaceGenderAliases',
 	);
 
 	/**
 	 * Keys for items which consist of associative arrays, which may be merged
 	 * by a fallback sequence.
 	 */
-	static public $mergeableMapKeys = array( 'messages', 'namespaceNames', 'mathNames',
-		'dateFormats', 'defaultUserOptionOverrides', 'imageFiles',
-		'preloadedMessages',
+	static public $mergeableMapKeys = array( 'messages', 'namespaceNames',
+		'dateFormats', 'imageFiles', 'preloadedMessages',
 	);
 
 	/**
@@ -122,7 +115,7 @@ class LocalisationCache {
 	 * key is removed after the first merge.
 	 */
 	static public $optionalMergeKeys = array( 'bookstoreList' );
-	
+
 	/**
 	 * Keys for items that are formatted like $magicWords
 	 */
@@ -136,13 +129,14 @@ class LocalisationCache {
 	/**
 	 * Keys which are loaded automatically by initLanguage()
 	 */
-	static public $preloadedKeys = array( 'dateFormats', 'namespaceNames',
-		'defaultUserOptionOverrides' );
+	static public $preloadedKeys = array( 'dateFormats', 'namespaceNames' );
 
 	/**
 	 * Constructor.
-	 * For constructor parameters, see the documentation in DefaultSettings.php 
+	 * For constructor parameters, see the documentation in DefaultSettings.php
 	 * for $wgLocalisationCacheConf.
+	 *
+	 * @param $conf Array
 	 */
 	function __construct( $conf ) {
 		global $wgCacheDirectory;
@@ -164,7 +158,7 @@ class LocalisationCache {
 					$storeClass = $wgCacheDirectory ? 'LCStore_CDB' : 'LCStore_DB';
 					break;
 				default:
-					throw new MWException( 
+					throw new MWException(
 						'Please set $wgLocalisationCacheConf[\'store\'] to something sensible.' );
 			}
 		}
@@ -221,11 +215,8 @@ class LocalisationCache {
 	 * Get a subitem, for instance a single message for a given language.
 	 */
 	public function getSubitem( $code, $key, $subkey ) {
-		if ( isset( $this->legacyData[$code][$key][$subkey] ) ) {
-			return $this->legacyData[$code][$key][$subkey];
-		}
-		if ( !isset( $this->loadedSubitems[$code][$key][$subkey] ) 
-			&& !isset( $this->loadedItems[$code][$key] ) ) 
+		if ( !isset( $this->loadedSubitems[$code][$key][$subkey] )
+			&& !isset( $this->loadedItems[$code][$key] ) )
 		{
 			wfProfileIn( __METHOD__.'-load' );
 			$this->loadSubitem( $code, $key, $subkey );
@@ -241,10 +232,10 @@ class LocalisationCache {
 	/**
 	 * Get the list of subitem keys for a given item.
 	 *
-	 * This is faster than array_keys($lc->getItem(...)) for the items listed in 
+	 * This is faster than array_keys($lc->getItem(...)) for the items listed in
 	 * self::$splitKeys.
 	 *
-	 * Will return null if the item is not found, or false if the item is not an 
+	 * Will return null if the item is not found, or false if the item is not an
 	 * array.
 	 */
 	public function getSubitemList( $code, $key ) {
@@ -335,7 +326,7 @@ class LocalisationCache {
 			// anymore (e.g. uninstalled extensions)
 			// When this happens, always expire the cache
 			if ( !$dep instanceof CacheDependency || $dep->isExpired() ) {
-				wfDebug( __METHOD__."($code): cache for $code expired due to " . 
+				wfDebug( __METHOD__."($code): cache for $code expired due to " .
 					get_class( $dep ) . "\n" );
 				return true;
 			}
@@ -351,6 +342,12 @@ class LocalisationCache {
 			return;
 		}
 		$this->initialisedLangs[$code] = true;
+
+		# If the code is of the wrong form for a Messages*.php file, do a shallow fallback
+		if ( !Language::isValidBuiltInCode( $code ) ) {
+			$this->initShallowFallback( $code, 'en' );
+			return;
+		}
 
 		# Recache the data if necessary
 		if ( !$this->manualRecache && $this->isExpired( $code ) ) {
@@ -370,7 +367,7 @@ class LocalisationCache {
 			if ( $this->manualRecache ) {
 				// No Messages*.php file. Do shallow fallback to en.
 				if ( $code === 'en' ) {
-					throw new MWException( 'No localisation cache found for English. ' . 
+					throw new MWException( 'No localisation cache found for English. ' .
 						'Please run maintenance/rebuildLocalisationCache.php.' );
 				}
 				$this->initShallowFallback( $code, 'en' );
@@ -392,7 +389,7 @@ class LocalisationCache {
 	}
 
 	/**
-	 * Create a fallback from one language to another, without creating a 
+	 * Create a fallback from one language to another, without creating a
 	 * complete persistent cache.
 	 */
 	public function initShallowFallback( $primaryCode, $fallbackCode ) {
@@ -422,7 +419,7 @@ class LocalisationCache {
 	}
 
 	/**
-	 * Merge two localisation values, a primary and a fallback, overwriting the 
+	 * Merge two localisation values, a primary and a fallback, overwriting the
 	 * primary value in place.
 	 */
 	protected function mergeItem( $key, &$value, $fallbackValue ) {
@@ -457,7 +454,7 @@ class LocalisationCache {
 			} else {
 				$oldSynonyms = array_slice( $fallbackInfo, 1 );
 				$newSynonyms = array_slice( $value[$magicName], 1 );
-				$synonyms = array_values( array_unique( array_merge( 
+				$synonyms = array_values( array_unique( array_merge(
 					$newSynonyms, $oldSynonyms ) ) );
 				$value[$magicName] = array_merge( array( $fallbackInfo[0] ), $synonyms );
 			}
@@ -469,7 +466,7 @@ class LocalisationCache {
 	 * found in extension *.i18n.php files, iterate through a fallback sequence
 	 * to merge the given data with an existing primary value.
 	 *
-	 * Returns true if any data from the extension array was used, false 
+	 * Returns true if any data from the extension array was used, false
 	 * otherwise.
 	 */
 	protected function mergeExtensionItem( $codeSequence, $key, &$value, $fallbackValue ) {
@@ -499,7 +496,7 @@ class LocalisationCache {
 
 		# Initial values
 		$initialData = array_combine(
-			self::$allKeys, 
+			self::$allKeys,
 			array_fill( 0, count( self::$allKeys ), null ) );
 		$coreData = $initialData;
 		$deps = array();
@@ -551,7 +548,7 @@ class LocalisationCache {
 
 		# Load the extension localisations
 		# This is done after the core because we know the fallback sequence now.
-		# But it has a higher precedence for merging so that we can support things 
+		# But it has a higher precedence for merging so that we can support things
 		# like site-specific message overrides.
 		$allData = $initialData;
 		foreach ( $wgExtensionMessagesFiles as $fileName ) {
@@ -602,11 +599,6 @@ class LocalisationCache {
 		}
 		# Decouple the reference to prevent accidental damage
 		unset($page);
-	
-		# Fix broken defaultUserOptionOverrides
-		if ( !is_array( $allData['defaultUserOptionOverrides'] ) ) {
-			$allData['defaultUserOptionOverrides'] = array();
-		}
 
 		# Set the list keys
 		$allData['list'] = array();
@@ -617,8 +609,8 @@ class LocalisationCache {
 		# Run hooks
 		wfRunHooks( 'LocalisationCacheRecache', array( $this, $code, &$allData ) );
 
-		if ( is_null( $allData['defaultUserOptionOverrides'] ) ) {
-			throw new MWException( __METHOD__.': Localisation data failed sanity check! ' . 
+		if ( is_null( $allData['namespaceNames'] ) ) {
+			throw new MWException( __METHOD__.': Localisation data failed sanity check! ' .
 				'Check that your languages/messages/MessagesEn.php file is intact.' );
 		}
 
@@ -643,7 +635,7 @@ class LocalisationCache {
 			}
 		}
 		$this->store->finishWrite();
-		
+
 		# Clear out the MessageBlobStore
 		# HACK: If using a null (i.e. disabled) storage backend, we
 		# can't write to the MessageBlobStore either
@@ -677,7 +669,7 @@ class LocalisationCache {
 	}
 
 	/**
-	 * Unload the data for a given language from the object cache. 
+	 * Unload the data for a given language from the object cache.
 	 * Reduces memory usage.
 	 */
 	public function unload( $code ) {
@@ -685,8 +677,6 @@ class LocalisationCache {
 		unset( $this->loadedItems[$code] );
 		unset( $this->loadedSubitems[$code] );
 		unset( $this->initialisedLangs[$code] );
-		// We don't unload legacyData because there's no way to get it back 
-		// again, it's not really a cache
 		foreach ( $this->shallowFallbacks as $shallowCode => $fbCode ) {
 			if ( $fbCode === $code ) {
 				$this->unload( $shallowCode );
@@ -700,22 +690,6 @@ class LocalisationCache {
 	public function unloadAll() {
 		foreach ( $this->initialisedLangs as $lang => $unused ) {
 			$this->unload( $lang );
-		}
-	}
-
-	/**
-	 * Add messages to the cache, from an extension that has not yet been 
-	 * migrated to $wgExtensionMessages or the LocalisationCacheRecache hook. 
-	 * Called by deprecated function $wgMessageCache->addMessages(). 
-	 */
-	public function addLegacyMessages( $messages ) {
-		foreach ( $messages as $lang => $langMessages ) {
-			if ( isset( $this->legacyData[$lang]['messages'] ) ) {
-				$this->legacyData[$lang]['messages'] = 
-					$langMessages + $this->legacyData[$lang]['messages'];
-			} else {
-				$this->legacyData[$lang]['messages'] = $langMessages;
-			}
 		}
 	}
 
@@ -734,15 +708,15 @@ class LocalisationCache {
  * The persistence layer is two-level hierarchical cache. The first level
  * is the language, the second level is the item or subitem.
  *
- * Since the data for a whole language is rebuilt in one operation, it needs 
- * to have a fast and atomic method for deleting or replacing all of the 
+ * Since the data for a whole language is rebuilt in one operation, it needs
+ * to have a fast and atomic method for deleting or replacing all of the
  * current data for a given language. The interface reflects this bulk update
- * operation. Callers writing to the cache must first call startWrite(), then 
- * will call set() a couple of thousand times, then will call finishWrite() 
- * to commit the operation. When finishWrite() is called, the cache is 
+ * operation. Callers writing to the cache must first call startWrite(), then
+ * will call set() a couple of thousand times, then will call finishWrite()
+ * to commit the operation. When finishWrite() is called, the cache is
  * expected to delete all data previously stored for that language.
  *
- * The values stored are PHP variables suitable for serialize(). Implementations 
+ * The values stored are PHP variables suitable for serialize(). Implementations
  * of LCStore are responsible for serializing and unserializing.
  */
 interface LCStore {
@@ -751,29 +725,29 @@ interface LCStore {
 	 * @param $code Language code
 	 * @param $key Cache key
 	 */
-	public function get( $code, $key );
+	function get( $code, $key );
 
 	/**
 	 * Start a write transaction.
 	 * @param $code Language code
 	 */
-	public function startWrite( $code );
+	function startWrite( $code );
 
 	/**
 	 * Finish a write transaction.
 	 */
-	public function finishWrite();
+	function finishWrite();
 
 	/**
 	 * Set a key to a given value. startWrite() must be called before this
 	 * is called, and finishWrite() must be called afterwards.
 	 */
-	public function set( $key, $value );
+	function set( $key, $value );
 
 }
 
 /**
- * LCStore implementation which uses the standard DB functions to store data. 
+ * LCStore implementation which uses the standard DB functions to store data.
  * This will work on any MediaWiki installation.
  */
 class LCStore_DB implements LCStore {
@@ -859,9 +833,9 @@ class LCStore_DB implements LCStore {
  * directory given by $wgCacheDirectory. If $wgCacheDirectory is not set, this
  * will throw an exception.
  *
- * Profiling indicates that on Linux, this implementation outperforms MySQL if 
- * the directory is on a local filesystem and there is ample kernel cache 
- * space. The performance advantage is greater when the DBA extension is 
+ * Profiling indicates that on Linux, this implementation outperforms MySQL if
+ * the directory is on a local filesystem and there is ample kernel cache
+ * space. The performance advantage is greater when the DBA extension is
  * available than it is with the PHP port.
  *
  * See Cdb.php and http://cr.yp.to/cdb.html
@@ -901,7 +875,7 @@ class LCStore_CDB implements LCStore {
 	public function startWrite( $code ) {
 		if ( !file_exists( $this->directory ) ) {
 			if ( !wfMkdirParents( $this->directory ) ) {
-				throw new MWException( "Unable to create the localisation store " . 
+				throw new MWException( "Unable to create the localisation store " .
 					"directory \"{$this->directory}\"" );
 			}
 		}
@@ -950,7 +924,7 @@ class LCStore_Null implements LCStore {
 }
 
 /**
- * A localisation cache optimised for loading large amounts of data for many 
+ * A localisation cache optimised for loading large amounts of data for many
  * languages. Used by rebuildLocalisationCache.php.
  */
 class LocalisationCache_BulkLoad extends LocalisationCache {
@@ -962,7 +936,7 @@ class LocalisationCache_BulkLoad extends LocalisationCache {
 
 	/**
 	 * Most recently used languages. Uses the linked-list aspect of PHP hashtables
-	 * to keep the most recently used language codes at the end of the array, and 
+	 * to keep the most recently used language codes at the end of the array, and
 	 * the language codes that are ready to be deleted at the beginning.
 	 */
 	var $mruLangs = array();

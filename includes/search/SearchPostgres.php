@@ -29,6 +29,11 @@
  * @ingroup Search
  */
 class SearchPostgres extends SearchEngine {
+
+	/**
+	 * @var DatabasePostgres
+	 */
+	protected $db;
 	/**
 	 * Creates an instance of this class
 	 * @param $db DatabaseSqlite: database object
@@ -56,6 +61,7 @@ class SearchPostgres extends SearchEngine {
 		}
 		return new PostgresSearchResultSet( $resultSet, $this->searchTerms );
 	}
+
 	function searchText( $term ) {
 		$q = $this->searchQuery( $term, 'textvector', 'old_text' );
 		$olderror = error_reporting(E_ERROR);
@@ -67,11 +73,14 @@ class SearchPostgres extends SearchEngine {
 		return new PostgresSearchResultSet( $resultSet, $this->searchTerms );
 	}
 
-
-	/*
+	/**
 	 * Transform the user's search string into a better form for tsearch2
 	 * Returns an SQL fragment consisting of quoted text to search for.
-	*/
+	 *
+	 * @param $term string
+	 *
+	 * @return string
+	 */
 	function parseQuery( $term ) {
 
 		wfDebug( "parseQuery received: $term \n" );
@@ -96,10 +105,10 @@ class SearchPostgres extends SearchEngine {
 				if (strtolower($terms[2]) === 'and') {
 					$searchstring .= ' & ';
 				}
-				else if (strtolower($terms[2]) === 'or' or $terms[2] === '|') {
+				elseif (strtolower($terms[2]) === 'or' or $terms[2] === '|') {
 					$searchstring .= ' | ';
 				}
-				else if (strtolower($terms[2]) === 'not') {
+				elseif (strtolower($terms[2]) === 'not') {
 					$searchstring .= ' & !';
 				}
 				else {
@@ -139,21 +148,18 @@ class SearchPostgres extends SearchEngine {
 	 * @param $colname
 	 */
 	function searchQuery( $term, $fulltext, $colname ) {
-		$postgresVersion = $this->db->getServerVersion();
-
-		$prefix = $postgresVersion < 8.3 ? "'default'," : '';
-
 		# Get the SQL fragment for the given term
 		$searchstring = $this->parseQuery( $term );
 
 		## We need a separate query here so gin does not complain about empty searches
-		$SQL = "SELECT to_tsquery($prefix $searchstring)";
+		$SQL = "SELECT to_tsquery($searchstring)";
 		$res = $this->db->query($SQL);
 		if (!$res) {
 			## TODO: Better output (example to catch: one 'two)
 			die ("Sorry, that was not a valid search string. Please go back and try again");
 		}
-		$top = pg_fetch_result($res,0,0);
+		$top = $res->fetchRow();
+		$top = $top[0];
 
 		if ($top === "") { ## e.g. if only stopwords are used XXX return something better
 			$query = "SELECT page_id, page_namespace, page_title, 0 AS score ".
@@ -168,12 +174,10 @@ class SearchPostgres extends SearchEngine {
 				}
 			}
 
-			$rankscore = $postgresVersion > 8.2 ? 5 : 1;
-			$rank = $postgresVersion < 8.3 ? 'rank' : 'ts_rank';
 			$query = "SELECT page_id, page_namespace, page_title, ".
-			"$rank($fulltext, to_tsquery($prefix $searchstring), $rankscore) AS score ".
+			"ts_rank($fulltext, to_tsquery($searchstring), 5) AS score ".
 			"FROM page p, revision r, pagecontent c WHERE p.page_latest = r.rev_id " .
-			"AND r.rev_text_id = c.old_id AND $fulltext @@ to_tsquery($prefix $searchstring)";
+			"AND r.rev_text_id = c.old_id AND $fulltext @@ to_tsquery($searchstring)";
 		}
 
 		## Redirects
@@ -204,7 +208,7 @@ class SearchPostgres extends SearchEngine {
 	function update( $pageid, $title, $text ) {
 		## We don't want to index older revisions
 		$SQL = "UPDATE pagecontent SET textvector = NULL WHERE old_id IN ".
-				"(SELECT rev_text_id FROM revision WHERE rev_page = " . intval( $pageid ) . 
+				"(SELECT rev_text_id FROM revision WHERE rev_page = " . intval( $pageid ) .
 				" ORDER BY rev_text_id DESC OFFSET 1)";
 		$this->db->query($SQL);
 		return true;

@@ -41,7 +41,7 @@ class UserrightsPage extends SpecialPage {
 		return true;
 	}
 
-	public function userCanExecute( $user ) {
+	public function userCanExecute( User $user ) {
 		return $this->userCanChangeRights( $user, false );
 	}
 
@@ -98,7 +98,7 @@ class UserrightsPage extends SpecialPage {
 		}
 
 		if( !$this->userCanChangeRights( $wgUser, true ) ) {
-			// fixme... there may be intermediate groups we can mention.
+			// @todo FIXME: There may be intermediate groups we can mention.
 			$wgOut->showPermissionsErrorPage( array( array(
 				$wgUser->isAnon()
 					? 'userrights-nologin'
@@ -112,7 +112,7 @@ class UserrightsPage extends SpecialPage {
 		}
 
 		$this->outputHeader();
-
+		$wgOut->addModuleStyles( 'mediawiki.special' );
 		$this->setHeaders();
 
 		// show the general form
@@ -222,7 +222,7 @@ class UserrightsPage extends SpecialPage {
 				$user->removeGroup( $group );
 			}
 		}
- 		if( $add ) {
+		if( $add ) {
 			$newGroups = array_merge( $newGroups, $add );
 			foreach( $add as $group ) {
 				$user->addGroup( $group );
@@ -317,7 +317,7 @@ class UserrightsPage extends SpecialPage {
 			return Status::newFatal( 'nouserspecified' );
 		}
 
-		if( $name{0} == '#' ) {
+		if( $name[0] == '#' ) {
 			// Numeric ID can be specified...
 			// We'll do a lookup for the name internally.
 			$id = intval( substr( $name, 1 ) );
@@ -414,7 +414,7 @@ class UserrightsPage extends SpecialPage {
 	 * @param $groups    Array:  Array of groups the user is in
 	 */
 	protected function showEditUserGroupsForm( $user, $groups ) {
-		global $wgOut, $wgUser, $wgLang;
+		global $wgOut, $wgUser, $wgLang, $wgRequest;
 
 		$list = array();
 		foreach( $groups as $group ) {
@@ -429,12 +429,14 @@ class UserrightsPage extends SpecialPage {
 		}
 
 		$grouplist = '';
-		if( count( $list ) > 0 ) {
-			$grouplist = wfMsgHtml( 'userrights-groupsmember' );
+		$count = count( $list );
+		if( $count > 0 ) {
+			$grouplist = wfMessage( 'userrights-groupsmember', $count)->parse();
 			$grouplist = '<p>' . $grouplist  . ' ' . $wgLang->listToText( $list ) . "</p>\n";
 		}
-		if( count( $autolist ) > 0 ) {
-			$autogrouplistintro = wfMsgHtml( 'userrights-groupsmember-auto' );
+		$count = count( $autolist );
+		if( $count > 0 ) {
+			$autogrouplistintro = wfMessage( 'userrights-groupsmember-auto', $count)->parse();
 			$grouplist .= '<p>' . $autogrouplistintro  . ' ' . $wgLang->listToText( $autolist ) . "</p>\n";
 		}
 		$wgOut->addHTML(
@@ -453,14 +455,15 @@ class UserrightsPage extends SpecialPage {
 						Xml::label( wfMsg( 'userrights-reason' ), 'wpReason' ) .
 					"</td>
 					<td class='mw-input'>" .
-						Xml::input( 'user-reason', 60, false, array( 'id' => 'wpReason', 'maxlength' => 255 ) ) .
+						Xml::input( 'user-reason', 60, $wgRequest->getVal( 'user-reason', false ),
+							array( 'id' => 'wpReason', 'maxlength' => 255 ) ) .
 					"</td>
 				</tr>
 				<tr>
 					<td></td>
 					<td class='mw-submit'>" .
 						Xml::submitButton( wfMsg( 'saveusergroups' ),
-							array( 'name' => 'saveusergroups' ) + $wgUser->getSkin()->tooltipAndAccessKeyAttribs( 'userrights-set' ) ) .
+							array( 'name' => 'saveusergroups' ) + Linker::tooltipAndAccesskeyAttribs( 'userrights-set' ) ) .
 					"</td>
 				</tr>" .
 			Xml::closeElement( 'table' ) . "\n" .
@@ -534,7 +537,7 @@ class UserrightsPage extends SpecialPage {
 		foreach( $columns as $name => $column ) {
 			if( $column === array() )
 				continue;
-			$ret .= Xml::element( 'th', null, wfMsg( 'userrights-' . $name . '-col' ) );
+			$ret .= Xml::element( 'th', null, wfMessage( 'userrights-' . $name . '-col', count( $column ) )->text() );
 		}
 		$ret.= "</tr>\n<tr>\n";
 		foreach( $columns as $column ) {

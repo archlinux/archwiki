@@ -1,6 +1,4 @@
 <?php
-define( 'GS_MAIN', -2 );
-define( 'GS_TALK', -1 );
 /**
  * Creates a sitemap for the site
  *
@@ -31,6 +29,9 @@ define( 'GS_TALK', -1 );
 require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 class GenerateSitemap extends Maintenance {
+	const GS_MAIN = -2;
+	const GS_TALK = -1;
+
 	/**
 	 * The maximum amount of urls in a sitemap file
 	 *
@@ -121,6 +122,13 @@ class GenerateSitemap extends Maintenance {
 	var $file;
 
 	/**
+	 * Identifier to use in filenames, default $wgDBname
+	 *
+	 * @var string
+	 */
+	private $identifier;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -129,6 +137,7 @@ class GenerateSitemap extends Maintenance {
 		$this->addOption( 'fspath', 'The file system path to save to, e.g. /tmp/sitemap; defaults to current directory', false, true );
 		$this->addOption( 'urlpath', 'The URL path corresponding to --fspath, prepended to filenames in the index; defaults to an empty string', false, true );
 		$this->addOption( 'compress', 'Compress the sitemap files, can take value yes|no, default yes', false, true );
+		$this->addOption( 'identifier', 'What site identifier to use for the wiki, defaults to $wgDBname', false, true );
 	}
 
 	/**
@@ -143,19 +152,20 @@ class GenerateSitemap extends Maintenance {
 		if ( $this->urlpath !== "" && substr( $this->urlpath, -1 ) !== '/' ) {
 			$this->urlpath .= '/';
 		}
+		$this->identifier = $this->getOption( 'identifier', wfWikiID() );
 		$this->compress = $this->getOption( 'compress', 'yes' ) !== 'no';
 		$this->dbr = wfGetDB( DB_SLAVE );
 		$this->generateNamespaces();
 		$this->timestamp = wfTimestamp( TS_ISO_8601, wfTimestampNow() );
-		$this->findex = fopen( "{$this->fspath}sitemap-index-" . wfWikiID() . ".xml", 'wb' );
+		$this->findex = fopen( "{$this->fspath}sitemap-index-{$this->identifier}.xml", 'wb' );
 		$this->main();
 	}
 
 	private function setNamespacePriorities() {
 		// Custom main namespaces
-		$this->priorities[GS_MAIN] = '0.5';
+		$this->priorities[self::GS_MAIN] = '0.5';
 		// Custom talk namesspaces
-		$this->priorities[GS_TALK] = '0.1';
+		$this->priorities[self::GS_TALK] = '0.1';
 		// MediaWiki standard namespaces
 		$this->priorities[NS_MAIN] = '1.0';
 		$this->priorities[NS_TALK] = '0.1';
@@ -234,7 +244,7 @@ class GenerateSitemap extends Maintenance {
 	 * @return String
 	 */
 	function guessPriority( $namespace ) {
-		return MWNamespace::isMain( $namespace ) ? $this->priorities[GS_MAIN] : $this->priorities[GS_TALK];
+		return MWNamespace::isMain( $namespace ) ? $this->priorities[self::GS_MAIN] : $this->priorities[self::GS_TALK];
 	}
 
 	/**
@@ -271,7 +281,7 @@ class GenerateSitemap extends Maintenance {
 			$i = $smcount = 0;
 
 			$fns = $wgContLang->getFormattedNsText( $namespace );
-			$this->output( "$namespace ($fns)" );
+			$this->output( "$namespace ($fns)\n" );
 			foreach ( $res as $row ) {
 				if ( $i++ === 0 || $i === $this->url_limit + 1 || $length + $this->limit[1] + $this->limit[2] > $this->size_limit ) {
 					if ( $this->file !== false ) {
@@ -288,7 +298,7 @@ class GenerateSitemap extends Maintenance {
 				}
 				$title = Title::makeTitle( $row->page_namespace, $row->page_title );
 				$date = wfTimestamp( TS_ISO_8601, $row->page_touched );
-				$entry = $this->fileEntry( $title->getFullURL(), $date, $this->priority( $namespace ) );
+				$entry = $this->fileEntry( $title->getCanonicalURL(), $date, $this->priority( $namespace ) );
 				$length += strlen( $entry );
 				$this->write( $this->file, $entry );
 				// generate pages for language variants
@@ -296,7 +306,7 @@ class GenerateSitemap extends Maintenance {
 					$variants = $wgContLang->getVariants();
 					foreach ( $variants as $vCode ) {
 						if ( $vCode == $wgContLang->getCode() ) continue; // we don't want default variant
-						$entry = $this->fileEntry( $title->getFullURL( '', $vCode ), $date, $this->priority( $namespace ) );
+						$entry = $this->fileEntry( $title->getCanonicalURL( '', $vCode ), $date, $this->priority( $namespace ) );
 						$length += strlen( $entry );
 						$this->write( $this->file, $entry );
 					}
@@ -349,7 +359,7 @@ class GenerateSitemap extends Maintenance {
 	 */
 	function sitemapFilename( $namespace, $count ) {
 		$ext = $this->compress ? '.gz' : '';
-		return "sitemap-" . wfWikiID() . "-NS_$namespace-$count.xml$ext";
+		return "sitemap-{$this->identifier}-NS_$namespace-$count.xml$ext";
 	}
 
 	/**
@@ -441,11 +451,12 @@ class GenerateSitemap extends Maintenance {
 	 * Populate $this->limit
 	 */
 	function generateLimit( $namespace ) {
+		// bug 17961: make a title with the longest possible URL in this namespace
 		$title = Title::makeTitle( $namespace, str_repeat( "\xf0\xa8\xae\x81", 63 ) . "\xe5\x96\x83" );
 
 		$this->limit = array(
 			strlen( $this->openFile() ),
-			strlen( $this->fileEntry( $title->getFullUrl(), wfTimestamp( TS_ISO_8601, wfTimestamp() ), $this->priority( $namespace ) ) ),
+			strlen( $this->fileEntry( $title->getCanonicalURL(), wfTimestamp( TS_ISO_8601, wfTimestamp() ), $this->priority( $namespace ) ) ),
 			strlen( $this->closeFile() )
 		);
 	}

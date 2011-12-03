@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Oct 16, 2006
  *
@@ -81,6 +81,7 @@ class ApiQueryContributions extends ApiQueryBase {
 			$this->prefixMode = false;
 			$this->multiUserMode = ( count( $this->params['user'] ) > 1 );
 		}
+
 		$this->prepareQuery();
 
 		// Do the actual query.
@@ -120,6 +121,8 @@ class ApiQueryContributions extends ApiQueryBase {
 	/**
 	 * Validate the 'user' parameter and set the value to compare
 	 * against `revision`.`rev_user_text`
+	 *
+	 * @param $user string
 	 */
 	private function prepareUsername( $user ) {
 		if ( !is_null( $user ) && $user !== '' ) {
@@ -179,7 +182,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		if ( $this->multiUserMode ) {
 			$this->addWhereRange( 'rev_user_text', $this->params['dir'], null, null );
 		}
-		$this->addWhereRange( 'rev_timestamp',
+		$this->addTimestampWhereRange( 'rev_timestamp',
 			$this->params['dir'], $this->params['start'], $this->params['end'] );
 		$this->addWhereFld( 'page_namespace', $this->params['namespace'] );
 
@@ -188,7 +191,7 @@ class ApiQueryContributions extends ApiQueryBase {
 			$show = array_flip( $show );
 			if ( ( isset( $show['minor'] ) && isset( $show['!minor'] ) )
 			   		|| ( isset( $show['patrolled'] ) && isset( $show['!patrolled'] ) ) ) {
-				$this->dieUsageMsg( array( 'show' ) );
+				$this->dieUsageMsg( 'show' );
 			}
 
 			$this->addWhereIf( 'rev_minor_edit = 0', isset( $show['!minor'] ) );
@@ -246,8 +249,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		// $this->addFieldsIf( 'rev_text_id', $this->fld_ids ); // Should this field be exposed?
 		$this->addFieldsIf( 'rev_comment', $this->fld_comment || $this->fld_parsedcomment );
 		$this->addFieldsIf( 'rev_len', $this->fld_size );
-		$this->addFieldsIf( 'rev_minor_edit', $this->fld_flags );
-		$this->addFieldsIf( 'rev_parent_id', $this->fld_flags );
+		$this->addFieldsIf( array( 'rev_minor_edit', 'rev_parent_id' ), $this->fld_flags );
 		$this->addFieldsIf( 'rc_patrolled', $this->fld_patrolled );
 
 		if ( $this->fld_tags ) {
@@ -262,6 +264,10 @@ class ApiQueryContributions extends ApiQueryBase {
 			$this->addWhereFld( 'ct_tag', $this->params['tag'] );
 			global $wgOldChangeTagsIndex;
 			$index['change_tag'] = $wgOldChangeTagsIndex ? 'ct_tag' : 'change_tag_tag_id';
+		}
+
+		if ( $this->params['toponly'] ) {
+			$this->addWhere( 'rev_id = page_latest' );
 		}
 
 		$this->addOption( 'USE INDEX', $index );
@@ -409,6 +415,7 @@ class ApiQueryContributions extends ApiQueryBase {
 				)
 			),
 			'tag' => null,
+			'toponly' => false,
 		);
 	}
 
@@ -422,12 +429,12 @@ class ApiQueryContributions extends ApiQueryBase {
 			'continue' => 'When more results are available, use this to continue',
 			'user' => 'The users to retrieve contributions for',
 			'userprefix' => "Retrieve contibutions for all users whose names begin with this value. Overrides {$p}user",
-			'dir' => 'The direction to search (older or newer)',
+			'dir' => $this->getDirectionDescription( $p ),
 			'namespace' => 'Only list contributions in these namespaces',
 			'prop' => array(
 				'Include additional pieces of information',
-				' ids            - Adds the page id and revision id',
-				' title          - Adds the title and namespace id of the page',
+				' ids            - Adds the page ID and revision ID',
+				' title          - Adds the title and namespace ID of the page',
 				' timestamp      - Adds the timestamp of the edit',
 				' comment        - Adds the comment of the edit',
 				' parsedcomment  - Adds the parsed comment of the edit',
@@ -439,6 +446,7 @@ class ApiQueryContributions extends ApiQueryBase {
 			'show' => array( "Show only items that meet this criteria, e.g. non minor edits only: {$p}show=!minor",
 					"NOTE: if {$p}show=patrolled or {$p}show=!patrolled is set, revisions older than $wgRCMaxAge won\'t be shown", ),
 			'tag' => 'Only list revisions tagged with this tag',
+			'toponly' => 'Only list changes which are the latest revision',
 		);
 	}
 
@@ -462,7 +470,11 @@ class ApiQueryContributions extends ApiQueryBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Usercontribs';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryUserContributions.php 75096 2010-10-20 18:50:33Z reedy $';
+		return __CLASS__ . ': $Id: ApiQueryUserContributions.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Jan 4, 2008
  *
@@ -49,30 +49,42 @@ class ApiWatch extends ApiBase {
 		$params = $this->extractRequestParams();
 		$title = Title::newFromText( $params['title'] );
 
-		if ( !$title ) {
+		if ( !$title || $title->getNamespace() < 0 ) {
 			$this->dieUsageMsg( array( 'invalidtitle', $params['title'] ) );
 		}
 
-		$article = new Article( $title );
+		$article = new Article( $title, 0 );
 		$res = array( 'title' => $title->getPrefixedText() );
 
 		if ( $params['unwatch'] ) {
 			$res['unwatched'] = '';
 			$res['message'] = wfMsgExt( 'removedwatchtext', array( 'parse' ), $title->getPrefixedText() );
-			$success = $article->doUnwatch();
+			$success = WatchAction::doUnwatch( $title, $wgUser );
 		} else {
 			$res['watched'] = '';
 			$res['message'] = wfMsgExt( 'addedwatchtext', array( 'parse' ), $title->getPrefixedText() );
-			$success = $article->doWatch();
+			$success = UnwatchAction::doWatch( $title, $wgUser );
 		}
 		if ( !$success ) {
-			$this->dieUsageMsg( array( 'hookaborted' ) );
+			$this->dieUsageMsg( 'hookaborted' );
 		}
 		$this->getResult()->addValue( null, $this->getModuleName(), $res );
 	}
 
+	public function mustBePosted() {
+		return true;
+	}
+
 	public function isWriteMode() {
 		return true;
+	}
+
+	public function needsToken() {
+		return true;
+	}
+
+	public function getTokenSalt() {
+		return 'watch';
 	}
 
 	public function getAllowedParams() {
@@ -81,8 +93,8 @@ class ApiWatch extends ApiBase {
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true
 			),
-
 			'unwatch' => false,
+			'token' => null,
 		);
 	}
 
@@ -90,6 +102,7 @@ class ApiWatch extends ApiBase {
 		return array(
 			'title' => 'The page to (un)watch',
 			'unwatch' => 'If set the page will be unwatched rather than watched',
+			'token' => 'A token previously acquired via prop=info',
 		);
 	}
 
@@ -112,7 +125,11 @@ class ApiWatch extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Watch';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiWatch.php 77192 2010-11-23 22:05:27Z btongminh $';
+		return __CLASS__ . ': $Id: ApiWatch.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

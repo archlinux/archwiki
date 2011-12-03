@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Sep 6, 2006
  *
@@ -93,6 +93,11 @@ class ApiHelp extends ApiBase {
 		$result->addValue( null, $this->getModuleName(), $r );
 	}
 
+	/**
+	 * @param  $module ApiBase
+	 * @param  $type String What type of request is this? e.g. action, query, list, prop, meta, format
+	 * @return string
+	 */
 	private function buildModuleHelp( $module, $type ) {
 		$msg = ApiMain::makeHelpMsgHeader( $module, $type );
 
@@ -149,7 +154,15 @@ class ApiHelp extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return array(
+			'https://www.mediawiki.org/wiki/API:Main_page',
+			'https://www.mediawiki.org/wiki/API:FAQ',
+			'https://www.mediawiki.org/wiki/API:Quick_start_guide',
+		);
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiHelp.php 73863 2010-09-28 02:33:43Z brion $';
+		return __CLASS__ . ': $Id: ApiHelp.php 104439 2011-11-28 15:22:23Z reedy $';
 	}
 }

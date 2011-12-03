@@ -3,30 +3,28 @@
  * Build constant slightly compact database of interwiki prefixes
  * Wikimedia specific!
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @todo document
  * @ingroup Maintenance
  * @ingroup Wikimedia
  */
 
-/**
- * @todo document
- * @ingroup Maintenance
- */
-class Site {
-	var $suffix, $lateral, $url;
-
-	function __construct( $s, $l, $u ) {
-		$this->suffix = $s;
-		$this->lateral = $l;
-		$this->url = $u;
-	}
-
-	function getURL( $lang ) {
-		$xlang = str_replace( '_', '-', $lang );
-		return "http://$xlang.{$this->url}/wiki/\$1";
-	}
-}
+require_once( dirname( __FILE__ ) . '/Site.php' );
 
 require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
@@ -39,6 +37,7 @@ class DumpInterwiki extends Maintenance {
 		$this->addOption( 'dblist', 'File with one db per line', false, true );
 		$this->addOption( 'specialdbs', "File with one 'special' db per line", false, true );
 		$this->addOption( 'o', 'Cdb output file', false, true );
+		$this->addOption( 'protocolrelative', 'Output wikimedia interwiki urls as protocol relative', false, false );
 	}
 
 	function execute() {
@@ -55,6 +54,12 @@ class DumpInterwiki extends Maintenance {
 			$this->dbFile = CdbWriter::open( $this->getOption( 'o' ) ) ;
 		} else {
 			$this->dbFile = false;
+		}
+
+		if ( $this->hasOption( 'protocolrelative' ) ) {
+			$this->urlprotocol = '';
+		} else {
+			$this->urlprotocol = 'http:';
 		}
 
 		$this->getRebuildInterwikiDump();
@@ -78,9 +83,9 @@ class DumpInterwiki extends Maintenance {
 
 		# Extra interwiki links that can't be in the intermap for some reason
 		$extraLinks = array(
-			array( 'm', 'http://meta.wikimedia.org/wiki/$1', 1 ),
-			array( 'meta', 'http://meta.wikimedia.org/wiki/$1', 1 ),
-			array( 'sep11', 'http://sep11.wikipedia.org/wiki/$1', 1 ),
+			array( 'm', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
+			array( 'meta', $this->urlprotocol . '//meta.wikimedia.org/wiki/$1', 1 ),
+			array( 'sep11', $this->urlprotocol . '//sep11.wikipedia.org/wiki/$1', 1 ),
 		);
 
 		# Language aliases, usually configured as redirects to the real wiki in apache
@@ -128,6 +133,13 @@ class DumpInterwiki extends Maintenance {
 
 				$url = $matches[2];
 				if ( preg_match( '/(wikipedia|wiktionary|wikisource|wikiquote|wikibooks|wikimedia)\.org/', $url ) ) {
+					if ( $this->hasOption( 'protocolrelative' ) ) {
+						if ( substr( $url, 0, 5 ) == 'http:' ) {
+							$url = substr( $url, 5 );
+						} else if ( substr( $url, 0, 6 ) == 'https:' ) {
+							$url = substr( $url, 6 );
+						}
+					}
 					$local = 1;
 				} else {
 					$local = 0;
@@ -157,7 +169,7 @@ class DumpInterwiki extends Maintenance {
 				# Links to multilanguage sites
 				foreach ( $sites as $targetSite ) {
 					$this->makeLink( array( 'iw_prefix' => $targetSite->lateral,
-						'iw_url' => $targetSite->getURL( 'en' ),
+						'iw_url' => $targetSite->getURL( 'en', $this->urlprotocol ),
 						'iw_local' => 1 ), $db );
 				}
 			} else {
@@ -181,14 +193,14 @@ class DumpInterwiki extends Maintenance {
 				foreach ( $sites as $targetSite ) {
 					if ( $targetSite->suffix != $site->suffix ) {
 						$this->makeLink( array( 'iw_prefix' => $targetSite->lateral,
-							'iw_url' => $targetSite->getURL( $lang ),
+							'iw_url' => $targetSite->getURL( $lang, $this->urlprotocol ),
 							'iw_local' => 1 ), $db );
 					}
 				}
 
 				if ( $site->suffix == "wiki" ) {
 					$this->makeLink( array( 'iw_prefix' => 'w',
-						'iw_url' => "http://en.wikipedia.org/wiki/$1",
+						'iw_url' => $this->urlprotocol . "//en.wikipedia.org/wiki/$1",
 						'iw_local' => 1 ), $db );
 				}
 
@@ -205,12 +217,12 @@ class DumpInterwiki extends Maintenance {
 	function makeLanguageLinks( &$site, $source ) {
 		# Actual languages with their own databases
 		foreach ( $this->langlist as $targetLang ) {
-			$this->makeLink( array( $targetLang, $site->getURL( $targetLang ), 1 ), $source );
+			$this->makeLink( array( $targetLang, $site->getURL( $targetLang, $this->urlprotocol ), 1 ), $source );
 		}
 
 		# Language aliases
 		foreach ( $this->languageAliases as $alias => $lang ) {
-			$this->makeLink( array( $alias, $site->getURL( $lang ), 1 ), $source );
+			$this->makeLink( array( $alias, $site->getURL( $lang, $this->urlprotocol ), 1 ), $source );
 		}
 	}
 

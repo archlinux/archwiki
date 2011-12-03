@@ -5,13 +5,17 @@
  * @file
  * @ingroup Media
  */
- 
+
 /**
  * Handler for DjVu images
  *
  * @ingroup Media
  */
 class DjVuHandler extends ImageHandler {
+
+	/**
+	 * @return bool
+	 */
 	function isEnabled() {
 		global $wgDjvuRenderer, $wgDjvuDump, $wgDjvuToXML;
 		if ( !$wgDjvuRenderer || ( !$wgDjvuDump && !$wgDjvuToXML ) ) {
@@ -22,9 +26,25 @@ class DjVuHandler extends ImageHandler {
 		}
 	}
 
-	function mustRender( $file ) { return true; }
-	function isMultiPage( $file ) { return true; }
+	/**
+	 * @param $file
+	 * @return bool
+	 */
+	function mustRender( $file ) {
+		return true;
+	}
 
+	/**
+	 * @param $file
+	 * @return bool
+	 */
+	function isMultiPage( $file ) {
+		return true;
+	}
+
+	/**
+	 * @return array
+	 */
 	function getParamMap() {
 		return array(
 			'img_width' => 'width',
@@ -32,6 +52,11 @@ class DjVuHandler extends ImageHandler {
 		);
 	}
 
+	/**
+	 * @param $name
+	 * @param $value
+	 * @return bool
+	 */
 	function validateParam( $name, $value ) {
 		if ( in_array( $name, array( 'width', 'height', 'page' ) ) ) {
 			if ( $value <= 0 ) {
@@ -44,6 +69,10 @@ class DjVuHandler extends ImageHandler {
 		}
 	}
 
+	/**
+	 * @param $params
+	 * @return bool|string
+	 */
 	function makeParamString( $params ) {
 		$page = isset( $params['page'] ) ? $params['page'] : 1;
 		if ( !isset( $params['width'] ) ) {
@@ -52,6 +81,10 @@ class DjVuHandler extends ImageHandler {
 		return "page{$page}-{$params['width']}px";
 	}
 
+	/**
+	 * @param $str
+	 * @return array|bool
+	 */
 	function parseParamString( $str ) {
 		$m = false;
 		if ( preg_match( '/^page(\d+)-(\d+)px$/', $str, $m ) ) {
@@ -61,6 +94,10 @@ class DjVuHandler extends ImageHandler {
 		}
 	}
 
+	/**
+	 * @param $params
+	 * @return array
+	 */
 	function getScriptParams( $params ) {
 		return array(
 			'width' => $params['width'],
@@ -68,6 +105,14 @@ class DjVuHandler extends ImageHandler {
 		);
 	}
 
+	/**
+	 * @param $image File
+	 * @param  $dstPath
+	 * @param  $dstUrl
+	 * @param  $params
+	 * @param int $flags
+	 * @return MediaTransformError|ThumbnailImage|TransformParameterError
+	 */
 	function doTransform( $image, $dstPath, $dstUrl, $params, $flags = 0 ) {
 		global $wgDjvuRenderer, $wgDjvuPostProcessor;
 
@@ -75,7 +120,9 @@ class DjVuHandler extends ImageHandler {
 		// normaliseParams will inevitably give.
 		$xml = $image->getMetadata();
 		if ( !$xml ) {
-			return new MediaTransformError( 'thumbnail_error', @$params['width'], @$params['height'],
+			$width = isset( $params['width'] ) ? $params['width'] : 0;
+			$height = isset( $params['height'] ) ? $params['height'] : 0;
+			return new MediaTransformError( 'thumbnail_error', $width, $height,
 				wfMsg( 'djvu_no_xml' ) );
 		}
 
@@ -100,7 +147,8 @@ class DjVuHandler extends ImageHandler {
 
 		# Use a subshell (brackets) to aggregate stderr from both pipeline commands
 		# before redirecting it to the overall stdout. This works in both Linux and Windows XP.
-		$cmd = '(' . wfEscapeShellArg( $wgDjvuRenderer ) . " -format=ppm -page={$page} -size={$width}x{$height} " .
+		$cmd = '(' . wfEscapeShellArg( $wgDjvuRenderer ) . " -format=ppm -page={$page}" . 
+			" -size={$params['physicalWidth']}x{$params['physicalHeight']} " .
 			wfEscapeShellArg( $srcPath );
 		if ( $wgDjvuPostProcessor ) {
 			$cmd .= " | {$wgDjvuPostProcessor}";
@@ -125,6 +173,8 @@ class DjVuHandler extends ImageHandler {
 
 	/**
 	 * Cache an instance of DjVuImage in an Image object, return that instance
+	 *
+	 * @return DjVuImage
 	 */
 	function getDjVuImage( $image, $path ) {
 		if ( !$image ) {
@@ -139,6 +189,7 @@ class DjVuHandler extends ImageHandler {
 
 	/**
 	 * Cache a document tree for the DjVu XML metadata
+	 * @param $image File
 	 */
 	function getMetaTree( $image , $gettext = false ) {
 		if ( isset( $image->dejaMetaTree ) ) {
@@ -159,11 +210,11 @@ class DjVuHandler extends ImageHandler {
 			$image->djvuTextTree = false;
 			$tree = new SimpleXMLElement( $metadata );
 			if( $tree->getName() == 'mw-djvu' ) {
-				foreach($tree->children() as $b){ 
+				foreach($tree->children() as $b){
 					if( $b->getName() == 'DjVuTxt' ) {
 						$image->djvuTextTree = $b;
 					}
-					else if ( $b->getName() == 'DjVuXML' ) {
+					elseif ( $b->getName() == 'DjVuXML' ) {
 						$image->dejaMetaTree = $b;
 					}
 				}

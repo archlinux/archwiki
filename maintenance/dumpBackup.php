@@ -27,7 +27,7 @@
 
 $originalDir = getcwd();
 
-$optionsWithArgs = array( 'pagelist', 'start', 'end' );
+$optionsWithArgs = array( 'pagelist', 'start', 'end', 'revstart', 'revend');
 
 require_once( dirname( __FILE__ ) . '/commandLine.inc' );
 require_once( 'backup.inc' );
@@ -44,7 +44,8 @@ if ( isset( $options['pagelist'] ) ) {
 	$pages = file( $options['pagelist'] );
 	chdir( $olddir );
 	if ( $pages === false ) {
-		wfDie( "Unable to open file {$options['pagelist']}\n" );
+		echo( "Unable to open file {$options['pagelist']}\n" );
+		die(1);
 	}
 	$pages = array_map( 'trim', $pages );
 	$dumper->pages = array_filter( $pages, create_function( '$x', 'return $x !== "";' ) );
@@ -56,9 +57,17 @@ if ( isset( $options['start'] ) ) {
 if ( isset( $options['end'] ) ) {
 	$dumper->endId = intval( $options['end'] );
 }
+
+if ( isset( $options['revstart'] ) ) {
+	$dumper->revStartId = intval( $options['revstart'] );
+}
+if ( isset( $options['revend'] ) ) {
+	$dumper->revEndId = intval( $options['revend'] );
+}
 $dumper->skipHeader = isset( $options['skip-header'] );
 $dumper->skipFooter = isset( $options['skip-footer'] );
 $dumper->dumpUploads = isset( $options['uploads'] );
+$dumper->dumpUploadFileContents = isset( $options['include-files'] );
 
 $textMode = isset( $options['stub'] ) ? WikiExporter::STUB : WikiExporter::TEXT;
 
@@ -70,6 +79,8 @@ if ( isset( $options['full'] ) ) {
 	$dumper->dump( WikiExporter::STABLE, $textMode );
 } elseif ( isset( $options['logs'] ) ) {
 	$dumper->dump( WikiExporter::LOGS );
+} elseif ( isset($options['revrange'] ) ) {
+	$dumper->dump( WikiExporter::RANGE, $textMode );
 } else {
 	$dumper->progress( <<<ENDS
 This script dumps the wiki page or logging database into an
@@ -85,7 +96,8 @@ Actions:
   --stable    Stable versions of pages?
   --pagelist=<file>
 			  Where <file> is a list of page titles to be dumped
-
+  --revrange  Dump specified range of revisions, requires
+              revstart and revend options.
 Options:
   --quiet     Don't dump status reports to stderr.
   --report=n  Report position and speed after every n pages processed.
@@ -93,10 +105,13 @@ Options:
   --server=h  Force reading from MySQL server h
   --start=n   Start from page_id or log_id n
   --end=n     Stop before page_id or log_id n (exclusive)
+  --revstart=n  Start from rev_id n
+  --revend=n    Stop before rev_id n (exclusive)
   --skip-header Don't output the <mediawiki> header
   --skip-footer Don't output the </mediawiki> footer
   --stub      Don't perform old_text lookups; for 2-pass dump
-  --uploads   Include upload records (experimental)
+  --uploads   Include upload records without files
+  --include-files Include files within the XML stream
   --conf=<file> Use the specified configuration file (LocalSettings.php)
 
   --wiki=<wiki>  Only back up the specified <wiki>

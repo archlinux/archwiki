@@ -31,27 +31,27 @@ $namespaceNames = array(
 );
 
 $specialPageAliases = array(
-	'Userlogin'                 => array( 'ވަދެވަޑައިގަންނަވާ' ),
-	'Userlogout'                => array( 'ބޭރަށް ވަޑައިގަންނަވާ' ),
+	'Allpages'                  => array( 'ހުރިހާ ސަފްޙާއެއް' ),
+	'Contributions'             => array( 'ޙިއްސާ' ),
 	'CreateAccount'             => array( 'މެމްބަރުކަން ހާސިލްކުރައްވާ' ),
-	'Preferences'               => array( 'ތަރުޖީހުތައް' ),
-	'Recentchanges'             => array( 'އެންމެ ފަހުގެ ބަދަލްތައް' ),
-	'Upload'                    => array( 'ފޮނުއްވާ' ),
+	'Emailuser'                 => array( 'މެމްބަރަށް އީ-މެއިލް ފޮނުވާ' ),
+	'BlockList'                 => array( 'ބްލޮކް ކުރެވިފައިވާ ލިސްޓް' ),
 	'Listfiles'                 => array( 'ފައިލް ލިސްޓް' ),
+	'Longpages'                 => array( 'ދިގު ސަފްޙާތައް' ),
 	'Newimages'                 => array( 'އާ ފައިލް' ),
+	'Newpages'                  => array( 'އާ ސަފްހާތައް' ),
+	'Preferences'               => array( 'ތަރުޖީހުތައް' ),
+	'Protectedpages'            => array( 'ދިފާޢުކުރެވިފައިވާ ސަފްޙާތައް' ),
 	'Randompage'                => array( 'ކޮންމެވެސް ސަފްޙާއެއް' ),
+	'Recentchanges'             => array( 'އެންމެ ފަހުގެ ބަދަލްތައް' ),
+	'Shortpages'                => array( 'ކުރު ސަފްޙާތައް' ),
+	'Specialpages'              => array( 'ޙާއްސަ ސަފްޙާތައް' ),
 	'Uncategorizedtemplates'    => array( 'ޤިސްމުކުރެވިފައި ނުވާ ފަންވަތް' ),
 	'Unusedcategories'          => array( 'ބޭނުން ނުކުރާ ޤިސްމުތައް' ),
 	'Unusedimages'              => array( 'ބޭނުން ނުކުރާ ފައިލް' ),
-	'Shortpages'                => array( 'ކުރު ސަފްޙާތައް' ),
-	'Longpages'                 => array( 'ދިގު ސަފްޙާތައް' ),
-	'Newpages'                  => array( 'އާ ސަފްހާތައް' ),
-	'Protectedpages'            => array( 'ދިފާޢުކުރެވިފައިވާ ސަފްޙާތައް' ),
-	'Allpages'                  => array( 'ހުރިހާ ސަފްޙާއެއް' ),
-	'Ipblocklist'               => array( 'ބްލޮކް ކުރެވިފައިވާ ލިސްޓް' ),
-	'Specialpages'              => array( 'ޙާއްސަ ސަފްޙާތައް' ),
-	'Contributions'             => array( 'ޙިއްސާ' ),
-	'Emailuser'                 => array( 'މެމްބަރަށް އީ-މެއިލް ފޮނުވާ' ),
+	'Upload'                    => array( 'ފޮނުއްވާ' ),
+	'Userlogin'                 => array( 'ވަދެވަޑައިގަންނަވާ' ),
+	'Userlogout'                => array( 'ބޭރަށް ވަޑައިގަންނަވާ' ),
 );
 
 $messages = array(
@@ -141,7 +141,6 @@ $messages = array(
 'go'                => 'ދުރުވޭ',
 'history'           => 'ޞަފްޙާގެ ތާރީހު',
 'history_short'     => 'ތާރީހު',
-'info_short'        => 'މައުލޫމާތު',
 'printableversion'  => 'ޗާޕަށްފަހި ނުސްހާ',
 'permalink'         => 'ދާއިމީ ފާލަން',
 'print'             => 'ޗާޕުކުރައްވާ',
@@ -229,7 +228,7 @@ $messages = array(
 'mailmypassword'             => 'ސިއްރުބަސް އީމޭލުކުރައްވާ',
 'acct_creation_throttle_hit' => 'މާފު ކުރައްވާ، އެހެނީ ތިޔަބޭފުޅާ ވަނީ ކުރީއްސުރެ $1 މެންބަރުކަން ހޯއްދަވާފައި އެހެންވީމާ އިތުރަށް ލިބިވަޑައެއް ނުގަންނަވާނެ.',
 
-# Password reset dialog
+# Change password dialog
 'oldpassword' => 'ކުރީގެ ސިއްރުބަސް:',
 
 # Edit page toolbar
@@ -373,7 +372,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 
 # Watchlist
 'watchlist'         => 'މަގޭ ނަޒަރު',
-'addedwatch'        => 'ނަޒަރުގެ ފިހުރިސްތަށް ލެވިއްޖެ',
 'addedwatchtext'    => "މި ޞަފްޙާ \"<nowiki>\$1</nowiki>\" ތިޔަބޭފުޅާގެ [[Special:Watchlist|ހާއްސަ ނަޒަރު]] ފިހުރިސްތަށް ލެވިއްޖެއެވެ. ދެން ކުރިމަގުގައި މި ޞަފްޙާ އަދި މިއާ ގުޅޭ ބަހުސް ގެ ޞަފްޙާ އަށް ގެނެވޭ އުނިއިތުރު ތަކުގެ މައުލޫމާތު މިޞަފްހާއަށް ލެވޭނެއެވެ. އަދި އެ ޞަފްޙާތަކުގެ ޝަނާހަތު ފަސޭހަ ކުރުމަށްޓަކައި [[Special:ފަހު ބަދަލުތައް|ފަހު ބަދަލުތަކުގެ ފިހުރިސްތު]] ގައި އެބައިތައް '''ބޯ''' (bold) އަކުރުން ލިޔެވޭނެއެވެ. <p> ކޮންމެ އިރަކުވެސް ތިޔަބޭފުޅާ ހާއްސަ ނަޒަރުގެ ފިހުރިސްތުން މި ޞަފްޙާ އުނިކުރައްވަން ބޭނުންފުޅިއްޔާ މަތީގައި ދެވިފައިވާ \"ހާއްސަ ނަޒަރުން އުނިކުރޭ\" ގައި ކޮއްޓަވާ ލައްވާށެވެ.",
 'watch'             => 'ނަޒަރުބަހައްޓަވާ',
 'watchthispage'     => 'މި ޞަފްޙާއަށް ނަޒަރުބަހައްޓަވާ',
@@ -470,7 +468,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'exif-gpsspeed-n' => 'ތަސްވީރުގެ ސުރުހީ',
 
 # 'all' in various places, this might be different for inflected languages
-'imagelistall'  => 'ހުރިހާ',
 'watchlistall2' => 'ހުރިހާ',
 'namespacesall' => 'ހުރިހާ',
 

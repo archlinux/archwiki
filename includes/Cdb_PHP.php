@@ -16,6 +16,11 @@ class CdbFunctions {
 	/**
 	 * Take a modulo of a signed integer as if it were an unsigned integer.
 	 * $b must be less than 0x40000000 and greater than 0
+	 *
+	 * @param $a
+	 * @param $b
+	 *
+	 * @return int
 	 */
 	public static function unsignedMod( $a, $b ) {
 		if ( $a & 0x80000000 ) {
@@ -25,9 +30,12 @@ class CdbFunctions {
 			return $a % $b;
 		}
 	}
-	
+
 	/**
 	 * Shift a signed integer right as if it were unsigned
+	 * @param $a
+	 * @param $b
+	 * @return int
 	 */
 	public static function unsignedShiftRight( $a, $b ) {
 		if ( $b == 0 ) {
@@ -42,6 +50,10 @@ class CdbFunctions {
 
 	/**
 	 * The CDB hash function.
+	 * 
+	 * @param $s
+	 *
+	 * @return
 	 */
 	public static function hash( $s ) {
 		$h = 5381;
@@ -103,11 +115,16 @@ class CdbReader_PHP extends CdbReader {
 	}
 
 	function close() {
-		if( isset($this->handle) )
+		if( isset( $this->handle ) ) {
 			fclose( $this->handle );
+		}
 		unset( $this->handle );
 	}
 
+	/**
+	 * @param $key
+	 * @return bool|string
+	 */
 	public function get( $key ) {
 		// strval is required
 		if ( $this->find( strval( $key ) ) ) {
@@ -117,6 +134,11 @@ class CdbReader_PHP extends CdbReader {
 		}
 	}
 
+	/**
+	 * @param $key
+	 * @param $pos
+	 * @return bool
+	 */
 	protected function match( $key, $pos ) {
 		$buf = $this->read( strlen( $key ), $pos );
 		return $buf === $key;
@@ -126,6 +148,12 @@ class CdbReader_PHP extends CdbReader {
 		$this->loop = 0;
 	}
 
+	/**
+	 * @throws MWException
+	 * @param $length
+	 * @param $pos
+	 * @return string
+	 */
 	protected function read( $length, $pos ) {
 		if ( fseek( $this->handle, $pos ) == -1 ) {
 			// This can easily happen if the internal pointers are incorrect
@@ -145,6 +173,8 @@ class CdbReader_PHP extends CdbReader {
 
 	/**
 	 * Unpack an unsigned integer and throw an exception if it needs more than 31 bits
+	 * @param $s
+	 * @return
 	 */
 	protected function unpack31( $s ) {
 		$data = unpack( 'V', $s );
@@ -156,12 +186,18 @@ class CdbReader_PHP extends CdbReader {
 
 	/**
 	 * Unpack a 32-bit signed integer
+	 * @param $s
+	 * @return int
 	 */
 	protected function unpackSigned( $s ) {
 		$data = unpack( 'va/vb', $s );
 		return $data['a'] | ( $data['b'] << 16 );
 	}
 
+	/**
+	 * @param $key
+	 * @return bool
+	 */
 	protected function findNext( $key ) {
 		if ( !$this->loop ) {
 			$u = CdbFunctions::hash( $key );
@@ -204,6 +240,10 @@ class CdbReader_PHP extends CdbReader {
 		return false;
 	}
 
+	/**
+	 * @param $key
+	 * @return bool
+	 */
 	protected function find( $key ) {
 		$this->findStart();
 		return $this->findNext( $key );
@@ -240,6 +280,11 @@ class CdbWriter_PHP extends CdbWriter {
 		}
 	}
 
+	/**
+	 * @param $key
+	 * @param $value
+	 * @return
+	 */
 	public function set( $key, $value ) {
 		if ( strval( $key ) === '' ) {
 			// DBA cross-check hack
@@ -251,10 +296,14 @@ class CdbWriter_PHP extends CdbWriter {
 		$this->addend( strlen( $key ), strlen( $value ), CdbFunctions::hash( $key ) );
 	}
 
+	/**
+	 * @throws MWException
+	 */
 	public function close() {
 		$this->finish();
-		if( isset($this->handle) )
+		if( isset($this->handle) ) {
 			fclose( $this->handle );
+		}
 		if ( wfIsWindows() && file_exists($this->realFileName) ) {
 			unlink( $this->realFileName );
 		}
@@ -264,6 +313,10 @@ class CdbWriter_PHP extends CdbWriter {
 		unset( $this->handle );
 	}
 
+	/**
+	 * @throws MWException
+	 * @param $buf
+	 */
 	protected function write( $buf ) {
 		$len = fwrite( $this->handle, $buf );
 		if ( $len !== strlen( $buf ) ) {
@@ -271,6 +324,10 @@ class CdbWriter_PHP extends CdbWriter {
 		}
 	}
 
+	/**
+	 * @throws MWException
+	 * @param $len
+	 */
 	protected function posplus( $len ) {
 		$newpos = $this->pos + $len;
 		if ( $newpos > 0x7fffffff ) {
@@ -279,6 +336,11 @@ class CdbWriter_PHP extends CdbWriter {
 		$this->pos = $newpos;
 	}
 
+	/**
+	 * @param $keylen
+	 * @param $datalen
+	 * @param $h
+	 */
 	protected function addend( $keylen, $datalen, $h ) {
 		$this->hplist[] = array(
 			'h' => $h,
@@ -291,6 +353,11 @@ class CdbWriter_PHP extends CdbWriter {
 		$this->posplus( $datalen );
 	}
 
+	/**
+	 * @throws MWException
+	 * @param $keylen
+	 * @param $datalen
+	 */
 	protected function addbegin( $keylen, $datalen ) {
 		if ( $keylen > 0x7fffffff ) {
 			throw new MWException( __METHOD__.': key length too long' );
@@ -302,6 +369,9 @@ class CdbWriter_PHP extends CdbWriter {
 		$this->write( $buf );
 	}
 
+	/**
+	 * @throws MWException
+	 */
 	protected function finish() {
 		// Hack for DBA cross-check
 		$this->hplist = array_reverse( $this->hplist );

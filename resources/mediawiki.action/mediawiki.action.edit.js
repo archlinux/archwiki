@@ -1,30 +1,101 @@
-/* Note, there is still stuff in skins/common/edit.js that
- * has not been jQuery-ized.
- */
-
 (function( $ ) {
-	//make sure edit summary does not exceed byte limit
-	$( '#wpSummary' ).attr( 'maxLength', 250 ).keypress( function( e ) {
-		// first check to see if this is actually a character key
-		// being pressed.
-		// Based on key-event info from http://unixpapa.com/js/key.html
-		// JQuery should also normalize e.which to be consistent cross-browser,
-		// however the same check is still needed regardless of jQuery.
+	// currentFocus is used to determine where to insert tags
+	var currentFocused = $( '#wpTextbox1' );
+	
+	mw.toolbar = {
+		$toolbar : $( '#toolbar' ),
+		buttons : [],
+		// If you want to add buttons, use 
+		// mw.toolbar.addButton( imageFile, speedTip, tagOpen, tagClose, sampleText, imageId, selectText );
+		addButton : function() {
+			this.buttons.push( [].slice.call( arguments ) );
+		},
+		insertButton : function( imageFile, speedTip, tagOpen, tagClose, sampleText, imageId, selectText ) {
+			var image = $('<img>', {
+				width  : 23,
+				height : 22,
+				src    : imageFile,
+				alt    : speedTip,
+				title  : speedTip,
+				id     : imageId || '',
+				'class': 'mw-toolbar-editbutton'
+			} ).click( function() {
+				mw.toolbar.insertTags( tagOpen, tagClose, sampleText, selectText );
+				return false;
+			} );
 
-		if ( e.which === 0 || e.charCode === 0 || e.ctrlKey || e.altKey || e.metaKey ) {
-			return true; //a special key (backspace, etc) so don't interfere.
+			this.$toolbar.append( image );
+			return true;
+		},
+
+		// apply tagOpen/tagClose to selection in textarea,
+		// use sampleText instead of selection if there is none
+		insertTags : function( tagOpen, tagClose, sampleText, selectText) {
+			if ( currentFocused.length ) {
+				currentFocused.textSelection(
+					'encapsulateSelection', { 'pre': tagOpen, 'peri': sampleText, 'post': tagClose }
+				);
+			}
+		}, 
+		init : function() {
+			// Legacy
+			// Merge buttons from mwCustomEditButtons
+			var buttons = [].concat( this.buttons, window.mwCustomEditButtons );
+			for ( var i = 0; i < buttons.length; i++ ) {
+				if ( $.isArray( buttons[i] ) ) {
+					// Passes our button array as arguments
+					mw.toolbar.insertButton.apply( this, buttons[i] );
+				} else {
+					// Legacy mwCustomEditButtons is an object
+					var c = buttons[i];
+					mw.toolbar.insertButton( c.imageFile, c.speedTip, c.tagOpen, c.tagClose, c.sampleText, c.imageId, c.selectText );
+				}
+			}
+			return true;
 		}
+	};
 
-		// This basically figures out how many bytes a UTF-16 string (which is what js sees)
-		// will take in UTF-8 by replacing a 2 byte character with 2 *'s, etc, and counting that.
-		// Note, surrogate (\uD800-\uDFFF) characters are counted as 2 bytes, since there's two of them
-		// and the actual character takes 4 bytes in UTF-8 (2*2=4). Might not work perfectly in edge cases
-		// such as illegal sequences, but that should never happen.
+	//Legacy
+	window.addButton =  mw.toolbar.addButton;
+	window.insertTags = mw.toolbar.insertTags;
 
-		var len = this.value.replace( /[\u0080-\u07FF\uD800-\uDFFF]/g, '**' ).replace( /[\u0800-\uD7FF\uE000-\uFFFF]/g, '***' ).length;
-		//247 as this doesn't count character about to be inserted.
-		if ( len > 247 ) {
-			e.preventDefault();
+	//make sure edit summary does not exceed byte limit
+	$( '#wpSummary' ).byteLimit( 250 );
+	
+	$( document ).ready( function() {
+		/**
+		 * Restore the edit box scroll state following a preview operation,
+		 * and set up a form submission handler to remember this state
+		 */
+		var scrollEditBox = function() {
+			var editBox = document.getElementById( 'wpTextbox1' );
+			var scrollTop = document.getElementById( 'wpScrolltop' );
+			var $editForm = $( '#editform' );
+			if( $editForm.length && editBox && scrollTop ) {
+				if( scrollTop.value ) {
+					editBox.scrollTop = scrollTop.value;
+				}
+				$editForm.submit( function() {
+					scrollTop.value = editBox.scrollTop;
+				});
+			}
+		};
+		scrollEditBox();
+		
+		// Create button bar
+		mw.toolbar.init();
+		
+		$( 'textarea, input:text' ).focus( function() {
+			currentFocused = $(this);
+		});
+
+		// HACK: make currentFocused work with the usability iframe
+		// With proper focus detection support (HTML 5!) this'll be much cleaner
+		var iframe = $( '.wikiEditor-ui-text iframe' );
+		if ( iframe.length > 0 ) {
+			$( iframe.get( 0 ).contentWindow.document )
+				.add( iframe.get( 0 ).contentWindow.document.body ) // for IE
+				.focus( function() { currentFocused = iframe; } );
 		}
 	});
 })(jQuery);

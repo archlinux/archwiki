@@ -1,17 +1,4 @@
 <?php
-
-/**
- * The include paths change after this file is included from commandLine.inc,
- * meaning that require_once() fails to detect that it is including the same
- * file again. We use DIY C-style protection as a workaround.
- */
-
-// Hide this pattern from Doxygen, which spazzes out at it
-/// @cond
-if( !defined( 'SITE_CONFIGURATION' ) ){
-define( 'SITE_CONFIGURATION', 1 );
-/// @endcond
-
 /**
  * This is a class used to hold configuration settings, particularly for multi-wiki sites.
  */
@@ -149,6 +136,11 @@ class SiteConfiguration {
 	/**
 	 * Type-safe string replace; won't do replacements on non-strings
 	 * private?
+	 *
+	 * @param $from
+	 * @param $to
+	 * @param $in
+	 * @return string
 	 */
 	function doReplace( $from, $to, $in ) {
 		if( is_string( $in ) ) {
@@ -204,7 +196,11 @@ class SiteConfiguration {
 		return (bool)($this->get( $setting, $wiki, $suffix, array(), $wikiTags ) );
 	}
 
-	/** Retrieves an array of local databases */
+	/**
+	 * Retrieves an array of local databases
+	 *
+	 * @return array
+	 */
 	function &getLocalDatabases() {
 		return $this->wikis;
 	}
@@ -242,6 +238,11 @@ class SiteConfiguration {
 		$this->extractGlobalSetting( $setting, $wiki, $params );
 	}
 
+	/**
+	 * @param $setting string
+	 * @param $wiki string
+	 * @param $params array
+	 */
 	public function extractGlobalSetting( $setting, $wiki, $params ) {
 		$value = $this->getSetting( $setting, $wiki, $params );
 		if ( !is_null( $value ) ) {
@@ -288,8 +289,9 @@ class SiteConfiguration {
 			'params' => array(),
 		);
 
-		if( !is_callable( $this->siteParamsCallback ) )
+		if( !is_callable( $this->siteParamsCallback ) ) {
 			return $default;
+		}
 
 		$ret = call_user_func_array( $this->siteParamsCallback, array( $this, $wiki ) );
 		# Validate the returned value
@@ -339,6 +341,8 @@ class SiteConfiguration {
 	/**
 	 * Work out the site and language name from a database name
 	 * @param $db
+	 *
+	 * @return array
 	 */
 	public function siteFromDB( $db ) {
 		// Allow override
@@ -377,10 +381,14 @@ class SiteConfiguration {
 	 * On encountering duplicate keys, merge the two, but ONLY if they're arrays.
 	 * PHP's array_merge_recursive() merges ANY duplicate values into arrays,
 	 * which is not fun
+	 *
+	 * @param $array1 array
+	 *
+	 * @return array
 	 */
 	static function arrayMerge( $array1/* ... */ ) {
 		$out = $array1;
-		for( $i=1; $i < func_num_args(); $i++ ) {
+		for( $i = 1; $i < func_num_args(); $i++ ) {
 			foreach( func_get_arg( $i ) as $key => $value ) {
 				if ( isset($out[$key]) && is_array($out[$key]) && is_array($value) ) {
 					$out[$key] = self::arrayMerge( $out[$key], $value );
@@ -395,7 +403,7 @@ class SiteConfiguration {
 
 		return $out;
 	}
-	
+
 	public function loadFullData() {
 		if ($this->fullLoadCallback && !$this->fullLoadDone) {
 			call_user_func( $this->fullLoadCallback, $this );
@@ -403,4 +411,3 @@ class SiteConfiguration {
 		}
 	}
 }
-} // End of multiple inclusion guard

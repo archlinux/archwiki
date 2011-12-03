@@ -180,8 +180,6 @@ $messages = array(
 'extlink_tip'     => 'Легэтурэ екстернэ (ну уита префиксул http://)',
 'headline_sample' => 'Текст де титлу',
 'headline_tip'    => 'Титлу де нивел 2',
-'math_sample'     => 'Интроду формула аичь',
-'math_tip'        => 'Формулэ математикэ (LaTeX)',
 'nowiki_sample'   => 'Интроду текст неформатат аичь',
 'nowiki_tip'      => 'Игнорэ форматаря вики',
 'image_tip'       => 'Фишиер инсерат',
@@ -394,7 +392,7 @@ $messages = array(
 # Delete
 'deletepage'            => 'Штерӂе паӂина',
 'actioncomplete'        => 'Акциуне комплетэ',
-'deletedtext'           => 'Паӂина «<nowiki>$1</nowiki>» а фост штярсэ.
+'deletedtext'           => 'Паӂина «$1» а фост штярсэ.
 Везь $2 пентру о листэ а елементелор штерсе речент.',
 'deletedarticle'        => 'а штерс «[[$1]]»',
 'dellogpage'            => 'Журнал штерӂерь',
@@ -413,7 +411,7 @@ $messages = array(
 'protectexpiry'               => 'Експирэ:',
 'protect_expiry_invalid'      => 'Тимпул де експираре ну есте валид.',
 'protect_expiry_old'          => 'Тимпул де експираре есте ын трекут.',
-'protect-text'                => "Поць визуализа сау модифика нивелул де протекцие пентру паӂина '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "Поць визуализа сау модифика нивелул де протекцие пентру паӂина '''$1'''.",
 'protect-locked-access'       => "Контул тэу ну аре пермисиуня де а скимба нивелуриле де протежаре а паӂиний.
 Аичь сынт сетэриле куренте пентру паӂина '''$1''':",
 'protect-cascadeon'           => 'Ачастэ паӂинэ есте протежатэ деоарече есте инклусэ ын {{PLURAL:$1|урмэтоаря паӂинэ, че аре|урмэтоареле паӂинь, че ау}} активитатэ протежаря ла модификаре ын каскадэ.
@@ -548,11 +546,10 @@ $messages = array(
 'tooltip-rollback'                => "«Ревино» анулязэ модификаря/модификэриле де пе ачастэ паӂинэ а ултимулуй контрибуитор принтр'о сингурэ апэсаре",
 
 # Media information
-'file-info-size'       => '$1 × $2 пиксель, мэриме фишиер: $3, тип MIME: $4',
-'file-nohires'         => '<small>Резолуций май марь ну сынт диспонибиле.</small>',
-'svg-long-desc'        => 'фишиер SVG, ку дименсиуня номиналэ де $1 × $2 пиксель, мэриме фишиер: $3',
-'show-big-image'       => 'Мэреште резолуция имаӂиний',
-'show-big-image-thumb' => '<small>Мэримя ачестей превизуализэрь: $1 × $2 пиксель</small>',
+'file-info-size' => '$1 × $2 пиксель, мэриме фишиер: $3, тип MIME: $4',
+'file-nohires'   => '<small>Резолуций май марь ну сынт диспонибиле.</small>',
+'svg-long-desc'  => 'фишиер SVG, ку дименсиуня номиналэ де $1 × $2 пиксель, мэриме фишиер: $3',
+'show-big-image' => 'Мэреште резолуция имаӂиний',
 
 # Bad image list
 'bad_image_list' => 'Форматул есте умэторул:
@@ -569,7 +566,7 @@ $messages = array(
 
 # External editor support
 'edit-externally'      => 'Едитязэ ачест фишиер фолосинд о апликацие екстернэ',
-'edit-externally-help' => '(Везь [http://www.mediawiki.org/wiki/Manual:External_editors инструкциунь де инсталаре] пентру май мулте информаций)',
+'edit-externally-help' => '(Везь [//www.mediawiki.org/wiki/Manual:External_editors инструкциунь де инсталаре] пентру май мулте информаций)',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'тоате',

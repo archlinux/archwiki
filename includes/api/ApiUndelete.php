@@ -1,10 +1,10 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Jul 3, 2007
  *
- * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@home.nl
+ * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,11 +43,11 @@ class ApiUndelete extends ApiBase {
 		$params = $this->extractRequestParams();
 
 		if ( !$wgUser->isAllowed( 'undelete' ) ) {
-			$this->dieUsageMsg( array( 'permdenied-undelete' ) );
+			$this->dieUsageMsg( 'permdenied-undelete' );
 		}
 
 		if ( $wgUser->isBlocked() ) {
-			$this->dieUsageMsg( array( 'blockedtext' ) );
+			$this->dieUsageMsg( 'blockedtext' );
 		}
 
 		$titleObj = Title::newFromText( $params['title'] );
@@ -69,7 +69,7 @@ class ApiUndelete extends ApiBase {
 		$pa = new PageArchive( $titleObj );
 		$retval = $pa->undelete( ( isset( $params['timestamps'] ) ? $params['timestamps'] : array() ), $params['reason'] );
 		if ( !is_array( $retval ) ) {
-			$this->dieUsageMsg( array( 'cannotundelete' ) );
+			$this->dieUsageMsg( 'cannotundelete' );
 		}
 
 		if ( $retval[1] ) {
@@ -103,7 +103,8 @@ class ApiUndelete extends ApiBase {
 			'token' => null,
 			'reason' => '',
 			'timestamps' => array(
-				ApiBase::PARAM_ISMULTI => true
+				ApiBase::PARAM_TYPE => 'timestamp',
+				ApiBase::PARAM_ISMULTI => true,
 			),
 			'watchlist' => array(
 				ApiBase::PARAM_DFLT => 'preferences',
@@ -158,7 +159,11 @@ class ApiUndelete extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Undelete';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiUndelete.php 74098 2010-10-01 20:12:50Z reedy $';
+		return __CLASS__ . ': $Id: ApiUndelete.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

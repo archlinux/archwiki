@@ -45,7 +45,7 @@ class WebRequest {
 	private $response;
 
 	public function __construct() {
-		/// @todo Fixme: this preemptive de-quoting can interfere with other web libraries
+		/// @todo FIXME: This preemptive de-quoting can interfere with other web libraries
 		///        and increases our memory footprint. It would be cleaner to do on
 		///        demand; but currently we have no wrapper for $_SERVER etc.
 		$this->checkMagicQuotes();
@@ -53,6 +53,119 @@ class WebRequest {
 		// POST overrides GET data
 		// We don't use $_REQUEST here to avoid interference from cookies...
 		$this->data = $_POST + $_GET;
+	}
+
+	/**
+	 * Extract the PATH_INFO variable even when it isn't a reasonable
+	 * value. On some large webhosts, PATH_INFO includes the script
+	 * path as well as everything after it.
+	 *
+	 * @param $want string: If this is not 'all', then the function
+	 * will return an empty array if it determines that the URL is
+	 * inside a rewrite path.
+	 *
+	 * @return Array: 'title' key is the title of the article.
+	 */
+	static public function getPathInfo( $want = 'all' ) {
+		// PATH_INFO is mangled due to http://bugs.php.net/bug.php?id=31892
+		// And also by Apache 2.x, double slashes are converted to single slashes.
+		// So we will use REQUEST_URI if possible.
+		$matches = array();
+		if ( !empty( $_SERVER['REQUEST_URI'] ) ) {
+			// Slurp out the path portion to examine...
+			$url = $_SERVER['REQUEST_URI'];
+			if ( !preg_match( '!^https?://!', $url ) ) {
+				$url = 'http://unused' . $url;
+			}
+			$a = parse_url( $url );
+			if( $a ) {
+				$path = isset( $a['path'] ) ? $a['path'] : '';
+
+				global $wgScript;
+				if( $path == $wgScript && $want !== 'all' ) {
+					// Script inside a rewrite path?
+					// Abort to keep from breaking...
+					return $matches;
+				}
+				// Raw PATH_INFO style
+				$matches = self::extractTitle( $path, "$wgScript/$1" );
+
+				global $wgArticlePath;
+				if( !$matches && $wgArticlePath ) {
+					$matches = self::extractTitle( $path, $wgArticlePath );
+				}
+
+				global $wgActionPaths;
+				if( !$matches && $wgActionPaths ) {
+					$matches = self::extractTitle( $path, $wgActionPaths, 'action' );
+				}
+
+				global $wgVariantArticlePath, $wgContLang;
+				if( !$matches && $wgVariantArticlePath ) {
+					$variantPaths = array();
+					foreach( $wgContLang->getVariants() as $variant ) {
+						$variantPaths[$variant] =
+							str_replace( '$2', $variant, $wgVariantArticlePath );
+					}
+					$matches = self::extractTitle( $path, $variantPaths, 'variant' );
+				}
+			}
+		} elseif ( isset( $_SERVER['ORIG_PATH_INFO'] ) && $_SERVER['ORIG_PATH_INFO'] != '' ) {
+			// Mangled PATH_INFO
+			// http://bugs.php.net/bug.php?id=31892
+			// Also reported when ini_get('cgi.fix_pathinfo')==false
+			$matches['title'] = substr( $_SERVER['ORIG_PATH_INFO'], 1 );
+
+		} elseif ( isset( $_SERVER['PATH_INFO'] ) && ($_SERVER['PATH_INFO'] != '') ) {
+			// Regular old PATH_INFO yay
+			$matches['title'] = substr( $_SERVER['PATH_INFO'], 1 );
+		}
+
+		return $matches;
+	}
+
+	/**
+	 * Work out an appropriate URL prefix containing scheme and host, based on
+	 * information detected from $_SERVER
+	 *
+	 * @return string
+	 */
+	public static function detectServer() {
+		list( $proto, $stdPort ) = self::detectProtocolAndStdPort();
+
+		$varNames = array( 'HTTP_HOST', 'SERVER_NAME', 'HOSTNAME', 'SERVER_ADDR' );
+		$host = 'localhost';
+		$port = $stdPort;
+		foreach ( $varNames as $varName ) {
+			if ( !isset( $_SERVER[$varName] ) ) {
+				continue;
+			}
+			$parts = IP::splitHostAndPort( $_SERVER[$varName] );
+			if ( !$parts ) {
+				// Invalid, do not use
+				continue;
+			}
+			$host = $parts[0];
+			if ( $parts[1] === false ) {
+				if ( isset( $_SERVER['SERVER_PORT'] ) ) {
+					$port = $_SERVER['SERVER_PORT'];
+				} // else leave it as $stdPort
+			} else {
+				$port = $parts[1];
+			}
+			break;
+		}
+
+		return $proto . '://' . IP::combineHostAndPort( $host, $port, $stdPort );
+	}
+	
+	public static function detectProtocolAndStdPort() {
+		return ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' ) ? array( 'https', 443 ) : array( 'http', 80 );
+	}
+	
+	public static function detectProtocol() {
+		list( $proto, $stdPort ) = self::detectProtocolAndStdPort();
+		return $proto;
 	}
 
 	/**
@@ -65,66 +178,13 @@ class WebRequest {
 	public function interpolateTitle() {
 		global $wgUsePathInfo;
 
-		// bug 16019: title interpolation on API queries is useless and possible harmful
+		// bug 16019: title interpolation on API queries is useless and sometimes harmful
 		if ( defined( 'MW_API' ) ) {
 			return;
 		}
 
 		if ( $wgUsePathInfo ) {
-			// PATH_INFO is mangled due to http://bugs.php.net/bug.php?id=31892
-			// And also by Apache 2.x, double slashes are converted to single slashes.
-			// So we will use REQUEST_URI if possible.
-			$matches = array();
-
-			if ( !empty( $_SERVER['REQUEST_URI'] ) ) {
-				// Slurp out the path portion to examine...
-				$url = $_SERVER['REQUEST_URI'];
-				if ( !preg_match( '!^https?://!', $url ) ) {
-					$url = 'http://unused' . $url;
-				}
-				$a = parse_url( $url );
-				if( $a ) {
-					$path = isset( $a['path'] ) ? $a['path'] : '';
-
-					global $wgScript;
-					if( $path == $wgScript ) {
-						// Script inside a rewrite path?
-						// Abort to keep from breaking...
-						return;
-					}
-					// Raw PATH_INFO style
-					$matches = $this->extractTitle( $path, "$wgScript/$1" );
-
-					global $wgArticlePath;
-					if( !$matches && $wgArticlePath ) {
-						$matches = $this->extractTitle( $path, $wgArticlePath );
-					}
-
-					global $wgActionPaths;
-					if( !$matches && $wgActionPaths ) {
-						$matches = $this->extractTitle( $path, $wgActionPaths, 'action' );
-					}
-
-					global $wgVariantArticlePath, $wgContLang;
-					if( !$matches && $wgVariantArticlePath ) {
-						$variantPaths = array();
-						foreach( $wgContLang->getVariants() as $variant ) {
-							$variantPaths[$variant] =
-								str_replace( '$2', $variant, $wgVariantArticlePath );
-						}
-						$matches = $this->extractTitle( $path, $variantPaths, 'variant' );
-					}
-				}
-			} elseif ( isset( $_SERVER['ORIG_PATH_INFO'] ) && $_SERVER['ORIG_PATH_INFO'] != '' ) {
-				// Mangled PATH_INFO
-				// http://bugs.php.net/bug.php?id=31892
-				// Also reported when ini_get('cgi.fix_pathinfo')==false
-				$matches['title'] = substr( $_SERVER['ORIG_PATH_INFO'], 1 );
-
-			} elseif ( isset( $_SERVER['PATH_INFO'] ) && ($_SERVER['PATH_INFO'] != '') ) {
-				// Regular old PATH_INFO yay
-				$matches['title'] = substr( $_SERVER['PATH_INFO'], 1 );
-			}
+			$matches = self::getPathInfo( 'title' );
 			foreach( $matches as $key => $val) {
 				$this->data[$key] = $_GET[$key] = $_REQUEST[$key] = $val;
 			}
@@ -141,7 +201,7 @@ class WebRequest {
 	 *             passed on as the value of this URL parameter
 	 * @return array of URL variables to interpolate; empty if no match
 	 */
-	private function extractTitle( $path, $bases, $key=false ) {
+	private static function extractTitle( $path, $bases, $key = false ) {
 		foreach( (array)$bases as $keyValue => $base ) {
 			// Find the part after $wgArticlePath
 			$base = str_replace( '$1', '', $base );
@@ -211,7 +271,7 @@ class WebRequest {
 			}
 		} else {
 			global $wgContLang;
-			$data = $wgContLang->normalize( $data );
+			$data = isset( $wgContLang ) ? $wgContLang->normalize( $data ) : UtfNormal::cleanUp( $data );
 		}
 		return $data;
 	}
@@ -269,7 +329,7 @@ class WebRequest {
 	}
 
 	/**
-	 * Set an aribtrary value into our get/post data.
+	 * Set an arbitrary value into our get/post data.
 	 *
 	 * @param $key String: key name to use
 	 * @param $value Mixed: value to set
@@ -357,7 +417,7 @@ class WebRequest {
 	public function getBool( $name, $default = false ) {
 		return (bool)$this->getVal( $name, $default );
 	}
-	
+
 	/**
 	 * Fetch a boolean value from the input or return $default if not set.
 	 * Unlike getBool, the string "false" will result in boolean false, which is
@@ -409,6 +469,8 @@ class WebRequest {
 	 * Extracts the given named values into an array.
 	 * If no arguments are given, returns all input values.
 	 * No transformation is performed on the values.
+	 *
+	 * @return array
 	 */
 	public function getValues() {
 		$names = func_get_args();
@@ -425,6 +487,26 @@ class WebRequest {
 		}
 		return $retVal;
 	}
+
+	/**
+	 * Returns the names of all input values excluding those in $exclude.
+	 *
+	 * @param $exclude Array
+	 * @return array
+	 */
+	public function getValueNames( $exclude = array() ) {
+		return array_diff( array_keys( $this->getValues() ), $exclude );
+	}
+
+	/**
+	 * Get the values passed in the query string.
+	 * No transformation is performed on the values.
+	 *
+	 * @return Array
+	 */
+	 public function getQueryValues() {
+	 	return $_GET;
+	 }
 
 	/**
 	 * Returns true if the present request was reached by a POST operation,
@@ -471,15 +553,18 @@ class WebRequest {
 	}
 
 	/**
-	 * Return the path portion of the request URI.
+	 * Return the path and query string portion of the request URI.
+	 * This will be suitable for use as a relative link in HTML output.
 	 *
 	 * @return String
 	 */
 	public function getRequestURL() {
-		if( isset( $_SERVER['REQUEST_URI']) && strlen($_SERVER['REQUEST_URI']) ) {
+		if( isset( $_SERVER['REQUEST_URI'] ) && strlen( $_SERVER['REQUEST_URI'] ) ) {
 			$base = $_SERVER['REQUEST_URI'];
-		} elseif( isset( $_SERVER['SCRIPT_NAME'] ) ) {
+		} elseif ( isset( $_SERVER['HTTP_X_ORIGINAL_URL'] ) && strlen( $_SERVER['HTTP_X_ORIGINAL_URL'] ) ) {
 			// Probably IIS; doesn't set REQUEST_URI
+			$base = $_SERVER['HTTP_X_ORIGINAL_URL'];
+		} elseif( isset( $_SERVER['SCRIPT_NAME'] ) ) {
 			$base = $_SERVER['SCRIPT_NAME'];
 			if( isset( $_SERVER['QUERY_STRING'] ) && $_SERVER['QUERY_STRING'] != '' ) {
 				$base .= '?' . $_SERVER['QUERY_STRING'];
@@ -487,8 +572,8 @@ class WebRequest {
 		} else {
 			// This shouldn't happen!
 			throw new MWException( "Web server doesn't provide either " .
-				"REQUEST_URI or SCRIPT_NAME. Report details of your " .
-				"web server configuration to http://bugzilla.wikimedia.org/" );
+				"REQUEST_URI, HTTP_X_ORIGINAL_URL or SCRIPT_NAME. Report details " .
+				"of your web server configuration to http://bugzilla.wikimedia.org/" );
 		}
 		// User-agents should not send a fragment with the URI, but
 		// if they do, and the web server passes it on to us, we
@@ -498,7 +583,7 @@ class WebRequest {
 		if( $hash !== false ) {
 			$base = substr( $base, 0, $hash );
 		}
-		if( $base{0} == '/' ) {
+		if( $base[0] == '/' ) {
 			return $base;
 		} else {
 			// We may get paths with a host prepended; strip it.
@@ -507,13 +592,17 @@ class WebRequest {
 	}
 
 	/**
-	 * Return the request URI with the canonical service and hostname.
+	 * Return the request URI with the canonical service and hostname, path,
+	 * and query string. This will be suitable for use as an absolute link
+	 * in HTML or other output.
+	 * 
+	 * If $wgServer is protocol-relative, this will return a fully
+	 * qualified URL with the protocol that was used for this request.
 	 *
 	 * @return String
 	 */
 	public function getFullRequestURL() {
-		global $wgServer;
-		return $wgServer . $this->getRequestURL();
+		return wfExpandUrl( $this->getRequestURL(), PROTO_CURRENT );
 	}
 
 	/**
@@ -523,23 +612,7 @@ class WebRequest {
 	 * @return String
 	 */
 	public function appendQuery( $query ) {
-		global $wgTitle;
-		$basequery = '';
-		foreach( $_GET as $var => $val ) {
-			if ( $var == 'title' )
-				continue;
-			if ( is_array( $val ) )
-				/* This will happen given a request like
-				 * http://en.wikipedia.org/w/index.php?title[]=Special:Userlogin&returnto[]=Main_Page
-				 */
-				continue;
-			$basequery .= '&' . urlencode( $var ) . '=' . urlencode( $val );
-		}
-		$basequery .= '&' . $query;
-
-		# Trim the extra &
-		$basequery = substr( $basequery, 1 );
-		return $wgTitle->getLocalURL( $basequery );
+		return $this->appendQueryArray( wfCgiToArray( $query ) );
 	}
 
 	/**
@@ -552,6 +625,12 @@ class WebRequest {
 		return htmlspecialchars( $this->appendQuery( $query ) );
 	}
 
+	/**
+	 * @param $key
+	 * @param $value
+	 * @param $onlyquery bool
+	 * @return String
+	 */
 	public function appendQueryValue( $key, $value, $onlyquery = false ) {
 		return $this->appendQueryArray( array( $key => $value ), $onlyquery );
 	}
@@ -566,7 +645,7 @@ class WebRequest {
 	 */
 	public function appendQueryArray( $array, $onlyquery = false ) {
 		global $wgTitle;
-		$newquery = $_GET;
+		$newquery = $this->getQueryValues();
 		unset( $newquery['title'] );
 		$newquery = array_merge( $newquery, $array );
 		$query = wfArrayToCGI( $newquery );
@@ -621,7 +700,7 @@ class WebRequest {
 	/**
 	 * Return the size of the upload, or 0.
 	 *
-	 * @deprecated
+	 * @deprecated since 1.17
 	 * @param $key String:
 	 * @return integer
 	 */
@@ -660,7 +739,7 @@ class WebRequest {
 	/**
 	 * Return a WebRequestUpload object corresponding to the key
 	 *
-	 * @param @key string
+	 * @param $key string
 	 * @return WebRequestUpload
 	 */
 	public function getUpload( $key ) {
@@ -683,32 +762,52 @@ class WebRequest {
 	}
 
 	/**
-	 * Get a request header, or false if it isn't set
-	 * @param $name String: case-insensitive header name
+	 * Initialise the header list
 	 */
-	public function getHeader( $name ) {
-		$name = strtoupper( $name );
+	private function initHeaders() {
+		if ( count( $this->headers ) ) {
+			return;
+		}
+
 		if ( function_exists( 'apache_request_headers' ) ) {
-			if ( !$this->headers ) {
-				foreach ( apache_request_headers() as $tempName => $tempValue ) {
-					$this->headers[ strtoupper( $tempName ) ] = $tempValue;
-				}
-			}
-			if ( isset( $this->headers[$name] ) ) {
-				return $this->headers[$name];
-			} else {
-				return false;
+			foreach ( apache_request_headers() as $tempName => $tempValue ) {
+				$this->headers[ strtoupper( $tempName ) ] = $tempValue;
 			}
 		} else {
-			$name = 'HTTP_' . str_replace( '-', '_', $name );
-			if ( $name === 'HTTP_CONTENT_LENGTH' && !isset( $_SERVER[$name] ) ) {
-				$name = 'CONTENT_LENGTH';
+			foreach ( $_SERVER as $name => $value ) {
+				if ( substr( $name, 0, 5 ) === 'HTTP_' ) {
+					$name = str_replace( '_', '-',  substr( $name, 5 ) );
+					$this->headers[$name] = $value;
+				} elseif ( $name === 'CONTENT_LENGTH' ) {
+					$this->headers['CONTENT-LENGTH'] = $value;
+				}
 			}
-			if ( isset( $_SERVER[$name] ) ) {
-				return $_SERVER[$name];
-			} else {
-				return false;
-			}
+		}
+	}
+
+	/**
+	 * Get an array containing all request headers
+	 *
+	 * @return Array mapping header name to its value
+	 */
+	public function getAllHeaders() {
+		$this->initHeaders();
+		return $this->headers;
+	}
+
+	/**
+	 * Get a request header, or false if it isn't set
+	 * @param $name String: case-insensitive header name
+	 *
+	 * @return string|false
+	 */
+	public function getHeader( $name ) {
+		$this->initHeaders();
+		$name = strtoupper( $name );
+		if ( isset( $this->headers[$name] ) ) {
+			return $this->headers[$name];
+		} else {
+			return false;
 		}
 	}
 
@@ -736,10 +835,13 @@ class WebRequest {
 	}
 
 	/**
-	 * Check if Internet Explorer will detect an incorrect cache extension in 
+	 * Check if Internet Explorer will detect an incorrect cache extension in
 	 * PATH_INFO or QUERY_STRING. If the request can't be allowed, show an error
 	 * message or redirect to a safer URL. Returns true if the URL is OK, and
 	 * false if an error message has been shown and the request should be aborted.
+	 *
+	 * @param $extWhitelist array
+	 * @return bool
 	 */
 	public function checkUrlExtension( $extWhitelist = array() ) {
 		global $wgScriptExtension;
@@ -755,15 +857,18 @@ class WebRequest {
 			}
 			wfHttpError( 403, 'Forbidden',
 				'Invalid file extension found in the path info or query string.' );
-			
+
 			return false;
 		}
 		return true;
 	}
 
 	/**
-	 * Attempt to redirect to a URL with a QUERY_STRING that's not dangerous in 
+	 * Attempt to redirect to a URL with a QUERY_STRING that's not dangerous in
 	 * IE 6. Returns true if it was successful, false otherwise.
+	 *
+	 * @param $url string
+	 * @return bool
 	 */
 	protected function doSecurityRedirect( $url ) {
 		header( 'Location: ' . $url );
@@ -777,11 +882,11 @@ class WebRequest {
 <body>
 <h1>Security redirect</h1>
 <p>
-We can't serve non-HTML content from the URL you have requested, because 
+We can't serve non-HTML content from the URL you have requested, because
 Internet Explorer would interpret it as an incorrect and potentially dangerous
 content type.</p>
-<p>Instead, please use <a href="$encUrl">this URL</a>, which is the same as the URL you have requested, except that 
-"&amp;*" is appended. This prevents Internet Explorer from seeing a bogus file 
+<p>Instead, please use <a href="$encUrl">this URL</a>, which is the same as the URL you have requested, except that
+"&amp;*" is appended. This prevents Internet Explorer from seeing a bogus file
 extension.
 </p>
 </body>
@@ -806,8 +911,10 @@ HTML;
 	 * Also checks for anything that looks like a file extension at the end of
 	 * QUERY_STRING, since IE 6 and earlier will use this to get the file type
 	 * if there was no dot before the question mark (bug 28235).
+	 *
+	 * @deprecated Use checkUrlExtension().
 	 */
-	public function isPathInfoBad() {
+	public function isPathInfoBad( $extWhitelist = array() ) {
 		global $wgScriptExtension;
 		$extWhitelist[] = ltrim( $wgScriptExtension, '.' );
 		return IEUrlExtension::areServerVarsBad( $_SERVER, $extWhitelist );
@@ -844,7 +951,7 @@ HTML;
 		foreach ( $langs as $lang => $val ) {
 			if ( $val === '' ) {
 				$langs[$lang] = 1;
-			} else if ( $val == 0 ) {
+			} elseif ( $val == 0 ) {
 				unset($langs[$lang]);
 			}
 		}
@@ -1008,6 +1115,14 @@ class FauxRequest extends WebRequest {
 		return $this->data;
 	}
 
+	public function getQueryValues() {
+		if ( $this->wasPosted ) {
+			return array();
+		} else {
+			return $this->data;
+		}
+	}
+
 	public function wasPosted() {
 		return $this->wasPosted;
 	}
@@ -1018,28 +1133,6 @@ class FauxRequest extends WebRequest {
 
 	public function getRequestURL() {
 		$this->notImplemented( __METHOD__ );
-	}
-
-	public function appendQuery( $query ) {
-		global $wgTitle;
-		$basequery = '';
-		foreach( $this->data as $var => $val ) {
-			if ( $var == 'title' ) {
-				continue;
-			}
-			if ( is_array( $val ) ) {
-				/* This will happen given a request like
-				 * http://en.wikipedia.org/w/index.php?title[]=Special:Userlogin&returnto[]=Main_Page
-				 */
-				continue;
-			}
-			$basequery .= '&' . urlencode( $var ) . '=' . urlencode( $val );
-		}
-		$basequery .= '&' . $query;
-
-		# Trim the extra &
-		$basequery = substr( $basequery, 1 );
-		return $wgTitle->getLocalURL( $basequery );
 	}
 
 	public function getHeader( $name ) {
@@ -1057,6 +1150,10 @@ class FauxRequest extends WebRequest {
 
 	public function setSessionData( $key, $data ) {
 		$this->session[$key] = $data;
+	}
+
+	public function getSessionArray() {
+		return $this->session;
 	}
 
 	public function isPathInfoBad( $extWhitelist = array() ) {

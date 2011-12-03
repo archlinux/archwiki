@@ -7,6 +7,7 @@
  * @ingroup Language
  * @file
  *
+ * @author Reedy
  * @author Ukabia
  */
 
@@ -30,19 +31,19 @@ $namespaceNames = array(
 );
 
 $specialPageAliases = array(
-	'Userlogin'                 => array( 'Ọ\'bàniféÍBànyé' ),
-	'Userlogout'                => array( 'Ọ\'bàniféÍFụtá' ),
-	'Preferences'               => array( 'Ọtúm_dọsẹrẹ_ihem' ),
-	'Upload'                    => array( 'TinyéIheNélú' ),
 	'Allpages'                  => array( 'IhüNílé' ),
-	'Specialpages'              => array( 'IhüKá' ),
+	'Blankpage'                 => array( 'HịcháIhü' ),
 	'Export'                    => array( 'MēKọFùtá' ),
-	'Undelete'                  => array( 'Ábàkàshịkwàlà' ),
+	'Filepath'                  => array( 'UzọrAkwúkwóOrünotu' ),
 	'Import'                    => array( 'BàÍfé' ),
 	'Mypage'                    => array( 'IhüNkèm' ),
 	'Mytalk'                    => array( 'OkwuNkèm' ),
-	'Filepath'                  => array( 'UzọrAkwúkwóOrünotu' ),
-	'Blankpage'                 => array( 'HịcháIhü' ),
+	'Preferences'               => array( 'Ọtúm_dọsẹrẹ_ihem' ),
+	'Specialpages'              => array( 'IhüKá' ),
+	'Undelete'                  => array( 'Ábàkàshịkwàlà' ),
+	'Upload'                    => array( 'TinyéIheNélú' ),
+	'Userlogin'                 => array( 'Ọ\'bàniféÍBànyé' ),
+	'Userlogout'                => array( 'Ọ\'bàniféÍFụtá' ),
 );
 
 $magicWords = array(
@@ -186,14 +187,7 @@ $messages = array(
 'listingcontinuesabbrev'         => 'mewá.',
 'index-category'                 => 'Ẹdẹle Ihü',
 'noindex-category'               => 'Ihü ẹdẹlebu',
-
-'mainpagetext'      => "'''MediaWiki a banyélé nke oma.'''",
-'mainpagedocfooter' => "Gbàkpó [http://meta.wikimedia.org/wiki/Help:Contents Ǹdù Ọ'bànifé] màkà ụmá màkà Í jí ngwa nsónùsòrò bu wiki.
-
-== I bídó ==
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Ndétu ndósé ihe]
-* [http://www.mediawiki.org/wiki/Manual:FAQ FAQ MediaWiki]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce wéfù ndétu nke ozi MediaWiki]",
+'broken-file-category'           => 'Ihü nwere jkọdọ na ga fail gbajírí',
 
 'about'         => 'Abwátà',
 'article'       => 'Ihü ihe dị',
@@ -245,10 +239,10 @@ $messages = array(
 'history'           => 'Akíkó mbu nke ihü',
 'history_short'     => 'Akiko mbú',
 'updatedmarker'     => 'ihe gáráníru ké mgbe m byàrà nga mbu',
-'info_short'        => 'Ómárí',
 'printableversion'  => 'Nkè I nweríkí dotié',
 'permalink'         => 'Jikodo ekechịrị',
 'print'             => 'Dotié',
+'view'              => 'Zi',
 'edit'              => 'Mèzi',
 'create'            => 'Ké',
 'editthispage'      => 'Rüwa na ihü nka',
@@ -256,6 +250,7 @@ $messages = array(
 'delete'            => 'Kàcha',
 'deletethispage'    => 'Kàcha ihü nkea',
 'undelete_short'    => 'A gbakashikwala {{PLURAL:$1|orü otù|$1 orü}}',
+'viewdeleted_short' => 'Zi {{PLURAL:$1|orü otụ bakashịrị|orü $1 bakashịrị}}',
 'protect'           => 'Cẹdolu',
 'protect_change'    => 'gbanwe',
 'protectthispage'   => 'Cẹdolu ihü nka',
@@ -340,6 +335,8 @@ Lé [[Special:Version|ụdì ihü]].',
 'toc'                     => 'Ihe dị ime',
 'showtoc'                 => 'zi',
 'hidetoc'                 => 'zonari',
+'collapsible-collapse'    => 'Zekpùdo',
+'collapsible-expand'      => 'Gbásà',
 'thisisdeleted'           => 'Lé ma tinyechárá $1?',
 'viewdeleted'             => 'Lé $1?',
 'restorelink'             => '{{PLURAL:$1|orü otụ bakashịrị|orü $1 bakashịrị}}',
@@ -351,6 +348,8 @@ Lé [[Special:Version|ụdì ihü]].',
 'page-rss-feed'           => "''$1'' ntabì RSS",
 'page-atom-feed'          => "''$1'' ntabì Atom",
 'red-link-title'          => '$1 (ihü a di gì)',
+'sort-descending'         => 'Dozi shí àlà',
+'sort-ascending'          => 'Dozi shí élú',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'Ihü',
@@ -415,10 +414,9 @@ Orürü: $1<br />
 'protectedinterface'   => 'Ihü nè nyé édé nke mkpátá màkà ngwa nsónùsòrò, na ó cẹdolu gbò mmelụ.',
 'editinginterface'     => "'''Okwu egú:''' I na rü ihü né nyé ihu maka mkpurụ edemede nke eji-a-rü nka.
 Gbanwere më ihüa ga mètú ihu élélé nke onye-na-banife maka ndi ozor.
-Maka ikuwaria na asụsụ nke ozor, biko chetu I ji [http://translatewiki.net/wiki/Main_Page?setlang=ig translatewiki.net], ihe orü MediaWiki di na ama ama.",
+Maka ikuwaria na asụsụ nke ozor, biko chetu I ji [//translatewiki.net/wiki/Main_Page?setlang=ig translatewiki.net], ihe orü MediaWiki di na ama ama.",
 'sqlhidden'            => '(nchowa SQL zonari a zonari)',
 'namespaceprotected'   => "I weghị ike I rüwa élu ihü nor na '''$1''' áháama.",
-'customcssjsprotected' => 'Í nwéghi ọdà Í rü na ihü nka, maka ó nwèrè ihe doséré ka onye ozor na banife.',
 'ns-specialprotected'  => 'Ihü mkpà, a nweriki ru na ya.',
 
 # Virus scanner
@@ -462,7 +460,7 @@ Bíkó nwèré áhà nke ozor.",
 'noname'                  => 'I nyétubọ áhạ buwa di mkpà.',
 'loginsuccesstitle'       => 'I batala nke oma',
 'loginsuccess'            => "'''Í bátálá nke ọma na ime {{SITENAME}} na áhà \"\$1\".'''",
-'nosuchusershort'         => 'Ọ díghị ọ\'bànifé nwéré áhà nke "<nowiki>$1</nowiki>".
+'nosuchusershort'         => 'Ọ díghị ọ\'bànifé nwéré áhà nke "$1".
 Lèmá òtú Í dèrè ya.',
 'nouserspecified'         => 'I kweshiri nyetu áhà gi iji a rüoru.',
 'login-userblocked'       => 'Ha gbachịrị onye á ezi. Anaá kweté kör banyé.',
@@ -480,7 +478,7 @@ Biko meríáríá ya.',
 'usernamehasherror'       => "Áhè ọ'bànifé ènwéghịkị nwé nkárí",
 'loginlanguagelabel'      => 'Asụsụ: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Gbanwe okwu éjị à gáfe',
 'resetpass_header'          => 'Gbanwe okwúngáfè nke bùwá',
 'oldpassword'               => 'Mkpurụ okwu ejị a gafẹ ochië:',
@@ -494,6 +492,11 @@ I na á banye...',
 'resetpass-submit-cancel'   => 'Kàchá',
 'resetpass-temp-password'   => 'mkpurụ okwu ejị a gafẹ I gi kushi ngwa ngwa:',
 
+# Special:PasswordReset
+'passwordreset'              => 'Nkuwaria okwúngáfè',
+'passwordreset-emailelement' => "Áhà Ọ'banife: $1
+Passwod nke gi gbanwe: $2",
+
 # Edit page toolbar
 'bold_sample'     => 'Mkpúrù èdè íke',
 'bold_tip'        => 'Mkpúrù èdè íke',
@@ -505,8 +508,6 @@ I na á banye...',
 'extlink_tip'     => 'Jikodo nọr na ẹzí (chètá íshí http://)',
 'headline_sample' => 'Ahiri ishi mkpurụ edemede',
 'headline_tip'    => 'Larri 2 ishiahiri',
-'math_sample'     => 'Tinyé zùbe ómárí ngá',
-'math_tip'        => 'Ihe ọtùtù ọmúmú-ónúọgụgụ (LaTeX)',
 'nowiki_sample'   => 'Tinyé mkụrụ edemede enweghị ihe ọbula na ya ti ya nga',
 'nowiki_tip'      => 'É gekwàlà otu wiki shi edé',
 'image_tip'       => 'Njikota édé a pọrọgwụla',
@@ -762,7 +763,6 @@ Nwàné ótù okwu íshí na ihe Í nè tú jí ''háníle:'' Í tuó ihe nílé
 'changepassword'            => 'Gbanwe okwu éjị à gáfe',
 'prefs-skin'                => 'Akpụkpọ',
 'skin-preview'              => 'Lètú',
-'prefs-math'                => 'Ọmúmú-ónúọgụgụ',
 'datedefault'               => 'Otú é shị na dose ihe efù',
 'prefs-datetime'            => 'Ubochi na ogẹ',
 'prefs-personal'            => "Nkówá ọ'bànifé",
@@ -779,7 +779,6 @@ Nwàné ótù okwu íshí na ihe Í nè tú jí ''háníle:'' Í tuó ihe nílé
 'columns'                   => 'Ogìdì:',
 'searchresultshead'         => 'Chọwa',
 'resultsperpage'            => 'Nlé na ihü:',
-'contextlines'              => 'Ahịrị na nke nlé:',
 'stub-threshold-disabled'   => 'Ápụgị òkò',
 'timezonelegend'            => 'Nkeji ogẹ:',
 'localtime'                 => 'Ogẹ ebeanọr:',
@@ -1128,10 +1127,8 @@ Ubwa, o na ga [[$2]].',
 'watchlist'         => 'Ndetu ihem ne lé',
 'mywatchlist'       => 'Ndetu ihem ne lé',
 'watchlistfor2'     => 'Maka $1 $2',
-'addedwatch'        => 'Tìrì na ndétu nlé',
 'addedwatchtext'    => "Ihü \"[[:\$1]]\" à bányéré [[Special:Watchlist|ndétu ihe Í ne lé]].
 Ihe gi gbanwe na ógè gi bya nà ihüá na ihü okwu ya gi di ndétu ngáhù, na ihü gi da na mkpụrụ édé '''sírí íke''' ímé [[Special:RecentChanges|ndétu gbanwere méré na ogè nso]] ka ȯ dí òfelè Í hü ya.",
-'removedwatch'      => 'Wéfùrù shí ndétu ihe Í ne lé',
 'removedwatchtext'  => 'Ihü "[[:$1]]" à fwüó lá [[Special:Watchlist|ihe ndétu ihe Í ne lé]].',
 'watch'             => 'Hü',
 'watchthispage'     => 'Lèwá ihüá',
@@ -1161,7 +1158,7 @@ Ihe gi gbanwe na ógè gi bya nà ihüá na ihü okwu ya gi di ndétu ngáhù, n
 'confirmdeletetext'     => 'Í gálá Í gbákashiá ihü na ákíkó mbu ya.
 Biko sí nà ọ bụ ihe Í chọrọ, na Í mà ihe gi mè, na Í nè me ya kà yá na [[{{MediaWiki:Policy-url}}|òtù há nè mé ihe]] di óma.',
 'actioncomplete'        => 'Ọ méchá',
-'deletedtext'           => '"<nowiki>$1</nowiki>" à gbákáshíálá.
+'deletedtext'           => '"$1" à gbákáshíálá.
 Lé $2 màkà okwu gbásárá ihe ọ gbakashiri màkà.',
 'deletedarticle'        => 'gbakashịrị "[[$1]]"',
 'dellogpage'            => 'Ntínyé ngbákashị',
@@ -1182,7 +1179,7 @@ Lé $2 màkà okwu gbásárá ihe ọ gbakashiri màkà.',
 'protectexpiry'               => 'Gbá okà:',
 'protect_expiry_invalid'      => 'Ógẹ mgbe ó gị gbá ùkà adíghị ómá.',
 'protect_expiry_old'          => 'Ógẹ mgbe ȯ gbàrà úkà à gafele.',
-'protect-text'                => "Í nwèríkí lá mà Í gbanwe ncẹdolu ihü '''<nowiki>$1</nowiki>''' nke.",
+'protect-text'                => "Í nwèríkí lá mà Í gbanwe ncẹdolu ihü '''$1''' nke.",
 'protect-locked-access'       => "Bùwá gi ènwéghị òdạ Í gbanwe ncẹdolu ihü.
 Ngá bu ihe hé mèkwàrà nà ihü '''$1''':",
 'protect-cascadeon'           => ' Ihüá cẹdolu màkà ȯ dị nà {{PLURAL:$1|ihü, nwéré|ihü, ndi nwéré}} cẹdolu mgbàwéré dí.
@@ -1271,7 +1268,6 @@ Ngá bu ihe hé mèkwàrà nà ihü '''$1''':",
 'blockip'                  => "Kwàchí ọ'bànifé",
 'blockip-title'            => "Kwàchí ọ'bànifé",
 'blockip-legend'           => "Kwàchí ọ'bànifé",
-'ipaddress'                => 'Áhàebeíbị IP:',
 'ipadressorusername'       => "IP mà ọ bu áhà ọ'bànifé:",
 'ipbexpiry'                => 'Gbá okà:',
 'ipbreason'                => 'Mgbághapụtà:',
@@ -1476,7 +1472,6 @@ Biko meríáríá ozor.',
 'file-nohires'         => '<small>Nke káchá mmá na ányá àdíghị.</small>',
 'svg-long-desc'        => 'usòrò SVG, nà áhà pixel $1 × $2, ívụ usòrò: $3',
 'show-big-image'       => 'Hü ya ka o dị',
-'show-big-image-thumb' => '<small>Ívù nlétú nke: pixel $1 × $2</small>',
 'file-info-gif-looped' => 'etemte',
 
 # Special:NewFiles
@@ -1501,13 +1496,19 @@ Jikodo nke gị byá àzú na áhìrì nke òfu á bu nke nwéríkí gáfè, dí
 'metadata-collapse' => 'Zonari nkówá di ógólógó',
 'metadata-fields'   => 'Ómárí nso nke nkeji nke EXIF détùrù na ozi nká gí banyé na nlé ihü nhuunuche mgbè ómárí nso mgbe àgàdà gi dátù.
 Nke ozor gí zonari na áká onwe ha.
-* okíké
-* àtụ
-* úbochịógèmbuyá
-* háfùrù na anwü
-* onúf
-* nkówá íjè ISO
-* ógólógó focal',
+* make
+* model
+* datetimeoriginal
+* exposuretime
+* fnumber
+* isospeedratings
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-imagewidth'          => 'Àsáa',
@@ -1572,15 +1573,13 @@ Nke ozor gí zonari na áká onwe ha.
 
 # External editor support
 'edit-externally'      => 'Rüo na élú usòrò nke na ngwa ọrụ nsónùsòrò nke ọzȯ',
-'edit-externally-help' => '(Lé nà [http://www.mediawiki.org/wiki/Manual:External_editors nkụzí mbídó] màkà nkúzí ozor)',
+'edit-externally-help' => '(Lé nà [//www.mediawiki.org/wiki/Manual:External_editors nkụzí mbídó] màkà nkúzí ozor)',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'nke níle',
-'imagelistall'     => 'nke níle',
-'watchlistall2'    => 'nke níle',
-'namespacesall'    => 'nke níle',
-'monthsall'        => 'nke níle',
-'limitall'         => 'nke níle',
+'watchlistall2' => 'nke níle',
+'namespacesall' => 'nke níle',
+'monthsall'     => 'nke níle',
+'limitall'      => 'nke níle',
 
 # Trackbacks
 'trackbackremove' => '([$1 Kàcha])',

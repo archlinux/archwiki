@@ -5,35 +5,6 @@
  */
 
 /**
- * Definitions of the NS_ constants are in Defines.php
- * @private
- */
-$wgCanonicalNamespaceNames = array(
-	NS_MEDIA            => 'Media',
-	NS_SPECIAL          => 'Special',
-	NS_TALK             => 'Talk',
-	NS_USER             => 'User',
-	NS_USER_TALK        => 'User_talk',
-	NS_PROJECT          => 'Project',
-	NS_PROJECT_TALK     => 'Project_talk',
-	NS_FILE             => 'File',
-	NS_FILE_TALK        => 'File_talk',
-	NS_MEDIAWIKI        => 'MediaWiki',
-	NS_MEDIAWIKI_TALK   => 'MediaWiki_talk',
-	NS_TEMPLATE         => 'Template',
-	NS_TEMPLATE_TALK    => 'Template_talk',
-	NS_HELP             => 'Help',
-	NS_HELP_TALK        => 'Help_talk',
-	NS_CATEGORY         => 'Category',
-	NS_CATEGORY_TALK    => 'Category_talk',
-);
-
-/// @todo UGLY UGLY
-if( is_array( $wgExtraNamespaces ) ) {
-	$wgCanonicalNamespaceNames = $wgCanonicalNamespaceNames + $wgExtraNamespaces;
-}
-
-/**
  * This is a utility class with only static functions
  * for dealing with namespaces that encodes all the
  * "magic" behaviors of them based on index.  The textual
@@ -52,6 +23,24 @@ class MWNamespace {
 	 * but some things are just too ingrained now. :)
 	 */
 	private static $alwaysCapitalizedNamespaces = array( NS_SPECIAL, NS_USER, NS_MEDIAWIKI );
+
+	/**
+	 * Throw an exception when trying to get the subject or talk page
+	 * for a given namespace where it does not make sense.
+	 * Special namespaces are defined in includes/define.php and have
+	 * a value below 0 (ex: NS_SPECIAL = -1 , NS_MEDIA = -2)
+	 *
+	 * @param $index
+	 * @param $method
+	 *
+	 * @return true
+	 */
+	private static function isMethodValidFor( $index, $method ) {
+		if( $index < NS_MAIN ) {
+			throw new MWException( "$method does not make any sense for given namespace $index" );
+		}
+		return true;
+	}
 
 	/**
 	 * Can pages in the given namespace be moved?
@@ -92,6 +81,7 @@ class MWNamespace {
 	 * @return int
 	 */
 	public static function getTalk( $index ) {
+		self::isMethodValidFor( $index, __METHOD__ );
 		return self::isTalk( $index )
 			? $index
 			: $index + 1;
@@ -99,18 +89,48 @@ class MWNamespace {
 
 	/**
 	 * Get the subject namespace index for a given namespace
+	 * Special namespaces (NS_MEDIA, NS_SPECIAL) are always the subject.
 	 *
 	 * @param $index Int: Namespace index
 	 * @return int
 	 */
 	public static function getSubject( $index ) {
+		# Handle special namespaces
+		if( $index < NS_MAIN ) {
+			return $index;
+		}
+
 		return self::isTalk( $index )
 			? $index - 1
 			: $index;
 	}
 
 	/**
+	 * Get the associated namespace.
+	 * For talk namespaces, returns the subject (non-talk) namespace
+	 * For subject (non-talk) namespaces, returns the talk namespace
+	 *
+	 * @param $index Int: namespace index
+	 * @return int or null if no associated namespace could be found
+	 */
+	public static function getAssociated( $index ) {
+		self::isMethodValidFor( $index, __METHOD__ );
+
+		if( self::isMain( $index ) ) {
+			return self::getTalk( $index );
+		} elseif( self::isTalk( $index ) ) {
+			return self::getSubject( $index );
+		} else {
+			return null;
+		}
+	}
+
+	/**
 	 * Returns whether the specified namespace exists
+	 *
+	 * @param $index
+	 * 
+	 * @return bool
 	 */
 	public static function exists( $index ) {
 		$nslist = self::getCanonicalNamespaces();
@@ -237,6 +257,21 @@ class MWNamespace {
 	}
 
 	/**
+	 * Get a list of all namespace indices which are considered to contain content
+	 * @return array of namespace indices
+	 */
+	public static function getContentNamespaces() {
+		global $wgContentNamespaces;
+		if( !is_array( $wgContentNamespaces ) || $wgContentNamespaces === array() ) {
+			return NS_MAIN;
+		} elseif ( !in_array( NS_MAIN, $wgContentNamespaces ) ) {
+			// always force NS_MAIN to be part of array (to match the algorithm used by isContent)
+			return array_merge( array( NS_MAIN ), $wgContentNamespaces );
+		} else {
+			return $wgContentNamespaces;
+		}
+	}
+	/**
 	 * Is the namespace first-letter capitalized?
 	 *
 	 * @param $index int Index to check
@@ -261,4 +296,17 @@ class MWNamespace {
 		// Default to the global setting
 		return $wgCapitalLinks;
 	}
+
+	/**
+	 * Does the namespace (potentially) have different aliases for different
+	 * genders. Not all languages make a distinction here.
+	 *
+	 * @since 1.18
+	 * @param $index int Index to check
+	 * @return bool
+	 */
+	public static function hasGenderDistinction( $index ) {
+		return $index == NS_USER || $index == NS_USER_TALK;
+	}
+
 }

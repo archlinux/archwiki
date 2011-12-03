@@ -12,7 +12,12 @@
  * @ingroup Media
  */
 abstract class MediaTransformOutput {
-	var $file, $width, $height, $url, $page, $path;
+	/**
+	 * @var File
+	 */
+	var $file;
+
+	var $width, $height, $url, $page, $path;
 
 	/**
 	 * Get the width of the output box
@@ -45,7 +50,7 @@ abstract class MediaTransformOutput {
 	/**
 	 * Fetch HTML for this transform output
 	 *
-	 * @param $options Associative array of options. Boolean options
+	 * @param $options array Associative array of options. Boolean options
 	 *     should be indicated with a value of true for true, and false or
 	 *     absent for false.
 	 *
@@ -73,6 +78,11 @@ abstract class MediaTransformOutput {
 
 	/**
 	 * Wrap some XHTML text in an anchor tag with the given attributes
+	 *
+	 * @param $linkAttribs array
+	 * @param $contents string
+	 *
+	 * @return string
 	 */
 	protected function linkWrap( $linkAttribs, $contents ) {
 		if ( $linkAttribs ) {
@@ -82,6 +92,11 @@ abstract class MediaTransformOutput {
 		}
 	}
 
+	/**
+	 * @param $title string
+	 * @param $params array
+	 * @return array
+	 */
 	function getDescLinkAttribs( $title = null, $params = '' ) {
 		$query = $this->page ? ( 'page=' . urlencode( $this->page ) ) : '';
 		if( $params ) {
@@ -97,7 +112,6 @@ abstract class MediaTransformOutput {
 		return $attribs;
 	}
 }
-
 
 /**
  * Media transform output for images
@@ -131,7 +145,7 @@ class ThumbnailImage extends MediaTransformOutput {
 	 * Return HTML <img ... /> tag for the thumbnail, will include
 	 * width and height attributes and a blank alt text (as required).
 	 *
-	 * @param $options Associative array of options. Boolean options
+	 * @param $options array Associative array of options. Boolean options
 	 *     should be indicated with a value of true for true, and false or
 	 *     absent for false.
 	 *
@@ -212,8 +226,8 @@ class MediaTransformError extends MediaTransformOutput {
 		$htmlArgs = array_map( 'htmlspecialchars', $args );
 		$htmlArgs = array_map( 'nl2br', $htmlArgs );
 
-		$this->htmlMsg = wfMsgReplaceArgs( htmlspecialchars( wfMsgGetKey( $msg, true ) ), $htmlArgs );
-		$this->textMsg = wfMsgReal( $msg, $args );
+		$this->htmlMsg = wfMessage( $msg )->rawParams( $htmlArgs )->escaped();
+		$this->textMsg = wfMessage( $msg )->rawParams( $htmlArgs )->text();
 		$this->width = intval( $width );
 		$this->height = intval( $height );
 		$this->url = false;

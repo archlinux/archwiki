@@ -151,7 +151,6 @@ $messages = array(
 'go'                => 'Vàje',
 'history'           => "Verziune 'e primma",
 'history_short'     => 'Cronologgia',
-'info_short'        => 'Nfurmazzione',
 'printableversion'  => "Verzione pe' stampa",
 'permalink'         => 'Jonta permanente',
 'edit'              => 'Càgna',
@@ -236,7 +235,7 @@ Putite cuntinuà a ausà {{SITENAME}} comme n'utente senza nomme, o si nò putit
 'gotaccountlink'             => 'Tràse',
 'loginerror'                 => "Probblema 'e accièsso",
 'loginsuccesstitle'          => 'Acciesso affettuato',
-'nosuchusershort'            => 'Nun ce stanno utente cu o nòmme "<nowiki>$1</nowiki>". Cuntrolla si scrivìste buòno.',
+'nosuchusershort'            => 'Nun ce stanno utente cu o nòmme "$1". Cuntrolla si scrivìste buòno.',
 'nouserspecified'            => "Tiene 'a dìcere nu nomme pricìso.",
 'acct_creation_throttle_hit' => 'Ce dispiace, haje già criato $1 utente. Nun ne pô crià ate.',
 'accountcreated'             => 'Cunto criato',
@@ -360,7 +359,6 @@ Also see [[Special:WantedCategories|wanted categories]].",
 'linksearch-ok' => 'Truova',
 
 # Watchlist
-'addedwatch'   => 'Aggiunto ai Osservate Speciale tue',
 'watch'        => 'Secuta',
 'notanarticle' => 'Chesta paggena nun è na voce',
 
@@ -374,7 +372,7 @@ Also see [[Special:WantedCategories|wanted categories]].",
 'exbeforeblank'   => "'O cuntenuto apprimm' 'a ll'arrevacamento era: '$1'",
 'exblank'         => "'a paggena era vacante",
 'actioncomplete'  => 'Azzione fernuta',
-'deletedtext'     => 'Qauccheruno ha scancellata \'a paggena "<nowiki>$1</nowiki>".  Addumannà \'o $2 pe na lista d"e ppaggene scancellate urdemamente.',
+'deletedtext'     => 'Qauccheruno ha scancellata \'a paggena "$1".  Addumannà \'o $2 pe na lista d"e ppaggene scancellate urdemamente.',
 'deletedarticle'  => 'ha scancellato "[[$1]]"',
 'dellogpage'      => 'Scancellazione',
 'deletionlog'     => 'Log d"e scancellazione',
@@ -410,11 +408,10 @@ Also see [[Special:WantedCategories|wanted categories]].",
 'ipadressorusername' => 'Nnerizzo IP o nomme utente',
 'ipboptions'         => '2 ore:2 hours,1 juorno:1 day,3 juorne:3 days,1 semmana:1 week,2 semmane:2 weeks,1 mise:1 month,3 mese:3 months,6 mese:6 months,1 anno:1 year,infinito:infinite',
 'blockipsuccesssub'  => 'Blocco aseguito',
-'blocklistline'      => '$1, $2 ha fermato $3 ($4)',
 'blocklink'          => 'ferma',
 'blocklogpage'       => 'Blocche',
 'blocklogentry'      => 'ha fermato "[[$1]]" pe\' nu mumento \'e $2 $3',
-'blocklogtext'       => "Chesta è 'a lista d''e azzione 'e blocco e sblocco utente.  'E nnerizze IP bloccate automaticamente nun nce so'. Addumannà 'a [[Special:IPBlockList|lista IP bloccate]] pp' 'a lista d''e nnerizze e nomme utente 'o ca blocco nce sta.",
+'blocklogtext'       => "Chesta è 'a lista d''e azzione 'e blocco e sblocco utente.  'E nnerizze IP bloccate automaticamente nun nce so'. Addumannà 'a [[Special:BlockList|lista IP bloccate]] pp' 'a lista d''e nnerizze e nomme utente 'o ca blocco nce sta.",
 
 # Move page
 'movearticle'             => "Spusta 'a paggena",
@@ -452,10 +449,6 @@ Also see [[Special:WantedCategories|wanted categories]].",
 # Attribution
 'others' => 'ate',
 
-# Info page
-'numedits'    => "Nummero 'e cagnamiente (articulo): $1",
-'numwatchers' => "Nummero 'e asservature: $1",
-
 # Special:NewFiles
 'noimages' => "Nun nc'è nind' 'a veré.",
 'ilsubmit' => 'Truova',
@@ -474,7 +467,7 @@ Also see [[Special:WantedCategories|wanted categories]].",
 'exif-subjectdistancerange-0' => 'Scanusciuta',
 
 # External editor support
-'edit-externally-help' => "Pe piglià cchiù nfromma veré 'e [http://www.mediawiki.org/wiki/Manual:External_editors struzione] ('n ngrese)",
+'edit-externally-help' => "Pe piglià cchiù nfromma veré 'e [//www.mediawiki.org/wiki/Manual:External_editors struzione] ('n ngrese)",
 
 # 'all' in various places, this might be different for inflected languages
 'namespacesall' => 'Tutte',

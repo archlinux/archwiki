@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on May 13, 2007
  *
@@ -52,6 +52,10 @@ class ApiQueryCategories extends ApiQueryGeneratorBase {
 		$this->run( $resultPageSet );
 	}
 
+	/**
+	 * @param $resultPageSet ApiPageSet
+	 * @return
+	 */
 	private function run( $resultPageSet = null ) {
 		if ( $this->getPageSet()->getGoodTitleCount() == 0 ) {
 			return;	// nothing to do
@@ -100,7 +104,7 @@ class ApiQueryCategories extends ApiQueryGeneratorBase {
 		}
 
 		if ( isset( $show['hidden'] ) && isset( $show['!hidden'] ) ) {
-			$this->dieUsageMsg( array( 'show' ) );
+			$this->dieUsageMsg( 'show' );
 		}
 		if ( isset( $show['hidden'] ) || isset( $show['!hidden'] ) || isset( $prop['hidden'] ) )
 		{
@@ -246,7 +250,11 @@ class ApiQueryCategories extends ApiQueryGeneratorBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Properties#categories_.2F_cl';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryCategories.php 86474 2011-04-20 13:22:05Z catrope $';
+		return __CLASS__ . ': $Id: ApiQueryCategories.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

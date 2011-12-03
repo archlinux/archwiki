@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Sep 19, 2006
  *
@@ -146,11 +146,11 @@ abstract class ApiFormatBase extends ApiBase {
 			return; // skip any initialization
 		}
 
-		header( "Content-Type: $mime; charset=utf-8" );
+		$this->getMain()->getRequest()->response()->header( "Content-Type: $mime; charset=utf-8" );
 
 		if ( $isHtml ) {
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML>
 <html>
 <head>
 <?php if ( $this->mUnescapeAmps ) {
@@ -169,7 +169,7 @@ abstract class ApiFormatBase extends ApiBase {
 <small>
 You are looking at the HTML representation of the <?php echo( $this->mFormat ); ?> format.<br />
 HTML is good for debugging, but probably is not suitable for your application.<br />
-See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
+See <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 <a href='<?php echo( $script ); ?>'>API help</a> for more information.
 </small>
 <?php
@@ -257,15 +257,13 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 	 * @return string
 	 */
 	protected function formatHTML( $text ) {
-		global $wgUrlProtocols;
-
 		// Escape everything first for full coverage
 		$text = htmlspecialchars( $text );
 
 		// encode all comments or tags as safe blue strings
 		$text = preg_replace( '/\&lt;(!--.*?--|.*?)\&gt;/', '<span style="color:blue;">&lt;\1&gt;</span>', $text );
 		// identify URLs
-		$protos = implode( "|", $wgUrlProtocols );
+		$protos = wfUrlProtocolsWithoutProtRel();
 		// This regex hacks around bug 13218 (&quot; included in the URL)
 		$text = preg_replace( "#(($protos).*?)(&quot;)?([ \\'\"<>\n]|&lt;|&gt;|&quot;)#", '<a href="\\1">\\1</a>\\3\\4', $text );
 		// identify requests to api.php
@@ -294,12 +292,16 @@ See <a href='http://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 		return 'api.php?action=query&meta=siteinfo&siprop=namespaces&format=' . $this->getModuleName();
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Data_formats';
+	}
+
 	public function getDescription() {
 		return $this->getIsHtml() ? ' (pretty-print in HTML)' : '';
 	}
 
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiFormatBase.php 75970 2010-11-04 00:55:30Z reedy $';
+		return __CLASS__ . ': $Id: ApiFormatBase.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }
 
@@ -368,6 +370,6 @@ class ApiFormatFeedWrapper extends ApiFormatBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatBase.php 75970 2010-11-04 00:55:30Z reedy $';
+		return __CLASS__ . ': $Id: ApiFormatBase.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

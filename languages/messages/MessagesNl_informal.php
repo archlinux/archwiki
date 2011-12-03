@@ -35,21 +35,20 @@ Het kan ook wijzen op een fout in de software van {{SITENAME}}.',
 Een lijst met bestaande speciale pagina’s staat op [[Special:SpecialPages|speciale pagina’s]].',
 
 # General errors
-'missing-article'      => 'In de database is geen inhoud aangetroffen voor de pagina "$1" die er wel zou moeten zijn ($2).
+'missing-article'     => 'In de database is geen inhoud aangetroffen voor de pagina "$1" die er wel zou moeten zijn ($2).
 
 Dit kan voorkomen als je een verouderde verwijzing naar het verschil tussen twee versies van een pagina volgt of een versie opvraagt die is verwijderd.
 
 Als dit niet het geval is, heb je wellicht een fout in de software gevonden.
 Maak hiervan melding bij een [[Special:ListUsers/sysop|systeembeheerder]] van {{SITENAME}} en vermeld daarbij de URL van deze pagina.',
-'actionthrottledtext'  => 'Als maatregel tegen spam is het aantal keren per tijdseenheid dat je deze handeling kunt verrichten beperkt.
+'actionthrottledtext' => 'Als maatregel tegen spam is het aantal keren per tijdseenheid dat je deze handeling kunt verrichten beperkt.
 De limiet is overschreden.
 Probeer het over een aantal minuten opnieuw.',
-'viewsourcetext'       => 'Je kunt de brontekst van deze pagina bekijken en kopiëren:',
-'editinginterface'     => "'''Waarschuwing:''' Je bewerkt een pagina die gebruikt wordt door de software.
+'viewsourcetext'      => 'Je kunt de brontekst van deze pagina bekijken en kopiëren:',
+'editinginterface'    => "'''Waarschuwing:''' Je bewerkt een pagina die gebruikt wordt door de software.
 Bewerkingen op deze pagina beïnvloeden de gebruikersinterface van iedereen.
-Overweeg voor vertalingen om [http://translatewiki.net/wiki/Main_Page?setlang=nl translatewiki.net] te gebruiken, het vertalingsproject voor MediaWiki.",
-'namespaceprotected'   => "Je hebt geen rechten om pagina's in de naamruimte '''$1''' te bewerken.",
-'customcssjsprotected' => 'Je kunt deze pagina niet bewerken, omdat die persoonlijke instellingen van een andere gebruiker bevat.',
+Overweeg voor vertalingen om [//translatewiki.net/wiki/Main_Page?setlang=nl translatewiki.net] te gebruiken, het vertalingsproject voor MediaWiki.",
+'namespaceprotected'  => "Je hebt geen rechten om pagina's in de naamruimte '''$1''' te bewerken.",
 
 # Login and logout pages
 'logouttext'                 => "'''Je bent nu afgemeld.'''
@@ -108,7 +107,7 @@ Negeer dit bericht als deze gebruiker zonder jouw medeweten is aangemaakt.',
 Wacht even voordat je het opnieuw probeert.',
 'suspicious-userlogout'      => 'Je verzoek om af te melden is genegeerd, omdat het lijkt alsof het verzoek is verzonden door een browser of cacheproxy die stuk is.',
 
-# Password reset dialog
+# Change password dialog
 'resetpass_announce'      => 'Je bent aangemeld met een tijdelijke code die je per e-mail is toegezonden.
 Voer een nieuw wachtwoord in om het aanmelden te voltooien:',
 'resetpass_success'       => 'Je wachtwoord is gewijzigd.
@@ -178,7 +177,7 @@ Je kunt [[Special:Search/{{PAGENAME}}|naar deze term zoeken]] in andere pagina\'
 'noarticletext-nopermission'       => 'Deze pagina bevat geen tekst.
 Je kunt [[Special:Search/{{PAGENAME}}|naar deze term zoeken]] in andere pagina\'s of
 <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} de logboeken doorzoeken]</span>.',
-'userpage-userdoesnotexist'        => 'Je bewerkt een gebruikerspagina van een gebruiker die niet bestaat (gebruiker "$1").
+'userpage-userdoesnotexist'        => 'Je bewerkt een gebruikerspagina van een gebruiker die niet bestaat (gebruiker "<nowiki>$1</nowiki>").
 Controleer of je deze pagina wel wilt aanmaken/bewerken.',
 'clearyourcache'                   => "'''Let op! Nadat je de wijzigingen hebt opgeslagen is het wellicht nodig je browsercache te legen.'''
 
@@ -357,10 +356,6 @@ Raadpleeg het verwijderingslogboek voordat je verder gaat.',
 'uploadfromurl-queued'        => 'Je upload is in de wachtrij geplaatst.',
 'filewasdeleted'              => 'Er is eerder een bestand met deze naam verwijderd.
 Raadpleeg het $1 voordat je het opnieuw toevoegt.',
-'upload-wasdeleted'           => "'''Waarschuwing: je bent een bestand dat eerder verwijderd was aan het uploaden.'''
-
-Controleer of het inderdaad je bedoeling is dit bestand te uploaden.
-Het verwijderingslogboek van dit bestand kunt je hier zien:",
 'filename-bad-prefix'         => "De naam van het bestand dat je aan het uploaden bent begint met '''\"\$1\"''', wat een niet-beschrijvende naam is die meestal automatisch door een digitale camera wordt gegeven.
 Kies een duidelijke naam voor je bestand.",
 'upload-success-msg'          => 'Je upload van [$2] is geslaagd en is beschikbaar: [[:{{ns:file}}:$1]]',
@@ -447,13 +442,13 @@ Tenzij je deze pagina bezoekt, komen er geen verdere berichten. Op je volglijst 
 
 --
 Je kunt je volglijstinstellingen wijzigen op:
-{{fullurl:Special:Watchlist/edit}}
+{{canonicalurl:Special:Watchlist/edit}}
 
 Je kunt de pagina van uw volglijst verwijderen via de volgende verwijzing:
 $UNWATCHURL
 
 Feedback en andere assistentie:
-{{fullurl:{{MediaWiki:Helppage}}}}',
+{{canonicalurl:{{MediaWiki:Helppage}}}}',
 
 # Delete
 'historywarning'    => "'''Waarschuwing:''' de pagina die je wilt verwijderen heeft ongeveer $1 {{PLURAL:$1|versie|versies}}:",
@@ -466,7 +461,7 @@ Je handeling is gestopt uit voorzorg tegen een beveiligingsrisico (dat bestaat u
 Ga een pagina terug, laad die pagina opnieuw en probeer het nog eens.',
 
 # Protect
-'protect-text'           => "Hier kun je het beveiligingsniveau voor de pagina '''<nowiki>$1</nowiki>''' bekijken en wijzigen.",
+'protect-text'           => "Hier kun je het beveiligingsniveau voor de pagina '''$1''' bekijken en wijzigen.",
 'protect-locked-blocked' => "Je kunt het beveiligingsniveau niet wijzigen terwijl je geblokkeerd bent.
 Hier zijn de huidige instellingen voor de pagina '''$1''':",
 'protect-locked-access'  => "Je hebt geen rechten om het beveiligingsniveau te wijzigen.
@@ -481,8 +476,7 @@ Mogelijk heb je een verkeerde verwijzing of is de versie hersteld of verwijderd 
 'undelete-show-file-confirm' => 'Weet je zeker dat je een verwijderde versie van het bestand "<nowiki>$1</nowiki>" van $2 om $3 wil bekijken?',
 
 # Block/unblock
-'ipb-needreblock'             => '== Deze gebruiker is al geblokkeerd ==
-$1 is al geblokkeerd.
+'ipb-needreblock'             => '$1 is al geblokkeerd.
 Wil je de instellingen wijzigen?',
 'proxyblockreason'            => 'Dit is een automatische preventieve blokkade, omdat je gebruik maakt van een open proxyserver.
 Neem contact op met je Internet-provider of je helpdesk en stel die op de hoogte van dit ernstige beveiligingsprobleem.',
@@ -544,7 +538,7 @@ In het laatste geval kun je ook een verwijzing gebruiken, bijvoorbeeld [[{{#Spec
 
 # Namespace 8 related
 'allmessagestext' => 'Hieronder staan de systeemberichten uit de MediaWiki-naamruimte.
-Ga naar [http://www.mediawiki.org/wiki/Localisation MediaWiki-lokalisatie] en [http://translatewiki.net translatewiki.net] als je wilt bijdragen aan de algemene vertaling voor MediaWiki.',
+Ga naar [//www.mediawiki.org/wiki/Localisation MediaWiki-lokalisatie] en [//translatewiki.net translatewiki.net] als je wilt bijdragen aan de algemene vertaling voor MediaWiki.',
 
 # Special:Import
 'importtext' => 'Gebruik de [[Special:Export|exportfunctie]] in de wiki waar de informatie vandaan komt, sla de uitvoer op je eigen systeem op, en voeg die daarna hier toe.',
@@ -633,13 +627,13 @@ Bevestig dat je de pagina opnieuw wilt aanmaken.",
 'watchlistedit-noitems'        => 'Je volglijst bevat geen pagina’s.',
 'watchlistedit-normal-explain' => 'Hieronder worden de pagina’s op je volglijst weergegeven.
 Klik op het vierkantje ernaast en daarna op "{{int:Watchlistedit-normal-submit}}" om een pagina te verwijderen.
-Je kunt ook de [[Special:Watchlist/raw|ruwe lijst bewerken]].',
+Je kunt ook de [[Special:EditWatchlist/raw|ruwe lijst bewerken]].',
 'watchlistedit-normal-done'    => 'Er {{PLURAL:$1|is 1 pagina|zijn $1 pagina’s}} verwijderd van je volglijst:',
 'watchlistedit-raw-explain'    => 'Hieronder staan pagina’s op je volglijst.
 Je kunt de lijst bewerken door pagina’s te verwijderen en toe te voegen.
 Eén pagina per regel.
 Als je klaar bent, klik dan op "{{int:Watchlistedit-raw-submit}}".
-Je kunt ook [[Special:Watchlist/edit|het standaard bewerkingsscherm gebruiken]].',
+Je kunt ook [[Special:EditWatchlist|het standaard bewerkingsscherm gebruiken]].',
 'watchlistedit-raw-done'       => 'Jr volglijst is bijgewerkt.',
 
 # Special:Version
@@ -647,7 +641,7 @@ Je kunt ook [[Special:Watchlist/edit|het standaard bewerkingsscherm gebruiken]].
 
 MediaWiki wordt verspreid in de hoop dat het nuttig is, maar ZONDER ENIGE GARANTIE; zonder zelfs de implicitiete garantie van VERKOOPBAARHEID of GESCHIKHEID VOOR ENIG DOEL IN HET BIJZONDER. Zie de GNU General Public License voor meer informatie.
 
-Samen met dit programma hoor je een [{{SERVER}}{{SCRIPTPATH}}/COPYING kopie van de GNU General Public License] te hebben ontvangen; zo niet, schrijf dan naar de Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA of [http://www.gnu.org/licenses/old-licenses/gpl-2.0.html lees de licentie online].',
+Samen met dit programma hoor je een [{{SERVER}}{{SCRIPTPATH}}/COPYING kopie van de GNU General Public License] te hebben ontvangen; zo niet, schrijf dan naar de Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA of [//www.gnu.org/licenses/old-licenses/gpl-2.0.html lees de licentie online].',
 
 # Database error messages
 'dberr-usegoogle' => 'Wellicht kun je in de tussentijd zoeken via Google.',

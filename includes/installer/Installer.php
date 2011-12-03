@@ -73,6 +73,7 @@ abstract class Installer {
 		'postgres',
 		'oracle',
 		'sqlite',
+		'ibm_db2',
 	);
 
 	/**
@@ -98,6 +99,7 @@ abstract class Installer {
 		'envCheckCache',
 		'envCheckDiff3',
 		'envCheckGraphics',
+		'envCheckServer',
 		'envCheckPath',
 		'envCheckExtension',
 		'envCheckShellLocale',
@@ -130,6 +132,7 @@ abstract class Installer {
 		'wgDiff3',
 		'wgImageMagickConvertCommand',
 		'IP',
+		'wgServer',
 		'wgScriptPath',
 		'wgScriptExtension',
 		'wgMetaNamespace',
@@ -236,6 +239,10 @@ abstract class Installer {
 	 * @var array
 	 */
 	public $licenses = array(
+		'cc-by' => array(
+			'url' => 'http://creativecommons.org/licenses/by/3.0/',
+			'icon' => '{$wgStylePath}/common/images/cc-by.png',
+		),
 		'cc-by-sa' => array(
 			'url' => 'http://creativecommons.org/licenses/by-sa/3.0/',
 			'icon' => '{$wgStylePath}/common/images/cc-by-sa.png',
@@ -249,14 +256,10 @@ abstract class Installer {
 			'icon' => '{$wgStylePath}/common/images/cc-0.png',
 		),
 		'pd' => array(
-			'url' => 'http://creativecommons.org/licenses/publicdomain/',
+			'url' => '',
 			'icon' => '{$wgStylePath}/common/images/public-domain.png',
 		),
-		'gfdl-old' => array(
-			'url' => 'http://www.gnu.org/licenses/old-licenses/fdl-1.2.html',
-			'icon' => '{$wgStylePath}/common/images/gnu-fdl.png',
-		),
-		'gfdl-current' => array(
+		'gfdl' => array(
 			'url' => 'http://www.gnu.org/copyleft/fdl.html',
 			'icon' => '{$wgStylePath}/common/images/gnu-fdl.png',
 		),
@@ -310,7 +313,7 @@ abstract class Installer {
 	 * Constructor, always call this from child classes.
 	 */
 	public function __construct() {
-		global $wgExtensionMessagesFiles, $wgUser, $wgHooks;
+		global $wgExtensionMessagesFiles, $wgUser;
 
 		// Disable the i18n cache and LoadBalancer
 		Language::getLocalisationCache()->disableBackend();
@@ -329,12 +332,14 @@ abstract class Installer {
 			$this->settings[$var] = $GLOBALS[$var];
 		}
 
+		$compiledDBs = array();
 		foreach ( self::getDBTypes() as $type ) {
 			$installer = $this->getDBInstaller( $type );
 
 			if ( !$installer->isCompiled() ) {
 				continue;
 			}
+			$compiledDBs[] = $type;
 
 			$defaults = $installer->getGlobalDefaults();
 
@@ -346,6 +351,7 @@ abstract class Installer {
 				}
 			}
 		}
+		$this->setVar( '_CompiledDBs', $compiledDBs );
 
 		$this->parserTitle = Title::newFromText( 'Installer' );
 		$this->parserOptions = new ParserOptions; // language will  be wrong :(
@@ -354,6 +360,8 @@ abstract class Installer {
 
 	/**
 	 * Get a list of known DB types.
+	 *
+	 * @return array
 	 */
 	public static function getDBTypes() {
 		return self::$dbTypes;
@@ -557,6 +565,9 @@ abstract class Installer {
 		return $html;
 	}
 
+	/**
+	 * @return ParserOptions
+	 */
 	public function getParserOptions() {
 		return $this->parserOptions;
 	}
@@ -573,6 +584,10 @@ abstract class Installer {
 	/**
 	 * Install step which adds a row to the site_stats table with appropriate
 	 * initial values.
+	 *
+	 * @param $installer DatabaseInstaller
+	 *
+	 * @return Status
 	 */
 	public function populateSiteStats( DatabaseInstaller $installer ) {
 		$status = $installer->getConnection();
@@ -609,24 +624,15 @@ abstract class Installer {
 	protected function envCheckDB() {
 		global $wgLang;
 
-		$compiledDBs = array();
 		$allNames = array();
 
 		foreach ( self::getDBTypes() as $name ) {
-			$db = $this->getDBInstaller( $name );
-			$readableName = wfMsg( 'config-type-' . $name );
-
-			if ( $db->isCompiled() ) {
-				$compiledDBs[] = $name;
-			}
-			$allNames[] = $readableName;
+			$allNames[] = wfMsg( "config-type-$name" );
 		}
 
-		$this->setVar( '_CompiledDBs', $compiledDBs );
-
-		if ( !$compiledDBs ) {
+		if ( !$this->getVar( '_CompiledDBs' ) ) {
 			$this->showError( 'config-no-db', $wgLang->commaList( $allNames ) );
-			// FIXME: this only works for the web installer!
+			// @todo FIXME: This only works for the web installer!
 			return false;
 		}
 
@@ -834,6 +840,15 @@ abstract class Installer {
 	}
 
 	/**
+	 * Environment check for the server hostname.
+	 */
+	protected function envCheckServer() {
+		$server = WebRequest::detectServer();
+		$this->showMessage( 'config-using-server', $server );
+		$this->setVar( 'wgServer', $server );
+	}
+
+	/**
 	 * Environment check for setting $IP and $wgScriptPath.
 	 */
 	protected function envCheckPath() {
@@ -841,31 +856,15 @@ abstract class Installer {
 		$IP = dirname( dirname( dirname( __FILE__ ) ) );
 
 		$this->setVar( 'IP', $IP );
-
-		// PHP_SELF isn't available sometimes, such as when PHP is CGI but
-		// cgi.fix_pathinfo is disabled. In that case, fall back to SCRIPT_NAME
-		// to get the path to the current script... hopefully it's reliable. SIGH
-		if ( !empty( $_SERVER['PHP_SELF'] ) ) {
-			$path = $_SERVER['PHP_SELF'];
-		} elseif ( !empty( $_SERVER['SCRIPT_NAME'] ) ) {
-			$path = $_SERVER['SCRIPT_NAME'];
-		} elseif ( $this->getVar( 'wgScriptPath' ) ) {
-			// Some kind soul has set it for us already (e.g. debconf)
-			return true;
-		} else {
-			$this->showError( 'config-no-uri' );
-			return false;
-		}
-
-		$uri = preg_replace( '{^(.*)/(mw-)?config.*$}', '$1', $path );
-		$this->setVar( 'wgScriptPath', $uri );
+		$this->showMessage( 'config-using-uri', $this->getVar( 'wgServer' ), $this->getVar( 'wgScriptPath' ) );
+		return true;
 	}
 
 	/**
 	 * Environment check for setting the preferred PHP file extension.
 	 */
 	protected function envCheckExtension() {
-		// FIXME: detect this properly
+		// @todo FIXME: Detect this properly
 		if ( defined( 'MW_INSTALL_PHP5_EXT' ) ) {
 			$ext = 'php5';
 		} else {
@@ -951,10 +950,10 @@ abstract class Installer {
 	 * TODO: document
 	 */
 	protected function envCheckUploadsDirectory() {
-		global $IP, $wgServer;
+		global $IP;
 
 		$dir = $IP . '/images/';
-		$url = $wgServer . $this->getVar( 'wgScriptPath' ) . '/images/';
+		$url = $this->getVar( 'wgServer' ) . $this->getVar( 'wgScriptPath' ) . '/images/';
 		$safe = !$this->dirIsExecutable( $dir, $url );
 
 		if ( $safe ) {
@@ -972,7 +971,10 @@ abstract class Installer {
 	protected function envCheckSuhosinMaxValueLength() {
 		$maxValueLength = ini_get( 'suhosin.get.max_value_length' );
 		if ( $maxValueLength > 0 ) {
-			$this->showMessage( 'config-suhosin-max-value-length', $maxValueLength );
+			if( $maxValueLength < 1024 ) {
+				# Only warn if the value is below the sane 1024
+				$this->showMessage( 'config-suhosin-max-value-length', $maxValueLength );
+			}
 		} else {
 			$maxValueLength = -1;
 		}
@@ -988,12 +990,12 @@ abstract class Installer {
 		$c = hexdec($c);
 		if ($c <= 0x7F) {
 			return chr($c);
-		} else if ($c <= 0x7FF) {
+		} elseif ($c <= 0x7FF) {
 			return chr(0xC0 | $c >> 6) . chr(0x80 | $c & 0x3F);
-		} else if ($c <= 0xFFFF) {
+		} elseif ($c <= 0xFFFF) {
 			return chr(0xE0 | $c >> 12) . chr(0x80 | $c >> 6 & 0x3F)
 				. chr(0x80 | $c & 0x3F);
-		} else if ($c <= 0x10FFFF) {
+		} elseif ($c <= 0x10FFFF) {
 			return chr(0xF0 | $c >> 18) . chr(0x80 | $c >> 12 & 0x3F)
 				. chr(0x80 | $c >> 6 & 0x3F)
 				. chr(0x80 | $c & 0x3F);
@@ -1168,6 +1170,8 @@ abstract class Installer {
 
 	/**
 	 * ParserOptions are constructed before we determined the language, so fix it
+	 *
+	 * @param $lang Language
 	 */
 	public function setParserLanguage( $lang ) {
 		$this->parserOptions->setTargetLanguage( $lang );
@@ -1193,11 +1197,14 @@ abstract class Installer {
 		}
 
 		$exts = array();
-		$dir = $this->getVar( 'IP' ) . '/extensions';
-		$dh = opendir( $dir );
+		$extDir = $this->getVar( 'IP' ) . '/extensions';
+		$dh = opendir( $extDir );
 
 		while ( ( $file = readdir( $dh ) ) !== false ) {
-			if( file_exists( "$dir/$file/$file.php" ) ) {
+			if( !is_dir( "$extDir/$file" ) ) {
+				continue;
+			}
+			if( file_exists( "$extDir/$file/$file.php" ) ) {
 				$exts[] = $file;
 			}
 		}
@@ -1224,10 +1231,12 @@ abstract class Installer {
 		 * @see https://bugzilla.wikimedia.org/show_bug.cgi?id=26857
 		 */
 		global $wgAutoloadClasses;
+		$wgAutoloadClasses = array();
+
 		require( "$IP/includes/DefaultSettings.php" );
 
 		foreach( $exts as $e ) {
-   			require_once( $IP . '/extensions' . "/$e/$e.php" );
+   			require_once( "$IP/extensions/$e/$e.php" );
 		}
 
 		$hooksWeWant = isset( $wgHooks['LoadExtensionSchemaUpdates'] ) ?
@@ -1514,5 +1523,15 @@ abstract class Installer {
 	 */
 	public function addInstallStep( $callback, $findStep = 'BEGINNING' ) {
 		$this->extraInstallSteps[$findStep][] = $callback;
+	}
+
+	/**
+	 * Disable the time limit for execution.
+	 * Some long-running pages (Install, Upgrade) will want to do this
+	 */
+	protected function disableTimeLimit() {
+		wfSuppressWarnings();
+		set_time_limit( 0 );
+		wfRestoreWarnings();
 	}
 }

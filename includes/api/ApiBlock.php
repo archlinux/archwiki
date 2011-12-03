@@ -1,10 +1,10 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Sep 4, 2007
  *
- * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@home.nl
+ * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +37,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  */
 class ApiBlock extends ApiBase {
 
-	/**
-	 * Std ctor.
-	 */
 	public function __construct( $main, $action ) {
 		parent::__construct( $main, $action );
 	}
@@ -51,56 +48,71 @@ class ApiBlock extends ApiBase {
 	 * of success. If it fails, the result will specify the nature of the error.
 	 */
 	public function execute() {
-		global $wgUser, $wgBlockAllowsUTEdit;
+		global $wgUser;
 		$params = $this->extractRequestParams();
 
 		if ( $params['gettoken'] ) {
-			$res['blocktoken'] = $wgUser->editToken();
+			$res['blocktoken'] = $wgUser->editToken( '', $this->getMain()->getRequest() );
 			$this->getResult()->addValue( null, $this->getModuleName(), $res );
 			return;
 		}
 
 		if ( !$wgUser->isAllowed( 'block' ) ) {
-			$this->dieUsageMsg( array( 'cantblock' ) );
+			$this->dieUsageMsg( 'cantblock' );
 		}
 		# bug 15810: blocked admins should have limited access here
 		if ( $wgUser->isBlocked() ) {
-			$status = IPBlockForm::checkUnblockSelf( $params['user'] );
+			$status = SpecialBlock::checkUnblockSelf( $params['user'] );
 			if ( $status !== true ) {
 				$this->dieUsageMsg( array( $status ) );
 			}
 		}
 		if ( $params['hidename'] && !$wgUser->isAllowed( 'hideuser' ) ) {
-			$this->dieUsageMsg( array( 'canthide' ) );
+			$this->dieUsageMsg( 'canthide' );
 		}
-		if ( $params['noemail'] && !IPBlockForm::canBlockEmail( $wgUser ) ) {
-			$this->dieUsageMsg( array( 'cantblock-email' ) );
+		if ( $params['noemail'] && !SpecialBlock::canBlockEmail( $wgUser ) ) {
+			$this->dieUsageMsg( 'cantblock-email' );
 		}
 
-		$form = new IPBlockForm( '' );
-		$form->BlockAddress = $params['user'];
-		$form->BlockReason = ( is_null( $params['reason'] ) ? '' : $params['reason'] );
-		$form->BlockReasonList = 'other';
-		$form->BlockExpiry = ( $params['expiry'] == 'never' ? 'infinite' : $params['expiry'] );
-		$form->BlockOther = '';
-		$form->BlockAnonOnly = $params['anononly'];
-		$form->BlockCreateAccount = $params['nocreate'];
-		$form->BlockEnableAutoblock = $params['autoblock'];
-		$form->BlockEmail = $params['noemail'];
-		$form->BlockHideName = $params['hidename'];
-		$form->BlockAllowUsertalk = $params['allowusertalk'] && $wgBlockAllowsUTEdit;
-		$form->BlockReblock = $params['reblock'];
+		$data = array(
+			'Target' => $params['user'],
+			'Reason' => array(
+				is_null( $params['reason'] ) ? '' : $params['reason'],
+				'other',
+				is_null( $params['reason'] ) ? '' : $params['reason']
+			),
+			'Expiry' => $params['expiry'] == 'never' ? 'infinite' : $params['expiry'],
+			'HardBlock' => !$params['anononly'],
+			'CreateAccount' => $params['nocreate'],
+			'AutoBlock' => $params['autoblock'],
+			'DisableEmail' => $params['noemail'],
+			'HideUser' => $params['hidename'],
+			'DisableUTEdit' => $params['allowusertalk'],
+			'AlreadyBlocked' => $params['reblock'],
+			'Watch' => $params['watchuser'],
+			'Confirm' => true,
+		);
 
-		$userID = $expiry = null;
-		$retval = $form->doBlock( $userID, $expiry );
-		if ( count( $retval ) ) {
+		$retval = SpecialBlock::processForm( $data );
+		if ( $retval !== true ) {
 			// We don't care about multiple errors, just report one of them
 			$this->dieUsageMsg( $retval );
 		}
 
+		list( $target, /*...*/ ) = SpecialBlock::getTargetAndType( $params['user'] );
 		$res['user'] = $params['user'];
-		$res['userID'] = intval( $userID );
-		$res['expiry'] = ( $expiry == Block::infinity() ? 'infinite' : wfTimestamp( TS_ISO_8601, $expiry ) );
+		$res['userID'] = $target instanceof User ? $target->getId() : 0;
+
+		$block = Block::newFromTarget( $target );
+		if( $block instanceof Block ){
+			$res['expiry'] = $block->mExpiry == wfGetDB( DB_SLAVE )->getInfinity()
+				? 'infinite'
+				: wfTimestamp( TS_ISO_8601, $block->mExpiry );
+		} else {
+			# should be unreachable
+			$res['expiry'] = '';
+		}
+
 		$res['reason'] = $params['reason'];
 		if ( $params['anononly'] ) {
 			$res['anononly'] = '';
@@ -119,6 +131,9 @@ class ApiBlock extends ApiBase {
 		}
 		if ( $params['allowusertalk'] ) {
 			$res['allowusertalk'] = '';
+		}
+		if ( $params['watchuser'] ) {
+			$res['watchuser'] = '';
 		}
 
 		$this->getResult()->addValue( null, $this->getModuleName(), $res );
@@ -149,6 +164,7 @@ class ApiBlock extends ApiBase {
 			'hidename' => false,
 			'allowusertalk' => false,
 			'reblock' => false,
+			'watchuser' => false,
 		);
 	}
 
@@ -166,6 +182,7 @@ class ApiBlock extends ApiBase {
 			'hidename' => 'Hide the username from the block log. (Requires the "hideuser" right.)',
 			'allowusertalk' => 'Allow the user to edit their own talk page (depends on $wgBlockAllowsUTEdit)',
 			'reblock' => 'If the user is already blocked, overwrite the existing block',
+			'watchuser' => 'Watch the user/IP\'s user and talk pages',
 		);
 	}
 
@@ -198,7 +215,11 @@ class ApiBlock extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Block';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiBlock.php 77192 2010-11-23 22:05:27Z btongminh $';
+		return __CLASS__ . ': $Id: ApiBlock.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

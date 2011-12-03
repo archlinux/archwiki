@@ -11,6 +11,21 @@
  *      - fetch metadata from source wiki for each file to import.
  *      - commit the fetched metadata to the destination wiki while submitting.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Maintenance
  * @author Rob Church <robchur@gmail.com>
@@ -81,7 +96,7 @@ if ( count( $args ) > 0 ) {
 			die( "failed to read comment file: {$options['comment-file']}\n" );
 		}
 	}
-	else if ( isset( $options['comment'] ) ) {
+	elseif ( isset( $options['comment'] ) ) {
 		$comment =  $options['comment'];
 	}
 
@@ -197,7 +212,9 @@ if ( count( $args ) > 0 ) {
 			} else {
 				$archive = $image->publish( $file );
 				if ( !$archive->isGood() ) {
-					echo( "failed.\n" );
+					echo( "failed. (" .
+						$archive->getWikiText() .
+						")\n" );
 					$failed++;
 					continue;
 				}
@@ -224,7 +241,7 @@ if ( count( $args ) > 0 ) {
 
 			if ( isset( $options['dry'] ) ) {
 				echo( "done.\n" );
-			} else if ( $image->recordUpload( $archive->value, $commentText, $license ) ) {
+			} elseif ( $image->recordUpload( $archive->value, $commentText, $license ) ) {
 				# We're done!
 				echo( "done.\n" );
 				if ( $doProtect ) {
@@ -232,8 +249,8 @@ if ( count( $args ) > 0 ) {
 						$article = new Article( $title );
 						echo "\nWaiting for slaves...\n";
 						// Wait for slaves.
-						sleep( 2.0 );
-						wfWaitForSlaves( 1.0 );
+						sleep( 2.0 ); # Why this sleep?
+						wfWaitForSlaves();
 
 						echo( "\nSetting image restrictions ... " );
 						if ( $article->updateRestrictions( $restrictions ) )
@@ -243,7 +260,7 @@ if ( count( $args ) > 0 ) {
 				}
 
 			} else {
-				echo( "failed.\n" );
+				echo( "failed. (at recordUpload stage)\n" );
 				$svar = 'failed';
 			}
 

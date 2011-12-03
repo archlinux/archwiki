@@ -1,10 +1,10 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on December 12, 2007
  *
- * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@home.nl
+ * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,10 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 		$this->run( $resultPageSet );
 	}
 
+	/**
+	 * @param $resultPageSet ApiPageSet
+	 * @return void
+	 */
 	private function run( $resultPageSet = null ) {
 		$db = $this->getDB();
 		$params = $this->extractRequestParams();
@@ -64,6 +68,10 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 		$from = ( is_null( $params['from'] ) ? null : $this->titlePartToKey( $params['from'] ) );
 		$to = ( is_null( $params['to'] ) ? null : $this->titlePartToKey( $params['to'] ) );
 		$this->addWhereRange( 'cat_title', $dir, $from, $to );
+
+		$min = $params['min'];
+		$max = $params['max'];
+		$this->addWhereRange( 'cat_pages', $dir, $min, $max );
 
 		if ( isset( $params['prefix'] ) ) {
 			$this->addWhere( 'cat_title' . $db->buildLike( $this->titlePartToKey( $params['prefix'] ), $db->anyString() ) );
@@ -144,6 +152,14 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 					'descending'
 				),
 			),
+			'min' => array(
+				ApiBase::PARAM_DFLT => null,
+				ApiBase::PARAM_TYPE => 'integer'
+			),
+			'max' => array(
+				ApiBase::PARAM_DFLT => null,
+				ApiBase::PARAM_TYPE => 'integer'
+			),
 			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
 				ApiBase::PARAM_TYPE => 'limit',
@@ -165,6 +181,8 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 			'to' => 'The category to stop enumerating at',
 			'prefix' => 'Search for all category titles that begin with this value',
 			'dir' => 'Direction to sort in',
+			'min' => 'Minimum number of category members',
+			'max' => 'Maximum number of category members',
 			'limit' => 'How many categories to return',
 			'prop' => array(
 				'Which properties to get',
@@ -185,7 +203,11 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Allcategories';
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryAllCategories.php 70647 2010-08-07 19:59:42Z ialex $';
+		return __CLASS__ . ': $Id: ApiQueryAllCategories.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

@@ -98,7 +98,6 @@ $messages = array(
 'searcharticle'    => 'Và',
 'history'          => 'Cronolugia',
 'history_short'    => 'Cronolugia',
-'info_short'       => 'Infurmazione',
 'permalink'        => 'Ligame permanente',
 'print'            => 'Stampà',
 'edit'             => 'Mudificà',
@@ -178,7 +177,7 @@ $messages = array(
 'accountcreatedtext'         => "U registramentu di l'utilizatore $1 hè statu fattu.",
 'loginlanguagelabel'         => 'Lingua: $1',
 
-# Password reset dialog
+# Change password dialog
 'retypenew' => 'Scrive torna a nova parulla secreta:',
 
 # Edit page toolbar
@@ -230,7 +229,6 @@ U to indirizzu IP serà registratu indu a cronolugia di ista pagina.",
 # Preferences page
 'preferences'       => 'Preferenze',
 'mypreferences'     => 'Preferenze',
-'prefs-math'        => 'Matematica',
 'prefs-rc'          => 'Ultimi cambiamenti',
 'prefs-watchlist'   => 'Articuli seguitati',
 'columns'           => 'Culonne:',
@@ -371,7 +369,6 @@ U to indirizzu IP serà registratu indu a cronolugia di ista pagina.",
 # Watchlist
 'watchlist'   => 'Articuli seguitati',
 'mywatchlist' => 'Articuli seguitati',
-'addedwatch'  => "Aghjuntu à u listinu di l'articuli seguitati",
 'watch'       => 'Seguità',
 
 'enotif_reset'       => 'Marcà tutte e pagine visitate',
@@ -424,11 +421,10 @@ U to indirizzu IP serà registratu indu a cronolugia di ista pagina.",
 'istemplate' => 'inclusione',
 
 # Block/unblock
-'ipaddress'                => 'Adrizzu IP',
 'ipadressorusername'       => 'Adrizzu IP o nome di cuntributore',
 'ipbreason'                => 'Mutivu:',
+'blocklist-reason'         => 'Mutivu',
 'ipblocklist-submit'       => 'Ricerca',
-'blocklistline'            => '$1, $2 bluccati $3 ($4)',
 'anononlyblock'            => 'solu i cuntributori anonimi',
 'blocklink'                => 'bluccà',
 'unblocklink'              => 'sbluccà',
@@ -490,9 +486,6 @@ U to indirizzu IP serà registratu indu a cronolugia di ista pagina.",
 'anonymous' => '{{PLURAL:$1|Utilizatore anonimu|Utilizatori anonimi}} di {{SITENAME}}',
 'others'    => 'altri',
 
-# Math errors
-'math_syntax_error' => 'errore di sintassa',
-
 # Media information
 'show-big-image' => 'Imagine in alta resoluzione',
 
@@ -521,7 +514,6 @@ U to indirizzu IP serà registratu indu a cronolugia di ista pagina.",
 'exif-saturation-0' => 'Nurmale',
 
 # 'all' in various places, this might be different for inflected languages
-'imagelistall'  => 'tutte',
 'watchlistall2' => 'tutti',
 'monthsall'     => 'tutti',
 

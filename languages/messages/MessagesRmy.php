@@ -211,7 +211,7 @@ Mishto si te jas kai {{SITENAME}} thai te paruves tiro lav sigo.',
 'accountcreated'             => 'Akount kerdo',
 'accountcreatedtext'         => 'Kerdo o akonto le jenesko ko $1.',
 
-# Password reset dialog
+# Change password dialog
 'oldpassword' => 'Purano nakahvipnasko lav',
 'newpassword' => 'Nevo nakhavipnasko lav:',
 
@@ -270,15 +270,12 @@ Kana avilyan kathe doshatar, ja palpale.',
 'preferences'    => 'Kamimata',
 'changepassword' => 'Paruv o nakhavipnasko lav',
 'prefs-skin'     => 'Dikhimos',
-'prefs-math'     => 'Matematika',
 'datedefault'    => 'Ni ekh kamipen',
 'prefs-datetime' => 'Dives thai chaso',
 'prefs-rc'       => 'Neve paruvimata',
 'saveprefs'      => 'Uxtav le kamimata',
 'resetprefs'     => 'Thov le kamimata sar ko shirdipen',
 'columns'        => 'Uche vortorina:',
-'contextlines'   => 'Vortorinyango gin pe avimos:',
-'contextchars'   => 'Grafemengo gin pe ekh vortorin:',
 'localtime'      => 'Thanutno vaxt',
 'timezoneoffset' => 'Ververipen',
 'guesstimezone'  => 'Le les katar o browser',
@@ -384,7 +381,6 @@ Kana avilyan kathe doshatar, ja palpale.',
 # Watchlist
 'watchlist'        => 'Dikhipnaske lekha',
 'mywatchlist'      => 'Dikhipnaske lekha',
-'addedwatch'       => 'Thovdi ando patrinipen le patrinyange so arakhav len',
 'addedwatchtext'   => 'I patrin "[[:$1]]" sas thovdi andi tiri lista [[Special:Watchlist|le artikolengi so dikhes len]].
 Le neve paruvimata andar kadale patrya thai andar lenge vakyarimatenge patrya thona kathe, vi dikhena pen le <b>thule semnurenca</b> andi patrin le [[Special:RecentChanges|neve paruvimatenge]].
 
@@ -406,7 +402,7 @@ Kana kamesa te khoses kadaya patrin andar tiri lista le patryange so arakhes len
 'exblank'         => 'i patrin sas chuchi',
 'historywarning'  => 'Dikh! La patrya so kames to khoses la si la puranipen:',
 'actioncomplete'  => 'Agorisardi buti',
-'deletedtext'     => '"<nowiki>$1</nowiki>" sas khosli.
+'deletedtext'     => '"$1" sas khosli.
 Dikh ando $2 ek patrinipen le palutne butyange khosle.',
 'deletedarticle'  => '"[[$1]]" sas khosli.',
 
@@ -521,13 +517,6 @@ Dikh ando $2 ek patrinipen le palutne butyange khosle.',
 'others'           => 'aver',
 'siteusers'        => 'Jeno/e kai {{SITENAME}} $1',
 
-# Math errors
-'math_unknown_error'    => 'bijangli dosh',
-'math_unknown_function' => 'bijangli funkciya',
-'math_syntax_error'     => 'sintaksaki dosh',
-'math_bad_output'       => 'Nashti te kerel pes vai te lekhavel po matematikano direktoro kai del pes avri.',
-'math_notexvc'          => 'Nai o kerditori (eksekutabilo) texvc; dikh math/README te labyares les.',
-
 # Image deletion
 'deletedrevision' => 'Khoslo o purano paruvipen $1',
 
@@ -540,10 +529,8 @@ Dikh ando $2 ek patrinipen le palutne butyange khosle.',
 'ilsubmit'     => 'Rod',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'sa',
-'imagelistall'     => 'savore',
-'watchlistall2'    => 'savore',
-'namespacesall'    => 'savore',
+'watchlistall2' => 'savore',
+'namespacesall' => 'savore',
 
 # Trackbacks
 'trackbacklink' => 'Vurma',

@@ -12,6 +12,7 @@
  * @author Amikeco
  * @author ArnoLagrange
  * @author Castelobranco
+ * @author Iketsi
  * @author Jens Liebenau
  * @author Lucas
  * @author LyzTyphone
@@ -68,96 +69,99 @@ $namespaceAliases = array(
 );
 
 $specialPageAliases = array(
-	'DoubleRedirects'           => array( 'Duoblaj_alidirektiloj' ),
+	'Activeusers'               => array( 'Aktivaj_uzantoj' ),
+	'Allmessages'               => array( 'Ĉiuj_mesaĝoj' ),
+	'Allpages'                  => array( 'Ĉiuj_paĝoj' ),
+	'Ancientpages'              => array( 'Malnovaj_paĝoj' ),
+	'Blankpage'                 => array( 'Malplena_paĝo' ),
+	'Block'                     => array( 'Forbari_IP-adreson' ),
+	'Blockme'                   => array( 'Forbari_min' ),
+	'Booksources'               => array( 'Citoj_el_libroj' ),
 	'BrokenRedirects'           => array( 'Rompitaj_alidirektiloj' ),
-	'Disambiguations'           => array( 'Apartigiloj' ),
-	'Userlogin'                 => array( 'Ensaluti' ),
-	'Userlogout'                => array( 'Elsaluti' ),
+	'Categories'                => array( 'Kategorioj' ),
+	'ChangePassword'            => array( 'Ŝanĝi_pasvorton' ),
+	'ComparePages'              => array( 'Komparu_paĝojn' ),
+	'Confirmemail'              => array( 'Konfirmi_per_retpoŝto' ),
+	'Contributions'             => array( 'Kontribuoj' ),
 	'CreateAccount'             => array( 'Krei_konton' ),
-	'Preferences'               => array( 'Preferoj' ),
-	'Watchlist'                 => array( 'Atentaro' ),
-	'Recentchanges'             => array( 'Lastaj_ŝanĝoj' ),
-	'Upload'                    => array( 'Alŝuti' ),
+	'Deadendpages'              => array( 'Paĝoj_sen_interna_ligilo' ),
+	'DeletedContributions'      => array( 'Forigitaj_kontribuoj' ),
+	'Disambiguations'           => array( 'Apartigiloj' ),
+	'DoubleRedirects'           => array( 'Duoblaj_alidirektiloj' ),
+	'Emailuser'                 => array( 'Retpoŝti_uzanton' ),
+	'Export'                    => array( 'Eksporti' ),
+	'Fewestrevisions'           => array( 'Plej_malmultaj_revizioj' ),
+	'FileDuplicateSearch'       => array( 'Serĉi_pri_duoblaj_dosieroj' ),
+	'Filepath'                  => array( 'Dosiero-pado' ),
+	'Import'                    => array( 'Importi' ),
+	'Invalidateemail'           => array( 'Malvalidigi_retpoŝton' ),
+	'BlockList'                 => array( 'Forbarlisto_de_IP-adresoj', 'IP-adresa_forbarlisto' ),
+	'LinkSearch'                => array( 'Serĉi_ligilon' ),
+	'Listadmins'                => array( 'Listigi_administrantojn' ),
+	'Listbots'                  => array( 'Listigi_robotojn' ),
 	'Listfiles'                 => array( 'Bildolisto' ),
-	'Newimages'                 => array( 'Novaj_bildoj' ),
-	'Listusers'                 => array( 'Listo_de_uzantoj' ),
 	'Listgrouprights'           => array( 'Gruprajtoj_de_uzantoj' ),
-	'Statistics'                => array( 'Statistikoj' ),
-	'Randompage'                => array( 'Hazarda_paĝo' ),
+	'Listredirects'             => array( 'Listigi_alidirektojn' ),
+	'Listusers'                 => array( 'Listo_de_uzantoj' ),
+	'Lockdb'                    => array( 'Ŝlosi_datumbazon' ),
+	'Log'                       => array( 'Protokolo', 'Protokoloj' ),
 	'Lonelypages'               => array( 'Neligitaj_paĝoj' ),
-	'Uncategorizedpages'        => array( 'Paĝoj_sen_kategorio' ),
-	'Uncategorizedcategories'   => array( 'Kategorioj_sen_kategorio' ),
-	'Uncategorizedimages'       => array( 'Bildoj_sen_kategorio' ),
-	'Uncategorizedtemplates'    => array( 'Ŝablonoj_sen_kategorio' ),
-	'Unusedcategories'          => array( 'Malplenaj_kategorioj' ),
-	'Unusedimages'              => array( 'Neuzataj_bildoj' ),
-	'Wantedpages'               => array( 'Dezirataj_paĝoj', 'Rompitaj_ligiloj' ),
-	'Wantedcategories'          => array( 'Dezirataj_kategorioj' ),
-	'Wantedfiles'               => array( 'Dezirataj_dosieroj' ),
-	'Wantedtemplates'           => array( 'Dezirataj_ŝablonoj' ),
+	'Longpages'                 => array( 'Longaj_paĝoj' ),
+	'MergeHistory'              => array( 'Kunigi_historion' ),
+	'MIMEsearch'                => array( 'MIME-Serĉo' ),
+	'Mostcategories'            => array( 'Plej_multaj_kategorioj' ),
+	'Mostimages'                => array( 'Plej_ligitaj_bildoj' ),
 	'Mostlinked'                => array( 'Plej_ligitaj_paĝoj' ),
 	'Mostlinkedcategories'      => array( 'Plej_ligitaj_kategorioj', 'Plej_uzataj_kategorioj' ),
 	'Mostlinkedtemplates'       => array( 'Plej_ligitaj_ŝablonoj', 'Plej_uzataj_ŝablonoj' ),
-	'Mostimages'                => array( 'Plej_ligitaj_bildoj' ),
-	'Mostcategories'            => array( 'Plej_multaj_kategorioj' ),
 	'Mostrevisions'             => array( 'Plej_multaj_revizioj' ),
-	'Fewestrevisions'           => array( 'Plej_malmultaj_revizioj' ),
-	'Shortpages'                => array( 'Mallongaj_paĝoj' ),
-	'Longpages'                 => array( 'Longaj_paĝoj' ),
-	'Newpages'                  => array( 'Novaj_paĝoj' ),
-	'Ancientpages'              => array( 'Malnovaj_paĝoj' ),
-	'Deadendpages'              => array( 'Paĝoj_sen_interna_ligilo' ),
-	'Protectedpages'            => array( 'Protektitaj_paĝoj' ),
-	'Protectedtitles'           => array( 'Protektitaj_titoloj' ),
-	'Allpages'                  => array( 'Ĉiuj_paĝoj' ),
-	'Prefixindex'               => array( 'Indekso_de_prefiksoj' ),
-	'Ipblocklist'               => array( 'Forbarlisto_de_IP-adresoj', 'IP-adresa_forbarlisto' ),
-	'Unblock'                   => array( 'Malforbari' ),
-	'Specialpages'              => array( 'Specialaj_paĝoj' ),
-	'Contributions'             => array( 'Kontribuoj' ),
-	'Emailuser'                 => array( 'Retpoŝti_uzanton' ),
-	'Confirmemail'              => array( 'Konfirmi_per_retpoŝto' ),
-	'Whatlinkshere'             => array( 'Kio_ligas_ĉi_tien?' ),
-	'Recentchangeslinked'       => array( 'Rilataj_ŝanĝoj' ),
 	'Movepage'                  => array( 'Alinomigi_paĝon' ),
-	'Blockme'                   => array( 'Forbari_min' ),
-	'Booksources'               => array( 'Citoj_el_libroj' ),
-	'Categories'                => array( 'Kategorioj' ),
-	'Export'                    => array( 'Eksporti' ),
-	'Version'                   => array( 'Versio' ),
-	'Allmessages'               => array( 'Ĉiuj_mesaĝoj' ),
-	'Log'                       => array( 'Protokolo', 'Protokoloj' ),
-	'Blockip'                   => array( 'Forbari_IP-adreson' ),
-	'Undelete'                  => array( 'Restarigi' ),
-	'Import'                    => array( 'Importi' ),
-	'Lockdb'                    => array( 'Ŝlosi_datumbazon' ),
-	'Unlockdb'                  => array( 'Malŝlosi_datumbazon' ),
-	'Userrights'                => array( 'Rajtoj_de_uzantoj' ),
-	'MIMEsearch'                => array( 'MIME-Serĉo' ),
-	'FileDuplicateSearch'       => array( 'Serĉi_pri_duoblaj_dosieroj' ),
-	'Unwatchedpages'            => array( 'Neatentitaj_paĝoj' ),
-	'Listredirects'             => array( 'Listigi_alidirektojn' ),
-	'Revisiondelete'            => array( 'Forigi_revizion' ),
-	'Unusedtemplates'           => array( 'Neuzataj_ŝablonoj' ),
-	'Randomredirect'            => array( 'Hazarda_alidirekto' ),
+	'Mycontributions'           => array( 'Miaj_kontribuoj', 'MiajKontribuoj' ),
 	'Mypage'                    => array( 'MiaPaĝo', 'Mia_paĝo' ),
 	'Mytalk'                    => array( 'Mia_diskutpaĝo', 'MiaDiskutpaĝo' ),
-	'Mycontributions'           => array( 'Miaj_kontribuoj', 'MiajKontribuoj' ),
 	'Myuploads'                 => array( 'Miaj_alŝutaĵoj' ),
-	'Listadmins'                => array( 'Listigi_administrantojn' ),
-	'Listbots'                  => array( 'Listigi_robotojn' ),
+	'Newimages'                 => array( 'Novaj_bildoj' ),
+	'Newpages'                  => array( 'Novaj_paĝoj' ),
+	'PermanentLink'             => array( 'Daŭra_ligilo' ),
 	'Popularpages'              => array( 'Popularaj_paĝoj' ),
+	'Preferences'               => array( 'Preferoj' ),
+	'Prefixindex'               => array( 'Indekso_de_prefiksoj' ),
+	'Protectedpages'            => array( 'Protektitaj_paĝoj' ),
+	'Protectedtitles'           => array( 'Protektitaj_titoloj' ),
+	'Randompage'                => array( 'Hazarda_paĝo' ),
+	'Randomredirect'            => array( 'Hazarda_alidirekto' ),
+	'Recentchanges'             => array( 'Lastaj_ŝanĝoj' ),
+	'Recentchangeslinked'       => array( 'Rilataj_ŝanĝoj' ),
+	'Revisiondelete'            => array( 'Forigi_revizion' ),
+	'RevisionMove'              => array( 'Movi_revizion' ),
 	'Search'                    => array( 'Serĉi' ),
-	'Resetpass'                 => array( 'Ŝanĝi_pasvorton' ),
-	'Withoutinterwiki'          => array( 'Sen_intervikia_ligilo' ),
-	'MergeHistory'              => array( 'Kunigi_historion' ),
-	'Filepath'                  => array( 'Dosiero-pado' ),
-	'Invalidateemail'           => array( 'Malvalidigi_retpoŝton' ),
-	'Blankpage'                 => array( 'Malplena_paĝo' ),
-	'LinkSearch'                => array( 'Serĉi_ligilon' ),
-	'DeletedContributions'      => array( 'Forigitaj_kontribuoj' ),
+	'Shortpages'                => array( 'Mallongaj_paĝoj' ),
+	'Specialpages'              => array( 'Specialaj_paĝoj' ),
+	'Statistics'                => array( 'Statistikoj' ),
 	'Tags'                      => array( 'Etikedoj' ),
-	'Activeusers'               => array( 'Aktivaj_uzantoj' ),
+	'Unblock'                   => array( 'Malforbari' ),
+	'Uncategorizedcategories'   => array( 'Kategorioj_sen_kategorio' ),
+	'Uncategorizedimages'       => array( 'Bildoj_sen_kategorio' ),
+	'Uncategorizedpages'        => array( 'Paĝoj_sen_kategorio' ),
+	'Uncategorizedtemplates'    => array( 'Ŝablonoj_sen_kategorio' ),
+	'Undelete'                  => array( 'Restarigi' ),
+	'Unlockdb'                  => array( 'Malŝlosi_datumbazon' ),
+	'Unusedcategories'          => array( 'Malplenaj_kategorioj' ),
+	'Unusedimages'              => array( 'Neuzataj_bildoj' ),
+	'Unusedtemplates'           => array( 'Neuzataj_ŝablonoj' ),
+	'Unwatchedpages'            => array( 'Neatentitaj_paĝoj' ),
+	'Upload'                    => array( 'Alŝuti' ),
+	'Userlogin'                 => array( 'Ensaluti' ),
+	'Userlogout'                => array( 'Elsaluti' ),
+	'Userrights'                => array( 'Rajtoj_de_uzantoj' ),
+	'Version'                   => array( 'Versio' ),
+	'Wantedcategories'          => array( 'Dezirataj_kategorioj' ),
+	'Wantedfiles'               => array( 'Dezirataj_dosieroj' ),
+	'Wantedpages'               => array( 'Dezirataj_paĝoj', 'Rompitaj_ligiloj' ),
+	'Wantedtemplates'           => array( 'Dezirataj_ŝablonoj' ),
+	'Watchlist'                 => array( 'Atentaro' ),
+	'Whatlinkshere'             => array( 'Kio_ligas_ĉi_tien?' ),
+	'Withoutinterwiki'          => array( 'Sen_intervikia_ligilo' ),
 );
 
 $magicWords = array(
@@ -325,8 +329,8 @@ $messages = array(
 'tog-shownumberswatching'     => 'Montri la nombron da priatentaj uzantoj',
 'tog-oldsig'                  => 'Ekzistanta subskribo:',
 'tog-fancysig'                => 'Trakti subskribon kiel vikitekston (sen aŭtomata ligo)',
-'tog-externaleditor'          => 'Defaŭlte uzi eksteran tekstprilaborilon (nur por ekspertoj, ĉar tio necesigas specialajn agordojn en via komputilo. [http://www.mediawiki.org/wiki/Manual:External_editors Pliaj informoj.])',
-'tog-externaldiff'            => 'Defaŭlte uzi eksteran ŝanĝmontrilon (nur por ekspertoj, ĉar tio necesigas specialajn agordojn en via komputilo. [http://www.mediawiki.org/wiki/Manual:External_editors Pliaj informoj.])',
+'tog-externaleditor'          => 'Defaŭlte uzi eksteran tekstprilaborilon (nur por ekspertoj, ĉar tio necesigas specialajn agordojn en via komputilo. [//www.mediawiki.org/wiki/Manual:External_editors Pliaj informoj.])',
+'tog-externaldiff'            => 'Defaŭlte uzi eksteran ŝanĝmontrilon (nur por ekspertoj, ĉar tio necesigas specialajn agordojn en via komputilo. [//www.mediawiki.org/wiki/Manual:External_editors Pliaj informoj.])',
 'tog-showjumplinks'           => 'Ebligi alirligojn "salti al"
 <!-- Bonvolu kontroli ĉu ĝustas la traduko de : Enable "jump to" accessibility links -->',
 'tog-uselivepreview'          => 'Uzi tujan antaŭrigardon (ĜavaSkripto) (Eksperimenta)',
@@ -423,15 +427,7 @@ $messages = array(
 'listingcontinuesabbrev'         => 'daŭrigo',
 'index-category'                 => 'Indeksitaj paĝoj',
 'noindex-category'               => 'Neindeksitaj paĝoj',
-
-'mainpagetext'      => "'''MediaWiki estis sukcese instalita.'''",
-'mainpagedocfooter' => "Konsultu la [http://meta.wikimedia.org/wiki/MediaWiki_User%27s_Guide User's Guide] por informo pri uzado de vikia programaro.
-
-==Kiel komenci==
-
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Listo de konfiguraĵoj] (angla)
-* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki Oftaj Demandoj] (angla)
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki dissendolisto pri anoncoj] (angla)",
+'broken-file-category'           => 'Paĝoj kun eraraj dosierligiloj',
 
 'about'         => 'Enkonduko',
 'article'       => 'Artikolo',
@@ -483,10 +479,10 @@ $messages = array(
 'history'           => 'Historio de versioj',
 'history_short'     => 'Historio',
 'updatedmarker'     => 'ĝisdatita de post mia lasta vizito',
-'info_short'        => 'Informo',
 'printableversion'  => 'Presebla versio',
 'permalink'         => 'Konstanta ligilo',
 'print'             => 'Printi',
+'view'              => 'Vidi',
 'edit'              => 'Redakti',
 'create'            => 'Krei',
 'editthispage'      => 'Redakti la paĝon',
@@ -494,6 +490,7 @@ $messages = array(
 'delete'            => 'Forigi',
 'deletethispage'    => 'Forigi ĉi tiun paĝon',
 'undelete_short'    => 'Malforigi {{PLURAL:$1|redakton|$1 redaktojn}}',
+'viewdeleted_short' => 'Vidi {{PLURAL:$1|unu forigitan redakton|$1 forigitajn redaktojn}}',
 'protect'           => 'Protekti',
 'protect_change'    => 'ŝanĝi',
 'protectthispage'   => 'Protekti la paĝon',
@@ -577,6 +574,8 @@ $1',
 'toc'                     => 'Enhavo',
 'showtoc'                 => 'montri',
 'hidetoc'                 => 'kaŝi',
+'collapsible-collapse'    => 'kaŝi',
+'collapsible-expand'      => 'Montri',
 'thisisdeleted'           => 'Vidi aŭ restarigi $1?',
 'viewdeleted'             => 'Ĉu rigardi $1?',
 'restorelink'             => '{{PLURAL:$1|unu forigitan version|$1 forigitajn versiojn}}',
@@ -588,6 +587,8 @@ $1',
 'page-rss-feed'           => '"$1" RSS-fonto',
 'page-atom-feed'          => '"$1" Atom-fonto',
 'red-link-title'          => '$1 (paĝo ne ekzistas)',
+'sort-descending'         => 'Ordigi malkreskante',
+'sort-ascending'          => 'Ordigi kreskante',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'Paĝo',
@@ -676,12 +677,13 @@ Peto: $2',
 'protectedpagetext'    => 'Tiu ĉi paĝo estas ŝlosita por malebligi redaktadon.',
 'viewsourcetext'       => 'Vi povas rigardi kaj kopii la fonton de la paĝo:',
 'protectedinterface'   => 'Ĉi tiu paĝo provizas interfacan tekston por la softvaro, kaj estas ŝlosita por malabeligi misuzon.',
-'editinginterface'     => "'''Atentu:''' Vi redaktas paĝon, kiu estas uzata kiel interfaca teksto por la rogramaro. Ŝanĝoj de ĉi tiu teksto povas ŝanĝi aspekton de la interfaco por aliaj uzantoj. Por tradukojn, bonvolu uzi [http://translatewiki.net/wiki/Main_Page?setlang=eo translatewiki.net], la MediaWiki-projekton por lingvigaj versioj.",
+'editinginterface'     => "'''Atentu:''' Vi redaktas paĝon, kiu estas uzata kiel interfaca teksto por la rogramaro. Ŝanĝoj de ĉi tiu teksto povas ŝanĝi aspekton de la interfaco por aliaj uzantoj. Por tradukojn, bonvolu uzi [//translatewiki.net/wiki/Main_Page?setlang=eo translatewiki.net], la MediaWiki-projekton por lingvigaj versioj.",
 'sqlhidden'            => '(SQL serĉomendo kaŝita)',
 'cascadeprotected'     => 'Ĉi tiu paĝo estas protektita kontraŭ redaktado, ĉar ĝi estas inkludita en la {{PLURAL:$1|sekvan paĝon, kiu|sekvajn paĝojn, kiuj}} estas {{PLURAL:$1|protektata|protektataj}} kun la "kaskada" opcio turnita sur:
 $2',
 'namespaceprotected'   => "Vi ne rajtas redakti paĝojn en la '''$1''' nomspaco.",
-'customcssjsprotected' => 'Vi ne rajtas redakti ĉi tiun paĝon, ĉar ĝi enhavas personajn alĝustigojn de alia uzanto.',
+'customcssprotected'   => 'Vi ne rajtas redakti ĉi tiun CSS-paĝon, ĉar ĝi enhavas personajn alĝustigojn de alia uzanto.',
+'customjsprotected'    => 'Vi ne rajtas redakti ĉi tiun JavaScript-paĝon, ĉar ĝi enhavas personajn alĝustigojn de alia uzanto.',
 'ns-specialprotected'  => 'Paĝoj en la {{ns:special}} nomspaco ne povas esti redaktataj.',
 'titleprotected'       => "Ĉi titolo estas protektita de kreado de [[User:$1|$1]].
 La kialo donata estis ''$2''.",
@@ -719,6 +721,7 @@ Ne forgesu fari viajn [[Special:Preferences|{{SITENAME}}-preferojn]].',
 'createaccount'              => 'Krei novan konton',
 'gotaccount'                 => "Ĉu vi jam havas konton? '''$1'''.",
 'gotaccountlink'             => 'Ensaluti',
+'userlogin-resetlink'        => 'Ĉu vi forgesis ensalutajn detalojn?',
 'createaccountmail'          => 'retpoŝte',
 'createaccountreason'        => 'Kialo:',
 'badretype'                  => 'La pasvortojn kiujn vi tajpis ne egalas.',
@@ -728,13 +731,14 @@ Bonvolu elekti alian nomon.',
 'createaccounterror'         => 'Ne eblis krei konton: $1',
 'nocookiesnew'               => 'La uzantokonto estis kreita sed vi ne estas ensalutinta. *** E-igo lcfirst {{SITENAME}} uzas kuketojn por akcepti uzantojn. Kuketoj esta malaktivigitaj ĉe vi. Bonvolu aktivigi ilin kaj ensalutu per viaj novaj salutnomo kaj pasvorto.',
 'nocookieslogin'             => '{{SITENAME}} uzas kuketojn por akcepti uzantojn. Kuketoj esta malaktivigitaj ĉe vi. Bonvolu aktivigi ilin kaj provu denove.',
+'nocookiesfornew'            => 'La uzula konto ne estis kreita, ĉar ne konfirmeblas ĝia fonto. Certiginte ke kuketoj estas ebligitaj, reŝargu tiun ĉi pagon kaj reprovu.',
 'noname'                     => 'Vi ne tajpis validan salutnomon.',
 'loginsuccesstitle'          => 'Ensalutado sukcesis',
 'loginsuccess'               => 'Vi ensalutis ĉe {{SITENAME}} kiel uzanto "$1".',
 'nosuchuser'                 => 'Neniu uzanto havas nomon "$1".
 Nomoj por uzantoj estas usklecodistinga.
 Kontrolu vian literumadon, aŭ [[Special:UserLogin/signup|kreu novan konton]].',
-'nosuchusershort'            => 'Ne ekzistas uzanto kun la nomo "<nowiki>$1</nowiki>". Bonvolu kontroli vian ortografion.',
+'nosuchusershort'            => 'Ne ekzistas uzanto kun la nomo "$1". Bonvolu kontroli vian ortografion.',
 'nouserspecified'            => 'Vi devas entajpi salutnomon.',
 'login-userblocked'          => 'Ĉi tiu uzanto estas forbarita. Ensalutado ne estas permesita.',
 'wrongpassword'              => 'Vi tajpis malĝustan pasvorton. Bonvolu provi denove.',
@@ -780,13 +784,14 @@ Vi povas ignori ĉi mesaĝon, se ĉi konto estis kreita erare.',
 'usernamehasherror'          => 'Salutnomo ne povas enhavi kriphaketaĵajn signojn',
 'login-throttled'            => 'Vi tro ofte provis eniri la pasvorton por ĉi tiu konto.
 Bonvolu ĝisatendi antaŭ retrovi.',
+'login-abort-generic'        => 'Via ensaluto malsukcesis - Ĉesigita',
 'loginlanguagelabel'         => 'Lingvo: $1',
 'suspicious-userlogout'      => 'Via peto por elsaluti estis malpermesita ĉar verŝajne ĝi estis sendita de trompita retumilo aŭ kaŝiganta proksima servilo.',
 
 # E-mail sending
 'php-mail-error-unknown' => 'Nekonata eraro en la funkcio mail() de PHP',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Ŝanĝi pasvorton',
 'resetpass_announce'        => 'Vi ensalutis kun provizora retpoŝtita pasvorto. Por kompleti ensalutadon, vi devas fari novan pasvorton ĉi tien:',
 'resetpass_text'            => '<!-- Aldonu tekston ĉi tien -->',
@@ -804,6 +809,40 @@ Bonvolu ĝisatendi antaŭ retrovi.',
 Vi eble jam ŝanĝis vian pasvorton aŭ petis novan provizoran pasvorton.',
 'resetpass-temp-password'   => 'Provizora pasvorto:',
 
+# Special:PasswordReset
+'passwordreset'                => 'Restarigo de pasvorto',
+'passwordreset-text'           => 'Plenumigu ĉi tiun formularon por ricevi retpoŝtan memoraĵon de viaj kontaj detaloj.',
+'passwordreset-legend'         => 'Refari pasvorton',
+'passwordreset-disabled'       => 'Pasvortaj restarigoj estis malŝaltitaj en ĉi tiu vikio.',
+'passwordreset-pretext'        => '{{PLURAL:$1||Enigi unu el la jenaj datenoj}}',
+'passwordreset-username'       => 'Salutnomo:',
+'passwordreset-domain'         => 'Domajno:',
+'passwordreset-email'          => 'Retpoŝtadreso:',
+'passwordreset-emailtitle'     => 'Kontaj detaloj en {{SITENAME}}',
+'passwordreset-emailtext-ip'   => 'Iu (verŝajne vi, de IP-adreso $1) petis rememoraĵo de viaj
+kontaj detaloj por {{SITENAME}} ($4). La {{PLURAL:$3|jena uzanto-konto|jenaj uzanto-kontoj}} estas
+asociita kun ĉi tiu retpoŝtadreso:
+
+$2
+
+Ĉi {{PLURAL:$3|tiu provizora pasvorto|tiuj provizoraj pasvortoj}} findatiĝos {{PLURAL:$5|unu tagon|$5 tagojn}}.
+Vi ensalutu kaj elektu novan pasvorton nun. Se iu alia petis ĉi tion,
+aŭ se vi memoris vian originalan pasvorton, kaj vi ne plu volas
+ŝanĝi ĝin, vi povas ignori ĉi tiun mesaĝon kaj plu uzi vian 
+malnovan pasvorton.',
+'passwordreset-emailtext-user' => 'Uzanto $1 de {{SITENAME}} petis rememoraĵo de viaj kontaj detaloj por {{SITENAME}}
+($4). La {{PLURAL:$3|jena uzanto-konto|jenaj uzanto-kontoj}} estas asociita kun ĉi tiu retpoŝtadreso:
+
+$2
+
+Ĉi {{PLURAL:$3|tiu provizora pasvorto|tiuj provizoraj pasvortoj}} findatiĝos {{PLURAL:$5|unu tagon|$5 tagojn}}.
+Vi devas ensaluti kaj elekti novan pasvorton nun. Se iu alia petis ĉi tion,
+aŭ se vi memoris vian originalan pasvorton, kaj vi ne plu volas ŝanĝi
+ĝin, vi povas ignori ĉi tiun mesaĝon kaj uzi vian malnovan pasvorton.',
+'passwordreset-emailelement'   => 'Salutnomo: $1
+Provizora pasvorto: $2',
+'passwordreset-emailsent'      => 'Rememoriga retpoŝto estis sendita.',
+
 # Edit page toolbar
 'bold_sample'     => 'Grasa teksto',
 'bold_tip'        => 'Grasa teksto',
@@ -815,8 +854,6 @@ Vi eble jam ŝanĝis vian pasvorton aŭ petis novan provizoran pasvorton.',
 'extlink_tip'     => 'Ekstera ligo (memoru http:// prefikson)',
 'headline_sample' => 'Titola teksto',
 'headline_tip'    => 'Titololinio je dua nivelo',
-'math_sample'     => 'Enmeti formulon ĉi tien',
-'math_tip'        => 'Matematika formulo (LaTeX)',
 'nowiki_sample'   => 'Enigi ne formatitan tekston ĉi tien',
 'nowiki_tip'      => 'Ignori vikiformatadon',
 'image_sample'    => 'Ekzemplo.jpg',
@@ -902,7 +939,7 @@ aŭ [{{fullurl:{{FULLPAGENAME}}|action=edit}} redakti ĉi tiun paĝon]</span>.',
 'noarticletext-nopermission'       => 'Estas neniom da teksto en ĉi tiu paĝo.
 Vi povas [[Special:Search/{{PAGENAME}}|serĉi ĉi tiun paĝan titolon]] en aliaj paĝoj,
 aŭ <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} serĉi la rilatajn protokolojn]</span>.',
-'userpage-userdoesnotexist'        => 'Uzantokonto "$1" ne estas registrita. Bonvolu konfirmi se vi volas krei/redakti ĉi tiun paĝon.',
+'userpage-userdoesnotexist'        => 'Uzantokonto "<nowiki>$1</nowiki>" ne estas registrita. Bonvolu konfirmi se vi volas krei/redakti ĉi tiun paĝon.',
 'userpage-userdoesnotexist-view'   => 'Uzanto-konto "$1" ne estas registrita.',
 'blocked-notice-logextract'        => 'Ĉi tiu uzanto estas ĉi-momente forbarita.
 La lasta protokolero estas jene montrata por via referenco:',
@@ -939,6 +976,7 @@ Se ankoraŭ ne funkcias, provu [[Special:UserLogout|elsaluti]] kaj reensaluti.",
 'token_suffix_mismatch'            => "'''Via redakto estis malpermesita ĉar via klienta fuŝis la interpunkcio en la redakto-signo.
 La redakto estis malpermesita por preventi koruptado de la teksto de la paĝo.
 Ĉi tiel malofte okazas kiam vi uzas fuŝan TTT-an anoniman prokurilon.'''",
+'edit_form_incomplete'             => "'''Kelkaj partoj de la redaktada formo ne atingis la servilon; rekontrolu ke via redakto estas ĝusta kaj reprovu.'''",
 'editing'                          => 'Redaktante $1',
 'editingsection'                   => 'Redaktante $1 (sekcion)',
 'editingcomment'                   => 'Redaktante $1 (nova sekcio)',
@@ -1281,12 +1319,13 @@ Provu prefiksi vian mendon kun ''all:'' por serĉi ĉiun enhavon (inkluzivante d
 indekso pro troŝarĝita servilo. Intertempe, vi povas serĉi per <i>guglo</i> aŭ per <i>jahu!</i>:</p>',
 
 # Quickbar
-'qbsettings'               => 'Preferoj pri ilaro',
-'qbsettings-none'          => 'Neniu',
-'qbsettings-fixedleft'     => 'Fiksiĝas maldekstre',
-'qbsettings-fixedright'    => 'Fiksiĝas dekstre',
-'qbsettings-floatingleft'  => 'Ŝvebas maldekstre',
-'qbsettings-floatingright' => 'Ŝvebas dekstre',
+'qbsettings'                => 'Preferoj pri ilaro',
+'qbsettings-none'           => 'Neniu',
+'qbsettings-fixedleft'      => 'Fiksiĝas maldekstre',
+'qbsettings-fixedright'     => 'Fiksiĝas dekstre',
+'qbsettings-floatingleft'   => 'Ŝvebas maldekstre',
+'qbsettings-floatingright'  => 'Ŝvebas dekstre',
+'qbsettings-directionality' => 'Fiksita, laŭ la teksto-direkteco de via lingvo',
 
 # Preferences page
 'preferences'                   => 'Preferoj',
@@ -1297,9 +1336,10 @@ indekso pro troŝarĝita servilo. Intertempe, vi povas serĉi per <i>guglo</i> a
 'changepassword'                => 'Ŝanĝi pasvorton',
 'prefs-skin'                    => 'Etoso',
 'skin-preview'                  => 'Antaŭrigardo',
-'prefs-math'                    => 'Matematikaĵoj',
 'datedefault'                   => 'Nenia prefero',
+'prefs-beta'                    => 'Ecoj de Beta',
 'prefs-datetime'                => 'Dato kaj horo',
+'prefs-labs'                    => 'Ecoj el Laboratorio',
 'prefs-personal'                => 'Uzanta profilo',
 'prefs-rc'                      => 'Lastaj ŝanĝoj',
 'prefs-watchlist'               => 'Atentaro',
@@ -1321,8 +1361,6 @@ indekso pro troŝarĝita servilo. Intertempe, vi povas serĉi per <i>guglo</i> a
 'columns'                       => 'Kolumnoj:',
 'searchresultshead'             => 'Serĉi',
 'resultsperpage'                => 'Montri trovitajn po',
-'contextlines'                  => 'Montri liniojn el paĝoj po:',
-'contextchars'                  => 'Montri literojn el linioj ĝis po:',
 'stub-threshold'                => 'Ago-sojlo por formatigo de <a href="#" class="stub">ligil-ĝermo (anglalingve: "stub link")</a> (bitikoj):',
 'stub-threshold-disabled'       => 'Malebligita',
 'recentchangesdays'             => 'Tagoj montrendaj en lastaj ŝanĝoj:',
@@ -1335,7 +1373,7 @@ Jen hazarde generita valoro por via uzo: $1',
 'savedprefs'                    => 'Viaj preferoj estas konservitaj.',
 'timezonelegend'                => 'Horzono:',
 'localtime'                     => 'Loka tempo:',
-'timezoneuseserverdefault'      => 'Uzi defaŭlton de servilo',
+'timezoneuseserverdefault'      => 'Uzi defaŭlton de servilo ($1)',
 'timezoneuseoffset'             => 'Alia (Enigu diferencon)',
 'timezoneoffset'                => 'Diferenco¹:',
 'servertime'                    => 'Servila tempo:',
@@ -1383,8 +1421,8 @@ Jen hazarde generita valoro por via uzo: $1',
 'prefs-help-gender'             => 'Nedeviga: uzita por sekseca salutado de la programaro. Ĉi tiu informo estos publika.',
 'email'                         => 'Retadreso',
 'prefs-help-realname'           => '* Vera nomo (opcia): se vi elektas sciigi ĝin, ĝi estos uzita por aŭtorigi vin pri viaj kontribuoj.',
-'prefs-help-email'              => 'Retadreso estas nedeviga, sed permesus por via pasvorto esti retpoŝtita al vi se vi forgesus ĝin.
-Vi povas ankaŭ elekti permesigi aliaj uzantoj kontakti vin per via uzanto-paĝo aŭ diskuto-paĝo sen malkaŝante vian identeco.',
+'prefs-help-email'              => 'Retadreso estas nedeviga, sed ebligas ke via pasvorto estos reagordota, se vi estos forgesinta ĝin.',
+'prefs-help-email-others'       => 'Vi povas elekti ke aliaj povas kontakti vin per via uzanto-paĝo aŭ parol-paĝo sen la neceso malkaŝi vian identecon.',
 'prefs-help-email-required'     => 'Ret-adreso estas bezonata.',
 'prefs-info'                    => 'Baza informo',
 'prefs-i18n'                    => 'Internaciigo',
@@ -1509,15 +1547,15 @@ Vi povas ankaŭ elekti permesigi aliaj uzantoj kontakti vin per via uzanto-paĝo
 'right-userrights'            => 'Redakti ĉiujn uzanto-rajtojn',
 'right-userrights-interwiki'  => 'Redakti la rajtojn de uzantoj en aliaj vikioj',
 'right-siteadmin'             => 'Ŝlosi kaj malŝlosi la datumbazon',
-'right-reset-passwords'       => 'Reŝanĝi pasvortojn de aliaj uzantoj',
 'right-override-export-depth' => 'Eksporti paĝojn inkluzivante ligitajn paĝojn ĝis profundeco de 5',
 'right-sendemail'             => 'Sendi retpoŝton al aliaj uzantoj',
 
 # User rights log
-'rightslog'      => 'Protokolo de uzanto-rajtoj',
-'rightslogtext'  => 'Ĉi tio estas protokolo pri la ŝanĝoj de uzantorajtoj.',
-'rightslogentry' => 'ŝanĝis grupan membrecon por $1 de $2 al $3',
-'rightsnone'     => '(nenia)',
+'rightslog'                  => 'Protokolo de uzanto-rajtoj',
+'rightslogtext'              => 'Ĉi tio estas protokolo pri la ŝanĝoj de uzantorajtoj.',
+'rightslogentry'             => 'ŝanĝis grupan membrecon por $1 de $2 al $3',
+'rightslogentry-autopromote' => 'estis aŭtomate altrangigita de $2 al $3',
+'rightsnone'                 => '(nenia)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read'                 => 'legi ĉi tiun paĝon',
@@ -1640,11 +1678,11 @@ Por inkluzivi la dosieron en paĝon, skribu ligilon laŭ la formoj
 'minlength1'                  => 'Nomoj de dosieroj nepre havas almenaŭ unu literon.',
 'illegalfilename'             => 'La dosiernomo $1 entenas karaktrojn kiuj ne estas permesitaj en paĝaj titoloj. Bonvolu renomi la dosieron kaj provu denove alŝuti ĝin.',
 'badfilename'                 => 'Dosiernomo estis ŝanĝita al "$1".',
-'filetype-mime-mismatch'      => 'Dosiera sufikso ne kongruas MIME-tipon.',
+'filetype-mime-mismatch'      => 'Dosiera sufikso ".$1" ne kongruas la MIME-tipon de la dosiero ($2).',
 'filetype-badmime'            => 'Dosieroj de la MIME-tipo "$1" ne estas permesitaj por alŝutado.',
 'filetype-bad-ie-mime'        => 'Ne povas alŝuti ĉi tiun dosieron, ĉar Interreta Esplorilo detektus ĝin kiel "$1", kiu estas malpermesita kaj eble danĝera dosiertipo.',
 'filetype-unwanted-type'      => "'''\".\$1\"''' estas nevolata dosiero-tipo. {{PLURAL:\$3|Preferata dosiero-tipo|Prefereataj dosiero-tipoj}} estas \$2.",
-'filetype-banned-type'        => "'''\".\$1\"''' ne estas permesita dosiero-tipo. {{PLURAL:\$3|Permesita dosiero-tipo|Permesitaj dosiero-tipoj}} estas \$2.",
+'filetype-banned-type'        => '\'\'\'".$1"\'\'\' ne estas {{PLURAL:$4|permesita dosiero-tipo|permesitaj dosiero-tipoj}}. {{PLURAL:$3|Permesita dosiero-tipo|Permesitaj dosiero-tipoj}} estas $2.',
 'filetype-missing'            => 'Ĉi tiu dosiero ne inkluzivas finaĵon de dosiernomo (kiel ".jpg").',
 'empty-file'                  => 'La dosiero kiun vi alŝutis estis malplena.',
 'file-too-large'              => 'La dosiero kiun vi alŝutis estis tro granda.',
@@ -1661,6 +1699,7 @@ Por inkluzivi la dosieron en paĝon, skribu ligilon laŭ la formoj
 tiu ĉi tiu dosiero pezas $2 bitokojn.',
 'largefileserver'             => 'Ĉi tiu dosiero estas pli granda ol permesas la servilaj preferoj.',
 'emptyfile'                   => 'La dosiero kiun vi alŝutis ŝajnas malplena. Tio povas esti kaŭzita sde tajperaro en la titolo. Bonvolu kontroli ĉu vi vere volas alŝuti tiun dosieron.',
+'windows-nonascii-filename'   => 'Ĉi tiu vikio ne subtenas dosiernomoj kun specialaj signoj.',
 'fileexists'                  => "Dosiero kun tia ĉi nomo jam ekzistas.
 Bonvolu kontroli '''<tt>[[:$1]]</tt>''' krom se vi certas ke vi konscie volas ŝanĝi ĝuste tiun.
 [[$1|thumb]]",
@@ -1697,6 +1736,8 @@ Se vi ankoraŭ volas alŝuti vian dosieron, bonvolu retroigi kaj uzi novan nomon
 'php-uploaddisabledtext'      => 'Dosiera alŝutado estas malŝalta en PHP. Bonvolu kontroli la preferon file_uploads.',
 'uploadscripted'              => 'HTML-aĵo aŭ skriptokodaĵo troviĝas en tiu ĉi tiu dosiero, kiun TTT-foliumilo eble interpretus erare.',
 'uploadvirus'                 => 'Viruso troviĝas en la dosiero! Detaloj: $1',
+'uploadjava'                  => 'La dosiero estas ZIP-dosiero kiu enhavas .class-dosieron de Java.
+Alŝutante Java-dosieron estas malpermesita, ĉar ili povas kaŭzi sekureco-limigojn esti preterpasitaj.',
 'upload-source'               => 'Fonta dosiero:',
 'sourcefilename'              => 'Fonta dosiernomo:',
 'sourceurl'                   => 'Fonta URL:',
@@ -1706,10 +1747,6 @@ Se vi ankoraŭ volas alŝuti vian dosieron, bonvolu retroigi kaj uzi novan nomon
 'upload-options'              => 'Alŝutaj agordoj',
 'watchthisupload'             => 'Atenti ĉi tiun dosieron',
 'filewasdeleted'              => 'Dosiero de ĉi nomo estis antaŭe alŝutita kaj poste redaktita. Vi kontrolu la $1 antaux alŝutante ĝin denove.',
-'upload-wasdeleted'           => "'''Averto: Vi alŝutas dosieron kiu estis antaŭe forigita.'''
-
-Vi konsideru ĉu taŭgas alŝuti ĉi tiu dosiero.
-jen la protokolo pri forigado por ĉi tiu dosiero por via oportuneco:",
 'filename-bad-prefix'         => "La nomo de la dosiero kiun vi alŝutas komencas kun '''\"\$1\"''', kiu estas nepriskriba nomo ofte aŭtomate donata de ciferecaj fotiloj. Bonvolu elekti pli priskriban nomon por via bildo.",
 'upload-success-subj'         => 'Alŝuto sukcesis!',
 'upload-success-msg'          => 'Via alŝuto el [$2] sukcesis. Ĝi disponeblas ĉi tie [[:{{ns:file}}:$1]]',
@@ -1731,6 +1768,23 @@ Se la problemo kontinuas, kontaku [[Special:ListUsers/sysop|sisteman administran
 'upload-too-many-redirects' => 'La URL-o enhavis tro multajn alidirektilojn',
 'upload-unknown-size'       => 'Nekonata grandeco',
 'upload-http-error'         => 'HTTP-eraro okazis: $1',
+
+# ZipDirectoryReader
+'zip-file-open-error' => 'Eraro okazis malfermante la dosieron pro ZIP-kontrolado.',
+'zip-wrong-format'    => 'La specifigita dosiero ne estis ZIP-dosiero',
+'zip-bad'             => 'La dosiero estas fuŝa aŭ alimaniere estas nelegebla ZIP-dosiero.
+Ĝi ne povas esti ĝuste kontrolita por sekureco.',
+'zip-unsupported'     => 'Ĉi tiu dosiero estas ZIP-dosiero kiu uzas ZIP-funkciojn malsubtenita de MediaWiki.
+Ĝi ne povas esti ĝuste kontrolita por sekureco.',
+
+# Special:UploadStash
+'uploadstash'          => 'Konservejo de alŝutoj',
+'uploadstash-summary'  => 'Tiu ĉi paĝo alirebligas la dosierojn alŝutitajn (aŭ alŝutatajn), kiuj ne jam estas publikigitaj per la vikio. Tiujn ĉi dosierojn ne povas vidi  iu ajn, krom la alŝutinto mem.',
+'uploadstash-clear'    => 'Malplenigi la dosierkonversejon.',
+'uploadstash-nofiles'  => 'Mankas dosieroj en la konservejo.',
+'uploadstash-badtoken' => 'Malsukcesis tiu ago, eble pro tio ke viaj ensalutiloj senvalidiĝis. Reprovu.',
+'uploadstash-errclear' => 'Sensukcesis la forigo de la dosieroj.',
+'uploadstash-refresh'  => 'Aktualigi la dosierliston.',
 
 # img_auth script messages
 'img-auth-accessdenied'     => 'Atingo malpermisita',
@@ -1812,7 +1866,7 @@ La jena listo montras la {{PLURAL:$1|unua paĝligilo|unuaj $1 paĝligiloj}} al n
 [[Special:WhatLinksHere/$2|Plena listo]] estas atingebla.',
 'nolinkstoimage'            => 'Neniu paĝo ligas al ĉi tiu dosiero.',
 'morelinkstoimage'          => 'Rigardi [[Special:WhatLinksHere/$1|pliajn ligilojn]] al ĉi tiu dosiero.',
-'redirectstofile'           => 'Jen {{PLURAL:$1|dosiero liganta|dosieroj ligantaj}} al ĉi tiu dosiero:',
+'linkstoimage-redirect'     => '$1 (alidirektilo al dosiero) $2',
 'duplicatesoffile'          => 'La {{PLURAL:$1|jena dosiero estas duplikato|jenaj dosieroj estas duplikatoj}} de ĉi tiu dosiero ([[Special:FileDuplicateSearch/$2|pluaj detaloj]]):',
 'sharedupload'              => 'Ĉi tiu dosiero estas de $1 kaj estas uzebla de aliaj projektoj.',
 'sharedupload-desc-there'   => 'Ĉi tiu dosiero estas de $1 kaj estas uzebla en aliaj projektoj.
@@ -1907,12 +1961,13 @@ Bonvolu kontroli aliajn ligilojn al la ŝablonoj antaŭ ol forigi ilin.',
 Ili devus anstataŭe alligi la ĝustan temon.<br />
 Paĝo estas traktata kiel apartigilo se ĝi uzas ŝablonon kiu estas ligita de [[MediaWiki:Disambiguationspage]]",
 
-'doubleredirects'            => 'Duoblaj alidirektadoj',
-'doubleredirectstext'        => 'Ĉi tiu paĝo montras paĝojn kiuj alidirektas al aliaj alidirektiloj.
+'doubleredirects'                   => 'Duoblaj alidirektadoj',
+'doubleredirectstext'               => 'Ĉi tiu paĝo montras paĝojn kiuj alidirektas al aliaj alidirektiloj.
 Ĉiu vico enhavas ligilojn ĉe la unua kaj dua alidirektadoj, kaj la unua linio de la dua alidirektado, kiu ĝenerale montras la "veran" celpaĝon, kiu celu la unuan alidirektadon.
 <del>Forstrekitaj</del> listeroj estis riparitaj.',
-'double-redirect-fixed-move' => '[[$1]] estis alinomita; ĝi nun alidirektas al [[$2]]',
-'double-redirect-fixer'      => 'Alidirektila riparilo',
+'double-redirect-fixed-move'        => '[[$1]] estis alinomita; ĝi nun alidirektas al [[$2]]',
+'double-redirect-fixed-maintenance' => 'Riparas duoblan alidirektilon de [[$1]] al [[$2]].',
+'double-redirect-fixer'             => 'Alidirektila riparilo',
 
 'brokenredirects'        => 'Rompitaj alidirektadoj',
 'brokenredirectstext'    => 'La jenaj alidirektadoj ligas al neekzistantaj paĝoj:',
@@ -1989,6 +2044,7 @@ Bonvolu noti ke aliaj retejoj povas ligi dosieron kun rekta URL-o, kaj tial esta
 'pager-newer-n'           => '{{PLURAL:$1|pli nova 1|pli novaj $1}}',
 'pager-older-n'           => '{{PLURAL:$1|pli malnova 1|pli malnovaj $1}}',
 'suppress'                => 'Superrigardo',
+'querypage-disabled'      => 'Tiu ĉi speciala paĝo estas malfunkciigita pro rendimentaj kialoj.',
 
 # Book sources
 'booksources'               => 'Libroservoj',
@@ -2107,6 +2163,10 @@ La retadreso kiun vi enigis en [[Special:Preferences|viaj preferoj]] aperos kiel
 'noemailtext'          => 'Ĉi tiu uzanto ne donis validan retadreson.',
 'nowikiemailtitle'     => 'Retpoŝto ne permesita',
 'nowikiemailtext'      => 'Ĉi tiu uzanto elektis ne ricevi retpoŝton de aliaj uzantoj.',
+'emailnotarget'        => 'Neekzistanta aŭ malvalida salutnomo por ricevanto.',
+'emailtarget'          => 'Enigi salutnomon de ricevonto',
+'emailusername'        => 'Salutnomo:',
+'emailusernamesubmit'  => 'Enigi',
 'email-legend'         => 'Sendi retpoŝton al alia {{SITENAME}}-uzanto',
 'emailfrom'            => 'De:',
 'emailto'              => 'Al:',
@@ -2131,9 +2191,9 @@ La retadreso kiun vi enigis en [[Special:Preferences|viaj preferoj]] aperos kiel
 'watchlistanontext'    => 'Bonvolu $1 por vidi aŭ redakti erojn en via atentaro.',
 'watchnologin'         => 'Ne ensalutinta',
 'watchnologintext'     => 'Nepras [[Special:UserLogin|ensaluti]] por ŝanĝi vian atentaron.',
-'addedwatch'           => 'Aldoniĝis al atentaro',
+'addwatch'             => 'Aldoniĝi al atentaro',
 'addedwatchtext'       => "La paĝo \"[[:\$1]]\" estis aldonita al via [[Special:Watchlist|atentaro]]. Estontaj ŝanĝoj de tiu ĉi paĝo aperos en '''grasa tiparo''' en la [[Special:RecentChanges|listo de Lastaj Ŝanĝoj]], kaj estos listigitaj en via atentaro. Se vi poste volos forigi la paĝon el via atentaro, alklaku \"Malatentu paĝon\" en la ilobreto.",
-'removedwatch'         => 'Forigis el atentaro',
+'removewatch'          => 'Forigi el atentaro',
 'removedwatchtext'     => 'La paĝo "[[:$1]]" estas forigita el via [[Special:Watchlist|atentaro]].',
 'watch'                => 'Atenti',
 'watchthispage'        => 'Priatenti paĝon',
@@ -2154,8 +2214,9 @@ La retadreso kiun vi enigis en [[Special:Preferences|viaj preferoj]] aperos kiel
 'watchlist-options'    => 'Opcioj por atentaro',
 
 # Displayed when you click the "watch" button and it is in the process of watching
-'watching'   => 'Aldonante al la atentaro...',
-'unwatching' => 'Malatentante...',
+'watching'       => 'Aldonante al la atentaro...',
+'unwatching'     => 'Malatentante...',
+'watcherrortext' => 'Eraro okazis ŝanĝinte vian agordojn de atentaro por "$1".',
 
 'enotif_mailer'                => 'Averta retmesaĝo de {{SITENAME}}',
 'enotif_reset'                 => 'Marki ĉiujn vizititajn paĝojn',
@@ -2181,17 +2242,20 @@ vikie: $PAGEEDITOR_WIKI
 
 Ne estos aliaj avertoj kaze de sekvaj ŝanĝoj krom se vi vizitus la paĝon. Vi povas ankaŭ malaktivigi la avertsignalon por ĉiuj priatentitaj paĝoj de via atentaro.
 
-             Sincere via, la avertsistemo de {{SITENAME}}
+            Sincere via, la avertsistemo de {{SITENAME}}
 
 --
-Por ŝanĝi la elektojn de via atentaro, bonvolu viziti
-{{fullurl:{{#special:Watchlist}}/edit}}
+Por ŝanĝi vian retpoŝtan notigadan preferon, klaku
+{{canonicalurl:{{#special:Preferences}}}}
 
-Por forigi la paĝon el via atentaro, bonvolu viziti
+Por ŝanĝi vian preferon de la atentaro, klaku
+{{canonicalurl:{{#special:EditWatchlist}}}}
+
+Por forigi la paĝon de via atentaro, klaku
 $UNWATCHURL
 
-Por viaj reagoj kaj por obteni plian helpon:
-{{fullurl:{{MediaWiki:Helppage}}}}',
+Komentoj kaj plia helpo:
+{{canonicalurl:{{MediaWiki:Helppage}}}}',
 
 # Delete
 'deletepage'             => 'Forigi paĝon',
@@ -2206,7 +2270,7 @@ Por viaj reagoj kaj por obteni plian helpon:
 'confirmdeletetext'      => 'Vi forigos la artikolon aŭ dosieron kaj forviŝos ĝian tutan historion el la datumaro.<br /> Bonvolu konfirmi, ke vi vere intencas tion, kaj ke vi komprenas la sekvojn, kaj ke vi ja sekvas la [[{{MediaWiki:Policy-url}}|regulojn pri forigado]].',
 'actioncomplete'         => 'Ago farita',
 'actionfailed'           => 'Ago malsukcesis',
-'deletedtext'            => '"<nowiki>$1</nowiki>" estas forigita.
+'deletedtext'            => '"$1" estas forigita.
 Vidu la paĝon $2 por registro de lastatempaj forigoj.',
 'deletedarticle'         => 'forigis "[[$1]]"',
 'suppressedarticle'      => '"[[$1]]" estas subigita',
@@ -2262,7 +2326,7 @@ Vidu [[Special:ProtectedPages|liston de protektitaj paĝoj]] por listo de aktual
 'protect_expiry_invalid'      => 'Malvalida findaŭro.',
 'protect_expiry_old'          => 'Eksvalidiĝa tempo jam pasis.',
 'protect-unchain-permissions' => 'Malŝlosi pluajn protektajn opciojn',
-'protect-text'                => "Vi povas ĉi tie vidi kaj ŝanĝi la protektnivelon de la paĝo '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "Vi povas ĉi tie vidi kaj ŝanĝi la protektnivelon de la paĝo '''$1'''.",
 'protect-locked-blocked'      => "Vi ne povas ŝanĝi prokekto-nivelojn dum forbarita. Jen la nunaj ecoj de la paĝo '''$1''':",
 'protect-locked-dblock'       => "Ne povas ŝanĝi nivelojn de protekto pro aktiva datumbaza ŝlosado.
 Jen la nunaj agordoj de la paĝo '''$1''':",
@@ -2316,9 +2380,8 @@ Vi povas ŝanĝi ties protektnivelon, sed tio ne ŝanĝos la kaskadan protekton.
 'undeletepagetext'             => 'La {{PLURAL:$1|jena paĝo estis forigita|jenaj paĝoj estis forigitaj}}, sed ankoraŭ restas {{PLURAL:$1|arkivita|arkivitaj}} kaj {{PLURAL:$1|restarigebla|restarigeblaj}}.
 La arkivo povas esti malplenigita periode.',
 'undelete-fieldset-title'      => 'Malforigi versiojn',
-'undeleteextrahelp'            => "Por restarigi la tuton de la paĝo, lasu ĉiujn markobutonoj malŝaltitaj kaj klaku la butonon '''''Restarigi'''''.
-Por restarigi selektitajn versiojn de la paĝo, marku la butonojn konformajn al la dezirataj versioj, kaj klaku la butonon '''''Restarigi'''''.
-Klakante butonon '''''Restarigi''''' viŝigos la komentokampon kaj malmarkos ĉiujn la markobutonojn.",
+'undeleteextrahelp'            => "Por restarigi la tutan kronologion de la paĝo, lasu ĉiujn markobutonoj malŝaltitaj kaj klaku la butonon '''''{{int:undeletebtn}}'''''.
+Por restarigi selektitajn versiojn de la paĝo, marku la butonojn konformajn al la dezirataj versioj, kaj klaku la butonon '''''{{int:undeletebtn}}'''''.",
 'undeleterevisions'            => '$1 {{PLURAL:$1|versio arkivita|versioj arkivitaj}}',
 'undeletehistory'              => 'Se vi restarigos la paĝon, ĉiuj versioj estos restarigitaj en la historio.
 Se nova paĝo kun la sama nomo estis kreita post la forigo, la restarigitaj versioj aperos antaŭe en la antaŭa historio.',
@@ -2360,9 +2423,12 @@ $1',
 'undelete-show-file-submit'    => 'Jes',
 
 # Namespace form on various pages
-'namespace'      => 'Nomspaco:',
-'invert'         => 'Inversigi elektaĵon',
-'blanknamespace' => '(Artikoloj)',
+'namespace'                     => 'Nomspaco:',
+'invert'                        => 'Inversigi elektaĵon',
+'tooltip-invert'                => 'Marku ĉi tiu skatolon por kaŝi ŝanĝoj al paĝoj en la elektita nomspaco (kaj la asocia nomspaco, se tiel markita)',
+'namespace_association'         => 'Asociita nomspaco',
+'tooltip-namespace_association' => 'Marku ĉi tiu skatolo por inkluzivi la diskutan aŭ teman nomspacon asocie de la elekta nomspaco',
+'blanknamespace'                => '(Artikoloj)',
 
 # Contributions
 'contributions'       => 'Kontribuoj de uzanto',
@@ -2411,11 +2477,13 @@ Jen la lasta ero de la forbara protokolo:',
 'whatlinkshere-filters'    => 'Filtriloj',
 
 # Block/unblock
+'autoblockid'                     => 'Aŭtomata forbaro #$1',
+'block'                           => 'Forbari uzanton',
+'unblock'                         => 'Malforbari uzanton',
 'blockip'                         => 'Forbari uzanton/IP-adreson',
 'blockip-title'                   => 'Forbari uzanton',
 'blockip-legend'                  => 'Forbari uzanton',
 'blockiptext'                     => "Per jena formularo vi povas forpreni de ajna nomo aŭ IP-adreso la rajton skribi en la vikio. Oni faru tion ''nur'' por eviti vandalismon, kaj sekvante la [[{{MediaWiki:Policy-url}}|regulojn pri forbarado]]. Klarigu la precizan kialon malsupre (ekzemple, citu paĝojn, kiuj estis vandaligitaj).",
-'ipaddress'                       => 'IP-adreso/nomo',
 'ipadressorusername'              => 'IP-adreso aŭ salutnomo:',
 'ipbexpiry'                       => 'Blokdaŭro',
 'ipbreason'                       => 'Kialo:',
@@ -2428,7 +2496,7 @@ Jen la lasta ero de la forbara protokolo:',
 ** Terurigema sinteno
 ** Misuzo de pluraj salutnomoj
 ** Neakceptebla uzanto-nomo',
-'ipbanononly'                     => 'Forbari nur anonimulojn',
+'ipb-hardblock'                   => 'Malpermesi ensalutitajn uzantoj de redaktante ĉi tiun IP-adreson',
 'ipbcreateaccount'                => 'Preventi kreadon de konto',
 'ipbemailban'                     => 'Malebligi al uzanto sendi retpoŝton.',
 'ipbenableautoblock'              => 'Aŭtomate forbaru la lastan IP-adreson uzitan de la uzanto, kaj ĉiajn subsekvantajn adresojn el kiuj tiu provos redakti',
@@ -2439,12 +2507,15 @@ Jen la lasta ero de la forbara protokolo:',
 'ipbotherreason'                  => 'Alia/kroma kialo:',
 'ipbhidename'                     => 'Kaŝi salutnomon de redaktoj kaj listoj',
 'ipbwatchuser'                    => 'Atenti la paĝojn por uzanto kaj diskuto de ĉi tiu uzanto.',
-'ipballowusertalk'                => 'Permesi al ĉi tiu uzanto redakti propran diskuto-paĝon dum forbariteco',
+'ipb-disableusertalk'             => 'Preventi ĉi tiun uzanton de redaktante ties propran diskuto-paĝon kiam forbarita',
 'ipb-change-block'                => 'Reforbari la uzanton kun ĉi tiuj preferoj',
+'ipb-confirm'                     => 'Konfirmi forbaron',
 'badipaddress'                    => 'Neniu uzanto, aŭ la IP-adreso estas misformita.',
 'blockipsuccesssub'               => 'Oni sukcese forbaris la adreson/nomon.',
 'blockipsuccesstext'              => '[[Special:Contributions/$1|$1]] estas forbarita. <br />
 Vidu la [[Special:IPBlockList|liston de IP-forbaroj]] por kontroli.',
+'ipb-blockingself'                => 'Vi preskaŭ forbaros vin mem! Ĉu vi certas ke vi volas fari ĉi tiel?',
+'ipb-confirmhideuser'             => 'Vi preskaŭ forbaras uzanto kun "kaŝi uzanton" ŝalta. Ĉi tiu kaŝi la nomon de uzanto en ĉiuj listoj ka protokoloj. Ĉu vi certas ke vi volas fari ĉi tiel?',
 'ipb-edit-dropdown'               => 'Redakti kialojn por forbaro.',
 'ipb-unblock-addr'                => 'Restarigi $1',
 'ipb-unblock'                     => 'Malforbari salutnomon aŭ IP-adreson',
@@ -2455,17 +2526,23 @@ Vidu la [[Special:IPBlockList|liston de IP-forbaroj]] por kontroli.',
 forbarita IP-adreso/nomo la povon enskribi en la vikio.',
 'ipusubmit'                       => 'Forigi ĉi tiun forbaron',
 'unblocked'                       => '[[User:$1|$1]] estas restarigita.',
+'unblocked-range'                 => '$1 estis malforbarita',
 'unblocked-id'                    => 'Forbaro $1 estas forigita.',
+'blocklist'                       => 'Forbaritaj uzantoj',
 'ipblocklist'                     => 'Forbaritaj uzantoj',
 'ipblocklist-legend'              => 'Trovi forbaritan uzanton.',
-'ipblocklist-username'            => 'Salutnomo aŭ IP-adreso:',
-'ipblocklist-sh-userblocks'       => '$1 kontaj forbaroj',
-'ipblocklist-sh-tempblocks'       => '$1 provizoraj forbaroj',
-'ipblocklist-sh-addressblocks'    => '$1 unuopaj IP-adresaj forbaroj',
+'blocklist-userblocks'            => 'Kaŝi konto-forbarojn',
+'blocklist-tempblocks'            => 'Kaŝi provizorajn forbarojn',
+'blocklist-addressblocks'         => 'Kaŝi unuopajn IP-adresajn forbarojn',
+'blocklist-timestamp'             => 'Tempindiko',
+'blocklist-target'                => 'Celo',
+'blocklist-expiry'                => 'Eksvalidiĝas',
+'blocklist-by'                    => 'Forbaranta administranto',
+'blocklist-params'                => 'Forbarado-parametroj',
+'blocklist-reason'                => 'Kialo',
 'ipblocklist-submit'              => 'Serĉi',
 'ipblocklist-localblock'          => 'Loka forbaro',
 'ipblocklist-otherblocks'         => '{{PLURAL:$1|Alia forbaro|Aliaj forbaroj}}',
-'blocklistline'                   => 'Je $1, $2 forbaris $3 ($4)',
 'infiniteblock'                   => 'senfina',
 'expiringblock'                   => 'senvalidiĝas je $1 $2',
 'anononlyblock'                   => 'nur anonimuloj',
@@ -2486,7 +2563,7 @@ La kialo donita por la forbaro de $1 estis: "$2"',
 'blocklog-showsuppresslog'        => 'Ĉi tiu uzanto estis forbarita kaj kaŝita antaŭe. Jen la protokolo pri subpremado por via informo:',
 'blocklogentry'                   => 'forbaris [[$1]] por daŭro de $2 $3',
 'reblock-logentry'                => 'ŝanĝis forbarajn opciojn [[$1]] kun findato de $2 $3',
-'blocklogtext'                    => 'Ĉi tio estas protokolo pri forbaraj kaj malforbaraj agoj. Aŭtomate forbaritaj IP adresoj ne estas listigitaj. Vidu la [[Special:IPBlockList|IP forbarliston]] por ĉi-momente fobaritaj uzantoj kaj IP-adresoj.',
+'blocklogtext'                    => 'Ĉi tio estas protokolo pri forbaraj kaj malforbaraj agoj. Aŭtomate forbaritaj IP adresoj ne estas listigitaj. Vidu la [[Special:BlockList|IP forbarliston]] por ĉi-momente fobaritaj uzantoj kaj IP-adresoj.',
 'unblocklogentry'                 => '$1 estis restarigita',
 'block-log-flags-anononly'        => 'nur anonimaj uzantoj',
 'block-log-flags-nocreate'        => 'kreado de kontoj malebligita',
@@ -2500,9 +2577,9 @@ La kialo donita por la forbaro de $1 estis: "$2"',
 'ipb_expiry_temp'                 => 'Kaŝitaj salutnomaj blokoj estu daŭraj.',
 'ipb_hide_invalid'                => 'Ne povas subpremi ĉi tiun konton; ĝi eble havas tro multajn redaktojn.',
 'ipb_already_blocked'             => '"$1" estas jam forbarita',
-'ipb-needreblock'                 => '== Jam forbarita ==
-$1 estas jam forbarita. Ĉu vi volas ŝanĝi la opciojn?',
+'ipb-needreblock'                 => '$1 estas jam forbarita. Ĉu vi volas ŝanĝi la opciojn?',
 'ipb-otherblocks-header'          => '{{PLURAL:$1|Alia forbaro|Aliaj forbaroj}}',
+'unblock-hideuser'                => 'Vi ne povas malforbari ĉi tiun uzanton, pro ties salutnomo estis kaŝita.',
 'ipb_cant_unblock'                => 'Eraro: Forbar-identigo $1 ne estas trovita. Ĝi eble estis jam malforbarita.',
 'ipb_blocked_as_range'            => 'Eraro: La IP-adreso $1 ne estas forbarita rekte kaj ne povas esti malforbarita. Tamen ĝi estas forbarita kiel parto de la intervalo $2, kiu ne povas esti malforbarita.',
 'ip_range_invalid'                => 'Malvalida IP-adresa intervalo.',
@@ -2543,6 +2620,7 @@ Bonvolu certigu, ke vi efektive intencas tion fari.',
 'unlockdbsuccesstext' => 'La datumaro de {{SITENAME}} estas malŝlosita.',
 'lockfilenotwritable' => 'La datumbaza dosiero pri ŝlosado ne estas skribebla. Por ŝlosi aŭ malŝlosi la datumbazon, ĉi devas esti skribebla de la TTT-servilo.',
 'databasenotlocked'   => 'La datumbazo ne estas ŝlosita.',
+'lockedbyandtime'     => '(de {{GENDER:$1|$1}} je $2, $3)',
 
 # Move page
 'move-page'                    => 'Alinomigi $1',
@@ -2668,7 +2746,7 @@ En la lasta okazo, vi ankaŭ povas uzi ligilon, ekz-e [[{{#Special:Export}}/{{Me
 'allmessagesdefault'            => 'Defaŭlta teksto',
 'allmessagescurrent'            => 'Nuna teksto',
 'allmessagestext'               => 'Ĉi tio estas listo de ĉiuj mesaĝoj haveblaj en la MediaWiki-nomspaco.
-Bonvolu aliri [http://www.mediawiki.org/wiki/Localisation MediaWiki-Asimilado] kaj [http://translatewiki.net translatewiki.net]
+Bonvolu aliri [//www.mediawiki.org/wiki/Localisation MediaWiki-Asimilado] kaj [//translatewiki.net translatewiki.net]
 se vi volus kontribui al la komuna MediaWiki-asimilado.',
 'allmessagesnotsupportedDB'     => '{{ns:special}}:Allmessages ne subtenata ĉar la variablo wgUseDatabaseMessages estas malkonektita.',
 'allmessages-filter-legend'     => 'Filtri',
@@ -2806,9 +2884,7 @@ Datoj de versioj kaj nomoj de redaktantoj estos preservitaj.
 'tooltip-summary'                 => 'Enigu mallongan resumon',
 
 # Metadata
-'nodublincore'      => 'Dublin Core RDF metadatumo estas malebligita por ĉi servilo.',
-'nocreativecommons' => 'RDF metadatenoj de la Krea Komunaĵo estas malpermesitaj por ĉi tiu servilo.',
-'notacceptable'     => 'La viki-servilo ne povas doni datumon en formato kiun via kliento povas legi.',
+'notacceptable' => 'La viki-servilo ne povas doni datumon en formato kiun via kliento povas legi.',
 
 # Attribution
 'anonymous'        => '{{PLURAL:$1|Anonima uzanto|Anonimaj uzantoj}} de {{SITENAME}}',
@@ -2832,12 +2908,17 @@ Datoj de versioj kaj nomoj de redaktantoj estos preservitaj.
 'spam_blanking'       => 'Forviŝo de ĉiuj versioj entenantaj ligilojn al $1',
 
 # Info page
-'infosubtitle'   => 'Informoj por paĝo',
-'numedits'       => 'Nombro de redaktoj (paĝo): $1',
-'numtalkedits'   => 'Nombro de redaktoj (diskuto-paĝo): $1',
-'numwatchers'    => 'Nombro de atentantoj: $1',
-'numauthors'     => 'Nombro de apartaj aŭtoroj (paĝo): $1',
-'numtalkauthors' => 'Nombro de apartaj aŭtoroj (diskuto-paĝo): $1',
+'pageinfo-title'            => 'Informoj por "$1"',
+'pageinfo-header-edits'     => 'Redaktoj',
+'pageinfo-header-watchlist' => 'Atentaro',
+'pageinfo-header-views'     => 'Rigardoj',
+'pageinfo-subjectpage'      => 'Paĝo',
+'pageinfo-talkpage'         => 'Diskuto-paĝo',
+'pageinfo-watchers'         => 'Nombro de atentantoj',
+'pageinfo-edits'            => 'Nombro de redaktoj',
+'pageinfo-authors'          => 'Nombro de distingaj aŭtoroj',
+'pageinfo-views'            => 'Nombro de rigardoj',
+'pageinfo-viewsperedit'     => 'Po rigardoj por redakto',
 
 # Skin names
 'skinname-standard'    => 'Klasika',
@@ -2845,25 +2926,6 @@ Datoj de versioj kaj nomoj de redaktantoj estos preservitaj.
 'skinname-cologneblue' => 'Kolonja Bluo',
 'skinname-monobook'    => 'Librejo',
 'skinname-chick'       => 'Kokido',
-
-# Math options
-'mw_math_png'    => 'Ĉiam krei PNG-bildon',
-'mw_math_simple' => 'HTMLigu se simple, aŭ PNG',
-'mw_math_html'   => 'HTMLigu se eble, aŭ PNG',
-'mw_math_source' => 'Lasu TeX-fonton (por tekstfoliumiloj)',
-'mw_math_modern' => 'Rekomendita por modernaj foliumiloj',
-'mw_math_mathml' => 'MathML seeble (provizora)',
-
-# Math errors
-'math_failure'          => 'malsukcesis analizi formulon',
-'math_unknown_error'    => 'nekonata eraro',
-'math_unknown_function' => 'nekonata funkcio',
-'math_lexing_error'     => 'leksika analizo malsukcesis',
-'math_syntax_error'     => 'sintakseraro',
-'math_image_error'      => 'Konverto al PNG malsukcesis; kontrolu ĉu estas ĝuste instalitaj latex kaj dvipng (aŭ dvips + gs + convert)',
-'math_bad_tmpdir'       => 'Ne povas skribi al aŭ krei matematikian labor-dosierujon.',
-'math_bad_output'       => 'Ne povas enskribi aŭ krei matematikan eligan dosierujon',
-'math_notexvc'          => 'Programo texvc ne ekzistas; bonvolu vidi math/README por konfiguri.',
 
 # Patrolling
 'markaspatrolleddiff'                 => 'Marki kiel patrolitan',
@@ -2900,21 +2962,24 @@ $1',
 'nextdiff'     => 'Pli nova redakto →',
 
 # Media information
-'mediawarning'         => "'''Atenton!''': Ĉi tiu dosiero eble enhavas malican kodadon, per ĝia ruligo via sistemo povus endanĝeriĝi.",
-'imagemaxsize'         => "Limo por bildoj:<br />''(por dosieraj priskribo-paĝoj)''",
-'thumbsize'            => 'Grandeco de bildetoj:',
-'widthheightpage'      => '$1×$2, $3 {{PLURAL:$3|paĝo|paĝoj}}',
-'file-info'            => 'grando de dosiero: $1, MIME-tipo: $2',
-'file-info-size'       => '$1 × $2 rastrumeroj, dosiera grandeco: $3, MIME-tipo: $4',
-'file-nohires'         => '<small>Nenia pli granda distingivo havebla.</small>',
-'svg-long-desc'        => 'SVG-dosiero, $1 × $2 rastrumeroj, grandeco de dosiero: $3',
-'show-big-image'       => 'Plena distingivo',
-'show-big-image-thumb' => '<small>Grandeco de ĉi antaŭvido: $1 × $2 rastrumeroj</small>',
-'file-info-gif-looped' => 'ripeta GIF',
-'file-info-gif-frames' => '$1 {{PLURAL:$1|ĉelo|ĉeloj}}',
-'file-info-png-looped' => 'ripetita',
-'file-info-png-repeat' => 'Ludis $1 fojo{{PLURAL:$1||j}}n',
-'file-info-png-frames' => '$1 kadro{{PLURAL:$1||j}}',
+'mediawarning'           => "'''Atenton!''': Ĉi tiu dosiero eble enhavas malican kodadon, per ĝia ruligo via sistemo povus endanĝeriĝi.",
+'imagemaxsize'           => "Limo por bildoj:<br />''(por dosieraj priskribo-paĝoj)''",
+'thumbsize'              => 'Grandeco de bildetoj:',
+'widthheightpage'        => '$1×$2, $3 {{PLURAL:$3|paĝo|paĝoj}}',
+'file-info'              => 'grando de dosiero: $1, MIME-tipo: $2',
+'file-info-size'         => '$1 × $2 rastrumeroj, dosiera grandeco: $3, MIME-tipo: $4',
+'file-info-size-pages'   => '$1 × $2 rastrumeroj, dosiera grandeco: $3, MIME-tipo: $4, $5 {{PLURAL:$5|paĝo|paĝoj}}',
+'file-nohires'           => '<small>Nenia pli granda distingivo havebla.</small>',
+'svg-long-desc'          => 'SVG-dosiero, $1 × $2 rastrumeroj, grandeco de dosiero: $3',
+'show-big-image'         => 'Plena distingivo',
+'show-big-image-preview' => '<small>Grandeco de ĉi antaŭvido: $1.</small>',
+'show-big-image-other'   => '<small>Aliaj distingivoj: $1.</small>',
+'show-big-image-size'    => '$1 × $2 rastrumeroj',
+'file-info-gif-looped'   => 'ripeta GIF',
+'file-info-gif-frames'   => '$1 {{PLURAL:$1|ĉelo|ĉeloj}}',
+'file-info-png-looped'   => 'ripetita',
+'file-info-png-repeat'   => 'Ludis $1 fojo{{PLURAL:$1||j}}n',
+'file-info-png-frames'   => '$1 kadro{{PLURAL:$1||j}}',
 
 # Special:NewFiles
 'newimages'             => 'Galerio de novaj dosieroj',
@@ -2940,15 +3005,21 @@ Sekvaj ligilo en la sama linio estas konsiderata kiel esceptoj (paĝoj kiel la b
 'metadata-help'     => 'Ĉi tiu dosiero enhavas plian informon, verŝajne aldonitan de la cifereca fotilo aŭ skanilo uzita por krei aux skani ĝin. Se la dosiero estis modifita de sia originala stato, iuj detaloj eble ne konformos al efektiva stato de la modifita bildo.',
 'metadata-expand'   => 'Montri etendajn detalojn',
 'metadata-collapse' => 'Kaŝi etendajn detalojn',
-'metadata-fields'   => 'La jenaj EXIF-metadatumaj kampoj estos inkluzivitaj en bildo-paĝoj kiam la metadatuma tabelo estas disfaldigita. Aliaj estos kaŝita defaŭlte.
-
+'metadata-fields'   => 'Metadatumaj kampoj de ĉi tiu mesaĝo estos inkluzivita en la paĝoj de bidloj kiam la metadatuma tabelo estas disfaldigita. 
+Aliaj estos kaŝitaj defaŭlte.
 * make
 * model
 * datetimeoriginal
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-imagewidth'                  => 'Larĝeco',
@@ -2963,13 +3034,11 @@ Sekvaj ligilo en la sama linio estas konsiderata kiel esceptoj (paĝoj kiel la b
 'exif-ycbcrpositioning'            => 'Y kaj C situado',
 'exif-xresolution'                 => 'Horizontala distingivo',
 'exif-yresolution'                 => 'Vertikala distingivo',
-'exif-resolutionunit'              => 'Unuo de X kaj Y distingivo',
 'exif-stripoffsets'                => 'Loko de bilda datumo',
 'exif-rowsperstrip'                => 'Nombro de vicoj por strio',
 'exif-stripbytecounts'             => 'Bitikoj por densigita strio',
 'exif-jpeginterchangeformat'       => 'Flankigo al JPEG SOI',
 'exif-jpeginterchangeformatlength' => 'Bitokoj de JPEG-datumo',
-'exif-transferfunction'            => 'Transiga funkcio',
 'exif-whitepoint'                  => 'Koloreco de blanka punkto',
 'exif-primarychromaticities'       => 'Kolorecoj de primaraĵoj',
 'exif-ycbcrcoefficients'           => 'Koeficientoj de kolorspaca transformiga matrikso',
@@ -2988,7 +3057,6 @@ Sekvaj ligilo en la sama linio estas konsiderata kiel esceptoj (paĝoj kiel la b
 'exif-compressedbitsperpixel'      => 'Reĝimo de bilda densigado',
 'exif-pixelydimension'             => 'Larĝeco de bildo',
 'exif-pixelxdimension'             => 'Alteco de bildo',
-'exif-makernote'                   => 'Notoj de fabrikejo',
 'exif-usercomment'                 => 'Komentoj de uzanto',
 'exif-relatedsoundfile'            => 'Rilata son-dosiero',
 'exif-datetimeoriginal'            => 'Dato kaj tempo de datuma generado',
@@ -3002,7 +3070,6 @@ Sekvaj ligilo en la sama linio estas konsiderata kiel esceptoj (paĝoj kiel la b
 'exif-exposureprogram'             => 'Ekspona programo',
 'exif-spectralsensitivity'         => 'Spektruma sensemo',
 'exif-isospeedratings'             => 'ISO sentiveco',
-'exif-oecf'                        => 'Optikelektronika konverada faktoro',
 'exif-shutterspeedvalue'           => 'APEX-Rapido de obturatoro',
 'exif-aperturevalue'               => 'APEX-Aperturo',
 'exif-brightnessvalue'             => 'APEX-Heleco',
@@ -3015,7 +3082,6 @@ Sekvaj ligilo en la sama linio estas konsiderata kiel esceptoj (paĝoj kiel la b
 'exif-focallength'                 => 'Fokusa longo de lenso',
 'exif-subjectarea'                 => 'Subjekta areo',
 'exif-flashenergy'                 => 'Fulmila energio',
-'exif-spatialfrequencyresponse'    => 'Spaca frekvenco-respondo',
 'exif-focalplanexresolution'       => 'X distingivo de fokusa ebeno',
 'exif-focalplaneyresolution'       => 'Y distingivo de fokusa ebeno',
 'exif-focalplaneresolutionunit'    => 'Distingivo-unuo de fokusa ebeno',
@@ -3024,7 +3090,6 @@ Sekvaj ligilo en la sama linio estas konsiderata kiel esceptoj (paĝoj kiel la b
 'exif-sensingmethod'               => 'Metodo de sensado',
 'exif-filesource'                  => 'Dosiera fonto',
 'exif-scenetype'                   => 'Speco de sceno',
-'exif-cfapattern'                  => 'CFA skemo',
 'exif-customrendered'              => 'Propra foto-rivelado',
 'exif-exposuremode'                => 'Ekspona reĝimo',
 'exif-whitebalance'                => 'Blanka balanciĝo',
@@ -3069,10 +3134,79 @@ Sekvaj ligilo en la sama linio estas konsiderata kiel esceptoj (paĝoj kiel la b
 'exif-gpsareainformation'          => 'Nomo de GPS areo',
 'exif-gpsdatestamp'                => 'GPS dato',
 'exif-gpsdifferential'             => 'GPS diferenca korektado',
+'exif-jpegfilecomment'             => 'Komento de JPEG-dosiero',
+'exif-keywords'                    => 'Ŝlosilvortoj',
+'exif-worldregioncreated'          => 'Monda regiono kie la foto estis fotita',
+'exif-countrycreated'              => 'Lando kie la foto estis fotita',
+'exif-countrycodecreated'          => 'Landokodo kie la foto estis fotita',
+'exif-provinceorstatecreated'      => 'Provinco aŭ subŝtato kie la foto estis fotita',
+'exif-citycreated'                 => 'Urbo kie la foto estis fotita',
+'exif-sublocationcreated'          => 'Subloko de la urbo kie la foto estis fotita',
+'exif-worldregiondest'             => 'Monda regiono montrita',
+'exif-countrydest'                 => 'Lando montrita',
+'exif-countrycodedest'             => 'ISO-kodo por lando montrita',
+'exif-provinceorstatedest'         => 'Provinco aŭ subŝtato montrita',
+'exif-citydest'                    => 'Urbo montrita',
+'exif-sublocationdest'             => 'Subloko de urbo montrita',
 'exif-objectname'                  => 'Mallonga titolo',
+'exif-specialinstructions'         => 'Speciala instrukcio',
+'exif-headline'                    => 'Titolo',
+'exif-credit'                      => 'Provizanto',
+'exif-source'                      => 'Fonto',
+'exif-editstatus'                  => 'Redaktora statuso de bildo',
+'exif-urgency'                     => 'Urĝeco',
+'exif-fixtureidentifier'           => 'Nomo de rikura kolumno',
+'exif-locationdest'                => 'Loko montrita',
+'exif-locationdestcode'            => 'Kodo de loko montrita',
+'exif-objectcycle'                 => 'Tempo de tago kiun medio estas intenciita',
+'exif-contact'                     => 'Informo por mesaĝigi',
+'exif-writer'                      => 'Aŭtoro',
+'exif-languagecode'                => 'Lingvo',
+'exif-iimversion'                  => 'IIM-versio',
+'exif-iimcategory'                 => 'Kategorio',
+'exif-iimsupplementalcategory'     => 'Aldonaj kategorioj',
+'exif-datetimeexpires'             => 'Ne uzu post',
+'exif-datetimereleased'            => 'Eldonitaj je',
+'exif-originaltransmissionref'     => 'Loko-kodo de originala komunikaĵo',
+'exif-identifier'                  => 'Identigo',
+'exif-lens'                        => 'Lenso uzita',
+'exif-serialnumber'                => 'Seria numero de fotilo',
+'exif-cameraownername'             => 'Propranto de fotilo',
+'exif-label'                       => 'Etikedo',
+'exif-datetimemetadata'            => 'Dato kiam metadatumoj estis laste modifitaj',
+'exif-nickname'                    => 'Malformala nomo de bildo',
+'exif-rating'                      => 'Taksado (el 5)',
+'exif-rightscertificate'           => 'Atestilo de rajtoj-administrado',
+'exif-copyrighted'                 => 'Aŭtorrajta statuso:',
+'exif-copyrightowner'              => 'Posedanto de la aŭtorrajto',
+'exif-usageterms'                  => 'Regularo pri uzado',
+'exif-webstatement'                => 'Interreta deklarado pri aŭtorrajtoj',
+'exif-originaldocumentid'          => 'Unika identigo de originala dokumento',
+'exif-licenseurl'                  => 'URL-o por aŭtorrajta permesilo',
+'exif-morepermissionsurl'          => 'Informo pri alternativa permesado',
+'exif-attributionurl'              => 'Kiam reuzante ĉi tiun verkon, bonvolu ligigi al:',
+'exif-preferredattributionname'    => 'Kiam reuzante ĉi tiun verkon, bonvolu mencii al:',
+'exif-pngfilecomment'              => 'Komento de PNG-dosiero',
+'exif-disclaimer'                  => 'Malgarantio',
+'exif-contentwarning'              => 'Averto pri enhavo',
+'exif-giffilecomment'              => 'Komento de GIF-dosiero',
+'exif-intellectualgenre'           => 'Tipo de aĵo',
+'exif-subjectnewscode'             => 'Temo-kodo',
+'exif-scenecode'                   => 'IPTC sceno-kodo',
+'exif-event'                       => 'Evento montrita',
+'exif-organisationinimage'         => 'Organizaĵo montrita',
+'exif-personinimage'               => 'Persono montrita',
+'exif-originalimageheight'         => 'Alto de bildo antaŭ stuco',
+'exif-originalimagewidth'          => 'Larĝo de bildo antaŭ stuco',
 
 # EXIF attributes
 'exif-compression-1' => 'Nedensigita',
+'exif-compression-2' => 'CCITT-Grupo 3 modifita ciferado laŭ Huffman Dimensio-1',
+'exif-compression-3' => 'CCITT Grupo-3 ĉifrado por faksilo',
+'exif-compression-4' => 'CCITT Grupo-4 ĉifrado por faksilo',
+
+'exif-copyrighted-true'  => 'Sub aŭtorrajto',
+'exif-copyrighted-false' => 'Sub publika domajno',
 
 'exif-unknowndate' => 'Nekonata dato',
 
@@ -3087,6 +3221,8 @@ Sekvaj ligilo en la sama linio estas konsiderata kiel esceptoj (paĝoj kiel la b
 
 'exif-planarconfiguration-1' => 'bloka formato',
 'exif-planarconfiguration-2' => 'ebena formato',
+
+'exif-colorspace-65535' => 'Nekalibrita',
 
 'exif-componentsconfiguration-0' => 'ne ekzistas',
 
@@ -3201,6 +3337,10 @@ Sekvaj ligilo en la sama linio estas konsiderata kiel esceptoj (paĝoj kiel la b
 'exif-gpslongitude-e' => 'Orienta longitudo',
 'exif-gpslongitude-w' => 'Uesta longitudo',
 
+# Pseudotags used for GPSAltitudeRef
+'exif-gpsaltitude-above-sealevel' => '$1 {{PLURAL:$1|metro|metroj}} super marnivelo',
+'exif-gpsaltitude-below-sealevel' => '$1 {{PLURAL:$1|metro|metroj}} sub marnivelo',
+
 'exif-gpsstatus-a' => 'Mezurado estanta',
 'exif-gpsstatus-v' => 'Mezurada interoperaciado',
 
@@ -3212,21 +3352,73 @@ Sekvaj ligilo en la sama linio estas konsiderata kiel esceptoj (paĝoj kiel la b
 'exif-gpsspeed-m' => 'Mejloj por horo',
 'exif-gpsspeed-n' => 'Knotoj',
 
+# Pseudotags used for GPSDestDistanceRef
+'exif-gpsdestdistance-k' => 'Kilometroj',
+'exif-gpsdestdistance-m' => 'Mejloj',
+'exif-gpsdestdistance-n' => 'Maraj mejloj',
+
+'exif-gpsdop-excellent' => 'Bonega ($1)',
+'exif-gpsdop-good'      => 'Bona ($1)',
+'exif-gpsdop-moderate'  => 'Meza ($1)',
+'exif-gpsdop-fair'      => 'Submeza ($1)',
+'exif-gpsdop-poor'      => 'Malbona ($1)',
+
+'exif-objectcycle-a' => 'Nur mateno',
+'exif-objectcycle-p' => 'Nur vespero',
+'exif-objectcycle-b' => 'Kaj mateno kaj vespero',
+
 # Pseudotags used for GPSTrackRef, GPSImgDirectionRef and GPSDestBearingRef
 'exif-gpsdirection-t' => 'Vera direkto',
 'exif-gpsdirection-m' => 'Magneta direkto',
 
+'exif-ycbcrpositioning-1' => 'Centrigita',
+'exif-ycbcrpositioning-2' => 'Multaj situoj',
+
+'exif-dc-contributor' => 'Kontribuintoj',
+'exif-dc-coverage'    => 'Spaca aŭ tempa amplekso de bildo',
+'exif-dc-date'        => 'Dato(j)',
+'exif-dc-publisher'   => 'Eldonejo',
+'exif-dc-relation'    => 'Rilata al bildo',
+'exif-dc-rights'      => 'Rajtoj',
+'exif-dc-source'      => 'Fonto de bildo',
+'exif-dc-type'        => 'Tipo de medio',
+
+'exif-rating-rejected' => 'Malakceptita',
+
+'exif-isospeedratings-overflow' => 'Pli granda ol 65535',
+
+'exif-iimcategory-ace' => 'Arto, kulturo, kaj regalado',
+'exif-iimcategory-clj' => 'Krimo kaj leĝo',
+'exif-iimcategory-dis' => 'Katastrofoj kaj akcidentoj',
+'exif-iimcategory-fin' => 'Ekonomio kaj entrepreno',
+'exif-iimcategory-edu' => 'Edukado',
+'exif-iimcategory-evn' => 'Medio',
+'exif-iimcategory-hth' => 'Sano',
+'exif-iimcategory-hum' => 'Homaj interesaĵoj',
+'exif-iimcategory-lab' => 'Laboro',
+'exif-iimcategory-lif' => 'Vivmaniero kaj ŝatokupo',
+'exif-iimcategory-pol' => 'Politiko',
+'exif-iimcategory-rel' => 'Religio kaj kreado',
+'exif-iimcategory-sci' => 'Scienco kaj teknologio',
+'exif-iimcategory-soi' => 'Sociaj aferoj',
+'exif-iimcategory-spo' => 'Sporto',
+'exif-iimcategory-war' => 'Milito, konflikto kaj malpacaĵo',
+'exif-iimcategory-wea' => 'Vetero',
+
+'exif-urgency-normal' => 'Norma ($1)',
+'exif-urgency-low'    => 'Malalta ($1)',
+'exif-urgency-high'   => 'Alta ($1)',
+'exif-urgency-other'  => 'Prioritato difinita de uzanto ($1)',
+
 # External editor support
 'edit-externally'      => 'Ŝanĝi ĉi tiun dosieron per ekstera programaro',
-'edit-externally-help' => "(Vidu la [http://www.mediawiki.org/wiki/Manual:External_editors instalinstrukciojn] por pliaj informoj.) ''[angle]''.",
+'edit-externally-help' => "(Vidu la [//www.mediawiki.org/wiki/Manual:External_editors instalinstrukciojn] por pliaj informoj.) ''[angle]''.",
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'ĉiuj',
-'imagelistall'     => 'ĉiuj',
-'watchlistall2'    => 'ĉiuj',
-'namespacesall'    => 'ĉiuj',
-'monthsall'        => 'ĉiuj',
-'limitall'         => 'ĉiuj',
+'watchlistall2' => 'ĉiuj',
+'namespacesall' => 'ĉiuj',
+'monthsall'     => 'ĉiuj',
+'limitall'      => 'ĉiuj',
 
 # E-mail address confirmation
 'confirmemail'              => 'Konfirmi retadreson',
@@ -3305,16 +3497,24 @@ $1',
 'trackbackdeleteok' => 'La postspurado estis sukcese forigita.',
 
 # Delete conflict
-'deletedwhileediting' => "'''Averto''': Ĉi tiu paĝo estis forigita post vi ekredaktis!",
-'confirmrecreate'     => "Uzanto [[User:$1|$1]] ([[User talk:$1|diskuto]]) forigis ĉi tiun paĝon post vi ekredaktis ĝin kun kialo:
+'deletedwhileediting'      => "'''Averto''': Ĉi tiu paĝo estis forigita post vi ekredaktis!",
+'confirmrecreate'          => "Uzanto [[User:$1|$1]] ([[User talk:$1|diskuto]]) forigis ĉi tiun paĝon post vi ekredaktis ĝin kun kialo:
 : ''$2''
 Bonvolu konfirmi ke vi ja volas rekrei la paĝon.",
-'recreate'            => 'Rekrei',
+'confirmrecreate-noreason' => 'Uzanto [[User:$1|$1]] ([[User talk:$1|diskuto-paĝo]]) forigis ĉi tiun paĝon post vi ekredaktis ĝin.
+Bonvolu konfirmi ke vi ja volas rekrei la paĝon.',
+'recreate'                 => 'Rekrei',
 
 # action=purge
 'confirm_purge_button' => 'Ek!',
 'confirm-purge-top'    => 'Ĉu forviŝigi la kaŝmemoron de tiu ĉi paĝo?',
 'confirm-purge-bottom' => 'Refreŝigante paĝon forviŝas la memorkaŝejon kaj devigas la plej lastan version aperi.',
+
+# action=watch/unwatch
+'confirm-watch-button'   => 'Ek!',
+'confirm-watch-top'      => 'Ĉu aldoni tiun ĉi paĝon al via atentaro?',
+'confirm-unwatch-button' => 'Ek!',
+'confirm-unwatch-top'    => 'Ĉu forigi tiun ĉi paĝon el via atentaro?',
 
 # Multipage image navigation
 'imgmultipageprev' => '← antaŭa paĝo',
@@ -3357,13 +3557,13 @@ Bonvolu konfirmi ke vi ja volas rekrei la paĝon.",
 'watchlistedit-normal-legend'  => 'Forigi titolojn de atentaro',
 'watchlistedit-normal-explain' => 'Jen titoloj de via atentaro.
 Forigi titolon, marku la skatoleto apude de ĝi, kaj klaku "{{int:Watchlistedit-normal-submit}}".
-Vi ankaŭ povas [[Special:Watchlist/raw|redakti la krudan liston]].',
+Vi ankaŭ povas [[Special:EditWatchlist/raw|redakti la krudan liston]].',
 'watchlistedit-normal-submit'  => 'Forigi Titolojn',
 'watchlistedit-normal-done'    => '{{PLURAL:$1|1 titolo estis forigita|$1 titoloj estis forigitaj}} de via atentaro:',
 'watchlistedit-raw-title'      => 'Redakti krudan atentaron',
 'watchlistedit-raw-legend'     => 'Redakti krudan atentaron',
 'watchlistedit-raw-explain'    => 'Jen titoloj en via atentaro, kiuj povas esti redaktata de aldono aŭ forigo de la listo: po unu titolo por linio. Kiam finite, klaku "{{int:Watchlistedit-raw-submit}}".
-Vi povas ankaŭ [[Special:Watchlist/edit|redakti norme]].',
+Vi povas ankaŭ [[Special:EditWatchlist|redakti norme]].',
 'watchlistedit-raw-titles'     => 'Titoloj:',
 'watchlistedit-raw-submit'     => 'Ĝisdatigi atentaron',
 'watchlistedit-raw-done'       => 'Via atentaro estas ĝisdatigita.',
@@ -3380,33 +3580,33 @@ Vi povas ankaŭ [[Special:Watchlist/edit|redakti norme]].',
 'duplicate-defaultsort' => '\'\'\'Averto:\'\'\' Defaŭlta ordiga ŝlosilo "$2" anstataŭigas pli fruan defaŭltan ordigan ŝlosilon "$1".',
 
 # Special:Version
-'version'                          => 'Versio',
-'version-extensions'               => 'Instalitaj kromprogramoj',
-'version-specialpages'             => 'Specialaj paĝoj',
-'version-parserhooks'              => 'Sintaksaj hokoj',
-'version-variables'                => 'Variabloj',
-'version-skins'                    => 'Etosoj',
-'version-other'                    => 'Alia',
-'version-mediahandlers'            => 'Mediaj traktiloj',
-'version-hooks'                    => 'Hokoj',
-'version-extension-functions'      => 'Kromprogramaj funkcioj',
-'version-parser-extensiontags'     => 'Sintaksaj etend-etikedoj',
-'version-parser-function-hooks'    => 'Hokoj de sintaksaj funkcioj',
-'version-skin-extension-functions' => 'Etendaj funkcioj pri grafika etoso',
-'version-hook-name'                => 'Nomo de hoko',
-'version-hook-subscribedby'        => 'Abonita de',
-'version-version'                  => '(Versio $1)',
-'version-license'                  => 'Permesilo',
-'version-poweredby-credits'        => "Ĉi tiu vikio funkcias per '''[http://www.mediawiki.org/ MediaWiki]''', aŭtorrajto ©&thinsp;2001–$1 $2.",
-'version-poweredby-others'         => 'aliaj',
-'version-license-info'             => 'MediaWiki estas libera programaro. Vi povas redistribui ĝin kaj/aŭ modifi ĝin sub la kondiĉoj de la GNU General Public Licens (GNU Ĝenerala Publika Permesilo) en ties eldono de la Free Software Foundation (Libera Softvara Fondaĵo) - aŭ versio 2 de la Permesilo, aŭ (laŭ via elekto) iu ajn posta versio.
+'version'                       => 'Versio',
+'version-extensions'            => 'Instalitaj kromprogramoj',
+'version-specialpages'          => 'Specialaj paĝoj',
+'version-parserhooks'           => 'Sintaksaj hokoj',
+'version-variables'             => 'Variabloj',
+'version-antispam'              => 'Kontraŭspamilo',
+'version-skins'                 => 'Etosoj',
+'version-other'                 => 'Alia',
+'version-mediahandlers'         => 'Mediaj traktiloj',
+'version-hooks'                 => 'Hokoj',
+'version-extension-functions'   => 'Kromprogramaj funkcioj',
+'version-parser-extensiontags'  => 'Sintaksaj etend-etikedoj',
+'version-parser-function-hooks' => 'Hokoj de sintaksaj funkcioj',
+'version-hook-name'             => 'Nomo de hoko',
+'version-hook-subscribedby'     => 'Abonita de',
+'version-version'               => '(Versio $1)',
+'version-license'               => 'Permesilo',
+'version-poweredby-credits'     => "Ĉi tiu vikio funkcias per '''[//www.mediawiki.org/ MediaWiki]''', aŭtorrajto ©&thinsp;2001–$1 $2.",
+'version-poweredby-others'      => 'aliaj',
+'version-license-info'          => 'MediaWiki estas libera programaro. Vi povas redistribui ĝin kaj/aŭ modifi ĝin sub la kondiĉoj de la GNU General Public Licens (GNU Ĝenerala Publika Permesilo) en ties eldono de la Free Software Foundation (Libera Softvara Fondaĵo) - aŭ versio 2 de la Permesilo, aŭ (laŭ via elekto) iu ajn posta versio.
 
 Tiun ĉi verkon ni distribuas esperante, ke ĝi utilos, sed SEN IA AJN GARANTIO; eĉ sen la implica garantio de SURMERKATIGEBLECO aŭ TAŬGECO POR IA DIFINITA CELO. Vidu GNU General Public License por pliaj detaloj.
 
-Oni devis doni al vi [{{SERVER}}{{SCRIPTPATH}}/COPYING ekzempleron de la GNU General Public License] kune kun tiu ĉi programo; se ne, skribu al Free Software Foundation, Inc., 59 Temple Place, Suite 350, Boston, MA 02111-1307 USA aŭ [http://www.gnu.org/licenses/old-licenses/gpl-2.0.html legu ĝin interrete].',
-'version-software'                 => 'Instalita programaro',
-'version-software-product'         => 'Produkto',
-'version-software-version'         => 'Versio',
+Oni devis doni al vi [{{SERVER}}{{SCRIPTPATH}}/COPYING ekzempleron de la GNU General Public License] kune kun tiu ĉi programo; se ne, skribu al Free Software Foundation, Inc., 59 Temple Place, Suite 350, Boston, MA 02111-1307 USA aŭ [//www.gnu.org/licenses/old-licenses/gpl-2.0.html legu ĝin interrete].',
+'version-software'              => 'Instalita programaro',
+'version-software-product'      => 'Produkto',
+'version-software-version'      => 'Versio',
 
 # Special:FilePath
 'filepath'         => 'Vojo al dosiero',
@@ -3416,22 +3616,22 @@ Oni devis doni al vi [{{SERVER}}{{SCRIPTPATH}}/COPYING ekzempleron de la GNU Gen
 Bildoj montriĝas en plena distingivo, aliaj dosiertipoj estas malfermataj rekte per ties asociita programo.',
 
 # Special:FileDuplicateSearch
-'fileduplicatesearch'          => 'Serĉu duplikatajn dosierojn',
-'fileduplicatesearch-summary'  => 'Serĉu duplikatajn dosierojn bazite de haketvaloro.
-
-Enigu la dosiernomon sen la "{{ns:file}}:" prefikso.',
-'fileduplicatesearch-legend'   => 'Serĉi duplikaton',
-'fileduplicatesearch-filename' => 'Dosiernomo:',
-'fileduplicatesearch-submit'   => 'Serĉi',
-'fileduplicatesearch-info'     => '$1 × $2 rastrumero<br />Dosiera pezo: $3<br />MIME-tipo: $4',
-'fileduplicatesearch-result-1' => 'La dosiero "$1" ne havas identan duplikaton.',
-'fileduplicatesearch-result-n' => 'La dosiero "$1" havas {{PLURAL:$2|1 identan duplikaton|$2 identajn duplikatojn}}.',
+'fileduplicatesearch'           => 'Serĉu duplikatajn dosierojn',
+'fileduplicatesearch-summary'   => 'Serĉi duplikatajn dosierojn bazite de haketvaloro.',
+'fileduplicatesearch-legend'    => 'Serĉi duplikaton',
+'fileduplicatesearch-filename'  => 'Dosiernomo:',
+'fileduplicatesearch-submit'    => 'Serĉi',
+'fileduplicatesearch-info'      => '$1 × $2 rastrumero<br />Dosiera pezo: $3<br />MIME-tipo: $4',
+'fileduplicatesearch-result-1'  => 'La dosiero "$1" ne havas identan duplikaton.',
+'fileduplicatesearch-result-n'  => 'La dosiero "$1" havas {{PLURAL:$2|1 identan duplikaton|$2 identajn duplikatojn}}.',
+'fileduplicatesearch-noresults' => 'Neniu dosiero nomita "$1" troviĝis.',
 
 # Special:SpecialPages
 'specialpages'                   => 'Specialaj paĝoj',
 'specialpages-note'              => '----
 * Normaj specialaj paĝoj.
-* <strong class="mw-specialpagerestricted">Limigitaj specialaj paĝoj.</strong>',
+* <strong class="mw-specialpagerestricted">Limigitaj specialaj paĝoj.</strong>
+* <span class="mw-specialpagecached">Memorkaŝitaj specialaj paĝoj (eble malaktualaj).</span>',
 'specialpages-group-maintenance' => 'Raportoj pri prizorgado',
 'specialpages-group-other'       => 'Aliaj specialaj paĝoj',
 'specialpages-group-login'       => 'Ensaluti / Krei novan konton',

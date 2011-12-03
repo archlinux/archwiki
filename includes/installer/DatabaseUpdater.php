@@ -31,12 +31,6 @@ abstract class DatabaseUpdater {
 	protected $extensionUpdates = array();
 
 	/**
-	 * Used to hold schema files during installation process
-	 * @var array
-	 */
-	protected $newExtensions = array();
-
-	/**
 	 * Handle to the database subclass
 	 *
 	 * @var DatabaseBase
@@ -46,7 +40,8 @@ abstract class DatabaseUpdater {
 	protected $shared = false;
 
 	protected $postDatabaseUpdateMaintenance = array(
-		'DeleteDefaultMessages'
+		'DeleteDefaultMessages',
+		'FixExtLinksProtocolRelative',
 	);
 
 	/**
@@ -65,6 +60,7 @@ abstract class DatabaseUpdater {
 		} else {
 			$this->maintenance = new FakeMaintenance;
 		}
+		$this->maintenance->setDB( $db );
 		$this->initOldGlobals();
 		$this->loadExtensions();
 		wfRunHooks( 'LoadExtensionSchemaUpdates', array( $this ) );
@@ -176,23 +172,6 @@ abstract class DatabaseUpdater {
 	}
 
 	/**
-	 * Add a brand new extension to MediaWiki. Used during the initial install
-	 * @param $ext String Name of extension
-	 * @param $sqlPath String Full path to the schema file
-	 */
-	public function addNewExtension( $ext, $sqlPath ) {
-		$this->newExtensions[ strtolower( $ext ) ] = $sqlPath;
-	}
-
-	/**
-	 * Get the list of extensions that registered a schema with our DB type
-	 * @return array
-	 */
-	public function getNewExtensions() {
-		return $this->newExtensions;
-	}
-
-	/**
 	 * Get the list of extension-defined updates
 	 *
 	 * @return Array
@@ -210,8 +189,8 @@ abstract class DatabaseUpdater {
 	 *
 	 * @param $what Array: what updates to perform
 	 */
-	public function doUpdates( $what = array( 'core', 'extensions', 'purge' ) ) {
-		global $wgVersion;
+	public function doUpdates( $what = array( 'core', 'extensions', 'purge', 'stats' ) ) {
+		global $wgLocalisationCacheConf, $wgVersion;
 
 		$what = array_flip( $what );
 		if ( isset( $what['core'] ) ) {
@@ -224,10 +203,14 @@ abstract class DatabaseUpdater {
 
 		$this->setAppliedUpdates( $wgVersion, $this->updates );
 
-		if( isset( $what['purge'] ) ) {
+		if ( isset( $what['purge'] ) ) {
 			$this->purgeCache();
+
+			if ( $wgLocalisationCacheConf['manualRecache'] ) {
+				$this->rebuildLocalisationCache();
+			}
 		}
-		if ( isset( $what['core'] ) ) {
+		if ( isset( $what['stats'] ) ) {
 			$this->checkStats();
 		}
 	}
@@ -254,6 +237,7 @@ abstract class DatabaseUpdater {
 	}
 
 	protected function setAppliedUpdates( $version, $updates = array() ) {
+		$this->db->clearFlag( DBO_DDLMODE );
 		if( !$this->canUseNewUpdatelog() ) {
 			return;
 		}
@@ -261,12 +245,14 @@ abstract class DatabaseUpdater {
 		$this->db->insert( 'updatelog',
 			array( 'ul_key' => $key, 'ul_value' => serialize( $updates ) ),
 			 __METHOD__ );
+		$this->db->setFlag( DBO_DDLMODE );
 	}
 
 	/**
 	 * Helper function: check if the given key is present in the updatelog table.
 	 * Obviously, only use this for updates that occur after the updatelog table was
 	 * created!
+	 * @param $key String Name of the key to check for
 	 */
 	public function updateRowExists( $key ) {
 		$row = $this->db->selectRow(
@@ -276,6 +262,23 @@ abstract class DatabaseUpdater {
 			__METHOD__
 		);
 		return (bool)$row;
+	}
+
+	/**
+	 * Helper function: Add a key to the updatelog table
+	 * Obviously, only use this for updates that occur after the updatelog table was
+	 * created!
+	 * @param $key String Name of key to insert
+	 * @param $val String [optional] value to insert along with the key
+	 */
+	public function insertUpdateRow( $key, $val = null ) {
+		$this->db->clearFlag( DBO_DDLMODE );
+		$values = array( 'ul_key' => $key );
+		if( $val && $this->canUseNewUpdatelog() ) {
+			$values['ul_value'] = $val;
+		}
+		$this->db->insert( 'updatelog', $values, __METHOD__, 'IGNORE' );
+		$this->db->setFlag( DBO_DDLMODE );
 	}
 
 	/**
@@ -459,13 +462,17 @@ abstract class DatabaseUpdater {
 	 * @param $fullpath Boolean: whether to treat $patch path as a relative or not
 	 */
 	public function modifyField( $table, $field, $patch, $fullpath = false ) {
+		$updateKey = "$table-$field-$patch";
 		if ( !$this->db->tableExists( $table ) ) {
 			$this->output( "...$table table does not exist, skipping modify field patch\n" );
 		} elseif ( !$this->db->fieldExists( $table, $field ) ) {
 			$this->output( "...$field field does not exist in $table table, skipping modify field patch\n" );
+		} elseif( $this->updateRowExists( $updateKey ) ) {
+			$this->output( "...$field in table $table already modified by patch $patch\n" );
 		} else {
 			$this->output( "Modifying $field field of table $table..." );
 			$this->applyPatch( $patch, $fullpath );
+			$this->insertUpdateRow( $updateKey );
 			$this->output( "ok\n" );
 		}
 	}
@@ -495,7 +502,7 @@ abstract class DatabaseUpdater {
 			$this->output( "done.\n" );
 			return;
 		}
-		SiteStatsInit::doAllAndCommit( false );
+		SiteStatsInit::doAllAndCommit( $this->db );
 	}
 
 	# Common updater functions
@@ -525,7 +532,7 @@ abstract class DatabaseUpdater {
 			"Populating log_user_text field, printing progress markers. For large\n" .
 			"databases, you may want to hit Ctrl-C and do this manually with\n" .
 			"maintenance/populateLogUsertext.php.\n" );
-		$task = new PopulateLogUsertext();
+		$task = $this->maintenance->runChild( 'PopulateLogUsertext' );
 		$task->execute();
 		$this->output( "Done populating log_user_text field.\n" );
 	}
@@ -540,7 +547,7 @@ abstract class DatabaseUpdater {
 			"Populating log_search table, printing progress markers. For large\n" .
 			"databases, you may want to hit Ctrl-C and do this manually with\n" .
 			"maintenance/populateLogSearch.php.\n" );
-		$task = new PopulateLogSearch();
+		$task = $this->maintenance->runChild( 'PopulateLogSearch' );
 		$task->execute();
 		$this->output( "Done populating log_search table.\n" );
 	}
@@ -568,7 +575,18 @@ abstract class DatabaseUpdater {
 			return;
 		}
 
-		$task = new UpdateCollation();
+		$task = $this->maintenance->runChild( 'UpdateCollation' );
 		$task->execute();
+	}
+
+	protected function rebuildLocalisationCache() {
+		/**
+		 * @var $cl RebuildLocalisationCache
+		 */
+		$cl = $this->maintenance->runChild( 'RebuildLocalisationCache', 'rebuildLocalisationCache.php' );
+		$this->output( "Rebuilding localisation cache...\n" );
+		$cl->setForce();
+		$cl->execute();
+		$this->output( "Rebuilding localisation cache done.\n" );
 	}
 }

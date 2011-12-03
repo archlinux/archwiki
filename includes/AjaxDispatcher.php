@@ -7,12 +7,6 @@
  * Handle ajax requests and send them to the proper handler.
  */
 
-if ( !( defined( 'MEDIAWIKI' ) && $wgUseAjax ) ) {
-	die( 1 );
-}
-
-require_once( 'AjaxFunctions.php' );
-
 /**
  * Object-Oriented Ajax functions.
  * @ingroup Ajax
@@ -74,7 +68,7 @@ class AjaxDispatcher {
 	 * request.
 	 */
 	function performAction() {
-		global $wgAjaxExportList, $wgOut, $wgUser;
+		global $wgAjaxExportList, $wgOut;
 
 		if ( empty( $this->mode ) ) {
 			return;
@@ -90,13 +84,6 @@ class AjaxDispatcher {
 				'Bad Request',
 				"unknown function " . (string) $this->func_name
 			);
-		} elseif ( !in_array( 'read', User::getGroupPermissions( array( '*' ) ), true ) 
-			&& !$wgUser->isAllowed( 'read' ) )
-		{
-			wfHttpError(
-				403,
-				'Forbidden',
-				'You must log in to view pages.' );
 		} else {
 			wfDebug( __METHOD__ . ' dispatching ' . $this->func_name . "\n" );
 

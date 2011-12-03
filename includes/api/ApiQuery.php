@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on Sep 7, 2006
  *
@@ -43,8 +43,13 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class ApiQuery extends ApiBase {
 
 	private $mPropModuleNames, $mListModuleNames, $mMetaModuleNames;
+
+	/**
+	 * @var ApiPageSet
+	 */
 	private $mPageSet;
-	private $params, $redirects, $convertTitles;
+
+	private $params, $redirects, $convertTitles, $iwUrl;
 
 	private $mQueryPropModules = array(
 		'info' => 'ApiQueryInfo',
@@ -77,6 +82,7 @@ class ApiQuery extends ApiBase {
 		'filearchive' => 'ApiQueryFilearchive',
 		'imageusage' => 'ApiQueryBacklinks',
 		'iwbacklinks' => 'ApiQueryIWBacklinks',
+		'langbacklinks' => 'ApiQueryLangBacklinks',
 		'logevents' => 'ApiQueryLogEvents',
 		'recentchanges' => 'ApiQueryRecentChanges',
 		'search' => 'ApiQuerySearch',
@@ -88,6 +94,7 @@ class ApiQuery extends ApiBase {
 		'users' => 'ApiQueryUsers',
 		'random' => 'ApiQueryRandom',
 		'protectedtitles' => 'ApiQueryProtectedTitles',
+		'querypage' => 'ApiQueryQueryPage',
 	);
 
 	private $mQueryMetaModules = array(
@@ -184,15 +191,15 @@ class ApiQuery extends ApiBase {
 	 * @return mixed string or null
 	 */
 	function getModuleType( $moduleName ) {
-		if ( array_key_exists ( $moduleName, $this->mQueryPropModules ) ) {
+		if ( isset( $this->mQueryPropModules[$moduleName] ) ) {
 			return 'prop';
 		}
 
-		if ( array_key_exists ( $moduleName, $this->mQueryListModules ) ) {
+		if ( isset( $this->mQueryListModules[$moduleName] ) ) {
 			return 'list';
 		}
 
-		if ( array_key_exists ( $moduleName, $this->mQueryMetaModules ) ) {
+		if ( isset( $this->mQueryMetaModules[$moduleName] ) ) {
 			return 'meta';
 		}
 
@@ -225,6 +232,7 @@ class ApiQuery extends ApiBase {
 		$this->params = $this->extractRequestParams();
 		$this->redirects = $this->params['redirects'];
 		$this->convertTitles = $this->params['converttitles'];
+		$this->iwUrl = $this->params['iwurl'];
 
 		// Create PageSet
 		$this->mPageSet = new ApiPageSet( $this, $this->redirects, $this->convertTitles );
@@ -272,6 +280,8 @@ class ApiQuery extends ApiBase {
 	 * Update a cache mode string, applying the cache mode of a new module to it.
 	 * The cache mode may increase in the level of privacy, but public modules
 	 * added to private data do not decrease the level of privacy.
+	 *
+	 * @return string
 	 */
 	protected function mergeCacheMode( $cacheMode, $modCacheMode ) {
 		if ( $modCacheMode === 'anon-public-user-private' ) {
@@ -307,9 +317,8 @@ class ApiQuery extends ApiBase {
 	 * @param $moduleList Array array(modulename => classname)
 	 */
 	private function instantiateModules( &$modules, $param, $moduleList ) {
-		$list = @$this->params[$param];
-		if ( !is_null ( $list ) ) {
-			foreach ( $list as $moduleName ) {
+		if ( isset( $this->params[$param] ) ) {
+			foreach ( $this->params[$param] as $moduleName ) {
 				$modules[] = new $moduleList[$moduleName] ( $this, $moduleName );
 			}
 		}
@@ -359,10 +368,15 @@ class ApiQuery extends ApiBase {
 		// Interwiki titles
 		$intrwValues = array();
 		foreach ( $pageSet->getInterwikiTitles() as $rawTitleStr => $interwikiStr ) {
-			$intrwValues[] = array(
+			$item = array(
 				'title' => $rawTitleStr,
-				'iw' => $interwikiStr
+				'iw' => $interwikiStr,
 			);
+			if ( $this->iwUrl ) {
+				$title = Title::newFromText( $rawTitleStr );
+				$item['url'] = wfExpandUrl( $title->getFullURL(), PROTO_CURRENT );
+			}
+			$intrwValues[] = $item;
 		}
 
 		if ( count( $intrwValues ) ) {
@@ -372,11 +386,15 @@ class ApiQuery extends ApiBase {
 
 		// Show redirect information
 		$redirValues = array();
-		foreach ( $pageSet->getRedirectTitles() as $titleStrFrom => $titleStrTo ) {
-			$redirValues[] = array(
+		foreach ( $pageSet->getRedirectTitles() as $titleStrFrom => $titleTo ) {
+			$r = array(
 				'from' => strval( $titleStrFrom ),
-				'to' => $titleStrTo
+				'to' => $titleTo->getPrefixedText(),
 			);
+			if ( $titleTo->getFragment() !== '' ) {
+				$r['tofragment'] = $titleTo->getFragment();
+			}
+			$redirValues[] = $r;
 		}
 
 		if ( count( $redirValues ) ) {
@@ -424,7 +442,7 @@ class ApiQuery extends ApiBase {
 			ApiQueryBase::addTitleInfo( $vals, $title );
 			$vals['special'] = '';
 			if ( $title->getNamespace() == NS_SPECIAL &&
-					!SpecialPage::exists( $title->getDbKey() ) ) {
+					!SpecialPageFactory::exists( $title->getDbKey() ) ) {
 				$vals['missing'] = '';
 			} elseif ( $title->getNamespace() == NS_MEDIA &&
 					!wfFindFile( $title ) ) {
@@ -465,16 +483,12 @@ class ApiQuery extends ApiBase {
 	private function doExport( $pageSet, $result )	{
 		$exportTitles = array();
 		$titles = $pageSet->getGoodTitles();
-		if( count( $titles ) ) {
+		if ( count( $titles ) ) {
 			foreach ( $titles as $title ) {
 				if ( $title->userCanRead() ) {
 					$exportTitles[] = $title;
 				}
 			}
-		}
-		// only export when there are titles
-		if ( !count( $exportTitles ) ) {
-			return;
 		}
 
 		$exporter = new WikiExporter( $this->getDB() );
@@ -578,6 +592,7 @@ class ApiQuery extends ApiBase {
 			'indexpageids' => false,
 			'export' => false,
 			'exportnowrap' => false,
+			'iwurl' => false,
 		);
 	}
 
@@ -586,16 +601,14 @@ class ApiQuery extends ApiBase {
 	 * @return string
 	 */
 	public function makeHelpMsg() {
-		$msg = '';
-
 		// Make sure the internal object is empty
 		// (just in case a sub-module decides to optimize during instantiation)
 		$this->mPageSet = null;
 		$this->mAllowedGenerators = array(); // Will be repopulated
 
-		$querySeparator = str_repeat( '--- ', 8 );
-		$moduleSeparator = str_repeat( '*** ', 10 );
-		$msg .= "\n$querySeparator Query: Prop  $querySeparator\n\n";
+		$querySeparator = str_repeat( '--- ', 12 );
+		$moduleSeparator = str_repeat( '*** ', 14 );
+		$msg = "\n$querySeparator Query: Prop  $querySeparator\n\n";
 		$msg .= $this->makeHelpMsgHelper( $this->mQueryPropModules, 'prop' );
 		$msg .= "\n$querySeparator Query: List  $querySeparator\n\n";
 		$msg .= $this->makeHelpMsgHelper( $this->mQueryListModules, 'list' );
@@ -621,7 +634,7 @@ class ApiQuery extends ApiBase {
 		$moduleDescriptions = array();
 
 		foreach ( $moduleList as $moduleName => $moduleClass ) {
-			$module = new $moduleClass ( $this, $moduleName, null );
+			$module = new $moduleClass( $this, $moduleName, null );
 
 			$msg = ApiMain::makeHelpMsgHeader( $module, $paramName );
 			$msg2 = $module->makeHelpMsg();
@@ -664,6 +677,7 @@ class ApiQuery extends ApiBase {
 			'indexpageids' => 'Include an additional pageids section listing all returned page IDs',
 			'export' => 'Export the current revisions of all given or generated pages',
 			'exportnowrap' => 'Return the export XML without wrapping it in an XML result (same format as Special:Export). Can only be used with export',
+			'iwurl' => 'Whether to get the full URL if the title is an interwiki link',
 		);
 	}
 
@@ -688,10 +702,18 @@ class ApiQuery extends ApiBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return array(
+			'https://www.mediawiki.org/wiki/API:Meta',
+			'https://www.mediawiki.org/wiki/API:Properties',
+			'https://www.mediawiki.org/wiki/API:Lists',
+		);
+	}
+
 	public function getVersion() {
 		$psModule = new ApiPageSet( $this );
 		$vers = array();
-		$vers[] = __CLASS__ . ': $Id: ApiQuery.php 80897 2011-01-24 18:57:42Z catrope $';
+		$vers[] = __CLASS__ . ': $Id: ApiQuery.php 104449 2011-11-28 15:52:04Z reedy $';
 		$vers[] = $psModule->getVersion();
 		return $vers;
 	}

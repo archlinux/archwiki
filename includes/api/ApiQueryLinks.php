@@ -1,6 +1,6 @@
 <?php
 /**
- * API for MediaWiki 1.8+
+ *
  *
  * Created on May 12, 2007
  *
@@ -39,7 +39,7 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 	const LINKS = 'links';
 	const TEMPLATES = 'templates';
 
-	private $table, $prefix, $description;
+	private $table, $prefix, $description, $helpUrl;
 
 	public function __construct( $query, $moduleName ) {
 		switch ( $moduleName ) {
@@ -48,12 +48,14 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 				$this->prefix = 'pl';
 				$this->description = 'link';
 				$this->titlesParam = 'titles';
+				$this->helpUrl = 'https://www.mediawiki.org/wiki/API:Properties#links_.2F_pl';
 				break;
 			case self::TEMPLATES:
 				$this->table = 'templatelinks';
 				$this->prefix = 'tl';
 				$this->description = 'template';
 				$this->titlesParam = 'templates';
+				$this->helpUrl = 'https://www.mediawiki.org/wiki/API:Properties#templates_.2F_tl';
 				break;
 			default:
 				ApiBase::dieDebug( __METHOD__, 'Unknown module name' );
@@ -74,6 +76,10 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		$this->run( $resultPageSet );
 	}
 
+	/**
+	 * @param $resultPageSet ApiPageSet
+	 * @return
+	 */
 	private function run( $resultPageSet = null ) {
 		if ( $this->getPageSet()->getGoodTitleCount() == 0 ) {
 			return;	// nothing to do
@@ -213,7 +219,7 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		);
 		if ( $this->getModuleName() == self::LINKS ) {
 			$arr[$this->titlesParam] = 'Only list links to these titles. Useful for checking whether a certain page links to a certain title.';
-		} else if ( $this->getModuleName() == self::TEMPLATES ) {
+		} elseif ( $this->getModuleName() == self::TEMPLATES ) {
 			$arr[$this->titlesParam] = 'Only list these templates. Useful for checking whether a certain page uses a certain template.';
 		}
 		return $arr;
@@ -234,7 +240,11 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		);
 	}
 
+	public function getHelpUrls() {
+		return $this->helpUrl;
+	}
+
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryLinks.php 70647 2010-08-07 19:59:42Z ialex $';
+		return __CLASS__ . ': $Id: ApiQueryLinks.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }

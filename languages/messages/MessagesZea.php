@@ -155,15 +155,6 @@ $messages = array(
 'category-file-count-limited'    => "Deêze categorie bevat {{PLURAL:$1|'t volhende bestand|de volhende $1 bestan'n}}.",
 'listingcontinuesabbrev'         => 'vedder',
 
-'mainpagetext'      => "'''De installaotie van MediaWiki is geslaegd.'''",
-'mainpagedocfooter' => "Raedpleeg de [http://meta.wikimedia.org/wiki/ZEA_Ulpe:Inhoudsopgaeve andleidieng] voe informatie over 't gebruuk van de wikisoftware.
-
-== Meer ulpe over MediaWiki ==
-
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Lieste mie instelliengen]
-* [http://www.mediawiki.org/wiki/Manual:FAQ Veehestelde vraehen (FAQ)]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Mailienglieste voe ankondigiengen van nieuwe versies]",
-
 'about'         => 'Info',
 'article'       => 'Artikel',
 'newwindow'     => '(opent een nieuw scherm)',
@@ -204,7 +195,6 @@ $messages = array(
 'history'           => 'Paginaheschiedenisse',
 'history_short'     => 'Geschiedenisse',
 'updatedmarker'     => 'bewerkt sins men lèste bezoek',
-'info_short'        => 'Informaotie',
 'printableversion'  => 'Printbaere versie',
 'permalink'         => 'Permanente lienk',
 'print'             => "Print'n",
@@ -371,12 +361,11 @@ Probeer 't over een antal menuten wee.",
 'protectedpagetext'    => 'Deêze pagina is beveiligd. Bewerken is nie meuhlijk.',
 'viewsourcetext'       => 'Je kan de brontekst van deêze pagina bekieken en kopiëren:',
 'protectedinterface'   => "Deêze pagina bevat tekst voe berichen van de software en is beveiligd om misbruuk te voorkomm'n.",
-'editinginterface'     => "'''Waerschuwienge:''' Je bewerk een pagina die a gebruukt wor deur de software. Bewerkiengen op deêze pagina beïnvloeden de gebrukersinterface van iedereên. Overweeg voe vertaeliengen om [http://translatewiki.net/wiki/Main_Page?setlang=zea translatewiki.net] te gebruken, 't vertaeliengsproject voe MediaWiki.",
+'editinginterface'     => "'''Waerschuwienge:''' Je bewerk een pagina die a gebruukt wor deur de software. Bewerkiengen op deêze pagina beïnvloeden de gebrukersinterface van iedereên. Overweeg voe vertaeliengen om [//translatewiki.net/wiki/Main_Page?setlang=zea translatewiki.net] te gebruken, 't vertaeliengsproject voe MediaWiki.",
 'sqlhidden'            => '(SQL-zoekopdracht verborhen)',
 'cascadeprotected'     => "Deêze pagina kan nie bewerkt worn, omda 't een is openomen in de volhende {{PLURAL:$1|pagina|pagina's}} die beveiligd {{PLURAL:$1|is|zien}} mie de cascaode-optie:
 $2",
 'namespaceprotected'   => "Je ei hin rechen om pagina's in de naemruumte '''$1''' te bewerken.",
-'customcssjsprotected' => 'Je kan deêze pagina nie bewerken, omda die persoônlijke instelliengen van een aore gebruker bevat.',
 'ns-specialprotected'  => 'Pagina\'s in de naemruumte "{{ns:special}}" kunn\'n nie bewerkt worn.',
 'titleprotected'       => "'t Anmaeken van deêze pagina is beveiligd deur [[User:$1|$1]].
 De heheven reeën is ''$2''.",
@@ -421,7 +410,7 @@ Schaokel die asjeblieft in en meld dinae an mie je nieuwe gebrukersnaem en wacht
 'loginsuccess'               => "'''Je bin noe anemeld bie {{SITENAME}} as \"\$1\".'''",
 'nosuchuser'                 => 'De gebruker "$1" besti nie.
 Controleer de schriefwieze of [[Special:UserLogin/signup|mik een nieuwe gebruker an]].',
-'nosuchusershort'            => 'De gebruker "<nowiki>$1</nowiki>" besti nie. Controleer de schriefwieze.',
+'nosuchusershort'            => 'De gebruker "$1" besti nie. Controleer de schriefwieze.',
 'nouserspecified'            => 'Je dien een gebrukersnaem op te heven.',
 'wrongpassword'              => "Wachtwoôrd onjuust. Probeer 't opnieuw.",
 'wrongpasswordempty'         => "'t Opeheven wachtwoôrd was leeg. Probeer 't opnieuw.",
@@ -458,7 +447,7 @@ Heef asjeblieft een heldig e-mailadres op of lit 't veld leeg.",
 Neheer dit bericht as deêze gebruker zonder joe medeweten is anemikt.',
 'loginlanguagelabel'         => 'Taele: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'           => "Wachtwoôrd herinstell'n",
 'resetpass_announce'  => "Je bin anemeld mie een tiedelijke code die a je per e-mail is toe-ezon'n. Voer een nieuw wachtwoôrd in om 't anmelden te voltooien:",
 'resetpass_header'    => "Wachtwoôrd herinstell'n",
@@ -480,8 +469,6 @@ Neheer dit bericht as deêze gebruker zonder joe medeweten is anemikt.',
 'extlink_tip'     => 'Externe lienk (verheet http:// nie)',
 'headline_sample' => 'Deêlonderwerp',
 'headline_tip'    => 'Tussenkopje (oôgste niveau)',
-'math_sample'     => 'Voer de formule in',
-'math_tip'        => 'Wiskundihe formule (LaTeX)',
 'nowiki_sample'   => 'Voer ier de nie op te maeken tekst in',
 'nowiki_tip'      => 'Wiki-opmaek neheren',
 'image_tip'       => 'Mediabestand',
@@ -552,7 +539,7 @@ Zien/eur IP-adres kan deu meêr as eên gebruker gebruukt ore.
 A je 'n bericht gekrege è dat-a dudelik nie an joe gericht is, ka je 't beste [[Special:UserLogin|jen eige anmelde]] om zukke verwarrienge in 't vervolg te vòkommen.''",
 'noarticletext'              => 'Deêze pagina bevat hin tekst.
 Je kan [[Special:Search/{{PAGENAME}}|ni deêze term zoeken]] in aore pagina\'s of <span class="plainlinks">[{{fullurl:{{FULLPAGENAME}}|action=edit}} deêze pagina bewerken]</span>.',
-'userpage-userdoesnotexist'  => 'Je bewerk een gebrukerspagina van een gebruker die a nie besti (gebruker "$1"). Controleer of a je deêze pagina wè wil anmaeken/bewerken.',
+'userpage-userdoesnotexist'  => 'Je bewerk een gebrukerspagina van een gebruker die a nie besti (gebruker "<nowiki>$1</nowiki>"). Controleer of a je deêze pagina wè wil anmaeken/bewerken.',
 'clearyourcache'             => '\'\'\'Let op!\'\'\' Leeg je cache naeda je de wiezigiengen ei opeslogen.
 
 {| border="1" cellpadding="3" class=toccolours style="border: 1px #AAAAAA solid; border-collapse: collapse;"
@@ -812,7 +799,6 @@ De hehevens over {{SITENAME}} zien meuhlijk nie bie'ewerkt.",
 'changepassword'            => 'Wachtwoôrd wiezigen',
 'prefs-skin'                => 'Vurmhevieng',
 'skin-preview'              => 'Voevertoônienge',
-'prefs-math'                => 'Formules',
 'datedefault'               => 'Hin vòkeur',
 'prefs-datetime'            => 'Daotum en tied',
 'prefs-personal'            => 'Gebrukersprofiel',
@@ -828,8 +814,6 @@ De hehevens over {{SITENAME}} zien meuhlijk nie bie'ewerkt.",
 'columns'                   => "Kolomm'n:",
 'searchresultshead'         => 'Zoek',
 'resultsperpage'            => "Resultaot'n per pagina:",
-'contextlines'              => 'Rehels per resultaot:',
-'contextchars'              => 'Context per rehel:',
 'stub-threshold'            => 'Drempel voe markerieng <a href="#" class="stub">stompje</a>:',
 'recentchangesdays'         => 'Antal daehen weer te heven in Juust angepast:',
 'recentchangescount'        => "Antal pagina's in Juust angepast:",
@@ -1035,7 +1019,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'mywatchlist'       => 'Mien volglieste',
 'watchnologin'      => 'Je bin nie angemolde.',
 'watchnologintext'  => 'Je moe [[Special:UserLogin|angemolde]] weze om je volglieste an te passen.',
-'addedwatch'        => 'An de volglieste toegevoegd',
 'addedwatchtext'    => "De bladzie \"[[:\$1]]\" is an je [[Special:Watchlist|Volglieste]] toegevoegd.
 Veranderiengen an deêze bladzie en de overlegbladzie die-a d'rbie oort zulle ierop zichtbaer ore
 en de bladzie komt '''vet''' te staen in de [[Special:RecentChanges|lieste van wat-a juust veranderd is]], daermee 't makkeliker te vinden is.
@@ -1091,7 +1074,7 @@ De reje daevò was: "$2"',
 'blocklogentry'               => 'ei "[[$1]]" geblokkeerd mee \'n afloôptied van $2 $3',
 'blocklogtext'                => "Dit is 'n logboek van gebrukersblokkaodes en -deblokkeriengen.
 Automaotisch geblokte ip-adressen stae d'r nie bie.
-Ziet de [[Special:IPBlockList|Lieste van ip-blokkeriengen]] vò blokkaodes die op dit moment in werkienge bin.",
+Ziet de [[Special:BlockList|Lieste van ip-blokkeriengen]] vò blokkaodes die op dit moment in werkienge bin.",
 'block-log-flags-anononly'    => 'allene anonieme gebrukers',
 'block-log-flags-nocreate'    => 'uutgeslote van anmaeken gebrukersnaemen',
 'block-log-flags-noautoblock' => 'gin autoblokkaode',
@@ -1134,17 +1117,6 @@ Kiest 'n aore naem.",
 'tooltip-n-help'          => 'Hulpinformaosie uvver deêze wiki',
 'tooltip-t-specialpages'  => "Liest van aole speciaole pagina's",
 'tooltip-watch'           => 'Voeg deêze bladzie toe an de volglieste',
-
-# Math errors
-'math_failure'          => 'Parsen mislukt',
-'math_unknown_error'    => 'onbekende fout',
-'math_unknown_function' => 'onbekende functie',
-'math_lexing_error'     => 'lexicohraofische fout',
-'math_syntax_error'     => 'syntactische fout',
-'math_image_error'      => 'PNG-omzettieng is mislukt. Hi nae of an latex, dvips en gs correct heïnstalleerd zien en zet om',
-'math_bad_tmpdir'       => "De map voe tiedelijke bestan'n voe wiskundihe formules besti nie of kan nie emikt worn",
-'math_bad_output'       => "De map voe bestan'n mie wiskundihe formules besti nie of kan nie emikt worn.",
-'math_notexvc'          => "Kan 't prohramma texvc nie vin'n; stel aolles in volhens de beschrievieng in math/README.",
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'aol',

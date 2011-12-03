@@ -22,11 +22,8 @@ class SkinModern extends SkinTemplate {
 		$template = 'ModernTemplate', $useHeadElement = true;
 
 	function setupSkinUserCss( OutputPage $out ){
-		// Do not call parent::setupSkinUserCss(), we have our own print style
-		$out->addStyle( 'common/shared.css', 'screen' );
-		$out->addStyle( 'modern/main.css', 'screen' );
-		$out->addStyle( 'modern/print.css', 'print' );
-		$out->addStyle( 'modern/rtl.css', 'screen', '', 'rtl' );
+		parent::setupSkinUserCss( $out );
+		$out->addModuleStyles ('skins.modern');
 	}
 }
 
@@ -35,6 +32,10 @@ class SkinModern extends SkinTemplate {
  * @ingroup Skins
  */
 class ModernTemplate extends MonoBookTemplate {
+
+	/**
+	 * @var Skin
+	 */
 	var $skin;
 	/**
 	 * Template filter callback for Modern skin.
@@ -45,24 +46,10 @@ class ModernTemplate extends MonoBookTemplate {
 	 * @access private
 	 */
 	function execute() {
-		global $wgRequest;
 		$this->skin = $skin = $this->data['skin'];
-		$action = $wgRequest->getText( 'action' );
 
 		// Suppress warnings to prevent notices about missing indexes in $this->data
 		wfSuppressWarnings();
-
-		// Generate additional footer links
-		$footerlinks = $this->data["footerlinks"];
-		// fold footerlinks into a single array using a bit of trickery
-		$footerlinks = call_user_func_array('array_merge', array_values($footerlinks));
-		// Generate additional footer icons
-		$footericons = $this->data["footericons"];
-		// Unset copyright.copyright since we don't need the icon and already output a copyright from footerlinks
-		unset($footericons["copyright"]["copyright"]);
-		if ( count($footericons["copyright"]) <= 0 ) {
-			unset($footericons["copyright"]);
-		}
 
 		$this->html( 'headelement' );
 ?>
@@ -73,41 +60,14 @@ class ModernTemplate extends MonoBookTemplate {
 	<div id="mw_main">
 	<div id="mw_contentwrapper">
 	<!-- navigation portlet -->
-	<div id="p-cactions" class="portlet">
-		<h5><?php $this->msg('views') ?></h5>
-		<div class="pBody">
-			<ul>
-	<?php		foreach($this->data['content_actions'] as $key => $tab) {
-					echo '
-				 <li id="' . Sanitizer::escapeId( "ca-$key" ) . '"';
-					if( $tab['class'] ) {
-						echo ' class="'.htmlspecialchars($tab['class']).'"';
-					}
-					echo'><a href="'.htmlspecialchars($tab['href']).'"';
-					# We don't want to give the watch tab an accesskey if the
-					# page is being edited, because that conflicts with the
-					# accesskey on the watch checkbox.  We also don't want to
-					# give the edit tab an accesskey, because that's fairly su-
-					# perfluous and conflicts with an accesskey (Ctrl-E) often
-					# used for editing in Safari.
-				 	if( in_array( $action, array( 'edit', 'submit' ) )
-				 	&& in_array( $key, array( 'edit', 'watch', 'unwatch' ))) {
-				 		echo $skin->tooltip( "ca-$key" );
-				 	} else {
-				 		echo $skin->tooltipAndAccesskey( "ca-$key" );
-				 	}
-				 	echo '>'.htmlspecialchars($tab['text']).'</a></li>';
-				} ?>
-			</ul>
-		</div>
-	</div>
+<?php $this->cactions(); ?>
 
 	<!-- content -->
 	<div id="mw_content">
 	<!-- contentholder does nothing by default, but it allows users to style the text inside
 	     the content area without affecting the meaning of 'em' in #mw_content, which is used
 	     for the margins -->
-	<div id="mw_contentholder" <?php $this->html("specialpageattributes") ?>>
+	<div id="mw_contentholder">
 		<div class='mw-topboxes'>
 			<div id="mw-js-message" style="display:none;"<?php $this->html('userlangattributes')?>></div>
 			<div class="mw-topbox" id="siteSub"><?php $this->msg('tagline') ?></div>
@@ -135,24 +95,7 @@ class ModernTemplate extends MonoBookTemplate {
 	<div id="mw_portlets"<?php $this->html("userlangattributes") ?>>
 
 	<!-- portlets -->
-	<?php
-		$sidebar = $this->data['sidebar'];
-		if ( !isset( $sidebar['SEARCH'] ) ) $sidebar['SEARCH'] = true;
-		if ( !isset( $sidebar['TOOLBOX'] ) ) $sidebar['TOOLBOX'] = true;
-		if ( !isset( $sidebar['LANGUAGES'] ) ) $sidebar['LANGUAGES'] = true;
-
-		foreach ($sidebar as $boxName => $cont) {
-			if ( $boxName == 'SEARCH' ) {
-				$this->searchBox();
-			} elseif ( $boxName == 'TOOLBOX' ) {
-				$this->toolbox();
-			} elseif ( $boxName == 'LANGUAGES' ) {
-				$this->languageBox();
-			} else {
-				$this->customBox( $boxName, $cont );
-			}
-		}
-	?>
+	<?php $this->renderPortals( $this->data['sidebar'] ); ?>
 
 	</div><!-- mw_portlets -->
 
@@ -166,14 +109,10 @@ class ModernTemplate extends MonoBookTemplate {
 		<h5><?php $this->msg('personaltools') ?></h5>
 		<div class="pBody">
 			<ul>
-<?php 			foreach($this->data['personal_urls'] as $key => $item) { ?>
-				<li id="<?php echo Sanitizer::escapeId( "pt-$key" ) ?>"<?php
-					if ($item['active']) { ?> class="active"<?php } ?>><a href="<?php
-				echo htmlspecialchars($item['href']) ?>"<?php echo $skin->tooltipAndAccesskey('pt-'.$key) ?><?php
-				if(!empty($item['class'])) { ?> class="<?php
-				echo htmlspecialchars($item['class']) ?>"<?php } ?>><?php
-				echo htmlspecialchars($item['text']) ?></a></li>
-<?php			} ?>
+<?php		foreach($this->getPersonalTools() as $key => $item) { ?>
+				<?php echo $this->makeListItem($key, $item); ?>
+
+<?php		} ?>
 			</ul>
 		</div>
 	</div>
@@ -183,7 +122,7 @@ class ModernTemplate extends MonoBookTemplate {
 	<div id="footer"<?php $this->html('userlangattributes') ?>>
 			<ul id="f-list">
 <?php
-		foreach( $footerlinks as $aLink ) {
+		foreach( $this->getFooterLinks("flat") as $aLink ) {
 			if( isset( $this->data[$aLink] ) && $this->data[$aLink] ) {
 ?>				<li id="<?php echo$aLink?>"><?php $this->html($aLink) ?></li>
 <?php 		}
@@ -191,7 +130,7 @@ class ModernTemplate extends MonoBookTemplate {
 ?>
 			</ul>
 <?php
-		foreach ( $footericons as $blockName => $footerIcons ) { ?>
+		foreach ( $this->getFooterIcons("nocopyright") as $blockName => $footerIcons ) { ?>
 			<div id="mw_<?php echo htmlspecialchars($blockName); ?>">
 <?php
 			foreach ( $footerIcons as $icon ) { ?>
@@ -205,13 +144,7 @@ class ModernTemplate extends MonoBookTemplate {
 ?>
 	</div>
 
-	<?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
-<?php $this->html('reporttime') ?>
-<?php if ( $this->data['debug'] ): ?>
-<!-- Debug output:
-<?php $this->text( 'debug' ); ?>
--->
-<?php endif; ?>
+	<?php $this->printTrail(); ?>
 </body></html>
 <?php
 	wfRestoreWarnings();

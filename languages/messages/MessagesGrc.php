@@ -164,14 +164,6 @@ $messages = array(
 'index-category'                 => 'Δέλτοι μετὰ δεικτῶν',
 'noindex-category'               => 'Δέλτοι ἄνευ δεικτῶν',
 
-'mainpagetext'      => "'''Ἡ ἐγκατάστασις τῆς MediaWiki ἦν ἐπιτυχής'''",
-'mainpagedocfooter' => 'Βουλευθήσεσθε τὰς [http://meta.wikimedia.org/wiki/Help:Contents βουλὰς τοῖς Χρωμένοις] ἵνα πληροφορηθῇτε περὶ τοῦ βίκιλογισμικοῦ.
-
-== Ἄρξασθε ==
-* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Διαλογή παραμέτρων διαμορφώσεως]
-* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki: τὰ πολλάκις αἰτηθέντα]
-* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce Διαλογή διαλέξεων ἐπὶ τῶν διανομῶν τῆς MediaWiki]',
-
 'about'         => 'Περὶ',
 'article'       => 'Ἡ ἐγγραφή',
 'newwindow'     => '(ἀνοίξεται ἐν νέᾳ θυρίδι)',
@@ -221,10 +213,10 @@ $messages = array(
 'history'           => 'Αἱ τῆς δέλτου πρότεραι',
 'history_short'     => 'Αἱ πρότεραι',
 'updatedmarker'     => 'αἱ δέλτου ἐνημερώσεις ἀφ’ ὅτε ἐπεσκέφθην αὐτὴν ὑστάτως',
-'info_short'        => 'Μάθησις',
 'printableversion'  => 'Ἐκτυπώσιμος μορφή',
 'permalink'         => 'Σύνδεσμος μόνιμος',
 'print'             => 'Τυποῦν',
+'view'              => 'Ὁρᾶν',
 'edit'              => 'Μεταγράφειν',
 'create'            => 'Ποιεῖν',
 'editthispage'      => 'Μεταγράφειν τήνδε τὴν δέλτον',
@@ -315,6 +307,8 @@ $1',
 'toc'                     => 'Περιεχόμενα',
 'showtoc'                 => 'δεικνύναι',
 'hidetoc'                 => 'κρύπτειν',
+'collapsible-collapse'    => 'Κατάρρευσις',
+'collapsible-expand'      => 'Ἀνάπτυξις',
 'thisisdeleted'           => 'Ὁρᾶν ἢ ἀποκαθιστάναι $1;',
 'viewdeleted'             => 'Ὁρᾶν $1;',
 'restorelink'             => '{{PLURAL:$1|μία διαγεγραμμένη μεταγραφή|$1 διαγεγραμμέναι μεταγραφαί}}',
@@ -408,7 +402,6 @@ $1',
 'cascadeprotected'     => 'Ἥδε ἡ δέλτος πεφύλακται, διότι συμπεριλαμβάνεται ἐν {{PLURAL:$1|τῇ ἑξῆς δέλτῳ ἥπερ πεφυλαγμένη ἐστὶ|ταῖς ἑξῆς δέλτοις αἵπερ πεφυλαγμέναι εἰσὶ}} μέσῳ τῆς ἐνεργοποιηθεῖσας διαδοχικῆς προστασίας ἐν τῷ:
 $2',
 'namespaceprotected'   => "Οὐκ ἔξεστί σοι μεταγράφειν δέλτους ἐν τῷ ὀνοματείῳ '''$1'''.",
-'customcssjsprotected' => 'Οὐκ ἔξεστί σοι μεταγράφειν τήνδε τὴν δέλτον, διότι περιέχει προσωπικὰς ῥυθμίσεις ἑτέρου χρωμένου.',
 'ns-specialprotected'  => 'Αἱ εἰδικαὶ δέλτοι μὴ μεταγραπτέαι εἰσίν.',
 'titleprotected'       => 'Ἡ ποίησις τῆσδε τῆς ἐπιγραφῆς πεφύλακται ὑπὸ τοῦ [[User:$1|$1]].
 Ἡ δεδομένη αἰτιολογία ἐστὶ "\'\'$2\'\'".',
@@ -461,7 +454,7 @@ $2',
 'nosuchuser'                 => 'Οὐκ ἐστὶ χρώμενος ὀνόματι "$1".
 Τὰ γράμματα τῶν ὀνομάτων χρωμένων διακρίνονται εἰς κεφαλαῖα καὶ μικρά.
 Σκόπει τὴν τῶν γραμμάτων ἀκριβείαν ἢ [[Special:UserLogin/signup|λογισμὸν νέον ποίει]].',
-'nosuchusershort'            => 'Οὐκ ἐστὶ χρώμενος ἔχων τὸ ὄνομα "<nowiki>$1</nowiki>".
+'nosuchusershort'            => 'Οὐκ ἐστὶ χρώμενος ἔχων τὸ ὄνομα "$1".
 Ἔλεγξον τὴν ὀρθογραφίαν σου.',
 'nouserspecified'            => 'Ὄνομα χρωμένου καθοριστέον ὑποχρεωτικώς.',
 'wrongpassword'              => 'Εἰσηγμένον σύνθημα ἐσφαλμένον. Πείρασον πάλιν.',
@@ -492,7 +485,7 @@ $2',
 'createaccount-title'        => 'Ποίησις λογισμοῦ διὰ {{SITENAME}}',
 'loginlanguagelabel'         => 'Γλῶσσα: $1',
 
-# Password reset dialog
+# Change password dialog
 'resetpass'                 => 'Ἀλλαγὴ συνθήματος',
 'resetpass_header'          => 'Ἀναδιορισμὸς συνθήματος λογισμοῦ',
 'oldpassword'               => 'Πρότερον σύνθημα:',
@@ -506,6 +499,9 @@ $2',
 'resetpass-submit-cancel'   => 'Ἀκυροῦν',
 'resetpass-temp-password'   => 'Προσωρινὸν σύνθημα:',
 
+# Special:PasswordReset
+'passwordreset-username' => 'Ὄνομα χρωμένου:',
+
 # Edit page toolbar
 'bold_sample'     => 'Γράμματα παχέα',
 'bold_tip'        => 'Γράμματα παχέα',
@@ -517,8 +513,6 @@ $2',
 'extlink_tip'     => 'Ἐξώτερος σύνδεσμος (μέμνησο τοῦ προθέματος http://)',
 'headline_sample' => 'Κείμενον ἐπικεφαλίδος',
 'headline_tip'    => 'Κλίμακος 2 ἐπικεφαλίς',
-'math_sample'     => 'Εἰσάγειν τύπον ὧδε',
-'math_tip'        => 'Μαθηματικὸς τύπος (LaTeX)',
 'nowiki_sample'   => 'Εἰσάγειν ἀμόρφωτον κείμενον ὧδε',
 'nowiki_tip'      => 'Ἀγνοεῖν βικι-μορφοποιίαν',
 'image_tip'       => 'Ἐμβεβαπτισμένον ἀρχεῖον',
@@ -880,9 +874,10 @@ $1",
 'changepassword'                => 'Ἀλλάττειν σύνθημα',
 'prefs-skin'                    => 'Ἐμφάνισις',
 'skin-preview'                  => 'Προεπισκοπεῖν',
-'prefs-math'                    => 'Τὰ μαθηματικά',
 'datedefault'                   => 'Οὐδεμία προτίμησις',
+'prefs-beta'                    => 'Λειτουργίαι τῆς Beta',
 'prefs-datetime'                => 'Χρονολογία καὶ ὥρα',
+'prefs-labs'                    => 'Λειτουργίαι τῶν Labs',
 'prefs-personal'                => 'Στοιχεῖα χρωμένου',
 'prefs-rc'                      => 'Αἱ νέαι μεταβολαί',
 'prefs-watchlist'               => 'Τὰ ἐφορώμενα',
@@ -904,8 +899,6 @@ $1",
 'columns'                       => 'Στῆλαι:',
 'searchresultshead'             => 'Ζητεῖν',
 'resultsperpage'                => 'Ἀποτελέσματα ἀνά δέλτον:',
-'contextlines'                  => 'Σειραὶ ἀνά ἀποτέλεσμα:',
-'contextchars'                  => 'Συναφὲς κείμενον ἀνά σειράν:',
 'stub-threshold'                => 'Ἄνω φράγμα διὰ τοῦς <a href="#" class="stub">συνδέσμους πρὸς λείμματα</a> (δυφία):',
 'stub-threshold-disabled'       => 'Ἀπενεργηθέν',
 'recentchangesdays'             => 'Αἱ ἡμέραι αἱ δεικτέαι ἐν ταῖς προσφάτοις ἀλλαγαῖς:',
@@ -915,7 +908,7 @@ $1",
 'savedprefs'                    => 'Αἱ προαιρέσεις σου καταγεγραμμέναι εἰσίν.',
 'timezonelegend'                => 'Χρονικὴ ζώνη:',
 'localtime'                     => 'Τοπικὴ ὥρα:',
-'timezoneuseserverdefault'      => 'Χρῆσθαι τῆς ἐξυπηρετητικῆς μηχανῆς τῷ προκαθωρισμένῳ',
+'timezoneuseserverdefault'      => 'Χρῆσθαι τῷ προκαθωρισμένῳ τοῦ βίκι ($1)',
 'timezoneuseoffset'             => 'Ἄλλον (καθορίζειν τὸ ἐκτόπισμα)',
 'timezoneoffset'                => 'Ἐκτόπισμα¹:',
 'servertime'                    => 'Ὥρα ὑπολογιστικῆς ἐξυπηρετητικῆς μηχανῆς:',
@@ -1069,7 +1062,6 @@ $1",
 'right-userrights'            => 'Μεταγράφειν ἅπαντα τοῦ χρωμένου δικαιώματα',
 'right-userrights-interwiki'  => 'Μεταγράφειν τὰ δικαιώματα χρωμένων ἐν ἄλλοις βίκι',
 'right-siteadmin'             => 'Φράττειν καὶ ἀποφράττειν τὴν βάσιν δεδομένων',
-'right-reset-passwords'       => 'Ἀναρρυθμίζειν συνθήματα ἄλλων χρωμένων',
 'right-override-export-depth' => 'Ἐξάγειν δέλτους περιλαμβανομένων συνδεδεμένων δέλτων ἕως βάθος τι 5 ἐπιπέδων',
 
 # User rights log
@@ -1191,8 +1183,8 @@ $1",
 'filetype-badmime'       => 'Ἀρχεῖα τύπου MIME "$1" μὴ ἐπιφορτίσιμα εἰσίν.',
 'filetype-unwanted-type' => "'''\".\$1\"''' ἐστὶ μὴ ἐπιθυμητὸς τύπος ἀρχείου.
 {{PLURAL:\$3|Προῃρημένος τύπος ἀρχείων ἐστὶ|Προῃρημένοι τύποι ἀρχείων εἰσὶ}} \$2.",
-'filetype-banned-type'   => "'''\".\$1\"''' ἐστὶ μὴ ἐπιτρεπτὸς τύπος ἀρχείου.
-{{PLURAL:\$3|Ἐπιτρεπτὸς τύπος ἀρχείων ἐστὶ|Ἐπιτρεπτοὶ τύποι ἀρχείων εἰσὶ}} \$2.",
+'filetype-banned-type'   => '\'\'\'".$1"\'\'\' μὴ {{PLURAL:$4|ἐπιτρεπόμενος τύπος ἀρχείου|ἐπιτρεπόμενοι τύποι ἀρχείων}}.
+{{PLURAL:$3|Ἐπιτρεπὀμενος τύπος ἀρχείων ἐστὶ|Ἐπιτρεπόμενοι τύποι ἀρχείων εἰσὶ}} $2.',
 'filetype-missing'       => 'Τόδε τὸ ἀρχεῖον οὐκ ἔχει ἐπέκτασιν (ὅπως ".jpg").',
 'large-file'             => 'Τὸ προτεινόμενον μέγεθος τῶν ἀρχείων οὔκ ἐστι μεγαλύτερον τοῦ $1·
 τοῦδε τοῦ ἀρχείου ἐστὶ $2.',
@@ -1232,6 +1224,9 @@ $1",
 'upload-too-many-redirects' => 'Ὁ URL περιεῖχεν πέρα τοῦ δέοντος πολλὰς ἀνακατευθύνσεις',
 'upload-unknown-size'       => 'Ἄγνωτον μέγεθος',
 'upload-http-error'         => 'Συνέβη σφάλμα τι τῆς HTTP: $1',
+
+# Special:UploadStash
+'uploadstash' => 'Ἐπιφορτίζειν ἀπόθεμα',
 
 # img_auth script messages
 'img-auth-accessdenied' => 'Οὐκ ἐπετράπη ἡ πρόσβασις',
@@ -1288,7 +1283,6 @@ $1",
 Ἡ [[Special:WhatLinksHere/$2|πλήρης διαλογὴ]] διαθέσιμός ἐστιν.',
 'nolinkstoimage'            => 'Οὐδένα ἐστὶ προσάγον τόδε τὸ φορτίον.',
 'morelinkstoimage'          => 'Ὁρᾶν [[Special:WhatLinksHere/$1|πλείονας συνδέσμους]] πρὸς τήνδε τὴν δέλτον.',
-'redirectstofile'           => '{{PLURAL:$1|Τὸ ἀκόλουθον ἀρχεῖον ἀναδιευθύνεται|$1 Τὰ ἀκόλουθα ἀρχεῖα ἀναδιευθύνονται}} πρὸς τόδε τὸ ἀρχεῖον:',
 'duplicatesoffile'          => '{{PLURAL:$1|Τὸ ἀκόλουθον ἀρχεῖον διπλότυπον ἐστὶ|$1 Τὰ ἀκόλουθα ἀρχεῖα διπλότυπα εἰσὶ}} τοῦδε τοῦ ἀρχείου ([[Special:FileDuplicateSearch/$2|πλείω]]):',
 'sharedupload'              => 'Τόδε τὸ ἀρχεῖον ἀπὸ τὴν $1 ἐστὶ καὶ δύνασαι χρῆσθαι τούτῳ εἰς ἕτερα σχέδια ἐξἴσου.',
 'filepage-nofile'           => 'Οὐδέν ἐστὶν ἀρχεῖον ἔχον τόδε τὸ ὄνομα.',
@@ -1533,27 +1527,29 @@ $1",
 'listgrouprights-removegroup-self-all' => 'Ἀφαιρεῖν ἁπάσας τὰς ὁμάδας ἀπὸ τὸν λογισμὸν ἐμοῦ τοῦ ἰδίου',
 
 # E-mail user
-'mailnologin'      => 'Οὐδεμία διεύθυνσις παραλήπτου',
-'emailuser'        => 'Ἠλεκτρονικὴν ἐπιστολὴν τῷδε τῷ χρωμένῳ πέμπειν',
-'emailpage'        => 'Χρώμενος ἠλ.-ταχυδρομείου',
-'emailpagetext'    => 'Χρώμενος τῷ κάτωθι προτύπῳ, ἀπόστειλον μήνυμά τι, ἐφὄσον δεδήλωκας ἔγκυρον ἠλ-διεύθυνσιν τινὰ εἰς τὰς [[Special:Preferences|προτιμήσεις χρωμένου]]. Ἥδε ἡ διεύθυνσις πεφασμένη ἔσεται ὡς διεύθυνσις ἀποστολέως τοῦ μηνύματος, οὕτως ὥστε ὁ παραλήπτης δύνηται ἀποκριθῆναι.',
-'usermailererror'  => 'Τὸ ἠλ-ταχυδρομεῖον ἐπέστρεψεν σφάλμα:',
-'defemailsubject'  => '{{SITENAME}} ἠλ.-ταχυδρομεῖον',
-'noemailtitle'     => 'Οὐδεμία ἠλ-διεύθυνσις',
-'noemailtext'      => 'Ὅδε ὁ χρώμενος οὐχ ὥρικεν ἔγκυρον τινὰ ἠλεκτρονικὴν διεύθυνσιν.',
-'nowikiemailtitle' => 'Ἠ-διεύθυνσις μὴ ἐπιτρεπτός',
-'nowikiemailtext'  => 'Ὅδε ὁ χρώμενος ἐπείλοχεν τὸ μὴ παραλαμβάνειν μηνύματα ἠλεκτρονικοῦ ταχυδρομείου ἐξ ἑτέρων χρωμένων.',
-'email-legend'     => 'Ἀποστολὴ ἠλ-μηνύματος πρὸς ἕτερον τινὰ χρώμενον τοῦ {{SITENAME}}',
-'emailfrom'        => 'Ἐκ:',
-'emailto'          => 'Πρός:',
-'emailsubject'     => 'Χρῆμα:',
-'emailmessage'     => 'Ἀγγελία:',
-'emailsend'        => 'Πέμπειν',
-'emailccme'        => 'Ἀπόστειλόν μοι ἀντίγραφόν τι τοῦ μηνύματός μου.',
-'emailccsubject'   => 'Ἀντιγραφὴ τοῦ μηνύματός σου πρὸς $1: $2',
-'emailsent'        => 'Ἠλ.-ἐπιστολὴ ἀπεστάλη',
-'emailsenttext'    => 'Τὸ μήνυμα ἠλ-ταχυδρομείου σου ἐστάλη.',
-'emailuserfooter'  => 'Ἥδε ἡ ἐπιστολὴ ἐστάλη ὑπὸ τοῦ/τῆς $1 εἰς τὸν/τὴν $2 κατὰ τὴν τέλεσιν "Ἁποστολὴ ἠλ-μηνύματος" ἐς τὸ {{SITENAME}}.',
+'mailnologin'         => 'Οὐδεμία διεύθυνσις παραλήπτου',
+'emailuser'           => 'Ἠλεκτρονικὴν ἐπιστολὴν τῷδε τῷ χρωμένῳ πέμπειν',
+'emailpage'           => 'Χρώμενος ἠλ.-ταχυδρομείου',
+'emailpagetext'       => 'Χρώμενος τῷ κάτωθι προτύπῳ, ἀπόστειλον μήνυμά τι, ἐφὄσον δεδήλωκας ἔγκυρον ἠλ-διεύθυνσιν τινὰ εἰς τὰς [[Special:Preferences|προτιμήσεις χρωμένου]]. Ἥδε ἡ διεύθυνσις πεφασμένη ἔσεται ὡς διεύθυνσις ἀποστολέως τοῦ μηνύματος, οὕτως ὥστε ὁ παραλήπτης δύνηται ἀποκριθῆναι.',
+'usermailererror'     => 'Τὸ ἠλ-ταχυδρομεῖον ἐπέστρεψεν σφάλμα:',
+'defemailsubject'     => '{{SITENAME}} ἠλ.-ταχυδρομεῖον',
+'noemailtitle'        => 'Οὐδεμία ἠλ-διεύθυνσις',
+'noemailtext'         => 'Ὅδε ὁ χρώμενος οὐχ ὥρικεν ἔγκυρον τινὰ ἠλεκτρονικὴν διεύθυνσιν.',
+'nowikiemailtitle'    => 'Ἠ-διεύθυνσις μὴ ἐπιτρεπτός',
+'nowikiemailtext'     => 'Ὅδε ὁ χρώμενος ἐπείλοχεν τὸ μὴ παραλαμβάνειν μηνύματα ἠλεκτρονικοῦ ταχυδρομείου ἐξ ἑτέρων χρωμένων.',
+'emailusername'       => 'Ὄνομα χρωμένου:',
+'emailusernamesubmit' => 'Ὑποβάλλειν',
+'email-legend'        => 'Ἀποστολὴ ἠλ-μηνύματος πρὸς ἕτερον τινὰ χρώμενον τοῦ {{SITENAME}}',
+'emailfrom'           => 'Ἐκ:',
+'emailto'             => 'Πρός:',
+'emailsubject'        => 'Χρῆμα:',
+'emailmessage'        => 'Ἀγγελία:',
+'emailsend'           => 'Πέμπειν',
+'emailccme'           => 'Ἀπόστειλόν μοι ἀντίγραφόν τι τοῦ μηνύματός μου.',
+'emailccsubject'      => 'Ἀντιγραφὴ τοῦ μηνύματός σου πρὸς $1: $2',
+'emailsent'           => 'Ἠλ.-ἐπιστολὴ ἀπεστάλη',
+'emailsenttext'       => 'Τὸ μήνυμα ἠλ-ταχυδρομείου σου ἐστάλη.',
+'emailuserfooter'     => 'Ἥδε ἡ ἐπιστολὴ ἐστάλη ὑπὸ τοῦ/τῆς $1 εἰς τὸν/τὴν $2 κατὰ τὴν τέλεσιν "Ἁποστολὴ ἠλ-μηνύματος" ἐς τὸ {{SITENAME}}.',
 
 # Watchlist
 'watchlist'          => 'Τὰ ἐφορώμενά μου',
@@ -1563,10 +1559,8 @@ $1",
 'watchlistanontext'  => '$1 πρὸ τοῦ ὁρᾶν ἢ τοῦ μεταγράφειν τεμάχια τινὰ ἐν τῇ ἐφοροδιαλογῇ σου.',
 'watchnologin'       => 'Μὴ συνδεδεμένος',
 'watchnologintext'   => 'Δεῖ σε [[Special:UserLogin|συνδεῖσθαι]] πρὸ τοῦ μεταβάλλειν τὴν ἐφοροδιαλογήν σου.',
-'addedwatch'         => 'Δέλτος προστεθειμένη εἰς τὸν ἐποπτευομένων κατάλογον ἐστίν',
 'addedwatchtext'     => "Ἡ δέλτος \"[[:\$1]]\" προσετέθη ἐν τῷ [[Special:Watchlist|καταλόγῳ ἐφορωμένων]] σου.
 Μελλοντικαὶ ἀλλαγαὶ τῆσδε τῆς δέλτου καὶ τῆς σχετικῆς δέλτου διαλέξεως καταλεχθήσονται ἐκεῖσε καὶ ἡ δέλτος ἐμφανίσεται '''ἔντονος''' ἐν τῷ [[Special:RecentChanges|καταλόγῳ προσφάτων ἀλλαγῶν]] οὕτως ὥστε εὐχερεστέρα ᾖ ἡ διάκρισις αὐτῆς.",
-'removedwatch'       => 'Ἀνεώραται ἥδε ἡ δέλτος',
 'removedwatchtext'   => 'Ἡ δέλτος "[[:$1]]" ἀφῃρέθη ἐκ τοῦ [[Special:Watchlist|καταλόγου ἐφορωμένων σου]].',
 'watch'              => 'Ἐφορᾶν',
 'watchthispage'      => 'Ἐφορᾶν τήνδε τὴν δέλτον',
@@ -1618,10 +1612,10 @@ $NEWPAGE
 
 --
 Διὰ τὸ ἀλλάξειν τὰς ῥυθμίσεις τὴς ἐφοροδιαλογῆς σου, ἐπίσκεψαι τὸ
-{{fullurl:{{#special:Watchlist}}/edit}}
+{{canonicalurl:{{#special:EditWatchlist}}}}
 
 Ἀνάδρασις καὶ περαιτέρω βοήθεια:
-{{fullurl:{{MediaWiki:Helppage}}}}',
+{{canonicalurl:{{MediaWiki:Helppage}}}}',
 
 # Delete
 'deletepage'             => 'Διαγράφειν τὴν δέλτον',
@@ -1636,7 +1630,7 @@ $NEWPAGE
 'confirmdeletetext'      => 'Βούλεσαι διαγράψειν ὁριστικῶς ἐκ τῆς βάσεως δεδομένων δέλτον τίνα (ἢ εἰκόνα τινα) μετὰ τῆς ἐῆς ἱστορίας. Παρακαλοῦμεν ὑμᾶς ἵνα ἐπιβεβαιώσητε τὴν θέλησιν ὑμῶν περὶ τοῦ αὐτὸ πράττειν καὶ περὶ τῆς ἀντιλήψεως τῶν συνεπειῶν, και περὶ τοῦ πράττειν ὑμῶν συμφώνως τῶν [[{{MediaWiki:Policy-url}}|κανόνων]].',
 'actioncomplete'         => 'Τέλειον τὸ ποιηθέν',
 'actionfailed'           => 'Δράσις ἀνεπιτυχής',
-'deletedtext'            => 'Τὸ "<nowiki>$1</nowiki>" διεγράφη.
+'deletedtext'            => 'Τὸ "$1" διεγράφη.
 Ἴδε τὸ $2 διὰ μητρῷόν τι προσφάτων διαγραφῶν.',
 'deletedarticle'         => 'Ἐσβέσθη ἡ δέλτος "[[$1]]"',
 'suppressedarticle'      => '"[[$1]]" κατεσταλμένον',
@@ -1679,7 +1673,7 @@ $NEWPAGE
 'protect_expiry_invalid'      => 'Ἄκυρος χρόνος λήξεως.',
 'protect_expiry_old'          => 'Χρόνος λήξεως ἐν τῷ παρελθόντι ἐστίν.',
 'protect-unchain-permissions' => 'Ἀναίρεσις ἀποκλεισμοῦ περαιτέρω ἐπιλογῶν περιφρουρήσεως',
-'protect-text'                => "Ὁρᾶν τε καὶ ἀλλάττειν δύνασθε τὴν κλίμακα φυλάξεως ἐνθάδε διὰ τὴν δέλτον '''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "Ὁρᾶν τε καὶ ἀλλάττειν δύνασθε τὴν κλίμακα φυλάξεως ἐνθάδε διὰ τὴν δέλτον '''$1'''.",
 'protect-locked-access'       => "Ὁ λογισμός σου οὐκ ἔχει ἄδειαν ἀλλαγῆς τῆς κλίμακος φυλάξεως δέλτων.
 Ἐνθάδε εἰσὶν αἱ τρέχουσαι ῥυθμίσεις διὰ τὴν δέλτον '''$1''':",
 'protect-cascadeon'           => 'Ἡδε δέλτος τῷ παρόντι πεφυλαγμένη ἐστὶν ἐπεὶ περιλαμβάνεται {{PLURAL:$1|τῇ ἀκολούθῳ δέλτῳ, ἥπερ ἔχει|ταῖς ἀκολούθοις δέλτοις, αἵπερ ἔχουσι}} τὴν διαδοχικὴν φύλαξιν ἐνεργόν. Δύνασαι ἀλλάττειν τὴν κλίμακα φύλαξις τῆσδε δέλτου, ἄνευ ἐπηρεασμοῦ τῆς διαδοχικῆς φυλάξεως.',
@@ -1807,7 +1801,6 @@ $1',
 'blockip'                         => 'Ἀποκλῄειν τόνδε τὸν χρώμενον',
 'blockip-title'                   => 'Φράττειν χρώμενον',
 'blockip-legend'                  => 'Φράττειν χρώμενον',
-'ipaddress'                       => 'Διεύθυνσις IP:',
 'ipadressorusername'              => 'Διεύθυνσις IP ἢ ὄνομα χρωμένου:',
 'ipbexpiry'                       => 'Λῆξις:',
 'ipbreason'                       => 'Αἰτία:',
@@ -1820,7 +1813,6 @@ $1',
 ** Ἐκφοβιστικὴ συμπεριφορά/ἐνόχλησις
 ** Κατάχρησις πολλαπλῶν λογισμῶν
 ** Ἀναπόδεκτον ὄνομα χρωμένου',
-'ipbanononly'                     => 'Φράττειν μόνον ἀνωνύμους χρωμένους',
 'ipbcreateaccount'                => 'Ἀποτρέπειν τὴν ποίησιν λογισμοῦ',
 'ipbemailban'                     => 'Ἀποτρέπειν τὴν ἀποστολὴν ἠλ-ἀγγελίας ὑπὸ τοῦ χρωμένου',
 'ipbsubmit'                       => 'Φράττειν τόνδε τὸν χρώμενον',
@@ -1830,7 +1822,6 @@ $1',
 'ipbotherreason'                  => 'Πρόσθετος/ἄλλη αἰτία:',
 'ipbhidename'                     => 'Κρύπτειν τὸ ὄνομα χρωμένου ἐν μεταγραφαῖς καὶ διαλογαῖς',
 'ipbwatchuser'                    => 'Ἐφορᾶν τοῦδε τοῦ χρωμένου τὰς δέλτους χρωμένου καὶ διαλέξεως',
-'ipballowusertalk'                => 'Ἄφες τῷδε χρωμένῳ μεταγράψειν τὴν ἰδίαν οὑ δέλτον διαλέξεως ἐν ὅσῳ πεφραγμένος ἐστίν',
 'ipb-change-block'                => 'Ἐπαναφράττειν τόνδε τὸν χρώμενον μετὰ τῶνδε τῶν ῥυθμίσεων',
 'badipaddress'                    => 'Ἄκυρος IP-διεύθυνσις',
 'blockipsuccesssub'               => 'Φραγὴ ἐπιτευκτός ἐστιν',
@@ -1845,14 +1836,12 @@ $1',
 'unblocked-id'                    => 'Ἡ φραγὴ τοῦ/τῆς $1 ἀφῃρέθη',
 'ipblocklist'                     => 'Πεφραγμέναι IP-διευθύνσεις καὶ ὀνόματα τῶν χρωμένων',
 'ipblocklist-legend'              => 'Εὑρίσκειν πεφραγμένον χρώμενον τινά',
-'ipblocklist-username'            => 'Ὄνομα χρωμένου ἢ IP-διεύθυνσις:',
-'ipblocklist-sh-userblocks'       => '$1 φραγαὶ λογισμῶν',
-'ipblocklist-sh-tempblocks'       => '$1 προσωριναὶ φραγαί',
-'ipblocklist-sh-addressblocks'    => '$1 μεμονωμέναι φραγαὶ IP',
+'blocklist-timestamp'             => 'Ἡμερομηνία καὶ ὥρα',
+'blocklist-target'                => 'Στόχος',
+'blocklist-reason'                => 'Αἰτία',
 'ipblocklist-submit'              => 'Ζητεῖν',
 'ipblocklist-localblock'          => 'Τοπικὴ φραγή',
 'ipblocklist-otherblocks'         => '{{PLURAL:$1|Ἑτέρα φραγή|Ἕτεραι φραγαί}}',
-'blocklistline'                   => '$3 ἐφράχθη ὑπὸ $1, $2 ($4)',
 'infiniteblock'                   => 'ἄπειρον',
 'expiringblock'                   => 'λῆξαν ἔσεται ἐν $1 ἐν $2',
 'anononlyblock'                   => 'ἀνωνύμους μόνον',
@@ -1880,8 +1869,7 @@ $1',
 'ipb_expiry_invalid'              => 'Χρόνος λήξεως ἄκυρος.',
 'ipb_expiry_temp'                 => 'Αἱ φραγαὶ τῶν κεκρυμμένων ὀνομάτων χρωμένων δεῖ εἶναι μόνιμοι.',
 'ipb_already_blocked'             => '"$1" ἤδη πεφραγμέν-ος/-η ἐστίν',
-'ipb-needreblock'                 => '== Ἤδη ἀποκεκλῃσμένος==
-Ἤδη ἀποκεκλῃσμένος ὁ $1 ἐστίν. Βούλεσαι ἀλλάξειν τὰς ῥυθμίσεις;',
+'ipb-needreblock'                 => 'Ἤδη ἀποκεκλῃσμένος ὁ $1 ἐστίν. Βούλεσαι ἀλλάξειν τὰς ῥυθμίσεις;',
 'ipb-otherblocks-header'          => '{{PLURAL:$1|Ἑτέρα φραγή|Ἕτεραι φραγαί}}',
 'ipb_cant_unblock'                => 'Σφάλμα: Ἡ φραγὴ τῆς ID $1 οὐχ εὑρέθη.
 Εἰκότως ἀποπεφραγμένη ἤδη ἐστίν.',
@@ -2136,9 +2124,7 @@ $1',
 'tooltip-preferences-save'        => 'Τιθέναι τὰς προαιρέσεις',
 
 # Metadata
-'nodublincore'      => 'Τὰ μεταδεδομένα RDF τὰ ἀφορῶντα τὸ πρότυπον κανόνων Dublin Core ἀπενεργηθέντα εἰσὶ ἐν τῇδε τῇ ἐξυπηρετητικῇ μηχανῇ.',
-'nocreativecommons' => 'Τὰ μεταδεδομένα RDF τὰ ἀφορῶντα τὰ Creative Commons (Δημιουργικὰ Κοινά) ἀπενεργηθέντα εἰσὶ ἐν τῇδε τῇ ἐξυπηρετητικῇ μηχανῇ.',
-'notacceptable'     => 'Ἡ ἐξυπηρετητικὴ μηχανὴ τοῦ βίκι οὐ δύναται παράσχειν δεδομένα ἐν διαμορφώσει τινὰ ἀναγνωσίμῳ ὑπἐσοῦ.',
+'notacceptable' => 'Ἡ ἐξυπηρετητικὴ μηχανὴ τοῦ βίκι οὐ δύναται παράσχειν δεδομένα ἐν διαμορφώσει τινὰ ἀναγνωσίμῳ ὑπἐσοῦ.',
 
 # Attribution
 'anonymous'        => '{{PLURAL:$1|Ἀνώνυμος χρώμενος|Ἀνώνυμοι χρώμενοι}} τῷ {{SITENAME}}',
@@ -2157,33 +2143,15 @@ $1',
 'spambot_username'    => 'Κάθαρσις τῶν ἀνεπιθυμήτων ἀγγελιῶν τῆς MediaWiki',
 
 # Info page
-'infosubtitle'   => 'Πληροφορίαι περὶ τῆς δἐλτου',
-'numedits'       => 'Ἀριθμὸς μεταγραφῶν (ἐν τῇ δέλτῳ): $1',
-'numtalkedits'   => 'Ἀριθμὸς μεταγραφῶν (δέλτος διαλέξεως): $1',
-'numwatchers'    => 'Ἀριθμὸς ἐφορώντων: $1',
-'numauthors'     => 'Ἀριθμὸς διακεκριμένων πρωτουργῶν (ἐν τῇ δέλτῳ): $1',
-'numtalkauthors' => 'Ἀριθμὸς διακεκριμένων πρωτουργῶν (ἐν τῇ δέλτῳ διαλέξεως): $1',
-
-# Math options
-'mw_math_png'    => 'Ἀπόδοσις PNG πάντοτε',
-'mw_math_simple' => 'HTML εἰ λίαν ἁπλοῦν, εἰδἄλλως PNG',
-'mw_math_html'   => 'HTML εἰ δυνατὸν, εἰδἄλλως PNG',
-'mw_math_source' => 'Ἄφες το ὡς TeX (διὰ τὰ πλοηγητήρια κειμένων)',
-'mw_math_modern' => 'Προτεινομένη διὰ σύγχρονα πλοηγητήρια',
-'mw_math_mathml' => 'MathML εἰ δυνατόν (πειραστικόν)',
-
-# Math errors
-'math_failure'          => 'Λεξιανάλυσις ἀποτετυχηκυῖα',
-'math_unknown_error'    => 'ἄγνωστον σφάλμα',
-'math_unknown_function' => 'ἄγνωστος ἐνέργεια',
-'math_lexing_error'     => 'σφάλμα λεξικῆς ἀναλύσεως',
-'math_syntax_error'     => 'σφάλμα συντάξεως',
-'math_image_error'      => 'Ἡ PNG-μετατροπὴ ἀπετεύχθη·
-ἔλεγξον τὴν ὀρθὴν ἐγκατάστασιν τῶν latex καὶ dvipng (ἢ dvips + gs + convert)',
-'math_bad_tmpdir'       => 'Ἀδύνατος ἦτο ἡ ποίησις μαθηματικῶν δεδομένων ἢ ἡ ἐγγραφὴ ἐν προσκαίρῳ ἀρχειοκαταλόγῳ',
-'math_bad_output'       => 'Ἀδύνατος ἦτο ἡ ποίησις μαθηματικῶν δεδομένων ἢ ἡ ἐγγραφὴ ἐν ἀρχειοκαταλόγῳ ἐξόδου',
-'math_notexvc'          => 'Ἐλλεῖπον ἐκτελέσιμον texvc;
-ἴδε math/README διὰ τὸ διαμορφοῦν.',
+'pageinfo-title'            => 'Πύστις περὶ "$1"',
+'pageinfo-header-edits'     => 'Μεταγραφαί',
+'pageinfo-header-watchlist' => 'Τὰ ἐφορώμενα',
+'pageinfo-header-views'     => 'Προβολαί',
+'pageinfo-subjectpage'      => 'Δέλτος',
+'pageinfo-talkpage'         => 'Δέλτος διαλέξεως',
+'pageinfo-edits'            => 'Ἀριθμὸς μεταγραφῶν',
+'pageinfo-views'            => 'Ἀριθμὸς προβολῶν',
+'pageinfo-viewsperedit'     => 'Προβολαὶ ἀνὰ μεταγραφήν',
 
 # Patrolling
 'markaspatrolleddiff'        => 'Σεσημασμένη ὡς φρουρουμένη',
@@ -2226,7 +2194,7 @@ $1',
 'file-nohires'         => '<small>Οὐ διατίθεται ὑψηλοτέρα ἀνάλυσις.</small>',
 'svg-long-desc'        => 'ἀρχεῖον SVG, ὀνομαστὶ $1 × $2 εἰκονοστοιχεῖα, μέγεθος ἀρχείου: $3',
 'show-big-image'       => 'Πλήρης ἀνάλυσις',
-'show-big-image-thumb' => '<small>Τῆσδε τῆς προθεωρήσεως μέγεθος: $1 × $2 εἰκονοστοιχεῖα</small>',
+'show-big-image-size'  => '$1 × $2 εἰκονοστοιχεία',
 'file-info-gif-looped' => 'ἄπειρος βρόγχος',
 'file-info-gif-frames' => '$1 {{PLURAL:$1|πλαίσιον|πλαίσια}}',
 'file-info-png-looped' => 'ἐν ἀπείρῳ βρόγχῳ',
@@ -2263,7 +2231,13 @@ $1',
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # EXIF tags
 'exif-imagewidth'                  => 'Πλάτος',
@@ -2278,13 +2252,11 @@ $1',
 'exif-ycbcrpositioning'            => 'Τοποθέτησις τῶν Y καὶ C',
 'exif-xresolution'                 => 'Ὁριζόντιος ἀνάλυσις',
 'exif-yresolution'                 => 'Κάθετος ἀνάλυσις',
-'exif-resolutionunit'              => 'Μονὰς τῆς τῶν X καὶ Y ἀναλύσεως',
 'exif-stripoffsets'                => 'Τοποθεσία δεδομένων εἰκόνος',
 'exif-rowsperstrip'                => 'Ἀριθμὸς σειρῶν ἀνὰ λῶρον',
 'exif-stripbytecounts'             => 'Δυφία ἀνὰ συμπεπιεσμένον λῶρον',
 'exif-jpeginterchangeformat'       => 'Μετάθεσις εἰς JPEG SOI',
 'exif-jpeginterchangeformatlength' => 'Δυφιολέξεις δεδομένων JPEG',
-'exif-transferfunction'            => 'Συνάρτησις μεταφορᾶς',
 'exif-whitepoint'                  => 'Χρωματικότης λευκοῦ σημείου',
 'exif-primarychromaticities'       => 'Πρωτεύουσαι χρωματικότητες',
 'exif-ycbcrcoefficients'           => 'Συντελεσταὶ μητρῶν μετασχηματισμοῦ χρώματος',
@@ -2303,7 +2275,6 @@ $1',
 'exif-compressedbitsperpixel'      => 'Τρόπος συμπιέσεως εἰκόνος',
 'exif-pixelydimension'             => 'Πλάτος εἰκόνος',
 'exif-pixelxdimension'             => 'Ὕψος εἰκόνος',
-'exif-makernote'                   => 'Ἐπισημειώσεις ἐξεργαστοῦ',
 'exif-usercomment'                 => 'Σχόλια χρωμένου',
 'exif-relatedsoundfile'            => 'Σχετιζόμενον ἀρχεῖον ἤχου',
 'exif-datetimeoriginal'            => 'Χρονολογία καὶ ὥρα παραγωγῆς δεδομένων',
@@ -2317,7 +2288,6 @@ $1',
 'exif-exposureprogram'             => 'Πρόγραμμα ἐκθέσεως',
 'exif-spectralsensitivity'         => 'Φασματικὴ εὐαισθητότης',
 'exif-isospeedratings'             => 'Βαθμολόγησις ταχύτητος ISO',
-'exif-oecf'                        => 'Παράγων ὀπτοηλεκτρονικῆς μετατροπῆς',
 'exif-shutterspeedvalue'           => 'Ταχύτης κλῄσεως APEX',
 'exif-aperturevalue'               => 'Ἄνοιξις διαφράγματος APEX',
 'exif-brightnessvalue'             => 'Φωτεινότης APEX',
@@ -2330,7 +2300,6 @@ $1',
 'exif-focallength'                 => 'Ἑστιακὸν μῆκος φακοῦ',
 'exif-subjectarea'                 => 'Θεματικὸν πεδίον',
 'exif-flashenergy'                 => 'Ἐνέργεια τῆς ἀστραποβόλου συσκευῆς',
-'exif-spatialfrequencyresponse'    => 'Ἀπόκρισις χωρικῆς συχνότητος',
 'exif-focalplanexresolution'       => 'Ἀνάλυσις ἑστιακοῦ ἐπιπέδου X',
 'exif-focalplaneyresolution'       => 'Ἀνάλυσις ἑστιακοῦ ἐπιπέδου Y',
 'exif-focalplaneresolutionunit'    => 'Μονὰς μετρήσεως ἀναλύσεως ἑστιακοῦ ἐπιπέδου',
@@ -2339,7 +2308,6 @@ $1',
 'exif-sensingmethod'               => 'Μέθοδος αἰσθητῆρος',
 'exif-filesource'                  => 'Πηγὴ ἀρχείου',
 'exif-scenetype'                   => 'Τύπος σκηνῆς',
-'exif-cfapattern'                  => 'Πρὀτυπον CFA',
 'exif-customrendered'              => 'Συνήθης ἐπεξεργασία εἰκόνος',
 'exif-exposuremode'                => 'Τρόπος ἐκθέσεως',
 'exif-whitebalance'                => 'Ἰσορροπία λευκῶν',
@@ -2384,9 +2352,20 @@ $1',
 'exif-gpsareainformation'          => 'Ὄνομα GPS-ζώνης',
 'exif-gpsdatestamp'                => 'Χρονολογία GPS',
 'exif-gpsdifferential'             => 'Διαφορικὴ διόρθωσις τοῦ GPS',
+'exif-keywords'                    => 'Λέξεις κλειδία',
+'exif-source'                      => 'Πηγή',
+'exif-urgency'                     => 'Ἐπεῖγον',
+'exif-writer'                      => 'Συγγραφεύς',
+'exif-languagecode'                => 'Γλῶττα',
+'exif-iimcategory'                 => 'Κατηγορία',
+'exif-label'                       => 'Ἐπιγραφή',
+'exif-disclaimer'                  => 'Ἀποποίησις εὐθύνης',
 
 # EXIF attributes
 'exif-compression-1' => 'Ἀσυμπίεστος',
+
+'exif-copyrighted-true'  => 'Ὑποκείμενον έν δικαιώμασιν',
+'exif-copyrighted-false' => 'Κοινὸ κτῆμα',
 
 'exif-unknowndate' => 'Ἄγνωτος χρονολογία',
 
@@ -2524,21 +2503,30 @@ $1',
 'exif-gpsspeed-m' => 'Μίλια ἀνὰ ὥρα',
 'exif-gpsspeed-n' => 'Κόμβοι',
 
+# Pseudotags used for GPSDestDistanceRef
+'exif-gpsdestdistance-k' => 'Χιλιόμετρα',
+'exif-gpsdestdistance-m' => 'Μίλια',
+'exif-gpsdestdistance-n' => 'Ναυτικά μίλια',
+
 # Pseudotags used for GPSTrackRef, GPSImgDirectionRef and GPSDestBearingRef
 'exif-gpsdirection-t' => 'Ἀληθὴς κατεύθυνσις',
 'exif-gpsdirection-m' => 'Μαγνητικὴ διεύθυνσις',
 
+'exif-dc-contributor' => 'Συνεισφέροντες',
+'exif-dc-publisher'   => 'Ἐκδότης',
+
+'exif-iimcategory-pol' => 'Πολιτική',
+'exif-iimcategory-spo' => 'Άθλοπαιδιαί',
+
 # External editor support
 'edit-externally'      => 'Μεταγράφειν τόδε τὸ ἀρχεῖον χρώμενος ἐξώτερήν τινα ἐφαρμογήν.',
-'edit-externally-help' => 'Εἰ πλείοντα βούλει μαθεῖν, [http://www.mediawiki.org/wiki/Manual:External_editors τὰς περὶ τοῦ σχῆματος διδασκαλίας] ἴδε.',
+'edit-externally-help' => 'Εἰ πλείοντα βούλει μαθεῖν, [//www.mediawiki.org/wiki/Manual:External_editors τὰς περὶ τοῦ σχῆματος διδασκαλίας] ἴδε.',
 
 # 'all' in various places, this might be different for inflected languages
-'recentchangesall' => 'Πᾶσαι',
-'imagelistall'     => 'Πᾶσαι',
-'watchlistall2'    => 'ἅπασαι',
-'namespacesall'    => 'ἅπασαι',
-'monthsall'        => 'ἅπαντες',
-'limitall'         => 'ἅπασαι',
+'watchlistall2' => 'ἅπασαι',
+'namespacesall' => 'ἅπασαι',
+'monthsall'     => 'ἅπαντες',
+'limitall'      => 'ἅπασαι',
 
 # E-mail address confirmation
 'confirmemail'             => 'Ἐπιβεβαίωσον διεύθυνσιν ἠλ-ταχυδρομείου',
@@ -2584,6 +2572,10 @@ $1',
 'confirm_purge_button' => 'εἶεν',
 'confirm-purge-top'    => 'Καθαίρειν τὴν λανθάνουσαν μνήμην τῆσδε τῆς δέλτου.',
 'confirm-purge-bottom' => 'Τὸ ἐκκαθαίρειν δέλτον τινὰ συμβάλλει τῷ καθαίρειν τῆν λανθάνουσαν μνήμην καὶ ἀναγκάζει τὴν παροῦσαν ἀναθεώρησιν ἵνα φανθῇ.',
+
+# action=watch/unwatch
+'confirm-watch-button'   => 'εἶεν',
+'confirm-unwatch-button' => 'εἶεν',
 
 # Multipage image navigation
 'imgmultipageprev' => '← ἡ δέλτος ἡ προτέρα',
@@ -2651,26 +2643,25 @@ $1',
 'duplicate-defaultsort' => 'Eἴδησις: Ἡ προκαθωρισμένη κλεὶς ταξινομήσεως "$2" ὑπερκαλύπτει προηγουμένην προκαθωρισμένην κλεῖδα ταξινομήσεως "$1".',
 
 # Special:Version
-'version'                          => 'Ἐπανόρθωμα',
-'version-extensions'               => 'Ἐγκατεστημέναι ἐπεκτάσεις',
-'version-specialpages'             => 'Εἰδικαὶ δέλτοι',
-'version-parserhooks'              => 'Ἀγγύλαι λεξιαναλυτικοῦ προγράμματος',
-'version-variables'                => 'Μεταβληταί',
-'version-other'                    => 'Ἄλλα',
-'version-mediahandlers'            => 'Χειρισταὶ μέσων',
-'version-hooks'                    => 'Ἀγγύλαι',
-'version-extension-functions'      => 'Ἐνέργειαι ἐπεκτάσεων',
-'version-parser-extensiontags'     => 'Σἠμαντρα ἐπεκτάσεων λεξιαναλυτικοῦ προγράμματος',
-'version-parser-function-hooks'    => 'Ἀγγύλαι ἐνεργειῶν λεξιαναλυτικοῦ προγράμματος',
-'version-skin-extension-functions' => 'Ἐνέργειαι ἐπεκτάσεων ἐπικαλύψεων',
-'version-hook-name'                => 'Ὄνομα ἀγκύλης',
-'version-hook-subscribedby'        => 'Ὑπογεγραφυῖα ὑπὸ',
-'version-version'                  => '(Ἔκδοσις $1)',
-'version-license'                  => 'Ἄδεια',
-'version-poweredby-others'         => 'ἄλλα',
-'version-software'                 => 'Ἐγκατεστημένον λογισμικόν',
-'version-software-product'         => 'Προϊόν',
-'version-software-version'         => 'Ἔκδοσις',
+'version'                       => 'Ἐπανόρθωμα',
+'version-extensions'            => 'Ἐγκατεστημέναι ἐπεκτάσεις',
+'version-specialpages'          => 'Εἰδικαὶ δέλτοι',
+'version-parserhooks'           => 'Ἀγγύλαι λεξιαναλυτικοῦ προγράμματος',
+'version-variables'             => 'Μεταβληταί',
+'version-other'                 => 'Ἄλλα',
+'version-mediahandlers'         => 'Χειρισταὶ μέσων',
+'version-hooks'                 => 'Ἀγγύλαι',
+'version-extension-functions'   => 'Ἐνέργειαι ἐπεκτάσεων',
+'version-parser-extensiontags'  => 'Σἠμαντρα ἐπεκτάσεων λεξιαναλυτικοῦ προγράμματος',
+'version-parser-function-hooks' => 'Ἀγγύλαι ἐνεργειῶν λεξιαναλυτικοῦ προγράμματος',
+'version-hook-name'             => 'Ὄνομα ἀγκύλης',
+'version-hook-subscribedby'     => 'Ὑπογεγραφυῖα ὑπὸ',
+'version-version'               => '(Ἔκδοσις $1)',
+'version-license'               => 'Ἄδεια',
+'version-poweredby-others'      => 'ἄλλα',
+'version-software'              => 'Ἐγκατεστημένον λογισμικόν',
+'version-software-product'      => 'Προϊόν',
+'version-software-version'      => 'Ἔκδοσις',
 
 # Special:FilePath
 'filepath'        => 'Διαδρομὴ ἀρχείου',
@@ -2679,9 +2670,7 @@ $1',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch'          => 'Ζήτησις διπλότυπων ἀρχείων',
-'fileduplicatesearch-summary'  => 'Ζητεῖν διπλότυπα ἀρχεῖα βάσει κερματιζομένων τιμῶν.
-
-Εἰσάγαγε τὸ ὄνομα ἀρχείου ἄνευ τοῦ προθέματος "{{ns:file}}:".',
+'fileduplicatesearch-summary'  => 'Ζητεῖν διπλότυπα ἀρχεῖα βάσει κερματιζομένων τιμῶν.',
 'fileduplicatesearch-legend'   => 'Ζήτησις διπλότυπου',
 'fileduplicatesearch-filename' => 'Ὄνομα ἀρχείου:',
 'fileduplicatesearch-submit'   => 'Ἀναζήτησις',
@@ -2693,7 +2682,8 @@ $1',
 'specialpages'                   => 'Εἰδικαὶ δέλτοι',
 'specialpages-note'              => '----
 * Κανονικαὶ εἰδικαὶ δέλτοι.
-* <strong class="mw-specialpagerestricted">Περιωρισμέναι εἰδικαὶ δἐλτοι.</strong>',
+* <strong class="mw-specialpagerestricted">Περιωρισμέναι εἰδικαὶ δἐλτοι.</strong>
+* <span class="mw-specialpagecached">Μόναι δέλτοι ἀποτεταμιευμέναι.</span>',
 'specialpages-group-maintenance' => 'Ἀναφοραὶ συντηρήσεως',
 'specialpages-group-other'       => 'Ἕτεραι εἰδικαὶ δέλτοι',
 'specialpages-group-login'       => 'Συνδεῖσθαι / ἐγγράφεσθαι',

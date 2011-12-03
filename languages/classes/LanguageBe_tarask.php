@@ -11,20 +11,26 @@
 
 class LanguageBe_tarask extends Language {
 	/**
-	* Plural form transformations
-	*
-	* $wordform1 - singular form (for 1, 21, 31, 41...)
-	* $wordform2 - plural form (for 2, 3, 4, 22, 23, 24, 32, 33, 34...)
-	* $wordform3 - plural form (for 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 26...)
-	*/
+	 * Plural form transformations
+	 *
+	 * $wordform1 - singular form (for 1, 21, 31, 41...)
+	 * $wordform2 - plural form (for 2, 3, 4, 22, 23, 24, 32, 33, 34...)
+	 * $wordform3 - plural form (for 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 26...)
+	 */
 
+	/**
+	 * @param $count int
+	 * @param $forms array
+	 *
+	 * @return string
+	 */
 	function convertPlural( $count, $forms ) {
 		if ( !count( $forms ) ) { return ''; }
 
 		// if no number with word, then use $form[0] for singular and $form[1] for plural or zero
 		if ( count( $forms ) === 2 ) return $count == 1 ? $forms[0] : $forms[1];
 
-		// FIXME: CLDR defines 4 plural forms instead of 3
+		// @todo FIXME: CLDR defines 4 plural forms instead of 3
 		//        http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html
 		$forms = $this->preConvertPlural( $forms, 3 );
 
@@ -41,11 +47,15 @@ class LanguageBe_tarask extends Language {
 		}
 	}
 
-	/*
+	/**
 	 * The Belarusian language uses apostrophe sign,
 	 * but the characters used for this could be both U+0027 and U+2019.
 	 * This function unifies apostrophe sign in search index values
 	 * to enable seach using both apostrophe signs.
+	 *
+	 * @param $string string
+	 *
+	 * @return string
 	 */
 	function normalizeForSearch( $string ) {
 		wfProfileIn( __METHOD__ );
@@ -62,9 +72,13 @@ class LanguageBe_tarask extends Language {
 		return $s;
 	}
 
-	/*
+	/**
 	 * Four-digit number should be without group commas (spaces)
 	 * So "1 234 567", "12 345" but "1234"
+	 *
+	 * @param $_ string
+	 *
+	 * @return string
 	 */
 	function commafy( $_ ) {
 		if ( preg_match( '/^-?\d{1,4}(\.\d*)?$/', $_ ) ) {
