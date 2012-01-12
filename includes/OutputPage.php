@@ -1223,6 +1223,7 @@ class OutputPage extends ContextSource {
 	public function parserOptions( $options = null ) {
 		if ( !$this->mParserOptions ) {
 			$this->mParserOptions = new ParserOptions;
+			$this->mParserOptions->setEditSection( false );
 		}
 		return wfSetVar( $this->mParserOptions, $options );
 	}
@@ -1799,27 +1800,34 @@ class OutputPage extends ContextSource {
 		if ( $this->mRedirect != '' ) {
 			# Standards require redirect URLs to be absolute
 			$this->mRedirect = wfExpandUrl( $this->mRedirect, PROTO_CURRENT );
-			if( $this->mRedirectCode == '301' || $this->mRedirectCode == '303' ) {
-				if( !$wgDebugRedirects ) {
-					$message = HttpStatus::getMessage( $this->mRedirectCode );
-					$response->header( "HTTP/1.1 {$this->mRedirectCode} $message" );
-				}
-				$this->mLastModified = wfTimestamp( TS_RFC2822 );
-			}
-			if ( $wgVaryOnXFP ) {
-				$this->addVaryHeader( 'X-Forwarded-Proto' );
-			}
-			$this->sendCacheControl();
 
-			$response->header( "Content-Type: text/html; charset=utf-8" );
-			if( $wgDebugRedirects ) {
-				$url = htmlspecialchars( $this->mRedirect );
-				print "<html>\n<head>\n<title>Redirect</title>\n</head>\n<body>\n";
-				print "<p>Location: <a href=\"$url\">$url</a></p>\n";
-				print "</body>\n</html>\n";
-			} else {
-				$response->header( 'Location: ' . $this->mRedirect );
+			$redirect = $this->mRedirect;
+			$code = $this->mRedirectCode;
+
+			if( wfRunHooks( "BeforePageRedirect", array( $this, &$redirect, &$code ) ) ) {
+				if( $code == '301' || $code == '303' ) {
+					if( !$wgDebugRedirects ) {
+						$message = HttpStatus::getMessage( $code );
+						$response->header( "HTTP/1.1 $code $message" );
+					}
+					$this->mLastModified = wfTimestamp( TS_RFC2822 );
+				}
+				if ( $wgVaryOnXFP ) {
+					$this->addVaryHeader( 'X-Forwarded-Proto' );
+				}
+				$this->sendCacheControl();
+
+				$response->header( "Content-Type: text/html; charset=utf-8" );
+				if( $wgDebugRedirects ) {
+					$url = htmlspecialchars( $redirect );
+					print "<html>\n<head>\n<title>Redirect</title>\n</head>\n<body>\n";
+					print "<p>Location: <a href=\"$url\">$url</a></p>\n";
+					print "</body>\n</html>\n";
+				} else {
+					$response->header( 'Location: ' . $redirect );
+				}
 			}
+
 			wfProfileOut( __METHOD__ );
 			return;
 		} elseif ( $this->mStatusCode ) {
@@ -1959,6 +1967,8 @@ class OutputPage extends ContextSource {
 	 * Produce the stock "please login to use the wiki" page
 	 */
 	public function loginToUse() {
+		global $wgRequest;
+
 		if( $this->getUser()->isLoggedIn() ) {
 			throw new PermissionsError( 'read' );
 		}
@@ -1968,12 +1978,18 @@ class OutputPage extends ContextSource {
 		$this->setRobotPolicy( 'noindex,nofollow' );
 		$this->setArticleRelated( false );
 
+		$returnto = Title::newFromURL( $wgRequest->getVal( 'title', '' ) );
+		$returntoquery = array();
+		if( $returnto ) {
+			$returntoquery = array( 'returnto' => $returnto->getPrefixedText() );
+		}
+
 		$loginTitle = SpecialPage::getTitleFor( 'Userlogin' );
 		$loginLink = Linker::linkKnown(
 			$loginTitle,
 			wfMsgHtml( 'loginreqlink' ),
 			array(),
-			array( 'returnto' => $this->getTitle()->getPrefixedText() )
+			$returntoquery
 		);
 		$this->addHTML( wfMessage( 'loginreqpagetext' )->rawParams( $loginLink )->parse() .
 			"\n<!--" . $this->getTitle()->getPrefixedUrl() . '-->' );
@@ -2387,7 +2403,8 @@ $templates
 		foreach ( (array) $modules as $name ) {
 			$module = $resourceLoader->getModule( $name );
 			# Check that we're allowed to include this module on this page
-			if ( ( $module->getOrigin() > $this->getAllowedModules( ResourceLoaderModule::TYPE_SCRIPTS )
+			if ( !$module
+				|| ( $module->getOrigin() > $this->getAllowedModules( ResourceLoaderModule::TYPE_SCRIPTS )
 					&& $only == ResourceLoaderModule::TYPE_SCRIPTS )
 				|| ( $module->getOrigin() > $this->getAllowedModules( ResourceLoaderModule::TYPE_STYLES )
 					&& $only == ResourceLoaderModule::TYPE_STYLES )
@@ -2603,12 +2620,15 @@ $templates
 	/**
 	 * Get an array containing the variables to be set in mw.config in JavaScript.
 	 *
+	 * DO NOT CALL THIS FROM OUTSIDE OF THIS CLASS OR Skin::makeGlobalVariablesScript().
+	 * This is only public until that function is removed. You have been warned.
+	 *
 	 * Do not add things here which can be evaluated in ResourceLoaderStartupScript
 	 * - in other words, page-indendent/site-wide variables (without state).
 	 * You will only be adding bloat to the html page and causing page caches to
 	 * have to be purged on configuration changes.
 	 */
-	protected function getJSVars() {
+	public function getJSVars() {
 		global $wgUseAjax, $wgEnableMWSuggest, $wgContLang;
 
 		$title = $this->getTitle();
@@ -2955,7 +2975,11 @@ $templates
 		$styles = array( 'other' => array(), 'user' => array(), 'site' => array(), 'private' => array(), 'noscript' => array() );
 		$resourceLoader = $this->getResourceLoader();
 		foreach ( $this->getModuleStyles() as $name ) {
-			$group = $resourceLoader->getModule( $name )->getGroup();
+			$module = $resourceLoader->getModule( $name );
+			if ( !$module ) {
+				continue;
+			}
+			$group = $module->getGroup();
 			// Modules in groups named "other" or anything different than "user", "site" or "private"
 			// will be placed in the "other" group
 			$styles[isset( $styles[$group] ) ? $group : 'other'][] = $name;

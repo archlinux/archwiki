@@ -33,7 +33,7 @@ $wgConf = new SiteConfiguration;
 /** @endcond */
 
 /** MediaWiki version number */
-$wgVersion = '1.18.0';
+$wgVersion = '1.18.1';
 
 /** Name of the site. It must be changed in LocalSettings.php */
 $wgSitename         = 'MediaWiki';
@@ -1410,6 +1410,8 @@ $wgQueryCacheLimit = 1000;
 $wgWantedPagesThreshold = 1;
 /** Enable slow parser functions */
 $wgAllowSlowParserFunctions = false;
+/** Allow schema updates */
+$wgAllowSchemaUpdates = true;
 
 /**
  * Do DELETE/INSERT for link updates instead of incremental
@@ -1511,6 +1513,8 @@ $wgParserCacheType = CACHE_ANYTHING;
  * given, giving a callable function which will generate a suitable cache object.
  *
  * The other parameters are dependent on the class used.
+ * - CACHE_DBA uses $wgTmpDirectory by default. The 'dir' parameter let you
+ *   overrides that.
  */
 $wgObjectCaches = array(
 	CACHE_NONE => array( 'class' => 'EmptyBagOStuff' ),

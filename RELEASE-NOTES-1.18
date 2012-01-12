@@ -3,6 +3,41 @@
 Security reminder: MediaWiki does not require PHP's register_globals
 setting since version 1.2.0. If you have it on, turn it '''off''' if you can.
 
+== MediaWiki 1.18.1 ==
+2012-01-11
+
+This a maintenance and security release of the MediaWiki 1.18 branch.
+
+=== Security changes ===
+* (bug 33117) prop=revisions allows deleted text to be exposed through cache pollution.
+
+=== Changes since 1.18.0 ===
+* (bug 32712) Fix for search indexing of pages with certain unicode chars following URL.
+* (bug 3901) Lang, hreflang attribs added to sidebar interlanguage links for screen readers.
+* (bug 30774) mediawiki.html: Add support for numbers and booleans in the
+  attribute values and element contents.
+* (bug 32473) [[Special:PasswordReset]] can not be used on private wiki.
+* (bug 32853) Fixed CACHE_DBA object cache type.
+* (bug 32786) Backward compatibility for extension using 1.17's Database::newFromType().
+* Fixed exception when using Special:WhatLinksHere on a Media: file.
+* (bug 32709) Private Wiki users were always taken to Special:Badtitle on login.
+* (bug 33240) Sort images are missing but referenced in css.
+* (bug 31921) Magic words REVISIONDAY, REVISIONMONTH and REVISIONYEAR were
+  not showing their values on preview.
+* (bug 32702) Removed method Skin::makeGlobalVariablesScript() has been readded
+  for backward compatibility.
+* (bug 30172) The check for posix_isatty() in maintenance scripts did not detect
+  when the function exists but is disabled. Introduced Maintenance::posix_isatty().
+* (bug 33305) Make mw.util.addCSS resistant to IE's @font-face bug by setting
+  cssText after DOM insertion.
+* (bug 29102) Upgrades no longer fail with the error "Unknown character set: 'mysql4'.
+* (bug 25355) Parser generates edit section links for special pages.
+* (bug 33321) Adding a line to MediaWiki:Sidebar that contains a pipe, but doesn't
+  have any pipes after being transformed by MessageCache, causes exception on
+  all pages.
+* Fixed recentchanges FK violation on page delete and cache purge error in updater
+  for Oracle DB.
+
 == MediaWiki 1.18 ==
 2011-11-24
 
@@ -150,8 +185,6 @@ Selected changes since MediaWiki 1.17 that may be of interest:
   create a page or new section.
 * (bug 8130) Query pages should limit to content namespaces, not just main
   namespace.
-* Search suggestions (other than in the Vector skin) will now use the HTML5
-  datalist feature where supported, currently only Firefox 4.
 * Special:Contribs now redirects to Special:Contributions.
 * (bug 6672) Images are now autorotated according to their EXIF orientation.
   This only affects thumbnails; the source remains unrotated.
@@ -287,10 +320,10 @@ Selected changes since MediaWiki 1.17 that may be of interest:
   Same for signupend on the account creation page.
 * (bug 31233) New OutputPage::addJsConfigVars() method to make the output page specific
   mw.config map extendable.
+* mw.util.wikiScript has been implemented (like wfScript in GlobalFunctions.php).
 
 === Bug fixes in 1.18 ===
 * (bug 27860) Minor edit after clicking 'new section' tab.
-* mw.util.getScript has been implemented (like wfScript in GlobalFunctions.php).
 * (bug 23119) WikiError class and subclasses are now marked as deprecated.
 * (bug 10871) Javascript and CSS pages in MediaWiki namespace are no longer
   treated as wikitext on preview.
@@ -711,8 +744,8 @@ changes to languages because of Bugzilla reports.
 * (bug 27681) Set $namespaceGenderAliases for Portuguese (pt and pt-br).
 * (bug 27785) Fallback language for Kabardian (kbd) is English now.
 * (bug 27825) Raw watchlist edit message now uses formatted numbers.
-* (bug 28040) Turkish: properly lower case 'I' to 'ı' (dotless i) and
-  uppercase 'i' to 'İ' (dotted i).
+* (bug 28040) Turkish: properly lower case 'I' to 'i' (dotless i) and
+  uppercase 'i' to 'I' (dotted i).
 * Conversion script between Syllabics and Latin for the Inuktitut language.
 * Date formats for Indonesian (id) updated.
 * Bhojpuri (bho) (renamed from "bh").

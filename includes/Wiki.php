@@ -78,7 +78,12 @@ class MediaWiki {
 			$ret = Title::newMainPage();
 		} else {
 			$ret = Title::newFromURL( $title );
-			// check variant links so that interwiki links don't have to worry
+			// Alias NS_MEDIA page URLs to NS_FILE...we only use NS_MEDIA
+			// in wikitext links to tell Parser to make a direct file link
+			if ( !is_null( $ret ) && $ret->getNamespace() == NS_MEDIA ) {
+				$ret = Title::makeTitle( NS_FILE, $ret->getDBkey() );
+			}
+			// Check variant links so that interwiki links don't have to worry
 			// about the possible different language variants
 			if ( count( $wgContLang->getVariants() ) > 1
 				&& !is_null( $ret ) && $ret->getArticleID() == 0 )
@@ -128,7 +133,7 @@ class MediaWiki {
 	 * @return void
 	 */
 	private function performRequest() {
-		global $wgServer, $wgUsePathInfo;
+		global $wgServer, $wgUsePathInfo, $wgTitle;
 
 		wfProfileIn( __METHOD__ );
 
@@ -145,7 +150,6 @@ class MediaWiki {
 
 		wfRunHooks( 'BeforeInitialize',
 			array( &$title, null, &$output, &$user, $request, $this ) );
-
 		// Invalid titles. Bug 21776: The interwikis must redirect even if the page name is empty.
 		if ( is_null( $title ) || ( $title->getDBkey() == '' && $title->getInterwiki() == '' ) ||
 			$title->isSpecial( 'Badtitle' ) )
@@ -157,6 +161,16 @@ class MediaWiki {
 		// the Read array in order for the user to see it. (We have to check here to
 		// catch special pages etc. We check again in Article::view())
 		} elseif ( !$title->userCanRead() ) {
+			// Bug 32276: allowing the skin to generate output with $wgTitle 
+			// set to the input title would allow anonymous users to 
+			// determine whether a page exists, potentially leaking private data. In fact, the 
+			// curid and oldid request  parameters would allow page titles to be enumerated even 
+			// when they are not guessable. So we reset the title to Special:Badtitle before the 
+			// permissions error is displayed.
+			$badtitle = SpecialPage::getTitleFor( 'Badtitle' );
+			$output->setTitle( $badtitle );
+			$wgTitle = $badtitle;
+
 			$output->loginToUse();
 		// Interwiki redirects
 		} elseif ( $title->getInterwiki() != '' ) {

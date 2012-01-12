@@ -403,6 +403,20 @@ abstract class Skin extends ContextSource {
 	}
 
 	/**
+	 * Make a <script> tag containing global variables
+	 *
+	 * @param $unused Unused
+	 * @return string HTML fragment
+	 */
+	public static function makeGlobalVariablesScript( $unused ) {
+		global $wgOut;
+
+		wfDeprecated( __METHOD__, '1.19' );
+
+		return self::makeVariablesScript( $wgOut->getJSVars() );
+	}
+
+	/**
 	 * Get the query to generate a dynamic stylesheet
 	 *
 	 * @return array
@@ -1244,6 +1258,12 @@ abstract class Skin extends ContextSource {
 				if ( strpos( $line, '|' ) !== false ) { // sanity check
 					$line = MessageCache::singleton()->transform( $line, false, null, $this->getTitle() );
 					$line = array_map( 'trim', explode( '|', $line, 2 ) );
+					if ( count( $line ) !== 2 ) {
+						// Second sanity check, could be hit by people doing
+						// funky stuff with parserfuncs... (bug 3321)
+						continue;
+					}
+
 					$extraAttribs = array();
 
 					$msgLink = wfMessage( $line[0] )->inContentLanguage();
@@ -1255,7 +1275,6 @@ abstract class Skin extends ContextSource {
 					} else {
 						$link = $line[0];
 					}
-
 					$msgText = wfMessage( $line[1] );
 					if ( $msgText->exists() ) {
 						$text = $msgText->text();

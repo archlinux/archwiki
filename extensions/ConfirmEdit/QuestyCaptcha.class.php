@@ -64,7 +64,7 @@ class QuestyCaptcha extends SimpleCaptcha {
 		global $wgOut;
 		$wgOut->setPageTitle( wfMsg( 'captchahelp-title' ) );
 		$wgOut->addWikiText( wfMsg( 'questycaptchahelp-text' ) );
-		if ( $this->storage->cookiesNeeded() ) {
+		if ( CaptchaStore::get()->cookiesNeeded() ) {
 			$wgOut->addWikiText( wfMsg( 'captchahelp-cookies-needed' ) );
 		}
 	}
