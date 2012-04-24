@@ -3,8 +3,9 @@ body { background: #f6f9fc; }
 body, #content, table { color: #222;}
 h1, h2, h3, h4, h5 { color: #222; }
 h1 { font-weight: bold; }
-pre { border: 1px solid #bcd; background: #ebf1f5; color: #222; }
-code { font-family: monospace; }
+pre, code, tt { background-color: #ebf1f5; color: #222; font-family: monospace; }
+pre { border: 1px solid #bcd; overflow: auto; }
+code, tt { padding: 0.1em 0.2em; }
 
 /* links (including page tabs and personal toolbar) */
 a, #p-cactions li a { text-decoration: none; outline: none; }
