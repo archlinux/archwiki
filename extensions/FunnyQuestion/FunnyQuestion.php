@@ -2,10 +2,10 @@
 
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FunnyQuestion',
-	'version' => '2.1',
+	'version' => '2.2',
 	'description' => 'Challenge-response authentication',
 	'author' => 'Pierre Schmitz',
-	'url' => 'https://www.archlinux.de'
+	'url' => 'https://pierre-schmitz.com/'
 );
 
 global $wgFunnyQuestions;
@@ -18,8 +18,8 @@ $wgFunnyQuestionTimeout = 3600;
 $wgFunnyQuestionWait = 2;
 $wgFunnyQuestionRemember = 3600*24;
 
-$wgAutoloadClasses['FunnyQuestion'] = dirname(__FILE__) . '/FunnyQuestion.body.php';
-$wgExtensionMessagesFiles['FunnyQuestion'] = dirname( __FILE__ ) . '/FunnyQuestion.i18n.php';
+$wgAutoloadClasses['FunnyQuestion'] = __DIR__ . '/FunnyQuestion.body.php';
+$wgExtensionMessagesFiles['FunnyQuestion'] = __DIR__ . '/FunnyQuestion.i18n.php';
 
 if ($wgGroupPermissions['*']['edit']) {
 	$wgHooks['EditPage::showEditForm:fields'][] = 'FunnyQuestion::addFunnyQuestionToEditPage';
