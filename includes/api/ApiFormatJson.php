@@ -97,6 +97,6 @@ class ApiFormatJson extends ApiFormatBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatJson.php 78829 2010-12-22 20:52:06Z reedy $';
+		return __CLASS__ . ': $Id$';
 	}
 }

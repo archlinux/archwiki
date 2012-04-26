@@ -226,6 +226,6 @@ class ApiFormatXml extends ApiFormatBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatXml.php 104476 2011-11-28 20:08:17Z reedy $';
+		return __CLASS__ . ': $Id$';
 	}
 }

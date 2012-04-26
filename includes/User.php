@@ -3272,11 +3272,12 @@ class User {
 		global $wgUserEmailConfirmationTokenExpiry;
 		$now = time();
 		$expires = $now + $wgUserEmailConfirmationTokenExpiry;
+		$expiration = wfTimestamp( TS_MW, $expires );
 		$this->load();
 		$token = MWCryptRand::generateHex( 32 );
 		$hash = md5( $token );
 		$this->mEmailToken = $hash;
-		$this->mEmailTokenExpires = wfTimestamp( TS_MW, $expires );
+		$this->mEmailTokenExpires = $expiration;
 		return $token;
 	}
 
@@ -3863,7 +3864,7 @@ class User {
 		} elseif ( $type == ':B:' ) {
 			# Salted
 			list( $salt, $realHash ) = explode( ':', substr( $hash, 3 ), 2 );
-			return md5( $salt.'-'.md5( $password ) ) == $realHash;
+			return md5( $salt.'-'.md5( $password ) ) === $realHash;
 		} else {
 			# Old-style
 			return self::oldCrypt( $password, $userId ) === $hash;

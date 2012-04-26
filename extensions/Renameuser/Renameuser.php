@@ -2,7 +2,7 @@
 if ( !defined( 'MEDIAWIKI' ) ) die();
 /**
  * A Special Page extension to rename users, runnable by users with renameuser
- * righs
+ * rights
  *
  * @file
  * @ingroup Extensions
@@ -18,14 +18,14 @@ $wgExtensionCredits['specialpage'][] = array(
 	'path' => __FILE__,
 	'name' => 'Renameuser',
 	'author'         => array( 'Ævar Arnfjörð Bjarmason', 'Aaron Schulz' ),
-	'url'            => 'http://www.mediawiki.org/wiki/Extension:Renameuser',
+	'url'            => 'https://www.mediawiki.org/wiki/Extension:Renameuser',
 	'descriptionmsg' => 'renameuser-desc',
 );
 
-# Internationalisation file
+# Internationalisation files
 $dir = dirname( __FILE__ ) . '/';
 $wgExtensionMessagesFiles['Renameuser'] = $dir . 'Renameuser.i18n.php';
-$wgExtensionAliasesFiles['Renameuser'] = $dir . 'Renameuser.alias.php';
+$wgExtensionMessagesFiles['RenameuserAliases'] = $dir . 'Renameuser.alias.php';
 
 /**
  * Users with more than this number of edits will have their rename operation
@@ -101,8 +101,7 @@ function wfRenameuserOnContribsLink( $id, $nt, &$tools ) {
 	global $wgUser;
 
 	if ( $wgUser->isAllowed( 'renameuser' ) && $id ) {
-		$sk = $wgUser->getSkin();
-		$tools[] = $sk->link(
+		$tools[] = Linker::link(
 			SpecialPage::getTitleFor( 'Renameuser' ),
 			wfMsg( 'renameuser-linkoncontribs' ),
 			array( 'title' => wfMsgExt( 'renameuser-linkoncontribs-text', 'parseinline' ) ),

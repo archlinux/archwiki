@@ -4,13 +4,13 @@
 
 /**
  * Copyright 2009 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS-IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -103,7 +103,7 @@ function makeContentCollector( browser, domInterface ) {
 		},
 		// call flush only when you're done
 			flush : function(withNewline) {
-				
+
 			}
 		};
 		self.startNew();
@@ -182,7 +182,7 @@ function makeContentCollector( browser, domInterface ) {
 		state.listType = oldListType;
 	}
 	function _produceListMarker(state) {
-		
+
 	}
 	function _startNewLine(state) {
 		if (state) {
@@ -262,14 +262,14 @@ function makeContentCollector( browser, domInterface ) {
 					_produceListMarker(state);
 				}
 				lines.appendText(textify(txt2));
-				
+
 				x += consumed;
 				txt = rest;
 				if (txt.length > 0) {
 					_startNewLine(state);
 				}
 			}
-			
+
 		} else {
 			var cls = dom.nodeProp(node, "className");
 			var tname = (dom.nodeTagName(node) || "").toLowerCase();
@@ -279,7 +279,7 @@ function makeContentCollector( browser, domInterface ) {
 				// ignore
 			} else if (!isEmpty) {
 				var styl = dom.nodeAttr(node, "style");
-				
+
 				var isPre = (tname == "pre");
 				if ((!isPre) && browser.safari) {
 					isPre = (styl && /\bwhite-space:\s*pre\b/i.exec(styl));
@@ -301,7 +301,7 @@ function makeContentCollector( browser, domInterface ) {
 
 				if (isPre)
 					_decrementFlag(state, 'preMode');
-				
+
 				if (oldListTypeOrNull) {
 					_exitList(state, oldListTypeOrNull);
 				}
@@ -384,7 +384,7 @@ function makeContentCollector( browser, domInterface ) {
 						lengthToTake = lineLimit;
 						newStrings.push(oldString.substring(0, lengthToTake));
 						oldString = oldString.substring(lengthToTake);
-						
+
 					}
 					if (oldString.length > 0) {
 						newStrings.push(oldString);
@@ -414,7 +414,7 @@ function makeContentCollector( browser, domInterface ) {
 
 					newStrings.unshift(i, 1);
 					lineStrings.splice.apply(lineStrings, newStrings);
-					
+
 				}
 			}
 			return {

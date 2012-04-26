@@ -33,11 +33,11 @@ class HTMLCaptchaField extends HTMLFormField {
 	 */
 	private $validationResult;
 
-	public function __construct( $params ){
+	public function __construct( $params ) {
 		parent::__construct( $params );
 
 		// For differentiating the type of form, mainly
-		if( isset( $params['prefix'] ) ){
+		if ( isset( $params['prefix'] ) ) {
 			$this->prefix = $params['prefix'];
 		}
 	}
@@ -48,29 +48,29 @@ class HTMLCaptchaField extends HTMLFormField {
 	 * @param  $value String
 	 * @return String
 	 */
-	public function getInputHTML( $value ){
+	public function getInputHTML( $value ) {
 		# TODO
 	}
 
-	public function validate( $data, $alldata ){
+	public function validate( $data, $alldata ) {
 		// We sent back the exists status of the captcha before.  If it *doesn't* exist
 		// we actually want to validate this as true, because we don't want an angry red
 		// error message, just for the user to put the captcha in again
-		if( $data === false ){
+		if ( $data === false ) {
 			return true;
 		}
 
-		
+
 	}
 
 	/**
 	 * @param  $request WebRequest
 	 * @return void
 	 */
-	public function loadDataFromRequest( $request ){
+	public function loadDataFromRequest( $request ) {
 		$this->captcha = Captcha::factory();
 		$this->captcha->loadFromRequest( $request, $this );
-		if( !$this->captcha->exists() ){
+		if ( !$this->captcha->exists() ) {
 			// The captcha doesn't exist; probably because it's already been used and
 			// then deleted for security.  Load the field up with a new captcha which
 			// will be shown to the user when the validation of said new object fails

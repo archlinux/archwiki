@@ -81,7 +81,7 @@ fn: {
 							if ( context.modules.preview.previewText == wikitext ) {
 								return;
 							}
-							
+
 							$dialog.find( '.wikiEditor-preview-dialog-contents' ).empty();
 							$dialog.find( '.wikiEditor-ui-loading' ).show();
 							$.post(

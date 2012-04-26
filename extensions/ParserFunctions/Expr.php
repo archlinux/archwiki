@@ -157,6 +157,8 @@ class ExprParser {
 	 * The algorithm here is based on the infix to RPN algorithm given in
 	 * http://montcs.bloomu.edu/~bobmon/Information/RPN/infix2rpn.shtml
 	 * It's essentially the same as Dijkstra's shunting yard algorithm.
+	 * @param $expr string
+	 * @return string
 	 */
 	function doExpression( $expr ) {
 		$operands = array();
@@ -371,181 +373,260 @@ class ExprParser {
 		return implode( "<br />\n", $operands );
 	}
 
+	/**
+	 * @param $op int
+	 * @param $stack array
+	 * @throws ExprError
+	 */
 	function doOperation( $op, &$stack ) {
 		switch ( $op ) {
 			case EXPR_NEGATIVE:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
 				$stack[] = -$arg;
 				break;
 			case EXPR_POSITIVE:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				break;
 			case EXPR_TIMES:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = $left * $right;
 					break;
 			case EXPR_DIVIDE:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
-				if ( $right == 0 ) throw new ExprError( 'division_by_zero', $this->names[$op] );
+				if ( $right == 0 ) {
+					throw new ExprError( 'division_by_zero', $this->names[$op] );
+				}
 				$stack[] = $left / $right;
 				break;
 			case EXPR_MOD:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
-				if ( $right == 0 ) throw new ExprError( 'division_by_zero', $this->names[$op] );
+				if ( $right == 0 ) {
+					throw new ExprError( 'division_by_zero', $this->names[$op] );
+				}
 				$stack[] = $left % $right;
 				break;
 			case EXPR_PLUS:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = $left + $right;
 				break;
 			case EXPR_MINUS:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = $left - $right;
 				break;
 			case EXPR_AND:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left && $right ) ? 1 : 0;
 				break;
 			case EXPR_OR:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left || $right ) ? 1 : 0;
 				break;
 			case EXPR_EQUALITY:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left == $right ) ? 1 : 0;
 				break;
 			case EXPR_NOT:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
 				$stack[] = ( !$arg ) ? 1 : 0;
 				break;
 			case EXPR_ROUND:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$digits = intval( array_pop( $stack ) );
 				$value = array_pop( $stack );
 				$stack[] = round( $value, $digits );
 				break;
 			case EXPR_LESS:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left < $right ) ? 1 : 0;
 				break;
 			case EXPR_GREATER:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left > $right ) ? 1 : 0;
 				break;
 			case EXPR_LESSEQ:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left <= $right ) ? 1 : 0;
 				break;
 			case EXPR_GREATEREQ:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left >= $right ) ? 1 : 0;
 				break;
 			case EXPR_NOTEQ:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = ( $left != $right ) ? 1 : 0;
 				break;
 			case EXPR_EXPONENT:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$stack[] = $left * pow( 10, $right );
 				break;
 			case EXPR_SINE:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
 				$stack[] = sin( $arg );
 				break;
 			case EXPR_COSINE:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
 				$stack[] = cos( $arg );
 				break;
 			case EXPR_TANGENS:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
 				$stack[] = tan( $arg );
 				break;
 			case EXPR_ARCSINE:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
-				if ( $arg < -1 || $arg > 1 ) throw new ExprError( 'invalid_argument', $this->names[$op] );
+				if ( $arg < -1 || $arg > 1 ) {
+					throw new ExprError( 'invalid_argument', $this->names[$op] );
+				}
 				$stack[] = asin( $arg );
 				break;
 			case EXPR_ARCCOS:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
-				if ( $arg < -1 || $arg > 1 ) throw new ExprError( 'invalid_argument', $this->names[$op] );
+				if ( $arg < -1 || $arg > 1 ) {
+					throw new ExprError( 'invalid_argument', $this->names[$op] );
+				}
 				$stack[] = acos( $arg );
 				break;
 			case EXPR_ARCTAN:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
 				$stack[] = atan( $arg );
 				break;
 			case EXPR_EXP:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
 				$stack[] = exp( $arg );
 				break;
 			case EXPR_LN:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
-				if ( $arg <= 0 ) throw new ExprError( 'invalid_argument_ln', $this->names[$op] );
+				if ( $arg <= 0 ) {
+					throw new ExprError( 'invalid_argument_ln', $this->names[$op] );
+				}
 				$stack[] = log( $arg );
 				break;
 			case EXPR_ABS:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
 				$stack[] = abs( $arg );
 				break;
 			case EXPR_FLOOR:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
 				$stack[] = floor( $arg );
 				break;
 			case EXPR_TRUNC:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
 				$stack[] = (int)$arg;
 				break;
 			case EXPR_CEIL:
-				if ( count( $stack ) < 1 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$arg = array_pop( $stack );
 				$stack[] = ceil( $arg );
 				break;
 			case EXPR_POW:
-				if ( count( $stack ) < 2 ) throw new ExprError( 'missing_operand', $this->names[$op] );
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
-				if ( false === ( $stack[] = pow( $left, $right ) ) ) throw new ExprError( 'division_by_zero', $this->names[$op] );
+				if ( false === ( $stack[] = pow( $left, $right ) ) ) {
+					throw new ExprError( 'division_by_zero', $this->names[$op] );
+				}
 				break;
 			default:
 				// Should be impossible to reach here.

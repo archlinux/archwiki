@@ -45,12 +45,12 @@ api: {
 				$.wikiEditor.modules.dialogs.fn.reallyCreate( context, mod, module );
 				$dialog = $( '#' + mod.id );
 			}
-			
+
 			// Workaround for bug in jQuery UI: close button in top right retains focus
 			$dialog.closest( '.ui-dialog' )
 				.find( '.ui-dialog-titlebar-close' )
 				.removeClass( 'ui-state-focus' );
-			
+
 			$dialog.dialog( 'open' );
 		}
 	},
@@ -147,7 +147,7 @@ fn: {
 		dialogDiv.bind( 'dialogclose', function() {
 			context.fn.restoreSelection();
 		} );
-		
+
 		// Let the outside world know we set up this dialog
 		context.$textarea.trigger( 'wikiEditor-dialogs-loaded-' + name );
 	},
@@ -187,7 +187,7 @@ fn: {
 		$(this).css( 'white-space', oldWS );
 		oldHidden.each( function() {
 			$(this).attr( 'style', $(this).data( 'oldstyle' ) );
-		});		
+		});
 	},
 	/**
 	 * Set the right tabindexes on elements in a dialog

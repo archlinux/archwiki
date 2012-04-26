@@ -198,9 +198,14 @@ $specialPageAliases['mt'] = array(
 	'Gadgets' => array( 'Aġġeġġi', 'Aċċessorji' ),
 );
 
+/** Norwegian Bokmål (‪Norsk (bokmål)‬) */
+$specialPageAliases['nb'] = array(
+	'Gadgets' => array( 'Tilleggsfunksjoner' ),
+);
+
 /** Nedersaksisch (Nedersaksisch) */
 $specialPageAliases['nds-nl'] = array(
-	'Gadgets' => array( 'Technisch_spul' ),
+	'Gadgets' => array( 'Technies_spul' ),
 );
 
 /** Dutch (Nederlands) */
@@ -211,11 +216,6 @@ $specialPageAliases['nl'] = array(
 /** Norwegian Nynorsk (‪Norsk (nynorsk)‬) */
 $specialPageAliases['nn'] = array(
 	'Gadgets' => array( 'Tilleggsfunksjonar' ),
-);
-
-/** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬) */
-$specialPageAliases['no'] = array(
-	'Gadgets' => array( 'Tilleggsfunksjoner' ),
 );
 
 /** Occitan (Occitan) */
@@ -233,7 +233,7 @@ $specialPageAliases['ro'] = array(
 	'Gadgets' => array( 'Gadgeturi' ),
 );
 
-/** Sanskrit (संस्कृत) */
+/** Sanskrit (संस्कृतम्) */
 $specialPageAliases['sa'] = array(
 	'Gadgets' => array( 'सुविधा_(गॅजेट)' ),
 );
@@ -253,7 +253,7 @@ $specialPageAliases['sl'] = array(
 	'Gadgets' => array( 'Vtičniki', 'Vticniki' ),
 );
 
-/** Serbian Cyrillic ekavian (‪Српски (ћирилица)‬) */
+/** Serbian (Cyrillic script) (‪Српски (ћирилица)‬) */
 $specialPageAliases['sr-ec'] = array(
 	'Gadgets' => array( 'Гаџети' ),
 );
@@ -278,7 +278,7 @@ $specialPageAliases['tr'] = array(
 	'Gadgets' => array( 'KüçükAraçlar' ),
 );
 
-/** Татарча (Татарча) */
+/** Tatar (Cyrillic script) (Татарча) */
 $specialPageAliases['tt-cyrl'] = array(
 	'Gadgets' => array( 'Гаджетлар' ),
 );
@@ -302,8 +302,3 @@ $specialPageAliases['zh-hans'] = array(
 $specialPageAliases['zh-hant'] = array(
 	'Gadgets' => array( '小工具' ),
 );
-
-/**
- * For backwards compatibility with MediaWiki 1.15 and earlier.
- */
-$aliases =& $specialPageAliases;

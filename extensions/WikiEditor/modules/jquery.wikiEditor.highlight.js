@@ -33,7 +33,7 @@
 'fn': {
 	/**
 	 * Creates a highlight module within a wikiEditor
-	 * 
+	 *
 	 * @param config Configuration object to create module from
 	 */
 	'create': function( context, config ) {
@@ -41,7 +41,7 @@
 	},
 	/**
 	 * Scans text division for tokens
-	 * 
+	 *
 	 * @param division
 	 */
 	'scan': function( context, division ) {
@@ -82,7 +82,7 @@
 	},
 	/**
 	 * Marks up text with HTML
-	 * 
+	 *
 	 * @param division
 	 * @param tokens
 	 */
@@ -91,7 +91,7 @@
 	'mark': function( context, division, tokens ) {
 		// Reset markers
 		var markers = [];
-		
+
 		// Recycle markers that will be skipped in this run
 		if ( context.modules.highlight.markers && division != '' ) {
 			for ( var i = 0; i < context.modules.highlight.markers.length; i++ ) {
@@ -101,11 +101,11 @@
 			}
 		}
 		context.modules.highlight.markers = markers;
-		
+
 		// Get all markers
 		context.fn.trigger( 'mark' );
 		markers.sort( function( a, b ) { return a.start - b.start || a.end - b.end; } );
-		
+
 		// Serialize the markers array to a string and compare it with the one stored in the previous run - if they're
 		// equal, there's no markers to change
 		var markersStr = '';
@@ -117,15 +117,15 @@
 			return;
 		}
 		context.modules.highlight.markersStr = markersStr;
-		
+
 		// Traverse the iframe DOM, inserting markers where they're needed - store visited markers here so we know which
 		// markers should be removed
 		var visited = [], v = 0;
 		for ( var i = 0; i < markers.length; i++ ) {
-			if ( typeof markers[i].skipDivision !== 'undefined' && ( division == markers[i].skipDivision ) ) { 
+			if ( typeof markers[i].skipDivision !== 'undefined' && ( division == markers[i].skipDivision ) ) {
 				continue;
 			}
-			
+
 			// We want to isolate each marker, so we may need to split textNodes if a marker starts or ends halfway one.
 			var start = markers[i].start;
 			var s = context.fn.getOffset( start );
@@ -134,7 +134,7 @@
 				continue;
 			}
 			var startNode = s.node;
-			
+
 			// Don't wrap leading BRs, produces undesirable results
 			// FIXME: It's also possible that the offset is a bit high because getOffset() has incremented .length to
 			// fake the newline caused by startNode being in a P. In this case, prevent the textnode splitting below
@@ -144,7 +144,7 @@
 				s = context.fn.getOffset( start );
 				startNode = s.node;
 			}
-			
+
 			// The next marker starts somewhere in this textNode or at this BR
 			if ( s.offset > 0 && s.node.nodeName == '#text' ) {
 				// Split off the prefix - this leaves the prefix in the current node and puts the rest in a new node
@@ -349,7 +349,7 @@
 			}
 			context.fn.purgeOffsets();
 		});
-		
+
 	}
 }
 

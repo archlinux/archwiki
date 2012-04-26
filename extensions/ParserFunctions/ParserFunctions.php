@@ -50,8 +50,8 @@ $wgPFUnitLanguageVariants = array(
 $wgExtensionCredits['parserhook'][] = array(
 	'path' => __FILE__,
 	'name' => 'ParserFunctions',
-	'version' => '1.4.0',
-	'url' => 'http://www.mediawiki.org/wiki/Extension:ParserFunctions',
+	'version' => '1.4.1',
+	'url' => 'https://www.mediawiki.org/wiki/Extension:ParserFunctions',
 	'author' => array( 'Tim Starling', 'Robert Rohde', 'Ross McClure', 'Juraj Simlovic' ),
 	'descriptionmsg' => 'pfunc_desc',
 );
@@ -69,25 +69,20 @@ $wgParserTestFiles[] = dirname( __FILE__ ) . "/convertTests.txt";
 
 $wgHooks['ParserFirstCallInit'][] = 'wfRegisterParserFunctions';
 
+/**
+ * @param $parser Parser
+ * @return bool
+ */
 function wfRegisterParserFunctions( $parser ) {
 	global $wgPFEnableStringFunctions, $wgPFEnableConvert;
 
-	if ( defined( get_class( $parser ) . '::SFH_OBJECT_ARGS' ) ) {
-		// These functions accept DOM-style arguments
-		$parser->setFunctionHook( 'if', 'ExtParserFunctions::ifObj', SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'ifeq', 'ExtParserFunctions::ifeqObj', SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'switch', 'ExtParserFunctions::switchObj', SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'ifexist', 'ExtParserFunctions::ifexistObj', SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'ifexpr', 'ExtParserFunctions::ifexprObj', SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'iferror', 'ExtParserFunctions::iferrorObj', SFH_OBJECT_ARGS );
-	} else {
-		$parser->setFunctionHook( 'if', 'ExtParserFunctions::ifHook' );
-		$parser->setFunctionHook( 'ifeq', 'ExtParserFunctions::ifeq' );
-		$parser->setFunctionHook( 'switch', 'ExtParserFunctions::switchHook' );
-		$parser->setFunctionHook( 'ifexist', 'ExtParserFunctions::ifexist' );
-		$parser->setFunctionHook( 'ifexpr', 'ExtParserFunctions::ifexpr' );
-		$parser->setFunctionHook( 'iferror', 'ExtParserFunctions::iferror' );
-	}
+	// These functions accept DOM-style arguments
+	$parser->setFunctionHook( 'if', 'ExtParserFunctions::ifObj', SFH_OBJECT_ARGS );
+	$parser->setFunctionHook( 'ifeq', 'ExtParserFunctions::ifeqObj', SFH_OBJECT_ARGS );
+	$parser->setFunctionHook( 'switch', 'ExtParserFunctions::switchObj', SFH_OBJECT_ARGS );
+	$parser->setFunctionHook( 'ifexist', 'ExtParserFunctions::ifexistObj', SFH_OBJECT_ARGS );
+	$parser->setFunctionHook( 'ifexpr', 'ExtParserFunctions::ifexprObj', SFH_OBJECT_ARGS );
+	$parser->setFunctionHook( 'iferror', 'ExtParserFunctions::iferrorObj', SFH_OBJECT_ARGS );
 
 	$parser->setFunctionHook( 'expr', 'ExtParserFunctions::expr' );
 	$parser->setFunctionHook( 'time', 'ExtParserFunctions::time' );

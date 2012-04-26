@@ -143,6 +143,11 @@ $specialPageAliases['ms'] = array(
 	'Nuke' => array( 'Hapus_pukal' ),
 );
 
+/** Norwegian Bokmål (‪Norsk (bokmål)‬) */
+$specialPageAliases['nb'] = array(
+	'Nuke' => array( 'Massesletting' ),
+);
+
 /** Nedersaksisch (Nedersaksisch) */
 $specialPageAliases['nds-nl'] = array(
 	'Nuke' => array( 'Massaal_vortdoon' ),
@@ -158,17 +163,12 @@ $specialPageAliases['nn'] = array(
 	'Nuke' => array( 'Massesletting' ),
 );
 
-/** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬) */
-$specialPageAliases['no'] = array(
-	'Nuke' => array( 'Massesletting' ),
-);
-
 /** Polish (Polski) */
 $specialPageAliases['pl'] = array(
 	'Nuke' => array( 'Masowe_usuwanie' ),
 );
 
-/** Sanskrit (संस्कृत) */
+/** Sanskrit (संस्कृतम्) */
 $specialPageAliases['sa'] = array(
 	'Nuke' => array( 'न्यूक' ),
 );
@@ -200,15 +200,10 @@ $specialPageAliases['vi'] = array(
 
 /** Simplified Chinese (‪中文(简体)‬) */
 $specialPageAliases['zh-hans'] = array(
-	'Nuke' => array( '杜克鲁克' ),
+	'Nuke' => array( '大量删除' ),
 );
 
 /** Traditional Chinese (‪中文(繁體)‬) */
 $specialPageAliases['zh-hant'] = array(
 	'Nuke' => array( '大量刪除' ),
 );
-
-/**
- * For backwards compatibility with MediaWiki 1.15 and earlier.
- */
-$aliases =& $specialPageAliases;

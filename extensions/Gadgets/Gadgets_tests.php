@@ -1,14 +1,14 @@
 <?php
-
 /**
  * @group Gadgets
  */
-class GadgetsTest extends PHPUnit_Framework_TestCase {
 
+class GadgetsTest extends PHPUnit_Framework_TestCase {
 	private function create( $line ) {
 		$g = Gadget::newFromDefinition( $line );
 		// assertInstanceOf() is available since PHPUnit 3.5
 		$this->assertEquals( 'Gadget', get_class( $g ) );
+
 		return $g;
 	}
 
@@ -34,7 +34,7 @@ class GadgetsTest extends PHPUnit_Framework_TestCase {
 		$g = $this->create( '*foo [ResourceLoader]|foo.js|foo.css' );
 		$this->assertEquals( 'foo', $g->getName() );
 		$this->assertTrue( $g->supportsResourceLoader() );
-		$this->assertEquals(0, count( $g->getLegacyScripts() ) );
+		$this->assertEquals( 0, count( $g->getLegacyScripts() ) );
 	}
 
 	function testDependencies() {
@@ -45,12 +45,11 @@ class GadgetsTest extends PHPUnit_Framework_TestCase {
 	}
 
 	function testPreferences() {
-		global $wgUser;
+		global $wgUser, $wgOut, $wgTitle;
 
 		// This test makes call to the parser which requires valids Outputpage
 		// and Title objects. Set them up there, they will be released at the
 		// end of the test.
-		global $wgOut, $wgTitle;
 		$old_wgOut = $wgOut;
 		$old_wgTitle = $wgTitle;
 		$wgTitle = Title::newFromText( 'Parser test for Gadgets extension' );

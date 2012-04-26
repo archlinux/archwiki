@@ -580,8 +580,14 @@ class ApiMain extends ApiBase {
 		$moduleParams = $module->extractRequestParams();
 
 		// Die if token required, but not provided (unless there is a gettoken parameter)
+		if ( isset( $moduleParams['gettoken'] ) ) {
+			$gettoken = $moduleParams['gettoken'];
+		} else {
+			$gettoken = false;
+		}
+
 		$salt = $module->getTokenSalt();
-		if ( $salt !== false && !$moduleParams['gettoken'] ) {
+		if ( $salt !== false && !$gettoken ) {
 			if ( !isset( $moduleParams['token'] ) ) {
 				$this->dieUsageMsg( array( 'missingparam', 'token' ) );
 			} else {
@@ -988,7 +994,7 @@ class ApiMain extends ApiBase {
 	public function getVersion() {
 		$vers = array();
 		$vers[] = 'MediaWiki: ' . SpecialVersion::getVersion() . "\n    https://svn.wikimedia.org/viewvc/mediawiki/trunk/phase3/";
-		$vers[] = __CLASS__ . ': $Id: ApiMain.php 104449 2011-11-28 15:52:04Z reedy $';
+		$vers[] = __CLASS__ . ': $Id$';
 		$vers[] = ApiBase::getBaseVersion();
 		$vers[] = ApiFormatBase::getBaseVersion();
 		$vers[] = ApiQueryBase::getBaseVersion();

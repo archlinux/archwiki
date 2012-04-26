@@ -1,12 +1,12 @@
 /**
  * This plugin provides a way to build a wiki-text editing user interface around a textarea.
- * 
+ *
  * @example To intialize without any modules:
  * 		$( 'div#edittoolbar' ).wikiEditor();
- * 
+ *
  * @example To initialize with one or more modules, or to add modules after it's already been initialized:
  * 		$( 'textarea#wpTextbox1' ).wikiEditor( 'addModule', 'toolbar', { ... config ... } );
- * 
+ *
  */
 ( function( $ ) {
 
@@ -117,7 +117,7 @@ $.wikiEditor = {
 	/**
 	 * Provides a way to extract messages from objects. Wraps the mediaWiki.msg() function, which
 	 * may eventually become a wrapper for some kind of core MW functionality.
-	 * 
+	 *
 	 * @param object Object to extract messages from
 	 * @param property String of name of property which contains the message. This should be the base name of the
 	 * property, which means that in the case of the object { this: 'that', fooMsg: 'bar' }, passing property as 'this'
@@ -152,7 +152,7 @@ $.wikiEditor = {
 	 * 'default' or 'default-rtl'. If such key doesn't exist, the object itself is considered the actual value, which
 	 * should ideally be the case so that you may use a string or object of any number of strings keyed by language
 	 * with a default.
-	 * 
+	 *
 	 * @param object Object to extract property from
 	 * @param lang Language code, defaults to wgUserLanguage
 	 */
@@ -163,7 +163,7 @@ $.wikiEditor = {
 	/**
 	 * Provides a way to extract the path of an icon in a certain language, automatically appending a version number for
 	 * caching purposes and prepending an image path when icon paths are relative.
-	 * 
+	 *
 	 * @param icon Icon object from e.g. toolbar config
 	 * @param path Default icon path, defaults to $.wikiEditor.imgPath
 	 * @param lang Language code, defaults to wgUserLanguage
@@ -214,7 +214,7 @@ if ( !$.wikiEditor.isSupported() ) {
 var context = $(this).data( 'wikiEditor-context' );
 // On first call, we need to set things up, but on all following calls we can skip right to the API handling
 if ( !context || typeof context == 'undefined' ) {
-	
+
 	// Star filling the context with useful data - any jQuery selections, as usual should be named with a preceding $
 	context = {
 		// Reference to the textarea element which the wikiEditor is being built around
@@ -248,18 +248,18 @@ if ( !context || typeof context == 'undefined' ) {
 		// List of extensions active on this context
 		'extensions': []
 	};
-	
-	/*
+
+	/**
 	 * Externally Accessible API
-	 * 
+	 *
 	 * These are available using calls to $(selection).wikiEditor( call, data ) where selection is a jQuery selection
 	 * of the textarea that the wikiEditor instance was built around.
 	 */
-	
+
 	context.api = {
 		/**
 		 * Activates a module on a specific context with optional configuration data.
-		 * 
+		 *
 		 * @param data Either a string of the name of a module to add without any additional configuration parameters,
 		 * or an object with members keyed with module names and valued with configuration objects.
 		 */
@@ -272,7 +272,7 @@ if ( !context || typeof context == 'undefined' ) {
 			}
 			for ( var module in modules ) {
 				// Check for the existance of an available / supported module with a matching name and a create function
-				if ( typeof module == 'string' && typeof $.wikiEditor.modules[module] !== 'undefined' && 
+				if ( typeof module == 'string' && typeof $.wikiEditor.modules[module] !== 'undefined' &&
 						$.wikiEditor.isSupported( $.wikiEditor.modules[module] ) )
 				{
 					// Extend the context's core API with this module's own API calls
@@ -295,20 +295,20 @@ if ( !context || typeof context == 'undefined' ) {
 			}
 		}
 	};
-	
-	/* 
+
+	/**
 	 * Event Handlers
-	 * 
+	 *
 	 * These act as filters returning false if the event should be ignored or returning true if it should be passed
 	 * on to all modules. This is also where we can attach some extra information to the events.
 	 */
-	
+
 	context.evt = {
 		/* Empty until extensions add some; see jquery.wikiEditor.iframe.js for examples. */
 	};
-	
+
 	/* Internal Functions */
-	
+
 	context.fn = {
 		/**
 		 * Executes core event filters as well as event handlers provided by modules.
@@ -322,7 +322,7 @@ if ( !context || typeof context == 'undefined' ) {
 			if ( typeof event.data == 'undefined' ) {
 				event.data = {};
 			}
-			
+
 			// Allow filtering to occur
 			if ( name in context.evt ) {
 				if ( !context.evt[name]( event ) ) {
@@ -331,7 +331,7 @@ if ( !context || typeof context == 'undefined' ) {
 			}
 			var returnFromModules = null; //they return null by default
 			// Pass the event around to all modules activated on this context
-			
+
 			for ( var module in context.modules ) {
 				if (
 					module in $.wikiEditor.modules &&
@@ -342,10 +342,10 @@ if ( !context || typeof context == 'undefined' ) {
 					if (ret != null) {
 						//if 1 returns false, the end result is false
 						if( returnFromModules == null ) {
-							returnFromModules = ret; 
+							returnFromModules = ret;
 						} else {
 							returnFromModules = returnFromModules && ret;
-						} 
+						}
 					}
 				}
 			}
@@ -460,15 +460,15 @@ if ( !context || typeof context == 'undefined' ) {
 			}
 		}
 	};
-	
-	/*
+
+	/**
 	 * Base UI Construction
-	 * 
+	 *
 	 * The UI is built from several containers, the outer-most being a div classed as "wikiEditor-ui". These containers
 	 * provide a certain amount of "free" layout, but in some situations procedural layout is needed, which is performed
 	 * as a response to the "resize" event.
 	 */
-	
+
 	// Assemble a temporary div to place over the wikiEditor while it's being constructed
 	/* Disabling our loading div for now
 	var $loader = $( '<div></div>' )

@@ -30,7 +30,7 @@
 				// Check if the current values of some form elements are the same as
 				// the original values
 				if (
-					wgAction == 'submit' ||
+					mw.config.get( 'wgAction' ) == 'submit' ||
 					$( '#wpTextbox1' ).data( 'origtext' ) != $( '#wpTextbox1' ).val() ||
 					$( '#wpSummary' ).data( 'origtext' ) != $( '#wpSummary' ).val()
 				) {

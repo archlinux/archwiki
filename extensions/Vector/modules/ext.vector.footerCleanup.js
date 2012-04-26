@@ -1,7 +1,7 @@
 /*
  * Footer cleanup for Vector
  */
-$( document ).ready( function() {
+jQuery( document ).ready( function( $ ) {
 	$( '#editpage-copywarn' )
 		.add( '.editOptions' )
 		.wrapAll( '<div id="editpage-bottom"></div>' );

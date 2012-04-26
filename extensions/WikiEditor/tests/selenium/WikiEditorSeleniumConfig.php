@@ -1,8 +1,8 @@
 <?php
 
 class WikiEditorSeleniumConfig {
-	
-	public static function getSettings(&$includeFiles, &$globalConfigs) {
+
+	public static function getSettings( &$includeFiles, &$globalConfigs ) {
 		$includes = array(
 			'extensions/Vector/Vector.php',
 		    'extensions/WikiEditor/WikiEditor.php'
@@ -21,7 +21,7 @@ class WikiEditorSeleniumConfig {
 			)
 		);
 		$includeFiles = array_merge( $includeFiles, $includes );
-		$globalConfigs = array_merge( $globalConfigs, $configs);
-		return true; 
+		$globalConfigs = array_merge( $globalConfigs, $configs );
+		return true;
 	}
 }

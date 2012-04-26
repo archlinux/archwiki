@@ -6,9 +6,9 @@
 'nameMappings': { //keep these all lowercase to navigate web of redirects
    "infobox skyscraper": "building_name",
    "infobox settlement": "official_name"
-},		
+},
 
-		
+
 /**
  * Compatability map
  */
@@ -36,13 +36,13 @@
  * Event handlers
  */
 evt: {
-	
+
 	mark: function( context, event ) {
 		// The markers returned by this function are skipped on realchange, so don't regenerate them in that case
 		if ( context.modules.highlight.currentScope == 'realchange' ) {
 			return;
 		}
-		
+
 		// Get references to the markers and tokens from the current context
 		var markers = context.modules.highlight.markers;
 		var tokenArray = context.modules.highlight.tokenArray;
@@ -96,10 +96,10 @@ evt: {
 								// No change
 								return;
 							}
-							
+
 							// Text changed, regenerate model
 							var model = $.wikiEditor.modules.templateEditor.fn.updateModel( $( node ) );
-							
+
 							// Update template name if needed
 							if ( $( node ).parent().hasClass( 'wikiEditor-template' ) ) {
 								var $label = $( node ).parent().find( '.wikiEditor-template-label' );
@@ -108,7 +108,7 @@ evt: {
 									$label.text( displayName );
 								}
 							}
-							
+
 							// Wrap or unwrap the template if needed
 							if ( $( node ).parent().hasClass( 'wikiEditor-template' ) &&
 									!model.isCollapsible() ) {
@@ -133,7 +133,7 @@ evt: {
 			}//if opentemplates
 		}
 	}, //mark
-	
+
 	keydown: function( context, event ) {
 		// Reset our ignoreKeypress variable if it's set to true
 		if ( context.$iframe.data( 'ignoreKeypress' ) ) {
@@ -156,7 +156,7 @@ evt: {
 				case 38:// Up
 				case 39:// Right
 				case 40: //Down
-					return true; 
+					return true;
 				default:
 					// Set the ignroreKeypress variable so we don't allow typing if the key is held
 					context.$iframe.data( 'ignoreKeypress', true );
@@ -197,7 +197,7 @@ exp: [
 	{ 'regex': /}}/, 'label': "TEMPLATE_END", 'markAfter': true }
 ],
 /**
- * Configuration 
+ * Configuration
  */
 cfg: {
 },
@@ -229,7 +229,7 @@ fn: {
 			.prepend(
 				'<span class="wikiEditor-template-expand wikiEditor-noinclude"></span>' +
 				'<span class="wikiEditor-template-name wikiEditor-noinclude">' +
-					'<span class="wikiEditor-template-label wikiEditor-noinclude">' + 
+					'<span class="wikiEditor-template-label wikiEditor-noinclude">' +
 					$.wikiEditor.modules.templateEditor.fn.getTemplateDisplayName( model ) + '</span>' +
 					'<span class="wikiEditor-template-dialog wikiEditor-noinclude"></span>' +
 				'</span>'
@@ -252,21 +252,21 @@ fn: {
 		if ( typeof ( opera ) == "undefined" ) {
 			$template.parent().attr('contentEditable', 'false');
 		}
-		
+
 		$template.click( function(event) {event.preventDefault(); return false;} );
-		
+
 		$template.find( '.wikiEditor-template-name' )
-			.click( function( event ) { 
-				$.wikiEditor.modules.templateEditor.fn.createDialog( $wrapper ); 
-				event.stopPropagation(); 
-				return false; 
+			.click( function( event ) {
+				$.wikiEditor.modules.templateEditor.fn.createDialog( $wrapper );
+				event.stopPropagation();
+				return false;
 				} )
 			.mousedown( function( event ) { event.stopPropagation(); return false; } );
 		$template.find( '.wikiEditor-template-expand' )
-			.click( function( event ) { 
-				$.wikiEditor.modules.templateEditor.fn.toggleWikiTextEditor( $wrapper ); 
+			.click( function( event ) {
+				$.wikiEditor.modules.templateEditor.fn.toggleWikiTextEditor( $wrapper );
 				event.stopPropagation();
-				return false; 
+				return false;
 				} )
 			.mousedown( function( event ) { event.stopPropagation(); return false; } );
 	},
@@ -281,22 +281,22 @@ fn: {
 		$template
 			.toggleClass( 'wikiEditor-template-expanded' )
 			.toggleClass( 'wikiEditor-template-collapsed' ) ;
-		
-		var $templateText = $template.find( '.wikiEditor-template-text' );		
+
+		var $templateText = $template.find( '.wikiEditor-template-text' );
 		$templateText.toggleClass( 'wikiEditor-template-text-shrunken' );
 		$templateText.toggleClass( 'wikiEditor-template-text-visible' );
 		if( $templateText.hasClass('wikiEditor-template-text-shrunken') ){
 			//we just closed the template
-		
+
 			// Update the model if we need to
 			if ( $templateText.html() != $templateText.data( 'oldHTML' ) ) {
 				var templateModel = $.wikiEditor.modules.templateEditor.fn.updateModel( $templateText );
-				
+
 				//this is the only place the template name can be changed; keep the template name in sync
 				var $tLabel = $template.find( '.wikiEditor-template-label' );
 				$tLabel.text( $.wikiEditor.modules.templateEditor.fn.getTemplateDisplayName( templateModel ) );
 			}
-			
+
 		}
 	},
 	/**
@@ -424,10 +424,10 @@ fn: {
 					// Remove any leftover rows
 					$rows.remove();
 					$fields.find( 'label' ).autoEllipsis();
-					// Ensure our close button doesn't recieve the ui-state-focus class 
+					// Ensure our close button doesn't recieve the ui-state-focus class
 					$( this ).parent( '.ui-dialog' ).find( '.ui-dialog-titlebar-close' )
 						.removeClass( 'ui-state-focus' );
-					
+
 					// Set tabindexes on form fields if needed
 					// First unset the tabindexes on the buttons and existing form fields
 					// so the order doesn't get messed up
@@ -470,7 +470,7 @@ fn: {
 		}
 		return model;
 	},
-	
+
 	/**
 	 * Gets template display name
 	 */
@@ -485,24 +485,24 @@ fn: {
 		}
 		return tName;
 	},
-	
+
 	/**
 	 * Builds a template model from given wikitext representation, allowing object-oriented manipulation of the contents
 	 * of the template while preserving whitespace and formatting.
-	 * 
+	 *
 	 * @param wikitext String of wikitext content
 	 */
 	model: function( wikitext ) {
-		
+
 		/* Private members */
-		
+
 		var collapsible = true;
-		
+
 		/* Private Functions */
-		
+
 		/**
 		 * Builds a Param object.
-		 * 
+		 *
 		 * @param name
 		 * @param value
 		 * @param number
@@ -520,7 +520,7 @@ fn: {
 		}
 		/**
 		 * Builds a Range object.
-		 * 
+		 *
 		 * @param begin
 		 * @param end
 		 */
@@ -530,7 +530,7 @@ fn: {
 		}
 		/**
 		 * Set 'original' to true if you want the original value irrespective of whether the model's been changed
-		 * 
+		 *
 		 * @param name
 		 * @param value
 		 * @param original
@@ -567,9 +567,9 @@ fn: {
 			}
 			return retVal;
 		};
-		
+
 		/* Public Functions */
-		
+
 		/**
 		 * Get template name
 		 */
@@ -582,7 +582,7 @@ fn: {
 		};
 		/**
 		 * Set template name (if we want to support this)
-		 * 
+		 *
 		 * @param name
 		 */
 		this.setName = function( name ) {
@@ -590,7 +590,7 @@ fn: {
 		};
 		/**
 		 * Set value for a given param name / number
-		 * 
+		 *
 		 * @param name
 		 * @param value
 		 */
@@ -599,7 +599,7 @@ fn: {
 		};
 		/**
 		 * Get value for a given param name / number
-		 * 
+		 *
 		 * @param name
 		 */
 		this.getValue = function( name ) {
@@ -607,7 +607,7 @@ fn: {
 		};
 		/**
 		 * Get original value of a param
-		 * 
+		 *
 		 * @param name
 		 */
 		this.getOriginalValue = function( name ) {
@@ -645,11 +645,11 @@ fn: {
 			}
 			return newText;
 		};
-		
+
 		this.isCollapsible = function() {
 			return collapsible;
 		};
-		
+
 		/**
 		 *  Update ranges if there's been a change in one or more 'segments' of the template.
 		 *  Removes adjustment function so adjustment is only made once ever.
@@ -668,7 +668,7 @@ fn: {
 				ranges[i].end += adjustment;
 			}
 		};
-		
+
 		// Whitespace* {{ whitespace* nonwhitespace:
 		if ( wikitext.match( /\s*{{\s*[^\s|]*:/ ) ) {
 			collapsible = false; // is a parser function
@@ -685,8 +685,8 @@ fn: {
 			sanatizedStr = sanatizedStr.substring( 0, endBraces.index ) + "  " +
 				sanatizedStr.substring( endBraces.index + 2 );
 		}
-		
-		
+
+
 		//treat HTML comments like whitespace
 		while ( sanatizedStr.indexOf( '<!' ) != -1 ) {
 			startIndex = sanatizedStr.indexOf( '<!' );
@@ -698,7 +698,7 @@ fn: {
 			sanatizedStr =
 				sanatizedStr.substring( 0, startIndex ) + sanatizedSegment + sanatizedStr.substring( endIndex );
 		}
-		
+
 		// Match the open braces we just found with equivalent closing braces note, works for any level of braces
 		while ( sanatizedStr.indexOf( '{{' ) != -1 ) {
 			startIndex = sanatizedStr.indexOf( '{{' ) + 1;
@@ -725,7 +725,7 @@ fn: {
 			sanatizedStr =
 				sanatizedStr.substring( 0, startIndex ) + sanatizedSegment + sanatizedStr.substring( endIndex );
 		}
-		
+
 		/*
 		 * Parse 1 param at a time
 		 */
@@ -771,11 +771,11 @@ fn: {
 			currentField = sanatizedStr.substring( oldDivider+1, divider );
 			if ( currentField.indexOf( '=' ) == -1 ) {
 				// anonymous field, gets a number
-				
+
 				//default values, since we'll allow empty values
 				valueBeginIndex = oldDivider + 1;
 				valueEndIndex = oldDivider + 1;
-				
+
 				valueBegin = currentField.match( /\S+/ ); //first nonwhitespace character
 				if( valueBegin != null ){
 					valueBeginIndex = valueBegin.index + oldDivider+1;
@@ -816,16 +816,16 @@ fn: {
 					continue;
 				}
 				nameEndIndex = nameEnd.index + oldDivider + 2;
-				// All the chars upto now 
+				// All the chars upto now
 				ranges.push( new Range( ranges[ranges.length-1].end, nameBeginIndex ) );
 				nameIndex = ranges.push( new Range( nameBeginIndex, nameEndIndex ) ) - 1;
 				currentValue = currentField.substring( currentField.indexOf( '=' ) + 1);
 				oldDivider += currentField.indexOf( '=' ) + 1;
-				
+
 				//default values, since we'll allow empty values
 				valueBeginIndex = oldDivider + 1;
 				valueEndIndex = oldDivider + 1;
-				
+
 				// First nonwhitespace character
 				valueBegin = currentValue.match( /\S+/ );
 				if( valueBegin != null ){
@@ -853,7 +853,7 @@ fn: {
 		}
 		// The rest of the string
 		ranges.push( new Range( valueEndIndex, wikitext.length ) );
-		
+
 		// Save vars
 		this.ranges = ranges;
 		this.wikitext = wikitext;
@@ -861,5 +861,5 @@ fn: {
 		this.paramsByName = paramsByName;
 		this.templateNameIndex = templateNameIndex;
 	} //model
-} 
+}
 }; } )( jQuery );

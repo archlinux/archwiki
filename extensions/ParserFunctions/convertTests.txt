@@ -172,13 +172,13 @@ Errors
 *{{#convert: 25 km/s/l }}
 *{{#convert: 25 km/m3 }}
 !! result
-<ul><li><strong class="error">Error: no source unit given</strong>
-</li><li><strong class="error">Error: unknown unit "foobars"</strong>
-</li><li><strong class="error">Error: unknown unit "foobar"</strong>
-</li><li><strong class="error">Error: cannot convert between units of "length" and "time"</strong>
-</li><li><strong class="error">Error: invalid compound unit "length/pressure"</strong>
-</li><li><strong class="error">Error: cannot parse double compound units like "km/s/l"</strong>
-</li><li><strong class="error">Error: invalid compound unit "length/volume"</strong>
+<ul><li><strong class="error">Error: No source unit given.</strong>
+</li><li><strong class="error">Error: Unknown unit "foobars".</strong>
+</li><li><strong class="error">Error: Unknown unit "foobar".</strong>
+</li><li><strong class="error">Error: Cannot convert between units of "length" and "time".</strong>
+</li><li><strong class="error">Error: Invalid compound unit "length/pressure".</strong>
+</li><li><strong class="error">Error: Cannot parse double compound units like "km/s/l".</strong>
+</li><li><strong class="error">Error: Invalid compound unit "length/volume".</strong>
 </li></ul>
 
 !! end
@@ -225,7 +225,7 @@ Case sensitivity
 </li><li>10,000,000 metres
 </li><li>0.01 megametres
 </li><li>0.1 millimetres of mercury
-</li><li><strong class="error">Error: unknown unit "pa"</strong>
+</li><li><strong class="error">Error: Unknown unit "pa".</strong>
 </li></ul>
 
 !! end

@@ -13,7 +13,7 @@ $pass = $fail = 0;
 $parser = new ExprParser;
 foreach ( $tests as $test ) {
 	$test = trim( $test );
-	if ( in_string( ';', $test ) )
+	if ( strpos( $test, ';' ) !== false )
 		list( $input, $expected ) = explode( ';', $test );
 	else {
 		$input = $test;

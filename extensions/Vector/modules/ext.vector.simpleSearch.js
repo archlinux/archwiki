@@ -2,6 +2,14 @@
 
 jQuery( document ).ready( function( $ ) {
 
+	// Ensure that the thing is actually present!
+	if ($('#simpleSearch').length == 0) {
+		// Don't try to set anything up if simpleSearch is disabled sitewide.
+		// The loader code loads us if the option is present, even if we're
+		// not actually enabled (anymore).
+		return;
+	}
+
 	// Compatibility map
 	var map = {
 		'browsers': {

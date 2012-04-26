@@ -32,7 +32,7 @@ See http://www.mediawiki.org/wiki/Extension:Gadgets#Usage
 
 == Caveats ==
 
-* Gadgets do not apply to Special:Preferences, Special:UserLogin and 
+* Gadgets do not apply to Special:Preferences, Special:UserLogin and
   Special:ResetPass so users can always disable any broken gadgets they
   may have enabled, and malicious gadgets will be unable to steal passwords.
 * Uses BeforePageDisplay hook, thus only works with MonoBook based skins;

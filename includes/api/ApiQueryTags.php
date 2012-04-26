@@ -185,6 +185,6 @@ class ApiQueryTags extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryTags.php 90542 2011-06-21 20:05:00Z ialex $';
+		return __CLASS__ . ': $Id$';
 	}
 }

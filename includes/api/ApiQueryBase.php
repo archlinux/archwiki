@@ -555,7 +555,7 @@ abstract class ApiQueryBase extends ApiBase {
 	 * @return string
 	 */
 	public static function getBaseVersion() {
-		return __CLASS__ . ': $Id: ApiQueryBase.php 103029 2011-11-14 20:58:30Z reedy $';
+		return __CLASS__ . ': $Id$';
 	}
 }
 

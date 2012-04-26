@@ -78,7 +78,7 @@ fn: {
 				);
 			}
 		} );
-		
+
 		context.$changesTab = context.fn.addView( {
 			'name': 'changes',
 			'titleMsg': 'wikieditor-preview-changes-tab',
@@ -91,7 +91,7 @@ fn: {
 				}
 				context.$changesTab.find( 'table.diff tbody' ).empty();
 				context.$changesTab.find( '.wikiEditor-preview-loading' ).show();
-				
+
 				// Call the API. First PST the input, then diff it
 				var postdata = {
 					'action': 'parse',
@@ -99,7 +99,7 @@ fn: {
 					'text': wikitext,
 					'format': 'json'
 				};
-				
+
 				$.post( mw.util.wikiScript( 'api' ), postdata, function( data ) {
 					try {
 						var postdata2 = {
@@ -114,7 +114,7 @@ fn: {
 						var section = $( '[name=wpSection]' ).val();
 						if ( section != '' )
 							postdata2['rvsection'] = section;
-						
+
 						$.post( mw.util.wikiScript( 'api' ), postdata2, function( data ) {
 								// Add diff CSS
 								mw.loader.load( 'mediawiki.action.history.diff' );
@@ -133,7 +133,7 @@ fn: {
 				}, 'json' );
 			}
 		} );
-		
+
 		var loadingMsg = mediaWiki.msg( 'wikieditor-preview-loading' );
 		context.modules.preview.$preview
 			.add( context.$changesTab )

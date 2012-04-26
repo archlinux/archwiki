@@ -70,6 +70,6 @@ class ApiDisabled extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiDisabled.php 79969 2011-01-10 22:36:26Z reedy $';
+		return __CLASS__ . ': $Id$';
 	}
 }

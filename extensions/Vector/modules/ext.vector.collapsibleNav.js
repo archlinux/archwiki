@@ -1,7 +1,7 @@
 /*
  * Collapisble navigation for Vector
  */
-( function( $ ) {
+jQuery( function( $ ) {
 
 	/* Browser Support */
 
@@ -9,7 +9,6 @@
 		// Left-to-right languages
 		'ltr': {
 			// Collapsible Nav is broken in Opera < 9.6 and Konqueror < 4
-			'msie': [['>=', 7]],
 			'opera': [['>=', 9.6]],
 			'konqueror': [['>=', 4.0]],
 			'blackberry': false,
@@ -19,7 +18,6 @@
 		},
 		// Right-to-left languages
 		'rtl': {
-			'msie': [['>=', 7]],
 			'opera': [['>=', 9.6]],
 			'konqueror': [['>=', 4.0]],
 			'blackberry': false,
@@ -225,4 +223,4 @@
 			}
 			return false;
 		} );
-} )( jQuery );
+} );

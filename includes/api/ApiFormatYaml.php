@@ -44,6 +44,6 @@ class ApiFormatYaml extends ApiFormatJson {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatYaml.php 86302 2011-04-18 11:42:44Z reedy $';
+		return __CLASS__ . ': $Id$';
 	}
 }

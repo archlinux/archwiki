@@ -456,6 +456,6 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryLogEvents.php 104449 2011-11-28 15:52:04Z reedy $';
+		return __CLASS__ . ': $Id$';
 	}
 }

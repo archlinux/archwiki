@@ -50,14 +50,17 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 				if ( isset( $this->props['name'] ) ) {
 					$row['name'] = $category;
 				}
+
 				if ( $category !== "" ) {
 					if ( isset( $this->props['title'] ) ) {
 						$row['desc'] = wfMessage( "gadget-section-$category" )->parse();
 					}
 				}
+
 				if ( isset( $this->props['members'] ) ) {
 					$row['members'] = count( $list );
 				}
+
 				$data[] = $row;
 			}
 		}
@@ -95,13 +98,14 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 				' title    - Category title',
 				' members  - Number of gadgets in category',
 			),
-			'names' => 'Name(s) of gadgets to retrieve',
+			'names' => 'Name(s) of categories to retrieve',
 		);
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		$params = $this->getAllowedParams();
 		$allProps = implode( '|', $params['prop'][ApiBase::PARAM_TYPE] );
+
 		return array(
 			'Get a list of existing gadget categories:',
 			'    api.php?action=query&list=gadgetcategories',
@@ -111,7 +115,6 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryGadgetCategories.php 96850 2011-09-12 15:10:26Z reedy $';
+		return __CLASS__ . ': $Id: ApiQueryGadgetCategories.php 97890 2011-09-23 06:48:37Z siebrand $';
 	}
-
 }

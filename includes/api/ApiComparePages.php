@@ -125,6 +125,6 @@ class ApiComparePages extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiComparePages.php 92400 2011-07-17 16:51:11Z reedy $';
+		return __CLASS__ . ': $Id$';
 	}
 }

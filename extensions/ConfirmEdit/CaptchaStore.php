@@ -40,9 +40,9 @@ abstract class CaptchaStore {
 	 * @return CaptchaStore
 	 */
 	public final static function get() {
-		if( !self::$instance instanceof self ){
+		if ( !self::$instance instanceof self ) {
 			global $wgCaptchaStorageClass;
-			if( in_array( 'CaptchaStore', class_parents( $wgCaptchaStorageClass ) ) ) {
+			if ( in_array( 'CaptchaStore', class_parents( $wgCaptchaStorageClass ) ) ) {
 				self::$instance = new $wgCaptchaStorageClass;
 			} else {
 				throw new MWException( "Invalid CaptchaStore class $wgCaptchaStorageClass" );
@@ -54,7 +54,7 @@ abstract class CaptchaStore {
 	/**
 	 * Protected constructor: no creating instances except through the factory method above
 	 */
-	protected function __construct(){}
+	protected function __construct() {}
 }
 
 class CaptchaSessionStore extends CaptchaStore {

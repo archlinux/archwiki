@@ -372,6 +372,6 @@ class ApiResult extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiResult.php 91144 2011-06-29 23:46:39Z reedy $';
+		return __CLASS__ . ': $Id$';
 	}
 }

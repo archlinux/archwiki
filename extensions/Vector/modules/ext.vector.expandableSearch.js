@@ -1,7 +1,7 @@
 /*
  * Expandable search for Vector
  */
-$( document ).ready( function() {
+jQuery( document ).ready( function( $ ) {
 	
 	/* Browser Support */
 

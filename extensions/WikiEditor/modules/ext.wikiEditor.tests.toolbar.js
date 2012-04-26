@@ -121,7 +121,7 @@ var wikiEditorTests = {
 		'pre': 0,
 		'post': 9
 	},
-	// Add 
+	// Add
 	'add_pages_characters': {
 		'call': 'addToToolbar',
 		'data': {
@@ -141,7 +141,7 @@ var wikiEditorTests = {
 		'pre': 0,
 		'post': 1
 	},
-	// Add 
+	// Add
 	'add_characters': {
 		'call': 'addToToolbar',
 		'data': {

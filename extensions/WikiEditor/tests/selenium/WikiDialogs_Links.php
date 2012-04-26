@@ -4,10 +4,10 @@ require_once 'WikiDialogs_Links_Setup.php';
  * Description of WikiNewPageDialogs
  *
  * @author bhagyag, pdhanda
- * 
+ *
  * This test case is part of the WikiEditorTestSuite.
  * Configuration for these tests are dosumented as part of extensions/WikiEditor/tests/selenium/WikiEditorTestSuite.php
- * 
+ *
  */
 class WikiDialogs_Links extends WikiDialogs_Links_Setup {
     // Set up the testing environment
@@ -15,13 +15,13 @@ class WikiDialogs_Links extends WikiDialogs_Links_Setup {
         parent::setUp();
         parent::doCreateInternalTestPageIfMissing();
     }
-    
+
 	function tearDown() {
 		parent::doLogout();
         parent::tearDown();
-    }	
+    }
 
-     //Create a new page temporary
+     // Create a new page temporary
     function createNewPage() {
        parent::doOpenLink();
        parent::login();

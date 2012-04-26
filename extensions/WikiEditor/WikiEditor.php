@@ -10,33 +10,33 @@
  * @author Nimish Gautam <nimish@wikimedia.org>
  * @author Adam Miller <amiller@wikimedia.org>
  * @license GPL v2 or later
- * @version 0.3.0
+ * @version 0.3.1
  */
 
 /* Configuration */
 
 // Each module may be configured individually to be globally on/off or user preference based
 $wgWikiEditorFeatures = array(
-	
+
 	/* Textarea / i-frame compatible (OK to deploy) */
-	
+
 	'toolbar' => array( 'global' => false, 'user' => true ),
 	// Provides interactive tools
 	'dialogs' => array( 'global' => false, 'user' => true ),
 	// Hide signature button from main namespace
 	'hidesig' => array( 'global' => true, 'user' => false ),
-	
+
 	/* Textarea / i-frame compatible, but still experimental and unstable (do not deploy!) */
-	
+
 	// Adds a tab for previewing in-line
 	'preview' => array( 'global' => false, 'user' => true ),
 	// Adds a button for previewing in a dialog
 	'previewDialog' => array( 'global' => false, 'user' => false ),
 	//  Adds a button and dialog for step-by-step publishing
 	'publish' => array( 'global' => false, 'user' => true ),
-	
+
 	/* I-frame dependent (do not deploy!) */
-	
+
 	// Failry stable table of contents
 	'toc' => array( 'global' => false, 'user' => true ),
 	// Pretty broken template collapsing/editing
@@ -52,8 +52,8 @@ $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
 	'name' => 'WikiEditor',
 	'author' => array( 'Trevor Parscal', 'Roan Kattouw', 'Nimish Gautam', 'Adam Miller' ),
-	'version' => '0.3.0',
-	'url' => 'http://www.mediawiki.org/wiki/Extension:WikiEditor',
+	'version' => '0.3.1',
+	'url' => 'https://www.mediawiki.org/wiki/Extension:WikiEditor',
 	'descriptionmsg' => 'wikieditor-desc',
 );
 $wgAutoloadClasses['WikiEditorHooks'] = dirname( __FILE__ ) . '/WikiEditor.hooks.php';
@@ -71,13 +71,13 @@ $wikiEditorTpl = array(
 
 $wgResourceModules += array(
 	/* Third-party modules */
-	
+
 	'contentCollector' => $wikiEditorTpl + array(
 		'scripts' => 'contentCollector.js',
 	),
-	
+
 	/* WikiEditor jQuery plugin Resources */
-	
+
 	'jquery.wikiEditor' => $wikiEditorTpl + array(
 		'scripts' => 'jquery.wikiEditor.js',
 		'styles' => 'jquery.wikiEditor.css',
@@ -295,7 +295,7 @@ $wgResourceModules += array(
 			'wikieditor-toolbar-tool-replace-case',
 			'wikieditor-toolbar-tool-replace-regex',
 			'wikieditor-toolbar-tool-replace-button-findnext',
-			'wikieditor-toolbar-tool-replace-button-replacenext',
+			'wikieditor-toolbar-tool-replace-button-replace',
 			'wikieditor-toolbar-tool-replace-button-replaceall',
 			'wikieditor-toolbar-tool-replace-close',
 			'wikieditor-toolbar-tool-replace-nomatch',
@@ -392,9 +392,9 @@ $wgResourceModules += array(
 			'wikieditor-toolbar-help-content-indent-result',
 		),
 	),
-	
+
 	/* WikiEditor Resources */
-	
+
 	'ext.wikiEditor' => $wikiEditorTpl + array(
 		'scripts' => 'ext.wikiEditor.js',
 		'styles' => 'ext.wikiEditor.css',

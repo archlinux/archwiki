@@ -215,6 +215,6 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryLangBacklinks.php 88429 2011-05-19 21:13:03Z reedy $';
+		return __CLASS__ . ': $Id$';
 	}
 }

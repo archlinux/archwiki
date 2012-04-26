@@ -246,7 +246,7 @@ $magicWords['ig'] = array(
 
 /** Italian (Italiano) */
 $magicWords['it'] = array(
-	'ifexist' => array( 0, 'ifexists' ),
+	'ifexist' => array( 0, 'ifexist' ),
 	'language' => array( 0, '#LINGUA' ),
 );
 

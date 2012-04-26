@@ -73,6 +73,6 @@ class ApiFormatRaw extends ApiFormatBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiFormatRaw.php 82429 2011-02-19 00:30:18Z reedy $';
+		return __CLASS__ . ': $Id$';
 	}
 }

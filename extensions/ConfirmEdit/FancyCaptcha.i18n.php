@@ -68,6 +68,7 @@ $messages['am'] = array(
  * @author Juanpabl
  */
 $messages['an'] = array(
+	'fancycaptcha-desc' => 'Chenerador chocant de CAPTCHAs ta Confirmar Edicions.',
 	'fancycaptcha-addurl' => "Ha encluyito vinclos esternos en a suya edición. Ta aduyar a protecher contra o spam automatico, escriba por favor as parolas que amaneixen en a caixa d'o cobaixo ([[Special:Captcha/help|más información]]):",
 	'fancycaptcha-badlogin' => "Ta aduyar a protecher contra o trenque automatico de parolas de paso, escriba por favor as parolas que amaneixen en a caixa d'o cobaixo ([[Special:Captcha/help|más información]]):",
 	'fancycaptcha-createaccount' => 'Ta aduyar a protecher contra a creyación automatica de cuentas, escriba por favor en o quatrón as parolas que amaneixen debaixo ([[Special:Captcha/help|más información]]):',
@@ -75,6 +76,7 @@ $messages['an'] = array(
 ([[Special:Captcha/help|más información]]):",
 	'fancycaptcha-edit' => "Ta editar ista pachina, escriba por favor as parolas que amaneixen en a caixa d'o cobaixo
 ([[Special:Captcha/help|más información]]):",
+	'fancycaptcha-sendemail' => 'Ta protecher-nos contra o spam automatizau por favor escriba as parolas que amaneixen en o siguient quadro ([[Special:Captcha/help|mas información]]):',
 );
 
 /** Arabic (العربية)
@@ -277,14 +279,15 @@ Er mwyn ceisio rhwystro peiriannau spam, byddwch gystal â theipio'r geiriau a w
 	'fancycaptcha-sendemail' => "Er mwyn cyfrannu at ddiogelu rhag sbamio awtomatig, byddwch gystal â gwneud y swm isod ac ysgrifennu'r ateb yn y blwch ([[Special:Captcha/help|rhagor o wybodaeth]]):",
 );
 
-/** Danish (Dansk) */
+/** Danish (Dansk)
+ * @author Peter Alberti
+ */
 $messages['da'] = array(
 	'fancycaptcha-addurl' => 'Din ændring tilføjer nye eksterne henvisninger. For at beskytte mod automatiseret spam, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):',
 	'fancycaptcha-badlogin' => 'For at beskytte mod automatiske forsøg på at gætte kodeord, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):',
 	'fancycaptcha-createaccount' => 'For at beskytte mod automatisk oprettelse af brugernavne, der bruges til spam, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):',
 	'fancycaptcha-create' => 'For at oprette en ny side, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):',
-	'fancycaptcha-edit' => 'or at redigere denne side
-([[Special:Captcha/help|more info]]):',
+	'fancycaptcha-edit' => 'For at redigere denne side, indtast da venligst ordene, der står i feltet nedenfor ([[Special:Captcha/help|mere information]]):',
 );
 
 /** German (Deutsch)
@@ -293,7 +296,7 @@ $messages['da'] = array(
  * @author Umherirrender
  */
 $messages['de'] = array(
-	'fancycaptcha-desc' => 'CAPTCHA-Generator für die Erweiterung „Confirm Edit“',
+	'fancycaptcha-desc' => 'Fancy-CAPTCHA-Generator für die Erweiterung „Confirm Edit“',
 	'fancycaptcha-addurl' => 'Deine Bearbeitung enthält neue externe Links.
 Zum Schutz vor automatisiertem Spamming gib das folgende Wort in das Feld unten ein. Klicke dann erneut auf „Seite speichern“ ([[Special:Captcha/help|Fragen oder Probleme?]]).',
 	'fancycaptcha-badlogin' => 'Zum Schutz vor einer Kompromittierung deines Benutzerkontos gib das folgende Wort in das Feld unten ein [[Special:Captcha/help|(Fragen oder Probleme?)]]:',
@@ -315,6 +318,7 @@ Zum Schutz vor automatisiertem Spamming geben Sie das folgende Wort in das Feld 
 	'fancycaptcha-createaccount' => 'Zum Schutz vor automatisierter Anlage von Benutzerkonten geben Sie bitte das folgende Wort in das Feld unten ein ([[Special:Captcha/help|Fragen oder Probleme?]]):',
 	'fancycaptcha-create' => 'Zur Erstellung der Seite geben Sie das folgende Wort in das Feld unten ein [[Special:Captcha/help|(Fragen oder Probleme?)]].',
 	'fancycaptcha-edit' => 'Zur Bearbeitung der Seite geben Sie das folgende Wort in das Feld unten ein [[Special:Captcha/help|(Fragen oder Probleme?)]].',
+	'fancycaptcha-sendemail' => 'Um gegen automatischen Spam vorzugehen, geben Sie bitte die Wörter unten in das Feld ein ([[Special:Captcha/help|mehr Informationen]]):',
 );
 
 /** Zazaki (Zazaki)
@@ -396,11 +400,11 @@ $messages['es'] = array(
 $messages['et'] = array(
 	'fancycaptcha-desc' => 'Kirevate piltidega robotilõks, kinnitamaks muudatuste õigsust.',
 	'fancycaptcha-addurl' => 'Sinu muudatus sisaldab uusi välislinke.
-Palun sisesta allpool olevas kastis kuvatud sõnad. Abinõu on kaitseks automaadistatud rämpsmuudatuste vastu ([[Special:Captcha/help|täpsem teave]]):',
-	'fancycaptcha-badlogin' => 'Palun sisesta allpool olevas kastis kuvatud sõnad. Abinõu on kaitseks automaatsete parooliäraarvajate vastu ([[Special:Captcha/help|täpsem teave]]):',
-	'fancycaptcha-createaccount' => 'Palun sisesta allpool olevas kastis kuvatud sõnad. Abinõu on kaitseks kontode automaatse loomise vastu ([[Special:Captcha/help|täpsem teave]]):',
-	'fancycaptcha-create' => 'Lehekülje loomiseks sisesta palun allpool olevas kastis kuvatud sõnad ([[Special:Captcha/help|täpsem teave]]):',
-	'fancycaptcha-edit' => 'Selle lehekülje muutmiseks sisesta palun allpool olevas kastis kuvatud sõnad ([[Special:Captcha/help|täpsev teave]]):',
+Palun sisesta allpool olevas kastis kuvatud sõnad. Abinõu on kaitseks automaadistatud rämpsmuudatuste eest ([[Special:Captcha/help|lisateave]]):',
+	'fancycaptcha-badlogin' => 'Palun sisesta allpool olevas kastis kuvatud sõnad. Abinõu on kaitseks automaatsete parooliäraarvajate eest ([[Special:Captcha/help|lisateave]]):',
+	'fancycaptcha-createaccount' => 'Palun sisesta allpool olevas kastis kuvatud sõnad. Abinõu on kaitseks kontode automaatse loomise eest ([[Special:Captcha/help|lisateave]]):',
+	'fancycaptcha-create' => 'Lehekülje loomiseks sisesta palun allpool olevas kastis kuvatud sõnad ([[Special:Captcha/help|lisateave]]):',
+	'fancycaptcha-edit' => 'Selle lehekülje muutmiseks sisesta palun allpool olevas kastis kuvatud sõnad ([[Special:Captcha/help|lisateave]]):',
 	'fancycaptcha-sendemail' => 'Palun sisesta allpool olevas kastis kuvatud sõnad. Abinõu on kaitseks automaadistatud rämpsmuudatuste vastu ([[Special:Captcha/help|lisateave]]):',
 );
 
@@ -417,6 +421,7 @@ $messages['eu'] = array(
 );
 
 /** Persian (فارسی)
+ * @author Ebraminio
  * @author Huji
  * @author Ladsgroup
  * @author Meisam
@@ -429,7 +434,7 @@ $messages['fa'] = array(
 	'fancycaptcha-createaccount' => 'برای کمک به جلوگیری از ایجاد خودکار حساب کاربری، لطفاً واژه‌ای را که در تصویر می‌بینید وارد کنید ([[Special:Captcha/help|اطلاعات بیشتر]]):',
 	'fancycaptcha-create' => 'برای ایجاد این صفحه، لطفاً واژه‌ای را که در تصویر می‌بینید وارد کنید ([[Special:Captcha/help|اطلاعات بیشتر]]):',
 	'fancycaptcha-edit' => 'برای ویرایش این صفحه، لطفاً واژه‌ای را که در تصویر می‌بینید وارد کنید ([[Special:Captcha/help|اطلاعات بیشتر]]):',
-	'fancycaptcha-sendemail' => 'برای کمک به محافظت در برابر هرزه‌نگاری خودکار، لطفاً واژه‌هایی را که در جعبهٔ زیر نمایش داده می‌شوند وارد کنید ([[Special:Captcha/help|اطلاعات بیش‌تر]]):',
+	'fancycaptcha-sendemail' => 'برای کمک به محافظت در برابر هرزه‌نگاری خودکار، لطفاً واژه‌هایی را که در جعبهٔ زیر نمایش داده می‌شوند وارد کنید ([[Special:Captcha/help|اطلاعات بیشتر]]):',
 );
 
 /** Finnish (Suomi)
@@ -474,13 +479,14 @@ Pour vérifier qu’il ne s’agit pas de pourriels automatisés, veuillez entre
  * @author ChrisPtDe
  */
 $messages['frp'] = array(
-	'fancycaptcha-desc' => "G·ènèrator d’émâges ''captcha'' anti-robots que demande una confirmacion d’homo des changements.",
+	'fancycaptcha-desc' => "G·ènèrator d’émâges ''captch·a'' anti-robots que demande una confirmacion d’homo des changements.",
 	'fancycaptcha-addurl' => 'Voutron changement encllut de lims de defôr novéls.
 Por nos édiér a combatre contre lo spame ôtomatisâ, volyéd buchiér los mots qu’aparèssont dens la bouèta ce-desot ([[Special:Captcha/help|més d’enformacions]]) :',
-	'fancycaptcha-badlogin' => 'Por nos édiér a combatre contre lo piratâjo ôtomatisâ de mots de pâssa, volyéd buchiér los mots qu’aparèssont dens la bouèta ce-desot ([[Special:Captcha/help|més d’enformacions]]) :',
+	'fancycaptcha-badlogin' => 'Por nos édiér a combatre contre lo cassâjo ôtomatisâ de contresegnos, volyéd buchiér los mots qu’aparèssont dedens la bouèta ce-desot ([[Special:Captcha/help|més d’enformacions]]) :',
 	'fancycaptcha-createaccount' => 'Por nos édiér a combatre contre les crèacions ôtomatisâs de comptos, volyéd buchiér los mots qu’aparèssont dens la bouèta ce-desot ([[Special:Captcha/help|més d’enformacions]]) :',
 	'fancycaptcha-create' => 'Por fâre ceta pâge, volyéd buchiér los mots qu’aparèssont dens la bouèta ce-desot ([[Special:Captcha/help|més d’enformacions]]) :',
 	'fancycaptcha-edit' => 'Por changiér ceta pâge, volyéd buchiér los mots qu’aparèssont dens la bouèta ce-desot ([[Special:Captcha/help|més d’enformacions]]) :',
+	'fancycaptcha-sendemail' => 'Por nos édiér a combatre contre lo spame ôtomatisâ, volyéd buchiér los mots qu’aparèssont dens la bouèta ce-desot ([[Special:Captcha/help|més d’enformacions]]) :',
 );
 
 /** Western Frisian (Frysk)
@@ -619,6 +625,19 @@ $messages['id'] = array(
 	'fancycaptcha-sendemail' => 'Sebagai pelindungan terhadap spam otomatis, silahkan masukkan kata-kata yang muncul di bawah ini ke dalam kotak yang tersedia ([[Special:Captcha/help|info lengkap]]):',
 );
 
+/** Iloko (Ilokano)
+ * @author Lam-ang
+ */
+$messages['ilo'] = array(
+	'fancycaptcha-addurl' => 'Ti inurnos mo ket adda nagyan na a baro a panilpo ti ruar.
+Tapno  masalakniban kadagiti automatiko a spam, pangaasim nga ikabil ti balikas nga agparang dita baba a kahon. ([[Special:Captcha/help|adu pay a pakaammo]]):',
+	'fancycaptcha-badlogin' => 'Tapno  masalakniban kadagiti automatiko a pinagsulbar ti kontrasenias, pangaasim nga ikabil ti balikas nga agparang dita baba a kahon. ([[Special:Captcha/help|adu pay a pakaammo]]):',
+	'fancycaptcha-createaccount' => 'Tapno  makasalaknib kadagiti automatiko a pinagaramid ti pakabilangan, pangaasim nga ikabil ti balikas nga agparang dita baba a kahon. ([[Special:Captcha/help|adu pay a pakaammo]]):',
+	'fancycaptcha-create' => 'Tapno makaaramid ti panid, pangaasim nga ikabil ti balikas nga agparang dita baba a kahon. ([[Special:Captcha/help|adu pay a pakaammo]]):',
+	'fancycaptcha-edit' => 'Tapno makaurnos daytoy a panid, pangaasim nga ikabil ti balikas nga agparang dita baba a kahon. ([[Special:Captcha/help|adu pay a pakaammo]]):',
+	'fancycaptcha-sendemail' => 'Tapno  makasalaknib kadagiti automatiko a pinagspam, pangaasim nga ikabil ti balikas nga agparang dita baba a kahon. ([[Special:Captcha/help|adu pay a pakaammo]]):',
+);
+
 /** Italian (Italiano)
  * @author Beta16
  * @author BrokenArrow
@@ -703,7 +722,7 @@ $messages['kk-arab'] = array(
 تٶمەندەگٸ كٶرسەتٸلگەن سٶزدەردٸ اۋماققا ەنگٸزٸڭٸز ([[{{ns:special}}:Captcha/help|كٶبٸرەك اقپارات]]):',
 );
 
-/** Kazakh (Cyrillic) (Қазақша (Cyrillic)) */
+/** Kazakh (Cyrillic script) (‪Қазақша (кирил)‬) */
 $messages['kk-cyrl'] = array(
 	'fancycaptcha-addurl' => 'Түзетуіңізде жаңа сыртқы сілтемелер бар екен. Өздік түрде «спам» жасалуынан қорғану үшін,
 төмендегі көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):',
@@ -717,7 +736,7 @@ $messages['kk-cyrl'] = array(
 төмендегі көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):',
 );
 
-/** Kazakh (Latin) (Қазақша (Latin)) */
+/** Kazakh (Latin script) (‪Qazaqşa (latın)‬) */
 $messages['kk-latn'] = array(
 	'fancycaptcha-addurl' => 'Tüzetwiñizde jaña sırtqı siltemeler bar eken. Özdik türde «spam» jasalwınan qorğanw üşin,
 tömendegi körsetilgen sözderdi awmaqqa engiziñiz ([[{{ns:special}}:Captcha/help|köbirek aqparat]]):',
@@ -808,6 +827,7 @@ Fir ze hellëfen, géint automatiséierte Spam virzegoen, gitt w.e.g. déi Wierd
 
 /** Limburgish (Limburgs)
  * @author Matthias
+ * @author Ooswesthoesbes
  */
 $messages['li'] = array(
 	'fancycaptcha-addurl' => 'Uw bewerking bevat nieuwe externe links. Voer alstublieft de woorden die
@@ -819,6 +839,7 @@ ter bescherming tegen het automatisch aanmaken van gebruikers ([[Special:Captcha
 hieronder verschijnen in het invoerveld in als bescherming tegen automatische spam ([[Special:Captcha/help|meer informatie]]):',
 	'fancycaptcha-edit' => 'Uw bewerking bevat nieuwe externe links. Voer alstublieft de woorden die
 hieronder verschijnen in het invoerveld in als bescherming tegen automatische spam ([[Special:Captcha/help|mie informatie]]):',
+	'fancycaptcha-sendemail' => "Veur de weurd die hie onger versjienen in 't inveurvèldj in es besjerming taege geautometiseerde spam ([[Special:Captcha/help|mier info]]):",
 );
 
 /** Lao (ລາວ) */
@@ -860,6 +881,7 @@ $messages['ml'] = array(
 
 /** Marathi (मराठी)
  * @author Kaustubh
+ * @author Mahitgar
  */
 $messages['mr'] = array(
 	'fancycaptcha-addurl' => 'तुमच्या संपादनात नवीन बाह्य दुवे आहेत.
@@ -868,6 +890,7 @@ $messages['mr'] = array(
 	'fancycaptcha-createaccount' => 'आपोआप होणार्‍या सदस्य नोंदणीपासून वाचण्यासाठी, खाली दिसणारे शब्द दिलेल्या पृष्ठपेटी मध्ये लिहा ([[Special:Captcha/help|अधिक माहिती]]):',
 	'fancycaptcha-create' => 'हे पान तयार करण्यासाठी, खाली दिसणारे शब्द दिलेल्या पृष्ठपेटी मध्ये लिहा ([[Special:Captcha/help|अधिक माहिती]]):',
 	'fancycaptcha-edit' => 'हे पान संपादित करण्यासाठी, खाली दिसणारे शब्द दिलेल्या पृष्ठपेटी मध्ये लिहा ([[Special:Captcha/help|अधिक माहिती]]):',
+	'fancycaptcha-sendemail' => 'आपोआप होणार्‍या उत्पातापासून वाचण्यासाठी, खाली दिसणारे शब्द दिलेल्या पृष्ठपेटी मध्ये लिहा ([[Special:Captcha/help|अधिक माहिती]]):',
 );
 
 /** Malay (Bahasa Melayu)
@@ -881,6 +904,20 @@ $messages['ms'] = array(
 	'fancycaptcha-create' => 'Untuk mencipta laman ini, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):',
 	'fancycaptcha-edit' => 'Untuk menyunting laman ini, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):',
 	'fancycaptcha-sendemail' => 'Untuk membanteras kegiatan spam secara automatik, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):',
+);
+
+/** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬)
+ * @author Harald Khan
+ * @author Jon Harald Søby
+ * @author Laaknor
+ */
+$messages['nb'] = array(
+	'fancycaptcha-addurl' => 'Din endring inkluderer nye eksterne lenker. For hjelpe oss å beskytte oss mot automatisk spam, vennligst skriv inn ordene som kommer opp i denne boksen ([[Special:Captcha/help|mer informasjon]]):',
+	'fancycaptcha-badlogin' => 'Skriv inn ordene som dukker opp i boksen nedenfor for å hjelpe oss å beskytte oss mot passordtyveri ([[Special:Captcha/help|mer informasjon]]):',
+	'fancycaptcha-createaccount' => 'Skriv inn ordene som dukker opp i boksen nedenfor for å hjelpe oss å beskytte oss mot automatisk kontoopprettelse ([[Special:Captcha/help|mer informasjon]]):',
+	'fancycaptcha-create' => 'Skriv inn ordene som dukker opp i boksen nedenfor for å opprette siden ([[Special:Captcha/help|mer informasjon]]):',
+	'fancycaptcha-edit' => 'For å endre denne siden, vennligst skriv inn ordene som dukker opp i boksen nedenfor ([[Special:Captcha/help|mer informasjon]]):',
+	'fancycaptcha-sendemail' => 'For å beskytte mot automatisert spam så må du skrive ordene under inn i tekstboksen ([[Special:Captcha/help|mer informasjon]]):',
 );
 
 /** Low German (Plattdüütsch)
@@ -900,13 +937,13 @@ As Schutz gegen automaatsch Spam, geev disse Bookstavenreeg in dat Feld ünnen i
  */
 $messages['nds-nl'] = array(
 	'fancycaptcha-addurl' => "Joew bewarking bevat uutgaonde verwiezingen. 
-Um dit prejek te bescharmen tegen spam, mu-j 't woord dat hieronder steet invullen ([[Special:Captcha/help|hulpe]]):",
-	'fancycaptcha-badlogin' => "Um disse webstee te beveiligen tegen 't kraken van wachwoorden, wö-j verzoch um de woorden dee-j hieronder zien in te vullen ([[Special:Captcha/help|hulpe]]):",
-	'fancycaptcha-createaccount' => "Um disse wiki te bescharmen tegen 't autematisch anmaken van gebrukersprefielen mu-j 't woord hieronder invullen ([[Special:Captcha/help|hulpe]]):",
-	'fancycaptcha-create' => "Um een pagina an te maken, mu-j 't woord dat hieronder steet invullen
+Um dit projekt te bescharmen tegen ongewunst reklame, mö'j t woord dat hieronder steet invullen ([[Special:Captcha/help|hulpe]]):",
+	'fancycaptcha-badlogin' => "Um disse webstee te beveiligen tegen t kraken van wachtwoorden, wö'j verzöcht um de woorden die'j hieronder zien in te vullen ([[Special:Captcha/help|hulpe]]):",
+	'fancycaptcha-createaccount' => "Um disse wiki te bescharmen tegen t automaties anmaken van gebrukersprefielen mö'j t woord hieronder invullen ([[Special:Captcha/help|hulpe]]):",
+	'fancycaptcha-create' => "Um n pagina an te maken, mö'j t woord dat hieronder steet invullen
 ([[Special:Captcha/help|hulpe]]):",
-	'fancycaptcha-edit' => 'Joew bewarking bevat nieje uutgaonde verwiezingen. Um disse wiki te bescharmen tegen ongewunste toevoegingen mu-j de woorden hieronder invullen ([[Special:Captcha/help|hulpe]]):',
-	'fancycaptcha-sendemail' => "Voer de woorden dee hieronder staon in 't invoerveld in as bescharming tegen autematische ongewunste reclame ([[Special:Captcha/help|meer infermasie]]):",
+	'fancycaptcha-edit' => "Joew bewarking bevat nieje uutgaonde verwiezingen. Um disse wiki te bescharmen tegen ongewunste reklame mö'j de woorden hieronder invullen ([[Special:Captcha/help|hulpe]]):",
+	'fancycaptcha-sendemail' => 'Voer de woorden die hieronder staon in t invoerveld in as bescharming tegen automatiese ongewunste reklame ([[Special:Captcha/help|meer informasie]]):',
 );
 
 /** Dutch (Nederlands)
@@ -935,20 +972,6 @@ For å hjelpa oss med å unngå automatisert spam, ver venleg og skriv inn orda 
 	'fancycaptcha-edit' => 'For å endra denne sida, ver venleg og skriv inn orda som kjem til syne i boksen nedanfor ([[Special:Captcha/help|meir informasjon]]):',
 );
 
-/** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬)
- * @author Harald Khan
- * @author Jon Harald Søby
- * @author Laaknor
- */
-$messages['no'] = array(
-	'fancycaptcha-addurl' => 'Din endring inkluderer nye eksterne lenker. For hjelpe oss å beskytte oss mot automatisk spam, vennligst skriv inn ordene som kommer opp i denne boksen ([[Special:Captcha/help|mer informasjon]]):',
-	'fancycaptcha-badlogin' => 'Skriv inn ordene som dukker opp i boksen nedenfor for å hjelpe oss å beskytte oss mot passordtyveri ([[Special:Captcha/help|mer informasjon]]):',
-	'fancycaptcha-createaccount' => 'Skriv inn ordene som dukker opp i boksen nedenfor for å hjelpe oss å beskytte oss mot automatisk kontoopprettelse ([[Special:Captcha/help|mer informasjon]]):',
-	'fancycaptcha-create' => 'Skriv inn ordene som dukker opp i boksen nedenfor for å opprette siden ([[Special:Captcha/help|mer informasjon]]):',
-	'fancycaptcha-edit' => 'For å endre denne siden, vennligst skriv inn ordene som dukker opp i boksen nedenfor ([[Special:Captcha/help|mer informasjon]]):',
-	'fancycaptcha-sendemail' => 'For å beskytte mot automatisert spam så må du skrive ordene under inn i tekstboksen ([[Special:Captcha/help|mer informasjon]]):',
-);
-
 /** Occitan (Occitan)
  * @author Cedric31
  */
@@ -966,7 +989,13 @@ $messages['oc'] = array(
  * @author Psubhashish
  */
 $messages['or'] = array(
-	'fancycaptcha-createaccount' => 'ଆପେଆପେ ଖାତା ଖୋଲିବାକୁ ଅଟକାଇବା ପାଇଁ ଦୟାକରି ଏହି ଘରଭିତରେ ଥିବା ଶବ୍ଦସବୁକୁ ତା ତଳେ ଥିବା ବାକ୍ସରେ ଟାଇପ କରନ୍ତୁ । ([[Special:Captcha/help|ଅଧିକ ଜାଣିବା]]):',
+	'fancycaptcha-addurl' => 'ଆପଣଙ୍କ ସମ୍ପାଦନାରେ ନୂଆ ବାହାର ଲିଙ୍କ ରହିଛି ।
+ଆପେଆପେ ହେଉଥିବା ସ୍ପାମର ପ୍ରତିରୋଧ କରିବା ନିମନ୍ତେ  ଘର ତଳେ ଥିବା ଶବ୍ଦସବୁ ଦିଅନ୍ତୁ ([[Special:Captcha/help|ଅଧିକ ବିବରଣୀ]]):',
+	'fancycaptcha-badlogin' => 'ଆପେଆପେ ହେଉଥିବା ପାସବାର୍ଡ଼ ଚୋରାଇବାକୁ ପ୍ରତିରୋଧ କରିବା ନିମନ୍ତେ ଦୟାକରି ଏହି ଘରଭିତରେ ଥିବା ଶବ୍ଦସବୁକୁ ତାହା ତଳେ ଥିବା ବାକ୍ସରେ ଟାଇପ କରନ୍ତୁ । ([[Special:Captcha/help|ଅଧିକ ସୂଚନା]]):',
+	'fancycaptcha-createaccount' => 'ଆପେଆପେ ଖାତା ଖୋଲିବାକୁ ଅଟକାଇବା ପାଇଁ ଦୟାକରି ଏହି ଘରଭିତରେ ଥିବା ଶବ୍ଦସବୁକୁ ତାହା ତଳେ ଥିବା ବାକ୍ସରେ ଟାଇପ କରନ୍ତୁ । ([[Special:Captcha/help|ଅଧିକ ସୂଚନା]]):',
+	'fancycaptcha-create' => 'ଏହି ପୃଷ୍ଠାଟିକୁ ତିଆରିବା ନିମନ୍ତେ, ଘର ତଳେ ଥିବା ଶବ୍ଦଟିକୁ ଏଠାରେ ଦିଅନ୍ତୁ ([[Special:Captcha/help|ଅଧିକ ଜାଣନ୍ତୁ]]):',
+	'fancycaptcha-edit' => 'ଏହି ପୃଷ୍ଠାଟିକୁ ବଦଳାଇବା ନିମନ୍ତେ, ଘର ତଳେ ଥିବା ଶବ୍ଦଟିକୁ ଏଠାରେ ଦିଅନ୍ତୁ ([[Special:Captcha/help|ଅଧିକ ଜାଣନ୍ତୁ]]):',
+	'fancycaptcha-sendemail' => 'ଆପେଆପେ ହେଉଥିବା ସ୍ପାମକୁ ରୋକିବା ନିମନ୍ତେ ଦୟାକରି ଏହି ଘରଭିତରେ ଥିବା ଶବ୍ଦସବୁକୁ ତାହା ତଳେ ଥିବା ବାକ୍ସରେ ଟାଇପ କରନ୍ତୁ । ([[Special:Captcha/help|ଅଧିକ ସୂଚନା]]):',
 );
 
 /** Polish (Polski)
@@ -994,6 +1023,19 @@ Për dene na man a vardesse da la reclam aotomatisà, për piasì, ch'a l'arbata
 	'fancycaptcha-create' => "Për creé sta pàgina-i d'amblé, për piasì, ch'a l'arbata le paròle ch'a s-ciàira ambelessì sota ([[Special:Captcha/help|për savejne dë pì]]):",
 	'fancycaptcha-edit' => "Për fe-ie dle modìfiche ansima a sta pàgina-sì, për piasì, ch'a l'arbata le paròle ch'a s-ciàira ambelessì sota ([[Special:Captcha/help|për savejne dë pì]]):",
 	'fancycaptcha-sendemail' => "Për giuté a protegi contra la rumenta automàtica, për piasì ch'a anseriss le paròle che as vëddo sota ant la casela ([[Special:Captcha/help|për savèjne ëd pi]]):",
+);
+
+/** Western Punjabi (پنجابی)
+ * @author Khalid Mahmood
+ */
+$messages['pnb'] = array(
+	'fancycaptcha-addurl' => 'تواڈی تبدیلی چ نویں بارلے جوڑ نیں۔
+اس صفحے نوں تبدیل کرن واسطے، مہربانی کر کے ڈبے چ دتے گۓ شبداں نوں لکھو ([[Special:Captcha/help|مزید جانکاری]]):',
+	'fancycaptcha-badlogin' => 'اپنے آپ کنجی توڑن دے خلاف مدد واسطے، مہربانی کر کے ڈبے چ دتے گۓ شبداں نوں لکھو ([[Special:Captcha/help|مزید جانکاری]]):',
+	'fancycaptcha-createaccount' => 'اپنے آپ غلط نویں کھاتے بنان نوں روکن واسطے، مہربانی کر کے ڈبے چ دتے گۓ شبداں نوں لکھو ([[Special:Captcha/help|مزید جانکاری]]):',
+	'fancycaptcha-create' => 'صفحہ بنان واسطے، مہربانی کر کے ڈبے چ دتے گۓ شبداں نوں لکھو ([[Special:Captcha/help|مزید جانکاری]]):',
+	'fancycaptcha-edit' => 'اس صفحے تے تبدیلی کرن واسطے، مہربانی کر کے ڈبے چ دتے گۓ شبداں نوں لکھو ([[Special:Captcha/help|مزید جانکاری]]):',
+	'fancycaptcha-sendemail' => 'اپنے آپ غلط مال آن نوں روکن واسطے، مہربانی کر کے ڈبے چ دتے گۓ شبداں نوں لکھو ([[Special:Captcha/help|مزید جانکاری]]):',
 );
 
 /** Pashto (پښتو)
@@ -1040,12 +1082,17 @@ $messages['rm'] = array(
 );
 
 /** Romanian (Română)
+ * @author Firilacroco
  * @author Mihai
  */
 $messages['ro'] = array(
-	'fancycaptcha-createaccount' => 'Pentru a ajuta protecția împotriva creării automate de conturi, te rog să introduci în cutie cuvintele care apar mai jos ([[Special:Captcha/help|mai multe detalii]]):',
+	'fancycaptcha-addurl' => 'Modificarea dumneavoastră include legături externe noi.
+Pentru a împiedica roboții de spam, vă rugăm să introduceți cuvintele care apar mai jos în căsuță ([[Special:Captcha/help|mai multe detalii]]):',
+	'fancycaptcha-badlogin' => 'Pentru a împiedica spargerea automată a parolelor, vă rugăm să introduceți cuvintele care apar mai jos în căsuță ([[Special:Captcha/help|mai multe detalii]]):',
+	'fancycaptcha-createaccount' => 'Pentru a împiedica crearea automată de conturi, vă rugăm să introduceți cuvintele care apar mai jos în căsuță ([[Special:Captcha/help|mai multe detalii]]):',
 	'fancycaptcha-create' => 'Pentru a crea pagina, te rog să introduci în cutie cuvintele care apar mai jos ([[Special:Captcha/help|mai multe detalii]]):',
 	'fancycaptcha-edit' => 'Pentru a modifica această pagină, te rog să introduci în cutie cuvintele care apar mai jos ([[Special:Captcha/help|mai multe detalii]]):',
+	'fancycaptcha-sendemail' => 'Pentru a împiedica roboții de spam, vă rugăm să introduceți cuvintele care apar mai jos în căsuță ([[Special:Captcha/help|mai multe detalii]]):',
 );
 
 /** Tarandíne (Tarandíne)
@@ -1062,10 +1109,12 @@ Pe aiutà a proteggere condre a 'u spam automateche, pe piacere mitte le parole 
 );
 
 /** Russian (Русский)
+ * @author Dim Grits
  * @author Lockal
  * @author Александр Сигачёв
  */
 $messages['ru'] = array(
+	'fancycaptcha-desc' => 'Необычный CAPTCHA-генератор для подтверждения редактирования',
 	'fancycaptcha-addurl' => 'Ваша правка содержит новые внешние ссылки. В целях защиты от спама, пожалуйста, введите слова, показанные ниже в рамке ([[Special:Captcha/help|подробнее…]]):',
 	'fancycaptcha-badlogin' => 'В целях защиты от автоматического взлома паролей, пожалуйста, введите в поле ввода буквы с изображения ([[Special:Captcha/help|подробнее]]):',
 	'fancycaptcha-createaccount' => 'Для предотвращения автоматической регистрации учётных записей, пожалуйста, введите изображённые символы в текстовое поле ([[Special:Captcha/help|подробнее]]):',
@@ -1086,7 +1135,7 @@ $messages['rue'] = array(
 	'fancycaptcha-sendemail' => 'В рамках охороны перед автоматічным спамом мусите описати текст з наступного образку. ([[Special:Captcha/help|Што тото значіть?]]):',
 );
 
-/** Yakut (Саха тыла)
+/** Sakha (Саха тыла)
  * @author HalanTul
  */
 $messages['sah'] = array(
@@ -1150,27 +1199,29 @@ $messages['sq'] = array(
 	'fancycaptcha-sendemail' => "Për t'u mbrojtur nga metoda automatike e gjetjes së fjalëkalimeve ju kërkojmë të vendosni fjalët e figurës në kuti ([[Special:Captcha/help|më shumë informacion]]):",
 );
 
-/** Serbian Cyrillic ekavian (‪Српски (ћирилица)‬)
+/** Serbian (Cyrillic script) (‪Српски (ћирилица)‬)
  * @author Millosh
  * @author Rancher
  * @author Жељко Тодоровић
  * @author Михајло Анђелковић
  */
 $messages['sr-ec'] = array(
-	'fancycaptcha-addurl' => 'Ваша измена садржи нове спољне везе.
-У циљу заштите од злоупотребе, унесите знакове са слике у поље изнад.',
-	'fancycaptcha-badlogin' => 'У циљу спречавања откривања лозинки, унесите знакове са слике у поље изнад.',
-	'fancycaptcha-createaccount' => 'У циљу заштите од злоупотребе, унесите знакове са слике у поље изнад.',
-	'fancycaptcha-create' => 'Да бисте направили страницу, унесите знакове са слике у поље изнад.',
-	'fancycaptcha-edit' => 'Да бисте изменили ову страницу, унесите знакове са слике у поље изнад.',
-	'fancycaptcha-sendemail' => 'У циљу заштите од злоупотребе, унесите знакове са слике у поље изнад.',
+	'fancycaptcha-desc' => 'Обогаћен стварач сликовног кода за потврду уређивања',
+	'fancycaptcha-addurl' => 'Ваша измена садржи нове спољашње везе.
+У циљу заштите од непожељних порука, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):',
+	'fancycaptcha-badlogin' => 'У циљу заштите од пробијања лозинки, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):',
+	'fancycaptcha-createaccount' => 'У циљу заштите од самоотварања налога, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):',
+	'fancycaptcha-create' => 'Да бисте направили страницу, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):',
+	'fancycaptcha-edit' => 'Да бисте уредили ову страницу, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):',
+	'fancycaptcha-sendemail' => 'У циљу заштите од непожељних порука, унесите речи са слике у поље испод ([[Special:Captcha/help|више информација]]):',
 );
 
-/** Serbian Latin ekavian (‪Srpski (latinica)‬)
+/** Serbian (Latin script) (‪Srpski (latinica)‬)
  * @author Michaello
  * @author Жељко Тодоровић
  */
 $messages['sr-el'] = array(
+	'fancycaptcha-desc' => 'Obogaćen stvarač slikovnog koda za potvrdu uređivanja',
 	'fancycaptcha-addurl' => 'Tvoja izmena uključuje nove spoljne veze. U cilju zaštite od automatskog spama, unesi reči koje se nalaze ispod u kutiju ([[Special:Captcha/help|detaljnije]]):',
 	'fancycaptcha-badlogin' => 'U cilju sprečavanja automatskog otkrivanja lozinki, unesi reči koje se nalaze ispod u kutiju ([[Special:Captcha/help|detaljnije]]):',
 	'fancycaptcha-createaccount' => 'U cilju zaštite od automatskog spama, unesi reči odozdo u kutiju ([[Special:Captcha/help|detaljnije]]):',
@@ -1184,10 +1235,10 @@ $messages['sr-el'] = array(
  */
 $messages['stq'] = array(
 	'fancycaptcha-addurl' => 'Dien Beoarbaidenge änthaalt näie externe Ferbiendengen.
-Tou Schuts foar automatisierde Spamminge reek dät foulgjende Woud in dät Fäild ien.
+Tou Skuts foar automatisierde Spamminge reek dät foulgjende Woud in dät Fäild ien.
 Klik dan fonnäien ap „Siede spiekerje“ [[Special:Captcha/help|(Froagen of Probleme?)]].',
-	'fancycaptcha-badlogin' => 'Toun Schuts foar ne Kompromittierenge fon dien Benutserkonto reek dät foulgjende Woud in dät Fäild hierunner ien [[Special:Captcha/help|(Froagen of Probleme?)]]:',
-	'fancycaptcha-createaccount' => 'Toun Schuts foar automatisierde Anloage fon Benutserkonten reek dät foulgjende Woud in dät Fäild hierunner ien [[Special:Captcha/help|(Froagen of Probleme?)]].',
+	'fancycaptcha-badlogin' => 'Toun Skuts foar ne Kompromittierenge fon dien Benutserkonto reek dät foulgjende Woud in dät Fäild hierunner ien [[Special:Captcha/help|(Froagen of Probleme?)]]:',
+	'fancycaptcha-createaccount' => 'Toun Skuts foar automatisierde Anloage fon Benutserkonten reek dät foulgjende Woud in dät Fäild hierunner ien [[Special:Captcha/help|(Froagen of Probleme?)]].',
 	'fancycaptcha-create' => 'Tou dät Moakjen fon ju Siede reek dät foulgjende Woud in dät Fäild hierunner ien
 [[Special:Captcha/help|(Froagen of Probleme?)]].',
 	'fancycaptcha-edit' => 'Tou Beoarbaidenge fon disse Siede reek dät foulgjende Woud in dät Fäild hierunner ien
@@ -1234,7 +1285,7 @@ $messages['te'] = array(
 ([[Special:Captcha/help|మరింత సమాచారం]]):',
 );
 
-/** Tajik (Cyrillic) (Тоҷикӣ (Cyrillic))
+/** Tajik (Cyrillic script) (Тоҷикӣ)
  * @author Ibrahim
  */
 $messages['tg-cyrl'] = array(
@@ -1245,7 +1296,7 @@ $messages['tg-cyrl'] = array(
 	'fancycaptcha-edit' => 'Барои вироиши ин саҳифа, вожаеро ки дар тасвир мебинед, ворид кунед ([[Special:Captcha/help|иттилооти бештар]]):',
 );
 
-/** Tajik (Latin) (Тоҷикӣ (Latin))
+/** Tajik (Latin script) (tojikī)
  * @author Liangent
  */
 $messages['tg-latn'] = array(
@@ -1306,9 +1357,11 @@ Otomatik spamdan korunmak için, lütfen aşağıdaki sözcükleri kutunun için
 
 /** Ukrainian (Українська)
  * @author Ahonc
+ * @author Dim Grits
  * @author Ytsukeng Fyvaprol
  */
 $messages['uk'] = array(
+	'fancycaptcha-desc' => 'Чудернацький CAPTCHA-генератор для підтвердження редагування',
 	'fancycaptcha-addurl' => 'Ваше редагування містить нові зовнішні посилання.
 Із метою захисту від спаму, будь ласка, введіть у текстове поле слова, зображені на картинці ([[Special:Captcha/help|докладніше]]):',
 	'fancycaptcha-badlogin' => 'Із метою захисту від автоматичного злому пароля, будь ласка, введіть у текстове поле слова, зображені на картинці ([[Special:Captcha/help|докладніше]]):',

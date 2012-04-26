@@ -65,7 +65,7 @@ fn: {
 						$(this).find( '[rel]' ).each( function() {
 							$(this).text( mediaWiki.msg( $(this).attr( 'rel' ) ) );
 						});
-						
+
 						/* REALLY DIRTY HACK! */
 						// Reformat the copyright warning stuff
 						var copyWarnHTML = $( '#editpage-copywarn p' ).html();
@@ -80,11 +80,11 @@ fn: {
 						}
 						newCopyWarnHTML += '</ul>';
 						// No list if there's only one element
-						$(this).find( '.wikiEditor-publish-dialog-copywarn' ).html( 
+						$(this).find( '.wikiEditor-publish-dialog-copywarn' ).html(
 								copyWarnStatements.length > 1 ? newCopyWarnHTML : copyWarnHTML
 						);
 						/* END OF REALLY DIRTY HACK */
-						
+
 						if ( $( '#wpMinoredit' ).size() == 0 )
 							$( '#wikiEditor-' + context.instance + '-dialog-minor' ).hide();
 						else if ( $( '#wpMinoredit' ).is( ':checked' ) )
@@ -95,7 +95,7 @@ fn: {
 						else if ( $( '#wpWatchthis' ).is( ':checked' ) )
 							$( '#wikiEditor-' + context.instance + '-dialog-watch' )
 								.attr( 'checked', 'checked' );
-						
+
 						$(this).find( 'form' ).submit( function( e ) {
 							$(this).closest( '.ui-dialog' ).find( 'button:first' ).click();
 							e.preventDefault();
