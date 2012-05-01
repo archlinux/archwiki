@@ -5,12 +5,12 @@ h1, h2, h3, h4, h5 { color: #222; }
 h1 { font-weight: bold; }
 pre, code, tt { background-color: #ebf1f5; color: #222; font-family: monospace; }
 pre { border: 1px solid #bcd; overflow: auto; }
-code, tt { padding: 0.1em 0.2em; }
+code, tt { padding: 0.3em; }
 
 /* links (including page tabs and personal toolbar) */
 a, #p-cactions li a { text-decoration: none; outline: none; }
 a:link, #p-cactions li a, #p-personal li a, #bodyContent a.external { color: #07b; }
-#bodyContent > div.mw-content-ltr a, #bodyContent > div.mw-content-rtl a { font-weight: bold; }
+#bodyContent > div.mw-content-ltr a, #bodyContent > div.mw-content-rtl a, #wikiPreview > div.mw-content-rtl a { font-weight: bold; }
 #bodyContent #toc a, #bodyContent .special li > a, #bodyContent .special li span a, #bodyContent #pagehistory a { font-weight: normal; }
 a:visited, #bodyContent a:visited.external { color: #666; }
 a:focus { color: #e90 !important; }
