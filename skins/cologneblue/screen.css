@@ -1,6 +1,6 @@
 body {
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 	color: black;
 }
 
@@ -21,7 +21,7 @@ body {
 }
 
 #topbar {
-	padding: 0px;
+	padding: 0;
 }
 
 #powersearch {
@@ -103,16 +103,15 @@ td#top-syslinks {
 td.top-linkcollection {
 	text-align: right;
 }
-td.top-subheader {
-	vertical-align: top;
-}
-
 /**
  * Overrides text justification (user preference)
  * See bug 31990
  */
 td.top-linkcollection #catlinks {
 	text-align: right;
+}
+td.top-subheader {
+	vertical-align: top;
 }
 td.bottom {
 	font-family: Verdana, Arial, sans-serif;

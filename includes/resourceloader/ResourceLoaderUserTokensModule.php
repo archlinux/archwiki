@@ -32,7 +32,7 @@ class ResourceLoaderUserTokensModule extends ResourceLoaderModule {
 
 	/**
 	 * Fetch the tokens for the current user.
-	 * 
+	 *
 	 * @param $context ResourceLoaderContext: Context object
 	 * @return Array: List of tokens keyed by token type
 	 */
@@ -40,7 +40,7 @@ class ResourceLoaderUserTokensModule extends ResourceLoaderModule {
 		global $wgUser;
 
 		return array(
-			'editToken' => $wgUser->edittoken(),
+			'editToken' => $wgUser->getEditToken(),
 			'watchToken' => ApiQueryInfo::getWatchToken(null, null),
 		);
 	}
@@ -50,7 +50,7 @@ class ResourceLoaderUserTokensModule extends ResourceLoaderModule {
 	 * @return string
 	 */
 	public function getScript( ResourceLoaderContext $context ) {
-		return Xml::encodeJsCall( 'mw.user.tokens.set', 
+		return Xml::encodeJsCall( 'mw.user.tokens.set',
 			array( $this->contextUserTokens( $context ) ) );
 	}
 

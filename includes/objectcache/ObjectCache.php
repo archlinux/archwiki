@@ -43,7 +43,7 @@ class ObjectCache {
 		global $wgObjectCaches;
 
 		if ( !isset( $wgObjectCaches[$id] ) ) {
-			throw new MWException( "Invalid object cache type \"$id\" requested. " . 
+			throw new MWException( "Invalid object cache type \"$id\" requested. " .
 				"It is not present in \$wgObjectCaches." );
 		}
 
@@ -89,9 +89,7 @@ class ObjectCache {
 	 * @return ObjectCache
 	 */
 	static function newAccelerator( $params ) {
-		if ( function_exists( 'eaccelerator_get' ) ) {
-			$id = 'eaccelerator';
-		} elseif ( function_exists( 'apc_fetch') ) {
+		if ( function_exists( 'apc_fetch') ) {
 			$id = 'apc';
 		} elseif( function_exists( 'xcache_get' ) && wfIniGetBool( 'xcache.var_size' ) ) {
 			$id = 'xcache';
@@ -106,11 +104,11 @@ class ObjectCache {
 
 	/**
 	 * Factory function that creates a memcached client object.
-	 * The idea of this is that it might eventually detect and automatically 
+	 * The idea of this is that it might eventually detect and automatically
 	 * support the PECL extension, assuming someone can get it to compile.
 	 *
 	 * @param $params array
-	 * 
+	 *
 	 * @return MemcachedPhpBagOStuff
 	 */
 	static function newMemcached( $params ) {

@@ -41,6 +41,9 @@ $namespaceAliases = array(
 	'Категори_кӓнгӓшӹмӓш'   => NS_CATEGORY_TALK,
 );
 
+// Remove Russian aliases
+$namespaceGenderAliases = array();
+
 $messages = array(
 # User preference toggles
 'tog-underline'               => 'Ажедмӓшвлӓм ыдыралаш',
@@ -482,8 +485,7 @@ $messages = array(
 'linksearch' => 'Тӱнӹш ажедмӓшвлӓ',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Сирӹшӹвлӓм регистрируйышы журнал',
-'newuserlog-create-entry' => 'У сирӹшӹ',
+'newuserlogpage' => 'Сирӹшӹвлӓм регистрируйышы журнал',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(группын списокшы)',
@@ -513,7 +515,6 @@ $messages = array(
 'actioncomplete'        => 'Лачокат ӹштӹмӹ',
 'deletedtext'           => '«$1» карангдымы.
 Анжы: $2 тидӹ мам карангдымы тӹ списокым анжыкта',
-'deletedarticle'        => '«[[$1]]» карангдымы',
 'dellogpage'            => 'Мам карангдымы анжыктышы сирмӓш',
 'deletecomment'         => 'Ӓмӓлжӹ:',
 'deleteotherreason'     => 'Вес ӓмӓл/ынгылдарал:',
@@ -545,8 +546,7 @@ $messages = array(
 'restriction-level'           => 'Пыраш лимӹ кӱкшӹц:',
 
 # Undelete
-'undeletelink'     => 'анжен лӓктӓш/угӹц ӹштӓш',
-'undeletedarticle' => 'мӹнгеш шӹндӹмӹ «[[$1]]»',
+'undeletelink' => 'анжен лӓктӓш/угӹц ӹштӓш',
 
 # Namespace form on various pages
 'namespace'      => 'Лӹмвлӓн кымдецӹштӹ:',
@@ -617,8 +617,6 @@ $messages = array(
 'talkexists'       => "'''Ӹлӹштӓш лӹм вашталтымы, но техень лӹмӓн ӹлӹштӓш тӹтежӓт улы, кӓнгӓшӹмӓш ӹлӹштӓшӹн лӹмжӹм вашталташ ак ли. Пуры лидӓ, кид доно нӹнӹм ушыда.'''",
 'movedto'          => 'техеньӹш вашталтымы',
 'movetalk'         => 'Ти кӓнгӓшӹмӓш ӹлӹштӓшӹн лӹмжӹм вашталташ',
-'1movedto2'        => 'лӹмӹм вашталтымы «[[$1]]» в «[[$2]]»',
-'1movedto2_redir'  => '«[[$1]]» у лӹмӹм пумы «[[$2]]» вес вӓрыш колтымы вӹлец',
 'movelogpage'      => 'Лӹмвлӓм вашталтымы журнал',
 'movereason'       => 'Ӓмӓлжӹ:',
 'revertmove'       => 'лишӹц колтымаш',
@@ -689,7 +687,7 @@ $messages = array(
 
 # Media information
 'file-info-size' => '$1 × $2 пиксел,  файлын размержӹ: $3, MIME-тип: $4',
-'file-nohires'   => '<small>Кого разрешени доно верси уке.</small>',
+'file-nohires'   => 'Кого разрешени доно верси уке.',
 'svg-long-desc'  => 'SVG-файл, номинально $1 × $2 пиксель,  файлын размержӹ: $3',
 'show-big-image' => 'Кӱкшӹрӓк разрешениӓн изображени',
 

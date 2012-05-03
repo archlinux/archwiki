@@ -43,10 +43,9 @@ jQuery( document ).ready( function( $ ) {
 	$( '.templatesUsed ul' )
 		.wrap( '<div id="transclusions-list" class="collapsible-list collapsed"></div>' )
 		.parent()
-		// FIXME: i18n, remove link from message and let community add link to transclusion page if it exists
-		.prepend( '<label>This page contains <a href="http://en.wikipedia.org/wiki/transclusion">transclusions</a> of <strong>'
-			+ transclusionCount 
-			+ '</strong> other pages.</label>' );
+		.prepend( $( '<label>' )
+			.text( mw.msg( 'vector-footercleanup-transclusion', transclusionCount ) ) 
+		);
 	$( '.mw-templatesUsedExplanation' ).remove();
 	
 	$( '.collapsible-list label' )

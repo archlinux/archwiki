@@ -96,7 +96,7 @@ class ApiTest extends ApiTestCase {
 			"lgtoken" => $token,
 			"lgname" => $user->username,
 			"lgpassword" => "badnowayinhell",
-			)
+			), $ret[2]
 		);
 
 		$result = $ret[0];
@@ -137,7 +137,7 @@ class ApiTest extends ApiTestCase {
 			"lgtoken" => $token,
 			"lgname" => $user->username,
 			"lgpassword" => $user->password,
-			)
+			), $ret[2]
 		);
 
 		$result = $ret[0];
@@ -148,6 +148,9 @@ class ApiTest extends ApiTestCase {
 		$this->assertEquals( "Success", $a );
 	}
 
+	/**
+	 * @group Broken
+	 */
 	function testApiGotCookie() {
 		$this->markTestIncomplete( "The server can't do external HTTP requests, and the internal one won't give cookies"  );
 
@@ -192,24 +195,23 @@ class ApiTest extends ApiTestCase {
 	}
 
 	/**
-	 * @depends testApiGotCookie
+	 * @todo Finish filling me out...what are we trying to test here?
 	 */
-	function testApiListPages( CookieJar $cj ) {
-		$this->markTestIncomplete( "Not done with this yet" );
+	function testApiListPages() {
 		global $wgServer;
-
-		if ( $wgServer == "http://localhost" ) {
+		if ( !isset( $wgServer ) ) {
 			$this->markTestIncomplete( 'This test needs $wgServer to be set in LocalSettings.php' );
 		}
-		$req = MWHttpRequest::factory( self::$apiUrl . "?action=query&format=xml&prop=revisions&" .
-									 "titles=Main%20Page&rvprop=timestamp|user|comment|content" );
-		$req->setCookieJar( $cj );
-		$req->execute();
-		libxml_use_internal_errors( true );
-		$sxe = simplexml_load_string( $req->getContent() );
-		$this->assertNotInternalType( "bool", $sxe );
-		$this->assertThat( $sxe, $this->isInstanceOf( "SimpleXMLElement" ) );
-		$a = $sxe->query[0]->pages[0]->page[0]->attributes();
+
+		$ret = $this->doApiRequest( array(
+			'action' => 'query',
+			'prop'   => 'revisions',
+			'titles' => 'Main Page',
+			'rvprop' => 'timestamp|user|comment|content',
+		) );
+
+		$result = $ret[0]['query']['pages'];
+		$this->markTestIncomplete( "Somebody needs to finish loving me" );
 	}
 	
 	function testRunLogin() {
@@ -228,7 +230,7 @@ class ApiTest extends ApiTestCase {
 			'action' => 'login',
 			"lgtoken" => $token,
 			"lgname" => $sysopUser->username,
-			"lgpassword" => $sysopUser->password ), $data );
+			"lgpassword" => $sysopUser->password ), $data[2] );
 
 		$this->assertArrayHasKey( "login", $data[0] );
 		$this->assertArrayHasKey( "result", $data[0]['login'] );

@@ -405,7 +405,6 @@ Segnalilu par plasê a un [[Special:ListUsers/sysop|administrator]], notant la U
 'badtitletext'       => 'Il titul de pagjine che tu âs inserît nol è valit, al è vuelit, o al veve un erôr tal colegament tra wiki diviersis o tra versions in altris lenghis.
 Al podarès vê dentri caratars che no podin jessi doprâts tai titui.',
 'viewsource'         => 'Cjale risultive',
-'viewsourcefor'      => 'di $1',
 'viewsourcetext'     => 'Tu puedis viodi e copiâ la risultive di cheste pagjine:',
 
 # Login and logout pages
@@ -535,7 +534,6 @@ Se tu vuelis tu puedis contatâ $1 o un altri [[{{MediaWiki:Grouppage-sysop}}|am
 Visiti che no tu puedis doprâ la funzion 'Messaç di pueste a chest utent' se no tu âs specificât une direzion di pueste eletroniche valide tes [[Special:Preferences|preferencis]] e se no tu sês stât blocât al ûs di cheste funzion.
 
 Par plasê inclût la to direzion IP atuâl ($3) o il numar dal bloc (ID #$5) in ogni richieste di sclariments.",
-'blockedoriginalsource'            => "Ca sot tu puedis viodi la risultive de pagjine '''$1''':",
 'whitelistedittext'                => 'Tu scugnis $1 par cambiâ lis pagjinis.',
 'confirmedittext'                  => 'Prime di cambiâ lis pagjinis tu scugnis confermâ la to direzion di pueste eletroniche. Par impuestâ e confermâ la direzion, dopre lis [[Special:Preferences|preferencis]].',
 'loginreqtitle'                    => 'Si scugne jentrâ',
@@ -638,15 +636,10 @@ Leiende: (cur) = difarencis cun la version atuâl, (prec) = difarencis cun la ve
 'revdelete-radio-same'       => '(no stâ cambiâ)',
 'revdelete-radio-set'        => 'Sì',
 'revdelete-radio-unset'      => 'No',
-'revdelete-logentry'         => 'cambiât la visibilitât de revision di "[[$1]]"',
 'revdel-restore'             => 'cambie visibilitât',
 'revdel-restore-deleted'     => 'revisions eliminadis',
 'revdel-restore-visible'     => 'revisions visibilis',
 'pagehist'                   => 'Storic de pagjine',
-'revdelete-content'          => 'contignût',
-'revdelete-uname'            => 'non utent',
-'revdelete-hid'              => 'platât $1',
-'revdelete-log-message'      => '$1 par $2 {{PLURAL:$2|revision|revisions}}',
 'revdelete-reasonotherlist'  => 'Altri motîf',
 
 # Merge log
@@ -740,7 +733,7 @@ Leiende: (cur) = difarencis cun la version atuâl, (prec) = difarencis cun la ve
 'prefs-rc'                    => 'Ultins cambiaments & stubs',
 'prefs-watchlist'             => 'Tignudis di voli',
 'prefs-watchlist-days'        => 'Numar di zornadis di mostrâ inte liste des pagjinis tignudis di voli:',
-'prefs-watchlist-days-max'    => 'Massim 7 zornadis',
+'prefs-watchlist-days-max'    => 'Massim $1 {{PLURAL:$1|zornade|zornadis}}',
 'prefs-watchlist-edits'       => 'Numar di modifichis di mostrâ inte liste slargjade:',
 'prefs-watchlist-edits-max'   => 'Numar massim: 1000',
 'prefs-misc'                  => 'Variis',
@@ -1128,12 +1121,8 @@ Cjale ancje lis [[Special:WantedCategories|categoriis desideradis]].',
 'activeusers-noresult'   => 'Nissun utent cjatât.',
 
 # Special:Log/newusers
-'newuserlogpage'              => 'Regjistri dai gnûfs utents',
-'newuserlogpagetext'          => 'Ca sot tu cjatis un regjistri dai gnûfs utents creâts.',
-'newuserlog-byemail'          => 'peraule clâf mandade par pueste eletroniche',
-'newuserlog-create-entry'     => 'al è rivât il gnûf utent',
-'newuserlog-create2-entry'    => 'creade une gnove identitât par $1',
-'newuserlog-autocreate-entry' => 'Identitât creade in automatic',
+'newuserlogpage'     => 'Regjistri dai gnûfs utents',
+'newuserlogpagetext' => 'Ca sot tu cjatis un regjistri dai gnûfs utents creâts.',
 
 # Special:ListGroupRights
 'listgrouprights'         => 'Dirits dai grups di utents',
@@ -1211,7 +1200,6 @@ Par plasê, da la conferme che tu vuelis fâlu, che tu capissis lis conseguencis
 'actionfailed'          => 'Azion falide',
 'deletedtext'           => '"$1" al è stât eliminât.
 Cjale $2 par une liste des ultimis eliminazions.',
-'deletedarticle'        => 'eliminât "[[$1]]"',
 'dellogpage'            => 'Regjistri des eliminazions',
 'deletionlog'           => 'regjistri eliminazions',
 'reverted'              => 'Tornât ae version precedente',
@@ -1264,7 +1252,6 @@ Tu puedis cambiâ il nivel di protezion di cheste pagjine, ma chest nol varà ef
 'undeleteviewlink'          => 'viôt',
 'undeleteinvert'            => 'Invertìs selezion',
 'undeletecomment'           => 'Reson:',
-'undeletedarticle'          => 'al à recuperât "[[$1]]"',
 'undelete-search-prefix'    => 'Mostre lis pagjinis che a scomencin cun:',
 'undelete-search-submit'    => 'Cîr',
 'undelete-show-file-submit' => 'Sì',
@@ -1376,8 +1363,6 @@ Sielç par plasê un altri non.',
 'talkexists'              => "'''La pagjine e je stade movude cun sucès, ma no si à podût movi la pagjine di discussion parcè che e esist za tal gnûf titul. Trasferìs il contignût a man par plasê.'''",
 'movedto'                 => 'Movude in',
 'movetalk'                => 'Môf ancje la pagjine di discussion, se pussibil.',
-'1movedto2'               => 'al à movût [[$1]] in [[$2]]',
-'1movedto2_redir'         => 'al à movût [[$1]] a [[$2]] par mieç di un re-indreçament',
 'movelogpage'             => 'Regjistri des pagjinis movudis',
 'movelogpagetext'         => 'Ca sot e je une liste des pagjinis movudis.',
 'movereason'              => 'Reson:',
@@ -1508,11 +1493,6 @@ Par plasê va su [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] 
 'skinname-nostalgia' => 'Nostalgjie',
 'skinname-modern'    => 'Moderne',
 
-# Patrol log
-'patrol-log-line' => 'al à segnât $1 di $2 come verificade $3',
-'patrol-log-auto' => '(in automatic)',
-'patrol-log-diff' => 'revision $1',
-
 # Browsing diffs
 'previousdiff' => '← Difarence precedente',
 'nextdiff'     => 'Prossime difarence →',
@@ -1522,7 +1502,7 @@ Par plasê va su [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] 
 'widthheightpage' => '$1 × $2, $3 {{PLURAL:$3|pagjine|pagjinis}}',
 'file-info'       => 'Dimensions: $1, gjenar MIME: $2',
 'file-info-size'  => '$1 × $2 pixel, dimensions: $3, gjenar MIME: $4',
-'file-nohires'    => '<small>No son disponibilis versions cun risoluzion plui alte.</small>',
+'file-nohires'    => 'No son disponibilis versions cun risoluzion plui alte.',
 'svg-long-desc'   => 'file tal formât SVG, dimensions nominâls $1 × $2 pixels, dimensions dal file: $3',
 'show-big-image'  => 'Version a risoluzion plene',
 
@@ -1718,5 +1698,11 @@ Se il file al è stât cambiât rispiet al so stât origjinâl, cualchi informaz
 # HTML forms
 'htmlform-submit'              => 'Invie',
 'htmlform-selectorother-other' => 'Altris',
+
+# New logging system
+'newuserlog-byemail' => 'peraule clâf mandade par pueste eletroniche',
+
+# API errors
+'api-error-unclassified' => 'Al è capitât un erôr no cognossût',
 
 );

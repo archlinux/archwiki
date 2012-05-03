@@ -1,11 +1,13 @@
-(function() {
+( function () {
 
-module( 'jquery.tablesorter.test.js' );
+var config = {
+	wgMonthNames: ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+	wgMonthNamesShort: ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+	wgDefaultDateFormat: 'dmy',
+	wgContentLanguage: 'en'
+};
 
-// setup hack
-mw.config.set('wgMonthNames', window.wgMonthNames = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']);
-mw.config.set('wgMonthNamesShort', window.wgMonthNamesShort = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
-mw.config.set('wgDefaultDateFormat', window.wgDefaultDateFormat = 'dmy');
+module( 'jquery.tablesorter', QUnit.newMwEnvironment( config ) );
 
 test( '-- Initial check', function() {
 	expect(1);
@@ -21,23 +23,24 @@ test( '-- Initial check', function() {
  * @return jQuery
  */
 var tableCreate = function( header, data ) {
-	var $table = $('<table class="sortable"><thead></thead><tbody></tbody></table>'),
-		$thead = $table.find('thead'),
-		$tbody = $table.find('tbody');
-	var $tr = $('<tr>');
-	$.each(header, function(i, str) {
-		var $th = $('<th>');
-		$th.text(str).appendTo($tr);
+	var $table = $( '<table class="sortable"><thead></thead><tbody></tbody></table>' ),
+		$thead = $table.find( 'thead' ),
+		$tbody = $table.find( 'tbody' ),
+		$tr = $( '<tr>' );
+
+	$.each( header, function( i, str ) {
+		var $th = $( '<th>' );
+		$th.text( str ).appendTo( $tr );
 	});
-	$tr.appendTo($thead);
+	$tr.appendTo( $thead );
 
 	for (var i = 0; i < data.length; i++) {
-		$tr = $('<tr>');
-		$.each(data[i], function(j, str) {
-			var $td = $('<td>');
-			$td.text(str).appendTo($tr);
+		$tr = $( '<tr>' );
+		$.each( data[i], function( j, str ) {
+			var $td = $( '<td>' );
+			$td.text( str ).appendTo( $tr );
 		});
-		$tr.appendTo($tbody);
+		$tr.appendTo( $tbody );
 	}
 	return $table;
 };
@@ -50,12 +53,13 @@ var tableCreate = function( header, data ) {
  */
 var tableExtract = function( $table ) {
 	var data = [];
-	$table.find('tbody').find('tr').each(function(i, tr) {
+
+	$table.find( 'tbody' ).find( 'tr' ).each( function( i, tr ) {
 		var row = [];
-		$(tr).find('td,th').each(function(i, td) {
-			row.push($(td).text());
+		$( tr ).find( 'td,th' ).each( function( i, td ) {
+			row.push( $( td ).text() );
 		});
-		data.push(row);
+		data.push( row );
 	});
 	return data;
 };
@@ -75,7 +79,6 @@ var tableTest = function( msg, header, data, expected, callback ) {
 		expect(1);
 
 		var $table = tableCreate( header, data );
-		//$('body').append($table);
 
 		// Give caller a chance to set up sorting and manipulate the table.
 		callback( $table );
@@ -93,18 +96,18 @@ var reversed = function(arr) {
 	return arr2;
 };
 
-// Sample data set: some planets!
-var header = ['Planet', 'Radius (km)'],
-	mercury = ['Mercury', '2439.7'],
-	venus = ['Venus', '6051.8'],
-	earth = ['Earth', '6371.0'],
-	mars = ['Mars', '3390.0'],
-	jupiter = ['Jupiter', '69911'],
-	saturn = ['Saturn', '58232'];
+// Sample data set using planets named and their radius
+var header  = [ 'Planet' , 'Radius (km)'],
+	mercury = [ 'Mercury', '2439.7' ],
+	venus   = [ 'Venus'  , '6051.8' ],
+	earth   = [ 'Earth'  , '6371.0' ],
+	mars    = [ 'Mars'   , '3390.0' ],
+	jupiter = [ 'Jupiter',  '69911' ],
+	saturn  = [ 'Saturn' ,  '58232' ];
 
 // Initial data set
-var planets = [mercury, venus, earth, mars, jupiter, saturn];
-var ascendingName = [earth, jupiter, mars, mercury, saturn, venus];
+var planets         = [mercury, venus, earth, mars, jupiter, saturn];
+var ascendingName   = [earth, jupiter, mars, mercury, saturn, venus];
 var ascendingRadius = [mercury, mars, venus, earth, saturn, jupiter];
 
 tableTest(
@@ -114,7 +117,7 @@ tableTest(
 	ascendingName,
 	function( $table ) {
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click();
+		$table.find( '.headerSort:eq(0)' ).click();
 	}
 );
 tableTest(
@@ -124,7 +127,7 @@ tableTest(
 	ascendingName,
 	function( $table ) {
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click();
+		$table.find( '.headerSort:eq(0)' ).click();
 	}
 );
 tableTest(
@@ -134,7 +137,7 @@ tableTest(
 	reversed(ascendingName),
 	function( $table ) {
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click().click();
+		$table.find( '.headerSort:eq(0)' ).click().click();
 	}
 );
 tableTest(
@@ -144,7 +147,7 @@ tableTest(
 	ascendingRadius,
 	function( $table ) {
 		$table.tablesorter();
-		$table.find('.headerSort:eq(1)').click();
+		$table.find( '.headerSort:eq(1)' ).click();
 	}
 );
 tableTest(
@@ -154,25 +157,23 @@ tableTest(
 	reversed(ascendingRadius),
 	function( $table ) {
 		$table.tablesorter();
-		$table.find('.headerSort:eq(1)').click().click();
+		$table.find( '.headerSort:eq(1)' ).click().click();
 	}
 );
 
 
 // Regression tests!
 tableTest(
-	'Bug 28775: German-style short numeric dates',
+	'Bug 28775: German-style (dmy) short numeric dates',
 	['Date'],
-	[
-		// German-style dates are day-month-year
+	[ // German-style dates are day-month-year
 		['11.11.2011'],
 		['01.11.2011'],
 		['02.10.2011'],
 		['03.08.2011'],
 		['09.11.2011']
 	],
-	[
-		// Sorted by ascending date
+	[ // Sorted by ascending date
 		['03.08.2011'],
 		['02.10.2011'],
 		['01.11.2011'],
@@ -180,25 +181,25 @@ tableTest(
 		['11.11.2011']
 	],
 	function( $table ) {
-		// @fixme reset it at end or change module to allow us to override it
-		mw.config.set('wgDefaultDateFormat', window.wgDefaultDateFormat = 'dmy');
+		mw.config.set( 'wgDefaultDateFormat', 'dmy' );
+		mw.config.set( 'wgContentLanguage', 'de' );
+
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click();
+		$table.find( '.headerSort:eq(0)' ).click();
 	}
 );
+
 tableTest(
-	'Bug 28775: American-style short numeric dates',
+	'Bug 28775: American-style (mdy) short numeric dates',
 	['Date'],
-	[
-		// American-style dates are month-day-year
+	[ // American-style dates are month-day-year
 		['11.11.2011'],
 		['01.11.2011'],
 		['02.10.2011'],
 		['03.08.2011'],
 		['09.11.2011']
 	],
-	[
-		// Sorted by ascending date
+	[ // Sorted by ascending date
 		['01.11.2011'],
 		['02.10.2011'],
 		['03.08.2011'],
@@ -206,10 +207,10 @@ tableTest(
 		['11.11.2011']
 	],
 	function( $table ) {
-		// @fixme reset it at end or change module to allow us to override it
-		mw.config.set('wgDefaultDateFormat', window.wgDefaultDateFormat = 'mdy');
+		mw.config.set( 'wgDefaultDateFormat', 'mdy' );
+
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click();
+		$table.find( '.headerSort:eq(0)' ).click();
 	}
 );
 
@@ -235,6 +236,7 @@ var ipv4Sorted = [
 	['204.204.132.158'],
 	['247.240.82.209']
 ];
+
 tableTest(
 	'Bug 17141: IPv4 address sorting',
 	['IP'],
@@ -242,7 +244,7 @@ tableTest(
 	ipv4Sorted,
 	function( $table ) {
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click();
+		$table.find( '.headerSort:eq(0)' ).click();
 	}
 );
 tableTest(
@@ -252,7 +254,7 @@ tableTest(
 	reversed(ipv4Sorted),
 	function( $table ) {
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click().click();
+		$table.find( '.headerSort:eq(0)' ).click().click();
 	}
 );
 
@@ -286,27 +288,36 @@ tableTest(
 	umlautWords,
 	umlautWordsSorted,
 	function( $table ) {
-		mw.config.set('tableSorterCollation', {'ä':'ae', 'ö' : 'oe', 'ß': 'ss', 'ü':'ue'});
+		mw.config.set( 'tableSorterCollation', {
+			'ä': 'ae',
+			'ö': 'oe',
+			'ß': 'ss',
+			'ü':'ue'
+		} );
+
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click();
-		mw.config.set('tableSorterCollation', {});
+		$table.find( '.headerSort:eq(0)' ).click();
 	}
 );
 
-var planetsRowspan  =[["Earth","6051.8"], jupiter, ["Mars","6051.8"], mercury, saturn, venus];
-var planetsRowspanII  =[jupiter, mercury, saturn, ['Venus', '6371.0'], venus, ['Venus', '3390.0']];
+var planetsRowspan = [["Earth","6051.8"], jupiter, ["Mars","6051.8"], mercury, saturn, venus];
+var planetsRowspanII = [jupiter, mercury, saturn, ['Venus', '6371.0'], venus, ['Venus', '3390.0']];
 
 tableTest(
-	'Basic planet table: Same value for multiple rows via rowspan',
+	'Basic planet table: same value for multiple rows via rowspan',
 	header,
 	planets,
 	planetsRowspan,
 	function( $table ) {
-		//Quick&Dirty mod
-		$table.find('tr:eq(3) td:eq(1), tr:eq(4) td:eq(1)').remove();
-		$table.find('tr:eq(2) td:eq(1)').attr('rowspan', '3');
+		// Modify the table to have a multiuple-row-spanning cell:
+		// - Remove 2nd cell of 4th row, and, 2nd cell or 5th row.
+		$table.find( 'tr:eq(3) td:eq(1), tr:eq(4) td:eq(1)' ).remove();
+		// - Set rowspan for 2nd cell of 3rd row to 3.
+		//   This covers the removed cell in the 4th and 5th row.
+		$table.find( 'tr:eq(2) td:eq(1)' ).prop( 'rowspan', '3' );
+
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click();
+		$table.find( '.headerSort:eq(0)' ).click();
 	}
 );
 tableTest(
@@ -315,11 +326,15 @@ tableTest(
 	planets,
 	planetsRowspanII,
 	function( $table ) {
-		//Quick&Dirty mod
-		$table.find('tr:eq(3) td:eq(0), tr:eq(4) td:eq(0)').remove();
-		$table.find('tr:eq(2) td:eq(0)').attr('rowspan', '3');
+		// Modify the table to have a multiuple-row-spanning cell:
+		// - Remove 1st cell of 4th row, and, 1st cell or 5th row.
+		$table.find( 'tr:eq(3) td:eq(0), tr:eq(4) td:eq(0)' ).remove();
+		// - Set rowspan for 1st cell of 3rd row to 3.
+		//   This covers the removed cell in the 4th and 5th row.
+		$table.find( 'tr:eq(2) td:eq(0)' ).prop( 'rowspan', '3' );
+
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click();
+		$table.find( '.headerSort:eq(0)' ).click();
 	}
 );
 
@@ -346,9 +361,10 @@ tableTest(
 	complexMDYDates,
 	complexMDYSorted,
 	function( $table ) {
-		mw.config.set('wgDefaultDateFormat', window.wgDefaultDateFormat = 'mdy');
+		mw.config.set( 'wgDefaultDateFormat', 'mdy' );
+
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click();
+		$table.find( '.headerSort:eq(0)' ).click();
 	}
 );
 
@@ -362,9 +378,9 @@ tableTest(
 	planets,
 	ascendingNameLegacy,
 	function( $table ) {
-		$table.find('tr:last').addClass('sortbottom');
+		$table.find( 'tr:last' ).addClass( 'sortbottom' );
 		$table.tablesorter();
-		$table.find('.headerSort:eq(0)').click();
+		$table.find( '.headerSort:eq(0)' ).click();
 	}
 );
 
@@ -470,6 +486,67 @@ test( 'data-sort-value attribute, when available, should override sorting positi
 		}
 	] );
 
+});
+
+var numbers = [
+	[ '12'    ],
+	[  '7'    ],
+	[ '13,000'],
+	[  '9'    ],
+	[ '14'    ],
+	[  '8.0'  ]
+];
+var numbersAsc = [
+	[  '7'    ],
+	[  '8.0'  ],
+	[  '9'    ],
+	[ '12'    ],
+	[ '14'    ],
+	[ '13,000']
+];
+
+tableTest( 'bug 8115: sort numbers with commas (ascending)',
+	['Numbers'], numbers, numbersAsc,
+	function( $table ) {
+		$table.tablesorter();
+		$table.find( '.headerSort:eq(0)' ).click();
+	}
+);
+
+tableTest( 'bug 8115: sort numbers with commas (descending)',
+	['Numbers'], numbers, reversed(numbersAsc),
+	function( $table ) {
+		$table.tablesorter();
+		$table.find( '.headerSort:eq(0)' ).click().click();
+	}
+);
+// TODO add numbers sorting tests for bug 8115 with a different language
+
+test( 'bug 32888 - Tables inside a tableheader cell', function() {
+	expect(2);
+
+	var $table;
+	$table = $(
+		'<table class="sortable" id="32888">' +
+		'<tr><th>header<table id="32888-2">'+
+			'<tr><th>1</th><th>2</th></tr>' +
+		'</table></th></tr>' +
+		'<tr><td>A</td></tr>' +
+		'<tr><td>B</td></tr>' +
+		'</table>'
+		);
+	$table.tablesorter();
+
+	equals(
+		$table.find('> thead:eq(0) > tr > th.headerSort').length,
+		1,
+		'Child tables inside a headercell should not interfere with sortable headers (bug 32888)'
+	);
+	equals(
+		$('#32888-2').find('th.headerSort').length,
+		0,
+		'The headers of child tables inside a headercell should not be sortable themselves (bug 32888)'
+	);
 });
 
 })();

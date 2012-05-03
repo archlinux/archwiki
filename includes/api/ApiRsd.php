@@ -25,10 +25,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	require_once( 'ApiBase.php' );
-}
-
 /**
  * API module for sending out RSD information
  * @ingroup API
@@ -71,7 +67,7 @@ class ApiRsd extends ApiBase {
 		return 'Export an RSD (Really Simple Discovery) schema';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=rsd'
 		);

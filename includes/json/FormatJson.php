@@ -11,11 +11,14 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 require_once dirname( __FILE__ ) . '/Services_JSON.php';
 
+/**
+ * JSON formatter wrapper class
+ */
 class FormatJson {
-	
+
 	/**
 	 * Returns the JSON representation of a value.
-	 * 
+	 *
 	 * @param $value Mixed: the value being encoded. Can be any type except a resource.
 	 * @param $isHtml Boolean
 	 *
@@ -23,7 +26,7 @@ class FormatJson {
 	 *        map to a parameter labeled "pretty-print output with indents and
 	 *        newlines" in Services_JSON::encode(), which has no string relation
 	 *        to HTML output.
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function encode( $value, $isHtml = false ) {
@@ -40,10 +43,10 @@ class FormatJson {
 
 	/**
 	 * Decodes a JSON string.
-	 * 
+	 *
 	 * @param $value String: the json string being decoded.
 	 * @param $assoc Boolean: when true, returned objects will be converted into associative arrays.
-	 * 
+	 *
 	 * @return Mixed: the value encoded in json in appropriate PHP type.
 	 * Values true, false and null (case-insensitive) are returned as true, false
 	 * and &null; respectively. &null; is returned if the json cannot be
@@ -51,15 +54,13 @@ class FormatJson {
 	 */
 	public static function decode( $value, $assoc = false ) {
 		if ( !function_exists( 'json_decode' ) ) {
-			if( $assoc )
-				$json = new Services_JSON( SERVICES_JSON_LOOSE_TYPE );
-			else
-				$json = new Services_JSON();
+			$json = $assoc ? new Services_JSON( SERVICES_JSON_LOOSE_TYPE ) :
+				new Services_JSON();
 			$jsonDec = $json->decode( $value );
 			return $jsonDec;
 		} else {
 			return json_decode( $value, $assoc );
 		}
 	}
-	
+
 }

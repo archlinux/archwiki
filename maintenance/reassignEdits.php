@@ -139,8 +139,8 @@ class ReassignEdits extends Maintenance {
 	 * i.e. user => id, user_text => text
 	 *
 	 * @param $user User for the spec
-	 * @param $idfield Field name containing the identifier
-	 * @param $utfield Field name containing the user text
+	 * @param $idfield string Field name containing the identifier
+	 * @param $utfield string Field name containing the user text
 	 * @return array
 	 */
 	private function userSpecification( &$user, $idfield, $utfield ) {
@@ -160,6 +160,9 @@ class ReassignEdits extends Maintenance {
 			$user->setName( $username );
 		} else {
 			$user = User::newFromName( $username );
+			if ( !$user ) {
+				$this->error( "Invalid username", true );
+			}
 		}
 		$user->load();
 		return $user;

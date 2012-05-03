@@ -117,42 +117,19 @@ class Xml {
 	 * @param $element_name String: value of the "name" attribute of the select tag
 	 * @param $label String: optional label to add to the field
 	 * @return string
+	 * @deprecated since 1.19
 	 */
 	public static function namespaceSelector( $selected = '', $all = null, $element_name = 'namespace', $label = null ) {
-		global $wgContLang;
-		$namespaces = $wgContLang->getFormattedNamespaces();
-		$options = array();
-
-		// Godawful hack... we'll be frequently passed selected namespaces
-		// as strings since PHP is such a shithole.
-		// But we also don't want blanks and nulls and "all"s matching 0,
-		// so let's convert *just* string ints to clean ints.
-		if( preg_match( '/^\d+$/', $selected ) ) {
-			$selected = intval( $selected );
-		}
-
-		if( !is_null( $all ) )
-			$namespaces = array( $all => wfMsg( 'namespacesall' ) ) + $namespaces;
-		foreach( $namespaces as $index => $name ) {
-			if( $index < NS_MAIN ) {
-				continue;
-			}
-			if( $index === 0 ) {
-				$name = wfMsg( 'blanknamespace' );
-			}
-			$options[] = self::option( $name, $index, $index === $selected );
-		}
-
-		$ret = Xml::openElement( 'select', array( 'id' => 'namespace', 'name' => $element_name,
-			'class' => 'namespaceselector' ) )
-			. "\n"
-			. implode( "\n", $options )
-			. "\n"
-			. Xml::closeElement( 'select' );
-		if ( !is_null( $label ) ) {
-			$ret = Xml::label( $label, $element_name ) . '&#160;' . $ret;
-		}
-		return $ret;
+		wfDeprecated( __METHOD__, '1.19' );
+		return Html::namespaceSelector( array(
+			'selected' => $selected,
+			'all'      => $all,
+			'label'    => $label,
+		), array(
+			'name'  => $element_name,
+			'id'    => 'namespace',
+			'class' => 'namespaceselector',
+		) );
 	}
 
 	/**
@@ -208,21 +185,39 @@ class Xml {
 	}
 
 	/**
-	 *
-	 * @param $selected string The language code of the selected language
-	 * @param $customisedOnly bool If true only languages which have some content are listed
-	 * @return array of label and select
+	 * Construct a language selector appropriate for use in a form or preferences
+	 * 
+	 * @param string $selected The language code of the selected language
+	 * @param boolean $customisedOnly If true only languages which have some content are listed
+	 * @param string $language The ISO code of the language to display the select list in (optional)
+	 * @return array containing 2 items: label HTML and select list HTML
 	 */
-	public static function languageSelector( $selected, $customisedOnly = true ) {
+	public static function languageSelector( $selected, $customisedOnly = true, $language = null ) {
 		global $wgLanguageCode;
-		/**
-		 * Make sure the site language is in the list; a custom language code
-		 * might not have a defined name...
-		 */
-		$languages = Language::getLanguageNames( $customisedOnly );
+
+		// If a specific language was requested and CLDR is installed, use it
+		if ( $language && is_callable( array( 'LanguageNames', 'getNames' ) ) ) {
+			if ( $customisedOnly ) {
+				$listType = LanguageNames::LIST_MW_SUPPORTED; // Only pull names that have localisation in MediaWiki
+			} else {
+				$listType = LanguageNames::LIST_MW; // Pull all languages that are in Names.php
+			}
+			// Retrieve the list of languages in the requested language (via CLDR)
+			$languages = LanguageNames::getNames(
+				$language, // Code of the requested language
+				LanguageNames::FALLBACK_NORMAL, // Use fallback chain
+				$listType
+			);
+		} else {
+			$languages = Language::getLanguageNames( $customisedOnly );
+		}
+		
+		// Make sure the site language is in the list; a custom language code might not have a
+		// defined name...
 		if( !array_key_exists( $wgLanguageCode, $languages ) ) {
 			$languages[$wgLanguageCode] = $wgLanguageCode;
 		}
+		
 		ksort( $languages );
 
 		/**
@@ -334,10 +329,10 @@ class Xml {
 
 	/**
 	 * Convenience function to build an HTML radio button
-	 * @param $name value of the name attribute
-	 * @param $value value of the value attribute
-	 * @param $checked Whether the checkbox is checked or not
-	 * @param $attribs other attributes
+	 * @param $name String value of the name attribute
+	 * @param $value String value of the value attribute
+	 * @param $checked Bool Whether the checkbox is checked or not
+	 * @param $attribs Array other attributes
 	 * @return string HTML
 	 */
 	public static function radio( $name, $value, $checked = false, $attribs = array() ) {
@@ -360,7 +355,7 @@ class Xml {
 	public static function label( $label, $id, $attribs = array() ) {
 		$a = array( 'for' => $id );
 
-		# FIXME avoid copy pasting below: 
+		# FIXME avoid copy pasting below:
 		if( isset( $attribs['class'] ) ){
 				$a['class'] = $attribs['class'];
 		}
@@ -376,8 +371,8 @@ class Xml {
 	 * @param $label String text of the label
 	 * @param $name String value of the name attribute
 	 * @param $id String id of the input
-	 * @param $size int value of the size attribute
-	 * @param $value value of the value attribute
+	 * @param $size Int|Bool value of the size attribute
+	 * @param $value String|Bool value of the value attribute
 	 * @param $attribs array other attributes
 	 * @return string HTML
 	 */
@@ -389,11 +384,11 @@ class Xml {
 	/**
 	 * Same as Xml::inputLabel() but return input and label in an array
 	 *
-	 * @param $label
-	 * @param $name
-	 * @param $id
-	 * @param $size
-	 * @param $value
+	 * @param $label String
+	 * @param $name String
+	 * @param $id String
+	 * @param $size Int|Bool
+	 * @param $value String|Bool
 	 * @param $attribs array
 	 *
 	 * @return array
@@ -466,7 +461,7 @@ class Xml {
 		if( $selected ) {
 			$attribs['selected'] = 'selected';
 		}
-		return self::element( 'option', $attribs, $text );
+		return Html::element( 'option', $attribs, $text );
 	}
 
 	/**
@@ -506,19 +501,24 @@ class Xml {
 					$optgroup = false;
 				}
 			}
+
 			if( $optgroup ) $options .= self::closeElement('optgroup');
 
 		$attribs = array();
+
 		if( $name ) {
 			$attribs['id'] = $name;
 			$attribs['name'] = $name;
 		}
+
 		if( $class ) {
 			$attribs['class'] = $class;
 		}
+
 		if( $tabindex ) {
 			$attribs['tabindex'] = $tabindex;
 		}
+
 		return Xml::openElement( 'select', $attribs )
 			. "\n"
 			. $options
@@ -537,9 +537,11 @@ class Xml {
 	 */
 	public static function fieldset( $legend = false, $content = false, $attribs = array() ) {
 		$s = Xml::openElement( 'fieldset', $attribs ) . "\n";
+
 		if ( $legend ) {
 			$s .= Xml::element( 'legend', null, $legend ) . "\n";
 		}
+
 		if ( $content !== false ) {
 			$s .= $content . "\n";
 			$s .= Xml::closeElement( 'fieldset' ) . "\n";
@@ -600,6 +602,7 @@ class Xml {
 			"\xe2\x80\x8c" => "\\u200c", // ZERO WIDTH NON-JOINER
 			"\xe2\x80\x8d" => "\\u200d", // ZERO WIDTH JOINER
 		);
+
 		return strtr( $string, $pairs );
 	}
 
@@ -627,7 +630,7 @@ class Xml {
 			$s = '[';
 			foreach ( $value as $elt ) {
 				if ( $s != '[' ) {
-					$s .= ', ';
+					$s .= ',';
 				}
 				$s .= self::encodeJsVar( $elt );
 			}
@@ -639,9 +642,10 @@ class Xml {
 			$s = '{';
 			foreach ( (array)$value as $name => $elt ) {
 				if ( $s != '{' ) {
-					$s .= ', ';
+					$s .= ',';
 				}
-				$s .= '"' . self::escapeJsString( $name ) . '": ' .
+
+				$s .= '"' . self::escapeJsString( $name ) . '":' .
 					self::encodeJsVar( $elt );
 			}
 			$s .= '}';
@@ -666,18 +670,21 @@ class Xml {
 	public static function encodeJsCall( $name, $args ) {
 		$s = "$name(";
 		$first = true;
+
 		foreach ( $args as $arg ) {
 			if ( $first ) {
 				$first = false;
 			} else {
 				$s .= ', ';
 			}
+
 			$s .= Xml::encodeJsVar( $arg );
 		}
+
 		$s .= ");\n";
+
 		return $s;
 	}
-
 
 	/**
 	 * Check if a string is well-formed XML.
@@ -702,7 +709,9 @@ class Xml {
 			xml_parser_free( $parser );
 			return false;
 		}
+
 		xml_parser_free( $parser );
+
 		return true;
 	}
 
@@ -720,6 +729,7 @@ class Xml {
 			'<html>' .
 			$text .
 			'</html>';
+
 		return Xml::isWellFormed( $html );
 	}
 
@@ -765,7 +775,6 @@ class Xml {
 
 		$form .= "</tbody></table>";
 
-
 		return $form;
 	}
 
@@ -778,36 +787,59 @@ class Xml {
 	 */
 	public static function buildTable( $rows, $attribs = array(), $headers = null ) {
 		$s = Xml::openElement( 'table', $attribs );
+
 		if ( is_array( $headers ) ) {
+			$s .= Xml::openElement( 'thead', $attribs );
+
 			foreach( $headers as $id => $header ) {
 				$attribs = array();
-				if ( is_string( $id ) ) $attribs['id'] = $id;
+
+				if ( is_string( $id ) ) {
+					$attribs['id'] = $id;
+				}
+
 				$s .= Xml::element( 'th', $attribs, $header );
 			}
+			$s .= Xml::closeElement( 'thead' );
 		}
+
 		foreach( $rows as $id => $row ) {
 			$attribs = array();
-			if ( is_string( $id ) ) $attribs['id'] = $id;
+
+			if ( is_string( $id ) ) {
+				$attribs['id'] = $id;
+			}
+
 			$s .= Xml::buildTableRow( $attribs, $row );
 		}
+
 		$s .= Xml::closeElement( 'table' );
+
 		return $s;
 	}
 
 	/**
 	 * Build a row for a table
-	 * @param $attribs An array of attributes to apply to the tr tag
-	 * @param $cells An array of strings to put in <td>
+	 * @param $attribs array An array of attributes to apply to the tr tag
+	 * @param $cells array An array of strings to put in <td>
 	 * @return string
 	 */
 	public static function buildTableRow( $attribs, $cells ) {
 		$s = Xml::openElement( 'tr', $attribs );
+
 		foreach( $cells as $id => $cell ) {
+
 			$attribs = array();
-			if ( is_string( $id ) ) $attribs['id'] = $id;
+
+			if ( is_string( $id ) ) {
+				$attribs['id'] = $id;
+			}
+
 			$s .= Xml::element( 'td', $attribs, $cell );
 		}
+
 		$s .= Xml::closeElement( 'tr' );
+
 		return $s;
 	}
 }
@@ -821,9 +853,11 @@ class XmlSelect {
 		if ( $name ) {
 			$this->setAttribute( 'name', $name );
 		}
+
 		if ( $id ) {
 			$this->setAttribute( 'id', $id );
 		}
+
 		if ( $default !== false ) {
 			$this->default = $default;
 		}
@@ -849,7 +883,7 @@ class XmlSelect {
 	 * @return array|null
 	 */
 	public function getAttribute( $name ) {
-		if ( isset($this->attributes[$name]) ) {
+		if ( isset( $this->attributes[$name] ) ) {
 			return $this->attributes[$name];
 		} else {
 			return null;
@@ -863,6 +897,7 @@ class XmlSelect {
 	public function addOption( $name, $value = false ) {
 		// Stab stab stab
 		$value = ($value !== false) ? $value : $name;
+
 		$this->options[] = array( $name => $value );
 	}
 
@@ -888,10 +923,11 @@ class XmlSelect {
 	 */
 	static function formatOptions( $options, $default = false ) {
 		$data = '';
+
 		foreach( $options as $label => $value ) {
 			if ( is_array( $value ) ) {
 				$contents = self::formatOptions( $value, $default );
-				$data .= Xml::tags( 'optgroup', array( 'label' => $label ), $contents ) . "\n";
+				$data .= Html::rawElement( 'optgroup', array( 'label' => $label ), $contents ) . "\n";
 			} else {
 				$data .= Xml::option( $label, $value, $value === $default ) . "\n";
 			}
@@ -905,12 +941,13 @@ class XmlSelect {
 	 */
 	public function getHTML() {
 		$contents = '';
+
 		foreach ( $this->options as $options ) {
 			$contents .= self::formatOptions( $options, $this->default );
 		}
-		return Xml::tags( 'select', $this->attributes, rtrim( $contents ) );
-	}
 
+		return Html::rawElement( 'select', $this->attributes, rtrim( $contents ) );
+	}
 }
 
 /**

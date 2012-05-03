@@ -33,8 +33,7 @@ class RandomPage extends SpecialPage {
 	protected $extra = array(); // Extra SQL statements
 
 	public function __construct( $name = 'Randompage' ){
-		global $wgContentNamespaces;
-		$this->namespaces = $wgContentNamespaces;
+		$this->namespaces = MWNamespace::getContentNamespaces();
 		parent::__construct( $name );
 	}
 
@@ -55,9 +54,9 @@ class RandomPage extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		global $wgOut, $wgContLang, $wgRequest;
+		global $wgContLang;
 
-		if ($par) {
+		if ( $par ) {
 			$this->setNamespace( $wgContLang->getNsIndex( $par ) );
 		}
 
@@ -65,15 +64,15 @@ class RandomPage extends SpecialPage {
 
 		if( is_null( $title ) ) {
 			$this->setHeaders();
-			$wgOut->addWikiMsg( strtolower( $this->mName ) . '-nopages',
+			$this->getOutput()->addWikiMsg( strtolower( $this->getName() ) . '-nopages',
 				$this->getNsList(), count( $this->namespaces ) );
 			return;
 		}
 
 		$redirectParam = $this->isRedirect() ? array( 'redirect' => 'no' ) : array();
-		$query = array_merge( $wgRequest->getValues(), $redirectParam );
+		$query = array_merge( $this->getRequest()->getValues(), $redirectParam );
 		unset( $query['title'] );
-		$wgOut->redirect( $title->getFullUrl( $query ) );
+		$this->getOutput()->redirect( $title->getFullUrl( $query ) );
 	}
 
 	/**

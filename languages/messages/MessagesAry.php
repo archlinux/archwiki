@@ -387,7 +387,7 @@ Ila ma kanṫċ, imken ikon ċi bog fe l-program.
 ymkn ikon ċi waḫd aĥor ḫdfo.',
 'badtitle'             => 'aanwan mamzyanch',
 'badtitletext'         => 'L-Ĝonwan li tlebṫi ġalet, ĥawi, ola waqila hada ĝonwan fe bezzaf de l-loġaṫ ola fe bezzaf de l-maċariĝ. Imken ikon fih ċi ḫrof li ma imken lekċ ṫesṫeĝmelhom fe l-ĝanawin.',
-'perfcached'           => 'l-bayanaṫ ṫ-ṫalia kayna f-lcache o-maymknċ ṫ-ḫddṫha.',
+'perfcached'           => 'l-bayanaṫ ṫ-ṫalia kayna f-lcache o-maymknċ ṫ-ḫddṫha. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
 'perfcachedts'         => 'l-bayanaṫ ṫ-ṫalia kayna f-lcache, o-ṫḫddṫaṫ aĥir mrra f-$1.',
 'querypage-no-updates' => 'ṫḫdiṫad dial had ṣfḫa ma ĥḍḍamaċ daba.
 l-bayanaṫ lli kayna hna daba maĥadiċ ṫṫḫḍḍṫ.',
@@ -395,7 +395,6 @@ l-bayanaṫ lli kayna hna daba maĥadiċ ṫṫḫḍḍṫ.',
 Function: $1<br />
 Query: $2',
 'viewsource'           => 'Ċof l-ĝin',
-'viewsourcefor'        => 'l  $1',
 'actionthrottled'      => 'had l-feĝl ṫṫḫbs',
 'actionthrottledtext'  => 'baċ nṫfadaw ṣ-ṣpam, ĝadad l-mṛṛaṫ lli ymkn ddir fiha had l-feĝl f-modda qṣiṛa rah mḫdod, o-nta rak fṫṫi had l-ĝadar.
 ĝawd jṛṛḅ mn beĝd ċwiya dial dqayq.',
@@ -526,6 +525,7 @@ ma ṫḍreb ḫsab l-had l-mesaj ila ṫṣĝyb had l-ḫisab ĝen tariq l-ĥat
 
 # E-mail sending
 'php-mail-error-unknown' => "ĥata' ma mĝrof-ċ fl-mail() function taĝ l-PHP.",
+'user-mail-no-addy'      => 'ḫawlṫi ṫsift email bla ĝonwan l-email.',
 
 # Change password dialog
 'resetpass'                 => 'tbdl lmot de passe',
@@ -575,6 +575,16 @@ talab, wlla ila ṫfkkarṫi klmṫ s-srr l-qdima, o-ma bqiti-ċ baġi ṫbddalh
 'passwordreset-emailelement'   => "smiṫ l-mosṫĥdim: $1
 klmṫ s-srr l-mo'qaṫa: $2",
 'passwordreset-emailsent'      => 'ṫsift email liṫ-ṫdkir.',
+
+# Special:ChangeEmail
+'changeemail'          => 'bddel ĝonwan l-email',
+'changeemail-header'   => 'bddel ĝonwan l-email dl-ḫisab',
+'changeemail-no-info'  => 'ĥaṣṣ tkon daĥol baĥ tqdr twṣl l-had ṣfḫa niċan.',
+'changeemail-oldemail' => 'ĝonwan l-email l-ḫali:',
+'changeemail-newemail' => 'ĝonwan dial l-email jdid:',
+'changeemail-none'     => '(walo)',
+'changeemail-submit'   => 'bddel l-email',
+'changeemail-cancel'   => 'lġi',
 
 # Edit page toolbar
 'bold_sample'     => 'Kṫaba ġliḍa',
@@ -646,9 +656,6 @@ ymkn lik ṫṫaṣl b-$1 wlla ċi [[{{MediaWiki:Grouppage-sysop}}|idari]] aĥor
 ĝonwan l-IP ṫaĝk daba howa $3, o-lmoĝrrif d-lblok howa #$5.
 mli ṫkṫb ċi talab ĥaṣṣk ṫĝti fih gaĝ had ṫ-ṫafaṣil lli l-foq.",
 'blockednoreason'                  => 'ta sabab mamaatich',
-'blockedoriginalsource'            => "l-mṣḍṛ dial '''$1''' mbyyn l-ṫḫṫ:",
-'blockededitsource'                => "n-naṣṣ dial '''ṫĝdilaṫk''' f-'''$1''' mbyyn l-ṫḫṫ:",
-'whitelistedittitle'               => 'khassk tdkhl bach thrr',
 'whitelistedittext'                => 'khassk  $1 bach taadl sfahi',
 'confirmedittext'                  => "ĥaṣṣk ṫ'kkd l-ĝonwan dl-email dialk qbl ma ṫĝddl ṣ-ṣfaḫi.
 dĥĥel o-'kked l-ĝonwan dl-email dialk fṫ-[[Special:Preferences|ṫfḍilaṫ]] dialk.",
@@ -853,8 +860,6 @@ raha kayna bĝda.',
 'revdelete-unsuppress'        => 'ḫyyed ḍ-ḍawabit mn l-moṛajaĝaṫ l-mosṫrjaĝa',
 'revdelete-log'               => 'sabab:',
 'revdelete-submit'            => 'tḅḅeq ĝla {{PLURAL:$1|l-ṃoṛajaĝa|l-ṃoṛajaĝaṫ}} l-mĥṫaṛa',
-'revdelete-logentry'          => 'bddl l-vizibiliṫi dl-ṃoṛajaĝa l-"[[$1]]"',
-'logdelete-logentry'          => 'bddl l-vizibiliṫi dl-ḫadaṫ l-"[[$1]]"',
 'revdelete-success'           => "'''ṫ-ṫḫdiṫ d-vizibiliṫi dl-morajaĝaṫ njḫ.'''",
 'revdelete-failure'           => "'''ṫ-ṫḫdiṫ d-vizibiliṫi dl-morajaĝaṫ ma njḫ-ċ:'''
 $1",
@@ -866,15 +871,6 @@ $1",
 'revdel-restore-visible'      => "morajaat mar'iya",
 'pagehist'                    => 'Ṫariĥ ṣ-ṣefḫa',
 'deletedhist'                 => 'tarikh lmhdof',
-'revdelete-content'           => 'L-Meḍmon',
-'revdelete-summary'           => 'molkhass taadil',
-'revdelete-uname'             => 'smiṫ l-mosṫĥdim',
-'revdelete-restricted'        => 'tḅḅq ḍ-ḍawaḅit ll-idariyyin',
-'revdelete-unrestricted'      => 'ḫyyd ḍ-ḍawaḅit ll-idariyyin',
-'revdelete-hid'               => 'ĥḅḅa $1',
-'revdelete-unhid'             => 'byyn $1',
-'revdelete-log-message'       => '$1 l-$2 {{PLURAL:$2|l-morajaĝa|dl-morajaĝaṫ}}',
-'logdelete-log-message'       => '$1 l-$2 {{PLURAL:$2|l-ḫadaṫ|dl-ḫdaṫ}}',
 'revdelete-no-change'         => "'''ṫḫdir:''' l-ĝonṣor l-m'rreĥ $2, $1 fih bĝda l-parametraṫ dl-vizibiliti lli mtloba.",
 'revdelete-reason-dropdown'   => '*asbab l-ḫdf l-ĝamma
 ** ĥrq ḫoqoq n-nacṛ
@@ -1016,7 +1012,7 @@ Laḫed ana imken ikono l-indexaṫ dial {{SITENAME}} qdam o ma bqaoċ ṣalḫi
 'prefs-rc'                      => 'Ṫ-Ṫeĝdilaṫ l-leĥĥra',
 'prefs-watchlist'               => "qa'imaṫ l-ṃoṛaqaba",
 'prefs-watchlist-days'          => 'adad kiyam alaard f qaimat lmoraqaba:',
-'prefs-watchlist-days-max'      => 'Maximmum 7 yam',
+'prefs-watchlist-days-max'      => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'         => "maksimom ĝadad ṫ-ṫġyiraṫ lli ṫṫbyyen f-qa'imaṫ l-ṃoṛaqaba l-mowssaĝa:",
 'prefs-watchlist-edits-max'     => 'maximmum:1000',
 'prefs-watchlist-token'         => 'miftah qaimat lmoraqaba',
@@ -1193,7 +1189,6 @@ Laḫed ana imken ikono l-indexaṫ dial {{SITENAME}} qdam o ma bqaoċ ṣalḫi
 'right-autopatrol'            => 'alm taadilat lmostakhdim morajaa tilqaiya',
 'right-patrolmarks'           => 'chof alamat lmorajaa f ahdat tghyirat',
 'right-unwatchedpages'        => 'chof sfahi li mamraqbinch',
-'right-trackback'             => 'dir trackback',
 'right-mergehistory'          => 'dmj tarikh sfahi',
 'right-userrights'            => 'taadil kol  salahiyat lmostkhdimin',
 'right-userrights-interwiki'  => 'taadil salahiyat lmostkhdim lmostkhdimin f lwikiyat lkhrin',
@@ -1237,7 +1232,6 @@ Laḫed ana imken ikono l-indexaṫ dial {{SITENAME}} qdam o ma bqaoċ ṣalḫi
 'action-patrol'               => 'alm ala taadilat lkhrin kamorajaa',
 'action-autopatrol'           => 'alm taadil dualk kamorajaa',
 'action-unwatchedpages'       => 'chof lista dyal sfahi li mamraqbach',
-'action-trackback'            => 'dir trackback',
 'action-mergehistory'         => 'dmj tarikh had sfha',
 'action-userrights'           => 'taadil kol  salahiyat lmostkhdimin',
 'action-userrights-interwiki' => 'taadil salahiyat lmostkhdimin f lwikiyat lkhrin',
@@ -1270,7 +1264,6 @@ Laḫed ana imken ikono l-indexaṫ dial {{SITENAME}} qdam o ma bqaoċ ṣalḫi
 'minoreditletter'                   => 'ṣ',
 'newpageletter'                     => 'J',
 'boteditletter'                     => 'b',
-'sectionlink'                       => '→',
 'number_of_watching_users_pageview' => '[$1 katchof  {{PLURAL:$1|mostkhdim|mostkhdimin}}]',
 'rc_categories'                     => 'limiti tsnifat (frqha b  "|")',
 'rc_categories_any'                 => 'ay wahd',
@@ -1284,7 +1277,6 @@ Laḫed ana imken ikono l-indexaṫ dial {{SITENAME}} qdam o ma bqaoċ ṣalḫi
 'recentchangeslinked-feed'     => 'L-mṫidad dyal ṣ-ṣefḫaṫ l-li mlaqyin',
 'recentchangeslinked-toolbox'  => 'L-mṫidad dyal ṣ-ṣefḫaṫ l-li mlaqyin',
 'recentchangeslinked-title'    => 'Ṫ-Ṫeġyiraṫ li mlaqyin mĝa "$1"',
-'recentchangeslinked-backlink' => '← $1',
 'recentchangeslinked-noresult' => 'ta tghyir f sfahi mrtabta f lmodda li drtiha',
 'recentchangeslinked-summary'  => "Hadi lista dial 'ṫ-ṫeġyiraṫ li ṫdaro mo'aĥarane le 'ṣ-ṣefḫaṫ li mlaqyin mĝa 'ṣ-ṣefḫa l-meĝniya (ola le 'aĝda' dial ċi ṣefa mĝayana). 'Ṣ-Ṣefḫaṫ li [[Special:Watchlist|mṫebeĝ]] mekṫobine be ḫrof ġlaḍ.",
 'recentchangeslinked-page'     => 'Smiyṫ ṣ-ṣefḫa',
@@ -1442,15 +1434,13 @@ $1',
 'shared-repo'               => 'depot mochtarak',
 
 # File reversion
-'filerevert'          => 'rjjea $1',
-'filerevert-backlink' => '← $1',
-'filerevert-legend'   => 'rjjea lfichier',
-'filerevert-comment'  => 'S-Sbab:',
-'filerevert-submit'   => 'Rejjeĝ',
+'filerevert'         => 'rjjea $1',
+'filerevert-legend'  => 'rjjea lfichier',
+'filerevert-comment' => 'S-Sbab:',
+'filerevert-submit'  => 'Rejjeĝ',
 
 # File deletion
 'filedelete'                  => 'suprimi $1',
-'filedelete-backlink'         => '← $1',
 'filedelete-legend'           => 'quprimi kolchi',
 'filedelete-comment'          => 'S-Sbab:',
 'filedelete-submit'           => 'Suprimi',
@@ -1629,12 +1619,8 @@ daba ka ṫḫwwal l-[[$2]].',
 'activeusers-noresult'   => 'ta mostakhdim matlgach.',
 
 # Special:Log/newusers
-'newuserlogpage'              => 'Ṫariĥ dyal l-ḫsabaṫ j-jdad',
-'newuserlogpagetext'          => "hada sijill d-inċa'aṫ l-moṣṫĥdimin.",
-'newuserlog-byemail'          => "lmot de passe raha tsiftat f l'email",
-'newuserlog-create-entry'     => 'Ḫsab jdid',
-'newuserlog-create2-entry'    => 'ĥṫareĝ ḫsab jdid $1',
-'newuserlog-autocreate-entry' => 'lcont tnchad automatikmen',
+'newuserlogpage'     => 'Ṫariĥ dyal l-ḫsabaṫ j-jdad',
+'newuserlogpagetext' => "hada sijill d-inċa'aṫ l-moṣṫĥdimin.",
 
 # Special:ListGroupRights
 'listgrouprights'                  => 'salahiyat mjmoat lmostkhdimin',
@@ -1729,7 +1715,6 @@ L-Kṫaba dyal had ṣ-ṣefḫa ġaṫban '''ġliḍa''' fe [[Special:RecentCha
 'excontent'              => 'lmohtawa kan : "$1"',
 'exblank'                => 'sfha kant khawya',
 'delete-confirm'         => 'suprimi "$1"',
-'delete-backlink'        => '← $1',
 'delete-legend'          => 'Suprimi',
 'confirmdeletetext'      => 'Ĝendak rah ġadi ṫemḫi ċi ṣefḫa ola fiċyé, o ḫṫa lé-vérsyon li fe ṫ-ṫariĥ.
 Ĝafak ekked belli hadċi howa li baġi ṫdir, belli nṫa fahem l-ahammiya dyalo, o belli kaṫdir hadċi be ṫ-ṫowfiq dyal [[{{MediaWiki:Policy-url}}|l-qawaĝid d-daĥiliya]].',
@@ -1737,8 +1722,6 @@ L-Kṫaba dyal had ṣ-ṣefḫa ġaṫban '''ġliḍa''' fe [[Special:RecentCha
 'actionfailed'           => 'Ma ṣeḍqaṫċ',
 'deletedtext'            => '« $1 » ṫemḫa.
 Ċof $2 ila bġiṫi ċi lista dyal kolċi li ṫemḫa aĥiran.',
-'deletedarticle'         => 'memḫi "[[$1]]"',
-'suppressedarticle'      => 'mḫa "[[$1]]"',
 'dellogpage'             => 'Ṫ-Ṫariĥ dyal ṣ-ṣefḫaṫ li ṫṫemḫaw',
 'dellogpagetext'         => 'Ha hiya l-lista dyal dakċi li ĝad ṫṫemḫa.',
 'deletionlog'            => 'Ṫ-Ṫariĥ dyal ṣ-ṣefḫaṫ li ṫṫemḫaw',
@@ -1761,7 +1744,6 @@ L-Kṫaba dyal had ṣ-ṣefḫa ġaṫban '''ġliḍa''' fe [[Special:RecentCha
 'modifiedarticleprotection'   => 'beddel l-mosṫawa de l-ḫimaya dyal « [[$1]] »',
 'unprotectedarticle'          => 'ḫma "[[$1]]"',
 'prot_1movedto2'              => '[[$1]] ṫnqlaṫ l-[[$2]]',
-'protect-backlink'            => '← $1',
 'protect-legend'              => "'kked l-ḫimaya",
 'protectcomment'              => 'S-Sbab:',
 'protectexpiry'               => 'ytsala:',
@@ -1818,7 +1800,6 @@ Imken lek ṫbeddel l-mosṫawa de l-ḫimaya dyal had ṣ-ṣefḫa bla ma i\'e
 'undeletereset'             => 'aawd regli',
 'undeleteinvert'            => 'Qleb dakċi li ĝzelṫi',
 'undeletecomment'           => 'sabab:',
-'undeletedarticle'          => 'sṫerjeĝ "[[$1]]"',
 'undeletedrevisions'        => '{{PLURAL:$1|vérsyon weḫda rejĝaṫ ki kaneṫ|$1 de lé-vérsyon rejĝo ki kano}}',
 'undeletedrevisions-files'  => 'ṫreddaṫ {{PLURAL:$1|1 l-ṃoṛajaĝa|$1 dl-ṃoṛajaĝaṫ}} o-{{PLURAL:$2|1 l-milef|$2 dl-milffaṫ}}',
 'undeletedfiles'            => 'ṫredd {{PLURAL:$1|1 l-milef|$1 dl-melffaṫ}}',
@@ -1861,7 +1842,6 @@ Imken lek ṫbeddel l-mosṫawa de l-ḫimaya dyal had ṣ-ṣefḫa bla ma i\'e
 'whatlinkshere'            => 'Ṣefḫaṫ mlaqyin',
 'whatlinkshere-title'      => 'Ṣ-Ṣefḫaṫ li mlaqyin mĝa "$1"',
 'whatlinkshere-page'       => 'ṣfḫa:',
-'whatlinkshere-backlink'   => '← $1',
 'linkshere'                => "Had ṣ-ṣefḫaṫ kayddiw le '''[[:$1]]''':",
 'nolinkshere'              => "ḫṫa ċi ṣfḫa ma ka-twṣṣel l-'''[[:$1]]'''.",
 'nolinkshere-ns'           => "ḫṫṫĝ ṣfḫa ma ka-twṣṣal l-'''[[:$1]]''' f-nnitaq lli ĥṫariṫi",
@@ -2009,9 +1989,6 @@ Imken hadċi y'eddi ṫeġyiraṫ hammin ila kaneṫ ċi ṣefḫa kayqrawha n-n
 'movepage-page-exists'        => 'Ṣ-Ṣefḫa $1 fayeṫ kayna o ma ymken lhaċ ṫṫemḫa otomaṫikiyan.',
 'movepage-page-moved'         => 'Ṣ-Ṣefḫa $1 wellaṫ smiyyṫha $2',
 'movepage-page-unmoved'       => 'Ṣ-Ṣefḫa $1 ma qeḍraṫċ ṫwelli $2.',
-'1movedto2'                   => 'neqqel [[$1]] ḫṫal [[$2]]',
-'1movedto2_redir'             => 'neqqel [[$1]] le [[$2]] foq ṫ-ṫeḫwila dyalṫha',
-'move-redirect-suppressed'    => 'Ṫ-Ṫeḫwil ṫṫemḫa',
 'movelogpage'                 => 'Ṫariĥ n-naql',
 'movelogpagetext'             => 'Ha hiya l-lista dyal ṣ-ṣefḫaṫ kamlin li ṫneqqlo.',
 'movesubpage'                 => '{{PLURAL:$1|Ṣefḫa ferĝiyya|Ṣefḫaṫ ferĝiyya}}',
@@ -2168,8 +2145,6 @@ Imken lek ṫċof l-ĝin dyalha.',
 'markaspatrolleddiff' => 'marki kamorajaaa',
 
 # Patrol log
-'patrol-log-auto'      => '(otomatik)',
-'patrol-log-diff'      => 'morajaa $1',
 'log-show-hide-patrol' => '$1 sijjil lkhafr',
 
 # Browsing diffs
@@ -2181,7 +2156,7 @@ Imken lek ṫċof l-ĝin dyalha.',
 'widthheight'          => '$1 × $2',
 'file-info'            => 'ḫajm l-milef: $1, n-noĝ dl-MIME: $2',
 'file-info-size'       => '$1 × $2 piksel, ṫqel l-fiċyé: $3, ċkel MIME : $4',
-'file-nohires'         => '<small>Ma kayenċ ċi rézolusyon kber men hadi.</small>',
+'file-nohires'         => 'Ma kayenċ ċi rézolusyon kber men hadi.',
 'svg-long-desc'        => 'Fiċyé SVG, rézolusyon $1 × $2 pikselaṫ, ḫajm : $3',
 'show-big-image'       => 'Rézolusyon kamla',
 'show-big-image-size'  => '$1 × $2 dl-ppiksilaṫ',
@@ -2198,9 +2173,9 @@ Imken lek ṫċof l-ĝin dyalha.',
 'sp-newimages-showfrom' => 'biyn lmilfat mn $2, $1',
 
 # Video information, used by Language::formatTimePeriod() to format lengths in the above messages
-'seconds-abbrev' => 's',
-'minutes-abbrev' => 'm',
-'hours-abbrev'   => 'h',
+'seconds-abbrev' => '$1s',
+'minutes-abbrev' => '$1m',
+'hours-abbrev'   => '$1h',
 
 # Bad image list
 'bad_image_list' => "L-forma howa ṫ-ṫali :
@@ -2577,13 +2552,6 @@ daba ymkn lik [[Special:UserLogin|ṫdĥol]] o-ṫsṫmṫĝ bl-wiki.",
 'scarytranscludefailed'   => '[lbaht 3la lqalb fchl l $1]',
 'scarytranscludetoolong'  => '[URL twil bzzaf]',
 
-# Trackbacks
-'trackbackbox'      => 'ṃoṫaḅaĝaṫ dial had ṣfḫa:<br />
-$1',
-'trackbackremove'   => '([$1 Suprimi])',
-'trackbacklink'     => 'lmotabaaa',
-'trackbackdeleteok' => 'lmotabaa tmshat',
-
 # Delete conflict
 'deletedwhileediting' => "'''attansyo''': had sfha tmshat bad ma bditi taadil dyalha",
 'recreate'            => "awd li'inchaa",
@@ -2758,5 +2726,10 @@ jrreb l-ĝṛḍ l-ĝadi.',
 # SQLite database support
 'sqlite-has-fts' => '$1 maa imkaniyat lbaht f nass kaml',
 'sqlite-no-fts'  => '$1 imkaniyat lbaht f nass kaml',
+
+# New logging system
+'revdelete-restricted'   => 'tḅḅq ḍ-ḍawaḅit ll-idariyyin',
+'revdelete-unrestricted' => 'ḫyyd ḍ-ḍawaḅit ll-idariyyin',
+'newuserlog-byemail'     => "lmot de passe raha tsiftat f l'email",
 
 );

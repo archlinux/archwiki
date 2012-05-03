@@ -34,7 +34,7 @@ class ExternalStoreDB {
 		$wiki = isset($this->mParams['wiki']) ? $this->mParams['wiki'] : false;
 		$lb =& $this->getLoadBalancer( $cluster );
 
-		if ( !in_array( "DB://" . $cluster, $wgDefaultExternalStore ) ) {
+		if ( !in_array( "DB://" . $cluster, (array)$wgDefaultExternalStore ) ) {
 			wfDebug( "read only external store" );
 			$lb->allowLagged(true);
 		} else {
@@ -120,12 +120,12 @@ class ExternalStoreDB {
 		wfDebug( "ExternalStoreDB::fetchBlob cache miss on $cacheID\n" );
 
 		$dbr =& $this->getSlave( $cluster );
-		$ret = $dbr->selectField( $this->getTable( $dbr ), 'blob_text', array( 'blob_id' => $id ) );
+		$ret = $dbr->selectField( $this->getTable( $dbr ), 'blob_text', array( 'blob_id' => $id ), __METHOD__ );
 		if ( $ret === false ) {
 			wfDebugLog( 'ExternalStoreDB', "ExternalStoreDB::fetchBlob master fallback on $cacheID\n" );
 			// Try the master
 			$dbw =& $this->getMaster( $cluster );
-			$ret = $dbw->selectField( $this->getTable( $dbw ), 'blob_text', array( 'blob_id' => $id ) );
+			$ret = $dbw->selectField( $this->getTable( $dbw ), 'blob_text', array( 'blob_id' => $id ), __METHOD__ );
 			if( $ret === false) {
 				wfDebugLog( 'ExternalStoreDB', "ExternalStoreDB::fetchBlob master failed to find $cacheID\n" );
 			}

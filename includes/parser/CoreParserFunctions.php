@@ -97,7 +97,7 @@ class CoreParserFunctions {
 	static function intFunction( $parser, $part1 = '' /*, ... */ ) {
 		if ( strval( $part1 ) !== '' ) {
 			$args = array_slice( func_get_args(), 2 );
-			$message = wfMessage( $part1, $args )->inLanguage( $parser->getOptions()->getUserLang() )->plain();
+			$message = wfMessage( $part1, $args )->inLanguage( $parser->getOptions()->getUserLangObj() )->plain();
 			return array( $message, 'noparse' => false );
 		} else {
 			return array( 'found' => false );
@@ -279,7 +279,14 @@ class CoreParserFunctions {
 	 */
 	static function gender( $parser, $username ) {
 		wfProfileIn( __METHOD__ );
-		$forms = array_slice( func_get_args(), 2);
+		$forms = array_slice( func_get_args(), 2 );
+
+		// Some shortcuts to avoid loading user data unnecessarily
+		if ( count( $forms ) === 0 ) {
+			return '';
+		} elseif ( count( $forms ) === 1 ) {
+			return $forms[0];
+		}
 
 		$username = trim( $username );
 
@@ -564,7 +571,11 @@ class CoreParserFunctions {
 	 *   to the link cache, so the local cache here should be unnecessary, but
 	 *   in fact calling getLength() repeatedly for the same $page does seem to
 	 *   run one query for each call?
+	 * @todo Document parameters
+	 *
 	 * @param $parser Parser
+	 * @param $page String TODO DOCUMENT (Default: empty string)
+	 * @param $raw TODO DOCUMENT (Default: null)
 	 */
 	static function pagesize( $parser, $page = '', $raw = null ) {
 		static $cache = array();
@@ -625,7 +636,7 @@ class CoreParserFunctions {
 
 	/**
 	 * Unicode-safe str_pad with the restriction that $length is forced to be <= 500
- 	 */
+	 */
 	static function pad( $parser, $string, $length, $padding = '0', $direction = STR_PAD_RIGHT ) {
 		$padding = $parser->killMarkers( $padding );
 		$lengthOfPadding = mb_strlen( $padding );
@@ -680,23 +691,36 @@ class CoreParserFunctions {
 
 	/**
 	 * @param $parser Parser
-	 * @param  $text
+	 * @param $text String The sortkey to use
+	 * @param $uarg String Either "noreplace" or "noerror" (in en)
+	 *   both suppress errors, and noreplace does nothing if
+	 *   a default sortkey already exists.
 	 * @return string
 	 */
-	public static function defaultsort( $parser, $text ) {
+	public static function defaultsort( $parser, $text, $uarg = '' ) {
+		static $magicWords = null;
+		if ( is_null( $magicWords ) ) {
+			$magicWords = new MagicWordArray( array( 'defaultsort_noerror', 'defaultsort_noreplace' ) );
+		}
+		$arg = $magicWords->matchStartToEnd( $uarg );
+
 		$text = trim( $text );
 		if( strlen( $text ) == 0 )
 			return '';
 		$old = $parser->getCustomDefaultSort();
-		$parser->setDefaultSort( $text );
-		if( $old === false || $old == $text )
+		if ( $old === false || $arg !== 'defaultsort_noreplace' ) {
+			$parser->setDefaultSort( $text );
+		}
+
+		if( $old === false || $old == $text || $arg ) {
 			return '';
-		else
+		} else {
 			return( '<span class="error">' .
 				wfMsgForContent( 'duplicate-defaultsort',
 						 htmlspecialchars( $old ),
 						 htmlspecialchars( $text ) ) .
 				'</span>' );
+		}
 	}
 
 	// Usage {{filepath|300}}, {{filepath|nowiki}}, {{filepath|nowiki|300}} or {{filepath|300|nowiki}}
@@ -724,7 +748,7 @@ class CoreParserFunctions {
 		if ( $file ) {
 			$url = $file->getFullUrl();
 
-			// If a size is requested...			
+			// If a size is requested...
 			if ( is_integer( $size ) ) {
 				$mto = $file->transform( array( 'width' => $size ) );
 				// ... and we can

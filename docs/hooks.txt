@@ -295,6 +295,17 @@ before showing the edit form ( EditPage::edit() ). This is triggered
 on &action=edit.
 $EditPage: the EditPage object
 
+'AlternateUserMailer': Called before mail is sent so that mail could
+be logged (or something else) instead of using PEAR or PHP's mail().
+Return false to skip the regular method of sending mail.  Return a
+string to return a php-mail-error message containing the error.
+Returning true will continue with sending email in the regular way.
+$headers: Associative array of headers for the email
+$to: MailAddress object or array
+$from: From address
+$subject: Subject of the email
+$body: Body of the message
+
 'APIAfterExecute': after calling the execute() method of an API module.
 Use this to extend core API modules.
 &$module: Module object
@@ -308,12 +319,16 @@ $text : the new text of the article (has yet to be saved)
 &$resultArr : data in this array will be added to the API result
 
 'APIGetAllowedParams': use this hook to modify a module's parameters.
-&$module: Module object
+&$module: ApiBase Module object
 &$params: Array of parameters
+
+'APIGetDescription': use this hook to modify a module's description
+&$module: ApiBase Module object
+&$desc: Array of descriptions
 
 'APIGetParamDescription': use this hook to modify a module's parameter
 descriptions.
-&$module: Module object
+&$module: ApiBase Module object
 &$desc: Array of parameter descriptions
 
 'APIQueryAfterExecute': after calling the execute() method of an
@@ -376,7 +391,7 @@ $tokenFunctions: array(action => callback)
 'ApiRsdServiceApis': Add or remove APIs from the RSD services list.
 Each service should have its own entry in the $apis array and have a
 unique name, passed as key for the array that represents the service data.
-In this data array, the key-value-pair identified by the apiLink key is 
+In this data array, the key-value-pair identified by the apiLink key is
 required.
 &$apis: array of services
 
@@ -397,32 +412,32 @@ Use this to change the content in this area or how it is loaded.
  $output: the OutputPage object ($wgOut)
 
 'ArticleDelete': before an article is deleted
-$article: the article (object) being deleted
+$article: the WikiPage (object) being deleted
 $user: the user (object) deleting the article
 $reason: the reason (string) the article is being deleted
 $error: if the deletion was prohibited, the (raw HTML) error message to display
   (added in 1.13)
 
 'ArticleDeleteComplete': after an article is deleted
-$article: the article that was deleted
+$article: the WikiPage that was deleted
 $user: the user that deleted the article
 $reason: the reason the article was deleted
 $id: id of the article that was deleted
 
 'ArticleEditUpdateNewTalk': before updating user_newtalk when a user talk page
 was changed
-$article: article (object) of the user talk page
+$article: WikiPage (object) of the user talk page
 
 'ArticleEditUpdates': when edit updates (mainly link tracking) are made when an
 article has been changed
-$article: the article (object)
+$article: the WikiPage (object)
 $editInfo: data holder that includes the parser output ($editInfo->output) for
 that page after the change
 $changed: bool for if the page was changed
 
 'ArticleEditUpdatesDeleteFromRecentchanges': before deleting old entries from
 recentchanges table, return false to not delete old entries
-$article: article (object) being modified
+$article: WikiPage (object) being modified
 
 'ArticleFromTitle': when creating an article object from a title object using
 Wiki::articleFromTitle()
@@ -430,7 +445,7 @@ $title: title (object) used to create the article object
 $article: article (object) that will be returned
 
 'ArticleInsertComplete': After a new article is created
-$article: Article created
+$article: WikiPage created
 $user: User creating the article
 $text: New content
 $summary: Edit summary/comment
@@ -445,33 +460,33 @@ $targetTitle: target title (object)
 $destTitle: destination title (object)
 
 'ArticlePageDataAfter': after loading data of an article from the database
-$article: article (object) whose data were loaded
+$article: WikiPage (object) whose data were loaded
 $row: row (object) returned from the database server
 
 'ArticlePageDataBefore': before loading data of an article from the database
-$article: article (object) that data will be loaded
+$article: WikiPage (object) that data will be loaded
 $fields: fileds (array) to load from the database
 
 'ArticlePrepareTextForEdit': called when preparing text to be saved
-$article: the article being saved
+$article: the WikiPage being saved
 $popts: parser options to be used for pre-save transformation
 
 'ArticleProtect': before an article is protected
-$article: the article being protected
+$article: the WikiPage being protected
 $user: the user doing the protection
 $protect: boolean whether this is a protect or an unprotect
 $reason: Reason for protect
 $moveonly: boolean whether this is for move only or not
 
 'ArticleProtectComplete': after an article is protected
-$article: the article that was protected
+$article: the WikiPage that was protected
 $user: the user who did the protection
 $protect: boolean whether it was a protect or an unprotect
 $reason: Reason for protect
 $moveonly: boolean whether it was for move only or not
 
 'ArticlePurge': before executing "&action=purge"
-$article: article (object) to purge
+$article: WikiPage (object) to purge
 
 'ArticleRevisionVisibilitySet': called when changing visibility of one or more
 revision of an article
@@ -483,13 +498,13 @@ $revision: the revision
 $oldPageID: the page ID of the revision when archived (may be null)
 
 'ArticleRollbackComplete': after an article rollback is completed
-$article: the article that was edited
+$article: the WikiPage that was edited
 $user: the user who did the rollback
 $revision: the revision the page was reverted back to
 $current: the reverted revision
 
 'ArticleSave': before an article is saved
-$article: the article (object) being saved
+$article: the WikiPage (object) being saved
 $user: the user (object) saving the article
 $text: the new article text
 $summary: the article summary (comment)
@@ -498,7 +513,7 @@ $iswatch: watch flag
 $section: section #
 
 'ArticleSaveComplete': After an article has been updated
-$article: Article modified
+$article: WikiPage modified
 $user: User performing the modification
 $text: New content
 $summary: Edit summary/comment
@@ -507,6 +522,7 @@ $isWatch: (No longer used)
 $section: (No longer used)
 $flags: Flags passed to Article::doEdit()
 $revision: New Revision of the article
+$status: Status object about to be returned by doEdit()
 $baseRevId: the rev ID (or false) this edit was based on
 
 'ArticleUndelete': When one or more revisions of an article are restored
@@ -528,11 +544,17 @@ $article: Article object
 viewing.
 &$article: the article
 &$pcache: whether to try the parser cache or not
-&$outputDone: whether the output for this page finished or not
+&$outputDone: whether the output for this page finished or not. Set to a ParserOutput
+object to both indicate that the output is done and what parser output was used.
 
 'ArticleViewRedirect': before setting "Redirected from ..." subtitle when
 follwed an redirect
 $article: target article (object)
+
+'ArticleViewCustom': allows to output the text of the article in a different format than wikitext
+$text: text of the page
+$title: title of the page
+$output: reference to $wgOut
 
 'AuthPluginAutoCreate': Called when creating a local account for an user logged
 in from an external authentication method
@@ -548,6 +570,16 @@ $args: arguments
 $user: user
 $result: result of checking autopromote condition
 
+'BacklinkCacheGetPrefix': allows to set prefix for a spefific link table
+$table: table name
+&$prefix: prefix
+
+'BacklinkCacheGetConditions': allows to set conditions for query when links to certain title
+are fetched
+$table: table name
+$title: title of the page to which backlinks are sought
+&$conds: query conditions
+
 'BadImage': When checking against the bad image list
 $name: Image name being checked
 &$bad: Whether or not the image is "bad"
@@ -555,9 +587,14 @@ $name: Image name being checked
 Change $bad and return false to override. If an image is "bad", it is not
 rendered inline in wiki pages or galleries in category pages.
 
-'BeforeInitialize': before anything is initialized in performRequestForTitle()
+'BeforeDisplayNoArticleText': before displaying noarticletext or noarticletext-nopermission
+at Article::showMissingArticle()
+
+$article: article object
+
+'BeforeInitialize': before anything is initialized in MediaWiki::performRequest()
 &$title: Title being used for request
-&$article: The associated Article object
+$unused: null
 &$output: OutputPage object
 &$user: User
 $request: WebRequest object
@@ -577,9 +614,10 @@ $out: OutputPage object
 'BeforeParserFetchFileAndTitle': before an image is rendered by Parser
 $parser: Parser object
 $nt: the image title
-&$time: the image timestamp (use '0' to force a broken thumbnail)
-&$sha1: image base 36 sha1 (used to specify the file, $nt will be ignored if this is set)
+&$options: array of options to RepoGroup::findFile
 &$descQuery: query string to add to thumbnail URL
+
+If 'broken' is a key in $options then the file will appear as a broken thumbnail.
 
 'BeforeParserFetchTemplateAndtitle': before a template is fetched by Parser
 $parser: Parser object
@@ -591,16 +629,21 @@ $title: title of the template
 &$parser: Parser object
 &$ig: ImageGallery object
 
-'BeforeWelcomeCreation': before the welcomecreation message is displayed to a newly created user 
+'BeforeWelcomeCreation': before the welcomecreation message is displayed to a newly created user
 &$welcome_creation_msg: MediaWiki message name to display on the welcome screen to a newly created user account
-&$injected_html: Any HTML to inject after the "logged in" message of a newly created user account 
+&$injected_html: Any HTML to inject after the "logged in" message of a newly created user account
 
-'BitmapHandlerTransform': before a file is transformed, gives extension the 
+'BitmapHandlerTransform': before a file is transformed, gives extension the
 possibility to transform it themselves
-$handler: BitmapHandler 
+$handler: BitmapHandler
 $image: File
-&$scalerParams: Array with scaler parameters 
+&$scalerParams: Array with scaler parameters
 &$mto: null, set to a MediaTransformOutput
+
+'BitmapHandlerCheckImageArea': by BitmapHandler::normaliseParams, after all normalizations have been performed, except for the $wgMaxImageArea check
+$image: File
+&$params: Array of parameters
+&$checkImageAreaHookResult: null, set to true or false to override the $wgMaxImageArea check result
 
 'PerformRetroactiveAutoblock': called before a retroactive autoblock is applied to a user
 $block: Block object (which is set to be autoblocking)
@@ -620,7 +663,7 @@ $output: OutputPage object in use
 
 'CanonicalNamespaces': For extensions adding their own namespaces or altering the defaults
 &$namespaces: Array of namespace numbers with corresponding canonical names
- 
+
 'CategoryPageView': before viewing a categorypage in CategoryPage::view
 $catpage: CategoryPage instance
 
@@ -726,7 +769,7 @@ $editpage_Obj: the current EditPage object
 
 'EditPage::importFormData': allow extensions to read additional data
 posted in the form
-$editpage: EditPage instance 
+$editpage: EditPage instance
 $request: Webrequest
 return value is ignored (should always return true)
 
@@ -830,8 +873,15 @@ $user: The user who is trying to email another user.
 $editToken: The user's edit token.
 &$hookErr: Out-param for the error. Passed as the parameters to OutputPage::showErrorPage.
 
+'ExemptFromAccountCreationThrottle': Exemption from the account creation throttle
+$ip: The ip address of the user
+
 'ExtensionTypes': called when generating the extensions credits, use this to change the tables headers
 &$extTypes: associative array of extensions types
+
+'ExtractThumbParameters': called when extracting thumbnail parameters from a thumbnail file name
+$thumbname: the base name of the thumbnail file
+&$params: the currently extracted params (has source name, temp or archived zone)
 
 'FetchChangesList': When fetching the ChangesList derivative for
 a particular user
@@ -844,7 +894,7 @@ $user: User the list is being fetched for
 $file: reference to the deleted file
 $oldimage: in case of the deletion of an old image, the name of the old file
 $article: in case all revisions of the file are deleted a reference to the
-	article associated with the file.
+	WikiFilePage associated with the file.
 $user: user who performed the deletion
 $reason: reason
 
@@ -876,7 +926,6 @@ $out: OutputPage object
 $title: Title object of page
 $url: string value as output (out parameter, can modify)
 $query: query options passed to Title::getCanonicalURL()
-$variant: variant passed to Title::getCanonicalURL()
 
 'GetDefaultSortkey': Override the default sortkey for a page.
 $title: Title object that we need to get a sortkey for
@@ -886,13 +935,11 @@ $title: Title object that we need to get a sortkey for
 $title: Title object of page
 $url: string value as output (out parameter, can modify)
 $query: query options passed to Title::getFullURL()
-$variant: variant passed to Title::getFullURL()
 
 'GetInternalURL': modify fully-qualified URLs used for squid cache purging
 $title: Title object of page
 $url: string value as output (out parameter, can modify)
 $query: query options passed to Title::getInternalURL()
-$variant: variant passed to Title::getFullURL()
 
 'GetIP': modify the ip of the current user (called only once)
 &$ip: string holding the ip as determined so far
@@ -902,18 +949,32 @@ $linkcolour_ids: array of prefixed DB keys of the pages linked to,
 	indexed by page_id.
 &$colours: (output) array of CSS classes, indexed by prefixed DB keys
 
-'GetLocalURL': modify local URLs as output into page links
+'GetLocalURL': modify local URLs as output into page links. Note that if you
+	are working with internal urls (non-interwiki) then it may be preferable
+	to work with the GetLocalURL::Internal or GetLocalURL::Article hooks as
+	GetLocalURL can be buggy for internal urls on render if you do not
+	re-implement the horrible hack that Title::getLocalURL uses
+	in your own extension.
 $title: Title object of page
-$url: string value as output (out parameter, can modify)
+&$url: string value as output (out parameter, can modify)
 $query: query options passed to Title::getLocalURL()
-$variant: variant passed to Title::getLocalURL()
+
+'GetLocalURL::Internal': modify local URLs to internal pages.
+$title: Title object of page
+&$url: string value as output (out parameter, can modify)
+$query: query options passed to Title::getLocalURL()
+
+'GetLocalURL::Article': modify local URLs specifically pointing to article paths
+	without any fancy queries or variants.
+$title: Title object of page
+&$url: string value as output (out parameter, can modify)
 
 'GetMetadataVersion': modify the image metadata version currently in use. This is
 	used when requesting image metadata from a ForiegnApiRepo. Media handlers
 	that need to have versioned metadata should add an element to the end of
 	the version array of the form 'handler_name=version'. Most media handlers
 	won't need to do this unless they broke backwards compatibility with a
-	previous version of the media handler metadata output. 
+	previous version of the media handler metadata output.
 &$version: Array of version strings
 
 'GetPreferences': modify user preferences
@@ -954,7 +1015,7 @@ $result: User permissions error to add. If none, return true.
 $imagePage: ImagePage object ($this)
 $output: $wgOut
 
-'ImagePageAfterImageLinks': called after the image links section on an image 
+'ImagePageAfterImageLinks': called after the image links section on an image
 	page is built
 $imagePage: ImagePage object ($this)
 &$html: HTML for the hook to add
@@ -998,7 +1059,8 @@ Return false to stop further processing of the tag
 
 'ImportHandleRevisionXMLTag': When parsing a XML tag in a page revision
 $reader: XMLReader object
-$revInfo: Array of information
+$pageInfo: Array of page information
+$revisionInfo: Array of revision information
 Return false to stop further processing of the tag
 
 'ImportHandleToplevelXMLTag': When parsing a top level XML tag
@@ -1020,7 +1082,7 @@ $article: Article object
 'InterwikiLoadPrefix': When resolving if a given prefix is an interwiki or not.
 Return true without providing an interwiki to continue interwiki search.
 $prefix: interwiki prefix we are looking for.
-&$iwData: output array describing the interwiki with keys iw_url, iw_local, 
+&$iwData: output array describing the interwiki with keys iw_url, iw_local,
   iw_trans and optionally iw_api and iw_wikiid.
 
 'InternalParseBeforeLinks': during Parser's internalParse method before links
@@ -1054,8 +1116,17 @@ $password: The password entered by the user
 &$result: Set this and return false to override the internal checks
 $user: User the password is being validated for
 
-'LanguageGetMagic': DEPRECATED, use $magicWords in a file listed in 
-$wgExtensionMessagesFiles instead. 
+'Language::getMessagesFileName':
+$code: The language code or the language we're looking for a messages file for
+&$file: The messages file path, you can override this to change the location.
+
+'LanguageGetNamespaces': Provide custom ordering for namespaces or
+remove namespaces. Do not use this hook to add namespaces. Use
+CanonicalNamespaces for that.
+&$namespaces: Array of namespaces indexed by their numbers
+
+'LanguageGetMagic': DEPRECATED, use $magicWords in a file listed in
+$wgExtensionMessagesFiles instead.
 Use this to define synonyms of magic words depending of the language
 $magicExtensions: associative array of magic words synonyms
 $lang: laguage code (string)
@@ -1131,19 +1202,48 @@ completed
 &updater: A DatabaseUpdater subclass
 
 'LocalFile::getHistory': called before file history query performed
-$file: the file
+$file: the File object
 $tables: tables
 $fields: select fields
 $conds: conditions
 $opts: query options
 $join_conds: JOIN conditions
 
+'LocalFilePurgeThumbnails': called before thumbnails for a local file a purged
+$file: the File object
+$archiveName: name of an old file version or false if it's the current one
+
 'LocalisationCacheRecache': Called when loading the localisation data into cache
 $cache: The LocalisationCache object
 $code: language code
 &$alldata: The localisation data from core and extensions
 
-'LoginAuthenticateAudit': a login attempt for a valid user account either
+'LogEventsListShowLogExtract': called before the string is added to OutputPage. Returning false will prevent the string from being added to the OutputPage
+&$s: html string to show for the log extract
+$types: String or Array Log types to show
+$page: String or Title The page title to show log entries for
+$user: String The user who made the log entries
+$param: Associative Array with the following additional options:
+ - lim Integer Limit of items to show, default is 50
+ - conds Array Extra conditions for the query (e.g. "log_action != 'revision'")
+ - showIfEmpty boolean Set to false if you don't want any output in case the loglist is empty if set to true (default), "No matching items in log" is displayed if loglist is empty
+ - msgKey Array If you want a nice box with a message, set this to the key of the message. First element is the message key, additional optional elements are parameters for the key that are processed with wfMsgExt and option 'parse'
+ - offset Set to overwrite offset parameter in $wgRequest set to '' to unset offset
+ - wrap String Wrap the message in html (usually something like "&lt;div ...>$1&lt;/div>").
+ - flags Integer display flags (NO_ACTION_LINK,NO_EXTRA_USER_LINKS)
+
+'LoggableUserIPData': called when IP data for a user action can be logged by extensions like CheckUser.
+This is intended for when users do things that do not already create edits or log entries.
+$context: The context the of the action, which includes the user and request
+$data: Associative array of data for handlers to record. It must include values for:
+ - 'namespace' Integer namespace for target title (NS_SPECIAL is allowed)
+ - 'title'     Database key string for target title (empty string if not applicable)
+ - 'pageid'    Integer page ID for target title (zero if not applicable)
+ - 'action'    Wikitext string in the same format as an edit summary
+ - 'comment'   Wikitext string in the same format as an edit summary
+ - 'timestamp' Timestamp when the action occured
+
+LoginAuthenticateAudit': a login attempt for a valid user account either
 succeeded or failed. No return data is accepted; this hook is for auditing only.
 $user: the User object being authenticated against
 $password: the password being submitted and found wanting
@@ -1167,11 +1267,6 @@ $time: timestamp of the log entry (added in 1.12)
 'MaintenanceRefreshLinksInit': before executing the refreshLinks.php maintenance script
 $refreshLinks: RefreshLinks object
 
-'MagicWordMagicWords': When defining new magic word.
-DEPRECATED: use $magicWords in a file listed in 
-$wgExtensionMessagesFiles instead.
-$magicWords: array of strings
-
 'MagicWordwgVariableIDs': When definig new magic words IDs.
 $variableIDs: array of strings
 
@@ -1181,6 +1276,8 @@ depend on the current page/request; static configuration should be added
 through ResourceLoaderGetConfigVars instead.
 &$vars: variable (or multiple variables) to be added into the output
 	of Skin::makeVariablesScript
+$out: The OutputPage which called the hook,
+    can be used to get the real title
 
 'MarkPatrolled': before an edit is marked patrolled
 $rcid: ID of the revision to be marked patrolled
@@ -1223,8 +1320,8 @@ $db: The database object to be queried.
 'MonoBookTemplateToolboxEnd': Called by Monobook skin after toolbox links have
 been rendered (useful for adding more)
 Note: this is only run for the Monobook skin. This hook is deprecated and
-may be removed in the future. To add items to the toolbox you should use 
-the SkinTemplateToolboxEnd hook instead, which works for all 
+may be removed in the future. To add items to the toolbox you should use
+the SkinTemplateToolboxEnd hook instead, which works for all
 "SkinTemplate"-type skins.
 $tools: array of tools
 
@@ -1239,7 +1336,7 @@ using this hook.
 
 'NewRevisionFromEditComplete': called when a revision was inserted
 due to an edit
-$article: the article edited
+$article: the WikiPage edited
 $rev: the new revision
 $baseID: the revision ID this was based off, if any
 $user: the editing user
@@ -1381,6 +1478,17 @@ $title: title object representing the file
 $file: file object that will be used to create the image
 &$params: 2-D array of parameters
 
+'ParserSectionCreate': Called each time the parser creates a document section
+from wikitext.  Use this to apply per-section modifications to HTML (like
+wrapping the section in a DIV).  Caveat: DIVs are valid wikitext, and a DIV
+can begin in one section and end in another.  Make sure your code can handle
+that case gracefully.  See the EditSectionClearerLink extension for an
+example.
+$parser: the calling Parser instance
+$section: the section number, zero-based, but section 0 is usually empty
+&$sectionContent: ref to the content of the section. modify this.
+$showEditLinks: boolean describing whether this section has an edit link
+
 'ParserTestParser': called when creating a new instance of Parser in
 maintenance/parserTests.inc
 $parser: Parser object created
@@ -1392,7 +1500,6 @@ to ensure that tests continue to run properly.
 
 'PersonalUrls': Alter the user-specific navigation links (e.g. "my page,
 my talk page, my contributions" etc).
-
 &$personal_urls: Array of link specifiers (see SkinTemplate.php)
 &$title: Title object representing the current page
 
@@ -1402,6 +1509,18 @@ $action : Action being performed
 &$result : Whether or not the action should be prevented
 Change $result and return false to give a definitive answer, otherwise
 the built-in rate limiting checks are used, if enabled.
+
+'PlaceNewSection': Override placement of new sections.
+$wikipage : WikiPage object
+$oldtext : the text of the article before editing
+$subject : subject of the new section
+&$text : text of the new section
+Return false and put the merged text into $text to override the default behavior.
+
+'PreferencesGetLegend': Override the text used for the <legend> of a preferences section
+$form: the PreferencesForm object. This is a ContextSource as well
+$key: the section name
+&$legend: the legend text. Defaults to wfMsg( "prefs-$key" ) but may be overridden
 
 'PrefixSearchBackend': Override the title prefix search used for OpenSearch and
 AJAX search suggestions. Put results into &$results outparam and return false.
@@ -1426,20 +1545,11 @@ $output: a string of the form HTML so far
 
 'ProtectionForm::save': called when a protection form is submitted
 $article: the title being (un)protected
-$errorMsg: an html message string of an error
+$errorMsg: an html message string of an error or an array of message name and its parameters
 
 'ProtectionForm::showLogExtract': called after the protection log extract is shown
 $article: the page the form is shown for
 $out: OutputPage object
-
-'ResourceLoaderRegisterModules': Right before modules information is required, such as when responding to a resource
-loader request or generating HTML output.
-&$resourceLoader: ResourceLoader object
-
-'ResourceLoaderGetStartupModules': Run once the startup module is being generated. This allows you
-to add modules to the startup module. This hook should be used sparingly since any module added here
-will be loaded on all pages. This hook is useful if you want to make code available to module loader 
-scripts. 
 
 'RawPageViewBeforeOutput': Right before the text is blown out in action=raw
 &$obj: RawPage object
@@ -1448,11 +1558,35 @@ scripts.
 'RecentChange_save': called at the end of RecentChange::save()
 $recentChange: RecentChange object
 
+'RequestContextCreateSkin': Called when RequestContext::getSkin creates a skin instance.
+Can be used by an extension override what skin is used in certain contexts.
+IContextSource $context: The RequestContext the skin is being created for.
+&$skin: A variable reference you may set a Skin instance or string key on to override the skin that will be used for the context.
+
 'ResourceLoaderGetConfigVars': called at the end of
 ResourceLoaderStartUpModule::getConfig(). Use this to export static
 configuration variables to JavaScript. Things that depend on the current
 page/request state must be added through MakeGlobalVariablesScript instead.
 &$vars: array( variable name => value )
+
+'ResourceLoaderGetStartupModules': Run once the startup module is being generated. This allows you
+to add modules to the startup module. This hook should be used sparingly since any module added here
+will be loaded on all pages. This hook is useful if you want to make code available to module loader
+scripts.
+
+'ResourceLoaderRegisterModules': Right before modules information is required, such as when responding to a resource
+loader request or generating HTML output.
+&$resourceLoader: ResourceLoader object
+
+'ResourceLoaderTestModules': let you add new JavaScript testing modules. This is called after the addition of 'qunit' and MediaWiki testing resources.
+&testModules: array of JavaScript testing modules. The 'qunit' framework, included in core, is fed using tests/qunit/QUnitTestResources.php.
+&ResourceLoader object
+To add a new qunit module named 'myext.tests':
+testModules['qunit']['myext.tests'] = array(
+	'script' => 'extension/myext/tests.js',
+	'dependencies' => <any module dependency you might have>
+);
+For qunit framework, the mediawiki.tests.qunit.testrunner dependency will be added to any module.
 
 'RevisionInsertComplete': called after a revision is inserted into the DB
 &$revision: the Revision
@@ -1482,7 +1616,7 @@ $term : Search term string
 &$title : Current Title object that is being returned (null if none found).
 
 'SearchEngineReplacePrefixesComplete': Run after SearchEngine::replacePrefixes().
-$searchEngine : The SearchEngine object. Users of this hooks will be interested 
+$searchEngine : The SearchEngine object. Users of this hooks will be interested
 in the $searchEngine->namespaces array.
 $query : Original query.
 &$parsed : Resultant query with the prefixes stripped.
@@ -1540,7 +1674,7 @@ $title: displayed page title
 $type: 'normal' or 'history' for old/diff views
 &$msg: overridable message; usually 'copyright' or 'history_copyright'. This message must be in HTML format, not wikitext!
 &$link: overridable HTML link to be passed into the message as $1
-&$forContent: overridable flag if copyright footer is shown in content language. 
+&$forContent: overridable flag if copyright footer is shown in content language.
 
 'SkinGetPoweredBy'
 &$text: additional 'powered by' icons in HTML.
@@ -1577,9 +1711,6 @@ starts page output
 'SkinTemplatePreventOtherActiveTabs': use this to prevent showing active tabs
 $sktemplate: SkinTemplate object
 $res: set to true to prevent active tabs
-
-'SkinTemplateSetupPageCss': use this to provide per-page CSS
-$out: Css to return
 
 'SkinTemplateTabAction': Override SkinTemplate::tabAction().
 You can either create your own array, or alter the parameters for
@@ -1666,9 +1797,9 @@ $data: array of data submitted by the user
 'SpecialRandomGetRandomTitle': called during the execution of Special:Random,
 use this to change some selection criteria or substitute a different title
 &$randstr: The random number from wfRandom()
-&$isRedir: Boolean, whether to select a redirect or non-redirect 
+&$isRedir: Boolean, whether to select a redirect or non-redirect
 &$namespaces: An array of namespace indexes to get the title from
-&$extra: An array of extra SQL statements 
+&$extra: An array of extra SQL statements
 &$title: If the hook returns false, a Title object to use instead of the
 result from the normal query
 
@@ -1736,10 +1867,10 @@ no matches
 $term: string of search term
 
 'SpecialStatsAddExtra': add extra statistic at the end of Special:Statistics
-&$extraStats: Array to save the new stats 
+&$extraStats: Array to save the new stats
               ( $extraStats['<name of statistic>'] => <value>; )
 
-'SpecialUploadComplete': Called after successfully uploading a file from 
+'SpecialUploadComplete': Called after successfully uploading a file from
 Special:Upload
 $form: The SpecialUpload object
 
@@ -1773,12 +1904,33 @@ $res: database result used to create the object
 $title: The title in question.
 &$types: The types of protection available.
 
+'TitleIsCssOrJsPage': Called when determining if a page is a CSS or JS page
+$title: Title object that is being checked
+$result: Boolean; whether MediaWiki currently thinks this is a CSS/JS page. Hooks may change this value to override the return value of Title::isCssOrJsPage()
+
+'TitleIsMovable': Called when determining if it is possible to move a page.
+Note that this hook is not called for interwiki pages or pages in immovable namespaces: for these, isMovable() always returns false.
+$title: Title object that is being checked
+$result: Boolean; whether MediaWiki currently thinks this page is movable. Hooks may change this value to override the return value of Title::isMovable()
+
+'TitleIsWikitextPage': Called when determining if a page is a wikitext or should
+be handled by seperate handler (via ArticleViewCustom)
+$title: Title object that is being checked
+$result: Boolean; whether MediaWiki currently thinks this is a wikitext page. Hooks may change this value to override the return value of Title::isWikitextPage()
+
 'TitleMoveComplete': after moving an article (title)
 $old: old title
 $nt: new title
 $user: user who did the move
 $pageid: database ID of the page that's been moved
 $redirid: database ID of the created redirect
+
+'TitleReadWhitelist': called at the end of read permissions checks, just before
+	adding the default error message if nothing allows the user to read the page.
+	If a handler wants a title to *not* be whitelisted, it should also return false.
+$title: Title object being checked against
+$user: Current user object
+&$whitelisted: Boolean value of whether this title is whitelisted
 
 'UndeleteForm::showHistory': called in UndeleteForm::showHistory, after a
 PageArchive object has been created but before any further processing is done.
@@ -1811,15 +1963,11 @@ $article: article "acted on"
 
 'UnwatchArticle': before a watch is removed from an article
 $user: user watching
-$article: article object to be removed
-
-'UnwatchArticle': after a watch is removed from an article
-$user: user that was watching
-$article: article object removed
+$page: WikiPage object to be removed
 
 'UnwatchArticleComplete': after a watch is removed from an article
 $user: user that watched
-$article: article object that was watched
+$page: WikiPage object that was watched
 
 'UploadForm:initial': before the upload form is generated
 $form: UploadForm object
@@ -1832,7 +1980,7 @@ $form: UploadForm object
 Lets you poke at member variables like $mUploadDescription before the
 file is saved.
 Do not use this hook to break upload processing. This will return the user to
-a blank form with no error message; use UploadVerification and 
+a blank form with no error message; use UploadVerification and
 UploadVerifyFile instead
 
 'UploadCreateFromRequest': when UploadBase::createFromRequest has been called
@@ -1842,19 +1990,19 @@ $type: (string) the requested upload type
 'UploadComplete': when Upload completes an upload
 &$upload: an UploadBase child instance
 
-'UploadFormInitDescriptor': after the descriptor for the upload form as been 
+'UploadFormInitDescriptor': after the descriptor for the upload form as been
 	assembled
 $descriptor: (array) the HTMLForm descriptor
 
-'UploadFormSourceDescriptors': after the standard source inputs have been 
+'UploadFormSourceDescriptors': after the standard source inputs have been
 added to the descriptor
 $descriptor: (array) the HTMLForm descriptor
 
-'UploadVerification': additional chances to reject an uploaded file. Consider 
+'UploadVerification': additional chances to reject an uploaded file. Consider
                       using UploadVerifyFile instead.
 string $saveName: destination file name
 string $tempName: filesystem path to the temporary file for checks
-string &$error: output: message key for message to show if upload canceled 
+string &$error: output: message key for message to show if upload canceled
 	by returning false. May also be an array, where the first element
 	is the message key and the remaining elements are used as parameters to
 	the message.
@@ -1862,7 +2010,7 @@ string &$error: output: message key for message to show if upload canceled
 'UploadVerifyFile': extra file verification, based on mime type, etc. Preferred
                     in most cases over UploadVerification.
 object $upload: an instance of UploadBase, with all info about the upload
-string $mime: the uploaded file's mime type, as detected by MediaWiki. Handlers 
+string $mime: the uploaded file's mime type, as detected by MediaWiki. Handlers
 	will typically only apply for specific mime types.
 object &$error: output: true if the file is valid. Otherwise, an indexed array
 	representing the problem with the file, where the first element
@@ -1933,8 +2081,11 @@ $user: User to get groups for
 &$rights: Array of rights, which may be added to.
 
 'UserGetDefaultOptions': after fetching the core default, this hook is ran
-right before returning the options to the caller.
-&$defaultOptions: Array of preference keys and their default values. 
+right before returning the options to the caller. WARNING: this hook is
+called for every call to User::getDefaultOptions(), which means it's
+potentially called dozens or hundreds of times. You may want to cache
+the results of non-trivial operations in your hook function for this reason.
+&$defaultOptions: Array of preference keys and their default values.
 
 'UserGetEmail': called when getting an user email address
 $user: User object
@@ -2048,6 +2199,11 @@ $user: User object
 &$timestamp: new timestamp, change this to override local email
 authentification timestamp
 
+'UserToolLinksEdit': Called when generating a list of user tool links, eg "Foobar (Talk | Contribs | Block)"
+$userId: User id of the current user
+$userText: User name of the current user
+&$items: Array of user tool links as HTML fragments
+
 'WantedPages::getQueryInfo': called in WantedPagesPage::getQueryInfo(), can be
 used to alter the SQL query which gets the list of wanted pages
 &$wantedPages: WantedPagesPage object
@@ -2055,11 +2211,11 @@ used to alter the SQL query which gets the list of wanted pages
 
 'WatchArticle': before a watch is added to an article
 $user: user that will watch
-$article: article object to be watched
+$page: WikiPage object to be watched
 
 'WatchArticleComplete': after a watch is added to an article
 $user: user that watched
-$article: article object watched
+$page: WikiPage object watched
 
 'WatchlistEditorBuildRemoveLine': when building remove lines in
 	Special:Watchlist/edit
@@ -2068,12 +2224,22 @@ $title: Title object
 $redirect: whether the page is a redirect
 $skin: Skin object
 
+'WebRequestPathInfoRouter': While building the PathRouter to parse the REQUEST_URI.
+$router: The PathRouter instance
+
 'WikiExporter::dumpStableQuery': Get the SELECT query for "stable" revisions
 dumps
 One, and only one hook should set this, and return false.
 &$tables: Database tables to use in the SELECT query
 &$opts: Options to use for the query
 &$join: Join conditions
+
+'wfShellMaintenanceCmd': Called when generating a shell-escaped command line
+	string to run a maintenance script.
+&$script: MediaWiki maintenance script path
+&$parameters: Array of arguments and options to the script
+&$options: Associative array of options, may contain the 'php' and 'wrapper'
+	keys
 
 'wgQueryPages': called when initialising $wgQueryPages, use this to add new
 query pages to be updated with maintenance/updateSpecialPages.php

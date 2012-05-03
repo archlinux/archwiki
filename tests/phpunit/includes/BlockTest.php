@@ -2,10 +2,9 @@
 
 /**
  * @group Database
+ * @group Blocking
  */
 class BlockTest extends MediaWikiLangTestCase {
-
-	const REASON = "Some reason";
 
 	private $block, $madeAt;
 
@@ -36,8 +35,8 @@ class BlockTest extends MediaWikiLangTestCase {
 			$oldBlock->delete();
 		}
 
-		$this->block = new Block( 'UTBlockee', 1, 0,
-			self::REASON
+		$this->block = new Block( 'UTBlockee', $user->getID(), 0,
+			'Parce que', 0, false, time() + 100500
 		);
 		$this->madeAt = wfTimestamp( TS_MW );
 
@@ -68,7 +67,7 @@ class BlockTest extends MediaWikiLangTestCase {
 		// $this->dumpBlocks();
 
 		$this->assertTrue( $this->block->equals( Block::newFromTarget('UTBlockee') ), "newFromTarget() returns the same block as the one that was made");
-
+		
 		$this->assertTrue( $this->block->equals( Block::newFromID( $this->blockId ) ), "newFromID() returns the same block as the one that was made");
 
 	}
@@ -77,8 +76,9 @@ class BlockTest extends MediaWikiLangTestCase {
 	 * per bug 26425
 	 */
 	function testBug26425BlockTimestampDefaultsToTime() {
-
-		$this->assertEquals( $this->madeAt, $this->block->mTimestamp, "If no timestamp is specified, the block is recorded as time()");
+		// delta to stop one-off errors when things happen to go over a second mark.
+		$delta = abs( $this->madeAt - $this->block->mTimestamp );
+		$this->assertLessThan( 2, $delta, "If no timestamp is specified, the block is recorded as time()");
 
 	}
 
@@ -91,6 +91,8 @@ class BlockTest extends MediaWikiLangTestCase {
 	 * @dataProvider dataBug29116
 	 */
 	function testBug29116LoadWithEmptyIp( $vagueTarget ) {
+		$this->hideDeprecated( 'Block::load' );
+
 		$uid = User::idFromName( 'UTBlockee' );
 		$this->assertTrue( ($uid > 0), 'Must be able to look up the target user during tests' );
 
@@ -121,4 +123,3 @@ class BlockTest extends MediaWikiLangTestCase {
 		);
 	}
 }
-

@@ -87,7 +87,7 @@ getSelection: function() {
 encapsulateSelection: function( options ) {
 	return this.each( function() {
 		var pre = options.pre, post = options.post;
-		
+
 		/**
 		 * Check if the selected text is the same as the insert text
 		 */
@@ -110,10 +110,10 @@ encapsulateSelection: function( options ) {
 				}
 			}
 		}
-		
+
 		/**
 		 * Do the splitlines stuff.
-		 * 
+		 *
 		 * Wrap each line of the selected text with pre and post
 		 */
 		function doSplitLines( selText, pre, post ) {
@@ -127,12 +127,62 @@ encapsulateSelection: function( options ) {
 			}
 			return insertText;
 		}
-		
+
 		var isSample = false;
 		if ( this.style.display == 'none' ) {
 			// Do nothing
+		} else if ( document.selection && document.selection.createRange ) {
+			// IE
+
+			// Note that IE9 will trigger the next section unless we check this first.
+			// See bug 35201.
+
+			activateElementOnIE( this );
+			if ( context ) {
+				context.fn.restoreCursorAndScrollTop();
+			}
+			if ( options.selectionStart !== undefined ) {
+				$(this).textSelection( 'setSelection', { 'start': options.selectionStart, 'end': options.selectionEnd } );
+			}
+
+			var selText = $(this).textSelection( 'getSelection' );
+			var scrollTop = this.scrollTop;
+			var range = document.selection.createRange();
+
+			checkSelectedText();
+			var insertText = pre + selText + post;
+			if ( options.splitlines ) {
+				insertText = doSplitLines( selText, pre, post );
+			}
+			if ( options.ownline && range.moveStart ) {
+				var range2 = document.selection.createRange();
+				range2.collapse();
+				range2.moveStart( 'character', -1 );
+				// FIXME: Which check is correct?
+				if ( range2.text != "\r" && range2.text != "\n" && range2.text != "" ) {
+					insertText = "\n" + insertText;
+					pre += "\n";
+				}
+				var range3 = document.selection.createRange();
+				range3.collapse( false );
+				range3.moveEnd( 'character', 1 );
+				if ( range3.text != "\r" && range3.text != "\n" && range3.text != "" ) {
+					insertText += "\n";
+					post += "\n";
+				}
+			}
+
+			range.text = insertText;
+			if ( isSample && options.selectPeri && range.moveStart ) {
+				range.moveStart( 'character', - post.length - selText.length );
+				range.moveEnd( 'character', - post.length );
+			}
+			range.select();
+			// Restore the scroll position
+			this.scrollTop = scrollTop;
 		} else if ( this.selectionStart || this.selectionStart == '0' ) {
 			// Mozilla/Opera
+
 			$(this).focus();
 			if ( options.selectionStart !== undefined ) {
 				$(this).textSelection( 'setSelection', { 'start': options.selectionStart, 'end': options.selectionEnd } );
@@ -143,7 +193,6 @@ encapsulateSelection: function( options ) {
 			var endPos = this.selectionEnd;
 			var scrollTop = this.scrollTop;
 			checkSelectedText();
-			
 			if ( options.selectionStart !== undefined
 					&& endPos - startPos != options.selectionEnd - options.selectionStart )
 			{
@@ -158,11 +207,13 @@ encapsulateSelection: function( options ) {
 				insertText = doSplitLines( selText, pre, post );
 			}
 			if ( options.ownline ) {
-				if ( startPos != 0 && this.value.charAt( startPos - 1 ) != "\n" ) {
+				if ( startPos != 0 && this.value.charAt( startPos - 1 ) != "\n" && this.value.charAt( startPos - 1 ) != "\r" ) {
 					insertText = "\n" + insertText;
+					pre += "\n";
 				}
-				if ( this.value.charAt( endPos ) != "\n" ) {
+				if ( this.value.charAt( endPos ) != "\n" && this.value.charAt( endPos ) != "\r" ) {
 					insertText += "\n";
+					post += "\n";
 				}
 			}
 			this.value = this.value.substring( 0, startPos ) + insertText +
@@ -181,49 +232,6 @@ encapsulateSelection: function( options ) {
 				this.selectionStart = startPos + insertText.length;
 				this.selectionEnd = this.selectionStart;
 			}
-		} else if ( document.selection && document.selection.createRange ) {
-			// IE
-			activateElementOnIE( this );
-			if ( context ) {
-				context.fn.restoreCursorAndScrollTop();
-			}
-			if ( options.selectionStart !== undefined ) {
-				$(this).textSelection( 'setSelection', { 'start': options.selectionStart, 'end': options.selectionEnd } );
-			}
-			
-			var selText = $(this).textSelection( 'getSelection' );
-			var scrollTop = this.scrollTop;
-			var range = document.selection.createRange();
-			
-			checkSelectedText();
-			var insertText = pre + selText  + post;
-			if ( options.splitlines ) {
-				insertText = doSplitLines( selText, pre, post );
-			}
-			if ( options.ownline && range.moveStart ) {
-				var range2 = document.selection.createRange();
-				range2.collapse();
-				range2.moveStart( 'character', -1 );
-				// FIXME: Which check is correct?
-				if ( range2.text != "\r" && range2.text != "\n" && range2.text != "" ) {
-					insertText = "\n" + insertText;
-				}
-				var range3 = document.selection.createRange();
-				range3.collapse( false );
-				range3.moveEnd( 'character', 1 );
-				if ( range3.text != "\r" && range3.text != "\n" && range3.text != "" ) {
-					insertText += "\n";
-				}
-			}
-			
-			range.text = insertText;
-			if ( isSample && options.selectPeri && range.moveStart ) {
-				range.moveStart( 'character', - post.length - selText.length );
-				range.moveEnd( 'character', - post.length );
-			}
-			range.select();
-			// Restore the scroll position
-			this.scrollTop = scrollTop;
 		}
 		$(this).trigger( 'encapsulateSelection', [ options.pre, options.peri, options.post, options.ownline,
 			options.replace, options.spitlines ] );
@@ -349,10 +357,10 @@ setSelection: function( options ) {
 			var length = this.value.length;
 			// IE doesn't count \n when computing the offset, so we won't either
 			var newLines = this.value.match( /\n/g );
-			if ( newLines) length = length - newLines.length;
+			if ( newLines ) length = length - newLines.length;
 			selection.moveStart( 'character', options.start );
 			selection.moveEnd( 'character', -length + options.end );
-			
+
 			// This line can cause an error under certain circumstances (textarea empty, no selection)
 			// Silence that error
 			try {
@@ -503,14 +511,14 @@ scrollToCaretPosition: function( options ) {
 	}
 	var context = $(this).data( 'wikiEditor-context' );
 	var hasIframe = typeof context !== 'undefined' && context && typeof context.$iframe !== 'undefined';
-	
+
 	// IE selection restore voodoo
 	var needSave = false;
 	if ( hasIframe && context.savedSelection !== null ) {
 		context.fn.restoreSelection();
 		needSave = true;
 	}
-	retval = ( hasIframe ? context.fn : fn )[command].call( this, options );
+	var retval = ( hasIframe ? context.fn : fn )[command].call( this, options );
 	if ( hasIframe && needSave ) {
 		context.fn.saveSelection();
 	}

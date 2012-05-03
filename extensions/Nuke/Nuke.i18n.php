@@ -37,6 +37,7 @@ Input the username or IP address to get a list of pages to delete, or leave blan
 	'nuke-delete-more'	 => '[[Special:Nuke|Delete more pages]]',
 	'nuke-pattern'       => 'Pattern for the page name:',
 	'nuke-nopages-global'=> 'There are no new pages in [[Special:RecentChanges|recent changes]].',
+	'nuke-viewchanges'   => 'view changes',
 );
 
 /** Message documentation (Message documentation)
@@ -173,19 +174,19 @@ $messages['arz'] = array(
  * @author Xuacu
  */
 $messages['ast'] = array(
-	'nuke' => 'Esborráu masivu',
+	'nuke' => 'Desaniciar en masa',
 	'action-nuke' => 'desaniciar páxines en masa',
-	'nuke-desc' => "Da a los alministradores la capacidá d'[[Special:Nuke|esborrar páxines masivamente]]",
-	'nuke-nopages' => 'Nun hai páxines nueves de [[Special:Contributions/$1|$1]] nos cambeos recientes.',
-	'nuke-list' => 'Les páxines siguientes foron creaes recién por [[Special:Contributions/$1|$1]]; escribi un comentariu y calca nel botón pa esborrales.',
-	'nuke-list-multiple' => "Les páxines darréu se crearon recientemente;
-escribi un comentariu y calca'l botón pa desaniciales.",
-	'nuke-defaultreason' => 'Esborráu masivu de páxines añadíes por $1',
-	'nuke-multiplepeople' => 'Desaniciu en masa de páxines nueves',
-	'nuke-tools' => "Esta ferramienta permite desanicios masivos de páxines añadíes recién por un usuariu o una IP determinada. Escribi'l nome d'usuariu o la IP pa obtener una llista de páxines a desaniciar, o dexa en blanco pa tolos usuarios.",
+	'nuke-desc' => 'Da a los alministradores la capacidá de [[Special:Nuke|desaniciar páxines en masa]]',
+	'nuke-nopages' => 'Nun hai páxines nueves de [[Special:Contributions/$1|$1]] nos cambios recientes.',
+	'nuke-list' => '[[Special:Contributions/$1|$1]] recién creó les páxines siguientes; escribi un comentariu y calca nel botón pa desaniciales.',
+	'nuke-list-multiple' => 'Les páxines darréu se crearon recién; escribi
+un comentariu y calca nel botón pa desaniciales.',
+	'nuke-defaultreason' => 'Desaniciu en masa de páxines amestaes por $1',
+	'nuke-multiplepeople' => 'Desaniciu en masa de páxines recién amestaes',
+	'nuke-tools' => "Esta ferramienta permite desanicios en masa de páxines añadíes recién por un usuariu o una IP determinada. Escribi'l nome d'usuariu o la IP pa ver una llista de páxines a desaniciar, o dexalo balero pa tolos usuarios.",
 	'nuke-submit-user' => 'Dir',
 	'nuke-submit-delete' => 'Desaniciar seleicionaes',
-	'right-nuke' => 'Esborráu masivu de páxines',
+	'right-nuke' => 'Desaniciu en masa de páxines',
 	'nuke-select' => 'Seleicionar: $1',
 	'nuke-userorip' => "Nome d'usuariu, direición IP o en blanco:",
 	'nuke-maxpages' => 'Máximu númberu de páxines:',
@@ -195,6 +196,7 @@ escribi un comentariu y calca'l botón pa desaniciales.",
 	'nuke-delete-more' => '[[Special:Nuke|Desaniciar más páxines]]',
 	'nuke-pattern' => 'Patrón pal nome de páxina:',
 	'nuke-nopages-global' => 'Nun hai páxines nueves nos [[Special:RecentChanges|cambios recientes]].',
+	'nuke-viewchanges' => 'ver los cambios',
 );
 
 /** Azerbaijani (Azərbaycanca)
@@ -286,6 +288,7 @@ $messages['be-tarask'] = array(
 	'nuke-delete-more' => '[[Special:Nuke|Масавае выдаленьне старонак]]',
 	'nuke-pattern' => 'Узор для назвы старонкі:',
 	'nuke-nopages-global' => 'У [[Special:RecentChanges|апошніх зьменах]] больш няма новых старонак.',
+	'nuke-viewchanges' => 'праглядзець зьмены',
 );
 
 /** Bulgarian (Български)
@@ -353,6 +356,7 @@ Merkañ ar c'homlec'h IP pe anv an implijer evit kaout roll ar pajennoù da zive
 	'nuke-delete-more' => '[[Special:Nuke|Diverkañ pajennoù all]]',
 	'nuke-pattern' => 'Patrom evit anv ar bajenn :',
 	'nuke-nopages-global' => "N'eus pajenn nevez ebet er [[Special:RecentChanges|c'hemmoù diwezhañ]].",
+	'nuke-viewchanges' => "Diskouez ar c'hemmoù",
 );
 
 /** Bosnian (Bosanski)
@@ -493,7 +497,7 @@ Gib einen Kommentar bezüglich der Löschung an und klicke auf die Schaltfläche
 	'nuke-multiplepeople' => 'Massenlöschung kürzlich erstellter Seiten',
 	'nuke-tools' => 'Diese Arbeitshilfe ermöglicht die Massenlöschung von Seiten, die von einer IP-Adresse oder einem Benutzer angelegt wurden.
 Gib die IP-Adresse oder den Benutzernamen ein, um eine Liste der zu löschenden Seiten zu erhalten. Sofern Du keine Angabe machst, werden alle Benutzer ausgewählt.',
-	'nuke-submit-user' => 'Hole die Liste',
+	'nuke-submit-user' => 'Abrufen',
 	'nuke-submit-delete' => 'Ausgewählte Seiten löschen',
 	'right-nuke' => 'Massenlöschung von Seiten',
 	'nuke-select' => 'Auswählen: $1',
@@ -505,6 +509,7 @@ Gib die IP-Adresse oder den Benutzernamen ein, um eine Liste der zu löschenden 
 	'nuke-delete-more' => '[[Special:Nuke|Weitere Seiten löschen]]',
 	'nuke-pattern' => 'Muster für den Seitennamen:',
 	'nuke-nopages-global' => 'Es gibt keine neuen Seiten unter den [[Special:RecentChanges|letzten Änderungen]].',
+	'nuke-viewchanges' => 'Änderungen ansehen',
 );
 
 /** German (formal address) (‪Deutsch (Sie-Form)‬)
@@ -542,6 +547,7 @@ Silinecek sayfaların listesini almak için kullanıcı adını ya da IPyi girin
  */
 $messages['dsb'] = array(
 	'nuke' => 'Masowe lašowanje',
+	'action-nuke' => 'Boki z masami lašowaś',
 	'nuke-desc' => 'Zmóžnja admininistratoram boki [[Special:Nuke|z masami lašowaś]]',
 	'nuke-nopages' => 'Žedne nowe boki wót [[Special:Contributions/$1|$1]] w aktualnych změnach',
 	'nuke-list' => 'Slědujuce boki su se nowo napórali wót [[Special:Contributions/$1|$1]];
@@ -549,7 +555,7 @@ zapódaj komentar a klikni na tłocašk, aby je lašował.',
 	'nuke-list-multiple' => 'Slědujuce boki su se rowno napórali;
 zapódaj komentar a klikni na tłocašk, aby je wulašował.',
 	'nuke-defaultreason' => 'Masowe lašowanje bokow, kótarež $1 jo pśidał.',
-	'nuke-multiplepeople' => 'někotare wužywarje',
+	'nuke-multiplepeople' => 'Masowe wulašowanje njedawno pśidanych bokow',
 	'nuke-tools' => 'Toś ten rěd zmóžnja masowe lašowanja bokow, kótarež wěsty wužywaŕ abo IP jo rowno pśidał. Zapódaj wužywarske mě abo IP-adresu, aby dostał lisćinu bokow, kótarež maju se lašowaś abo wóstaj pólo prozne, aby wubrał wšych wužywarjow.',
 	'nuke-submit-user' => 'W pórěźe',
 	'nuke-submit-delete' => 'Wubrane wulašowaś',
@@ -561,6 +567,9 @@ zapódaj komentar a klikni na tłocašk, aby je wulašował.',
 	'nuke-deleted' => "Bok '''$1''' jo se wulašował.",
 	'nuke-not-deleted' => "Bok [[:$1]] '''njejo dał''' se wulašowaś.",
 	'nuke-delete-more' => '[[Special:Nuke|Dalšne boki lašowaś]]',
+	'nuke-pattern' => 'Pśikład za bokowe mě:',
+	'nuke-nopages-global' => 'Njejsu žedne nowe boki w [[Special:RecentChanges|aktualnych změnach]].',
+	'nuke-viewchanges' => 'změny pokazaś',
 );
 
 /** Ewe (Eʋegbe) */
@@ -625,6 +634,7 @@ Enigu la salutnomon aŭ IP-adreson por akiri liston de paĝoj forigi, aŭ lasu �
 
 /** Spanish (Español)
  * @author Aleator
+ * @author Armando-Martin
  * @author Crazymadlover
  * @author DJ Nietzsche
  * @author Dferg
@@ -658,6 +668,7 @@ Introduzca el nombre de usuario o la dirección IP para obtener la lista de pág
 	'nuke-delete-more' => '[[Special:Nuke|Borrar más páginas]]',
 	'nuke-pattern' => 'Patrón del título de la página:',
 	'nuke-nopages-global' => 'No hay nuevas páginas en los [[Special:RecentChanges|cambios recientes]].',
+	'nuke-viewchanges' => 'Mostrar cambios',
 );
 
 /** Estonian (Eesti)
@@ -730,6 +741,7 @@ $messages['fa'] = array(
 	'nuke-delete-more' => '[[Special:Nuke|حذف صفحه‌های بیشتر]]',
 	'nuke-pattern' => 'الگو برای نام صفحه:',
 	'nuke-nopages-global' => 'هیچ صفحهٔ جدیدی در [[Special:RecentChanges|فهرست تغییرات اخیر]] نیست.',
+	'nuke-viewchanges' => 'نمایش تغییرات',
 );
 
 /** Finnish (Suomi)
@@ -775,6 +787,7 @@ Kirjoita käyttäjänimi tai IP-osoite, niin saat listan poistettavista sivuista
  * @author Peter17
  * @author Seb35
  * @author Sherbrooke
+ * @author Wyz
  * @author Zetud
  */
 $messages['fr'] = array(
@@ -800,6 +813,7 @@ entrez un commentaire et cliquez sur le bouton pour les supprimer.',
 	'nuke-delete-more' => '[[Special:Nuke|Supprimer plus de pages]]',
 	'nuke-pattern' => 'Modèle pour le nom de page:',
 	'nuke-nopages-global' => "Il n'y a pas de nouvelle page dans [[Special:RecentChanges|changements récents]].",
+	'nuke-viewchanges' => 'voir les modifications',
 );
 
 /** Franco-Provençal (Arpetan)
@@ -869,6 +883,7 @@ Introduza o nome do usuario ou enderezo IP para obter unha lista das páxinas pa
 	'nuke-delete-more' => '[[Special:Nuke|Borrar máis páxinas]]',
 	'nuke-pattern' => 'Patrón para o nome de páxina:',
 	'nuke-nopages-global' => 'Non hai páxinas novas nos [[Special:RecentChanges|cambios recentes]].',
+	'nuke-viewchanges' => 'ollar os cambios',
 );
 
 /** Ancient Greek (Ἀρχαία ἑλληνικὴ)
@@ -937,7 +952,7 @@ $messages['he'] = array(
 	'nuke-list-multiple' => 'הדפים הבאים נוצרו לאחרונה;
 אנא כתבו נימוק למחיקה ולחצו על הכפתור כדי למחוק אותם.',
 	'nuke-defaultreason' => 'הסרה מרובה של דפים שנוספו על ידי $1',
-	'nuke-multiplepeople' => 'משתמשים מרובים',
+	'nuke-multiplepeople' => 'מחיקה מרובה של דפים שנוספו לאחרונה',
 	'nuke-tools' => 'כלי זה מאפשר מחיקות המוניות של דפים שנוספו לאחרונה על ידי משתמש או כתובת IP מסוימים.
 כתבו את שם המשתמש או כתובת ה־IP כדי לקבל את רשימת הדפים למחיקה או השאירו את השדה הזה ריק עבור כל המשתמשים.',
 	'nuke-submit-user' => 'הצגה',
@@ -952,6 +967,7 @@ $messages['he'] = array(
 	'nuke-delete-more' => '[[Special:Nuke|למחוק עוד דפים]]',
 	'nuke-pattern' => 'תבנית עבור שם הדף:',
 	'nuke-nopages-global' => 'אין דפים חדשים ב[[Special:RecentChanges|שינויים אחרונים]].',
+	'nuke-viewchanges' => 'הצגת שינויים',
 );
 
 /** Hindi (हिन्दी)
@@ -1006,7 +1022,7 @@ $messages['hr'] = array(
  */
 $messages['hsb'] = array(
 	'nuke' => 'Masowe wušmórnjenje',
-	'action-nuke' => 'Strony zhašeć',
+	'action-nuke' => 'Strony z masami zhašeć',
 	'nuke-desc' => 'Zmóžnja administratoram [[Special:Nuke|masowe wušmórnjenje]] stronow',
 	'nuke-nopages' => 'W poslednich změnach njejsu nowe strony z [[Special:Contributions/$1|$1]].',
 	'nuke-list' => 'Slědowace strony buchu runje přez [[Special:Contributions/$1|$1]] wutworjene; zapodaj komentar a klikń na tłóčatko wušmórnjenja.',
@@ -1027,6 +1043,7 @@ napisaj komentar a klikń na tłóčatko, zo by je wušmórnył.',
 	'nuke-delete-more' => '[[Special:Nuke|Dalše strony wušmórnyć]]',
 	'nuke-pattern' => 'Přikład za mjeno strony:',
 	'nuke-nopages-global' => 'Njejsu žane nowe strony w [[Special:RecentChanges|aktualnych změnach]].',
+	'nuke-viewchanges' => 'změny pokazać',
 );
 
 /** Hungarian (Magyar)
@@ -1082,6 +1099,7 @@ Entra le nomine de usator o adresse IP pro obtener un lista de paginas a deler, 
 	'nuke-delete-more' => '[[Special:Nuke|Deler plus paginas]]',
 	'nuke-pattern' => 'Patrono pro le nomine de pagina:',
 	'nuke-nopages-global' => 'Il non ha nove paginas in le [[Special:RecentChanges|modificationes recente]].',
+	'nuke-viewchanges' => 'vider modificationes',
 );
 
 /** Indonesian (Bahasa Indonesia)
@@ -1216,6 +1234,7 @@ Inserisci il nome utente o l'indirizzo IP per la lista delle pagine da cancellar
 	'nuke-delete-more' => '[[Special:Nuke|Cancella più pagine]]',
 	'nuke-pattern' => 'Modello per il titolo della pagina:',
 	'nuke-nopages-global' => 'Non ci sono nuove pagine negli [[Special:RecentChanges|ultimi cambiamenti]].',
+	'nuke-viewchanges' => 'vedi modifiche',
 );
 
 /** Japanese (日本語)
@@ -1223,32 +1242,39 @@ Inserisci il nome utente o l'indirizzo IP per la lista delle pagine da cancellar
  * @author Fievarsty
  * @author Hosiryuhosi
  * @author JtFuruhata
+ * @author Marine-Blue
  * @author Muttley
  * @author Ohgi
  * @author Schu
+ * @author Shirayuki
  * @author 青子守歌
  */
 $messages['ja'] = array(
 	'nuke' => '一括削除',
-	'nuke-desc' => '{{int:group-sysop}}がページを[[Special:Nuke|一括削除]]できる機能を提供します。',
-	'nuke-nopages' => '最近の更新ページに[[Special:Contributions/$1|$1]]が新規作成したページはありません。',
-	'nuke-list' => '以下は、[[Special:Contributions/$1|$1]] によって最近作成されたページの一覧です；
-理由を記入しボタンを押すと、これらは削除されます。',
+	'action-nuke' => 'ページを一括削除',
+	'nuke-desc' => '{{int:group-sysop}}がページを[[Special:Nuke|一括削除]]する機能を提供します。',
+	'nuke-nopages' => '最近の更新に[[Special:Contributions/$1|$1]]が新規作成したページはありません。',
+	'nuke-list' => '[[Special:Contributions/$1|$1]] は最近、以下のページを作成しました；
+これらを削除するには、理由を記入してボタンを押してください。',
 	'nuke-list-multiple' => '最近作成されたページが表示されています。
 コメントを入力し、ボタンを押すと、削除されます。',
-	'nuke-defaultreason' => '$1 によって加えられたページを一括削除',
-	'nuke-multiplepeople' => '複数の利用者',
-	'nuke-tools' => 'このツールを使うと、指定した利用者またはIPアドレスによって最近作成されたページを、まとめて削除することができます。
-利用者名またはIPアドレスを入力すると、削除対象ページの一覧が生成されます。空にすると、すべての利用者によるものが対象になります。',
+	'nuke-defaultreason' => '$1が追加したページの一括削除',
+	'nuke-multiplepeople' => '最近追加されたページの一括削除',
+	'nuke-tools' => '指定した利用者またはIPアドレスが最近作成したページを、このツールで一括削除できます。
+利用者名またはIPアドレスを入力すると、削除対象ページの一覧が生成されます。空にすると全利用者が対象になります。',
 	'nuke-submit-user' => '一覧取得',
 	'nuke-submit-delete' => '選択されたページを削除',
-	'right-nuke' => 'ページの一括削除',
+	'right-nuke' => 'ページを一括削除',
 	'nuke-select' => '選択：$1',
 	'nuke-userorip' => '利用者名、IP アドレスまたは空白:',
-	'nuke-maxpages' => 'ページの最大量:',
-	'nuke-editby' => '[[Special:Contributions/$1|$1]]によって作成',
-	'nuke-deleted' => "ページ  '''$1''' は削除されています。",
-	'nuke-not-deleted' => "Page [[:$1]] は削除'''出来ません''' 。",
+	'nuke-maxpages' => '最大ページ数：',
+	'nuke-editby' => '[[Special:Contributions/$1|$1]]が作成',
+	'nuke-deleted' => "ページ  '''$1''' は削除されました。",
+	'nuke-not-deleted' => "ページ [[:$1]] を削除'''できませんでした''' 。",
+	'nuke-delete-more' => '[[Special:Nuke|他のページも削除]]',
+	'nuke-pattern' => 'ページ名のパターン：',
+	'nuke-nopages-global' => '[[Special:RecentChanges|最近の更新]]には新しいページはありません。',
+	'nuke-viewchanges' => '差分を表示',
 );
 
 /** Jutish (Jysk)
@@ -1285,6 +1311,7 @@ Lebokna jeneng panganggo utawa alamat IP kanggo olèh daftar kaca-kaca sing bisa
 /** Georgian (ქართული)
  * @author Alsandro
  * @author BRUTE
+ * @author David1010
  * @author Dawid Deutschland
  * @author Sopho
  */
@@ -1301,6 +1328,10 @@ $messages['ka'] = array(
 	'nuke-submit-delete' => 'არჩეულის წაშლა',
 	'right-nuke' => 'გვერდების მასობრივად წაშლა',
 	'nuke-select' => 'აირჩიეთ: $1',
+	'nuke-userorip' => 'მომხმარებლის სახელი, IP-მისამართი (შესაძლებელია ცარიელის დატოვება):',
+	'nuke-maxpages' => 'გვერდების მაქსიმალური რაოდენობა:',
+	'nuke-deleted' => "გვერდი '''$1''' წაიშალა.",
+	'nuke-not-deleted' => "გვერდი [[:$1]] წაშლა '''შეუძლებელია'''.",
 );
 
 /** Khmer (ភាសាខ្មែរ)
@@ -1431,6 +1462,7 @@ Gitt w.e.g. d'IP-Adress respektiv de Benotzer n fir eng Lescht vun de Säiten ze
 	'nuke-delete-more' => '[[Special:Nuke|Méi Säite läschen]]',
 	'nuke-pattern' => 'Muster fir de Säitennumm:',
 	'nuke-nopages-global' => 'Et si keng nei Säiten an de [[Special:RecentChanges|rezenten Ännerungen]].',
+	'nuke-viewchanges' => 'Ännerunge weisen',
 );
 
 /** Limburgish (Limburgs)
@@ -1523,6 +1555,7 @@ $messages['mk'] = array(
 	'nuke-delete-more' => '[[Special:Nuke|Избриши уште страници]]',
 	'nuke-pattern' => 'Мостра за име на страница:',
 	'nuke-nopages-global' => 'Нема нови страници во [[Special:RecentChanges|скорешните промени]].',
+	'nuke-viewchanges' => 'прикажи промени',
 );
 
 /** Malayalam (മലയാളം)
@@ -1598,6 +1631,7 @@ Isikan nama pengguna atau alamat IP untuk mendapat senarai laman yang hendak dik
 	'nuke-delete-more' => '[[Special:Nuke|Hapuskan lebih banyak laman]]',
 	'nuke-pattern' => 'Pola nama laman:',
 	'nuke-nopages-global' => 'Tiada laman baru dalam [[Special:RecentChanges|perubahan terkini]].',
+	'nuke-viewchanges' => 'lihat perubahan',
 );
 
 /** Maltese (Malti)
@@ -1734,6 +1768,7 @@ Voer de gebruikersnaam of het IP-adres in voor een lijst van te verwijderen pagi
 	'nuke-delete-more' => "[[Special:Nuke|Meer pagina's verwijderen]]",
 	'nuke-pattern' => 'Patroon voor de paginanaam:',
 	'nuke-nopages-global' => "Er zijn geen nieuwe pagina's in de [[Special:RecentChanges|recente wijzigingen]].",
+	'nuke-viewchanges' => 'wijzigingen bekijken',
 );
 
 /** Norwegian Nynorsk (‪Norsk (nynorsk)‬)
@@ -1824,6 +1859,8 @@ $messages['pdc'] = array(
 );
 
 /** Polish (Polski)
+ * @author Beau
+ * @author BeginaFelicysym
  * @author Derbeth
  * @author Leinad
  * @author Nux
@@ -1839,7 +1876,7 @@ $messages['pl'] = array(
 	'nuke-list-multiple' => 'Poniższa lista przedstawia ostatnio dodane strony.
 Wpisz powód, a następnie zatwierdź usunięcie stron.',
 	'nuke-defaultreason' => 'Masowe usunięcie stron dodanych przez $1',
-	'nuke-multiplepeople' => 'Masowe usuwanie ostatnio dodanych stron',
+	'nuke-multiplepeople' => 'Masowe usuwanie ostatnio utworzonych stron',
 	'nuke-tools' => 'Narzędzie pozwala na masowe usuwanie stron ostatnio dodanych przez zarejestrowanego lub anonimowego użytkownika.
 Wpisz nazwę użytkownika lub adres IP by otrzymać listę stron do usunięcia. Możesz także nic nie wpisywać, wtedy będzie można masowo usunąć wkład wszystkich użytkowników.',
 	'nuke-submit-user' => 'Dalej',
@@ -1852,8 +1889,9 @@ Wpisz nazwę użytkownika lub adres IP by otrzymać listę stron do usunięcia. 
 	'nuke-deleted' => "Strona '''$1''' została usunięta.",
 	'nuke-not-deleted' => "Strony [[:$1]] '''nie można''' usunąć.",
 	'nuke-delete-more' => '[[Special:Nuke|Usuń więcej stron]]',
-	'nuke-pattern' => 'Wzór dla nazwy strony:',
+	'nuke-pattern' => 'Wzór nazwy strony:',
 	'nuke-nopages-global' => 'Brak nowych stron w [[Special:RecentChanges|ostatnich zmianach]].',
+	'nuke-viewchanges' => 'widok zmian',
 );
 
 /** Piedmontese (Piemontèis)
@@ -1884,6 +1922,7 @@ ch'a buta un coment e ch'a sgnaca ël boton për scanceleje.",
 	'nuke-delete-more' => "[[Special:Nuke|Scancelé pì 'd pàgine]]",
 	'nuke-pattern' => 'Model për ël nòm ëd pàgina:',
 	'nuke-nopages-global' => "A-i é pa 'd pàgine neuve an [[Special:RecentChanges|ùltime modìfiche]].",
+	'nuke-viewchanges' => 'varda modìfiche',
 );
 
 /** Pashto (پښتو)
@@ -1931,6 +1970,7 @@ introduza um comentário e clique o botão para eliminá-las.',
 );
 
 /** Brazilian Portuguese (Português do Brasil)
+ * @author 555
  * @author Carla404
  * @author Eduardo.mps
  * @author Giro720
@@ -1944,7 +1984,7 @@ $messages['pt-br'] = array(
 	'nuke-list-multiple' => 'As seguintes páginas foram criadas recentemente;
 introduza um comentário e clique o botão para eliminá-las.',
 	'nuke-defaultreason' => 'Eliminação em massa de páginas criadas por $1',
-	'nuke-multiplepeople' => 'vários usuários',
+	'nuke-multiplepeople' => 'Eliminação em massa de páginas recentemente adicionadas',
 	'nuke-tools' => 'Esta ferramenta permite a eliminação em massa de páginas criadas recentemente por um usuário ou IP específico.
 Forneça o nome de usuário ou o IP para obter a lista de páginas a eliminar, ou deixe em branco para todos os usuários.',
 	'nuke-submit-user' => 'Ir',
@@ -2045,6 +2085,7 @@ Mitte 'u nome de l'utende o l'indirizze IP pe avè 'n'elenghe de le pàggene de 
 );
 
 /** Russian (Русский)
+ * @author DR
  * @author Eugrus
  * @author HalanTul
  * @author KPu3uC B Poccuu
@@ -2075,6 +2116,7 @@ $messages['ru'] = array(
 	'nuke-delete-more' => '[[Special:Nuke|Множественное удаление страниц]]',
 	'nuke-pattern' => 'Шаблон для имени страницы:',
 	'nuke-nopages-global' => 'В [[Special:RecentChanges|недавних изменениях]] нет новых страниц.',
+	'nuke-viewchanges' => 'Внесённые изменения',
 );
 
 /** Rusyn (Русиньскый)
@@ -2215,6 +2257,7 @@ Vnesite uporabniško ime ali IP, da pridobite seznam strani za izbris, ali pusti
 	'nuke-delete-more' => '[[Special:Nuke|Izbriši več strani]]',
 	'nuke-pattern' => 'Vzorec imena strani:',
 	'nuke-nopages-global' => 'V [[Special:RecentChanges|zadnjih spremembah]] ni novih strani.',
+	'nuke-viewchanges' => 'ogled sprememb',
 );
 
 /** Serbian (Cyrillic script) (‪Српски (ћирилица)‬)
@@ -2543,6 +2586,7 @@ Hãy nhập tên thành viên hoặc địa chỉ IP để lấy danh sách các
 	'nuke-delete-more' => '[[Special:Nuke|Xóa thêm trang]]',
 	'nuke-pattern' => 'Mẫu tên trang:',
 	'nuke-nopages-global' => 'Không có trang mới trong các [[Special:RecentChanges|thay đổi gần đây]].',
+	'nuke-viewchanges' => 'xem thay đổi',
 );
 
 /** Volapük (Volapük)
@@ -2592,12 +2636,13 @@ $messages['yue'] = array(
  * @author PhiLiP
  * @author Shinjiman
  * @author Xiaomingyan
+ * @author Yfdyh000
  * @author 阿pp
  */
 $messages['zh-hans'] = array(
 	'nuke' => '大量删除',
 	'action-nuke' => '大量删除页面',
-	'nuke-desc' => '让管理员可以[[Special:Nuke|大量删除]]页面',
+	'nuke-desc' => '让管理员可以[[Special:Nuke|批量删除]]页面',
 	'nuke-nopages' => '在最近更改中没有[[Special:Contributions/$1|$1]]创建的新页面。',
 	'nuke-list' => '以下为[[Special:Contributions/$1|$1]]最近创建的页面，请填写注释并点击按钮删除它们。',
 	'nuke-list-multiple' => '以下为最近创建的页面，请填写注释并点击按钮删除它们。',

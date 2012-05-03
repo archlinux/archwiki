@@ -19,25 +19,25 @@ class ArticleTest extends MediaWikiTestCase {
 
 	}
 
-	function testImplementsGetMagic() {		
-		$this->assertEquals( -1, $this->article->mCounter, "Article __get magic" );
+	function testImplementsGetMagic() {
+		$this->assertEquals( false, $this->article->mLatest, "Article __get magic" );
 	}
 
 	/**
 	 * @depends testImplementsGetMagic
 	 */
 	function testImplementsSetMagic() {
-
-		$this->article->mCounter = 2;
-		$this->assertEquals( 2, $this->article->mCounter, "Article __set magic" );
+		$this->article->mLatest = 2;
+		$this->assertEquals( 2, $this->article->mLatest, "Article __set magic" );
 	}
 
 	/**
 	 * @depends testImplementsSetMagic
 	 */
 	function testImplementsCallMagic() {
-		$this->article->mCounter = 33;
-		$this->assertEquals( 33, $this->article->getCount(), "Article __call magic" );
+		$this->article->mLatest = 33;
+		$this->article->mDataLoaded = true;
+		$this->assertEquals( 33, $this->article->getLatest(), "Article __call magic" );
 	}
 
 	function testGetOrSetOnNewProperty() {

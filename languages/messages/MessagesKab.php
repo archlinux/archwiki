@@ -308,14 +308,13 @@ Win (anedbal) isekker-itt yenna-d: $1',
 'cannotdelete'         => 'Ur yezmir ara ad yemḥu asebter neɣ afaylu i tebɣiḍ. (Ahat amdan wayeḍ yemḥa-t.)',
 'badtitle'             => 'Azwel ur yelhi',
 'badtitletext'         => 'Asebter i testeqsiḍ fell-as mačči ṣaḥiḥ, d ilem, neɣ yella ugul deg wezday seg wikipedia s tutlayt tayeḍ neɣ deg wezday n wiki nniḍen. Ahat tesɛa asekkil ur yezmir ara ad yettuseqdac deg wezwel.',
-'perfcached'           => 'Talɣut deg ukessar seg lkac u waqila mačči d tasiwelt taneggarut.',
-'perfcachedts'         => 'Talɣut deg ukessar seg lkac, tasiwelt taneggarut n wass $1.',
+'perfcached'           => 'Talɣut deg ukessar seg lkac u waqila mačči d tasiwelt taneggarut. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'Talɣut deg ukessar seg lkac, tasiwelt taneggarut n wass $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'Ibeddlen n usebter-agi ur ttbanen ara tura. Tilɣa ines qrib a d-banen.',
 'wrong_wfQuery_params' => 'Imsektayen mačči ṣaḥiḥ deg wfQuery()<br />
 Tawuri: $1<br />
 Query: $2',
 'viewsource'           => 'Ẓer aɣbalu',
-'viewsourcefor'        => 'n $1',
 'protectedpagetext'    => 'Asebter-agi d amsekker.',
 'viewsourcetext'       => 'Tzemreḍ ad twaliḍ u txedmeḍ alsaru n uɣbalu n usebter-agi:',
 'protectedinterface'   => 'Asebter-agi d amsekker axaṭer yettuseqdac i weḍris n software.',
@@ -447,9 +446,6 @@ $1 iɛekkel-it u yenna-d ''$2''.
 
 Tzemreḍ ad tmeslayeḍ akk d $1 neɣ [[{{MediaWiki:Grouppage-sysop}}|anedbal]] nniḍen iwakken ad tsmelayem ɣef uɛekkil-nni.
 Lukan ur tefkiḍ ara email saḥih deg [[Special:Preferences|isemyifiyen n wemseqdac]], ur tezmireḍ ara ad tazneḍ email. Tansa n IP inek n tura d $3, ID n uɛekkil d #$5. Smekti-ten u fka-ten i unedbal-nni.",
-'blockedoriginalsource'     => "Aɣablu n '''$1''' hat deg ukessar:",
-'blockededitsource'         => "Aḍris n '''ubeddel inek''' i '''$1''' hat deg ukessar:",
-'whitelistedittitle'        => 'Yessefk ad tkecmeḍ iwakken ad tbeddleḍ',
 'whitelistedittext'         => 'Yessefk ad $1 iwakken ad tbeddleḍ isebtar.',
 'confirmedittext'           => 'Yessefk ad tsentmeḍ tansa e-mail inek uqbel abeddel. Xtar tansa e-mail di [[Special:Preferences|isemyifiyen n wemseqdac]].',
 'nosuchsectiontitle'        => 'Amur ulac-it',
@@ -589,8 +585,6 @@ Inedbalen wiyaḍ deg wiki-yagi zemren ad ẓren imuren i yettwafren u zemren a 
 'revdelete-unsuppress'        => 'Kkes icekkilen ɣef tisiwal i yuɣalen-d',
 'revdelete-log'               => 'Ayɣer',
 'revdelete-submit'            => 'Eg-it i tasiwelt tettwafren',
-'revdelete-logentry'          => 'asekkud n tasiwelt tettubeddel i  [[$1]]',
-'logdelete-logentry'          => 'asekkud n tamirt tettubeddel i [[$1]]',
 'revdelete-success'           => "'''Asekkud n tasiwelt yettuxdem.'''",
 'logdelete-success'           => "'''Asekkud n tamirt yettuxdem.'''",
 
@@ -1058,7 +1052,6 @@ Tadhelt:
 'actioncomplete'  => 'Axdam yekfa',
 'deletedtext'     => '"$1" yettumḥa.
 Ẓer $2 i aɣmis n yimḥayin imaynuten.',
-'deletedarticle'  => '"[[$1]]" yettumḥa',
 'dellogpage'      => 'Aɣmis n umḥay',
 'dellogpagetext'  => 'Deg ukessar, yella wumuɣ n yimḥayin imaynuten.',
 'deletionlog'     => 'Aɣmis n umḥay',
@@ -1181,8 +1174,6 @@ Xtar yiwen nniḍen.',
 'talkexists'              => "'''Asemmimeḍ n usebter yekfa, meɛna asebter n umyannan ines ur yettusemmimeḍ ara axaṭer yella yagi yiwen s yisem kif-kif. G leɛnayek, xdem-it weḥd-ek.'''",
 'movedto'                 => 'yettusmimeḍ ar',
 'movetalk'                => 'Smimeḍ asebter n umyannan (n umagrad-nni)',
-'1movedto2'               => '[[$1]] yettusmimeḍ ar [[$2]]',
-'1movedto2_redir'         => '[[$1]] yettusmimeḍ ar [[$2]] s redirect',
 'movelogpage'             => 'Aɣmis n usemmimeḍ',
 'movelogpagetext'         => 'Akessar yella wumuɣ n isebtar yettusmimeḍen.',
 'movereason'              => 'Ayɣer',
@@ -1329,8 +1320,6 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 
 # Patrol log
 'patrol-log-page' => 'Aɣmis n usenqad',
-'patrol-log-line' => 'Yercem tasiwelt $1 n $2 "yettwassenqden" $3',
-'patrol-log-auto' => '(otomatik)',
 
 # Image deletion
 'deletedrevision' => 'Tasiwelt taqdimt $1 tettumḥa.',
@@ -1345,7 +1334,7 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 'thumbsize'      => 'Tiddi n tugna tamecṭuḥt:',
 'file-info'      => 'tiddi n ufaylu: $1, anaw n MIME: $2',
 'file-info-size' => '$1 × $2 pixel, tiddi n ufaylu: $3, anaw n MIME: $4',
-'file-nohires'   => '<small>Ulac resolution i tameqqrant fell-as.</small>',
+'file-nohires'   => 'Ulac resolution i tameqqrant fell-as.',
 'show-big-image' => 'Resolution tameqqrant',
 
 # Special:NewFiles
@@ -1410,13 +1399,6 @@ ad yemmut ass $4.',
 'scarytranscludedisabled' => '[Yettwakkes assekcam n isebtar seg wiki tiyaḍ]',
 'scarytranscludefailed'   => '[Ur yezmir ara a d-yawi talɣa n $1; suref-aɣ]',
 'scarytranscludetoolong'  => '[URL d aɣezfan bezzaf; suref-aɣ]',
-
-# Trackbacks
-'trackbackbox'      => 'Izdayen n zdeffir n umagrad-agi:<br />
-$1',
-'trackbackremove'   => '([$1 Mḥu])',
-'trackbacklink'     => 'Azday n zdeffir',
-'trackbackdeleteok' => 'Azday n zdeffir yettumḥa.',
 
 # Delete conflict
 'deletedwhileediting' => 'Aɣtal: Asebter-agi yettumḥa qbel ad tebdiḍ a t-tbeddleḍ!',

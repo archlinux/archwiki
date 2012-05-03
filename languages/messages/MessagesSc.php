@@ -381,7 +381,6 @@ Podet èsser stadu burradu dae calicunu àteru.',
 'badtitle'            => 'Tìtulu malu',
 'badtitletext'        => "Su tìtulu de sa pàgina ch'as pediu est bùidu, isballiau, o iscritu in is cullegamentus inter-wiki in manera non currègia o cun caràteres no amìtius.",
 'viewsource'          => 'Càstia mitza',
-'viewsourcefor'       => 'pro $1',
 'actionthrottled'     => 'Atzione rimandada',
 'sqlhidden'           => '(Consulta SQL cuada)',
 'namespaceprotected'  => "Non tenes su permissu de acontzare is pàginas in su nùmene-lugu '''$1'''.",
@@ -519,7 +518,6 @@ Nota ca sa funtzione 'Ispedi un'e-mail a custu usuàriu' no est ativa ki no est 
 S'indiritzu IP atuale est $3, su nùmeru ID de su bloccu est #$5.
 Pro praxere spetzìfica totu is particulares in antis in carche siat pregunta de acrarimentu.",
 'blockednoreason'                  => 'perunu motivu indicadu',
-'whitelistedittitle'               => "Esigit s'identificatzione pro acontzare is pàginas",
 'loginreqtitle'                    => 'Identificatzione rekesta',
 'loginreqlink'                     => 'identifica·ti',
 'loginreqpagetext'                 => 'Depes èsser $1 pro bìer àteras pàginas.',
@@ -607,13 +605,6 @@ Cosas de ammentare: '''({{int:cur}})''' = diferèntzias cun sa versione currente
 'revdel-restore-visible'     => 'revisiones visìbiles',
 'pagehist'                   => 'Istòria de sa pàgina',
 'deletedhist'                => 'Istòria fuliada',
-'revdelete-content'          => 'cuntènnidu',
-'revdelete-summary'          => "ogetu de s'acontzu",
-'revdelete-uname'            => 'nùmene usuàriu',
-'revdelete-hid'              => 'cua $1',
-'revdelete-unhid'            => 'ammustra $1',
-'revdelete-log-message'      => '$1 pro $2 {{PLURAL:$2|revisione|revisiones}}',
-'logdelete-log-message'      => '$1 pro $2 {{PLURAL:$2|eventu|eventos}}',
 'revdelete-reasonotherlist'  => 'Àteru motivu',
 
 # History merging
@@ -834,15 +825,14 @@ Prova a seberare ''totu:'' pro chircare in totu su cuntènnidu (inclùdidas pàg
 'rc-enhanced-hide'               => 'Cua particulares',
 
 # Recent changes linked
-'recentchangeslinked'          => 'Mudàntzias ligadas',
-'recentchangeslinked-feed'     => 'Mudàntzias ligadas',
-'recentchangeslinked-toolbox'  => 'Mudàntzias ligadas',
-'recentchangeslinked-title'    => 'Mudàntzias ligadas a "$1"',
-'recentchangeslinked-backlink' => '← $1',
-'recentchangeslinked-summary'  => "Custa est una lista de is mudàntzias fatas dae pagu a is pàginas ligadas a cussa spetzificada.
+'recentchangeslinked'         => 'Mudàntzias ligadas',
+'recentchangeslinked-feed'    => 'Mudàntzias ligadas',
+'recentchangeslinked-toolbox' => 'Mudàntzias ligadas',
+'recentchangeslinked-title'   => 'Mudàntzias ligadas a "$1"',
+'recentchangeslinked-summary' => "Custa est una lista de is mudàntzias fatas dae pagu a is pàginas ligadas a cussa spetzificada.
 Is pàginas de sa [[Special:Watchlist|watchlist tua]] sunt in '''grassu'''.",
-'recentchangeslinked-page'     => 'Nùmene pàgina:',
-'recentchangeslinked-to'       => 'Ammustra feti mudàntzias a pàginas ligadas a cussa spetzificada',
+'recentchangeslinked-page'    => 'Nùmene pàgina:',
+'recentchangeslinked-to'      => 'Ammustra feti mudàntzias a pàginas ligadas a cussa spetzificada',
 
 # Upload
 'upload'              => 'Càrriga file',
@@ -919,12 +909,10 @@ Càstia sa [[Special:NewFiles|galleria de files nous]] pro una presentada prus b
 'shared-repo-from'          => 'dae $1',
 
 # File reversion
-'filerevert-backlink' => '← $1',
-'filerevert-comment'  => 'Motivu:',
+'filerevert-comment' => 'Motivu:',
 
 # File deletion
 'filedelete'                  => 'Cantzella $1',
-'filedelete-backlink'         => '← $1',
 'filedelete-legend'           => 'Cantzella su file',
 'filedelete-submit'           => 'Cantzella',
 'filedelete-success'          => "Su file '''$1''' est istadu fuliau.",
@@ -1032,9 +1020,7 @@ Dia podent essere immàgines impreadas dae àteros giassos cun unu ligàmine dir
 'activeusers-hidesysops' => 'Cua amministradores',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Usuàrios nous',
-'newuserlog-byemail'      => 'password imbiada via e-mail',
-'newuserlog-create-entry' => 'Account usuàriu nou',
+'newuserlogpage' => 'Usuàrios nous',
 
 # Special:ListGroupRights
 'listgrouprights-group'   => 'Grupu',
@@ -1096,7 +1082,6 @@ Is mudàntzias de custa pàgina e de sa pàgina de cuntierras sua ant a bennere 
 'excontentauthor'       => "su cuntènnidu fiat: '$1' (e s'ùnicu contribudori fiat '[[Special:Contributions/$2|$2]]')",
 'exblank'               => 'sa pàgina fiat bùida',
 'delete-confirm'        => 'Fùlia "$1"',
-'delete-backlink'       => '← $1',
 'delete-legend'         => 'Fuliare',
 'confirmdeletetext'     => "Ses acanta de burrare una pàgina cun totu su stòria sua.
 Pro praxere, cunfirma ca est intentzione tua fàgher custu, ca connosches is cosseguèntzias de s'atzione tua, a ca custa est cunforma a is [[{{MediaWiki:Policy-url}}|lìnias polìticas]].",
@@ -1104,7 +1089,6 @@ Pro praxere, cunfirma ca est intentzione tua fàgher custu, ca connosches is cos
 'actionfailed'          => 'Atzione faddida',
 'deletedtext'           => 'Sa pàgina "$1" est istada fuliada.
 Càstia su log $2 pro unu registru de is ùrtimas fuliaduras.',
-'deletedarticle'        => 'at fuliadu "[[$1]]"',
 'dellogpage'            => 'Burraduras',
 'dellogpagetext'        => 'A sighire una lista de is prus reghentes burraduras.',
 'reverted'              => 'Torrada a sa versione in antis',
@@ -1124,7 +1108,6 @@ s'ùrtimu contribuidore est s'ùnicu autore de custa pàgina.",
 'protectlogpage'              => 'Amparaduras',
 'protectedarticle'            => 'at amparau "[[$1]]"',
 'modifiedarticleprotection'   => 'at cambiau su livellu de amparadura pro "[[$1]]"',
-'protect-backlink'            => '← $1',
 'protectcomment'              => 'Motivu:',
 'protectexpiry'               => 'Iscadèntzia:',
 'protect_expiry_invalid'      => "S'iscadèntzia est imbàlida.",
@@ -1172,7 +1155,6 @@ Chi est istada creada una pàgina cun su matessi tìtulu, is revisiones recupera
 'undeleteviewlink'          => 'abbista',
 'undeleteinvert'            => 'Fùrria sa seletzione',
 'undeletecomment'           => 'Motivu:',
-'undeletedarticle'          => 'at restauradu "$1"',
 'undeletedrevisions'        => '{{PLURAL:$1|1 revisione restaurada|$1 revisiones restauradas}}',
 'undeletedrevisions-files'  => '{{PLURAL:$1|1 revisione|$1 revisiones}} e {{PLURAL:$2|1 file|$2 files}} restaurados',
 'undeletedfiles'            => '{{PLURAL:$1|1 file restauradu|$1 files restaurados}}',
@@ -1207,7 +1189,6 @@ Chi est istada creada una pàgina cun su matessi tìtulu, is revisiones recupera
 'whatlinkshere'            => 'Pàginas chi ligant a custa',
 'whatlinkshere-title'      => 'Pàginas chi ligant a "$1"',
 'whatlinkshere-page'       => 'Pàgina:',
-'whatlinkshere-backlink'   => '← $1',
 'linkshere'                => "Sas pàginas chi sighint ligant a '''[[:$1]]''':",
 'nolinkshere'              => "Peruna pàgina ligat a '''[[:$1]]'''.",
 'nolinkshere-ns'           => "Peruna pàgina ligat a '''[[:$1]]''' in su nùmene-logu seberadu.",
@@ -1314,8 +1295,6 @@ Pro praxere sèbera un'àteru nùmene.",
 'talkexists'              => "'''Su movimentu de sa pàgina est andadu bene, ma no est stadu possìbile mòver sa pàgina de cuntierras pro ite nde esistit giai un'àtera cun su matessi tìtulu. Pro praxere giunghe tue su cuntestu de sa pàgina betza.'''",
 'movedto'                 => 'mòvida a',
 'movetalk'                => 'Move sa pàgina de cuntierra galu',
-'1movedto2'               => 'at mòvidu [[$1]] a [[$2]]',
-'1movedto2_redir'         => 'at mòvidu [[$1]] a [[$2]] subra redirect',
 'movelogpage'             => 'Moviduras',
 'movereason'              => 'Motivu:',
 'revertmove'              => 'fùrria',
@@ -1418,7 +1397,7 @@ Podes agiùnger unu motivu in s\'ogetu de s\'acontzu.',
 
 # Media information
 'file-info-size' => '$1 × $2 pixels, mannesa de su file: $3, tipu de MIME: $4',
-'file-nohires'   => '<small>Non si tenent risolutziones prus artas.</small>',
+'file-nohires'   => 'Non si tenent risolutziones prus artas.',
 'svg-long-desc'  => 'file in formadu SVG, mannesa nominale $1 × $2 pixel, mannesa de su file: $3',
 'show-big-image' => 'Versione a risolutzione arta',
 
@@ -1429,9 +1408,9 @@ Podes agiùnger unu motivu in s\'ogetu de s\'acontzu.',
 
 # Video information, used by Language::formatTimePeriod() to format lengths in the above messages
 'video-dims'     => '$1, $2×$3',
-'seconds-abbrev' => 's',
-'minutes-abbrev' => 'm',
-'hours-abbrev'   => 'h',
+'seconds-abbrev' => '$1s',
+'minutes-abbrev' => '$1m',
+'hours-abbrev'   => '$1h',
 
 # Bad image list
 'bad_image_list' => 'Su formau est su chi sighit:
@@ -1579,5 +1558,8 @@ Is acàpius chi sighint in sa matessi lìnia sunt cunsideraus comente eccetzione
 
 # HTML forms
 'htmlform-selectorother-other' => 'Àteru',
+
+# New logging system
+'newuserlog-byemail' => 'password imbiada via e-mail',
 
 );

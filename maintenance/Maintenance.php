@@ -20,6 +20,11 @@
  * @defgroup Maintenance Maintenance
  */
 
+/**
+ * @defgroup MaintenanceArchive Maintenance archives
+ * @ingroup Maintenance
+ */
+
 // Define this so scripts can easily find doMaintenance.php
 define( 'RUN_MAINTENANCE_IF_MAIN', dirname( __FILE__ ) . '/doMaintenance.php' );
 define( 'DO_MAINTENANCE', RUN_MAINTENANCE_IF_MAIN ); // original name, harmless
@@ -130,14 +135,15 @@ abstract class Maintenance {
 	 */
 	public static function shouldExecute() {
 		$bt = debug_backtrace();
-		if ( count( $bt ) < 2 ) {
+		$count = count( $bt );
+		if ( $count < 2 ) {
 			return false; // sanity
 		}
 		if ( $bt[0]['class'] !== 'Maintenance' || $bt[0]['function'] !== 'shouldExecute' ) {
 			return false; // last call should be to this function
 		}
-		$includeFuncs = array( 'require_once', 'require', 'include' );
-		for( $i=1; $i < count( $bt ); $i++ ) {
+		$includeFuncs = array( 'require_once', 'require', 'include', 'include_once' );
+		for( $i=1; $i < $count; $i++ ) {
 			if ( !in_array( $bt[$i]['function'], $includeFuncs ) ) {
 				return false; // previous calls should all be "requires"
 			}
@@ -247,6 +253,20 @@ abstract class Maintenance {
 	 */
 	protected function setBatchSize( $s = 0 ) {
 		$this->mBatchSize = $s;
+
+		// If we support $mBatchSize, show the option.
+		// Used to be in addDefaultParams, but in order for that to
+		// work, subclasses would have to call this function in the constructor
+		// before they called parent::__construct which is just weird
+		// (and really wasn't done).
+		if ( $this->mBatchSize ) {
+			$this->addOption( 'batch-size', 'Run this many operations ' .
+				'per batch, default: ' . $this->mBatchSize, false, true );
+			if ( isset( $this->mParams['batch-size'] ) ) {
+				// This seems a little ugly...
+				$this->mDependantParameters['batch-size'] = $this->mParams['batch-size'];
+			}
+		}
 	}
 
 	/**
@@ -299,8 +319,7 @@ abstract class Maintenance {
 			} else {
 				print( $out );
 			}
-		}
-		else {
+		} else {
 			$out = preg_replace( '/\n\z/', '', $out );
 			$this->outputChanneled( $out, $channel );
 		}
@@ -427,11 +446,7 @@ abstract class Maintenance {
 			$this->addOption( 'dbuser', 'The DB user to use for this script', false, true );
 			$this->addOption( 'dbpass', 'The password to use for this script', false, true );
 		}
-		// If we support $mBatchSize, show the option
-		if ( $this->mBatchSize ) {
-			$this->addOption( 'batch-size', 'Run this many operations ' .
-				'per batch, default: ' . $this->mBatchSize, false, true );
-		}
+
 		# Save additional script dependant options to display
 		# them separately in help
 		$this->mDependantParameters = array_diff_key( $this->mParams, $this->mGenericParameters );
@@ -455,6 +470,9 @@ abstract class Maintenance {
 			}
 		}
 
+		/**
+		 * @var $child Maintenance
+		 */
 		$child = new $maintClass();
 		$child->loadParamsAndArgs( $this->mSelf, $this->mOptions, $this->mArgs );
 		if ( !is_null( $this->mDb ) ) {
@@ -525,6 +543,7 @@ abstract class Maintenance {
 	 * to allow sysadmins to explicitly set one if they'd prefer to override
 	 * defaults (or for people using Suhosin which yells at you for trying
 	 * to disable the limits)
+	 * @return string
 	 */
 	public function memoryLimit() {
 		$limit = $this->getOption( 'memory-limit', 'max' );
@@ -851,6 +870,9 @@ abstract class Maintenance {
 			$wgDBpassword = $wgDBadminpassword;
 
 			if ( $wgDBservers ) {
+				/**
+				 * @var $wgDBservers array
+				 */
 				foreach ( $wgDBservers as $i => $server ) {
 					$wgDBservers[$i]['user'] = $wgDBuser;
 					$wgDBservers[$i]['password'] = $wgDBpassword;
@@ -886,57 +908,6 @@ abstract class Maintenance {
 	public function globals() {
 		if ( $this->hasOption( 'globals' ) ) {
 			print_r( $GLOBALS );
-		}
-	}
-
-	/**
-	 * Do setup specific to WMF
-	 */
-	public function loadWikimediaSettings() {
-		global $IP, $wgNoDBParam, $wgUseNormalUser, $wgConf, $site, $lang;
-
-		if ( empty( $wgNoDBParam ) ) {
-			# Check if we were passed a db name
-			if ( isset( $this->mOptions['wiki'] ) ) {
-				$db = $this->mOptions['wiki'];
-			} else {
-				$db = array_shift( $this->mArgs );
-			}
-			list( $site, $lang ) = $wgConf->siteFromDB( $db );
-
-			# If not, work out the language and site the old way
-			if ( is_null( $site ) || is_null( $lang ) ) {
-				if ( !$db ) {
-					$lang = 'aa';
-				} else {
-					$lang = $db;
-				}
-				if ( isset( $this->mArgs[0] ) ) {
-					$site = array_shift( $this->mArgs );
-				} else {
-					$site = 'wikipedia';
-				}
-			}
-		} else {
-			$lang = 'aa';
-			$site = 'wikipedia';
-		}
-
-		# This is for the IRC scripts, which now run as the apache user
-		# The apache user doesn't have access to the wikiadmin_pass command
-		if ( $_ENV['USER'] == 'apache' ) {
-		# if ( posix_geteuid() == 48 ) {
-			$wgUseNormalUser = true;
-		}
-
-		putenv( 'wikilang=' . $lang );
-
-		ini_set( 'include_path', ".:$IP:$IP/includes:$IP/languages:$IP/maintenance" );
-
-		if ( $lang == 'test' && $site == 'wikipedia' ) {
-			if ( !defined( 'TESTWIKI' ) ) {
-				define( 'TESTWIKI', 1 );
-			}
 		}
 	}
 
@@ -1030,6 +1001,7 @@ abstract class Maintenance {
 
 	/**
 	 * Get the maintenance directory.
+	 * @return string
 	 */
 	protected function getDir() {
 		return dirname( __FILE__ );
@@ -1177,6 +1149,7 @@ abstract class Maintenance {
 	 * Update the searchindex table for a given pageid
 	 * @param $dbw Database: a database write handle
 	 * @param $pageId Integer: the page ID to update.
+	 * @return null|string
 	 */
 	public function updateSearchIndexForPage( $dbw, $pageId ) {
 		// Get current revision
@@ -1208,7 +1181,7 @@ abstract class Maintenance {
 		} else {
 			return posix_isatty( $fd );
 		}
-}
+	}
 
 	/**
 	 * Prompt the console for input
@@ -1274,6 +1247,9 @@ abstract class Maintenance {
 	}
 }
 
+/**
+ * Fake maintenance wrapper, mostly used for the web installer/updater
+ */
 class FakeMaintenance extends Maintenance {
 	protected $mSelf = "FakeMaintenanceScript";
 	public function execute() {

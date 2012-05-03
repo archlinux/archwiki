@@ -7,9 +7,8 @@
  * @ingroup Language
  * @file
  *
+ * @author Rk_kaul (on ks.wikipedia.org)
  */
-
-# @todo FIXME: Inherit almost everything for now
 
 $digitTransformTable = array(
 	'0' => '०', # &#x0966;

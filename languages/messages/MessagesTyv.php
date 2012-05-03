@@ -661,9 +661,7 @@ The password for this new account can be changed on the ''[[Special:ChangePasswo
 'activeusers-hidesysops' => 'Эргелекчыларны чажырары',
 
 # Special:Log/newusers
-'newuserlogpage'           => 'Чаа ажыглакчы кырында журнал',
-'newuserlog-create-entry'  => 'Чаа бүрүткел бижик',
-'newuserlog-create2-entry' => '$1 деп чаа бүрүткел бижикти бүдүрген',
+'newuserlogpage' => 'Чаа ажыглакчы кырында журнал',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(кежигүннүң даңзызы)',
@@ -701,7 +699,6 @@ The password for this new account can be changed on the ''[[Special:ChangePasswo
 'delete-confirm'        => '"$1" деп арынны ырадыры',
 'delete-legend'         => 'Ырадыры',
 'actioncomplete'        => 'Ажыл доосту',
-'deletedarticle'        => '"[[$1]]" деп арынны ап каан',
 'deletecomment'         => 'Чылдагаан:',
 'deleteotherreason'     => 'Өске/немелде чылдагаан:',
 'deletereasonotherlist' => 'Өске чылдагаан',
@@ -729,7 +726,6 @@ The password for this new account can be changed on the ''[[Special:ChangePasswo
 'undeletelink'           => 'көөрү/диргисири',
 'undeleteviewlink'       => 'көөрү',
 'undeletecomment'        => 'Чылдагаан:',
-'undeletedarticle'       => '"[[$1]]" диргискен',
 'undelete-search-submit' => 'Дилээр',
 
 # Namespace form on various pages

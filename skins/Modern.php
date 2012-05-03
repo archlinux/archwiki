@@ -21,6 +21,9 @@ class SkinModern extends SkinTemplate {
 	var $skinname = 'modern', $stylename = 'modern',
 		$template = 'ModernTemplate', $useHeadElement = true;
 
+	/**
+	 * @param $out OutputPage
+	 */
 	function setupSkinUserCss( OutputPage $out ){
 		parent::setupSkinUserCss( $out );
 		$out->addModuleStyles ('skins.modern');
@@ -34,10 +37,6 @@ class SkinModern extends SkinTemplate {
 class ModernTemplate extends MonoBookTemplate {
 
 	/**
-	 * @var Skin
-	 */
-	var $skin;
-	/**
 	 * Template filter callback for Modern skin.
 	 * Takes an associative array of data set from a SkinTemplate-based
 	 * class, and a wrapper for MediaWiki's localization database, and
@@ -46,8 +45,6 @@ class ModernTemplate extends MonoBookTemplate {
 	 * @access private
 	 */
 	function execute() {
-		$this->skin = $skin = $this->data['skin'];
-
 		// Suppress warnings to prevent notices about missing indexes in $this->data
 		wfSuppressWarnings();
 
@@ -55,7 +52,7 @@ class ModernTemplate extends MonoBookTemplate {
 ?>
 
 	<!-- heading -->
-	<div id="mw_header"><h1 id="firstHeading"><?php $this->html('title') ?></h1></div>
+	<div id="mw_header"><h1 id="firstHeading"><span dir="auto"><?php $this->html('title') ?></span></h1></div>
 
 	<div id="mw_main">
 	<div id="mw_contentwrapper">
@@ -134,7 +131,7 @@ class ModernTemplate extends MonoBookTemplate {
 			<div id="mw_<?php echo htmlspecialchars($blockName); ?>">
 <?php
 			foreach ( $footerIcons as $icon ) { ?>
-				<?php echo $this->skin->makeFooterIcon( $icon, 'withoutImage' ); ?>
+				<?php echo $this->getSkin()->makeFooterIcon( $icon, 'withoutImage' ); ?>
 
 <?php
 			} ?>

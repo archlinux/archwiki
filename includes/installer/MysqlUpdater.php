@@ -66,7 +66,6 @@ class MysqlUpdater extends DatabaseUpdater {
 			array( 'addTable', 'user_newtalk',                      'patch-usernewtalk2.sql' ),
 			array( 'addTable', 'transcache',                        'patch-transcache.sql' ),
 			array( 'addField', 'interwiki',     'iw_trans',         'patch-interwiki-trans.sql' ),
-			array( 'addTable', 'trackbacks',                        'patch-trackbacks.sql' ),
 
 			// 1.6
 			array( 'doWatchlistNull' ),
@@ -158,7 +157,6 @@ class MysqlUpdater extends DatabaseUpdater {
 			array( 'doUpdateTranscacheField' ),
 			array( 'renameEuWikiId' ),
 			array( 'doUpdateMimeMinorField' ),
-			array( 'doPopulateRevLen' ),
 
 			// 1.17
 			array( 'addTable', 'iwlinks',                           'patch-iwlinks.sql' ),
@@ -182,6 +180,18 @@ class MysqlUpdater extends DatabaseUpdater {
 			array( 'modifyField', 'user_properties', 'up_property', 'patch-up_property.sql' ),
 			array( 'addTable', 'uploadstash',                       'patch-uploadstash.sql' ),
 			array( 'addTable', 'user_former_groups',                'patch-user_former_groups.sql'),
+
+			// 1.19
+			array( 'addIndex', 'logging',       'type_action',      'patch-logging-type-action-index.sql'),
+			array( 'doMigrateUserOptions' ),
+			array( 'dropField', 'user',         'user_options', 'patch-drop-user_options.sql' ),
+			array( 'addField', 'revision',      'rev_sha1',         'patch-rev_sha1.sql' ),
+			array( 'addField', 'archive',       'ar_sha1',          'patch-ar_sha1.sql' ),
+			array( 'addIndex', 'page', 'page_redirect_namespace_len', 'patch-page_redirect_namespace_len.sql' ),
+			array( 'modifyField', 'user_groups', 'ug_group', 'patch-ug_group-length-increase.sql' ),
+			array( 'addField',	'uploadstash',	'us_chunk_inx',		'patch-uploadstash_chunk.sql' ),
+			array( 'addfield', 'job',           'job_timestamp',    'patch-jobs-add-timestamp.sql' ),
+			array( 'modifyField', 'user_former_groups', 'ufg_group', 'patch-ufg_group-length-increase.sql' ),
 		);
 	}
 
@@ -220,12 +230,12 @@ class MysqlUpdater extends DatabaseUpdater {
 		if ( $info ) {
 			foreach ( $info as $row ) {
 				if ( $row->Column_name == $field ) {
-					$this->output( "...index $index on table $table includes field $field\n" );
+					$this->output( "...index $index on table $table includes field $field.\n" );
 					return true;
 				}
 			}
 		}
-		$this->output( "...index $index on table $table has no field $field; adding\n" );
+		$this->output( "...index $index on table $table has no field $field; added.\n" );
 		return false;
 	}
 
@@ -235,14 +245,14 @@ class MysqlUpdater extends DatabaseUpdater {
 	protected function doInterwikiUpdate() {
 		global $IP;
 
-		if ( $this->db->tableExists( "interwiki" ) ) {
+		if ( $this->db->tableExists( "interwiki", __METHOD__ ) ) {
 			$this->output( "...already have interwiki table\n" );
 			return;
 		}
 
 		$this->output( 'Creating interwiki table...' );
 		$this->applyPatch( 'patch-interwiki.sql' );
-		$this->output( "ok\n" );
+		$this->output( "done.\n" );
 		$this->output( 'Adding default interwiki definitions...' );
 		$this->applyPatch( "$IP/maintenance/interwiki.sql", true );
 		$this->output( "done.\n" );
@@ -257,7 +267,7 @@ class MysqlUpdater extends DatabaseUpdater {
 			throw new MWException( 'Missing rc_timestamp field of recentchanges table. Should not happen.' );
 		}
 		if ( $meta->isMultipleKey() ) {
-			$this->output( "...indexes seem up to 20031107 standards\n" );
+			$this->output( "...indexes seem up to 20031107 standards.\n" );
 			return;
 		}
 
@@ -291,7 +301,7 @@ class MysqlUpdater extends DatabaseUpdater {
 		$talk = $this->db->selectField( 'watchlist', 'count(*)', 'wl_namespace & 1', __METHOD__ );
 		$nontalk = $this->db->selectField( 'watchlist', 'count(*)', 'NOT (wl_namespace & 1)', __METHOD__ );
 		if ( $talk == $nontalk ) {
-			$this->output( "...watchlist talk page rows already present\n" );
+			$this->output( "...watchlist talk page rows already present.\n" );
 			return;
 		}
 
@@ -307,7 +317,7 @@ class MysqlUpdater extends DatabaseUpdater {
 	}
 
 	function doSchemaRestructuring() {
-		if ( $this->db->tableExists( 'page' ) ) {
+		if ( $this->db->tableExists( 'page', __METHOD__ ) ) {
 			$this->output( "...page table already exists.\n" );
 			return;
 		}
@@ -498,7 +508,7 @@ class MysqlUpdater extends DatabaseUpdater {
 	}
 
 	protected function doPagelinksUpdate() {
-		if ( $this->db->tableExists( 'pagelinks' ) ) {
+		if ( $this->db->tableExists( 'pagelinks', __METHOD__ ) ) {
 			$this->output( "...already have pagelinks table.\n" );
 			return;
 		}
@@ -547,18 +557,18 @@ class MysqlUpdater extends DatabaseUpdater {
 	}
 
 	protected function doUserGroupsUpdate() {
-		if ( $this->db->tableExists( 'user_groups' ) ) {
+		if ( $this->db->tableExists( 'user_groups', __METHOD__ ) ) {
 			$info = $this->db->fieldInfo( 'user_groups', 'ug_group' );
 			if ( $info->type() == 'int' ) {
 				$oldug = $this->db->tableName( 'user_groups' );
 				$newug = $this->db->tableName( 'user_groups_bogus' );
 				$this->output( "user_groups table exists but is in bogus intermediate format. Renaming to $newug... " );
 				$this->db->query( "ALTER TABLE $oldug RENAME TO $newug", __METHOD__ );
-				$this->output( "ok\n" );
+				$this->output( "done.\n" );
 
 				$this->output( "Re-adding fresh user_groups table... " );
 				$this->applyPatch( 'patch-user_groups.sql' );
-				$this->output( "ok\n" );
+				$this->output( "done.\n" );
 
 				$this->output( "***\n" );
 				$this->output( "*** WARNING: You will need to manually fix up user permissions in the user_groups\n" );
@@ -572,13 +582,13 @@ class MysqlUpdater extends DatabaseUpdater {
 
 		$this->output( "Adding user_groups table... " );
 		$this->applyPatch( 'patch-user_groups.sql' );
-		$this->output( "ok\n" );
+		$this->output( "done.\n" );
 
-		if ( !$this->db->tableExists( 'user_rights' ) ) {
-			if ( $this->db->fieldExists( 'user', 'user_rights' ) ) {
+		if ( !$this->db->tableExists( 'user_rights', __METHOD__ ) ) {
+			if ( $this->db->fieldExists( 'user', 'user_rights', __METHOD__ ) ) {
 				$this->output( "Upgrading from a 1.3 or older database? Breaking out user_rights for conversion..." );
 				$this->db->applyPatch( 'patch-user_rights.sql' );
-				$this->output( "ok\n" );
+				$this->output( "done.\n" );
 			} else {
 				$this->output( "*** WARNING: couldn't locate user_rights table or field for upgrade.\n" );
 				$this->output( "*** You may need to manually configure some sysops by manipulating\n" );
@@ -643,7 +653,7 @@ class MysqlUpdater extends DatabaseUpdater {
 	}
 
 	protected function doTemplatelinksUpdate() {
-		if ( $this->db->tableExists( 'templatelinks' ) ) {
+		if ( $this->db->tableExists( 'templatelinks', __METHOD__ ) ) {
 			$this->output( "...templatelinks table already exists\n" );
 			return;
 		}
@@ -701,7 +711,7 @@ class MysqlUpdater extends DatabaseUpdater {
 	 * -- Andrew Garrett, January 2007.
 	 */
 	protected function doRestrictionsUpdate() {
-		if ( $this->db->tableExists( 'page_restrictions' ) ) {
+		if ( $this->db->tableExists( 'page_restrictions', __METHOD__ ) ) {
 			$this->output( "...page_restrictions table already exists.\n" );
 			return;
 		}
@@ -741,19 +751,21 @@ class MysqlUpdater extends DatabaseUpdater {
 	}
 
 	protected function doPopulateParentId() {
-		if ( $this->updateRowExists( 'populate rev_parent_id' ) ) {
-			$this->output( "...rev_parent_id column already populated.\n" );
-			return;
-		}
+		if ( !$this->updateRowExists( 'populate rev_parent_id' ) ) {
+			$this->output(
+				"Populating rev_parent_id fields, printing progress markers. For large\n" .
+				"databases, you may want to hit Ctrl-C and do this manually with\n" .
+				"maintenance/populateParentId.php.\n" );
 
-		$task = $this->maintenance->runChild( 'PopulateParentId' );
-		$task->execute();
+			$task = $this->maintenance->runChild( 'PopulateParentId' );
+			$task->execute();
+		}
 	}
 
 	protected function doMaybeProfilingMemoryUpdate() {
-		if ( !$this->db->tableExists( 'profiling' ) ) {
+		if ( !$this->db->tableExists( 'profiling', __METHOD__ ) ) {
 			// Simply ignore
-		} elseif ( $this->db->fieldExists( 'profiling', 'pf_memory' ) ) {
+		} elseif ( $this->db->fieldExists( 'profiling', 'pf_memory', __METHOD__ ) ) {
 			$this->output( "...profiling table has pf_memory field.\n" );
 		} else {
 			$this->output( "Adding pf_memory field to table profiling..." );
@@ -784,7 +796,7 @@ class MysqlUpdater extends DatabaseUpdater {
 	}
 
 	protected function renameEuWikiId() {
-		if ( $this->db->fieldExists( 'external_user', 'eu_local_id' ) ) {
+		if ( $this->db->fieldExists( 'external_user', 'eu_local_id', __METHOD__ ) ) {
 			$this->output( "...eu_wiki_id already renamed to eu_local_id.\n" );
 			return;
 		}
@@ -803,16 +815,6 @@ class MysqlUpdater extends DatabaseUpdater {
 		$this->output( "Altering all *_mime_minor fields to 100 bytes in size ... " );
 		$this->applyPatch( 'patch-mime_minor_length.sql' );
 		$this->output( "done.\n" );
-	}
-
-	protected function doPopulateRevLen() {
-		if ( $this->updateRowExists( 'populate rev_len' ) ) {
-			$this->output( "...rev_len column already populated.\n" );
-			return;
-		}
-
-		$task = $this->maintenance->runChild( 'PopulateRevisionLength' );
-		$task->execute();
 	}
 
 	protected function doClFieldsUpdate() {

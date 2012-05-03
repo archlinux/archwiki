@@ -391,14 +391,13 @@ Maek hiervon maldienge bie 'n [[Special:ListUsers/sysop|beheêrder]] von {{SITEN
 'cannotdelete'         => "Kan de bladzie of 't bestand nie wisse. Misschien is 't a deu iemand aors gewist.",
 'badtitle'             => 'Verkeerde titel',
 'badtitletext'         => "De bladzie die-a je angevrogen ei was ongeldig, leeg, of fout gelinkt vanuut 'n aore wiki. Mischien stae d'r eên of meer teêkens in die-an nie in titels gebruukt kunne ore.",
-'perfcached'           => "De hehevens komm'n uut een cache en zien meuhlijk nie actueel.",
-'perfcachedts'         => "De hehevens komm'n uut een cache en zien voe 't lèst biehewerkt op $1.",
+'perfcached'           => "De hehevens komm'n uut een cache en zien meuhlijk nie actueel. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.",
+'perfcachedts'         => "De hehevens komm'n uut een cache en zien voe 't lèst biehewerkt op $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.",
 'querypage-no-updates' => 'Deêze pagina kan nie biehewerkt worn. Deêze hehevens worn nie ververst.',
 'wrong_wfQuery_params' => 'Foute parameters voe wfQuery()<br />
 Functie: $1<br />
 Zoekopdracht: $2',
 'viewsource'           => 'brontekst bekieken',
-'viewsourcefor'        => 'vò $1',
 'actionthrottled'      => 'Handelienge tehenehouwen',
 'actionthrottledtext'  => "As maetrehel tehen spam is 't antal keern per tiedseêneid da je deêze handelienge kan verrichen beperkt.
 De limiet is overschreeën.
@@ -564,9 +563,6 @@ Je kan hin gebruuk maeken van de functie 'e-mail deêze gebruker', tenzie a je e
 Je blokkaodenummer is #$5.
 Vermeld dat a je erhens over deêze blokkaode wil reaheern.",
 'blockednoreason'                  => 'hin reeën opeheven',
-'blockedoriginalsource'            => "De brontekst van '''$1''' staet ieronder:",
-'blockededitsource'                => "D'n tekst van '''joen biedragen''' an '''$1''' staet ieronder:",
-'whitelistedittitle'               => 'Voe bewerken is anmelden verplicht',
 'whitelistedittext'                => "Je mò $1 om pagina's te bewerken.",
 'confirmedittext'                  => "Je mò jen e-mailadres bevestihen voe da je kan bewerken.
 Voer jen e-mailadres in en bevestig 't via [[Special:Preferences|je vòkeuren]].",
@@ -756,8 +752,6 @@ Aore opzichters van {{SITENAME}} kunn'n de verborhen inoud benadern en de verwie
 'revdelete-unsuppress'        => 'Beperkiengen op terugezette wiezigiengen verwiederen',
 'revdelete-log'               => 'Opmerkieng in logboek:',
 'revdelete-submit'            => 'Toepassen op de hesillecteerde bewerkieng',
-'revdelete-logentry'          => 'zichbaereid van bewerkiengen is ewiezigd voe [[$1]]',
-'logdelete-logentry'          => 'wiezigen zichbaereid van hebeurtenis [[$1]]',
 'revdelete-success'           => "'''Zichbaereid van de wiezigieng succesvol inesteld.'''",
 'logdelete-success'           => "'''Zichbaereid van de hebeurtenisse succesvol inesteld.'''",
 'revdel-restore'              => 'Zichbaereid wiezigen',
@@ -765,15 +759,6 @@ Aore opzichters van {{SITENAME}} kunn'n de verborhen inoud benadern en de verwie
 'revdel-restore-visible'      => 'zichtbaere versies',
 'pagehist'                    => 'Paginaheschiedenisse',
 'deletedhist'                 => 'Verwiederde heschiedenisse',
-'revdelete-content'           => 'inoud',
-'revdelete-summary'           => 'saemenvattieng bewerken',
-'revdelete-uname'             => 'gebrukersnaem',
-'revdelete-restricted'        => 'ei beperkiengen an beheêrders opeleid',
-'revdelete-unrestricted'      => 'ei beperkiengen voe beheêrders opeheven',
-'revdelete-hid'               => 'ei $1 verborhen',
-'revdelete-unhid'             => 'ei $1 zichbaer emikt',
-'revdelete-log-message'       => '$1 voe $2 {{PLURAL:$2|versie|versies}}',
-'logdelete-log-message'       => '$1 voe $2 {{PLURAL:$2|logboekrehel|logboekrehels}}',
 
 # Suppression log
 'suppressionlog'     => 'Verberhiengslogboek',
@@ -1093,6 +1078,7 @@ De [$2 pagina mè de bestandsbeschrievienge] wòdt hieronder weergegeev'n.",
 'prefixindex'       => "Alle pagina's op vòvoegsel",
 'longpages'         => 'Langste bladzies',
 'listusers'         => 'Gebrukerslieste',
+'usercreated'       => '{{GENDER:$3|Geregistreerd}} op $1 om $2',
 'newpages'          => "Nieuwe pagina's",
 'newpages-username' => 'Gebrukersnaem:',
 'ancientpages'      => 'Bladzies die-an lang nie bin angepast',
@@ -1137,8 +1123,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'linksearch-line' => "$1 ei 'n verwiezienge in $2",
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Logboek nuwe gebrukers',
-'newuserlog-create-entry' => 'Nieuwe gebruker',
+'newuserlogpage' => 'Logboek nuwe gebrukers',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(ledenlieste)',
@@ -1169,7 +1154,6 @@ A je de bladzie laeter weêr van je volglieste afaele wil, klik dan op \"nie me�
 # Delete
 'actioncomplete' => 'Actie uutgevoerd',
 'actionfailed'   => 'De handelienge is mislukt.',
-'deletedarticle' => 'wiste "[[$1]]"',
 'dellogpage'     => 'Wislogboek',
 
 # Rollback
@@ -1263,8 +1247,6 @@ Ziet de [[Special:BlockList|Lieste van ip-blokkeriengen]] vò blokkaodes die op 
 'articleexists'    => "D'r bestaet al 'n bladzie mee dieën naem, of de naem
 die-a je gekozen is is ongeldeg.
 Kiest 'n aore naem.",
-'1movedto2'        => '[[$1]] is verschove nae [[$2]]',
-'1movedto2_redir'  => '[[$1]] is verschove nae [[$2]] over de deurverwiezienge',
 'movelogpage'      => 'Hernoemingslogboek',
 'revertmove'       => 'terugdraejen',
 
@@ -1343,6 +1325,7 @@ Kiest 'n aore naem.",
 
 # Media information
 'file-info-size' => '$1 × $2 pixels, bestandsgroôtte: $3, MIME-type: $4',
+'file-nohires'   => "Hin 'oôgere resolutie beschikbaer",
 'svg-long-desc'  => 'SVG-bestand, nominaal $1 × $2 pixels, bestandshroôtte: $3',
 'show-big-image' => 'Volledige resolutie',
 
@@ -1419,5 +1402,9 @@ Aorre veld'n worr'n verborr'n.
 
 # Special:Tags
 'tag-filter' => '[[Special:Tags|Labelfilter]]:',
+
+# New logging system
+'revdelete-restricted'   => 'ei beperkiengen an beheêrders opeleid',
+'revdelete-unrestricted' => 'ei beperkiengen voe beheêrders opeheven',
 
 );

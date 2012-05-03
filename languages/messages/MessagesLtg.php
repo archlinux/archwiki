@@ -275,6 +275,9 @@ Par to var ziņuot [[Special:ListUsers/sysop|kaidam administratoram]], nūruodū
 'passwordreset-username' => 'Slāgvuords:',
 'passwordreset-email'    => 'E-posta adress:',
 
+# Special:ChangeEmail
+'changeemail-cancel' => 'Atsaukt',
+
 # Edit page toolbar
 'bold_sample'     => 'Pamalnais roksts',
 'bold_tip'        => 'Pamalnais roksts',
@@ -357,7 +360,6 @@ n = nasvareigs lobuojums.',
 'revdelete-log'              => 'Īmesle:',
 'revdel-restore'             => 'maineit radzameibu',
 'pagehist'                   => 'Puslopys viesture',
-'revdelete-uname'            => 'slāgvuords',
 'revdelete-otherreason'      => 'Cyta/papyldoma īmesle:',
 'revdelete-reasonotherlist'  => 'Cyta īmesle',
 
@@ -591,8 +593,7 @@ Lopys, kas ir tovā [[Special:Watchlist|puorraugamūs rokstu sarokstā]] ir '''r
 'listusers-submit' => 'Paruodeit',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Jaunūs lītuotuoju registrs',
-'newuserlog-create-entry' => 'Registrāts lītuotuojvuords',
+'newuserlogpage' => 'Jaunūs lītuotuoju registrs',
 
 # Special:ListGroupRights
 'listgrouprights-members'  => '(dalinīku saroksts)',
@@ -628,7 +629,6 @@ Ka vāluok puordūmuosi i nagribiesi vairs puorraudzeit itū lopu, spīd iz sait
 'actioncomplete'        => 'Darbeiba pabeigta',
 'deletedtext'           => '"$1" beja iztreits.
 Kab apsavērtu pādejuo iztreitū sarokstu, verīs $2.',
-'deletedarticle'        => 'dzāsts "[[$1]]"',
 'dellogpage'            => 'Iztreišonys registris',
 'deletionlog'           => 'iztreišonys registru',
 'deletecomment'         => 'Īmesle:',
@@ -665,8 +665,7 @@ Pašreizejī lopys '''$1''' īstatejumi ir:",
 'restriction-move' => 'Puorceļt',
 
 # Undelete
-'undeletelink'     => 'apsavērt/atjaunynuot',
-'undeletedarticle' => 'atjaunynoju "[[$1]]"',
+'undeletelink' => 'apsavērt/atjaunynuot',
 
 # Namespace form on various pages
 'namespace'      => 'Vuordu pluots:',
@@ -750,8 +749,6 @@ Ka gribiesi, tod tev itei sarunu lopa byus juopuolīk voi juoapvīnoj pošam.",
 'talkexists'              => "'''Itei lopa tyka puorvītuota veiksmeigai, bet tuos sarunu lopu navarieja puorvītuot, deļ tuo ka jaunuo nūsaukuma lopai jau ir diskuseju lopa. Lyudzu apvīnoj ituos sarunu lopys pats.'''",
 'movedto'                 => 'puorvītuota iz',
 'movetalk'                => 'Puorceļt sasītū sprīžu.',
-'1movedto2'               => '"[[$1]]" puorsauču par "[[$2]]"',
-'1movedto2_redir'         => '[[$1]] tyka puorsauktys par [[$2]], lītojūt puoradresaceju',
 'movelogpage'             => 'Puorvītuošonys registrs',
 'movesubpage'             => '{{PLURAL:$1|Zampuslopa|Zampuslopys}}',
 'movereason'              => 'Īmesle:',
@@ -843,7 +840,7 @@ Tys ļaun davīnuot pamatuojumu kūpsavylkumā.',
 
 # Media information
 'file-info-size' => '$1 × $2 pikseli, faila izmārs: $3, MIME tips: $4',
-'file-nohires'   => '<small>Augstuoka izškirtspieja nav pīejama.</small>',
+'file-nohires'   => 'Augstuoka izškirtspieja nav pīejama.',
 'svg-long-desc'  => 'SVG fails, definātais lelums $1 × $2 pikseli, faila lelums: $3',
 'show-big-image' => 'Pylnā lelumā',
 

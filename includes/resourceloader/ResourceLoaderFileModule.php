@@ -33,47 +33,74 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	protected $remoteBasePath = '';
 	/**
 	 * Array: List of paths to JavaScript files to always include
-	 * @example array( [file-path], [file-path], ... )
+	 * @par Usage:
+	 * @code
+	 * array( [file-path], [file-path], ... )
+	 * @endcode
 	 */
 	protected $scripts = array();
 	/**
 	 * Array: List of JavaScript files to include when using a specific language
-	 * @example array( [language-code] => array( [file-path], [file-path], ... ), ... )
+	 * @par Usage:
+	 * @code
+	 * array( [language-code] => array( [file-path], [file-path], ... ), ... )
+	 * @endcode
 	 */
 	protected $languageScripts = array();
 	/**
 	 * Array: List of JavaScript files to include when using a specific skin
-	 * @example array( [skin-name] => array( [file-path], [file-path], ... ), ... )
+	 * @par Usage:
+	 * @code
+	 * array( [skin-name] => array( [file-path], [file-path], ... ), ... )
+	 * @endcode
 	 */
 	protected $skinScripts = array();
 	/**
 	 * Array: List of paths to JavaScript files to include in debug mode
-	 * @example array( [skin-name] => array( [file-path], [file-path], ... ), ... )
+	 * @par Usage:
+	 * @code
+	 * array( [skin-name] => array( [file-path], [file-path], ... ), ... )
+	 * @endcode
 	 */
 	protected $debugScripts = array();
 	/**
 	 * Array: List of paths to JavaScript files to include in the startup module
-	 * @example array( [file-path], [file-path], ... )
+	 * @par Usage:
+	 * @code
+	 * array( [file-path], [file-path], ... )
+	 * @endcode
 	 */
 	protected $loaderScripts = array();
 	/**
 	 * Array: List of paths to CSS files to always include
-	 * @example array( [file-path], [file-path], ... )
+	 * @par Usage:
+	 * @code
+	 * array( [file-path], [file-path], ... )
+	 * @endcode
 	 */
 	protected $styles = array();
 	/**
 	 * Array: List of paths to CSS files to include when using specific skins
-	 * @example array( [file-path], [file-path], ... )
+	 * @par Usage:
+	 * @code
+	 * array( [file-path], [file-path], ... )
+	 * @endcode
 	 */
 	protected $skinStyles = array();
 	/**
 	 * Array: List of modules this module depends on
-	 * @example array( [file-path], [file-path], ... )
+	 * @par Usage:
+	 * @code
+	 * array( [file-path], [file-path], ... )
+	 * @endcode
 	 */
 	protected $dependencies = array();
 	/**
 	 * Array: List of message keys used by this module
-	 * @example array( [message-key], [message-key], ... )
+	 * @par Usage:
+	 * @code
+	 * array( [message-key], [message-key], ... )
+	 * @endcode
 	 */
 	protected $messages = array();
 	/** String: Name of group to load this module in */
@@ -84,12 +111,18 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	protected $debugRaw = true;
 	/**
 	 * Array: Cache for mtime
-	 * @example array( [hash] => [mtime], [hash] => [mtime], ... )
+	 * @par Usage:
+	 * @code
+	 * array( [hash] => [mtime], [hash] => [mtime], ... )
+	 * @endcode
 	 */
 	protected $modifiedTime = array();
 	/**
 	 * Array: Place where readStyleFile() tracks file dependencies
-	 * @example array( [file-path], [file-path], ... )
+	 * @par Usage:
+	 * @code
+	 * array( [file-path], [file-path], ... )
+	 * @endcode
 	 */
 	protected $localFileRefs = array();
 
@@ -106,6 +139,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 *     to $wgScriptPath
 	 *
 	 * Below is a description for the $options array:
+	 * @par Construction options:
 	 * @code
 	 * 	array(
 	 * 		// Base path to prepend to all local paths in $options. Defaults to $IP
@@ -223,7 +257,11 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		$files = $this->getScriptFiles( $context );
 		return $this->readScriptFiles( $files );
 	}
-	
+
+	/**
+	 * @param $context ResourceLoaderContext
+	 * @return array
+	 */
 	public function getScriptURLsForDebug( ResourceLoaderContext $context ) {
 		$urls = array();
 		foreach ( $this->getScriptFiles( $context ) as $file ) {
@@ -232,6 +270,9 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		return $urls;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function supportsURLLoading() {
 		return $this->debugRaw;
 	}
@@ -275,6 +316,10 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		return $styles;
 	}
 
+	/**
+	 * @param $context ResourceLoaderContext
+	 * @return array
+	 */
 	public function getStyleURLsForDebug( ResourceLoaderContext $context ) {
 		$urls = array();
 		foreach ( $this->getStyleFiles( $context ) as $mediaType => $list ) {
@@ -377,7 +422,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		}
 
 		wfProfileIn( __METHOD__.'-filemtime' );
-		$filesMtime = max( array_map( 'filemtime', $files ) );
+		$filesMtime = max( array_map( array( __CLASS__, 'safeFilemtime' ), $files ) );
 		wfProfileOut( __METHOD__.'-filemtime' );
 		$this->modifiedTime[$context->getHash()] = max(
 			$filesMtime,
@@ -503,10 +548,10 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		$js = '';
 		foreach ( array_unique( $scripts ) as $fileName ) {
 			$localPath = $this->getLocalPath( $fileName );
-			$contents = file_get_contents( $localPath );
-			if ( $contents === false ) {
+			if ( !file_exists( $localPath ) ) {
 				throw new MWException( __METHOD__.": script file not found: \"$localPath\"" );
 			}
+			$contents = file_get_contents( $localPath );
 			if ( $wgResourceLoaderValidateStaticJS ) {
 				// Static files don't really need to be checked as often; unlike
 				// on-wiki module they shouldn't change unexpectedly without
@@ -552,17 +597,18 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 *
 	 * This method can be used as a callback for array_map()
 	 *
-	 * @param $path String: File path of script file to read
+	 * @param $path String: File path of style file to read
 	 * @param $flip bool
 	 *
 	 * @return String: CSS data in script file
+	 * @throws MWException if the file doesn't exist
 	 */
 	protected function readStyleFile( $path, $flip ) {
 		$localPath = $this->getLocalPath( $path );
-		$style = file_get_contents( $localPath );
-		if ( $style === false ) {
+		if ( !file_exists( $localPath ) ) {
 			throw new MWException( __METHOD__.": style file not found: \"$localPath\"" );
 		}
+		$style = file_get_contents( $localPath );
 		if ( $flip ) {
 			$style = CSSJanus::transform( $style, true, false );
 		}
@@ -580,6 +626,23 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		return CSSMin::remap(
 			$style, $dir, $remoteDir, true
 		);
+	}
+
+	/**
+	 * Safe version of filemtime(), which doesn't throw a PHP warning if the file doesn't exist
+	 * but returns 1 instead.
+	 * @param $filename string File name
+	 * @return int UNIX timestamp, or 1 if the file doesn't exist
+	 */
+	protected static function safeFilemtime( $filename ) {
+		if ( file_exists( $filename ) ) {
+			return filemtime( $filename );
+		} else {
+			// We only ever map this function on an array if we're gonna call max() after,
+			// so return our standard minimum timestamps here. This is 1, not 0, because
+			// wfTimestamp(0) == NOW
+			return 1;
+		}
 	}
 
 	/**

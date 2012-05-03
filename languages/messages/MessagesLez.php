@@ -14,6 +14,8 @@
  * @author Reedy
  */
 
+$fallback = 'ru';
+
 $messages = array(
 # User preference toggles
 'tog-underline'               => 'ЭлячIунрин кIаникай цIар чIугун',
@@ -271,7 +273,6 @@ $messages = array(
 'badtitle'           => 'Ииже текъвер тIвар',
 'badtitletext'       => 'ТIалабзавай ччин  я вичел амал алачир я,  я  ичIи я,  ва я чIаларарадин ва я викиарадин кьилин цlарар чlурукlа къалурнава. Мумкин я, кьилин цlарара сад ва я адалай гзаф рехъ гун виже текъвер символар кардик кутунвайди я.',
 'viewsource'         => 'Килигун',
-'viewsourcefor'      => 'идаз $1',
 
 # Virus scanner
 'virus-unknownscanner' => 'Малумтушир антивирус',
@@ -405,15 +406,10 @@ $messages = array(
 'revdelete-radio-set'        => 'Эхь',
 'revdelete-radio-unset'      => 'Ваъ',
 'revdelete-log'              => 'Кар',
-'revdelete-logentry'         => 'Дегишарна акунвал "[[$1]]"',
 'revdel-restore'             => 'Аквадайвал дегишарун',
 'revdel-restore-deleted'     => 'Алуднавай жуьреяр',
 'revdel-restore-visible'     => 'Аквадай дегишвилер',
 'pagehist'                   => 'Ччинин тарих',
-'revdelete-content'          => 'Къйеда',
-'revdelete-uname'            => 'ишлемишчидин тIар',
-'revdelete-hid'              => 'чуьнуьх авунай $1',
-'revdelete-log-message'      => '$1 идай $2 {{PLURAL:$2|Жуьре|Жуьреяр}}',
 'revdelete-edit-reasonlist'  => 'Алудунин себебар дуьзар хъувун',
 'revdelete-offender'         => 'Автордин жуьре:',
 
@@ -512,6 +508,8 @@ $messages = array(
 'prefs-watchlist-token'     => 'Гуьзетунин сиягьдин лишан',
 'prefs-misc'                => 'Муькуь низамарунар',
 'prefs-resetpass'           => 'Парол дегишарун',
+'prefs-changeemail'         => 'Э-почта дегишарун',
+'prefs-setemail'            => 'Э-почта эцигна туькIуьрун',
 'prefs-email'               => 'E-mail туькlуьрунин кьадарар',
 'prefs-rendering'           => 'КЪецепатан  акунар',
 'saveprefs'                 => 'Хуьн',
@@ -676,7 +674,7 @@ $messages = array(
 'prefixindex'   => 'Префикс галай вири ччинар',
 'shortpages'    => 'Куьруь хъувун',
 'longpages'     => 'Яргъи хъувун',
-'usercreated'   => 'И чIава туькlуьрнава: $1 $2',
+'usercreated'   => '{{GENDER:$3|Created}} идав $1 идал $2',
 'newpages'      => 'ЦIийи ччинар',
 'move'          => 'ТIвар эхцигун',
 'movethispage'  => 'Юзун и хъувун',
@@ -710,8 +708,7 @@ $messages = array(
 'linksearch-line' => '$2-ай $1-аз элячlун',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Иштиракчийрин туькlуьрунин журнал',
-'newuserlog-create-entry' => 'ЦIийи ишлемишчидин чин',
+'newuserlogpage' => 'Иштиракчийрин туькlуьрунин журнал',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(уьзвийрин сиягь)',
@@ -744,7 +741,6 @@ $messages = array(
 'actioncomplete'        => 'Кар авунва',
 'actionfailed'          => 'Кар йиз алакьнавач',
 'deletedtext'           => '"$1" чlурнайтир.                                                                                                                                                       Килиг $2 эхиримжи  чlурунар ахтармишун.',
-'deletedarticle'        => 'къакъудун "[[$1]]"',
 'dellogpage'            => 'Алудунин журнал',
 'deletecomment'         => 'Кар',
 'deleteotherreason'     => 'Масса/ ва мад кар',
@@ -782,7 +778,6 @@ $messages = array(
 'undeletelink'              => 'Килигун/гуьнгуьна хтун',
 'undeleteviewlink'          => 'Килигун',
 'undeletecomment'           => 'Кар',
-'undeletedarticle'          => 'Туькlуьр хъувуна "[[$1]]"',
 'undelete-show-file-submit' => 'Э',
 
 # Namespace form on various pages
@@ -864,8 +859,6 @@ $messages = array(
 'talkexists'       => "'''Чарчин тlар дегишарна, чарчин ихтилатар дегишар жезатуш, вучиз лагьайтlа ихтилатар цlийи чарчел фена.Галкlура гълелди.'''",
 'movedto'          => 'хтана иниз',
 'movetalk'         => 'Югъун,галкlана рахун',
-'1movedto2'        => 'хъфена [[$1]] идал [[$2]]',
-'1movedto2_redir'  => 'къфена [[$1]] идаз [[$2]] ракъурунар',
 'movelogpage'      => 'Тlвар эхцигунрин журнал',
 'movereason'       => 'Фагьум:',
 'revertmove'       => 'Рахкъурун',
@@ -942,17 +935,13 @@ $messages = array(
 'tooltip-undo'                    => '«ГЬич авун»  авунвай  дуьзар хъувун paxкурзава ва сифтедин килигунин режимда  дуьзар хъувундин форма ахъа йийзва. Им нетижадиз себеб алава йийз  мумкинвал гузва',
 'tooltip-summary'                 => 'Куьруь нетижа гьадрун',
 
-# Patrol log
-'patrol-log-line' => 'кхьена  $1 идай $2 ахтармишнава $3',
-'patrol-log-diff' => 'жуьре $1',
-
 # Browsing diffs
 'previousdiff' => 'Вилик алатай дуьзар хъувун',
 'nextdiff'     => 'ЦIийи дегишунар',
 
 # Media information
 'file-info-size' => '$1 × $2 пикселар, файлдин кьадар: $3, MIME жуьре: $4',
-'file-nohires'   => '<small>Чlехи ахъаюн авай жуьре авач.</small>',
+'file-nohires'   => 'Идалайни хъсан ери авайд туш',
 'svg-long-desc'  => 'SVG файл, номилдаказ $1 $2 × пикселяр, файлдин кьадар: $3',
 'show-big-image' => 'Мадни хъсан еридин шикил',
 

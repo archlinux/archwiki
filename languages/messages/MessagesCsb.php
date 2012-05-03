@@ -351,7 +351,6 @@ Mòże to zgłoszëc [[Special:ListUsers/sysop|sprôwnikòwi]], pòdając adres�
 'badtitle'           => 'Òchëbny titel',
 'badtitletext'       => 'Pòdóny titel starnë je òchëbny. Gwësno są w nim znaczi, chtërnëch brëkòwanié je zakôzané abò je pùsti.',
 'viewsource'         => 'Zdrojowi tekst',
-'viewsourcefor'      => 'dlô $1',
 'editinginterface'   => "'''ÒSTRZÉGA:''' Editëjesz starnã, jakô zamëkô w se tekst interfejsu softwôrë. Wszëtczé zmianë tu zrobioné bãdze widzec na interfejse jinszëch brëkòwników.
 Przemëszlë dolmaczënié na [//translatewiki.net/wiki/Main_Page?setlang=csb translatewiki.net], ekstra ùdbie lokalizacëji softwôrë MediaWiki.",
 
@@ -468,9 +467,6 @@ Bë zgwësnic sprawã zablokòwaniô mòżesz skòntaktowac sã z $1 abò jińsz
 Boczë, że të ni mòżesz stądka sélac e-mailów, jeżlë nié môsz jesz zaregisterowóné e-mailowé adresë w [[Special:Preferences|nastôwach]].
 Twòjô aktualnô adresa IP to $3, a zablokòwónô adresa ID to #$5.
 Proszëmë pòdac wëższé pòdôłczi przë wszëtczich pëtaniach.",
-'blockedoriginalsource'            => "Zdrój '''$1''' je niżi:",
-'blockededitsource'                => "Tekst '''Twòjëch edicëji''' do '''$1''' je niżi:",
-'whitelistedittitle'               => 'Bë editowac je nót sã wlogòwac',
 'loginreqlink'                     => 'Wlogùjë',
 'loginreqpagetext'                 => '$1 sã, żebë przezérac jinszé starnë.',
 'accmailtitle'                     => 'Parola wësłónô.',
@@ -553,15 +549,6 @@ Administrator, chtëren jã zablokòwôł, pòdôł przëczënã: $1",
 'revdel-restore-visible'     => 'widzawné wersëje',
 'pagehist'                   => 'Historëjô starnë',
 'deletedhist'                => 'Rëmniãtô historëjô edicëji',
-'revdelete-content'          => 'zamkłosc',
-'revdelete-summary'          => 'òpisënk zjinaczi',
-'revdelete-uname'            => 'miono brëkòwnika',
-'revdelete-restricted'       => 'nastôwi ògrańczenia dlô sprôwników',
-'revdelete-unrestricted'     => 'rëmôj ògrańczenia dlô sprôwników',
-'revdelete-hid'              => 'zatacë $1',
-'revdelete-unhid'            => 'nie tacë $1',
-'revdelete-log-message'      => '$1 - $2 {{PLURAL:$2|wersëjô|wersëji}}',
-'logdelete-log-message'      => '$1 – $2 {{PLURAL:$2|zdarzenié|zdarzenia|zdarzeniów}}',
 'revdelete-hide-current'     => 'Pòkôza sã fela przë taceniu wersëji datowóny na $2, $1. To je nônowszô wersëjô starnë, chtërnô ni mòże bëc zataconô.',
 'revdelete-show-no-access'   => 'Pòkôza sã fela przë próbie wëskrzënieniô elementu datowónegò na $2, $1. Widzawnota negò elementu òsta ògrańczonô - ni môsz przëstãpù.',
 
@@ -766,15 +753,14 @@ Mòżesz zezwòlëc jinszim brëkòwniką na łączbã z Tobą przez Twòją sta
 'rc-enhanced-hide'               => 'Zatacë detale',
 
 # Recent changes linked
-'recentchangeslinked'          => 'Zmianë w dolënkòwónëch',
-'recentchangeslinked-feed'     => 'Zmianë w dolënkòwónëch',
-'recentchangeslinked-toolbox'  => 'Zmianë w dolënkòwónëch',
-'recentchangeslinked-title'    => 'Zjinaczi w lënkòwónëch z "$1"',
-'recentchangeslinked-backlink' => '← $1',
-'recentchangeslinked-summary'  => "Niżi nachôdô sã lësta slédnëch zjinaków na lënkòwónëch starnach z pòdóny starnë (abò we wszëtczich starnach przënôleżącëch do pòdóny kategòrëji).
+'recentchangeslinked'         => 'Zmianë w dolënkòwónëch',
+'recentchangeslinked-feed'    => 'Zmianë w dolënkòwónëch',
+'recentchangeslinked-toolbox' => 'Zmianë w dolënkòwónëch',
+'recentchangeslinked-title'   => 'Zjinaczi w lënkòwónëch z "$1"',
+'recentchangeslinked-summary' => "Niżi nachôdô sã lësta slédnëch zjinaków na lënkòwónëch starnach z pòdóny starnë (abò we wszëtczich starnach przënôleżącëch do pòdóny kategòrëji).
 Starnë z [[Special:Watchlist|lëstë ùzérónëch artiklów]] są '''pògrëbioné'''.",
-'recentchangeslinked-page'     => 'Miono starnë:',
-'recentchangeslinked-to'       => 'Wëskrzëni zjinaczi nié na lënkòwónëch starnach, blós na starnach lënkùjącëch do pòdóny starnë',
+'recentchangeslinked-page'    => 'Miono starnë:',
+'recentchangeslinked-to'      => 'Wëskrzëni zjinaczi nié na lënkòwónëch starnach, blós na starnach lënkùjącëch do pòdóny starnë',
 
 # Upload
 'upload'              => 'Wladënk lopka',
@@ -908,8 +894,7 @@ Mòżesz zawãżëc wëszłosc przez wëbranié ôrtu registru, miona brëkòwni
 'linksearch' => 'Bùtnowé lënczi',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Nowi brëkòwnicë',
-'newuserlog-create-entry' => 'Nowé kònto brëkòwnika',
+'newuserlogpage' => 'Nowi brëkòwnicë',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(lësta nôlëżników karna)',
@@ -966,7 +951,6 @@ Czej chcesz remôc starnã z lëste ùzéronëch artiklów, klikni ''Òprzestôj
 'actioncomplete'        => 'Òperacëjô wëkònónô',
 'deletedtext'           => '^$1" òstôł rëmniãti.
 Òbôczë na starnie $2 register slédnych rëmniãców.',
-'deletedarticle'        => 'rëmniãté przez "[[$1]]"',
 'dellogpage'            => 'Rëmóné',
 'deletionlog'           => 'register rëmaniów',
 'deletecomment'         => 'Przëczëna:',
@@ -1012,7 +996,6 @@ Mòżesz zmienic légã zazychrowaniô, nie bãdze to równak miało cëskù na 
 'viewdeletedpage'           => 'Òbaczë rëmóne starnë',
 'undeletebtn'               => 'Doprowôdzë nazôd',
 'undeletelink'              => 'wëskrzëni abò doprowôdzë nazôd',
-'undeletedarticle'          => 'dobëté nazôd "[[$1]]"',
 'undelete-show-file-submit' => 'Jo',
 
 # Namespace form on various pages
@@ -1112,8 +1095,6 @@ W taczich przëtrôfkach zamkłosc diskùsëji mòże przeniesc blós rãczno.',
 'talkexists'              => "'''Starna zamkłoscë òsta ùdało przeniosłô, równak starna diskùsëji ni, ga starna diskùsëji na nowim pacu ju je. Sparłãczë ne dwa tekstë rãczno'''",
 'movedto'                 => 'przeniesłô do',
 'movetalk'                => 'Przeniesë téż starnã <i>Diskùsëje</i>, jeżle je to mòżlëwé.',
-'1movedto2'               => '[[$1]] przeniesłé do [[$2]]',
-'1movedto2_redir'         => '[[$1]] przeniesłé do [[$2]] nad przeczérowanim',
 'movelogpage'             => 'Przeniosłé',
 'movereason'              => 'Przëczëna:',
 'revertmove'              => 'copnij',
@@ -1217,7 +1198,7 @@ Zezwôlô na dodanié przëczënë zjinaczi w òpisënkù.',
 'imagemaxsize'   => 'Ògrańczë na starnie òpisënkù òbrôzków jich miarã do:',
 'thumbsize'      => 'Miara miniaturków:',
 'file-info-size' => '$1 × $2 pikslów, miara lopka: $3, ôrt MIME: $4',
-'file-nohires'   => '<small>Felëje wikszô miara.</small>',
+'file-nohires'   => 'Felëje wikszô miara.',
 'svg-long-desc'  => 'Lopk SVG, nominalno $1 × $2 pikslów, miara lopka: $3',
 'show-big-image' => 'Fùl miara',
 
@@ -1293,5 +1274,9 @@ Jinszé pòla bãdą domëslno zataconé.
 
 # Special:SpecialPages
 'specialpages' => 'Specjalné starnë',
+
+# New logging system
+'revdelete-restricted'   => 'nastôwi ògrańczenia dlô sprôwników',
+'revdelete-unrestricted' => 'rëmôj ògrańczenia dlô sprôwników',
 
 );

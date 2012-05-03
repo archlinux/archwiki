@@ -269,7 +269,6 @@ $messages = array(
 Fung'ksyun: $1<br />
 Query: $2",
 'viewsource'           => "Kamukile ng'i",
-'viewsourcefor'        => 'di $1',
 'viewsourcetext'       => 'A sa kamukile wiki-selt di bye petulo:',
 'sqlhidden'            => '(SQL query sa cwankekile)',
 
@@ -373,8 +372,6 @@ $1 bolok a. Lyangutukezireason sa ''$2''.
 A bulelezi $1/[[{{MediaWiki:Grouppage-sysop}}|xetewi sesop]] bolok.
 A ni sebilize 'meli sebelu' ka a ni afi adresi di meli kwa zwa [[Special:Preferences|petohoni]] e no sa bolok di sebelize.
 A IP sa $3, e ID di bolok sa #$5. Bulelezi IP e ID kwa bukizisize.",
-'blockedoriginalsource'      => "Olige di '''$1''' sa kamukile:",
-'blockededitsource'          => "Selt di '''zwa hloli ye ng'i''' di '''$1''' sa kamukile:",
 'whitelistedittext'          => "A sa $1 di hloli ye ng'i petulo.",
 'nosuchsectiontitle'         => 'Ni di lyangutukezi',
 'loginreqlink'               => 'menuhile',
@@ -756,7 +753,6 @@ A sa afi kulobala di zwa mukoloko di kentezi, tampi \"ngambu kentezi\".",
 'confirmdeletetext'     => 'A sa afi kulobala petulo e bundau. A sa ukisize a sa ni bufosi e a sa iki di  [[{{MediaWiki:Policy-url}}|polisi]].',
 'actioncomplete'        => 'Sa afi',
 'deletedtext'           => '"$1" sa afi kulobala. Fatukile $2 di desu di afi kulobala nca.',
-'deletedarticle'        => 'sa afi kulobala "[[$1]]"',
 'dellogpage'            => 'Desu di afi kulobala',
 'deletecomment'         => 'Lyangutukezi:',
 'deleteotherreason'     => 'Xetewi/ewi lyangutukezi:',
@@ -808,7 +804,6 @@ Petohoni di petulo '''$1''' sa:",
 'undeletebtn'            => 'Ati-afi kulobala',
 'undeletereset'          => 'Lisetize',
 'undeletecomment'        => 'Lyangutukezi:',
-'undeletedarticle'       => 'sa ati-afi kulobala "[[$1]]"',
 'undelete-search-box'    => 'Fatukile afi kulobala petulo',
 'undelete-search-prefix' => 'Kamukile petulo di:',
 'undelete-search-submit' => 'Fatukile',
@@ -889,8 +884,6 @@ Teri yaki, a nyanganyisize.",
 'talkexists'       => "'''No bufosi di nyanganyisize petulo, bufosi di nyanganyisize bulelezi, tubi hani.'''",
 'movedto'          => 'nyanganyisize di',
 'movetalk'         => 'Nyanganyisize petulo di bulelezi',
-'1movedto2'        => '[[$1]] nyanganyisize di [[$2]]',
-'1movedto2_redir'  => '[[$1]] nyanganyisize di [[$2]] alo petulo abezi',
 'movelogpage'      => 'Desu di nyanganyisize',
 'movelogpagetext'  => 'Bye mukoloko sa mukoloko di petulo nyanganyisize.',
 'movereason'       => 'Lyangutukezi:',
@@ -984,9 +977,6 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 'siteuser'  => '{{SITENAME}} sebelu $1',
 'siteusers' => '{{SITENAME}} sebelu $1',
 
-# Patrol log
-'patrol-log-auto' => '(auto)',
-
 # Image deletion
 'filedeleteerror-short' => 'Bufosi di afi kulobala di media/imegi: $1',
 'filedeleteerror-long'  => 'Bufosi sa, abi sa afi kulobala di media/imegi:
@@ -1000,7 +990,7 @@ $1',
 # Media information
 'widthheightpage' => '$1 × $2, $3 petulo',
 'file-info-size'  => '$1 × $2 pixel, imegi: $3, MIME type: $4',
-'file-nohires'    => '<small>A sa risolusi aku balise.</small>',
+'file-nohires'    => 'A sa risolusi aku balise.',
 'svg-long-desc'   => 'SVG imegi, nominali $1 × $2 pixel, imega: $3',
 'show-big-image'  => 'Risolusi bakisize',
 
@@ -1046,9 +1036,6 @@ Xete ling'ki kwa lina sa konsidisize desepo. Petulo dimedi inlinenikusize.",
 'watchlistall2' => 'xeti',
 'namespacesall' => 'xeti',
 'monthsall'     => 'xeti',
-
-# Trackbacks
-'trackbackremove' => '([$1 afi kulobala])',
 
 # action=purge
 'confirm_purge_button' => 'Afi',

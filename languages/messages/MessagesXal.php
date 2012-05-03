@@ -52,6 +52,9 @@ $namespaceAliases = array(
 	'Янзин_тускар_ухалвр'     => NS_CATEGORY_TALK,
 );
 
+// Remove Russian aliases
+$namespaceGenderAliases = array();
+
 $messages = array(
 # User preference toggles
 'tog-underline'               => 'Заалһиг татас татх:',
@@ -385,7 +388,6 @@ $1',
 'badtitle'            => 'Буру нернь',
 'badtitletext'        => 'Сурсн нерн буру, хоосн, аль му бичсн келн хоорнд нертә. Тиим чигн биз, нерн зөв уга үзгтә.',
 'viewsource'          => 'Ишиг хәләх',
-'viewsourcefor'       => '$1 халх',
 'actionthrottled'     => 'Хурдна заг',
 'sqlhidden'           => '(SQL сурвр бултулсн)',
 'ns-specialprotected' => 'Шишлң халх чиклсн бәәх болшго.',
@@ -628,7 +630,7 @@ $1',
 'prefs-rc'                    => 'Шидрә сольлһн',
 'prefs-watchlist'             => 'Шинҗллһнә сеткүл',
 'prefs-watchlist-days'        => 'Шинҗллһнә седкүлд үзүлсн ик гисн өдрин то:',
-'prefs-watchlist-days-max'    => 'Ик гисн 7 хонг',
+'prefs-watchlist-days-max'    => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-misc'                  => 'Талдан',
 'prefs-resetpass'             => 'Нууц угиг сольҗ',
 'prefs-email'                 => "E-mail'ын көгүд",
@@ -860,8 +862,7 @@ $1',
 'linksearch' => 'Һаза заалһуд',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Бичгдлһнә сеткүл',
-'newuserlog-create-entry' => 'Шин демнч',
+'newuserlogpage' => 'Бичгдлһнә сеткүл',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(мөчүдин сеткүл)',
@@ -925,7 +926,6 @@ e-mail\'ар $PAGEEDITOR_EMAIL
 'actioncomplete'        => 'Үүлд кев',
 'deletedtext'           => '«$1» һарһҗ болв.
 $2 шидрә һарһлһна төлә хәләтн.',
-'deletedarticle'        => '«[[$1]]» халхиг һарһв',
 'dellogpage'            => 'Һарһллһна сеткүл',
 'deletecomment'         => 'Учр:',
 'deleteotherreason'     => 'Талдан аль дәкәд учр:',
@@ -963,9 +963,8 @@ $2 шидрә һарһлһна төлә хәләтн.',
 'restriction-move' => 'Көндлһн',
 
 # Undelete
-'undeletelink'     => 'гүүһәд хәләх/босхҗ тохрах',
-'undeleteinvert'   => 'Зөрү суңһлт',
-'undeletedarticle' => '«[[$1]]» хәрү кехв',
+'undeletelink'   => 'гүүһәд хәләх/босхҗ тохрах',
+'undeleteinvert' => 'Зөрү суңһлт',
 
 # Namespace form on various pages
 'namespace'      => 'Нернә у:',
@@ -1051,8 +1050,6 @@ $2 шидрә һарһлһна төлә хәләтн.',
 'talkexists'       => "'''Халхин йовудта көндллһн. Болв, ухалвр халх көндәх болшго. Юнгад гихлә, эн нерәдлһтә халх бәәнә. Буйн болтха, териг һарар неҗәлтн.'''",
 'movedto'          => 'көндсн:',
 'movetalk'         => 'Өөр ухалвр халхиг көндәх.',
-'1movedto2'        => '«[[$1]]» халхас «[[$2]]» халхд көндв',
-'1movedto2_redir'  => '«[[$1]]» халхас «[[$2]]» халхд көндв (авч одлһта уга).',
 'movelogpage'      => 'Нернә сольлһна сеткүл',
 'movereason'       => 'Учр:',
 'revertmove'       => 'хәрүлһн',
@@ -1136,7 +1133,7 @@ $2 шидрә һарһлһна төлә хәләтн.',
 # Media information
 'file-info'            => 'боомгин кемҗә: $1, MIME төрл: $2',
 'file-info-size'       => '$1 × $2 цегтә, боомгин кемҗән: $3, MIME янз: $4',
-'file-nohires'         => '<small>Икәр чинртә янз уга.</small>',
+'file-nohires'         => 'Икәр чинртә янз уга.',
 'svg-long-desc'        => 'SVG боомг, $1 × $2 мет цегтә, боомгин кемҗән: $3',
 'show-big-image'       => 'Күцц чинр',
 'file-info-gif-looped' => 'билцгсн',

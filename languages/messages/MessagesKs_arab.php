@@ -7,9 +7,9 @@
  * @ingroup Language
  * @file
  *
+ * @author Rk_kaul (on ks.wikipedia.org)
  */
 
-# @todo FIXME: Inherit almost everything for now
 $rtl = true;
 
 $digitTransformTable = array(
@@ -23,7 +23,10 @@ $digitTransformTable = array(
 	'7' => '٧', # &#x0667;
 	'8' => '٨', # &#x0668;
 	'9' => '٩', # &#x0669;
-	'.' => '٫', # &#x066b; wrong table ?
+);
+
+$separatorTransformTable = array(
+	'.' => '٫', # &#x066b;
 	',' => '٬', # &#x066c;
 );
 

@@ -81,7 +81,7 @@ class Preprocessor_DOM implements Preprocessor {
 	 */
 	function memCheck() {
 		if ( $this->memoryLimit === false ) {
-			return;
+			return true;
 		}
 		$usage = memory_get_usage();
 		if ( $usage > $this->memoryLimit * 0.9 ) {
@@ -543,7 +543,7 @@ class Preprocessor_DOM implements Preprocessor {
 						'open' => $curChar,
 						'close' => $rule['end'],
 						'count' => $count,
-						'lineStart' => ($i == 0 || $text[$i-1] == "\n"),
+						'lineStart' => ($i > 0 && $text[$i-1] == "\n"),
 					);
 
 					$stack->push( $piece );
@@ -957,8 +957,7 @@ class PPFrame_DOM implements PPFrame {
 			return $root;
 		}
 
-		if ( ++$this->parser->mPPNodeCount > $this->parser->mOptions->getMaxPPNodeCount() )
-		{
+		if ( ++$this->parser->mPPNodeCount > $this->parser->mOptions->getMaxPPNodeCount() ) {
 			return '<span class="error">Node-count limit exceeded</span>';
 		}
 
@@ -1339,6 +1338,15 @@ class PPFrame_DOM implements PPFrame {
 	 */
 	function isTemplate() {
 		return false;
+	}
+
+	/**
+	 * Get a title of frame
+	 *
+	 * @return Title
+	 */
+	function getTitle() {
+		return $this->title;
 	}
 }
 

@@ -4,7 +4,7 @@
   * @ingroup Language
   *
   * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
-  * @link http://be-x-old.wikipedia.org/wiki/Project_talk:LanguageBe_tarask.php
+  * @see http://be-x-old.wikipedia.org/wiki/Project_talk:LanguageBe_tarask.php
   * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License
   * @license http://www.gnu.org/copyleft/fdl.html GNU Free Documentation License
   */
@@ -27,7 +27,10 @@ class LanguageBe_tarask extends Language {
 	function convertPlural( $count, $forms ) {
 		if ( !count( $forms ) ) { return ''; }
 
-		// if no number with word, then use $form[0] for singular and $form[1] for plural or zero
+		// If the actual number is not mentioned in the expression, then just two forms are enough:
+		// singular for $count == 1
+		// plural   for $count != 1
+		// For example, "This user belongs to {{PLURAL:$1|one group|several groups}}."
 		if ( count( $forms ) === 2 ) return $count == 1 ? $forms[0] : $forms[1];
 
 		// @todo FIXME: CLDR defines 4 plural forms instead of 3

@@ -23,6 +23,9 @@ class SkinMonoBook extends SkinTemplate {
 	var $skinname = 'monobook', $stylename = 'monobook',
 		$template = 'MonoBookTemplate', $useHeadElement = true;
 
+	/**
+	 * @param $out OutputPage
+	 */
 	function setupSkinUserCss( OutputPage $out ) {
 		global $wgHandheldStyle;
 		parent::setupSkinUserCss( $out );
@@ -36,8 +39,6 @@ class SkinMonoBook extends SkinTemplate {
 		}
 
 		// TODO: Migrate all of these
-		$out->addStyle( 'monobook/IE50Fixes.css', 'screen', 'lt IE 5.5000' );
-		$out->addStyle( 'monobook/IE55Fixes.css', 'screen', 'IE 5.5000' );
 		$out->addStyle( 'monobook/IE60Fixes.css', 'screen', 'IE 6' );
 		$out->addStyle( 'monobook/IE70Fixes.css', 'screen', 'IE 7' );
 
@@ -51,11 +52,6 @@ class SkinMonoBook extends SkinTemplate {
 class MonoBookTemplate extends BaseTemplate {
 
 	/**
-	 * @var Skin
-	 */
-	var $skin;
-
-	/**
 	 * Template filter callback for MonoBook skin.
 	 * Takes an associative array of data set from a SkinTemplate-based
 	 * class, and a wrapper for MediaWiki's localization database, and
@@ -64,8 +60,6 @@ class MonoBookTemplate extends BaseTemplate {
 	 * @access private
 	 */
 	function execute() {
-		$this->skin = $this->data['skin'];
-
 		// Suppress warnings to prevent notices about missing indexes in $this->data
 		wfSuppressWarnings();
 
@@ -75,8 +69,8 @@ class MonoBookTemplate extends BaseTemplate {
 	<a id="top"></a>
 	<?php if($this->data['sitenotice']) { ?><div id="siteNotice"><?php $this->html('sitenotice') ?></div><?php } ?>
 
-	<h1 id="firstHeading" class="firstHeading"><?php $this->html('title') ?></h1>
-	<div id="bodyContent">
+	<h1 id="firstHeading" class="firstHeading"><span dir="auto"><?php $this->html('title') ?></span></h1>
+	<div id="bodyContent" class="mw-body">
 		<div id="siteSub"><?php $this->msg('tagline') ?></div>
 		<div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
 <?php if($this->data['undelete']) { ?>
@@ -84,7 +78,7 @@ class MonoBookTemplate extends BaseTemplate {
 <?php } ?><?php if($this->data['newtalk'] ) { ?>
 		<div class="usermessage"><?php $this->html('newtalk')  ?></div>
 <?php } ?><?php if($this->data['showjumplinks']) { ?>
-		<div id="jump-to-nav"><?php $this->msg('jumpto') ?> <a href="#column-one"><?php $this->msg('jumptonavigation') ?></a>, <a href="#searchInput"><?php $this->msg('jumptosearch') ?></a></div>
+		<div id="jump-to-nav" class="mw-jump"><?php $this->msg('jumpto') ?> <a href="#column-one"><?php $this->msg('jumptonavigation') ?></a>, <a href="#searchInput"><?php $this->msg('jumptosearch') ?></a></div>
 <?php } ?>
 		<!-- start content -->
 <?php $this->html('bodytext') ?>
@@ -108,15 +102,13 @@ class MonoBookTemplate extends BaseTemplate {
 		</div>
 	</div>
 	<div class="portlet" id="p-logo">
-		<?php
-			$logoAttribs = array() + Linker::tooltipAndAccesskeyAttribs('p-logo');
-			$logoAttribs['style'] = "background-image: url({$this->data['logopath']});";
-			$logoAttribs['href'] = $this->data['nav_urls']['mainpage']['href'];
-			echo Html::element( 'a', $logoAttribs );
-		?>
+<?php
+			echo Html::element( 'a', array(
+				'href' => $this->data['nav_urls']['mainpage']['href'],
+				'style' => "background-image: url({$this->data['logopath']});" )
+				+ Linker::tooltipAndAccesskeyAttribs('p-logo') ); ?>
 
 	</div>
-	<script type="<?php $this->text('jsmimetype') ?>"> if (window.isMSIE55) fixalpha(); </script>
 <?php
 	$this->renderPortals( $this->data['sidebar'] );
 ?>
@@ -136,7 +128,7 @@ class MonoBookTemplate extends BaseTemplate {
 	foreach ( $validFooterIcons as $blockName => $footerIcons ) { ?>
 	<div id="f-<?php echo htmlspecialchars($blockName); ?>ico">
 <?php foreach ( $footerIcons as $icon ) { ?>
-		<?php echo $this->skin->makeFooterIcon( $icon ); ?>
+		<?php echo $this->getSkin()->makeFooterIcon( $icon ); ?>
 
 <?php }
 ?>
@@ -222,25 +214,8 @@ echo $footerEnd;
 		<div class="pBody">
 			<ul><?php
 				foreach($this->data['content_actions'] as $key => $tab) {
-					$linkAttribs = array( 'href' => $tab['href'] );
-
-				 	if( isset( $tab["tooltiponly"] ) && $tab["tooltiponly"] ) {
-						$title = Linker::titleAttrib( "ca-$key" );
-						if ( $title !== false ) {
-							$linkAttribs['title'] = $title;
-						}
-				 	} else {
-						$linkAttribs += Linker::tooltipAndAccesskeyAttribs( "ca-$key" );
-				 	}
-				 	$linkHtml = Html::element( 'a', $linkAttribs, $tab['text'] );
-
-				 	/* Surround with a <li> */
-				 	$liAttribs = array( 'id' => Sanitizer::escapeId( "ca-$key" ) );
-					if( $tab['class'] ) {
-						$liAttribs['class'] = $tab['class'];
-					}
-				 	echo '
-				' . Html::rawElement( 'li', $liAttribs, $linkHtml );
+					echo '
+				' . $this->makeListItem( $key, $tab );
 				} ?>
 
 			</ul>

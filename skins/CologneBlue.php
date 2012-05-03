@@ -19,6 +19,9 @@ class SkinCologneBlue extends SkinLegacy {
 	var $skinname = 'cologneblue', $stylename = 'cologneblue',
 		$template = 'CologneBlueTemplate';
 
+	/**
+	 * @param $out OutputPage
+	 */
 	function setupSkinUserCss( OutputPage $out ){
 		parent::setupSkinUserCss( $out );
 		$out->addModuleStyles( 'skins.cologneblue' );
@@ -55,6 +58,9 @@ class SkinCologneBlue extends SkinLegacy {
 
 class CologneBlueTemplate extends LegacyTemplate {
 
+	/**
+	 * @return string
+	 */
 	function doBeforeContent() {
 		$mainPageObj = Title::newMainPage();
 
@@ -62,7 +68,7 @@ class CologneBlueTemplate extends LegacyTemplate {
 		  '<table width="100%" border="0" cellspacing="0" cellpadding="8"><tr>';
 
 		$s .= '<td class="top" nowrap="nowrap">';
-		$s .= '<a href="' . $mainPageObj->escapeLocalURL() . '">';
+		$s .= '<a href="' . htmlspecialchars( $mainPageObj->getLocalURL() ) . '">';
 		$s .= '<span id="sitetitle">' . wfMsg( 'sitetitle' ) . '</span></a>';
 
 		$s .= '</td><td class="top" id="top-syslinks" width="100%">';
@@ -75,10 +81,9 @@ class CologneBlueTemplate extends LegacyTemplate {
 
 		$s .= '<font size="-1"><span id="langlinks">';
 		$s .= str_replace( '<br />', '', $this->otherLanguages() );
-		$cat = '<div id="catlinks" class="catlinks">' . $this->getSkin()->getCategoryLinks() . '</div>';
-		if( $cat ) {
-			$s .= "<br />$cat\n";
-		}
+
+		$s .= $this->getSkin()->getCategories();
+
 		$s .= '<br />' . $this->pageTitleLinks();
 		$s .= '</span></font>';
 
@@ -95,9 +100,10 @@ class CologneBlueTemplate extends LegacyTemplate {
 		return $s;
 	}
 
+	/**
+	 * @return string
+	 */
 	function doAfterContent(){
-		global $wgLang;
-
 		$s = "\n</div><br clear='all' />\n";
 
 		$s .= "\n<div id='footer'>";
@@ -106,7 +112,7 @@ class CologneBlueTemplate extends LegacyTemplate {
 		$s .= '<td class="bottom">';
 
 		$s .= $this->bottomLinks();
-		$s .= $wgLang->pipeList( array(
+		$s .= $this->getSkin()->getLanguage()->pipeList( array(
 			"\n<br />" . Linker::link(
 				Title::newMainPage(),
 				null,
@@ -129,8 +135,10 @@ class CologneBlueTemplate extends LegacyTemplate {
 		return $s;
 	}
 
+	/**
+	 * @return string
+	 */
 	function sysLinks() {
-		global $wgUser, $wgLang;
 		$li = SpecialPage::getTitleFor( 'Userlogin' );
 		$lo = SpecialPage::getTitleFor( 'Userlogout' );
 
@@ -165,7 +173,7 @@ class CologneBlueTemplate extends LegacyTemplate {
 		if( $this->extensionTabLinks() ) {
 			$s[] = $this->extensionTabLinks();
 		}
-		if ( $wgUser->isLoggedIn() ) {
+		if ( $this->data['loggedin'] ) {
 			$s[] = Linker::linkKnown(
 				$lo,
 				wfMsg( 'logout' ),
@@ -181,18 +189,16 @@ class CologneBlueTemplate extends LegacyTemplate {
 			);
 		}
 
-		return $wgLang->pipeList( $s );
+		return $this->getSkin()->getLanguage()->pipeList( $s );
 	}
 
 	/**
 	 * Compute the sidebar
 	 * @access private
+	 *
+	 * @return string
 	 */
 	function quickBar(){
-		global $wgOut, $wgUser;
-
-		$tns = $this->getSkin()->getTitle()->getNamespace();
-
 		$s = "\n<div id='quickbar'>";
 
 		$sep = '<br />';
@@ -229,7 +235,9 @@ class CologneBlueTemplate extends LegacyTemplate {
 			$barnumber++;
 		}
 
-		if ( $wgOut->isArticle() ) {
+		$user = $this->getSkin()->getUser();
+
+		if ( $this->data['isarticle'] ) {
 			$s .= $this->menuHead( 'qbedit' );
 			$s .= '<strong>' . $this->editThisPage() . '</strong>';
 
@@ -238,16 +246,16 @@ class CologneBlueTemplate extends LegacyTemplate {
 				wfMsg( 'edithelp' )
 			);
 
-			if( $wgUser->isLoggedIn() ) {
+			if( $this->data['loggedin'] ) {
 				$s .= $sep . $this->moveThisPage();
 			}
-			if ( $wgUser->isAllowed( 'delete' ) ) {
+			if ( $user->isAllowed( 'delete' ) ) {
 				$dtp = $this->deleteThisPage();
 				if ( $dtp != '' ) {
 					$s .= $sep . $dtp;
 				}
 			}
-			if ( $wgUser->isAllowed( 'protect' ) ) {
+			if ( $user->isAllowed( 'protect' ) ) {
 				$ptp = $this->protectThisPage();
 				if ( $ptp != '' ) {
 					$s .= $sep . $ptp;
@@ -259,7 +267,7 @@ class CologneBlueTemplate extends LegacyTemplate {
 			$s .= $this->talkLink()
 					. $sep . $this->commentLink()
 					. $sep . $this->printableLink();
-			if ( $wgUser->isLoggedIn() ) {
+			if ( $this->data['loggedin'] ) {
 				$s .= $sep . $this->watchThisPage();
 			}
 
@@ -270,8 +278,10 @@ class CologneBlueTemplate extends LegacyTemplate {
 					. $sep . $this->whatLinksHere()
 					. $sep . $this->watchPageLinksLink();
 
-			if( $tns == NS_USER || $tns == NS_USER_TALK ) {
-				$id = User::idFromName( $this->getSkin()->getTitle()->getText() );
+			$title = $this->getSkin()->getTitle();
+			$tns = $title->getNamespace();
+			if ( $tns == NS_USER || $tns == NS_USER_TALK ) {
+				$id = User::idFromName( $title->getText() );
 				if( $id != 0 ) {
 					$s .= $sep . $this->userContribsLink();
 					if( $this->getSkin()->showEmailUser( $id ) ) {
@@ -283,20 +293,20 @@ class CologneBlueTemplate extends LegacyTemplate {
 		}
 
 		$s .= $this->menuHead( 'qbmyoptions' );
-		if ( $wgUser->isLoggedIn() ) {
+		if ( $this->data['loggedin'] ) {
 			$tl = Linker::link(
-				$wgUser->getTalkPage(),
+				$user->getTalkPage(),
 				wfMsg( 'mytalk' ),
 				array(),
 				array(),
 				array( 'known', 'noclasses' )
 			);
-			if ( $wgUser->getNewtalk() ) {
+			if ( $user->getNewtalk() ) {
 				$tl .= ' *';
 			}
 
 			$s .= Linker::link(
-					$wgUser->getUserPage(),
+					$user->getUserPage(),
 					wfMsg( 'mypage' ),
 					array(),
 					array(),
@@ -304,7 +314,7 @@ class CologneBlueTemplate extends LegacyTemplate {
 				) . $sep . $tl . $sep . Linker::specialLink( 'Watchlist' )
 					. $sep .
 				Linker::link(
-					SpecialPage::getSafeTitleFor( 'Contributions', $wgUser->getName() ),
+					SpecialPage::getSafeTitleFor( 'Contributions', $user->getName() ),
 					wfMsg( 'mycontris' ),
 					array(),
 					array(),
@@ -319,7 +329,7 @@ class CologneBlueTemplate extends LegacyTemplate {
 			. Linker::specialLink( 'Newpages' )
 			. $sep . Linker::specialLink( 'Listfiles' )
 			. $sep . Linker::specialLink( 'Statistics' );
-		if( UploadBase::isEnabled() && UploadBase::isAllowed( $wgUser ) === true ) {
+		if( UploadBase::isEnabled() && UploadBase::isAllowed( $user ) === true ) {
 			$s .= $sep . $this->getUploadLink();
 		}
 
@@ -342,15 +352,23 @@ class CologneBlueTemplate extends LegacyTemplate {
 		return $s;
 	}
 
+	/**
+	 * @param $key string
+	 * @return string
+	 */
 	function menuHead( $key ) {
 		$s = "\n<h6>" . wfMsg( $key ) . "</h6>";
 		return $s;
 	}
 
+	/**
+	 * @param $label string
+	 * @return string
+	 */
 	function searchForm( $label = '' ) {
-		global $wgRequest, $wgUseTwoButtonsSearchForm;
+		global $wgUseTwoButtonsSearchForm;
 
-		$search = $wgRequest->getText( 'search' );
+		$search = $this->getSkin()->getRequest()->getText( 'search' );
 		$action = $this->data['searchaction'];
 		$s = "<form id=\"searchform{$this->searchboxes}\" method=\"get\" class=\"inline\" action=\"$action\">";
 		if( $label != '' ) {

@@ -115,6 +115,19 @@ $wgNamespaceAliases['Image'] = NS_FILE;
 $wgNamespaceAliases['Image_talk'] = NS_FILE_TALK;
 
 /**
+ * Initialise $wgLockManagers to include basic FS version
+ */
+$wgLockManagers[] = array(
+	'name'          => 'fsLockManager',
+	'class'         => 'FSLockManager',
+	'lockDirectory' => "{$wgUploadDirectory}/lockdir",
+);
+$wgLockManagers[] = array(
+	'name'          => 'nullLockManager',
+	'class'         => 'NullLockManager',
+);
+
+/**
  * Initialise $wgLocalFileRepo from backwards-compatible settings
  */
 if ( !$wgLocalFileRepo ) {
@@ -163,7 +176,7 @@ if ( $wgUseSharedUploads ) {
 		);
 	} else {
 		$wgForeignFileRepos[] = array(
-			'class' => 'FSRepo',
+			'class' => 'FileRepo',
 			'name' => 'shared',
 			'directory' => $wgSharedUploadDirectory,
 			'url' => $wgSharedUploadPath,
@@ -177,15 +190,33 @@ if ( $wgUseSharedUploads ) {
 }
 if ( $wgUseInstantCommons ) {
 	$wgForeignFileRepos[] = array(
-		'class'                   => 'ForeignAPIRepo',
-		'name'                    => 'wikimediacommons',
-		'apibase'                 => 'http://commons.wikimedia.org/w/api.php',
-		'hashLevels'              => 2,
-		'fetchDescription'        => true,
-		'descriptionCacheExpiry'  => 43200,
-		'apiThumbCacheExpiry'     => 86400,
+		'class'                  => 'ForeignAPIRepo',
+		'name'                   => 'wikimediacommons',
+		'apibase'                => WebRequest::detectProtocol() === 'https' ?
+			'https://commons.wikimedia.org/w/api.php' :
+			'http://commons.wikimedia.org/w/api.php',
+		'hashLevels'             => 2,
+		'fetchDescription'       => true,
+		'descriptionCacheExpiry' => 43200,
+		'apiThumbCacheExpiry'    => 86400,
 	);
 }
+/*
+ * Add on default file backend config for file repos.
+ * FileBackendGroup will handle initializing the backends.
+ */
+if ( !isset( $wgLocalFileRepo['backend'] ) ) {
+	$wgLocalFileRepo['backend'] = $wgLocalFileRepo['name'] . '-backend';
+}
+foreach ( $wgForeignFileRepos as &$repo ) {
+	if ( !isset( $repo['directory'] ) && $repo['class'] === 'ForeignAPIRepo' ) {
+		$repo['directory'] = $wgUploadDirectory; // b/c
+	}
+	if ( !isset( $repo['backend'] ) ) {
+		$repo['backend'] = $repo['name'] . '-backend';
+	}
+}
+unset( $repo ); // no global pollution; destroy reference
 
 if ( is_null( $wgEnableAutoRotation ) ) {
 	// Only enable auto-rotation when the bitmap handler can rotate
@@ -268,8 +299,10 @@ $wgContLanguageCode = $wgLanguageCode;
 
 # Easy to forget to falsify $wgShowIPinHeader for static caches.
 # If file cache or squid cache is on, just disable this (DWIMD).
+# Do the same for $wgDebugToolbar.
 if ( $wgUseFileCache || $wgUseSquid ) {
 	$wgShowIPinHeader = false;
+	$wgDebugToolbar = false;
 }
 
 # $wgAllowRealName and $wgAllowUserSkin were removed in 1.16
@@ -320,14 +353,19 @@ if ( $wgNewUserLog ) {
 	$wgLogTypes[]                        = 'newusers';
 	$wgLogNames['newusers']              = 'newuserlogpage';
 	$wgLogHeaders['newusers']            = 'newuserlogpagetext';
-	$wgLogActions['newusers/newusers']   = 'newuserlogentry'; // For compatibility with older log entries
-	$wgLogActions['newusers/create']     = 'newuserlog-create-entry';
-	$wgLogActions['newusers/create2']    = 'newuserlog-create2-entry';
-	$wgLogActions['newusers/autocreate'] = 'newuserlog-autocreate-entry';
+	# newusers, create, create2, autocreate
+	$wgLogActionsHandlers['newusers/*']  = 'NewUsersLogFormatter';
 }
 
 if ( $wgCookieSecure === 'detect' ) {
 	$wgCookieSecure = ( substr( $wgServer, 0, 6 ) === 'https:' );
+}
+
+// Disable MWDebug for command line mode, this prevents MWDebug from eating up
+// all the memory from logging SQL queries on maintenance scripts
+global $wgCommandLineMode;
+if ( $wgDebugToolbar && !$wgCommandLineMode ) {
+	MWDebug::init();
 }
 
 if ( !defined( 'MW_COMPILED' ) ) {
@@ -375,7 +413,6 @@ if( is_null( $wgLocalTZoffset ) ) {
 }
 
 # Useful debug output
-global $wgCommandLineMode;
 if ( $wgCommandLineMode ) {
 	$wgRequest = new FauxRequest( array() );
 
@@ -465,12 +502,6 @@ if ( !is_object( $wgAuth ) ) {
 $wgTitle = null;
 
 $wgDeferredUpdateList = array();
-
-// We need to check for safe_mode, because mail() will throw an E_NOTICE
-// on additional parameters
-if( !is_null($wgAdditionalMailParams) && wfIniGetBool('safe_mode') ) {
-	$wgAdditionalMailParams = null;
-}
 
 wfProfileOut( $fname . '-globals' );
 wfProfileIn( $fname . '-extensions' );

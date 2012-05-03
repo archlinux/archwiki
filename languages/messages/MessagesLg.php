@@ -367,15 +367,14 @@ Kisoboka nti waliwo eyakwesoose.',
 'badtitle'             => 'Buzibu ku linnya lya lupapula',
 'badtitletext'         => "Onoonyezza erinnya ly'olupapula eritakkirizibwa, oba ery'olupapula olwereere, oba ery'oluli ku wiki endala nga teruyungidwa ku eno obulungi.<br />
 Erinnya eryo liyinza ate okubaamu ennukuta oba obubonero ebitakkirizibwa mu mannya ga mpapula.",
-'perfcached'           => "Data eddako wano eva mu ggwanika zzibizi era eyinz'obutatuukana n'eyennono.",
-'perfcachedts'         => "Data eddako wano eva mu ggwanika zzibizi, yasemba okutuukanizibwa n'ey'ennono ku saawa $3, nga $2.",
+'perfcached'           => "Data eddako wano eva mu ggwanika zzibizi era eyinz'obutatuukana n'eyennono. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.",
+'perfcachedts'         => "Data eddako wano eva mu ggwanika zzibizi, yasemba okutuukanizibwa n'ey'ennono ku saawa $3, nga $2. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.",
 'querypage-no-updates' => 'Ku ssaawa eno olupapula luno terukkiriza kukyusibwamu.<br />
 Data eruliko ejjakugira nga tekyuka.',
 'wrong_wfQuery_params' => 'wfQuery() kirimu paramita ensobu zino<br />
 Mukolo: $1<br />
 Ekiragiro ekinoonyeza mu ggwanika lya data: $2',
 'viewsource'           => "Kebera obulambike obw'ennono obw'olupapula luno",
-'viewsourcefor'        => 'obwa $1',
 'actionthrottled'      => 'Ekikolwa kigaanidwa',
 'actionthrottledtext'  => "Okulwanyisa abasindika obubaka kiyaaye, twateekawo ekkomo ery'emirundi omuntu gy'ayinza okukola ekikolwa ekyo.<br />
 Gwe olituuseeko.<br />
@@ -604,9 +603,6 @@ Ekya 'Memba ono musindikire e-mail' toosobole okukikozesa okugyako nga mu [[Spec
 Kakano endagiriro eya 'IP' gy'oliko eri $3, yo ennamba eya natti gyebakusibye eri #$5.<br />
 Gw'ogenda okwogera naye ku natti mutegeeze ensonga zonna ezinnyonyodwa wano.",
 'blockednoreason'                  => 'tebawadde ensonga',
-'blockedoriginalsource'            => "Ensibuko ya '''$1''' eragidwa wano awaddako:",
-'blockededitsource'                => "Ebigambo ebya '''by'okyusizza''' ku '''$1''' biragidwa wano awaddako:",
-'whitelistedittitle'               => 'Okukyusa ku bino, wetaaga okuba nga oyingidde',
 'whitelistedittext'                => '$1 olyoke osobole okukyusa ku mpapula.',
 'confirmedittext'                  => "Kyetaagisa osooke okutukakasiza E-mail yo olyoke okkirizibwe okukyusa mu mpapula.<br />
 Endagiriro yo eya E-mail osobola okugitutegeeza n'okugitukakasiza ku lupapula lwo olwa '[[Special:Preferences|Enteekateeka yange]]'.",
@@ -797,13 +793,11 @@ oba ku gano agali ku lupapula luno.<br />
 'history-feed-item-nocomment' => 'Bya $1, nga $2',
 
 # Revision deletion
-'rev-delundel'      => 'laga/kisa',
-'rev-showdeleted'   => 'laga',
-'revdelete-log'     => 'Nsonga:',
-'revdel-restore'    => "tegeka ebiba biragibwa n'ebikisibwa",
-'pagehist'          => "Ennanda y'olupapula luno",
-'revdelete-content' => 'ebirimu',
-'revdelete-uname'   => "ery'obwa memba",
+'rev-delundel'    => 'laga/kisa',
+'rev-showdeleted' => 'laga',
+'revdelete-log'   => 'Nsonga:',
+'revdel-restore'  => "tegeka ebiba biragibwa n'ebikisibwa",
+'pagehist'        => "Ennanda y'olupapula luno",
 
 # Merge log
 'revertmerge' => 'Yawula ebigattidwa',
@@ -1031,8 +1025,7 @@ W'owandikira by'onoonya bw'osoosawo akagambo ''all:'', okunoonya kubuna Wikipedi
 'linksearch-ok' => 'Noonya',
 
 # Special:Log/newusers
-'newuserlogpage'          => "Olukalala olw'ebifudeyo mu kukolawo akawunti empya",
-'newuserlog-create-entry' => 'Akawunti empya',
+'newuserlogpage' => "Olukalala olw'ebifudeyo mu kukolawo akawunti empya",
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(lukalala lwa bamemba)',
@@ -1071,7 +1064,6 @@ Kakasa nti kino ky'oyagala, era nti otegeera bye kinaaleetawo, era nti kikkirizi
 'deletedtext'           => 'Olupapula "$1" lugyidwawo.
 
 Kebera olukalala $2 okumanya ebifa ku byakagyibwawo.',
-'deletedarticle'        => 'olupapula olwa "[[$1]]" lugyidwawo',
 'dellogpage'            => 'Ebigyidwawo',
 'deletecomment'         => 'Nsonga:',
 'deleteotherreason'     => 'Nsonga ndala:',
@@ -1118,7 +1110,6 @@ Oyinz'okukyusa okusibibwa kw'olupapula luno, naye tekijjakukyusa ebikugizo ebivu
 'undeletebtn'            => 'Luzzewo',
 'undeletelink'           => 'lukebere/luzzewo',
 'undeletecomment'        => 'Nsonga:',
-'undeletedarticle'       => '"[[$1]]" luzzidwawo',
 'undelete-search-submit' => 'Noonya',
 
 # Namespace form on various pages
@@ -1211,8 +1202,6 @@ Londayo eddala.',
 Yogera nange gwe olina okugyegattira ku eyo esangidwawo.'''",
 'movedto'          => 'kati lutumidwa',
 'movetalk'         => "N'olupapula olwa yogera nange lwakwo lusimbulize",
-'1movedto2'        => 'olupapula [[$1]] lukyusidwa luyitibwe [[$2]]',
-'1movedto2_redir'  => 'olupapula [[$1]] kati lukutwalabutwazi ku [[$2]], ebyalulingako kaakano gye bisangibwa',
 'movelogpage'      => 'Ebikyusidwa manya',
 'movereason'       => 'Nsonga:',
 'revertmove'       => 'zaawo erinya ekkadde',
@@ -1309,7 +1298,7 @@ Ob'oyagala okuyamba ku kuvvuunula eby'omu MediaWiki yonna, kebera ku [//www.medi
 
 # Media information
 'file-info-size' => 'pikseli $1 ku $2 , bunene bwa fayiro: $3, kika kya MIME: $4',
-'file-nohires'   => '<small>Tewali kisingako wano.</small>',
+'file-nohires'   => 'Tewali kisingako wano.',
 'svg-long-desc'  => 'Fayiro ya kika  kya SVG, ya pikselo $1 ku $2 awamu, ya obunene bwa: $3',
 'show-big-image' => 'Laga ekifaananyi ekijjuvu',
 

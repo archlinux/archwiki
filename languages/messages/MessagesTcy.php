@@ -340,15 +340,19 @@ $messages = array(
 'formerror'            => 'ದೋಷ: ಅರ್ಜಿನ್ ಕಡಪುಡಿಯೆರ್ ಆಯಿಜಿ',
 'badarticleerror'      => 'ಈ ಪುಟಡ್ ಈರ್ ಪ್ರಯತ್ನಿಸಾನ ಕಾರ್ಯ ಸಾದ್ಯ ಇಜ್ಜಿ',
 'cannotdelete'         => 'ಪುಟ ಅಥವಾ ಹೊತ್ತಗೆ "$1" ನ್ ಮಾಜಾವರ ಆಪುಜ್ಜಿ.(ಬೇತೆ ಎರೋ ಮಾಜಾದಿಪ್ಪೆರ್)',
+'cannotdelete-title'   => '"$1" ಮಾಜಾವರೆ ಆಪುಜ್ಜಿ',
 'badtitle'             => 'ಸರಿ ಇಜ್ಜಾಂದಿನ ಪುದರ್',
 'badtitletext'         => 'ಈರ್ ಕೋರಿನ ಪುಟದ ಶೀರ್ಷಿಕೆ ಸಿಂಧು ಅತ್ತ್ ಅಥವಾ ಖಾಲಿ ಅಥವಾ ಸರಿಯಾತ್‘ನ ಕೊಂಡಿಯತ್ತಾಂದಿನ ಅಂತರ ಭಾಷೆ/ಅಂತರ ವಿಕಿ ಸಂಪರ್ಕ.
 ಐಟ್ ಒಂಜಿ ಅಥವಾ ಹೆಚ್ಚಿ ಶೀರ್ಷಿಕೆಡ್ ಬಳಕೆ ಮಲ್ಪರ ನಿಷಿದ್ದ್ಜವಾಯಿನ ಅಕ್ಷರಳು ಇಪ್ಪು.',
+'perfcached'           => 'ಈ ಮಾಹಿತಿಲು ಕಂಪ್ಯುಟರ್‘ದ ತಾತ್ಕಾಲಿಕ ನೆನೆಪುಡ್‘ದ್ ಬತ್ತ್‘ದ್‘ನ ಬೊಕ್ಕ ಸರಿಯಾನ ಸ್ಥಿತಿ ಆದಿಪ್ಪಾಂದ್ A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'ಈ ತಿರ್ತ ಮಾಹಿತಿ ಕಂಪ್ಯೂಟರ್‘ದ ತಾತ್ಕಾಲಿಕ ನೆನಪುಡ್ ಉಂಡು. ದೆತ್ತ ಕಡೆತ ಬದಲಾವಣೆ $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'ಈ ಪುಟೊತ್ತ ಆಧುನಿಕ ಮಲ್ಪುನ ಕ್ರಿಯೆನ್ ಸದ್ಯಗ್ ಉಂತಾದ್ಂಡ್. ಮುಲ್ಪ ಉಪ್ಪುನ ಮಾಹಿತಿನ್ ನವೀಕರಣ ಮಲ್ಪರಾಪುಜಿ',
 'viewsource'           => 'ಮೂಲ ಬರಹೊನು ತೂಲೆ',
-'viewsourcefor'        => '$1 ಪುಟೊಗು',
+'viewsource-title'     => ' $1 ಮೂಲ ಬರಹ ತೂಲೆ',
 'actionthrottled'      => 'ಕಾರ್ಯನ್ ದೆಂಗಾದುಂಡು',
 'protectedpagetext'    => 'ಈ ಪುಟನ್ ಸಂಪಾದನೆ ಮಲ್ಪಂದಿಲೆಕ್ಕ ಸಂರಕ್ಷಣೆ ಮಲ್ತ್‘ಂಡ್',
 'viewsourcetext'       => 'ಈರ್ ಈ ಪುಟದ ಮೂಲನ್ ತೂವೊಲಿ ಬೊಕ್ಕ ನಕಲ್ ಮಲ್ಪೊಲಿ',
+'viewyourtext'         => 'ಈರ್ ಈ ಪುಟದ ಮೂಲನ್ ತೂವೊಲಿ ಬೊಕ್ಕ ನಕಲ್ ಮಲ್ಪೊಲಿ',
 'protectedinterface'   => 'ಈ ಪುಟ ತಂತ್ರಾಂಶ ಉಪಯೋಗ ಮಲ್ಪುನ ಪಠ್ಯನ್ ಒದಗಿಸಾಪುಂಡ್. ದುರುಪಯೋಗ ಅವಂದಿಲೆಕ್ಕ ಇದೆನ್ ಸಂರಕ್ಷಣೆ ಮಲ್ತ್‘ಂಡ್.',
 'ns-specialprotected'  => 'ವಿಶೇಷ ಪುಟ‘ಕ್‘ಲೆನ್ ಸಂಪಾದನೆ ಮಲ್ಪರೆ ಆಪುಜಿ',
 
@@ -430,6 +434,10 @@ $messages = array(
 'passwordreset'          => 'ಪ್ರವೇಶ ಪದನ್ ರಿಸೆಟ್ ಮಲ್ಪುಲೆ',
 'passwordreset-username' => 'ಸದಸ್ಯೆರ್ನ ಪುದರ್:',
 'passwordreset-email'    => 'ಇ-ಅಂಚೆ ವಿಳಾಸೊ',
+
+# Special:ChangeEmail
+'changeemail-submit' => 'ಇ-ಅಂಚೆ ವಿಳಾಸ ಬದಲಾವಣೆ ಮಲ್ಪುಲೆ',
+'changeemail-cancel' => 'ವಜಾ ಮಲ್ಪುಲೆ',
 
 # Edit page toolbar
 'bold_sample'     => 'ದಪ್ಪ ಅಕ್ಷರ',
@@ -595,6 +603,7 @@ $messages = array(
 'prefs-datetime'            => 'ದಿನ ಬೊಕ್ಕ ಸಮಯ',
 'prefs-rc'                  => 'ಇಂಚಿಪದ ಬದಲಾವಣೆಲು',
 'prefs-resetpass'           => 'ಪ್ರವೇಶಪದೊನ್ ಬದಲಾವಣೆ ಮಲ್ಪುಲೆ',
+'prefs-changeemail'         => 'ಇ-ಅಂಚೆ ವಿಳಾಸೊನು ಬದಲಾವಣೆ ಮಲ್ಪುಲೆ',
 'saveprefs'                 => 'ಒರಿಪಾಲೆ',
 'rows'                      => 'ಸಾಲ್‘ಲು',
 'searchresultshead'         => ' 
@@ -649,6 +658,7 @@ $messages = array(
 'action-upload'         => 'ಈ ಫೈಲ್‘ನ್ ಅಪ್‘ಲೋಡ್ ಮಲ್ಪುಲೆ',
 'action-delete'         => 'ಈ ಪುಟೊನ್ ಮಾಜಾಲೆ',
 'action-deleterevision' => 'ಈ ಆವೃತ್ತಿನ್ ಮಾಜಾಲೆ',
+'action-sendemail'      => 'ಇ-ಅಂಚೆ ಕಡಪುಡುಲೆ',
 
 # Recent changes
 'nchanges'                       => '$1 {{PLURAL:$1|ಬದಲಾವಣೆ|ಬದಲಾವಣೆಲು}}',
@@ -770,8 +780,7 @@ $messages = array(
 'allpagessubmit' => 'ಪೋ',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'ಸದಸ್ಯ ರಚನೆ ಲಾಗ್',
-'newuserlog-create-entry' => 'ಪೊಸ ಸದಸ್ಯೆರ್ನ ಎಕೌಂಟ್',
+'newuserlogpage' => 'ಸದಸ್ಯ ರಚನೆ ಲಾಗ್',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(ಸದಸ್ಯೆರ್ನ ಪಟ್ಟಿ)',
@@ -793,7 +802,6 @@ $messages = array(
 
 # Delete
 'actioncomplete' => 'ಕಾರ್ಯ ಸಂಪೂರ್ಣ',
-'deletedarticle' => '"[[$1]]" ನೆನ್ನ್ ದೆತ್ತ್ ದಾ೦ಡ್',
 'dellogpage'     => 'ಡಿಲೀಟ್ ಮಲ್ತಿನ ಫೈಲ್’ಲೆದ ದಾಖಲೆ',
 
 # Rollback
@@ -807,7 +815,6 @@ $messages = array(
 # Undelete
 'undeletelink'     => 'ದುಂಬುದ ಆವೃತ್ತಿಗ್ ಪೋಲೆ',
 'undeleteviewlink' => 'ತೂಲೆ',
-'undeletedarticle' => '"[[$1]]" ನ್ ಪಿರಕನತ್’ನ್ಡ್',
 
 # Namespace form on various pages
 'namespace'      => 'ನೇಮ್-ಸ್ಪೇಸ್:',
@@ -939,7 +946,7 @@ $messages = array(
 
 # Media information
 'file-info-size' => '$1 × $2 ಪಿಕ್ಸೆಲ್, ಫೈಲ್’ದ ಗಾತ್ರ: $3, MIME ಪ್ರಕಾರ: $4',
-'file-nohires'   => '<small>ಇಂದೆರ್ದ್ ಜಾಸ್ತಿ ವಿವರವಾಯಿನ ನೋಟ ಇಜ್ಜಿ.</small>',
+'file-nohires'   => 'ಇಂದೆರ್ದ್ ಜಾಸ್ತಿ ವಿವರವಾಯಿನ ನೋಟ ಇಜ್ಜಿ.',
 'svg-long-desc'  => 'ಎಸ್.ವಿ.ಜಿ ಫೈಲ್, ಸುಮಾರಾದ್ $1 × $2 ಪಿಕ್ಸೆಲ್, ಫೈಲ್’ದ ಗಾತ್ರ: $3',
 'show-big-image' => 'ಪೂರ್ತಿ ರೆಸೊಲ್ಯೂಶನ್',
 

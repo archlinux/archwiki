@@ -22,7 +22,7 @@ class RefreshLinksJob extends Job {
 	 * @return boolean success
 	 */
 	function run() {
-		global $wgParser;
+		global $wgParser, $wgContLang;
 		wfProfileIn( __METHOD__ );
 
 		$linkCache = LinkCache::singleton();
@@ -42,7 +42,7 @@ class RefreshLinksJob extends Job {
 		}
 
 		wfProfileIn( __METHOD__.'-parse' );
-		$options = new ParserOptions;
+		$options = ParserOptions::newFromUserAndLang( new User, $wgContLang );
 		$parserOutput = $wgParser->parse( $revision->getText(), $this->title, $options, true, true, $revision->getId() );
 		wfProfileOut( __METHOD__.'-parse' );
 		wfProfileIn( __METHOD__.'-update' );
@@ -71,7 +71,7 @@ class RefreshLinksJob2 extends Job {
 	 * @return boolean success
 	 */
 	function run() {
-		global $wgParser;
+		global $wgParser, $wgContLang;
 
 		wfProfileIn( __METHOD__ );
 
@@ -88,8 +88,10 @@ class RefreshLinksJob2 extends Job {
 			wfProfileOut( __METHOD__ );
 			return false;
 		}
+		// Back compat for pre-r94435 jobs
+		$table = isset( $this->params['table'] ) ? $this->params['table'] : 'templatelinks';
 		$titles = $this->title->getBacklinkCache()->getLinks( 
-			'templatelinks', $this->params['start'], $this->params['end']);
+			$table, $this->params['start'], $this->params['end']);
 		
 		# Not suitable for page load triggered job running!
 		# Gracefully switch to refreshLinks jobs if this happens.
@@ -103,6 +105,7 @@ class RefreshLinksJob2 extends Job {
 			wfProfileOut( __METHOD__ );
 			return true;
 		}
+		$options = ParserOptions::newFromUserAndLang( new User, $wgContLang );
 		# Re-parse each page that transcludes this page and update their tracking links...
 		foreach ( $titles as $title ) {
 			$revision = Revision::newFromTitle( $title );
@@ -112,7 +115,6 @@ class RefreshLinksJob2 extends Job {
 				return false;
 			}
 			wfProfileIn( __METHOD__.'-parse' );
-			$options = new ParserOptions;
 			$parserOutput = $wgParser->parse( $revision->getText(), $title, $options, true, true, $revision->getId() );
 			wfProfileOut( __METHOD__.'-parse' );
 			wfProfileIn( __METHOD__.'-update' );

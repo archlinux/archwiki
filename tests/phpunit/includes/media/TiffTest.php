@@ -15,16 +15,15 @@ class TiffTest extends MediaWikiTestCase {
 	}
 
 	public function testInvalidFile() {
-		global $wgShowEXIF;
-		if ( !$wgShowEXIF ) {
+		if ( !wfDl( 'exif' ) ) {
 			$this->markTestIncomplete( "This test needs the exif extension." );
 		}
 		$res = $this->handler->getMetadata( null, $this->filePath . 'README' );
 		$this->assertEquals( ExifBitmapHandler::BROKEN_FILE, $res );
 	}
+
 	public function testTiffMetadataExtraction() {
-		global $wgShowEXIF;
-		if ( !$wgShowEXIF ) {
+		if ( !wfDl( 'exif' ) ) {
 			$this->markTestIncomplete( "This test needs the exif extension." );
 		}
 		$res = $this->handler->getMetadata( null, $this->filePath . 'test.tiff' );

@@ -37,8 +37,7 @@ class SpecialVersion extends SpecialPage {
 	protected static $viewvcUrls = array(
 		'svn+ssh://svn.wikimedia.org/svnroot/mediawiki' => 'http://svn.wikimedia.org/viewvc/mediawiki',
 		'http://svn.wikimedia.org/svnroot/mediawiki' => 'http://svn.wikimedia.org/viewvc/mediawiki',
-		# Doesn't work at the time of writing but maybe some day:
-		'https://svn.wikimedia.org/viewvc/mediawiki' => 'http://svn.wikimedia.org/viewvc/mediawiki',
+		'https://svn.wikimedia.org/viewvc/mediawiki' => 'https://svn.wikimedia.org/viewvc/mediawiki',
 	);
 
 	public function __construct(){
@@ -49,11 +48,12 @@ class SpecialVersion extends SpecialPage {
 	 * main()
 	 */
 	public function execute( $par ) {
-		global $wgOut, $wgSpecialVersionShowHooks, $wgRequest;
+		global $wgSpecialVersionShowHooks;
 
 		$this->setHeaders();
 		$this->outputHeader();
-		$wgOut->allowClickjacking();
+		$out = $this->getOutput();
+		$out->allowClickjacking();
 
 		$text =
 			$this->getMediaWikiCredits() .
@@ -63,10 +63,10 @@ class SpecialVersion extends SpecialPage {
 			$text .= $this->getWgHooks();
 		}
 
-		$wgOut->addWikiText( $text );
-		$wgOut->addHTML( $this->IPInfo() );
+		$out->addWikiText( $text );
+		$out->addHTML( $this->IPInfo() );
 
-		if ( $wgRequest->getVal( 'easteregg' ) ) {
+		if ( $this->getRequest()->getVal( 'easteregg' ) ) {
 			if ( $this->showEasterEgg() ) {
 				// TODO: put something interesting here
 			}
@@ -106,7 +106,7 @@ class SpecialVersion extends SpecialPage {
 			'Aryeh Gregor', 'Aaron Schulz', 'Andrew Garrett', 'Raimond Spekking',
 			'Alexandre Emsenhuber', 'Siebrand Mazeland', 'Chad Horohoe',
 			'Roan Kattouw', 'Trevor Parscal', 'Bryan Tong Minh', 'Sam Reed',
-			'Victor Vasiliev', 'Rotem Liss', 'Platonides', 'Ashar Voultoiz',
+			'Victor Vasiliev', 'Rotem Liss', 'Platonides', 'Antoine Musso',
 			wfMsg( 'version-poweredby-others' )
 		);
 
@@ -126,7 +126,7 @@ class SpecialVersion extends SpecialPage {
 		// be loaded here, so feel free to use wfMsg*() in the 'name'. Raw HTML or wikimarkup
 		// can be used.
 		$software = array();
-		$software['[http://www.mediawiki.org/ MediaWiki]'] = self::getVersionLinked();
+		$software['[https://www.mediawiki.org/ MediaWiki]'] = self::getVersionLinked();
 		$software['[http://www.php.net/ PHP]'] = phpversion() . " (" . php_sapi_name() . ")";
 		$software[$dbr->getSoftwareLink()] = $dbr->getServerInfo();
 
@@ -143,7 +143,7 @@ class SpecialVersion extends SpecialPage {
 		foreach( $software as $name => $version ) {
 			$out .= "<tr>
 					<td>" . $name . "</td>
-					<td class=\"ltr\">" . $version . "</td>
+					<td dir=\"ltr\">" . $version . "</td>
 				</tr>\n";
 		}
 
@@ -153,6 +153,7 @@ class SpecialVersion extends SpecialPage {
 	/**
 	 * Return a string of the MediaWiki version with SVN revision if available.
 	 *
+	 * @param $flags String
 	 * @return mixed
 	 */
 	public static function getVersion( $flags = '' ) {
@@ -357,18 +358,17 @@ class SpecialVersion extends SpecialPage {
 	 * Callback to sort extensions by type.
 	 */
 	function compare( $a, $b ) {
-		global $wgLang;
 		if( $a['name'] === $b['name'] ) {
 			return 0;
 		} else {
-			return $wgLang->lc( $a['name'] ) > $wgLang->lc( $b['name'] )
+			return $this->getLanguage()->lc( $a['name'] ) > $this->getLanguage()->lc( $b['name'] )
 				? 1
 				: -1;
 		}
 	}
 
 	/**
-	 * Creates and formats the creidts for a single extension and returns this.
+	 * Creates and formats the credits for a single extension and returns this.
 	 *
 	 * @param $extension Array
 	 *
@@ -502,7 +502,7 @@ class SpecialVersion extends SpecialPage {
 	 * @return String: HTML fragment
 	 */
 	private function IPInfo() {
-		$ip =  str_replace( '--', ' - ', htmlspecialchars( wfGetIP() ) );
+		$ip =  str_replace( '--', ' - ', htmlspecialchars( $this->getRequest()->getIP() ) );
 		return "<!-- visited from $ip -->\n" .
 			"<span style='display:none'>visited from $ip</span>";
 	}
@@ -542,11 +542,10 @@ class SpecialVersion extends SpecialPage {
 		} elseif ( $cnt == 0 ) {
 			return '';
 		} else {
-			global $wgLang;
 			if ( $sort ) {
 				sort( $list );
 			}
-			return $wgLang->listToText( array_map( array( __CLASS__, 'arrayToString' ), $list ) );
+			return $this->getLanguage()->listToText( array_map( array( __CLASS__, 'arrayToString' ), $list ) );
 		}
 	}
 

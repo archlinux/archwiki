@@ -548,8 +548,9 @@ class DatabaseOracle extends DatabaseBase {
 					$val = $val->fetch();
 				}
 
+				// backward compatibility
 				if ( preg_match( '/^timestamp.*/i', $col_type ) == 1 && strtolower( $val ) == 'infinity' ) {
-					$val = '31-12-2030 12:00:00.000000';
+					$val = $this->getInfinity();
 				}
 
 				$val = ( $wgContLang != null ) ? $wgContLang->checkTitleEncoding( $val ) : $val;
@@ -654,7 +655,7 @@ class DatabaseOracle extends DatabaseBase {
 		return $retval;
 	}
 
-	function tableName( $name, $quoted = true ) {
+	function tableName( $name, $format = 'quoted' ) {
 		/*
 		Replace reserved words with better ones
 		Using uppercase because that's the only way Oracle can handle
@@ -669,7 +670,7 @@ class DatabaseOracle extends DatabaseBase {
 				break;
 		}
 
-		return parent::tableName( strtoupper( $name ), $quoted );
+		return parent::tableName( strtoupper( $name ), $format );
 	}
 
 	function tableNameInternal( $name ) {
@@ -768,9 +769,9 @@ class DatabaseOracle extends DatabaseBase {
 
 		// dirty code ... i know
 		$endArray = array();
-		$endArray[] = $prefix.'MWUSER';
-		$endArray[] = $prefix.'PAGE';
-		$endArray[] = $prefix.'IMAGE';
+		$endArray[] = strtoupper($prefix.'MWUSER');
+		$endArray[] = strtoupper($prefix.'PAGE');
+		$endArray[] = strtoupper($prefix.'IMAGE');
 		$fixedOrderTabs = $endArray;
 		while (($row = $result->fetchRow()) !== false) {
 			if (!in_array($row['table_name'], $fixedOrderTabs))
@@ -855,7 +856,7 @@ class DatabaseOracle extends DatabaseBase {
 	/**
 	 * Query whether a given table exists (in the given schema, or the default mw one if not given)
 	 */
-	function tableExists( $table ) {
+	function tableExists( $table, $fname = __METHOD__ ) {
 		$table = $this->tableName( $table );
 		$table = $this->addQuotes( strtoupper( $this->removeIdentifierQuotes( $table ) ) );
 		$owner = $this->addQuotes( strtoupper( $this->mDBname ) );
@@ -969,7 +970,8 @@ class DatabaseOracle extends DatabaseBase {
 	}
 
 	/* defines must comply with ^define\s*([^\s=]*)\s*=\s?'\{\$([^\}]*)\}'; */
-	function sourceStream( $fp, $lineCallback = false, $resultCallback = false, $fname = 'DatabaseOracle::sourceStream' ) {
+	function sourceStream( $fp, $lineCallback = false, $resultCallback = false,
+		$fname = 'DatabaseOracle::sourceStream', $inputCallback = false ) {
 		$cmd = '';
 		$done = false;
 		$dollarquote = false;
@@ -1023,6 +1025,9 @@ class DatabaseOracle extends DatabaseBase {
 					}
 
 					$cmd = $this->replaceVars( $cmd );
+					if ( $inputCallback ) {
+						call_user_func( $inputCallback, $cmd );
+					}
 					$res = $this->doQuery( $cmd );
 					if ( $resultCallback ) {
 						call_user_func( $resultCallback, $res, $this );
@@ -1210,7 +1215,7 @@ class DatabaseOracle extends DatabaseBase {
 			$sql .= $sqlSet;
 		}
 
-		if ( $conds != '*' ) {
+		if ( $conds !== array() && $conds !== '*' ) {
 			$conds = $this->wrapConditionsForWhere( $table, $conds );
 			$sql .= ' WHERE ' . $this->makeList( $conds, LIST_AND );
 		}
@@ -1299,7 +1304,8 @@ class DatabaseOracle extends DatabaseBase {
 		return 'BITOR(' . $fieldLeft . ', ' . $fieldRight . ')';
 	}
 
-	function setFakeMaster( $enabled = true ) { }
+	function setFakeMaster( $enabled = true ) {
+	}
 
 	function getDBname() {
 		return $this->mDBname;
@@ -1312,4 +1318,9 @@ class DatabaseOracle extends DatabaseBase {
 	public function getSearchEngine() {
 		return 'SearchOracle';
 	}
+
+	public function getInfinity() {
+		return '31-12-2030 12:00:00.000000';
+	}
+
 } // end DatabaseOracle class

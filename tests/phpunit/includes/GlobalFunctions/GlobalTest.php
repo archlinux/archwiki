@@ -94,24 +94,80 @@ class GlobalTest extends MediaWikiTestCase {
 		$this->assertTrue( $end > $start, "Time is running backwards!" );
 	}
 
-	function testArrayToCGI() {
-		$this->assertEquals(
-			"baz=AT%26T&foo=bar",
-			wfArrayToCGI(
-				array( 'baz' => 'AT&T', 'ignore' => '' ),
-				array( 'foo' => 'bar', 'baz' => 'overridden value' ) ) );
-		$this->assertEquals(
-			"path%5B0%5D=wiki&path%5B1%5D=test&cfg%5Bservers%5D%5Bhttp%5D=localhost",
-			wfArrayToCGI( array(
-				'path' => array( 'wiki', 'test' ),
-				'cfg' => array( 'servers' => array( 'http' => 'localhost' ) ) ) ) );
+	function dataArrayToCGI() {
+		return array(
+			array( array(), '' ), // empty
+			array( array( 'foo' => 'bar' ), 'foo=bar' ), // string test
+			array( array( 'foo' => '' ), 'foo=' ), // empty string test
+			array( array( 'foo' => 1 ), 'foo=1' ), // number test
+			array( array( 'foo' => true ), 'foo=1' ), // true test
+			array( array( 'foo' => false ), '' ), // false test
+			array( array( 'foo' => null ), '' ), // null test
+			array( array( 'foo' => 'A&B=5+6@!"\'' ), 'foo=A%26B%3D5%2B6%40%21%22%27' ), // urlencoding test
+			array( array( 'foo' => 'bar', 'baz' => 'is', 'asdf' => 'qwerty' ), 'foo=bar&baz=is&asdf=qwerty' ), // multi-item test
+			array( array( 'foo' => array( 'bar' => 'baz' ) ), 'foo%5Bbar%5D=baz' ),
+			array( array( 'foo' => array( 'bar' => 'baz', 'qwerty' => 'asdf' ) ), 'foo%5Bbar%5D=baz&foo%5Bqwerty%5D=asdf' ),
+			array( array( 'foo' => array( 'bar', 'baz' ) ), 'foo%5B0%5D=bar&foo%5B1%5D=baz' ),
+			array( array( 'foo' => array( 'bar' => array( 'bar' => 'baz' ) ) ), 'foo%5Bbar%5D%5Bbar%5D=baz' ),
+		);
 	}
 
-	function testCgiToArray() {
+	/**
+	 * @dataProvider dataArrayToCGI
+	 */
+	function testArrayToCGI( $array, $result ) {
+		$this->assertEquals( $result, wfArrayToCGI( $array ) );
+	}
+
+
+	function testArrayToCGI2() {
 		$this->assertEquals(
-			array( 'path' => array( 'wiki', 'test' ),
-			'cfg' => array( 'servers' => array( 'http' => 'localhost' ) ) ),
-			wfCgiToArray( 'path%5B0%5D=wiki&path%5B1%5D=test&cfg%5Bservers%5D%5Bhttp%5D=localhost' ) );
+			"baz=bar&foo=bar",
+			wfArrayToCGI(
+				array( 'baz' => 'bar' ),
+				array( 'foo' => 'bar', 'baz' => 'overridden value' ) ) );
+	}
+
+	function dataCgiToArray() {
+		return array(
+			array( '', array() ), // empty
+			array( 'foo=bar', array( 'foo' => 'bar' ) ), // string
+			array( 'foo=', array( 'foo' => '' ) ), // empty string
+			array( 'foo', array( 'foo' => '' ) ), // missing =
+			array( 'foo=bar&qwerty=asdf', array( 'foo' => 'bar', 'qwerty' => 'asdf' ) ), // multiple value
+			array( 'foo=A%26B%3D5%2B6%40%21%22%27', array( 'foo' => 'A&B=5+6@!"\'' ) ), // urldecoding test
+			array( 'foo%5Bbar%5D=baz', array( 'foo' => array( 'bar' => 'baz' ) ) ),
+			array( 'foo%5Bbar%5D=baz&foo%5Bqwerty%5D=asdf', array( 'foo' => array( 'bar' => 'baz', 'qwerty' => 'asdf' ) ) ),
+			array( 'foo%5B0%5D=bar&foo%5B1%5D=baz', array( 'foo' => array( 0 => 'bar', 1 => 'baz' ) ) ),
+			array( 'foo%5Bbar%5D%5Bbar%5D=baz', array( 'foo' => array( 'bar' => array( 'bar' => 'baz' ) ) ) ),
+		);
+	}
+
+	/**
+	 * @dataProvider dataCgiToArray
+	 */
+	function testCgiToArray( $cgi, $result ) {
+		$this->assertEquals( $result, wfCgiToArray( $cgi ) );
+	}
+
+	function dataCgiRoundTrip() {
+		return array(
+			array( '' ),
+			array( 'foo=bar' ),
+			array( 'foo=' ),
+			array( 'foo=bar&baz=biz' ),
+			array( 'foo=A%26B%3D5%2B6%40%21%22%27' ),
+			array( 'foo%5Bbar%5D=baz' ),
+			array( 'foo%5B0%5D=bar&foo%5B1%5D=baz' ),
+			array( 'foo%5Bbar%5D%5Bbar%5D=baz' ),
+		);
+	}
+
+	/**
+	 * @dataProvider dataCgiRoundTrip
+	 */
+	function testCgiRoundTrip( $cgi ) {
+		$this->assertEquals( $cgi, wfArrayToCGI( wfCgiToArray( $cgi ) ) );
 	}
 
 	function testMimeTypeMatch() {
@@ -176,263 +232,6 @@ class GlobalTest extends MediaWikiTestCase {
 				array( 'text/*'                => 1.0 ),
 				array( 'application/xhtml+xml' => 1.0 ) ) );
 	}
-
-	function testTimestamp() {
-		$t = gmmktime( 12, 34, 56, 1, 15, 2001 );
-		$this->assertEquals(
-			'20010115123456',
-			wfTimestamp( TS_MW, $t ),
-			'TS_UNIX to TS_MW' );
-		$this->assertEquals(
-			'19690115123456',
-			wfTimestamp( TS_MW, -30281104 ),
-			'Negative TS_UNIX to TS_MW' );
-		$this->assertEquals(
-			979562096,
-			wfTimestamp( TS_UNIX, $t ),
-			'TS_UNIX to TS_UNIX' );
-		$this->assertEquals(
-			'2001-01-15 12:34:56',
-			wfTimestamp( TS_DB, $t ),
-			'TS_UNIX to TS_DB' );
-		$this->assertEquals(
-			'20010115T123456Z',
-			wfTimestamp( TS_ISO_8601_BASIC, $t ),
-			'TS_ISO_8601_BASIC to TS_DB' );
-
-		$this->assertEquals(
-			'20010115123456',
-			wfTimestamp( TS_MW, '20010115123456' ),
-			'TS_MW to TS_MW' );
-		$this->assertEquals(
-			979562096,
-			wfTimestamp( TS_UNIX, '20010115123456' ),
-			'TS_MW to TS_UNIX' );
-		$this->assertEquals(
-			'2001-01-15 12:34:56',
-			wfTimestamp( TS_DB, '20010115123456' ),
-			'TS_MW to TS_DB' );
-		$this->assertEquals(
-			'20010115T123456Z',
-			wfTimestamp( TS_ISO_8601_BASIC, '20010115123456' ),
-			'TS_MW to TS_ISO_8601_BASIC' );
-
-		$this->assertEquals(
-			'20010115123456',
-			wfTimestamp( TS_MW, '2001-01-15 12:34:56' ),
-			'TS_DB to TS_MW' );
-		$this->assertEquals(
-			979562096,
-			wfTimestamp( TS_UNIX, '2001-01-15 12:34:56' ),
-			'TS_DB to TS_UNIX' );
-		$this->assertEquals(
-			'2001-01-15 12:34:56',
-			wfTimestamp( TS_DB, '2001-01-15 12:34:56' ),
-			'TS_DB to TS_DB' );
-		$this->assertEquals(
-			'20010115T123456Z',
-			wfTimestamp( TS_ISO_8601_BASIC, '2001-01-15 12:34:56' ),
-			'TS_DB to TS_ISO_8601_BASIC' );
-
-		# rfc2822 section 3.3
-
-		$this->assertEquals(
-			'Mon, 15 Jan 2001 12:34:56 GMT',
-			wfTimestamp( TS_RFC2822, '20010115123456' ),
-			'TS_MW to TS_RFC2822' );
-
-		$this->assertEquals(
-			'20010115123456',
-			wfTimestamp( TS_MW, 'Mon, 15 Jan 2001 12:34:56 GMT' ),
-			'TS_RFC2822 to TS_MW' );
-
-		$this->assertEquals(
-			'20010115123456',
-			wfTimestamp( TS_MW, ' Mon, 15 Jan 2001 12:34:56 GMT' ),
-			'TS_RFC2822 with leading space to TS_MW' );
-
-		$this->assertEquals(
-			'20010115123456',
-			wfTimestamp( TS_MW, '15 Jan 2001 12:34:56 GMT' ),
-			'TS_RFC2822 without optional day-of-week to TS_MW' );
-
-		# FWS = ([*WSP CRLF] 1*WSP) / obs-FWS ; Folding white space
-		# obs-FWS = 1*WSP *(CRLF 1*WSP) ; Section 4.2
-		$this->assertEquals(
-			'20010115123456',
-			wfTimestamp( TS_MW, 'Mon, 15         Jan 2001 12:34:56 GMT' ),
-			'TS_RFC2822 to TS_MW' );
-
-		# WSP = SP / HTAB ; rfc2234
-		$this->assertEquals(
-			'20010115123456',
-			wfTimestamp( TS_MW, "Mon, 15 Jan\x092001 12:34:56 GMT" ),
-			'TS_RFC2822 with HTAB to TS_MW' );
-
-		$this->assertEquals(
-			'20010115123456',
-			wfTimestamp( TS_MW, "Mon, 15 Jan\x09 \x09  2001 12:34:56 GMT" ),
-			'TS_RFC2822 with HTAB and SP to TS_MW' );
-
-		$this->assertEquals(
-			'19941106084937',
-			wfTimestamp( TS_MW, "Sun, 6 Nov 94 08:49:37 GMT" ),
-			'TS_RFC2822 with obsolete year to TS_MW' );
-	}
-
-	/**
-	 * This test checks wfTimestamp() with values outside.
-	 * It needs PHP 64 bits or PHP > 5.1.
-	 * See r74778 and bug 25451
-	 */
-	function testOldTimestamps() {
-		$this->assertEquals( 'Fri, 13 Dec 1901 20:45:54 GMT',
-			wfTimestamp( TS_RFC2822, '19011213204554' ),
-			'Earliest time according to php documentation' );
-
-		$this->assertEquals( 'Tue, 19 Jan 2038 03:14:07 GMT',
-			wfTimestamp( TS_RFC2822, '20380119031407' ),
-			'Latest 32 bit time' );
-
-		$this->assertEquals( '-2147483648',
-			wfTimestamp( TS_UNIX, '19011213204552' ),
-			'Earliest 32 bit unix time' );
-
-		$this->assertEquals( '2147483647',
-			wfTimestamp( TS_UNIX, '20380119031407' ),
-			'Latest 32 bit unix time' );
-
-		$this->assertEquals( 'Fri, 13 Dec 1901 20:45:52 GMT',
-			wfTimestamp( TS_RFC2822, '19011213204552' ),
-			'Earliest 32 bit time' );
-
-		$this->assertEquals( 'Fri, 13 Dec 1901 20:45:51 GMT',
-			wfTimestamp( TS_RFC2822, '19011213204551' ),
-			'Earliest 32 bit time - 1' );
-
-		$this->assertEquals( 'Tue, 19 Jan 2038 03:14:08 GMT',
-			wfTimestamp( TS_RFC2822, '20380119031408' ),
-			'Latest 32 bit time + 1' );
-
-		$this->assertEquals( '19011212000000',
-			wfTimestamp(TS_MW, '19011212000000'),
-			'Convert to itself r74778#c10645' );
-
-		$this->assertEquals( '-2147483649',
-			wfTimestamp( TS_UNIX, '19011213204551' ),
-			'Earliest 32 bit unix time - 1' );
-
-		$this->assertEquals( '2147483648',
-			wfTimestamp( TS_UNIX, '20380119031408' ),
-			'Latest 32 bit unix time + 1' );
-
-		$this->assertEquals( '19011213204551',
-			wfTimestamp( TS_MW, '-2147483649' ),
-			'1901 negative unix time to MediaWiki' );
-
-		$this->assertEquals( '18010115123456',
-			wfTimestamp( TS_MW, '-5331871504' ),
-			'1801 negative unix time to MediaWiki' );
-
-		$this->assertEquals( 'Tue, 09 Aug 0117 12:34:56 GMT',
-			wfTimestamp( TS_RFC2822, '0117-08-09 12:34:56'),
-			'Death of Roman Emperor [[Trajan]]');
-
-		/* @todo FIXME: 00 to 101 years are taken as being in [1970-2069] */
-
-		$this->assertEquals( 'Sun, 01 Jan 0101 00:00:00 GMT',
-			wfTimestamp( TS_RFC2822, '-58979923200'),
-			'1/1/101');
-
-		$this->assertEquals( 'Mon, 01 Jan 0001 00:00:00 GMT',
-			wfTimestamp( TS_RFC2822, '-62135596800'),
-			'Year 1');
-
-		/* It is not clear if we should generate a year 0 or not
-		 * We are completely off RFC2822 requirement of year being
-		 * 1900 or later.
-		 */
-		$this->assertEquals( 'Wed, 18 Oct 0000 00:00:00 GMT',
-			wfTimestamp( TS_RFC2822, '-62142076800'),
-			'ISO 8601:2004 [[year 0]], also called [[1 BC]]');
-	}
-
-	function testHttpDate() {
-		# The Resource Loader uses wfTimestamp() to convert timestamps
-		# from If-Modified-Since header.
-		# Thus it must be able to parse all rfc2616 date formats
-		# http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
-
-		$this->assertEquals(
-			'19941106084937',
-			wfTimestamp( TS_MW, 'Sun, 06 Nov 1994 08:49:37 GMT' ),
-			'RFC 822 date' );
-
-		$this->assertEquals(
-			'19941106084937',
-			wfTimestamp( TS_MW, 'Sunday, 06-Nov-94 08:49:37 GMT' ),
-			'RFC 850 date' );
-
-		$this->assertEquals(
-			'19941106084937',
-			wfTimestamp( TS_MW, 'Sun Nov  6 08:49:37 1994' ),
-			"ANSI C's asctime() format" );
-
-		// See http://www.squid-cache.org/mail-archive/squid-users/200307/0122.html and r77171
-		$this->assertEquals(
-			'20101122141242',
-			wfTimestamp( TS_MW, 'Mon, 22 Nov 2010 14:12:42 GMT; length=52626' ),
-			"Netscape extension to HTTP/1.0" );
-
-	}
-
-	function testTimestampParameter() {
-		// There are a number of assumptions in our codebase where wfTimestamp() should give 
-		// the current date but it is not given a 0 there. See r71751 CR
-
-		$now = wfTimestamp( TS_UNIX );
-		// We check that wfTimestamp doesn't return false (error) and use a LessThan assert 
-		// for the cases where the test is run in a second boundary.
-		
-		$zero = wfTimestamp( TS_UNIX, 0 );
-		$this->assertNotEquals( false, $zero );
-		$this->assertLessThan( 5, $zero - $now );
-
-		$empty = wfTimestamp( TS_UNIX, '' );
-		$this->assertNotEquals( false, $empty );
-		$this->assertLessThan( 5, $empty - $now );
-
-		$null = wfTimestamp( TS_UNIX, null );
-		$this->assertNotEquals( false, $null );
-		$this->assertLessThan( 5, $null - $now );
-	}
-
-	function testBasename() {
-		$sets = array(
-			'' => '',
-			'/' => '',
-			'\\' => '',
-			'//' => '',
-			'\\\\' => '',
-			'a' => 'a',
-			'aaaa' => 'aaaa',
-			'/a' => 'a',
-			'\\a' => 'a',
-			'/aaaa' => 'aaaa',
-			'\\aaaa' => 'aaaa',
-			'/aaaa/' => 'aaaa',
-			'\\aaaa\\' => 'aaaa',
-			'\\aaaa\\' => 'aaaa',
-			'/mnt/upload3/wikipedia/en/thumb/8/8b/Zork_Grand_Inquisitor_box_cover.jpg/93px-Zork_Grand_Inquisitor_box_cover.jpg' => '93px-Zork_Grand_Inquisitor_box_cover.jpg',
-			'C:\\Progra~1\\Wikime~1\\Wikipe~1\\VIEWER.EXE' => 'VIEWER.EXE',
-			'Östergötland_coat_of_arms.png' => 'Östergötland_coat_of_arms.png',
-			);
-		foreach ( $sets as $from => $to ) {
-			$this->assertEquals( $to, wfBaseName( $from ),
-				"wfBaseName('$from') => '$to'" );
-		}
-	}
-	
 	
 	function testFallbackMbstringFunctions() {
 		
@@ -701,135 +500,6 @@ class GlobalTest extends MediaWikiTestCase {
 		);
 	}
 
-
-	/**
-	 * test @see wfBCP47().
-	 * Please note the BCP explicitly state that language codes are case
-	 * insensitive, there are some exceptions to the rule :)
-   	 * This test is used to verify our formatting against all lower and
-	 * all upper cases language code.
-	 *
-	 * @see http://tools.ietf.org/html/bcp47
-	 * @dataProvider provideLanguageCodes()
-	 */
-	function testBCP47( $code, $expected ) {
-		$code = strtolower( $code );
-		$this->assertEquals( $expected, wfBCP47($code),
-			"Applying BCP47 standard to lower case '$code'"
-		);
-
-		$code = strtoupper( $code );
-		$this->assertEquals( $expected, wfBCP47($code),
-			"Applying BCP47 standard to upper case '$code'"
-		);
-	}
-
-	/**
-	 * Array format is ($code, $expected)
-	 */
-	function provideLanguageCodes() {
-		return array(
-			// Extracted from BCP47 (list not exhaustive)
-			# 2.1.1
-			array( 'en-ca-x-ca'    , 'en-CA-x-ca'     ),
-			array( 'sgn-be-fr'     , 'sgn-BE-FR'      ),
-			array( 'az-latn-x-latn', 'az-Latn-x-latn' ),
-			# 2.2
-			array( 'sr-Latn-RS', 'sr-Latn-RS' ),
-			array( 'az-arab-ir', 'az-Arab-IR' ),
-
-			# 2.2.5
-			array( 'sl-nedis'  , 'sl-nedis'   ),
-			array( 'de-ch-1996', 'de-CH-1996' ),
-
-			# 2.2.6
-			array(
-				'en-latn-gb-boont-r-extended-sequence-x-private',
-				'en-Latn-GB-boont-r-extended-sequence-x-private'
-			),
-
-			// Examples from BCP47 Appendix A
-			# Simple language subtag:
-			array( 'DE', 'de' ),
-			array( 'fR', 'fr' ),
-			array( 'ja', 'ja' ),
-
-			# Language subtag plus script subtag:
-			array( 'zh-hans', 'zh-Hans'),
-			array( 'sr-cyrl', 'sr-Cyrl'),
-			array( 'sr-latn', 'sr-Latn'),
-
-			# Extended language subtags and their primary language subtag
-			# counterparts:
-			array( 'zh-cmn-hans-cn', 'zh-cmn-Hans-CN' ),
-			array( 'cmn-hans-cn'   , 'cmn-Hans-CN'    ),
-			array( 'zh-yue-hk'     , 'zh-yue-HK'      ),
-			array( 'yue-hk'        , 'yue-HK'         ),
-
-			# Language-Script-Region:
-			array( 'zh-hans-cn', 'zh-Hans-CN' ),
-			array( 'sr-latn-RS', 'sr-Latn-RS' ),
-
-			# Language-Variant:
-			array( 'sl-rozaj'      , 'sl-rozaj'       ),
-			array( 'sl-rozaj-biske', 'sl-rozaj-biske' ),
-			array( 'sl-nedis'      , 'sl-nedis'       ),
-
-			# Language-Region-Variant:
-			array( 'de-ch-1901'  , 'de-CH-1901'  ),
-			array( 'sl-it-nedis' , 'sl-IT-nedis' ),
-
-			# Language-Script-Region-Variant:
-			array( 'hy-latn-it-arevela', 'hy-Latn-IT-arevela' ),
-
-			# Language-Region:
-			array( 'de-de' , 'de-DE' ),
-			array( 'en-us' , 'en-US' ),
-			array( 'es-419', 'es-419'),
-
-			# Private use subtags:
-			array( 'de-ch-x-phonebk'      , 'de-CH-x-phonebk' ),
-			array( 'az-arab-x-aze-derbend', 'az-Arab-x-aze-derbend' ),
-			/**
-			 * Previous test does not reflect the BCP which states:
-			 *  az-Arab-x-AZE-derbend
-			 * AZE being private, it should be lower case, hence the test above
-			 * should probably be:
-			#array( 'az-arab-x-aze-derbend', 'az-Arab-x-AZE-derbend' ),
-			 */
-
-			# Private use registry values:
-			array( 'x-whatever', 'x-whatever' ),
-			array( 'qaa-qaaa-qm-x-southern', 'qaa-Qaaa-QM-x-southern' ),
-			array( 'de-qaaa'   , 'de-Qaaa'    ),
-			array( 'sr-latn-qm', 'sr-Latn-QM' ),
-			array( 'sr-qaaa-rs', 'sr-Qaaa-RS' ),
-
-			# Tags that use extensions
-			array( 'en-us-u-islamcal', 'en-US-u-islamcal' ),
-			array( 'zh-cn-a-myext-x-private', 'zh-CN-a-myext-x-private' ),
-			array( 'en-a-myext-b-another', 'en-a-myext-b-another' ),
-
-			# Invalid:
-			// de-419-DE
-			// a-DE
-			// ar-a-aaa-b-bbb-a-ccc
-	
-		/*	
-			// ISO 15924 :
-			array( 'sr-Cyrl', 'sr-Cyrl' ),
-			# @todo FIXME: Fix our function?
-			array( 'SR-lATN', 'sr-Latn' ),
-			array( 'fr-latn', 'fr-Latn' ),
-			// Use lowercase for single segment
-			// ISO 3166-1-alpha-2 code
-			array( 'US', 'us' ),  # USA
-			array( 'uS', 'us' ),  # USA
-			array( 'Fr', 'fr' ),  # France
-			array( 'va', 'va' ),  # Holy See (Vatican City State)
-		 */);
-	}
-
 	/**
 	 * @dataProvider provideMakeUrlIndexes()
 	 */
@@ -886,7 +556,63 @@ class GlobalTest extends MediaWikiTestCase {
 			),
 		);
 	}
+	
+	/**
+	 * @dataProvider provideWfMatchesDomainList
+	 */
+	function testWfMatchesDomainList( $url, $domains, $expected, $description ) {
+		$actual = wfMatchesDomainList( $url, $domains );
+		$this->assertEquals( $expected, $actual, $description );
+	}
+	
+	function provideWfMatchesDomainList() {
+		$a = array();
+		$protocols = array( 'HTTP' => 'http:', 'HTTPS' => 'https:', 'protocol-relative' => '' );
+		foreach ( $protocols as $pDesc => $p ) {
+			$a = array_merge( $a, array(
+				array( "$p//www.example.com", array(), false, "No matches for empty domains array, $pDesc URL" ),
+				array( "$p//www.example.com", array( 'www.example.com' ), true, "Exact match in domains array, $pDesc URL" ),
+				array( "$p//www.example.com", array( 'example.com' ), true, "Match without subdomain in domains array, $pDesc URL" ),
+				array( "$p//www.example2.com", array( 'www.example.com', 'www.example2.com', 'www.example3.com' ), true, "Exact match with other domains in array, $pDesc URL" ),
+				array( "$p//www.example2.com", array( 'example.com', 'example2.com', 'example3,com' ), true, "Match without subdomain with other domains in array, $pDesc URL" ),
+				array( "$p//www.example4.com", array( 'example.com', 'example2.com', 'example3,com' ), false, "Domain not in array, $pDesc URL" ),
+				
+				// FIXME: This is a bug in wfMatchesDomainList(). If and when this is fixed, update this test case
+				array( "$p//nds-nl.wikipedia.org", array( 'nl.wikipedia.org' ), true, "Substrings of domains match while they shouldn't, $pDesc URL" ),
+			) );
+		}
+		return $a;
+	}
 
+	/**
+	 * @dataProvider provideWfShellMaintenanceCmdList
+	 */
+	function testWfShellMaintenanceCmd( $script, $parameters, $options, $expected, $description ) {
+		if( wfIsWindows() ) {
+			// Approximation that's good enough for our purposes just now
+			$expected = str_replace( "'", '"', $expected );
+		}
+		$actual = wfShellMaintenanceCmd( $script, $parameters, $options );
+		$this->assertEquals( $expected, $actual, $description );
+	}
+
+	function provideWfShellMaintenanceCmdList() {
+		global $wgPhpCli;
+		return array(
+			array( 'eval.php', array( '--help', '--test' ), array(),
+				"'$wgPhpCli' 'eval.php' '--help' '--test'",
+				"Called eval.php --help --test" ),
+			array( 'eval.php', array( '--help', '--test space' ), array('php' => 'php5'),
+				"'php5' 'eval.php' '--help' '--test space'",
+				"Called eval.php --help --test with php option" ),
+			array( 'eval.php', array( '--help', '--test', 'X' ), array('wrapper' => 'MWScript.php'),
+				"'$wgPhpCli' 'MWScript.php' 'eval.php' '--help' '--test' 'X'",
+				"Called eval.php --help --test with wrapper option" ),
+			array( 'eval.php', array( '--help', '--test', 'y' ), array('php' => 'php5', 'wrapper' => 'MWScript.php'),
+				"'php5' 'MWScript.php' 'eval.php' '--help' '--test' 'y'",
+				"Called eval.php --help --test with wrapper and php option" ),
+		);
+	}
 	/* TODO: many more! */
 }
 

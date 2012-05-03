@@ -7,6 +7,7 @@
  * @ingroup Language
  * @file
  *
+ * @author Bombo (on ln.wikipedia.org)
  * @author Eruedin
  * @author Moyogo
  */
@@ -225,10 +226,9 @@ Ezalí listɛ́ ya nkásá gudi bizalí  na [[Special:SpecialPages|{{int:special
 'enterlockreason'    => 'Ópésa ntína mpé ntángo ya kokanisa ya bofúngi ya litákoli ya kabo',
 'internalerror'      => 'Zíko ya káti',
 'internalerror_info' => 'Zíko ya káti: $1',
-'perfcached'         => 'Bipeseli byangó bizalí o mobómbisi-lombángu mpé bikokí kozala ya lɛlɔ́ tɛ̂.',
-'perfcachedts'       => 'Bipeseli byangó bizalí o mobómbisi-lombángu mpé bikokí kozala ya lɛlɔ́ tɛ̂. Bizalí bya $1.',
+'perfcached'         => 'Bipeseli byangó bizalí o mobómbisi-lombángu mpé bikokí kozala ya lɛlɔ́ tɛ̂. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'       => 'Bipeseli byangó bizalí o mobómbisi-lombángu mpé bikokí kozala ya lɛlɔ́ tɛ̂. Bizalí bya $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'viewsource'         => 'Komɔ́nisa mosólo',
-'viewsourcefor'      => 'na $1',
 
 # Login and logout pages
 'yourname'                => 'Nkómbó ya mosáleli:',
@@ -481,8 +481,7 @@ Ezalí listɛ́ ya nkásá gudi bizalí  na [[Special:SpecialPages|{{int:special
 'categories' => 'Ndéngé',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Zuluná ya bokeli bwa konti ya mosáleli',
-'newuserlog-create-entry' => 'Konti ya mosáleli ya sika',
+'newuserlogpage' => 'Zuluná ya bokeli bwa konti ya mosáleli',
 
 # E-mail user
 'emailuser'       => 'Kotíndela yě mɛ́lɛ',
@@ -513,7 +512,6 @@ Ezalí listɛ́ ya nkásá gudi bizalí  na [[Special:SpecialPages|{{int:special
 
 # Delete
 'deletepage'            => 'Kolímwisa lonkásá loye',
-'deletedarticle'        => 'elímwísí "[[$1]]"',
 'dellogpage'            => 'zuluná ya bolímwisi',
 'deletionlog'           => 'zuluná ya bolímwisi',
 'deletecomment'         => 'Ntína:',
@@ -545,7 +543,6 @@ Ezalí listɛ́ ya nkásá gudi bizalí  na [[Special:SpecialPages|{{int:special
 # Undelete
 'undeletelink'     => 'komɔnisa / kozóngisa',
 'undeleteviewlink' => 'Komɔ́nisa',
-'undeletedarticle' => 'Ezóngísí « [[$1]] »',
 
 # Namespace form on various pages
 'namespace'      => 'Ntáká ya nkómbó :',

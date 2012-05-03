@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * This class contains a list of pages that the client has requested.
  * Initially, when the client passes in titles=, pageids=, or revisions=
@@ -57,7 +52,7 @@ class ApiPageSet extends ApiQueryBase {
 
 	/**
 	 * Constructor
-	 * @param $query ApiQuery
+	 * @param $query ApiQueryBase
 	 * @param $resolveRedirects bool Whether redirects should be resolved
 	 * @param $convertTitles bool
 	 */
@@ -464,7 +459,7 @@ class ApiPageSet extends ApiQueryBase {
 						__METHOD__ );
 			$this->profileDBOut();
 		}
-		
+
 		$this->initFromQueryResult( $res, $remaining, false );	// process PageIDs
 
 		// Resolve any found redirects
@@ -645,8 +640,8 @@ class ApiPageSet extends ApiQueryBase {
 			// We found pages that aren't in the redirect table
 			// Add them
 			foreach ( $this->mPendingRedirectIDs as $id => $title ) {
-				$article = new Article( $title );
-				$rt = $article->insertRedirect();
+				$page = WikiPage::factory( $title );
+				$rt = $page->insertRedirect();
 				if ( !$rt ) {
 					// What the hell. Let's just ignore this
 					continue;
@@ -743,7 +738,7 @@ class ApiPageSet extends ApiQueryBase {
 		return $array;
 	}
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array(
 			'titles' => array(
 				ApiBase::PARAM_ISMULTI => true
@@ -759,7 +754,7 @@ class ApiPageSet extends ApiQueryBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array(
 			'titles' => 'A list of titles to work on',
 			'pageids' => 'A list of page IDs to work on',

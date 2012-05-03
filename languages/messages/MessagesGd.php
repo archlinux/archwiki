@@ -373,23 +373,25 @@ An dèan thu aithris air seo do [[Special:ListUsers/sysop|rianadair]], ag innse 
 'badarticleerror'      => 'Cha ghabh an gnìomh seo a dhèanamh air an duilleag seo.',
 'cannotdelete'         => 'Cha do ghabh an duilleag no am faidhle "$1" a sguabadh às.
 Faodaidh gun deach a sguabadh às le cuideigin eile mu thràth.',
+'cannotdelete-title'   => 'Cha ghabh an duilleag "$1" a sguabadh às',
 'badtitle'             => 'Droch thiotal',
 'badtitletext'         => "Bha an duilleag a dh'iarr thu mì-dhligheach, falamh no le tiotal eadar-chànanach no eadar-uici air a dhroch cheangal.
 Faodaidh gu bheil aon no barrachd charactairean ann nach urrainn dhut a chleachdadh ann an tiotalan.",
-'perfcached'           => "Chaidh an dàta a leanas a thasgadh 's faodaidh gu bheil e air dheireadh.",
-'perfcachedts'         => "Chaidh an dàta a leanas a thasgadh 's chaidh ùrachadh $1 turas mu dheireadh.",
+'perfcached'           => "Chaidh an dàta a leanas a thasgadh 's faodaidh gu bheil e air dheireadh. Tha {{PLURAL:$1|$1 toradh|$1 thoradh|$1 toraidhean|$1 toradh|$1 thoradh|$1 toraidhean|$1 toradh}} ri fhaighinn san tasgadan air a' char as motha.",
+'perfcachedts'         => "Chaidh an dàta a leanas a thasgadh agus chaidh ùradhadh $1 turas mu dheireadh. Tha {{PLURAL:$4|$4 toradh|$4 thoradh|$4 toraidhean|$4 toradh|$4 thoradh|$4 toraidhean|$4 toradh}} ri fhaighinn san tasgadan air a' char as motha.",
 'querypage-no-updates' => 'Tha ùrachadh air a chur à comas air an duilleag seo an-dràsta.
 Cha dèid an dàta an-seo ùrachadh aig an àm seo.',
 'wrong_wfQuery_params' => 'Paramatairean mì-cheart airson wfQuery()<br />
 Foincsean: $1<br />
 Iarrtas: $2',
 'viewsource'           => 'Seall an tùs',
-'viewsourcefor'        => 'airson $1',
+'viewsource-title'     => 'Seall an tùs aig $1',
 'actionthrottled'      => 'Gnìomh air a mhùchadh',
 'actionthrottledtext'  => "Gus casg a chur air spama, chan urrainn dhut an gnìomh seo a dhèanamh ro thric am broinn ùine ghoirid agus chaidh thu thairis air a' chrìoch seo.
 Feuch ris a-rithist às a dhèidh seo.",
 'protectedpagetext'    => 'Chaidh an duilleag seo a ghlasadh gus casg a chur air deasachadh.',
 'viewsourcetext'       => "'S urrainn dhut coimhead air tùs na duilleige seo 's lethbhreac a dhèanamh dheth:",
+'viewyourtext'         => "'S urrainn dhut coimhead air '''na mhùthaich thu''' 's lethbhreac a dhèanamh dheth air an duilleag seo:",
 'protectedinterface'   => "Tha an duilleag seo a' solar teacsa eadar-aghaidh airson a' bhathar-bhog is chaidh a ghlaadh gus casg a chur air mì-chleachdadh.",
 'editinginterface'     => "'''Rabhadh:''' Tha thu a' deasachadh duilleag a tha 'ga chleachdadh a chum teacsa eadar-aghaidh a sholar airson a' bhathar-bhog.
 Ma dh'atharraicheas tu an duilleag seo, bidh buaidh ann air coltas na h-eadar-aghaidh mar a chì càch i.
@@ -666,13 +668,9 @@ Mìneachadh: '''({{int:cur}})''' = an diofar eadar e 's am mùthadh as ùire, ''
 
 # Revision deletion
 'rev-delundel'           => 'seall/falaich',
-'revdelete-logentry'     => 'a dh\'atharraich faicsinneachd mùthaidhean "[[$1]]"',
 'revdel-restore'         => 'mùth follaiseachd',
 'revdel-restore-deleted' => 'mùthaidhean a chaidh a sguabadh às',
 'revdel-restore-visible' => 'mùthaidhean faicsinneach',
-'revdelete-content'      => 'susbaint',
-'revdelete-hid'          => "a dh'fhalaich $1",
-'revdelete-log-message'  => '$1 airson $2 {{PLURAL:$2|mhùthadh|mhùthadh|mhùthadh|mhùthadh|mùthaidhean|mùthadh}}',
 
 # Merge log
 'revertmerge' => 'Dì-aontaich',
@@ -883,7 +881,7 @@ Chithear an tuairisgeul a tha aice air [duilleag tuairisgeul an fhaidhle $2] gu 
 'shortpages'              => 'Duilleagan goirid',
 'longpages'               => 'Duilleagan fada',
 'listusers'               => 'Liosta nan cleachdaichean',
-'usercreated'             => 'a chruthaich $1 aig $2',
+'usercreated'             => 'Air a chruthachadh le {{GENDER:$3|}} $1 aig $2',
 'newpages'                => 'Duilleagan ùra',
 'ancientpages'            => 'Duilleagan as sìne',
 'move'                    => 'Gluais',
@@ -921,8 +919,7 @@ Thoir sùil air na [[Special:WantedCategories|roinntean-seòrsa a thathar 'gan i
 'linksearch-line' => "Tha $1 a' ceangal an-seo o $2",
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Loga cruthachaidh de chleachdaichean',
-'newuserlog-create-entry' => 'Cunntas de chleachdaiche ùr',
+'newuserlogpage' => 'Loga cruthachaidh de chleachdaichean',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(liosta de bhuill)',
@@ -972,7 +969,6 @@ Dearbhaich gu bheil thu airson seo a dhèanamh 's gun tuig thu a' bhuaidh a bhio
 'actionfailed'           => "Dh'fhàillig ort",
 'deletedtext'            => 'Chaidh "$1" a sguabadh às.
 Seall air $2 airson clàr de dhuilleagan a chaidh a sguabadh às o chionn ghoirid.',
-'deletedarticle'         => '"[[$1]]" air a sguabadh às',
 'dellogpage'             => 'Loga an sguabaidh às',
 'reverted'               => 'Air aiseag gu tionndadh nas sine',
 'deletecomment'          => 'Adhbhar:',
@@ -1023,7 +1019,6 @@ Seo roghainnean làithreach na duilleige '''$1''':",
 'undeleterevisions' => 'Chaidh $1 {{PLURAL:$1|leth-bhreac|leth-bhreac|leth-bhreac|leth-bhreac|leth-bhreacan|leth-bhreac}} a chur san tasg-lann',
 'undeletelink'      => 'seall/aisig',
 'undeleteviewlink'  => 'seall',
-'undeletedarticle'  => 'a dh\'aisig "[[$1]]"',
 
 # Namespace form on various pages
 'namespace'      => 'Namespace:',
@@ -1128,8 +1123,6 @@ Nach tagh thu ainm eile?',
 Bidh agad ris an co-aontachadh a làimh.'''",
 'movedto'                 => 'air a ghluasad a',
 'movetalk'                => 'Gluais an duilleag deasbaireachd a tha co-cheangailte ris',
-'1movedto2'               => '[[$1]] air a ghluasad a [[$2]]',
-'1movedto2_redir'         => 'a ghluais [[$1]] a [[$2]] thairis air ath-sheòladh',
 'movelogpage'             => 'Loga nan gluasadan',
 'movereason'              => 'Adhbhar:',
 'revertmove'              => 'till',
@@ -1218,17 +1211,13 @@ Tadhail air [//www.mediawiki.org/wiki/Localisation Ionadaileadh MediaWiki] is [/
 'others'        => 'eile',
 'siteusers'     => '{{PLURAL:$2|chleachdaiche|chleachdaiche|chleachdaiche|chleachdaiche|cleachdaichean|cleachdaiche}} {{SITENAME}} $1',
 
-# Patrol log
-'patrol-log-line' => 'a chomharraich $1 dhen duilleag $2 freiceadan $3',
-'patrol-log-diff' => 'lèirmheas $1',
-
 # Browsing diffs
 'previousdiff' => '← Mùthadh nas sine',
 'nextdiff'     => 'Deasachadh nas ùire →',
 
 # Media information
 'file-info-size' => '$1 × $2 pixel, meud an fhaidhle: $3, seòrsa MIME: $4',
-'file-nohires'   => '<small>Chan eil dùmhlachd-bhreacaidh nas fhearr ri fhaighinn.</small>',
+'file-nohires'   => 'Chan eil dùmhlachd-bhreacaidh nas fhearr ri fhaighinn.',
 'svg-long-desc'  => 'Faidhle SVG, a-rèir ainm $1 × $2 pixel, meud faidhle: $3',
 'show-big-image' => 'Dùmhlachd-bhreacaidh shlàn',
 

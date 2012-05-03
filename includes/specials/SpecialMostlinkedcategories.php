@@ -25,7 +25,7 @@
  */
 
 /**
- * A querypage to show categories ordered in descending order by the pages  in them
+ * A querypage to show categories ordered in descending order by the pages in them
  *
  * @ingroup SpecialPage
  */
@@ -35,16 +35,14 @@ class MostlinkedCategoriesPage extends QueryPage {
 		parent::__construct( $name );
 	}
 
-	function isExpensive() { return true; }
 	function isSyndicated() { return false; }
 
 	function getQueryInfo() {
 		return array (
-			'tables' => array ( 'categorylinks' ),
-			'fields' => array ( 'cl_to AS title',
+			'tables' => array ( 'category' ),
+			'fields' => array ( 'cat_title AS title',
 					NS_CATEGORY . ' AS namespace',
-					'COUNT(*) AS value' ),
-			'options' => array ( 'GROUP BY' => 'cl_to' )
+					'cat_pages AS value' ),
 		);
 	}
 
@@ -76,15 +74,14 @@ class MostlinkedCategoriesPage extends QueryPage {
 	 * @return string
 	 */
 	function formatResult( $skin, $result ) {
-		global $wgLang, $wgContLang;
+		global $wgContLang;
 
 		$nt = Title::makeTitle( NS_CATEGORY, $result->title );
 		$text = $wgContLang->convert( $nt->getText() );
 
-		$plink = $skin->link( $nt, htmlspecialchars( $text ) );
+		$plink = Linker::link( $nt, htmlspecialchars( $text ) );
 
-		$nlinks = wfMsgExt( 'nmembers', array( 'parsemag', 'escape' ),
-			$wgLang->formatNum( $result->value ) );
-		return wfSpecialList( $plink, $nlinks );
+		$nlinks = $this->msg( 'nmembers' )->numParams( $result->value )->escaped();
+		return $this->getLanguage()->specialList( $plink, $nlinks );
 	}
 }

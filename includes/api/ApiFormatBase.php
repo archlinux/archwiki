@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiBase.php' );
-}
-
 /**
  * This is the abstract base class for API formatters.
  *
@@ -235,8 +230,10 @@ See <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 	public function getBuffer() {
 		return $this->mBuffer;
 	}
+
 	/**
 	 * Set the flag to buffer the result instead of printing it.
+	 * @param $value bool
 	 */
 	public function setBufferResult( $value ) {
 		$this->mBufferResult = $value;
@@ -267,7 +264,7 @@ See <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 		// This regex hacks around bug 13218 (&quot; included in the URL)
 		$text = preg_replace( "#(($protos).*?)(&quot;)?([ \\'\"<>\n]|&lt;|&gt;|&quot;)#", '<a href="\\1">\\1</a>\\3\\4', $text );
 		// identify requests to api.php
-		$text = preg_replace( "#api\\.php\\?[^ \\()<\n\t]+#", '<a href="\\0">\\0</a>', $text );
+		$text = preg_replace( "#api\\.php\\?[^ <\n\t]+#", '<a href="\\0">\\0</a>', $text );
 		if ( $this->mHelp ) {
 			// make strings inside * bold
 			$text = preg_replace( "#\\*[^<>\n]+\\*#", '<b>\\0</b>', $text );
@@ -288,8 +285,11 @@ See <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>, or
 		return $text;
 	}
 
-	protected function getExamples() {
-		return 'api.php?action=query&meta=siteinfo&siprop=namespaces&format=' . $this->getModuleName();
+	public function getExamples() {
+		return array(
+			'api.php?action=query&meta=siteinfo&siprop=namespaces&format=' . $this->getModuleName()
+				=> "Format the query result in the {$this->getModuleName()} format",
+		);
 	}
 
 	public function getHelpUrls() {
@@ -335,6 +335,8 @@ class ApiFormatFeedWrapper extends ApiFormatBase {
 
 	/**
 	 * Feed does its own headers
+	 *
+	 * @return null
 	 */
 	public function getMimeType() {
 		return null;
@@ -342,6 +344,8 @@ class ApiFormatFeedWrapper extends ApiFormatBase {
 
 	/**
 	 * Optimization - no need to sanitize data that will not be needed
+	 *
+	 * @return bool
 	 */
 	public function getNeedsRawData() {
 		return true;

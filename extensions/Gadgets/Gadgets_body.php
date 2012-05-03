@@ -18,10 +18,11 @@ class GadgetHooks {
 	 * @param $article Article
 	 * @param $user User
 	 * @param $text String: New page text
+	 * @return bool
 	 */
 	public static function articleSaveComplete( $article, $user, $text ) {
 		// update cache if MediaWiki:Gadgets-definition was edited
-		$title = $article->mTitle;
+		$title = $article->getTitle();
 		if ( $title->getNamespace() == NS_MEDIAWIKI && $title->getText() == 'Gadgets-definition' ) {
 			Gadget::loadStructuredList( $text );
 		}
@@ -31,12 +32,18 @@ class GadgetHooks {
 	/**
 	 * UserGetDefaultOptions hook handler
 	 * @param $defaultOptions Array of default preference keys and values
+	 * @return bool
 	 */
 	public static function userGetDefaultOptions( &$defaultOptions ) {
 		$gadgets = Gadget::loadStructuredList();
-		if ( !$gadgets ) return true;
+		if ( !$gadgets ) {
+			return true;
+		}
 
-		foreach ( $gadgets as $section => $thisSection ) {
+		/**
+		 * @var $gadget Gadget
+		 */
+		foreach ( $gadgets as $thisSection ) {
 			foreach ( $thisSection as $gadgetId => $gadget ) {
 				if ( $gadget->isOnByDefault() ) {
 					$defaultOptions['gadget-' . $gadgetId] = 1;
@@ -51,10 +58,10 @@ class GadgetHooks {
 	 * GetPreferences hook handler.
 	 * @param $user User
 	 * @param $preferences Array: Preference descriptions
+	 * @return bool
 	 */
 	public static function getPreferences( $user, &$preferences ) {
 		$gadgets = Gadget::loadStructuredList();
-
 		if ( !$gadgets ) {
 			return true;
 		}
@@ -64,6 +71,9 @@ class GadgetHooks {
 		foreach ( $gadgets as $section => $thisSection ) {
 			$available = array();
 
+			/**
+			 * @var $gadget Gadget
+			 */
 			foreach ( $thisSection as $gadget ) {
 				if ( $gadget->isAllowed( $user ) ) {
 					$gname = $gadget->getName();
@@ -115,14 +125,17 @@ class GadgetHooks {
 	/**
 	 * ResourceLoaderRegisterModules hook handler.
 	 * @param $resourceLoader ResourceLoader
+	 * @return bool
 	 */
 	public static function registerModules( &$resourceLoader ) {
 		$gadgets = Gadget::loadList();
-
 		if ( !$gadgets ) {
 			return true;
 		}
 
+		/**
+		 * @var $g Gadget
+		 */
 		foreach ( $gadgets as $g ) {
 			$module = $g->getModule();
 			if ( $module ) {
@@ -136,6 +149,7 @@ class GadgetHooks {
 	/**
 	 * BeforePageDisplay hook handler.
 	 * @param $out OutputPage
+	 * @return bool
 	 */
 	public static function beforePageDisplay( $out ) {
 		global $wgUser;
@@ -152,6 +166,9 @@ class GadgetHooks {
 		$lb->setCaller( __METHOD__ );
 		$pages = array();
 
+		/**
+		 * @var $gadget Gadget
+		 */
 		foreach ( $gadgets as $gadget ) {
 			if ( $gadget->isEnabled( $wgUser ) && $gadget->isAllowed( $wgUser ) ) {
 				if ( $gadget->hasModule() ) {
@@ -212,6 +229,7 @@ class GadgetHooks {
 	/**
 	 * UnitTestsList hook handler
 	 * @param $files Array: List of extension test files
+	 * @return bool
 	 */
 	public static function unitTestsList( $files ) {
 		$files[] = dirname( __FILE__ ) . '/Gadgets_tests.php';
@@ -244,7 +262,7 @@ class Gadget {
 	/**
 	 * Creates an instance of this class from definition in MediaWiki:Gadgets-definition
 	 * @param $definition String: Gadget definition
-	 * @return Mixed: Instance of Gadget class or false if $definition is invalid
+	 * @return Gadget|bool Instance of Gadget class or false if $definition is invalid
 	 */
 	public static function newFromDefinition( $definition ) {
 		$m = array();
@@ -497,7 +515,7 @@ class Gadget {
 		}
 
 		$gadgets = array();
-		foreach ( $struct as $section => $entries ) {
+		foreach ( $struct as $entries ) {
 			$gadgets = array_merge( $gadgets, $entries );
 		}
 		wfProfileOut( __METHOD__ );
@@ -507,13 +525,19 @@ class Gadget {
 
 	/**
 	 * Checks whether gadget list from cache can be used.
+	 * @param $gadgets array
 	 * @return Boolean
 	 */
 	private static function isValidList( $gadgets ) {
-		if ( !is_array( $gadgets ) ) return false;
+		if ( !is_array( $gadgets ) ) {
+			return false;
+		}
 		// Check if we have 1) array of gadgets 2) the gadgets are up to date
 		// One check is enough
-		foreach ( $gadgets as $section => $list ) {
+		/**
+		 * @var $g Gadget
+		 */
+		foreach ( $gadgets as $list ) {
 			foreach ( $list as $g ) {
 				if ( !( $g instanceof Gadget ) || $g->isOutdated() ) {
 					return false;
@@ -574,8 +598,7 @@ class Gadget {
 			$m = array();
 			if ( preg_match( '/^==+ *([^*:\s|]+?)\s*==+\s*$/', $line, $m ) ) {
 				$section = $m[1];
-			}
-			else {
+			} else {
 				$gadget = self::newFromDefinition( $line );
 				if ( $gadget ) {
 					$gadgets[$section][$gadget->getName()] = $gadget;
@@ -617,6 +640,7 @@ class GadgetResourceLoaderModule extends ResourceLoaderWikiModule {
 
 	/**
 	 * Overrides the abstract function from ResourceLoaderWikiModule class
+	 * @param $context ResourceLoaderContext
 	 * @return Array: $pages passed to __construct()
 	 */
 	protected function getPages( ResourceLoaderContext $context ) {

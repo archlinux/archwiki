@@ -37,6 +37,9 @@ $namespaceNames = array(
 	NS_CATEGORY_TALK    => 'Категорине_сӳтсе_явмалли',
 );
 
+// Remove Russian aliases
+$namespaceGenderAliases = array();
+
 $linkTrail = '/^([a-zа-яĕçăӳ"»]+)(.*)$/sDu';
 
 $messages = array(
@@ -352,14 +355,13 @@ $1',
 'cannotdelete'         => 'Эсир кăтартнă страницăна е файла кăларса пăрахаймастпăр. Ăна, тен, урăххи кăларса пăрахнă?',
 'badtitle'             => 'Ку ят килĕшмест',
 'badtitletext'         => 'Эсир кăтартнă статья ячĕ тĕрĕс мар, пушă, е чĕлхе хушшинчипе интервики ячĕ тĕрĕс мар. Ятра усă курма юраман паллăсене çырнинче пулма пултарать.',
-'perfcached'           => 'Ку даннăйсене кэшран илнĕ, çавна май унта юлашки улшăнусем палăрмасăр пултараççĕ.',
-'perfcachedts'         => 'Ку даннăйсене кэшран илнĕ, юлашки хут вăл $1 вăхăтра çĕнелнĕ.',
+'perfcached'           => 'Ку даннăйсене кэшран илнĕ, çавна май унта юлашки улшăнусем палăрмасăр пултараççĕ. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'Ку даннăйсене кэшран илнĕ, юлашки хут вăл $1 вăхăтра çĕнелнĕ. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'Ку страницăна хальхи вăхăтра улăштарма чарнă. Ку даннăйсене хальхи вăхăтра çĕнетме май çук.',
 'wrong_wfQuery_params' => 'wfQuery() функцине тĕрĕс мар параметрсем панă<br />
 Функци: $1<br />
 Ыйту: $2',
 'viewsource'           => 'Курăм',
-'viewsourcefor'        => '«$1» страници',
 'actionthrottled'      => 'Хăвăртлăха чакарнă',
 'actionthrottledtext'  => 'Спампа кĕрешнине пула ку ĕçе пĕчĕк вăхăт хушшинче ытла нумай тума чарнă. Темиçе минутран тепре туса пăхма пултаратăр.',
 'protectedpagetext'    => 'Ку страницăна тӳрлетме май çук, хӳтĕленĕ.',
@@ -487,9 +489,6 @@ $1 хутшăнакан патне, е ытти [[{{MediaWiki:Grouppage-sysop}}|
 
 Сирĕн IP-адрес — $3, чару идентификаторĕ — #$5. Çырусенче, тархасшăн, вĕсене пĕлтерĕр.",
 'blockednoreason'        => 'сăлтавне пĕлтермен',
-'blockedoriginalsource'  => 'Аяларах «$1» страницăн текстне куратăр.',
-'blockededitsource'      => "Аяларах эсир «$1» страницăра '''хăвсамăр тунă''' улшăнусене куратăр.",
-'whitelistedittitle'     => 'Улăштарма сирĕн авторизациленмелле',
 'loginreqtitle'          => 'Сайта кĕмелле',
 'loginreqlink'           => 'сайта кĕр',
 'loginreqpagetext'       => 'Ытти страницăсене курмашкăн сирĕн $1.',
@@ -571,10 +570,6 @@ $1 хутшăнакан патне, е ытти [[{{MediaWiki:Grouppage-sysop}}|
 'revdelete-success'      => 'Версин курăмлăхне улăштартăмăр.',
 'pagehist'               => 'Страница историйĕ',
 'deletedhist'            => 'Кăларса пăрахнисен историйĕ',
-'revdelete-content'      => 'ăшлăхĕ',
-'revdelete-uname'        => 'Хутшăнакан ячĕ',
-'revdelete-hid'          => '$1 пытарнă',
-'revdelete-unhid'        => '$1 курăмлă тунă',
 
 # Suppression log
 'suppressionlog' => 'Пытару журналĕ',
@@ -933,20 +928,19 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'enotif_anon_editor' => '$1 анонимлă хутшăнакан',
 
 # Delete
-'deletepage'        => 'Кăларса парахнă статьясем',
-'confirm'           => 'Çирĕплетни',
-'excontent'         => 'ăшлăхĕ: «$1»',
-'excontentauthor'   => 'ăшлăхĕ: «$1» ([[Special:Contributions/$2|$2]] пĕччен кăна улшăнусем кĕртнĕ)',
-'exblank'           => 'страница пушă пулнă',
-'actioncomplete'    => 'Турăмăр',
-'deletedtext'       => '«$1» кăларса парахрăмăр.
+'deletepage'      => 'Кăларса парахнă статьясем',
+'confirm'         => 'Çирĕплетни',
+'excontent'       => 'ăшлăхĕ: «$1»',
+'excontentauthor' => 'ăшлăхĕ: «$1» ([[Special:Contributions/$2|$2]] пĕччен кăна улшăнусем кĕртнĕ)',
+'exblank'         => 'страница пушă пулнă',
+'actioncomplete'  => 'Турăмăр',
+'deletedtext'     => '«$1» кăларса парахрăмăр.
 Юлашки кăларса пăрахнă статьясен списокне курмашкăн кунта пăхăр: $2.',
-'suppressedarticle' => '«[[$1]]» пытарнă',
-'dellogpage'        => 'Кăларса пăрахнисем',
-'dellogpagetext'    => 'Аяларах эсир юлашки кăларса пăрахнă статьясене куратăр.',
-'deletionlog'       => 'кăларса пăрахнисем',
-'reverted'          => 'Малтанхи версине тавăрнă',
-'deletecomment'     => 'Сăлтавĕ',
+'dellogpage'      => 'Кăларса пăрахнисем',
+'dellogpagetext'  => 'Аяларах эсир юлашки кăларса пăрахнă статьясене куратăр.',
+'deletionlog'     => 'кăларса пăрахнисем',
+'reverted'        => 'Малтанхи версине тавăрнă',
+'deletecomment'   => 'Сăлтавĕ',
 
 # Rollback
 'rollback'       => 'Тÿрлетÿсене каялла куçарасси',
@@ -971,7 +965,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'undeleterevisions'      => 'Архивра пурĕ $1 верси',
 'undeletebtn'            => 'Каялла тавăр!',
 'undeletereset'          => 'Тасат',
-'undeletedarticle'       => '«[[$1]]» каялла тавăрнă',
 'undeletedrevisions'     => '$1 кăларса пăрахнă тӳрлетӳсене каялла тавăрнă',
 'undelete-search-box'    => 'Кăларса пăрахнă страницăсен хушшинчи шырав',
 'undelete-search-submit' => 'Шыра',
@@ -1034,8 +1027,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 Тархасшăн, статьяна урăх ят парăр.',
 'talkexists'              => "'''Страницăн ятне улăштартăмăр, анчах та сӳтсе явмалли страницăн ятне улăштараймарăмар — вăл ятлă страницăна маларах хатĕрленĕ. Тархасшăн, вĕсене хăвăр тĕллĕн çыпăçтарăр.'''",
 'movetalk'                => 'Статьяна сӳтсе явнă страницăн ятне те улăштармалла',
-'1movedto2'               => '[[$1]] [[$2]] çине куçарнă',
-'1movedto2_redir'         => '«[[$1]]» статья ятне маларах куçаракан страница пулнă «[[$2]]» çине улăштарнă',
 'movelogpage'             => 'Статьясен ятне улăштарнине кăтартакан журнал',
 'movereason'              => 'Сăлтавĕ',
 'delete_and_move'         => 'Кăларса пăрахса куçарасси',
@@ -1119,7 +1110,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Media information
 'file-info'      => 'файл пысăкăшĕ: $1, MIME-тĕсĕ: $2',
 'file-info-size' => '$1 × $2 пиксел, файл пысăкăше: $3, MIME-тĕсĕ: $4',
-'file-nohires'   => '<small>Пысăкрах калăпăшли çук.</small>',
+'file-nohires'   => 'Пысăкрах калăпăшли çук.',
 
 # Special:NewFiles
 'newimages'         => 'Çĕнĕ файлсен галерейи',
@@ -1155,9 +1146,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Scary transclusion
 'scarytranscludefailed'  => '[Шел те, $1 шаблонпа усă кураймарăмăр]',
 'scarytranscludetoolong' => '[Питĕ шел, URL ытла вăрăм]',
-
-# Trackbacks
-'trackbackremove' => '([$1 кăларса пăрах])',
 
 # Delete conflict
 'deletedwhileediting' => 'Асăрхăр: эсир тӳрлетнĕ вăхăтра ку страницăна кăларса парахнă!',

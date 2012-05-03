@@ -33,12 +33,20 @@ class Sanitizer {
 	 * Regular expression to match various types of character references in
 	 * Sanitizer::normalizeCharReferences and Sanitizer::decodeCharReferences
 	 */
-	const CHAR_REFS_REGEX = 
+	const CHAR_REFS_REGEX =
 		'/&([A-Za-z0-9\x80-\xff]+);
 		 |&\#([0-9]+);
 		 |&\#[xX]([0-9A-Fa-f]+);
 		 |(&)/x';
 
+	/**
+	 * Blacklist for evil uris like javascript:
+	 * WARNING: DO NOT use this in any place that actually requires blacklisting
+	 * for security reasons. There are NUMEROUS[1] ways to bypass blacklisting, the
+	 * only way to be secure from javascript: uri based xss vectors is to whitelist
+	 * things that you know are safe and deny everything else.
+	 * [1]: http://ha.ckers.org/xss.html
+	 */
 	const EVIL_URI_PATTERN = '!(^|\s|\*/\s*)(javascript|vbscript)([^\w]|$)!i';
 	const XMLNS_ATTRIBUTE_PATTERN = "/^xmlns:[:A-Z_a-z-.0-9]+$/";
 
@@ -327,7 +335,7 @@ class Sanitizer {
 			$attribFirst = '[:A-Z_a-z0-9]';
 			$attrib = '[:A-Z_a-z-.0-9]';
 			$space = '[\x09\x0a\x0d\x20]';
-			self::$attribsRegex = 
+			self::$attribsRegex =
 				"/(?:^|$space)({$attribFirst}{$attrib}*)
 				  ($space*=$space*
 					(?:
@@ -449,16 +457,26 @@ class Sanitizer {
 								# and see if we find a match below them
 								$optstack = array();
 								array_push( $optstack, $ot );
-								$ot = @array_pop( $tagstack );
+								wfSuppressWarnings();
+								$ot = array_pop( $tagstack );
+								wfRestoreWarnings();
 								while ( $ot != $t && isset( $htmlsingleallowed[$ot] ) ) {
 									array_push( $optstack, $ot );
-									$ot = @array_pop( $tagstack );
+									wfSuppressWarnings();
+									$ot = array_pop( $tagstack );
+									wfRestoreWarnings();
 								}
 								if ( $t != $ot ) {
 									# No match. Push the optional elements back again
 									$badtag = true;
-									while ( $ot = @array_pop( $optstack ) ) {
+									wfSuppressWarnings();
+									$ot = array_pop( $optstack );
+									wfRestoreWarnings();
+									while ( $ot ) {
 										array_push( $tagstack, $ot );
+										wfSuppressWarnings();
+										$ot = array_pop( $optstack );
+										wfRestoreWarnings();
 									}
 								}
 							} else {
@@ -595,6 +613,102 @@ class Sanitizer {
 	}
 
 	/**
+	 * Take an array of attribute names and values and fix some deprecated values
+	 * for the given element type.
+	 * This does not validate properties, so you should ensure that you call
+	 * validateTagAttributes AFTER this to ensure that the resulting style rule
+	 * this may add is safe.
+	 *
+	 * - Converts most presentational attributes like align into inline css
+	 *
+	 * @param $attribs Array
+	 * @param $element String
+	 * @return Array
+	 */
+	static function fixDeprecatedAttributes( $attribs, $element ) {
+		global $wgHtml5, $wgCleanupPresentationalAttributes;
+
+		// presentational attributes were removed from html5, we can leave them
+		// in when html5 is turned off
+		if ( !$wgHtml5 || !$wgCleanupPresentationalAttributes ) {
+			return $attribs;
+		}
+
+		$table = array( 'table' );
+		$cells = array( 'td', 'th' );
+		$colls = array( 'col', 'colgroup' );
+		$tblocks = array( 'tbody', 'tfoot', 'thead' );
+		$h = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
+
+		$presentationalAttribs = array(
+			'align' => array( 'text-align', array_merge( array( 'caption', 'hr', 'div', 'p', 'tr' ), $table, $cells, $colls, $tblocks, $h ) ),
+			'clear' => array( 'clear', array( 'br' ) ),
+			'height' => array( 'height', $cells ),
+			'nowrap' => array( 'white-space', $cells ),
+			'size' => array( 'height', array( 'hr' ) ),
+			'type' => array( 'list-style-type', array( 'li', 'ol', 'ul' ) ),
+			'valign' => array( 'vertical-align', array_merge( $cells, $colls, $tblocks ) ),
+			'width' => array( 'width', array_merge( array( 'hr', 'pre' ), $table, $cells, $colls ) ),
+		);
+
+		// Ensure that any upper case or mixed case attributes are converted to lowercase
+		foreach ( $attribs as $attribute => $value ) {
+			if ( $attribute !== strtolower( $attribute ) && array_key_exists( strtolower( $attribute ), $presentationalAttribs ) ) {
+				$attribs[strtolower( $attribute )] = $value;
+				unset( $attribs[$attribute] );
+			}
+		}
+
+		$style = "";
+		foreach ( $presentationalAttribs as $attribute => $info ) {
+			list( $property, $elements ) = $info;
+
+			// Skip if this attribute is not relevant to this element
+			if ( !in_array( $element, $elements ) ) {
+				continue;
+			}
+
+			// Skip if the attribute is not used
+			if ( !array_key_exists( $attribute, $attribs ) ) {
+				continue;
+			}
+
+			$value = $attribs[$attribute];
+
+			// For nowrap the value should be nowrap instead of whatever text is in the value
+			if ( $attribute === 'nowrap' ) {
+				$value = 'nowrap';
+			}
+
+			// clear="all" is clear: both; in css
+			if ( $attribute === 'clear' && strtolower( $value ) === 'all' ) {
+				$value = 'both';
+			}
+
+			// Size based properties should have px applied to them if they have no unit
+			if ( in_array( $attribute, array( 'height', 'width', 'size' ) ) ) {
+				if ( preg_match( '/^[\d.]+$/', $value ) ) {
+					$value = "{$value}px";
+				}
+			}
+
+			$style .= " $property: $value;";
+
+			unset( $attribs[$attribute] );
+		}
+
+		if ( $style ) {
+			// Prepend our style rules so that they can be overridden by user css
+			if ( isset($attribs['style']) ) {
+				$style .= " " . $attribs['style'];
+			}
+			$attribs['style'] = trim($style);
+		}
+
+		return $attribs;
+	}
+
+	/**
 	 * Take an array of attribute names and values and normalize or discard
 	 * illegal values for the given element type.
 	 *
@@ -662,7 +776,7 @@ class Sanitizer {
 			}
 
 			//RDFa and microdata properties allow URLs, URIs and/or CURIs. check them for sanity
-			if ( $attribute === 'rel' || $attribute === 'rev' || 
+			if ( $attribute === 'rel' || $attribute === 'rev' ||
 				$attribute === 'about' || $attribute === 'property' || $attribute === 'resource' || #RDFa
 				$attribute === 'datatype' || $attribute === 'typeof' ||                             #RDFa
 				$attribute === 'itemid' || $attribute === 'itemprop' || $attribute === 'itemref' || #HTML5 microdata
@@ -670,7 +784,7 @@ class Sanitizer {
 
 				//Paranoia. Allow "simple" values but suppress javascript
 				if ( preg_match( self::EVIL_URI_PATTERN, $value ) ) {
-					continue; 
+					continue;
 				}
 			}
 
@@ -735,7 +849,7 @@ class Sanitizer {
 	 * returned string may contain character references given certain
 	 * clever input strings. These character references must
 	 * be escaped before the return value is embedded in HTML.
-	 * 
+	 *
 	 * @param $value String
 	 * @return String
 	 */
@@ -757,7 +871,7 @@ class Sanitizer {
 			$space = '[\\x20\\t\\r\\n\\f]';
 			$nl = '(?:\\n|\\r\\n|\\r|\\f)';
 			$backslash = '\\\\';
-			$decodeRegex = "/ $backslash 
+			$decodeRegex = "/ $backslash
 				(?:
 					($nl) |  # 1. Line continuation
 					([0-9A-Fa-f]{1,6})$space? |  # 2. character number
@@ -767,7 +881,7 @@ class Sanitizer {
 		}
 		$value = preg_replace_callback( $decodeRegex,
 			array( __CLASS__, 'cssDecodeCallback' ), $value );
-		
+
 		// Remove any comments; IE gets token splitting wrong
 		// This must be done AFTER decoding character references and
 		// escape sequences, because those steps can introduce comments
@@ -841,8 +955,9 @@ class Sanitizer {
 			return '';
 		}
 
-		$stripped = Sanitizer::validateTagAttributes(
-			Sanitizer::decodeTagAttributes( $text ), $element );
+		$decoded = Sanitizer::decodeTagAttributes( $text );
+		$decoded = Sanitizer::fixDeprecatedAttributes( $decoded, $element );
+		$stripped = Sanitizer::validateTagAttributes( $decoded, $element );
 
 		$attribs = array();
 		foreach( $stripped as $attribute => $value ) {
@@ -1341,7 +1456,7 @@ class Sanitizer {
 		if ( $wgAllowRdfaAttributes ) {
 			#RDFa attributes as specified in section 9 of http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014
 			$common = array_merge( $common, array(
-			    'about', 'property', 'resource', 'datatype', 'typeof', 
+			    'about', 'property', 'resource', 'datatype', 'typeof',
 			) );
 		}
 
@@ -1458,7 +1573,7 @@ class Sanitizer {
 			'th'         => array_merge( $common, $tablecell, $tablealign ),
 
 			# 12.2 # NOTE: <a> is not allowed directly, but the attrib whitelist is used from the Parser object
-			'a'          => array_merge( $common, array( 'href', 'rel', 'rev' ) ), # rel/rev esp. for RDFa 
+			'a'          => array_merge( $common, array( 'href', 'rel', 'rev' ) ), # rel/rev esp. for RDFa
 
 			# 13.2
 			# Not usually allowed, but may be used for extension-style hooks
@@ -1549,7 +1664,7 @@ class Sanitizer {
 		$url = Sanitizer::decodeCharReferences( $url );
 
 		# Escape any control characters introduced by the above step
-		$url = preg_replace_callback( '/[\][<>"\\x00-\\x20\\x7F\|]/', 
+		$url = preg_replace_callback( '/[\][<>"\\x00-\\x20\\x7F\|]/',
 			array( __CLASS__, 'cleanUrlCallback' ), $url );
 
 		# Validate hostname portion
@@ -1573,7 +1688,7 @@ class Sanitizer {
 				\xe1\xa0\x8d| # 180d MONGOLIAN FREE VARIATION SELECTOR THREE
 				\xe2\x80\x8c| # 200c ZERO WIDTH NON-JOINER
 				\xe2\x80\x8d| # 200d ZERO WIDTH JOINER
-				[\xef\xb8\x80-\xef\xb8\x8f] # fe00-fe00f VARIATION SELECTOR-1-16
+				[\xef\xb8\x80-\xef\xb8\x8f] # fe00-fe0f VARIATION SELECTOR-1-16
 				/xuD";
 
 			$host = preg_replace( $strip, '', $host );
@@ -1616,6 +1731,8 @@ class Sanitizer {
 	 * Note that this validation doesn't 100% match RFC 2822, but is believed
 	 * to be liberal enough for wide use. Some invalid addresses will still
 	 * pass validation here.
+	 *
+	 * @since 1.18
 	 *
 	 * @param $addr String E-mail address
 	 * @return Bool

@@ -1,4 +1,7 @@
-// MediaWiki JavaScript support functions
+/**
+ * MediaWiki legacy wikibits
+ */
+(function(){
 
 window.clientPC = navigator.userAgent.toLowerCase(); // Get client info
 window.is_gecko = /gecko/.test( clientPC ) &&
@@ -46,9 +49,6 @@ if ( /msie ([0-9]{1,}[\.0-9]{0,})/.exec( clientPC ) != null
 	ie6_bugs = true;
 }
 
-// Global external objects used by this script.
-/*extern ta, stylepath, skin */
-
 // add any onload functions in this hook (please don't hard-code any events in the xhtml source)
 window.doneOnloadHook = undefined;
 
@@ -66,9 +66,8 @@ window.addOnloadHook = function( hookFunct ) {
 };
 
 window.importScript = function( page ) {
-	// TODO: might want to introduce a utility function to match wfUrlencode() in PHP
-	var uri = wgScript + '?title=' +
-		encodeURIComponent(page.replace(/ /g,'_')).replace(/%2F/ig,'/').replace(/%3A/ig,':') +
+	var uri = mw.config.get( 'wgScript' ) + '?title=' +
+		mw.util.wikiUrlencode( page ) +
 		'&action=raw&ctype=text/javascript';
 	return importScriptURI( uri );
 };
@@ -87,7 +86,7 @@ window.importScriptURI = function( url ) {
 };
 
 window.importStylesheet = function( page ) {
-	return importStylesheetURI( wgScript + '?action=raw&ctype=text/css&title=' + encodeURIComponent( page.replace(/ /g,'_') ) );
+	return importStylesheetURI( mw.config.get( 'wgScript' ) + '?action=raw&ctype=text/css&title=' + mw.util.wikiUrlencode( page ) );
 };
 
 window.importStylesheetURI = function( url, media ) {
@@ -116,20 +115,20 @@ window.appendCSS = function( text ) {
 };
 
 // Special stylesheet links for Monobook only (see bug 14717)
-if ( typeof stylepath != 'undefined' && skin == 'monobook' ) {
+var skinpath = mw.config.get( 'stylepath' ) + '/' + mw.config.get( 'skin' );
+if ( mw.config.get( 'skin' ) === 'monobook' ) {
 	if ( opera6_bugs ) {
-		importStylesheetURI( stylepath + '/' + skin + '/Opera6Fixes.css' );
+		importStylesheetURI( skinpath + '/Opera6Fixes.css' );
 	} else if ( opera7_bugs ) {
-		importStylesheetURI( stylepath + '/' + skin + '/Opera7Fixes.css' );
+		importStylesheetURI( skinpath + '/Opera7Fixes.css' );
 	} else if ( opera95_bugs ) {
-		importStylesheetURI( stylepath + '/' + skin + '/Opera9Fixes.css' );
+		importStylesheetURI( skinpath + '/Opera9Fixes.css' );
 	} else if ( ff2_bugs ) {
-		importStylesheetURI( stylepath + '/' + skin + '/FF2Fixes.css' );
+		importStylesheetURI( skinpath + '/FF2Fixes.css' );
 	}
 }
 
-
-if ( 'wgBreakFrames' in window && window.wgBreakFrames ) {
+if ( mw.config.get( 'wgBreakFrames' ) ) {
 	// Un-trap us from framesets
 	if ( window.top != window ) {
 		window.top.location = window.location;
@@ -319,7 +318,7 @@ window.addPortletLink = function( portlet, href, text, id, tooltip, accesskey, n
 		link.setAttribute( 'title', tooltip );
 	}
 	if ( accesskey && tooltip ) {
-		updateTooltipAccessKeys( new Array( link ) );
+		updateTooltipAccessKeys( [link] );
 	}
 
 	if ( nextnode && nextnode.parentNode == node ) {
@@ -365,11 +364,6 @@ window.getInnerText = function( el ) {
 		}
 	}
 	return str;
-};
-
-/* Dummy for deprecated function */
-window.ta = [];
-window.akeytt = function( doId ) {
 };
 
 window.checkboxes = undefined;
@@ -445,7 +439,7 @@ window.checkboxClickHandler = function( e ) {
 	From http://www.robertnyman.com/2005/11/07/the-ultimate-getelementsbyclassname/
 */
 window.getElementsByClassName = function( oElm, strTagName, oClassNames ) {
-	var arrReturnElements = new Array();
+	var arrReturnElements = [];
 	if ( typeof( oElm.getElementsByClassName ) == 'function' ) {
 		/* Use a native implementation where possible FF3, Saf3.2, Opera 9.5 */
 		var arrNativeReturn = oElm.getElementsByClassName( oClassNames );
@@ -460,7 +454,7 @@ window.getElementsByClassName = function( oElm, strTagName, oClassNames ) {
 		return arrReturnElements;
 	}
 	var arrElements = ( strTagName == '*' && oElm.all ) ? oElm.all : oElm.getElementsByTagName( strTagName );
-	var arrRegExpClassNames = new Array();
+	var arrRegExpClassNames = [];
 	if( typeof oClassNames == 'object' ) {
 		for( var i = 0; i < oClassNames.length; i++ ) {
 			arrRegExpClassNames[arrRegExpClassNames.length] =
@@ -581,7 +575,7 @@ window.jsMsg = function( message, className ) {
 window.injectSpinner = function( element, id ) {
 	var spinner = document.createElement( 'img' );
 	spinner.id = 'mw-spinner-' + id;
-	spinner.src = stylepath + '/common/images/spinner.gif';
+	spinner.src = mw.config.get( 'stylepath' ) + '/common/images/spinner.gif';
 	spinner.alt = spinner.title = '...';
 	if( element.nextSibling ) {
 		element.parentNode.insertBefore( spinner, element.nextSibling );
@@ -666,5 +660,7 @@ window.removeHandler = function( element, remove, handler ) {
 hookEvent( 'load', runOnloadHook );
 
 if ( ie6_bugs ) {
-	importScriptURI( stylepath + '/common/IEFixes.js' );
+	importScriptURI( mw.config.get( 'stylepath' ) + '/common/IEFixes.js' );
 }
+
+})();

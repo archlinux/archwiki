@@ -279,9 +279,6 @@ $3',
 # Special:LinkSearch
 'linksearch' => 'linksígíí tłʼóoʼdi siʼánígíí',
 
-# Special:Log/newusers
-'newuserlog-create-entry' => 'choyoołʼįįhí ániidí',
-
 # E-mail user
 'emailuser' => 'E-mail bichʼįʼ áshłééh nisin',
 
@@ -303,9 +300,6 @@ $3',
 # Displayed when you click the "watch" button and it is in the process of watching
 'watching'   => '(...)',
 'unwatching' => '(...)',
-
-# Delete
-'deletedarticle' => '"[[$1]]" yiyiisxį́',
 
 # Protect
 'protectedarticle'          => '"[[$1]]" bichʼą́ą́h ííyá.',
@@ -351,14 +345,12 @@ $3',
 'blocklogentry' => '[[$1]] bichʼą́ą́h niiníyá ($2 $3)',
 
 # Move page
-'movearticle'     => 'naaltsoos:',
-'newtitle'        => 'naaltsoos bizhiʼ ániidí:',
-'move-watch'      => 'shinááł',
-'movepagebtn'     => '✔ bee lą́ ashłeeh',
-'movepage-moved'  => '\'\'\'"$1" kʼad "$2" wolyé\'\'\'',
-'1movedto2'       => 'naaltsoos "[[$1]]" → "[[$2]]"-góó yidiyiznááʼ',
-'1movedto2_redir' => 'naaltsoos "[[$1]]" → "[[$2]]"-góó yidiyiznááʼ (dah astsihí ńtʼę́ę́ʼ)',
-'revertmove'      => 'ńdíídleeł!',
+'movearticle'    => 'naaltsoos:',
+'newtitle'       => 'naaltsoos bizhiʼ ániidí:',
+'move-watch'     => 'shinááł',
+'movepagebtn'    => '✔ bee lą́ ashłeeh',
+'movepage-moved' => '\'\'\'"$1" kʼad "$2" wolyé\'\'\'',
+'revertmove'     => 'ńdíídleeł!',
 
 # Skin names
 'skinname-monobook' => "NaaltsoosŁáa'ígíí",

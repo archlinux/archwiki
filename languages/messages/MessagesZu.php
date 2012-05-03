@@ -7,6 +7,8 @@
  * @ingroup Language
  * @file
  *
+ * @author Jose77 (on zu.wikipedia.org)
+ * @author Joziboy (on zu.wikipedia.org)
  * @author לערי ריינהארט
  */
 
@@ -239,9 +241,6 @@ ikhawundi lakho liyadalwa. musa ukukhohlwa ukuguqula amakhethelo a-{{SITENAME}} 
 # Special:AllPages
 'allinnamespace' => 'Onke amakhasi ($1 namespace)',
 'allpagessubmit' => 'Hamba',
-
-# Special:Log/newusers
-'newuserlog-create-entry' => 'Umsebenzi omusha',
 
 # E-mail user
 'emailuser'    => 'Thumela umlayezo lo msebenzisi',

@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * A query module to show basic page information.
  *
@@ -142,7 +137,7 @@ class ApiQueryPageProps extends ApiQueryBase {
 		return 'Get various properties defined in the page content';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&prop=pageprops&titles=Category:Foo',
 		);

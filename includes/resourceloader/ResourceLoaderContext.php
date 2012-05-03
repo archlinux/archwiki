@@ -21,7 +21,7 @@
  */
 
 /**
- * Object passed around to modules which contains information about the state 
+ * Object passed around to modules which contains information about the state
  * of a specific loader request
  */
 class ResourceLoaderContext {
@@ -42,7 +42,11 @@ class ResourceLoaderContext {
 
 	/* Methods */
 
-	public function __construct( ResourceLoader $resourceLoader, WebRequest $request ) {
+	/**
+	 * @param $resourceLoader ResourceLoader
+	 * @param $request WebRequest
+	 */
+	public function __construct( $resourceLoader, WebRequest $request ) {
 		global $wgDefaultSkin, $wgResourceLoaderDebug;
 
 		$this->resourceLoader = $resourceLoader;
@@ -59,11 +63,13 @@ class ResourceLoaderContext {
 		$this->only      = $request->getVal( 'only' );
 		$this->version   = $request->getVal( 'version' );
 
-		if ( !$this->skin ) {
+		$skinnames = Skin::getSkinNames();
+		// If no skin is specified, or we don't recognize the skin, use the default skin
+		if ( !$this->skin || !isset( $skinnames[$this->skin] ) ) {
 			$this->skin = $wgDefaultSkin;
 		}
 	}
-	
+
 	/**
 	 * Expand a string of the form jquery.foo,bar|jquery.ui.baz,quux to
 	 * an array of module names like array( 'jquery.foo', 'jquery.bar',
@@ -98,6 +104,14 @@ class ResourceLoaderContext {
 			}
 		}
 		return $retval;
+	}
+
+	/**
+	 * Return a dummy ResourceLoaderContext object suitable for passing into things that don't "really" need a context
+	 * @return ResourceLoaderContext
+	 */
+	public static function newDummyContext() {
+		return new self( null, new FauxRequest( array() ) );
 	}
 
 	/**
@@ -150,14 +164,14 @@ class ResourceLoaderContext {
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getSkin() {
 		return $this->skin;
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getUser() {
 		return $this->user;
@@ -171,14 +185,14 @@ class ResourceLoaderContext {
 	}
 
 	/**
-	 * @return String
+	 * @return String|null
 	 */
 	public function getOnly() {
 		return $this->only;
 	}
 
 	/**
-	 * @return String
+	 * @return String|null
 	 */
 	public function getVersion() {
 		return $this->version;
@@ -211,7 +225,7 @@ class ResourceLoaderContext {
 	public function getHash() {
 		if ( !isset( $this->hash ) ) {
 			$this->hash = implode( '|', array(
-				$this->getLanguage(), $this->getDirection(), $this->skin, $this->user, 
+				$this->getLanguage(), $this->getDirection(), $this->skin, $this->user,
 				$this->debug, $this->only, $this->version
 			) );
 		}

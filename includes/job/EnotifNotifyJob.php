@@ -20,10 +20,11 @@ class EnotifNotifyJob extends Job {
 	function run() {
 		$enotif = new EmailNotification();
 		// Get the user from ID (rename safe). Anons are 0, so defer to name.
-		if( isset($this->params['editorID']) && $this->params['editorID'] ) {
+		if( isset( $this->params['editorID'] ) && $this->params['editorID'] ) {
 			$editor = User::newFromId( $this->params['editorID'] );
 		// B/C, only the name might be given.
 		} else {
+			# FIXME: newFromName could return false on a badly configured wiki.
 			$editor = User::newFromName( $this->params['editor'], false );
 		}
 		$enotif->actuallyNotifyOnPageChange(

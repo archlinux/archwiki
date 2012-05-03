@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * This action allows users to get their watchlist items in RSS/Atom formats.
  * When executed, it performs a nested call to the API to get the needed data,
@@ -44,6 +39,8 @@ class ApiFeedWatchlist extends ApiBase {
 
 	/**
 	 * This module uses a custom feed wrapper printer.
+	 *
+	 * @return ApiFormatFeedWrapper
 	 */
 	public function getCustomPrinter() {
 		return new ApiFormatFeedWrapper( $this->getMain() );
@@ -67,6 +64,9 @@ class ApiFeedWatchlist extends ApiBase {
 
 			if( !isset( $wgFeedClasses[ $params['feedformat'] ] ) ) {
 				$this->dieUsage( 'Invalid subscription feed type', 'feed-invalid' );
+			}
+			if ( !is_null( $params['wlexcludeuser'] ) ) {
+				$fauxReqArr['wlexcludeuser'] = $params['wlexcludeuser'];
 			}
 
 			// limit to the number of hours going from now back
@@ -150,6 +150,10 @@ class ApiFeedWatchlist extends ApiBase {
 		}
 	}
 
+	/**
+	 * @param $info array
+	 * @return FeedItem
+	 */
 	private function createFeedItem( $info ) {
 		$titleStr = $info['title'];
 		$title = Title::newFromText( $titleStr );
@@ -188,6 +192,9 @@ class ApiFeedWatchlist extends ApiBase {
 			'wltoken' => array(
 				ApiBase::PARAM_TYPE => 'string'
 			),
+			'wlexcludeuser' => array(
+				ApiBase::PARAM_TYPE => 'user'
+			),
 			'linktodiffs' => false,
 		);
 	}
@@ -197,9 +204,10 @@ class ApiFeedWatchlist extends ApiBase {
 			'feedformat' => 'The format of the feed',
 			'hours'      => 'List pages modified within this many hours from now',
 			'allrev'     => 'Include multiple revisions of the same page within given timeframe',
-			'wlowner'    => "The user whose watchlist you want (must be accompanied by {$this->getModulePrefix()}token if it's not you)",
+			'wlowner'    => "The user whose watchlist you want (must be accompanied by {$this->getModulePrefix()}wltoken if it's not you)",
 			'wltoken'    => 'Security token that requested user set in their preferences',
-			'linktodiffs' => 'Link to change differences instead of article pages'
+			'wlexcludeuser' => 'A user whose edits should not be shown in the watchlist',
+			'linktodiffs' => 'Link to change differences instead of article pages',
 		);
 	}
 
@@ -214,7 +222,7 @@ class ApiFeedWatchlist extends ApiBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=feedwatchlist',
 			'api.php?action=feedwatchlist&allrev=&linktodiffs=&hours=6'

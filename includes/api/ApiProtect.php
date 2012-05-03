@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * @ingroup API
  */
@@ -39,7 +34,7 @@ class ApiProtect extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgUser, $wgRestrictionLevels;
+		global $wgRestrictionLevels;
 		$params = $this->extractRequestParams();
 
 		$titleObj = Title::newFromText( $params['title'] );
@@ -47,7 +42,7 @@ class ApiProtect extends ApiBase {
 			$this->dieUsageMsg( array( 'invalidtitle', $params['title'] ) );
 		}
 
-		$errors = $titleObj->getUserPermissionsErrors( 'protect', $wgUser );
+		$errors = $titleObj->getUserPermissionsErrors( 'protect', $this->getUser() );
 		if ( $errors ) {
 			// We don't care about multiple errors, just report one of them
 			$this->dieUsageMsg( reset( $errors ) );
@@ -107,20 +102,16 @@ class ApiProtect extends ApiBase {
 		}
 
 		$cascade = $params['cascade'];
-		$articleObj = new Article( $titleObj );
 
 		$watch = $params['watch'] ? 'watch' : $params['watchlist'];
 		$this->setWatch( $watch, $titleObj );
 
-		if ( $titleObj->exists() ) {
-			$ok = $articleObj->updateRestrictions( $protections, $params['reason'], $cascade, $expiryarray );
-		} else {
-			$ok = $titleObj->updateTitleProtection( $protections['create'], $params['reason'], $expiryarray['create'] );
-		}
-		if ( !$ok ) {
-			// This is very weird. Maybe the article was deleted or the user was blocked/desysopped in the meantime?
-			// Just throw an unknown error in this case, as it's very likely to be a race condition
-			$this->dieUsageMsg( array() );
+		$pageObj = WikiPage::factory( $titleObj );
+		$status = $pageObj->doUpdateRestrictions( $protections, $expiryarray, $cascade, $params['reason'], $this->getUser() );
+
+		if ( !$status->isOK() ) {
+			$errors = $status->getErrorsArray();
+			$this->dieUsageMsg( $errors[0] );
 		}
 		$res = array(
 			'title' => $titleObj->getPrefixedText(),
@@ -217,7 +208,7 @@ class ApiProtect extends ApiBase {
 		return '';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=protect&title=Main%20Page&token=123ABC&protections=edit=sysop|move=sysop&cascade=&expiry=20070901163000|never',
 			'api.php?action=protect&title=Main%20Page&token=123ABC&protections=edit=all|move=all&reason=Lifting%20restrictions'

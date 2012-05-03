@@ -488,8 +488,7 @@ Ku gwada tare da amfani da \"all:\" don bincikar duka shafunan (har da shafunan 
 'listusers-submit' => 'Nuna',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Rajistan sabbin akwantoci',
-'newuserlog-create-entry' => 'Sabon akwanti',
+'newuserlogpage' => 'Rajistan sabbin akwantoci',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(jerin mambobi)',
@@ -521,7 +520,6 @@ A nan ne kuma za a yi rajistan dukkan sauye-sauye ga shafin ko shafinsa na muhaw
 'actioncomplete'        => 'Aiki cikakke',
 'deletedtext'           => 'An soke "$1".
 Ku duba $2 ku ga rajistan soke-soke na baya-bayan nan.',
-'deletedarticle'        => 'an soke "[[$1]]"',
 'dellogpage'            => 'Rajistan sauye-sauye',
 'deletecomment'         => 'Dalili:',
 'deleteotherreason'     => 'Wani dalilin:',
@@ -562,7 +560,6 @@ Kuna iya sake wa wannan shafi matakin kariya, amma hakan ba zai yi tasiri ga kar
 # Undelete
 'undeletelink'           => 'duba/maido da',
 'undeletecomment'        => 'Dalili:',
-'undeletedarticle'       => 'an mayar da "[[$1]]"',
 'undelete-search-submit' => 'Nema',
 
 # Namespace form on various pages
@@ -647,8 +644,6 @@ Don Allah ku zaɓi wani suna.',
 Don Allah ku game su da hannu.'''",
 'movedto'          => 'an gusar zuwa',
 'movetalk'         => 'Gusar da shafin mahawara mai alaƙa',
-'1movedto2'        => 'an gusar da [[$1]] zuwa [[$2]]',
-'1movedto2_redir'  => 'an gusar da [[$1]] zuwa [[$2]] ta hanyar soke turawa',
 'movelogpage'      => 'Rajistan gushe-gushe',
 'movereason'       => 'Dalili:',
 'revertmove'       => 'koma',
@@ -722,7 +717,7 @@ Tana ba da damar bayyana dalilin soke gyaran.',
 
 # Media information
 'file-info-size' => 'pikisal $1 × $2, girman fayil: $3, irin MIME: $4',
-'file-nohires'   => '<small>Babu wata babbar saƙa.</small>',
+'file-nohires'   => 'Babu wata babbar saƙa.',
 'svg-long-desc'  => 'Fayil kin SVG, saƙar fikisal $1 x $2, girman fayil: $3',
 'show-big-image' => 'Cikakkar saƙa',
 

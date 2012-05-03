@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * API Module to move pages
  * @ingroup API
@@ -40,7 +35,7 @@ class ApiMove extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgUser;
+		$user = $this->getUser();
 		$params = $this->extractRequestParams();
 		if ( is_null( $params['reason'] ) ) {
 			$params['reason'] = '';
@@ -75,9 +70,9 @@ class ApiMove extends ApiBase {
 			&& !RepoGroup::singleton()->getLocalRepo()->findFile( $toTitle )
 			&& wfFindFile( $toTitle ) )
 		{
-			if ( !$params['ignorewarnings'] && $wgUser->isAllowed( 'reupload-shared' ) ) {
+			if ( !$params['ignorewarnings'] && $user->isAllowed( 'reupload-shared' ) ) {
 				$this->dieUsageMsg( 'sharedfile-exists' );
-			} elseif ( !$wgUser->isAllowed( 'reupload-shared' ) ) {
+			} elseif ( !$user->isAllowed( 'reupload-shared' ) ) {
 				$this->dieUsageMsg( 'cantoverwrite-sharedfile' );
 			}
 		}
@@ -89,7 +84,7 @@ class ApiMove extends ApiBase {
 		}
 
 		$r = array( 'from' => $fromTitle->getPrefixedText(), 'to' => $toTitle->getPrefixedText(), 'reason' => $params['reason'] );
-		if ( !$params['noredirect'] || !$wgUser->isAllowed( 'suppressredirect' ) ) {
+		if ( !$params['noredirect'] || !$user->isAllowed( 'suppressredirect' ) ) {
 			$r['redirectcreated'] = '';
 		}
 
@@ -254,7 +249,7 @@ class ApiMove extends ApiBase {
 		return '';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=move&from=Exampel&to=Example&token=123ABC&reason=Misspelled%20title&movetalk=&noredirect='
 		);

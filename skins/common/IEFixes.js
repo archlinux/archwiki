@@ -63,6 +63,11 @@ window.fixalpha = function( logoId ) {
 	}
 };
 
+if ( isMSIE55 ) {
+	// ondomready
+	$( fixalpha );
+}
+
 // fix ie6 disappering float bug
 window.relativeforfloats = function() {
 	var bc = document.getElementById( 'bodyContent' );

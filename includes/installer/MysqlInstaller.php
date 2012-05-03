@@ -32,7 +32,7 @@ class MysqlInstaller extends DatabaseInstaller {
 
 	public $supportedEngines = array( 'InnoDB', 'MyISAM' );
 
-	public $minimumVersion = '4.0.14';
+	public $minimumVersion = '5.0.2';
 
 	public $webUserPrivs = array(
 		'DELETE',
@@ -75,8 +75,8 @@ class MysqlInstaller extends DatabaseInstaller {
 			$this->getTextBox( 'wgDBserver', 'config-db-host', array(), $this->parent->getHelpBox( 'config-db-host-help' ) ) .
 			Html::openElement( 'fieldset' ) .
 			Html::element( 'legend', array(), wfMsg( 'config-db-wiki-settings' ) ) .
-			$this->getTextBox( 'wgDBname', 'config-db-name', array(), $this->parent->getHelpBox( 'config-db-name-help' ) ) .
-			$this->getTextBox( 'wgDBprefix', 'config-db-prefix', array(), $this->parent->getHelpBox( 'config-db-prefix-help' ) ) .
+			$this->getTextBox( 'wgDBname', 'config-db-name', array( 'dir' => 'ltr' ), $this->parent->getHelpBox( 'config-db-name-help' ) ) .
+			$this->getTextBox( 'wgDBprefix', 'config-db-prefix', array( 'dir' => 'ltr' ), $this->parent->getHelpBox( 'config-db-prefix-help' ) ) .
 			Html::closeElement( 'fieldset' ) .
 			$this->getInstallUserBox();
 	}
@@ -113,6 +113,9 @@ class MysqlInstaller extends DatabaseInstaller {
 		if ( !$status->isOK() ) {
 			return $status;
 		}
+		/**
+		 * @var $conn DatabaseBase
+		 */
 		$conn = $status->value;
 
 		// Check version
@@ -154,11 +157,14 @@ class MysqlInstaller extends DatabaseInstaller {
 			$this->parent->showStatusError( $status );
 			return;
 		}
+		/**
+		 * @var $conn DatabaseBase
+		 */
 		$conn = $status->value;
 		$conn->selectDB( $this->getVar( 'wgDBname' ) );
 
 		# Determine existing default character set
-		if ( $conn->tableExists( "revision" ) ) {
+		if ( $conn->tableExists( "revision", __METHOD__ ) ) {
 			$revision = $conn->buildLike( $this->getVar( 'wgDBprefix' ) . 'revision' );
 			$res = $conn->query( "SHOW TABLE STATUS $revision", __METHOD__ );
 			$row = $conn->fetchObject( $res );
@@ -207,18 +213,12 @@ class MysqlInstaller extends DatabaseInstaller {
 	 * @return array
 	 */
 	public function getEngines() {
-		$engines = array( 'InnoDB', 'MyISAM' );
 		$status = $this->getConnection();
-		if ( !$status->isOK() ) {
-			return $engines;
-		}
-		$conn = $status->value;
 
-		$version = $conn->getServerVersion();
-		if ( version_compare( $version, "4.1.2", "<" ) ) {
-			// No SHOW ENGINES in this version
-			return $engines;
-		}
+		/**
+		 * @var $conn DatabaseBase
+		 */
+		$conn = $status->value;
 
 		$engines = array();
 		$res = $conn->query( 'SHOW ENGINES', __METHOD__ );
@@ -237,16 +237,7 @@ class MysqlInstaller extends DatabaseInstaller {
 	 * @return array
 	 */
 	public function getCharsets() {
-		$status = $this->getConnection();
-		$mysql5 = array( 'binary', 'utf8' );
-		$mysql4 = array( 'mysql4' );
-		if ( !$status->isOK() ) {
-			return $mysql5;
-		}
-		if ( version_compare( $status->value->getServerVersion(), '4.1.0', '>=' ) ) {
-			return $mysql5;
-		}
-		return $mysql4;
+		return array( 'binary', 'utf8' );
 	}
 
 	/**
@@ -259,12 +250,10 @@ class MysqlInstaller extends DatabaseInstaller {
 		if ( !$status->isOK() ) {
 			return false;
 		}
+		/**
+		 * @var $conn DatabaseBase
+		 */
 		$conn = $status->value;
-
-		// Check version, need INFORMATION_SCHEMA and CREATE USER
-		if ( version_compare( $conn->getServerVersion(), '5.0.2', '<' ) ) {
-			return false;
-		}
 
 		// Get current account name
 		$currentName = $conn->selectField( '', 'CURRENT_USER()', '', __METHOD__ );
@@ -637,7 +626,7 @@ class MysqlInstaller extends DatabaseInstaller {
 # MySQL table options to use during installation or update
 \$wgDBTableOptions   = \"{$tblOpts}\";
 
-# Experimental charset support for MySQL 4.1/5.0.
+# Experimental charset support for MySQL 5.0.
 \$wgDBmysql5 = {$dbmysql5};";
 	}
 }

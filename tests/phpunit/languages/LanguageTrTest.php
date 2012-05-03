@@ -1,7 +1,7 @@
 <?php
 /**
- * @author Ashar Voultoiz
- * @copyright Copyright © 2011, Ashar Voultoiz
+ * @author Antoine Musso
+ * @copyright Copyright © 2011, Antoine Musso
  * @file
  */
 
@@ -18,7 +18,10 @@ class LanguageTrTest extends MediaWikiTestCase {
 
 	/**
 	 * See @bug 28040
-	 * Credits to #wikipedia-tr users berm, []LuCkY[] and Emperyan
+	 * Credits to irc://irc.freenode.net/wikipedia-tr users:
+	 *  - berm
+	 *  - []LuCkY[]
+	 *  - Emperyan
 	 * @see http://en.wikipedia.org/wiki/Dotted_and_dotless_I
 	 * @dataProvider provideDottedAndDotlessI
 	 */

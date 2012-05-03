@@ -371,15 +371,14 @@ Di piej ar fail "$1" kudn diliit.
 Imaita aredi diliit bai smadi els.',
 'badtitle'             => 'Bad taikl',
 'badtitletext'         => 'Di piej taikl yu rikwes invalid, emti, ar a inkarek lingk inta-langwij ar inta-wiki taikl. Imaita kantien wan ar muo kiarakta we kyaahn yuuz ina taikl.',
-'perfcached'           => 'Di falarin dieta kiash ahn maita no op tu diet.',
-'perfcachedts'         => 'Di falarin dieta kiash, ahn laas opdiet $1.',
+'perfcached'           => 'Di falarin dieta kiash ahn maita no op tu diet. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'Di falarin dieta kiash, ahn laas opdiet $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'Opdiet fi dis piej korantli disiebl.
 Dieta ya no go rifresh fi nou.',
 'wrong_wfQuery_params' => 'Inkarek paramita tu wfQuery()<br />
 Fongshan: $1<br />
 Kwieri: $2',
 'viewsource'           => 'Vyuu Suos',
-'viewsourcefor'        => 'fi $1',
 'actionthrottled'      => 'Akshan chratl',
 'actionthrottledtext'  => 'Az anti-spam meja, yu limit frahn pofaam dis akshan tomoch taim ina shaat spies a taim, ahn yu exiid di limit.
 Begyu chrai agen ina fyuu minit.',
@@ -594,9 +593,6 @@ Nuot se yu kyaahn yuuz di "e-miel dis yuuza" fiicha anles yu gat a valid e-miel 
 Yu korant IP ajress a $3, ahn di blak ID a #$5.
 Begyu inkluud aal abov ditiel ina eni kwieri yu mek.',
 'blockednoreason'                  => 'no riizn no gi',
-'blockedoriginalsource'            => "Di suos a '''$1''' shuo biluo:",
-'blockededitsource'                => "Di tex a '''yu edit''' tu '''$1''' shuo biluo:",
-'whitelistedittitle'               => 'Lagiin rikwaya fi edit',
 'whitelistedittext'                => 'Yu afi $1 fi edit piej',
 'confirmedittext'                  => 'Yu mos kanfoerm yu e-miel ajres bifuo yu edit piej.
 Begyu set ahn validiet yu e-miel ajres chruu yu [[Special:Preferences|yuuza prefransdem]].',
@@ -839,8 +835,7 @@ Piej pahn [[Special:Watchlist|yu wachlis]] dem '''buol'''.",
 'linksearch' => 'Extoernal lingk',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Yuuza krieshan lag',
-'newuserlog-create-entry' => 'Nyuu yuuza akount',
+'newuserlogpage' => 'Yuuza krieshan lag',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(lis a memba)',
@@ -872,7 +867,6 @@ Begyu kanfoerm se yu inten fi du dis, se yu andastan di kansikwens, ahn se yu a 
 'actioncomplete'        => 'Akshan kompliit',
 'deletedtext'           => '"$1" don diliit.
 Si $2 fi a rekaad a riisant diliishan.',
-'deletedarticle'        => 'diliitid "[[$1]]"',
 'dellogpage'            => 'Diliishan lag',
 'deletecomment'         => 'Riizn:',
 'deleteotherreason'     => 'Ada/adishanal riizn:',
@@ -906,8 +900,7 @@ Yu kiahn chienj dis piej protekshan lebl, bot inaa go afek di kiaskiedn proteksh
 'restriction-level'           => 'Rischrikshan lebl:',
 
 # Undelete
-'undeletelink'     => 'vyuu/ristuor',
-'undeletedarticle' => 'don ristuor "[[$1]]"',
+'undeletelink' => 'vyuu/ristuor',
 
 # Namespace form on various pages
 'namespace'      => 'Niemspies',
@@ -988,8 +981,6 @@ Begyu chuuz aneda niem.',
 Begyu moerj dem manyuali.'''",
 'movedto'          => 'muuv gaan a',
 'movetalk'         => 'Muuv asuosietid taak piej',
-'1movedto2'        => '[[$1]] muuv gaan a [[$2]]',
-'1movedto2_redir'  => 'muuv [[$1]] tu [[$2]] uoba ridirek',
 'movelogpage'      => 'Muuv lag',
 'movereason'       => 'Riizn:',
 'revertmove'       => 'rivoert',
@@ -1061,7 +1052,7 @@ Yu kiahn vyuu isuos.',
 
 # Media information
 'file-info-size' => '$1 × $2 pixl, fail saiz: $3, MIME taip: $4',
-'file-nohires'   => '<small>No aya rezaluushan no avielobl.</small>',
+'file-nohires'   => 'No aya rezaluushan no avielobl.',
 'svg-long-desc'  => 'SVG fail, naminali $1 × $2 pixl, fail saiz: $3',
 'show-big-image' => 'Ful rezaluushan',
 

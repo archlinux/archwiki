@@ -89,7 +89,7 @@ abstract class MediaHandler {
 	 *
 	 * @param $image File: the image object, or false if there isn't one
 	 * @param $path String: the filename
-	 * @return Array
+	 * @return Array Follow the format of PHP getimagesize() internal function. See http://www.php.net/getimagesize
 	 */
 	abstract function getImageSize( $image, $path );
 
@@ -97,7 +97,7 @@ abstract class MediaHandler {
 	 * Get handler-specific metadata which will be saved in the img_metadata field.
 	 *
 	 * @param $image File: the image object, or false if there isn't one.
-	 *   Warning, File::getPropsFromPath might pass an (object)array() instead (!)
+	 *   Warning, FSFile::getPropsFromPath might pass an (object)array() instead (!)
 	 * @param $path String: the filename
 	 * @return String
 	 */
@@ -187,7 +187,7 @@ abstract class MediaHandler {
 	 * @param $dstUrl String: Destination URL to use in output HTML
 	 * @param $params Array: Arbitrary set of parameters validated by $this->validateParam()
 	 */
-	function getTransform( $image, $dstPath, $dstUrl, $params ) {
+	final function getTransform( $image, $dstPath, $dstUrl, $params ) {
 		return $this->doTransform( $image, $dstPath, $dstUrl, $params, self::TRANSFORM_LATER );
 	}
 
@@ -200,6 +200,8 @@ abstract class MediaHandler {
 	 * @param $dstUrl String: destination URL to use in output HTML
 	 * @param $params Array: arbitrary set of parameters validated by $this->validateParam()
 	 * @param $flags Integer: a bitfield, may contain self::TRANSFORM_LATER
+	 *
+	 * @return MediaTransformOutput
 	 */
 	abstract function doTransform( $image, $dstPath, $dstUrl, $params, $flags = 0 );
 
@@ -258,7 +260,7 @@ abstract class MediaHandler {
 	 * @param $image File
 	 */
 	function getPageDimensions( $image, $page ) {
-		$gis = $this->getImageSize( $image, $image->getPath() );
+		$gis = $this->getImageSize( $image, $image->getLocalRefPath() );
 		return array(
 			'width' => $gis[0],
 			'height' => $gis[1]
@@ -362,7 +364,7 @@ abstract class MediaHandler {
 	 * @param &$array Array An array containing elements for each type of visibility
 	 * and each of those elements being an array of metadata items. This function adds
 	 * a value to that array.
-	 * @param $visbility string ('visible' or 'collapsed') if this value is hidden
+	 * @param $visibility string ('visible' or 'collapsed') if this value is hidden
 	 * by default.
 	 * @param $type String type of metadata tag (currently always 'exif')
 	 * @param $id String the name of the metadata tag (like 'artist' for example).
@@ -378,8 +380,10 @@ abstract class MediaHandler {
 	 * Note, everything here is passed through the parser later on (!)
 	 */
 	protected static function addMeta( &$array, $visibility, $type, $id, $value, $param = false ) {
-		$msgName = "$type-$id";
-		if ( wfEmptyMsg( $msgName ) ) {
+		$msg = wfMessage( "$type-$id", $param );
+		if ( $msg->exists() ) {
+			$name = $msg->text();
+		} else {
 			// This is for future compatibility when using instant commons.
 			// So as to not display as ugly a name if a new metadata
 			// property is defined that we don't know about
@@ -387,8 +391,6 @@ abstract class MediaHandler {
 			// by default).
 			wfDebug( __METHOD__ . ' Unknown metadata name: ' . $id . "\n" );
 			$name = wfEscapeWikiText( $id );
-		} else {
-			$name = wfMsg( $msgName, $param );
 		}
 		$array[$visibility][] = array(
 			'id' => "$type-$id",
@@ -403,9 +405,7 @@ abstract class MediaHandler {
 	 */
 	function getShortDesc( $file ) {
 		global $wgLang;
-		$nbytes = wfMsgExt( 'nbytes', array( 'parsemag', 'escape' ),
-			$wgLang->formatNum( $file->getSize() ) );
-		return "$nbytes";
+		return htmlspecialchars( $wgLang->formatSize( $file->getSize() ) );
 	}
 
 	/**
@@ -414,9 +414,8 @@ abstract class MediaHandler {
 	 */
 	function getLongDesc( $file ) {
 		global $wgLang;
-		return wfMsgExt( 'file-info', 'parseinline',
-			$wgLang->formatSize( $file->getSize() ),
-			$file->getMimeType() );
+		return wfMessage( 'file-info', htmlspecialchars( $wgLang->formatSize( $file->getSize() ) ),
+			$file->getMimeType() )->parse();
 	}
 
 	/**
@@ -425,9 +424,7 @@ abstract class MediaHandler {
 	 */
 	static function getGeneralShortDesc( $file ) {
 		global $wgLang;
-		$nbytes = wfMsgExt( 'nbytes', array( 'parsemag', 'escape' ),
-			$wgLang->formatNum( $file->getSize() ) );
-		return "$nbytes";
+		return $wgLang->formatSize( $file->getSize() );
 	}
 
 	/**
@@ -436,9 +433,26 @@ abstract class MediaHandler {
 	 */
 	static function getGeneralLongDesc( $file ) {
 		global $wgLang;
-		return wfMsgExt( 'file-info', 'parseinline',
-			$wgLang->formatSize( $file->getSize() ),
-			$file->getMimeType() );
+		return wfMessage( 'file-info', $wgLang->formatSize( $file->getSize() ),
+			$file->getMimeType() )->parse();
+	}
+
+	/**
+	 * Calculate the largest thumbnail width for a given original file size
+	 * such that the thumbnail's height is at most $maxHeight.
+	 * @param $boxWidth Integer Width of the thumbnail box.
+	 * @param $boxHeight Integer Height of the thumbnail box.
+	 * @param $maxHeight Integer Maximum height expected for the thumbnail.
+	 * @return Integer.
+	 */
+	public static function fitBoxWidth( $boxWidth, $boxHeight, $maxHeight ) {
+		$idealWidth = $boxWidth * $maxHeight / $boxHeight;
+		$roundedUp = ceil( $idealWidth );
+		if( round( $roundedUp * $boxHeight / $boxWidth ) > $maxHeight ) {
+			return floor( $idealWidth );
+		} else {
+			return $roundedUp;
+		}
 	}
 
 	function getDimensionsString( $file ) {
@@ -476,14 +490,31 @@ abstract class MediaHandler {
 		if( file_exists( $dstPath ) ) {
 			$thumbstat = stat( $dstPath );
 			if( $thumbstat['size'] == 0 || $retval != 0 ) {
-				wfDebugLog( 'thumbnail',
-					sprintf( 'Removing bad %d-byte thumbnail "%s"',
-						$thumbstat['size'], $dstPath ) );
-				unlink( $dstPath );
+				$result = unlink( $dstPath );
+
+				if ( $result ) {
+					wfDebugLog( 'thumbnail',
+						sprintf( 'Removing bad %d-byte thumbnail "%s". unlink() succeeded',
+							$thumbstat['size'], $dstPath ) );
+				} else {
+					wfDebugLog( 'thumbnail',
+						sprintf( 'Removing bad %d-byte thumbnail "%s". unlink() failed',
+							$thumbstat['size'], $dstPath ) );
+				}
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Remove files from the purge list
+	 * 
+	 * @param array $files
+	 * @param array $options
+	 */
+	public function filterThumbnailPurgeList( &$files, $options ) {
+		// Do nothing
 	}
 }
 
@@ -575,7 +606,7 @@ abstract class ImageHandler extends MediaHandler {
 			# Height & width were both set
 			if ( $params['width'] * $srcHeight > $params['height'] * $srcWidth ) {
 				# Height is the relative smaller dimension, so scale width accordingly
-				$params['width'] = wfFitBoxWidth( $srcWidth, $srcHeight, $params['height'] );
+				$params['width'] = self::fitBoxWidth( $srcWidth, $srcHeight, $params['height'] );
 
 				if ( $params['width'] == 0 ) {
 					# Very small image, so we need to rely on client side scaling :(
@@ -611,13 +642,6 @@ abstract class ImageHandler extends MediaHandler {
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Get a transform output object without actually doing the transform
-	 */
-	function getTransform( $image, $dstPath, $dstUrl, $params ) {
-		return $this->doTransform( $image, $dstPath, $dstUrl, $params, self::TRANSFORM_LATER );
 	}
 
 	/**
@@ -686,9 +710,8 @@ abstract class ImageHandler extends MediaHandler {
 	 */
 	function getShortDesc( $file ) {
 		global $wgLang;
-		$nbytes = wfMsgExt( 'nbytes', array( 'parsemag', 'escape' ),
-			$wgLang->formatNum( $file->getSize() ) );
-		$widthheight = wfMsgHtml( 'widthheight', $wgLang->formatNum( $file->getWidth() ) ,$wgLang->formatNum( $file->getHeight() ) );
+		$nbytes = htmlspecialchars( $wgLang->formatSize( $file->getSize() ) );
+		$widthheight = wfMessage( 'widthheight' )->numParams( $file->getWidth(), $file->getHeight() )->escaped();
 
 		return "$widthheight ($nbytes)";
 	}
@@ -700,19 +723,15 @@ abstract class ImageHandler extends MediaHandler {
 	function getLongDesc( $file ) {
 		global $wgLang;
 		$pages = $file->pageCount();
+		$size = htmlspecialchars( $wgLang->formatSize( $file->getSize() ) );
 		if ( $pages === false || $pages <= 1 ) {
-			$msg = wfMsgExt('file-info-size', 'parseinline',
-				$wgLang->formatNum( $file->getWidth() ),
-				$wgLang->formatNum( $file->getHeight() ),
-				$wgLang->formatSize( $file->getSize() ),
-				$file->getMimeType() );
+			$msg = wfMessage( 'file-info-size' )->numParams( $file->getWidth(),
+				$file->getHeight() )->params( $size,
+				$file->getMimeType() )->parse();
 		} else {
-			$msg = wfMsgExt('file-info-size-pages', 'parseinline',
-				$wgLang->formatNum( $file->getWidth() ),
-				$wgLang->formatNum( $file->getHeight() ),
-				$wgLang->formatSize( $file->getSize() ),
-				$file->getMimeType(),
-				$wgLang->formatNum( $pages ) );
+			$msg = wfMessage( 'file-info-size-pages' )->numParams( $file->getWidth(),
+				$file->getHeight() )->params( $size,
+				$file->getMimeType() )->numParams( $pages )->parse();
 		}
 		return $msg;
 	}
@@ -722,16 +741,11 @@ abstract class ImageHandler extends MediaHandler {
 	 * @return string
 	 */
 	function getDimensionsString( $file ) {
-		global $wgLang;
 		$pages = $file->pageCount();
-		$width = $wgLang->formatNum( $file->getWidth() );
-		$height = $wgLang->formatNum( $file->getHeight() );
-		$pagesFmt = $wgLang->formatNum( $pages );
-
 		if ( $pages > 1 ) {
-			return wfMsgExt( 'widthheightpage', 'parsemag', $width, $height, $pagesFmt );
+			return wfMessage( 'widthheightpage' )->numParams( $file->getWidth(), $file->getHeight(), $pages )->text();
 		} else {
-			return wfMsg( 'widthheight', $width, $height );
+			return wfMessage( 'widthheight' )->numParams( $file->getWidth(), $file->getHeight() )->text();
 		}
 	}
 }

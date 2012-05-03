@@ -173,6 +173,32 @@ class SrConverter extends LanguageConverter {
 
 		return $ret;
 	}
+
+	/**
+	 * Guess if a text is written in Cyrillic or Latin.
+	 * Overrides LanguageConverter::guessVariant()
+	 *
+	 * @param string  $text The text to be checked
+	 * @param string  $variant Language code of the variant to be checked for
+	 * @return bool  true if $text appears to be written in $variant
+	 *
+	 * @author Nikola Smolenski <smolensk@eunet.rs>
+	 * @since 1.19
+	 */
+	public function guessVariant( $text, $variant ) {
+		$numCyrillic = preg_match_all("/[шђчћжШЂЧЋЖ]/u", $text, $dummy);
+		$numLatin = preg_match_all("/[šđčćžŠĐČĆŽ]/u", $text, $dummy);
+
+		if( $variant == 'sr-ec' ) {
+			return (boolean) ($numCyrillic > $numLatin);
+		} elseif( $variant == 'sr-el' ) {
+			return (boolean) ($numLatin > $numCyrillic);
+		} else {
+			return false;
+		}
+
+	}
+
 }
 
 /**
@@ -212,7 +238,10 @@ class LanguageSr extends LanguageSr_ec {
 			return '';
 		}
 
-		// if no number with word, then use $form[0] for singular and $form[1] for plural or zero
+		// If the actual number is not mentioned in the expression, then just two forms are enough:
+		// singular for $count == 1
+		// plural   for $count != 1
+		// For example, "This user belongs to {{PLURAL:$1|one group|several groups}}."
 		if ( count( $forms ) === 2 ) {
 			return $count == 1 ? $forms[0] : $forms[1];
 		}

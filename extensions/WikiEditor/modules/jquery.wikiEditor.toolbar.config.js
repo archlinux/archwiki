@@ -204,7 +204,7 @@ getDefaultConfig: function() {
 											'periMsg': 'wikieditor-toolbar-tool-heading-example',
 											'post': ' ==',
 											'regex': /^(\s*)(={1,6})(.*?)\2(\s*)$/,
-											'regexReplace': "\$1==\$3==\$4",
+											'regexReplace': "$1==$3==$4",
 											'ownline': true
 										}
 									}
@@ -218,7 +218,7 @@ getDefaultConfig: function() {
 											'periMsg': 'wikieditor-toolbar-tool-heading-example',
 											'post': ' ===',
 											'regex': /^(\s*)(={1,6})(.*?)\2(\s*)$/,
-											'regexReplace': "\$1===\$3===\$4",
+											'regexReplace': "$1===$3===$4",
 											'ownline': true
 										}
 									}
@@ -232,7 +232,7 @@ getDefaultConfig: function() {
 											'periMsg': 'wikieditor-toolbar-tool-heading-example',
 											'post': ' ====',
 											'regex': /^(\s*)(={1,6})(.*?)\2(\s*)$/,
-											'regexReplace': "\$1====\$3====\$4",
+											'regexReplace': "$1====$3====$4",
 											'ownline': true
 										}
 									}
@@ -246,7 +246,7 @@ getDefaultConfig: function() {
 											'periMsg': 'wikieditor-toolbar-tool-heading-example',
 											'post': ' =====',
 											'regex': /^(\s*)(={1,6})(.*?)\2(\s*)$/,
-											'regexReplace': "\$1=====\$3=====\$4",
+											'regexReplace': "$1=====$3=====$4",
 											'ownline': true
 										}
 									}
@@ -678,7 +678,11 @@ getDefaultConfig: function() {
 						"\u060c", "\u061b", "\u061f", "\u0640",
 						// digits
 						"\u0660", "\u0661", "\u0662", "\u0663", "\u0664", "\u0665", "\u0666", "\u0667",
-						"\u0668", "\u0669", "\u066A", "\u066B", "\u066C", "\u066D"
+						"\u0668", "\u0669",
+						// other special characters
+						"\u066A", "\u066B", "\u066C", "\u066D",
+						// ZWNJ and ZWJ
+						[ "ZWNJ", "\u200C" ], [ "ZWJ", "\u200D" ]
 					]
 				},
 				// Characters for languages other than Arabic.
@@ -757,27 +761,49 @@ getDefaultConfig: function() {
 					'layout': 'characters',
 					'direction': 'rtl',
 					'characters': [
+						// Letters
 						"\u05d0", "\u05d1", "\u05d2", "\u05d3", "\u05d4", "\u05d5", "\u05d6", "\u05d7", "\u05d8",
 						"\u05d9", "\u05db", "\u05da", "\u05dc", "\u05de", "\u05dd", "\u05e0", "\u05df", "\u05e1",
 						"\u05e2", "\u05e4", "\u05e3", "\u05e6", "\u05e5", "\u05e7", "\u05e8", "\u05e9", "\u05ea",
-						"\u05f3", "\u05f4", "\u05f0", "\u05f1", "\u05f2", "\u05be",
-						[ "\u05b0\u25cc", "\u05b0" ], [ "\u05b1\u25cc", "\u05b1" ], [ "\u05b2\u25cc", "\u05b2" ],
-						[ "\u05b3\u25cc", "\u05b3" ], [ "\u05b4\u25cc", "\u05b4" ], [ "\u05b5\u25cc", "\u05b5" ],
-						[ "\u05b6\u25cc", "\u05b6" ], [ "\u05b7\u25cc", "\u05b7" ], [ "\u05b8\u25cc", "\u05b8" ],
-						[ "\u05b9\u25cc", "\u05b9" ], [ "\u05bb\u25cc", "\u05bb" ], [ "\u05bc\u25cc", "\u05bc" ],
-						[ "\u05c1\u25cc", "\u05c1" ], [ "\u05c2\u25cc", "\u05c2" ], [ "\u05c7\u25cc", "\u05c7" ],
-						[ "\u0591\u25cc", "\u0591" ], [ "\u0592\u25cc", "\u0592" ], [ "\u0593\u25cc", "\u0593" ],
-						[ "\u0594\u25cc", "\u0594" ], [ "\u0595\u25cc", "\u0595" ], [ "\u0596\u25cc", "\u0596" ],
-						[ "\u0597\u25cc", "\u0597" ], [ "\u0598\u25cc", "\u0598" ], [ "\u0599\u25cc", "\u0599" ],
-						[ "\u059a\u25cc", "\u059a" ], [ "\u059b\u25cc", "\u059b" ], [ "\u059c\u25cc", "\u059c" ],
-						[ "\u059d\u25cc", "\u059d" ], [ "\u059e\u25cc", "\u059e" ], [ "\u059f\u25cc", "\u059f" ],
-						[ "\u05a0\u25cc", "\u05a0" ], [ "\u05a1\u25cc", "\u05a1" ], [ "\u05a2\u25cc", "\u05a2" ],
-						[ "\u05a3\u25cc", "\u05a3" ], [ "\u05a4\u25cc", "\u05a4" ], [ "\u05a5\u25cc", "\u05a5" ],
-						[ "\u05a6\u25cc", "\u05a6" ], [ "\u05a7\u25cc", "\u05a7" ], [ "\u05a8\u25cc", "\u05a8" ],
-						[ "\u05a9\u25cc", "\u05a9" ], [ "\u05aa\u25cc", "\u05aa" ], [ "\u05ab\u25cc", "\u05ab" ],
-						[ "\u05ac\u25cc", "\u05ac" ], [ "\u05ad\u25cc", "\u05ad" ], [ "\u05ae\u25cc", "\u05ae" ],
-						[ "\u05af\u25cc", "\u05af" ], [ "\u05bf\u25cc", "\u05bf" ], [ "\u05c0\u25cc", "\u05c0" ],
-						[ "\u05c3\u25cc", "\u05c3" ]
+
+						// Yiddish
+						"\u05f0", "\u05f1", "\u05f2",
+
+						// Punctuation
+						"\u05f3", "\u05f4", "\u05be", "\u2013",
+						{
+							'label': "\u201e\u201d",
+							'action': {
+								'type': 'encapsulate', 'options': { 'pre': "\u201e", 'post': "\u201d" }
+							}
+						},
+						{
+							'label': "\u201a\u2019",
+							'action': {
+								'type': 'encapsulate', 'options': { 'pre': "\u201a", 'post': "\u2019" }
+							}
+						},
+
+						// Vowels
+						[ "\u25cc\u05b0", "\u05b0" ], [ "\u25cc\u05b1", "\u05b1" ], [ "\u25cc\u05b2", "\u05b2" ],
+						[ "\u25cc\u05b3", "\u05b3" ], [ "\u25cc\u05b4", "\u05b4" ], [ "\u25cc\u05b5", "\u05b5" ],
+						[ "\u25cc\u05b6", "\u05b6" ], [ "\u25cc\u05b7", "\u05b7" ], [ "\u25cc\u05b8", "\u05b8" ],
+						[ "\u25cc\u05b9", "\u05b9" ], [ "\u25cc\u05bb", "\u05bb" ], [ "\u25cc\u05bc", "\u05bc" ],
+						[ "\u25cc\u05c1", "\u05c1" ], [ "\u25cc\u05c2", "\u05c2" ], [ "\u25cc\u05c7", "\u05c7" ],
+
+						// Cantillation
+						[ "\u25cc\u0591", "\u0591" ], [ "\u25cc\u0592", "\u0592" ], [ "\u25cc\u0593", "\u0593" ],
+						[ "\u25cc\u0594", "\u0594" ], [ "\u25cc\u0595", "\u0595" ], [ "\u25cc\u0596", "\u0596" ],
+						[ "\u25cc\u0597", "\u0597" ], [ "\u25cc\u0598", "\u0598" ], [ "\u25cc\u0599", "\u0599" ],
+						[ "\u25cc\u059a", "\u059a" ], [ "\u25cc\u059b", "\u059b" ], [ "\u25cc\u059c", "\u059c" ],
+						[ "\u25cc\u059d", "\u059d" ], [ "\u25cc\u059e", "\u059e" ], [ "\u25cc\u059f", "\u059f" ],
+						[ "\u25cc\u05a0", "\u05a0" ], [ "\u25cc\u05a1", "\u05a1" ], [ "\u25cc\u05a2", "\u05a2" ],
+						[ "\u25cc\u05a3", "\u05a3" ], [ "\u25cc\u05a4", "\u05a4" ], [ "\u25cc\u05a5", "\u05a5" ],
+						[ "\u25cc\u05a6", "\u05a6" ], [ "\u25cc\u05a7", "\u05a7" ], [ "\u25cc\u05a8", "\u05a8" ],
+						[ "\u25cc\u05a9", "\u05a9" ], [ "\u25cc\u05aa", "\u05aa" ], [ "\u25cc\u05ab", "\u05ab" ],
+						[ "\u25cc\u05ac", "\u05ac" ], [ "\u25cc\u05ad", "\u05ad" ], [ "\u25cc\u05ae", "\u05ae" ],
+						[ "\u25cc\u05af", "\u05af" ], [ "\u25cc\u05bf", "\u05bf" ], [ "\u25cc\u05c0", "\u05c0" ],
+						[ "\u25cc\u05c3", "\u05c3" ]
 					]
 				},
 				'bangla': {
@@ -793,6 +819,16 @@ getDefaultConfig: function() {
 						"\u09ae", "\u09af", "\u09b0", "\u09b2", "\u09b6", "\u09b7", "\u09b8", "\u09b9", "\u09a1\u09bc",
 						"\u09a2\u09bc", "\u09af\u09bc", "\u09ce", "\u0982", "\u0983", "\u0981", "\u09cd", "\u09e7",
 						"\u09e8", "\u09e9", "\u09ea", "\u09eb", "\u09ec", "\u09ed", "\u09ee", "\u09ef", "\u09e6"
+					]
+				},
+				'tamil': {
+					'labelMsg': 'wikieditor-toolbar-characters-page-tamil',
+					'language': 'ta',
+					'layout': 'characters',
+					'characters': [
+						"\u0be6", "\u0be7", "\u0be8", "\u0be9", "\u0bea", "\u0beb", "\u0bec", "\u0bed", "\u0bee",
+						"\u0bef", "\u0bf0", "\u0bf1", "\u0bf2", "\u0bf3", "\u0bf4", "\u0bf5", "\u0bf6", "\u0bf7",
+						"\u0bf8", "\u0bf9", "\u0bfa", "\u0bd0"
 					]
 				},
 				'telugu': {
@@ -838,18 +874,45 @@ getDefaultConfig: function() {
 					'language': 'gu',
 					'layout': 'characters',
 					'characters': [
-						"\u0ad0", "\u0a85", "\u0a86", "\u0a87", "\u0a88", "\u0a89", "\u0a8a", "\u0a8b", "\u0ae0",
-						"\u0a8c", "\u0ae1", "\u0a8d", "\u0a8f", "\u0a90", "\u0a91", "\u0a93", "\u0a94", "\u0a95",
-						"\u0a96", "\u0a97", "\u0a98", "\u0a99", "\u0a9a", "\u0a9b", "\u0a9c", "\u0a9d", "\u0a9e",
-						"\u0a9f", "\u0aa0", "\u0aa1", "\u0aa2", "\u0aa3", "\u0aa4", "\u0aa5", "\u0aa6", "\u0aa7",
-						"\u0aa8", "\u0aaa", "\u0aab", "\u0aac", "\u0aad", "\u0aae", "\u0aaf", "\u0ab0", "\u0ab2",
-						"\u0ab5", "\u0ab6", "\u0ab7", "\u0ab8", "\u0ab9", "\u0ab3", "\u0abd",
-						[ "\u25cc\u0abe", "\u0abe" ], [ "\u25cc\u0abf", "\u0abf" ], [ "\u25cc\u0ac0", "\u0ac0" ],
-						[ "\u25cc\u0ac1", "\u0ac1" ], [ "\u25cc\u0ac2", "\u0ac2" ], [ "\u25cc\u0ac3", "\u0ac3" ],
-						[ "\u25cc\u0ac4", "\u0ac4" ], [ "\u25cc\u0ae2", "\u0ae2" ], [ "\u25cc\u0ae3", "\u0ae3" ],
-						[ "\u25cc\u0ac5", "\u0ac5" ], [ "\u25cc\u0ac7", "\u0ac7" ], [ "\u25cc\u0ac8", "\u0ac8" ],
-						[ "\u25cc\u0ac9", "\u0ac9" ], [ "\u25cc\u0acb", "\u0acb" ], [ "\u25cc\u0acc", "\u0acc" ],
-						[ "\u25cc\u0acd", "\u0acd" ]
+						"\u0ad0", // Om
+						"\u0a81", // Candrabindu
+						"\u0a82", // Anusvara
+						"\u0a83", // Visarga
+						// Vowels
+						"\u0a85", "\u0a86", // A
+						"\u0a87", "\u0a88", // I
+						"\u0a89", "\u0a8a", // U
+						"\u0a8f", "\u0a90", // E
+						"\u0a93", "\u0a94", // O
+						"\u0a85\u0a82", // A with Anusvara
+						"\u0a8b", // Vocalic R
+						"\u0a8d", "\u0a91", // Candra E and O
+						// Special vowels
+						"\u0a8c", // Vocalic L
+						"\u0ae0", // Vocalic RR
+						"\u0ae1", // Vocalic LL
+						// Consonants
+						"\u0a95", "\u0a96", "\u0a97", "\u0a98", "\u0a99",
+						"\u0a9a", "\u0a9b", "\u0a9c", "\u0a9d", "\u0a9e",
+						"\u0a9f", "\u0aa0", "\u0aa1", "\u0aa2", "\u0aa3",
+						"\u0aa4", "\u0aa5", "\u0aa6", "\u0aa7", "\u0aa8",
+						"\u0aaa", "\u0aab", "\u0aac", "\u0aad", "\u0aae",
+						"\u0aaf", "\u0ab0", "\u0ab2", "\u0ab3",
+						"\u0ab5", "\u0ab6", "\u0ab7", "\u0ab8", "\u0ab9",
+						"\u0a95\u0acd\u0ab7", // ksh
+						"\u0a9c\u0acd\u0a9e", // jny
+						"\u0abd", // Avagraha
+						// Vowel signs
+						"\u0abe", "\u0abf", "\u0ac0", "\u0ac0", "\u0ac1", "\u0ac2",
+						"\u0ac3", "\u0ac4", "\u0ac5", "\u0ac7", "\u0ac8", "\u0ac9", "\u0acb", "\u0acc",
+						"\u0ae2", "\u0ae3",
+						// Virama
+						"\u0acd",
+						// Digits
+						"\u0ae6", "\u0ae7", "\u0ae8", "\u0ae9", "\u0aea",
+						"\u0aeb", "\u0aec", "\u0aed", "\u0aee", "\u0aef",
+						// Rupee
+						"\u0af1"
 					]
 				},
 				'thai': {

@@ -29,6 +29,9 @@ class WikiEditorHooks {
 			'modules' => array(
 				'ext.wikiEditor.toolbar',
 			),
+			'configurations' => array(
+				'wgWikiEditorToolbarClickTracking',
+			),
 		),
 		'dialogs' => array(
 			'preferences' => array(
@@ -209,6 +212,27 @@ class WikiEditorHooks {
 			if ( isset( $feature['modules'] ) && self::isEnabled( $name ) ) {
 				$wgOut->addModules( $feature['modules'] );
 			}
+		}
+		return true;
+	}
+
+	/**
+	 * EditPageBeforeEditToolbar hook
+	 *
+	 * Disable the old toolbar if the new one is enabled
+	 *
+	 * @param $toolbar html
+	 * @return bool
+	 */
+	public static function EditPageBeforeEditToolbar( &$toolbar ) {
+		if ( self::isEnabled( 'toolbar' ) ) {
+			$toolbar = Html::rawElement(
+				'div', array(
+					'class' => 'wikiEditor-oldToolbar',
+					'style' => 'display:none;'
+				),
+				$toolbar
+			);
 		}
 		return true;
 	}

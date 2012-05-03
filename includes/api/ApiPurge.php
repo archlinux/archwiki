@@ -25,10 +25,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	require_once( 'ApiBase.php' );
-}
-
 /**
  * API interface for page purging
  * @ingroup API
@@ -43,42 +39,58 @@ class ApiPurge extends ApiBase {
 	 * Purges the cache of a page
 	 */
 	public function execute() {
-		global $wgUser;
+		$user = $this->getUser();
 		$params = $this->extractRequestParams();
-		if ( !$wgUser->isAllowed( 'purge' ) && !$this->getMain()->isInternalMode() &&
-				!$this->getMain()->getRequest()->wasPosted() ) {
+		if ( !$user->isAllowed( 'purge' ) && !$this->getMain()->isInternalMode() &&
+				!$this->getRequest()->wasPosted() ) {
 			$this->dieUsageMsg( array( 'mustbeposted', $this->getModuleName() ) );
 		}
 
 		$forceLinkUpdate = $params['forcelinkupdate'];
+		$pageSet = new ApiPageSet( $this );
+		$pageSet->execute();
 
 		$result = array();
-		foreach ( $params['titles'] as $t ) {
+		foreach( $pageSet->getInvalidTitles() as $title ) {
 			$r = array();
-			$title = Title::newFromText( $t );
-			if ( !$title instanceof Title ) {
-				$r['title'] = $t;
-				$r['invalid'] = '';
-				$result[] = $r;
-				continue;
-			}
+			$r['title'] = $title;
+			$r['invalid'] = '';
+			$result[] = $r;
+		}
+		foreach( $pageSet->getMissingPageIDs() as $p ) {
+			$page = array();
+			$page['pageid'] = $p;
+			$page['missing'] = '';
+			$result[] = $page;
+		}
+		foreach( $pageSet->getMissingRevisionIDs() as $r ) {
+			$rev = array();
+			$rev['revid'] = $r;
+			$rev['missing'] = '';
+			$result[] = $rev;
+		}
+
+		foreach ( $pageSet->getTitles() as $title ) {
+			$r = array();
+
 			ApiQueryBase::addTitleInfo( $r, $title );
 			if ( !$title->exists() ) {
 				$r['missing'] = '';
 				$result[] = $r;
 				continue;
 			}
-			$context = $this->createContext();
-			$context->setTitle( $title );
-			$article = Article::newFromTitle( $title, $context );
-			$article->doPurge(); // Directly purge and skip the UI part of purge().
+
+			$page = WikiPage::factory( $title );
+			$page->doPurge(); // Directly purge and skip the UI part of purge().
 			$r['purged'] = '';
 
 			if( $forceLinkUpdate ) {
-				if ( !$wgUser->pingLimiter() ) {
+				if ( !$user->pingLimiter() ) {
 					global $wgParser, $wgEnableParserCache;
-					$popts = new ParserOptions();
-					$p_result = $wgParser->parse( $article->getContent(), $title, $popts );
+
+					$popts = ParserOptions::newFromContext( $this->getContext() );
+					$p_result = $wgParser->parse( $page->getRawText(), $title, $popts,
+						true, true, $page->getLatest() );
 
 					# Update the links tables
 					$u = new LinksUpdate( $title, $p_result );
@@ -88,7 +100,7 @@ class ApiPurge extends ApiBase {
 
 					if ( $wgEnableParserCache ) {
 						$pcache = ParserCache::singleton();
-						$pcache->save( $p_result, $article, $popts );
+						$pcache->save( $p_result, $page, $popts );
 					}
 				} else {
 					$this->setWarning( $this->parseMsg( array( 'actionthrottledtext' ) ) );
@@ -108,18 +120,15 @@ class ApiPurge extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		return array(
-			'titles' => array(
-				ApiBase::PARAM_ISMULTI => true,
-				ApiBase::PARAM_REQUIRED => true
-			),
+		$psModule = new ApiPageSet( $this );
+		return $psModule->getAllowedParams() + array(
 			'forcelinkupdate' => false,
 		);
 	}
 
 	public function getParamDescription() {
-		return array(
-			'titles' => 'A list of titles',
+		$psModule = new ApiPageSet( $this );
+		return $psModule->getParamDescription() + array(
 			'forcelinkupdate' => 'Update the links tables',
 		);
 	}
@@ -131,14 +140,17 @@ class ApiPurge extends ApiBase {
 	}
 
 	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'cantpurge' ),
-		) );
+		$psModule = new ApiPageSet( $this );
+		return array_merge(
+			parent::getPossibleErrors(),
+			array( array( 'cantpurge' ), ),
+			$psModule->getPossibleErrors()
+		);
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'api.php?action=purge&titles=Main_Page|API'
+			'api.php?action=purge&titles=Main_Page|API' => 'Purge the "Main Page" and the "API" page',
 		);
 	}
 

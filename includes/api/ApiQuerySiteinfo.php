@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * A query action to return meta information about the wiki site.
  *
@@ -43,6 +38,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 		$done = array();
+		$fit = false;
 		foreach ( $params['prop'] as $p ) {
 			switch ( $p ) {
 				case 'general':
@@ -138,6 +134,14 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		}
 		$data['rights'] = $GLOBALS['wgRightsText'];
 		$data['lang'] = $GLOBALS['wgLanguageCode'];
+
+		$fallbacks = array();
+		foreach( $wgContLang->getFallbackLanguages() as $code ) {
+			$fallbacks[] = array( 'code' => $code );
+		}
+		$data['fallback'] = $fallbacks;
+		$this->getResult()->setIndexedTagName( $data['fallback'], 'lang' );
+
 		if ( $wgContLang->isRTL() ) {
 			$data['rtl'] = '';
 		}
@@ -256,40 +260,44 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	}
 
 	protected function appendInterwikiMap( $property, $filter ) {
-		$this->resetQueryParams();
-		$this->addTables( 'interwiki' );
-		$this->addFields( array( 'iw_prefix', 'iw_local', 'iw_url', 'iw_wikiid', 'iw_api' ) );
-
+		$local = null;
 		if ( $filter === 'local' ) {
-			$this->addWhere( 'iw_local = 1' );
+			$local = 1;
 		} elseif ( $filter === '!local' ) {
-			$this->addWhere( 'iw_local = 0' );
+			$local = 0;
 		} elseif ( $filter ) {
 			ApiBase::dieDebug( __METHOD__, "Unknown filter=$filter" );
 		}
 
-		$this->addOption( 'ORDER BY', 'iw_prefix' );
+		$params = $this->extractRequestParams();
+		$langCode = isset( $params['inlanguagecode'] ) ? $params['inlanguagecode'] : '';
 
-		$res = $this->select( __METHOD__ );
+		if( $langCode ) {
+			$langNames = Language::getTranslatedLanguageNames( $langCode );
+		} else {
+			$langNames = Language::getLanguageNames();
+		}
 
+		$getPrefixes = Interwiki::getAllPrefixes( $local );
 		$data = array();
-		$langNames = Language::getLanguageNames();
-		foreach ( $res as $row ) {
+
+		foreach ( $getPrefixes as $row ) {
+			$prefix = $row['iw_prefix'];
 			$val = array();
-			$val['prefix'] = $row->iw_prefix;
-			if ( $row->iw_local == '1' ) {
+			$val['prefix'] = $prefix;
+			if ( $row['iw_local'] == '1' ) {
 				$val['local'] = '';
 			}
-			// $val['trans'] = intval( $row->iw_trans ); // should this be exposed?
-			if ( isset( $langNames[$row->iw_prefix] ) ) {
-				$val['language'] = $langNames[$row->iw_prefix];
+			// $val['trans'] = intval( $row['iw_trans'] ); // should this be exposed?
+			if ( isset( $langNames[$prefix] ) ) {
+				$val['language'] = $langNames[$prefix];
 			}
-			$val['url'] = wfExpandUrl( $row->iw_url, PROTO_CURRENT );
-			if( isset( $row->iw_wikiid ) ) {
-				$val['wikiid'] = $row->iw_wikiid;
+			$val['url'] = wfExpandUrl( $row['iw_url'], PROTO_CURRENT );
+			if( isset( $row['iw_wikiid'] ) ) {
+				$val['wikiid'] = $row['iw_wikiid'];
 			}
-			if( isset( $row->iw_api ) ) {
-				$val['api'] = $row->iw_api;
+			if( isset( $row['iw_api'] ) ) {
+				$val['api'] = $row['iw_api'];
 			}
 
 			$data[] = $val;
@@ -467,8 +475,18 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	}
 
 	public function appendLanguages( $property ) {
+		$params = $this->extractRequestParams();
+		$langCode = isset( $params['inlanguagecode'] ) ? $params['inlanguagecode'] : '';
+
+		if( $langCode ) {
+			$langNames = Language::getTranslatedLanguageNames( $langCode );
+		} else {
+			$langNames = Language::getLanguageNames();
+		}
+
 		$data = array();
-		foreach ( Language::getLanguageNames() as $code => $name ) {
+
+		foreach ( $langNames as $code => $name ) {
 			$lang = array( 'code' => $code );
 			ApiResult::setContent( $lang, $name );
 			$data[] = $lang;
@@ -565,10 +583,12 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 			),
 			'showalldb' => false,
 			'numberingroup' => false,
+			'inlanguagecode' => null,
 		);
 	}
 
 	public function getParamDescription() {
+		$p = $this->getModulePrefix();
 		return array(
 			'prop' => array(
 				'Which sysinfo properties to get:',
@@ -578,13 +598,13 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 				' specialpagealiases    - List of special page aliases',
 				' magicwords            - List of magic words and their aliases',
 				' statistics            - Returns site statistics',
-				' interwikimap          - Returns interwiki map (optionally filtered)',
+				" interwikimap          - Returns interwiki map (optionally filtered, (optionally localised by using {$p}inlanguagecode))",
 				' dbrepllag             - Returns database server with the highest replication lag',
 				' usergroups            - Returns user groups and the associated permissions',
 				' extensions            - Returns extensions installed on the wiki',
 				' fileextensions        - Returns list of file extensions allowed to be uploaded',
 				' rightsinfo            - Returns wiki rights (license) information if available',
-				' languages             - Returns a list of languages MediaWiki supports',
+				" languages             - Returns a list of languages MediaWiki supports (optionally localised by using {$p}inlanguagecode)",
 				' skins                 - Returns a list of all enabled skins',
 				' extensiontags         - Returns a list of parser extension tags',
 				' functionhooks         - Returns a list of parser function hooks',
@@ -593,6 +613,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 			'filteriw' =>  'Return only local or only nonlocal entries of the interwiki map',
 			'showalldb' => 'List all database servers, not just the one lagging the most',
 			'numberingroup' => 'Lists the number of users in user groups',
+			'inlanguagecode' => 'Language code for localised language names (best effort, use CLDR extension)',
 		);
 	}
 
@@ -606,7 +627,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&meta=siteinfo&siprop=general|namespaces|namespacealiases|statistics',
 			'api.php?action=query&meta=siteinfo&siprop=interwikimap&sifilteriw=local',

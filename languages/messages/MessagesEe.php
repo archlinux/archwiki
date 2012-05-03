@@ -185,7 +185,6 @@ $messages = array(
 Ɖewomahĩ ame aɖe tutui xoxo.',
 'badtitle'        => 'Tanya gbegblẽ',
 'viewsource'      => 'Kpɔ alesi wowɔe',
-'viewsourcefor'   => '$1 tɔwo',
 
 # Login and logout pages
 'remembermypassword'         => 'Ɖo ŋku nyeƒe dzesi ŋkɔ dzi le mɔ sia dzi (vaseɖe {{PLURAL:$1|ŋkeke|ŋkeke}} $1 megbe)',
@@ -259,8 +258,6 @@ Zã [[Special:Search|nuwo didi le wiki sia dzi]] kpɔ na axa yeyeawo.',
 'revdelete-radio-same'  => '(megatrɔe o)',
 'revdelete-radio-set'   => 'Yo',
 'revdelete-radio-unset' => 'Kpao',
-'revdelete-hid'         => 'ɣla $1',
-'revdelete-unhid'       => 'megaɣla $1 o',
 
 # Diffs
 'history-title'           => '"$1" ƒe tata xoxoawo',
@@ -296,7 +293,7 @@ Zã [[Special:Search|nuwo didi le wiki sia dzi]] kpɔ na axa yeyeawo.',
 'mypreferences'            => 'Nyeƒe didiwo',
 'skin-preview'             => 'Kpɔe do ŋgɔ',
 'prefs-datetime'           => 'Ŋkeke kple gaƒoƒo',
-'prefs-watchlist-days-max' => 'Vaseɖe ŋkeke 7',
+'prefs-watchlist-days-max' => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'timezoneregion-africa'    => 'Afrika',
 'yourlanguage'             => 'Gbe:',
 'yournick'                 => 'Dzesi',
@@ -411,9 +408,7 @@ Zã [[Special:Search|nuwo didi le wiki sia dzi]] kpɔ na axa yeyeawo.',
 'linksearch-ok' => 'Dii',
 
 # Special:Log/newusers
-'newuserlogpage'           => 'Ŋkɔŋlɔla yeyewo ƒe xexlẽme',
-'newuserlog-create-entry'  => 'Nuŋlɔla yeye',
-'newuserlog-create2-entry' => 'woŋlɔ ŋkɔ yeye na $1',
+'newuserlogpage' => 'Ŋkɔŋlɔla yeyewo ƒe xexlẽme',
 
 # Special:ListGroupRights
 'listgrouprights-group' => 'Hame',
@@ -430,7 +425,6 @@ Zã [[Special:Search|nuwo didi le wiki sia dzi]] kpɔ na axa yeyeawo.',
 'delete-confirm' => 'Tutu "$1"',
 'delete-legend'  => 'Tutui',
 'actioncomplete' => 'Wowɔe vɔ',
-'deletedarticle' => 'wotutu "[[$1]]"',
 'dellogpagetext' => 'Afisia wofia axa mamleawo siwo wotutu la',
 
 # Protect
@@ -513,7 +507,6 @@ Zã [[Special:Search|nuwo didi le wiki sia dzi]] kpɔ na axa yeyeawo.',
 Tia ŋkɔ alo tanya bubu.',
 'cantmove-titleprotected' => 'Wòmateŋu ahe axa aɖeke va afii o, elabena wo xemɔ na tanya sia ƒe ŋɔŋlɔ',
 'movedto'                 => 'wohee yi',
-'1movedto2'               => '[[$1]] wohee yi [[$2]]',
 
 # Export
 'export' => 'Ɖo axa siawo ɖa',

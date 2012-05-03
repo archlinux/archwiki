@@ -398,12 +398,11 @@ Yèn dudu iki panyebabé, panjenengan manawa bisa nemokaké kasalahan (''bug'') 
 Manawa wis dibusak déning wong liya.',
 'badtitle'             => 'Judhulé ora sah',
 'badtitletext'         => 'Judhul kaca sing panjenengan ora bisa dituduhaké, kosong, utawa dadi judhul antar-basa utawa judhul antar-wiki. Iku bisa uga ana  sawijining utawa luwih aksara sing ora bisa didadèkaké judhul.',
-'perfcached'           => 'Data iki dijupuk saka <em>cache</em> lan mbokmenawa dudu data pungkasan:',
-'perfcachedts'         => 'Data iki dijupuk saka <em>cache</em>, lan dianyaraké ing pungkasan ing $1.',
+'perfcached'           => 'Data iki dijupuk saka <em>cache</em> lan mbokmenawa dudu data pungkasan. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'Data iki dijupuk saka <em>cache</em>, lan dianyaraké ing pungkasan ing $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'Update saka kaca iki lagi dipatèni. Data sing ana ing kéné saiki ora bisa bakal dibalèni unggah manèh.',
 'wrong_wfQuery_params' => 'Parameter salah menyang wfQuery()<br />Fungsi: $1<br />Panyuwunan: $2',
 'viewsource'           => 'Tuduhna sumber',
-'viewsourcefor'        => 'saka $1',
 'actionthrottled'      => 'Tindakan diwatesi',
 'actionthrottledtext'  => 'Minangka sawijining pepesthèn anti-spam, panjenengan diwatesi nglakoni tindhakan iki sing cacahé kakèhan ing wektu cendhak.
 Mangga dicoba manèh ing sawetara menit.',
@@ -598,9 +597,6 @@ Panjenengan ora bisa nganggo fitur "kirim e-mail panganggo iki" kejaba panjeneng
 
 ID pamblokiran panjenengan iku #$5 lan alamat IP panjenengan iku $3. Tulung sertakna informasi ing dhuwur kabèh iki saben ngajokaké pitakonan panjenengan. Matur nuwun.',
 'blockednoreason'                  => 'ora ana alesan sing diwènèhaké',
-'blockedoriginalsource'            => "Isi sumber '''$1''' dituduhaké ing ngisor iki:",
-'blockededitsource'                => "Tèks '''suntingan panjenengan''' tumrap ing '''$1''' dituduhaké ing ngisor iki:",
-'whitelistedittitle'               => 'Prelu log mlebu kanggo nyunting',
 'whitelistedittext'                => 'Panjenengan kudu $1 supaya bisa nyunting artikel.',
 'confirmedittext'                  => 'Panjenengan kudu ndhedhes alamat e-mail dhisik sadurungé pareng nyunting sawijining kaca. Mangga nglebokaké lan validasi alamat e-mail panjenengan sadurungé nglakoni panyuntingan. Alamat e-mail sawisé bisa diowahi liwat [[Special:Preferences|kaca préférènsi]]',
 'nosuchsectiontitle'               => 'Bagéan ora ditemokaké',
@@ -811,8 +807,6 @@ Pangurus {{SITENAME}} liyané bakal tetep bisa ngaksès isi sing kadhelikaké ik
 'revdelete-unsuppress'        => 'Busak watesan ing revisi sing dibalèkaké',
 'revdelete-log'               => 'Alesan:',
 'revdelete-submit'            => 'Trapna ing {{PLURAL:$1|révisi|révisi}} kapilih',
-'revdelete-logentry'          => 'owahna tampilan revisi kanggo [[$1]]',
-'logdelete-logentry'          => 'owahna aturan pandhelikan saka [[$1]]',
 'revdelete-success'           => 'Aturan pandhelikan revisi bisa kasil ditrapaké.',
 'revdelete-failure'           => "'''Mode tampilan révisi ora bisa disèt:'''
 $1",
@@ -822,15 +816,6 @@ $1",
 'revdel-restore'              => 'Ngowahi visiblitas (pangatonan)',
 'pagehist'                    => 'Sajarah kaca',
 'deletedhist'                 => 'Sajarah sing dibusak',
-'revdelete-content'           => 'isi',
-'revdelete-summary'           => 'ringkesan suntingan',
-'revdelete-uname'             => 'jeneng panganggo',
-'revdelete-restricted'        => 'rèstriksi ditrapaké marang para opsis',
-'revdelete-unrestricted'      => 'rèstriksi marang para opsis dijabel',
-'revdelete-hid'               => 'delikna $1',
-'revdelete-unhid'             => 'buka pandelikan $1',
-'revdelete-log-message'       => '$1 kanggo $2 {{PLURAL:$2|révisi|révisi}}',
-'logdelete-log-message'       => '$1 kanggo $2 {{PLURAL:$2|prastawa|prastawa}}',
 'revdelete-hide-current'      => 'Gagal ndhelikaké révisi tanggal $2, $1: iki arupa révisi paling anyar.
 Révisi iki ora bisa didhelikaké.',
 'revdelete-show-no-access'    => 'Gagal nampilaké révisi tanggal $1, jam $2: révisi iki wis ditandhani "kawates".
@@ -976,7 +961,7 @@ Gunakna tombol radio kanggo nggabungaké révisi-révisi sing digawé sadurungé
 'prefs-rc'                      => 'Owah-owahan pungkasan',
 'prefs-watchlist'               => 'Dhaftar pangawasan',
 'prefs-watchlist-days'          => 'Cacahé dina sing dituduhaké ing dhaftar pangawasan:',
-'prefs-watchlist-days-max'      => 'Maksimum 7 dina',
+'prefs-watchlist-days-max'      => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'         => 'Cacahé suntingan maksimum sing dituduhaké ing dhaftar pangawasan sing luwih jangkep:',
 'prefs-watchlist-edits-max'     => 'Gunggung maksimum: 1000',
 'prefs-watchlist-token'         => 'Token pantauan:',
@@ -1166,7 +1151,6 @@ Panjenengan uga bisa milih supaya wong liya ngubungi panjenengan liwat jeneng pa
 'right-autopatrol'            => 'Gawé supaya suntingan-suntingan ditandhani minangka wis dipatroli',
 'right-patrolmarks'           => 'Ndeleng tandha-tandha patroli owah-owahan anyar',
 'right-unwatchedpages'        => 'Tuduhna daftar kaca-kaca sing ora diawasi',
-'right-trackback'             => 'Kirimna trackback',
 'right-mergehistory'          => 'Gabungna sajarah kaca-kaca',
 'right-userrights'            => 'Sunting kabèh hak-hak panganggo',
 'right-userrights-interwiki'  => 'Sunting hak-hak para panganggo ing situs-situs wiki liya',
@@ -1210,7 +1194,6 @@ Panjenengan uga bisa milih supaya wong liya ngubungi panjenengan liwat jeneng pa
 'action-patrol'               => 'nandhani suntingan panganggo liya minangka wis kapriksa',
 'action-autopatrol'           => 'nandhani suntingan panjenengan dhéwé minangka wis kapriksa',
 'action-unwatchedpages'       => 'pirsani dhaftar kaca-kaca sing ora kaawasi',
-'action-trackback'            => 'kirim panjejak balik',
 'action-mergehistory'         => 'nggabungaké sajarah kaca iki',
 'action-userrights'           => 'ngowahi kabèh hak panganggo',
 'action-userrights-interwiki' => 'ngowahi hak aksès saka panganggo ing wiki liya',
@@ -1668,12 +1651,8 @@ Deleng uga [[Special:WantedCategories|kategori sing diperlokaké]].',
 'activeusers-noresult'   => 'Panganggo ora ditemokaké.',
 
 # Special:Log/newusers
-'newuserlogpage'              => 'Log panganggo anyar',
-'newuserlogpagetext'          => 'Ing ngisor iki kapacak log pandaftaran panganggo anyar.',
-'newuserlog-byemail'          => 'tembung sandhi wis dikirim liwat e-mail',
-'newuserlog-create-entry'     => 'Panganggo anyar',
-'newuserlog-create2-entry'    => 'gawé akun anyar $1',
-'newuserlog-autocreate-entry' => 'akun panganggo digawé otomatis',
+'newuserlogpage'     => 'Log panganggo anyar',
+'newuserlogpagetext' => 'Ing ngisor iki kapacak log pandaftaran panganggo anyar.',
 
 # Special:ListGroupRights
 'listgrouprights'                      => 'Hak-hak grup panganggo',
@@ -1800,8 +1779,6 @@ Umpan balik lan pitulung sabanjuré:
 'actioncomplete'         => 'Proses tuntas',
 'actionfailed'           => 'Tindakan gagal',
 'deletedtext'            => '"$1" sampun kabusak. Coba pirsani $2 kanggé log paling énggal kaca ingkang kabusak.',
-'deletedarticle'         => 'mbusak "[[$1]]"',
-'suppressedarticle'      => 'ndelikaké "[[$1]]"',
 'dellogpage'             => 'Cathetan pambusakan',
 'dellogpagetext'         => 'Ing ngisor iki kapacak log pambusakan kaca sing anyar dhéwé.',
 'deletionlog'            => 'Cathetan sing dibusak',
@@ -1927,7 +1904,6 @@ Panjenengan mbokmenawa ngetutaké pranala sing salah, utawa revisi iku wis dipul
 'undeletereset'                => "''Reset''",
 'undeleteinvert'               => 'Walik pilihan',
 'undeletecomment'              => 'Alesan:',
-'undeletedarticle'             => '"$1" wis dibalèkaké',
 'undeletedrevisions'           => '$1 {{PLURAL:$1|révisi|révisi}} wis dibalèkaké',
 'undeletedrevisions-files'     => '$1 {{PLURAL:$1|révisi|révisi}} lan $2 berkas dibalèkaké',
 'undeletedfiles'               => '$1 {{PLURAL:$1|berkas|berkas}} dibalèkaké',
@@ -2154,9 +2130,6 @@ Ing kasus-kasus iku, yèn panjenengan gayuh, panjenengan bisa mindhahaké utawa 
 'movepage-page-moved'          => 'Kaca $1 wis dipindhah menyang $2.',
 'movepage-page-unmoved'        => 'Kaca $1 ora bisa dialihaké menyang $2.',
 'movepage-max-pages'           => 'Paling akèh $1 {{PLURAL:$1|kaca|kaca}} wis dialihaké lan ora ana manèh sing bakal dialihaké sacara otomatis.',
-'1movedto2'                    => 'Ngalihaké [[$1]] menyang [[$2]]',
-'1movedto2_redir'              => '[[$1]] dipunalihaken menyang [[$2]] via pangalihan',
-'move-redirect-suppressed'     => 'pengalihan ditahan',
 'movelogpage'                  => 'Log pamindhahan',
 'movelogpagetext'              => 'Ing ngisor iki kapacak log pangalihan kaca.',
 'movesubpage'                  => '{{PLURAL:$1|Anak-kaca|Anak-kaca}}',
@@ -2381,9 +2354,6 @@ Mbokmanawa iki disebabaké anané pranala jaba sing klebu daftar ireng.',
 # Patrol log
 'patrol-log-page'      => 'Log patroli',
 'patrol-log-header'    => 'Iki log revisi sing wis dipatroli.',
-'patrol-log-line'      => 'nandhani $1 saka $2 sing dipatroli $3',
-'patrol-log-auto'      => '(otomatis)',
-'patrol-log-diff'      => 'révisi $1',
 'log-show-hide-patrol' => '$1 log patroli',
 
 # Image deletion
@@ -2408,7 +2378,7 @@ $1',
 'widthheightpage'      => '$1 × $2, $3 {{PLURAL:$3|kaca|kaca}}',
 'file-info'            => 'ukuran berkas: $1, tipe MIME: $2',
 'file-info-size'       => '$1 × $2 piksel, ukuran berkas: $3, tipe MIME: $4',
-'file-nohires'         => '<small>Ora ana résolusi sing luwih dhuwur.</small>',
+'file-nohires'         => 'Ora ana résolusi sing luwih dhuwur.',
 'svg-long-desc'        => 'Berkas SVG, nominal $1 × $2 piksel, gedhené berkas: $3',
 'show-big-image'       => 'Résolusi kebak',
 'file-info-gif-looped' => 'mubeng',
@@ -2759,13 +2729,6 @@ Konfirmasi iki bakal kadaluwarsa ing $4.',
 'scarytranscludefailed'   => '[Olèhé njupuk cithakan $1 gagal]',
 'scarytranscludetoolong'  => '[URL-é kedawan]',
 
-# Trackbacks
-'trackbackbox'      => 'Ngrunut balik kanggo kaca iki:<br />
-$1',
-'trackbackremove'   => '([$1 Busak])',
-'trackbacklink'     => 'Lacak balik',
-'trackbackdeleteok' => 'Pelacakan balik bisa dibusak.',
-
 # Delete conflict
 'deletedwhileediting' => "'''Pènget''': Kaca iki wis kabusak sawisé panjenengan miwiti nyunting!",
 'confirmrecreate'     => "Panganggo [[User:$1|$1]] ([[User talk:$1|Wicara]]) wis mbusak kaca iki nalika panjenengan miwiti panyuntingan mawa alesan:
@@ -2951,5 +2914,10 @@ Katrangan tampilan:
 'htmlform-submit'              => 'Kirim',
 'htmlform-reset'               => 'Batalna pangowahan',
 'htmlform-selectorother-other' => 'Liya',
+
+# New logging system
+'revdelete-restricted'   => 'rèstriksi ditrapaké marang para opsis',
+'revdelete-unrestricted' => 'rèstriksi marang para opsis dijabel',
+'newuserlog-byemail'     => 'tembung sandhi wis dikirim liwat e-mail',
 
 );

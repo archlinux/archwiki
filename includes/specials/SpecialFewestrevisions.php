@@ -70,30 +70,26 @@ class FewestrevisionsPage extends QueryPage {
 	 * @param $result Object: database row
 	 */
 	function formatResult( $skin, $result ) {
-		global $wgLang, $wgContLang;
+		global $wgContLang;
 
 		$nt = Title::makeTitleSafe( $result->namespace, $result->title );
 		if( !$nt ) {
 			return '<!-- bad title -->';
 		}
 
-		$text = $wgContLang->convert( $nt->getPrefixedText() );
+		$text = htmlspecialchars( $wgContLang->convert( $nt->getPrefixedText() ) );
+		$plink = Linker::linkKnown( $nt, $text );
 
-		$plink = $skin->linkKnown(
-			$nt,
-			$text
-		);
-
-		$nl = wfMsgExt( 'nrevisions', array( 'parsemag', 'escape' ),
-			$wgLang->formatNum( $result->value ) );
-		$redirect = $result->redirect ? ' - ' . wfMsgHtml( 'isredirect' ) : '';
-		$nlink = $skin->linkKnown(
+		$nl = $this->msg( 'nrevisions' )->numParams( $result->value )->escaped();
+		$redirect = isset( $result->redirect ) && $result->redirect ?
+			' - ' . wfMsgHtml( 'isredirect' ) : '';
+		$nlink = Linker::linkKnown(
 			$nt,
 			$nl,
 			array(),
 			array( 'action' => 'history' )
 		) . $redirect;
 
-		return wfSpecialList( $plink, $nlink );
+		return $this->getLanguage()->specialList( $plink, $nlink );
 	}
 }

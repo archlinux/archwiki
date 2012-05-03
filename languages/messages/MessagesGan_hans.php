@@ -377,14 +377,13 @@ MySQL回到错误“$3: $4”。',
 'cannotdelete'         => '拣正𠮶页面或图像“$1”删伓正。（佢可能拕人家删吥哩。）',
 'badtitle'             => '错误𠮶标题',
 'badtitletext'         => '所要求𠮶页面标题伓正确，伓存在，跨语言或跨wiki链接。标题错误，佢可能有只或好几只伓合𠮶标题字符。',
-'perfcached'           => '底下系缓存资料，可能伓系最新𠮶。',
-'perfcachedts'         => '底下系缓存资料，佢最晏更新𠮶时间系 $1。',
+'perfcached'           => '底下系缓存资料，可能伓系最新𠮶。 A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => '底下系缓存资料，佢最晏更新𠮶时间系 $1。 A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => '个页目前改伓正，佢𠮶资料伓能仰上更新。',
 'wrong_wfQuery_params' => '参数错误斢到嘞 wfQuery()<br />
 函数： $1<br />
 查询： $2',
 'viewsource'           => '源代码',
-'viewsourcefor'        => '$1 𠮶源代码',
 'protectedpagetext'    => '个页锁到嘞，改伓正。',
 'viewsourcetext'       => '倷可以眵吖或复制个页𠮶源代码：',
 'protectedinterface'   => '个页给正嘞软件𠮶界面文本，佢拖锁到怕人乱扤。',
@@ -535,9 +534,6 @@ $2',
 
 倷𠮶封锁ID系$5。请到查询𠮶时间都要紧标到佢。',
 'blockednoreason'                  => '冇话理由',
-'blockedoriginalsource'            => "底下系'''$1'''𠮶源代码:",
-'blockededitsource'                => "底下系倷对'''$1'''𠮶'''编辑'''内容:",
-'whitelistedittitle'               => '登入后才编得正',
 'whitelistedittext'                => '起先倷要$1才编得正个页。',
 'confirmedittext'                  => '确认嘞email才能编写个页。麻烦用[[Special:Preferences|参数设置]]设置同确认倷𠮶email。',
 'nosuchsectiontitle'               => '冇个只段落',
@@ -699,8 +695,6 @@ $2',
 'revdelete-unsuppress'        => '移吥恢复正𠮶改动𠮶限制',
 'revdelete-log'               => '原因:',
 'revdelete-submit'            => '应用到选正𠮶修改',
-'revdelete-logentry'          => '已更改[[$1]]𠮶修改可见性',
-'logdelete-logentry'          => '已更改[[$1]]𠮶事件可见性',
 'revdelete-success'           => "'''修订𠮶可见性设置正喽。'''",
 'logdelete-success'           => "'''事件𠮶可见性设置正喽。'''",
 'revdel-restore'              => '改动可见性',
@@ -708,7 +702,6 @@ $2',
 'revdel-restore-visible'      => '相得到𠮶修订版',
 'pagehist'                    => '文章历史',
 'deletedhist'                 => '删吥𠮶历史',
-'revdelete-hid'               => '弆到 $1',
 
 # History merging
 'mergehistory'                     => '合并页面𠮶历史',
@@ -1182,6 +1175,7 @@ $2',
 'protectedpagesempty'     => '个兮参数下冇页面拖保护到。',
 'protectedtitles'         => '保护题目',
 'listusers'               => '用户列表',
+'usercreated'             => '到$1𠮶$2{{GENDER:$3|建立}}',
 'newpages'                => '新页面',
 'newpages-username'       => '用户名:',
 'ancientpages'            => '老早𠮶页面',
@@ -1243,8 +1237,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-noresult' => '寻伓到用户。',
 
 # Special:Log/newusers
-'newuserlogpage'          => '新开户𠮶人名单',
-'newuserlog-create-entry' => '新用户𠮶账户',
+'newuserlogpage' => '新开户𠮶人名单',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '（成员名单）',
@@ -1339,7 +1332,6 @@ $NEWPAGE
 'actioncomplete'        => '扤正嘞',
 'actionfailed'          => '操作冇舞正',
 'deletedtext'           => '"$1"删卟嘞。最晏𠮶删除记录请望$2。',
-'deletedarticle'        => '"[[$1]]"删卟嘞',
 'dellogpage'            => '删除日志',
 'dellogpagetext'        => '下底系最晏删除𠮶记录列表:',
 'deletionlog'           => '删除日志',
@@ -1434,7 +1426,6 @@ $NEWPAGE
 'undeleteviewlink'             => '望吖',
 'undeletereset'                => '设过',
 'undeletecomment'              => '评论:',
-'undeletedarticle'             => '恢复正𠮶"[[$1]]"',
 'undeletedrevisions'           => '$1只修改版本恢复正嘞',
 'undeletedrevisions-files'     => '$1只修改版本同$2只档案恢复正嘞',
 'undeletedfiles'               => '$1只档案恢复正嘞',
@@ -1624,8 +1615,6 @@ $1',
 'talkexists'              => '页面本身移动正嘞，但系新标题下底有嘞对话页，所以对话页移伓正。请手工合并两页。',
 'movedto'                 => '移到',
 'movetalk'                => '移动相关𠮶讨论页',
-'1movedto2'               => '[[$1]]移到[[$2]]',
-'1movedto2_redir'         => '[[$1]]通过重定向移到[[$2]]',
 'movelogpage'             => '移动日志',
 'movelogpagetext'         => '下底系移动嘞𠮶页面列表:',
 'movereason'              => '原因:',
@@ -1817,8 +1806,6 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 
 # Patrol log
 'patrol-log-page' => '巡查记录',
-'patrol-log-line' => '标正嘞$1/$2版系检查过𠮶$3',
-'patrol-log-auto' => '（自动）',
 
 # Image deletion
 'deletedrevision'                 => '删卟嘞旧版本$1。',
@@ -1842,7 +1829,7 @@ $1',
 'widthheightpage' => '$1 × $2,$3页',
 'file-info'       => '档案大细: $1, MIME 类型: $2',
 'file-info-size'  => '$1 × $2 像素，档案大细：$3 ，MIME类型：$4',
-'file-nohires'    => '<small>冇更高分辨率𠮶图像。</small>',
+'file-nohires'    => '冇更高分辨率𠮶图像。',
 'svg-long-desc'   => 'SVG档案，表面大细： $1 × $2 像素，档案大细：$3',
 'show-big-image'  => '完整分辨率',
 
@@ -2166,13 +2153,6 @@ $3
 'scarytranscludedisabled' => '[跨网站𠮶编码转换用伓正]',
 'scarytranscludefailed'   => '[对伓住，提取$1失败]',
 'scarytranscludetoolong'  => '[对伓住，URL 太长]',
-
-# Trackbacks
-'trackbackbox'      => '个篇文章𠮶引用:<br />
-$1',
-'trackbackremove'   => '（[$1删除]）',
-'trackbacklink'     => '引用',
-'trackbackdeleteok' => '成功删卟个只引用。',
 
 # Delete conflict
 'deletedwhileediting' => '警告: 倷编辑𠮶时间有人删卟嘞个页！',

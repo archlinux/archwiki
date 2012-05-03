@@ -224,6 +224,12 @@ abstract class DatabaseBase implements DatabaseType {
 	protected $mDefaultBigSelects = null;
 	protected $mSchemaVars = false;
 
+	protected $preparedArgs;
+
+	protected $htmlErrors;
+
+	protected $delimiter = ';';
+
 # ------------------------------------------------------------------------------
 # Accessors
 # ------------------------------------------------------------------------------
@@ -242,7 +248,7 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Boolean, controls output of large amounts of debug information.
-	 * @param $debug:
+	 * @param $debug bool|null
 	 *   - true to enable debugging
 	 *   - false to disable debugging
 	 *   - omitted or null to do nothing
@@ -290,7 +296,9 @@ abstract class DatabaseBase implements DatabaseType {
 	 * code should use lastErrno() and lastError() to handle the
 	 * situation as appropriate.
 	 *
-	 * @return The previous value of the flag.
+	 * @param $ignoreErrors bool|null
+	 *
+	 * @return bool The previous value of the flag.
 	 */
 	function ignoreErrors( $ignoreErrors = null ) {
 		return wfSetBit( $this->mFlags, DBO_IGNORE, $ignoreErrors );
@@ -324,15 +332,17 @@ abstract class DatabaseBase implements DatabaseType {
 	 * @return The previous table prefix.
 	 */
 	function tablePrefix( $prefix = null ) {
-		return wfSetVar( $this->mTablePrefix, $prefix, true );
+		return wfSetVar( $this->mTablePrefix, $prefix );
 	}
 
 	/**
 	 * Get properties passed down from the server info array of the load
 	 * balancer.
 	 *
-	 * @param $name The entry of the info array to get, or null to get the
+	 * @param $name string The entry of the info array to get, or null to get the
 	 *   whole array
+	 *
+	 * @return LoadBalancer|null
 	 */
 	function getLBInfo( $name = null ) {
 		if ( is_null( $name ) ) {
@@ -353,7 +363,6 @@ abstract class DatabaseBase implements DatabaseType {
 	 *
 	 * @param $name
 	 * @param $value
-	 * @return void
 	 */
 	function setLBInfo( $name, $value = null ) {
 		if ( is_null( $value ) ) {
@@ -365,6 +374,8 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Set lag time in seconds for a fake slave
+	 *
+	 * @param $lag int
 	 */
 	function setFakeSlaveLag( $lag ) {
 		$this->mFakeSlaveLag = $lag;
@@ -372,6 +383,8 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Make this connection a fake master
+	 *
+	 * @param $enabled bool
 	 */
 	function setFakeMaster( $enabled = true ) {
 		$this->mFakeMaster = $enabled;
@@ -379,6 +392,8 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Returns true if this database supports (and uses) cascading deletes
+	 *
+	 * @return bool
 	 */
 	function cascadingDeletes() {
 		return false;
@@ -386,6 +401,8 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Returns true if this database supports (and uses) triggers (e.g. on the page table)
+	 *
+	 * @return bool
 	 */
 	function cleanupTriggers() {
 		return false;
@@ -394,6 +411,8 @@ abstract class DatabaseBase implements DatabaseType {
 	/**
 	 * Returns true if this database is strict about what can be put into an IP field.
 	 * Specifically, it uses a NULL value instead of an empty string.
+	 *
+	 * @return bool
 	 */
 	function strictIPs() {
 		return false;
@@ -401,6 +420,8 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Returns true if this database uses timestamps rather than integers
+	 *
+	 * @return bool
 	*/
 	function realTimestamps() {
 		return false;
@@ -408,6 +429,8 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Returns true if this database does an implicit sort when doing GROUP BY
+	 *
+	 * @return bool
 	 */
 	function implicitGroupby() {
 		return true;
@@ -416,6 +439,8 @@ abstract class DatabaseBase implements DatabaseType {
 	/**
 	 * Returns true if this database does an implicit order by when the column has an index
 	 * For example: SELECT page_title FROM page LIMIT 1
+	 *
+	 * @return bool
 	 */
 	function implicitOrderby() {
 		return true;
@@ -424,6 +449,8 @@ abstract class DatabaseBase implements DatabaseType {
 	/**
 	 * Returns true if this database requires that SELECT DISTINCT queries require that all
 	   ORDER BY expressions occur in the SELECT list per the SQL92 standard
+	 *
+	 * @return bool
 	 */
 	function standardSelectDistinct() {
 		return true;
@@ -432,6 +459,8 @@ abstract class DatabaseBase implements DatabaseType {
 	/**
 	 * Returns true if this database can do a native search on IP columns
 	 * e.g. this works as expected: .. WHERE rc_ip = '127.42.12.102/32';
+	 *
+	 * @return bool
 	 */
 	function searchableIPs() {
 		return false;
@@ -439,6 +468,8 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Returns true if this database can use functional indexes
+	 *
+	 * @return bool
 	 */
 	function functionalIndexes() {
 		return false;
@@ -451,7 +482,6 @@ abstract class DatabaseBase implements DatabaseType {
 	function lastQuery() {
 		return $this->mLastQuery;
 	}
-
 
 	/**
 	 * Returns true if the connection may have been used for write queries.
@@ -508,6 +538,10 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * General read-only accessor
+	 *
+	 * @param $name string
+	 *
+	 * @return string
 	 */
 	function getProperty( $name ) {
 		return $this->$name;
@@ -579,13 +613,27 @@ abstract class DatabaseBase implements DatabaseType {
 	}
 
 	/**
+	 * Called by serialize. Throw an exception when DB connection is serialized.
+	 * This causes problems on some database engines because the connection is
+	 * not restored on unserialize.
+	 */
+	public function __sleep() {
+		throw new MWException( 'Database serialization may cause problems, since the connection is not restored on wakeup.' );
+	}
+
+	/**
 	 * Same as new DatabaseMysql( ... ), kept for backward compatibility
 	 * @deprecated since 1.17
 	 *
+	 * @param $server
+	 * @param $user
+	 * @param $password
+	 * @param $dbName
+	 * @param $flags int
 	 * @return DatabaseMysql
 	 */
 	static function newFromParams( $server, $user, $password, $dbName, $flags = 0 ) {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.17' );
 		return new DatabaseMysql( $server, $user, $password, $dbName, $flags );
 	}
 
@@ -595,7 +643,7 @@ abstract class DatabaseBase implements DatabaseType {
 	 * @see Database::factory()
 	 */
 	public final static function newFromType( $dbType, $p = array() ) {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.18' );
 		if ( isset( $p['tableprefix'] ) ) {
 			$p['tablePrefix'] = $p['tableprefix'];
 		}
@@ -627,9 +675,9 @@ abstract class DatabaseBase implements DatabaseType {
 			'mysql', 'postgres', 'sqlite', 'oracle', 'mssql', 'ibm_db2'
 		);
 		$dbType = strtolower( $dbType );
+		$class = 'Database' . ucfirst( $dbType );
 
-		if( in_array( $dbType, $canonicalDBTypes ) ) {
-			$class = 'Database' . ucfirst( $dbType );
+		if( in_array( $dbType, $canonicalDBTypes ) || ( class_exists( $class ) && is_subclass_of( $class, 'DatabaseBase' ) ) ) {
 			return new $class(
 				isset( $p['host'] ) ? $p['host'] : false,
 				isset( $p['user'] ) ? $p['user'] : false,
@@ -649,6 +697,9 @@ abstract class DatabaseBase implements DatabaseType {
 		set_error_handler( array( $this, 'connectionErrorHandler' ) );
 	}
 
+	/**
+	 * @return bool|string
+	 */
 	protected function restoreErrorHandler() {
 		restore_error_handler();
 		if ( $this->htmlErrors !== false ) {
@@ -663,6 +714,10 @@ abstract class DatabaseBase implements DatabaseType {
 		}
 	}
 
+	/**
+	 * @param $errno
+	 * @param $errstr
+	 */
 	protected function connectionErrorHandler( $errno,  $errstr ) {
 		$this->mPHPError = $errstr;
 	}
@@ -695,13 +750,15 @@ abstract class DatabaseBase implements DatabaseType {
 	 * The DBMS-dependent part of query()
 	 *
 	 * @param  $sql String: SQL query.
-	 * @return Result object to feed to fetchObject, fetchRow, ...; or false on failure
+	 * @return ResultWrapper Result object to feed to fetchObject, fetchRow, ...; or false on failure
 	 */
 	protected abstract function doQuery( $sql );
 
 	/**
 	 * Determine whether a query writes to the DB.
 	 * Should return true if unsure.
+	 *
+	 * @param $sql string
 	 *
 	 * @return bool
 	 */
@@ -776,8 +833,8 @@ abstract class DatabaseBase implements DatabaseType {
 			# that would delay transaction initializations to once connection
 			# is really used by application
 			$sqlstart = substr( $sql, 0, 10 ); // very much worth it, benchmark certified(tm)
-			if ( strpos( $sqlstart, "SHOW " ) !== 0 and strpos( $sqlstart, "SET " ) !== 0 )
-				$this->begin();
+			if ( strpos( $sqlstart, "SHOW " ) !== 0 && strpos( $sqlstart, "SET " ) !== 0 )
+				$this->begin( __METHOD__ . " ($fname)" );
 		}
 
 		if ( $this->debug() ) {
@@ -787,19 +844,20 @@ abstract class DatabaseBase implements DatabaseType {
 			$sqlx = substr( $commentedSql, 0, 500 );
 			$sqlx = strtr( $sqlx, "\t\n", '  ' );
 
-			if ( $isMaster ) {
-				wfDebug( "Query $cnt (master): $sqlx\n" );
-			} else {
-				wfDebug( "Query $cnt (slave): $sqlx\n" );
-			}
+			$master = $isMaster ? 'master' : 'slave';
+			wfDebug( "Query {$this->mDBname} ($cnt) ($master): $sqlx\n" );
 		}
 
 		if ( istainted( $sql ) & TC_MYSQL ) {
 			throw new MWException( 'Tainted query found' );
 		}
 
+		$queryId = MWDebug::query( $sql, $fname, $isMaster );
+
 		# Do the query and handle errors
 		$ret = $this->doQuery( $commentedSql );
+
+		MWDebug::queryTime( $queryId );
 
 		# Try reconnecting if the connection was lost
 		if ( false === $ret && $this->wasErrorReissuable() ) {
@@ -874,6 +932,9 @@ abstract class DatabaseBase implements DatabaseType {
 	 * database classes. The query wrapper functions (select() etc.) should be
 	 * used instead.
 	 *
+	 * @param $sql string
+	 * @param $func string
+	 *
 	 * @return array
 	 */
 	function prepare( $sql, $func = 'DatabaseBase::prepare' ) {
@@ -885,6 +946,7 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Free a prepared query, generated by prepare().
+	 * @param $prepared
 	 */
 	function freePrepared( $prepared ) {
 		/* No-op by default */
@@ -959,7 +1021,6 @@ abstract class DatabaseBase implements DatabaseType {
 	 *
 	 * @param $matches Array
 	 * @return String
-	 * @private
 	 */
 	function fillPreparedArg( $matches ) {
 		switch( $matches[1] ) {
@@ -998,6 +1059,12 @@ abstract class DatabaseBase implements DatabaseType {
 	 *
 	 * This function exists for historical reasons, DatabaseBase::update() has a more standard
 	 * calling convention and feature set
+	 *
+	 * @param $table string
+	 * @param $var
+	 * @param $value
+	 * @param $cond
+	 * @param $fname string
 	 *
 	 * @return bool
 	 */
@@ -1159,7 +1226,6 @@ abstract class DatabaseBase implements DatabaseType {
 	 * @param $fname String Caller function name
 	 * @param $options Array Query options
 	 * @param $join_conds Array Join conditions
-	 *
 	 *
 	 * @param $table string|array
 	 *
@@ -1324,7 +1390,7 @@ abstract class DatabaseBase implements DatabaseType {
 				$from = ' FROM ' . implode( ',', $this->tableNamesWithAlias( $table ) );
 			}
 		} elseif ( $table != '' ) {
-			if ( $table { 0 } == ' ' ) {
+			if ( $table[0] == ' ' ) {
 				$from = ' FROM ' . $table;
 			} else {
 				$from = ' FROM ' . $this->tableName( $table );
@@ -1364,7 +1430,7 @@ abstract class DatabaseBase implements DatabaseType {
 	 *
 	 * @param $table string|array Table name
 	 * @param $vars string|array Field names
-	 * @param $conds|array Conditions
+	 * @param $conds array Conditions
 	 * @param $fname string Caller function name
 	 * @param $options string|array Query options
 	 * @param $join_conds array|string Join conditions
@@ -1404,8 +1470,8 @@ abstract class DatabaseBase implements DatabaseType {
 	 * Takes the same arguments as DatabaseBase::select().
 	 *
 	 * @param $table String: table name
-	 * @param $vars Array: unused
-	 * @param $conds Array: filters on the table
+	 * @param Array|string $vars : unused
+	 * @param Array|string $conds : filters on the table
 	 * @param $fname String: function name for profiling
 	 * @param $options Array: options for select
 	 * @return Integer: row count
@@ -1428,7 +1494,9 @@ abstract class DatabaseBase implements DatabaseType {
 	 * Removes most variables from an SQL query and replaces them with X or N for numbers.
 	 * It's only slightly flawed. Don't use for anything important.
 	 *
-	 * @param $sql String: A SQL Query
+	 * @param $sql String A SQL Query
+	 *
+	 * @return string
 	 */
 	static function generalizeSQL( $sql ) {
 		# This does the same as the regexp below would do, but in such a way
@@ -1469,6 +1537,10 @@ abstract class DatabaseBase implements DatabaseType {
 	 * Usually throws a DBQueryError on failure
 	 * If errors are explicitly ignored, returns NULL on failure
 	 *
+	 * @param $table
+	 * @param $index
+	 * @param $fname string
+	 *
 	 * @return bool|null
 	 */
 	function indexExists( $table, $index, $fname = 'DatabaseBase::indexExists' ) {
@@ -1483,14 +1555,15 @@ abstract class DatabaseBase implements DatabaseType {
 	/**
 	 * Query whether a given table exists
 	 *
-	 * @string table
+	 * @param $table string
+	 * @param $fname string
 	 *
 	 * @return bool
 	 */
-	function tableExists( $table ) {
+	function tableExists( $table, $fname = __METHOD__ ) {
 		$table = $this->tableName( $table );
 		$old = $this->ignoreErrors( true );
-		$res = $this->query( "SELECT 1 FROM $table LIMIT 1", __METHOD__ );
+		$res = $this->query( "SELECT 1 FROM $table LIMIT 1", $fname );
 		$this->ignoreErrors( $old );
 
 		return (bool)$res;
@@ -1498,6 +1571,9 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * mysql_field_type() wrapper
+	 * @param $res
+	 * @param $index
+	 * @return string
 	 */
 	function fieldType( $res, $index ) {
 		if ( $res instanceof ResultWrapper ) {
@@ -1562,7 +1638,7 @@ abstract class DatabaseBase implements DatabaseType {
 	 *
 	 * @param $table   String Table name. This will be passed through
 	 *                 DatabaseBase::tableName().
-	 * @param $a	   Array of rows to insert
+	 * @param $a       Array of rows to insert
 	 * @param $fname   String Calling function name (use __METHOD__) for logs/profiling
 	 * @param $options Array of options
 	 *
@@ -1662,7 +1738,7 @@ abstract class DatabaseBase implements DatabaseType {
 		$opts = $this->makeUpdateOptions( $options );
 		$sql = "UPDATE $opts $table SET " . $this->makeList( $values, LIST_SET );
 
-		if ( $conds != '*' ) {
+		if ( $conds !== array() && $conds !== '*' ) {
 			$sql .= " WHERE " . $this->makeList( $conds, LIST_AND );
 		}
 
@@ -1672,7 +1748,7 @@ abstract class DatabaseBase implements DatabaseType {
 	/**
 	 * Makes an encoded list of strings from an array
 	 * @param $a Array containing the data
-	 * @param $mode:
+	 * @param $mode int Constant
 	 *      - LIST_COMMA:          comma separated, no field names
 	 *      - LIST_AND:            ANDed WHERE clause (without the WHERE). See
 	 *        the documentation for $conds in DatabaseBase::select().
@@ -1800,6 +1876,9 @@ abstract class DatabaseBase implements DatabaseType {
 	 * Change the current database
 	 *
 	 * @todo Explain what exactly will fail if this is not overridden.
+	 *
+	 * @param $db
+	 *
 	 * @return bool Success or failure
 	 */
 	function selectDB( $db ) {
@@ -1835,11 +1914,13 @@ abstract class DatabaseBase implements DatabaseType {
 	 * when calling query() directly.
 	 *
 	 * @param $name String: database table name
-	 * @param $quoted Boolean: Automatically pass the table name through
-	 *          addIdentifierQuotes() so that it can be used in a query.
+	 * @param $format String One of:
+	 *   quoted - Automatically pass the table name through addIdentifierQuotes()
+	 *            so that it can be used in a query.
+	 *   raw - Do not add identifier quotes to the table name
 	 * @return String: full database name
 	 */
-	function tableName( $name, $quoted = true ) {
+	function tableName( $name, $format = 'quoted' ) {
 		global $wgSharedDB, $wgSharedPrefix, $wgSharedTables;
 		# Skip the entire process when we have a string quoted on both ends.
 		# Note that we check the end so that we will still quote any use of
@@ -1871,7 +1952,7 @@ abstract class DatabaseBase implements DatabaseType {
 		}
 		$prefix = $this->mTablePrefix; # Default prefix
 
-		# A database name has been specified in input. We don't want any 
+		# A database name has been specified in input. We don't want any
 		# prefixes added.
 		if ( isset( $database ) ) {
 			$prefix = '';
@@ -1891,11 +1972,11 @@ abstract class DatabaseBase implements DatabaseType {
 
 		# Quote the $database and $table and apply the prefix if not quoted.
 		if ( isset( $database ) ) {
-			$database = ( !$quoted || $this->isQuotedIdentifier( $database ) ? $database : $this->addIdentifierQuotes( $database ) );
+			$database = ( $format == 'quoted' || $this->isQuotedIdentifier( $database ) ? $database : $this->addIdentifierQuotes( $database ) );
 		}
 
 		$table = "{$prefix}{$table}";
-		if ( $quoted && !$this->isQuotedIdentifier( $table ) ) {
+		if ( $format == 'quoted' && !$this->isQuotedIdentifier( $table ) ) {
 			$table = $this->addIdentifierQuotes( "{$table}" );
 		}
 
@@ -1913,6 +1994,8 @@ abstract class DatabaseBase implements DatabaseType {
 	 * extract($dbr->tableNames('user','watchlist'));
 	 * $sql = "SELECT wl_namespace,wl_title FROM $watchlist,$user
 	 *         WHERE wl_user=user_id AND wl_user=$nameWithQuotes";
+	 *
+	 * @return array
 	 */
 	public function tableNames() {
 		$inArray = func_get_args();
@@ -1933,6 +2016,8 @@ abstract class DatabaseBase implements DatabaseType {
 	 * list( $user, $watchlist ) = $dbr->tableNamesN('user','watchlist');
 	 * $sql = "SELECT wl_namespace,wl_title FROM $watchlist,$user
 	 *         WHERE wl_user=user_id AND wl_user=$nameWithQuotes";
+	 *
+	 * @return array
 	 */
 	public function tableNamesN() {
 		$inArray = func_get_args();
@@ -1950,7 +2035,7 @@ abstract class DatabaseBase implements DatabaseType {
 	 * e.g. tableName AS newTableName
 	 *
 	 * @param $name string Table name, see tableName()
-	 * @param $alias string Alias (optional)
+	 * @param $alias string|bool Alias (optional)
 	 * @return string SQL name for aliased table. Will not alias a table to its own name
 	 */
 	public function tableNameWithAlias( $name, $alias = false ) {
@@ -1982,9 +2067,9 @@ abstract class DatabaseBase implements DatabaseType {
 	 * Get the aliased table name clause for a FROM clause
 	 * which might have a JOIN and/or USE INDEX clause
 	 *
-	 * @param $tables array( [alias] => table )
-	 * @param $use_index array() Same as for select()
-	 * @param $join_conds array() Same as for select()
+	 * @param $tables array ( [alias] => table )
+	 * @param $use_index array Same as for select()
+	 * @param $join_conds array Same as for select()
 	 * @return string
 	 */
 	protected function tableNamesWithUseIndexOrJOIN(
@@ -2087,6 +2172,8 @@ abstract class DatabaseBase implements DatabaseType {
 	 * Since MySQL is the odd one out here the double quotes are our generic
 	 * and we implement backticks in DatabaseMysql.
 	 *
+	 * @param $s string
+	 *
 	 * @return string
 	 */
 	public function addIdentifierQuotes( $s ) {
@@ -2111,10 +2198,12 @@ abstract class DatabaseBase implements DatabaseType {
 	 * was renamed to addIdentifierQuotes.
 	 * @deprecated since 1.18 use addIdentifierQuotes
 	 *
+	 * @param $s string
+	 *
 	 * @return string
 	 */
 	function quote_ident( $s ) {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.18' );
 		return $this->addIdentifierQuotes( $s );
 	}
 
@@ -2123,12 +2212,20 @@ abstract class DatabaseBase implements DatabaseType {
 	 * WARNING: you should almost never use this function directly,
 	 * instead use buildLike() that escapes everything automatically
 	 * @deprecated since 1.17, warnings in 1.17, removed in ???
+	 *
+	 * @param $s string
+	 *
+	 * @return string
 	 */
 	public function escapeLike( $s ) {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.17' );
 		return $this->escapeLikeInternal( $s );
 	}
 
+	/**
+	 * @param $s string
+	 * @return string
+	 */
 	protected function escapeLikeInternal( $s ) {
 		$s = str_replace( '\\', '\\\\', $s );
 		$s = $this->strencode( $s );
@@ -2181,7 +2278,7 @@ abstract class DatabaseBase implements DatabaseType {
 	/**
 	 * Returns a token for buildLike() that denotes a '%' to be used in a LIKE query
 	 *
-	 * @rerturn LikeMatch
+	 * @return LikeMatch
 	 */
 	function anyString() {
 		return new LikeMatch( '%' );
@@ -2191,6 +2288,12 @@ abstract class DatabaseBase implements DatabaseType {
 	 * Returns an appropriately quoted sequence value for inserting a new row.
 	 * MySQL has autoincrement fields, so this is just NULL. But the PostgreSQL
 	 * subclass will return an integer, and save the value for insertId()
+	 *
+	 * Any implementation of this function should *not* involve reusing
+	 * sequence numbers created for rolled-back transactions.
+	 * See http://bugs.mysql.com/bug.php?id=30767 for details.
+	 * @param $seqName string
+	 * @return null
 	 */
 	function nextSequenceValue( $seqName ) {
 		return null;
@@ -2203,6 +2306,8 @@ abstract class DatabaseBase implements DatabaseType {
 	 * which index to pick.  Anyway, other databases might have different
 	 * indexes on a given table.  So don't bother overriding this unless you're
 	 * MySQL.
+	 * @param $index
+	 * @return string
 	 */
 	function useIndexClause( $index ) {
 		return '';
@@ -2223,14 +2328,11 @@ abstract class DatabaseBase implements DatabaseType {
 	 * to collide. However if you do this, you run the risk of encountering
 	 * errors which wouldn't have occurred in MySQL.
 	 *
-	 * @param $rows Can be either a single row to insert, or multiple rows,
-	 *    in the same format as for DatabaseBase::insert()
-	 * @param $uniqueIndexes is an array of indexes. Each element may be either
-	 *    a field name or an array of field names
-	 *
 	 * @param $table String: The table to replace the row(s) in.
-	 * @param $uniqueIndexes Array: An associative array of indexes
-	 * @param $rows Array: Array of rows to replace
+	 * @param $rows array Can be either a single row to insert, or multiple rows,
+	 *    in the same format as for DatabaseBase::insert()
+	 * @param $uniqueIndexes array is an array of indexes. Each element may be either
+	 *    a field name or an array of field names
 	 * @param $fname String: Calling function name (use __METHOD__) for logs/profiling
 	 */
 	function replace( $table, $uniqueIndexes, $rows, $fname = 'DatabaseBase::replace' ) {
@@ -2284,9 +2386,11 @@ abstract class DatabaseBase implements DatabaseType {
 	 * REPLACE query wrapper for MySQL and SQLite, which have a native REPLACE
 	 * statement.
 	 *
-	 * @param $table Table name
-	 * @param $rows Rows to insert
-	 * @param $fname Caller function name
+	 * @param $table string Table name
+	 * @param $rows array Rows to insert
+	 * @param $fname string Caller function name
+	 *
+	 * @return ResultWrapper
 	 */
 	protected function nativeReplace( $table, $rows, $fname ) {
 		$table = $this->tableName( $table );
@@ -2353,6 +2457,11 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Returns the size of a text field, or -1 for "unlimited"
+	 *
+	 * @param $table string
+	 * @param $field string
+	 *
+	 * @return int
 	 */
 	function textFieldSize( $table, $field ) {
 		$table = $this->tableName( $table );
@@ -2412,24 +2521,24 @@ abstract class DatabaseBase implements DatabaseType {
 	 * INSERT SELECT wrapper. Takes data from a SELECT query and inserts it
 	 * into another table.
 	 *
-	 * @param $destTable The table name to insert into
-	 * @param $srcTable May be either a table name, or an array of table names
+	 * @param $destTable string The table name to insert into
+	 * @param $srcTable string|array May be either a table name, or an array of table names
 	 *    to include in a join.
 	 *
-	 * @param $varMap must be an associative array of the form
+	 * @param $varMap array must be an associative array of the form
 	 *    array( 'dest1' => 'source1', ...). Source items may be literals
 	 *    rather than field names, but strings should be quoted with
 	 *    DatabaseBase::addQuotes()
 	 *
-	 * @param $conds Condition array. See $conds in DatabaseBase::select() for
+	 * @param $conds array Condition array. See $conds in DatabaseBase::select() for
 	 *    the details of the format of condition arrays. May be "*" to copy the
 	 *    whole table.
 	 *
-	 * @param $fname The function name of the caller, from __METHOD__
+	 * @param $fname string The function name of the caller, from __METHOD__
 	 *
-	 * @param $insertOptions Options for the INSERT part of the query, see
+	 * @param $insertOptions array Options for the INSERT part of the query, see
 	 *    DatabaseBase::insert() for details.
-	 * @param $selectOptions Options for the SELECT part of the query, see
+	 * @param $selectOptions array Options for the SELECT part of the query, see
 	 *    DatabaseBase::select() for details.
 	 *
 	 * @return ResultWrapper
@@ -2461,7 +2570,10 @@ abstract class DatabaseBase implements DatabaseType {
 			" FROM $srcTable $useIndex ";
 
 		if ( $conds != '*' ) {
-			$sql .= ' WHERE ' . $this->makeList( $conds, LIST_AND );
+			if ( is_array( $conds ) ) {
+				$conds = $this->makeList( $conds, LIST_AND );
+			}
+			$sql .= " WHERE $conds";
 		}
 
 		$sql .= " $tailOpts";
@@ -2483,9 +2595,9 @@ abstract class DatabaseBase implements DatabaseType {
 	 * The version provided by default works in MySQL and SQLite.  It will very
 	 * likely need to be overridden for most other DBMSes.
 	 *
-	 * @param $sql String: SQL query we will append the limit too
-	 * @param $limit Integer: the SQL limit
-	 * @param $offset Integer the SQL offset (default false)
+	 * @param $sql String SQL query we will append the limit too
+	 * @param $limit Integer the SQL limit
+	 * @param $offset Integer|false the SQL offset (default false)
 	 *
 	 * @return string
 	 */
@@ -2499,6 +2611,11 @@ abstract class DatabaseBase implements DatabaseType {
 				. "{$limit} ";
 	}
 
+	/**
+	 * @param $sql
+	 * @param $num
+	 * @return string
+	 */
 	function limitResultForUpdate( $sql, $num ) {
 		return $this->limitResult( $sql, $num, 0 );
 	}
@@ -2553,12 +2670,32 @@ abstract class DatabaseBase implements DatabaseType {
 	}
 
 	/**
+	 * Determines how long the server has been up
+	 * STUB
+	 *
+	 * @return int
+	 */
+	function getServerUptime() {
+		return 0;
+	}
+
+	/**
 	 * Determines if the last failure was due to a deadlock
 	 * STUB
 	 *
 	 * @return bool
 	 */
 	function wasDeadlock() {
+		return false;
+	}
+
+	/**
+	 * Determines if the last failure was due to a lock timeout
+	 * STUB
+	 *
+	 * @return bool
+	 */
+	function wasLockTimeout() {
 		return false;
 	}
 
@@ -2598,11 +2735,12 @@ abstract class DatabaseBase implements DatabaseType {
 	 * Returns whatever the callback function returned on its successful,
 	 * iteration, or false on error, for example if the retry limit was
 	 * reached.
+	 *
+	 * @return bool
 	 */
 	function deadlockLoop() {
-		$myFname = 'DatabaseBase::deadlockLoop';
 
-		$this->begin();
+		$this->begin( __METHOD__ );
 		$args = func_get_args();
 		$function = array_shift( $args );
 		$oldIgnore = $this->ignoreErrors( true );
@@ -2633,11 +2771,11 @@ abstract class DatabaseBase implements DatabaseType {
 		$this->ignoreErrors( $oldIgnore );
 
 		if ( $tries <= 0 ) {
-			$this->rollback( $myFname );
+			$this->rollback( __METHOD__ );
 			$this->reportQueryError( $error, $errno, $sql, $fname );
 			return false;
 		} else {
-			$this->commit( $myFname );
+			$this->commit( __METHOD__ );
 			return $retVal;
 		}
 	}
@@ -2654,29 +2792,28 @@ abstract class DatabaseBase implements DatabaseType {
 	 *   zero if we timed out.
 	 */
 	function masterPosWait( DBMasterPos $pos, $timeout ) {
-		$fname = 'DatabaseBase::masterPosWait';
-		wfProfileIn( $fname );
+		wfProfileIn( __METHOD__ );
 
 		if ( !is_null( $this->mFakeSlaveLag ) ) {
 			$wait = intval( ( $pos->pos - microtime( true ) + $this->mFakeSlaveLag ) * 1e6 );
 
 			if ( $wait > $timeout * 1e6 ) {
 				wfDebug( "Fake slave timed out waiting for $pos ($wait us)\n" );
-				wfProfileOut( $fname );
+				wfProfileOut( __METHOD__ );
 				return -1;
 			} elseif ( $wait > 0 ) {
 				wfDebug( "Fake slave waiting $wait us\n" );
 				usleep( $wait );
-				wfProfileOut( $fname );
+				wfProfileOut( __METHOD__ );
 				return 1;
 			} else {
 				wfDebug( "Fake slave up to date ($wait us)\n" );
-				wfProfileOut( $fname );
+				wfProfileOut( __METHOD__ );
 				return 0;
 			}
 		}
 
-		wfProfileOut( $fname );
+		wfProfileOut( __METHOD__ );
 
 		# Real waits are implemented in the subclass.
 		return 0;
@@ -2713,6 +2850,8 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Begin a transaction, committing any previously open transaction
+	 *
+	 * @param $fname string
 	 */
 	function begin( $fname = 'DatabaseBase::begin' ) {
 		$this->query( 'BEGIN', $fname );
@@ -2721,6 +2860,8 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * End a transaction
+	 *
+	 * @param $fname string
 	 */
 	function commit( $fname = 'DatabaseBase::commit' ) {
 		if ( $this->mTrxLevel ) {
@@ -2732,6 +2873,8 @@ abstract class DatabaseBase implements DatabaseType {
 	/**
 	 * Rollback a transaction.
 	 * No-op on non-transactional databases.
+	 *
+	 * @param $fname string
 	 */
 	function rollback( $fname = 'DatabaseBase::rollback' ) {
 		if ( $this->mTrxLevel ) {
@@ -2778,6 +2921,8 @@ abstract class DatabaseBase implements DatabaseType {
 	 * The result is unquoted, and needs to be passed through addQuotes()
 	 * before it can be included in raw SQL.
 	 *
+	 * @param $ts string|int
+	 *
 	 * @return string
 	 */
 	function timestamp( $ts = 0 ) {
@@ -2792,6 +2937,8 @@ abstract class DatabaseBase implements DatabaseType {
 	 *
 	 * The result is unquoted, and needs to be passed through addQuotes()
 	 * before it can be included in raw SQL.
+	 *
+	 * @param $ts string|int
 	 *
 	 * @return string
 	 */
@@ -2813,6 +2960,10 @@ abstract class DatabaseBase implements DatabaseType {
 	 * a wrapper. Nowadays, raw database objects are never exposed to external
 	 * callers, so this is unnecessary in external code. For compatibility with
 	 * old code, ResultWrapper objects are passed through unaltered.
+	 *
+	 * @param $result bool|ResultWrapper
+	 *
+	 * @return bool|ResultWrapper
 	 */
 	function resultObject( $result ) {
 		if ( empty( $result ) ) {
@@ -2829,6 +2980,11 @@ abstract class DatabaseBase implements DatabaseType {
 
 	/**
 	 * Return aggregated value alias
+	 *
+	 * @param $valuedata
+	 * @param $valuename string
+	 *
+	 * @return string
 	 */
 	function aggregateValue ( $valuedata, $valuename = 'value' ) {
 		return $valuename;
@@ -2860,7 +3016,7 @@ abstract class DatabaseBase implements DatabaseType {
 	/**
 	 * Return the maximum number of items allowed in a list, or 0 for unlimited.
 	 *
-	 * return int
+	 * @return int
 	 */
 	function maxListLen() {
 		return 0;
@@ -2871,6 +3027,8 @@ abstract class DatabaseBase implements DatabaseType {
 	 * don't allow simple quoted strings to be inserted. To insert into such
 	 * a field, pass the data through this function before passing it to
 	 * DatabaseBase::insert().
+	 * @param $b string
+	 * @return string
 	 */
 	function encodeBlob( $b ) {
 		return $b;
@@ -2880,20 +3038,36 @@ abstract class DatabaseBase implements DatabaseType {
 	 * Some DBMSs return a special placeholder object representing blob fields
 	 * in result objects. Pass the object through this function to return the
 	 * original string.
+	 * @param $b string
+	 * @return string
 	 */
 	function decodeBlob( $b ) {
 		return $b;
 	}
 
 	/**
-	 * Override database's default connection timeout.  May be useful for very
-	 * long batch queries such as full-wiki dumps, where a single query reads
-	 * out over hours or days.  May or may not be necessary for non-MySQL
-	 * databases.  For most purposes, leaving it as a no-op should be fine.
+	 * Override database's default connection timeout
 	 *
 	 * @param $timeout Integer in seconds
+	 * @return void
+	 * @deprecated since 1.19; use setSessionOptions()
 	 */
-	public function setTimeout( $timeout ) {}
+	public function setTimeout( $timeout ) {
+		wfDeprecated( __METHOD__, '1.19' );
+		$this->setSessionOptions( array( 'connTimeout' => $timeout ) );
+	}
+
+	/**
+	 * Override database's default behavior. $options include:
+	 *     'connTimeout' : Set the connection timeout value in seconds.
+	 *                     May be useful for very long batch queries such as
+	 *                     full-wiki dumps, where a single query reads out over
+	 *                     hours or days.
+	 *
+	 * @param $options Array
+	 * @return void
+	 */
+	public function setSessionOptions( array $options ) {}
 
 	/**
 	 * Read and execute SQL commands from a file.
@@ -2906,6 +3080,7 @@ abstract class DatabaseBase implements DatabaseType {
 	 * @param $resultCallback Callback: Optional function called for each MySQL result
 	 * @param $fname String: Calling function name or false if name should be
 	 *      generated dynamically using $filename
+	 * @return bool|string
 	 */
 	function sourceFile( $filename, $lineCallback = false, $resultCallback = false, $fname = false ) {
 		wfSuppressWarnings();
@@ -2973,56 +3148,42 @@ abstract class DatabaseBase implements DatabaseType {
 	 * @param $lineCallback Callback: Optional function called before reading each line
 	 * @param $resultCallback Callback: Optional function called for each MySQL result
 	 * @param $fname String: Calling function name
+	 * @param $inputCallback Callback: Optional function called for each complete line (ended with ;) sent
+	 * @return bool|string
 	 */
-	function sourceStream( $fp, $lineCallback = false, $resultCallback = false,
-		$fname = 'DatabaseBase::sourceStream' )
+	public function sourceStream( $fp, $lineCallback = false, $resultCallback = false,
+		$fname = 'DatabaseBase::sourceStream', $inputCallback = false )
 	{
-		$cmd = "";
-		$done = false;
-		$dollarquote = false;
+		$cmd = '';
 
-		while ( ! feof( $fp ) ) {
+		while ( !feof( $fp ) ) {
 			if ( $lineCallback ) {
 				call_user_func( $lineCallback );
 			}
 
 			$line = trim( fgets( $fp ) );
-			$sl = strlen( $line ) - 1;
 
-			if ( $sl < 0 ) {
+			if ( $line == '' ) {
 				continue;
 			}
 
-			if ( '-' == $line { 0 } && '-' == $line { 1 } ) {
+			if ( '-' == $line[0] && '-' == $line[1] ) {
 				continue;
-			}
-
-			# # Allow dollar quoting for function declarations
-			if ( substr( $line, 0, 4 ) == '$mw$' ) {
-				if ( $dollarquote ) {
-					$dollarquote = false;
-					$done = true;
-				}
-				else {
-					$dollarquote = true;
-				}
-			}
-			elseif ( !$dollarquote ) {
-				if ( ';' == $line { $sl } && ( $sl < 2 || ';' != $line { $sl - 1 } ) ) {
-					$done = true;
-					$line = substr( $line, 0, $sl );
-				}
 			}
 
 			if ( $cmd != '' ) {
 				$cmd .= ' ';
 			}
 
+			$done = $this->streamStatementEnd( $cmd, $line );
+
 			$cmd .= "$line\n";
 
-			if ( $done ) {
-				$cmd = str_replace( ';;', ";", $cmd );
+			if ( $done || feof( $fp ) ) {
 				$cmd = $this->replaceVars( $cmd );
+				if ( $inputCallback ) {
+					call_user_func( $inputCallback, $cmd );
+				}
 				$res = $this->query( $cmd, $fname );
 
 				if ( $resultCallback ) {
@@ -3035,11 +3196,28 @@ abstract class DatabaseBase implements DatabaseType {
 				}
 
 				$cmd = '';
-				$done = false;
 			}
 		}
 
 		return true;
+	}
+
+	/**
+	 * Called by sourceStream() to check if we've reached a statement end
+	 *
+	 * @param $sql String SQL assembled so far
+	 * @param $newLine String New line about to be added to $sql
+	 * @return Bool Whether $newLine contains end of the statement
+	 */
+	public function streamStatementEnd( &$sql, &$newLine ) {
+		if ( $this->delimiter ) {
+			$prev = $newLine;
+			$newLine = preg_replace( '/' . preg_quote( $this->delimiter, '/' ) . '$/', '', $newLine );
+			if ( $newLine != $prev ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -3096,6 +3274,8 @@ abstract class DatabaseBase implements DatabaseType {
 	/**
 	 * Get schema variables. If none have been set via setSchemaVars(), then
 	 * use some defaults from the current object.
+	 *
+	 * @return array
 	 */
 	protected function getSchemaVars() {
 		if ( $this->mSchemaVars ) {
@@ -3207,9 +3387,10 @@ abstract class DatabaseBase implements DatabaseType {
 	 * @param $tableName string
 	 * @param $fName string
 	 * @return bool|ResultWrapper
+	 * @since 1.18
 	 */
 	public function dropTable( $tableName, $fName = 'DatabaseBase::dropTable' ) {
-		if( !$this->tableExists( $tableName ) ) {
+		if( !$this->tableExists( $tableName, $fName ) ) {
 			return false;
 		}
 		$sql = "DROP TABLE " . $this->tableName( $tableName );

@@ -60,6 +60,9 @@ $namespaceAliases = array(
 	'Категорийын_каҥашымаш'     => NS_CATEGORY_TALK,
 );
 
+// Remove Russian aliases
+$namespaceGenderAliases = array();
+
 $specialPageAliases = array(
 	'Preferences'               => array( 'Келыштарымаш' ),
 	'Recentchanges'             => array( 'Пытартыш_тӧрлатымаш-влак' ),
@@ -69,14 +72,14 @@ $specialPageAliases = array(
 );
 
 $magicWords = array(
-	'img_right'             => array( '1', 'пурла', 'справа', 'right' ),
-	'img_left'              => array( '1', 'шола', 'слева', 'left' ),
-	'img_border'            => array( '1', 'чек', 'граница', 'border' ),
-	'img_sub'               => array( '1', 'йымалне', 'под', 'sub' ),
-	'img_super'             => array( '1', 'ӱмбалне', 'над', 'super', 'sup' ),
-	'img_top'               => array( '1', 'кӱшычын', 'сверху', 'top' ),
-	'img_middle'            => array( '1', 'покшелне', 'посередине', 'middle' ),
-	'img_bottom'            => array( '1', 'ӱлычын', 'снизу', 'bottom' ),
+	'img_right'               => array( '1', 'пурла', 'справа', 'right' ),
+	'img_left'                => array( '1', 'шола', 'слева', 'left' ),
+	'img_border'              => array( '1', 'чек', 'граница', 'border' ),
+	'img_sub'                 => array( '1', 'йымалне', 'под', 'sub' ),
+	'img_super'               => array( '1', 'ӱмбалне', 'над', 'super', 'sup' ),
+	'img_top'                 => array( '1', 'кӱшычын', 'сверху', 'top' ),
+	'img_middle'              => array( '1', 'покшелне', 'посередине', 'middle' ),
+	'img_bottom'              => array( '1', 'ӱлычын', 'снизу', 'bottom' ),
 );
 
 $messages = array(
@@ -329,7 +332,6 @@ $messages = array(
 'badtitle'           => 'Сай огыл лӱм',
 'badtitletext'       => 'Йодмо лаштыкын лӱмжӧ йоҥылыш, але яра, але йылме кокла але интер-вики лӱмжӧ йоҥылыш. Ала лӱмыштӧ кӱлдымӧ тамга улыт.',
 'viewsource'         => 'Тӱҥалтыш текст',
-'viewsourcefor'      => '$1 лан',
 
 # Virus scanner
 'virus-badscanner'     => "Келыштарымаш йоҥылыш: палыдыме вирус сканер: ''$1''",
@@ -471,10 +473,6 @@ $messages = array(
 'revdel-restore'            => 'Койымашым вашталташ',
 'pagehist'                  => 'Лаштыкын эртымгорно',
 'deletedhist'               => 'Шӧрымо эртымгорно',
-'revdelete-content'         => 'кӧргӧ',
-'revdelete-summary'         => 'тӧрлатымаш-влакым возен ончыктымаш',
-'revdelete-uname'           => 'Пайдаланышын лӱмжӧ',
-'revdelete-hid'             => '$1 шылтыме',
 'revdelete-otherreason'     => 'Вес/ешартыш амал:',
 'revdelete-reasonotherlist' => 'Вес амал',
 
@@ -767,8 +765,7 @@ $messages = array(
 'activeusers-hidesysops' => 'Сайтвиктарыше-влакым шылташ',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'У пайдаланыше регистрацийым эртарыме журнал',
-'newuserlog-create-entry' => 'У пайдаланыше',
+'newuserlogpage' => 'У пайдаланыше регистрацийым эртарыме журнал',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(тӱшкаште улшо-влак)',
@@ -807,7 +804,6 @@ $messages = array(
 'actioncomplete'        => 'Ыштыме',
 'deletedtext'           => '«$1» шӧрымӧ.
 Ончо $2 пытартыш шӧрымӧ-влак лӱмер гыч.',
-'deletedarticle'        => '«[[$1]]» шӧрымӧ',
 'dellogpage'            => 'Шӧрымӧ нерген журнал',
 'deletionlog'           => 'шӧрымӧ нерген журнал',
 'deletecomment'         => 'Амал:',
@@ -844,7 +840,6 @@ $messages = array(
 
 # Undelete
 'undeletelink'           => 'ончалаш/тӧрлатен шындаш',
-'undeletedarticle'       => '«[[$1]]» тӧрлатен шынден',
 'undelete-search-submit' => 'Кычал',
 
 # Namespace form on various pages
@@ -934,9 +929,6 @@ $messages = array(
 'talkexists'                => "'''Лаштыкым кусарыме гынат, тудын каҥашымаш лаштыкшым тыгай лӱман лаштык улмылан кӧра кусараш огеш лий. Нуным шке кидет дене иктыш ушно.'''",
 'movedto'                   => 'лаштыкыш кусарыме',
 'movetalk'                  => 'Каҥашымаш лаштыкым кусараш',
-'1movedto2'                 => '[[$1]] лаштыкым [[$2]] лаштыкыш кусарыме',
-'1movedto2_redir'           => '[[$1]] лаштыкым [[$2]] лаштыкыш кусарыме ӱмбал вес вереш колтымаш',
-'move-redirect-suppressed'  => 'вес верек колтымаш ыштыме огыл',
 'movelogpage'               => 'Кусарыме нерген журнал',
 'movereason'                => 'Амал:',
 'revertmove'                => 'мӧҥгешла пӧртылаш',
@@ -1014,7 +1006,7 @@ $messages = array(
 # Media information
 'widthheightpage' => '$1 × $2, $3 {{PLURAL:$3|лаштык|лаштык}}',
 'file-info-size'  => '$1 × $2 пиксел, файлын кугытшо: $3, MIME-тип: $4',
-'file-nohires'    => '<small>Кугурак чаплык уке.</small>',
+'file-nohires'    => 'Кугурак чаплык уке.',
 'svg-long-desc'   => 'SVG файл, шкенжын кугытшо: $1 × $2 пиксел, файлын кугытшо: $3',
 'show-big-image'  => 'Шкенжын чаплыкше',
 

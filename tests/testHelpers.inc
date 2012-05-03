@@ -1,53 +1,5 @@
 <?php
 
-/**
- * @ingroup Testing
- *
- * Set of classes to help with test output and such. Right now pretty specific
- * to the parser tests but could be more useful one day :)
- *
- * @todo Fixme: Make this more generic
- */
-
-class AnsiTermColorer {
-	function __construct() {
-	}
-
-	/**
-	 * Return ANSI terminal escape code for changing text attribs/color
-	 *
-	 * @param $color String: semicolon-separated list of attribute/color codes
-	 * @return String
-	 */
-	public function color( $color ) {
-		global $wgCommandLineDarkBg;
-
-		$light = $wgCommandLineDarkBg ? "1;" : "0;";
-
-		return "\x1b[{$light}{$color}m";
-	}
-
-	/**
-	 * Return ANSI terminal escape code for restoring default text attributes
-	 *
-	 * @return String
-	 */
-	public function reset() {
-		return $this->color( 0 );
-	}
-}
-
-/* A colour-less terminal */
-class DummyTermColorer {
-	public function color( $color ) {
-		return '';
-	}
-
-	public function reset() {
-		return '';
-	}
-}
-
 class TestRecorder {
 	var $parent;
 	var $term;
@@ -121,8 +73,8 @@ class DbTestPreviewer extends TestRecorder  {
 	function start() {
 		parent::start();
 
-		if ( ! $this->db->tableExists( 'testrun' )
-			or ! $this->db->tableExists( 'testitem' ) )
+		if ( ! $this->db->tableExists( 'testrun', __METHOD__ )
+			|| ! $this->db->tableExists( 'testitem', __METHOD__ ) )
 		{
 			print "WARNING> `testrun` table not found in database.\n";
 			$this->prevRun = false;
@@ -305,7 +257,7 @@ class DbTestRecorder extends DbTestPreviewer  {
 		$this->db->begin();
 
 		if ( ! $this->db->tableExists( 'testrun' )
-			or ! $this->db->tableExists( 'testitem' ) )
+			|| ! $this->db->tableExists( 'testitem' ) )
 		{
 			print "WARNING> `testrun` table not found in database. Trying to create table.\n";
 			$this->db->sourceFile( $this->db->patchPath( 'patch-testrun.sql' ) );
@@ -355,12 +307,12 @@ class TestFileIterator implements Iterator {
 	private $parserTest; /* An instance of ParserTest (parserTests.php) or MediaWikiParserTest (phpunit) */
 	private $index = 0;
 	private $test;
+	private $section = null; /** String|null: current test section being analyzed */
+	private $sectionData = array();
 	private $lineNum;
 	private $eof;
 
 	function __construct( $file, $parserTest ) {
-		global $IP;
-
 		$this->file = $file;
 		$this->fh = fopen( $this->file, "rt" );
 
@@ -369,7 +321,6 @@ class TestFileIterator implements Iterator {
 		}
 
 		$this->parserTest = $parserTest;
-		$this->parserTest->showRunFile( wfRelativePath( $this->file, $IP ) );
 
 		$this->lineNum = $this->index = 0;
 	}
@@ -409,128 +360,223 @@ class TestFileIterator implements Iterator {
 	}
 
 	function readNextTest() {
-		$data = array();
-		$section = null;
+		$this->clearSection();
+
+		# Create a fake parser tests which never run anything unless
+		# asked to do so. This will avoid running hooks for a disabled test
+		$delayedParserTest = new DelayedParserTest();
 
 		while ( false !== ( $line = fgets( $this->fh ) ) ) {
 			$this->lineNum++;
 			$matches = array();
 
 			if ( preg_match( '/^!!\s*(\w+)/', $line, $matches ) ) {
-				$section = strtolower( $matches[1] );
+				$this->section = strtolower( $matches[1] );
 
-				if ( $section == 'endarticle' ) {
-					if ( !isset( $data['text'] ) ) {
-						throw new MWException( "'endarticle' without 'text' at line {$this->lineNum} of $this->file\n" );
-					}
+				if ( $this->section == 'endarticle' ) {
+					$this->checkSection( 'text'    );
+					$this->checkSection( 'article' );
 
-					if ( !isset( $data['article'] ) ) {
-						throw new MWException( "'endarticle' without 'article' at line {$this->lineNum} of $this->file\n" );
-					}
+					$this->parserTest->addArticle( ParserTest::chomp( $this->sectionData['article'] ), $this->sectionData['text'], $this->lineNum );
 
-					$this->parserTest->addArticle( ParserTest::chomp( $data['article'] ), $data['text'], $this->lineNum );
-
-					$data = array();
-					$section = null;
+					$this->clearSection();
 
 					continue;
 				}
 
-				if ( $section == 'endhooks' ) {
-					if ( !isset( $data['hooks'] ) ) {
-						throw new MWException( "'endhooks' without 'hooks' at line {$this->lineNum} of $this->file\n" );
-					}
+				if ( $this->section == 'endhooks' ) {
+					$this->checkSection( 'hooks' );
 
-					foreach ( explode( "\n", $data['hooks'] ) as $line ) {
+					foreach ( explode( "\n", $this->sectionData['hooks'] ) as $line ) {
 						$line = trim( $line );
 
 						if ( $line ) {
-							if ( !$this->parserTest->requireHook( $line ) ) {
-								return false;
-							}
+							$delayedParserTest->requireHook( $line );
 						}
 					}
 
-					$data = array();
-					$section = null;
+					$this->clearSection();
 
 					continue;
 				}
 
-				if ( $section == 'endfunctionhooks' ) {
-					if ( !isset( $data['functionhooks'] ) ) {
-						throw new MWException( "'endfunctionhooks' without 'functionhooks' at line {$this->lineNum} of $this->file\n" );
-					}
+				if ( $this->section == 'endfunctionhooks' ) {
+					$this->checkSection( 'functionhooks' );
 
-					foreach ( explode( "\n", $data['functionhooks'] ) as $line ) {
+					foreach ( explode( "\n", $this->sectionData['functionhooks'] ) as $line ) {
 						$line = trim( $line );
 
 						if ( $line ) {
-							if ( !$this->parserTest->requireFunctionHook( $line ) ) {
-								return false;
-							}
+							$delayedParserTest->requireFunctionHook( $line );
 						}
 					}
 
-					$data = array();
-					$section = null;
+					$this->clearSection();
 
 					continue;
 				}
 
-				if ( $section == 'end' ) {
-					if ( !isset( $data['test'] ) ) {
-						throw new MWException( "'end' without 'test' at line {$this->lineNum} of $this->file\n" );
+				if ( $this->section == 'end' ) {
+					$this->checkSection( 'test'   );
+					$this->checkSection( 'input'  );
+					$this->checkSection( 'result' );
+
+					if ( !isset( $this->sectionData['options'] ) ) {
+						$this->sectionData['options'] = '';
 					}
 
-					if ( !isset( $data['input'] ) ) {
-						throw new MWException( "'end' without 'input' at line {$this->lineNum} of $this->file\n" );
+					if ( !isset( $this->sectionData['config'] ) ) {
+						$this->sectionData['config'] = '';
 					}
 
-					if ( !isset( $data['result'] ) ) {
-						throw new MWException( "'end' without 'result' at line {$this->lineNum} of $this->file\n" );
-					}
-
-					if ( !isset( $data['options'] ) ) {
-						$data['options'] = '';
-					}
-
-					if ( !isset( $data['config'] ) )
-						$data['config'] = '';
-
-					if ( ( ( preg_match( '/\\bdisabled\\b/i', $data['options'] ) && !$this->parserTest->runDisabled )
-							 || !preg_match( "/" . $this->parserTest->regex . "/i", $data['test'] ) )  ) {
+					if ( ( ( preg_match( '/\\bdisabled\\b/i', $this->sectionData['options'] ) && !$this->parserTest->runDisabled )
+							 || !preg_match( "/" . $this->parserTest->regex . "/i", $this->sectionData['test'] ) )  ) {
 						# disabled test
-						$data = array();
-						$section = null;
+						$this->clearSection();
+
+						# Forget any pending hooks call since test is disabled
+						$delayedParserTest->reset();
 
 						continue;
 					}
 
+					# We are really going to run the test, run pending hooks and hooks function
+					wfDebug( __METHOD__ . " unleashing delayed test for: {$this->sectionData['test']}" );
+					$hooksResult = $delayedParserTest->unleash( $this->parserTest );
+					if( !$hooksResult ) {
+						# Some hook reported an issue. Abort.
+						return false;
+					}
+
 					$this->test = array(
-						'test' => ParserTest::chomp( $data['test'] ),
-						'input' => ParserTest::chomp( $data['input'] ),
-						'result' => ParserTest::chomp( $data['result'] ),
-						'options' => ParserTest::chomp( $data['options'] ),
-						'config' => ParserTest::chomp( $data['config'] ) );
+						'test'    => ParserTest::chomp( $this->sectionData['test']    ),
+						'input'   => ParserTest::chomp( $this->sectionData['input']   ),
+						'result'  => ParserTest::chomp( $this->sectionData['result']  ),
+						'options' => ParserTest::chomp( $this->sectionData['options'] ),
+						'config'  => ParserTest::chomp( $this->sectionData['config']  ),
+					);
 
 					return true;
 				}
 
-				if ( isset ( $data[$section] ) ) {
+				if ( isset ( $this->sectionData[$this->section] ) ) {
 					throw new MWException( "duplicate section '$section' at line {$this->lineNum} of $this->file\n" );
 				}
 
-				$data[$section] = '';
+				$this->sectionData[$this->section] = '';
 
 				continue;
 			}
 
-			if ( $section ) {
-				$data[$section] .= $line;
+			if ( $this->section ) {
+				$this->sectionData[$this->section] .= $line;
 			}
 		}
 
 		return false;
 	}
+
+
+	/**
+	 * Clear section name and its data
+	 */
+	private function clearSection() {
+		$this->sectionData = array();
+		$this->section = null;
+		
+	}
+
+	/**
+	 * Verify the current section data has some value for the given token
+	 * name (first parameter).
+	 * Throw an exception if it is not set, referencing current section
+	 * and adding the current file name and line number
+	 *
+	 * @param $token String: expected token that should have been mentionned before closing this section 
+	 */
+	private function checkSection( $token ) {
+		if( is_null( $this->section ) ) {
+			throw new MWException( __METHOD__ . " can not verify a null section!\n" );
+		}
+
+		if( !isset($this->sectionData[$token]) ) {
+			throw new MWException( sprintf(
+				"'%s' without '%s' at line %s of %s\n",
+				$this->section,
+				$token,
+				$this->lineNum,
+				$this->file
+			));
+		}
+		return true;
+	}
+}
+
+/**
+ * A class to delay execution of a parser test hooks.
+ */
+class DelayedParserTest {
+
+	/** Initialized on construction */
+	private $hooks;
+	private $fnHooks;
+
+	public function __construct() {
+		$this->reset();
+	}
+
+	/**
+	 * Init/reset or forgot about the current delayed test.
+	 * Call to this will erase any hooks function that were pending.
+	 */
+	public function reset() {
+		$this->hooks   = array();
+		$this->fnHooks = array();
+	}
+
+	/**
+	 * Called whenever we actually want to run the hook.
+	 * Should be the case if we found the parserTest is not disabled 
+	 */
+	public function unleash( &$parserTest ) {
+		if( !($parserTest instanceof ParserTest || $parserTest instanceof NewParserTest
+		) ) {
+			throw new MWException( __METHOD__ . " must be passed an instance of ParserTest or NewParserTest classes\n" );
+		}
+
+		# Trigger delayed hooks. Any failure will make us abort
+		foreach( $this->hooks as $hook ) {
+			$ret = $parserTest->requireHook( $hook );
+			if( !$ret ) {
+				return false;
+			}
+		}
+
+		# Trigger delayed function hooks. Any failure will make us abort
+		foreach( $this->fnHooks as $fnHook ) {
+			$ret = $parserTest->requireFunctionHook( $fnHook );
+			if( !$ret ) {
+				return false;
+			}
+		}
+
+		# Delayed execution was successful.
+		return true;
+	}
+
+	/**
+	 * Similar to ParserTest object but does not run anything
+	 * Use unleash() to really execute the hook
+	 */
+	public function requireHook( $hook ) {
+		$this->hooks[] = $hook;
+	}
+	/**
+	 * Similar to ParserTest object but does not run anything
+	 * Use unleash() to really execute the hook function
+	 */
+	public function requireFunctionHook( $fnHook ) {
+		$this->fnHooks[] = $fnHook;
+	}
+
 }

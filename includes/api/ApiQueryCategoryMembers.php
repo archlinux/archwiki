@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiQueryBase.php" );
-}
-
 /**
  * A query module to enumerate pages that belong to a category.
  *
@@ -153,7 +148,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				$endsortkey = $params['endsortkeyprefix'] !== null ?
 					Collation::singleton()->getSortkey( $params['endsortkeyprefix'] ) :
 					$params['endsortkey'];
-				
+
 				// The below produces ORDER BY cl_sortkey, cl_from, possibly with DESC added to each of them
 				$this->addWhereRange( 'cl_sortkey',
 					$dir,
@@ -392,12 +387,10 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 		);
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Get first 10 pages in [[Category:Physics]]:',
-			'  api.php?action=query&list=categorymembers&cmtitle=Category:Physics',
-			'Get page info about first 10 pages in [[Category:Physics]]:',
-			'  api.php?action=query&generator=categorymembers&gcmtitle=Category:Physics&prop=info',
+			'api.php?action=query&list=categorymembers&cmtitle=Category:Physics' => 'Get first 10 pages in [[Category:Physics]]',
+			'api.php?action=query&generator=categorymembers&gcmtitle=Category:Physics&prop=info' => 'Get page info about first 10 pages in [[Category:Physics]]',
 		);
 	}
 

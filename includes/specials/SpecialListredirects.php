@@ -43,6 +43,7 @@ class ListredirectsPage extends QueryPage {
 			'tables' => array( 'p1' => 'page', 'redirect', 'p2' => 'page' ),
 			'fields' => array( 'p1.page_namespace AS namespace',
 					'p1.page_title AS title',
+					'p1.page_title AS value',
 					'rd_namespace',
 					'rd_title',
 					'rd_fragment',
@@ -90,7 +91,7 @@ class ListredirectsPage extends QueryPage {
 			);
 		} else {
 			$title = Title::makeTitle( $row->namespace, $row->title );
-			$article = new Article( $title );
+			$article = WikiPage::factory( $title );
 			return $article->getRedirectTarget();
 		}
 	}
@@ -98,7 +99,7 @@ class ListredirectsPage extends QueryPage {
 	function formatResult( $skin, $result ) {
 		# Make a link to the redirect itself
 		$rd_title = Title::makeTitle( $result->namespace, $result->title );
-		$rd_link = $skin->link(
+		$rd_link = Linker::link(
 			$rd_title,
 			null,
 			array(),
@@ -108,10 +109,10 @@ class ListredirectsPage extends QueryPage {
 		# Find out where the redirect leads
 		$target = $this->getRedirectTarget( $result );
 		if( $target ) {
-			global $wgLang;
 			# Make a link to the destination page
-			$arr = $wgLang->getArrow() . $wgLang->getDirMark();
-			$targetLink = $skin->link( $target );
+			$lang = $this->getLanguage();
+			$arr = $lang->getArrow() . $lang->getDirMark();
+			$targetLink = Linker::link( $target );
 			return "$rd_link $arr $targetLink";
 		} else {
 			return "<del>$rd_link</del>";

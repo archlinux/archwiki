@@ -325,10 +325,11 @@ Cur coontey jeh da [[Special:ListUsers/sysop|reireyder]], as goaill stiagh yn UR
 'filenotfound'        => 'Cha dooar shin y coadan "$1".',
 'fileexistserror'     => 'Cha dod shin screeu da\'n choadan "$1": t\'eh ayn hannah',
 'badarticleerror'     => 'Cha nod oo jannoo yn obbyr shen er y duillag shoh.',
+'cannotdelete-title'  => 'Gyn jargaght y duillag "$1" y scryssey',
 'badtitle'            => 'Drogh-ennym',
 'badtitletext'        => "Va marranys ayn bentyn rish ennym ny duillag v'ou shirrey. Foddee dy row eh follym ny gyn vree, ny kianglt dy moal myr kiangley eddyr-wiki. Foddee dy vel cowraghyn 'syn ennym nagh nod oo jannoo ymmyd jeu ayns enmyn.",
 'viewsource'          => 'Jeeagh er bun',
-'viewsourcefor'       => 'dy $1',
+'viewsource-title'    => 'Jeeagh er bun $1',
 'actionthrottled'     => 'Obbyr er ny phlooghey',
 'actionthrottledtext' => "Myr saase noi-spam, cha nod oo jannoo yn obbyr shoh rouyr keayrtyn ayns tammylt beg, as t'ou er roshtyn yn earroo smoo.  Jean eab noa dy gerrid, my saillt.",
 'protectedpagetext'   => "Ta'n duillag shoh fo ghlass, as cha nod oo eshyn y reaghey.",
@@ -406,11 +407,16 @@ Myr eiyrtys, cha nod keayrtee lesh yn enmys IP shoh ny smoo coontyssyn noa y chr
 'resetpass-submit-loggedin' => 'Caghlaa fockle yn arrey',
 
 # Special:PasswordReset
-'passwordreset-username'     => "Dt'ennym ymmydeyr:",
-'passwordreset-email'        => 'Enmys post-L:',
-'passwordreset-emailelement' => 'Ennym ymmydeyr: $1
+'passwordreset-username'           => "Dt'ennym ymmydeyr:",
+'passwordreset-email'              => 'Enmys post-L:',
+'passwordreset-emailelement'       => 'Ennym ymmydeyr: $1
 Fockle arrey shallidagh: $2',
-'passwordreset-emailsent'    => 'Ta post-l cur gys cooinaghtyn er ny chur dhyt.',
+'passwordreset-emailsent'          => 'Ta post-l cur gys cooinaghtyn er ny chur dhyt.',
+'passwordreset-emailsent-capture'  => 'Ta post-l cur gys cooinaghtyn er ny chur dhyt, as eshyn heese.',
+'passwordreset-emailerror-capture' => 'Ta post-l cur gys cooinaghtyn er ny chur dhyt, as eshyn heese, agh cha rosh eh yn ymmydeyr: $1',
+
+# Special:ChangeEmail
+'changeemail-none' => '(gyn)',
 
 # Edit page toolbar
 'bold_sample'     => 'Clou trome',
@@ -541,9 +547,6 @@ Ogher: '''({{int:cur}})''' = anchaslyssyn rish y lhieggan t'ayn nish,
 'revdel-restore'       => 'ceaghley leayrid',
 'pagehist'             => 'Shennaghys y duillag',
 'deletedhist'          => 'Shennaghys scryssit',
-'revdelete-content'    => 'cummal',
-'revdelete-summary'    => 'giare-choontey yn reaghey',
-'revdelete-uname'      => 'ennym yn ymmydeyr',
 
 # History merging
 'mergehistory'             => 'Shennaghys ny duillagyn y chochiangley',
@@ -914,7 +917,7 @@ Ta duillagyn er [[Special:Watchlist|dty rolley arrey]] ayns '''clou trome'''.",
 'protectedpages-cascade'  => 'Cha nel agh coadey eiraghtagh',
 'protectedtitles'         => 'Enmyn coadit',
 'listusers'               => 'Rolley ymmydeyryn',
-'usercreated'             => 'Crooit er $1 ec $2',
+'usercreated'             => 'Crooit liorish {{GENDER:$3|}} er $1 ec $2',
 'newpages'                => 'Duillagyn noa',
 'newpages-username'       => 'Ennym ymmydeyr:',
 'ancientpages'            => 'Duillagyn by hinney',
@@ -960,8 +963,7 @@ Ta duillagyn er [[Special:Watchlist|dty rolley arrey]] ayns '''clou trome'''.",
 'listusers-submit' => 'Taishbyn',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Lioar chooishyn ny h-ymmydeyryn noa',
-'newuserlog-create-entry' => 'Ymmydeyr noa',
+'newuserlogpage' => 'Lioar chooishyn ny h-ymmydeyryn noa',
 
 # Special:ListGroupRights
 'listgrouprights-group'    => 'Possan',
@@ -1052,7 +1054,6 @@ Feeraghey dy vel eh y çhalee ayd eh y yannoo, dy vel ny scanshyn toiggit ayd, a
 'actioncomplete'        => 'Obbraghey creaghnit',
 'deletedtext'           => 'Ta "$1" scrysst.<br />
 Jeeagh er $2 son recortys ny scryssaghyn magh jeianagh.',
-'deletedarticle'        => '"[[$1]]" scryssit',
 'dellogpage'            => 'Lioar scryssaghyn magh',
 'deletecomment'         => 'Fa:',
 'deleteotherreason'     => 'Fa elley/tooilley:',
@@ -1109,7 +1110,6 @@ Shoh ny reaghaghyn roie da'n duillag '''$1''':",
 'undeletelink'           => 'jeeagh/cur er ash',
 'undeletereset'          => 'Aahoiaghey',
 'undeletecomment'        => 'Fa:',
-'undeletedarticle'       => '"[[$1]]" aahoiaghit',
 'undelete-search-box'    => 'Ronsee ny duillagyn scrysst',
 'undelete-search-submit' => 'Ronsee',
 
@@ -1224,8 +1224,6 @@ Reih ennym elley, my sailliu.',
 Jean covestey eddyr oc er laueyn, my sailliu.'''",
 'movedto'                 => 'aa-enmyssit myr',
 'movetalk'                => 'Scugh yn duillag resoonaght eck',
-'1movedto2'               => '[[$1]] aa-enmyssit myr [[$2]]',
-'1movedto2_redir'         => 'va [[$1]] scughit dys [[$2]] harrish aaenmys',
 'movelogpage'             => 'Lioar chooishyn y scughey',
 'movereason'              => 'Fa:',
 'revertmove'              => 'goll er ash',
@@ -1320,10 +1318,6 @@ T'eh lhiggey da oyr y chur 'sy ghiare-choontey.",
 'others'    => 'sleih elley',
 'siteusers' => '{{PLURAL:$2|Ymmydeyr|Ymmydeyryn}} ec {{SITENAME}} $1',
 
-# Patrol log
-'patrol-log-auto' => '(seyr-obbragh)',
-'patrol-log-diff' => 'caghlaa $1',
-
 # Browsing diffs
 'previousdiff' => '← Y caghlaa ny shinney',
 'nextdiff'     => 'Y caghlaa ny snoa →',
@@ -1331,7 +1325,7 @@ T'eh lhiggey da oyr y chur 'sy ghiare-choontey.",
 # Media information
 'widthheightpage' => '$1 × $2, $3 {{PLURAL:$3|duillag|duillagyn}}',
 'file-info-size'  => '$1 × {{PLURAL:$2|$2 pixel|$2 phixel|$2 phixel|$2 pixelyn}}, mooadys y choadan: $3, sorçh MIME: $4',
-'file-nohires'    => '<small>Cha nel jeeskeaylley ny smoo ry-gheddyn.</small>',
+'file-nohires'    => 'Cha nel jeeskeaylley ny smoo ry-gheddyn.',
 'svg-long-desc'   => 'coadan SVG, $1 × {{PLURAL:$2|$2 pixel|$2 phixel|$2 phixel|$2 pixelyn}} dy ennymagh, mooadys y choadan: $3',
 'show-big-image'  => 'Jeeskeaylley ymlane',
 

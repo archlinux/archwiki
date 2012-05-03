@@ -18,6 +18,10 @@ class ImagePage extends Article {
 
 	var $mExtraDescription = false;
 
+	/**
+	 * @param $title Title
+	 * @return WikiFilePage
+	 */
 	protected function newPage( Title $title ) {
 		// Overload mPage with a file-specific page
 		return new WikiFilePage( $title );
@@ -99,12 +103,10 @@ class ImagePage extends Article {
 				$wgOut->setPageTitle( $this->getTitle()->getPrefixedText() );
 				$wgOut->addHTML( $this->viewRedirect( Title::makeTitle( NS_FILE, $this->mPage->getFile()->getName() ),
 					/* $appendSubtitle */ true, /* $forceKnown */ true ) );
-				$this->mPage->viewUpdates();
+				$this->mPage->doViewUpdates( $this->getContext()->getUser() );
 				return;
 			}
 		}
-
-		$this->showRedirectedFromHeader();
 
 		if ( $wgShowEXIF && $this->displayImg->exists() ) {
 			// @todo FIXME: Bad interface, see note on MediaHandler::formatMetadata().
@@ -136,7 +138,7 @@ class ImagePage extends Article {
 			# Just need to set the right headers
 			$wgOut->setArticleFlag( true );
 			$wgOut->setPageTitle( $this->getTitle()->getPrefixedText() );
-			$this->mPage->viewUpdates();
+			$this->mPage->doViewUpdates( $this->getContext()->getUser() );
 		}
 
 		# Show shared description, if needed
@@ -184,6 +186,9 @@ class ImagePage extends Article {
 		$wgOut->addModuleStyles( 'filepage' );
 	}
 
+	/**
+	 * @return File
+	 */
 	public function getDisplayedFile() {
 		$this->loadFile();
 		return $this->displayImg;
@@ -243,6 +248,7 @@ class ImagePage extends Article {
 	 *
 	 * Omit noarticletext if sharedupload; text will be fetched from the
 	 * shared upload server if possible.
+	 * @return string
 	 */
 	public function getContent() {
 		$this->loadFile();
@@ -254,7 +260,7 @@ class ImagePage extends Article {
 
 	protected function openShowImage() {
 		global $wgOut, $wgUser, $wgImageLimits, $wgRequest,
-			$wgLang, $wgEnableUploads;
+			$wgLang, $wgEnableUploads, $wgSend404Code;
 
 		$this->loadFile();
 
@@ -322,12 +328,21 @@ class ImagePage extends Article {
 					}
 					$msgsmall = wfMessage( 'show-big-image-preview' )->
 						rawParams( $this->makeSizeLink( $params, $width, $height ) )->
-						parse() . ' ' .
-						wfMessage( 'show-big-image-other' )->
-						rawParams( $wgLang->pipeList( $otherSizes ) )->parse();
+						parse();
+					if ( count( $otherSizes ) && $this->displayImg->getRepo()->canTransformVia404() ) {
+						$msgsmall .= ' ' .
+						Html::rawElement( 'span', array( 'class' => 'mw-filepage-other-resolutions' ),
+							wfMessage( 'show-big-image-other' )->rawParams( $wgLang->pipeList( $otherSizes ) )->
+							params( count( $otherSizes ) )->parse()
+						);
+					}
+				} elseif ( $width == 0 && $height == 0 ){
+					# Some sort of audio file that doesn't have dimensions
+					# Don't output a no hi res message for such a file
+					$msgsmall = '';
 				} else {
 					# Image is small enough to show full size on image page
-					$msgsmall = wfMsgExt( 'file-nohires', array( 'parseinline' ) );
+					$msgsmall = wfMessage( 'file-nohires' )->parse();
 				}
 
 				$params['width'] = $width;
@@ -335,7 +350,7 @@ class ImagePage extends Article {
 				$thumbnail = $this->displayImg->transform( $params );
 
 				$showLink = true;
-				$anchorclose = '<br />' . $msgsmall;
+				$anchorclose = Html::rawElement( 'div', array( 'class' => 'mw-filepage-resolutioninfo' ), $msgsmall );
 
 				$isMulti = $this->displayImg->isMultipage() && $this->displayImg->pageCount() > 1;
 				if ( $isMulti ) {
@@ -392,7 +407,7 @@ class ImagePage extends Article {
 						'action' => $wgScript,
 						'onchange' => 'document.pageselector.submit();',
 					);
-
+					$options = array();
 					for ( $i = 1; $i <= $count; $i++ ) {
 						$options[] = Xml::option( $wgLang->formatNum( $i ), $i, $i == $page );
 					}
@@ -407,7 +422,7 @@ class ImagePage extends Article {
 						wfMsgExt( 'imgmultigoto', array( 'parseinline', 'replaceafter' ), $select ) .
 						Xml::submitButton( wfMsg( 'imgmultigo' ) ) .
 						Xml::closeElement( 'form' ) .
-						"<hr />$thumb1\n$thumb2<br clear=\"all\" /></div></td></tr></table>"
+						"<hr />$thumb1\n$thumb2<br style=\"clear: both\" /></div></td></tr></table>"
 					);
 				}
 			} else {
@@ -467,7 +482,7 @@ EOT
 			// by Article::View().
 			$wgOut->setRobotPolicy( 'noindex,nofollow' );
 			$wgOut->wrapWikiMsg( "<div id='mw-imagepage-nofile' class='plainlinks'>\n$1\n</div>", $nofile );
-			if ( !$this->getID() ) {
+			if ( !$this->getID() && $wgSend404Code ) {
 				// If there is no image, no shared image, and no description page,
 				// output a 404, to be consistent with articles.
 				$wgRequest->response()->header( 'HTTP/1.1 404 Not Found' );
@@ -478,9 +493,10 @@ EOT
 
 	/**
 	 * Creates an thumbnail of specified size and returns an HTML link to it
-	 * @param array $params Scaler parameters
-	 * @param int $width
-	 * @param int $height
+	 * @param $params array Scaler parameters
+	 * @param $width int
+	 * @param $height int
+	 * @return string
 	 */
 	private function makeSizeLink( $params, $width, $height ) {
 		$params['width'] = $width;
@@ -609,6 +625,11 @@ EOT
 		}
 	}
 
+	/**
+	 * @param $target
+	 * @param $limit
+	 * @return ResultWrapper
+	 */
 	protected function queryImageLinks( $target, $limit ) {
 		$dbr = wfGetDB( DB_SLAVE );
 
@@ -741,6 +762,9 @@ EOT
 		);
 		$wgOut->addHTML( "<ul class='mw-imagepage-duplicates'>\n" );
 
+		/**
+		 * @var $file File
+		 */
 		foreach ( $dupes as $file ) {
 			$fromSrc = '';
 			if ( $file->isLocal() ) {
@@ -765,29 +789,25 @@ EOT
 	 * Delete the file, or an earlier version of it
 	 */
 	public function delete() {
-		global $wgUploadMaintenance;
-		if ( $wgUploadMaintenance && $this->getTitle() && $this->getTitle()->getNamespace() == NS_FILE ) {
-			global $wgOut;
-			$wgOut->wrapWikiMsg( "<div class='error'>\n$1\n</div>\n", array( 'filedelete-maintenance' ) );
-			return;
-		}
-
-		$this->loadFile();
-		if ( !$this->mPage->getFile()->exists() || !$this->mPage->getFile()->isLocal() || $this->mPage->getFile()->getRedirected() ) {
+		$file = $this->mPage->getFile();
+		if ( !$file->exists() || !$file->isLocal() || $file->getRedirected() ) {
 			// Standard article deletion
 			parent::delete();
 			return;
 		}
-		$deleter = new FileDeleteForm( $this->mPage->getFile() );
+
+		$deleter = new FileDeleteForm( $file );
 		$deleter->execute();
 	}
 
 	/**
 	 * Display an error with a wikitext description
+	 *
+	 * @param $description String
 	 */
 	function showError( $description ) {
 		global $wgOut;
-		$wgOut->setPageTitle( wfMsg( 'internalerror' ) );
+		$wgOut->setPageTitle( wfMessage( 'internalerror' ) );
 		$wgOut->setRobotPolicy( 'noindex,nofollow' );
 		$wgOut->setArticleRelated( false );
 		$wgOut->enableClientCache( false );
@@ -833,6 +853,11 @@ class ImageHistoryList {
 	 */
 	protected $imagePage;
 
+	/**
+	 * @var File
+	 */
+	protected $current;
+
 	protected $repo, $showThumb;
 	protected $preventClickjacking = false;
 
@@ -848,14 +873,24 @@ class ImageHistoryList {
 		$this->showThumb = $wgShowArchiveThumbnails && $this->img->canRender();
 	}
 
+	/**
+	 * @return ImagePage
+	 */
 	public function getImagePage() {
 		return $this->imagePage;
 	}
 
+	/**
+	 * @return File
+	 */
 	public function getFile() {
 		return $this->img;
 	}
 
+	/**
+	 * @param $navLinks string
+	 * @return string
+	 */
 	public function beginImageHistoryList( $navLinks = '' ) {
 		global $wgOut, $wgUser;
 		return Xml::element( 'h2', array( 'id' => 'filehistory' ), wfMsg( 'filehist' ) ) . "\n"
@@ -873,6 +908,10 @@ class ImageHistoryList {
 			. "</tr>\n";
 	}
 
+	/**
+	 * @param $navLinks string
+	 * @return string
+	 */
 	public function endImageHistoryList( $navLinks = '' ) {
 		return "</table>\n$navLinks\n</div>\n";
 	}
@@ -948,7 +987,7 @@ class ImageHistoryList {
 					array(
 						'action' => 'revert',
 						'oldimage' => $img,
-						'wpEditToken' => $wgUser->editToken( $img )
+						'wpEditToken' => $wgUser->getEditToken( $img )
 					),
 					array( 'known', 'noclasses' )
 				);
@@ -963,7 +1002,7 @@ class ImageHistoryList {
 		$row .= "<td $selected style='white-space: nowrap;'>";
 		if ( !$file->userCan( File::DELETED_FILE ) ) {
 			# Don't link to unviewable files
-			$row .= '<span class="history-deleted">' . $wgLang->timeAndDate( $timestamp, true ) . '</span>';
+			$row .= '<span class="history-deleted">' . $wgLang->timeanddate( $timestamp, true ) . '</span>';
 		} elseif ( $file->isDeleted( File::DELETED_FILE ) ) {
 			if ( $local ) {
 				$this->preventClickjacking();
@@ -971,22 +1010,22 @@ class ImageHistoryList {
 				# Make a link to review the image
 				$url = Linker::link(
 					$revdel,
-					$wgLang->timeAndDate( $timestamp, true ),
+					$wgLang->timeanddate( $timestamp, true ),
 					array(),
 					array(
 						'target' => $this->title->getPrefixedText(),
 						'file' => $img,
-						'token' => $wgUser->editToken( $img )
+						'token' => $wgUser->getEditToken( $img )
 					),
 					array( 'known', 'noclasses' )
 				);
 			} else {
-				$url = $wgLang->timeAndDate( $timestamp, true );
+				$url = $wgLang->timeanddate( $timestamp, true );
 			}
 			$row .= '<span class="history-deleted">' . $url . '</span>';
 		} else {
 			$url = $iscur ? $this->current->getUrl() : $this->current->getArchiveUrl( $img );
-			$row .= Xml::element( 'a', array( 'href' => $url ), $wgLang->timeAndDate( $timestamp, true ) );
+			$row .= Xml::element( 'a', array( 'href' => $url ), $wgLang->timeanddate( $timestamp, true ) );
 		}
 		$row .= "</td>";
 
@@ -1020,7 +1059,7 @@ class ImageHistoryList {
 		if ( $file->isDeleted( File::DELETED_COMMENT ) ) {
 			$row .= '<td><span class="history-deleted">' . wfMsgHtml( 'rev-deleted-comment' ) . '</span></td>';
 		} else {
-			$row .= '<td dir="' . $wgContLang->getDir() . '">' . Linker::commentBlock( $description, $this->title ) . '</td>';
+			$row .= '<td dir="' . $wgContLang->getDir() . '">' . Linker::formatComment( $description, $this->title ) . '</td>';
 		}
 
 		$rowClass = null;
@@ -1047,7 +1086,7 @@ class ImageHistoryList {
 			$thumbnail = $file->transform( $params );
 			$options = array(
 				'alt' => wfMsg( 'filehist-thumbtext',
-					$wgLang->timeAndDate( $timestamp, true ),
+					$wgLang->timeanddate( $timestamp, true ),
 					$wgLang->date( $timestamp, true ),
 					$wgLang->time( $timestamp, true ) ),
 				'file-link' => true,
@@ -1063,10 +1102,16 @@ class ImageHistoryList {
 		}
 	}
 
+	/**
+	 * @param $enable bool
+	 */
 	protected function preventClickjacking( $enable = true ) {
 		$this->preventClickjacking = $enable;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function getPreventClickjacking() {
 		return $this->preventClickjacking;
 	}
@@ -1098,6 +1143,9 @@ class ImageHistoryPseudoPager extends ReverseChronologicalPager {
 		$this->mRange = array( 0, 0 ); // display range
 	}
 
+	/**
+	 * @return Title
+	 */
 	function getTitle() {
 		return $this->mTitle;
 	}
@@ -1106,14 +1154,23 @@ class ImageHistoryPseudoPager extends ReverseChronologicalPager {
 		return false;
 	}
 
+	/**
+	 * @return string
+	 */
 	function getIndexField() {
 		return '';
 	}
 
+	/**
+	 * @return string
+	 */
 	function formatRow( $row ) {
 		return '';
 	}
 
+	/**
+	 * @return string
+	 */
 	function getBody() {
 		$s = '';
 		$this->doQuery();
@@ -1217,10 +1274,16 @@ class ImageHistoryPseudoPager extends ReverseChronologicalPager {
 		$this->mQueryDone = true;
 	}
 
+	/**
+	 * @param $enable bool
+	 */
 	protected function preventClickjacking( $enable = true ) {
 		$this->preventClickjacking = $enable;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function getPreventClickjacking() {
 		return $this->preventClickjacking;
 	}

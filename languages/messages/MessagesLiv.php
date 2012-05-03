@@ -298,13 +298,9 @@ Legend: '''({{int:cur}})''' = vaiţīd līdzinţõmizõks lǟndz redaktsijõks,,
 
 # Revision deletion
 'rev-delundel'           => 'nägţ/vaŗ jarā',
-'revdelete-logentry'     => 'mõitiņtīz līed [[$1]] redaktsij nǟdõbõzt',
 'revdel-restore'         => 'Mõitiņt nǟdõbõzt',
 'revdel-restore-deleted' => 'jarā kištāntõd redaktsijõd',
 'revdel-restore-visible' => 'nǟdõbõd redaktsijõd',
-'revdelete-content'      => 'sižāli',
-'revdelete-hid'          => '$1 jarā vaŗtõd',
-'revdelete-log-message'  => '{{PLURAL:$2| Īd|$2}} redaktsijõ $1',
 
 # Merge log
 'revertmerge' => 'Kīeld jarā kubbõ vieddimi',
@@ -463,7 +459,7 @@ Legend: '''({{int:cur}})''' = vaiţīd līdzinţõmizõks lǟndz redaktsijõks,,
 'nbytes'        => '$1 {{PLURAL:$1|bait|baitõ}}',
 'nmembers'      => '$1 {{PLURAL:$1|nõtkõm| nõtkõmḑi}}',
 'prefixindex'   => 'Amād pēļikērad prefiksõks',
-'usercreated'   => 'Konto lūomiz āiga: $1 kīela $2',
+'usercreated'   => 'Konto {{GENDER:$3|lūomiz}} āiga: $1 kīela $2',
 'newpages'      => 'Ūd lēḑõd',
 'move'          => 'Vīž',
 'movethispage'  => 'Viedāgid se līedpūol tuoiz nim alā',
@@ -495,8 +491,7 @@ Legend: '''({{int:cur}})''' = vaiţīd līdzinţõmizõks lǟndz redaktsijõks,,
 'linksearch-line' => '$1 um sidtõd līedst $2',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Kȭlbatijizt lūomiz log',
-'newuserlog-create-entry' => 'Ūž kȭlbatiji',
+'newuserlogpage' => 'Kȭlbatijizt lūomiz log',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(nõtkõmd nimkēra)',
@@ -527,7 +522,6 @@ Legend: '''({{int:cur}})''' = vaiţīd līdzinţõmizõks lǟndz redaktsijõks,,
 'actioncomplete'        => 'Ažā tīedõd',
 'actionfailed'          => 'Tīemi äb-vȯņštīz',
 'deletedtext'           => ' "$1" um jarā kištāntõd. Jarā kištāntõd lēḑõd āt tūodõd nimkēras $2.',
-'deletedarticle'        => 'jarā kištāntõd "[[$1]]"',
 'dellogpage'            => 'Jarā kištāntimiz log',
 'deletecomment'         => 'Sī:',
 'deleteotherreason'     => 'Mū agā jūrõ pandõb sī:',
@@ -561,7 +555,6 @@ Legend: '''({{int:cur}})''' = vaiţīd līdzinţõmizõks lǟndz redaktsijõks,,
 # Undelete
 'undeletelink'     => 'vaņ/lūo ūtstõ',
 'undeleteviewlink' => 'vaņ',
-'undeletedarticle' => 'tūoi tāgiž līed "[[$1]]"',
 
 # Namespace form on various pages
 'namespace'      => 'Nim-rūim:',
@@ -638,8 +631,6 @@ Až sugīz nei, sōd līed tōdõs kädūdõks jeddõpēḑõn sōtõ agā jūr�
 'talkexists'       => "'''Lēḑ um jeddõpēḑõn sōtõd, bet nõvpidāmiz-līedtõ äb sōnd jeddõpēḑõn sōtõ, sīestõ ku ūd nim allõ um nõvpidāmiz-lēḑ jubā vȯlmizõs. Pōlaks viedāgid nõvpidāmiz-lēḑõd īž kubbõ.'''",
 'movedto'          => 'Jeddõpēḑõn sōtõd pēļizkēra alā:',
 'movetalk'         => 'Sōtõgid jeddõpēḑõn ka nõvpidāmiz lēḑ',
-'1movedto2'        => 'vīž jarā līed [[$1]] nim [[$2]] jūrõ',
-'1movedto2_redir'  => ' vīž jarā līed [[$1]]  ja sōtiz sīe pēļizkēra [[$2]] alā',
 'movelogpage'      => 'Jarā vīmiz log',
 'movereason'       => 'Sī:',
 'revertmove'       => 'kīerõgid tāgiž',
@@ -711,17 +702,13 @@ Až sugīz nei, sōd līed tōdõs kädūdõks jeddõpēḑõn sōtõ agā jūr�
 'tooltip-undo'                    => '"Viedāgid jarā" tīeb tijāks/kīeldõbjarā sīe mõitõks ja ovātõb redigīerimiz läb tekstõ jedmõl-vaņtlimizõks. Neiīž tēg võigid sǟl kēratõ, mis vȯļ sīe jarā vīmiz sī.',
 'tooltip-summary'                 => 'Kēratigid lītõ kubbõ-võtāmi',
 
-# Patrol log
-'patrol-log-line' => 'paņ merk ku $1 līeds $2 kontroļļtõd $3',
-'patrol-log-diff' => 'versij $1',
-
 # Browsing diffs
 'previousdiff' => '← Jedmõli redaktsij',
 'nextdiff'     => 'Jo ūd redigīerimizt',
 
 # Media information
 'file-info-size' => ' $1 × $2 piksõlt, bildā sūrit: $3, MIME tīp: $4',
-'file-nohires'   => '<small>Sīestõ sūrimmõ bildõ äb ūo.</small>',
+'file-nohires'   => 'Sīestõ sūrimmõ bildõ äb ūo.',
 'svg-long-desc'  => 'SVG fail, origināli sūrit  $1 × $2 piksõlt, fail sūrit: $3',
 'show-big-image' => 'täuž rezolūtsij',
 

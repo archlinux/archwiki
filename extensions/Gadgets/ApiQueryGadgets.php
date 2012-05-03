@@ -76,6 +76,9 @@ class ApiQueryGadgets extends ApiQueryBase {
 		$data = array();
 		$result = $this->getResult();
 
+		/**
+		 * @var $g Gadget
+		 */
 		foreach ( $gadgets as $g ) {
 			$row = array();
 			if ( isset( $this->props['id'] ) ) {
@@ -217,6 +220,6 @@ class ApiQueryGadgets extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryGadgets.php 100509 2011-10-22 19:09:25Z liangent $';
+		return __CLASS__ . ': $Id$';
 	}
 }

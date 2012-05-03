@@ -238,7 +238,7 @@ fn: {
 	doAction : function( context, action, source ) {
 		// Verify that this has been called from a source that's within the toolbar
 		// 'trackAction' defined in click tracking
-		if ( $.trackAction !== undefined && source.closest( '.wikiEditor-ui-toolbar' ).size() ) {
+		if ( mw.config.get( 'wgWikiEditorToolbarClickTracking' ) && $.trackAction !== undefined && source.closest( '.wikiEditor-ui-toolbar' ).size() ) {
 			// Build a unique id for this action by tracking the parent rel attributes up to the toolbar level
 			var rels = [];
 			var step = source;
@@ -461,7 +461,7 @@ fn: {
 					{ expires: 30, path: '/' }
 				);
 				// Click tracking
-				if ( $.trackAction !== undefined){
+				if ( mw.config.get( 'wgWikiEditorToolbarClickTracking' ) && $.trackAction !== undefined ) {
 					$.trackAction(section + '.' + $(this).attr('rel'));
 				}
 				context.fn.restoreCursorAndScrollTop();
@@ -640,7 +640,7 @@ fn: {
 							} );
 					}
 					// Click tracking
-					if ( $.trackAction !== undefined ) {
+					if ( mw.config.get( 'wgWikiEditorToolbarClickTracking' ) && $.trackAction !== undefined ) {
 						$.trackAction( $section.attr('rel') + '.' + ( show ? 'show': 'hide' )  );
 					}
 					// Save the currently visible section

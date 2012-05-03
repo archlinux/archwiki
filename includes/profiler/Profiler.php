@@ -34,25 +34,27 @@ function wfProfileOut( $functionname = 'missing' ) {
  * @todo document
  */
 class Profiler {
-	var $mStack = array (), $mWorkStack = array (), $mCollated = array ();
-	var $mCalls = array (), $mTotals = array ();
-	var $mTemplated = false;
-	var $mTimeMetric = 'wall';
-	private $mCollateDone = false;
-	protected $mProfileID = false;
+	protected $mStack = array(), $mWorkStack = array (), $mCollated = array (),
+		$mCalls = array (), $mTotals = array ();
+	protected $mTimeMetric = 'wall';
+	protected $mProfileID = false, $mCollateDone = false, $mTemplated = false;
 	private static $__instance = null;
 
 	function __construct( $params ) {
-		// Push an entry for the pre-profile setup time onto the stack
-		global $wgRequestTime;
-		if ( !empty( $wgRequestTime ) ) {
-			$this->mWorkStack[] = array( '-total', 0, $wgRequestTime, 0 );
-			$this->mStack[] = array( '-setup', 1, $wgRequestTime, 0, microtime(true), 0 );
-		} else {
-			$this->profileIn( '-total' );
-		}
 		if ( isset( $params['timeMetric'] ) ) {
 			$this->mTimeMetric = $params['timeMetric'];
+		}
+		if ( isset( $params['profileID'] ) ) {
+			$this->mProfileID = $params['profileID'];
+		}
+
+		// Push an entry for the pre-profile setup time onto the stack
+		$initial = $this->getInitialTime();
+		if ( $initial !== null ) {
+			$this->mWorkStack[] = array( '-total', 0, $initial, 0 );
+			$this->mStack[] = array( '-setup', 1, $initial, 0, $this->getTime(), 0 );
+		} else {
+			$this->profileIn( '-total' );
 		}
 	}
 
@@ -64,11 +66,19 @@ class Profiler {
 		if( is_null( self::$__instance ) ) {
 			global $wgProfiler;
 			if( is_array( $wgProfiler ) ) {
-				$class = isset( $wgProfiler['class'] ) ? $wgProfiler['class'] : 'ProfilerStub';
+				if( !isset( $wgProfiler['class'] ) ) {
+					wfDebug( __METHOD__ . " called without \$wgProfiler['class']"
+						. " set, falling back to ProfilerStub for safety\n" );
+					$class = 'ProfilerStub';
+				} else {
+					$class = $wgProfiler['class'];
+				}
 				self::$__instance = new $class( $wgProfiler );
 			} elseif( $wgProfiler instanceof Profiler ) {
 				self::$__instance = $wgProfiler; // back-compat
 			} else {
+				wfDebug( __METHOD__ . ' called with bogus $wgProfiler setting,'
+						. " falling back to ProfilerStub for safety\n" );
 				self::$__instance = new ProfilerStub( $wgProfiler );
 			}
 		}
@@ -141,12 +151,12 @@ class Profiler {
 				if( $functionname == 'close' ){
 					$message = "Profile section ended by close(): {$bit[0]}";
 					$this->debug( "$message\n" );
-					$this->mStack[] = array( $message, 0, '0 0', 0, '0 0', 0 );
+					$this->mStack[] = array( $message, 0, 0.0, 0, 0.0, 0 );
 				}
 				elseif( $bit[0] != $functionname ){
 					$message = "Profiling error: in({$bit[0]}), out($functionname)";
 					$this->debug( "$message\n" );
-					$this->mStack[] = array( $message, 0, '0 0', 0, '0 0', 0 );
+					$this->mStack[] = array( $message, 0, 0.0, 0, 0.0, 0 );
 				}
 			//}
 			$bit[] = $time;
@@ -256,13 +266,31 @@ class Profiler {
 		if ( $this->mTimeMetric === 'user' ) {
 			return $this->getUserTime();
 		} else {
-			return microtime(true);
+			return microtime( true );
 		}
 	}
 
 	function getUserTime() {
 		$ru = getrusage();
-		return $ru['ru_utime.tv_sec'].' '.$ru['ru_utime.tv_usec'] / 1e6;
+		return $ru['ru_utime.tv_sec'] + $ru['ru_utime.tv_usec'] / 1e6;
+	}
+
+	private function getInitialTime() {
+		global $wgRequestTime, $wgRUstart;
+
+		if ( $this->mTimeMetric === 'user' ) {
+			if ( count( $wgRUstart ) ) {
+				return $wgRUstart['ru_utime.tv_sec'] + $wgRUstart['ru_utime.tv_usec'] / 1e6;
+			} else {
+				return null;
+			}
+		} else {
+			if ( empty( $wgRequestTime ) ) {
+				return null;
+			} else {
+				return $wgRequestTime;
+			}
+		}
 	}
 
 	protected function collateData() {
@@ -344,7 +372,8 @@ class Profiler {
 
 	/**
 	 * Returns a list of profiled functions.
-	 * Also log it into the database if $wgProfileToDatabase is set to true.
+	 *
+	 * @return string
 	 */
 	function getFunctionReport() {
 		$this->collateData();

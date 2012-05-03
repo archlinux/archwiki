@@ -45,6 +45,7 @@ $specialPageAliases = array(
 	'Allmessages'               => array( 'ToutMesaj' ),
 	'Allpages'                  => array( 'ToutPaj' ),
 	'Ancientpages'              => array( 'PajAnsyen' ),
+	'Badtitle'                  => array( 'MovèTit' ),
 	'Blankpage'                 => array( 'PajVid' ),
 	'Block'                     => array( 'Bloke', 'BlokeIP', 'BlokeItilizatè' ),
 	'Blockme'                   => array( 'BlokeM' ),
@@ -496,14 +497,13 @@ Souple, kontakte yon [[Special:ListUsers/sysop|administratè]], epi ba li lyen a
 Yon lòt moun te gendwa efase l anvan ou.',
 'badtitle'             => 'Tit ou bay an pa bon, li pa koresponn nan sistèm an, eseye byen ekri li',
 'badtitletext'         => 'Tit, sijè paj ou mande a pa korèk oubyen li pa egziste oubyen li nan yon lòt pwojè wiki yo (gade nan lòt pwojè wiki yo pou wè toutbon). Li mèt genyen tou kèk karaktè ki pa rekonèt nan sistèm an, eseye itilize bon karaktè yo nan tit ou yo.',
-'perfcached'           => 'Sa se yon vèsyon ki sòti nan kach sistèm nou an. Li gendwa pa a jou.',
-'perfcachedts'         => 'Done sa yo sòti nan sistèm kach la, yo gendwa pa a jou. Dènye fwa nou mete yo a jou se te $1.',
+'perfcached'           => 'Sa se yon vèsyon ki sòti nan kach sistèm nou an. Li gendwa pa a jou. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'Done sa yo sòti nan sistèm kach la, yo gendwa pa a jou. Dènye fwa nou mete yo a jou se te $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'Nou pa kapab mete paj sa yo a jou paske fonksyon mizajou dezaktive. Done w ap jwenn pi ba pap rafrechi.',
 'wrong_wfQuery_params' => 'Paramèt sa yo pa bon sou wfQuery()<br />
 Fonksyon : $1<br />
 Demann : $2',
 'viewsource'           => 'Wè kòd paj la',
-'viewsourcefor'        => 'pou $1',
 'actionthrottled'      => 'Aksyon sa limite',
 'actionthrottledtext'  => 'Nan batay kont pouryèl, aksyon sa ou tapral fè limite nan kantite itilizasyon l pandan yon tan ki kout. Li sanble ou depase kantite sa. Eseye ankò nan kèk minit.',
 'protectedpagetext'    => 'Paj sa pwoteje pou anpeche tout modifikasyon nou ta kapab fè sou li. Gade paj diskisyon sou li pito.',
@@ -691,9 +691,6 @@ Si toutfwa ou te bay yon bon adrès imèl nan preferans ou yo ( [[Special:Prefer
 
 Adrès IP ou an kounye a se $3. Idantifyan pou blokaj la se $5. Ou dwe mete enfòmasyon sa yo nan demann ou an.',
 'blockednoreason'                  => 'Li pa bay pyès rezon pou aksyon sa',
-'blockedoriginalsource'            => "Wè kòd sous '''$1''' pli ba :",
-'blockededitsource'                => "Teks '''modifikasyon ou yo''' sou '''$1''' parèt pi ba :",
-'whitelistedittitle'               => 'Ou dwe konekte w pou ou kapab modifye tèks sa',
 'whitelistedittext'                => 'Ou dwe $1 pou ou kapab genyen dwa pou modifye paj sa.',
 'confirmedittext'                  => 'Ou dwe konfime adrès imèl ou an anvan ou kapab fè modifikasyon. Antre epi valide adrès imèl ou an nan paj [[Special:Preferences|preferans]] ou.',
 'nosuchsectiontitle'               => 'Nou pa ka jwenn seksyon sa a',
@@ -875,16 +872,9 @@ Lejand : ({{MediaWiki:Cur}}) = diferans ak vèsyon kounye a, ({{MediaWiki:Last}}
 'revdelete-unsuppress'       => 'Anlve restriksyon yo sou vèsyon yo ki restore',
 'revdelete-log'              => 'Poukisa:',
 'revdelete-submit'           => 'Aplike sou vèsyon ki seleksyone {{PLURAL:$1|a|yo}}',
-'revdelete-logentry'         => 'Vizibilite pou vèsyon sa modifye pou [[$1]]',
 'revdel-restore'             => 'Modifye, chanje vizibilite a',
 'pagehist'                   => 'Istorik paj sa',
 'deletedhist'                => 'Istorik efase',
-'revdelete-content'          => 'kontni',
-'revdelete-summary'          => 'somè pou modifikasyon',
-'revdelete-uname'            => 'non itilizatè',
-'revdelete-restricted'       => 'aplike restriksyon sa yo pou administratè yo',
-'revdelete-hid'              => 'kache $1',
-'revdelete-unhid'            => 'montre $1',
 
 # Merge log
 'revertmerge' => 'Separe',
@@ -1114,12 +1104,8 @@ Gade tou [[Special:WantedCategories|kategori moun mande]].',
 'linksearch' => 'Lyen andeyò',
 
 # Special:Log/newusers
-'newuserlogpage'              => 'Jounal pou kreyasyon kont itilizatè yo',
-'newuserlogpagetext'          => 'Men jounal, istorik kreyasyon kont itilizatè yo.',
-'newuserlog-byemail'          => 'mopas an voye pa imèl',
-'newuserlog-create-entry'     => 'Nouvo kont itilizatè',
-'newuserlog-create2-entry'    => 'te kreye kont $1',
-'newuserlog-autocreate-entry' => 'Kont sa kreye otomatikman',
+'newuserlogpage'     => 'Jounal pou kreyasyon kont itilizatè yo',
+'newuserlogpagetext' => 'Men jounal, istorik kreyasyon kont itilizatè yo.',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(lis manm yo)',
@@ -1151,7 +1137,6 @@ Depi kounye a, tout modifikasyon nan paj sa a ak nan paj diskisyon li pral parè
 'actioncomplete'        => 'Aksyon an fèt',
 'deletedtext'           => '« $1 » efase.
 Gade $2 pou wè yon lis efasman resan.',
-'deletedarticle'        => 'efase « [[$1]] »',
 'dellogpage'            => 'Jounal efasman yo',
 'deletecomment'         => 'Rezon:',
 'deleteotherreason'     => 'Rezon an plis :',
@@ -1187,9 +1172,8 @@ Men reglaj pou paj '''$1''' an kounye a:",
 'restriction-level'           => 'Nivo kontrent, restriksyon:',
 
 # Undelete
-'undeletebtn'      => 'Retabli',
-'undeletelink'     => 'gade/retabli',
-'undeletedarticle' => 'retabli « [[$1]] »',
+'undeletebtn'  => 'Retabli',
+'undeletelink' => 'gade/retabli',
 
 # Namespace form on various pages
 'namespace'      => 'Espas non :',
@@ -1272,8 +1256,6 @@ Nan ka sa yo, ou dwe renonmen oubyen fizyone paj la ou menm si ou vle.',
 'talkexists'       => 'Paj nan te byen deplase, men paj diskisyon an pa t deplase paske te deja ekziste youn anlè nouvo paj la. Tanpri, fizyone de paj diskisyon sa yo ou menm.',
 'movedto'          => 'deplase nan',
 'movetalk'         => 'Renonmen ak deplase paj diskisyon an tou',
-'1movedto2'        => 'te deplase [[$1]] vè [[$2]]',
-'1movedto2_redir'  => 'te deplase [[$1]] vè [[$2]], nan menm moman, li ekraze redireksyon li',
 'movelogpage'      => 'Jounal deplasman yo',
 'movereason'       => 'Rezon:',
 'revertmove'       => 'revoke',
@@ -1353,7 +1335,7 @@ Li pèmèt retabli vèsyon ki te anvan li epi ajoute yon rezon ki esplike poukis
 
 # Media information
 'file-info-size' => '$1 × $2 piksèl, gwosè fichye a : $3, tip MIME li ye : $4',
-'file-nohires'   => '<small>Pa genyen rezolisyon ki pi wo ki disponib.</small>',
+'file-nohires'   => 'Pa genyen rezolisyon ki pi wo ki disponib.',
 'svg-long-desc'  => 'Fichye SVG, rezolisyon de $1 × $2 piksèl, gwosè fichye : $3',
 'show-big-image' => 'Pi bon rezolisyon',
 
@@ -1409,5 +1391,9 @@ Nenpòt lòt lyen nan menm liy nan konsidere kòm yon eksèpsyon, i.e. paj kote 
 
 # HTML forms
 'htmlform-reset' => 'Revoke chanjman yo',
+
+# New logging system
+'revdelete-restricted' => 'aplike restriksyon sa yo pou administratè yo',
+'newuserlog-byemail'   => 'mopas an voye pa imèl',
 
 );

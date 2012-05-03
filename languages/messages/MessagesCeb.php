@@ -407,15 +407,14 @@ Puyde kini gipapas na sa uban.',
 'badtitle'             => 'Bati nga titulo',
 'badtitletext'         => 'Ang gihangyong titulo sa panid mahimong inbalido, walay sulod, o nasayop og sumpay nga inter-pinulongan o inter-wiki nga titulo.
 Basin aduna kini usa o daghan pang mga karakter nga dili magamit isip titulo.',
-'perfcached'           => 'Ang mosunod nga data naka-cache ug mahimong dili ang labing bag-o.',
-'perfcachedts'         => 'Ang mosunod nga data naka-cache, ug kataposang nabag-o sa $1.',
+'perfcached'           => 'Ang mosunod nga data naka-cache ug mahimong dili ang labing bag-o. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'Ang mosunod nga data naka-cache, ug kataposang nabag-o sa $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'Ang mga update alang sa kining panid naka-disable sa kasamtangan.
 Dili karon dayon ma-refresh ang data dinhi.',
 'wrong_wfQuery_params' => 'Sayop nga mga parametro sa wfQuery()<br />
 Function: $1<br />
 Query: $2',
 'viewsource'           => 'Tan-awa ang ginikanan',
-'viewsourcefor'        => 'para kang $1',
 'actionthrottled'      => 'Na-throttle ang lihok',
 'actionthrottledtext'  => "Isip anti-spam, gilimitahan ka sa sinagunson nga paghimo niining lihok sa mubong panahon lang, ikaw misobra na sa maong limit.
 Palihog sulayi'g usab sa pipila ka minutos.",
@@ -653,8 +652,6 @@ Isip tagdumala, puyde nimo [$1 tan-awon ang diff] kon gusto ka magpadayon.",
 'revdelete-unsuppress'        => 'Tangtanga ang mga restriksyon sa nabalik nga mga rebisyon',
 'revdelete-log'               => 'Rason:',
 'revdelete-submit'            => 'I-aplay sa napiling rebisyon',
-'revdelete-logentry'          => 'giusab ang bisibilidad sa rebisyon sa [[$1]]',
-'logdelete-logentry'          => 'giusab ang bisibilidad sa event sa [[$1]]',
 'revdelete-success'           => "'''Ang bisibilidad sa rebisyon malamposong na-set.'''",
 'revdelete-failure'           => "'''Ang bisibilidad sa rebisyon dili ma-set.'''
 $1",
@@ -664,15 +661,6 @@ $1",
 'revdel-restore'              => 'usba ang bisibilidad',
 'pagehist'                    => 'Kaagi sa panid',
 'deletedhist'                 => 'Napapas nga kaagi',
-'revdelete-content'           => 'sulod',
-'revdelete-summary'           => 'mubong sugid sa pag-usab',
-'revdelete-uname'             => 'username',
-'revdelete-restricted'        => 'mga na-aplay nga restriksyon sa mga tagdumala',
-'revdelete-unrestricted'      => 'gitangtang ang mga restriksyon alang sa mga tagdumala',
-'revdelete-hid'               => 'gitago $1',
-'revdelete-unhid'             => 'ayaw itago $1',
-'revdelete-log-message'       => '$1 para sa $2 {{PLURAL:$2|rebisyon|mga rebisyon}}',
-'logdelete-log-message'       => '$1 para sa $2 {{PLURAL:$2|event|mga event}}',
 'revdelete-hide-current'      => 'Sayop sa pagtago sa item sa petsa sa $2, $1: kini ang kasamtangang rebisyon.
 Dili puyde kini tagoon.',
 'revdelete-show-no-access'    => 'Sayop sa pagtago sa item sa petsa sa $2, $1: namarkahan kini isip "restricted".
@@ -775,7 +763,7 @@ Hinumdomi nga ang ilang indeks sa sulod sa {{SITENAME}} mahimong dugay-dugay na.
 'prefs-rc'                      => 'Mga bag-ong pag-usab',
 'prefs-watchlist'               => 'Gibantayan',
 'prefs-watchlist-days'          => 'Mga adlaw nga ipakita sa gibantayan:',
-'prefs-watchlist-days-max'      => 'Maximum 7 ka adlaw',
+'prefs-watchlist-days-max'      => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'         => 'Maximum nga numero sa pag-usab nga ipakita sa ekspanded nga gibantayan:',
 'prefs-watchlist-edits-max'     => 'Maximum nga numero: 1000',
 'prefs-watchlist-token'         => 'Token sa gibantayan',
@@ -984,11 +972,8 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'linksearch' => 'Mga sumpay sa gawas',
 
 # Special:Log/newusers
-'newuserlogpage'           => "Log sa paghimo'g gumagamit",
-'newuserlogpagetext'       => "Kini mao ang ''log'' sa bag-ong namugnang mga gumagamit.",
-'newuserlog-byemail'       => "ang pasword gipadala na pinaagi sa ''e-mail''",
-'newuserlog-create-entry'  => 'Bag-ong gumagamit',
-'newuserlog-create2-entry' => "naghimo'g akawnt alang kang $1",
+'newuserlogpage'     => "Log sa paghimo'g gumagamit",
+'newuserlogpagetext' => "Kini mao ang ''log'' sa bag-ong namugnang mga gumagamit.",
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(talaan sa mga miyembro)',
@@ -1020,7 +1005,6 @@ Palihog ikompirma nga imo gyud ni buhaton, nga nakasabot ka sa mga puyde idangat
 'actioncomplete'        => 'Nahuman na ang lihok',
 'deletedtext'           => 'Ang "$1" napapas na.
 Tan-awa ang $2 para sa rekord sa mga bag-ong napapas.',
-'deletedarticle'        => 'gitangtang "[[$1]]"',
 'dellogpage'            => 'Log sa pagtangtang',
 'deletecomment'         => 'Rason:',
 'deleteotherreason'     => 'Uban pa/dugang nga rason:',
@@ -1054,8 +1038,7 @@ Puyde nimo usbon ang level sa proteksyon ning panid, pero dili kini makaapekto s
 'restriction-level'           => 'Level sa restriksyon:',
 
 # Undelete
-'undeletelink'     => 'tan-awa/ibalik',
-'undeletedarticle' => 'nabalik "[[$1]]"',
+'undeletelink' => 'tan-awa/ibalik',
 
 # Namespace form on various pages
 'namespace'      => 'Ngalang espasyo:',
@@ -1137,8 +1120,6 @@ Palihog pagpili og laing ngalan.',
 Palihog imanwal ang pag-merge nila.'''",
 'movedto'          => 'nabalhin ngadto',
 'movetalk'         => 'Ibalhin ang kaubang panid sa hisgot',
-'1movedto2'        => 'gibalhin ang [[$1]] ngadto sa [[$2]]',
-'1movedto2_redir'  => 'gibalhin ang [[$1]] ngadto sa [[$2]] taas sa redirek',
 'movelogpage'      => 'Log sa pagbalhin',
 'movereason'       => 'Rason:',
 'revertmove'       => 'i-revert',
@@ -1211,7 +1192,7 @@ Puyde dugangan og rason sa mubong sugid.',
 
 # Media information
 'file-info-size' => '$1 × $2 pixels, size sa payl: $3, MIME type: $4',
-'file-nohires'   => '<small>Walay mas taas nga resolusyon.</small>',
+'file-nohires'   => 'Walay mas taas nga resolusyon.',
 'svg-long-desc'  => 'SVG nga payl, nominally $1 × $2 pixels, size sa payl: $3',
 'show-big-image' => 'Tibuok resolusyon',
 
@@ -1260,5 +1241,10 @@ Ang uban default nga nakatago.
 
 # Special:SpecialPages
 'specialpages' => 'Espesyal nga mga panid',
+
+# New logging system
+'revdelete-restricted'   => 'mga na-aplay nga restriksyon sa mga tagdumala',
+'revdelete-unrestricted' => 'gitangtang ang mga restriksyon alang sa mga tagdumala',
+'newuserlog-byemail'     => "ang pasword gipadala na pinaagi sa ''e-mail''",
 
 );

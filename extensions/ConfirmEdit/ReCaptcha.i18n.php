@@ -149,10 +149,12 @@ $messages['es'] = array(
 	'recaptcha-create' => 'Para protegernos de la creación automática de páginas, escribe las dos palabras que ves en el cuadro de abajo:',
 );
 
-/** French (Français) */
+/** French (Français)
+ * @author Urhixidur
+ */
 $messages['fr'] = array(
 	'recaptcha-edit' => "Pour nous protéger des robots, merci d'écrire les deux mots visibles dans le cadre qui suit:",
-	'recaptcha-addurl' => "Votre contribution contient des liens vers un site externe. Pour nous protéger des robots, merci d'écrire les deux mots visibles dans le cadre qui suit:",
+	'recaptcha-addurl' => 'Votre contribution contient des liens vers un site externe. Pour nous protéger des robots, merci d’écrire les deux mots visibles dans le cadre qui suit :',
 	'recaptcha-badpass' => "Pour nous protéger des essais automatiques de cassage de mot de passe, merci d'écrire les deux mots visibles dans le cadre qui suit:",
 	'recaptcha-createaccount' => "Pour nous protéger des créations automatiques de compte, merci d'écrire les deux mots visibles dans le cadre qui suit:",
 	'recaptcha-createaccount-fail' => 'Réponse de reCAPTCHA fausse ou manquante.',
@@ -242,8 +244,11 @@ $messages['it'] = array(
 	'recaptcha-create' => 'Per aiutarci a proteggerci dalla creazione automatica di pagine, scrivi le due parole mostrate nel riquadro sottostante:',
 );
 
-/** Japanese (日本語) */
+/** Japanese (日本語)
+ * @author Shirayuki
+ */
 $messages['ja'] = array(
+	'recaptcha-desc' => 'Confirm Edit 用 reCAPTCHA モジュール',
 	'recaptcha-edit' => '自動編集スパムからの保護のため、下の画像に表示されている２つの言葉を入力 してください。',
 	'recaptcha-addurl' => 'あなたの編集は新しい外部リンクを含んでいます。自動スパムからの保護のた め、下の画像に表示されている２つの言葉を入力してください。',
 	'recaptcha-badpass' => '自動パスワードクラッキングからの保護のために、下の画像に表示されている２ つの言葉を入力してください。',
@@ -453,14 +458,15 @@ $messages['vi'] = array(
 /** Simplified Chinese (‪中文(简体)‬)
  * @author Hydra
  * @author Hzy980512
+ * @author Onecountry
  */
 $messages['zh-hans'] = array(
-	'recaptcha-edit' => '要帮助保护免受垃圾邮件自动的编辑，请键入您在下面的框中看到这两个词：',
-	'recaptcha-addurl' => '您的编辑包含新的外部链接。为了帮助防止自动垃圾邮件，请键入您在下面的框中看到这两个词：',
-	'recaptcha-badpass' => '为帮助防止自动密码破解，请键入您看到下面的框中的两个字：',
-	'recaptcha-createaccount' => '为了防止自动程序创建账户，请键入您在下面的框中看到的两个词：',
-	'recaptcha-createaccount-fail' => '不正确或缺失的 reCAPTCHA 答案。',
-	'recaptcha-create' => '为了防止自动程序创建页面，请输入您在下面的框中看到的两个词：',
+	'recaptcha-edit' => '为了避免垃圾用户自动编辑，请键入下面框中的两个单词：',
+	'recaptcha-addurl' => '您的编辑包含新的外部链接。为了避免垃圾用户自动编辑，请键入下面框中的两个单词：',
+	'recaptcha-badpass' => '为避免自动密码破解，请键入下面框中的两个单词：',
+	'recaptcha-createaccount' => '为了避免创建自动垃圾用户，请键入下面框中的两个单词：',
+	'recaptcha-createaccount-fail' => 'reCAPTCHA 答案不正确或未填写。',
+	'recaptcha-create' => '为了避免垃圾用户自动创建页面，请键入下面框中的两个单词：',
 );
 
 /** Traditional Chinese (‪中文(繁體)‬) */

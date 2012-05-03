@@ -7,11 +7,12 @@
  * @ingroup Language
  * @file
  *
+ * @author BRG (on nov.wikipedia.org)
  * @author Chrisportelli
  * @author MF-Warburg
  * @author Malafaya
  * @author Nov ialiste
- * @author nov.wikipedia.org sysops
+ * @author Wayne (on nov.wikipedia.org)
  */
 
 $messages = array(
@@ -199,18 +200,17 @@ As a result, visitors using this IP address cannot create any more accounts at t
 'image_sample' => 'Exemple.jpg',
 
 # Edit pages
-'summary'               => 'Resume:',
-'minoredit'             => 'Dise es mikri modifiko',
-'watchthis'             => 'Observa disi pagine',
-'savearticle'           => 'Spara pagine',
-'showpreview'           => 'Montra previdatu',
-'showdiff'              => 'Montra chanjos',
-'blockedoriginalsource' => "Li fonte de '''$1''' bli montra subu:",
-'loginreqtitle'         => 'Ensignato Postulat',
-'loginreqlink'          => 'ensignata',
-'accmailtitle'          => 'Pasa-vorde sendat.',
-'accmailtext'           => 'Li pasa-vorde por "$1" ha bli senda a $2.',
-'yourtext'              => 'Vun texte',
+'summary'       => 'Resume:',
+'minoredit'     => 'Dise es mikri modifiko',
+'watchthis'     => 'Observa disi pagine',
+'savearticle'   => 'Spara pagine',
+'showpreview'   => 'Montra previdatu',
+'showdiff'      => 'Montra chanjos',
+'loginreqtitle' => 'Ensignato Postulat',
+'loginreqlink'  => 'ensignata',
+'accmailtitle'  => 'Pasa-vorde sendat.',
+'accmailtext'   => 'Li pasa-vorde por "$1" ha bli senda a $2.',
+'yourtext'      => 'Vun texte',
 
 # History pages
 'currentrev'          => 'Nuni revisione',
@@ -367,7 +367,6 @@ Si vu voli plu tardim ekarta li pagine fro vun observa-liste, klikta \"Desobserv
 'excontentauthor' => "kontenaje esed: '$1' (e li soli kontribuere esed '[[Special:Contributions/$2|$2]]')",
 'exblank'         => 'pagine esed vakui',
 'actioncomplete'  => 'Akto kompleti',
-'deletedarticle'  => 'ekartad "[[$1]]"',
 'dellogpage'      => 'Loge de ekartos',
 'dellogpagetext'  => 'Subu es liste del maxim resenti ekartos.',
 'deletionlog'     => 'registre de ekartos',
@@ -408,12 +407,10 @@ Si vu voli plu tardim ekarta li pagine fro vun observa-liste, klikta \"Desobserv
 'movenologin'             => 'Non ensignatat',
 'move-watch'              => 'Observa disi pagine',
 'movedto'                 => 'movat a',
-'1movedto2'               => '[[$1]] movat a [[$2]]',
-'1movedto2_redir'         => '[[$1]] movat a [[$2]] via ri-adreso',
 'movereason'              => 'Resone:',
 'delete_and_move'         => 'Ekarta e mova',
 'delete_and_move_confirm' => 'Yes, ekarta li pagine',
-'delete_and_move_reason'  => 'Ekartat por fa spatie por movo',
+'delete_and_move_reason'  => 'Ekartat por fa spatie por movo "[[$1]]"',
 
 # Namespace 8 related
 'allmessages'        => 'Sisteme mesajes',

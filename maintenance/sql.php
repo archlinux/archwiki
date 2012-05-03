@@ -30,32 +30,59 @@ class MwSql extends Maintenance {
 	}
 
 	public function execute() {
+		$dbw = wfGetDB( DB_MASTER );
 		if ( $this->hasArg() ) {
 			$fileName = $this->getArg();
 			$file = fopen( $fileName, 'r' );
-			$promptCallback = false;
-		} else {
-			$file = $this->getStdin();
-			$promptObject = new SqlPromptPrinter( "> " );
-			$promptCallback = $promptObject->cb();
+			if ( !$file ) {
+				$this->error( "Unable to open input file", true );
+			}
+
+			$error = $dbw->sourceStream( $file, false, array( $this, 'sqlPrintResult' ) );
+			if ( $error !== true ) {
+				$this->error( $error, true );
+			} else {
+				exit( 0 );
+			}
 		}
 
-		if ( !$file )
-			$this->error( "Unable to open input file", true );
+		$useReadline = function_exists( 'readline_add_history' )
+				&& Maintenance::posix_isatty( 0 /*STDIN*/ );
 
-		$dbw = wfGetDB( DB_MASTER );
-		$error = $dbw->sourceStream( $file, $promptCallback, array( $this, 'sqlPrintResult' ) );
-		if ( $error !== true ) {
-			$this->error( $error, true );
-		} else {
-			exit( 0 );
+		if ( $useReadline ) {
+			global $IP;
+			$historyFile = isset( $_ENV['HOME'] ) ?
+					"{$_ENV['HOME']}/.mwsql_history" : "$IP/maintenance/.mwsql_history";
+			readline_read_history( $historyFile );
+		}
+
+		$wholeLine = '';
+		while ( ( $line = Maintenance::readconsole() ) !== false ) {
+			$done = $dbw->streamStatementEnd( $wholeLine, $line );
+
+			$wholeLine .= $line;
+
+			if ( !$done ) {
+				continue;
+			}
+			if ( $useReadline ) {
+				readline_add_history( $wholeLine );
+				readline_write_history( $historyFile );
+			}
+			try{
+				$res = $dbw->query( $wholeLine );
+				$this->sqlPrintResult( $res, $dbw );
+				$wholeLine = '';
+			} catch (DBQueryError $e) {
+				$this->error( $e, true );
+			}
 		}
 	}
 
 	/**
 	 * Print the results, callback for $db->sourceStream()
-	 * @param $res The results object
-	 * @param $db Database object
+	 * @param $res ResultWrapper The results object
+	 * @param $db DatabaseBase object
 	 */
 	public function sqlPrintResult( $res, $db ) {
 		if ( !$res ) {
@@ -70,22 +97,11 @@ class MwSql extends Maintenance {
 		}
 	}
 
+	/**
+	 * @return int DB_TYPE constant
+	 */
 	public function getDbType() {
 		return Maintenance::DB_ADMIN;
-	}
-}
-
-class SqlPromptPrinter {
-	function __construct( $prompt ) {
-		$this->prompt = $prompt;
-	}
-
-	function cb() {
-		return array( $this, 'printPrompt' );
-	}
-
-	function printPrompt() {
-		echo $this->prompt;
 	}
 }
 

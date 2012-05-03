@@ -376,7 +376,6 @@ Pe favô ti peu segnalâ quello che l'é sucesso a in [[Special:ListUsers/sysop|
 'badtitle'           => "O tìtolo o no l'è corretto.",
 'badtitletext'       => "O tittolo da paggina çercâa o l'è vêuo, sballiòu o con caratteri no accettæ, oppûre o deriva da 'n errô inti collegamenti tra scîti Wiki diversci o verscioîn in léngue diversce do mæximo scîto.",
 'viewsource'         => 'Veddi a fonte',
-'viewsourcefor'      => 'de $1',
 'protectedpagetext'  => "'Sta paggina a l'è stæta protezûa pe impedîghe a modiffica.",
 'viewsourcetext'     => "O l'è poscibbile vedde e copiâ o còddice sorgente de 'sta paggina:",
 
@@ -498,9 +497,6 @@ Ti pêu contattâ \$1 ou 'n âtro
 Dagghe a mente a che no ti pêu ûsâ o comando \"manda na littia elettronega a sto utente\" se non ti g'hæ 'n indirisso de posta elettronega registroö in te têu [[Special:Preferences|preferense]] e se o no l'è stæto bloccòu ascì.
 
 O têu blòcco ID o l'è \$5. Pe piaxei metti 'sto ID in tûtte e domande che ti fæ.",
-'blockedoriginalsource'            => "A fònte de '''$1''' a l'è chi sotta:",
-'blockededitsource'                => "O testo de i '''teu cangiamenti''' a '''$1''' o l'è chi sotta:",
-'whitelistedittitle'               => "Bezêugna registrâse pe modificâ 'na pagina.",
 'whitelistedittext'                => 'Pe cangia sta pagina devvi $1.',
 'loginreqtitle'                    => "Besêugna registrâse primma de modificâ 'sta paggina.",
 'accmailtitle'                     => 'Pòula segretta spedïa',
@@ -823,6 +819,7 @@ Chi de segoito ti peu védde a descriçión inta [$2 pàgina de descriçión do 
 'protectedpages'          => 'Paggine protette',
 'protectedtitles'         => 'Tittoli protezûi',
 'listusers'               => "Lista d'ûtenti",
+'usercreated'             => '{{GENDER:$3|Creòu/â}} o $1 a-a $2',
 'newpages'                => 'Pagine ciù reçenti',
 'ancientpages'            => 'Paggine ciû vëgie',
 'move'                    => 'Mescia',
@@ -926,7 +923,6 @@ Ti te peu strinza a vista se ti te çerni un tipo de registro, un nomme de un ut
 'actioncomplete'        => 'Açion finïa',
 'actionfailed'          => 'Açión falîa',
 'deletedtext'           => 'A paggina "$1" a l\'è stæta scassâa. Consûltâ o $2 pe \'na lista de-e paggine scassæ de reçente.',
-'deletedarticle'        => 'O s\'ha scassòu "[[$1]]"',
 'dellogpage'            => 'Registro de-e cose scassæ',
 'deletecomment'         => 'Raxon:',
 'deleteotherreason'     => 'Ûn âtro motivo',
@@ -1089,8 +1085,6 @@ Inte 'sti câxi, se o se vêu fâ coscì, o se deive stramûâ ò azzonze manual
 'talkexists'              => "'''A paggina a l'è stæta stramûâa correttamente, ma o no l'è stæto poscibbile stramûâ a paggina de discûxon perché ghe n'è zà 'n'âtra co-o nêuvo tittolo. O se deive inserî manualmente i contegnûi de tûtte e doe.'''",
 'movedto'                 => 'Stramûâa a',
 'movetalk'                => 'Stramûâ anche a paggina de discûxon',
-'1movedto2'               => '[[$1]] mesciòu a [[$2]]',
-'1movedto2_redir'         => '[[$1]] mescioö a [[$2]] redirect',
 'movelogpage'             => 'Lista di remesci',
 'movereason'              => 'Raxon',
 'revertmove'              => 'Ristorâ',
@@ -1188,7 +1182,7 @@ Inte 'sti câxi, se o se vêu fâ coscì, o se deive stramûâ ò azzonze manual
 # Media information
 'thumbsize'      => 'Dimescion da a imàginetta:',
 'file-info-size' => '$1 × $2 pixel, dimenscioîn: $3, tippo MIME: $4',
-'file-nohires'   => '<small>No ghe son verscioîn a resolûxon ciû ærta.</small>',
+'file-nohires'   => 'No ghe son verscioìn a rezoluçion ciù âta.',
 'svg-long-desc'  => "archivio in formato SVG, dimenscioìn nominâli $1 × $2 pixel, dimenscioìn de l'archivio: $3",
 'show-big-image' => "Verscion d'ærta resolûxon",
 

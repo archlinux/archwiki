@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * @ingroup API
  */
@@ -39,14 +34,13 @@ class ApiUndelete extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgUser;
 		$params = $this->extractRequestParams();
 
-		if ( !$wgUser->isAllowed( 'undelete' ) ) {
+		if ( !$this->getUser()->isAllowed( 'undelete' ) ) {
 			$this->dieUsageMsg( 'permdenied-undelete' );
 		}
 
-		if ( $wgUser->isBlocked() ) {
+		if ( $this->getUser()->isBlocked() ) {
 			$this->dieUsageMsg( 'blockedtext' );
 		}
 
@@ -74,7 +68,7 @@ class ApiUndelete extends ApiBase {
 
 		if ( $retval[1] ) {
 			wfRunHooks( 'FileUndeleteComplete',
-				array( $titleObj, array(), $wgUser, $params['reason'] ) );
+				array( $titleObj, array(), $this->getUser(), $params['reason'] ) );
 		}
 
 		$this->setWatch( $params['watchlist'], $titleObj );
@@ -152,7 +146,7 @@ class ApiUndelete extends ApiBase {
 		return '';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=undelete&title=Main%20Page&token=123ABC&reason=Restoring%20main%20page',
 			'api.php?action=undelete&title=Main%20Page&token=123ABC&timestamps=20070703220045|20070702194856'

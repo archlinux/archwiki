@@ -63,22 +63,24 @@ class UserrightsPage extends SpecialPage {
 	public function execute( $par ) {
 		// If the visitor doesn't have permissions to assign or remove
 		// any groups, it's a bit silly to give them the user search prompt.
-		global $wgUser, $wgRequest, $wgOut;
 
-		if( $par !== null ) {
-			$this->mTarget = $par;
-		} else {
-			$this->mTarget = $wgRequest->getVal( 'user' );
-		}
+		$user = $this->getUser();
 
 		/*
 		 * If the user is blocked and they only have "partial" access
 		 * (e.g. they don't have the userrights permission), then don't
 		 * allow them to use Special:UserRights.
 		 */
-		if( $wgUser->isBlocked() && !$wgUser->isAllowed( 'userrights' ) ) {
-			$wgOut->blockedPage();
-			return;
+		if( $user->isBlocked() && !$user->isAllowed( 'userrights' ) ) {
+			throw new UserBlockedError( $user->mBlock );
+		}
+
+		$request = $this->getRequest();
+
+		if( $par !== null ) {
+			$this->mTarget = $par;
+		} else {
+			$this->mTarget = $request->getVal( 'user' );
 		}
 
 		$available = $this->changeableGroups();
@@ -90,49 +92,44 @@ class UserrightsPage extends SpecialPage {
 			 * target.
 			 */
 			if ( !count( $available['add'] ) && !count( $available['remove'] ) )
-				$this->mTarget = $wgUser->getName();
+				$this->mTarget = $user->getName();
 		}
 
-		if ( User::getCanonicalName( $this->mTarget ) == $wgUser->getName() ) {
+		if ( User::getCanonicalName( $this->mTarget ) == $user->getName() ) {
 			$this->isself = true;
 		}
 
-		if( !$this->userCanChangeRights( $wgUser, true ) ) {
+		if( !$this->userCanChangeRights( $user, true ) ) {
 			// @todo FIXME: There may be intermediate groups we can mention.
-			$wgOut->showPermissionsErrorPage( array( array(
-				$wgUser->isAnon()
-					? 'userrights-nologin'
-					: 'userrights-notallowed' ) ) );
-			return;
+			$msg = $user->isAnon() ? 'userrights-nologin' : 'userrights-notallowed';
+			throw new PermissionsError( null, array( array( $msg ) ) );
 		}
 
-		if ( wfReadOnly() ) {
-			$wgOut->readOnlyPage();
-			return;
-		}
+		$this->checkReadOnly();
 
-		$this->outputHeader();
-		$wgOut->addModuleStyles( 'mediawiki.special' );
 		$this->setHeaders();
+		$this->outputHeader();
+
+		$out = $this->getOutput();
+		$out->addModuleStyles( 'mediawiki.special' );
 
 		// show the general form
 		if ( count( $available['add'] ) || count( $available['remove'] ) ) {
 			$this->switchForm();
 		}
 
-		if( $wgRequest->wasPosted() ) {
+		if( $request->wasPosted() ) {
 			// save settings
-			if( $wgRequest->getCheck( 'saveusergroups' ) ) {
-				$reason = $wgRequest->getVal( 'user-reason' );
-				$tok = $wgRequest->getVal( 'wpEditToken' );
-				if( $wgUser->matchEditToken( $tok, $this->mTarget ) ) {
+			if( $request->getCheck( 'saveusergroups' ) ) {
+				$reason = $request->getVal( 'user-reason' );
+				$tok = $request->getVal( 'wpEditToken' );
+				if( $user->matchEditToken( $tok, $this->mTarget ) ) {
 					$this->saveUserGroups(
 						$this->mTarget,
 						$reason
 					);
 
-					$url = $this->getSuccessURL();
-					$wgOut->redirect( $url );
+					$out->redirect( $this->getSuccessURL() );
 					return;
 				}
 			}
@@ -157,11 +154,9 @@ class UserrightsPage extends SpecialPage {
 	 * @return null
 	 */
 	function saveUserGroups( $username, $reason = '' ) {
-		global $wgRequest, $wgOut;
-
 		$status = $this->fetchUser( $username );
 		if( !$status->isOK() ) {
-			$wgOut->addWikiText( $status->getWikiText() );
+			$this->getOutput()->addWikiText( $status->getWikiText() );
 			return;
 		} else {
 			$user = $status->value;
@@ -176,7 +171,7 @@ class UserrightsPage extends SpecialPage {
 		foreach ( $allgroups as $group ) {
 			// We'll tell it to remove all unchecked groups, and add all checked groups.
 			// Later on, this gets filtered for what can actually be removed
-			if ( $wgRequest->getCheck( "wpGroup-$group" ) ) {
+			if ( $this->getRequest()->getCheck( "wpGroup-$group" ) ) {
 				$addgroup[] = $group;
 			} else {
 				$removegroup[] = $group;
@@ -196,10 +191,8 @@ class UserrightsPage extends SpecialPage {
 	 * @return Array: Tuple of added, then removed groups
 	 */
 	function doSaveUserGroups( $user, $add, $remove, $reason = '' ) {
-		global $wgUser;
-
 		// Validate input set...
-		$isself = ( $user->getName() == $wgUser->getName() );
+		$isself = ( $user->getName() == $this->getUser()->getName() );
 		$groups = $user->getGroups();
 		$changeable = $this->changeableGroups();
 		$addable = array_merge( $changeable['add'], $isself ? $changeable['add-self'] : array() );
@@ -265,11 +258,9 @@ class UserrightsPage extends SpecialPage {
 	 * @param $username String: name of the user.
 	 */
 	function editUserGroupsForm( $username ) {
-		global $wgOut;
-
 		$status = $this->fetchUser( $username );
 		if( !$status->isOK() ) {
-			$wgOut->addWikiText( $status->getWikiText() );
+			$this->getOutput()->addWikiText( $status->getWikiText() );
 			return;
 		} else {
 			$user = $status->value;
@@ -281,7 +272,7 @@ class UserrightsPage extends SpecialPage {
 
 		// This isn't really ideal logging behavior, but let's not hide the
 		// interwiki logs if we're using them as is.
-		$this->showLogFragment( $user, $wgOut );
+		$this->showLogFragment( $user, $this->getOutput() );
 	}
 
 	/**
@@ -292,7 +283,7 @@ class UserrightsPage extends SpecialPage {
 	 * @return Status object
 	 */
 	public function fetchUser( $username ) {
-		global $wgUser, $wgUserrightsInterwikiDelimiter;
+		global $wgUserrightsInterwikiDelimiter;
 
 		$parts = explode( $wgUserrightsInterwikiDelimiter, $username );
 		if( count( $parts ) < 2 ) {
@@ -304,7 +295,7 @@ class UserrightsPage extends SpecialPage {
 			if( $database == wfWikiID() ) {
 				$database = '';
 			} else {
-				if( !$wgUser->isAllowed( 'userrights-interwiki' ) ) {
+				if( !$this->getUser()->isAllowed( 'userrights-interwiki' ) ) {
 					return Status::newFatal( 'userrights-no-interwiki' );
 				}
 				if( !UserRightsProxy::validDatabase( $database ) ) {
@@ -372,8 +363,8 @@ class UserrightsPage extends SpecialPage {
 	 * Output a form to allow searching for a user
 	 */
 	function switchForm() {
-		global $wgOut, $wgScript;
-		$wgOut->addHTML(
+		global $wgScript;
+		$this->getOutput()->addHTML(
 			Html::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript, 'name' => 'uluser', 'id' => 'mw-userrights-form1' ) ) .
 			Html::hidden( 'title',  $this->getTitle()->getPrefixedText() ) .
 			Xml::fieldset( wfMsg( 'userrights-lookup-user' ) ) .
@@ -414,8 +405,6 @@ class UserrightsPage extends SpecialPage {
 	 * @param $groups    Array:  Array of groups the user is in
 	 */
 	protected function showEditUserGroupsForm( $user, $groups ) {
-		global $wgOut, $wgUser, $wgLang, $wgRequest;
-
 		$list = array();
 		foreach( $groups as $group ) {
 			$list[] = self::buildGroupLink( $group );
@@ -432,30 +421,38 @@ class UserrightsPage extends SpecialPage {
 		$count = count( $list );
 		if( $count > 0 ) {
 			$grouplist = wfMessage( 'userrights-groupsmember', $count)->parse();
-			$grouplist = '<p>' . $grouplist  . ' ' . $wgLang->listToText( $list ) . "</p>\n";
+			$grouplist = '<p>' . $grouplist  . ' ' . $this->getLanguage()->listToText( $list ) . "</p>\n";
 		}
 		$count = count( $autolist );
 		if( $count > 0 ) {
 			$autogrouplistintro = wfMessage( 'userrights-groupsmember-auto', $count)->parse();
-			$grouplist .= '<p>' . $autogrouplistintro  . ' ' . $wgLang->listToText( $autolist ) . "</p>\n";
+			$grouplist .= '<p>' . $autogrouplistintro  . ' ' . $this->getLanguage()->listToText( $autolist ) . "</p>\n";
 		}
-		$wgOut->addHTML(
+
+		$userToolLinks = Linker::userToolLinks(
+				$user->getId(),
+				$user->getName(),
+				false, /* default for redContribsWhenNoEdits */
+				Linker::TOOL_LINKS_EMAIL /* Add "send e-mail" link */
+		);
+
+		$this->getOutput()->addHTML(
 			Xml::openElement( 'form', array( 'method' => 'post', 'action' => $this->getTitle()->getLocalURL(), 'name' => 'editGroup', 'id' => 'mw-userrights-form2' ) ) .
 			Html::hidden( 'user', $this->mTarget ) .
-			Html::hidden( 'wpEditToken', $wgUser->editToken( $this->mTarget ) ) .
+			Html::hidden( 'wpEditToken', $this->getUser()->getEditToken( $this->mTarget ) ) .
 			Xml::openElement( 'fieldset' ) .
-			Xml::element( 'legend', array(), wfMsg( 'userrights-editusergroup' ) ) .
-			wfMsgExt( 'editinguser', array( 'parse' ), wfEscapeWikiText( $user->getName() ) ) .
-			wfMsgExt( 'userrights-groups-help', array( 'parse' ) ) .
+			Xml::element( 'legend', array(), wfMessage( 'userrights-editusergroup', $user->getName() )->text() ) .
+			wfMessage( 'editinguser' )->params( wfEscapeWikiText( $user->getName() ) )->rawParams( $userToolLinks )->parse() .
+			wfMessage( 'userrights-groups-help', $user->getName() )->parse() .
 			$grouplist .
-			Xml::tags( 'p', null, $this->groupCheckboxes( $groups ) ) .
+			Xml::tags( 'p', null, $this->groupCheckboxes( $groups, $user ) ) .
 			Xml::openElement( 'table', array( 'border' => '0', 'id' => 'mw-userrights-table-outer' ) ) .
 				"<tr>
 					<td class='mw-label'>" .
 						Xml::label( wfMsg( 'userrights-reason' ), 'wpReason' ) .
 					"</td>
 					<td class='mw-input'>" .
-						Xml::input( 'user-reason', 60, $wgRequest->getVal( 'user-reason', false ),
+						Xml::input( 'user-reason', 60, $this->getRequest()->getVal( 'user-reason', false ),
 							array( 'id' => 'wpReason', 'maxlength' => 255 ) ) .
 					"</td>
 				</tr>
@@ -496,10 +493,12 @@ class UserrightsPage extends SpecialPage {
 	/**
 	 * Adds a table with checkboxes where you can select what groups to add/remove
 	 *
+	 * @todo Just pass the username string?
 	 * @param $usergroups Array: groups the user belongs to
+	 * @param $user User a user object
 	 * @return string XHTML table element with checkboxes
 	 */
-	private function groupCheckboxes( $usergroups ) {
+	private function groupCheckboxes( $usergroups, $user ) {
 		$allgroups = $this->getAllGroups();
 		$ret = '';
 
@@ -547,11 +546,11 @@ class UserrightsPage extends SpecialPage {
 			foreach( $column as $group => $checkbox ) {
 				$attr = $checkbox['disabled'] ? array( 'disabled' => 'disabled' ) : array();
 
+				$member = User::getGroupMember( $group, $user->getName() );
 				if ( $checkbox['irreversible'] ) {
-					$text = htmlspecialchars( wfMsg( 'userrights-irreversible-marker',
-						User::getGroupMember( $group ) ) );
+					$text = wfMessage( 'userrights-irreversible-marker', $member )->escaped();
 				} else {
-					$text = htmlspecialchars( User::getGroupMember( $group ) );
+					$text = htmlspecialchars( $member );
 				}
 				$checkboxHtml = Xml::checkLabel( $text, "wpGroup-" . $group,
 					"wpGroup-" . $group, $checkbox['set'], $attr );
@@ -588,13 +587,12 @@ class UserrightsPage extends SpecialPage {
 	}
 
 	/**
-	 * Returns $wgUser->changeableGroups()
+	 * Returns $this->getUser()->changeableGroups()
 	 *
 	 * @return Array array( 'add' => array( addablegroups ), 'remove' => array( removablegroups ) , 'add-self' => array( addablegroups to self), 'remove-self' => array( removable groups from self) )
 	 */
 	function changeableGroups() {
-		global $wgUser;
-		return $wgUser->changeableGroups();
+		return $this->getUser()->changeableGroups();
 	}
 
 	/**
@@ -605,6 +603,6 @@ class UserrightsPage extends SpecialPage {
 	 */
 	protected function showLogFragment( $user, $output ) {
 		$output->addHTML( Xml::element( 'h2', null, LogPage::logName( 'rights' ) . "\n" ) );
-		LogEventsList::showLogExtract( $output, 'rights', $user->getUserPage()->getPrefixedText() );
+		LogEventsList::showLogExtract( $output, 'rights', $user->getUserPage() );
 	}
 }

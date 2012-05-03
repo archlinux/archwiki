@@ -478,14 +478,13 @@ $1',
 'badtitle'             => 'عنوان بد',
 'badtitletext'         => 'لوٹتگین عنوان صفحه نامعتبر ،هالیک یا یک عنوان هرابین لینک بین زبانی یا بین وی کی انت.
 آی شاید شامل یک یا گیشترین کاراکترانت که ته عناوین استفاده نه بنت.',
-'perfcached'           => 'جهلیگین دیتا ذخیره بیتگنت و شاید نوک می بنت.',
-'perfcachedts'         => 'جهلیگین دیتا ذخیره بیتگنت و اهرین په روچ بیگ $1.',
+'perfcached'           => 'جهلیگین دیتا ذخیره بیتگنت و شاید نوک می بنت. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'جهلیگین دیتا ذخیره بیتگنت و اهرین په روچ بیگ $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'په روچ بیگان په ای صفحه الان غیر فعالنت. دیتا ادان الان نوکین نهنت.',
 'wrong_wfQuery_params' => 'اشتباهین پارامتر به wfQuery()<br />
 Function: $1<br />
 Query: $2',
 'viewsource'           => 'به گند منبع آ',
-'viewsourcefor'        => 'په $1',
 'actionthrottled'      => 'کار گیر نت',
 'actionthrottledtext'  => 'په خاطر یک معیار ضد اسپم شما چه انجام ای کار ته یک کمی زمان محدود بیتگیت، و شما چه ای محدودیت رد بیتگیت.
 لطفا چند دقیقه بعد کوشست کن',
@@ -679,9 +678,6 @@ $2',
  مشی هنوکی ان آی پی $3 شمی شماره محدودیت $5
 لطفا ای شماره ته هر جوست و پرسی هور کنیت.',
 'blockednoreason'                  => 'هچ دلیلی دهگ نه بیته',
-'blockedoriginalsource'            => "منبع '''$1''' جهلآ پیش دراگ بیت:",
-'blockededitsource'                => "متن '''your edits'' به '''$1''' جهلآ پیش دارگ بیت:",
-'whitelistedittitle'               => 'په اصلاح کتن بایدن وارد سیستم بیت',
 'whitelistedittext'                => 'شما باید $1به اصلاح کتن صفحات.',
 'confirmedittext'                  => 'شما بایدن وتی آدرس ایمیل آ پیش چه اصلاح کتن صفحات تایید کنیت.
 لطفا وتی آدرس ایمیل آی چه طریق [[Special:Preferences|ترجحات کاربر]] تنظیم و معتبر کنیت.',
@@ -893,8 +889,6 @@ Legend: (cur) = تفاوتان گون هنوکین نسخه,
 'revdelete-unsuppress'        => 'بزور محدودیت آنء جه ترینتگین بازبینی آن',
 'revdelete-log'               => 'دلیل:',
 'revdelete-submit'            => 'بلی اور انتخابی بازبینی',
-'revdelete-logentry'          => 'عوض بوت ظاهر بیگ بازبینی  [[$1]]',
-'logdelete-logentry'          => 'عوض بیت ظاهر بوتن رویداد چه  [[$1]]',
 'revdelete-success'           => "'''ظاهر بازبینی گون موفقیت تنظیم بوت.'''",
 'revdelete-failure'           => "'''پیشدارگ نسخ قابل تنظیم نه بیتن.'''",
 'logdelete-success'           => "''''آمار ظاهر بیگ گون موفقیت تنظیم بوت.''''",
@@ -903,15 +897,6 @@ $1",
 'revdel-restore'              => 'عوض کن ظاهر بیگء',
 'pagehist'                    => 'تاریح صفحه',
 'deletedhist'                 => 'تاریح حذف بوت',
-'revdelete-content'           => 'محتوا',
-'revdelete-summary'           => 'خلاصه اصلاح',
-'revdelete-uname'             => 'نام کاربری',
-'revdelete-restricted'        => 'محدودیت آن په مدیران سیستم بوت',
-'revdelete-unrestricted'      => 'به زور چه مدیران سیستم محدودیتان',
-'revdelete-hid'               => 'پناه $1',
-'revdelete-unhid'             => ' $1پنهاه مکن',
-'revdelete-log-message'       => '$1 په $2 {{PLURAL:$2|بازبینی|بازبینی ان}}',
-'logdelete-log-message'       => '$1 په $2 {{PLURAL:$2|رویداد|رویدادان}}',
 'revdelete-edit-reasonlist'   => 'اصلاح دلایل حذف',
 
 # Suppression log
@@ -1047,7 +1032,7 @@ $1",
 'prefs-rc'                      => 'نوکین تغییرات',
 'prefs-watchlist'               => 'لیست چارگ',
 'prefs-watchlist-days'          => 'روچان په پیش دارگ ته لیست چارگ',
-'prefs-watchlist-days-max'      => '(حداکثر ۷ روچ)',
+'prefs-watchlist-days-max'      => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'         => 'گشیترین تعداد تغییرات په پیشدارگ ته پچین لیست چارگ:',
 'prefs-watchlist-edits-max'     => '(گیشترین تعداد: ۱۰۰۰)',
 'prefs-misc'                    => 'هردابین',
@@ -1228,7 +1213,6 @@ $1",
 'right-autopatrol'            => 'اتوماتیکی اصلاحات یکیء چه وتی نشان کن په داب نظارت بوتگین',
 'right-patrolmarks'           => 'به گند نوکین تغییرات نشان نظارتی',
 'right-unwatchedpages'        => 'به گند په داب یکیک لیست نچارتگین صفحات',
-'right-trackback'             => 'یک رندگری دیم دی',
 'right-mergehistory'          => 'چن وبند کن تاریح صفحاتء',
 'right-userrights'            => 'اصلاح کل حقوق کاربری',
 'right-userrights-interwiki'  => 'اصلاح حقوق کابرانی کابران دگه ویکی انء',
@@ -1271,7 +1255,6 @@ $1",
 'action-patrol'               => 'نشان کتن اصلاح دگران په داب چارگ بیتگین',
 'action-autopatrol'           => 'نشان کتن وتی اصلاح په داب چارگ بوتگین',
 'action-unwatchedpages'       => 'چارگ لیست نچارتگین صفحات',
-'action-trackback'            => 'ثبت یک بازتر',
 'action-mergehistory'         => 'هورکتن تاریح ای صفحه',
 'action-userrights'           => 'اصلاح کل حقوق کاربر',
 'action-userrights-interwiki' => 'اصلاح حقوق کاربری کاربران ته دگه ویکیء',
@@ -1729,12 +1712,8 @@ PICT # misc.
 'activeusers-noresult' => 'هچ کاربری درگیزگ نه بیت',
 
 # Special:Log/newusers
-'newuserlogpage'              => 'ورود شرکتن کاربر',
-'newuserlogpagetext'          => '.شی یک ورودی چه شرکتن کاربر',
-'newuserlog-byemail'          => 'کلمه رمز گون ایمیل دیم دهگ بوت',
-'newuserlog-create-entry'     => 'نوکین کاربر',
-'newuserlog-create2-entry'    => 'نوکین حساب شربوت  $1',
-'newuserlog-autocreate-entry' => 'حساب اتوماتیکی شربوت',
+'newuserlogpage'     => 'ورود شرکتن کاربر',
+'newuserlogpagetext' => '.شی یک ورودی چه شرکتن کاربر',
 
 # Special:ListGroupRights
 'listgrouprights'                      => 'حقوق گروه کاربر',
@@ -1862,8 +1841,6 @@ $NEWPAGE
 'actionfailed'           => 'عمل پروش وارت',
 'deletedtext'            => '"$1" حذف بیت.
 بگندیت $2 په ثبتی که نوکین حذفیات',
-'deletedarticle'         => 'حذف بوت "[[$1]]"',
-'suppressedarticle'      => 'متوقف بوت "[[$1]]"',
 'dellogpage'             => 'حذف ورودان',
 'dellogpagetext'         => 'جهلء یک لیستی چه نوکترین حذفیات هست.',
 'deletionlog'            => 'آمار حذف',
@@ -1993,7 +1970,6 @@ $NEWPAGE
 'undeletereset'                => 'برگردینگ',
 'undeleteinvert'               => 'چپکایگ کتن انتخاب',
 'undeletecomment'              => 'نظر:',
-'undeletedarticle'             => 'واترینت "[[$1]]"',
 'undeletedrevisions'           => '{{PLURAL:$1|1 بازبینی|$1 بازبینی آن}} واترینگ بیت',
 'undeletedrevisions-files'     => '{{PLURAL:$1|1 بازبینی|$1بازبینی ان}} و {{PLURAL:$2|1 فایل|$2 فایلان}} برگردینگ بوتن',
 'undeletedfiles'               => '{{PLURAL:$1|1 فایل|$1 فایلآن}} واترینگ بین',
@@ -2228,9 +2204,6 @@ $1',
 'movepage-page-moved'          => 'صفحه  $1 جاه په جاه بیت په  $2',
 'movepage-page-unmoved'        => 'صفحه $1نه تونیت جاه په جاه بیت په $2',
 'movepage-max-pages'           => 'گیشترین $1 {{PLURAL:$1|صفحه|صفحات}}جاه په جاه بوتگن  ودگه هچی اتوماتیکی جاه په جاه نه بیت.',
-'1movedto2'                    => '[[$1]] چاه په چاه بوت په [[$2]]',
-'1movedto2_redir'              => '[[$1]] جاه په جاه بوت په [[$2]] غیر مستقیم',
-'move-redirect-suppressed'     => 'تغییر مسیر بند بوت',
 'movelogpage'                  => 'جاه په جاهی ورود',
 'movelogpagetext'              => 'جهلء یک لیستی چه صفحات جاه په جاه بوتگین هست',
 'movesubpage'                  => '{{PLURAL:$1|زیرتاک|زیرتاکان}}',
@@ -2471,9 +2444,6 @@ $1',
 # Patrol log
 'patrol-log-page'      => 'آمار نظارت',
 'patrol-log-header'    => 'شی آماری چه بازبینی آن گشتی انت.',
-'patrol-log-line'      => 'نشان هلگ بیتن $1 چه $2 نظارت $3',
-'patrol-log-auto'      => '(اتوماتیک)',
-'patrol-log-diff'      => 'ر$1',
 'log-show-hide-patrol' => '$1  آمار گشت',
 
 # Image deletion
@@ -2498,7 +2468,7 @@ $1',
 'widthheightpage' => '$1 × $2, $3 {{PLURAL:$3|صفحه|صفحات}}',
 'file-info'       => 'اندازه فایل: $1, مایم نوع: $2',
 'file-info-size'  => '$1 × $2 پیکسل, اندازه فایل: $3, مایم نوع: $4',
-'file-nohires'    => '<small>مزنترین رزلوشن نیست.</small>',
+'file-nohires'    => 'مزنترین رزلوشن نیست.',
 'svg-long-desc'   => 'اس وی جی  فایل, معمولا $1 × $2 پیکسل, فایل اندازه: $3',
 'show-big-image'  => 'کل صفحه',
 
@@ -2515,9 +2485,9 @@ $1',
 'sp-newimages-showfrom' => 'پیش دار نوکین فایلان شروع بینت چه $2, $1',
 
 # Video information, used by Language::formatTimePeriod() to format lengths in the above messages
-'seconds-abbrev' => 'س',
-'minutes-abbrev' => 'م',
-'hours-abbrev'   => 'ه',
+'seconds-abbrev' => '$1س',
+'minutes-abbrev' => '$1م',
+'hours-abbrev'   => '$1ه',
 
 # Bad image list
 'bad_image_list' => 'فرمت په داب جهلیگی انت:
@@ -2927,13 +2897,6 @@ $5
 'scarytranscludefailed'   => '[تمپلت آرگ پروش وارت په $1]',
 'scarytranscludetoolong'  => '[URL باز مزننت]',
 
-# Trackbacks
-'trackbackbox'      => 'گرند گروگان ای صفحه:<br />
-$1',
-'trackbackremove'   => '([$1 حذف])',
-'trackbacklink'     => 'رند گر',
-'trackbackdeleteok' => 'رند گر گون موفقیت حذف بوت.',
-
 # Delete conflict
 'deletedwhileediting' => "'''هوژاری''': ای صفحه حذف بوتت رند چه شمی اصلاح کتن شروه بیگ!",
 'confirmrecreate'     => "کاربر [[User:$1|$1]] ([[User talk:$1|گپ]]) ای صفحهء حذف کتت بعد چه شی که شما اصلاح شروع کتت گون ای دلیل:
@@ -3167,5 +3130,10 @@ $1',
 'htmlform-submit'              => 'دیم دی',
 'htmlform-reset'               => 'ترینگ تغییرات',
 'htmlform-selectorother-other' => 'دگه',
+
+# New logging system
+'revdelete-restricted'   => 'محدودیت آن په مدیران سیستم بوت',
+'revdelete-unrestricted' => 'به زور چه مدیران سیستم محدودیتان',
+'newuserlog-byemail'     => 'کلمه رمز گون ایمیل دیم دهگ بوت',
 
 );

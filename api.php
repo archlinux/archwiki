@@ -68,11 +68,13 @@ if ( !$wgEnableAPI ) {
 
 // Selectively allow cross-site AJAX
 
-/*
+/**
  * Helper function to convert wildcard string into a regex
  * '*' => '.*?'
  * '?' => '.'
- * @ return string
+ *
+ * @param $search string
+ * @return string
  */
 function convertWildcard( $search ) {
 	$search = preg_quote( $search, '/' );
@@ -115,7 +117,7 @@ $processor = new ApiMain( $wgRequest, $wgEnableWriteAPI );
 $processor->execute();
 
 // Execute any deferred updates
-wfDoUpdates();
+DeferredUpdates::doUpdates();
 
 // Log what the user did, for book-keeping purposes.
 $endtime = microtime( true );
@@ -127,7 +129,7 @@ if ( $wgAPIRequestLog ) {
 	$items = array(
 			wfTimestamp( TS_MW ),
 			$endtime - $starttime,
-			wfGetIP(),
+			$wgRequest->getIP(),
 			$_SERVER['HTTP_USER_AGENT']
 	);
 	$items[] = $wgRequest->wasPosted() ? 'POST' : 'GET';

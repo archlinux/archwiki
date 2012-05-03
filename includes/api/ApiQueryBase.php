@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiBase.php' );
-}
-
 /**
  * This is a base class for all Query modules.
  * It provides some common functionality such as constructing various SQL
@@ -40,6 +35,11 @@ abstract class ApiQueryBase extends ApiBase {
 
 	private $mQueryModule, $mDb, $tables, $where, $fields, $options, $join_conds;
 
+	/**
+	 * @param $query ApiBase
+	 * @param $moduleName string
+	 * @param $paramPrefix string
+	 */
 	public function __construct( ApiBase $query, $moduleName, $paramPrefix = '' ) {
 		parent::__construct( $query->getMain(), $moduleName, $paramPrefix );
 		$this->mQueryModule = $query;
@@ -55,6 +55,7 @@ abstract class ApiQueryBase extends ApiBase {
 	 * Public caching will only be allowed if *all* the modules that supply
 	 * data for a given request return a cache mode of public.
 	 *
+	 * @param $params
 	 * @return string
 	 */
 	public function getCacheMode( $params ) {
@@ -213,21 +214,26 @@ abstract class ApiQueryBase extends ApiBase {
 
 		if ( $sort ) {
 			$order = $field . ( $isDirNewer ? '' : ' DESC' );
-			if ( !isset( $this->options['ORDER BY'] ) ) {
-				$this->addOption( 'ORDER BY', $order );
-			} else {
-				$this->addOption( 'ORDER BY', $this->options['ORDER BY'] . ', ' . $order );
-			}
+			// Append ORDER BY
+			$optionOrderBy = isset( $this->options['ORDER BY'] ) ? (array)$this->options['ORDER BY'] : array();
+			$optionOrderBy[] = $order;
+			$this->addOption( 'ORDER BY', $optionOrderBy );
 		}
 	}
+
 	/**
 	 * Add a WHERE clause corresponding to a range, similar to addWhereRange,
 	 * but converts $start and $end to database timestamps.
 	 * @see addWhereRange
+	 * @param $field
+	 * @param $dir
+	 * @param $start
+	 * @param $end
+	 * @param $sort bool
 	 */
 	protected function addTimestampWhereRange( $field, $dir, $start, $end, $sort = true ) {
 		$db = $this->getDb();
-		return $this->addWhereRange( $field, $dir, 
+		return $this->addWhereRange( $field, $dir,
 			$db->timestampOrNull( $start ), $db->timestampOrNull( $end ), $sort );
 	}
 
@@ -502,8 +508,7 @@ abstract class ApiQueryBase extends ApiBase {
 	 * @return void
 	 */
 	public function showHiddenUsersAddBlockInfo( $showBlockInfo ) {
-		global $wgUser;
-		$userCanViewHiddenUsers = $wgUser->isAllowed( 'hideuser' );
+		$userCanViewHiddenUsers = $this->getUser()->isAllowed( 'hideuser' );
 
 		if ( $showBlockInfo || !$userCanViewHiddenUsers ) {
 			$this->addTables( 'ipblocks' );

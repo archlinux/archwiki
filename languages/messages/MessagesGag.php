@@ -93,7 +93,7 @@ $specialPageAliases = array(
 );
 
 $magicWords = array(
-	'redirect'              => array( '0', '#YÖNNENDİRMÄKLER', '#YÖNNENDİR', '#YÖNNENDİRMÄ', '#YÖNLENDİRME', '#YÖNLENDİR', '#REDIRECT' ),
+	'redirect'                => array( '0', '#YÖNNENDİRMÄKLER', '#YÖNNENDİR', '#YÖNNENDİRMÄ', '#YÖNLENDİRME', '#YÖNLENDİR', '#REDIRECT' ),
 );
 
 $messages = array(
@@ -372,7 +372,6 @@ Yalvarêrız benneyiniz URL - i hem raport ediniz bunu bir [[Special:ListUsers/s
 'badtitle'           => 'Yannış yazı adı',
 'badtitletext'       => 'Girilen sayfa adı beki yannış beki de boş, yaki geçersiz neçin ki diller arası baalantı yaki vikiler arası baalantı içerer. Var nicä içindä olsun bir yaki taa çok nışan angıları yasak başlıklarda kullanılsın.',
 'viewsource'         => 'Geliniri gör',
-'viewsourcefor'      => '$1 için',
 'protectedpagetext'  => 'Bu sayfa diiştirmämää deyni kilitlendi.',
 'viewsourcetext'     => 'Var nicä görmää hem kopiya etmää bu yapraa gelinirini:',
 
@@ -480,8 +479,6 @@ Herliim girmediniz [[Special:Preferences|seçimner]] bölümünde geçerli bir e
 
 Şindi IP adresiniz $3. Yalvarêrêz bu adresi belirtmää her angı bir sorgu yapar kana.',
 'blockednoreason'                  => 'hiç bir sebep belirtilmedi',
-'blockedoriginalsource'            => "'''$1''' sayfasın kaynak teksti aşaada:",
-'whitelistedittitle'               => 'Lääzım açmaa sessiya diişmäk yapmaa deyni',
 'whitelistedittext'                => 'Diişmäk yapmaa için $1.',
 'nosuchsectiontitle'               => 'Bölä bölüm yok',
 'loginreqtitle'                    => 'Lääazım sessiya açmaa',
@@ -803,8 +800,7 @@ Sizin bakmaa [[Special:Watchlist|listasındaki]] sayfalar verildi '''kalın''' b
 'linksearch' => 'İç baalantlar',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Eni kullanıcı bennemäkleri',
-'newuserlog-create-entry' => 'Eni kullanıcı esabı',
+'newuserlogpage' => 'Eni kullanıcı bennemäkleri',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(azaların listası)',
@@ -842,7 +838,6 @@ Lütfen doorulayın ani siz neetlenersiniz bunu yapmaa, annêêrsiniz onun rezul
 'actioncomplete'        => 'İşlik tamannandı.',
 'deletedtext'           => '"$1" silindi.
 Yakın zamanda silinenleri görmää deyni: $2.',
-'deletedarticle'        => '"[[$1]]" silindi',
 'dellogpage'            => 'Silmää jurnalı',
 'deletecomment'         => 'Sebep',
 'deleteotherreason'     => 'Başka/ek sebep:',
@@ -878,9 +873,8 @@ Burada bitki seçimner '''$1''' yazı diiştirmää deyni:",
 'restriction-level'           => 'Yasaklama düzeyi:',
 
 # Undelete
-'undeletebtn'      => 'Geeri getir!',
-'undeletelink'     => 'Göster/geeri getir',
-'undeletedarticle' => '[[$1]] geeri getirildi.',
+'undeletebtn'  => 'Geeri getir!',
+'undeletelink' => 'Göster/geeri getir',
 
 # Namespace form on various pages
 'namespace'      => 'Er adı:',
@@ -965,8 +959,6 @@ Yalvarêrêz başka bir ad seçmää.',
 'talkexists'       => "'''Bu sayfa kendisi başarılan aktarıldı, ama konuşmaa sayfası aktarılamadı neçin ki eni ad altında bulunêr taa birisi. Yalvarêrêz onnarı ellän birleştirmää.'''",
 'movedto'          => 'taşındı:',
 'movetalk'         => 'Varsa hem aktar "konuşmaa" sayfasını.',
-'1movedto2'        => '[[$1]] sayfasın eni adı: [[$2]]',
-'1movedto2_redir'  => '[[$1]] başlaa [[$2]] sayfasına gönderildi',
 'movelogpage'      => 'Ad diişmäk jurnalı',
 'movereason'       => 'Sebep',
 'revertmove'       => 'geeri al',
@@ -1048,7 +1040,7 @@ Dönün baş yapraa',
 
 # Media information
 'file-info-size' => '$1 × $2 piksel, fayl ölçüsü: $3, MIME tipi: $4',
-'file-nohires'   => '<small>Taa üüksek aydınnıklı versiya bulunmêêr.</small>',
+'file-nohires'   => 'Taa üüksek aydınnıklı versiya bulunmêêr.',
 'svg-long-desc'  => 'SVG faylı, nominal $1 × $2 piksel, fayl ölçüsü: $3',
 'show-big-image' => 'Taman aydınnık',
 

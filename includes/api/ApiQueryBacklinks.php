@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiQueryBase.php" );
-}
-
 /**
  * This is a three-in-one module to query:
  *   * backlinks  - links pointing to the given page,
@@ -511,7 +506,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		static $examples = array(
 			'backlinks' => array(
 				'api.php?action=query&list=backlinks&bltitle=Main%20Page',

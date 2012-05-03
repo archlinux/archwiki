@@ -17,7 +17,7 @@ class LanguageTr extends Language {
 	 * @return string
 	 */
 	function ucfirst ( $string ) {
-		if ( !empty( $string ) && $string[0] == 'i' ) {
+		if ( strlen( $string ) && $string[0] == 'i' ) {
 			return 'İ' . substr( $string, 1 );
 		} else {
 			return parent::ucfirst( $string );
@@ -29,7 +29,7 @@ class LanguageTr extends Language {
 	 * @return mixed|string
 	 */
 	function lcfirst ( $string ) {
-		if ( !empty( $string ) && $string[0] == 'I' ) {
+		if ( strlen( $string ) && $string[0] == 'I' ) {
 			return 'ı' . substr( $string, 1 );
 		} else {
 			return parent::lcfirst( $string );

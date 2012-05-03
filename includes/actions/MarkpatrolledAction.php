@@ -28,30 +28,25 @@ class MarkpatrolledAction extends FormlessAction {
 		return 'markpatrolled';
 	}
 
-	public function getRestriction() {
-		return 'read';
-	}
-
 	protected function getDescription() {
 		return '';
 	}
 
-	protected function checkCanExecute( User $user ) {
-		if ( !$user->matchEditToken( $this->getRequest()->getVal( 'token' ), $this->getRequest()->getInt( 'rcid' ) ) ) {
-			throw new ErrorPageError( 'sessionfailure-title', 'sessionfailure' );
-		}
-
-		return parent::checkCanExecute( $user );
-	}
-
 	public function onView() {
-		$rc = RecentChange::newFromId( $this->getRequest()->getInt( 'rcid' ) );
+		$request = $this->getRequest();
 
+		$rcId = $request->getInt( 'rcid' );
+		$rc = RecentChange::newFromId( $rcId );
 		if ( is_null( $rc ) ) {
 			throw new ErrorPageError( 'markedaspatrollederror', 'markedaspatrollederrortext' );
 		}
 
-		$errors = $rc->doMarkPatrolled( $this->getUser() );
+		$user = $this->getUser();
+		if ( !$user->matchEditToken( $request->getVal( 'token' ), $rcId ) ) {
+			throw new ErrorPageError( 'sessionfailure-title', 'sessionfailure' );
+		}
+
+		$errors = $rc->doMarkPatrolled( $user );
 
 		if ( in_array( array( 'rcpatroldisabled' ), $errors ) ) {
 			throw new ErrorPageError( 'rcpatroldisabled', 'rcpatroldisabledtext' );
@@ -67,19 +62,18 @@ class MarkpatrolledAction extends FormlessAction {
 		$return = SpecialPage::getTitleFor( $returnto );
 
 		if ( in_array( array( 'markedaspatrollederror-noautopatrol' ), $errors ) ) {
-			$this->getOutput()->setPageTitle( wfMsg( 'markedaspatrollederror' ) );
+			$this->getOutput()->setPageTitle( $this->msg( 'markedaspatrollederror' ) );
 			$this->getOutput()->addWikiMsg( 'markedaspatrollederror-noautopatrol' );
 			$this->getOutput()->returnToMain( null, $return );
 			return;
 		}
 
-		if ( !empty( $errors ) ) {
-			$this->getOutput()->showPermissionsErrorPage( $errors );
-			return;
+		if ( count( $errors ) ) {
+			throw new PermissionsError( 'patrol', $errors );
 		}
 
 		# Inform the user
-		$this->getOutput()->setPageTitle( wfMsg( 'markedaspatrolled' ) );
+		$this->getOutput()->setPageTitle( $this->msg( 'markedaspatrolled' ) );
 		$this->getOutput()->addWikiMsg( 'markedaspatrolledtext', $rc->getTitle()->getPrefixedText() );
 		$this->getOutput()->returnToMain( null, $return );
 	}

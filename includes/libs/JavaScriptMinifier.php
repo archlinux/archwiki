@@ -484,22 +484,42 @@ class JavaScriptMinifier {
 					$end++;
 				}
 			} elseif(
+				$ch === '0'
+				&& ($pos + 1 < $length) && ($s[$pos + 1] === 'x' || $s[$pos + 1] === 'X' )
+			) {
+				// Hex numeric literal
+				$end++; // x or X
+				$len = strspn( $s, '0123456789ABCDEFabcdef', $end );
+				if ( !$len ) {
+					return self::parseError($s, $pos, 'Expected a hexadecimal number but found ' . substr( $s, $pos, 5 ) . '...' );
+				}
+				$end += $len;
+			} elseif(
 				ctype_digit( $ch )
 				|| ( $ch === '.' && $pos + 1 < $length && ctype_digit( $s[$pos + 1] ) )
 			) {
-				// Numeric literal. Search for the end of it, but don't care about [+-]exponent
-				// at the end, as the results of "numeric [+-] numeric" and "numeric" are
-				// identical to our state machine.
-				$end += strspn( $s, '0123456789ABCDEFabcdefXx.', $end );
-				while( $s[$end - 1] === '.' ) {
-					// Special case: When a numeric ends with a dot, we have to check the 
-					// literal for proper syntax
-					$decimal = strspn( $s, '0123456789', $pos, $end - $pos - 1 );
-					if( $decimal === $end - $pos - 1 ) {
-						break;
-					} else {
-						$end--;
+				$end += strspn( $s, '0123456789', $end );
+				$decimal = strspn( $s, '.', $end );
+				if ($decimal) {
+					if ( $decimal > 2 ) {
+						return self::parseError($s, $end, 'The number has too many decimal points' );
 					}
+					$end += strspn( $s, '0123456789', $end + 1 ) + $decimal;
+				}
+				$exponent = strspn( $s, 'eE', $end );
+				if( $exponent ) {
+					if ( $exponent > 1 ) {
+						return self::parseError($s, $end, 'Number with several E' );
+					}
+					$end++;
+					
+					// + sign is optional; - sign is required.
+					$end += strspn( $s, '-+', $end );
+					$len = strspn( $s, '0123456789', $end );
+					if ( !$len ) {
+						return self::parseError($s, $pos, 'No decimal digits after e, how many zeroes should be added?' );
+					}
+					$end += $len;
 				}
 			} elseif( isset( $opChars[$ch] ) ) {
 				// Punctuation character. Search for the longest matching operator.
@@ -575,5 +595,10 @@ class JavaScriptMinifier {
 			}
 		}
 		return $out;
+	}
+	
+	static function parseError($fullJavascript, $position, $errorMsg) {
+		// TODO: Handle the error: trigger_error, throw exception, return false...
+		return false;
 	}
 }

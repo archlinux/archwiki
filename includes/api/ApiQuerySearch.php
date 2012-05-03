@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * Query module to perform full text search within wiki titles and content
  *
@@ -68,6 +63,9 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		$search->setLimitOffset( $limit + 1, $params['offset'] );
 		$search->setNamespaces( $params['namespace'] );
 		$search->showRedirects = $params['redirects'];
+
+		$query = $search->transformSearchTerm( $query );
+		$query = $search->replacePrefixes( $query );
 
 		// Perform the actual search
 		if ( $what == 'text' ) {
@@ -293,7 +291,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&list=search&srsearch=meaning',
 			'api.php?action=query&list=search&srwhat=text&srsearch=meaning',

@@ -19,6 +19,10 @@ abstract class ApiTestCaseUpload extends ApiTestCase {
 		$this->clearFakeUploads();
 	}
 
+	public function tearDown() {
+		$this->clearTempUpload();
+	}
+
 	/**
 	 * Helper function -- remove files and associated articles by Title
 	 * @param $title Title: title to be removed
@@ -33,8 +37,8 @@ abstract class ApiTestCaseUpload extends ApiTestCase {
 			if ( !$status->isGood() ) {
 				return false;
 			}
-			$article = new Article( $title );
-			$article->doDeleteArticle( "removing for test" );
+			$page = WikiPage::factory( $title );
+			$page->doDeleteArticle( "removing for test" );
 
 			// see if it now doesn't exist; reload
 			$title = Title::newFromText( $title->getText(), NS_FILE );
@@ -56,7 +60,7 @@ abstract class ApiTestCaseUpload extends ApiTestCase {
 	 * @param $filePath String: path to file on the filesystem
 	 */
 	public function deleteFileByContent( $filePath ) {
-		$hash = File::sha1Base36( $filePath );
+		$hash = FSFile::getSha1Base36FromPath( $filePath );
 		$dupes = RepoGroup::singleton()->findBySha1( $hash );
 		$success = true;
 		foreach ( $dupes as $dupe ) {
@@ -99,6 +103,36 @@ abstract class ApiTestCaseUpload extends ApiTestCase {
 
 		return true;
 
+	}
+	function fakeUploadChunk(  $fieldName, $fileName, $type, & $chunkData ){
+		$tmpName = tempnam( wfTempDir(), "" );
+		// copy the chunk data to temp location: 
+		if ( !file_put_contents( $tmpName, $chunkData ) ) {
+			throw new Exception( "couldn't copy chunk data to $tmpName" );
+		}
+		
+		clearstatcache();
+		$size = filesize( $tmpName );
+		if ( $size === false ) {
+			throw new Exception( "couldn't stat $tmpName" );
+		}
+		
+		$_FILES[ $fieldName ] = array(
+			'name'		=> $fileName,
+			'type'		=> $type,
+			'tmp_name' 	=> $tmpName,
+			'size' 		=> $size,
+			'error'		=> null
+		);
+	}
+
+	function clearTempUpload() {
+		if( isset( $_FILES['file']['tmp_name'] ) ) {
+			$tmp = $_FILES['file']['tmp_name'];
+			if( file_exists( $tmp ) ) {
+				unlink( $tmp );
+			}
+		}
 	}
 
 	/**

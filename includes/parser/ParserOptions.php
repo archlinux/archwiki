@@ -1,58 +1,188 @@
 <?php
 /**
- * Options for the PHP parser
+ * \brief Options for the PHP parser
  *
  * @file
  * @ingroup Parser
  */
 
 /**
- * Set options of the Parser
- * @todo document
+ * \brief Set options of the Parser
+ *
+ * All member variables are supposed to be private in theory, although in practise this is not the case.
+ *
  * @ingroup Parser
  */
 class ParserOptions {
-	# All variables are supposed to be private in theory, although in practise this is not the case.
-	var $mUseDynamicDates;           # Use DateFormatter to format dates
-	var $mInterwikiMagic;            # Interlanguage links are removed and returned in an array
-	var $mAllowExternalImages;       # Allow external images inline
-	var $mAllowExternalImagesFrom;   # If not, any exception?
-	var $mEnableImageWhitelist;      # If not or it doesn't match, should we check an on-wiki whitelist?
-	var $mDateFormat = null;         # Date format index
-	var $mEditSection = true;        # Create "edit section" links
-	var $mAllowSpecialInclusion;     # Allow inclusion of special pages
-	var $mTidy = false;              # Ask for tidy cleanup
-	var $mInterfaceMessage = false;  # Which lang to call for PLURAL and GRAMMAR
-	var $mTargetLanguage = null;     # Overrides above setting with arbitrary language
-	var $mMaxIncludeSize;            # Maximum size of template expansions, in bytes
-	var $mMaxPPNodeCount;            # Maximum number of nodes touched by PPFrame::expand()
-	var $mMaxPPExpandDepth;          # Maximum recursion depth in PPFrame::expand()
-	var $mMaxTemplateDepth;          # Maximum recursion depth for templates within templates
-	var $mRemoveComments = true;     # Remove HTML comments. ONLY APPLIES TO PREPROCESS OPERATIONS
-	var $mTemplateCallback =         # Callback for template fetching
+	
+	/**
+	 * Use DateFormatter to format dates
+	 */
+	var $mUseDynamicDates;
+	
+	/**
+	 * Interlanguage links are removed and returned in an array
+	 */
+	var $mInterwikiMagic;
+	
+	/**
+	 * Allow external images inline?
+	 */
+	var $mAllowExternalImages;
+	
+	/**
+	 * If not, any exception?
+	 */
+	var $mAllowExternalImagesFrom;
+	
+	/**
+	 * If not or it doesn't match, should we check an on-wiki whitelist?
+	 */
+	var $mEnableImageWhitelist;
+	
+	/**
+	 * Date format index
+	 */
+	var $mDateFormat = null;
+	
+	/**
+	 * Create "edit section" links?
+	 */
+	var $mEditSection = true;
+	
+	/**
+	 * Allow inclusion of special pages?
+	 */
+	var $mAllowSpecialInclusion;
+	
+	/**
+	 * Use tidy to cleanup output HTML?
+	 */
+	var $mTidy = false;
+	
+	/**
+	 * Which lang to call for PLURAL and GRAMMAR
+	 */
+	var $mInterfaceMessage = false;
+	
+	/**
+	 * Overrides $mInterfaceMessage with arbitrary language
+	 */
+	var $mTargetLanguage = null;
+	
+	/**
+	 * Maximum size of template expansions, in bytes
+	 */
+	var $mMaxIncludeSize;
+	
+	/**
+	 * Maximum number of nodes touched by PPFrame::expand()
+	 */
+	var $mMaxPPNodeCount;
+	
+	/**
+	 * Maximum recursion depth in PPFrame::expand()
+	 */
+	var $mMaxPPExpandDepth;
+	
+	/**
+	 * Maximum recursion depth for templates within templates
+	 */
+	var $mMaxTemplateDepth;
+	
+	/**
+	 * Remove HTML comments. ONLY APPLIES TO PREPROCESS OPERATIONS
+	 */
+	var $mRemoveComments = true;
+	
+	/**
+	 * Callback for template fetching. Used as first argument to call_user_func().
+	 */
+	var $mTemplateCallback =
 		array( 'Parser', 'statelessFetchTemplate' );
-	var $mEnableLimitReport = false; # Enable limit report in an HTML comment on output
-	var $mTimestamp;                 # Timestamp used for {{CURRENTDAY}} etc.
-	var $mExternalLinkTarget;        # Target attribute for external links
-	var $mCleanSignatures;           #
-	var $mPreSaveTransform = true;   # Transform wiki markup when saving the page.
-
-	var $mNumberHeadings;            # Automatically number headings
-	var $mMath;                      # User math preference (as integer)
-	var $mThumbSize;                 # Thumb size preferred by the user.
-	private $mStubThreshold;         # Maximum article size of an article to be marked as "stub"
-	var $mUserLang;                  # Language code of the User language.
+		
+	/**
+	 * Enable limit report in an HTML comment on output
+	 */
+	var $mEnableLimitReport = false;
+	
+	/**
+	 * Timestamp used for {{CURRENTDAY}} etc.
+	 */
+	var $mTimestamp;
+	
+	/**
+	 * Target attribute for external links
+	 */
+	var $mExternalLinkTarget;
+	
+	/**
+	 * Clean up signature texts? 
+	 *
+	 * 1) Strip ~~~, ~~~~ and ~~~~~ out of signatures
+	 * 2) Substitute all transclusions
+	 */
+	var $mCleanSignatures;
+	
+	/**
+	 * Transform wiki markup when saving the page?
+	 */
+	var $mPreSaveTransform = true;
 
 	/**
-	 * @var User
+	 * Automatically number headings?
 	 */
-	var $mUser;                      # Stored user object
-	var $mIsPreview = false;         # Parsing the page for a "preview" operation
-	var $mIsSectionPreview = false;  # Parsing the page for a "preview" operation on a single section
-	var $mIsPrintable = false;       # Parsing the printable version of the page
+	var $mNumberHeadings;
+	
+	/**
+	 * User math preference (as integer). Not used (1.19)
+	 */
+	var $mMath;
+	
+	/**
+	 * Thumb size preferred by the user.
+	 */
+	var $mThumbSize;
+	
+	/**
+	 * Maximum article size of an article to be marked as "stub"
+	 */
+	private $mStubThreshold;
+	
+	/**
+	 * Language object of the User language.
+	 */
+	var $mUserLang;
 
-	var $mExtraKey = '';             # Extra key that should be present in the caching key.
+	/**
+	 * @var User 
+	 * Stored user object
+	 */
+	var $mUser;
+	
+	/**
+	 * Parsing the page for a "preview" operation?
+	 */
+	var $mIsPreview = false;
+	
+	/**
+	 * Parsing the page for a "preview" operation on a single section?
+	 */
+	var $mIsSectionPreview = false;
+	
+	/**
+	 * Parsing the printable version of the page?
+	 */
+	var $mIsPrintable = false;
 
+	/**
+	 * Extra key that should be present in the caching key.
+	 */
+	var $mExtraKey = '';
+
+	/**
+	 * Function to be called when an option is accessed.
+	 */
 	protected $onAccessCallback = null;
 
 	function getUseDynamicDates()               { return $this->mUseDynamicDates; }
@@ -96,7 +226,7 @@ class ParserOptions {
 	 * @deprecated since 1.18 Use Linker::* instead
 	 */
 	function getSkin( $title = null ) {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.18' );
 		return new DummyLinker;
 	}
 
@@ -119,12 +249,23 @@ class ParserOptions {
 	 * You shouldn't use this. Really. $parser->getFunctionLang() is all you need.
 	 * Using this fragments the cache and is discouraged. Yes, {{int: }} uses this,
 	 * producing inconsistent tables (Bug 14404).
+	 *
+	 * @return Language object
+	 * @since 1.19
+	 */
+	function getUserLangObj() {
+		$this->optionUsed( 'userlang' );
+		return $this->mUserLang;
+	}
+
+	/**
+	 * Same as getUserLangObj() but returns a string instead.
+	 *
 	 * @return String   Language code
 	 * @since 1.17
 	 */
 	function getUserLang() {
-		$this->optionUsed( 'userlang' );
-		return $this->mUserLang;
+		return $this->getUserLangObj()->getCode();
 	}
 
 	function setUseDynamicDates( $x )           { return wfSetVar( $this->mUseDynamicDates, $x ); }
@@ -137,7 +278,9 @@ class ParserOptions {
 	function setNumberHeadings( $x )            { return wfSetVar( $this->mNumberHeadings, $x ); }
 	function setAllowSpecialInclusion( $x )     { return wfSetVar( $this->mAllowSpecialInclusion, $x ); }
 	function setTidy( $x )                      { return wfSetVar( $this->mTidy, $x ); }
-	function setSkin( $x )                      { $this->mSkin = $x; }
+
+	/** @deprecated in 1.19; will be removed in 1.20 */
+	function setSkin( $x )                      { wfDeprecated( __METHOD__, '1.19' ); }
 	function setInterfaceMessage( $x )          { return wfSetVar( $this->mInterfaceMessage, $x ); }
 	function setTargetLanguage( $x )            { return wfSetVar( $this->mTargetLanguage, $x, true ); }
 	function setMaxIncludeSize( $x )            { return wfSetVar( $this->mMaxIncludeSize, $x ); }
@@ -151,8 +294,8 @@ class ParserOptions {
 	function setExternalLinkTarget( $x )        { return wfSetVar( $this->mExternalLinkTarget, $x ); }
 	function setMath( $x )                      { return wfSetVar( $this->mMath, $x ); }
 	function setUserLang( $x )                  {
-		if ( $x instanceof Language ) {
-			$x = $x->getCode();
+		if ( is_string( $x ) ) {
+			$x = Language::factory( $x );
 		}
 		return wfSetVar( $this->mUserLang, $x );
 	}
@@ -171,41 +314,75 @@ class ParserOptions {
 		$this->mExtraKey .= '!' . $key;
 	}
 
-	function __construct( $user = null ) {
-		$this->initialiseFromUser( $user );
+	/**
+	 * Constructor
+	 * @param $user User object
+	 * @param $lang Language object
+	 */
+	function __construct( $user = null, $lang = null ) {
+		if ( $user === null ) {
+			global $wgUser;
+			if ( $wgUser === null ) {
+				$user = new User;
+			} else {
+				$user = $wgUser;
+			}
+		}
+		if ( $lang === null ) {
+			global $wgLang;
+			if ( !StubObject::isRealObject( $wgLang ) ) {
+				$wgLang->_unstub();
+			}
+			$lang = $wgLang;
+		}
+		$this->initialiseFromUser( $user, $lang );
 	}
 
 	/**
-	 * Get parser options
+	 * Get a ParserOptions object from a given user.
+	 * Language will be taken from $wgLang.
 	 *
 	 * @param $user User object
 	 * @return ParserOptions object
 	 */
-	static function newFromUser( $user ) {
+	public static function newFromUser( $user ) {
 		return new ParserOptions( $user );
 	}
 
-	/** Get user options */
-	function initialiseFromUser( $userInput ) {
-		global $wgUseDynamicDates, $wgInterwikiMagic, $wgAllowExternalImages;
-		global $wgAllowExternalImagesFrom, $wgEnableImageWhitelist, $wgAllowSpecialInclusion, $wgMaxArticleSize;
-		global $wgMaxPPNodeCount, $wgMaxTemplateDepth, $wgMaxPPExpandDepth, $wgCleanSignatures;
-		global $wgExternalLinkTarget, $wgLang;
+	/**
+	 * Get a ParserOptions object from a given user and language
+	 *
+	 * @param $user User object
+	 * @param $lang Language object
+	 * @return ParserOptions object
+	 */
+	public static function newFromUserAndLang( User $user, Language $lang ) {
+		return new ParserOptions( $user, $lang );
+	}
+
+	/**
+	 * Get a ParserOptions object from a IContextSource object
+	 *
+	 * @param $context IContextSource object
+	 * @return ParserOptions object
+	 */
+	public static function newFromContext( IContextSource $context ) {
+		return new ParserOptions( $context->getUser(), $context->getLanguage() );
+	}
+
+	/** 
+	 * Get user options 
+	 *
+	 * @param $user User object
+	 * @param $lang Language object
+	 */
+	private function initialiseFromUser( $user, $lang ) {
+		global $wgUseDynamicDates, $wgInterwikiMagic, $wgAllowExternalImages,
+			$wgAllowExternalImagesFrom, $wgEnableImageWhitelist, $wgAllowSpecialInclusion,
+			$wgMaxArticleSize, $wgMaxPPNodeCount, $wgMaxTemplateDepth, $wgMaxPPExpandDepth,
+			$wgCleanSignatures, $wgExternalLinkTarget;
 
 		wfProfileIn( __METHOD__ );
-
-		if ( !$userInput ) {
-			global $wgUser;
-			if ( isset( $wgUser ) ) {
-				$user = $wgUser;
-			} else {
-				$user = new User;
-			}
-		} else {
-			$user =& $userInput;
-		}
-
-		$this->mUser = $user;
 
 		$this->mUseDynamicDates = $wgUseDynamicDates;
 		$this->mInterwikiMagic = $wgInterwikiMagic;
@@ -220,11 +397,12 @@ class ParserOptions {
 		$this->mCleanSignatures = $wgCleanSignatures;
 		$this->mExternalLinkTarget = $wgExternalLinkTarget;
 
+		$this->mUser = $user;
 		$this->mNumberHeadings = $user->getOption( 'numberheadings' );
 		$this->mMath = $user->getOption( 'math' );
 		$this->mThumbSize = $user->getOption( 'thumbsize' );
 		$this->mStubThreshold = $user->getStubThreshold();
-		$this->mUserLang = $wgLang->getCode();
+		$this->mUserLang = $lang;
 
 		wfProfileOut( __METHOD__ );
 	}
@@ -274,10 +452,12 @@ class ParserOptions {
 	 * settings.
 	 *
 	 * @since 1.17
-	 * @return \string Page rendering hash
+	 * @param $forOptions Array
+	 * @param $title Title: used to get the content language of the page (since r97636)
+	 * @return string Page rendering hash
 	 */
-	public function optionsHash( $forOptions ) {
-		global $wgContLang, $wgRenderHashAppend;
+	public function optionsHash( $forOptions, $title = null ) {
+		global $wgRenderHashAppend;
 
 		$confstr = '';
 
@@ -308,7 +488,7 @@ class ParserOptions {
 		}
 
 		if ( in_array( 'userlang', $forOptions ) ) {
-			$confstr .= '!' . $this->mUserLang;
+			$confstr .= '!' . $this->mUserLang->getCode();
 		} else {
 			$confstr .= '!*';
 		}
@@ -321,7 +501,12 @@ class ParserOptions {
 
 		// add in language specific options, if any
 		// @todo FIXME: This is just a way of retrieving the url/user preferred variant
-		$confstr .= $wgContLang->getExtraHashOptions();
+		if( !is_null( $title ) ) {
+			$confstr .= $title->getPageLanguage()->getExtraHashOptions();
+		} else {
+			global $wgContLang;
+			$confstr .= $wgContLang->getExtraHashOptions();
+		}
 
 		$confstr .= $wgRenderHashAppend;
 

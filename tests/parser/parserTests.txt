@@ -615,6 +615,26 @@ disabled
 </dl>
 !! end
 
+!! test
+Definition and unordered list using wiki syntax nested in unordered list using html tags.
+!! input
+<ul><li>
+; term : description 
+* unordered
+</li>
+</ul>
+!! result
+<ul><li>
+<dl><dt> term&#160;</dt><dd> description 
+</dd></dl>
+<ul><li> unordered
+</li></ul>
+</li>
+</ul>
+
+!! end
+
+
 ###
 ### External links
 ###
@@ -1050,8 +1070,10 @@ http://www.example.com/?title=AT%26T
 </p>
 !! end
 
+# According to http://dev.w3.org/html5/spec/Overview.html#parsing-urls a plain
+# % is actually legal in HTML5. Any change in output would need testing though.
 !! test
-Bug 4781, 5267: %26 in URL
+Bug 4781, 5267: %25 in URL
 !! input
 http://www.example.com/?title=100%25_Bran
 !! result
@@ -1166,6 +1188,29 @@ URL-encoding in URL functions (multiple parameters)
 {{localurl:Some page|q=?&amp=&}}
 !! result
 <p>/index.php?title=Some_page&amp;q=?&amp;amp=&amp;
+</p>
+!! end
+
+!! test
+Brackets in urls
+!! input
+http://example.com/index.php?foozoid%5B%5D=bar
+
+http://example.com/index.php?foozoid&#x5B;&#x5D;=bar
+!! result
+<p><a rel="nofollow" class="external free" href="http://example.com/index.php?foozoid%5B%5D=bar">http://example.com/index.php?foozoid%5B%5D=bar</a>
+</p><p><a rel="nofollow" class="external free" href="http://example.com/index.php?foozoid%5B%5D=bar">http://example.com/index.php?foozoid%5B%5D=bar</a>
+</p>
+!! end
+
+!! test
+IPv6 urls (bug 21261)
+!! options
+disabled
+!! input
+http://[2404:130:0:1000::187:2]/index.php
+!! result
+<p><a rel="nofollow" class="external free" href="http://[2404:130:0:1000::187:2]/index.php">http://[2404:130:0:1000::187:2]/index.php</a>
 </p>
 !! end
 
@@ -1346,7 +1391,7 @@ Multiplication table
 !! test
 Table rowspan
 !! input
-{| align=right border=1
+{| border=1
 | Cell 1, row 1 
 |rowspan=2| Cell 2, row 1 (and 2) 
 | Cell 3, row 1 
@@ -1355,7 +1400,7 @@ Table rowspan
 | Cell 3, row 2 
 |}
 !! result
-<table align="right" border="1">
+<table border="1">
 <tr>
 <td> Cell 1, row 1
 </td>
@@ -1434,6 +1479,28 @@ Table security: embedded pipes (http://lists.wikimedia.org/mailman/htdig/wikitec
 
 !! end
 
+
+!! test
+Indented table markup mixed with indented pre content (proposed in bug 6200)
+!! input
+ <table>
+ <tr>
+ <td>
+ Text that should be rendered preformatted
+ </td>
+ </tr>
+ </table>
+!! result
+ <table>
+ <tr>
+ <td>
+<pre>Text that should be rendered preformatted
+</pre>
+ </td>
+ </tr>
+ </table>
+
+!! end
 
 
 ###
@@ -1872,7 +1939,7 @@ Inline interwiki link with empty title (bug 2372)
 !! input
 [[MeatBall:]]
 !! result
-<p><a href="http://www.usemod.com/cgi-bin/mb.pl?" class="extiw" title="meatball:">MeatBall:</a>
+<p><a href="http://www.usemod.com/cgi-bin/mb.pl" class="extiw" title="meatball:">MeatBall:</a>
 </p>
 !! end
 
@@ -1969,13 +2036,13 @@ Incorrecly removing closing slashes from correctly formed XHTML
 !! test 
 Failing to transform badly formed HTML into correct XHTML
 !! input
-<br clear=left>
-<br clear=right>
-<br clear=all>
+<br style="clear: left;">
+<br style="clear: right;">
+<br style="clear: both;">
 !! result
-<p><br clear="left" />
-<br clear="right" />
-<br clear="all" />
+<p><br style="clear: left;" />
+<br style="clear: right;" />
+<br style="clear: both;" />
 </p>
 !!end
 
@@ -3027,35 +3094,6 @@ section=1
 !! result
 ==Section 1==
 !! end
-!! article
-Template:Top-level template
-!! text
-{{Nested template}}
-!! endarticle
-
-!! article
-Template:Nested template
-!! text
-*Item 1
-*Item 2
-!! endarticle
-
-!! test
-Line-start flag in a nested template call
-!! input
-*Item A
-*Item B
-
-{{Top-level template}}
-!! result
-<ul><li>Item A
-</li><li>Item B
-</li></ul>
-<ul><li>Item 1
-</li><li>Item 2
-</li></ul>
-
-!! end
 
 ###
 ### Pre-save transform tests
@@ -3418,6 +3456,66 @@ pst title=[[Ns:Somearticle (IGNORED), Context]]
 [[|Article]]
 !! result
 [[Ns:Article, Context|Article]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with full-width parens and no space (Japanese and Chinese style, bug 30149)
+!! options
+pst
+!! input
+[[Article（context）|]]
+[[Bar:Article（context）|]]
+[[:Bar:Article（context）|]]
+[[|Article（context）]]
+[[Bar:X （Y） Z|]]
+[[:Bar:X （Y） Z|]]
+!! result
+[[Article（context）|Article]]
+[[Bar:Article（context）|Article]]
+[[:Bar:Article（context）|Article]]
+[[Article（context）]]
+[[Bar:X （Y） Z|X （Y） Z]]
+[[:Bar:X （Y） Z|X （Y） Z]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with full-width parens and space (Japanese and Chinese style, bug 30149)
+!! options
+pst
+!! input
+[[Article （context）|]]
+[[Bar:Article （context）|]]
+[[:Bar:Article （context）|]]
+[[|Article （context）]]
+[[Bar:X （Y） Z|]]
+[[:Bar:X （Y） Z|]]
+!! result
+[[Article （context）|Article]]
+[[Bar:Article （context）|Article]]
+[[:Bar:Article （context）|Article]]
+[[Article （context）]]
+[[Bar:X （Y） Z|X （Y） Z]]
+[[:Bar:X （Y） Z|X （Y） Z]]
+!! end
+
+!! test
+pre-save transform: context links ("pipe trick") with parens and no space (Korean style, bug 30149)
+!! options
+pst
+!! input
+[[Article(context)|]]
+[[Bar:Article(context)|]]
+[[:Bar:Article(context)|]]
+[[|Article(context)]]
+[[Bar:X(Y)Z|]]
+[[:Bar:X(Y)Z|]]
+!! result
+[[Article(context)|Article]]
+[[Bar:Article(context)|Article]]
+[[:Bar:Article(context)|Article]]
+[[Article(context)]]
+[[Bar:X(Y)Z|X(Y)Z]]
+[[:Bar:X(Y)Z|X(Y)Z]]
 !! end
 
 !! test
@@ -4487,9 +4585,9 @@ div with unquoted attribute
 !! test
 div with illegal double attributes
 !! input
-<div align="center" align="right">HTML rocks</div>
+<div id="a" id="b">HTML rocks</div>
 !! result
-<div align="right">HTML rocks</div>
+<div id="b">HTML rocks</div>
 
 !!end
 
@@ -4519,9 +4617,9 @@ Table multiple attributes correction
 !! test
 DIV IN UPPERCASE
 !! input
-<DIV ALIGN="center">HTML ROCKS</DIV>
+<DIV ID="x">HTML ROCKS</DIV>
 !! result
-<div align="center">HTML ROCKS</div>
+<div id="x">HTML ROCKS</div>
 
 !!end
 
@@ -8381,7 +8479,17 @@ comment title=[[Main Page]]
 !! input
 /* External links */ removed bogus entries
 !! result
-<span class="autocomment"><a href="/wiki/Main_Page#External_links" title="Main Page">→</a>External links: </span> removed bogus entries
+<a href="/wiki/Main_Page#External_links" title="Main Page">→</a>‎<span dir="auto"><span class="autocomment">External links: </span> removed bogus entries</span>
+!!end
+
+!! test
+Edit comment with section link and text before it (non-local, eg in history list)
+!! options
+comment title=[[Main Page]]
+!! input
+pre-comment text /* External links */ removed bogus entries
+!! result
+pre-comment text - <a href="/wiki/Main_Page#External_links" title="Main Page">→</a>‎<span dir="auto"><span class="autocomment">External links: </span> removed bogus entries</span>
 !!end
 
 !! test
@@ -8391,7 +8499,7 @@ comment local title=[[Main Page]]
 !! input
 /* External links */ removed bogus entries
 !! result
-<span class="autocomment"><a href="#External_links">→</a>External links: </span> removed bogus entries
+<a href="#External_links">→</a>‎<span dir="auto"><span class="autocomment">External links: </span> removed bogus entries</span>
 !!end
 
 !! test
@@ -8478,7 +8586,7 @@ title=[[Main Page]]
 !!input
 /* __hello__world__ */
 !! result
-<span class="autocomment"><a href="/wiki/Main_Page#hello_world" title="Main Page">→</a>__hello__world__</span>
+<a href="/wiki/Main_Page#hello_world" title="Main Page">→</a>‎<span dir="auto"><span class="autocomment">__hello__world__</span></span>
 !! end
 
 !! test
@@ -8493,6 +8601,8 @@ comment
 
 !! test
 Bad images - basic functionality
+!! options
+disabled
 !! input
 [[File:Bad.jpg]]
 !! result
@@ -8500,6 +8610,8 @@ Bad images - basic functionality
 
 !! test
 Bad images - bug 16039: text after bad image disappears
+!! options
+disabled
 !! input
 Foo bar
 [[File:Bad.jpg]]
@@ -8713,6 +8825,33 @@ Text&apos;s been normalized?
 </p>
 !! end
 
+!! test
+Bug 19052 U+3000 IDEOGRAPHIC SPACE should terminate free external links
+!! input
+http://www.example.org/　<-- U+3000 (vim: ^Vu3000)
+!! result
+<p><a rel="nofollow" class="external free" href="http://www.example.org/">http://www.example.org/</a>　&lt;-- U+3000 (vim: ^Vu3000)
+</p>
+!! end
+
+!! test
+Bug 19052 U+3000 IDEOGRAPHIC SPACE should terminate bracketed external links
+!! input
+[http://www.example.org/　ideograms]
+!! result
+<p><a rel="nofollow" class="external text" href="http://www.example.org/">ideograms</a>
+</p>
+!! end
+
+!! test
+Bug 19052 U+3000 IDEOGRAPHIC SPACE should terminate external images links
+!! input
+http://www.example.org/pic.png　<-- U+3000 (vim: ^Vu3000)
+!! result
+<p><img src="http://www.example.org/pic.png" alt="pic.png" />　&lt;-- U+3000 (vim: ^Vu3000)
+</p>
+!! end
+
 !! article
 Mediawiki:loop1
 !! text
@@ -8740,6 +8879,22 @@ Bug 31098 Template which includes system messages which includes the template
 <p><span class="error">Template loop detected: <a href="/wiki/Template:Identical" title="Template:Identical">Template:Identical</a></span>
 <span class="error">Template loop detected: <a href="/wiki/Template:Identical" title="Template:Identical">Template:Identical</a></span>
 </p>
+!! end
+
+!! test
+Deprecated presentational attributes are converted to css
+!! input
+{|
+| valign=top align=left width=100 height=25% | Asdf
+|}
+<ul type="disc"></ul>
+!! result
+<table>
+<tr>
+<td style="text-align: left; height: 25%; vertical-align: top; width: 100px;"> Asdf
+</td></tr></table>
+<ul style="list-style-type: disc;"></ul>
+
 !! end
 
 !! test
@@ -8797,6 +8952,132 @@ language=en
 </p>
 !! end
 
+!! test
+Bug 26375: TOC with italics
+!! options
+title=[[Main Page]]
+!! input
+__TOC__
+== ''Lost'' episodes ==
+!! result
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Lost_episodes"><span class="tocnumber">1</span> <span class="toctext"><i>Lost</i> episodes</span></a></li>
+</ul>
+</td></tr></table>
+<h2><span class="editsection">[<a href="/index.php?title=Main_Page&amp;action=edit&amp;section=1" title="Edit section: Lost episodes">edit</a>]</span> <span class="mw-headline" id="Lost_episodes"> <i>Lost</i> episodes </span></h2>
+
+!! end
+
+!! test
+Bug 26375: TOC with bold 
+!! options
+title=[[Main Page]]
+!! input
+__TOC__
+== '''should be bold''' then normal text ==
+!! result
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#should_be_bold_then_normal_text"><span class="tocnumber">1</span> <span class="toctext"><b>should be bold</b> then normal text</span></a></li>
+</ul>
+</td></tr></table>
+<h2><span class="editsection">[<a href="/index.php?title=Main_Page&amp;action=edit&amp;section=1" title="Edit section: should be bold then normal text">edit</a>]</span> <span class="mw-headline" id="should_be_bold_then_normal_text"> <b>should be bold</b> then normal text </span></h2>
+
+!! end
+
+!! test
+Bug 33845: Headings become cursive in TOC when they contain an image
+!! options
+title=[[Main Page]]
+!! input
+__TOC__
+== Image [[Image:foobar.jpg]] ==
+!! result
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Image"><span class="tocnumber">1</span> <span class="toctext">Image</span></a></li>
+</ul>
+</td></tr></table>
+<h2><span class="editsection">[<a href="/index.php?title=Main_Page&amp;action=edit&amp;section=1" title="Edit section: Image">edit</a>]</span> <span class="mw-headline" id="Image"> Image <a href="/wiki/File:Foobar.jpg" class="image"><img alt="Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" width="1941" height="220" /></a> </span></h2>
+
+!! end
+
+!! test
+Bug 33845 (2): Headings become bold in TOC when they contain a blockquote
+!! options
+title=[[Main Page]]
+!! input
+__TOC__
+== <blockquote>Quote</blockquote> ==
+!! result
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Quote"><span class="tocnumber">1</span> <span class="toctext">Quote</span></a></li>
+</ul>
+</td></tr></table>
+<h2><span class="editsection">[<a href="/index.php?title=Main_Page&amp;action=edit&amp;section=1" title="Edit section: Quote">edit</a>]</span> <span class="mw-headline" id="Quote"> <blockquote>Quote</blockquote> </span></h2>
+
+!! end
+
+!! test
+Unclosed tags in TOC
+!! options
+title=[[Main Page]]
+!! input
+__TOC__
+== Proof: 2 < 3 ==
+<small>Hanc marginis exiguitas non caperet.</small>
+QED
+!! result
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Proof:_2_.3C_3"><span class="tocnumber">1</span> <span class="toctext">Proof: 2 &lt; 3</span></a></li>
+</ul>
+</td></tr></table>
+<h2><span class="editsection">[<a href="/index.php?title=Main_Page&amp;action=edit&amp;section=1" title="Edit section: Proof: 2 &lt; 3">edit</a>]</span> <span class="mw-headline" id="Proof:_2_.3C_3"> Proof: 2 &lt; 3 </span></h2>
+<p><small>Hanc marginis exiguitas non caperet.</small>
+QED
+</p>
+!! end
+
+!! test
+Multiple tags in TOC
+!! input
+__TOC__
+== <i>Foo</i> <b>Bar</b> ==
+
+== <i>Foo</i> <blockquote>Bar</blockquote> ==
+!! result
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Foo_Bar"><span class="tocnumber">1</span> <span class="toctext"><i>Foo</i> <b>Bar</b></span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Foo_Bar_2"><span class="tocnumber">2</span> <span class="toctext"><i>Foo</i> Bar</span></a></li>
+</ul>
+</td></tr></table>
+<h2><span class="editsection">[<a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: Foo Bar">edit</a>]</span> <span class="mw-headline" id="Foo_Bar"> <i>Foo</i> <b>Bar</b> </span></h2>
+<h2><span class="editsection">[<a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: Foo Bar">edit</a>]</span> <span class="mw-headline" id="Foo_Bar_2"> <i>Foo</i> <blockquote>Bar</blockquote> </span></h2>
+
+!! end
+
+!! test
+Tags with parameters in TOC
+!! input
+__TOC__
+== <sup class="in-h2">Hello</sup> ==
+
+== <sup class="a > b">Evilbye</sup> ==
+!! result
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Hello"><span class="tocnumber">1</span> <span class="toctext"><sup>Hello</sup></span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#b.22.3EEvilbye"><span class="tocnumber">2</span> <span class="toctext"><sup> b"&gt;Evilbye</sup></span></a></li>
+</ul>
+</td></tr></table>
+<h2><span class="editsection">[<a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: Hello">edit</a>]</span> <span class="mw-headline" id="Hello"> <sup class="in-h2">Hello</sup> </span></h2>
+<h2><span class="editsection">[<a href="/index.php?title=Parser_test&amp;action=edit&amp;section=2" title="Edit section: b&quot;>Evilbye">edit</a>]</span> <span class="mw-headline" id="b.22.3EEvilbye"> <sup> b"&gt;Evilbye</sup> </span></h2>
+
+!! end
 
 !! article
 MediaWiki:Bug32057
@@ -8893,6 +9174,15 @@ Strip marker in anchorencode
 !! result
 <p>xy
 </p>
+!! end
+
+!! test
+nowiki inside link inside heading (bug 18295)
+!! input
+==[[foo|x<nowiki>y</nowiki>z]]==
+!! result
+<h2><span class="editsection">[<a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: xyz">edit</a>]</span> <span class="mw-headline" id="xyz"><a href="/index.php?title=Foo&amp;action=edit&amp;redlink=1" class="new" title="Foo (page does not exist)">xyz</a></span></h2>
+
 !! end
 
 

@@ -220,7 +220,6 @@ $messages = array(
 'error'             => 'Xato',
 'badtitle'          => 'Notoʻgʻri sarlavha',
 'viewsource'        => "Ko'rib chiqish",
-'viewsourcefor'     => '$1 uchun',
 'protectedpagetext' => 'Bu sahifa tahrirlashdan saqlanish maqsadida qulflangan.',
 'viewsourcetext'    => "Siz bu sahifaning manbasini ko'rishingiz va uni nusxasini olishingiz mumkin:",
 
@@ -484,9 +483,6 @@ Bu yerda: (joriy) = hozirgi koʻrinish bilan farq,
 [[Special:UnusedCategories|Unused categories]] are not shown here.
 Also see [[Special:WantedCategories|wanted categories]].',
 
-# Special:Log/newusers
-'newuserlog-create-entry' => 'Yangi foydalanuvchi',
-
 # E-mail user
 'emailuser' => 'Bu foydalanuvchiga e-maktub joʻnat',
 
@@ -501,14 +497,13 @@ Agar siz bu sahifani kuzatuv ro'yxatingizdan o'chirmoqchi bo'lsangiz \"Kuzatmasl
 'watch'            => 'kuzatish',
 'watchthispage'    => 'Sahifani kuzatish',
 'unwatch'          => 'kuzatmaslik',
-'wlnote'           => "Pastda oxirgi '''$2''' soatda sodir bo'lgan $1 o'zgartirishlar ko'rsatilgan.",
+'wlnote'           => "Below {{PLURAL:$1|is the last change|are the last '''$1''' changes}} in the last {{PLURAL:$2|hour|'''$2''' hours}}, as of $3, $4.",
 'wlshowlast'       => "Oxirgi $1 soatdagi $2 kundagi tahrirlarni ko'rsatish. $3 tahrirlarni ko'rsatish",
 
 # Delete
 'actioncomplete'        => 'Bajarildi',
 'deletedtext'           => '"$1" yoʻqotildi.
 Yaqinda sodir etilgan yoʻqotishlar uchun $2ni koʻring.',
-'deletedarticle'        => '"[[$1]]" yoʻqotildi',
 'dellogpage'            => 'Yoʻqotish qaydlari',
 'deletecomment'         => 'Sabab:',
 'deleteotherreason'     => 'Boshqa/qoʻshimcha sabab:',
@@ -567,7 +562,6 @@ Yaqinda sodir etilgan yoʻqotishlar uchun $2ni koʻring.',
 'movepagebtn'    => 'Sahifani koʻchir',
 'pagemovedsub'   => 'Koʻchirildi',
 'movepage-moved' => '\'\'\'"$1" nomli sahifa "$2" nomli sahifaga koʻchirildi\'\'\'',
-'1movedto2'      => "[[$1]] [[$2]]ga ko'chirildi",
 'movelogpage'    => 'Koʻchirish qaydlari',
 'movereason'     => 'Sabab:',
 'revertmove'     => 'qaytar',
@@ -643,7 +637,7 @@ Yaqinda sodir etilgan yoʻqotishlar uchun $2ni koʻring.',
 'imagemaxsize'   => "Tasvir ta'rifi sahifasidagi tasvirning kattaligi:",
 'thumbsize'      => 'Tasvirning kichiklashtirilgan versiyasining kattaligi:',
 'file-info-size' => '$1 × $2 piksel, fayl hajmi: $3, MIME tipi: $4',
-'file-nohires'   => '<small>Bundan kattaroq tasvir yoʻq.</small>',
+'file-nohires'   => 'Bundan kattaroq tasvir yoʻq.',
 'svg-long-desc'  => 'SVG fayl, asl oʻlchamlari $1 × $2 piksel, fayl hajmi: $3',
 'show-big-image' => 'Asl hajmdagi tasvir',
 

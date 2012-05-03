@@ -56,7 +56,7 @@ class WikiExporter {
 	 * make additional queries to pull source data while the
 	 * main query is still running.
 	 *
-	 * @param $db Database
+	 * @param $db DatabaseBase
 	 * @param $history Mixed: one of WikiExporter::FULL, WikiExporter::CURRENT,
 	 *                 WikiExporter::RANGE or WikiExporter::STABLE,
 	 *                 or an associative array:
@@ -380,7 +380,7 @@ class XmlDumpWriter {
 	 * @return string
 	 */
 	function schemaVersion() {
-		return "0.5";
+		return "0.6";
 	}
 
 	/**
@@ -477,10 +477,22 @@ class XmlDumpWriter {
 		$out = "  <page>\n";
 		$title = Title::makeTitle( $row->page_namespace, $row->page_title );
 		$out .= '    ' . Xml::elementClean( 'title', array(), self::canonicalTitle( $title ) ) . "\n";
+		$out .= '    ' . Xml::element( 'ns', array(), strval( $row->page_namespace) ) . "\n";
 		$out .= '    ' . Xml::element( 'id', array(), strval( $row->page_id ) ) . "\n";
 		if ( $row->page_is_redirect ) {
-			$out .= '    ' . Xml::element( 'redirect', array() ) . "\n";
+			$page = WikiPage::factory( $title );
+			$redirect = $page->getRedirectTarget();
+			if ( $redirect instanceOf Title && $redirect->isValidRedirectTarget() ) {
+				$out .= '    ' . Xml::element( 'redirect', array( 'title' => self::canonicalTitle( $redirect ) ) ) . "\n";
+			}
 		}
+		
+		if ( $row->rev_sha1 ) {
+			$out .= "      " . Xml::element('sha1', null, strval($row->rev_sha1) ) . "\n";
+		} else {
+			$out .= "      <sha1/>\n";
+		}
+		
 		if ( $row->page_restrictions != '' ) {
 			$out .= '    ' . Xml::element( 'restrictions', array(),
 				strval( $row->page_restrictions ) ) . "\n";
@@ -538,12 +550,12 @@ class XmlDumpWriter {
 			// Raw text from the database may have invalid chars
 			$text = strval( Revision::getRevisionText( $row ) );
 			$out .= "      " . Xml::elementClean( 'text',
-				array( 'xml:space' => 'preserve', 'bytes' => $row->rev_len ),
+				array( 'xml:space' => 'preserve', 'bytes' => intval( $row->rev_len ) ),
 				strval( $text ) ) . "\n";
 		} else {
 			// Stub output
 			$out .= "      " . Xml::element( 'text',
-				array( 'id' => $row->rev_text_id, 'bytes' => $row->rev_len ),
+				array( 'id' => $row->rev_text_id, 'bytes' => intval( $row->rev_len ) ),
 				"" ) . "\n";
 		}
 
@@ -609,7 +621,7 @@ class XmlDumpWriter {
 
 	function writeContributor( $id, $text ) {
 		$out = "      <contributor>\n";
-		if ( $id ) {
+		if ( $id || !IP::isValid( $text ) ) {
 			$out .= "        " . Xml::elementClean( 'username', null, strval( $text ) ) . "\n";
 			$out .= "        " . Xml::element( 'id', null, strval( $id ) ) . "\n";
 		} else {
@@ -677,9 +689,10 @@ class XmlDumpWriter {
 	 * canonical namespace. This skips any special-casing such as gendered
 	 * user namespaces -- which while useful, are not yet listed in the
 	 * XML <siteinfo> data so are unsafe in export.
-	 * 
+	 *
 	 * @param Title $title
 	 * @return string
+	 * @since 1.18
 	 */
 	public static function canonicalTitle( Title $title ) {
 		if ( $title->getInterwiki() ) {
@@ -689,7 +702,7 @@ class XmlDumpWriter {
 		global $wgContLang;
 		$prefix = str_replace( '_', ' ', $wgContLang->getNsText( $title->getNamespace() ) );
 
-		if ($prefix !== '') {
+		if ( $prefix !== '' ) {
 			$prefix .= ':';
 		}
 
@@ -892,8 +905,6 @@ class DumpBZip2Output extends DumpPipeOutput {
  * @ingroup Dump
  */
 class Dump7ZipOutput extends DumpPipeOutput {
-	protected $filename;
-
 	function __construct( $file ) {
 		$command = $this->setup7zCommand( $file );
 		parent::__construct( $command );
@@ -908,10 +919,6 @@ class Dump7ZipOutput extends DumpPipeOutput {
 		return( $command );
 	}
 
-	function closeRenameAndReopen( $newname ) {
-		$this->closeAndRename( $newname, true );
-	}
-
 	function closeAndRename( $newname, $open = false ) {
 		$newname = $this->checkRenameArgCount( $newname );
 		if ( $newname ) {
@@ -919,7 +926,7 @@ class Dump7ZipOutput extends DumpPipeOutput {
 			proc_close( $this->procOpenResource );
 			$this->renameOrException( $newname );
 			if ( $open ) {
-				$command = $this->setup7zCommand( $file );
+				$command = $this->setup7zCommand( $this->filename );
 				$this->startCommand( $command );
 			}
 		}

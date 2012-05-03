@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiQueryBase.php" );
-}
-
 /**
  * This query adds an <images> subelement to all pages with the list of images embedded into those pages.
  *
@@ -79,11 +74,15 @@ class ApiQueryImages extends ApiQueryGeneratorBase {
 			);
 		}
 
+		$dir = ( $params['dir'] == 'descending' ? ' DESC' : '' );
 		// Don't order by il_from if it's constant in the WHERE clause
 		if ( count( $this->getPageSet()->getGoodTitles() ) == 1 ) {
-			$this->addOption( 'ORDER BY', 'il_to' );
+			$this->addOption( 'ORDER BY', 'il_to' . $dir );
 		} else {
-			$this->addOption( 'ORDER BY', 'il_from, il_to' );
+			$this->addOption( 'ORDER BY', array(
+						'il_from' . $dir,
+						'il_to' . $dir
+			));
 		}
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
 
@@ -92,7 +91,7 @@ class ApiQueryImages extends ApiQueryGeneratorBase {
 			foreach ( $params['images'] as $img ) {
 				$title = Title::newFromText( $img );
 				if ( !$title || $title->getNamespace() != NS_FILE ) {
-					$this->setWarning( "``$img'' is not a file" );
+					$this->setWarning( "\"$img\" is not a file" );
 				} else {
 					$images[] = $title->getDBkey();
 				}
@@ -154,7 +153,14 @@ class ApiQueryImages extends ApiQueryGeneratorBase {
 			'continue' => null,
 			'images' => array(
 				ApiBase::PARAM_ISMULTI => true,
-			)
+			),
+			'dir' => array(
+				ApiBase::PARAM_DFLT => 'ascending',
+				ApiBase::PARAM_TYPE => array(
+					'ascending',
+					'descending'
+				)
+			),
 		);
 	}
 
@@ -163,6 +169,7 @@ class ApiQueryImages extends ApiQueryGeneratorBase {
 			'limit' => 'How many images to return',
 			'continue' => 'When more results are available, use this to continue',
 			'images' => 'Only list these images. Useful for checking whether a certain page has a certain Image.',
+			'dir' => 'The direction in which to list',
 		);
 	}
 
@@ -176,12 +183,10 @@ class ApiQueryImages extends ApiQueryGeneratorBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Get a list of images used in the [[Main Page]]:',
-			'  api.php?action=query&prop=images&titles=Main%20Page',
-			'Get information about all images used in the [[Main Page]]:',
-			'  api.php?action=query&generator=images&titles=Main%20Page&prop=info'
+			'api.php?action=query&prop=images&titles=Main%20Page' => 'Get a list of images used in the [[Main Page]]',
+			'api.php?action=query&generator=images&titles=Main%20Page&prop=info' => 'Get information about all images used in the [[Main Page]]',
 		);
 	}
 

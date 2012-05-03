@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiFormatBase.php' );
-}
-
 /**
  * API WDDX output formatter
  * @ingroup API
@@ -69,6 +64,8 @@ class ApiFormatWddx extends ApiFormatBase {
 
 	/**
 	 * Recursively go through the object and output its data in WDDX format.
+	 * @param $elemValue
+	 * @param $indent int
 	 */
 	function slowWddxPrinter( $elemValue, $indent = 0 ) {
 		$indstr = ( $this->getIsHtml() ? '' : str_repeat( ' ', $indent ) );

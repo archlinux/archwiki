@@ -36,12 +36,12 @@ class DisambiguationsPage extends PageQueryPage {
 	function isSyndicated() { return false; }
 
 	function getPageHeader() {
-		return wfMsgExt( 'disambiguations-text', array( 'parse' ) );
+		return $this->msg( 'disambiguations-text' )->parseAsBlock();
 	}
 
 	function getQueryInfo() {
 		$dbr = wfGetDB( DB_SLAVE );
-		$dMsgText = wfMsgForContent( 'disambiguationspage' );
+		$dMsgText = $this->msg( 'disambiguationspage' )->inContentLanguage()->text();
 		$linkBatch = new LinkBatch;
 
 		# If the text can be treated as a title, use it verbatim.
@@ -122,16 +122,14 @@ class DisambiguationsPage extends PageQueryPage {
 	}
 
 	function formatResult( $skin, $result ) {
-		global $wgLang;
-
 		$title = Title::newFromID( $result->value );
 		$dp = Title::makeTitle( $result->namespace, $result->title );
 
-		$from = $skin->link( $title );
-		$edit = $skin->link( $title, wfMsgExt( 'parentheses', array( 'escape' ), wfMsg( 'editlink' ) ) ,
+		$from = Linker::link( $title );
+		$edit = Linker::link( $title, $this->msg( 'parentheses', $this->msg( 'editlink' )->text() )->escaped(),
 			array(), array( 'redirect' => 'no', 'action' => 'edit' ) );
-		$arr  = $wgLang->getArrow();
-		$to   = $skin->link( $dp );
+		$arr  = $this->getLanguage()->getArrow();
+		$to   = Linker::link( $dp );
 
 		return "$from $edit $arr $to";
 	}

@@ -17,6 +17,7 @@ form#editform {
 	padding: 0;
 	margin: -1px;
 	line-height: 1.5em;
+	resize: vertical;
 }
 .wikiEditor-ui .wikiEditor-ui-text > textarea#wpTextbox1 {
 	margin: 0;

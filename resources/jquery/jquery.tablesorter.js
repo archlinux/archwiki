@@ -8,8 +8,9 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
  *
- * @depends on mw.config (wgDigitTransformTable, wgMonthNames, wgMonthNamesShort,
+ * Depends on mw.config (wgDigitTransformTable, wgMonthNames, wgMonthNamesShort,
  * wgDefaultDateFormat, wgContentLanguage)
+ * Uses 'tableSorterCollation' in mw.config (if available)
  */
 /**
  *
@@ -240,7 +241,7 @@
 				}
 				$thead.append( this );
 			} );
-			$table.children('tbody').before( $thead );
+			$table.find(' > tbody:first').before( $thead );
 		}
 		if( !$table.get(0).tFoot ) {
 			var $tfoot = $( '<tfoot>' );
@@ -259,9 +260,9 @@
 		var	maxSeen = 0,
 			longest,
 			realCellIndex = 0,
-			$tableHeaders = $( 'thead:eq(0) tr', table );
+			$tableHeaders = $( 'thead:eq(0) > tr', table );
 		if ( $tableHeaders.length > 1 ) {
-			$tableHeaders.each(function() {
+			$tableHeaders.each( function() {
 				if ( this.cells.length > maxSeen ) {
 					maxSeen = this.cells.length;
 					longest = this;
@@ -594,7 +595,7 @@
 
 						if ( firstTime ) {
 							firstTime = false;
-							
+
 							// Legacy fix of .sortbottoms
 							// Wrap them inside inside a tfoot (because that's what they actually want to be) &
 							// and put the <tfoot> at the end of the <table>
@@ -604,10 +605,10 @@
 								if ( $tfoot.length ) {
 									$tfoot.eq(0).prepend( $sortbottoms );
 								} else {
-									$table.append( $( '<tfoot>' ).append( $sortbottoms ) )
+									$table.append( $( '<tfoot>' ).append( $sortbottoms ) );
 								}
 							}
-							
+
 							explodeRowspans( $table );
 							// try to auto detect column type, and store in tables config
 							table.config.parsers = buildParserCache( table, $headers );

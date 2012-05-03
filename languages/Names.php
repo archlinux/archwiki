@@ -86,7 +86,8 @@
 	'el' => 'Ελληνικά',	# Greek
 	'eml' => 'Emiliàn e rumagnòl',	# Emiliano-Romagnolo / Sammarinese
 	'en' => 'English',		# English
-	'en-gb' => 'British English',		# British English
+	'en-ca' => 'Canadian English',	# Canadian English
+	'en-gb' => 'British English',	# British English
 	'eo' => 'Esperanto',	# Esperanto
 	'es' => 'Español',	# Spanish
 	'et' => 'Eesti',		# Estonian
@@ -179,9 +180,9 @@
 	'krc' => 'Къарачай-Малкъар', # Karachay-Balkar
 	'kri' => 'Krio', # Krio
 	'krj' => 'Kinaray-a', # Kinaray-a
-	'ks' => 'कश्मीरी - (كشميري)',	# Kashmiri (multiple scripts - defaults to Perso-Arabic)
-	'ks-arab' => 'كشميري',	# Kashmiri (Perso-Arabic script)
-	'ks-deva' => 'कश्मीरी',	# Kashmiri (Devanagari script)
+	'ks' => 'कॉशुर - کٲشُر',	# Kashmiri (multiple scripts - defaults to Perso-Arabic)
+	'ks-arab' => 'کٲشُر',	# Kashmiri (Perso-Arabic script)
+	'ks-deva' => 'कॉशुर',	# Kashmiri (Devanagari script)
 	'ksh' => 'Ripoarisch',	# Ripuarian
 	'ku'  => 'Kurdî',	# Kurdish (multiple scripts - defaults to Latin)
 	'ku-latn' => "\xE2\x80\xAAKurdî (latînî)\xE2\x80\xAC",	# Northern Kurdish (Latin script)
@@ -243,7 +244,7 @@
 	'nl' => 'Nederlands',	# Dutch
 	'nl-informal' => "\xE2\x80\xAANederlands (informeel)\xE2\x80\xAC",	# Dutch (informal address ("je"))
 	'nn' => "\xE2\x80\xAANorsk (nynorsk)\xE2\x80\xAC",	# Norwegian (Nynorsk)
-	'no' => "\xE2\x80\xAANorsk (bokmål)\xE2\x80\xAC",		# Norwegian
+	'no' => "\xE2\x80\xAANorsk (bokmål)\xE2\x80\xAC",		# Norwegian (falls back to nb).
 	'nov' => 'Novial',		# Novial
 	'nrm' => 'Nouormand',	# Norman
 	'nso' => 'Sesotho sa Leboa',	# Northern Sotho
@@ -289,7 +290,7 @@
 	# 'ruq-grek' => 'Βλαεστε',	# Megleno-Romanian (Greek script)
 	'ruq-latn' => 'Vlăheşte',	# Megleno-Romanian (Latin script)
 	'rw' => 'Kinyarwanda',	# Kinyarwanda, should possibly be Kinyarwandi
-	'sa' => 'संस्कृत',	# Sanskrit
+	'sa' => 'संस्कृतम्',	# Sanskrit
 	'sah' => 'Саха тыла', # Sakha
 	'sc' => 'Sardu',		# Sardinian
 	'scn' => 'Sicilianu',	# Sicilian
@@ -301,7 +302,9 @@
 	'sg' => 'Sängö',		# Sango/Sangho
 	'sgs' => 'Žemaitėška', # Samogitian
 	'sh' => 'Srpskohrvatski / Српскохрватски', # Serbocroatian
-	'shi' => 'Tašlḥiyt',    # Tachelhit
+	'shi' => 'Tašlḥiyt/ⵜⴰⵛⵍⵃⵉⵜ',    # Tachelhit (multiple scripts - defaults to Latin)
+	'shi-tfng' => 'ⵜⴰⵛⵍⵃⵉⵜ',    # Tachelhit (Tifinagh script)
+	'shi-latn' => 'Tašlḥiyt',    # Tachelhit (Latin script)
 	'si' => 'සිංහල',	# Sinhalese
 	'simple' => 'Simple English',	# Simple English
 	'sk' => 'Slovenčina',	# Slovak
@@ -334,6 +337,7 @@
 	'ti' => 'ትግርኛ',		# Tigrinya
 	'tk' => 'Türkmençe',	# Turkmen
 	'tl' => 'Tagalog',		# Tagalog
+	'tly' => 'толышә зывон',	# Talysh
 	'tn' => 'Setswana',		# Setswana
 	'to' => 'lea faka-Tonga',		# Tonga (Tonga Islands)
 	'tokipona' => 'Toki Pona',      # Toki Pona
@@ -356,7 +360,7 @@
 	'uz' => 'O\'zbek',	# Uzbek
 	've' => 'Tshivenda',		# Venda
 	'vec' => 'Vèneto',	# Venetian
-	'vep' => 'Vepsan kel\'',	# Veps
+	'vep' => 'Vepsän kel\'',	# Veps
 	'vi' => 'Tiếng Việt',	# Vietnamese
 	'vls' => 'West-Vlams', # West Flemish
 	'vmf' => 'Mainfränkisch', # Upper Franconian, Main-Franconian

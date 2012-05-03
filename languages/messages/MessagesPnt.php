@@ -328,7 +328,6 @@ $messages = array(
 'badtitletext'         => "Το ψαλαφεμένον ο τίτλος τη σελίδας εν άκυρον, γιά εύκαιρον γιά τσακωμένον διαγλωσσικόν σύνδεσμος.
 Τερέστεν αν έχ' έναν γιά πολλά γράμματα που 'κ ίνεται να κουλανεύκουνταν απές σε τίτλον.",
 'viewsource'           => 'Τερέστεν κωδικόν',
-'viewsourcefor'        => 'για $1',
 'protectedpagetext'    => "Αβούτη σελίδαν εν ασπαλιγμένον και 'κ αλλάζ'.",
 'viewsourcetext'       => "Επορείτε να τερείτε και ν' αντιγράφετε το κείμενον τ' ατεινές τη σελίδας:",
 'protectedinterface'   => "Αβούτη σελίδαν έχ' απές κείμενον για το interface τη software και για τ' ατό εν ασπαλιγμένον.",
@@ -486,7 +485,6 @@ $messages = array(
 Το IP εσούν εν $3 και το ID τη ασπαλιγματίνεσουν εν #$5.
 Ποδεδίζουμε σας να γράφτατο σο μένεμαν εσούν.",
 'blockednoreason'                  => "'Κ εγράφτεν αιτίαν",
-'whitelistedittitle'               => "Εμπάτε για να φτάτε τ' αλλαγάς",
 'whitelistedittext'                => "Πρέπ να $1 για ν' επορείτε ν' επεξεργάσκεστε τα σελίδας.",
 'nosuchsectiontitle'               => "Αΐκον κομμάτ' 'κ εχ'",
 'loginreqtitle'                    => 'Επρέπ να εσέβειτε',
@@ -573,11 +571,6 @@ $messages = array(
 'revdel-restore'             => 'Ἀλλαγμαν ορατότητας',
 'pagehist'                   => 'Ιστορίαν σελίδας',
 'deletedhist'                => 'Σβηγμένον ιστορίαν',
-'revdelete-content'          => 'περιεχόμενον',
-'revdelete-summary'          => 'σύνοψην',
-'revdelete-uname'            => "όνεμαν χρήστ'",
-'revdelete-hid'              => 'κρυφόν $1',
-'revdelete-unhid'            => 'όχι κρυφόν $1',
 
 # History merging
 'mergehistory-from' => 'Σελίδα πηγή:',
@@ -956,8 +949,7 @@ $messages = array(
 'listusers-submit' => 'Δείξον',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Αρχείον ποισιματίων λογαρίων χρήστε',
-'newuserlog-create-entry' => 'Νέον χρήστες',
+'newuserlogpage' => 'Αρχείον ποισιματίων λογαρίων χρήστε',
 
 # Special:ListGroupRights
 'listgrouprights-group'   => 'Ομάδαν',
@@ -1007,7 +999,6 @@ $messages = array(
 'actioncomplete'        => 'Η ενέργειαν ετελέθεν',
 'deletedtext'           => 'Το "$1" εσβήγανατο.
 Τερέστεν το $2 και δεαβάστεν για τα υστερνά τα σβησίματα.',
-'deletedarticle'        => 'ενεσβύεν η "[[$1]]"',
 'dellogpage'            => "Κατάλογον με τ' ατά ντ' ενεσβύγαν",
 'deletionlog'           => 'αρχείον ασπαλιγματίων',
 'deletecomment'         => 'Αιτία:',
@@ -1057,7 +1048,6 @@ $messages = array(
 'undeletelink'              => 'τέρεμαν/επαναφορά',
 'undeleteviewlink'          => 'τέρεμα',
 'undeletecomment'           => 'Σχόλιον:',
-'undeletedarticle'          => 'επαναφορά τη "[[$1]]"',
 'undelete-search-box'       => "Αράεμαν σελιδίων ντ'ενεσβύαν",
 'undelete-search-submit'    => 'Εύρον',
 'undelete-show-file-submit' => 'Ναι',
@@ -1178,8 +1168,6 @@ $messages = array(
 Ποισέστεν τα έναν.'''",
 'movedto'                 => 'ετεροχλαεύτεν σο',
 'movetalk'                => 'Ετεροχλάεμαν τη σελίδας καλατσεματί',
-'1movedto2'               => '[[$1]] ετερχλαεύτεν σο [[$2]]',
-'1movedto2_redir'         => '[[$1]] ετερχλαεύτεν σο [[$2]] σε σύνδεσμον απάν',
 'movelogpage'             => 'Αρχείον ετεροχλαεματί',
 'movereason'              => 'Λόγον:',
 'revertmove'              => 'κλώσιμον',
@@ -1279,9 +1267,6 @@ $messages = array(
 # Spam protection
 'spamprotectiontitle' => 'Φίλτρον προστασίας ασό σπαμ',
 
-# Patrol log
-'patrol-log-auto' => '(αυτόματον)',
-
 # Browsing diffs
 'previousdiff' => '← Προτεσνόν διαφορά',
 'nextdiff'     => 'Άλλον διαφορά →',
@@ -1289,7 +1274,7 @@ $messages = array(
 # Media information
 'widthheightpage' => '$1 × $2, $3 {{PLURAL:$3|σελίδα|σελίδας}}',
 'file-info-size'  => '$1 × $2 εικονοστοιχεία, μέγεθος αρχείου: $3, MIME τύπον: $4',
-'file-nohires'    => "<small>'Κ εχ κι άλλο ψηλόν ανάλυσην.</small>",
+'file-nohires'    => "'Κ εχ κι άλλο ψηλόν ανάλυσην.",
 'svg-long-desc'   => "Αρχείον SVG, κατ' όνομα $1 × $2 εικονοστοιχεία, μέγεθος αρχεί: $3",
 'show-big-image'  => 'Τζιπ τρανόν ανάλυση',
 
@@ -1387,9 +1372,6 @@ $messages = array(
 'watchlistall2' => 'ούλαι',
 'namespacesall' => 'ούλαι',
 'monthsall'     => 'ούλαι',
-
-# Trackbacks
-'trackbackremove' => '([$1 Σβήσον])',
 
 # Delete conflict
 'recreate' => 'Ποίσον αξάν',

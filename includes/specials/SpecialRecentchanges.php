@@ -73,9 +73,7 @@ class SpecialRecentChanges extends IncludableSpecialPage {
 	public function setup( $parameters ) {
 		$opts = $this->getDefaultOptions();
 
-		$this->customFilters = array();
-		wfRunHooks( 'SpecialRecentChangesFilters', array( $this, &$this->customFilters ) );
-		foreach( $this->customFilters as $key => $params ) {
+		foreach( $this->getCustomFilters() as $key => $params ) {
 			$opts->add( $key, $params['default'] );
 		}
 
@@ -88,6 +86,19 @@ class SpecialRecentChanges extends IncludableSpecialPage {
 
 		$opts->validateIntBounds( 'limit', 0, 5000 );
 		return $opts;
+	}
+
+	/**
+	 * Get custom show/hide filters
+	 *
+	 * @return Array Map of filter URL param names to properties (msg/default)
+	 */
+	protected function getCustomFilters() {
+		if ( $this->customFilters === null ) {
+			$this->customFilters = array();
+			wfRunHooks( 'SpecialRecentChangesFilters', array( $this, &$this->customFilters ) );
+		}
+		return $this->customFilters;
 	}
 
 	/**
@@ -231,6 +242,9 @@ class SpecialRecentChanges extends IncludableSpecialPage {
 			}
 			if( preg_match( '/^days=(\d+)$/', $bit, $m ) ) {
 				$opts['days'] = $m[1];
+			}
+			if( preg_match( '/^namespace=(\d+)$/', $bit, $m ) ) {
+				$opts['namespace'] = $m[1];
 			}
 		}
 	}
@@ -617,7 +631,15 @@ class SpecialRecentChanges extends IncludableSpecialPage {
 	 * @param $opts FormOptions
 	 */
 	function setTopText( FormOptions $opts ) {
-		$this->getOutput()->addWikiText( wfMsgForContentNoTrans( 'recentchangestext' ) );
+		global $wgContLang;
+		$this->getOutput()->addWikiText(
+			Html::rawElement( 'p',
+				array( 'lang' => $wgContLang->getCode(), 'dir' => $wgContLang->getDir() ),
+				"\n" . wfMsgForContentNoTrans( 'recentchangestext' ) . "\n"
+			), 
+			/* $lineStart */ false,
+			/* $interface */ false
+		);
 	}
 
 	/**
@@ -636,7 +658,10 @@ class SpecialRecentChanges extends IncludableSpecialPage {
 	 * @return String
 	 */
 	protected function namespaceFilterForm( FormOptions $opts ) {
-		$nsSelect = Xml::namespaceSelector( $opts['namespace'], '' );
+		$nsSelect = Html::namespaceSelector(
+			array( 'selected' => $opts['namespace'], 'all' => '' ),
+			array( 'name' => 'namespace', 'id' => 'namespace' )
+		);
 		$nsLabel = Xml::label( wfMsg( 'namespace' ), 'namespace' );
 		$invert = Xml::checkLabel(
 			wfMsg( 'invert' ), 'invert', 'nsinvert',
@@ -766,10 +791,10 @@ class SpecialRecentChanges extends IncludableSpecialPage {
 		}
 		if( $options['from'] ) {
 			$note .= wfMsgExt( 'rcnotefrom', array( 'parseinline' ),
-				$this->getLang()->formatNum( $options['limit'] ),
-				$this->getLang()->timeanddate( $options['from'], true ),
-				$this->getLang()->date( $options['from'], true ),
-				$this->getLang()->time( $options['from'], true ) ) . '<br />';
+				$this->getLanguage()->formatNum( $options['limit'] ),
+				$this->getLanguage()->timeanddate( $options['from'], true ),
+				$this->getLanguage()->date( $options['from'], true ),
+				$this->getLanguage()->time( $options['from'], true ) ) . '<br />';
 		}
 
 		# Sort data for display and make sure it's unique after we've added user data.
@@ -782,30 +807,30 @@ class SpecialRecentChanges extends IncludableSpecialPage {
 
 		// limit links
 		foreach( $wgRCLinkLimits as $value ) {
-			$cl[] = $this->makeOptionsLink( $this->getLang()->formatNum( $value ),
+			$cl[] = $this->makeOptionsLink( $this->getLanguage()->formatNum( $value ),
 				array( 'limit' => $value ), $nondefaults, $value == $options['limit'] );
 		}
-		$cl = $this->getLang()->pipeList( $cl );
+		$cl = $this->getLanguage()->pipeList( $cl );
 
 		// day links, reset 'from' to none
 		foreach( $wgRCLinkDays as $value ) {
-			$dl[] = $this->makeOptionsLink( $this->getLang()->formatNum( $value ),
+			$dl[] = $this->makeOptionsLink( $this->getLanguage()->formatNum( $value ),
 				array( 'days' => $value, 'from' => '' ), $nondefaults, $value == $options['days'] );
 		}
-		$dl = $this->getLang()->pipeList( $dl );
+		$dl = $this->getLanguage()->pipeList( $dl );
 
 
 		// show/hide links
 		$showhide = array( wfMsg( 'show' ), wfMsg( 'hide' ) );
 		$filters = array(
-			'hideminor' 	=> 'rcshowhideminor',
-			'hidebots'  	=> 'rcshowhidebots',
-			'hideanons' 	=> 'rcshowhideanons',
-			'hideliu'		=> 'rcshowhideliu',
+			'hideminor'     => 'rcshowhideminor',
+			'hidebots'      => 'rcshowhidebots',
+			'hideanons'     => 'rcshowhideanons',
+			'hideliu'       => 'rcshowhideliu',
 			'hidepatrolled' => 'rcshowhidepatr',
-			'hidemyself'	=> 'rcshowhidemine'
+			'hidemyself'    => 'rcshowhidemine'
 		);
-		foreach ( $this->customFilters as $key => $params ) {
+		foreach ( $this->getCustomFilters() as $key => $params ) {
 			$filters[$key] = $params['msg'];
 		}
 		// Disable some if needed
@@ -822,13 +847,13 @@ class SpecialRecentChanges extends IncludableSpecialPage {
 
 		// show from this onward link
 		$timestamp = wfTimestampNow();
-		$now = $this->getLang()->timeanddate( $timestamp, true );
+		$now = $this->getLanguage()->timeanddate( $timestamp, true );
 		$tl = $this->makeOptionsLink(
 			$now, array( 'from' => $timestamp ), $nondefaults
 		);
 
 		$rclinks = wfMsgExt( 'rclinks', array( 'parseinline', 'replaceafter' ),
-			$cl, $dl, $this->getLang()->pipeList( $links ) );
+			$cl, $dl, $this->getLanguage()->pipeList( $links ) );
 		$rclistfrom = wfMsgExt( 'rclistfrom', array( 'parseinline', 'replaceafter' ), $tl );
 		return "{$note}$rclinks<br />$rclistfrom";
 	}

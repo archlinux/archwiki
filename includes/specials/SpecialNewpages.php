@@ -78,7 +78,6 @@ class SpecialNewpages extends IncludableSpecialPage {
 	}
 
 	protected function parseParams( $par ) {
-		global $wgLang;
 		$bits = preg_split( '/\s*,\s*/', trim( $par ) );
 		foreach ( $bits as $bit ) {
 			if ( 'shownav' == $bit ) {
@@ -112,7 +111,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 				$this->opts->setValue( 'username', $m[1] );
 			}
 			if ( preg_match( '/^namespace=(.*)$/', $bit, $m ) ) {
-				$ns = $wgLang->getNsIndex( $m[1] );
+				$ns = $this->getLanguage()->getNsIndex( $m[1] );
 				if( $ns !== false ) {
 					$this->opts->setValue( 'namespace',  $ns );
 				}
@@ -139,11 +138,12 @@ class SpecialNewpages extends IncludableSpecialPage {
 			// Settings
 			$this->form();
 
-			$this->setSyndicated();
 			$feedType = $this->opts->getValue( 'feed' );
 			if( $feedType ) {
 				return $this->feed( $feedType );
 			}
+
+			$out->setFeedAppendQuery( wfArrayToCGI( $this->opts->getAllValues() ) );
 		}
 
 		$pager = new NewPagesPager( $this, $this->opts );
@@ -162,7 +162,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 	}
 
 	protected function filterLinks() {
-		global $wgGroupPermissions, $wgLang;
+		global $wgGroupPermissions;
 
 		// show/hide links
 		$showhide = array( wfMsgHtml( 'show' ), wfMsgHtml( 'hide' ) );
@@ -194,13 +194,13 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$self = $this->getTitle();
 		foreach ( $filters as $key => $msg ) {
 			$onoff = 1 - $this->opts->getValue( $key );
-			$link = $this->getSkin()->link( $self, $showhide[$onoff], array(),
+			$link = Linker::link( $self, $showhide[$onoff], array(),
 					array( $key => $onoff ) + $changed
 			);
 			$links[$key] = wfMsgHtml( $msg, $link );
 		}
 
-		return $wgLang->pipeList( $links );
+		return $this->getLanguage()->pipeList( $links );
 	}
 
 	protected function form() {
@@ -276,12 +276,6 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$this->getOutput()->addHTML( $form );
 	}
 
-	protected function setSyndicated() {
-		$out = $this->getOutput();
-		$out->setSyndicated( true );
-		$out->setFeedAppendQuery( wfArrayToCGI( $this->opts->getAllValues() ) );
-	}
-
 	/**
 	 * Format a row, providing the timestamp, links to the page/history, size, user links, and a comment
 	 *
@@ -289,8 +283,6 @@ class SpecialNewpages extends IncludableSpecialPage {
 	 * @return String
 	 */
 	public function formatRow( $result ) {
-		global $wgLang;
-
 		# Revision deletion works on revisions, so we should cast one
 		$row = array(
 					  'comment' => $result->rc_comment,
@@ -302,11 +294,19 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 		$classes = array();
 
-		$dm = $wgLang->getDirMark();
+		$lang = $this->getLanguage();
+		$dm = $lang->getDirMark();
 
-		$title = Title::makeTitleSafe( $result->rc_namespace, $result->rc_title );
-		$time = Html::element( 'span', array( 'class' => 'mw-newpages-time' ),
-			$wgLang->timeAndDate( $result->rc_timestamp, true )
+		$title = Title::newFromRow( $result );
+		$spanTime = Html::element( 'span', array( 'class' => 'mw-newpages-time' ),
+			$lang->timeanddate( $result->rc_timestamp, true )
+		);
+		$time = Linker::linkKnown(
+			$title,
+			$spanTime,
+			array(),
+			array( 'oldid' => $result->rc_this_oldid ),
+			array()
 		);
 
 		$query = array( 'redirect' => 'no' );
@@ -315,14 +315,14 @@ class SpecialNewpages extends IncludableSpecialPage {
 			$query['rcid'] = $result->rc_id;
 		}
 
-		$plink = $this->getSkin()->linkKnown(
+		$plink = Linker::linkKnown(
 			$title,
 			null,
 			array( 'class' => 'mw-newpages-pagename' ),
 			$query,
 			array( 'known' ) // Set explicitly to avoid the default of 'known','noclasses'. This breaks the colouration for stubs
 		);
-		$histLink = $this->getSkin()->linkKnown(
+		$histLink = Linker::linkKnown(
 			$title,
 			wfMsgHtml( 'hist' ),
 			array(),
@@ -330,13 +330,12 @@ class SpecialNewpages extends IncludableSpecialPage {
 		);
 		$hist = Html::rawElement( 'span', array( 'class' => 'mw-newpages-history' ), wfMsg( 'parentheses', $histLink ) );
 
-		$length = Html::rawElement( 'span', array( 'class' => 'mw-newpages-length' ),
-				'[' . wfMsgExt( 'nbytes', array( 'parsemag', 'escape' ), $wgLang->formatNum( $result->length ) ) .
-				']'
+		$length = Html::element( 'span', array( 'class' => 'mw-newpages-length' ),
+				'[' . $this->msg( 'nbytes' )->numParams( $result->length )->text() . ']'
 		);
 
-		$ulink = $this->getSkin()->revUserTools( $rev );
-		$comment = $this->getSkin()->revComment( $rev );
+		$ulink = Linker::revUserTools( $rev );
+		$comment = Linker::revComment( $rev );
 
 		if ( $this->patrollable( $result ) ) {
 			$classes[] = 'not-patrolled';
@@ -357,7 +356,14 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 		$css = count( $classes ) ? ' class="' . implode( ' ', $classes ) . '"' : '';
 
-		return "<li{$css}>{$time} {$dm}{$plink} {$hist} {$dm}{$length} {$dm}{$ulink} {$comment} {$tagDisplay}</li>\n";
+		# Display the old title if the namespace has been changed
+		$oldTitleText = '';
+		if ( $result->page_namespace !== $result->rc_namespace ) {
+			$oldTitleText = wfMessage( 'rc-old-title' )->params( Title::makeTitle( $result->rc_namespace, $result->rc_title )
+			                                           ->getPrefixedText() )->escaped();	
+		}
+
+		return "<li{$css}>{$time} {$dm}{$plink} {$hist} {$dm}{$length} {$dm}{$ulink} {$comment} {$tagDisplay} {$oldTitleText}</li>\n";
 	}
 
 	/**
@@ -461,31 +467,9 @@ class NewPagesPager extends ReverseChronologicalPager {
 	protected $mForm;
 
 	function __construct( $form, FormOptions $opts ) {
-		parent::__construct();
+		parent::__construct( $form->getContext() );
 		$this->mForm = $form;
 		$this->opts = $opts;
-	}
-
-	/**
-	 * @return Title
-	 */
-	function getTitle() {
-		static $title = null;
-		if ( $title === null ) {
-			$title = $this->mForm->getTitle();
-		}
-		return $title;
-	}
-
-	/**
-	 * @return User
-	 */
-	function getUser() {
-		static $user = null;
-		if ( $user === null ) {
-			$user = $this->mForm->getUser();
-		}
-		return $user;
 	}
 
 	function getQueryInfo() {
@@ -531,7 +515,8 @@ class NewPagesPager extends ReverseChronologicalPager {
 		$fields = array(
 			'rc_namespace', 'rc_title', 'rc_cur_id', 'rc_user', 'rc_user_text',
 			'rc_comment', 'rc_timestamp', 'rc_patrolled','rc_id', 'rc_deleted',
-			'page_len AS length', 'page_latest AS rev_id', 'ts_tags'
+			'page_len AS length', 'page_latest AS rev_id', 'ts_tags', 'rc_this_oldid',
+			'page_namespace', 'page_title'
 		);
 		$join_conds = array( 'page' => array( 'INNER JOIN', 'page_id=rc_cur_id' ) );
 

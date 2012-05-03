@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiQueryBase.php" );
-}
-
 /**
  * A query module to list all external URLs found on a given set of pages.
  *
@@ -148,10 +143,9 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Get a list of external links on the [[Main Page]]:',
-			'  api.php?action=query&prop=extlinks&titles=Main%20Page',
+			'api.php?action=query&prop=extlinks&titles=Main%20Page' => 'Get a list of external links on the [[Main Page]]',
 		);
 	}
 

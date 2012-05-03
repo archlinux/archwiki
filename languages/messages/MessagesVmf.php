@@ -510,7 +510,7 @@ Hirmid sagsd, das Du den dhägsd '''selbâr gschriim''' hasd, das däär dhägsd
 'prefs-rc'                  => 'Ledschde Ändrungn',
 'prefs-watchlist'           => 'Beoobachdungs-lischdn',
 'prefs-watchlist-days'      => 'Wiifiil dääch dsrig in dr beoobachdungs-lischdn:',
-'prefs-watchlist-days-max'  => 'Hechschdns 7 dääch',
+'prefs-watchlist-days-max'  => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'     => 'Wiifiil âjdrääch hechschdens:',
 'prefs-watchlist-edits-max' => 'Hegschd-dsôôl: 1000',
 'prefs-watchlist-token'     => "Token fir d'beoobachdungs-lisdn",
@@ -653,8 +653,7 @@ S'gajd awâr aa â [[Special:WhatLinksHere/$2|lisdn mid alâ fârwajs]].",
 'linksearch' => 'Linggs nach ausârhalb',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Brodoghol iwâr dii naja bearbajdâr-ôômeldunga',
-'newuserlog-create-entry' => 'Eds hasd a benudsâr-ghondoo',
+'newuserlogpage' => 'Brodoghol iwâr dii naja bearbajdâr-ôômeldunga',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(Lisdn fon dâ midgliidâr)',
@@ -688,7 +687,6 @@ Wenns'd dii sajdn irchendwan amôl nimä fârfolchn wilsd, musd bloos af „{{in
 'confirmdeletetext'      => "Duu bisd grôd dâbaj, â sajdn midsamd alle dsugheeriche alde wärsjoona ds'leschn. Bide beschdäädich, das De wasd, was des als bewirgd, un das De Dich dâbaj aa an d'[[{{MediaWiki:Policy-url}}|richliinjen]] fo dem wighi hiir häldsd.",
 'actioncomplete'         => 'Erleedichd',
 'deletedtext'            => '„$1“ is gleschd wôrn. Im $2 findsd â lisdn mid dâ ledsdn leschunga.',
-'deletedarticle'         => 'had „[[$1]]“ gleschd',
 'dellogpage'             => 'Logbuch fo di leschunga',
 'deletecomment'          => 'Grund:',
 'deleteotherreason'      => 'Noch a Grund dâfiir:',
@@ -730,8 +728,7 @@ Wenns'd dii sajdn irchendwan amôl nimä fârfolchn wilsd, musd bloos af „{{in
 'restriction-level'           => 'Ausmôôs fom schbärn:',
 
 # Undelete
-'undeletelink'     => 'ôôgugn/dsrighooln',
-'undeletedarticle' => 'had „[[$1]]“ widârhäärgschdeld',
+'undeletelink' => 'ôôgugn/dsrighooln',
 
 # Namespace form on various pages
 'namespace'      => 'Nôômâraum:',
@@ -810,8 +807,6 @@ Schrajb bide den '''naja'' nôômâ fo dâr sajdn undârals '''Dsiil'' nâj un '
 'talkexists'       => 'Dii sajdn is fârschoom wôrn, awa baj iira disghusjoonssajdn is ned gangâ, wals dii scho mim naja nôôma gibd. Jeds musd des fo hand dsamwôrschdln.',
 'movedto'          => 'fârschoom nach',
 'movetalk'         => "Dii disghusjoons-sajdn aa mid fârschiim, wen's gäd",
-'1movedto2'        => 'had „[[$1]]“ nach „[[$2]]“ umdaafd',
-'1movedto2_redir'  => 'had „[[$1]]“ nach „[[$2]]“ fârschoom un dâbaj â wajdârlajdung ibârschriim',
 'movelogpage'      => 'Umdaaf-Logbuch',
 'movereason'       => 'Grund:',
 'revertmove'       => 'dsrigdaafn af an aldn nôômâ',
@@ -915,7 +910,7 @@ Bidde gug's mi´m foorschau-gnobf ôô fôrm schbajchan",
 
 # Media information
 'file-info-size' => '$1 × $2 pigsl, dadajgrääsn: $3, MIME-tib: $4',
-'file-nohires'   => "<small>A he´äre aafleesung gibd's ghaane.</small>",
+'file-nohires'   => "A he´äre aafleesung gibd's ghaane.",
 'svg-long-desc'  => 'SVG-dadaj, ufleesung: $1 × $2 pigsl, dadajgreesn: $3',
 'show-big-image' => 'Bild in hegsdâr aufleesung',
 

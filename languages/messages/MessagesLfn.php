@@ -272,7 +272,6 @@ $messages = array(
 'badtitle'            => 'Titulo es mal',
 'badtitletext'        => 'La titulo de la paje tu ia desira ia es nonlegal, es vacua, o es un titulo intervici o interlingual no liada coreta. Es posable ce es un o plu simboles ce no pote es usada en titulos.',
 'viewsource'          => 'Vide la orijin',
-'viewsourcefor'       => 'per $1',
 'viewsourcetext'      => 'Tu pote vide e copia la orijin de esta paje:',
 
 # Login and logout pages
@@ -704,7 +703,6 @@ Si tu vole sutrae la paje de tu lista de pajes oservada en la futur, clica a \"n
 'actioncomplete'        => 'Ata completada',
 'deletedtext'           => '"$1" ia es sutraeda.
 Vide $2 per un catalogo de sutraes resente.',
-'deletedarticle'        => 'sutraeda "[[$1]]"',
 'dellogpage'            => 'catalogo de sutraes',
 'deletecomment'         => 'Razona:',
 'deleteotherreason'     => 'Otra/plu razona:',
@@ -827,8 +825,6 @@ En esta casos, tu va nesesa move o fusa la paje per mano, si desirada.",
 'talkexists'       => "'''La paje se mesma ia es moveda, ma la paje de discutes no pote es moveda, per ce un esiste ja a la titulo nova. Per favore, fusa los per mano'''",
 'movedto'          => 'moveda a',
 'movetalk'         => 'Move la paje de discutes ance',
-'1movedto2'        => '[[$1]] es moveda a [[$2]]',
-'1movedto2_redir'  => '[[$1]] es moveda a [[$2]] tra redirije',
 'movelogpage'      => 'Move arcive',
 'movelogpagetext'  => 'A su es un lista de pajes moveda',
 'movereason'       => 'Razona:',
@@ -904,7 +900,7 @@ En esta casos, tu va nesesa move o fusa la paje per mano, si desirada.",
 # Media information
 'widthheightpage' => '$1 × $2, $3 {{PLURAL:$3|paje|pajes}}',
 'file-info-size'  => '$1 × $2 pixel, grandia de fix: $3, MIME tipo: $4',
-'file-nohires'    => '<small>No plu densia posable.</small>',
+'file-nohires'    => 'No plu densia posable.',
 'svg-long-desc'   => 'SVG fix, per nom $1 × $2 pixeles, grandia de fix: $3',
 'show-big-image'  => 'Densia masima',
 

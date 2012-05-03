@@ -1,40 +1,85 @@
 /**
- * CSS in this file is used by *all* skins (that have any CSS at all).  Be
+ * CSS in this file is used by *all* skins (that have any CSS at all). Be
  * careful what you put in here, since what looks good in one skin may not in
  * another, but don't ignore the poor pre-Monobook users either.
  */
 
 /* GENERAL CLASSES FOR DIRECTIONALITY SUPPORT */
-/* These classes should be used for text depending on the content direction.
-Content stuff like editsection, ul/ol and TOC depend on this. */
- /* @noflip */.mw-content-ltr { direction: ltr; }
-/* @noflip */.mw-content-rtl { direction: rtl; }
+
+/**
+ * These classes should be used for text depending on the content direction.
+ * Content stuff like editsection, ul/ol and TOC depend on this.
+ */
+.mw-content-ltr {
+	/* @noflip */
+	direction: ltr;
+}
+.mw-content-rtl {
+	/* @noflip */
+	direction: rtl;
+}
+
 /* Most input fields should be in site direction */
-/* @noflip */.sitedir-ltr textarea, .sitedir-ltr input { direction: ltr; }
-/* @noflip */.sitedir-rtl textarea, .sitedir-rtl input { direction: rtl; }
+.sitedir-ltr textarea,
+.sitedir-ltr input {
+	/* @noflip */
+	direction: ltr;
+}
+.sitedir-rtl textarea,
+.sitedir-rtl input {
+	/* @noflip */
+	direction: rtl;
+}
+
 /* Input types that should follow user direction, like buttons */
-input[type="submit"], input[type="button"], input[type="reset"], input[type="file"] { direction: ltr; }
+/* TODO: What about buttons in wikipage content ? */
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+input[type="file"] {
+	direction: ltr;
+}
+
 /* Override default values */
-/* @noflip */textarea[dir="ltr"], input[dir="ltr"] { direction: ltr; }
-/* @noflip */textarea[dir="rtl"], input[dir="rtl"] { direction: rtl; }
+textarea[dir="ltr"],
+input[dir="ltr"] {
+	/* @noflip */
+	direction: ltr;
+}
+textarea[dir="rtl"],
+input[dir="rtl"] {
+	/* @noflip */
+	direction: rtl;
+}
 
 /* Default style for semantic tags */
-abbr, acronym, .explain {
-	border-bottom: 1px dotted black;
+abbr,
+acronym,
+.explain {
+	border-bottom: 1px dotted;
 	cursor: help;
 }
 
 /* Colored watchlist and recent changes numbers */
-.mw-plusminus-pos { color: #006400; } /* dark green */
-.mw-plusminus-neg { color: #8b0000; } /* dark red */
-.mw-plusminus-null { color: #aaa; } /* gray */
-
-/* Links to redirects appear italicized on [[Special:AllPages]], [[Special:PrefixIndex]],
-   [[Special:Watchlist/edit]] and in category listings */
-.allpagesredirect, .redirect-in-category, .watchlistredir {
-	font-style: italic;
+.mw-plusminus-pos {
+	color: #006400; /* dark green */
+}
+.mw-plusminus-neg {
+	color: #8b0000; /* dark red */
+}
+.mw-plusminus-null {
+	color: #aaa; /* gray */
 }
 
+/**
+ * Links to redirects appear italicized on [[Special:AllPages]], [[Special:PrefixIndex]],
+ * [[Special:Watchlist/edit]] and in category listings.
+ */
+.allpagesredirect,
+.redirect-in-category,
+.watchlistredir {
+	font-style: italic;
+}
 
 /* Comment and username portions of RC entries */
 span.comment {
@@ -50,15 +95,25 @@ span.changedby {
 	direction: ltr;
 	unicode-bidi: embed;
 }
-img.tex { vertical-align: middle; }
-span.texhtml { font-family: serif; }
+img.tex {
+	vertical-align: middle;
+}
+span.texhtml {
+	font-family: serif;
+}
 
-/* add a bit of margin space between the preview and the toolbar */
-/* this replaces the ugly <p><br /></p> we used to insert into the page source */
-#wikiPreview.ontop { margin-bottom: 1em; }
+/**
+ * Add a bit of margin space between the preview and the toolbar.
+ * This replaces the ugly <p><br /></p> we used to insert into the page source
+ */
+#wikiPreview.ontop {
+	margin-bottom: 1em;
+}
 
 /* Stop floats from intruding into edit area in previews */
-#editform, #toolbar, #wpTextbox1 {
+#editform,
+#toolbar,
+#wpTextbox1 {
 	clear: both;
 }
 #toolbar img {
@@ -77,8 +132,25 @@ div#mw-js-message {
 	margin-left: 5px;
 }
 /* Correct directionality when page dir is different from site/user dir */
-/* @noflip */.mw-content-ltr .editsection, .mw-content-rtl .mw-content-ltr .editsection { float: right; }
-/* @noflip */.mw-content-rtl .editsection, .mw-content-ltr .mw-content-rtl .editsection { float: left; }
+.mw-content-ltr .editsection,
+.mw-content-rtl .mw-content-ltr .editsection {
+	/* @noflip */
+	float: right;
+}
+.mw-content-rtl .editsection,
+.mw-content-ltr .mw-content-rtl .editsection {
+	/* @noflip */
+	float: left;
+}
+
+/**
+ * File description page
+ */
+
+div.mw-filepage-resolutioninfo {
+	font-size: smaller;
+}
+
 /**
  * File histories
  */
@@ -102,10 +174,21 @@ table.filehistory td.filehistory-selected {
 	font-weight: bold;
 }
 
-/*
+/**
+ * Add a checkered background image on hover for file
+ * description pages. (bug 26470)
+ */
+.filehistory a img,
+#file img:hover {
+	/* @embed */
+	background: white url(images/Checker-16x16.png) repeat;
+}
+
+/**
  * rev_deleted stuff
  */
-li span.deleted, span.history-deleted {
+li span.deleted,
+span.history-deleted {
 	text-decoration: line-through;
 	color: #888;
 	font-style: italic;
@@ -131,17 +214,31 @@ div.patrollink {
 /**
  * Forms
  */
-td.mw-label { text-align: right; }
-td.mw-input { text-align: left; }
-td.mw-submit { text-align: left; }
+td.mw-label {
+	text-align: right;
+}
+td.mw-input {
+	text-align: left;
+}
+td.mw-submit {
+	text-align: left;
+}
 
-td.mw-label { vertical-align: top; }
-.prefsection td.mw-label { width: 20%; }
-.prefsection table { width: 100%; }
-td.mw-submit { white-space: nowrap; }
+td.mw-label {
+	vertical-align: top;
+}
+.prefsection td.mw-label {
+	width: 20%;
+}
+.prefsection table {
+	width: 100%;
+}
+td.mw-submit {
+	white-space: nowrap;
+}
 
 table.mw-htmlform-nolabel td.mw-label {
-	width: 0 !important;
+	width: 1px;
 }
 
 tr.mw-htmlform-vertical-label td.mw-label {
@@ -151,7 +248,8 @@ tr.mw-htmlform-vertical-label td.mw-label {
 .mw-htmlform-invalid-input td.mw-input input {
 	border-color: red;
 }
-.mw-htmlform-multiselect-flatlist div.mw-htmlform-multiselect-item {
+
+.mw-htmlform-flatlist div.mw-htmlform-flatlist-item {
 	display: inline;
 	margin-right: 1em;
 	white-space: nowrap;
@@ -164,8 +262,12 @@ input#wpSummary {
 /**
  * Image captions
  */
-.thumbcaption { text-align: left; }
-.magnify { float: right; }
+.thumbcaption {
+	text-align: left;
+}
+.magnify {
+	float: right;
+}
 
 /**
  * Categories
@@ -177,56 +279,61 @@ input#wpSummary {
 	 */
 	text-align: left;
 }
-#catlinks ul {
-	display:inline;
-	margin: 0px;
-	padding: 0px;
+.catlinks ul {
+	display: inline;
+	margin: 0;
+	padding: 0;
 	list-style: none;
 	list-style-type: none;
 	list-style-image: none;
 	vertical-align: middle !ie;
 }
 
-#catlinks li {
-	display:inline-block;
-	line-height: 1.35em;
-	padding: 0 .7em;
+.catlinks li {
+	display: inline-block;
+	line-height: 1.25em;
 	border-left: 1px solid #AAA;
-	margin: 0.3em 0;
+	margin: 0.125em 0;
+	padding: 0 0.5em;
 	zoom: 1;
-	display:inline !ie;
+	display: inline !ie;
 }
 
-#catlinks li:first-child {
-	padding-left: .4em;
+.catlinks li:first-child {
+	padding-left: 0.25em;
 	border-left: none;
 }
 /**
  * Hidden categories
  */
-.mw-hidden-cats-hidden { display: none; }
-.catlinks-allhidden { display: none; }
+.mw-hidden-cats-hidden {
+	display: none;
+}
+.catlinks-allhidden {
+	display: none;
+}
 
 /* Convenience links to edit block, delete and protect reasons */
-p.mw-ipb-conveniencelinks, p.mw-protect-editreasons,
-p.mw-filedelete-editreasons, p.mw-delete-editreasons,
+p.mw-ipb-conveniencelinks,
+p.mw-protect-editreasons,
+p.mw-filedelete-editreasons,
+p.mw-delete-editreasons,
 p.mw-revdel-editreasons {
 	font-size: 90%;
 	text-align: right;
 }
 
-/*
+/**
  * OpenSearch ajax suggestions
  */
 .os-suggest {
 	overflow: auto;
 	overflow-x: hidden;
 	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 0px;
+	top: 0;
+	left: 0;
+	width: 0;
 	background-color: white;
-	background-color: Window;
 	border-style: solid;
 	border-color: #AAAAAA;
 	border-width: 1px;
@@ -242,24 +349,17 @@ table.os-suggest-results {
 	width: 100%;
 }
 
-.os-suggest-result, .os-suggest-result-hl {
+.os-suggest-result,
+.os-suggest-result-hl {
 	white-space: nowrap;
 	background-color: white;
-	background-color: Window;
 	color: black;
-	color: WindowText;
 	padding: 2px;
 }
 .os-suggest-result-hl,
 .os-suggest-result-hl-webkit {
 	background-color: #4C59A6;
 	color: white;
-}
-.os-suggest-result-hl {
-	/* System colors are misimplemented in Safari 3.0 and earlier,
-	   making highlighted text illegible... */
-	background-color: Highlight;
-	color: HighlightText;
 }
 
 .os-suggest-toggle {
@@ -269,15 +369,18 @@ table.os-suggest-results {
 }
 .os-suggest-toggle-def {
 	position: absolute;
-	top: 0px;
-	left: 0px;
+	top: 0;
+	left: 0;
 	font-size: 65%;
 	visibility: hidden;
 }
 
 /* Page history styling */
-/* the auto-generated edit comments */
-.autocomment { color: gray; }
+
+/* The auto-generated edit comments */
+.autocomment {
+	color: gray;
+}
 #pagehistory .history-user {
 	margin-left: 0.4em;
 	margin-right: 0.2em;
@@ -297,16 +400,19 @@ table.os-suggest-results {
 	float: right;
 }
 
-/** Generic minor/bot/newpage styling */
-.newpage, .minor, .bot {
+/** Generic minor/bot/newpage styling (recent changes) */
+.newpage,
+.minoredit,
+.botedit {
 	font-weight: bold;
 }
 
-#shared-image-dup, #shared-image-conflict {
+#shared-image-dup,
+#shared-image-conflict {
 	font-style: italic;
 }
 
-/*
+/**
  * Recreating deleted page warning
  * Reupload file warning
  * Page protection warning
@@ -332,7 +438,8 @@ input.mw-revdelundel-hidden {
 	visibility: hidden;
 }
 
-td.mw-revdel-checkbox, th.mw-revdel-checkbox {
+td.mw-revdel-checkbox,
+th.mw-revdel-checkbox {
 	padding-right: 10px;
 	text-align: center;
 }
@@ -340,7 +447,7 @@ td.mw-revdel-checkbox, th.mw-revdel-checkbox {
 /* feed links */
 a.feedlink {
 	/* @embed */
-	background: url("images/feed-icon.png") center left no-repeat;
+	background: url(images/feed-icon.png) center left no-repeat;
 	padding-left: 16px;
 }
 
@@ -351,30 +458,36 @@ a.feedlink {
 	padding: 0 !important;
 }
 /* External URLs should always be treated as LTR (bug 4330) */
-/* @noflip */ .rtl a.external.free, .rtl a.external.autonumber {
+/* @noflip */ .rtl a.external.free,
+.rtl a.external.autonumber {
 	direction: ltr;
 	unicode-bidi: embed;
 }
 
-/* wikitable class for skinning normal tables
- * keep on sync with commonPrint.css
+/**
+ * wikitable class for skinning normal tables
+ * keep in sync with commonPrint.css
  */
 table.wikitable {
 	margin: 1em 1em 1em 0;
-	background: #f9f9f9;
+	background-color: #f9f9f9;
 	border: 1px #aaa solid;
 	border-collapse: collapse;
 	color: black;
 }
-.wikitable th, .wikitable td {
+table.wikitable > tr > th,
+table.wikitable > tr > td,
+table.wikitable > * > tr > th,
+table.wikitable > * > tr > td {
 	border: 1px #aaa solid;
 	padding: 0.2em;
 }
-.wikitable th {
-	background: #f2f2f2;
+table.wikitable > tr > th,
+table.wikitable > * > tr > th {
+	background-color: #f2f2f2;
 	text-align: center;
 }
-.wikitable caption {
+table.wikitable > caption {
 	font-weight: bold;
 }
 
@@ -396,7 +509,9 @@ table.collapsed tr.collapsable {
 	color: red;
 	font-size: larger;
 }
-.errorbox, .warningbox, .successbox {
+.errorbox,
+.warningbox,
+.successbox {
 	font-size: larger;
 	border: 2px solid;
 	padding: .5em 1em;
@@ -416,7 +531,9 @@ table.collapsed tr.collapsable {
 	border-color: green;
 	background-color: #dfd;
 }
-.errorbox h2, .warningbox h2, .successbox h2 {
+.errorbox h2,
+.warningbox h2,
+.successbox h2 {
 	font-size: 1em;
 	font-weight: bold;
 	display: inline;
@@ -463,17 +580,38 @@ table.collapsed tr.collapsable {
 	padding: 0.2em;
 }
 
-/*
-	Table pager (e.g. Special:ListFiles)
-	- remove underlines from the navigation link
-	- collapse borders
-	- set the borders to outsets (similar to Special:AllMessages)
-	- remove line wrapping for all td and th, set background color
-	- restore line wrapping for the last two table cells (description and size)
-*/
+/**
+ * Data table style
+ *
+ * Transparent table with suddle borders
+ * and blue row-highlighting.
+ */
+.mw-datatable {
+	border-collapse: collapse;
+}
+.mw-datatable,
+.mw-datatable td,
+.mw-datatable th {
+	border: 1px solid #aaaaaa;
+	padding: 0 0.15em 0 0.15em;
+}
+.mw-datatable th {
+	background-color: #ddddff;
+}
+.mw-datatable td {
+	background-color: #ffffff;
+}
+.mw-datatable tr:hover td {
+	background-color: #eeeeff;
+}
+
+
+/**
+ * TablePager tables generated by the TablePager PHP class
+ * in MediaWiki (e.g. Special:ListFiles).
+ */
 .TablePager {
 	min-width: 80%;
-	border-collapse: collapse;
 }
 .TablePager_nav {
 	margin: 0 auto;
@@ -485,21 +623,9 @@ table.collapsed tr.collapsable {
 .TablePager_nav a {
 	text-decoration: none;
 }
-.TablePager, .TablePager td, .TablePager th {
-	border: 1px solid #aaaaaa;
-	padding: 0 0.15em 0 0.15em;
-}
-.TablePager th {
-	background-color: #eeeeff;
-}
-.TablePager td {
-	background-color: #ffffff;
-}
-.TablePager tr:hover td {
-	background-color: #eeeeff;
-}
 
-.imagelist td, .imagelist th {
+.imagelist td,
+.imagelist th {
 	white-space: nowrap;
 }
 .imagelist .TablePager_col_links {
@@ -555,7 +681,8 @@ table.mw_metadata {
 	border-collapse: collapse;
 }
 
-table.mw_metadata td, table.mw_metadata th {
+table.mw_metadata td,
+table.mw_metadata th {
 	text-align: center;
 	border: 1px solid #aaaaaa;
 	padding-left: 5px;
@@ -582,13 +709,13 @@ table.mw_metadata ul.metadata-langlist {
 .mw-content-ltr ul,
 .mw-content-rtl .mw-content-ltr ul {
 	/* @noflip */
-	margin: 0.3em 0 0 1.5em;
+	margin: 0.3em 0 0 1.6em;
 	padding: 0;
 }
 .mw-content-rtl ul,
 .mw-content-ltr .mw-content-rtl ul {
 	/* @noflip */
-	margin: 0.3em 1.5em 0 0;
+	margin: 0.3em 1.6em 0 0;
 	padding: 0;
 }
 .mw-content-ltr ol,
@@ -603,19 +730,17 @@ table.mw_metadata ul.metadata-langlist {
 	margin: 0.3em 3.2em 0 0;
 	padding: 0;
 }
-
-/* Correct directionality when page dir is different from site/user dir */
-/* @noflip */.mw-content-ltr ul, .mw-content-rtl .mw-content-ltr ul {
-	margin: .3em 0 0 1.5em;
+/* @noflip */
+.mw-content-ltr dd,
+.mw-content-rtl .mw-content-ltr dd {
+	margin-left: 1.6em;
+	margin-right: 0;
 }
-/* @noflip */.mw-content-rtl ul, .mw-content-ltr .mw-content-rtl ul {
-	margin: .3em 1.5em 0 0;
-}
-/* @noflip */.mw-content-ltr ol, .mw-content-rtl .mw-content-ltr ol {
-	margin: .3em 0 0 3.2em;
-}
-/* @noflip */.mw-content-rtl ol, .mw-content-ltr .mw-content-rtl ol {
-	margin: .3em 3.2em 0 0;
+/* @noflip */
+.mw-content-rtl dd,
+.mw-content-ltr .mw-content-rtl dd {
+	margin-right: 1.6em;
+	margin-left: 0;
 }
 
 /* Galleries */
@@ -628,7 +753,8 @@ li.gallerybox {
 	display: inline-block;
 }
 
-ul.gallery, li.gallerybox {
+ul.gallery,
+li.gallerybox {
 	zoom: 1;
 	*display: inline;
 }
@@ -684,6 +810,37 @@ div.gallerytext {
 	background-repeat: no-repeat;
 }
 
+/* Language specific height correction for titles. Ref Bug 29405 and Bug 30809 */
+/* Languages like hi or ml require slightly more vertical space to show diacritics properly */
+h1:lang(as),
+h1:lang(bn),
+h1:lang(gu),
+h1:lang(hi),
+h1:lang(kn),
+h1:lang(ml),
+h1:lang(mr),
+h1:lang(or),
+h1:lang(pa),
+h1:lang(sa),
+h1:lang(ta),
+h1:lang(te) {
+	line-height: 1.5em !important;
+}
+h2:lang(as), h3:lang(as), h4:lang(as), h5:lang(as), h6:lang(as),
+h2:lang(bn), h3:lang(bn), h4:lang(bn), h5:lang(bn), h6:lang(bn),
+h2:lang(gu), h3:lang(gu), h4:lang(gu), h5:lang(gu), h6:lang(gu),
+h2:lang(hi), h3:lang(hi), h4:lang(hi), h5:lang(hi), h6:lang(hi),
+h2:lang(kn), h3:lang(kn), h4:lang(kn), h5:lang(kn), h6:lang(kn),
+h2:lang(ml), h3:lang(ml), h4:lang(ml), h5:lang(ml), h6:lang(ml),
+h2:lang(mr), h3:lang(mr), h4:lang(mr), h5:lang(mr), h6:lang(mr),
+h2:lang(or), h3:lang(or), h4:lang(or), h5:lang(or), h6:lang(or),
+h2:lang(pa), h3:lang(pa), h4:lang(pa), h5:lang(pa), h6:lang(pa),
+h2:lang(sa), h3:lang(sa), h4:lang(sa), h5:lang(sa), h6:lang(sa),
+h2:lang(ta), h3:lang(ta), h4:lang(ta), h5:lang(ta), h6:lang(ta),
+h2:lang(te), h3:lang(te), h4:lang(te), h5:lang(te), h6:lang(te) {
+	line-height: 1.2em;
+}
+
 /* Localised ordered list numbering for some languages */
 ol:lang(bcc) li,
 ol:lang(bqi) li,
@@ -716,20 +873,28 @@ ol:lang(or) li {
 }
 
 /* Correct directionality when page dir is different from site/user dir */
-/* @noflip */.mw-content-ltr .toc ul, .mw-content-ltr #toc ul,
-.mw-content-rtl .mw-content-ltr .toc ul, .mw-content-rtl .mw-content-ltr #toc ul {
+/* @noflip */ .mw-content-ltr .toc ul,
+.mw-content-ltr #toc ul,
+.mw-content-rtl .mw-content-ltr .toc ul,
+.mw-content-rtl .mw-content-ltr #toc ul {
 	text-align: left;
 }
-/* @noflip */.mw-content-rtl .toc ul, .mw-content-rtl #toc ul,
-.mw-content-ltr .mw-content-rtl .toc ul, .mw-content-ltr .mw-content-rtl #toc ul {
+/* @noflip */ .mw-content-rtl .toc ul,
+.mw-content-rtl #toc ul,
+.mw-content-ltr .mw-content-rtl .toc ul,
+.mw-content-ltr .mw-content-rtl #toc ul {
 	text-align: right;
 }
-/* @noflip */.mw-content-ltr .toc ul ul, .mw-content-ltr #toc ul ul,
-.mw-content-rtl .mw-content-ltr .toc ul ul, .mw-content-rtl .mw-content-ltr #toc ul ul {
+/* @noflip */ .mw-content-ltr .toc ul ul,
+.mw-content-ltr #toc ul ul,
+.mw-content-rtl .mw-content-ltr .toc ul ul,
+.mw-content-rtl .mw-content-ltr #toc ul ul {
 	margin: 0 0 0 2em;
 }
-/* @noflip */.mw-content-rtl .toc ul ul, .mw-content-rtl #toc ul ul,
-.mw-content-ltr .mw-content-rtl .toc ul ul, .mw-content-ltr .mw-content-rtl #toc ul ul {
+/* @noflip */ .mw-content-rtl .toc ul ul,
+.mw-content-rtl #toc ul ul,
+.mw-content-ltr .mw-content-rtl .toc ul ul,
+.mw-content-ltr .mw-content-rtl #toc ul ul {
 	margin: 0 2em 0 0;
 }
 
@@ -745,7 +910,7 @@ ol:lang(or) li {
 	display: none;
 	margin-left: 2px;
 	margin-bottom: -8px;
-	padding: 0px 0px 0px 15px;
+	padding: 0 0 0 15px;
 	/* @embed */
 	background-image: url('images/help-question.gif');
 	background-position: left center;
@@ -793,35 +958,19 @@ ol:lang(or) li {
 	right: 10px;
 	background-position: 0% 100%;
 }
-/* Table Sorting */
-table.sortable th.headerSort {
-	background-image: url(images/sort_both.gif);
-	cursor: pointer;
-	background-repeat: no-repeat;
-	background-position: center right;
-	padding-right: 21px;
-}
-table.sortable th.headerSortUp {
-	background-image: url(images/sort_up.gif);
-}
-table.sortable th.headerSortDown {
-	background-image: url(images/sort_down.gif);
-}
 
-/* LTR content in RTL layout */
-.ltr {
-	/* @noflip */
-	direction: ltr;
-	unicode-bidi: embed;
-}
-
-#mw-clearyourcache, #mw-sitecsspreview, #mw-sitejspreview, #mw-usercsspreview, #mw-userjspreview {
+#mw-clearyourcache,
+#mw-sitecsspreview,
+#mw-sitejspreview,
+#mw-usercsspreview,
+#mw-userjspreview {
 	direction: ltr;
 	unicode-bidi: embed;
 }
 
 /* Correct user & content directionality when viewing a diff */
-.diff-currentversion-title, .diff {
+.diff-currentversion-title,
+.diff {
 	direction: ltr;
 	unicode-bidi: embed;
 }
@@ -833,27 +982,56 @@ table.sortable th.headerSortDown {
 	direction: ltr;
 	unicode-bidi: embed;
 }
-.diff-otitle, .diff-ntitle, .diff-lineno {
+.diff-otitle,
+.diff-ntitle,
+.diff-lineno {
 	direction: ltr !important;
 	unicode-bidi: embed;
 }
 
-#mw-revision-info, #mw-revision-nav {
+#mw-revision-info,
+#mw-revision-info-current,
+#mw-revision-nav {
 	direction: ltr;
+	display: inline;
 }
 
 /* Images */
-/* @noflip */div.tright, div.floatright, table.floatright {
+
+/* @noflip */ div.tright,
+div.floatright,
+table.floatright {
 	clear: right;
 	float: right;
 }
-/* @noflip */div.tleft, div.floatleft, table.floatleft {
+/* @noflip */ div.tleft,
+div.floatleft,
+table.floatleft {
 	float: left;
 	clear: left;
 }
-div.floatright, table.floatright, div.floatleft, table.floatleft {
+div.floatright,
+table.floatright,
+div.floatleft,
+table.floatleft {
 	position: relative;
 }
 
 /* bug 12205 */
-#mw-credits a { unicode-bidi: embed; }
+#mw-credits a {
+	unicode-bidi: embed;
+}
+
+/* Accessibility */
+.mw-jump,
+#jump-to-nav {
+	overflow: hidden;
+	height: 0;
+	zoom: 1; /* http://webaim.org/techniques/skipnav/#iequirk */
+}
+
+/* For developpers */
+.xdebug-error {
+	position: absolute;
+	z-index: 99;
+}

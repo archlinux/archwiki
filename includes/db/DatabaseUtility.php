@@ -10,6 +10,9 @@ class DBObject {
 		$this->mData = $data;
 	}
 
+	/**
+	 * @return bool
+	 */
 	function isLOB() {
 		return false;
 	}
@@ -155,6 +158,9 @@ class ResultWrapper implements Iterator {
 		$this->currentRow = null;
 	}
 
+	/**
+	 * @return int
+	 */
 	function current() {
 		if ( is_null( $this->currentRow ) ) {
 			$this->next();
@@ -162,16 +168,25 @@ class ResultWrapper implements Iterator {
 		return $this->currentRow;
 	}
 
+	/**
+	 * @return int
+	 */
 	function key() {
 		return $this->pos;
 	}
 
+	/**
+	 * @return int
+	 */
 	function next() {
 		$this->pos++;
 		$this->currentRow = $this->fetchObject();
 		return $this->currentRow;
 	}
 
+	/**
+	 * @return bool
+	 */
 	function valid() {
 		return $this->current() !== false;
 	}

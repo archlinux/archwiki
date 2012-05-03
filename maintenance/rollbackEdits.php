@@ -62,10 +62,12 @@ class RollbackEdits extends Maintenance {
 			return;
 		}
 
+		$doer = User::newFromName( 'Maintenance script' );
+
 		foreach ( $titles as $t ) {
-			$a = new Article( $t );
-			$this->output( 'Processing ' . $t->getPrefixedText() . '...' );
-			if ( !$a->commitRollback( $user, $summary, $bot, $results ) ) {
+			$page = WikiPage::factory( $t );
+			$this->output( 'Processing ' . $t->getPrefixedText() . '... ' );
+			if ( !$page->commitRollback( $user, $summary, $bot, $results, $doer ) ) {
 				$this->output( "done\n" );
 			} else {
 				$this->output( "failed\n" );
@@ -76,6 +78,7 @@ class RollbackEdits extends Maintenance {
 	/**
 	 * Get all pages that should be rolled back for a given user
 	 * @param $user String a name to check against rev_user_text
+	 * @return array
 	 */
 	private function getRollbackTitles( $user ) {
 		$dbr = wfGetDB( DB_SLAVE );

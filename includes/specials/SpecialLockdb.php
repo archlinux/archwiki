@@ -26,89 +26,53 @@
  *
  * @ingroup SpecialPage
  */
-class SpecialLockdb extends SpecialPage {
+class SpecialLockdb extends FormSpecialPage {
 	var $reason = '';
 
 	public function __construct() {
 		parent::__construct( 'Lockdb', 'siteadmin' );
 	}
 
-	public function execute( $par ) {
-		global $wgUser, $wgRequest;
+	public function requiresWrite() {
+		return false;
+	}
 
-		$this->setHeaders();
+	public function checkExecutePermissions( User $user ) {
+		global $wgReadOnlyFile;
 
-		# Permission check
-		if( !$this->userCanExecute( $wgUser ) ) {
-			$this->displayRestrictionError();
-			return;
-		}
-
-		$this->outputHeader();
-
+		parent::checkExecutePermissions( $user );
 		# If the lock file isn't writable, we can do sweet bugger all
-		global $wgReadOnlyFile;
-		if( !is_writable( dirname( $wgReadOnlyFile ) ) ) {
-			self::notWritable();
-			return;
-		}
-
-		$action = $wgRequest->getVal( 'action' );
-		$this->reason = $wgRequest->getVal( 'wpLockReason', '' );
-
-		if ( $action == 'success' ) {
-			$this->showSuccess();
-		} elseif ( $action == 'submit' && $wgRequest->wasPosted() &&
-			$wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ) ) ) {
-			$this->doSubmit();
-		} else {
-			$this->showForm();
+		if ( !is_writable( dirname( $wgReadOnlyFile ) ) ) {
+			throw new ErrorPageError( 'lockdb', 'lockfilenotwritable' );
 		}
 	}
 
-	private function showForm( $err = '' ) {
-		global $wgOut, $wgUser;
-
-		$wgOut->addWikiMsg( 'lockdbtext' );
-
-		if ( $err != '' ) {
-			$wgOut->setSubtitle( wfMsg( 'formerror' ) );
-			$wgOut->addHTML( '<p class="error">' . htmlspecialchars( $err ) . "</p>\n" );
-		}
-
-		$wgOut->addHTML(
-			Html::openElement( 'form', array( 'id' => 'lockdb', 'method' => 'POST',
-				'action' => $this->getTitle()->getLocalURL( 'action=submit' ) ) ). "\n" .
-			wfMsgHtml( 'enterlockreason' ) . ":\n" .
-			Html::textarea( 'wpLockReason', $this->reason, array( 'rows' => 4 ) ). "
-<table>
-	<tr>
-		" . Html::openElement( 'td', array( 'style' => 'text-align:right' ) ) . "
-			" . Html::input( 'wpLockConfirm', null, 'checkbox' ) . "
-		</td>
-		" . Html::openElement( 'td', array( 'style' => 'text-align:left' ) ) .
-			wfMsgHtml( 'lockconfirm' ) . "</td>
-	</tr>
-	<tr>
-		<td>&#160;</td>
-		" . Html::openElement( 'td', array( 'style' => 'text-align:left' ) ) . "
-			" . Html::input( 'wpLock', wfMsg( 'lockbtn' ), 'submit' ) . "
-		</td>
-	</tr>
-</table>\n" .
-			Html::hidden( 'wpEditToken', $wgUser->editToken() ) . "\n" .
-			Html::closeElement( 'form' )
+	protected function getFormFields() {
+		return array(
+			'Reason' => array(
+				'type' => 'textarea',
+				'rows' => 4,
+				'vertical-label' => true,
+				'label-message' => 'enterlockreason',
+			),
+			'Confirm' => array(
+				'type' => 'toggle',
+				'label-message' => 'lockconfirm',
+			),
 		);
-
 	}
 
-	private function doSubmit() {
-		global $wgOut, $wgUser, $wgContLang, $wgRequest;
-		global $wgReadOnlyFile;
+	protected function alterForm( HTMLForm $form ) {
+		$form->setWrapperLegend( false );
+		$form->setHeaderText( $this->msg( 'lockdbtext' )->parseAsBlock() );
+		$form->setSubmitTextMsg( 'lockbtn' );
+	}
 
-		if ( ! $wgRequest->getCheck( 'wpLockConfirm' ) ) {
-			$this->showForm( wfMsg( 'locknoconfirm' ) );
-			return;
+	public function onSubmit( array $data ) {
+		global $wgContLang, $wgReadOnlyFile;
+
+		if ( !$data['Confirm'] ) {
+			return Status::newFatal( 'locknoconfirm' );
 		}
 
 		wfSuppressWarnings();
@@ -119,33 +83,25 @@ class SpecialLockdb extends SpecialPage {
 			# This used to show a file not found error, but the likeliest reason for fopen()
 			# to fail at this point is insufficient permission to write to the file...good old
 			# is_writable() is plain wrong in some cases, it seems...
-			self::notWritable();
-			return;
+			return Status::newFatal( 'lockfilenotwritable' );
 		}
-		fwrite( $fp, $this->reason );
+		fwrite( $fp, $data['Reason'] );
 		$timestamp = wfTimestampNow();
 		fwrite( $fp, "\n<p>" . wfMsgExt(
 			'lockedbyandtime',
 			array( 'content', 'parsemag' ),
-			$wgUser->getName(),
+			$this->getUser()->getName(),
 			$wgContLang->date( $timestamp ),
 			$wgContLang->time( $timestamp )
 		) . "</p>\n" );
 		fclose( $fp );
 
-		$wgOut->redirect( $this->getTitle()->getFullURL( 'action=success' ) );
+		return Status::newGood();
 	}
 
-	private function showSuccess() {
-		global $wgOut;
-
-		$wgOut->setPagetitle( wfMsg( 'lockdb' ) );
-		$wgOut->setSubtitle( wfMsg( 'lockdbsuccesssub' ) );
-		$wgOut->addWikiMsg( 'lockdbsuccesstext' );
-	}
-
-	public static function notWritable() {
-		global $wgOut;
-		$wgOut->showErrorPage( 'lockdb', 'lockfilenotwritable' );
+	public function onSuccess() {
+		$out = $this->getOutput();
+		$out->addSubtitle( $this->msg( 'lockdbsuccesssub' ) );
+		$out->addWikiMsg( 'lockdbsuccesstext' );
 	}
 }

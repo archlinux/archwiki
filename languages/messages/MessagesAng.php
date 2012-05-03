@@ -444,7 +444,6 @@ Scēawa þīne wrītunge eft, oþþe brūc þā cartan þe is hērunder tō [[Sp
 'showdiff'                         => 'Hƿearfas sēon',
 'summary-preview'                  => 'Scortnesse forescēaƿe:',
 'blockednoreason'                  => 'nānu racu ȝiefen',
-'whitelistedittitle'               => 'Inmeldunge behōfed to ādihtenne',
 'whitelistedittext'                => 'Þū scealt $1 to ādihtenne sīdan.',
 'nosuchsectiontitle'               => 'Ne mæȝ dǣl findan',
 'loginreqtitle'                    => 'Inmeldung ābeden',
@@ -528,9 +527,6 @@ folcliċum āgnunge oþþe ȝelīċum frēom horde (sēo $1 for āscungum).
 'revdelete-radio-unset'      => 'Nā',
 'revdel-restore'             => 'scēaƿnesse hƿeorfan',
 'pagehist'                   => 'Sīdan stǣr',
-'revdelete-content'          => 'innoþ',
-'revdelete-summary'          => 'ādihtscortnes',
-'revdelete-uname'            => 'brūcendnama',
 'revdelete-reasonotherlist'  => 'Ōðru racu',
 
 # History merging
@@ -848,8 +844,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'activeusers' => 'Hƿata brūcenda ȝetalu',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Brūcenda ȝesceaft ȝetalu',
-'newuserlog-create-entry' => 'Nīƿe brūcend',
+'newuserlogpage' => 'Brūcenda ȝesceaft ȝetalu',
 
 # Special:ListGroupRights
 'listgrouprights-group'           => 'Clīeƿen',
@@ -903,7 +898,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'exblank'               => 'tramet wæs ǣmtig',
 'historywarning'        => 'Warnung: Se tramet, þone þu āfeorsian teohhast, hæfþ stǣre:',
 'actioncomplete'        => 'Ƿeorcdǣd fuldōn',
-'deletedarticle'        => 'āfeorsode "[[$1]]"',
 'dellogpage'            => 'Āfeorsunge ƿīsbōc',
 'deletionlog'           => 'āfeorsunge wisbōc',
 'deletecomment'         => 'Racu:',
@@ -955,7 +949,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'undeletebtn'            => 'Edstaðola!',
 'undeletelink'           => 'sēon/nīƿian',
 'undeleteviewlink'       => 'sēon',
-'undeletedarticle'       => 'edstaðolod "[[$1]]"',
 'undelete-search-submit' => 'Sēċan',
 
 # Namespace form on various pages
@@ -1021,22 +1014,20 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'proxyblocksuccess'        => 'Ȝedōn.',
 
 # Move page
-'movearticle'     => 'Sīdan ȝeferan:',
-'newtitle'        => 'To nīƿum name:',
-'move-watch'      => 'Frumasīdan and endesīdan ƿæccan',
-'movepagebtn'     => 'Sīdan ȝeferan',
-'pagemovedsub'    => 'Ȝefōr spēdde',
-'movepage-moved'  => '\'\'\'"$1" ƿæs to "$2"\'\'\' ȝefered',
-'articleexists'   => 'Tramet on þǣm naman ǣr stendeþ, oþþe þone
+'movearticle'    => 'Sīdan ȝeferan:',
+'newtitle'       => 'To nīƿum name:',
+'move-watch'     => 'Frumasīdan and endesīdan ƿæccan',
+'movepagebtn'    => 'Sīdan ȝeferan',
+'pagemovedsub'   => 'Ȝefōr spēdde',
+'movepage-moved' => '\'\'\'"$1" ƿæs to "$2"\'\'\' ȝefered',
+'articleexists'  => 'Tramet on þǣm naman ǣr stendeþ, oþþe þone
 naman þu cēas nis andfenge.
 Bidde cēos ōðerne naman.',
-'movedto'         => 'ȝefered to',
-'movetalk'        => 'Ȝesibbed ȝespreċsīdan ȝeferan',
-'1movedto2'       => '[[$1]] ȝefered to [[$2]]',
-'1movedto2_redir' => '[[$1]] ȝefered to [[$2]] ofer edlǣdunge',
-'movelogpage'     => 'Ȝeferan ealdhord',
-'movereason'      => 'Racu:',
-'revertmove'      => 'Undōn',
+'movedto'        => 'ȝefered to',
+'movetalk'       => 'Ȝesibbed ȝespreċsīdan ȝeferan',
+'movelogpage'    => 'Ȝeferan ealdhord',
+'movereason'     => 'Racu:',
+'revertmove'     => 'Undōn',
 
 # Export
 'export' => 'Sīdan ūtsendan',
@@ -1127,10 +1118,6 @@ Bidde cēos ōðerne naman.',
 'others'    => 'ōðru',
 'anonusers' => '{{SITENAME}} {{PLURAL:$2|uncūþ brūcend|uncūðe brūcendas}} $1',
 
-# Patrol log
-'patrol-log-auto' => '(selffremmende)',
-'patrol-log-diff' => 'nīƿung $1',
-
 # Browsing diffs
 'previousdiff' => '← Ieldra ādiht',
 'nextdiff'     => 'Nīƿra ādiht',
@@ -1139,7 +1126,7 @@ Bidde cēos ōðerne naman.',
 'imagemaxsize'   => 'Settan biliðu on biliþgemearcungtrametum tō:',
 'thumbsize'      => 'Þumannæglmicelnes:',
 'file-info-size' => '$1 × $2 pixels, fīlmiċelu: $3, MIMEcynn: $4',
-'file-nohires'   => '<small>Þǣr nis nǣniȝ mā miċelu.</small>',
+'file-nohires'   => 'Þǣr nis nǣniȝ mā miċelu.',
 'svg-long-desc'  => 'SVG fīl, rihte $1 × $2 pixels, fīlmiċelu: $3',
 'show-big-image' => 'Fulmiċelu',
 

@@ -72,8 +72,10 @@ class LanguageRu extends Language {
 	 * Examples:
 	 *   message with number
 	 *     "Сделано $1 {{PLURAL:$1|изменение|изменения|изменений}}"
+	 *     ("$1 change[s] were made)
 	 *   message without number
 	 *     "Действие не может быть выполнено по {{PLURAL:$1|следующей причине|следующим причинам}}:"
+	 *     ("The action cannot be performed for the following reason[s]")
 	 * @param $count int
 	 * @param $forms array
 	 *
@@ -82,7 +84,10 @@ class LanguageRu extends Language {
 	function convertPlural( $count, $forms ) {
 		if ( !count( $forms ) ) { return ''; }
 
-		// if no number with word, then use $form[0] for singular and $form[1] for plural or zero
+		// If the actual number is not mentioned in the expression, then just two forms are enough:
+		// singular for $count == 1
+		// plural   for $count != 1
+		// For example, "This user belongs to {{PLURAL:$1|one group|several groups}}."
 		if ( count( $forms ) === 2 ) return $count == 1 ? $forms[0] : $forms[1];
 
 		// @todo FIXME: CLDR defines 4 plural forms. Form with decimals missing.

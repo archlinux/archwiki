@@ -35,8 +35,8 @@ class WithoutInterwikiPage extends PageQueryPage {
 	}
 
 	function execute( $par ) {
-		global $wgRequest;
-		$this->prefix = Title::capitalize( $wgRequest->getVal( 'prefix', $par ), NS_MAIN );
+		$this->prefix = Title::capitalize(
+			$this->getRequest()->getVal( 'prefix', $par ), NS_MAIN );
 		parent::execute( $par );
 	}
 
@@ -84,7 +84,7 @@ class WithoutInterwikiPage extends PageQueryPage {
 					'page_title AS title',
 					'page_title AS value' ),
 			'conds' => array ( 'll_title IS NULL',
-					'page_namespace' => NS_MAIN,
+					'page_namespace' => MWNamespace::getContentNamespaces(),
 					'page_is_redirect' => 0 ),
 			'join_conds' => array ( 'langlinks' => array (
 					'LEFT JOIN', 'll_from = page_id' ) )

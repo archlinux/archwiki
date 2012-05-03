@@ -144,6 +144,9 @@ class Ibm_db2Installer extends DatabaseInstaller {
 		if ( !$status->isOK() ) {
 			return $status;
 		}
+		/**
+		 * @var $conn DatabaseBase
+		 */
 		$conn = $status->value;
 		$dbName = $this->getVar( 'wgDBname' );
 		if( !$conn->selectDB( $dbName ) ) {
@@ -213,15 +216,16 @@ class Ibm_db2Installer extends DatabaseInstaller {
 		$this->db->selectDB( $this->getVar( 'wgDBname' ) );
 
 		try {
-			$result = $this->db->query( 'SELECT PAGESIZE FROM SYSCAT.TABLESPACES' );
+			$result = $this->db->query( 'SELECT PAGESIZE FROM SYSCAT.TABLESPACES FOR READ ONLY' );
 			if( $result == false ) {
 				$status->fatal( 'config-connection-error', '' );
-			}
-			else {
-				while ( $row = $this->db->fetchRow( $result ) ) {
+			} else {
+				$row = $this->db->fetchRow( $result );
+				while ( $row ) {
 					if( $row[0] >= 32768 ) {
 						return $status;
 					}
+					$row = $this->db->fetchRow( $result );
 				}
 				$status->fatal( 'config-ibm_db2-low-db-pagesize', '' );
 			}
@@ -245,7 +249,7 @@ class Ibm_db2Installer extends DatabaseInstaller {
 \$wgDBport             = \"{$port}\";";
 	}
 
-	public function __construct($parent) {
-		parent::__construct($parent);
+	public function __construct( $parent ) {
+		parent::__construct( $parent );
 	}
 }

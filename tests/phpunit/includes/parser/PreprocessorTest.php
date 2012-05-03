@@ -49,43 +49,45 @@ class PreprocessorTest extends MediaWikiTestCase {
 			array( "== Foo ==\n== Bar == \n", "<root><h level=\"2\" i=\"1\">== Foo ==</h>\n<h level=\"2\" i=\"2\">== Bar == </h>\n</root>" ),
 			array( "===========", "<root><h level=\"5\" i=\"1\">===========</h></root>" ),
 			array( "Foo\n=\n==\n=\n", "<root>Foo\n=\n==\n=\n</root>" ),
-			array( "{{Foo}}", "<root><template lineStart=\"1\"><title>Foo</title></template></root>" ),
+			array( "{{Foo}}", "<root><template><title>Foo</title></template></root>" ),
 			array( "\n{{Foo}}", "<root>\n<template lineStart=\"1\"><title>Foo</title></template></root>" ),
-			array( "{{Foo|bar}}", "<root><template lineStart=\"1\"><title>Foo</title><part><name index=\"1\" /><value>bar</value></part></template></root>" ),
-			array( "{{Foo|bar}}a", "<root><template lineStart=\"1\"><title>Foo</title><part><name index=\"1\" /><value>bar</value></part></template>a</root>" ),
-			array( "{{Foo|bar|baz}}", "<root><template lineStart=\"1\"><title>Foo</title><part><name index=\"1\" /><value>bar</value></part><part><name index=\"2\" /><value>baz</value></part></template></root>" ),
-			array( "{{Foo|1=bar}}", "<root><template lineStart=\"1\"><title>Foo</title><part><name>1</name>=<value>bar</value></part></template></root>" ),
-			array( "{{Foo|=bar}}", "<root><template lineStart=\"1\"><title>Foo</title><part><name></name>=<value>bar</value></part></template></root>" ),
-			array( "{{Foo|bar=baz}}", "<root><template lineStart=\"1\"><title>Foo</title><part><name>bar</name>=<value>baz</value></part></template></root>" ),
-			array( "{{Foo|1=bar|baz}}", "<root><template lineStart=\"1\"><title>Foo</title><part><name>1</name>=<value>bar</value></part><part><name index=\"1\" /><value>baz</value></part></template></root>" ),
-			array( "{{Foo|1=bar|2=baz}}", "<root><template lineStart=\"1\"><title>Foo</title><part><name>1</name>=<value>bar</value></part><part><name>2</name>=<value>baz</value></part></template></root>" ),
-			array( "{{Foo|bar|foo=baz}}", "<root><template lineStart=\"1\"><title>Foo</title><part><name index=\"1\" /><value>bar</value></part><part><name>foo</name>=<value>baz</value></part></template></root>" ),
-			array( "{{{1}}}", "<root><tplarg lineStart=\"1\"><title>1</title></tplarg></root>" ),
-			array( "{{{1|}}}", "<root><tplarg lineStart=\"1\"><title>1</title><part><name index=\"1\" /><value></value></part></tplarg></root>" ),
-			array( "{{{Foo}}}", "<root><tplarg lineStart=\"1\"><title>Foo</title></tplarg></root>" ),
-			array( "{{{Foo|}}}", "<root><tplarg lineStart=\"1\"><title>Foo</title><part><name index=\"1\" /><value></value></part></tplarg></root>" ),
-			array( "{{{Foo|bar|baz}}}", "<root><tplarg lineStart=\"1\"><title>Foo</title><part><name index=\"1\" /><value>bar</value></part><part><name index=\"2\" /><value>baz</value></part></tplarg></root>" ),
+			array( "{{Foo|bar}}", "<root><template><title>Foo</title><part><name index=\"1\" /><value>bar</value></part></template></root>" ),  
+			array( "{{Foo|bar}}a", "<root><template><title>Foo</title><part><name index=\"1\" /><value>bar</value></part></template>a</root>" ),  
+			array( "{{Foo|bar|baz}}", "<root><template><title>Foo</title><part><name index=\"1\" /><value>bar</value></part><part><name index=\"2\" /><value>baz</value></part></template></root>" ),  
+			array( "{{Foo|1=bar}}", "<root><template><title>Foo</title><part><name>1</name>=<value>bar</value></part></template></root>" ),
+			array( "{{Foo|=bar}}", "<root><template><title>Foo</title><part><name></name>=<value>bar</value></part></template></root>" ),
+			array( "{{Foo|bar=baz}}", "<root><template><title>Foo</title><part><name>bar</name>=<value>baz</value></part></template></root>" ), 
+			array( "{{Foo|{{bar}}=baz}}", "<root><template><title>Foo</title><part><name><template><title>bar</title></template></name>=<value>baz</value></part></template></root>" ),
+			array( "{{Foo|1=bar|baz}}", "<root><template><title>Foo</title><part><name>1</name>=<value>bar</value></part><part><name index=\"1\" /><value>baz</value></part></template></root>" ), 
+			array( "{{Foo|1=bar|2=baz}}", "<root><template><title>Foo</title><part><name>1</name>=<value>bar</value></part><part><name>2</name>=<value>baz</value></part></template></root>" ),
+			array( "{{Foo|bar|foo=baz}}", "<root><template><title>Foo</title><part><name index=\"1\" /><value>bar</value></part><part><name>foo</name>=<value>baz</value></part></template></root>" ), 
+			array( "{{{1}}}", "<root><tplarg><title>1</title></tplarg></root>" ),
+			array( "{{{1|}}}", "<root><tplarg><title>1</title><part><name index=\"1\" /><value></value></part></tplarg></root>" ),
+			array( "{{{Foo}}}", "<root><tplarg><title>Foo</title></tplarg></root>" ),
+			array( "{{{Foo|}}}", "<root><tplarg><title>Foo</title><part><name index=\"1\" /><value></value></part></tplarg></root>" ),
+			array( "{{{Foo|bar|baz}}}", "<root><tplarg><title>Foo</title><part><name index=\"1\" /><value>bar</value></part><part><name index=\"2\" /><value>baz</value></part></tplarg></root>" ),
 			array( "{<!-- -->{Foo}}", "<root>{<comment>&lt;!-- --&gt;</comment>{Foo}}</root>" ),
 			array( "{{{{Foobar}}}}", "<root>{<tplarg><title>Foobar</title></tplarg>}</root>" ),
-			array( "{{{ {{Foo}} }}}", "<root><tplarg lineStart=\"1\"><title> <template><title>Foo</title></template> </title></tplarg></root>" ),
-			array( "{{ {{{Foo}}} }}", "<root><template lineStart=\"1\"><title> <tplarg><title>Foo</title></tplarg> </title></template></root>" ),
-			array( "{{{{{Foo}}}}}", "<root><template lineStart=\"1\"><title><tplarg><title>Foo</title></tplarg></title></template></root>" ),
-			array( "{{{{{Foo}} }}}", "<root><tplarg lineStart=\"1\"><title><template><title>Foo</title></template> </title></tplarg></root>" ),
-			array( "{{{{{{Foo}}}}}}", "<root><tplarg lineStart=\"1\"><title><tplarg><title>Foo</title></tplarg></title></tplarg></root>" ),
+			array( "{{{ {{Foo}} }}}", "<root><tplarg><title> <template><title>Foo</title></template> </title></tplarg></root>" ),
+			array( "{{ {{{Foo}}} }}", "<root><template><title> <tplarg><title>Foo</title></tplarg> </title></template></root>" ),
+			array( "{{{{{Foo}}}}}", "<root><template><title><tplarg><title>Foo</title></tplarg></title></template></root>" ),
+			array( "{{{{{Foo}} }}}", "<root><tplarg><title><template><title>Foo</title></template> </title></tplarg></root>" ),
+			array( "{{{{{{Foo}}}}}}", "<root><tplarg><title><tplarg><title>Foo</title></tplarg></title></tplarg></root>" ),
 			array( "{{{{{{Foo}}}}}", "<root>{<template><title><tplarg><title>Foo</title></tplarg></title></template></root>" ),
 			array( "[[[Foo]]", "<root>[[[Foo]]</root>" ),
-			array( "{{Foo|[[[[bar]]|baz]]}}", "<root><template lineStart=\"1\"><title>Foo</title><part><name index=\"1\" /><value>[[[[bar]]|baz]]</value></part></template></root>" ), // This test is important, since it means the difference between having the [[ rule stacked or not
+			array( "{{Foo|[[[[bar]]|baz]]}}", "<root><template><title>Foo</title><part><name index=\"1\" /><value>[[[[bar]]|baz]]</value></part></template></root>" ), // This test is important, since it means the difference between having the [[ rule stacked or not
 			array( "{{Foo|[[[[bar]|baz]]}}", "<root>{{Foo|[[[[bar]|baz]]}}</root>" ),
 			array( "{{Foo|Foo [[[[bar]|baz]]}}", "<root>{{Foo|Foo [[[[bar]|baz]]}}</root>" ),
 			array( "Foo <display map>Bar</display map             >Baz", "<root>Foo <ext><name>display map</name><attr></attr><inner>Bar</inner><close>&lt;/display map             &gt;</close></ext>Baz</root>" ),
 			array( "Foo <display map foo>Bar</display map             >Baz", "<root>Foo <ext><name>display map</name><attr> foo</attr><inner>Bar</inner><close>&lt;/display map             &gt;</close></ext>Baz</root>" ),
 			array( "Foo <gallery bar=\"baz\" />", "<root>Foo <ext><name>gallery</name><attr> bar=&quot;baz&quot; </attr></ext></root>" ),
+			array( "Foo <gallery bar=\"1\" baz=2 />", "<root>Foo <ext><name>gallery</name><attr> bar=&quot;1&quot; baz=2 </attr></ext></root>" ),
 			array( "</foo>Foo<//foo>", "<root><ext><name>/foo</name><attr></attr><inner>Foo</inner><close>&lt;//foo&gt;</close></ext></root>" ), # Worth blacklisting IMHO
-			array( "{{#ifexpr: ({{{1|1}}} = 2) | Foo | Bar }}", "<root><template lineStart=\"1\"><title>#ifexpr: (<tplarg><title>1</title><part><name index=\"1\" /><value>1</value></part></tplarg> = 2) </title><part><name index=\"1\" /><value> Foo </value></part><part><name index=\"2\" /><value> Bar </value></part></template></root>"),
-			array( "{{#if: {{{1|}}} | Foo | {{Bar}} }}", "<root><template lineStart=\"1\"><title>#if: <tplarg><title>1</title><part><name index=\"1\" /><value></value></part></tplarg> </title><part><name index=\"1\" /><value> Foo </value></part><part><name index=\"2\" /><value> <template><title>Bar</title></template> </value></part></template></root>"),
-			array( "{{#if: {{{1|}}} | Foo | [[Bar]] }}", "<root><template lineStart=\"1\"><title>#if: <tplarg><title>1</title><part><name index=\"1\" /><value></value></part></tplarg> </title><part><name index=\"1\" /><value> Foo </value></part><part><name index=\"2\" /><value> [[Bar]] </value></part></template></root>"),
-			array( "{{#if: {{{1|}}} | [[Foo]] | Bar }}", "<root><template lineStart=\"1\"><title>#if: <tplarg><title>1</title><part><name index=\"1\" /><value></value></part></tplarg> </title><part><name index=\"1\" /><value> [[Foo]] </value></part><part><name index=\"2\" /><value> Bar </value></part></template></root>"),
-			array( "{{#if: {{{1|}}} | 1 | {{#if: {{{1|}}} | 2 | 3 }} }}", "<root><template lineStart=\"1\"><title>#if: <tplarg><title>1</title><part><name index=\"1\" /><value></value></part></tplarg> </title><part><name index=\"1\" /><value> 1 </value></part><part><name index=\"2\" /><value> <template><title>#if: <tplarg><title>1</title><part><name index=\"1\" /><value></value></part></tplarg> </title><part><name index=\"1\" /><value> 2 </value></part><part><name index=\"2\" /><value> 3 </value></part></template> </value></part></template></root>"),
+			array( "{{#ifexpr: ({{{1|1}}} = 2) | Foo | Bar }}", "<root><template><title>#ifexpr: (<tplarg><title>1</title><part><name index=\"1\" /><value>1</value></part></tplarg> = 2) </title><part><name index=\"1\" /><value> Foo </value></part><part><name index=\"2\" /><value> Bar </value></part></template></root>"),
+			array( "{{#if: {{{1|}}} | Foo | {{Bar}} }}", "<root><template><title>#if: <tplarg><title>1</title><part><name index=\"1\" /><value></value></part></tplarg> </title><part><name index=\"1\" /><value> Foo </value></part><part><name index=\"2\" /><value> <template><title>Bar</title></template> </value></part></template></root>"),
+			array( "{{#if: {{{1|}}} | Foo | [[Bar]] }}", "<root><template><title>#if: <tplarg><title>1</title><part><name index=\"1\" /><value></value></part></tplarg> </title><part><name index=\"1\" /><value> Foo </value></part><part><name index=\"2\" /><value> [[Bar]] </value></part></template></root>"),
+			array( "{{#if: {{{1|}}} | [[Foo]] | Bar }}", "<root><template><title>#if: <tplarg><title>1</title><part><name index=\"1\" /><value></value></part></tplarg> </title><part><name index=\"1\" /><value> [[Foo]] </value></part><part><name index=\"2\" /><value> Bar </value></part></template></root>"),
+			array( "{{#if: {{{1|}}} | 1 | {{#if: {{{1|}}} | 2 | 3 }} }}", "<root><template><title>#if: <tplarg><title>1</title><part><name index=\"1\" /><value></value></part></tplarg> </title><part><name index=\"1\" /><value> 1 </value></part><part><name index=\"2\" /><value> <template><title>#if: <tplarg><title>1</title><part><name index=\"1\" /><value></value></part></tplarg> </title><part><name index=\"1\" /><value> 2 </value></part><part><name index=\"2\" /><value> 3 </value></part></template> </value></part></template></root>"),
 			array( "{{ {{Foo}}", "<root>{{ <template><title>Foo</title></template></root>"),
 			array( "{{Foobar {{Foo}} {{Bar}} {{Baz}} ", "<root>{{Foobar <template><title>Foo</title></template> <template><title>Bar</title></template> <template><title>Baz</title></template> </root>"),
 			array( "[[Foo]] |", "<root>[[Foo]] |</root>"),
@@ -97,19 +99,54 @@ class PreprocessorTest extends MediaWikiTestCase {
 			array( "{{Foo|bar=[[baz]}}", "<root>{{Foo|bar=[[baz]}}</root>"),
 			array( "{{foo|", "<root>{{foo|</root>"),
 			array( "{{foo|}", "<root>{{foo|}</root>"),
-			array( "{{foo|} }}", "<root><template lineStart=\"1\"><title>foo</title><part><name index=\"1\" /><value>} </value></part></template></root>"),
+			array( "{{foo|} }}", "<root><template><title>foo</title><part><name index=\"1\" /><value>} </value></part></template></root>"),
 			array( "{{foo|bar=|}", "<root>{{foo|bar=|}</root>"),
 			array( "{{Foo|} Bar=", "<root>{{Foo|} Bar=</root>"),
-			array( "{{Foo|} Bar=}}", "<root><template lineStart=\"1\"><title>Foo</title><part><name>} Bar</name>=<value></value></part></template></root>"),
+			array( "{{Foo|} Bar=}}", "<root><template><title>Foo</title><part><name>} Bar</name>=<value></value></part></template></root>"),
 			/* array( file_get_contents( dirname( __FILE__ ) . '/QuoteQuran.txt' ), file_get_contents( dirname( __FILE__ ) . '/QuoteQuranExpanded.txt' ) ), */
 		);
+	}
+
+	/**
+	 * Get XML preprocessor tree from the preprocessor (which may not be the
+	 * native XML-based one).
+	 *
+	 * @param string $wikiText
+	 * @return string
+	 */
+	function preprocessToXml( $wikiText ) {
+		if ( method_exists( $this->mPreprocessor, 'preprocessToXml' ) ) {
+			return $this->normalizeXml( $this->mPreprocessor->preprocessToXml( $wikiText ) );
+		}
+		
+		$dom = $this->mPreprocessor->preprocessToObj( $wikiText );
+		if ( is_callable( array( $dom, 'saveXML' ) ) ) {
+			return $dom->saveXML();
+		} else {
+			return $this->normalizeXml( $dom->__toString() );
+		}
+	}
+
+	/**
+	 * Normalize XML string to the form that a DOMDocument saves out.
+	 *
+	 * @param string $xml
+	 * @return string
+	 */
+	function normalizeXml( $xml ) {
+		return preg_replace( '!<([a-z]+)/>!', '<$1></$1>', str_replace( ' />', '/>', $xml ) );
+		
+		$dom = new DOMDocument();
+		// 1 << 19 == XML_PARSE_HUGE, needed so newer versions of libxml2 don't barf when the XML is >256 levels deep
+		$dom->loadXML( $xml, 1 << 19 );
+		return $dom->saveXML();
 	}
 
 	/**
 	 * @dataProvider provideCases
 	 */
 	function testPreprocessorOutput( $wikiText, $expectedXml ) {
-		$this->assertEquals( $expectedXml, $this->mPreprocessor->preprocessToXml( $wikiText ) );
+		$this->assertEquals( $this->normalizeXml( $expectedXml ), $this->preprocessToXml( $wikiText ) );
 	}
 
 	/**
@@ -130,11 +167,12 @@ class PreprocessorTest extends MediaWikiTestCase {
 	function testPreprocessorOutputFiles( $filename ) {
 		$folder = dirname( __FILE__ ) . "/../../../parser/preprocess";
 		$wikiText = file_get_contents( "$folder/$filename.txt" );
-		$output = $this->mPreprocessor->preprocessToXml( $wikiText );
+		$output = $this->preprocessToXml( $wikiText );
 
 		$expectedFilename = "$folder/$filename.expected";
 		if ( file_exists( $expectedFilename ) ) {
-			$this->assertStringEqualsFile( $expectedFilename, $output );
+			$expectedXml = $this->normalizeXml( file_get_contents( $expectedFilename ) );
+			$this->assertEquals( $expectedXml, $output );
 		} else {
 			$tempFilename = tempnam( $folder, "$filename." );
 			file_put_contents( $tempFilename, $output );
@@ -189,7 +227,7 @@ class PreprocessorTest extends MediaWikiTestCase {
 	 * @dataProvider provideHeadings
 	 */
 	function testHeadings( $wikiText, $expectedXml ) {
-		$this->assertEquals( $expectedXml, $this->mPreprocessor->preprocessToXml( $wikiText ) );
+		$this->assertEquals( $this->normalizeXml( $expectedXml ), $this->preprocessToXml( $wikiText ) );
 	}
 }
 

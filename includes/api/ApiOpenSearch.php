@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * @ingroup API
  */
@@ -116,10 +111,10 @@ class ApiOpenSearch extends ApiBase {
 	}
 
 	public function getDescription() {
-		return 'Searches the wiki using the OpenSearch protocol';
+		return 'Search the wiki using the OpenSearch protocol';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=opensearch&search=Te'
 		);

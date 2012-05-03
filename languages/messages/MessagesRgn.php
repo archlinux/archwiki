@@ -476,8 +476,7 @@ $1 {{PLURAL:$1|elemént|elemént}}',
 'linksearch' => 'Ghènz int ê web',
 
 # Special:Log/newusers
-'newuserlogpage'          => "Regèstar d'j nov",
-'newuserlog-create-entry' => "L'è arivé un patàca nov",
+'newuserlogpage' => "Regèstar d'j nov",
 
 # Special:ListGroupRights
 'listgrouprights-members' => "(Lèsta d'j mèmbar)",
@@ -509,7 +508,6 @@ Par piasé, cunferma ch't'ê propri l'intenziòn d'fël, ch'at capèss al su con
 'actioncomplete'        => 'Lavor fät e finì',
 'deletedtext'           => 'La pàgina "$1" l\'è stëda scanzlèda.
 Guèrda $2 par avdé la lèsta daglj ultum scanzeladür.',
-'deletedarticle'        => 'l\'à scanzlé "[[$1]]"',
 'dellogpage'            => 'Regèstar dal scanzladùr',
 'deletecomment'         => 'Rasòn:',
 'deleteotherreason'     => 'Ètar mutiv:',
@@ -543,8 +541,7 @@ T'pù cambié ê livel d'pruteziòn d'sta pàgina, mo la pruteziòn ricursiva la
 'restriction-level'           => "Livel d'restriziòn:",
 
 # Undelete
-'undeletelink'     => 'Guèrda/Torna indrì',
-'undeletedarticle' => 'l\'à artruvè "[[$1]]"',
+'undeletelink' => 'Guèrda/Torna indrì',
 
 # Namespace form on various pages
 'namespace'      => "Spàzi d'é nom:",
@@ -625,8 +622,6 @@ Par piaser, daij un ètar nom.",
 Par piasé, met insem al du pàgin te, fasend copia e incola.",
 'movedto'          => 'Spusté vers:',
 'movetalk'         => "Sposta ènca la pàgina d'cunversaziòn",
-'1movedto2'        => "[[$1]] l'è stê mòs a [[$2]]",
-'1movedto2_redir'  => "[[$1]] l'è stè moss in [[$2]] par redireziòn",
 'movelogpage'      => "Regéstar d'j muvimént",
 'movereason'       => 'Rasòn:',
 'revertmove'       => 'Métla cum era prèma',
@@ -697,7 +692,7 @@ Par piasé, met insem al du pàgin te, fasend copia e incola.",
 
 # Media information
 'file-info-size' => "$1 × $2 pixel, amsùra d'e' file: $3, tipo MIME: $4",
-'file-nohires'   => "<small>U n' è pusèbil d'avdé cun òna risoluziòn piò élta. </small>",
+'file-nohires'   => "U n' è pusèbil d'avdé cun òna risoluziòn piò élta.",
 'svg-long-desc'  => "file d'taja SVG, dimensiòn numinèli $1 × $2 pixel, dimensiòn d'e' file: $3",
 'show-big-image' => 'Versiòn ad amsura pina',
 

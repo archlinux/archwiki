@@ -77,16 +77,20 @@ window.ProtectionForm = {
 	},
 
 	/**
-	 * Is this protection level cascadeable?
-	 * @param level String
-	 *
-	 * @return boolean
-	 *
+	 * Checks if a cerain protection level is cascadeable.
+	 * @param level {String}
+	 * @return {Boolean}
 	 */
 	'isCascadeableLevel': function( level ) {
-		for (var k = 0; k < wgCascadeableLevels.length; k++) {
-			if ( wgCascadeableLevels[k] == level ) {
-				return true;
+		var cascadeLevels, len, i;
+
+		cascadeLevels = mw.config.get( 'wgCascadeableLevels' );
+		// cascadeLevels isn't defined on all pages
+		if ( cascadeLevels ) {
+			for ( i = 0, len = cascadeLevels.length; i < len; i += 1 ) {
+				if ( cascadeLevels[i] === level ) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -252,7 +256,7 @@ window.ProtectionForm = {
 	 */
 	'getLevelSelectors': function() {
 		var all = document.getElementsByTagName("select");
-		var ours = new Array();
+		var ours = [];
 		for (var i = 0; i < all.length; i++) {
 			var element = all[i];
 			if (element.id.match(/^mwProtect-level-/)) {
@@ -281,7 +285,7 @@ window.ProtectionForm = {
 	 */
 	'getExpiryInputs': function() {
 		var all = document.getElementsByTagName("input");
-		var ours = new Array();
+		var ours = [];
 		for (var i = 0; i < all.length; i++) {
 			var element = all[i];
 			if (element.name.match(/^mwProtect-expiry-/)) {
@@ -309,7 +313,7 @@ window.ProtectionForm = {
 	 */
 	'getExpirySelectors': function() {
 		var all = document.getElementsByTagName("select");
-		var ours = new Array();
+		var ours = [];
 		for (var i = 0; i < all.length; i++) {
 			var element = all[i];
 			if (element.id.match(/^mwProtectExpirySelection-/)) {

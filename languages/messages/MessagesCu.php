@@ -61,8 +61,8 @@ $namespaceAliases = array(
 );
 
 $magicWords = array(
-	'redirect'              => array( '0', '#ПРѢНАПРАВЛЄНИѤ', '#REDIRECT' ),
-	'language'              => array( '0', '#ѨꙀꙐКЪ:', '#LANGUAGE:' ),
+	'redirect'                => array( '0', '#ПРѢНАПРАВЛЄНИѤ', '#REDIRECT' ),
+	'language'                => array( '0', '#ѨꙀꙐКЪ:', '#LANGUAGE:' ),
 );
 
 $defaultDateFormat = 'mdy';
@@ -263,9 +263,8 @@ $messages = array(
 'nstab-category'  => 'катигорїꙗ',
 
 # General errors
-'error'         => 'блаꙁна',
-'viewsource'    => 'страницѧ источьнъ обраꙁъ',
-'viewsourcefor' => '$1 дѣлꙗ',
+'error'      => 'блаꙁна',
+'viewsource' => 'страницѧ источьнъ обраꙁъ',
 
 # Login and logout pages
 'yourname'                => 'твоѥ имѧ',
@@ -355,8 +354,6 @@ $messages = array(
 'revdelete-log'              => 'какъ съмꙑслъ :',
 'pagehist'                   => 'страницѧ їсторїꙗ',
 'deletedhist'                => 'поничьжєна їсторїꙗ',
-'revdelete-summary'          => 'мѣнꙑ опьсаниѥ',
-'revdelete-uname'            => 'польꙃєватєлꙗ имѧ',
 'revdelete-otherreason'      => 'инъ или допльнитєл҄ьнъ съмꙑслъ :',
 'revdelete-reasonotherlist'  => 'инъ съмꙑслъ',
 
@@ -584,9 +581,7 @@ $messages = array(
 'listusers-submit' => 'виждь',
 
 # Special:Log/newusers
-'newuserlogpage'              => 'новъ мѣстъ сътворѥниꙗ їсторїꙗ',
-'newuserlog-create-entry'     => 'новъ польꙃєватєл҄ь',
-'newuserlog-autocreate-entry' => 'польꙃєватєлꙗ мѣсто аѵтоматичьно сътворєно ѥстъ',
+'newuserlogpage' => 'новъ мѣстъ сътворѥниꙗ їсторїꙗ',
 
 # E-mail user
 'emailuser' => 'посъли єпїстолѫ',
@@ -615,7 +610,6 @@ $messages = array(
 'actioncomplete'  => 'дѣиство сътворєно ѥстъ',
 'deletedtext'     => 'страница ⁖ $1 ⁖ поничьжєна ѥстъ ⁙
 виждь ⁖ $2 ⁖ послѣдьнъ поничьжєниѩ дѣлꙗ',
-'deletedarticle'  => '⁖ [[$1]] ⁖ поничьжєнъ ѥстъ',
 'dellogpage'      => 'поничьжєниꙗ їсторїꙗ',
 'deletionlog'     => 'поничьжєниꙗ їсторїꙗ',
 'deletecomment'   => 'какъ съмꙑслъ :',
@@ -686,8 +680,6 @@ $messages = array(
 'movepage-moved-redirect' => 'прѣнаправлѥниѥ сътворѥно бѣ',
 'movedto'                 => 'прѣимєновано въ',
 'movetalk'                => 'си страницѧ бєсѣдꙑ прѣимєнованиѥ',
-'1movedto2'               => '⁖ [[$1]] ⁖ нарєчєнъ ⁖ [[$2]] ⁖ ѥстъ',
-'1movedto2_redir'         => '[[$1]] нарєчєнъ [[$2]] врьхоу прѣнаправлѥниꙗ ѥстъ.',
 'movelogpage'             => 'прѣимєнованиꙗ їсторїꙗ',
 'movereason'              => 'какъ съмꙑслъ :',
 'move-leave-redirect'     => 'прѣнаправлѥниꙗ сътворѥниѥ',

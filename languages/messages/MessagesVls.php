@@ -191,8 +191,7 @@ $messages = array(
 'newpages-username' => 'Gebrukersnoame:',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Logboek nieuwe gebrukers',
-'newuserlog-create-entry' => 'Nieuwe gebruker',
+'newuserlogpage' => 'Logboek nieuwe gebrukers',
 
 # Watchlist
 'mywatchlist' => 'Myn volglyste',
@@ -207,7 +206,6 @@ $messages = array(
 'undeletepage'           => 'Weggedoane bloadn erstelln of bekykn',
 'undeletehistorynoadmin' => "'t Artikel is weggedoan. De reden davôorn ku je zien in de soamnvattienge ieronder, tôpe me uutleg over wie dat 't blad bewerkt èt vôorn dat weggedoan es gewist. Den tekst van die weggedoane versies kan allêene door sysops gelezen wordn.",
 'undeletebtn'            => 'Erstelln',
-'undeletedarticle'       => '"[[$1]]" ersteld',
 'undeletedfiles'         => '{{PLURAL:$1|1 bestand|$1 bestandn}} ersteld',
 
 # Contributions

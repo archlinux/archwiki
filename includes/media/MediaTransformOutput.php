@@ -18,33 +18,42 @@ abstract class MediaTransformOutput {
 	var $file;
 
 	var $width, $height, $url, $page, $path;
+	protected $storagePath = false;
 
 	/**
 	 * Get the width of the output box
 	 */
-	function getWidth() {
+	public function getWidth() {
 		return $this->width;
 	}
 
 	/**
 	 * Get the height of the output box
 	 */
-	function getHeight() {
+	public function getHeight() {
 		return $this->height;
 	}
 
 	/**
 	 * @return string The thumbnail URL
 	 */
-	function getUrl() {
+	public function getUrl() {
 		return $this->url;
 	}
 
 	/**
-	 * @return String: destination file path (local filesystem)
+	 * @return string|false The permanent thumbnail storage path
 	 */
-	function getPath() {
-		return $this->path;
+	public function getStoragePath() {
+		return $this->storagePath;
+	}
+
+	/**
+	 * @param $storagePath string The permanent storage path
+	 * @return void
+	 */
+	public function setStoragePath( $storagePath ) {
+		$this->storagePath = $storagePath;
 	}
 
 	/**
@@ -67,13 +76,63 @@ abstract class MediaTransformOutput {
 	 *
 	 * @return string
 	 */
-	abstract function toHtml( $options = array() );
+	abstract public function toHtml( $options = array() );
 
 	/**
 	 * This will be overridden to return true in error classes
 	 */
-	function isError() {
+	public function isError() {
 		return false;
+	}
+
+	/**
+	 * Check if an output thumbnail file actually exists.
+	 * This will return false if there was an error, the
+	 * thumbnail is to be handled client-side only, or if
+	 * transformation was deferred via TRANSFORM_LATER.
+	 * 
+	 * @return Bool
+	 */
+	public function hasFile() {
+		// If TRANSFORM_LATER, $this->path will be false.
+		// Note: a null path means "use the source file".
+		return ( !$this->isError() && ( $this->path || $this->path === null ) );
+	}
+
+	/**
+	 * Check if the output thumbnail is the same as the source.
+	 * This can occur if the requested width was bigger than the source.
+	 *
+	 * @return Bool
+	 */
+	public function fileIsSource() {
+		return ( !$this->isError() && $this->path === null );
+	}
+
+	/**
+	 * Get the path of a file system copy of the thumbnail.
+	 * Callers should never write to this path.
+	 *
+	 * @return string|false Returns false if there isn't one
+	 */
+	public function getLocalCopyPath() {
+		if ( $this->isError() ) {
+			return false;
+		} elseif ( $this->path === null ) {
+			return $this->file->getLocalRefPath();
+		} else {
+			return $this->path; // may return false
+		}
+	}
+
+	/**
+	 * Stream the file if there were no errors
+	 *
+	 * @param $headers Array Additional HTTP headers to send on success
+	 * @return Bool success
+	 */
+	public function streamFile( $headers = array() ) {
+		return $this->path && StreamFile::stream( $this->getLocalCopyPath(), $headers );
 	}
 
 	/**
@@ -97,7 +156,7 @@ abstract class MediaTransformOutput {
 	 * @param $params array
 	 * @return array
 	 */
-	function getDescLinkAttribs( $title = null, $params = '' ) {
+	public function getDescLinkAttribs( $title = null, $params = '' ) {
 		$query = $this->page ? ( 'page=' . urlencode( $this->page ) ) : '';
 		if( $params ) {
 			$query .= $query ? '&'.$params : $params;
@@ -119,13 +178,16 @@ abstract class MediaTransformOutput {
  * @ingroup Media
  */
 class ThumbnailImage extends MediaTransformOutput {
-
 	/**
+	 * Get a thumbnail object from a file and parameters.
+	 * If $path is set to null, the output file is treated as a source copy.
+	 * If $path is set to false, no output file will be created.
+	 * 
 	 * @param $file File object
 	 * @param $url String: URL path to the thumb
 	 * @param $width Integer: file's width
 	 * @param $height Integer: file's height
-	 * @param $path String: filesystem path to the thumb
+	 * @param $path String|false|null: filesystem path to the thumb
 	 * @param $page Integer: page number, for multipage files
 	 * @private
 	 */
@@ -185,7 +247,7 @@ class ThumbnailImage extends MediaTransformOutput {
 		} elseif ( !empty( $options['custom-title-link'] ) ) {
 			$title = $options['custom-title-link'];
 			$linkAttribs = array(
-				'href' => $title->getLinkUrl(),
+				'href' => $title->getLinkURL(),
 				'title' => empty( $options['title'] ) ? $title->getFullText() : $options['title']
 			);
 		} elseif ( !empty( $options['desc-link'] ) ) {

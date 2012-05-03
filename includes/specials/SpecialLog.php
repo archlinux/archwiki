@@ -30,13 +30,24 @@
  */
 class SpecialLog extends SpecialPage {
 
+	/**
+	 * List log type for which the target is a user
+	 * Thus if the given target is in NS_MAIN we can alter it to be an NS_USER
+	 * Title user instead. 
+	 */
+	private $typeOnUser = array(
+		'block',
+		'newusers',
+		'rights',
+	);
+
 	public function __construct() {
 		parent::__construct( 'Log' );
 	}
 
 	public function execute( $par ) {
-		global $wgRequest;
-
+		global $wgLogRestrictions;
+		
 		$this->setHeaders();
 		$this->outputHeader();
 
@@ -53,7 +64,7 @@ class SpecialLog extends SpecialPage {
 		$opts->add( 'offender', '' );
 
 		// Set values
-		$opts->fetchValuesFromRequest( $wgRequest );
+		$opts->fetchValuesFromRequest( $this->getRequest() );
 		if ( $par ) {
 			$this->parseParams( $opts, (string)$par );
 		}
@@ -64,6 +75,16 @@ class SpecialLog extends SpecialPage {
 			$opts->setValue( 'month', '' );
 		}
 
+		// Reset the log type to default (nothing) if it's invalid or if the
+		// user does not possess the right to view it
+		$type = $opts->getValue( 'type' );
+		if ( !LogPage::isLogType( $type )
+			|| ( isset( $wgLogRestrictions[$type] )
+				&& !$this->getUser()->isAllowed( $wgLogRestrictions[$type] ) )
+		) {
+			$opts->setValue( 'type', '' );
+		}
+
 		# Handle type-specific inputs
 		$qc = array();
 		if ( $opts->getValue( 'type' ) == 'suppress' ) {
@@ -72,6 +93,20 @@ class SpecialLog extends SpecialPage {
 				$qc = array( 'ls_field' => 'target_author_id', 'ls_value' => $offender->getId() );
 			} elseif ( $offender && IP::isIPAddress( $offender->getName() ) ) {
 				$qc = array( 'ls_field' => 'target_author_ip', 'ls_value' => $offender->getName() );
+			}
+		}
+
+		# Some log types are only for a 'User:' title but we might have been given
+		# only the username instead of the full title 'User:username'. This part try
+		# to lookup for a user by that name and eventually fix user input. See bug 1697.
+		if( in_array( $opts->getValue( 'type' ), $this->typeOnUser ) ) {
+			# ok we have a type of log which expect a user title.
+			$target = Title::newFromText( $opts->getValue( 'page' ) );
+			if( $target && $target->getNamespace() === NS_MAIN ) {
+				# User forgot to add 'User:', we are adding it for him
+				$opts->setValue( 'page',
+					Title::makeTitleSafe( NS_USER, $opts->getValue( 'page' ) )
+				);
 			}
 		}
 
@@ -95,30 +130,27 @@ class SpecialLog extends SpecialPage {
 	}
 
 	private function show( FormOptions $opts, array $extraConds ) {
-		global $wgOut;
-
 		# Create a LogPager item to get the results and a LogEventsList item to format them...
-		$loglist = new LogEventsList( $this->getSkin(), $wgOut, 0 );
+		$loglist = new LogEventsList( $this->getSkin(), $this->getOutput(), 0 );
 		$pager = new LogPager( $loglist, $opts->getValue( 'type' ), $opts->getValue( 'user' ),
 			$opts->getValue( 'page' ), $opts->getValue( 'pattern' ), $extraConds, $opts->getValue( 'year' ),
 			$opts->getValue( 'month' ), $opts->getValue( 'tagfilter' ) );
 
-		# Set title and add header
-		$loglist->showHeader( $pager->getType() );
+		$this->addHeader( $opts->getValue( 'type' ) );
 
 		# Set relevant user
-		if ( $pager->getUser() ) {
-			$this->getSkin()->setRelevantUser( User::newFromName( $pager->getUser() ) );
+		if ( $pager->getPerformer() ) {
+			$this->getSkin()->setRelevantUser( User::newFromName( $pager->getPerformer() ) );
 		}
 
 		# Show form options
-		$loglist->showOptions( $pager->getType(), $pager->getUser(), $pager->getPage(), $pager->getPattern(),
+		$loglist->showOptions( $pager->getType(), $opts->getValue( 'user' ), $pager->getPage(), $pager->getPattern(),
 			$pager->getYear(), $pager->getMonth(), $pager->getFilterParams(), $opts->getValue( 'tagfilter' ) );
 
 		# Insert list
 		$logBody = $pager->getBody();
 		if ( $logBody ) {
-			$wgOut->addHTML(
+			$this->getOutput()->addHTML(
 				$pager->getNavigationBar() .
 				$loglist->beginLogEventsList() .
 				$logBody .
@@ -126,7 +158,19 @@ class SpecialLog extends SpecialPage {
 				$pager->getNavigationBar()
 			);
 		} else {
-			$wgOut->addWikiMsg( 'logempty' );
+			$this->getOutput()->addWikiMsg( 'logempty' );
 		}
 	}
+
+	/**
+	 * Set page title and show header for this log type
+	 * @param $type string
+	 * @since 1.19
+	 */
+	protected function addHeader( $type ) {
+		$page = new LogPage( $type );
+		$this->getOutput()->setPageTitle( $page->getName()->text() );
+		$this->getOutput()->addHTML( $page->getDescription()->parseAsBlock() );
+	}
+
 }

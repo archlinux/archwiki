@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * This query action adds a list of a specified user's contributions to the output.
  *
@@ -146,7 +141,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		// We're after the revision table, and the corresponding page
 		// row for anything we retrieve. We may also need the
 		// recentchanges row and/or tag summary row.
-		global $wgUser;
+		$user = $this->getUser();
 		$tables = array( 'page', 'revision' ); // Order may change
 		$this->addWhere( 'page_id=rev_page' );
 
@@ -167,7 +162,7 @@ class ApiQueryContributions extends ApiQueryBase {
 			);
 		}
 
-		if ( !$wgUser->isAllowed( 'hideuser' ) ) {
+		if ( !$user->isAllowed( 'hideuser' ) ) {
 			$this->addWhere( $this->getDB()->bitAnd( 'rev_deleted', Revision::DELETED_USER ) . ' = 0' );
 		}
 		// We only want pages by the specified users.
@@ -216,7 +211,7 @@ class ApiQueryContributions extends ApiQueryBase {
 
 		if ( isset( $show['patrolled'] ) || isset( $show['!patrolled'] ) ||
 				 $this->fld_patrolled ) {
-			if ( !$wgUser->useRCPatrol() && !$wgUser->useNPPatrol() ) {
+			if ( !$user->useRCPatrol() && !$user->useNPPatrol() ) {
 				$this->dieUsage( 'You need the patrol right to request the patrolled flag', 'permissiondenied' );
 			}
 
@@ -275,6 +270,9 @@ class ApiQueryContributions extends ApiQueryBase {
 
 	/**
 	 * Extract fields from the database row and append them to a result array
+	 *
+	 * @param $row
+	 * @return array
 	 */
 	private function extractRowInfo( $row ) {
 		$vals = array();
@@ -321,8 +319,7 @@ class ApiQueryContributions extends ApiQueryBase {
 				}
 
 				if ( $this->fld_parsedcomment ) {
-					global $wgUser;
-					$vals['parsedcomment'] = $wgUser->getSkin()->formatComment( $row->rev_comment, $title );
+					$vals['parsedcomment'] = Linker::formatComment( $row->rev_comment, $title );
 				}
 			}
 		}
@@ -444,7 +441,7 @@ class ApiQueryContributions extends ApiQueryBase {
 				' tags           - Lists tags for the edit',
 			),
 			'show' => array( "Show only items that meet this criteria, e.g. non minor edits only: {$p}show=!minor",
-					"NOTE: if {$p}show=patrolled or {$p}show=!patrolled is set, revisions older than $wgRCMaxAge won\'t be shown", ),
+					"NOTE: if {$p}show=patrolled or {$p}show=!patrolled is set, revisions older than \$wgRCMaxAge ($wgRCMaxAge) won't be shown", ),
 			'tag' => 'Only list revisions tagged with this tag',
 			'toponly' => 'Only list changes which are the latest revision',
 		);
@@ -463,7 +460,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&list=usercontribs&ucuser=YurikBot',
 			'api.php?action=query&list=usercontribs&ucuserprefix=217.121.114.',

@@ -18,7 +18,7 @@
  * @author Yuyu
  */
 
-$fallback = 'zh-hant';
+$fallback = 'zh-hant, zh-hans';
 
 $fallback8bitEncoding = 'Big5-HKSCS';
 
@@ -80,7 +80,6 @@ $messages = array(
 'revdelete-suppress-text' => "壓制'''只'''應用於以下的情況:
 * 不合適的個人資料
 *: ''地址、電話號碼、身份證號碼等。''",
-'revdelete-logentry'      => '已更改「[[$1]]」之修訂可見度',
 
 # Diffs
 'editundo' => '撤銷',

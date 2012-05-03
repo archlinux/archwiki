@@ -1,10 +1,8 @@
 <?php
-
-require_once( dirname( __FILE__ ) . '/ParserHelpers.php' );
 require_once( dirname( __FILE__ ) . '/NewParserTest.php' );
 
 /**
- * The UnitTest must be either a class that inherits from PHPUnit_Framework_TestCase 
+ * The UnitTest must be either a class that inherits from MediaWikiTestCase
  * or a class that provides a public static suite() method which returns 
  * an PHPUnit_Framework_Test object
  * 
@@ -20,9 +18,13 @@ class MediaWikiParserTest {
 
 		foreach ( $wgParserTestFiles as $filename ) {
 			$testsName = basename( $filename, '.txt' );
-			$className = /*ucfirst( basename( dirname( $filename ) ) ) .*/ ucfirst( basename( $filename, '.txt' ) );
+			/* This used to be ucfirst( basename( dirname( $filename ) ) )
+			 * and then was ucfirst( basename( $filename, '.txt' )
+			 * but that didn't work with names like foo.tests.txt
+			 */
+			$className = str_replace( '.', '_',  ucfirst( basename( $filename, '.txt' ) ) );
 			
-			eval( "/** @group Database\n@group Parser\n*/ class $className extends NewParserTest { protected \$file = \"" . addslashes( $filename ) . "\"; } " );
+			eval( "/** @group Database\n@group Parser\n*/ class $className extends NewParserTest { protected \$file = '" . strtr( $filename, array( "'" => "\\'", '\\' => '\\\\' ) ) . "'; } " );
 
 			$parserTester = new $className( $testsName );
 			$suite->addTestSuite( new ReflectionClass ( $parserTester ) );

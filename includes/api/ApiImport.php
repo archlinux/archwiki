@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiBase.php' );
-}
-
 /**
  * API module that imports an XML file like Special:Import does
  *
@@ -41,13 +36,12 @@ class ApiImport extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgUser;
-
+		$user = $this->getUser();
 		$params = $this->extractRequestParams();
 
 		$isUpload = false;
 		if ( isset( $params['interwikisource'] ) ) {
-			if ( !$wgUser->isAllowed( 'import' ) ) {
+			if ( !$user->isAllowed( 'import' ) ) {
 				$this->dieUsageMsg( 'cantimport' );
 			}
 			if ( !isset( $params['interwikipage'] ) ) {
@@ -61,7 +55,7 @@ class ApiImport extends ApiBase {
 			);
 		} else {
 			$isUpload = true;
-			if ( !$wgUser->isAllowed( 'importupload' ) ) {
+			if ( !$user->isAllowed( 'importupload' ) ) {
 				$this->dieUsageMsg( 'cantimport-upload' );
 			}
 			$source = ImportStreamSource::newFromUpload( 'xml' );
@@ -158,10 +152,10 @@ class ApiImport extends ApiBase {
 		return '';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Import [[meta:Help:Parserfunctions]] to namespace 100 with full history:',
-			'  api.php?action=import&interwikisource=meta&interwikipage=Help:ParserFunctions&namespace=100&fullhistory=&token=123ABC',
+			'api.php?action=import&interwikisource=meta&interwikipage=Help:ParserFunctions&namespace=100&fullhistory=&token=123ABC'
+				=> 'Import [[meta:Help:Parserfunctions]] to namespace 100 with full history',
 		);
 	}
 

@@ -16,7 +16,6 @@ DROP SEQUENCE IF EXISTS page_restrictions_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS ipblocks_ipb_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS recentchanges_rc_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS logging_log_id_seq CASCADE;
-DROP SEQUENCE IF EXISTS trackbacks_tb_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS job_job_id_seq CASCADE;
 DROP SEQUENCE IF EXISTS category_cat_id_seq CASCADE;
 DROP FUNCTION IF EXISTS page_deleted() CASCADE;
@@ -116,7 +115,8 @@ CREATE TABLE revision (
   rev_minor_edit  SMALLINT     NOT NULL  DEFAULT 0,
   rev_deleted     SMALLINT     NOT NULL  DEFAULT 0,
   rev_len         INTEGER          NULL,
-  rev_parent_id   INTEGER          NULL
+  rev_parent_id   INTEGER          NULL,
+  rev_sha1        TEXT         NOT NULL DEFAULT ''
 );
 CREATE UNIQUE INDEX revision_unique ON revision (rev_page, rev_id);
 CREATE INDEX rev_text_id_idx        ON revision (rev_text_id);
@@ -159,6 +159,7 @@ CREATE TABLE archive (
   ar_text        TEXT, -- technically should be bytea, but not used anymore
   ar_page_id     INTEGER          NULL,
   ar_parent_id   INTEGER          NULL,
+  ar_sha1        TEXT         NOT NULL DEFAULT '',
   ar_comment     TEXT,
   ar_user        INTEGER          NULL  REFERENCES mwuser(user_id) ON DELETE SET NULL DEFERRABLE INITIALLY DEFERRED,
   ar_user_text   TEXT         NOT NULL,
@@ -358,11 +359,11 @@ CREATE INDEX fa_dupe      ON filearchive (fa_storage_group, fa_storage_key);
 CREATE INDEX fa_notime    ON filearchive (fa_deleted_timestamp);
 CREATE INDEX fa_nouser    ON filearchive (fa_deleted_user);
 
-CREATE SEQUENCE us_id_seq;
+CREATE SEQUENCE uploadstash_us_id_seq;
 CREATE TYPE media_type AS ENUM ('UNKNOWN','BITMAP','DRAWING','AUDIO','VIDEO','MULTIMEDIA','OFFICE','TEXT','EXECUTABLE','ARCHIVE');
 
 CREATE TABLE uploadstash (
-  us_id           INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('us_id_seq'),
+  us_id           INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('uploadstash_us_id_seq'),
   us_user         INTEGER,
   us_key          TEXT,
   us_orig_path    TEXT,
@@ -370,6 +371,7 @@ CREATE TABLE uploadstash (
   us_source_type  TEXT,
   us_timestamp    TIMESTAMPTZ,
   us_status       TEXT,
+  us_chunk_inx    INTEGER NULL,
   us_size         INTEGER,
   us_sha1         TEXT,
   us_mime         TEXT,
@@ -510,17 +512,6 @@ CREATE TABLE log_search (
 );
 CREATE INDEX ls_log_id ON log_search (ls_log_id);
 
-CREATE SEQUENCE trackbacks_tb_id_seq;
-CREATE TABLE trackbacks (
-  tb_id     INTEGER  NOT NULL  PRIMARY KEY DEFAULT nextval('trackbacks_tb_id_seq'),
-  tb_page   INTEGER            REFERENCES page(page_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
-  tb_title  TEXT     NOT NULL,
-  tb_url    TEXT     NOT NULL,
-  tb_ex     TEXT,
-  tb_name   TEXT
-);
-CREATE INDEX trackback_page ON trackbacks (tb_page);
-
 
 CREATE SEQUENCE job_job_id_seq;
 CREATE TABLE job (
@@ -528,9 +519,11 @@ CREATE TABLE job (
   job_cmd        TEXT      NOT NULL,
   job_namespace  SMALLINT  NOT NULL,
   job_title      TEXT      NOT NULL,
+  job_timestamp  TIMESTAMPTZ,
   job_params     TEXT      NOT NULL
 );
 CREATE INDEX job_cmd_namespace_title ON job (job_cmd, job_namespace, job_title);
+CREATE INDEX job_timestamp_idx ON job (job_timestamp);
 
 -- Tsearch2 2 stuff. Will fail if we don't have proper access to the tsearch2 tables
 -- Version 8.3 or higher only. Previous versions would need another parmeter for to_tsvector.

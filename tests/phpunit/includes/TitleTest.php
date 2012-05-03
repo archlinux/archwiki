@@ -41,10 +41,10 @@ class TitleTest extends MediaWikiTestCase {
 	/**
 	 * Auth-less test of Title::isValidMoveOperation
 	 * 
+	 * @group Database
 	 * @param string $source
 	 * @param string $target
-	 * @param array|string|true $requiredErrors
-	 * @group Database
+	 * @param array|string|true $expected Required error
 	 * @dataProvider dataTestIsValidMoveOperation
 	 */
 	function testIsValidMoveOperation( $source, $target, $expected ) {

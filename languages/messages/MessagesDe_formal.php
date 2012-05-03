@@ -57,6 +57,7 @@ Falls dies nicht der Fall ist, haben Sie eventuell einen Fehler in der Software 
 'actionthrottledtext' => 'Im Rahmen einer Anti-Spam-Maßnahme kann diese Aktion in einem kurzen Zeitabstand nur begrenzt oft ausgeführt werden. Diese Grenze haben Sie überschritten.
 Bitte versuchen Sie es in ein paar Minuten erneut.',
 'viewsourcetext'      => 'Sie können den Quelltext dieser Seite betrachten und kopieren:',
+'viewyourtext'        => "Sie können den Quelltext '''Ihrer Bearbeitung''' dieser Seite betrachten und kopieren:",
 'editinginterface'    => "'''Warnung:''' Diese Seite enthält von der MediaWiki-Software genutzten Text.
 Änderungen auf dieser Seite wirken sich auf die Benutzeroberfläche aus.
 Ziehen Sie bitte im Fall von Übersetzungen in Betracht, diese bei [//translatewiki.net/wiki/Main_Page?setlang=de-formal translatewiki.net], der Lokalisierungsplattform für MediaWiki, durchzuführen.",
@@ -130,6 +131,7 @@ Möglicherweise haben Sie Ihr Passwort bereits erfolgreich geändert oder ein ne
 
 # Special:PasswordReset
 'passwordreset-text'           => 'Bitte dieses Formular ausfüllen, um per E-Mail eine Erinnerung zu den Anmeldeinformationen Ihres Benutzerkontos zu erhalten.',
+'passwordreset-capture-help'   => 'Sofern Sie dieses Kästchen ankreuzen, wird die E-Mail-Nachricht mit dem temporären Passwort, sowohl Ihnen angezeigt, als auch dem Benutzer zugesandt.',
 'passwordreset-emailtext-ip'   => 'Jemand mit der IP-Adresse $1, wahrscheinlich Sie selbst, hat eine Erinnerung an Ihre Benutzerkonteninformationen für {{SITENAME}} angefordert ($4). {{PLURAL:$3|Das folgende Benutzerkonto ist|Die folgenden Benutzerkonten sind}} mit dieser E-Mail-Adresse verknüpft:
 
 $2
@@ -141,6 +143,10 @@ Sie sollten sich anmelden und ein neues Passwort vergeben. Falls jemand anderes 
 $2
 
 {{PLURAL:$3|Dieses temporäre Passwort läuft|Diese temporären Passwörter laufen}} innerhalb von {{PLURAL:$5|einem Tag|$5 Tagen}} ab. Sie sollten sich anmelden und ein neues Passwort vergeben. Falls jemand anderes diese Anfrage getätigt hat oder Sie sich wieder an Ihr ursprüngliches Passwort erinnern können und es nicht ändern möchten, können Sie diese Nachricht ignorieren und weiterhin Ihr altes Passwort benutzen.',
+
+# Special:ChangeEmail
+'changeemail-text'    => 'Füllen Sie dieses Formular vollständig aus, um Ihre E-Mail-Adresse zu ändern. Sie müssen Ihr Passwort angeben, um diese Änderung zu bestätigen.',
+'changeemail-no-info' => 'Sie müssen angemeldet sein, um direkt auf diese Seite zugreifen zu können.',
 
 # Edit page toolbar
 'sig_tip' => 'Ihre Signatur mit Zeitstempel',
@@ -178,7 +184,6 @@ Sie können die „E-Mail an diesen Benutzer“-Funktion nicht nutzen, solange k
 
 Ihre aktuelle IP-Adresse ist $3, und die Sperr-ID ist $5.
 Bitte fügen Sie alle Informationen jeder Anfrage hinzu, die Sie stellen.",
-'blockededitsource'                => "Der Quelltext '''Ihrer Änderungen''' an '''$1''':",
 'whitelistedittext'                => 'Sie müssen sich $1, um Seiten bearbeiten zu können.',
 'confirmedittext'                  => 'Sie müssen Ihre E-Mail-Adresse erst bestätigen, bevor Sie Bearbeitungen vornehmen können. Bitte ergänzen und bestätigen Sie Ihre E-Mail in den [[Special:Preferences|Einstellungen]].',
 'nosuchsectiontext'                => 'Sie haben versucht, einen Abschnitt zu bearbeiten, der nicht existiert.
@@ -241,7 +246,7 @@ Reichen Sie keine Texte ein, falls Sie nicht wollen, dass diese ohne Einschränk
 
 Sie bestätigen hiermit auch, dass Sie diese Texte selbst geschrieben haben oder diese von einer gemeinfreien Quelle kopiert haben
 (siehe $1 für weitere Details). '''ÜBERTRAGEN SIE OHNE GENEHMIGUNG KEINE URHEBERRECHTLICH GESCHÜTZTEN INHALTE!'''",
-'longpageerror'                    => "'''Fehler: Der Text, den Sie zu speichern versuchen, ist $1 KB groß. Dies ist größer als das erlaubte Maximum von $2 KB.'''
+'longpageerror'                    => "'''Fehler: Der Text, den Sie zu speichern versuchen, ist {{PLURAL:$1|ein Kilobyte|$1 Kilobyte}} groß. Dies ist größer als das erlaubte Maximum von {{PLURAL:$2|ein Kilobyte|$2 Kilobyte}}.'''
 Er kann nicht gespeichert werden.",
 'readonlywarning'                  => "'''Achtung: Die Datenbank wurde für Wartungsarbeiten gesperrt, so dass Ihre Änderungen derzeit nicht gespeichert werden können.
 Sichern Sie den Text bitte lokal auf Ihrem Computer und versuchen Sie zu einem späteren Zeitpunkt, die Änderungen zu übertragen.'''
@@ -594,6 +599,11 @@ Bitte besuchen Sie die Seiten [//www.mediawiki.org/wiki/Localisation MediaWiki-L
 Die Versionsdaten und Benutzernamen bleiben dabei erhalten.
 Alle Transwiki-Import-Aktionen werden im [[Special:Log/import|Import-Logbuch]] protokolliert.',
 'import-token-mismatch' => 'Verlust der Sessiondaten. Bitte versuchen Sie es erneut.',
+'import-error-edit'     => 'Die Seite „$1“ wurde nicht importiert, da Sie nicht berechtigt sind, sie zu bearbeiten.',
+'import-error-create'   => 'Die Seite „$1“ wurde nicht importiert, da Sie nicht berechtigt sind, sie zu erstellen.',
+
+# JavaScriptTest
+'javascripttest-pagetext-skins' => 'Wählen Sie eine Benutzeroberfläche zur Durchführung der Tests aus:',
 
 # Tooltip help for the actions
 'tooltip-pt-userpage'            => 'Ihre Benutzerseite',
@@ -689,5 +699,16 @@ Sie können auch die [[Special:EditWatchlist|Standardseite]] zum Bearbeiten benu
 'dberr-again'     => 'Warten Sie einige Minuten und versuchen Sie dann neu zuladen.',
 'dberr-usegoogle' => 'Sie könnten in der Zwischenzeit mit Google suchen.',
 'dberr-outofdate' => 'Beachten Sie, dass der Suchindex unserer Inhalte bei Google veraltet sein kann.',
+
+# Feedback
+'feedback-bugornote' => 'Sofern Sie detailliert ein technisches Problem beschreiben möchten, melden Sie bitte [$1 einen Fehler].
+Anderenfalls können Sie auch das untenstehende einfache Formular nutzen. Ihr Kommentar wird, zusammen mit Ihrem Benutzernamen und der Version des von Ihnen verwendeten Webbrowsers sowie Betriebssystems, auf der Seite „[$3 $2]“ hinzugefügt.',
+'feedback-thanks'    => 'Vielen Dank. Ihre Rückmeldung wurde auf der Seite „[$2 $1]“ gespeichert.',
+'feedback-bugcheck'  => 'Super! Bitte überprüfen Sie noch, ob es sich hierbei nicht um einen bereits [$1 bekannten Fehler] handelt.',
+
+# API errors
+'api-error-badaccess-groups' => 'Sie haben nicht die Berechtigung Dateien in dieses Wiki hochzuladen.',
+'api-error-hookaborted'      => 'Die von Ihnen vorgesehene Anpassung kann nicht durchgeführt werden (Unterbrechung durch eine Programmschnittstelle).',
+'api-error-mustbeloggedin'   => 'Um Dateien hochladen zu können, müssen Sie angemeldet sein.',
 
 );

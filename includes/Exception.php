@@ -53,7 +53,7 @@ class MWException extends Exception {
 		global $wgExceptionHooks;
 
 		if ( !isset( $wgExceptionHooks ) || !is_array( $wgExceptionHooks ) ) {
-			return;	// Just silently ignore
+			return; // Just silently ignore
 		}
 
 		if ( !array_key_exists( $name, $wgExceptionHooks ) || !is_array( $wgExceptionHooks[ $name ] ) ) {
@@ -70,8 +70,9 @@ class MWException extends Exception {
 				$result = null;
 			}
 
-			if ( is_string( $result ) )
+			if ( is_string( $result ) ) {
 				return $result;
+			}
 		}
 	}
 
@@ -118,6 +119,7 @@ class MWException extends Exception {
 	/**
 	 * If $wgShowExceptionDetails is true, return a text message with a
 	 * backtrace to the error.
+	 * @return string
 	 */
 	function getText() {
 		global $wgShowExceptionDetails;
@@ -131,10 +133,12 @@ class MWException extends Exception {
 		}
 	}
 
-	/* Return titles of this error page */
+	/**
+	 * Return titles of this error page
+	 * @return String
+	 */
 	function getPageTitle() {
-		global $wgSitename;
-		return $this->msg( 'internalerror', "$wgSitename error" );
+		return $this->msg( 'internalerror', "Internal error" );
 	}
 
 	/**
@@ -166,12 +170,7 @@ class MWException extends Exception {
 	function reportHTML() {
 		global $wgOut;
 		if ( $this->useOutputPage() ) {
-			$wgOut->setPageTitle( $this->getPageTitle() );
-			$wgOut->setRobotPolicy( "noindex,nofollow" );
-			$wgOut->setArticleRelated( false );
-			$wgOut->enableClientCache( false );
-			$wgOut->redirect( '' );
-			$wgOut->clearHTML();
+			$wgOut->prepareErrorPage( $this->getPageTitle() );
 
 			$hookResult = $this->runHooks( get_class( $this ) );
 			if ( $hookResult ) {
@@ -182,6 +181,7 @@ class MWException extends Exception {
 
 			$wgOut->output();
 		} else {
+			header( "Content-Type: text/html; charset=utf-8" );
 			$hookResult = $this->runHooks( get_class( $this ) . "Raw" );
 			if ( $hookResult ) {
 				die( $hookResult );
@@ -210,6 +210,10 @@ class MWException extends Exception {
 		}
 	}
 
+	/**
+	 * @static
+	 * @return bool
+	 */
 	static function isCommandLine() {
 		return !empty( $GLOBALS['wgCommandLineMode'] );
 	}
@@ -221,10 +225,17 @@ class MWException extends Exception {
  * @ingroup Exception
  */
 class FatalError extends MWException {
+
+	/**
+	 * @return string
+	 */
 	function getHTML() {
 		return $this->getMessage();
 	}
 
+	/**
+	 * @return string
+	 */
 	function getText() {
 		return $this->getMessage();
 	}
@@ -255,9 +266,40 @@ class ErrorPageError extends MWException {
 	function report() {
 		global $wgOut;
 
+
 		$wgOut->showErrorPage( $this->title, $this->msg, $this->params );
 		$wgOut->output();
 	}
+}
+
+/**
+ * Show an error page on a badtitle.
+ * Similar to ErrorPage, but emit a 400 HTTP error code to let mobile
+ * browser it is not really a valid content.
+ */
+class BadTitleError extends ErrorPageError {
+
+	/**
+	 * @param $msg string A message key (default: 'badtitletext')
+	 * @param $params Array parameter to wfMsg()
+	 */
+	function __construct( $msg = 'badtitletext', $params = null ) {
+		parent::__construct( 'badtitle', $msg, $params );
+	}
+
+	/**
+	 * Just like ErrorPageError::report() but additionally set
+	 * a 400 HTTP status code (bug 33646).
+	 */
+	function report() {
+		global $wgOut;
+
+		// bug 33646: a badtitle error page need to return an error code
+		// to let mobile browser now that it is not a normal page.
+		$wgOut->setStatusCode( 400 );
+		parent::report();
+	}
+
 }
 
 /**
@@ -266,33 +308,34 @@ class ErrorPageError extends MWException {
  * @ingroup Exception
  */
 class PermissionsError extends ErrorPageError {
-	public $permission;
+	public $permission, $errors;
 
-	function __construct( $permission ) {
+	function __construct( $permission, $errors = array() ) {
 		global $wgLang;
 
 		$this->permission = $permission;
 
-		$groups = array_map(
-			array( 'User', 'makeGroupLinkWiki' ),
-			User::getGroupsWithPermission( $this->permission )
-		);
+		if ( !count( $errors ) ) {
+			$groups = array_map(
+				array( 'User', 'makeGroupLinkWiki' ),
+				User::getGroupsWithPermission( $this->permission )
+			);
 
-		if( $groups ) {
-			parent::__construct(
-				'badaccess',
-				'badaccess-groups',
-				array(
-					$wgLang->commaList( $groups ),
-					count( $groups )
-				)
-			);
-		} else {
-			parent::__construct(
-				'badaccess',
-				'badaccess-group0'
-			);
+			if ( $groups ) {
+				$errors[] = array( 'badaccess-groups', $wgLang->commaList( $groups ), count( $groups ) );
+			} else {
+				$errors[] = array( 'badaccess-group0' );
+			}
 		}
+
+		$this->errors = $errors;
+	}
+
+	function report() {
+		global $wgOut;
+
+		$wgOut->showPermissionsErrorPage( $this->errors, $this->permission );
+		$wgOut->output();
 	}
 }
 
@@ -322,6 +365,7 @@ class ThrottledError extends ErrorPageError {
 			'actionthrottledtext'
 		);
 	}
+
 	public function report(){
 		global $wgOut;
 		$wgOut->setStatusCode( 503 );
@@ -335,10 +379,15 @@ class ThrottledError extends ErrorPageError {
  */
 class UserBlockedError extends ErrorPageError {
 	public function __construct( Block $block ){
-		global $wgLang;
+		global $wgLang, $wgRequest;
 
-		$blockerUserpage = $block->getBlocker()->getUserPage();
-		$link = "[[{$blockerUserpage->getPrefixedText()}|{$blockerUserpage->getText()}]]";
+		$blocker = $block->getBlocker();
+		if ( $blocker instanceof User ) { // local user
+			$blockerUserpage = $block->getBlocker()->getUserPage();
+			$link = "[[{$blockerUserpage->getPrefixedText()}|{$blockerUserpage->getText()}]]";
+		} else { // foreign user
+			$link = $blocker;
+		}
 
 		$reason = $block->mReason;
 		if( $reason == '' ) {
@@ -355,14 +404,63 @@ class UserBlockedError extends ErrorPageError {
 			array(
 				$link,
 				$reason,
-				wfGetIP(),
-				$block->getBlocker()->getName(),
+				$wgRequest->getIP(),
+				$block->getByName(),
 				$block->getId(),
 				$wgLang->formatExpiry( $block->mExpiry ),
 				$intended,
 				$wgLang->timeanddate( wfTimestamp( TS_MW, $block->mTimestamp ), true )
 			)
 		);
+	}
+}
+
+/**
+ * Show an error that looks like an HTTP server error.
+ * Replacement for wfHttpError().
+ *
+ * @ingroup Exception
+ */
+class HttpError extends MWException {
+	private $httpCode, $header, $content;
+
+	/**
+	 * Constructor
+	 *
+	 * @param $httpCode Integer: HTTP status code to send to the client
+	 * @param $content String|Message: content of the message
+	 * @param $header String|Message: content of the header (\<title\> and \<h1\>)
+	 */
+	public function __construct( $httpCode, $content, $header = null ){
+		parent::__construct( $content );
+		$this->httpCode = (int)$httpCode;
+		$this->header = $header;
+		$this->content = $content;
+	}
+
+	public function reportHTML() {
+		$httpMessage = HttpStatus::getMessage( $this->httpCode );
+
+		header( "Status: {$this->httpCode} {$httpMessage}" );
+		header( 'Content-type: text/html; charset=utf-8' );
+
+		if ( $this->header === null ) {
+			$header = $httpMessage;
+		} elseif ( $this->header instanceof Message ) {
+			$header = $this->header->escaped();
+		} else {
+			$header = htmlspecialchars( $this->header );
+		}
+
+		if ( $this->content instanceof Message ) {
+			$content = $this->content->escaped();
+		} else {
+			$content = htmlspecialchars( $this->content );
+		}
+
+		print "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n".
+			"<html><head><title>$header</title></head>\n" .
+			"<body><h1>$header</h1><p>$content</p></body></html>\n";
 	}
 }
 

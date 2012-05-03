@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * RandomImageGenerator -- does what it says on the tin.
  * Requires Imagick, the ImageMagick library for PHP, or the command line equivalent (usually 'convert').
  *
@@ -27,12 +27,11 @@
 class RandomImageGenerator {
 
 	private $dictionaryFile;
-	private $minWidth = 400;
-	private $maxWidth = 800;
-	private $minHeight = 400;
-	private $maxHeight = 800;
-	private $shapesToDraw = 5;
-	private $imageWriteMethod;
+	private $minWidth     = 400 ;
+	private $maxWidth     = 800 ;
+	private $minHeight    = 400 ;
+	private $maxHeight    = 800 ;
+	private $shapesToDraw =   5 ;
 
 	/**
 	 * Orientations: 0th row, 0th column, EXIF orientation code, rotation 2x2 matrix that is opposite of orientation
@@ -41,35 +40,35 @@ class RandomImageGenerator {
 	 * (we also would need a non-symmetric shape for the images to test those, like a letter F)
 	 */
 	private static $orientations = array(
-		array( 	
-			'0thRow' => 'top', 	
-			'0thCol' => 'left', 	
-			'exifCode' => 1, 	
-			'counterRotation' => array( array( 1, 0 ), array( 0, 1 ) ) 	 	
+		array(
+			'0thRow' => 'top',
+			'0thCol' => 'left',
+			'exifCode' => 1,
+			'counterRotation' => array( array( 1, 0 ), array( 0, 1 ) )
 		),
-		array( 
+		array(
 			'0thRow' => 'bottom',
-			'0thCol' => 'right', 	
-			'exifCode' => 3, 	
-			'counterRotation' => array( array( -1, 0 ), array( 0, -1 ) ) 		
+			'0thCol' => 'right',
+			'exifCode' => 3,
+			'counterRotation' => array( array( -1, 0 ), array( 0, -1 ) )
 		),
-		array( 
-			'0thRow' => 'right', 
-			'0thCol' => 'top', 		
-			'exifCode' => 6, 	
-			'counterRotation' => array( array( 0, 1 ), array( 1, 0 ) ) 	
+		array(
+			'0thRow' => 'right',
+			'0thCol' => 'top',
+			'exifCode' => 6,
+			'counterRotation' => array( array( 0, 1 ), array( 1, 0 ) )
 		),
-		array( 
-			'0thRow' => 'left', 	
-			'0thCol' => 'bottom', 	
-			'exifCode' => 8, 	
-			'counterRotation' => array( array( 0, -1 ), array( -1, 0 ) ) 		
+		array(
+			'0thRow' => 'left',
+			'0thCol' => 'bottom',
+			'exifCode' => 8,
+			'counterRotation' => array( array( 0, -1 ), array( -1, 0 ) )
 		)
 	);
 
 
 	public function __construct( $options = array() ) {
-		foreach ( array( 'dictionaryFile', 'minWidth', 'minHeight', 'maxHeight', 'shapesToDraw' ) as $property ) {
+		foreach ( array( 'dictionaryFile', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 'shapesToDraw' ) as $property ) {
 			if ( isset( $options[$property] ) ) {
 				$this->$property = $options[$property];
 			}
@@ -77,10 +76,10 @@ class RandomImageGenerator {
 
 		// find the dictionary file, to generate random names
 		if ( !isset( $this->dictionaryFile ) ) {
-			foreach ( array( 
-					'/usr/share/dict/words', 
-					'/usr/dict/words', 
-					dirname( __FILE__ ) . '/words.txt' ) 
+			foreach ( array(
+					'/usr/share/dict/words',
+					'/usr/dict/words',
+					dirname( __FILE__ ) . '/words.txt' )
 					as $dictionaryFile ) {
 				if ( is_file( $dictionaryFile ) and is_readable( $dictionaryFile ) ) {
 					$this->dictionaryFile = $dictionaryFile;
@@ -90,14 +89,6 @@ class RandomImageGenerator {
 		}
 		if ( !isset( $this->dictionaryFile ) ) {
 			throw new Exception( "RandomImageGenerator: dictionary file not found or not specified properly" );
-		}
-		
-		if ( !class_exists( 'Imagick' ) ) {
-			throw new Exception( 'No Imagick extension' );
-		}
-		global $wgExiv2Command;
-		if ( !$wgExiv2Command || !is_executable( $wgExiv2Command ) ) {
-			throw new Exception( 'exiv2 not executable or $wgExiv2Command not set' );
 		}
 	}
 
@@ -125,15 +116,16 @@ class RandomImageGenerator {
 	 */
 	function getImageWriteMethod( $format ) {
 		global $wgUseImageMagick, $wgImageMagickConvertCommand;
-		if ( $format === 'svg' ) { 
+		if ( $format === 'svg' ) {
 			return 'writeSvg';
 		} else {
 			// figure out how to write images
-			if ( class_exists( 'Imagick' ) ) {
+			global $wgExiv2Command;
+			if ( class_exists( 'Imagick' ) && $wgExiv2Command && is_executable( $wgExiv2Command ) ) {
 				return 'writeImageWithApi';
 			} elseif ( $wgUseImageMagick && $wgImageMagickConvertCommand && is_executable( $wgImageMagickConvertCommand ) ) {
 				return 'writeImageWithCommandLine';
-			} 
+			}
 		}
 		throw new Exception( "RandomImageGenerator: could not find a suitable method to write images in '$format' format" );
 	}
@@ -219,7 +211,7 @@ class RandomImageGenerator {
 	 */
 	static function shapePointsToString( $shape ) {
 		$points = array();
-		foreach ( $shape as $point ) { 
+		foreach ( $shape as $point ) {
 			$points[] = $point['x'] . ',' . $point['y'];
 		}
 		return join( " ", $points );
@@ -232,16 +224,16 @@ class RandomImageGenerator {
 	 * @param $format: file format to write (which is obviously always svg here)
 	 * @param $filename: filename to write to
 	 */
-	public function writeSvg( $spec, $format, $filename ) { 
+	public function writeSvg( $spec, $format, $filename ) {
 		$svg = new SimpleXmlElement( '<svg/>' );
 		$svg->addAttribute( 'xmlns', 'http://www.w3.org/2000/svg' );
-   		$svg->addAttribute( 'version', '1.1' );
- 		$svg->addAttribute( 'width', $spec['width'] );
- 		$svg->addAttribute( 'height', $spec['height'] );
+		$svg->addAttribute( 'version', '1.1' );
+		$svg->addAttribute( 'width', $spec['width'] );
+		$svg->addAttribute( 'height', $spec['height'] );
 		$g = $svg->addChild( 'g' );
 		foreach ( $spec['draws'] as $drawSpec ) {
 			$shape = $g->addChild( 'polygon' );
-			$shape->addAttribute( 'fill', $drawSpec['fill'] );		
+			$shape->addAttribute( 'fill', $drawSpec['fill'] );
 			$shape->addAttribute( 'points', self::shapePointsToString( $drawSpec['shape'] ) );
 		};
 		if ( ! $fh = fopen( $filename, 'w' ) ) {
@@ -260,20 +252,20 @@ class RandomImageGenerator {
 	 * @param $filename: filename to write to
 	 */
 	public function writeImageWithApi( $spec, $format, $filename ) {
-		// this is a hack because I can't get setImageOrientation() to work. See below. 
+		// this is a hack because I can't get setImageOrientation() to work. See below.
 		global $wgExiv2Command;
 
 		$image = new Imagick();
 		/**
-		 * If the format is 'jpg', will also add a random orientation -- the image will be drawn rotated with triangle points 
+		 * If the format is 'jpg', will also add a random orientation -- the image will be drawn rotated with triangle points
 		 * facing in some direction (0, 90, 180 or 270 degrees) and a countering rotation should turn the triangle points upward again
 		 */
 		$orientation = self::$orientations[0]; // default is normal orientation
 		if ( $format == 'jpg' ) {
 			$orientation = self::$orientations[ array_rand( self::$orientations ) ];
-			$spec = self::rotateImageSpec( $spec, $orientation['counterRotation'] ); 
+			$spec = self::rotateImageSpec( $spec, $orientation['counterRotation'] );
 		}
-			
+
 		$image->newImage( $spec['width'], $spec['height'], new ImagickPixel( $spec['fill'] ) );
 
 		foreach ( $spec['draws'] as $drawSpec ) {
@@ -296,7 +288,7 @@ class RandomImageGenerator {
 			$cmd = wfEscapeShellArg( $wgExiv2Command )
 				. " -M "
 				. wfEscapeShellArg( "set Exif.Image.Orientation " . $orientation['exifCode'] )
-				. " " 
+				. " "
 				. wfEscapeShellArg( $filename );
 
 			$retval = 0;
@@ -304,15 +296,13 @@ class RandomImageGenerator {
 			if ( $retval !== 0 ) {
 				print "Error with $cmd: $retval, $err\n";
 			}
-                }
-
-
+		}
 	}
 
 	/**
 	 * Given an image specification, produce rotated version
 	 * This is used when simulating a rotated image capture with EXIF orientation
-	 * @param $spec Object returned by getImageSpec 
+	 * @param $spec Object returned by getImageSpec
 	 * @param $matrix 2x2 transformation matrix
 	 * @return transformed Spec
 	 */
@@ -323,8 +313,8 @@ class RandomImageGenerator {
 		$correctionY = 0;
 		if ( $dims['x'] < 0 ) {
 			$correctionX = abs( $dims['x'] );
-		} 
-		if ( $dims['y'] < 0 ) { 
+		}
+		if ( $dims['y'] < 0 ) {
 			$correctionY = abs( $dims['y'] );
 		}
 		$tSpec['width'] = abs( $dims['x'] );
@@ -332,7 +322,7 @@ class RandomImageGenerator {
 		$tSpec['fill'] = $spec['fill'];
 		$tSpec['draws'] = array();
 		foreach( $spec['draws'] as $draw ) {
-			$tDraw = array( 
+			$tDraw = array(
 				'fill' => $draw['fill'],
 				'shape' => array()
 			);
@@ -349,13 +339,13 @@ class RandomImageGenerator {
 
 	/**
 	 * Given a matrix and a pair of images, return new position
-	 * @param $matrix: 2x2 rotation matrix 
+	 * @param $matrix: 2x2 rotation matrix
 	 * @param $x: x-coordinate number
 	 * @param $y: y-coordinate number
-	 * @return Array transformed with properties x, y 
+	 * @return Array transformed with properties x, y
 	 */
 	private static function matrixMultiply2x2( $matrix, $x, $y ) {
-		return array( 
+		return array(
 			'x' => $x * $matrix[0][0] + $y * $matrix[0][1],
 			'y' => $x * $matrix[1][0] + $y * $matrix[1][1]
 		);
@@ -366,10 +356,10 @@ class RandomImageGenerator {
 	 * Based on an image specification, write such an image to disk, using the command line ImageMagick program ('convert').
 	 *
 	 * Sample command line:
-	 *    $ convert -size 100x60 xc:rgb(90,87,45)  \
-		 * 	-draw 'fill rgb(12,34,56)   polygon 41,39 44,57 50,57 41,39' \
-		 *      -draw 'fill rgb(99,123,231) circle 59,39 56,57' \
-		 *      -draw 'fill rgb(240,12,32)  circle 50,21 50,3'  filename.png
+	 *  $ convert -size 100x60 xc:rgb(90,87,45) \
+	 * 	 -draw 'fill rgb(12,34,56)   polygon 41,39 44,57 50,57 41,39' \
+	 *   -draw 'fill rgb(99,123,231) circle 59,39 56,57' \
+	 *   -draw 'fill rgb(240,12,32)  circle 50,21 50,3'  filename.png
 	 *
 	 * @param $spec: spec describing background and shapes to draw
 	 * @param $format: file format to write (unused by this method but kept so it has the same signature as writeImageWithApi)

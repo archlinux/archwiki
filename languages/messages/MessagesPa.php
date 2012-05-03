@@ -52,6 +52,8 @@ $digitTransformTable = array(
 );
 $linkTrail = '/^([ਁਂਃਅਆਇਈਉਊਏਐਓਔਕਖਗਘਙਚਛਜਝਞਟਠਡਢਣਤਥਦਧਨਪਫਬਭਮਯਰਲਲ਼ਵਸ਼ਸਹ਼ਾਿੀੁੂੇੈੋੌ੍ਖ਼ਗ਼ਜ਼ੜਫ਼ੰੱੲੳa-z]+)(.*)$/sDu';
 
+$digitGroupingPattern = "##,##,###";
+
 $messages = array(
 # User preference toggles
 'tog-underline'             => 'ਅੰਡਰ-ਲਾਈਨ ਲਿੰਕ:',
@@ -323,9 +325,9 @@ A list of valid special pages can be found at [[Special:SpecialPages]].',
 'internalerror_info' => 'ਅੰਦਰੂਨੀ ਗਲਤੀ: $1',
 'badtitle'           => 'ਗਲਤ ਟਾਇਟਲ',
 'viewsource'         => 'ਸਰੋਤ ਵੇਖੋ',
-'viewsourcefor'      => '$1 ਲਈ',
 'protectedpagetext'  => 'ਇਸ ਪੰਨੇ ਨੂੰ ਐਡਿਟ ਕਰਨ ਦੀ ਮਨਾਹੀ ਹੈ।',
 'viewsourcetext'     => 'ਤੁਸੀਂ ਇਸ ਪੰਨੇ ਦਾ ਸੋਮਾ ਦੇਖ ਸਕਦੇ ਹੋ ਤੇ ਉਸ ਦਾ ਉਤਾਰਾ ਵੀ ਲੈ ਸਕਦੇ ਹੋ।',
+'viewyourtext'       => 'ਤੁਸੀਂ ਇਸ ਪੰਨੇ ਬਾਰੇ " ਆਪਣੇ ਸੰਪਾਦਨਾਂ " ਨੂੰ ਦੇਖ ਸਕਦੇ ਹੋ ਤੇ ਉਨ੍ਹਾਂ ਦਾ ਉਤਾਰਾ ਵਿ ਲੈ ਸਕਦੇ ਹੋ।',
 'protectedinterface' => 'ਇਹ ਪੰਨਾ ਸਾਫ਼ਟਵੇਅਰ ਇੰਟਰਫ਼ੇਸ ਦਾ ਮੂਲ ਪਾਠ ਹੈ ,ਅਤੇ ਦੁਰਵਰਤੌਂ ਤੌਂ ਬਚਾਅ ਲਈ ਰਾਖਵਾਂ ਕੀਤਾ ਗਿਆ ਹੈ।',
 'editinginterface'   => "'''ਚਿਤਾਵਨੀ''' ਤੁਸੀਂ ਐਸੇ ਪੰਨੇ ਨੂੰ ਬਦਲ ਰਹੇ ਹੋ ਜੋ ਸਾਫ਼ਟਵੇਅਰ ਇੰਟਰਫ਼ੇਸ ਦੇ ਮੂਲ ਪਾਠ ਲਈ ਵਰਤਿਆ ਗਿਆ ਹੈ।
 ਇਸ ਪੰਨੇ ਦੇ ਬਦਲਾਅ ਦੁਸਰੇ ਵਰਤੋਂ ਕਰਣ ਵਾਲਿਆਂ ਲਈ ਵਰਤੇ ਜਾਣ ਵਾਲੇ ਇੰਟਰਫਲੇਸ ਦੀ ਸ਼ਕਲ ਤੇ ਅਸਰ ਪਾ ਦੇਣਗੇ।ਅਨੁਵਾਦ ਕਰਣ ਲਈ ,ਕਿਰਪਾ ਕਰਕੇ [//translatewiki.net/wiki/Main_Page?setlang=pa ਟ੍ਰਾਂਸਲੇਟਵਿਕੀ.ਨੈਟ] ਦੀ ਵਰਤੌਂ ਕਰੋ,ਇਹ ਮੀਡੀਆਵਿਕੀ ਦੀ ਸਥਾਨਕੀਕਰਣ ਯੋਜਨਾ ਹੈ।",
@@ -450,7 +452,6 @@ $1 ਘੰਟੇ ਵਿੱਚ। ਨੁਕਸਾਨ ਤੋਂ ਬਚਣ ਲਈ, $
 'summary-preview'            => 'ਸੰਖੇਪ ਝਲਕ:',
 'subject-preview'            => 'ਵਿਸ਼ਾ/ਹੈੱਡਲਾਈਨ ਝਲਕ:',
 'blockedtitle'               => 'ਯੂਜ਼ਰ ਬਲਾਕ ਕੀਤਾ ਗਿਆ',
-'whitelistedittitle'         => 'ਸੋਧਣ ਲਈ ਲਾਗਇਨ ਕਰਨਾ ਪਵੇਗਾ',
 'whitelistedittext'          => 'ਪੇਜ ਸੋਧਣ ਲਈ ਤੁਹਾਨੂੰ $1 ਕਰਨਾ ਪਵੇਗਾ।',
 'nosuchsectiontitle'         => 'ਇੰਝ ਦਾ ਕੋਈ ਸ਼ੈਕਸ਼ਨ ਨਹੀਂ ਹੈ।',
 'loginreqtitle'              => 'ਲਾਗਇਨ ਚਾਹੀਦਾ ਹੈ',
@@ -529,8 +530,6 @@ $1 ਘੰਟੇ ਵਿੱਚ। ਨੁਕਸਾਨ ਤੋਂ ਬਚਣ ਲਈ, $
 'revdel-restore-visible'  => 'ਦ੍ਰਿਸ਼ਟ ਬਦਲਾਅ',
 'pagehist'                => 'ਪੇਜ ਦਾ ਅਤੀਤ',
 'deletedhist'             => 'ਹਟਾਇਆ ਗਿਆ ਅਤੀਤ',
-'revdelete-content'       => 'ਸਮਗੱਰੀ',
-'revdelete-summary'       => 'ਸੰਖੇਪ ਸੋਧ',
 
 # Merge log
 'revertmerge' => 'ਬਿਨ-ਮਿਲਾਨ',
@@ -859,9 +858,6 @@ to upload files.',
 'listusers-submit'   => 'ਵੇਖੋ',
 'listusers-noresult' => 'ਕੋਈ ਯੂਜ਼ਰ ਨਹੀਂ ਲੱਭਿਆ।',
 
-# Special:Log/newusers
-'newuserlog-create-entry' => 'ਨਵਾਂ ਯੂਜ਼ਰ ਅਕਾਊਂਟ',
-
 # Special:ListGroupRights
 'listgrouprights-group'   => 'ਗਰੁੱਪ',
 'listgrouprights-members' => '(ਮੈਂਬਰਾਂ ਦੀ ਲਿਸਟ)',
@@ -909,7 +905,6 @@ to upload files.',
 'delete-confirm'        => '"$1" ਹਟਾਓ',
 'delete-legend'         => 'ਹਟਾਓ',
 'actioncomplete'        => 'ਐਕਸ਼ਨ ਪੂਰਾ ਹੋਇਆ',
-'deletedarticle'        => '"[[$1]]" ਹਟਾਇਆ',
 'dellogpage'            => 'ਹਟਾਉਣ ਲਾਗ',
 'deletecomment'         => 'ਕਾਰਨ:',
 'deleteotherreason'     => 'ਹੋਰ/ਵਾਧੂ ਕਾਰਨ:',
@@ -1135,9 +1130,6 @@ to upload files.',
 'skinname-chick'    => 'ਚੀਚਕ',
 'skinname-simple'   => 'ਸੈਂਪਲ',
 
-# Patrol log
-'patrol-log-auto' => '(ਆਟੋਮੈਟਿਕ)',
-
 # Browsing diffs
 'previousdiff' => '← ਪੁਰਾਣੀ ਸੋਧ',
 'nextdiff'     => 'ਅੰਤਰ ਅੱਗੇ →',
@@ -1223,10 +1215,6 @@ to upload files.',
 
 # Scary transclusion
 'scarytranscludetoolong' => '[ਅਫਸੋਸ ਹੈ ਕਿ URL ਬਹੁਤ ਲੰਮਾ ਹੈ]',
-
-# Trackbacks
-'trackbackremove' => '([$1 ਹਟਾਓ])',
-'trackbacklink'   => 'ਟਰੈਕਬੈਕ',
 
 # Delete conflict
 'recreate' => 'ਮੁੜ-ਬਣਾਓ',

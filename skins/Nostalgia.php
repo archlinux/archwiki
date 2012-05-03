@@ -18,6 +18,9 @@ class SkinNostalgia extends SkinLegacy {
 	var $skinname = 'nostalgia', $stylename = 'nostalgia',
 		$template = 'NostalgiaTemplate';
 
+	/**
+	 * @param $out OutputPage
+	 */
 	function setupSkinUserCss( OutputPage $out ){
 		parent::setupSkinUserCss( $out );
 		$out->addModuleStyles( 'skins.nostalgia' );
@@ -27,6 +30,9 @@ class SkinNostalgia extends SkinLegacy {
 
 class NostalgiaTemplate extends LegacyTemplate {
 
+	/**
+	 * @return string
+	 */
 	function doBeforeContent() {
 		$s = "\n<div id='content'>\n<div id='top'>\n";
 		$s .= '<div id="logo">' . $this->getSkin()->logoText( 'right' ) . '</div>';
@@ -48,10 +54,7 @@ class NostalgiaTemplate extends LegacyTemplate {
 			$s .= '<br />' . $ol;
 		}
 
-		$cat = '<div id="catlinks" class="catlinks">' . $this->getSkin()->getCategoryLinks() . '</div>';
-		if( $cat ) {
-			$s .= '<br />' . $cat;
-		}
+		$s .= $this->getSkin()->getCategories();
 
 		$s .= "<br clear='all' /></div><hr />\n</div>\n";
 		$s .= "\n<div id='article'>";
@@ -59,14 +62,16 @@ class NostalgiaTemplate extends LegacyTemplate {
 		return $s;
 	}
 
+	/**
+	 * @return string
+	 */
 	function topLinks() {
-		global $wgOut, $wgUser;
 		$sep = " |\n";
 
 		$s = $this->getSkin()->mainPageLink() . $sep
 		  . Linker::specialLink( 'Recentchanges' );
 
-		if ( $wgOut->isArticle() ) {
+		if ( $this->data['isarticle'] ) {
 			$s .= $sep . '<strong>' . $this->editThisPage() . '</strong>' . $sep . $this->talkLink() .
 					$sep . $this->historyLink();
 		}
@@ -74,30 +79,31 @@ class NostalgiaTemplate extends LegacyTemplate {
 		/* show links to different language variants */
 		$s .= $this->variantLinks();
 		$s .= $this->extensionTabLinks();
-		if ( $wgUser->isAnon() ) {
+		if ( !$this->data['loggedin'] ) {
 			$s .= $sep . Linker::specialLink( 'Userlogin' );
 		} else {
 			/* show user page and user talk links */
-			$s .= $sep . Linker::link( $wgUser->getUserPage(), wfMsgHtml( 'mypage' ) );
-			$s .= $sep . Linker::link( $wgUser->getTalkPage(), wfMsgHtml( 'mytalk' ) );
-			if ( $wgUser->getNewtalk() ) {
+			$user = $this->getSkin()->getUser();
+			$s .= $sep . Linker::link( $user->getUserPage(), wfMsgHtml( 'mypage' ) );
+			$s .= $sep . Linker::link( $user->getTalkPage(), wfMsgHtml( 'mytalk' ) );
+			if ( $user->getNewtalk() ) {
 				$s .= ' *';
 			}
 			/* show watchlist link */
 			$s .= $sep . Linker::specialLink( 'Watchlist' );
 			/* show my contributions link */
 			$s .= $sep . Linker::link(
-				SpecialPage::getSafeTitleFor( 'Contributions', $wgUser->getName() ),
+				SpecialPage::getSafeTitleFor( 'Contributions', $this->data['username'] ),
 				wfMsgHtml( 'mycontris' ) );
 			/* show my preferences link */
 			$s .= $sep . Linker::specialLink( 'Preferences' );
 			/* show upload file link */
-			if( UploadBase::isEnabled() && UploadBase::isAllowed( $wgUser ) === true ) {
+			if( UploadBase::isEnabled() && UploadBase::isAllowed( $user ) === true ) {
 				$s .= $sep . $this->getUploadLink();
 			}
 
 			/* show log out link */
-			$s .= $sep . $this->getSkin()->specialLink( 'Userlogout' );
+			$s .= $sep . Linker::specialLink( 'Userlogout' );
 		}
 
 		$s .= $sep . $this->specialPagesList();
@@ -105,6 +111,9 @@ class NostalgiaTemplate extends LegacyTemplate {
 		return $s;
 	}
 
+	/**
+	 * @return string
+	 */
 	function doAfterContent() {
 		$s = "\n</div><br clear='all' />\n";
 

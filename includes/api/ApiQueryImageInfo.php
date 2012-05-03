@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * A query action to get image information and upload history.
  *
@@ -318,8 +313,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 				$vals['commenthidden'] = '';
 			} else {
 				if ( $pcomment ) {
-					global $wgUser;
-					$vals['parsedcomment'] = $wgUser->getSkin()->formatComment(
+					$vals['parsedcomment'] = Linker::formatComment(
 						$file->getDescription(), $file->getTitle() );
 				}
 				if ( $comment ) {
@@ -568,7 +562,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&titles=File:Albert%20Einstein%20Head.jpg&prop=imageinfo',
 			'api.php?action=query&titles=File:Test.jpg&prop=imageinfo&iilimit=50&iiend=20071231235959&iiprop=timestamp|user|url',

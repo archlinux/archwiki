@@ -375,15 +375,14 @@ Mahimo nga napanas na ini sang iban.',
 'badtitle'             => 'Malain nga titulo',
 'badtitletext'         => 'Ang ginapangayo mo nga titulo ka pahina ay sala, blangko, ukon indi ensakto ang pagtabid sang inter-lengwahe o inter-wiki na titulo.
 Siguro may-ara ini sang isa ukon madamo nga karakter nga indi ginabaton kag ginagamit sa titulo.',
-'perfcached'           => 'Ang masunod nga datos nakatago lamang kag mahimo nga indi bag-o.',
-'perfcachedts'         => 'Ang masunod nga datos nakatago lamang, kag pinaka-ulihe nga ginbag-o sang $1.',
+'perfcached'           => 'Ang masunod nga datos nakatago lamang kag mahimo nga indi bag-o. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'Ang masunod nga datos nakatago lamang, kag pinaka-ulihe nga ginbag-o sang $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'Ang mga pagbag-o sa sini nga panid karon ginpa-untat.
 Ang datos nga yari diri indi pagliwaton.',
 'wrong_wfQuery_params' => 'Indi insakto nga mga parametro sa wfQuery()<br />
 Kapuslanan: $1<br />
 Pagpamangkot: $2',
 'viewsource'           => 'Lantawon ang ginhalinan',
-'viewsourcefor'        => 'para sa $1',
 'actionthrottled'      => 'Ang paghulag ginpunggan',
 'actionthrottledtext'  => 'Bilang pagpangontra sa span, ginalimitahan ka sa pagbuhat sang sini nga paghulag sa tuman ka damo nga beses sa malip-ot nga tinion, kag naglapaw ka na sa sini nga patakaran.
 Palihog tilawan mo liwat pagkatapos sang malip-ot nga tinion.',
@@ -500,6 +499,7 @@ Wala pa sang e-mail nga ipadala diri para sa bisan ano sa masunod nga mga katung
 'emailconfirmlink'           => 'Palihog pamatud-i ang imo e-mail adres',
 'invalidemailaddress'        => 'Ang e-mail adres indi mabaton tungod kay nagagwa nga sala ang iya plastar.
 Palihog butang sang ginplastar sing maayo nga adres ukon panason nal lang ang lugar.',
+'cannotchangeemail'          => 'Ang mga e-mail adres indi mahimo nga ilisan sa sini nga wiki.',
 'accountcreated'             => 'Nahimo na ang akawnt',
 'accountcreatedtext'         => 'Ang akawnt sang manug-gamit nga $1 nahimo na.',
 'createaccount-title'        => 'Pagbuhat sang akawnt para sa {{SITENAME}}',
@@ -516,6 +516,7 @@ Palihog maghulat anay bag-o tilawan liwat.',
 
 # E-mail sending
 'php-mail-error-unknown' => 'Wala nahibaluan nga sala sa kapuslanan nga sulat() sang PHP.',
+'user-mail-no-addy'      => 'Gintilawan nga magpadala sang e-mail biskan wala sang e-mail adres.',
 
 # Change password dialog
 'resetpass'                 => 'Ilisan ang pasword',
@@ -537,16 +538,18 @@ Mahimo nga madinalag-on mo nga nga gin-ilisan ang imo pasword ukon nagpangabay k
 'resetpass-temp-password'   => 'Temporaryo nga pasword:',
 
 # Special:PasswordReset
-'passwordreset'                => 'Liwaton ang pasword',
-'passwordreset-text'           => 'Taposon ang ini nga formas agod nga makabaton sang e-mail nga nagapahanumdom sang mga detalye sang imo akawnt.',
-'passwordreset-legend'         => 'Liwaton ang pasword',
-'passwordreset-disabled'       => 'Ang mga pagliwat sang pasword gin-untat sa sini nga wiki.',
-'passwordreset-pretext'        => '{{PLURAL:$1||Magbutang sang isa sang mga datos sa idalom}}',
-'passwordreset-username'       => 'Ngalan sang Manog-gamit"',
-'passwordreset-domain'         => 'Domeyn:',
-'passwordreset-email'          => 'Adres sang e-mail:',
-'passwordreset-emailtitle'     => 'Ang mga detalye sang akawnt sa {{SITENAME}}',
-'passwordreset-emailtext-ip'   => 'May tawo nga (mahimo ikaw, halin sa IP adres nga $1) nagpangabay sang pahanumdom sang mga detalye
+'passwordreset'                    => 'Liwaton ang pasword',
+'passwordreset-text'               => 'Taposon ang ini nga formas agod nga makabaton sang e-mail nga nagapahanumdom sang mga detalye sang imo akawnt.',
+'passwordreset-legend'             => 'Liwaton ang pasword',
+'passwordreset-disabled'           => 'Ang mga pagliwat sang pasword gin-untat sa sini nga wiki.',
+'passwordreset-pretext'            => '{{PLURAL:$1||Magbutang sang isa sang mga datos sa idalom}}',
+'passwordreset-username'           => 'Ngalan sang Manog-gamit"',
+'passwordreset-domain'             => 'Domeyn:',
+'passwordreset-capture'            => 'Lantawon ang nagresuta nga e-mail?',
+'passwordreset-capture-help'       => 'Kon butangan mo sang tsek ang ini nga kahon, ang e-mail (nga may temporaryo nga pasword) igapakita sa imo kag amo man ipadala sa manuggamit.',
+'passwordreset-email'              => 'Adres sang e-mail:',
+'passwordreset-emailtitle'         => 'Ang mga detalye sang akawnt sa {{SITENAME}}',
+'passwordreset-emailtext-ip'       => 'May tawo nga (mahimo ikaw, halin sa IP adres nga $1) nagpangabay sang pahanumdom sang mga detalye
 sang imo akawnt para sa {{SITENAME}} ($4). Ang masunod nga {{PLURAL:$3|akawnt|mga akawnt}} sang manuggamit
 may kabahin sa sini nga adres sang e-mail:
 
@@ -556,7 +559,7 @@ $2
 Kinahanglan mo nga magsulod kag magpili sang bag-o nga pasword subong. Kon lain nga tawo ang nagbuhat sini
 nga pagpangabay, ukon nadumduman mo na ang imo pasword, kag indi mo na kinahanglan nga ini
 paga-ilisan, mahimo mo nga pabay-an ang ini nga pahanumdom kag magpadayon sa paggamit sang imo daan nga pasword.',
-'passwordreset-emailtext-user' => 'Ang manuggamit nga si $1 sa {{SITENAME}} nagpangabay sang pahanumdom sang mga detalye sang imo akawnt para sa {{SITENAME}} 
+'passwordreset-emailtext-user'     => 'Ang manuggamit nga si $1 sa {{SITENAME}} nagpangabay sang pahanumdom sang mga detalye sang imo akawnt para sa {{SITENAME}} 
 ($4). Ang masunod nga {{PLURAL:$3|akawnt|mga akawnt}} sang manuggamit may kabahin sa sini nga adres sang e-mail:
 
 $2
@@ -565,9 +568,22 @@ $2
 Kinahanglan mo nga magsulod kag magpili sang bag-o nga pasword subong. Kon lain nga tawo ang nagbuhat sini
 nga pagpangabay, ukon nadumduman mo na ang imo pasword, kag indi mo na kinahanglan nga ini
 paga-ilisan, mahimo mo nga pabay-an ang ini nga pahanumdom kag magpadayon sa paggamit sang imo daan nga pasword.',
-'passwordreset-emailelement'   => 'Gamit-pangalan: $1
+'passwordreset-emailelement'       => 'Gamit-pangalan: $1
 Temporaryo nga pasword: $2',
-'passwordreset-emailsent'      => 'May pahanumdom nga e-mail nga ginpadala.',
+'passwordreset-emailsent'          => 'May pahanumdom nga e-mail nga ginpadala.',
+'passwordreset-emailsent-capture'  => 'May e-mail nga nagapahanumdum, nga ginapakita sa idalom.',
+'passwordreset-emailerror-capture' => 'May e-mail nga nagapahanumdom nga ginbuhat, nga ginapakita sa idalom, apang ang pagpadala sa manuggamit indi madinalag-on: $1',
+
+# Special:ChangeEmail
+'changeemail'          => 'Ilisan ang E-mail adres',
+'changeemail-header'   => 'Ilisan ang e-mail adres sang akawnt',
+'changeemail-text'     => 'Tapusa ang ini nga formas agod nga ma-ilisan ang imo e-mail adres. Kinahanglan mo nga magbutang sang imo pasword sa pag-kumperma sang sini nga pag-ilis.',
+'changeemail-no-info'  => 'Kinahanglan nga nakasulod ka agod nga makadtoan ang ini nga panid sing derecho.',
+'changeemail-oldemail' => 'E-mail adres sa subong:',
+'changeemail-newemail' => 'Bag-o nga e-mail adres:',
+'changeemail-none'     => '(wala)',
+'changeemail-submit'   => 'Ilisan and E-mail',
+'changeemail-cancel'   => 'Kanselahon',
 
 # Edit page toolbar
 'bold_sample'     => 'Dukot nga teksto',
@@ -637,9 +653,6 @@ Indi mo magamit ang 'i-email ining manuggamit' samtang wala ka sang matood nga e
 Ang imo adres sang IP karon amo ang $3, kag ang ID sang pagpuggong amo ang #$5.
 Palihog dala sang mga nasulat sa ibabaw sa mga pagpamangkot nga imo ubrahon.",
 'blockednoreason'                  => 'wala sang rason nga ginhatag',
-'blockedoriginalsource'            => "Ang ginhalinan sang '''$1''' ginapakita sa dalom:",
-'blockededitsource'                => "Ang mga letra sang '''imo gin-ilisan''' sa '''$1''' ginapakita sa dalom:",
-'whitelistedittitle'               => 'Kinahanglan Magsulod para maka ilis',
 'whitelistedittext'                => 'Kinahanglan mo ang $1 agod maka-ilis sang mga panid.',
 'confirmedittext'                  => 'Kinahanglan mo nga kumpirmahon ang imo e-mail adres bag-o ka mag-ilis sang mga panid.
 Palihog plastar kag magpamatood sang imo e-mail adres paagi sang imo [[Special:Preferences|pagpalabi]].',
@@ -904,8 +917,6 @@ Ang iban nga administrador sa {{SITENAME}} mahimo sa gihapon nga makasulod sa na
 'revdelete-unsuppress'        => 'Kuhaon ang mga pagbawal sa mga ginliwat nga mga pagbag-o',
 'revdelete-log'               => 'Rason:',
 'revdelete-submit'            => 'Ipatuman sa ginpili nga {{PLURAL:$1|pagbag-o|mga pagbag-o}}',
-'revdelete-logentry'          => 'gin-ilisan nga pagbag-o sa pagkakitaon sang "[[$1]]"',
-'logdelete-logentry'          => 'gin-ilisan nga hinatabo sa pagkakitaon sang "[[$1]]"',
 'revdelete-success'           => "'''Ang pagkakitaon sang pagbag-o madinalag-on nga ginbag-o.'''",
 'revdelete-failure'           => "'''Ang pagkakitaon sang pagbag-o indi mabag-o:'''
 $1",
@@ -917,15 +928,6 @@ $1",
 'revdel-restore-visible'      => 'mga makita nga pagbag-o',
 'pagehist'                    => 'Kasaysayan sang panid',
 'deletedhist'                 => 'Ginpanas nga kasaysayan',
-'revdelete-content'           => 'kaundan',
-'revdelete-summary'           => 'liwaton ang kabilogan',
-'revdelete-uname'             => 'gamit-pangalan',
-'revdelete-restricted'        => 'ginapatuman nga pagbawal sa mga administrador',
-'revdelete-unrestricted'      => 'ginkakas nga pagbawal sa mga administrador',
-'revdelete-hid'               => 'tagu $1',
-'revdelete-unhid'             => 'ditagu $1',
-'revdelete-log-message'       => '$1 para sa $2 {{PLURAL:$2|pagbag-o|mga pagbag-o}}',
-'logdelete-log-message'       => '$1 para sa $2 {{PLURAL:$2|hinatabo|mga hinatabo}}',
 'revdelete-hide-current'      => 'May sala sa pagtago sang bagay nga may petsa nga $2, $1: amo ini ang pagbag-o karon.
 Indi ini mahimo nga taguon.',
 'revdelete-show-no-access'    => 'May sala sa pagpakita sang bagay nga may petsa nga $2, $1: ang ini nga bagay ginmarkahan nga "ginabawalan".
@@ -1086,12 +1088,14 @@ Tandai nga ang ila nga palasulundan sang mga unod sang {{SITENAME}} mahimo nga m
 'prefs-rc'                      => 'Mga Bag-o nga Inislan',
 'prefs-watchlist'               => 'Lista sang mga ginabantayan',
 'prefs-watchlist-days'          => 'Mga adlaw nga ipakita sa lista sang ginabantayan:',
-'prefs-watchlist-days-max'      => 'Indi magsobra 7 ka adlaw',
+'prefs-watchlist-days-max'      => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'         => 'Ang pinakataas nga beses sang pag-ilis nga ipakita sa ginpalawig nga lista sang ginabantayan:',
 'prefs-watchlist-edits-max'     => 'Pinakataas nga numero: 1000',
 'prefs-watchlist-token'         => 'Token sang lista sang ginabantayan:',
 'prefs-misc'                    => 'Misc',
 'prefs-resetpass'               => 'Ilisan ang pasword',
+'prefs-changeemail'             => 'Ilisan ang E-mail',
+'prefs-setemail'                => 'Magbutang sang E-mail adres',
 'prefs-email'                   => 'Mga pililian sang e-mail',
 'prefs-rendering'               => 'Hitsura',
 'saveprefs'                     => 'Itipunon',
@@ -1151,6 +1155,7 @@ Indi na ini maliwat pa.',
 'yourrealname'                  => 'Matood-tood nga pangalan:',
 'yourlanguage'                  => 'Lenguahe:',
 'yourvariant'                   => 'Ang lain nga lenggwahe sang kaundan:',
+'prefs-help-variant'            => 'Ang imo mas gusto nga kinalain ukon ortigrapiya sa pagpakita sang kaundan nga mga panid sang sini nga wiki sa.',
 'yournick'                      => 'Bag-o nga pirma:',
 'prefs-help-signature'          => 'Ang mga kumento sa mga panid sang pag-estorya kinahanglan nga napirmahan sang "<nowiki>~~~~</nowiki>" nga pagasayluhon sa imo pirma sang stamp sang oras.',
 'badsig'                        => 'Indi mabaton nga hilaw nga pirma.
@@ -1294,8 +1299,7 @@ Mga Pahina sa [[Special:Watchlist|imo lista-lantaw]] ay '''dukot'''.",
 'linksearch-ok' => 'Pangita-a',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Naga-usar nga ginhimo log',
-'newuserlog-create-entry' => 'Bag-o na akawnt nga naga-usar',
+'newuserlogpage' => 'Naga-usar nga ginhimo log',
 
 # Special:ListGroupRights
 'listgrouprights-group'   => 'Grupo',
@@ -1330,7 +1334,6 @@ Palihog lang nga sigurado nga kinagusto mo ini nga himuon, nga na-intindihan mo 
 'actioncomplete'        => 'Kompleto nga aksiyon',
 'deletedtext'           => '"$1" ay nakakas na.
 Lantawa $2 para sa mga lista sang mga bag-o lang ginkakas.',
-'deletedarticle'        => 'ginkakas "[[$1]]"',
 'dellogpage'            => 'Ginkakas na log',
 'deletecomment'         => 'Rason:',
 'deleteotherreason'     => 'Iban/dugang nga rason:',
@@ -1370,7 +1373,6 @@ Pwede mo mabag-o ang lebel sang proteksiyon sang pahina, pero indi ini ma apektu
 
 # Undelete
 'undeletelink'           => 'tan-aw/ginbalik',
-'undeletedarticle'       => 'nanumbalik "[[$1]]"',
 'undelete-search-submit' => 'Pangita-a',
 
 # Namespace form on various pages
@@ -1458,8 +1460,6 @@ Palihog lang pili sang lain nga ngalan. Salamat.',
 Palihog lang sang pagkombinar sa ila sang ensakto.'''",
 'movedto'          => 'gin saylo sa',
 'movetalk'         => 'Isaylo ang upod mga nga pahina hambal',
-'1movedto2'        => '[[$1]] gin saylo na sa [[$2]]',
-'1movedto2_redir'  => 'isaylo [[$1]] sa [[$2]] labaw sa gin direkta liwat',
 'movelogpage'      => 'Giho log',
 'movereason'       => 'Rason:',
 'revertmove'       => 'nagbalik',
@@ -1536,7 +1536,7 @@ Gapasugot sa pagdugang sang rason sa kabilugan.',
 
 # Media information
 'file-info-size' => '$1 × $2 piksel, kadakuon sang file: $3, MIME type: $4',
-'file-nohires'   => '<small>Wala sang yara na taas nga resolusyon.</small>',
+'file-nohires'   => 'Wala sang yara na taas nga resolusyon.',
 'svg-long-desc'  => 'SVG file, nominalya $1 × $2 piksels, kadakuon sang file: $3',
 'show-big-image' => 'Kabilogan nga resolusyon',
 
@@ -1600,5 +1600,9 @@ Ang iban ay pagataguon sang default.
 
 # Special:SpecialPages
 'specialpages' => 'Espesyal nga mga panid',
+
+# New logging system
+'revdelete-restricted'   => 'ginapatuman nga pagbawal sa mga administrador',
+'revdelete-unrestricted' => 'ginkakas nga pagbawal sa mga administrador',
 
 );

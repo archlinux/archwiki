@@ -31,11 +31,18 @@ INSERT INTO &mw_prefix.mwuser
 
 CREATE TABLE &mw_prefix.user_groups (
   ug_user   NUMBER      DEFAULT 0 NOT NULL,
-  ug_group  VARCHAR2(16)     NOT NULL
+  ug_group  VARCHAR2(32)     NOT NULL
 );
 ALTER TABLE &mw_prefix.user_groups ADD CONSTRAINT &mw_prefix.user_groups_fk1 FOREIGN KEY (ug_user) REFERENCES &mw_prefix.mwuser(user_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 CREATE UNIQUE INDEX &mw_prefix.user_groups_u01 ON &mw_prefix.user_groups (ug_user,ug_group);
 CREATE INDEX &mw_prefix.user_groups_i01 ON &mw_prefix.user_groups (ug_group);
+
+CREATE TABLE &mw_prefix.user_former_groups (
+  ufg_user   NUMBER      DEFAULT 0 NOT NULL,
+  ufg_group  VARCHAR2(16)     NOT NULL
+);
+ALTER TABLE &mw_prefix.user_former_groups ADD CONSTRAINT &mw_prefix.user_former_groups_fk1 FOREIGN KEY (ufg_user) REFERENCES &mw_prefix.mwuser(user_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+CREATE UNIQUE INDEX &mw_prefix.user_former_groups_u01 ON &mw_prefix.user_former_groups (ufg_user,ufg_group);
 
 CREATE TABLE &mw_prefix.user_newtalk (
   user_id  NUMBER DEFAULT 0 NOT NULL,
@@ -72,6 +79,7 @@ ALTER TABLE &mw_prefix.page ADD CONSTRAINT &mw_prefix.page_pk PRIMARY KEY (page_
 CREATE UNIQUE INDEX &mw_prefix.page_u01 ON &mw_prefix.page (page_namespace,page_title);
 CREATE INDEX &mw_prefix.page_i01 ON &mw_prefix.page (page_random);
 CREATE INDEX &mw_prefix.page_i02 ON &mw_prefix.page (page_len);
+CREATE INDEX &mw_prefix.page_i03 ON &mw_prefix.page (page_is_redirect, page_namespace, page_len);
 
 -- Create a dummy page to satisfy fk contraints especially with revisions
 INSERT INTO &mw_prefix.page
@@ -97,7 +105,8 @@ CREATE TABLE &mw_prefix.revision (
   rev_minor_edit  CHAR(1)         DEFAULT '0' NOT NULL,
   rev_deleted     CHAR(1)         DEFAULT '0' NOT NULL,
   rev_len         NUMBER          NULL,
-  rev_parent_id   NUMBER      	   DEFAULT NULL
+  rev_parent_id   NUMBER      	   DEFAULT NULL,
+  rev_sha1		  VARCHAR2(32)    NULL
 );
 ALTER TABLE &mw_prefix.revision ADD CONSTRAINT &mw_prefix.revision_pk PRIMARY KEY (rev_id);
 ALTER TABLE &mw_prefix.revision ADD CONSTRAINT &mw_prefix.revision_fk1 FOREIGN KEY (rev_page) REFERENCES &mw_prefix.page(page_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
@@ -131,7 +140,8 @@ CREATE TABLE &mw_prefix.archive (
   ar_deleted     CHAR(1)      DEFAULT '0' NOT NULL,
   ar_len         NUMBER,
   ar_page_id     NUMBER,
-  ar_parent_id   NUMBER
+  ar_parent_id   NUMBER,
+  ar_sha1		  VARCHAR2(32)    NULL
 );
 ALTER TABLE &mw_prefix.archive ADD CONSTRAINT &mw_prefix.archive_fk1 FOREIGN KEY (ar_user) REFERENCES &mw_prefix.mwuser(user_id) ON DELETE SET NULL DEFERRABLE INITIALLY DEFERRED;
 CREATE INDEX &mw_prefix.archive_i01 ON &mw_prefix.archive (ar_namespace,ar_title,ar_timestamp);
@@ -250,7 +260,7 @@ CREATE TABLE &mw_prefix.ipblocks (
   ipb_address           VARCHAR2(255)     NULL,
   ipb_user              NUMBER      DEFAULT 0 NOT  NULL,
   ipb_by                NUMBER      DEFAULT 0 NOT NULL,
-  ipb_by_text           VARCHAR2(255)      NOT NULL,
+  ipb_by_text           VARCHAR2(255)      NULL,
   ipb_reason            VARCHAR2(255)         NOT NULL,
   ipb_timestamp         TIMESTAMP(6) WITH TIME ZONE  NOT NULL,
   ipb_auto              CHAR(1)         DEFAULT '0' NOT NULL,
@@ -354,6 +364,31 @@ CREATE INDEX &mw_prefix.filearchive_i01 ON &mw_prefix.filearchive (fa_name, fa_t
 CREATE INDEX &mw_prefix.filearchive_i02 ON &mw_prefix.filearchive (fa_storage_group, fa_storage_key);
 CREATE INDEX &mw_prefix.filearchive_i03 ON &mw_prefix.filearchive (fa_deleted_timestamp);
 CREATE INDEX &mw_prefix.filearchive_i04 ON &mw_prefix.filearchive (fa_user_text,fa_timestamp);
+
+CREATE SEQUENCE uploadstash_us_id_seq;
+CREATE TABLE &mw_prefix.uploadstash (
+	us_id                 NUMBER       NOT NULL,
+  us_user               NUMBER          DEFAULT 0 NOT NULL,
+	us_key								VARCHAR2(255) NOT NULL,
+	us_orig_path 					VARCHAR2(255) NOT NULL,
+	us_path								VARCHAR2(255) NOT NULL,
+	us_source_type				VARCHAR2(50),
+  us_timestamp          TIMESTAMP(6) WITH TIME ZONE,
+	us_status							VARCHAR2(50) NOT NULL,
+	us_chunk_inx						NUMBER,
+	us_size								NUMBER NOT NULL,
+	us_sha1								VARCHAR2(32) NOT NULL,
+	us_mime								VARCHAR2(255),
+  us_media_type         VARCHAR2(32) DEFAULT NULL,
+	us_image_width				NUMBER,
+	us_image_height				NUMBER,
+	us_image_bits					NUMBER
+);
+ALTER TABLE &mw_prefix.uploadstash ADD CONSTRAINT &mw_prefix.uploadstash_pk PRIMARY KEY (us_id);
+ALTER TABLE &mw_prefix.uploadstash ADD CONSTRAINT &mw_prefix.uploadstash_fk1 FOREIGN KEY (us_user) REFERENCES &mw_prefix.mwuser(user_id) ON DELETE SET NULL DEFERRABLE INITIALLY DEFERRED;
+CREATE INDEX &mw_prefix.uploadstash_i01 ON &mw_prefix.uploadstash (us_user);
+CREATE INDEX &mw_prefix.uploadstash_i02 ON &mw_prefix.uploadstash (us_timestamp);
+CREATE UNIQUE INDEX &mw_prefix.uploadstash_u01 ON &mw_prefix.uploadstash (us_key);
 
 CREATE SEQUENCE recentchanges_rc_id_seq;
 CREATE TABLE &mw_prefix.recentchanges (
@@ -467,6 +502,7 @@ CREATE INDEX &mw_prefix.logging_i01 ON &mw_prefix.logging (log_type, log_timesta
 CREATE INDEX &mw_prefix.logging_i02 ON &mw_prefix.logging (log_user, log_timestamp);
 CREATE INDEX &mw_prefix.logging_i03 ON &mw_prefix.logging (log_namespace, log_title, log_timestamp);
 CREATE INDEX &mw_prefix.logging_i04 ON &mw_prefix.logging (log_timestamp);
+CREATE INDEX &mw_prefix.logging_i05 ON &mw_prefix.logging (log_type, log_action, log_timestamp);
 
 CREATE TABLE &mw_prefix.log_search (
   ls_field VARCHAR2(32) NOT NULL,
@@ -476,18 +512,6 @@ CREATE TABLE &mw_prefix.log_search (
 ALTER TABLE &mw_prefix.log_search ADD CONSTRAINT log_search_pk PRIMARY KEY (ls_field,ls_value,ls_log_id);
 CREATE INDEX &mw_prefix.log_search_i01 ON &mw_prefix.log_search (ls_log_id);
 
-CREATE SEQUENCE trackbacks_tb_id_seq;
-CREATE TABLE &mw_prefix.trackbacks (
-  tb_id     NUMBER   NOT NULL,
-  tb_page   NUMBER,
-  tb_title  VARCHAR2(255)     NOT NULL,
-  tb_url    VARCHAR2(255)     NOT NULL,
-  tb_ex     CLOB,
-  tb_name   VARCHAR2(255) 
-);
-ALTER TABLE &mw_prefix.trackbacks ADD CONSTRAINT &mw_prefix.trackbacks_pk PRIMARY KEY (tb_id);
-ALTER TABLE &mw_prefix.trackbacks ADD CONSTRAINT &mw_prefix.trackbacks_fk1 FOREIGN KEY (tb_page) REFERENCES &mw_prefix.page(page_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-CREATE INDEX &mw_prefix.trackbacks_i01 ON &mw_prefix.trackbacks (tb_page);
 
 CREATE SEQUENCE job_job_id_seq;
 CREATE TABLE &mw_prefix.job (
@@ -495,10 +519,12 @@ CREATE TABLE &mw_prefix.job (
   job_cmd        VARCHAR2(60)      NOT NULL,
   job_namespace  NUMBER  DEFAULT 0 NOT NULL,
   job_title      VARCHAR2(255)      NOT NULL,
+  job_timestamp	 TIMESTAMP(6) WITH TIME ZONE NULL,
   job_params     CLOB      NOT NULL
 );
 ALTER TABLE &mw_prefix.job ADD CONSTRAINT &mw_prefix.job_pk PRIMARY KEY (job_id);
 CREATE INDEX &mw_prefix.job_i01 ON &mw_prefix.job (job_cmd, job_namespace, job_title);
+CREATE INDEX &mw_prefix.job_i02 ON &mw_prefix.job (job_timestamp);
 
 CREATE TABLE &mw_prefix.querycache_info (
   qci_type       VARCHAR2(32) NOT NULL,
@@ -642,8 +668,7 @@ CREATE TABLE &mw_prefix.config (
   cf_value blob NOT NULL
 );
 ALTER TABLE &mw_prefix.config ADD CONSTRAINT &mw_prefix.config_pk PRIMARY KEY (cf_name);
--- leaving index out for now ... 
-
+-- leaving index out for now ...
 
 -- do not prefix this table as it breaks parserTests
 CREATE TABLE wiki_field_info_full (
@@ -653,9 +678,9 @@ data_default VARCHAR2(4000),
 data_length NUMBER NOT NULL,
 data_type VARCHAR2(106),
 not_null CHAR(1) NOT NULL,
-prim NUMBER(1), 
+prim NUMBER(1),
 uniq NUMBER(1),
-nonuniq NUMBER(1) 
+nonuniq NUMBER(1)
 );
 ALTER TABLE wiki_field_info_full ADD CONSTRAINT wiki_field_info_full_pk PRIMARY KEY (table_name, column_name);
 
@@ -722,7 +747,7 @@ CREATE OR REPLACE PROCEDURE duplicate_table(p_tabname   IN VARCHAR2,
 BEGIN
   BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE ' || p_newprefix || p_tabname ||
-                      ' CASCADE CONSTRAINTS';
+                      ' CASCADE CONSTRAINTS PURGE';
   EXCEPTION
     WHEN e_table_not_exist THEN
       NULL;
@@ -732,8 +757,9 @@ BEGIN
   END IF;
   IF (l_temporary) THEN
     EXECUTE IMMEDIATE 'CREATE GLOBAL TEMPORARY TABLE ' || p_newprefix ||
-                      p_tabname || ' AS SELECT * FROM ' || p_oldprefix ||
-                      p_tabname || ' WHERE ROWNUM = 0';
+                      p_tabname ||
+                      ' ON COMMIT PRESERVE ROWS AS SELECT * FROM ' ||
+                      p_oldprefix || p_tabname || ' WHERE ROWNUM = 0';
   ELSE
     EXECUTE IMMEDIATE 'CREATE TABLE ' || p_newprefix || p_tabname ||
                       ' AS SELECT * FROM ' || p_oldprefix || p_tabname ||
@@ -780,7 +806,8 @@ BEGIN
                  FROM user_constraints uc
                 WHERE table_name = p_oldprefix || p_tabname
                   AND constraint_type = 'R') LOOP
-      IF nvl(length(l_temp_ei_sql), 0) > 0 THEN
+      IF nvl(length(l_temp_ei_sql), 0) > 0 AND
+         INSTR(l_temp_ei_sql, 'PRIMARY KEY') = 0 THEN
         EXECUTE IMMEDIATE l_temp_ei_sql;
       END IF;
     END LOOP;

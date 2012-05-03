@@ -25,11 +25,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiBase.php' );
-}
-
 /**
  * Unit to authenticate log-in attempts to the current wiki.
  *
@@ -55,39 +50,45 @@ class ApiLogin extends ApiBase {
 
 		$result = array();
 
-		$req = new FauxRequest( array(
-			'wpName' => $params['name'],
-			'wpPassword' => $params['password'],
-			'wpDomain' => $params['domain'],
-			'wpLoginToken' => $params['token'],
-			'wpRemember' => ''
-		) );
-
 		// Init session if necessary
 		if ( session_id() == '' ) {
 			wfSetupSession();
 		}
 
-		$loginForm = new LoginForm( $req );
+		$context = new DerivativeContext( $this->getContext() );
+		$context->setRequest( new DerivativeRequest(
+			$this->getContext()->getRequest(),
+			array(
+				'wpName' => $params['name'],
+				'wpPassword' => $params['password'],
+				'wpDomain' => $params['domain'],
+				'wpLoginToken' => $params['token'],
+				'wpRemember' => ''
+			)
+		) );
+		$loginForm = new LoginForm();
+		$loginForm->setContext( $context );
 
-		global $wgCookiePrefix, $wgUser, $wgPasswordAttemptThrottle;
+		global $wgCookiePrefix, $wgPasswordAttemptThrottle;
 
 		$authRes = $loginForm->authenticateUserData();
 		switch ( $authRes ) {
 			case LoginForm::SUCCESS:
-				$wgUser->setOption( 'rememberpassword', 1 );
-				$wgUser->setCookies( $this->getMain()->getRequest() );
+				$user = $context->getUser();
+				$this->getContext()->setUser( $user );
+				$user->setOption( 'rememberpassword', 1 );
+				$user->setCookies( $this->getRequest() );
 
 				// Run hooks.
 				// @todo FIXME: Split back and frontend from this hook.
 				// @todo FIXME: This hook should be placed in the backend
 				$injected_html = '';
-				wfRunHooks( 'UserLoginComplete', array( &$wgUser, &$injected_html ) );
+				wfRunHooks( 'UserLoginComplete', array( &$user, &$injected_html ) );
 
 				$result['result'] = 'Success';
-				$result['lguserid'] = intval( $wgUser->getId() );
-				$result['lgusername'] = $wgUser->getName();
-				$result['lgtoken'] = $wgUser->getToken();
+				$result['lguserid'] = intval( $user->getId() );
+				$result['lgusername'] = $user->getName();
+				$result['lgtoken'] = $user->getToken();
 				$result['cookieprefix'] = $wgCookiePrefix;
 				$result['sessionid'] = session_id();
 				break;
@@ -199,14 +200,14 @@ class ApiLogin extends ApiBase {
 			array( 'code' => 'NotExists', 'info' => ' The username you provided doesn\'t exist' ),
 			array( 'code' => 'EmptyPass', 'info' => ' You didn\'t set the lgpassword parameter or you left it empty' ),
 			array( 'code' => 'WrongPass', 'info' => ' The password you provided is incorrect' ),
-			array( 'code' => 'WrongPluginPass', 'info' => 'Same as `WrongPass", returned when an authentication plugin rather than MediaWiki itself rejected the password' ),
+			array( 'code' => 'WrongPluginPass', 'info' => 'Same as "WrongPass", returned when an authentication plugin rather than MediaWiki itself rejected the password' ),
 			array( 'code' => 'CreateBlocked', 'info' => 'The wiki tried to automatically create a new account for you, but your IP address has been blocked from account creation' ),
 			array( 'code' => 'Throttled', 'info' => 'You\'ve logged in too many times in a short time' ),
 			array( 'code' => 'Blocked', 'info' => 'User is blocked' ),
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=login&lgname=user&lgpassword=password'
 		);

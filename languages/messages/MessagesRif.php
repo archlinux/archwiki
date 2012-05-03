@@ -158,7 +158,6 @@ $messages = array(
 'badtitletext'   => 'Isem n Tasna itexised war icni ca, ixwa, niɣ  isem n ajar-tutlayt niɣ ajar-wiki war icni ca.
 teqqad ad yilli days ca n usekkil war itwagg deg isem .',
 'viewsource'     => 'Ẓṛ aghbalu',
-'viewsourcefor'  => 'i $1',
 'viewsourcetext' => 'Tzemred a tẓerd u atsneɣled aɣbal n Tasna ya :',
 
 # Login and logout pages
@@ -524,7 +523,6 @@ Ma nican txsd a tggd manaya? Ma tssnd min ttggd? Ma ttggd manaya amc teqqaṛ  [
 'actioncomplete'        => 'Tiggawt tsala',
 'deletedtext'           => '"$1" Twakkes.
 Xemm $2 i tikkas timaynutin.',
-'deletedarticle'        => 'twakkes "[[$1]]"',
 'dellogpage'            => 'Aɣmis n uṣfaḍ',
 'deletecomment'         => 'Ssebba:',
 'deleteotherreason'     => 'Ca n ssebba nniḍn:',
@@ -640,7 +638,6 @@ ixdar isem nniḍn.',
 snaqlitent s ufus.'''",
 'movedto'          => 'smutti ghar',
 'movetalk'         => 'Snaqel Tasniwin n usiwl igg illan akid-s',
-'1movedto2'        => '[[$1]] twaneql ɣa [[$2]]',
 'movelogpage'      => 'Snaql aɣmis',
 'movereason'       => 'Ssebba:',
 'revertmove'       => 'sedwel',
@@ -715,7 +712,7 @@ Bbeẓ x ufeskar n uzar-timeẓṛi zzat i gha txemmled min turid',
 
 # Media information
 'file-info-size' => '$1 × $2 pixel, tiddisize n ufaylu: $3, anawtype n MIME: $4',
-'file-nohires'   => '<small>walu ca n resolution yemɣa x wa.</small>',
+'file-nohires'   => 'walu ca n resolution yemɣa x wa.',
 'svg-long-desc'  => 'Afaylu n SVG, dis $1 × $2 pixel, Tiddi n ufaylu: $3',
 'show-big-image' => 'Resolution ameqran',
 

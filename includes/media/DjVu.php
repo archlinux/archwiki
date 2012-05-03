@@ -131,7 +131,7 @@ class DjVuHandler extends ImageHandler {
 		}
 		$width = $params['width'];
 		$height = $params['height'];
-		$srcPath = $image->getPath();
+		$srcPath = $image->getLocalRefPath();
 		$page = $params['page'];
 		if ( $page > $this->pageCount( $image ) ) {
 			return new MediaTransformError( 'thumbnail_error', $width, $height, wfMsg( 'djvu_page_error' ) );
@@ -141,13 +141,13 @@ class DjVuHandler extends ImageHandler {
 			return new ThumbnailImage( $image, $dstUrl, $width, $height, $dstPath, $page );
 		}
 
-		if ( !wfMkdirParents( dirname( $dstPath ) ) ) {
+		if ( !wfMkdirParents( dirname( $dstPath ), null, __METHOD__ ) ) {
 			return new MediaTransformError( 'thumbnail_error', $width, $height, wfMsg( 'thumbnail_dest_directory' ) );
 		}
 
 		# Use a subshell (brackets) to aggregate stderr from both pipeline commands
 		# before redirecting it to the overall stdout. This works in both Linux and Windows XP.
-		$cmd = '(' . wfEscapeShellArg( $wgDjvuRenderer ) . " -format=ppm -page={$page}" . 
+		$cmd = '(' . wfEscapeShellArg( $wgDjvuRenderer ) . " -format=ppm -page={$page}" .
 			" -size={$params['physicalWidth']}x{$params['physicalHeight']} " .
 			wfEscapeShellArg( $srcPath );
 		if ( $wgDjvuPostProcessor ) {
@@ -190,6 +190,7 @@ class DjVuHandler extends ImageHandler {
 	/**
 	 * Cache a document tree for the DjVu XML metadata
 	 * @param $image File
+	 * @param $gettext Boolean: DOCUMENT (Default: false)
 	 */
 	function getMetaTree( $image , $gettext = false ) {
 		if ( isset( $image->dejaMetaTree ) ) {
@@ -222,7 +223,7 @@ class DjVuHandler extends ImageHandler {
 				$image->dejaMetaTree = $tree;
 			}
 		} catch( Exception $e ) {
-			wfDebug( "Bogus multipage XML metadata on '$image->name'\n" );
+			wfDebug( "Bogus multipage XML metadata on '{$image->getName()}'\n" );
 		}
 		wfRestoreWarnings();
 		wfProfileOut( __METHOD__ );

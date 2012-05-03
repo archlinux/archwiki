@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  *
@@ -36,6 +35,8 @@ class ApiFeedContributions extends ApiBase {
 
 	/**
 	 * This module uses a custom feed wrapper printer.
+	 *
+	 * @return ApiFormatFeedWrapper
 	 */
 	public function getCustomPrinter() {
 		return new ApiFormatFeedWrapper( $this->getMain() );
@@ -73,7 +74,7 @@ class ApiFeedContributions extends ApiBase {
 			$feedUrl
 		);
 
-		$pager = new ContribsPager( array(
+		$pager = new ContribsPager( $this->getContext(), array(
 			'target' => $target,
 			'namespace' => $params['namespace'],
 			'year' => $params['year'],
@@ -99,7 +100,7 @@ class ApiFeedContributions extends ApiBase {
 		if( $title ) {
 			$date = $row->rev_timestamp;
 			$comments = $title->getTalkPage()->getFullURL();
-			$revision = Revision::newFromRow( $row);
+			$revision = Revision::newFromRow( $row );
 
 			return new FeedItem(
 				$title->getPrefixedText(),
@@ -195,7 +196,7 @@ class ApiFeedContributions extends ApiBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=feedcontributions&user=Reedy',
 		);

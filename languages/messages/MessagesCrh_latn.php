@@ -456,16 +456,17 @@ Lütfen, URL yazıp bundan [[Special:ListUsers/sysop|idarecige]] haber beriñiz.
 'formerror'            => 'Hata: formanıñ malümatını yollamaqnıñ iç çaresi yoq',
 'badarticleerror'      => 'Siz yapmağa istegen işlev bu saifede yapılıp оlamay.',
 'cannotdelete'         => '"$1" saife ya da faylı yoq etilip olamadı. Başqa bir qullanıcı tarafından yoq etilgen ola bile.',
+'cannotdelete-title'   => '"$1" saifesini yoq etmege olmaz',
 'badtitle'             => 'Ruhsetsiz serleva',
 'badtitletext'         => 'İstenilgen saife adı doğru degil, o boştır, yahut tillerara bağlantı ya da vikilerara bağlantı doğru yazılmağan. Belki saife adında yasaqlanğan işaretler bar.',
-'perfcached'           => 'Malümatlar daa evelceden azırlanğan ola bilir. Bu sebepten eskirgen ola bilir!',
-'perfcachedts'         => 'Aşağıda keşte saqlanğan malümat buluna, soñki yañaruv zamanı: $1.',
+'perfcached'           => 'Malümatlar daa evelceden azırlanğan ola bilir. Bu sebepten eskirgen ola bilir! A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'Aşağıda keşte saqlanğan malümat buluna, soñki yañaruv zamanı: $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'Bu saifeni deñiştirmege şimdi izin yoq. Bu malümat aman yañartılmaycaq.',
 'wrong_wfQuery_params' => 'wrong_wfQuery_params - wfQuery() funktsiyası içün izinsiz parametrler<br />
 Funktsiya: $1<br />
 Soratma: $2',
 'viewsource'           => 'menba kodunı köster',
-'viewsourcefor'        => '$1 içün',
+'viewsource-title'     => '$1 saifesiniñ menba kodu',
 'actionthrottled'      => 'Areket toqtaldı',
 'actionthrottledtext'  => 'Spamğa qarşı küreş sebebinden bu areketni az vaqıt içinde çoq kere tekrarlap olamaysıñız. Mümkün olğan qarardan ziyade areket yaptıñız. Bir qaç daqqadan soñ tekrarlap baqıñız.',
 'protectedpagetext'    => 'Bu saifeni kimse deñiştirmesin dep o blok etildi.',
@@ -651,9 +652,6 @@ Blok etüvni muzakere etmek içün $1 qullanıcısına ya da başqa er angi [[{{
 Diqqat etiñiz ki, qayd olunmağan ve e-mail adresiñizni [[Special:Preferences|şahsiy sazlamalarda]] tasdıqlamağan alda, em de blok etilgende sizge mektüp yollamaq yasaq etilgen olsa, idarecige mektüp yollap olamazsıñız.
 IP adresiñiz — $3, blok etüv identifikatorı — #$5. Lütfen, idarecilerge mektüpleriñizde onı bildiriñiz.',
 'blockednoreason'                  => 'sebep bildirilmedi',
-'blockedoriginalsource'            => 'Aşağıda "$1" saifesiniñ metini buluna.',
-'blockededitsource'                => "Aşağıda \"\$1\" saifesindeki '''yapqan deñiştirmeleriñizniñ''' metini buluna.",
-'whitelistedittitle'               => 'Deñiştirmek içün oturım açmalısıñız',
 'whitelistedittext'                => 'Saifeni deñiştirmek içün $1 kereksiñiz.',
 'confirmedittext'                  => 'Saifeni deñiştirmeden evel e-mail adresiñizni tasdıqlamalısıñız. Lütfen, [[Special:Preferences|sazlamalar saifesinde]] e-mail adresiñizni kirsetiñiz ve tasdıqlañız.',
 'nosuchsectiontitle'               => 'Bölük tapılamadı',
@@ -913,7 +911,7 @@ Vikide bu saifege oşağan saifelerni [[Special:Search|tapıp baqıñız]].',
 'prefs-rc'                      => 'Soñki deñişmeler',
 'prefs-watchlist'               => 'Közetüv cedveli',
 'prefs-watchlist-days'          => 'Közetüv cedvelinde kösterilecek kün sayısı:',
-'prefs-watchlist-days-max'      => 'Eñ çoq 7 kün',
+'prefs-watchlist-days-max'      => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'         => 'Kenişletilgen közetüv cedvelinde kösterilecek deñişmeler sayısı:',
 'prefs-watchlist-edits-max'     => 'Eñ çoq 1000',
 'prefs-watchlist-token'         => 'Közetüv cedveli işareti:',
@@ -1003,7 +1001,7 @@ Eger bildirseñiz, saifelerdeki deñişmelerni kimniñ yapqanını köstermek i�
 'userrights-lookup-user'   => 'Qullanıcı gruppalarını idare et',
 'userrights-user-editname' => 'Öz qullanıcı adıñıznı yazıñız:',
 'editusergroup'            => 'Qullanıcı gruppaları nizamla',
-'editinguser'              => "'''[[User:$1|$1]]''' qullanıcısınıñ ([[User talk:$1|{{int:talkpagelinktext}}]]{{int:pipe-separator}}[[Special:Contributions/$1|{{int:contribslink}}]]) izinlerini deñiştirmektesiñiz",
+'editinguser'              => "'''[[User:$1|$1]]''' $2 qullanıcısınıñ izinlerini deñiştireyatasız",
 'userrights-editusergroup' => 'Qullanıcı gruppaları nizamla',
 'saveusergroups'           => 'Qullanıcı gruppalarını saqla',
 'userrights-groupsmember'  => 'Azası оlğan gruppalarıñız:',
@@ -1384,12 +1382,8 @@ Ayrıca [[Special:WantedCategories|talap etilgen kategoriyalarnıñ cedveline]] 
 'listusers-noresult' => 'İç bir qullanıcı tapılmadı.',
 
 # Special:Log/newusers
-'newuserlogpage'              => 'Yañı qullanıcı jurnalı',
-'newuserlogpagetext'          => 'Eñ sоñki qayd оlğan qullanıcı jurnalı.',
-'newuserlog-byemail'          => 'parol e-mail vastasınen yiberilgen',
-'newuserlog-create-entry'     => 'Yañı qullanıcı',
-'newuserlog-create2-entry'    => 'yañı esap yarattı $1',
-'newuserlog-autocreate-entry' => 'Esap avtomatik olaraq yaratıldı',
+'newuserlogpage'     => 'Yañı qullanıcı jurnalı',
+'newuserlogpagetext' => 'Eñ sоñki qayd оlğan qullanıcı jurnalı.',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(azalar cedveli)',
@@ -1438,7 +1432,7 @@ Ayrıca [[Special:WantedCategories|talap etilgen kategoriyalarnıñ cedveline]] 
 'watchmethod-list'     => 'közetüv cedvelindeki saifeler teşkerile',
 'watchlistcontains'    => 'Siziñ közetüv cedveliñizde {{PLURAL:$1|1|$1}} saife bar.',
 'iteminvalidname'      => '"$1" saifesi munasebetinen problema olıp çıqtı, elverişli olmağan isimdir…',
-'wlnote'               => "Aşağıda soñki {{PLURAL:$2|saat|'''$2''' saat}} içinde yapılğan soñki {{PLURAL:$1|deñişiklik|'''$1''' deñişiklik}} kösterile.",
+'wlnote'               => "Aşağıda saat $3, $4 içün soñki {{PLURAL:$2|saat|'''$2''' saat}} içinde yapılğan soñki {{PLURAL:$1|deñişme|'''$1''' deñişme}} kösterile.",
 'wlshowlast'           => 'Soñki $1 saat içün, $2 kün içün ya da $3 köster',
 'watchlist-options'    => 'Közetüv cedveli sazlamaları',
 
@@ -1501,7 +1495,6 @@ Lütfen, neticelerini añlağanıñıznı ve [[{{MediaWiki:Policy-url}}|yoq etü
 'actionfailed'          => 'Areket yapılamadı',
 'deletedtext'           => '"$1" yoq etildi.
 yaqın zamanda yoq etilgenlerni körmek içün: $2.',
-'deletedarticle'        => '"[[$1]]" yoq etildi',
 'dellogpage'            => 'Yoq etüv jurnalı',
 'dellogpagetext'        => 'Aşağıdaki cedvel soñki yoq etüv jurnalıdır.',
 'deletionlog'           => 'yoq etüv jurnalı',
@@ -1567,7 +1560,6 @@ Bu saifeniñ qorçalav seviyesini deñiştirip olasıñız, amma kaskadlı qorç
 'undeletelink'       => 'köster/keri ketir',
 'undeletereset'      => 'Vazgeç',
 'undeletecomment'    => 'Sebep:',
-'undeletedarticle'   => '"[[$1]]" keri ketirildi.',
 'undeletedrevisions' => 'Toplam {{PLURAL:$1|1 qayd|$1 qayd}} keri ketirildi.',
 'undelete-header'    => 'Keçenlerde yоq etilgen saifelerni körmek içün [[Special:Log/delete|yоq etüv jurnalına]] baqıñız.',
 
@@ -1691,9 +1683,6 @@ Lütfen, başqa bir ad saylap yazıñız.',
 'movepage-page-exists'         => '$1 saifesi endi bar, ve avtomatik olaraq yañıdan yazılıp olamaz.',
 'movepage-page-moved'          => '$1 saifesiniñ adı $2 olaraq deñiştirildi.',
 'movepage-page-unmoved'        => '$1 saifesiniñ adı $2 olaraq deñiştirilip olamay.',
-'1movedto2'                    => '"[[$1]]" saifesiniñ adı "[[$2]]" olaraq deñiştirildi',
-'1movedto2_redir'              => '[[$1]] serlevası [[$2]] saifesine yollandı',
-'move-redirect-suppressed'     => 'yollama bastırılğan',
 'movelogpage'                  => 'Ad deñişmeleri jurnalı',
 'movelogpagetext'              => 'Aşağıda bulunğan cedvel adı deñiştirilgen saifelerni köstere',
 'movesubpage'                  => '{{PLURAL:$1|Alt saife|Alt saifeler}}',
@@ -1861,7 +1850,7 @@ Faylnı işletip işletim sistemañızğa zarar ketirip olursıñız.",
 'widthheightpage' => '$1 × $2, {{PLURAL:$3|1|$3}} saife',
 'file-info'       => 'fayl büyükligi: $1, MIME çeşiti: $2',
 'file-info-size'  => '$1 × $2 piksel, fayl büyükligi: $3, MIME çeşiti: $4',
-'file-nohires'    => '<small>Daa yüksek çezinirlikke saip versiya yoq.</small>',
+'file-nohires'    => 'Daa yüksek ayırımlılıqqa saip versiya yoq.',
 'svg-long-desc'   => 'SVG faylı, nominal $1 × $2 piksel, fayl büyükligi: $3',
 'show-big-image'  => 'Tam ayırımlılıq',
 
@@ -1879,9 +1868,9 @@ Faylnı işletip işletim sistemañızğa zarar ketirip olursıñız.",
 
 # Video information, used by Language::formatTimePeriod() to format lengths in the above messages
 'video-dims'     => '$1, $2 × $3',
-'seconds-abbrev' => 'san.',
-'minutes-abbrev' => 'daq.',
-'hours-abbrev'   => 'saat',
+'seconds-abbrev' => '$1san.',
+'minutes-abbrev' => '$1daq.',
+'hours-abbrev'   => '$1saat',
 
 # Bad image list
 'bad_image_list' => 'Format böyle olmalı:
@@ -2015,13 +2004,6 @@ Bu tasdıq kodu $4 tarihına qadar qullanılıp olacaq.',
 'scarytranscludefailed'   => '[$1 şablonına irişilip olamadı]',
 'scarytranscludetoolong'  => '[URL adresi çoq uzun]',
 
-# Trackbacks
-'trackbackbox'      => 'Bu saife içün trackback:<br />
-$1',
-'trackbackremove'   => '([$1 yoq et])',
-'trackbacklink'     => 'Trackback',
-'trackbackdeleteok' => 'Trackback muvafaqiyetnen yoq etildi.',
-
 # Delete conflict
 'deletedwhileediting' => "'''Tenbi''': Bu saife siz deñişiklik yapmağa başlağandan soñ yoq etildi!",
 'confirmrecreate'     => "Siz bu saifeni deñiştirgen vaqıtta [[User:$1|$1]] ([[User talk:$1|muzakere]]) qullanıcısı onı yoq etkendir, sebebi:
@@ -2124,5 +2106,8 @@ Bitirgen soñ "{{int:Watchlistedit-raw-submit}}" yazısına basıñız.
 
 # HTML forms
 'htmlform-reset' => 'Deñişikliklerni keri al',
+
+# New logging system
+'newuserlog-byemail' => 'parol e-mail vastasınen yiberilgen',
 
 );

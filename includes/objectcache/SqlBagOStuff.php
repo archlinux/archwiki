@@ -24,24 +24,24 @@ class SqlBagOStuff extends BagOStuff {
 
 	/**
 	 * Constructor. Parameters are:
-	 *   - server:   A server info structure in the format required by each 
+	 *   - server:   A server info structure in the format required by each
 	 *               element in $wgDBServers.
 	 *
-	 *   - purgePeriod: The average number of object cache requests in between 
-	 *                  garbage collection operations, where expired entries 
-	 *                  are removed from the database. Or in other words, the 
-	 *                  reciprocal of the probability of purging on any given 
-	 *                  request. If this is set to zero, purging will never be 
+	 *   - purgePeriod: The average number of object cache requests in between
+	 *                  garbage collection operations, where expired entries
+	 *                  are removed from the database. Or in other words, the
+	 *                  reciprocal of the probability of purging on any given
+	 *                  request. If this is set to zero, purging will never be
 	 *                  done.
 	 *
 	 *   - tableName:   The table name to use, default is "objectcache".
 	 *
-	 *   - shards:      The number of tables to use for data storage. If this is 
-	 *                  more than 1, table names will be formed in the style 
-	 *                  objectcacheNNN where NNN is the shard index, between 0 and 
-	 *                  shards-1. The number of digits will be the minimum number 
-	 *                  required to hold the largest shard index. Data will be 
-	 *                  distributed across all tables by key hash. This is for 
+	 *   - shards:      The number of tables to use for data storage. If this is
+	 *                  more than 1, table names will be formed in the style
+	 *                  objectcacheNNN where NNN is the shard index, between 0 and
+	 *                  shards-1. The number of digits will be the minimum number
+	 *                  required to hold the largest shard index. Data will be
+	 *                  distributed across all tables by key hash. This is for
 	 *                  MySQL bugs 61735 and 61736.
 	 *
 	 * @param $params array
@@ -108,7 +108,7 @@ class SqlBagOStuff extends BagOStuff {
 	protected function getTableByShard( $index ) {
 		if ( $this->shards > 1 ) {
 			$decimals = strlen( $this->shards - 1 );
-			return $this->tableName . 
+			return $this->tableName .
 				sprintf( "%0{$decimals}d", $index );
 		} else {
 			return $this->tableName;
@@ -133,7 +133,7 @@ class SqlBagOStuff extends BagOStuff {
 		if ( $this->isExpired( $row->exptime ) ) {
 			$this->debug( "get: key has expired, deleting" );
 			try {
-				$db->begin();
+				$db->begin( __METHOD__ );
 				# Put the expiry time in the WHERE condition to avoid deleting a
 				# newly-inserted value
 				$db->delete( $tableName,
@@ -141,7 +141,7 @@ class SqlBagOStuff extends BagOStuff {
 						'keyname' => $key,
 						'exptime' => $row->exptime
 					), __METHOD__ );
-				$db->commit();
+				$db->commit( __METHOD__ );
 			} catch ( DBQueryError $e ) {
 				$this->handleWriteError( $e );
 			}
@@ -170,18 +170,18 @@ class SqlBagOStuff extends BagOStuff {
 			$encExpiry = $db->timestamp( $exptime );
 		}
 		try {
-			$db->begin();
+			$db->begin( __METHOD__ );
 			// (bug 24425) use a replace if the db supports it instead of
 			// delete/insert to avoid clashes with conflicting keynames
-			$db->replace( 
-				$this->getTableByKey( $key ), 
+			$db->replace(
+				$this->getTableByKey( $key ),
 				array( 'keyname' ),
 				array(
 					'keyname' => $key,
 					'value' => $db->encodeBlob( $this->serialize( $value ) ),
 					'exptime' => $encExpiry
 				), __METHOD__ );
-			$db->commit();
+			$db->commit( __METHOD__ );
 		} catch ( DBQueryError $e ) {
 			$this->handleWriteError( $e );
 
@@ -195,12 +195,12 @@ class SqlBagOStuff extends BagOStuff {
 		$db = $this->getDB();
 
 		try {
-			$db->begin();
-			$db->delete( 
-				$this->getTableByKey( $key ), 
-				array( 'keyname' => $key ), 
+			$db->begin( __METHOD__ );
+			$db->delete(
+				$this->getTableByKey( $key ),
+				array( 'keyname' => $key ),
 				__METHOD__ );
-			$db->commit();
+			$db->commit( __METHOD__ );
 		} catch ( DBQueryError $e ) {
 			$this->handleWriteError( $e );
 
@@ -216,23 +216,23 @@ class SqlBagOStuff extends BagOStuff {
 		$step = intval( $step );
 
 		try {
-			$db->begin();
-			$row = $db->selectRow( 
-				$tableName, 
+			$db->begin( __METHOD__ );
+			$row = $db->selectRow(
+				$tableName,
 				array( 'value', 'exptime' ),
-				array( 'keyname' => $key ), 
-				__METHOD__, 
+				array( 'keyname' => $key ),
+				__METHOD__,
 				array( 'FOR UPDATE' ) );
 			if ( $row === false ) {
 				// Missing
-				$db->commit();
+				$db->commit( __METHOD__ );
 
 				return null;
 			}
 			$db->delete( $tableName, array( 'keyname' => $key ), __METHOD__ );
 			if ( $this->isExpired( $row->exptime ) ) {
 				// Expired, do not reinsert
-				$db->commit();
+				$db->commit( __METHOD__ );
 
 				return null;
 			}
@@ -245,12 +245,12 @@ class SqlBagOStuff extends BagOStuff {
 					'value' => $db->encodeBlob( $this->serialize( $newValue ) ),
 					'exptime' => $row->exptime
 				), __METHOD__, 'IGNORE' );
-			
+
 			if ( $db->affectedRows() == 0 ) {
 				// Race condition. See bug 28611
 				$newValue = null;
 			}
-			$db->commit();
+			$db->commit( __METHOD__ );
 		} catch ( DBQueryError $e ) {
 			$this->handleWriteError( $e );
 
@@ -265,7 +265,7 @@ class SqlBagOStuff extends BagOStuff {
 		$result = array();
 
 		for ( $i = 0; $i < $this->shards; $i++ ) {
-			$res = $db->select( $this->getTableByShard( $i ), 
+			$res = $db->select( $this->getTableByShard( $i ),
 				array( 'keyname' ), false, __METHOD__ );
 			foreach ( $res as $row ) {
 				$result[] = $row->keyname;
@@ -311,18 +311,67 @@ class SqlBagOStuff extends BagOStuff {
 	/**
 	 * Delete objects from the database which expire before a certain date.
 	 */
-	public function deleteObjectsExpiringBefore( $timestamp ) {
+	public function deleteObjectsExpiringBefore( $timestamp, $progressCallback = false ) {
 		$db = $this->getDB();
 		$dbTimestamp = $db->timestamp( $timestamp );
+		$totalSeconds = false;
+		$baseConds = array( 'exptime < ' . $db->addQuotes( $dbTimestamp ) );
 
 		try {
 			for ( $i = 0; $i < $this->shards; $i++ ) {
-				$db->begin();
-				$db->delete(
-					$this->getTableByShard( $i ), 
-					array( 'exptime < ' . $db->addQuotes( $dbTimestamp ) ), 
-					__METHOD__ );
-				$db->commit();
+				$maxExpTime = false;
+				while ( true ) {
+					$conds = $baseConds;
+					if ( $maxExpTime !== false ) {
+						$conds[] = 'exptime > ' . $db->addQuotes( $maxExpTime );
+					}
+					$rows = $db->select( 
+						$this->getTableByShard( $i ),
+						array( 'keyname', 'exptime' ),
+						$conds,
+						__METHOD__,
+						array( 'LIMIT' => 100, 'ORDER BY' => 'exptime' ) );
+					if ( !$rows->numRows() ) {
+						break;
+					}
+					$keys = array();
+					$row = $rows->current();
+					$minExpTime = $row->exptime;
+					if ( $totalSeconds === false ) {
+						$totalSeconds = wfTimestamp( TS_UNIX, $timestamp )
+							- wfTimestamp( TS_UNIX, $minExpTime );
+					}
+					foreach ( $rows as $row ) {
+						$keys[] = $row->keyname;
+						$maxExpTime = $row->exptime;
+					}
+
+					$db->begin( __METHOD__ );
+					$db->delete(
+						$this->getTableByShard( $i ),
+						array( 
+							'exptime >= ' . $db->addQuotes( $minExpTime ),
+							'exptime < ' . $db->addQuotes( $dbTimestamp ),
+							'keyname' => $keys
+						),
+						__METHOD__ );
+					$db->commit( __METHOD__ );
+
+					if ( $progressCallback ) {
+						if ( intval( $totalSeconds ) === 0 ) {
+							$percent = 0;
+						} else {
+							$remainingSeconds = wfTimestamp( TS_UNIX, $timestamp ) 
+								- wfTimestamp( TS_UNIX, $maxExpTime );
+							if ( $remainingSeconds > $totalSeconds ) {
+								$totalSeconds = $remainingSeconds;
+							}
+							$percent = ( $i + $remainingSeconds / $totalSeconds ) 
+								/ $this->shards * 100;
+						}
+						call_user_func( $progressCallback, $percent );
+					}
+				}
 			}
 		} catch ( DBQueryError $e ) {
 			$this->handleWriteError( $e );
@@ -335,9 +384,9 @@ class SqlBagOStuff extends BagOStuff {
 
 		try {
 			for ( $i = 0; $i < $this->shards; $i++ ) {
-				$db->begin();
+				$db->begin( __METHOD__ );
 				$db->delete( $this->getTableByShard( $i ), '*', __METHOD__ );
-				$db->commit();
+				$db->commit( __METHOD__ );
 			}
 		} catch ( DBQueryError $e ) {
 			$this->handleWriteError( $e );
@@ -415,12 +464,12 @@ class SqlBagOStuff extends BagOStuff {
 		}
 
 		for ( $i = 0; $i < $this->shards; $i++ ) {
-			$db->begin();
+			$db->begin( __METHOD__ );
 			$db->query(
 				'CREATE TABLE ' . $db->tableName( $this->getTableByShard( $i ) ) .
 				' LIKE ' . $db->tableName( 'objectcache' ),
 				__METHOD__ );
-			$db->commit();
+			$db->commit( __METHOD__ );
 		}
 	}
 }

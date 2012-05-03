@@ -338,7 +338,6 @@ $messages = array(
 'cannotdelete'        => 'ບໍ່ສາມາດລຶບໜ້າ ຫຼື ໄຟລ໌ ໄດ້. (ມັນອາດຈະຖືກລຶບໂດຍໃຜຜູ້ໜຶ່ງແລ້ວ.)',
 'badtitle'            => 'ຫົວຂໍ້ບໍ່ຖືກຕ້ອງ',
 'viewsource'          => 'ເບິ່ງຊອສ໌',
-'viewsourcefor'       => 'ສຳຫຼັບ $1',
 'namespaceprotected'  => "ທ່ານບໍ່ໄດ້ຮັບອະນຸຍາດ ໃຫ້ ດັດແກ້ ໜ້າ ໃນ  '''$1'''.",
 
 # Login and logout pages
@@ -410,8 +409,6 @@ $messages = array(
 'showdiff'                 => 'ສະແດງສ່ວນຕ່າງ',
 'anoneditwarning'          => "'''ເຕືອນ:''' ທ່ານ ບໍ່ໄດ້ເຊັນເຂົ້າ. ທີ່ຢູ່ IP ຂອງ ທ່ານ ຈະຖືກບັນທຶກໄວ້ ໃນ ປະຫວັດການດັດແກ້ ຂອງ ໜ້ານີ້.",
 'blockedtitle'             => 'ຜູ້ໃຊ້ຖືກຫ້າມ',
-'blockededitsource'        => "ເນື້ອໃນ ຂອງ '''ການດັດແປງໂດຍທ່ານ '''ຕໍ່ກັບ '''$1''' ມີດັ່ງລຸ່ມນີ້:",
-'whitelistedittitle'       => 'ຕ້ອງເຊັນເຂົ້າ ຈຶ່ງຈະສາມາດດັດແກ້ໄດ້',
 'whitelistedittext'        => 'ທ່ານ ຈະຕ້ອງ  $1 ເພື່ອ ຈະດັດແກ້.',
 'loginreqtitle'            => 'ຈຳເປັນຕ້ອງ ເຊັນເຂົ້າ',
 'loginreqlink'             => 'ເຊັນເຂົ້າ',
@@ -693,10 +690,8 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-submit' => 'ສະແດງ',
 
 # Special:Log/newusers
-'newuserlogpage'           => 'ບັນທຶກການສ້າງບັນຊີຜູ້ໃຊ້',
-'newuserlogpagetext'       => 'ນີ້ແມ່ນ ບັນທຶກການສ້າງ ບັນຊີຜູ້ໃຊ້ໃໝ່',
-'newuserlog-create-entry'  => 'ຜູ້ໃຊ້ໃໝ່',
-'newuserlog-create2-entry' => 'ໄດ້ສ້າງບັນຊີ ໃຫ້ $1',
+'newuserlogpage'     => 'ບັນທຶກການສ້າງບັນຊີຜູ້ໃຊ້',
+'newuserlogpagetext' => 'ນີ້ແມ່ນ ບັນທຶກການສ້າງ ບັນຊີຜູ້ໃຊ້ໃໝ່',
 
 # E-mail user
 'emailuser'      => 'ສົ່ງອີເມລ ຫາ ຜູ້ໃຊ້ນີ້',
@@ -740,7 +735,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Delete
 'confirm'        => 'ຢືນຢັນ',
 'actioncomplete' => 'ສຳເລັດ',
-'deletedarticle' => 'ໄດ້ລຶບ "[[$1]]"',
 'dellogpage'     => 'ບັນທຶກ ການລຶບ',
 'dellogpagetext' => 'ຂ້າງລຸ່ມ ແມ່ນ ລາຍການ ການລຶບຫຼ້າສຸດ.',
 'deletionlog'    => 'ບັນທຶກ ການລຶບ',
@@ -834,8 +828,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 ກະລຸນາເລືອກຊື່ອື່ນ.',
 'movedto'                 => 'ໄດ້ຖືກຍ້າຍໄປ',
 'movetalk'                => 'ຍ້າຍທັງ ໜ້າສົນທະນາ ທີ່ ກ່ຽວພັນ.',
-'1movedto2'               => '[[$1]] ຍ້າຍໄປ [[$2]]',
-'1movedto2_redir'         => '[[$1]] ຍ້າຍໄປ [[$2]] ທັບ ການໂອນໜ້າ',
 'movelogpage'             => 'ບັນທຶກການຍ້າຍ',
 'movereason'              => 'ເຫດຜົນ:',
 'delete_and_move'         => 'ລຶບ ແລະ ຍ້າຍ',

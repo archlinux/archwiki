@@ -105,6 +105,13 @@ $wgResourceModules += array(
 	'ext.vector.footerCleanup' => $vectorResourceTemplate + array(
 		'scripts' => 'ext.vector.footerCleanup.js',
 		'styles' => 'ext.vector.footerCleanup.css',
+		'messages' => array (
+			'vector-footercleanup-transclusion',
+		),
+		'dependencies' => array(
+			// The message require plural support at javascript.
+			'mediawiki.jqueryMsg',
+		)
 	),
 	'ext.vector.sectionEditLinks' => $vectorResourceTemplate + array(
 		'scripts' => 'ext.vector.sectionEditLinks.js',

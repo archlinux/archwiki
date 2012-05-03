@@ -396,7 +396,7 @@ class MWMemcached {
 	/**
 	 * Retrieves the value associated with the key from the memcache server
 	 *
-	 * @param $key Mixed: key to retrieve
+	 * @param $key array|string key to retrieve
 	 *
 	 * @return Mixed
 	 */
@@ -419,6 +419,7 @@ class MWMemcached {
 			return false;
 		}
 
+		$key = is_array( $key ) ? $key[1] : $key;
 		if ( isset( $this->stats['get'] ) ) {
 			$this->stats['get']++;
 		} else {
@@ -826,9 +827,9 @@ class MWMemcached {
 	/**
 	 * Perform increment/decriment on $key
 	 *
-	 * @param $cmd String: command to perform
-	 * @param $key String: key to perform it on
-	 * @param $amt Integer: amount to adjust
+	 * @param $cmd String command to perform
+	 * @param $key String|array key to perform it on
+	 * @param $amt Integer amount to adjust
 	 *
 	 * @return Integer: new value of $key
 	 * @access private
@@ -958,10 +959,13 @@ class MWMemcached {
 		} else {
 			$this->stats[$cmd] = 1;
 		}
-		
-		// Memcached doesn't seem to handle very high TTL values very well,
-		// so clamp them at 30 days
-		if ( $exp > 2592000 ) {
+
+		// TTLs higher than 30 days will be detected as absolute TTLs
+		// (UNIX timestamps), and will result in the cache entry being
+		// discarded immediately because the expiry is in the past.
+		// Clamp expiries >30d at 30d, unless they're >=1e9 in which
+		// case they are likely to really be absolute (1e9 = 2011-09-09)
+		if ( $exp > 2592000 && $exp < 1000000000 ) {
 			$exp = 2592000;
 		}
 

@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiFormatBase.php' );
-}
-
 /**
  * API XML output formatter
  * @ingroup API
@@ -68,11 +63,15 @@ class ApiFormatXml extends ApiFormatBase {
 			$this->addXslt();
 		}
 		if ( $this->mIncludeNamespace ) {
-			$data = array( 'xmlns' => self::$namespace ) + $this->getResultData();
+			// If the result data already contains an 'xmlns' namespace added
+			// for custom XML output types, it will override the one for the
+			// generic API results.
+			// This allows API output of other XML types like Atom, RSS, RSD.
+			$data = $this->getResultData() + array( 'xmlns' => self::$namespace );
 		} else {
 			$data = $this->getResultData();
 		}
-		
+
 		$this->printText(
 			self::recXmlPrint( $this->mRootElemName,
 				$data,
@@ -94,7 +93,7 @@ class ApiFormatXml extends ApiFormatBase {
 	 *
 	 * If neither key is found, all keys become element names, and values become element content.
 	 * The method is recursive, so the same rules apply to any sub-arrays.
-	 * 
+	 *
 	 * @param $elemName
 	 * @param $elemValue
 	 * @param $indent
@@ -202,7 +201,7 @@ class ApiFormatXml extends ApiFormatBase {
 			$this->setWarning( 'Stylesheet should have .xsl extension.' );
 			return;
 		}
-		$this->printText( '<?xml-stylesheet href="' . $nt->escapeLocalURL( 'action=raw' ) . '" type="text/xsl" ?>' );
+		$this->printText( '<?xml-stylesheet href="' . htmlspecialchars( $nt->getLocalURL( 'action=raw' ) ) . '" type="text/xsl" ?>' );
 	}
 
 	public function getAllowedParams() {

@@ -413,7 +413,6 @@ It posse contene un o plu carácteres quel ne posse esser usat in titules.',
 Function: $1<br />
 Question: $2',
 'viewsource'           => 'Vider fonte',
-'viewsourcefor'        => 'por $1',
 'viewsourcetext'       => 'Vu posse vider e copiar li contenete de ti págine:',
 'titleprotected'       => 'Ti titul ha esset gardat de creation per [[User:$1|$1]]. 
 Li motive dat es "\'\'$2\'\'".',
@@ -507,7 +506,6 @@ Por preventer misusa, solmen un parol-clave amemora va esser inviat per {{PLURAL
 Tui adresse de IP va esser registrat in historico de redactiones de ti págine.",
 'summary-preview'                  => 'Prevision de summarium:',
 'subject-preview'                  => 'Prevision de Tema/Division:',
-'whitelistedittitle'               => 'Exige que vu es identificat por redacter',
 'whitelistedittext'                => 'Vu have que $1 por redacter págines.',
 'loginreqtitle'                    => 'Apertion de session obligatori',
 'accmailtitle'                     => 'Li passa-parol es inviat.',
@@ -602,13 +600,9 @@ Legende: '''({{int:cur}})''' = diferenties che ultim revision, '''({{int:last}})
 
 # Revision deletion
 'rev-delundel'           => 'monstrar/ocultar',
-'revdelete-logentry'     => 'alterat visibilitá de revision de "[[$1]]"',
 'revdel-restore'         => 'change visibilitá',
 'revdel-restore-deleted' => 'revisiones deletet',
 'revdel-restore-visible' => 'revisiones visibil',
-'revdelete-content'      => 'contenete',
-'revdelete-hid'          => 'ocu $1',
-'revdelete-log-message'  => '$1 por $2 {{PLURAL:$2|revision|revisiones}}',
 
 # Suppression log
 'suppressionlog'     => 'Diarium de supression',
@@ -941,7 +935,7 @@ Li descrition es in li [$2 págine de descrition del file] ta e es monstrat in i
 'deadendpages'            => 'Págines sin exeada',
 'listusers'               => 'Liste de usatores',
 'usereditcount'           => '$1 {{PLURAL:$1|redaction|redactiones}}',
-'usercreated'             => 'Creat in $1 in $2',
+'usercreated'             => '{{GENDER:$3|Creat}} in $1 in $2',
 'newpages'                => 'Nov págines',
 'ancientpages'            => 'Li max old págines',
 'move'                    => 'Mover',
@@ -982,8 +976,7 @@ Li descrition es in li [$2 págine de descrition del file] ta e es monstrat in i
 'linksearch-line' => '$1 es ligat de $2',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Diarium de creation de usator',
-'newuserlog-create-entry' => 'Nov conto de usator',
+'newuserlogpage' => 'Diarium de creation de usator',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(liste de membres)',
@@ -1032,8 +1025,6 @@ Li descrition es in li [$2 págine de descrition del file] ta e es monstrat in i
 'delete-legend'         => 'Deleter',
 'actioncomplete'        => 'Processu complet',
 'actionfailed'          => 'Processu fallit',
-'deletedarticle'        => 'deletet "[[$1]]"',
-'suppressedarticle'     => "supresset ''[[$1]]''",
 'dellogpage'            => 'Diarium de deletion',
 'deletecomment'         => 'Motive:',
 'deleteotherreason'     => 'Altri motive:',
@@ -1082,7 +1073,6 @@ Vu posse have un catenun mal, o li revision posse have esset restaurat o removet
 'undeletereset'                => 'Recomensar',
 'undeleteinvert'               => 'Inverter selection',
 'undeletecomment'              => 'Motive:',
-'undeletedarticle'             => 'restaurat "[[$1]]"',
 'undeletedrevisions'           => '{{PLURAL:$1|1 revision|$1 revisiones}} restaurat',
 'undeletedrevisions-files'     => '{{PLURAL:$1|1 revision|$1 revisiones}} e {{PLURAL:$2|1 file|$2 files}} restaurat',
 'undeletedfiles'               => '{{PLURAL:$1|1 file|$1 files}} restaurat',
@@ -1166,19 +1156,17 @@ $1',
 'block-log-flags-nocreate' => 'creation de conto debilisat',
 
 # Move page
-'movearticle'     => 'Mover págine:',
-'movenologin'     => 'Vu ne ha intrat',
-'newtitle'        => 'Por nov titul:',
-'move-watch'      => 'Vigilar ti págine',
-'movepagebtn'     => 'Mover págine',
-'talkexists'      => "'''Li págine itself esset movet successosimen, ma li págine de discussion ne posset esser movet pro que un ja existe in li nov titul.
+'movearticle' => 'Mover págine:',
+'movenologin' => 'Vu ne ha intrat',
+'newtitle'    => 'Por nov titul:',
+'move-watch'  => 'Vigilar ti págine',
+'movepagebtn' => 'Mover págine',
+'talkexists'  => "'''Li págine itself esset movet successosimen, ma li págine de discussion ne posset esser movet pro que un ja existe in li nov titul.
 Pleser fuse les manualmen.'''",
-'movedto'         => 'movet por',
-'1movedto2'       => '[[$1]] hat movet por [[$2]]',
-'1movedto2_redir' => 'movet [[$1]] por [[$2]] redirectionment ultra',
-'movelogpage'     => 'Diarium de movementiones',
-'movereason'      => 'Motive:',
-'revertmove'      => 'reverter',
+'movedto'     => 'movet por',
+'movelogpage' => 'Diarium de movementiones',
+'movereason'  => 'Motive:',
+'revertmove'  => 'reverter',
 
 # Export
 'export' => 'Exportar págines',
@@ -1273,10 +1261,6 @@ Pleser fuse les manualmen.'''",
 # Scripts
 'vector.js' => '/* Alquel JavaScript ci va esser cargat por usatores que usa li pelle Vector */',
 
-# Patrol log
-'patrol-log-line' => 'marcat $1 de $2 protectet $3',
-'patrol-log-diff' => 'revision $1',
-
 # Browsing diffs
 'previousdiff' => '← Redaction anteriori',
 'nextdiff'     => 'Proxim redaction →',
@@ -1285,7 +1269,7 @@ Pleser fuse les manualmen.'''",
 'thumbsize'       => 'Mesura de miniatura:',
 'widthheightpage' => '$1 × $2, $3 {{PLURAL:$3|págine|págines}}',
 'file-info-size'  => '$1 × $2 pixeles, dimension de file: $3, tip MIME: $4',
-'file-nohires'    => '<small>Nequant resolution max alt disponibil.</small>',
+'file-nohires'    => 'Nequant resolution max alt disponibil.',
 'svg-long-desc'   => '(file SVG, nominalmen $1 × $2 pixeles, mesura de file: $3)',
 'show-big-image'  => 'Resolution complet',
 
@@ -1330,13 +1314,6 @@ Altri va esser ocultat per contumacie.
 'watchlistall2' => 'omni',
 'namespacesall' => 'omni',
 'monthsall'     => 'omni',
-
-# Trackbacks
-'trackbackbox'      => 'Tracies de dorse por ti págine:<br /> $1',
-'trackbackexcerpt'  => '; $4 $5: [$2 $1]: <nowiki>$3</nowiki>',
-'trackbackremove'   => '([$1 Deleter])',
-'trackbacklink'     => 'Tracie de dorse',
-'trackbackdeleteok' => 'Li tracie de dorse esset deletet che successe',
 
 # Multipage image navigation
 'imgmultigo' => 'Ear!',

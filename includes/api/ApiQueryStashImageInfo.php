@@ -45,6 +45,11 @@ class ApiQueryStashImageInfo extends ApiQueryImageInfo {
 			$this->dieUsage( "One of filekey or sessionkey must be supplied", 'nofilekey');
 		}
 
+		// Alias sessionkey to filekey, but give an existing filekey precedence.
+		if ( !$params['filekey'] && $params['sessionkey'] ) {
+			$params['filekey'] = $params['sessionkey'];
+		}
+
 		try {
 			$stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash();
 
@@ -122,7 +127,7 @@ class ApiQueryStashImageInfo extends ApiQueryImageInfo {
 		return 'Returns image information for stashed images';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&prop=stashimageinfo&siifilekey=124sd34rsdf567',
 			'api.php?action=query&prop=stashimageinfo&siifilekey=b34edoe3|bceffd4&siiurlwidth=120&siiprop=url',

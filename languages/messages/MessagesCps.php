@@ -371,18 +371,19 @@ Palihog isugid ini sa isa ka [[Special:ListUsers/sysop|administrator]], samtang 
 'badarticleerror'      => 'Ang mini nga aksyon indi mahimo sa mini nga pahina.',
 'cannotdelete'         => 'Indi mapanas ang pahina ukon ang file nga "$1" .
 Posible nga ginpanas na ini sang wala makilal-an.',
+'cannotdelete-title'   => 'Indi mapanas ang pahina nga "$1"',
 'badtitle'             => 'Kala-in nga titulo',
 'badtitletext'         => 'Ang ginapangayo nga titulo sang pahina sala, wala unod, ukon may indi insakto nga koneksyon sa inter-language ukon sa titulo sang interwiki.
 Pwede nga naga-unod mini sang isa ukon madamo pa nga mga karakter nga indi pwede gamiton sa mga titulo.',
-'perfcached'           => '',
-'perfcachedts'         => '',
+'perfcached'           => 'Naka-cache ang mga gasunod nga pahina kag posible nga wala na sa panahon. {{PLURAL:$1|one result is|$1 results are}} ang pinakamataas nga bakante nga cache.',
+'perfcachedts'         => 'Nakacache ang gasunod nga datos, kag nagligad nga ginsapanahon sang $1. {{PLURAL:$4|ang|$4 ang}} pinakamataas nga bakante nga cache.',
 'querypage-no-updates' => 'Ginbawalan yanda ang mga update sa mini nga pahina .
 Ang data diya wala napreskuhan sang aktwal.',
 'wrong_wfQuery_params' => 'Sala nga mga parametro sa wfQuery()<br />
 Pulos: $1<br />
 Pamangkot: $2',
 'viewsource'           => 'Tan-awon ang ginhalinan',
-'viewsourcefor'        => 'para sa $1',
+'viewsource-title'     => 'Tan-awon ang ginhalinan para sa $1',
 'actionthrottled'      => 'Ginpunggan ang ulubrahon',
 'actionthrottledtext'  => 'Bilang pangontra spam nga mga pagsulundan, ginalimitahan ikaw sa pag-ubra sang mini nga mga aksyon sang madamo nga beses sa manubo nga oras, kag nagsobra ka na sa limitasyon.
 Palihog tistingan liwat sa pila ka minutos.',
@@ -722,8 +723,7 @@ Ang paglarawan nga yara sa ibabaw sang [$2 pahina sang paglarawan sang akta] sin
 'linksearch' => 'Panggwa nga mga link',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Listahan sang pag-ubra sang manug-usar',
-'newuserlog-create-entry' => 'Bag-o nga manug-usar',
+'newuserlogpage' => 'Listahan sang pag-ubra sang manug-usar',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(lista sang mga myembro)',
@@ -755,7 +755,6 @@ Palihog kumpirmahon nga intensyon mo nga himu-on mini, nga na-intindihan mo ang 
 'actioncomplete'        => 'Tapos na ang aksyon',
 'deletedtext'           => 'Napanas na ang "$1".
 Tan-awon ang $2 para sa nalista sang mga bag-o lang napanas.',
-'deletedarticle'        => 'ginpanas ang "[[$1]]"',
 'dellogpage'            => 'Lista sang pagpanas',
 'deletecomment'         => 'Rason:',
 'deleteotherreason'     => 'Iban pa/dugang nga rason:',
@@ -791,7 +790,6 @@ Pwede mo mabag-o ang lebel sang proteksiyon sang mini nga pahina, pero indi ma-a
 # Undelete
 'undeletelink'     => 'tan-awon/ibalik',
 'undeleteviewlink' => 'tan-awon',
-'undeletedarticle' => 'ginbalik ang "[[$1]]"',
 
 # Namespace form on various pages
 'namespace'      => 'Lang-at ngalan:',
@@ -872,8 +870,6 @@ Palihog pili liwat sang bag-o nga ngalan.',
 Palihog pakikombinar sa ila sang manomano.'''",
 'movedto'          => 'ginsaylo sa',
 'movetalk'         => 'Isaylo ang kaangot nga pahina sang istoryahanay',
-'1movedto2'        => 'Ang [[$1]] gin-saylo na sa [[$2]]',
-'1movedto2_redir'  => 'Ang [[$1]] ginsaylo sa [[$2]] sa ibabaw sang pagdirekta',
 'movelogpage'      => 'Lista sang pagsaylo',
 'movereason'       => 'Rason:',
 'revertmove'       => 'ibalik',
@@ -947,7 +943,7 @@ Makit-an mo lang ang ginhalinan (source) sini.',
 
 # Media information
 'file-info-size' => '$1 × $2 piksel, kadakuon sang file: $3, klase sang MIME: $4',
-'file-nohires'   => '<small>Wala na sang mas mataas pa nga resolusyon (katin-aw).</small>',
+'file-nohires'   => 'Wala na sang mas mataas pa nga resolusyon (katin-aw).',
 'svg-long-desc'  => 'SVG file, nga ara sa $1 × $2 ka piksels, kadakuon sang file: $3',
 'show-big-image' => 'Bilog nga resolusyon (katin-aw)',
 

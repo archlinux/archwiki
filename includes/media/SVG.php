@@ -93,13 +93,13 @@ class SvgHandler extends ImageHandler {
 		$clientHeight = $params['height'];
 		$physicalWidth = $params['physicalWidth'];
 		$physicalHeight = $params['physicalHeight'];
-		$srcPath = $image->getPath();
+		$srcPath = $image->getLocalRefPath();
 
 		if ( $flags & self::TRANSFORM_LATER ) {
 			return new ThumbnailImage( $image, $dstUrl, $clientWidth, $clientHeight, $dstPath );
 		}
 
-		if ( !wfMkdirParents( dirname( $dstPath ) ) ) {
+		if ( !wfMkdirParents( dirname( $dstPath ), null, __METHOD__ ) ) {
 			return new MediaTransformError( 'thumbnail_error', $clientWidth, $clientHeight,
 				wfMsg( 'thumbnail_dest_directory' ) );
 		}
@@ -119,7 +119,7 @@ class SvgHandler extends ImageHandler {
 	* @param string $dstPath
 	* @param string $width
 	* @param string $height
-	* @returns TRUE/MediaTransformError
+	* @return true|MediaTransformError
 	*/
 	public function rasterize( $srcPath, $dstPath, $width, $height ) {
 		global $wgSVGConverters, $wgSVGConverter, $wgSVGConverterPath;
@@ -129,7 +129,7 @@ class SvgHandler extends ImageHandler {
 			if ( is_array( $wgSVGConverters[$wgSVGConverter] ) ) {
 				// This is a PHP callable
 				$func = $wgSVGConverters[$wgSVGConverter][0];
-				$args = array_merge( array( $srcPath, $dstPath, $width, $height ), 
+				$args = array_merge( array( $srcPath, $dstPath, $width, $height ),
 					array_slice( $wgSVGConverters[$wgSVGConverter], 1 ) );
 				if ( !is_callable( $func ) ) {
 					throw new MWException( "$func is not callable" );
@@ -161,13 +161,13 @@ class SvgHandler extends ImageHandler {
 		}
 		return true;
 	}
-	
+
 	public static function rasterizeImagickExt( $srcPath, $dstPath, $width, $height ) {
 		$im = new Imagick( $srcPath );
 		$im->setImageFormat( 'png' );
 		$im->setBackgroundColor( 'transparent' );
 		$im->setImageDepth( 8 );
-		
+
 		if ( !$im->thumbnailImage( intval( $width ), intval( $height ), /* fit */ false ) ) {
 			return 'Could not resize image';
 		}

@@ -233,7 +233,16 @@ class FormatMetadata {
 					if ( $val == '0000:00:00 00:00:00' || $val == '    :  :     :  :  ' ) {
 						$val = wfMsg( 'exif-unknowndate' );
 					} elseif ( preg_match( '/^(?:\d{4}):(?:\d\d):(?:\d\d) (?:\d\d):(?:\d\d):(?:\d\d)$/D', $val ) ) {
+						// Full date.
 						$time = wfTimestamp( TS_MW, $val );
+						if ( $time && intval( $time ) > 0 ) {
+							$val = $wgLang->timeanddate( $time );
+						}
+					} elseif ( preg_match( '/^(?:\d{4}):(?:\d\d):(?:\d\d) (?:\d\d):(?:\d\d)$/D', $val ) ) {
+						// No second field. Still format the same
+						// since timeanddate doesn't include seconds anyways,
+						// but second still available in api
+						$time = wfTimestamp( TS_MW, $val . ':00' );
 						if ( $time && intval( $time ) > 0 ) {
 							$val = $wgLang->timeanddate( $time );
 						}
@@ -1174,7 +1183,7 @@ class FormatMetadata {
 	 * Format a coordinate value, convert numbers from floating point
 	 * into degree minute second representation.
 	 *
-	 * @param $coords Array: degrees, minutes and seconds
+	 * @param $coord Array: degrees, minutes and seconds
 	 * @param $type String: latitude or longitude (for if its a NWS or E)
 	 * @return mixed A floating point number or whatever we were fed
 	 */

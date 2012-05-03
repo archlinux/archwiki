@@ -1,6 +1,6 @@
 <?php
 /**
- * Implements Special:Blankpage
+ * Implements Special:PasswordReset
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,19 +28,33 @@
  */
 class SpecialPasswordReset extends FormSpecialPage {
 
+	/**
+	 * @var Message
+	 */
+	private $email;
+
+	/**
+	 * @var Status
+	 */
+	private $result;
+
 	public function __construct() {
 		parent::__construct( 'PasswordReset' );
 	}
 
 	public function userCanExecute( User $user ) {
+		return $this->canChangePassword( $user ) === true && parent::userCanExecute( $user );
+	}
+
+	public function checkExecutePermissions( User $user ) {
 		$error = $this->canChangePassword( $user );
 		if ( is_string( $error ) ) {
 			throw new ErrorPageError( 'internalerror', $error );
-		} else if ( !$error ) {
+		} elseif ( !$error ) {
 			throw new ErrorPageError( 'internalerror', 'resetpass_forbidden' );
 		}
 
-		return parent::userCanExecute( $user );
+		return parent::checkExecutePermissions( $user );
 	}
 
 	protected function getFormFields() {
@@ -66,6 +80,14 @@ class SpecialPasswordReset extends FormSpecialPage {
 				'type' => 'select',
 				'options' => $domains,
 				'label-message' => 'passwordreset-domain',
+			);
+		}
+
+		if( $this->getUser()->isAllowed( 'passwordreset' ) ){
+			$a['Capture'] = array(
+				'type' => 'check',
+				'label-message' => 'passwordreset-capture',
+				'help-message' => 'passwordreset-capture-help',
 			);
 		}
 
@@ -108,6 +130,16 @@ class SpecialPasswordReset extends FormSpecialPage {
 				$wgAuth->setDomain( 'invaliddomain' );
 			}
 		}
+
+		if( isset( $data['Capture'] ) && !$this->getUser()->isAllowed( 'passwordreset' ) ){
+			// The user knows they don't have the passwordreset permission, but they tried to spoof the form.  That's naughty
+			throw new PermissionsError( 'passwordreset' );
+		}
+
+		/**
+		 * @var $firstUser User
+		 * @var $users User[]
+		 */
 
 		if ( isset( $data['Username'] ) && $data['Username'] !== '' ) {
 			$method = 'username';
@@ -183,7 +215,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 
 		// We need to have a valid IP address for the hook, but per bug 18347, we should
 		// send the user's name if they're logged in.
-		$ip = wfGetIP();
+		$ip = $this->getRequest()->getIP();
 		if ( !$ip ) {
 			return array( 'badipaddress' );
 		}
@@ -207,8 +239,8 @@ class SpecialPasswordReset extends FormSpecialPage {
 		}
 		$passwordBlock = implode( "\n\n", $passwords );
 
-		$body = wfMessage( $msg )->inLanguage( $userLanguage );
-		$body->params(
+		$this->email = wfMessage( $msg )->inLanguage( $userLanguage );
+		$this->email->params(
 			$username,
 			$passwordBlock,
 			count( $passwords ),
@@ -218,28 +250,49 @@ class SpecialPasswordReset extends FormSpecialPage {
 
 		$title = wfMessage( 'passwordreset-emailtitle' );
 
-		$result = $firstUser->sendMail( $title->text(), $body->text() );
+		$this->result = $firstUser->sendMail( $title->escaped(), $this->email->escaped() );
 
-		if ( $result->isGood() ) {
+		// Blank the email if the user is not supposed to see it
+		if( !isset( $data['Capture'] ) || !$data['Capture'] ) {
+			$this->email = null;
+		}
+
+		if ( $this->result->isGood() ) {
+			return true;
+		} elseif( isset( $data['Capture'] ) && $data['Capture'] ){
+			// The email didn't send, but maybe they knew that and that's why they captured it
 			return true;
 		} else {
 			// @todo FIXME: The email didn't send, but we have already set the password throttle
 			// timestamp, so they won't be able to try again until it expires...  :(
-			return array( array( 'mailerror', $result->getMessage() ) );
+			return array( array( 'mailerror', $this->result->getMessage() ) );
 		}
 	}
 
 	public function onSuccess() {
+		if( $this->getUser()->isAllowed( 'passwordreset' ) && $this->email != null ){
+			// @todo: Logging
+
+			if( $this->result->isGood() ){
+				$this->getOutput()->addWikiMsg( 'passwordreset-emailsent-capture' );
+			} else {
+				$this->getOutput()->addWikiMsg( 'passwordreset-emailerror-capture', $this->result->getMessage() );
+			}
+
+			$this->getOutput()->addHTML( Html::rawElement( 'pre', array(), $this->email->escaped() ) );
+		}
+
 		$this->getOutput()->addWikiMsg( 'passwordreset-emailsent' );
 		$this->getOutput()->returnToMain();
 	}
 
-	function canChangePassword(User $user) {
+	protected function canChangePassword( User $user ) {
 		global $wgPasswordResetRoutes, $wgAuth;
 
 		// Maybe password resets are disabled, or there are no allowable routes
 		if ( !is_array( $wgPasswordResetRoutes ) ||
-			 !in_array( true, array_values( $wgPasswordResetRoutes ) ) ) {
+			 !in_array( true, array_values( $wgPasswordResetRoutes ) ) )
+		{
 			return 'passwordreset-disabled';
 		}
 
@@ -257,15 +310,12 @@ class SpecialPasswordReset extends FormSpecialPage {
 		return true;
 	}
 
-
 	/**
 	 * Hide the password reset page if resets are disabled.
 	 * @return Bool
 	 */
 	function isListed() {
-		global $wgUser;
-
-		if ( $this->canChangePassword( $wgUser ) === true ) {
+		if ( $this->canChangePassword( $this->getUser() ) === true ) {
 			return parent::isListed();
 		}
 

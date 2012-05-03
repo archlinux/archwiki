@@ -26,11 +26,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * Query module to enumerate all deleted files.
  *
@@ -43,9 +38,9 @@ class ApiQueryFilearchive extends ApiQueryBase {
 	}
 
 	public function execute() {
-		global $wgUser;
+		$user = $this->getUser();
 		// Before doing anything at all, let's check permissions
-		if ( !$wgUser->isAllowed( 'deletedhistory' ) ) {
+		if ( !$user->isAllowed( 'deletedhistory' ) ) {
 			$this->dieUsage( 'You don\'t have permission to view deleted file information', 'permissiondenied' );
 		}
 
@@ -110,7 +105,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			}
 		}
 
-		if ( !$wgUser->isAllowed( 'suppressrevision' ) ) {
+		if ( !$user->isAllowed( 'suppressrevision' ) ) {
 			// Filter out revisions that the user is not allowed to see. There
 			// is no way to indicate that we have skipped stuff because the
 			// continuation parameter is fa_name
@@ -166,7 +161,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			if ( $fld_description ) {
 				$file['description'] = $row->fa_description;
 				if ( isset( $prop['parseddescription'] ) ) {
-					$file['parseddescription'] = $wgUser->getSkin()->formatComment(
+					$file['parseddescription'] = Linker::formatComment(
 						$row->fa_description, $title );
 				}
 			}
@@ -285,11 +280,12 @@ class ApiQueryFilearchive extends ApiQueryBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Simple Use',
-			' Show a list of all deleted files',
-			'  api.php?action=query&list=filearchive',
+			'api.php?action=query&list=filearchive' => array(
+				'Simple Use',
+				'Show a list of all deleted files',
+			),
 		);
 	}
 

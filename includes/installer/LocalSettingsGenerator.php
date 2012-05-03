@@ -44,7 +44,7 @@ class LocalSettingsGenerator {
 				'wgLanguageCode', 'wgEnableEmail', 'wgEnableUserEmail', 'wgDiff3',
 				'wgEnotifUserTalk', 'wgEnotifWatchlist', 'wgEmailAuthentication',
 				'wgDBtype', 'wgSecretKey', 'wgRightsUrl', 'wgSitename', 'wgRightsIcon',
-				'wgRightsText', 'wgRightsCode', 'wgMainCacheType', 'wgEnableUploads',
+				'wgRightsText', 'wgMainCacheType', 'wgEnableUploads',
 				'wgMainCacheType', '_MemCachedServers', 'wgDBserver', 'wgDBuser',
 				'wgDBpassword', 'wgUseInstantCommons', 'wgUpgradeKey', 'wgDefaultSkin',
 				'wgMetaNamespace', 'wgResourceLoaderMaxQueryLength'
@@ -187,7 +187,7 @@ class LocalSettingsGenerator {
 			$locale = '';
 		}
 
-		$rightsUrl = $this->values['wgRightsUrl'] ? '' : '#';
+		//$rightsUrl = $this->values['wgRightsUrl'] ? '' : '#'; // TODO: Fixme, I'm unused!
 		$hashedUploads = $this->safeMode ? '' : '#';
 		$metaNamespace = '';
 		if( $this->values['wgMetaNamespace'] !== $this->values['wgSitename'] ) {
@@ -329,7 +329,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 \$wgRightsUrl  = \"{$this->values['wgRightsUrl']}\";
 \$wgRightsText = \"{$this->values['wgRightsText']}\";
 \$wgRightsIcon = \"{$this->values['wgRightsIcon']}\";
-# \$wgRightsCode = \"{$this->values['wgRightsCode']}\"; # Not yet used
 
 # Path to the GNU diff3 utility. Used for conflict resolution.
 \$wgDiff3 = \"{$this->values['wgDiff3']}\";

@@ -101,6 +101,7 @@ class Exif {
 	 * Constructor
 	 *
 	 * @param $file String: filename.
+	 * @param $byteOrder String Type of byte ordering either 'BE' (Big Endian) or 'LE' (Little Endian). Default ''.
 	 * @todo FIXME: The following are broke:
 	 * SubjectArea. Need to test the more obscure tags.
 	 *
@@ -537,7 +538,7 @@ class Exif {
 	 * @deprecated since 1.18
 	 */
 	function makeFormattedData( ) {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.18' );
 		$this->mFormattedExifData = FormatMetadata::getFormattedData(
 			$this->mFilteredExifData );
 	}
@@ -569,7 +570,7 @@ class Exif {
 	 * @deprecated since 1.18
 	 */
 	function getFormattedData() {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.18' );
 		if (!$this->mFormattedExifData) {
 			$this->makeFormattedData();
 		}

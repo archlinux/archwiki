@@ -184,17 +184,15 @@ class RefreshLinks extends Maintenance {
 				__METHOD__ );
 			return;
 		}
-		$article = new Article( $title );
 
-		$rt = $article->followRedirect();
+		$page = WikiPage::factory( $title );
+		$rt = $page->getRedirectTarget();
 
-		if ( !$rt || !is_object( $rt ) ) {
+		if ( $rt === null ) {
 			// $title is not a redirect
 			// Delete any redirect table entry for it
 			$dbw->delete( 'redirect', array( 'rd_from' => $id ),
 				__METHOD__ );
-		} else {
-			$article->updateRedirectOn( $dbw, $rt );
 		}
 	}
 
@@ -213,12 +211,13 @@ class RefreshLinks extends Maintenance {
 		if ( is_null( $title ) ) {
 			return;
 		}
-		$dbw->begin();
 
 		$revision = Revision::newFromTitle( $title );
 		if ( !$revision ) {
 			return;
 		}
+
+		$dbw->begin();
 
 		$options = new ParserOptions;
 		$parserOutput = $wgParser->parse( $revision->getText(), $title, $options, true, true, $revision->getId() );
@@ -229,7 +228,7 @@ class RefreshLinks extends Maintenance {
 
 	/**
 	 * Removes non-existing links from pages from pagelinks, imagelinks,
-	 * categorylinks, templatelinks and externallinks tables.
+	 * categorylinks, templatelinks, externallinks, interwikilinks, langlinks and redirect tables.
 	 *
 	 * @param $maxLag
 	 * @param $batchSize The size of deletion batches
@@ -254,6 +253,7 @@ class RefreshLinks extends Maintenance {
 			'iwlinks' => 'iwl_from',
 			'langlinks' => 'll_from',
 			'redirect' => 'rd_from',
+			'page_props' => 'pp_page',
 		);
 
 		foreach ( $linksTables as $table => $field ) {
@@ -271,7 +271,6 @@ class RefreshLinks extends Maintenance {
 			$counter = 0;
 			$list = array();
 			$this->output( "0.." );
-
 			foreach ( $results as $row ) {
 				$counter++;
 				$list[] = $row->$field;

@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * A query action to return messages from site message cache
  *
@@ -65,7 +60,18 @@ class ApiQueryAllmessages extends ApiQueryBase {
 
 		// Determine which messages should we print
 		if ( in_array( '*', $params['messages'] ) ) {
-			$message_names = array_keys( Language::getMessagesFor( 'en' ) );
+			$message_names = Language::getMessageKeysFor( $langObj->getCode() );
+			if ( $params['includelocal'] ) {
+				global $wgLanguageCode;
+				$message_names = array_unique( array_merge(
+					$message_names,
+					// Pass in the content language code so we get local messages that have a
+					// MediaWiki:msgkey page. We might theoretically miss messages that have no
+					// MediaWiki:msgkey page but do have a MediaWiki:msgkey/lang page, but that's
+					// just a stupid case.
+					MessageCache::singleton()->getAllMessageKeys( $wgLanguageCode )
+				) );
+			}
 			sort( $message_names );
 			$messages_target = $message_names;
 		} else {
@@ -158,7 +164,9 @@ class ApiQueryAllmessages extends ApiQueryBase {
 					} else {
 						$msgString = $msg->plain();
 					}
-					ApiResult::setContent( $a, $msgString );
+					if ( !$params['nocontent'] ) {
+						ApiResult::setContent( $a, $msgString );
+					}
 					if ( isset( $prop['default'] ) ) {
 						$default = wfMessage( $message )->inLanguage( $langObj )->useDatabase( false );
 						if ( !$default->exists() ) {
@@ -204,6 +212,8 @@ class ApiQueryAllmessages extends ApiQueryBase {
 				)
 			),
 			'enableparser' => false,
+			'nocontent' => false,
+			'includelocal' => false,
 			'args' => array(
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_ALLOW_DUPLICATES => true,
@@ -230,7 +240,11 @@ class ApiQueryAllmessages extends ApiQueryBase {
 			'messages' => 'Which messages to output. "*" (default) means all messages',
 			'prop' => 'Which properties to get',
 			'enableparser' => array( 'Set to enable parser, will preprocess the wikitext of message',
-							  'Will substitute magic words, handle templates etc.' ),
+							'Will substitute magic words, handle templates etc.' ),
+			'nocontent' => 'If set, do not include the content of the messages in the output.',
+			'includelocal' => array( "Also include local messages, i.e. messages that don't exist in the software but do exist as a MediaWiki: page.",
+							"This lists all MediaWiki: pages, so it will also list those that aren't 'really' messages such as Common.js",
+			),
 			'title' => 'Page name to use as context when parsing message (for enableparser option)',
 			'args' => 'Arguments to be substituted into message',
 			'prefix' => 'Return messages with this prefix',
@@ -246,7 +260,7 @@ class ApiQueryAllmessages extends ApiQueryBase {
 		return 'Return messages from this site';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&meta=allmessages&amprefix=ipb-',
 			'api.php?action=query&meta=allmessages&ammessages=august|mainpage&amlang=de',

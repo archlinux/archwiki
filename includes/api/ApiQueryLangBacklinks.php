@@ -25,11 +25,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiQueryBase.php" );
-}
-
 /**
  * This gives links pointing to the given interwiki
  * @ingroup API
@@ -207,7 +202,7 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&list=langbacklinks&lbltitle=Test&lbllang=fr',
 			'api.php?action=query&generator=langbacklinks&glbltitle=Test&lbllang=fr&prop=info'

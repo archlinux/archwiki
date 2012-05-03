@@ -21,7 +21,7 @@
  */
 
 $magicWords = array(
-	'redirect'              => array( '0', '#VARDA', '#RINVIA', '#RINVIO', '#RIMANDO', '#REDIRECT' ),
+	'redirect'                => array( '0', '#VARDA', '#RINVIA', '#RINVIO', '#RIMANDO', '#REDIRECT' ),
 );
 
 $fallback = 'it';
@@ -58,6 +58,7 @@ $specialPageAliases = array(
 	'Allmessages'               => array( 'Messagi' ),
 	'Allpages'                  => array( 'TuteLePagine' ),
 	'Ancientpages'              => array( 'PagineMancoNove' ),
+	'Badtitle'                  => array( 'TitoloSbalià' ),
 	'Blankpage'                 => array( 'PaginaVoda' ),
 	'Block'                     => array( 'Bloca' ),
 	'Blockme'                   => array( 'BlocaProxy' ),
@@ -499,15 +500,14 @@ Se prega de dìrghelo a un [[Special:ListUsers/sysop|aministradore]] indicando l
 Podaria esare sta zà scansełà da qualcun altro.',
 'badtitle'             => 'Titoło mia justo',
 'badtitletext'         => "El titoło de ła pajina richiesta xè vodo, erà o con carateri no amesi opure el deriva da n'erore ne i cołegamenti tra siti wiki diversi o version en łengue diverse de ło steso sito.",
-'perfcached'           => 'Sti dati qua no i vien mia azornà in tenpo reale, ma solo na olta ogni tanto.',
-'perfcachedts'         => "Sti dati qua i xe stà azornà l'ultima olta el $1.",
+'perfcached'           => 'Sti dati qua no i vien mia azornà in tenpo reale, ma solo na olta ogni tanto. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => "Sti dati qua i xe stà azornà l'ultima olta el $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.",
 'querypage-no-updates' => "L'azornamento periodico de sta pagina el xe sospeso. 
 I dati che ghè qua drento no i xe azornà.",
 'wrong_wfQuery_params' => 'Erore ne i parametri invià a ła funsion wfQuery()<br />
 Funsion: $1<br />
 Query: $2',
 'viewsource'           => 'Varda el testo',
-'viewsourcefor'        => 'de $1',
 'actionthrottled'      => 'Asion ritardà',
 'actionthrottledtext'  => "Come misura de sicuresa contro e o spam, l'esecusion de alcune asion e a xè limità a on numaro masimo de volte en on determinà periodo de tenpo, limite che en questo caso xè sta superà. Se prega de riprovare tra qualche minuto.",
 'protectedpagetext'    => 'Sta pagina la xe stà proteta de modo che nissuni possa canbiarla.',
@@ -701,9 +701,6 @@ Nota che la funzion 'Scrivi a l'utente' no la xe ativa a meno che no te gavi reg
 
 Se prega de specificar el to indirizo IP atuale ($3) e el nùmaro del bloco (ID #$5) in qualsiasi richiesta de ciarimenti.",
 'blockednoreason'                  => 'nissuna motivazion indicà',
-'blockedoriginalsource'            => "El còdese sorgente de '''$1''' el vien mostrà de seguito:",
-'blockededitsource'                => "El testo de le '''to modifiche''' a '''$1''' el xe mostrà qua soto:",
-'whitelistedittitle'               => 'Bisogna èssar registrà par poder canbiar le pagine',
 'whitelistedittext'                => 'Te ghè da $1 par canbiar le pagine.',
 'confirmedittext'                  => "Te ghè da confermar l'indirizo e-mail prima de editar le pàxene. Par piaxer inposta e conferma el to indirizo e--mail tramite le to [[Special:Preferences|preferenze]].",
 'nosuchsectiontitle'               => 'Sezion mia catà',
@@ -942,8 +939,6 @@ I altri aministradori de {{SITENAME}} i podarà vardar istesso i contenuti scont
 'revdelete-unsuppress'        => 'Elimina le limitazion su le revision ripristinà',
 'revdelete-log'               => 'Motivassion:',
 'revdelete-submit'            => 'Àplica a {{PLURAL:$1|la|le}} revision selezionà',
-'revdelete-logentry'          => 'gà modificà la visibilità par una revision de [[$1]]',
-'logdelete-logentry'          => "gà modificà la visibilità de l'evento [[$1]]",
 'revdelete-success'           => "'''Visibilità de la revision ajornà coretamente.'''",
 'revdelete-failure'           => "'''No se riesse a ajornar la visibilità de la version:'''
 $1",
@@ -955,15 +950,6 @@ $1",
 'revdel-restore-visible'      => 'revision visibili',
 'pagehist'                    => 'Cronologia de la pagina',
 'deletedhist'                 => 'Cronologia scancelà',
-'revdelete-content'           => 'contenuto',
-'revdelete-summary'           => 'modifica ogeto',
-'revdelete-uname'             => 'nome utente',
-'revdelete-restricted'        => 'aplicà restrizioni ai aministradori',
-'revdelete-unrestricted'      => 'gà cavà le limitazion par i aministradori',
-'revdelete-hid'               => 'scondar $1',
-'revdelete-unhid'             => 'mostrar $1',
-'revdelete-log-message'       => '$1 par $2 {{PLURAL:$2|revision|revisioni}}',
-'logdelete-log-message'       => '$1 par $2 {{PLURAL:$2|evento|eventi}}',
 'revdelete-hide-current'      => 'No se pol scondar la version datà $1 a le $2, parché la xe la version corente.',
 'revdelete-show-no-access'    => 'No se pol réndar visibile la version datà $1 a le $2: la xe stà marcà come "ad acesso ristreto".
 No ti gà acesso su de ela.',
@@ -1115,7 +1101,7 @@ Prova a métarghe \"all:\" davanti al testo che te serchi par vardar in tuti i n
 'prefs-rc'                      => 'Ultime modifeghe',
 'prefs-watchlist'               => 'Tegnùi de òcio',
 'prefs-watchlist-days'          => 'Nùmaro de giòrni da far védar nei osservati speciali:',
-'prefs-watchlist-days-max'      => 'Massimo 7 zorni',
+'prefs-watchlist-days-max'      => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'         => 'Nùmaro de modifiche da far védar con le funzion avanzade:',
 'prefs-watchlist-edits-max'     => '(nùmaro massimo: 1000)',
 'prefs-watchlist-token'         => "Segnal par le pagine tegnùe d'ocio:",
@@ -1308,7 +1294,6 @@ Co qualcheduni te scrivarà, nol vedarà mia el to indirizo.',
 'right-autopatrol'            => 'Segna automaticamente le modifiche come verificà',
 'right-patrolmarks'           => 'Dòpara le funsionalità de patugliamento dei ultimi canbiamenti',
 'right-unwatchedpages'        => "Mostra na lista de pagine mìa tegnue d'ocio",
-'right-trackback'             => 'Spedissi un trackback',
 'right-mergehistory'          => 'Fondi insieme la cronologia de le pagine',
 'right-userrights'            => "Modifica tuti quanti i diriti de l'utente",
 'right-userrights-interwiki'  => 'Modifica i diriti de utenti de altri siti wiki',
@@ -1352,7 +1337,6 @@ Co qualcheduni te scrivarà, nol vedarà mia el to indirizo.',
 'action-patrol'               => 'segnar le modìfeghe dei altri utenti come verificàe',
 'action-autopatrol'           => 'segnar le to modìfeghe come verificàe',
 'action-unwatchedpages'       => "vardar la lista de pàxene mia tegnùe d'ocio",
-'action-trackback'            => 'mandar na trackback',
 'action-mergehistory'         => 'unir la cronologia de sta pàxena',
 'action-userrights'           => 'canbiar tuti i diriti dei utenti',
 'action-userrights-interwiki' => 'canbiar i diriti dei utenti su altre wiki',
@@ -1766,7 +1750,7 @@ Le righe <del>sbarà</del> le xe xà stà sistemà.',
 'listusers-editsonly'     => 'Fà védar sol che i utenti che gà fato dei contributi',
 'listusers-creationsort'  => 'Òrdena par data de creassion',
 'usereditcount'           => '$1 {{PLURAL:$1|contributo|contributi}}',
-'usercreated'             => 'Creà el $1 a le $2',
+'usercreated'             => '{{GENDER:$3|Creà|Creà}} el $1 a le $2',
 'newpages'                => 'Pagine nove',
 'newpages-username'       => 'Nome utente:',
 'ancientpages'            => 'Pagine pì vece',
@@ -1857,12 +1841,8 @@ Protocòli suportè: <tt>$1</tt>',
 'activeusers-noresult'   => 'Nissun utente catà.',
 
 # Special:Log/newusers
-'newuserlogpage'              => 'Novi utenti',
-'newuserlogpagetext'          => 'Sto qua el xè el registro dei novi utenti registrai.',
-'newuserlog-byemail'          => 'password spedìa par e-mail',
-'newuserlog-create-entry'     => 'se ga pena rejistrà',
-'newuserlog-create2-entry'    => 'ga registrà el nome utente $1',
-'newuserlog-autocreate-entry' => 'Account creà automaticamente',
+'newuserlogpage'     => 'Novi utenti',
+'newuserlogpagetext' => 'Sto qua el xè el registro dei novi utenti registrai.',
 
 # Special:ListGroupRights
 'listgrouprights'                      => 'Diriti dei grupi utenti',
@@ -1999,8 +1979,6 @@ Par riscontri e ulteriore assistensa:
 'actionfailed'           => 'Azion mia riussìa',
 'deletedtext'            => "''$1'' xe stà scanselà.
 Varda $2 par n'elenco de le ultime pagine scanselà.",
-'deletedarticle'         => 'gà scanselà "[[$1]]"',
-'suppressedarticle'      => 'sconto "[[$1]]"',
 'dellogpage'             => 'Registro de scancelassion',
 'dellogpagetext'         => 'Qui de seguito ghe xe un ełenco de łe pàxene scancełae de reçente.',
 'deletionlog'            => 'Registro de scancełasión',
@@ -2119,7 +2097,6 @@ Se dopo ła scancełazion xè stà creà na nova pàxena col stesso titoło, łe
 'undeletereset'                => 'Reinposta',
 'undeleteinvert'               => 'Inverti selession',
 'undeletecomment'              => 'Motivassion:',
-'undeletedarticle'             => 'ga recuperà "[[$1]]"',
 'undeletedrevisions'           => '{{PLURAL:$1|Una revision recuperà|$1 revision recuperà}}',
 'undeletedrevisions-files'     => '{{PLURAL:$1|Una revision|$1 revision}} e $2 file recuperà',
 'undeletedfiles'               => '{{PLURAL:$1|Un file recuperà|$1 file recuperà}}',
@@ -2369,9 +2346,6 @@ Par piaser, métighe un titolo difarente.",
 'movepage-page-moved'          => 'La pagina $1 la xe stà spostà a $2.',
 'movepage-page-unmoved'        => "No s'à mìa podesto spostar $1 a $2.",
 'movepage-max-pages'           => "Xe stà ragiunto el nùmaro massimo consentìo de $1 {{PLURAL:$1|pagina|pagine}} spostà e nissun'altra la vegnarà spostà in automatico.",
-'1movedto2'                    => 'ga spostà [[$1]] a [[$2]]',
-'1movedto2_redir'              => 'ga spostà [[$1]] a [[$2]] tramite on rimando',
-'move-redirect-suppressed'     => 'nissun rimando',
 'movelogpage'                  => 'Spostamenti',
 'movelogpagetext'              => 'Lista de pàxene spostàe.',
 'movesubpage'                  => '{{PLURAL:$1|Sotopagina|Sotopagine}}',
@@ -2605,9 +2579,6 @@ Questo xe probabilmente dovùo a la presenza de un colegamento a un sito foresto
 # Patrol log
 'patrol-log-page'      => 'Modifiche verificàe',
 'patrol-log-header'    => 'Qua de sèvito xe elencàe le verifiche de le modifiche.',
-'patrol-log-line'      => 'gà segnà la $1 a la pagina $2 come verificà $3',
-'patrol-log-auto'      => '(verifica automatica)',
-'patrol-log-diff'      => 'revision $1',
 'log-show-hide-patrol' => '$1 el registro dei canbiamenti verificài',
 
 # Image deletion
@@ -2633,7 +2604,7 @@ La so esecuzion la podarìa danegiar el to computer.",
 'widthheightpage'      => '$1 × $2, $3 {{PLURAL:$3|pagina|pagine}}',
 'file-info'            => 'Dimensioni: $1, tipo MIME: $2',
 'file-info-size'       => '$1 × $2 pixel, dimension del file: $3, tipo MIME: $4',
-'file-nohires'         => '<small>No ghe xe version a risolussion pì granda.</small>',
+'file-nohires'         => 'No ghe xe version a risolussion pì granda.',
 'svg-long-desc'        => 'file en formato SVG, dimension nominałi $1 × $2 pixel, dimension del file: $3',
 'show-big-image'       => 'Version ad alta risołusion',
 'file-info-gif-looped' => 'ripetù',
@@ -3009,13 +2980,6 @@ El codexe de conferma el scadrà en automatego a łe $4.',
 'scarytranscludefailed'   => '[Inpossibile otegner el modèl $1]',
 'scarytranscludetoolong'  => '[La URL la xe massa longa]',
 
-# Trackbacks
-'trackbackbox'      => 'Informazion de traciamento par sta voxe:<br />
-$1',
-'trackbackremove'   => '([$1 Scancela])',
-'trackbacklink'     => 'Trackback',
-'trackbackdeleteok' => 'Informasion de trackback eliminà coretamente.',
-
 # Delete conflict
 'deletedwhileediting' => "'''Ocio''': Sta pàxena la xè stà scancełà dopo che te ghè scominzià a modificarla!",
 'confirmrecreate'     => "L'utente [[User:$1|$1]] ([[User talk:$1|discussion]]) el ga scancełà sta voxe dopo che te ghè scuminsià a modificarla, con ła seguente motivazion:
@@ -3217,5 +3181,10 @@ Le imagini le vien mostrà a la risoluzion pi granda che se pol, par i altri tip
 # SQLite database support
 'sqlite-has-fts' => '$1 con la possibilità de riserca completa nel testo',
 'sqlite-no-fts'  => '$1 sensa la possibilità de riserca completa nel testo',
+
+# New logging system
+'revdelete-restricted'   => 'aplicà restrizioni ai aministradori',
+'revdelete-unrestricted' => 'gà cavà le limitazion par i aministradori',
+'newuserlog-byemail'     => 'password spedìa par e-mail',
 
 );

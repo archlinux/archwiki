@@ -17,16 +17,16 @@
 $fallback = 'ru';
 
 $namespaceNames = array(
-	NS_MEDIA            => 'Media',
+	NS_MEDIA            => 'Медиа',
 	NS_SPECIAL          => 'Сæрмагонд',
 	NS_TALK             => 'Тæрхон',
 	NS_USER             => 'Архайæг',
 	NS_USER_TALK        => 'Архайæджы_ныхас',
-	NS_PROJECT_TALK     => 'Дискусси_$1',
-	NS_FILE             => 'Ныв',
-	NS_FILE_TALK        => 'Нывы_тæрхон',
+	NS_PROJECT_TALK     => '{{GRAMMAR:genitive|$1}}_тæрхон',
+	NS_FILE             => 'Файл',
+	NS_FILE_TALK        => 'Файлы_тæрхон',
 	NS_MEDIAWIKI        => 'MediaWiki',
-	NS_MEDIAWIKI_TALK   => 'Тæрхон_MediaWiki',
+	NS_MEDIAWIKI_TALK   => 'MediaWiki-йы_тæрхон',
 	NS_TEMPLATE         => 'Шаблон',
 	NS_TEMPLATE_TALK    => 'Шаблоны_тæрхон',
 	NS_HELP             => 'Æххуыс',
@@ -38,18 +38,24 @@ $namespaceNames = array(
 $namespaceAliases = array(
 	'Дискусси'                    => NS_TALK,
 	'Архайæджы_дискусси'          => NS_USER_TALK,
+	'Дискусси_$1'                 => NS_PROJECT_TALK,
+	'Ныв'                         => NS_FILE,
+	'Нывы_тæрхон'                 => NS_FILE_TALK,
 	'Нывы_тыххæй_дискусси'        => NS_FILE_TALK,
 	'Дискусси_MediaWiki'          => NS_MEDIAWIKI_TALK,
+	'Тæрхон_MediaWiki'            => NS_MEDIAWIKI_TALK,
 	'Шаблоны_тыххæй_дискусси'     => NS_TEMPLATE_TALK,
 	'Æххуысы_тыххæй_дискусси'     => NS_HELP_TALK,
 	'Категорийы_тыххæй_дискусси'  => NS_CATEGORY_TALK,
 );
 
+// Remove Russian aliases
+$namespaceGenderAliases = array();
 
 $magicWords = array(
-	'redirect'              => array( '0', '#РАРВЫСТ', '#перенаправление', '#перенапр', '#REDIRECT' ),
-	'img_right'             => array( '1', 'рахиз', 'справа', 'right' ),
-	'img_left'              => array( '1', 'галиу', 'слева', 'left' ),
+	'redirect'                => array( '0', '#РАРВЫСТ', '#перенаправление', '#перенапр', '#REDIRECT' ),
+	'img_right'               => array( '1', 'рахиз', 'справа', 'right' ),
+	'img_left'                => array( '1', 'галиу', 'слева', 'left' ),
 );
 
 $linkTrail = '/^((?:[a-z]|а|æ|б|в|г|д|е|ё|ж|з|и|й|к|л|м|н|о|п|р|с|т|у|ф|х|ц|ч|ш|щ|ъ|ы|ь|э|ю|я|“|»)+)(.*)$/sDu';
@@ -347,7 +353,6 @@ $messages = array(
 Æндæр исчи йæ аппæрста мыййаг.',
 'badtitle'             => 'Æнæмбæлон сæргонд',
 'viewsource'           => 'Код кæсын',
-'viewsourcefor'        => 'Фарс «$1»',
 'protectedpagetext'    => 'Ацы фарс у ивынæй æхгæд.',
 'viewsourcetext'       => 'Ацы фарсы код фенæн æмæ халдих кæнæн ис:',
 'ns-specialprotected'  => 'Сæрмагонд фæрстæ ({{ns:special}}) баивæн нæй.',
@@ -407,6 +412,9 @@ $messages = array(
 'passwordreset-emailelement' => 'Архайæджы ном: $1
 Рæстæгмæ пароль: $2',
 
+# Special:ChangeEmail
+'changeemail-cancel' => 'Ныууадзын',
+
 # Edit page toolbar
 'bold_sample'     => 'Бæзджын текст',
 'bold_tip'        => 'Бæзджын текст',
@@ -440,7 +448,6 @@ $messages = array(
 'summary-preview'                  => 'Ивд афыст уыдзæн:',
 'blockedtitle'                     => 'Архайæг хъодыгонд æрцыд',
 'blockednoreason'                  => 'аххос амынд не ’рцыд',
-'whitelistedittitle'               => 'Ацы текст ивынмæ хъуамæ дæхи бацамонай системæйæн',
 'loginreqtitle'                    => 'Хъæуы бахизын',
 'accmailtitle'                     => 'Пароль рарвыст у.',
 'newarticle'                       => '(Ног)',
@@ -512,10 +519,6 @@ $messages = array(
 'revdel-restore-deleted'    => 'хафт ивдтытæ',
 'revdel-restore-visible'    => 'зынгæ ивдтытæ',
 'pagehist'                  => 'Фарсы истори',
-'revdelete-content'         => 'мидис',
-'revdelete-summary'         => 'ивддзинады мидис',
-'revdelete-uname'           => 'архайæджы ном',
-'revdelete-hid'             => 'Ист $1',
 'revdelete-reasonotherlist' => 'Æндæр аххос',
 'revdelete-offender'        => 'Фарсы фæлтæры автор:',
 
@@ -828,7 +831,7 @@ $3',
 'longpages'              => 'Даргъ фæрстæ',
 'protectedpages'         => 'Æхгæд фæрстæ',
 'listusers'              => 'Архайджыты номхыгъд',
-'usercreated'            => 'Фæзындис $1, {{grammar:superessive|$2}}',
+'usercreated'            => '{{GENDER:$3|Фæзындис}} $1, {{grammar:superessive|$2}}',
 'newpages'               => 'Ног фæрстæ',
 'newpages-username'      => 'Архайæг:',
 'ancientpages'           => 'Зæронддæр фæрстæ',
@@ -875,8 +878,7 @@ $3',
 'listusers-submit' => 'Равдисын',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Архайджыты фæзындты лог',
-'newuserlog-create-entry' => 'Ног архайæджы аккаунт',
+'newuserlogpage' => 'Архайджыты фæзындты лог',
 
 # Special:ListGroupRights
 'listgrouprights-group'   => 'Къорд',
@@ -919,7 +921,6 @@ $3',
 'delete-confirm'        => 'Схаф "$1"',
 'actioncomplete'        => 'Æххæст',
 'actionfailed'          => 'Нæ рауадис',
-'deletedarticle'        => 'схафта "[[$1]]"',
 'dellogpage'            => 'Аппарыны лог',
 'deletionlog'           => 'аппарыны лог',
 'deletecomment'         => 'Аххос:',
@@ -1020,16 +1021,14 @@ $3',
 'databasenotlocked'   => 'Рарддон æхгæд неу.',
 
 # Move page
-'movearticle'              => 'Статьяйы ном баив',
-'movenologin'              => 'Системæйæн дæхи нæ бацамыдтай',
-'newtitle'                 => 'Ног ном',
-'move-watch'               => 'Ацы фарсмæ дæ цæст æрдар',
-'movepagebtn'              => 'Фарсы ном ивын',
-'1movedto2_redir'          => "[[$1]] æрвыстимæ хаст æрцыд [[$2]]'мæ",
-'move-redirect-suppressed' => 'рарвысты фарс нæ бахъуыд',
-'movelogpage'              => 'Номивдтыты лог',
-'movereason'               => 'Аххос:',
-'revertmove'               => 'раивын',
+'movearticle' => 'Статьяйы ном баив',
+'movenologin' => 'Системæйæн дæхи нæ бацамыдтай',
+'newtitle'    => 'Ног ном',
+'move-watch'  => 'Ацы фарсмæ дæ цæст æрдар',
+'movepagebtn' => 'Фарсы ном ивын',
+'movelogpage' => 'Номивдтыты лог',
+'movereason'  => 'Аххос:',
+'revertmove'  => 'раивын',
 
 # Export
 'export' => 'Фæрсты экспорт',
@@ -1119,11 +1118,6 @@ $3',
 'skinname-myskin'      => 'Мæхи',
 'skinname-chick'       => 'Карк',
 
-# Patrol log
-'patrol-log-line' => 'банысан кодта $1 $2 фарсæй патрулгондæй $3',
-'patrol-log-auto' => '(автоматон)',
-'patrol-log-diff' => 'ивд $1',
-
 # Browsing diffs
 'previousdiff' => '← Зæронддæр ивд',
 'nextdiff'     => 'Фæстæдæр ивд →',
@@ -1132,6 +1126,7 @@ $3',
 'thumbsize'       => 'Къаддæргонды бæрц:',
 'widthheightpage' => '$1 × $2, $3 {{PLURAL:$3|фарс|фарсы}}',
 'file-info-size'  => '$1 × $2 пикселы, файлы уæз: $3, MIME тип: $4',
+'file-nohires'    => 'Нæй ын стырдæр фæлтæр .',
 'svg-long-desc'   => 'SVG файл, номиналон $1 × $2 пикселы, файлы бæрц: $3',
 'show-big-image'  => 'Æнæхъæнæй',
 
@@ -1228,5 +1223,10 @@ $3',
 
 # HTML forms
 'htmlform-selectorother-other' => 'Æндæр',
+
+# Feedback
+'feedback-subject' => 'Сæр:',
+'feedback-message' => 'Фыстæг:',
+'feedback-close'   => 'Æххæст',
 
 );

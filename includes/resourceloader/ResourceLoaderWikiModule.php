@@ -24,26 +24,45 @@ defined( 'MEDIAWIKI' ) || die( 1 );
 
 /**
  * Abstraction for resource loader modules which pull from wiki pages
- * 
- * This can only be used for wiki pages in the MediaWiki and User namespaces, 
- * because of its dependence on the functionality of 
- * Title::isValidCssJsSubpage.
+ *
+ * This can only be used for wiki pages in the MediaWiki and User namespaces,
+ * because of its dependence on the functionality of
+ * Title::isCssJsSubpage.
  */
 abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
-	
+
 	/* Protected Members */
 
 	# Origin is user-supplied code
 	protected $origin = self::ORIGIN_USER_SITEWIDE;
-	
+
 	// In-object cache for title mtimes
 	protected $titleMtimes = array();
-	
+
 	/* Abstract Protected Methods */
-	
+
+	/**
+	 * @abstract
+	 * @param $context ResourceLoaderContext
+	 */
 	abstract protected function getPages( ResourceLoaderContext $context );
-	
+
 	/* Protected Methods */
+
+	/**
+	 * Get the Database object used in getTitleMTimes(). Defaults to the local slave DB
+	 * but subclasses may want to override this to return a remote DB object, or to return
+	 * null if getTitleMTimes() shouldn't access the DB at all.
+	 *
+	 * NOTE: This ONLY works for getTitleMTimes() and getModifiedTime(), NOT FOR ANYTHING ELSE.
+	 * In particular, it doesn't work for getting the content of JS and CSS pages. That functionality
+	 * will use the local DB irrespective of the return value of this method.
+	 *
+	 * @return DatabaseBase|null
+	 */
+	protected function getDB() {
+		return wfGetDB( DB_SLAVE );
+	}
 
 	/**
 	 * @param $title Title
@@ -54,7 +73,7 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 			$message = wfMessage( $title->getDBkey() )->inContentLanguage();
 			return $message->exists() ? $message->plain() : '';
 		}
-		if ( !$title->isCssJsSubpage() ) {
+		if ( !$title->isCssJsSubpage() && !$title->isCssOrJsPage() ) {
 			return null;
 		}
 		$revision = Revision::newFromTitle( $title );
@@ -63,7 +82,7 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 		}
 		return $revision->getRawText();
 	}
-	
+
 	/* Methods */
 
 	/**
@@ -98,7 +117,7 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 	 */
 	public function getStyles( ResourceLoaderContext $context ) {
 		global $wgScriptPath;
-		
+
 		$styles = array();
 		foreach ( $this->getPages( $context ) as $titleText => $options ) {
 			if ( $options['type'] !== 'style' ) {
@@ -107,7 +126,7 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 			$title = Title::newFromText( $titleText );
 			if ( !$title || $title->isRedirect()  ) {
 				continue;
-			}			
+			}
 			$media = isset( $options['media'] ) ? $options['media'] : 'all';
 			$style = $this->getContent( $title );
 			if ( strval( $style ) === '' ) {
@@ -138,6 +157,7 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 		if ( count( $mtimes ) ) {
 			$modifiedTime = max( $modifiedTime, max( $mtimes ) );
 		}
+		$modifiedTime = max( $modifiedTime, $this->getMsgBlobMtime( $context->getLanguage() ) );
 		return $modifiedTime;
 	}
 
@@ -156,19 +176,24 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 	 * @return array( prefixed DB key => UNIX timestamp ), nonexistent titles are dropped
 	 */
 	protected function getTitleMtimes( ResourceLoaderContext $context ) {
+		$dbr = $this->getDB();
+		if ( !$dbr ) {
+			// We're dealing with a subclass that doesn't have a DB
+			return array();
+		}
+		
 		$hash = $context->getHash();
 		if ( isset( $this->titleMtimes[$hash] ) ) {
 			return $this->titleMtimes[$hash];
 		}
-		
+
 		$this->titleMtimes[$hash] = array();
 		$batch = new LinkBatch;
 		foreach ( $this->getPages( $context ) as $titleText => $options ) {
 			$batch->addObj( Title::newFromText( $titleText ) );
 		}
-		
+
 		if ( !$batch->isEmpty() ) {
-			$dbr = wfGetDB( DB_SLAVE );
 			$res = $dbr->select( 'page',
 				array( 'page_namespace', 'page_title', 'page_touched' ),
 				$batch->constructSet( 'page', $dbr ),

@@ -16,10 +16,11 @@
  *
  * @param $name string the image name to check
  * @param $contextTitle Title|bool the page on which the image occurs, if known
+ * @param $blacklist string wikitext of a file blacklist
  * @return bool
  */
-function wfIsBadImage( $name, $contextTitle = false ) {
-	static $badImages = false;
+function wfIsBadImage( $name, $contextTitle = false, $blacklist = null ) {
+	static $badImageCache = null; // based on bad_image_list msg
 	wfProfileIn( __METHOD__ );
 
 	# Handle redirects
@@ -34,11 +35,17 @@ function wfIsBadImage( $name, $contextTitle = false ) {
 		wfProfileOut( __METHOD__ );
 		return $bad;
 	}
-
-	if( !$badImages ) {
+ 
+	$cacheable = ( $blacklist === null );
+	if( $cacheable && $badImageCache !== null ) {
+		$badImages = $badImageCache;
+	} else { // cache miss
+		if ( $blacklist === null ) {
+			$blacklist = wfMsgForContentNoTrans( 'bad_image_list' ); // site list
+		}
 		# Build the list now
 		$badImages = array();
-		$lines = explode( "\n", wfMsgForContentNoTrans( 'bad_image_list' ) );
+		$lines = explode( "\n", $blacklist );
 		foreach( $lines as $line ) {
 			# List items only
 			if ( substr( $line, 0, 1 ) !== '*' ) {
@@ -68,27 +75,13 @@ function wfIsBadImage( $name, $contextTitle = false ) {
 				$badImages[$imageDBkey] = $exceptions;
 			}
 		}
+		if ( $cacheable ) {
+			$badImageCache = $badImages;
+		}
 	}
 
 	$contextKey = $contextTitle ? $contextTitle->getPrefixedDBkey() : false;
 	$bad = isset( $badImages[$name] ) && !isset( $badImages[$name][$contextKey] );
 	wfProfileOut( __METHOD__ );
 	return $bad;
-}
-
-/**
- * Calculate the largest thumbnail width for a given original file size
- * such that the thumbnail's height is at most $maxHeight.
- * @param $boxWidth Integer Width of the thumbnail box.
- * @param $boxHeight Integer Height of the thumbnail box.
- * @param $maxHeight Integer Maximum height expected for the thumbnail.
- * @return Integer.
- */
-function wfFitBoxWidth( $boxWidth, $boxHeight, $maxHeight ) {
-	$idealWidth = $boxWidth * $maxHeight / $boxHeight;
-	$roundedUp = ceil( $idealWidth );
-	if( round( $roundedUp * $boxHeight / $boxWidth ) > $maxHeight )
-		return floor( $idealWidth );
-	else
-		return $roundedUp;
 }

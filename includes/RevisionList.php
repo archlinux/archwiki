@@ -2,15 +2,11 @@
 /**
  * List for revision table items for a single page
  */
-abstract class Rev_List {
+abstract class RevisionListBase extends ContextSource {
 	/**
 	 * @var Title
 	 */
 	var $title;
-	/**
-	 * @var IContextSource
-	 */
-	var $context;
 
 	var $ids, $res, $current;
 
@@ -20,7 +16,7 @@ abstract class Rev_List {
 	 * @param $title Title
 	 */
 	function __construct( IContextSource $context, Title $title ) {
-		$this->context = $context;
+		$this->setContext( $context );
 		$this->title = $title;
 	}
 
@@ -104,38 +100,20 @@ abstract class Rev_List {
 	 * @param $row stdclass
 	 */
 	abstract public function newItem( $row );
-
-	/**
-	 * Get the language of the user doing the action
-	 *
-	 * @return Language object
-	 */
-	public function getLang() {
-		return $this->context->getLang();
-	}
-
-	/**
-	 * Get the user doing the action
-	 *
-	 * @return User object
-	 */
-	public function getUser() {
-		return $this->context->getUser();
-	}
 }
 
 /**
  * Abstract base class for revision items
  */
-abstract class Rev_Item {
-	/** The parent Rev_List */
+abstract class RevisionItemBase {
+	/** The parent RevisionListBase */
 	var $list;
 
 	/** The DB result row */
 	var $row;
 
 	/**
-	 * @param $list Rev_List
+	 * @param $list RevisionListBase
 	 * @param $row DB result row
 	 */
 	public function __construct( $list, $row ) {
@@ -184,19 +162,19 @@ abstract class Rev_Item {
 	}
 
 	/**
-	 * Get the date, formatted with $wgLang
+	 * Get the date, formatted in user's languae
 	 */
 	public function formatDate() {
-		global $wgLang;
-		return $wgLang->date( $this->getTimestamp() );
+		return $this->list->getLanguage()->userDate( $this->getTimestamp(),
+			$this->list->getUser() );
 	}
 
 	/**
-	 * Get the time, formatted with $wgLang
+	 * Get the time, formatted in user's languae
 	 */
 	public function formatTime() {
-		global $wgLang;
-		return $wgLang->time( $this->getTimestamp() );
+		return $this->list->getLanguage()->userTime( $this->getTimestamp(),
+			$this->list->getUser() );
 	}
 
 	/**
@@ -240,7 +218,7 @@ abstract class Rev_Item {
 	abstract public function getHTML();
 }
 
-class RevisionList extends Rev_List {
+class RevisionList extends RevisionListBase {
 	public function getType() {
 		return 'revision';
 	}
@@ -250,19 +228,19 @@ class RevisionList extends Rev_List {
 	 * @return mixed
 	 */
 	public function doQuery( $db ) {
-		$conds = array(
-			'rev_page' => $this->title->getArticleID(),
-			'rev_page = page_id'
-		);
+		$conds = array( 'rev_page' => $this->title->getArticleID() );
 		if ( $this->ids !== null ) {
 			$conds['rev_id'] = array_map( 'intval', $this->ids );
 		}
 		return $db->select(
-			array( 'revision', 'page' ),
-			'*',
+			array( 'revision', 'page', 'user' ),
+			array_merge( Revision::selectFields(), Revision::selectUserFields() ),
 			$conds,
 			__METHOD__,
-			array( 'ORDER BY' => 'rev_id DESC' )
+			array( 'ORDER BY' => 'rev_id DESC' ),
+			array(
+				'page' => Revision::pageJoinCond(),
+				'user' => Revision::userJoinCond() )
 		);
 	}
 
@@ -274,7 +252,7 @@ class RevisionList extends Rev_List {
 /**
  * Item class for a live revision table row
  */
-class RevisionItem extends Rev_Item {
+class RevisionItem extends RevisionItemBase {
 	var $revision, $context;
 
 	public function __construct( $list, $row ) {
@@ -296,15 +274,15 @@ class RevisionItem extends Rev_Item {
 	}
 
 	public function getAuthorNameField() {
-		return 'rev_user_text';
+		return 'user_name'; // see Revision::selectUserFields()
 	}
 
 	public function canView() {
-		return $this->revision->userCan( Revision::DELETED_RESTRICTED );
+		return $this->revision->userCan( Revision::DELETED_RESTRICTED, $this->context->getUser() );
 	}
 
 	public function canViewContent() {
-		return $this->revision->userCan( Revision::DELETED_TEXT );
+		return $this->revision->userCan( Revision::DELETED_TEXT, $this->context->getUser() );
 	}
 
 	public function isDeleted() {
@@ -316,7 +294,7 @@ class RevisionItem extends Rev_Item {
 	 * Overridden by RevDel_ArchiveItem.
 	 */
 	protected function getRevisionLink() {
-		$date = $this->list->getLang()->timeanddate( $this->revision->getTimestamp(), true );
+		$date = $this->list->getLanguage()->timeanddate( $this->revision->getTimestamp(), true );
 		if ( $this->isDeleted() && !$this->canViewContent() ) {
 			return $date;
 		}

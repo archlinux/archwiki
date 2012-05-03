@@ -171,7 +171,6 @@ Usakanganwe kuchinga [[Special:Preferences|mapreferences ako {{SITENAME}}]].',
 'move-page-legend' => 'Chichinura peji',
 'movepagebtn'      => 'Chichinura peji',
 'movedto'          => 'rachichinurwa ku',
-'1movedto2'        => '[[$1]] rachichinurwa ku [[$2]]',
 'movereason'       => 'Chikonzero',
 
 # Namespace 8 related
@@ -182,9 +181,6 @@ Usakanganwe kuchinga [[Special:Preferences|mapreferences ako {{SITENAME}}]].',
 'tooltip-pt-logout'      => 'Chibuda',
 'tooltip-ca-move'        => 'Chichinura kupeji iri',
 'tooltip-p-logo'         => 'Peji Rekutanga',
-
-# Trackbacks
-'trackbackremove' => '([$1 Delete])',
 
 # Table pager
 'table_pager_limit_submit' => 'Enda',

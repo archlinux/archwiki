@@ -36,9 +36,12 @@ class ReCaptcha extends SimpleCaptcha {
 			return false;
 		}
 
+		// Compat: WebRequest::getIP is only available since MW 1.19.
+		$ip = method_exists( $wgRequest, 'getIP' ) ? $wgRequest->getIP() : wfGetIP();
+
 		$recaptcha_response = recaptcha_check_answer(
 			$wgReCaptchaPrivateKey,
-			$wgRequest->getIP(),
+			$ip,
 			$challenge,
 			$response
 		);

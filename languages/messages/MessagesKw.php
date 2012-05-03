@@ -327,7 +327,6 @@ $messages = array(
 'filenotfound'        => 'Nag aljem cavos an restren "$1".',
 'badtitle'            => 'Titel drog',
 'viewsource'          => 'Gweles an bednfenten',
-'viewsourcefor'       => 'rag $1',
 
 # Login and logout pages
 'welcomecreation'         => '== Dynnargh, $1! ==
@@ -471,10 +470,9 @@ Alwhedh: '''({{int:cur}})''' = dyffrans gen an amendyans diwettha, '''({{int:las
 'history-feed-item-nocomment' => '$1 dhe $2',
 
 # Revision deletion
-'rev-delundel'    => 'disqwedhes/cudha',
-'revdel-restore'  => 'chanjya an hewelder',
-'pagehist'        => 'Istory an folen',
-'revdelete-uname' => 'hanow-usyer',
+'rev-delundel'   => 'disqwedhes/cudha',
+'revdel-restore' => 'chanjya an hewelder',
+'pagehist'       => 'Istory an folen',
 
 # History merging
 'mergehistory-reason' => 'Acheson:',
@@ -780,8 +778,7 @@ En '''tew''' ew folednow eus war agas [[Special:Watchlist|rol golyas]].",
 'listusers-submit' => 'Disqwedhes',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Covnoten gwryans devnydhyoryon',
-'newuserlog-create-entry' => 'Devnydhyer noweth',
+'newuserlogpage' => 'Covnoten gwryans devnydhyoryon',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(rol an esely)',
@@ -815,7 +812,6 @@ En '''tew''' ew folednow eus war agas [[Special:Watchlist|rol golyas]].",
 'actioncomplete'        => 'An gwryans ew cowlwres',
 'deletedtext'           => '"$1" yw dileys.
 Gwelowgh $2 rag covadh a dhileanjow a-dhiwedhes.',
-'deletedarticle'        => 'a dhileas "[[$1]]"',
 'dellogpage'            => 'Covnoten dilea',
 'deletecomment'         => 'Acheson:',
 'deleteotherreason'     => 'Acheson aral/keworansel:',
@@ -846,7 +842,6 @@ Gwelowgh $2 rag covadh a dhileanjow a-dhiwedhes.',
 # Undelete
 'undeletelink'              => 'gweles/daswul',
 'undeleteviewlink'          => 'gweles',
-'undeletedarticle'          => 'a wrug restorya "[[$1]]"',
 'undelete-search-submit'    => 'Whila',
 'undelete-show-file-submit' => 'Ea',
 
@@ -917,8 +912,6 @@ Gwelowgh $2 rag covadh a dhileanjow a-dhiwedhes.',
 'pagemovedsub'     => 'An gwarnyans a sowenas',
 'movepage-moved'   => '\'\'\'Gwayes ew "$1" war-tu "$2"\'\'\'',
 'movedto'          => 'gwayes war-tu',
-'1movedto2'        => '[[$1]] gwayes war-tu [[$2]]',
-'1movedto2_redir'  => 'a wayas [[$1]] war-tu [[$2]] dres daswedyans',
 'movelogpage'      => 'Covnoten gwaya',
 'movereason'       => 'Acheson:',
 'revertmove'       => 'trebuchya',
@@ -1009,7 +1002,7 @@ Whi a ell gweles hy fednfenten.',
 
 # Media information
 'file-info-size' => '$1 × $2 pixel, mens an restren: $3, sort MIME : $4',
-'file-nohires'   => '<small>Nag eus clerder uhella cavadow.</small>',
+'file-nohires'   => 'Nag eus clerder uhella cavadow.',
 'svg-long-desc'  => 'Restren SVG, $1 × $2 pixel en hanow, mens an restren: $3',
 'show-big-image' => 'Clerder leun',
 
@@ -1039,9 +1032,6 @@ Whi a ell gweles hy fednfenten.',
 'watchlistall2' => 'oll',
 'namespacesall' => 'oll',
 'monthsall'     => 'oll',
-
-# Trackbacks
-'trackbackremove' => '([$1 Dilea])',
 
 # Multipage image navigation
 'imgmultipageprev' => '← folen kens',

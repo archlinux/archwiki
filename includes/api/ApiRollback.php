@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * @ingroup API
  */
@@ -52,11 +47,11 @@ class ApiRollback extends ApiBase {
 		$params = $this->extractRequestParams();
 
 		// User and title already validated in call to getTokenSalt from Main
-		$titleObj = $this->getTitle();
-		$articleObj = new Article( $titleObj );
+		$titleObj = $this->getRbTitle();
+		$pageObj = WikiPage::factory( $titleObj );
 		$summary = ( isset( $params['summary'] ) ? $params['summary'] : '' );
 		$details = array();
-		$retval = $articleObj->doRollback( $this->getUser(), $summary, $params['token'], $params['markbot'], $details );
+		$retval = $pageObj->doRollback( $this->getRbUser(), $summary, $params['token'], $params['markbot'], $details, $this->getUser() );
 
 		if ( $retval ) {
 			// We don't care about multiple errors, just report one of them
@@ -141,10 +136,10 @@ class ApiRollback extends ApiBase {
 	}
 
 	public function getTokenSalt() {
-		return array( $this->getTitle()->getPrefixedText(), $this->getUser() );
+		return array( $this->getRbTitle()->getPrefixedText(), $this->getRbUser() );
 	}
 
-	private function getUser() {
+	private function getRbUser() {
 		if ( $this->mUser !== null ) {
 			return $this->mUser;
 		}
@@ -165,7 +160,7 @@ class ApiRollback extends ApiBase {
 	/**
 	 * @return Title
 	 */
-	private function getTitle() {
+	private function getRbTitle() {
 		if ( $this->mTitleObj !== null ) {
 			return $this->mTitleObj;
 		}
@@ -184,7 +179,7 @@ class ApiRollback extends ApiBase {
 		return $this->mTitleObj;
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=rollback&title=Main%20Page&user=Catrope&token=123ABC',
 			'api.php?action=rollback&title=Main%20Page&user=217.121.114.116&token=123ABC&summary=Reverting%20vandalism&markbot=1'

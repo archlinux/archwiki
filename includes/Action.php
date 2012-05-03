@@ -1,5 +1,9 @@
 <?php
 /**
+ * @defgroup Actions Action done on pages
+ */
+
+/**
  * Actions are things which can be done to pages (edit, delete, rollback, etc).  They
  * are distinct from Special Pages because an action must apply to exactly one page.
  *
@@ -27,7 +31,7 @@ abstract class Action {
 
 	/**
 	 * Page on which we're performing the action
-	 * @var Article
+	 * @var Page
 	 */
 	protected $page;
 
@@ -72,17 +76,65 @@ abstract class Action {
 	/**
 	 * Get an appropriate Action subclass for the given action
 	 * @param $action String
-	 * @param $page Article
+	 * @param $page Page
+	 * @param $context IContextSource
 	 * @return Action|false|null false if the action is disabled, null
 	 *     if it is not recognised
 	 */
-	public final static function factory( $action, Page $page ) {
+	public final static function factory( $action, Page $page, IContextSource $context = null ) {
 		$class = self::getClass( $action, $page->getActionOverrides() );
 		if ( $class ) {
-			$obj = new $class( $page );
+			$obj = new $class( $page, $context );
 			return $obj;
 		}
 		return $class;
+	}
+
+	/**
+	 * Get the action that will be executed, not necessarily the one passed
+	 * passed through the "action" request parameter. Actions disabled in
+	 * $wgActions will be replaced by "nosuchaction".
+	 *
+	 * @since 1.19
+	 * @param $context IContextSource
+	 * @return string: action name
+	 */
+	public final static function getActionName( IContextSource $context ) {
+		global $wgActions;
+
+		$request = $context->getRequest();
+		$actionName = $request->getVal( 'action', 'view' );
+
+		// Check for disabled actions
+		if ( isset( $wgActions[$actionName] ) && $wgActions[$actionName] === false ) {
+			$actionName = 'nosuchaction';
+		}
+
+		// Workaround for bug #20966: inability of IE to provide an action dependent
+		// on which submit button is clicked.
+		if ( $actionName === 'historysubmit' ) {
+			if ( $request->getBool( 'revisiondelete' ) ) {
+				$actionName = 'revisiondelete';
+			} else {
+				$actionName = 'view';
+			}
+		} elseif ( $actionName == 'editredlink' ) {
+			$actionName = 'edit';
+		}
+
+		// Trying to get a WikiPage for NS_SPECIAL etc. will result
+		// in WikiPage::factory throwing "Invalid or virtual namespace -1 given."
+		// For SpecialPages et al, default to action=view.
+		if ( !$context->canUseWikiPage() ) {
+			return 'view';
+		}
+		
+		$action = Action::factory( $actionName, $context->getWikiPage() );
+		if ( $action instanceof Action ) {
+			return $action->getName();
+		}
+
+		return 'nosuchaction';
 	}
 
 	/**
@@ -92,14 +144,14 @@ abstract class Action {
 	 * @return Bool
 	 */
 	public final static function exists( $name ) {
-		return self::getClass( $name ) !== null;
+		return self::getClass( $name, array() ) !== null;
 	}
 
 	/**
 	 * Get the IContextSource in use here
 	 * @return IContextSource
 	 */
-	protected final function getContext() {
+	public final function getContext() {
 		if ( $this->context instanceof IContextSource ) {
 			return $this->context;
 		}
@@ -111,7 +163,7 @@ abstract class Action {
 	 *
 	 * @return WebRequest
 	 */
-	protected final function getRequest() {
+	public final function getRequest() {
 		return $this->getContext()->getRequest();
 	}
 
@@ -120,7 +172,7 @@ abstract class Action {
 	 *
 	 * @return OutputPage
 	 */
-	protected final function getOutput() {
+	public final function getOutput() {
 		return $this->getContext()->getOutput();
 	}
 
@@ -129,7 +181,7 @@ abstract class Action {
 	 *
 	 * @return User
 	 */
-	protected final function getUser() {
+	public final function getUser() {
 		return $this->getContext()->getUser();
 	}
 
@@ -138,34 +190,58 @@ abstract class Action {
 	 *
 	 * @return Skin
 	 */
-	protected final function getSkin() {
+	public final function getSkin() {
 		return $this->getContext()->getSkin();
 	}
 
 	/**
 	 * Shortcut to get the user Language being used for this instance
 	 *
-	 * @return Skin
+	 * @return Language
 	 */
-	protected final function getLang() {
-		return $this->getContext()->getLang();
+	public final function getLanguage() {
+		return $this->getContext()->getLanguage();
+	}
+
+	/**
+	 * Shortcut to get the user Language being used for this instance
+	 *
+	 * @deprecated 1.19 Use getLanguage instead
+	 * @return Language
+	 */
+	public final function getLang() {
+		wfDeprecated( __METHOD__, '1.19' );
+		return $this->getLanguage();
 	}
 
 	/**
 	 * Shortcut to get the Title object from the page
 	 * @return Title
 	 */
-	protected final function getTitle() {
+	public final function getTitle() {
 		return $this->page->getTitle();
+	}
+
+	/**
+	 * Get a Message object with context set
+	 * Parameters are the same as wfMessage()
+	 *
+	 * @return Message object
+	 */
+	public final function msg() {
+		$params = func_get_args();
+		return call_user_func_array( array( $this->getContext(), 'msg' ), $params );
 	}
 
 	/**
 	 * Protected constructor: use Action::factory( $action, $page ) to actually build
 	 * these things in the real world
-	 * @param Page $page
+	 * @param $page Page
+	 * @param $context IContextSource
 	 */
-	protected function __construct( Page $page ) {
+	protected function __construct( Page $page, IContextSource $context = null ) {
 		$this->page = $page;
+		$this->context = $context;
 	}
 
 	/**
@@ -177,8 +253,11 @@ abstract class Action {
 	/**
 	 * Get the permission required to perform this action.  Often, but not always,
 	 * the same as the action name
+	 * @return String|null
 	 */
-	public abstract function getRestriction();
+	public function getRestriction() {
+		return null;
+	}
 
 	/**
 	 * Checks if the given user (identified by an object) can perform this action.  Can be
@@ -189,17 +268,24 @@ abstract class Action {
 	 * @throws ErrorPageError
 	 */
 	protected function checkCanExecute( User $user ) {
-		if ( $this->requiresWrite() && wfReadOnly() ) {
-			throw new ReadOnlyError();
-		}
-
-		if ( $this->getRestriction() !== null && !$user->isAllowed( $this->getRestriction() ) ) {
-			throw new PermissionsError( $this->getRestriction() );
+		$right = $this->getRestriction();
+		if ( $right !== null ) {
+			$errors = $this->getTitle()->getUserPermissionsErrors( $right, $user );
+			if ( count( $errors ) ) {
+				throw new PermissionsError( $right, $errors );
+			}
 		}
 
 		if ( $this->requiresUnblock() && $user->isBlocked() ) {
 			$block = $user->mBlock;
 			throw new UserBlockedError( $block );
+		}
+
+		// This should be checked at the end so that the user won't think the
+		// error is only temporary when he also don't have the rights to execute
+		// this action
+		if ( $this->requiresWrite() && wfReadOnly() ) {
+			throw new ReadOnlyError();
 		}
 	}
 
@@ -246,7 +332,7 @@ abstract class Action {
 	 * @return String
 	 */
 	protected function getDescription() {
-		return wfMsg( strtolower( $this->getName() ) );
+		return wfMsgHtml( strtolower( $this->getName() ) );
 	}
 
 	/**
@@ -259,8 +345,6 @@ abstract class Action {
 
 	/**
 	 * Execute the action in a silent fashion: do not display anything or release any errors.
-	 * @param $data Array values that would normally be in the POST request
-	 * @param $captureErrors Bool whether to catch exceptions and just return false
 	 * @return Bool whether execution was successful
 	 */
 	public abstract function execute();
@@ -279,6 +363,10 @@ abstract class FormAction extends Action {
 	 * @return String HTML which will be sent to $form->addPreText()
 	 */
 	protected function preText() { return ''; }
+
+	/**
+	 * @return string
+	 */
 	protected function postText() { return ''; }
 
 	/**

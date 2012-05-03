@@ -36,86 +36,96 @@ class SpecialContributions extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		global $wgUser, $wgOut, $wgRequest;
-
 		$this->setHeaders();
 		$this->outputHeader();
-		$wgOut->addModuleStyles( 'mediawiki.special' );
+		$out = $this->getOutput();
+		$out->addModuleStyles( 'mediawiki.special' );
 
 		$this->opts = array();
+		$request = $this->getRequest();
 
-		if( $par == 'newbies' ) {
+		if ( $par == 'newbies' ) {
 			$target = 'newbies';
 			$this->opts['contribs'] = 'newbie';
-		} elseif( isset( $par ) ) {
+		} elseif ( $par !== null ) {
 			$target = $par;
 		} else {
-			$target = $wgRequest->getVal( 'target' );
+			$target = $request->getVal( 'target' );
 		}
 
 		// check for radiobox
-		if( $wgRequest->getVal( 'contribs' ) == 'newbie' ) {
+		if ( $request->getVal( 'contribs' ) == 'newbie' ) {
 			$target = 'newbies';
 			$this->opts['contribs'] = 'newbie';
+		} else {
+			$this->opts['contribs'] = 'user';
 		}
 
-		$this->opts['deletedOnly'] = $wgRequest->getBool( 'deletedOnly' );
+		$this->opts['deletedOnly'] = $request->getBool( 'deletedOnly' );
 
-		if( !strlen( $target ) ) {
-			$wgOut->addHTML( $this->getForm() );
+		if ( !strlen( $target ) ) {
+			$out->addHTML( $this->getForm() );
 			return;
 		}
 
-		$this->opts['limit'] = $wgRequest->getInt( 'limit', $wgUser->getOption('rclimit') );
+		$user = $this->getUser();
+
+		$this->opts['limit'] = $request->getInt( 'limit', $user->getOption( 'rclimit' ) );
 		$this->opts['target'] = $target;
-		$this->opts['topOnly'] = $wgRequest->getBool( 'topOnly' );
+		$this->opts['topOnly'] = $request->getBool( 'topOnly' );
 
 		$nt = Title::makeTitleSafe( NS_USER, $target );
-		if( !$nt ) {
-			$wgOut->addHTML( $this->getForm() );
+		if ( !$nt ) {
+			$out->addHTML( $this->getForm() );
 			return;
 		}
-		$id = User::idFromName( $nt->getText() );
+		$userObj = User::newFromName( $nt->getText(), false );
+		if ( !$userObj ) {
+			$out->addHTML( $this->getForm() );
+			return;
+		}
+		$id = $userObj->getID();
 
-		if( $target != 'newbies' ) {
+		if ( $this->opts['contribs'] != 'newbie' ) {
 			$target = $nt->getText();
-			$wgOut->setSubtitle( $this->contributionsSub( $nt, $id ) );
-			$wgOut->setHTMLTitle( wfMsg( 'pagetitle', wfMsgExt( 'contributions-title', array( 'parsemag' ),$target ) ) );
-			$user = User::newFromName( $target, false );
-			if ( is_object( $user ) ) {
-				$this->getSkin()->setRelevantUser( $user );
-			}
+			$out->addSubtitle( $this->contributionsSub( $userObj ) );
+			$out->setHTMLTitle( $this->msg( 'pagetitle', $this->msg( 'contributions-title', $target )->plain() ) );
+			$this->getSkin()->setRelevantUser( $userObj );
 		} else {
-			$wgOut->setSubtitle( wfMsgHtml( 'sp-contributions-newbies-sub') );
-			$wgOut->setHTMLTitle( wfMsg( 'pagetitle', wfMsg( 'sp-contributions-newbies-title' ) ) );
+			$out->addSubtitle( $this->msg( 'sp-contributions-newbies-sub' ) );
+			$out->setHTMLTitle( $this->msg( 'pagetitle', $this->msg( 'sp-contributions-newbies-title' )->plain() ) );
 		}
 
-		if( ( $ns = $wgRequest->getVal( 'namespace', null ) ) !== null && $ns !== '' ) {
+		if ( ( $ns = $request->getVal( 'namespace', null ) ) !== null && $ns !== '' ) {
 			$this->opts['namespace'] = intval( $ns );
 		} else {
 			$this->opts['namespace'] = '';
 		}
 
-		$this->opts['tagFilter'] = (string) $wgRequest->getVal( 'tagFilter' );
+		$this->opts['associated'] = $request->getBool( 'associated' );
+
+		$this->opts['nsInvert'] = (bool) $request->getVal( 'nsInvert' );
+
+		$this->opts['tagfilter'] = (string) $request->getVal( 'tagfilter' );
 
 		// Allows reverts to have the bot flag in recent changes. It is just here to
 		// be passed in the form at the top of the page
-		if( $wgUser->isAllowed( 'markbotedits' ) && $wgRequest->getBool( 'bot' ) ) {
+		if ( $user->isAllowed( 'markbotedits' ) && $request->getBool( 'bot' ) ) {
 			$this->opts['bot'] = '1';
 		}
 
-		$skip = $wgRequest->getText( 'offset' ) || $wgRequest->getText( 'dir' ) == 'prev';
+		$skip = $request->getText( 'offset' ) || $request->getText( 'dir' ) == 'prev';
 		# Offset overrides year/month selection
-		if( $skip ) {
+		if ( $skip ) {
 			$this->opts['year'] = '';
 			$this->opts['month'] = '';
 		} else {
-			$this->opts['year'] = $wgRequest->getIntOrNull( 'year' );
-			$this->opts['month'] = $wgRequest->getIntOrNull( 'month' );
+			$this->opts['year'] = $request->getIntOrNull( 'year' );
+			$this->opts['month'] = $request->getIntOrNull( 'month' );
 		}
 
-		$feedType = $wgRequest->getVal( 'feed' );
-		if( $feedType ) {
+		$feedType = $request->getVal( 'feed' );
+		if ( $feedType ) {
 			// Maintain some level of backwards compatability
 			// If people request feeds using the old parameters, redirect to API
 			$apiParams = array(
@@ -129,8 +139,8 @@ class SpecialContributions extends SpecialPage {
 			if ( $this->opts['deletedOnly'] ) {
 				$apiParams['deletedonly'] = true;
 			}
-			if ( $this->opts['tagFilter'] !== '' ) {
-				$apiParams['tagfilter'] = $this->opts['tagFilter'];
+			if ( $this->opts['tagfilter'] !== '' ) {
+				$apiParams['tagfilter'] = $this->opts['tagfilter'];
 			}
 			if ( $this->opts['namespace'] !== '' ) {
 				$apiParams['namespace'] = $this->opts['namespace'];
@@ -144,7 +154,7 @@ class SpecialContributions extends SpecialPage {
 
 			$url = wfScript( 'api' ) . '?' . wfArrayToCGI( $apiParams );
 
-			$wgOut->redirect( $url, '301' );
+			$out->redirect( $url, '301' );
 			return;
 		}
 
@@ -153,47 +163,49 @@ class SpecialContributions extends SpecialPage {
 
 		if ( wfRunHooks( 'SpecialContributionsBeforeMainOutput', array( $id ) ) ) {
 
-			$wgOut->addHTML( $this->getForm() );
+			$out->addHTML( $this->getForm() );
 
-			$pager = new ContribsPager( array(
+			$pager = new ContribsPager( $this->getContext(), array(
 				'target' => $target,
+				'contribs' => $this->opts['contribs'],
 				'namespace' => $this->opts['namespace'],
 				'year' => $this->opts['year'],
 				'month' => $this->opts['month'],
 				'deletedOnly' => $this->opts['deletedOnly'],
 				'topOnly' => $this->opts['topOnly'],
+				'nsInvert' => $this->opts['nsInvert'],
+				'associated' => $this->opts['associated'],
 			) );
-			if( !$pager->getNumRows() ) {
-				$wgOut->addWikiMsg( 'nocontribs', $target );
+			if ( !$pager->getNumRows() ) {
+				$out->addWikiMsg( 'nocontribs', $target );
 			} else {
 				# Show a message about slave lag, if applicable
 				$lag = wfGetLB()->safeGetLag( $pager->getDatabase() );
-				if( $lag > 0 )
-					$wgOut->showLagWarning( $lag );
+				if ( $lag > 0 )
+					$out->showLagWarning( $lag );
 
-				$wgOut->addHTML(
+				$out->addHTML(
 					'<p>' . $pager->getNavigationBar() . '</p>' .
 					$pager->getBody() .
 					'<p>' . $pager->getNavigationBar() . '</p>'
 				);
 			}
-			$wgOut->preventClickjacking( $pager->getPreventClickjacking() );
+			$out->preventClickjacking( $pager->getPreventClickjacking() );
 
 			# Show the appropriate "footer" message - WHOIS tools, etc.
-			if( $target != 'newbies' ) {
+			if ( $this->opts['contribs'] != 'newbie' ) {
 				$message = 'sp-contributions-footer';
 				if ( IP::isIPAddress( $target ) ) {
 					$message = 'sp-contributions-footer-anon';
 				} else {
-					$user = User::newFromName( $target );
-					if ( !$user || $user->isAnon() ) {
+					if ( $userObj->isAnon() ) {
 						// No message for non-existing users
 						return;
 					}
 				}
 
-				if( !wfMessage( $message, $target )->isDisabled() ) {
-					$wgOut->wrapWikiMsg(
+				if ( !$this->msg( $message, $target )->isDisabled() ) {
+					$out->wrapWikiMsg(
 						"<div class='mw-contributions-footer'>\n$1\n</div>",
 						array( $message, $target ) );
 				}
@@ -203,33 +215,29 @@ class SpecialContributions extends SpecialPage {
 
 	/**
 	 * Generates the subheading with links
-	 * @param $nt Title object for the target
-	 * @param $id Integer: User ID for the target
+	 * @param $userObj User object for the target
 	 * @return String: appropriately-escaped HTML to be output literally
 	 * @todo FIXME: Almost the same as getSubTitle in SpecialDeletedContributions.php. Could be combined.
 	 */
-	protected function contributionsSub( $nt, $id ) {
-		global $wgLang, $wgUser, $wgOut;
-
-		$sk = $this->getSkin();
-
-		if ( $id === null ) {
-			$user = htmlspecialchars( $nt->getText() );
+	protected function contributionsSub( $userObj ) {
+		if ( $userObj->isAnon() ) {
+			$user = htmlspecialchars( $userObj->getName() );
 		} else {
-			$user = $sk->link( $nt, htmlspecialchars( $nt->getText() ) );
+			$user = Linker::link( $userObj->getUserPage(), htmlspecialchars( $userObj->getName() ) );
 		}
-		$userObj = User::newFromName( $nt->getText(), /* check for username validity not needed */ false );
-		$talk = $nt->getTalkPage();
-		if( $talk ) {
-			$tools = self::getUserLinks( $nt, $talk, $userObj, $wgUser );
-			$links = $wgLang->pipeList( $tools );
+		$nt = $userObj->getUserPage();
+		$talk = $userObj->getTalkPage();
+		if ( $talk ) {
+			$tools = $this->getUserLinks( $nt, $talk, $userObj );
+			$links = $this->getLanguage()->pipeList( $tools );
 
 			// Show a note if the user is blocked and display the last block log entry.
 			if ( $userObj->isBlocked() ) {
+				$out = $this->getOutput(); // showLogExtract() wants first parameter by reference
 				LogEventsList::showLogExtract(
-					$wgOut,
+					$out,
 					'block',
-					$nt->getPrefixedText(),
+					$nt,
 					'',
 					array(
 						'lim' => 1,
@@ -238,9 +246,9 @@ class SpecialContributions extends SpecialPage {
 							$userObj->isAnon() ?
 								'sp-contributions-blocked-notice-anon' :
 								'sp-contributions-blocked-notice',
-							$nt->getText() # Support GENDER in 'sp-contributions-blocked-notice'
+							$userObj->getName() # Support GENDER in 'sp-contributions-blocked-notice'
 						),
-						'offset' => '' # don't use $wgRequest parameter offset
+						'offset' => '' # don't use WebRequest parameter offset
 					)
 				);
 			}
@@ -250,10 +258,11 @@ class SpecialContributions extends SpecialPage {
 		// languages that want to put the "for" bit right after $user but before
 		// $links.  If 'contribsub' is around, use it for reverse compatibility,
 		// otherwise use 'contribsub2'.
-		if( wfEmptyMsg( 'contribsub' ) ) {
-			return wfMsgHtml( 'contribsub2', $user, $links );
+		$oldMsg = $this->msg( 'contribsub' );
+		if ( $oldMsg->exists() ) {
+			return $oldMsg->rawParams( "$user ($links)" );
 		} else {
-			return wfMsgHtml( 'contribsub', "$user ($links)" );
+			return $this->msg( 'contribsub2' )->rawParams( $user, $links );
 		}
 	}
 
@@ -262,38 +271,37 @@ class SpecialContributions extends SpecialPage {
 	 * @param $userpage Title: Target user page
 	 * @param $talkpage Title: Talk page
 	 * @param $target User: Target user object
-	 * @param $subject User: The viewing user ($wgUser is still checked in some cases, like userrights page!!)
+	 * @return array
 	 */
-	public static function getUserLinks( Title $userpage, Title $talkpage, User $target, User $subject ) {
+	public function getUserLinks( Title $userpage, Title $talkpage, User $target ) {
 
-		$sk = $subject->getSkin();
 		$id = $target->getId();
 		$username = $target->getName();
 
-		$tools[] = $sk->link( $talkpage, wfMsgHtml( 'sp-contributions-talk' ) );
+		$tools[] = Linker::link( $talkpage, $this->msg( 'sp-contributions-talk' )->escaped() );
 
-		if( ( $id !== null ) || ( $id === null && IP::isIPAddress( $username ) ) ) {
-			if( $subject->isAllowed( 'block' ) ) { # Block / Change block / Unblock links
+		if ( ( $id !== null ) || ( $id === null && IP::isIPAddress( $username ) ) ) {
+			if ( $this->getUser()->isAllowed( 'block' ) ) { # Block / Change block / Unblock links
 				if ( $target->isBlocked() ) {
-					$tools[] = $sk->linkKnown( # Change block link
+					$tools[] = Linker::linkKnown( # Change block link
 						SpecialPage::getTitleFor( 'Block', $username ),
-						wfMsgHtml( 'change-blocklink' )
+						$this->msg( 'change-blocklink' )->escaped()
 					);
-					$tools[] = $sk->linkKnown( # Unblock link
+					$tools[] = Linker::linkKnown( # Unblock link
 						SpecialPage::getTitleFor( 'Unblock', $username ),
-						wfMsgHtml( 'unblocklink' )
+						$this->msg( 'unblocklink' )->escaped()
 					);
 				} else { # User is not blocked
-					$tools[] = $sk->linkKnown( # Block link
+					$tools[] = Linker::linkKnown( # Block link
 						SpecialPage::getTitleFor( 'Block', $username ),
-						wfMsgHtml( 'blocklink' )
+						$this->msg( 'blocklink' )->escaped()
 					);
 				}
 			}
 			# Block log link
-			$tools[] = $sk->linkKnown(
+			$tools[] = Linker::linkKnown(
 				SpecialPage::getTitleFor( 'Log', 'block' ),
-				wfMsgHtml( 'sp-contributions-blocklog' ),
+				$this->msg( 'sp-contributions-blocklog' )->escaped(),
 				array(),
 				array(
 					'page' => $userpage->getPrefixedText()
@@ -301,31 +309,32 @@ class SpecialContributions extends SpecialPage {
 			);
 		}
 		# Uploads
-		$tools[] = $sk->linkKnown(
+		$tools[] = Linker::linkKnown(
 			SpecialPage::getTitleFor( 'Listfiles', $username ),
-			wfMsgHtml( 'sp-contributions-uploads' )
+			$this->msg( 'sp-contributions-uploads' )->escaped()
 		);
 
 		# Other logs link
-		$tools[] = $sk->linkKnown(
+		$tools[] = Linker::linkKnown(
 			SpecialPage::getTitleFor( 'Log', $username ),
-			wfMsgHtml( 'sp-contributions-logs' )
+			$this->msg( 'sp-contributions-logs' )->escaped()
 		);
 
 		# Add link to deleted user contributions for priviledged users
-		if( $subject->isAllowed( 'deletedhistory' ) ) {
-			$tools[] = $sk->linkKnown(
+		if ( $this->getUser()->isAllowed( 'deletedhistory' ) ) {
+			$tools[] = Linker::linkKnown(
 				SpecialPage::getTitleFor( 'DeletedContributions', $username ),
-				wfMsgHtml( 'sp-contributions-deleted' )
+				$this->msg( 'sp-contributions-deleted' )->escaped()
 			);
 		}
 
 		# Add a link to change user rights for privileged users
 		$userrightsPage = new UserrightsPage();
-		if( $id !== null && $userrightsPage->userCanChangeRights( $target ) ) {
-			$tools[] = $sk->linkKnown(
+		$userrightsPage->setContext( $this->getContext() );
+		if ( $id !== null && $userrightsPage->userCanChangeRights( $target ) ) {
+			$tools[] = Linker::linkKnown(
 				SpecialPage::getTitleFor( 'Userrights', $username ),
-				wfMsgHtml( 'sp-contributions-userrights' )
+				$this->msg( 'sp-contributions-userrights' )->escaped()
 			);
 		}
 
@@ -341,82 +350,185 @@ class SpecialContributions extends SpecialPage {
 		global $wgScript;
 
 		$this->opts['title'] = $this->getTitle()->getPrefixedText();
-		if( !isset( $this->opts['target'] ) ) {
+		if ( !isset( $this->opts['target'] ) ) {
 			$this->opts['target'] = '';
 		} else {
 			$this->opts['target'] = str_replace( '_' , ' ' , $this->opts['target'] );
 		}
 
-		if( !isset( $this->opts['namespace'] ) ) {
+		if ( !isset( $this->opts['namespace'] ) ) {
 			$this->opts['namespace'] = '';
 		}
 
-		if( !isset( $this->opts['contribs'] ) ) {
+		if ( !isset( $this->opts['nsInvert'] ) ) {
+			$this->opts['nsInvert'] = '';
+		}
+
+		if ( !isset( $this->opts['associated'] ) ) {
+			$this->opts['associated'] = false;
+		}
+
+		if ( !isset( $this->opts['contribs'] ) ) {
 			$this->opts['contribs'] = 'user';
 		}
 
-		if( !isset( $this->opts['year'] ) ) {
+		if ( !isset( $this->opts['year'] ) ) {
 			$this->opts['year'] = '';
 		}
 
-		if( !isset( $this->opts['month'] ) ) {
+		if ( !isset( $this->opts['month'] ) ) {
 			$this->opts['month'] = '';
 		}
 
-		if( $this->opts['contribs'] == 'newbie' ) {
+		if ( $this->opts['contribs'] == 'newbie' ) {
 			$this->opts['target'] = '';
 		}
 
-		if( !isset( $this->opts['tagFilter'] ) ) {
-			$this->opts['tagFilter'] = '';
+		if ( !isset( $this->opts['tagfilter'] ) ) {
+			$this->opts['tagfilter'] = '';
 		}
 
-		if( !isset( $this->opts['topOnly'] ) ) {
+		if ( !isset( $this->opts['topOnly'] ) ) {
 			$this->opts['topOnly'] = false;
 		}
 
-		$f = Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript, 'class' => 'mw-contributions-form' ) );
+		$form = Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript, 'class' => 'mw-contributions-form' ) );
 
 		# Add hidden params for tracking except for parameters in $skipParameters
-		$skipParameters = array( 'namespace', 'deletedOnly', 'target', 'contribs', 'year', 'month', 'topOnly' );
+		$skipParameters = array( 'namespace', 'nsInvert', 'deletedOnly', 'target', 'contribs', 'year', 'month', 'topOnly', 'associated' );
 		foreach ( $this->opts as $name => $value ) {
-			if( in_array( $name, $skipParameters ) ) {
+			if ( in_array( $name, $skipParameters ) ) {
 				continue;
 			}
-			$f .= "\t" . Html::hidden( $name, $value ) . "\n";
+			$form .= "\t" . Html::hidden( $name, $value ) . "\n";
 		}
 
-		$tagFilter = ChangeTags::buildTagFilterSelector( $this->opts['tagFilter'] );
+		$tagFilter = ChangeTags::buildTagFilterSelector( $this->opts['tagfilter'] );
 
-		$f .= 	Xml::fieldset( wfMsg( 'sp-contributions-search' ) ) .
-			Xml::radioLabel( wfMsgExt( 'sp-contributions-newbies', array( 'parsemag' ) ),
-				'contribs', 'newbie' , 'newbie', $this->opts['contribs'] == 'newbie' ) . '<br />' .
-			Xml::radioLabel( wfMsgExt( 'sp-contributions-username', array( 'parsemag' ) ),
-				'contribs' , 'user', 'user', $this->opts['contribs'] == 'user' ) . ' ' .
-			Html::input( 'target', $this->opts['target'], 'text', array(
-				'size' => '20',
-				'required' => ''
-			) + ( $this->opts['target'] ? array() : array( 'autofocus' ) ) ) . ' '.
-			Html::rawElement( 'span', array( 'style' => 'white-space: nowrap' ),
-				Xml::label( wfMsg( 'namespace' ), 'namespace' ) . ' ' .
-				Xml::namespaceSelector( $this->opts['namespace'], '' )
+		if ( $tagFilter ) {
+			$filterSelection =
+				Xml::tags( 'td', array( 'class' => 'mw-label' ), array_shift( $tagFilter ) ) .
+				Xml::tags( 'td', array( 'class' => 'mw-input' ), implode( '&#160', $tagFilter ) );
+		} else {
+			$filterSelection = Xml::tags( 'td', array( 'colspan' => 2 ), '' );
+		}
+
+		$targetSelection = Xml::tags( 'td', array( 'colspan' => 2 ),
+			Xml::radioLabel(
+				$this->msg( 'sp-contributions-newbies' )->text(),
+				'contribs',
+				'newbie' ,
+				'newbie',
+				$this->opts['contribs'] == 'newbie',
+				array( 'class' => 'mw-input' )
+			) . '<br />' .
+			Xml::radioLabel(
+				$this->msg( 'sp-contributions-username' )->text(),
+				'contribs',
+				'user',
+				'user',
+				$this->opts['contribs'] == 'user',
+				array( 'class' => 'mw-input' )
+			) . ' ' .
+			Html::input(
+				'target',
+				$this->opts['target'],
+				'text',
+				array( 'size' => '20', 'required' => '', 'class' => 'mw-input' ) +
+					( $this->opts['target'] ? array() : array( 'autofocus' )
+				)
+			) . ' '
+		) ;
+
+		$namespaceSelection =
+			Xml::tags( 'td', array( 'class' => 'mw-label' ),
+				Xml::label(
+					$this->msg( 'namespace' )->text(),
+					'namespace',
+					''
+				)
 			) .
-			Xml::checkLabel( wfMsg( 'history-show-deleted' ),
-				'deletedOnly', 'mw-show-deleted-only', $this->opts['deletedOnly'] ) . '<br />' .
-			Xml::tags( 'p', null, Xml::checkLabel( wfMsg( 'sp-contributions-toponly' ),
-				'topOnly', 'mw-show-top-only', $this->opts['topOnly'] ) ) .
-			( $tagFilter ? Xml::tags( 'p', null, implode( '&#160;', $tagFilter ) ) : '' ) .
-			Html::rawElement( 'p', array( 'style' => 'white-space: nowrap' ),
-				Xml::dateMenu( $this->opts['year'], $this->opts['month'] ) . ' ' .
-				Xml::submitButton( wfMsg( 'sp-contributions-submit' ) )
-			) . ' ';
-		$explain = wfMessage( 'sp-contributions-explain' );
+			Xml::tags( 'td', null,
+				Xml::namespaceSelector( $this->opts['namespace'], '' ) . '&#160;' .
+				Html::rawElement( 'span', array( 'style' => 'white-space: nowrap' ),
+					Xml::checkLabel(
+						$this->msg( 'invert' )->text(),
+						'nsInvert',
+						'nsInvert',
+						$this->opts['nsInvert'],
+						array( 'title' => $this->msg( 'tooltip-invert' )->text(), 'class' => 'mw-input' )
+					) . '&#160;'
+				) .
+				Html::rawElement( 'span', array( 'style' => 'white-space: nowrap' ),
+					Xml::checkLabel(
+						$this->msg( 'namespace_association' )->text(),
+						'associated',
+						'associated',
+						$this->opts['associated'],
+						array( 'title' => $this->msg( 'tooltip-namespace_association' )->text(), 'class' => 'mw-input' )
+					) . '&#160;'
+				)
+			) ;
+
+		$extraOptions = Xml::tags( 'td', array( 'colspan' => 2 ),
+			Html::rawElement( 'span', array( 'style' => 'white-space: nowrap' ),
+				Xml::checkLabel(
+					$this->msg( 'history-show-deleted' )->text(),
+					'deletedOnly',
+					'mw-show-deleted-only',
+					$this->opts['deletedOnly'],
+					array( 'class' => 'mw-input' )
+				)
+			) .
+			Html::rawElement( 'span', array( 'style' => 'white-space: nowrap' ),
+				Xml::checkLabel(
+					$this->msg( 'sp-contributions-toponly' )->text(),
+					'topOnly',
+					'mw-show-top-only',
+					$this->opts['topOnly'],
+					array( 'class' => 'mw-input' )
+				)
+			)
+		) ;
+
+		$dateSelectionAndSubmit = Xml::tags( 'td', array( 'colspan' => 2 ),
+			Xml::dateMenu(
+				$this->opts['year'],
+				$this->opts['month']
+			) . ' ' .
+			Xml::submitButton(
+				$this->msg( 'sp-contributions-submit' )->text(),
+				array( 'class' => 'mw-submit' )
+			)
+		) ;
+
+		$form .=
+			Xml::fieldset( $this->msg( 'sp-contributions-search' )->text() ) .
+			Xml::openElement( 'table', array( 'class' => 'mw-contributions-table' ) ) .
+				Xml::openElement( 'tr' ) .
+					$targetSelection .
+				Xml::closeElement( 'tr' ) .
+				Xml::openElement( 'tr' ) .
+					$namespaceSelection .
+				Xml::closeElement( 'tr' ) .
+				Xml::openElement( 'tr' ) .
+					$filterSelection .
+				Xml::closeElement( 'tr' ) .
+				Xml::openElement( 'tr' ) .
+					$extraOptions .
+				Xml::closeElement( 'tr' ) .
+				Xml::openElement( 'tr' ) .
+					$dateSelectionAndSubmit .
+				Xml::closeElement( 'tr' ) .
+			Xml::closeElement( 'table' );
+
+		$explain = $this->msg( 'sp-contributions-explain' );
 		if ( $explain->exists() ) {
-			$f .= "<p id='mw-sp-contributions-explain'>{$explain}</p>";
+			$form .= "<p id='mw-sp-contributions-explain'>{$explain}</p>";
 		}
-		$f .= Xml::closeElement('fieldset' ) .
+		$form .= Xml::closeElement( 'fieldset' ) .
 			Xml::closeElement( 'form' );
-		return $f;
+		return $form;
 	}
 }
 
@@ -430,18 +542,21 @@ class ContribsPager extends ReverseChronologicalPager {
 	var $namespace = '', $mDb;
 	var $preventClickjacking = false;
 
-	function __construct( $options ) {
-		parent::__construct();
+	function __construct( IContextSource $context, array $options ) {
+		parent::__construct( $context );
 
 		$msgs = array( 'uctop', 'diff', 'newarticle', 'rollbacklink', 'diff', 'hist', 'rev-delundel', 'pipe-separator' );
 
-		foreach( $msgs as $msg ) {
-			$this->messages[$msg] = wfMsgExt( $msg, array( 'escapenoentities' ) );
+		foreach ( $msgs as $msg ) {
+			$this->messages[$msg] = $this->msg( $msg )->escaped();
 		}
 
 		$this->target = isset( $options['target'] ) ? $options['target'] : '';
+		$this->contribs = isset( $options['contribs'] ) ? $options['contribs'] : 'users';
 		$this->namespace = isset( $options['namespace'] ) ? $options['namespace'] : '';
-		$this->tagFilter = isset( $options['tagFilter'] ) ? $options['tagFilter'] : false;
+		$this->tagFilter = isset( $options['tagfilter'] ) ? $options['tagfilter'] : false;
+		$this->nsInvert = isset( $options['nsInvert'] ) ? $options['nsInvert'] : false;
+		$this->associated = isset( $options['associated'] ) ? $options['associated'] : false;
 
 		$this->deletedOnly = !empty( $options['deletedOnly'] );
 		$this->topOnly = !empty( $options['topOnly'] );
@@ -459,33 +574,35 @@ class ContribsPager extends ReverseChronologicalPager {
 		return $query;
 	}
 
-	function getTitle() {
-		return SpecialPage::getTitleFor( 'Contributions' );
-	}
-
 	function getQueryInfo() {
-		global $wgUser;
 		list( $tables, $index, $userCond, $join_cond ) = $this->getUserCond();
 
+		$user = $this->getUser();
 		$conds = array_merge( $userCond, $this->getNamespaceCond() );
+
 		// Paranoia: avoid brute force searches (bug 17342)
-		if( !$wgUser->isAllowed( 'deletedhistory' ) ) {
-			$conds[] = $this->mDb->bitAnd('rev_deleted',Revision::DELETED_USER) . ' = 0';
-		} elseif( !$wgUser->isAllowed( 'suppressrevision' ) ) {
-			$conds[] = $this->mDb->bitAnd('rev_deleted',Revision::SUPPRESSED_USER) .
+		if ( !$user->isAllowed( 'deletedhistory' ) ) {
+			$conds[] = $this->mDb->bitAnd( 'rev_deleted', Revision::DELETED_USER ) . ' = 0';
+		} elseif ( !$user->isAllowed( 'suppressrevision' ) ) {
+			$conds[] = $this->mDb->bitAnd( 'rev_deleted', Revision::SUPPRESSED_USER ) .
 				' != ' . Revision::SUPPRESSED_USER;
 		}
-		$join_cond['page'] = array( 'INNER JOIN', 'page_id=rev_page' );
+
+		# Don't include orphaned revisions
+		$join_cond['page'] = Revision::pageJoinCond();
+		# Get the current user name for accounts
+		$join_cond['user'] = Revision::userJoinCond();
 
 		$queryInfo = array(
-			'tables' => $tables,
-			'fields' => array(
-				'page_namespace', 'page_title', 'page_is_new', 'page_latest', 'page_is_redirect',
-				'page_len','rev_id', 'rev_page', 'rev_text_id', 'rev_timestamp', 'rev_comment',
-				'rev_minor_edit', 'rev_user', 'rev_user_text', 'rev_parent_id', 'rev_deleted'
+			'tables'     => $tables,
+			'fields'     => array_merge(
+				Revision::selectFields(),
+				Revision::selectUserFields(),
+				array( 'page_namespace', 'page_title', 'page_is_new',
+					'page_latest', 'page_is_redirect', 'page_len' )
 			),
-			'conds' => $conds,
-			'options' => array( 'USE INDEX' => array('revision' => $index) ),
+			'conds'      => $conds,
+			'options'    => array( 'USE INDEX' => array( 'revision' => $index ) ),
 			'join_conds' => $join_cond
 		);
 
@@ -505,31 +622,52 @@ class ContribsPager extends ReverseChronologicalPager {
 	function getUserCond() {
 		$condition = array();
 		$join_conds = array();
-		if( $this->target == 'newbies' ) {
-			$tables = array( 'user_groups', 'page', 'revision' );
+		$tables = array( 'revision', 'page', 'user' );
+		if ( $this->contribs == 'newbie' ) {
+			$tables[] = 'user_groups';
 			$max = $this->mDb->selectField( 'user', 'max(user_id)', false, __METHOD__ );
-			$condition[] = 'rev_user >' . (int)($max - $max / 100);
+			$condition[] = 'rev_user >' . (int)( $max - $max / 100 );
 			$condition[] = 'ug_group IS NULL';
 			$index = 'user_timestamp';
 			# @todo FIXME: Other groups may have 'bot' rights
 			$join_conds['user_groups'] = array( 'LEFT JOIN', "ug_user = rev_user AND ug_group = 'bot'" );
 		} else {
-			$tables = array( 'page', 'revision' );
-			$condition['rev_user_text'] = $this->target;
-			$index = 'usertext_timestamp';
+			if ( IP::isIPAddress( $this->target ) ) {
+				$condition['rev_user_text'] = $this->target;
+				$index = 'usertext_timestamp';
+			} else {
+				$condition['rev_user'] = User::idFromName( $this->target );
+				$index = 'user_timestamp';
+			}
 		}
-		if( $this->deletedOnly ) {
+		if ( $this->deletedOnly ) {
 			$condition[] = "rev_deleted != '0'";
 		}
-		if( $this->topOnly ) {
+		if ( $this->topOnly ) {
 			$condition[] = "rev_id = page_latest";
 		}
 		return array( $tables, $index, $condition, $join_conds );
 	}
 
 	function getNamespaceCond() {
-		if( $this->namespace !== '' ) {
-			return array( 'page_namespace' => (int)$this->namespace );
+		if ( $this->namespace !== '' ) {
+			$selectedNS = $this->mDb->addQuotes( $this->namespace );
+			$eq_op = $this->nsInvert ? '!=' : '=';
+			$bool_op = $this->nsInvert ? 'AND' : 'OR';
+
+			if ( !$this->associated ) {
+				return array( "page_namespace $eq_op $selectedNS" );
+			} else {
+				$associatedNS = $this->mDb->addQuotes (
+					MWNamespace::getAssociated( $this->namespace )
+				);
+				return array(
+					"page_namespace $eq_op $selectedNS " .
+					$bool_op .
+					" page_namespace $eq_op $associatedNS"
+				);
+			}
+
 		} else {
 			return array();
 		}
@@ -539,10 +677,62 @@ class ContribsPager extends ReverseChronologicalPager {
 		return 'rev_timestamp';
 	}
 
+	function doBatchLookups() {
+		$this->mResult->rewind();
+		$revIds = array();
+		foreach ( $this->mResult as $row ) {
+			if( $row->rev_parent_id ) {
+				$revIds[] = $row->rev_parent_id;
+			}
+		}
+		$this->mParentLens = $this->getParentLengths( $revIds );
+		$this->mResult->rewind(); // reset
+
+		# Do a link batch query
+		$this->mResult->seek( 0 );
+		$batch = new LinkBatch();
+		# Give some pointers to make (last) links
+		foreach ( $this->mResult as $row ) {
+			if ( $this->contribs === 'newbie' ) { // multiple users
+				$batch->add( NS_USER, $row->user_name );
+				$batch->add( NS_USER_TALK, $row->user_name );
+			}
+			$batch->add( $row->page_namespace, $row->page_title );
+		}
+		$batch->execute();
+		$this->mResult->seek( 0 );
+	}
+
+	/**
+	 * Do a batched query to get the parent revision lengths
+	 */
+	private function getParentLengths( array $revIds ) {
+		$revLens = array();
+		if ( !$revIds ) {
+			return $revLens; // empty
+		}
+		wfProfileIn( __METHOD__ );
+		$res = $this->getDatabase()->select( 'revision',
+			array( 'rev_id', 'rev_len' ),
+			array( 'rev_id' => $revIds ),
+			__METHOD__ );
+		foreach ( $res as $row ) {
+			$revLens[$row->rev_id] = $row->rev_len;
+		}
+		wfProfileOut( __METHOD__ );
+		return $revLens;
+	}
+
+	/**
+	 * @return string
+	 */
 	function getStartBody() {
 		return "<ul>\n";
 	}
 
+	/**
+	 * @return string
+	 */
 	function getEndBody() {
 		return "</ul>\n";
 	}
@@ -558,15 +748,13 @@ class ContribsPager extends ReverseChronologicalPager {
 	 * @todo This would probably look a lot nicer in a table.
 	 */
 	function formatRow( $row ) {
-		global $wgUser, $wgLang;
 		wfProfileIn( __METHOD__ );
 
-		$sk = $this->getSkin();
 		$rev = new Revision( $row );
 		$classes = array();
 
 		$page = Title::newFromRow( $row );
-		$link = $sk->link(
+		$link = Linker::link(
 			$page,
 			htmlspecialchars( $page->getPrefixedText() ),
 			array(),
@@ -574,19 +762,20 @@ class ContribsPager extends ReverseChronologicalPager {
 		);
 		# Mark current revisions
 		$topmarktext = '';
-		if( $row->rev_id == $row->page_latest ) {
+		if ( $row->rev_id == $row->page_latest ) {
 			$topmarktext .= '<span class="mw-uctop">' . $this->messages['uctop'] . '</span>';
 			# Add rollback link
-			if( !$row->page_is_new && $page->quickUserCan( 'rollback' )
+			if ( !$row->page_is_new && $page->quickUserCan( 'rollback' )
 				&& $page->quickUserCan( 'edit' ) )
 			{
 				$this->preventClickjacking();
-				$topmarktext .= ' '.$sk->generateRollback( $rev );
+				$topmarktext .= ' ' . Linker::generateRollback( $rev );
 			}
 		}
+		$user = $this->getUser();
 		# Is there a visible previous revision?
-		if( $rev->userCan( Revision::DELETED_TEXT ) && $rev->getParentId() !== 0 ) {
-			$difftext = $sk->linkKnown(
+		if ( $rev->userCan( Revision::DELETED_TEXT, $user ) && $rev->getParentId() !== 0 ) {
+			$difftext = Linker::linkKnown(
 				$page,
 				$this->messages['diff'],
 				array(),
@@ -598,77 +787,78 @@ class ContribsPager extends ReverseChronologicalPager {
 		} else {
 			$difftext = $this->messages['diff'];
 		}
-		$histlink = $sk->linkKnown(
+		$histlink = Linker::linkKnown(
 			$page,
 			$this->messages['hist'],
 			array(),
 			array( 'action' => 'history' )
 		);
 
-		$comment = $wgLang->getDirMark() . $sk->revComment( $rev, false, true );
-		$date = $wgLang->timeanddate( wfTimestamp( TS_MW, $row->rev_timestamp ), true );
-		if( $rev->userCan( Revision::DELETED_TEXT ) ) {
-			$d = $sk->linkKnown(
+		if ( $row->rev_parent_id === null ) {
+			// For some reason rev_parent_id isn't populated for this row.
+			// Its rumoured this is true on wikipedia for some revisions (bug 34922).
+			// Next best thing is to have the total number of bytes.
+			$chardiff = ' . . ' . Linker::formatRevisionSize( $row->rev_len ) . ' . . ';
+		} else {
+			$parentLen = isset( $this->mParentLens[$row->rev_parent_id] ) ? $this->mParentLens[$row->rev_parent_id] : 0;
+			$chardiff = ' . . ' . ChangesList::showCharacterDifference(
+					$parentLen, $row->rev_len ) . ' . . ';
+		}
+
+		$lang = $this->getLanguage();
+		$comment = $lang->getDirMark() . Linker::revComment( $rev, false, true );
+		$date = $lang->userTimeAndDate( $row->rev_timestamp, $user );
+		if ( $rev->userCan( Revision::DELETED_TEXT, $user ) ) {
+			$d = Linker::linkKnown(
 				$page,
-				htmlspecialchars($date),
+				htmlspecialchars( $date ),
 				array(),
 				array( 'oldid' => intval( $row->rev_id ) )
 			);
 		} else {
 			$d = htmlspecialchars( $date );
 		}
-		if( $rev->isDeleted( Revision::DELETED_TEXT ) ) {
+		if ( $rev->isDeleted( Revision::DELETED_TEXT ) ) {
 			$d = '<span class="history-deleted">' . $d . '</span>';
 		}
 
-		if( $this->target == 'newbies' ) {
-			$userlink = ' . . ' . $sk->userLink( $row->rev_user, $row->rev_user_text );
-			$userlink .= ' ' . wfMsg( 'parentheses', $sk->userTalkLink( $row->rev_user, $row->rev_user_text ) ) . ' ';
+		# Show user names for /newbies as there may be different users.
+		# Note that we already excluded rows with hidden user names.
+		if ( $this->contribs == 'newbie' ) {
+			$userlink = ' . . ' . Linker::userLink( $rev->getUser(), $rev->getUserText() );
+			$userlink .= ' ' . $this->msg( 'parentheses' )->rawParams(
+				Linker::userTalkLink( $rev->getUser(), $rev->getUserText() ) )->escaped() . ' ';
 		} else {
 			$userlink = '';
 		}
 
-		if( $rev->getParentId() === 0 ) {
+		if ( $rev->getParentId() === 0 ) {
 			$nflag = ChangesList::flag( 'newpage' );
 		} else {
 			$nflag = '';
 		}
 
-		if( $rev->isMinor() ) {
+		if ( $rev->isMinor() ) {
 			$mflag = ChangesList::flag( 'minor' );
 		} else {
 			$mflag = '';
 		}
 
-		// Don't show useless link to people who cannot hide revisions
-		$canHide = $wgUser->isAllowed( 'deleterevision' );
-		if( $canHide || ($rev->getVisibility() && $wgUser->isAllowed('deletedhistory')) ) {
-			if( !$rev->userCan( Revision::DELETED_RESTRICTED ) ) {
-				$del = $this->mSkin->revDeleteLinkDisabled( $canHide ); // revision was hidden from sysops
-			} else {
-				$query = array(
-					'type'   => 'revision',
-					'target' => $page->getPrefixedDbkey(),
-					'ids'    => $rev->getId()
-				);
-				$del = $this->mSkin->revDeleteLink( $query,
-					$rev->isDeleted( Revision::DELETED_RESTRICTED ), $canHide );
-			}
+		$del = Linker::getRevDeleteLink( $user, $rev, $page );
+		if ( $del !== '' ) {
 			$del .= ' ';
-		} else {
-			$del = '';
 		}
 
 		$diffHistLinks = '(' . $difftext . $this->messages['pipe-separator'] . $histlink . ')';
-		$ret = "{$del}{$d} {$diffHistLinks} {$nflag}{$mflag} {$link}{$userlink} {$comment} {$topmarktext}";
+		$ret = "{$del}{$d} {$diffHistLinks}{$chardiff}{$nflag}{$mflag} {$link}{$userlink} {$comment} {$topmarktext}";
 
 		# Denote if username is redacted for this edit
-		if( $rev->isDeleted( Revision::DELETED_USER ) ) {
-			$ret .= " <strong>" . wfMsgHtml('rev-deleted-user-contribs') . "</strong>";
+		if ( $rev->isDeleted( Revision::DELETED_USER ) ) {
+			$ret .= " <strong>" . $this->msg( 'rev-deleted-user-contribs' )->escaped() . "</strong>";
 		}
 
 		# Tags, if any.
-		list($tagSummary, $newClasses) = ChangeTags::formatSummaryRow( $row->ts_tags, 'contributions' );
+		list( $tagSummary, $newClasses ) = ChangeTags::formatSummaryRow( $row->ts_tags, 'contributions' );
 		$classes = array_merge( $classes, $newClasses );
 		$ret .= " $tagSummary";
 

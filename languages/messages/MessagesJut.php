@@ -303,7 +303,6 @@ MySQL æ returnerede fejl "$3: $4".',
 Funksje: $1<br />
 Førespørgsel: $2',
 'viewsource'           => 'Ves æ kelde',
-'viewsourcefor'        => 'før $1',
 'viewsourcetext'       => "Du ken dog se og åfskreve'n keldekode til æ side:",
 
 # Login and logout pages
@@ -610,11 +609,8 @@ hersenenge, (førge) = førskel til den førge hersenenge, l = lile til mendre �
 'linksearch-error' => "Wildkårter må ken benyttes i'n stårt åf håstnavnet.",
 
 # Special:Log/newusers
-'newuserlogpage'           => 'Brugeråprettelseslog',
-'newuserlogpagetext'       => "Dett'er en log åver de senest åprettede brugere.",
-'newuserlog-byemail'       => 'kodeort tilsend via e-mail',
-'newuserlog-create-entry'  => 'Ny bruger',
-'newuserlog-create2-entry' => 'åprettede brugerkonto før $1',
+'newuserlogpage'     => 'Brugeråprettelseslog',
+'newuserlogpagetext' => "Dett'er en log åver de senest åprettede brugere.",
 
 # E-mail user
 'emailuser' => 'E-mail til denne bruger',
@@ -642,7 +638,6 @@ hersenenge, (førge) = førskel til den førge hersenenge, l = lile til mendre �
 [[{{MediaWiki:Policy-url}}]].",
 'actioncomplete'        => 'Gennemført',
 'deletedtext'           => '"$1" er slettet. Sæg $2 før en førtegnelse åver de nyeste sletnenger.',
-'deletedarticle'        => 'slettede "[[$1]]"',
 'dellogpage'            => 'Sletnengslog',
 'deletecomment'         => 'Begrundelse:',
 'deleteotherreason'     => 'Anden/uddybende begrundelse:',
@@ -744,7 +739,6 @@ navn du harst valgt er ekke gyldegt. Vælg et andet navn.',
 'talkexists'       => 'Æ side blev flyttet korrekt, men den tilhørende diskusjeside ken ekke flyttes, førdi der ålrede eksisterer en ve den nye titel. Du erst nødt til at flette dem sammen manuelt.',
 'movedto'          => 'flyttet til',
 'movetalk'         => 'Flyt også\'n "diskusjeside", hves den eksisterer.',
-'1movedto2'        => '[[$1]] flyttet til [[$2]]',
 'movelogpage'      => 'Flyttelog',
 'movereason'       => 'Begrundelse:',
 'revertmove'       => 'gendan',
@@ -810,7 +804,7 @@ navn du harst valgt er ekke gyldegt. Vælg et andet navn.',
 
 # Media information
 'file-info-size' => '$1 × $2 pixel, gøretstørrelse: $3, MIME-senenge: $4',
-'file-nohires'   => '<small>Engen højere åpløsnenge fundet.</small>',
+'file-nohires'   => 'Engen højere åpløsnenge fundet.',
 'svg-long-desc'  => 'SVG gøret, wønetstørrelse $1 × $2 pixel, gøretstørrelse: $3',
 'show-big-image' => 'Hersenenge i større åpløsnenge',
 
@@ -861,5 +855,8 @@ Kun endholtet åf æ liste (lenjer startende ve *) bliver brugt. Den første hen
 
 # Special:SpecialPages
 'specialpages' => 'Sonst sider',
+
+# New logging system
+'newuserlog-byemail' => 'kodeort tilsend via e-mail',
 
 );

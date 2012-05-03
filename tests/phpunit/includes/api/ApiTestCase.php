@@ -7,6 +7,11 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 	public static $users;
 	protected static $apiUrl;
 
+	/**
+	 * @var ApiTestContext
+	 */
+	protected $apiContext;
+
 	function setUp() {
 		global $wgContLang, $wgAuth, $wgMemc, $wgRequest, $wgUser, $wgServer;
 
@@ -21,31 +26,37 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 			'sysop' => new ApiTestUser(
 				'Apitestsysop',
 				'Api Test Sysop',
-				'api_test_sysop@sample.com',
+				'api_test_sysop@example.com',
 				array( 'sysop' )
 			),
 			'uploader' => new ApiTestUser(
 				'Apitestuser',
 				'Api Test User',
-				'api_test_user@sample.com',
+				'api_test_user@example.com',
 				array()
 			)
 		);
 
 		$wgUser = self::$users['sysop']->user;
 
+		$this->apiContext = new ApiTestContext();
+
 	}
 
-	protected function doApiRequest( $params, $session = null, $appendModule = false ) {
+	protected function doApiRequest( $params, $session = null, $appendModule = false, $user = null ) {
 		if ( is_null( $session ) ) {
 			$session = array();
 		}
 
-		$request = new FauxRequest( $params, true, $session );
-		$module = new ApiMain( $request, true );
+		$context = $this->apiContext->newTestContext( $params, $session, $user );
+		$module = new ApiMain( $context, true );
 		$module->execute();
 
-		$results = array( $module->getResultData(), $request, $request->getSessionArray() );
+		$results = array(
+			$module->getResultData(),
+			$context->getRequest(),
+			$context->getRequest()->getSessionArray()
+		);
 		if( $appendModule ) {
 			$results[] = $module;
 		}
@@ -59,14 +70,15 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 	 * request, without actually requesting a "real" edit token
 	 * @param $params: key-value API params
 	 * @param $session: session array
+	 * @param $user String|null A User object for the context 
 	 */
-	protected function doApiRequestWithToken( $params, $session ) {
+	protected function doApiRequestWithToken( $params, $session, $user = null ) {
 		if ( $session['wsToken'] ) {
 			// add edit token to fake session
 			$session['wsEditToken'] = $session['wsToken'];
 			// add token to request parameters
 			$params['token'] = md5( $session['wsToken'] ) . User::EDIT_TOKEN_SUFFIX;
-			return $this->doApiRequest( $params, $session );
+			return $this->doApiRequest( $params, $session, false, $user );
 		} else {
 			throw new Exception( "request data not in right format" );
 		}
@@ -91,12 +103,11 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 	}
 
 	protected function getTokenList( $user ) {
-		$GLOBALS['wgUser'] = $user->user;
 		$data = $this->doApiRequest( array(
 			'action' => 'query',
 			'titles' => 'Main Page',
 			'intoken' => 'edit|delete|protect|move|block|unblock',
-			'prop' => 'info' ) );
+			'prop' => 'info' ), false, $user->user );
 		return $data;
 	}
 }
@@ -135,5 +146,25 @@ class MockApi extends ApiBase {
 			'enablechunks' => false,
 			'sessionkey' => null,
 		);
+	}
+}
+
+class ApiTestContext extends RequestContext {
+
+	/**
+	 * Returns a DerivativeContext with the request variables in place
+	 *
+	 * @param $params Array key-value API params
+	 * @param $session Array session data
+	 * @param $user User or null
+	 * @return DerivativeContext
+	 */
+	public function newTestContext( $params, $session, $user = null ) {
+		$context = new DerivativeContext( $this );
+		$context->setRequest( new FauxRequest( $params, true, $session ) );
+		if ( $user !== null ) {
+			$context->setUser( $user );
+		}
+		return $context;
 	}
 }

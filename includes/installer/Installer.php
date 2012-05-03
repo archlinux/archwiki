@@ -97,6 +97,7 @@ abstract class Installer {
 		'envCheckPCRE',
 		'envCheckMemory',
 		'envCheckCache',
+		'envCheckModSecurity',
 		'envCheckDiff3',
 		'envCheckGraphics',
 		'envCheckServer',
@@ -106,6 +107,7 @@ abstract class Installer {
 		'envCheckUploadsDirectory',
 		'envCheckLibicu',
 		'envCheckSuhosinMaxValueLength',
+		'envCheckCtype',
 	);
 
 	/**
@@ -204,7 +206,6 @@ abstract class Installer {
 	protected $objectCaches = array(
 		'xcache' => 'xcache_get',
 		'apc' => 'apc_fetch',
-		'eaccel' => 'eaccelerator_get',
 		'wincache' => 'wincache_ucache_get'
 	);
 
@@ -295,11 +296,13 @@ abstract class Installer {
 	 * The parameters are like parameters to wfMsg().
 	 * The messages will be in wikitext format, which will be converted to an
 	 * output format such as HTML or text before being sent to the user.
+	 * @param $msg
 	 */
 	public abstract function showMessage( $msg /*, ... */ );
 
 	/**
 	 * Same as showMessage(), but for displaying errors
+	 * @param $msg
 	 */
 	public abstract function showError( $msg /*, ... */ );
 
@@ -601,7 +604,6 @@ abstract class Installer {
 			'ss_good_articles' => 0,
 			'ss_total_pages' => 0,
 			'ss_users' => 0,
-			'ss_admins' => 0,
 			'ss_images' => 0 ),
 			__METHOD__, 'IGNORE' );
 		return Status::newGood();
@@ -620,6 +622,7 @@ abstract class Installer {
 
 	/**
 	 * Environment check for DB types.
+	 * @return bool
 	 */
 	protected function envCheckDB() {
 		global $wgLang;
@@ -630,19 +633,32 @@ abstract class Installer {
 			$allNames[] = wfMsg( "config-type-$name" );
 		}
 
-		if ( !$this->getVar( '_CompiledDBs' ) ) {
+		// cache initially available databases to make sure that everything will be displayed correctly
+		// after a refresh on env checks page
+		$databases = $this->getVar( '_CompiledDBs-preFilter' );
+		if ( !$databases ) {
+			$databases = $this->getVar( '_CompiledDBs' );
+			$this->setVar( '_CompiledDBs-preFilter', $databases );
+		}
+
+		$databases = array_flip ( $databases );
+		foreach ( array_keys( $databases ) as $db ) {
+			$installer = $this->getDBInstaller( $db );
+			$status = $installer->checkPrerequisites();
+			if ( !$status->isGood() ) {
+				$this->showStatusMessage( $status );
+			}
+			if ( !$status->isOK() ) {
+				unset( $databases[$db] );
+			}
+		}
+		$databases = array_flip( $databases );
+		if ( !$databases ) {
 			$this->showError( 'config-no-db', $wgLang->commaList( $allNames ) );
 			// @todo FIXME: This only works for the web installer!
 			return false;
 		}
-
-		// Check for FTS3 full-text search module
-		$sqlite = $this->getDBInstaller( 'sqlite' );
-		if ( $sqlite->isCompiled() ) {
-			if( DatabaseSqlite::getFulltextSearchModule() != 'FTS3' ) {
-				$this->showMessage( 'config-no-fts3' );
-			}
-		}
+		$this->setVar( '_CompiledDBs', $databases );
 	}
 
 	/**
@@ -803,6 +819,15 @@ abstract class Installer {
 	}
 
 	/**
+	 * Scare user to death if they have mod_security
+	 */
+	protected function envCheckModSecurity() {
+		if ( self::apacheModulePresent( 'mod_security' ) ) {
+			$this->showMessage( 'config-mod-security' );
+		}
+	}
+
+	/**
 	 * Search for GNU diff3.
 	 */
 	protected function envCheckDiff3() {
@@ -842,25 +867,27 @@ abstract class Installer {
 	/**
 	 * Environment check for the server hostname.
 	 */
-	protected function envCheckServer( $srv = null ) {
-		if ( $srv ) {
-			// wgServer was pre-defined, perhaps by the cli installer
-			$server = $srv;
-		} else {
-			$server = WebRequest::detectServer();
-		}
+	protected function envCheckServer() {
+		$server = $this->envGetDefaultServer();
 		$this->showMessage( 'config-using-server', $server );
 		$this->setVar( 'wgServer', $server );
 	}
 
 	/**
+	 * Helper function to be called from envCheckServer()
+	 * @return String
+	 */
+	protected abstract function envGetDefaultServer();
+
+	/**
 	 * Environment check for setting $IP and $wgScriptPath.
+	 * @return bool
 	 */
 	protected function envCheckPath() {
 		global $IP;
 		$IP = dirname( dirname( dirname( __FILE__ ) ) );
-
 		$this->setVar( 'IP', $IP );
+
 		$this->showMessage( 'config-using-uri', $this->getVar( 'wgServer' ), $this->getVar( 'wgScriptPath' ) );
 		return true;
 	}
@@ -880,6 +907,7 @@ abstract class Installer {
 
 	/**
 	 * TODO: document
+	 * @return bool
 	 */
 	protected function envCheckShellLocale() {
 		$os = php_uname( 's' );
@@ -1036,7 +1064,7 @@ abstract class Installer {
 		 */
 		if( $utf8 ) {
 			$useNormalizer = 'utf8';
-			$utf8 = utf8_normalize( $not_normal_c, UNORM_NFC );
+			$utf8 = utf8_normalize( $not_normal_c, UtfNormal::UNORM_NFC );
 			if ( $utf8 !== $normal_c ) $needsUpdate = true;
 		}
 		if( $intl ) {
@@ -1053,6 +1081,13 @@ abstract class Installer {
 			if( $needsUpdate ) {
 				$this->showMessage( 'config-unicode-update-warning' );
 			}
+		}
+	}
+
+	protected function envCheckCtype() {
+		if ( !function_exists( 'ctype_digit' ) ) {
+			$this->showError( 'config-ctype' );
+			return false;
 		}
 	}
 
@@ -1116,6 +1151,9 @@ abstract class Installer {
 	/**
 	 * Same as locateExecutable(), but checks in getPossibleBinPaths() by default
 	 * @see locateExecutable()
+	 * @param $names
+	 * @param $versionInfo bool
+	 * @return bool|string
 	 */
 	public static function locateExecutableInDefaultPaths( $names, $versionInfo = false ) {
 		foreach( self::getPossibleBinPaths() as $path ) {
@@ -1174,17 +1212,36 @@ abstract class Installer {
 	}
 
 	/**
+	 * Checks for presence of an Apache module. Works only if PHP is running as an Apache module, too.
+	 *
+	 * @param $moduleName String: Name of module to check.
+	 * @return bool
+	 */
+	public static function apacheModulePresent( $moduleName ) {
+		if ( function_exists( 'apache_get_modules' ) && in_array( $moduleName, apache_get_modules() ) ) {
+			return true;
+		}
+		// try it the hard way
+		ob_start();
+		phpinfo( INFO_MODULES );
+		$info = ob_get_clean();
+		return strpos( $info, $moduleName ) !== false;
+	}
+
+	/**
 	 * ParserOptions are constructed before we determined the language, so fix it
 	 *
 	 * @param $lang Language
 	 */
 	public function setParserLanguage( $lang ) {
 		$this->parserOptions->setTargetLanguage( $lang );
-		$this->parserOptions->setUserLang( $lang->getCode() );
+		$this->parserOptions->setUserLang( $lang );
 	}
 
 	/**
 	 * Overridden by WebInstaller to provide lastPage parameters.
+	 * @param $page string
+	 * @return string
 	 */
 	protected function getDocUrl( $page ) {
 		return "{$_SERVER['PHP_SELF']}?page=" . urlencode( $page );
@@ -1213,6 +1270,7 @@ abstract class Installer {
 				$exts[] = $file;
 			}
 		}
+		natcasesort( $exts );
 
 		return $exts;
 	}
@@ -1241,7 +1299,7 @@ abstract class Installer {
 		require( "$IP/includes/DefaultSettings.php" );
 
 		foreach( $exts as $e ) {
-   			require_once( "$IP/extensions/$e/$e.php" );
+			require_once( "$IP/extensions/$e/$e.php" );
 		}
 
 		$hooksWeWant = isset( $wgHooks['LoadExtensionSchemaUpdates'] ) ?
@@ -1432,6 +1490,9 @@ abstract class Installer {
 		return $status;
 	}
 
+	/**
+	 * @param $s Status
+	 */
 	private function subscribeToMediaWikiAnnounce( Status $s ) {
 		$params = array(
 			'email'    => $this->getVar( '_AdminEmail' ),
@@ -1461,18 +1522,19 @@ abstract class Installer {
 	/**
 	 * Insert Main Page with default content.
 	 *
+	 * @param $installer DatabaseInstaller
 	 * @return Status
 	 */
 	protected function createMainpage( DatabaseInstaller $installer ) {
 		$status = Status::newGood();
 		try {
-			$article = new Article( Title::newMainPage() );
-			$article->doEdit( wfMsgForContent( 'mainpagetext' ) . "\n\n" .
-								wfMsgForContent( 'mainpagedocfooter' ),
-								'',
-								EDIT_NEW,
-								false,
-								User::newFromName( 'MediaWiki default' ) );
+			$page = WikiPage::factory( Title::newMainPage() );
+			$page->doEdit( wfMsgForContent( 'mainpagetext' ) . "\n\n" .
+							wfMsgForContent( 'mainpagedocfooter' ),
+							'',
+							EDIT_NEW,
+							false,
+							User::newFromName( 'MediaWiki default' ) );
 		} catch (MWException $e) {
 			//using raw, because $wgShowExceptionDetails can not be set yet
 			$status->fatal( 'config-install-mainpage-failed', $e->getMessage() );

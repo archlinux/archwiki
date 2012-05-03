@@ -9,8 +9,10 @@ class LinkCache {
 	// becomes incompatible with the new version.
 	private $mClassVer = 4;
 
-	private $mGoodLinks, $mBadLinks;
-	private $mForUpdate;
+	private $mGoodLinks = array();
+	private $mGoodLinkFields = array();
+	private $mBadLinks = array();
+	private $mForUpdate = false;
 
 	/**
 	 * Get an instance of this class
@@ -23,13 +25,6 @@ class LinkCache {
 			$instance = new LinkCache;
 		}
 		return $instance;
-	}
-
-	function __construct() {
-		$this->mForUpdate = false;
-		$this->mGoodLinks = array();
-		$this->mGoodLinkFields = array();
-		$this->mBadLinks = array();
 	}
 
 	/**
@@ -96,6 +91,23 @@ class LinkCache {
 	}
 
 	/**
+	 * Same as above with better interface.
+	 * @since 1.19
+	 * @param $title Title
+	 * @param $row object which has the fields page_id, page_is_redirect,
+	 *  page_latest
+	 */
+	public function addGoodLinkObjFromRow( $title, $row ) {
+		$dbkey = $title->getPrefixedDbKey();
+		$this->mGoodLinks[$dbkey] = intval( $row->page_id );
+		$this->mGoodLinkFields[$dbkey] = array(
+			'length' => intval( $row->page_len ),
+			'redirect' => intval( $row->page_is_redirect ),
+			'revision' => intval( $row->page_latest ),
+		);
+	}
+
+	/**
 	 * @param $title Title
 	 */
 	public function addBadLinkObj( $title ) {
@@ -114,15 +126,9 @@ class LinkCache {
 	 */
 	public function clearLink( $title ) {
 		$dbkey = $title->getPrefixedDbKey();
-		if( isset($this->mBadLinks[$dbkey]) ) {
-			unset($this->mBadLinks[$dbkey]);
-		}
-		if( isset($this->mGoodLinks[$dbkey]) ) {
-			unset($this->mGoodLinks[$dbkey]);
-		}
-		if( isset($this->mGoodLinkFields[$dbkey]) ) {
-			unset($this->mGoodLinkFields[$dbkey]);
-		}
+		unset( $this->mBadLinks[$dbkey] );
+		unset( $this->mGoodLinks[$dbkey] );
+		unset( $this->mGoodLinkFields[$dbkey] );
 	}
 
 	public function getGoodLinks() { return $this->mGoodLinks; }
@@ -188,22 +194,13 @@ class LinkCache {
 			__METHOD__, $options );
 		# Set fields...
 		if ( $s !== false ) {
+			$this->addGoodLinkObjFromRow( $nt, $s );
 			$id = intval( $s->page_id );
-			$len = intval( $s->page_len );
-			$redirect = intval( $s->page_is_redirect );
-			$revision = intval( $s->page_latest );
 		} else {
+			$this->addBadLinkObj( $nt );
 			$id = 0;
-			$len = -1;
-			$redirect = 0;
-			$revision = 0;
 		}
 
-		if ( $id == 0 ) {
-			$this->addBadLinkObj( $nt );
-		} else {
-			$this->addGoodLinkObj( $id, $nt, $len, $redirect, $revision );
-		}
 		wfProfileOut( __METHOD__ );
 		return $id;
 	}

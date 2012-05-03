@@ -9,6 +9,7 @@
  *
  * @author Ezagren
  * @author Kurniasan
+ * @author Zaidpjd (on bug.wikipedia.org)
  */
 
 $fallback = "id";
@@ -171,7 +172,6 @@ $messages = array(
 'internalerror_info'  => 'Éro internal: $1',
 'badtitle'            => 'Judul dek essa',
 'viewsource'          => 'Ita sumber',
-'viewsourcefor'       => 'polé $1',
 
 # Virus scanner
 'virus-unknownscanner' => "Antivirus dé' riisseŋ:",
@@ -237,9 +237,6 @@ $messages = array(
 'revdelete-hide-comment' => 'Tapo komentar mapadecéŋ',
 'revdelete-hide-user'    => 'Tapo aseŋ papakéna/IPna papadéceŋë',
 'revdelete-log'          => 'Saba:',
-'revdelete-content'      => 'lise',
-'revdelete-uname'        => 'aseŋ papaké',
-'revdelete-hid'          => 'tapo $1',
 
 # Diffs
 'editundo' => 'undo',
@@ -311,12 +308,8 @@ $messages = array(
 'filehist-dimensions' => 'Dimensi',
 'imagelinks'          => 'Liŋke',
 
-# File reversion
-'filerevert-backlink' => '← $1',
-
 # File deletion
 'filedelete'             => 'Mapeddé $1',
-'filedelete-backlink'    => '← $1',
 'filedelete-legend'      => 'Mapeddé berkas',
 'filedelete-intro'       => "Iko purani mapeddé '''[[Media:$1|$1]]'''.",
 'filedelete-submit'      => 'Peddé',
@@ -384,10 +377,9 @@ Apak ida ronnak mappedde halamang édé ri daftar jagaan, klik \"Mangedda jaga\"
 'sp-contributions-talk' => 'Bicara',
 
 # What links here
-'whatlinkshere'          => 'Pranala ri leppa iyéwé',
-'whatlinkshere-page'     => 'Leppa:',
-'whatlinkshere-backlink' => '← $1',
-'whatlinkshere-links'    => '← liŋke',
+'whatlinkshere'       => 'Pranala ri leppa iyéwé',
+'whatlinkshere-page'  => 'Leppa:',
+'whatlinkshere-links' => '← liŋke',
 
 # Block/unblock
 'ipblocklist-submit' => 'Sappa',
@@ -397,8 +389,6 @@ Apak ida ronnak mappedde halamang édé ri daftar jagaan, klik \"Mangedda jaga\"
 # Move page
 'articleexists'             => 'Leppa béla ida pile ni ujuk, a dek essa.
 Silakan pile aseng laing.',
-'1movedto2'                 => '[[$1]] léccé lao [[$2]]',
-'1movedto2_redir'           => '[[$1]] rileccé lao ri[[$2]] paké redirect',
 'movelogpage'               => 'Log leccé',
 'movereason'                => 'Saba:',
 'delete_and_move'           => 'Peddé nappa paleccé',

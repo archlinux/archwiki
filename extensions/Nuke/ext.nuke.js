@@ -1,5 +1,5 @@
 /**
- * JavasSript for the Nuke MediaWiki extension.
+ * JavaScript for the Nuke MediaWiki extension.
  * @see https://www.mediawiki.org/wiki/Extension:Nuke
  *
  * @licence GNU GPL v2 or later

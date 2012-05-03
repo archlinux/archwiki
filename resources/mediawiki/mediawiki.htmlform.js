@@ -1,7 +1,7 @@
 /**
  * Utility functions for jazzing up HTMLForm elements
  */
-( function( $ ) { 
+( function( $ ) {
 
 /**
  * jQuery plugin to fade or snap to visible state.
@@ -10,7 +10,7 @@
  * @return jQuery
  */
 $.fn.goIn = function( instantToggle ) {
-	if ( instantToggle !== undefined && instantToggle === true ) {
+	if ( instantToggle === true ) {
 		return $(this).show();
 	}
 	return $(this).stop( true, true ).fadeIn();
@@ -23,7 +23,7 @@ $.fn.goIn = function( instantToggle ) {
  * @return jQuery
  */
 $.fn.goOut = function( instantToggle ) {
-	if ( instantToggle !== undefined && instantToggle === true ) {
+	if ( instantToggle === true ) {
 		return $(this).hide();
 	}
 	return $(this).stop( true, true ).fadeOut();

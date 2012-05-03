@@ -6,8 +6,8 @@
  * As of february 2011, it only tests some revisions and date related
  * magic variables.
  *
- * @author Ashar Voultoiz
- * @copyright Copyright © 2011, Ashar Voultoiz
+ * @author Antoine Musso
+ * @copyright Copyright © 2011, Antoine Musso
  * @file
  */
 
@@ -38,6 +38,12 @@ class MagicVariableTest extends MediaWikiTestCase {
 
 		# initialize parser output
 		$this->testParser->clearState();
+
+		# Needs a title to do magic word stuff
+		$title = Title::newFromText( 'Tests' );
+		$title->mRedirect = false; # Else it needs a db connection just to check if it's a redirect (when deciding the page language)
+
+		$this->testParser->setTitle( $title );
 	}
 
 	/** destroy parser (TODO: is it really neded?)*/

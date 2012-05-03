@@ -4,7 +4,7 @@ if( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
 
-define( 'Nuke_VERSION', '1.1.3' );
+define( 'Nuke_VERSION', '1.1.4' );
 
 $dir = dirname(__FILE__) . '/';
 

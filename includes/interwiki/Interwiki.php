@@ -136,7 +136,7 @@ class Interwiki {
 	/**
 	 * Load the interwiki, trying first memcached then the DB
 	 *
-	 * @param $prefix The interwiki prefix
+	 * @param $prefix string The interwiki prefix
 	 * @return Boolean: the prefix is valid
 	 */
 	protected static function load( $prefix ) {
@@ -150,6 +150,9 @@ class Interwiki {
 		if ( !$iwData ) {
 			$key = wfMemcKey( 'interwiki', $prefix );
 			$iwData = $wgMemc->get( $key );
+			if ( $iwData === '!NONEXISTENT' ) {
+				return false; // negative cache hit
+			}
 		}
 
 		if( $iwData && is_array( $iwData ) ) { // is_array is hack for old keys
@@ -173,6 +176,8 @@ class Interwiki {
 			);
 			$wgMemc->add( $key, $mc, $wgInterwikiExpiry );
 			return $iw;
+		} else {
+			$wgMemc->add( $key, '!NONEXISTENT', $wgInterwikiExpiry ); // negative cache hit
 		}
 
 		return false;
@@ -181,8 +186,8 @@ class Interwiki {
 	/**
 	 * Fill in member variables from an array (e.g. memcached result, Database::fetchRow, etc)
 	 *
-	 * @param $mc Associative array: row from the interwiki table
-	 * @return Boolean: whether everything was there
+	 * @param $mc array Associative array: row from the interwiki table
+	 * @return Boolean|Interwiki whether everything was there
 	 */
 	protected static function loadFromArray( $mc ) {
 		if( isset( $mc['iw_url'] ) ) {
@@ -199,15 +204,130 @@ class Interwiki {
 	}
 
 	/**
+	 * Fetch all interwiki prefixes from interwiki cache
+	 *
+	 * @param $local null|string If not null, limits output to local/non-local interwikis
+	 * @return Array List of prefixes
+	 * @since 1.19
+	 */
+	protected static function getAllPrefixesCached( $local ) {
+		global $wgInterwikiCache, $wgInterwikiScopes, $wgInterwikiFallbackSite;
+		static $db, $site;
+
+		wfDebug( __METHOD__ . "()\n" );
+		if( !$db ) {
+			$db = CdbReader::open( $wgInterwikiCache );
+		}
+		/* Resolve site name */
+		if( $wgInterwikiScopes >= 3 && !$site ) {
+			$site = $db->get( '__sites:' . wfWikiID() );
+			if ( $site == '' ) {
+				$site = $wgInterwikiFallbackSite;
+			}
+		}
+
+		// List of interwiki sources
+		$sources = array();
+		// Global Level
+		if ( $wgInterwikiScopes >= 2 ) {
+			$sources[] = '__global';
+		}
+		// Site level
+		if ( $wgInterwikiScopes >= 3 ) {
+			$sources[] = '_' . $site;
+		}
+		$sources[] = wfWikiID();
+
+		$data = array();
+
+		foreach( $sources as $source ) {
+			$list = $db->get( "__list:{$source}" );
+			foreach ( explode( ' ', $list ) as $iw_prefix ) {
+				$row = $db->get( "{$source}:{$iw_prefix}" );
+				if( !$row ) {
+					continue;
+				}
+
+				list( $iw_local, $iw_url ) = explode( ' ', $row );
+
+				if ( $local !== null && $local != $iw_local ) {
+					continue;
+				}
+
+				$data[$iw_prefix] = array(
+					'iw_prefix' => $iw_prefix,
+					'iw_url'    => $iw_url,
+					'iw_local'  => $iw_local,
+				);
+			}
+		}
+
+		ksort( $data );
+
+		return array_values( $data );
+	}
+
+	/**
+	 * Fetch all interwiki prefixes from DB
+	 *
+	 * @param $local string|null If not null, limits output to local/non-local interwikis
+	 * @return Array List of prefixes
+	 * @since 1.19
+	 */
+	protected static function getAllPrefixesDB( $local ) {
+		$db = wfGetDB( DB_SLAVE );
+
+		$where = array();
+
+		if ( $local !== null ) {
+			if ( $local == 1 ) {
+				$where['iw_local'] = 1;
+			} elseif ( $local == 0 ) {
+				$where['iw_local'] = 0;
+			}
+		}
+
+		$res = $db->select( 'interwiki',
+			array( 'iw_prefix', 'iw_url', 'iw_api', 'iw_wikiid', 'iw_local', 'iw_trans' ),
+			$where, __METHOD__, array( 'ORDER BY' => 'iw_prefix' )
+		);
+		$retval = array();
+		foreach ( $res as $row ) {
+			$retval[] = (array)$row;
+		}
+		return $retval;
+	}
+
+	/**
+	 * Returns all interwiki prefixes
+	 *
+	 * @param $local string|null If set, limits output to local/non-local interwikis
+	 * @return Array List of prefixes
+	 * @since 1.19
+	 */
+	public static function getAllPrefixes( $local = null ) {
+		global $wgInterwikiCache;
+
+		if ( $wgInterwikiCache ) {
+			return self::getAllPrefixesCached( $local );
+		} else {
+			return self::getAllPrefixesDB( $local );
+		}
+	}
+
+	/**
 	 * Get the URL for a particular title (or with $1 if no title given)
 	 *
 	 * @param $title String: what text to put for the article name
 	 * @return String: the URL
+	 * @note Prior to 1.19 The getURL with an argument was broken.
+	 *       If you if you use this arg in an extension that supports MW earlier
+	 *       than 1.19 please wfUrlencode and substitute $1 on your own.
 	 */
 	public function getURL( $title = null ) {
 		$url = $this->mURL;
-		if( $title != null ) {
-			$url = str_replace( "$1", $title, $url );
+		if( $title !== null ) {
+			$url = str_replace( "$1", wfUrlencode( $title ), $url );
 		}
 		return $url;
 	}

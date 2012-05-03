@@ -30,7 +30,7 @@ class SpecialNewFiles extends IncludableSpecialPage {
 		$this->setHeaders();
 		$this->outputHeader();
 
-		$pager = new NewFilesPager( $par );
+		$pager = new NewFilesPager( $this->getContext(), $par );
 
 		if ( !$this->including() ) {
 			$form = $pager->getForm();
@@ -50,18 +50,16 @@ class SpecialNewFiles extends IncludableSpecialPage {
  */
 class NewFilesPager extends ReverseChronologicalPager {
 
-	function __construct( $par = null ) {
-		global $wgRequest;
+	/**
+	 * @var ImageGallery
+	 */
+	var $gallery;
 
-		$this->like = $wgRequest->getText( 'like' );
-		$this->showbots = $wgRequest->getBool( 'showbots' , 0 );
-		$this->skin = $this->getSkin();
+	function __construct( IContextSource $context, $par = null ) {
+		$this->like = $context->getRequest()->getText( 'like' );
+		$this->showbots = $context->getRequest()->getBool( 'showbots' , 0 );
 
-		parent::__construct();
-	}
-
-	function getTitle() {
-		return SpecialPage::getTitleFor( 'Newimages' );
+		parent::__construct( $context );
 	}
 
 	function getQueryInfo() {
@@ -105,7 +103,10 @@ class NewFilesPager extends ReverseChronologicalPager {
 	}
 
 	function getStartBody(){
-		$this->gallery = new ImageGallery();
+		if ( !$this->gallery ) {
+			$this->gallery = new ImageGallery();
+		}
+		return '';
 	}
 
 	function getEndBody(){
@@ -113,24 +114,22 @@ class NewFilesPager extends ReverseChronologicalPager {
 	}
 
 	function formatRow( $row ) {
-		global $wgLang;
-
 		$name = $row->img_name;
 		$user = User::newFromId( $row->img_user );
 
 		$title = Title::makeTitle( NS_FILE, $name );
-		$ul = $this->skin->link( $user->getUserpage(), $user->getName() );
+		$ul = Linker::link( $user->getUserpage(), $user->getName() );
 
 		$this->gallery->add(
 			$title,
 			"$ul<br />\n<i>"
-				. htmlspecialchars( $wgLang->timeanddate( $row->img_timestamp, true ) )
+				. htmlspecialchars( $this->getLanguage()->timeanddate( $row->img_timestamp, true ) )
 				. "</i><br />\n"
 		);
 	}
 
 	function getForm() {
-		global $wgRequest, $wgMiserMode;
+		global $wgMiserMode;
 
 		$fields = array(
 			'like' => array(
@@ -142,16 +141,16 @@ class NewFilesPager extends ReverseChronologicalPager {
 				'type' => 'check',
 				'label' => wfMessage( 'showhidebots', wfMsg( 'show' ) ),
 				'name' => 'showbots',
-			#	'default' => $wgRequest->getBool( 'showbots', 0 ),
+			#	'default' => $this->getRequest()->getBool( 'showbots', 0 ),
 			),
 			'limit' => array(
 				'type' => 'hidden',
-				'default' => $wgRequest->getText( 'limit' ),
+				'default' => $this->getRequest()->getText( 'limit' ),
 				'name' => 'limit',
 			),
 			'offset' => array(
 				'type' => 'hidden',
-				'default' => $wgRequest->getText( 'offset' ),
+				'default' => $this->getRequest()->getText( 'offset' ),
 				'name' => 'offset',
 			),
 		);
@@ -160,7 +159,7 @@ class NewFilesPager extends ReverseChronologicalPager {
 			unset( $fields['like'] );
 		}
 
-		$form = new HTMLForm( $fields );
+		$form = new HTMLForm( $fields, $this->getContext() );
 		$form->setTitle( $this->getTitle() );
 		$form->setSubmitText( wfMsg( 'ilsubmit' ) );
 		$form->setMethod( 'get' );

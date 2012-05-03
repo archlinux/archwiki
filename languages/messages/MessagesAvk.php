@@ -393,14 +393,13 @@ MySQL va « $3 : $4 » rokla al dimstakser.',
 'cannotdelete'         => 'Sulara va bazenu bu oku ewava tir merotisa.',
 'badtitle'             => 'Rotaf vergumvelt',
 'badtitletext'         => 'Vergumvelt ke erunu bu tir volenafu ok vlardafu ike walavafi gluyasiki me tir enafi',
-'perfcached'           => 'Vlevef orig yo tid koe palsexo nume me zo ronusked.',
-'perfcachedts'         => 'Vlevef orig yo tid koe palsexo, ise ironokafa nuskera tir $1.',
+'perfcached'           => 'Vlevef orig yo tid koe palsexo nume me zo ronusked. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'Vlevef orig yo tid koe palsexo, ise ironokafa nuskera tir $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'Nuskera va batu bu me noelon flir. Acum origeem me zo divneditir.',
 'wrong_wfQuery_params' => 'Mewadaf dor koe wfQuery() dirgara<br />
 Fliok : $1<br />
 Erura : $2',
 'viewsource'           => 'Wira va klitakrent',
-'viewsourcefor'        => 'tori $1',
 'actionthrottled'      => 'Tulokaliana tegira',
 'actionthrottledtext'  => 'Wetce sabega kev staksavamolavara, rin ta bata skura gemeltamon slikviele zo kimar voxe va bata kimara al kaikayal. Vay artimon lwil !',
 'protectedpagetext'    => 'Batu bu betaradjison zo nendar.',
@@ -547,9 +546,6 @@ Ta keyaksera va $1 ok konar [[{{MediaWiki:Grouppage-sysop}}|ristusik]] rotuzeral
 Va \'"e-mail" staksara pu bat favesik\' me rofavel vaxede "e-mail" mane tir koe rinaf [[Special:Preferences|lodamaceem]] ise vaon faveson me zo elekayal.
 Rinaf tise IP mane tir $3 ise ID elekara tir #$5. Va bate ik bane mane ko kota erura vay bazel !',
 'blockednoreason'                  => 'Meka bazena lazava',
-'blockedoriginalsource'            => "Klita ke '''$1''' vleveon zo nedir :",
-'blockededitsource'                => "Krent ke '''rinaf betakseem''' va '''$1''' vleveon zo betar :",
-'whitelistedittitle'               => 'Kucilan login ta sutelara',
 'whitelistedittext'                => 'Ta bubetara rin gonaskil ta $1',
 'confirmedittext'                  => 'Abdi bubetara va rinafe e-mail mane gogruyel. Kan rinaf [[Special:Preferences|favesiklodamaceem]] va rinafe e-mail mane vay plekul ise tuenal !',
 'nosuchsectiontitle'               => 'Me man gabot',
@@ -692,22 +688,11 @@ Ta ropasusu warzafu bu yo va [[Special:Search|aneyara ko wiki]] yawal.',
 'revdelete-unsuppress'      => 'Dimirutara va dimplekun betaks yo',
 'revdelete-log'             => 'Lazava :',
 'revdelete-submit'          => 'Ko reban siatos rewar',
-'revdelete-logentry'        => 'Betayana betarafa rowinuca ke [[$1]]',
-'logdelete-logentry'        => 'Betayana bifafa rowinuca ke [[$1]]',
 'revdelete-success'         => "'''Kiewaskinon plekuyuna betarafa rowinuca.'''",
 'logdelete-success'         => "'''Kiewaskinon plekuyuna bifafa rowinuca.'''",
 'revdel-restore'            => 'Betara va rowinuca',
 'pagehist'                  => 'Buizvot',
 'deletedhist'               => 'Sularizvot',
-'revdelete-content'         => 'cek',
-'revdelete-summary'         => 'betara va vildeks',
-'revdelete-uname'           => 'favesikyolt',
-'revdelete-restricted'      => 'irutara rewana pu ristusik',
-'revdelete-unrestricted'    => 'irutara tiolteyena pu ristusik',
-'revdelete-hid'             => '$1 pals-',
-'revdelete-unhid'           => '$1 volpals-',
-'revdelete-log-message'     => '$1 tori $2 {{PLURAL:$2|betara|betara}}',
-'logdelete-log-message'     => '$1 tori $2 {{PLURAL:$2|bif|bif}}',
 'revdelete-edit-reasonlist' => 'Betara va sularalazava',
 
 # Suppression log
@@ -815,7 +800,7 @@ Kan ''all:'' laganeyal ta varafa exulera (gon keyaksexo is teza ikz-), oke wetce
 'prefs-rc'                  => 'Noeltaf betakseem',
 'prefs-watchlist'           => 'Suzdasiki',
 'prefs-watchlist-days'      => 'Cugafa vielota gonedina koe suzdasiki :',
-'prefs-watchlist-days-max'  => 'Cugon 7 viel',
+'prefs-watchlist-days-max'  => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'     => 'Betaracugota gonedina koe mantafi suzdasiki :',
 'prefs-watchlist-edits-max' => 'Cugafa ota : 1000',
 'prefs-misc'                => 'Gedrafa lodamaca yo',
@@ -942,7 +927,6 @@ Gotir le $1 {{PLURAL:$1|staa|staa}}.',
 'right-patrol'               => 'Tcalara va fieyen betaks',
 'right-patrolmarks'          => 'Rupera va noeltafa fieratcala',
 'right-unwatchedpages'       => 'Wira va medisukeyenu bu',
-'right-trackback'            => 'Erura va suzdara',
 'right-mergehistory'         => 'Jera va buizvot',
 'right-userrights'           => 'Betara va favesikrokeem',
 'right-userrights-interwiki' => "Betara va favesikrokeem koe aro 'wiki' xo",
@@ -1320,11 +1304,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-noresult' => 'Mek trasiyin favesik.',
 
 # Special:Log/newusers
-'newuserlogpage'              => 'Buredura "log"',
-'newuserlog-byemail'          => 'remravlem staksayan kan e-mail',
-'newuserlog-create-entry'     => 'Warzaf favesik',
-'newuserlog-create2-entry'    => 'va $1 warzafa pata reduyur',
-'newuserlog-autocreate-entry' => 'Mivaskon reduyuna pata',
+'newuserlogpage' => 'Buredura "log"',
 
 # Special:ListGroupRights
 'listgrouprights'                 => 'Rokeem ke favesiklospa',
@@ -1445,8 +1425,6 @@ Vay gruyel da djuskul ise va maletireem vangrupel ise tarkason va [[{{MediaWiki:
 'actioncomplete'         => 'Skuyuna sulara',
 'deletedtext'            => '« $1 » tir sulayan.
 Ta vexala dem noeltaf sulareem va $2 disukel.',
-'deletedarticle'         => 'al sular va « [[$1]] »',
-'suppressedarticle'      => '"[[$1]]" sulayan',
 'dellogpage'             => 'Izvot va sulareem',
 'dellogpagetext'         => 'Tir tela vexala dem noeltaf sulareem.
 Bazen bartiv tir tel ke zanisiko.',
@@ -1535,7 +1513,6 @@ Si une nouvelle page avec le même nom a été créée depuis la suppression, le
 'undeletelink'              => 'wira ik dimplekura',
 'undeletereset'             => 'Tolplekura',
 'undeletecomment'           => 'Sebuks :',
-'undeletedarticle'          => 'va « [[$1]] » al dimplekur',
 'undeletedrevisions'        => '$1 siatos dimplekuyun',
 'undeletedrevisions-files'  => '$1 betaks isu $2 iyeltak zo dimplekuyud',
 'undeletedfiles'            => '{{PLURAL:$1|1|$1}} dimplekuyun iyeltak',
@@ -1717,8 +1694,6 @@ Dans ce cas, vous devrez renommer ou fusionner la page manuellement si vous le d
 'movepage-page-exists'    => '$1 bu ixam tir nume me balkon zo rotolsuter.',
 'movepage-page-moved'     => '$1 bu ko $2 su zo arrundar.',
 'movepage-page-unmoved'   => '$1 bu ko $2 me al zo rotarrundar.',
-'1movedto2'               => '[[$1]] arbureyen kal [[$2]]',
-'1movedto2_redir'         => '[[$1]] arbureyen kal [[$2]] (graskara)',
 'movelogpage'             => 'Arrundara va "log" bu',
 'movelogpagetext'         => 'Vleveon vexala dem arrundayanu bu se.',
 'movereason'              => 'Lazava :',
@@ -1892,8 +1867,6 @@ MediaWiki spam cleanup',
 
 # Patrol log
 'patrol-log-page' => '"Log" triosusiki va fiereem',
-'patrol-log-line' => 'tcalara va $1 ke $2 : $3 fieyen',
-'patrol-log-auto' => '(mivaskon)',
 
 # Image deletion
 'deletedrevision'                 => '$1 sulayan guazaf betaks',
@@ -1914,7 +1887,7 @@ $1',
 'widthheightpage' => '$1 × $2, $3 {{PLURAL:$3|bu|bu}}',
 'file-info'       => 'iyeltakaldo : $1, MIME ord : $2',
 'file-info-size'  => '$1 × $2 pixel, iyeltakaldo : $3, MIME ord : $4',
-'file-nohires'    => '<small>Me roderaykan logijaf lum.</small>',
+'file-nohires'    => 'Me roderaykan logijaf lum.',
 'svg-long-desc'   => 'SVG iyeltak, prekson $1 × $2 pixels, iyeltakaldo : $3',
 'show-big-image'  => 'Geltraf lum',
 
@@ -2178,11 +2151,6 @@ This confirmation code will expire at $4.',
 # Scary transclusion
 'scarytranscludetoolong' => '[URL tir abrotcarsaf]',
 
-# Trackbacks
-'trackbackremove'   => '([$1 Sulara])',
-'trackbacklink'     => 'Sledasiki',
-'trackbackdeleteok' => 'Sledasiki tir sulanhayani.',
-
 # Delete conflict
 'deletedwhileediting' => "'''Obral''' : Batu bu zo sulayar vielu toz betayal !",
 'recreate'            => 'Tolredura',
@@ -2292,5 +2260,10 @@ This confirmation code will expire at $4.',
 
 # Special:BlankPage
 'blankpage' => 'Butuvlardara',
+
+# New logging system
+'revdelete-restricted'   => 'irutara rewana pu ristusik',
+'revdelete-unrestricted' => 'irutara tiolteyena pu ristusik',
+'newuserlog-byemail'     => 'remravlem staksayan kan e-mail',
 
 );

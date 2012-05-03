@@ -342,11 +342,11 @@ Fadlan u sheek [[Special:ListUsers/sysop|maamulaha]], kana digtooneesii URL-ka.'
 'badarticleerror'      => 'Shaqadaan ma lagu sameyn karo boggaan.',
 'cannotdelete'         => 'Boggaan ama file\'ka "$1" mala tirtiri karo.
 waxaa laga yaabaa in oo qof kale tirtiray .',
+'cannotdelete-title'   => 'Ma tirtiri karo bogga "$1"',
 'badtitle'             => 'Qoraal xun',
 'badtitletext'         => 'Bogga aad rabtay ciwaankiisa sax ma eheen, waa ebar, ama waa erayo qalad oo la xiriiro isdhaafka-luqadaha ama isdhaafka-ciwaanka wiki.
 Waxaa ku jiri kara xuruufo aanan loo isticmaalikarin cinwaan ahaan.',
 'viewsource'           => 'Itusi xogta',
-'viewsourcefor'        => ' ku socoto $1',
 'actionthrottled'      => 'Shaqada waala ceejiyay',
 'actionthrottledtext'  => 'Hadii aan ahay ka hortaga spamka, laguuma ogolo  shaqadaan badan oo waqti sidaan u yar ku qabatay,waadna ku xad gudubtay halihii laguu oglolaa.
 fadlan waxyar kadib ku soo noqo.',
@@ -455,6 +455,9 @@ Fadlan waxyar sug intii aadan soo gelin.',
 'login-abort-generic'        => 'Ma u soo gali karin gudaha - waa la noqay',
 'loginlanguagelabel'         => 'Luqada: $1',
 
+# E-mail sending
+'user-mail-no-addy' => "Isku dayday in aa dirto e-mail ayada oo ciwaan e-mail la'aan ah.",
+
 # Change password dialog
 'resetpass'                 => 'Bedel ereysirka',
 'resetpass_announce'        => 'waxaa ku soo geshay eraysir ku meelgaar ah  oo e-mail laguugu soo diray.
@@ -473,26 +476,35 @@ Hadda gudaha ku gal',
 'resetpass-temp-password'   => 'Ereysir ku meel gaar ah:',
 
 # Special:PasswordReset
-'passwordreset'                => 'Bedel ereysirka',
-'passwordreset-legend'         => 'Bedel ereysirka',
-'passwordreset-username'       => 'Magaca gudagalka',
-'passwordreset-email'          => 'Ciwaanka e-mailka',
-'passwordreset-emailtext-ip'   => "(Qof laga yaabo in ee tahay adi, oo ka socdo ciwaanka IP'ka $1)  ayaa  codsaday xasuus faah faahin akoonkaada {{SITENAME}}
+'passwordreset'                    => 'Bedel ereysirka',
+'passwordreset-legend'             => 'Bedel ereysirka',
+'passwordreset-username'           => 'Magaca gudagalka',
+'passwordreset-email'              => 'Ciwaanka e-mailka',
+'passwordreset-emailtext-ip'       => "(Qof laga yaabo in ee tahay adi, oo ka socdo ciwaanka IP'ka $1)  ayaa  codsaday xasuus faah faahin akoonkaada {{SITENAME}}
 ($4). Isticmaaladaan soo socota {{PLURAL:$3|akoonkooda waxee|akoonkooda waxee}} la xiriiraan ciwaankaan e-mailka ah:
 
 $2
 
 {{PLURAL:$3|eraysirkaan kumeel gaarka ah|Eraysiryadaan kumeel gaarka ah}} waxay dhacaayaan {{PLURAL:$5|hal maalin|$5 maalmood}}.
 Waa in aad gudaha gashaa oo e-mail cusub doorataa hadda. Hadii ee qof kale codsigaan sameysay, ama hadii aad soo xasuusatay eraysirkaagii hore, oo aadna u baahneen in aad badashid, iska ilaaw fariintaan siina isticmaal eraysirkaagii duqi ahaa.",
-'passwordreset-emailtext-user' => 'Isticmaale $1 ee {{SITENAME}} wuxuu codsaday xasuus faah faahin akoonkaada {{SITENAME}}
+'passwordreset-emailtext-user'     => 'Isticmaale $1 ee {{SITENAME}} wuxuu codsaday xasuus faah faahin akoonkaada {{SITENAME}}
 ($4). Isticmaaladaan soo socota {{PLURAL:$3|akoonkooda waxee|akoonkooda waxee}} la xiriiraan ciwaankaan e-mailka ah:
 
 $2
 
 {{PLURAL:$3|eraysirkaan kumeel gaarka ah|Eraysiryadaan kumeel gaarka ah}} waxay dhacaayaan {{PLURAL:$5|hal maalin|$5 maalmood}}.
 Waa in aad gudaha gashaa oo e-mail cusub doorataa hadda. Hadii ee qof kale codsigaan sameysay, ama hadii aad soo xasuusatay eraysirkaagii hore, oo aadna u baahneen in aad badashid, iska ilaaw fariintaan siina isticmaal eraysirkaagii duqi ahaa.',
-'passwordreset-emailelement'   => 'Magaca gudagalka: $1
+'passwordreset-emailelement'       => 'Magaca gudagalka: $1
 Ereysirka kumeelgaarka ah: $2',
+'passwordreset-emailerror-capture' => 'E-mail xasuus ah ayaa la sameeyay, oo ka arki kartid hoosta,laakiin wuxuu ku guul dareestay in isticmaalaha loo diro: $1',
+
+# Special:ChangeEmail
+'changeemail'          => 'Bedel ciwaanka E-mailka',
+'changeemail-header'   => 'Bedel ciwaanka e-mailka akoonka',
+'changeemail-oldemail' => 'Ciwaanka e-mailka hadda jiro:',
+'changeemail-newemail' => 'Ciwaan e-mail oo cusub:',
+'changeemail-none'     => '(waxna)',
+'changeemail-submit'   => 'Bedel e-mailka',
 
 # Edit page toolbar
 'bold_sample'     => 'Far butac ah',
@@ -548,9 +560,6 @@ Ma isticmaali kartid 'e-mailka isticmaalahaan' soo diray hadii aad heesato maa h
 Ciwaankaada  IP'ka waa $3, ID'ga la mamnuucay neh waa  #$5.
 fadlan ku soo dar faahfaahinta ku qoran kor su'aalo kasto oo sameyso.",
 'blockednoreason'                  => 'wax sabab ah kama bixin',
-'blockedoriginalsource'            => "Xogta '''$1''' hoos aad ka arki kartaa:",
-'blockededitsource'                => "Qoraalkii '''aad waxkaga bedashay''' '''$1''' waxaad ku arkikartaa hoos:",
-'whitelistedittitle'               => 'Waxaa loo baahanyahay gudagal si aad wax uga bedeshid',
 'whitelistedittext'                => 'Waa in aad $1 si aad wax uga bedeshid boggaga.',
 'confirmedittext'                  => 'Waa in aad xaqiijisaa e-mailkaada inta aadan bogaga wax ka bedelin.
 fadlan ku dar kuna xaqiiji e-mailkaada meesha  [[Special:Preferences|dooqyada gudagalahaaga]].',
@@ -678,9 +687,6 @@ sababteeda neh waxaa laga heli kartaa  [{{fullurl:{{#Special:Log}}/delete|page={
 'revdel-restore-deleted'      => 'kuwii la tirtiray badalyadooda',
 'revdel-restore-visible'      => 'bedelyadka la arki karo',
 'pagehist'                    => 'Taariikhda bogga',
-'revdelete-content'           => 'oo kooban',
-'revdelete-uname'             => 'Magaca isticmaalaha',
-'revdelete-hid'               => 'qari $1',
 'revdelete-reasonotherlist'   => 'sabababaha kale',
 
 # History merging
@@ -1027,8 +1033,7 @@ Tafaasiishiisa waxee ku qorantahay [$2 bogga tafaasiisha faylka] oo ka arki kart
 'listusers-blocked'  => '(waa la mamnuucay)',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Gudagalaha Isticmaale sameeyay',
-'newuserlog-create-entry' => 'Isticmaale cusub',
+'newuserlogpage' => 'Gudagalaha Isticmaale sameeyay',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(Inta ka mid ah liiskooda)',
@@ -1087,7 +1092,6 @@ Hadii aad rabootid in aad boggan ka saartid wardiyeynta, dhagsii \"Ha' wardiyeyn
 'historywarning' => "'''Digniin:''' Bogga aad tirtiri rabtid wuxuu leeyahay taariikh lagu qiyaaso $1 {{PLURAL:$1|bedelyo ah|bedelaadyo ah}}:",
 'actioncomplete' => "Amarka waa la'dhamaystiray",
 'actionfailed'   => 'Shaqada waad ku guul dareesatay',
-'deletedarticle' => 'la tirtiray "[[$1]]"',
 'dellogpage'     => 'Tirtiraha guda galaheeda',
 
 # Rollback
@@ -1133,7 +1137,6 @@ Wuxuu ku badalay bedelkii ka danbeeyay oo sameeyay $2.',
 'undeletelink'             => 'fiiri/mar kale sameey',
 'undeleteviewlink'         => 'itusi',
 'undeletereset'            => 'Dib u habeey',
-'undeletedarticle'         => 'La\' sooceliyey "[[$1]]"',
 'undeletedrevisions'       => '$1 {{PLURAL:$1|revision|revisions}} restored',
 'undeletedrevisions-files' => '$1 {{PLURAL:$1|revision|revisions}} and $2 {{PLURAL:$2|file|files}} restored',
 'undeletedfiles'           => '$1 {{PLURAL:$1|file|files}} restored',
@@ -1204,13 +1207,11 @@ Wuxuu ku badalay bedelkii ka danbeeyay oo sameeyay $2.',
 'proxyblocksuccess'        => 'waa la sameeyay.',
 
 # Move page
-'movenologin'     => 'Gudaha kuma jirtid',
-'movedto'         => 'loo wareejiyey',
-'movetalk'        => "Wareejiyey bogga wadahadalka la'xiriira",
-'1movedto2'       => '[[$1]] waxaa loo wareejiyey [[$2]]',
-'1movedto2_redir' => '[[$1]] waxaa loo wareejiyey [[$2]] si loo sii toosiyo',
-'movelogpage'     => 'Wareejinta guda galaheeda',
-'revertmove'      => 'celi',
+'movenologin' => 'Gudaha kuma jirtid',
+'movedto'     => 'loo wareejiyey',
+'movetalk'    => "Wareejiyey bogga wadahadalka la'xiriira",
+'movelogpage' => 'Wareejinta guda galaheeda',
+'revertmove'  => 'celi',
 
 # Export
 'export'            => 'Dhoofi boggag',
@@ -1298,17 +1299,13 @@ Waxaa fiiri kartaa cadaadkiisa',
 'lastmodifiedatby' => 'Bogaan waxaa ugu dambeyntii wax laga bedelay $2, $1 kana bedelay $3.',
 'othercontribs'    => 'Waxay ku saleysantahay shaqada $1.',
 
-# Patrol log
-'patrol-log-line' => 'waxa la calaamadeeyay  $1 ee  $2 waxaa la waardiyeeyay $3',
-'patrol-log-diff' => 'bedelaadka $1',
-
 # Browsing diffs
 'previousdiff' => '← bedelkii ka duqsanaa',
 'nextdiff'     => 'Bedelkii ugu cusbaa →',
 
 # Media information
 'file-info-size' => '$1 × $2 pixels, weyninka faylka : $3, nuuca MIME: $4',
-'file-nohires'   => '<small>Malahan wax kale oo tafaasiil ah</small>',
+'file-nohires'   => 'Faah faahin dheeraad ah malahan.',
 
 # Special:NewFiles
 'imagelisttext' => "Hoos waxaa yaala liiska '''$1''' {{PLURAL:$1|file|faylalka}} oo u kala soocan $2.",
@@ -1390,5 +1387,18 @@ Hadii faylka wax laga badalay sida oo markiisa hore ahaa, waxaa laga yaabaa in e
 # HTML forms
 'htmlform-reset'               => 'Ka noqo wax bedelka',
 'htmlform-selectorother-other' => 'kuwa kale',
+
+# API errors
+'api-error-copyuploaddisabled' => 'Soo gelinta dhinaca URL-ka waa laga damiyay kombiyuutarkaan',
+'api-error-filename-tooshort'  => 'Magaca faylka aad oo u gaabanyahay',
+'api-error-filetype-banned'    => 'Faylka nuucaan waa laga mamnuucay',
+'api-error-http'               => 'Qalad gudaha ah: Ma ku xiro karo kombiyutarka',
+'api-error-illegal-filename'   => 'Magaca faylkaan lama ogola.',
+'api-error-mustbeloggedin'     => 'Waa in aad gudaha u soo gashaa hadii aad rabtid in aad fayl soo geliso.',
+'api-error-ok-but-empty'       => 'Qalad gudaha ah : kombiyutarka maka soo jawaabin',
+'api-error-unclassified'       => 'Qalad la aqoon aa dhacay',
+'api-error-unknown-code'       => 'Qalad la aqoon: "$1"',
+'api-error-unknown-warning'    => 'Digniin la aqoon: $1',
+'api-error-uploaddisabled'     => 'Soo gelinta waa laga xiray wikigaan.',
 
 );

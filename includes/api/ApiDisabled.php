@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * API module that dies with an error immediately.
  *
@@ -46,7 +41,7 @@ class ApiDisabled extends ApiBase {
 	}
 
 	public function execute() {
-		$this->dieUsage( "The ``{$this->getModuleName()}'' module has been disabled.", 'moduledisabled' );
+		$this->dieUsage( "The \"{$this->getModuleName()}\" module has been disabled.", 'moduledisabled' );
 	}
 
 	public function isReadMode() {
@@ -65,7 +60,7 @@ class ApiDisabled extends ApiBase {
 		return 'This module has been disabled';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array();
 	}
 

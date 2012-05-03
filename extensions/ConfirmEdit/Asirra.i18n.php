@@ -66,6 +66,21 @@ $messages['de-formal'] = array(
 	'asirra-failed' => 'Bitte wählen Sie nur die Fotos mit Katzen aus.',
 );
 
+/** Spanish (Español)
+ * @author Armando-Martin
+ */
+$messages['es'] = array(
+	'asirra-desc' => 'Módulo de Asirra para ConfirmEdit',
+	'asirra-edit' => 'Para ayudar a protegernos contra el spam de edición automática, seleccione sólo las fotos de gatos en el cuadro siguiente:',
+	'asirra-addurl' => 'Su edición incluye nuevos enlaces externos. Para ayudar a protegernos contra el spam automatizado, por favor, seleccione solo las fotos de gato en el cuadro siguiente:',
+	'asirra-badpass' => 'Para ayudar a protegernos del robo automatizado de contraseñas, seleccione sólo las fotos de gatos en el cuadro siguiente:',
+	'asirra-createaccount' => 'Para ayudar a protegernos contra la creación automatizada de cuentas, seleccione sólo las fotos de gato en el cuadro siguiente:',
+	'asirra-createaccount-fail' => 'Identifique correctamente los gatos.',
+	'asirra-create' => 'Para ayudar a protegernos contra la creación automática de páginas, seleccione sólo las fotos de gato en el cuadro siguiente:',
+	'asirra-nojs' => "'''Por favor active JavaScript y vuelva a la página.'''",
+	'asirra-failed' => 'Identifique todas las imágenes de gatos',
+);
+
 /** French (Français)
  * @author Seb35
  */
@@ -179,6 +194,21 @@ $messages['nl'] = array(
 	'asirra-create' => "Kies om het automatisch aanmaken van pagina's tegen te gaan de afbeeldingen met een poes in het onderstaande venster:",
 	'asirra-nojs' => "'''Schakel JavaScript in en probeer de pagina opnieuw op te slaan.'''",
 	'asirra-failed' => 'Identificeer alle afbeeldingen van katten.',
+);
+
+/** Polish (Polski)
+ * @author BeginaFelicysym
+ */
+$messages['pl'] = array(
+	'asirra-desc' => 'Moduł Asirra dla ConfirmEdit',
+	'asirra-edit' => 'Aby uchronić się przed automatami wprowadzającymi spam, proszę wybrać tylko zdjęcia kotów w poniższym polu:',
+	'asirra-addurl' => 'Wprowadzony przez ciebie tekst zawiera linki zewnętrzne. Aby uchronić nas przed automatycznym spamem, proszę wskazać tylko zdjęcia kotów w poniższym polu:',
+	'asirra-badpass' => 'Aby uchronić się przed zautomatyzowanym łamaniem haseł, proszę wybrać tylko zdjęcia kotów w poniższym polu:',
+	'asirra-createaccount' => 'Aby uchronić się przed automatycznym tworzeniem kont, proszę wybrać tylko zdjęcia kotów w poniższym polu:',
+	'asirra-createaccount-fail' => 'Prosimy prawidłowo zidentyfikować koty.',
+	'asirra-create' => 'Aby uchronić się przed automatycznym tworzeniem stron, proszę wybrać tylko zdjęcia kotów w poniższym polu:',
+	'asirra-nojs' => "'''Prosimy włączyć obsługę języka JavaScript i ponowne przesłanie strony.'''",
+	'asirra-failed' => 'Prosimy wskazać wszystkie obrazy kotów',
 );
 
 /** Piedmontese (Piemontèis)

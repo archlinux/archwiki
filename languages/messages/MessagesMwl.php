@@ -64,17 +64,17 @@ $specialPageAliases = array(
 );
 
 $magicWords = array(
-	'redirect'              => array( '0', '#ANCAMINAR', '#REDIRECIONAMENTO', '#REDIRECT' ),
-	'img_right'             => array( '1', 'dreita', 'direita', 'right' ),
-	'img_left'              => array( '1', 'squierda', 'esquerda', 'left' ),
-	'img_none'              => array( '1', 'nanhun', 'nenhum', 'none' ),
-	'img_center'            => array( '1', 'centro', 'center', 'centre' ),
-	'img_middle'            => array( '1', 'meio', 'middle' ),
-	'language'              => array( '0', '#LHENGUA:', '#IDIOMA:', '#LANGUAGE:' ),
-	'filepath'              => array( '0', 'CAMINOFEXEIRO:', 'CAMINHODOARQUIVO', 'FILEPATH:' ),
-	'tag'                   => array( '0', 'eitiqueta', 'tag' ),
-	'pagesize'              => array( '1', 'TAMANHOFEXEIRO', 'TAMANHODAPAGINA', 'TAMANHODAPÁGINA', 'PAGESIZE' ),
-	'staticredirect'        => array( '1', '_ANCAMINARSTATICO_', '__REDIRECIONAMENTOESTATICO__', '__REDIRECIONAMENTOESTÁTICO__', '__STATICREDIRECT__' ),
+	'redirect'                => array( '0', '#ANCAMINAR', '#REDIRECIONAMENTO', '#REDIRECT' ),
+	'img_right'               => array( '1', 'dreita', 'direita', 'right' ),
+	'img_left'                => array( '1', 'squierda', 'esquerda', 'left' ),
+	'img_none'                => array( '1', 'nanhun', 'nenhum', 'none' ),
+	'img_center'              => array( '1', 'centro', 'center', 'centre' ),
+	'img_middle'              => array( '1', 'meio', 'middle' ),
+	'language'                => array( '0', '#LHENGUA:', '#IDIOMA:', '#LANGUAGE:' ),
+	'filepath'                => array( '0', 'CAMINOFEXEIRO:', 'CAMINHODOARQUIVO', 'FILEPATH:' ),
+	'tag'                     => array( '0', 'eitiqueta', 'tag' ),
+	'pagesize'                => array( '1', 'TAMANHOFEXEIRO', 'TAMANHODAPAGINA', 'TAMANHODAPÁGINA', 'PAGESIZE' ),
+	'staticredirect'          => array( '1', '_ANCAMINARSTATICO_', '__REDIRECIONAMENTOESTATICO__', '__REDIRECIONAMENTOESTÁTICO__', '__STATICREDIRECT__' ),
 );
 
 $messages = array(
@@ -360,7 +360,6 @@ Por fabor, diç esto a un [[Special:ListUsers/sysop|admenistrador]], dezindo la 
 'badtitletext'         => 'La páigina que pediste ye ambálida, bazia, ó ua lhigaçon mal feita dun títalo antre-lhéngua ó antre-biqui.
 Puode tener un ó mais carateres que nun puoden ser outelizados an títalos.',
 'viewsource'           => 'Ber código',
-'viewsourcefor'        => 'pa $1',
 'actionthrottled'      => 'Acion lhemitada',
 'viewsourcetext'       => 'Tu puodes ber i copiar l código desta páigina:',
 
@@ -529,10 +528,8 @@ Legenda: (atu) = defrénças de la berson atual,
 'history-feed-item-nocomment' => '$1 a $2',
 
 # Revision deletion
-'rev-delundel'      => 'amostrar/scunder',
-'revdel-restore'    => 'Demudar besiblidade',
-'revdelete-content' => 'cuntenido',
-'revdelete-uname'   => 'nome de outelizador',
+'rev-delundel'   => 'amostrar/scunder',
+'revdel-restore' => 'Demudar besiblidade',
 
 # History merging
 'mergehistory-submit' => 'Misturar eidiçones',
@@ -854,8 +851,7 @@ Páiginas que steian ne ls [[Special:Watchlist|tous begiados]] son amostradas an
 'listusers-submit' => 'Amostrar',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Registro de criaçon de outelizadores',
-'newuserlog-create-entry' => 'Nuobo outelizador',
+'newuserlogpage' => 'Registro de criaçon de outelizadores',
 
 # Special:ListGroupRights
 'listgrouprights-rights'  => 'Dreitos',
@@ -896,7 +892,6 @@ Por fabor, bei se ye esso que quieres fazer, que antendes las cunsequéncias i s
 'actioncomplete'        => 'Acion acabada',
 'deletedtext'           => '"$1" fue elhiminada.
 Consulte $2 para um registo de eliminações recentes.',
-'deletedarticle'        => 'botado pa la rue "[[$1]]"',
 'dellogpage'            => 'Registro de botado fuora',
 'deletecomment'         => 'Rezon:',
 'deleteotherreason'     => 'Rezon adicional:',
@@ -936,9 +931,8 @@ Esta ye la cunfiguraçon atual pa la páigina '''$1''':",
 'restriction-move' => 'Arrastrar',
 
 # Undelete
-'undeletebtn'      => 'Recuperar',
-'undeletelink'     => 'ber/restourar',
-'undeletedarticle' => 'restourado "[[$1]]"',
+'undeletebtn'  => 'Recuperar',
+'undeletelink' => 'ber/restourar',
 
 # Namespace form on various pages
 'namespace'      => 'Spácio de nomes:',
@@ -1020,8 +1014,6 @@ Por fabor, scuolhe outro nome.',
 'talkexists'       => "'''La páigina an si fui arrastrada cun éisito. Inda assi, la páigina de çcusson nun fui arrastrada, ua beç que yá eisistie ua cun este títalo. Por fabor, ajunta-las a la mano.'''",
 'movedto'          => 'arrastrado pa',
 'movetalk'         => 'Arrastrar tamien la páigina de çcusson associada.',
-'1movedto2'        => '[[$1]] fui arrastrado pa [[$2]]',
-'1movedto2_redir'  => 'arrastreste [[$1]] pa [[$2]] nun ancaminamiento',
 'movelogpage'      => "Registro d'arrastros",
 'movereason'       => 'Rezon:',
 'revertmove'       => 'poner al robés',
@@ -1115,7 +1107,7 @@ Premite ajuntar la rezon de la eidiçon ne l sumário.',
 
 # Media information
 'file-info-size' => '$1 × $2 pixel, tamanho: $3, tipo MIME: $4',
-'file-nohires'   => '<small>Sin resoluçon maior çponible.</small>',
+'file-nohires'   => 'Sin resoluçon maior çponible.',
 'svg-long-desc'  => 'fexeiro SVG, de $1 × $2 pixeles, tamanho: $3',
 'show-big-image' => 'Resoluçon cumpleta',
 

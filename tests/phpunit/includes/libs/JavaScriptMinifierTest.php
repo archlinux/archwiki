@@ -84,6 +84,13 @@ class JavaScriptMinifierTest extends MediaWikiTestCase {
 			// And also per spec unicode char escape values should work in identifiers,
 			// as long as it's a valid char. In future it might get normalized.
 			array( "var Ka\\u015dSkatolVal = {}", 'var Ka\\u015dSkatolVal={}'),
+
+			/* Some structures that might look invalid at first sight */
+			array( "var a = 5.;", "var a=5.;" ),
+			array( "5.0.toString();", "5.0.toString();" ),
+			array( "5..toString();", "5..toString();" ),
+			array( "5...toString();", false ),
+			array( "5.\n.toString();", '5..toString();' ),
 		);
 	}
 
@@ -101,5 +108,41 @@ class JavaScriptMinifierTest extends MediaWikiTestCase {
 		$parser->parse( $minified, 'minify-test.js', 1 );
 
 		$this->assertEquals( $expectedOutput, $minified, "Minified output should be in the form expected." );
+	}
+
+	/**
+	 * @dataProvider provideBug32548
+	 */
+	function testBug32548Exponent($num) {
+		// Long line breaking was being incorrectly done between the base and
+		// exponent part of a number, causing a syntax error. The line should
+		// instead break at the start of the number.
+		$prefix = 'var longVarName' . str_repeat('_', 973) . '=';
+		$suffix = ',shortVarName=0;';
+
+		$input = $prefix . $num . $suffix;
+		$expected = $prefix . "\n" . $num . $suffix;
+
+		$minified = JavaScriptMinifier::minify( $input );
+
+		$this->assertEquals( $expected, $minified, "Line breaks must not occur in middle of exponent");
+	}
+
+	function provideBug32548() {
+		return array(
+			array(
+				// This one gets interpreted all together by the prior code;
+				// no break at the 'E' happens.
+				'1.23456789E55',				
+			),
+			array(
+				// This one breaks under the bad code; splits between 'E' and '+'
+				'1.23456789E+5',
+			),
+			array(
+				// This one breaks under the bad code; splits between 'E' and '-'
+				'1.23456789E-5',
+			),
+		);
 	}
 }

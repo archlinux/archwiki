@@ -352,12 +352,11 @@ Pol favol, contauta con un [[Special:ListUsers/sysop|çajoril]], mentandu la URL
 'cannotdelete'         => 'Nu es possibri esborral "$1". Puei que ya lo aiga esborrau otra presona.',
 'badtitle'             => 'Mal entitulau',
 'badtitletext'         => 'El entítulu la páhina está vaciu, nu es váliu, u es un atihu entelluenga u entelgüiqui encorretu.',
-'perfcached'           => "Los siguientis datus s'alcuentran nel caché i es posibri que nu estén atualizaus.",
-'perfcachedts'         => 'Estus datus están emburacaus. La su úrtima atualización hue el $1.',
+'perfcached'           => "Los siguientis datus s'alcuentran nel caché i es posibri que nu estén atualizaus. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.",
+'perfcachedts'         => 'Estus datus están emburacaus. La su úrtima atualización hue el $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => "Las atualiçacionis desta páhina s'alcuentran atualmenti desativás. Los datus nu sedrán atualizaus a cortu praçu.",
 'wrong_wfQuery_params' => 'Parametrus a wfQuery()<br /> Hunción: $1<br /> Pregunta: $2 encorretus',
 'viewsource'           => 'Vel coigu huenti',
-'viewsourcefor'        => 'pa $1',
 'actionthrottled'      => 'Ación ilimitá',
 'actionthrottledtext'  => 'Cumu miia pa prevenil el spam, solu pueis hazel esta ación un limitau númeru e vezis nun cortu praçu e tiempu, i as pasau esti límiti. Pol favol, enténtalu otra vezi endrentu angunus minutus.',
 'protectedpagetext'    => "Esta página s'alcuentra atarugá a nuevas eicionis.",
@@ -532,9 +531,6 @@ Pueis contautal con $1 u con otru [[{{MediaWiki:Grouppage-sysop}}|çahoril]] pa 
 Si nu as escrebiu enas tus [[Special:Preferences|preferéncias]] una direción d\'email, u si t\'á siu atarugau el correu, nu te sedrá possibri gastal el botón "Envial un email a esti ussuáriu".
 $3 es la tu direción IP atual, i el ID del tarugu es #$5. Pol favol, escrebi dambus los dos datus en cualisquiel consurta que hagas.',
 'blockednoreason'                  => "nu s'an dau razonis",
-'blockedoriginalsource'            => "El cóigu huenti e '''$1''' se muestra embahu:",
-'blockededitsource'                => "Embahu se muestra el testu '''las tus eicionis''' en '''$1''':",
-'whitelistedittitle'               => 'Es mestel rustrilsi pa eital',
 'whitelistedittext'                => 'Tiinis que $1 pa eital páhinas.',
 'confirmedittext'                  => 'Ebis confirmal la tu direción d´email enantis d´eital páhinas. Pol favol, escrebi i compreba el tu email pol meyu las tus [[Special:Preferences|preferéncias d´usuáriu]].',
 'nosuchsectiontitle'               => 'Nu es posibri alcuentral el apaltiju',
@@ -717,22 +713,11 @@ El restu e çahorilis desti güiqui sí tendrán premisu pa visoreal el continiu
 'revdelete-unsuppress'        => 'Esborral restricionis enas revisionis arrecuperás',
 'revdelete-log'               => 'Razón:',
 'revdelete-submit'            => 'Aprical a {{PLURAL:$1|la revisión aseñalá|las revisionis aseñalás}}',
-'revdelete-logentry'          => 'chambá la visibiliá la revisión pa [[$1]]',
-'logdelete-logentry'          => "chambá la visibiliá d'eventus de [[$1]]",
 'revdelete-success'           => "'''Visibiliá revisionis chambá.'''",
 'logdelete-success'           => "'''Visibiliá d'eventus chambá.'''",
 'revdel-restore'              => 'Chambal visibiliá',
 'pagehist'                    => 'Estorial la páhina',
 'deletedhist'                 => 'Estorial esborrau',
-'revdelete-content'           => 'conteniu',
-'revdelete-summary'           => 'eital sumáriu',
-'revdelete-uname'             => "nombri d'usuáriu",
-'revdelete-restricted'        => 'las restricionis a los çahorilis án siu apricás',
-'revdelete-unrestricted'      => 'las restricionis a los çahorilis án siu esborrás',
-'revdelete-hid'               => 'açonchal $1',
-'revdelete-unhid'             => 'esaçonchal $1',
-'revdelete-log-message'       => '$1 de $2 {{PLURAL:$2|revisión|revisionis}}',
-'logdelete-log-message'       => '$1 de $2 {{PLURAL:$2|eventu|eventus}}',
 'revdelete-edit-reasonlist'   => 'Eital razonis del esborrau',
 
 # Suppression log
@@ -846,7 +831,7 @@ Asigurati e qu'esti chambu mantenga la continuiá el estorial la páhina.",
 'prefs-rc'                  => 'Úrtimus chambus',
 'prefs-watchlist'           => 'Lista e seguimientu',
 'prefs-watchlist-days'      => 'Máisimu númeru e dias a muestral ena lista e seguimientu:',
-'prefs-watchlist-days-max'  => 'Máisimu 7 dias',
+'prefs-watchlist-days-max'  => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'     => 'Númeru máisimu e chambus a muestral ena lista e seguimientu umentá:',
 'prefs-misc'                => 'Bandallu (una mihina e tó)',
 'prefs-resetpass'           => 'Escambial consínia',
@@ -1366,10 +1351,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-noresult' => 'Nu s´alcuentró dengún usuáriu.',
 
 # Special:Log/newusers
-'newuserlogpage'           => 'Rustrihu de nuevus usuárius',
-'newuserlog-byemail'       => 'consínia enviá pol e-mail',
-'newuserlog-create-entry'  => "Nueva cuenta d'usuáriu",
-'newuserlog-create2-entry' => 'nueva cuenta criá: $1',
+'newuserlogpage' => 'Rustrihu de nuevus usuárius',
 
 # Special:ListGroupRights
 'listgrouprights'                 => "Derechus del grupu d'usuárius",
@@ -1493,7 +1475,6 @@ Pol favol, confirma que realmenti quieis hazel esu, qu'entiendis las consecuenci
 'actioncomplete'         => 'Ación acabihá',
 'deletedtext'            => 'S\'á esborrau "$1" corretamenti.
 Consurta $2 pa vel los úrtimus esborraus.',
-'deletedarticle'         => 'esborrau "[[$1]]"',
 'dellogpage'             => 'Rustrihu d´esborrau',
 'dellogpagetext'         => 'Embahu se muestra una lista colos úrtimus esborraus.',
 'deletionlog'            => 'rustrihu d´esborrau',
@@ -1591,7 +1572,6 @@ arrecuperás apaicerán nel estorial anteriol.",
 'undeletelink'                 => 'Guipal/arrecuperal',
 'undeletereset'                => 'Reahustal',
 'undeletecomment'              => 'Comentáriu:',
-'undeletedarticle'             => '"[[$1]]" restaurau',
 'undeletedrevisions'           => '{{PLURAL:$1|1 revisión|$1 revisionis}} restaurás',
 'undeletedrevisions-files'     => '{{PLURAL:$1|1 revisión|$1 revisionis}} i {{PLURAL:$2|1 archivu|$2 archivus}} restauraus',
 'undeletedfiles'               => '{{PLURAL:$1|1 archivu|$1 archivus}} restauraus',
@@ -1797,8 +1777,6 @@ Pol favol, escrebi otru entítulu.',
 'talkexists'              => "'''S'á moviu la páhina, peru la su caraba nu puei sel movia polque ya desisti otra caraba con el nuevu entítulu. Pol favol, mesturalas manualmenti.'''",
 'movedto'                 => 's´á moviu a',
 'movetalk'                => 'Tamién movel la su caraba',
-'1movedto2'               => '[[$1]] s´á moviu a [[$2]]',
-'1movedto2_redir'         => "S'á moviu [[$1]] a [[$2]] criandu una redireción",
 'movelogpage'             => 'Rustrihu e movimientus',
 'movelogpagetext'         => 'Embahu ai una lista colas páhinas movias.',
 'movereason'              => 'Razón:',
@@ -1981,9 +1959,6 @@ Pol favol, gasta el botón "previsoreal" enantis d\'emburacal.',
 # Patrol log
 'patrol-log-page'   => 'Rustrihu e revisionis',
 'patrol-log-header' => 'Esti es un rustriju e revissionis patrullás.',
-'patrol-log-line'   => '$1 está aseñalau $2 patrullau $3',
-'patrol-log-auto'   => '(autumáticu)',
-'patrol-log-diff'   => 'revisión $1',
 
 # Image deletion
 'deletedrevision'                 => 'Esborrá la revisión antigua $1',
@@ -2005,7 +1980,7 @@ $1',
 'widthheightpage' => '$1 × $2, $3 {{PLURAL:$3|página|páginas}}',
 'file-info'       => 'grandol el archivu: $1, MIME type: $2',
 'file-info-size'  => '$1 × $2 pixel, grandol el archivu: $3, MIME type: $4',
-'file-nohires'    => '<small>Nu disponibri a mayol resolución.</small>',
+'file-nohires'    => 'Nu disponibri a mayol resolución.',
 'svg-long-desc'   => 'archivu SVG, $1 × $2 pixelis, grandol: $3',
 'show-big-image'  => 'Resolución máisima',
 
@@ -2021,7 +1996,7 @@ $1',
 'sp-newimages-showfrom' => 'Muestral nuevas imahin empuntás a partil de $2, $1',
 
 # Video information, used by Language::formatTimePeriod() to format lengths in the above messages
-'hours-abbrev' => 'o',
+'hours-abbrev' => '$1o',
 
 # Bad image list
 'bad_image_list' => 'El hormatu ebi sel asina:
@@ -2306,12 +2281,6 @@ El coigu de confirmación caucará a las $4.',
 'scarytranscludefailed'   => '[Marru al cargal la prantilla pa $1]',
 'scarytranscludetoolong'  => '[La URL es mu larga]',
 
-# Trackbacks
-'trackbackbox'      => 'Trackbacks pa esti artículu:<br />
-$1',
-'trackbackremove'   => '([$1 Esborral])',
-'trackbackdeleteok' => "El trackback s'á esborrau corretamenti.",
-
 # Delete conflict
 'deletedwhileediting' => 'Avisu: esta página á siu esborrá endispués de tu encetal a eitala!',
 'confirmrecreate'     => "El usuáriu [[User:$1|$1]] ([[User talk:$1|caraba]]) á esborrau esta páhina aluspués de que prencipiaras a eitala, pola siguienti razón:
@@ -2446,5 +2415,10 @@ Las imahin se muestran a resolución compreta; las demas crasis d'archivu s'ehec
 
 # Database error messages
 'dberr-header' => 'Marru ena wiki',
+
+# New logging system
+'revdelete-restricted'   => 'las restricionis a los çahorilis án siu apricás',
+'revdelete-unrestricted' => 'las restricionis a los çahorilis án siu esborrás',
+'newuserlog-byemail'     => 'consínia enviá pol e-mail',
 
 );

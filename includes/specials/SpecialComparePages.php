@@ -57,6 +57,7 @@ class SpecialComparePages extends SpecialPage {
 				'label-message' => 'compare-page1',
 				'size' => '40',
 				'section' => 'page1',
+				'validation-callback' => array( $this, 'checkExistingTitle' ),
 			),
 			'Revision1' => array(
 				'type' => 'int',
@@ -64,6 +65,7 @@ class SpecialComparePages extends SpecialPage {
 				'label-message' => 'compare-rev1',
 				'size' => '8',
 				'section' => 'page1',
+				'validation-callback' => array( $this, 'checkExistingRevision' ),
 			),
 			'Page2' => array(
 				'type' => 'text',
@@ -71,6 +73,7 @@ class SpecialComparePages extends SpecialPage {
 				'label-message' => 'compare-page2',
 				'size' => '40',
 				'section' => 'page2',
+				'validation-callback' => array( $this, 'checkExistingTitle' ),
 			),
 			'Revision2' => array(
 				'type' => 'int',
@@ -78,6 +81,7 @@ class SpecialComparePages extends SpecialPage {
 				'label-message' => 'compare-rev2',
 				'size' => '8',
 				'section' => 'page2',
+				'validation-callback' => array( $this, 'checkExistingRevision' ),
 			),
 			'Action' => array(
 				'type' => 'hidden',
@@ -87,29 +91,33 @@ class SpecialComparePages extends SpecialPage {
 				'type' => 'hidden',
 				'name' => 'diffonly',
 			),
-		), 'compare' );
-		$form->setSubmitText( wfMsg( 'compare-submit' ) );
+			'Unhide' => array(
+				'type' => 'hidden',
+				'name' => 'unhide',
+			),
+		), $this->getContext(), 'compare' );
+		$form->setSubmitTextMsg( 'compare-submit' );
 		$form->suppressReset();
 		$form->setMethod( 'get' );
-		$form->setTitle( $this->getTitle() );
+		$form->setSubmitCallback( array( __CLASS__, 'showDiff' ) );
 
 		$form->loadData();
 		$form->displayForm( '' );
-
-		self::showDiff( $form->mFieldData );
+		$form->trySubmit();
 	}
 
-	public static function showDiff( $data ){
+	public static function showDiff( $data, HTMLForm $form ){
 		$rev1 = self::revOrTitle( $data['Revision1'], $data['Page1'] );
 		$rev2 = self::revOrTitle( $data['Revision2'], $data['Page2'] );
 
 		if( $rev1 && $rev2 ) {
-			$de = new DifferenceEngine( null,
+			$de = new DifferenceEngine( $form->getContext(),
 				$rev1,
 				$rev2,
 				null, // rcid
-				( $data["Action"] == 'purge' ),
-				false );
+				( $data['Action'] == 'purge' ),
+				( $data['Unhide'] == '1' )
+			);
 			$de->showDiffPage( true );
 		}
 	}
@@ -124,5 +132,30 @@ class SpecialComparePages extends SpecialPage {
 			}
 		}
 		return null;
+	}
+
+	public function checkExistingTitle( $value, $alldata ) {
+		if ( $value === '' || $value === null ) {
+			return true;
+		}
+		$title = Title::newFromText( $value );
+		if ( !$title instanceof Title ) {
+			return $this->msg( 'compare-invalid-title' )->parseAsBlock();
+		}
+		if ( !$title->exists() ) {
+			return $this->msg( 'compare-title-not-exists' )->parseAsBlock();
+		}
+		return true;
+	}
+
+	public function checkExistingRevision( $value, $alldata ) {
+		if ( $value === '' || $value === null ) {
+			return true;
+		}
+		$revision = Revision::newFromId( $value );
+		if ( $revision === null ) {
+			return $this->msg( 'compare-revision-not-exists' )->parseAsBlock();
+		}
+		return true;
 	}
 }

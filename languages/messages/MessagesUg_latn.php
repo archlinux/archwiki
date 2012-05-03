@@ -12,8 +12,6 @@
  * @author לערי ריינהארט
  */
 
-$rtl = true;
-
 $messages = array(
 # Dates
 'sunday'        => 'Yekshenbe',
@@ -215,9 +213,6 @@ $messages = array(
 
 # Special:NewFiles
 'ilsubmit' => 'Izdash',
-
-# Trackbacks
-'trackbackremove' => '([$1 Yukhutush])',
 
 # action=purge
 'confirm_purge_button' => 'Maqul',

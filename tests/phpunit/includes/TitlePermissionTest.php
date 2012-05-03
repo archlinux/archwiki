@@ -5,12 +5,16 @@
  */
 class TitlePermissionTest extends MediaWikiLangTestCase {
 	protected $title;
-	protected $user;
-	protected $anonUser;
-	protected $userUser;
-	protected $altUser;
-	protected $userName;
-	protected $altUserName;
+
+	/**
+	 * @var User
+	 */
+	protected $user, $anonUser, $userUser, $altUser;
+
+	/**
+	 * @var string
+	 */
+	protected $userName, $altUserName;
 
 	function setUp() {
 		global $wgLocaltimezone, $wgLocalTZoffset, $wgMemc, $wgContLang, $wgLang;
@@ -56,6 +60,8 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 	}
 
 	function setUserPerm( $perm ) {
+		// Setting member variables is evil!!!
+
 		if ( is_array( $perm ) ) {
 			$this->user->mRights = $perm;
 		} else {
@@ -299,7 +305,7 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 			$this->assertEquals( $check[$action][3],
 				$this->title->userCan( $action, true ) );
 			$this->assertEquals( $check[$action][3],
-				$this->title->quickUserCan( $action, false ) );
+				$this->title->quickUserCan( $action ) );
 
 			# count( User::getGroupsWithPermissions( $action ) ) < 1
 		}
@@ -451,7 +457,7 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 																	 $this->user ) );
 
 		$this->assertEquals( true,
-							 $this->title->quickUserCan( 'edit', false ) );
+							 $this->title->quickUserCan( 'edit' ) );
 		$this->title->mRestrictions = array( "edit" => array( 'bogus', "sysop", "protect", "" ),
 										   "bogus" => array( 'bogus', "sysop", "protect", "" ) );
 
@@ -491,9 +497,9 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 																	 $this->user ) );
 		$this->title->mCascadeRestriction = true;
 		$this->assertEquals( false,
-							 $this->title->quickUserCan( 'bogus', false ) );
+							 $this->title->quickUserCan( 'bogus' ) );
 		$this->assertEquals( false,
-							 $this->title->quickUserCan( 'edit', false ) );
+							 $this->title->quickUserCan( 'edit' ) );
 		$this->assertEquals( array( array( 'badaccess-group0' ),
 									array( 'protectedpagetext', 'bogus' ),
 									array( 'protectedpagetext', 'protect' ),
@@ -537,7 +543,7 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 		$this->setTitle( NS_MAIN, "test page" );
 		$this->title->mTitleProtection['pt_create_perm'] = '';
 		$this->title->mTitleProtection['pt_user'] = $this->user->getID();
-		$this->title->mTitleProtection['pt_expiry'] = Block::infinity();
+		$this->title->mTitleProtection['pt_expiry'] = wfGetDB( DB_SLAVE )->getInfinity();
 		$this->title->mTitleProtection['pt_reason'] = 'test';
 		$this->title->mCascadeRestriction = false;
 
@@ -574,7 +580,7 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 							 $this->title->userCan( 'move' ) );
 
 		$this->title->mInterwiki = "no";
-		$this->assertEquals( array( array( 'immobile-page' ) ),
+		$this->assertEquals( array( array( 'immobile-source-page' ) ),
 							 $this->title->getUserPermissionsErrors( 'move', $this->user ) );
 		$this->assertEquals( false,
 							 $this->title->userCan( 'move' ) );
@@ -623,7 +629,7 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 		$prev = time();
 		$now = time() + 120;
 		$this->user->mBlockedby = $this->user->getId();
-		$this->user->mBlock = new Block( '127.0.8.1', $this->user->getId(), $this->user->getId(),
+		$this->user->mBlock = new Block( '127.0.8.1', 0, $this->user->getId(),
 										'no reason given', $prev + 3600, 1, 0 );
 		$this->user->mBlock->mTimestamp = 0;
 		$this->assertEquals( array( array( 'autoblockedtext',
@@ -640,7 +646,7 @@ class TitlePermissionTest extends MediaWikiLangTestCase {
 		global $wgLocalTZoffset;
 		$wgLocalTZoffset = -60;
 		$this->user->mBlockedby = $this->user->getName();
-		$this->user->mBlock = new Block( '127.0.8.1', 2, 1, 'no reason given', $now, 0, 10 );
+		$this->user->mBlock = new Block( '127.0.8.1', 0, 1, 'no reason given', $now, 0, 10 );
 		$this->assertEquals( array( array( 'blockedtext',
 			'[[User:Useruser|Useruser]]', 'no reason given', '127.0.0.1',
 			'Useruser', null, '23:00, 31 December 1969', '127.0.8.1',

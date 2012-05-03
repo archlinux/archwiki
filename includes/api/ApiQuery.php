@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiBase.php' );
-}
-
 /**
  * This is the main query class. It behaves similar to ApiMain: based on the
  * parameters given, it will create a list of titles to work on (an ApiPageSet
@@ -106,6 +101,8 @@ class ApiQuery extends ApiBase {
 	private $mSlaveDB = null;
 	private $mNamedDB = array();
 
+	protected $mAllowedGenerators = array();
+
 	public function __construct( $main, $action ) {
 		parent::__construct( $main, $action );
 
@@ -119,9 +116,8 @@ class ApiQuery extends ApiBase {
 		$this->mListModuleNames = array_keys( $this->mQueryListModules );
 		$this->mMetaModuleNames = array_keys( $this->mQueryMetaModules );
 
-		// Allow the entire list of modules at first,
-		// but during module instantiation check if it can be used as a generator.
-		$this->mAllowedGenerators = array_merge( $this->mListModuleNames, $this->mPropModuleNames );
+		$this->makeHelpMsgHelper( $this->mQueryPropModules, 'prop' );
+		$this->makeHelpMsgHelper( $this->mQueryListModules, 'list' );
 	}
 
 	/**
@@ -179,7 +175,7 @@ class ApiQuery extends ApiBase {
 
 	/**
 	 * Get the array mapping module names to class names
-	 * @return array(modulename => classname)
+	 * @return array array(modulename => classname)
 	 */
 	function getModules() {
 		return array_merge( $this->mQueryPropModules, $this->mQueryListModules, $this->mQueryMetaModules );
@@ -281,6 +277,8 @@ class ApiQuery extends ApiBase {
 	 * The cache mode may increase in the level of privacy, but public modules
 	 * added to private data do not decrease the level of privacy.
 	 *
+	 * @param $cacheMode string
+	 * @param $modCacheMode string
 	 * @return string
 	 */
 	protected function mergeCacheMode( $cacheMode, $modCacheMode ) {
@@ -441,7 +439,7 @@ class ApiQuery extends ApiBase {
 			$vals = array();
 			ApiQueryBase::addTitleInfo( $vals, $title );
 			$vals['special'] = '';
-			if ( $title->getNamespace() == NS_SPECIAL &&
+			if ( $title->isSpecialPage() &&
 					!SpecialPageFactory::exists( $title->getDbKey() ) ) {
 				$vals['missing'] = '';
 			} elseif ( $title->getNamespace() == NS_MEDIA &&
@@ -485,7 +483,7 @@ class ApiQuery extends ApiBase {
 		$titles = $pageSet->getGoodTitles();
 		if ( count( $titles ) ) {
 			foreach ( $titles as $title ) {
-				if ( $title->userCanRead() ) {
+				if ( $title->userCan( 'read' ) ) {
 					$exportTitles[] = $title;
 				}
 			}
@@ -634,6 +632,9 @@ class ApiQuery extends ApiBase {
 		$moduleDescriptions = array();
 
 		foreach ( $moduleList as $moduleName => $moduleClass ) {
+			/**
+			 * @var $module ApiQueryBase
+			 */
 			$module = new $moduleClass( $this, $moduleName, null );
 
 			$msg = ApiMain::makeHelpMsgHeader( $module, $paramName );
@@ -673,7 +674,7 @@ class ApiQuery extends ApiBase {
 					'NOTE: generator parameter names must be prefixed with a \'g\', see examples' ),
 			'redirects' => 'Automatically resolve redirects',
 			'converttitles' => array( "Convert titles to other variants if necessary. Only works if the wiki's content language supports variant conversion.",
-					'Languages that support variant conversion include kk, ku, gan, tg, sr, zh' ),
+					'Languages that support variant conversion include gan, iu, kk, ku, shi, sr, tg, zh' ),
 			'indexpageids' => 'Include an additional pageids section listing all returned page IDs',
 			'export' => 'Export the current revisions of all given or generated pages',
 			'exportnowrap' => 'Return the export XML without wrapping it in an XML result (same format as Special:Export). Can only be used with export',
@@ -695,7 +696,7 @@ class ApiQuery extends ApiBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&prop=revisions&meta=siteinfo&titles=Main%20Page&rvprop=user|comment',
 			'api.php?action=query&generator=allpages&gapprefix=API/&prop=revisions',

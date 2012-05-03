@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiBase.php' );
-}
-
 /**
  * API module to allow users to watch a page
  *
@@ -41,8 +36,8 @@ class ApiWatch extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgUser;
-		if ( !$wgUser->isLoggedIn() ) {
+		$user = $this->getUser();
+		if ( !$user->isLoggedIn() ) {
 			$this->dieUsage( 'You must be logged-in to have a watchlist', 'notloggedin' );
 		}
 
@@ -53,17 +48,16 @@ class ApiWatch extends ApiBase {
 			$this->dieUsageMsg( array( 'invalidtitle', $params['title'] ) );
 		}
 
-		$article = new Article( $title, 0 );
 		$res = array( 'title' => $title->getPrefixedText() );
 
 		if ( $params['unwatch'] ) {
 			$res['unwatched'] = '';
-			$res['message'] = wfMsgExt( 'removedwatchtext', array( 'parse' ), $title->getPrefixedText() );
-			$success = WatchAction::doUnwatch( $title, $wgUser );
+			$res['message'] = $this->msg( 'removedwatchtext', $title->getPrefixedText() )->title( $title )->parseAsBlock();
+			$success = UnwatchAction::doUnwatch( $title, $user );
 		} else {
 			$res['watched'] = '';
-			$res['message'] = wfMsgExt( 'addedwatchtext', array( 'parse' ), $title->getPrefixedText() );
-			$success = UnwatchAction::doWatch( $title, $wgUser );
+			$res['message'] = $this->msg( 'addedwatchtext', $title->getPrefixedText() )->title( $title )->parseAsBlock();
+			$success = WatchAction::doWatch( $title, $user );
 		}
 		if ( !$success ) {
 			$this->dieUsageMsg( 'hookaborted' );
@@ -118,10 +112,10 @@ class ApiWatch extends ApiBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'api.php?action=watch&title=Main_Page',
-			'api.php?action=watch&title=Main_Page&unwatch=',
+			'api.php?action=watch&title=Main_Page' => 'Watch the page "Main Page"',
+			'api.php?action=watch&title=Main_Page&unwatch=' => 'Unwatch the page "Main Page"',
 		);
 	}
 

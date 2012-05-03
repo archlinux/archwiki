@@ -362,14 +362,13 @@ $1',
 'cannotdelete'         => 'የተወሰነው ገጽ ወይም ፋይል ለማጥፋት አልተቻለም። (ምናልባት በሌላ ሰው እጅ ገና ጠፍቷል።)',
 'badtitle'             => 'መጥፎ አርዕስት',
 'badtitletext'         => 'የፈለጉት አርዕስት ልክ አልነበረም። ምናልባት ለአርዕስት የማይሆን የፊደል ምልክት አለበት።',
-'perfcached'           => 'ማስታወቂያ፡ ይህ መረጃ በየጊዜ የሚታደስ ስለሆነ ዘመናዊ ሳይሆን የቆየ ሊሆን ይችላል።',
+'perfcached'           => 'ማስታወቂያ፡ ይህ መረጃ በየጊዜ የሚታደስ ስለሆነ ዘመናዊ ሳይሆን የቆየ ሊሆን ይችላል። A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
 'perfcachedts'         => 'የሚቀጥለው መረጃ ተቆጥቧል፣ መጨረሻ የታደሠው $1 እ.ኤ.አ. ነው።',
 'querypage-no-updates' => 'ይህ ገጽ አሁን የታደሠ አይደለም። ወደፊትም መታደሱ ቀርቷል። በቅርብ ግዜ አይታደስም።',
 'wrong_wfQuery_params' => 'ለwfQuery() ትክክለኛ ያልሆነ ግቤት<br />
 ተግባር፦ $1<br />
 ጥያቄ፦ $2',
 'viewsource'           => 'ምንጩን ተመልከት',
-'viewsourcefor'        => 'ለ«$1»',
 'actionthrottled'      => 'ተግባሩ ተቋረጠ',
 'actionthrottledtext'  => 'የስፓም መብዛት ለመቃወም፣ በአጭር ጊዜ ውስጥ ይህን ተግባር ብዙ ጊዜ ከመፈጽም ተክለክለዋል። አሁንም ከመጠኑ በላይ በልጠዋል። እባክዎ ከጥቂት ደቂቃ በኋላ እንደገና ይሞክሩ።',
 'protectedpagetext'    => 'ይኸው ገጽ እንዳይታረም ተጠብቋል።',
@@ -530,9 +529,6 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 
 የማገጃዎ ቁጥር # $5 ነው። እባክዎ በማንኛውም ጥያቄ ይህን ቁጥር ይሰጡ።",
 'blockednoreason'                  => 'ምንም ምክንያት አልተሰጠም',
-'blockedoriginalsource'            => "የ'''$1''' ጥሬ ኮድ ምንጭ ከዚህ ታች ይታያል፦",
-'blockededitsource'                => "በ'''$1''' ላይ '''የእርስዎ ለውጦች''' ጽሕፈት ከዚህ ታች ይታያሉ፦",
-'whitelistedittitle'               => 'ለማዘጋጀት መግባት አስቀድሞ ያስፈልጋል',
 'whitelistedittext'                => 'ገጾችን ለማዘጋጀት $1 አስቀድሞ ያስፈልግዎታል።',
 'confirmedittext'                  => 'ገጽ ማዘጋጀት ሳይችሉ፣ አስቀድመው የኢ-ሜል አድራሻዎን ማረጋገጥ አለብዎት። እባክዎ፣ በ[[Special:Preferences|ምርጫዎችዎ]] በኩል ኢ-ሜል አድራሻዎን ያረጋግጡ።',
 'nosuchsectiontitle'               => 'የማይኖር ክፍል',
@@ -670,12 +666,6 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'revdelete-submit'        => 'በተመረጠው ዕትም ይደረግ',
 'revdel-restore'          => 'እይታን ለማስተካከል',
 'pagehist'                => 'የገጽ ታሪክ',
-'revdelete-content'       => 'ይዞታ',
-'revdelete-summary'       => 'ማጠቃለያ',
-'revdelete-uname'         => 'ያባል ስም',
-'revdelete-hid'           => '$1 ደበቀ',
-'revdelete-unhid'         => '$1 ገለጸ',
-'revdelete-log-message'   => '$1 ለ$2 {{PLURAL:$2|እትም|እትሞች}}',
 
 # Suppression log
 'suppressionlog' => 'የመከልከል መዝገብ',
@@ -790,7 +780,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'prefs-rc'                  => 'የቅርቡ ለውጦች ዝርዝር',
 'prefs-watchlist'           => 'የሚከታተሉ ገጾች',
 'prefs-watchlist-days'      => 'በሚከታተሉት ገጾች ዝርዝር ስንት ቀን ይታይ፤',
-'prefs-watchlist-days-max'  => '(ከ7 ቀን አይበልጥም)',
+'prefs-watchlist-days-max'  => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'     => 'በተደረጁት ዝርዝር ስንት ለውጥ ይታይ፤',
 'prefs-watchlist-edits-max' => '(ከ1,000 ለውጥ በላይ አይሆንም)',
 'prefs-misc'                => 'ልዩ ልዩ ምርጫዎች',
@@ -918,7 +908,6 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'right-import'           => 'ከሌላ ዊኪ ገጾችን ለማስገባት',
 'right-patrol'           => 'የሰው ለውጦች የተሣለፉ ሆነው ለማመልከት',
 'right-autopatrol'       => 'የራሱ ለውጦች በቀጥታ የተሣለፉ ሆነው መመልከት',
-'right-trackback'        => 'trackback ለማቅረብ',
 'right-mergehistory'     => 'የገጾች እትሞችን ታሪክ ለመዋሐድ',
 'right-userrights'       => 'ያባላት ሁሉ መብቶች ለማስተካከል',
 
@@ -950,7 +939,6 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'action-import'           => 'ይህን ገጽ ከሌላ ዊኪ ለማስገባት',
 'action-patrol'           => 'የሰው ለውጦች የተሣለፉ ሆነው ለማመልከት',
 'action-autopatrol'       => 'የራስዎ ለውጥ የተሣለፈ ሆኖ መመልከት',
-'action-trackback'        => 'trackback ለማቅረብ',
 'action-mergehistory'     => 'የዚሁን ገጽ ዕትሞች ታሪክ ለማዋሐድ',
 'action-userrights'       => 'ያባላት ሁሉ መብቶች ለማስተካከል',
 
@@ -1312,11 +1300,8 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-noresult' => 'ማንም ተጠቃሚ አልተገኘም።',
 
 # Special:Log/newusers
-'newuserlogpage'           => 'የአባልነት መዝገብ (user log)',
-'newuserlogpagetext'       => 'ይህ መዝገብ ወደ አባልነት የገቡትን ብዕር ስሞች ይዘርዝራል።',
-'newuserlog-byemail'       => 'ማለፊያ-ቃል በኤ-መልዕክት ተልኳል',
-'newuserlog-create-entry'  => 'አዲስ አባል',
-'newuserlog-create2-entry' => 'ለ$1 አባልነት ተፈጥሯል',
+'newuserlogpage'     => 'የአባልነት መዝገብ (user log)',
+'newuserlogpagetext' => 'ይህ መዝገብ ወደ አባልነት የገቡትን ብዕር ስሞች ይዘርዝራል።',
 
 # Special:ListGroupRights
 'listgrouprights'         => 'የተጠቃሚ ስብስባ መብቶች',
@@ -1427,8 +1412,6 @@ $NEWPAGE
 'deletedtext'            => '«$1» ጠፍቷል።
 
 (የጠፉትን ገጾች ሁሉ ለመመልከት $2 ይዩ።)',
-'deletedarticle'         => '«[[$1]]» አጠፋ',
-'suppressedarticle'      => '"[[$1]]"ን ከለከለ',
 'dellogpage'             => 'የማጥፋት መዝገብ',
 'dellogpagetext'         => 'በቅርቡ የጠፉት ገጾች ከዚህ ታች የዘረዝራሉ።',
 'deletionlog'            => 'የማጥፋት መዝገብ',
@@ -1521,7 +1504,6 @@ $NEWPAGE
 'undeletelink'               => 'አሳይ/ወደ ነበረበት መልስ',
 'undeletereset'              => 'ባዶ ይደረግ',
 'undeletecomment'            => 'ማጠቃልያ፦',
-'undeletedarticle'           => '«[[$1]]»ን መለሰ',
 'undeletedrevisions'         => '{{PLURAL:$1|1 ዕትም|$1 ዕትሞች}} መለሰ',
 'undeletedrevisions-files'   => '{{PLURAL:$1|1 ዕትም|$1 ዕትሞች}} እና {{PLURAL:$2|1 ፋይል|$2 ፋይሎች}} መለሰ',
 'undeletedfiles'             => '{{PLURAL:$1|1 ፋይል|$1 ፋይሎች}} መለሰ',
@@ -1712,9 +1694,6 @@ $1',
 'move-talk-subpages'        => 'የውይይቱ ገጽ ንዑስ ገጾች ደግሞ ይዛወሩ',
 'movepage-page-moved'       => 'ገጹ $1 ወደ $2 ተዛውሯል።',
 'movepage-page-unmoved'     => 'ገጹ $1 ወደ $2 ሊዛወር አልተቻለም።',
-'1movedto2'                 => '«$1» ወደ «[[$2]]» አዛወረ',
-'1movedto2_redir'           => '«[[$1]]» ወደ «[[$2]]» አዛወረ -- በመምሪያ መንገድ ፈንታ',
-'move-redirect-suppressed'  => 'መምሪያ መንገድ ተከለከለ',
 'movelogpage'               => 'የማዛወር መዝገብ',
 'movelogpagetext'           => 'ይህ መዝገብ ገጽ ሲዛወር ይመዝገባል። <ይመለስ> ቢጫኑ ኖሮ መዛወሩን ይገለብጣል!',
 'movereason'                => 'ምክንያት:',
@@ -1873,8 +1852,6 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 
 # Patrol log
 'patrol-log-page' => 'የማሳለፊያ መዝገብ',
-'patrol-log-line' => 'እትም $1 ከ$2 የተመለከተ ሆኖ አሳለፈ $3',
-'patrol-log-auto' => '(በቀጥታ)',
 
 # Image deletion
 'deletedrevision'                 => 'የቆየው ዕትም $1 አጠፋ',
@@ -1896,7 +1873,7 @@ $1',
 'widthheightpage' => '$1 በ$2፣ $3 ገጾች',
 'file-info'       => 'የፋይል መጠን፦ $1፣ የMIME አይነት፦ $2',
 'file-info-size'  => '$1 × $2 ፒክስል፤ መጠን፦ $3፤ የMIME ዓይነት፦ $4',
-'file-nohires'    => '<small>ከዚህ በላይ ማጉላት አይቻልም።</small>',
+'file-nohires'    => 'ከዚህ በላይ ማጉላት አይቻልም።',
 'svg-long-desc'   => 'የSVG ፋይል፡ በተግባር $1 × $2 ፒክስል፤ መጠን፦ $3',
 'show-big-image'  => 'በሙሉ ጒልህነት ለመመልከት',
 
@@ -2173,9 +2150,6 @@ $3
 # Scary transclusion
 'scarytranscludetoolong' => '[URL ከመጠን በላይ የረዘመ ነው]',
 
-# Trackbacks
-'trackbackremove' => '([$1 ማጥፋት])',
-
 # Delete conflict
 'deletedwhileediting' => "'''ማስጠንቀቂያ'''፦ መዘጋጀት ከጀመሩ በኋላ ገጹ ጠፍቷል!",
 'confirmrecreate'     => "መዘጋጀት ከጀመሩ በኋላ፣ ተጠቃሚው [[User:$1|$1]] ([[User talk:$1|ውይይት]]) ገጹን አጠፍተው ይህን ምክንያት አቀረቡ፦
@@ -2291,5 +2265,35 @@ $3
 
 # Special:BlankPage
 'blankpage' => 'ባዶ ገጽ',
+
+# New logging system
+'newuserlog-byemail' => 'ማለፊያ-ቃል በኤ-መልዕክት ተልኳል',
+
+# API errors
+'api-error-badaccess-groups'      => 'እርስዎ በዚህ ውኪ ላይ ፋይል እንድሊኩ አልተፈቀደም።',
+'api-error-badtoken'              => 'የውስጥ ስህተት: መጥፎ ጥቅል።',
+'api-error-copyuploaddisabled'    => 'በሰነድ አድራሻ መላክ በዚህ አቅራቢ ላይ አልተፈቀደም።',
+'api-error-duplicate'             => 'በዚህ ድረ ገጽ ላይ የዚህ ዓይነት ይዞታ {{PLURAL:$1| [$2 ያለው ፋይል አለ።] | [$2 ያላቸው ፍይሎች አሉ።]}}',
+'api-error-duplicate-popup-title' => 'አንድ አይነት {{PLURAL:$1|ፋይል|ፋይሎች}}',
+'api-error-empty-file'            => 'የላኩት ፋይል ባዶ ነበር።',
+'api-error-fetchfileerror'        => 'የውስጥ ስህተት: ፍይሉ ሲመጣ ችግር ተፈጠረ።',
+'api-error-file-too-large'        => 'የላኩት ፋይል በጣም ትልቅ ነበር።',
+'api-error-filename-tooshort'     => 'የፋይሉ ስም በጣም ትንሽ ነው።',
+'api-error-filetype-banned'       => 'የዚህ ዓይነት ፋይል ተከልክሏል።',
+'api-error-filetype-missing'      => 'ፋይሉ ቅጥያ ይጎለዋል።',
+'api-error-illegal-filename'      => 'የፋይሉ ስም የተፈቀደ አይደለም።',
+'api-error-invalid-file-key'      => 'የውስጥ ስህተት: ፍይሉ የጊዜያዊ ማስቀመጫ ውስጥ አልተገኘም።',
+'api-error-missingparam'          => 'የውስጥ ስህተት: ጥያቄው ግቤቶች ይጎሉታል።',
+'api-error-missingresult'         => 'የውስጥ ስህተት: መቅዳቱ እንደተሳካ ማረጋገጥ አልተቻለም።',
+'api-error-mustbeloggedin'        => 'ፋይል ለመላክ ተዘግቦ መግባት ያስፈልጋል።',
+'api-error-noimageinfo'           => 'ፋይል መላኩ ተሳክቷል ግን አቅራቢው ምንም ዓይነት መረጃ ስለ ፋይሉ አልሰጠም።',
+'api-error-overwrite'             => 'እንድን ፋይል ደምስሶ መጻፍ አልተፈቀደም።',
+'api-error-stashfailed'           => 'የውስጥ ስህተት: አቅራቢው ጊዜያዊ ፍይሉን አላስቀመጠም።',
+'api-error-timeout'               => 'በሚገባ ጊዜ ውስጥ አቅራቢው መልስ አልሰጠም።',
+'api-error-unknown-code'          => 'ያልታወቀ ስህተት: "$1"',
+'api-error-unknown-error'         => 'የውስጥ ስህተት: የእርስዎን ፋይል ለመላክ ሲሞከር ችግር ተፈጠረ።',
+'api-error-unknown-warning'       => 'ያልታወቀ ማስጠንቀቂያ $1',
+'api-error-uploaddisabled'        => 'ፋይል መላክ በዚህ ውኪ ላይ አልተፈቀደም።',
+'api-error-verification-error'    => 'ይህ ፋይል የተበላሸ ወይም ትክክል ያልሆነ ቅጥያ ያለው ሊሆን ይችላል።',
 
 );

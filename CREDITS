@@ -1,4 +1,4 @@
-MediaWiki 1.18 is a collaborative project released under the
+MediaWiki 1.19 is a collaborative project released under the
 GNU General Public License v2. We would like to recognize the
 following names for their contribution to the product.
 
@@ -8,7 +8,7 @@ following names for their contribution to the product.
 * Alexandre Emsenhuber
 * Andrew Garrett
 * Aryeh Gregor
-* Ashar Voultoiz
+* Antoine Musso 
 * Brian Wolff
 * Bertrand Grondin
 * Brad Jorsch
@@ -22,7 +22,6 @@ following names for their contribution to the product.
 * Danny B.
 * David McCabe
 * Derk-Jan Hartman
-* DieBuche
 * Domas Mituzas
 * Emufarmers
 * Fran Rogers
@@ -30,13 +29,17 @@ following names for their contribution to the product.
 * Guy Van den Broeck
 * Happy-melon
 * Hojjat
+* Ian Baker
 * Ilmari Karonen
 * Jack D. Pond
 * Jack Phoenix
 * Jan Paul Posma
 * Jason Richey
+* Jeroen De Dauw
+* John Du Hart
 * Jon Harald Søby
 * Juliano F. Ravasi
+* Leo Koppelkamm
 * Leon Weber
 * Leslie Hoare
 * Marco Schuster
@@ -47,6 +50,7 @@ following names for their contribution to the product.
 * MinuteElectron
 * Mohamed Magdy
 * Nathaniel Herman
+* Neil Kandalgaonkar
 * Nicolas Dumazet
 * Niklas Laxström
 * Philip Tzou
@@ -79,8 +83,11 @@ following names for their contribution to the product.
 * Ahmad Sherif
 * Alejandro Mery
 * Amalthea
+* Amir E. Aharoni
+* Andrew Dunbar
 * Antonio Ospite
 * Azliq7
+* Beau
 * Bergi
 * Borislav Manolov
 * Brad Jorsch
@@ -89,14 +96,19 @@ following names for their contribution to the product.
 * Carlin
 * Carsten Nielsen
 * Conrad Irwin
+* cryptocoryne
 * Dan Barrett
 * Dan Collins
 * Dan Nessett
 * Daniel Arnold
+* David Baumgarten
 * Denny Vrandecic
+* Edward Z. Yang
 * Erwin Dokter
 * FunPika
 * fomafix
+* Gero Scholz
+* Gilles van den Hoven
 * Grunny
 * Harry Burt
 * Ireas
@@ -104,7 +116,6 @@ following names for their contribution to the product.
 * Jeremy Baron
 * Jidanni
 * Jimmy Xu
-* John Du Hart
 * Jonathan Wiltshire
 * Karun Dambietz
 * Kim Hyun-Joon
@@ -122,21 +133,29 @@ following names for their contribution to the product.
 * Mathias Ertl
 * Matthew Britton
 * mati
+* Max
 * Max Sikström
+* merl
 * Michael Dale
 * Michael De La Rue
 * Michael M.
+* Michael Newton
 * Michael Walsh
 * Mike Horvath
 * Mormegil
+* MrBlueSky
 * MrPete
 * MZMcBride
 * mybugs.mail
 * Nakon
 * Nathan Larson
 * nephele
+* Nik
+* Nx.devnull
+* Nikola Kovacs
 * Nikolaos S. Karastathis
 * Olaf Lenz
+* Olivier Finlay Beaton
 * Paul Copperman
 * Paul Oranje
 * PieRRoMaN
@@ -145,17 +164,20 @@ following names for their contribution to the product.
 * rgcjonas
 * Robert Treat
 * RockMFR
+* Rusty Burchfield
 * Salvatore Ingala
 * Scott Colcord
 * Simon Walker
 * Solitarius
-* ST47
+* Søren Løvborg
 * Stefano Codari
 * Str4nd
 * svip
 * The Evil IP address
+* Tim Landscheidt
 * Tisane
 * Umherirrender
+* Van de Bugger
 * Ville Stadista
 * Vitaliy Filippov
 * William Demchick

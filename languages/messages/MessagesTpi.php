@@ -7,6 +7,7 @@
  * @ingroup Language
  * @file
  *
+ * @author Caffelice (on tpi.wikipedia.org)
  * @author Iketsi
  * @author Wantok
  * @author Wytukaze
@@ -257,10 +258,9 @@ $messages = array(
 'nstab-category'  => 'Grup',
 
 # General errors
-'error'         => 'Birua',
-'badtitle'      => 'Nem bilong pes i no stret',
-'viewsource'    => 'Lukim as tok',
-'viewsourcefor' => 'bilong $1',
+'error'      => 'Birua',
+'badtitle'   => 'Nem bilong pes i no stret',
+'viewsource' => 'Lukim as tok',
 
 # Login and logout pages
 'yourname'            => 'Yusanem:',
@@ -330,11 +330,6 @@ Na tu yu tok tru nau olsem yu raitim dispela yu yet, o yu kisim long wanpela hap
 'revdelete-radio-set'        => 'Yes',
 'revdelete-radio-unset'      => 'Nogat',
 'pagehist'                   => 'Ol senis bilong pes',
-'revdelete-uname'            => 'yusanem',
-'revdelete-hid'              => 'i bin haitim $1',
-'revdelete-unhid'            => 'i bin soim $1',
-'revdelete-log-message'      => '$1 long $2 senis',
-'logdelete-log-message'      => '$1 long $2 senis',
 
 # History merging
 'mergehistory-from' => 'As pes:',
@@ -383,7 +378,7 @@ Na tu yu tok tru nau olsem yu raitim dispela yu yet, o yu kisim long wanpela hap
 'datedefault'               => 'Nogat laik',
 'prefs-rc'                  => 'Nupela senis',
 'prefs-watchlist'           => 'Lukautbuk',
-'prefs-watchlist-days-max'  => 'No moa long 7 de',
+'prefs-watchlist-days-max'  => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits-max' => 'No moa long: 1000',
 'prefs-resetpass'           => 'Senis paswot',
 'saveprefs'                 => 'Holim long tingting',
@@ -581,8 +576,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-submit' => 'Soim',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Ripot long ol nupela yusa',
-'newuserlog-create-entry' => 'Lista bilong ol nupela yusa',
+'newuserlogpage' => 'Ripot long ol nupela yusa',
 
 # Special:ListGroupRights
 'listgrouprights-group'   => 'Grup',
@@ -637,7 +631,6 @@ Sapos yu laik rausim dispela pes long lukautbuk bilong yu bihain, paitim \"Pinis
 'deletepage'            => 'Rausim dispela pes',
 'delete-confirm'        => 'Rausim $1',
 'delete-legend'         => 'Rausim',
-'deletedarticle'        => 'i rausim "[[$1]]"',
 'dellogpage'            => 'Ripot long rausim ol pes',
 'deletecomment'         => 'As bilong en:',
 'deletereasonotherlist' => 'Arapela as bilong en',
@@ -716,8 +709,6 @@ Yu mas painim narapela nem.',
 'talkexists'       => "'''Pes bilong buk i surik pinis, tasol pes bilong toktok i no inap surik, bilong wanem wanpela pes bilong toktok istap pinis wantaim dispela nam.  Yu mas pasim wantaim tupela pes bilong toktok yu yet.'''",
 'movedto'          => 'i surik i go long',
 'movetalk'         => 'Surikim pes bilong toktok wantaim',
-'1movedto2'        => '[[$1]] i surik i go long [[$2]] pinis',
-'1movedto2_redir'  => 'surikim [[$1]] long [[$2]] bilong nupela rot',
 'movelogpage'      => 'Buk bilong ol surik',
 'movelogpagetext'  => 'Hia yumi lukim ol pes i surik pinis.',
 'movereason'       => 'As bilong en:',
@@ -797,9 +788,6 @@ Yu inap lukim as tok bilong em',
 
 # Scary transclusion
 'scarytranscludetoolong' => '[URL i longpela tumas]',
-
-# Trackbacks
-'trackbackremove' => '([$1 Rausim])',
 
 # action=purge
 'confirm_purge_button' => 'OK',

@@ -7,7 +7,7 @@
  *
  * Calling this function kills execution immediately.
  *
- * @param $entryPoint String Which entry point we're protecting. One of:
+ * @param $type String Which entry point we are protecting. One of:
  *   - index.php
  *   - load.php
  *   - api.php
@@ -17,7 +17,7 @@
  * version are hardcoded here
  */
 function wfPHPVersionError( $type ){
-	$mwVersion = '1.18';
+	$mwVersion = '1.19';
 	$phpVersion = PHP_VERSION;
 	$message = "MediaWiki $mwVersion requires at least PHP version 5.2.3, you are using PHP $phpVersion.";
 	if( $type == 'index.php' ) {
@@ -32,7 +32,7 @@ function wfPHPVersionError( $type ){
 		header( 'Cache-control: none' );
 		header( 'Pragma: nocache' );
 
-$finalOutput = <<<HTML
+		$finalOutput = <<<HTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns='http://www.w3.org/1999/xhtml' lang='en'>
 	<head>

@@ -247,7 +247,6 @@ $messages = array(
 'badtitletext'       => 'მოთხილ ხასილაშ ჯოხო ჩილათირ რდუ, ვარა ჩოლიერ, ვარა ხოლო გოხოლუდეს ჩილათირო გინორცხუაფილ ინტერ–ნინა ვარა ინტერ–წიკი ჯოხო. 
 თენა შილებე იკათუანდას ართ ვარა უმოს თიშნერ ნიშანს ნამუშ გუმორინაფა ჯოხოს ვა შილებე.',
 'viewsource'         => 'ქოძირი წყუ',
-'viewsourcefor'      => '$1-იშ',
 'viewsourcetext'     => 'თქვა შეილებუნა ქოძირათ თე ხასჷლაშ დაჭყაფური ფაილი დო ქუდარსხუათ თიშ მანგი:',
 
 # Login and logout pages
@@ -384,13 +383,9 @@ $messages = array(
 
 # Revision deletion
 'rev-delundel'           => 'ძირაფა/ტყობინაფა',
-'revdelete-logentry'     => '"[[$1]]"-შ რედაქტირაფეფიშ ძირაფობაქ დითირჷ',
 'revdel-restore'         => 'ორწყენჯობაშ თირუა',
 'revdel-restore-deleted' => 'ლასირი რევიზიეფი',
 'revdel-restore-visible' => 'ძირაფადი რევიზიეფი',
-'revdelete-content'      => 'დინორე',
-'revdelete-hid'          => 'დიფულუ $1',
-'revdelete-log-message'  => '$1 $2- შო {{PLURAL:$2|რევიზია|რევიზიეფი}}',
 
 # Merge log
 'revertmerge' => 'ეკორტყუალაშ მოლასუა',
@@ -574,7 +569,7 @@ $messages = array(
 'prefixindex'             => 'არძო ხასილა პრეფიქსით',
 'shortpages'              => 'ჭიჭე ხასილეფ',
 'longpages'               => 'გინძე ხასილეფ',
-'usercreated'             => 'დირსხუ $1 $2-ს',
+'usercreated'             => '{{GENDER:$3|დირსხუ}} $2-ის $1-ს',
 'newpages'                => 'ახალ ხასილეფ',
 'ancientpages'            => 'ჯვეშ ხასილეფ',
 'move'                    => 'გინოღალა',
@@ -611,8 +606,7 @@ $messages = array(
 'linksearch-line' => '$1 მერცხიილი რე $2-შე',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'მახვარებუშ რეგისტრაციაშ ჟურნალ',
-'newuserlog-create-entry' => 'ახალ მახვარებუ',
+'newuserlogpage' => 'მახვარებუშ რეგისტრაციაშ ჟურნალ',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(მაკათურეფიშ ერკებული)',
@@ -646,7 +640,6 @@ $messages = array(
 'actionfailed'          => 'მოქმედალაქ დემარცხჷ',
 'deletedtext'           => '"$1\\" ლასირქ იყ’უ.
 ასერდე ლასირ ხასილეფიშ ერკებულ ქოძირით $2–ს.',
-'deletedarticle'        => '"[[$1]]" ლასირ რე',
 'dellogpage'            => 'ლასირეფიშ ერკებულ',
 'deletecomment'         => 'სამანჯელ:',
 'deleteotherreason'     => 'შხვა/გეძინელ სამანჯელ:',
@@ -685,7 +678,6 @@ $messages = array(
 'undeletebtn'            => 'ახალშო ეკონწყუალა',
 'undeletelink'           => 'ძირაფა/ეკონწყუალა',
 'undeleteviewlink'       => 'ძირაფა',
-'undeletedarticle'       => 'ეკონწყილქ იყ’უ "[[$1]]"',
 'undelete-search-submit' => 'გორუა',
 
 # Namespace form on various pages
@@ -778,8 +770,6 @@ $messages = array(
 ქორთხინთ, აკორტყუათ თინეფ მანუალურო.'''",
 'movedto'          => 'გინაღალულ რე',
 'movetalk'         => 'ასოცირებულ სხუნუაშ ხასილაშ გინოღალა',
-'1movedto2'        => '[[$1]] გინოღალირ რე [[$2]]–შა',
-'1movedto2_redir'  => '[[$1]] გინოღალირ რე [[$2]]-შა გინოწურაფათ',
 'movelogpage'      => 'ორეგისტრაციე ჟურნალიშ გინოღალა',
 'movereason'       => 'სამანჯელი:',
 'revertmove'       => 'გოუქვაფა',
@@ -857,17 +847,13 @@ $messages = array(
 'tooltip-undo'                    => '"გოუქვაფა" მიშაღალირ თირაფეფს გოუქვენს დო გუთმონწყუნს რედაქტირაფაშ ფორმას გიწოთოლორაფაშ რეჟიმს. თენა შესაძლებლობას ირძენს რეზიუმეს სამანჯელქ იყ’უას დაკონკრეტებულქინ.',
 'tooltip-summary'                 => 'კუნტა რეზიუმეშ მიშაჸონაფა',
 
-# Patrol log
-'patrol-log-line' => 'მერჩქინელი $1 $2-შე პატრულირაფილი $3',
-'patrol-log-diff' => 'რევიზია $1',
-
 # Browsing diffs
 'previousdiff' => '← წოხოლენი თირაფეფ',
 'nextdiff'     => 'უახალაშ თირაფა →',
 
 # Media information
 'file-info-size' => '$1 × $2 პიქსელ, ფაილიშ ზომა: $3, MIME ტიპ: $4',
-'file-nohires'   => '<small> უმოს მაღალ გიშაგორანჯალა ვა რე შელებუან.</small>',
+'file-nohires'   => ' უმოს მაღალ გიშაგორანჯალა ვა რე შელებუან.',
 'svg-long-desc'  => 'SVG ფაილ, ნომინალურო $1 × $2 პიქსელ, ფაილიშ ზიმა: $3',
 'show-big-image' => 'რსული გიშაგორანჯალა',
 
@@ -913,9 +899,6 @@ $messages = array(
 'watchlistall2' => 'არძა',
 'namespacesall' => 'არძა',
 'monthsall'     => 'არძა',
-
-# Trackbacks
-'trackbacklink' => 'Trackback',
 
 # Watchlist editing tools
 'watchlisttools-view' => 'მერცხილ თირაფეფიშ ძირაფა',

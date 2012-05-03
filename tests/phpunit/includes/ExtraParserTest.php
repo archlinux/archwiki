@@ -10,11 +10,13 @@ class ExtraParserTest extends MediaWikiTestCase {
 		global $wgContLang;
 		global $wgShowDBErrorBacktrace;
 		global $wgLanguageCode;
+		global $wgAlwaysUseTidy;
 
 		$wgShowDBErrorBacktrace = true;
 		$wgLanguageCode = 'en';
 		$wgContLang = new Language( 'en' );
 		$wgMemc = new EmptyBagOStuff;
+		$wgAlwaysUseTidy = false;
 		
 		$this->options = new ParserOptions;
 		$this->options->setTemplateCallback( array( __CLASS__, 'statelessFetchTemplate' ) );
@@ -61,20 +63,48 @@ class ExtraParserTest extends MediaWikiTestCase {
 	 * cleanSig() makes all templates substs and removes tildes
 	 */
 	function testCleanSig() {
+		global $wgCleanSignatures;
+		$oldCleanSignature = $wgCleanSignatures;
+		$wgCleanSignatures = true;
+
 		$title = Title::newFromText( __FUNCTION__ );
 		$outputText = $this->parser->cleanSig( "{{Foo}} ~~~~" );
+
+		$wgCleanSignatures = $oldCleanSignature;
 		
 		$this->assertEquals( "{{SUBST:Foo}} ", $outputText );
+	}
+
+	/**
+	 * cleanSig() should do nothing if disabled
+	 */
+	function testCleanSigDisabled() {
+		global $wgCleanSignatures;
+		$oldCleanSignature = $wgCleanSignatures;
+		$wgCleanSignatures = false;
+
+		$title = Title::newFromText( __FUNCTION__ );
+		$outputText = $this->parser->cleanSig( "{{Foo}} ~~~~" );
+
+		$wgCleanSignatures = $oldCleanSignature;
+		
+		$this->assertEquals( "{{Foo}} ~~~~", $outputText );
 	}
 	
 	/**
 	 * cleanSigInSig() just removes tildes
+	 * @dataProvider provideStringsForCleanSigInSig
 	 */
-	function testCleanSigInSig() {
-		$title = Title::newFromText( __FUNCTION__ );
-		$outputText = $this->parser->cleanSigInSig( "{{Foo}} ~~~~" );
-		
-		$this->assertEquals( "{{Foo}} ", $outputText );
+	function testCleanSigInSig( $in, $out ) {
+		$this->assertEquals( Parser::cleanSigInSig( $in), $out );
+	}
+	
+	function provideStringsForCleanSigInSig() {
+		return array(
+			array( "{{Foo}} ~~~~", "{{Foo}} " ),
+			array( "~~~", "" ),
+			array( "~~~~~", "" ),
+		);
 	}
 	
 	function testGetSection() {
@@ -109,5 +139,29 @@ class ExtraParserTest extends MediaWikiTestCase {
 			'text' => $text,
 			'finalTitle' => $title,
 			'deps' => $deps );
+	}
+
+	/**
+	 * @group Database
+	 */
+	function testTrackingCategory() {
+		$title = Title::newFromText( __FUNCTION__ );
+		$catName =  wfMsgForContent( 'broken-file-category' );
+		$cat = Title::makeTitleSafe( NS_CATEGORY, $catName );
+		$expected = array( $cat->getDBkey() );
+		$parserOutput = $this->parser->parse( "[[file:nonexistent]]" , $title, $this->options );
+		$result = $parserOutput->getCategoryLinks();
+		$this->assertEquals( $expected, $result );
+	}
+
+	/**
+	 * @group Database
+	 */
+	function testTrackingCategorySpecial() {
+		// Special pages shouldn't have tracking cats.
+		$title = SpecialPage::getTitleFor( 'Contributions' );
+		$parserOutput = $this->parser->parse( "[[file:nonexistent]]" , $title, $this->options );
+		$result = $parserOutput->getCategoryLinks();
+		$this->assertEmpty( $result );
 	}
  }

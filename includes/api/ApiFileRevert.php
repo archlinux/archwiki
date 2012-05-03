@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * @ingroup API
  */
@@ -47,14 +42,12 @@ class ApiFileRevert extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgUser;
-
 		$this->params = $this->extractRequestParams();
 		// Extract the file and archiveName from the request parameters
 		$this->validateParameters();
 
 		// Check whether we're allowed to revert this file
-		$this->checkPermissions( $wgUser );
+		$this->checkPermissions( $this->getUser() );
 
 		$sourceUrl = $this->file->getArchiveVirtualUrl( $this->archiveName );
 		$status = $this->file->upload( $sourceUrl, $this->params['comment'], $this->params['comment'] );
@@ -176,10 +169,10 @@ class ApiFileRevert extends ApiBase {
 		return '';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Revert Wiki.png to the version of 20110305152740:',
-			'    api.php?action=filerevert&filename=Wiki.png&comment=Revert&archivename=20110305152740!Wiki.png&token=+\\',
+			'api.php?action=filerevert&filename=Wiki.png&comment=Revert&archivename=20110305152740!Wiki.png&token=+\\'
+				=> 'Revert Wiki.png to the version of 20110305152740',
 		);
 	}
 

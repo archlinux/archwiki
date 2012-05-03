@@ -5,12 +5,15 @@
  * @ingroup Media
  */
 class WikiFilePage extends WikiPage {
+	/**
+	 * @var File
+	 */
 	protected $mFile = false; 				// !< File object
 	protected $mRepo = null;			    // !<
 	protected $mFileLoaded = false;		    // !<
 	protected $mDupes = null;				// !<
 
-	function __construct( $title ) {
+	public function __construct( $title ) {
 		parent::__construct( $title );
 		$this->mDupes = null;
 		$this->mRepo = null;
@@ -22,13 +25,15 @@ class WikiFilePage extends WikiPage {
 
 	/**
 	 * @param $file File:
-	 * @return void
 	 */
 	public function setFile( $file ) {
 		$this->mFile = $file;
 		$this->mFileLoaded = true;
 	}
 
+	/**
+	 * @return bool
+	 */
 	protected function loadFile() {
 		if ( $this->mFileLoaded ) {
 			return true;
@@ -43,8 +48,12 @@ class WikiFilePage extends WikiPage {
 			}
 		}
 		$this->mRepo = $this->mFile->getRepo();
+		return true;
 	}
 
+	/**
+	 * @return mixed|null|Title
+	 */
 	public function getRedirectTarget() {
 		$this->loadFile();
 		if ( $this->mFile->isLocal() ) {
@@ -59,6 +68,9 @@ class WikiFilePage extends WikiPage {
 		return $this->mRedirectTarget = Title::makeTitle( NS_FILE, $to );
 	}
 
+	/**
+	 * @return bool|mixed|Title
+	 */
 	public function followRedirect() {
 		$this->loadFile();
 		if ( $this->mFile->isLocal() ) {
@@ -72,25 +84,38 @@ class WikiFilePage extends WikiPage {
 		return Title::makeTitle( NS_FILE, $to );
 	}
 
+	/**
+	 * @param bool $text
+	 * @return bool
+	 */
 	public function isRedirect( $text = false ) {
 		$this->loadFile();
 		if ( $this->mFile->isLocal() ) {
 			return parent::isRedirect( $text );
 		}
-			
+
 		return (bool)$this->mFile->getRedirected();
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isLocal() {
 		$this->loadFile();
 		return $this->mFile->isLocal();
 	}
 
+	/**
+	 * @return bool|File
+	 */
 	public function getFile() {
 		$this->loadFile();
 		return $this->mFile;
 	}
 
+	/**
+	 * @return array|null
+	 */
 	public function getDuplicates() {
 		$this->loadFile();
 		if ( !is_null( $this->mDupes ) ) {
@@ -104,6 +129,10 @@ class WikiFilePage extends WikiPage {
 		// Remove duplicates with self and non matching file sizes
 		$self = $this->mFile->getRepoName() . ':' . $this->mFile->getName();
 		$size = $this->mFile->getSize();
+
+		/**
+		 * @var $file File
+		 */
 		foreach ( $dupes as $index => $file ) {
 			$key = $file->getRepoName() . ':' . $file->getName();
 			if ( $key == $self ) {
@@ -127,13 +156,13 @@ class WikiFilePage extends WikiPage {
 			$update = new HTMLCacheUpdate( $this->mTitle, 'imagelinks' );
 			$update->doUpdate();
 			$this->mFile->upgradeRow();
-			$this->mFile->purgeCache();
+			$this->mFile->purgeCache( array( 'forThumbRefresh' => true ) );
 		} else {
 			wfDebug( 'ImagePage::doPurge no image for ' . $this->mFile->getName() . "; limiting purge to cache only\n" );
 			// even if the file supposedly doesn't exist, force any cached information
 			// to be updated (in case the cached information is wrong)
-			$this->mFile->purgeCache();
+			$this->mFile->purgeCache( array( 'forThumbRefresh' => true ) );
 		}
-		parent::doPurge();
+		return parent::doPurge();
 	}
 }

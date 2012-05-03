@@ -48,7 +48,7 @@
  * @since 1.16
  */
 class Html {
-	# List of void elements from HTML5, section 9.1.2 as of 2009-08-10
+	# List of void elements from HTML5, section 8.1.2 as of 2011-08-12
 	private static $voidElements = array(
 		'area',
 		'base',
@@ -64,16 +64,19 @@ class Html {
 		'meta',
 		'param',
 		'source',
+		'track',
+		'wbr',
 	);
 
 	# Boolean attributes, which may have the value omitted entirely.  Manually
-	# collected from the HTML5 spec as of 2010-06-07.
+	# collected from the HTML5 spec as of 2011-08-12.
 	private static $boolAttribs = array(
 		'async',
 		'autofocus',
 		'autoplay',
 		'checked',
 		'controls',
+		'default',
 		'defer',
 		'disabled',
 		'formnovalidate',
@@ -82,6 +85,7 @@ class Html {
 		'itemscope',
 		'loop',
 		'multiple',
+		'muted',
 		'novalidate',
 		'open',
 		'pubdate',
@@ -91,25 +95,40 @@ class Html {
 		'scoped',
 		'seamless',
 		'selected',
+		'truespeed',
+		'typemustmatch',
+		# HTML5 Microdata
+		'itemscope',
+	);
+
+	private static $HTMLFiveOnlyAttribs = array(
+		'autocomplete',
+		'autofocus',
+		'max',
+		'min',
+		'multiple',
+		'pattern',
+		'placeholder',
+		'required',
+		'step',
+		'spellcheck',
 	);
 
 	/**
 	 * Returns an HTML element in a string.  The major advantage here over
 	 * manually typing out the HTML is that it will escape all attribute
 	 * values.  If you're hardcoding all the attributes, or there are none, you
-	 * should probably type out the string yourself.
+	 * should probably just type out the html element yourself.
 	 *
 	 * This is quite similar to Xml::tags(), but it implements some useful
 	 * HTML-specific logic.  For instance, there is no $allowShortTag
 	 * parameter: the closing tag is magically omitted if $element has an empty
 	 * content model.  If $wgWellFormedXml is false, then a few bytes will be
-	 * shaved off the HTML output as well.  In the future, other HTML-specific
-	 * features might be added, like allowing arrays for the values of
-	 * attributes like class= and media=.
+	 * shaved off the HTML output as well.
 	 *
 	 * @param $element string The element's name, e.g., 'a'
 	 * @param $attribs array  Associative array of attributes, e.g., array(
-	 *   'href' => 'http://www.mediawiki.org/' ).  See expandAttributes() for
+	 *   'href' => 'http://www.mediawiki.org/' ). See expandAttributes() for
 	 *   further documentation.
 	 * @param $contents string The raw HTML contents of the element: *not*
 	 *   escaped!
@@ -352,6 +371,28 @@ class Html {
 	 * For instance, it will omit quotation marks if $wgWellFormedXml is false,
 	 * and will treat boolean attributes specially.
 	 *
+	 * Attributes that should contain space-separated lists (such as 'class') array
+	 * values are allowed as well, which will automagically be normalized
+	 * and converted to a space-separated string. In addition to a numerical
+	 * array, the attribute value may also be an associative array. See the
+	 * example below for how that works.
+	 *
+	 * @par Numerical array
+	 * @code
+	 *     Html::element( 'em', array(
+	 *         'class' => array( 'foo', 'bar' )
+	 *     ) );
+	 *     // gives '<em class="foo bar"></em>'
+	 * @endcode
+	 *
+	 * @par Associative array
+	 * @code
+	 *     Html::element( 'em', array(
+	 *         'class' => array( 'foo', 'bar', 'foo' => false, 'quux' => true )
+	 *     ) );
+	 *     // gives '<em class="bar quux"></em>'
+	 * @endcode
+	 *
 	 * @param $attribs array Associative array of attributes, e.g., array(
 	 *   'href' => 'http://www.mediawiki.org/' ).  Values will be HTML-escaped.
 	 *   A value of false means to omit the attribute.  For boolean attributes,
@@ -381,6 +422,12 @@ class Html {
 			# and we'd like consistency and better compression anyway.
 			$key = strtolower( $key );
 
+			# Here we're blacklisting some HTML5-only attributes...
+			if ( !$wgHtml5 && in_array( $key, self::$HTMLFiveOnlyAttribs )
+			 ) {
+				continue;
+			}
+
 			# Bug 23769: Blacklist all form validation attributes for now.  Current
 			# (June 2010) WebKit has no UI, so the form just refuses to submit
 			# without telling the user why, which is much worse than failing
@@ -391,20 +438,53 @@ class Html {
 				continue;
 			}
 
-			# Here we're blacklisting some HTML5-only attributes...
-			if ( !$wgHtml5 && in_array( $key, array(
-					'autocomplete',
-					'autofocus',
-					'max',
-					'min',
-					'multiple',
-					'pattern',
-					'placeholder',
-					'required',
-					'step',
-					'spellcheck',
-			) ) ) {
-				continue;
+			// http://www.w3.org/TR/html401/index/attributes.html ("space-separated")
+			// http://www.w3.org/TR/html5/index.html#attributes-1 ("space-separated")
+			$spaceSeparatedListAttributes = array(
+				'class', // html4, html5
+				'accesskey', // as of html5, multiple space-separated values allowed
+				// html4-spec doesn't document rel= as space-separated
+				// but has been used like that and is now documented as such 
+				// in the html5-spec.
+				'rel',
+			);
+
+			# Specific features for attributes that allow a list of space-separated values
+			if ( in_array( $key, $spaceSeparatedListAttributes ) ) {
+				// Apply some normalization and remove duplicates
+
+				// Convert into correct array. Array can contain space-seperated
+				// values. Implode/explode to get those into the main array as well.
+				if ( is_array( $value ) ) {
+					// If input wasn't an array, we can skip this step
+					
+					$newValue = array();
+					foreach ( $value as $k => $v ) {
+						if ( is_string( $v ) ) {
+							// String values should be normal `array( 'foo' )`
+							// Just append them
+							if ( !isset( $value[$v] ) ) {
+								// As a special case don't set 'foo' if a
+								// separate 'foo' => true/false exists in the array
+								// keys should be authoritive
+								$newValue[] = $v;
+							}
+						} elseif ( $v ) {
+							// If the value is truthy but not a string this is likely
+							// an array( 'foo' => true ), falsy values don't add strings
+							$newValue[] = $k;
+						}
+					}
+					$value = implode( ' ', $newValue );
+				}
+				$value = explode( ' ', $value );
+
+				// Normalize spacing by fixing up cases where people used
+				// more than 1 space and/or a trailing/leading space
+				$value = array_diff( $value, array( '', ' ' ) );
+
+				// Remove duplicates and create the string
+				$value = implode( ' ', array_unique( $value ) );
 			}
 
 			# See the "Attributes" section in the HTML syntax part of HTML5,
@@ -460,6 +540,7 @@ class Html {
 					# @todo FIXME: Is this really true?
 					$map['<'] = '&lt;';
 				}
+				
 				$ret .= " $key=$quote" . strtr( $value, $map ) . $quote;
 			}
 		}
@@ -619,6 +700,77 @@ class Html {
 			$spacedValue = $value;
 		}
 		return self::element( 'textarea', $attribs, $spacedValue );
+	}
+	/**
+	 * Build a drop-down box for selecting a namespace
+	 *
+	 * @param $params array:
+	 * - selected: [optional] Id of namespace which should be pre-selected
+	 * - all: [optional] Value of item for "all namespaces". If null or unset, no <option> is generated to select all namespaces
+	 * - label: text for label to add before the field
+	 * @param $selectAttribs array HTML attributes for the generated select element.
+	 * - id:   [optional], default: 'namespace'
+	 * - name: [optional], default: 'namespace'
+	 * @return string HTML code to select a namespace.
+	 */
+	public static function namespaceSelector( Array $params = array(), Array $selectAttribs = array() ) {
+		global $wgContLang;
+
+		// Default 'id' & 'name' <select> attributes
+		$selectAttribs = $selectAttribs + array(
+			'id'   => 'namespace',
+			'name' => 'namespace',
+		);
+		ksort( $selectAttribs );
+
+		// Is a namespace selected?
+		if ( isset( $params['selected'] ) ) {
+			// If string only contains digits, convert to clean int. Selected could also
+			// be "all" or "" etc. which needs to be left untouched.
+			// PHP is_numeric() has issues with large strings, PHP ctype_digit has other issues
+			// and returns false for already clean ints. Use regex instead..
+			if ( preg_match( '/^\d+$/', $params['selected'] ) ) {
+				$params['selected'] = intval( $params['selected'] );
+			}
+			// else: leaves it untouched for later processing
+		} else {
+			$params['selected'] = '';
+		}
+
+		// Array holding the <option> elements
+		$options = array();
+
+		if ( isset( $params['all'] ) ) {
+			// add an <option> that would let the user select all namespaces.
+			// Value is provided by user, the name shown is localized.
+			$options[$params['all']] = wfMsg( 'namespacesall' );
+		}
+		// Add defaults <option> according to content language
+		$options += $wgContLang->getFormattedNamespaces();
+
+		// Convert $options to HTML
+		$optionsHtml = array();
+		foreach ( $options as $nsId => $nsName ) {
+			if ( $nsId < NS_MAIN ) {
+				continue;
+			}
+			if ( $nsId === 0 ) {
+				$nsName = wfMsg( 'blanknamespace' );
+			}
+			$optionsHtml[] = Xml::option( $nsName, $nsId, $nsId === $params['selected'] );
+		}
+
+		// Forge a <select> element and returns it
+		$ret = '';
+		if ( isset( $params['label'] ) ) {
+			$ret .= Xml::label( $params['label'], $selectAttribs['id'] ) . '&#160;';
+		}
+		$ret .= Html::openElement( 'select', $selectAttribs )
+			. "\n"
+			. implode( "\n", $optionsHtml )
+			. "\n"
+			. Html::closeElement( 'select' );
+		return $ret;
 	}
 
 	/**

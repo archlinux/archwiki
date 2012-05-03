@@ -59,7 +59,7 @@ class Block {
 	 */
 	function __construct( $address = '', $user = 0, $by = 0, $reason = '',
 		$timestamp = 0, $auto = 0, $expiry = '', $anonOnly = 0, $createAccount = 0, $enableAutoblock = 0,
-		$hideName = 0, $blockEmail = 0, $allowUsertalk = 0 )
+		$hideName = 0, $blockEmail = 0, $allowUsertalk = 0, $byText = '' )
 	{
 		if( $timestamp === 0 ){
 			$timestamp = wfTimestampNow();
@@ -71,13 +71,20 @@ class Block {
 		}
 
 		$this->setTarget( $address );
-		$this->setBlocker( User::newFromID( $by ) );
+		if ( $this->target instanceof User && $user ) {
+			$this->target->setId( $user ); // needed for foreign users
+		}
+		if ( $by ) { // local user
+			$this->setBlocker( User::newFromID( $by ) );
+		} else { // foreign user
+			$this->setBlocker( $byText );
+		}
 		$this->mReason = $reason;
 		$this->mTimestamp = wfTimestamp( TS_MW, $timestamp );
 		$this->mAuto = $auto;
 		$this->isHardblock( !$anonOnly );
 		$this->prevents( 'createaccount', $createAccount );
-		if ( $expiry == 'infinity' || $expiry == Block::infinity() ) {
+		if ( $expiry == 'infinity' || $expiry == wfGetDB( DB_SLAVE )->getInfinity() ) {
 			$this->mExpiry = 'infinity';
 		} else {
 			$this->mExpiry = wfTimestamp( TS_MW, $expiry );
@@ -101,6 +108,7 @@ class Block {
 	 * @deprecated since 1.18
 	 */
 	public static function newFromDB( $address, $user = 0 ) {
+		wfDeprecated( __METHOD__, '1.18' );
 		return self::newFromTarget( User::whoIs( $user ), $address );
 	}
 
@@ -155,6 +163,7 @@ class Block {
 	 * @deprecated since 1.18
 	 */
 	public function clear() {
+		wfDeprecated( __METHOD__, '1.18' );
 		# Noop
 	}
 
@@ -167,7 +176,7 @@ class Block {
 	 * @deprecated since 1.18
 	 */
 	public function load( $address = '', $user = 0 ) {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.18' );
 		if( $user ){
 			$username = User::whoIs( $user );
 			$block = self::newFromTarget( $username, $address );
@@ -345,7 +354,11 @@ class Block {
 	 */
 	protected function initFromRow( $row ) {
 		$this->setTarget( $row->ipb_address );
-		$this->setBlocker( User::newFromId( $row->ipb_by ) );
+		if ( $row->ipb_by ) { // local user
+			$this->setBlocker( User::newFromID( $row->ipb_by ) );
+		} else { // foreign user
+			$this->setBlocker( $row->ipb_by_text );
+		}
 
 		$this->mReason = $row->ipb_reason;
 		$this->mTimestamp = wfTimestamp( TS_MW, $row->ipb_timestamp );
@@ -418,10 +431,12 @@ class Block {
 		# Don't collide with expired blocks
 		Block::purgeExpired();
 
-		$ipb_id = $dbw->nextSequenceValue( 'ipblocks_ipb_id_seq' );
+		$row = $this->getDatabaseArray();
+		$row['ipb_id'] = $dbw->nextSequenceValue("ipblocks_ipb_id_seq");
+
 		$dbw->insert(
 			'ipblocks',
-			$this->getDatabaseArray(),
+			$row,
 			__METHOD__,
 			array( 'IGNORE' )
 		);
@@ -471,8 +486,8 @@ class Block {
 		$a = array(
 			'ipb_address'          => (string)$this->target,
 			'ipb_user'             => $this->target instanceof User ? $this->target->getID() : 0,
-			'ipb_by'               => $this->getBlocker()->getId(),
-			'ipb_by_text'          => $this->getBlocker()->getName(),
+			'ipb_by'               => $this->getBy(),
+			'ipb_by_text'          => $this->getByName(),
 			'ipb_reason'           => $this->mReason,
 			'ipb_timestamp'        => $db->timestamp( $this->mTimestamp ),
 			'ipb_auto'             => $this->mAuto,
@@ -761,11 +776,12 @@ class Block {
 	/**
 	 * Get the user id of the blocking sysop
 	 *
-	 * @return Integer
+	 * @return Integer (0 for foreign users)
 	 */
 	public function getBy() {
-		return $this->getBlocker() instanceof User
-			? $this->getBlocker()->getId()
+		$blocker = $this->getBlocker();
+		return ( $blocker instanceof User )
+			? $blocker->getId()
 			: 0;
 	}
 
@@ -775,9 +791,10 @@ class Block {
 	 * @return String
 	 */
 	public function getByName() {
-		return $this->getBlocker() instanceof User
-			? $this->getBlocker()->getName()
-			: null;
+		$blocker = $this->getBlocker();
+		return ( $blocker instanceof User )
+			? $blocker->getName()
+			: (string)$blocker; // username
 	}
 
 	/**
@@ -795,6 +812,7 @@ class Block {
 	 * @param $x Bool
 	 */
 	public function forUpdate( $x = null ) {
+		wfDeprecated( __METHOD__, '1.18' );
 		# noop
 	}
 
@@ -883,6 +901,7 @@ class Block {
 	 * @deprecated since 1.18; use $dbw->encodeExpiry() instead
 	 */
 	public static function encodeExpiry( $expiry, $db ) {
+		wfDeprecated( __METHOD__, '1.18' );
 		return $db->encodeExpiry( $expiry );
 	}
 
@@ -892,9 +911,10 @@ class Block {
 	 * @param $expiry String: Database expiry format
 	 * @param $timestampType Int Requested timestamp format
 	 * @return String
-	 * @deprecated since 1.18; use $wgLang->decodeExpiry() instead
+	 * @deprecated since 1.18; use $wgLang->formatExpiry() instead
 	 */
 	public static function decodeExpiry( $expiry, $timestampType = TS_MW ) {
+		wfDeprecated( __METHOD__, '1.18' );
 		global $wgContLang;
 		return $wgContLang->formatExpiry( $expiry, $timestampType );
 	}
@@ -919,6 +939,7 @@ class Block {
 	 * @deprecated since 1.18, call IP::sanitizeRange() directly
 	 */
 	public static function normaliseRange( $range ) {
+		wfDeprecated( __METHOD__, '1.18' );
 		return IP::sanitizeRange( $range );
 	}
 
@@ -927,7 +948,8 @@ class Block {
 	 */
 	public static function purgeExpired() {
 		$dbw = wfGetDB( DB_MASTER );
-		$dbw->delete( 'ipblocks', array( 'ipb_expiry < ' . $dbw->addQuotes( $dbw->timestamp() ) ), __METHOD__ );
+		$dbw->delete( 'ipblocks',
+			array( 'ipb_expiry < ' . $dbw->addQuotes( $dbw->timestamp() ) ), __METHOD__ );
 	}
 
 	/**
@@ -937,6 +959,7 @@ class Block {
 	 * @return String
 	 */
 	public static function infinity() {
+		wfDeprecated( __METHOD__, '1.18' );
 		return wfGetDB( DB_SLAVE )->getInfinity();
 	}
 
@@ -948,6 +971,8 @@ class Block {
 	 * @deprecated since 1.18; use $wgLang->formatExpiry() instead
 	 */
 	public static function formatExpiry( $encoded_expiry ) {
+		wfDeprecated( __METHOD__, '1.18' );
+
 		global $wgContLang;
 		static $msg = null;
 
@@ -981,7 +1006,7 @@ class Block {
 	 * @deprecated since 1.18 moved to SpecialBlock::parseExpiryInput()
 	 */
 	public static function parseExpiryInput( $expiry ) {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.18' );
 		return SpecialBlock::parseExpiryInput( $expiry );
 	}
 
@@ -1017,7 +1042,7 @@ class Block {
 			# passed by some callers (bug 29116)
 			return null;
 
-		} elseif( in_array( $type, array( Block::TYPE_USER, Block::TYPE_IP, Block::TYPE_RANGE, null ) ) ) {
+		} elseif( in_array( $type, array( Block::TYPE_USER, Block::TYPE_IP, Block::TYPE_RANGE ) ) ) {
 			$block = new Block();
 			$block->fromMaster( $fromMaster );
 
@@ -1027,12 +1052,9 @@ class Block {
 
 			if( $block->newLoad( $vagueTarget ) ){
 				return $block;
-			} else {
-				return null;
 			}
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -1127,6 +1149,15 @@ class Block {
 	}
 
 	/**
+	 * @since 1.19
+	 *
+	 * @return Mixed|string
+	 */
+	public function getExpiry() {
+		return $this->mExpiry;
+	}
+
+	/**
 	 * Set the target for this block, and update $this->type accordingly
 	 * @param $target Mixed
 	 */
@@ -1136,7 +1167,7 @@ class Block {
 
 	/**
 	 * Get the user who implemented this block
-	 * @return User
+	 * @return User|string Local User object or string for a foreign user
 	 */
 	public function getBlocker(){
 		return $this->blocker;
@@ -1144,9 +1175,9 @@ class Block {
 
 	/**
 	 * Set the user who implemented (or will implement) this block
-	 * @param $user User
+	 * @param $user User|string Local User object or username string for foriegn users
 	 */
-	public function setBlocker( User $user ){
+	public function setBlocker( $user ){
 		$this->blocker = $user;
 	}
 }

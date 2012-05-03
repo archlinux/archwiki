@@ -10,6 +10,7 @@
  * @author Aputtu
  * @author Iketsi
  * @author Kaare
+ * @author Kaniina (on kl.wikipedia.org)
  * @author Qaqqalik
  * @author לערי ריינהארט
  */
@@ -415,9 +416,6 @@ Aamma takuuk [[Special:WantedCategories|sunut atassusinut kissaatigineqartut]].'
 # Special:LinkSearch
 'linksearch-ok' => 'Ujaruk',
 
-# Special:Log/newusers
-'newuserlog-create-entry' => 'Atuisoq nutaaq',
-
 # Watchlist
 'watchlist'      => 'Ersersimasut',
 'mywatchlist'    => 'Nuisatiffikka',
@@ -436,7 +434,6 @@ Aamma takuuk [[Special:WantedCategories|sunut atassusinut kissaatigineqartut]].'
 'delete-confirm'  => 'Peeruk "$1"',
 'actioncomplete'  => 'Naammassivoq',
 'deletedtext'     => '"$1" peerpoq. Takukkit $2 peerneqarsimasut kingulliit.',
-'deletedarticle'  => 'peerpaa "[[$1]]"',
 
 # Rollback
 'revertpage' => 'Inisseqqiineq [[User:$1|$1]]-meersoq, peerneqarpoq [[Special:Contributions/$2|$2]] ([[User talk:$2|diskussion]])-meersoq',
@@ -447,7 +444,6 @@ Aamma takuuk [[Special:WantedCategories|sunut atassusinut kissaatigineqartut]].'
 
 # Undelete
 'undeletebtn'            => 'Inisseqqiguk',
-'undeletedarticle'       => 'inisseqqippaa "[[$1]]"',
 'undelete-search-submit' => 'Ujarlerit',
 
 # Namespace form on various pages
@@ -487,13 +483,11 @@ Aamma takuuk [[Special:WantedCategories|sunut atassusinut kissaatigineqartut]].'
 'blocklogentry'      => 'asserpaa [[$1]] $2-mik sivissusilimmik $3',
 
 # Move page
-'movearticle'     => 'Qupperneq nuuguk',
-'move-watch'      => 'Qupperneq ersersimatiguk',
-'movepagebtn'     => 'Qupperneq nuuguk',
-'pagemovedsub'    => 'Nuunnera iluatsippoq',
-'movepage-moved'  => 'Qupperneq \'\'\'"$1" uunga nuuppoq "$2"\'\'\'',
-'1movedto2'       => '[[$1]] nuuppaa [[$2]]-mut',
-'1movedto2_redir' => '[[$1]] nuunneqarsimavoq [[$2]]-mut adresse-ia aqqutigalugu allanngortillugu',
+'movearticle'    => 'Qupperneq nuuguk',
+'move-watch'     => 'Qupperneq ersersimatiguk',
+'movepagebtn'    => 'Qupperneq nuuguk',
+'pagemovedsub'   => 'Nuunnera iluatsippoq',
+'movepage-moved' => 'Qupperneq \'\'\'"$1" uunga nuuppoq "$2"\'\'\'',
 
 # Namespace 8 related
 'allmessages-language'      => 'Oqaatsit:',
@@ -536,9 +530,6 @@ Aamma takuuk [[Special:WantedCategories|sunut atassusinut kissaatigineqartut]].'
 
 # Attribution
 'lastmodifiedatby' => 'Una qupperneq kingullermik allanngortinneqarsimavoq $2, $1 $3-mit.',
-
-# Patrol log
-'patrol-log-line' => 'nalunaaqqutserpaa $1 $2 misissorneqarsimasutut $3',
 
 # Browsing diffs
 'previousdiff' => '← Assigiinngissut siulia',

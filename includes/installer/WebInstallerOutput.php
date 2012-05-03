@@ -144,11 +144,7 @@ class WebInstallerOutput {
 	 */
 	public function getDir() {
 		global $wgLang;
-		if( !is_object( $wgLang ) || !$wgLang->isRtl() ) {
-			return 'ltr';
-		} else {
-			return 'rtl';
-		}
+		return is_object( $wgLang ) ? $wgLang->getDir() : 'ltr';
 	}
 
 	/**
@@ -156,11 +152,7 @@ class WebInstallerOutput {
 	 */
 	public function getLanguageCode() {
 		global $wgLang;
-		if( !is_object( $wgLang ) ) {
-			return 'en';
-		} else {
-			return $wgLang->getCode();
-		}
+		return is_object( $wgLang ) ? $wgLang->getCode() : 'en';
 	}
 
 	/**
@@ -240,7 +232,6 @@ class WebInstallerOutput {
 		href="http://www.mediawiki.org/"
 		title="Main Page"></a>
 	</div>
-	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
 	<div class="portal"><div class="body">
 <?php
 	echo $this->parent->parse( wfMsgNoTrans( 'config-sidebar' ), true );

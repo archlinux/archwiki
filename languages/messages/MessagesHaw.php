@@ -61,27 +61,27 @@ $specialPageAliases = array(
 );
 
 $magicWords = array(
-	'currentmonth'          => array( '1', 'KĒIAMAHINA', 'KEIAMAHINA', 'CURRENTMONTH', 'CURRENTMONTH2' ),
-	'currentmonthname'      => array( '1', 'KĒIAINOAMAHINA', 'KEIAINOAMAHINA', 'CURRENTMONTHNAME' ),
-	'currentday'            => array( '1', 'KĒIALĀ', 'KEIALA', 'CURRENTDAY' ),
-	'currentday2'           => array( '1', 'KĒIALĀ2', 'KEIALA2', 'CURRENTDAY2' ),
-	'currentdayname'        => array( '1', 'KĒIAINOALĀ', 'KEIAINOALA', 'CURRENTDAYNAME' ),
-	'currentyear'           => array( '1', 'KĒIAMAKAHIKI', 'KEIAMAKAHIKI', 'CURRENTYEAR' ),
-	'currenttime'           => array( '1', 'KĒIAMANAWA', 'KEIAMANAWA', 'CURRENTTIME' ),
-	'currenthour'           => array( '1', 'KĒIAHOLA', 'KEIAHOLA', 'CURRENTHOUR' ),
-	'numberofpages'         => array( '1', 'HELUʻAOʻAO', 'HELUAOAO', 'NUMBEROFPAGES' ),
-	'numberofarticles'      => array( '1', 'HELUMEA', 'NUMBEROFARTICLES' ),
-	'numberoffiles'         => array( '1', 'HELUWAIHONA', 'NUMBEROFFILES' ),
-	'numberofusers'         => array( '1', 'HELUMEAHOʻOHANA', 'HELUMEAHOOHANA', 'NUMBEROFUSERS' ),
-	'numberofedits'         => array( '1', 'HELULOLI', 'NUMBEROFEDITS' ),
-	'pagename'              => array( '1', 'INOAʻAOʻAO', 'INOAAOAO', 'PAGENAME' ),
-	'img_right'             => array( '1', 'ʻākau', 'ākau', 'akau', 'right' ),
-	'img_left'              => array( '1', 'hema', 'left' ),
-	'img_none'              => array( '1', 'ʻaʻohe', 'aohe', 'none' ),
-	'img_link'              => array( '1', 'loulou=$1', 'link=$1' ),
-	'currentweek'           => array( '1', 'KĒIAPULE', 'KEIAPULE', 'CURRENTWEEK' ),
-	'language'              => array( '0', '#ʻŌLELO', '#ŌLELO', '#OLELO', '#LANGUAGE:' ),
-	'numberofadmins'        => array( '1', 'HELUKAHU', 'NUMBEROFADMINS' ),
+	'currentmonth'            => array( '1', 'KĒIAMAHINA', 'KEIAMAHINA', 'CURRENTMONTH', 'CURRENTMONTH2' ),
+	'currentmonthname'        => array( '1', 'KĒIAINOAMAHINA', 'KEIAINOAMAHINA', 'CURRENTMONTHNAME' ),
+	'currentday'              => array( '1', 'KĒIALĀ', 'KEIALA', 'CURRENTDAY' ),
+	'currentday2'             => array( '1', 'KĒIALĀ2', 'KEIALA2', 'CURRENTDAY2' ),
+	'currentdayname'          => array( '1', 'KĒIAINOALĀ', 'KEIAINOALA', 'CURRENTDAYNAME' ),
+	'currentyear'             => array( '1', 'KĒIAMAKAHIKI', 'KEIAMAKAHIKI', 'CURRENTYEAR' ),
+	'currenttime'             => array( '1', 'KĒIAMANAWA', 'KEIAMANAWA', 'CURRENTTIME' ),
+	'currenthour'             => array( '1', 'KĒIAHOLA', 'KEIAHOLA', 'CURRENTHOUR' ),
+	'numberofpages'           => array( '1', 'HELUʻAOʻAO', 'HELUAOAO', 'NUMBEROFPAGES' ),
+	'numberofarticles'        => array( '1', 'HELUMEA', 'NUMBEROFARTICLES' ),
+	'numberoffiles'           => array( '1', 'HELUWAIHONA', 'NUMBEROFFILES' ),
+	'numberofusers'           => array( '1', 'HELUMEAHOʻOHANA', 'HELUMEAHOOHANA', 'NUMBEROFUSERS' ),
+	'numberofedits'           => array( '1', 'HELULOLI', 'NUMBEROFEDITS' ),
+	'pagename'                => array( '1', 'INOAʻAOʻAO', 'INOAAOAO', 'PAGENAME' ),
+	'img_right'               => array( '1', 'ʻākau', 'ākau', 'akau', 'right' ),
+	'img_left'                => array( '1', 'hema', 'left' ),
+	'img_none'                => array( '1', 'ʻaʻohe', 'aohe', 'none' ),
+	'img_link'                => array( '1', 'loulou=$1', 'link=$1' ),
+	'currentweek'             => array( '1', 'KĒIAPULE', 'KEIAPULE', 'CURRENTWEEK' ),
+	'language'                => array( '0', '#ʻŌLELO', '#ŌLELO', '#OLELO', '#LANGUAGE:' ),
+	'numberofadmins'          => array( '1', 'HELUKAHU', 'NUMBEROFADMINS' ),
 );
 
 $messages = array(
@@ -317,7 +317,6 @@ $messages = array(
 'filenotfound'        => '‘A‘ole hiki ke loa‘a waihona "$1".',
 'badtitle'            => 'Inoa ‘ino',
 'viewsource'          => 'E nānā i ka molekumu',
-'viewsourcefor'       => 'no $1',
 'cascadeprotected'    => 'Ho‘omalu ‘ia kēia ‘ao‘ao mai e ho‘opololei ana, no ka mea, hoʻokomo pū ‘ia ‘oia ma aia {{PLURAL:$1|‘ao‘ao|nā ‘ao‘ao}} i lalo, ho‘omalu ‘ia me ka "e wailele ana" koho:
 $2',
 'ns-specialprotected' => '‘A‘ole hiki ke ho‘opololei i nā ‘ao‘ao kūikawā',
@@ -394,9 +393,6 @@ E ʻoluʻolu, e kūlia hou.',
 E hoʻopaʻa ʻia ana kou IP ma ko kēia ʻaoʻao mōʻaukala.",
 'blockedtitle'                     => 'Ua ke‘a ‘ia ka mea ho‘ohana',
 'blockednoreason'                  => '‘a‘ohe kumu',
-'blockedoriginalsource'            => "Aia ke kumu o '''$1'''
-hō‘ike ‘ia i lalo:",
-'blockededitsource'                => "Aia ka mo‘olelo o '''kou mau ho‘opololei''' i '''$1''' hō‘ike ‘ia i lalo:",
 'loginreqlink'                     => 'ʻeʻe',
 'accmailtitle'                     => 'Ua ho‘ouna ‘ia ka hua‘ōlelo huna',
 'newarticle'                       => '(Hou)',
@@ -496,7 +492,7 @@ E ʻoluʻolu, e hōʻoia i ka hoʻokūkū ʻana i lalo, a laila, e mālama i nā
 'prefs-rc'                  => 'Nā loli hou',
 'prefs-watchlist'           => 'Helu nānā',
 'prefs-watchlist-days'      => 'Nā lā e hōʻike ana i ka helu nānā:',
-'prefs-watchlist-days-max'  => 'ʻEhiku lā ka palena nui',
+'prefs-watchlist-days-max'  => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'saveprefs'                 => 'Mālama',
 'searchresultshead'         => 'Huli',
 'savedprefs'                => 'Ua mālama ‘ia kāu makemake',
@@ -645,9 +641,6 @@ E ʻoluʻolu, e hōʻoia i ka hoʻokūkū ʻana i lalo, a laila, e mālama i nā
 # Special:ListUsers
 'listusers-submit' => 'Hō‘ike',
 
-# Special:Log/newusers
-'newuserlog-create-entry' => 'Mea hoʻohana hou',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(papa o nā lālā)',
 
@@ -676,7 +669,6 @@ E ʻoluʻolu, e hōʻoia i ka hoʻokūkū ʻana i lalo, a laila, e mālama i nā
 'actioncomplete'         => 'Ua pau',
 'deletedtext'            => 'Ua kāpae ʻia ʻo "$1".
 E ʻike iā $2 no ka papa o nā kāpae ʻana hou.',
-'deletedarticle'         => 'ua kāpae ‘ia "[[$1]]"',
 'dellogpage'             => 'Mo‘olelo kāpae',
 'dellogpagetext'         => 'He helu o nā mea i kāpae ʻia hou i lalo.',
 'deletionlog'            => 'mo‘olelo kāpae',
@@ -762,7 +754,6 @@ E ʻike iā $2 no ka papa o nā kāpae ʻana hou.',
 'pagemovedsub'            => 'Kūleʻa ka hoʻoneʻe ʻana',
 'movepage-moved'          => '\'\'\'Ua hoʻoneʻe ʻia ʻo "$1" iā "$2"\'\'\'',
 'movedto'                 => 'ua neʻe ʻia i/iā',
-'1movedto2'               => 'Ua hoʻoneʻe ʻo [[$1]] iā [[$2]]',
 'movereason'              => 'Kumu:',
 'delete_and_move'         => 'E kāpae a e ho‘ololi i ka inoa',
 'delete_and_move_confirm' => '‘Ae, e kāpae i ka ‘ao‘ao',

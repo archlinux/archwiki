@@ -355,14 +355,13 @@ $1',
 渠作兴已经拨别人家删除脱哉。',
 'badtitle'             => '该只标题弗来三',
 'badtitletext'         => '所请求页面个标题是无效个、弗存在，跨语言或跨wiki链接个标题错误。渠作兴包含一只或多只弗好用拉标题里向字符。',
-'perfcached'           => '下底是缓存数据，箇咾作兴弗是顶新个：',
-'perfcachedts'         => '下头是缓存数据，压末一趟更新辰光是$1。',
+'perfcached'           => '下底是缓存数据，箇咾作兴弗是顶新个. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => '下头是缓存数据，压末一趟更新辰光是$1。 A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => '当前禁止对此页面进行更新。箇搭个数据弗好立即刷新。',
 'wrong_wfQuery_params' => '错误个参数拨传递到 wfQuery（）<br />
 函数：$1<br />
 查询：$2',
 'viewsource'           => '源码',
-'viewsourcefor'        => '$1个源码',
 'actionthrottled'      => '动作已压制',
 'actionthrottledtext'  => '基于反垃圾链接个考量，限制垃拉短时间内多趟重复箇只操作。请过脱几分钟再试试看。',
 'protectedpagetext'    => '箇只页面已经锁定，以防编辑。',
@@ -542,9 +541,6 @@ $2',
 
 侬个IP地址是$3，而该查封ID是 #$5。 请垃拉侬个查询里向注明以上所有资料。",
 'blockednoreason'                  => '弗曾拨原因',
-'blockedoriginalsource'            => "下头是'''$1'''个源码：",
-'blockededitsource'                => "侬对'''$1'''进行'''编辑'''个文字如下:",
-'whitelistedittitle'               => '登录仔再好编辑',
 'whitelistedittext'                => '侬必须$1才能编辑。',
 'confirmedittext'                  => '垃拉编辑此页之前侬必须确认侬个邮箱地址。请通过[[Special:Preferences|个人设置]]设置并验证侬个邮箱地址。',
 'nosuchsectiontitle'               => '寻弗着箇只段落',
@@ -780,8 +776,6 @@ $3封禁个原因是''$2''",
 'revdelete-unsuppress'        => '垃拉已恢复个修订里向移除限制',
 'revdelete-log'               => '理由：',
 'revdelete-submit'            => '应用于拣中个{{PLURAL:$1|修订}}',
-'revdelete-logentry'          => '[[$1]]个修订可见性已更改',
-'logdelete-logentry'          => '[[$1]]个事件可见性已更改',
 'revdelete-success'           => "'''修订个可见性已经成功更新。'''",
 'revdelete-failure'           => "'''修订个可见性无法更新：'''
 $1",
@@ -793,15 +787,6 @@ $1",
 'revdel-restore-visible'      => '可见个修订版本',
 'pagehist'                    => '页面历史',
 'deletedhist'                 => '已删除之历史',
-'revdelete-content'           => '内容',
-'revdelete-summary'           => '编辑摘要',
-'revdelete-uname'             => '用户名',
-'revdelete-restricted'        => '已将限制应用到管理员',
-'revdelete-unrestricted'      => '已移除对管理员个限制',
-'revdelete-hid'               => '囥脱 $1',
-'revdelete-unhid'             => '显示 $1',
-'revdelete-log-message'       => '$1个$2次修订',
-'logdelete-log-message'       => '$1个$2项事件',
 'revdelete-hide-current'      => '隐藏于$1 $2之项目错误：箇个是当前个修订，弗可以隐藏。',
 'revdelete-show-no-access'    => '显示于$1 $2之项目错误：箇只项目已经标示为"已限制"，侬对渠并无通行权。',
 'revdelete-modify-no-access'  => '更改于$1 $2之项目错误：箇个项目已经标示为"已限制"，侬对渠并无通行权。',
@@ -947,7 +932,7 @@ $1",
 'prefs-rc'                      => '近段辰光个改动',
 'prefs-watchlist'               => '监控列表',
 'prefs-watchlist-days'          => '勒拉监控列表里向显示个日数：',
-'prefs-watchlist-days-max'      => '顶长7日天',
+'prefs-watchlist-days-max'      => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'         => '勒拉扩展个监控列表里向显示个编辑趟数：',
 'prefs-watchlist-edits-max'     => '顶多：1000',
 'prefs-watchlist-token'         => '监控列表记认：',
@@ -1212,8 +1197,7 @@ $1",
 'listusers-submit' => '显示',
 
 # Special:Log/newusers
-'newuserlogpage'          => '用户创建日志',
-'newuserlog-create-entry' => '新开户',
+'newuserlogpage' => '用户创建日志',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '（成员列表）',
@@ -1261,7 +1245,6 @@ $1",
 请确定侬要进行此项操作，并且了解其后果，同时侬个行为符合[[{{MediaWiki:Policy-url}}|the policy]]。',
 'actioncomplete'        => '操作完成哉',
 'deletedtext'           => '"$1"已经删除。最近删除记录请参见$2。',
-'deletedarticle'        => '"[[$1]]" 已经删脱哉',
 'dellogpage'            => '删除记录',
 'deletionlog'           => '删除记录',
 'deletecomment'         => '理由:',
@@ -1304,11 +1287,10 @@ $1",
 'restriction-move' => '捅荡',
 
 # Undelete
-'undeletepage'     => '查看搭仔恢复删脱个页面',
-'viewdeletedpage'  => '望望删脱个页面',
-'undeletelink'     => '查看／恢复',
-'undeletecomment'  => '理由：',
-'undeletedarticle' => '已恢复个"[[$1]]"',
+'undeletepage'    => '查看搭仔恢复删脱个页面',
+'viewdeletedpage' => '望望删脱个页面',
+'undeletelink'    => '查看／恢复',
+'undeletecomment' => '理由：',
 
 # Namespace form on various pages
 'namespace'      => '名字空间:',
@@ -1401,8 +1383,6 @@ $1",
 但是由于新标题下已经有对话页存在，所以对话页无法移动。请手工合并两只页面。',
 'movedto'                 => '移动到',
 'movetalk'                => '移动相关讨论页',
-'1movedto2'               => '[[$1]]捅到[[$2]]',
-'1movedto2_redir'         => '[[$1]]通过重定向捅到[[$2]]',
 'movelogpage'             => '捅荡记录',
 'movelogpagetext'         => '下底是拨拉捅荡个页面列表。',
 'movereason'              => '理由:',
@@ -1487,9 +1467,6 @@ $1",
 # Attribution
 'anonymous' => '{{SITENAME}}浪个匿名用户',
 
-# Patrol log
-'patrol-log-auto' => '（自动）',
-
 # Image deletion
 'deletedrevision' => '拨删脱个旧修订 $1',
 
@@ -1499,7 +1476,7 @@ $1",
 
 # Media information
 'file-info-size' => '$1×$2像素，文件大小：$3，MIME类型：$4',
-'file-nohires'   => '<small>无更高分辨率可提供。</small>',
+'file-nohires'   => '无更高分辨率可提供。',
 'svg-long-desc'  => 'SVG文件，名义大小：$1×$2像素，文件大小：$3',
 'show-big-image' => '完整分辨率',
 
@@ -1625,5 +1602,9 @@ Variants for Chinese language
 
 # Special:SpecialPages
 'specialpages' => '特殊页面',
+
+# New logging system
+'revdelete-restricted'   => '已将限制应用到管理员',
+'revdelete-unrestricted' => '已移除对管理员个限制',
 
 );

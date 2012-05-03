@@ -15,24 +15,34 @@ class ApiBlockTest extends ApiTestCase {
 	}
 
 	function addDBData() {
-		$user = User::newFromName( 'UTBlockee' );
+		$user = User::newFromName( 'UTApiBlockee' );
 
 		if ( $user->getId() == 0 ) {
 			$user->addToDatabase();
-			$user->setPassword( 'UTBlockeePassword' );
+			$user->setPassword( 'UTApiBlockeePassword' );
 
 			$user->saveSettings();
 		}
 	}
 
+	/**
+	 * This test has probably always been broken and use an invalid token
+	 * Bug tracking brokenness is https://bugzilla.wikimedia.org/35646
+	 *
+	 * Root cause is https://gerrit.wikimedia.org/r/3434
+	 * Which made the Block/Unblock API to actually verify the token
+	 * previously always considered valid (bug 34212).
+	 *
+	 * @group Broken
+	 */
 	function testMakeNormalBlock() {
 
 		$data = $this->getTokens();
 
-		$user = User::newFromName( 'UTBlockee' );
+		$user = User::newFromName( 'UTApiBlockee' );
 
 		if ( !$user->getId() ) {
-			$this->markTestIncomplete( "The user UTBlockee does not exist" );
+			$this->markTestIncomplete( "The user UTApiBlockee does not exist" );
 		}
 
 		if( !isset( $data[0]['query']['pages'] ) ) {
@@ -45,15 +55,15 @@ class ApiBlockTest extends ApiTestCase {
 
 		$data = $this->doApiRequest( array(
 			'action' => 'block',
-			'user' => 'UTBlockee',
-			'reason' => BlockTest::REASON,
-			'token' => $pageinfo['blocktoken'] ), $data );
+			'user' => 'UTApiBlockee',
+			'reason' => 'Some reason',
+			'token' => $pageinfo['blocktoken'] ), $data, false, self::$users['sysop']->user );
 
-		$block = Block::newFromTarget('UTBlockee');
+		$block = Block::newFromTarget('UTApiBlockee');
 
 		$this->assertTrue( !is_null( $block ), 'Block is valid' );
 
-		$this->assertEquals( 'UTBlockee', (string)$block->getTarget() );
+		$this->assertEquals( 'UTApiBlockee', (string)$block->getTarget() );
 		$this->assertEquals( 'Some reason', $block->mReason );
 		$this->assertEquals( 'infinity', $block->mExpiry );
 

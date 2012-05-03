@@ -35,7 +35,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 $wgExtensionFunctions[] = 'confirmEditSetup';
-$wgExtensionCredits['other'][] = array(
+$wgExtensionCredits['antispam'][] = array(
 	'path' => __FILE__,
 	'name' => 'ConfirmEdit',
 	'author' => array( 'Brion Vibber', '...' ),

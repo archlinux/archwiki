@@ -7,6 +7,7 @@
  * @ingroup Language
  * @file
  *
+ * @author Delaraha (on pap.wikipedia.org)
  * @author Kamizu
  * @author Sdm1985
  * @author לערי ריינהארט
@@ -161,7 +162,6 @@ Bo por haña un lista di tur [[Special:SpecialPages|{{int:specialpages}}]].',
 'badtitle'      => 'Título inválido',
 'badtitletext'  => 'E título di e página ku bo a pidi tabata inválido, bashí, òf un link pa un inter-idioma òf inter-wiki inkorekto.',
 'viewsource'    => 'Wak fuente',
-'viewsourcefor' => 'di $1',
 
 # Login and logout pages
 'welcomecreation'            => '== Bon bini, $1! ==
@@ -184,18 +184,17 @@ No lubidá di kambia bo [[Special:Preferences|{{SITENAME}} preferensianan]].',
 'accountcreatedtext'         => 'E kuenta di uzadó pa $1 tabata trahá.',
 
 # Edit pages
-'watchthis'          => 'Observá e página aki',
-'anoneditwarning'    => 'Bo no a outentiká bo mes.
+'watchthis'        => 'Observá e página aki',
+'anoneditwarning'  => 'Bo no a outentiká bo mes.
 Bo por kambia página libremente, pero tene kuenta ku lo nota bo IP adrès den e historia di kambionan hasí na e página aki.',
-'blockedtitle'       => 'Uzadó ta blokiá',
-'whitelistedittitle' => 'Mester outentiká promé pa editá',
-'confirmedittext'    => 'Bo mester konfirmá bo e-mail adrès promé ku bo editá página. Por fabor duna i validá bo e-mail adrès via bo [[Special:Preferences|preferensianan]].',
-'accmailtitle'       => 'Kontraseña mandá.',
-'accmailtext'        => "E kontraseña pa '$1' tabata mandá pa $2.",
-'newarticle'         => '(Nobo)',
-'anontalkpagetext'   => "----''Esaki ta e página di diskushon pa un uzadó anonimo ku no a traha un kuenta ahinda, òf no sa uza e. Ta pa e rason aki nos tin ku uza IP adrès pa identifiká e persona. Diferente uzadó por uza e IP adrès aki. Si bo ta un uzadó anonimo i ta sinti ku komentario irelevante tabata mandá pa bo, por fabor [[Special:UserLogin|registrá un kuenta nobo òf outentiká bo mes]] pa evitá konfushon den futuro.''",
-'yourtext'           => 'Bo teksto',
-'yourdiff'           => 'Diferensianan',
+'blockedtitle'     => 'Uzadó ta blokiá',
+'confirmedittext'  => 'Bo mester konfirmá bo e-mail adrès promé ku bo editá página. Por fabor duna i validá bo e-mail adrès via bo [[Special:Preferences|preferensianan]].',
+'accmailtitle'     => 'Kontraseña mandá.',
+'accmailtext'      => "E kontraseña pa '$1' tabata mandá pa $2.",
+'newarticle'       => '(Nobo)',
+'anontalkpagetext' => "----''Esaki ta e página di diskushon pa un uzadó anonimo ku no a traha un kuenta ahinda, òf no sa uza e. Ta pa e rason aki nos tin ku uza IP adrès pa identifiká e persona. Diferente uzadó por uza e IP adrès aki. Si bo ta un uzadó anonimo i ta sinti ku komentario irelevante tabata mandá pa bo, por fabor [[Special:UserLogin|registrá un kuenta nobo òf outentiká bo mes]] pa evitá konfushon den futuro.''",
+'yourtext'         => 'Bo teksto',
+'yourdiff'         => 'Diferensianan',
 
 # History pages
 'currentrev'          => 'Revishon aktual',
@@ -349,11 +348,9 @@ Wak e [[Special:BlockList|lista di blokeonan]] pa wak tur blokeo aktivo.',
 'unblocklogentry'    => 'a desblokia $1',
 
 # Move page
-'articleexists'   => 'Tin un página ku e título ei kaba, òf e
+'articleexists' => 'Tin un página ku e título ei kaba, òf e
 título ku bo a skohe no ta válido.
 Por fabor skohe un otro título.',
-'1movedto2'       => '[[$1]] mové pa [[$2]]',
-'1movedto2_redir' => '[[$1]] mové pa [[$2]] riba redirect',
 
 # Namespace 8 related
 'allmessages'        => 'Mensahenan di sistema',

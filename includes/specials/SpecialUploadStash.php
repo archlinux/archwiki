@@ -35,7 +35,6 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		try {
 			$this->stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash();
 		} catch ( UploadStashNotAvailableException $e ) {
-			return null;
 		}
 	}
 
@@ -46,20 +45,13 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * @return Boolean: success
 	 */
 	public function execute( $subPage ) {
-		global $wgUser;
+		$this->checkPermissions();
 
-		if ( !$this->userCanExecute( $wgUser ) ) {
-			$this->displayRestrictionError();
-			return;
-		}
-
-		if ( !isset( $subPage ) || $subPage === '' ) {
+		if ( $subPage === null || $subPage === '' ) {
 			return $this->showUploads();
 		}
-
 		return $this->showUpload( $subPage );
 	}
-
 
 	/**
 	 * If file available in stash, cats it out to the client as a simple HTTP response.
@@ -68,10 +60,8 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * @param $key String: the key of a particular requested file
 	 */
 	public function showUpload( $key ) {
-		global $wgOut;
-
 		// prevent callers from doing standard HTML output -- we'll take it from here
-		$wgOut->disable();
+		$this->getOutput()->disable();
 
 		try {
 			$params = $this->parseKey( $key );
@@ -97,8 +87,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 			$message = $e->getMessage();
 		}
 
-		wfHttpError( $code, HttpStatus::getMessage( $code ), $message );
-		return false;
+		throw new HttpError( $code, $message );
 	}
 
 	/**
@@ -177,14 +166,15 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		}
 
 		// we should have just generated it locally
-		if ( ! $thumbnailImage->getPath() ) {
+		if ( !$thumbnailImage->getStoragePath() ) {
 			throw new UploadStashFileNotFoundException( "no local path for scaled item" );
 		}
 
 		// now we should construct a File, so we can get mime and other such info in a standard way
 		// n.b. mimetype may be different from original (ogx original -> jpeg thumb)
-		$thumbFile = new UnregisteredLocalFile( false, $this->stash->repo, $thumbnailImage->getPath(), false );
-		if ( ! $thumbFile ) {
+		$thumbFile = new UnregisteredLocalFile( false, 
+			$this->stash->repo, $thumbnailImage->getStoragePath(), false );
+		if ( !$thumbFile ) {
 			throw new UploadStashFileNotFoundException( "couldn't create local file object for thumbnail" );
 		}
 
@@ -210,12 +200,20 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		// this global probably looks something like 'http://upload.wikimedia.org/wikipedia/test/thumb/temp'
 		// do not use trailing slash
 		global $wgUploadStashScalerBaseUrl;
+		$scalerBaseUrl = $wgUploadStashScalerBaseUrl;
+
+		if( preg_match( '/^\/\//', $scalerBaseUrl ) ) {
+			// this is apparently a protocol-relative URL, which makes no sense in this context,
+			// since this is used for communication that's internal to the application.
+			// default to http.
+			$scalerBaseUrl = wfExpandUrl( $scalerBaseUrl, PROTO_CANONICAL );
+		}
 
 		// We need to use generateThumbName() instead of thumbName(), because
 		// the suffix needs to match the file name for the remote thumbnailer
 		// to work
 		$scalerThumbName = $file->generateThumbName( $file->getName(), $params );
-		$scalerThumbUrl = $wgUploadStashScalerBaseUrl . '/' . $file->getUrlRel() .
+		$scalerThumbUrl = $scalerBaseUrl . '/' . $file->getUrlRel() .
 			'/' . rawurlencode( $scalerThumbName );
 
 		// make a curl call to the scaler to create a thumbnail
@@ -241,18 +239,17 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	/**
 	 * Output HTTP response for file
 	 * Side effect: writes HTTP response to STDOUT.
-	 * XXX could use wfStreamfile (in includes/Streamfile.php), but for consistency with outputContents() doing it this way.
-	 * XXX is mimeType really enough, or do we need encoding for full Content-Type header?
 	 *
 	 * @param $file File object with a local path (e.g. UnregisteredLocalFile, LocalFile. Oddly these don't share an ancestor!)
 	 */
-	private function outputLocalFile( $file ) {
+	private function outputLocalFile( File $file ) {
 		if ( $file->getSize() > self::MAX_SERVE_BYTES ) {
 			throw new SpecialUploadStashTooLargeException();
 		}
-		self::outputFileHeaders( $file->getMimeType(), $file->getSize() );
-		readfile( $file->getPath() );
-		return true;
+		return $file->getRepo()->streamFile( $file->getPath(),
+			array( 'Content-Transfer-Encoding: binary',
+				'Expires: Sun, 17-Jan-2038 19:14:07 GMT' )
+		);
 	}
 
 	/**
@@ -309,7 +306,6 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * @param Status : $status - the result of processRequest
 	 */
 	private function showUploads( $status = null ) {
-		global $wgOut;
 		if ( $status === null ) {
 			$status = Status::newGood();
 		}
@@ -327,7 +323,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 				'default' => true,
 				'name' => 'clear',
 			)
-		), 'clearStashedUploads' );
+		), $this->getContext(), 'clearStashedUploads' );
 		$form->setSubmitCallback( array( __CLASS__ , 'tryClearStashedUploads' ) );
 		$form->setTitle( $this->getTitle() );
 		$form->setSubmitText( wfMsg( 'uploadstash-clear' ) );
@@ -340,7 +336,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 			array( 'href' => $this->getTitle()->getLocalURL() ),
 			wfMsg( 'uploadstash-refresh' ) );
 		$files = $this->stash->listFiles();
-		if ( count( $files ) ) {
+		if ( $files && count( $files ) ) {
 			sort( $files );
 			$fileListItemsHtml = '';
 			foreach ( $files as $file ) {
@@ -350,11 +346,11 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 						$this->getTitle( "file/$file" )->getLocalURL() ), $file )
 				);
 			}
-			$wgOut->addHtml( Html::rawElement( 'ul', array(), $fileListItemsHtml ) );
+			$this->getOutput()->addHtml( Html::rawElement( 'ul', array(), $fileListItemsHtml ) );
 			$form->displayForm( $formResult );
-			$wgOut->addHtml( Html::rawElement( 'p', array(), $refreshHtml ) );
+			$this->getOutput()->addHtml( Html::rawElement( 'p', array(), $refreshHtml ) );
 		} else {
-			$wgOut->addHtml( Html::rawElement( 'p', array(),
+			$this->getOutput()->addHtml( Html::rawElement( 'p', array(),
 				Html::element( 'span', array(), wfMsg( 'uploadstash-nofiles' ) )
 				. ' '
 				. $refreshHtml

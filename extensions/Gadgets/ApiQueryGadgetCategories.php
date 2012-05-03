@@ -115,6 +115,6 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryGadgetCategories.php 97890 2011-09-23 06:48:37Z siebrand $';
+		return __CLASS__ . ': $Id$';
 	}
 }

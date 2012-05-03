@@ -463,17 +463,11 @@ $messages = array(
 'revdelete-radio-set'        => 'XӀаа',
 'revdelete-radio-unset'      => 'A',
 'revdelete-log'              => 'Бахьан',
-'revdelete-logentry'         => '[[$1]] доржама оагӀувни бӀасанче хийцай',
 'revdel-restore'             => 'БӀасанче хувца',
 'revdel-restore-deleted'     => 'дӀадаьккха доржамаш',
 'revdel-restore-visible'     => 'бӀаргагушдола доржамаш',
 'pagehist'                   => 'ОагӀува искар',
 'deletedhist'                => 'ДӀадакхамий искар',
-'revdelete-content'          => 'чулоацаро',
-'revdelete-summary'          => 'хувцамий лоацам',
-'revdelete-uname'            => 'дакъалаьцархочунна цIи',
-'revdelete-hid'              => 'къайла я $1',
-'revdelete-log-message'      => '$1ара $2чунна  {{PLURAL:$2|доржама|доржамий}}',
 
 # History merging
 'mergehistory-list'   => 'ВIашагIатоха хувцамий искар',
@@ -744,7 +738,7 @@ $messages = array(
 'prefixindex'   => 'ОагIувнаший хьалхера цIи хьагойтар',
 'shortpages'    => 'Лоаца оагIувнаш',
 'longpages'     => 'Доккхий оагIувнаш',
-'usercreated'   => '$1ара $2чуча даь да',
+'usercreated'   => '{{GENDER:$3|Чуваьннав|Чуяьннай}} $1  $2',
 'newpages'      => 'Керда оагIувнаш',
 'move'          => 'ЦIи хувца',
 'movethispage'  => 'Укх оагIува цIи хувца',
@@ -777,8 +771,7 @@ $messages = array(
 'linksearch-line' => '$1 тIа Iинк $2 юкъера',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Дакъалаьцархоший дIаязбeнна таптар',
-'newuserlog-create-entry' => 'Керда дакъалаьцархо',
+'newuserlogpage' => 'Дакъалаьцархоший дIаязбeнна таптар',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(тоабий дагарче)',
@@ -812,7 +805,6 @@ $messages = array(
 'actionfailed'          => 'Оттам даьдац',
 'deletedtext'           => '"$1" дIаяккха хиннай.
 ТIехьара дIадаьккха дагарчена хьожаргволаш/хьожаргьйолаш, $2 хьажа.',
-'deletedarticle'        => ' "[[$1]]" дIадаьккхад',
 'dellogpage'            => 'ДIадаккхара тептар',
 'deletecomment'         => 'Бахьан:',
 'deleteotherreason'     => 'Кхыдола бахьан/тIатохар:',
@@ -852,7 +844,6 @@ $messages = array(
 # Undelete
 'undeletelink'     => 'БIаргтасса/юхаметтаоттаде',
 'undeleteviewlink' => 'бIаргтасса',
-'undeletedarticle' => '"[[$1]]" юха оттая я',
 
 # Namespace form on various pages
 'namespace'      => 'ЦIерий аренаш',
@@ -943,8 +934,6 @@ $messages = array(
 'talkexists'       => "'''ОагIувни цIи хьийца хиннай, амма дувцама оагIувни цIи хувца мегаш яц, изза мо цIи йолаш оагIув йоландаь. Дехар да, кулга новкъосталца цхьанна вIашагIатоха уш.'''",
 'movedto'          => 'керда цIи тилла я',
 'movetalk'         => 'МаIан чулоаца дувцама оагIувни цIи хувца',
-'1movedto2'        => '[[$1]] цIи цу тIа [[$2]] хийцай',
-'1movedto2_redir'  => '[[$1]] цIи хийцай [[$2]] дIа-хьа оагIува тIа гIолла',
 'movelogpage'      => 'Хувцама тептар',
 'movereason'       => 'Бахьан',
 'revertmove'       => 'юхаяккха',
@@ -1022,17 +1011,13 @@ $messages = array(
 'tooltip-undo'                    => 'Я хувцам дIаяккхи, бIаргатассар хьахокха, кара дале, дIаяккха бахьан Iочуязаде моттигаца.',
 'tooltip-summary'                 => 'Лоаца чулоацам Iочуязаде',
 
-# Patrol log
-'patrol-log-line' => '$1 долачаьрахь $2 $3 хьажав/хьажай',
-'patrol-log-diff' => '$1 доржам',
-
 # Browsing diffs
 'previousdiff' => '← Хьалхара хувцам',
 'nextdiff'     => 'ТIайоагIа хувцам',
 
 # Media information
 'file-info-size' => '$1 × $2 фихсам, паьла дустам: $3, MIME-тайп: $4',
-'file-nohires'   => '<small>Укхал доккхагIа доржам дац</small>',
+'file-nohires'   => 'Укхал доккхагIа доржам дац',
 'svg-long-desc'  => 'SVG-паьл, $1 × $2 фихелашца, паьла дустам: $3',
 'show-big-image' => 'Хьадоккхадаь сурт',
 

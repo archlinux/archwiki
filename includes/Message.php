@@ -1,55 +1,137 @@
 <?php
 /**
- * This class provides methods for fetching interface messages and
- * processing them into variety of formats that are needed in MediaWiki.
+ * The Message class provides methods which fullfil two basic services:
+ *  - fetching interface messages
+ *  - processing messages into a variety of formats
  *
- * It is intented to replace the old wfMsg* functions that over time grew
- * unusable.
+ * First implemented with MediaWiki 1.17, the Message class is intented to
+ * replace the old wfMsg* functions that over time grew unusable.
+ * @see https://www.mediawiki.org/wiki/New_messages_API for equivalences
+ * between old and new functions.
  *
- * Examples:
- * Fetching a message text for interface message
- *    $button = Xml::button( wfMessage( 'submit' )->text() );
- * </pre>
- * Messages can have parameters:
- *    wfMessage( 'welcome-to' )->params( $wgSitename )->text(); 
- *        {{GRAMMAR}} and friends work correctly
- *    wfMessage( 'are-friends', $user, $friend );
- *    wfMessage( 'bad-message' )->rawParams( '<script>...</script>' )->escaped();
- * </pre>
- * Sometimes the message text ends up in the database, so content language is needed.
- *    wfMessage( 'file-log', $user, $filename )->inContentLanguage()->text()
- * </pre>
- * Checking if message exists:
+ * You should use the wfMessage() global function which acts as a wrapper for
+ * the Message class. The wrapper let you pass parameters as arguments.
+ *
+ * The most basic usage cases would be:
+ *
+ * @code
+ *     // Initialize a Message object using the 'some_key' message key
+ *     $message = wfMessage( 'some_key' );
+ *
+ *     // Using two parameters those values are strings 'value1' and 'value2':
+ *     $message = wfMessage( 'some_key',
+ *          'value1', 'value2'
+ *     );
+ * @endcode
+ *
+ * @section message_global_fn Global function wrapper:
+ *
+ * Since wfMessage() returns a Message instance, you can chain its call with
+ * a method. Some of them return a Message instance too so you can chain them.
+ * You will find below several examples of wfMessage() usage.
+ *
+ * Fetching a message text for interface message:
+ *
+ * @code
+ *    $button = Xml::button(
+ *         wfMessage( 'submit' )->text()
+ *    );
+ * @endcode
+ *
+ * A Message instance can be passed parameters after it has been constructed,
+ * use the params() method to do so:
+ *
+ * @code
+ *     wfMessage( 'welcome-to' )
+ *         ->params( $wgSitename )
+ *         ->text();
+ * @endcode
+ *
+ * {{GRAMMAR}} and friends work correctly:
+ *
+ * @code
+ *    wfMessage( 'are-friends',
+ *        $user, $friend
+ *    );
+ *    wfMessage( 'bad-message' )
+ *         ->rawParams( '<script>...</script>' )
+ *         ->escaped();
+ * @endcode
+ *
+ * @section message_language Changing language:
+ *
+ * Messages can be requested in a different language or in whatever current
+ * content language is being used. The methods are:
+ *     - Message->inContentLanguage()
+ *     - Message->inLanguage()
+ *
+ * Sometimes the message text ends up in the database, so content language is
+ * needed:
+ *
+ * @code
+ *    wfMessage( 'file-log',
+ *        $user, $filename
+ *    )->inContentLanguage()->text();
+ * @endcode
+ *
+ * Checking whether a message exists:
+ *
+ * @code
  *    wfMessage( 'mysterious-message' )->exists()
- * </pre>
+ *    // returns a boolean whether the 'mysterious-message' key exist.
+ * @endcode
+ *
  * If you want to use a different language:
- *    wfMessage( 'email-header' )->inLanguage( $user->getOption( 'language' ) )->plain()
- *        Note that you cannot parse the text except in the content or interface
- *        languages
- * </pre>
  *
+ * @code
+ *    $userLanguage = $user->getOption( 'language' );
+ *    wfMessage( 'email-header' )
+ *         ->inLanguage( $userLanguage )
+ *         ->plain();
+ * @endcode
  *
- * Comparison with old wfMsg* functions:
+ * @note You cannot parse the text except in the content or interface
+ * @note languages
  *
- * Use full parsing.
+ * @section message_compare_old Comparison with old wfMsg* functions:
+ *
+ * Use full parsing:
+ *
+ * @code
+ *     // old style:
  *     wfMsgExt( 'key', array( 'parseinline' ), 'apple' );
- *     === wfMessage( 'key', 'apple' )->parse();
- * </pre>
- * Parseinline is used because it is more useful when pre-building html.
+ *     // new style:
+ *     wfMessage( 'key', 'apple' )->parse();
+ * @endcode
+ *
+ * Parseinline is used because it is more useful when pre-building HTML.
  * In normal use it is better to use OutputPage::(add|wrap)WikiMsg.
  *
- * Places where html cannot be used. {{-transformation is done.
+ * Places where HTML cannot be used. {{-transformation is done.
+ * @code
+ *     // old style:
  *     wfMsgExt( 'key', array( 'parsemag' ), 'apple', 'pear' );
- *     === wfMessage( 'key', 'apple', 'pear' )->text();
- * </pre>
+ *     // new style:
+ *     wfMessage( 'key', 'apple', 'pear' )->text();
+ * @endcode
  *
- * Shortcut for escaping the message too, similar to wfMsgHTML, but
+ * Shortcut for escaping the message too, similar to wfMsgHTML(), but
  * parameters are not replaced after escaping by default.
- * $escaped = wfMessage( 'key' )->rawParams( 'apple' )->escaped();
- * </pre>
+ * @code
+ *     $escaped = wfMessage( 'key' )
+ *          ->rawParams( 'apple' )
+ *          ->escaped();
+ * @endcode
+ *
+ * @section message_appendix Appendix:
  *
  * @todo
  * - test, can we have tests?
+ * - this documentation needs to be extended
+ *
+ * @see https://www.mediawiki.org/wiki/WfMessage()
+ * @see https://www.mediawiki.org/wiki/New_messages_API
+ * @see https://www.mediawiki.org/wiki/Localisation
  *
  * @since 1.17
  * @author Niklas Laxström
@@ -60,7 +142,7 @@ class Message {
 	 * means the current interface language, false content language.
 	 */
 	protected $interface = true;
-	
+
 	/**
 	 * In which language to get this message. Overrides the $interface
 	 * variable.
@@ -68,7 +150,7 @@ class Message {
 	 * @var Language
 	 */
 	protected $language = null;
-	
+
 	/**
 	 * The message key.
 	 */
@@ -101,6 +183,11 @@ class Message {
 	protected $title = null;
 
 	/**
+	 * @var string
+	 */
+	protected $message;
+
+	/**
 	 * Constructor.
 	 * @param $key: message key, or array of message keys to try and use the first non-empty message for
 	 * @param $params Array message parameters
@@ -131,7 +218,7 @@ class Message {
 	 * Factory function accepting multiple message keys and returning a message instance
 	 * for the first message which is non-empty. If all messages are empty then an
 	 * instance of the first message key is returned.
-	 * @param Varargs: message keys
+	 * @param Varargs: message keys (or first arg as an array of all the message keys)
 	 * @return Message: $this
 	 */
 	public static function newFallbackSequence( /*...*/ ) {
@@ -150,7 +237,7 @@ class Message {
 
 	/**
 	 * Adds parameters to the parameter list of this message.
-	 * @param Varargs: parameters as Strings
+	 * @param Varargs: parameters as Strings, or a single argument that is an array of Strings
 	 * @return Message: $this
 	 */
 	public function params( /*...*/ ) {
@@ -168,7 +255,7 @@ class Message {
 	 * In other words the parsing process cannot access the contents
 	 * of this type of parameter, and you need to make sure it is
 	 * sanitized beforehand.  The parser will see "$n", instead.
-	 * @param Varargs: raw parameters as Strings
+	 * @param Varargs: raw parameters as Strings (or single argument that is an array of raw parameters)
 	 * @return Message: $this
 	 */
 	public function rawParams( /*...*/ ) {
@@ -181,11 +268,11 @@ class Message {
 		}
 		return $this;
 	}
-	
+
 	/**
 	 * Add parameters that are numeric and will be passed through
 	 * Language::formatNum before substitution
-	 * @param Varargs: numeric parameters
+	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
 	 * @return Message: $this
 	 */
 	public function numParams( /*...*/ ) {
@@ -198,7 +285,20 @@ class Message {
 		}
 		return $this;
 	}
-	
+
+	/**
+	 * Set the language and the title from a context object
+	 *
+	 * @param $context IContextSource
+	 * @return Message: $this
+	 */
+	public function setContext( IContextSource $context ) {
+		$this->inLanguage( $context->getLanguage() );
+		$this->title( $context->getTitle() );
+
+		return $this;
+	}
+
 	/**
 	 * Request the message in any language that is supported.
 	 * As a side effect interface message status is unconditionally
@@ -216,7 +316,7 @@ class Message {
 		} else {
 			$type = gettype( $lang );
 			throw new MWException( __METHOD__ . " must be "
-				. "passed a String or Language object; $type given" 
+				. "passed a String or Language object; $type given"
 			);
 		}
 		$this->interface = false;
@@ -268,10 +368,10 @@ class Message {
 	 */
 	public function toString() {
 		$string = $this->getMessageText();
-		
+
 		# Replace parameters before text parsing
 		$string = $this->replaceParameters( $string, 'before' );
-		
+
 		# Maybe transform using the full parser
 		if( $this->format === 'parse' ) {
 			$string = $this->parseText( $string );
@@ -287,10 +387,10 @@ class Message {
 			$string = $this->transformText( $string );
 			$string = htmlspecialchars( $string, ENT_QUOTES, 'UTF-8', false );
 		}
-		
+
 		# Raw parameter replacement
 		$string = $this->replaceParameters( $string, 'after' );
-		
+
 		return $string;
 	}
 
@@ -303,7 +403,7 @@ class Message {
 	public function __toString() {
 		return $this->toString();
 	}
-	
+
 	/**
 	 * Fully parse the text from wikitext to HTML
 	 * @return String parsed HTML
@@ -470,7 +570,10 @@ class Message {
 	protected function fetchMessage() {
 		if ( !isset( $this->message ) ) {
 			$cache = MessageCache::singleton();
-			if ( is_array($this->key) ) {
+			if ( is_array( $this->key ) ) {
+				if ( !count( $this->key ) ) {
+					throw new MWException( "Given empty message key array." );
+				}
 				foreach ( $this->key as $key ) {
 					$message = $cache->get( $key, $this->useDatabase, $this->language );
 					if ( $message !== false && $message !== '' ) {

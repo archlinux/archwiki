@@ -133,8 +133,8 @@ $specialPageAliases = array(
 	'Protectedtitles'           => array( 'TítůlosGuardados' ),
 	'Randompage'                => array( 'KualunkeHoja' ),
 	'Randomredirect'            => array( 'KualunkeDireksyón' ),
-	'Recentchanges'             => array( 'TrokamientosFreskos' ),
-	'Recentchangeslinked'       => array( 'TrokamientosÈnterassados' ),
+	'Recentchanges'             => array( 'TrocamientosFreskos' ),
+	'Recentchangeslinked'       => array( 'TrocamientosÈnterassados' ),
 	'Revisiondelete'            => array( 'EfassarRēvizyón' ),
 	'RevisionMove'              => array( 'TaxireaRēvizyón' ),
 	'Search'                    => array( 'Buscar' ),
@@ -169,12 +169,12 @@ $specialPageAliases = array(
 );
 
 $magicWords = array(
-	'redirect'              => array( '0', '#DIRIJAR', '#DIRECCIÓN', '#REDIRECCIÓN', '#REDIRECCION', '#REDIRECT' ),
-	'fullpagename'          => array( '1', 'NOMBREDEHOJACOMPLETA', 'NOMBREDEPÁGINACOMPLETA', 'NOMBREDEPAGINACOMPLETA', 'NOMBREDEPÁGINAENTERA', 'NOMBREDEPAGINAENTERA', 'FULLPAGENAME' ),
-	'subpagename'           => array( '1', 'NOMBREDEHOJICA', 'NOMBREDESUBPAGINA', 'NOMBREDESUBPÁGINA', 'SUBPAGENAME' ),
-	'msg'                   => array( '0', 'MSJ:', 'MSG:' ),
-	'img_left'              => array( '1', 'cierda', 'izquierda', 'izda', 'izq', 'left' ),
-	'img_none'              => array( '1', 'dinguna', 'dinguno', 'ninguna', 'nada', 'no', 'ninguno', 'none' ),
+	'redirect'                => array( '0', '#DIRIJAR', '#DIRECCIÓN', '#REDIRECCIÓN', '#REDIRECCION', '#REDIRECT' ),
+	'fullpagename'            => array( '1', 'NOMBREDEHOJACOMPLETA', 'NOMBREDEPÁGINACOMPLETA', 'NOMBREDEPAGINACOMPLETA', 'NOMBREDEPÁGINAENTERA', 'NOMBREDEPAGINAENTERA', 'FULLPAGENAME' ),
+	'subpagename'             => array( '1', 'NOMBREDEHOJICA', 'NOMBREDESUBPAGINA', 'NOMBREDESUBPÁGINA', 'SUBPAGENAME' ),
+	'msg'                     => array( '0', 'MSJ:', 'MSG:' ),
+	'img_left'                => array( '1', 'cierda', 'izquierda', 'izda', 'izq', 'left' ),
+	'img_none'                => array( '1', 'dinguna', 'dinguno', 'ninguna', 'nada', 'no', 'ninguno', 'none' ),
 );
 
 $messages = array(
@@ -476,7 +476,6 @@ Si puede ser mete un [[Special:ListUsers/sysop|administrador]] en corriente y ta
 'badtitletext'        => 'El título de la hoja demandada está vazío, no es valible, o es un link interlingua o interwiki incorrecto.
 Puede ser que contiene uno o más caracteres que no se pueden usar en los títulos.',
 'viewsource'          => 'Ver su manadero',
-'viewsourcefor'       => 'para $1',
 
 # Login and logout pages
 'yourname'                => 'Su nombre de usuario',
@@ -511,6 +510,10 @@ Si puede ser, escoge un otro nombre.',
 'passwordreset-username' => 'Nombre de usador:',
 'passwordreset-domain'   => 'Dominio:',
 'passwordreset-email'    => 'Adresso de letral:',
+
+# Special:ChangeEmail
+'changeemail-submit' => 'Trocar letral',
+'changeemail-cancel' => 'Anular',
 
 # Edit page toolbar
 'bold_sample'     => 'Teksto gordo',
@@ -622,7 +625,6 @@ Leyenda: (act) = diferencias con la versión actual,
 'revdel-restore-deleted'     => 'enderechamientos efaçados',
 'revdel-restore-visible'     => 'enderechamientos viźivles',
 'pagehist'                   => 'La storia de la hoja',
-'revdelete-content'          => 'contenido',
 'revdelete-reasonotherlist'  => 'Otra razón',
 
 # History merging
@@ -697,7 +699,7 @@ Las búsquedas producen más o munco a buscar biervos comunes como «la» o «de
 'prefs-rc'                  => 'Los Trocamientos de Alcabo',
 'prefs-watchlist'           => 'Lista de los Trocamientos Preferidos',
 'prefs-watchlist-days'      => 'El número de los días a mostrar en la lista de los trocamientos preferidos:',
-'prefs-watchlist-days-max'  => '7 días a lo más muncho',
+'prefs-watchlist-days-max'  => '$1 {{PLURAL:$1|días|días}} a lo más muncho',
 'prefs-resetpass'           => 'Trocar la parola',
 'prefs-rendering'           => 'Vista',
 'saveprefs'                 => 'Enrejistrar',
@@ -847,9 +849,7 @@ La descripción en su [$2 hoja de descripción del arxivo] está amostrada debax
 'linksearch' => 'Linkes eksternos',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Registro de creación de usuarios',
-'newuserlog-byemail'      => 'kóddiche mandado con letral',
-'newuserlog-create-entry' => 'Usuario nuevo',
+'newuserlogpage' => 'Registro de creación de usuarios',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(ver los miembros de este grupo)',
@@ -884,7 +884,6 @@ resultados, i que lo estás haziendo de acorddo con las [[{{MediaWiki:Policy-url
 'actioncomplete'        => 'Aksion kompleta',
 'deletedtext'           => '"$1" fue efassado.
 Mira $2 para un registro de los efassados nuevos.',
-'deletedarticle'        => 'efassó «[[$1]]»',
 'dellogpage'            => 'Registro de efassados',
 'deletecomment'         => 'Razón:',
 'deleteotherreason'     => 'Otra razón:',
@@ -924,7 +923,6 @@ A continuación se mostran las opciones actuales de la hoja '''$1''':",
 # Undelete
 'undeletelink'     => 've/trae atrás',
 'undeleteviewlink' => 've',
-'undeletedarticle' => 'restoró «[[$1]]»',
 
 # Namespace form on various pages
 'namespace'      => 'Espacio de nombres:',
@@ -1006,8 +1004,6 @@ Si puede ser, escoge otro nombre.',
 'talkexists'       => 'La hoja fue renombrada con reuxito, ma la diskussión no se pudo renombrar porque ya egziste una en el título nuevo. Si puede ser, házelo manualmente.',
 'movedto'          => 'renombrado a',
 'movetalk'         => 'Renombrar la hoja de diskussión también, si es possible.',
-'1movedto2'        => 'El muevo nombre de la hoja [[$1]]; ya es [[$2]]',
-'1movedto2_redir'  => '[[$1]] fue taxireado a [[$2]] sovre una direksión',
 'movelogpage'      => 'Registro de traslados',
 'movereason'       => 'Razón:',
 'revertmove'       => 'àbolta',
@@ -1090,7 +1086,7 @@ Puedes ver su manadero',
 
 # Media information
 'file-info-size' => '$1 × $2 píkseles; boy del arxivo: $3; tipo MIME: $4',
-'file-nohires'   => '<small>No disponible a mayor resolución.</small>',
+'file-nohires'   => 'No disponible a mayor resolución.',
 'svg-long-desc'  => 'arxivo SVG, nominalmente $1 × $2 píkseles, boy del arxivo: $3',
 'show-big-image' => 'Resolución original',
 
@@ -1160,9 +1156,6 @@ Los otros campos se van a guardar por defecto.
 'confirmemail_sent'    => 'Konfirmasion de pósta embiada.',
 'confirmemail_success' => 'Su direksion de pósta a sido konfirmada. Agóra puedes registrarse e kolaborar en el wiki.',
 
-# Trackbacks
-'trackbackremove' => '([$1 Efasár])',
-
 # Delete conflict
 'recreate' => 'Krear de muevo',
 
@@ -1228,5 +1221,14 @@ Los otros campos se van a guardar por defecto.
 
 # HTML forms
 'htmlform-selectorother-other' => 'Otro',
+
+# New logging system
+'logentry-newusers-autocreate' => 'El cuento $1 fue crîado otomatika mente',
+'newuserlog-byemail'           => 'kóddiche mandado con letral',
+
+# Feedback
+'feedback-subject' => 'Sujeto',
+'feedback-message' => 'Messaje',
+'feedback-cancel'  => 'Anular',
 
 );

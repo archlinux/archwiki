@@ -1,13 +1,31 @@
 <?php
 class FormatMetadataTest extends MediaWikiTestCase {
-	public function testInvalidDate() {
-		global $wgShowEXIF;
-		if ( !$wgShowEXIF ) {
-			$this->markTestIncomplete( "This test needs the exif extension." );
+	public function setUp() {
+		if ( !wfDl( 'exif' ) ) {
+			$this->markTestSkipped( "This test needs the exif extension." );
 		}
-		
-		$file = UnregisteredLocalFile::newFromPath( dirname( __FILE__ ) . 
-			'/../../data/media/broken_exif_date.jpg', 'image/jpeg' );
+		$filePath = dirname( __FILE__ ) .  '/../../data/media';
+		$this->backend = new FSFileBackend( array(
+			'name'           => 'localtesting',
+			'lockManager'    => 'nullLockManager',
+			'containerPaths' => array( 'data' => $filePath )
+		) );
+		$this->repo = new FSRepo( array(
+			'name'    => 'temp',
+			'url'     => 'http://localhost/thumbtest',
+			'backend' => $this->backend
+		) );
+		global $wgShowEXIF;
+		$this->show = $wgShowEXIF;
+		$wgShowEXIF = true;
+	}
+	public function tearDown() {
+		global $wgShowEXIF;
+		$wgShowEXIF = $this->show;
+	}
+
+	public function testInvalidDate() {
+		$file = $this->dataFile( 'broken_exif_date.jpg', 'image/jpeg' );
 		
 		// Throws an error if bug hit
 		$meta = $file->formatMetadata();
@@ -25,5 +43,10 @@ class FormatMetadataTest extends MediaWikiTestCase {
 		$this->assertEquals( '0000:01:00 00:02:27', 
 			$meta['visible'][$dateIndex]['value'],
 			'File with invalid date metadata (bug 29471)' );
+	}
+
+	private function dataFile( $name, $type ) {
+		return new UnregisteredLocalFile( false, $this->repo,
+			"mwstore://localtesting/data/$name", $type );
 	}
 }

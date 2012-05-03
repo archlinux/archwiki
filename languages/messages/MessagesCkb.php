@@ -132,14 +132,14 @@ $specialPageAliases = array(
 );
 
 $magicWords = array(
-	'img_thumbnail'         => array( '1', 'وێنۆک', 'thumbnail', 'thumb' ),
-	'img_right'             => array( '1', 'ڕاست', 'right' ),
-	'img_left'              => array( '1', 'چەپ', 'left' ),
-	'img_width'             => array( '1', '$1پیکسڵ', '$1px' ),
-	'img_center'            => array( '1', 'ناوەڕاست', 'center', 'centre' ),
-	'img_framed'            => array( '1', 'چوارچێوە', 'framed', 'enframed', 'frame' ),
-	'img_frameless'         => array( '1', 'بێچوارچێوە', 'frameless' ),
-	'img_border'            => array( '1', 'سنوور', 'border' ),
+	'img_thumbnail'           => array( '1', 'وێنۆک', 'thumbnail', 'thumb' ),
+	'img_right'               => array( '1', 'ڕاست', 'right' ),
+	'img_left'                => array( '1', 'چەپ', 'left' ),
+	'img_width'               => array( '1', '$1پیکسڵ', '$1px' ),
+	'img_center'              => array( '1', 'ناوەڕاست', 'center', 'centre' ),
+	'img_framed'              => array( '1', 'چوارچێوە', 'framed', 'enframed', 'frame' ),
+	'img_frameless'           => array( '1', 'بێچوارچێوە', 'frameless' ),
+	'img_border'              => array( '1', 'سنوور', 'border' ),
 );
 
 $messages = array(
@@ -399,6 +399,7 @@ $1',
 تەماشای [[Special:Version|پەڕەی وەشان]] بکە.',
 
 'ok'                      => 'باشه‌',
+'backlinksubtitle'        => '→ $1',
 'retrievedfrom'           => 'وەرگیراو لە «$1»',
 'youhavenewmessages'      => '$1ت ھەیە ($2).',
 'newmessageslink'         => 'پەیامی نوێ',
@@ -493,15 +494,14 @@ $1',
 'badtitle'             => 'ناونیشانی خراپ',
 'badtitletext'         => 'سەرناوی پەڕەی داواکراو بەتاڵە، واڵایە یان سەرناوێکی نێوان-زمانی یان نێوانی-ویکییە کە بە شێوەیەکی ھەڵە بەستەری بۆ دراوە.
 ڕەنگە یەک یان چەند کاراکتەری تێدا بێت کە ناکرێت لە سەرناوەکاندا بەکار بھێنرێت.',
-'perfcached'           => 'ئەم داتای خوارەوە پاشەکەوتی کەشە وە ناکرێ تازەی بکەیەوە.',
-'perfcachedts'         => 'ئەم داتای خوارەوە کەش کراوە، و دوایین جار لە $1 تازە کراوەتەوە',
+'perfcached'           => 'ئەم داتای خوارەوە پاشەکەوتی کەشە وە ناکرێ تازەی بکەیەوە. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'ئەم داتای خوارەوە کەش کراوە، و دوایین جار لە $1 تازە کراوەتەوە A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'تازەکردنەوەی ئەم لاپەڕە لە حاڵی ئێستا دا ناچالاک کراو.
 داتای ئەم شوێنە بەم زووانە تازە ناکرێتەوە.',
 'wrong_wfQuery_params' => 'پارامێتری ھەڵە بۆ wfQuery()<br />
 کردار: $1<br />
 داواکاری: $2',
 'viewsource'           => 'سەرچاوەکەی ببینە',
-'viewsourcefor'        => 'بۆ $1',
 'actionthrottled'      => 'چالاکی پێشی پێ گیرا',
 'actionthrottledtext'  => 'بە مەبەستی پێشگریی لە سپەم، ڕێگە نادرێت تۆ لە ماوەیەکی کورت دا لە سەر یەک ئەمە زۆر جار ئەنجام بدەی، وە ئیستا تۆ لە ڕادە بەدەرت کردووە.
 تکایە پاش چەند خولەک دووبارە تاقی بکەوە.',
@@ -706,9 +706,6 @@ $2',
 ئای‌پی ئەدرەسی ئێستای تۆ $3 و پەێناسەی بەربەست‌کراو #$5.<br />
 تکایە لە هەر پرس و داواکاریەکت‌دا هەموو وردەکاریەکانی سەرەوە بگونجێنە.',
 'blockednoreason'                  => 'هیچ هۆکارێک نەدراوە',
-'blockedoriginalsource'            => "سەرچاوەی '''$1''' لەخوارەوە پیشاندراوە:",
-'blockededitsource'                => "دەقی '''دەستکاریەکانی تۆ''' بۆ '''$1''' لە خوارەوە نیشان‌دراوە:",
-'whitelistedittitle'               => 'بۆ دەستکاریکردن پێویستە لەژوورەوە بیت',
 'whitelistedittext'                => 'بۆ دەستکاری کردنی لاپەڕەکان دەبێ $1.',
 'confirmedittext'                  => 'پێویستە پێش هەرجۆرە دەستکاریەکی لاپەڕەکان ئەدرەسی ئیمەیلت ڕاچاو کردبێت .<br />
 تکایە لە [[Special:Preferences|ھەڵبژاردەکانی بەکارھێنەر]] ئی‌مەیلەکەت دانێ و بڕواپێکراوی بکە.',
@@ -952,8 +949,6 @@ $3 هۆکاری "$2" خستوەتەڕوو',
 'revdelete-unsuppress'        => 'لابردنی بەربەستەکان لە سەر پێداچوونەوە گەڕێندراوەکان',
 'revdelete-log'               => 'هۆکار:',
 'revdelete-submit'            => 'خستنەکار بۆ سەر پێداچوونەوە {{PLURAL:$1|ھەڵبژێردراوەکە|ھەڵبژێردراوەکان}}',
-'revdelete-logentry'          => 'گۆڕانی بەرچاوکەوتنی دەستکارییەکی [[$1]]',
-'logdelete-logentry'          => 'بیندرانی ڕووداوە‌ گۆڕاوەکەی [[$1]]',
 'revdelete-success'           => "'''چۆنیەتی بیندرانی پێداچوونەوە بە سەرکەوتوویی نوێکراوە.'''",
 'revdelete-failure'           => "'''ناکرێ دەرکەوتنی پێداچوونەوە نوێبکرێتەوە:'''
 $1",
@@ -965,15 +960,6 @@ $1",
 'revdel-restore-visible'      => 'پێداچوونەوە دەرکەوتووەکان',
 'pagehist'                    => 'مێژووی پەڕە',
 'deletedhist'                 => 'مێژوو بسڕەوە',
-'revdelete-content'           => 'ناوەرۆک',
-'revdelete-summary'           => 'پوختەی دەستکاری',
-'revdelete-uname'             => 'ناوی بەکارهێنەر',
-'revdelete-restricted'        => 'ئەو سنووری بەرگریانەی خستراوەتە سەر بەڕێوبەران',
-'revdelete-unrestricted'      => 'ئەو سنووری بەرگریانەی لابردراوە لە سەر بەڕێوبەران',
-'revdelete-hid'               => '$1ـی داشارد',
-'revdelete-unhid'             => '$1ـی ئاشکرا کرد',
-'revdelete-log-message'       => '$1 بۆ {{PLURAL:$2|پێداچوونەوەی|پێداچوونەوەکانی}} $2',
-'logdelete-log-message'       => '$1 بۆ {{PLURAL:$2|ڕووداوی|ڕووداوەکانی}} $2',
 'revdelete-hide-current'      => 'هەڵە لە شاردنەوەی بابەتی ڕیکەوتی $1، کات $2: ئەم پێداچوونەوە ئێستا لەکاردایە.
 ناکرێ داشاردرێت.',
 'revdelete-show-no-access'    => 'هەڵە لە نیشان‌دانی بابەتی ڕیکەوتی $1، کات $2: ئەم بابەتە وەک "بەرگیراو"‌ نیشانکراوە.
@@ -1132,7 +1118,7 @@ $1",
 'prefs-rc'                      => 'دوایین گۆڕانکارییەکان',
 'prefs-watchlist'               => 'لیستی چاودێری',
 'prefs-watchlist-days'          => 'ژمارەی ڕۆژەکان بۆ نیشاندان لە لیستی چاودێری:',
-'prefs-watchlist-days-max'      => 'ئه‌وپه‌ڕی ٧ ڕۆژ',
+'prefs-watchlist-days-max'      => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'         => 'ئەوپەڕی ژمارەی گۆڕانکارییەکان بۆ نیشاندان لە لیستی چاودێریی پەرەپێدراو:',
 'prefs-watchlist-edits-max'     => 'ئەوپەڕی ژمارە: ١٠٠٠',
 'prefs-watchlist-token'         => 'ڕەمزی لیستی چاودێری:',
@@ -1321,7 +1307,6 @@ $1",
 'right-autopatrol'            => 'خۆکار لەژێرچاودێری نیشان‌کردنی دەستکاریەکانی کەسێک بۆخۆی',
 'right-patrolmarks'           => 'دیتنی دوایین دەستکاریەکان وا لەژێرچاودێری نیشان‌کراون',
 'right-unwatchedpages'        => 'دیتنی لیستێک لەو لاپەڕانەی چاودێری ناکرێن',
-'right-trackback'             => 'ناردنی ڕێچکەیەک',
 'right-mergehistory'          => 'سەریەک‌خستنی میژووی لاپەڕەکان',
 'right-userrights'            => 'دەستکاری مافەکانی هەموو بەکارهێنەران',
 'right-userrights-interwiki'  => 'دەستکاری مافەکانی بەکارهێنەریی بەکارهێنەران لە ویکی‌یەکانی دیکە‌دا',
@@ -1364,7 +1349,6 @@ $1",
 'action-patrol'               => 'لەژێرچاودێری نیشان‌کردنی دەستکاریەکانی کەسانی‌تر',
 'action-autopatrol'           => 'دەستکاریەکانت وەک لەژێرچاودێری نیشان کراون',
 'action-unwatchedpages'       => 'دیتنی لیستێک لەو لاپەڕانەی چاودێری ناکرێن',
-'action-trackback'            => 'ناردنی ڕێچکەیەک',
 'action-mergehistory'         => 'سەریەک‌خستنی میژووی ئەم لاپەڕە',
 'action-userrights'           => 'دەستکاری مافەکانی هەموو بەکارهێنەران',
 'action-userrights-interwiki' => 'دەستکاری مافەکانی بەکارهێنەریی بەکارهێنەران لە ویکی‌یەکانی دیکە‌دا',
@@ -1612,7 +1596,6 @@ $1',
 
 # File reversion
 'filerevert'                => 'پێچەوانەکردنەوەی $1',
-'filerevert-backlink'       => '→ $1',
 'filerevert-legend'         => 'پێچەوانەکردنەوەی پەڕگە',
 'filerevert-intro'          => "خەریکی پەڕگەی '''[[Media:$1|$1]]''' دەگەڕینیتەوە بۆ [$4 وەشانی $3، $2].",
 'filerevert-comment'        => 'هۆکار:',
@@ -1623,7 +1606,6 @@ $1',
 
 # File deletion
 'filedelete'                  => 'سڕینەوەی $1',
-'filedelete-backlink'         => '→ $1',
 'filedelete-legend'           => 'سڕینەوەی پەڕگە',
 'filedelete-intro'            => "خەریکی پەڕگەی '''[[Media:$1|$1]]''' دەگەڵ هەموو مێژووی دەسڕیتەوە.",
 'filedelete-intro-old'        => "خەریکی وەشانی [$4 $3، $2] لە '''[[Media:$1|$1]]''' دەسڕیتەوە.",
@@ -1758,7 +1740,7 @@ $1',
 'listusers-editsonly'     => 'تەنھا ئەو بەکارھێنەرانە نیشان بدە کە دەستکارییان کردووە',
 'listusers-creationsort'  => 'ڕیز کردن بە پێی ڕێکەوتی دروست کردن',
 'usereditcount'           => '$1 {{PLURAL:$1|دەستکاری|دەستکاری}}',
-'usercreated'             => 'دروست کراو لە $2ی $1',
+'usercreated'             => 'لە $1 کاتژمێر $2 {{GENDER:$3|دروستکراوە}}',
 'newpages'                => 'پەڕە نوێکان',
 'newpages-username'       => 'ناوی بەکارھێنەر:',
 'ancientpages'            => 'کۆنترین پەڕەکان',
@@ -1848,12 +1830,8 @@ $1',
 'activeusers-noresult'   => 'هیچ بەکارهێنەرێک نەدۆزرایەوە',
 
 # Special:Log/newusers
-'newuserlogpage'              => 'لۆگی دروست کردنی بەکارھێنەر',
-'newuserlogpagetext'          => 'ئەمە لۆگێکی درووست‌کردنی بەکارهێنەرە.',
-'newuserlog-byemail'          => 'تێپەڕوشە بە ئیمەیل نێردرا.',
-'newuserlog-create-entry'     => 'بەکارھێنەری نوێ',
-'newuserlog-create2-entry'    => 'ھەژماری $1ی دروست کرد',
-'newuserlog-autocreate-entry' => 'هەژمارە بە جۆری خۆکار درووست‌کرا',
+'newuserlogpage'     => 'لۆگی دروست کردنی بەکارھێنەر',
+'newuserlogpagetext' => 'ئەمە لۆگێکی درووست‌کردنی بەکارهێنەرە.',
 
 # Special:ListGroupRights
 'listgrouprights'                      => 'مافەکانی گرووپە بەکارھێنەرییەکان',
@@ -1983,7 +1961,6 @@ $UNWATCHURL
 'exbeforeblank'          => 'ناوەرۆک بەر لە بەتاڵ کردنەوە ئەمە بوو: «$1»',
 'exblank'                => 'پەڕە خاڵی بوو',
 'delete-confirm'         => 'سڕینەوەی «$1»',
-'delete-backlink'        => '→ $1',
 'delete-legend'          => 'بیسڕەوە',
 'historywarning'         => "'''وشیار بە:''' پەڕەیەک کە دەتەوێ بیسڕیتەوە مێژوویەکی ھەیە بە نزیکەی $1 {{PLURAL:$1|پێداچوونەوە|پێداچوونەوە}}وە:",
 'confirmdeletetext'      => 'تۆ خەریکی پەڕەیەک بە ھەموو مێژووەکەیەوە دەسڕیتەو.
@@ -1992,8 +1969,6 @@ $UNWATCHURL
 'actionfailed'           => 'کردارەکە سەرنەکەوت',
 'deletedtext'            => '«$1»  سڕایەوە.
 سەیری $2 بکە بۆ تۆمارێکی دوایین سڕینەوەکان.',
-'deletedarticle'         => '«[[$1]]»ی سڕییەوە',
-'suppressedarticle'      => '«[[$1]]»ی دامرکاندەوە',
 'dellogpage'             => 'لۆگی سڕینەوە',
 'dellogpagetext'         => 'ئەوەی خوارەوە لیستێكە لە دوایین سڕینەوەکان',
 'deletionlog'            => 'لۆگی سڕینەوە',
@@ -2042,7 +2017,6 @@ $UNWATCHURL
 'movedarticleprotection'      => 'ڕێککارییەکانی پاراستن لە  "[[$2]]" گوازرایەوە بۆ "[[$1]]"',
 'protect-title'               => 'گۆڕینی ئاستی پاراستنی "$1"',
 'prot_1movedto2'              => '[[$1]] گوازراوەتەوە بۆ [[$2]]',
-'protect-backlink'            => '← $1',
 'protect-legend'              => 'پاراستن تەیید بکە',
 'protectcomment'              => 'ھۆکار:',
 'protectexpiry'               => 'ھەتا:',
@@ -2122,7 +2096,6 @@ $UNWATCHURL
 'undeletereset'                => 'بردنەوە نووک',
 'undeleteinvert'               => 'هەڵگێڕانەوەی هەڵبژاردن',
 'undeletecomment'              => 'هۆکار:',
-'undeletedarticle'             => '«[[$1]]» گێڕایەوە',
 'undeletedrevisions'           => '{{PLURAL:$1|1 پێداچوونەوە|$1 پێداچوونەوە}} هێنرایەوە',
 'undeletedrevisions-files'     => '{{PLURAL:$1|1 پێداچوونەوە|$1 پێداچوونەوە}} و {{PLURAL:$2|1 پەڕگە|$2 پەڕگە}} هێنرایەوە',
 'undeletedfiles'               => '{{PLURAL:$1|1 پەڕگە|$1 پەڕگە}} هێنرایەوه',
@@ -2372,9 +2345,6 @@ $1',
 'movepage-page-moved'          => 'پەڕەی $1 گۆزرایەوە بۆ $2.',
 'movepage-page-unmoved'        => 'ناکرێ پەڕەی $1 بگوێزرێتەوە بۆ $2.',
 'movepage-max-pages'           => 'زۆرینەی ژمارەی $1 {{PLURAL:$1|لاپەڕە|لاپەڕە}} گوێستراوەتەوە و لەوە زیاتر خۆکار ناگوێسترێتەوە.',
-'1movedto2'                    => '«[[$1]]»ی گواستەوە بۆ «[[$2]]»',
-'1movedto2_redir'              => 'بە ڕەوانکردنەوە، [[$1]] گۆزرایەوە بۆ [[$2]]',
-'move-redirect-suppressed'     => 'ڕەوانەکردن بەرگری‌کراوە',
 'movelogpage'                  => 'لۆگی گواستنەوە',
 'movelogpagetext'              => 'لە خوارەوەدا لیستی ھەموو پەڕە گواستنەوەکان دەبینن.',
 'movesubpage'                  => '{{PLURAL:$1|ژێرپەڕە|ژێرپەڕە}}',
@@ -2622,8 +2592,6 @@ $1',
 # Patrol log
 'patrol-log-page'      => 'لۆگی چاودێری',
 'patrol-log-header'    => 'ئەمە لۆگێکی چاودێری پێداچوونەوەکانە.',
-'patrol-log-auto'      => '(خۆکار)',
-'patrol-log-diff'      => 'پێداچوونەوە $1',
 'log-show-hide-patrol' => 'لۆگی چاودێری $1',
 
 # Image deletion
@@ -2642,7 +2610,7 @@ $1',
 'thumbsize'      => 'قەبارەی وێنۆک:',
 'file-info'      => 'قه‌باره‌: $1, جۆر: $2',
 'file-info-size' => '$1 × $2 پیکسێل، قەبارەی پەڕگە: $3، جۆری MIME: $4',
-'file-nohires'   => '<small>رەزۆلوشنی سەرتر لەمە لە بەردەست دا نیە.</small>',
+'file-nohires'   => 'رەزۆلوشنی سەرتر لەمە لە بەردەست دا نیە.',
 'svg-long-desc'  => 'پەڕگەی SVG، بە ناو $1 × $2 پیکسەڵ، قەبارەی پەڕگە: $3',
 'show-big-image' => 'گەورە کردنەوە',
 
@@ -2897,9 +2865,6 @@ $5
 # Scary transclusion
 'scarytranscludetoolong' => '[URL زۆر درێژە]',
 
-# Trackbacks
-'trackbackremove' => '([سڕینەوە $1])',
-
 # Delete conflict
 'deletedwhileediting' => "'''ھۆشیار بە''': ئەم پەڕە دوای ئەوە تۆ دەستکاریکردنیت دەستپێکرد سڕاوەتەوە!",
 'recreate'            => 'درووست‌کردنەوە',
@@ -3107,5 +3072,10 @@ $5
 'htmlform-submit'              => 'ناردن',
 'htmlform-reset'               => 'پووچەڵکردنەوەی دەستکارییەکان',
 'htmlform-selectorother-other' => 'دیکە',
+
+# New logging system
+'revdelete-restricted'   => 'ئەو سنووری بەرگریانەی خستراوەتە سەر بەڕێوبەران',
+'revdelete-unrestricted' => 'ئەو سنووری بەرگریانەی لابردراوە لە سەر بەڕێوبەران',
+'newuserlog-byemail'     => 'تێپەڕوشە بە ئیمەیل نێردرا.',
 
 );

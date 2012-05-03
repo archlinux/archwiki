@@ -34,7 +34,7 @@ class ForkController {
 
 	public function __construct( $numProcs, $flags = 0 ) {
 		if ( php_sapi_name() != 'cli' ) {
-			throw new MWException( "MultiProcess cannot be used from the web." );
+			throw new MWException( "ForkController cannot be used from the web." );
 		}
 		$this->procsToStart = $numProcs;
 		$this->flags = $flags;
@@ -119,13 +119,13 @@ class ForkController {
 		// Don't share DB or memcached connections
 		wfGetLBFactory()->destroyInstance();
 		ObjectCache::clear();
-		unset( $wgMemc );
+		$wgMemc = null;
 	}
 
 	/**
 	 * Fork a number of worker processes.
 	 *
-	 * return string
+	 * @return string
 	 */
 	protected function forkWorkers( $numProcs ) {
 		$this->prepareEnvironment();

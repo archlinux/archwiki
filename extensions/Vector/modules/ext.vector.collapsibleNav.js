@@ -172,10 +172,14 @@ jQuery( function( $ ) {
 			) {
 				$(this)
 					.addClass( 'expanded' )
+					.removeClass( 'collapsed' )
 					.find( 'div.body' )
+					.hide() // bug 34450
 					.show();
 			} else {
-				$(this).addClass( 'collapsed' );
+				$(this)
+                                	.addClass( 'collapsed' )
+					.removeClass( 'expanded' );
 			}
 			// Re-save cookie
 			if ( state != null ) {

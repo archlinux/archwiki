@@ -367,8 +367,7 @@ $messages = array(
 'linksearch' => 'Легэтурь екстерне',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Журнал утилизаторь ной',
-'newuserlog-create-entry' => 'Конт ноу де утилизатор',
+'newuserlogpage' => 'Журнал утилизаторь ной',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(листэ де мембрь)',
@@ -394,7 +393,6 @@ $messages = array(
 'actioncomplete'        => 'Акциуне комплетэ',
 'deletedtext'           => 'Паӂина «$1» а фост штярсэ.
 Везь $2 пентру о листэ а елементелор штерсе речент.',
-'deletedarticle'        => 'а штерс «[[$1]]»',
 'dellogpage'            => 'Журнал штерӂерь',
 'deletecomment'         => 'Мотив:',
 'deleteotherreason'     => 'Мотив диферит/суплиментар:',
@@ -426,8 +424,7 @@ $messages = array(
 'restriction-level'           => 'Нивел де рестрикцие:',
 
 # Undelete
-'undeletelink'     => 'визуализязэ/рестаурязэ',
-'undeletedarticle' => 'а рекуперат «[[$1]]»',
+'undeletelink' => 'визуализязэ/рестаурязэ',
 
 # Namespace form on various pages
 'namespace'      => 'Спациу де нуме:',
@@ -480,7 +477,6 @@ $messages = array(
 'movearticle' => 'Депласязэ паӂина:',
 'newtitle'    => 'Титлул ноу:',
 'movepagebtn' => 'Депласязэ паӂина',
-'1movedto2'   => 'а депласат [[$1]] ын [[$2]]',
 'movelogpage' => 'Журнал депласэрь',
 'movereason'  => 'Мотив:',
 'revertmove'  => 'ревино',
@@ -547,7 +543,7 @@ $messages = array(
 
 # Media information
 'file-info-size' => '$1 × $2 пиксель, мэриме фишиер: $3, тип MIME: $4',
-'file-nohires'   => '<small>Резолуций май марь ну сынт диспонибиле.</small>',
+'file-nohires'   => 'Резолуций май марь ну сынт диспонибиле.',
 'svg-long-desc'  => 'фишиер SVG, ку дименсиуня номиналэ де $1 × $2 пиксель, мэриме фишиер: $3',
 'show-big-image' => 'Мэреште резолуция имаӂиний',
 

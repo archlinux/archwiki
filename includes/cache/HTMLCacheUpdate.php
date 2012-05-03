@@ -23,8 +23,7 @@
  *
  * @ingroup Cache
  */
-class HTMLCacheUpdate
-{
+class HTMLCacheUpdate implements DeferrableUpdate {
 	/**
 	 * @var Title
 	 */
@@ -33,6 +32,12 @@ class HTMLCacheUpdate
 	public $mTable, $mPrefix, $mStart, $mEnd;
 	public $mRowsPerJob, $mRowsPerQuery;
 
+	/**
+	 * @param $titleTo
+	 * @param $table
+	 * @param $start bool
+	 * @param $end bool
+	 */
 	function __construct( $titleTo, $table, $start = false, $end = false ) {
 		global $wgUpdateRowsPerJob, $wgUpdateRowsPerQuery;
 
@@ -138,6 +143,9 @@ class HTMLCacheUpdate
 		Job::batchInsert( $jobs );
 	}
 
+	/**
+	 * @return mixed
+	 */
 	protected function insertJobs() {
 		$batches = $this->mCache->partition( $this->mTable, $this->mRowsPerJob );
 		if ( !$batches ) {
@@ -157,6 +165,7 @@ class HTMLCacheUpdate
 
 	/**
 	 * Invalidate an array (or iterator) of Title objects, right now
+	 * @param $titleArray array
 	 */
 	protected function invalidateTitles( $titleArray ) {
 		global $wgUseFileCache, $wgUseSquid;
@@ -179,7 +188,7 @@ class HTMLCacheUpdate
 		foreach ( $batches as $batch ) {
 			$dbw->update( 'page',
 				array( 'page_touched' => $timestamp ),
-				array( 'page_id IN (' . $dbw->makeList( $batch ) . ')' ),
+				array( 'page_id' => $batch ),
 				__METHOD__
 			);
 		}
@@ -197,8 +206,8 @@ class HTMLCacheUpdate
 			}
 		}
 	}
-
 }
+
 
 /**
  * Job wrapper for HTMLCacheUpdate. Gets run whenever a related

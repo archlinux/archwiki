@@ -1,7 +1,10 @@
 <?php
 /**
- * @file
- * @ingroup upload
+ * @defgroup Upload
+ */
+
+/**
+ * @ingroup Upload
  *
  * UploadBase and subclasses are the backend of MediaWiki's file uploads.
  * The frontends are formed by ApiUpload and SpecialUpload.
@@ -12,7 +15,6 @@
  * @author Bryan Tong Minh
  * @author Michael Dale
  */
-
 abstract class UploadBase {
 	protected $mTempPath;
 	protected $mDesiredDestName, $mDestName, $mRemoveTempFile, $mSourceType;
@@ -37,6 +39,7 @@ abstract class UploadBase {
 	const HOOK_ABORTED = 11;
 	const FILE_TOO_LARGE = 12;
 	const WINDOWS_NONASCII_FILENAME = 13;
+	const FILENAME_TOO_LONG = 14;
 
 	public function getVerificationErrorCode( $error ) {
 		$code_to_status = array(self::EMPTY_FILE => 'empty-file',
@@ -49,6 +52,7 @@ abstract class UploadBase {
 								self::VERIFICATION_ERROR => 'verification-error',
 								self::HOOK_ABORTED =>  'hookaborted',
 								self::WINDOWS_NONASCII_FILENAME => 'windows-nonascii-filename',
+								self::FILENAME_TOO_LONG => 'filename-toolong',
 		);
 		if( isset( $code_to_status[$error] ) ) {
 			return $code_to_status[$error];
@@ -161,6 +165,9 @@ abstract class UploadBase {
 	 */
 	public function initializePathInfo( $name, $tempPath, $fileSize, $removeTempFile = false ) {
 		$this->mDesiredDestName = $name;
+		if ( FileBackend::isStoragePath( $tempPath ) ) {
+			throw new MWException( __METHOD__ . " given storage path `$tempPath`." );
+		}
 		$this->mTempPath = $tempPath;
 		$this->mFileSize = $fileSize;
 		$this->mRemoveTempFile = $removeTempFile;
@@ -195,39 +202,17 @@ abstract class UploadBase {
 	}
 
 	/**
-	 * Append a file to the Repo file
-	 *
-	 * @param $srcPath String: path to source file
-	 * @param $toAppendPath String: path to the Repo file that will be appended to.
-	 * @return Status Status
-	 */
-	protected function appendToUploadFile( $srcPath, $toAppendPath ) {
-		$repo = RepoGroup::singleton()->getLocalRepo();
-		$status = $repo->append( $srcPath, $toAppendPath );
-		return $status;
-	}
-
-	/**
-	 * Finish appending to the Repo file
-	 *
-	 * @param $toAppendPath String: path to the Repo file that will be appended to.
-	 * @return Status Status
-	 */
-	protected function appendFinish( $toAppendPath ) {
-		$repo = RepoGroup::singleton()->getLocalRepo();
-		$status = $repo->appendFinish( $toAppendPath );
-		return $status;
-	}
-
-
-	/**
 	 * @param $srcPath String: the source path
 	 * @return the real path if it was a virtual URL
 	 */
 	function getRealPath( $srcPath ) {
 		$repo = RepoGroup::singleton()->getLocalRepo();
 		if ( $repo->isVirtualUrl( $srcPath ) ) {
-			return $repo->resolveVirtualUrl( $srcPath );
+			// @TODO: just make uploads work with storage paths
+			// UploadFromStash loads files via virtuals URLs
+			$tmpFile = $repo->getLocalCopy( $srcPath );
+			$tmpFile->bind( $this ); // keep alive with $thumb
+			return $tmpFile->getPath();
 		}
 		return $srcPath;
 	}
@@ -355,12 +340,12 @@ abstract class UploadBase {
 	 * @return mixed true of the file is verified, array otherwise.
 	 */
 	protected function verifyFile() {
-		global $wgAllowJavaUploads;
+		global $wgAllowJavaUploads, $wgDisableUploadScriptChecks;
 		# get the title, even though we are doing nothing with it, because
 		# we need to populate mFinalExtension
 		$this->getTitle();
 
-		$this->mFileProps = File::getPropsFromPath( $this->mTempPath, $this->mFinalExtension );
+		$this->mFileProps = FSFile::getPropsFromPath( $this->mTempPath, $this->mFinalExtension );
 
 		# check mime type, if desired
 		$mime = $this->mFileProps[ 'file-mime' ];
@@ -370,12 +355,14 @@ abstract class UploadBase {
 		}
 
 		# check for htmlish code and javascript
-		if( self::detectScript( $this->mTempPath, $mime, $this->mFinalExtension ) ) {
-			return array( 'uploadscripted' );
-		}
-		if( $this->mFinalExtension == 'svg' || $mime == 'image/svg+xml' ) {
-			if( $this->detectScriptInSvg( $this->mTempPath ) ) {
+		if ( !$wgDisableUploadScriptChecks ) {
+			if( self::detectScript( $this->mTempPath, $mime, $this->mFinalExtension ) ) {
 				return array( 'uploadscripted' );
+			}
+			if( $this->mFinalExtension == 'svg' || $mime == 'image/svg+xml' ) {
+				if( $this->detectScriptInSvg( $this->mTempPath ) ) {
+					return array( 'uploadscripted' );
+				}
 			}
 		}
 
@@ -445,7 +432,7 @@ abstract class UploadBase {
 	}
 
 	/**
-	 * Alias for verifyTitlePermissions. The function was originally 'verifyPermissions' 
+	 * Alias for verifyTitlePermissions. The function was originally 'verifyPermissions'
 	 * but that suggests it's checking the user, when it's really checking the title + user combination.
 	 * @param $user User object to verify the permissions against
 	 * @return mixed An array as returned by getUserPermissionsErrors or true
@@ -478,7 +465,7 @@ abstract class UploadBase {
 		$permErrors = $nt->getUserPermissionsErrors( 'edit', $user );
 		$permErrorsUpload = $nt->getUserPermissionsErrors( 'upload', $user );
 		if ( !$nt->exists() ) {
-			$permErrorsCreate = $nt->getUserPermissionsErrors( 'createpage', $user );
+			$permErrorsCreate = $nt->getUserPermissionsErrors( 'create', $user );
 		} else {
 			$permErrorsCreate = array();
 		}
@@ -544,7 +531,7 @@ abstract class UploadBase {
 		}
 
 		// Check dupes against existing files
-		$hash = File::sha1Base36( $this->mTempPath );
+		$hash = FSFile::getSha1Base36FromPath( $this->mTempPath );
 		$dupes = RepoGroup::singleton()->findBySha1( $hash );
 		$title = $this->getTitle();
 		// Remove all matches against self
@@ -589,7 +576,7 @@ abstract class UploadBase {
 			if ( $watch ) {
 				$user->addWatch( $this->getLocalFile()->getTitle() );
 			}
-						
+
 			wfRunHooks( 'UploadComplete', array( &$this ) );
 		}
 
@@ -606,7 +593,7 @@ abstract class UploadBase {
 		if ( $this->mTitle !== false ) {
 			return $this->mTitle;
 		}
-		
+
 		/* Assume that if a user specified File:Something.jpg, this is an error
 		 * and that the namespace prefix needs to be stripped of.
 		 */
@@ -615,6 +602,13 @@ abstract class UploadBase {
 			$this->mFilteredName = $title->getDBkey();
 		} else {
 			$this->mFilteredName = $this->mDesiredDestName;
+		}
+
+		# oi_archive_name is max 255 bytes, which include a timestamp and an
+		# exclamation mark, so restrict file name to 240 bytes.
+		if ( strlen( $this->mFilteredName ) > 240 ) {
+			$this->mTitleError = self::FILENAME_TOO_LONG;
+			return $this->mTitle = null;
 		}
 
 		/**
@@ -630,6 +624,8 @@ abstract class UploadBase {
 			return $this->mTitle = null;
 		}
 		$this->mFilteredName = $nt->getDBkey();
+
+
 
 		/**
 		 * We'll want to blacklist against *any* 'extension', and use
@@ -677,7 +673,7 @@ abstract class UploadBase {
 			$this->mTitleError = self::FILETYPE_BADTYPE;
 			return $this->mTitle = null;
 		}
-		
+
 		// Windows may be broken with special characters, see bug XXX
 		if ( wfIsWindows() && !preg_match( '/^[\x0-\x7f]*$/', $nt->getText() ) ) {
 			$this->mTitleError = self::WINDOWS_NONASCII_FILENAME;
@@ -742,14 +738,12 @@ abstract class UploadBase {
 	 * This method returns the file object, which also has a 'fileKey' property which can be passed through a form or
 	 * API request to find this stashed file again.
 	 *
-	 * @param $key String: (optional) the file key used to find the file info again. If not supplied, a key will be autogenerated.
 	 * @return UploadStashFile stashed file
 	 */
-	public function stashFile( $key = null ) {
+	public function stashFile() {
 		// was stashSessionFile
 		$stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash();
-
-		$file = $stash->stashFile( $this->mTempPath, $this->getSourceType(), $key );
+		$file = $stash->stashFile( $this->mTempPath, $this->getSourceType() );
 		$this->mLocalFile = $file;
 		return $file;
 	}
@@ -757,21 +751,19 @@ abstract class UploadBase {
 	/**
 	 * Stash a file in a temporary directory, returning a key which can be used to find the file again. See stashFile().
 	 *
-	 * @param $key String: (optional) the file key used to find the file info again. If not supplied, a key will be autogenerated.
 	 * @return String: file key
 	 */
-	public function stashFileGetKey( $key = null ) {
-		return $this->stashFile( $key )->getFileKey();
+	public function stashFileGetKey() {
+		return $this->stashFile()->getFileKey();
 	}
 
-	/** 
+	/**
 	 * alias for stashFileGetKey, for backwards compatibility
 	 *
-	 * @param $key String: (optional) the file key used to find the file info again. If not supplied, a key will be autogenerated.
 	 * @return String: file key
 	 */
-	public function stashSession( $key = null ) {
-		return $this->stashFileGetKey( $key );
+	public function stashSession() {
+		return $this->stashFileGetKey();
 	}
 
 	/**

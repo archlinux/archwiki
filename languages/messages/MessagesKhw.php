@@ -12,6 +12,8 @@
 
 $fallback = 'ur';
 
+$rtl = true;
+
 $messages = array(
 # User preference toggles
 'tog-underline'               => 'ربطو خط کشیدگی',
@@ -346,12 +348,11 @@ MySQL جوابِ خطاء پرائے "$3: $4"',
 'badtitle'             => 'خراب عنوان',
 'badtitletext'         => "'درخاس شدہ صفحہو عنوان ناقص، خالی، یا کیہ غلط ربط شدہ بین لسانی یا بین ویکی عنوان شیر.
 شاید ھیارا ای یا زیات ھش حروف موجود شینی کہ ھیت عنوانا استعمال نو بونیان.',",
-'perfcached'           => 'ذیلی ڈیٹا ابطن شدہ شیر وا ھمو بیکا امکان شیر',
-'perfcachedts'         => 'ذیلی ڈیٹا ابطن شدہ شیر وا آخری بار ھمو بتاریخیت $1 کورونو ہوئے.',
+'perfcached'           => 'ذیلی ڈیٹا ابطن شدہ شیر وا ھمو بیکا امکان شیر A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'ذیلی ڈیٹا ابطن شدہ شیر وا آخری بار ھمو بتاریخیت $1 کورونو ہوئے. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'ھیہ صفحہو بچے بتاریخات فی الحال ناقابل ساوزینو بیتی شینی. 
 ھمو ڈیٹا ھنیسے تازہ کورونو نو بوئے',
 'viewsource'           => 'مسودو لوڑے',
-'viewsourcefor'        => 'بچے $1',
 'actionthrottledtext'  => 'بطورِ ای ضدسپم تدبیر، تہ مختصار وختہ کئی دفعہ ھیہ کورومو کوریکو وجھین محدود کورونو ہوئے، وا تو ھیہ حدو پار کوری آسوس.
 براہِ کرم، ای کما میلیٹ آچہ کھوشش کورے',
 'protectedpagetext'    => 'ھیہ صفحہو تدویناری محفوظ لاکھیکو بچے قلف لیگینو بیتی شیر',
@@ -504,9 +505,6 @@ MySQL جوابِ خطاء پرائے "$3: $4"',
 'subject-preview'                  => 'عنوان/شہ سرخیو پیش منظر:',
 'blockedtitle'                     => 'صارفو بلاک کورونو بیتی شیر',
 'blockednoreason'                  => 'کیہ وجہ دیونو نو ھوی',
-'blockedoriginalsource'            => "'''$1''' مآخذو موڑا دیونو بیتی شیر:",
-'blockededitsource'                => "'''$1''' کورونو بیرو'''تہ  ترمیمان''' متن موڑا دیونو بیتی شیر:",
-'whitelistedittitle'               => 'ترمیم کوریکو بچے داخلِ نوشتہ بیک لازمی شیر',
 'whitelistedittext'                => 'ترمیم کوریکو بچے $1 ضروری شیر.',
 'nosuchsectiontitle'               => 'قطعہ ملاو نو ھوی',
 'loginreqtitle'                    => 'داخلہ / اندراج لازم',
@@ -574,9 +572,6 @@ MySQL جوابِ خطاء پرائے "$3: $4"',
 'revdel-restore'         => 'ظاہریتو تبدیل کورے',
 'revdel-restore-deleted' => 'حذف شدہ رویژنز',
 'revdel-restore-visible' => 'ویزیبل رویژنز',
-'revdelete-content'      => 'فھرست',
-'revdelete-hid'          => '$1 کھوشت ھوی',
-'revdelete-log-message'  => '$1 بچے $2 {{PLURAL:$2|نظرثانی|نظرثانی}}',
 
 # Merge log
 'revertmerge' => 'غیر ضم',
@@ -809,8 +804,7 @@ HTML tags لوڑے.',",
 'linksearch-line' => '$1 مربوط شیر $2 ری',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'نوشتۂ آمد صارف',
-'newuserlog-create-entry' => 'نوغ یوزر',
+'newuserlogpage' => 'نوشتۂ آمد صارف',
 
 # Special:ListGroupRights
 'listgrouprights-members' => 'ممبارانن فھرست',
@@ -841,7 +835,6 @@ HTML tags لوڑے.',",
 'actionfailed'          => 'تہ ایکشن ناکام ہوی',
 'deletedtext'           => '"$1" حذف کورونو بیتی شیر ۔
 حالیہ حذف شدگیو تاریخ نامو بچے  $2  لوڑے',
-'deletedarticle'        => 'حذف شدہ "[[$1]]"',
 'dellogpage'            => 'نوشتۂ حذف شدگی',
 'deletecomment'         => 'وجہ',
 'deleteotherreason'     => 'جوو/اِضافی وجہ',
@@ -873,7 +866,6 @@ HTML tags لوڑے.',",
 'undelete'         => 'ضائع کاردو صفحاتن لوڑے',
 'undeletelink'     => 'لوڑے/بحال کورے',
 'undeleteviewlink' => 'لوڑے',
-'undeletedarticle' => 'بحال "[[$1]]"',
 
 # Namespace form on various pages
 'namespace'      => 'نامو ژاغہ:',
@@ -931,19 +923,17 @@ HTML tags لوڑے.',",
 'block-log-flags-nocreate' => 'کھاتہ کھولاو کوریکو سورا پاوپندی شیر',
 
 # Move page
-'movearticle'     => 'مـنـتـقـل کـورے',
-'newtitle'        => 'نوغ عنوان',
-'move-watch'      => 'صفحہ زیر نظر',
-'movepagebtn'     => 'منتقل',
-'pagemovedsub'    => 'انتقال کامیاب',
-'movepage-moved'  => '\'\'\'"$1" ھیہ ووشکی منتقل کورونو ھوی "$2"\'\'\'',
-'articleexists'   => 'ھیہ عنوانو سورا کیہ صفحہ پروشٹیاری موجودشیر یا تہ درخواست کاردو  نام مستعمل نیکی براۓ مہربانی خور نامو منتخب کورے۔',
-'movedto'         => 'آلونو ھوی',
-'1movedto2'       => '[[$1]] ووشکی [[$2]] منتقل',
-'1movedto2_redir' => 'آلونو ھوی[[$1]] ری[[$2]] ری ڈایریکٹ کوری',
-'movelogpage'     => 'نوشتۂ منتقلی',
-'movereason'      => 'واجھہ',
-'revertmove'      => 'رجوغ',
+'movearticle'    => 'مـنـتـقـل کـورے',
+'newtitle'       => 'نوغ عنوان',
+'move-watch'     => 'صفحہ زیر نظر',
+'movepagebtn'    => 'منتقل',
+'pagemovedsub'   => 'انتقال کامیاب',
+'movepage-moved' => '\'\'\'"$1" ھیہ ووشکی منتقل کورونو ھوی "$2"\'\'\'',
+'articleexists'  => 'ھیہ عنوانو سورا کیہ صفحہ پروشٹیاری موجودشیر یا تہ درخواست کاردو  نام مستعمل نیکی براۓ مہربانی خور نامو منتخب کورے۔',
+'movedto'        => 'آلونو ھوی',
+'movelogpage'    => 'نوشتۂ منتقلی',
+'movereason'     => 'واجھہ',
+'revertmove'     => 'رجوغ',
 
 # Export
 'export' => 'برآمد صفحات',
@@ -1014,16 +1004,13 @@ HTML tags لوڑے.',",
 'tooltip-undo'                    => '"واپس" یا لوظ آچیا کلک کوریکو سوم جستہ تہ صفحہ کچا تہ پشینو بوی ھے سوم جستہ تو واپس کوریکو وجہ نیویشیکو بوس',
 'tooltip-summary'                 => 'ای مختصار سمری ساوزاوے',
 
-# Patrol log
-'patrol-log-diff' => '$1 نظرثانی',
-
 # Browsing diffs
 'previousdiff' => ' ← پرانو تدوین',
 'nextdiff'     => 'صفحہو نم:',
 
 # Media information
 'file-info-size' => '$1 × $2 پکسلز, فل سایز: $3, MIME ٹایپ: $4',
-'file-nohires'   => '<small>ھموغاری لوٹ ریزولیوشن دستیاب نیکی.</small>',
+'file-nohires'   => 'ھموغاری لوٹ ریزولیوشن دستیاب نیکی.',
 'svg-long-desc'  => 'SVG فایل, nominally $1 × $2 پکسلز, فایل سایز: $3',
 'show-big-image' => 'لوٹ کوری پشاوے',
 

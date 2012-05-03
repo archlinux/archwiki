@@ -20,7 +20,7 @@ class UploadFromUrlTest extends ApiTestCase {
 		}
 	}
 
-	protected function doApiRequest( $params, $unused = null, $appendModule = false ) {
+	protected function doApiRequest( $params, $unused = null, $appendModule = false, $user = null ) {
 		$sessionId = session_id();
 		session_write_close();
 
@@ -36,7 +36,10 @@ class UploadFromUrlTest extends ApiTestCase {
 	 * Ensure that the job queue is empty before continuing
 	 */
 	public function testClearQueue() {
-		while ( $job = Job::pop() ) { }
+		$job = Job::pop();
+		while ( $job ) {
+			$job = Job::pop();
+		}
 		$this->assertFalse( $job );
 	}
 
@@ -73,7 +76,7 @@ class UploadFromUrlTest extends ApiTestCase {
 	 * @depends testClearQueue
 	 */
 	public function testSetupUrlDownload( $data ) {
-		$token = $this->user->editToken();
+		$token = $this->user->getEditToken();
 		$exception = false;
 
 		try {
@@ -147,7 +150,7 @@ class UploadFromUrlTest extends ApiTestCase {
 	 * @depends testClearQueue
 	 */
 	public function testAsyncUpload( $data ) {
-		$token = $this->user->editToken();
+		$token = $this->user->getEditToken();
 
 		$this->user->addGroup( 'users' );
 
@@ -166,7 +169,7 @@ class UploadFromUrlTest extends ApiTestCase {
 	 * @depends testClearQueue
 	 */
 	public function testAsyncUploadWarning( $data ) {
-		$token = $this->user->editToken();
+		$token = $this->user->getEditToken();
 
 		$this->user->addGroup( 'users' );
 
@@ -197,7 +200,7 @@ class UploadFromUrlTest extends ApiTestCase {
 	 * @depends testClearQueue
 	 */
 	public function testSyncDownload( $data ) {
-		$token = $this->user->editToken();
+		$token = $this->user->getEditToken();
 
 		$job = Job::pop();
 		$this->assertFalse( $job, 'Starting with an empty jobqueue' );
@@ -221,7 +224,7 @@ class UploadFromUrlTest extends ApiTestCase {
 	}
 
 	public function testLeaveMessage() {
-		$token = $this->user->user->editToken();
+		$token = $this->user->user->getEditToken();
 
 		$talk = $this->user->user->getTalkPage();
 		if ( $talk->exists() ) {
@@ -274,7 +277,7 @@ class UploadFromUrlTest extends ApiTestCase {
 
 		return;
 
-		/**
+		/*
 		// Broken until using leavemessage with ignorewarnings is supported
 		$job->run();
 

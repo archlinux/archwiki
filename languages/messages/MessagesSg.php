@@ -7,8 +7,8 @@
  * @ingroup Language
  * @file
  *
+ * @author Ice201 (on sg.wikipedia.org)
  * @author Mdkidiri
- * @author sg.wikipedia.org sysops
  */
 
 $fallback = 'fr';
@@ -249,7 +249,7 @@ $messages = array(
 'yournick'      => 'Nyîmbâ:',
 
 # User rights
-'editinguser' => "Mo fa na mbi nyîmbâ '''[[User:$1|$1]]''' ([[User talk:$1|{{int:talkpagelinktext}}]] | [[Special:Contributions/$1|{{int:contribslink}}]])",
+'editinguser' => "Mo fa na mbi nyîmbâ '''[[User:$1|$1]]''' $2",
 
 # Recent changes
 'recentchanges' => 'Ndângbâ sänzëmä',

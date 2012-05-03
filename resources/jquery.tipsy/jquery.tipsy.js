@@ -1,10 +1,17 @@
 // tipsy, facebook style tooltips for jquery
-// version 1.0.0a
+// version 1.0.0a*
 // (c) 2008-2010 jason frame [jason@onehackoranother.com]
-// releated under the MIT license
+// released under the MIT license
+
+// * This installation of tipsy includes several local modifications to both Javascript and CSS.
+//   Please be careful when upgrading.
 
 (function($) {
-    
+
+	function maybeCall(thing, ctx) {
+		return (typeof thing == 'function') ? (thing.call(ctx)) : thing;
+	};
+	
     function fixTitle($ele) {
         if ($ele.attr('title') || typeof($ele.attr('original-title')) != 'string') {
             $ele.attr('original-title', $ele.attr('title') || '').removeAttr('title');
@@ -71,6 +78,9 @@
                 }
                 
                 $tip.css(tp).addClass('tipsy-' + gravity);
+                if (this.options.className) {
+                    $tip.addClass(maybeCall(this.options.className, this.$element[0]));
+                }
                 
                 if (this.options.fade) {
                     $tip.stop().css({opacity: 0, display: 'block', visibility: 'visible'}).animate({opacity: this.options.opacity}, 100);
@@ -174,6 +184,7 @@
     };
     
     $.fn.tipsy.defaults = {
+        className: null,
         delayIn: 0,
         delayOut: 0,
         fade: true,

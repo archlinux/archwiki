@@ -5,13 +5,13 @@
 
 var eventBase = 'ext.vector.sectionEditLinks-bucket:';
 var cookieBase = 'ext.vector.sectionEditLinks-';
+var bucket = null;
 
 if ( mw.config.get( 'wgVectorSectionEditLinksBucketTest', false ) ) {
 	// If the version in the client's cookie doesn't match wgVectorSectionEditLinksExperiment, then
 	// we need to disregard the bucket they may already be in to ensure accurate redistribution
 	var currentExperiment = $.cookie( cookieBase + 'experiment' );
 	var experiment = Number( mw.config.get( 'wgVectorSectionEditLinksExperiment', 0 ) );
-	var bucket = null;
 	if ( currentExperiment === null || Number( currentExperiment ) != experiment ) {
 		$.cookie( cookieBase + 'experiment', experiment );
 	} else {
@@ -32,7 +32,12 @@ if ( mw.config.get( 'wgVectorSectionEditLinksBucketTest', false ) ) {
 		}
 	}
 }
-if ( bucket > 0 ) {
+
+if ( bucket <= 0 ) {
+	return;
+}
+
+$(document).ready( function() {
 	// Transform the targets of section edit links to route through the click tracking API
 	var session = $.cookie( 'clicktracking-session' );
 	$( 'span.editsection a, #ca-edit a' ).each( function() {
@@ -70,6 +75,6 @@ if ( bucket > 0 ) {
 					.remove();
 		} );
 	}
-}
+} );
 
 } )( jQuery, mediaWiki );

@@ -5,7 +5,7 @@
  */
 class SiteStats {
 	static $row, $loaded = false;
-	static $admins, $jobs;
+	static $jobs;
 	static $pageCount = array();
 	static $groupMemberCounts = array();
 
@@ -207,7 +207,7 @@ class SiteStats {
 		}
 		// Now check for underflow/overflow
 		foreach( array( 'total_views', 'total_edits', 'good_articles',
-		'total_pages', 'users', 'admins', 'images' ) as $member ) {
+		'total_pages', 'users', 'images' ) as $member ) {
 			if(
 				$row->{"ss_$member"} > 2000000000
 				|| $row->{"ss_$member"} < 0
@@ -220,9 +220,9 @@ class SiteStats {
 }
 
 /**
- *
+ * Class for handling updates to the site_stats table
  */
-class SiteStatsUpdate {
+class SiteStatsUpdate implements DeferrableUpdate {
 
 	var $mViews, $mEdits, $mGood, $mPages, $mUsers;
 
@@ -268,9 +268,9 @@ class SiteStatsUpdate {
 			$sql = "UPDATE $site_stats SET $updates";
 
 			# Need a separate transaction because this a global lock
-			$dbw->begin();
+			$dbw->begin( __METHOD__ );
 			$dbw->query( $sql, __METHOD__ );
-			$dbw->commit();
+			$dbw->commit( __METHOD__ );
 		}
 	}
 
@@ -407,9 +407,9 @@ class SiteStatsInit {
 
 	/**
 	 * Do all updates and commit them. More or less a replacement
-	 * for the original initStats, but without the calls to wfOut()
+	 * for the original initStats, but without output.
 	 *
-	 * @param $database Boolean or DatabaseBase:
+	 * @param $database DatabaseBase|bool
 	 * - Boolean: whether to use the master DB
 	 * - DatabaseBase: database connection to use
 	 * @param $options Array of options, may contain the following values

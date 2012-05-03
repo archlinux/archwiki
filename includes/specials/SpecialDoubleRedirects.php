@@ -38,7 +38,7 @@ class DoubleRedirectsPage extends PageQueryPage {
 	function sortDescending() { return false; }
 
 	function getPageHeader() {
-		return wfMsgExt( 'doubleredirectstext', array( 'parse' ) );
+		return $this->msg( 'doubleredirectstext' )->parseAsBlock();
 	}
 
 	function reallyGetQueryInfo( $namespace = null, $title = null ) {
@@ -49,6 +49,7 @@ class DoubleRedirectsPage extends PageQueryPage {
 					'pb' => 'page', 'pc' => 'page' ),
 			'fields' => array ( 'pa.page_namespace AS namespace',
 					'pa.page_title AS title',
+					'pa.page_title AS value',
 					'pb.page_namespace AS nsb',
 					'pb.page_title AS tb',
 					'pc.page_namespace AS nsc',
@@ -76,8 +77,6 @@ class DoubleRedirectsPage extends PageQueryPage {
 	}
 
 	function formatResult( $skin, $result ) {
-		global $wgLang;
-
 		$titleA = Title::makeTitle( $result->namespace, $result->title );
 
 		if ( $result && !isset( $result->nsb ) ) {
@@ -91,35 +90,40 @@ class DoubleRedirectsPage extends PageQueryPage {
 			}
 		}
 		if ( !$result ) {
-			return '<del>' . $skin->link( $titleA, null, array(), array( 'redirect' => 'no' ) ) . '</del>';
+			return '<del>' . Linker::link( $titleA, null, array(), array( 'redirect' => 'no' ) ) . '</del>';
 		}
 
 		$titleB = Title::makeTitle( $result->nsb, $result->tb );
 		$titleC = Title::makeTitle( $result->nsc, $result->tc );
 
-		$linkA = $skin->linkKnown(
+		$linkA = Linker::linkKnown(
 			$titleA,
 			null,
 			array(),
 			array( 'redirect' => 'no' )
 		);
-		$edit = $skin->linkKnown(
+
+		$edit = Linker::linkKnown(
 			$titleA,
-			wfMsgExt( 'parentheses', array( 'escape' ), wfMsg( 'editlink' ) ),
+			$this->msg( 'parentheses', $this->msg( 'editlink' )->text() )->escaped(),
 			array(),
 			array(
 				'redirect' => 'no',
 				'action' => 'edit'
 			)
 		);
-		$linkB = $skin->linkKnown(
+
+		$linkB = Linker::linkKnown(
 			$titleB,
 			null,
 			array(),
 			array( 'redirect' => 'no' )
 		);
-		$linkC = $skin->linkKnown( $titleC );
-		$arr = $wgLang->getArrow() . $wgLang->getDirMark();
+
+		$linkC = Linker::linkKnown( $titleC );
+
+		$lang = $this->getLanguage();
+		$arr = $lang->getArrow() . $lang->getDirMark();
 
 		return( "{$linkA} {$edit} {$arr} {$linkB} {$arr} {$linkC}" );
 	}

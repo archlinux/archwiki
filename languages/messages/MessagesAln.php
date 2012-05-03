@@ -49,16 +49,16 @@ $specialPageAliases = array(
 );
 
 $magicWords = array(
-	'currentmonth'          => array( '1', 'MUEJIAKTUAL', 'MUEJIAKTUAL2', 'MUAJIMOMENTAL', 'MUAJIMOMENTAL2', 'CURRENTMONTH', 'CURRENTMONTH2' ),
-	'currentmonth1'         => array( '1', 'MUEJIAKTUAL1', 'MUAJIMOMENTAL1', 'CURRENTMONTH1' ),
-	'currentmonthname'      => array( '1', 'EMNIMUEJITAKTUAL', 'EMRIIMUAJITMOMENTAL', 'CURRENTMONTHNAME' ),
-	'currenttime'           => array( '1', 'KOHATASH', 'KOHATANI', 'CURRENTTIME' ),
-	'currenthour'           => array( '1', 'ORATASH', 'ORATANI', 'CURRENTHOUR' ),
-	'localmonth'            => array( '1', 'MUEJILOKAL', 'MUAJILOKAL', 'LOCALMONTH', 'LOCALMONTH2' ),
-	'img_center'            => array( '1', 'qendër', 'qendrore', 'qëndër', 'qëndrore', 'center', 'centre' ),
-	'img_baseline'          => array( '1', 'vijabazë', 'linjabazë', 'baseline' ),
-	'servername'            => array( '0', 'EMNISERVERIT', 'EMRIISERVERIT', 'SERVERNAME' ),
-	'currentweek'           => array( '1', 'JAVAAKTUALE', 'JAVAMOMENTALE', 'CURRENTWEEK' ),
+	'currentmonth'            => array( '1', 'MUEJIAKTUAL', 'MUEJIAKTUAL2', 'MUAJIMOMENTAL', 'MUAJIMOMENTAL2', 'CURRENTMONTH', 'CURRENTMONTH2' ),
+	'currentmonth1'           => array( '1', 'MUEJIAKTUAL1', 'MUAJIMOMENTAL1', 'CURRENTMONTH1' ),
+	'currentmonthname'        => array( '1', 'EMNIMUEJITAKTUAL', 'EMRIIMUAJITMOMENTAL', 'CURRENTMONTHNAME' ),
+	'currenttime'             => array( '1', 'KOHATASH', 'KOHATANI', 'CURRENTTIME' ),
+	'currenthour'             => array( '1', 'ORATASH', 'ORATANI', 'CURRENTHOUR' ),
+	'localmonth'              => array( '1', 'MUEJILOKAL', 'MUAJILOKAL', 'LOCALMONTH', 'LOCALMONTH2' ),
+	'img_center'              => array( '1', 'qendër', 'qendrore', 'qëndër', 'qëndrore', 'center', 'centre' ),
+	'img_baseline'            => array( '1', 'vijabazë', 'linjabazë', 'baseline' ),
+	'servername'              => array( '0', 'EMNISERVERIT', 'EMRIISERVERIT', 'SERVERNAME' ),
+	'currentweek'             => array( '1', 'JAVAAKTUALE', 'JAVAMOMENTALE', 'CURRENTWEEK' ),
 );
 
 $messages = array(
@@ -415,15 +415,14 @@ Ndodh që âsht fshi prej dikujt tjetër.',
 'badtitle'             => 'Titull i keq',
 'badtitletext'         => 'Titulli i faqes që kërkuet ishte jovalid, bosh, apo ishte nji vegëz gabim e lidhun ndërgjuhesisht apo ndër-wiki.
 Ndodh që ka shêja që nuk munden me u përdorë në titull.',
-'perfcached'           => 'Informacioni i mâposhtëm âsht kopje e memorizueme, por mundet mos me qenë verzioni i fundit:',
-'perfcachedts'         => 'Shenimi i mâposhtëm âsht kopje e memorizueme dhe âsht rifreskue së fundit me $1.',
+'perfcached'           => 'Informacioni i mâposhtëm âsht kopje e memorizueme, por mundet mos me qenë verzioni i fundit. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'Shenimi i mâposhtëm âsht kopje e memorizueme dhe âsht rifreskue së fundit me $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'Redaktimi i kësaj faqeje âsht ndalue për momentin.
 Shenimet këtu nuk do të rifreskohen.',
 'wrong_wfQuery_params' => 'Parametra gabim te wfQuery()<br />
 Funksioni: $1<br />
 Kërkesa: $2',
 'viewsource'           => 'Shih kodin',
-'viewsourcefor'        => 'e $1',
 'actionthrottled'      => 'Veprimi âsht i kufizuem',
 'actionthrottledtext'  => 'Si masë kunder spamit, jeni të kufizuem me kry këtë veprim shumë herë për nji kohë shumë të shkurtë, dhe e keni tejkalue këtë kufizim.
 Ju lutemi provoni prap mbas disa minutave.',
@@ -640,9 +639,6 @@ Nuk mundeni me shfrytëzue funksionin 'dërgo email këtij përdoruesi' përveç
 Adresa juej aktuale e IP âsht $3, dhe ID e bllokimit âsht #$5.
 Ju lutemi përfshini këto shenime në të gjitha shkresat që i bâni.",
 'blockednoreason'                  => 'nuk âsht dhânë arsye',
-'blockedoriginalsource'            => "Kodi burimor i '''$1''' âsht mâ poshtë:",
-'blockededitsource'                => "Teksti i '''redaktimeve tueja''' të '''$1''' âsht mâ poshtë:",
-'whitelistedittitle'               => 'Lypet kyçje për me mujtë me redaktue',
 'whitelistedittext'                => 'Duheni me u $1 për me redaktue artikuj.',
 'confirmedittext'                  => 'Duheni me vërtetue adresën tuej të emailit para se me redaktue.
 Ju lutemi vërtetoni adresën tuej të emailit përmjet [[Special:Preferences|parapëlqimeve]] tueja.',
@@ -842,22 +838,11 @@ Shiko tek [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} regjistr
 'revdelete-unsuppress'        => 'Hiq kufizimet nga versionet e restauruara',
 'revdelete-log'               => 'Arsyeja:',
 'revdelete-submit'            => 'Apliko te versionet e zgjedhura',
-'revdelete-logentry'          => 'Pamja e versionit u ndryshua për [[$1]]',
-'logdelete-logentry'          => 'u ndryshua dukshmëria e ngjarjes së [[$1]]',
 'revdelete-success'           => "'''Dukshmëria e versioneve u vendos me sukses.'''",
 'logdelete-success'           => "'''Dukshmëria e regjistrave u vendos me sukses.'''",
 'revdel-restore'              => 'ndrro dukshmëninë',
 'pagehist'                    => 'Historiku i faqes',
 'deletedhist'                 => 'Historiku i grisjeve',
-'revdelete-content'           => 'përmbajtja',
-'revdelete-summary'           => 'përmbledhja redaktimit',
-'revdelete-uname'             => 'përdoruesi',
-'revdelete-restricted'        => 'u vendosën kufizime për administruesit',
-'revdelete-unrestricted'      => 'u hoqën kufizimet për administruesit',
-'revdelete-hid'               => 'u fsheh $1',
-'revdelete-unhid'             => 'u tregua $1',
-'revdelete-log-message'       => '$1 për $2 {{PLURAL:$2|version|versione}}',
-'logdelete-log-message'       => '$1 për $2 {{PLURAL:$2|ngjarje|ngjarje}}',
 'revdelete-edit-reasonlist'   => 'Arsye grisjeje për redaktimet',
 
 # Suppression log
@@ -993,7 +978,7 @@ Vini re se indeksat e tyne të përmbajtjes së {{SITENAME}} munden me qenë të
 'prefs-rc'                      => 'Ndryshimet e freskëta',
 'prefs-watchlist'               => 'Lista e mbikëqyrjeve',
 'prefs-watchlist-days'          => 'Numri i ditëve me i tregue në listën e mbikëqyrjeve:',
-'prefs-watchlist-days-max'      => 'Maksimalisht 7 ditë',
+'prefs-watchlist-days-max'      => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'         => 'Numri maksimal i ndryshimeve që tregohen në listën e zgjânueme të mbikëqyrjes:',
 'prefs-watchlist-edits-max'     => 'Numri maksimal: 1000',
 'prefs-misc'                    => 'Të ndryshme',
@@ -1149,6 +1134,7 @@ Mundeni me zgjedhe që të tjerët me ju kontaktue përmjet faqe së diskutimit 
 'right-unwatchedpages'   => 'Shiko listën e faqeve të pa vëzhguara',
 'right-mergehistory'     => 'Bashko historinë e faqeve',
 'right-userrights'       => 'Redakto të gjitha të drejtat e përdoruesit',
+'right-passwordreset'    => 'Fjalëkalimi Reset e një përdoruesi ([[Special:PasswordReset|faqe veçantë]])',
 
 # User rights log
 'rightslog'      => 'Regjsitri i tagrit të përdoruesve',
@@ -1293,8 +1279,7 @@ Faqet në [[Special:Watchlist|listën tuej të mbikëqyrjes]] janë '''të theks
 'linksearch' => 'Vegzat e jashtme',
 
 # Special:Log/newusers
-'newuserlogpage'          => 'Regjistri i krijimit të përdoruesve',
-'newuserlog-create-entry' => 'Përdorues i ri',
+'newuserlogpage' => 'Regjistri i krijimit të përdoruesve',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(lista e antarëve)',
@@ -1326,7 +1311,6 @@ Ju lutemi konfirmoni që kjo âsht ajo që deshtët me bâ, që i keni të njoft
 'actioncomplete'        => 'Veprimi u kry',
 'deletedtext'           => '"$1" âsht fshi.
 Shih $2 për regjistrin e fshimjeve të fundit.',
-'deletedarticle'        => 'grisi "[[$1]]"',
 'dellogpage'            => 'Regjistri i fshimjeve',
 'deletecomment'         => 'Arsyeja:',
 'deleteotherreason'     => 'Arsyet tjera/shtesë:',
@@ -1362,7 +1346,6 @@ Mundeni me ndryshue nivelin e mbrojtjes për këtë faqe, por kjo nuk ka me prek
 # Undelete
 'undeletelink'     => 'shih/kthe',
 'undeleteviewlink' => 'shih',
-'undeletedarticle' => 'u rikthye "[[$1]]"',
 
 # Namespace form on various pages
 'namespace'      => 'Hapësira:',
@@ -1453,8 +1436,6 @@ Ju lutemi zgjedhni nji titull tjetër.',
 Ju lutemi bashkoni manualisht.'''",
 'movedto'          => 'zhvendosur te',
 'movetalk'         => 'Zhvendos faqen gjegjëse të diskutimeve',
-'1movedto2'        => '[[$1]] u zhvendos në [[$2]]',
-'1movedto2_redir'  => '[[$1]] u zhvendos te [[$2]] përmjet përcjelljes',
 'movelogpage'      => 'Regjistri i zhvendosjeve',
 'movereason'       => 'Arsyeja:',
 'revertmove'       => 'kthe mbrapsht',
@@ -1572,7 +1553,7 @@ Lejon dhânien e arsyes në përmbledhje.',
 
 # Media information
 'file-info-size' => '$1 × $2 pixela, madhësia e skedës: $3, tipi MIME: $4',
-'file-nohires'   => '<small>Rezolucioni i plotë.</small>',
+'file-nohires'   => 'Rezolucioni i plotë.',
 'svg-long-desc'  => 'skeda SVG, $1 × $2 pixela, madhësia: $3',
 'show-big-image' => 'Rezolucion i plotë',
 
@@ -1633,5 +1614,9 @@ Tjerat kanë me mbetë të mshefuna.
 
 # Special:SpecialPages
 'specialpages' => 'Faqet e posaçme',
+
+# New logging system
+'revdelete-restricted'   => 'u vendosën kufizime për administruesit',
+'revdelete-unrestricted' => 'u hoqën kufizimet për administruesit',
 
 );

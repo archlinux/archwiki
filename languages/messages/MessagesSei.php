@@ -298,14 +298,13 @@ Sysop zo locköx zo xuniim jan rae': $1",
 'badtitle'             => 'Ahisharliit',
 'badtitletext'         => 'Zo páhina coccebj ahisharliit zo.
 Jan pos-coccebj plusöxde 1 jöx 1 characterám jan nepos-coccebj usadas titlenám iti.',
-'perfcached'           => 'Jan data coccebj cache ö necoccebj updatenom.',
-'perfcachedts'         => "Jan data coccebj cache ö coccebjöx updatenom $1 'de.",
+'perfcached'           => 'Jan data coccebj cache ö necoccebj updatenom. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => "Jan data coccebj cache ö coccebjöx updatenom $1 'de. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.",
 'querypage-no-updates' => 'Updatenámde jan páhina coccebj disablenöx cmaa. Jan data necanj cmaa.',
 'wrong_wfQuery_params' => 'Parameterám incorrectámde wfQuery()<br />
 Funccion: $1<br />
 Query: $2',
 'viewsource'           => 'Cohuatlöx sourcenam',
-'viewsourcefor'        => '$1 mii',
 'protectedpagetext'    => 'Jan páhina coccebj lockom neticpatlöx pos-poop.',
 'viewsourcetext'       => 'Mecohuatlöx ö copynom sourcenam zode jan páhina:',
 'protectedinterface'   => "Jan páhina coccebj textuade interface software zo 'de ö coccebj lockom neticpatlöx abusenam.",
@@ -455,9 +454,6 @@ Me contactam $1 jöx pac [[{{MediaWiki:Grouppage-sysop}}|sysop]] discussom iti b
 Me nenusor e-iitom päzxo hab' adressade e-iitom validom coccebj [[Special:Preferences|mequáatlaác]] ö'me neblockomde e-iitom.
 
 Me IDde block coccebj $5. Includam 1 jöx 2 pac querinám iti.",
-'blockedoriginalsource'     => "Sourcenam zode '''$1''' coccebj cohuatlöx:",
-'blockededitsource'         => "Textua zode '''meticpatlöxde''' '''$1''' coccebj cohuatlöx:",
-'whitelistedittitle'        => 'Caápo Neces ticpatlöx',
 'whitelistedittext'         => 'Mecoccebj $1 ticpatlöx páhinám.',
 'confirmedittext'           => "Me confirmöx menadressade de e-iitom ticpatlöx 'depre. Set' ö validatenan menadressade IP [[Special:Preferences|hequáatlaác]] mii.",
 'nosuchsectiontitle'        => "Ne'dáár partam",
@@ -572,8 +568,6 @@ Informacion: (curt) = quiíxde vercion currentua,
 'revdelete-hide-comment'  => 'Camaát commentuade ticpatlöx',
 'revdelete-hide-user'     => 'Camaát IDde caitom/IDde IP',
 'revdelete-log'           => 'Ra:',
-'revdelete-logentry'      => 'quiixöx revicion visibilitiitde [[$1]]',
-'logdelete-logentry'      => 'quiixöx eventua visibilitiitde [[$1]]',
 
 # Diffs
 'history-title'           => 'Históriade revicionde "$1"',
@@ -978,7 +972,6 @@ iitom e-iitomde diijömde caitóm.',
 'movepagebtn'      => 'Yacom páhina',
 'movedto'          => 'yacomöxde',
 'movetalk'         => 'Yacom czaxö páhina yodina ipríi',
-'1movedto2'        => '[[$1]] yacomöxde [[$2]]',
 'movereason'       => 'Ra:',
 'delete_and_move'  => 'Delatom ö yacom',
 

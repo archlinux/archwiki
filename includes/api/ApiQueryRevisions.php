@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * A query action to enumerate revisions of a given page, or show top revisions of multiple pages.
  * Various pieces of information may be shown - flags, comments, and the actual wiki markup of the rev.
@@ -84,8 +79,8 @@ class ApiQueryRevisions extends ApiQueryBase {
 		if ( !$wgUser->isAllowed( 'rollback' ) ) {
 			return false;
 		}
-		return $wgUser->editToken( array( $title->getPrefixedText(),
-						$rev->getUserText() ) );
+		return $wgUser->getEditToken(
+			array( $title->getPrefixedText(), $rev->getUserText() ) );
 	}
 
 	public function execute() {
@@ -159,6 +154,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 		$this->fld_comment = isset ( $prop['comment'] );
 		$this->fld_parsedcomment = isset ( $prop['parsedcomment'] );
 		$this->fld_size = isset ( $prop['size'] );
+		$this->fld_sha1 = isset ( $prop['sha1'] );
 		$this->fld_userid = isset( $prop['userid'] );
 		$this->fld_user = isset ( $prop['user'] );
 		$this->token = $params['token'];
@@ -196,7 +192,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 		if ( isset( $prop['content'] ) || !is_null( $this->difftotext ) ) {
 			// For each page we will request, the user must have read rights for that page
 			foreach ( $pageSet->getGoodTitles() as $title ) {
-				if ( !$title->userCanRead() ) {
+				if ( !$title->userCan( 'read' ) ) {
 					$this->dieUsage(
 						'The current user is not allowed to read ' . $title->getPrefixedText(),
 						'accessdenied' );
@@ -409,8 +405,20 @@ class ApiQueryRevisions extends ApiQueryBase {
 			$vals['timestamp'] = wfTimestamp( TS_ISO_8601, $revision->getTimestamp() );
 		}
 
-		if ( $this->fld_size && !is_null( $revision->getSize() ) ) {
-			$vals['size'] = intval( $revision->getSize() );
+		if ( $this->fld_size ) {
+			if ( !is_null( $revision->getSize() ) ) {
+				$vals['size'] = intval( $revision->getSize() );
+			} else {
+				$vals['size'] = 0;
+			}
+		}
+
+		if ( $this->fld_sha1 ) {
+			if ( $revision->getSha1() != '' ) {
+				$vals['sha1'] = wfBaseConvert( $revision->getSha1(), 36, 16, 40 );
+			} else {
+				$vals['sha1'] = '';
+			}
 		}
 
 		if ( $this->fld_comment || $this->fld_parsedcomment ) {
@@ -424,8 +432,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 				}
 
 				if ( $this->fld_parsedcomment ) {
-					global $wgUser;
-					$vals['parsedcomment'] = $wgUser->getSkin()->formatComment( $comment, $title );
+					$vals['parsedcomment'] = Linker::formatComment( $comment, $title );
 				}
 			}
 		}
@@ -468,7 +475,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 		}
 		if ( $this->fld_content && !$revision->isDeleted( Revision::DELETED_TEXT ) ) {
 			if ( $this->generateXML ) {
-				$wgParser->startExternalParse( $title, new ParserOptions(), OT_PREPROCESS );
+				$wgParser->startExternalParse( $title, ParserOptions::newFromContext( $this->getContext() ), OT_PREPROCESS );
 				$dom = $wgParser->preprocessToDom( $text );
 				if ( is_callable( array( $dom, 'saveXML' ) ) ) {
 					$xml = $dom->saveXML();
@@ -479,10 +486,10 @@ class ApiQueryRevisions extends ApiQueryBase {
 
 			}
 			if ( $this->expandTemplates && !$this->parseContent ) {
-				$text = $wgParser->preprocess( $text, $title, new ParserOptions() );
+				$text = $wgParser->preprocess( $text, $title, ParserOptions::newFromContext( $this->getContext() ) );
 			}
 			if ( $this->parseContent ) {
-				$text = $wgParser->parse( $text, $title, new ParserOptions() )->getText();
+				$text = $wgParser->parse( $text, $title, ParserOptions::newFromContext( $this->getContext() ) )->getText();
 			}
 			ApiResult::setContent( $vals, $text );
 		} elseif ( $this->fld_content ) {
@@ -494,11 +501,13 @@ class ApiQueryRevisions extends ApiQueryBase {
 			static $n = 0; // Number of uncached diffs we've had
 			if ( $n < $wgAPIMaxUncachedDiffs ) {
 				$vals['diff'] = array();
+				$context = new DerivativeContext( $this->getContext() );
+				$context->setTitle( $title );
 				if ( !is_null( $this->difftotext ) ) {
-					$engine = new DifferenceEngine( $title );
+					$engine = new DifferenceEngine( $context );
 					$engine->setText( $text, $this->difftotext );
 				} else {
-					$engine = new DifferenceEngine( $title, $revision->getID(), $this->diffto );
+					$engine = new DifferenceEngine( $context, $revision->getID(), $this->diffto );
 					$vals['diff']['from'] = $engine->getOldid();
 					$vals['diff']['to'] = $engine->getNewid();
 				}
@@ -537,6 +546,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 					'user',
 					'userid',
 					'size',
+					'sha1',
 					'comment',
 					'parsedcomment',
 					'content',
@@ -599,7 +609,8 @@ class ApiQueryRevisions extends ApiQueryBase {
 				' timestamp      - The timestamp of the revision',
 				' user           - User that made the revision',
 				' userid         - User id of revision creator',
-				' size           - Length of the revision',
+				' size           - Length (bytes) of the revision',
+				' sha1           - SHA-1 (base 16) of the revision',
 				' comment        - Comment by the user for revision',
 				' parsedcomment  - Parsed comment by the user for the revision',
 				' content        - Text of the revision',
@@ -651,15 +662,15 @@ class ApiQueryRevisions extends ApiQueryBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Get data with content for the last revision of titles "API" and "Main Page":',
+			'Get data with content for the last revision of titles "API" and "Main Page"',
 			'  api.php?action=query&prop=revisions&titles=API|Main%20Page&rvprop=timestamp|user|comment|content',
-			'Get last 5 revisions of the "Main Page":',
+			'Get last 5 revisions of the "Main Page"',
 			'  api.php?action=query&prop=revisions&titles=Main%20Page&rvlimit=5&rvprop=timestamp|user|comment',
-			'Get first 5 revisions of the "Main Page":',
+			'Get first 5 revisions of the "Main Page"',
 			'  api.php?action=query&prop=revisions&titles=Main%20Page&rvlimit=5&rvprop=timestamp|user|comment&rvdir=newer',
-			'Get first 5 revisions of the "Main Page" made after 2006-05-01:',
+			'Get first 5 revisions of the "Main Page" made after 2006-05-01',
 			'  api.php?action=query&prop=revisions&titles=Main%20Page&rvlimit=5&rvprop=timestamp|user|comment&rvdir=newer&rvstart=20060501000000',
 			'Get first 5 revisions of the "Main Page" that were not made made by anonymous user "127.0.0.1"',
 			'  api.php?action=query&prop=revisions&titles=Main%20Page&rvlimit=5&rvprop=timestamp|user|comment&rvexcludeuser=127.0.0.1',

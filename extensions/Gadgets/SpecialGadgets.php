@@ -20,7 +20,7 @@ class SpecialGadgets extends SpecialPage {
 
 	/**
 	 * Main execution function
-	 * @param $par Parameters passed to the page
+	 * @param $par array Parameters passed to the page
 	 */
 	function execute( $par ) {
 		$parts = explode( '/', $par );
@@ -37,8 +37,6 @@ class SpecialGadgets extends SpecialPage {
 	 */
 	public function showMainForm() {
 		global $wgOut, $wgUser, $wgLang, $wgContLang;
-
-		$skin = $wgUser->getSkin();
 
 		$this->setHeaders();
 		$wgOut->setPagetitle( wfMsg( "gadgets-title" ) );
@@ -62,7 +60,7 @@ class SpecialGadgets extends SpecialPage {
 				$t = Title::makeTitleSafe( NS_MEDIAWIKI, "Gadget-section-$section$lang" );
 				if ( $editInterfaceAllowed ) {
 					$lnkTarget = $t
-						? $skin->link( $t, wfMsgHTML( 'edit' ), array(), array( 'action' => 'edit' ) )
+						? Linker::link( $t, wfMsgHTML( 'edit' ), array(), array( 'action' => 'edit' ) )
 						: htmlspecialchars( $section );
 					$lnk =  "&#160; &#160; [$lnkTarget]";
 				} else {
@@ -79,6 +77,9 @@ class SpecialGadgets extends SpecialPage {
 				$wgOut->addHTML( Html::rawElement( 'h2', array(), $ttext . $lnk ) . "\n" );
 			}
 
+			/**
+			 * @var $gadget Gadget
+			 */
 			foreach ( $entries as $gadget ) {
 				$t = Title::makeTitleSafe( NS_MEDIAWIKI, "Gadget-{$gadget->getName()}$lang" );
 
@@ -88,10 +89,10 @@ class SpecialGadgets extends SpecialPage {
 
 				$links = array();
 				if ( $editInterfaceAllowed ) {
-					$links[] = $skin->link( $t, wfMsgHTML( 'edit' ), array(), array( 'action' => 'edit' ) );
+					$links[] = Linker::link( $t, wfMsgHTML( 'edit' ), array(), array( 'action' => 'edit' ) );
 				}
 
-				$links[] = $skin->link( $this->getTitle( "export/{$gadget->getName()}" ), wfMsgHtml( 'gadgets-export' ) );
+				$links[] = Linker::link( $this->getTitle( "export/{$gadget->getName()}" ), wfMsgHtml( 'gadgets-export' ) );
 
 				$ttext = wfMsgExt( "gadget-{$gadget->getName()}", $msgOpt );
 
@@ -114,7 +115,7 @@ class SpecialGadgets extends SpecialPage {
 						continue;
 					}
 
-					$lnk[] = $skin->link( $t, htmlspecialchars( $t->getText() ) );
+					$lnk[] = Linker::link( $t, htmlspecialchars( $t->getText() ) );
 				}
 				$wgOut->addHTML( $wgLang->commaList( $lnk ) );
 
@@ -169,6 +170,9 @@ class SpecialGadgets extends SpecialPage {
 			return;
 		}
 
+		/**
+		 * @var $g Gadget
+		 */
 		$g = $gadgets[$gadget];
 		$this->setHeaders();
 		$wgOut->setPagetitle( wfMsg( "gadgets-export-title" ) );

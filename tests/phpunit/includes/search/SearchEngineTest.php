@@ -12,7 +12,7 @@ class SearchEngineTest extends MediaWikiTestCase {
 		unset( $this->search );
 	}
 
-	/*
+	/**
 	 * Checks for database type & version.
 	 * Will skip current test if DB does not support search.
 	 */
@@ -64,8 +64,10 @@ class SearchEngineTest extends MediaWikiTestCase {
 		$this->assertTrue( is_object( $results ) );
 
 		$matches = array();
-		while ( $row = $results->next() ) {
+		$row = $results->next();
+		while ( $row ) {
 			$matches[] = $row->getTitle()->getPrefixedText();
+			$row = $results->next();
 		}
 		$results->free();
 		# Search is not guaranteed to return results in a certain order;
@@ -83,20 +85,18 @@ class SearchEngineTest extends MediaWikiTestCase {
 	 * @param $n Integer: unused
 	 */
 	function insertPage( $pageName, $text, $ns ) {
-		$dbw = $this->db;
 		$title = Title::newFromText( $pageName );
 
 		$user = User::newFromName( 'WikiSysop' );
 		$comment = 'Search Test';
 
 		// avoid memory leak...?
-		$linkCache = LinkCache::singleton();
-		$linkCache->clear();
+		LinkCache::singleton()->clear();
 
-		$article = new Article( $title );
-		$article->doEdit( $text, $comment, 0, false, $user );
+		$page = WikiPage::factory( $title );
+		$page->doEdit( $text, $comment, 0, false, $user );
 
-		$this->pageList[] = array( $title, $article->getId() );
+		$this->pageList[] = array( $title, $page->getId() );
 
 		return true;
 	}

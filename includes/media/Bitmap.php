@@ -12,7 +12,6 @@
  * @ingroup Media
  */
 class BitmapHandler extends ImageHandler {
-
 	/**
 	 * @param $image File
 	 * @param $params array Transform parameters. Entries with the keys 'width'
@@ -21,12 +20,10 @@ class BitmapHandler extends ImageHandler {
 	 * @return bool
 	 */
 	function normaliseParams( $image, &$params ) {
-		global $wgMaxImageArea;
 		if ( !parent::normaliseParams( $image, $params ) ) {
 			return false;
 		}
 
-		$mimeType = $image->getMimeType();
 		# Obtain the source, pre-rotation dimensions
 		$srcWidth = $image->getWidth( $params['page'] );
 		$srcHeight = $image->getHeight( $params['page'] );
@@ -43,18 +40,26 @@ class BitmapHandler extends ImageHandler {
 			}
 		}
 
-		# Don't thumbnail an image so big that it will fill hard drives and send servers into swap
-		# JPEG has the handy property of allowing thumbnailing without full decompression, so we make
-		# an exception for it.
-		# @todo FIXME: This actually only applies to ImageMagick
-		if ( $mimeType !== 'image/jpeg' &&
-			$srcWidth * $srcHeight > $wgMaxImageArea )
-		{
-			return false;
+		# Check if the file is smaller than the maximum image area for thumbnailing
+		$checkImageAreaHookResult = null;
+		wfRunHooks( 'BitmapHandlerCheckImageArea', array( $image, &$params, &$checkImageAreaHookResult ) );
+		if ( is_null( $checkImageAreaHookResult ) ) {
+			global $wgMaxImageArea;
+
+			if ( $srcWidth * $srcHeight > $wgMaxImageArea &&
+					!( $image->getMimeType() == 'image/jpeg' &&
+						self::getScalerType( false, false ) == 'im' ) ) {
+				# Only ImageMagick can efficiently downsize jpg images without loading
+				# the entire file in memory
+				return false;
+			}
+		} else {
+			return $checkImageAreaHookResult;
 		}
 
 		return true;
 	}
+
 
 	/**
 	 * Extracts the width/height if the image will be scaled before rotating
@@ -81,10 +86,15 @@ class BitmapHandler extends ImageHandler {
 	}
 
 
-	// Function that returns the number of pixels to be thumbnailed.
-	// Intended for animated GIFs to multiply by the number of frames.
-	function getImageArea( $image, $width, $height ) {
-		return $width * $height;
+	/**
+	 * Function that returns the number of pixels to be thumbnailed.
+	 * Intended for animated GIFs to multiply by the number of frames.
+	 *
+	 * @param File $image
+	 * @return int
+	 */
+	function getImageArea( $image ) {
+		return $image->getWidth() * $image->getHeight();
 	}
 
 	/**
@@ -115,12 +125,14 @@ class BitmapHandler extends ImageHandler {
 			'srcWidth' => $image->getWidth(),
 			'srcHeight' => $image->getHeight(),
 			'mimeType' => $image->getMimeType(),
-			'srcPath' => $image->getPath(),
 			'dstPath' => $dstPath,
 			'dstUrl' => $dstUrl,
 		);
 
-		wfDebug( __METHOD__ . ": creating {$scalerParams['physicalDimensions']} thumbnail at $dstPath\n" );
+		# Determine scaler type
+		$scaler = self::getScalerType( $dstPath );
+
+		wfDebug( __METHOD__ . ": creating {$scalerParams['physicalDimensions']} thumbnail at $dstPath using scaler $scaler\n" );
 
 		if ( !$image->mustRender() &&
 				$scalerParams['physicalWidth'] == $scalerParams['srcWidth']
@@ -131,9 +143,6 @@ class BitmapHandler extends ImageHandler {
 			return $this->getClientScalingThumbnailImage( $image, $scalerParams );
 		}
 
-		# Determine scaler type
-		$scaler = self::getScalerType( $dstPath );
-		wfDebug( __METHOD__ . ": scaler $scaler\n" );
 
 		if ( $scaler == 'client' ) {
 			# Client-side image scaling, use the source URL
@@ -144,14 +153,17 @@ class BitmapHandler extends ImageHandler {
 		if ( $flags & self::TRANSFORM_LATER ) {
 			wfDebug( __METHOD__ . ": Transforming later per flags.\n" );
 			return new ThumbnailImage( $image, $dstUrl, $scalerParams['clientWidth'],
-				$scalerParams['clientHeight'], $dstPath );
+				$scalerParams['clientHeight'], false );
 		}
 
 		# Try to make a target path for the thumbnail
-		if ( !wfMkdirParents( dirname( $dstPath ) ) ) {
+		if ( !wfMkdirParents( dirname( $dstPath ), null, __METHOD__ ) ) {
 			wfDebug( __METHOD__ . ": Unable to create thumbnail destination directory, falling back to client scaling\n" );
 			return $this->getClientScalingThumbnailImage( $image, $scalerParams );
 		}
+
+		# Transform functions and binaries need a FS source file
+		$scalerParams['srcPath'] = $image->getLocalRefPath();
 
 		# Try a hook
 		$mto = null;
@@ -223,13 +235,6 @@ class BitmapHandler extends ImageHandler {
 		} else {
 			$scaler = 'client';
 		}
-
-		if ( $scaler != 'client' && $dstPath ) {
-			if ( !wfMkdirParents( dirname( $dstPath ) ) ) {
-				# Unable to create a path for the thumbnail
-				return 'client';
-			}
-		}
 		return $scaler;
 	}
 
@@ -245,7 +250,7 @@ class BitmapHandler extends ImageHandler {
 	 */
 	protected function getClientScalingThumbnailImage( $image, $params ) {
 		return new ThumbnailImage( $image, $image->getURL(),
-				$params['clientWidth'], $params['clientHeight'], $params['srcPath'] );
+			$params['clientWidth'], $params['clientHeight'], null );
 	}
 
 	/**
@@ -276,15 +281,16 @@ class BitmapHandler extends ImageHandler {
 					< $wgSharpenReductionThreshold ) {
 				$sharpen = "-sharpen " . wfEscapeShellArg( $wgSharpenParameter );
 			}
-			// JPEG decoder hint to reduce memory, available since IM 6.5.6-2
-			$decoderHint = "-define jpeg:size={$params['physicalDimensions']}";
+			if ( version_compare( $this->getMagickVersion(), "6.5.6" ) >= 0 ) {
+				// JPEG decoder hint to reduce memory, available since IM 6.5.6-2
+				$decoderHint = "-define jpeg:size={$params['physicalDimensions']}";
+			}
 
 		} elseif ( $params['mimeType'] == 'image/png' ) {
 			$quality = "-quality 95"; // zlib 9, adaptive filtering
 
 		} elseif ( $params['mimeType'] == 'image/gif' ) {
-			if ( $this->getImageArea( $image, $params['srcWidth'],
-					$params['srcHeight'] ) > $wgMaxAnimatedGifArea ) {
+			if ( $this->getImageArea( $image ) > $wgMaxAnimatedGifArea ) {
 				// Extract initial frame only; we're so big it'll
 				// be a total drag. :P
 				$scene = 0;
@@ -298,6 +304,8 @@ class BitmapHandler extends ImageHandler {
 					$animation_post = '-fuzz 5% -layers optimizeTransparency';
 				}
 			}
+		} elseif ( $params['mimeType'] == 'image/x-xcf' ) {
+			$animation_post = '-layers merge';
 		}
 
 		// Use one thread only, to avoid deadlock bugs on OOM
@@ -372,8 +380,7 @@ class BitmapHandler extends ImageHandler {
 			} elseif( $params['mimeType'] == 'image/png' ) {
 				$im->setCompressionQuality( 95 );
 			} elseif ( $params['mimeType'] == 'image/gif' ) {
-				if ( $this->getImageArea( $image, $params['srcWidth'],
-						$params['srcHeight'] ) > $wgMaxAnimatedGifArea ) {
+				if ( $this->getImageArea( $image ) > $wgMaxAnimatedGifArea ) {
 					// Extract initial frame only; we're so big it'll
 					// be a total drag. :P
 					$im->setImageScene( 0 );
@@ -502,7 +509,7 @@ class BitmapHandler extends ImageHandler {
 		if ( !isset( $typemap[$params['mimeType']] ) ) {
 			$err = 'Image type not supported';
 			wfDebug( "$err\n" );
-			$errMsg = wfMsg ( 'thumbnail_image-type' );
+			$errMsg = wfMsg( 'thumbnail_image-type' );
 			return $this->getMediaTransformError( $params, $errMsg );
 		}
 		list( $loader, $colorStyle, $saveType ) = $typemap[$params['mimeType']];
@@ -510,14 +517,14 @@ class BitmapHandler extends ImageHandler {
 		if ( !function_exists( $loader ) ) {
 			$err = "Incomplete GD library configuration: missing function $loader";
 			wfDebug( "$err\n" );
-			$errMsg = wfMsg ( 'thumbnail_gd-library', $loader );
+			$errMsg = wfMsg( 'thumbnail_gd-library', $loader );
 			return $this->getMediaTransformError( $params, $errMsg );
 		}
 
 		if ( !file_exists( $params['srcPath'] ) ) {
 			$err = "File seems to be missing: {$params['srcPath']}";
 			wfDebug( "$err\n" );
-			$errMsg = wfMsg ( 'thumbnail_image-missing', $params['srcPath'] );
+			$errMsg = wfMsg( 'thumbnail_image-missing', $params['srcPath'] );
 			return $this->getMediaTransformError( $params, $errMsg );
 		}
 

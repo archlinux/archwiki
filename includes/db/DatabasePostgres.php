@@ -39,7 +39,7 @@ AND relname=%s
 AND attname=%s;
 SQL;
 
-		$table = $db->tableName( $table, false );
+		$table = $db->tableName( $table, 'raw' );
 		$res = $db->query(
 			sprintf( $q,
 				$db->addQuotes( $wgDBmwschema ),
@@ -200,6 +200,7 @@ class DatabasePostgres extends DatabaseBase {
 		$this->query( "SET client_encoding='UTF8'", __METHOD__ );
 		$this->query( "SET datestyle = 'ISO, YMD'", __METHOD__ );
 		$this->query( "SET timezone = 'GMT'", __METHOD__ );
+		$this->query( "SET standard_conforming_strings = on", __METHOD__ );
 
 		global $wgDBmwschema;
 		if ( $this->schemaExists( $wgDBmwschema ) ) {
@@ -564,7 +565,7 @@ class DatabasePostgres extends DatabaseBase {
 		$ignore = in_array( 'IGNORE', $insertOptions ) ? 'mw' : '';
 
 		if( is_array( $insertOptions ) ) {
-			$insertOptions = implode( ' ', $insertOptions );
+			$insertOptions = implode( ' ', $insertOptions ); // FIXME: This is unused
 		}
 		if( !is_array( $selectOptions ) ) {
 			$selectOptions = array( $selectOptions );
@@ -622,16 +623,21 @@ class DatabasePostgres extends DatabaseBase {
 		return $res;
 	}
 
-	function tableName( $name, $quoted = true ) {
+	function tableName( $name, $format = 'quoted' ) {
 		# Replace reserved words with better ones
 		switch( $name ) {
 			case 'user':
-				return 'mwuser';
+				return $this->realTableName( 'mwuser', $format );
 			case 'text':
-				return 'pagecontent';
+				return $this->realTableName( 'pagecontent', $format );
 			default:
-				return parent::tableName( $name, $quoted );
+				return $this->realTableName( $name, $format );
 		}
+	}
+
+	/* Don't cheat on installer */
+	function realTableName( $name, $format = 'quoted' ) {
+		return parent::tableName( $name, $format );
 	}
 
 	/**
@@ -687,6 +693,24 @@ class DatabasePostgres extends DatabaseBase {
 		return $this->query( 'CREATE ' . ( $temporary ? 'TEMPORARY ' : '' ) . " TABLE $newName (LIKE $oldName INCLUDING DEFAULTS)", $fname );
 	}
 
+	function listTables( $prefix = null, $fname = 'DatabasePostgres::listTables' ) {
+		global $wgDBmwschema;
+		$eschema = $this->addQuotes( $wgDBmwschema );
+		$result = $this->query( "SELECT tablename FROM pg_tables WHERE schemaname = $eschema", $fname );
+
+		$endArray = array();
+
+		foreach( $result as $table ) {
+			$vars = get_object_vars($table);
+			$table = array_pop( $vars );
+			if( !$prefix || strpos( $table, $prefix ) === 0 ) {
+				$endArray[] = $table;
+			}
+		}
+
+		return $endArray;
+	}
+
 	function timestamp( $ts = 0 ) {
 		return wfTimestamp( TS_POSTGRES, $ts );
 	}
@@ -737,7 +761,7 @@ class DatabasePostgres extends DatabaseBase {
 		if ( !$schema ) {
 			$schema = $wgDBmwschema;
 		}
-		$table = $this->tableName( $table, false );
+		$table = $this->realTableName( $table, 'raw' );
 		$etable = $this->addQuotes( $table );
 		$eschema = $this->addQuotes( $schema );
 		$SQL = "SELECT 1 FROM pg_catalog.pg_class c, pg_catalog.pg_namespace n "
@@ -752,7 +776,7 @@ class DatabasePostgres extends DatabaseBase {
 	 * For backward compatibility, this function checks both tables and
 	 * views.
 	 */
-	function tableExists( $table, $schema = false ) {
+	function tableExists( $table, $fname = __METHOD__, $schema = false ) {
 		return $this->relationExists( $table, array( 'r', 'v' ), $schema );
 	}
 
@@ -766,8 +790,8 @@ class DatabasePostgres extends DatabaseBase {
 		$q = <<<SQL
 	SELECT 1 FROM pg_class, pg_namespace, pg_trigger
 		WHERE relnamespace=pg_namespace.oid AND relkind='r'
-		      AND tgrelid=pg_class.oid
-		      AND nspname=%s AND relname=%s AND tgname=%s
+			  AND tgrelid=pg_class.oid
+			  AND nspname=%s AND relname=%s AND tgname=%s
 SQL;
 		$res = $this->query(
 			sprintf(
@@ -981,5 +1005,18 @@ SQL;
 
 	public function getSearchEngine() {
 		return 'SearchPostgres';
+	}
+
+	public function streamStatementEnd( &$sql, &$newLine ) {
+		# Allow dollar quoting for function declarations
+		if ( substr( $newLine, 0, 4 ) == '$mw$' ) {
+			if ( $this->delimiter ) {
+				$this->delimiter = false;
+			}
+			else {
+				$this->delimiter = ';';
+			}
+		}
+		return parent::streamStatementEnd( $sql, $newLine );
 	}
 } // end DatabasePostgres class

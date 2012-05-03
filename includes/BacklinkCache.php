@@ -22,7 +22,7 @@
  * @author Tim Starling
  * @copyright © 2009, Tim Starling, Domas Mituzas
  * @copyright © 2010, Max Sem
- * @copyright © 2011, Ashar Voultoiz
+ * @copyright © 2011, Antoine Musso
  */
 class BacklinkCache {
 
@@ -75,6 +75,8 @@ class BacklinkCache {
 	 * Serialization handler, diasallows to serialize the database to prevent
 	 * failures after this class is deserialized from cache with dead DB
 	 * connection.
+	 *
+	 * @return array
 	 */
 	function __sleep() {
 		return array( 'partitionCache', 'fullResultCache', 'title' );
@@ -190,7 +192,13 @@ class BacklinkCache {
 		if ( isset( $prefixes[$table] ) ) {
 			return $prefixes[$table];
 		} else {
-			throw new MWException( "Invalid table \"$table\" in " . __CLASS__ );
+			$prefix = null;
+			wfRunHooks( 'BacklinkCacheGetPrefix', array( $table, &$prefix ) );
+			if( $prefix ) {
+				return $prefix;
+			} else {
+				throw new MWException( "Invalid table \"$table\" in " . __CLASS__ );
+			}
 		}
 	}
 
@@ -237,7 +245,10 @@ class BacklinkCache {
 				);
 				break;
 			default:
-				throw new MWException( "Invalid table \"$table\" in " . __CLASS__ );
+				$conds = null;
+				wfRunHooks( 'BacklinkCacheGetConditions', array( $table, $this->title, &$conds ) );
+				if( !$conds )
+					throw new MWException( "Invalid table \"$table\" in " . __CLASS__ );
 		}
 
 		return $conds;

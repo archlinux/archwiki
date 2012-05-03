@@ -16,6 +16,8 @@
  * UploadStash represents the entire stash of temporary files.
  * UploadStashFile is a filestore for the actual physical disk files.
  * UploadFromStash extends UploadBase, and represents a single stashed file as it is moved from the stash to the regular file repository
+ *
+ * @ingroup Upload
  */
 class UploadStash {
 
@@ -48,7 +50,7 @@ class UploadStash {
 	 *
 	 * @param $repo FileRepo
 	 */
-	public function __construct( $repo, $user = null ) {
+	public function __construct( FileRepo $repo, $user = null ) {
 		// this might change based on wiki's configuration.
 		$this->repo = $repo;
 
@@ -106,10 +108,7 @@ class UploadStash {
 
 			// fetch fileprops
 			$path = $this->fileMetadata[$key]['us_path'];
-			if ( $this->repo->isVirtualUrl( $path ) ) {
-				$path = $this->repo->resolveVirtualUrl( $path );
-			}
-			$this->fileProps[$key] = File::getPropsFromPath( $path );
+			$this->fileProps[$key] = $this->repo->getFileProps( $path );
 		}
 
 		if ( ! $this->files[$key]->exists() ) {
@@ -163,7 +162,7 @@ class UploadStash {
 			wfDebug( __METHOD__ . " tried to stash file at '$path', but it doesn't exist\n" );
 			throw new UploadStashBadPathException( "path doesn't exist" );
 		}
-		$fileProps = File::getPropsFromPath( $path );
+		$fileProps = FSFile::getPropsFromPath( $path );
 		wfDebug( __METHOD__ . " stashing file at '$path'\n" );
 
 		// we will be initializing from some tmpnam files that don't have extensions.
@@ -215,7 +214,8 @@ class UploadStash {
 					$error = array( 'unknown', 'no error recorded' );
 				}
 			}
-			throw new UploadStashFileException( "error storing file in '$path': " . implode( '; ', $error ) );
+			// at this point, $error should contain the single "most important" error, plus any parameters.
+			throw new UploadStashFileException( "Error storing file in '$path': " . wfMessage( $error )->text() );
 		}
 		$stashPath = $storeStatus->value;
 
@@ -233,7 +233,7 @@ class UploadStash {
 			'us_user' => $this->userId,
 			'us_key' => $key,
 			'us_orig_path' => $path,
-			'us_path' => $stashPath,
+			'us_path' => $stashPath, // virtual URL
 			'us_size' => $fileProps['size'],
 			'us_sha1' => $fileProps['sha1'],
 			'us_mime' => $fileProps['mime'],
@@ -334,13 +334,13 @@ class UploadStash {
 		$dbw = $this->repo->getMasterDb();
 
 		// this gets its own transaction since it's called serially by the cleanupUploadStash maintenance script
-		$dbw->begin();
+		$dbw->begin( __METHOD__ );
 		$dbw->delete(
 			'uploadstash',
 			array( 'us_key' => $key ),
 			__METHOD__
 		);
-		$dbw->commit();
+		$dbw->commit( __METHOD__ );
 
 		// TODO: look into UnregisteredLocalFile and find out why the rv here is sometimes wrong (false when file was removed)
 		// for now, ignore.
@@ -475,7 +475,7 @@ class UploadStashFile extends UnregisteredLocalFile {
 	 * A LocalFile wrapper around a file that has been temporarily stashed, so we can do things like create thumbnails for it
 	 * Arguably UnregisteredLocalFile should be handling its own file repo but that class is a bit retarded currently
 	 *
-	 * @param $repo FSRepo: repository where we should find the path
+	 * @param $repo FileRepo: repository where we should find the path
 	 * @param $path String: path to file
 	 * @param $key String: key to store the path and any stashed data under
 	 * @throws UploadStashBadPathException

@@ -198,7 +198,6 @@ $messages = array(
 'badtitle'           => 'Gååre nomme',
 'badtitletext'       => 'Dïhte bielietiitele lea nov sån ijje luhpede, bielie lea gåaroes, jallh lea bielie gåarhmede lïenghke gåajkoe.',
 'viewsource'         => 'Vuesehte tjaalege',
-'viewsourcefor'      => 'ihke $1',
 'viewsourcetext'     => 'Dov dorje vuesehte jih kåpieerae gaaltjie dejstie dïhte bielie:',
 
 # Login and logout pages
@@ -570,7 +569,6 @@ Dov dorje värrhtoedimmie gååvnese bielieh, jallh [[Special:UserLogin|logge s�
 'actioncomplete'        => 'Deahpadimmie voerkes',
 'deletedtext'           => '"$1" lea sihkojuvvon.
 Vuajna $2 ihke galtege bïjre männgan sihkojuvvonh.',
-'deletedarticle'        => 'sihkoj "[[$1]]"',
 'dellogpage'            => 'Sihkkun logge',
 'deletecomment'         => 'Gaavhtan ihke sihkkuma',
 'deleteotherreason'     => 'Jeatjebh/ehkstre gaavhtan:',
@@ -677,7 +675,6 @@ nome dov åtna veeljeme lea ijje jiiltige.
 Gïemhpes veeljeme jeatjebh nomme.',
 'movedto'          => 'jåhta gåajkoe',
 'movetalk'         => 'Jåhta aaj dïerkestidhbielie, bïjre dïhte gååvnese.',
-'1movedto2'        => '[[$1]] jåhta gåajkoe [[$2]]',
 'movelogpage'      => 'Jåhta logge',
 'movereason'       => 'Gaavhtan:',
 'revertmove'       => 'jåhta bååstede',
@@ -758,9 +755,6 @@ Gïemhpes veeljeme jeatjebh nomme.',
 'siteuser'  => '{{SITENAME}} nuhtjien $1',
 'siteusers' => '{{SITENAME}} nuhtjien(h) $1',
 
-# Patrol log
-'patrol-log-auto' => '(jïjtsistie)',
-
 # Browsing diffs
 'previousdiff' => '← Övtebe joekehts',
 'nextdiff'     => 'Minngebe joekehts →',
@@ -768,7 +762,7 @@ Gïemhpes veeljeme jeatjebh nomme.',
 # Media information
 'file-info'      => 'baalka stoerre: $1, MIME-vuekie: $2',
 'file-info-size' => '$1 × $2 pixel, baalka stoerre: $3, MIME-vuekie: $4',
-'file-nohires'   => '<small>Ijje jïlle bäjjeselöösninge jaksoes.</small>',
+'file-nohires'   => 'Ijje jïlle bäjjeselöösninge jaksoes.',
 'svg-long-desc'  => 'SVG baalka, maadth-stoerre $1 × $2 pixel, baalka stoerre: $3',
 'show-big-image' => 'Dïeves stoerre',
 

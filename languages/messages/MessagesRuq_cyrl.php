@@ -134,8 +134,7 @@ $messages = array(
 'nstab-category' => 'категориа',
 
 # General errors
-'viewsource'    => 'баганаере',
-'viewsourcefor' => 'пентру $1',
+'viewsource' => 'баганаере',
 
 # Login and logout pages
 'yourname'                => 'Ном дутилизатору:',
@@ -262,9 +261,6 @@ $3',
 'watching'   => 'О клајаере...',
 'unwatching' => 'О деклајаере...',
 
-# Delete
-'deletedarticle' => 'делајрај "[[$1]]"',
-
 # Rollback
 'rollbacklink' => 'ревенире',
 
@@ -333,7 +329,7 @@ $3',
 'tooltip-diff'              => 'Ратај це модификајри аи фајцут текстулуи.',
 
 # Media information
-'file-nohires'   => '<small>Це-н-ест нресолуцион маи мари.</small>',
+'file-nohires'   => 'Це-н-ест нресолуцион маи мари.',
 'show-big-image' => 'Мареште ресолуцион',
 
 # Bad image list

@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * This query action allows clients to retrieve a list of recently modified pages
  * that are part of the logged-in user's watchlist.
@@ -159,8 +154,8 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 
 			// Check permissions.
 			if ( isset( $show['patrolled'] ) || isset( $show['!patrolled'] ) ) {
-				global $wgUser;
-				if ( !$wgUser->useRCPatrol() && !$wgUser->useNPPatrol() ) {
+				$user = $this->getUser();
+				if ( !$user->useRCPatrol() && !$user->useNPPatrol() ) {
 					$this->dieUsage( 'You need the patrol right to request the patrolled flag', 'permissiondenied' );
 				}
 			}
@@ -438,7 +433,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&list=watchlist',
 			'api.php?action=query&list=watchlist&wlprop=ids|title|timestamp|user|comment',

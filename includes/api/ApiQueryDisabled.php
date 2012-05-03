@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * API module that does nothing
  *
@@ -46,7 +41,7 @@ class ApiQueryDisabled extends ApiQueryBase {
 	}
 
 	public function execute() {
-		$this->setWarning( "The ``{$this->getModuleName()}'' module has been disabled." );
+		$this->setWarning( "The \"{$this->getModuleName()}\" module has been disabled." );
 	}
 
 	public function getAllowedParams() {
@@ -63,7 +58,7 @@ class ApiQueryDisabled extends ApiQueryBase {
 		);
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array();
 	}
 

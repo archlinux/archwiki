@@ -38,21 +38,8 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			$wgVariantArticlePath, $wgActionPaths, $wgUseAjax, $wgVersion,
 			$wgEnableAPI, $wgEnableWriteAPI, $wgDBname, $wgEnableMWSuggest,
 			$wgSitename, $wgFileExtensions, $wgExtensionAssetsPath,
-			$wgCookiePrefix, $wgResourceLoaderMaxQueryLength, $wgLegacyJavaScriptGlobals;
+			$wgCookiePrefix, $wgResourceLoaderMaxQueryLength;
 
-		// Pre-process information
-		$separatorTransTable = $wgContLang->separatorTransformTable();
-		$separatorTransTable = $separatorTransTable ? $separatorTransTable : array();
-		$compactSeparatorTransTable = array(
-			implode( "\t", array_keys( $separatorTransTable ) ),
-			implode( "\t", $separatorTransTable ),
-		);
-		$digitTransTable = $wgContLang->digitTransformTable();
-		$digitTransTable = $digitTransTable ? $digitTransTable : array();
-		$compactDigitTransTable = array(
-			implode( "\t", array_keys( $digitTransTable ) ),
-			implode( "\t", $digitTransTable ),
-		);
 		$mainPage = Title::newMainPage();
 
 		/**
@@ -81,7 +68,9 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			'wgScriptExtension' => $wgScriptExtension,
 			'wgScript' => $wgScript,
 			'wgVariantArticlePath' => $wgVariantArticlePath,
-			'wgActionPaths' => $wgActionPaths,
+			// Force object to avoid "empty" associative array from
+			// becoming [] instead of {} in JS (bug 34604)
+			'wgActionPaths' => (object)$wgActionPaths,
 			'wgServer' => $wgServer,
 			'wgUserLanguage' => $context->getLanguage(),
 			'wgContentLanguage' => $wgContLang->getCode(),
@@ -91,8 +80,6 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			'wgDefaultDateFormat' => $wgContLang->getDefaultDateFormat(),
 			'wgMonthNames' => $wgContLang->getMonthNamesArray(),
 			'wgMonthNamesShort' => $wgContLang->getMonthAbbreviationsArray(),
-			'wgSeparatorTransformTable' => $compactSeparatorTransTable,
-			'wgDigitTransformTable' => $compactDigitTransTable,
 			'wgMainPageTitle' => $mainPage ? $mainPage->getPrefixedText() : null,
 			'wgFormattedNamespaces' => $wgContLang->getFormattedNamespaces(),
 			'wgNamespaceIds' => $namespaceIds,
@@ -107,7 +94,6 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			// MediaWiki sets cookies to have this prefix by default
 			'wgCookiePrefix' => $wgCookiePrefix,
 			'wgResourceLoaderMaxQueryLength' => $wgResourceLoaderMaxQueryLength,
-			'wgLegacyJavaScriptGlobals' => $wgLegacyJavaScriptGlobals,
 			'wgCaseSensitiveNamespaces' => $caseSensitiveNamespaces,
 		);
 		if ( $wgUseAjax && $wgEnableMWSuggest ) {
@@ -132,6 +118,11 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 		$out = '';
 		$registrations = array();
 		$resourceLoader = $context->getResourceLoader();
+
+		// Register sources
+		$out .= ResourceLoader::makeLoaderSourcesScript( $resourceLoader->getSources() );
+
+		// Register modules
 		foreach ( $resourceLoader->getModuleNames() as $name ) {
 			$module = $resourceLoader->getModule( $name );
 			// Support module loader scripts
@@ -139,9 +130,10 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			if ( $loader !== false ) {
 				$deps = $module->getDependencies();
 				$group = $module->getGroup();
+				$source = $module->getSource();
 				$version = wfTimestamp( TS_ISO_8601_BASIC,
 					$module->getModifiedTime( $context ) );
-				$out .= ResourceLoader::makeCustomLoaderScript( $name, $version, $deps, $group, $loader );
+				$out .= ResourceLoader::makeCustomLoaderScript( $name, $version, $deps, $group, $source, $loader );
 			}
 			// Automatically register module
 			else {
@@ -149,22 +141,28 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 				// seem to do that, and custom implementations might forget. Coerce it to TS_UNIX
 				$moduleMtime = wfTimestamp( TS_UNIX, $module->getModifiedTime( $context ) );
 				$mtime = max( $moduleMtime, wfTimestamp( TS_UNIX, $wgCacheEpoch ) );
-				// Modules without dependencies or a group pass two arguments (name, timestamp) to
+				// Modules without dependencies, a group or a foreign source pass two arguments (name, timestamp) to
 				// mw.loader.register()
-				if ( !count( $module->getDependencies() && $module->getGroup() === null ) ) {
+				if ( !count( $module->getDependencies() && $module->getGroup() === null && $module->getSource() === 'local' ) ) {
 					$registrations[] = array( $name, $mtime );
 				}
-				// Modules with dependencies but no group pass three arguments
+				// Modules with dependencies but no group or foreign source pass three arguments
 				// (name, timestamp, dependencies) to mw.loader.register()
-				elseif ( $module->getGroup() === null ) {
+				elseif ( $module->getGroup() === null && $module->getSource() === 'local' ) {
 					$registrations[] = array(
 						$name, $mtime,  $module->getDependencies() );
 				}
-				// Modules with dependencies pass four arguments (name, timestamp, dependencies, group)
+				// Modules with a group but no foreign source pass four arguments (name, timestamp, dependencies, group)
+				// to mw.loader.register()
+				elseif ( $module->getSource() === 'local' ) {
+					$registrations[] = array(
+						$name, $mtime,  $module->getDependencies(), $module->getGroup() );
+				}
+				// Modules with a foreign source pass five arguments (name, timestamp, dependencies, group, source)
 				// to mw.loader.register()
 				else {
 					$registrations[] = array(
-						$name, $mtime,  $module->getDependencies(), $module->getGroup() );
+						$name, $mtime, $module->getDependencies(), $module->getGroup(), $module->getSource() );
 				}
 			}
 		}
@@ -229,6 +227,9 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 		return $out;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function supportsURLLoading() {
 		return false;
 	}

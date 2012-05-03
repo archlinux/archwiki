@@ -271,7 +271,7 @@
 	font-size: 1.25em;
 }
 .wikiEditor-ui-toolbar .page-characters div[dir=rtl] span {
-	direction: rtl;
+	/* @noflip */ direction: rtl;
 }
 .wikiEditor-ui-toolbar .page-characters div span:hover {
 	background-color: white;

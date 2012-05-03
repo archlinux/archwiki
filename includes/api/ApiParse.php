@@ -22,11 +22,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * @ingroup API
  */
@@ -63,7 +58,8 @@ class ApiParse extends ApiBase {
 
 		// The parser needs $wgTitle to be set, apparently the
 		// $title parameter in Parser::parse isn't enough *sigh*
-		global $wgParser, $wgUser, $wgTitle, $wgLang;
+		// TODO: Does this still need $wgTitle?
+		global $wgParser, $wgTitle, $wgLang;
 
 		// Currently unnecessary, code to act as a safeguard against any change in current behaviour of uselang breaks
 		$oldLang = null;
@@ -72,7 +68,7 @@ class ApiParse extends ApiBase {
 			$wgLang = Language::factory( $params['uselang'] );
 		}
 
-		$popts = new ParserOptions();
+		$popts = ParserOptions::newFromContext( $this->getContext() );
 		$popts->setTidy( true );
 		$popts->enableLimitReport( !$params['disablepp'] );
 
@@ -88,7 +84,7 @@ class ApiParse extends ApiBase {
 				if ( !$rev ) {
 					$this->dieUsage( "There is no revision ID $oldid", 'missingrev' );
 				}
-				if ( !$rev->userCan( Revision::DELETED_TEXT ) ) {
+				if ( !$rev->userCan( Revision::DELETED_TEXT, $this->getUser() ) ) {
 					$this->dieUsage( "You don't have permission to view deleted revisions", 'permissiondenied' );
 				}
 
@@ -98,22 +94,20 @@ class ApiParse extends ApiBase {
 
 				// If for some reason the "oldid" is actually the current revision, it may be cached
 				if ( $titleObj->getLatestRevID() === intval( $oldid ) )  {
-					$articleObj = new Article( $titleObj, 0 );
-
-					$p_result = $this->getParsedSectionOrText( $articleObj, $titleObj, $popts, $pageid,
+					// May get from/save to parser cache
+					$p_result = $this->getParsedSectionOrText( $titleObj, $popts, $pageid,
 						 isset( $prop['wikitext'] ) ) ;
 				} else { // This is an old revision, so get the text differently
-					$this->text = $rev->getText( Revision::FOR_THIS_USER );
-
-					$wgTitle = $titleObj;
+					$this->text = $rev->getText( Revision::FOR_THIS_USER, $this->getUser() );
 
 					if ( $this->section !== false ) {
 						$this->text = $this->getSectionText( $this->text, 'r' . $rev->getId() );
 					}
 
+					// Should we save old revision parses to the parser cache?
 					$p_result = $wgParser->parse( $this->text, $titleObj, $popts );
 				}
-			} else { // Not $oldid
+			} else { // Not $oldid, but $pageid or $page
 				if ( $params['redirects'] ) {
 					$reqParams = array(
 						'action' => 'query',
@@ -155,12 +149,12 @@ class ApiParse extends ApiBase {
 				}
 				$wgTitle = $titleObj;
 
-				$articleObj = new Article( $titleObj, 0 );
 				if ( isset( $prop['revid'] ) ) {
-					$oldid = $articleObj->getRevIdFetched();
+					$oldid = $titleObj->getLatestRevID();
 				}
 
-				$p_result = $this->getParsedSectionOrText( $articleObj, $titleObj, $popts, $pageid,
+				// Potentially cached
+				$p_result = $this->getParsedSectionOrText( $titleObj, $popts, $pageid,
 					 isset( $prop['wikitext'] ) ) ;
 			}
 		} else { // Not $oldid, $pageid, $page. Hence based on $text
@@ -180,10 +174,11 @@ class ApiParse extends ApiBase {
 			}
 
 			if ( $params['pst'] || $params['onlypst'] ) {
-				$this->pstText = $wgParser->preSaveTransform( $this->text, $titleObj, $wgUser, $popts );
+				$this->pstText = $wgParser->preSaveTransform( $this->text, $titleObj, $this->getUser(), $popts );
 			}
 			if ( $params['onlypst'] ) {
 				// Build a result and bail out
+				$result_array = array();
 				$result_array['text'] = array();
 				$result->setContent( $result_array['text'], $this->pstText );
 				if ( isset( $prop['wikitext'] ) ) {
@@ -193,6 +188,7 @@ class ApiParse extends ApiBase {
 				$result->addValue( null, $this->getModuleName(), $result_array );
 				return;
 			}
+			// Not cached (save or load)
 			$p_result = $wgParser->parse( $params['pst'] ? $this->pstText : $this->text, $titleObj, $popts );
 		}
 
@@ -215,7 +211,7 @@ class ApiParse extends ApiBase {
 
 		if ( !is_null( $params['summary'] ) ) {
 			$result_array['parsedsummary'] = array();
-			$result->setContent( $result_array['parsedsummary'], $wgUser->getSkin()->formatComment( $params['summary'], $titleObj ) );
+			$result->setContent( $result_array['parsedsummary'], Linker::formatComment( $params['summary'], $titleObj ) );
 		}
 
 		if ( isset( $prop['langlinks'] ) ) {
@@ -257,16 +253,16 @@ class ApiParse extends ApiBase {
 		}
 
 		if ( isset( $prop['headitems'] ) || isset( $prop['headhtml'] ) ) {
-			$context = new RequestContext;
+			$context = $this->getContext();
+			$context->setTitle( $titleObj );
 			$context->getOutput()->addParserOutputNoText( $p_result );
 
 			if ( isset( $prop['headitems'] ) ) {
 				$headItems = $this->formatHeadItems( $p_result->getHeadItems() );
 
-				$context->getSkin()->setupUserCss( $context->getOutput() );
 				$css = $this->formatCss( $context->getOutput()->buildCssLinksArray() );
 
-				$scripts = array( $context->getOutput()->getHeadScripts( $context->getSkin() ) );
+				$scripts = array( $context->getOutput()->getHeadScripts() );
 
 				$result_array['headitems'] = array_merge( $headItems, $css, $scripts );
 			}
@@ -311,29 +307,29 @@ class ApiParse extends ApiBase {
 	}
 
 	/**
-	 * @param $articleObj Article
 	 * @param $titleObj Title
 	 * @param $popts ParserOptions
 	 * @param $pageId Int
 	 * @param $getWikitext Bool
 	 * @return ParserOutput
 	 */
-	private function getParsedSectionOrText( $articleObj, $titleObj, $popts, $pageId = null, $getWikitext = false ) {
-		if ( $this->section !== false ) {
-			global $wgParser;
+	private function getParsedSectionOrText( $titleObj, $popts, $pageId = null, $getWikitext = false ) {
+		global $wgParser;
 
-			$this->text = $this->getSectionText( $articleObj->getRawText(), !is_null ( $pageId )
+		$page = WikiPage::factory( $titleObj );
+
+		if ( $this->section !== false ) {
+			$this->text = $this->getSectionText( $page->getRawText(), !is_null( $pageId )
 					? 'page id ' . $pageId : $titleObj->getText() );
 
+			// Not cached (save or load)
 			return $wgParser->parse( $this->text, $titleObj, $popts );
 		} else {
 			// Try the parser cache first
-			$pout = $articleObj->getParserOutput();
+			// getParserOutput will save to Parser cache if able
+			$pout = $page->getParserOutput( $popts );
 			if ( $getWikitext ) {
-				$rev = Revision::newFromTitle( $titleObj );
-				if ( $rev ) {
-					$this->text = $rev->getText();
-				}
+				$this->text = $page->getRawText();
 			}
 			return $pout;
 		}
@@ -341,6 +337,7 @@ class ApiParse extends ApiBase {
 
 	private function getSectionText( $text, $what ) {
 		global $wgParser;
+		// Not cached (save or load)
 		$text = $wgParser->getSection( $text, $this->section, false );
 		if ( $text === false ) {
 			$this->dieUsage( "There is no section {$this->section} in " . $what, 'nosuchsection' );
@@ -377,7 +374,7 @@ class ApiParse extends ApiBase {
 	}
 
 	private function categoriesHtml( $categories ) {
-		$context = $this->createContext();
+		$context = $this->getContext();
 		$context->getOutput()->addCategoryLinks( $categories );
 		return $context->getSkin()->getCategories();
 	}
@@ -385,8 +382,12 @@ class ApiParse extends ApiBase {
 	/**
 	 * @deprecated since 1.18 No modern skin generates language links this way, please use language links
 	 *                        data to generate your own HTML.
+	 * @param $languages array
+	 * @return string
 	 */
 	private function languagesHtml( $languages ) {
+		wfDeprecated( __METHOD__, '1.18' );
+
 		global $wgContLang, $wgHideInterlanguageLinks;
 
 		if ( $wgHideInterlanguageLinks || count( $languages ) == 0 ) {
@@ -584,7 +585,7 @@ class ApiParse extends ApiBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=parse&text={{Project:Sandbox}}'
 		);

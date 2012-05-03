@@ -25,11 +25,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * Query module to get list of random pages
  *
@@ -175,7 +170,7 @@ class ApiQueryRandom extends ApiQueryGeneratorBase {
 		);
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return 'api.php?action=query&list=random&rnnamespace=0&rnlimit=2';
 	}
 

@@ -401,8 +401,8 @@ MySQL قايتۇرغان خاتالىقى"$3: $4"',
 'badtitle'             => 'خاتا ماۋزۇ',
 'badtitletext'         => 'ئىلتىماس قىلىنغان بەتنىڭ ماۋزۇسى ئىناۋەتسىز، مەۋجۇد ئەمەس، تىل ھالقىغان ياكى wiki ئۇلانمىسىدىن ھالقىغان ماۋزۇ خاتالىقى.
 ئۇ بىر ياكى بىر قانچە ماۋزۇغا ئىشلەتكىلى بولمايدىغان ھەرپنى ئۆز ئىچىگە ئالغان.',
-'perfcached'           => 'تۆۋەندىكىسى غەملەك سانلىق مەلۇماتى، شۇڭلاشقا يېڭى بولماسلىقى مۇمكىن.',
-'perfcachedts'         => 'تۆۋەندىكىسى غەملەك سانلىق مەلۇماتى، ئاخىرقى يېڭىلانغان ۋاقتى $1.',
+'perfcached'           => 'تۆۋەندىكىسى غەملەك سانلىق مەلۇماتى، شۇڭلاشقا يېڭى بولماسلىقى مۇمكىن. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
+'perfcachedts'         => 'تۆۋەندىكىسى غەملەك سانلىق مەلۇماتى، ئاخىرقى يېڭىلانغان ۋاقتى $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
 'querypage-no-updates' => 'نۆۋەتتە مەزكۇر بەتنى يېڭىلاش چەكلەندى.
 
 بۇ جايدىكى سانلىق مەلۇماتنى دەرھال يېڭىلىغىلى بولمايدۇ.',
@@ -412,7 +412,6 @@ MySQL قايتۇرغان خاتالىقى"$3: $4"',
 
 سۈرۈشتۈرۈش: $2',
 'viewsource'           => 'مەنبەنى كۆرسەت',
-'viewsourcefor'        => '$1 نىڭ مەنبە كودى',
 'actionthrottled'      => 'مەشغۇلات چەكلەندى',
 'actionthrottledtext'  => 'ئەخلەتكە قارشى تۇرۇش ئۆلچىمىگە ئاساسەن، سىز بۇ بىر بۆلۈك قىسقا ۋاقىتتا بۇ مەشغۇلاتنى ئېلىپ بېرىشىڭىزنى چەكلىدى، ئەمما سىز بۇ چەكتىن ئېشىپ كەتتىڭىز.
 
@@ -557,6 +556,7 @@ $2',
 
 # E-mail sending
 'php-mail-error-unknown' => 'PHP نىڭmail() فونكسىيەسىدىكى يوچۇن خاتالىق',
+'user-mail-no-addy'      => 'ئېلخەت ئادرېسسىز خەت يوللاشنى سىنىدى.',
 
 # Change password dialog
 'resetpass'                 => 'ئىم ئۆزگەرت',
@@ -603,6 +603,17 @@ $2
 'passwordreset-emailelement'   => 'ئىشلەتكۈچى ئاتى: $1
 ۋاقىتلىق ئىم: $2',
 'passwordreset-emailsent'      => 'ئەسكەرتىش ئېلخەت ئەۋەتىلدى.',
+
+# Special:ChangeEmail
+'changeemail'          => 'ئېلخەت ئادرېس ئۆزگەرت',
+'changeemail-header'   => 'ھېساباتنىڭ ئېلخەت ئادرېسىنى ئۆزگەرت',
+'changeemail-text'     => 'بۇ جەدۋەل تاماملانسا ئېلخەت ئادرېسىڭىزنى ئۆزگەرتىدۇ. سىز ئىم كىرگۈزۈپ بۇ ئۆزگەرتىشنى جەزملەيسىز.',
+'changeemail-no-info'  => 'تىزىمغا كىرسىڭىز ئاندىن بۇ بەتنى بىۋاستە زىيارەت قىلالايسىز.',
+'changeemail-oldemail' => 'نۆۋەتتىكى ئېلخەت ئادرېسى:',
+'changeemail-newemail' => 'يېڭى ئېلخەت ئادرېسى:',
+'changeemail-none'     => '(يوق)',
+'changeemail-submit'   => 'ئېلخەت ئۆزگەرت',
+'changeemail-cancel'   => 'ۋاز كەچ',
 
 # Edit page toolbar
 'bold_sample'     => 'توم خەت',
@@ -670,9 +681,6 @@ $2
 سىزنىڭ نۆۋەتتىكى IP ئادرېسىڭىز $3، چەكلەنگەن كىملىك   #$5.
 سوئالىڭىزدا يۇقىرىقى بارلىق ماتېرىياللارنى ئىزاھلاڭ.",
 'blockednoreason'                  => 'سەۋەبى يوق',
-'blockedoriginalsource'            => "تۆۋەندىكىسى '''$1''' نىڭ ئەسلى كودى:",
-'blockededitsource'                => "سىزنىڭ '''$1''' غا ئېلىپ بارغان '''تەھرىرىڭىز'''نىڭ تېكستى تۆۋەندىكىچە:",
-'whitelistedittitle'               => 'تىزىمغا كىرگەندىن كېيىن تەھرىرلىگىلى بولىدۇ',
 'whitelistedittext'                => 'سىزدە $1 بولغاندا ئاندىن بەتنى تەھرىرلىيەلەيسىز.',
 'confirmedittext'                  => 'سىز بۇ بەتنى تەھرىرلەشتىن ئىلگىرى ئېلخەت ئادرېسىڭىزنى جەزملەڭ.
 [[Special:Preferences|ئىشلەتكۈچى مايىللىق]] ئارقىلىق تەڭشەپ ئېلخەت ئادرېسىڭىزنى دەلىللەڭ.',
@@ -932,8 +940,6 @@ $3 تەمىنلىگەن چەكلەش سەۋەبى ''$2''",
 'revdelete-unsuppress'        => 'ئەسلىگە كەلتۈرۈلگەن تۈزىتىلگەن نەشرىدىن چەكلىمىنى چىقىرىۋەت',
 'revdelete-log'               => 'سەۋەب:',
 'revdelete-submit'            => 'تاللانغان {{PLURAL:$1|تۈزىتىش|تۈرىتىش}}نى قوللان',
-'revdelete-logentry'          => '[[$1]] نىڭ تۈزىتىش نەشرىنىڭ كۆرۈنۈشچانلىقى ئۆزگەرتىلدى',
-'logdelete-logentry'          => '[[$1]] نىڭ ھادىسە كۆرۈنۈشچانلىقى ئۆزگەرتىلدى',
 'revdelete-success'           => "'''تۈزىتىلگەن نەشرىنىڭ كۆرۈنۈشچانلىقى مۇۋەپپەقىيەتلىك تەڭشەلدى.'''",
 'revdelete-failure'           => "'''تۈزىتىشنىڭ كۆرۈنۈشچانلىقىنى يېڭىلىيالمىدى:'''
 $1",
@@ -945,15 +951,6 @@ $1",
 'revdel-restore-visible'      => 'كۆرۈنىدىغان تۈزىتىلگەن نەشرى',
 'pagehist'                    => 'بەتنىڭ تارىخى',
 'deletedhist'                 => 'ئۆچۈرۈلگەن تارىخ',
-'revdelete-content'           => 'مەزمۇن',
-'revdelete-summary'           => 'ئۈزۈندە تەھرىرلە',
-'revdelete-uname'             => 'ئىشلەتكۈچى ئاتى',
-'revdelete-restricted'        => 'باشقۇرغۇچى چەكلىمىسىنى قوللان',
-'revdelete-unrestricted'      => 'باشقۇرغۇچىنىڭ چەكلىمىسى چىقىرىۋېتىلدى',
-'revdelete-hid'               => '$1 يوشۇر',
-'revdelete-unhid'             => '$1 يوشۇرما',
-'revdelete-log-message'       => '$1 نىڭ {{PLURAL:$2|قېتىملىق|قېتىملىق}}  تۈزىتىلگەن نەشرى',
-'logdelete-log-message'       => '$1 نىڭ  $2 {{PLURAL:$2|ھادىسىسى|ھادىسىسى}}',
 'revdelete-hide-current'      => '$2 $1 ۋاقىتتىكى تۈرلەر خاتالىقىنى يوشۇرۇۋاتىدۇ: بۇ نۆۋەتتىكى تۈزىتىلگەن نەشرى.
 ئۇنى يوشۇرغىلى بولمايدۇ.',
 'revdelete-show-no-access'    => '$2 $1  تۈر خاتالىقىنى كۆرسىتىۋاتىدۇ: بۇ تۈر "چەكلەنگەن" بەلگىسى قويۇلغان، ئۇنى زىيارەت قىلىش ھوقۇقىڭىز يوق.',
@@ -1110,12 +1107,14 @@ $1",
 'prefs-rc'                      => 'ئاخىرقى ئۆزگەرتىشلەر',
 'prefs-watchlist'               => 'كۆزەت تىزىملىكى',
 'prefs-watchlist-days'          => 'كۆزەت تىزىملىكىدە كۆرۈنىدىغان كۈن سانى:',
-'prefs-watchlist-days-max'      => 'ئەڭ كۆپ بولغاندا 7 كۈن',
+'prefs-watchlist-days-max'      => 'Maximum $1 {{PLURAL:$1|day|days}}',
 'prefs-watchlist-edits'         => 'كۈچەيتىلگەن كۆزەت تىزىملىكىدە ئەڭ كۆپ ئۆزگەرتىش سانى:',
 'prefs-watchlist-edits-max'     => 'ئەڭ كۆپ سانى: 1000',
 'prefs-watchlist-token'         => 'كۆزەت تىزىملىك نىشانى:',
 'prefs-misc'                    => 'ئارىلاشما تۈر',
 'prefs-resetpass'               => 'ئىم ئۆزگەرت',
+'prefs-changeemail'             => 'ئېلخەت ئۆزگەرت',
+'prefs-setemail'                => 'ئېلخەت ئادرېس تەڭشەك',
 'prefs-email'                   => 'ئېلخەت تاللانما',
 'prefs-rendering'               => 'كۆرۈنۈش',
 'saveprefs'                     => 'ساقلا',
@@ -1220,7 +1219,7 @@ HTML بەلگىسىنى تەكشۈرۈڭ.',
 'userrights-lookup-user'       => 'ئىشلەتكۈچى گۇرۇپپىسى باشقۇرۇش',
 'userrights-user-editname'     => 'ئىشلەتكۈچى ئاتى كىرگۈزۈڭ:',
 'editusergroup'                => 'ئىشلەتكۈچى گۇرۇپپىسى تەھرىر',
-'editinguser'                  => "'''[[User:$1|$1]]''' ([[User talk:$1|{{int:talkpagelinktext}}]]{{int:pipe-separator}}[[Special:Contributions/$1|{{int:contribslink}}]]) ئىشلەتكۈچىنىڭ ھوقۇقىنى ئۆزگەرتىۋاتىدۇ",
+'editinguser'                  => "ئىشلەتكۈچى '''[[User:$1|$1]]''' $2 نىڭ ھوقۇقىنى ئۆزگەرتىۋاتىدۇ",
 'userrights-editusergroup'     => 'ئىشلەتكۈچى گۇرۇپپىسى تەھرىر',
 'saveusergroups'               => 'ئىشلەتكۈچى گۇرۇپپىسى ساقلا',
 'userrights-groupsmember'      => 'ئەزاسى:',
@@ -1314,7 +1313,6 @@ HTML بەلگىسىنى تەكشۈرۈڭ.',
 'right-autopatrol'            => 'ئۆزەم تەھرىرلىگەنگە ئاپتوماتىك چارلاش بەلگىسى قوي',
 'right-patrolmarks'           => 'يېقىنقى نازارەت بەلگىسىنىڭ ئۆزگۈرۈشىنى كۆرسەت',
 'right-unwatchedpages'        => 'كۆزىتىلمىگەن بەت تىزىملىكىنى كۆرسەت',
-'right-trackback'             => 'trackback تاپشۇر',
 'right-mergehistory'          => 'بەت تارىخىنى بىرلەشتۈر',
 'right-userrights'            => 'ھەممە ئىشلەتكۈچىنىڭ ھوقۇقىنى تەھرىرلە',
 'right-userrights-interwiki'  => 'باشقا wiki دىكى ئىشلەتكۈچى ھوقۇقىنى تەھرىرلە',
@@ -1359,7 +1357,6 @@ HTML بەلگىسىنى تەكشۈرۈڭ.',
 'action-patrol'               => 'باشقا تەھرىرگە چارلاش بەلگىسى قوي',
 'action-autopatrol'           => 'ئۆزەمنىڭ تەھرىرىگە چارلاش بەلگىسى قوي',
 'action-unwatchedpages'       => 'كۆزىتىلمىگەن بەت تىزىملىكىنى كۆرسەت',
-'action-trackback'            => 'trackback تاپشۇر',
 'action-mergehistory'         => 'بۇ بەتنىڭ تارىخىنى بىرلەشتۈر',
 'action-userrights'           => 'ھەممە ئىشلەتكۈچىنىڭ ھوقۇقىنى تەھرىرلە',
 'action-userrights-interwiki' => 'باشقا wiki دىكى ئىشلەتكۈچى ھوقۇقىنى تەھرىرلە',
@@ -1904,12 +1901,8 @@ URL نىڭ توغرىلىقى ۋە تور بېكەتنى زىيارەت قىلى
 'activeusers-noresult'   => 'ئىشلەتكۈچى تېپىلمىدى.',
 
 # Special:Log/newusers
-'newuserlogpage'              => 'ئىشلەتكۈچى قۇرغان خاتىرە',
-'newuserlogpagetext'          => '(چەكلەنگەن)',
-'newuserlog-byemail'          => 'ئىم ئىلخەتتە يوللاندى',
-'newuserlog-create-entry'     => 'يېڭى ئىشلەتكۈچى ھېساباتى',
-'newuserlog-create2-entry'    => '$1 يېڭى ھېسابات قۇرۇلدى',
-'newuserlog-autocreate-entry' => 'ئۆزلۈكىدىن قۇرۇلغان ھېسابات',
+'newuserlogpage'     => 'ئىشلەتكۈچى قۇرغان خاتىرە',
+'newuserlogpagetext' => '(چەكلەنگەن)',
 
 # Special:ListGroupRights
 'listgrouprights'                      => 'ئىشلەتكۈچى گۇرۇپپا ھوقۇقى',
@@ -1938,7 +1931,7 @@ URL نىڭ توغرىلىقى ۋە تور بېكەتنى زىيارەت قىلى
 'emailpagetext'        => 'سىز تۆۋەندىكى جەدۋەلنى ئىشلىتىپ، بۇ ئىشلەتكۈچىگە ئېلخەت يوللىيالايسىز.
  [[Special:Preferences|ئىشلەتكۈچى مايىللىقىڭىز]]دىكى ئېلخەت ئادرېسى  "يوللىغۇچى" ستونىدا كۆرۈنىدۇ، مۇشۇنداق بولغاندا شۇ ئىشلەتكۈچى سىزگە بىۋاسىتە جاۋاب قايتۇرالايدۇ.',
 'usermailererror'      => 'Mail ئوبيېكتى خاتالىق قايتۇردى:',
-'defemailsubject'      => '{{SITENAME}} ئېلخەت',
+'defemailsubject'      => '{{SITENAME}}بېكەتتىكى "$1" ئىشلەتكۈچىنىڭ ئېلخەت',
 'usermaildisabled'     => 'ئىشلەتكۈچى ئېلخەت چەكلەنگەن',
 'usermaildisabledtext' => 'سىز بۇ wiki دىكى باشقا ئىشلەتكۈچىگە ئېلخەت يوللىيالمايسىز.',
 'noemailtitle'         => 'ئېلخەت ئادرېس يوق',
@@ -2056,8 +2049,6 @@ $UNWATCHURL نى زىيارەت قىلىڭ
 'actionfailed'           => 'مەشغۇلات مەغلۇپ بولدى',
 'deletedtext'            => '"$1" ئۆچۈرۈلدى.
  يېقىندا ئۆچۈرۈلگەن خاتىرىنى $2 دىن كۆرۈڭ.',
-'deletedarticle'         => '"[[$1]]"ئۆچۈرۈلگەن',
-'suppressedarticle'      => 'بىكار قىلىندى "[[$1]]"',
 'dellogpage'             => 'ئۆچۈرۈش خاتىرىسى',
 'dellogpagetext'         => 'تۆۋەندىكىسى يېقىندا ئۆچۈرۈلگەن خاتىرە تىزىملىكى.',
 'deletionlog'            => 'ئۆچۈرۈش خاتىرىسى',
@@ -2129,6 +2120,7 @@ $2 نىڭ ئاخىرقى تۈزىتىلگەن نەشرىگە ئۆزگەرتىل�
 'protect-level-sysop'         => 'باشقۇرغۇچىلا',
 'protect-summary-cascade'     => 'زەنجىرسىمان قۇلۇپ',
 'protect-expiring'            => ' $1 (UTC) توختىتىلغان',
+'protect-expiring-local'      => '$1 ۋاقتى توشىدۇ',
 'protect-expiry-indefinite'   => 'قەرەلسىز',
 'protect-cascade'             => 'بۇ بەت ئۆز ئىچىگە ئالغان بەتنى قوغدا (زەنجىرسىمان قۇلۇپتا قوغدالغان).',
 'protect-cantedit'            => 'سىز بۇ بەتنىڭ قوغداش دەرىجىسىنى ئۆزگەرتەلمەيسىز، چۈنكى ئۇنى تەھرىرلەش ھوقۇقىڭىز يوق.',
@@ -2189,7 +2181,6 @@ $2 نىڭ ئاخىرقى تۈزىتىلگەن نەشرىگە ئۆزگەرتىل�
 'undeletereset'                => 'ئەسلىگە قايتۇر',
 'undeleteinvert'               => 'ئەكسىچە تاللا',
 'undeletecomment'              => 'سەۋەب:',
-'undeletedarticle'             => '"[[$1]]" ئەسلىگە كەلتۈرۈلدى',
 'undeletedrevisions'           => '{{PLURAL:$1|1 تۈزىتىش|$1 تۈزىتىش}} ئەسلىگە كەلتۈرۈلدى',
 'undeletedrevisions-files'     => '{{PLURAL:$1|1 تۈزىتىش|$1 تۈزىتىش}} ۋە {{PLURAL:$2|1 ھۆججەت|$2 ھۆججەت}}  ئەسلىگە كەلتۈرۈلدى',
 'undeletedfiles'               => '{{PLURAL:$1|1 ھۆججەت|$1 ھۆججەت}}  ئەسلىگە كەلتۈرۈلدى',
@@ -2329,6 +2320,7 @@ $1',
 'blocklist-userblocks'            => 'ھېسابات چەكلەشنى يوشۇر',
 'blocklist-tempblocks'            => 'ۋاقىتلىق چەكلەشنى يوشۇر',
 'blocklist-addressblocks'         => 'يەككە IP چەكلەشنى يوشۇر',
+'blocklist-rangeblocks'           => 'دائىرە چەكلىمىسىنى يوشۇر',
 'blocklist-timestamp'             => 'ۋاقىت تامغاسى',
 'blocklist-target'                => 'نىشان',
 'blocklist-expiry'                => 'ۋاقتى ئۆتتى',
@@ -2351,6 +2343,7 @@ $1',
 'unblocklink'                     => 'چەكلەشنى توختات',
 'change-blocklink'                => 'ئۆزگەرتىش چەكلەنگەن',
 'contribslink'                    => 'تۆھپىكارلار',
+'emaillink'                       => 'ئېلخەت يوللا',
 'autoblocker'                     => 'سىز "[[User:$1|$1]]" بىلەن بىر IP ئادرېسنى ئورتاق ئىشلەتكەچكە ئۆزلۈكىدىن چەكلىدى.
  $1 نىڭ چەكلەنگەنلىك سەۋەبى:  "$2"',
 'blocklogpage'                    => 'چەكلەنگەن خاتىرە',
@@ -2486,9 +2479,6 @@ $1',
 'movepage-page-moved'          => '$1 بەت $2 گە يۆتكەلدى.',
 'movepage-page-unmoved'        => '$1 بەتنى $2 گە يۆتكىيەلمىدى.',
 'movepage-max-pages'           => ' $1 {{PLURAL:$1|بەت|بەت}} يۆتكەش سانى ئەڭ يۇقىرى چەككە يەتتى، بىرلا ۋاقىتتا تېخىمۇ كۆپ بەتنى ئۆزلۈكىدىن يۆتكىيەلمەيدۇ.',
-'1movedto2'                    => '[[$1]] دىن [[$2]] غا يۆتكەلدى',
-'1movedto2_redir'              => 'قايتا نىشان بەلگىلەپ [[$1]] دىن [[$2]] غا يۆتكەلدى',
-'move-redirect-suppressed'     => 'قايتا نىشانلاش تىزگىنلەندى',
 'movelogpage'                  => 'خاتىرىنى يۆتكە',
 'movelogpagetext'              => 'تۆۋەندىكىسى يۆتكەلگەن ھەممە بەتلەرنىڭ تىزىملىكى.',
 'movesubpage'                  => '{{PLURAL:$1|تارماق بەت|تارماق بەت}}',
@@ -2613,6 +2603,8 @@ $1',
 'import-token-mismatch'      => 'جەريان سانلىق مەلۇماتى يوقالدى.
  قايتا سىناڭ.',
 'import-invalid-interwiki'   => 'بەلگىلەنگەن wiki دىن ئەكىرەلمىدى.',
+'import-error-edit'          => '"$1" نى ئەكىرمىدى چۈنكى سىز ئۇنى تەھرىرلەشكە يول قويمىغان.',
+'import-error-create'        => '"$1" نى ئەكىرمىدى چۈنكى سىز ئۇنى قۇرۇشقا يول قويمىغان.',
 
 # Import log
 'importlogpage'                    => 'ئەكىرىش خاتىرىسى',
@@ -2743,9 +2735,6 @@ $1',
 # Patrol log
 'patrol-log-page'      => 'چارلاش خاتىرىسى',
 'patrol-log-header'    => 'بۇ چارلانغان تۈزىتىلگەن نەشرى.',
-'patrol-log-line'      => '$2 نىڭ نەشرى $1 غا چارلاش بەلگىسى قويۇلغان $3',
-'patrol-log-auto'      => '(ئاپتوماتىك)',
-'patrol-log-diff'      => 'تۈزىتىش $1',
 'log-show-hide-patrol' => '$1 چارلاش خاتىرىسى',
 
 # Image deletion
@@ -2764,22 +2753,24 @@ $1',
 'nextdiff'     => 'يېڭى نەشرى →',
 
 # Media information
-'mediawarning'         => "'''ئاگاھلاندۇرۇش''': بۇ ھۆججەتتە زەھەرخەندە كود بولۇشى مۇمكىن، ئۇنى ئىجرا قىلسىڭىز سىستېمىڭىزغا خەۋپ ئېلىپ كېلىشى مۇمكىن.",
-'imagemaxsize'         => "سۈرەت چوڭلۇق چەكلىمىسى: <br />''(ھۆججەت چۈشەندۈرۈش بېتى ئۈچۈن)''",
-'thumbsize'            => 'كىچىك سۈرەت چوڭلۇقى:',
-'widthheightpage'      => '$1 × $2, $3 {{PLURAL:$3|بەت|بەت}}',
-'file-info'            => 'ھۆججەت چوڭلۇقى: $1, MIME تىپى: $2',
-'file-info-size'       => '$1 × $2 پىكسېل، ھۆججەت چوڭلۇقى: $3، MIME تىپى: $4',
-'file-info-size-pages' => '$1 × $2 پىكسېل، ھۆججەت چوڭلۇقى: $3, MIME تىپى: $4, $5 {{PLURAL:$5|بەت|بەت}}',
-'file-nohires'         => '<small>يۇقىرىراق پەرق ئېتىش نىسبىتى يوق.</small>',
-'svg-long-desc'        => 'SVG ھۆججىتى، ئاتاقتىكى چوڭلۇقى $1 × $2 نۇقتا، ھۆججەت چوڭلۇقى: $3',
-'show-big-image'       => 'تولۇق ئېنىقلىق دەرىجىسى',
-'show-big-image-size'  => '$1 × $2 پىكسېل',
-'file-info-gif-looped' => 'دەۋرىيلەنگەن',
-'file-info-gif-frames' => '$1 {{PLURAL:$1|كاندۇك|كاندۇك}}',
-'file-info-png-looped' => 'دەۋرىيلەنگەن',
-'file-info-png-repeat' => '$1 {{PLURAL:$1|قېتىم|قېتىم}} قويۇلدى',
-'file-info-png-frames' => '$1 {{PLURAL:$1|كاندۇك|كاندۇك}}',
+'mediawarning'           => "'''ئاگاھلاندۇرۇش''': بۇ ھۆججەتتە زەھەرخەندە كود بولۇشى مۇمكىن، ئۇنى ئىجرا قىلسىڭىز سىستېمىڭىزغا خەۋپ ئېلىپ كېلىشى مۇمكىن.",
+'imagemaxsize'           => "سۈرەت چوڭلۇق چەكلىمىسى: <br />''(ھۆججەت چۈشەندۈرۈش بېتى ئۈچۈن)''",
+'thumbsize'              => 'كىچىك سۈرەت چوڭلۇقى:',
+'widthheightpage'        => '$1 × $2, $3 {{PLURAL:$3|بەت|بەت}}',
+'file-info'              => 'ھۆججەت چوڭلۇقى: $1, MIME تىپى: $2',
+'file-info-size'         => '$1 × $2 پىكسېل، ھۆججەت چوڭلۇقى: $3، MIME تىپى: $4',
+'file-info-size-pages'   => '$1 × $2 پىكسېل، ھۆججەت چوڭلۇقى: $3, MIME تىپى: $4, $5 {{PLURAL:$5|بەت|بەت}}',
+'file-nohires'           => 'يۇقىرىراق پەرق ئېتىش نىسبىتى يوق.',
+'svg-long-desc'          => 'SVG ھۆججىتى، ئاتاقتىكى چوڭلۇقى $1 × $2 نۇقتا، ھۆججەت چوڭلۇقى: $3',
+'show-big-image'         => 'تولۇق ئېنىقلىق دەرىجىسى',
+'show-big-image-preview' => 'بۇ ئالدىن كۆزىتىشنىڭ چوڭلۇقى: $1.',
+'show-big-image-other'   => 'باشقا چوڭلۇقى: $1.',
+'show-big-image-size'    => '$1 × $2 پىكسېل',
+'file-info-gif-looped'   => 'دەۋرىيلەنگەن',
+'file-info-gif-frames'   => '$1 {{PLURAL:$1|كاندۇك|كاندۇك}}',
+'file-info-png-looped'   => 'دەۋرىيلەنگەن',
+'file-info-png-repeat'   => '$1 {{PLURAL:$1|قېتىم|قېتىم}} قويۇلدى',
+'file-info-png-frames'   => '$1 {{PLURAL:$1|كاندۇك|كاندۇك}}',
 
 # Special:NewFiles
 'newimages'             => 'يېڭى ھۆججەت كارىدورى',
@@ -3291,13 +3282,6 @@ $5
 'scarytranscludefailed'   => '[$1 نىڭ قېلىپىنى ئېلىش مەغلۇپ بولدى]',
 'scarytranscludetoolong'  => '[URL بەك ئۇزۇن]',
 
-# Trackbacks
-'trackbackbox'      => 'بۇ بەتنىڭ نەقىلى: <br />
-$1',
-'trackbackremove'   => '([$1 ئۆچۈر])',
-'trackbacklink'     => 'نەقىل',
-'trackbackdeleteok' => 'بۇ نەقىل مۇۋەپپەقىيەتلىك ئۆچۈرۈلدى.',
-
 # Delete conflict
 'deletedwhileediting'      => "'''ئاگاھلاندۇرۇش''': بۇ بەت تەھرىرلەشكە باشلىغاندىن كېيىن ئۆچۈرۈلگەن!",
 'confirmrecreate'          => "سىز بۇ بەتنى تەھرىرلىگەندىن كېيىن ئىشلەتكۈچى [[User:$1|$1]] ([[User talk:$1|مۇنازىرە]])  تۆۋەندىكى سەۋەب تۈپەيلىدىن بۇ بەت ئۆچۈرۈلدى:
@@ -3477,13 +3461,16 @@ MediaWiki ئىشلىتىش مەقسىتىنى ئاساس قىلىپ ئېلان �
 'tags-hitcount'           => '$1 {{PLURAL:$1|ئۆزگەرتىش|ئۆزگەرتىش}}',
 
 # Special:ComparePages
-'comparepages'     => 'بەت سېلىشتۇر',
-'compare-selector' => 'بەتنىڭ تۈزىتىلگەن نەشرىنى سېلىشتۇر',
-'compare-page1'    => '1- بەت',
-'compare-page2'    => '2- بەت',
-'compare-rev1'     => 'تۈزىتىلگەن نەشرى 1',
-'compare-rev2'     => 'تۈزىتىلگەن نەشرى 2',
-'compare-submit'   => 'سېلىشتۇر',
+'comparepages'                => 'بەت سېلىشتۇر',
+'compare-selector'            => 'بەتنىڭ تۈزىتىلگەن نەشرىنى سېلىشتۇر',
+'compare-page1'               => '1- بەت',
+'compare-page2'               => '2- بەت',
+'compare-rev1'                => 'تۈزىتىلگەن نەشرى 1',
+'compare-rev2'                => 'تۈزىتىلگەن نەشرى 2',
+'compare-submit'              => 'سېلىشتۇر',
+'compare-invalid-title'       => 'سىز بەلگىلىگەن تېما ئىناۋەتسىز.',
+'compare-title-not-exists'    => 'سىز بەلگىلىگەن تېما مەۋجۇت ئەمەس.',
+'compare-revision-not-exists' => 'سىز بەلگىلىگەن تۈزىتىلگەن نەشرى مەۋجۇت ئەمەس.',
 
 # Database error messages
 'dberr-header'      => 'بۇ wiki مەسىلىگە يولۇقتى',
@@ -3510,5 +3497,14 @@ MediaWiki ئىشلىتىش مەقسىتىنى ئاساس قىلىپ ئېلان �
 # SQLite database support
 'sqlite-has-fts' => '$1 پۈتۈن تېكست ئىزدەشنى قوللايدۇ',
 'sqlite-no-fts'  => '$1 پۈتۈن تېكست ئىزدەشنى قوللىمايدۇ',
+
+# New logging system
+'revdelete-restricted'                => 'باشقۇرغۇچى چەكلىمىسىنى قوللان',
+'revdelete-unrestricted'              => 'باشقۇرغۇچىنىڭ چەكلىمىسى چىقىرىۋېتىلدى',
+'logentry-move-move'                  => '$1 نى $3 بەتتىن $4 غا يۆتكىدى',
+'logentry-move-move-noredirect'       => 'قايتا نىشانلاشنى قالدۇرمايلا $1 نى $3 بەتتىن $4 غا يۆتكىدى',
+'logentry-move-move_redir'            => 'قايتا نىشانلاپ $1 نى $3 بەتتىن $4 غا يۆتكىدى',
+'logentry-move-move_redir-noredirect' => 'قايتا نىشانلاش ئارقىلىق $1 نى $3 بەتتىن $4 غا يۆتكىدى قايتا نىشانلاشنى قالدۇرمىدى',
+'newuserlog-byemail'                  => 'ئىم ئىلخەتتە يوللاندى',
 
 );

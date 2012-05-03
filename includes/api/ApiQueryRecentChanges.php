@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * A query action to enumerate the recent changes that were done to the wiki.
  * Various filters are supported.
@@ -52,7 +47,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 	 * Get an array mapping token names to their handler functions.
 	 * The prototype for a token function is func($pageid, $title, $rc)
 	 * it should return a token or false (permission denied)
-	 * @return array(tokenname => function)
+	 * @return array array(tokenname => function)
 	 */
 	protected function getTokenFunctions() {
 		// Don't call the hooks twice
@@ -89,7 +84,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		// The patrol token is always the same, let's exploit that
 		static $cachedPatrolToken = null;
 		if ( is_null( $cachedPatrolToken ) ) {
-			$cachedPatrolToken = $wgUser->editToken( 'patrol' );
+			$cachedPatrolToken = $wgUser->getEditToken( 'patrol' );
 		}
 
 		return $cachedPatrolToken;
@@ -129,7 +124,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 	 * @param $resultPageSet ApiPageSet
 	 */
 	public function run( $resultPageSet = null ) {
-		global $wgUser;
+		$user = $this->getUser();
 		/* Get the parameters of the request. */
 		$params = $this->extractRequestParams();
 
@@ -163,7 +158,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 
 			// Check permissions
 			if ( isset( $show['patrolled'] ) || isset( $show['!patrolled'] ) ) {
-				if ( !$wgUser->useRCPatrol() && !$wgUser->useNPPatrol() ) {
+				if ( !$user->useRCPatrol() && !$user->useNPPatrol() ) {
 					$this->dieUsage( 'You need the patrol right to request the patrolled flag', 'permissiondenied' );
 				}
 			}
@@ -219,7 +214,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			/* Set up internal members based upon params. */
 			$this->initProperties( $prop );
 
-			if ( $this->fld_patrolled && !$wgUser->useRCPatrol() && !$wgUser->useNPPatrol() ) {
+			if ( $this->fld_patrolled && !$user->useRCPatrol() && !$user->useNPPatrol() ) {
 				$this->dieUsage( 'You need the patrol right to request the patrolled flag', 'permissiondenied' );
 			}
 
@@ -410,8 +405,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		}
 
 		if ( $this->fld_parsedcomment && isset( $row->rc_comment ) ) {
-			global $wgUser;
-			$vals['parsedcomment'] = $wgUser->getSkin()->formatComment( $row->rc_comment, $title );
+			$vals['parsedcomment'] = Linker::formatComment( $row->rc_comment, $title );
 		}
 
 		if ( $this->fld_redirect ) {
@@ -633,7 +627,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&list=recentchanges'
 		);

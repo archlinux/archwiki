@@ -33,14 +33,6 @@ class ShortPagesPage extends QueryPage {
 		parent::__construct( $name );
 	}
 
-	// inexpensive?
-	/**
-	 * This query is indexed as of 1.5
-	 */
-	function isExpensive() {
-		return true;
-	}
-
 	function isSyndicated() {
 		return false;
 	}
@@ -51,9 +43,9 @@ class ShortPagesPage extends QueryPage {
 			'fields' => array ( 'page_namespace AS namespace',
 					'page_title AS title',
 					'page_len AS value' ),
-			'conds' => array ( 'page_namespace' => MWNamespace::getContentNamespaces(),
+			'conds' => array ( 'page_namespace' => NS_MAIN,
 					'page_is_redirect' => 0 ),
-			'options' => array ( 'USE INDEX' => 'page_len' )
+			'options' => array ( 'USE INDEX' => 'page_redirect_namespace_len' )
 		);
 	}
 
@@ -86,23 +78,22 @@ class ShortPagesPage extends QueryPage {
 	}
 
 	function formatResult( $skin, $result ) {
-		global $wgLang;
-		$dm = $wgLang->getDirMark();
+		$dm = $this->getLanguage()->getDirMark();
 
 		$title = Title::makeTitle( $result->namespace, $result->title );
 		if ( !$title ) {
 			return '<!-- Invalid title ' .  htmlspecialchars( "{$result->namespace}:{$result->title}" ). '-->';
 		}
-		$hlink = $skin->linkKnown(
+		$hlink = Linker::linkKnown(
 			$title,
 			wfMsgHtml( 'hist' ),
 			array(),
 			array( 'action' => 'history' )
 		);
 		$plink = $this->isCached()
-					? $skin->link( $title )
-					: $skin->linkKnown( $title );
-		$size = wfMessage( 'nbytes', $wgLang->formatNum( $result->value ) )->escaped();
+					? Linker::link( $title )
+					: Linker::linkKnown( $title );
+		$size = $this->msg( 'nbytes' )->numParams( $result->value )->escaped();
 
 		return $title->exists()
 				? "({$hlink}) {$dm}{$plink} {$dm}[{$size}]"
