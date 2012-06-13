@@ -53,19 +53,17 @@ class SpecialGadgets extends SpecialPage {
 		$listOpen = false;
 
 		$msgOpt = array( 'parseinline', 'parsemag' );
-		$editInterfaceAllowed = $wgUser->isAllowed( 'editinterface' );
+		$editInterfaceMessage = $wgUser->isAllowed( 'editinterface' )
+			? 'edit'
+			: 'viewsource';
 
 		foreach ( $gadgets as $section => $entries ) {
 			if ( $section !== false && $section !== '' ) {
 				$t = Title::makeTitleSafe( NS_MEDIAWIKI, "Gadget-section-$section$lang" );
-				if ( $editInterfaceAllowed ) {
-					$lnkTarget = $t
-						? Linker::link( $t, wfMsgHTML( 'edit' ), array(), array( 'action' => 'edit' ) )
-						: htmlspecialchars( $section );
-					$lnk =  "&#160; &#160; [$lnkTarget]";
-				} else {
-					$lnk = '';
-				}
+				$lnkTarget = $t
+					? Linker::link( $t, wfMsgHTML( $editInterfaceMessage ), array(), array( 'action' => 'edit' ) )
+					: htmlspecialchars( $section );
+				$lnk =  "&#160; &#160; [$lnkTarget]";
 
 				$ttext = wfMsgExt( "gadget-section-$section", $msgOpt );
 
@@ -88,10 +86,7 @@ class SpecialGadgets extends SpecialPage {
 				}
 
 				$links = array();
-				if ( $editInterfaceAllowed ) {
-					$links[] = Linker::link( $t, wfMsgHTML( 'edit' ), array(), array( 'action' => 'edit' ) );
-				}
-
+				$links[] = Linker::link( $t, wfMsgHTML( $editInterfaceMessage ), array(), array( 'action' => 'edit' ) );
 				$links[] = Linker::link( $this->getTitle( "export/{$gadget->getName()}" ), wfMsgHtml( 'gadgets-export' ) );
 
 				$ttext = wfMsgExt( "gadget-{$gadget->getName()}", $msgOpt );

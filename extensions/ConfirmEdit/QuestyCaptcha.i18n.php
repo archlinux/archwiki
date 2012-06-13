@@ -430,11 +430,12 @@ Prema no botón \"atrás\" do seu navegador para volver á páxina de edición."
 );
 
 /** Swiss German (Alemannisch)
+ * @author Als-Chlämens
  * @author Als-Holder
  */
 $messages['gsw'] = array(
-	'questycaptcha-addurl' => 'In Dynere Bearbeitig het s neji extärni Gleicher (Links).
-As Schutz gege automatischi Spam, beantwort bitte d FRog, wu do unter gnännt wird ([[Special:Captcha/help|meh Informatione]]):',
+	'questycaptcha-addurl' => 'In Dynere Bearbeitig het s neji extärni Links.
+As Schutz gege automatischi Spam, beantwort bitte d Frog, wu do unter gnännt wird ([[Special:Captcha/help|meh Informatione]]):',
 	'questycaptcha-badlogin' => 'As Schutz gege ne automatisch Passwort-Knacke, beantwort bitte d Frog, wu do unte gnännt wird ([[Special:Captcha/help|meh Informatione]]):',
 	'questycaptcha-createaccount' => 'As Schutz gege ne automatisch Aalege vu Benutzerkonte, beantwort bitte d Frog, wu do unte gnännt wird ([[Special:Captcha/help|meh Informatione]]):',
 	'questycaptcha-create' => 'Go d Syte aalege, beantwort bitte d Frog, wu do unte gnännt wird ([[Special:Captcha/help|meh Informatione]]):',
@@ -616,7 +617,7 @@ Fare clic sul pulsante 'indietro' del browser per tornare alla pagina di modific
  * @author Shirayuki
  */
 $messages['ja'] = array(
-	'questycaptcha-desc' => 'Confirm Edit 用の質問形式 CAPTCHA ジェネレータ',
+	'questycaptcha-desc' => 'Confirm Edit 用の質問形式 CAPTCHA ジェネレーター',
 	'questycaptcha-addurl' => 'あなたの編集では新たな外部リンクが追加されています。自動で実行されるスパム行為防止のため、以下に表示される確認用の質問に回答してください ([[Special:Captcha/help|詳細]]):',
 	'questycaptcha-badlogin' => '自動化スクリプトによるパスワードクラック攻撃を防止するため、以下に表示される確認用の質問に回答してください ([[Special:Captcha/help|詳細]]):',
 	'questycaptcha-createaccount' => '自動化されたアカウント作成を防止するため、以下に表示される確認用の質問に回答してください ([[Special:Captcha/help|詳細]]):',
@@ -629,13 +630,15 @@ $messages['ja'] = array(
 
 正当な投稿をするにあたって本機能が障害となっている場合、[[{{MediaWiki:Grouppage-sysop}}|サイト管理者]]に連絡して協力を求めてください。
 
-ページの編集に戻るには、ブラウザの「戻る」ボタンを押してください。',
+ページの編集に戻るには、ブラウザーの「戻る」ボタンを押してください。',
 );
 
 /** Korean (한국어)
  * @author Kwj2772
+ * @author 아라
  */
 $messages['ko'] = array(
+	'questycaptcha-desc' => '편집 확인에 대한 탐구적인 CAPCHA(캡차) 생성기',
 	'questycaptcha-badlogin' => '자동화된 비밀번호 깨기를 방지하기 위해 아래애 보이는 질문에 대답해주세요 ([[Special:Captcha/help|자세한 정보]]):',
 );
 
@@ -1141,6 +1144,27 @@ $messages['uk'] = array(
 Будь ласка, зв\'яжіться з [[{{MediaWiki:Grouppage-sysop}}|адміністраторами сайту]] по допомогу, якщо ця система не дозволяє вам робити допустимий внесок. 
 
 Натисніть на кнопку "назад" у браузері, щоб повернутися на сторінку редагування.',
+);
+
+/** Walloon (walon)
+ * @author Srtxg
+ */
+$messages['wa'] = array(
+	'questycaptcha-addurl' => "Dins vos candjmints i gn a des dfoûtrinnès hårdêyes (URL).
+Po s' mete a houte des robots di spam, nos vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula respondez al kesse chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
+	'questycaptcha-badlogin' => "Po s' mete a houte des des robots ki sayèt d' adviner les screts, nos  vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula respondez al kesse chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
+	'questycaptcha-createaccount' => "Po s' mete a houte des des robots k' ahivèt des contes otomaticmint, nos  vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula respondez al kesse chal pa dzi ([[Special:Captcha/help|pus di racsegnes]]):",
+	'questycaptcha-create' => "Por vos poleur ahiver l' pådje, vos dvoz responde al kesse chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
+	'questycaptcha-edit' => 'Po candjî cisse pådje ci, vos dvoz responde al kesse chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):',
+	'questycaptcha-sendemail' => "Po s' mete a houte des robots di spam, nos vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula respondez al kesse chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
+	'questycaptchahelp-text' => "Les waibes k' acceptèt des messaedjes do publik, come ci wiki chal, sont sovint eployîs pa des må-fjhants spameus, po pleur mete, avou des usteyes otomatikes, des loyéns di rclame viè les sites da zels.
+Bén seur, on pout todi les disfacer al mwin, mins c' est on soyant ovraedje.
+
+Adon, pa côps, copurade cwand vos radjoutez des hårdêyes a ene pådje, on eployrè ene passete d' acertinaedje, dj' ô bén k' on vs dimandrè d' responde a ene kesse. Come çoula est ene sacwè d' målåjheye a fé otomaticmint pa on robot, çoula permete di leyî les vraiyès djins fé leus candjmints tot arestant l' plupårt des spameus et des sfwaitès atakes pa robot.
+
+S' i vs plait contactez les [[{{MediaWiki:Grouppage-sysop}}|manaedjeus do site]] po d' l' aidance si çoula vos espaitche di fé vos candjmints ledjitimes.
+
+Clitchîz sol boton «En erî» di vosse betchteu waibe po rivni al pådje di dvant.",
 );
 
 /** Yiddish (ייִדיש)

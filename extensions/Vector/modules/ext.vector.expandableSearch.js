@@ -1,27 +1,27 @@
 /*
  * Expandable search for Vector
  */
-jQuery( document ).ready( function( $ ) {
+jQuery( document ).ready( function ( $ ) {
 	
 	/* Browser Support */
 
 	var map = {
 		// Left-to-right languages
-		'ltr': {
+		ltr: {
 			// Collapsible Nav is broken in Opera < 9.6 and Konqueror < 4
-			'msie': [['>=', 8]],
-			'blackberry': false,
-			'ipod': false,
-			'iphone': false,
-			'ps3': false
+			msie: [['>=', 8]],
+			blackberry: false,
+			ipod: false,
+			iphone: false,
+			ps3: false
 		},
 		// Right-to-left languages
-		'rtl': {
-			'msie': [['>=', 8]],
-			'blackberry': false,
-			'ipod': false,
-			'iphone': false,
-			'ps3': false
+		rtl: {
+			msie: [['>=', 8]],
+			blackberry: false,
+			ipod: false,
+			iphone: false,
+			ps3: false
 		}
 	};
 	if ( !$.client.test( map ) ) {
@@ -30,41 +30,43 @@ jQuery( document ).ready( function( $ ) {
 	
 	$( '#searchInput' )
 		.expandableField( { 
-			'beforeExpand': function( context ) {
-				// animate the containers border
+			beforeExpand: function ( context ) {
+				// Animate the containers border
 				$( this )
 					.parent()
 					.animate( {
-						'borderTopColor': '#a0d8ff',
-						'borderLeftColor': '#a0d8ff',
-						'borderRightColor': '#a0d8ff',
-						'borderBottomColor': '#a0d8ff' }, 'fast' );
+						borderTopColor: '#a0d8ff',
+						borderLeftColor: '#a0d8ff',
+						borderRightColor: '#a0d8ff',
+						borderBottomColor: '#a0d8ff'
+					}, 'fast' );
 			},
-			'beforeCondense': function( context ) {
-				// animate the containers border
+			beforeCondense: function ( context ) {
+				// Animate the containers border
 				$( this )
 					.parent()
 					.animate( {
-						'borderTopColor': '#aaaaaa',
-						'borderLeftColor': '#aaaaaa',
-						'borderRightColor': '#aaaaaa',
-						'borderBottomColor': '#aaaaaa' }, 'fast' );
+						borderTopColor: '#aaaaaa',
+						borderLeftColor: '#aaaaaa',
+						borderRightColor: '#aaaaaa',
+						borderBottomColor: '#aaaaaa'
+					}, 'fast' );
 			},
-			'afterExpand': function( context ) {
-				//trigger the collapsible tabs resize handler
-				if ( typeof $.collapsibleTabs != 'undefined' ){
+			afterExpand: function ( context ) {
+				// Trigger the collapsible tabs resize handler
+				if ( $.collapsibleTabs ) {
 					$.collapsibleTabs.handleResize();
 				}
 			},
-			'afterCondense': function( context ) {
-				//trigger the collapsible tabs resize handler
-				if ( typeof $.collapsibleTabs != 'undefined' ){
+			afterCondense: function ( context ) {
+				// Trigger the collapsible tabs resize handler
+				if ( $.collapsibleTabs ) {
 					$.collapsibleTabs.handleResize();
 				}
 			},
-			'expandToLeft': ! $( 'body' ).is( '.rtl' )
+			expandToLeft: !$( 'body' ).hasClass( 'rtl' )
 		} )
-		.css( 'float', $( 'body' ).is( '.rtl' ) ? 'right' : 'left' )
+		.css( 'float', $( 'body' ).hasClass( 'rtl' ) ? 'right' : 'left' )
 		.siblings( 'button' )
-		.css( 'float', $( 'body' ).is( '.rtl' ) ? 'right' : 'left' );
+		.css( 'float', $( 'body' ).hasClass( 'rtl' ) ? 'right' : 'left' );
 } );

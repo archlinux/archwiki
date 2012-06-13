@@ -38,7 +38,7 @@ div.suggestions {
 .wikiEditor-toolbar-dialog .ui-dialog-titlebar-close {
 	padding: 0;
 }
-body.ltr .wikiEditor-toolbar-dialog .ui-dialog-titlebar-close {
+body .wikiEditor-toolbar-dialog .ui-dialog-titlebar-close {
 	right: 0.9em;
 }
 .wikieditor-toolbar-field-wrapper {

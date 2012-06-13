@@ -82,6 +82,7 @@ $messages['es'] = array(
 );
 
 /** French (Français)
+ * @author Gomoko
  * @author Seb35
  */
 $messages['fr'] = array(
@@ -93,6 +94,7 @@ $messages['fr'] = array(
 	'asirra-createaccount-fail' => 'Veuillez identifier correctement les chats.',
 	'asirra-create' => 'Pour nous aider à nous protéger contre la création automatique de pages, veuillez sélectionner uniquement les photos de chats dans la boîte ci-dessous :',
 	'asirra-nojs' => "'''Veuillez activer le JavaScript et re-soumettre la page.'''",
+	'asirra-failed' => 'Veuillez identifier toutes les images de chat',
 );
 
 /** Galician (Galego)
@@ -138,6 +140,14 @@ $messages['ia'] = array(
 	'asirra-create' => 'Pro adjutar a proteger nos contra le creation automatisate de paginas, per favor selige solmente le photos de cattos in le quadro sequente:',
 	'asirra-nojs' => "'''Per favor activa JavaScript e resubmitte le pagina.'''",
 	'asirra-failed' => 'Per favor identifica tote le imagines de cattos',
+);
+
+/** Japanese (日本語)
+ * @author Shirayuki
+ */
+$messages['ja'] = array(
+	'asirra-desc' => 'ConfirmEdit 用 Asirra モジュール',
+	'asirra-nojs' => "'''JavaScript を有効にしてページを再読込してください。'''",
 );
 
 /** Luxembourgish (Lëtzebuergesch)
@@ -239,6 +249,22 @@ $messages['pt'] = array(
 	'asirra-createaccount-fail' => 'Identifique correctamente os gatos, por favor.',
 	'asirra-create' => 'Como prevenção contra sistemas automatizados de criação de páginas, seleccione só as fotografias de gatos na caixa abaixo:',
 	'asirra-nojs' => "'''Possibilite o uso de JavaScript e reenvie a página, por favor.'''",
+);
+
+/** Walloon (walon)
+ * @author Srtxg
+ */
+$messages['wa'] = array(
+	'asirra-desc' => "Module Asirra pol passete d' acertinaedje des candjmints (ConfirmEdit)",
+	'asirra-edit' => "Po s' mete a houte des des robots di spam, nos  vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula tchoezixhoz seulmint les imådjes avou des tchets e l' boesse chal pa dzo:",
+	'asirra-addurl' => "Dins vos candjmints i gn a des dfoûtrinnès hårdêyes (URL).
+Po s' mete a houte des des robots di spam, nos  vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula tchoezixhoz seulmint les imådjes avou des tchets e l' boesse chal pa dzo:",
+	'asirra-badpass' => "Po s' mete a houte des des robots ki sayèt d' adviner les screts, nos  vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula tchoezixhoz seulmint les imådjes avou des tchets e l' boesse chal pa dzo:",
+	'asirra-createaccount' => "Po s' mete a houte des des robots k' ahivèt des contes otomaticmint, nos  vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula tchoezixhoz seulmint les imådjes avou des tchets e l' boesse chal pa dzo:",
+	'asirra-createaccount-fail' => 'Tchoezixhoz comifåt les tchets (les biesses ki gnawèt).',
+	'asirra-create' => "Po s' mete a houte des des robots k' ahivèt des pådjes otomaticmint, nos  vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula tchoezixhoz seulmint les imådjes avou des tchets e l' boesse chal pa dzo:",
+	'asirra-nojs' => "'''Metoz s' i vs plait en alaedje li JavaScrit et s' revoyî l' pådje.'''",
+	'asirra-failed' => 'Idintifyî totes les imådjes avou des tchets',
 );
 
 /** Simplified Chinese (‪中文(简体)‬)

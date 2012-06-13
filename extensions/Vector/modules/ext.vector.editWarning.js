@@ -1,27 +1,27 @@
 /*
  * Edit warning for Vector
  */
-(function( $ ) {
-	$(document).ready( function() {
+( function ( mw, $ ) {
+	$(document).ready( function () {
 		// Check if EditWarning is enabled and if we need it
-		if ( $( '#wpTextbox1' ).size() == 0 ) {
+		if ( $( '#wpTextbox1' ).length === 0 ) {
 			return true;
 		}
 		// Get the original values of some form elements
-		$( '#wpTextbox1, #wpSummary' ).each( function() {
+		$( '#wpTextbox1, #wpSummary' ).each( function () {
 			$(this).data( 'origtext', $(this).val() );
 		});
 		// Attach our own handler for onbeforeunload which respects the current one
-		var fallbackWindowOnBeforeUnload = window.onbeforeunload;
-		var ourWindowOnBeforeUnload = function() {
-			var fallbackResult = undefined;
-			var retval = undefined;
-			var thisFunc = arguments.callee;
-			// Check if someone already set on onbeforeunload hook
-			if ( fallbackWindowOnBeforeUnload ) {
+		var otherOnBeforeUnload = window.onbeforeunload;
+		function ourOnBeforeUnload() {
+			var fallbackResult, retval;
+
+			// Check if someone already set an onbeforeunload hook
+			if ( otherOnBeforeUnload ) {
 				// Get the result of their onbeforeunload hook
-				fallbackResult = fallbackWindowOnBeforeUnload();
+				fallbackResult = otherOnBeforeUnload();
 			}
+
 			// Check if their onbeforeunload hook returned something
 			if ( fallbackResult !== undefined ) {
 				// Exit here, returning their message
@@ -31,41 +31,40 @@
 				// the original values
 				if (
 					mw.config.get( 'wgAction' ) == 'submit' ||
-					$( '#wpTextbox1' ).data( 'origtext' ) != $( '#wpTextbox1' ).val() ||
-					$( '#wpSummary' ).data( 'origtext' ) != $( '#wpSummary' ).val()
+						$( '#wpTextbox1' ).data( 'origtext' ) != $( '#wpTextbox1' ).val() ||
+						$( '#wpSummary' ).data( 'origtext' ) != $( '#wpSummary' ).val()
 				) {
 					// Return our message
-					retval = mediaWiki.msg( 'vector-editwarning-warning' );
+					retval = mw.msg( 'vector-editwarning-warning' );
 				}
 			}
-			
+
 			// Unset the onbeforeunload handler so we don't break page caching in Firefox
 			window.onbeforeunload = null;
 			if ( retval !== undefined ) {
 				// ...but if the user chooses not to leave the page, we need to rebind it
-				setTimeout( function() {
-					window.onbeforeunload = thisFunc;
-				} );
+				setTimeout( function () {
+					window.onbeforeunload = ourOnBeforeUnload;
+				}, 1 );
 				return retval;
 			}
-		};
-		var pageShowHandler = function() {
-			// Re-add onbeforeunload handler
-			window.onbeforeunload = ourWindowOnBeforeUnload;
-		};
-		pageShowHandler();
-		if ( window.addEventListener ) {
-			window.addEventListener('pageshow', pageShowHandler, false);
-		} else if ( window.attachEvent ) {
-			window.attachEvent( 'pageshow', pageShowHandler );
 		}
-		
+
+		// Do the first binding now
+		window.onbeforeunload = ourOnBeforeUnload;
+
+		function pageShowHandler() {
+			// Re-add onbeforeunload handler on pageshow.
+			window.onbeforeunload = ourOnBeforeUnload;
+		}
+
+		$( window ).on( 'pageshow', pageShowHandler );
+
 		// Add form submission handler
-		$( 'form' ).submit( function() {
+		$( '#editform' ).submit( function () {
 			// Restore whatever previous onbeforeload hook existed
-			window.onbeforeunload = fallbackWindowOnBeforeUnload;
+			window.onbeforeunload = otherOnBeforeUnload;
 		});
 	});
-	//Global storage of fallback for onbeforeunload hook
-	var fallbackWindowOnBeforeUnload = null;
-})( jQuery );
+
+}( mediaWiki, jQuery ) );

@@ -112,6 +112,7 @@ $messages['arz'] = array(
 
 /** Assamese (অসমীয়া)
  * @author Chaipau
+ * @author Gitartha.bordoloi
  * @author Rajuonline
  */
 $messages['as'] = array(
@@ -122,6 +123,7 @@ $messages['as'] = array(
 	'fancycaptcha-createaccount' => 'স্বয়ংক্ৰীয় নতুন সদস্যভুক্তিৰ পৰা হাত সাৰিবলৈ, তলত দেখিবলৈ পোৱা শব্দটো বাকচৰ ভিতৰত লিখক। ([[Special:Captcha/help|অধিক তথ্য]]):',
 	'fancycaptcha-create' => 'পৃষ্ঠাটো বনাবলৈ, তলত দেখিবলৈ পোৱা শব্দটো বাকচৰ ভিতৰত লিখক। ([[Special:Captcha/help|অধিক তথ্য]]):',
 	'fancycaptcha-edit' => 'এই পৃষ্ঠাটো সম্পাদনা কৰিবলৈ, তলত দেখিবলৈ পোৱা শব্দটো বাকচৰ ভিতৰত লিখক। ([[Special:Captcha/help|অধিক তথ্য]]):',
+	'fancycaptcha-sendemail' => 'স্বয়ংক্ৰিয় স্পেমিঙৰ পৰা বাচিবলৈ অনুগ্ৰহ কৰি তলৰ বাকছটোৰ তলত ওলোৱা আখৰকেইটা লিখক ([[Special:Captcha/help|অধিক তথ্য]]):',
 );
 
 /** Asturian (Asturianu)
@@ -190,6 +192,7 @@ $messages['bg'] = array(
 );
 
 /** Bengali (বাংলা)
+ * @author Nasir8891
  * @author Zaheen
  */
 $messages['bn'] = array(
@@ -199,6 +202,7 @@ $messages['bn'] = array(
 	'fancycaptcha-create' => 'পাতাটি সৃষ্টি করতে চাইলে অনুগ্রহ করে নিচের বাক্সে দেখানো শব্দগুলি প্রবেশ করান ([[Special:Captcha/help|আরও তথ্য]]):',
 	'fancycaptcha-edit' => 'পাতাটি সম্পাদনা করতে চাইলে অনুগ্রহ করে নিচের বাক্সে দেখানো শব্দগুলি প্রবেশ করান
 ([[Special:Captcha/help|আরও তথ্য]]):',
+	'fancycaptcha-sendemail' => 'স্বয়ংক্রিয় স্প্যামিং এর বিরুদ্ধে সুরক্ষার খাতিরে অনুগ্রহ করে নিচের বাক্সে দেখানো শব্দগুলি প্রবেশ করান ([[Special:Captcha/help|আরও তথ্য]]):',
 );
 
 /** Breton (Brezhoneg)
@@ -244,6 +248,13 @@ $messages['ca'] = array(
 /** Min Dong Chinese (Mìng-dĕ̤ng-ngṳ̄) */
 $messages['cdo'] = array(
 	'fancycaptcha-badlogin' => 'Ôi-lāu huòng-cī tiàng-sê̤ṳ cê̤ṳ-dông puái-gāi mĭk-mā, chiāng nṳ̄ sṳ̆-ĭk â-dā̤ bēng-bēng diē-lié gì sṳ̀ ([[Special:Captcha/help|gáing sâ̤ séng-sék]]):',
+);
+
+/** Sorani (کوردی)
+ * @author Asoxor
+ */
+$messages['ckb'] = array(
+	'fancycaptcha-createaccount' => 'بۆ یارمەتیدانی بەرگری لە دروستکردنی خۆکاری ھەژمار، تکایە ئەو وشانە لە خوارەوەدا دیارن لە بۆکسەکەدا بنووسە ([[Special:Captcha/help|زانیاریی زۆرتر]]):',
 );
 
 /** Czech (Česky)
@@ -517,11 +528,12 @@ Para contribuír na protección contra o spam automatizado, introduza as palabra
 );
 
 /** Swiss German (Alemannisch)
+ * @author Als-Chlämens
  * @author Als-Holder
  * @author Melancholie
  */
 $messages['gsw'] = array(
-	'fancycaptcha-addurl' => 'In Dyynere Bearbeitig het s neiji externi Gleicher.
+	'fancycaptcha-addurl' => 'In Dyynere Bearbeitig het s neiji externi Link.
 Zum Schutz vor automatisiertem Spamming gib des Wort in s Fäld unten yy. Druck derno nomol uf „Syte spychere“. [[Special:Captcha/help|(Frogen oder Probläm?)]]',
 	'fancycaptcha-badlogin' => 'Zum Schutz vor ere Kompromittierig vu Dyynm Benutzerkonto gib des Wort in s Fäld unten yy [[Special:Captcha/help|(Frogen oder Probläm?)]]:',
 	'fancycaptcha-createaccount' => 'Zum Schutz vor ere automatisierte Aalag vu Benutzerkonte gib bitte des Wort in s Fäld unten yy ([[Special:Captcha/help|Frogen oder Probläm?]]):',
@@ -674,7 +686,7 @@ $messages['it'] = array(
  * @author Shirayuki
  */
 $messages['ja'] = array(
-	'fancycaptcha-desc' => 'Confirm Edit 用の装飾的な CAPTCHA ジェネレータ',
+	'fancycaptcha-desc' => 'Confirm Edit 用の装飾的な CAPTCHA ジェネレーター',
 	'fancycaptcha-addurl' => 'あなたの編集で新たな外部リンクが追加されています。
 自動化スクリプトによるスパム行為防止のため、以下のボックスに表示される確認用の文字列を入力してください ([[Special:Captcha/help|詳細]]):',
 	'fancycaptcha-badlogin' => '自動化スクリプトによるパスワードクラック攻撃を防止するため、以下のボックスに表示される確認用の文字列を入力してください ([[Special:Captcha/help|詳細]]):',
@@ -708,12 +720,17 @@ $messages['jv'] = array(
 );
 
 /** Georgian (ქართული)
+ * @author David1010
  * @author ITshnik
  */
 $messages['ka'] = array(
 	'fancycaptcha-addurl' => 'თქვენი ცვლილება შეიცავს ახალ გარე ბმულებს.
 ავტომატური სპამინგისგან თავდაცვის მიზნით, გთხოვთ, შეიყვანოთ ქვემოთ მოცემული სიტყვები ყუთში ([[Special:Captcha/help|მეტი ინფორმაცია]]):',
 	'fancycaptcha-badlogin' => 'პაროლების ავტომატური გატეხვისგან თავდაცვის მიზნით, გთხოვთ, შეიყვანოთ ქვემოთ მოცემული სიტყვები ყუთში ([[Special:Captcha/help|მეტი ინფორმაცია]]):',
+	'fancycaptcha-createaccount' => 'ანგარიშების ავტომატური რეგისტრაციისაგან თავდაცვის მიზნით, გთხოვთ, შეიყვანოთ ნაჩვენები სიმბოლოები ტექსტურ ველში ([[Special:Captcha/help|დეტალურად]]):',
+	'fancycaptcha-create' => 'გვერდის შესაქმნელად, გთხოვთ, შეიყვანეთ ასოები, რომლებიც ნაჩვენებია ქვედა სურათზე ([[Special:Captcha/help|დეტალურად…]]):',
+	'fancycaptcha-edit' => 'გვერდის რედაქტირებისათვის, გთხოვთ, შეიყვანეთ ასოები, რომლებიც ნაჩვენებია ქვედა სურათზე ([[Special:Captcha/help|დეტალურად…]]):',
+	'fancycaptcha-sendemail' => 'ავტომატური სპამისაგან თავდაცვის მიზნით, გთხოვთ, შეიყვანოთ ქვევით ნაჩვენები სიტყვა ტექსტურ ველში ([[Special:Captcha/help|მეტი ინფორმაცია]]):',
 );
 
 /** Kara-Kalpak (Qaraqalpaqsha)
@@ -783,8 +800,10 @@ $messages['km'] = array(
 /** Korean (한국어)
  * @author Kwj2772
  * @author ToePeu
+ * @author 아라
  */
 $messages['ko'] = array(
+	'fancycaptcha-desc' => '편집 확인에 대한 공상 CAPTCHA(캡차) 생성기',
 	'fancycaptcha-addurl' => '편집이 새로운 외부 링크를 포함하고 있습니다.
 자동화된 스팸을 막기 위해 아래 상자의 단어를 적어주세요. ([[Special:Captcha/help|더 많은 정보]])',
 	'fancycaptcha-badlogin' => '자동화된 암호깨기를 막기 위해서, 아래 상자에 있는 단어를 입력해 주시기 바랍니다. ([[Special:Captcha/help|추가 도움말]]):',
@@ -792,6 +811,13 @@ $messages['ko'] = array(
 	'fancycaptcha-create' => '이 문서를 생성하시려면, 아래의 상자 안에 있는 낱말을 입력해주세요 ([[Special:Captcha/help|자세한 정보]]):',
 	'fancycaptcha-edit' => '이 문서를 편집하시려면, 아래의 상자 안에 있는 낱말을 입력해주세요 ([[Special:Captcha/help|자세한 정보]]):',
 	'fancycaptcha-sendemail' => '자동화된 스팸을 방지하기 위해, 아래 상자에 있는 단어를 입력해 주시기 바랍니다. ([[Special:Captcha/help|추가 도움말]]):',
+);
+
+/** Karachay-Balkar (Къарачай-Малкъар)
+ * @author Iltever
+ */
+$messages['krc'] = array(
+	'fancycaptcha-createaccount' => 'Тергеу джазыуланы (аккаунтланы) автомат халда регистрация этиуню къоймаз ючюн, текстлик терезеде суратланнган символланы джазыгъыз ([[Special:Captcha/help|толуракъ]]):',
 );
 
 /** Colognian (Ripoarisch)
@@ -922,6 +948,13 @@ $messages['ms'] = array(
 	'fancycaptcha-sendemail' => 'Untuk membanteras kegiatan spam secara automatik, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):',
 );
 
+/** Maltese (Malti)
+ * @author Chrisportelli
+ */
+$messages['mt'] = array(
+	'fancycaptcha-createaccount' => "Bħala miżura ta' prekawzjoni kontra l-ħolqien awtomatiku tal-kontijiet, jekk jogħġbok daħħal fil-kaxxa l-ittri li jidhru hawn taħt ([[Special:Captcha/help|aktar informazzjoni]]):",
+);
+
 /** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬)
  * @author Harald Khan
  * @author Jon Harald Søby
@@ -978,6 +1011,7 @@ Voer de woorden die hieronder verschijnen in het invoerveld in als bescherming t
 
 /** Norwegian Nynorsk (‪Norsk (nynorsk)‬)
  * @author Harald Khan
+ * @author Njardarlogar
  */
 $messages['nn'] = array(
 	'fancycaptcha-addurl' => 'Endringa di inneheld nye utlenkjer.
@@ -1312,7 +1346,7 @@ $messages['tg-cyrl'] = array(
 	'fancycaptcha-edit' => 'Барои вироиши ин саҳифа, вожаеро ки дар тасвир мебинед, ворид кунед ([[Special:Captcha/help|иттилооти бештар]]):',
 );
 
-/** Tajik (Latin script) (tojikī)
+/** Tajik (Latin script) (Tojikī)
  * @author Liangent
  */
 $messages['tg-latn'] = array(
@@ -1431,6 +1465,19 @@ $messages['vo'] = array(
 $messages['vro'] = array(
 	'fancycaptcha-badlogin' => 'Salasõna automaatsõ vällänuhkmisõ vasta kirodaq pildi päält sõnaq alanolõvahe kasti
 ([[Special:Captcha/help|Abiteedüs]]):',
+);
+
+/** Walloon (walon)
+ * @author Srtxg
+ */
+$messages['wa'] = array(
+	'fancycaptcha-addurl' => "Dins vos candjmints i gn a des dfoûtrinnès hårdêyes (URL).
+Po s' mete a houte des robots di spam, nos vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula tapez les mots k' aparexhèt chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
+	'fancycaptcha-badlogin' => "Po s' mete a houte des des robots ki sayèt d' adviner les screts, nos  vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula tapez les mots k' aperexhèt chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
+	'fancycaptcha-createaccount' => "Po s' mete a houte des des robots k' ahivèt des contes otomaticmint, nos  vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula tapez les mots k' aparexhèt chal pa dzi ([[Special:Captcha/help|pus di racsegnes]]):",
+	'fancycaptcha-create' => "Por vos poleur ahiver l' pådje, vos dvoz taper les mots k' aparexhèt e l' boesse chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
+	'fancycaptcha-edit' => "Po candjî cisse pådje ci, vos dvoz taper les mots k' aparexhèt e l' boesse chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
+	'fancycaptcha-sendemail' => "Po s' mete a houte des robots di spam, nos vs dimandans d' acertiner ki vos estoz bén ene djin, po çoula tapez les mots k' aparexhèt chal pa dzo ([[Special:Captcha/help|pus di racsegnes]]):",
 );
 
 /** Yiddish (ייִדיש)

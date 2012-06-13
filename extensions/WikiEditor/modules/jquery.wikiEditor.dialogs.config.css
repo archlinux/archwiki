@@ -8,21 +8,13 @@
 	padding: 0;
 	float: left;
 }
-body.rtl #wikieditor-toolbar-table-dialog fieldset {
-	float: right;
-}
+
 #wikieditor-toolbar-table-dialog .wikieditor-toolbar-table-preview-wrapper {
 	width: 330px;
 	padding: 0;
 	float: right;
 }
-body.rtl #wikieditor-toolbar-table-dialog .wikieditor-toolbar-table-preview-wrapper {
-	float: left;
-}
-body.rtl .wikiEditor-toolbar-dialog .wikieditor-toolbar-table-preview-wrapper table {
-	margin-left: 1em;
-	margin-right: 0;
-}
+
 .wikieditor-toolbar-table-preview-content * {
 	cursor: default;
 }
@@ -41,11 +33,7 @@ body.rtl .wikiEditor-toolbar-dialog .wikieditor-toolbar-table-preview-wrapper ta
 	margin-right: 20px;
 	vertical-align: bottom;
 }
-body.rtl .wikieditor-toolbar-table-dimension-fields .wikieditor-toolbar-field-wrapper {
-	float: right;
-	margin-right: 0px;
-	margin-left: 20px;
-}
+
 .wikiEditor-toolbar-dialog .ui-dialog-content {
 	padding: 30px 20px 0 !important;
 }
@@ -75,18 +63,22 @@ body.rtl .wikieditor-toolbar-table-dimension-fields .wikieditor-toolbar-field-wr
 #wikieditor-toolbar-link-int-target-status-exists {
 	/* @embed */
 	background-image: url(images/dialogs/insert-link-exists.png);
+	background-position: left;
 }
 #wikieditor-toolbar-link-int-target-status-notexists {
 	/* @embed */
 	background-image: url(images/dialogs/insert-link-notexists.png);
+	background-position: left;
 }
 #wikieditor-toolbar-link-int-target-status-invalid {
 	/* @embed */
 	background-image: url(images/dialogs/insert-link-invalid.png);
+	background-position: left;
 }
 #wikieditor-toolbar-link-int-target-status-external {
 	/* @embed */
 	background-image: url(images/dialogs/insert-link-external.png);
+	background-position: left;
 }
 /* Reference Dialog */
 #wikieditor-toolbar-reference-dialog label {
@@ -97,42 +89,15 @@ body.rtl .wikieditor-toolbar-table-dimension-fields .wikieditor-toolbar-field-wr
 	width: 100%;
 }
 /* RTL Changes */
-body.rtl .wikiEditor-toolbar-dialog .ui-dialog-buttonpane button {
-	float: left;
-	margin: 0.5em 0.4em 0.5em 0 !important;
-}
-body.rtl .wikiEditor-toolbar-dialog .ui-dialog-titlebar-close {
-	left: 0.9em;
-	right: auto;
-}
-body.rtl .wikiEditor-toolbar-dialog .ui-dialog-title {
-	float:right;
-}
-body.rtl #wikieditor-toolbar-link-int-target-status {
-	float: left;
-}
-body.rtl #wikieditor-toolbar-tool-link-int-target-label {
-	float: right;
-}
-body.rtl .wikieditor-toolbar-floated-field-wrapper {
-	float: right;
-	margin-right: 0;
-	margin-left: 2em;
-}
-body.rtl #wikieditor-toolbar-link-int-target-status-exists,
-body.rtl #wikieditor-toolbar-link-int-target-status-notexists,
-body.rtl #wikieditor-toolbar-link-int-target-status-invalid,
-body.rtl #wikieditor-toolbar-link-int-target-status-external {
-	padding-left: 0;
-	padding-right: 30px;
-	background-position: 100% 50%;
-}
+
 body.rtl #wikieditor-toolbar-link-int-target-status-external {
 	/* @embed */
 	background-image: url(images/dialogs/insert-link-external-rtl.png);
 }
-body.rtl #wikieditor-toolbar-reference-dialog label {
-	float: right;
+
+body.rtl .wikiEditor-toolbar-dialog .ui-dialog-buttonpane button {
+	float: left;
+	margin: 0.5em 0.4em 0.5em 0 !important;
 }
 /* Template Editor Dialogs */
 .wikiEditor-template-dialog-fields label {

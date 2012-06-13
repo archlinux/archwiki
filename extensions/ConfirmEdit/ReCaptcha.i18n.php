@@ -137,6 +137,13 @@ $messages['de-formal'] = array(
 	'recaptcha-createaccount' => 'Zum Schutz gegen die automatisierte Erstellung von Benutzerkonten bitten wir Sie, die folgenden beiden Wörter in das untenstehende Feld einzugeben:',
 );
 
+/** Lower Sorbian (Dolnoserbski)
+ * @author Michawiki
+ */
+$messages['dsb'] = array(
+	'recaptcha-createaccount-fail' => 'Wopacne abo felujuce wótegrono reCAPTCHA.',
+);
+
 /** Spanish (Español)
  * @author Fitoschido
  */
@@ -249,12 +256,19 @@ $messages['it'] = array(
  */
 $messages['ja'] = array(
 	'recaptcha-desc' => 'Confirm Edit 用 reCAPTCHA モジュール',
-	'recaptcha-edit' => '自動編集スパムからの保護のため、下の画像に表示されている２つの言葉を入力 してください。',
-	'recaptcha-addurl' => 'あなたの編集は新しい外部リンクを含んでいます。自動スパムからの保護のた め、下の画像に表示されている２つの言葉を入力してください。',
-	'recaptcha-badpass' => '自動パスワードクラッキングからの保護のために、下の画像に表示されている２ つの言葉を入力してください。',
-	'recaptcha-createaccount' => '自動アカウント登録からの保護のために、下の画像に表示されている２つの言葉 を入力してください。',
-	'recaptcha-createaccount-fail' => '入力された文字列が正しくありません。',
-	'recaptcha-create' => '自動ページ作成からの保護のために、下の画像に表示されている２つの言葉を入 力してください。',
+	'recaptcha-edit' => '自動編集スパムからの保護のため、下の画像に表示されている2つの単語を入力してください：',
+	'recaptcha-addurl' => 'あなたの編集は新しい外部リンクを含んでいます。自動スパムからの保護のため、下の画像に表示されている2つの単語を入力してください：',
+	'recaptcha-badpass' => '自動パスワードクラッキングからの保護のために、下の画像に表示されている2つの単語を入力してください：',
+	'recaptcha-createaccount' => '自動アカウント登録からの保護のために、下の画像に表示されている2つの単語を入力してください：',
+	'recaptcha-createaccount-fail' => '文字列が正しくない、または入力されていません。',
+	'recaptcha-create' => '自動ページ作成からの保護のために、下の画像に表示されている2つの単語を入力してください：',
+);
+
+/** Korean (한국어)
+ * @author 아라
+ */
+$messages['ko'] = array(
+	'recaptcha-desc' => '편집 확인에 대한 reCAPCHA 모듈',
 );
 
 /** Colognian (Ripoarisch)

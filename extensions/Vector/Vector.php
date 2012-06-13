@@ -75,6 +75,7 @@ $wgResourceModules += array(
 			'vector-collapsiblenav-more',
 		),
 		'dependencies' => array(
+			'mediawiki.util',
 			'jquery.client',
 			'jquery.cookie',
 			'jquery.tabIndex',
@@ -128,10 +129,10 @@ $wgResourceModules += array(
 			'vector-simplesearch-containing',
 		),
 		'dependencies' => array(
-			'jquery.client',
-			'jquery.suggestions',
 			'jquery.autoEllipsis',
+			'jquery.client',
 			'jquery.placeholder',
+			'jquery.suggestions',
 			'mediawiki.legacy.mwsuggest', // to ensure we disable it in proper order
 		),
 	),

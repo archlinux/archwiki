@@ -1,14 +1,18 @@
+/**
+ * Section edit links
+ */
+
 span.vector-editLink {
 	float: none;
 	display: inline-block;
 }
+
 span.vector-editLink a {
 	padding-left: 18px;
 	/* @embed */
-	background-image: url(images/edit-faded.png);
-	background-position: left top;
-	background-repeat: no-repeat;
+	background: url(images/edit-faded.png) left top no-repeat;
 }
+
 span.vector-editLink a:hover {
 	/* @embed */
 	background-image: url(images/edit.png);
