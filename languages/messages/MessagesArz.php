@@ -330,7 +330,7 @@ $messages = array(
 'tog-enotifminoredits'        => 'ابعتلى ايميل للتعديلات الصغيره للصفحات',
 'tog-enotifrevealaddr'        => 'بين الايميل بتاعى فى ايميلات الاعلام',
 'tog-shownumberswatching'     => 'بين عدد اليوزرز المراقبين',
-'tog-oldsig'                  => 'بروفه للامضا الحاليه',
+'tog-oldsig'                  => 'الامضا دلوقتى:',
 'tog-fancysig'                => 'امضا خام (من غير لينك أوتوماتيك)',
 'tog-externaleditor'          => 'استعمل محرر خارجى افتراضيا',
 'tog-externaldiff'            => 'استعمل فرق خارجى افتراضيا',
@@ -459,7 +459,7 @@ $messages = array(
 'vector-action-move'       => 'نقل',
 'vector-action-protect'    => 'حمايه',
 'vector-action-undelete'   => 'الغى المسح',
-'vector-action-unprotect'  => 'الغى الحمايه',
+'vector-action-unprotect'  => 'غير الحمايه',
 'vector-view-create'       => 'اعمل',
 'vector-view-edit'         => 'تعديل',
 'vector-view-history'      => 'استعراض التاريخ',
@@ -493,8 +493,8 @@ $messages = array(
 'protect'           => 'حمايه',
 'protect_change'    => 'غيّر',
 'protectthispage'   => 'احمى الصفحه دى',
-'unprotect'         => 'الغى الحماية',
-'unprotectthispage' => 'شيل حماية الصفحه دى',
+'unprotect'         => 'غير الحمايه',
+'unprotectthispage' => 'غير حماية الصفحه دى',
 'newpage'           => 'صفحه جديده',
 'talkpage'          => 'ناقش الصفحه دى',
 'talkpagelinktext'  => 'مناقشه',
@@ -527,6 +527,9 @@ $messages = array(
 لو سمحت تستنا شويه قبل ما تحاول تستعرض الصفحه دى من تانى.
 
 $1',
+'pool-timeout'      => 'انتهاء الانتظار للقفل',
+'pool-queuefull'    => 'طابور الانتخاب مليان',
+'pool-errorunknown' => 'غلط مش معروف',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => 'عن {{SITENAME}}',
@@ -708,8 +711,8 @@ $2',
 'createaccountmail'          => 'بـ الايميل',
 'createaccountreason'        => 'السبب:',
 'badretype'                  => 'كلمتين السر اللى  كتبتهم مش  زى بعضهم',
-'userexists'                 => 'اسم اليوزر اللى دخلته بيستعمله يوزر غيرك.
-دخل اسم تانى.',
+'userexists'                 => 'اسم اليوزر اللى كتبته بيستعمله يوزر غيرك.
+اكتت اسم يوزر تانى.',
 'loginerror'                 => 'غلط فى الدخول',
 'createaccounterror'         => 'مش قادر يعمل الحساب: $1',
 'nocookiesnew'               => 'اليوزر خلاص اتفتح له حساب، بس انت لسة ما سجلتش دخولك.
@@ -970,12 +973,12 @@ $2',
 'permissionserrorstext-withaction' => 'أنت ما عندكش الصلاحيات علشان $2، لل{{PLURAL:$1|سبب|أسباب}} ده:',
 'recreate-moveddeleted-warn'       => "'''تحذير: انت بتعيد انشاء صفحه اتمسحت قبل كده.'''
 لازم تتأكد من ان الاستمرار فى تحرير الصفحه دى ملائم.
-سجلات الحذف و النقل بتوع الصفحه دى معروضه هنا:",
+سجلات المسح  و النقل بتوع الصفحه دى معروضه هنا:",
 'moveddeleted-notice'              => 'الصفحة دى اتمسحت. سجل المسح و سجل النقل بتوع الصفحة معروضين تحت علشان ترجعلهم.',
 'log-fulllog'                      => 'استعراض السجل بالكامل',
 'edit-hook-aborted'                => 'الخطاف ساب التعديل من غير مايدى تفسير.',
-'edit-gone-missing'                => 'لم يمكن تحديث الصفحة.
-يبدو أنه تم حذفها.',
+'edit-gone-missing'                => 'مش ممكن تعديل الصفحه.
+يظهر انها إتمسحت.',
 'edit-conflict'                    => 'تضارب تحريرى.',
 'edit-no-change'                   => 'تعديلك تم تجاهله، لأن ما حصلش أى تعديل للنص.',
 'edit-already-exists'              => 'لم يمكن إنشاء صفحة جديدة.
@@ -1066,7 +1069,7 @@ $2',
 ممكن تكون فيه تفاصيل فى [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} سجل التخبيه].
 كسيسوب ممكن [$1 تشوف الفرق ده] لو إنت عايز تكمل.",
 'rev-deleted-diff-view'       => "واحده من نسخ الفرق ده '''اتمسحت'''.
-كسيسوب ممكن تشوف الفرق ده؛ ممكن تكون فيه تفاصيل فى [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} سجل الحذف].",
+كسيسوب ممكن تشوف الفرق ده؛ ممكن تكون فيه تفاصيل فى [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} سجل المسح].",
 'rev-suppressed-diff-view'    => "واحده من نسخ الفرق ده '''اتخبت'''.
 كسيسوب ممكن تشوف الفرق ده؛ ممكن تكون فيه تفاصيل فى [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} سجل التخبيه].",
 'rev-delundel'                => 'عرض/تخبيه',
@@ -1110,6 +1113,8 @@ $1",
 'logdelete-failure'           => "'''مانفعش اعادة ظبط عرض السجل:'''
 $1",
 'revdel-restore'              => 'تغيير الشوف',
+'revdel-restore-deleted'      => 'مراجعات ممسوحه',
+'revdel-restore-visible'      => 'مراجعات ممكن تتشاف',
 'pagehist'                    => 'تاريخ الصفحة',
 'deletedhist'                 => 'التاريخ الممسوح',
 'revdelete-hide-current'      => 'حصل غلط فى تخبية البند اللى بتاريخ $2, الساعه$1: دى هى النسخه بتاعة دلوقتى.
@@ -1171,11 +1176,13 @@ $1",
 # Diffs
 'history-title'            => 'تاريخ تعديل "$1"',
 'difference'               => '(الفرق بين النسخ)',
+'difference-multipage'     => '(الفرق بين الصفحتين)',
 'lineno'                   => 'سطر $1:',
 'compareselectedversions'  => 'قارن بين النسختين المختارتين',
 'showhideselectedversions' => 'عرض/تخبية المراجعات المختاره.',
 'editundo'                 => 'استرجاع',
 'diff-multi'               => '({{PLURAL:$1|نسخه واحده متوسطه|$1 نسخ متوسطه}} by {{PLURAL:$2|يوزر واحد |$2 يوزرات}}  مش معروضه)',
+'diff-multi-manyusers'     => '({{PLURAL:$1|نسخه واحده متوسطه|$1 نسخ متوسطه}} by {{PLURAL:$2|يوزر واحد |$2 يوزرات}}  مش معروضه)',
 
 # Search results
 'searchresults'                    => 'نتايج التدوير',
@@ -1210,6 +1217,7 @@ $1",
 'searchprofile-everything-tooltip' => 'دور فى  كل المحتوى (شامل صفحات النقاش)',
 'searchprofile-advanced-tooltip'   => 'دور فى النطاقات المخصصة',
 'search-result-size'               => '$1 ({{PLURAL:$2|1 كلمه|$2 كلام}})',
+'search-result-category-size'      => '{{PLURAL:$1|لا أعضاء|عضو واحد|عضوين|$1 أعضاء|$1 عضوًا|$1 عضو}} ({{PLURAL:$2|لا تصانيف فرعية|تصنيف فرعى واحد|تصنيفين فرعيين|$2 تصنيفات فرعية|$2 تصنيف فرعى|$2 تصنيف فرعى}} و{{PLURAL:$3|لا ملفات|ملف واحد|ملفين|$3 ملفات|$3 ملف|$3 ملف}})',
 'search-result-score'              => 'الارتباط: $1%',
 'search-redirect'                  => '(تحويله $1)',
 'search-section'                   => '(جزء $1)',
@@ -1364,6 +1372,10 @@ $1",
 'prefs-displaywatchlist'        => 'اختيارات العرض',
 'prefs-diffs'                   => 'التغيير',
 
+# User preference: e-mail validation using jQuery
+'email-address-validity-valid'   => 'عنوان الإيميل صح',
+'email-address-validity-invalid' => 'عنوان الإيميل غلط',
+
 # User rights
 'userrights'                   => 'إدارة الحقوق بتاعة اليوزر',
 'userrights-lookup-user'       => 'إدارة مجموعات اليوزر',
@@ -1447,6 +1459,7 @@ $1",
 'right-hideuser'              => 'منع اسم يوزر، و خبيه عن الناس',
 'right-ipblock-exempt'        => 'إتفادى عمليات منع الأيبي، المنع الأوتوماتيكى ومنع النطاق.',
 'right-proxyunbannable'       => 'إتفادى عمليات المنع الأوتوماتيكية للبروكسيهات',
+'right-unblockself'           => 'رفع المنع عن نفسهم',
 'right-protect'               => 'تغيير مستويات الحماية وتعديل الصفحات المحمية',
 'right-editprotected'         => 'تعديل الصفحات المحمية (من غير الحماية المتضمنة)',
 'right-editinterface'         => 'تعديل الواجهة بتاعة اليوزر',
@@ -1570,9 +1583,9 @@ $1",
 لعرض أو البحث ف الملفات المتحملة سابقا، راجع عمليات المسح [[Special:Log/delete|deletion log]] [[Special:FileList|لستة الملفات المتحملة]]، عمليات التحميل  موجودة فى [[Special:Log/upload|سجل التحميل]].
 
 علشان تحط صورة فى صفحة، استخدم الوصلات فى الصيغ التالية:
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.jpg]]</nowiki></tt>''' علشان استخدام النسخة الكاملة لملف
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.png|200px|thumb|left|نص بديل]]</nowiki></tt>''' لاستخدام صورة عرضها 200 بكسل فى صندوق فى الجانب الأيسر مع 'نص بديل' كوصف
-* '''<tt><nowiki>[[</nowiki>{{ns:media}}<nowiki>:File.ogg]]</nowiki></tt>''' للوصل للملف مباشرة بدون عرض الملف.",
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.jpg]]</nowiki></code>''' علشان استخدام النسخة الكاملة لملف
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.png|200px|thumb|left|نص بديل]]</nowiki></code>''' لاستخدام صورة عرضها 200 بكسل فى صندوق فى الجانب الأيسر مع 'نص بديل' كوصف
+* '''<code><nowiki>[[</nowiki>{{ns:media}}<nowiki>:File.ogg]]</nowiki></code>''' للوصل للملف مباشرة بدون عرض الملف.",
 'upload-permitted'            => 'أنواع الملفات المسموحة: $1.',
 'upload-preferred'            => 'أنواع الملفات المفضلة: $1.',
 'upload-prohibited'           => 'أنواع الملفات الممنوعة: $1.',
@@ -1600,25 +1613,27 @@ $1",
 'filetype-banned-type'        => "'''\".\$1\"''' مش نوع ملف مسموح بيه.
 {{PLURAL:\$3|نوع الملف المسموح بيه هو|أنواع الملفات المسموح بيها هي}} \$2.",
 'filetype-missing'            => 'الملف مالوش امتدا(مثلا ".jpg").',
+'file-too-large'              => 'الملف كان كبير جدا.',
+'filetype-banned'             => 'نوع الملف ده ممنوع.',
 'large-file'                  => 'ينصح ان الملفات ماتكونش أكبر من $1؛ الملف ده حجمه $2.',
 'largefileserver'             => 'حجم الملف ده أكبر من المسموح بيه على السيرڨر ده .',
 'emptyfile'                   => 'الظاهر ان الملف اللى انت حملته طلع فاضي.
 يمكن يكون السبب هوه كتابة الاسم غلط.
 لو سمحت تتاكد من إنك فعلا عايز تحمل الملف دا..',
-'fileexists'                  => "فيه  ملف موجود بالاسم ده  الرجاء التأكد من الملف ده باتباع الوصلة التالية '''<tt>[[:$1]]</tt>''' قبل ما تغيره.
-[[$1|thumb]]",
-'filepageexists'              => "صفحة الوصف بتاعة المف دا خلاص اتعملها انشاء فى '''<tt>[[:$1]]</tt>'''، بس مافيش ملف بالاسم دا دلوقتى.
+'fileexists'                  => 'فيه  ملف موجود بالاسم ده  الرجاء التأكد من الملف ده باتباع الوصلة التالية <strong>[[:$1]]</strong> قبل ما تغيره.
+[[$1|thumb]]',
+'filepageexists'              => 'صفحة الوصف بتاعة المف دا خلاص اتعملها انشاء فى <strong>[[:$1]]</strong>، بس مافيش ملف بالاسم دا دلوقتى.
 الملخص اللى ح تكتبه  مش ح يظهر على صفحة الوصف.
 علشان تخلى الملف يظهر هناك، ح تحتاج تعدله يدوي.
-[[$1|thumb]]",
-'fileexists-extension'        => "فى ملف موجود باسم قريب: [[$2|thumb]]
-* اسم الملف اللى انت عايز تحمله: '''<tt>[[:$1]]</tt>'''
-* اسم الملف الموجود: '''<tt>[[:$2]]</tt>'''
-لو سمحت تختار اسم تاني.",
+[[$1|thumb]]',
+'fileexists-extension'        => 'فى ملف موجود باسم قريب: [[$2|thumb]]
+* اسم الملف اللى انت عايز تحمله: <strong>[[:$1]]</strong>
+* اسم الملف الموجود: <strong>[[:$2]]</strong>
+لو سمحت تختار اسم تاني.',
 'fileexists-thumbnail-yes'    => "الظاهر ان الملف دا عبارة عن صورة متصغرة ''(تصغير)''. [[$1|thumb]]
-لو سمحت تشيك على الملف '''<tt>[[:$1]]</tt>'''.
+لو سمحت تشيك على الملف <strong>[[:$1]]</strong>.
 لو كان الملف هو نفس الصورة بالحجم الاصلي، ف مافيش داعى تحمله مرة تانية",
-'file-thumbnail-no'           => "يبدأ الملف ب '''<tt>$1</tt>'''.
+'file-thumbnail-no'           => "يبدأ الملف ب <strong>$1</strong>.
 يبدو أن الملف مصتغر لحجم أعلى ''(تصغير)''.
 إذا كان عندك الصورة فى درجة دقة كامله حملها، أو غير اسم الملف من فضلك.",
 'fileexists-forbidden'        => 'فى ملف بنفس الاسم موجود, و ماينفعش يتكتب عليه.
@@ -1755,7 +1770,7 @@ PICT # misc.
 'filehist-filesize'                 => 'حجم الفايل',
 'filehist-comment'                  => 'تعليق',
 'filehist-missing'                  => 'ملف مش  موجود',
-'imagelinks'                        => 'لينكات الفايل',
+'imagelinks'                        => 'استخدام الفايل',
 'linkstoimage'                      => '{{PLURAL:$1|الصفحة|ال$1 صفحة}} دى فيها وصله للفايل ده:',
 'linkstoimage-more'                 => 'أكتر من $1 {{PLURAL:$1|صفحة تصل|صفحة تصل}} للملف ده .
 القائمة التالية تعرض {{PLURAL:$1|أول وصلة صفحة|أول $1 وصلة صفحة}} للملف ده بس.
@@ -1809,7 +1824,7 @@ PICT # misc.
 'mimesearch'         => 'تدوير MIME',
 'mimesearch-summary' => 'الصفحة دى مهمتها فلترة الملفات على حسب نوعها.
 المدخل: نوع المحتوى/النوع الفرعي، يعنى مثلا
-<tt>image/jpeg</tt>.',
+<code>image/jpeg</code>.',
 'mimetype'           => 'نوع الملف:',
 'download'           => 'تنزيل',
 
@@ -1923,7 +1938,7 @@ PICT # misc.
 'listusers-editsonly'     => 'عرض اليوزرز اللى قاموا بتعديلات فقط',
 'listusers-creationsort'  => 'رتب على حسب تاريخ الإنشاء',
 'usereditcount'           => '$1 {{PLURAL:$1|تعديل|تعديل}}',
-'usercreated'             => 'اتعملت فى $1 الساعه $2',
+'usercreated'             => '{{GENDER:$3|إتعملت|إتعملت}}  يوم $1 الساعه $2',
 'newpages'                => 'صفحات جديده',
 'newpages-username'       => 'اسم اليوزر:',
 'ancientpages'            => 'اقدم الصفحات',
@@ -1995,7 +2010,7 @@ PICT # misc.
 'linksearch-ns'    => 'النطاق:',
 'linksearch-ok'    => 'تدوير',
 'linksearch-text'  => 'الكروت الخاصة زى "*.wikipedia.org" ممكن تستعمل.<br />
-البروتوكولات المدعومة: <tt>$1</tt>',
+البروتوكولات المدعومة: <code>$1</code>',
 'linksearch-line'  => '$1 موصوله من $2',
 'linksearch-error' => 'الكروت الخاصة ممكن تبان بس  فى بداية اسم المضيف',
 
@@ -2144,7 +2159,7 @@ $UNWATCHURL
 'delete-legend'          => 'مسح',
 'historywarning'         => "'''تحذير:''' الصفحه اللى ها  تمسحها ليها تاريخ فيه تقريبا $1 {{PLURAL:$1|مراجعة|مراجعة}}:",
 'confirmdeletetext'      => 'انت على وشك انك تمسح صفحه أو صوره و كل تاريخها.
-من فضلك  اتأكد انك عايز المسح وبأنك فاهم نتايج  العمليه  دى. عمليات الحذف لازم تتم بناء على [[{{MediaWiki:Policy-url}}|القواعد المتفق عليها]].',
+من فضلك  اتأكد انك عايز المسح وبأنك فاهم نتايج  العمليه  دى. عمليات المسح لازم تتم بناء على [[{{MediaWiki:Policy-url}}|القواعد المتفق عليها]].',
 'actioncomplete'         => 'العمليه خلصت',
 'actionfailed'           => 'الفعل فشل',
 'deletedtext'            => '"$1" اتمسحت.
@@ -2344,7 +2359,7 @@ $1',
 'nolinkshere-ns'           => "مافيش صفحات بتوصل لـ '''[[:$1]]''' فى النطاق اللى انت اختارته.",
 'isredirect'               => 'صفحة تحويل',
 'istemplate'               => 'متضمن',
-'isimage'                  => 'لينك صورة',
+'isimage'                  => 'وصلة ملف',
 'whatlinkshere-prev'       => '{{PLURAL:$1|اللى قبل كده|الـ $1 اللى قبل كده}}',
 'whatlinkshere-next'       => '{{PLURAL:$1|اللى بعد كده|الـ $1 اللى بعد كده}}',
 'whatlinkshere-links'      => '← وصلات',
@@ -2399,7 +2414,7 @@ $1',
 'ipusubmit'                       => 'ارفع المنع دا',
 'unblocked'                       => 'المنع اترفع عن [[User:$1|$1]]',
 'unblocked-id'                    => 'منع $1 اترفع',
-'ipblocklist'                     => 'لستة عناوين الااى بى واسامى اليوزر الممنوعه',
+'ipblocklist'                     => 'يوزرات ممنوعين',
 'ipblocklist-legend'              => 'دور على يوزر ممنوع',
 'ipblocklist-submit'              => 'تدوير',
 'ipblocklist-localblock'          => 'منع محلى',

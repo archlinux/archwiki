@@ -1,5 +1,5 @@
 <?php
-/** Occitan (Occitan)
+/** Occitan (occitan)
  *
  * See MessagesQqq.php for message documentation incl. usage of parameters
  * To improve a translation please visit http://translatewiki.net
@@ -646,6 +646,7 @@ Informatz-ne un [[Special:ListUsers/sysop|administrator]] aprèp aver notada l�
 'badarticleerror'      => 'Aquesta accion pòt pas èsser efectuada sus aquesta pagina.',
 'cannotdelete'         => 'Impossible de suprimir la pagina o lo fichièr « $1 ».
 Benlèu la supression ja es estada efectuada per qualqu’un mai.',
+'cannotdelete-title'   => 'Impossible de suprimir la pagina "$1"',
 'badtitle'             => 'Títol marrit',
 'badtitletext'         => 'Lo títol de la pagina demandada es invalid, void o s’agís d’un títol interlenga o interprojècte mal ligat. Benlèu conten un o maites caractèrs que pòdon pas èsser utilizats dins los títols.',
 'perfcached'           => 'Aquò es una version en amagatal e es benlèu pas a jorn. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
@@ -655,6 +656,7 @@ Benlèu la supression ja es estada efectuada per qualqu’un mai.',
 Foncion : $1<br />
 Requèsta : $2',
 'viewsource'           => 'Vejatz lo tèxte font',
+'viewsource-title'     => 'Veire la font de $1',
 'actionthrottled'      => 'Accion limitada',
 'actionthrottledtext'  => "Per luchar contra lo spam, l’utilizacion d'aquesta accion es limitada a un cèrt nombre de còps dins una sosta pro corta. S'avèra qu'avètz depassat aqueste limit. Ensajatz tornamai dins qualques minutas.",
 'protectedpagetext'    => 'Aquesta pagina es estada protegida per empachar sa modificacion.',
@@ -1518,6 +1520,7 @@ Tanben podètz causir de permetre a d’autres de vos contactar per vòstra pagi
 'action-userrights'           => 'modificar totes los dreches d’utilizaire',
 'action-userrights-interwiki' => 'modificar los dreches d’utilizaire e los sus d’autres wikis',
 'action-siteadmin'            => 'varrolhar o desvarrolhar la banca de donadas',
+'action-sendemail'            => 'mandar corrièrs electronics',
 
 # Recent changes
 'nchanges'                          => '$1 {{PLURAL:$1|cambiament|cambiaments}}',
@@ -1581,9 +1584,9 @@ Lo jornal de las supressions e lo dels desplaçaments d'aquesta pagina son afich
 Per veire o recercar d'imatges mandats precedentament, consultatz [[Special:FileList|la tièra dels imatges]]. Las còpias e las supressions tanben son enregistradas dins l'[[Special:Log/upload|istoric dels impòrts]], las supressions dins l’[[Special:Log/delete|istoric de las supressions]].
 
 Per inclure un imatge dins una pagina, utilizatz un ligam de la forma
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:fichièr.jpg]]</nowiki></tt>''',
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:fichièr.png|200px|thumb|left|tèxte descriptiu]]</nowiki></tt>''' per utilizar una miniatura de 200 pixèls de larg dins una bóstia a esquèrra amb 'tèxte descriptiu' coma descripcion
-* '''<tt><nowiki>[[</nowiki>{{ns:media}}<nowiki>:fichièr.ogg]]</nowiki></tt>''' per ligar dirèctament cap al fichièr sens l'afichar.",
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:fichièr.jpg]]</nowiki></code>''',
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:fichièr.png|200px|thumb|left|tèxte descriptiu]]</nowiki></code>''' per utilizar una miniatura de 200 pixèls de larg dins una bóstia a esquèrra amb 'tèxte descriptiu' coma descripcion
+* '''<code><nowiki>[[</nowiki>{{ns:media}}<nowiki>:fichièr.ogg]]</nowiki></code>''' per ligar dirèctament cap al fichièr sens l'afichar.",
 'upload-permitted'            => 'Formats de fichièrs autorizats : $1.',
 'upload-preferred'            => 'Formats de fichièrs preferits : $1.',
 'upload-prohibited'           => 'Formats de fichièrs interdiches : $1.',
@@ -1625,20 +1628,20 @@ Vejatz la [[Special:NewFiles|galariá dels imatges novèls]] per una presentacio
 'large-file'                  => 'Los fichièrs importats deurián pas èsser mai gros que $1 ; aqueste fichièr fa $2.',
 'largefileserver'             => "La talha d'aqueste fichièr es superiora al maximum autorizat.",
 'emptyfile'                   => 'Lo fichièr que volètz importar sembla void. Aquò pòt èsser degut a una error dins lo nom del fichièr. Verificatz que desiratz vertadièrament copiar aqueste fichièr.',
-'fileexists'                  => "Un fichièr amb aqueste nom existís ja.
-Mercé de verificar '''<tt>[[:$1]]</tt>'''.
-Sètz segur de voler modificar aqueste fichièr ? [[$1|thumb]]",
-'filepageexists'              => "La pagina de descripcion per aqueste fichièr ja es estada creada aicí '''<tt>[[:$1]]</tt>''', mas cap de fichièr existís pas actualament jos aqueste nom.
+'fileexists'                  => 'Un fichièr amb aqueste nom existís ja.
+Mercé de verificar <strong>[[:$1]]</strong>.
+Sètz segur de voler modificar aqueste fichièr ? [[$1|thumb]]',
+'filepageexists'              => "La pagina de descripcion per aqueste fichièr ja es estada creada aicí <strong>[[:$1]]</strong>, mas cap de fichièr existís pas actualament jos aqueste nom.
 Lo resumit qu'anatz especificar apareisserà pas sus la pagina de descripcion.
 Per o far, vos caldrà modificar la pagina manualament. [[$1|vinheta]]",
 'fileexists-extension'        => "Un fichièr amb un nom pròchi existís ja : [[$2|thumb]]
-* Nom del fichièr d'importar : '''<tt>[[:$1]]</tt>'''
-* Nom del fichièr existent : '''<tt>[[:$2]]</tt>'''
+* Nom del fichièr d'importar : <strong>[[:$1]]</strong>
+* Nom del fichièr existent : <strong>[[:$2]]</strong>
 Causissètz-ne un autre.",
 'fileexists-thumbnail-yes'    => "Lo fichièr sembla èsser un imatge en talha reducha ''(thumbnail)''. [[$1|thumb]]
-Verificatz lo fichièr '''<tt>[[:$1]]</tt>'''.
+Verificatz lo fichièr <strong>[[:$1]]</strong>.
 Se lo fichièr verificat es lo meteis imatge (dins una resolucion melhora), es pas de besonh d’importar una version reducha.",
-'file-thumbnail-no'           => "Lo nom del fichièr comença per '''<tt>$1</tt>'''.
+'file-thumbnail-no'           => "Lo nom del fichièr comença per <strong>$1</strong>.
 Es possible que s’agisca d’una version reducha ''(miniatura)''.
 Se dispausatz del fichièr en resolucion nauta, importatz-lo, si que non cambiatz lo nom del fichièr.",
 'fileexists-forbidden'        => "Un fichièr amb aqueste nom existís ja e pòt pas èsser espotit.
@@ -1781,6 +1784,7 @@ La tièra seguenta aficha {{PLURAL:$1|lo primièr ligam de pagina|los $1 primiè
 Una [[Special:WhatLinksHere/$2|tièra completa]] es disponibla.',
 'nolinkstoimage'            => 'Cap de pagina compòrta pas de ligam cap a aqueste imatge.',
 'morelinkstoimage'          => 'Vejatz [[Special:WhatLinksHere/$1|mai de ligams]] cap a aqueste imatge.',
+'linkstoimage-redirect'     => '$1 (redireccion de fichièr) $2',
 'duplicatesoffile'          => "{{PLURAL:$1|Lo fichièr seguent es un duplicata|Los fichièrs seguents son de duplicatas}} d'aqueste fichièr ([[Special:FileDuplicateSearch/$2|mai de detalhs]]):",
 'sharedupload'              => 'Aqueste fichièr proven de $1 e pòt èsser utilizat per d’autres projèctes.',
 'sharedupload-desc-there'   => "Aqueste fichièr proven de $1 e pòt èsser utilizat per d'autres projèctes. Vejatz [$2 sa pagina de descripcion] per mai d'entresenhas.",
@@ -1822,7 +1826,7 @@ Una [[Special:WhatLinksHere/$2|tièra completa]] es disponibla.',
 
 # MIME search
 'mimesearch'         => 'Recèrca per tipe MIME',
-'mimesearch-summary' => 'Aquesta pagina especiala permet de cercar de fichièrs en foncion de lor tipe MIME. Entrada : tipe/sostipe, per exemple <tt>image/jpeg</tt>.',
+'mimesearch-summary' => 'Aquesta pagina especiala permet de cercar de fichièrs en foncion de lor tipe MIME. Entrada : tipe/sostipe, per exemple <code>image/jpeg</code>.',
 'mimetype'           => 'Tipe MIME :',
 'download'           => 'telecargament',
 
@@ -1872,12 +1876,13 @@ Doblidetz pas de verificar se i a pas d’autre ligam cap als modèls abans de l
 Deurián puslèu puntar cap a una pagina apropriada.<br />
 Una pagina es tractada coma una pagina d’omonimia s'utiliza un modèl qu'es ligat a partir de [[MediaWiki:Disambiguationspage]]",
 
-'doubleredirects'            => 'Redireccions doblas',
-'doubleredirectstext'        => 'Vaquí una lista de las paginas que redirigisson cap a de paginas que son elas-meteissas de paginas de redireccion.
+'doubleredirects'                   => 'Redireccions doblas',
+'doubleredirectstext'               => 'Vaquí una lista de las paginas que redirigisson cap a de paginas que son elas-meteissas de paginas de redireccion.
 Cada entrada conten de ligams cap a la primièra e la segonda redireccions, e mai la primièra linha de tèxte de la segonda pagina, çò que provesís, de costuma, la « vertadièra » pagina cibla, cap a la quala la primièra redireccion deuriá redirigir.
 Las entradas <del>barradas</del> son estadas resolgudas.',
-'double-redirect-fixed-move' => '[[$1]] es estat renomenat, aquò es ara una redireccion cap a [[$2]]',
-'double-redirect-fixer'      => 'Corrector de redireccion',
+'double-redirect-fixed-move'        => '[[$1]] es estat renomenat, aquò es ara una redireccion cap a [[$2]]',
+'double-redirect-fixed-maintenance' => 'Correccion de  la doble redireccion de [[$1]] a [[$2]]',
+'double-redirect-fixer'             => 'Corrector de redireccion',
 
 'brokenredirects'        => 'Redireccions copadas',
 'brokenredirectstext'    => "Aquestas redireccions mènan cap a de paginas qu'existisson pas :",
@@ -2009,7 +2014,7 @@ Vejatz tanben [[Special:WantedCategories|las categorias demandadas]].',
 'linksearch-pat'   => 'Recercar l’expression :',
 'linksearch-ns'    => 'Espacis de noms :',
 'linksearch-ok'    => 'Recercar',
-'linksearch-text'  => 'De caractèrs « joker » pòdon èsser utilizats, per exemple <code>*.wikipedia.org</code>.<br />Protocòls reconeguts : <tt>$1</tt>.',
+'linksearch-text'  => 'De caractèrs « joker » pòdon èsser utilizats, per exemple <code>*.wikipedia.org</code>.<br />Protocòls reconeguts : <code>$1</code>.',
 'linksearch-line'  => '$1 amb un ligam a partir de $2',
 'linksearch-error' => 'Los caractèrs « joker » pòdon pas èsser utilizats qu’al començament del nom de domeni.',
 
@@ -2095,8 +2100,10 @@ L'adreça electronica qu'avètz indicada dins [[Special:Preferences|vòstras pre
 'watchnologin'         => 'Vos sètz pas identificat(ada)',
 'watchnologintext'     => 'Vos cal èsser [[Special:UserLogin|connectat(ada)]]
 per modificar vòstra lista de seguiment.',
+'addwatch'             => 'Ajustar a la lista de seguiment',
 'addedwatchtext'       => 'La pagina "[[:$1]]" es estada aponduda a vòstra [[Special:Watchlist|lista de seguiment]].
 Las modificacions venentas d\'aquesta pagina e de la pagina de discussion associada seràn repertoriadas aicí, e la pagina apareisserà <b>en gras</b> dins la [[Special:RecentChanges|tièra dels darrièrs cambiaments]] per èsser localizada mai aisidament.',
+'removewatch'          => 'Suprimir de la lista de seguiment',
 'removedwatchtext'     => 'La pagina « [[:$1]] » es estada levada de vòstra [[Special:Watchlist|lista de seguiment]].',
 'watch'                => 'Seguir',
 'watchthispage'        => 'Seguir aquesta pagina',
@@ -2420,6 +2427,7 @@ Podètz consultar la [[Special:BlockList|lista dels comptes e de las adreças IP
 a partir d'una adreça IP precedentament blocada.",
 'ipusubmit'                       => 'Suprimir aqueste blocatge',
 'unblocked'                       => '[[User:$1|$1]] es estat desblocat',
+'unblocked-range'                 => '$1 es estat desblocat',
 'unblocked-id'                    => 'Lo blocatge $1 es estat levat',
 'blocklist'                       => 'Utilizaires o adreças IP blocats',
 'ipblocklist'                     => 'Utilizaires o adreças IP blocats',
@@ -2788,6 +2796,13 @@ Aquò es probablament causat per un ligam sus lista negra que punta cap a un sit
 'spam_reverting'      => 'Restabliment de la darrièra version que conten pas de ligam cap a $1',
 'spam_blanking'       => 'Totas las versions que contenon de ligams cap a $1 son blanquidas',
 
+# Info page
+'pageinfo-subjectpage'  => 'Pagina',
+'pageinfo-edits'        => "Nombre d'edicions",
+'pageinfo-authors'      => "Nombre d'autors distints",
+'pageinfo-views'        => 'Nombre de vistas',
+'pageinfo-viewsperedit' => 'Visitas per modificacions',
+
 # Skin names
 'skinname-standard'    => 'Estandard',
 'skinname-nostalgia'   => 'Nostalgia',
@@ -3155,6 +3170,7 @@ Los autres ligams sus la meteissa linha son considerats coma d'excepcions, per e
 'exif-gpsdirection-m' => 'Nòrd magnetic',
 
 'exif-iimcategory-edu' => 'Educacion',
+'exif-iimcategory-evn' => 'Environament',
 'exif-iimcategory-hth' => 'Santat',
 'exif-iimcategory-lab' => 'Tribailh',
 'exif-iimcategory-pol' => 'Politic',
@@ -3265,6 +3281,7 @@ Confirmatz que desiratz tornar crear aqueste article.",
 'table_pager_first'        => 'Primièra pagina',
 'table_pager_last'         => 'Darrièra pagina',
 'table_pager_limit'        => 'Far veire $1 elements per pagina',
+'table_pager_limit_label'  => 'Elements per pagina:',
 'table_pager_limit_submit' => 'Accedir',
 'table_pager_empty'        => 'Cap de resultat',
 
@@ -3404,8 +3421,9 @@ Picatz lo nom del fichièr sens lo prefix « {{ns:file}}: »",
 'tags-hitcount'           => '$1 {{PLURAL:$1|cambiament|cambiaments}}',
 
 # Special:ComparePages
-'compare-page1' => 'Pagina 1',
-'compare-page2' => 'Pagina 2',
+'compare-page1'  => 'Pagina 1',
+'compare-page2'  => 'Pagina 2',
+'compare-submit' => 'Comparar',
 
 # Database error messages
 'dberr-header'      => 'Aqueste wiki a un problèma',

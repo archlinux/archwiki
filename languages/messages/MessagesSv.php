@@ -1,5 +1,5 @@
 <?php
-/** Swedish (Svenska)
+/** Swedish (svenska)
  *
  * See MessagesQqq.php for message documentation incl. usage of parameters
  * To improve a translation please visit http://translatewiki.net
@@ -44,6 +44,7 @@
  * @author StefanB
  * @author Steinninn
  * @author Str4nd
+ * @author Thurs
  * @author Tobulos1
  * @author Where next Columbus
  * @author Where next Columbus?
@@ -339,7 +340,7 @@ $messages = array(
 'tog-nocache'                 => 'Stäng av cachelagring för sidor',
 'tog-enotifwatchlistpages'    => 'Skicka e-post till mig när en sida på min bevakningslista ändras',
 'tog-enotifusertalkpages'     => 'Skicka e-post till mig när något händer på min diskussionssida',
-'tog-enotifminoredits'        => 'Skicka mig e-post även för mindre ändringar',
+'tog-enotifminoredits'        => 'Skicka mig e-post även för mindre ändringar av sidor och filer',
 'tog-enotifrevealaddr'        => 'Visa min e-postadress i e-postmeddelanden om ändringar som skickas till andra',
 'tog-shownumberswatching'     => 'Visa antalet användare som bevakar',
 'tog-oldsig'                  => 'Nuvarande signatur:',
@@ -676,8 +677,8 @@ Den kanske redan har raderats av någon annan.',
 'badtitle'             => 'Felaktig titel',
 'badtitletext'         => 'Den begärda sidtiteln är antingen ogiltig eller tom, eller så är titeln felaktigt länkad från en annan wiki.
 Den kan innehålla ett eller flera tecken som inte får användas i sidtitlar.',
-'perfcached'           => 'Följande data är cachad och är möjligtvis inte helt uppdaterad. Maximalt {{PLURAL:$1|ett|$1}} restultat finns {{PLURAL:$1|tillgängligt|tillgängliga}} i cachen.',
-'perfcachedts'         => 'Sidan är hämtad ur ett cacheminne och uppdaterades senast $1. Maximalt {{PLURAL:$4|ett|$4}} restultat finns {{PLURAL:$4|tillgängligt|tillgängliga}} i cachen.',
+'perfcached'           => 'Följande data är cachad och är möjligtvis inte helt uppdaterad. Maximalt {{PLURAL:$1|ett|$1}} resultat finns {{PLURAL:$1|tillgängligt|tillgängliga}} i cachen.',
+'perfcachedts'         => 'Sidan är hämtad ur ett cacheminne och uppdaterades senast $1. Maximalt {{PLURAL:$4|ett|$4}} resultat finns {{PLURAL:$4|tillgängligt|tillgängliga}} i cachen.',
 'querypage-no-updates' => 'Uppdatering av den här sidan är inte aktiverad. Datan kommer i nuläget inte att uppdateras.',
 'wrong_wfQuery_params' => 'Felaktiga parametrar för wfQuery()<br /> Funktion: $1<br /> Förfrågan: $2',
 'viewsource'           => 'Visa wikitext',
@@ -978,8 +979,8 @@ Den har inte sparats än!'''",
 'userinvalidcssjstitle'            => "'''Varning:''' Skalet \"\$1\" finns inte. Kom ihåg att .css- och .js-sidor för enskilda användare börjar på liten bokstav. Exempel: {{ns:user}}:Foo/vector.css i stället för {{ns:user}}:Foo/Vector.css.",
 'updated'                          => '(Uppdaterad)',
 'note'                             => "'''Obs!'''",
-'previewnote'                      => "'''Detta är bara en förhandsvisning;
-ändringar har ännu inte sparats!'''",
+'previewnote'                      => "'''Kom ihåg att detta bara är en förhandsvisning.'''
+Dina ändringar har ännu inte sparats!",
 'previewconflict'                  => 'Den här förhandsvisningen är resultatet av den
 redigerbara texten ovanför,
 så som det kommer att se ut om du väljer att spara.',
@@ -1220,7 +1221,7 @@ Vänligen kontrollera loggarna.',
 # Suppression log
 'suppressionlog'     => 'Undanhållandelogg',
 'suppressionlogtext' => 'Nedan visas en lista över raderingar och blockeringar som berör innehåll dolt för administratörer.
-Se [[Special:BlockList|IP-blockeringslistan]] för listan över gällande blockeringar.',
+Se [[Special:BlockList|blockeringslistan]] för listan över gällande blockeringar.',
 
 # History merging
 'mergehistory'                     => 'Sammanfoga sidhistoriker',
@@ -1385,7 +1386,7 @@ Här är ett slumpmässigt genererat värde som du kan använda: $1',
 'savedprefs'                    => 'Dina inställningar har sparats',
 'timezonelegend'                => 'Tidszon:',
 'localtime'                     => 'Lokal tid:',
-'timezoneuseserverdefault'      => 'Använd wiki standard ($1)',
+'timezoneuseserverdefault'      => 'Använd wikins standard ($1)',
 'timezoneuseoffset'             => 'Annan (specificera skillnad)',
 'timezoneoffset'                => 'Skillnad¹:',
 'servertime'                    => 'Serverns tid:',
@@ -1642,6 +1643,7 @@ Om du väljer att ange ditt riktiga namn, kommer det att användas för att till
 'newsectionsummary'                 => '/* $1 */ nytt avsnitt',
 'rc-enhanced-expand'                => 'Visa detaljer (kräver JavaScript)',
 'rc-enhanced-hide'                  => 'Göm detaljer',
+'rc-old-title'                      => 'skapades ursprungligen som "$1"',
 
 # Recent changes linked
 'recentchangeslinked'          => 'Relaterade ändringar',
@@ -1671,9 +1673,9 @@ Raderings- och sidflyttningsloggen för denna sida återges här:",
 För att titta på eller leta efter filer som redan har laddats upp, se [[Special:FileList|listan över uppladdade filer]]. Uppladdningar loggförs även i [[Special:Log/upload|uppladdningsloggen]], och raderingar i [[Special:Log/delete|raderingsloggen]].
 
 Använd en länk på något av följande format för att infoga en fil på en sida:
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.jpg]]</nowiki></tt>''' för att visa filen i dess hela storlek
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.png|200px|thumb|left|alternativ text]]</nowiki></tt>''' för att visa en rendering med bredden 200 pixel i en ruta till vänster med bildtexten 'alternativ text'
-* '''<tt><nowiki>[[</nowiki>{{ns:media}}<nowiki>:File.ogg]]</nowiki></tt>''' för att länka direkt till filen utan att visa den",
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.jpg]]</nowiki></code>''' för att visa filen i dess hela storlek
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.png|200px|thumb|left|alternativ text]]</nowiki></code>''' för att visa en rendering med bredden 200 pixel i en ruta till vänster med bildtexten 'alternativ text'
+* '''<code><nowiki>[[</nowiki>{{ns:media}}<nowiki>:File.ogg]]</nowiki></code>''' för att länka direkt till filen utan att visa den",
 'upload-permitted'            => 'Tillåtna filtyper: $1.',
 'upload-preferred'            => 'Föredragna filtyper: $1.',
 'upload-prohibited'           => 'Förbjudna filtyper: $1.',
@@ -1718,21 +1720,21 @@ denna fil är $2.',
 'largefileserver'             => 'Denna fil är större än vad servern ställts in att tillåta.',
 'emptyfile'                   => 'Filen du laddade upp verkar vara tom; felet kan bero på ett stavfel i filnamnet. Kontrollera om du verkligen vill ladda upp denna fil.',
 'windows-nonascii-filename'   => 'Denna wiki stödjer inte filnamn med specialtecken.',
-'fileexists'                  => "Det finns redan en fil med detta namn.
-Titta på '''<tt>[[:$1]]</tt>''', såvida du inte är säker på att du vill ändra den.
-[[$1|thumb]]",
-'filepageexists'              => "Beskrivningssidan för denna fil har redan skapats på '''<tt>[[:$1]]</tt>''', men just nu finns ingen fil med detta namn.
+'fileexists'                  => 'Det finns redan en fil med detta namn.
+Titta på <strong>[[:$1]]</strong>, såvida du inte är säker på att du vill ändra den.
+[[$1|thumb]]',
+'filepageexists'              => 'Beskrivningssidan för denna fil har redan skapats på <strong>[[:$1]]</strong>, men just nu finns ingen fil med detta namn.
 Den sammanfattning du skriver här kommer inte visas på beskrivningssidan.
 För att din sammanfattning ska visas där, så måste du redigera beskrivningssidan manuellt.
-[[$1|thumb]]",
-'fileexists-extension'        => "En fil med ett liknande namn finns redan: [[$2|thumb]]
-* Namn på den fil du försöker ladda upp: '''<tt>[[:$1]]</tt>'''
-* Namn på filen som redan finns: '''<tt>[[:$2]]</tt>'''
-Var vänlig välj ett annat namn.",
+[[$1|thumb]]',
+'fileexists-extension'        => 'En fil med ett liknande namn finns redan: [[$2|thumb]]
+* Namn på den fil du försöker ladda upp: <strong>[[:$1]]</strong>
+* Namn på filen som redan finns: <strong>[[:$2]]</strong>
+Var vänlig välj ett annat namn.',
 'fileexists-thumbnail-yes'    => "Filen verkar vara en bild med förminskad storlek ''(miniatyrbild)''. [[$1|thumb]]
-Var vänlig kontrollera filen '''<tt>[[:$1]]</tt>'''.
+Var vänlig kontrollera filen <strong>[[:$1]]</strong>.
 Om det är samma fil i originalstorlek så är det inte nödvändigt att ladda upp en extra miniatyrbild.",
-'file-thumbnail-no'           => "Filnamnet börjar med '''<tt>$1</tt>'''.
+'file-thumbnail-no'           => "Filnamnet börjar med <strong>$1</strong>.
 Det verkar vara en bild med förminskad storlek ''(miniatyrbild)''.
 Om du har denna bild i full storlek, ladda då hellre upp den, annars var vänlig och ändra filens namn.",
 'fileexists-forbidden'        => 'En fil med detta namn existerar redan, och kan inte överskrivas.
@@ -1817,12 +1819,12 @@ Om problemet kvarstår, kontakta en [[Special:ListUsers/sysop|administratör]].'
 'backend-fail-closetemp'     => 'Kunde inte stänga temporär fil.',
 'backend-fail-read'          => 'Kunde inte läsa filen $1.',
 'backend-fail-create'        => 'Kunde inte skapa filen $1.',
-'backend-fail-readonly'      => 'Lagrings-backend "$1" är för närvarande skrivskyddad. Den angivna anledningen är: "$2"',
-'backend-fail-synced'        => 'Filen "$1" är i ett inkonsekvent tillstånd inom de interna lagrings-backends',
-'backend-fail-connect'       => 'Kunde inte ansluta till lagrings-backend "$1".',
-'backend-fail-internal'      => 'Ett okänt fel uppstod i lagrings-backend "$1".',
+'backend-fail-readonly'      => 'Lagringssystemet "$1" är för närvarande skrivskyddad. Den angivna anledningen är: "$2"',
+'backend-fail-synced'        => 'Filen "$1" är i ett inkonsekvent tillstånd inom de interna lagringssystemen',
+'backend-fail-connect'       => 'Kunde inte ansluta till lagringssystemet "$1".',
+'backend-fail-internal'      => 'Ett okänt fel uppstod i lagringssystemet "$1".',
 'backend-fail-contenttype'   => 'Kunde inte bestämma innehållstypen för filen att spara på "$1".',
-'backend-fail-batchsize'     => 'Lagrings-backend gavs en batch på $1 fil{{PLURAL:$1|operation|operationer}}; gränsen är $2 {{PLURAL:$2|operation|operationer}}.',
+'backend-fail-batchsize'     => 'Lagringssystemet gav en batch på $1 fil{{PLURAL:$1|operation|operationer}}; gränsen är $2 {{PLURAL:$2|operation|operationer}}.',
 
 # Lock manager
 'lockmanager-notlocked'        => 'Kunde inte låsa upp "$1"; den är inte låst.',
@@ -1945,6 +1947,7 @@ Beskrivningen på dess [$2 filbeskrivningssida] visas nedan.',
 'uploadnewversion-linktext' => 'Ladda upp en ny version av denna fil',
 'shared-repo-from'          => 'från $1',
 'shared-repo'               => 'en gemensam filförvaring',
+'filepage.css'              => '/* CSS som skrivs här inkluderas på filbeskrivningssidan, även på utländska klientwikis */',
 
 # File reversion
 'filerevert'                => 'Återställ $1',
@@ -1978,7 +1981,7 @@ Beskrivningen på dess [$2 filbeskrivningssida] visas nedan.',
 
 # MIME search
 'mimesearch'         => 'MIME-sökning',
-'mimesearch-summary' => 'På den här sidan kan du söka efter filer via dess MIME-typ. Input: contenttype/subtype, t.ex. <tt>image/jpeg</tt>.',
+'mimesearch-summary' => 'På den här sidan kan du söka efter filer via dess MIME-typ. Input: contenttype/subtype, t.ex. <code>image/jpeg</code>.',
 'mimetype'           => 'MIME-typ:',
 'download'           => 'ladda ner',
 
@@ -2171,7 +2174,7 @@ Se även [[Special:WantedCategories|önskade kategorier]].',
 'linksearch-ok'    => 'Sök',
 'linksearch-text'  => 'Jokertecken (wildcards) som t.ex. "*.wikipedia.org" kan användas.
 Det krävs åtminstone en toppnivå-domän, t.ex. "*.org".<br />
-Protokoll som stöds: <tt>$1</tt> (lägg inte till något av dessa i din sökning).',
+Protokoll som stöds: <code>$1</code> (lägg inte till något av dessa i din sökning).',
 'linksearch-line'  => '$1 länkas från $2',
 'linksearch-error' => 'Jokertecken kan bara användas i början av domännamnet.',
 
@@ -2584,8 +2587,8 @@ Ange orsak nedan (exempelvis genom att nämna sidor som blivit vandaliserade).',
 'ipb-confirm'                     => 'Bekräfta blockering',
 'badipaddress'                    => 'Du har inte skrivit IP-adressen korrekt.',
 'blockipsuccesssub'               => 'Blockeringen är utförd',
-'blockipsuccesstext'              => '[[Special:Contributions/$1|$1]] har blockerats.
-<br />För att se alla aktuella blockeringar, gå till [[Special:BlockList|listan över blockeringar]].',
+'blockipsuccesstext'              => '[[Special:Contributions/$1|$1]] har blockerats.<br />
+För att se alla aktuella blockeringar, gå till [[Special:BlockList|listan över blockeringar]].',
 'ipb-blockingself'                => 'Du håller på att blockera dig själv! Är du säker på att du vill göra det?',
 'ipb-confirmhideuser'             => 'Du är på väg att blockera en användare med "göm användare" aktiverat. Detta kommer upphäva användarens namn i alla listor och loggar. Är du säker på att du vill göra det?',
 'ipb-edit-dropdown'               => 'Redigera blockeringsanledningar',
@@ -2640,7 +2643,7 @@ Undanhållandeloggen visas nedan för referens:',
 'reblock-logentry'                => 'ändrade blockeringsinställningar för [[$1]] med en varaktighet på $2 $3',
 'blocklogtext'                    => 'Detta är en logg över blockeringar och avblockeringar.
 Automatiskt blockerade IP-adresser listas ej.
-I [[Special:BlockList|blockeringslistan]] listas alla IP-adresser och användare som är blockerade för närvarande.',
+Se [[Special:BlockList|blockeringslistan]] för en översikt av gällande blockeringar.',
 'unblocklogentry'                 => 'tog bort blockering av "$1"',
 'block-log-flags-anononly'        => 'bara oinloggade',
 'block-log-flags-nocreate'        => 'hindrar kontoregistrering',
@@ -2894,7 +2897,7 @@ Spara den på din dator och ladda upp den här.',
 
 # JavaScriptTest
 'javascripttest'                           => 'JavaScript-testning',
-'javascripttest-disabled'                  => 'Denna funktion är avaktiverad.',
+'javascripttest-disabled'                  => 'Denna funktion har inte aktiverats på denna wiki.',
 'javascripttest-title'                     => 'Kör $1 tester',
 'javascripttest-pagetext-noframework'      => 'Denna sida är reserverat för att köra JavaScript-tester.',
 'javascripttest-pagetext-unknownframework' => 'Okänd testmiljö "$1".',
@@ -2975,29 +2978,39 @@ Ger möjlighet att skriva en motivering i redigeringssammanfattningen',
 'tooltip-summary'                     => 'Skriv en kort sammanfattning',
 
 # Stylesheets
-'common.css'      => '/* CSS som skrivs här påverkar alla skal */',
-'standard.css'    => '/* CSS som skrivs här kommer att påverka alla användare av skalet Standard */',
-'nostalgia.css'   => '/* CSS som skrivs här kommer att påverka alla användare av skalet Nostalgi */',
-'cologneblue.css' => '/* CSS som skrivs här kommer att påverka alla användare av skalet Cologne blå */',
-'monobook.css'    => '/* CSS som skrivs här kommer att påverka alla användare av skalet Monobook */',
-'myskin.css'      => '/* CSS som skrivs här kommer att påverka alla användare av skalet Mitt utseende */',
-'chick.css'       => '/* CSS som skrivs här kommer att påverka alla användare av skalet Chick */',
-'simple.css'      => '/* CSS som skrivs här kommer att påverka alla användare av skalet Enkel */',
-'modern.css'      => '/* CSS som skrivs här kommer att påverka alla användare av skalet Modern */',
-'vector.css'      => '/* CSS som skrivs här kommer att påverka alla användare av skalet Vector */',
-'print.css'       => '/* CSS som skrivs här kommer att påverka utskriftsversionen */',
+'common.css'              => '/* CSS som skrivs här påverkar alla skal */',
+'standard.css'            => '/* CSS som skrivs här kommer att påverka alla användare av skalet Standard */',
+'nostalgia.css'           => '/* CSS som skrivs här kommer att påverka alla användare av skalet Nostalgi */',
+'cologneblue.css'         => '/* CSS som skrivs här kommer att påverka alla användare av skalet Cologne blå */',
+'monobook.css'            => '/* CSS som skrivs här kommer att påverka alla användare av skalet Monobook */',
+'myskin.css'              => '/* CSS som skrivs här kommer att påverka alla användare av skalet Mitt utseende */',
+'chick.css'               => '/* CSS som skrivs här kommer att påverka alla användare av skalet Chick */',
+'simple.css'              => '/* CSS som skrivs här kommer att påverka alla användare av skalet Enkel */',
+'modern.css'              => '/* CSS som skrivs här kommer att påverka alla användare av skalet Modern */',
+'vector.css'              => '/* CSS som skrivs här kommer att påverka alla användare av skalet Vector */',
+'print.css'               => '/* CSS som skrivs här kommer att påverka utskriftsversionen */',
+'handheld.css'            => '/* CSS som placeras här kommer att påverka handhållna enheter som baseras på skalet som konfigurerats i $wgHandheldStyle */',
+'noscript.css'            => '/* CSS som placeras här kommer att påverka användare med JavaScript inaktiverat */',
+'group-autoconfirmed.css' => '/* CSS som placeras här kommer bara att påverka bekräftade användare */',
+'group-bot.css'           => '/* CSS som placeras här kommer bara att påverka robotar */',
+'group-sysop.css'         => '/* CSS som placeras här kommer bara att påverka administratörer */',
+'group-bureaucrat.css'    => '/* CSS som placeras här kommer bara att påverka byråkrater */',
 
 # Scripts
-'common.js'      => '/* JavaScript som skrivs här körs varje gång en användare laddar en sida. */',
-'standard.js'    => '/* JavaScript här kommer att laddas för dem som använder skalet Standard */',
-'nostalgia.js'   => '/* JavaScript här kommer att laddas för dem som använder skalet Nostalgi */',
-'cologneblue.js' => '/* JavaScript här kommer att laddas för dem som använder skalet Cologne blå */',
-'monobook.js'    => '/* JavaScript här kommer att laddas för dem som använder skalet Monobook */',
-'myskin.js'      => '/* JavaScript här kommer att laddas för dem som använder skalet Mitt utseende */',
-'chick.js'       => '/* JavaScript här kommer att laddas för dem som använder skalet Chick */',
-'simple.js'      => '/* JavaScript här kommer att laddas för dem som använder skalet Enkel */',
-'modern.js'      => '/* JavaScript här kommer att laddas för dem som använder skalet Modern */',
-'vector.js'      => '/* JavaScript här kommer att laddas för dem som använder skalet Vector */',
+'common.js'              => '/* JavaScript som skrivs här körs varje gång en användare laddar en sida. */',
+'standard.js'            => '/* JavaScript här kommer att laddas för dem som använder skalet Standard */',
+'nostalgia.js'           => '/* JavaScript här kommer att laddas för dem som använder skalet Nostalgi */',
+'cologneblue.js'         => '/* JavaScript här kommer att laddas för dem som använder skalet Cologne blå */',
+'monobook.js'            => '/* JavaScript här kommer att laddas för dem som använder skalet Monobook */',
+'myskin.js'              => '/* JavaScript här kommer att laddas för dem som använder skalet Mitt utseende */',
+'chick.js'               => '/* JavaScript här kommer att laddas för dem som använder skalet Chick */',
+'simple.js'              => '/* JavaScript här kommer att laddas för dem som använder skalet Enkel */',
+'modern.js'              => '/* JavaScript här kommer att laddas för dem som använder skalet Modern */',
+'vector.js'              => '/* JavaScript här kommer att laddas för dem som använder skalet Vector */',
+'group-autoconfirmed.js' => '/* JavaScript här kommer att laddas för bekräftade användare */',
+'group-bot.js'           => '/* JavaScript här kommer att laddas för robotar */',
+'group-sysop.js'         => '/* JavaScript här kommer att laddas för administratörer */',
+'group-bureaucrat.js'    => '/* JavaScript här kommer att laddas för byråkrater */',
 
 # Metadata
 'notacceptable' => 'Den här wiki-servern kan inte erbjuda data i ett format som din klient kan läsa.',
@@ -3330,6 +3343,7 @@ Andra kommer att gömmas som standard
 'exif-compression-2' => 'CCITT Grupp 3 1-dimensionell modifierad Huffman-skurlängdskodning',
 'exif-compression-3' => 'CCITT Grupp 3 fax-kodning',
 'exif-compression-4' => 'CCITT Grupp 4 fax-kodning',
+'exif-compression-6' => 'JPEG (gammal)',
 
 'exif-copyrighted-true'  => 'Upphovsrättsskyddat',
 'exif-copyrighted-false' => 'Allmän egendom',
@@ -3762,7 +3776,7 @@ Bilder visas i full upplösning, andra filtyper öppnas direkt i de program som 
 * <span class="mw-specialpagecached">Cachade specialsidor (kan vara föråldrade).</span>',
 'specialpages-group-maintenance' => 'Underhållsrapporter',
 'specialpages-group-other'       => 'Övriga specialsidor',
-'specialpages-group-login'       => 'Inloggning/registrering',
+'specialpages-group-login'       => 'Logga in / skapa konto',
 'specialpages-group-changes'     => 'Senaste ändringar och loggar',
 'specialpages-group-media'       => 'Filer och uppladdning',
 'specialpages-group-users'       => 'Användare och behörigheter',

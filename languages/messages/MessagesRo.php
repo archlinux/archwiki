@@ -1,5 +1,5 @@
 <?php
-/** Romanian (Română)
+/** Romanian (română)
  *
  * See MessagesQqq.php for message documentation incl. usage of parameters
  * To improve a translation please visit http://translatewiki.net
@@ -305,7 +305,7 @@ $messages = array(
 'tog-hidepatrolled'           => 'Ascunde în schimbări recente editările patrulate',
 'tog-newpageshidepatrolled'   => 'Ascunde paginile patrulate din lista de pagini noi',
 'tog-extendwatchlist'         => 'Extinde lista de articole urmărite pentru a arăta toate schimbările efectuate, nu doar pe cele mai recente',
-'tog-usenewrc'                => 'Afișează varianta îmbunătățită a schimbărilor recente (necesită JavaScript)',
+'tog-usenewrc'                => 'Grupează modificările după pagină în cadrul schimbărilor recente și listei paginilor urmărite (necesită JavaScript)',
 'tog-numberheadings'          => 'Numerotează automat secțiunile',
 'tog-showtoolbar'             => 'Afișează bara de unelte pentru modificare (JavaScript)',
 'tog-editondblclick'          => 'Activează modificarea paginii prin dublu clic (JavaScript)',
@@ -314,17 +314,17 @@ $messages = array(
 pe titlul secțiunii (JavaScript)',
 'tog-showtoc'                 => 'Arată cuprinsul (pentru paginile cu mai mult de 3 paragrafe cu titlu)',
 'tog-rememberpassword'        => 'Autentificare automată de la acest navigator (expiră după $1 {{PLURAL:$1|zi|zile|de zile}})',
-'tog-watchcreations'          => 'Adaugă paginile pe care le creez la lista mea de urmărire',
-'tog-watchdefault'            => 'Adaugă paginile pe care le modific la lista mea de urmărire',
-'tog-watchmoves'              => 'Adaugă paginile pe care le redenumesc la lista de pagini urmărite',
-'tog-watchdeletion'           => 'Adaugă paginile pe care le șterg în lista de pagini urmărite',
+'tog-watchcreations'          => 'Adaugă paginile pe care le creez și fișierele pe care le încarc la lista mea de urmărire',
+'tog-watchdefault'            => 'Adaugă paginile și fișierele pe care le modific la lista mea de urmărire',
+'tog-watchmoves'              => 'Adaugă paginile și fișierele pe care le redenumesc la lista mea de urmărire',
+'tog-watchdeletion'           => 'Adaugă paginile și fișierele pe care le șterg la lista mea de urmărire',
 'tog-minordefault'            => 'Marchează din oficiu toate modificările ca fiind minore',
 'tog-previewontop'            => 'Arată previzualizarea deasupra căsuței de modificare',
 'tog-previewonfirst'          => 'Arată previzualizarea la prima modificare',
 'tog-nocache'                 => 'Dezactivează opțiunea navigatorului de memorare în cache a paginilor',
-'tog-enotifwatchlistpages'    => 'Trimite-mi un email la modificările paginilor',
+'tog-enotifwatchlistpages'    => 'Trimite-mi un e-mail atunci când o pagină sau un fișier din lista mea de pagini urmărite suferă modificări',
 'tog-enotifusertalkpages'     => 'Trimite-mi un email când pagina mea de discuții este modificată',
-'tog-enotifminoredits'        => 'Trimite-mi un email de asemenea pentru modificările minore ale paginilor',
+'tog-enotifminoredits'        => 'Trimite-mi, de asemenea, un e-mail în caz de modificări minore asupra paginilor și fișierelor',
 'tog-enotifrevealaddr'        => 'Descoperă-mi adresa email în mesajele de notificare',
 'tog-shownumberswatching'     => 'Arată numărul utilizatorilor care urmăresc',
 'tog-oldsig'                  => 'Semnătură actuală:',
@@ -617,12 +617,12 @@ O listă cu paginile speciale valide se poate găsi la [[Special:SpecialPages|{{
 # General errors
 'error'                => 'Eroare',
 'databaseerror'        => 'Eroare la baza de date',
-'dberrortext'          => 'A apărut o eroare în sintaxa interogării.
-Aceasta poate indica o problemă în program.
-Ultima interogare încercată a fost:
-<blockquote><tt>$1</tt></blockquote>
-din cadrul funcției "<tt>$2</tt>".
-Baza de date a returnat eroarea "<tt>$3: $4</tt>".',
+'dberrortext'          => 'A apărut o eroare în sintaxa interogării bazei de date.
+Acest lucru poate indica o problemă în program.
+Ultima interogare trimisă către baza de date a fost:
+<blockquote><code>$1</code></blockquote>
+din cadrul funcției „<code>$2</code>”.
+Baza de date a returnat eroarea „<samp>$3: $4</samp>”.',
 'dberrortextcl'        => 'A apărut o eroare de sintaxă în interogare.
 Ultima interogare încercată a fost:
 „$1”
@@ -634,12 +634,12 @@ Baza de date a returnat eroarea „$3: $4”',
 'readonlytext'         => 'Baza de date {{SITENAME}} este momentan blocată la scriere, probabil pentru o operațiune de rutină, după care va fi deblocată și se va reveni la starea normală.
 
 Administratorul care a blocat-o a oferit această explicație: $1',
-'missing-article'      => 'Baza de date nu găsește textul unei pagini care ar fi trebuit găsit, numit „$1” $2.
+'missing-article'      => 'Baza de date nu găsește textul unei pagini care ar fi trebuit găsită, numită „$1” $2.
 
-În mod normal faptul este cauzat de urmărirea unei dif neactualizată sau a unei legături din istoric spre o pagină care a fost ștearsă.
+În mod normal faptul este cauzat de accesarea unei dif neactualizată sau a unei legături din istoric spre o pagină care a fost ștearsă.
 
 Dacă nu acesta e motivul, s-ar putea să fi găsit un bug în program.
-Te rog anunță acest aspect unui [[Special:ListUsers/sysop|administrator]], indicându-i adresa URL.',
+Vă rugăm să-i semnalați acest aspect unui [[Special:ListUsers/sysop|administrator]], indicându-i adresa URL.',
 'missingarticle-rev'   => '(versiunea#: $1)',
 'missingarticle-diff'  => '(Dif: $1, $2)',
 'readonly_lag'         => 'Baza de date a fost închisă automatic în timp ce serverele secundare ale bazei de date îl urmează pe cel principal.',
@@ -732,7 +732,7 @@ Contul dumneavoatră a fost creat. Nu uitați să vă personalizați [[Special:P
 Vă rugăm să alegeți un alt nume.',
 'loginerror'                 => 'Eroare de autentificare',
 'createaccounterror'         => 'Nu pot crea contul: $1',
-'nocookiesnew'               => 'Contul a fost creat, dar dvs. nu sunteți autentificat(ă). {{SITENAME}} folosește cookie-uri pentru a reține utilizatorii autentificați. Browser-ul dvs. are modulele cookie dezactivate (disabled). Vă rugăm să le activați și să vă reautentificați folosind noul nume de utilizator și noua parolă.',
+'nocookiesnew'               => 'Contul a fost creat, dar nu sunteți autentificat{{GENDER:||ă|}}. {{SITENAME}} folosește module cookie pentru a reține utilizatorii autentificați. Navigatorul dumneavoastră are aceste module cookie dezactivate. Vă rugăm să le activați și să vă reautentificați folosind noul nume de utilizator și noua parolă.',
 'nocookieslogin'             => '{{SITENAME}} folosește module cookie pentru a autentifica utilizatorii. Browser-ul dvs. are cookie-urile dezactivate. Vă rugăm să le activați și să incercați din nou.',
 'nocookiesfornew'            => 'Contul de utilizator nu a fost creat, deoarece nu am putut confirma sursa.
 Asigurați-vă că aveți cookie-urile activate, reîncărcați pagina și încercați din nou.',
@@ -880,7 +880,7 @@ Parolă temporară: $2',
 # Edit pages
 'summary'                          => 'Rezumat:',
 'subject'                          => 'Subiect / titlu:',
-'minoredit'                        => 'Aceasta este o editare minoră',
+'minoredit'                        => 'Aceasta este o modificare minoră',
 'watchthis'                        => 'Monitorizează această pagină',
 'savearticle'                      => 'Salvare pagină',
 'preview'                          => 'Previzualizare',
@@ -974,7 +974,8 @@ Ultima intrare în jurnalul blocărilor este afișată mai jos pentru referinț�
 Paginile .css și .js specifice utilizatorilor au titluri care încep cu literă mică; de exemplu {{ns:user}}:Foo/vector.css în comparație cu {{ns:user}}:Foo/Vector.css.",
 'updated'                          => '(Actualizat)',
 'note'                             => "'''Notă:'''",
-'previewnote'                      => "Aceasta este doar o previzualizare! Pentru a salva pagina în forma actuală, descrieți succint modificările efectuate și apăsați butonul '''Salvează pagina'''.",
+'previewnote'                      => "'''Țineți cont că aceasta este doar o previzualizare.'''
+Modificările dumneavoastră nu au fost încă salvate!",
 'previewconflict'                  => 'Această pre-vizualizare reflectă textul din caseta de sus, respectiv felul în care va arăta articolul dacă alegeți să-l salvați acum.',
 'session_fail_preview'             => "'''Ne pare rău! Nu am putut procesa modificarea dumneavoastră din cauza pierderii datelor sesiunii.
 Vă rugăm să încercați din nou.
@@ -1049,7 +1050,7 @@ Jurnalul ștergerilor și al mutărilor pentru această pagină este disponibil:
 Jurnalul ștergerilor și al mutărilor este disponibil mai jos.',
 'log-fulllog'                      => 'Vezi tot jurnalul',
 'edit-hook-aborted'                => 'Modificarea a fost abandonată din cauza unui hook.
-Fără nicio explicație.',
+Nicio explicație furnizată.',
 'edit-gone-missing'                => 'Pagina nu s-a putut actualiza.
 Se pare că a fost ștearsă.',
 'edit-conflict'                    => 'Conflict de modificare.',
@@ -1085,7 +1086,7 @@ Acsete argumente au fost omise.',
 Motivul invocat de $3 este ''$2''",
 
 # History pages
-'viewpagelogs'           => 'Vezi jurnalele pentru această pagină',
+'viewpagelogs'           => 'Afișează jurnalele paginii',
 'nohistory'              => 'Nu există istoric pentru această pagină.',
 'currentrev'             => 'Versiunea curentă',
 'currentrev-asof'        => 'Versiunea curentă din $1',
@@ -1213,7 +1214,7 @@ Nu ai acces asupra lui.',
 # Suppression log
 'suppressionlog'     => 'Înlătură jurnalul',
 'suppressionlogtext' => 'Mai jos este afișată o listă a ștergerilor și a blocărilor care implică conținutul ascuns de administratori.
-Vedeți [[Special:BlockList|adresele IP blocate]] pentru o listă a interzicerilor operaționale sau a blocărilor.',
+Vedeți [[Special:BlockList|lista blocărilor]] pentru o listă a interzicerilor operaționale sau a blocărilor.',
 
 # History merging
 'mergehistory'                     => 'Unește istoricul paginilor',
@@ -1247,7 +1248,7 @@ Folosirea linkurilor de navigare va reseta această coloană.',
 'mergelogpagetext'   => 'Mai jos este o listă a celor mai recente combinări ale istoricului unei pagini cu al alteia.',
 
 # Diffs
-'history-title'            => 'Istoricul versiunilor pentru „$1”',
+'history-title'            => '$1: Istoricul versiunilor',
 'difference'               => '(Diferența dintre versiuni)',
 'difference-multipage'     => '(Diferență între pagini)',
 'lineno'                   => 'Linia $1:',
@@ -1455,7 +1456,7 @@ Dacă decideți furnizarea sa, acesta va fi folosit pentru a vă atribui munca.'
 # User rights
 'userrights'                   => 'Administrare permisiuni de utilizator',
 'userrights-lookup-user'       => 'Administrare grupuri de utilizatori',
-'userrights-user-editname'     => 'Introdu un nume de utilizator:',
+'userrights-user-editname'     => 'Introduceți un nume de utilizator:',
 'editusergroup'                => 'Modificare grup de utilizatori',
 'editinguser'                  => "Modificare permisiuni de utilizator pentru '''[[User:$1|$1]]''' $2",
 'userrights-editusergroup'     => 'Modificare grup de utilizatori',
@@ -1562,7 +1563,7 @@ Dacă decideți furnizarea sa, acesta va fi folosit pentru a vă atribui munca.'
 # User rights log
 'rightslog'                  => 'Jurnal permisiuni de utilizator',
 'rightslogtext'              => 'Acest jurnal cuprinde modificările permisiunilor utilizatorilor.',
-'rightslogentry'             => 'a schimbat pentru $1 apartenența la un grup de la $2 la $3',
+'rightslogentry'             => 'a schimbat permisiunile pentru $1 de la $2 la $3',
 'rightslogentry-autopromote' => 'a fost promovat în mod automat de la $2 la $3',
 'rightsnone'                 => '(niciunul)',
 
@@ -1640,6 +1641,7 @@ $3',
 'newsectionsummary'                 => '/* $1 */ secțiune nouă',
 'rc-enhanced-expand'                => 'Arată detalii (necesită JavaScript)',
 'rc-enhanced-hide'                  => 'Ascunde detaliile',
+'rc-old-title'                      => 'inițial creată cu titlul „$1”',
 
 # Recent changes linked
 'recentchangeslinked'          => 'Modificări corelate',
@@ -1668,9 +1670,9 @@ Iată aici înregistrările relevante din jurnalul de ștergeri și redenumiri:"
 Pentru a vizualiza sau căuta imagini deja trimise, mergeți la [[Special:FileList|lista cu imagini]]; (re)încărcările și ștergerile sunt de asemenea înregistrate în [[Special:Log/upload|jurnalul fișierelor trimise]], respectiv [[Special:Log/delete|jurnalul fișierelor șterse]].
 
 Pentru a insera un fișier într-o pagină, folosiți o legătură de forma:
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:Fișier.jpg]]</nowiki></tt>''' pentru a include versiunea integrală a unui fișier
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:Fișier.png|200px|thumb|left|informații]]</nowiki></tt>''' pentru a introduce o imagine cu o lățime de 200 de pixeli într-un chenar plasat în partea stângă, având ca descriere textul „informații”
-* '''<tt><nowiki>[[</nowiki>{{ns:media}}<nowiki>:Fișier.ogg]]</nowiki></tt>''' pentru o legătură directă către fișier, fără a-l afișa",
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:Fișier.jpg]]</nowiki></code>''' pentru a include versiunea integrală a unui fișier
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:Fișier.png|200px|thumb|left|informații]]</nowiki></code>''' pentru a introduce o imagine cu o lățime de 200 de pixeli într-un chenar plasat în partea stângă, având ca descriere textul „informații”
+* '''<code><nowiki>[[</nowiki>{{ns:media}}<nowiki>:Fișier.ogg]]</nowiki></code>''' pentru o legătură directă către fișier, fără a-l afișa",
 'upload-permitted'            => 'Tipuri de fișiere permise: $1.',
 'upload-preferred'            => 'Tipuri de fișiere preferate: $1.',
 'upload-prohibited'           => 'Tipuri de fișiere interzise: $1.',
@@ -1714,20 +1716,20 @@ Vezi [[Special:NewFiles|galeria fișierelor noi]] pentru o mai bună vizualizare
 'largefileserver'             => 'Fișierul este mai mare decât este configurat serverul să permită.',
 'emptyfile'                   => 'Fișierul pe care l-ați încărcat pare a fi gol. Aceasta poate fi datorită unei greșeli în numele fișierului. Verificați dacă într-adevăr doriți să încărcați acest fișier.',
 'windows-nonascii-filename'   => 'Acest wiki nu acceptă nume de fișiere care conțin caractere speciale.',
-'fileexists'                  => "Un fișier cu același nume există deja, vă rugăm verificați '''<tt>[[:$1]]</tt>''' dacă nu sunteți sigur dacă doriți să îl modificați.
-[[$1|thumb]]",
-'filepageexists'              => "Pagina cu descrierea fișierului a fost deja creată la '''<tt>[[:$1]]</tt>''', dar niciun fișier cu acest nume nu există în acest moment.
+'fileexists'                  => 'Un fișier cu același nume există deja, vă rugăm verificați <strong>[[:$1]]</strong> dacă nu sunteți sigur dacă doriți să îl modificați.
+[[$1|thumb]]',
+'filepageexists'              => 'Pagina cu descrierea fișierului a fost deja creată la <strong>[[:$1]]</strong>, dar niciun fișier cu acest nume nu există în acest moment.
 Sumarul pe care l-ai introdus nu va apărea în pagina cu descriere.
 Pentru ca sumarul tău să apară, va trebui să îl adaugi manual.
-[[$1|miniatură]]",
-'fileexists-extension'        => "Un fișier cu un nume similar există: [[$2|thumb]]
-* Numele fișierului de încărcat: '''<tt>[[:$1]]</tt>'''
-* Numele fișierului existent: '''<tt>[[:$2]]</tt>'''
-Te rog alege alt nume.",
+[[$1|miniatură]]',
+'fileexists-extension'        => 'Un fișier cu un nume similar există: [[$2|thumb]]
+* Numele fișierului de încărcat: <strong>[[:$1]]</strong>
+* Numele fișierului existent: <strong>[[:$2]]</strong>
+Te rog alege alt nume.',
 'fileexists-thumbnail-yes'    => "Fișierul pare a fi o imagine cu o rezoluție scăzută ''(thumbnail)''. [[$1|thumb]]
-Verifică fișierul'''<tt>[[:$1]]</tt>'''.
+Verifică fișierul<strong>[[:$1]]</strong>.
 Dacă fișierul verificat este identic cu imaginea originală nu este necesară încărcarea altui thumbnail.",
-'file-thumbnail-no'           => "Numele fișierului începe cu '''<tt>$1</tt>'''.
+'file-thumbnail-no'           => "Numele fișierului începe cu <strong>$1</strong>.
 Se pare că este o imagine cu dimensiune redusă''(thumbnail)''.
 Dacă ai această imagine la rezoluție mare încarc-o pe aceasta, altfel schimbă numele fișierului.",
 'fileexists-forbidden'        => 'Un fișier cu acest nume există deja și nu poate fi rescris.
@@ -1799,8 +1801,13 @@ Dacă problema persistă, contactați un [[Special:ListUsers/sysop|administrator
 'backend-fail-writetemp'     => 'Imposibil de scris în fișierul temporar.',
 'backend-fail-closetemp'     => 'Imposibil de închis fișierul temporar.',
 'backend-fail-read'          => 'Imposibil de citit fișierul $1.',
-'backend-fail-create'        => 'Imposibil de creat fișierul $1.',
+'backend-fail-create'        => 'Imposibil de scris fișierul $1.',
+'backend-fail-readonly'      => "Suportul de stocare „$1” este în prezent doar în citire. Motivul dat este: „''$2''”",
+'backend-fail-synced'        => 'Fișierul „$1” este într-o stare de inconsistență în suporturile de stocare internă',
+'backend-fail-connect'       => 'Imposibil de conectat la suportul de stocare „$1”.',
+'backend-fail-internal'      => 'O eroare necunoscută s-a produs în suportul de stocare „$1”.',
 'backend-fail-contenttype'   => 'Nu s-a putut determina tipul de conținut al fișierului de stocat la „$1”.',
+'backend-fail-batchsize'     => 'Suportul de stocare a furnizat un lot de $1 {{PLURAL:$1|operațiune|operațiuni|de operațiuni}} de fișier; limita este $2 {{PLURAL:$2|operațiune|operațiuni|de operațiuni}}.',
 
 # Lock manager
 'lockmanager-notlocked'        => 'Imposibil de deblocat „$1”; nu este blocată.',
@@ -1895,7 +1902,7 @@ Când acestei pagini îi este aplicat filtrul de utilizator, sunt afișate doar 
 'filehist'                  => 'Istoricul fișierului',
 'filehist-help'             => "Apăsați pe '''Data și ora''' pentru a vedea versiunea fișierului trimisă la momentul respectiv.",
 'filehist-deleteall'        => 'șterge tot',
-'filehist-deleteone'        => 'șterge',
+'filehist-deleteone'        => 'ștergere',
 'filehist-revert'           => 'revenire',
 'filehist-current'          => 'actuală',
 'filehist-datetime'         => 'Data și ora',
@@ -1916,7 +1923,7 @@ O [[Special:WhatLinksHere/$2|listă completă]] este disponibilă.',
 'morelinkstoimage'          => 'Vedeți [[Special:WhatLinksHere/$1|mai multe legături]] către acest fișier.',
 'linkstoimage-redirect'     => '$1 (redirecționare de fișier) $2',
 'duplicatesoffile'          => '{{PLURAL:$1|Fișierul următor este duplicat|Următoarele $1 fișiere sunt duplicate}} ale acestui fișier ([[Special:FileDuplicateSearch/$2|mai multe detalii]]):',
-'sharedupload'              => 'Acest fișier provine de la $1 și poate fi folosit și de alte proiecte.',
+'sharedupload'              => 'Acest fișier provine de la $1, putând fi folosit și de alte proiecte.',
 'sharedupload-desc-there'   => 'Acest fișier provine de la $1 și poate fi folosit și în cadrul altor proiecte.
 Vizitați [$2 pagina de descriere a fișierului] pentru mai multe detalii.',
 'sharedupload-desc-here'    => 'Acest fișier provine de la $1 și poate fi folosit și în cadrul altor proiecte.
@@ -1960,7 +1967,7 @@ Descrierea de mai jos poate fi consultată la [$2 pagina de descriere a fișieru
 # MIME search
 'mimesearch'         => 'Căutare MIME',
 'mimesearch-summary' => 'This page enables the filtering of files for its MIME-type.
-Input: contenttype/subtype, e.g. <tt>image/jpeg</tt>.
+Input: contenttype/subtype, e.g. <code>image/jpeg</code>.
 
 
 Această pagină specială permite căutarea fișierelor în funcție de tipul MIME (Multipurpose Internet Mail Extensions). Cele mai des întâlnite sunt:
@@ -2018,9 +2025,9 @@ Lista tipurilor MIME recunoscute de MediaWiki poate fi găsită la [http://svn.w
 
 'disambiguations'      => 'Pagini care trimit către pagini de dezambiguizare',
 'disambiguationspage'  => 'Template:Dezambiguizare',
-'disambiguations-text' => "Paginile următoare conțin legături către o '''pagină de dezambiguizare'''.
-În locul acesteia ar trebui să conțină legături către un articol.<br />
-O pagină este considerată o pagină de dezambiguizare dacă folosește formate care apar la [[MediaWiki:Disambiguationspage]]",
+'disambiguations-text' => "Paginile următoare conțin cel puțin o legătură către o '''pagină de dezambiguizare'''.
+Acestea ar trebui să conțină legături către un articol mai potrivit.<br />
+O pagină este considerată o pagină de dezambiguizare dacă folosește formate care apar la [[MediaWiki:Disambiguationspage]].",
 
 'doubleredirects'                   => 'Redirecționări duble',
 'doubleredirectstext'               => 'Această listă conține pagini care redirecționează la alte pagini de redirecționare.
@@ -2033,7 +2040,7 @@ Intrările <del>tăiate</del> au fost rezolvate.',
 'brokenredirects'        => 'Redirecționări greșite',
 'brokenredirectstext'    => 'Următoarele redirecționări conduc spre articole inexistente:',
 'brokenredirects-edit'   => 'modificare',
-'brokenredirects-delete' => 'șterge',
+'brokenredirects-delete' => 'ștergere',
 
 'withoutinterwiki'         => 'Pagini fără legături interwiki',
 'withoutinterwiki-summary' => 'Următoarele pagini nu se leagă la versiuni ale lor în alte limbi:',
@@ -2165,7 +2172,7 @@ Vedeți și [[Special:WantedCategories|categoriile dorite]].',
 'linksearch-ok'    => 'Caută',
 'linksearch-text'  => 'Pot fi folosite metacaractere precum „*.wikipedia.org”.
 Necesită cel puțin un domeniu de nivel superior, cum ar fi „*.org”.<br />
-Protocoale suportate: <tt>$1</tt> (nu adăugați niciunul dintre acestea în câmpul de căutare).',
+Protocoale suportate: <code>$1</code> (nu adăugați niciunul dintre acestea în câmpul de căutare).',
 'linksearch-line'  => '$1 este legat de $2',
 'linksearch-error' => 'Metacaracterele pot să apară doar la începutul hostname-ului.',
 
@@ -2247,7 +2254,7 @@ Adresa de e-mail introdusă de tine în [[Special:Preferences|preferințele de u
 'mywatchlist'          => 'Pagini urmărite',
 'watchlistfor2'        => 'Pentru $1 $2',
 'nowatchlist'          => 'Nu ați ales să urmăriți nici o pagină.',
-'watchlistanontext'    => 'Te rugăm să $1 pentru a vizualiza sau edita itemii de pe lista ta de urmărire.',
+'watchlistanontext'    => 'Vă rugăm să vă $1 pentru a vizualiza sau edita elementele din lista dumneavoastră de pagini urmărite.',
 'watchnologin'         => 'Nu sunteți autentificat',
 'watchnologintext'     => 'Trebuie să fiți [[Special:UserLogin|autentificat]] pentru a vă modifica lista de pagini urmărite.',
 'addwatch'             => 'Adăugă la lista de pagini urmărite',
@@ -2496,7 +2503,7 @@ $1',
 'blanknamespace'                => 'Articole',
 
 # Contributions
-'contributions'       => 'Contribuțiile utilizatorului',
+'contributions'       => 'Contribuții utilizator',
 'contributions-title' => 'Contribuțiile utilizatorului $1',
 'mycontris'           => 'Contribuții',
 'contribsub2'         => 'Pentru $1 ($2)',
@@ -2521,7 +2528,7 @@ Iată aici ultima înregistrare relevantă din jurnalul blocărilor:',
 'sp-contributions-search'              => 'Căutare contribuții',
 'sp-contributions-username'            => 'Adresă IP sau nume de utilizator:',
 'sp-contributions-toponly'             => 'Afișează numai versiunile recente',
-'sp-contributions-submit'              => 'Caută',
+'sp-contributions-submit'              => 'Căutare',
 
 # What links here
 'whatlinkshere'            => 'Ce trimite aici',
@@ -2580,8 +2587,8 @@ Precizați motivul blocării; de exemplu indicați paginile vandalizate de acest
 'ipb-confirm'                     => 'Confirmare blocare',
 'badipaddress'                    => 'Adresa IP este invalidă.',
 'blockipsuccesssub'               => 'Utilizatorul a fost blocat',
-'blockipsuccesstext'              => '[[Special:Contributions/$1|$1]] a fost blocată.<br />
-Vezi [[Special:BlockList|lista de adrese IP și conturi blocate]] pentru a revizui adresele blocate.',
+'blockipsuccesstext'              => '[[Special:Contributions/$1|$1]] a fost blocat{{GENDER:$1||ă|}}.<br />
+Vedeți [[Special:BlockList|lista blocărilor]] pentru a revizui adresele blocate.',
 'ipb-blockingself'                => 'Sunteți pe cale să vă autoblocați! Sunteți sigur că doriți să continuați?',
 'ipb-confirmhideuser'             => 'Sunteți pe cale să blocați un utilizator cu funcția „ascunde utilizator” activată. Acest lucru va înlătura numele său de utilizator din toate listele și jurnalele. Sunteți sigur că vreți să continuați?',
 'ipb-edit-dropdown'               => 'Modifică motivele blocării',
@@ -2634,7 +2641,7 @@ Jurnalul blocărilor este indicat mai jos:',
 Jurnalul suprimărilor este indicat mai jos:',
 'blocklogentry'                   => 'a blocat utilizatorul „[[$1]]” pe o perioadă de $2 $3',
 'reblock-logentry'                => 'a fost schimbată blocarea pentru [[$1]] cu data expirării la $2 $3',
-'blocklogtext'                    => 'Acest jurnal cuprinde acțiunile de blocare și deblocare. Adresele IP blocate automat nu sunt afișate. Vizitați [[Special:BlockList|lista de adrese blocate]] pentru o listă explicită a adreselor blocate în acest moment.',
+'blocklogtext'                    => 'Acest jurnal cuprinde acțiunile de blocare și deblocare. Adresele IP blocate automat nu sunt afișate. Vizitați [[Special:BlockList|lista blocărilor]] pentru o listă explicită a adreselor blocate în acest moment.',
 'unblocklogentry'                 => 'a deblocat utilizatorul $1',
 'block-log-flags-anononly'        => 'doar utilizatorii anonimi',
 'block-log-flags-nocreate'        => 'crearea de conturi dezactivată',
@@ -2733,7 +2740,7 @@ automat odată cu aceasta '''afară de cazul că''':
 manual paginile de discuții, dacă dorești acest lucru.",
 'movearticle'                  => 'Pagina de redenumit:',
 'moveuserpage-warning'         => "'''Atenție''': sunteți pe cale să redenumiți o pagină de utilizator. Vă rugăm să rețineți că singura redenumită va fi pagina, nu și utilizatorul.",
-'movenologin'                  => 'Nu ești autentificat',
+'movenologin'                  => 'Nu sunteți autentificat{{GENDER:||ă}}.',
 'movenologintext'              => 'Trebuie să fii un utilizator înregistrat și să te [[Special:UserLogin|autentifici]] pentru a muta o pagină.',
 'movenotallowed'               => 'Nu ai permisiunea să muți pagini.',
 'movenotallowedfile'           => 'Nu ai permisiunea de a muta fișiere.',
@@ -2899,7 +2906,7 @@ Un dosar temporar lipsește.',
 
 # JavaScriptTest
 'javascripttest'                           => 'Testare JavaScript',
-'javascripttest-disabled'                  => 'Această funcție este dezactivată.',
+'javascripttest-disabled'                  => 'Această funcție nu a fost activată pe acest wiki.',
 'javascripttest-title'                     => 'Rulare teste pentru $1',
 'javascripttest-pagetext-noframework'      => 'Această pagină este rezervată rulării testelor JavaScript.',
 'javascripttest-pagetext-unknownframework' => 'Cadru de testare „$1” necunoscut.',
@@ -3012,7 +3019,7 @@ Permite adăugarea unui motiv în descrierea modificărilor',
 'spamprotectionmatch' => 'Următorul text a fost oferit de filtrul de spam: $1',
 'spambot_username'    => 'Curățarea de spam a MediaWiki',
 'spam_reverting'      => 'Revenire la ultima versiune care nu conține legături către $1',
-'spam_blanking'       => 'Toate reviziile conținând legături către $1, au eșuat',
+'spam_blanking'       => 'Toate versiunile conținând legături către $1 au fost golite',
 
 # Info page
 'pageinfo-title'            => 'Informații pentru „$1”',
@@ -3081,7 +3088,7 @@ Executându-l, sistemul dvs. poate fi compromis.",
 'file-info-size-pages'   => '$1 × $2 pixeli, mărime fișier: $3, tip MIME: $4, $5 {{PLURAL:$5|pagină|pagini}}',
 'file-nohires'           => 'Rezoluții mai mari nu sunt disponibile.',
 'svg-long-desc'          => 'fișier SVG, cu dimensiunea nominală de $1 × $2 pixeli, mărime fișier: $3',
-'show-big-image'         => 'Mărește rezoluția imaginii',
+'show-big-image'         => 'Rezoluție maximă',
 'show-big-image-preview' => 'Mărimea acestei previzualizări: $1.',
 'show-big-image-other'   => '{{PLURAL:$2|Altă rezoluție|Alte rezoluții}}: $1.',
 'show-big-image-size'    => '$1 × $2 pixeli',
@@ -3636,7 +3643,7 @@ Vă rugăm să confirmați faptul că într-adevăr doriți să recreați acest 
 'table_pager_prev'         => 'Pagina anterioară',
 'table_pager_first'        => 'Prima pagină',
 'table_pager_last'         => 'Ultima pagină',
-'table_pager_limit'        => 'Arată $1 itemi pe pagină',
+'table_pager_limit'        => 'Arată $1 elemente pe pagină',
 'table_pager_limit_label'  => 'Elemente pe pagină:',
 'table_pager_limit_submit' => 'Du-te',
 'table_pager_empty'        => 'Niciun rezultat',
@@ -3746,7 +3753,7 @@ Imaginile sunt afișate la rezoluția lor maximă, în timp ce alte tipuri de fi
 * <span class="mw-specialpagecached">Pagini speciale aflate doar în memoria cache (pot fi neactualizate).</span>',
 'specialpages-group-maintenance' => 'Întreținere',
 'specialpages-group-other'       => 'Alte pagini speciale',
-'specialpages-group-login'       => 'Autentificare / Înregistrare',
+'specialpages-group-login'       => 'Autentificare / creare cont',
 'specialpages-group-changes'     => 'Schimbări recente și jurnale',
 'specialpages-group-media'       => 'Fișiere',
 'specialpages-group-users'       => 'Utilizatori și permisiuni',
@@ -3799,11 +3806,11 @@ Imaginile sunt afișate la rezoluția lor maximă, în timp ce alte tipuri de fi
 # Database error messages
 'dberr-header'      => 'Acest site are o problemă',
 'dberr-problems'    => 'Ne cerem scuze! Acest site întâmpină dificultăți tehnice.',
-'dberr-again'       => 'Așteaptă câteva minute și încearcă din nou.',
+'dberr-again'       => 'Așteptați câteva minute și încercați din nou.',
 'dberr-info'        => '(Nu pot contacta baza de date a serverului: $1)',
-'dberr-usegoogle'   => 'Între timp poți efectua căutarea folosind Google.',
-'dberr-outofdate'   => 'De reținut ca indexarea conținutului nostru de către ei poate să nu fie actualizată.',
-'dberr-cachederror' => 'Următoarea pagină este o copie în cache a paginii cerute, s-ar putea să nu fie actualizată.',
+'dberr-usegoogle'   => 'Între timp puteți efectua căutarea folosind Google.',
+'dberr-outofdate'   => 'De reținut că indexarea conținutului nostru de către ei poate să nu fie actualizată.',
+'dberr-cachederror' => 'Următoarea pagină este o copie în cache a paginii cerute, care s-ar putea să nu fie actualizată.',
 
 # HTML forms
 'htmlform-invalid-input'       => 'Există probleme la valorile introduse',
@@ -3854,8 +3861,8 @@ Imaginile sunt afișate la rezoluția lor maximă, în timp ce alte tipuri de fi
 'newuserlog-byemail'                  => 'parola trimisă prin e-mail',
 
 # Feedback
-'feedback-bugornote' => 'Dacă sunteți pregătit să descrieți o problemă tehnică în detaliu vă rugăm să [ $1 raportați un bug].
-În caz contrar, puteți utiliza formularul de mai jos. Comentariul dumneavoastră va fi adăugat pe pagina „[ $3  $2 ]”, împreună cu numele de utilizator și numele navigatorului pe care îl folosiți.',
+'feedback-bugornote' => 'Dacă sunteți pregătit să descrieți o problemă tehnică în detaliu vă rugăm să [$1 raportați un bug].
+În caz contrar, puteți utiliza formularul de mai jos. Comentariul dumneavoastră va fi adăugat pe pagina „[$3 $2]”, împreună cu numele de utilizator și numele navigatorului pe care îl folosiți.',
 'feedback-subject'   => 'Subiect:',
 'feedback-message'   => 'Mesaj:',
 'feedback-cancel'    => 'Revocare',

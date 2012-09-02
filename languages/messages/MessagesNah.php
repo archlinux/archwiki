@@ -812,10 +812,10 @@ Intlā ticnequi, tlācah quimatīzqueh motequi.',
 Tlahcuilōlli iuhcāyōtl {{PLURAL:\$3|moēlēhuia cah|moēlēhuiah cateh}} \$2.",
 'filetype-missing'       => 'Tlahcuilōlli ahmo quipiya huēiyaquiliztli (quemeh ".jpg").',
 'large-file'             => 'Mā tlahcuilōlli ahmo achi huēiyac $1; inīn cah $2.',
-'fileexists-extension'   => "Tlahcuilōlli zan iuh tōcātica ia: [[$2|thumb]]
-* Tlahcuilōlli moquetzacah: '''<tt>[[:$1]]</tt>'''
-* Tlahcuilōlli tlein ia ītōca: '''<tt>[[:$2]]</tt>'''
-Timitztlātlauhtiah, xitlahcuiloa occē tōcāitl.",
+'fileexists-extension'   => 'Tlahcuilōlli zan iuh tōcātica ia: [[$2|thumb]]
+* Tlahcuilōlli moquetzacah: <strong>[[:$1]]</strong>
+* Tlahcuilōlli tlein ia ītōca: <strong>[[:$2]]</strong>
+Timitztlātlauhtiah, xitlahcuiloa occē tōcāitl.',
 'savefile'               => 'Quipiyāz tlahcuilōlli',
 'uploadedimage'          => 'ōmoquetz "[[$1]]"',
 'overwroteimage'         => 'ōmoquetz yancuīc "[[$1]]" iuhcāyōtl',
@@ -1499,5 +1499,18 @@ Niman tihuelīti [[Special:UserLogin|timocalaqui]] auh ticpactiāz huiquitica.',
 
 # HTML forms
 'htmlform-selectorother-other' => 'Occē',
+
+# API errors
+'api-error-ok-but-empty'       => 'Tlâtek îtlakawilistli: Âmò tènankilia in tlatèmakani.',
+'api-error-overwrite'          => 'Awel motlâkuilnepanòltis sè èwalli tlèn yi katki.',
+'api-error-stashfailed'        => 'Tlâtek îtlakawilistli: In tlatèmakani awel òkeuh in èwalpanòni.',
+'api-error-timeout'            => 'In tlatèmakani âmò òwalnàwat kèn òmochìxtikatka.',
+'api-error-unclassified'       => 'Òpanòk sè âmò ìxmatkàyo îtlakawilistli.',
+'api-error-unknown-code'       => 'Âmò ìxmatkàyo îtlakawilistli: "$1".',
+'api-error-unknown-error'      => 'Tlâtek îtlakawilistli: Îtlâtlèn òîtlakauh îkuàk òmonekià motilànas in èwalli.',
+'api-error-unknown-warning'    => 'Âmò ìxmatkàyo tlanawatilistli: "$1".',
+'api-error-unknownerror'       => 'Âmò ìxmatkàyo îtlakawilistli: "$1".',
+'api-error-uploaddisabled'     => 'Sèuhtok in êkawilistli ìpan inìn wiki.',
+'api-error-verification-error' => 'Inìn èwalli welis îtlakauhtok, noso âmò kualli motzòwîtok.',
 
 );

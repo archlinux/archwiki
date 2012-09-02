@@ -1,5 +1,5 @@
 <?php
-/** Tarandíne (Tarandíne)
+/** tarandíne (tarandíne)
  *
  * See MessagesQqq.php for message documentation incl. usage of parameters
  * To improve a translation please visit http://translatewiki.net
@@ -31,7 +31,7 @@ $messages = array(
 'tog-hidepatrolled'           => "Scunne le cangiaminde condrollete jndr'à le cangiaminde recende",
 'tog-newpageshidepatrolled'   => "Scunne le pàggene tenute sotte condrolle da 'a liste de le pàggene nuève",
 'tog-extendwatchlist'         => "Spanne 'a liste de le pàggene condrollete pe fa vedè tutte le cangiaminde fatte, none sulamende l'urteme",
-'tog-usenewrc'                => "Ause le cangiaminde recende migliorate (richiede 'u JavaScript)",
+'tog-usenewrc'                => "Ause le cangiaminde recende migliorate (vole 'u JavaScript)",
 'tog-numberheadings'          => 'Testete auto-numerete',
 'tog-showtoolbar'             => "Fà vedè 'a barra de le cangiaminde (JavaScript)",
 'tog-editondblclick'          => "Cange le pàggene cu 'nu doppie clic (JavaScript)",
@@ -39,17 +39,17 @@ $messages = array(
 'tog-editsectiononrightclick' => "Abilite le cngiaminde d'a sezione ausanne 'u pulsande destre d'u mouse cazzanne sus a 'u titele (Javascript)",
 'tog-showtoc'                 => "Fa vedè 'a taggelle de le condenute (pe le pàggene cu cchiù de 3 testete)",
 'tog-rememberpassword'        => "Arrencuerdete 'u nome mije sus a stu browser (pe 'nu massime de $1 {{PLURAL:$1|sciurne|sciurne}})",
-'tog-watchcreations'          => "Mitte le pàggene ca je agghje ccrejete jndr'à le pàggene condrollete",
-'tog-watchdefault'            => "Mitte le pàggene ca je agghje cangete jndr'à le pàggene condrolleteAdd pages I edit to my watchlist",
-'tog-watchmoves'              => "Mitte le pàggene ca je agghje spustete jndr'à le pàggene condrollete",
-'tog-watchdeletion'           => "Mitte le pàggene ca je agghje scangillete jndr'à le pàggene condrollete",
+'tog-watchcreations'          => "Mitte le pàggene ca je agghie ccrejate jndr'à le pàggene condrollate",
+'tog-watchdefault'            => "Mitte le pàggene ca je agghie cangiate jndr'à le pàggene condrollate",
+'tog-watchmoves'              => "!Mitte le pàggene ca je agghie spustate jndr'à le pàggene condrollate",
+'tog-watchdeletion'           => "Mitte le pàggene ca je agghie scangellate jndr'à le pàggene condrollate",
 'tog-minordefault'            => 'Pe convenzione signe tutte le cangiaminde cumme a stuédeche',
 'tog-previewontop'            => "Fa vedè l'andeprime apprime de 'a scatole de le cangiaminde",
 'tog-previewonfirst'          => "Fà vedè l'andeprime sus a 'u prime cangiaminde",
 'tog-nocache'                 => "Disabbilete 'u caching d'a pàgene sfogliate",
-'tog-enotifwatchlistpages'    => "Manneme 'na mail quanne 'a pàgene ca stoche a condrolle ha cangete",
+'tog-enotifwatchlistpages'    => "Manneme 'na mail quanne 'a pàgene ca stoche a condrolle ha cangiate",
 'tog-enotifusertalkpages'     => "Manneme 'na mail quanne 'a pàgene de le 'ngazzaminde ha cangete",
-'tog-enotifminoredits'        => "Manneme 'na mail quanne onne state fatte cangiaminde stuèdeche sus 'a pàgene",
+'tog-enotifminoredits'        => "Manneme 'na mail quanne onne state fatte cangiaminde stuèdeche sus a le pàggene",
 'tog-enotifrevealaddr'        => "Fa vedè l'indirizze e-mail jndr'à le e-mail de notifiche",
 'tog-shownumberswatching'     => "Fa vedè 'u numere de le utinde ca uardene",
 'tog-oldsig'                  => 'Firme esistende:',
@@ -624,7 +624,7 @@ Passuord temboranèe: $2',
 
 # Edit pages
 'summary'                          => 'Riepileghe:',
-'subject'                          => 'Oggette/Testete:',
+'subject'                          => 'Oggette/Testate:',
 'minoredit'                        => 'Cangiaminde stuèdeche',
 'watchthis'                        => 'Condrolle sta pàgene',
 'savearticle'                      => "Registre 'a vôsce",
@@ -643,7 +643,7 @@ Ce tu cazze \"{{int:savearticle}}\" 'n'otra vote, 'u cangiamende tune avène mem
 'summary-preview'                  => "Andeprime d'u riepileghe:",
 'subject-preview'                  => "Andeprime de l'Oggette/Testete:",
 'blockedtitle'                     => "L'utende è blocchete",
-'blockedtext'                      => "''''U nome de l'utende o l'indirizze IP ha state blocchete.'''
+'blockedtext'                      => "''''U nome de l'utende o l'indirizze IP ha state bloccate.'''
 
 'U blocche ha state fatte da $1.
 'U mutive date jè ''$2''.
@@ -724,8 +724,8 @@ L'urteme archivije de le bloccaminde se iacche aqquà sotte pe referimende:",
 Arrecuerdete ca jndr'à le file personalizzete .css e .js s'ause scrivere le titele cu le lettere piccenne, pe esembie {{ns:user}}:Foo/vector.css è diverse da {{ns:user}}:Foo/Vector.css.",
 'updated'                          => '(Cangiete)',
 'note'                             => "'''Vide Bbuene:'''",
-'previewnote'                      => "'''Queste è sole 'n'andeprime;
-le cangiaminde non g'onne state angore reggistrete!'''",
+'previewnote'                      => "'''Arrecuerdete queste è sole 'n'andeprime.'''
+le cangiaminde non g'onne state angore reggistrate!",
 'previewconflict'                  => "Sta andeprime fece vedè 'u teste ca ste jndr'à 'u teste de l'area de sus cumme avène fore ce tu decide cu reggistre.",
 'session_fail_preview'             => "'''Ne dispiace! Non ge putime processà 'u cangiamende tue purcè s'a perse 'a sessione de le date.
 Pe piacere pruève 'n'otra vote.
@@ -764,7 +764,7 @@ Tu na promettere pure ca le cose ca scrive tu, sonde 'mbormaziune libbere o copi
 Ce tu non ge vuè ca quidde ca scrive avène cangete da tre, allore non scè scrivenne proprie aqquà.<br />
 Tu ne stè promitte ca quidde ca scrive tu, o lè scritte cu 'u penziere tue o lè cupiate da risorse de pubbliche dominie o sembre robba libbere (vide $1 pe cchiù dettaglie).
 '''NO REGGISTRA' FATIJE CUPERTE DA 'U COPYRIGHT SENZA PERMESSE! NO FA STUDECARIE!'''",
-'longpageerror'                    => "'''ERRORE: 'U teste ca tu vuè ccu reggistre è luenghe $1 kilobyte, invece 'u limite massime jè de {{PLURAL:$2|$2}} kilobyte.'''
+'longpageerror'                    => "'''ERRORE: 'U teste ca tu vuè ccu reggistre è luenghe {{PLURAL:$1|'nu kilobyte|$1 kilobyte}}, invece 'u limite massime jè de {{PLURAL:$2|'nu kilobyte|$2 kilobyte}}.'''
 Non ge puè reggistrà sta pàggene.",
 'readonlywarning'                  => "'''FA ATTENZIO': 'U database ha state bloccate pe manutenziona, e allore tu non ge puè reggistrà le cangiaminde ca ste face mò.'''
 Tu puè fa 'na bella cose, tagghie e 'nzicche le cangiaminde jndr'à 'nu file de teste sus a 'u combiuter tue e pò cchiù tarde le reggistre sus 'a Uicchi.
@@ -968,7 +968,7 @@ Pe piacere condrolle l'archivije.",
 # Suppression log
 'suppressionlog'     => 'Archivie de le soppressiune',
 'suppressionlogtext' => "Sotte stè 'n'elenghe de scangellaminde e blocche sus a le condenute scunnute da l'amministrature.
-Vide l'[[Special:BlockList|elenghe de le IP bloccate]] pa liste de le operazziune corrende de espulsione e blocche.",
+Vide l'[[Special:BlockList|elenghe de le IP bloccate]] pe l'elenghe de le operazziune corrende de espulsione e blocche.",
 
 # History merging
 'mergehistory'                     => "Scuagghie 'a storie de le pàggene",
@@ -1002,7 +1002,7 @@ Vide Bbuene ca ausanne le collegaminde de navigazzione sta culonne avène azzera
 'mergelogpagetext'   => "Stte stè 'na liste de le cchiù recende scuagghiaminde de le cunde de le vosce jndr'à 'n'otre.",
 
 # Diffs
-'history-title'            => 'Liste de le versiune de "$1"',
+'history-title'            => '$1: Cunde de le revisiune',
 'difference'               => "(Differenze 'mbrà versiune)",
 'difference-multipage'     => "(Differenze 'mbrà le pàggene)",
 'lineno'                   => 'Linea $1:',
@@ -1118,7 +1118,7 @@ Però fa attenzione purcè l'indice lore sus a {{SITENAME}} ponne condenè pàgg
 'saveprefs'                     => 'Reggistre',
 'resetprefs'                    => "Pulizze le cangiaminde ca non g'è reggistrete",
 'restoreprefs'                  => "Repristene tutte le 'mbostaziune origginale",
-'prefs-editing'                 => 'Cangiaminde...',
+'prefs-editing'                 => 'Stoche a cange',
 'prefs-edit-boxsize'            => "Dimenzione d'a pàgene de cangiamende.",
 'rows'                          => 'Righe:',
 'columns'                       => 'Culonne:',
@@ -1399,6 +1399,7 @@ Ce tu 'u mitte, a fatje ca è fatte t'avène ricanusciute.",
 'newsectionsummary'                 => '/* $1 */ seziona nove',
 'rc-enhanced-expand'                => 'Fà vedè le dettaglie (ha ausà JavaScript)',
 'rc-enhanced-hide'                  => 'Scunne le dettaglie',
+'rc-old-title'                      => 'origgenariamende ccreajate cumme "$1"',
 
 # Recent changes linked
 'recentchangeslinked'          => 'Cangiaminde culleghete',
@@ -1428,9 +1429,9 @@ L'archivije de de scangellaminde e de le spustaminde pe sta pàgene le puè acch
 Pe vedè o cercà le file carecate precedendemende veje a 'a [[Special:FileList|liste de le file carecate]], le carecaminde sonde pure reggistrate jndr'à l'[[Special:Log/upload|archivije de le carecaminde]], le scangellazziune jndr'à l'[[Special:Log/delete|archivije de le scangellaminde]].
 
 Pe ingludere 'nu file jndr'à 'na pàgene, ause 'u collegamende jndr'à une de le forme seguende:
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.jpg]]</nowiki></tt>''' pe ausà 'a versiona comblete d'u file
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.png|200px|thumb|left|alt text]]</nowiki></tt>''' pe ausà 'nu file cu 'a dimenziona massime de 200 pixel jndr'à 'na scatele ca se iacchie sus a 'u margine sinistre cu 'u teste 'alt text' cumme didascalìe.
-* '''<tt><nowiki>[[</nowiki>{{ns:media}}<nowiki>:File.ogg]]</nowiki></tt>''' pe appundà direttamende a 'u file senze ca face vedè 'u file",
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.jpg]]</nowiki></code>''' pe ausà 'a versiona comblete d'u file
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.png|200px|thumb|left|alt text]]</nowiki></code>''' pe ausà 'nu file cu 'a dimenziona massime de 200 pixel jndr'à 'na scatele ca se iacchie sus a 'u margine sinistre cu 'u teste 'alt text' cumme didascalìe.
+* '''<code><nowiki>[[</nowiki>{{ns:media}}<nowiki>:File.ogg]]</nowiki></code>''' pe appundà direttamende a 'u file senze ca face vedè 'u file",
 'upload-permitted'            => 'Tipe de file permesse: $1.',
 'upload-preferred'            => 'Tipe de file preferite: $1.',
 'upload-prohibited'           => 'Tipe de file proibbite: $1.',
@@ -1478,20 +1479,20 @@ Stu file jè $2.",
 Pò essere ca è scritte male 'u nome d'u file e n'à carecate 'n'otre.
 Pe piacere condrolle ce tu avveramende vuè cu careche stu file.",
 'windows-nonascii-filename'   => 'Sta Uicchi non ge supporte le nome de le file cu le carattere speciale.',
-'fileexists'                  => "'Nu file cu stu nome esiste già, pe piacere verifiche '''<tt>[[:$1]]</tt>''' ce tu non ge sì secure no 'u sce cangianne.
+'fileexists'                  => "'Nu file cu stu nome esiste già, pe piacere verifiche <strong>[[:$1]]</strong> ce tu non ge sì secure no 'u sce cangianne.
 [[$1|thumb]]",
-'filepageexists'              => "'A pàgene de descrizione pe stu file ha state già ccreiate 'u '''<tt>[[:$1]]</tt>''', ma nisciune file cu stu nome osce a die esiste.
+'filepageexists'              => "'A pàgene de descrizione pe stu file ha state già ccreiate 'u <strong>[[:$1]]</strong>, ma nisciune file cu stu nome osce a die esiste.
 'U riepileghe ca tu è mise non ge iesse sus 'a pàgene de descrizione.
 Pe fà assè 'u riepileghe tu tìne abbesogne de cangiarle a mane.
 [[$1|thumb]]",
 'fileexists-extension'        => "'Nu file cu 'nu nome simile esiste già: [[$2|thumb]]
-* Nome d'u file ca vuè cu careche: '''<tt>[[:$1]]</tt>'''
-* Nome d'u file ca già esiste: '''<tt>[[:$2]]</tt>'''
+* Nome d'u file ca vuè cu careche: <strong>[[:$1]]</strong>
+* Nome d'u file ca già esiste: <strong>[[:$2]]</strong>
 Pe piacere vide ce scacchie 'nu nome differende.",
 'fileexists-thumbnail-yes'    => "'U file pare ca jè 'n'immaggine de dimenzione ridotte ''(miniature)''. [[$1|thumb]]
-Pe piacere condrolle 'u file '''<tt>[[:$1]]</tt>'''.
+Pe piacere condrolle 'u file <strong>[[:$1]]</strong>.
 Ce 'u file condrollete jè d'a stesse dimenzione de quedda originale allore non ge stè abbesogne de carecà 'na miniatura de cchiù.",
-'file-thumbnail-no'           => "'U nome d'u file accumenze pe '''<tt>$1</tt>'''.
+'file-thumbnail-no'           => "'U nome d'u file accumenze pe <strong>$1</strong>.
 Pare ca jè 'n'immaggine piccenne ''(miniature)''.
 Ce tu tìne sulamende st'immaggine da carecà apposte, ce nò vide ce cange 'u file.",
 'fileexists-forbidden'        => "'U file cu stu nome già esiste e non ge pò essere sovrascritte.<br />
@@ -1580,7 +1581,13 @@ Ce 'u probbleme angore jè presende, condatte 'n'[[Special:ListUsers/sysop|ammin
 'backend-fail-writetemp'     => 'Non ge pozze scrivere sus a file temboranèe.',
 'backend-fail-closetemp'     => 'Non ge pozze achiudere file temboranèe.',
 'backend-fail-read'          => "Non ge pozze leggere 'u file $1.",
-'backend-fail-create'        => "Non ge pozze ccrejà 'u file $1.",
+'backend-fail-create'        => "Non ge pozze scrivere 'u file $1.",
+'backend-fail-readonly'      => 'L\'archivije de rete "$1" jè pe stu mumende in sole letture. \'U mutive ha state: "$2"',
+'backend-fail-synced'        => "'U file \"\$1\" jè jndr'à 'nu state ingonsistende jndr'à l'archivije inderne",
+'backend-fail-connect'       => 'Non ge pozze connettere \'a memorie de rrete "$1".',
+'backend-fail-internal'      => "'N'errore scanusciute s'à verificate jndr'à l'archivije de rrete \"\$1\".",
+'backend-fail-contenttype'   => 'Non ge pozze capìe \'u tipe de condenute d\'u file da reggistrà sus a "$1".',
+'backend-fail-batchsize'     => "L'archivije de rrete ha date 'nu processe de $1 {{PLURAL:$1|operazione|operaziune}} sus a le file; 'u limite jè $2 {{PLURAL:$2|operazione|operaziune}}.",
 
 # Lock manager
 'lockmanager-notlocked'        => 'Non ge pozze sbloccà "$1"; jidde non g\'è bloccate.',
@@ -1614,9 +1621,9 @@ Non g'è possibbele verificà pa securezze.",
 # img_auth script messages
 'img-auth-accessdenied'     => 'Accesse negate',
 'img-auth-nopathinfo'       => "No se iacchie PATH_INFO.
-'U server tune non g'è 'mbostate o non ge passe st'mbormazione.
+'U server tune non g'è 'mbostate o non ge passe sta 'mbormazione.
 Pò essere ca jè basate sus a 'u CGI e non ge pò supportà img_auth.
-[https://www.mediawiki.org/wiki/Manual:Image_Authorization Vide autorizzazzione de le immaggine.]",
+Vide https://www.mediawiki.org/wiki/Manual:Image_Authorization",
 'img-auth-notindir'         => "'U percorse richieste non ge stè jndr'à cartelle de carecamende configurate",
 'img-auth-badtitle'         => 'Non ge se pò costruì \'nu titele valide da "$1".',
 'img-auth-nologinnWL'       => 'Tu non ge sì collegate e "$1" non ge stè jndr\'à lista vianghe.',
@@ -1742,7 +1749,7 @@ Pe piacere vide 'a [$2 pàgene de descrizione d'u file] pe maggiore 'mbormaziune
 # MIME search
 'mimesearch'         => "Ricerca jndr'à 'u MIME",
 'mimesearch-summary' => "Sta pàgene abbilitesce 'u filtre sus a le file pu tipe de MIME.
-Input: contenttype/subtype, pe esembie <tt>image/jpeg</tt>.",
+Input: contenttype/subtype, pe esembie <code>image/jpeg</code>.",
 'mimetype'           => 'Tipe de MIME:',
 'download'           => 'scareche',
 
@@ -1791,7 +1798,7 @@ Arrecuèrdete de condrollà pe otre collegaminde a le template apprime de scange
 'disambiguationspage'  => 'Template:disambigue',
 'disambiguations-text' => "Le pàggene seguende appondene a 'na '''pàgene de disambiguazione'''.
 'Nvece avessere appondà a 'a temateca appropriate.<br />
-'Na pàgene jè trattate cumme pàgene de disambiguazione ce tu ause 'nu template ca è appundate da [[MediaWiki:Disambiguationspage|Pàggene de disambiguazione]]",
+'Na pàgene jè trattate cumme pàgene de disambiguazione ce tu ause 'nu template ca è appundate da [[MediaWiki:Disambiguationspage]]",
 
 'doubleredirects'                   => 'Ridirezionaminde a doppie',
 'doubleredirectstext'               => "Sta pàgene elenghe le pàggene ca se ridirezionane sus a otre pàggene de ridirezionaminde.
@@ -1837,6 +1844,8 @@ Mò s'avène redirette a [[$2]].",
 'wantedpages'             => 'Pàggene cchiù cerchete',
 'wantedpages-badtitle'    => "Titele invalide in mmienze a l'inzieme de le resultate: $1",
 'wantedfiles'             => 'File cchiù cerchete',
+'wantedfiletext-cat'      => "Le seguende file onne state ausate ma non g'esistene, Le file de le archivije de fore ponne essere elengate fine ca esistene. Ogne false allarme avène <del>signate</del>. In aggiunde, le pàggene ca tènene ste file ca non g'esistene avène elengate jndr'à [[:$1]]",
+'wantedfiletext-nocat'    => "Le file seguende onne state ausate ma non g'esistene. Le file da le archivije esterne ponne stà in liste fine ca esistente. Ogne false allarme avène <del>segnalate</del>.",
 'wantedtemplates'         => 'Template cchiù ausete',
 'mostlinked'              => 'Pàggene cchiù appundete',
 'mostlinkedcategories'    => 'Categorije cchiù appundete',
@@ -1937,7 +1946,7 @@ Vide pure [[Special:WantedCategories|Categorije cercate]].",
 'linksearch-ok'    => 'Cirche',
 'linksearch-text'  => 'Le wildcard cumme a "*.wikipedia.org" ponne essere ausate.<br />
 Onne abbesogne almede de \'nu dominie de levèlle ierte, pe esembie "*.org". <br />
-Protocolle supportate: <tt>$1</tt> (no sce aggiungenne nisciune de chiste jndr\'à recerca toje).',
+Protocolle supportate: <code>$1</code> (no sce aggiungenne nisciune de chiste jndr\'à recerca toje).',
 'linksearch-line'  => '$1 jè pundete da $2',
 'linksearch-error' => "Le wildcard ponne essere ausate sulamende a l'inzie de l'hostname.",
 
@@ -1970,8 +1979,8 @@ Ponne stà [[{{MediaWiki:Listgrouprights-helppage}}|'mbormaziune de cchiù]] sus
 'listgrouprights-rights'               => 'Diritte',
 'listgrouprights-helppage'             => 'Help:Deritte de le gruppe',
 'listgrouprights-members'              => '(liste de le membre)',
-'listgrouprights-right-display'        => '<span class="listgrouprights-granted">$1 <tt>($2)</tt></span>',
-'listgrouprights-right-revoked'        => '<span class="listgrouprights-revoked">$1 <tt>($2)</tt></span>',
+'listgrouprights-right-display'        => '<span class="listgrouprights-granted">$1 <code>($2)</code></span>',
+'listgrouprights-right-revoked'        => '<span class="listgrouprights-revoked">$1 <code>($2)</code></span>',
 'listgrouprights-addgroup'             => 'Puè aggiungere {{PLURAL:$2|gruppe|gruppe}}: $1',
 'listgrouprights-removegroup'          => 'Puè scangellà {{PLURAL:$2|gruppe|gruppe}}: $1',
 'listgrouprights-addgroup-all'         => 'Puè aggiungere tutte le gruppe',
@@ -2421,7 +2430,7 @@ L'archivije de le soppressiune 'u puè acchià aqquà sotte pe riferimende:",
 'blocklogentry'                   => "blocchete [[$1]] pe 'nu timbe de $2 $3",
 'reblock-logentry'                => "cangiate l'imbostazione de le blocche pe [[$1]] cu 'na data de scadenze de $2 $3",
 'blocklogtext'                    => "Quiste è l'archivije de l'aziune de blocche e sblocche pe l'utinde.
-L'indirizze IP automaticamende bloccate non ge stonne jndr'à liste.
+L'indirizze IP automaticamende bloccate non ge stonne jndr'à l'elenghe.
 Vide 'a [[Special:BlockList|liste de le IP bloccate]] pa liste de le operaziune de ban e blocche ca stonne attive mò.",
 'unblocklogentry'                 => 'sblocchete $1',
 'block-log-flags-anononly'        => "sulamende l'utinde anonime",
@@ -2673,6 +2682,9 @@ Reggistrele sus a 'u combiuter tune e carechele aqquà.",
 'import-invalid-interwiki'   => "Non ge pozze 'mbortà da 'a Uicchi specificate.",
 'import-error-edit'          => 'Pàgene "$1" non g\' \'mbortate purcé tu non ge tìne le permesse pe cangiarle.',
 'import-error-create'        => 'Pàgene "$1" non g\' \'mbortate purcé tu non ge tìne le permesse pe ccrejarle.',
+'import-error-interwiki'     => 'Pagene "$1" non g\'ha state \'mbortate purcé \'u nome sue jè riservate pe collegaminde esterne (interuicchi).',
+'import-error-special'       => "'A pagena \"\$1\" non g'ha state 'mbortate purcé apponde a 'nu namespace speciale ca non g'è permesse a le pàggene normale.",
+'import-error-invalid'       => "'A pàgene \"\$1\" non g'ha state 'mbortate purcé 'u nome jè invalide.",
 
 # Import log
 'importlogpage'                    => "Archivie de le 'mbortaziune",
@@ -2683,9 +2695,15 @@ Reggistrele sus a 'u combiuter tune e carechele aqquà.",
 'import-logentry-interwiki-detail' => '$1 {{PLURAL:$1|revisione|revisiune}} da $2',
 
 # JavaScriptTest
-'javascripttest'          => 'Test de JavaScript',
-'javascripttest-disabled' => 'Sta funzione jè disabbilitate.',
-'javascripttest-title'    => 'Stoche a esegue $1 test',
+'javascripttest'                           => 'Test de JavaScript',
+'javascripttest-disabled'                  => "Sta funzione non g'à state abbilitate sus a sta Uicchi.",
+'javascripttest-title'                     => 'Stoche a esegue $1 test',
+'javascripttest-pagetext-noframework'      => 'Sta pàgene jè riservate pe le esecuziune de le test de Javascript.',
+'javascripttest-pagetext-unknownframework' => 'Ambiende de teste scanusciute "$1".',
+'javascripttest-pagetext-frameworks'       => 'Pe piacere scacchie une de le seguende ambiende de test: $1',
+'javascripttest-pagetext-skins'            => "Scacchie 'n'aspette pe eseguì le test cu:",
+'javascripttest-qunit-intro'               => "Vide 'a [$1 documendazione d'u test] sus a mediawiki.org.",
+'javascripttest-qunit-heading'             => 'Ambiende de test MediaUicchi JavaScript QUnit',
 
 # Tooltip help for the actions
 'tooltip-pt-userpage'                 => "'A pàgene utende meje",
@@ -3736,7 +3754,7 @@ Le immaggine sonde fatte vedè jndr'à resoluziona megghie, otre tipe de file re
 * <span class="mw-specialpagecached">Pàggene speciale in memorie cache (ponne essere vecchie).</span>',
 'specialpages-group-maintenance' => "Report d'a manutenzione",
 'specialpages-group-other'       => 'Otre pàggene speciele',
-'specialpages-group-login'       => 'Tràse / Reggistrete',
+'specialpages-group-login'       => 'Tràse / Reggistrate',
 'specialpages-group-changes'     => 'Cangiaminde recende e archivie',
 'specialpages-group-media'       => 'Riepileghe de media e carecaminde',
 'specialpages-group-users'       => 'Utinde e deritte',
@@ -3849,7 +3867,7 @@ Ce nò, tu puè ausà 'u module facile aqquà sotte. 'U commende tune avène agg
 'feedback-subject'   => 'Oggette:',
 'feedback-message'   => 'Messàgge:',
 'feedback-cancel'    => 'Annulle',
-'feedback-submit'    => "Conferme 'u feedback",
+'feedback-submit'    => "Conferme 'a segnalazione",
 'feedback-adding'    => "Aggiunge feedback a 'a pàgene...",
 'feedback-error1'    => "Errore: resultate inaspettate da l'API",
 'feedback-error2'    => 'Errore: Cangiamende fallite',
@@ -3860,29 +3878,41 @@ Ce nò, tu puè ausà 'u module facile aqquà sotte. 'U commende tune avène agg
 'feedback-bugnew'    => "Agghie verificate. Manne 'nu bug nuève",
 
 # API errors
-'api-error-badtoken'              => 'Errore inderne: Gettone errate.',
-'api-error-duplicate-popup-title' => 'Dupleche {{PLURAL:$1|file|file}}',
-'api-error-empty-file'            => "'U file ca tu è confermate ere vacande.",
-'api-error-file-too-large'        => "'U file ca tu è confermate jè troppe granne.",
-'api-error-filename-tooshort'     => "'U nome d'u file jè troppe curte.",
-'api-error-filetype-banned'       => 'Stu tipe de file jè vietate.',
-'api-error-filetype-missing'      => "'U file jè senze 'n'estenzione.",
-'api-error-http'                  => "Errore inderne: Non ge se riesce a collegà a 'u server",
-'api-error-illegal-filename'      => "'U nome d'u file non g'è permesse.",
-'api-error-missingparam'          => 'Errore inderne: Parametre mangande sus a richieste.',
-'api-error-missingresult'         => "Errore inderne: Non ge se pò determinà ce 'a copie ha state fatte.",
-'api-error-mustbeloggedin'        => 'Tu a essere collegate pe carecà le file.',
-'api-error-mustbeposted'          => "Errore inderne: 'A richieste vole HTTP POST.",
-'api-error-nomodule'              => "Errore inderne: Nisciune module de carecamende 'mbostate.",
-'api-error-ok-but-empty'          => "Errore inderne: Nisciune resposte da 'u server.",
-'api-error-overwrite'             => "'A sovrascritture de 'nu file ca esiste non ge se pò fà.",
-'api-error-stashfailed'           => "Errore inderne: 'U server ha fallite 'a reggistrazione de le file temboranèe.",
-'api-error-timeout'               => "'U server non g'ave resposte jndr'à 'u tiembe ca 'u spettave.",
-'api-error-unclassified'          => "'N'errore scanusciute s'a verificate",
-'api-error-unknown-code'          => 'Errore scanusciute: "$1"',
-'api-error-unknown-error'         => "Errore inderne: Quacche cose ha sciute storte quanne ste pruvave a carecà 'u file tune.",
-'api-error-unknown-warning'       => 'Avvertimende scanusciute: $1',
-'api-error-uploaddisabled'        => 'Le carecaminde sonde disabbilitate sus a sta Uicchi.',
-'api-error-verification-error'    => "Stu file pò essere scuasciate, o ave 'n'estenzione sbagliate.",
+'api-error-badaccess-groups'              => 'Tu non ge puè carecà file sus a sta Uicchi.',
+'api-error-badtoken'                      => 'Errore inderne: Gettone errate.',
+'api-error-copyuploaddisabled'            => "'U carecamende da URL jè disabbilitate sus a stu server.",
+'api-error-duplicate'                     => "{{PLURAL:$1|Stè [$2 'n'otre file]|Stonne [$2 otre file]}} sus a 'u site cu 'u stesse condenute.",
+'api-error-duplicate-archive'             => "{{PLURAL:$1|Stave [$2 'n'otre file]|Stavane [$2 otre file]}} già sus a 'u site cu 'u stesse condenute, ma {{PLURAL:$1|ha state|onne state}} scangellate.",
+'api-error-duplicate-archive-popup-title' => "Dupliche {{PLURAL:$1|'u file ca ha state|le file ca onne state}} scangellate.",
+'api-error-duplicate-popup-title'         => 'Dupleche {{PLURAL:$1|file|file}}',
+'api-error-empty-file'                    => "'U file ca tu è confermate ere vacande.",
+'api-error-emptypage'                     => 'Quanne se ne ccreje une, le pàggene vacande non ge sò permesse.',
+'api-error-fetchfileerror'                => "Errore inderne: Quacchecose ha sciute stuèrte quanne ste analizzave 'u file.",
+'api-error-file-too-large'                => "'U file ca tu è confermate jè troppe granne.",
+'api-error-filename-tooshort'             => "'U nome d'u file jè troppe curte.",
+'api-error-filetype-banned'               => 'Stu tipe de file jè vietate.',
+'api-error-filetype-missing'              => "'U file jè senze 'n'estenzione.",
+'api-error-hookaborted'                   => "'U cangiamende ca tu stè pruève a ffà ha state inderrotte da 'n'estenzione.",
+'api-error-http'                          => "Errore inderne: Non ge se riesce a collegà a 'u server",
+'api-error-illegal-filename'              => "'U nome d'u file non g'è permesse.",
+'api-error-internal-error'                => "Errore inderne: Quaccheccose ha sciute male mendre ca ste processamme 'u carecamende tune sus 'a uicchi.",
+'api-error-invalid-file-key'              => "Errore inderne: 'U file non ge se iacchie jndr'à memorie temboranèe.",
+'api-error-missingparam'                  => 'Errore inderne: Parametre mangande sus a richieste.',
+'api-error-missingresult'                 => "Errore inderne: Non ge se pò determinà ce 'a copie ha state fatte.",
+'api-error-mustbeloggedin'                => 'Tu a essere collegate pe carecà le file.',
+'api-error-mustbeposted'                  => "Errore inderne: 'A richieste vole HTTP POST.",
+'api-error-noimageinfo'                   => "'U carecamende ha riuscite, ma 'u server non ge n'ha date nisciuna 'mbormazione sus a 'u file.",
+'api-error-nomodule'                      => "Errore inderne: Nisciune module de carecamende 'mbostate.",
+'api-error-ok-but-empty'                  => "Errore inderne: Nisciune resposte da 'u server.",
+'api-error-overwrite'                     => "'A sovrascritture de 'nu file ca esiste non ge se pò fà.",
+'api-error-stashfailed'                   => "Errore inderne: 'U server ha fallite 'a reggistrazione de le file temboranèe.",
+'api-error-timeout'                       => "'U server non g'ave resposte jndr'à 'u tiembe ca 'u spettave.",
+'api-error-unclassified'                  => "'N'errore scanusciute s'a verificate",
+'api-error-unknown-code'                  => 'Errore scanusciute: "$1"',
+'api-error-unknown-error'                 => "Errore inderne: Quacche cose ha sciute storte quanne ste pruvave a carecà 'u file tune.",
+'api-error-unknown-warning'               => 'Avvertimende scanusciute: $1',
+'api-error-unknownerror'                  => 'Errore scanusciute: "$1"',
+'api-error-uploaddisabled'                => 'Le carecaminde sonde disabbilitate sus a sta Uicchi.',
+'api-error-verification-error'            => "Stu file pò essere scuasciate, o ave 'n'estenzione sbagliate.",
 
 );

@@ -13,6 +13,7 @@
  * @author Kandar
  * @author Meursault2004
  * @author Mssetiadi
+ * @author Reedy
  * @author Urhixidur
  * @author לערי ריינהארט
  */
@@ -136,7 +137,7 @@ $messages = array(
 'tog-hidepatrolled'           => 'Sumputkeun anu geus diroris ti béréndélan nu anyar robah',
 'tog-newpageshidepatrolled'   => 'Sumputkeun nu geus diroris tina béréndélan kaca anyar',
 'tog-extendwatchlist'         => 'Legaan béréndélan ngarah sakabéh parobahanana kaawaskeun',
-'tog-usenewrc'                => 'Nu anyar robah dina wanda séjén (maké JavaScript)',
+'tog-usenewrc'                => 'Parobahan grup dumasar kaca dina béréndélan anyar robah jeung awaskeuneun (maké JavaScript)',
 'tog-numberheadings'          => 'Nomeran lulugu sacara otomatis',
 'tog-showtoolbar'             => "Témbongkeun ''toolbar'' édit (JavaScript)",
 'tog-editondblclick'          => 'Édit kaca ku klik ganda (JavaScript)',
@@ -144,17 +145,17 @@ $messages = array(
 'tog-editsectiononrightclick' => 'Fungsikeun ngédit sub-bagean kalawan klik-katuhu dina judul bagean (JavaScript)',
 'tog-showtoc'                 => 'Témbongkeun daptar eusi<br />(pikeun kaca nu leuwih ti tilu subjudul)',
 'tog-rememberpassword'        => 'Apalkeun login kuring dina ieu panyungsi (pikeun paling lila $1 {{PLURAL:$1|poé|poé}})',
-'tog-watchcreations'          => 'Awaskeun kaca jieunan kuring',
-'tog-watchdefault'            => 'Tambahkeun kaca nu diédit ku anjeun kana awaskeuneun anjeun',
-'tog-watchmoves'              => 'Awaskeun kaca nu dipindahkeun ku kuring',
-'tog-watchdeletion'           => 'Awaskeun kaca nu dihapus ku kuring',
+'tog-watchcreations'          => 'Tambahkeun kaca-kaca jieunan kuring jeung berkas muatan kuring kana awaskeuneun',
+'tog-watchdefault'            => 'Tambahkeun kaca jeung berkas anu diédit ku kuring kana awaskeuneun',
+'tog-watchmoves'              => 'Tambahkeun kaca jeung berkas anu dipindahkeun ka awaskeuneun',
+'tog-watchdeletion'           => 'Tambahkeun kaca jeung berkas anu dihapus kana awaskeuneun',
 'tog-minordefault'            => 'Tandaan sadaya éditan salaku minor luyu jeung ti dituna',
 'tog-previewontop'            => 'Témbongkeun sawangan méméh kotak édit (lain sanggeusna)',
 'tog-previewonfirst'          => 'Témbongkeun sawangan dina éditan munggaran',
 'tog-nocache'                 => "Tumpurkeun ''cache'' kaca dina pangaprak",
-'tog-enotifwatchlistpages'    => 'Surélékan mun robah',
+'tog-enotifwatchlistpages'    => 'Lamun aya kaca atawa berkas anu diawaskeun robah, béjaan ngaliwatan surélék',
 'tog-enotifusertalkpages'     => 'Mun kaca obrolan kuring robah, béjaan ngaliwatan surélék',
-'tog-enotifminoredits'        => 'Béjaan ogé (ngaliwatan surélék) mun aya parobahan leutik dina kacana',
+'tog-enotifminoredits'        => 'Béjaan ogé (ngaliwatan surélék) lamun aya parobahan leutik dina kaca jeung berkasna',
 'tog-enotifrevealaddr'        => 'Témbongkeun alamat surélék kuring dina surat émbaran',
 'tog-shownumberswatching'     => 'Témbongkeun jumlah nu ngawaskeun',
 'tog-oldsig'                  => 'Paraf nu geus aya:',
@@ -488,8 +489,8 @@ Sigana geus dihapus ku nu séjén.',
 'cannotdelete-title'   => 'Hanteu bisa ngahapus kaca "$1"',
 'badtitle'             => 'Judul goréng',
 'badtitletext'         => 'Judul kaca nu dipénta teu bener, kosong, atawa judul antarbasa atawa antarwikina salah tutumbu.',
-'perfcached'           => 'Data di handap ieu sindangan sahingga--meureun--teu mutahir. A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
-'perfcachedts'         => 'Data di handap ieu mah sindangan, panungtungan diropéa téh $1. A maximum of {{PLURAL:$4|one result is|$4 results are}} available in the cache.',
+'perfcached'           => "Data di handap ieu mangrupa 'cache' sahingga bisa jadi henteu mutahir. 'Cache' nyadiakeun paling loba {{PLURAL:$1|hiji hasil|$1 hasil}}.",
+'perfcachedts'         => "Data di handap mangrupa 'cache' anu panungtungan diropéa $1. 'Cache' nyadiakeun paling loba {{PLURAL:$4|hiji hasil|$4 hasil}}.",
 'querypage-no-updates' => 'Pangrobahan ahir ti kaca ieu keur dipaéhkeun. Data anu aya di dieu ayeuna moal dimuat deui.',
 'wrong_wfQuery_params' => 'Parameter salah ka wfQuery()<br />Fungsi: $1<br />Pamenta: $2',
 'viewsource'           => 'Témbongkeun sumber',
@@ -718,7 +719,7 @@ Alesanana ''\$2''.
 * Sasaran nudipeungpeuk : \$7
 
 Anjeun bisa nepungan \$1 atawa salasahiji [[{{MediaWiki:Grouppage-sysop}}|kuncén]] séjén pikeun nyawalakeun hal ieu.
-'''<u>Catet</u>''': yén anjeun teu bisa maké fungsi \"surélékan pamaké ieu\" mun anjeun teu ngadaptarkeun alamat surélék nu sah kana [[Special:Preferences|préferénsi pamaké]] anjeun.
+'''Catet''': yén anjeun teu bisa maké fungsi \"surélékan pamaké ieu\" mun anjeun teu ngadaptarkeun alamat surélék nu sah kana [[Special:Preferences|préferénsi pamaké]] anjeun.
 
 Alamat IP anjeun \$3 jeung ID na #\$5.
 Lampirkeun informasi ieu dina unggal ''query'' anjeun.",
@@ -780,7 +781,7 @@ Pikeun rujukan, éntri log panungtung dipidangkeun di handap:',
 'userinvalidcssjstitle'            => "'''Awas''': kulit \"\$1\" mah teu aya. Sing émut yén kaca .css jeung .js mah migunakeun aksara leutik dina judulna, contona baé {{ns:user}}:Foo/vector.css lawan {{ns:user}}:Foo/Vector.css.",
 'updated'                          => '(Geus diropéa)',
 'note'                             => "'''Catetan:'''",
-'previewnote'                      => "'''Inget yén ieu ukur pramidang, can disimpen!'''
+'previewnote'                      => "'''Inget yén ieu ukur pratayang, can disimpen.'''
 Éditan anjeun can disimpen!",
 'previewconflict'                  => 'Sawangan ieu mangrupa eunteung pikeun téks na rohangan ngédit sakumaha bakal katémbong mun ku anjeun disimpen.',
 'session_fail_preview'             => "'''Punten! Kami teu bisa ngolah éditan anjeun alatan leungitna data rintakan. Mangga cobian deui. Mun tetep teu bisa, cobi kaluar log lajeng lebet deui.'''",
@@ -1426,8 +1427,8 @@ Pikeun némbongkeun atawa néang gambar-gambar nu pernah dimuat saméméhna, man
 Paké formulir di handap pikeun ngamuat koropak gambar anyar pikeun ilustrasi kaca anjeun. Na kalolobaan panyungsi, anjeun bakal manggihan tombol \"Sungsi/''Browse''...\", nu bakal nganteur ka dialog muka-koropak nu baku na sistim operasi anjeun. Milih hiji koropak bakal ngeusian ngaran koropakna kana rohangan téks gigireun tombol nu tadi. Anjeun ogé kudu nyontréng kotak nu nandakeun yén anjeun teu ngarumpak hak cipta batur ku dimuatna ieu koropak. Pencét tombol \"Muatkeun/''Upload''\" pikeun ngeréngsékeun muatan. Prosés ieu bisa lila mun anjeun migunakeun sambungan internét nu lambat.
 
 Format nu dianjurkeun nyéta JPEG pikeun gambar fotografik, PNG pikeun hasil ngagambar sarta gambar séjénna, sarta OGG pikeun sora. Pilih ngaran koropak nu déskriptif sangkan teu ngalieurkeun. Pikeun ngasupkeun gambarna na kaca séjén, pigunakeun tumbu dina wujud
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:Gambar.jpg]]</nowiki></tt>''' pikeun gambar dina ukuran aslina
-* '''<tt><nowiki>[[</nowiki>{{ns:media}}<nowiki>:Berkas.ogg]]</nowiki></tt>''' pikeun sora.
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:Gambar.jpg]]</nowiki></code>''' pikeun gambar dina ukuran aslina
+* '''<code><nowiki>[[</nowiki>{{ns:media}}<nowiki>:Berkas.ogg]]</nowiki></code>''' pikeun sora.
 
 Catet yén salaku kaca wiki, nu séjén bisa ngarobah atawa ngahapus muatan anjeun mun maranéhna nganggap ieu saluyu jeung kapentingan proyék, sarta anjeun bisa waé dipeungpeuk ti ngamuat koropak mun anjeun ngaruksak/ngaganggu sistim.",
 'upload-permitted'            => 'Tipeu koropak nu diwidian: $1.',
@@ -1469,12 +1470,12 @@ Catet yén salaku kaca wiki, nu séjén bisa ngarobah atawa ngahapus muatan anje
 'largefileserver'             => 'Ieu koropak badag teuing, ngaleuwihan wates nu diwenangkeun ku server.',
 'emptyfile'                   => "Koropak nu dimuatkeun ku anjeun jigana kosong. Hal ieu bisa jadi alatan sarupaning ''typo'' na ngaran koropakna. Mangga parios deui yén anjeun leres-leres hoyong ngamuat koropak éta.",
 'windows-nonascii-filename'   => 'Ieu wiki teu ngarojong ngaran berkas anu maké aksara husus.',
-'fileexists'                  => "Koropak nu ngaranna kieu geus aya, mangga parios '''<tt>[[:$1]]</tt>''' mun anjeun teu yakin rék ngaganti.
-[[$1|thumb]]",
-'fileexists-extension'        => "Geus aya berkas anu ngaranna sarupa: [[$2|thumb]]
-* Ngaran berkas nu dimuat: '''<tt>[[:$1]]</tt>'''
-* Ngaran berkas nu geus aya: '''<tt>[[:$2]]</tt>'''
-Pilih ngaran séjén.",
+'fileexists'                  => 'Koropak nu ngaranna kieu geus aya, mangga parios <strong>[[:$1]]</strong> mun anjeun teu yakin rék ngaganti.
+[[$1|thumb]]',
+'fileexists-extension'        => 'Geus aya berkas anu ngaranna sarupa: [[$2|thumb]]
+* Ngaran berkas nu dimuat: <strong>[[:$1]]</strong>
+* Ngaran berkas nu geus aya: <strong>[[:$2]]</strong>
+Pilih ngaran séjén.',
 'fileexists-forbidden'        => 'Berkas  nu ngaranna kitu geus aya sarta teu bisa ditimpah.
 Mun anjeun keukeuh rék ngunggahkeun berkas anjeun, mangga balik deui sarta paké ngaran anyar.
 [[File:$1|thumb|center|$1]]',
@@ -1621,7 +1622,7 @@ Pedaran ti [$2 kaca pedaranana] dipidangkeun di handap.',
 
 # MIME search
 'mimesearch'         => 'Sungsi MIME',
-'mimesearch-summary' => 'Ieu kaca bisa dipaké nyaring koropak dumasar tipeu MIME-na. Asupan: contenttype/subtype, contona <tt>image/jpeg</tt>.',
+'mimesearch-summary' => 'Ieu kaca bisa dipaké nyaring koropak dumasar tipeu MIME-na. Asupan: contenttype/subtype, contona <code>image/jpeg</code>.',
 'mimetype'           => 'Tipeu MIME:',
 'download'           => 'pulut',
 
@@ -1806,7 +1807,7 @@ Baca ogé [[Special:WantedCategories|kategori nu dipikabutuh]].',
 'linksearch-pat'   => 'Pola sungsi:',
 'linksearch-ns'    => 'Spasi ngaran:',
 'linksearch-ok'    => 'Sungsi',
-'linksearch-text'  => "''Wildcard'' sarupaning \"*.wikipedia.org\" bisa dipaké.<br />Protokol nu dirojong: <tt>\$1</tt>",
+'linksearch-text'  => "''Wildcard'' sarupaning \"*.wikipedia.org\" bisa dipaké.<br />Protokol nu dirojong: <code>\$1</code>",
 'linksearch-line'  => '$1 ditumbu ti $2',
 'linksearch-error' => "''Wildcard'' ngan bisa némbongan dina awal ngaran indung (''host'').",
 
@@ -2787,6 +2788,12 @@ Nu séjénna bakal disumputkeun sakumaha asalna.
 'exif-gpslongitude-e' => 'Gurat Wétan',
 'exif-gpslongitude-w' => 'Gurat Kulon',
 
+# Pseudotags used for GPSAltitudeRef
+'exif-gpsaltitude-above-sealevel' => '$1 {{PLURAL:$1|méter|méter}} luhureun beungeut laut',
+'exif-gpsaltitude-below-sealevel' => '$1 {{PLURAL:$1|méter|méter}} handapeun beungeut laut',
+
+'exif-gpsstatus-a' => 'Keur ngukur',
+
 'exif-gpsmeasuremode-2' => 'Ukuran 2-diménsi',
 'exif-gpsmeasuremode-3' => 'Ukuran 3-diménsi',
 
@@ -2795,8 +2802,52 @@ Nu séjénna bakal disumputkeun sakumaha asalna.
 'exif-gpsspeed-m' => 'Mil per jam',
 'exif-gpsspeed-n' => 'Knot',
 
+# Pseudotags used for GPSDestDistanceRef
+'exif-gpsdestdistance-k' => 'Kilométer',
+'exif-gpsdestdistance-m' => 'Mil',
+'exif-gpsdestdistance-n' => 'Mil laut',
+
+'exif-gpsdop-excellent' => 'Sampurna ($1)',
+'exif-gpsdop-good'      => 'Alus ($1)',
+'exif-gpsdop-moderate'  => 'Moderat ($1)',
+'exif-gpsdop-fair'      => 'Cukup ($1)',
+'exif-gpsdop-poor'      => 'Awon ($1)',
+
+'exif-objectcycle-a' => 'Isuk-isuk wungkul',
+'exif-objectcycle-p' => 'Soré wungkul',
+'exif-objectcycle-b' => 'Isuk jeung beurang',
+
 # Pseudotags used for GPSTrackRef, GPSImgDirectionRef and GPSDestBearingRef
+'exif-gpsdirection-t' => 'Arah sajati',
 'exif-gpsdirection-m' => 'Arah magnétik',
+
+'exif-ycbcrpositioning-1' => 'Nengah',
+
+'exif-dc-contributor' => 'Kontributor',
+'exif-dc-date'        => 'Titimangsa',
+'exif-dc-publisher'   => 'Pamedal',
+'exif-dc-relation'    => 'Média anu tumali',
+'exif-dc-rights'      => 'Hak',
+'exif-dc-source'      => 'Média sumber',
+'exif-dc-type'        => 'Jenis média',
+
+'exif-rating-rejected' => 'Ditolak',
+
+'exif-isospeedratings-overflow' => 'Leuwih ti 65535',
+
+'exif-iimcategory-ace' => 'Seni, budaya, jeung hiburan',
+'exif-iimcategory-clj' => 'Hukum jeung kajahatan',
+'exif-iimcategory-dis' => 'Bencana jeung kacilakaan',
+'exif-iimcategory-edu' => 'Atikan',
+'exif-iimcategory-evn' => 'Lingkungan',
+'exif-iimcategory-hth' => 'Kawaluyaan',
+'exif-iimcategory-pol' => 'Politik',
+'exif-iimcategory-rel' => 'Ageman jeung kayakinan',
+'exif-iimcategory-soi' => 'Isu sosial',
+'exif-iimcategory-spo' => 'Olahraga',
+'exif-iimcategory-wea' => 'Cuaca',
+
+'exif-urgency-normal' => 'Normal ($1)',
 
 # External editor support
 'edit-externally'      => 'Édit koropak ieu migunakeun aplikasi éksternal',
@@ -3010,6 +3061,11 @@ Coba ku sawangan normal.',
 'revdelete-restricted'   => 'akses geus dibatesan ukur keur kuncén',
 'revdelete-unrestricted' => 'Watesan akses kuncén dihapuskeun',
 'newuserlog-byemail'     => 'Sandi geus dikirim maké surélék.',
+
+# Feedback
+'feedback-subject' => 'Ngeunaan:',
+'feedback-message' => 'Surat:',
+'feedback-cancel'  => 'Bolay',
 
 # API errors
 'api-error-file-too-large'    => 'Berkas nu dikirim gedé teuing.',

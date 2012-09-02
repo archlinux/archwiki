@@ -94,6 +94,10 @@ public function allowPasswordChange() {
 	return false;
 }
 
+public function allowSetLocalPassword() {
+	return false;
+}
+
 public function setPassword( $user, $password ) {
 	return false;
 }

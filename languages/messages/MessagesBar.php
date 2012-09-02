@@ -467,8 +467,9 @@ Es muass sichergstöd seih, daas Cookies aktivierd san. Danoch bittscheh d' Seit
 # Change password dialog
 'resetpass'                 => 'Posswort ändern',
 'oldpassword'               => 'Oids Posswort:',
-'newpassword'               => 'Naichs Posswort:',
-'retypenew'                 => 'Naichs Posswort (nuamoi):',
+'newpassword'               => 'Neichs Posswort:',
+'retypenew'                 => 'Neichs Posswort (nuamoi):',
+'resetpass_submit'          => 'Posswort ywermitteln und auhmöden',
 'resetpass-submit-loggedin' => 'Posswort ändern',
 'resetpass-submit-cancel'   => 'Obbrechen',
 
@@ -511,8 +512,8 @@ Es muass sichergstöd seih, daas Cookies aktivierd san. Danoch bittscheh d' Seit
 'blockedtitle'                     => 'Da Benytzer is gsperrt',
 'whitelistedittext'                => "Du muasst de $1, um Saiten beorwaiten z' kenna.",
 'loginreqtitle'                    => "'s braucht a Åmöidung",
-'loginreqlink'                     => 'åmöiden',
-'loginreqpagetext'                 => "Du muasst de $1, dass d' Saiten leesen kååst.",
+'loginreqlink'                     => 'åmöden',
+'loginreqpagetext'                 => "Du muasst dé $1, daas d' Seiten leesen kauhst.",
 'accmailtitle'                     => 'Passwort is vaschickt worn',
 'accmailtext'                      => 'E zuafällig genariards Posswort fyr [[User talk:$1|$1]] is an $2 gschickt worn.
 
@@ -534,7 +535,8 @@ Du derfst an Titel auf åndre Seiten [[Special:Search/{{PAGENAME}}|suachen]]
 'userpage-userdoesnotexist-view'   => 'Benutzerkonto „$1“ existiard ned.',
 'blocked-notice-logextract'        => "{{GENDER:$1|Der Benutzer|De Benutzarin|Der Benutzer do}} is zurzeid gesperrd.
 Zua da Informazion foigt a aktueller Auszug aus 'm Benutzersperr-Logbiache:",
-'updated'                          => '(Gendert)',
+'updated'                          => '(Gänderd)',
+'note'                             => "'''Hihweis:'''",
 'previewnote'                      => "'''Dés is netter a Vurschau, d' Seiten is nuh néd gspeicherd worn!'''",
 'previewconflict'                  => "Dé Vurschau gibt 'n Inhoid vom ówern Textföd wieder. Só werd d' Seiten ausschaung, wånnst iatz speichern duast.",
 'session_fail_preview'             => "'''Daine Beorwaitungen håm ned gspaichert wern kenna, wail Sitzungsdaaten valurn gånga san.'''
@@ -549,7 +551,8 @@ Des owere Textföidl enthoit 'n aktuöin Stånd.
 Des untare Textföidl enthoit daine Enderungen.
 Bittschee fiag daine Enderungen ins owere Textföidl ai.
 '''Netter''' da Inhoit vom owern Textföidl werd gspaichert, wånn du auf  „{{int:savearticle}}“ druckst!",
-'yourtext'                         => 'Dai Text',
+'yourtext'                         => 'Deih Text',
+'storedversion'                    => 'Gespeicherde Versión',
 'editingold'                       => "'''Ochtung: Du beorwaitst a oide Version vo derer Saiten. Wånn du spaichertst, wern olle naichen Versionen ywerschriim!'''",
 'copyrightwarning'                 => "'''Bittschee kopiar koane Websaiten, dé néd daine oaganen san, benytz koane urhéwerrechtléch gschytzten Werke óne aner Dalaabnis vom Urhéwer!'''<br />
 
@@ -580,7 +583,7 @@ Zur Informazion foigt da aktuöie Logbuachaitrog:",
 Bittscheh priaff genau, ób dé erneite Seitendastöung dé Richtlinien entsprichd.
 Zua deiner Informazión fóigts Lésch- und Vaschiawungs-Logbiaché mid da Begryndung fyr d' vurhergeherde Léschung:",
 'moveddeleted-notice'              => "Dé Seiten do is gschléschd worn. Es fóigt a Auszug aus'm Lésch- und Vaschiawungs-Logbiaché voh derer Seiten.",
-'edit-conflict'                    => 'Konflikt beim Beorweiden.',
+'edit-conflict'                    => 'Konflikt ban Beorwaten.',
 
 # Parser/template warnings
 'post-expand-template-inclusion-warning'  => "Owocht: D' Gréss vo eihbundne Vurlong is z' gróss, étlé Vurlong kennern néd eihbunden wern.",
@@ -913,7 +916,7 @@ A [[Special:WhatLinksHere/$2|voiständige Listn]] gibt's aa.",
 'filedelete-intro'  => "Du léschst dé Daatei '''„[[Media:$1|$1]]“'''.",
 
 # MIME search
-'mimesearch-summary' => 'Auf dieser Spezialseite können die Dateien nach dem MIME-Typ gefiltert werden. Die Eingabe muss immer den Medien- und Subtyp beinhalten: <tt>image/jpeg</tt> (siehe Bildbeschreibungsseite).',
+'mimesearch-summary' => 'Auf dieser Spezialseite können die Dateien nach dem MIME-Typ gefiltert werden. Die Eingabe muss immer den Medien- und Subtyp beinhalten: <code>image/jpeg</code> (siehe Bildbeschreibungsseite).',
 'download'           => 'Owerlooden',
 
 # Unused templates
@@ -1038,7 +1041,7 @@ Links as Naumensraim wern do néd afglistt.",
 'linksearch-pat'  => 'Suachmuster:',
 'linksearch-ns'   => 'Nåmensraum:',
 'linksearch-ok'   => 'Suacher',
-'linksearch-text' => "Dé Speziaalseiten do daméglicht d' Suach noch Seiten, in dénen bstimmte Weblinks enthoiden san. Dodabei kennern Blootzhoiter wia beispüsweis  <tt>*.beispü.at</tt> hergnummer wern. Es muass mindastens a Top-Level-Domain, z. Bsp. „*.org“. auhgeem wern. <br />Unterstytzde Protokói: <tt>$1</tt> (Dé bittscheh bei da Suachauhgob auhgeem.)",
+'linksearch-text' => "Dé Speziaalseiten do daméglicht d' Suach noch Seiten, in dénen bstimmte Weblinks enthoiden san. Dodabei kennern Blootzhoiter wia beispüsweis  <code>*.beispü.at</code> hergnummer wern. Es muass mindastens a Top-Level-Domain, z. Bsp. „*.org“. auhgeem wern. <br />Unterstytzde Protokói: <code>$1</code> (Dé bittscheh bei da Suachauhgob auhgeem.)",
 'linksearch-line' => '$1 is valinkt voh $2',
 
 # Special:ListUsers

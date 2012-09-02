@@ -1,5 +1,5 @@
 <?php
-/** Serbo-Croatian (Srpskohrvatski)
+/** Serbo-Croatian (srpskohrvatski / српскохрватски)
  *
  * See MessagesQqq.php for message documentation incl. usage of parameters
  * To improve a translation please visit http://translatewiki.net
@@ -894,8 +894,8 @@ Posljednje stavke evidencije blokiranja možete pogledati ispod:',
 Ne zaboravite da imena stranica s .css i .js kodom počinju malim slovom, npr. {{ns:user}}:Foo/vector.css, a ne {{ns:user}}:Foo/Vector.css.",
 'updated'                          => '(Osvježeno)',
 'note'                             => "'''Napomena:'''",
-'previewnote'                      => "'''Upamtite da je ovo samo pretpregled.'''
-Vaše izmjene još uvijek nisu snimljene!",
+'previewnote'                      => "'''Ne zaboravite da je ovo samo pregled'''
+Izmjene stranice nisu još sačuvane!",
 'previewconflict'                  => 'Ovaj pretpregled reflektuje tekst u gornjem polju
 kako će izgledati ako pritisnete "Snimi stranicu".',
 'session_fail_preview'             => "'''Izvinjavamo se! Nismo mogli obraditi vašu izmjenu zbog gubitka podataka o prijavi. Molimo pokušajte ponovno. Ako i dalje ne bude radilo, pokušajte se [[Special:UserLogout|odjaviti]] i ponovno prijaviti.'''",
@@ -1134,7 +1134,8 @@ Molimo provjerite zapise.',
 
 # Suppression log
 'suppressionlog'     => 'Registri sakrivanja',
-'suppressionlogtext' => 'Ispod je spisak brisanja i blokiranja koja su povezana sa sadržajem koji je sakriven od administratora. Vidi [[Special:IPBlockList|spisak IP blokiranja]] za pregled trenutno važećih blokada.',
+'suppressionlogtext' => 'Ispod je spisak brisanja i blokiranja koja su povezana sa sadržajem koji je sakriven od administratora. 
+Vidi [[Special:BlockList|spisak blokiranja]] za pregled trenutno važećih blokada.',
 
 # History merging
 'mergehistory'                     => 'Spoji historije stranice',
@@ -1560,6 +1561,7 @@ Ako izaberete da date ime, biće korišteno za pripisivanje Vašeg rada.',
 'newsectionsummary'                 => '/* $1 */ nova sekcija',
 'rc-enhanced-expand'                => 'Pokaži detalje (neophodan JavaScript)',
 'rc-enhanced-hide'                  => 'Sakrij detalje',
+'rc-old-title'                      => 'prvobitno kreirano kao "$1"',
 
 # Recent changes linked
 'recentchangeslinked'          => 'Srodne izmjene',
@@ -1589,9 +1591,9 @@ Zapisnik brisanja i premještanja za ovu stranicu je dostupan ovdje na uvid:",
 Da bi ste vidjeli ili pretražili ranije postavljene datoteke, pogledajte [[Special:FileList|spisak postavljenih datoteka]], ponovna postavljanja su također zapisana u [[Special:Log/upload|evidenciji postavljanja]], a brisanja u [[Special:Log/delete|evidenciji brisanja]].
 
 Da bi ste prikazali datoteku na stranici, koristite link na jedan od slijedećih načina:
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:Datoteka.jpg]]</nowiki></tt>''' da upotrijebite potpunu veziju datoteke
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:Datoteka.png|200px|thumb|lijevo|opis slike]]</nowiki></tt>''' da upotrijebite smanjeni prikaz širine 200 piksela unutar okvira, s lijevim poravnanjem i ''opisom slike''.
-* '''<tt><nowiki>[[</nowiki>{{ns:media}}<nowiki>:Datoteka.ogg]]</nowiki></tt>''' za direkno povezivanje datoteke bez njenog prikazivanja",
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:Datoteka.jpg]]</nowiki></code>''' da upotrijebite potpunu veziju datoteke
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:Datoteka.png|200px|thumb|lijevo|opis slike]]</nowiki></code>''' da upotrijebite smanjeni prikaz širine 200 piksela unutar okvira, s lijevim poravnanjem i ''opisom slike''.
+* '''<code><nowiki>[[</nowiki>{{ns:media}}<nowiki>:Datoteka.ogg]]</nowiki></code>''' za direkno povezivanje datoteke bez njenog prikazivanja",
 'upload-permitted'            => 'Podržane vrste datoteka: $1.',
 'upload-preferred'            => 'Preferirane vrste datoteka: $1.',
 'upload-prohibited'           => 'Zabranjene vrste datoteka: $1.',
@@ -1639,21 +1641,21 @@ Ova datoteka je velika $2.',
 Ovo je moguće zbog greške u imenu datoteke. 
 Molimo Vas da provjerite da li stvarno želite da pošaljete ovu datoteku.',
 'windows-nonascii-filename'   => 'Ova wiki ne podržava imena datoteka sa posebnim znacima.',
-'fileexists'                  => "Datoteka sa ovim imenom već postoji.
-Molimo Vas da provjerite '''<tt>[[:$1]]</tt>''' ako niste sigurni da li želite da je promjenite.
-[[$1|thumb]]",
-'filepageexists'              => "Opis stranice za ovu datoteku je već napravljen ovdje '''<tt>[[:$1]]</tt>''', ali datoteka sa ovim nazivom trenutno ne postoji.
+'fileexists'                  => 'Datoteka sa ovim imenom već postoji.
+Molimo Vas da provjerite <strong>[[:$1]]</strong> ako niste sigurni da li želite da je promjenite.
+[[$1|thumb]]',
+'filepageexists'              => 'Opis stranice za ovu datoteku je već napravljen ovdje <strong>[[:$1]]</strong>, ali datoteka sa ovim nazivom trenutno ne postoji.
 Sažetak koji ste naveli neće se pojaviti na stranici opisa.
 Da bi se Vaš opis ovdje našao, potrebno je da ga ručno uredite.
-[[$1|thumb]]",
-'fileexists-extension'        => "Datoteka sa sličnim nazivom postoji: [[$2|thumb]]
-* Naziv datoteke koja se postavlja: '''<tt>[[:$1]]</tt>'''
-* Naziv postojeće datoteke: '''<tt>[[:$2]]</tt>'''
-Molimo Vas da izaberete drugačiji naziv.",
-'fileexists-thumbnail-yes'    => "Izgleda da je datoteka slika smanjene veličine ''(\"thumbnail\")''. [[\$1|thumb]]
-Molimo provjerite datoteku '''<tt>[[:\$1]]</tt>'''.
-Ako je provjerena datoteka ista slika originalne veličine, nije potrebno postavljati dodatnu sliku.",
-'file-thumbnail-no'           => "Naziv datoteke počinje sa '''<tt>\$1</tt>'''.
+[[$1|thumb]]',
+'fileexists-extension'        => 'Datoteka sa sličnim nazivom postoji: [[$2|thumb]]
+* Naziv datoteke koja se postavlja: <strong>[[:$1]]</strong>
+* Naziv postojeće datoteke: <strong>[[:$2]]</strong>
+Molimo Vas da izaberete drugačiji naziv.',
+'fileexists-thumbnail-yes'    => 'Izgleda da je datoteka slika smanjene veličine \'\'("thumbnail")\'\'. [[$1|thumb]]
+Molimo provjerite datoteku <strong>[[:$1]]</strong>.
+Ako je provjerena datoteka ista slika originalne veličine, nije potrebno postavljati dodatnu sliku.',
+'file-thumbnail-no'           => "Naziv datoteke počinje sa <strong>\$1</strong>.
 Izgleda da se radi o smanjenoj slici ''(\"thumbnail\")''.
 Ako imate ovu sliku u punoj rezoluciji, postavite nju; ili promijenite naslov ove datoteke.",
 'fileexists-forbidden'        => 'Datoteka sa ovim imenom već postoji i ne može biti presnimljena.
@@ -1892,7 +1894,7 @@ Opis sa njene [$2 stranice opisa datoteke] je prikazan ispod.',
 # MIME search
 'mimesearch'         => 'MIME pretraga',
 'mimesearch-summary' => 'Ova stranica omogućava filtriranje datoteka prema njihovoj MIME vrsti.
-Ulazni podaci: vrstasadržaja/podvrsta, npr. <tt>image/jpeg</tt>.',
+Ulazni podaci: vrstasadržaja/podvrsta, npr. <code>image/jpeg</code>.',
 'mimetype'           => 'MIME tip:',
 'download'           => 'učitaj',
 
@@ -2088,7 +2090,7 @@ Vidi također [[Special:WantedCategories|zatražene kategorije]].',
 'linksearch-ok'    => 'Traži',
 'linksearch-text'  => 'Mogu se koristiti džokeri poput „*.wikipedia.org“.<br />
 Potreban je najviši domen, kao „*.org“.<br />
-Podržani protokoli: <tt>$1</tt> (ne stavljajte u pretragu)',
+Podržani protokoli: <code>$1</code> (ne stavljajte u pretragu)',
 'linksearch-line'  => '$1 je povezan od $2',
 'linksearch-error' => 'Džokeri se mogu pojavljivati samo na početku naziva servera.',
 
@@ -2566,8 +2568,8 @@ Evidencija sakrivanja je prikazana ispod kao referenca:',
 'blocklogentry'                   => 'blokiran [[$1]] s rokom: $2 $3',
 'reblock-logentry'                => 'promjena postavki blokiranja za [[$1]] sa vremenom isteka u $2 $3',
 'blocklogtext'                    => 'Ovo je historija akcija blokiranja i deblokiranja korisnika.
-Automatsko blokirane IP adrese nisu uspisane ovde.
-Pogledajte [[Special:BlockList|blokirane IP adrese]] za spisak trenutnih zabrana i blokiranja.',
+Automatski blokirane IP adrese nisu navedene ovdje.
+Pogledajte [[Special:BlockList|spisak blokiranja]] za spisak trenutnih zabrana i blokiranja.',
 'unblocklogentry'                 => 'deblokiran $1',
 'block-log-flags-anononly'        => 'samo anonimni korisnici',
 'block-log-flags-nocreate'        => 'pravljenje računa onemogućeno',
@@ -2831,7 +2833,7 @@ Molimo pokušajte ponovno.',
 
 # JavaScriptTest
 'javascripttest'                           => 'Javaskript test',
-'javascripttest-disabled'                  => 'Ova funkcija je onemogućena.',
+'javascripttest-disabled'                  => 'Ova funkcija je onemogućena na ovom wikiju.',
 'javascripttest-title'                     => 'Izvršavanje testova za $1',
 'javascripttest-pagetext-noframework'      => 'Ova stranica je rezervisana za izvršavanje javaskript testova.',
 'javascripttest-pagetext-unknownframework' => 'Nepoznati radni okvir „$1“.',
