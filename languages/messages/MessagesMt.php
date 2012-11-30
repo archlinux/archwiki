@@ -1195,7 +1195,7 @@ Nota li l-użu tal-links tan-navigazzjoni jagħmel reset tal-kolonna.",
 'mergehistory-reason'              => 'Raġuni:',
 
 # Merge log
-'mergelog'           => "Reġistru ta' twaħħid",
+'mergelog'           => 'Twaħħid',
 'pagemerge-logentry' => "waħħad [[$1]] ma' [[$2]] (reviżjonijiet sa $3)",
 'revertmerge'        => 'Infired',
 'mergelogpagetext'   => "Hawn taħt hawn lista ta' l-aktar tgħaqqid riċenti ta' paġna waħda ta' storja f'oħra.",
@@ -1514,7 +1514,7 @@ Hawnhekk hawn valur iġġenerat b'mod każwali li inti tista' tuża: $1",
 # User rights log
 'rightslog'                  => 'Drittijiet tal-utenti',
 'rightslogtext'              => "Dan huwa r-reġistru tal-modifiki ta' drittijiet tal-utenti.",
-'rightslogentry'             => "biddel is-sħubija ta' $1 mill-grupp $2 għall-grupp $3",
+'rightslogentry'             => "biddel is-sħubija ta' $1 minn $2 għal $3",
 'rightslogentry-autopromote' => 'ġie awtomatikament promoss minn $2 għal $3',
 'rightsnone'                 => '(xejn)',
 
@@ -1698,7 +1698,7 @@ It-tlugħ ta' fajls tal-Java mhuwiex permess, minħabba li jistgħu jaqbżu rest
 'upload-source'               => 'Sors tal-fajl',
 'sourcefilename'              => 'L-isem tal-fajl tal-oriġini:',
 'sourceurl'                   => 'Sors tal-URL:',
-'destfilename'                => 'L-Isem tal-fajl tad-destinazzjoni:',
+'destfilename'                => "Isem tal-fajl ta' destinazzjoni:",
 'upload-maxfilesize'          => 'Daqs massimu tal-fajl: $1',
 'upload-description'          => 'Deskrizzjoni tal-fajl',
 'upload-options'              => 'Opzjonijiet għat-tlugħ tal-fajl',
@@ -1941,15 +1941,16 @@ Daħħal: tip/sottotip, eż. <code>image/jpeg</code>.",
 'disambiguations-text' => "Il-Paġni li jinsabu f'din lista huma parti minn '''paġna ta' diżambigwazzjoni''' b'hekk għandhom jiġu relatati mas-suġġett preċiż minflok. <br />
 Paġna tiġi stimata paġna ta' diżambigwazzjoni dawk kollha li jagħmlu użu mit-template elenkat f'[[MediaWiki:Disambiguationspage]]",
 
-'doubleredirects'                   => 'Riindirizzi doppji',
-'doubleredirectstext'               => 'Din il-paġna telenka dawk il-paġni li jindirizzaw lejn paġna oħra ta\' riindirizzament.
-Kull filliera għandha ħolqa għall-ewwel u t-tieni riindirizz, kif ukoll fejn tirrindirizza t-tieni paġna, is-soltu magħrufa bħalha l-paġna "reali" fejn se twassal, fejn suppost l-ewwel riindirizz għandu jipponta.',
+'doubleredirects'                   => 'Rindirizzi doppji',
+'doubleredirectstext'               => 'Din il-paġna telenka dawk il-paġni li jindirizzaw lejn paġna oħra ta\' rindirizzament.
+Kull filliera għandha ħolqa għall-ewwel u t-tieni rindirizz, kif ukoll fejn tirrindirizza t-tieni paġna, is-soltu magħrufa bħalha l-paġna "reali" fejn se twassal, fejn suppost l-ewwel rindirizz għandu jipponta.
+Daħliet <del>maqtugħa</del> saritilhom it-tiswija.',
 'double-redirect-fixed-move'        => '[[$1]] ġie mmexxi awtomatikament, issa hu rindirizz għal [[$2]]',
 'double-redirect-fixed-maintenance' => "Tiswija ta' rindirizz doppju minn [[$1]] għal [[$2]].",
 'double-redirect-fixer'             => "Tiswija ta' rindirizz",
 
-'brokenredirects'        => 'Riindirizzi ħżiena',
-'brokenredirectstext'    => 'Ir-riindirizzi segwenti għandhom ħoloq għal paġni ineżistenti:',
+'brokenredirects'        => 'Rindirizzi ħżiena',
+'brokenredirectstext'    => 'Ir-rindirizzi segwenti għandhom ħoloq lejn paġni li ma jeżistux:',
 'brokenredirects-edit'   => 'editja',
 'brokenredirects-delete' => 'ħassar',
 
@@ -2647,9 +2648,9 @@ Jekk jogħġbok, waħħad iż-żewġ paġni manwalment.'''",
 'move-talk-subpages'           => "Mexxi is-sottopaġni kollha tal-paġna ta' diskussjoni (sa $1)",
 'movepage-page-exists'         => 'Il-paġna $1 diġà teżisti u ma tistax tiġi miktuba fuqha awtomatikament.',
 'movepage-page-moved'          => 'Il-Paġna $1 ġiet imċaqilqa għal $2.',
-'movepage-page-unmoved'        => 'Il-Paġna $1 ma setgħatx tiġi mċaqilqa għal $2.',
+'movepage-page-unmoved'        => 'Il-paġna $1 ma setgħetx titmexxa lejn $2.',
 'movepage-max-pages'           => "Ġie mċaqlaq in-numru massimu ta' {{PLURAL:$1|paġna u ma jistax jiġi mċaqlaq aktar awtomatikament|$1 paġni u ma jistgħux jiġu mċaqilqa aktar awtomatikament.}}",
-'movelogpage'                  => "Reġistru tat-tmexxija ta' paġni",
+'movelogpage'                  => "Tmexxija ta' paġni",
 'movelogpagetext'              => "Hawn taħt jinsab lista ta' paġni mċaqilqa.",
 'movesubpage'                  => '{{PLURAL:$1|Sottopaġna|Sottopaġna}}',
 'movesubpagetext'              => 'Din il-paġna għandha $1 {{PLURAL:$1|sottopaġna murija|sottopaġni murija}} hawn taħt:',

@@ -261,7 +261,7 @@ $messages = array(
 'cancel'        => 'Batilisha',
 'moredotdotdot' => 'Zaidi...',
 'mypage'        => 'Ukurasa wangu',
-'mytalk'        => 'Majadiliano yangu',
+'mytalk'        => 'Majadiliano',
 'anontalk'      => 'Majadiliano ya IP hii',
 'navigation'    => 'Urambazaji',
 'and'           => '&#32;na',
@@ -517,7 +517,7 @@ Sababu zilizotolewa ni "\'\'$2\'\'".',
 
 # Virus scanner
 'virus-badscanner'     => "Usanidi mbaya: kiskani virusi hakijulikani: ''$1''",
-'virus-scanfailed'     => 'skani imeshindwa (kodi $1)',
+'virus-scanfailed'     => 'skani imeshindwa (msimbo $1)',
 'virus-unknownscanner' => 'kipambana na virusi haijulikani:',
 
 # Login and logout pages
@@ -627,7 +627,7 @@ Tafadhali subiri kwanza kabla ya kujaribu tena.',
 
 # Change password dialog
 'resetpass'                 => 'Kubadilisha neno la siri',
-'resetpass_announce'        => 'Umeingia na kodi za barua pepe za muda tu.
+'resetpass_announce'        => 'Umeingia na msimbo wa barua pepe wa muda tu.
 Kumalizia kuingia ndani, ni lazima urekebishe neno la siri jipya hapa:',
 'resetpass_header'          => 'Kubadilisha neno la siri la akaunti',
 'oldpassword'               => 'Neno la siri la zamani',
@@ -1124,7 +1124,7 @@ Ujue lakini kwamba kumbukumbu za {{SITENAME}} kule Google labda zilipitwa na wak
 
 # Preferences page
 'preferences'                   => 'Mapendekezo',
-'mypreferences'                 => 'Mapendekezo yangu',
+'mypreferences'                 => 'Mapendekezo',
 'prefs-edits'                   => 'Idadi ya marekebisho:',
 'prefsnologin'                  => 'Hujaingia',
 'prefsnologintext'              => 'Inabidi <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} uingie akaunti yako]</span> ili ubadilishe mapendekezo yako.',
@@ -1487,7 +1487,7 @@ Tafadhali uhakikishe kwamba ni kweli unataka kupakia faili hili.',
 'windows-nonascii-filename'   => 'Wiki hii haiwezi kutumia majina ya mafaili yenye herufi maalumu.',
 'fileexists'                  => 'Faili lenye jina hili lipo tayari, tafadhali tazama <strong>[[:$1]]</strong> ikiwa una mashaka kuhusu kulibadilisha.
 [[$1|thumb]]',
-'filepageexists'              => 'Ukurasa wa maelezo kwa ajili ya faili hili tayari umeshaanzishwa katika <strong>[[:$1]]</strong>, lakini bado hakuna faili lenye jina hili kwa sasa.
+'filepageexists'              => 'Ukurasa wa maelezo kwa ajili ya faili hili tayari umeshaanzishwa katika <strong>[[:$1]]</strong>, lakini hakuna faili lenye jina hili kwa sasa.
 Muhtasari utakaoandika hautaonekana katika ukurasa wa maelezo.
 Kufanya muhtasari wako uonekana pale, utahitajika uhariri ukurasa kwa mikono.
 [[$1|thumb]]',
@@ -1499,7 +1499,7 @@ Tafadhali chagua jina lingine.',
 [[$1|thumb]]
 Tafadhali tazama faili la <strong>[[:$1]]</strong>.
 Ikiwa faili hili linaonyesha picha ile ile kwa ukubwa wa kawaida hakuna haja ya kupakia faili lingine la picha ndogo.",
-'file-thumbnail-no'           => "Jina la faili linaloanza na <strong>$1</strong>.
+'file-thumbnail-no'           => "Jina la faili linaanza na <strong>$1</strong>.
 Inaonekana kuwa ni picha iliyopunguzwa ukubwa''(thumbnail)''.
 Ikiwa unaoyo picha hii kwa ukubwa wa kawaida tafadhali pakia picha hii, vinginevyo tafadhali badilisha jina la faili.",
 'fileexists-forbidden'        => 'Faili lenye jina hili lipo tayari, na haliwezi kuandikizwa.
@@ -1587,7 +1587,9 @@ Haliwezi kukaguliwa vilivyo kwa sababu za kiusalama.',
 
 # img_auth script messages
 'img-auth-accessdenied' => 'Ruksa imekataliwa',
+'img-auth-nologinnWL'   => '',
 'img-auth-nofile'       => 'Hakuna faili la "$1".',
+'img-auth-isdir'        => '',
 'img-auth-noread'       => 'Mtumiaji hana fursa ya kusoma "$1".',
 
 # HTTP errors
@@ -1962,7 +1964,7 @@ Anwani yako ya barua pepe ulioitaja katika [[Special:Preferences|mapendekezo yak
 
 # Watchlist
 'watchlist'            => 'Maangalizi yangu',
-'mywatchlist'          => 'Maangalizi yangu',
+'mywatchlist'          => 'Maangalizi',
 'watchlistfor2'        => 'Kwa ajili ya $1 $2',
 'nowatchlist'          => 'Hamna vitu katika maangalizi yako.',
 'watchlistanontext'    => 'Tafadhali $1 ili kutazama au kuhariri vitu vilivyopo katika orodha yako ya maangalizi.',
@@ -2105,7 +2107,7 @@ ukurasa huu una mhariri mmoja tu.',
 'protect-unchain-permissions' => 'Fungua chaguzi zingine za ulindaji',
 'protect-text'                => "Unaweza kutazama na kubadilisha kiwango cha ulindaji hapa kwa ukurasa '''$1'''.",
 'protect-locked-dblock'       => "Viwango vya ulindaji haviwezi kubadilishwa kwa sababu hifadhidata imefungwa.
-Hapo panaandikwa viwango vya ulindaji wa ukurasa '''$1''':",
+Hii hapa ni mipangilio iliyopo kwa ajili ya ukurasa '''$1''':",
 'protect-locked-access'       => "Akaunti yako hairuhusiwi kubadilisha viwango vya ulindaji.
 Hivi ni vipimo kwa ukurasa '''$1''':",
 'protect-cascadeon'           => 'Ukurasa huu umelindwa kwa sababu umezingatiwa katika {{PLURAL:$1|ukurasa $1 unaolinda kurasa chini yake|kurasa $1 zinazolinda kurasa chini yake}}. Unaweza kubadilisha kiwango cha ulindaji wa ukurasa huu, lakini hutaathirika ulindaji kutoka kurasa juu yake.',
@@ -2115,13 +2117,13 @@ Hivi ni vipimo kwa ukurasa '''$1''':",
 'protect-level-sysop'         => 'Wakabidhi tu',
 'protect-summary-cascade'     => 'ulindaji kwa kurasa chini yake',
 'protect-expiring'            => 'itakwisha $1 (UTC)',
-'protect-expiring-local'      => 'inaishia saa $1',
+'protect-expiring-local'      => 'inaisha $1',
 'protect-expiry-indefinite'   => 'bila mwisho',
 'protect-cascade'             => 'Linda kurasa zinazozingatiwa chini ya ukurasa huu',
 'protect-cantedit'            => 'Huwezi kubadilisha kiwango cha ulindaji wa ukurasa huu, kwa sababu huruhusiwi kuuhariri.',
 'protect-othertime'           => 'Kipindi kingine:',
 'protect-othertime-op'        => 'kipindi kingine',
-'protect-existing-expiry'     => 'Kipindi cha ulindaji uliowekwa unaishia: $3, $2',
+'protect-existing-expiry'     => 'Muda wa kwisha uliopo: $3, $2',
 'protect-otherreason'         => 'Sababu nyingine:',
 'protect-otherreason-op'      => 'Sababu nyingine',
 'protect-dropdown'            => '*Sababu za kawaida za ulindaji
@@ -2133,8 +2135,8 @@ Hivi ni vipimo kwa ukurasa '''$1''':",
 'protect-expiry-options'      => 'saa 1:1 hour,siku 1:1 day,wiki 1:1 week,wiki 2:2 weeks,mwezi 1:1 month,miezi 3:3 months,miezi 6:6 months,mwaka 1:1 year,milele:infinite',
 'restriction-type'            => 'Ruhusa:',
 'restriction-level'           => 'Kiwango cha kizuia:',
-'minimum-size'                => 'Saizi ndogo mno',
-'maximum-size'                => 'Saizi kubwa mno:',
+'minimum-size'                => 'Saizi ndogo',
+'maximum-size'                => 'Saizi kubwa:',
 'pagesize'                    => '(baiti)',
 
 # Restrictions (nouns)
@@ -2145,8 +2147,8 @@ Hivi ni vipimo kwa ukurasa '''$1''':",
 
 # Restriction levels
 'restriction-level-sysop'         => 'umelindwa kabisa',
-'restriction-level-autoconfirmed' => 'umelindwa kwa kiasi',
-'restriction-level-all'           => 'chochote',
+'restriction-level-autoconfirmed' => 'umelindwa kiasi',
+'restriction-level-all'           => 'kiasi chochote',
 
 # Undelete
 'undelete'                  => 'Kuzitazama kurasa zilizofutwa',
@@ -2183,7 +2185,7 @@ $1',
 # Contributions
 'contributions'       => 'Michango ya mtumiaji',
 'contributions-title' => 'Michango ya mtumiaji $1',
-'mycontris'           => 'Michango yangu',
+'mycontris'           => 'Michango',
 'contribsub2'         => 'Kwa $1 ($2)',
 'nocontribs'          => 'Mabadiliko yanayolingana na vigezo vilivyoulizwa hayakupatikana.',
 'uctop'               => '(juu)',
@@ -2265,7 +2267,7 @@ Andika sababu ya kuzuia chini (kwa mfano, kwa kutaja mifano ya kurasa zilizohari
 'blockipsuccesssub'          => 'Kulifaulu kumzuia',
 'ipb-edit-dropdown'          => 'Hariri sababu za kuzuia',
 'ipb-unblock-addr'           => 'Acha kumzuia $1',
-'ipb-unblock'                => 'Acha kumzuia mtumiaji au anwani wa IP',
+'ipb-unblock'                => 'Acha kumzuia mtumiaji au anwani ya IP',
 'ipb-blocklist-contribs'     => 'Michango ya $1',
 'unblockip'                  => 'Acha kuzuia mtumiaji',
 'blocklist'                  => 'Watumiaji waliozuiliwa',
@@ -2276,7 +2278,7 @@ Andika sababu ya kuzuia chini (kwa mfano, kwa kutaja mifano ya kurasa zilizohari
 'blocklist-expiry'           => 'Itakwisha',
 'blocklist-reason'           => 'Sababu',
 'ipblocklist-submit'         => 'Tafuta',
-'ipblocklist-otherblocks'    => ' {{PLURAL:$1|Uzuio mwingine|Zuio zingine}}',
+'ipblocklist-otherblocks'    => '{{PLURAL:$1|Uzuio mwingine|Zuio zingine}}',
 'infiniteblock'              => 'milele',
 'expiringblock'              => 'inakwisha tarehe $1 saa $2',
 'emailblock'                 => 'barua pepe imezuiliwa',
@@ -2459,7 +2461,7 @@ Ulihafadhie katika tarakalishi yako, halafu ulipakie hapa.',
 'importbadinterwiki'         => 'Kiungo kibovu kati za wiki',
 'importnotext'               => 'Tupu au bila maandishi',
 'importsuccess'              => 'Kuleta kumekamilishwa!',
-'import-noarticle'           => 'Hakuna kurasa za kuleta!',
+'import-noarticle'           => 'Hakuna kurasa ya kuingiza!',
 'import-token-mismatch'      => 'Data ya kipindi zilipotelewa.
 Tafadhali jaribu tena.',
 
@@ -2676,7 +2678,7 @@ likifupishwa. Nyuga zingine zitafichwa kama chaguo-msingi.
 'exif-keywords'                    => 'Maneno yahusika',
 'exif-worldregioncreated'          => 'Eneo la dunia palipopigwa picha',
 'exif-countrycreated'              => 'Nchi palipopigwa picha',
-'exif-countrycodecreated'          => 'Kodi ya nchi picha palipopigwa',
+'exif-countrycodecreated'          => 'Msimbo wa nchi picha palipopigwa',
 'exif-countrydest'                 => 'Nchi inayoonyeshwa',
 'exif-citydest'                    => 'Mji umeonyeshwa',
 'exif-objectname'                  => 'Jina fupi',
@@ -2872,7 +2874,7 @@ na kama *huja* sajili akaunti hii, fuata kiungo hiki ili kubatilisha uthibitisho
 
 $5
 
-Kodi hizi za uthibitisho zitaishia mnamo $4.',
+Msimbo huu wa uthibitisho utaishia mnamo $4.',
 'confirmemail_body_changed' => 'Kuna mtu, huenda ikawa wewe, kutoka anwani ya IP $1, ambaye amebadilisha anwani ya barua pepe ya akaunti "$2" iwe anwani ya barua pepe hii, kule {{SITENAME}}.
 
 Ili kuthibitisha ya kwamba akaunti hii inamilikiwa na wewe, pamoja na kuwezesha upya zana zinazotumia barua pepe kule {{SITENAME}}, ufungue kiungo hiki katika kivinjari chako:

@@ -9,6 +9,7 @@
  *
  * @author Ainali
  * @author Boivie
+ * @author Cybjit
  * @author Dafer45
  * @author Diupwijk
  * @author EPO
@@ -452,7 +453,7 @@ $messages = array(
 'cancel'        => 'Avbryt',
 'moredotdotdot' => 'Mer...',
 'mypage'        => 'Min sida',
-'mytalk'        => 'Min diskussion',
+'mytalk'        => 'Diskussion',
 'anontalk'      => 'Diskussionssida för denna IP-adress',
 'navigation'    => 'Navigering',
 'and'           => '&#32;och',
@@ -475,7 +476,7 @@ $messages = array(
 'vector-action-protect'          => 'Skrivskydda',
 'vector-action-undelete'         => 'Återställ',
 'vector-action-unprotect'        => 'Ändra skydd',
-'vector-simplesearch-preference' => 'Aktivera utökade sökförslag (endast Vector-utseendet)',
+'vector-simplesearch-preference' => 'Aktivera förenklat sökfält (endast Vector-utseendet)',
 'vector-view-create'             => 'Skapa',
 'vector-view-edit'               => 'Redigera',
 'vector-view-history'            => 'Visa historik',
@@ -633,7 +634,7 @@ I [[Special:SpecialPages|listan över specialsidor]] kan du se vilka specialsido
 'error'                => 'Fel',
 'databaseerror'        => 'Databasfel',
 'dberrortext'          => 'Ett syntaxfel i databasfrågan har uppstått.
-Detta kan indikera en bug i mjukvaran.
+Detta kan indikera en bugg i mjukvaran.
 Den senaste databasfrågan att köras var:
 <blockquote><tt>$1</tt></blockquote>
 från funktionen "<tt>$2</tt>".
@@ -688,9 +689,11 @@ Den kan innehålla ett eller flera tecken som inte får användas i sidtitlar.',
 'protectedpagetext'    => 'Den här sidan har skrivskyddats för att förhindra redigering.',
 'viewsourcetext'       => 'Du kan se och kopiera denna sidas källtext:',
 'viewyourtext'         => "Du kan se och kopiera källan för '''dina redigeringar''' på denna sida:",
-'protectedinterface'   => 'Denna sida innehåller text för mjukvarans gränssnitt, och är skrivskyddad för att förebygga missbruk.',
-'editinginterface'     => "'''Varning:''' Du redigerar en sida som används till texten i gränssnittet. Ändringar på denna sida kommer att påverka gränssnittets utseende för alla användare.
-För översättningar, använd gärna [//translatewiki.net/wiki/Main_Page?setlang=sv translatewiki.net], översättningsprojektet för MediaWiki.",
+'protectedinterface'   => 'Denna sida innehåller text för mjukvarans gränssnitt på denna wiki, och är skrivskyddad för att förebygga missbruk.
+För att lägga till eller ändra översättningar för alla wikis, var god använd [//translatewiki.net/ translatewiki.net], lokaliseringsprojektet för MediaWiki.',
+'editinginterface'     => "'''Varning:''' Du redigerar en sida som används till texten i gränssnittet.
+Ändringar på denna sida kommer att påverka gränssnittets utseende för alla användare på denna wiki.
+För att lägga till eller ändra översättningar för alla wikis, var god använd [//translatewiki.net/ translatewiki.net], översättningsprojektet för MediaWiki.",
 'sqlhidden'            => '(gömd SQL-förfrågan)',
 'cascadeprotected'     => 'Den här sidan har skyddats från redigering eftersom den inkluderas på följande {{PLURAL:$1|sida|sidor}} som skrivskyddats med "kaskaderande skydd":
 $2',
@@ -757,8 +760,8 @@ Användarnamn är skiftlägeskänsliga.
 Kontrollera din stavning, eller [[Special:UserLogin/signup|skapa ett nytt konto]].',
 'nosuchusershort'            => 'Det finns ingen användare som heter "$1". Kontrollera att du stavat rätt.',
 'nouserspecified'            => 'Du måste ange ett användarnamn.',
-'login-userblocked'          => 'Denna användare är blockerad. Login inte tillåtet.',
-'wrongpassword'              => 'Lösenordet du angav är felaktigt. Försök igen',
+'login-userblocked'          => 'Denna användare är blockerad. Inloggning är inte tillåtet.',
+'wrongpassword'              => 'Lösenordet du angav är felaktigt. Försök igen.',
 'wrongpasswordempty'         => 'Lösenordet som angavs var blankt. Var god försök igen.',
 'passwordtooshort'           => 'Lösenord måste innehålla minst {{PLURAL:$1|$1 tecken}}.',
 'password-name-match'        => 'Ditt lösenord måste vara olikt ditt användarnamn.',
@@ -961,11 +964,10 @@ eller <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}
 'userpage-userdoesnotexist-view'   => 'Kontot "$1" är inte registrerat.',
 'blocked-notice-logextract'        => 'Användaren är blockerad.
 Orsaken till senaste blockeringen kan ses nedan:',
-'clearyourcache'                   => "'''OBS:''' Sedan du sparat sidan kan du behöva tömma din webbläsares cache för att se ändringarna.
+'clearyourcache'                   => "'''OBS:''' Efter du sparat sidan kan du behöva tömma din webbläsares cache för att se ändringarna.
 *'''Firefox / Safari:''' Håll ned ''Skift'' och klicka på ''Uppdatera sidan'' eller tryck antingen ''Ctrl-F5'' eller ''Ctrl-R'' (''⌘-R'' på Mac)
 *'''Google Chrome:''' Tryck ''Ctrl-Skift-R''  (''⌘-Shift-R'' på Mac)
 *'''Internet Explorer:'''  Håll ned ''Ctrl'' och klicka på ''Uppdatera'' eller tryck ''Ctrl-F5''
-*'''Konqueror:''' Klicka på ''Reload'' eller tryck på ''F5''
 *'''Opera:''' Rensa cachen i ''Verktyg → Inställningar''",
 'usercssyoucanpreview'             => "'''Tips:''' Använd \"{{int:showpreview}}\"-knappen för att testa din nya css innan du sparar.",
 'userjsyoucanpreview'              => "'''Tips:''' Använd \"{{int:showpreview}}\"-knappen för att testa din nya JavaScript innan du sparar.",
@@ -1211,7 +1213,8 @@ Vänligen kontrollera loggarna.',
 'revdelete-only-restricted'   => 'Fel vid döljning av objekt daterat $2, $1: du kan inte undanhålla objekt från att visas för administratörer utan att också välja en av de övriga visningsalternativen.',
 'revdelete-reason-dropdown'   => '*Vanliga orsaker till radering
 ** Brott mot copyright
-** Opassande personupplysningar
+** Opassande kommentar eller personupplysningar
+** Opassande användarnamn
 ** Möjligt ärekränkande uppgifter',
 'revdelete-otherreason'       => 'Annan/ytterligare anledning:',
 'revdelete-reasonotherlist'   => 'Annan anledning',
@@ -1340,7 +1343,7 @@ Notera dock att deras indexering av {{SITENAME}} kan vara något föråldrad.',
 
 # Preferences page
 'preferences'                   => 'Inställningar',
-'mypreferences'                 => 'Mina inställningar',
+'mypreferences'                 => 'Inställningar',
 'prefs-edits'                   => 'Antal redigeringar:',
 'prefsnologin'                  => 'Inte inloggad',
 'prefsnologintext'              => 'Du måste vara <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} inloggad]</span> för att kunna ändra dina inställningar.',
@@ -1402,7 +1405,7 @@ Här är ett slumpmässigt genererat värde som du kan använda: $1',
 'timezoneregion-indian'         => 'Indiska oceanen',
 'timezoneregion-pacific'        => 'Stilla havet',
 'allowemail'                    => 'Tillåt e-post från andra användare',
-'prefs-searchoptions'           => 'Sökalternativ',
+'prefs-searchoptions'           => 'Sök',
 'prefs-namespaces'              => 'Namnrymder',
 'defaultns'                     => 'Sök annars i dessa namnrymder:',
 'default'                       => 'ursprungsinställning',
@@ -2028,8 +2031,8 @@ Innan mallarna raderas, kontrollera att det inte finns andra länkar till dem.',
 
 'disambiguations'      => 'Sidor som länkar till förgreningssidor',
 'disambiguationspage'  => 'Template:Förgrening',
-'disambiguations-text' => "Följande sidor länkar till ''förgreningssidor''.
-Länkarna bör troligtvis ändras så att de länkar till en artikel istället.<br />
+'disambiguations-text' => "Följande sidorna innehåller minst en länk till en '''förgreningssida'''.
+De bör troligtvis ändras så att de länkar till en mer passande sida istället.<br />
 En sida anses vara en förgreningssida om den inkluderar en mall som länkas till från [[MediaWiki:Disambiguationspage]].",
 
 'doubleredirects'                   => 'Dubbla omdirigeringar',
@@ -2173,8 +2176,8 @@ Se även [[Special:WantedCategories|önskade kategorier]].',
 'linksearch-ns'    => 'Namnrymd:',
 'linksearch-ok'    => 'Sök',
 'linksearch-text'  => 'Jokertecken (wildcards) som t.ex. "*.wikipedia.org" kan användas.
-Det krävs åtminstone en toppnivå-domän, t.ex. "*.org".<br />
-Protokoll som stöds: <code>$1</code> (lägg inte till något av dessa i din sökning).',
+Det krävs åtminstone en toppdomän, t.ex. "*.org".<br />
+Protokoll som stöds: <code>$1</code> (sätts till http:// om inget protokoll anges).',
 'linksearch-line'  => '$1 länkas från $2',
 'linksearch-error' => 'Jokertecken kan bara användas i början av domännamnet.',
 
@@ -2221,7 +2224,7 @@ Det kan finnas [[{{MediaWiki:Listgrouprights-helppage}}|ytterligare information]
 'mailnologintext'      => 'För att kunna skicka e-post till andra användare, måste du vara [[Special:UserLogin|inloggad]] och ha angivit en korrekt e-postadress i dina [[Special:Preferences|användarinställningar]].',
 'emailuser'            => 'Skicka e-post till den här användaren',
 'emailpage'            => 'Skicka e-post till användare',
-'emailpagetext'        => 'Du kan använda det här formuläret för att skicka e-post till den här användaren.
+'emailpagetext'        => 'Du kan använda formuläret nedan för att skicka e-post till den här {{GENDER:$1|användaren}}.
 Den e-postadress du har angivit i [[Special:Preferences|dina användarinställningar]] kommer att visas som "Från"-adress i meddelandet, så att mottagaren har möjlighet att svara direkt till dig.',
 'usermailererror'      => 'Fel i hanteringen av mail:',
 'defemailsubject'      => '{{SITENAME}} e-post från användare "$1"',
@@ -2253,7 +2256,7 @@ Den e-postadress du har angivit i [[Special:Preferences|dina användarinställni
 
 # Watchlist
 'watchlist'            => 'Bevakningslista',
-'mywatchlist'          => 'Min bevakningslista',
+'mywatchlist'          => 'Bevakningslista',
 'watchlistfor2'        => 'För $1 $2',
 'nowatchlist'          => 'Du har inga sidor i din bevakningslista.',
 'watchlistanontext'    => 'Du måste $1 för att se eller redigera din bevakningslista.',
@@ -2505,7 +2508,7 @@ $1',
 # Contributions
 'contributions'       => 'Användarbidrag',
 'contributions-title' => 'Bidrag av $1',
-'mycontris'           => 'Mina bidrag',
+'mycontris'           => 'Bidrag',
 'contribsub2'         => 'För $1 ($2)',
 'nocontribs'          => 'Inga ändringar som motsvarar dessa kriterier hittades.',
 'uctop'               => '(senaste)',
@@ -2551,8 +2554,8 @@ Den senaste posten i blockeringsloggen visas nedan som referens:',
 
 # Block/unblock
 'autoblockid'                     => 'Autoblockera #$1',
-'block'                           => 'Blockera användaren',
-'unblock'                         => 'Avblockera användaren',
+'block'                           => 'Blockera användare',
+'unblock'                         => 'Upphäv blockering av användare',
 'blockip'                         => 'Blockera användare',
 'blockip-title'                   => 'Blockera användare',
 'blockip-legend'                  => 'Blockera användare',
@@ -3038,14 +3041,14 @@ Detta orsakades troligen av en länk till en svartlistad webbplats.',
 
 # Info page
 'pageinfo-title'            => 'Information om "$1"',
-'pageinfo-header-edits'     => 'Redigeringar',
+'pageinfo-header-edits'     => 'Redigeringshistorik',
 'pageinfo-header-watchlist' => 'Bevakningslista',
 'pageinfo-header-views'     => 'Visningar',
 'pageinfo-subjectpage'      => 'Sida',
 'pageinfo-talkpage'         => 'Diskussionssida',
 'pageinfo-watchers'         => 'Antal användare som bevakar sidan',
 'pageinfo-edits'            => 'Antal redigeringar',
-'pageinfo-authors'          => 'Antal olika författare',
+'pageinfo-authors'          => 'Totalt antal olika författare',
 'pageinfo-views'            => 'Antal visningar',
 'pageinfo-viewsperedit'     => 'Sidvisningar per redigering',
 
@@ -3877,9 +3880,9 @@ Bilder visas i full upplösning, andra filtyper öppnas direkt i de program som 
 'logentry-move-move_redir-noredirect' => '$1 flyttade sidan $3 till $4 över en omdirigering utan att lämna en omdirigering',
 'logentry-patrol-patrol'              => '$1 markerade versionen $4 av sidan $3 som patrullerad',
 'logentry-patrol-patrol-auto'         => '$1 markerade automatiskt versionen $4 av sidan $3 som patrullerad',
-'logentry-newusers-newusers'          => '$1 skapade ett användarkonto',
-'logentry-newusers-create'            => '$1 skapade ett användarkonto',
-'logentry-newusers-create2'           => '$1 skapade ett användarkonto $3',
+'logentry-newusers-newusers'          => 'Användarkonto $1 skapades',
+'logentry-newusers-create'            => 'Användarkonto $1 skapades',
+'logentry-newusers-create2'           => 'Användarkonto $3 skapades av $1',
 'logentry-newusers-autocreate'        => 'Kontot $1 skapades automatiskt',
 'newuserlog-byemail'                  => 'lösenord skickat med e-post',
 

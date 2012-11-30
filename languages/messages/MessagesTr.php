@@ -9,6 +9,7 @@
  *
  * @author 82-145
  * @author Bekiroflaz
+ * @author BetelgeuSeginus
  * @author Bilalokms
  * @author Bombola
  * @author Cekli829
@@ -21,6 +22,7 @@
  * @author Goktr001
  * @author Hanberke
  * @author Hcagri
+ * @author Hedda Gabler
  * @author Ijon
  * @author Incelemeelemani
  * @author Joseph
@@ -372,7 +374,7 @@ $messages = array(
 
 'underline-always'  => 'Daima',
 'underline-never'   => 'Asla',
-'underline-default' => 'Tarayıcı varsayılanı',
+'underline-default' => 'Tema veya Tarayıcı varsayılanı',
 
 # Font style option in Special:Preferences
 'editfont-style'     => 'Düzenleme alanının yazı tipi:',
@@ -457,8 +459,8 @@ $messages = array(
 'newwindow'     => '(yeni bir pencerede açılır)',
 'cancel'        => 'İptal',
 'moredotdotdot' => 'Daha...',
-'mypage'        => 'sayfam',
-'mytalk'        => 'Mesaj sayfam',
+'mypage'        => 'Sayfa',
+'mytalk'        => 'Mesaj',
 'anontalk'      => "Bu IP'nin iletileri",
 'navigation'    => 'Gezinti',
 'and'           => '&#32;ve',
@@ -481,7 +483,7 @@ $messages = array(
 'vector-action-protect'          => 'Koru',
 'vector-action-undelete'         => 'Silinmeyi geri al',
 'vector-action-unprotect'        => 'Korumayı değiştir',
-'vector-simplesearch-preference' => 'Gelişmiş arama önerilerini getir (Sadece Vector görünümü için)',
+'vector-simplesearch-preference' => 'Gelişmiş arama önerilerini etkinleştir (Sadece Vector görünümü için)',
 'vector-view-create'             => 'Oluştur',
 'vector-view-edit'               => 'Düzenle',
 'vector-view-history'            => 'Geçmişi gör',
@@ -492,7 +494,7 @@ $messages = array(
 'variants'                       => 'Türevler',
 
 'errorpagetitle'    => 'Hata',
-'returnto'          => '$1 sayfasına dön.',
+'returnto'          => '$1 sayfasına geri dön.',
 'tagline'           => '{{SITENAME}} sitesinden',
 'help'              => 'Yardım',
 'search'            => 'Ara',
@@ -504,7 +506,7 @@ $messages = array(
 'updatedmarker'     => 'son ziyaretimden sonra güncellenmiş',
 'printableversion'  => 'Yazdırılabilir sürüm',
 'permalink'         => 'Kalıcı bağlantı',
-'print'             => 'Bastır',
+'print'             => 'Yazdır',
 'view'              => 'Görüntüle',
 'edit'              => 'Düzenle',
 'create'            => 'Oluştur',
@@ -639,7 +641,7 @@ Bu, {{SITENAME}} sitesindeki bir hatayı da belirtebilir.",
 # General errors
 'error'                => 'Hata',
 'databaseerror'        => 'Veritabanı hatası',
-'dberrortext'          => 'Veritabanı sorgu sözdizimi hatası oluştu.
+'dberrortext'          => 'Bir veritabanı sorgusu sözdizimi hatası oluştu.
 Bu yazılımdaki bir hatadan kaynaklanabilir.
 "<tt>$2</tt>" işlevinden denenen son sorgulama:
 <blockquote><tt>$1</tt></blockquote>.
@@ -696,8 +698,8 @@ Lütfen birkaç dakika sonra yeniden deneyin.',
 'protectedpagetext'    => 'Bu sayfa değişiklik yapılmaması için koruma altına alınmıştır.',
 'viewsourcetext'       => 'Bu sayfanın kaynağını görebilir ve kopyalayabilirsiniz:',
 'viewyourtext'         => "Bu sayfaya '''yaptığınız değişikliklerin''' kaynağını görünteleyip kopyalayabilirsiniz:",
-'protectedinterface'   => 'Bu sayfa yazılım için arayüz metni sağlamaktadır ve kötüye kullanımı önlemek için kilitlenmiştir.',
-'editinginterface'     => "'''UYARI:''' Yazılım için arayüz sağlamakta kullanılan bir sayfayı değiştirmektesiniz. Bu sayfadaki değişiklikler kullanıcı arayüzünü diğer kullanıcılar için de değiştirecektir. Çeviriler için, lütfen [//translatewiki.net/wiki/Main_Page?setlang=tr translatewiki.net]'yi kullanarak MediaWiki yerelleştirme projesini dikkate alınız.",
+'protectedinterface'   => "Bu sayfa yazılım için arayüz metni sağlamaktadır ve kötüye kullanımı önlemek için korumaya alınmıştır. Eklemek ya da bütün vikilerdeki çevirileri değiştirmek için lütfen MediaWiki yerelleştirme projesi [//translatewiki.net/ translatewiki.net]'i kullanın.",
+'editinginterface'     => "'''UYARI:''' Wiki yazılımı için arayüz sağlamakta kullanılan bir sayfayı değiştirmektesiniz. Bu sayfadaki değişiklikler kullanıcı arayüzünü diğer kullanıcılar için de değiştirecektir. Çeviriler için, lütfen [//translatewiki.net/wiki/Main_Page?setlang=tr translatewiki.net]'yi kullanarak MediaWiki yerelleştirme projesini dikkate alınız.",
 'sqlhidden'            => '(SQL gizli sorgu)',
 'cascadeprotected'     => 'Bu sayfa değişiklik yapılması engellenmiştir, çünkü  "kademeli" seçeneği aktif hale getirilerek koruma altına alınan {{PLURAL:$1|sayfada|sayfada}} kullanılmaktadır:
 $2',
@@ -976,7 +978,6 @@ Son engelleme günlüğü girdisi referans için aşağıda sağlanmıştır:',
 * '''Firefox / Safari:''' ''Shift'' tuşuna basılıyken \"Yeniden yükle\"'ye tıklayın ya da \"Ctrl-F5\" ya da ''Ctrl-R'' yapın (Mac için '⌘-R'').
 * '''Google Chrome:''' ''Ctrl-Shift-R'''ye basın. (Mac için ''⌘-Shift-R'')
 * '''Internet Explorer:''' ''Ctrl'' basılıyken ''Yenile'''ye tıklayın ya da ''Ctrl-F5'' yapın.
-* '''Konqueror:''' 'Yeniden yükle'''ye ya da ''F5'''e basın.
 * '''Opera:''' ''Araçlar → Tercihler'''den önbelliği temizleyin.",
 'usercssyoucanpreview'             => "'''İpucu:''' Kaydetmeden önce \"{{int:showpreview}}\"e tıklayarak yeni CSSinizi deneyin.",
 'userjsyoucanpreview'              => "'''İpucu:''' Kaydetmeden önce \"{{int:showpreview}}\"e tıklayarak yeni JavaScript'inizi test edin.",
@@ -1211,9 +1212,11 @@ Erişiminiz yok.',
 'revdelete-concurrent-change' => '$2 $1 tarihli öğe değiştirilirken hata: öğenin durumu siz değiştirmeye çalışırken bir başkası tarafından değiştirilmiş görünüyor.
 Lütfen günlükleri kontrol edin.',
 'revdelete-only-restricted'   => '$2 $1 tarihli öğe gizlenirken hata: Öğeleri, diğer gizleme seçeneklerinden birini seçmeden, hizmetli görünümden bastıramazsınız.',
-'revdelete-reason-dropdown'   => '*Genel silme sebepleri
-** Telif ihlali
-** Uygunsuz kişisel bilgi',
+'revdelete-reason-dropdown'   => '*Genel silme nedenleri
+** Telif hakkı ihlali
+** Sakıncalı yorum veya kişisel bilgi 
+** Sakıncalı kullanıcı adı
+** Muhtemel iftira niteliğinde bilgiler',
 'revdelete-otherreason'       => 'Diğer/ek sebep:',
 'revdelete-reasonotherlist'   => 'Diğer sebep',
 'revdelete-edit-reasonlist'   => 'Silme nedenlerini değiştir',
@@ -1282,7 +1285,7 @@ Gezinti bağlantılarının bu sütunu sıfırlayacağını unutmayın.',
 'prevn-title'                      => 'Önceki $1 {{PLURAL:$1|sonuç|sonuç}}',
 'nextn-title'                      => 'Sonraki $1 {{PLURAL:$1|sonuç|sonuç}}',
 'shown-title'                      => 'Sayfa başına $1 {{PLURAL:$1|sonuç|sonuç}} göster',
-'viewprevnext'                     => '($1 {{int:pipe-separator}} $2) ($3)',
+'viewprevnext'                     => '($1 {{int:pipe-separator}} $2) ($3) gör',
 'searchmenu-legend'                => 'Arama seçenekleri',
 'searchmenu-exists'                => "'''Bu vikide \"[[:\$1]]\" adında bir sayfa mevcut'''",
 'searchmenu-new'                   => "'''Bu vikide \"[[:\$1]]\" sayfasını oluştur!'''",
@@ -1342,7 +1345,7 @@ Aramanızın başına '''all:''' önekini ekleyerek tüm içeriği aramayı (tar
 
 # Preferences page
 'preferences'                   => 'Tercihler',
-'mypreferences'                 => 'Tercihlerim',
+'mypreferences'                 => 'Tercihler',
 'prefs-edits'                   => 'Değişiklik sayısı:',
 'prefsnologin'                  => 'Oturum açık değil',
 'prefsnologintext'              => 'Kullanıcı tercihlerinizi ayarlamak için <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} giriş yapmalısınız]</span>.',
@@ -1404,7 +1407,7 @@ Kullanabileceğiniz rastgele-üretilmiş bir değer: $1',
 'timezoneregion-indian'         => 'Hint Okyanusu',
 'timezoneregion-pacific'        => 'Pasifik Okyanusu',
 'allowemail'                    => 'Diğer kullanıcılar bana e-posta atabilsin',
-'prefs-searchoptions'           => 'Arama seçenekleri',
+'prefs-searchoptions'           => 'Arama',
 'prefs-namespaces'              => 'İsim alanları',
 'defaultns'                     => 'Aksi halde bu ad alanlarında ara:',
 'default'                       => 'varsayılan',
@@ -1803,12 +1806,18 @@ Eğer sorun tekrarlanırsa, bir [[Special:ListUsers/sysop|hizmetli]] ile temasa 
 'upload-http-error'         => 'Bir HTTP hatası oluştu: $1',
 
 # File backend
-'backend-fail-notexists' => '$1 dosyası mevcut değil.',
-'backend-fail-delete'    => '"$1" dosyası silinemedi.',
-'backend-fail-opentemp'  => 'Geçici dosya açılamadı.',
-'backend-fail-closetemp' => 'Geçici dosya kapanamadı.',
-'backend-fail-read'      => '$1 dosyası okunamadı.',
-'backend-fail-create'    => '$1 dosyası yazılamadı.',
+'backend-fail-stream'        => '$1 dosyası okunamadı.',
+'backend-fail-notexists'     => '$1 dosyası mevcut değil.',
+'backend-fail-invalidpath'   => '"$1" geçerli bir depolama yolu değil.',
+'backend-fail-delete'        => '"$1" dosyası silinemedi.',
+'backend-fail-alreadyexists' => '"$1" dosyası zaten mevcut.',
+'backend-fail-copy'          => '"$1" dosyası, "$2" dosyasına kopyalanamadı.',
+'backend-fail-move'          => '"$1" dosyası, "$2" dosyasına taşınamadı.',
+'backend-fail-opentemp'      => 'Geçici dosya açılamadı.',
+'backend-fail-writetemp'     => 'Geçici dosya oluşturulamadı.',
+'backend-fail-closetemp'     => 'Geçici dosya kapanamadı.',
+'backend-fail-read'          => '$1 dosyası okunamadı.',
+'backend-fail-create'        => '$1 dosyası yazılamadı.',
 
 # ZipDirectoryReader
 'zip-file-open-error' => 'Dosya ZIP denetimleri için açılırken bir hata ile karşılaşıldı.',
@@ -2083,8 +2092,8 @@ Lütfen unutmayın ki, diğer web siteleri bir dosyaya doğrudan bir URL ile ba�
 'notargettext'            => 'Bu fonksiyonu uygulamak için bir hedef sayfası ya da kullanıcısı belirtmediniz.',
 'nopagetitle'             => 'Böyle bir hedef sayfası yok',
 'nopagetext'              => 'Belirttiğiniz hedef sayfası mevcut değil.',
-'pager-newer-n'           => '{{PLURAL:$1|1 daha yeni|$1 daha yeni}}',
-'pager-older-n'           => '{{PLURAL:$1|1 daha eski|$1 daha eski}}',
+'pager-newer-n'           => '$1 daha yeni',
+'pager-older-n'           => '$1 daha eski',
 'suppress'                => 'Gözetim',
 'querypage-disabled'      => 'Bu özel sayfa, performansa dayalı nedenlerle devre dışı bırakılır.',
 
@@ -2222,7 +2231,7 @@ Bireysel haklarla ilgili [[{{MediaWiki:Listgrouprights-helppage}}|daha fazla bil
 
 # Watchlist
 'watchlist'            => 'İzleme listem',
-'mywatchlist'          => 'İzleme listem',
+'mywatchlist'          => 'İzleme listesi',
 'watchlistfor2'        => '$1 için $2',
 'nowatchlist'          => 'İzleme listesinde hiçbir madde bulunmuyor.',
 'watchlistanontext'    => 'Lütfen izleme listenizdeki maddeleri görmek ya da değiştirmek için $1.',
@@ -2462,6 +2471,7 @@ Revizyon onarılmış veya arşivden silinmiş olabilir ya da sahip olduğunuz b
 'undelete-cleanup-error'       => 'Kullanılmayan "$1" arşiv dosyasını silerken hata.',
 'undelete-missing-filearchive' => 'Dosya arşiv IDsi $1 geri getirilemiyor çünkü veritabanında değil.
 Daha önceden silinmesi geri alınmış olabilir.',
+'undelete-error'               => 'Sayfa silinemiyor hatası',
 'undelete-error-short'         => 'Bu dosyanın silinmesini geri alırken hata çıktı: $1',
 'undelete-error-long'          => 'Bu dosyanın silinmesini geri alırken hatalar çıktı:
 
@@ -2478,7 +2488,7 @@ $1',
 # Contributions
 'contributions'       => 'Kullanıcının katkıları',
 'contributions-title' => '$1 için kullanıcı katkıları',
-'mycontris'           => 'Katkılarım',
+'mycontris'           => 'Katkılar',
 'contribsub2'         => '$1 ($2)',
 'nocontribs'          => 'Bu kriterlere uyan değişiklik bulunamadı',
 'uctop'               => '(son)',
@@ -2518,7 +2528,7 @@ Son engelleme günlüğü girdisi kaynak amacıyla aşağıda verilmiştir:',
 'whatlinkshere-hideredirs' => 'Yönlendirmeleri $1',
 'whatlinkshere-hidetrans'  => 'Dönüştürmeleri $1',
 'whatlinkshere-hidelinks'  => 'Bağlantıları $1',
-'whatlinkshere-hideimages' => 'Resim bağlantılarını $1',
+'whatlinkshere-hideimages' => 'Dosya bağlantılarını $1',
 'whatlinkshere-filters'    => 'Süzgeçler',
 
 # Block/unblock
@@ -2961,13 +2971,14 @@ Geçici dosya kayıp.',
 
 # Info page
 'pageinfo-title'            => 'Bilgi için "$1"',
-'pageinfo-header-edits'     => 'Değişiklikler',
+'pageinfo-header-edits'     => 'Düzenleme geçmişi',
 'pageinfo-header-watchlist' => 'İzleme listesi',
 'pageinfo-header-views'     => 'Görüntüle',
 'pageinfo-subjectpage'      => 'Sayfa',
 'pageinfo-talkpage'         => 'Tartışma sayfası',
-'pageinfo-watchers'         => 'İzleyen sayısı',
+'pageinfo-watchers'         => 'Sayfanın izleyici sayısı',
 'pageinfo-edits'            => 'Değişiklik sayısı',
+'pageinfo-authors'          => 'Farklı yazar sayısı',
 'pageinfo-views'            => 'Görüntülenme sayısı',
 'pageinfo-viewsperedit'     => 'Değişiklik başına görüntüleme',
 
@@ -3210,6 +3221,7 @@ Diğerleri varsayılan olarak gizlenecektir.
 'exif-objectname'                  => 'Kısa başlık',
 'exif-specialinstructions'         => 'Özel talimatlar',
 'exif-headline'                    => 'Başlık',
+'exif-credit'                      => 'Sağlayıcı',
 'exif-source'                      => 'Kaynak',
 'exif-urgency'                     => 'Aciliyet',
 'exif-fixtureidentifier'           => 'Fikstür adı',
@@ -3224,6 +3236,7 @@ Diğerleri varsayılan olarak gizlenecektir.
 'exif-serialnumber'                => 'Kameranın seri numarası',
 'exif-cameraownername'             => 'Kameranın sahibi',
 'exif-label'                       => 'Etiket',
+'exif-nickname'                    => 'Görüntünün resmî olmayan adı',
 'exif-rating'                      => 'Oylama (5 üzerinden)',
 'exif-copyrighted'                 => 'Telif hakkı durumu',
 'exif-copyrightowner'              => 'Telif hakkı sahibi',
@@ -3231,12 +3244,15 @@ Diğerleri varsayılan olarak gizlenecektir.
 'exif-webstatement'                => 'Çevrimiçi telif hakkı bildirimi',
 'exif-licenseurl'                  => 'Telif hakkı lisansı için URL',
 'exif-morepermissionsurl'          => 'Alternatif lisans bilgileri',
+'exif-attributionurl'              => 'Bu çalışmayı yeniden kullanırken lütfen bağlantı verin',
 'exif-pngfilecomment'              => 'PNG dosyası yorumu',
 'exif-disclaimer'                  => 'Sorumluluk reddi',
 'exif-contentwarning'              => 'İçerik uyarısı',
 'exif-giffilecomment'              => 'GIF dosyası yorumu',
+'exif-intellectualgenre'           => 'Öğe türü',
 'exif-subjectnewscode'             => 'Konu kodu',
 'exif-event'                       => 'Adı geçen olay',
+'exif-organisationinimage'         => 'Organizasyon gösterilmiştir',
 'exif-personinimage'               => 'Adı geçen kişi',
 'exif-originalimageheight'         => 'Resmin kırpılmadan önceki yükseliği',
 'exif-originalimagewidth'          => 'Resmin kırpılmadan önceki genişliği',
@@ -3804,6 +3820,7 @@ Resimler tam çözünürlükte görüntülenir, diğer dosya tipleri ilgili prog
 'feedback-cancel'   => 'İptal',
 'feedback-submit'   => 'Geribildirimi Gönder',
 'feedback-adding'   => 'Sayfaya geribildirim ekleniyor...',
+'feedback-error1'   => 'Hata: Bilinmeyen API sonucu',
 'feedback-error2'   => 'Hata: Düzenleme başarısız oldu',
 'feedback-error3'   => "Hata: API'den yanıt yok",
 'feedback-thanks'   => 'Teşekkürler! Görüşleriniz "[$2 $1]" sayfasında paylaşılmıştır.',
@@ -3817,19 +3834,26 @@ Resimler tam çözünürlükte görüntülenir, diğer dosya tipleri ilgili prog
 'api-error-duplicate-popup-title' => 'Çift {{PLURAL:$1|dosya|dosya}}',
 'api-error-empty-file'            => 'Gönderdiğiniz dosya boş.',
 'api-error-emptypage'             => 'Yeni, boş bir sayfa oluşturmaya izin verilmez.',
+'api-error-fetchfileerror'        => 'İç hata: Dosya alınırken bir hata oluştu.',
 'api-error-file-too-large'        => 'Gönderdiğiniz dosya çok büyük.',
 'api-error-filename-tooshort'     => 'Dosya adı çok kısa.',
 'api-error-filetype-banned'       => 'Bu dosya biçimi yasaklanmıştır.',
 'api-error-filetype-missing'      => 'Dosya uzantısı eksik.',
+'api-error-hookaborted'           => 'Yapmaya çalıştığınız değişiklik bir eklenti tarafından iptal edildi.',
 'api-error-http'                  => 'İç hata: sunucu ile bağlantı kurulamıyor.',
 'api-error-illegal-filename'      => 'Bu dosya adına izin verilmiyor.',
+'api-error-internal-error'        => "İç hata: Wiki'ye yükleme yapma işleminizde bir şeyler ters gitti.",
 'api-error-invalid-file-key'      => 'İç hata: geçici depolama dosyası bulunamadı.',
+'api-error-missingparam'          => 'İç hata: İstenilen parametreler eksik.',
+'api-error-missingresult'         => 'İç hata: Kopyalamanın başarılı olup olmadığı belirlenemedi.',
 'api-error-mustbeloggedin'        => 'Dosya yükleyebilmek için oturum açmanız gereklidir.',
 'api-error-mustbeposted'          => 'İç hata: İstek HTTP POST gerektiriyor.',
+'api-error-noimageinfo'           => 'Yükleme başarılı oldu, ancak sunucu, bize dosya hakkında herhangi bir bilgi vermedi.',
 'api-error-nomodule'              => 'İç hata: Yükleme modülü ayarı yapılmadı.',
 'api-error-ok-but-empty'          => 'İç hata: Sunucu yanıt vermiyor.',
 'api-error-overwrite'             => 'Varolan dosyanın üzerine yazmaya izin verilmiyor.',
 'api-error-stashfailed'           => 'İç hata: Sunucu, geçici dosyaları kaybetti.',
+'api-error-timeout'               => 'Sunucu beklenen süre içinde yanıt vermedi.',
 'api-error-unclassified'          => 'Bilinmeyen bir hata oluştu.',
 'api-error-unknown-code'          => 'Bilinmeyen hata: "$1"',
 'api-error-unknown-error'         => 'İç hata: Dosya yüklemeye çalışırken bir şeyler ters gitti.',

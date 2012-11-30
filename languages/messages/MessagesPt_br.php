@@ -310,7 +310,7 @@ $magicWords = array(
 
 $messages = array(
 # User preference toggles
-'tog-underline'               => 'Sublinhar ligação:',
+'tog-underline'               => 'Sublinhar links:',
 'tog-highlightbroken'         => 'Formatar links quebrados <a href="" class="new">como isto</a> (alternativa: como isto<a href="" class="internal">?</a>).',
 'tog-justify'                 => 'Justificar parágrafos',
 'tog-hideminor'               => 'Ocultar edições menores nas mudanças recentes',
@@ -321,28 +321,28 @@ $messages = array(
 'tog-numberheadings'          => 'Auto-numerar cabeçalhos',
 'tog-showtoolbar'             => 'Mostrar barra de edição (JavaScript)',
 'tog-editondblclick'          => 'Editar páginas quando houver clique duplo (JavaScript)',
-'tog-editsection'             => 'Habilitar edição de seção via ligações [editar]',
+'tog-editsection'             => 'Ativar a edição de seções com links [editar]',
 'tog-editsectiononrightclick' => 'Habilitar edição de seção por clique com o botão direito no título da seção (JavaScript)',
 'tog-showtoc'                 => 'Mostrar Tabela de Conteúdos (para páginas com mais de três cabeçalhos)',
 'tog-rememberpassword'        => 'Recordar os meus dados neste navegador (por no máximo $1 {{PLURAL:$1|dia|dias}})',
-'tog-watchcreations'          => 'Adicionar páginas criadas por mim à minha lista de páginas vigiadas',
-'tog-watchdefault'            => 'Adicionar páginas editadas por mim à minha lista de páginas vigiadas',
-'tog-watchmoves'              => 'Adicionar páginas movidas por mim à minha lista de páginas vigiadas',
-'tog-watchdeletion'           => 'Adicionar páginas eliminadas por mim à minha lista de páginas vigiadas',
+'tog-watchcreations'          => 'Adicionar as páginas e arquivos que eu criar às minhas páginas vigiadas',
+'tog-watchdefault'            => 'Adicionar as páginas e arquivos que eu editar às minhas páginas vigiadas',
+'tog-watchmoves'              => 'Adicionar as páginas e arquivos que eu mover às minhas páginas vigiadas',
+'tog-watchdeletion'           => 'Adicionar as páginas e arquivos que eu eliminar às minhas páginas vigiadas',
 'tog-minordefault'            => 'Marcar todas as edições como secundárias, por padrão',
 'tog-previewontop'            => 'Mostrar previsão antes da caixa de edição',
 'tog-previewonfirst'          => 'Mostrar previsão na primeira edição',
 'tog-nocache'                 => 'Desativar o cache de páginas do navegador',
-'tog-enotifwatchlistpages'    => 'Receber e-mail quando uma página da minha lista de páginas vigiadas for alterada',
+'tog-enotifwatchlistpages'    => 'Notificar-me por e-mail quando uma página ou arquivo vigiado for alterado',
 'tog-enotifusertalkpages'     => 'Receber e-mail quando a minha página de discussão for editada',
-'tog-enotifminoredits'        => 'Enviar-me um email também quando forem edições menores',
+'tog-enotifminoredits'        => 'Notificar-me por e-mail também sobre edições menores de páginas ou arquivos',
 'tog-enotifrevealaddr'        => 'Revelar o meu endereço de email nas notificações',
 'tog-shownumberswatching'     => 'Mostrar o número de usuários que estão vigiando',
 'tog-oldsig'                  => 'Assinatura existente:',
-'tog-fancysig'                => 'Tratar assinatura como wikitexto (sem ligação automática)',
+'tog-fancysig'                => 'Tratar assinatura como wikitexto (sem link automático)',
 'tog-externaleditor'          => 'Utilizar editor externo por padrão (apenas para usuários avançados; requer configurações adicionais em seu computador. [//www.mediawiki.org/wiki/Manual:External_editors Mais informações.])',
 'tog-externaldiff'            => 'Utilizar comparador de versões externo por padrão (apenas para usuários avançados; requer configurações adicionais em seu computador. [//www.mediawiki.org/wiki/Manual:External_editors Mais informações.])',
-'tog-showjumplinks'           => 'Ativar ligações de acessibilidade "ir para"',
+'tog-showjumplinks'           => 'Ativar links de acessibilidade "ir para"',
 'tog-uselivepreview'          => 'Utilizar pré-visualização em tempo real (JavaScript) (Experimental)',
 'tog-forceeditsummary'        => 'Avisar-me ao introduzir um sumário vazio',
 'tog-watchlisthideown'        => 'Ocultar as minhas edições da lista de páginas vigiadas',
@@ -438,15 +438,15 @@ $messages = array(
 'listingcontinuesabbrev'         => 'cont.',
 'index-category'                 => 'Páginas indexadas',
 'noindex-category'               => 'Páginas não indexadas',
-'broken-file-category'           => 'Páginas com ligações quebradas para arquivos',
+'broken-file-category'           => 'Páginas com links inválidos para arquivos',
 
 'about'         => 'Sobre',
 'article'       => 'Página de conteúdo',
 'newwindow'     => '(abre em uma nova janela)',
 'cancel'        => 'Cancelar',
 'moredotdotdot' => 'Mais...',
-'mypage'        => 'Minha página',
-'mytalk'        => 'Minha discussão',
+'mypage'        => 'Página',
+'mytalk'        => 'Discussão',
 'anontalk'      => 'Discussão para este IP',
 'navigation'    => 'Navegação',
 'and'           => '&#32;e',
@@ -469,7 +469,7 @@ $messages = array(
 'vector-action-protect'          => 'Proteger',
 'vector-action-undelete'         => 'Restaurar',
 'vector-action-unprotect'        => 'Alterar a proteção',
-'vector-simplesearch-preference' => 'Ativar sugestões de busca melhoradas (apenas no tema Vector)',
+'vector-simplesearch-preference' => 'Ativar barra simplificada de buscas (apenas no skin Vector)',
 'vector-view-create'             => 'Criar',
 'vector-view-edit'               => 'Editar',
 'vector-view-history'            => 'Ver histórico',
@@ -491,7 +491,7 @@ $messages = array(
 'history_short'     => 'Histórico',
 'updatedmarker'     => 'atualizado desde a minha última visita',
 'printableversion'  => 'Versão para impressão',
-'permalink'         => 'Ligação permanente',
+'permalink'         => 'Link permanente',
 'print'             => 'Imprimir',
 'view'              => 'Ver',
 'edit'              => 'Editar',
@@ -617,7 +617,7 @@ Veja a [[Special:Version|página sobre a versão do sistema]].',
 # Main script and global functions
 'nosuchaction'      => 'Ação inexistente',
 'nosuchactiontext'  => 'A ação especificada pela URL é inválida.
-Você deve ter se enganado ao digitar a URL, ou seguiu uma ligação incorreta.
+Você deve ter se enganado ao digitar a URL, ou acessou um link incorreto.
 Isso também pode indicar um erro no software usado no sítio {{SITENAME}}.',
 'nosuchspecialpage' => 'Esta página especial não existe',
 'nospecialpagetext' => '<strong>Você requisitou uma página especial inválida.</strong>
@@ -627,12 +627,12 @@ Uma lista de páginas especiais válidas poderá ser encontrada em [[Special:Spe
 # General errors
 'error'                => 'Erro',
 'databaseerror'        => 'Erro no banco de dados',
-'dberrortext'          => 'Ocorreu um erro de sintaxe de busca no banco de dados.
-Isto pode indicar um problema com o \'\'software\'\'.
+'dberrortext'          => 'Ocorreu um erro de sintaxe na busca no banco de dados.
+Isto pode indicar um bug no software.
 A última tentativa de busca no banco de dados foi:
-<blockquote><tt>$1</tt></blockquote>
-na função "<tt>$2</tt>".
-O banco de dados retornou o erro "<tt>$3: $4</tt>".',
+<blockquote><code>$1</code></blockquote>
+na função "<code>$2</code>".
+O banco de dados retornou o erro "<samp>$3: $4</samp>".',
 'dberrortextcl'        => 'Ocorreu um erro de sintaxe de busca no banco de dados.
 A última tentativa de busca no banco de dados foi:
 "$1"
@@ -646,10 +646,10 @@ O banco de dados retornou o erro "$3: $4".',
 Quem fez o bloqueio oferece a seguinte explicação: $1',
 'missing-article'      => 'O banco de dados não encontrou o texto de uma página que deveria ter encontrado, com o nome "$1" $2.
 
-Isso normalmente é causado ao acessar uma ligação de diferença (diff) desatualizada ou para o histórico de uma página que foi apagada.
+Isso normalmente é causado ao acessar um link de diferença (dif) desatualizado ou para o histórico de uma página que foi apagada.
 
-Se não for este o caso, você pode ter encontrado um defeito (bug) no software.
-Anote o URL e reporte o ocorrido a um [[Special:ListUsers/sysop|administrador]].',
+Se este não for o caso, você pode ter encontrado um defeito (bug) no software.
+Anote a URL e reporte o ocorrido a um [[Special:ListUsers/sysop|administrador]].',
 'missingarticle-rev'   => '(revisão#: $1)',
 'missingarticle-diff'  => '(Dif.: $1, $2)',
 'readonly_lag'         => 'O banco de dados foi automaticamente bloqueado enquanto os servidores secundários se sincronizam com o principal',
@@ -833,12 +833,17 @@ Você pode já ter alterado com sucesso a sua senha, ou solicitado uma nova senh
 'passwordreset-capture-help'       => 'Se marcar esta caixa, o e-mail (com a senha temporária) será-lhe mostrado, além de ser enviado para o usuário.',
 'passwordreset-email'              => 'Endereço de e-mail:',
 'passwordreset-emailtitle'         => 'Detalhes da conta em {{SITENAME}}',
-'passwordreset-emailtext-ip'       => 'Alguém (provavelmente você, do endereço IP $1) solicitou um lembrete do seu detalhes de conta para {{SITENAME}} ($4). {{PLURAL:$3|A seguinte conta está associada|As seguintes contas estão associadas}} a este e-mail:
+'passwordreset-emailtext-ip'       => 'Alguém (provavelmente você, a partir do endereço IP $1)
+solicitou um lembrete dos seus detalhes de conta para {{SITENAME}} ($4).
+{{PLURAL:$3|A seguinte conta está associada|As seguintes contas estão associadas}} a este e-mail:
 
 $2
 
-{{PLURAL:$3|Esta senha temporária |Essas senhas temporárias}} vão expirar em {{PLURAL:$5|um dia|$5 dias}}.
-Você deve efetuar login e escolher uma nova senha agora. Se você conseguir lembrar da senha, ignore este e-mail e continue usando sua senha anterior, do contrário, prossiga com as instruções clicando na ligação.',
+{{PLURAL:$3|Esta senha temporária vai|Essas senhas temporárias vão}} expirar em {{PLURAL:$5|um dia|$5 dias}}.
+Você deve efetuar login e escolher uma nova senha agora.
+Se você conseguir lembrar da senha, ignore este e-mail e continue
+usando sua senha anterior. Caso contrário, prossiga com as instruções
+disponíveis no link.',
 'passwordreset-emailtext-user'     => 'O usuário $1 da {{SITENAME}} pediu a recuperação dos detalhes da sua conta na {{SITENAME}} ($4). {{PLURAL:$3|A seguinte conta está associada|As seguintes contas estão associadas}} a este e-mail:
 
 $2
@@ -866,10 +871,10 @@ Senha temporária: $2',
 'bold_tip'        => 'Texto em negrito',
 'italic_sample'   => 'Texto em itálico',
 'italic_tip'      => 'Texto em itálico',
-'link_sample'     => 'Título da ligação',
-'link_tip'        => 'Ligação interna',
-'extlink_sample'  => 'http://www.example.com título da ligação',
-'extlink_tip'     => 'Ligação externa (lembre-se do prefixo http://)',
+'link_sample'     => 'Título do link',
+'link_tip'        => 'Link interno',
+'extlink_sample'  => 'http://www.example.com título do link',
+'extlink_tip'     => 'Link externo (lembre-se do prefixo http://)',
 'headline_sample' => 'Conteúdo do cabeçalho',
 'headline_tip'    => 'Seção de nível 2',
 'nowiki_sample'   => 'Inserir texto não-formatado aqui',
@@ -877,7 +882,7 @@ Senha temporária: $2',
 'image_sample'    => 'Exemplo.jpg',
 'image_tip'       => 'Arquivo embutido',
 'media_sample'    => 'Exemplo.ogg',
-'media_tip'       => 'Ligação para o arquivo',
+'media_tip'       => 'Link para o arquivo',
 'sig_tip'         => 'Sua assinatura, com hora e data',
 'hr_tip'          => 'Linha horizontal (use de forma moderada)',
 
@@ -945,7 +950,7 @@ Ela pode ter sido movida ou removido enquanto você estava vendo a página.',
 
 A senha para esta nova conta pode ser alterada na página ''[[Special:ChangePassword|de troca de senha]]'', após a autenticação.",
 'newarticle'                       => '(Nova)',
-'newarticletext'                   => "Você seguiu uma ligação para uma página que ainda não existe.
+'newarticletext'                   => "Você seguiu um link para uma página que ainda não existe.
 Para criá-la, comece escrevendo na caixa abaixo (veja [[{{MediaWiki:Helppage}}|a página de ajuda]] para mais informações).
 Se você chegou aqui por engano, clique no botão '''voltar''' do seu navegador.",
 'anontalkpagetext'                 => "---- ''Esta é a página de discussão para um usuário anônimo que ainda não criou uma conta ou que não a usa, de forma que temos de utilizar o endereço de IP para identificá-lo(a). Tal endereço de IP pode ser compartilhado por vários usuários. Se você é um usuário anônimo e acha que comentários irrelevantes foram direcionados a você, por gentileza, [[Special:UserLogin/signup|crie uma conta]] ou [[Special:UserLogin|autentique-se]], a fim de evitar futuras confusões com outros usuários anônimos.''",
@@ -960,11 +965,10 @@ Verifique se deseja mesmo criar/editar esta página.',
 'userpage-userdoesnotexist-view'   => 'A conta de usuário "$1" não está registrada.',
 'blocked-notice-logextract'        => 'Este usuário está atualmente bloqueado.
 O registro de bloqueio mais recente é fornecido abaixo, para referência:',
-'clearyourcache'                   => "'''Nota:''' Depois de salvar, você terá de limpar o ''cache'' do seu navegador para ver as alterações.
+'clearyourcache'                   => "Nota:''' Depois de salvar, você terá de limpar o ''cache'' do seu navegador para ver as alterações.
 * '''Firefox / Safari:''' pressione ''Shift'' enquanto clica em ''Recarregar'', ou pressione ''Ctrl-F5'' ou ''Ctrl-R'' (''Command-R'' para Mac);
 * '''Google Chrome:''' pressione ''Ctrl-Shift-R'' (''Command-Shift-R'' em um Mac)
 * '''Internet Explorer:''' pressione ''Ctrl'' enquanto clica em ''Recarregar'' ou pressione ''Ctrl-F5'';
-* '''Konqueror:''' clique no botão ''Recarregar'' ou pressione ''F5'';
 * '''Opera:''' limpe o ''cache'' em ''Ferramentas → Preferências'' (''Tools → Preferences'')",
 'usercssyoucanpreview'             => "'''Dica:''' Utilize o botão \"{{int:showpreview}}\" para testar seu novo CSS antes de salvar.",
 'userjsyoucanpreview'              => "'''Dica:''' Utilize o botão \"{{int:showpreview}}\" para testar seu novo JavaScript antes de salvar.",
@@ -1021,7 +1025,7 @@ A página não pode ser salva.",
 Pode, no entanto, copiar o seu texto num editor externo e guardá-lo para posterior envio.
 
 Quem bloqueou o banco de dados forneceu a seguinte justificativa: $1",
-'protectedpagewarning'             => "'''Atenção: Esta página foi protegida para que apenas usuários com privilégios de administrado possam editá-la.'''
+'protectedpagewarning'             => "'''Atenção: Esta página foi protegida para que apenas usuários com privilégios de administrador possam editá-la.'''
 A última entrada no histórico é fornecida abaixo como referência:",
 'semiprotectedpagewarning'         => "'''Nota:''' Esta página foi protegida, sendo que apenas usuários registrados poderão editá-la.
 A última entrada no histórico é fornecida abaixo para referência:",
@@ -1205,9 +1209,10 @@ Você não tem acesso a ele.',
 'revdelete-concurrent-change' => 'Erro ao modificar o item datado de $2, $1: o seu estado parece ter sido alterado por outra pessoa enquanto você tentava modificá-lo.
 Por favor, verifique os registros.',
 'revdelete-only-restricted'   => 'Erro ao ocultar o item de $2 às $1: você não pode impedir que itens sejam visualizados por administradores sem também selecionar uma das outras opções de visibilidade.',
-'revdelete-reason-dropdown'   => '*Motivos comuns para eliminação
-** Violação de direitos autorais
-** Informação pessoal inapropriada
+'revdelete-reason-dropdown'   => '*Razões comuns para eliminação
+** Violação de direitos de autor
+** Comentário ou informação pessoal inapropriada
+** Nome de usuário impróprio
 ** Informação potencialmente difamatória',
 'revdelete-otherreason'       => 'Outro motivo/motivo adicional:',
 'revdelete-reasonotherlist'   => 'Outro motivo',
@@ -1337,7 +1342,7 @@ Note que os índices do sistema de busca externo poderão conter referências de
 
 # Preferences page
 'preferences'                   => 'Preferências',
-'mypreferences'                 => 'Minhas preferências',
+'mypreferences'                 => 'Preferências',
 'prefs-edits'                   => 'Número de edições:',
 'prefsnologin'                  => 'Não autenticado',
 'prefsnologintext'              => 'É necessário estar <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} autenticado]</span> para definir as suas preferências.',
@@ -1399,7 +1404,7 @@ Eis um valor gerado aleatoriamente que você pode usar: $1",
 'timezoneregion-indian'         => 'Oceano Índico',
 'timezoneregion-pacific'        => 'Oceano Pacífico',
 'allowemail'                    => 'Permitir que outros usuários me enviem e-mails',
-'prefs-searchoptions'           => 'Opções de busca',
+'prefs-searchoptions'           => 'Busca',
 'prefs-namespaces'              => 'Espaços nominais',
 'defaultns'                     => 'Caso contrário pesquisar nestes espaços nominais:',
 'default'                       => 'padrão',
@@ -1862,6 +1867,7 @@ A sua segurança não pode ser devidamente verificada.',
 'uploadstash-badtoken' => 'Não foi possível executar essa operação, talvez porque as suas credenciais de edição expiraram. Tente novamente.',
 'uploadstash-errclear' => 'Não foi possível apagar os arquivos.',
 'uploadstash-refresh'  => 'Atualizar a lista de arquivos',
+'invalid-chunk-offset' => 'Deslocamento de fragmento inválido',
 
 # img_auth script messages
 'img-auth-accessdenied'     => 'Acesso negado',
@@ -2423,7 +2429,7 @@ Esta é a configuração atual para a página '''$1''':",
 'protect-summary-cascade'     => 'p. progressiva',
 'protect-expiring'            => 'expira em $1 (UTC)',
 'protect-expiring-local'      => 'expira $1',
-'protect-expiry-indefinite'   => 'indefinido',
+'protect-expiry-indefinite'   => 'tempo indefinido',
 'protect-cascade'             => '"Proteção progressiva" - proteja quaisquer páginas que estejam incluídas nesta.',
 'protect-cantedit'            => 'Você não pode alterar o nível de proteção desta página uma vez que você não se encontra habilitado a editá-la.',
 'protect-othertime'           => 'Outra duração:',
@@ -2516,7 +2522,7 @@ $1',
 # Contributions
 'contributions'       => 'Contribuições {{GENDER:{{BASEPAGENAME}}|do usuário|da usuária}}',
 'contributions-title' => 'Contribuições {{GENDER:$1|do usuário|da usuária}} $1',
-'mycontris'           => 'Minhas contribuições',
+'mycontris'           => 'Contribuições',
 'contribsub2'         => 'Para $1 ($2)',
 'nocontribs'          => 'Não foram encontradas mudanças com este critério.',
 'uctop'               => '(atual)',
@@ -3021,14 +3027,14 @@ Tal bloqueio foi provavelmente causado por uma ligação para um ''website'' ext
 
 # Info page
 'pageinfo-title'            => 'Informações sobre "$1"',
-'pageinfo-header-edits'     => 'Edições',
+'pageinfo-header-edits'     => 'Histórico de edições',
 'pageinfo-header-watchlist' => 'Páginas vigiadas',
 'pageinfo-header-views'     => 'Visitas',
 'pageinfo-subjectpage'      => 'Página',
 'pageinfo-talkpage'         => 'Página de discussão',
-'pageinfo-watchers'         => 'Número de pessoas vigiando',
+'pageinfo-watchers'         => 'Número de vigilantes da página',
 'pageinfo-edits'            => 'Número de edições',
-'pageinfo-authors'          => 'Número de autores individuais',
+'pageinfo-authors'          => 'Número total de autores distintos',
 'pageinfo-views'            => 'Número de visitas',
 'pageinfo-viewsperedit'     => 'Visitas por edição',
 
@@ -3044,7 +3050,7 @@ Tal bloqueio foi provavelmente causado por uma ligação para um ''website'' ext
 
 # Patrolling
 'markaspatrolleddiff'                 => 'Marcar como patrulhada',
-'markaspatrolledtext'                 => 'Marcar esta página como verificada',
+'markaspatrolledtext'                 => 'Marcar esta página como patrulhada',
 'markedaspatrolled'                   => 'Marcado como verificado',
 'markedaspatrolledtext'               => 'A revisão selecionada de [[:$1]] foi marcada como patrulhada.',
 'rcpatroldisabled'                    => 'Edições verificadas nas Mudanças Recentes desativadas',
@@ -3758,7 +3764,7 @@ As imagens serão exibidas em sua resolução máxima, outros tipos de arquivos 
 * <span class="mw-specialpagerestricted">Páginas especiais restritas.</span>',
 'specialpages-group-maintenance' => 'Relatórios de manutenção',
 'specialpages-group-other'       => 'Outras páginas especiais',
-'specialpages-group-login'       => 'Entrar / registrar-se',
+'specialpages-group-login'       => 'Entrar / Criar conta',
 'specialpages-group-changes'     => 'Mudanças e registros recentes',
 'specialpages-group-media'       => 'Relatórios de mídias e uploads',
 'specialpages-group-users'       => 'Usuários e privilégios',

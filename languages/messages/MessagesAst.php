@@ -109,7 +109,7 @@ $messages = array(
 
 'underline-always'  => 'Siempre',
 'underline-never'   => 'Nunca',
-'underline-default' => 'Restolador por defeutu',
+'underline-default' => 'Predeterminao del aspeutu o del restolador',
 
 # Font style option in Special:Preferences
 'editfont-style'     => "Estilu de fonte de l'área d'edición:",
@@ -194,8 +194,8 @@ $messages = array(
 'newwindow'     => '(ábrese nuna ventana nueva)',
 'cancel'        => 'Encaboxar',
 'moredotdotdot' => 'Más...',
-'mypage'        => 'La mio páxina',
-'mytalk'        => 'El mio alderique',
+'mypage'        => 'Páxina',
+'mytalk'        => 'Alderique',
 'anontalk'      => 'Alderique pa esta IP',
 'navigation'    => 'Navegación',
 'and'           => '&#32;y',
@@ -218,7 +218,7 @@ $messages = array(
 'vector-action-protect'          => 'Protexer',
 'vector-action-undelete'         => 'Restaurar',
 'vector-action-unprotect'        => 'Camudar la proteición',
-'vector-simplesearch-preference' => 'Activar suxerencies meyoraes de gueta (namái apariencia Vector)',
+'vector-simplesearch-preference' => 'Activar la barra de gueta simplificada (namái apariencia Vector)',
 'vector-view-create'             => 'Crear',
 'vector-view-edit'               => 'Editar',
 'vector-view-history'            => 'Ver historial',
@@ -228,7 +228,7 @@ $messages = array(
 'namespaces'                     => 'Espacios de nome',
 'variants'                       => 'Variantes',
 
-'errorpagetitle'    => 'Fallu',
+'errorpagetitle'    => 'Error',
 'returnto'          => 'Tornar a $1.',
 'tagline'           => 'De {{SITENAME}}',
 'help'              => 'Ayuda',
@@ -373,7 +373,7 @@ Tamién podría ser un bug nel software usáu por {{SITENAME}}.",
 Pues atopar una llista de les páxines especiales válides en [[Special:SpecialPages|{{int:specialpages}}]].',
 
 # General errors
-'error'                => 'Fallu',
+'error'                => 'Error',
 'databaseerror'        => 'Fallu na base de datos',
 'dberrortext'          => "Hebo un fallu de sintaxis nuna consulta a la base de datos.
 Esti fallu pue ser por un problema del software.
@@ -435,10 +435,11 @@ Por favor vuelvi intentalo nunos minutos.',
 'protectedpagetext'    => 'Esta páxina ta candada pa torgar la so edición.',
 'viewsourcetext'       => "Pues ver y copiar la fonte d'esta páxina:",
 'viewyourtext'         => "Pues ver y copiar la fonte de '''les tos ediciones''' d'esta páxina:",
-'protectedinterface'   => "Esta páxina proporciona testu d'interfaz de l'aplicación, y ta candada pa torgar abusos.",
-'editinginterface'     => "'''Avisu:''' Tas editando una páxina que s'usa pa proporcionar el testu d'interfaz de l'aplicación.
-Los cambeos nesta páxina van afeutar l'apariencia de la interfaz pa otros usuarios.
-Si quies facer traducciones, por favor usa [//translatewiki.net/wiki/Main_Page?setlang=ast translatewiki.net], el proyeutu de traducción de MediaWiki.",
+'protectedinterface'   => "Esta páxina proporciona'l testu de la interfaz del software d'esta wiki, y ta candada pa torgar abusos.
+P'amestar o cambiar les traducciones de toles wikis, por favor usa [//translatewiki.net/translatewiki.net], el proyeutu de llocalización de MediaWiki.",
+'editinginterface'     => "'''Avisu:''' Tas editando una páxina que s'usa pa proporcionar el testu d'interfaz del programa.
+Los cambeos nesta páxina van afeutar l'apariencia de la interfaz pa otros usuarios d'esta wiki.
+P'amestar o camudar traducciones pa toles wikis, por favor, usa [//translatewiki.net/ translatewiki.net], el proyeutu de traducción de MediaWiki.",
 'sqlhidden'            => '(consulta SQL anubrida)',
 'cascadeprotected'     => "Esta páxina ta protexida d'ediciones porque ta enxerta {{PLURAL:$1|na siguiente páxina|nes siguientes páxines}}, que {{PLURAL:$1|ta protexida|tán protexíes}} cola opción «en cascada» activada:
 $2",
@@ -986,10 +987,11 @@ Nun tienes accesu al mesmu.',
 'revdelete-concurrent-change' => "Error al camudar l'elementu con data $2, $1: paez que'l so estáu camudólu otra persona mientres tentabes camudalu tu.
 Comprueba los rexistros, por favor.",
 'revdelete-only-restricted'   => "Fallu al anubrir l'elementu con data $1, $2: nun se puen quitar elementos de la vista de los alministradores ensin escoyer tamién una de les otres opciones de visibilidá.",
-'revdelete-reason-dropdown'   => '*Razones comúnes de desaniciu 
+'revdelete-reason-dropdown'   => "*Razones comúnes de desaniciu 
 ** Violación del Copyright
-** Información personal non apropiada
-** Información potencialmente bilordiosa',
+** Información personal o comentariu non apropiáu
+** Nome d'usuariu non apropiáu
+** Información potencialmente bilordiosa",
 'revdelete-otherreason'       => 'Motivu distintu/adicional:',
 'revdelete-reasonotherlist'   => 'Otru motivu',
 'revdelete-edit-reasonlist'   => 'Editar motivos del desaniciu',
@@ -1115,7 +1117,7 @@ Asegúrate de qu'esti cambéu caltenga la continuidá del históricu de la páxi
 
 # Preferences page
 'preferences'                   => 'Preferencies',
-'mypreferences'                 => 'Les mios preferencies',
+'mypreferences'                 => 'Preferencies',
 'prefs-edits'                   => "Númberu d'ediciones:",
 'prefsnologin'                  => 'Non identificáu',
 'prefsnologintext'              => 'Necesites tar <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} identificáu]</span> pa camudar les preferencies d\'usuariu.',
@@ -1177,7 +1179,7 @@ Equí tienes un valor al debalu que pues usar: $1",
 'timezoneregion-indian'         => 'Océanu Índicu',
 'timezoneregion-pacific'        => 'Océanu Pacíficu',
 'allowemail'                    => 'Dexar a los otros usuarios mandate correos',
-'prefs-searchoptions'           => 'Opciones de busca',
+'prefs-searchoptions'           => 'Guetar',
 'prefs-namespaces'              => 'Espacios de nome',
 'defaultns'                     => "D'otra miente, guetar nestos espacios de nome:",
 'default'                       => 'predetermináu',
@@ -1958,7 +1960,7 @@ Ver tamién les [[Special:WantedCategories|categoríes más buscaes]].",
 'linksearch-ok'    => 'Guetar',
 'linksearch-text'  => 'Se puen usar comodinos como "*.wikipedia.org".
 Necesita polo menos un dominiu de primer nivel, como "*.org".<br />
-Protocolos almitíos: <code>$1</code> (nun amiestes dengún d\'estos na to gueta).',
+Protocolos almitíos: <code>$1</code> (el predetermináu ye http:// si nun se conseña dengún protocolu).',
 'linksearch-line'  => '$1 enllaciáu dende $2',
 'linksearch-error' => 'Los comodinos namái puen apaecer al entamu del nome del güéspede.',
 
@@ -2006,9 +2008,9 @@ Pue haber [[{{MediaWiki:Listgrouprights-helppage}}|información adicional]] toca
 y tener una direición de corréu válida nes tos [[Special:Preferences|preferencies]]
 pa poder unviar correos a otros usuarios.',
 'emailuser'            => 'Manda-y un corréu a esti usuariu',
-'emailpage'            => "Corréu d'usuariu",
-'emailpagetext'        => "Pues usar el formulariu d'embaxo pa unviar un corréu electrónicu a esti usuariu.
-La direición de corréu electrónicu qu'especificasti nes [[Special:Preferences|tos preferencies d'usuariu]] va apaecer como la direición \"Dende\" del corréu, pa que'l que lo recibe seya quien a respondete direutamente a ti.",
+'emailpage'            => 'Envigar un corréu electrónicu a un usuariu',
+'emailpagetext'        => 'Pues usar el formulariu de más abaxo pa unviar un corréu electrónicu a {{GENDER:$1|esti usuariu|esta usuaria}}.
+La direición de corréu electrónicu qu\'especificasti nes [[Special:Preferences|tos preferencies d\'usuariu]] va apaecer como la direición "Dende" del corréu, pa que\'l que lo recibe seya quien a respondete direutamente a ti.',
 'usermailererror'      => "L'operador de corréu devolvió un error:",
 'defemailsubject'      => 'Corréu electrónicu del usuariu «$1» de {{SITENAME}}',
 'usermaildisabled'     => 'Corréu del usuariu desactiváu',
@@ -2039,7 +2041,7 @@ La direición de corréu electrónicu qu'especificasti nes [[Special:Preferences
 
 # Watchlist
 'watchlist'            => 'La mio páxina de vixilancia',
-'mywatchlist'          => 'La mio llista de vixilancia',
+'mywatchlist'          => 'Llista de vixilancia',
 'watchlistfor2'        => 'Pa $1 $2',
 'nowatchlist'          => 'La to llista de vixilancia ta vacia.',
 'watchlistanontext'    => 'Por favor $1 pa ver o editar entraes na to llista de vixilancia.',
@@ -2298,7 +2300,7 @@ $1",
 # Contributions
 'contributions'       => 'Collaboraciones del usuariu',
 'contributions-title' => "Contribuciones d'usuariu pa $1",
-'mycontris'           => 'Les mios collaboraciones',
+'mycontris'           => 'Collaboraciones',
 'contribsub2'         => 'De $1 ($2)',
 'nocontribs'          => "Nun s'atoparon cambeos que coincidan con esi criteriu.",
 'uctop'               => '(actual)',
@@ -2339,7 +2341,7 @@ La cabera entrada del rexistru de bloqueos s'ufre darréu pa referencia:",
 'whatlinkshere-hideredirs' => '$1 redireiciones',
 'whatlinkshere-hidetrans'  => '$1 tresclusiones',
 'whatlinkshere-hidelinks'  => '$1 enllaces',
-'whatlinkshere-hideimages' => "$1 enllaces d'imaxe",
+'whatlinkshere-hideimages' => '$1 los enllaces al ficheru',
 'whatlinkshere-filters'    => 'Peñeres',
 
 # Block/unblock
@@ -2828,14 +2830,14 @@ Probablemente tea causao por un enllaz a un sitiu esternu de la llista prieta.',
 
 # Info page
 'pageinfo-title'            => 'Información sobro "$1"',
-'pageinfo-header-edits'     => 'Ediciones',
+'pageinfo-header-edits'     => "Historial d'ediciones",
 'pageinfo-header-watchlist' => 'Llista de vixilancia',
 'pageinfo-header-views'     => 'Vistes',
 'pageinfo-subjectpage'      => 'Páxina',
 'pageinfo-talkpage'         => "Páxina d'alderique",
-'pageinfo-watchers'         => 'Númberu de vixilantes',
+'pageinfo-watchers'         => 'Númberu de vixilantes de la páxina',
 'pageinfo-edits'            => "Númberu d'ediciones",
-'pageinfo-authors'          => "Númberu d'autores distintos",
+'pageinfo-authors'          => "Númberu total d'autores distintos",
 'pageinfo-views'            => 'Númberu de visites',
 'pageinfo-viewsperedit'     => 'Visites por edición',
 
@@ -3420,7 +3422,7 @@ Esti códigu de confirmación caduca\'l $4.',
 
 # Scary transclusion
 'scarytranscludedisabled' => '[La tresclusión interwiki ta desactivada]',
-'scarytranscludefailed'   => '[La obtención de la plantía falló pa $1]',
+'scarytranscludefailed'   => '[Falló la recuperación de la plantía pa $1]',
 'scarytranscludetoolong'  => '[La URL ye demasiao llarga]',
 
 # Delete conflict
@@ -3531,7 +3533,7 @@ Tamién pues [[Special:EditWatchlist|usar l'editor estándar]].",
 'version-version'               => '(Versión $1)',
 'version-license'               => 'Llicencia',
 'version-poweredby-credits'     => "Esta wiki funciona con '''[//www.mediawiki.org/ MediaWiki]''', copyright © 2001-$1 $2.",
-'version-poweredby-others'      => 'otros',
+'version-poweredby-others'      => '[{{SERVER}}{{SCRIPTPATH}}/CREDITS otros]',
 'version-license-info'          => "MediaWiki ye software llibre; pues redistribuilu y/o camudalu baxo los términos de la Llicencia Pública Xeneral GNU tal como ta asoleyada pola Free Software Foundation; o la versión 2 de la Llicencia, o (como prefieras) cualesquier versión posterior.
 
 MediaWiki se distribúi col envís de que seya afayadiza, pero ENSIN GARANTÍA DALA; ensin siquiera garantía implícita de COMERCIALIDÁ o ADAUTACIÓN A UN DETERMINÁU PROPÓSITU. Llee la Llicencia Pública Xeneral GNU pa más detalles.
@@ -3668,9 +3670,9 @@ Les imáxenes amuésense a resolución completa; les demás tribes d'archivu exe
 'logentry-move-move_redir-noredirect' => '$1 treslladó la páxina "$3" a "$4" sobre una redireición ensin dexar una redireición',
 'logentry-patrol-patrol'              => '$1 marcó la revisión $4 de la páxina "$3" como patrullada',
 'logentry-patrol-patrol-auto'         => '$1 marcó automaticamente la revisión $4 de la páxina "$3" como patrullada',
-'logentry-newusers-newusers'          => "$1 creó una cuenta d'usuariu",
-'logentry-newusers-create'            => "$1 creó una cuenta d'usuariu",
-'logentry-newusers-create2'           => "$1 creó una cuenta d'usuariu $3",
+'logentry-newusers-newusers'          => "Se creó la cuenta d'usuariu $1",
+'logentry-newusers-create'            => "Se creó la cuenta d'usuariu $1",
+'logentry-newusers-create2'           => "$1 creó la cuenta d'usuariu $3",
 'logentry-newusers-autocreate'        => 'La cuenta $1 se creó automáticamente',
 'newuserlog-byemail'                  => 'conseña unviada per corréu electrónicu',
 

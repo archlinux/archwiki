@@ -1,5 +1,5 @@
 <?php
-/** Crimean Turkish (Latin script) (‪qırımtatarca (Latin)‬)
+/** Crimean Turkish (Latin script) (qırımtatarca (Latin)‎)
  *
  * See MessagesQqq.php for message documentation incl. usage of parameters
  * To improve a translation please visit http://translatewiki.net
@@ -238,8 +238,8 @@ $messages = array(
 'newwindow'     => '(yañı bir pencerede açılır)',
 'cancel'        => 'Lâğu',
 'moredotdotdot' => 'Daa...',
-'mypage'        => 'Saifem',
-'mytalk'        => 'Muzakere saifem',
+'mypage'        => 'Saife',
+'mytalk'        => 'Muzakere',
 'anontalk'      => 'Bu IP-niñ muzakeresi',
 'navigation'    => 'Saytta yol tapuv',
 'and'           => '&#32;ve',

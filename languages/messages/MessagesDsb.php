@@ -209,7 +209,7 @@ $messages = array(
 
 'underline-always'  => 'pśecej',
 'underline-never'   => 'žednje',
-'underline-default' => 'pó standarźe browsera',
+'underline-default' => 'Standard drastwy abo wobglědowaka',
 
 # Font style option in Special:Preferences
 'editfont-style'     => 'Pismowy stil wobźěłowańskego póla:',
@@ -294,8 +294,8 @@ $messages = array(
 'newwindow'     => '(se wótcynijo w nowem woknje)',
 'cancel'        => 'Pśetergnuś',
 'moredotdotdot' => 'Wěcej…',
-'mypage'        => 'Mój bok',
-'mytalk'        => 'mója diskusija',
+'mypage'        => 'Bok',
+'mytalk'        => 'Diskusija',
 'anontalk'      => 'Diskusija z toś teju IP',
 'navigation'    => 'Nawigacija',
 'and'           => '&#32;a',
@@ -318,7 +318,7 @@ $messages = array(
 'vector-action-protect'          => 'Šćitaś',
 'vector-action-undelete'         => 'Wótnowiś',
 'vector-action-unprotect'        => 'Šćit změniś',
-'vector-simplesearch-preference' => 'Pólěpšone pytańske naraźenja zmóžniś (jano suknja Vector)',
+'vector-simplesearch-preference' => 'Zjadnorjonu pytańsku lejstwu zmóžniś (jano drastwa Vector)',
 'vector-view-create'             => 'Napóraś',
 'vector-view-edit'               => 'Wobźěłaś',
 'vector-view-history'            => 'Wersije a awtory',
@@ -531,8 +531,10 @@ Wótpšašanje: $2',
 'protectedpagetext'    => 'Wobźěłanje toś togo boka jo se znjemóžniło.',
 'viewsourcetext'       => 'Žrědłowy tekst togo boka móžoš se woglědaś a kopěrowaś:',
 'viewyourtext'         => "Móžoš se žrědłowy tekst '''swójich změnow''' woglědaś a do toś togo bok kopěrowaś:",
-'protectedinterface'   => 'Toś ten bok wopśimujo tekst za rěcny zwjerch softwary. Jogo wobźěłowanje jo se znjemóžniło, aby se znjewužywanjeju zadorało.',
-'editinginterface'     => "'''Warnowanje:''' Wobźěłujoš bok, kótaryž se wužywa, aby se tekst za pówjerch software MediaWiki k dispoziciji stajił. Změny na toś tom boku buźo wuglědanje wužywarskego pówjercha za drugich wužywarjow wobwliwowaś. Wužywaj pšosym za pśełožki [//translatewiki.net/wiki/Main_Page?setlang=dsb translatewiki.net], projekt MediaWiki za lokalizacije.",
+'protectedinterface'   => 'Toś ten bok wopśimujo tekst za rěcny zwjerch softwary na toś tom wikiju a šćita se, aby se znjewužywanjeju zadorało.
+Aby pśełožki za wšykne wikije pśidał abo změnił, wužyj pšosym [//translatewiki.net/ translatewiki.net], lokalizěrowański projekt MediaWiki.',
+'editinginterface'     => "'''Warnowanje:''' Wobźěłujoš bok, kótaryž se wužywa, aby se tekst za pówjerch software MediaWiki k dispoziciji stajił. Změny na toś tom boku buźo wuglědanje wužywarskego pówjercha za drugich wužywarjow na toś tom wikiju wobwliwowaś.
+Aby pśełožki za wšykne wikije pśidał abo změnił, wužywaj pšosym [//translatewiki.net/ translatewiki.net], projekt MediaWiki za lokalizacije.",
 'sqlhidden'            => '(Wótpšašanje SQL schowane)',
 'cascadeprotected'     => 'Za toś ten bok jo se wobźěłowanje znjemóžniło, dokulaž jo zawězany do {{PLURAL:$1|slědujucego boka|slědujuceju bokowu|slědujucych bokow}}, {{PLURAL:$1|kótaryž jo|kótarejž stej|kótarež su}} pśez kaskadowu opciju {{PLURAL:$1|šćitany|šćitanej|šćitane}}: $2',
 'namespaceprotected'   => "Njejsy wopšawnjony, boki w rumje: '''$1''' wobźěłaś.",
@@ -793,7 +795,6 @@ Nejnowšy zapisk blokěrowańskego protokola pódawa se dołojce ako referenca:'
 * '''Firefox/Safari:''' Źarź ''Umsch'' tłocony, mjaztym až kliknjoš na ''Znowego'' abo tłoc pak ''Strg-F5'' pak ''Strg-R'' (''⌘-R'' na Makintošu)
 * '''Google Chrome:''' Tłoc na ''Strg-Umsch-R'' ('⌘-Umsch-R'' na Makintošu)
 * '''Internet Explorer:''' Źarź ''Strg'' tłocony, mjaztym až kliknjoš na ''Aktualisieren'' abo tłoc ''Strg-F5''
-* '''Konqueror:''' Klikni na ''Aktualisieren'' abo tłoc ''F5''
 * '''Opera:''' Wuprozni cache w ''Extras → Einstellungen''",
 'usercssyoucanpreview'             => "'''Pokazka:''' Wužywaj tłocašk '{{int:showpreview}}', aby swój nowy css testował, nježli až jen składujoš.",
 'userjsyoucanpreview'              => "'''Pokazka:''' Wužywaj tłocašk \"{{int:showpreview}}\", aby swój nowy JavaScript testował, nježli až jen składujoš.",
@@ -1025,7 +1026,9 @@ Pšosym pśeglědaj protokole.',
 'revdelete-only-restricted'   => 'Zmólka pśi chowanju zapiska wót $2, $1; njamóžoš zapiski pśed wócami administratorow  pódtłocyś, mimo až teke wuběraš jadnu z drugich wiźobnosćowych opcijow.',
 'revdelete-reason-dropdown'   => '*Zwucone pśicyny za wulašowanje
 ** Pśestupjenje awtorskego pšawa
-** Njegóźece se wósobinske informacije',
+** Njegóźece se komentary abo wósobinske informacije
+** Njegóźece se wužywarske mě
+** Potencielnje kśiwźece informacije',
 'revdelete-otherreason'       => 'Druga/pśidatna pśicyna:',
 'revdelete-reasonotherlist'   => 'Druga pśicyna',
 'revdelete-edit-reasonlist'   => 'Pśicyny za lašowanje wobźěłaś',
@@ -1150,7 +1153,7 @@ Zaruc, až historija wersijow nastawka jo njepśetergnjona.',
 
 # Preferences page
 'preferences'                   => 'Nastajenja',
-'mypreferences'                 => 'nastajenja',
+'mypreferences'                 => 'Nastajenja',
 'prefs-edits'                   => 'Licba wobźěłanjow:',
 'prefsnologin'                  => 'Njejsy pśizjawjony',
 'prefsnologintext'              => 'Musyš se <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} pśizjawiś]</span>, aby mógał swóje nastajenja změniś.',
@@ -1212,7 +1215,7 @@ How jo pśipadnje napórana gódnota, kótaruž móžoš wužywaś: $1',
 'timezoneregion-indian'         => 'Indiski ocean',
 'timezoneregion-pacific'        => 'Pacifiski ocean',
 'allowemail'                    => 'Dostawanje e-mailow drugich wužywarjow zmóžniś.',
-'prefs-searchoptions'           => 'Pytańske opcije',
+'prefs-searchoptions'           => 'Pytaś',
 'prefs-namespaces'              => 'Mjenjowe rumy',
 'defaultns'                     => 'Howac w toś tych mjenjowych rumach pytaś:',
 'default'                       => 'Standard',
@@ -1972,7 +1975,7 @@ Glědaj teke [[Special:WantedCategories|póžedane kategorije]].',
 'linksearch-ok'    => 'Pytaś',
 'linksearch-text'  => 'Jo móžno zastupne znamuška kaž "*.wikipedia.org" wužywaś. 
 Jo nanejmjenjej głowna domena trěbna, na pśikład "*.org"<br />
-Pódpěrane protokole: <code>$1</code> (pšosym njepódaj je w swójom pytanju).',
+Pódpěrane protokole: <code>$1</code> (standard jo http://, jolic žeden protokol njejo pódany).',
 'linksearch-line'  => '$1 wótkazany z $2',
 'linksearch-error' => 'Zasupne znamješko daju se jano na zachopjeńku URL wužywaś.',
 
@@ -2018,7 +2021,7 @@ Pódpěrane protokole: <code>$1</code> (pšosym njepódaj je w swójom pytanju).
 'mailnologintext'      => 'Dejš [[Special:UserLogin|pśizjawjony]] byś a płaśiwu e-mailowu adresu w swójich [[Special:Preferences|nastajenjach]] měś, aby drugim wužywarjam e-mail pósłał.',
 'emailuser'            => 'Toś tomu wužywarjeju e-mail pósłaś',
 'emailpage'            => 'E-mail wužywarjeju',
-'emailpagetext'        => 'Móžoš slědujucy formular wužywaś, aby toś tomu wužywarjeju e-mail pósłał.
+'emailpagetext'        => 'Móžoš slědujucy formular wužywaś, aby toś tomu {{GENDER:$1|wužywarjeju}} e-mail pósłał.
 E-mailowa adresa, kótaruž sy zapódał w [[Special:Preferences|swójich wužywarskich nastajenjach]], zjawi se ako adresa w pólu "Wót" e-maile, aby dostawaŕ móžo śi direktnje wótegroniś.',
 'usermailererror'      => 'E-mailowy objekt jo zmólku wrośił.',
 'defemailsubject'      => '{{SITENAME}} - e-mail wót wužywarja "$1"',
@@ -2050,7 +2053,7 @@ E-mailowa adresa, kótaruž sy zapódał w [[Special:Preferences|swójich wužyw
 
 # Watchlist
 'watchlist'            => 'Wobglědowańka',
-'mywatchlist'          => 'wobglědowańka',
+'mywatchlist'          => 'Wobglědowańka',
 'watchlistfor2'        => 'Za wužywarja $1 $2',
 'nowatchlist'          => 'Žedne zapise w twójej wobglědowańce.',
 'watchlistanontext'    => 'Dejš $1, aby mógał swóju wobglědowańku wiźeś abo zapise w njej wobźěłaś.',
@@ -2296,7 +2299,7 @@ $1',
 # Contributions
 'contributions'       => 'Wužywarske pśinoski',
 'contributions-title' => 'Wužywarske pśinoski wót $1',
-'mycontris'           => 'móje pśinoski',
+'mycontris'           => 'Pśinoski',
 'contribsub2'         => 'Za $1 ($2)',
 'nocontribs'          => 'Za toś te kriterije njejsu žedne změny se namakali.',
 'uctop'               => '(aktualny)',
@@ -2785,14 +2788,14 @@ W zespominanju dajo se pśicyna pódaś.',
 
 # Info page
 'pageinfo-title'            => 'Informacije za bok "$1"',
-'pageinfo-header-edits'     => 'Změny',
+'pageinfo-header-edits'     => 'Historiju wobźěłaś',
 'pageinfo-header-watchlist' => 'Wobglědowańka',
 'pageinfo-header-views'     => 'Zwobraznjenja',
 'pageinfo-subjectpage'      => 'Bok',
 'pageinfo-talkpage'         => 'Diskusijny bok',
-'pageinfo-watchers'         => 'Licba  wobglědowarjow',
+'pageinfo-watchers'         => 'Licba  wobglědowarjow boka',
 'pageinfo-edits'            => 'Licba wobźěłanjow:',
-'pageinfo-authors'          => 'Licba wšakich awtorow',
+'pageinfo-authors'          => 'Cełkowna licba wšakich awtorow',
 'pageinfo-views'            => 'Licba zwobraznjenjow',
 'pageinfo-viewsperedit'     => 'Zwobraznjenja na změnu',
 
@@ -3616,8 +3619,8 @@ Wobraze se w połnym wótgranicowanju pokazuju, druge datajowe typy se ze zwěza
 'logentry-move-move_redir-noredirect' => '$1 jo pśesunuł bok $3 do $4 a jo pśepisał dalejpósrědnjenje, mimo až jo napórał dalejpósrědnjenje',
 'logentry-patrol-patrol'              => '$1 jo markěrował wersiju $4 boka $3 ako doglědowanu',
 'logentry-patrol-patrol-auto'         => '$1 jo awtomatiski markěrował wersiju $4 boka $3 ako doglědowanu',
-'logentry-newusers-newusers'          => '$1 jo załožył wužywarske konto',
-'logentry-newusers-create'            => '$1 jo załožył wužywarske konto',
+'logentry-newusers-newusers'          => 'Wužywarske konto $1 jo se załožyło',
+'logentry-newusers-create'            => 'Wužywarske konto $1 jo se załožyło',
 'logentry-newusers-create2'           => '$1 jo załožył wužywarske konto $3',
 'logentry-newusers-autocreate'        => 'Konto $1 jo se awtomatiski załožyło',
 'newuserlog-byemail'                  => 'Pótajne słowo bu pśez e-mail pósłane.',

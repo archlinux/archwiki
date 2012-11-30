@@ -12,6 +12,7 @@
  * @author Malafaya
  * @author McDutchie
  * @author Reedy
+ * @author Yfdyh000
  * @author לערי ריינהארט
  */
 
@@ -193,7 +194,7 @@ $messages = array(
 
 'underline-always'  => 'Sempre',
 'underline-never'   => 'Nunquam',
-'underline-default' => 'Secundo le configuration del navigator',
+'underline-default' => 'Como definite per tu navigator o apparentia',
 
 # Font style option in Special:Preferences
 'editfont-style'     => 'Stilo de litteras del area de modification:',
@@ -278,8 +279,8 @@ $messages = array(
 'newwindow'     => '(se aperi in un nove fenestra)',
 'cancel'        => 'Cancellar',
 'moredotdotdot' => 'Plus...',
-'mypage'        => 'Mi pagina',
-'mytalk'        => 'Mi discussion',
+'mypage'        => 'Pagina',
+'mytalk'        => 'Discussion',
 'anontalk'      => 'Discussion pro iste adresse IP',
 'navigation'    => 'Navigation',
 'and'           => '&#32;e',
@@ -302,7 +303,7 @@ $messages = array(
 'vector-action-protect'          => 'Proteger',
 'vector-action-undelete'         => 'Restaurar',
 'vector-action-unprotect'        => 'Cambiar protection',
-'vector-simplesearch-preference' => 'Activar le suggestiones de recerca meliorate (solmente in apparentia Vector)',
+'vector-simplesearch-preference' => 'Activar le barra de recerca simplificate (solmente in apparentia Vector)',
 'vector-view-create'             => 'Crear',
 'vector-view-edit'               => 'Modificar',
 'vector-view-history'            => 'Vider historia',
@@ -519,10 +520,10 @@ Per favor reprova post alcun minutas.',
 'protectedpagetext'    => 'Iste pagina ha essite protegite contra modificationes.',
 'viewsourcetext'       => 'Tu pote vider e copiar le codice-fonte de iste pagina:',
 'viewyourtext'         => "Tu pote vider e copiar le fonte de '''tu modificationes''' de iste pagina:",
-'protectedinterface'   => 'Iste pagina contine texto pro le interfacie del software, e es protegite pro impedir le abuso.',
+'protectedinterface'   => 'Iste pagina contine texto pro le interfacie del software de iste wiki, e es protegite pro impedir le abuso. Pro adder o modificar traductiones pro tote le wikis, per favor usa [//translatewiki.net/ translatewiki.net], le projecto de traduction de MediaWiki.',
 'editinginterface'     => "'''Attention:''' Le texto de iste pagina face parte del interfacie pro le software.
-Omne modification a iste pagina cambiara le apparentia del interfacie pro altere usatores.
-Pro traductiones, per favor considera usar [//translatewiki.net/wiki/Main_Page?setlang=ia translatewiki.net], le projecto pro localisar MediaWiki.",
+Omne modification a iste pagina cambiara le apparentia del interfacie pro altere usatores de iste wiki.
+Pro adder o modificar traductiones pro tote le wikis, per favor usa [//translatewiki.net/ translatewiki.net], le projecto de traduction de MediaWiki.",
 'sqlhidden'            => '(Consulta SQL non monstrate)',
 'cascadeprotected'     => 'Iste pagina ha essite protegite contra modificationes, proque illo es includite in le sequente {{PLURAL:$1|pagina, le qual|paginas, le quales}} es protegite usante le option "cascada":
 $2',
@@ -823,7 +824,6 @@ Le ultime entrata del registro de blocadas es reproducite ci infra pro informati
 * '''Firefox / Safari:''' Tenente ''Shift'' clicca ''Reload (Recargar)'', o preme ''Ctrl-F5'' o ''Ctrl-R'' (''⌘-R'' sur Mac)
 * '''Google Chrome:''' Preme ''Ctrl-Shift-R'' (''⌘-Shift-R'' sur Mac)
 * '''Internet Explorer:''' Tenente ''Ctrl'' clicca ''Refresh (Refrescar)'', o preme ''Ctrl-F5'' 
-* '''Konqueror:''' Clicca ''Reload (Recargar)'' o preme ''F5''
 * '''Opera:''' Vacua le ''cache'' in ''Tools → Preferences (Utensiles → Preferentias)''",
 'usercssyoucanpreview'             => "'''Consilio:''' Usa le button \"{{int:showpreview}}\" pro testar tu nove CSS ante de salveguardar lo.",
 'userjsyoucanpreview'              => "'''Consilio:''' Usa le button \"{{int:showpreview}}\" pro testar tu nove JavaScript ante de salveguardar lo.",
@@ -1074,7 +1074,9 @@ Per favor verifica le registros.',
 'revdelete-only-restricted'   => 'Error de celar le entrata del $1 a $2: tu non pote render entratas invisibile a administratores sin seliger tamben un del altere optiones de visibilitate.',
 'revdelete-reason-dropdown'   => '*Motivos commun pro deletion
 ** Violation de copyright
-** Information personal inappropriate',
+** Information personal o commento inappropriate
+** Nomine de usator inappropriate
+** Information que pote esser diffamatori',
 'revdelete-otherreason'       => 'Altere/additional motivo:',
 'revdelete-reasonotherlist'   => 'Altere motivo',
 'revdelete-edit-reasonlist'   => 'Modificar motivos pro deletion',
@@ -1205,7 +1207,7 @@ Nota que lor indices del contento de {{SITENAME}} pote esser obsolete.',
 
 # Preferences page
 'preferences'                   => 'Preferentias',
-'mypreferences'                 => 'Mi preferentias',
+'mypreferences'                 => 'Preferentias',
 'prefs-edits'                   => 'Numero de modificationes:',
 'prefsnologin'                  => 'Tu non ha aperite un session',
 'prefsnologintext'              => 'Tu debe <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} aperir session]</span> pro configurar preferentias de usator.',
@@ -1267,7 +1269,7 @@ Ecce un valor aleatorimente generate que tu pote usar: $1',
 'timezoneregion-indian'         => 'Oceano Indian',
 'timezoneregion-pacific'        => 'Oceano Pacific',
 'allowemail'                    => 'Activar reception de e-mail de altere usatores',
-'prefs-searchoptions'           => 'Optiones de recerca',
+'prefs-searchoptions'           => 'Recerca',
 'prefs-namespaces'              => 'Spatios de nomines',
 'defaultns'                     => 'Alteremente cercar in iste spatios de nomines:',
 'default'                       => 'predefinite',
@@ -1901,7 +1903,8 @@ Memora verificar que non existe altere ligamines al patronos ante que tu los del
 'statistics-mostpopular'       => 'Le paginas plus visitate',
 
 'disambiguations'      => 'Paginas con ligamines a paginas de disambiguation',
-'disambiguationspage'  => 'Template:Disambiguation',
+'disambiguationspage'  => 'Template:Disambig
+Template:Disambiguation',
 'disambiguations-text' => "Le sequente paginas contine al minus un ligamine a un '''pagina de disambiguation'''.
 Istes debe forsan ligar directemente al articulo sur le thema in question.<br />
 Un pagina se tracta como pagina de disambiguation si illo usa un patrono que es ligate ab [[MediaWiki:Disambiguationspage]].",
@@ -2050,8 +2053,8 @@ Vide etiam le [[Special:WantedCategories|categorias desirate]].',
 'linksearch-ns'    => 'Spatio de nomines:',
 'linksearch-ok'    => 'Cercar',
 'linksearch-text'  => 'Es possibile usar metacharacteres como in "*.wikipedia.org".
-Necessita al minus un dominio de nivello superior, per exemplo "*.org".<br />
-Protocollos supportate: <code>$1</code> (non include alcun de istes in tu recerca).',
+Isto necessita specificar al minus le dominio de nivello superior, per exemplo "*.org".<br />
+Protocollos supportate: <code>$1</code> (http:// es assumite si nulle protocollo es specificate).',
 'linksearch-line'  => '$1 ligate ab $2',
 'linksearch-error' => 'Le metacharacteres pote apparer solmente al initio del nomine de host.',
 
@@ -2100,9 +2103,9 @@ e haber un adresse de e-mail valide in tu [[Special:Preferences|preferentias]]
 pro inviar e-mail a altere usatores.',
 'emailuser'            => 'Inviar e-mail a iste usator',
 'emailpage'            => 'Inviar e-mail al usator',
-'emailpagetext'        => 'Le formulario infra es pro inviar un message de e-mail a iste usator.
-Le adresse de e-mail que tu indicava in [[Special:Preferences|tu preferentias de usator]] apparera
-como le adresse del expeditor del e-mail, de modo que le destinatario pote responder directemente a te.',
+'emailpagetext'        => 'Le formulario sequente es pro inviar un message de e-mail a iste {{GENDER:$1|usator}}.
+Le adresse de e-mail que tu specificava in [[Special:Preferences|tu preferentias de usator]] apparera
+como le adresse del expeditor, de sorta que le destinatario potera responder te directemente.',
 'usermailererror'      => 'Le objecto de e-mail retornava le error:',
 'defemailsubject'      => 'E-mail del usator "$1" de {{SITENAME}}',
 'usermaildisabled'     => 'E-mail a usatores disactivate',
@@ -2133,7 +2136,7 @@ como le adresse del expeditor del e-mail, de modo que le destinatario pote respo
 
 # Watchlist
 'watchlist'            => 'Mi observatorio',
-'mywatchlist'          => 'Mi observatorio',
+'mywatchlist'          => 'Observatorio',
 'watchlistfor2'        => 'De $1 $2',
 'nowatchlist'          => 'Tu non ha paginas sub observation.',
 'watchlistanontext'    => 'Tu debe $1 pro poter vider o modificar entratas in tu observatorio.',
@@ -2402,7 +2405,7 @@ $1',
 # Contributions
 'contributions'       => 'Contributiones del usator',
 'contributions-title' => 'Contributiones del usator $1',
-'mycontris'           => 'Mi contributiones',
+'mycontris'           => 'Contributiones',
 'contribsub2'         => 'Pro $1 ($2)',
 'nocontribs'          => 'Necun modification ha essite trovate secundo iste criterios.',
 'uctop'               => '(ultime)',
@@ -2442,7 +2445,7 @@ Le ultime entrata del registro de blocadas es reproducite hic infra pro informat
 'whatlinkshere-hideredirs' => '$1 redirectiones',
 'whatlinkshere-hidetrans'  => '$1 transclusiones',
 'whatlinkshere-hidelinks'  => '$1 ligamines',
-'whatlinkshere-hideimages' => '$1 ligamines verso imagines',
+'whatlinkshere-hideimages' => '$1 le ligamines a files',
 'whatlinkshere-filters'    => 'Filtros',
 
 # Block/unblock
@@ -2935,14 +2938,14 @@ Le causa es probabilemente un ligamine verso un sito externe que es presente in 
 
 # Info page
 'pageinfo-title'            => 'Informationes pro "$1"',
-'pageinfo-header-edits'     => 'Modificationes',
+'pageinfo-header-edits'     => 'Historia de modificationes',
 'pageinfo-header-watchlist' => 'Observatorio',
 'pageinfo-header-views'     => 'Visitas',
 'pageinfo-subjectpage'      => 'Pagina',
 'pageinfo-talkpage'         => 'Discussion',
-'pageinfo-watchers'         => 'Numero de observatores',
+'pageinfo-watchers'         => 'Numero de observatores del pagina',
 'pageinfo-edits'            => 'Numero de modificationes',
-'pageinfo-authors'          => 'Numero de autores distincte',
+'pageinfo-authors'          => 'Numero total de autores distincte',
 'pageinfo-views'            => 'Numero de visitas',
 'pageinfo-viewsperedit'     => 'Visitas per modification',
 
@@ -3337,7 +3340,7 @@ Le alteres essera initialmente celate.
 'exif-whitebalance-1' => 'Balancia de blanc manual',
 
 'exif-scenecapturetype-0' => 'Standard',
-'exif-scenecapturetype-1' => 'Panorama',
+'exif-scenecapturetype-1' => 'Paisage',
 'exif-scenecapturetype-2' => 'Portrait',
 'exif-scenecapturetype-3' => 'Scena nocturne',
 
@@ -3773,9 +3776,9 @@ Le imagines se monstra in plen resolution, le altere typos de file se executa di
 'logentry-move-move_redir-noredirect' => '$1 renominava le pagina $3 a $4, superscribente un redirection sin lassar un nove redirection',
 'logentry-patrol-patrol'              => '$1 marcava le version $4 del pagina $3 como patruliate',
 'logentry-patrol-patrol-auto'         => '$1 automaticamente marcava le version $4 del pagina $3 como patruliate',
-'logentry-newusers-newusers'          => '$1 creava un conto de usator',
-'logentry-newusers-create'            => '$1 creava un conto de usator',
-'logentry-newusers-create2'           => '$1 creava un conto de usator $3',
+'logentry-newusers-newusers'          => 'Le conto de usator $1 ha essite create',
+'logentry-newusers-create'            => 'Le conto de usator $1 ha essite create',
+'logentry-newusers-create2'           => 'Le conto de usator $3 ha essite create per $1',
 'logentry-newusers-autocreate'        => 'Le conto $1 ha essite create automaticamente',
 'newuserlog-byemail'                  => 'contrasigno inviate per e-mail',
 

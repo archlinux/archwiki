@@ -19,6 +19,7 @@
  * @author Brownout
  * @author Candalua
  * @author Civvì
+ * @author Codicorumus
  * @author Cruccone
  * @author Cryptex
  * @author Dakrismeno
@@ -311,7 +312,7 @@ $messages = array(
 
 'underline-always'  => 'Sempre',
 'underline-never'   => 'Mai',
-'underline-default' => 'Mantieni le impostazioni del browser',
+'underline-default' => 'Mantieni le impostazioni del browser o della skin',
 
 # Font style option in Special:Preferences
 'editfont-style'     => 'Stile del carattere nella casella di modifica:',
@@ -396,8 +397,8 @@ $messages = array(
 'newwindow'     => '(si apre in una nuova finestra)',
 'cancel'        => 'Annulla',
 'moredotdotdot' => 'Altro...',
-'mypage'        => 'La mia pagina',
-'mytalk'        => 'mie discussioni',
+'mypage'        => 'Pagina',
+'mytalk'        => 'discussioni',
 'anontalk'      => 'Discussioni per questo IP',
 'navigation'    => 'Navigazione',
 'and'           => '&#32;e',
@@ -407,7 +408,7 @@ $messages = array(
 'qbbrowse'       => 'Sfoglia',
 'qbedit'         => 'Modifica',
 'qbpageoptions'  => 'Opzioni pagina',
-'qbpageinfo'     => 'Informazioni sulla pagina',
+'qbpageinfo'     => 'Informazioni pagina',
 'qbmyoptions'    => 'Le mie pagine',
 'qbspecialpages' => 'Pagine speciali',
 'faq'            => 'Domande frequenti',
@@ -420,7 +421,7 @@ $messages = array(
 'vector-action-protect'          => 'Proteggi',
 'vector-action-undelete'         => 'Recupera',
 'vector-action-unprotect'        => 'Cambia la protezione',
-'vector-simplesearch-preference' => 'Abilita i suggerimenti di ricerca avanzata (solo per la skin Vector)',
+'vector-simplesearch-preference' => 'Abilita la barra per la ricerca semplificata (solo per la skin Vector)',
 'vector-view-create'             => 'Crea',
 'vector-view-edit'               => 'Modifica',
 'vector-view-history'            => 'Visualizza cronologia',
@@ -634,9 +635,10 @@ Query: $2',
 'protectedpagetext'    => 'Questa pagina è stata protetta per impedirne la modifica.',
 'viewsourcetext'       => 'È possibile visualizzare e copiare il codice sorgente di questa pagina:',
 'viewyourtext'         => "È possibile visualizzare e copiare il codice sorgente delle '''tue modifiche''' a questa pagina:",
-'protectedinterface'   => "Questa pagina contiene un elemento che fa parte dell'interfaccia utente del software; è quindi protetta per evitare possibili abusi.",
-'editinginterface'     => "'''Attenzione:''' Il testo di questa pagina fa parte dell'interfaccia utente del sito. Tutte le modifiche apportate a questa pagina si riflettono sui messaggi visualizzati per tutti gli utenti.
-Per le traduzioni, considera la possibilità di usare [//translatewiki.net/wiki/Main_Page?setlang=it translatewiki.net], il progetto MediaWiki per la localizzazione.",
+'protectedinterface'   => "Questa pagina contiene un elemento che fa parte dell'interfaccia utente del software di questo sito ed è protetta per evitare possibili abusi.
+Per aggiungere o modificare traduzioni per tutti i wiki usare [//translatewiki.net/ translatewiki.net], il progetto di localizzazione di MediaWiki,",
+'editinginterface'     => "'''Attenzione:''' Il testo di questa pagina fa parte dell'interfaccia utente del sito. Tutte le modifiche apportate a questa pagina si riflettono sui messaggi visualizzati per tutti gli utenti su questo wiki.
+Per aggiungere o modificare le traduzioni valide su tutti i wiki, considera la possibilità di usare [//translatewiki.net/wiki/Main_Page?setlang=it translatewiki.net], il progetto MediaWiki per la localizzazione.",
 'sqlhidden'            => '(la query SQL è stata nascosta)',
 'cascadeprotected'     => 'Su questa pagina non è possibile effettuare modifiche perché è stata inclusa {{PLURAL:$1|nella pagina indicata di seguito, che è stata protetta|nelle pagine indicate di seguito, che sono state protette}} selezionando la protezione "ricorsiva":
 $2',
@@ -673,7 +675,7 @@ L'account è stato creato correttamente. Non dimenticare di personalizzare le [[
 'userlogin'                  => 'Entra / registrati',
 'userloginnocreate'          => 'Entra',
 'logout'                     => 'Esci',
-'userlogout'                 => 'Esci',
+'userlogout'                 => 'esci',
 'notloggedin'                => 'Accesso non effettuato',
 'nologin'                    => "Non hai ancora un accesso? '''$1'''.",
 'nologinlink'                => 'Registrati',
@@ -841,7 +843,7 @@ Password temporanea: $2',
 'showlivepreview'                  => "Funzione ''Live preview''",
 'showdiff'                         => 'Mostra cambiamenti',
 'anoneditwarning'                  => "'''Attenzione:''' Accesso non effettuato. Nella cronologia della pagina verrà registrato l'indirizzo IP.",
-'anonpreviewwarning'               => "''Non hai eseguito il login. Salvando il tuo indirizzo IP sarà registrato nella cronologia di questa voce.''",
+'anonpreviewwarning'               => "''Non è stato eseguito il login. Salvando la pagina, il proprio indirizzo IP sarà registrato nella cronologia.''",
 'missingsummary'                   => "'''Attenzione:''' non è stato specificato l'oggetto di questa modifica. Premendo di nuovo \"{{int:savearticle}}\" la modifica verrà salvata con l'oggetto vuoto.",
 'missingcommenttext'               => 'Inserire un commento qui sotto.',
 'missingcommentheader'             => "'''Attenzione:''' non è stata specificato l'oggetto/l'intestazione di questo commento. Premendo di nuovo \"{{int:savearticle}}\" la modifica verrà salvata senza intestazione.",
@@ -1059,7 +1061,7 @@ Legenda: '''({{int:cur}})''' = differenze con la versione attuale, '''({{int:las
 'rev-deleted-text-permission' => "Questa versione della pagina è stata '''cancellata'''.
 Consultare il [{{fullurl:{{#Special:Log}}/delete|page={{PAGENAMEE}}}} log delle cancellazioni] per ulteriori dettagli.",
 'rev-deleted-text-unhide'     => "Questa versione della pagina è stata '''cancellata'''.
-Consultare il [{{fullurl:{{#Special:Log}}/delete|page={{PAGENAMEE}}}} log delle cancellazioni] per ulteriori dettagli.
+Consultare il [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} log delle cancellazioni] per ulteriori dettagli.
 Agli amministratori è ancora consentito [$1 visualizzare questa versione] se necessario.",
 'rev-suppressed-text-unhide'  => "Questa versione della pagina è stata '''rimossa'''.
 Consultare il [{{fullurl:{{#Special:Log}}/suppress|page={{PAGENAMEE}}}} log di rimozione] per ulteriori dettagli.
@@ -1133,9 +1135,10 @@ $1",
 'revdelete-no-change'         => "'''Attenzione:''' l'oggetto con data $1 $2 aveva già le impostazioni di visibilità richieste.",
 'revdelete-concurrent-change' => "Impossibile modificare l'oggetto con data $1 $2 in quanto il suo stato è stato modificato da un altro utente mentre se ne tentava la modifica.",
 'revdelete-only-restricted'   => "Errore nel nascondere l'oggetto datato $1, $2: non è possibile nascondere gli oggetti alla vista degli amministratori senza selezionare almeno un'altra delle opzioni di rimozione.",
-'revdelete-reason-dropdown'   => '*Motivazioni più comuni per la cancellazione
+'revdelete-reason-dropdown'   => '* Motivazioni più comuni per la cancellazione
 ** Violazione di copyright
-** Informazioni personali inappropriate
+** Commenti o informazioni personali inappropriate
+** Nome utente inappropriato
 ** Informazione potenzialmente diffamatoria',
 'revdelete-otherreason'       => 'Altra motivazione o motivazione aggiuntiva:',
 'revdelete-reasonotherlist'   => 'Altra motivazione',
@@ -1322,7 +1325,7 @@ Vedi l'[[Special:BlockList|elenco dei blocchi]] per l'elenco dei bandi e dei blo
 'timezoneregion-indian'         => 'Oceano Indiano',
 'timezoneregion-pacific'        => 'Oceano Pacifico',
 'allowemail'                    => 'Abilita la ricezione di messaggi e-mail da altri utenti',
-'prefs-searchoptions'           => 'Opzioni di ricerca',
+'prefs-searchoptions'           => 'Ricerca',
 'prefs-namespaces'              => 'Namespace',
 'defaultns'                     => 'In caso contrario, cerca in questi namespace:',
 'default'                       => 'predefinito',
@@ -1971,7 +1974,7 @@ I redirect <del>cancellati</del> sono stati corretti.',
 'lonelypages'             => 'Pagine orfane',
 'lonelypagestext'         => 'Le pagine indicate di seguito sono prive di collegamenti provenienti da altre pagine di {{SITENAME}} e non sono incluse in nessuna pagina del sito.',
 'uncategorizedpages'      => 'Pagine prive di categorie',
-'uncategorizedcategories' => 'Categorie non categorizzate',
+'uncategorizedcategories' => 'Categorie prive di categorie',
 'uncategorizedimages'     => 'File privi di categorie',
 'uncategorizedtemplates'  => 'Template privi di categorie',
 'unusedcategories'        => 'Categorie vuote',
@@ -1990,7 +1993,7 @@ I redirect <del>cancellati</del> sono stati corretti.',
 'mostcategories'          => 'Pagine con più categorie',
 'mostimages'              => 'File più richiamati',
 'mostrevisions'           => 'Pagine con più versioni',
-'prefixindex'             => 'Indice delle voci per lettere iniziali',
+'prefixindex'             => 'Indice delle pagine per lettere iniziali',
 'prefixindex-namespace'   => 'Tutte le pagine con il prefisso del namespace $1',
 'shortpages'              => 'Pagine più corte',
 'longpages'               => 'Pagine più lunghe',
@@ -2082,7 +2085,7 @@ Vedi anche le [[Special:WantedCategories|categorie richieste]].',
 'linksearch-ok'    => 'Cerca',
 'linksearch-text'  => 'È possibile fare uso di metacaratteri, ad esempio "*.wikipedia.org".<br />
 È necessario almeno un dominio di primo livello, ad esempio "*.org".<br />
-Protocolli supportati: <code>$1</code> (non aggiungere nessuno di questi nella tua ricerca).',
+Protocolli supportati: <code>$1</code> (predefinito http:// se nessun protocollo è specificato).',
 'linksearch-line'  => '$1 presente nella pagina $2',
 'linksearch-error' => "I metacaratteri possono essere usati solo all'inizio dell'indirizzo.",
 
@@ -2093,7 +2096,7 @@ Protocolli supportati: <code>$1</code> (non aggiungere nessuno di questi nella t
 'listusers-blocked'  => '(bloccato)',
 
 # Special:ActiveUsers
-'activeusers'            => 'Lista degli utenti attivi',
+'activeusers'            => 'Elenco degli utenti attivi',
 'activeusers-intro'      => 'Questo è un elenco di utenti che hanno avuto qualche tipo di attività da $1 {{PLURAL:$1|giorno|giorni}} a questa parte.',
 'activeusers-count'      => "$1 {{PLURAL:$1|modifica|modifiche}} {{PLURAL:$3|nell'ultimo giorno|negli ultimi $3 giorni}}",
 'activeusers-from'       => 'Mostra gli utenti a partire da:',
@@ -2129,7 +2132,7 @@ Potrebbero esserci [[{{MediaWiki:Listgrouprights-helppage}}|ulteriori informazio
 'mailnologintext'      => 'Per inviare messaggi e-mail ad altri utenti è necessario [[Special:UserLogin|accedere al sito]] e aver registrato un indirizzo valido nelle proprie [[Special:Preferences|preferenze]].',
 'emailuser'            => "Scrivi all'utente",
 'emailpage'            => "Invia un messaggio e-mail all'utente",
-'emailpagetext'        => 'Usare il modulo sottostante per inviare un messaggio e-mail all\'utente indicato. L\'indirizzo specificato nelle [[Special:Preferences|preferenze]] del mittente apparirà nel campo "Da:" del messaggio per consentire al destinatario di rispondere direttamente.',
+'emailpagetext'        => 'Usare il modulo sottostante per inviare un messaggio e-mail all\'{{GENDER:$1|utente}} indicato. L\'indirizzo specificato nelle [[Special:Preferences|preferenze]] del mittente apparirà nel campo "Da:" del messaggio per consentire al destinatario di rispondere direttamente.',
 'usermailererror'      => "L'oggetto mail ha restituito l'errore:",
 'defemailsubject'      => 'Messaggio da {{SITENAME}} dall\'utente "$1"',
 'usermaildisabled'     => 'e-mail utente disabilitata',
@@ -2408,7 +2411,7 @@ $1',
 # Contributions
 'contributions'       => 'Contributi utente',
 'contributions-title' => 'Contributi di $1',
-'mycontris'           => 'miei contributi',
+'mycontris'           => 'contributi',
 'contribsub2'         => 'Per $1 ($2)',
 'nocontribs'          => 'Non sono state trovate modifiche che soddisfino i criteri di ricerca.',
 'uctop'               => '(ultima per la pagina)',
@@ -2447,7 +2450,7 @@ $1',
 'whatlinkshere-hideredirs' => '$1 redirect',
 'whatlinkshere-hidetrans'  => '$1 inclusioni',
 'whatlinkshere-hidelinks'  => '$1 link',
-'whatlinkshere-hideimages' => '$1 link da immagini',
+'whatlinkshere-hideimages' => '$1 link da file',
 'whatlinkshere-filters'    => 'Filtri',
 
 # Block/unblock
@@ -2921,14 +2924,14 @@ Tutte le operazioni di importazione trans-wiki sono registrate nel [[Special:Log
 
 # Info page
 'pageinfo-title'            => 'Informazioni per "$1"',
-'pageinfo-header-edits'     => 'Edit',
+'pageinfo-header-edits'     => 'Cronologia delle modifiche',
 'pageinfo-header-watchlist' => 'Osservati speciali',
 'pageinfo-header-views'     => 'Visualizzazioni',
 'pageinfo-subjectpage'      => 'Pagina',
 'pageinfo-talkpage'         => 'Pagina di discussione',
-'pageinfo-watchers'         => 'Numero di utenti che hanno la pagina nei loro Osservati Speciali',
+'pageinfo-watchers'         => 'Numero di utenti che hanno la pagina nei loro osservati speciali',
 'pageinfo-edits'            => 'Numero di edit',
-'pageinfo-authors'          => 'Numero di autori diversi',
+'pageinfo-authors'          => 'Numero totale di autori diversi',
 'pageinfo-views'            => 'Numero di visualizzazioni',
 'pageinfo-viewsperedit'     => 'Visualizzazioni per modifica',
 
@@ -3555,7 +3558,7 @@ Per favore, conferma che desideri veramente ricreare questa pagina.",
 'size-bytes' => '$1 byte',
 
 # Live preview
-'livepreview-loading' => 'Caricamento in corso…',
+'livepreview-loading' => 'Caricamento in corso...',
 'livepreview-ready'   => 'Caricamento in corso… Pronto.',
 'livepreview-failed'  => "Errore nella funzione Live preview.
 Usare l'anteprima standard.",
@@ -3759,9 +3762,9 @@ Le immagini vengono mostrate alla massima risoluzione disponibile, per gli altri
 'logentry-move-move_redir-noredirect' => '$1 ha spostato la pagina $3 a $4 al posto di un redirect senza lasciare redirect',
 'logentry-patrol-patrol'              => '$1 ha segnato la versione $4 della pagina $3 come verificata',
 'logentry-patrol-patrol-auto'         => '$1 ha segnato automaticamente la versione $4 della pagina $3 come verificata',
-'logentry-newusers-newusers'          => "$1 ha creato un'utenza",
-'logentry-newusers-create'            => "$1 ha creato un'utenza",
-'logentry-newusers-create2'           => "$1 ha creato un'utenza $3",
+'logentry-newusers-newusers'          => "L'account utente $1 è stato creato",
+'logentry-newusers-create'            => "L'account utente $1 è stato creato",
+'logentry-newusers-create2'           => "L'account utente $3 è stato creato da $1",
 'logentry-newusers-autocreate'        => "L'utenza $1 è stata creata automaticamente",
 'newuserlog-byemail'                  => 'password inviata via mail',
 

@@ -351,7 +351,7 @@ $messages = array(
 'tog-watchlisthidebots'       => 'Piilota bottien muokkaukset',
 'tog-watchlisthideminor'      => 'Piilota pienet muokkaukset',
 'tog-watchlisthideliu'        => 'Piilota kirjautuneiden käyttäjien muokkaukset tarkkailulistalta',
-'tog-watchlisthideanons'      => 'Piilota anonyymien käyttäjien muokkaukset tarkkailulistalta',
+'tog-watchlisthideanons'      => 'Piilota rekisteröitymättömien käyttäjien muokkaukset tarkkailulistalta',
 'tog-watchlisthidepatrolled'  => 'Piilota tarkastetut muokkaukset tarkkailulistalta',
 'tog-nolangconversion'        => 'Älä tee muunnoksia kielivarianttien välillä',
 'tog-ccmeonemails'            => 'Lähetä minulle kopio MediaWikin kautta lähetetyistä sähköposteista',
@@ -362,7 +362,7 @@ $messages = array(
 
 'underline-always'  => 'Aina',
 'underline-never'   => 'Ei koskaan',
-'underline-default' => 'Selaimen oletustapa',
+'underline-default' => 'Ulkoasun tai selaimen oletustapa',
 
 # Font style option in Special:Preferences
 'editfont-style'     => 'Muokkauskentän kirjasintyyppi',
@@ -459,7 +459,7 @@ $messages = array(
 'qbedit'         => 'Muokkaa',
 'qbpageoptions'  => 'Sivuasetukset',
 'qbpageinfo'     => 'Sivun tiedot',
-'qbmyoptions'    => 'Asetukset',
+'qbmyoptions'    => 'Omat sivut',
 'qbspecialpages' => 'Toimintosivut',
 'faq'            => 'Usein kysytyt kysymykset',
 'faqpage'        => 'Project:Usein kysytyt kysymykset',
@@ -471,7 +471,7 @@ $messages = array(
 'vector-action-protect'          => 'Suojaa',
 'vector-action-undelete'         => 'Palauta',
 'vector-action-unprotect'        => 'Muuta suojausta',
-'vector-simplesearch-preference' => 'Ota käyttöön parannetut hakuehdotukset (vain Vector-ulkoasu)',
+'vector-simplesearch-preference' => 'Ota käyttöön yksinkertaistettu hakupalkki (vain Vector-ulkoasu)',
 'vector-view-create'             => 'Luo',
 'vector-view-edit'               => 'Muokkaa',
 'vector-view-history'            => 'Näytä historia',
@@ -486,7 +486,7 @@ $messages = array(
 'tagline'           => '{{SITENAME}}',
 'help'              => 'Ohje',
 'search'            => 'Haku',
-'searchbutton'      => 'Etsi',
+'searchbutton'      => 'Hae',
 'go'                => 'Siirry',
 'searcharticle'     => 'Siirry',
 'history'           => 'Historia',
@@ -669,8 +669,8 @@ Joku muu on saattanut poistaa sen.',
 'cannotdelete-title'   => 'Sivua $1 ei voi poistaa',
 'badtitle'             => 'Virheellinen otsikko',
 'badtitletext'         => 'Pyytämäsi sivuotsikko oli virheellinen, tyhjä tai väärin linkitetty kieltenvälinen tai wikienvälinen linkki.',
-'perfcached'           => 'Tiedot ovat välimuistista eivätkä välttämättä ole ajan tasalla. Välimuistissa on enintään {{PLURAL:$1|yksi tulos|$1 tulosta}}.',
-'perfcachedts'         => 'Tiedot ovat välimuistista ja se päivitettiin viimeksi $1. Välimuistissa on enintään {{PLURAL:$4|yksi tulos|$4 tulosta}}.',
+'perfcached'           => 'Tiedot ovat välimuistista eivätkä välttämättä ole ajan tasalla. Välimuistissa on saatavilla enintään {{PLURAL:$1|yksi tulos|$1 tulosta}}.',
+'perfcachedts'         => 'Nämä tiedot ovat välimuistista, ja ne on päivitetty viimeksi $1. Välimuistissa on saatavilla enintään {{PLURAL:$4|yksi tulos|$4 tulosta}}.',
 'querypage-no-updates' => 'Tämän sivun tietoja ei toistaiseksi päivitetä.',
 'wrong_wfQuery_params' => 'Virheelliset parametrit wfQuery()<br />Funktio: $1<br />Tiedustelu: $2',
 'viewsource'           => 'Lähdekoodi',
@@ -680,10 +680,11 @@ Joku muu on saattanut poistaa sen.',
 'protectedpagetext'    => 'Tämä sivu on suojattu muutoksilta.',
 'viewsourcetext'       => 'Voit tarkastella ja kopioida tämän sivun lähdekoodia:',
 'viewyourtext'         => "Voit tarkastella ja kopioida lähdekoodin '''tekemistäsi muutoksista''' tähän sivuun:",
-'protectedinterface'   => 'Tämä sivu sisältää ohjelmiston käyttöliittymätekstiä ja on suojattu häiriköinnin estämiseksi.',
+'protectedinterface'   => 'Tämä sivu sisältää ohjelmiston käyttöliittymätekstiä ja on suojattu häiriköinnin estämiseksi.
+Viestien kääntäminen tulisi tehdä [//translatewiki.net/ translatewiki.netissä] – MediaWikin kotoistusprojektissa.',
 'editinginterface'     => "'''Varoitus:''' Muokkaat sivua, joka sisältää ohjelmiston käyttöliittymätekstiä.
-Muutokset tähän sivuun vaikuttavat muiden käyttäjien käyttöliittymän ulkoasuun.
-Viestien kääntäminen tulisi tehdä [//translatewiki.net/wiki/Main_Page?setlang=fi translatewiki.netissä] – MediaWikin kotoistusprojektissa.",
+Muutokset tähän sivuun vaikuttavat muiden käyttäjien käyttöliittymän ulkoasuun tässä wikissä.
+Viestien kääntäminen tulisi tehdä [//translatewiki.net/ translatewiki.netissä] – MediaWikin kotoistusprojektissa.",
 'sqlhidden'            => '(SQL-kysely piilotettu)',
 'cascadeprotected'     => 'Tämä sivu on suojattu muokkauksilta, koska se on sisällytetty alla {{PLURAL:$1|olevaan laajennetusti suojattuun sivuun|oleviin laajennetusti suojattuihin sivuihin}}:
 $2',
@@ -768,7 +769,7 @@ Tästä johtuen tästä IP-osoitteesta ei voi tällä hetkellä luoda uusia tunn
 'noemailprefs'               => 'Sähköpostiosoitetta ei ole määritelty.',
 'emailconfirmlink'           => 'Varmenna sähköpostiosoite',
 'invalidemailaddress'        => 'Sähköpostiosoitetta ei voida hyväksyä, koska se ei ole oikeassa muodossa. Ole hyvä ja anna oikea sähköpostiosoite tai jätä kenttä tyhjäksi.',
-'cannotchangeemail'          => 'Tunnuksien sähköpostiosoitteita ei voi muuttaa tässä wikissä.',
+'cannotchangeemail'          => 'Tunnusten sähköpostiosoitteita ei voi muuttaa tässä wikissä.',
 'accountcreated'             => 'Käyttäjätunnus luotiin',
 'accountcreatedtext'         => 'Käyttäjän $1 käyttäjätunnus luotiin.',
 'createaccount-title'        => 'Tunnuksen luominen {{GRAMMAR:illative|{{SITENAME}}}}',
@@ -868,7 +869,7 @@ Väliaikainen salasana: $2',
 'image_sample'    => 'Esimerkki.jpg',
 'image_tip'       => 'Tallennettu tiedosto',
 'media_sample'    => 'Esimerkki.ogg',
-'media_tip'       => 'Mediatiedostolinkki',
+'media_tip'       => 'Tiedostolinkki',
 'sig_tip'         => 'Allekirjoitus aikamerkinnällä',
 'hr_tip'          => 'Vaakasuora viiva',
 
@@ -952,7 +953,6 @@ Alla on viimeisin estolokin tapahtuma:',
 * '''Firefox ja Safari:''' Napsauta ''Shift''-näppäin pohjassa ''Päivitä'' tai paina ''Ctrl-F5'' tai ''Ctrl-R'' (''⌘-R'' Macilla)
 * '''Google Chrome:''' Paina ''Ctrl-Shift-R'' (''⌘-Shift-R'' Macilla)
 * '''Internet Explorer:''' Napsauta ''Ctrl''-näppäin pohjassa ''Päivitä'' tai paina ''Ctrl-F5''
-* '''Konqueror''': Napsauta ''Päivitä'' tai paina ''F5''
 * '''Opera:''' Tyhjennä välimuisti: ''Tools→Preferences''",
 'usercssyoucanpreview'             => 'Voit testata uutta CSS:ää ennen tallennusta käyttämällä painiketta ”{{int:showpreview}}”.',
 'userjsyoucanpreview'              => 'Voit testata uutta JavaScriptiä ennen tallennusta käyttämällä painiketta ”{{int:showpreview}}”.',
@@ -965,7 +965,8 @@ Alla on viimeisin estolokin tapahtuma:',
 'userinvalidcssjstitle'            => "'''Varoitus:''' Tyyliä nimeltä ”$1” ei ole olemassa. Muista, että käyttäjän määrittelemät .css- ja .js-sivut alkavat pienellä alkukirjaimella, esim. {{ns:user}}:Matti Meikäläinen/vector.css eikä {{ns:user}}:Matti Meikäläinen/Vector.css.",
 'updated'                          => '(Päivitetty)',
 'note'                             => "'''Huomautus:'''",
-'previewnote'                      => "'''Tämä on vasta sivun esikatselu. Tekemiäsi muokkauksia ei ole vielä tallennettu!'''",
+'previewnote'                      => "'''Tämä on vasta sivun esikatselu.'''
+Tekemiäsi muutoksia ei ole vielä tallennettu.",
 'previewconflict'                  => 'Tämä esikatselu näyttää miltä muokkausalueella oleva teksti näyttää tallennettuna.',
 'session_fail_preview'             => "'''Muokkaustasi ei voitu tallentaa, koska istuntosi tiedot ovat kadonneet.''' Yritä uudelleen. Jos ongelma ei katoa, yritä [[Special:UserLogout|kirjautua ulos]] ja takaisin sisään.",
 'session_fail_preview_html'        => "'''Muokkaustasi ei voitu tallentaa, koska istuntosi tiedot ovat kadonneet.'''
@@ -1092,7 +1093,7 @@ Kokeile [[Special:Search|hakua]] löytääksesi asiaan liittyviä sivuja.',
 'rev-deleted-comment'         => '(muokkausyhteenveto poistettu)',
 'rev-deleted-user'            => '(käyttäjänimi poistettu)',
 'rev-deleted-event'           => '(lokitapahtuma poistettu)',
-'rev-deleted-user-contribs'   => '[käyttäjänimi tai IP-osoite poistettu – muokkaus piilotettu muokkauksista]',
+'rev-deleted-user-contribs'   => '[käyttäjätunnus tai IP-osoite poistettu – muokkaus on piilotettu muokkausluettelosta]',
 'rev-deleted-text-permission' => "Tämä versio sivusta on '''poistettu'''.
 Lisätietoja löytyy [{{fullurl:{{#Special:Log}}/delete|page={{FULLPAGENAMEE}}}} poistolokista].",
 'rev-deleted-text-unhide'     => "Tämä versio sivusta on '''poistettu'''.
@@ -1173,7 +1174,9 @@ Sinulla ei ole oikeutta siihen.',
 'revdelete-only-restricted'   => 'Virhe piilotettaessa $1 kello $2 päivättyä kohdetta: Et voi poistaa kohteita ylläpitäjien näkyviltä valitsematta myös jotain muuta näkyvyysasetusta.',
 'revdelete-reason-dropdown'   => '*Yleiset poistosyyt
 ** Tekijänoikeusrikkomus
-** Sopimattomat henkilötiedot',
+** Sopimattomat henkilötiedot
+** Sopimaton käyttäjätunnus
+** Mahdollinen kunnianloukkaus',
 'revdelete-otherreason'       => 'Muu syy tai tarkennus',
 'revdelete-reasonotherlist'   => 'Muu syy',
 'revdelete-edit-reasonlist'   => 'Muokkaa poistosyitä',
@@ -1214,7 +1217,7 @@ Uuden ja vanhan sivun muutoksien pitää muodostaa jatkumo – ne eivät saa men
 'mergelogpagetext'   => 'Alla on loki viimeisimmistä muutoshistorioiden yhdistämisistä.',
 
 # Diffs
-'history-title'            => 'Sivun "$1" muutoshistoria',
+'history-title'            => 'Sivun $1 muutoshistoria',
 'difference'               => 'Versioiden väliset erot',
 'difference-multipage'     => '(Sivujen välinen eroavaisuus)',
 'lineno'                   => 'Rivi $1:',
@@ -1287,7 +1290,7 @@ Kokeile lisätä haun alkuun ''all:'', niin haku kohdistuu kaikkeen sisältöön
 'powersearch-field'                => 'Etsi',
 'powersearch-togglelabel'          => 'Muuta valintaa',
 'powersearch-toggleall'            => 'Valitse kaikki',
-'powersearch-togglenone'           => 'Valitse ei mitään',
+'powersearch-togglenone'           => 'Poista valinnat',
 'search-external'                  => 'Ulkoinen haku',
 'searchdisabled'                   => 'Tekstihaku on poistettu toistaiseksi käytöstä suuren kuorman vuoksi. Voit käyttää alla olevaa Googlen hakukenttää sivujen etsimiseen, kunnes haku tulee taas käyttöön. <small>Huomaa, että ulkopuoliset kopiot {{GRAMMAR:genitive|{{SITENAME}}}} sisällöstä eivät välttämättä ole ajan tasalla.</small>',
 
@@ -2123,7 +2126,7 @@ Katso myös [[Special:WantedCategories|halutut luokat]].',
 'linksearch-ok'    => 'Etsi',
 'linksearch-text'  => 'Tähteä (*) voi käyttää jokerimerkkinä, esimerkiksi ”*.wikipedia.org”.
 Vähintään ylätason verkkotunnus, esimerkiksi "*.org", tarvitaan.<br />
-Tuetut protokollat: <code>$1</code> (älä lisää näitä hakuusi).',
+Tuetut protokollat: <code>$1</code> (oletuksena on <code>http://</code>, jos protokollaa ei määritetä).',
 'linksearch-line'  => '$1 on linkitetty sivulta $2',
 'linksearch-error' => 'Jokerimerkkiä voi käyttää ainoastaan osoitteen alussa.',
 
@@ -2170,7 +2173,7 @@ Lisätietoa yksittäisistä käyttäjäoikeuksista saattaa löytyä [[{{MediaWik
 'mailnologintext'      => 'Sinun pitää olla [[Special:UserLogin|kirjautuneena sisään]] ja [[Special:Preferences|asetuksissasi]] pitää olla toimiva ja <strong>varmennettu</strong> sähköpostiosoite, jotta voit lähettää sähköpostia muille käyttäjille.',
 'emailuser'            => 'Lähetä sähköpostia tälle käyttäjälle',
 'emailpage'            => 'Lähetä sähköpostia käyttäjälle',
-'emailpagetext'        => 'Jos tämä käyttäjä on antanut asetuksissaan kelvollisen sähköpostiosoitteen, alla olevalla lomakkeella voit lähettää hänelle viestin. [[Special:Preferences|Omissa asetuksissasi]] annettu sähköpostiosoite näkyy sähköpostin lähettäjän osoitteena, jotta vastaanottaja voi suoraan vastata viestiin.',
+'emailpagetext'        => 'Jos tämä {{GENDER:$1|käyttäjä}} on antanut asetuksissaan kelvollisen sähköpostiosoitteen, alla olevalla lomakkeella voit lähettää hänelle viestin. [[Special:Preferences|Omissa asetuksissasi]] annettu sähköpostiosoite näkyy sähköpostin lähettäjän osoitteena, jotta vastaanottaja voi suoraan vastata viestiin.',
 'usermailererror'      => 'Postitus palautti virheen:',
 'defemailsubject'      => 'Sähköpostia käyttäjältä $1 sivustolta {{SITENAME}}',
 'usermaildisabled'     => 'Käyttäjien sähköposti poistettu käytöstä',
@@ -2226,7 +2229,7 @@ Lisätietoa yksittäisistä käyttäjäoikeuksista saattaa löytyä [[{{MediaWik
 'watchlistcontains'    => 'Tarkkailulistallasi on {{PLURAL:$1|yksi sivu|$1 sivua}}.',
 'iteminvalidname'      => 'Sivun $1 kanssa oli ongelmia! Sivun nimessä on vikaa.',
 'wlnote'               => "Alla on {{PLURAL:$1|yksi muutos|'''$1''' muutosta}} viimeisen {{PLURAL:$2|tunnin|'''$2''' tunnin}} ajalta $3 kello $4 asti.",
-'wlshowlast'           => 'Näytä viimeiset $1 tuntia tai $2 päivää$3',
+'wlshowlast'           => 'Näytä viimeiset $1 tuntia tai $2 päivää, $3',
 'watchlist-options'    => 'Tarkkailulistan asetukset',
 
 # Displayed when you click the "watch" button and it is in the process of watching
@@ -2522,7 +2525,7 @@ Alla on viimeisin estolokin tapahtuma:',
 'ipb-confirm'                     => 'Vahvista esto',
 'badipaddress'                    => 'IP-osoite on väärin muotoiltu.',
 'blockipsuccesssub'               => 'Esto onnistui',
-'blockipsuccesstext'              => 'Käyttäjä tai IP-osoite [[Special:Contributions/$1|$1]] on estetty.<br />
+'blockipsuccesstext'              => '[[Special:Contributions/$1|$1]] on estetty.<br />
 Voimassa olevat estot näkyvät [[Special:BlockList|estolistasta]].',
 'ipb-blockingself'                => 'Olet estämässä itseäsi. Oletko varma, että haluat tehdä niin?',
 'ipb-confirmhideuser'             => 'Olet estämässä käyttäjää ”piilota käyttäjä” -toiminnon kanssa.  Tämä piilottaa käyttäjän nimen kaikissa luetteloissa ja lokitapahtumissa.  Oletko varma, että haluat tehdä näin?',
@@ -2955,14 +2958,14 @@ Tallenna tiedot koneellesi ja tuo ne tällä sivulla.',
 
 # Info page
 'pageinfo-title'            => 'Tietoja sivusta $1',
-'pageinfo-header-edits'     => 'Muokkaukset',
+'pageinfo-header-edits'     => 'Muutoshistoria',
 'pageinfo-header-watchlist' => 'Tarkkailulista',
 'pageinfo-header-views'     => 'Näyttökerrat',
 'pageinfo-subjectpage'      => 'Sivu',
 'pageinfo-talkpage'         => 'Keskustelusivu',
-'pageinfo-watchers'         => 'Tarkkailijoiden lukumäärä',
+'pageinfo-watchers'         => 'Sivun tarkkailijoiden lukumäärä',
 'pageinfo-edits'            => 'Muokkausten lukumäärä',
-'pageinfo-authors'          => 'Eri tekijöiden lukumäärä',
+'pageinfo-authors'          => 'Sivun eri muokkaajien kokonaismäärä',
 'pageinfo-views'            => 'Katselukertojen määrä',
 'pageinfo-viewsperedit'     => 'Katseluita per muokkaus',
 
@@ -3469,7 +3472,7 @@ Kaikki muut linkit ovat poikkeuksia eli toisin sanoen sivuja, joissa tiedostoa s
 'edit-externally-help' => '(Katso [//www.mediawiki.org/wiki/Manual:External_editors ohjeet], jos haluat lisätietoja.)',
 
 # 'all' in various places, this might be different for inflected languages
-'watchlistall2' => ', koko historia',
+'watchlistall2' => 'koko historia',
 'namespacesall' => 'kaikki',
 'monthsall'     => 'kaikki',
 'limitall'      => 'kaikki',
@@ -3785,8 +3788,8 @@ Kuvat näytetään täysikokoisina. Muut tiedostot avataan niille määritetyss�
 'logentry-move-move_redir-noredirect' => '$1 siirsi sivun $3 ohjauksen $4 päälle luomatta ohjausta',
 'logentry-patrol-patrol'              => '$1 merkitsi sivun $3 muutoksen $4 tarkastetuksi',
 'logentry-patrol-patrol-auto'         => '$1 merkitsi automaattisesti sivun $3 muutoksen $4 tarkastetuksi',
-'logentry-newusers-newusers'          => '$1 loi käyttäjätunnuksen',
-'logentry-newusers-create'            => '$1 loi käyttäjätunnuksen',
+'logentry-newusers-newusers'          => 'Käyttäjätunnus $1 luotiin',
+'logentry-newusers-create'            => 'Käyttäjätunnus $1 luotiin',
 'logentry-newusers-create2'           => '$1 loi käyttäjätunnuksen $3',
 'logentry-newusers-autocreate'        => 'Käyttäjätunnus $1 luotiin automaattisesti',
 'newuserlog-byemail'                  => 'salasana lähetetty sähköpostitse',

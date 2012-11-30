@@ -362,7 +362,7 @@ $messages = array(
 
 'underline-always'  => 'mindig',
 'underline-never'   => 'soha',
-'underline-default' => 'a böngésző alapértelmezése szerint',
+'underline-default' => 'Felület és böngésző alapértelmezése szerint',
 
 # Font style option in Special:Preferences
 'editfont-style'     => 'A szerkesztőterület betűtípusa:',
@@ -384,7 +384,7 @@ $messages = array(
 'tue'           => 'kedd',
 'wed'           => 'sze',
 'thu'           => 'csü',
-'fri'           => 'pé',
+'fri'           => 'pén',
 'sat'           => 'szo',
 'january'       => 'január',
 'february'      => 'február',
@@ -448,7 +448,7 @@ $messages = array(
 'cancel'        => 'Mégse',
 'moredotdotdot' => 'Tovább…',
 'mypage'        => 'Lapom',
-'mytalk'        => 'Vitalapom',
+'mytalk'        => 'Vitalap',
 'anontalk'      => 'Az IP-címhez tartozó vitalap',
 'navigation'    => 'Navigáció',
 'and'           => '&#32;és',
@@ -471,7 +471,7 @@ $messages = array(
 'vector-action-protect'          => 'Lapvédelem',
 'vector-action-undelete'         => 'Visszaállítás',
 'vector-action-unprotect'        => 'Védelem módosítása',
-'vector-simplesearch-preference' => 'Továbbfejlesztett keresési javaslatok engedélyezése (csak Vector felületen)',
+'vector-simplesearch-preference' => 'Egyszerűsített keresési sáv engedélyezése (csak Vector felületen)',
 'vector-view-create'             => 'Létrehozás',
 'vector-view-edit'               => 'Szerkesztés',
 'vector-view-history'            => 'Laptörténet',
@@ -575,9 +575,9 @@ További információkat a [[Special:Version|verzióinformációs lapon]] talál
 
 'ok'                      => 'OK',
 'retrievedfrom'           => 'A lap eredeti címe: „$1”',
-'youhavenewmessages'      => 'Új üzenet vár $1! (Az üzenetet $2.)',
-'newmessageslink'         => 'a vitalapodon',
-'newmessagesdifflink'     => 'külön is megtekintheted',
+'youhavenewmessages'      => '$1 a vitalapodon! ($2 külön is megtekintheted.)',
+'newmessageslink'         => 'új üzenet vár',
+'newmessagesdifflink'     => 'az utolsó üzenetet',
 'youhavenewmessagesmulti' => 'Új üzenetet vár a(z) $1 wikin',
 'editsection'             => 'szerkesztés',
 'editold'                 => 'szerkesztés',
@@ -632,9 +632,9 @@ Az érvényes speciális lapok listáját a [[Special:SpecialPages|{{int:special
 'databaseerror'        => 'Adatbázishiba',
 'dberrortext'          => 'Szintaktikai hiba található az adatbázis-lekérdezésben.
 Ezt szoftverhiba okozhatta.
-Az utolsó adatbázis-lekérdezés a(z) „<tt>$2</tt>” függvényből történt, és a következő volt:
-<blockquote><tt>$1</tt></blockquote>
-Az adatbázis ezzel a hibával tért vissza: „<tt>$3: $4</tt>”.',
+Az utolsó adatbázis-lekérdezés a(z) „<code>$2</code>” függvényből történt, és a következő volt:
+<blockquote><code>$1</code></blockquote>
+Az adatbázis ezzel a hibával tért vissza: „<samp>$3: $4</samp>”.',
 'dberrortextcl'        => 'Szintaktikai hiba található az adatbázis-lekérdezésben.
 Az utolsó adatbázis-lekérdezés a(z) „$2” függvényből történt, és a következő volt:
 „$1”
@@ -686,7 +686,7 @@ Lekérdezés: $2',
 'viewsourcetext'       => 'Megtekintheted és másolhatod a lap forrását:',
 'viewyourtext'         => "Megtekintheted és kimásolhatod a '''saját szerkesztéseidet''' az alábbi lapra:",
 'protectedinterface'   => 'Ez a lap a szoftver felületéhez szolgáltat szöveget, és a visszaélések elkerülése miatt le van zárva.',
-'editinginterface'     => "'''Vigyázat:''' egy olyan lapot szerkesztesz, ami a MediaWiki szoftver felületéhez tartozik. A lap megváltoztatása hatással lesz más szerkesztők számára is. Fordításra inkább használd a MediaWiki fordítására indított kezdeményezést, a [//translatewiki.net/wiki/Main_Page?setlang=hu translatewiki.net-et].",
+'editinginterface'     => "'''Vigyázat:''' egy olyan lapot szerkesztesz, ami a MediaWiki szoftver felületéhez tartozik. A lap megváltoztatása hatással lesz a kinézetre, ahogy más szerkesztők látják a lapot. Fordításra inkább használd a MediaWiki fordítására indított kezdeményezést, a [//translatewiki.net/wiki/Main_Page?setlang=hu translatewiki.net-et].",
 'sqlhidden'            => '(rejtett SQL lekérdezés)',
 'cascadeprotected'     => 'Ez a lap szerkesztés elleni védelemmel lett ellátva, mert a következő {{PLURAL:$1|lapon|lapokon}} be van kapcsolva a „kaszkádolt” védelem:
 $2',
@@ -965,7 +965,6 @@ A blokkolási napló legutóbbi ide vonatkozó bejegyzése a következő:',
 '''Firefox / Safari:''' tartsd lenyomva a Shift gombot és kattints a ''Frissítés'' gombra a címsorban, vagy használd a ''Ctrl–F5'' vagy ''Ctrl–R'' billentyűkombinációt (Mac-en ''Command–R'');
 '''Google Chrome:''' használd a ''Ctrl–Shift–R'' billentyűkombinációt (Mac-en ''Command–Shift–R'');
 '''Internet Explorer:''' tartsd nyomva a ''Ctrl''-t, és kattints a ''Frissítés'' gombra, vagy nyomj ''Ctrl–F5''-öt;
-'''Konqueror: '''kattints a ''Frissítés'' gombra vagy nyomj ''F5''-öt;
 '''Opera:''' ürítsd ki a gyorsítótárat a ''Beállítások / Haladó / Előzmények→Törlés most'' gombbal, majd frissítsd az oldalt.",
 'usercssyoucanpreview'             => "'''Tipp:''' mentés előtt használd az „{{int:showpreview}}” gombot az új CSS-ed teszteléséhez.",
 'userjsyoucanpreview'              => "'''Tipp:''' mentés előtt használd az „{{int:showpreview}}” gombot az új JavaScipted teszteléséhez.",
@@ -1202,7 +1201,8 @@ Ellenőrizd a naplókat.',
 'revdelete-only-restricted'   => 'Hiba a(z) $1 $2 időbélyegű elem elrejtésekor: nem rejthetsz el az adminisztrátorok elől elemeket anélkül, hogy ne választanál ki egy másik elrejtési beállítást.',
 'revdelete-reason-dropdown'   => '*Általános törlési okok
 ** Jogsértő tartalom
-** Kényes személyes információk',
+** Kényes személyes információk
+** Potenciális becsületsértő információk',
 'revdelete-otherreason'       => 'Más/további ok:',
 'revdelete-reasonotherlist'   => 'Más ok',
 'revdelete-edit-reasonlist'   => 'Törlési okok szerkesztése',
@@ -1327,7 +1327,7 @@ Győződj meg róla, hogy a laptörténet folytonossága megmarad.',
 
 # Preferences page
 'preferences'                   => 'Beállítások',
-'mypreferences'                 => 'Beállításaim',
+'mypreferences'                 => 'Beállítások',
 'prefs-edits'                   => 'Szerkesztéseid száma:',
 'prefsnologin'                  => 'Nem jelentkeztél be',
 'prefsnologintext'              => 'Saját beállításaid elmentéséhez <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} be kell jelentkezned.] </span>',
@@ -1389,7 +1389,7 @@ Itt van egy véletlenszerűen generált érték, amit használhatsz: $1',
 'timezoneregion-indian'         => 'Indiai-óceán',
 'timezoneregion-pacific'        => 'Csendes-óceán',
 'allowemail'                    => 'E-mail engedélyezése más szerkesztőktől',
-'prefs-searchoptions'           => 'A keresés beállításai',
+'prefs-searchoptions'           => 'Keresés',
 'prefs-namespaces'              => 'Névterek',
 'defaultns'                     => 'Egyébként a következő névterekben keressen:',
 'default'                       => 'alapértelmezett',
@@ -1597,7 +1597,7 @@ A műveletet nem lehet visszavonni.',
 # Recent changes
 'nchanges'                          => '{{PLURAL:$1|egy|$1}} változtatás',
 'recentchanges'                     => 'Friss változtatások',
-'recentchanges-legend'              => 'A friss változások beállításai',
+'recentchanges-legend'              => 'A friss változtatások beállításai',
 'recentchangestext'                 => 'Ezen a lapon a wikiben történt legutóbbi változásokat lehet nyomonkövetni.',
 'recentchanges-feed-description'    => 'Kövesd a wiki friss változtatásait ezzel a hírcsatornával.',
 'recentchanges-label-newpage'       => 'Ezzel a szerkesztéssel egy új lap jött létre',
@@ -1605,8 +1605,8 @@ A műveletet nem lehet visszavonni.',
 'recentchanges-label-bot'           => 'Ezt a szerkesztést egy bot hajtotta végre',
 'recentchanges-label-unpatrolled'   => 'Ezt a szerkesztést még nem ellenőrizték',
 'rcnote'                            => "Alább az utolsó '''{{PLURAL:$2|egy|$2}}''' nap utolsó '''{{PLURAL:$1|egy|$1}}''' változtatása látható. A lap generálásának időpontja $4, $5.",
-'rcnotefrom'                        => 'Alább a <b>$2</b> óta történt változások láthatóak (<b>$1</b> db).',
-'rclistfrom'                        => '$1 után történt változások megtekintése',
+'rcnotefrom'                        => 'Alább a <b>$2</b> óta történt változtatások láthatóak (<b>$1</b> db).',
+'rclistfrom'                        => '$1 után történt változtatások megtekintése',
 'rcshowhideminor'                   => 'apró szerkesztések $1',
 'rcshowhidebots'                    => 'botok szerkesztéseinek $1',
 'rcshowhideliu'                     => 'bejelentkezett felhasználók szerkesztéseinek $1',
@@ -1635,7 +1635,7 @@ A műveletet nem lehet visszavonni.',
 'recentchangeslinked-feed'     => 'Kapcsolódó változtatások',
 'recentchangeslinked-toolbox'  => 'Kapcsolódó változtatások',
 'recentchangeslinked-title'    => 'A(z) $1 laphoz kapcsolódó változtatások',
-'recentchangeslinked-noresult' => 'A megadott időtartam alatt nem történt változás a kapcsolódó lapokon.',
+'recentchangeslinked-noresult' => 'A megadott időtartam alatt nem történt változtatás a kapcsolódó lapokon.',
 'recentchangeslinked-summary'  => "Alább azon lapoknak a legutóbbi változtatásai láthatóak, amelyekre hivatkozik egy megadott lap (vagy tagjai a megadott kategóriának).
 A [[Special:Watchlist|figyelőlistádon]] szereplő lapok '''félkövérrel''' vannak jelölve.",
 'recentchangeslinked-page'     => 'Lap neve:',
@@ -2157,7 +2157,7 @@ Lásd még a [[Special:WantedCategories|keresett kategóriák]] listáját.',
 'linksearch-ns'    => 'Névtér:',
 'linksearch-ok'    => 'keresés',
 'linksearch-text'  => 'Helyettesítő karaktereket is lehet használni, például "*.wikipedia.org". Legalább egy felső szintű tartománynak lennie kell, például "*.org"<br />
-Támogatott protokollok: <code>$1</code> (ezeket ne írd be a keresésbe).',
+Támogatott protokollok: <code>$1</code> (http:// az alapértelmezett, ha nincs protokoll megadva).',
 'linksearch-line'  => '$1 hivatkozva innen: $2',
 'linksearch-error' => 'Helyettesítő karakterek csak a cím elején szerepelhetnek.',
 
@@ -2205,7 +2205,7 @@ Az egyes csoportokról további információt [[{{MediaWiki:Listgrouprights-help
 'emailuser'            => 'E-mail küldése ezen szerkesztőnek',
 'emailpage'            => 'E-mail küldése',
 'emailpagetext'        => 'A szerkesztő e-mail-címére ezen űrlap kitöltésével üzenetet tudsz küldeni.
-Feladóként a [[Special:Preferences|beállításaid]]nál megadott e-mail-címed fog szerepelni, így a címzett közvetlenül neked tud majd válaszolni.',
+Feladóként a [[Special:Preferences|beállításaid]]nál megadott e-mail-címed fog szerepelni, így a címzett közvetlenül tud majd válaszolni neked.',
 'usermailererror'      => 'A levélküldő objektum hibával tért vissza:',
 'defemailsubject'      => '{{SITENAME}} e-mail a következő felhasználótól: „$1”',
 'usermaildisabled'     => 'Email fogadás letiltva',
@@ -2236,7 +2236,7 @@ Feladóként a [[Special:Preferences|beállításaid]]nál megadott e-mail-címe
 
 # Watchlist
 'watchlist'            => 'Figyelőlistám',
-'mywatchlist'          => 'Figyelőlistám',
+'mywatchlist'          => 'Figyelőlista',
 'watchlistfor2'        => '$1 részére $2',
 'nowatchlist'          => 'Nincs lap a figyelőlistádon.',
 'watchlistanontext'    => 'A figyelőlistád megtekintéséhez és szerkesztéséhez $1.',
@@ -2495,7 +2495,7 @@ $1',
 # Contributions
 'contributions'       => 'Szerkesztő közreműködései',
 'contributions-title' => '$1 közreműködései',
-'mycontris'           => 'Közreműködéseim',
+'mycontris'           => 'Közreműködések',
 'contribsub2'         => '$1 ($2)',
 'nocontribs'          => 'Nem található a feltételeknek megfelelő változtatás.',
 'uctop'               => ' (utolsó)',
@@ -2535,7 +2535,7 @@ A blokknapló legutóbbi ide vonatkozó bejegyzése a következő:',
 'whatlinkshere-hideredirs' => 'átirányítások $1',
 'whatlinkshere-hidetrans'  => 'beillesztések $1',
 'whatlinkshere-hidelinks'  => 'linkek $1',
-'whatlinkshere-hideimages' => 'képhivatkozás $1',
+'whatlinkshere-hideimages' => 'fájlhivatkozások $1',
 'whatlinkshere-filters'    => 'Elemek szűrése',
 
 # Block/unblock
@@ -2755,7 +2755,7 @@ Kérlek, válassz egy másik nevet.',
 
 Az átnevezés céljaként megadott „[[:$1]]” szócikk már létezik.  Ha az átnevezést végre akarod hajtani, ezt a lapot törölni kell.  Valóban ezt szeretnéd?',
 'delete_and_move_confirm'      => 'Igen, töröld a lapot',
-'delete_and_move_reason'       => 'Törölve, hogy legyen hely átmozgatni [[$1]] lapot.',
+'delete_and_move_reason'       => 'átnevezendő lap célneve felszabadítva „[[$1]]” számára',
 'selfmove'                     => 'A cikk jelenlegi címe megegyezik azzal, amire át szeretnéd mozgatni. Egy szócikket saját magára mozgatni nem lehet.',
 'immobile-source-namespace'    => 'A(z) „$1” névtér lapjai nem nevezhetőek át',
 'immobile-target-namespace'    => 'A(z) „$1” névtérbe nem mozgathatsz át lapokat',
@@ -3027,14 +3027,14 @@ Ez valószínűleg egy olyan link miatt van, ami egy feketelistán lévő oldalr
 
 # Info page
 'pageinfo-title'            => 'Információk a(z) „$1” lapról',
-'pageinfo-header-edits'     => 'Szerkesztések',
+'pageinfo-header-edits'     => 'Szerkesztések története',
 'pageinfo-header-watchlist' => 'Figyelőlista',
 'pageinfo-header-views'     => 'Megtekintések',
 'pageinfo-subjectpage'      => 'Lap',
 'pageinfo-talkpage'         => 'Vitalap',
 'pageinfo-watchers'         => 'Figyelők száma',
 'pageinfo-edits'            => 'Szerkesztések száma',
-'pageinfo-authors'          => 'Egyedi szerkesztők száma',
+'pageinfo-authors'          => 'Egyedi szerkesztők teljes száma',
 'pageinfo-views'            => 'Megtekintések száma',
 'pageinfo-viewsperedit'     => 'Megtekintés/szerkesztés',
 
@@ -3723,7 +3723,7 @@ minden egyes sor egy figyelt lap címe. Ha kész vagy, kattints a lista alatt ta
 'version-version'               => '(verzió: $1)',
 'version-license'               => 'Licenc',
 'version-poweredby-credits'     => "Ez a wiki '''[//www.mediawiki.org/ MediaWiki]''' szoftverrel működik, copyright © 2001-$1 $2.",
-'version-poweredby-others'      => 'mások',
+'version-poweredby-others'      => '[{{SERVER}}{{SCRIPTPATH}}/CREDITS mások]',
 'version-license-info'          => 'A MediaWiki szabad szoftver, terjeszthető és / vagy módosítható a GNU General Public License alatt, amit a Free Software Foundation közzétett; vagy a 2-es verziójú licenc, vagy (az Ön választása alapján) bármely későbbi verzió szerint. 
 
 A MediaWikit abban a reményben terjesztjük, hogy hasznos lesz, de GARANCIA NÉLKÜL, anélkül, hogy PIACKÉPES vagy HASZNÁLHATÓ LENNE EGY ADOTT CÉLRA. Lásd a GNU General Public License-t a további részletekért. 
@@ -3855,8 +3855,8 @@ A képek teljes méretben jelennek meg, más fájltípusok közvetlenül a hozz�
 'revdelete-unrestricted'              => 'felfedett az adminisztrátoroknak',
 'logentry-move-move'                  => '$1 átnevezte a(z) $3 lapot a következő névre: $4',
 'logentry-move-move-noredirect'       => '$1 átnevezte a(z) $3 lapot $4 lapra átirányítás nélkül',
-'logentry-move-move_redir'            => '$1 átnevezte a(z) $3 lapot $4 lapra átirányítással',
-'logentry-move-move_redir-noredirect' => '$1 átnevezte a(z) $3 lapot $4 lapra átirányítás nélkül',
+'logentry-move-move_redir'            => '$1 átnevezte a(z) $3 lapot $4 lapra az átirányítást felülírva',
+'logentry-move-move_redir-noredirect' => '$1 átnevezte a(z) $3 lapot $4 lapra az átirányítást felülírva, átirányítás nélkül',
 'logentry-patrol-patrol'              => '$1 a(z) $3 lap $4 változatát ellenőrzöttnek jelölte',
 'logentry-patrol-patrol-auto'         => '$1 a(z) $3 lap $4 változatát automatikusan ellenőrzöttnek jelölte',
 'logentry-newusers-newusers'          => '$1 létrehozott egy felhasználói fiókot',
@@ -3866,7 +3866,7 @@ A képek teljes méretben jelennek meg, más fájltípusok közvetlenül a hozz�
 'newuserlog-byemail'                  => 'a jelszót kiküldtük a megadott e-mail címre',
 
 # Feedback
-'feedback-bugornote' => 'Ha kész technikai problémát részletesen leírni, akkor kérjük [$1 jelents egy hibát]. Egyébként használd az alábbi űrlapot. A hozzászólásod a „[$3 $2]” laphoz kerül felvételre, a szerkesztő neveddel és böngésződ típusával együtt.',
+'feedback-bugornote' => 'Ha kész vagy a technikai problémát részletesen leírni, akkor kérjük [$1 jelents egy hibát]. Egyébként használd az alábbi űrlapot. A hozzászólásod a „[$3 $2]” laphoz lesz hozzáadva a szerkesztő neveddel és böngésződ típusával együtt.',
 'feedback-subject'   => 'Tárgy:',
 'feedback-message'   => 'Üzenet:',
 'feedback-cancel'    => 'Mégse',

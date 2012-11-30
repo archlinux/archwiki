@@ -21,6 +21,7 @@
  * @author Hamaryns
  * @author Jens Liebenau
  * @author Kaganer
+ * @author Kippenvlees1
  * @author Krinkle
  * @author MarkvA
  * @author McDutchie
@@ -396,7 +397,7 @@ $messages = array(
 
 'underline-always'  => 'Altijd',
 'underline-never'   => 'Nooit',
-'underline-default' => 'Webbrowser-standaard',
+'underline-default' => 'Standaard in uw vormgeving of webbrowser',
 
 # Font style option in Special:Preferences
 'editfont-style'     => 'Lettertypestijl bewerkingsvenster:',
@@ -481,8 +482,8 @@ $messages = array(
 'newwindow'     => '(opent in een nieuw venster)',
 'cancel'        => 'Annuleren',
 'moredotdotdot' => 'Meer…',
-'mypage'        => 'Mijn gebruikerspagina',
-'mytalk'        => 'Mijn overleg',
+'mypage'        => 'Gebruikerspagina',
+'mytalk'        => 'Overleg',
 'anontalk'      => 'Overlegpagina voor dit IP-adres',
 'navigation'    => 'Navigatie',
 'and'           => '&#32;en',
@@ -505,7 +506,7 @@ $messages = array(
 'vector-action-protect'          => 'Beveiligen',
 'vector-action-undelete'         => 'Terugplaatsen',
 'vector-action-unprotect'        => 'Beveiliging wijzigen',
-'vector-simplesearch-preference' => 'Verbeterde zoeksuggesties inschakelen (alleen voor het uiterlijk Vector)',
+'vector-simplesearch-preference' => 'Vereenvoudigd zoeken inschakelen (alleen voor het uiterlijk Vector)',
 'vector-view-create'             => 'Aanmaken',
 'vector-view-edit'               => 'Bewerken',
 'vector-view-history'            => 'Geschiedenis weergeven',
@@ -725,10 +726,11 @@ Probeer het over een aantal minuten opnieuw.',
 Bewerken is niet mogelijk.',
 'viewsourcetext'       => 'U kunt de brontekst van deze pagina bekijken en kopiëren:',
 'viewyourtext'         => "U kunt '''uw bewerkingen''' aan de brontekst van deze pagina bekijken en kopiëren:",
-'protectedinterface'   => 'Deze pagina bevat tekst voor berichten van de software en is beveiligd om misbruik te voorkomen.',
+'protectedinterface'   => "Deze pagina bevat tekst voor berichten van de software op deze wiki en is beveiligd om misbruik te voorkomen.
+Gebruik [//translatewiki.net/ translatewiki.net], het vertaalproject voor MediaWiki, om vertalingen voor alle wiki's toe te voegen of te wijzigen.",
 'editinginterface'     => "'''Waarschuwing:''' u bewerkt een pagina die interfacetekst voor de software bevat.
-Bewerkingen op deze pagina beïnvloeden de gebruikersinterface van iedereen.
-Overweeg voor vertalingen om [//translatewiki.net/wiki/Main_Page?setlang=nl translatewiki.net] te gebruiken, het vertaalproject voor MediaWiki.",
+Bewerkingen op deze pagina beïnvloeden de gebruikersinterface van iedereen op deze wiki.
+Om vertalingen toe te voegen of te wijzigen voor alle wiki's, gebruik [//translatewiki.net/ translatewiki.net], het vertaalproject voor MediaWiki.",
 'sqlhidden'            => '(SQL-zoekopdracht verborgen)',
 'cascadeprotected'     => "Deze pagina kan niet bewerkt worden, omdat die is opgenomen in de volgende {{PLURAL:$1|pagina|pagina's}} die beveiligd {{PLURAL:$1|is|zijn}} met de cascade-optie:
 $2",
@@ -1278,7 +1280,8 @@ Controleer de logboeken.',
 'revdelete-only-restricted'   => 'Er is een fout opgetreden bij het verbergen van het item van $1, $2: u kunt geen items onderdrukken uit het zicht van beheerders zonder ook een van de andere zichtbaarheidsopties te selecteren.',
 'revdelete-reason-dropdown'   => '* Veel voorkomende redenen voor verwijderen
 ** Auteursrechtenschending
-** Onbetamelijke persoonlijke gegevens
+** Onbetamelijke reactie of persoonlijke gegevens
+** Onbetamelijke gebruikersnaam
 ** Potentieel lasterlijke gegevens',
 'revdelete-otherreason'       => 'Andere reden:',
 'revdelete-reasonotherlist'   => 'Andere reden',
@@ -1412,7 +1415,7 @@ De gegevens over {{SITENAME}} zijn mogelijk niet bijgewerkt.',
 
 # Preferences page
 'preferences'                   => 'Voorkeuren',
-'mypreferences'                 => 'Mijn voorkeuren',
+'mypreferences'                 => 'Voorkeuren',
 'prefs-edits'                   => 'Aantal bewerkingen:',
 'prefsnologin'                  => 'Niet aangemeld',
 'prefsnologintext'              => 'U moet <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} aangemeld]</span> zijn om uw voorkeuren te kunnen instellen.',
@@ -1474,7 +1477,7 @@ Hier volgt een willekeurig gegenereerde waarde die u kunt gebruiken: $1',
 'timezoneregion-indian'         => 'Indische Oceaan',
 'timezoneregion-pacific'        => 'Stille Oceaan',
 'allowemail'                    => 'E-mail van andere gebruikers toestaan',
-'prefs-searchoptions'           => 'Zoekinstellingen',
+'prefs-searchoptions'           => 'Zoeken',
 'prefs-namespaces'              => 'Naamruimten',
 'defaultns'                     => 'Anders in de volgende naamruimten zoeken:',
 'default'                       => 'standaard',
@@ -1725,7 +1728,7 @@ Als u deze opgeeft, kan deze naam gebruikt worden om u erkenning te geven voor u
 'recentchangeslinked-toolbox'  => 'Verwante wijzigingen',
 'recentchangeslinked-title'    => 'Wijzigingen verwant aan "$1"',
 'recentchangeslinked-noresult' => "Er zijn in de opgegeven periode geen bewerkingen geweest op de pagina's waarheen vanaf hier verwezen wordt.",
-'recentchangeslinked-summary'  => "Deze speciale pagina geeft de laatste bewerkingen weer op pagina's waarheen verwezen wordt vanaf een aangegeven pagina of vanaf pagina's in een aangegeven pagina een categorie.
+'recentchangeslinked-summary'  => "Deze speciale pagina geeft de laatste bewerkingen weer op pagina's waarheen verwezen wordt vanaf een aangegeven pagina of op pagina's in een aangegeven categorie.
 Pagina's die op [[Special:Watchlist|uw volglijst]] staan worden '''vet''' weergegeven.",
 'recentchangeslinked-page'     => 'Paginanaam:',
 'recentchangeslinked-to'       => "Wijzigingen aan pagina's met verwijzingen naar deze pagina bekijken",
@@ -2085,7 +2088,7 @@ Invoer: inhoudstype/subtype, bijvoorbeeld <code>image/jpeg</code>.',
 # Unused templates
 'unusedtemplates'     => 'Ongebruikte sjablonen',
 'unusedtemplatestext' => 'Deze pagina geeft alle pagina\'s weer in de naamruimte {{ns:template}} die op geen enkele pagina gebruikt worden.
-Vergeet niet de "Verwijzingen naar deze pagina" te controleren alvorens dit sjabloon te verwijderen.',
+Vergeet niet de "Verwijzingen naar deze pagina" te controleren alvorens deze sjabloon te verwijderen.',
 'unusedtemplateswlh'  => 'andere verwijzingen',
 
 # Random page
@@ -2270,8 +2273,8 @@ Zie ook [[Special:WantedCategories|niet-bestaande categorieën met verwijzingen]
 'linksearch-ns'    => 'Naamruimte:',
 'linksearch-ok'    => 'Zoeken',
 'linksearch-text'  => 'Wildcards zoals "*.wikipedia.org" of "*.org" zijn toegestaan.
-Heeft tenminste een topleveldomein, zoals bijvoorbeeld "*.org".<br />
-Ondersteunde protocollen: <code>$1</code> (voeg deze niet toe in uw zoekopdracht).',
+Heeft tenminste een topleveldomein nodig, zoals bijvoorbeeld "*.org".<br />
+Ondersteunde protocollen: <code>$1</code> (wordt "http://"als er geen protocol wordt opgegeven).',
 'linksearch-line'  => '$1 heeft een verwijzing in $2',
 'linksearch-error' => 'Wildcards zijn alleen toegestaan aan het begin van een hostnaam.',
 
@@ -2318,7 +2321,7 @@ Er kan [[{{MediaWiki:Listgrouprights-helppage}}|extra informatie]] over individu
 'mailnologintext'      => 'U moet [[Special:UserLogin|aangemeld]] zijn en een geldig e-mailadres in uw [[Special:Preferences|voorkeuren]] vermelden om andere gebruikers te kunnen e-mailen.',
 'emailuser'            => 'Deze gebruiker e-mailen',
 'emailpage'            => 'Gebruiker e-mailen',
-'emailpagetext'        => 'Via dit formulier kunt u een e-mail aan deze gebruiker verzenden.
+'emailpagetext'        => 'Via dit formulier kunt u een e-mail aan {{GENDER:$1|deze gebruiker}} verzenden.
 Het e-mailadres dat u hebt opgegeven bij [[Special:Preferences|uw voorkeuren]] wordt als afzender gebruikt.
 De ontvanger kan dus direct naar u reageren.',
 'usermailererror'      => 'Foutmelding bij het verzenden:',
@@ -2351,7 +2354,7 @@ De ontvanger kan dus direct naar u reageren.',
 
 # Watchlist
 'watchlist'            => 'Volglijst',
-'mywatchlist'          => 'Mijn volglijst',
+'mywatchlist'          => 'Volglijst',
 'watchlistfor2'        => 'Voor $1 $2',
 'nowatchlist'          => 'Uw volglijst is leeg.',
 'watchlistanontext'    => 'Om uw volglijst te bekijken of te bewerken moet u zich $1.',
@@ -2612,7 +2615,7 @@ $1',
 # Contributions
 'contributions'       => 'Gebruikersbijdragen',
 'contributions-title' => 'Bijdragen van $1',
-'mycontris'           => 'Mijn bijdragen',
+'mycontris'           => 'Bijdragen',
 'contribsub2'         => 'Voor $1 ($2)',
 'nocontribs'          => 'Geen wijzigingen gevonden die aan de gestelde criteria voldoen.',
 'uctop'               => '(laatste wijziging)',
@@ -2653,7 +2656,7 @@ De laatste regel uit het blokkeerlogboek wordt hieronder ter referentie weergege
 'whatlinkshere-hideredirs' => 'doorverwijzingen $1',
 'whatlinkshere-hidetrans'  => 'Transclusies $1',
 'whatlinkshere-hidelinks'  => 'verwijzingen $1',
-'whatlinkshere-hideimages' => 'bestandsverwijzingen $1',
+'whatlinkshere-hideimages' => 'Bestandsverwijzingen $1',
 'whatlinkshere-filters'    => 'Filters',
 
 # Block/unblock
@@ -2735,7 +2738,7 @@ Zie de [[Special:BlockList|blokkadelijst]] voor recente blokkades.',
 'ipblocklist-empty'               => 'De blokkeerlijst is leeg.',
 'ipblocklist-no-results'          => 'Dit IP-adres of deze gebruikersnaam is niet geblokkeerd.',
 'blocklink'                       => 'blokkeren',
-'unblocklink'                     => 'deblokkeren',
+'unblocklink'                     => 'blokkade opheffen',
 'change-blocklink'                => 'blokkade wijzigen',
 'contribslink'                    => 'bijdragen',
 'emaillink'                       => 'e-mail verzenden',
@@ -3153,14 +3156,14 @@ Meestal wordt dit door een externe verwijzing op een zwarte lijst veroorzaakt.',
 
 # Info page
 'pageinfo-title'            => 'Informatie over "$1"',
-'pageinfo-header-edits'     => 'Bewerkingen',
+'pageinfo-header-edits'     => 'Bewerkingsgeschiedenis',
 'pageinfo-header-watchlist' => 'Volglijst',
 'pageinfo-header-views'     => 'Weergaven',
 'pageinfo-subjectpage'      => 'Pagina',
 'pageinfo-talkpage'         => 'Overlegpagina',
-'pageinfo-watchers'         => 'Aantal volgers',
+'pageinfo-watchers'         => 'Aantal paginavolgers',
 'pageinfo-edits'            => 'Aantal bewerkingen',
-'pageinfo-authors'          => 'Aantal verschillende auteurs',
+'pageinfo-authors'          => 'Totaal aantal verschillende auteurs',
 'pageinfo-views'            => 'Aantal weergaven',
 'pageinfo-viewsperedit'     => 'Weergaven per bewerking',
 
@@ -3741,7 +3744,7 @@ De bevestigingscode vervalt op $4.',
 
 # Scary transclusion
 'scarytranscludedisabled' => '[Interwiki-invoeging van sjablonen is uitgeschakeld]',
-'scarytranscludefailed'   => '[Het sjabloon $1 kon niet opgehaald worden]',
+'scarytranscludefailed'   => '[De sjabloon $1 kon niet opgehaald worden]',
 'scarytranscludetoolong'  => '[De URL is te lang]',
 
 # Delete conflict
@@ -3871,7 +3874,7 @@ U kunt ook [[Special:EditWatchlist|het standaard bewerkingsscherm gebruiken]].',
 'version-version'               => '(Versie $1)',
 'version-license'               => 'Licentie',
 'version-poweredby-credits'     => "Deze wiki wordt aangedreven door '''[//www.mediawiki.org/ MediaWiki]''', copyright © 2001-$1 $2.",
-'version-poweredby-others'      => 'anderen',
+'version-poweredby-others'      => '[{{SERVER}}{{SCRIPTPATH}}/CREDITS anderen]',
 'version-license-info'          => 'MediaWiki is vrije software; u kunt MediaWiki verspreiden en/of aanpassen onder de voorwaarden van de GNU General Public License zoals gepubliceerd door de Free Software Foundation; ofwel versie 2 van de Licentie, of - naar uw wens - enige latere versie.
 
 MediaWiki wordt verspreid in de hoop dat het nuttig is, maar ZONDER ENIGE GARANTIE; zonder zelfs de impliciete garantie van VERKOOPBAARHEID of GESCHIKTHEID VOOR ENIG DOEL IN HET BIJZONDER. Zie de GNU General Public License voor meer informatie.
@@ -3954,7 +3957,7 @@ Andere bestandstypen worden direct in het met het MIME-type verbonden programma 
 'compare-rev1'                => 'Versie 1',
 'compare-rev2'                => 'Versie 2',
 'compare-submit'              => 'Vergelijken',
-'compare-invalid-title'       => 'De titel die u hebt opgegeven is ongeldig.',
+'compare-invalid-title'       => 'De opgegeven pagina is ongeldig.',
 'compare-title-not-exists'    => 'De titel die u hebt opgegeven bestaat niet.',
 'compare-revision-not-exists' => 'De versie die u hebt opgegeven bestaat niet.',
 
@@ -4009,15 +4012,16 @@ Andere bestandstypen worden direct in het met het MIME-type verbonden programma 
 'logentry-move-move_redir-noredirect' => '$1 heeft pagina $3 naar $4 hernoemd over een doorverwijzing zonder een doorverwijzing achter te laten',
 'logentry-patrol-patrol'              => '$1 heeft versie $4 van pagina $3 als gecontroleerd gemarkeerd',
 'logentry-patrol-patrol-auto'         => '$1 heeft versie $4 van pagina $3 automatisch als gecontroleerd gemarkeerd',
-'logentry-newusers-newusers'          => '$1 heeft een gebruiker aangemaakt',
-'logentry-newusers-create'            => '$1 is als gebruiker aangemaakt',
-'logentry-newusers-create2'           => '$1 heeft een gebruiker $3 aangemaakt',
+'logentry-newusers-newusers'          => 'Gebruiker $1 is aangemaakt',
+'logentry-newusers-create'            => 'Gebruiker $1 is aangemaakt',
+'logentry-newusers-create2'           => 'Gebruiker $3 is aangemaakt door $1',
 'logentry-newusers-autocreate'        => 'De gebruiker $1 is automatisch aangemaakt',
 'newuserlog-byemail'                  => 'wachtwoord is verzonden per e-mail',
 
 # Feedback
 'feedback-bugornote' => 'Als u zover bent om een technisch probleem in detail te beschrijven, [$1 rapporteer dan een bug].
-Anders kunt u ook het eenvoudige formulier hieronder gebruiken. Uw reactie wordt dan toegevoegd aan de pagina "[$3 $2]", samen met uw gebruikersnaam en de browser die u gebruikt.',
+Anders kunt u ook het eenvoudige formulier hieronder gebruiken.
+Uw reactie wordt dan toegevoegd aan de pagina "[$3 $2]", samen met uw gebruikersnaam en de browser die u gebruikt.',
 'feedback-subject'   => 'Onderwerp:',
 'feedback-message'   => 'Bericht:',
 'feedback-cancel'    => 'Annuleren',

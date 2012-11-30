@@ -344,7 +344,7 @@ $messages = array(
 
 'underline-always'  => 'zawsze',
 'underline-never'   => 'nigdy',
-'underline-default' => 'według ustawień przeglądarki',
+'underline-default' => 'według ustawień skórki lub przeglądarki',
 
 # Font style option in Special:Preferences
 'editfont-style'     => 'Styl czcionki w polu edycyjnym',
@@ -429,8 +429,8 @@ $messages = array(
 'newwindow'     => '(otwiera się w nowym oknie)',
 'cancel'        => 'Anuluj',
 'moredotdotdot' => 'Więcej...',
-'mypage'        => 'Moja strona',
-'mytalk'        => 'Moja dyskusja',
+'mypage'        => 'Strona',
+'mytalk'        => 'Dyskusja',
 'anontalk'      => 'Dyskusja tego IP',
 'navigation'    => 'Nawigacja',
 'and'           => '&#32;oraz',
@@ -453,7 +453,7 @@ $messages = array(
 'vector-action-protect'          => 'Zabezpiecz',
 'vector-action-undelete'         => 'Odtwórz',
 'vector-action-unprotect'        => 'Zmień zabezpieczenie',
-'vector-simplesearch-preference' => 'Włącz zaawansowane podpowiedzi wyszukiwania (tylko dla skórki Wektor)',
+'vector-simplesearch-preference' => 'Włącz uproszczony pasek wyszukiwania (tylko dla skórki Wektor)',
 'vector-view-create'             => 'Utwórz',
 'vector-view-edit'               => 'Edytuj',
 'vector-view-history'            => 'Wyświetl historię',
@@ -613,9 +613,9 @@ Listę dostępnych stron specjalnych znajdziesz [[Special:SpecialPages|tutaj]].'
 'dberrortext'          => 'Wystąpił błąd składni w zapytaniu do bazy danych.
 Może to oznaczać błąd w oprogramowaniu.
 Ostatnie, nieudane zapytanie to:
-<blockquote><tt>$1</tt></blockquote>
-wysłane przez funkcję „<tt>$2</tt>”.
-Baza danych zgłosiła błąd „<tt>$3: $4</tt>”.',
+<blockquote><code>$1</code></blockquote>
+wysłane przez funkcję „<code>$2</code>”.
+Baza danych zgłosiła błąd „<samp>$3: $4</samp>”.',
 'dberrortextcl'        => 'Wystąpił błąd składni w zapytaniu do bazy danych.
 Ostatnie, nieudane zapytanie to:
 „$1”
@@ -667,10 +667,11 @@ Zapytanie: $2',
 'protectedpagetext'    => 'Wyłączono możliwość edycji tej strony.',
 'viewsourcetext'       => 'Tekst źródłowy strony można podejrzeć i skopiować.',
 'viewyourtext'         => "Tekst źródłowy '''zmodyfikowanej''' przez Ciebie strony możesz podejrzeć i skopiować",
-'protectedinterface'   => 'Ta strona zawiera tekst interfejsu oprogramowania, dlatego możliwość jej edycji została zablokowana.',
+'protectedinterface'   => 'Ta strona zawiera tekst interfejsu oprogramowania wiki i jest zabezpieczona przed nadużyciami.
+By dodać lub zmienić tłumaczenia wszystkich serwisów wiki, użyj [//translatewiki.net/ translatewiki.net], projektu lokalizacji MediaWiki.',
 'editinginterface'     => "'''Ostrzeżenie:''' Edytujesz stronę, która zawiera tekst interfejsu oprogramowania.
-Zmiany na tej stronie zmienią wygląd interfejsu dla innych użytkowników.
-Rozważ wykonanie tłumaczenia na [//translatewiki.net/wiki/Main_Page?setlang=pl translatewiki.net], specjalizowanym projekcie lokalizacji oprogramowania MediaWiki.",
+Zmiany na tej stronie zmienią wygląd interfejsu dla innych użytkowników tej wiki.
+By dodać lub zmienić tłumaczenia wszystkich wiki, użyj [//translatewiki.net/wiki/Main_Page?setlang=pl translatewiki.net], specjalizowany projekt lokalizacji oprogramowania MediaWiki.",
 'sqlhidden'            => '(ukryto zapytanie SQL)',
 'cascadeprotected'     => 'Ta strona została zabezpieczona przed edycją, ponieważ jest ona zawarta na {{PLURAL:$1|następującej stronie, która została zabezpieczona|następujących stronach, które zostały zabezpieczone}} z włączoną opcją dziedziczenia:
 $2',
@@ -959,7 +960,6 @@ Ostatni wpis rejestru blokad jest pokazany poniżej.',
 * '''Firefox / Safari:''' Przytrzymaj ''Shift'' podczas klikania ''Odśwież bieżącą stronę'', lub naciśnij klawisze ''Ctrl+F5'' lub ''Ctrl+R'' (''⌘-R'' na komputerze Mac)
 * '''Google Chrome:''' Naciśnij ''Ctrl-Shift-R'' (''⌘-Shift-R'' na komputerze Mac)
 * '''Internet Explorer:''' Przytrzymaj ''Ctrl'' jednocześnie klikając ''Odśwież'' lub naciśnij klawisze ''Ctrl+F5''
-* '''Konqueror:''' Kliknij polecenie ''Odśwież'' lub naciśnij klawisz ''F5''
 * '''Opera:''' Wyczyść pamięć podręczną w ''Narzędzia → Preferencje''",
 'usercssyoucanpreview'             => "'''Podpowiedź:''' Użyj przycisku „Podgląd”, aby przetestować nowy arkusz stylów CSS przed jego zapisaniem.",
 'userjsyoucanpreview'              => "'''Podpowiedź:''' Użyj przycisku „Podgląd”, aby przetestować nowy kod JavaScript przed jego zapisaniem.",
@@ -1201,7 +1201,9 @@ Proszę sprawdzić rejestr operacji.',
 'revdelete-only-restricted'   => 'Nie można ukryć elementu z $2, $1 przed administratorami bez określenia jednej z pozostałych opcji ukrywania.',
 'revdelete-reason-dropdown'   => '* Najczęstsze powody usunięcia
 ** Naruszenie praw autorskich
-** Informacja naruszająca prywatność',
+** Niestosowny komentarz lub informacja naruszająca prywatność
+** Niestosowna nazwa użytkownika
+** Potencjalnie oszczercza informacja',
 'revdelete-otherreason'       => 'Inny lub dodatkowy powód:',
 'revdelete-reasonotherlist'   => 'Inny powód',
 'revdelete-edit-reasonlist'   => 'Edycja listy powodów usunięcia pliku',
@@ -1393,7 +1395,7 @@ Wygenerowany losowo klucz, którego możesz użyć to $1',
 'timezoneregion-indian'         => 'Ocean Indyjski',
 'timezoneregion-pacific'        => 'Ocean Spokojny',
 'allowemail'                    => 'Zgadzam się, by inni użytkownicy mogli przesyłać do mnie e‐maile',
-'prefs-searchoptions'           => 'Opcje wyszukiwania',
+'prefs-searchoptions'           => 'Wyszukiwanie',
 'prefs-namespaces'              => 'Przestrzenie nazw',
 'defaultns'                     => 'Albo przeszukuj przestrzenie nazw:',
 'default'                       => 'domyślnie',
@@ -1409,7 +1411,7 @@ Tej operacji nie można później cofnąć.',
 'username'                      => 'Nazwa użytkownika',
 'uid'                           => 'ID użytkownika',
 'prefs-memberingroups'          => 'Należy do {{PLURAL:$1|grupy|grup}}',
-'prefs-registration'            => 'Moment rejestracji',
+'prefs-registration'            => 'Data rejestracji',
 'yourrealname'                  => 'Imię i nazwisko',
 'yourlanguage'                  => 'Język interfejsu',
 'yourvariant'                   => 'Wariant języka treści',
@@ -1431,7 +1433,7 @@ Jeśli zdecydujesz się je podać, zostaną użyte, by udokumentować Twoje auto
 'prefs-help-email-others'       => 'Możesz również umożliwić innym użytkownikom wysłanie do Ciebie e‐maila poprzez Twoją stronę użytkownika lub stronę dyskusji (bez ujawniania Twojego adresu).',
 'prefs-help-email-required'     => 'Wymagany jest adres e‐mail.',
 'prefs-info'                    => 'Podstawowe informacje',
-'prefs-i18n'                    => 'Ustawienia międzynarodowe',
+'prefs-i18n'                    => 'Ustawienia językowe',
 'prefs-signature'               => 'Podpis',
 'prefs-dateformat'              => 'Format daty',
 'prefs-timeoffset'              => 'Różnica czasu',
@@ -1560,7 +1562,7 @@ Jeśli zdecydujesz się je podać, zostaną użyte, by udokumentować Twoje auto
 'rightslog'                  => 'Uprawnienia',
 'rightslogtext'              => 'Rejestr zmian uprawnień użytkowników.',
 'rightslogentry'             => 'zmienił przynależność $1 do grup ($2 → $3)',
-'rightslogentry-autopromote' => 'automatycznie zmienia przynależność ($2 → $3)',
+'rightslogentry-autopromote' => 'automatycznie zmienił przynależność ($2 → $3)',
 'rightsnone'                 => 'brak',
 
 # Associated actions - in the sentence "You do not have permission to X"
@@ -1637,9 +1639,9 @@ Jeśli zdecydujesz się je podać, zostaną użyte, by udokumentować Twoje auto
 'rc-old-title'                      => 'oryginalnie utworzono jako "$1"',
 
 # Recent changes linked
-'recentchangeslinked'          => 'Zmiany w dolinkowanych',
-'recentchangeslinked-feed'     => 'Zmiany w dolinkowanych',
-'recentchangeslinked-toolbox'  => 'Zmiany w dolinkowanych',
+'recentchangeslinked'          => 'Zmiany w linkowanych',
+'recentchangeslinked-feed'     => 'Zmiany w linkowanych',
+'recentchangeslinked-toolbox'  => 'Zmiany w linkowanych',
 'recentchangeslinked-title'    => 'Zmiany w linkowanych z „$1”',
 'recentchangeslinked-noresult' => 'Nie było żadnych zmian na (zależnie od ustawień) linkowanych lub linkujących stronach w wybranym okresie.',
 'recentchangeslinked-summary'  => "Poniżej znajduje się lista ostatnich zmian na stronach linkowanych z podanej strony (lub we wszystkich stronach należących do podanej kategorii).
@@ -2172,7 +2174,7 @@ Zobacz również [[Special:WantedCategories|brakujące kategorie]].',
 'linksearch-ok'    => 'Szukaj',
 'linksearch-text'  => 'Można użyć symboli wieloznacznych jak „*.wikipedia.org”.
 Wymaga podania co najmniej domeny najwyższego poziomu np. „*.org”.<br />
-Obsługiwane protokoły: <code>$1</code> (nie podawaj ich podczas wyszukiwania).',
+Obsługiwane protokoły: <code>$1</code> (jeśli nie podano, domyślny to http://).',
 'linksearch-line'  => '$1 link na stronie $2',
 'linksearch-error' => 'Symbolu wieloznacznego można użyć wyłącznie na początku nazwy hosta.',
 
@@ -2219,7 +2221,7 @@ Sprawdź stronę z [[{{MediaWiki:Listgrouprights-helppage}}|dodatkowymi informac
 'mailnologintext'      => 'Musisz się [[Special:UserLogin|zalogować]] i mieć wpisany aktualny adres e‐mailowy w swoich [[Special:Preferences|preferencjach]], aby móc wysłać e‐mail do innego użytkownika.',
 'emailuser'            => 'Wyślij e‐mail do tego użytkownika',
 'emailpage'            => 'Wyślij e‐mail do użytkownika',
-'emailpagetext'        => 'Możesz użyć poniższego formularza, aby wysłać wiadomość e‐mail do tego użytkownika.
+'emailpagetext'        => 'Możesz użyć poniższego formularza, aby wysłać wiadomość e‐mail do {{GENDER:$1|tego użytkownika|tej użytkowniczki}}.
 Adres e‐mailowy, który został przez Ciebie wprowadzony w [[Special:Preferences|Twoich preferencjach]], zostanie umieszczony w polu „Od”, dzięki czemu odbiorca będzie mógł Ci odpowiedzieć.',
 'usermailererror'      => 'Moduł obsługi poczty zwrócił błąd:',
 'defemailsubject'      => '{{SITENAME}} – e‐mail od użytkownika „$1“',
@@ -2507,7 +2509,7 @@ $1',
 # Contributions
 'contributions'       => 'Wkład użytkownika',
 'contributions-title' => 'Wkład {{GENDER:$1|użytkownika|użytkowniczki}} $1',
-'mycontris'           => 'Moje edycje',
+'mycontris'           => 'Edycje',
 'contribsub2'         => 'Dla użytkownika $1 ($2)',
 'nocontribs'          => 'Brak zmian odpowiadających tym kryteriom.',
 'uctop'               => ' (jako ostatnia)',
@@ -2547,7 +2549,7 @@ Poniżej znajduje się ostatni wpis w rejestrze blokowania.',
 'whatlinkshere-hideredirs' => '$1 przekierowania',
 'whatlinkshere-hidetrans'  => '$1 dołączenia',
 'whatlinkshere-hidelinks'  => '$1 linki',
-'whatlinkshere-hideimages' => '$1 linki z grafik',
+'whatlinkshere-hideimages' => '$1 linki z plików',
 'whatlinkshere-filters'    => 'Filtry',
 
 # Block/unblock
@@ -3034,14 +3036,14 @@ Najprawdopodobniej zostało to spowodowane przez link do zewnętrznej strony int
 
 # Info page
 'pageinfo-title'            => 'Informacje o „$1“',
-'pageinfo-header-edits'     => 'Edycje',
+'pageinfo-header-edits'     => 'Historia edycji',
 'pageinfo-header-watchlist' => 'Obserwowane',
 'pageinfo-header-views'     => 'Odsłon',
 'pageinfo-subjectpage'      => 'Strona',
 'pageinfo-talkpage'         => 'Strona dyskusji',
-'pageinfo-watchers'         => 'Obserwujących',
+'pageinfo-watchers'         => 'Liczba obserwujących',
 'pageinfo-edits'            => 'Edycji',
-'pageinfo-authors'          => 'Autorów',
+'pageinfo-authors'          => 'Całkowita liczba autorów',
 'pageinfo-views'            => 'Odsłon',
 'pageinfo-viewsperedit'     => 'Odsłon na edycję',
 
@@ -3928,9 +3930,9 @@ Grafiki są pokazywane w pełnej rozdzielczości. Inne typy plików są otwieran
 'logentry-move-move_redir-noredirect' => '$1 przenosi stronę $3 na $4 w miejsce przekierowania i bez pozostawienia przekierowania pod starym tytułem',
 'logentry-patrol-patrol'              => '$1 oznacza wersję $4 strony $3 jako sprawdzoną',
 'logentry-patrol-patrol-auto'         => '$1 automatycznie oznacza wersję $4 strony $3 jako sprawdzoną',
-'logentry-newusers-newusers'          => '$1 tworzy konto użytkownika',
-'logentry-newusers-create'            => '$1 tworzy konto użytkownika',
-'logentry-newusers-create2'           => '$1 tworzy konto użytkownika $3',
+'logentry-newusers-newusers'          => 'Konto użytkownika $1 zostało utworzone',
+'logentry-newusers-create'            => 'Konto użytkownika $1 zostało utworzone',
+'logentry-newusers-create2'           => 'Konto użytkownika $3 zostało utworzone przez użytkownika $1',
 'logentry-newusers-autocreate'        => '$1 automatycznie tworzy konto użytkownika',
 'newuserlog-byemail'                  => 'hasło zostało wysłane e‐mailem',
 

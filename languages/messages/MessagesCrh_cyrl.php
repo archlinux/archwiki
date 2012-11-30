@@ -1,5 +1,5 @@
 <?php
-/** Crimean Turkish (Cyrillic script) (‪къырымтатарджа (Кирилл)‬)
+/** Crimean Turkish (Cyrillic script) (къырымтатарджа (Кирилл)‎)
  *
  * See MessagesQqq.php for message documentation incl. usage of parameters
  * To improve a translation please visit http://translatewiki.net
@@ -243,8 +243,8 @@ $messages = array(
 'newwindow'     => '(янъы бир пенджереде ачылыр)',
 'cancel'        => 'Лягъу',
 'moredotdotdot' => 'Даа...',
-'mypage'        => 'Саифем',
-'mytalk'        => 'Музакере саифем',
+'mypage'        => 'Саифе',
+'mytalk'        => 'Музакере',
 'anontalk'      => 'Бу IP-нинъ музакереси',
 'navigation'    => 'Сайтта ёл тапув',
 'and'           => '&#32;ве',

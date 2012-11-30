@@ -361,7 +361,7 @@ $messages = array(
 
 'underline-always'  => 'Ĉiam',
 'underline-never'   => 'Neniam',
-'underline-default' => 'Defaŭlte laŭ foliumilo',
+'underline-default' => 'Pravaloro laŭ foliumilo',
 
 # Font style option in Special:Preferences
 'editfont-style'     => 'Tipara stilo de redakta tekstujo',
@@ -446,8 +446,8 @@ $messages = array(
 'newwindow'     => '(en nova fenestro)',
 'cancel'        => 'Nuligi',
 'moredotdotdot' => 'Pli...',
-'mypage'        => 'Mia paĝo',
-'mytalk'        => 'Mia diskuto',
+'mypage'        => 'Paĝo',
+'mytalk'        => 'Diskuto',
 'anontalk'      => 'Diskutpaĝo por tiu ĉi IP',
 'navigation'    => 'Navigado',
 'and'           => '&#32;kaj',
@@ -470,7 +470,7 @@ $messages = array(
 'vector-action-protect'          => 'Protekti',
 'vector-action-undelete'         => 'Malforigi',
 'vector-action-unprotect'        => 'Ŝanĝi protekadon',
-'vector-simplesearch-preference' => 'Ebligi plibonigitajn serĉajn sugestojn (nur Vektora etoso)',
+'vector-simplesearch-preference' => 'Ebligi simpligitan serĉan strion (nur Vektora etoso)',
 'vector-view-create'             => 'Krei',
 'vector-view-edit'               => 'Redakti',
 'vector-view-history'            => 'Vidi historion',
@@ -627,12 +627,12 @@ Listo de validaj specialaj paĝoj estas trovebla ĉe [[Special:SpecialPages|{{in
 # General errors
 'error'                => 'Eraro',
 'databaseerror'        => 'Datumbaza eraro',
-'dberrortext'          => 'Sintakseraro okazis dum informpeto al la datumaro.
-Ĝi eble indikas cimon en la programaro.
+'dberrortext'          => 'Sintakseraro okazis dum informpeto al la datenbazo.
+Ĝi eble indikas misaĵeton en la programaro.
 Jen la plej laste provita informpeto:
-<blockquote><tt>$1</tt></blockquote>
-el la funkcio "<tt>$2</tt>".
-MySQL liveris eraron "<tt>$3: $4</tt>".',
+<blockquote><code>$1</code></blockquote>
+el la funkcio "<code>$2</code>".
+La datenbazo liveris eraron "<samp>$3: $4</samp>".',
 'dberrortextcl'        => 'Sintaksa eraro de la datumbaza informmendo okazis.
 La lasta provita datumbaza informmendo estis:
 "$1"
@@ -690,8 +690,9 @@ Peto: $2',
 'protectedpagetext'    => 'Tiu ĉi paĝo estas ŝlosita por malebligi redaktadon.',
 'viewsourcetext'       => 'Vi povas rigardi kaj kopii la fonton de la paĝo:',
 'viewyourtext'         => "Vi povas vidi kaj kopii la fonton de '''viaj redaktoj''' al ĉi tiu paĝo:",
-'protectedinterface'   => 'Ĉi tiu paĝo provizas interfacan tekston por la softvaro, kaj estas ŝlosita por malabeligi misuzon.',
-'editinginterface'     => "'''Atentu:''' Vi redaktas paĝon, kiu estas uzata kiel interfaca teksto por la rogramaro. Ŝanĝoj de ĉi tiu teksto povas ŝanĝi aspekton de la interfaco por aliaj uzantoj. Por tradukojn, bonvolu uzi [//translatewiki.net/wiki/Main_Page?setlang=eo translatewiki.net], la MediaWiki-projekton por lingvigaj versioj.",
+'protectedinterface'   => 'Ĉi tiu paĝo provizas interfacan tekston por la softvaro, kaj estas ŝlosita por malebligi misuzon.
+Por aldoni aŭ ŝanĝi tradukojn por ĉiuj vikioj, bonvolu uzi [//translatewiki.net/ translatewiki.net], la projekto por provizi tradukojn por MediaWiki.',
+'editinginterface'     => "'''Atentu:''' Vi redaktas paĝon, kiu estas uzata kiel interfaca teksto por la programaro. Ŝanĝoj de ĉi tiu teksto povas ŝanĝi aspekton de la interfaco por aliaj uzantoj sur ĉi tiu vikio. Por aldoni aŭ ŝanĝi tradukojn, bonvolu uzi [//translatewiki.net/ translatewiki.net], la MediaWiki-projekton por lingvigaj versioj.",
 'sqlhidden'            => '(SQL serĉomendo kaŝita)',
 'cascadeprotected'     => 'Ĉi tiu paĝo estas protektita kontraŭ redaktado, ĉar ĝi estas inkludita en la {{PLURAL:$1|sekvan paĝon, kiu|sekvajn paĝojn, kiuj}} estas {{PLURAL:$1|protektata|protektataj}} kun la "kaskada" opcio turnita sur:
 $2',
@@ -971,15 +972,13 @@ aŭ <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}
 'userpage-userdoesnotexist-view'   => 'Uzanto-konto "$1" ne estas registrita.',
 'blocked-notice-logextract'        => 'Ĉi tiu uzanto estas ĉi-momente forbarita.
 La lasta protokolero estas jene montrata por via referenco:',
-'clearyourcache'                   => "'''Notu:''' Post konservado vi forviŝu la kaŝmemoron de via foliumilo por vidi la ŝanĝojn. 
-* '''Firefox / Safari:''' Premu majuskligan klavon klakante ''Reŝarĝi'', aŭ premu ''Stir-F5'', aŭ premu ''Stir-R'' aŭ ''⌘-R'' kun Makintoŝo
-* '''Google Chrome:''' Premu ''Stir-majuskligklavon'' aŭ ⌘-Majuskligklavo-R'' kun Makintoŝo
+'clearyourcache'                   => "Notu:''' Post konservado, vi forviŝu la kaŝmemoron de via foliumilo por vidi la ŝanĝojn. 
+* '''Firefox / Safari:''' Premu majuskligan klavon klakante ''Reŝarĝi'', aŭ premu aŭ ''Stir-F5'' aŭ ''Stir-R'' (''⌘-R'' kun Makintoŝo)
+* '''Google Chrome:''' Premu ''Stir-majuskligklavon-R'' (''⌘-Majuskligklavo-R'' kun Makintoŝo)
 * '''Interreta Esplorilo''': Premu ''Stir'' klakante ''Refreŝu'', aŭ premu ''Stir-F5'' 
-* '''Safari:''' ''Cmd-R''
-* '''Konqueror:''' Klaku ''Reŝarĝu'' aŭ premu ''F5''
 * '''Opera:''' Nuligi la kaŝmemoro en ''Iloj → Preferoj''",
 'usercssyoucanpreview'             => "'''Konsileto:''' Uzu la butonon \"Antaŭrigardi\" por provi vian novan CSS-kodon antaŭ konservado.",
-'userjsyoucanpreview'              => "'''Konsileto:''' Uzu la butonon \"Antaŭrigard\" por provi vian novan JS-kodon antaŭ konservado.",
+'userjsyoucanpreview'              => "'''Konsileto:''' Uzu la butonon \"{{int:showpreview}}\" por provi vian novan JS-kodon antaŭ konservado.",
 'usercsspreview'                   => "'''Notu ke vi nur antaŭvidas vian uzanto-CSS.
 Ĝi ne jam estis konservita!'''",
 'userjspreview'                    => "'''Memoru ke vi nun nur provas kaj antaŭrigardas vian uzantan javaskripton, ĝi ne estas jam konservita'''",
@@ -1220,8 +1219,9 @@ Bonvolu kontroli la protokolojn.',
 'revdelete-only-restricted'   => 'Eraro kaŝante la aĵon de $2, $1: Vi ne povas subpremi aĵojn de vido de administrantoj sen ankaŭ selektante unu el la aliaj subpremo-opcioj.',
 'revdelete-reason-dropdown'   => '*Oftaj kialoj por forigado
 ** Aŭtorrajta neglekto
-** Maltaŭga persona informo
-** Eventualaj malhonorigaj informoj',
+** Maltaŭga komento aŭ persona informo
+** Nekonvena uzantnomo
+** Eventuale kalumnaj informoj',
 'revdelete-otherreason'       => 'Alia/aldona kialo:',
 'revdelete-reasonotherlist'   => 'Alia kialo',
 'revdelete-edit-reasonlist'   => 'Redakti kialojn por forigo',
@@ -1349,7 +1349,7 @@ indekso pro troŝarĝita servilo. Intertempe, vi povas serĉi per <i>guglo</i> a
 
 # Preferences page
 'preferences'                   => 'Preferoj',
-'mypreferences'                 => 'Miaj preferoj',
+'mypreferences'                 => 'Preferoj',
 'prefs-edits'                   => 'Nombro de redaktoj:',
 'prefsnologin'                  => 'Ne jam salutis!',
 'prefsnologintext'              => 'Vi devas esti <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} ensalutita]</span> por fari viajn preferojn.',
@@ -1411,7 +1411,7 @@ Jen hazarde generita valoro por via uzo: $1',
 'timezoneregion-indian'         => 'Hinda Oceano',
 'timezoneregion-pacific'        => 'Pacifiko',
 'allowemail'                    => 'Rajtigi retmesaĝojn de aliaj uzantoj',
-'prefs-searchoptions'           => 'Serĉaj opcioj',
+'prefs-searchoptions'           => 'Serĉu',
 'prefs-namespaces'              => 'Nomspacoj',
 'defaultns'                     => 'Alimaniere, traserĉi la jenajn nomspacojn:',
 'default'                       => 'defaŭlte',
@@ -2217,7 +2217,7 @@ Estas [[{{MediaWiki:Listgrouprights-helppage}}|aldona informo]] pri individuaj r
 'mailnologintext'      => 'Vi nepre estu [[Special:UserLogin|salutanta]] kaj havanta validan retpoŝtadreson en viaj [[Special:Preferences|preferoj]] por retpoŝti al aliaj uzantoj.',
 'emailuser'            => 'Retpoŝti ĉi tiun uzanton',
 'emailpage'            => 'Retpoŝti uzanton',
-'emailpagetext'        => 'Vi povas uzi la jenan paĝon por sendi retpoŝtan mesaĝon al ĉi tiu uzanto.
+'emailpagetext'        => 'Vi povas uzi la jenan paĝon por sendi retpoŝtan mesaĝon al ĉi tiu {{GENDER:$1|uzanto|uzantino}}.
 La retadreso kiun vi enigis en [[Special:Preferences|viaj preferoj]] aperos kiel la "De" adreso de la retpoŝto, do la ricevonto eblos respondi rekte al vi.',
 'usermailererror'      => 'Resendita retmesaĝa erarsubjekto:',
 'defemailsubject'      => '{{SITENAME}} retmesaĝo de uzanto "$1"',
@@ -2500,7 +2500,7 @@ $1',
 # Contributions
 'contributions'       => 'Kontribuoj de uzanto',
 'contributions-title' => 'Kontribuoj de uzanto $1',
-'mycontris'           => 'Miaj kontribuoj',
+'mycontris'           => 'Kontribuoj',
 'contribsub2'         => 'De $1 ($2)',
 'nocontribs'          => 'Trovis neniajn redaktojn laŭ tiu kriterio.',
 'uctop'               => ' (lasta)',
@@ -3032,14 +3032,14 @@ Datoj de versioj kaj nomoj de redaktantoj estos preservitaj.
 
 # Info page
 'pageinfo-title'            => 'Informoj por "$1"',
-'pageinfo-header-edits'     => 'Redaktoj',
+'pageinfo-header-edits'     => 'Historio de redaktoj',
 'pageinfo-header-watchlist' => 'Atentaro',
 'pageinfo-header-views'     => 'Rigardoj',
 'pageinfo-subjectpage'      => 'Paĝo',
 'pageinfo-talkpage'         => 'Diskuto-paĝo',
-'pageinfo-watchers'         => 'Nombro de atentantoj',
+'pageinfo-watchers'         => 'Nombro de paĝatentantoj',
 'pageinfo-edits'            => 'Nombro de redaktoj',
-'pageinfo-authors'          => 'Nombro de distingaj aŭtoroj',
+'pageinfo-authors'          => 'Suma nombro de malsamaj aŭtoroj',
 'pageinfo-views'            => 'Nombro de rigardoj',
 'pageinfo-viewsperedit'     => 'Po rigardoj por redakto',
 
@@ -3136,7 +3136,7 @@ Sekvaj ligilo en la sama linio estas konsiderata kiel esceptoj (paĝoj kiel la b
 'metadata-help'     => 'Ĉi tiu dosiero enhavas plian informon, verŝajne aldonitan de la cifereca fotilo aŭ skanilo uzita por krei aŭ skani ĝin. Se la dosiero estis modifita de sia originala stato, iuj detaloj eble ne konformos al efektiva stato de la modifita bildo.',
 'metadata-expand'   => 'Montri etendajn detalojn',
 'metadata-collapse' => 'Kaŝi etendajn detalojn',
-'metadata-fields'   => 'Metadatumaj kampoj de ĉi tiu mesaĝo estos inkluzivita en la paĝoj de bidloj kiam la metadatuma tabelo estas disfaldigita. 
+'metadata-fields'   => 'Metadatumaj kampoj de ĉi tiu mesaĝo estos inkluzivitaj en la paĝoj de bildoj kiam la metadatuma tabelo estas disfaldita. 
 Aliaj estos kaŝitaj defaŭlte.
 * make
 * model
@@ -3862,9 +3862,9 @@ Bildoj montriĝas en plena distingivo, aliaj dosiertipoj estas malfermataj rekte
 'logentry-move-move_redir-noredirect' => '$1 movis paĝon $3 al $4 anstataŭigante alidirektilon sen lasante alidirektilon',
 'logentry-patrol-patrol'              => '$1 markis revizion $4 de paĝo $3 kiel patrolita',
 'logentry-patrol-patrol-auto'         => '$1 aŭtomate markis revizion $4 de paĝo $3 kiel patrolita',
-'logentry-newusers-newusers'          => '$1 kreis salutnomon',
-'logentry-newusers-create'            => '$1 kreis salutnomon',
-'logentry-newusers-create2'           => '$1 kreis salutnomo $3',
+'logentry-newusers-newusers'          => '$1 kreis konton',
+'logentry-newusers-create'            => '$1 kreis konton',
+'logentry-newusers-create2'           => '$1 kreis uzanton $3',
 'logentry-newusers-autocreate'        => 'Konto $1 estis kreita aŭtomate',
 'newuserlog-byemail'                  => 'pasvorto sendita retpoŝte',
 

@@ -670,7 +670,7 @@ XHTML id names.
 
 'underline-always'  => 'Always',
 'underline-never'   => 'Never',
-'underline-default' => 'Browser default',
+'underline-default' => 'Skin or browser default',
 
 # Font style option in Special:Preferences
 'editfont-style'     => 'Edit area font style:',
@@ -758,8 +758,8 @@ XHTML id names.
 'newwindow'     => '(opens in new window)',
 'cancel'        => 'Cancel',
 'moredotdotdot' => 'More...',
-'mypage'        => 'My page',
-'mytalk'        => 'My talk',
+'mypage'        => 'Page',
+'mytalk'        => 'Talk',
 'anontalk'      => 'Talk for this IP address',
 'navigation'    => 'Navigation',
 'and'           => '&#32;and',
@@ -784,7 +784,7 @@ XHTML id names.
 'vector-action-protect'          => 'Protect',
 'vector-action-undelete'         => 'Undelete',
 'vector-action-unprotect'        => 'Change protection',
-'vector-simplesearch-preference' => 'Enable enhanced search suggestions (Vector skin only)',
+'vector-simplesearch-preference' => 'Enable simplified search bar (Vector skin only)',
 'vector-view-create'             => 'Create',
 'vector-view-edit'               => 'Edit',
 'vector-view-history'            => 'View history',
@@ -1015,10 +1015,11 @@ Please try again in a few minutes.',
 'protectedpagetext'    => 'This page has been protected to prevent editing.',
 'viewsourcetext'       => 'You can view and copy the source of this page:',
 'viewyourtext'         => "You can view and copy the source of '''your edits''' to this page:",
-'protectedinterface'   => 'This page provides interface text for the software, and is protected to prevent abuse.',
+'protectedinterface'   => 'This page provides interface text for the software on this wiki, and is protected to prevent abuse.
+To add or change translations for all wikis, please use [//translatewiki.net/ translatewiki.net], the MediaWiki localisation project.',
 'editinginterface'     => "'''Warning:''' You are editing a page which is used to provide interface text for the software.
-Changes to this page will affect the appearance of the user interface for other users.
-For translations, please consider using [//translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net], the MediaWiki localisation project.",
+Changes to this page will affect the appearance of the user interface for other users on this wiki.
+To add or change translations for all wikis, please use [//translatewiki.net/ translatewiki.net], the MediaWiki localisation project.",
 'sqlhidden'            => '(SQL query hidden)',
 'cascadeprotected'     => 'This page has been protected from editing, because it is included in the following {{PLURAL:$1|page, which is|pages, which are}} protected with the "cascading" option turned on:
 $2',
@@ -1599,7 +1600,8 @@ Please check the logs.',
 'revdelete-only-restricted'   => 'Error hiding the item dated $2, $1: You cannot suppress items from view by administrators without also selecting one of the other visibility options.',
 'revdelete-reason-dropdown'   => '*Common delete reasons
 ** Copyright violation
-** Inappropriate personal information
+** Inappropriate comment or personal information
+** Inappropriate username
 ** Potentially libelous information',
 'revdelete-otherreason'       => 'Other/additional reason:',
 'revdelete-reasonotherlist'   => 'Other reason',
@@ -1752,7 +1754,7 @@ Note that their indexes of {{SITENAME}} content may be out of date.',
 # Preferences page
 'preferences'                   => 'Preferences',
 'preferences-summary'           => '', # do not translate or duplicate this message to other languages
-'mypreferences'                 => 'My preferences',
+'mypreferences'                 => 'Preferences',
 'prefs-edits'                   => 'Number of edits:',
 'prefsnologin'                  => 'Not logged in',
 'prefsnologintext'              => 'You must be <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} logged in]</span> to set user preferences.',
@@ -1814,7 +1816,7 @@ Here's a randomly-generated value you can use: $1",
 'timezoneregion-indian'         => 'Indian Ocean',
 'timezoneregion-pacific'        => 'Pacific Ocean',
 'allowemail'                    => 'Enable e-mail from other users',
-'prefs-searchoptions'           => 'Search options',
+'prefs-searchoptions'           => 'Search',
 'prefs-namespaces'              => 'Namespaces',
 'defaultns'                     => 'Otherwise search in these namespaces:',
 'default'                       => 'default',
@@ -2663,7 +2665,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'linksearch-ok'    => 'Search',
 'linksearch-text'  => 'Wildcards such as "*.wikipedia.org" may be used.
 Needs at least a top-level domain, for example "*.org".<br />
-Supported protocols: <code>$1</code> (do not add any of these in your search).',
+Supported protocols: <code>$1</code> (defaults to http:// if no protocol is specified).',
 'linksearch-line'  => '$1 is linked from $2',
 'linksearch-error' => 'Wildcards may appear only at the start of the hostname.',
 
@@ -2713,7 +2715,7 @@ There may be [[{{MediaWiki:Listgrouprights-helppage}}|additional information]] a
 'mailnologintext'      => 'You must be [[Special:UserLogin|logged in]] and have a valid e-mail address in your [[Special:Preferences|preferences]] to send e-mail to other users.',
 'emailuser'            => 'E-mail this user',
 'emailpage'            => 'E-mail user',
-'emailpagetext'        => 'You can use the form below to send an e-mail message to this user.
+'emailpagetext'        => 'You can use the form below to send an e-mail message to this {{GENDER:$1|user}}.
 The e-mail address you entered in [[Special:Preferences|your user preferences]] will appear as the "From" address of the e-mail, so the recipient will be able to reply directly to you.',
 'usermailererror'      => 'Mail object returned error:',
 'defemailsubject'      => '{{SITENAME}} e-mail from user "$1"',
@@ -2746,7 +2748,7 @@ The e-mail address you entered in [[Special:Preferences|your user preferences]] 
 
 # Watchlist
 'watchlist'            => 'My watchlist',
-'mywatchlist'          => 'My watchlist',
+'mywatchlist'          => 'Watchlist',
 'watchlistfor2'        => 'For $1 $2',
 'nowatchlist'          => 'You have no items on your watchlist.',
 'watchlistanontext'    => 'Please $1 to view or edit items on your watchlist.',
@@ -2803,8 +2805,7 @@ Contact the editor:
 mail: $PAGEEDITOR_EMAIL
 wiki: $PAGEEDITOR_WIKI
 
-There will be no other notifications in case of further changes unless you visit this page.
-You could also reset the notification flags for all your watched pages on your watchlist.
+There will be no other notifications in case of further changes unless you visit this page. You could also reset the notification flags for all your watched pages on your watchlist.
 
 			 Your friendly {{SITENAME}} notification system
 
@@ -3011,7 +3012,7 @@ $1',
 # Contributions
 'contributions'       => 'User contributions',
 'contributions-title' => 'User contributions for $1',
-'mycontris'           => 'My contributions',
+'mycontris'           => 'Contributions',
 'contribsub2'         => 'For $1 ($2)',
 'nocontribs'          => 'No changes were found matching these criteria.',
 'uctop'               => '(top)',
@@ -3056,7 +3057,7 @@ The latest block log entry is provided below for reference:',
 'whatlinkshere-hideredirs' => '$1 redirects',
 'whatlinkshere-hidetrans'  => '$1 transclusions',
 'whatlinkshere-hidelinks'  => '$1 links',
-'whatlinkshere-hideimages' => '$1 image links',
+'whatlinkshere-hideimages' => '$1 file links',
 'whatlinkshere-filters'    => 'Filters',
 
 # Block/unblock
@@ -3575,7 +3576,7 @@ You can view its source',
 'standard.css'            => '/* CSS placed here will affect users of the Standard skin */', # only translate this message to other languages if you have to change it
 'nostalgia.css'           => '/* CSS placed here will affect users of the Nostalgia skin */', # only translate this message to other languages if you have to change it
 'cologneblue.css'         => '/* CSS placed here will affect users of the Cologne Blue skin */', # only translate this message to other languages if you have to change it
-'monobook.css'            => '/* CSS placed here will affect users of the Monobook skin */', # only translate this message to other languages if you have to change it
+'monobook.css'            => '/* CSS placed here will affect users of the MonoBook skin */', # only translate this message to other languages if you have to change it
 'myskin.css'              => '/* CSS placed here will affect users of the MySkin skin */', # only translate this message to other languages if you have to change it
 'chick.css'               => '/* CSS placed here will affect users of the Chick skin */', # only translate this message to other languages if you have to change it
 'simple.css'              => '/* CSS placed here will affect users of the Simple skin */', # only translate this message to other languages if you have to change it
@@ -3631,14 +3632,14 @@ This is probably caused by a link to a blacklisted external site.',
 
 # Info page
 'pageinfo-title'            => 'Information for "$1"',
-'pageinfo-header-edits'     => 'Edits',
+'pageinfo-header-edits'     => 'Edit history',
 'pageinfo-header-watchlist' => 'Watchlist',
 'pageinfo-header-views'     => 'Views',
 'pageinfo-subjectpage'      => 'Page',
 'pageinfo-talkpage'         => 'Talk page',
-'pageinfo-watchers'         => 'Number of watchers',
+'pageinfo-watchers'         => 'Number of page watchers',
 'pageinfo-edits'            => 'Number of edits',
-'pageinfo-authors'          => 'Number of distinct authors',
+'pageinfo-authors'          => 'Total number of distinct authors',
 'pageinfo-views'            => 'Number of views',
 'pageinfo-viewsperedit'     => 'Views per edit',
 
@@ -3721,10 +3722,10 @@ By executing it, your system may be compromised.",
 
 # Video information, used by Language::formatTimePeriod() to format lengths in the above messages
 'video-dims'     => '$1, $2 × $3', # only translate this message to other languages if you have to change it
-'seconds-abbrev' => '$1s', # only translate this message to other languages if you have to change it
-'minutes-abbrev' => '$1m', # only translate this message to other languages if you have to change it
-'hours-abbrev'   => '$1h', # only translate this message to other languages if you have to change it
-'days-abbrev'    => '$1d', # only translate this message to other languages if you have to change it
+'seconds-abbrev' => '$1 s', # only translate this message to other languages if you have to change it
+'minutes-abbrev' => '$1 min', # only translate this message to other languages if you have to change it
+'hours-abbrev'   => '$1 h', # only translate this message to other languages if you have to change it
+'days-abbrev'    => '$1 d', # only translate this message to other languages if you have to change it
 'seconds'        => '{{PLURAL:$1|$1 second|$1 seconds}}',
 'minutes'        => '{{PLURAL:$1|$1 minute|$1 minutes}}',
 'hours'          => '{{PLURAL:$1|$1 hour|$1 hours}}',
@@ -4703,10 +4704,10 @@ This site is experiencing technical difficulties.',
 'logentry-move-move_redir-noredirect' => '$1 moved page $3 to $4 over a redirect without leaving a redirect',
 'logentry-patrol-patrol'              => '$1 marked revision $4 of page $3 patrolled',
 'logentry-patrol-patrol-auto'         => '$1 automatically marked revision $4 of page $3 patrolled',
-'logentry-newusers-newusers'          => '$1 created a user account',
-'logentry-newusers-create'            => '$1 created a user account',
-'logentry-newusers-create2'           => '$1 created a user account $3',
-'logentry-newusers-autocreate'        => 'Account $1 was created automatically',
+'logentry-newusers-newusers'          => 'User account $1 was created',
+'logentry-newusers-create'            => 'User account $1 was created',
+'logentry-newusers-create2'           => 'User account $3 was created by $1',
+'logentry-newusers-autocreate'        => 'User account $1 was created automatically',
 'newuserlog-byemail'                  => 'password sent by e-mail',
 
 # Feedback
