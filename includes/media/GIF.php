@@ -2,6 +2,21 @@
 /**
  * Handler for GIF images.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Media
  */
@@ -78,6 +93,17 @@ class GIFHandler extends BitmapHandler {
 		return false;
 	}
 
+	/**
+	 * We cannot animate thumbnails that are bigger than a particular size
+	 * @param File $file
+	 * @return bool
+	 */
+	function canAnimateThumbnail( $file ) {
+		global $wgMaxAnimatedGifArea;
+		$answer = $this->getImageArea( $file ) <= $wgMaxAnimatedGifArea;
+		return $answer;
+	}
+
 	function getMetadataType( $image ) {
 		return 'parsed-gif';
 	}
@@ -127,11 +153,11 @@ class GIFHandler extends BitmapHandler {
 		$info[] = $original;
 		
 		if ( $metadata['looped'] ) {
-			$info[] = wfMsgExt( 'file-info-gif-looped', 'parseinline' );
+			$info[] = wfMessage( 'file-info-gif-looped' )->parse();
 		}
 		
 		if ( $metadata['frameCount'] > 1 ) {
-			$info[] = wfMsgExt( 'file-info-gif-frames', 'parseinline', $metadata['frameCount'] );
+			$info[] = wfMessage( 'file-info-gif-frames' )->numParams( $metadata['frameCount'] )->parse();
 		}
 		
 		if ( $metadata['duration'] ) {

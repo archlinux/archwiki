@@ -173,7 +173,7 @@ $wgCaptchaRegexes = array();
 /** Register special page */
 $wgSpecialPages['Captcha'] = 'CaptchaSpecialPage';
 
-$wgConfirmEditIP = dirname( __FILE__ );
+$wgConfirmEditIP = __DIR__;
 $wgExtensionMessagesFiles['ConfirmEdit'] = "$wgConfirmEditIP/ConfirmEdit.i18n.php";
 $wgExtensionMessagesFiles['ConfirmEditAlias'] = "$wgConfirmEditIP/ConfirmEdit.alias.php";
 

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Formating of image metadata values into human readable form.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -98,14 +100,20 @@ class FormatMetadata {
 				) {
 					continue;
 				}
-				$tags[$tag] = intval( $h[0] / $h[1] )
+				$tags[$tag] = str_pad( intval( $h[0] / $h[1] ), 2, '0', STR_PAD_LEFT )
 					. ':' . str_pad( intval( $m[0] / $m[1] ), 2, '0', STR_PAD_LEFT )
 					. ':' . str_pad( intval( $s[0] / $s[1] ), 2, '0', STR_PAD_LEFT );
 
-				$time = wfTimestamp( TS_MW, '1971:01:01 ' . $tags[$tag] );
-				// the 1971:01:01 is just a placeholder, and not shown to user.
-				if ( $time && intval( $time ) > 0 ) {
-					$tags[$tag] = $wgLang->time( $time );
+				try {
+					$time = wfTimestamp( TS_MW, '1971:01:01 ' . $tags[$tag] );
+					// the 1971:01:01 is just a placeholder, and not shown to user.
+					if ( $time && intval( $time ) > 0 ) {
+						$tags[$tag] = $wgLang->time( $time );
+					}
+				} catch ( TimestampException $e ) {
+					// This shouldn't happen, but we've seen bad formats
+					// such as 4-digit seconds in the wild.
+					// leave $tags[$tag] as-is
 				}
 				continue;
 			}
@@ -231,7 +239,7 @@ class FormatMetadata {
 				case 'dc-date':
 				case 'DateTimeMetadata':
 					if ( $val == '0000:00:00 00:00:00' || $val == '    :  :     :  :  ' ) {
-						$val = wfMsg( 'exif-unknowndate' );
+						$val = wfMessage( 'exif-unknowndate' )->text();
 					} elseif ( preg_match( '/^(?:\d{4}):(?:\d\d):(?:\d\d) (?:\d\d):(?:\d\d):(?:\d\d)$/D', $val ) ) {
 						// Full date.
 						$time = wfTimestamp( TS_MW, $val );
@@ -307,7 +315,7 @@ class FormatMetadata {
 						'redeye'   => ( $val & bindec( '01000000' ) ) >> 6,
 //						'reserved' => ($val & bindec( '10000000' )) >> 7,
 					);
-	
+					$flashMsgs = array();
 					# We do not need to handle unknown values since all are used.
 					foreach ( $flashDecode as $subTag => $subValue ) {
 						# We do not need any message for zeroed values.
@@ -589,7 +597,7 @@ class FormatMetadata {
 				case 'Software':
 					if ( is_array( $val ) ) {
 						//if its a software, version array.
-						$val = wfMsg( 'exif-software-version-value', $val[0], $val[1] );
+						$val = wfMessage( 'exif-software-version-value', $val[0], $val[1] )->text();
 					} else {
 						$val = self::msg( $tag, '', $val );
 					}
@@ -597,8 +605,8 @@ class FormatMetadata {
 
 				case 'ExposureTime':
 					// Show the pretty fraction as well as decimal version
-					$val = wfMsg( 'exif-exposuretime-format',
-						self::formatFraction( $val ), self::formatNum( $val ) );
+					$val = wfMessage( 'exif-exposuretime-format',
+						self::formatFraction( $val ), self::formatNum( $val ) )->text();
 					break;
 				case 'ISOSpeedRatings':
 					// If its = 65535 that means its at the
@@ -611,13 +619,13 @@ class FormatMetadata {
 					}
 					break;
 				case 'FNumber':
-					$val = wfMsg( 'exif-fnumber-format',
-						self::formatNum( $val ) );
+					$val = wfMessage( 'exif-fnumber-format',
+						self::formatNum( $val ) )->text();
 					break;
 
 				case 'FocalLength': case 'FocalLengthIn35mmFilm':
-					$val = wfMsg( 'exif-focallength-format',
-						self::formatNum( $val ) );
+					$val = wfMessage( 'exif-focallength-format',
+						self::formatNum( $val ) )->text();
 					break;
 
 				case 'MaxApertureValue':
@@ -631,14 +639,14 @@ class FormatMetadata {
 					if ( is_numeric( $val ) ) {
 						$fNumber = pow( 2, $val / 2 );
 						if ( $fNumber !== false ) {
-							$val = wfMsg( 'exif-maxaperturevalue-value',
+							$val = wfMessage( 'exif-maxaperturevalue-value',
 								self::formatNum( $val ),
 								self::formatNum( $fNumber, 2 )
-							);
+							)->text();
 						}
 					}
 					break;
-					
+
 				case 'iimCategory':
 					switch( strtolower( $val ) ) {
 						// See pg 29 of IPTC photo
@@ -694,7 +702,7 @@ class FormatMetadata {
 				case 'PixelYDimension':
 				case 'ImageWidth':
 				case 'ImageLength':
-					$val = self::formatNum( $val ) . ' ' . wfMsg( 'unit-pixel' );
+					$val = self::formatNum( $val ) . ' ' . wfMessage( 'unit-pixel' )->text();
 					break;
 
 				// Do not transform fields with pure text.
@@ -800,7 +808,7 @@ class FormatMetadata {
 					break;
 
 				case 'LanguageCode':
-					$lang = $wgLang->getLanguageName( strtolower( $val ) );
+					$lang = Language::fetchLanguageName( strtolower( $val ), $wgLang->getCode() );
 					if ($lang) {
 						$val = htmlspecialchars( $lang );
 					} else {
@@ -825,14 +833,14 @@ class FormatMetadata {
 	* This turns an array of (for example) authors into a bulleted list.
 	*
 	* This is public on the basis it might be useful outside of this class.
-	* 
+	*
 	* @param $vals Array array of values
 	* @param $type String Type of array (either lang, ul, ol).
 	* lang = language assoc array with keys being the lang code
 	* ul = unordered list, ol = ordered list
 	* type can also come from the '_type' member of $vals.
 	* @param $noHtml Boolean If to avoid returning anything resembling
-	* html. (Ugly hack for backwards compatibility with old mediawiki). 
+	* html. (Ugly hack for backwards compatibility with old mediawiki).
 	* @return String single value (in wiki-syntax).
 	*/
 	public static function flattenArray( $vals, $type = 'ul', $noHtml = false ) {
@@ -874,7 +882,7 @@ class FormatMetadata {
 				// If default is set, save it for later,
 				// as we don't know if it's equal to
 				// one of the lang codes. (In xmp
-				// you specify the language for a 
+				// you specify the language for a
 				// default property by having both
 				// a default prop, and one in the language
 				// that are identical)
@@ -937,11 +945,11 @@ class FormatMetadata {
 	 * @param $lang String lang code of item or false
 	 * @param $default Boolean if it is default value.
 	 * @param $noHtml Boolean If to avoid html (for back-compat)
-	 * @return language item (Note: despite how this looks,
-	 * 	this is treated as wikitext not html).
+	 * @throws MWException
+	 * @return string language item (Note: despite how this looks,
+	 * this is treated as wikitext not html).
 	 */
 	private static function langItem( $value, $lang, $default = false, $noHtml = false ) {
-		global $wgContLang;
 		if ( $lang === false && $default === false) {
 			throw new MWException('$lang and $default cannot both '
 				. 'be false.');
@@ -956,21 +964,21 @@ class FormatMetadata {
 
 		if ( $lang === false ) {
 			if ( $noHtml ) {
-				return wfMsg( 'metadata-langitem-default',
-					$wrappedValue ) . "\n\n";
+				return wfMessage( 'metadata-langitem-default',
+					$wrappedValue )->text() . "\n\n";
 			} /* else */
 			return '<li class="mw-metadata-lang-default">'
-				. wfMsg( 'metadata-langitem-default',
-					$wrappedValue )
+				. wfMessage( 'metadata-langitem-default',
+					$wrappedValue )->text()
 				. "</li>\n";
 		}
 
 		$lowLang = strtolower( $lang );
-		$langName = $wgContLang->getLanguageName( $lowLang );
+		$langName = Language::fetchLanguageName( $lowLang );
 		if ( $langName === '' ) {
 			//try just the base language name. (aka en-US -> en ).
 			list( $langPrefix ) = explode( '-', $lowLang, 2 );
-			$langName = $wgContLang->getLanguageName( $langPrefix );
+			$langName = Language::fetchLanguageName( $langPrefix );
 			if ( $langName === '' ) {
 				// give up.
 				$langName = $lang;
@@ -979,8 +987,8 @@ class FormatMetadata {
 		// else we have a language specified
 
 		if ( $noHtml ) {
-			return '*' . wfMsg( 'metadata-langitem',
-				$wrappedValue, $langName, $lang );
+			return '*' . wfMessage( 'metadata-langitem',
+				$wrappedValue, $langName, $lang )->text();
 		} /* else: */
 
 		$item = '<li class="mw-metadata-lang-code-'
@@ -989,8 +997,8 @@ class FormatMetadata {
 			$item .= ' mw-metadata-lang-default';
 		}
 		$item .= '" lang="' . $lang . '">';
-		$item .= wfMsg( 'metadata-langitem',
-			$wrappedValue, $langName, $lang );
+		$item .= wfMessage( 'metadata-langitem',
+			$wrappedValue, $langName, $lang )->text();
 		$item .= "</li>\n";
 		return $item;
 	}
@@ -1004,24 +1012,22 @@ class FormatMetadata {
 	 * @param $val String: the value of the tag
 	 * @param $arg String: an argument to pass ($1)
 	 * @param $arg2 String: a 2nd argument to pass ($2)
-	 * @return string A wfMsg of "exif-$tag-$val" in lower case
+	 * @return string A wfMessage of "exif-$tag-$val" in lower case
 	 */
 	static function msg( $tag, $val, $arg = null, $arg2 = null ) {
 		global $wgContLang;
 
 		if ($val === '')
 			$val = 'value';
-		return wfMsg( $wgContLang->lc( "exif-$tag-$val" ), $arg, $arg2 );
+		return wfMessage( $wgContLang->lc( "exif-$tag-$val" ), $arg, $arg2 )->text();
 	}
 
 	/**
 	 * Format a number, convert numbers from fractions into floating point
 	 * numbers, joins arrays of numbers with commas.
 	 *
-	 * @private
-	 *
 	 * @param $num Mixed: the value to format
-	 * @param $round digits to round to or false.
+	 * @param $round float|int|bool digits to round to or false.
 	 * @return mixed A floating point number or whatever we were fed
 	 */
 	static function formatNum( $num, $round = false ) {
@@ -1102,8 +1108,9 @@ class FormatMetadata {
 		return $a;
 	}
 
-	/** Fetch the human readable version of a news code.
-	 * A news code is an 8 digit code. The first two 
+	/**
+	 * Fetch the human readable version of a news code.
+	 * A news code is an 8 digit code. The first two
 	 * digits are a general classification, so we just
 	 * translate that.
 	 *
@@ -1111,7 +1118,7 @@ class FormatMetadata {
 	 * a string, not an int.
 	 *
 	 * @param $val String: The 8 digit news code.
-	 * @return The human readable form
+	 * @return string The human readable form
 	 */
 	static private function convertNewsCode( $val ) {
 		if ( !preg_match( '/^\d{8}$/D', $val ) ) {
@@ -1183,7 +1190,7 @@ class FormatMetadata {
 	 * Format a coordinate value, convert numbers from floating point
 	 * into degree minute second representation.
 	 *
-	 * @param $coord Array: degrees, minutes and seconds
+	 * @param $coord int degrees, minutes and seconds
 	 * @param $type String: latitude or longitude (for if its a NWS or E)
 	 * @return mixed A floating point number or whatever we were fed
 	 */
@@ -1193,17 +1200,14 @@ class FormatMetadata {
 			$nCoord = -$coord;
 			if ( $type === 'latitude' ) {
 				$ref = 'S';
-			}
-			elseif ( $type === 'longitude' ) {
+			} elseif ( $type === 'longitude' ) {
 				$ref = 'W';
 			}
-		}
-		else {
+		} else {
 			$nCoord = $coord;
 			if ( $type === 'latitude' ) {
 				$ref = 'N';
-			}
-			elseif ( $type === 'longitude' ) {
+			} elseif ( $type === 'longitude' ) {
 				$ref = 'E';
 			}
 		}
@@ -1216,7 +1220,7 @@ class FormatMetadata {
 		$min = self::formatNum( $min );
 		$sec = self::formatNum( $sec );
 
-		return wfMsg( 'exif-coordinate-format', $deg, $min, $sec, $ref, $coord );
+		return wfMessage( 'exif-coordinate-format', $deg, $min, $sec, $ref, $coord )->text();
 	}
 
 	/**
@@ -1274,7 +1278,7 @@ class FormatMetadata {
 				// Todo: This can potentially be multi-line.
 				// Need to check how that works in XMP.
 				$street = '<span class="extended-address">'
-					. htmlspecialchars( 
+					. htmlspecialchars(
 						$vals['CiAdrExtadr'] )
 					. '</span>';
 			}
@@ -1321,7 +1325,7 @@ class FormatMetadata {
 			}
 			if ( isset( $vals['CiAdrPcode'] ) ) {
 				$postal = '<span class="postal-code">'
-					. htmlspecialchars( 
+					. htmlspecialchars(
 						$vals['CiAdrPcode'] )
 					. '</span>';
 			}
@@ -1337,9 +1341,9 @@ class FormatMetadata {
 					. htmlspecialchars( $vals['CiUrlWork'] )
 					. '</span>';
 			}
-			return wfMsg( 'exif-contact-value', $email, $url,
+			return wfMessage( 'exif-contact-value', $email, $url,
 				$street, $city, $region, $postal, $country,
-				$tel );
+				$tel )->text();
 		}
 	}
 }
@@ -1352,12 +1356,19 @@ class FormatMetadata {
 **/
 class FormatExif {
 	var $meta;
-	function FormatExif ( $meta ) {
+
+	/**
+	 * @param $meta array
+	 */
+	function FormatExif( $meta ) {
 		wfDeprecated(__METHOD__);
 		$this->meta = $meta;
 	}
 
-	function getFormattedData ( ) {
+	/**
+	 * @return array
+	 */
+	function getFormattedData() {
 		return FormatMetadata::getFormattedData( $this->meta );
 	}
 }

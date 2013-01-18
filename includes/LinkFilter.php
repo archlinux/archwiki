@@ -1,4 +1,25 @@
 <?php
+/**
+ * Functions to help implement an external link filter for spam control.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
+
 
 /**
  * Some functions to help implement an external link filter for spam control.
@@ -120,7 +141,7 @@ class LinkFilter {
 	 * Filters an array returned by makeLikeArray(), removing everything past first pattern placeholder.
 	 *
 	 * @param $arr array: array to filter
-	 * @return filtered array
+	 * @return array filtered array
 	 */
 	public static function keepOneWildcard( $arr ) {
 		if( !is_array( $arr ) ) {

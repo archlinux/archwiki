@@ -1,5 +1,7 @@
 <?php
 /**
+ * Resource loader module for user tokens.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -52,6 +54,13 @@ class ResourceLoaderUserTokensModule extends ResourceLoaderModule {
 	public function getScript( ResourceLoaderContext $context ) {
 		return Xml::encodeJsCall( 'mw.user.tokens.set',
 			array( $this->contextUserTokens( $context ) ) );
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function supportsURLLoading() {
+		return false;
 	}
 
 	/**

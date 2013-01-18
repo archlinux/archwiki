@@ -3,6 +3,21 @@
  * Local repository that stores files in the local filesystem and registers them
  * in the wiki's own database.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup FileRepo
  */
@@ -24,7 +39,7 @@ class LocalRepo extends FileRepo {
 	/**
 	 * @throws MWException
 	 * @param $row
-	 * @return File
+	 * @return LocalFile
 	 */
 	function newFileFromRow( $row ) {
 		if ( isset( $row->img_name ) ) {
@@ -55,7 +70,7 @@ class LocalRepo extends FileRepo {
 	 *
 	 * @return FileRepoStatus
 	 */
-	function cleanupDeletedBatch( $storageKeys ) {
+	function cleanupDeletedBatch( array $storageKeys ) {
 		$backend = $this->backend; // convenience
 		$root = $this->getZonePath( 'deleted' );
 		$dbw = $this->getMasterDB();
@@ -64,7 +79,7 @@ class LocalRepo extends FileRepo {
 		foreach ( $storageKeys as $key ) {
 			$hashPath = $this->getDeletedHashPath( $key );
 			$path = "$root/$hashPath$key";
-			$dbw->begin();
+			$dbw->begin( __METHOD__ );
 			// Check for usage in deleted/hidden files and pre-emptively
 			// lock the key to avoid any future use until we are finished.
 			$deleted = $this->deletedFileHasKey( $key, 'lock' );
@@ -80,7 +95,7 @@ class LocalRepo extends FileRepo {
 				wfDebug( __METHOD__ . ": $key still in use\n" );
 				$status->successCount++;
 			}
-			$dbw->commit();
+			$dbw->commit( __METHOD__ );
 		}
 		return $status;
 	}
@@ -133,7 +148,7 @@ class LocalRepo extends FileRepo {
 	public static function getHashFromKey( $key ) {
 		return strtok( $key, '.' );
 	}
-	
+
 	/**
 	 * Checks if there is a redirect named as $title
 	 *
@@ -183,12 +198,12 @@ class LocalRepo extends FileRepo {
 		}
 	}
 
-
 	/**
 	 * Function link Title::getArticleID().
 	 * We can't say Title object, what database it should use, so we duplicate that function here.
 	 *
 	 * @param $title Title
+	 * @return bool|int|mixed
 	 */
 	protected function getArticleID( $title ) {
 		if( !$title instanceof Title ) {
@@ -219,7 +234,9 @@ class LocalRepo extends FileRepo {
 		$res = $dbr->select(
 			'image',
 			LocalFile::selectFields(),
-			array( 'img_sha1' => $hash )
+			array( 'img_sha1' => $hash ),
+			__METHOD__,
+			array( 'ORDER BY' => 'img_name' )
 		);
 		
 		$result = array();
@@ -232,7 +249,41 @@ class LocalRepo extends FileRepo {
 	}
 
 	/**
+	 * Get an array of arrays or iterators of file objects for files that
+	 * have the given SHA-1 content hashes.
+	 *
+	 * Overrides generic implementation in FileRepo for performance reason
+	 *
+	 * @param $hashes array An array of hashes
+	 * @return array An Array of arrays or iterators of file objects and the hash as key
+	 */
+	function findBySha1s( array $hashes ) {
+		if( !count( $hashes ) ) {
+			return array(); //empty parameter
+		}
+
+		$dbr = $this->getSlaveDB();
+		$res = $dbr->select(
+			'image',
+			LocalFile::selectFields(),
+			array( 'img_sha1' => $hashes ),
+			__METHOD__,
+			array( 'ORDER BY' => 'img_name' )
+		);
+
+		$result = array();
+		foreach ( $res as $row ) {
+			$file = $this->newFileFromRow( $row );
+			$result[$file->getSha1()][] = $file;
+		}
+		$res->free();
+
+		return $result;
+	}
+
+	/**
 	 * Get a connection to the slave DB
+	 * @return DatabaseBase
 	 */
 	function getSlaveDB() {
 		return wfGetDB( DB_SLAVE );
@@ -240,6 +291,7 @@ class LocalRepo extends FileRepo {
 
 	/**
 	 * Get a connection to the master DB
+	 * @return DatabaseBase
 	 */
 	function getMasterDB() {
 		return wfGetDB( DB_MASTER );

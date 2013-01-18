@@ -2,6 +2,21 @@
 /**
  * PostgreSQL-specific installer.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Deployment
  */
@@ -45,7 +60,7 @@ class PostgresInstaller extends DatabaseInstaller {
 			$this->getTextBox( 'wgDBserver', 'config-db-host', array(), $this->parent->getHelpBox( 'config-db-host-help' ) ) .
 			$this->getTextBox( 'wgDBport', 'config-db-port' ) .
 			Html::openElement( 'fieldset' ) .
-			Html::element( 'legend', array(), wfMsg( 'config-db-wiki-settings' ) ) .
+			Html::element( 'legend', array(), wfMessage( 'config-db-wiki-settings' )->text() ) .
 			$this->getTextBox( 'wgDBname', 'config-db-name', array(), $this->parent->getHelpBox( 'config-db-name-help' ) ) .
 			$this->getTextBox( 'wgDBmwschema', 'config-db-schema', array(), $this->parent->getHelpBox( 'config-db-schema-help' ) ) .
 			Html::closeElement( 'fieldset' ) .
@@ -110,9 +125,9 @@ class PostgresInstaller extends DatabaseInstaller {
 
 	/**
 	 * Open a PG connection with given parameters
-	 * @param $user User name
-	 * @param $password Password
-	 * @param $dbName Database name
+	 * @param $user string User name
+	 * @param $password string Password
+	 * @param $dbName string Database name
 	 * @return Status
 	 */
 	protected function openConnectionWithParams( $user, $password, $dbName ) {
@@ -147,7 +162,7 @@ class PostgresInstaller extends DatabaseInstaller {
 			 */
 			$conn = $status->value;
 			$conn->clearFlag( DBO_TRX );
-			$conn->commit();
+			$conn->commit( __METHOD__ );
 			$this->pgConns[$type] = $conn;
 		}
 		return $status;
@@ -168,14 +183,14 @@ class PostgresInstaller extends DatabaseInstaller {
 	 * separate connection for this allows us to avoid accidental cross-module
 	 * dependencies.
 	 *
-	 * @param $type The type of connection to get:
+	 * @param $type string The type of connection to get:
 	 *    - create-db:     A connection for creating DBs, suitable for pre-
 	 *                     installation.
 	 *    - create-schema: A connection to the new DB, for creating schemas and
 	 *                     other similar objects in the new DB.
 	 *    - create-tables: A connection with a role suitable for creating tables.
 	 *
-	 * @return A Status object. On success, a connection object will be in the
+	 * @return Status object. On success, a connection object will be in the
 	 *   value member.
 	 */
 	protected function openPgConnection( $type ) {
@@ -344,6 +359,7 @@ class PostgresInstaller extends DatabaseInstaller {
 	/**
 	 * Returns true if the install user is able to create objects owned
 	 * by the web user, false otherwise.
+	 * @return bool
 	 */
 	protected function canCreateObjectsForWebUser() {
 		if ( $this->isSuperUser() ) {
@@ -365,10 +381,11 @@ class PostgresInstaller extends DatabaseInstaller {
 
 	/**
 	 * Recursive helper for canCreateObjectsForWebUser().
-	 * @param $conn Database object
-	 * @param $targetMember Role ID of the member to look for
-	 * @param $group Role ID of the group to look for
-	 * @param $maxDepth Maximum recursive search depth
+	 * @param $conn DatabaseBase object
+	 * @param $targetMember int Role ID of the member to look for
+	 * @param $group int Role ID of the group to look for
+	 * @param $maxDepth int Maximum recursive search depth
+	 * @return bool
 	 */
 	protected function isRoleMember( $conn, $targetMember, $group, $maxDepth ) {
 		if ( $targetMember === $group ) {
@@ -429,10 +446,6 @@ class PostgresInstaller extends DatabaseInstaller {
 		$conn = $status->value;
 
 		$dbName = $this->getVar( 'wgDBname' );
-		//$schema = $this->getVar( 'wgDBmwschema' );
-		//$user = $this->getVar( 'wgDBuser' );
-		//$safeschema = $conn->addIdentifierQuotes( $schema );
-		//$safeuser = $conn->addIdentifierQuotes( $user );
 
 		$exists = $conn->selectField( '"pg_catalog"."pg_database"', '1',
 			array( 'datname' => $dbName ), __METHOD__ );
@@ -464,19 +477,13 @@ class PostgresInstaller extends DatabaseInstaller {
 			}
 		}
 
-		// If we created a user, alter it now to search the new schema by default
-		if ( $this->getVar( '_CreateDBAccount' ) ) {
-			$conn->query( "ALTER ROLE $safeuser SET search_path = $safeschema, public",
-				__METHOD__ );
-		}
-
 		// Select the new schema in the current connection
-		$conn->query( "SET search_path = $safeschema" );
+		$conn->determineCoreSchema( $schema );
 		return Status::newGood();
 	}
 
 	function commitChanges() {
-		$this->db->commit();
+		$this->db->commit( __METHOD__ );
 		return Status::newGood();
 	}
 
@@ -491,10 +498,8 @@ class PostgresInstaller extends DatabaseInstaller {
 		}
 		$conn = $status->value;
 
-		//$schema = $this->getVar( 'wgDBmwschema' );
 		$safeuser = $conn->addIdentifierQuotes( $this->getVar( 'wgDBuser' ) );
 		$safepass = $conn->addQuotes( $this->getVar( 'wgDBpassword' ) );
-		//$safeschema = $conn->addIdentifierQuotes( $schema );
 
 		// Check if the user already exists
 		$userExists = $conn->roleExists( $this->getVar( 'wgDBuser' ) );
@@ -551,7 +556,7 @@ class PostgresInstaller extends DatabaseInstaller {
 		 */
 		$conn = $status->value;
 
-		if( $conn->tableExists( 'user' ) ) {
+		if( $conn->tableExists( 'archive' ) ) {
 			$status->warning( 'config-install-tables-exist' );
 			$this->enableLB();
 			return $status;

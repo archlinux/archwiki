@@ -371,7 +371,9 @@ CREATE TABLE ipblocks (
   ipb_range_end         VARCHAR(1024),
   ipb_deleted           SMALLINT NOT NULL DEFAULT 0,
   ipb_block_email       SMALLINT NOT NULL DEFAULT 0,
-  ipb_allow_usertalk    SMALLINT NOT NULL DEFAULT 0
+  ipb_allow_usertalk    SMALLINT NOT NULL DEFAULT 0,
+  ipb_parent_block_id             INTEGER DEFAULT NULL
+  -- REFERENCES ipblocks(ipb_id) ON DELETE SET NULL
 
 );
 CREATE INDEX ipb_address
@@ -926,13 +928,3 @@ CREATE TABLE user_former_groups (
 );
 CREATE UNIQUE INDEX ufg_user_group
   ON user_former_groups (ufg_user, ufg_group);
-
-
-
--- Table for holding configuration changes
-CREATE TABLE config (
-  cf_name   VARCHAR(255) NOT NULL
-    PRIMARY KEY,
-  cf_value  CLOB(64K) INLINE LENGTH 4096 NOT NULL
-);
-

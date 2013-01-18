@@ -4,7 +4,7 @@
  *
  * Created on Oct 16, 2006
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,6 +195,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	 * @param $type string
 	 * @param $action string
 	 * @param $ts
+	 * @param $legacy bool
 	 * @return array
 	 */
 	public static function addLogParams( $result, &$vals, $params, $type, $action, $ts, $legacy = false ) {
@@ -262,6 +263,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		}
 		if ( !is_null( $params ) ) {
 			$result->setIndexedTagName( $params, 'param' );
+			$result->setIndexedTagName_recursive( $params, 'param' );
 			$vals = array_merge( $vals, $params );
 		}
 		return $vals;
@@ -358,7 +360,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 
 	public function getCacheMode( $params ) {
 		if ( !is_null( $params['prop'] ) && in_array( 'parsedcomment', $params['prop'] ) ) {
-			// formatComment() calls wfMsg() among other things
+			// formatComment() calls wfMessage() among other things
 			return 'anon-public-user-private';
 		} else {
 			return 'public';
@@ -366,7 +368,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	}
 
 	public function getAllowedParams() {
-		global $wgLogTypes, $wgLogActions;
+		global $wgLogTypes, $wgLogActions, $wgLogActionsHandlers;
 		return array(
 			'prop' => array(
 				ApiBase::PARAM_ISMULTI => true,
@@ -388,7 +390,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				ApiBase::PARAM_TYPE => $wgLogTypes
 			),
 			'action' => array(
-				ApiBase::PARAM_TYPE => array_keys( $wgLogActions )
+				ApiBase::PARAM_TYPE => array_keys( array_merge( $wgLogActions, $wgLogActionsHandlers ) )
 			),
 			'start' => array(
 				ApiBase::PARAM_TYPE => 'timestamp'
@@ -443,6 +445,62 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			'prefix' => 'Filter entries that start with this prefix. Disabled in Miser Mode',
 			'limit' => 'How many total event entries to return',
 			'tag' => 'Only list event entries tagged with this tag',
+		);
+	}
+
+	public function getResultProperties() {
+		global $wgLogTypes;
+		return array(
+			'ids' => array(
+				'logid' => 'integer',
+				'pageid' => 'integer'
+			),
+			'title' => array(
+				'ns' => 'namespace',
+				'title' => 'string'
+			),
+			'type' => array(
+				'type' => array(
+					ApiBase::PROP_TYPE => $wgLogTypes
+				),
+				'action' => 'string'
+			),
+			'details' => array(
+				'actionhidden' => 'boolean'
+			),
+			'user' => array(
+				'userhidden' => 'boolean',
+				'user' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'anon' => 'boolean'
+			),
+			'userid' => array(
+				'userhidden' => 'boolean',
+				'userid' => array(
+					ApiBase::PROP_TYPE => 'integer',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'anon' => 'boolean'
+			),
+			'timestamp' => array(
+				'timestamp' => 'timestamp'
+			),
+			'comment' => array(
+				'commenthidden' => 'boolean',
+				'comment' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'parsedcomment' => array(
+				'commenthidden' => 'boolean',
+				'parsedcomment' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			)
 		);
 	}
 

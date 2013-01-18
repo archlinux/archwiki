@@ -28,9 +28,9 @@
  */
 $optionsWithArgs = array( 'output' );
 
-require_once( dirname( __FILE__ ) . '/../commandLine.inc' );
+require_once( __DIR__ . '/../commandLine.inc' );
 require_once( 'languages.inc' );
-require_once( dirname( __FILE__ ) . '/StatOutputs.php' );
+require_once( __DIR__ . '/StatOutputs.php' );
 
 
 if ( isset( $options['help'] ) ) {
@@ -102,7 +102,7 @@ foreach ( $wgLanguages->getLanguages() as $code ) {
 	}
 
 	# Calculate the numbers
-	$language = $wgContLang->getLanguageName( $code );
+	$language = Language::fetchLanguageName( $code );
 	$fallback = $wgLanguages->getFallback( $code );
 	$messages = $wgLanguages->getMessages( $code );
 	$messagesNumber = count( $messages['translated'] );
@@ -134,5 +134,3 @@ foreach ( $wgLanguages->getLanguages() as $code ) {
 
 # Footer
 $output->footer();
-
-

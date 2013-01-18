@@ -60,9 +60,9 @@ class WantedPagesPage extends WantedQueryPage {
 				'pg2' => 'page'
 			),
 			'fields' => array(
-				'pl_namespace AS namespace',
-				'pl_title AS title',
-				'COUNT(*) AS value'
+				'namespace' => 'pl_namespace',
+				'title' => 'pl_title',
+				'value' => 'COUNT(*)'
 			),
 			'conds' => array(
 				'pg1.page_namespace IS NULL',
@@ -72,7 +72,7 @@ class WantedPagesPage extends WantedQueryPage {
 			),
 			'options' => array(
 				'HAVING' => "COUNT(*) > $count",
-				'GROUP BY' => 'pl_namespace, pl_title'
+				'GROUP BY' => array( 'pl_namespace', 'pl_title' )
 			),
 			'join_conds' => array(
 				'pg1' => array(

@@ -2,6 +2,21 @@
 /**
  * Basic search engine
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Search
  */
@@ -65,6 +80,7 @@ class SearchEngine {
 	/**
 	 * If this search backend can list/unlist redirects
 	 * @deprecated since 1.18 Call supports( 'list-redirects' );
+	 * @return bool
 	 */
 	function acceptListRedirects() {
 		wfDeprecated( __METHOD__, '1.18' );
@@ -91,7 +107,7 @@ class SearchEngine {
 	 * @since 1.18
 	 * @param $feature String
 	 * @param $data Mixed
-	 * @return Noolean
+	 * @return bool
 	 */
 	public function setFeatureData( $feature, $data ) {
 		$this->features[$feature] = $data;
@@ -147,6 +163,7 @@ class SearchEngine {
 
 	/**
 	 * Really find the title match.
+	 * @return null|\Title
 	 */
 	private static function getNearMatchInternal( $searchterm ) {
 		global $wgContLang, $wgEnableSearchContributorsByIP;
@@ -287,6 +304,7 @@ class SearchEngine {
 	 * or namespace names
 	 *
 	 * @param $query String
+	 * @return string
 	 */
 	function replacePrefixes( $query ) {
 		global $wgContLang;
@@ -297,7 +315,7 @@ class SearchEngine {
 			return $parsed;
 		}
 
-		$allkeyword = wfMsgForContent( 'searchall' ) . ":";
+		$allkeyword = wfMessage( 'searchall' )->inContentLanguage()->text() . ":";
 		if ( strncmp( $query, $allkeyword, strlen( $allkeyword ) ) == 0 ) {
 			$this->namespaces = null;
 			$parsed = substr( $query, strlen( $allkeyword ) );
@@ -391,6 +409,7 @@ class SearchEngine {
 	 * and preferences
 	 *
 	 * @param $namespaces Array
+	 * @return array
 	 */
 	public static function namespacesAsText( $namespaces ) {
 		global $wgContLang;
@@ -398,7 +417,7 @@ class SearchEngine {
 		$formatted = array_map( array( $wgContLang, 'getFormattedNsText' ), $namespaces );
 		foreach ( $formatted as $key => $ns ) {
 			if ( empty( $ns ) )
-				$formatted[$key] = wfMsg( 'blanknamespace' );
+				$formatted[$key] = wfMessage( 'blanknamespace' )->text();
 		}
 		return $formatted;
 	}
@@ -485,19 +504,6 @@ class SearchEngine {
 			}
 			return $wgCanonicalServer . wfScript( 'api' ) . '?action=opensearch&search={searchTerms}&namespace=' . $ns;
 		}
-	}
-
-	/**
-	 * Get internal MediaWiki Suggest template
-	 *
-	 * @return String
-	 */
-	public static function getMWSuggestTemplate() {
-		global $wgMWSuggestTemplate, $wgServer;
-		if ( $wgMWSuggestTemplate )
-			return $wgMWSuggestTemplate;
-		else
-			return $wgServer . wfScript( 'api' ) . '?action=opensearch&search={searchTerms}&namespace={namespaces}&suggest';
 	}
 }
 
@@ -737,7 +743,10 @@ class SearchResult {
 	protected function initFromTitle( $title ) {
 		$this->mTitle = $title;
 		if ( !is_null( $this->mTitle ) ) {
-			$this->mRevision = Revision::newFromTitle( $this->mTitle );
+			$id = false;
+			wfRunHooks( 'SearchResultInitFromTitle', array( $title, &$id ) );
+			$this->mRevision = Revision::newFromTitle(
+				$this->mTitle, $id, Revision::READ_NORMAL );
 			if ( $this->mTitle->getNamespace() === NS_FILE )
 				$this->mImage = wfFindFile( $this->mTitle );
 		}
@@ -771,7 +780,7 @@ class SearchResult {
 	}
 
 	/**
-	 * @return Double or null if not supported
+	 * @return float|null if not supported
 	 */
 	function getScore() {
 		return null;
@@ -1185,6 +1194,7 @@ class SearchHighlighter {
 	 * Do manual case conversion for non-ascii chars
 	 *
 	 * @param $matches Array
+	 * @return string
 	 */
 	function caseCallback( $matches ) {
 		global $wgContLang;
@@ -1305,6 +1315,7 @@ class SearchHighlighter {
 	/**
 	 * Basic wikitext removal
 	 * @protected
+	 * @return mixed
 	 */
 	function removeWiki( $text ) {
 		$fname = __METHOD__;

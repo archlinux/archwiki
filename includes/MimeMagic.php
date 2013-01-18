@@ -2,6 +2,21 @@
 /**
  * Module defining helper functions for detecting and dealing with mime types.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  */
 
@@ -123,7 +138,7 @@ END_STRING
  * Implements functions related to mime types such as detection and mapping to
  * file extension.
  *
- * Instances of this class are stateles, there only needs to be one global instance
+ * Instances of this class are stateless, there only needs to be one global instance
  * of MimeMagic. Please use MimeMagic::singleton() to get that instance.
  */
 class MimeMagic {
@@ -214,8 +229,6 @@ class MimeMagic {
 			if ( $i === false ) {
 				continue;
 			}
-
-			#print "processing MIME line $s<br>";
 
 			$mime = substr( $s, 0, $i );
 			$ext = trim( substr($s, $i+1 ) );
@@ -566,6 +579,7 @@ class MimeMagic {
 	 *
 	 * @param string $file
 	 * @param mixed $ext
+	 * @return bool|string
 	 */
 	private function doGuessMimeType( $file, $ext ) { // TODO: remove $ext param
 		// Read a chunk of the file
@@ -1030,6 +1044,7 @@ class MimeMagic {
 	 *
 	 * This funktion relies on the mapping defined by $this->mMediaTypes
 	 * @access private
+	 * @return int|string
 	 */
 	function findMediaType( $extMime ) {
 		if ( strpos( $extMime, '.' ) === 0 ) { 
@@ -1067,6 +1082,7 @@ class MimeMagic {
 	 * @param $fileName String: the file name (unused at present)
 	 * @param $chunk String: the first 256 bytes of the file
 	 * @param $proposed String: the MIME type proposed by the server
+	 * @return Array
 	 */
 	public function getIEMimeTypes( $fileName, $chunk, $proposed ) {
 		$ca = $this->getIEContentAnalyzer();

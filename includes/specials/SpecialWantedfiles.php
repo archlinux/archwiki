@@ -39,7 +39,7 @@ class WantedFilesPage extends WantedQueryPage {
 		# Specifically setting to use "Wanted Files" (NS_MAIN) as title, so as to get what
 		# category would be used on main namespace pages, for those tricky wikipedia
 		# admins who like to do {{#ifeq:{{NAMESPACE}}|foo|bar|....}}.
-		$catMessage = wfMessage( 'broken-file-category' )
+		$catMessage = $this->msg( 'broken-file-category' )
 			->title( Title::newFromText( "Wanted Files", NS_MAIN ) )
 			->inContentLanguage();
 		
@@ -66,6 +66,7 @@ class WantedFilesPage extends WantedQueryPage {
 	 * that exist e.g. in a shared repo.  Setting this at least
 	 * keeps them from showing up as redlinks in the output, even
 	 * if it doesn't fix the real problem (bug 6220).
+	 * @return bool
 	 */
 	function forceExistenceCheck() {
 		return true;
@@ -74,9 +75,9 @@ class WantedFilesPage extends WantedQueryPage {
 	function getQueryInfo() {
 		return array (
 			'tables' => array ( 'imagelinks', 'image' ),
-			'fields' => array ( "'" . NS_FILE . "' AS namespace",
-					'il_to AS title',
-					'COUNT(*) AS value' ),
+			'fields' => array ( 'namespace' => NS_FILE,
+					'title' => 'il_to',
+					'value' => 'COUNT(*)' ),
 			'conds' => array ( 'img_name IS NULL' ),
 			'options' => array ( 'GROUP BY' => 'il_to' ),
 			'join_conds' => array ( 'image' =>

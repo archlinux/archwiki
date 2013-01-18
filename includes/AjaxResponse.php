@@ -1,6 +1,21 @@
 <?php
 /**
- * Response handler for Ajax requests
+ * Response handler for Ajax requests.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  * @ingroup Ajax
@@ -13,27 +28,52 @@
  * @ingroup Ajax
  */
 class AjaxResponse {
-	/** Number of seconds to get the response cached by a proxy */
+
+	/**
+	 * Number of seconds to get the response cached by a proxy
+	 * @var int $mCacheDuration
+	 */
 	private $mCacheDuration;
 
-	/** HTTP header Content-Type */
+	/**
+	 * HTTP header Content-Type
+	 * @var string $mContentType
+	 */
 	private $mContentType;
 
-	/** Disables output. Can be set by calling $AjaxResponse->disable() */
+	/**
+	 * Disables output. Can be set by calling $AjaxResponse->disable()
+	 * @var bool $mDisabled
+	 */
 	private $mDisabled;
 
-	/** Date for the HTTP header Last-modified */
+	/**
+	 * Date for the HTTP header Last-modified
+	 * @var string|false $mLastModified
+	 */
 	private $mLastModified;
 
-	/** HTTP response code */
+	/**
+	 * HTTP response code
+	 * @var string $mResponseCode
+	 */
 	private $mResponseCode;
 
-	/** HTTP Vary header */
+	/**
+	 * HTTP Vary header
+	 * @var string $mVary
+	 */
 	private $mVary;
 
-	/** Content of our HTTP response */
+	/**
+	 * Content of our HTTP response
+	 * @var string $mText
+	 */
 	private $mText;
 
+	/**
+	 * @param $text string|null
+	 */
 	function __construct( $text = null ) {
 		$this->mCacheDuration = null;
 		$this->mVary = null;
@@ -49,41 +89,67 @@ class AjaxResponse {
 		}
 	}
 
+	/**
+	 * Set the number of seconds to get the response cached by a proxy
+	 * @param $duration int
+	 */
 	function setCacheDuration( $duration ) {
 		$this->mCacheDuration = $duration;
 	}
 
+	/**
+	 * Set the HTTP Vary header
+	 * @param $vary string
+	 */
 	function setVary( $vary ) {
 		$this->mVary = $vary;
 	}
 
+	/**
+	 * Set the HTTP response code
+	 * @param $code string
+	 */
 	function setResponseCode( $code ) {
 		$this->mResponseCode = $code;
 	}
 
+	/**
+	 * Set the HTTP header Content-Type
+	 * @param $type string
+	 */
 	function setContentType( $type ) {
 		$this->mContentType = $type;
 	}
 
+	/**
+	 * Disable output.
+	 */
 	function disable() {
 		$this->mDisabled = true;
 	}
 
-	/** Add content to the response */
+	/**
+	 * Add content to the response
+	 * @param $text string
+	 */
 	function addText( $text ) {
 		if ( ! $this->mDisabled && $text ) {
 			$this->mText .= $text;
 		}
 	}
 
-	/** Output text */
+	/**
+	 * Output text
+	 */
 	function printText() {
 		if ( ! $this->mDisabled ) {
 			print $this->mText;
 		}
 	}
 
-	/** Construct the header and output it */
+	/**
+	 * Construct the header and output it
+	 */
 	function sendHeaders() {
 		global $wgUseSquid, $wgUseESI;
 
@@ -139,8 +205,10 @@ class AjaxResponse {
 	/**
 	 * checkLastModified tells the client to use the client-cached response if
 	 * possible. If sucessful, the AjaxResponse is disabled so that
-	 * any future call to AjaxResponse::printText() have no effect. The method
-	 * returns true iff the response code was set to 304 Not Modified.
+	 * any future call to AjaxResponse::printText() have no effect.
+	 *
+	 * @param $timestamp string
+	 * @return bool Returns true if the response code was set to 304 Not Modified.
 	 */
 	function checkLastModified ( $timestamp ) {
 		global $wgCachePages, $wgCacheEpoch, $wgUser;
@@ -148,21 +216,21 @@ class AjaxResponse {
 
 		if ( !$timestamp || $timestamp == '19700101000000' ) {
 			wfDebug( "$fname: CACHE DISABLED, NO TIMESTAMP\n" );
-			return;
+			return false;
 		}
 
 		if ( !$wgCachePages ) {
 			wfDebug( "$fname: CACHE DISABLED\n", false );
-			return;
+			return false;
 		}
 
 		if ( $wgUser->getOption( 'nocache' ) ) {
 			wfDebug( "$fname: USER DISABLED CACHE\n", false );
-			return;
+			return false;
 		}
 
 		$timestamp = wfTimestamp( TS_MW, $timestamp );
-		$lastmod = wfTimestamp( TS_RFC2822, max( $timestamp, $wgUser->mTouched, $wgCacheEpoch ) );
+		$lastmod = wfTimestamp( TS_RFC2822, max( $timestamp, $wgUser->getTouched(), $wgCacheEpoch ) );
 
 		if ( !empty( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) ) {
 			# IE sends sizes after the date like this:
@@ -191,11 +259,12 @@ class AjaxResponse {
 			wfDebug( "$fname: client did not send If-Modified-Since header\n", false );
 			$this->mLastModified = $lastmod;
 		}
+		return false;
 	}
 
 	/**
-	 * @param $mckey
-	 * @param $touched
+	 * @param $mckey string
+	 * @param $touched int
 	 * @return bool
 	 */
 	function loadFromMemcached( $mckey, $touched ) {
@@ -222,7 +291,7 @@ class AjaxResponse {
 	}
 
 	/**
-	 * @param $mckey
+	 * @param $mckey string
 	 * @param $expiry int
 	 * @return bool
 	 */

@@ -1,7 +1,7 @@
 <?php
 
 global $wgAutoloadClasses;
-$testFolder = dirname( __FILE__ );
+$testFolder = __DIR__;
 
 $wgAutoloadClasses += array(
 
@@ -9,6 +9,7 @@ $wgAutoloadClasses += array(
 	'MediaWikiTestCase' => "$testFolder/phpunit/MediaWikiTestCase.php",
 	'MediaWikiPHPUnitCommand' => "$testFolder/phpunit/MediaWikiPHPUnitCommand.php",
 	'MediaWikiLangTestCase' => "$testFolder/phpunit/MediaWikiLangTestCase.php",
+	'NewParserTest' => "$testFolder/phpunit/includes/parser/NewParserTest.php",
 
 	//includes
 	'BlockTest' => "$testFolder/phpunit/includes/BlockTest.php",
@@ -16,13 +17,17 @@ $wgAutoloadClasses += array(
 	//API
 	'ApiFormatTestBase' => "$testFolder/phpunit/includes/api/format/ApiFormatTestBase.php",
 	'ApiTestCase' => "$testFolder/phpunit/includes/api/ApiTestCase.php",
-	'ApiTestUser' => "$testFolder/phpunit/includes/api/ApiTestUser.php",
+	'TestUser' => "$testFolder/phpunit/includes/TestUser.php",
 	'MockApi' => "$testFolder/phpunit/includes/api/ApiTestCase.php",
 	'RandomImageGenerator' => "$testFolder/phpunit/includes/api/RandomImageGenerator.php",
 	'UserWrapper' => "$testFolder/phpunit/includes/api/ApiTestCase.php",
 
 	//Selenium
 	'SeleniumTestConstants' => "$testFolder/selenium/SeleniumTestConstants.php",
+
+	//maintenance
+	'DumpTestCase' => "$testFolder/phpunit/maintenance/DumpTestCase.php",
+	'BackupDumper' => "$testFolder/../maintenance/backup.inc",
 
 	//Generic providers
 	'MediaWikiProvide' => "$testFolder/phpunit/includes/Providers.php",

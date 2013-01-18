@@ -1,11 +1,31 @@
 <?php
+/**
+ * Hebrew (עברית) specific code.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @author Rotem Liss
+ * @ingroup Language
+ */
 
 /**
  * Hebrew (עברית)
  *
  * @ingroup Language
- *
- * @author Rotem Liss
  */
 class LanguageHe extends Language {
 
@@ -48,23 +68,4 @@ class LanguageHe extends Language {
 		return $word;
 	}
 
-	/**
-	 * Gets a number and uses the suited form of the word.
-	 *
-	 * @param $count Integer: the number of items
-	 * @param $forms Array with 3 items: the three plural forms
-	 * @return String: the suited form of word
-	 */
-	function convertPlural( $count, $forms ) {
-		if ( !count( $forms ) ) { return ''; }
-		$forms = $this->preConvertPlural( $forms, 3 );
-
-		if ( $count == 1 ) {
-			return $forms[0]; // Singular
-		} elseif ( $count == 2 ) {
-			return $forms[2]; // Dual or plural if dual is not provided (filled in preConvertPlural)
-		} else {
-			return $forms[1]; // Plural
-		}
-	}
 }

@@ -1,6 +1,21 @@
 <?php
 /**
- * Include most things that's need to customize the site
+ * Include most things that's need to customize the site.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  */
@@ -49,7 +64,7 @@ if ( !empty($wgActionPaths) && !isset($wgActionPaths['view']) ) {
 
 if ( !empty($wgActionPaths) && !isset($wgActionPaths['view']) ) {
 	# 'view' is assumed the default action path everywhere in the code
-	# but is rarely filled in $wgActionPaths 
+	# but is rarely filled in $wgActionPaths
 	$wgActionPaths['view'] = $wgArticlePath ;
 }
 
@@ -62,9 +77,6 @@ if ( $wgLogo === false ) $wgLogo = "$wgStylePath/common/images/wiki.png";
 
 if ( $wgUploadPath === false ) $wgUploadPath = "$wgScriptPath/images";
 if ( $wgUploadDirectory === false ) $wgUploadDirectory = "$IP/images";
-
-if ( $wgTmpDirectory === false ) $wgTmpDirectory = "{$wgUploadDirectory}/tmp";
-
 if ( $wgReadOnlyFile === false ) $wgReadOnlyFile = "{$wgUploadDirectory}/lock_yBgMBwiR";
 if ( $wgFileCacheDirectory === false ) $wgFileCacheDirectory = "{$wgUploadDirectory}/cache";
 if ( $wgDeletedDirectory === false ) $wgDeletedDirectory = "{$wgUploadDirectory}/deleted";
@@ -320,9 +332,6 @@ if ( !$wgEnotifMinorEdits ) {
 foreach( $wgDisabledActions as $action ){
 	$wgActions[$action] = false;
 }
-if( !$wgAllowPageInfo ){
-	$wgActions['info'] = false;
-}
 
 if ( !$wgHtml5Version && $wgHtml5 && $wgAllowRdfaAttributes ) {
 	# see http://www.w3.org/TR/rdfa-in-html/#document-conformance
@@ -353,12 +362,14 @@ if ( $wgNewUserLog ) {
 	$wgLogTypes[]                        = 'newusers';
 	$wgLogNames['newusers']              = 'newuserlogpage';
 	$wgLogHeaders['newusers']            = 'newuserlogpagetext';
-	# newusers, create, create2, autocreate
-	$wgLogActionsHandlers['newusers/*']  = 'NewUsersLogFormatter';
+	$wgLogActionsHandlers['newusers/newusers'] = 'NewUsersLogFormatter';
+	$wgLogActionsHandlers['newusers/create'] = 'NewUsersLogFormatter';
+	$wgLogActionsHandlers['newusers/create2'] = 'NewUsersLogFormatter';
+	$wgLogActionsHandlers['newusers/autocreate'] = 'NewUsersLogFormatter';
 }
 
 if ( $wgCookieSecure === 'detect' ) {
-	$wgCookieSecure = ( substr( $wgServer, 0, 6 ) === 'https:' );
+	$wgCookieSecure = ( WebRequest::detectProtocol() === 'https:' );
 }
 
 // Disable MWDebug for command line mode, this prevents MWDebug from eating up
@@ -381,14 +392,28 @@ if ( !defined( 'MW_COMPILED' ) ) {
 	require_once( "$IP/includes/normal/UtfNormalUtil.php" );
 	require_once( "$IP/includes/GlobalFunctions.php" );
 	require_once( "$IP/includes/ProxyTools.php" );
-	require_once( "$IP/includes/ImageFunctions.php" );
 	require_once( "$IP/includes/normal/UtfNormalDefines.php" );
 	wfProfileOut( $fname . '-includes' );
 }
 
-# Now that GlobalFunctions is loaded, set the default for $wgCanonicalServer
+# Now that GlobalFunctions is loaded, set defaults that depend
+# on it.
+if ( $wgTmpDirectory === false ) {
+	$wgTmpDirectory = wfTempDir();
+}
+
 if ( $wgCanonicalServer === false ) {
 	$wgCanonicalServer = wfExpandUrl( $wgServer, PROTO_HTTP );
+}
+
+// Initialize $wgHTCPMulticastRouting from backwards-compatible settings
+if ( !$wgHTCPMulticastRouting && $wgHTCPMulticastAddress ) {
+	$wgHTCPMulticastRouting = array(
+		'' => array(
+			'host' => $wgHTCPMulticastAddress,
+			'port' => $wgHTCPPort,
+		)
+	);
 }
 
 wfProfileIn( $fname . '-misc1' );
@@ -421,16 +446,16 @@ if ( $wgCommandLineMode ) {
 	# Can't stub this one, it sets up $_GET and $_REQUEST in its constructor
 	$wgRequest = new WebRequest;
 
-	$debug = "Start request\n\n{$_SERVER['REQUEST_METHOD']} {$wgRequest->getRequestURL()}";
+	$debug = "\n\nStart request {$wgRequest->getMethod()} {$wgRequest->getRequestURL()}\n";
 
 	if ( $wgDebugPrintHttpHeaders ) {
-		$debug .= "\nHTTP HEADERS:\n";
+		$debug .= "HTTP HEADERS:\n";
 
 		foreach ( $wgRequest->getAllHeaders() as $name => $value ) {
 			$debug .= "$name: $value\n";
 		}
 	}
-	wfDebug( "$debug\n" );
+	wfDebug( $debug );
 }
 
 wfProfileOut( $fname . '-misc1' );
@@ -439,6 +464,7 @@ wfProfileIn( $fname . '-memcached' );
 $wgMemc = wfGetMainCache();
 $messageMemc = wfGetMessageCacheStorage();
 $parserMemc = wfGetParserCacheStorage();
+$wgLangConvMemc = wfGetLangConverterCacheStorage();
 
 wfDebug( 'CACHES: ' . get_class( $wgMemc ) . '[main] ' .
 	get_class( $messageMemc ) . '[message] ' .
@@ -458,11 +484,9 @@ if ( !wfIniGetBool( 'session.auto_start' ) ) {
 
 if ( !defined( 'MW_NO_SESSION' ) && !$wgCommandLineMode ) {
 	if ( $wgRequest->checkSessionCookie() || isset( $_COOKIE[$wgCookiePrefix . 'Token'] ) ) {
-		wfIncrStats( 'request_with_session' );
 		wfSetupSession();
 		$wgSessionStarted = true;
 	} else {
-		wfIncrStats( 'request_without_session' );
 		$wgSessionStarted = false;
 	}
 }
@@ -479,7 +503,7 @@ $wgRequest->interpolateTitle();
 $wgUser = RequestContext::getMain()->getUser(); # BackCompat
 
 /**
- * @var Language
+ * @var $wgLang Language
  */
 $wgLang = new StubUserLang;
 
@@ -489,7 +513,7 @@ $wgLang = new StubUserLang;
 $wgOut = RequestContext::getMain()->getOutput(); # BackCompat
 
 /**
- * @var Parser
+ * @var $wgParser Parser
  */
 $wgParser = new StubObject( 'wgParser', $wgParserConf['class'], array( $wgParserConf ) );
 

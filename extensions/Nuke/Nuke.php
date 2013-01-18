@@ -1,12 +1,12 @@
 <?php
 
-if( !defined( 'MEDIAWIKI' ) ) {
+if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
 
-define( 'Nuke_VERSION', '1.1.4' );
+define( 'Nuke_VERSION', '1.1.7' );
 
-$dir = dirname(__FILE__) . '/';
+$dir = dirname( __FILE__ ) . '/';
 
 $wgExtensionMessagesFiles['Nuke'] = $dir . 'Nuke.i18n.php';
 $wgExtensionMessagesFiles['NukeAlias'] = $dir . 'Nuke.alias.php';

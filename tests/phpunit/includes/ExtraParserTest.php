@@ -21,6 +21,8 @@ class ExtraParserTest extends MediaWikiTestCase {
 		$this->options = new ParserOptions;
 		$this->options->setTemplateCallback( array( __CLASS__, 'statelessFetchTemplate' ) );
 		$this->parser = new Parser;
+
+		MagicWord::clearCache();
 	}
 
 	// Bug 8689 - Long numeric lines kill the parser
@@ -146,7 +148,7 @@ class ExtraParserTest extends MediaWikiTestCase {
 	 */
 	function testTrackingCategory() {
 		$title = Title::newFromText( __FUNCTION__ );
-		$catName =  wfMsgForContent( 'broken-file-category' );
+		$catName =  wfMessage( 'broken-file-category' )->inContentLanguage()->text();
 		$cat = Title::makeTitleSafe( NS_CATEGORY, $catName );
 		$expected = array( $cat->getDBkey() );
 		$parserOutput = $this->parser->parse( "[[file:nonexistent]]" , $title, $this->options );

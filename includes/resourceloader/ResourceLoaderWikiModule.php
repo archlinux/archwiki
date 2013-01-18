@@ -1,5 +1,7 @@
 <?php
 /**
+ * Abstraction for resource loader modules which pull from wiki pages.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -19,8 +21,6 @@
  * @author Trevor Parscal
  * @author Roan Kattouw
  */
-
-defined( 'MEDIAWIKI' ) || die( 1 );
 
 /**
  * Abstraction for resource loader modules which pull from wiki pages
@@ -42,7 +42,6 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 	/* Abstract Protected Methods */
 
 	/**
-	 * @abstract
 	 * @param $context ResourceLoaderContext
 	 */
 	abstract protected function getPages( ResourceLoaderContext $context );
@@ -69,14 +68,10 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 	 * @return null|string
 	 */
 	protected function getContent( $title ) {
-		if ( $title->getNamespace() === NS_MEDIAWIKI ) {
-			$message = wfMessage( $title->getDBkey() )->inContentLanguage();
-			return $message->exists() ? $message->plain() : '';
-		}
 		if ( !$title->isCssJsSubpage() && !$title->isCssOrJsPage() ) {
 			return null;
 		}
-		$revision = Revision::newFromTitle( $title );
+		$revision = Revision::newFromTitle( $title, false, Revision::READ_NORMAL );
 		if ( !$revision ) {
 			return null;
 		}
@@ -137,12 +132,12 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 			}
 			$style = CSSMin::remap( $style, false, $wgScriptPath, true );
 			if ( !isset( $styles[$media] ) ) {
-				$styles[$media] = '';
+				$styles[$media] = array();
 			}
 			if ( strpos( $titleText, '*/' ) === false ) {
-				$styles[$media] .=  "/* $titleText */\n";
+				$style =  "/* $titleText */\n" . $style;
 			}
-			$styles[$media] .= $style . "\n";
+			$styles[$media][] = $style;
 		}
 		return $styles;
 	}
@@ -181,7 +176,7 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 			// We're dealing with a subclass that doesn't have a DB
 			return array();
 		}
-		
+
 		$hash = $context->getHash();
 		if ( isset( $this->titleMtimes[$hash] ) ) {
 			return $this->titleMtimes[$hash];

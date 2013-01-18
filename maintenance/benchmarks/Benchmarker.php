@@ -5,7 +5,7 @@
  */
 
 /**
- * Create a doxygen subgroup of Maintenance for benchmarks
+ * Base code for benchmark scripts.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,13 @@
  * @ingroup Benchmark
  */
 
-require_once( dirname( __FILE__ ) . '/../Maintenance.php' );
+require_once( __DIR__ . '/../Maintenance.php' );
+
+/**
+ * Base class for benchmark scripts.
+ *
+ * @ingroup Benchmark
+ */
 abstract class Benchmarker extends Maintenance {
 	private $results;
 
@@ -47,11 +53,11 @@ abstract class Benchmarker extends Maintenance {
 			}
 
 			$bench_number++;
-			$start = wfTime();
+			$start = microtime( true );
 			for( $i=0; $i<$count; $i++ ) {
 				call_user_func_array( $bench['function'], $bench['args'] );
 			}
-			$delta = wfTime() - $start;
+			$delta = microtime( true ) - $start;
 
 			// function passed as a callback
 			if( is_array( $bench['function'] ) ) {
@@ -61,7 +67,7 @@ abstract class Benchmarker extends Maintenance {
 
 			$this->results[$bench_number] = array(
 				'function'  => $bench['function'],
-				'arguments' => $bench['args'], 
+				'arguments' => $bench['args'],
 				'count'     => $count,
 				'delta'     => $delta,
 				'average'   => $delta / $count,

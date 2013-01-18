@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Maintenance script to show the cached statistics.
+ * Show the cached statistics.
  * Give out the same output as [[Special:Statistics]]
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,6 +19,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @ingroup Maintenance
  * @author Antoine Musso <hashar at free dot fr>
  * Based on initStats.php by:
@@ -28,8 +29,13 @@
  * @license GNU General Public License 2.0 or later
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script to show the cached statistics.
+ *
+ * @ingroup Maintenance
+ */
 class ShowStats extends Maintenance {
 	public function __construct() {
 		parent::__construct();

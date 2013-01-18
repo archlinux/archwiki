@@ -1,4 +1,4 @@
-/*
+/**
  * CSS for WikiEditor Toolbar jQuery plugin
  */
 
@@ -119,7 +119,7 @@
 /* Toolbar */
 .wikiEditor-ui-toolbar .group .label {
 	float: left;
-	border: 0px;
+	border: 0;
 	height: 22px;
 	line-height: 22px;
 	margin: 2px;
@@ -130,7 +130,7 @@
 }
 .wikiEditor-ui-toolbar .group img.tool {
 	float: left;
-	border: 0px;
+	border: 0;
 	height: 22px;
 	width: 22px;
 	padding: 2px;
@@ -237,7 +237,7 @@
 .wikiEditor-ui-toolbar .page-table td {
 	text-align: left;
 	padding: 5px;
-	margin: 0px;
+	margin: 0;
 }
 .wikiEditor-ui-toolbar .section-help .page-table td.cell-syntax,
 .wikiEditor-ui-toolbar .section-help .page-table td.syntax {
@@ -279,7 +279,7 @@
 	border-color: #a8d7f9;
 }
 .ui-widget table td.wikieditor-toolbar-table-preview-wrapper span {
-	padding: 4px 6px 0px;
+	padding: 4px 6px 0;
 	display: block;
 }
 .ui-widget table .wikieditor-toolbar-table-preview-frame {

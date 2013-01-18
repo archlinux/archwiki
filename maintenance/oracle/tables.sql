@@ -39,7 +39,7 @@ CREATE INDEX &mw_prefix.user_groups_i01 ON &mw_prefix.user_groups (ug_group);
 
 CREATE TABLE &mw_prefix.user_former_groups (
   ufg_user   NUMBER      DEFAULT 0 NOT NULL,
-  ufg_group  VARCHAR2(32)     NOT NULL
+  ufg_group  VARCHAR2(16)     NOT NULL
 );
 ALTER TABLE &mw_prefix.user_former_groups ADD CONSTRAINT &mw_prefix.user_former_groups_fk1 FOREIGN KEY (ufg_user) REFERENCES &mw_prefix.mwuser(user_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 CREATE UNIQUE INDEX &mw_prefix.user_former_groups_u01 ON &mw_prefix.user_former_groups (ufg_user,ufg_group);
@@ -116,6 +116,7 @@ CREATE INDEX &mw_prefix.revision_i01 ON &mw_prefix.revision (rev_timestamp);
 CREATE INDEX &mw_prefix.revision_i02 ON &mw_prefix.revision (rev_page,rev_timestamp);
 CREATE INDEX &mw_prefix.revision_i03 ON &mw_prefix.revision (rev_user,rev_timestamp);
 CREATE INDEX &mw_prefix.revision_i04 ON &mw_prefix.revision (rev_user_text,rev_timestamp);
+CREATE INDEX &mw_prefix.revision_i05 ON &mw_prefix.revision (rev_page,rev_user,rev_timestamp);
 
 CREATE SEQUENCE text_old_id_seq;
 CREATE TABLE &mw_prefix.pagecontent ( -- replaces reserved word 'text'
@@ -272,7 +273,8 @@ CREATE TABLE &mw_prefix.ipblocks (
   ipb_range_end         VARCHAR2(255),
   ipb_deleted           CHAR(1)      DEFAULT '0' NOT NULL,
   ipb_block_email       CHAR(1)      DEFAULT '0' NOT NULL,
-  ipb_allow_usertalk    CHAR(1)      DEFAULT '0' NOT NULL
+  ipb_allow_usertalk    CHAR(1)      DEFAULT '0' NOT NULL,
+  ipb_parent_block_id             NUMBER       DEFAULT NULL
 );
 ALTER TABLE &mw_prefix.ipblocks ADD CONSTRAINT &mw_prefix.ipblocks_pk PRIMARY KEY (ipb_id);
 ALTER TABLE &mw_prefix.ipblocks ADD CONSTRAINT &mw_prefix.ipblocks_fk1 FOREIGN KEY (ipb_user) REFERENCES &mw_prefix.mwuser(user_id) ON DELETE SET NULL DEFERRABLE INITIALLY DEFERRED;
@@ -282,6 +284,7 @@ CREATE INDEX &mw_prefix.ipblocks_i01 ON &mw_prefix.ipblocks (ipb_user);
 CREATE INDEX &mw_prefix.ipblocks_i02 ON &mw_prefix.ipblocks (ipb_range_start, ipb_range_end);
 CREATE INDEX &mw_prefix.ipblocks_i03 ON &mw_prefix.ipblocks (ipb_timestamp);
 CREATE INDEX &mw_prefix.ipblocks_i04 ON &mw_prefix.ipblocks (ipb_expiry);
+CREATE INDEX &mw_prefix.ipblocks_i05 ON &mw_prefix.ipblocks (ipb_parent_block_id);
 
 CREATE TABLE &mw_prefix.image (
   img_name         VARCHAR2(255)      NOT NULL,
@@ -663,13 +666,6 @@ CREATE TABLE &mw_prefix.module_deps (
   md_deps BLOB NOT NULL
 );
 CREATE UNIQUE INDEX &mw_prefix.module_deps_u01 ON &mw_prefix.module_deps (md_module, md_skin);
-
-CREATE TABLE &mw_prefix.config (
-  cf_name VARCHAR2(255) NOT NULL,
-  cf_value blob NOT NULL
-);
-ALTER TABLE &mw_prefix.config ADD CONSTRAINT &mw_prefix.config_pk PRIMARY KEY (cf_name);
--- leaving index out for now ...
 
 -- do not prefix this table as it breaks parserTests
 CREATE TABLE wiki_field_info_full (

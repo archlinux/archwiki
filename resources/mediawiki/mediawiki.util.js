@@ -1,8 +1,8 @@
 /**
  * Implements mediaWiki.util library
  */
-( function ( $, mw ) {
-	"use strict";
+( function ( mw, $ ) {
+	'use strict';
 
 	// Local cache and alias
 	var util = {
@@ -13,12 +13,6 @@
 		 */
 		init: function () {
 			var profile, $tocTitle, $tocToggleLink, hideTocCookie;
-
-			/* Set up $.messageBox */
-			$.messageBoxNew( {
-				id: 'mw-js-message',
-				parent: '#content'
-			} );
 
 			/* Set tooltipAccessKeyPrefix */
 			profile = $.client.profile();
@@ -48,7 +42,11 @@
 				&& profile.name === 'safari'
 				&& profile.layoutVersion > 526 ) {
 				util.tooltipAccessKeyPrefix = 'ctrl-alt-';
-
+			// Firefox 14+ on Mac
+			} else if ( profile.platform === 'mac'
+				&& profile.name === 'firefox'
+				&& profile.versionNumber >= 14 ) {
+				util.tooltipAccessKeyPrefix = 'ctrl-option-';
 			// Safari/Konqueror on any platform, or any browser on Mac
 			// (but not Safari on Windows)
 			} else if ( !( profile.platform === 'win' && profile.name === 'safari' )
@@ -63,25 +61,49 @@
 			}
 
 			/* Fill $content var */
-			if ( $( '#bodyContent' ).length ) {
-				// Vector, Monobook, Chick etc.
-				util.$content = $( '#bodyContent' );
+			util.$content = ( function () {
+				var $content, selectors = [
+					// The preferred standard for setting $content (class="mw-body")
+					// You may also use (class="mw-body mw-body-primary") if you use
+					// mw-body in multiple locations.
+					// Or class="mw-body-primary" if you want $content to be deeper
+					// in the dom than mw-body
+					'.mw-body-primary',
+					'.mw-body',
 
-			} else if ( $( '#mw_contentholder' ).length ) {
-				// Modern
-				util.$content = $( '#mw_contentholder' );
+					/* Legacy fallbacks for setting the content */
+					// Vector, Monobook, Chick, etc... based skins
+					'#bodyContent',
 
-			} else if ( $( '#article' ).length ) {
-				// Standard, CologneBlue
-				util.$content = $( '#article' );
+					// Modern based skins
+					'#mw_contentholder',
 
-			} else {
-				// #content is present on almost all if not all skins. Most skins (the above cases)
-				// have #content too, but as an outer wrapper instead of the article text container.
-				// The skins that don't have an outer wrapper do have #content for everything
-				// so it's a good fallback
-				util.$content = $( '#content' );
-			}
+					// Standard, CologneBlue
+					'#article',
+
+					// #content is present on almost all if not all skins. Most skins (the above cases)
+					// have #content too, but as an outer wrapper instead of the article text container.
+					// The skins that don't have an outer wrapper do have #content for everything
+					// so it's a good fallback
+					'#content',
+
+					// If nothing better is found fall back to our bodytext div that is guaranteed to be here
+					'#mw-content-text',
+
+					// Should never happen... well, it could if someone is not finished writing a skin and has
+					// not inserted bodytext yet. But in any case <body> should always exist
+					'body'
+				];
+				for ( var i = 0, l = selectors.length; i < l; i++ ) {
+					$content = $( selectors[i] ).first();
+					if ( $content.length ) {
+						return $content;
+					}
+				}
+
+				// Make sure we don't unset util.$content if it was preset and we don't find anything
+				return util.$content;
+			} )();
 
 			// Table of contents toggle
 			$tocTitle = $( '#toctitle' );
@@ -150,32 +172,41 @@
 		 * Get address to a script in the wiki root.
 		 * For index.php use mw.config.get( 'wgScript' )
 		 *
+		 * @since 1.18
 		 * @param str string Name of script (eg. 'api'), defaults to 'index'
 		 * @return string Address to script (eg. '/w/api.php' )
 		 */
 		wikiScript: function ( str ) {
-			return mw.config.get( 'wgScriptPath' ) + '/' + ( str || 'index' ) +
-				mw.config.get( 'wgScriptExtension' );
+			str = str || 'index';
+			if ( str === 'index' ) {
+				return mw.config.get( 'wgScript' );
+			} else if ( str === 'load' ) {
+				return mw.config.get( 'wgLoadScript' );
+			} else {
+				return mw.config.get( 'wgScriptPath' ) + '/' + str +
+					mw.config.get( 'wgScriptExtension' );
+			}
 		},
 
 		/**
-		 * Append a new style block to the head
+		 * Append a new style block to the head and return the CSSStyleSheet object.
+		 * Use .ownerNode to access the <style> element, or use mw.loader.addStyleTag.
+		 * This function returns the styleSheet object for convience (due to cross-browsers
+		 * difference as to where it is located).
+		 * @example
+		 * <code>
+		 * var sheet = mw.util.addCSS('.foobar { display: none; }');
+		 * $(foo).click(function () {
+		 *     // Toggle the sheet on and off
+		 *     sheet.disabled = !sheet.disabled;
+		 * });
+		 * </code>
 		 *
 		 * @param text string CSS to be appended
-		 * @return CSSStyleSheet
+		 * @return CSSStyleSheet (use .ownerNode to get to the <style> element)
 		 */
 		addCSS: function ( text ) {
-			var s = document.createElement( 'style' );
-			s.type = 'text/css';
-			s.rel = 'stylesheet';
-			// Insert into document before setting cssText (bug 33305)
-			document.getElementsByTagName('head')[0].appendChild( s );
-			if ( s.styleSheet ) {
-				s.styleSheet.cssText = text; // IE
-			} else {
-				// Safari sometimes borks on null
-				s.appendChild( document.createTextNode( String( text ) ) );
-			}
+			var s = mw.loader.addStyleTag( text );
 			return s.sheet || s;
 		},
 
@@ -231,7 +262,7 @@
 			// Get last match, stop at hash
 			var	re = new RegExp( '^[^#]*[&?]' + $.escapeRE( param ) + '=([^&#]*)' ),
 				m = re.exec( url );
-			if ( m && m.length > 1 ) {
+			if ( m ) {
 				// Beware that decodeURIComponent is not required to understand '+'
 				// by spec, as encodeURIComponent does not produce it.
 				return decodeURIComponent( m[1].replace( /\+/g, '%20' ) );
@@ -282,7 +313,7 @@
 
 		/*
 		 * @var jQuery
-		 * A jQuery object that refers to the page-content element
+		 * A jQuery object that refers to the content area element
 		 * Populated by init().
 		 */
 		$content: null,
@@ -353,20 +384,21 @@
 					return null;
 				}
 				// Select the first (most likely only) unordered list inside the portlet
-				$ul = $portlet.find( 'ul' );
+				$ul = $portlet.find( 'ul' ).eq( 0 );
 
 				// If it didn't have an unordered list yet, create it
 				if ( $ul.length === 0 ) {
+
+					$ul = $( '<ul>' );
+
 					// If there's no <div> inside, append it to the portlet directly
 					if ( $portlet.find( 'div:first' ).length === 0 ) {
-						$portlet.append( '<ul></ul>' );
+						$portlet.append( $ul );
 					} else {
 						// otherwise if there's a div (such as div.body or div.pBody)
 						// append the <ul> to last (most likely only) div
-						$portlet.find( 'div' ).eq( -1 ).append( '<ul></ul>' );
+						$portlet.find( 'div' ).eq( -1 ).append( $ul );
 					}
-					// Select the created element
-					$ul = $portlet.find( 'ul' ).eq( 0 );
 				}
 				// Just in case..
 				if ( $ul.length === 0 ) {
@@ -424,43 +456,18 @@
 		 * Calling with no arguments, with an empty string or null will hide the message
 		 *
 		 * @param message {mixed} The DOM-element, jQuery object or HTML-string to be put inside the message box.
-		 * @param className {String} Used in adding a class; should be different for each call
 		 * to allow CSS/JS to hide different boxes. null = no class used.
-		 * @return {Boolean} True on success, false on failure.
+		 * @depreceated Use mw.notify
 		 */
-		jsMessage: function ( message, className ) {
+		jsMessage: function ( message ) {
 			if ( !arguments.length || message === '' || message === null ) {
-				$( '#mw-js-message' ).empty().hide();
-				return true; // Emptying and hiding message is intended behaviour, return true
-
-			} else {
-				// We special-case skin structures provided by the software. Skins that
-				// choose to abandon or significantly modify our formatting can just define
-				// an mw-js-message div to start with.
-				var $messageDiv = $( '#mw-js-message' );
-				if ( !$messageDiv.length ) {
-					$messageDiv = $( '<div id="mw-js-message"></div>' );
-					if ( util.$content.parent().length ) {
-						util.$content.parent().prepend( $messageDiv );
-					} else {
-						return false;
-					}
-				}
-
-				if ( className ) {
-					$messageDiv.prop( 'class', 'mw-js-message-' + className );
-				}
-
-				if ( typeof message === 'object' ) {
-					$messageDiv.empty();
-					$messageDiv.append( message );
-				} else {
-					$messageDiv.html( message );
-				}
-
-				$messageDiv.slideDown();
 				return true;
 			}
+			if ( typeof message !== 'object' ) {
+				message = $.parseHTML( message );
+			}
+			mw.notify( message, { autoHide: true, tag: 'legacy' } );
+			return true;
 		},
 
 		/**
@@ -598,4 +605,4 @@
 
 	mw.util = util;
 
-} )( jQuery, mediaWiki );
+}( mediaWiki, jQuery ) );

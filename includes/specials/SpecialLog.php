@@ -33,7 +33,7 @@ class SpecialLog extends SpecialPage {
 	/**
 	 * List log type for which the target is a user
 	 * Thus if the given target is in NS_MAIN we can alter it to be an NS_USER
-	 * Title user instead. 
+	 * Title user instead.
 	 */
 	private $typeOnUser = array(
 		'block',
@@ -47,7 +47,7 @@ class SpecialLog extends SpecialPage {
 
 	public function execute( $par ) {
 		global $wgLogRestrictions;
-		
+
 		$this->setHeaders();
 		$this->outputHeader();
 
@@ -65,7 +65,7 @@ class SpecialLog extends SpecialPage {
 
 		// Set values
 		$opts->fetchValuesFromRequest( $this->getRequest() );
-		if ( $par ) {
+		if ( $par !== null ) {
 			$this->parseParams( $opts, (string)$par );
 		}
 
@@ -131,7 +131,7 @@ class SpecialLog extends SpecialPage {
 
 	private function show( FormOptions $opts, array $extraConds ) {
 		# Create a LogPager item to get the results and a LogEventsList item to format them...
-		$loglist = new LogEventsList( $this->getSkin(), $this->getOutput(), 0 );
+		$loglist = new LogEventsList( $this->getContext(), null, LogEventsList::USE_REVDEL_CHECKBOXES );
 		$pager = new LogPager( $loglist, $opts->getValue( 'type' ), $opts->getValue( 'user' ),
 			$opts->getValue( 'page' ), $opts->getValue( 'pattern' ), $extraConds, $opts->getValue( 'year' ),
 			$opts->getValue( 'month' ), $opts->getValue( 'tagfilter' ) );
@@ -152,15 +152,36 @@ class SpecialLog extends SpecialPage {
 		if ( $logBody ) {
 			$this->getOutput()->addHTML(
 				$pager->getNavigationBar() .
-				$loglist->beginLogEventsList() .
-				$logBody .
-				$loglist->endLogEventsList() .
+				$this->getRevisionButton( $loglist->beginLogEventsList() . $logBody . $loglist->endLogEventsList() ) .
 				$pager->getNavigationBar()
 			);
 		} else {
 			$this->getOutput()->addWikiMsg( 'logempty' );
 		}
 	}
+
+	private function getRevisionButton( $formcontents ) {
+		# If the user doesn't have the ability to delete log entries, don't bother showing him/her the button.
+		if ( !$this->getUser()->isAllowedAll( 'deletedhistory', 'deletelogentry' ) ) {
+			return $formcontents;
+		}
+
+		# Show button to hide log entries
+		global $wgScript;
+		$s = Html::openElement( 'form', array( 'action' => $wgScript, 'id' => 'mw-log-deleterevision-submit' ) ) . "\n";
+		$s .= Html::hidden( 'title', SpecialPage::getTitleFor( 'Revisiondelete' ) ) . "\n";
+		$s .= Html::hidden( 'target', SpecialPage::getTitleFor( 'Log' ) ) . "\n";
+		$s .= Html::hidden( 'type', 'logging' ) . "\n";
+		$button = Html::element( 'button',
+			array( 'type' => 'submit', 'class' => "deleterevision-log-submit mw-log-deleterevision-button" ),
+			$this->msg( 'showhideselectedlogentries' )->text()
+		) . "\n";
+		$s .= $button . $formcontents . $button;
+		$s .= Html::closeElement( 'form' );
+
+		return $s;
+	}
+
 
 	/**
 	 * Set page title and show header for this log type

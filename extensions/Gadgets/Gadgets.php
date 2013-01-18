@@ -16,15 +16,15 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 1 );
 }
 
-if ( version_compare( $wgVersion, '1.18alpha', '<' ) ) {
-	die( "This version of Extension:Gadgets requires MediaWiki 1.18+\n" );
+if ( version_compare( $wgVersion, '1.19', '<' ) ) {
+	die( "This version of Extension:Gadgets requires MediaWiki 1.19+\n" );
 }
 
 $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
 	'name' => 'Gadgets',
 	'author' => array( 'Daniel Kinzler', 'Max Semenik' ),
-	'url' => 'http://mediawiki.org/wiki/Extension:Gadgets',
+	'url' => 'https://mediawiki.org/wiki/Extension:Gadgets',
 	'descriptionmsg' => 'gadgets-desc',
 );
 

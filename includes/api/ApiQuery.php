@@ -4,7 +4,7 @@
  *
  * Created on Sep 7, 2006
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,55 +47,55 @@ class ApiQuery extends ApiBase {
 	private $params, $redirects, $convertTitles, $iwUrl;
 
 	private $mQueryPropModules = array(
+		'categories' => 'ApiQueryCategories',
+		'categoryinfo' => 'ApiQueryCategoryInfo',
+		'duplicatefiles' => 'ApiQueryDuplicateFiles',
+		'extlinks' => 'ApiQueryExternalLinks',
+		'images' => 'ApiQueryImages',
+		'imageinfo' => 'ApiQueryImageInfo',
 		'info' => 'ApiQueryInfo',
-		'revisions' => 'ApiQueryRevisions',
 		'links' => 'ApiQueryLinks',
 		'iwlinks' => 'ApiQueryIWLinks',
 		'langlinks' => 'ApiQueryLangLinks',
-		'images' => 'ApiQueryImages',
-		'imageinfo' => 'ApiQueryImageInfo',
+		'pageprops' => 'ApiQueryPageProps',
+		'revisions' => 'ApiQueryRevisions',
 		'stashimageinfo' => 'ApiQueryStashImageInfo',
 		'templates' => 'ApiQueryLinks',
-		'categories' => 'ApiQueryCategories',
-		'extlinks' => 'ApiQueryExternalLinks',
-		'categoryinfo' => 'ApiQueryCategoryInfo',
-		'duplicatefiles' => 'ApiQueryDuplicateFiles',
-		'pageprops' => 'ApiQueryPageProps',
 	);
 
 	private $mQueryListModules = array(
-		'allimages' => 'ApiQueryAllimages',
-		'allpages' => 'ApiQueryAllpages',
-		'alllinks' => 'ApiQueryAllLinks',
 		'allcategories' => 'ApiQueryAllCategories',
+		'allimages' => 'ApiQueryAllImages',
+		'alllinks' => 'ApiQueryAllLinks',
+		'allpages' => 'ApiQueryAllPages',
 		'allusers' => 'ApiQueryAllUsers',
 		'backlinks' => 'ApiQueryBacklinks',
 		'blocks' => 'ApiQueryBlocks',
 		'categorymembers' => 'ApiQueryCategoryMembers',
 		'deletedrevs' => 'ApiQueryDeletedrevs',
 		'embeddedin' => 'ApiQueryBacklinks',
+		'exturlusage' => 'ApiQueryExtLinksUsage',
 		'filearchive' => 'ApiQueryFilearchive',
 		'imageusage' => 'ApiQueryBacklinks',
 		'iwbacklinks' => 'ApiQueryIWBacklinks',
 		'langbacklinks' => 'ApiQueryLangBacklinks',
 		'logevents' => 'ApiQueryLogEvents',
+		'protectedtitles' => 'ApiQueryProtectedTitles',
+		'querypage' => 'ApiQueryQueryPage',
+		'random' => 'ApiQueryRandom',
 		'recentchanges' => 'ApiQueryRecentChanges',
 		'search' => 'ApiQuerySearch',
 		'tags' => 'ApiQueryTags',
 		'usercontribs' => 'ApiQueryContributions',
+		'users' => 'ApiQueryUsers',
 		'watchlist' => 'ApiQueryWatchlist',
 		'watchlistraw' => 'ApiQueryWatchlistRaw',
-		'exturlusage' => 'ApiQueryExtLinksUsage',
-		'users' => 'ApiQueryUsers',
-		'random' => 'ApiQueryRandom',
-		'protectedtitles' => 'ApiQueryProtectedTitles',
-		'querypage' => 'ApiQueryQueryPage',
 	);
 
 	private $mQueryMetaModules = array(
+		'allmessages' => 'ApiQueryAllMessages',
 		'siteinfo' => 'ApiQuerySiteinfo',
 		'userinfo' => 'ApiQueryUserInfo',
-		'allmessages' => 'ApiQueryAllmessages',
 	);
 
 	private $mSlaveDB = null;
@@ -103,11 +103,16 @@ class ApiQuery extends ApiBase {
 
 	protected $mAllowedGenerators = array();
 
+	/**
+	 * @param $main ApiMain
+	 * @param $action string
+	 */
 	public function __construct( $main, $action ) {
 		parent::__construct( $main, $action );
 
 		// Allow custom modules to be added in LocalSettings.php
-		global $wgAPIPropModules, $wgAPIListModules, $wgAPIMetaModules;
+		global $wgAPIPropModules, $wgAPIListModules, $wgAPIMetaModules,
+			$wgMemc, $wgAPICacheHelpTimeout;
 		self::appendUserModules( $this->mQueryPropModules, $wgAPIPropModules );
 		self::appendUserModules( $this->mQueryListModules, $wgAPIListModules );
 		self::appendUserModules( $this->mQueryMetaModules, $wgAPIMetaModules );
@@ -116,8 +121,22 @@ class ApiQuery extends ApiBase {
 		$this->mListModuleNames = array_keys( $this->mQueryListModules );
 		$this->mMetaModuleNames = array_keys( $this->mQueryMetaModules );
 
-		$this->makeHelpMsgHelper( $this->mQueryPropModules, 'prop' );
-		$this->makeHelpMsgHelper( $this->mQueryListModules, 'list' );
+		// Get array of query generators from cache if present
+		$key = wfMemcKey( 'apiquerygenerators', SpecialVersion::getVersion( 'nodb' ) );
+
+		if ( $wgAPICacheHelpTimeout > 0 ) {
+			$cached = $wgMemc->get( $key );
+			if ( $cached ) {
+				$this->mAllowedGenerators = $cached;
+				return;
+			}
+		}
+		$this->makeGeneratorList( $this->mQueryPropModules );
+		$this->makeGeneratorList( $this->mQueryListModules );
+
+		if ( $wgAPICacheHelpTimeout > 0 ) {
+			$wgMemc->set( $key, $this->mAllowedGenerators, $wgAPICacheHelpTimeout );
+		}
 	}
 
 	/**
@@ -135,7 +154,7 @@ class ApiQuery extends ApiBase {
 
 	/**
 	 * Gets a default slave database connection object
-	 * @return Database
+	 * @return DatabaseBase
 	 */
 	public function getDB() {
 		if ( !isset( $this->mSlaveDB ) ) {
@@ -154,7 +173,7 @@ class ApiQuery extends ApiBase {
 	 * @param $name string Name to assign to the database connection
 	 * @param $db int One of the DB_* constants
 	 * @param $groups array Query groups
-	 * @return Database
+	 * @return DatabaseBase
 	 */
 	public function getNamedDB( $name, $db, $groups ) {
 		if ( !array_key_exists( $name, $this->mNamedDB ) ) {
@@ -202,6 +221,9 @@ class ApiQuery extends ApiBase {
 		return null;
 	}
 
+	/**
+	 * @return ApiFormatRaw|null
+	 */
 	public function getCustomPrinter() {
 		// If &exportnowrap is set, use the raw formatter
 		if ( $this->getParameter( 'export' ) &&
@@ -258,6 +280,9 @@ class ApiQuery extends ApiBase {
 		$this->outputGeneralPageInfo();
 
 		// Execute all requested modules.
+		/**
+		 * @var $module ApiQueryBase
+		 */
 		foreach ( $modules as $module ) {
 			$params = $module->extractRequestParams();
 			$cacheMode = $this->mergeCacheMode(
@@ -303,6 +328,9 @@ class ApiQuery extends ApiBase {
 	 */
 	private function addCustomFldsToPageSet( $modules, $pageSet ) {
 		// Query all requested modules.
+		/**
+		 * @var $module ApiQueryBase
+		 */
 		foreach ( $modules as $module ) {
 			$module->requestExtraData( $pageSet );
 		}
@@ -384,6 +412,9 @@ class ApiQuery extends ApiBase {
 
 		// Show redirect information
 		$redirValues = array();
+		/**
+		 * @var $titleTo Title
+		 */
 		foreach ( $pageSet->getRedirectTitles() as $titleStrFrom => $titleTo ) {
 			$r = array(
 				'from' => strval( $titleStrFrom ),
@@ -602,7 +633,6 @@ class ApiQuery extends ApiBase {
 		// Make sure the internal object is empty
 		// (just in case a sub-module decides to optimize during instantiation)
 		$this->mPageSet = null;
-		$this->mAllowedGenerators = array(); // Will be repopulated
 
 		$querySeparator = str_repeat( '--- ', 12 );
 		$moduleSeparator = str_repeat( '*** ', 14 );
@@ -614,8 +644,6 @@ class ApiQuery extends ApiBase {
 		$msg .= $this->makeHelpMsgHelper( $this->mQueryMetaModules, 'meta' );
 		$msg .= "\n\n$moduleSeparator Modules: continuation  $moduleSeparator\n\n";
 
-		// Perform the base call last because the $this->mAllowedGenerators
-		// will be updated inside makeHelpMsgHelper()
 		// Use parent to make default message for the query module
 		$msg = parent::makeHelpMsg() . $msg;
 
@@ -643,13 +671,25 @@ class ApiQuery extends ApiBase {
 				$msg .= $msg2;
 			}
 			if ( $module instanceof ApiQueryGeneratorBase ) {
-				$this->mAllowedGenerators[] = $moduleName;
 				$msg .= "Generator:\n  This module may be used as a generator\n";
 			}
 			$moduleDescriptions[] = $msg;
 		}
 
 		return implode( "\n", $moduleDescriptions );
+	}
+
+	/**
+	 * Adds any classes that are a subclass of ApiQueryGeneratorBase
+	 * to the allowed generator list
+	 * @param $moduleList array()
+	 */
+	private function makeGeneratorList( $moduleList ) {
+		foreach( $moduleList as  $moduleName => $moduleClass ) {
+			if ( is_subclass_of( $moduleClass, 'ApiQueryGeneratorBase'  ) ) {
+				$this->mAllowedGenerators[] = $moduleName;
+			}
+		}
 	}
 
 	/**
@@ -674,7 +714,7 @@ class ApiQuery extends ApiBase {
 					'NOTE: generator parameter names must be prefixed with a \'g\', see examples' ),
 			'redirects' => 'Automatically resolve redirects',
 			'converttitles' => array( "Convert titles to other variants if necessary. Only works if the wiki's content language supports variant conversion.",
-					'Languages that support variant conversion include gan, iu, kk, ku, shi, sr, tg, zh' ),
+					'Languages that support variant conversion include ' . implode( ', ', LanguageConverter::$languagesWithVariants ) ),
 			'indexpageids' => 'Include an additional pageids section listing all returned page IDs',
 			'export' => 'Export the current revisions of all given or generated pages',
 			'exportnowrap' => 'Return the export XML without wrapping it in an XML result (same format as Special:Export). Can only be used with export',

@@ -1,23 +1,25 @@
 /* Publish module for wikiEditor */
-( function( $ ) { $.wikiEditor.modules.publish = {
+( function ( $ ) {
+
+$.wikiEditor.modules.publish = {
 
 /**
  * Compatability map
  */
-'browsers': {
+browsers: {
 	// Left-to-right languages
-	'ltr': {
-		'msie': [['>=', 7]],
-		'firefox': [['>=', 3]],
-		'opera': [['>=', 9.6]],
-		'safari': [['>=', 4]]
+	ltr: {
+		msie: [['>=', 7]],
+		firefox: [['>=', 3]],
+		opera: [['>=', 9.6]],
+		safari: [['>=', 4]]
 	},
 	// Right-to-left languages
-	'rtl': {
-		'msie': [['>=', 8]],
-		'firefox': [['>=', 3]],
-		'opera': [['>=', 9.6]],
-		'safari': [['>=', 4]]
+	rtl: {
+		msie: [['>=', 8]],
+		firefox: [['>=', 3]],
+		opera: [['>=', 9.6]],
+		safari: [['>=', 4]]
 	}
 },
 /**
@@ -29,7 +31,7 @@ fn: {
 	 * @param context Context object of editor to create module in
 	 * @param config Configuration object to create module from
 	 */
-	create: function( context, config ) {
+	create: function ( context, config ) {
 		// Build the dialog behind the Publish button
 		var dialogID = 'wikiEditor-' + context.instance + '-dialog';
 		$.wikiEditor.modules.dialogs.fn.create(
@@ -61,8 +63,10 @@ fn: {
 								</div>\
 							</form>\
 						</div>',
-					init: function() {
-						$(this).find( '[rel]' ).each( function() {
+					init: function () {
+						var i;
+
+						$(this).find( '[rel]' ).each( function () {
 							$(this).text( mediaWiki.msg( $(this).attr( 'rel' ) ) );
 						});
 
@@ -72,8 +76,8 @@ fn: {
 						// TODO: internationalize by splitting on other characters that end statements
 						var copyWarnStatements = copyWarnHTML.split( '. ' );
 						var newCopyWarnHTML = '<ul>';
-						for ( var i = 0; i < copyWarnStatements.length; i++ ) {
-							if ( copyWarnStatements[i] != '' ) {
+						for ( i = 0; i < copyWarnStatements.length; i++ ) {
+							if ( copyWarnStatements[i] !== '' ) {
 								var copyWarnStatement = $.trim( copyWarnStatements[i] ).replace( /\.*$/, '' );
 								newCopyWarnHTML += '<li>' + copyWarnStatement + '.</li>';
 							}
@@ -85,42 +89,42 @@ fn: {
 						);
 						/* END OF REALLY DIRTY HACK */
 
-						if ( $( '#wpMinoredit' ).size() == 0 )
+						if ( $( '#wpMinoredit' ).length === 0 )
 							$( '#wikiEditor-' + context.instance + '-dialog-minor' ).hide();
 						else if ( $( '#wpMinoredit' ).is( ':checked' ) )
 							$( '#wikiEditor-' + context.instance + '-dialog-minor' )
-								.attr( 'checked', 'checked' );
-						if ( $( '#wpWatchthis' ).size() == 0 )
+								.prop( 'checked', true );
+						if ( $( '#wpWatchthis' ).length === 0 )
 							$( '#wikiEditor-' + context.instance + '-dialog-watch' ).hide();
 						else if ( $( '#wpWatchthis' ).is( ':checked' ) )
 							$( '#wikiEditor-' + context.instance + '-dialog-watch' )
-								.attr( 'checked', 'checked' );
+								.prop( 'checked', true );
 
-						$(this).find( 'form' ).submit( function( e ) {
+						$(this).find( 'form' ).submit( function ( e ) {
 							$(this).closest( '.ui-dialog' ).find( 'button:first' ).click();
 							e.preventDefault();
 						});
 					},
 					dialog: {
 						buttons: {
-							'wikieditor-publish-dialog-publish': function() {
+							'wikieditor-publish-dialog-publish': function () {
 								var minorChecked = $( '#wikiEditor-' + context.instance +
 									'-dialog-minor' ).is( ':checked' ) ?
 										'checked' : '';
 								var watchChecked = $( '#wikiEditor-' + context.instance +
 									'-dialog-watch' ).is( ':checked' ) ?
 										'checked' : '';
-								$( '#wpMinoredit' ).attr( 'checked', minorChecked );
-								$( '#wpWatchthis' ).attr( 'checked', watchChecked );
+								$( '#wpMinoredit' ).prop( 'checked', minorChecked );
+								$( '#wpWatchthis' ).prop( 'checked', watchChecked );
 								$( '#wpSummary' ).val( $( '#wikiEditor-' + context.instance +
 									'-dialog-summary' ).val() );
 								$( '#editform' ).submit();
 							},
-							'wikieditor-publish-dialog-goback': function() {
+							'wikieditor-publish-dialog-goback': function () {
 								$(this).dialog( 'close' );
 							}
 						},
-						open: function() {
+						open: function () {
 							$( '#wikiEditor-' + context.instance + '-dialog-summary' ).focus();
 						},
 						width: 500
@@ -129,18 +133,22 @@ fn: {
 				}
 			}
 		);
+
 		context.fn.addButton( {
 			'captionMsg': 'wikieditor-publish-button-publish',
-			'action': function() {
+			'action': function () {
 				$( '#' + dialogID ).dialog( 'open' );
 				return false;
 			}
 		} );
+
 		context.fn.addButton( {
 			'captionMsg': 'wikieditor-publish-button-cancel',
-			'action': function() { }
+			'action': function () { }
 		} );
 	}
 }
 
-}; } )( jQuery );
+};
+
+}( jQuery ) );

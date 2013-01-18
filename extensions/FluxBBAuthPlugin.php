@@ -4,7 +4,7 @@ $wgHooks['isValidPassword'][] = 'FluxBBAuthPlugin::isValidPassword';
 
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FluxBBAuthPlugin',
-	'version' => '1.2',
+	'version' => '1.3',
 	'description' => 'Use FluxBB accounts in MediaWiki',
 	'author' => 'Pierre Schmitz',
 	'url' => 'https://pierre-schmitz.com/'
@@ -12,6 +12,8 @@ $wgExtensionCredits['other'][] = array(
 
 require_once(__DIR__.'/../includes/AuthPlugin.php');
 
+global $FluxBBDatabase;
+$FluxBBDatabase = 'fluxbb';
 
 class FluxBBAuthPlugin extends AuthPlugin {
 
@@ -21,23 +23,21 @@ public static function isValidPassword($password) {
 }
 
 private function getUserData($username) {
+	global $FluxBBDatabase;
 	$dbr = wfGetDB( DB_SLAVE );
 
-	$result = $dbr->safeQuery('SELECT id, username, email, realname FROM fluxbb.users WHERE username = ?', $username);
-	$data = $result->fetchRow();
-	$result->free();
-
-	return $data;
+	return $dbr->selectRow($FluxBBDatabase.'.users', array('username', 'email', 'realname'), array('username' => $username));
 }
 
 public function userExists( $username ) {
+	global $FluxBBDatabase;
 	$dbr = wfGetDB( DB_SLAVE );
 
 	try {
-		$result = $dbr->safeQuery('SELECT id FROM fluxbb.users WHERE username = ?', $username);
+		$result = $dbr->select($FluxBBDatabase.'.users', 'id', array('username' => $username));
 		$exists = ($result->numRows() > 0 ? true : false);
 		$result->free();
-	} catch (Exception $e) {
+	} catch (DBQueryError $e) {
 		$exists = false;
 	}
 
@@ -45,13 +45,14 @@ public function userExists( $username ) {
 }
 
 public function authenticate( $username, $password ) {
+	global $FluxBBDatabase;
 	$dbr = wfGetDB( DB_SLAVE );
 
 	try {
-		$result = $dbr->safeQuery('SELECT id FROM fluxbb.users WHERE username = ? AND password = ?', $username, sha1($password));
+		$result = $dbr->select($FluxBBDatabase.'.users', 'id', array('username' => $username, 'password' => sha1($password)));
 		$authenticated = ($result->numRows() > 0 ? true : false);
 		$result->free();
-	} catch (Exception $e) {
+	} catch (DBQueryError $e) {
 		$authenticated = false;
 	}
 
@@ -126,9 +127,12 @@ public function strictUserAuth( $username ) {
 public function initUser( &$user, $autocreate=false ) {
 	try {
 		$data = $this->getUserData($user->getName());
-		$user->setEmail($data['email']);
+		if (!$data) {
+			return false;
+		}
+		$user->setEmail($data->email);
 		$user->confirmEmail();
-		$user->setRealName($data['realname']);
+		$user->setRealName($data->realname);
 	} catch (Exception $e) {
 		return false;
 	}
@@ -139,7 +143,10 @@ public function getCanonicalName( $username ) {
 	if ($username != 'MediaWiki default') {
 		try {
 			$data = $this->getUserData($username);
-			return strtoupper(substr($data['username'], 0, 1)).substr($data['username'], 1);
+			if (!$data) {
+				return false;
+			}
+			return strtoupper(substr($data->username, 0, 1)).substr($data->username, 1);
 		} catch (Exception $e) {
 			return false;
 		}

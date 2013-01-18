@@ -2,6 +2,21 @@
 /**
  * This is the MS SQL Server Native database abstraction layer.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Database
  * @author Joel Penner <a-joelpe at microsoft dot com>
@@ -46,6 +61,7 @@ class DatabaseMssql extends DatabaseBase {
 
 	/**
 	 * Usually aborts on failure
+	 * @return bool|DatabaseBase|null
 	 */
 	function open( $server, $user, $password, $dbName ) {
 		# Test for driver support, to avoid suppressed fatal error
@@ -107,14 +123,10 @@ class DatabaseMssql extends DatabaseBase {
 	/**
 	 * Closes a database connection, if it is open
 	 * Returns success, true if already closed
+	 * @return bool
 	 */
-	function close() {
-		$this->mOpened = false;
-		if ( $this->mConn ) {
-			return sqlsrv_close( $this->mConn );
-		} else {
-			return true;
-		}
+	protected function closeConnection() {
+		return sqlsrv_close( $this->mConn );
 	}
 
 	protected function doQuery( $sql ) {
@@ -226,6 +238,7 @@ class DatabaseMssql extends DatabaseBase {
 
 	/**
 	 * This must be called after nextSequenceVal
+	 * @return null
 	 */
 	function insertId() {
 		return $this->mInsertId;
@@ -310,6 +323,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * This is not necessarily an accurate estimate, so use sparingly
 	 * Returns -1 if count cannot be found
 	 * Takes same arguments as Database::select()
+	 * @return int
 	 */
 	function estimateRowCount( $table, $vars = '*', $conds = '', $fname = 'DatabaseMssql::estimateRowCount', $options = array() ) {
 		$options['EXPLAIN'] = true;// http://msdn2.microsoft.com/en-us/library/aa259203.aspx
@@ -326,6 +340,7 @@ class DatabaseMssql extends DatabaseBase {
 	/**
 	 * Returns information about an index
 	 * If errors are explicitly ignored, returns NULL on failure
+	 * @return array|bool|null
 	 */
 	function indexInfo( $table, $index, $fname = 'DatabaseMssql::indexExists' ) {
 		# This does not return the same info as MYSQL would, but that's OK because MediaWiki never uses the
@@ -365,6 +380,7 @@ class DatabaseMssql extends DatabaseBase {
 	 *
 	 * Usually aborts on failure
 	 * If errors are explicitly ignored, returns success
+	 * @return bool
 	 */
 	function insert( $table, $arrToInsert, $fname = 'DatabaseMssql::insert', $options = array() ) {
 		# No rows to insert, easy just return now
@@ -494,6 +510,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * Source items may be literals rather than field names, but strings should be quoted with Database::addQuotes()
 	 * $conds may be "*" to copy the whole table
 	 * srcTable may be an array of tables.
+	 * @return null|\ResultWrapper
 	 */
 	function insertSelect( $destTable, $srcTable, $varMap, $conds, $fname = 'DatabaseMssql::insertSelect',
 		$insertOptions = array(), $selectOptions = array() ) {
@@ -511,6 +528,7 @@ class DatabaseMssql extends DatabaseBase {
 
 	/**
 	 * Return the next in a sequence, save the value for retrieval via insertId()
+	 * @return
 	 */
 	function nextSequenceValue( $seqName ) {
 		if ( !$this->tableExists( 'sequence_' . $seqName ) ) {
@@ -527,6 +545,7 @@ class DatabaseMssql extends DatabaseBase {
 
 	/**
 	 * Return the current value of a sequence. Assumes it has ben nextval'ed in this session.
+	 * @return
 	 */
 	function currentSequenceValue( $seqName ) {
 		$ret = sqlsrv_query( $this->mConn, "SELECT TOP 1 id FROM [sequence_$seqName] ORDER BY id DESC" );
@@ -559,6 +578,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * $sql string SQL query we will append the limit too
 	 * $limit integer the SQL limit
 	 * $offset integer the SQL offset (default false)
+	 * @return mixed|string
 	 */
 	function limitResult( $sql, $limit, $offset = false ) {
 		if ( $offset === false || $offset == 0 ) {
@@ -597,14 +617,6 @@ class DatabaseMssql extends DatabaseBase {
 			$sql = str_replace( $matches[0], '', $sql );
 			return $this->limitResult( $sql, $row_count, $offset );
 		}
-		return $sql;
-	}
-
-	// MSSQL does support this, but documentation is too thin to make a generalized
-	// function for this. Apparently UPDATE TOP (N) works, but the sort order
-	// may not be what we're expecting so the top n results may be a random selection.
-	// TODO: Implement properly.
-	function limitResultForUpdate( $sql, $num ) {
 		return $sql;
 	}
 
@@ -647,6 +659,7 @@ class DatabaseMssql extends DatabaseBase {
 
 	/**
 	 * Query whether a given column exists in the mediawiki schema
+	 * @return bool
 	 */
 	function fieldExists( $table, $field, $fname = 'DatabaseMssql::fieldExists' ) {
 		$table = $this->tableName( $table );
@@ -681,7 +694,7 @@ class DatabaseMssql extends DatabaseBase {
 	/**
 	 * Begin a transaction, committing any previously open transaction
 	 */
-	function begin( $fname = 'DatabaseMssql::begin' ) {
+	protected function doBegin( $fname = 'DatabaseMssql::begin' ) {
 		sqlsrv_begin_transaction( $this->mConn );
 		$this->mTrxLevel = 1;
 	}
@@ -689,7 +702,7 @@ class DatabaseMssql extends DatabaseBase {
 	/**
 	 * End a transaction
 	 */
-	function commit( $fname = 'DatabaseMssql::commit' ) {
+	protected function doCommit( $fname = 'DatabaseMssql::commit' ) {
 		sqlsrv_commit( $this->mConn );
 		$this->mTrxLevel = 0;
 	}
@@ -698,7 +711,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * Rollback a transaction.
 	 * No-op on non-transactional databases.
 	 */
-	function rollback( $fname = 'DatabaseMssql::rollback' ) {
+	protected function doRollback( $fname = 'DatabaseMssql::rollback' ) {
 		sqlsrv_rollback( $this->mConn );
 		$this->mTrxLevel = 0;
 	}
@@ -707,6 +720,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * Escapes a identifier for use inm SQL.
 	 * Throws an exception if it is invalid.
 	 * Reference: http://msdn.microsoft.com/en-us/library/aa224033%28v=SQL.80%29.aspx
+	 * @return string
 	 */
 	private function escapeIdentifier( $identifier ) {
 		if ( strlen( $identifier ) == 0 ) {
@@ -795,6 +809,7 @@ class DatabaseMssql extends DatabaseBase {
 
 	/**
 	 * @private
+	 * @return string
 	 */
 	function tableNamesWithUseIndexOrJOIN( $tables, $use_index = array(), $join_conds = array() ) {
 		$ret = array();
@@ -893,6 +908,7 @@ class DatabaseMssql extends DatabaseBase {
 
 	/**
 	 * Get the type of the DBMS, as it appears in $wgDBtype.
+	 * @return string
 	 */
 	function getType(){
 		return 'mssql';
@@ -909,6 +925,7 @@ class DatabaseMssql extends DatabaseBase {
 	/**
 	 * Since MSSQL doesn't recognize the infinity keyword, set date manually.
 	 * @todo Remove magic date
+	 * @return string
 	 */
 	public function getInfinity() {
 		return '3000-01-31 00:00:00.000';

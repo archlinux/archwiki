@@ -1,5 +1,7 @@
 <?php
 /**
+ * Benchmark %MediaWiki hooks.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -19,8 +21,13 @@
  * @ingroup Benchmark
  */
 
-require_once( dirname( __FILE__ ) . '/Benchmarker.php' );
+require_once( __DIR__ . '/Benchmarker.php' );
 
+/**
+ * Maintenance script that benchmarks %MediaWiki hooks.
+ *
+ * @ingroup Benchmark
+ */
 class BenchmarkHooks extends Benchmarker {
 
 	public function __construct() {
@@ -58,14 +65,14 @@ class BenchmarkHooks extends Benchmarker {
 	 * @return string
 	 */
 	private function benchHooks( $trials = 10 ) {
-		$start = wfTime();
+		$start = microtime( true );
 		for ( $i = 0; $i < $trials; $i++ ) {
 			wfRunHooks( 'Test' );
 		}
-		$delta = wfTime() - $start;
+		$delta = microtime( true ) - $start;
 		$pertrial = $delta / $trials;
-		return sprintf( "Took %6.2fs",
-			$pertrial );
+		return sprintf( "Took %6.3fms",
+			$pertrial * 1000 );
 	}
 
 	/**

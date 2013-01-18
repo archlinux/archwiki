@@ -110,21 +110,27 @@ class SanitizerTest extends MediaWikiTestCase {
 		$this->assertEquals( Sanitizer::decodeTagAttributes( 'foo=&foobar;' ), array( 'foo' => '&foobar;' ), 'Entity-like items are accepted' );
 	}
 
-	function testDeprecatedAttributes() {
-		$GLOBALS['wgCleanupPresentationalAttributes'] = true;
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'clear="left"', 'br' ), ' style="clear: left;"', 'Deprecated attributes are converted to styles when enabled.' );
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'clear="all"', 'br' ), ' style="clear: both;"', 'clear=all is converted to clear: both; not clear: all;' );
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'CLEAR="ALL"', 'br' ), ' style="clear: both;"', 'clear=ALL is not treated differently from clear=all' );
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'width="100"', 'td' ), ' style="width: 100px;"', 'Numeric sizes use pixels instead of numbers.' );
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'width="100%"', 'td' ), ' style="width: 100%;"', 'Units are allowed in sizes.' );
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'WIDTH="100%"', 'td' ), ' style="width: 100%;"', 'Uppercase WIDTH is treated as lowercase width.' );
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'WiDTh="100%"', 'td' ), ' style="width: 100%;"', 'Mixed case does not break WiDTh.' );
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'nowrap="true"', 'td' ), ' style="white-space: nowrap;"', 'nowrap attribute is output as white-space: nowrap; not something else.' );
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'nowrap=""', 'td' ), ' style="white-space: nowrap;"', 'nowrap="" is considered true, not false' );
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'NOWRAP="true"', 'td' ), ' style="white-space: nowrap;"', 'nowrap attribute works when uppercase.' );
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'NoWrAp="true"', 'td' ), ' style="white-space: nowrap;"', 'nowrap attribute works when mixed-case.' );
-		$GLOBALS['wgCleanupPresentationalAttributes'] = false;
-		$this->assertEquals( Sanitizer::fixTagAttributes( 'clear="left"', 'br' ), ' clear="left"', 'Deprecated attributes are not converted to styles when enabled.' );
+	/**
+	 * @dataProvider provideDeprecatedAttributes
+	 */
+	function testDeprecatedAttributesUnaltered( $inputAttr, $inputEl ) {
+		$this->assertEquals( " $inputAttr", Sanitizer::fixTagAttributes( $inputAttr, $inputEl ) );
+	}
+
+	public static function provideDeprecatedAttributes() {
+		return array(
+			array( 'clear="left"', 'br' ),
+			array( 'clear="all"', 'br' ),
+			array( 'width="100"', 'td' ),
+			array( 'nowrap="true"', 'td' ),
+			array( 'nowrap=""', 'td' ),
+			array( 'align="right"', 'td' ),
+			array( 'align="center"', 'table' ),
+			array( 'align="left"', 'tr' ),
+			array( 'align="center"', 'div' ),
+			array( 'align="left"', 'h1' ),
+			array( 'align="left"', 'span' ),
+		);
 	}
 
 	/**

@@ -1,5 +1,27 @@
 <?php
 /**
+ * Backend for uploading files from a HTTP resource.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Upload
+ */
+
+/**
  * Implements uploading from a HTTP resource.
  *
  * @ingroup Upload
@@ -14,11 +36,12 @@ class UploadFromUrl extends UploadBase {
 
 	/**
 	 * Checks if the user is allowed to use the upload-by-URL feature. If the
-	 * user is allowed, pass on permissions checking to the parent.
+	 * user is not allowed, return the name of the user right as a string. If
+	 * the user is allowed, have the parent do further permissions checking.
 	 *
 	 * @param $user User
 	 *
-	 * @return bool
+	 * @return bool|string
 	 */
 	public static function isAllowed( $user ) {
 		if ( !$user->isAllowed( 'upload_by_url' ) ) {
@@ -37,6 +60,31 @@ class UploadFromUrl extends UploadBase {
 	}
 
 	/**
+	 * Checks whether the URL is for an allowed host
+	 *
+	 * @param $url string
+	 * @return bool
+	 */
+	public static function isAllowedHost( $url ) {
+		global $wgCopyUploadsDomains;
+		if ( !count( $wgCopyUploadsDomains ) ) {
+			return true;
+		}
+		$parsedUrl = wfParseUrl( $url );
+		if ( !$parsedUrl ) {
+			return false;
+		}
+		$valid = false;
+		foreach( $wgCopyUploadsDomains as $domain ) {
+			if ( $parsedUrl['host'] === $domain ) {
+				$valid = true;
+				break;
+			}
+		}
+		return $valid;
+	}
+
+	/**
 	 * Entry point for API upload
 	 *
 	 * @param $name string
@@ -44,6 +92,7 @@ class UploadFromUrl extends UploadBase {
 	 * @param $async mixed Whether the download should be performed
 	 * asynchronous. False for synchronous, async or async-leavemessage for
 	 * asynchronous download.
+	 * @throws MWException
 	 */
 	public function initialize( $name, $url, $async = false ) {
 		global $wgAllowAsyncCopyUploads;
@@ -68,7 +117,7 @@ class UploadFromUrl extends UploadBase {
 		if ( !$desiredDestName ) {
 			$desiredDestName = $request->getText( 'wpUploadFileURL' );
 		}
-		return $this->initialize(
+		$this->initialize(
 			$desiredDestName,
 			trim( $request->getVal( 'wpUploadFileURL' ) ),
 			false
@@ -101,6 +150,9 @@ class UploadFromUrl extends UploadBase {
 			return Status::newFatal( 'http-invalid-url' );
 		}
 
+		if( !self::isAllowedHost( $this->mUrl ) ) {
+			return Status::newFatal( 'upload-copy-upload-invalid-domain' );
+		}
 		if ( !$this->mAsync ) {
 			return $this->reallyFetchFile();
 		}
@@ -155,9 +207,14 @@ class UploadFromUrl extends UploadBase {
 		$this->mRemoveTempFile = true;
 		$this->mFileSize = 0;
 
-		$req = MWHttpRequest::factory( $this->mUrl, array(
+		$options = array(
 			'followRedirects' => true
-		) );
+		);
+		global $wgCopyUploadProxy;
+		if ( $wgCopyUploadProxy !== false ) {
+			$options['proxy'] = $wgCopyUploadProxy;
+		}
+		$req = MWHttpRequest::factory( $this->mUrl, $options );
 		$req->setCallback( array( $this, 'saveTempFileChunk' ) );
 		$status = $req->execute();
 
@@ -180,6 +237,7 @@ class UploadFromUrl extends UploadBase {
 	/**
 	 * Wrapper around the parent function in order to defer verifying the
 	 * upload until the file really has been fetched.
+	 * @return array|mixed
 	 */
 	public function verifyUpload() {
 		if ( $this->mAsync ) {
@@ -191,6 +249,7 @@ class UploadFromUrl extends UploadBase {
 	/**
 	 * Wrapper around the parent function in order to defer checking warnings
 	 * until the file really has been fetched.
+	 * @return Array
 	 */
 	public function checkWarnings() {
 		if ( $this->mAsync ) {
@@ -203,6 +262,8 @@ class UploadFromUrl extends UploadBase {
 	/**
 	 * Wrapper around the parent function in order to defer checking protection
 	 * until we are sure that the file can actually be uploaded
+	 * @param $user User
+	 * @return bool|mixed
 	 */
 	public function verifyTitlePermissions( $user ) {
 		if ( $this->mAsync ) {
@@ -214,6 +275,11 @@ class UploadFromUrl extends UploadBase {
 	/**
 	 * Wrapper around the parent function in order to defer uploading to the
 	 * job queue for asynchronous uploads
+	 * @param $comment string
+	 * @param $pageText string
+	 * @param $watch bool
+	 * @param $user User
+	 * @return Status
 	 */
 	public function performUpload( $comment, $pageText, $watch, $user ) {
 		if ( $this->mAsync ) {
@@ -226,11 +292,11 @@ class UploadFromUrl extends UploadBase {
 	}
 
 	/**
-	 * @param  $comment
-	 * @param  $pageText
-	 * @param  $watch
-	 * @param  $user User
-	 * @return
+	 * @param $comment
+	 * @param $pageText
+	 * @param $watch
+	 * @param $user User
+	 * @return String
 	 */
 	protected function insertJob( $comment, $pageText, $watch, $user ) {
 		$sessionKey = $this->stashSession();

@@ -215,7 +215,7 @@ textarea {
 	margin-left: 0.5em;
 }
 
-pre {
+pre, .mw-code {
 	margin: 2em;
 	border: solid 1px black;
 }
@@ -345,6 +345,7 @@ a.stub {
 }
 a.new,
 #p-personal a.new {
+	color: #BA0000;
 	text-decoration: line-through;
 }
 li.new {
@@ -370,9 +371,6 @@ li.new {
 }
 #p-cactions {
 	background-color: inherit;
-}
-div.printfooter {
-	display: none;
 }
 
 #footer {

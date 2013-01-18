@@ -2,6 +2,21 @@
 /**
  * Handler for PNG images.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Media
  */
@@ -65,6 +80,14 @@ class PNGHandler extends BitmapHandler {
 		}
 		return false;
 	}
+	/**
+	 * We do not support making APNG thumbnails, so always false
+	 * @param $image File
+	 * @return bool false
+	 */
+	function canAnimateThumbnail( $image ) {
+		return false;
+	}
 	
 	function getMetadataType( $image ) {
 		return 'parsed-png';
@@ -113,13 +136,13 @@ class PNGHandler extends BitmapHandler {
 		$info[] = $original;
 		
 		if ( $metadata['loopCount'] == 0 ) {
-			$info[] = wfMsgExt( 'file-info-png-looped', 'parseinline' );
+			$info[] = wfMessage( 'file-info-png-looped' )->parse();
 		} elseif ( $metadata['loopCount'] > 1 ) {
-			$info[] = wfMsgExt( 'file-info-png-repeat', 'parseinline', $metadata['loopCount'] );
+			$info[] = wfMessage( 'file-info-png-repeat' )->numParams( $metadata['loopCount'] )->parse();
 		}
 		
 		if ( $metadata['frameCount'] > 0 ) {
-			$info[] = wfMsgExt( 'file-info-png-frames', 'parseinline', $metadata['frameCount'] );
+			$info[] = wfMessage( 'file-info-png-frames' )->numParams( $metadata['frameCount'] )->parse();
 		}
 		
 		if ( $metadata['duration'] ) {

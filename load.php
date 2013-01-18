@@ -20,11 +20,11 @@
  * @file
  * @author Roan Kattouw
  * @author Trevor Parscal
- *
  */
 
 // Bail if PHP is too low
-if ( !function_exists( 'version_compare' ) || version_compare( phpversion(), '5.2.3' ) < 0 ) {
+if ( !function_exists( 'version_compare' ) || version_compare( phpversion(), '5.3.2' ) < 0 ) {
+	// We need to use dirname( __FILE__ ) here cause __DIR__ is PHP5.3+
 	require( dirname( __FILE__ ) . '/includes/PHPVersionError.php' );
 	wfPHPVersionError( 'load.php' );
 }
@@ -32,7 +32,7 @@ if ( !function_exists( 'version_compare' ) || version_compare( phpversion(), '5.
 if ( isset( $_SERVER['MW_COMPILED'] ) ) {
 	require ( 'phase3/includes/WebStart.php' );
 } else {
-	require ( dirname( __FILE__ ) . '/includes/WebStart.php' );
+	require ( __DIR__ . '/includes/WebStart.php' );
 }
 
 wfProfileIn( 'load.php' );

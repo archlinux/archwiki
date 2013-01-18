@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Image authorisation script
  *
@@ -22,15 +21,29 @@
  *
  * Your server needs to support PATH_INFO; CGI-based configurations usually don't.
  *
- * @file
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- **/
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
 
 define( 'MW_NO_OUTPUT_COMPRESSION', 1 );
 if ( isset( $_SERVER['MW_COMPILED'] ) ) {
-	require ( 'phase3/includes/WebStart.php' );
+	require ( 'core/includes/WebStart.php' );
 } else {
-	require ( dirname( __FILE__ ) . '/includes/WebStart.php' );
+	require ( __DIR__ . '/includes/WebStart.php' );
 }
 wfProfileIn( 'img_auth.php' );
 
@@ -43,7 +56,7 @@ wfImageAuthMain();
 wfLogProfilingData();
 
 function wfImageAuthMain() {
-	global $wgImgAuthPublicTest, $wgRequest, $wgUploadDirectory;
+	global $wgImgAuthPublicTest, $wgRequest;
 
 	// See if this is a public Wiki (no protections).
 	if ( $wgImgAuthPublicTest
@@ -92,7 +105,7 @@ function wfImageAuthMain() {
 	}
 
 	// Check to see if the file exists
-	if ( !$repo->fileExists( $filename, FileRepo::FILES_ONLY ) ) {
+	if ( !$repo->fileExists( $filename ) ) {
 		wfForbidden( 'img-auth-accessdenied','img-auth-nofile', $filename );
 		return;
 	}
@@ -135,13 +148,13 @@ function wfForbidden( $msg1, $msg2 ) {
 	array_shift( $args );
 	array_shift( $args );
 
-	$msgHdr = htmlspecialchars( wfMsg( $msg1 ) );
+	$msgHdr = wfMessage( $msg1 )->escaped();
 	$detailMsgKey = $wgImgAuthDetails ? $msg2 : 'badaccess-group0';
-	$detailMsg = htmlspecialchars( wfMsg( $detailMsgKey, $args ) );
+	$detailMsg = wfMessage( $detailMsgKey, $args )->escaped();
 
 	wfDebugLog( 'img_auth',
-		"wfForbidden Hdr:" . wfMsgExt( $msg1, array( 'language' => 'en' ) ). " Msg: ".
-		wfMsgExt( $msg2, array( 'language' => 'en' ), $args )
+		"wfForbidden Hdr:" . wfMessage( $msg1 )->inLanguage( 'en' )->text() . " Msg: ".
+		wfMessage( $msg2, $args )->inLanguage( 'en' )->text()
 	);
 
 	header( 'HTTP/1.0 403 Forbidden' );

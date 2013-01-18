@@ -1,6 +1,21 @@
 <?php
 /**
- * Functions for dealing with proxies
+ * Functions for dealing with proxies.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  */
@@ -53,11 +68,20 @@ function wfGetIP() {
  * @return bool
  */
 function wfIsTrustedProxy( $ip ) {
-	global $wgSquidServers, $wgSquidServersNoPurge;
+	$trusted = wfIsConfiguredProxy( $ip );
+	wfRunHooks( 'IsTrustedProxy', array( &$ip, &$trusted ) );
+	return $trusted;
+}
 
+/**
+ * Checks if an IP matches a proxy we've configured.
+ * @param $ip String
+ * @return bool
+ */
+function wfIsConfiguredProxy( $ip ) {
+	global $wgSquidServers, $wgSquidServersNoPurge;
 	$trusted = in_array( $ip, $wgSquidServers ) ||
 		in_array( $ip, $wgSquidServersNoPurge );
-	wfRunHooks( 'IsTrustedProxy', array( &$ip, &$trusted ) );
 	return $trusted;
 }
 

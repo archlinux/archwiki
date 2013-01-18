@@ -9,7 +9,7 @@
 \*======================================================================*/
 
 jQuery( function( $ ) {
-	var asirraform = $( "form#userlogin2" )
+	var asirraform = $( "form#userlogin2" );
 	var submitButtonClicked = document.createElement("input");
 	var passThroughFormSubmit = false;
 
@@ -49,7 +49,7 @@ jQuery( function( $ ) {
 			asirraform.submit();
 		}
 	}
-	
+
 	PrepareSubmit();
-	
+
 } );

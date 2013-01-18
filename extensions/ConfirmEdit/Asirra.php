@@ -24,9 +24,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	exit;
 }
 
-$dir = dirname( __FILE__ ) . '/';
+$dir = __DIR__ . '/';
 require_once( "$dir/ConfirmEdit.php" );
-$dir = dirname( __FILE__ ) . '/';
 
 $wgCaptchaClass = 'Asirra';
 $wgExtensionMessagesFiles['Asirra'] = "$dir/Asirra.i18n.php";

@@ -416,7 +416,7 @@ fn: {
 								} )
 								.appendTo( $paramRow );
 							$paramRow
-								.append( '<div style="clear:both"></div>' )
+								.append( '<div style="clear: both;"></div>' )
 								.appendTo( $fields );
 						}
 					}
@@ -566,7 +566,7 @@ fn: {
 				ranges[params[rangeIndex].valueIndex].newVal = value;
 			}
 			return retVal;
-		};
+		}
 
 		/* Public Functions */
 

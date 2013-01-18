@@ -2,7 +2,6 @@
 
 class ExtParserFunctions {
 	static $mExprParser;
-	static $mConvertParser;
 	static $mTimeCache = array();
 	static $mTimeChars = 0;
 	static $mMaxTimeChars = 6000; # ~10 seconds
@@ -13,7 +12,6 @@ class ExtParserFunctions {
 	 */
 	public static function clearState( $parser ) {
 		self::$mTimeChars = 0;
-		$parser->pf_ifexist_breakdown = array();
 		$parser->pf_markerRegex = null;
 		return true;
 	}
@@ -305,7 +303,8 @@ class ExtParserFunctions {
 			if ( $current == '..' ) { // removing one level
 				if ( !count( $newExploded ) ) {
 					// attempted to access a node above root node
-					return '<strong class="error">' . wfMsgForContent( 'pfunc_rel2abs_invalid_depth', $fullPath ) . '</strong>';
+					$msg = wfMessage( 'pfunc_rel2abs_invalid_depth', $fullPath )->inContentLanguage()->escaped();
+					return '<strong class="error">' . $msg . '</strong>';
 				}
 				// remove last level from the stack
 				array_pop( $newExploded );
@@ -317,26 +316,6 @@ class ExtParserFunctions {
 
 		// we can now join it again
 		return implode( '/' , $newExploded );
-	}
-
-	/**
-	 * @param $parser Parser
-	 * @param $frame PPFrame
-	 * @return bool
-	 */
-	public static function incrementIfexistCount( $parser, $frame ) {
-		// Don't let this be called more than a certain number of times. It tends to make the database explode.
-		global $wgExpensiveParserFunctionLimit;
-		self::registerClearHook();
-		$parser->mExpensiveFunctionCount++;
-		if ( $frame ) {
-			$pdbk = $frame->getPDBK( 1 );
-			if ( !isset( $parser->pf_ifexist_breakdown[$pdbk] ) ) {
-				$parser->pf_ifexist_breakdown[$pdbk] = 0;
-			}
-			$parser->pf_ifexist_breakdown[$pdbk] ++;
-		}
-		return $parser->mExpensiveFunctionCount <= $wgExpensiveParserFunctionLimit;
 	}
 
 	/**
@@ -357,7 +336,7 @@ class ExtParserFunctions {
 				/* If namespace is specified as NS_MEDIA, then we want to
 				 * check the physical file, not the "description" page.
 				 */
-				if ( !self::incrementIfexistCount( $parser, $frame ) ) {
+				if ( !$parser->incrementExpensiveFunctionCount() ) {
 					return $else;
 				}
 				$file = wfFindFile( $title );
@@ -372,7 +351,7 @@ class ExtParserFunctions {
 				 * since their existence can be checked without
 				 * accessing the database.
 				 */
-				return SpecialPage::exists( $title->getDBkey() ) ? $then : $else;
+				return SpecialPageFactory::exists( $title->getDBkey() ) ? $then : $else;
 			} elseif ( $title->isExternal() ) {
 				/* Can't check the existence of pages on other sites,
 				 * so just return $else.  Makes a sort of sense, since
@@ -381,7 +360,7 @@ class ExtParserFunctions {
 				return $else;
 			} else {
 				$pdbk = $title->getPrefixedDBkey();
-				if ( !self::incrementIfexistCount( $parser, $frame ) ) {
+				if ( !$parser->incrementExpensiveFunctionCount() ) {
 					return $else;
 				}
 				$lc = LinkCache::singleton();
@@ -435,7 +414,8 @@ class ExtParserFunctions {
 		self::registerClearHook();
 		if ( $date === '' ) {
 			$cacheKey = $parser->getOptions()->getTimestamp();
-			$date = wfTimestamp( TS_ISO_8601, $cacheKey );
+			$timestamp = new MWTimestamp( $cacheKey );
+			$date = $timestamp->getTimestamp( TS_ISO_8601 );
 		} else {
 			$cacheKey = $date;
 		}
@@ -485,11 +465,11 @@ class ExtParserFunctions {
 
 		# format the timestamp and return the result
 		if ( $invalidTime ) {
-			$result = '<strong class="error">' . wfMsgForContent( 'pfunc_time_error' ) . '</strong>';
+			$result = '<strong class="error">' . wfMessage( 'pfunc_time_error' )->inContentLanguage()->escaped() . '</strong>';
 		} else {
 			self::$mTimeChars += strlen( $format );
 			if ( self::$mTimeChars > self::$mMaxTimeChars ) {
-				return '<strong class="error">' . wfMsgForContent( 'pfunc_time_too_long' ) . '</strong>';
+				return '<strong class="error">' . wfMessage( 'pfunc_time_too_long' )->inContentLanguage()->escaped() . '</strong>';
 			} else {
 				if ( $ts < 100000000000000 ) { // Language can't deal with years after 9999
 					if ( $language !== '' && Language::isValidBuiltInCode( $language ) ) {
@@ -501,7 +481,7 @@ class ExtParserFunctions {
 						$result = $parser->getFunctionLang()->sprintfDate( $format, $ts );
 					}
 				} else {
-					return '<strong class="error">' . wfMsgForContent( 'pfunc_time_too_big' ) . '</strong>';
+					return '<strong class="error">' . wfMessage( 'pfunc_time_too_big' )->inContentLanguage()->escaped() . '</strong>';
 				}
 			}
 		}
@@ -524,7 +504,7 @@ class ExtParserFunctions {
 	 * Obtain a specified number of slash-separated parts of a title,
 	 * e.g. {{#titleparts:Hello/World|1}} => "Hello"
 	 *
-	 * @param $parser Parent parser
+	 * @param $parser Parser Parent parser
 	 * @param $title string Title to split
 	 * @param $parts int Number of parts to keep
 	 * @param $offset int Offset starting at 1
@@ -554,29 +534,6 @@ class ExtParserFunctions {
 	}
 
 	/**
-	 * Get a ConvertParser object
-	 * @return ConvertParser
-	 */
-	protected static function &getConvertParser() {
-		if ( !isset( self::$mConvertParser ) ) {
-			self::$mConvertParser = new ConvertParser;
-		}
-		return self::$mConvertParser;
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function convert( /*...*/ ) {
-		try {
-			$args = func_get_args();
-			return self::getConvertParser()->execute( $args );
-		} catch ( ConvertError $e ) {
-			return $e->getMessage();
-		}
-	}
-
-	/**
 	 *  Verifies parameter is less than max string length.
 	 * @param $text
 	 * @return bool
@@ -591,12 +548,9 @@ class ExtParserFunctions {
 	 * @return string
 	 */
 	private static function tooLongError() {
-		global $wgPFStringLengthLimit, $wgContLang;
-		return '<strong class="error">' .
-			wfMsgExt( 'pfunc_string_too_long',
-				array( 'escape', 'parsemag', 'content' ),
-				$wgContLang->formatNum( $wgPFStringLengthLimit ) ) .
-			'</strong>';
+		global $wgPFStringLengthLimit;
+		$msg = wfMessage( 'pfunc_string_too_long' )->numParams( $wgPFStringLengthLimit );
+		return '<strong class="error">' . $msg->inContentLanguage()->escaped() . '</strong>';
 	}
 
 	/**
@@ -626,7 +580,7 @@ class ExtParserFunctions {
 	 * Note: If the needle is not found, empty string is returned.
 	 * @param $parser Parser
 	 * @param $inStr string
-	 * @param $inNeedle int
+	 * @param $inNeedle int|string
 	 * @param $inOffset int
 	 * @return int|string
 	 */
@@ -660,7 +614,7 @@ class ExtParserFunctions {
 	 * Note: If the needle is not found, -1 is returned.
 	 * @param $parser Parser
 	 * @param $inStr string
-	 * @param $inNeedle int
+	 * @param $inNeedle int|string
 	 * @return int|string
 	 */
 	public static function runRPos ( $parser, $inStr = '', $inNeedle = '' ) {

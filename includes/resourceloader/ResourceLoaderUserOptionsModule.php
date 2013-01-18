@@ -1,5 +1,7 @@
 <?php
 /**
+ * Resource loader module for user preference customizations.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -42,7 +44,7 @@ class ResourceLoaderUserOptionsModule extends ResourceLoaderModule {
 		if ( isset( $this->modifiedTime[$hash] ) ) {
 			return $this->modifiedTime[$hash];
 		}
-		
+
 		global $wgUser;
 		return $this->modifiedTime[$hash] = wfTimestamp( TS_UNIX, $wgUser->getTouched() );
 	}
@@ -55,6 +57,13 @@ class ResourceLoaderUserOptionsModule extends ResourceLoaderModule {
 		global $wgUser;
 		return Xml::encodeJsCall( 'mw.user.options.set',
 			array( $wgUser->getOptions() ) );
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function supportsURLLoading() {
+		return false;
 	}
 
 	/**

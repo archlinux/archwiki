@@ -2,6 +2,21 @@
 /**
  * Job for asynchronous upload-by-url.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup JobQueue
  */
@@ -67,10 +82,10 @@ class UploadFromUrlJob extends Job {
 
 				if ( $this->params['leaveMessage'] ) {
 					$this->user->leaveUserMessage(
-						wfMsg( 'upload-warning-subj' ),
-						wfMsg( 'upload-warning-msg',
+						wfMessage( 'upload-warning-subj' )->text(),
+						wfMessage( 'upload-warning-msg',
 							$key,
-							$this->params['url'] )
+							$this->params['url'] )->text()
 					);
 				} else {
 					wfSetupSession( $this->params['sessionId'] );
@@ -104,17 +119,17 @@ class UploadFromUrlJob extends Job {
 	protected function leaveMessage( $status ) {
 		if ( $this->params['leaveMessage'] ) {
 			if ( $status->isGood() ) {
-				$this->user->leaveUserMessage( wfMsg( 'upload-success-subj' ),
-					wfMsg( 'upload-success-msg',
+				$this->user->leaveUserMessage( wfMessage( 'upload-success-subj' )->text(),
+					wfMessage( 'upload-success-msg',
 						$this->upload->getTitle()->getText(),
 						$this->params['url']
-					) );
+					)->text() );
 			} else {
-				$this->user->leaveUserMessage( wfMsg( 'upload-failure-subj' ),
-					wfMsg( 'upload-failure-msg',
+				$this->user->leaveUserMessage( wfMessage( 'upload-failure-subj' )->text(),
+					wfMessage( 'upload-failure-msg',
 						$status->getWikiText(),
 						$this->params['url']
-					) );
+					)->text() );
 			}
 		} else {
 			wfSetupSession( $this->params['sessionId'] );

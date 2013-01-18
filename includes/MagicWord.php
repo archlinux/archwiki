@@ -1,15 +1,30 @@
 <?php
 /**
- * File for magic words
+ * File for magic words.
  *
- * See docs/magicword.txt
+ * See docs/magicword.txt.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  * @ingroup Parser
  */
 
 /**
- * This class encapsulates "magic words" such as #redirect, __NOTOC__, etc.
+ * This class encapsulates "magic words" such as "#redirect", __NOTOC__, etc.
  *
  * @par Usage:
  * @code
@@ -27,7 +42,7 @@
  *
  * To add magic words in an extension, use $magicWords in a file listed in
  * $wgExtensionMessagesFiles[].
- * 
+ *
  * @par Example:
  * @code
  * $magicWords = array();
@@ -84,6 +99,7 @@ class MagicWord {
 		'numberoffiles',
 		'numberofedits',
 		'articlepath',
+		'pageid',
 		'sitename',
 		'server',
 		'servername',
@@ -95,6 +111,7 @@ class MagicWord {
 		'fullpagenamee',
 		'namespace',
 		'namespacee',
+		'namespacenumber',
 		'currentweek',
 		'currentdow',
 		'localweek',
@@ -282,6 +299,7 @@ class MagicWord {
 	 * Initialises this object with an ID
 	 *
 	 * @param $id
+	 * @throws MWException
 	 */
 	function load( $id ) {
 		global $wgContLang;
@@ -290,8 +308,8 @@ class MagicWord {
 		$wgContLang->getMagic( $this );
 		if ( !$this->mSynonyms ) {
 			$this->mSynonyms = array( 'dkjsagfjsgashfajsh' );
-			#throw new MWException( "Error: invalid magic word '$id'" );
-			wfDebugLog( 'exception', "Error: invalid magic word '$id'\n" );
+			throw new MWException( "Error: invalid magic word '$id'" );
+			#wfDebugLog( 'exception', "Error: invalid magic word '$id'\n" );
 		}
 		wfProfileOut( __METHOD__ );
 	}
@@ -628,6 +646,9 @@ class MagicWordArray {
 	var $baseRegex, $regex;
 	var $matches;
 
+	/**
+	 * @param $names array
+	 */
 	function __construct( $names = array() ) {
 		$this->names = $names;
 	}
@@ -756,12 +777,21 @@ class MagicWordArray {
 	}
 
 	/**
+	 * @since 1.20
+	 * @return array
+	 */
+	public function getNames() {
+		return $this->names;
+	}
+
+	/**
 	 * Parse a match array from preg_match
 	 * Returns array(magic word ID, parameter value)
 	 * If there is no parameter value, that element will be false.
 	 *
 	 * @param $m array
 	 *
+	 * @throws MWException
 	 * @return array
 	 */
 	function parseMatch( $m ) {
@@ -798,7 +828,7 @@ class MagicWordArray {
 		$regexes = $this->getVariableStartToEndRegex();
 		foreach ( $regexes as $regex ) {
 			if ( $regex !== '' ) {
-				$m = false;
+				$m = array();
 				if ( preg_match( $regex, $text, $m ) ) {
 					return $this->parseMatch( $m );
 				}
@@ -813,7 +843,7 @@ class MagicWordArray {
 	 *
 	 * @param $text string
 	 *
-	 * @return string|false
+	 * @return string|bool False on failure
 	 */
 	public function matchStartToEnd( $text ) {
 		$hash = $this->getHash();
@@ -861,7 +891,7 @@ class MagicWordArray {
 	 *
 	 * @param $text string
 	 *
-	 * @return int|false
+	 * @return int|bool False on failure
 	 */
 	public function matchStartAndRemove( &$text ) {
 		$regexes = $this->getRegexStart();

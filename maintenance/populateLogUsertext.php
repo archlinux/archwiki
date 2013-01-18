@@ -20,11 +20,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script that makes the required database updates for
+ * Special:ProtectedPages to show all protected pages.
+ *
+ * @ingroup Maintenance
+ */
 class PopulateLogUsertext extends LoggedUpdateMaintenance {
 	public function __construct() {
 		parent::__construct();
@@ -59,12 +66,12 @@ class PopulateLogUsertext extends LoggedUpdateMaintenance {
 			$res = $db->select( array( 'logging', 'user' ),
 				array( 'log_id', 'user_name' ), $cond, __METHOD__ );
 
-			$db->begin();
+			$db->begin( __METHOD__ );
 			foreach ( $res as $row ) {
 				$db->update( 'logging', array( 'log_user_text' => $row->user_name ),
 					array( 'log_id' => $row->log_id ), __METHOD__ );
 			}
-			$db->commit();
+			$db->commit( __METHOD__ );
 			$blockStart += $this->mBatchSize;
 			$blockEnd += $this->mBatchSize;
 			wfWaitForSlaves();

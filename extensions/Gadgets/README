@@ -8,7 +8,7 @@ Licenses: GNU General Public Licence (GPL)
 The Gadgets extension provides a way for users to pick JavaScript or CSS
 based "gadgets" that other wiki users provide.
 
-<http://mediawiki.org/wiki/Extension:Gadgets>
+<https://mediawiki.org/wiki/Extension:Gadgets>
 
 The Gadgets extension was originally written by Daniel Kinzler in 2007
 and is released under the GNU General Public Licence (GPL).
@@ -16,9 +16,9 @@ The internationalization files may contain contributions by several people;
 they should be mentioned in each file individually.
 
 == Prerequisites ==
-This version of Gadgets requires MediaWiki 1.17 or later. To get a version
+This version of Gadgets requires MediaWiki 1.19 or later. To get a version
 compatible with earlier MediaWiki release, visit
-    http://www.mediawiki.org/wiki/Special:ExtensionDistributor/Gadgets
+    https://www.mediawiki.org/wiki/Special:ExtensionDistributor/Gadgets
 
 == Installing ==
 Copy the Gadgets directory into the extensions folder of your

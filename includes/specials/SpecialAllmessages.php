@@ -146,8 +146,9 @@ class AllmessagesTablePager extends TablePager {
 	function buildForm() {
 		global $wgScript;
 
-		$languages = Language::getLanguageNames( false );
-		ksort( $languages );
+		$attrs = array( 'id' => 'mw-allmessages-form-lang', 'name' => 'lang' );
+		$msg = wfMessage( 'allmessages-language' );
+		$langSelect = Xml::languageSelector( $this->langcode, false, null, $attrs, $msg );
 
 		$out  = Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript, 'id' => 'mw-allmessages-form' ) ) .
 			Xml::fieldset( $this->msg( 'allmessages-filter-legend' )->text() ) .
@@ -187,18 +188,8 @@ class AllmessagesTablePager extends TablePager {
 				"</td>\n
 			</tr>
 			<tr>\n
-				<td class=\"mw-label\">" .
-					Xml::label( $this->msg( 'allmessages-language' )->text(), 'mw-allmessages-form-lang' ) .
-				"</td>\n
-				<td class=\"mw-input\">" .
-					Xml::openElement( 'select', array( 'id' => 'mw-allmessages-form-lang', 'name' => 'lang' ) );
-
-		foreach( $languages as $lang => $name ) {
-			$selected = $lang == $this->langcode;
-			$out .= Xml::option( $lang . ' - ' . $name, $lang, $selected ) . "\n";
-		}
-		$out .= Xml::closeElement( 'select' ) .
-				"</td>\n
+				<td class=\"mw-label\">" . $langSelect[0] . "</td>\n
+				<td class=\"mw-input\">" . $langSelect[1] . "</td>\n
 			</tr>" .
 
 			'<tr>
@@ -290,6 +281,7 @@ class AllmessagesTablePager extends TablePager {
 	/**
 	 *  This function normally does a database query to get the results; we need
 	 * to make a pretend result using a FakeResultWrapper.
+	 * @return FakeResultWrapper
 	 */
 	function reallyDoQuery( $offset, $limit, $descending ) {
 		$result = new FakeResultWrapper( array() );
@@ -369,7 +361,7 @@ class AllmessagesTablePager extends TablePager {
 						array( 'broken' )
 					);
 				}
-				return $title . ' (' . $talk . ')';
+				return $title . ' ' . $this->msg( 'parentheses' )->rawParams( $talk )->escaped();
 
 			case 'am_default' :
 			case 'am_actual' :

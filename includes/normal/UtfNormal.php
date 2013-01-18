@@ -190,7 +190,7 @@ class UtfNormal {
 	 */
 	static function loadData() {
 		if( !isset( self::$utfCombiningClass ) ) {
-			require_once( dirname(__FILE__) . '/UtfNormalData.inc' );
+			require_once( __DIR__ . '/UtfNormalData.inc' );
 		}
 	}
 
@@ -238,6 +238,7 @@ class UtfNormal {
 	 * Returns true if the string is _definitely_ in NFC.
 	 * Returns false if not or uncertain.
 	 * @param $string String: a UTF-8 string, altered on output to be valid UTF-8 safe for XML.
+	 * @return bool
 	 */
 	static function quickIsNFCVerify( &$string ) {
 		# Screen out some characters that eg won't be allowed in XML

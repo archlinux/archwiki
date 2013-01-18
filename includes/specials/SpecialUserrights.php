@@ -47,6 +47,9 @@ class UserrightsPage extends SpecialPage {
 
 	public function userCanChangeRights( $user, $checkIfSelf = true ) {
 		$available = $this->changeableGroups();
+		if ( $user->getId() == 0 ) {
+			return false;
+		}
 		return !empty( $available['add'] )
 			|| !empty( $available['remove'] )
 			|| ( ( $this->isself || !$checkIfSelf ) &&
@@ -72,7 +75,7 @@ class UserrightsPage extends SpecialPage {
 		 * allow them to use Special:UserRights.
 		 */
 		if( $user->isBlocked() && !$user->isAllowed( 'userrights' ) ) {
-			throw new UserBlockedError( $user->mBlock );
+			throw new UserBlockedError( $user->getBlock() );
 		}
 
 		$request = $this->getRequest();
@@ -345,7 +348,7 @@ class UserrightsPage extends SpecialPage {
 
 	function makeGroupNameList( $ids ) {
 		if( empty( $ids ) ) {
-			return wfMsgForContent( 'rightsnone' );
+			return $this->msg( 'rightsnone' )->inContentLanguage()->text();
 		} else {
 			return implode( ', ', $ids );
 		}
@@ -367,9 +370,9 @@ class UserrightsPage extends SpecialPage {
 		$this->getOutput()->addHTML(
 			Html::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript, 'name' => 'uluser', 'id' => 'mw-userrights-form1' ) ) .
 			Html::hidden( 'title',  $this->getTitle()->getPrefixedText() ) .
-			Xml::fieldset( wfMsg( 'userrights-lookup-user' ) ) .
-			Xml::inputLabel( wfMsg( 'userrights-user-editname' ), 'user', 'username', 30, str_replace( '_', ' ', $this->mTarget ) ) . ' ' .
-			Xml::submitButton( wfMsg( 'editusergroup' ) ) .
+			Xml::fieldset( $this->msg( 'userrights-lookup-user' )->text() ) .
+			Xml::inputLabel( $this->msg( 'userrights-user-editname' )->text(), 'user', 'username', 30, str_replace( '_', ' ', $this->mTarget ) ) . ' ' .
+			Xml::submitButton( $this->msg( 'editusergroup' )->text() ) .
 			Html::closeElement( 'fieldset' ) .
 			Html::closeElement( 'form' ) . "\n"
 		);
@@ -420,12 +423,12 @@ class UserrightsPage extends SpecialPage {
 		$grouplist = '';
 		$count = count( $list );
 		if( $count > 0 ) {
-			$grouplist = wfMessage( 'userrights-groupsmember', $count)->parse();
+			$grouplist = $this->msg( 'userrights-groupsmember', $count, $user->getName() )->parse();
 			$grouplist = '<p>' . $grouplist  . ' ' . $this->getLanguage()->listToText( $list ) . "</p>\n";
 		}
 		$count = count( $autolist );
 		if( $count > 0 ) {
-			$autogrouplistintro = wfMessage( 'userrights-groupsmember-auto', $count)->parse();
+			$autogrouplistintro = $this->msg( 'userrights-groupsmember-auto', $count, $user->getName() )->parse();
 			$grouplist .= '<p>' . $autogrouplistintro  . ' ' . $this->getLanguage()->listToText( $autolist ) . "</p>\n";
 		}
 
@@ -441,15 +444,15 @@ class UserrightsPage extends SpecialPage {
 			Html::hidden( 'user', $this->mTarget ) .
 			Html::hidden( 'wpEditToken', $this->getUser()->getEditToken( $this->mTarget ) ) .
 			Xml::openElement( 'fieldset' ) .
-			Xml::element( 'legend', array(), wfMessage( 'userrights-editusergroup', $user->getName() )->text() ) .
-			wfMessage( 'editinguser' )->params( wfEscapeWikiText( $user->getName() ) )->rawParams( $userToolLinks )->parse() .
-			wfMessage( 'userrights-groups-help', $user->getName() )->parse() .
+			Xml::element( 'legend', array(), $this->msg( 'userrights-editusergroup', $user->getName() )->text() ) .
+			$this->msg( 'editinguser' )->params( wfEscapeWikiText( $user->getName() ) )->rawParams( $userToolLinks )->parse() .
+			$this->msg( 'userrights-groups-help', $user->getName() )->parse() .
 			$grouplist .
 			Xml::tags( 'p', null, $this->groupCheckboxes( $groups, $user ) ) .
-			Xml::openElement( 'table', array( 'border' => '0', 'id' => 'mw-userrights-table-outer' ) ) .
+			Xml::openElement( 'table', array( 'id' => 'mw-userrights-table-outer' ) ) .
 				"<tr>
 					<td class='mw-label'>" .
-						Xml::label( wfMsg( 'userrights-reason' ), 'wpReason' ) .
+						Xml::label( $this->msg( 'userrights-reason' )->text(), 'wpReason' ) .
 					"</td>
 					<td class='mw-input'>" .
 						Xml::input( 'user-reason', 60, $this->getRequest()->getVal( 'user-reason', false ),
@@ -459,7 +462,7 @@ class UserrightsPage extends SpecialPage {
 				<tr>
 					<td></td>
 					<td class='mw-submit'>" .
-						Xml::submitButton( wfMsg( 'saveusergroups' ),
+						Xml::submitButton( $this->msg( 'saveusergroups' )->text(),
 							array( 'name' => 'saveusergroups' ) + Linker::tooltipAndAccesskeyAttribs( 'userrights-set' ) ) .
 					"</td>
 				</tr>" .
@@ -531,12 +534,12 @@ class UserrightsPage extends SpecialPage {
 		}
 
 		# Build the HTML table
-		$ret .=	Xml::openElement( 'table', array( 'border' => '0', 'class' => 'mw-userrights-groups' ) ) .
+		$ret .=	Xml::openElement( 'table', array( 'class' => 'mw-userrights-groups' ) ) .
 			"<tr>\n";
 		foreach( $columns as $name => $column ) {
 			if( $column === array() )
 				continue;
-			$ret .= Xml::element( 'th', null, wfMessage( 'userrights-' . $name . '-col', count( $column ) )->text() );
+			$ret .= Xml::element( 'th', null, $this->msg( 'userrights-' . $name . '-col', count( $column ) )->text() );
 		}
 		$ret.= "</tr>\n<tr>\n";
 		foreach( $columns as $column ) {
@@ -548,7 +551,7 @@ class UserrightsPage extends SpecialPage {
 
 				$member = User::getGroupMember( $group, $user->getName() );
 				if ( $checkbox['irreversible'] ) {
-					$text = wfMessage( 'userrights-irreversible-marker', $member )->escaped();
+					$text = $this->msg( 'userrights-irreversible-marker', $member )->escaped();
 				} else {
 					$text = htmlspecialchars( $member );
 				}
@@ -602,7 +605,8 @@ class UserrightsPage extends SpecialPage {
 	 * @param $output OutputPage to use
 	 */
 	protected function showLogFragment( $user, $output ) {
-		$output->addHTML( Xml::element( 'h2', null, LogPage::logName( 'rights' ) . "\n" ) );
+		$rightsLogPage = new LogPage( 'rights' );
+		$output->addHTML( Xml::element( 'h2', null, $rightsLogPage->getName()->text() ) );
 		LogEventsList::showLogExtract( $output, 'rights', $user->getUserPage() );
 	}
 }

@@ -1,8 +1,27 @@
 <?php
 /**
- * Functions related to the output of file content
+ * Functions related to the output of file content.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
+ */
+
+/**
+ * Functions related to the output of file content
  */
 class StreamFile {
 	const READY_STREAM = 1;
@@ -12,25 +31,36 @@ class StreamFile {
 	 * Stream a file to the browser, adding all the headings and fun stuff.
 	 * Headers sent include: Content-type, Content-Length, Last-Modified,
 	 * and Content-Disposition.
-	 * 
+	 *
 	 * @param $fname string Full name and path of the file to stream
 	 * @param $headers array Any additional headers to send
 	 * @param $sendErrors bool Send error messages if errors occur (like 404)
 	 * @return bool Success
 	 */
 	public static function stream( $fname, $headers = array(), $sendErrors = true ) {
+		wfProfileIn( __METHOD__ );
+
+		if ( FileBackend::isStoragePath( $fname ) ) { // sanity
+			throw new MWException( __FUNCTION__ . " given storage path '$fname'." );
+		}
+
 		wfSuppressWarnings();
 		$stat = stat( $fname );
 		wfRestoreWarnings();
 
 		$res = self::prepareForStream( $fname, $stat, $headers, $sendErrors );
 		if ( $res == self::NOT_MODIFIED ) {
-			return true; // use client cache
+			$ok = true; // use client cache
 		} elseif ( $res == self::READY_STREAM ) {
-			return readfile( $fname );
+			wfProfileIn( __METHOD__ . '-send' );
+			$ok = readfile( $fname );
+			wfProfileOut( __METHOD__ . '-send' );
 		} else {
-			return false; // failed
+			$ok = false; // failed
 		}
+
+		wfProfileOut( __METHOD__ );
+		return $ok;
 	}
 
 	/**
@@ -41,16 +71,14 @@ class StreamFile {
 	 * (c) sends Content-Length header based on HTTP_IF_MODIFIED_SINCE check
 	 *
 	 * @param $path string Storage path or file system path
-	 * @param $info Array|false File stat info with 'mtime' and 'size' fields
+	 * @param $info Array|bool File stat info with 'mtime' and 'size' fields
 	 * @param $headers Array Additional headers to send
 	 * @param $sendErrors bool Send error messages if errors occur (like 404)
-	 * @return int|false READY_STREAM, NOT_MODIFIED, or false on failure
+	 * @return int|bool READY_STREAM, NOT_MODIFIED, or false on failure
 	 */
 	public static function prepareForStream(
 		$path, $info, $headers = array(), $sendErrors = true
 	) {
-		global $wgLanguageCode;
-
 		if ( !is_array( $info ) ) {
 			if ( $sendErrors ) {
 				header( 'HTTP/1.0 404 Not Found' );
@@ -91,9 +119,6 @@ class StreamFile {
 			return false;
 		}
 
-		header( "Content-Disposition: inline;filename*=utf-8'$wgLanguageCode'" .
-			urlencode( basename( $path ) ) );
-
 		// Send additional headers
 		foreach ( $headers as $header ) {
 			header( $header );
@@ -116,7 +141,7 @@ class StreamFile {
 
 	/**
 	 * Determine the file type of a file based on the path
-	 * 
+	 *
 	 * @param $filename string Storage path or file system path
 	 * @param $safe bool Whether to do retroactive upload blacklist checks
 	 * @return null|string

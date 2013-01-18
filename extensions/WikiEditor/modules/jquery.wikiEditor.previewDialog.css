@@ -1,4 +1,4 @@
-/*
+/**
  * CSS for WikiEditor Preview Dialog jQuery plugin
  */
 
@@ -14,6 +14,7 @@
 	overflow: hidden;
 	border: none;
 }
+
 /* FIXME: This only works for the first wikiEditor on the page! */
 #wikiEditor-0-preview-dialog .wikiEditor-ui-loading span {
 	display: block;
@@ -24,12 +25,15 @@
 	text-indent: -9999px;
 	margin: 50px auto;
 }
+
 .ui-dialog .ui-dialog-buttonpane {
 	margin: 0 !important;
 }
+
 .wikiEditor-preview-dialog-contents {
 	font-size: 0.9em !important;
 }
+
 .wikiEditor-preview-dialog-contents #firstHeading {
 	font-size: 2.1em;
 }

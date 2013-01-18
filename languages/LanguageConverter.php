@@ -29,6 +29,24 @@
  * @maintainers fdcn <fdcn64@gmail.com>, shinjiman <shinjiman@gmail.com>, PhiLiP <philip.npc@gmail.com>
  */
 class LanguageConverter {
+
+	/**
+	 * languages supporting variants
+	 * @since 1.20
+	 * @var array
+	 */
+	static public $languagesWithVariants = array(
+		'gan',
+		'iu',
+		'kk',
+		'ku',
+		'shi',
+		'sr',
+		'tg',
+		'uz',
+		'zh',
+	);
+
 	var $mMainLanguageCode;
 	var $mVariants, $mVariantFallbacks, $mVariantNames;
 	var $mTablesLoaded = false;
@@ -72,7 +90,7 @@ class LanguageConverter {
 		$this->mMainLanguageCode = $maincode;
 		$this->mVariants = array_diff( $variants, $wgDisabledVariants );
 		$this->mVariantFallbacks = $variantfallbacks;
-		$this->mVariantNames = Language::getLanguageNames();
+		$this->mVariantNames = Language::fetchLanguageNames();
 		$this->mCacheKey = wfMemcKey( 'conversiontables', $maincode );
 		$defaultflags = array(
 			// 'S' show converted text
@@ -277,7 +295,7 @@ class LanguageConverter {
 			// We record these fallback variants, and process
 			// them later.
 			$fallbacks = $this->getVariantFallbacks( $language );
-			if ( is_string( $fallbacks ) ) {
+			if ( is_string( $fallbacks ) && $fallbacks !== $this->mMainLanguageCode ) {
 				$fallbackLanguages[] = $fallbacks;
 			} elseif ( is_array( $fallbacks ) ) {
 				$fallbackLanguages =
@@ -576,7 +594,7 @@ class LanguageConverter {
 	 */
 	public function convertTo( $text, $variant ) {
 		global $wgDisableLangConversion;
-		if ( $wgDisableLangConversion || $this->guessVariant( $text, $variant ) ) {
+		if ( $wgDisableLangConversion ) {
 			return $text;
 		}
 		return $this->recursiveConvertTopLevel( $text, $variant );
@@ -595,18 +613,22 @@ class LanguageConverter {
 		$startPos = 0;
 		$out = '';
 		$length = strlen( $text );
+		$shouldConvert = !$this->guessVariant( $text, $variant );
+
 		while ( $startPos < $length ) {
 			$pos = strpos( $text, '-{', $startPos );
 
 			if ( $pos === false ) {
 				// No more markup, append final segment
-				$out .= $this->autoConvert( substr( $text, $startPos ), $variant );
+				$fragment = substr( $text, $startPos );
+				$out .= $shouldConvert? $this->autoConvert( $fragment, $variant ): $fragment;
 				return $out;
 			}
 
 			// Markup found
 			// Append initial segment
-			$out .= $this->autoConvert( substr( $text, $startPos, $pos - $startPos ), $variant );
+			$fragment = substr( $text, $startPos, $pos - $startPos );
+			$out .= $shouldConvert? $this->autoConvert( $fragment, $variant ): $fragment;
 
 			// Advance position
 			$startPos = $pos;
@@ -626,6 +648,7 @@ class LanguageConverter {
 	 * @param $startPos int
 	 * @param $depth Integer: depth of recursion
 	 *
+	 * @throws MWException
 	 * @return String: converted text
 	 */
 	protected function recursiveConvertRule( $text, $variant, &$startPos, $depth = 0 ) {
@@ -664,8 +687,8 @@ class LanguageConverter {
 						$inner .= '-{';
 						if ( !$warningDone ) {
 							$inner .= '<span class="error">' .
-								wfMsgForContent( 'language-converter-depth-warning',
-									$this->mMaxDepth ) .
+								wfMessage( 'language-converter-depth-warning' )
+									->numParams( $this->mMaxDepth )->inContentLanguage()->text() .
 								'</span>';
 							$warningDone = true;
 						}
@@ -796,6 +819,7 @@ class LanguageConverter {
 	 * This method must be implemented in derived class.
 	 *
 	 * @private
+	 * @throws MWException
 	 */
 	function loadDefaultTables() {
 		$name = get_class( $this );
@@ -808,16 +832,18 @@ class LanguageConverter {
 	 * @param $fromCache Boolean: load from memcached? Defaults to true.
 	 */
 	function loadTables( $fromCache = true ) {
+		global $wgLangConvMemc;
+
 		if ( $this->mTablesLoaded ) {
 			return;
 		}
-		global $wgMemc;
+
 		wfProfileIn( __METHOD__ );
 		$this->mTablesLoaded = true;
 		$this->mTables = false;
 		if ( $fromCache ) {
 			wfProfileIn( __METHOD__ . '-cache' );
-			$this->mTables = $wgMemc->get( $this->mCacheKey );
+			$this->mTables = $wgLangConvMemc->get( $this->mCacheKey );
 			wfProfileOut( __METHOD__ . '-cache' );
 		}
 		if ( !$this->mTables
@@ -835,7 +861,7 @@ class LanguageConverter {
 			$this->postLoadTables();
 			$this->mTables[self::CACHE_VERSION_KEY] = true;
 
-			$wgMemc->set( $this->mCacheKey, $this->mTables, 43200 );
+			$wgLangConvMemc->set( $this->mCacheKey, $this->mTables, 43200 );
 			wfProfileOut( __METHOD__ . '-recache' );
 		}
 		wfProfileOut( __METHOD__ );
@@ -1015,8 +1041,8 @@ class LanguageConverter {
 	 * @param $summary String: edit summary of the edit
 	 * @param $isMinor Boolean: was the edit marked as minor?
 	 * @param $isWatch Boolean: did the user watch this page or not?
-	 * @param $section Unused
-	 * @param $flags Bitfield
+	 * @param $section
+	 * @param $flags int Bitfield
 	 * @param $revision Object: new Revision object or null
 	 * @return Boolean: true
 	 */
@@ -1089,7 +1115,6 @@ class LanguageConverter {
 class ConverterRule {
 	var $mText; // original text in -{text}-
 	var $mConverter; // LanguageConverter object
-	var $mManualCodeError = '<strong class="error">code error!</strong>';
 	var $mRuleDisplay = '';
 	var $mRuleTitle = false;
 	var $mRules = '';// string : the text of the rules
@@ -1465,7 +1490,9 @@ class ConverterRule {
 			}
 		}
 		if ( $this->mRuleDisplay === false ) {
-			$this->mRuleDisplay = $this->mManualCodeError;
+			$this->mRuleDisplay = '<span class="error">'
+				. wfMessage( 'converter-manual-rule-error' )->inContentLanguage()->escaped()
+				. '</span>';
 		}
 
 		$this->generateConvTable();

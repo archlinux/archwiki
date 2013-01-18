@@ -53,7 +53,7 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 
 				if ( $category !== "" ) {
 					if ( isset( $this->props['title'] ) ) {
-						$row['desc'] = wfMessage( "gadget-section-$category" )->parse();
+						$row['desc'] = $this->msg( "gadget-section-$category" )->parse();
 					}
 				}
 

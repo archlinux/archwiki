@@ -41,9 +41,9 @@ class UnwatchedpagesPage extends QueryPage {
 	function getQueryInfo() {
 		return array (
 			'tables' => array ( 'page', 'watchlist' ),
-			'fields' => array ( 'page_namespace AS namespace',
-					'page_title AS title',
-					'page_namespace AS value' ),
+			'fields' => array ( 'namespace' => 'page_namespace',
+					'title' => 'page_title',
+					'value' => 'page_namespace' ),
 			'conds' => array ( 'wl_title IS NULL',
 					'page_is_redirect' => 0,
 					"page_namespace != '" . NS_MEDIAWIKI .
@@ -68,17 +68,19 @@ class UnwatchedpagesPage extends QueryPage {
 	function formatResult( $skin, $result ) {
 		global $wgContLang;
 
-		$nt = Title::makeTitle( $result->namespace, $result->title );
+		$nt = Title::makeTitleSafe( $result->namespace, $result->title );
+		if ( !$nt ) {
+			return Html::element( 'span', array( 'class' => 'mw-invalidtitle' ),
+				Linker::getInvalidTitleDescription( $this->getContext(), $result->namespace, $result->title ) );
+		}
+
 		$text = $wgContLang->convert( $nt->getPrefixedText() );
 
-		$plink = Linker::linkKnown(
-			$nt,
-			htmlspecialchars( $text )
-		);
+		$plink = Linker::linkKnown( $nt, htmlspecialchars( $text ) );
 		$token = WatchAction::getWatchToken( $nt, $this->getUser() );
 		$wlink = Linker::linkKnown(
 			$nt,
-			wfMsgHtml( 'watch' ),
+			$this->msg( 'watch' )->escaped(),
 			array(),
 			array( 'action' => 'watch', 'token' => $token )
 		);

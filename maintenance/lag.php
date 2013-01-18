@@ -21,8 +21,13 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script to show database lag.
+ *
+ * @ingroup Maintenance
+ */
 class DatabaseLag extends Maintenance {
 	public function __construct() {
 		parent::__construct();

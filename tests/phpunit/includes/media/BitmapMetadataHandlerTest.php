@@ -2,7 +2,7 @@
 class BitmapMetadataHandlerTest extends MediaWikiTestCase {
 
 	public function setUp() {
-		$this->filePath = dirname( __FILE__ ) . '/../../data/media/';
+		$this->filePath = __DIR__ . '/../../data/media/';
 	}
 
 	/**
@@ -73,7 +73,8 @@ class BitmapMetadataHandlerTest extends MediaWikiTestCase {
 		$this->assertEquals( '2020:07:14 01:36:05', $meta['DateTimeDigitized'] );
 		$this->assertEquals( '1997:03:02 00:01:02', $meta['DateTimeOriginal'] );
 	}
-	/* File has an invalid time (+ one valid but really weird time)
+	/**
+	 * File has an invalid time (+ one valid but really weird time)
 	 * that shouldn't be included
 	 */
 	public function testIPTCDatesInvalid() {

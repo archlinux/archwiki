@@ -1,16 +1,35 @@
 <?php
 /**
  * Helper class to keep track of options when mixing links and form elements.
- * @todo This badly need some examples and tests :-)
  *
  * Copyright © 2008, Niklas Laxstiröm
- *
  * Copyright © 2011, Antoine Musso
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  * @author Niklas Laxström
  * @author Antoine Musso 
  */
 
+/**
+ * Helper class to keep track of options when mixing links and form elements.
+ *
+ * @todo This badly need some examples and tests :-)
+ */
 class FormOptions implements ArrayAccess {
 	/** @name Type constants
 	 * Used internally to map an option value to a WebRequest accessor
@@ -65,7 +84,7 @@ class FormOptions implements ArrayAccess {
 	 *
 	 * @param $data Mixed: value to guess type for
 	 * @exception MWException Unsupported datatype
-	 * @return Type constant 
+	 * @return int Type constant
 	 */
 	public static function guessType( $data ) {
 		if ( is_bool( $data ) ) {
@@ -291,11 +310,17 @@ class FormOptions implements ArrayAccess {
 	 * @see http://php.net/manual/en/class.arrayaccess.php
 	 */
 	/* @{ */
-	/** Whether option exist*/
+	/**
+	 * Whether option exist
+	 * @return bool
+	 */
 	public function offsetExists( $name ) {
 		return isset( $this->options[$name] );
 	}
-	/** Retrieve an option value */
+	/**
+	 * Retrieve an option value
+	 * @return Mixed
+	 */
 	public function offsetGet( $name ) {
 		return $this->getValue( $name );
 	}

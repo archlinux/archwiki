@@ -1,8 +1,8 @@
 <?php
 /**
- * This script starts pending jobs.
+ * Run pending jobs.
  *
- * Usage:
+ * Options:
  *  --maxjobs <num> (default 10000)
  *  --type <job_cmd>
  *
@@ -21,11 +21,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script that runs pending jobs.
+ *
+ * @ingroup Maintenance
+ */
 class RunJobs extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -37,6 +43,9 @@ class RunJobs extends Maintenance {
 	}
 
 	public function memoryLimit() {
+		if ( $this->hasOption( 'memory-limit' ) ) {
+			return parent::memoryLimit();
+		}
 		// Don't eat all memory on the machine if we get a bad job.
 		return "150M";
 	}
@@ -60,9 +69,11 @@ class RunJobs extends Maintenance {
 		$wgTitle = Title::newFromText( 'RunJobs.php' );
 		$dbw = wfGetDB( DB_MASTER );
 		$n = 0;
-		$conds = '';
-		if ( $type !== false ) {
-			$conds = "job_cmd = " . $dbw->addQuotes( $type );
+
+		if ( $type === false ) {
+			$conds = Job::defaultQueueConditions( );
+		} else {
+			$conds = array( 'job_cmd' => $type );
 		}
 
 		while ( $dbw->selectField( 'job', 'job_id', $conds, 'runJobs.php' ) ) {
@@ -77,6 +88,7 @@ class RunJobs extends Maintenance {
 				wfWaitForSlaves();
 				$t = microtime( true );
 				$offset = $job->id;
+				$this->runJobsLog( $job->toString() . " STARTING" );
 				$status = $job->run();
 				$t = microtime( true ) - $t;
 				$timeMs = intval( $t * 1000 );

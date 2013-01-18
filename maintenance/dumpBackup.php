@@ -29,8 +29,8 @@ $originalDir = getcwd();
 
 $optionsWithArgs = array( 'pagelist', 'start', 'end', 'revstart', 'revend');
 
-require_once( dirname( __FILE__ ) . '/commandLine.inc' );
-require_once( 'backup.inc' );
+require_once( __DIR__ . '/commandLine.inc' );
+require_once( __DIR__ . '/backup.inc' );
 
 $dumper = new BackupDumper( $argv );
 
@@ -87,6 +87,10 @@ This script dumps the wiki page or logging database into an
 XML interchange wrapper format for export or backup.
 
 XML output is sent to stdout; progress reports are sent to stderr.
+
+WARNING: this is not a full database dump! It is merely for public export
+		 of your wiki. For full backup, see our online help at:
+         https://www.mediawiki.org/wiki/Backup
 
 Usage: php dumpBackup.php <action> [<options>]
 Actions:

@@ -60,7 +60,7 @@ class ApiFeedContributions extends ApiBase {
 			$this->dieUsage( 'Size difference is disabled in Miser Mode', 'sizediffdisabled' );
 		}
 
-		$msg = wfMsgForContent( 'Contributions' );
+		$msg = wfMessage( 'Contributions' )->inContentLanguage()->text();
 		$feedTitle = $wgSitename . ' - ' . $msg . ' [' . $wgLanguageCode . ']';
 		$feedUrl = SpecialPage::getTitleFor( 'Contributions', $params['user'] )->getFullURL();
 
@@ -96,7 +96,7 @@ class ApiFeedContributions extends ApiBase {
 	}
 
 	protected function feedItem( $row ) {
-		$title = Title::MakeTitle( intval( $row->page_namespace ), $row->page_title );
+		$title = Title::makeTitle( intval( $row->page_namespace ), $row->page_title );
 		if( $title ) {
 			$date = $row->rev_timestamp;
 			$comments = $title->getTalkPage()->getFullURL();
@@ -129,7 +129,8 @@ class ApiFeedContributions extends ApiBase {
 	 */
 	protected function feedItemDesc( $revision ) {
 		if( $revision ) {
-			return '<p>' . htmlspecialchars( $revision->getUserText() ) . wfMsgForContent( 'colon-separator' ) .
+			$msg = wfMessage( 'colon-separator' )->inContentLanguage()->text();
+			return '<p>' . htmlspecialchars( $revision->getUserText() ) . $msg .
 				htmlspecialchars( FeedItem::stripComment( $revision->getComment() ) ) .
 				"</p>\n<hr />\n<div>" .
 				nl2br( htmlspecialchars( $revision->getText() ) ) . "</div>";
@@ -150,8 +151,7 @@ class ApiFeedContributions extends ApiBase {
 				ApiBase::PARAM_REQUIRED => true,
 			),
 			'namespace' => array(
-				ApiBase::PARAM_TYPE => 'namespace',
-				ApiBase::PARAM_ISMULTI => true
+				ApiBase::PARAM_TYPE => 'namespace'
 			),
 			'year' => array(
 				ApiBase::PARAM_TYPE => 'integer'

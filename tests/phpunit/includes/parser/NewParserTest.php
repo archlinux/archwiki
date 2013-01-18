@@ -186,7 +186,7 @@ class NewParserTest extends MediaWikiTestCase {
 		if ( !$this->db->selectField( 'image', '1', array( 'img_name' => $image->getName() ) ) ) {
 			$image->recordUpload2(
 				'', // archive name
-				'Upload of some lame file', 
+				'Upload of some lame file',
 				'Some lame file',
 				array(
 					'size'        => 12345,
@@ -197,7 +197,7 @@ class NewParserTest extends MediaWikiTestCase {
 					'mime'        => 'image/jpeg',
 					'metadata'    => serialize( array() ),
 					'sha1'        => wfBaseConvert( '', 16, 36, 31 ),
-					'fileExists'  => true ), 
+					'fileExists'  => true ),
 				$this->db->timestamp( '20010115123500' ), $user
 			);
 		}
@@ -207,8 +207,8 @@ class NewParserTest extends MediaWikiTestCase {
 		if ( !$this->db->selectField( 'image', '1', array( 'img_name' => $image->getName() ) ) ) {
 			$image->recordUpload2(
 				'', // archive name
-				'zomgnotcensored', 
-				'Borderline image', 
+				'zomgnotcensored',
+				'Borderline image',
 				array(
 					'size'        => 12345,
 					'width'       => 320,
@@ -218,7 +218,7 @@ class NewParserTest extends MediaWikiTestCase {
 					'mime'        => 'image/jpeg',
 					'metadata'    => serialize( array() ),
 					'sha1'        => wfBaseConvert( '', 16, 36, 31 ),
-					'fileExists'  => true ), 
+					'fileExists'  => true ),
 				$this->db->timestamp( '20010115123500' ), $user
 			);
 		}
@@ -326,7 +326,6 @@ class NewParserTest extends MediaWikiTestCase {
 			'wgExternalLinkTarget' => false,
 			'wgAlwaysUseTidy' => false,
 			'wgHtml5' => true,
-			'wgCleanupPresentationalAttributes' => true,
 			'wgWellFormedXml' => true,
 			'wgAllowMicrodataAttributes' => true,
 			'wgAdaptiveMessageCache' => true,
@@ -344,6 +343,9 @@ class NewParserTest extends MediaWikiTestCase {
 		}
 
 		$this->savedGlobals = array();
+
+		/** @since 1.20 */
+		wfRunHooks( 'ParserTestGlobals', array( &$settings ) );
 
 		foreach ( $settings as $var => $val ) {
 			if ( array_key_exists( $var, $GLOBALS ) ) {
@@ -380,7 +382,7 @@ class NewParserTest extends MediaWikiTestCase {
 		# The entries saved into RepoGroup cache with previous globals will be wrong.
 		RepoGroup::destroySingleton();
 		FileBackendGroup::destroySingleton();
-		MessageCache::singleton()->destroyInstance();
+		MessageCache::destroyInstance();
 
 		return $context;
 	}
@@ -596,7 +598,7 @@ class NewParserTest extends MediaWikiTestCase {
 	 * Run a fuzz test series
 	 * Draw input from a set of test files
 	 *
-	 * @todo @fixme Needs some work to not eat memory until the world explodes
+	 * @todo fixme Needs some work to not eat memory until the world explodes
 	 *
 	 * @group ParserFuzz
 	 */

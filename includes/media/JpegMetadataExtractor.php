@@ -1,10 +1,34 @@
 <?php
 /**
-* Class for reading jpegs and extracting metadata.
-* see also BitmapMetadataHandler.
-*
-* Based somewhat on GIFMetadataExtrator.
-*/
+ * Extraction of JPEG image metadata.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Media
+ */
+
+/**
+ * Class for reading jpegs and extracting metadata.
+ * see also BitmapMetadataHandler.
+ *
+ * Based somewhat on GIFMetadataExtrator.
+ *
+ * @ingroup Media
+ */
 class JpegMetadataExtractor {
 
 	const MAX_JPEG_SEGMENTS = 200;
@@ -143,13 +167,17 @@ class JpegMetadataExtractor {
 	/**
 	* Helper function for jpegSegmentSplitter
 	* @param &$fh FileHandle for jpeg file
-	* @return data content of segment.
+	* @return string data content of segment.
 	*/
 	private static function jpegExtractMarker( &$fh ) {
 		$size = wfUnpack( "nint", fread( $fh, 2 ), 2 );
-		if ( $size['int'] <= 2 ) throw new MWException( "invalid marker size in jpeg" );
+		if ( $size['int'] <= 2 ) {
+			throw new MWException( "invalid marker size in jpeg" );
+		}
 		$segment = fread( $fh, $size['int'] - 2 );
-		if ( strlen( $segment ) !== $size['int'] - 2 ) throw new MWException( "Segment shorter than expected" );
+		if ( strlen( $segment ) !== $size['int'] - 2 ) {
+			throw new MWException( "Segment shorter than expected" );
+		}
 		return $segment;
 	}
 

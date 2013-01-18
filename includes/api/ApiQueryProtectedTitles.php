@@ -4,7 +4,7 @@
  *
  * Created on Feb 13, 2009
  *
- * Copyright © 2009 Roan Kattouw <Firstname>.<Lastname>@gmail.com
+ * Copyright © 2009 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 
 	public function getCacheMode( $params ) {
 		if ( !is_null( $params['prop'] ) && in_array( 'parsedcomment', $params['prop'] ) ) {
-			// formatComment() calls wfMsg() among other things
+			// formatComment() calls wfMessage() among other things
 			return 'anon-public-user-private';
 		} else {
 			return 'public';
@@ -211,6 +211,40 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 				' level          - Adds the protection level',
 			),
 			'level' => 'Only list titles with these protection levels',
+		);
+	}
+
+	public function getResultProperties() {
+		global $wgRestrictionLevels;
+		return array(
+			'' => array(
+				'ns' => 'namespace',
+				'title' => 'string'
+			),
+			'timestamp' => array(
+				'timestamp' => 'timestamp'
+			),
+			'user' => array(
+				'user' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'userid' => 'integer'
+			),
+			'comment' => array(
+				'comment' => 'string'
+			),
+			'parsedcomment' => array(
+				'parsedcomment' => 'string'
+			),
+			'expiry' => array(
+				'expiry' => 'timestamp'
+			),
+			'level' => array(
+				'level' => array(
+					ApiBase::PROP_TYPE => array_diff( $wgRestrictionLevels, array( '' ) )
+				)
+			)
 		);
 	}
 

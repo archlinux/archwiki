@@ -22,14 +22,6 @@ $magicWords['en'] = array(
 	'timel' => array( 0, 'timel' ),
 	'rel2abs' => array( 0, 'rel2abs' ),
 	'titleparts' => array( 0, 'titleparts' ),
-	'convert' => array( 0, 'convert' ),
-	'sourceunit' => array( 0, '#sourceunit' ),
-	'targetunit' => array( 0, '#targetunit' ),
-	'linkunit' => array( 0, '#linkunit' ),
-	'decimalplaces' => array( 0, '#dp' ),
-	'significantfigures' => array( 0, '#sf' ),
-	'abbreviate' => array( 0, '#abbreviate' ),
-	'language' => array( 0, '#language' ),
 	'len' => array( 0, 'len' ),
 	'pos' => array( 0, 'pos' ),
 	'rpos' => array( 0, 'rpos' ),
@@ -54,7 +46,6 @@ $magicWords['ar'] = array(
 	'timel' => array( 0, 'تيمل' ),
 	'rel2abs' => array( 0, 'ريلتوآبس' ),
 	'titleparts' => array( 0, 'أجزاء_العنوان' ),
-	'language' => array( 0, '#لغة:' ),
 	'len' => array( 0, 'لين' ),
 	'pos' => array( 0, 'بوس' ),
 	'rpos' => array( 0, 'آربوس' ),
@@ -63,11 +54,6 @@ $magicWords['ar'] = array(
 	'replace' => array( 0, 'استبدال' ),
 	'explode' => array( 0, 'انفجار' ),
 	'urldecode' => array( 0, 'فك_مسار' ),
-);
-
-/** Aramaic (ܐܪܡܝܐ) */
-$magicWords['arc'] = array(
-	'language' => array( 0, '#ܠܫܢܐ:' ),
 );
 
 /** Egyptian Spoken Arabic (مصرى) */
@@ -93,26 +79,20 @@ $magicWords['arz'] = array(
 	'explode' => array( 0, 'انفجار', 'explode' ),
 );
 
-/** Breton (Brezhoneg) */
+/** Breton (brezhoneg) */
 $magicWords['br'] = array(
 	'time' => array( 0, 'amzer' ),
-	'convert' => array( 0, 'amdreiñ' ),
 	'count' => array( 0, 'kontañ' ),
 	'replace' => array( 0, 'erlec\'hiañ' ),
 );
 
-/** Bosnian (Bosanski) */
-$magicWords['bs'] = array(
-	'language' => array( 0, '#JEZIK:' ),
-);
-
-/** Chechen (Нохчийн) */
+/** Chechen (нохчийн) */
 $magicWords['ce'] = array(
 	'time' => array( 0, 'хан', 'time' ),
 	'replace' => array( 0, 'хийцарна', 'замена', 'replace' ),
 );
 
-/** Czech (Česky) */
+/** Czech (česky) */
 $magicWords['cs'] = array(
 	'expr' => array( 0, 'výraz', 'expr' ),
 	'if' => array( 0, 'když', 'if' ),
@@ -121,6 +101,15 @@ $magicWords['cs'] = array(
 	'len' => array( 0, 'délka', 'len' ),
 	'count' => array( 0, 'počet', 'count' ),
 	'replace' => array( 0, 'nahradit', 'replace' ),
+);
+
+/** German (Deutsch) */
+$magicWords['de'] = array(
+	'switch' => array( 0, 'wechsle' ),
+	'default' => array( 0, '#standard' ),
+	'count' => array( 0, 'zähle' ),
+	'replace' => array( 0, 'ersetze' ),
+	'urldecode' => array( 0, 'dekodiereurl', 'dekodiere_url' ),
 );
 
 /** Esperanto (Esperanto) */
@@ -135,25 +124,19 @@ $magicWords['eo'] = array(
 	'ifexist' => array( 0, 'seekzistas' ),
 	'time' => array( 0, 'tempo' ),
 	'timel' => array( 0, 'tempoo' ),
-	'language' => array( 0, '#LINGVO:' ),
 );
 
-/** Spanish (Español) */
+/** Spanish (español) */
 $magicWords['es'] = array(
-	'if' => array( 0, 'si', 'if' ),
-	'ifexpr' => array( 0, 'siexpr', 'ifexpr' ),
-	'iferror' => array( 0, 'sierror', 'iferror' ),
-	'switch' => array( 0, 'según', 'switch' ),
-	'ifexist' => array( 0, 'siexiste', 'ifexist' ),
-	'time' => array( 0, 'tiempo', 'time' ),
-	'len' => array( 0, 'long', 'longitud', 'len' ),
-	'replace' => array( 0, 'reemplazar', 'replace' ),
-	'explode' => array( 0, 'separar', 'explode' ),
-);
-
-/** Estonian (Eesti) */
-$magicWords['et'] = array(
-	'language' => array( 0, '#KEEL:' ),
+	'if' => array( 0, 'si' ),
+	'ifexpr' => array( 0, 'siexpr' ),
+	'iferror' => array( 0, 'sierror' ),
+	'switch' => array( 0, 'según' ),
+	'ifexist' => array( 0, 'siexiste' ),
+	'time' => array( 0, 'tiempo' ),
+	'len' => array( 0, 'long', 'longitud' ),
+	'replace' => array( 0, 'reemplazar' ),
+	'explode' => array( 0, 'separar' ),
 );
 
 /** Persian (فارسی) */
@@ -170,7 +153,6 @@ $magicWords['fa'] = array(
 	'timel' => array( 0, 'زمان‌بلند' ),
 	'rel2abs' => array( 0, 'نسبی‌به‌مطلق' ),
 	'titleparts' => array( 0, 'پاره‌عنوان' ),
-	'language' => array( 0, '#زبان' ),
 	'len' => array( 0, 'طول' ),
 	'pos' => array( 0, 'جا' ),
 	'rpos' => array( 0, 'جار' ),
@@ -179,16 +161,6 @@ $magicWords['fa'] = array(
 	'replace' => array( 0, 'جایگزین' ),
 	'explode' => array( 0, 'گسترش' ),
 	'urldecode' => array( 0, 'نشانی‌بی‌کد' ),
-);
-
-/** Finnish (Suomi) */
-$magicWords['fi'] = array(
-	'language' => array( 0, '#KIELI:' ),
-);
-
-/** Galician (Galego) */
-$magicWords['gl'] = array(
-	'language' => array( 0, '#LINGUA:', '#IDIOMA:' ),
 );
 
 /** Hebrew (עברית) */
@@ -207,7 +179,7 @@ $magicWords['he'] = array(
 	'titleparts' => array( 0, 'חלק בכותרת', 'titleparts' ),
 );
 
-/** Hungarian (Magyar) */
+/** Hungarian (magyar) */
 $magicWords['hu'] = array(
 	'expr' => array( 0, 'kif', 'expr' ),
 	'if' => array( 0, 'ha', 'if' ),
@@ -244,10 +216,9 @@ $magicWords['ig'] = array(
 	'timel' => array( 0, 'ógèl', 'timel' ),
 );
 
-/** Italian (Italiano) */
+/** Italian (italiano) */
 $magicWords['it'] = array(
 	'ifexist' => array( 0, 'ifexist' ),
-	'language' => array( 0, '#LINGUA' ),
 );
 
 /** Japanese (日本語) */
@@ -264,7 +235,6 @@ $magicWords['ja'] = array(
 	'timel' => array( 0, '時間地方' ),
 	'rel2abs' => array( 0, '参照から絶対' ),
 	'titleparts' => array( 0, 'タイトル部分' ),
-	'language' => array( 0, '#言語:', '＃言語：' ),
 	'len' => array( 0, '長さ' ),
 	'pos' => array( 0, '位置' ),
 	'rpos' => array( 0, '最後の位置' ),
@@ -275,27 +245,28 @@ $magicWords['ja'] = array(
 	'urldecode' => array( 0, 'URLデコード' ),
 );
 
-/** Khmer (ភាសាខ្មែរ) */
-$magicWords['km'] = array(
-	'language' => array( 0, '#ភាសា:' ),
-);
-
 /** Korean (한국어) */
 $magicWords['ko'] = array(
 	'expr' => array( 0, '수식' ),
+	'if' => array( 0, '만약' ),
+	'ifeq' => array( 0, '만약일치' ),
+	'ifexpr' => array( 0, '만약계산' ),
+	'iferror' => array( 0, '만약오류' ),
 	'switch' => array( 0, '스위치' ),
 	'default' => array( 0, '#기본값' ),
+	'ifexist' => array( 0, '만약존재' ),
 	'time' => array( 0, '시간' ),
 	'timel' => array( 0, '지역시간' ),
-	'language' => array( 0, '#언어:' ),
 	'len' => array( 0, '길이' ),
+	'pos' => array( 0, '위치' ),
+	'rpos' => array( 0, '오른위치' ),
 	'count' => array( 0, '개수' ),
 	'replace' => array( 0, '교체' ),
 	'explode' => array( 0, '분리' ),
 	'urldecode' => array( 0, '주소디코딩:' ),
 );
 
-/** ‪Kurdî (latînî)‬ (‪Kurdî (latînî)‬) */
+/** Kurdish (Latin script) (Kurdî (latînî)‎) */
 $magicWords['ku-latn'] = array(
 	'len' => array( 0, '#ziman' ),
 );
@@ -316,7 +287,7 @@ $magicWords['mg'] = array(
 	'time' => array( 0, 'lera', 'time' ),
 );
 
-/** Macedonian (Македонски) */
+/** Macedonian (македонски) */
 $magicWords['mk'] = array(
 	'expr' => array( 0, 'израз' ),
 	'if' => array( 0, 'ако' ),
@@ -330,11 +301,6 @@ $magicWords['mk'] = array(
 	'timel' => array( 0, 'времел' ),
 	'rel2abs' => array( 0, 'релдоапс' ),
 	'titleparts' => array( 0, 'насловделови' ),
-	'convert' => array( 0, 'претвори' ),
-	'sourceunit' => array( 0, '#изворнаединица' ),
-	'targetunit' => array( 0, '#целнаединица' ),
-	'linkunit' => array( 0, '#врскаединица' ),
-	'abbreviate' => array( 0, '#скрати' ),
 	'len' => array( 0, 'долж' ),
 	'pos' => array( 0, 'пол' ),
 	'rpos' => array( 0, 'впол' ),
@@ -356,7 +322,6 @@ $magicWords['ml'] = array(
 	'ifexist' => array( 0, 'ഉണ്ടെങ്കിൽ' ),
 	'time' => array( 0, 'സമയം' ),
 	'timel' => array( 0, 'സമയം|' ),
-	'language' => array( 0, '#ഭാഷ:' ),
 	'sub' => array( 0, 'ഉപം' ),
 	'count' => array( 0, 'എണ്ണുക' ),
 	'replace' => array( 0, 'മാറ്റിച്ചേർക്കുക' ),
@@ -383,11 +348,6 @@ $magicWords['mr'] = array(
 	'count' => array( 0, 'मोज', 'मोजा', 'count' ),
 	'replace' => array( 0, 'नेबदल', 'रिप्लेस', 'replace' ),
 	'explode' => array( 0, 'एकफोड', 'explode' ),
-);
-
-/** Erzya (Эрзянь) */
-$magicWords['myv'] = array(
-	'language' => array( 0, '#КЕЛЕСЬ:' ),
 );
 
 /** Nedersaksisch (Nedersaksisch) */
@@ -417,19 +377,13 @@ $magicWords['nl'] = array(
 	'timel' => array( 0, 'tijdl' ),
 	'rel2abs' => array( 0, 'relatiefnaarabsoluut' ),
 	'titleparts' => array( 0, 'paginanaamdelen' ),
-	'convert' => array( 0, 'converteren' ),
-	'sourceunit' => array( 0, '#broneenheid' ),
-	'targetunit' => array( 0, '#doeleenheid' ),
-	'linkunit' => array( 0, '#verbindingseenheid' ),
-	'abbreviate' => array( 0, '#afkorten' ),
-	'language' => array( 0, '#TAAL:' ),
 	'count' => array( 0, 'telling' ),
 	'replace' => array( 0, 'vervangen' ),
 	'explode' => array( 0, 'exploderen' ),
 	'urldecode' => array( 0, 'urldecoderen' ),
 );
 
-/** Norwegian Nynorsk (‪Norsk (nynorsk)‬) */
+/** Norwegian Nynorsk (norsk (nynorsk)‎) */
 $magicWords['nn'] = array(
 	'expr' => array( 0, 'uttrykk', 'expr' ),
 	'if' => array( 0, 'om', 'if' ),
@@ -449,12 +403,6 @@ $magicWords['nn'] = array(
 /** Oriya (ଓଡ଼ିଆ) */
 $magicWords['or'] = array(
 	'time' => array( 0, 'ସମୟ' ),
-	'convert' => array( 0, 'ବଦଳାଇବା' ),
-);
-
-/** Polish (Polski) */
-$magicWords['pl'] = array(
-	'language' => array( 0, '#JĘZYK:' ),
 );
 
 /** Pashto (پښتو) */
@@ -464,7 +412,7 @@ $magicWords['ps'] = array(
 	'count' => array( 0, 'شمېرل', 'count' ),
 );
 
-/** Portuguese (Português) */
+/** Portuguese (português) */
 $magicWords['pt'] = array(
 	'if' => array( 0, 'se', 'if' ),
 	'ifeq' => array( 0, 'seigual', 'ifeq' ),
@@ -476,31 +424,21 @@ $magicWords['pt'] = array(
 	'len' => array( 0, 'comprimento', 'len' ),
 );
 
-/** Russian (Русский) */
+/** Russian (русский) */
 $magicWords['ru'] = array(
 	'replace' => array( 0, 'замена' ),
 );
 
-/** Albanian (Shqip) */
-$magicWords['sq'] = array(
-	'language' => array( 0, '#GJUHA:' ),
-);
-
-/** Serbian Cyrillic ekavian (‪Српски (ћирилица)‬) */
+/** Serbian (Cyrillic script) (српски (ћирилица)‎) */
 $magicWords['sr-ec'] = array(
 	'default' => array( 0, '#подразумевано' ),
 	'time' => array( 0, 'време' ),
-	'convert' => array( 0, 'претвори' ),
-	'sourceunit' => array( 0, '#изворнајединица', '#изворна_јединица' ),
-	'targetunit' => array( 0, '#крајњајединица', '#крајња_јединица' ),
-	'linkunit' => array( 0, '#везајединице', '#веза_јединице' ),
-	'abbreviate' => array( 0, '#скрати' ),
 	'pos' => array( 0, 'поз' ),
 	'count' => array( 0, 'број' ),
 	'replace' => array( 0, 'замени' ),
 );
 
-/** Swedish (Svenska) */
+/** Swedish (svenska) */
 $magicWords['sv'] = array(
 	'expr' => array( 0, 'utr', 'expr' ),
 	'if' => array( 0, 'om', 'if' ),
@@ -529,12 +467,7 @@ $magicWords['tr'] = array(
 	'default' => array( 0, '#vas' ),
 );
 
-/** Татарча (Татарча) */
-$magicWords['tt-cyrl'] = array(
-	'language' => array( 0, '#ТЕЛ:' ),
-);
-
-/** Ukrainian (Українська) */
+/** Ukrainian (українська) */
 $magicWords['uk'] = array(
 	'expr' => array( 0, 'вираз', 'expr' ),
 	'if' => array( 0, 'якщо', 'if' ),
@@ -549,7 +482,6 @@ $magicWords['uk'] = array(
 /** Vietnamese (Tiếng Việt) */
 $magicWords['vi'] = array(
 	'expr' => array( 0, 'côngthức' ),
-	'language' => array( 0, '#NGÔNNGỮ:' ),
 );
 
 /** Yiddish (ייִדיש) */

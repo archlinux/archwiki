@@ -1,6 +1,6 @@
 <?php
 /**
- * XHTML sanitizer for MediaWiki
+ * XHTML sanitizer for %MediaWiki.
  *
  * Copyright © 2002-2005 Brion Vibber <brion@pobox.com> et al
  * http://www.mediawiki.org/
@@ -374,7 +374,7 @@ class Sanitizer {
 		if ( !$staticInitialised ) {
 
 			$htmlpairsStatic = array( # Tags that must be closed
-				'b', 'del', 'i', 'ins', 'u', 'font', 'big', 'small', 'sub', 'sup', 'h1',
+				'b', 'bdi', 'del', 'i', 'ins', 'u', 'font', 'big', 'small', 'sub', 'sup', 'h1',
 				'h2', 'h3', 'h4', 'h5', 'h6', 'cite', 'code', 'em', 's',
 				'strike', 'strong', 'tt', 'var', 'div', 'center',
 				'blockquote', 'ol', 'ul', 'dl', 'table', 'caption', 'pre',
@@ -610,102 +610,6 @@ class Sanitizer {
 		}
 		wfProfileOut( __METHOD__ );
 		return $text;
-	}
-
-	/**
-	 * Take an array of attribute names and values and fix some deprecated values
-	 * for the given element type.
-	 * This does not validate properties, so you should ensure that you call
-	 * validateTagAttributes AFTER this to ensure that the resulting style rule
-	 * this may add is safe.
-	 *
-	 * - Converts most presentational attributes like align into inline css
-	 *
-	 * @param $attribs Array
-	 * @param $element String
-	 * @return Array
-	 */
-	static function fixDeprecatedAttributes( $attribs, $element ) {
-		global $wgHtml5, $wgCleanupPresentationalAttributes;
-
-		// presentational attributes were removed from html5, we can leave them
-		// in when html5 is turned off
-		if ( !$wgHtml5 || !$wgCleanupPresentationalAttributes ) {
-			return $attribs;
-		}
-
-		$table = array( 'table' );
-		$cells = array( 'td', 'th' );
-		$colls = array( 'col', 'colgroup' );
-		$tblocks = array( 'tbody', 'tfoot', 'thead' );
-		$h = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
-
-		$presentationalAttribs = array(
-			'align' => array( 'text-align', array_merge( array( 'caption', 'hr', 'div', 'p', 'tr' ), $table, $cells, $colls, $tblocks, $h ) ),
-			'clear' => array( 'clear', array( 'br' ) ),
-			'height' => array( 'height', $cells ),
-			'nowrap' => array( 'white-space', $cells ),
-			'size' => array( 'height', array( 'hr' ) ),
-			'type' => array( 'list-style-type', array( 'li', 'ol', 'ul' ) ),
-			'valign' => array( 'vertical-align', array_merge( $cells, $colls, $tblocks ) ),
-			'width' => array( 'width', array_merge( array( 'hr', 'pre' ), $table, $cells, $colls ) ),
-		);
-
-		// Ensure that any upper case or mixed case attributes are converted to lowercase
-		foreach ( $attribs as $attribute => $value ) {
-			if ( $attribute !== strtolower( $attribute ) && array_key_exists( strtolower( $attribute ), $presentationalAttribs ) ) {
-				$attribs[strtolower( $attribute )] = $value;
-				unset( $attribs[$attribute] );
-			}
-		}
-
-		$style = "";
-		foreach ( $presentationalAttribs as $attribute => $info ) {
-			list( $property, $elements ) = $info;
-
-			// Skip if this attribute is not relevant to this element
-			if ( !in_array( $element, $elements ) ) {
-				continue;
-			}
-
-			// Skip if the attribute is not used
-			if ( !array_key_exists( $attribute, $attribs ) ) {
-				continue;
-			}
-
-			$value = $attribs[$attribute];
-
-			// For nowrap the value should be nowrap instead of whatever text is in the value
-			if ( $attribute === 'nowrap' ) {
-				$value = 'nowrap';
-			}
-
-			// clear="all" is clear: both; in css
-			if ( $attribute === 'clear' && strtolower( $value ) === 'all' ) {
-				$value = 'both';
-			}
-
-			// Size based properties should have px applied to them if they have no unit
-			if ( in_array( $attribute, array( 'height', 'width', 'size' ) ) ) {
-				if ( preg_match( '/^[\d.]+$/', $value ) ) {
-					$value = "{$value}px";
-				}
-			}
-
-			$style .= " $property: $value;";
-
-			unset( $attribs[$attribute] );
-		}
-
-		if ( $style ) {
-			// Prepend our style rules so that they can be overridden by user css
-			if ( isset($attribs['style']) ) {
-				$style .= " " . $attribs['style'];
-			}
-			$attribs['style'] = trim($style);
-		}
-
-		return $attribs;
 	}
 
 	/**
@@ -956,7 +860,6 @@ class Sanitizer {
 		}
 
 		$decoded = Sanitizer::decodeTagAttributes( $text );
-		$decoded = Sanitizer::fixDeprecatedAttributes( $decoded, $element );
 		$stripped = Sanitizer::validateTagAttributes( $decoded, $element );
 
 		$attribs = array();
@@ -1016,7 +919,7 @@ class Sanitizer {
 
 		# Stupid hack
 		$encValue = preg_replace_callback(
-			'/(' . wfUrlProtocols() . ')/',
+			'/((?i)' . wfUrlProtocols() . ')/',
 			array( 'Sanitizer', 'armorLinksCallback' ),
 			$encValue );
 		return $encValue;
@@ -1243,7 +1146,7 @@ class Sanitizer {
 	 * a. named char refs can only be &lt; &gt; &amp; &quot;, others are
 	 *   numericized (this way we're well-formed even without a DTD)
 	 * b. any numeric char refs must be legal chars, not invalid or forbidden
-	 * c. use &#x, not &#X
+	 * c. use lower cased "&#x", not "&#X"
 	 * d. fix or reject non-valid attributes
 	 *
 	 * @param $text String
@@ -1411,7 +1314,7 @@ class Sanitizer {
 	/**
 	 * If the named entity is defined in the HTML 4.0/XHTML 1.0 DTD,
 	 * return the UTF-8 encoding of that character. Otherwise, returns
-	 * pseudo-entity source (eg &foo;)
+	 * pseudo-entity source (eg "&foo;")
 	 *
 	 * @param $name String
 	 * @return String
@@ -1611,6 +1514,10 @@ class Sanitizer {
 			# 'title' may not be 100% valid here; it's XHTML
 			# http://www.w3.org/TR/REC-MathML/
 			'math'       => array( 'class', 'style', 'id', 'title' ),
+
+			# HTML 5 section 4.6
+			'bdi' => $common,
+
 			);
 		return $whitelist;
 	}

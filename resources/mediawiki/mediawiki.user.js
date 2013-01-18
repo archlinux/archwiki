@@ -2,16 +2,48 @@
  * Implementation for mediaWiki.user
  */
 
-(function( $ ) {
+( function ( mw, $ ) {
 
 	/**
 	 * User object
 	 */
 	function User( options, tokens ) {
+		var user, callbacks;
 
 		/* Private Members */
 
-		var that = this;
+		user = this;
+		callbacks = {};
+
+		/**
+		 * Gets the current user's groups or rights.
+		 * @param {String} info: One of 'groups' or 'rights'.
+		 * @param {Function} callback
+		 */
+		function getUserInfo( info, callback ) {
+			var api;
+			if ( callbacks[info] ) {
+				callbacks[info].add( callback );
+				return;
+			}
+			callbacks.rights = $.Callbacks('once memory');
+			callbacks.groups = $.Callbacks('once memory');
+			callbacks[info].add( callback );
+			api = new mw.Api();
+			api.get( {
+				action: 'query',
+				meta: 'userinfo',
+				uiprop: 'rights|groups'
+			} ).always( function ( data ) {
+				var rights, groups;
+				if ( data.query && data.query.userinfo ) {
+					rights = data.query.userinfo.rights;
+					groups = data.query.userinfo.groups;
+				}
+				callbacks.rights.fire( rights || [] );
+				callbacks.groups.fire( groups || [] );
+			} );
+		}
 
 		/* Public Members */
 
@@ -25,14 +57,15 @@
 		 * Generates a random user session ID (32 alpha-numeric characters).
 		 *
 		 * This information would potentially be stored in a cookie to identify a user during a
-		 * session or series of sessions. It's uniqueness should not be depended on.
+		 * session or series of sessions. Its uniqueness should not be depended on.
 		 *
 		 * @return String: Random set of 32 alpha-numeric characters
 		 */
 		function generateId() {
-			var id = '';
-			var seed = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-			for ( var i = 0, r; i < 32; i++ ) {
+			var i, r,
+				id = '',
+				seed = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+			for ( i = 0; i < 32; i++ ) {
 				r = Math.floor( Math.random() * seed.length );
 				id += seed.substring( r, r + 1 );
 			}
@@ -44,8 +77,15 @@
 		 *
 		 * @return Mixed: User name string or null if users is anonymous
 		 */
-		this.name = function() {
+		this.getName = function () {
 			return mw.config.get( 'wgUserName' );
+		};
+
+		/**
+		 * @deprecated since 1.20 use mw.user.getName() instead
+		 */
+		this.name = function () {
+			return this.getName();
 		};
 
 		/**
@@ -53,8 +93,15 @@
 		 *
 		 * @return Boolean
 		 */
-		this.anonymous = function() {
-			return that.name() ? false : true;
+		this.isAnon = function () {
+			return user.getName() === null;
+		};
+
+		/**
+		 * @deprecated since 1.20 use mw.user.isAnon() instead
+		 */
+		this.anonymous = function () {
+			return user.isAnon();
 		};
 
 		/**
@@ -67,7 +114,7 @@
 		 */
 		this.sessionId = function () {
 			var sessionId = $.cookie( 'mediaWiki.user.sessionId' );
-			if ( typeof sessionId == 'undefined' || sessionId === null ) {
+			if ( typeof sessionId === 'undefined' || sessionId === null ) {
 				sessionId = generateId();
 				$.cookie( 'mediaWiki.user.sessionId', sessionId, { 'expires': null, 'path': '/' } );
 			}
@@ -84,16 +131,20 @@
 		 * @return String: User name or random session ID
 		 */
 		this.id = function() {
-			var name = that.name();
+			var id,
+				name = user.getName();
 			if ( name ) {
 				return name;
 			}
-			var id = $.cookie( 'mediaWiki.user.id' );
-			if ( typeof id == 'undefined' || id === null ) {
+			id = $.cookie( 'mediaWiki.user.id' );
+			if ( typeof id === 'undefined' || id === null ) {
 				id = generateId();
 			}
 			// Set cookie if not set, or renew it if already set
-			$.cookie( 'mediaWiki.user.id', id, { 'expires': 365, 'path': '/' } );
+			$.cookie( 'mediaWiki.user.id', id, {
+				expires: 365,
+				path: '/'
+			} );
 			return id;
 		};
 
@@ -120,38 +171,41 @@
 		 *         'expires': 7
 		 *     } );
 		 */
-		this.bucket = function( key, options ) {
+		this.bucket = function ( key, options ) {
+			var cookie, parts, version, bucket,
+				range, k, rand, total;
+
 			options = $.extend( {
-				'buckets': {},
-				'version': 0,
-				'tracked': false,
-				'expires': 30
+				buckets: {},
+				version: 0,
+				tracked: false,
+				expires: 30
 			}, options || {} );
-			var cookie = $.cookie( 'mediaWiki.user.bucket:' + key );
-			var bucket = null;
-			var version = 0;
+
+			cookie = $.cookie( 'mediaWiki.user.bucket:' + key );
+
 			// Bucket information is stored as 2 integers, together as version:bucket like: "1:2"
 			if ( typeof cookie === 'string' && cookie.length > 2 && cookie.indexOf( ':' ) > 0 ) {
-				var parts = cookie.split( ':' );
-				if ( parts.length > 1 && parts[0] == options.version ) {
+				parts = cookie.split( ':' );
+				if ( parts.length > 1 && Number( parts[0] ) === options.version ) {
 					version = Number( parts[0] );
 					bucket = String( parts[1] );
 				}
 			}
-			if ( bucket === null ) {
+			if ( bucket === undefined ) {
 				if ( !$.isPlainObject( options.buckets ) ) {
 					throw 'Invalid buckets error. Object expected for options.buckets.';
 				}
 				version = Number( options.version );
 				// Find range
-				var	range = 0, k;
+				range = 0;
 				for ( k in options.buckets ) {
 					range += options.buckets[k];
 				}
 				// Select random value within range
-				var rand = Math.random() * range;
+				rand = Math.random() * range;
 				// Determine which bucket the value landed in
-				var total = 0;
+				total = 0;
 				for ( k in options.buckets ) {
 					bucket = k;
 					total += options.buckets[k];
@@ -160,7 +214,7 @@
 					}
 				}
 				if ( options.tracked ) {
-					mw.loader.using( 'jquery.clickTracking', function() {
+					mw.loader.using( 'jquery.clickTracking', function () {
 						$.trackAction(
 							'mediaWiki.user.bucket:' + key + '@' + version + ':' + bucket
 						);
@@ -174,10 +228,24 @@
 			}
 			return bucket;
 		};
+
+		/**
+		 * Gets the current user's groups.
+		 */
+		this.getGroups = function ( callback ) {
+			getUserInfo( 'groups', callback );
+		};
+
+		/**
+		 * Gets the current user's rights.
+		 */
+		this.getRights = function ( callback ) {
+			getUserInfo( 'rights', callback );
+		};
 	}
 
 	// Extend the skeleton mw.user from mediawiki.js
 	// This is kind of ugly but we're stuck with this for b/c reasons
 	mw.user = new User( mw.user.options, mw.user.tokens );
 
-})(jQuery);
+}( mediaWiki, jQuery ) );

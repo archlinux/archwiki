@@ -1,69 +1,29 @@
 /*
  * Footer cleanup for Vector
  */
-jQuery( function ( $ ) {
-	$( '#editpage-copywarn' )
-		.add( '.editOptions' )
-		.wrapAll( '<div id="editpage-bottom"></div>' );
-	$( '#wpSummary' )
-		.data( 'hint',
-			$( '#wpSummaryLabel span small' )
-				.remove()
-				.text()
-				// FIXME - Not a long-term solution. This change should be done in the message itself
-				.replace( /\)|\(/g, '' )
-		)
-		.change( function () {
-			if ( $( this ).val().length === 0 ) {
-				$( this )
-					.addClass( 'inline-hint' )
-					.val( $( this ).data( 'hint' ) );
-			} else {
-				$( this ).removeClass( 'inline-hint' );
-			}
-		} )
-		.focus( function () {
-			if ( $( this ).val() == $( this ).data( 'hint' ) ) {
-				$( this )
-					.removeClass( 'inline-hint' )
-					.val( "" );
-			}
-		})
-		.blur( function () { $( this ).trigger( 'change' ); } )
-		.trigger( 'change' );
-	$( '#wpSummary' )
-		.add( '.editCheckboxes' )
-		.wrapAll( '<div id="editpage-summary-fields"></div>' );
-		
-	$( '#editpage-specialchars' ).remove();
-	
-	// transclusions
-	// FIXME - bad CSS styling here with double class selectors. Should address here. 
-	var transclusionCount = $( '.templatesUsed ul li' ).size();
-	$( '.templatesUsed ul' )
-		.wrap( '<div id="transclusions-list" class="collapsible-list collapsed"></div>' )
-		.parent()
-		.prepend( $( '<label>' )
-			.text( mw.msg( 'vector-footercleanup-transclusion', transclusionCount ) ) 
-		);
-	$( '.mw-templatesUsedExplanation' ).remove();
-	
-	$( '.collapsible-list label' )
-		.click( function () {
-			$( this )
-				.parent()
-				.toggleClass( 'expanded' )
-				.toggleClass( 'collapsed' )
-				.find( 'ul' )
-				.slideToggle( 'fast' );
-			return false;
-		})
-		.trigger( 'click' );
+ ( function ( $ ) {
+	// Wait for onload to remove edit help and "|" after cancel link.
+	window.onload = function() {
+		// Only if advanced editor is found.
+		if ( 'wikiEditor' in $ ) {
+			$( '.editButtons' ).find( '.editHelp' ).remove();
+			// Remove the "|" from after the cancelLink.
+			var $cancelLink = $( '#mw-editform-cancel' );
+			$cancelLink.parent().empty().append( $cancelLink );
+		}
+	};
+    // Waiting until dom ready as the module is loaded in the head.
+    $( document ).ready( function () {
+		// Make "Templates used" a collapsible list.
+		$( '.templatesUsed ul' ).footerCollapsibleList( {
+			name: 'templates-used-list',
+			title: mw.msg( 'vector-footercleanup-templates' )
+		} );
 
-	$( '#wpPreview, #wpDiff, .editHelp, #editpage-specialchars' )
-		.remove();
-
-	$( '#mw-editform-cancel' )
-		.remove()
-		.appendTo( '.editButtons' );
-} );
+		// Make "Hidden categories" a collapsible list.
+		$( '.hiddencats ul' ).footerCollapsibleList( {
+			name: 'hidden-categories-list',
+			title: mw.msg( 'vector-footercleanup-categories' )
+		} );
+    } );
+} ( jQuery ) );

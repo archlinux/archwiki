@@ -1,5 +1,7 @@
 <?php
 /**
+ * PHP port of CSSJanus.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,6 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  */
 
 /**
@@ -122,7 +125,7 @@ class CSSJanus {
 	 * @param $css String: stylesheet to transform
 	 * @param $swapLtrRtlInURL Boolean: If true, swap 'ltr' and 'rtl' in URLs
 	 * @param $swapLeftRightInURL Boolean: If true, swap 'left' and 'right' in URLs
-	 * @return Transformed stylesheet
+	 * @return string Transformed stylesheet
 	 */
 	public static function transform( $css, $swapLtrRtlInURL = false, $swapLeftRightInURL = false ) {
 		// We wrap tokens in ` , not ~ like the original implementation does.
@@ -265,10 +268,17 @@ class CSSJanus {
 	 * @return string
 	 */
 	private static function fixBackgroundPosition( $css ) {
-		$css = preg_replace_callback( self::$patterns['bg_horizontal_percentage'],
+		$replaced = preg_replace_callback( self::$patterns['bg_horizontal_percentage'],
 			array( 'self', 'calculateNewBackgroundPosition' ), $css );
-		$css = preg_replace_callback( self::$patterns['bg_horizontal_percentage_x'],
+		if ( $replaced !== null ) {
+			// Check for null; sometimes preg_replace_callback() returns null here for some weird reason
+			$css = $replaced;
+		}
+		$replaced = preg_replace_callback( self::$patterns['bg_horizontal_percentage_x'],
 			array( 'self', 'calculateNewBackgroundPosition' ), $css );
+		if ( $replaced !== null ) {
+			$css = $replaced;
+		}
 
 		return $css;
 	}

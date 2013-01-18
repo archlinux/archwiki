@@ -1,7 +1,28 @@
 <?php
 /**
- * File for BacklinkCache class
+ * Class for fetching backlink lists, approximate backlink counts and
+ * partitions.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
+ * @author Tim Starling
+ * @copyright © 2009, Tim Starling, Domas Mituzas
+ * @copyright © 2010, Max Sem
+ * @copyright © 2011, Antoine Musso
  */
 
 /**
@@ -18,13 +39,10 @@
  * Introduced by r47317
  *
  * @internal documentation reviewed on 18 Mar 2011 by hashar
- *
- * @author Tim Starling
- * @copyright © 2009, Tim Starling, Domas Mituzas
- * @copyright © 2010, Max Sem
- * @copyright © 2011, Antoine Musso
  */
 class BacklinkCache {
+	/** @var ProcessCacheLRU */
+	protected static $cache;
 
 	/**
 	 * Multi dimensions array representing batches. Keys are:
@@ -65,10 +83,30 @@ class BacklinkCache {
 
 	/**
 	 * Create a new BacklinkCache
-	 * @param Title $title : Title object to create a backlink cache for.
+	 *
+	 * @param Title $title : Title object to create a backlink cache for
 	 */
-	function __construct( $title ) {
+	public function __construct( Title $title ) {
 		$this->title = $title;
+	}
+
+	/**
+	 * Create a new BacklinkCache or reuse any existing one.
+	 * Currently, only one cache instance can exist; callers that
+	 * need multiple backlink cache objects should keep them in scope.
+	 *
+	 * @param Title $title : Title object to get a backlink cache for
+	 * @return BacklinkCache
+	 */
+	public static function get( Title $title ) {
+		if ( !self::$cache ) { // init cache
+			self::$cache = new ProcessCacheLRU( 1 );
+		}
+		$dbKey = $title->getPrefixedDBkey();
+		if ( !self::$cache->has( $dbKey, 'obj' ) ) {
+			self::$cache->set( $dbKey, 'obj', new self( $title ) );
+		}
+		return self::$cache->get( $dbKey, 'obj' );
 	}
 
 	/**
@@ -103,7 +141,7 @@ class BacklinkCache {
 	/**
 	 * Get the slave connection to the database
 	 * When non existing, will initialize the connection.
-	 * @return Database object
+	 * @return DatabaseBase object
 	 */
 	protected function getDB() {
 		if ( !isset( $this->db ) ) {
@@ -179,6 +217,7 @@ class BacklinkCache {
 	/**
 	 * Get the field name prefix for a given table
 	 * @param $table String
+	 * @return null|string
 	 */
 	protected function getPrefix( $table ) {
 		static $prefixes = array(
@@ -206,6 +245,7 @@ class BacklinkCache {
 	 * Get the SQL condition array for selecting backlinks, with a join
 	 * on the page table.
 	 * @param $table String
+	 * @return array|null
 	 */
 	protected function getConditions( $table ) {
 		$prefix = $this->getPrefix( $table );
@@ -285,7 +325,7 @@ class BacklinkCache {
 	 */
 	public function partition( $table, $batchSize ) {
 
-		// 1) try partition cache ... 
+		// 1) try partition cache ...
 
 		if ( isset( $this->partitionCache[$table][$batchSize] ) ) {
 			wfDebug( __METHOD__ . ": got from partition cache\n" );
@@ -340,7 +380,7 @@ class BacklinkCache {
 	 * Partition a DB result with backlinks in it into batches
 	 * @param $res ResultWrapper database result
 	 * @param $batchSize integer
-	 * @return array @see 
+	 * @return array @see
 	 */
 	protected function partitionResult( $res, $batchSize ) {
 		$batches = array();

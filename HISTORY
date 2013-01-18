@@ -63,7 +63,7 @@ This a maintenance and security release of the MediaWiki 1.18 branch.
   for Oracle DB.
 * (bug 33117) prop=revisions allows deleted text to be exposed through cache pollution.
 
-=== MediaWiki 1.18.0 ===
+== MediaWiki 1.18.0 ==
 2011-11-24
 
 This is the first stable release of the MediaWiki 1.18 branch.

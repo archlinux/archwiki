@@ -109,16 +109,17 @@ class UserMailer {
 	/**
 	 * Creates a single string from an associative array
 	 *
-	 * @param $headers Associative Array: keys are header field names,
+	 * @param $headers array Associative Array: keys are header field names,
 	 *                 values are ... values.
 	 * @param $endl String: The end of line character.  Defaults to "\n"
 	 * @return String
 	 */
 	static function arrayToHeaderString( $headers, $endl = "\n" ) {
+		$strings = array();
 		foreach( $headers as $name => $value ) {
-			$string[] = "$name: $value";
+			$strings[] = "$name: $value";
 		}
-		return implode( $endl, $string );
+		return implode( $endl, $strings );
 	}
 
 	/**
@@ -345,6 +346,7 @@ class UserMailer {
 	/**
 	 * Converts a string into quoted-printable format
 	 * @since 1.17
+	 * @return string
 	 */
 	public static function quotedPrintable( $string, $charset = '' ) {
 		# Probably incomplete; see RFC 2045
@@ -434,9 +436,9 @@ class EmailNotification {
 			$res = $dbw->select( array( 'watchlist' ),
 				array( 'wl_user' ),
 				array(
-					'wl_title' => $title->getDBkey(),
-					'wl_namespace' => $title->getNamespace(),
 					'wl_user != ' . intval( $editor->getID() ),
+					'wl_namespace' => $title->getNamespace(),
+					'wl_title' => $title->getDBkey(),
 					'wl_notificationtimestamp IS NULL',
 				), __METHOD__
 			);
@@ -446,17 +448,17 @@ class EmailNotification {
 			if ( $watchers ) {
 				// Update wl_notificationtimestamp for all watching users except
 				// the editor
-				$dbw->begin();
+				$dbw->begin( __METHOD__ );
 				$dbw->update( 'watchlist',
 					array( /* SET */
 						'wl_notificationtimestamp' => $dbw->timestamp( $timestamp )
 					), array( /* WHERE */
-						'wl_title' => $title->getDBkey(),
+						'wl_user' => $watchers,
 						'wl_namespace' => $title->getNamespace(),
-						'wl_user' => $watchers
+						'wl_title' => $title->getDBkey(),
 					), __METHOD__
 				);
-				$dbw->commit();
+				$dbw->commit( __METHOD__ );
 			}
 		}
 
@@ -620,32 +622,37 @@ class EmailNotification {
 		$postTransformKeys = array();
 
 		if ( $this->oldid ) {
-			if ( $wgEnotifImpersonal ) {
-				// For impersonal mail, show a diff link to the last revision.
-				$keys['$NEWPAGE'] = wfMsgForContent( 'enotif_lastdiff',
-					$this->title->getCanonicalUrl( 'diff=next&oldid=' . $this->oldid ) );
-			} else {
-				$keys['$NEWPAGE'] = wfMsgForContent( 'enotif_lastvisited',
-					$this->title->getCanonicalUrl( 'diff=0&oldid=' . $this->oldid ) );
+			// Always show a link to the diff which triggered the mail. See bug 32210.
+			$keys['$NEWPAGE'] = wfMessage( 'enotif_lastdiff',
+				$this->title->getCanonicalUrl( 'diff=next&oldid=' . $this->oldid ) )
+				->inContentLanguage()->text();
+			if ( !$wgEnotifImpersonal ) {
+				// For personal mail, also show a link to the diff of all changes
+				// since last visited.
+				$keys['$NEWPAGE'] .= " \n" . wfMessage( 'enotif_lastvisited',
+					$this->title->getCanonicalUrl( 'diff=0&oldid=' . $this->oldid ) )
+					->inContentLanguage()->text();
 			}
 			$keys['$OLDID']   = $this->oldid;
-			$keys['$CHANGEDORCREATED'] = wfMsgForContent( 'changed' );
+			$keys['$CHANGEDORCREATED'] = wfMessage( 'changed' )->inContentLanguage()->text();
 		} else {
-			$keys['$NEWPAGE'] = wfMsgForContent( 'enotif_newpagetext' );
+			$keys['$NEWPAGE'] = wfMessage( 'enotif_newpagetext' )->inContentLanguage()->text();
 			# clear $OLDID placeholder in the message template
 			$keys['$OLDID']   = '';
-			$keys['$CHANGEDORCREATED'] = wfMsgForContent( 'created' );
+			$keys['$CHANGEDORCREATED'] = wfMessage( 'created' )->inContentLanguage()->text();
 		}
 
 		$keys['$PAGETITLE'] = $this->title->getPrefixedText();
 		$keys['$PAGETITLE_URL'] = $this->title->getCanonicalUrl();
-		$keys['$PAGEMINOREDIT'] = $this->minorEdit ? wfMsgForContent( 'minoredit' ) : '';
+		$keys['$PAGEMINOREDIT'] = $this->minorEdit ?
+			wfMessage( 'minoredit' )->inContentLanguage()->text() : '';
 		$keys['$UNWATCHURL'] = $this->title->getCanonicalUrl( 'action=unwatch' );
 
 		if ( $this->editor->isAnon() ) {
 			# real anon (user:xxx.xxx.xxx.xxx)
-			$keys['$PAGEEDITOR'] = wfMsgForContent( 'enotif_anon_editor', $this->editor->getName() );
-			$keys['$PAGEEDITOR_EMAIL'] = wfMsgForContent( 'noemailtitle' );
+			$keys['$PAGEEDITOR'] = wfMessage( 'enotif_anon_editor', $this->editor->getName() )
+				->inContentLanguage()->text();
+			$keys['$PAGEEDITOR_EMAIL'] = wfMessage( 'noemailtitle' )->inContentLanguage()->text();
 		} else {
 			$keys['$PAGEEDITOR'] = $wgEnotifUseRealName ? $this->editor->getRealName() : $this->editor->getName();
 			$emailPage = SpecialPage::getSafeTitleFor( 'Emailuser', $this->editor->getName() );
@@ -659,12 +666,12 @@ class EmailNotification {
 
 		# Now build message's subject and body
 
-		$subject = wfMsgExt( 'enotif_subject', 'content' );
+		$subject = wfMessage( 'enotif_subject' )->inContentLanguage()->plain();
 		$subject = strtr( $subject, $keys );
 		$subject = MessageCache::singleton()->transform( $subject, false, null, $this->title );
 		$this->subject = strtr( $subject, $postTransformKeys );
 
-		$body = wfMsgExt( 'enotif_body', 'content' );
+		$body = wfMessage( 'enotif_body' )->inContentLanguage()->plain();
 		$body = strtr( $body, $keys );
 		$body = MessageCache::singleton()->transform( $body, false, null, $this->title );
 		$this->body = wordwrap( strtr( $body, $postTransformKeys ), 72 );
@@ -754,6 +761,7 @@ class EmailNotification {
 	/**
 	 * Same as sendPersonalised but does impersonal mail suitable for bulk
 	 * mailing.  Takes an array of MailAddress objects.
+	 * @return Status
 	 */
 	function sendImpersonal( $addresses ) {
 		global $wgContLang;
@@ -765,7 +773,7 @@ class EmailNotification {
 				array( '$WATCHINGUSERNAME',
 					'$PAGEEDITDATE',
 					'$PAGEEDITTIME' ),
-				array( wfMsgForContent( 'enotif_impersonal_salutation' ),
+				array( wfMessage( 'enotif_impersonal_salutation' )->inContentLanguage()->text(),
 					$wgContLang->date( $this->timestamp, false, false ),
 					$wgContLang->time( $this->timestamp, false, false ) ),
 				$this->body );

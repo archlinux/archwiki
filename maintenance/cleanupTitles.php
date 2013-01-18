@@ -1,6 +1,6 @@
 <?php
 /**
- * Script to clean up broken, unparseable titles.
+ * Clean up broken, unparseable titles.
  *
  * Usage: php cleanupTitles.php [--fix]
  * Options:
@@ -29,8 +29,13 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/cleanupTable.inc' );
+require_once( __DIR__ . '/cleanupTable.inc' );
 
+/**
+ * Maintenance script to clean up broken, unparseable titles.
+ *
+ * @ingroup Maintenance
+ */
 class TitleCleanup extends TableCleanup {
 	public function __construct() {
 		parent::__construct();

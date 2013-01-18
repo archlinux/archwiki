@@ -6,15 +6,18 @@ class HtmlTest extends MediaWikiTestCase {
 	private static $oldContLang;
 	private static $oldLanguageCode;
 	private static $oldNamespaces;
+	private static $oldHTML5;
 
 	public function setUp() {
-		global $wgLang, $wgContLang, $wgLanguageCode;
-		
+		global $wgLang, $wgContLang, $wgLanguageCode, $wgHTML5;
+
+		// Save globals
 		self::$oldLang = $wgLang;
 		self::$oldContLang = $wgContLang;
 		self::$oldNamespaces = $wgContLang->getNamespaces();
 		self::$oldLanguageCode = $wgLanguageCode;
-		
+		self::$oldHTML5 = $wgHTML5;
+
 		$wgLanguageCode = 'en';
 		$wgContLang = $wgLang = Language::factory( $wgLanguageCode );
 
@@ -36,18 +39,41 @@ class HtmlTest extends MediaWikiTestCase {
 			9  => 'MediaWiki_talk',
 			10  => 'Template',
 			11  => 'Template_talk',
+			14  => 'Category',
+			15  => 'Category_talk',
 			100  => 'Custom',
 			101  => 'Custom_talk',
 		) );
 	}
-	
-	public function tearDown() {
-		global $wgLang, $wgContLang, $wgLanguageCode;
 
+	public function tearDown() {
+		global $wgLang, $wgContLang, $wgLanguageCode, $wgHTML5;
+
+		// Restore globals
 		$wgContLang->setNamespaces( self::$oldNamespaces );
 		$wgLang = self::$oldLang;
 		$wgContLang = self::$oldContLang;
 		$wgLanguageCode = self::$oldLanguageCode;
+		$wgHTML5 = self::$oldHTML5;
+	}
+
+	/**
+	 * Wrapper to easily set $wgHTML5 = true.
+	 * Original value will be restored after test completion.
+	 * @todo Move to MediaWikiTestCase
+	 */
+	public function enableHTML5() {
+		global $wgHTML5;
+		$wgHTML5 = true;
+	}
+	/**
+	 * Wrapper to easily set $wgHTML5 = false
+	 * Original value will be restored after test completion.
+	 * @todo Move to MediaWikiTestCase
+	 */
+	public function disableHTML5() {
+		global $wgHTML5;
+		$wgHTML5 = false;
 	}
 
 	public function testExpandAttributesSkipsNullAndFalse() {
@@ -213,7 +239,7 @@ class HtmlTest extends MediaWikiTestCase {
 
 	function testNamespaceSelector() {
 		$this->assertEquals(
-			'<select id="namespace" name="namespace">' . "\n" .
+			'<select>' . "\n" .
 '<option value="0">(Main)</option>' . "\n" .
 '<option value="1">Talk</option>' . "\n" .
 '<option value="2">User</option>' . "\n" .
@@ -226,12 +252,15 @@ class HtmlTest extends MediaWikiTestCase {
 '<option value="9">MediaWiki talk</option>' . "\n" .
 '<option value="10">Template</option>' . "\n" .
 '<option value="11">Template talk</option>' . "\n" .
+'<option value="14">Category</option>' . "\n" .
+'<option value="15">Category talk</option>' . "\n" .
 '<option value="100">Custom</option>' . "\n" .
 '<option value="101">Custom talk</option>' . "\n" .
 '</select>',
 			Html::namespaceSelector(),
 			'Basic namespace selector without custom options'
 		);
+
 		$this->assertEquals(
 			'<label for="mw-test-namespace">Select a namespace:</label>&#160;' .
 '<select id="mw-test-namespace" name="wpNamespace">' . "\n" .
@@ -248,6 +277,8 @@ class HtmlTest extends MediaWikiTestCase {
 '<option value="9">MediaWiki talk</option>' . "\n" .
 '<option value="10">Template</option>' . "\n" .
 '<option value="11">Template talk</option>' . "\n" .
+'<option value="14">Category</option>' . "\n" .
+'<option value="15">Category talk</option>' . "\n" .
 '<option value="100">Custom</option>' . "\n" .
 '<option value="101">Custom talk</option>' . "\n" .
 '</select>',
@@ -257,77 +288,281 @@ class HtmlTest extends MediaWikiTestCase {
 			),
 			'Basic namespace selector with custom values'
 		);
+
+		$this->assertEquals(
+			'<label>Select a namespace:</label>&#160;' .
+'<select>' . "\n" .
+'<option value="0">(Main)</option>' . "\n" .
+'<option value="1">Talk</option>' . "\n" .
+'<option value="2">User</option>' . "\n" .
+'<option value="3">User talk</option>' . "\n" .
+'<option value="4">MyWiki</option>' . "\n" .
+'<option value="5">MyWiki Talk</option>' . "\n" .
+'<option value="6">File</option>' . "\n" .
+'<option value="7">File talk</option>' . "\n" .
+'<option value="8">MediaWiki</option>' . "\n" .
+'<option value="9">MediaWiki talk</option>' . "\n" .
+'<option value="10">Template</option>' . "\n" .
+'<option value="11">Template talk</option>' . "\n" .
+'<option value="14">Category</option>' . "\n" .
+'<option value="15">Category talk</option>' . "\n" .
+'<option value="100">Custom</option>' . "\n" .
+'<option value="101">Custom talk</option>' . "\n" .
+'</select>',
+			Html::namespaceSelector(
+				array( 'label' => 'Select a namespace:' )
+			),
+			'Basic namespace selector with a custom label but no id attribtue for the <select>'
+		);
 	}
 
-	function testNamespaceSelectorIdAndNameDefaultsAttributes() {
-
-		$this->assertNsSelectorIdAndName(
-			'namespace', 'namespace',
-			Html::namespaceSelector( array(), array(
-				# neither 'id' nor 'name' key given
-			)),
-			"Neither 'id' nor 'name' key given"
+	function testCanFilterOutNamespaces() {
+		$this->assertEquals(
+'<select>' . "\n" .
+'<option value="2">User</option>' . "\n" .
+'<option value="4">MyWiki</option>' . "\n" .
+'<option value="5">MyWiki Talk</option>' . "\n" .
+'<option value="6">File</option>' . "\n" .
+'<option value="7">File talk</option>' . "\n" .
+'<option value="8">MediaWiki</option>' . "\n" .
+'<option value="9">MediaWiki talk</option>' . "\n" .
+'<option value="10">Template</option>' . "\n" .
+'<option value="11">Template talk</option>' . "\n" .
+'<option value="14">Category</option>' . "\n" .
+'<option value="15">Category talk</option>' . "\n" .
+'</select>',
+			Html::namespaceSelector(
+				array( 'exclude' => array( 0, 1, 3, 100, 101 ) )
+			),
+			'Namespace selector namespace filtering.'
 		);
+	}
 
-		$this->assertNsSelectorIdAndName(
-			'namespace', 'select_name',
-			Html::namespaceSelector( array(), array(
-				'name' => 'select_name',
-				# no 'id' key given
-			)),
-			"No 'id' key given, 'name' given"
-		);
-
-		$this->assertNsSelectorIdAndName(
-			'select_id', 'namespace',
-			Html::namespaceSelector( array(), array(
-				'id' => 'select_id',
-				# no 'name' key given
-			)),
-			"'id' given, no 'name' key given"
-		);
-
-		$this->assertNsSelectorIdAndName(
-			'select_id', 'select_name',
-			Html::namespaceSelector( array(), array(
-				'id'   => 'select_id',
-				'name' => 'select_name',
-			)),
-			"Both 'id' and 'name' given"
+	function testCanDisableANamespaces() {
+		$this->assertEquals(
+'<select>' . "\n" .
+'<option disabled="" value="0">(Main)</option>' . "\n" .
+'<option disabled="" value="1">Talk</option>' . "\n" .
+'<option disabled="" value="2">User</option>' . "\n" .
+'<option disabled="" value="3">User talk</option>' . "\n" .
+'<option disabled="" value="4">MyWiki</option>' . "\n" .
+'<option value="5">MyWiki Talk</option>' . "\n" .
+'<option value="6">File</option>' . "\n" .
+'<option value="7">File talk</option>' . "\n" .
+'<option value="8">MediaWiki</option>' . "\n" .
+'<option value="9">MediaWiki talk</option>' . "\n" .
+'<option value="10">Template</option>' . "\n" .
+'<option value="11">Template talk</option>' . "\n" .
+'<option value="14">Category</option>' . "\n" .
+'<option value="15">Category talk</option>' . "\n" .
+'<option value="100">Custom</option>' . "\n" .
+'<option value="101">Custom talk</option>' . "\n" .
+'</select>',
+			Html::namespaceSelector( array(
+				'disable' => array( 0, 1, 2, 3, 4 )
+			) ),
+			'Namespace selector namespace disabling'
 		);
 	}
 
 	/**
-	 * Helper to verify <select> attributes generated by Html::namespaceSelector()
-	 * This helper expect the Html method to use 'namespace' as a default value for
-	 * both 'id' and 'name' attributes.
-	 *
-	 * @param String $expectedId <select> id attribute value
-	 * @param String $expectedName <select> name attribute value
-	 * @param String $html Output of a call to Html::namespaceSelector()
-	 * @param String $msg Optional message (default: '')
-	*/
-	function assertNsSelectorIdAndName( $expectedId, $expectedName, $html, $msg = '' ) {
-		$actualId = 'namespace';
-		if( 1 === preg_match( '/id="(.+?)"/', $html, $m ) ) {
-			$actualId = $m[1];
-		}
-
-		$actualName = 'namespace';
-		if( 1 === preg_match( '/name="(.+?)"/', $html, $m ) ) {
-			$actualName = $m[1];
-		}
+	 * @dataProvider providesHtml5InputTypes
+	 */
+	function testHtmlElementAcceptsNewHtml5TypesInHtml5Mode( $HTML5InputType ) {
+		$this->enableHTML5();
 		$this->assertEquals(
-			array( #expected
-				'id'   => $expectedId,
-				'name' => $expectedName,
-			),
-			array( #actual
-				'id'   => $actualId,
-				'name' => $actualName,
-			),
-			'Html::namespaceSelector() got wrong id and/or name attribute(s). ' . $msg
+			'<input type="' . $HTML5InputType . '" />',
+			HTML::element( 'input', array( 'type' => $HTML5InputType ) ),
+			'In HTML5, HTML::element() should accept type="' . $HTML5InputType . '"'
 		);
+	}
+
+	/**
+	 * List of input element types values introduced by HTML5
+	 * Full list at http://www.w3.org/TR/html-markup/input.html
+	 */
+	function providesHtml5InputTypes() {
+		$types = array(
+			'datetime',
+			'datetime-local',
+			'date',
+			'month',
+			'time',
+			'week',
+			'number',
+			'range',
+			'email',
+			'url',
+			'search',
+			'tel',
+			'color',
+		);
+		$cases = array();
+		foreach( $types as $type ) {
+			$cases[] = array( $type );
+		}
+		return $cases;
+	}
+
+	/**
+	 * Test out Html::element drops default value
+	 * @cover Html::dropDefaults
+	 * @dataProvider provideElementsWithAttributesHavingDefaultValues
+	 */
+	function testDropDefaults( $expected, $element, $message = '' ) {
+		$this->enableHTML5();
+		$this->assertEquals( $expected, $element, $message );
+	}
+
+	function provideElementsWithAttributesHavingDefaultValues() {
+		# Use cases in a concise format:
+		# <expected>, <element name>, <array of attributes> [, <message>]
+		# Will be mapped to Html::element()
+		$cases = array();
+
+		### Generic cases, match $attribDefault static array
+		$cases[] = array( '<area />',
+			'area', array( 'shape' => 'rect' )
+		);
+
+		$cases[] = array( '<button></button>',
+			'button', array( 'formaction' => 'GET' )
+		);
+		$cases[] = array( '<button></button>',
+			'button', array( 'formenctype' => 'application/x-www-form-urlencoded' )
+		);
+		$cases[] = array( '<button></button>',
+			'button', array( 'type' => 'submit' )
+		);
+
+		$cases[] = array( '<canvas></canvas>',
+			'canvas', array( 'height' => '150' )
+		);
+		$cases[] = array( '<canvas></canvas>',
+			'canvas', array( 'width' => '300' )
+		);
+		# Also check with numeric values
+		$cases[] = array( '<canvas></canvas>',
+			'canvas', array( 'height' => 150 )
+		);
+		$cases[] = array( '<canvas></canvas>',
+			'canvas', array( 'width' => 300 )
+		);
+
+		$cases[] = array( '<command />',
+			'command', array( 'type' => 'command' )
+		);
+
+		$cases[] = array( '<form></form>',
+			'form', array( 'action' => 'GET' )
+		);
+		$cases[] = array( '<form></form>',
+			'form', array( 'autocomplete' => 'on' )
+		);
+		$cases[] = array( '<form></form>',
+			'form', array( 'enctype' => 'application/x-www-form-urlencoded' )
+		);
+
+		$cases[] = array( '<input />',
+			'input', array( 'formaction' => 'GET' )
+		);
+		$cases[] = array( '<input />',
+			'input', array( 'type' => 'text' )
+		);
+
+		$cases[] = array( '<keygen />',
+			'keygen', array( 'keytype' => 'rsa' )
+		);
+
+		$cases[] = array( '<link />',
+			'link', array( 'media' => 'all' )
+		);
+
+		$cases[] = array( '<menu></menu>',
+			'menu', array( 'type' => 'list' )
+		);
+
+		$cases[] = array( '<script></script>',
+			'script', array( 'type' => 'text/javascript' )
+		);
+
+		$cases[] = array( '<style></style>',
+			'style', array( 'media' => 'all' )
+		);
+		$cases[] = array( '<style></style>',
+			'style', array( 'type' => 'text/css' )
+		);
+
+		$cases[] = array( '<textarea></textarea>',
+			'textarea', array( 'wrap' => 'soft' )
+		);
+
+		### SPECIFIC CASES
+
+		# <link type="text/css" />
+		$cases[] = array( '<link />',
+			'link', array( 'type' => 'text/css' )
+		);
+
+		# <input /> specific handling
+		$cases[] = array( '<input type="checkbox" />',
+			'input', array( 'type' => 'checkbox', 'value' => 'on' ),
+			'Default value "on" is stripped of checkboxes',
+		);
+		$cases[] = array( '<input type="radio" />',
+			'input', array( 'type' => 'radio', 'value' => 'on' ),
+			'Default value "on" is stripped of radio buttons',
+		);
+		$cases[] = array( '<input type="submit" value="Submit" />',
+			'input', array( 'type' => 'submit', 'value' => 'Submit' ),
+			'Default value "Submit" is kept on submit buttons (for possible l10n issues)',
+		);
+		$cases[] = array( '<input type="color" />',
+			'input', array( 'type' => 'color', 'value' => '' ),
+		);
+		$cases[] = array( '<input type="range" />',
+			'input', array( 'type' => 'range', 'value' => '' ),
+		);
+
+		# <select /> specifc handling
+		$cases[] = array( '<select multiple=""></select>',
+			'select', array( 'size' => '4', 'multiple' => true ),
+		);
+		# .. with numeric value
+		$cases[] = array( '<select multiple=""></select>',
+			'select', array( 'size' => 4, 'multiple' => true ),
+		);
+		$cases[] = array( '<select></select>',
+			'select', array( 'size' => '1', 'multiple' => false ),
+		);
+		# .. with numeric value
+		$cases[] = array( '<select></select>',
+			'select', array( 'size' => 1, 'multiple' => false ),
+		);
+
+		# Passing an array as value
+		$cases[] = array( '<a class="css-class-one css-class-two"></a>',
+			'a', array( 'class' => array( 'css-class-one', 'css-class-two' ) ),
+			"dropDefaults accepts values given as an array"
+		);
+
+		# FIXME: doDropDefault should remove defaults given in an array
+		# Expected should be '<a></a>'
+		$cases[] = array( '<a class=""></a>',
+			'a', array( 'class' => array( '', '' ) ),
+			"dropDefaults accepts values given as an array"
+		);
+
+
+		# Craft the Html elements
+		$ret = array();
+		foreach( $cases as $case ) {
+			$ret[] = array(
+				$case[0],
+				Html::element( $case[1], $case[2] )
+			);
+		}
+		return $ret;
 	}
 
 }

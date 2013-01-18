@@ -2,104 +2,75 @@
  * Footer cleanup
  */
 
-#editpage-bottom {
-	background-color: #F3F3F3;
+#wpTextbox1 {
+	margin: 0;
+	display: block;
+}
+
+.editOptions {
+	background-color: #F0F0F0;
 	border: 1px solid silver;
 	border-top: none;
-	padding: 20px 170px 20px 170px;
+	padding: 1em 1em 1.5em 1em;
 	margin-right: -2px;
-}
-
-#editpage-bottom input.inline-hint {
-	color: #999999;
-	font-style: italic;
+	margin-bottom: 2em;
 }
 
 .collapsible-list {
-	border-top: 1px solid silver;
-	border-bottom: 1px solid silver;
+	display: inline;
+	cursor: pointer;
+	min-width: 400px;
 }
-
-.collapsible-list {
-	border-top: 1px solid silver;
-	border-bottom: 1px solid silver;
-	padding: 3px 2px;
-}
-
-.collapsible-list ul {
-	display: block;
-	padding: 0 0 0 14px;
-}
-
-.collapsible-list.collapsed label {
-	/* @embed */
-	background: url(../images/vector/collapsibleNav/arrow-down.png) 0 50% no-repeat;
-	padding: 4px 0 3px 1.5em;
-	margin-bottom: 0;
-}
-
-.collapsible-list.expanded label {
-	/* @embed */
-	background: url(../images/vector/collapsibleNav/arrow-right.png) 0 50% no-repeat;
-	padding: 4px 0 3px 1.5em;
-	margin-bottom: 0;
-}
-
-#editpage-bottom .editOptions {
-	width: 100%;
-}
-
-#editpage-bottom #wpSummaryLabel,
-#editpage-bottom #editpage-summary-fields,
-#editpage-bottom .editButtons {
+.collapsible-list > span {
 	float: left;
-}
-
-#editpage-bottom #wpSummaryLabel {
-	width: 150px;
-	margin-left: -150px;
-	position: relative;
-}
-
-#editpage-bottom #editpage-summary-fields {
-	width: 100%;
-	margin-right: -100%;
-}
-
-#editpage-bottom #editpage-summary-fields input.mw-summary {
-	width: 95%;
-}
-
-#editpage-bottom .editButtons {
-	width: 150px;
-	margin-right: -150px;
-	float: right;
-	position: relative;
-}
-
-#editpage-bottom #editpage-copywarn {
-	margin-left: -150px;
-	margin-right: 10px;
-}
-
-/* Why don't we use self clearing floats anywhere? */
-
-#editpage-bottom .editOptions:after {
-	content: ".";
+	/* @embed */
+	background: url(./images/open.png);
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
 	display: block;
-	height: 0;
-	clear: both;
-	visibility: hidden;
+	height: 16px;
+	width: 16px;
 }
 
-#editpage-bottom .editOptions {
+.collapsible-list > span.collapsed {
+	/* @embed */
+	background: url(./images/closed-ltr.png);
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+}
+
+.hiddencats > ul, .templatesUsed > ul {
+	margin: 1em 2.5em;
+}
+
+.editCheckboxes {
+	margin-bottom: 1em;
+}
+
+.editCheckboxes input[type='checkbox']:first-child {
+	margin-left: 0;
+}
+
+.cancelLink {
+	margin: 0 0.5em;
+}
+
+.cancelLinkPipeSpace {
 	display: inline-block;
+	width: 0.5em;
+	height: 0.5em;
 }
 
-* html #editpage-bottom .editOptions {
-	height: 1%;
+#editpage-copywarn {
+	font-size: 0.9em;
 }
 
-#editpage-bottom .editOptions {
+input#wpSummary {
 	display: block;
+	margin-top: 0;
+	margin-bottom: 0.5em;
+}
+
+.editButtons > input[type='submit']:first-child {
+	margin-left: .1em;
 }

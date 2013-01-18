@@ -550,6 +550,7 @@ $3
 When that has been done, you can '''[$2 enter your wiki]'''.",
 	'config-download-localsettings' => 'Download LocalSettings.php',
 	'config-help' => 'help',
+	'config-nofile'     => 'File "$1" could not be found. Has it been deleted?',
 	'mainpagetext'      => "'''MediaWiki has been successfully installed.'''",
 	'mainpagedocfooter' => "Consult the [//meta.wikimedia.org/wiki/Help:Contents User's Guide] for information on using the wiki software.
 
@@ -4484,7 +4485,7 @@ Esta no es la contraseña para la cuenta de MediaWiki; esta es la contraseña pa
 	'config-db-wiki-help' => 'Introduce el nombre de usuario y la contraseña que serán usados para acceder a la base de datos durante la operación normal del wiki.
 Si esta cuenta no existe y la cuenta de instalación tiene suficientes privilegios, se creará esta cuenta de usuario con los privilegios mínimos necesarios para la operación normal del wiki.',
 	'config-db-prefix' => 'Prefijo para las tablas de la base de datos:',
-	'config-db-prefix-help' => 'Si necesita compartir una base de datos entre múltiples wikis, o entre MediaWiki y otra aplicación web, puede optar por agregar un prefijo a todos los nombres de tabla para evitar conflictos.
+	'config-db-prefix-help' => 'Si necesita compartir una base de datos entre múltiples wikis, o entre MediaWiki y otra aplicación web, puede optar por agregar un prefijo a todos los nombres de tabla para evitar conflictos. 
 No utilice espacios.
 
 Normalmente se deja este campo vacío.',
@@ -14228,7 +14229,7 @@ Jeśli korzystasz ze współdzielonego hostingu, dostawca usługi hostingowej mo
 
 Możesz utworzyć konto użytkownika bazy danych podczas instalacji MediaWiki. Wówczas należy podać nazwę i hasło użytkownika z rolą SYSDBA w celu użycia go przez instalator do utworzenia nowe konta użytkownika, z którego korzystać będzie MediaWiki.
 
-Możesz również skorzystać z konta użytkownika bazy danych utworzonego bezpośrednio w Oracle i wówczas wystarczy podać tylko nazwę i hasło tego użytkownika. Konto z rolą SYSDBA nie będzie potrzebne, jednak konto użytkownika powinno mieć uprawnienia do utworzenia obiektów w schemacie bazy danych. Możesz też podać dwa konta - konto dla instalatora, z pomocą którego zostaną obiekty w schemacie bazy danych i drugie konto, z którego będzie MediaWiki korzystać będzie do pracy.
+Możesz również skorzystać z konta użytkownika bazy danych utworzonego bezpośrednio w Oracle i wówczas wystarczy podać tylko nazwę i hasło tego użytkownika. Konto z rolą SYSDBA nie będzie potrzebne, jednak konto użytkownika powinno mieć uprawnienia do utworzenia obiektów w schemacie bazy danych. Możesz też podać dwa konta - konto dla instalatora, z pomocą którego zostaną obiekty w schemacie bazy danych i drugie konto, z którego będzie MediaWiki korzystać będzie do pracy. 
 
 W podkatalogu "maintenance/oracle" znajduje się skrypt do tworzenia konta użytkownika. Korzystanie z konta użytkownika z ograniczonymi uprawnieniami spowoduje wyłączenie funkcji związanych z aktualizacją oprogramowania MediaWiki.',
 	'config-db-install-account' => 'Konto użytkownika dla instalatora',
@@ -17765,7 +17766,7 @@ Ang mas masasalimuot na mga kaayusan ng mga karapatan ng tagagamit ay makukuha p
 	'config-license-gfdl' => 'Lisensiyang 1.3 ng Malayang Dokumentasyon ng GNU o mas lalong huli',
 	'config-license-pd' => 'Nasasakupan ng Madla',
 	'config-license-cc-choose' => 'Pumili ng isang pasadyang Lisensiya ng Malikhaing mga Pangkaraniwan',
-	'config-license-help' => "Maraming mga pangmadlang wiki ang naglalagay ng lahat ng mga ambag sa ilalim ng [http://freedomdefined.org/Definition lisensiyang malaya].
+	'config-license-help' => "Maraming mga pangmadlang wiki ang naglalagay ng lahat ng mga ambag sa ilalim ng [http://freedomdefined.org/Definition lisensiyang malaya]. 
 Nakakatulong ito sa paglikha ng isang diwa ng pagmamay-ari ng pamayanan at nakapanghihikayat ng ambag na pangmahabang panahon.
 Sa pangkalahatan, hindi kailangan ang isang wiking pribado o pangsamahan.
 

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Resource loader module for user preference customizations.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -69,13 +71,6 @@ class ResourceLoaderUserCSSPrefsModule extends ResourceLoaderModule {
 				$rules[] = 'a:lang(ar), a:lang(ckb), a:lang(fa),a:lang(kk-arab), ' .
 				'a:lang(mzn), a:lang(ps), a:lang(ur) { text-decoration: none; }';
 			}
-			if ( $options['highlightbroken'] ) {
-				$rules[] = "a.new, #quickbar a.new { color: #ba0000; }\n";
-			} else {
-				$rules[] = "a.new, #quickbar a.new, a.stub, #quickbar a.stub { color: inherit; }";
-				$rules[] = "a.new:after, #quickbar a.new:after { content: '?'; color: #ba0000; }";
-				$rules[] = "a.stub:after, #quickbar a.stub:after { content: '!'; color: #772233; }";
-			}
 			if ( $options['justify'] ) {
 				$rules[] = "#article, #bodyContent, #mw_content { text-align: justify; }\n";
 			}
@@ -86,7 +81,10 @@ class ResourceLoaderUserCSSPrefsModule extends ResourceLoaderModule {
 				$rules[] = ".editsection { display: none; }\n";
 			}
 			if ( $options['editfont'] !== 'default' ) {
-				$rules[] = "textarea { font-family: {$options['editfont']}; }\n";
+				// Double-check that $options['editfont'] consists of safe characters only
+				if ( preg_match( '/^[a-zA-Z0-9_, -]+$/', $options['editfont'] ) ) {
+					$rules[] = "textarea { font-family: {$options['editfont']}; }\n";
+				}
 			}
 			$style = implode( "\n", $rules );
 			if ( $this->getFlip( $context ) ) {

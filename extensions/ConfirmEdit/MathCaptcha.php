@@ -15,7 +15,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	exit;
 }
 
-require_once dirname( __FILE__ ) . '/ConfirmEdit.php';
+$dir = __DIR__;
+require_once $dir . '/ConfirmEdit.php';
 $wgCaptchaClass = 'MathCaptcha';
 
-$wgAutoloadClasses['MathCaptcha'] = dirname( __FILE__ ) . '/MathCaptcha.class.php';
+$wgAutoloadClasses['MathCaptcha'] = $dir . '/MathCaptcha.class.php';

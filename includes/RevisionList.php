@@ -1,5 +1,26 @@
 <?php
 /**
+ * Holders of revision list for a single page
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
+
+/**
  * List for revision table items for a single page
  */
 abstract class RevisionListBase extends ContextSource {
@@ -31,6 +52,7 @@ abstract class RevisionListBase extends ContextSource {
 	/**
 	 * Get the internal type name of this list. Equal to the table name.
 	 * Override this function.
+	 * @return null
 	 */
 	public function getType() {
 		return null;
@@ -80,6 +102,7 @@ abstract class RevisionListBase extends ContextSource {
 
 	/**
 	 * Get the number of items in the list.
+	 * @return int
 	 */
 	public function length() {
 		if( !$this->res ) {
@@ -124,6 +147,7 @@ abstract class RevisionItemBase {
 	/**
 	 * Get the DB field name associated with the ID list.
 	 * Override this function.
+	 * @return null
 	 */
 	public function getIdField() {
 		return null;
@@ -132,6 +156,7 @@ abstract class RevisionItemBase {
 	/**
 	 * Get the DB field name storing timestamps.
 	 * Override this function.
+	 * @return bool
 	 */
 	public function getTimestampField() {
 		return false;
@@ -140,6 +165,7 @@ abstract class RevisionItemBase {
 	/**
 	 * Get the DB field name storing user ids.
 	 * Override this function.
+	 * @return bool
 	 */
 	public function getAuthorIdField() {
 		return false;
@@ -148,6 +174,7 @@ abstract class RevisionItemBase {
 	/**
 	 * Get the DB field name storing user names.
 	 * Override this function.
+	 * @return bool
 	 */
 	public function getAuthorNameField() {
 		return false;
@@ -155,6 +182,7 @@ abstract class RevisionItemBase {
 
 	/**
 	 * Get the ID, as it would appear in the ids URL parameter
+	 * @return
 	 */
 	public function getId() {
 		$field = $this->getIdField();
@@ -163,6 +191,7 @@ abstract class RevisionItemBase {
 
 	/**
 	 * Get the date, formatted in user's languae
+	 * @return String
 	 */
 	public function formatDate() {
 		return $this->list->getLanguage()->userDate( $this->getTimestamp(),
@@ -171,6 +200,7 @@ abstract class RevisionItemBase {
 
 	/**
 	 * Get the time, formatted in user's languae
+	 * @return String
 	 */
 	public function formatTime() {
 		return $this->list->getLanguage()->userTime( $this->getTimestamp(),
@@ -179,6 +209,7 @@ abstract class RevisionItemBase {
 
 	/**
 	 * Get the timestamp in MW 14-char form
+	 * @return Mixed
 	 */
 	public function getTimestamp() {
 		$field = $this->getTimestampField();
@@ -187,6 +218,7 @@ abstract class RevisionItemBase {
 
 	/**
 	 * Get the author user ID
+	 * @return int
 	 */
 	public function getAuthorId() {
 		$field = $this->getAuthorIdField();
@@ -195,6 +227,7 @@ abstract class RevisionItemBase {
 
 	/**
 	 * Get the author user name
+	 * @return string
 	 */
 	public function getAuthorName() {
 		$field = $this->getAuthorNameField();
@@ -212,7 +245,7 @@ abstract class RevisionItemBase {
 	abstract public function canViewContent();
 
 	/**
-	 * Get the HTML of the list item. Should be include <li></li> tags.
+	 * Get the HTML of the list item. Should be include "<li></li>" tags.
 	 * This is used to show the list in HTML form, by the special page.
 	 */
 	abstract public function getHTML();
@@ -258,7 +291,7 @@ class RevisionItem extends RevisionItemBase {
 	public function __construct( $list, $row ) {
 		parent::__construct( $list, $row );
 		$this->revision = new Revision( $row );
-		$this->context = $list->context;
+		$this->context = $list->getContext();
 	}
 
 	public function getIdField() {
@@ -292,6 +325,7 @@ class RevisionItem extends RevisionItemBase {
 	/**
 	 * Get the HTML link to the revision text.
 	 * Overridden by RevDel_ArchiveItem.
+	 * @return string
 	 */
 	protected function getRevisionLink() {
 		$date = $this->list->getLanguage()->timeanddate( $this->revision->getTimestamp(), true );
@@ -312,15 +346,16 @@ class RevisionItem extends RevisionItemBase {
 	/**
 	 * Get the HTML link to the diff.
 	 * Overridden by RevDel_ArchiveItem
+	 * @return string
 	 */
 	protected function getDiffLink() {
 		if ( $this->isDeleted() && !$this->canViewContent() ) {
-			return wfMsgHtml('diff');
+			return $this->context->msg( 'diff' )->escaped();
 		} else {
 			return
 				Linker::link(
 					$this->list->title,
-					wfMsgHtml('diff'),
+					$this->context->msg( 'diff' )->escaped(),
 					array(),
 					array(
 						'diff' => $this->revision->getId(),
@@ -336,13 +371,14 @@ class RevisionItem extends RevisionItemBase {
 	}
 
 	public function getHTML() {
-		$difflink = $this->getDiffLink();
+		$difflink = $this->context->msg( 'parentheses' )
+			->rawParams( $this->getDiffLink() )->escaped();
 		$revlink = $this->getRevisionLink();
 		$userlink = Linker::revUserLink( $this->revision );
 		$comment = Linker::revComment( $this->revision );
 		if ( $this->isDeleted() ) {
 			$revlink = "<span class=\"history-deleted\">$revlink</span>";
 		}
-		return "<li>($difflink) $revlink $userlink $comment</li>";
+		return "<li>$difflink $revlink $userlink $comment</li>";
 	}
 }

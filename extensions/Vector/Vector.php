@@ -20,7 +20,6 @@ $wgVectorFeatures = array(
 	'collapsiblenav' => array( 'global' => true, 'user' => true ),
 	'collapsibletabs' => array( 'global' => true, 'user' => false ),
 	'editwarning' => array( 'global' => false, 'user' => true ),
-	'simplesearch' => array( 'global' => false, 'user' => true ),
 	// The follwing are experimental and likely unstable - use at your own risk
 	'expandablesearch' => array( 'global' => false, 'user' => false ),
 	'footercleanup' => array( 'global' => false, 'user' => false ),
@@ -104,15 +103,22 @@ $wgResourceModules += array(
 		),
 	),
 	'ext.vector.footerCleanup' => $vectorResourceTemplate + array(
-		'scripts' => 'ext.vector.footerCleanup.js',
+		'scripts' => array(
+			'jquery.footerCollapsibleList.js',
+			'ext.vector.footerCleanup.js',
+		),
 		'styles' => 'ext.vector.footerCleanup.css',
 		'messages' => array (
 			'vector-footercleanup-transclusion',
+			'vector-footercleanup-templates',
+			'vector-footercleanup-categories',
 		),
 		'dependencies' => array(
 			// The message require plural support at javascript.
 			'mediawiki.jqueryMsg',
-		)
+			'jquery.cookie'
+		),
+		'position' => 'top',
 	),
 	'ext.vector.sectionEditLinks' => $vectorResourceTemplate + array(
 		'scripts' => 'ext.vector.sectionEditLinks.js',
@@ -120,20 +126,6 @@ $wgResourceModules += array(
 		'dependencies' => array(
 			'jquery.cookie',
 			'jquery.clickTracking',
-		),
-	),
-	'ext.vector.simpleSearch' => $vectorResourceTemplate + array(
-		'scripts' => 'ext.vector.simpleSearch.js',
-		'messages' => array(
-			'vector-simplesearch-search',
-			'vector-simplesearch-containing',
-		),
-		'dependencies' => array(
-			'jquery.autoEllipsis',
-			'jquery.client',
-			'jquery.placeholder',
-			'jquery.suggestions',
-			'mediawiki.legacy.mwsuggest', // to ensure we disable it in proper order
 		),
 	),
 );

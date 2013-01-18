@@ -1,5 +1,25 @@
 <?php
-
+/**
+ * Efficient concatenated text storage.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
+ 
 /**
  * Base class for general text storage via the "object" flag in old_flags, or 
  * two-part external storage URLs. Used for represent efficient concatenated 
@@ -179,8 +199,8 @@ class HistoryBlobStub {
 	var $mOldId, $mHash, $mRef;
 
 	/**
-	 * @param $hash Strng: the content hash of the text
-	 * @param $oldid Integer: the old_id for the CGZ object
+	 * @param $hash string the content hash of the text
+	 * @param $oldid Integer the old_id for the CGZ object
 	 */
 	function __construct( $hash = '', $oldid = 0 ) {
 		$this->mHash = $hash;
@@ -298,7 +318,7 @@ class HistoryBlobCurStub {
 	}
 
 	/**
-	 * @return string|false
+	 * @return string|bool
 	 */
 	function getText() {
 		$dbr = wfGetDB( DB_SLAVE );
@@ -515,13 +535,11 @@ class DiffHistoryBlob implements HistoryBlob {
 
 		$header = unpack( 'Vofp/Vcsize', substr( $diff, 0, 8 ) );
 		
-		# Check the checksum if mhash is available
-		if ( extension_loaded( 'mhash' ) ) {
-			$ofp = mhash( MHASH_ADLER32, $base );
-			if ( $ofp !== substr( $diff, 0, 4 ) ) {
-				wfDebug( __METHOD__. ": incorrect base checksum\n" );
-				return false;
-			}
+		# Check the checksum if hash/mhash is available
+		$ofp = $this->xdiffAdler32( $base );
+		if ( $ofp !== false && $ofp !== substr( $diff, 0, 4 ) ) {
+			wfDebug( __METHOD__. ": incorrect base checksum\n" );
+			return false;
 		}
 		if ( $header['csize'] != strlen( $base ) ) {
 			wfDebug( __METHOD__. ": incorrect base length\n" );
@@ -558,6 +576,30 @@ class DiffHistoryBlob implements HistoryBlob {
 			}
 		}
 		return $out;
+	}
+
+	/**
+	 * Compute a binary "Adler-32" checksum as defined by LibXDiff, i.e. with 
+	 * the bytes backwards and initialised with 0 instead of 1. See bug 34428.
+	 *
+	 * Returns false if no hashing library is available
+	 */
+	function xdiffAdler32( $s ) {
+		static $init;
+		if ( $init === null ) {
+			$init = str_repeat( "\xf0", 205 ) . "\xee" . str_repeat( "\xf0", 67 ) . "\x02";
+		}
+		// The real Adler-32 checksum of $init is zero, so it initialises the 
+		// state to zero, as it is at the start of LibXDiff's checksum 
+		// algorithm. Appending the subject string then simulates LibXDiff.
+		if ( function_exists( 'hash' ) ) {
+			$hash = hash( 'adler32', $init . $s, true );
+		} elseif ( function_exists( 'mhash' ) ) {
+			$hash = mhash( MHASH_ADLER32, $init . $s );
+		} else {
+			return false;
+		}
+		return strrev( $hash );
 	}
 
 	function uncompress() {

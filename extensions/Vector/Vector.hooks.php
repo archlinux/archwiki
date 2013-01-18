@@ -63,10 +63,6 @@ class VectorHooks {
 				'vector-noexperiments' => false,
 			),
 		),
-		'simplesearch' => array(
-			'requirements' => array( 'vector-simplesearch' => true, 'disablesuggest' => false ),
-			'modules' => array( 'ext.vector.simpleSearch' ),
-		),
 		'experiments' => array(
 			'preferences' => array(
 				'vector-noexperiments' => array(

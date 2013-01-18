@@ -151,7 +151,7 @@ q {
 	font-style: italic;
 }
 code { background-color: #f9f9f9; }
-pre {
+pre, .mw-code {
 	padding: 1em;
 	border: 1px dashed #2f6fab;
 	color: black;
@@ -353,10 +353,6 @@ div.gallerybox {
 }
 
 .templatesUsed { margin-top: 1.5em; }
-
-.printfooter {
-	display: none;
-}
 
 #footer {
 	background-color: white;

@@ -2,6 +2,21 @@
 /**
  * IBM_DB2-specific updater.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Deployment
  */
@@ -55,20 +70,22 @@ class Ibm_db2Updater extends DatabaseUpdater {
 			array( 'addField', 'categorylinks',  'cl_sortkey_prefix', 'patch-cl_sortkey_prefix-field.sql' ),
 			array( 'addField', 'categorylinks',  'cl_collation',      'patch-cl_collation-field.sql' ),
 			array( 'addField', 'categorylinks',  'cl_type',           'patch-cl_type-field.sql' ),
-			
+
 			//1.18
 			array( 'doUserNewTalkTimestampNotNull' ),
 			array( 'addIndex', 'user',          'user_email',       'patch-user_email_index.sql' ),
 			array( 'modifyField', 'user_properties', 'up_property', 'patch-up_property.sql' ),
 			array( 'addTable', 'uploadstash',                       'patch-uploadstash.sql' ),
 			array( 'addTable', 'user_former_groups',                'patch-user_former_groups.sql'),
-			array( 'doRebuildLocalisationCache' ), 
-			
+			array( 'doRebuildLocalisationCache' ),
+
 			// 1.19
 			array( 'addIndex', 'logging',       'type_action',      'patch-logging-type-action-index.sql'),
 			array( 'dropField', 'user',         'user_options', 'patch-drop-user_options.sql' ),
 			array( 'addField', 'revision',      'rev_sha1',         'patch-rev_sha1.sql' ),
-			array( 'addField', 'archive',       'ar_sha1',          'patch-ar_sha1.sql' )
+			array( 'addField', 'archive',       'ar_sha1',          'patch-ar_sha1.sql' ),
+
+			// 1.20
 		);
 	}
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Delete old (non-current) revisions from the database
  *
@@ -18,12 +17,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @ingroup Maintenance
  * @author Rob Church <robchur@gmail.com>
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script that deletes old (non-current) revisions from the database.
+ *
+ * @ingroup Maintenance
+ */
 class DeleteOldRevisions extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -41,7 +46,7 @@ class DeleteOldRevisions extends Maintenance {
 
 		# Data should come off the master, wrapped in a transaction
 		$dbw = wfGetDB( DB_MASTER );
-		$dbw->begin();
+		$dbw->begin( __METHOD__ );
 
 		$tbl_pag = $dbw->tableName( 'page' );
 		$tbl_rev = $dbw->tableName( 'revision' );
@@ -90,7 +95,7 @@ class DeleteOldRevisions extends Maintenance {
 
 		# This bit's done
 		# Purge redundant text records
-		$dbw->commit();
+		$dbw->commit( __METHOD__ );
 		if ( $delete ) {
 			$this->purgeRedundantText( true );
 		}

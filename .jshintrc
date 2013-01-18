@@ -1,0 +1,25 @@
+{
+	"predef": [
+		"mediaWiki",
+		"jQuery",
+		"QUnit",
+		"mw",
+		"$"
+	],
+
+	"bitwise": true,
+	"immed": true,
+	"latedef": true,
+	"newcap": true,
+	"noarg": true,
+	"nonew": true,
+	"undef": true,
+
+	"laxbreak": true,
+	"loopfunc": true,
+	"smarttabs": true,
+	"multistr": true,
+	"onecase": true,
+
+	"browser": true
+}

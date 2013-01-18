@@ -2,6 +2,21 @@
 /**
  * DBMS-specific installation helper.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Deployment
  */
@@ -50,7 +65,7 @@ abstract class DatabaseInstaller {
 	public abstract function getName();
 
 	/**
-	 * @return true if the client library is compiled in.
+	 * @return bool Returns true if the client library is compiled in.
 	 */
 	public abstract function isCompiled();
 
@@ -88,6 +103,7 @@ abstract class DatabaseInstaller {
 	 * $this->parent can be assumed to be a WebInstaller.
 	 * If the DB type has no settings beyond those already configured with
 	 * getConnectForm(), this should return false.
+	 * @return bool
 	 */
 	public function getSettingsForm() {
 		return false;
@@ -140,7 +156,7 @@ abstract class DatabaseInstaller {
 			$this->db = $status->value;
 			// Enable autocommit
 			$this->db->clearFlag( DBO_TRX );
-			$this->db->commit();
+			$this->db->commit( __METHOD__ );
 		}
 		return $status;
 	}
@@ -207,6 +223,7 @@ abstract class DatabaseInstaller {
 	/**
 	 * Override this to provide DBMS-specific schema variables, to be
 	 * substituted into tables.sql and other schema files.
+	 * @return array
 	 */
 	public function getSchemaVars() {
 		return array();
@@ -256,7 +273,7 @@ abstract class DatabaseInstaller {
 			$up = DatabaseUpdater::newForDB( $this->db );
 			$up->doUpdates();
 		} catch ( MWException $e ) {
-			echo "\nAn error occured:\n";
+			echo "\nAn error occurred:\n";
 			echo $e->getText();
 			$ret = false;
 		}
@@ -282,6 +299,7 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Get an array of MW configuration globals that will be configured by this class.
+	 * @return array
 	 */
 	public function getGlobalNames() {
 		return $this->globalNames;
@@ -313,14 +331,16 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Get the internationalised name for this DBMS.
+	 * @return String
 	 */
 	public function getReadableName() {
-		return wfMsg( 'config-type-' . $this->getName() );
+		return wfMessage( 'config-type-' . $this->getName() )->text();
 	}
 
 	/**
 	 * Get a name=>value map of MW configuration globals that overrides.
 	 * DefaultSettings.php
+	 * @return array
 	 */
 	public function getGlobalDefaults() {
 		return array();
@@ -328,6 +348,7 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Get a name=>value map of internal variables used during installation.
+	 * @return array
 	 */
 	public function getInternalDefaults() {
 		return $this->internalDefaults;
@@ -439,6 +460,7 @@ abstract class DatabaseInstaller {
 	 *      values:         List of allowed values (required)
 	 *      itemAttribs     Array of attribute arrays, outer key is the value name (optional)
 	 *
+	 * @return string
 	 */
 	public function getRadioSet( $params ) {
 		$params['controlName'] = $this->getName() . '_' . $params['var'];
@@ -451,6 +473,7 @@ abstract class DatabaseInstaller {
 	 * Assumes that variables containing "password" in the name are (potentially
 	 * fake) passwords.
 	 * @param $varNames Array
+	 * @return array
 	 */
 	public function setVarsFromRequest( $varNames ) {
 		return $this->parent->setVarsFromRequest( $varNames, $this->getName() . '_' );
@@ -486,7 +509,7 @@ abstract class DatabaseInstaller {
 	public function getInstallUserBox() {
 		return
 			Html::openElement( 'fieldset' ) .
-			Html::element( 'legend', array(), wfMsg( 'config-db-install-account' ) ) .
+			Html::element( 'legend', array(), wfMessage( 'config-db-install-account' )->text() ) .
 			$this->getTextBox( '_InstallUser', 'config-db-username', array( 'dir' => 'ltr' ), $this->parent->getHelpBox( 'config-db-install-username' ) ) .
 			$this->getPasswordBox( '_InstallPassword', 'config-db-password', array( 'dir' => 'ltr' ), $this->parent->getHelpBox( 'config-db-install-password' ) ) .
 			Html::closeElement( 'fieldset' );
@@ -494,6 +517,7 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Submit a standard install user fieldset.
+	 * @return Status
 	 */
 	public function submitInstallUserBox() {
 		$this->setVarsFromRequest( array( '_InstallUser', '_InstallPassword' ) );
@@ -510,7 +534,7 @@ abstract class DatabaseInstaller {
 	public function getWebUserBox( $noCreateMsg = false ) {
 		$wrapperStyle = $this->getVar( '_SameAccount' ) ? 'display: none' : '';
 		$s = Html::openElement( 'fieldset' ) .
-			Html::element( 'legend', array(), wfMsg( 'config-db-web-account' ) ) .
+			Html::element( 'legend', array(), wfMessage( 'config-db-web-account' )->text() ) .
 			$this->getCheckBox(
 				'_SameAccount', 'config-db-web-account-same',
 				array( 'class' => 'hideShowRadio', 'rel' => 'dbOtherAccount' )
@@ -520,7 +544,7 @@ abstract class DatabaseInstaller {
 			$this->getPasswordBox( 'wgDBpassword', 'config-db-password' ) .
 			$this->parent->getHelpBox( 'config-db-web-help' );
 		if ( $noCreateMsg ) {
-			$s .= $this->parent->getWarningBox( wfMsgNoTrans( $noCreateMsg ) );
+			$s .= $this->parent->getWarningBox( wfMessage( $noCreateMsg )->plain() );
 		} else {
 			$s .= $this->getCheckBox( '_CreateDBAccount', 'config-db-web-create' );
 		}

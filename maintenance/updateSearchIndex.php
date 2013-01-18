@@ -1,6 +1,6 @@
 <?php
 /**
- * Script for periodic off-peak updating of the search index
+ * Periodic off-peak updating of the search index.
  *
  * Usage: php updateSearchIndex.php [-s START] [-e END] [-p POSFILE] [-l LOCKTIME] [-q]
  * Where START is the starting timestamp
@@ -28,8 +28,13 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script for periodic off-peak updating of the search index.
+ *
+ * @ingroup Maintenance
+ */
 class UpdateSearchIndex extends Maintenance {
 
 	public function __construct() {

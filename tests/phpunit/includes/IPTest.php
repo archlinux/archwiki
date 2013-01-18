@@ -1,6 +1,7 @@
 <?php
 /**
  * Tests for IP validity functions. Ported from /t/inc/IP.t by avar.
+ * @group IP
  */
 
 class IPTest extends MediaWikiTestCase {
@@ -14,9 +15,9 @@ class IPTest extends MediaWikiTestCase {
 		$this->assertFalse( IP::isIPAddress( "" ), 'Empty string is not an IP' );
 		$this->assertFalse( IP::isIPAddress( 'abc' ), 'Garbage IP string' );
 		$this->assertFalse( IP::isIPAddress( ':' ), 'Single ":" is not an IP' );
-		$this->assertFalse( IP::isIPAddress( '2001:0DB8::A:1::1'), 'IPv6 with a double :: occurence' );
-		$this->assertFalse( IP::isIPAddress( '2001:0DB8::A:1::'), 'IPv6 with a double :: occurence, last at end' );
-		$this->assertFalse( IP::isIPAddress( '::2001:0DB8::5:1'), 'IPv6 with a double :: occurence, firt at beginning' );
+		$this->assertFalse( IP::isIPAddress( '2001:0DB8::A:1::1'), 'IPv6 with a double :: occurrence' );
+		$this->assertFalse( IP::isIPAddress( '2001:0DB8::A:1::'), 'IPv6 with a double :: occurrence, last at end' );
+		$this->assertFalse( IP::isIPAddress( '::2001:0DB8::5:1'), 'IPv6 with a double :: occurrence, firt at beginning' );
 		$this->assertFalse( IP::isIPAddress( '124.24.52' ), 'IPv4 not enough quads' );
 		$this->assertFalse( IP::isIPAddress( '24.324.52.13' ), 'IPv4 out of range' );
 		$this->assertFalse( IP::isIPAddress( '.24.52.13' ), 'IPv4 starts with period' );
@@ -503,6 +504,39 @@ class IPTest extends MediaWikiTestCase {
 			array( '0:1:2:3:4:5:6:7/120', '0:1:2:3:4:5:6:0/120', 'IPv6 range' ),
 			array( '0:e1:2:3:4:5:e6:7/128', '0:E1:2:3:4:5:E6:7/128', 'IPv6 silly range' ),
 			array( '0:c1:A2:3:4:5:c6:7', '0:C1:A2:3:4:5:C6:7', 'IPv6 non range' ),
+		);
+	}
+
+	/**
+	 * Test for IP::prettifyIP()
+	 * @dataProvider provideIPsToPrettify
+	 */
+	function testPrettifyIP( $ip, $prettified ) {
+		$this->assertEquals( $prettified, IP::prettifyIP( $ip ), "Prettify of $ip" );
+	}
+
+	/**
+	 * Provider for IP::testPrettifyIP()
+	 */
+	function provideIPsToPrettify() {
+		return array(
+			array( '0:0:0:0:0:0:0:0', '::' ),
+			array( '0:0:0::0:0:0', '::' ),
+			array( '0:0:0:1:0:0:0:0', '0:0:0:1::' ),
+			array( '0:0::f', '::f' ),
+			array( '0::0:0:0:33:fef:b', '::33:fef:b' ),
+			array( '3f:535:0:0:0:0:e:fbb', '3f:535::e:fbb' ),
+			array( '0:0:fef:0:0:0:e:fbb', '0:0:fef::e:fbb' ),
+			array( 'abbc:2004::0:0:0:0', 'abbc:2004::' ),
+			array( 'cebc:2004:f:0:0:0:0:0', 'cebc:2004:f::' ),
+			array( '0:0:0:0:0:0:0:0/16', '::/16' ),
+			array( '0:0:0::0:0:0/64', '::/64' ),
+			array( '0:0::f/52', '::f/52' ),
+			array( '::0:0:33:fef:b/52', '::33:fef:b/52' ),
+			array( '3f:535:0:0:0:0:e:fbb/48', '3f:535::e:fbb/48' ),
+			array( '0:0:fef:0:0:0:e:fbb/96', '0:0:fef::e:fbb/96' ),
+			array( 'abbc:2004:0:0::0:0/40', 'abbc:2004::/40' ),
+			array( 'aebc:2004:f:0:0:0:0:0/80', 'aebc:2004:f::/80' ),
 		);
 	}
 }

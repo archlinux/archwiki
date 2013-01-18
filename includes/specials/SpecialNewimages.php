@@ -58,6 +58,9 @@ class NewFilesPager extends ReverseChronologicalPager {
 	function __construct( IContextSource $context, $par = null ) {
 		$this->like = $context->getRequest()->getText( 'like' );
 		$this->showbots = $context->getRequest()->getBool( 'showbots' , 0 );
+		if ( is_numeric( $par ) ) {
+			$this->setLimit( $par );
+		}
 
 		parent::__construct( $context );
 	}
@@ -68,15 +71,18 @@ class NewFilesPager extends ReverseChronologicalPager {
 		$tables = array( 'image' );
 
 		if( !$this->showbots ) {
-			$tables[] = 'user_groups';
-			$conds[] = 'ug_group IS NULL';
-			$jconds['user_groups'] = array(
-				'LEFT JOIN',
-				array(
-					'ug_group' => User::getGroupsWithPermission( 'bot' ),
-					'ug_user = img_user'
-				)
-			);
+			$groupsWithBotPermission = User::getGroupsWithPermission( 'bot' );
+			if( count( $groupsWithBotPermission ) ) {
+				$tables[] = 'user_groups';
+				$conds[] = 'ug_group IS NULL';
+				$jconds['user_groups'] = array(
+					'LEFT JOIN',
+					array(
+						'ug_group' => $groupsWithBotPermission,
+						'ug_user = img_user'
+					)
+				);
+			}
 		}
 
 		if( !$wgMiserMode && $this->like !== null ){
@@ -123,7 +129,7 @@ class NewFilesPager extends ReverseChronologicalPager {
 		$this->gallery->add(
 			$title,
 			"$ul<br />\n<i>"
-				. htmlspecialchars( $this->getLanguage()->timeanddate( $row->img_timestamp, true ) )
+				. htmlspecialchars( $this->getLanguage()->userTimeAndDate( $row->img_timestamp, $this->getUser() ) )
 				. "</i><br />\n"
 		);
 	}
@@ -139,13 +145,13 @@ class NewFilesPager extends ReverseChronologicalPager {
 			),
 			'showbots' => array(
 				'type' => 'check',
-				'label' => wfMessage( 'showhidebots', wfMsg( 'show' ) ),
+				'label' => $this->msg( 'showhidebots', $this->msg( 'show' )->plain() )->escaped(),
 				'name' => 'showbots',
 			#	'default' => $this->getRequest()->getBool( 'showbots', 0 ),
 			),
 			'limit' => array(
 				'type' => 'hidden',
-				'default' => $this->getRequest()->getText( 'limit' ),
+				'default' => $this->mLimit,
 				'name' => 'limit',
 			),
 			'offset' => array(
@@ -161,9 +167,9 @@ class NewFilesPager extends ReverseChronologicalPager {
 
 		$form = new HTMLForm( $fields, $this->getContext() );
 		$form->setTitle( $this->getTitle() );
-		$form->setSubmitText( wfMsg( 'ilsubmit' ) );
+		$form->setSubmitTextMsg( 'ilsubmit' );
 		$form->setMethod( 'get' );
-		$form->setWrapperLegend( wfMsg( 'newimages-legend' ) );
+		$form->setWrapperLegendMsg( 'newimages-legend' );
 
 		return $form;
 	}

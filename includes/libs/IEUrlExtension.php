@@ -1,4 +1,24 @@
 <?php
+/**
+ * Checks for validity of requested URL's extension.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
 
 /**
  * Internet Explorer derives a cache filename from a URL, and then in certain
@@ -35,8 +55,8 @@ class IEUrlExtension {
 	 *
 	 * If the a variable is unset in $_SERVER, it should be unset in $vars.
 	 *
-	 * @param $vars A subset of $_SERVER.
-	 * @param $extWhitelist Extensions which are allowed, assumed harmless.
+	 * @param $vars array A subset of $_SERVER.
+	 * @param $extWhitelist array Extensions which are allowed, assumed harmless.
 	 * @return bool
 	 */
 	public static function areServerVarsBad( $vars, $extWhitelist = array() ) {
@@ -73,7 +93,7 @@ class IEUrlExtension {
 	 * a potentially harmful file extension.
 	 *
 	 * @param $urlPart string The right-hand portion of a URL
-	 * @param $extWhitelist An array of file extensions which may occur in this
+	 * @param $extWhitelist array An array of file extensions which may occur in this
 	 *    URL, and which should be allowed.
 	 * @return bool
 	 */

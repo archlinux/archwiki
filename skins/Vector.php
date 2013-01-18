@@ -3,6 +3,21 @@
  * Vector - Modern version of MonoBook with fresh look and many usability
  * improvements.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @todo document
  * @file
  * @ingroup Skins
@@ -17,6 +32,8 @@ if( !defined( 'MEDIAWIKI' ) ) {
  * @ingroup Skins
  */
 class SkinVector extends SkinTemplate {
+
+	protected static $bodyClasses = array( 'vector-animateLayout' );
 
 	var $skinname = 'vector', $stylename = 'vector',
 		$template = 'VectorTemplate', $useHeadElement = true;
@@ -52,6 +69,20 @@ class SkinVector extends SkinTemplate {
 		parent::setupSkinUserCss( $out );
 		$out->addModuleStyles( 'skins.vector' );
 	}
+
+	/**
+	 * Adds classes to the body element.
+	 * 
+	 * @param $out OutputPage object
+	 * @param &$bodyAttrs Array of attributes that will be set on the body element
+	 */
+	function addToBodyAttributes( $out, &$bodyAttrs ) {
+		if ( isset( $bodyAttrs['class'] ) && strlen( $bodyAttrs['class'] ) > 0 ) {
+			$bodyAttrs['class'] .= ' ' . implode( ' ', static::$bodyClasses );
+		} else {
+			$bodyAttrs['class'] = implode( ' ', static::$bodyClasses );
+		}
+	}
 }
 
 /**
@@ -72,7 +103,7 @@ class VectorTemplate extends BaseTemplate {
 		$nav = $this->data['content_navigation'];
 
 		if ( $wgVectorUseIconWatch ) {
-			$mode = $this->getSkin()->getTitle()->userIsWatching() ? 'unwatch' : 'watch';
+			$mode = $this->getSkin()->getUser()->isWatched( $this->getSkin()->getRelevantTitle() ) ? 'unwatch' : 'watch';
 			if ( isset( $nav['actions'][$mode] ) ) {
 				$nav['views'][$mode] = $nav['actions'][$mode];
 				$nav['views'][$mode]['class'] = rtrim( 'icon ' . $nav['views'][$mode]['class'], ' ' );
@@ -134,9 +165,7 @@ class VectorTemplate extends BaseTemplate {
 			<!-- /sitenotice -->
 			<?php endif; ?>
 			<!-- firstHeading -->
-			<h1 id="firstHeading" class="firstHeading">
-				<span dir="auto"><?php $this->html( 'title' ) ?></span>
-			</h1>
+			<h1 id="firstHeading" class="firstHeading"><span dir="auto"><?php $this->html( 'title' ) ?></span></h1>
 			<!-- /firstHeading -->
 			<!-- bodyContent -->
 			<div id="bodyContent">
@@ -161,7 +190,8 @@ class VectorTemplate extends BaseTemplate {
 				<?php if ( $this->data['showjumplinks'] ): ?>
 				<!-- jumpto -->
 				<div id="jump-to-nav" class="mw-jump">
-					<?php $this->msg( 'jumpto' ) ?> <a href="#mw-head"><?php $this->msg( 'jumptonavigation' ) ?></a>,
+					<?php $this->msg( 'jumpto' ) ?>
+					<a href="#mw-head"><?php $this->msg( 'jumptonavigation' ) ?></a><?php $this->msg( 'comma-separator' ) ?>
 					<a href="#p-search"><?php $this->msg( 'jumptosearch' ) ?></a>
 				</div>
 				<!-- /jumpto -->
@@ -250,7 +280,7 @@ class VectorTemplate extends BaseTemplate {
 	 *
 	 * @param $portals array
 	 */
-	private function renderPortals( $portals ) {
+	protected function renderPortals( $portals ) {
 		// Force the rendering of the following portals
 		if ( !isset( $portals['SEARCH'] ) ) {
 			$portals['SEARCH'] = true;
@@ -286,7 +316,13 @@ class VectorTemplate extends BaseTemplate {
 		}
 	}
 
-	private function renderPortal( $name, $content, $msg = null, $hook = null ) {
+	/**
+	 * @param $name string
+	 * @param $content array
+	 * @param $msg null|string
+	 * @param $hook null|string|array
+	 */
+	protected function renderPortal( $name, $content, $msg = null, $hook = null ) {
 		if ( $msg === null ) {
 			$msg = $name;
 		}
@@ -324,7 +360,7 @@ class VectorTemplate extends BaseTemplate {
 	 *
 	 * @param $elements array
 	 */
-	private function renderNavigation( $elements ) {
+	protected function renderNavigation( $elements ) {
 		global $wgVectorUseSimpleSearch;
 
 		// If only one element was given, wrap it in an array, allowing more
@@ -363,9 +399,9 @@ class VectorTemplate extends BaseTemplate {
 	</h4>
 	<h5><span><?php $this->msg( 'variants' ) ?></span><a href="#"></a></h5>
 	<div class="menu">
-		<ul<?php $this->html( 'userlangattributes' ) ?>>
+		<ul>
 			<?php foreach ( $this->data['variant_urls'] as $link ): ?>
-				<li<?php echo $link['attributes'] ?>><a href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a></li>
+				<li<?php echo $link['attributes'] ?>><a href="<?php echo htmlspecialchars( $link['href'] ) ?>" lang="<?php echo htmlspecialchars( $link['lang'] ) ?>" hreflang="<?php echo htmlspecialchars( $link['hreflang'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a></li>
 			<?php endforeach; ?>
 		</ul>
 	</div>
@@ -424,11 +460,11 @@ class VectorTemplate extends BaseTemplate {
 		<?php if ( $wgVectorUseSimpleSearch && $this->getSkin()->getUser()->getOption( 'vector-simplesearch' ) ): ?>
 		<div id="simpleSearch">
 			<?php if ( $this->data['rtl'] ): ?>
-			<?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'src' => $this->getSkin()->getSkinStylePath( 'images/search-rtl.png' ) ) ); ?>
+			<?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'src' => $this->getSkin()->getSkinStylePath( 'images/search-rtl.png' ), 'width' => '12', 'height' => '13' ) ); ?>
 			<?php endif; ?>
 			<?php echo $this->makeSearchInput( array( 'id' => 'searchInput', 'type' => 'text' ) ); ?>
 			<?php if ( !$this->data['rtl'] ): ?>
-			<?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'src' => $this->getSkin()->getSkinStylePath( 'images/search-ltr.png' ) ) ); ?>
+			<?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'src' => $this->getSkin()->getSkinStylePath( 'images/search-ltr.png' ), 'width' => '12', 'height' => '13' ) ); ?>
 			<?php endif; ?>
 		<?php else: ?>
 		<div>

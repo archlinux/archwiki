@@ -1,5 +1,26 @@
 <?php
 /**
+ * Data storage in external repositories.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
+
+/**
  * @defgroup ExternalStorage ExternalStorage
  */
 
@@ -24,7 +45,7 @@ class ExternalStore {
 	 *
 	 * @param $url String: The URL of the text to get
 	 * @param $params Array: associative array of parameters for the ExternalStore object.
-	 * @return The text stored or false on error
+	 * @return string|bool The text stored or false on error
 	 */
 	static function fetchFromURL( $url, $params = array() ) {
 		global $wgExternalStores;
@@ -81,7 +102,7 @@ class ExternalStore {
 	 * @param $url
 	 * @param $data
 	 * @param $params array
-	 * @return string|false The URL of the stored data item, or false on error
+	 * @return string|bool The URL of the stored data item, or false on error
 	 */
 	static function insert( $url, $data, $params = array() ) {
 		list( $proto, $params ) = explode( '://', $url, 2 );

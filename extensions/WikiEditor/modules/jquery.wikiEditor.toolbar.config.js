@@ -149,7 +149,7 @@ getDefaultConfig: function() {
 								'options': {
 									'pre': '[[' + fileNamespace + ':',
 									'periMsg': 'wikieditor-toolbar-tool-file-example',
-									'post': "]]"
+									'post': "|" + mw.config.get( 'wgWikiEditorMagicWords' ).img_thumbnail + "]]"
 								}
 							}
 						},
@@ -462,7 +462,7 @@ getDefaultConfig: function() {
 							'action': {
 								'type': 'encapsulate',
 								'options': {
-									'pre': "#REDIRECT [[",
+									'pre': mw.config.get( 'wgWikiEditorMagicWords' ).redirect + ' [[',
 									'periMsg': 'wikieditor-toolbar-tool-redirect-example',
 									'post': "]]",
 									'ownline': true
@@ -1271,7 +1271,7 @@ getDefaultConfig: function() {
 						{
 							'description': { 'htmlMsg': 'wikieditor-toolbar-help-content-file-description' },
 							'syntax': { 'htmlMsg': [ 'wikieditor-toolbar-help-content-file-syntax', fileNamespace ] },
-							'result': { 'htmlMsg': [ 'wikieditor-toolbar-help-content-file-result', mw.config.get( 'stylepath' ) ] }
+							'result': { 'htmlMsg': [ 'wikieditor-toolbar-help-content-file-result', mw.config.get( 'stylepath' ), mw.config.get( 'wgExtensionAssetsPath' ) ] }
 						}
 					]
 				},

@@ -15,7 +15,3 @@ require_once( "$IP/extensions/Vector/Vector.php" );
 
 $wgDefaultUserOptions['vector-collapsiblenav'] = 1;
 
-# By default, the Vector skin does not use the simplified search box. To take advantage of the simplesearch feature you
-# must add this to your LocalSettings.php file.
-
-$wgVectorUseSimpleSearch = true;

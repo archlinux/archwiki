@@ -1,5 +1,7 @@
 <?php
 /**
+ * Extraction and validation of image metadata.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -368,6 +370,12 @@ class Exif {
 		$this->exifGPStoNumber( 'GPSDestLongitude' );
 
 		if ( isset( $this->mFilteredExifData['GPSAltitude'] ) && isset( $this->mFilteredExifData['GPSAltitudeRef'] ) ) {
+
+			// We know altitude data is a <num>/<denom> from the validation functions ran earlier.
+			// But multiplying such a string by -1 doesn't work well, so convert.
+			list( $num, $denom ) = explode( '/', $this->mFilteredExifData['GPSAltitude'] );
+			$this->mFilteredExifData['GPSAltitude'] = $num / $denom;
+
 			if ( $this->mFilteredExifData['GPSAltitudeRef'] === "\1" ) {
 				$this->mFilteredExifData['GPSAltitude'] *= - 1;
 			}
@@ -549,6 +557,7 @@ class Exif {
 	 */
 	/**
 	 * Get $this->mRawExifData
+	 * @return array
 	 */
 	function getData() {
 		return $this->mRawExifData;

@@ -1,7 +1,28 @@
 <?php
 /**
- * Implements Special:UploadStash
+ * Implements Special:UploadStash.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup SpecialPage
+ * @ingroup Upload
+ */
+
+/**
  * Web access for files temporarily stored by UploadStash.
  *
  * For example -- files that were uploaded with the UploadWizard extension are stored temporarily
@@ -10,12 +31,7 @@
  *
  * Since this is based on the user's session, in effect this creates a private temporary file area.
  * However, the URLs for the files cannot be shared.
- *
- * @file
- * @ingroup SpecialPage
- * @ingroup Upload
  */
-
 class SpecialUploadStash extends UnlistedSpecialPage {
 	// UploadStash
 	private $stash;
@@ -58,6 +74,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * n.b. Most sanity checking done in UploadStashLocalFile, so this is straightforward.
 	 *
 	 * @param $key String: the key of a particular requested file
+	 * @return bool
 	 */
 	public function showUpload( $key ) {
 		// prevent callers from doing standard HTML output -- we'll take it from here
@@ -241,6 +258,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * Side effect: writes HTTP response to STDOUT.
 	 *
 	 * @param $file File object with a local path (e.g. UnregisteredLocalFile, LocalFile. Oddly these don't share an ancestor!)
+	 * @return bool
 	 */
 	private function outputLocalFile( File $file ) {
 		if ( $file->getSize() > self::MAX_SERVE_BYTES ) {
@@ -255,8 +273,9 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	/**
 	 * Output HTTP response of raw content
 	 * Side effect: writes HTTP response to STDOUT.
-	 * @param String $content: content
-	 * @param String $mimeType: mime type
+	 * @param $content String content
+	 * @param $contentType String mime type
+	 * @return bool
 	 */
 	private function outputContents( $content, $contentType ) {
 		$size = strlen( $content );
@@ -303,7 +322,8 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	/**
 	 * Default action when we don't have a subpage -- just show links to the uploads we have,
 	 * Also show a button to clear stashed files
-	 * @param Status : $status - the result of processRequest
+	 * @param $status [optional] Status: the result of processRequest
+	 * @return bool
 	 */
 	private function showUploads( $status = null ) {
 		if ( $status === null ) {
@@ -326,7 +346,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		), $this->getContext(), 'clearStashedUploads' );
 		$form->setSubmitCallback( array( __CLASS__ , 'tryClearStashedUploads' ) );
 		$form->setTitle( $this->getTitle() );
-		$form->setSubmitText( wfMsg( 'uploadstash-clear' ) );
+		$form->setSubmitTextMsg( 'uploadstash-clear' );
 
 		$form->prepareForm();
 		$formResult = $form->tryAuthorizedSubmit();
@@ -334,7 +354,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		// show the files + form, if there are any, or just say there are none
 		$refreshHtml = Html::element( 'a',
 			array( 'href' => $this->getTitle()->getLocalURL() ),
-			wfMsg( 'uploadstash-refresh' ) );
+			$this->msg( 'uploadstash-refresh' )->text() );
 		$files = $this->stash->listFiles();
 		if ( $files && count( $files ) ) {
 			sort( $files );
@@ -351,7 +371,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 			$this->getOutput()->addHtml( Html::rawElement( 'p', array(), $refreshHtml ) );
 		} else {
 			$this->getOutput()->addHtml( Html::rawElement( 'p', array(),
-				Html::element( 'span', array(), wfMsg( 'uploadstash-nofiles' ) )
+				Html::element( 'span', array(), $this->msg( 'uploadstash-nofiles' )->text() )
 				. ' '
 				. $refreshHtml
 			) );

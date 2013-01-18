@@ -2,6 +2,21 @@
 /**
  * MySQL-specific installer.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Deployment
  */
@@ -74,7 +89,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		return
 			$this->getTextBox( 'wgDBserver', 'config-db-host', array(), $this->parent->getHelpBox( 'config-db-host-help' ) ) .
 			Html::openElement( 'fieldset' ) .
-			Html::element( 'legend', array(), wfMsg( 'config-db-wiki-settings' ) ) .
+			Html::element( 'legend', array(), wfMessage( 'config-db-wiki-settings' )->text() ) .
 			$this->getTextBox( 'wgDBname', 'config-db-name', array( 'dir' => 'ltr' ), $this->parent->getHelpBox( 'config-db-name-help' ) ) .
 			$this->getTextBox( 'wgDBprefix', 'config-db-prefix', array( 'dir' => 'ltr' ), $this->parent->getHelpBox( 'config-db-prefix-help' ) ) .
 			Html::closeElement( 'fieldset' ) .
@@ -336,7 +351,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		$s .= Xml::openElement( 'div', array(
 			'id' => 'dbMyisamWarning'
 		));
-		$s .= $this->parent->getWarningBox( wfMsg( 'config-mysql-myisam-dep' ) );
+		$s .= $this->parent->getWarningBox( wfMessage( 'config-mysql-myisam-dep' )->text() );
 		$s .= Xml::closeElement( 'div' );
 
 		if( $this->getVar( '_MysqlEngine' ) != 'MyISAM' ) {
@@ -514,21 +529,21 @@ class MysqlInstaller extends DatabaseInstaller {
 				$fullName = $this->buildFullUserName( $dbUser, $host );
 				if( !$this->userDefinitelyExists( $dbUser, $host ) ) {
 					try{
-						$this->db->begin();
+						$this->db->begin( __METHOD__ );
 						$this->db->query( "CREATE USER $fullName IDENTIFIED BY $escPass", __METHOD__ );
-						$this->db->commit();
+						$this->db->commit( __METHOD__ );
 						$grantableNames[] = $fullName;
 					} catch( DBQueryError $dqe ) {
 						if( $this->db->lastErrno() == 1396 /* ER_CANNOT_USER */ ) {
 							// User (probably) already exists
-							$this->db->rollback();
+							$this->db->rollback( __METHOD__ );
 							$status->warning( 'config-install-user-alreadyexists', $dbUser );
 							$grantableNames[] = $fullName;
 							break;
 						} else {
 							// If we couldn't create for some bizzare reason and the
 							// user probably doesn't exist, skip the grant
-							$this->db->rollback();
+							$this->db->rollback( __METHOD__ );
 							$status->warning( 'config-install-user-create-failed', $dbUser, $dqe->getText() );
 						}
 					}
@@ -544,11 +559,11 @@ class MysqlInstaller extends DatabaseInstaller {
 		$dbAllTables = $this->db->addIdentifierQuotes( $dbName ) . '.*';
 		foreach( $grantableNames as $name ) {
 			try {
-				$this->db->begin();
+				$this->db->begin( __METHOD__ );
 				$this->db->query( "GRANT ALL PRIVILEGES ON $dbAllTables TO $name", __METHOD__ );
-				$this->db->commit();
+				$this->db->commit( __METHOD__ );
 			} catch( DBQueryError $dqe ) {
-				$this->db->rollback();
+				$this->db->rollback( __METHOD__ );
 				$status->fatal( 'config-install-user-grant-failed', $dbUser, $dqe->getText() );
 			}
 		}

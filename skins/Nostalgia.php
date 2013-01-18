@@ -2,6 +2,21 @@
 /**
  * Nostalgia: A skin which looks like Wikipedia did in its first year (2001).
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Skins
  */
@@ -84,8 +99,8 @@ class NostalgiaTemplate extends LegacyTemplate {
 		} else {
 			/* show user page and user talk links */
 			$user = $this->getSkin()->getUser();
-			$s .= $sep . Linker::link( $user->getUserPage(), wfMsgHtml( 'mypage' ) );
-			$s .= $sep . Linker::link( $user->getTalkPage(), wfMsgHtml( 'mytalk' ) );
+			$s .= $sep . Linker::link( $user->getUserPage(), wfMessage( 'mypage' )->escaped() );
+			$s .= $sep . Linker::link( $user->getTalkPage(), wfMessage( 'mytalk' )->escaped() );
 			if ( $user->getNewtalk() ) {
 				$s .= ' *';
 			}
@@ -94,7 +109,7 @@ class NostalgiaTemplate extends LegacyTemplate {
 			/* show my contributions link */
 			$s .= $sep . Linker::link(
 				SpecialPage::getSafeTitleFor( 'Contributions', $this->data['username'] ),
-				wfMsgHtml( 'mycontris' ) );
+				wfMessage( 'mycontris' )->escaped() );
 			/* show my preferences link */
 			$s .= $sep . Linker::specialLink( 'Preferences' );
 			/* show upload file link */

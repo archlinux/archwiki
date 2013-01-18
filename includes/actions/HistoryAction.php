@@ -3,6 +3,22 @@
  * Page history
  *
  * Split off from Article.php and Skin.php, 2003-12-22
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  */
 
@@ -69,10 +85,9 @@ class HistoryAction extends FormlessAction {
 
 	/**
 	 * Print the history page for an article.
-	 * @return nothing
 	 */
 	function onView() {
-		global $wgScript, $wgUseFileCache, $wgSquidMaxage;
+		global $wgScript, $wgUseFileCache;
 
 		$out = $this->getOutput();
 		$request = $this->getRequest();
@@ -85,10 +100,6 @@ class HistoryAction extends FormlessAction {
 		}
 
 		wfProfileIn( __METHOD__ );
-
-		if ( $request->getFullRequestURL() == $this->getTitle()->getInternalURL( 'action=history' ) ) {
-			$out->setSquidMaxage( $wgSquidMaxage );
-		}
 
 		$this->preCacheMessages();
 
@@ -107,8 +118,9 @@ class HistoryAction extends FormlessAction {
 		// Handle atom/RSS feeds.
 		$feedType = $request->getVal( 'feed' );
 		if ( $feedType ) {
+			$this->feed( $feedType );
 			wfProfileOut( __METHOD__ );
-			return $this->feed( $feedType );
+			return;
 		}
 
 		// Fail nicely if article doesn't exist.
@@ -192,6 +204,11 @@ class HistoryAction extends FormlessAction {
 	 * @return ResultWrapper
 	 */
 	function fetchRevisions( $limit, $offset, $direction ) {
+		// Fail if article doesn't exist.
+		if( !$this->getTitle()->exists() ) {
+			return new FakeResultWrapper( array() );
+		}
+
 		$dbr = wfGetDB( DB_SLAVE );
 
 		if ( $direction == HistoryPage::DIR_PREV ) {
@@ -231,8 +248,8 @@ class HistoryAction extends FormlessAction {
 
 		$feed = new $wgFeedClasses[$type](
 			$this->getTitle()->getPrefixedText() . ' - ' .
-			wfMsgForContent( 'history-feed-title' ),
-			wfMsgForContent( 'history-feed-description' ),
+			$this->msg( 'history-feed-title' )->inContentLanguage()->text(),
+			$this->msg( 'history-feed-description' )->inContentLanguage()->text(),
 			$this->getTitle()->getFullUrl( 'action=history' )
 		);
 
@@ -258,8 +275,8 @@ class HistoryAction extends FormlessAction {
 
 	function feedEmpty() {
 		return new FeedItem(
-			wfMsgForContent( 'nohistory' ),
-			$this->getOutput()->parse( wfMsgForContent( 'history-feed-empty' ) ),
+			$this->msg( 'nohistory' )->inContentLanguage()->text(),
+			$this->msg( 'history-feed-empty' )->inContentLanguage()->parseAsBlock(),
 			$this->getTitle()->getFullUrl(),
 			wfTimestamp( TS_MW ),
 			'',
@@ -287,15 +304,14 @@ class HistoryAction extends FormlessAction {
 		);
 		if ( $rev->getComment() == '' ) {
 			global $wgContLang;
-			$title = wfMsgForContent( 'history-feed-item-nocomment',
+			$title = $this->msg( 'history-feed-item-nocomment',
 				$rev->getUserText(),
 				$wgContLang->timeanddate( $rev->getTimestamp() ),
 				$wgContLang->date( $rev->getTimestamp() ),
-				$wgContLang->time( $rev->getTimestamp() )
-			);
+				$wgContLang->time( $rev->getTimestamp() ) )->inContentLanguage()->text();
 		} else {
 			$title = $rev->getUserText() .
-			wfMsgForContent( 'colon-separator' ) .
+			$this->msg( 'colon-separator' )->inContentLanguage()->text() .
 			FeedItem::stripComment( $rev->getComment() );
 		}
 		return new FeedItem(
@@ -316,6 +332,10 @@ class HistoryPager extends ReverseChronologicalPager {
 	public $lastRow = false, $counter, $historyPage, $buttons, $conds;
 	protected $oldIdChecked;
 	protected $preventClickjacking = false;
+	/**
+	 * @var array
+	 */
+	protected $parentLens;
 
 	function __construct( $historyPage, $year = '', $month = '', $tagFilter = '', $conds = array() ) {
 		parent::__construct( $historyPage->getContext() );
@@ -384,7 +404,11 @@ class HistoryPager extends ReverseChronologicalPager {
 		# Do a link batch query
 		$this->mResult->seek( 0 );
 		$batch = new LinkBatch();
+		$revIds = array();
 		foreach ( $this->mResult as $row ) {
+			if( $row->rev_parent_id ) {
+				$revIds[] = $row->rev_parent_id;
+			}
 			if( !is_null( $row->user_name ) ) {
 				$batch->add( NS_USER, $row->user_name );
 				$batch->add( NS_USER_TALK, $row->user_name );
@@ -393,6 +417,7 @@ class HistoryPager extends ReverseChronologicalPager {
 				$batch->add( NS_USER_TALK, $row->rev_user_text );
 			}
 		}
+		$this->parentLens = Revision::getParentLengths( $this->mDb, $revIds );
 		$batch->execute();
 		$this->mResult->seek( 0 );
 	}
@@ -523,7 +548,7 @@ class HistoryPager extends ReverseChronologicalPager {
 		$histLinks = Html::rawElement(
 				'span',
 				array( 'class' => 'mw-history-histlinks' ),
-				'(' . $curlink . $this->historyPage->message['pipe-separator'] . $lastlink . ') '
+				$this->msg( 'parentheses' )->rawParams( $curlink . $this->historyPage->message['pipe-separator'] . $lastlink )->escaped()
 		);
 		$s = $histLinks . $diffButtons;
 
@@ -574,26 +599,29 @@ class HistoryPager extends ReverseChronologicalPager {
 		}
 
 		# Size is always public data
-		$prevSize = $prevRev ? $prevRev->getSize() : 0;
+		$prevSize = isset( $this->parentLens[$row->rev_parent_id] )
+			? $this->parentLens[$row->rev_parent_id]
+			: 0;
 		$sDiff = ChangesList::showCharacterDifference( $prevSize, $rev->getSize() );
-		$s .= ' . . ' . $sDiff . ' . . ';
+		$fSize = Linker::formatRevisionSize($rev->getSize());
+		$s .= ' <span class="mw-changeslist-separator">. .</span> ' . "$fSize $sDiff";
 
-		$s .= Linker::revComment( $rev, false, true );
+		# Text following the character difference is added just before running hooks
+		$s2 = Linker::revComment( $rev, false, true );
 
 		if ( $notificationtimestamp && ( $row->rev_timestamp >= $notificationtimestamp ) ) {
-			$s .= ' <span class="updatedmarker">' .  $this->msg( 'updatedmarker' )->escaped() . '</span>';
+			$s2 .= ' <span class="updatedmarker">' .  $this->msg( 'updatedmarker' )->escaped() . '</span>';
+			$classes[] = 'mw-history-line-updated';
 		}
 
 		$tools = array();
 
 		# Rollback and undo links
-		if ( $prevRev &&
-			!count( $this->getTitle()->getUserPermissionsErrors( 'edit', $this->getUser() ) ) )
-		{
-			if ( $latest && !count( $this->getTitle()->getUserPermissionsErrors( 'rollback', $this->getUser() ) ) ) {
+		if ( $prevRev && $this->getTitle()->quickUserCan( 'edit', $user ) ) {
+			if ( $latest && $this->getTitle()->quickUserCan( 'rollback', $user ) ) {
 				$this->preventClickjacking();
 				$tools[] = '<span class="mw-rollback-link">' .
-					Linker::buildRollbackLink( $rev ) . '</span>';
+					Linker::buildRollbackLink( $rev, $this->getContext() ) . '</span>';
 			}
 
 			if ( !$rev->isDeleted( Revision::DELETED_TEXT )
@@ -618,13 +646,20 @@ class HistoryPager extends ReverseChronologicalPager {
 		}
 
 		if ( $tools ) {
-			$s .= ' (' . $lang->pipeList( $tools ) . ')';
+			$s2 .= ' '. $this->msg( 'parentheses' )->rawParams( $lang->pipeList( $tools ) )->escaped();
 		}
 
 		# Tags
 		list( $tagSummary, $newClasses ) = ChangeTags::formatSummaryRow( $row->ts_tags, 'history' );
 		$classes = array_merge( $classes, $newClasses );
-		$s .= " $tagSummary";
+		if ( $tagSummary !== '' ) {
+			$s2 .= " $tagSummary";
+		}
+
+		# Include separator between character difference and following text
+		if ( $s2 !== '' ) {
+			$s .= ' <span class="mw-changeslist-separator">. .</span> ' . $s2;
+		}
 
 		wfRunHooks( 'PageHistoryLineEnding', array( $this, &$row , &$s, &$classes ) );
 
@@ -649,7 +684,7 @@ class HistoryPager extends ReverseChronologicalPager {
 			$link = Linker::linkKnown(
 				$this->getTitle(),
 				$date,
-				array(),
+				array( 'class' => 'mw-changeslist-date' ),
 				array( 'oldid' => $rev->getId() )
 			);
 		} else {
@@ -784,6 +819,7 @@ class HistoryPager extends ReverseChronologicalPager {
 
 	/**
 	 * Get the "prevent clickjacking" flag
+	 * @return bool
 	 */
 	function getPreventClickjacking() {
 		return $this->preventClickjacking;

@@ -1,10 +1,24 @@
 These are the release notes for the Nuke extension.
 
 Extension page on mediawiki.org: https://www.mediawiki.org/wiki/Extension:Nuke
-Latest version of the release notes: http://svn.wikimedia.org/viewvc/mediawiki/trunk/extensions/Nuke/RELEASE-NOTES?view=co
+Latest version of the release notes: https://gerrit.wikimedia.org/r/gitweb?p=mediawiki/extensions/Nuke.git;a=blob;f=RELEASE-NOTES
 
-=== Version 1.1.5 ==
+=== Version 1.1.7 ===
+(2012-10-05)
+
+* Added option to limit page selection by namespace.
+
+=== Version 1.1.6 ===
+(2012-08-14)
+
+* Making use of of the new message methods introduced in MW 1.18 instead of wfMsg*.
+* Use of User::getEditToken rather then deprecated User::editToken.
+* Updated release notes, readme and install to reflect the Git migration.
+* Changed minimum required MediaWiki version from 1.18 to 1.19.
+
+=== Version 1.1.5 ===
 (2012-03-14)
+
 * (bug 35214) Special:Nuke allows deletions even when blocked
 * (bug 16985) Show number of recent edits in Special:Nuke
 * (bug 23600) Nuke extension w/PostgreSQL: column "recentchanges.rc_timestamp" should be in GROUP BY
@@ -25,7 +39,7 @@ Latest version of the release notes: http://svn.wikimedia.org/viewvc/mediawiki/t
 * Implemented sql like match feature as suggested in bug 5835.
 * Removed inline JavaScript and make use of jQuery loaded via the resource loader instead.
 * Modernizing of some of the code to make use of newly introduced features.
-* Compatibility with MediaWiki < 1.18 broken.
+* Changed minimum required MediaWiki version from 1.16 to 1.18.
 
 === Version 1.1.1 ===
 (2011-10-19)

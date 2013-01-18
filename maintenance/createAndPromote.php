@@ -1,6 +1,6 @@
 <?php
 /**
- * Maintenance script to create an account and grant it administrator rights
+ * Creates an account and grant it administrator rights.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,13 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script to create an account and grant it administrator rights.
+ *
+ * @ingroup Maintenance
+ */
 class CreateAndPromote extends Maintenance {
 
 	public function __construct() {

@@ -1,15 +1,26 @@
 <?php
 /**
- * Simple wrapper for json_econde and json_decode that falls back on Services_JSON class
+ * Simple wrapper for json_econde and json_decode that falls back on Services_JSON class.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	die( 1 );
-}
-
-require_once dirname( __FILE__ ) . '/Services_JSON.php';
+require_once __DIR__ . '/Services_JSON.php';
 
 /**
  * JSON formatter wrapper class
@@ -30,14 +41,11 @@ class FormatJson {
 	 * @return string
 	 */
 	public static function encode( $value, $isHtml = false ) {
-		// Some versions of PHP have a broken json_encode, see PHP bug
-		// 46944. Test encoding an affected character (U+20000) to
-		// avoid this.
-		if ( !function_exists( 'json_encode' ) || $isHtml || strtolower( json_encode( "\xf0\xa0\x80\x80" ) ) != '"\ud840\udc00"' ) {
+		if ( !function_exists( 'json_encode' ) || ( $isHtml && version_compare( PHP_VERSION, '5.4.0', '<' ) ) ) {
 			$json = new Services_JSON();
 			return $json->encode( $value, $isHtml );
 		} else {
-			return json_encode( $value );
+			return json_encode( $value, $isHtml ? JSON_PRETTY_PRINT : 0 );
 		}
 	}
 
@@ -49,7 +57,7 @@ class FormatJson {
 	 *
 	 * @return Mixed: the value encoded in json in appropriate PHP type.
 	 * Values true, false and null (case-insensitive) are returned as true, false
-	 * and &null; respectively. &null; is returned if the json cannot be
+	 * and "&null;" respectively. "&null;" is returned if the json cannot be
 	 * decoded or if the encoded data is deeper than the recursion limit.
 	 */
 	public static function decode( $value, $assoc = false ) {

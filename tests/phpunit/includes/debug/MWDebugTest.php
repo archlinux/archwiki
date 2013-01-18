@@ -12,6 +12,11 @@ class MWDebugTest extends MediaWikiTestCase {
 		}
 		/** Clear log before each test */
 		MWDebug::clearLog();
+		wfSuppressWarnings();
+	}
+
+	function tearDown() {
+		wfRestoreWarnings();
 	}
 
 	function testAddLog() {
@@ -30,7 +35,7 @@ class MWDebugTest extends MediaWikiTestCase {
 		$this->assertEquals( array( array(
 			'msg' => 'Warning message',
 			'type' => 'warn',
-			'caller' => 'MWDebug::warning',
+			'caller' => 'MWDebugTest::testAddWarning',
 			) ),
 			MWDebug::getLog()
 		);

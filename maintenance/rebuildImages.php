@@ -1,6 +1,6 @@
 <?php
 /**
- * Script to update image metadata records
+ * Update image metadata records.
  *
  * Usage: php rebuildImages.php [--missing] [--dry-run]
  * Options:
@@ -30,8 +30,13 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script to update image metadata records.
+ *
+ * @ingroup Maintenance
+ */
 class ImageBuilder extends Maintenance {
 
 	/**
@@ -86,7 +91,7 @@ class ImageBuilder extends Maintenance {
 		$this->processed = 0;
 		$this->updated = 0;
 		$this->count = $count;
-		$this->startTime = wfTime();
+		$this->startTime = microtime( true );
 		$this->table = $table;
 	}
 
@@ -99,7 +104,7 @@ class ImageBuilder extends Maintenance {
 		$portion = $this->processed / $this->count;
 		$updateRate = $this->updated / $this->processed;
 
-		$now = wfTime();
+		$now = microtime( true );
 		$delta = $now - $this->startTime;
 		$estimatedTotalTime = $delta / $portion;
 		$eta = $this->startTime + $estimatedTotalTime;
@@ -189,7 +194,7 @@ class ImageBuilder extends Maintenance {
 				$filename = $altname;
 				$this->output( "Estimating transcoding... $altname\n" );
 			} else {
-				# @FIXME: create renameFile()
+				# @todo FIXME: create renameFile()
 				$filename = $this->renameFile( $filename );
 			}
 		}

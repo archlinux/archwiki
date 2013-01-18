@@ -1,6 +1,6 @@
 <?php
 /**
- * Do each user sequentially, since accounts can't be deleted
+ * Convert user options to the new `user_properties` table.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,15 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script to convert user options to the new `user_properties` table.
+ *
+ * Do each user sequentially, since accounts can't be deleted
+ *
+ * @ingroup Maintenance
+ */
 class ConvertUserOptions extends Maintenance {
 
 	private $mConversionCount = 0;

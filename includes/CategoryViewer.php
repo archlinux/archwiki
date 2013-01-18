@@ -1,7 +1,24 @@
 <?php
-
-if ( !defined( 'MEDIAWIKI' ) )
-	die( 1 );
+/**
+ * List and paging of category members.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
 
 class CategoryViewer extends ContextSource {
 	var $limit, $from, $until,
@@ -105,7 +122,7 @@ class CategoryViewer extends ContextSource {
 
 		// Give a proper message if category is empty
 		if ( $r == '' ) {
-			$r = wfMsgExt( 'category-empty', array( 'parse' ) );
+			$r = $this->msg( 'category-empty' )->parseAsBlock();
 		}
 
 		$lang = $this->getLanguage();
@@ -172,7 +189,8 @@ class CategoryViewer extends ContextSource {
 	*
 	* @param Title $title
 	* @param string $sortkey The human-readable sortkey (before transforming to icu or whatever).
-	*/
+	 * @return string
+	 */
 	function getSubcategorySortChar( $title, $sortkey ) {
 		global $wgContLang;
 
@@ -351,7 +369,7 @@ class CategoryViewer extends ContextSource {
 		if ( $rescnt > 0 ) {
 			# Showing subcategories
 			$r .= "<div id=\"mw-subcategories\">\n";
-			$r .= '<h2>' . wfMsg( 'subcategories' ) . "</h2>\n";
+			$r .= '<h2>' . $this->msg( 'subcategories' )->text() . "</h2>\n";
 			$r .= $countmsg;
 			$r .= $this->getSectionPagingLinks( 'subcat' );
 			$r .= $this->formatList( $this->children, $this->children_start_char );
@@ -365,7 +383,7 @@ class CategoryViewer extends ContextSource {
 	 * @return string
 	 */
 	function getPagesSection() {
-		$ti = htmlspecialchars( $this->title->getText() );
+		$ti = wfEscapeWikiText( $this->title->getText() );
 		# Don't show articles section if there are none.
 		$r = '';
 
@@ -380,7 +398,7 @@ class CategoryViewer extends ContextSource {
 
 		if ( $rescnt > 0 ) {
 			$r = "<div id=\"mw-pages\">\n";
-			$r .= '<h2>' . wfMsg( 'category_header', $ti ) . "</h2>\n";
+			$r .= '<h2>' . $this->msg( 'category_header', $ti )->text() . "</h2>\n";
 			$r .= $countmsg;
 			$r .= $this->getSectionPagingLinks( 'page' );
 			$r .= $this->formatList( $this->articles, $this->articles_start_char );
@@ -401,7 +419,7 @@ class CategoryViewer extends ContextSource {
 			$countmsg = $this->getCountMessage( $rescnt, $dbcnt, 'file' );
 
 			$r .= "<div id=\"mw-category-media\">\n";
-			$r .= '<h2>' . wfMsg( 'category-media-header', htmlspecialchars( $this->title->getText() ) ) . "</h2>\n";
+			$r .= '<h2>' . $this->msg( 'category-media-header', wfEscapeWikiText( $this->title->getText() ) )->text() . "</h2>\n";
 			$r .= $countmsg;
 			$r .= $this->getSectionPagingLinks( 'file' );
 			if ( $this->showGallery ) {
@@ -486,11 +504,11 @@ class CategoryViewer extends ContextSource {
 		# Split into three columns
 		$columns = array_chunk( $columns, ceil( count( $columns ) / 3 ), true /* preserve keys */ );
 
-		$ret = '<table width="100%"><tr valign="top">';
+		$ret = '<table style="width: 100%;"><tr style="vertical-align: top;">';
 		$prevchar = null;
 
 		foreach ( $columns as $column ) {
-			$ret .= '<td width="33.3%">';
+			$ret .= '<td style="width: 33.3%;">';
 			$colContents = array();
 
 			# Kind of like array_flip() here, but we keep duplicates in an
@@ -508,7 +526,7 @@ class CategoryViewer extends ContextSource {
 				if ( $first && $char === $prevchar ) {
 					# We're continuing a previous chunk at the top of a new
 					# column, so add " cont." after the letter.
-					$ret .= ' ' . wfMsgHtml( 'listingcontinuesabbrev' );
+					$ret .= ' ' . wfMessage( 'listingcontinuesabbrev' )->escaped();
 				}
 				$ret .= "</h3>\n";
 
@@ -558,7 +576,7 @@ class CategoryViewer extends ContextSource {
 	 * @return String HTML
 	 */
 	private function pagingLinks( $first, $last, $type = '' ) {
-		$prevLink = wfMessage( 'prevn' )->numParams( $this->limit )->escaped();
+		$prevLink = $this->msg( 'prevn' )->numParams( $this->limit )->escaped();
 
 		if ( $first != '' ) {
 			$prevQuery = $this->query;
@@ -572,7 +590,7 @@ class CategoryViewer extends ContextSource {
 			);
 		}
 
-		$nextLink = wfMessage( 'nextn' )->numParams( $this->limit )->escaped();
+		$nextLink = $this->msg( 'nextn' )->numParams( $this->limit )->escaped();
 
 		if ( $last != '' ) {
 			$lastQuery = $this->query;
@@ -586,7 +604,7 @@ class CategoryViewer extends ContextSource {
 			);
 		}
 
-		return "($prevLink) ($nextLink)";
+		return $this->msg('categoryviewer-pagedlinks')->rawParams($prevLink, $nextLink)->escaped();
 	}
 
 	/**
@@ -670,8 +688,8 @@ class CategoryViewer extends ContextSource {
 			$this->cat->refreshCounts();
 		} else {
 			# Case 3: hopeless.  Don't give a total count at all.
-			return wfMessage( "category-$type-count-limited" )->numParams( $rescnt )->parseAsBlock();
+			return $this->msg( "category-$type-count-limited" )->numParams( $rescnt )->parseAsBlock();
 		}
-		return wfMessage( "category-$type-count" )->numParams( $rescnt, $totalcnt )->parseAsBlock();
+		return $this->msg( "category-$type-count" )->numParams( $rescnt, $totalcnt )->parseAsBlock();
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * MediaWiki page data importer
+ * MediaWiki page data importer.
  *
  * Copyright © 2003,2005 Brion Vibber <brion@pobox.com>
  * http://www.mediawiki.org/
@@ -33,7 +33,7 @@
 class WikiImporter {
 	private $reader = null;
 	private $mLogItemCallback, $mUploadCallback, $mRevisionCallback, $mPageCallback;
-	private $mSiteInfoCallback, $mTargetNamespace, $mPageOutCallback;
+	private $mSiteInfoCallback, $mTargetNamespace, $mTargetRootPage, $mPageOutCallback;
 	private $mNoticeCallback, $mDebug;
 	private $mImportUploads, $mImageBasePath;
 	private $mNoUpdates = false;
@@ -200,6 +200,39 @@ class WikiImporter {
 	}
 
 	/**
+	 * Set a target root page under which all pages are imported
+	 * @param $rootpage
+	 * @return status object
+	 */
+	public function setTargetRootPage( $rootpage ) {
+		$status = Status::newGood();
+		if( is_null( $rootpage ) ) {
+			// No rootpage
+			$this->mTargetRootPage = null;
+		} elseif( $rootpage !== '' ) {
+			$rootpage = rtrim( $rootpage, '/' ); //avoid double slashes
+			$title = Title::newFromText( $rootpage, !is_null( $this->mTargetNamespace ) ? $this->mTargetNamespace : NS_MAIN );
+			if( !$title || $title->isExternal() ) {
+				$status->fatal( 'import-rootpage-invalid' );
+			} else {
+				if( !MWNamespace::hasSubpages( $title->getNamespace() ) ) {
+					global $wgContLang;
+
+					$displayNSText = $title->getNamespace() == NS_MAIN
+						? wfMessage( 'blanknamespace' )->text()
+						: $wgContLang->getNsText( $title->getNamespace() );
+					$status->fatal( 'import-rootpage-nosubpage', $displayNSText );
+				} else {
+					// set namespace to 'all', so the namespace check in processTitle() can passed
+					$this->setTargetNamespace( null );
+					$this->mTargetRootPage = $title->getPrefixedDBKey();
+				}
+			}
+		}
+		return $status;
+	}
+
+	/**
 	 * @param $dir
 	 */
 	public function setImageBasePath( $dir ) {
@@ -275,7 +308,7 @@ class WikiImporter {
 	}
 
 	/**
-	 * Notify the callback function when a new <page> is reached.
+	 * Notify the callback function when a new "<page>" is reached.
 	 * @param $title Title
 	 */
 	function pageCallback( $title ) {
@@ -285,7 +318,7 @@ class WikiImporter {
 	}
 
 	/**
-	 * Notify the callback function when a </page> is closed.
+	 * Notify the callback function when a "</page>" is closed.
 	 * @param $title Title
 	 * @param $origTitle Title
 	 * @param $revCount Integer
@@ -301,7 +334,8 @@ class WikiImporter {
 
 	/**
 	 * Notify the callback function of a revision
-	 * @param $revision A WikiRevision object
+	 * @param $revision WikiRevision object
+	 * @return bool|mixed
 	 */
 	private function revisionCallback( $revision ) {
 		if ( isset( $this->mRevisionCallback ) ) {
@@ -314,7 +348,8 @@ class WikiImporter {
 
 	/**
 	 * Notify the callback function of a new log item
-	 * @param $revision A WikiRevision object
+	 * @param $revision WikiRevision object
+	 * @return bool|mixed
 	 */
 	private function logItemCallback( $revision ) {
 		if ( isset( $this->mLogItemCallback ) ) {
@@ -394,6 +429,7 @@ class WikiImporter {
 
 	/**
 	 * Primary entry point
+	 * @return bool
 	 */
 	public function doImport() {
 		$this->reader->read();
@@ -783,9 +819,14 @@ class WikiImporter {
 		$origTitle = Title::newFromText( $workTitle );
 
 		if( !is_null( $this->mTargetNamespace ) && !is_null( $origTitle ) ) {
-			$title = Title::makeTitle( $this->mTargetNamespace,
+			# makeTitleSafe, because $origTitle can have a interwiki (different setting of interwiki map)
+			# and than dbKey can begin with a lowercase char
+			$title = Title::makeTitleSafe( $this->mTargetNamespace,
 				$origTitle->getDBkey() );
 		} else {
+			if( !is_null( $this->mTargetRootPage ) ) {
+				$workTitle = $this->mTargetRootPage . '/' . $workTitle;
+			}
 			$title = Title::newFromText( $workTitle );
 		}
 
@@ -826,7 +867,7 @@ class UploadSourceAdapter {
 	 * @return string
 	 */
 	static function registerSource( $source ) {
-		$id = wfGenerateToken();
+		$id = wfRandomString();
 
 		self::$sourceRegistrations[$id] = $source;
 

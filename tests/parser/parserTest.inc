@@ -140,7 +140,7 @@ class ParserTest {
 			$wgNamespaceAliases, $wgNamespaceProtection, $wgLocalFileRepo,
 			$parserMemc, $wgThumbnailScriptPath, $wgScriptPath,
 			$wgArticlePath, $wgStyleSheetPath, $wgScript, $wgStylePath, $wgExtensionAssetsPath,
-			$wgMainCacheType, $wgMessageCacheType, $wgParserCacheType;
+			$wgMainCacheType, $wgMessageCacheType, $wgParserCacheType, $wgLockManagers;
 
 		$wgScript = '/index.php';
 		$wgScriptPath = '/';
@@ -149,6 +149,11 @@ class ParserTest {
 		$wgStylePath = '/skins';
 		$wgExtensionAssetsPath = '/extensions';
 		$wgThumbnailScriptPath = false;
+		$wgLockManagers = array( array(
+			'name'          => 'fsLockManager',
+			'class'         => 'FSLockManager',
+			'lockDirectory' => wfTempDir() . '/test-repo/lockdir',
+		) );
 		$wgLocalFileRepo = array(
 			'class'           => 'LocalRepo',
 			'name'            => 'local',
@@ -627,6 +632,11 @@ class ParserTest {
 			'wgScriptPath' => '/',
 			'wgArticlePath' => '/wiki/$1',
 			'wgActionPaths' => array(),
+			'wgLockManagers' => array(
+				'name'          => 'fsLockManager',
+				'class'         => 'FSLockManager',
+				'lockDirectory' => $this->uploadDir . '/lockdir',
+			),
 			'wgLocalFileRepo' => array(
 				'class' => 'LocalRepo',
 				'name' => 'local',
@@ -680,7 +690,6 @@ class ParserTest {
 			'wgExternalLinkTarget' => false,
 			'wgAlwaysUseTidy' => false,
 			'wgHtml5' => true,
-			'wgCleanupPresentationalAttributes' => true,
 			'wgWellFormedXml' => true,
 			'wgAllowMicrodataAttributes' => true,
 			'wgAdaptiveMessageCache' => true,
@@ -699,6 +708,9 @@ class ParserTest {
 		}
 
 		$this->savedGlobals = array();
+
+		/** @since 1.20 */
+		wfRunHooks( 'ParserTestGlobals', array( &$settings ) );
 
 		foreach ( $settings as $var => $val ) {
 			if ( array_key_exists( $var, $GLOBALS ) ) {
@@ -951,6 +963,8 @@ class ParserTest {
 	 */
 	private function teardownGlobals() {
 		RepoGroup::destroySingleton();
+		FileBackendGroup::destroySingleton();
+		LockManagerGroup::destroySingleton();
 		LinkCache::singleton()->clear();
 
 		foreach ( $this->savedGlobals as $var => $val ) {

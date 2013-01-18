@@ -1,7 +1,22 @@
 #!/usr/bin/php
 <?php
 /**
- * Other tests for the unicode normalization module
+ * Other tests for the unicode normalization module.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  * @ingroup UtfNormal
@@ -61,6 +76,7 @@ function normalize_form_kd($c)     { return UtfNormal::toNFKD($c); }
  * following functions to force pure PHP usage.  I decided not to
  * commit that code since might produce a slowdown in the UTF
  * normalization code just for the sake of these tests. -- hexmode
+ * @return string
  */
 function normalize_form_c_php($c)  { return UtfNormal::toNFC($c, "php");  }
 function normalize_form_d_php($c)  { return UtfNormal::toNFD($c, "php");  }

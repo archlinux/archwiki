@@ -2,6 +2,53 @@
 
 class FancyCaptcha extends SimpleCaptcha {
 	/**
+	 * @return FileBackend
+	 */
+	public function getBackend() {
+		global $wgCaptchaFileBackend, $wgCaptchaDirectory;
+
+		if ( $wgCaptchaFileBackend ) {
+			return FileBackendGroup::singleton()->get( $wgCaptchaFileBackend );
+		} else {
+			static $backend = null;
+			if ( !$backend ) {
+				$backend = new FSFileBackend( array(
+					'name'           => 'captcha-backend',
+					'lockManager'    => 'nullLockManager',
+					'containerPaths' => array( 'captcha-render' => $wgCaptchaDirectory ),
+					'fileMode'       => 777
+				) );
+			}
+			return $backend;
+		}
+	}
+
+	/**
+	 * @return integer Estimate of the number of captchas files
+	 */
+	public function estimateCaptchaCount() {
+		global $wgCaptchaDirectoryLevels;
+
+		$factor = 1;
+		$sampleDir = $this->getBackend()->getRootStoragePath() . '/captcha-render';
+		if ( $wgCaptchaDirectoryLevels >= 1 ) { // 1/16 sample if 16 shards
+			$sampleDir .= '/' . dechex( mt_rand( 0, 15 ) );
+			$factor = 16;
+		}
+		if ( $wgCaptchaDirectoryLevels >= 3 ) { // 1/256 sample if 4096 shards
+			$sampleDir .= '/' . dechex( mt_rand( 0, 15 ) );
+			$factor = 256;
+		}
+
+		$count = 0;
+		foreach ( $this->getBackend()->getFileList( array( 'dir' => $sampleDir ) ) as $file ) {
+			++$count;
+		}
+
+		return ( $count * $factor );
+	}
+
+	/**
 	 * Check if the submitted form matches the captcha session data provided
 	 * by the plugin when the form was generated.
 	 *
@@ -71,7 +118,7 @@ class FancyCaptcha extends SimpleCaptcha {
 			'<p>' .
 			Html::element( 'label', array(
 				'for' => 'wpCaptchaWord',
-			), parent::getMessage( 'label' ) . wfMsg( 'colon-separator' ) ) .
+			), parent::getMessage( 'label' ) . wfMessage( 'colon-separator' )->text() ) .
 			Html::element( 'input', array(
 				'name' => 'wpCaptchaWord',
 				'id'   => 'wpCaptchaWord',
@@ -85,94 +132,151 @@ class FancyCaptcha extends SimpleCaptcha {
 
 	/**
 	 * Select a previously generated captcha image from the queue.
-	 * @fixme subject to race conditions if lots of files vanish
 	 * @return mixed tuple of (salt key, text hash) or false if no image to find
 	 */
-	function pickImage() {
-		global $wgCaptchaDirectory, $wgCaptchaDirectoryLevels;
-		return $this->pickImageDir(
-			$wgCaptchaDirectory,
-			$wgCaptchaDirectoryLevels );
+	protected function pickImage() {
+		global $wgCaptchaDirectoryLevels;
+
+		$lockouts = 0; // number of times another process claimed a file before this one
+		$baseDir = $this->getBackend()->getRootStoragePath() . '/captcha-render';
+		return $this->pickImageDir( $baseDir, $wgCaptchaDirectoryLevels, $lockouts );
 	}
 
-	function pickImageDir( $directory, $levels ) {
-		if ( $levels ) {
-			$dirs = array();
+	/**
+	 * @param $directory string
+	 * @param $levels integer
+	 * @param $lockouts integer
+	 * @return Array|bool
+	 */
+	protected function pickImageDir( $directory, $levels, &$lockouts ) {
+		global $wgMemc;
 
-			// Check which subdirs are actually present...
-			$dir = opendir( $directory );
-			if ( !$dir ) {
-				return false;
-			}
-			while ( false !== ( $entry = readdir( $dir ) ) ) {
+		if ( $levels <= 0 ) { // $directory has regular files
+			return $this->pickImageFromDir( $directory, $lockouts );
+		}
+
+		$backend = $this->getBackend();
+
+		$key  = "fancycaptcha:dirlist:{$backend->getWikiId()}:" . sha1( $directory );
+		$dirs = $wgMemc->get( $key ); // check cache
+		if ( !is_array( $dirs ) ) { // cache miss
+			$dirs = array(); // subdirs actually present...
+			foreach ( $backend->getTopDirectoryList( array( 'dir' => $directory ) ) as $entry ) {
 				if ( ctype_xdigit( $entry ) && strlen( $entry ) == 1 ) {
 					$dirs[] = $entry;
 				}
 			}
-			closedir( $dir );
-
-			$place = mt_rand( 0, count( $dirs ) - 1 );
-			// In case all dirs are not filled,
-			// cycle through next digits...
-			for ( $j = 0; $j < count( $dirs ); $j++ ) {
-				$char = $dirs[( $place + $j ) % count( $dirs )];
-				$return = $this->pickImageDir( "$directory/$char", $levels - 1 );
-				if ( $return ) {
-					return $return;
-				}
-			}
-			// Didn't find any images in this directory... empty?
-			return false;
-		} else {
-			return $this->pickImageFromDir( $directory );
+			wfDebug( "Cache miss for $directory subdirectory listing.\n" );
+			$wgMemc->set( $key, $dirs, 86400 );
 		}
-	}
 
-	function pickImageFromDir( $directory ) {
-		if ( !is_dir( $directory ) ) {
-			return false;
+		if ( !count( $dirs ) ) {
+			// Remove this directory if empty so callers don't keep looking here
+			$backend->clean( array( 'dir' => $directory ) );
+			return false; // none found
 		}
-		$n = mt_rand( 0, $this->countFiles( $directory ) - 1 );
-		$dir = opendir( $directory );
 
-		$count = 0;
-
-		$entry = readdir( $dir );
-		$pick = false;
-		while ( false !== $entry ) {
-			$entry = readdir( $dir );
-			if ( preg_match( '/^image_([0-9a-f]+)_([0-9a-f]+)\\.png$/', $entry, $matches ) ) {
-				$size = getimagesize( "$directory/$entry" );
-				$pick = array(
-					'salt' => $matches[1],
-					'hash' => $matches[2],
-					'width' => $size[0],
-					'height' => $size[1],
-					'viewed' => false,
-				);
-				if ( $count++ == $n ) {
-					break;
-				}
+		$place = mt_rand( 0, count( $dirs ) - 1 ); // pick a random subdir
+		// In case all dirs are not filled, cycle through next digits...
+		for ( $j = 0; $j < count( $dirs ); $j++ ) {
+			$char = $dirs[( $place + $j ) % count( $dirs )];
+			$info = $this->pickImageDir( "$directory/$char", $levels - 1, $lockouts );
+			if ( $info ) {
+				return $info; // found a captcha
+			} else {
+				wfDebug( "Could not find captcha in $directory.\n" );
+				$wgMemc->delete( $key ); // files changed on disk?
 			}
 		}
-		closedir( $dir );
-		return $pick;
+
+		return false; // didn't find any images in this directory... empty?
 	}
 
 	/**
-	 * Count the number of files in a directory.
-	 * @return int
+	 * @param $directory string
+	 * @param $lockouts integer
+	 * @return Array|bool
 	 */
-	function countFiles( $dirname ) {
-		$dir = opendir( $dirname );
-		$count = 0;
-		while ( false !== ( $entry = readdir( $dir ) ) ) {
-			if ( $entry != '.' && $entry != '..' ) {
-				$count++;
+	protected function pickImageFromDir( $directory, &$lockouts ) {
+		global $wgMemc;
+
+		$backend = $this->getBackend();
+
+		$key   = "fancycaptcha:filelist:{$backend->getWikiId()}:" . sha1( $directory );
+		$files = $wgMemc->get( $key ); // check cache
+		if ( !is_array( $files ) ) { // cache miss
+			$files = array(); // captcha files
+			foreach ( $backend->getTopFileList( array( 'dir' => $directory ) ) as $entry ) {
+				$files[] = $entry;
+				if ( count( $files ) >= 500 ) { // sanity
+					wfDebug( 'Skipping some captchas; $wgCaptchaDirectoryLevels set too low?.' );
+					break;
+				}
+			}
+			$wgMemc->set( $key, $files, 86400 );
+			wfDebug( "Cache miss for $directory captcha listing.\n" );
+		}
+
+		if ( !count( $files ) ) {
+			// Remove this directory if empty so callers don't keep looking here
+			$backend->clean( array( 'dir' => $directory ) );
+			return false;
+		}
+
+		$info = $this->pickImageFromList( $directory, $files, $lockouts );
+		if ( !$info ) {
+			wfDebug( "Could not find captcha in $directory.\n" );
+			$wgMemc->delete( $key ); // files changed on disk?
+		}
+
+		return $info;
+	}
+
+	/**
+	 * @param $directory string
+	 * @param $files array
+	 * @param $lockouts integer
+	 * @return boolean
+	 */
+	protected function pickImageFromList( $directory, array $files, &$lockouts ) {
+		global $wgMemc, $wgCaptchaDeleteOnSolve;
+
+		if ( !count( $files ) ) {
+			return false; // none found
+		}
+
+		$backend  = $this->getBackend();
+		$place    = mt_rand( 0, count( $files ) - 1 ); // pick a random file
+		$misses   = 0; // number of files in listing that don't actually exist
+		for ( $j = 0; $j < count( $files ); $j++ ) {
+			$entry = $files[( $place + $j ) % count( $files )];
+			if ( preg_match( '/^image_([0-9a-f]+)_([0-9a-f]+)\\.png$/', $entry, $matches ) ) {
+				if ( $wgCaptchaDeleteOnSolve ) { // captcha will be deleted when solved
+					$key = "fancycaptcha:filelock:{$backend->getWikiId()}:" . sha1( $entry );
+					// Try to claim this captcha for 10 minutes (for the user to solve)...
+					if ( ++$lockouts <= 10 && !$wgMemc->add( $key, '1', 600 ) ) {
+						continue; // could not acquire (skip it to avoid race conditions)
+					}
+				}
+				$fsFile = $backend->getLocalReference( array( 'src' => "$directory/$entry" ) );
+				if ( !$fsFile || !$fsFile->exists() ) {
+					if ( ++$misses >= 5 ) { // too many files in the listing don't exist
+						break; // listing cache too stale? break out so it will be cleared
+					}
+					continue; // try next file
+				}
+				$size = getimagesize( $fsFile->getPath() );
+				return array(
+					'salt'   => $matches[1],
+					'hash'   => $matches[2],
+					'width'  => $size[0],
+					'height' => $size[1],
+					'viewed' => false,
+				);
 			}
 		}
-		closedir( $dir );
-		return $count;
+
+		return false; // none found
 	}
 
 	function showImage() {
@@ -182,60 +286,67 @@ class FancyCaptcha extends SimpleCaptcha {
 
 		$info = $this->retrieveCaptcha();
 		if ( $info ) {
-			/*
-			// Be a little less restrictive for now; in at least some circumstances,
-			// Konqueror tries to reload the image even if you haven't navigated
-			// away from the page.
-			if( $info['viewed'] ) {
-				wfHttpError( 403, 'Access Forbidden', "Can't view captcha image a second time." );
-				return false;
-			}
-			*/
-
-			$info['viewed'] = wfTimestamp();
+			$timestamp = new MWTimestamp();
+			$info['viewed'] = $timestamp->getTimestamp();
 			$this->storeCaptcha( $info );
 
 			$salt = $info['salt'];
 			$hash = $info['hash'];
-			$file = $this->imagePath( $salt, $hash );
 
-			if ( file_exists( $file ) ) {
-				global $IP;
-				require_once "$IP/includes/StreamFile.php";
-				header( "Cache-Control: private, s-maxage=0, max-age=3600" );
-				wfStreamFile( $file );
-				return true;
-			}
+			return $this->getBackend()->streamFile( array(
+				'src'     => $this->imagePath( $salt, $hash ),
+				'headers' => array( "Cache-Control: private, s-maxage=0, max-age=3600" )
+			) )->isOK();
 		}
+
 		wfHttpError( 500, 'Internal Error', 'Requested bogus captcha image' );
 		return false;
 	}
 
-	function imagePath( $salt, $hash ) {
-		global $wgCaptchaDirectory, $wgCaptchaDirectoryLevels;
-		$file = $wgCaptchaDirectory;
-		$file .= DIRECTORY_SEPARATOR;
+	/**
+	 * @param $salt string
+	 * @param $hash string
+	 * @return string
+	 */
+	public function imagePath( $salt, $hash ) {
+		global $wgCaptchaDirectoryLevels;
+
+		$file = $this->getBackend()->getRootStoragePath() . '/captcha-render/';
 		for ( $i = 0; $i < $wgCaptchaDirectoryLevels; $i++ ) {
-			$file .= $hash { $i } ;
-			$file .= DIRECTORY_SEPARATOR;
+			$file .= $hash{ $i } . '/';
 		}
 		$file .= "image_{$salt}_{$hash}.png";
+
 		return $file;
+	}
+
+	/**
+	 * @param $basename string
+	 * @return Array (salt, hash)
+	 * @throws MWException
+	 */
+	public function hashFromImageName( $basename ) {
+		if ( preg_match( '/^image_([0-9a-f]+)_([0-9a-f]+)\\.png$/', $basename, $matches ) ) {
+			return array( $matches[1], $matches[2] );
+		} else {
+			throw new MWException( "Invalid filename '$basename'.\n" );
+		}
 	}
 
 	/**
 	 * Show a message asking the user to enter a captcha on edit
 	 * The result will be treated as wiki text
 	 *
-	 * @param $action Action being performed
+	 * @param $action string Action being performed
 	 * @return string
 	 */
 	function getMessage( $action ) {
 		$name = 'fancycaptcha-' . $action;
-		$text = wfMsg( $name );
+		$text = wfMessage( $name )->text();
 		# Obtain a more tailored message, if possible, otherwise, fall back to
 		# the default for edits
-		return wfEmptyMsg( $name, $text ) ? wfMsg( 'fancycaptcha-edit' ) : $text;
+		return wfMessage( $name, $text )->isDisabled() ?
+			wfMessage( 'fancycaptcha-edit' )->text() : $text;
 	}
 
 	/**
@@ -248,10 +359,9 @@ class FancyCaptcha extends SimpleCaptcha {
 		$pass = parent::passCaptcha();
 
 		if ( $pass && $wgCaptchaDeleteOnSolve ) {
-			$filename = $this->imagePath( $info['salt'], $info['hash'] );
-			if ( file_exists( $filename ) ) {
-				unlink( $filename );
-			}
+			$this->getBackend()->quickDelete( array(
+				'src' => $this->imagePath( $info['salt'], $info['hash'] )
+			) );
 		}
 
 		return $pass;

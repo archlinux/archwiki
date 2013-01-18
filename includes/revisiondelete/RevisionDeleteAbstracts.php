@@ -1,4 +1,25 @@
 <?php
+/**
+ * Interface definition for deletable items.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup RevisionDelete
+ */
 
 /**
  * Abstract base class for a list of deletable items. The list class
@@ -16,6 +37,7 @@ abstract class RevDel_List extends RevisionListBase {
 	 * Get the DB field name associated with the ID list.
 	 * This used to populate the log_search table for finding log entries.
 	 * Override this function.
+	 * @return null
 	 */
 	public static function getRelationType() {
 		return null;
@@ -25,7 +47,7 @@ abstract class RevDel_List extends RevisionListBase {
 	 * Set the visibility for the revisions in this list. Logging and
 	 * transactions are done here.
 	 *
-	 * @param $params Associative array of parameters. Members are:
+	 * @param $params array Associative array of parameters. Members are:
 	 *     value:       The integer value to set the visibility to
 	 *     comment:     The log comment.
 	 * @return Status
@@ -37,7 +59,7 @@ abstract class RevDel_List extends RevisionListBase {
 		$this->res = false;
 		$dbw = wfGetDB( DB_MASTER );
 		$this->doQuery( $dbw );
-		$dbw->begin();
+		$dbw->begin( __METHOD__ );
 		$status = Status::newGood();
 		$missing = array_flip( $this->ids );
 		$this->clearFileOps();
@@ -110,7 +132,7 @@ abstract class RevDel_List extends RevisionListBase {
 
 		if ( $status->successCount == 0 ) {
 			$status->ok = false;
-			$dbw->rollback();
+			$dbw->rollback( __METHOD__ );
 			return $status;
 		}
 
@@ -121,7 +143,7 @@ abstract class RevDel_List extends RevisionListBase {
 		$status->merge( $this->doPreCommitUpdates() );
 		if ( !$status->isOK() ) {
 			// Fatal error, such as no configured archive directory
-			$dbw->rollback();
+			$dbw->rollback( __METHOD__ );
 			return $status;
 		}
 
@@ -136,7 +158,7 @@ abstract class RevDel_List extends RevisionListBase {
 			'authorIds' => $authorIds,
 			'authorIPs' => $authorIPs
 		) );
-		$dbw->commit();
+		$dbw->commit( __METHOD__ );
 
 		// Clear caches
 		$status->merge( $this->doPostCommitUpdates() );
@@ -154,7 +176,7 @@ abstract class RevDel_List extends RevisionListBase {
 
 	/**
 	 * Record a log entry on the action
-	 * @param $params Associative array of parameters:
+	 * @param $params array Associative array of parameters:
 	 *     newBits:         The new value of the *_deleted bitfield
 	 *     oldBits:         The old value of the *_deleted bitfield.
 	 *     title:           The target title
@@ -189,6 +211,7 @@ abstract class RevDel_List extends RevisionListBase {
 
 	/**
 	 * Get the log action for this list type
+	 * @return string
 	 */
 	public function getLogAction() {
 		return 'revision';
@@ -196,7 +219,7 @@ abstract class RevDel_List extends RevisionListBase {
 
 	/**
 	 * Get log parameter array.
-	 * @param $params Associative array of log parameters, same as updateLog()
+	 * @param $params array Associative array of log parameters, same as updateLog()
 	 * @return array
 	 */
 	public function getLogParams( $params ) {
@@ -247,6 +270,7 @@ abstract class RevDel_Item extends RevisionItemBase {
 	 * Returns true if the item is "current", and the operation to set the given
 	 * bits can't be executed for that reason
 	 * STUB
+	 * @return bool
 	 */
 	public function isHideCurrentOp( $newBits ) {
 		return false;

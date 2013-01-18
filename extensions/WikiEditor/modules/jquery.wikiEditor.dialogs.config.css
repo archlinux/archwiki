@@ -80,6 +80,15 @@
 	background-image: url(images/dialogs/insert-link-external.png);
 	background-position: left;
 }
+/* File dialog */
+#wikieditor-toolbar-file-target,
+#wikieditor-toolbar-file-caption {
+	width: 100%;
+}
+.wikieditor-toolbar-file-options .wikieditor-toolbar-field-wrapper {
+	float: left;
+	margin: 0 20px 0 0;
+}
 /* Reference Dialog */
 #wikieditor-toolbar-reference-dialog label {
 	float: left;

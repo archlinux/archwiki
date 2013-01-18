@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @author Philip
 import tarfile as tf
@@ -31,7 +31,7 @@ def unichr3( *args ):
 
 # DEFINE
 UNIHAN_VER = '5.2.0'
-SF_MIRROR = 'cdnetworks-kr-2'
+SF_MIRROR = 'dfn'
 SCIM_TABLES_VER = '0.5.10'
 SCIM_PINYIN_VER = '0.5.91'
 LIBTABE_VER = '0.2.3'
@@ -39,7 +39,7 @@ LIBTABE_VER = '0.2.3'
 
 def download( url, dest ):
     if os.path.isfile( dest ):
-        print( 'File %s up to date.' % dest )
+        print( 'File %s is up to date.' % dest )
         return
     global islinux
     if islinux:
@@ -370,15 +370,15 @@ $zh2Hant = array(\n'''
         +  PHPArray( toCN ) \
         +  '\n);\n\n$zh2SG = array(\n' \
         +  PHPArray( toSG ) \
-        +  '\n);'
+        +  '\n);\n'
     
-    f = open( 'ZhConversion.php', 'wb', encoding = 'utf8' )
+    f = open( os.path.join( '..', 'ZhConversion.php' ), 'wb', encoding = 'utf8' )
     print ('Writing ZhConversion.php ... ')
     f.write( php )
     f.close()
     
-    #Remove temp files
-    print ('Deleting temp files ... ')
+    # Remove temporary files
+    print ('Deleting temporary files ... ')
     os.remove('EZ-Big.txt.in')
     os.remove('phrase_lib.txt')
     os.remove('tsi.src')

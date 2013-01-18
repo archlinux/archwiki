@@ -1,8 +1,7 @@
 <?php
-
 /**
- * Maintenance script to import one or more images from the local file system into
- * the wiki without using the web-based interface.
+ * Import one or more images from the local file system into the wiki without
+ * using the web-based interface.
  *
  * "Smart import" additions:
  * - aim: preserve the essential metadata (user, description) when importing medias from an existing wiki
@@ -33,8 +32,8 @@
  */
 
 $optionsWithArgs = array( 'extensions', 'comment', 'comment-file', 'comment-ext', 'user', 'license', 'sleep', 'limit', 'from', 'source-wiki-url' );
-require_once( dirname( __FILE__ ) . '/commandLine.inc' );
-require_once( dirname( __FILE__ ) . '/importImages.inc' );
+require_once( __DIR__ . '/commandLine.inc' );
+require_once( __DIR__ . '/importImages.inc' );
 $processed = $added = $ignored = $skipped = $overwritten = $failed = 0;
 
 echo( "Import Images\n\n" );

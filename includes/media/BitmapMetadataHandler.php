@@ -1,13 +1,36 @@
 <?php
 /**
-Class to deal with reconciling and extracting metadata from bitmap images.
-This is meant to comply with http://www.metadataworkinggroup.org/pdf/mwg_guidance.pdf
+ * Extraction of metadata from different bitmap image types.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Media
+ */
 
-This sort of acts as an intermediary between MediaHandler::getMetadata
-and the various metadata extractors.
-
-@todo other image formats.
-*/
+/**
+ * Class to deal with reconciling and extracting metadata from bitmap images.
+ * This is meant to comply with http://www.metadataworkinggroup.org/pdf/mwg_guidance.pdf
+ *
+ * This sort of acts as an intermediary between MediaHandler::getMetadata
+ * and the various metadata extractors.
+ *
+ * @todo other image formats.
+ * @ingroup Media
+ */
 class BitmapMetadataHandler {
 
 	private $metadata = array();
@@ -122,7 +145,7 @@ class BitmapMetadataHandler {
 	/** Main entry point for jpeg's.
 	 *
 	 * @param $filename string filename (with full path)
-	 * @return metadata result array.
+	 * @return array metadata result array.
 	 * @throws MWException on invalid file.
 	 */
 	static function Jpeg ( $filename ) {
@@ -193,7 +216,7 @@ class BitmapMetadataHandler {
 	 * They don't really have native metadata, so just merges together
 	 * XMP and image comment.
 	 *
-	 * @param $filename full path to file
+	 * @param $filename string full path to file
 	 * @return Array metadata array
 	 */
 	static public function GIF ( $filename ) {

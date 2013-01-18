@@ -182,7 +182,7 @@ fn: {
 		$.wikiEditor.modules.toc.cfg.rtl = $( 'body' ).is( '.rtl' );
 		$.wikiEditor.modules.toc.cfg.flexProperty = $.wikiEditor.modules.toc.cfg.rtl ? 'marginLeft' : 'marginRight';
 		var height = context.$ui.find( '.wikiEditor-ui-left' ).height();
-		context.modules.toc.$toc = $( '<div />' )
+		context.modules.toc.$toc = $( '<div>' )
 			.addClass( 'wikiEditor-ui-toc' )
 			.data( 'context', context )
 			.data( 'positionMode', 'regular' )
@@ -195,7 +195,7 @@ fn: {
 			$.wikiEditor.modules.toc.fn.redraw( context, $.wikiEditor.modules.toc.cfg.defaultWidth );
 	},
 	redraw: function( context, fixedWidth ) {
-		var fixedWidth = parseFloat( fixedWidth );
+		fixedWidth = parseFloat( fixedWidth );
 		if( context.modules.toc.$toc.data( 'positionMode' ) == 'regular' ) {
 			context.$ui.find( '.wikiEditor-ui-right' )
 			.css( 'width', fixedWidth + 'px' );
@@ -214,8 +214,9 @@ fn: {
 	switchLayout: function( context ) {
 		var width,
 			height = context.$ui.find( '.wikiEditor-ui-right' ).height();
-		if( context.modules.toc.$toc.data( 'positionMode' ) == 'regular'
-		 	&& !context.modules.toc.$toc.data( 'collapsed' ) ) {
+		if ( context.modules.toc.$toc.data( 'positionMode' ) == 'regular'
+				&& !context.modules.toc.$toc.data( 'collapsed' )
+		) {
 			// store position mode
 			context.modules.toc.$toc.data( 'positionMode', 'goofy' );
 			// store the width of the TOC, to ensure we dont allow it to be larger than this when switching back
@@ -423,8 +424,12 @@ fn: {
 		 * @param {Object} outline Array of objects with level fields
 		 */
 		function buildStructure( outline, offset, level ) {
-			if ( offset == undefined ) offset = 0;
-			if ( level == undefined ) level = 1;
+			if ( offset === undefined ) {
+				offset = 0;
+			}
+			if ( level === undefined ) {
+				level = 1;
+			}
 			var sections = [];
 			for ( var i = offset; i < outline.length; i++ ) {
 				if ( outline[i].nLevel == level ) {
@@ -445,9 +450,9 @@ fn: {
 		 * @param {Object} structure Structured outline
 		 */
 		function buildList( structure ) {
-			var list = $( '<ul />' );
+			var list = $( '<ul>' );
 			for ( var i = 0; i < structure.length; i++ ) {
-				var div = $( '<div />' )
+				var div = $( '<div>' )
 					.addClass( 'section-' + structure[i].index )
 					.data( 'index', structure[i].index )
 					.mousedown( function() {
@@ -457,7 +462,7 @@ fn: {
 					.click( function( event ) {
 						var wrapper = context.$content.find(
 							'.wikiEditor-toc-section-' + $( this ).data( 'index' ) );
-						if ( wrapper.size() == 0 )
+						if ( wrapper.length === 0 )
 							wrapper = context.$content;
 						context.fn.scrollToTop( wrapper, true );
 						context.$textarea.textSelection( 'setSelection', {
@@ -471,16 +476,16 @@ fn: {
 						//$.wikiEditor.modules.toc.fn.unhighlight( context );
 						$( this ).addClass( 'current' );
 						//$( this ).removeClass( 'current' );
-						setTimeout( function() { $.wikiEditor.modules.toc.fn.unhighlight( context ) }, 1000 );
+						setTimeout( function() { $.wikiEditor.modules.toc.fn.unhighlight( context ); }, 1000 );
 
 						if ( typeof $.trackAction != 'undefined' )
 							$.trackAction( 'ntoc.heading' );
 						event.preventDefault();
 					} )
 					.text( structure[i].text );
-				if ( structure[i].text == '' )
+				if ( structure[i].text === '' )
 					div.html( '&nbsp;' );
-				var item = $( '<li />' ).append( div );
+				var item = $( '<li>' ).append( div );
 				if ( structure[i].sections !== undefined ) {
 					item.append( buildList( structure[i].sections ) );
 				}
@@ -493,11 +498,11 @@ fn: {
 		 *
 		 */
 		function buildCollapseControls( ) {
-			var $collapseControl = $( '<div />' ), $expandControl = $( '<div />' );
+			var $collapseControl = $( '<div>' ), $expandControl = $( '<div>' );
 			$collapseControl
 				.addClass( 'tab' )
 				.addClass( 'tab-toc' )
-				.append( '<a href="#" />' )
+				.append( '<a href="#"></a>' )
 				.mousedown( function( e ) {
 					// No dragging!
 					e.preventDefault();
@@ -513,7 +518,7 @@ fn: {
 				.text( mediaWiki.msg( 'wikieditor-toc-hide' ) );
 			$expandControl
 				.addClass( 'wikiEditor-ui-toc-expandControl' )
-				.append( '<a href="#" />' )
+				.append( '<a href="#"></a>' )
 				.mousedown( function( e ) {
 					// No dragging!
 					e.preventDefault();
@@ -546,7 +551,7 @@ fn: {
 					start: function( e, ui ) {
 						var $this = $( this );
 						// Toss a transparent cover over our iframe
-						$( '<div />' )
+						$( '<div>' )
 							.addClass( 'wikiEditor-ui-resize-mask' )
 							.css( {
 								'position': 'absolute',
@@ -636,8 +641,12 @@ fn: {
 			// Recursively build the structure and add special item for
 			// section 0, if needed
 			var structure = buildStructure( outline );
-			if ( $( 'input[name=wpSection]' ).val() == '' ) {
-				structure.unshift( { 'text': mw.config.get( 'wgPageName' ).replace( /_/g, ' ' ), 'level': 1, 'index': 0 } );
+			if ( $( 'input[name="wpSection"]' ).val() === '' ) {
+				structure.unshift( {
+					'text': mw.config.get( 'wgPageName' ).replace( /_/g, ' ' ),
+					'level': 1,
+					'index': 0
+				} );
 			}
 			context.modules.toc.$toc.html( buildList( structure ) );
 
@@ -645,18 +654,20 @@ fn: {
 				buildResizeControls();
 				buildCollapseControls();
 			}
-			context.modules.toc.$toc.find( 'div' ).autoEllipsis(
-				{ 'position': 'right', 'tooltip': true, 'restoreText': true }
-			);
+			context.modules.toc.$toc.find( 'div' ).autoEllipsis( {
+				'position': 'right',
+				'tooltip': true,
+				'restoreText': true
+			} );
 		}
 	},
 	improveUI: function() {
 		/*
 		 * Extending resizable to allow west resizing without altering the left position attribute
 		 */
-		$.ui.plugin.add( "resizable", "preventPositionLeftChange", {
+		$.ui.plugin.add( 'resizable', 'preventPositionLeftChange', {
 			resize: function( event, ui ) {
-				$( this ).data( "resizable" ).position.left = 0;
+				$( this ).data( 'resizable' ).position.left = 0;
 			}
 		} );
 	}

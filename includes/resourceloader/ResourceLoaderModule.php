@@ -1,5 +1,7 @@
 <?php
 /**
+ * Abstraction for resource loader modules.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -170,7 +172,9 @@ abstract class ResourceLoaderModule {
 	 * Get all CSS for this module for a given skin.
 	 *
 	 * @param $context ResourceLoaderContext: Context object
-	 * @return Array: List of CSS strings keyed by media type
+	 * @return Array: List of CSS strings or array of CSS strings keyed by media type.
+	 *  like array( 'screen' => '.foo { width: 0 }' );
+	 *  or array( 'screen' => array( '.foo { width: 0 }' ) );
 	 */
 	public function getStyles( ResourceLoaderContext $context ) {
 		// Stub, override expected
@@ -235,13 +239,24 @@ abstract class ResourceLoaderModule {
 
 	/**
 	 * Where on the HTML page should this module's JS be loaded?
-	 * 'top': in the <head>
-	 * 'bottom': at the bottom of the <body>
+	 *  - 'top': in the "<head>"
+	 *  - 'bottom': at the bottom of the "<body>"
 	 *
 	 * @return string
 	 */
 	public function getPosition() {
 		return 'bottom';
+	}
+
+	/**
+	 * Whether this module's JS expects to work without the client-side ResourceLoader module.
+	 * Returning true from this function will prevent mw.loader.state() call from being
+	 * appended to the bottom of the script.
+	 *
+	 * @return bool
+	 */
+	public function isRaw() {
+		return false;
 	}
 
 	/**

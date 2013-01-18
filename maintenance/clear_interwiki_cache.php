@@ -1,7 +1,6 @@
 <?php
 /**
- * This script is used to clear the interwiki links for ALL languages in
- * the cache.
+ * Clear the cache of interwiki prefixes for all local wikis.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +21,13 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script to clear the cache of interwiki prefixes for all local wikis.
+ *
+ * @ingroup Maintenance
+ */
 class ClearInterwikiCache extends Maintenance {
 
 	public function __construct() {
