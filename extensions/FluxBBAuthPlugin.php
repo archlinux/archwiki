@@ -4,7 +4,7 @@ $wgHooks['isValidPassword'][] = 'FluxBBAuthPlugin::isValidPassword';
 
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FluxBBAuthPlugin',
-	'version' => '1.3',
+	'version' => '1.4',
 	'description' => 'Use FluxBB accounts in MediaWiki',
 	'author' => 'Pierre Schmitz',
 	'url' => 'https://pierre-schmitz.com/'
@@ -17,143 +17,131 @@ $FluxBBDatabase = 'fluxbb';
 
 class FluxBBAuthPlugin extends AuthPlugin {
 
-public static function isValidPassword($password) {
-	$length = strlen($password);
-	return ($length >= 4 && $length <= 25);
-}
-
-private function getUserData($username) {
-	global $FluxBBDatabase;
-	$dbr = wfGetDB( DB_SLAVE );
-
-	return $dbr->selectRow($FluxBBDatabase.'.users', array('username', 'email', 'realname'), array('username' => $username));
-}
-
-public function userExists( $username ) {
-	global $FluxBBDatabase;
-	$dbr = wfGetDB( DB_SLAVE );
-
-	try {
-		$result = $dbr->select($FluxBBDatabase.'.users', 'id', array('username' => $username));
-		$exists = ($result->numRows() > 0 ? true : false);
-		$result->free();
-	} catch (DBQueryError $e) {
-		$exists = false;
+	public static function isValidPassword($password) {
+		$length = strlen($password);
+		return ($length >= 4 && $length <= 25);
 	}
 
-	return $exists;
-}
+	private function getUserData($username) {
+		global $FluxBBDatabase;
+		$dbr = wfGetDB( DB_SLAVE );
 
-public function authenticate( $username, $password ) {
-	global $FluxBBDatabase;
-	$dbr = wfGetDB( DB_SLAVE );
-
-	try {
-		$result = $dbr->select($FluxBBDatabase.'.users', 'id', array('username' => $username, 'password' => sha1($password)));
-		$authenticated = ($result->numRows() > 0 ? true : false);
-		$result->free();
-	} catch (DBQueryError $e) {
-		$authenticated = false;
+		return $dbr->selectRow($FluxBBDatabase.'.users', array('username', 'email', 'realname'), array('username' => $username));
 	}
 
-	return $authenticated;
-}
+	public function userExists( $username ) {
+		global $FluxBBDatabase;
+		$dbr = wfGetDB( DB_SLAVE );
 
-public function modifyUITemplate( &$template, &$type ) {
-	$template->set( 'usedomain', false );
-	$template->set('link', 'Um Dich hier anzumelden, nutze Deine Konto-Daten aus dem <a href="https://bbs.archlinux.de/">archlinux.de-Forum</a>.');
-}
+		try {
+			$result = $dbr->select($FluxBBDatabase.'.users', 'id', array('username' => $username));
+			$exists = ($result->numRows() > 0 ? true : false);
+			$result->free();
+		} catch (DBQueryError $e) {
+			$exists = false;
+		}
 
-public function setDomain( $domain ) {
-	$this->domain = $domain;
-}
+		return $exists;
+	}
 
-public function validDomain( $domain ) {
-	return true;
-}
+	public function authenticate( $username, $password ) {
+		global $FluxBBDatabase;
+		$dbr = wfGetDB( DB_SLAVE );
 
-public function updateUser( &$user ) {
-	return $this->initUser($user);
-}
+		try {
+			$result = $dbr->select($FluxBBDatabase.'.users', 'id', array('username' => $username, 'password' => sha1($password)));
+			$authenticated = ($result->numRows() > 0 ? true : false);
+			$result->free();
+		} catch (DBQueryError $e) {
+			$authenticated = false;
+		}
 
-public function autoCreate() {
-	return true;
-}
+		return $authenticated;
+	}
 
-public function allowPropChange( $prop = '' ) {
-	if( $prop == 'realname' ) {
-		return false;
-	} elseif( $prop == 'emailaddress' ) {
-		return false;
-	} elseif( $prop == 'nickname' ) {
-		return false;
-	} else {
+	public function modifyUITemplate( &$template, &$type ) {
+		$template->set( 'usedomain', false );
+		$template->set('link', 'Um Dich hier anzumelden, nutze Deine Konto-Daten aus dem <a href="https://bbs.archlinux.de/">archlinux.de-Forum</a>.');
+	}
+
+	public function updateUser( &$user ) {
+		return $this->initUser($user);
+	}
+
+	public function autoCreate() {
 		return true;
 	}
-}
-public function allowPasswordChange() {
-	return false;
-}
 
-public function allowSetLocalPassword() {
-	return false;
-}
-
-public function setPassword( $user, $password ) {
-	return false;
-}
-
-public function updateExternalDB( $user ) {
-	// this way userdata is allways overwritten by external db
-	return $this->initUser($user);
-}
-
-public function canCreateAccounts() {
-	return false;
-}
-
-public function addUser( $user, $password, $email = '', $realname = '' ) {
-	return false;
-}
-
-public function strict() {
-	return true;
-}
-
-public function strictUserAuth( $username ) {
-	return true;
-}
-
-public function initUser( &$user, $autocreate=false ) {
-	try {
-		$data = $this->getUserData($user->getName());
-		if (!$data) {
-			return false;
-		}
-		$user->setEmail($data->email);
-		$user->confirmEmail();
-		$user->setRealName($data->realname);
-	} catch (Exception $e) {
+	protected function allowRealNameChange() {
 		return false;
 	}
-	return true;
-}
 
-public function getCanonicalName( $username ) {
-	if ($username != 'MediaWiki default') {
+	protected function allowEmailChange() {
+		return false;
+	}
+
+	protected function allowNickChange() {
+		return false;
+	}
+
+	public function allowPasswordChange() {
+		return false;
+	}
+
+	public function allowSetLocalPassword() {
+		return false;
+	}
+
+	public function setPassword( $user, $password ) {
+		return false;
+	}
+
+	public function updateExternalDB( $user ) {
+		return false;
+	}
+
+	public function canCreateAccounts() {
+		return false;
+	}
+
+	public function addUser( $user, $password, $email = '', $realname = '' ) {
+		return false;
+	}
+
+	public function strict() {
+		return true;
+	}
+
+	public function strictUserAuth( $username ) {
+		return true;
+	}
+
+	public function initUser( &$user, $autocreate = false ) {
 		try {
-			$data = $this->getUserData($username);
+			$data = $this->getUserData($user->getName());
 			if (!$data) {
 				return false;
 			}
-			return strtoupper(substr($data->username, 0, 1)).substr($data->username, 1);
+			$user->setEmail($data->email);
+			$user->confirmEmail();
+			$user->setRealName($data->realname);
+			$user->saveSettings();
 		} catch (Exception $e) {
 			return false;
 		}
-	} else {
+		return true;
+	}
+
+	public function getCanonicalName( $username ) {
+		try {
+			$data = $this->getUserData($username);
+			if ($data !== false) {
+				return strtoupper(substr($data->username, 0, 1)).substr($data->username, 1);
+			}
+		} catch (Exception $e) {
+		}
 		return $username;
 	}
-}
 
 }
 
