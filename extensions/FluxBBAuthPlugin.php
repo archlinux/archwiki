@@ -1,10 +1,13 @@
 <?php
 
+$wgAuth = new FluxBBAuthPlugin();
+
+$wgHiddenPrefs[] = 'realname';
 $wgHooks['isValidPassword'][] = 'FluxBBAuthPlugin::isValidPassword';
 
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FluxBBAuthPlugin',
-	'version' => '1.4',
+	'version' => '1.5',
 	'description' => 'Use FluxBB accounts in MediaWiki',
 	'author' => 'Pierre Schmitz',
 	'url' => 'https://pierre-schmitz.com/'
