@@ -1,10 +1,5 @@
 <?php
 
-$wgAuth = new FluxBBAuthPlugin();
-
-$wgHiddenPrefs[] = 'realname';
-$wgHooks['isValidPassword'][] = 'FluxBBAuthPlugin::isValidPassword';
-
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FluxBBAuthPlugin',
 	'version' => '1.5',
@@ -147,5 +142,9 @@ class FluxBBAuthPlugin extends AuthPlugin {
 	}
 
 }
+
+$wgAuth = new FluxBBAuthPlugin();
+$wgHiddenPrefs[] = 'realname';
+$wgHooks['isValidPassword'][] = 'FluxBBAuthPlugin::isValidPassword';
 
 ?>
