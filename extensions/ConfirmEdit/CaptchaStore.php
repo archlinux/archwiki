@@ -59,6 +59,13 @@ abstract class CaptchaStore {
 
 class CaptchaSessionStore extends CaptchaStore {
 
+	protected function __construct() {
+		// Make sure the session is started
+		if ( session_id() === '' ) {
+			wfSetupSession();
+		}
+	}
+
 	function store( $index, $info ) {
 		$_SESSION['captcha' . $info['index']] = $info;
 	}

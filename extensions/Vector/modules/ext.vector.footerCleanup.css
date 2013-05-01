@@ -12,7 +12,6 @@
 	border: 1px solid silver;
 	border-top: none;
 	padding: 1em 1em 1.5em 1em;
-	margin-right: -2px;
 	margin-bottom: 2em;
 }
 
@@ -74,3 +73,4 @@ input#wpSummary {
 .editButtons > input[type='submit']:first-child {
 	margin-left: .1em;
 }
+

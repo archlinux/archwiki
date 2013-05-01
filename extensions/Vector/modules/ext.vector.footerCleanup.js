@@ -1,19 +1,21 @@
-/*
+/**
  * Footer cleanup for Vector
  */
- ( function ( $ ) {
+( function ( $ ) {
 	// Wait for onload to remove edit help and "|" after cancel link.
-	window.onload = function() {
+	window.onload = function () {
 		// Only if advanced editor is found.
 		if ( 'wikiEditor' in $ ) {
 			$( '.editButtons' ).find( '.editHelp' ).remove();
 			// Remove the "|" from after the cancelLink.
 			var $cancelLink = $( '#mw-editform-cancel' );
 			$cancelLink.parent().empty().append( $cancelLink );
+			// Adjustment for proper right side alignment with WikiEditor.
+			$( '.editOptions, #editpage-specialchars' ).css( 'margin-right', '-2px' );
 		}
 	};
-    // Waiting until dom ready as the module is loaded in the head.
-    $( document ).ready( function () {
+	// Waiting until dom ready as the module is loaded in the head.
+	$( document ).ready( function () {
 		// Make "Templates used" a collapsible list.
 		$( '.templatesUsed ul' ).footerCollapsibleList( {
 			name: 'templates-used-list',
@@ -25,5 +27,5 @@
 			name: 'hidden-categories-list',
 			title: mw.msg( 'vector-footercleanup-categories' )
 		} );
-    } );
+	} );
 } ( jQuery ) );

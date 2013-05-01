@@ -49,13 +49,6 @@ but you can see the text of that button here: {{msg-mw|Prefs-editing}}",
 	'vector-footercleanup-transclusion' => 'Label used in the footer while editing to display the count of how many transclusions a page contains.',
 );
 
-/** Turoyo (Ṫuroyo)
- * @author Ariyo
- */
-$messages['tru'] = array(
-	'vector-simplesearch-search' => 'Kruxyo',
-);
-
 /** Achinese (Acèh)
  * @author Si Gam Acèh
  */
@@ -70,7 +63,7 @@ $messages['ace'] = array(
  */
 $messages['af'] = array(
 	'vector' => 'Gebruikerskoppelvlak-verbeteringe vir Vektor',
-	'vector-desc' => 'Verbeter die gebruikerskoppelvlak-elemente van die Vektor omslag (skin).',
+	'vector-desc' => 'Verbeter die gebruikerskoppelvlak-elemente van die Vektor omslag (skin).', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Inklapbare navigasiespyskaart by die gebruik van Vector toelaat',
 	'vector-collapsiblenav-more' => 'Meer tale',
 	'vector-editwarning-warning' => 'As u hierdie bladsy verlaat, verloor u moontlik die wysigings wat u aangebring het.
@@ -86,8 +79,8 @@ Indien u aangemeld is, kan u hierdie waarskuwing in die {{int:prefs-editing}}"-a
  */
 $messages['aln'] = array(
 	'vector' => 'përmirësime UI për Vektor',
-	'vector-desc' => 'Në elementet përmirëson ndërfaqen e përdoruesit të lëkurës Vektor.',
-	'vector-collapsiblenav-preference' => 'Aktivizo paloset la navigacion menu',
+	'vector-desc' => 'Në elementet përmirëson ndërfaqen e përdoruesit të lëkurës Vektor.', # Fuzzy
+	'vector-collapsiblenav-preference' => 'Aktivizo paloset la navigacion menu', # Fuzzy
 	'vector-editwarning-warning' => 'Duke e lënë këtë faqe mund të bëjë që ju të humbni ndonjë ndryshim që keni bërë. Nëse ju jeni regjistruar, ju mund ta çaktivizoni këtë paralajmërim në "Tue redaktue" seksionin e preferencave tuaja.',
 	'vector-editwarning-preference' => 'Paralajmëron mua kur unë të lë një redakto faqe me ndryshimet e para shpëtimit',
 	'vector-simplesearch-search' => 'Kërkim',
@@ -107,7 +100,7 @@ $messages['am'] = array(
  */
 $messages['an'] = array(
 	'vector' => "Milloras d'a interficie ta Vector",
-	'vector-desc' => "Milloras en os elementos d'interficie d'usuario de l'aparencia Vector.",
+	'vector-desc' => "Milloras en os elementos d'interficie d'usuario de l'aparencia Vector.", # Fuzzy
 	'vector-collapsiblenav-preference' => "Activar a opción de plegar os menús de navegación en l'aparencia Vector",
 	'vector-collapsiblenav-more' => 'Más luengas',
 	'vector-editwarning-warning' => "Si sale d'ista pachina perderá totz os cambios que haiga feito. Si tiene una cuenta d'usuario, puet eliminar ista alvertencia en a sección «Caixa d'edición» d'as suyas preferencies.",
@@ -126,7 +119,7 @@ $messages['an'] = array(
  */
 $messages['ar'] = array(
 	'vector' => 'تحسينات واجهة المستخدم لفكتور',
-	'vector-desc' => 'تحسينات في عناصر واجهة المستخدم لواجهة فكتور.',
+	'vector-desc' => 'تحسينات في عناصر واجهة المستخدم لواجهة فكتور.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'مكّن طي العناصر في قائمة التصفح في واجهة فكتور',
 	'vector-collapsiblenav-more' => 'لغات أخرى',
 	'vector-editwarning-warning' => 'قد تتسبب مغادرة هذه الصفحة بخسارتك لأي تغييرات قمت بها.
@@ -157,7 +150,7 @@ $messages['arc'] = array(
  */
 $messages['arz'] = array(
 	'vector' => 'تحسينات واجهه المستخدم لفكتور',
-	'vector-desc' => 'تحسينات فى عناصر واجهه المستخدم لواجهه فكتور.',
+	'vector-desc' => 'تحسينات فى عناصر واجهه المستخدم لواجهه فكتور.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'خلّى الليستات بتاعة مينيو الاستكشاف تبان مقفوله فى Vector skin',
 	'vector-collapsiblenav-more' => 'لغات اكتر',
 	'vector-editwarning-warning' => 'لو سيبت الصفحه دى ممكن يخلّيك تضيّع اى تغييرات عملتها.
@@ -173,7 +166,7 @@ $messages['arz'] = array(
  */
 $messages['as'] = array(
 	'vector' => 'ভেক্টৰৰ বাবে ব্যৱহাৰকাৰী যোগাযোগৰ উন্নতি সাধন',
-	'vector-desc' => "ভেক্টৰ আৱৰণৰ ব্যৱহাৰকাৰী ইণ্টাৰফে'চ উপাদানৰ উন্নতি সাধন।",
+	'vector-desc' => "ভেক্টৰ আৱৰণৰ ব্যৱহাৰকাৰী ইণ্টাৰফে'চ উপাদানৰ উন্নতি সাধন।", # Fuzzy
 	'vector-collapsiblenav-preference' => 'ভেক্টৰ আৱৰণত ভাঁজযুক্ত নেভিগছন মেনু সক্ৰিয় কৰক',
 	'vector-collapsiblenav-more' => 'অধিক ভাষা',
 	'vector-editwarning-warning' => 'এই পৃষ্ঠাটো এৰিলে আপুনি কৰা পৰিবৰ্তনসমূহ হেৰাব পাৰে। যদি আপুনি প্ৰৱেশ কৰা অৱস্থাত আছে, আপুনি এই সতৰ্কবাৰ্তাক আপোনাৰ পছন্দসমূহৰ "সম্পাদনা" অংশত অসামৰ্থবান কৰিব পাৰিব।',
@@ -217,7 +210,7 @@ $messages['az'] = array(
  */
 $messages['ba'] = array(
 	'vector' => '"Векторлы" күренешен яҡшыртыуҙар',
-	'vector-desc' => '"Векторлы" күренешенең ҡулланыусы интерфейсында яҡшыртыуҙар.',
+	'vector-desc' => '"Векторлы" күренешенең ҡулланыусы интерфейсында яҡшыртыуҙар.', # Fuzzy
 	'vector-collapsiblenav-preference' => '"Векторлы" күренешендә һул яҡ менюла блоктарҙы төрөргә рөхсәт итергә',
 	'vector-collapsiblenav-more' => 'Күберәк телдәр',
 	'vector-editwarning-warning' => 'Икенсе биткә күсеү һеҙ индергән үҙгәрештәрҙең юғалыуына килтереүе мөмкин.
@@ -234,7 +227,7 @@ $messages['ba'] = array(
  */
 $messages['bar'] = array(
 	'vector' => "Vabesserrungen fyr d' Vector-Benutzerowerflächen",
-	'vector-desc' => 'Vabesserrungen an da Vektor-Benutzerowerflächen',
+	'vector-desc' => 'Vabesserrungen an da Vektor-Benutzerowerflächen', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Zåmmkloppm vo Elemente im Navigazionsmenü vo da Benutzerowerflächen Vector aktivirn',
 	'vector-collapsiblenav-more' => 'Weiderne Sproochen',
 	'vector-editwarning-warning' => "'s Valossen vo derer Seiten kå dodazua fyrn, daas d' Änderrungen valurn geengan.
@@ -250,7 +243,7 @@ Ois ågmödter Benutzer kå's Åzoang vo derer Warnung im \"Beorweiten\"-Bereich
  */
 $messages['be'] = array(
 	'vector' => 'Паляпшае інтэрфэйс для кажуха Vector',
-	'vector-desc' => 'Паляпшае элементы інтэрфэйсу ўдзельніка для кажуха Vector',
+	'vector-desc' => 'Паляпшае элементы інтэрфэйсу ўдзельніка для кажуха Vector', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Уключыць згортванне блокаў у навігацыйным меню для кажуха Vector',
 	'vector-collapsiblenav-more' => 'Болей моваў',
 	'vector-editwarning-warning' => 'Выхад з гэтай старонкі прывядзе да страты правак, якія вы зрабілі. 
@@ -289,7 +282,7 @@ $messages['be-tarask'] = array(
  */
 $messages['bg'] = array(
 	'vector' => 'Подобрения на потребителския интерфейс за облик Вектор',
-	'vector-desc' => 'Подобрява елементите от потребителския интерфейс на облик Вектор.',
+	'vector-desc' => 'Подобрява елементите от потребителския интерфейс на облик Вектор.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Включване на сгъваемо/разгъваемо меню за навигация в облика Vector',
 	'vector-collapsiblenav-more' => 'Още езици',
 	'vector-editwarning-warning' => 'Ако излезете от тази страница, може да загубите всички незапазени промени, които сте направили. 
@@ -316,7 +309,7 @@ $messages['bjn'] = array(
  */
 $messages['bn'] = array(
 	'vector' => 'ভেক্টরের জন্য ব্যবহারকারী ইন্টারফেসের উন্নতি সাধন',
-	'vector-desc' => 'ভেক্টর স্কিনের ইন্টারফেস উপাদানের উন্নতি সাধন',
+	'vector-desc' => 'ভেক্টর স্কিনের ইন্টারফেস উপাদানের উন্নতি সাধন', # Fuzzy
 	'vector-collapsiblenav-preference' => 'ভেক্টর স্কিনে ভাঁজযোগ্য নেভিগেশন মেনু সক্রিয় করো',
 	'vector-collapsiblenav-more' => 'আরও ভাষা',
 	'vector-editwarning-warning' => 'এই পাতাটি ত্যাগ করলে আপনার আপনার করা পরিবর্তনগুলো হারিয়ে যেতে পারে।
@@ -332,7 +325,7 @@ $messages['bn'] = array(
  */
 $messages['bpy'] = array(
 	'vector' => 'ভেক্টরর কা আতাকুরার ইন্টারফেসহার উন্নতি করানিহান',
-	'vector-desc' => 'ভেক্টর স্কিনর ইন্টারফেস মাথেলর উন্নতি করানি।',
+	'vector-desc' => 'ভেক্টর স্কিনর ইন্টারফেস মাথেলর উন্নতি করানি।', # Fuzzy
 	'vector-collapsiblenav-preference' => 'ভেক্টর স্কিনহানার থিপকরানি একরব নেভিগেশন মেনু থা কর',
 	'vector-collapsiblenav-more' => 'আরাকউ ঠার',
 	'vector-editwarning-warning' => 'পাতা এহান বেলিয়া গেলেগা তি সিলকরিসত অতা মাঙুইতে পারে।
@@ -348,7 +341,7 @@ $messages['bpy'] = array(
  */
 $messages['br'] = array(
 	'vector' => 'Gwellaennoù IU evit Vector',
-	'vector-desc' => 'Gwellaat a ra elfennoù eus ar gwiskadur Vector war an etrefas implijer.',
+	'vector-desc' => 'Gwellaat a ra elfennoù eus ar gwiskadur Vector war an etrefas implijer.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Aotren al lañser merdeiñ pak-dispak a-gleiz gant an neuz Vector',
 	'vector-collapsiblenav-more' => "Muioc'h a yezhoù",
 	'vector-editwarning-warning' => "Mar kuitait ar bajenn-mañ e c'hallit koll ar c'hemmoù degaset ganeoc'h.
@@ -366,7 +359,7 @@ Ma'z oc'h kevreet e c'hallit diweredekaat ar c'hemenn-diwall-mañ e rann \"Prene
  */
 $messages['bs'] = array(
 	'vector' => 'UI poboljšanja za Vector',
-	'vector-desc' => 'Poboljšava elemente korisničkog interfejsa u koži Vector.',
+	'vector-desc' => 'Poboljšava elemente korisničkog interfejsa u koži Vector.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Omogući skrivanje stavki u navigacionom meniju u koži Vector',
 	'vector-collapsiblenav-more' => 'Više jezika',
 	'vector-editwarning-warning' => 'Napuštanje ove stranice može dovesti do gubitka svih promjena koje ste načinili.
@@ -385,7 +378,7 @@ Ako ste prijavljeni, možete isključiti ovo upozorenje u "Veličine tekstualnog
  */
 $messages['ca'] = array(
 	'vector' => 'Millores de la interfície per a Vector',
-	'vector-desc' => "Millores en els elements d'interfície d'usuari de l'aparença Vector.",
+	'vector-desc' => "Millores en els elements d'interfície d'usuari de l'aparença Vector.", # Fuzzy
 	'vector-collapsiblenav-preference' => "Activa l'opció de plegar els menús de navegació en l'aparença Vector",
 	'vector-collapsiblenav-more' => 'Més llengües',
 	'vector-editwarning-warning' => "Si sortiu d'aquesta pàgina perdreu tots els canvis que hàgiu fet.
@@ -418,20 +411,20 @@ $messages['ckb'] = array(
 	'vector-simplesearch-containing' => 'بە لەبەرگرتنەوەی ...',
 );
 
-/** Crimean Turkish (Latin script) (qırımtatarca (Latin)‎)
- * @author Don Alessandro
- */
-$messages['crh-latn'] = array(
-	'vector-simplesearch-search' => 'Qıdır',
-	'vector-simplesearch-containing' => 'içinde bu olğan...',
-);
-
 /** Crimean Turkish (Cyrillic script) (къырымтатарджа (Кирилл)‎)
  * @author Don Alessandro
  */
 $messages['crh-cyrl'] = array(
 	'vector-simplesearch-search' => 'Къыдыр',
 	'vector-simplesearch-containing' => 'ичинде бу олгъан...',
+);
+
+/** Crimean Turkish (Latin script) (qırımtatarca (Latin)‎)
+ * @author Don Alessandro
+ */
+$messages['crh-latn'] = array(
+	'vector-simplesearch-search' => 'Qıdır',
+	'vector-simplesearch-containing' => 'içinde bu olğan...',
 );
 
 /** Czech (česky)
@@ -481,7 +474,7 @@ $messages['cv'] = array(
  */
 $messages['cy'] = array(
 	'vector' => "Gwelliannau i'r rhyngwyneb ar gyfer Vector",
-	'vector-desc' => 'Yn gwella ar y rhyngwyneb yn y wedd Vector.',
+	'vector-desc' => 'Yn gwella ar y rhyngwyneb yn y wedd Vector.', # Fuzzy
 	'vector-collapsiblenav-preference' => "Galluogi crebachu'r ddewislen lywio yn y wedd Vector",
 	'vector-collapsiblenav-more' => 'Rhagor o ieithoedd',
 	'vector-editwarning-warning' => 'Os y gadewch y dudalen hon mae\'n bosib y collwch eich newidiadau iddi.
@@ -539,7 +532,8 @@ Als angemeldeter Benutzer kann das Anzeigen dieser Warnung im „Bearbeiten“-B
 	'vector-footercleanup-categories' => 'Versteckte Kategorien auf dieser Seite anzeigen',
 );
 
-/** German (formal address) (Deutsch (Sie-Form)‎) */
+/** German (formal address) (Deutsch (Sie-Form)‎)
+ */
 $messages['de-formal'] = array(
 	'vector-editwarning-warning' => 'Das Verlassen dieser Seite kann dazu führen, dass Ihre Änderungen verloren gehen.
 Wenn Sie angemeldet sind, können Sie das Anzeigen dieser Warnung im „Bearbeiten“-Bereich Ihrer Einstellungen abschalten.',
@@ -592,7 +586,7 @@ $messages['dsb'] = array(
  */
 $messages['el'] = array(
 	'vector' => 'βελτιώσεις στο UI για το Vector',
-	'vector-desc' => 'Παρέχει βελτίωση στα στοιχεία διεπαφής χρήστη του skin Vector.',
+	'vector-desc' => 'Παρέχει βελτίωση στα στοιχεία διεπαφής χρήστη του skin Vector.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Ενεργοποίηση πτυσσόμενων ενοτήτων στο μενού πλοήγησης με το θέμα Vector',
 	'vector-collapsiblenav-more' => 'Περισσότερες γλώσσες',
 	'vector-editwarning-warning' => 'Αφήνοντας αυτή τη σελίδα μπορεί να σας κάνει να χάσετε κάποιες αλλαγές που έχετε κάνει.
@@ -610,7 +604,7 @@ $messages['el'] = array(
  */
 $messages['eo'] = array(
 	'vector' => 'Plibonigado de grafika interfaco por Vector',
-	'vector-desc' => 'Plibonigas la elementojn de la uzula interfaco de la Vector-etoso.',
+	'vector-desc' => 'Plibonigas la elementojn de la uzula interfaco de la Vector-etoso.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Ŝalti kaŝebladon de aĵoj en la dekstra navigmenuo kun etoso Vector',
 	'vector-collapsiblenav-more' => 'Pli lingvoj',
 	'vector-editwarning-warning' => 'Forlasante ĉi tiun paĝon kaŭzos al vi perdi iun ajn ŝanĝojn kiujn vi faris.
@@ -670,7 +664,7 @@ Kui oled sisse loginud, saad selle hoiatuse eelistuste alaosas "Toimetamine" kee
  */
 $messages['eu'] = array(
 	'vector' => 'EI hobekuntzak Vector-entzat',
-	'vector-desc' => 'Vector skin-eko lankidearen interfazeko elementuak hobetzen ditu.',
+	'vector-desc' => 'Vector skin-eko lankidearen interfazeko elementuak hobetzen ditu.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Vector skin-ean ezkerreko nabigazio menua irekigarri bihurtzen du',
 	'vector-collapsiblenav-more' => 'Hizkuntza gehiago',
 	'vector-editwarning-warning' => 'Orrialde honetatik irteten bazara, egindako aldaketak galdu egingo dira.
@@ -684,12 +678,13 @@ Saioa hasi baduzu, mezu hau kendu dezakezu zure hobespenen orrialdeko "Aldatzen"
  * @author Ebraminio
  * @author Huji
  * @author Ladsgroup
+ * @author Reza1615
  * @author Sahim
  * @author ZxxZxxZ
  */
 $messages['fa'] = array(
 	'vector' => 'بهبودهای رابط کاربر برای پوستهٔ برداری',
-	'vector-desc' => 'بهبود در عناصر رابط کاربری از طریق پوسته وکتور',
+	'vector-desc' => 'بهبود در عناصر رابط کاربری در زمان استفاده از پوستهٔ وکتور',
 	'vector-collapsiblenav-preference' => 'فعال‌کردن منوی تاشوی ناوبری در پوسته وکتور',
 	'vector-collapsiblenav-more' => 'زبان‌های بیشتر',
 	'vector-editwarning-warning' => 'خروج از این صفحه ممکن است باعث از دست رفتن هرچه نوشته‌اید شود.
@@ -699,6 +694,8 @@ $messages['fa'] = array(
 	'vector-simplesearch-containing' => 'صفحه‌های دربردارنده...',
 	'vector-noexperiments-preference' => 'من را از ویژگی‌های آزمایشی مستثنی کن',
 	'vector-footercleanup-transclusion' => 'این صفحه شامل {{PLURAL:$1|تراگنجانش|تراگنجانش‌های}} {{PLURAL:$1|صفحه‌ای دیگر است|$1 صفحهٔ دیگر است}}.',
+	'vector-footercleanup-templates' => 'نمایش الگوها در این صفحه',
+	'vector-footercleanup-categories' => 'نمایش رده‌های پنهان این صفحه',
 );
 
 /** Finnish (suomi)
@@ -759,7 +756,7 @@ Si vous êtes connecté avec votre compte, vous pouvez retirer cet avertissement
  */
 $messages['frp'] = array(
 	'vector' => 'Mèlyoracions EU por « Vèctor »',
-	'vector-desc' => 'Mèlyoracions des èlèments de l’entèrface usanciér de l’habelyâjo « Vèctor ».',
+	'vector-desc' => 'Mèlyoracions des èlèments de l’entèrface usanciér de l’habelyâjo « Vèctor ».', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Activar lo menu de navigacion repleyâblo avouéc l’habelyâjo « Vèctor »',
 	'vector-collapsiblenav-more' => 'Més de lengoues',
 	'vector-editwarning-warning' => 'Quitar ceta pâge vos farat pèrdre tôs los changements que vos éd fêts.
@@ -787,7 +784,8 @@ $messages['ga'] = array(
 	'vector-simplesearch-search' => 'Cuardaigh',
 );
 
-/** Simplified Gan script (赣语（简体）‎) */
+/** Simplified Gan script (赣语（简体）‎)
+ */
 $messages['gan-hans'] = array(
 	'vector-simplesearch-search' => '寻吖',
 );
@@ -804,7 +802,7 @@ $messages['gan-hant'] = array(
  */
 $messages['gd'] = array(
 	'vector' => 'Leasachaidhean an UI airson Vector',
-	'vector-desc' => 'Cuiridh seo piseach air eileamaidean eadar-aghaidh nan cleachdaichean san chraiceann Vector.',
+	'vector-desc' => 'Cuiridh seo piseach air eileamaidean eadar-aghaidh nan cleachdaichean san chraiceann Vector.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Cuir an comas dùmhlachadh nan rudan san chlàr-taice seòlaidh san chraiceann Vector',
 	'vector-collapsiblenav-more' => 'Barrachd chànan',
 	'vector-editwarning-warning' => 'Ma dh\'fhàgas tu an duilleag seo, faodaidh gun caill thu mùthadh sam bith a rinn thu.
@@ -833,7 +831,8 @@ Se accedeu ao sistema, pode desactivar esta mensaxe de advertencia na sección "
 	'vector-footercleanup-categories' => 'Ver as categorías ocultas desta páxina',
 );
 
-/** Ancient Greek (Ἀρχαία ἑλληνικὴ) */
+/** Ancient Greek (Ἀρχαία ἑλληνικὴ)
+ */
 $messages['grc'] = array(
 	'vector-simplesearch-search' => 'Ζητεῖν',
 	'vector-simplesearch-containing' => 'περιέχον...',
@@ -865,7 +864,7 @@ Wänn Du aagmäldet bisch, chasch s Anzeige vu däre Warnig im „Tekscht-Ygab�
  */
 $messages['gu'] = array(
 	'vector' => 'વેક્ટર માટે UI સુધારા',
-	'vector-desc' => 'વેક્ટર સ્કીનના યુઝર ઈંટરફેઝ ના તત્વોને સુધારે છે',
+	'vector-desc' => 'વેક્ટર સ્કીનના યુઝર ઈંટરફેઝ ના તત્વોને સુધારે છે', # Fuzzy
 	'vector-collapsiblenav-preference' => 'વેક્ટર સ્કીનના સાઈડ બારમાં કોલેપ્સીંગ સક્રીય કરશે.',
 	'vector-collapsiblenav-more' => 'વધુ ભાષાઓ',
 	'vector-editwarning-warning' => 'આ પાનું છોડી દેશો તો તમારા ફેરફારો સચવાશે નહીં.
@@ -935,7 +934,7 @@ $messages['hif-latn'] = array(
  */
 $messages['hr'] = array(
 	'vector' => 'Poboljšanja sučelja stila Vektor',
-	'vector-desc' => 'Poboljšava elemente korisničkog sučelja stila Vector.',
+	'vector-desc' => 'Poboljšava elemente korisničkog sučelja stila Vector.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Omogući sklopivi lijevi navigacijski izbornik za Vektor stil',
 	'vector-collapsiblenav-more' => 'Više jezika',
 	'vector-editwarning-warning' => 'Napuštanje ove stranice može uzrokovati gubitak svake izmjene koju ste napravili.
@@ -971,7 +970,7 @@ $messages['hsb'] = array(
  */
 $messages['hu'] = array(
 	'vector' => 'Fejlesztések a Vector felhasználói felületén',
-	'vector-desc' => 'Fejlesztések a Vector felület felhasználói felületének elemein.',
+	'vector-desc' => 'Fejlesztések a Vector felület felhasználói felületének elemein.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Összecsukható navigációs menü engedélyezése a Vector felületen',
 	'vector-collapsiblenav-more' => 'Más nyelveken',
 	'vector-editwarning-warning' => 'A lap elhagyásával az összes itt végzett változtatás elveszhet.
@@ -997,7 +996,7 @@ $messages['hy'] = array(
  */
 $messages['ia'] = array(
 	'vector' => 'Meliorationes del interfacie de usator pro Vector',
-	'vector-desc' => 'Meliora le elementos del interfacie de usator del apparentia Vector.',
+	'vector-desc' => 'Meliora le elementos del interfacie de usator del apparentia Vector.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Render plicabile le elementos in le menu de navigation in le apparentia Vector',
 	'vector-collapsiblenav-more' => 'Plus linguas',
 	'vector-editwarning-warning' => 'Quitar iste pagina pote causar le perdita de omne modificationes que tu ha facite.
@@ -1017,7 +1016,7 @@ Si tu ha aperite un session, tu pote disactivar iste aviso in le section "Modifi
  */
 $messages['id'] = array(
 	'vector' => 'Meningkatkan UI untuk Vector',
-	'vector-desc' => 'Meningkatkan elemen pada antarmuka penguna dari kulit Vector.',
+	'vector-desc' => 'Meningkatkan elemen pada antarmuka penguna dari kulit Vector.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Aktifkan fungsi menu navigasi kiri yang dapat ditampilkan pada kulit Vektor',
 	'vector-collapsiblenav-more' => 'Lebih banyak bahasa',
 	'vector-editwarning-warning' => 'Meninggalkan halaman ini dapat menyebabkan semua perubahan yang belum tersimpan hilang.
@@ -1071,7 +1070,7 @@ $messages['io'] = array(
  */
 $messages['is'] = array(
 	'vector' => 'Viðmóts lagfæringar á Vector-sniði',
-	'vector-desc' => 'Endurbætir notanda viðmót Vector sniðsins.',
+	'vector-desc' => 'Endurbætir notanda viðmót Vector sniðsins.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Fella saman hluti í hliðarstiku Vector sniðsins',
 	'vector-collapsiblenav-more' => 'Fleiri tungumál',
 	'vector-editwarning-warning' => 'Ef farið er frá þessari síðu gætu þær breytingar sem þú hefur gert tapast.
@@ -1131,7 +1130,7 @@ $messages['ja'] = array(
  */
 $messages['jv'] = array(
 	'vector' => 'Pambenahan UI kanggo Vector',
-	'vector-desc' => 'Benahi unsur antarmuka panganggo saka kulit Vector.',
+	'vector-desc' => 'Benahi unsur antarmuka panganggo saka kulit Vector.', # Fuzzy
 	'vector-collapsiblenav-more' => 'Luwih akèh basa',
 	'vector-editwarning-preference' => 'Èlingaké kula yèn kula ninggalaké suntingan sing durung kasimpen',
 	'vector-simplesearch-search' => 'Golèk',
@@ -1147,7 +1146,7 @@ $messages['jv'] = array(
  */
 $messages['ka'] = array(
 	'vector' => 'ვექტორული თემის ინტერფეისის გაუმჯობესება',
-	'vector-desc' => 'ვექტორული თემის სამომხმარებლო ინტერფეისის გაუმჯობესება',
+	'vector-desc' => 'ვექტორული თემის სამომხმარებლო ინტერფეისის გაუმჯობესება', # Fuzzy
 	'vector-collapsiblenav-preference' => 'დართეთ მარცხნივ "ვექტორ" დიზაინში ბლოკების ჩაკეცვა',
 	'vector-collapsiblenav-more' => 'დამატებითი ენები',
 	'vector-editwarning-warning' => 'სხვა გვერდზე გადასვლა გამოიწვევს ცვლილებების დაკარგვას.',
@@ -1212,7 +1211,7 @@ $messages['ko'] = array(
 로그인한 경우, 환경 설정 "편집 상자"란에서 이 경고창을 띄우지 않도록 설정할 수 있습니다.',
 	'vector-editwarning-preference' => '수정한 내용을 저장하지 않고 편집 양식을 닫거나 다른 페이지로 이동할 때 알림',
 	'vector-simplesearch-search' => '찾기',
-	'vector-simplesearch-containing' => '다음의 어구가 들어간 문서 찾기...',
+	'vector-simplesearch-containing' => '다음 어구가 들어간 문서 찾기',
 	'vector-noexperiments-preference' => '새 기능 실험에서 나를 제외합니다.',
 	'vector-footercleanup-transclusion' => '이 페이지는 다른 $1 페이지의 트랜스클루전이 포함되어 있습니다.',
 	'vector-footercleanup-templates' => '이 문서에서 틀 보기',
@@ -1224,7 +1223,7 @@ $messages['ko'] = array(
  */
 $messages['krc'] = array(
 	'vector' => '«Вектор» темагъа интерфейсни игилендириу',
-	'vector-desc' => '«Вектор» темагъа къошулуучу интерфейсни игилендириулери',
+	'vector-desc' => '«Вектор» темагъа къошулуучу интерфейсни игилендириулери', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Сол менюда «Вектор» темада блокла джашырыу амалны джандыр',
 	'vector-collapsiblenav-more' => 'Дагъыда тилле',
 	'vector-editwarning-warning' => 'Башха бетге кёчсегиз, этген тюрлениулеригиз тас болургъа боллукъдула.
@@ -1239,7 +1238,7 @@ $messages['krc'] = array(
  */
 $messages['ksh'] = array(
 	'vector' => 'Verbäßert Schnettschtäll för Minsche en dä Vektor Bovverfläsch.',
-	'vector-desc' => 'Verbäßert Schnettschtäll för Minsche en dä Vektor Bovverfläsch.',
+	'vector-desc' => 'Verbäßert de Schnettschtäll för der Minsch met dä Vektor Bovverfläsch.',
 	'vector-collapsiblenav-preference' => 'Donn zohlohße, Ußwahle em Ußsinn „Vektor“ zoh_ze_klappe',
 	'vector-collapsiblenav-more' => 'Mieh Shprooche',
 	'vector-editwarning-warning' => 'Wann de vun hee dä Sigg fott jeihß, doh künnte all Ding Änderunge aan dä Sigg verschött jonn.
@@ -1249,6 +1248,8 @@ Do kanns heh di Warnung affschallde, wann de aanjemelldt un enjelogg bes, dann k
 	'vector-simplesearch-containing' => 'dren änthallde…',
 	'vector-noexperiments-preference' => 'Donn mesch nit met neue Saache zom Ußprobeere behällijje',
 	'vector-footercleanup-transclusion' => 'Heh di Sigg trick {{PLURAL:$1|ein ander Sigg|$1 ander Sigge|kein ander Sigg}} en sesch eren.',
+	'vector-footercleanup-templates' => 'Donn de Schablohne op heh dä Sigg aanzeije',
+	'vector-footercleanup-categories' => 'Donn de verschtoche Saachjrioppe vun heh dä Sigg aanzeije',
 );
 
 /** Kurdish (Latin script) (Kurdî (latînî)‎)
@@ -1273,7 +1274,8 @@ Mars owgh hwi omgelmys, hwi a ell dialosegi an gwarnyans-ma en trogh "Chanjya" a
 	'vector-simplesearch-containing' => 'ow senji...',
 );
 
-/** Latin (Latina) */
+/** Latin (Latina)
+ */
 $messages['la'] = array(
 	'vector-simplesearch-search' => 'Quaerere',
 );
@@ -1310,7 +1312,7 @@ ebiri mu kitundu ekya "Kukyusa" eky\'omu "Nteekateeka yange".',
  */
 $messages['li'] = array(
 	'vector' => 'Vectorgebroekersinterfaceverbaeteringe',
-	'vector-desc' => 'Verbaetertj de vectorgebroekersinterface-illemente',
+	'vector-desc' => 'Verbaetertj de vectorgebroekersinterface-illemente', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Zèt inklapbaar navigatiemenu in bie vectorgebroek',
 	'vector-collapsiblenav-more' => 'Mieë spräök',
 	'vector-editwarning-warning' => "Es se dees pagina verleets verluus se meugelik wieziginge die se haes gemaak.
@@ -1334,7 +1336,7 @@ $messages['lt'] = array(
 	'vector-simplesearch-search' => 'Ieškoti',
 );
 
-/** Lushai (Mizo ţawng)
+/** Mizo (Mizo ţawng)
  * @author RMizo
  */
 $messages['lus'] = array(
@@ -1350,7 +1352,7 @@ $messages['lus'] = array(
  */
 $messages['lv'] = array(
 	'vector' => 'Vector lietotāja saskarsnes uzlabojumi',
-	'vector-desc' => 'Uzlabo lietotāja saskarsnes elementus Vector apdarē.',
+	'vector-desc' => 'Uzlabo lietotāja saskarsnes elementus Vector apdarē.', # Fuzzy
 	'vector-collapsiblenav-more' => 'Vairāk valodu',
 	'vector-editwarning-warning' => 'Atstājot šo lapu tu zaudēsi izdarītās izmaiņas. 
 Ja esi pieteicies, jūs vari atspējot šo brīdinājumu savās izvēlēs sadaļā "rediģēšana"',
@@ -1364,7 +1366,7 @@ Ja esi pieteicies, jūs vari atspējot šo brīdinājumu savās izvēlēs sadaļ
  */
 $messages['min'] = array(
 	'vector' => 'Membaiki UI untuak Vektor',
-	'vector-desc' => 'Membaiki elemen pado antamuka pangguno dari kulit Vektor',
+	'vector-desc' => 'Membaiki elemen pado antamuka pangguno dari kulit Vektor', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Aktifkan fungsi menu navigasi yang dapek ditampilkan pado kulit Vektor',
 	'vector-collapsiblenav-more' => 'Labiah banyak baso',
 	'vector-editwarning-warning' => 'Maninggakan laman ko dapek maakibatkan parubahan yang awak buek hilang. Jiko awak lah masuak log, awak dapek maabaikan maklumat ko malalui "Suntingan" pado laman preferensi awak.',
@@ -1413,7 +1415,8 @@ $messages['ml'] = array(
 	'vector-footercleanup-categories' => 'ഈ താളിൽ മറഞ്ഞിരിക്കുന്ന വർഗ്ഗങ്ങൾ കാണുക',
 );
 
-/** Mongolian (монгол) */
+/** Mongolian (монгол)
+ */
 $messages['mn'] = array(
 	'vector-simplesearch-search' => 'Хайх',
 );
@@ -1424,7 +1427,7 @@ $messages['mn'] = array(
  */
 $messages['mr'] = array(
 	'vector' => 'समदिश परिधानाच्या उपयोगकर्ता-आंतरपृष्ठातील(UI) सुधारणा',
-	'vector-desc' => 'समदिश परिधान (व्हेक्टर) त्वचेच्या उपयोगकर्ता-आंतरपृष्ठ (इंटरफेस) घटकांमध्ये सुधारणा करते',
+	'vector-desc' => 'समदिश परिधान (व्हेक्टर) त्वचेच्या उपयोगकर्ता-आंतरपृष्ठ (इंटरफेस) घटकांमध्ये सुधारणा करते', # Fuzzy
 	'vector-collapsiblenav-preference' => 'समदिश परिधानाच्या सुचालनानुक्रमातील घटकांची घडीक्षमता सक्षम करा.',
 	'vector-collapsiblenav-more' => 'इतर भाषा दाखवा',
 	'vector-editwarning-warning' => "या पानावरुन दुसर्‍या पानावर गेल्यास, तुम्ही येथे केलेले बदल जतन होणार नाहीत.
@@ -1461,7 +1464,7 @@ Anda boleh melumpuhkan amaran in di bahagian "Menyunting" dalam keutamaan anda.'
  */
 $messages['mt'] = array(
 	'vector' => 'Titjib tal-interfaċċa tal-utent għal Vector',
-	'vector-desc' => 'Ittejjeb l-elementi tal-interfaċċa tal-utent tal-aspett grafiku Vector.',
+	'vector-desc' => 'Ittejjeb l-elementi tal-interfaċċa tal-utent tal-aspett grafiku Vector.', # Fuzzy
 	'vector-collapsiblenav-preference' => "Ippermetti ''menus'' tan-navigazzjoni li jistew jinħbew fl-aspett grafiku Vector",
 	'vector-collapsiblenav-more' => 'Aktar lingwi',
 	'vector-editwarning-warning' => 'Jekk tħalli din il-paġna jista\' jwassal sabiex titlef kwalunkwe tibdil li tkun għamilt. Jekk int tinsab fil-kont tiegħek, tista\' tneħħi dan l-avviż fis-sezzjoni "Modifiki" tal-preferenzi tiegħek.',
@@ -1483,13 +1486,14 @@ $messages['nah'] = array(
 
 /** Norwegian Bokmål (norsk (bokmål)‎)
  * @author Danmichaelo
+ * @author Event
  * @author Jsoby
  * @author Laaknor
  * @author Nghtwlkr
  */
 $messages['nb'] = array(
 	'vector' => 'Brukergrensesnittsforbedringer for Vector',
-	'vector-desc' => 'Forbedrer elementer i brukergrensesnittet for Vector-utseendet.',
+	'vector-desc' => 'Forbedrer brukergrensesnittet for Vector-utseendet.',
 	'vector-collapsiblenav-preference' => 'Aktiver sammenlegging av element i navigeringsmenyen i drakten Vector',
 	'vector-collapsiblenav-more' => 'Flere språk',
 	'vector-editwarning-warning' => 'Ved å forlate siden vil du miste alle endringer du har utført.
@@ -1562,8 +1566,8 @@ Om du er innlogga, kan du slå av denne åtvaringa under «Endring» i instillin
  */
 $messages['oc'] = array(
 	'vector' => 'Melhoraments IU per Vector',
-	'vector-desc' => "Melhoraments dels elements de l'interfàcia d'utilizaire de l'abilhatge Vector.",
-	'vector-collapsiblenav-preference' => "Activar lo menut de navigacion d'esquèrra replegable",
+	'vector-desc' => "Melhoraments dels elements de l'interfàcia d'utilizaire de l'abilhatge Vector.", # Fuzzy
+	'vector-collapsiblenav-preference' => "Activar lo menut de navigacion d'esquèrra replegable", # Fuzzy
 	'vector-editwarning-warning' => "Quitar aquesta pagina vos farà pèrdre totas las modificacions qu'avètz fachas.
 Se sètz connectat amb vòstre compte, podètz levar aqueste avertiment dins la seccion Fenèstra de modificacion de vòstras preferéncias.",
 	'vector-editwarning-preference' => 'M’avisar quand quiti una pagina de modificacion sens publicar los cambiaments',
@@ -1578,7 +1582,7 @@ Se sètz connectat amb vòstre compte, podètz levar aqueste avertiment dins la 
  */
 $messages['or'] = array(
 	'vector' => 'ଭେକ୍ଟର ପାଇଁ ଇଉଜର ଇଣ୍ଟରଫେସ ଉନ୍ନତିକରଣ',
-	'vector-desc' => 'ଭେକ୍ଟର ଆବରଣରେ ଇଉଜର ଇଣ୍ଟରଫେସ ଉପାଦାନସମୂହକୁ ଉନ୍ନତ କରିବେ ।',
+	'vector-desc' => 'ଭେକ୍ଟର ଆବରଣରେ ଇଉଜର ଇଣ୍ଟରଫେସ ଉପାଦାନସମୂହକୁ ଉନ୍ନତ କରିବେ ।', # Fuzzy
 	'vector-collapsiblenav-preference' => 'ଭେକ୍ଟର ବହିରାବରଣରେ କଡ଼ରେ ଥିବା ପଟିକାର ଚିଜ ସବୁକୁ ଦେଖାଇବା-ଲୁଚାଇବା ସଚଳ କରିବେ',
 	'vector-collapsiblenav-more' => 'ଅଧିକ ଭାଷା',
 	'vector-editwarning-warning' => 'ଏହି ପୃଷ୍ଠାକୁ ଛାଡ଼ି ଚାଲିଗଲେ ହୁଏ ତ ଆପଣ କରିଥିବା କିଛି ସମ୍ପାଦନା ହରାଇ ପାରନ୍ତି ।
@@ -1615,20 +1619,23 @@ $messages['pfl'] = array(
 
 /** Polish (polski)
  * @author BeginaFelicysym
+ * @author Matma Rex
  * @author Sp5uhe
  */
 $messages['pl'] = array(
-	'vector' => 'Ulepszenia interfejsu użytkownika dla skórki Wektor',
-	'vector-desc' => 'Poprawia elementy interfejsu użytkownika skórki Wektor.',
-	'vector-collapsiblenav-preference' => 'Włącz po lewej rozwijalne menu nawigacyjne w skórce Wektor',
+	'vector' => 'Usprawnienia interfejsu użytkownika skórki Wektor',
+	'vector-desc' => 'Usprawnia elementy interfejsu użytkownika skórki Wektor',
+	'vector-collapsiblenav-preference' => 'Włącz zwijanie sekcji menu bocznego w skórce Wektor',
 	'vector-collapsiblenav-more' => 'Inne języki',
 	'vector-editwarning-warning' => 'Opuszczenie tej strony może spowodować utratę wprowadzonych przez Ciebie zmian.
-Jeśli jesteś zalogowany możesz wyłączyć wyświetlanie tego ostrzeżenia w zakładce Edycja w swoich preferencjach.',
+Jeśli jesteś zalogowany, możesz wyłączyć wyświetlanie tego ostrzeżenia w zakładce Edycja w swoich preferencjach.',
 	'vector-editwarning-preference' => 'Ostrzegaj mnie, gdy opuszczam stronę edycji bez zapisania zmian',
 	'vector-simplesearch-search' => 'Szukaj',
 	'vector-simplesearch-containing' => 'zawierające...',
 	'vector-noexperiments-preference' => 'Nie chcę w przyszłości brać udziału w testach',
 	'vector-footercleanup-transclusion' => 'Ta strona zawiera {{PLURAL:$1|dołączoną treść|dołączone treści}} z {{PLURAL:$1|jednej innej strony|$1 innych stron|$1 innych stron}}.',
+	'vector-footercleanup-templates' => 'Zobacz szablony użyte na tej stronie',
+	'vector-footercleanup-categories' => 'Zobacz ukryte kategorie dodane do tej strony',
 );
 
 /** Piedmontese (Piemontèis)
@@ -1637,7 +1644,7 @@ Jeśli jesteś zalogowany możesz wyłączyć wyświetlanie tego ostrzeżenia w 
  */
 $messages['pms'] = array(
 	'vector' => 'Ameliorament UI për Vector',
-	'vector-desc' => "Ameliorament ëd j'element dl'antërfacia utent dla pel Vector.",
+	'vector-desc' => "Ameliorament ëd j'element dl'antërfacia utent dla pel Vector.", # Fuzzy
 	'vector-collapsiblenav-preference' => "Abilité a stërmé j'element ant la bara ëd navigassion ant ël livel Vector",
 	'vector-collapsiblenav-more' => "Pì 'd lenghe",
 	'vector-editwarning-warning' => "Lassé sta pàgina-sì a peul fé an manera che it perde tute le modìfiche ch'it l'has fàit.
@@ -1654,7 +1661,7 @@ S'it ses logà, it peule disabilité st'avis-sì ant la session \"Quàder ëd mo
  */
 $messages['pnb'] = array(
 	'vector' => 'یو آئی بہتریاں ویکٹر لئی',
-	'vector-desc' => 'ورتن والے دے وکھالے',
+	'vector-desc' => 'ورتن والے دے وکھالے', # Fuzzy
 	'vector-collapsiblenav-preference' => 'ویکٹر سکن چ سائیڈ بار چ چیزاں دا ڈگنا ہون دیو۔',
 	'vector-collapsiblenav-more' => 'ہور بولیاں',
 	'vector-editwarning-warning' => 'اے صفے توں جان تے ہو سکدا اوہ ساریاں تبدیلیاں مک جان جیہڑیاں تساں بناياں نیں۔
@@ -1665,7 +1672,8 @@ $messages['pnb'] = array(
 	'vector-noexperiments-preference' => 'منوں نویاں شیواں دے تجربیاں توں بار رکھو',
 );
 
-/** Pontic (Ποντιακά) */
+/** Pontic (Ποντιακά)
+ */
 $messages['pnt'] = array(
 	'vector-simplesearch-search' => 'Αράεμαν',
 );
@@ -1684,7 +1692,7 @@ $messages['ps'] = array(
  */
 $messages['pt'] = array(
 	'vector' => 'Melhorias da interface do tema Vector',
-	'vector-desc' => 'Melhora os elementos da interface do utilizador para o tema Vector',
+	'vector-desc' => 'Melhora os elementos da interface do utilizador para o tema Vector', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Permitir o ocultamento dos elementos do menu de navegação no tema Vector',
 	'vector-collapsiblenav-more' => 'Mais línguas',
 	'vector-editwarning-warning' => 'Abandonar esta página pode fazer com que perca todas as suas alterações.
@@ -1704,7 +1712,7 @@ Se estiver autenticado, pode desactivar este aviso na secção "Edição" das pr
  */
 $messages['pt-br'] = array(
 	'vector' => 'Melhorias da IU do Vector',
-	'vector-desc' => 'Melhora a interface do usuário do tema Vector',
+	'vector-desc' => 'Melhora a interface do usuário do tema Vector', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Ativar o ocultamento de itens no menu de navegação no tema Vector',
 	'vector-collapsiblenav-more' => 'Mais idiomas',
 	'vector-editwarning-warning' => 'Abandonar esta página pode fazer com que você perca todas as alterações que fez.
@@ -1720,7 +1728,7 @@ Se você estiver autenticado, você pode desabilitar este aviso na seção "Opç
  */
 $messages['qu'] = array(
 	'vector' => 'Ruraqpaq uyapurapi Vector nisqapaq allinchasqakuna',
-	'vector-desc' => 'Ruraqpaq uyapurapi Vector qarap qallawankunata allinchan.',
+	'vector-desc' => 'Ruraqpaq uyapurapi Vector qarap qallawankunata allinchan.', # Fuzzy
 	'vector-collapsiblenav-preference' => "Vector qarap wamp'unanpi qallawa pakana llamk'anata atichiy",
 	'vector-collapsiblenav-more' => 'Aswan rimaykuna',
 	'vector-editwarning-warning' => "Kay p'anqata saqispaykiqa lliw rurarqusqayki hukchasqakunatachá chinkachiykiman.
@@ -1767,6 +1775,7 @@ Ce tu è trasute, tu puè disabbilità st\'avvertimende jndr\'à sezione "Cangia
 );
 
 /** Russian (русский)
+ * @author Base
  * @author G0rn
  * @author Ignatus
  * @author KPu3uC B Poccuu
@@ -1796,7 +1805,7 @@ $messages['ru'] = array(
  */
 $messages['rue'] = array(
 	'vector' => 'Здоконалїня хосновательского інтерфейсу про Вектор',
-	'vector-desc' => 'Здоконалює елементы хосновательского інтерфейсу Вектор.',
+	'vector-desc' => 'Здоконалює елементы хосновательского інтерфейсу Вектор.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Поволити згортати положкы навіґачного меню во взглядї «Векторне»',
 	'vector-collapsiblenav-more' => 'Іншы языкы',
 	'vector-editwarning-warning' => 'Зохаблїнём той стрінкы ся можуть вшыткы учінены зміны стратити.
@@ -1813,7 +1822,7 @@ $messages['rue'] = array(
  */
 $messages['sa'] = array(
 	'vector' => 'वाहकाय यु ऐ प्रगतिः',
-	'vector-desc' => 'आकृतिचर्मणः योजकमध्यस्थांशेषु प्रगतिः',
+	'vector-desc' => 'आकृतिचर्मणः योजकमध्यस्थांशेषु प्रगतिः', # Fuzzy
 	'vector-collapsiblenav-preference' => 'आकृतिचर्मणि पार्श्वदण्डे वस्तुपतनस्य सक्रियता',
 	'vector-collapsiblenav-more' => 'अन्याः भाषाः',
 	'vector-editwarning-warning' => 'अस्मात् पृष्ठात् गमनेन अत्र भवता कृतानि परिवर्तनानि निष्फलानि भवेयुः ।
@@ -1830,7 +1839,7 @@ $messages['sa'] = array(
  */
 $messages['sah'] = array(
 	'vector' => '"Вектор" диэн тиэмэни тупсарар',
-	'vector-desc' => 'Вектор диэн тиэмэ туттар интерфейсын тупсарыы',
+	'vector-desc' => 'Вектор диэн тиэмэ туттар интерфейсын тупсарыы', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Вектор тиэмэ хаҥас менютугар блоктары куччатары (сворачивание) көҥүллүүргэ',
 	'vector-collapsiblenav-more' => 'Өссө тыллар',
 	'vector-editwarning-warning' => 'Атын сирэйгэ көстөххүнэ билигин оҥорбут уларытыыларыҥ барыта сүтэн хаалыахтара.
@@ -1848,7 +1857,8 @@ $messages['sc'] = array(
 	'vector-simplesearch-search' => 'Chirca',
 );
 
-/** Sicilian (sicilianu) */
+/** Sicilian (sicilianu)
+ */
 $messages['scn'] = array(
 	'vector-simplesearch-search' => 'Ricerca',
 );
@@ -1869,7 +1879,7 @@ $messages['se'] = array(
  */
 $messages['si'] = array(
 	'vector' => 'දෛශික සඳහා UI දියුණු කිරීම්',
-	'vector-desc' => 'දෛශික පෘෂ්ඨයේ පරිශීලක අතුරු මුහුණත් මූලිකාංග මත දියුණු කරයි',
+	'vector-desc' => 'දෛශික පෘෂ්ඨයේ පරිශීලක අතුරු මුහුණත් මූලිකාංග මත දියුණු කරයි', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Vector ඡවියේ ගමන්කෙරුම් මෙනුවේ අංග හැකිළුම සක්‍රීය කරයි',
 	'vector-collapsiblenav-more' => 'තවත් භාෂාවන්',
 	'vector-editwarning-warning' => 'අවධානයට: මෙම පිටුවෙන් නික්ම යාම ඔබ සිදු කළ වෙනස්කම් නැතිවී යෑමට හේතු විය හැක.
@@ -1886,7 +1896,7 @@ $messages['si'] = array(
  */
 $messages['sk'] = array(
 	'vector' => 'Vylepšenia použ. rozhrania Vector',
-	'vector-desc' => 'Vylepšuje prvky používateľského rozhrania témy vzhľady Vector',
+	'vector-desc' => 'Vylepšuje prvky používateľského rozhrania témy vzhľady Vector', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Povoliť zbaľovanie položiek v navigačnom menu v téme vzhľadu Vector',
 	'vector-collapsiblenav-more' => 'Ďalšie jazyky',
 	'vector-editwarning-warning' => 'Ak opustíte túto stránku, môžete tým stratiť všetky vykonané zmeny.
@@ -1903,7 +1913,7 @@ Ak ste prihlásený, toto upozornenie môžete vypnúť v sekcii „Úpravy“ s
  */
 $messages['sl'] = array(
 	'vector' => 'Izboljšave uporabniškega vmesnika za Vector',
-	'vector-desc' => 'Izboljšave elementov uporabniškega vmesnika kože Vector.',
+	'vector-desc' => 'Izboljša uporabniški vmesnik pri uporabi kože Vector.',
 	'vector-collapsiblenav-preference' => 'Omogoči zlaganje vnosov v navigacijskem meniju v koži Vector',
 	'vector-collapsiblenav-more' => 'Več jezikov',
 	'vector-editwarning-warning' => 'Če zapustite stran, boste morda izgubili vse spremembe, ki ste jih naredili.
@@ -1930,7 +1940,7 @@ $messages['so'] = array(
  */
 $messages['sq'] = array(
 	'vector' => 'Përmirësime UI për Vector',
-	'vector-desc' => 'Përmirësime në elementet e ndërfaqes së përdoruesit të pamjes Vector.',
+	'vector-desc' => 'Përmirësime në elementet e ndërfaqes së përdoruesit të pamjes Vector.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Aktivizoni mbylljen e artikujve në menunë e navigimit në pamjen Vector',
 	'vector-collapsiblenav-more' => 'Gjuhët tjera',
 	'vector-editwarning-warning' => 'Lënia e kësaj faqeje mund t\'ju shkaktojë humbjen e çdo ndryshimi që keni bërë.
@@ -1947,8 +1957,8 @@ Nëse keni hyrë brenda, ju mund ta hiqni këtë paralajmërim në seksionin "Re
  */
 $messages['sr-ec'] = array(
 	'vector' => 'Побољшања корисничког интерфејса за вектор',
-	'vector-desc' => 'Побољшава корисничке елементе сучеља за пресвлаку Вектор.',
-	'vector-collapsiblenav-preference' => 'Скупљање ставки навигационог менија у Vector пресвлаци',
+	'vector-desc' => 'Побољшава корисничке елементе сучеља за пресвлаку Вектор.', # Fuzzy
+	'vector-collapsiblenav-preference' => 'Расклапање ставки у бочној траци у теми „Векторско“',
 	'vector-collapsiblenav-more' => 'Више језика:',
 	'vector-editwarning-warning' => 'Ако напустите ову страницу, изгубићете све измене које сте направили.
 Ако сте пријављени, можете онемогућити ово упозорење у својим подешавањима, у одељку „Уређивање“.',
@@ -1964,7 +1974,7 @@ $messages['sr-ec'] = array(
  */
 $messages['sr-el'] = array(
 	'vector' => 'Poboljšanja korisničkog interfejsa za vektor',
-	'vector-desc' => 'Poboljšava korisničke elemente sučelja za presvlaku Vektor.',
+	'vector-desc' => 'Poboljšava korisničke elemente sučelja za presvlaku Vektor.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Skupljanje stavki navigacionog menija u Vector presvlaci',
 	'vector-collapsiblenav-more' => 'Još jezika:',
 	'vector-editwarning-warning' => 'Ako napustite ovu stranicu, izgubićete sve izmene koje ste napravili.
@@ -1973,7 +1983,7 @@ Ako ste prijavljeni, možete onemogućiti ovo upozorenje u svojim podešavanjima
 	'vector-simplesearch-search' => 'Pretraga',
 	'vector-simplesearch-containing' => 'sadrži...',
 	'vector-noexperiments-preference' => 'Izuzmi me iz probnih mogućnosti',
-	'vector-footercleanup-transclusion' => 'Ova stranica sadrži {{PLURAL:$1|uključivanje|uključivanja}} na još $1 {{PLURAL:$1|drugu stranicu|druge stranice|drugih stranica}}.',
+	'vector-footercleanup-transclusion' => 'Ova stranica sadrži {{PLURAL:$1|uključivanje|uključivanja}} na još $1 {{PLURAL:$1|drugu stranicu|druge stranice|drugih stranica}}.', # Fuzzy
 );
 
 /** Seeltersk (Seeltersk)
@@ -2022,7 +2032,7 @@ Om du är inloggad kan du slå av den här varningen under "Redigering" i dina i
  */
 $messages['sw'] = array(
 	'vector' => 'Mabadiliko ya kuendeleza kusano ya Vector',
-	'vector-desc' => 'Inaboresha kusano kwa ajili ya watumiaji wa umbo la Vector.',
+	'vector-desc' => 'Inaboresha kusano kwa ajili ya watumiaji wa umbo la Vector.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Kuwezesha vitu vikunjike katika orodha ya urambazaji, katika umbo la Vector',
 	'vector-collapsiblenav-more' => 'Lugha zingine',
 	'vector-editwarning-warning' => 'Ukitoka kwenye ukurasa huu labda utapoteza madabiliko uliyoyafanya.
@@ -2063,7 +2073,7 @@ $messages['te'] = array(
  * @author Woraponboonkerd
  */
 $messages['th'] = array(
-	'vector-desc' => 'ข้อปรับปรุงองค์ประกอบอินเตอร์เฟซผู้ใช้ของสกินเวกเตอร์',
+	'vector-desc' => 'ข้อปรับปรุงองค์ประกอบอินเตอร์เฟซผู้ใช้ของสกินเวกเตอร์', # Fuzzy
 	'vector-collapsiblenav-preference' => 'ใช้งานการย่อรายการของเมนูนำทางในสกินเวกเตอร์',
 	'vector-collapsiblenav-more' => 'ภาษาอื่นๆ',
 	'vector-editwarning-warning' => 'การออกจากหน้านี้อาจทำให้ความเปลี่ยนแปลงที่คุณกระทำสูญหาย
@@ -2088,7 +2098,7 @@ $messages['tk'] = array(
  */
 $messages['tl'] = array(
 	'vector' => 'Mga pagpapainam na UI para sa Vector',
-	'vector-desc' => 'Nagpapainam sa mga sangkap ng dugtungang-mukha na pangtatagamit ng pabalat ng Vector.',
+	'vector-desc' => 'Nagpapainam sa mga sangkap ng dugtungang-mukha na pangtatagamit ng pabalat ng Vector.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Paganahin ang pagkanatitiklop ng mga bagay na nasa loob ng talaang panglibot sa loob ng pabalat na Vector',
 	'vector-collapsiblenav-more' => 'Iba pang mga wika',
 	'vector-editwarning-warning' => 'Ang paglisan mula sa pahinang ito ay maaaring makasanhi sa iyo ng pagkawala ng anumang mga pagbabagong ginawa mo.
@@ -2108,6 +2118,7 @@ $messages['tpi'] = array(
 );
 
 /** Turkish (Türkçe)
+ * @author Emperyan
  * @author Hcagri
  * @author Karduelis
  * @author Srhat
@@ -2115,15 +2126,24 @@ $messages['tpi'] = array(
  */
 $messages['tr'] = array(
 	'vector' => 'Vector için kullanıcı arabirimi iyileştirmeleri',
-	'vector-desc' => 'Vector görünümünün kullanıcı arayüzü bileşenlerini iyileştirir',
-	'vector-collapsiblenav-preference' => 'Vector temasında dolaşım menüsündeki ögelerin daraltılmasını etkinleştir',
-	'vector-collapsiblenav-more' => 'Daha fazla dil',
+	'vector-desc' => 'Vector görünümünün kullanıcı arayüzü bileşenlerini geliştirir',
+	'vector-collapsiblenav-preference' => 'Vector temasında kenar çubuğundaki ögelerin daraltılmasını etkinleştir',
+	'vector-collapsiblenav-more' => 'Diğer diller',
 	'vector-editwarning-warning' => 'Bu sayfadan ayrılmak yaptığınız herhangi bir değişikliği kaybetmenize sebep olabilir.
 Eğer giriş yaptıysanız, bu uyarıyı, tercihlerinizin "Sayfa yazma alanı" bölümünde devre dışı bırakabilirsiniz.',
 	'vector-editwarning-preference' => 'Kaydedilmemiş değişikliğe sahip bir değişiklik sayfasından çıkarken beni uyar',
 	'vector-simplesearch-search' => 'Ara',
 	'vector-simplesearch-containing' => 'içeren...',
 	'vector-noexperiments-preference' => 'Beni gelecekteki deneylere dahil etme',
+	'vector-footercleanup-templates' => 'Bu sayfada kullanılan şablonları göster',
+	'vector-footercleanup-categories' => 'Bu sayfadaki gizli kategorileri göster',
+);
+
+/** Turoyo (Ṫuroyo)
+ * @author Ariyo
+ */
+$messages['tru'] = array(
+	'vector-simplesearch-search' => 'Kruxyo',
 );
 
 /** Tatar (Cyrillic script) (татарча)
@@ -2141,15 +2161,24 @@ $messages['tt-cyrl'] = array(
 	'vector-noexperiments-preference' => 'Тикшерүдәге мөмкинлекләрне кулланмаска',
 );
 
+/** Central Atlas Tamazight (ⵜⴰⵎⴰⵣⵉⵖⵜ)
+ * @author Tifinaghes
+ */
+$messages['tzm'] = array(
+	'vector-collapsiblenav-more' => 'ⵓⴳⴰⵔ ⵏ ⵜⵓⵜⵍⴰⵢⵉⵏ',
+	'vector-simplesearch-search' => 'ⴰⵔⵣⵣⵓ',
+);
+
 /** Ukrainian (українська)
  * @author AS
+ * @author Base
  * @author Microcell
  * @author Olvin
  * @author Prima klasy4na
  */
 $messages['uk'] = array(
 	'vector' => 'Удосконалення інтерфейсу користувача за допомогою «векторного» оформлення',
-	'vector-desc' => 'Покращує елементи інтерфейсу користувача за допомогою «векторного» оформлення.',
+	'vector-desc' => 'Покращує елементи інтерфейсу користувача за допомогою «векторного» оформлення.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'Дозволити згортання бічного меню в оформленні «Векторне»',
 	'vector-collapsiblenav-more' => 'Інші мови',
 	'vector-editwarning-warning' => 'Перехід на іншу сторінку призведе до втрати ваших змін.
@@ -2159,13 +2188,15 @@ $messages['uk'] = array(
 	'vector-simplesearch-containing' => 'що містять...',
 	'vector-noexperiments-preference' => 'Відмовитись від випробування технічних експериментів',
 	'vector-footercleanup-transclusion' => 'Ця сторінка містить {{PLURAL:$1|включення|включення|включень}} інших сторінок',
+	'vector-footercleanup-templates' => 'Показати шаблони, що використовує ця сторінка',
+	'vector-footercleanup-categories' => 'Показати приховані категорії на цій сторінці',
 );
 
 /** Urdu (اردو)
  * @author පසිඳු කාවින්ද
  */
 $messages['ur'] = array(
-	'vector-desc' => 'صارف انٹرفیس کے عناصر ویکٹر جلد کے پر بہتر ہے.',
+	'vector-desc' => 'صارف انٹرفیس کے عناصر ویکٹر جلد کے پر بہتر ہے.', # Fuzzy
 	'vector-collapsiblenav-preference' => 'فعال حصہ ویکٹر جلد میں سائڈبار میں آئیٹمز کی',
 	'vector-collapsiblenav-more' => 'مزید زبانوں میں',
 	'vector-editwarning-preference' => 'خبردار مجھے جب میں غیر محفوظ کردہ تبدیلیوں کے ساتھ ایک ترمیم کے صفحے کو چھوڑ دو',
@@ -2187,7 +2218,7 @@ $messages['uz'] = array(
  */
 $messages['vec'] = array(
 	'vector' => 'Mejoramenti de interfacia utente (UI) par el Vector.',
-	'vector-desc' => "Mejora l'interfacia utente del tema Vector.",
+	'vector-desc' => "Mejora l'interfacia utente del tema Vector.", # Fuzzy
 	'vector-collapsiblenav-preference' => 'Abiłita menù de navigaxion nascondibiłe par ła skin Vector',
 	'vector-collapsiblenav-more' => 'Pì łengue',
 	'vector-editwarning-warning' => 'Se te vè via da sta pagina te podaressi pèrdar tute le modìfeghe che te ghè fato.
@@ -2197,7 +2228,8 @@ Se te sì loggà, te poli disabilitar sto aviso in te la sezion "Dimension de la
 	'vector-simplesearch-containing' => 'che contien...',
 );
 
-/** Veps (vepsän kel’) */
+/** Veps (vepsän kel’)
+ */
 $messages['vep'] = array(
 	'vector-simplesearch-search' => 'Ectä',
 	'vector-simplesearch-containing' => 'mülütajad...',
@@ -2237,7 +2269,7 @@ $messages['vo'] = array(
  */
 $messages['wa'] = array(
 	'vector' => "Amidraedjes di l' eterface pol pea «Vector»",
-	'vector-desc' => "Amidraedjes pol pea d' eterface d' uzeu «Vector»",
+	'vector-desc' => "Amidraedjes pol pea d' eterface d' uzeu «Vector»", # Fuzzy
 	'vector-collapsiblenav-preference' => "Permete d' erôler les cayets del båre di costé avou l' pea «Vector»",
 	'vector-collapsiblenav-more' => 'Pus di lingaedjes',
 	'vector-editwarning-warning' => "Cwiter cisse pådje ci vos frè piede tos les candjmints ki vos avoz fwait.
@@ -2249,7 +2281,8 @@ Si vos estoz elodjî, vos ploz dismete cist adviertixhmint ci dins l' linwete «
 	'vector-footercleanup-transclusion' => "Cisse pådje ci a {{PLURAL:$1|on ravalé elemint|des ravalés elemints}} vnant d' {{PLURAL:$1|ene ôte pådje|$1 ôtès pådjes}}.",
 );
 
-/** Mingrelian (მარგალური) */
+/** Mingrelian (მარგალური)
+ */
 $messages['xmf'] = array(
 	'vector-simplesearch-search' => 'გორუა',
 );
@@ -2290,7 +2323,7 @@ Tó bá jẹ́ pé ẹ ti wọlé, ẹ lè dẹ́kun ìkìlọ̀ yìí nínù ab
  */
 $messages['yue'] = array(
 	'vector' => '對於Vector嘅界面改進',
-	'vector-desc' => '改進Vector畫面嘅界面元素。',
+	'vector-desc' => '改進Vector畫面嘅界面元素。', # Fuzzy
 	'vector-collapsiblenav-preference' => '用可折疊導航列',
 	'vector-collapsiblenav-more' => '更多語言',
 	'vector-editwarning-warning' => '離開呢一版會令到你嘅修改唔見咗。
@@ -2310,7 +2343,7 @@ $messages['yue'] = array(
  */
 $messages['zh-hans'] = array(
 	'vector' => 'Vector用户界面改进',
-	'vector-desc' => '改进Vector皮肤中的用户界面元素。',
+	'vector-desc' => '改进Vector皮肤中的用户界面元素。', # Fuzzy
 	'vector-collapsiblenav-preference' => '在Vector皮肤的导航菜单中折叠项目',
 	'vector-collapsiblenav-more' => '更多语言',
 	'vector-editwarning-warning' => '离开这个页面可能会令您失去之前的所有更改。若您已经登入，您可在您参数设置的“编辑”一栏中关闭此警告。',
@@ -2333,7 +2366,7 @@ $messages['zh-hans'] = array(
  */
 $messages['zh-hant'] = array(
 	'vector' => 'Vector 使用者介面改進',
-	'vector-desc' => '改進 Vector 外觀中的使用者介面元素。',
+	'vector-desc' => '改進 Vector 外觀中的使用者介面元素。', # Fuzzy
 	'vector-collapsiblenav-preference' => '在 Vector 外觀的導覽選單中摺疊項目',
 	'vector-collapsiblenav-more' => '更多語言',
 	'vector-editwarning-warning' => '離開這個頁面可能會令您失去之前的所有更改。若您已經登入，您可在您偏好設定的「編輯」節中關閉此警告。',
@@ -2345,4 +2378,3 @@ $messages['zh-hant'] = array(
 	'vector-footercleanup-templates' => '查看該頁調用的模板',
 	'vector-footercleanup-categories' => '查看該頁所屬的隱藏類別',
 );
-

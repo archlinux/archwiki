@@ -341,6 +341,9 @@ $wgResourceModules += array(
 			'wikieditor-toolbar-characters-page-thai',
 			'wikieditor-toolbar-characters-page-lao',
 			'wikieditor-toolbar-characters-page-khmer',
+			'wikieditor-toolbar-characters-endash',
+			'wikieditor-toolbar-characters-emdash',
+			'wikieditor-toolbar-characters-minus',
 			/* Help Section */
 			'wikieditor-toolbar-section-help',
 			'wikieditor-toolbar-help-heading-description',

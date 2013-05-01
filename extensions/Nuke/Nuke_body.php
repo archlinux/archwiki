@@ -30,12 +30,14 @@ class SpecialNuke extends SpecialPage {
 		// Normalise name
 		if ( $target !== '' ) {
 			$user = User::newFromName( $target );
-			if ( $user ) $target = $user->getName();
+			if ( $user ) {
+				$target = $user->getName();
+			}
 		}
 
 		$msg = $target === '' ?
 			$this->msg( 'nuke-multiplepeople' )->inContentLanguage()->text() :
-			$this->msg( 'nuke-defaultreason', "[[Special:Contributions/$target|$target]]" )->
+			$this->msg( 'nuke-defaultreason', $target )->
 				inContentLanguage()->text();
 		$reason = $req->getText( 'wpReason', $msg );
 

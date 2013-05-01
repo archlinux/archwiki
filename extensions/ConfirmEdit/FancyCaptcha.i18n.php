@@ -245,7 +245,8 @@ $messages['ca'] = array(
 	'fancycaptcha-sendemail' => 'Per ajudar a protegir contra el correu brossa automatitzat, si us plau, introduïu les paraules que apareixen a sota la caixa ([[Special:Captcha/help|més informació]]):',
 );
 
-/** Min Dong Chinese (Mìng-dĕ̤ng-ngṳ̄) */
+/** Min Dong Chinese (Mìng-dĕ̤ng-ngṳ̄)
+ */
 $messages['cdo'] = array(
 	'fancycaptcha-badlogin' => 'Ôi-lāu huòng-cī tiàng-sê̤ṳ cê̤ṳ-dông puái-gāi mĭk-mā, chiāng nṳ̄ sṳ̆-ĭk â-dā̤ bēng-bēng diē-lié gì sṳ̀ ([[Special:Captcha/help|gáing sâ̤ séng-sék]]):',
 );
@@ -291,6 +292,8 @@ Er mwyn ceisio rhwystro peiriannau spam, byddwch gystal â theipio'r geiriau a w
 );
 
 /** Danish (dansk)
+ * @author Christian List
+ * @author Kaare
  * @author Peter Alberti
  */
 $messages['da'] = array(
@@ -299,6 +302,7 @@ $messages['da'] = array(
 	'fancycaptcha-createaccount' => 'For at beskytte mod automatisk oprettelse af brugernavne, der bruges til spam, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):',
 	'fancycaptcha-create' => 'For at oprette en ny side, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):',
 	'fancycaptcha-edit' => 'For at redigere denne side, indtast da venligst ordene, der står i feltet nedenfor ([[Special:Captcha/help|mere information]]):',
+	'fancycaptcha-sendemail' => 'For at beskytte mod automatisk spam, bedes du skrive ordene der ses herunder i boksen ([[Special:Captcha/help|mere information]]):',
 );
 
 /** German (Deutsch)
@@ -508,7 +512,8 @@ $messages['fy'] = array(
 	'fancycaptcha-badlogin' => 'As ekstra beskerming tsjin automatysk ûntsiferjen fan wachtwurden wurdt jo frege de ûndersteande letters oer te tikken. ([[Special:Captcha/help|mear ynformaasje]]).',
 );
 
-/** Irish (Gaeilge) */
+/** Irish (Gaeilge)
+ */
 $messages['ga'] = array(
 	'fancycaptcha-createaccount' => 'Mar chosaint in éadan cuntais a chruthaítear go huathoibríoch, ionchuir na focail a thaispeántar san íomhá seo thíos: <br />([[Special:Captcha/help|tuilleadh eolais]])',
 );
@@ -753,49 +758,52 @@ $messages['ka'] = array(
  */
 $messages['kaa'] = array(
 	'fancycaptcha-createaccount' => "Jan'a akkauntlardın' avtomatik jaratılıwının' aldın alıw ushın, to'mendegi
-ko'rsetilgen so'zlerdi kiritin'([[{{ns:special}}:Captcha/help|ko'birek mag'lıwmat]]):",
+ko'rsetilgen so'zlerdi kiritin'([[{{ns:special}}:Captcha/help|ko'birek mag'lıwmat]]):", # Fuzzy
 );
 
-/** Kazakh (Arabic script) (قازاقشا (تٴوتە)‏) */
+/** Kazakh (Arabic script) (قازاقشا (تٴوتە)‏)
+ */
 $messages['kk-arab'] = array(
 	'fancycaptcha-addurl' => 'تٷزەتۋٸڭٸزدە جاڭا سىرتقى سٸلتەمەلەر بار ەكەن. ٶزدٸك تٷردە «سپام» جاسالۋىنان قورعانۋ ٷشٸن,
-تٶمەندەگٸ كٶرسەتٸلگەن سٶزدەردٸ اۋماققا ەنگٸزٸڭٸز ([[{{ns:special}}:Captcha/help|كٶبٸرەك اقپارات]]):',
+تٶمەندەگٸ كٶرسەتٸلگەن سٶزدەردٸ اۋماققا ەنگٸزٸڭٸز ([[{{ns:special}}:Captcha/help|كٶبٸرەك اقپارات]]):', # Fuzzy
 	'fancycaptcha-badlogin' => 'قۇپييا سٶزدٸ ٶزدٸكتٸ بۇزدىرۋدان قورعانۋ ٷشٸن, تٶمەندەگٸ
-كٶرسەتٸلگەن سٶزدەردٸ اۋماققا ەنگٸزٸڭٸز ([[{{ns:special}}:Captcha/help|كٶبٸرەك اقپارات]]):',
+كٶرسەتٸلگەن سٶزدەردٸ اۋماققا ەنگٸزٸڭٸز ([[{{ns:special}}:Captcha/help|كٶبٸرەك اقپارات]]):', # Fuzzy
 	'fancycaptcha-createaccount' => 'جاڭا تٸركەلگٸ ٶزدٸكتٸ جاسالۋىنان قورعانۋ ٷشٸن, تٶمەندەگٸ
-كٶرسەتٸلگەن سٶزدەردٸ اۋماققا ەنگٸزٸڭٸز ([[{{ns:special}}:Captcha/help|كٶبٸرەك اقپارات]]):',
+كٶرسەتٸلگەن سٶزدەردٸ اۋماققا ەنگٸزٸڭٸز ([[{{ns:special}}:Captcha/help|كٶبٸرەك اقپارات]]):', # Fuzzy
 	'fancycaptcha-create' => 'تٷزەتۋٸڭٸزدە جاڭا سىرتقى سٸلتەمەلەر بار ەكەن. ٶزدٸك تٷردە «سپام» جاسالۋىنان قورعانۋ ٷشٸن,
-تٶمەندەگٸ كٶرسەتٸلگەن سٶزدەردٸ اۋماققا ەنگٸزٸڭٸز ([[{{ns:special}}:Captcha/help|كٶبٸرەك اقپارات]]):',
+تٶمەندەگٸ كٶرسەتٸلگەن سٶزدەردٸ اۋماققا ەنگٸزٸڭٸز ([[{{ns:special}}:Captcha/help|كٶبٸرەك اقپارات]]):', # Fuzzy
 	'fancycaptcha-edit' => 'تٷزەتۋٸڭٸزدە جاڭا سىرتقى سٸلتەمەلەر بار ەكەن. ٶزدٸك تٷردە «سپام» جاسالۋىنان قورعانۋ ٷشٸن,
-تٶمەندەگٸ كٶرسەتٸلگەن سٶزدەردٸ اۋماققا ەنگٸزٸڭٸز ([[{{ns:special}}:Captcha/help|كٶبٸرەك اقپارات]]):',
+تٶمەندەگٸ كٶرسەتٸلگەن سٶزدەردٸ اۋماققا ەنگٸزٸڭٸز ([[{{ns:special}}:Captcha/help|كٶبٸرەك اقپارات]]):', # Fuzzy
 );
 
-/** Kazakh (Cyrillic script) (қазақша (кирил)‎) */
+/** Kazakh (Cyrillic script) (қазақша (кирил)‎)
+ */
 $messages['kk-cyrl'] = array(
 	'fancycaptcha-addurl' => 'Түзетуіңізде жаңа сыртқы сілтемелер бар екен. Өздік түрде «спам» жасалуынан қорғану үшін,
-төмендегі көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):',
+төмендегі көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):', # Fuzzy
 	'fancycaptcha-badlogin' => 'Құпия сөзді өздікті бұздырудан қорғану үшін, төмендегі
-көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):',
+көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):', # Fuzzy
 	'fancycaptcha-createaccount' => 'Жаңа тіркелгі өздікті жасалуынан қорғану үшін, төмендегі
-көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):',
+көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):', # Fuzzy
 	'fancycaptcha-create' => 'Түзетуіңізде жаңа сыртқы сілтемелер бар екен. Өздік түрде «спам» жасалуынан қорғану үшін,
-төмендегі көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):',
+төмендегі көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):', # Fuzzy
 	'fancycaptcha-edit' => 'Түзетуіңізде жаңа сыртқы сілтемелер бар екен. Өздік түрде «спам» жасалуынан қорғану үшін,
-төмендегі көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):',
+төмендегі көрсетілген сөздерді аумаққа енгізіңіз ([[{{ns:special}}:Captcha/help|көбірек ақпарат]]):', # Fuzzy
 );
 
-/** Kazakh (Latin script) (qazaqşa (latın)‎) */
+/** Kazakh (Latin script) (qazaqşa (latın)‎)
+ */
 $messages['kk-latn'] = array(
 	'fancycaptcha-addurl' => 'Tüzetwiñizde jaña sırtqı siltemeler bar eken. Özdik türde «spam» jasalwınan qorğanw üşin,
-tömendegi körsetilgen sözderdi awmaqqa engiziñiz ([[{{ns:special}}:Captcha/help|köbirek aqparat]]):',
+tömendegi körsetilgen sözderdi awmaqqa engiziñiz ([[{{ns:special}}:Captcha/help|köbirek aqparat]]):', # Fuzzy
 	'fancycaptcha-badlogin' => 'Qupïya sözdi özdikti buzdırwdan qorğanw üşin, tömendegi
-körsetilgen sözderdi awmaqqa engiziñiz ([[{{ns:special}}:Captcha/help|köbirek aqparat]]):',
+körsetilgen sözderdi awmaqqa engiziñiz ([[{{ns:special}}:Captcha/help|köbirek aqparat]]):', # Fuzzy
 	'fancycaptcha-createaccount' => 'Jaña tirkelgi özdikti jasalwınan qorğanw üşin, tömendegi
-körsetilgen sözderdi awmaqqa engiziñiz ([[{{ns:special}}:Captcha/help|köbirek aqparat]]):',
+körsetilgen sözderdi awmaqqa engiziñiz ([[{{ns:special}}:Captcha/help|köbirek aqparat]]):', # Fuzzy
 	'fancycaptcha-create' => 'Tüzetwiñizde jaña sırtqı siltemeler bar eken. Özdik türde «spam» jasalwınan qorğanw üşin,
-tömendegi körsetilgen sözderdi awmaqqa engiziñiz ([[{{ns:special}}:Captcha/help|köbirek aqparat]]):',
+tömendegi körsetilgen sözderdi awmaqqa engiziñiz ([[{{ns:special}}:Captcha/help|köbirek aqparat]]):', # Fuzzy
 	'fancycaptcha-edit' => 'Tüzetwiñizde jaña sırtqı siltemeler bar eken. Özdik türde «spam» jasalwınan qorğanw üşin,
-tömendegi körsetilgen sözderdi awmaqqa engiziñiz ([[{{ns:special}}:Captcha/help|köbirek aqparat]]):',
+tömendegi körsetilgen sözderdi awmaqqa engiziñiz ([[{{ns:special}}:Captcha/help|köbirek aqparat]]):', # Fuzzy
 );
 
 /** Khmer (ភាសាខ្មែរ)
@@ -906,7 +914,8 @@ hieronder verschijnen in het invoerveld in als bescherming tegen automatische sp
 	'fancycaptcha-sendemail' => "Veur de weurd die hie onger versjienen in 't inveurvèldj in es besjerming taege geautometiseerde spam ([[Special:Captcha/help|mier info]]):",
 );
 
-/** Lao (ລາວ) */
+/** Lao (ລາວ)
+ */
 $messages['lo'] = array(
 	'fancycaptcha-addurl' => 'ການດັດແກ້ຂອງທ່ານ ມີລິ້ງຄ໌ພາຍນອກ. ເພື່ອປ້ອງກັນ ສະແປມອັດຕະໂນມັດ, ກະລຸນາ ພິມຄຳສັບຂ້າງລຸ່ມນີ້ ໃສ່ໃນກັບ ([[Special:Captcha/help|ຂໍ້ມູນເພີ່ມຕື່ມ]]):',
 	'fancycaptcha-badlogin' => 'ເພື່ອຊ່ອຍປ້ອງກັນ ການສືບຄົ້ນຫາລະຫັດຜ່ານແບບອັດຕະໂນມັດ, ກະລຸນາ ພິມຄຳສັບ ຂ້າງລຸ່ມນີ້ ໃສ່ໃນກັບ ([[Special:Captcha/help|ຂໍ້ມູນເພີ່ມຕື່ມ]]):',
@@ -1565,7 +1574,8 @@ $messages['yo'] = array(
 Láti ṣèránwọ́ láti kojú spam aṣefúnrararẹ̀, ẹ jọ̀wọ́ ẹ fi àwọn ọ̀rọ̀ tí wọ́n hàn nísàlẹ̀ sínú ààyè ([[Special:Captcha/help|ẹ̀kúnrẹ́rẹ́]]):',
 );
 
-/** Cantonese (粵語) */
+/** Cantonese (粵語)
+ */
 $messages['yue'] = array(
 	'fancycaptcha-addurl' => '你嘅編輯包括咗新嘅外部連結。為咗防止自動化嘅濫貼，請響下面個盒度輸入下面嘅文字 ([[Special:Captcha/help|更多資訊]]):',
 	'fancycaptcha-badlogin' => '為咗防止不當程式破解密碼，請響下面個盒度輸入下面嘅文字 ([[Special:Captcha/help|更多資訊]]):',
@@ -1598,4 +1608,3 @@ $messages['zh-hant'] = array(
 	'fancycaptcha-edit' => '如您想要編輯此頁面，請輸入以下的文字（[[Special:Captcha/help|相關資訊]]）：',
 	'fancycaptcha-sendemail' => '為防止不當程式進行破壞，請輸入以下的文字（[[Special:Captcha/help|相關資訊]]）：',
 );
-

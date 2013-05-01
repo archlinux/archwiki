@@ -1,7 +1,7 @@
 /**
  * Toolbar module for wikiEditor
  */
-( function( $ ) { $.wikiEditor.modules.toolbar = {
+( function ( mw, $ ) { $.wikiEditor.modules.toolbar = {
 
 /**
  * API accessible functions
@@ -563,6 +563,8 @@ fn: {
 					}
 				}
 			};
+		// In some cases the label for the character isn't the same as the
+		// character that gets inserted (e.g. Hebrew vowels)
 		} else if ( character && 0 in character && 1 in character ) {
 			character = {
 				'label' : character[0],
@@ -577,7 +579,15 @@ fn: {
 		}
 		if ( character && 'action' in character && 'label' in character ) {
 			actions[character.label] = character.action;
-			return '<span rel="' + character.label + '">' + character.label + '</span>';
+			if ( character.titleMsg !== undefined ) {
+				return mw.html.element(
+					'span',
+					{ 'rel': character.label, 'title': mw.msg( character.titleMsg ) },
+					character.label
+				);
+			} else {
+				return mw.html.element( 'span', { 'rel': character.label }, character.label );
+			}
 		}
 		mw.log( "A character for the toolbar was undefined. This is not supposed to happen. Double check the config." );
 		return ""; // bug 31673; also an additional fix for bug 24208...
@@ -780,4 +790,4 @@ fn: {
 	}
 }
 
-}; } )( jQuery );
+}; } )( mediaWiki, jQuery );

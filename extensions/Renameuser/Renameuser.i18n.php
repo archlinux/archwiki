@@ -16,7 +16,7 @@ $messages['en'] = array(
 	'renameuser-summary' => '', # do not translate or duplicate this message to other languages
 	'renameuserold'       => 'Current username:',
 	'renameusernew'       => 'New username:',
-	'renameuserreason'    => 'Reason for rename:',
+	'renameuserreason'    => 'Reason:',
 	'renameusermove'      => 'Move user and talk pages (and their subpages) to new name',
 	'renameusersuppress'  => 'Do not create redirects to the new name',
 	'renameuserreserve'   => 'Block the old username from future use',
@@ -65,6 +65,7 @@ $messages['qqq'] = array(
 	'renameuser-linkoncontribs' => 'Link description used on Special:Contributions and Special:DeletedContributions. Only added if a user has rights to rename users.',
 	'renameuser-linkoncontribs-text' => 'Tooltip for {{msg-mw|renameuser-linkoncontribs}}.',
 	'renameuser-desc' => '{{desc}}',
+	'renameuser-summary' => '{{notranslate}}',
 	'renameuserreserve' => 'Option to block the old username (after it has been renamed) from being used again.',
 	'renameuserwarnings' => '{{Identical|Warning}}',
 	'renameusersubmit' => '{{Identical|Submit}}',
@@ -76,14 +77,6 @@ $messages['qqq'] = array(
 	'action-renameuser' => '{{Doc-action|renameuser}}',
 	'right-renameuser' => '{{doc-right|renameuser}}',
 	'renameuser-renamed-notice' => 'This message supports the use of GENDER with parameter $1.',
-);
-
-/** ꢱꣃꢬꢵꢯ꣄ꢡ꣄ꢬꢵ (ꢱꣃꢬꢵꢯ꣄ꢡ꣄ꢬꢵ)
- * @author MooRePrabu
- */
-$messages['saz'] = array(
-	'renameuser' => 'ꢮꢮ꣄ꢬꢸꢥꢵꢬ꣄ ꢥꢵꢮ꣄ ꢪꢬ꣄ꢗꢶ',
-	'renameusernew' => 'ꢥꣁꢮ꣄ꢮꣁ  ꢮꢮ꣄ꢬꢸꢥꢵꢬ꣄ ꢥꢵꢮ꣄',
 );
 
 /** Afrikaans (Afrikaans)
@@ -98,7 +91,7 @@ $messages['af'] = array(
 	'renameuser-desc' => "Herdoop gebruikers (benodig ''renameuser'' regte)",
 	'renameuserold' => 'Huidige gebruikersnaam:',
 	'renameusernew' => 'Nuwe gebruikersnaam:',
-	'renameuserreason' => 'Rede vir hernoeming:',
+	'renameuserreason' => 'Rede vir hernoeming:', # Fuzzy
 	'renameusermove' => 'Hernoem gebruikers- en besprekingsbladsye (met subblaaie) na nuwe naam',
 	'renameusersuppress' => 'Moenie skep aansture na die nuwe naam',
 	'renameuserreserve' => 'Voorkom dat die ou gebruiker in die toekoms weer gebruik kan word',
@@ -135,7 +128,7 @@ $messages['an'] = array(
 	'renameuser-desc' => "Renombrar un usuario (amenista os dreitos de ''renameuser'')",
 	'renameuserold' => 'Nombre actual:',
 	'renameusernew' => 'Nombre nuevo:',
-	'renameuserreason' => "Razón d'o cambeo de nombre:",
+	'renameuserreason' => "Razón d'o cambeo de nombre:", # Fuzzy
 	'renameusermove' => "Tresladar as pachinas d'usuario y de descusión (y as suyas sozpachinas) ta o nuevo nombre",
 	'renameusersuppress' => 'No creyar reendreceras ta o nuevo nombre',
 	'renameuserreserve' => "Bloqueyar l'antigo nombre d'usuario ta privar que torne a ser usau",
@@ -184,7 +177,7 @@ $messages['ar'] = array(
 	'renameuser-desc' => "يضيف [[Special:Renameuser|صفحة خاصة]] لإعادة تسمية مستخدم (يحتاج إلى صلاحية ''renameuser'')",
 	'renameuserold' => 'اسم المستخدم الحالي:',
 	'renameusernew' => 'الاسم الجديد:',
-	'renameuserreason' => 'السبب لإعادة التسمية:',
+	'renameuserreason' => 'السبب لإعادة التسمية:', # Fuzzy
 	'renameusermove' => 'انقل صفحات المستخدم ونقاشه (بالصفحات الفرعية) إلى الاسم الجديد',
 	'renameusersuppress' => 'لا تقم بإنشاء تحويلات إلى الاسم الجديد',
 	'renameuserreserve' => 'احفظ اسم المستخدم القديم ضد الاستخدام',
@@ -240,7 +233,7 @@ $messages['arz'] = array(
 	'renameuser-desc' => "بيضيف [[Special:Renameuser|صفحة مخصوصة]] علشان تغير اسم يوزر(محتاج صلاحية ''renameuser'')",
 	'renameuserold' => 'اسم اليوزر الحالي:',
 	'renameusernew' => 'اسم اليوزر الجديد:',
-	'renameuserreason' => 'السبب لإعادة التسميه:',
+	'renameuserreason' => 'السبب لإعادة التسميه:', # Fuzzy
 	'renameusermove' => 'انقل صفحات اليوزر و مناقشاته (بالصفحات الفرعية)للاسم الجديد.',
 	'renameuserreserve' => 'احفظ اسم اليوزر القديم ضد الاستخدام',
 	'renameuserwarnings' => 'التحذيرات:',
@@ -275,7 +268,7 @@ $messages['as'] = array(
 	'renameuser-desc' => "এজন ব্যৱহাৰকাৰীৰ পুনৰ্নামাকৰণ কৰিবলৈ এখন [[Special:Renameuser|বিশেষ পৃষ্ঠা]] যোগ দিয়ে (''renameuser'' অধিকাৰৰ প্ৰয়োজন)",
 	'renameuserold' => 'বৰ্তমানৰ সদস্যনাম:',
 	'renameusernew' => 'নতুন সদস্যনাম:',
-	'renameuserreason' => 'পুনৰ্নামাকৰণৰ কাৰণ:',
+	'renameuserreason' => 'পুনৰ্নামাকৰণৰ কাৰণ:', # Fuzzy
 	'renameusermove' => 'সদস্যপৃষ্ঠা আৰু আলোচনা পৃষ্ঠা (আৰু সেইবোৰৰ উপপৃষ্ঠা) নতুন নামলৈ স্থানান্তৰ কৰক',
 	'renameusersuppress' => 'নতুন নামলৈ পুনৰ্নিৰ্দেশ সৃষ্টি কৰিব নালাগে',
 	'renameuserreserve' => 'ভৱিষ্যত ব্যৱহাৰৰ বাবে পুৰণা সদস্যনামটো বাৰণ কৰক',
@@ -315,7 +308,7 @@ $messages['ast'] = array(
 	'renameuser-desc' => "Renoma un usuariu (necesita'l permisu ''renameuser'')",
 	'renameuserold' => "Nome d'usuariu actual:",
 	'renameusernew' => "Nome d'usuariu nuevu:",
-	'renameuserreason' => 'Motivu del cambéu de nome:',
+	'renameuserreason' => 'Motivu:',
 	'renameusermove' => "Treslladar les páxines d'usuariu y d'alderique (y toles subpáxines) al nome nuevu",
 	'renameusersuppress' => 'Nun crear redireiciones al nome nuevu',
 	'renameuserreserve' => "Bloquiar el nome d'usuariu antiguu pa evitar usalu nun futuru",
@@ -377,7 +370,7 @@ $messages['ba'] = array(
 	'renameuser-desc' => "Ҡатнашыусы исемен үҙгәртеү өсөн [[Special:Renameuser|махсус бит]] өҫтәй (''renameuser'' хоҡуғы кәрәк)",
 	'renameuserold' => 'Хәҙерге исеме:',
 	'renameusernew' => 'Яңы исеме:',
-	'renameuserreason' => 'Исемен үҙгәртеү сәбәбе:',
+	'renameuserreason' => 'Исемен үҙгәртеү сәбәбе:', # Fuzzy
 	'renameusermove' => 'Шулай уҡ ҡатнашыусы битенең, фекер алышыу битенең (һәм уларҙың эске биттәренең) исемен үҙгәртергә',
 	'renameusersuppress' => 'Яңы исемгә йүнәлтеүҙәр булдырмаҫҡа',
 	'renameuserreserve' => 'Ҡатнашыусының элекке исемен киләсәктә ҡулланыу өсөн һаҡларға',
@@ -413,7 +406,7 @@ $messages['bcc'] = array(
 	'renameuser-desc' => "یک کاربر نامی بدیل کن(حق ''بدل نام''لازمن)",
 	'renameuserold' => 'هنوکین نام کاربری:',
 	'renameusernew' => 'نوکین نام کاربری:',
-	'renameuserreason' => 'دلیل په نام بدل کتن:',
+	'renameuserreason' => 'دلیل په نام بدل کتن:', # Fuzzy
 	'renameusermove' => 'صفحات گپ و کاربر (و آیانی زیر صفحات) په نوکین نام جاه په جاه کن',
 	'renameuserwarnings' => 'هوژاریان:',
 	'renameuserconfirm' => 'بله، کاربر نامی عوض کن',
@@ -430,7 +423,7 @@ $messages['bcc'] = array(
 	'renameuser-page-unmoved' => 'صفحه $1 نه تونیت په $2 جاه په جاه بیت.',
 	'renameuserlogpage' => 'آمار نام بدل کتن کاربر',
 	'renameuserlogpagetext' => 'شی آماری چه تغییرات نامان کاربران انت',
-	'renameuserlogentry' => 'نام بدل بوت  $1 په "$2"',
+	'renameuserlogentry' => 'نام بدل بوت  $1 په "$2"', # Fuzzy
 	'renameuser-log' => '{{PLURAL:$1|1 اصلاح|$1 اصلاحلات}}. دلیل: $2',
 	'renameuser-move-log' => 'اتوماتیکی صفحه جاه په جاه بیت وهدی که کاربر نام بدل بی "[[User:$1|$1]]" به "[[User:$2|$2]]"',
 	'right-renameuser' => 'عوض کتن نام کابران',
@@ -445,7 +438,7 @@ $messages['bcl'] = array(
 	'renameusererrorexists' => 'An parágamit "<nowiki>$1</nowiki>" yaon na',
 	'renameuser-page-moved' => 'An páhinang $1 piglipat sa $2.',
 	'renameuser-page-unmoved' => 'An páhinang $1 dai mailipat sa $2.',
-	'renameuser-log' => '$1 mga hirá. Rasón: $2',
+	'renameuser-log' => '$1 mga hirá. Rasón: $2', # Fuzzy
 );
 
 /** Belarusian (Taraškievica orthography) (беларуская (тарашкевіца)‎)
@@ -461,7 +454,7 @@ $messages['be-tarask'] = array(
 	'renameuser-desc' => "Дадае [[Special:Renameuser|спэцыяльную старонку]] для перайменаваньня рахунку ўдзельніка (неабходныя правы на ''перайменаваньне ўдзельніка'')",
 	'renameuserold' => 'Цяперашняе імя ўдзельніка:',
 	'renameusernew' => 'Новае імя:',
-	'renameuserreason' => 'Прычына перайменаваньня:',
+	'renameuserreason' => 'Прычына:',
 	'renameusermove' => 'Перайменаваць старонкі ўдзельніка і гутарак (і іх падстаронкі)',
 	'renameusersuppress' => 'Не ствараць перанакіраваньні на новую назву рахунку',
 	'renameuserreserve' => 'Заблякаваць старое імя ўдзельніка для выкарыстаньня ў будучыні',
@@ -503,7 +496,7 @@ $messages['bg'] = array(
 	'renameuser-desc' => 'Добавя възможност за преименуване на потребители',
 	'renameuserold' => 'Текущо потребителско име:',
 	'renameusernew' => 'Ново потребителско име:',
-	'renameuserreason' => 'Причина за преименуването:',
+	'renameuserreason' => 'Причина за преименуването:', # Fuzzy
 	'renameusermove' => 'Преместване под новото име на потребителската лична страница и беседа (както и техните подстраници)',
 	'renameusersuppress' => 'Без създаване на пренасочване към новото име',
 	'renameuserreserve' => 'Блокиране на старото потребителско име срещу узурпация в бъдеще',
@@ -540,7 +533,7 @@ $messages['bn'] = array(
 	'renameuser-desc' => "একজন ব্যবহারকারীকে নামান্তর করুন (''ব্যবহাকারী নামান্তর'' অধিকার প্রয়োজন)",
 	'renameuserold' => 'বর্তমান ব্যবহারকারী নাম:',
 	'renameusernew' => 'নতুন ব্যবহারকারী নাম:',
-	'renameuserreason' => 'নামান্তরের কারণ:',
+	'renameuserreason' => 'নামান্তরের কারণ:', # Fuzzy
 	'renameusermove' => 'ব্যবহারকারী এবং আলাপের পাতা (এবং তার উপপাতাসমূহ) নতুন নামে সরিয়ে নাও',
 	'renameusersuppress' => 'নতুন নামে রিডাইরেক্ট করবেন না',
 	'renameuserreserve' => 'ভবিষ্যতে উদ্দেশ্যে পুরাতন ব্যবহারকারী নাম ব্লক করা হল',
@@ -580,7 +573,7 @@ $messages['br'] = array(
 	'renameuser-desc' => "Adenvel un implijer (ret eo kaout ''gwirioù adenvel'')",
 	'renameuserold' => 'Anv a-vremañ an implijer :',
 	'renameusernew' => 'Anv implijer nevez :',
-	'renameuserreason' => 'Abeg evit adenvel :',
+	'renameuserreason' => 'Abeg evit adenvel :', # Fuzzy
 	'renameusermove' => 'Kas ar pajennoù implijer ha kaozeal (hag o ispajennoù) betek o anv nevez',
 	'renameusersuppress' => 'Arabat krouiñ adkasoù war-du an anv nevez',
 	'renameuserreserve' => "Mirout na vo implijet an anv kozh pelloc'h en dazont",
@@ -618,7 +611,7 @@ $messages['bs'] = array(
 	'renameuser-desc' => "Dodaje [[Special:Renameuser|posebnu stranicu]] u svrhu promjene imena korisnika (zahtjeva pravo ''preimenovanja korisnika'')",
 	'renameuserold' => 'Trenutno ime korisnika:',
 	'renameusernew' => 'Novo korisničko ime:',
-	'renameuserreason' => 'Razlog promjene imena:',
+	'renameuserreason' => 'Razlog promjene imena:', # Fuzzy
 	'renameusermove' => 'Premještanje korisnika i njegove stranice za razgovor (zajedno sa podstranicama) na novo ime',
 	'renameusersuppress' => 'Ne pravi preusmjerenja na novo ime',
 	'renameuserreserve' => 'Blokiraj staro korisničko ime od kasnijeg korištenja',
@@ -662,7 +655,7 @@ $messages['ca'] = array(
 	'renameuser-desc' => "Reanomena un usuari (necessita drets de ''renameuser'')",
 	'renameuserold' => "Nom d'usuari actual:",
 	'renameusernew' => "Nou nom d'usuari:",
-	'renameuserreason' => 'Motiu pel canvi:',
+	'renameuserreason' => 'Motiu pel canvi:', # Fuzzy
 	'renameusermove' => "Reanomena la pàgina d'usuari, la de discussió i les subpàgines que tingui al nou nom",
 	'renameusersuppress' => 'No creis redireccions cap al nou nom',
 	'renameuserreserve' => "Bloca el nom d'usuari antic d'usos futurs",
@@ -699,19 +692,10 @@ $messages['ce'] = array(
 	'renameuser-linkoncontribs' => 'декъашхон цlе хийца',
 );
 
-/** Sorani Kurdish (کوردی) */
+/** Sorani Kurdish (کوردی)
+ */
 $messages['ckb'] = array(
 	'renameusersubmit' => 'ناردن',
-);
-
-/** Crimean Turkish (Latin script) (qırımtatarca (Latin)‎)
- * @author Don Alessandro
- */
-$messages['crh-latn'] = array(
-	'renameuserlogpage' => 'Qullanıcı adı deñişikligi jurnalı',
-	'renameuserlogpagetext' => 'Aşağıda bulunğan cedvel adı deñiştirilgen qullanıcılarnı köstere',
-	'renameuserlogentry' => '$1 qullanıcısınıñ adını "$2" оlaraq deñiştirdi',
-	'renameuser-log' => '{{PLURAL:$1|1 deñişiklik|$1 deñişiklik}} yapqan. Sebep: $2',
 );
 
 /** Crimean Turkish (Cyrillic script) (къырымтатарджа (Кирилл)‎)
@@ -722,6 +706,16 @@ $messages['crh-cyrl'] = array(
 	'renameuserlogpagetext' => 'Ашагъыда булунгъан джедвель ады денъиштирильген къулланыджыларны косьтере',
 	'renameuserlogentry' => '$1 къулланыджысынынъ адыны "$2" оларакъ денъиштирди',
 	'renameuser-log' => '{{PLURAL:$1|1 денъишиклик|$1 денъишиклик}} япкъан. Себеп: $2',
+);
+
+/** Crimean Turkish (Latin script) (qırımtatarca (Latin)‎)
+ * @author Don Alessandro
+ */
+$messages['crh-latn'] = array(
+	'renameuserlogpage' => 'Qullanıcı adı deñişikligi jurnalı',
+	'renameuserlogpagetext' => 'Aşağıda bulunğan cedvel adı deñiştirilgen qullanıcılarnı köstere',
+	'renameuserlogentry' => '$1 qullanıcısınıñ adını "$2" оlaraq deñiştirdi',
+	'renameuser-log' => '{{PLURAL:$1|1 deñişiklik|$1 deñişiklik}} yapqan. Sebep: $2',
 );
 
 /** Czech (česky)
@@ -738,7 +732,7 @@ $messages['cs'] = array(
 	'renameuser-desc' => "Přejmenování uživatele (vyžadováno oprávnění ''renameuser'')",
 	'renameuserold' => 'Stávající uživatelské jméno:',
 	'renameusernew' => 'Nové uživatelské jméno:',
-	'renameuserreason' => 'Důvod přejmenování:',
+	'renameuserreason' => 'Důvod přejmenování:', # Fuzzy
 	'renameusermove' => 'Přesunout uživatelské a diskusní stránky (a jejich podstránky) na nové jméno',
 	'renameusersuppress' => 'Nevytvářet přesměrování na nové jméno',
 	'renameuserreserve' => 'Zabránit nové registraci původního uživatelského jména',
@@ -774,7 +768,7 @@ $messages['cu'] = array(
 	'renameuser' => 'прѣимєноуи польꙃєватєл҄ь',
 	'renameuserold' => 'нꙑнѣщьнѥѥ имѧ :',
 	'renameusernew' => 'ново имѧ :',
-	'renameuserreason' => 'какъ съмꙑслъ :',
+	'renameuserreason' => 'какъ съмꙑслъ :', # Fuzzy
 	'renameusermove' => 'нарьци тако польꙃєватєлꙗ страницѫ · бєсѣдѫ и ихъ подъстраницѧ',
 	'renameusersubmit' => 'єи',
 	'renameusererrordoesnotexist' => 'польꙃєватєлꙗ ⁖ <nowiki>$1</nowiki> ⁖ нѣстъ',
@@ -803,7 +797,7 @@ $messages['cy'] = array(
 	'renameuser-desc' => "Yn ychwanegu [[Special:Renameuser|tudalen arbennig]] er mwyn gallu ail-enwi cyfrif defnyddiwr (sydd angen y gallu ''renameuser'')",
 	'renameuserold' => 'Enw presennol y defnyddiwr:',
 	'renameusernew' => "Enw newydd i'r defnyddiwr:",
-	'renameuserreason' => 'Y rheswm dros ail-enwi:',
+	'renameuserreason' => 'Y rheswm dros ail-enwi:', # Fuzzy
 	'renameusermove' => "Symud y tudalennau defnyddiwr a sgwrs (ac unrhyw is-dudalennau) i'r enw newydd",
 	'renameusersuppress' => "Peidiwch â gosod ailgyfeiriadau i'r enw newydd",
 	'renameuserreserve' => 'Atal yr hen enw defnyddiwr rhag cael ei ddefnyddio rhagor',
@@ -834,6 +828,7 @@ Mae'r lòg ail-enwi defnyddwyr i'w weld isod.",
 
 /** Danish (dansk)
  * @author Byrial
+ * @author Christian List
  * @author Froztbyte
  * @author Hylle
  * @author Peter Alberti
@@ -845,7 +840,7 @@ $messages['da'] = array(
 	'renameuser-desc' => "Laver en [[Special:Renameuser|specialside]] til at omdøbe en bruger (kræver rettigheden ''renameuser'')",
 	'renameuserold' => 'Nuværende brugernavn:',
 	'renameusernew' => 'Nyt brugernavn:',
-	'renameuserreason' => 'Årsag til omdøbning:',
+	'renameuserreason' => 'Begrundelse:',
 	'renameusermove' => 'Flyt bruger- og diskussionssider (og deres undersider) til nyt navn',
 	'renameusersuppress' => 'Opret ikke omdirigeringer til det nye navn',
 	'renameuserreserve' => 'Bloker det gamle brugernavn fra fremtidig brug',
@@ -875,6 +870,7 @@ Til information er omdøbningsloggen vist nedenfor.',
 
 /** German (Deutsch)
  * @author Kghbln
+ * @author Metalhead64
  * @author Raimond Spekking
  * @author Spacebirdy
  * @author The Evil IP address
@@ -928,7 +924,7 @@ $messages['diq'] = array(
 	'renameuser-desc' => "qey newe ra namedayişê karberi re yew [[Special:Renameuser|pelo xas]] têare keno (gani heqqê ''karberi re newe ra name bıde'' bıbo )",
 	'renameuserold' => 'nameyê karberi yo nıkayi',
 	'renameusernew' => 'nameyê karberi yo newe',
-	'renameuserreason' => 'çıra:',
+	'renameuserreason' => 'Sebeb:',
 	'renameusermove' => 'nameyê karberan u pelê werêaameyişan bıkırışi nameyo newe',
 	'renameusersuppress' => 'Name de newi re hetenayışo newe vıraştış',
 	'renameuserreserve' => 'nameyê karberi yo verini bloke bıker.',
@@ -967,7 +963,7 @@ $messages['dsb'] = array(
 	'renameuser-desc' => "Wužywarja pśemjeniś (pomina se pšawo ''renameuser'')",
 	'renameuserold' => 'Aktualne wužywarske mě:',
 	'renameusernew' => 'Nowe wužywarske mě:',
-	'renameuserreason' => 'Pśicyna za pśemjenjenje',
+	'renameuserreason' => 'Pśicyna za pśemjenjenje', # Fuzzy
 	'renameusermove' => 'Wužywarski a diskusijny bok (a jich pódboki) do nowego mjenja pśesunuś',
 	'renameusersuppress' => 'Dalejpósrědnjenja k nowemu mjenjoju njenapóraś',
 	'renameuserreserve' => 'Stare wužywarske mě pśeśiwo pśichodnemu wužywanjeju blokěrowaś',
@@ -997,6 +993,7 @@ Protokol pśemjenjowanjow jo dołojce ako referenca pódany.',
 );
 
 /** Greek (Ελληνικά)
+ * @author Aitolos
  * @author Badseed
  * @author Consta
  * @author Dead3y3
@@ -1013,7 +1010,7 @@ $messages['el'] = array(
 	'renameuser-desc' => "Προσθέτει μια [[Special:Renameuser|ειδική σελίδα]] για την μετονομασία ενός χρήστη (είναι απαραίτητο το δικαίωμα ''renameuser'')",
 	'renameuserold' => 'Τρέχον όνομα χρήστη:',
 	'renameusernew' => 'Νέο όνομα χρήστη:',
-	'renameuserreason' => 'Λόγος μετονομασίας:',
+	'renameuserreason' => 'Αιτία:',
 	'renameusermove' => 'Μετακίνηση της σελίδας χρήστη και της σελίδας συζήτησης χρήστη (και των υποσελίδων τους) στο καινούργιο όνομα',
 	'renameusersuppress' => 'Μην δημιουργείτε ανακατευθύνσεις στο νέο όνομα',
 	'renameuserreserve' => 'Φραγή του παλιού ονόματος χρήστη/χρήστριας από μελλοντική χρήση',
@@ -1052,7 +1049,7 @@ $messages['eo'] = array(
 	'renameuser-desc' => "Aldonas [[Special:Renameuser|specialan paĝon]] por alinomigi uzanton (bezonas rajton ''renameuser'')",
 	'renameuserold' => 'Aktuala salutnomo:',
 	'renameusernew' => 'Nova salutnomo:',
-	'renameuserreason' => 'Kialo por alinomigo:',
+	'renameuserreason' => 'Kialo por alinomigo:', # Fuzzy
 	'renameusermove' => 'Movu uzantan kaj diskutan paĝojn (kaj ties subpaĝojn) al la nova nomo',
 	'renameusersuppress' => 'Ne krei alidirektilojn al la nova nomo',
 	'renameuserreserve' => 'Teni la malnovan salutnomon de plua uzo',
@@ -1090,6 +1087,7 @@ Jen la protokolo pri renomigado por via referenco.',
  * @author Jatrobat
  * @author Lin linao
  * @author Locos epraix
+ * @author Ralgis
  * @author Remember the dot
  * @author Sanbec
  * @author Spacebirdy
@@ -1146,7 +1144,7 @@ $messages['et'] = array(
 	'renameuser-desc' => "Lisab kasutajanime muutmise [[Special:Renameuser|erilehekülje]] (vajab ''renameuser''-õigust).",
 	'renameuserold' => 'Praegune kasutajanimi:',
 	'renameusernew' => 'Uus kasutajanimi:',
-	'renameuserreason' => 'Muutmise põhjus:',
+	'renameuserreason' => 'Muutmise põhjus:', # Fuzzy
 	'renameusermove' => 'Nimeta ümber kasutajaleht, aruteluleht ja nende alamlehed.',
 	'renameusersuppress' => 'Ära loo ümbersuunamisi uuele nimele',
 	'renameuserreserve' => 'Ära luba vana kasutajanime edaspidi kasutada',
@@ -1178,12 +1176,13 @@ Allpool on toodud ümbernimetamislogi.',
 /** Basque (euskara)
  * @author An13sa
  * @author Theklan
+ * @author Xabier Armendaritz
  */
 $messages['eu'] = array(
 	'renameuser' => 'Erabiltzaile bati izena aldatu',
 	'renameuserold' => 'Oraingo erabiltzaile izena:',
 	'renameusernew' => 'Erabiltzaile izen berria:',
-	'renameuserreason' => 'Izena aldatzeko arrazoia:',
+	'renameuserreason' => 'Izena aldatzeko arrazoia:', # Fuzzy
 	'renameuserwarnings' => 'Oharrak:',
 	'renameuserconfirm' => 'Bai, lankidearen izena aldatu',
 	'renameusersubmit' => 'Bidali',
@@ -1191,7 +1190,7 @@ $messages['eu'] = array(
 	'renameusererrorinvalid' => '"<nowiki>$1</nowiki>" erabiltzaile izena okerra da',
 	'renameusersuccess' => '"<nowiki>$1</nowiki>" lankidearen izen berria "<nowiki>$2</nowiki>" da',
 	'renameuser-page-exists' => 'Badago $1 orrialdea, eta ezin da automatikoki gainidatzi.',
-	'renameuser-page-moved' => '$1 orrialde $2(e)ra mugitu da.',
+	'renameuser-page-moved' => '$1 orria $2 izenera aldatu da.',
 	'renameuser-page-unmoved' => 'Ezin izan da $1 orrialdea $2(e)ra mugitu.',
 	'renameuserlogpage' => 'Erabiltzaileen izen aldaketa erregistroa',
 	'renameuserlogpagetext' => 'Erabiltzaileen izen aldaketen erregistroa da hau',
@@ -1219,7 +1218,7 @@ $messages['fa'] = array(
 	'renameuser-desc' => "نام یک کاربر را تغییر می‌دهد (نیازمند برخورداری از اختیارات ''تغییرنام'' است)",
 	'renameuserold' => 'نام کاربری کنونی:',
 	'renameusernew' => 'نام کاربری نو:',
-	'renameuserreason' => 'علت تغییر نام کاربری:',
+	'renameuserreason' => 'دلیل:',
 	'renameusermove' => 'صفحه‌های کاربری و بحث (به همراه زیر صفحه‌هایشان) به نام جدید منتقل کن',
 	'renameusersuppress' => 'تغییرمسیر به نام جدید ایجاد نکن',
 	'renameuserreserve' => 'نام کاربری قبلی را در مقابل استفادهٔ مجدد حفظ کن',
@@ -1263,7 +1262,7 @@ $messages['fi'] = array(
 	'renameuser-desc' => "Mahdollistaa käyttäjän uudelleennimeämisen (vaatii ''renameuser''-oikeudet).",
 	'renameuserold' => 'Nykyinen tunnus',
 	'renameusernew' => 'Uusi tunnus',
-	'renameuserreason' => 'Kommentti',
+	'renameuserreason' => 'Syy',
 	'renameusermove' => 'Siirrä käyttäjä- ja keskustelusivut alasivuineen uudelle nimelle',
 	'renameusersuppress' => 'Älä luo ohjauksia uuteen nimeen',
 	'renameuserreserve' => 'Estä entinen käyttäjänimi tulevalta käytöltä',
@@ -1301,7 +1300,7 @@ $messages['fo'] = array(
 	'renameuser-linkoncontribs-text' => 'Umdoyp henda brúkara',
 	'renameuserold' => 'Rætta brúkaranavn:',
 	'renameusernew' => 'Nýtt brúkaranavn:',
-	'renameuserreason' => 'Orsøk til nýtt navn:',
+	'renameuserreason' => 'Orsøk til nýtt navn:', # Fuzzy
 	'renameuserwarnings' => 'Ávaringar:',
 	'renameuserconfirm' => 'Ja, gev hesum brúkara nýtt navn',
 	'renameusersubmit' => 'Send inn',
@@ -1327,6 +1326,7 @@ Loggurin fyri navnabroytingina er givin niðanfyri fyri keldu ávísing.',
  * @author Grondin
  * @author Hégésippe Cormier
  * @author IAlex
+ * @author Nicolas NALLET
  * @author Peter17
  * @author PieRRoMaN
  * @author Urhixidur
@@ -1339,7 +1339,7 @@ $messages['fr'] = array(
 	'renameuser-desc' => "Renomme un utilisateur (nécessite les droits de ''renameuser'')",
 	'renameuserold' => 'Nom actuel de l’utilisateur :',
 	'renameusernew' => 'Nouveau nom de l’utilisateur :',
-	'renameuserreason' => 'Motif du changement de nom :',
+	'renameuserreason' => 'Raison(s) du changement de nom :',
 	'renameusermove' => 'Renommer toutes les pages de l’utilisateur vers le nouveau nom',
 	'renameusersuppress' => 'Ne pas créer de redirection vers le nouveau nom',
 	'renameuserreserve' => 'Réserver l’ancien nom pour un usage futur',
@@ -1377,7 +1377,7 @@ $messages['frp'] = array(
 	'renameuser-desc' => "Apond una [[Special:Renameuser|pâge spèciâla]] por renomar un usanciér (at fôta des drêts de ''renameuser'').",
 	'renameuserold' => 'Nom d’ora a l’usanciér :',
 	'renameusernew' => 'Novél nom a l’usanciér :',
-	'renameuserreason' => 'Rêson du changement de nom :',
+	'renameuserreason' => 'Rêson du changement de nom :', # Fuzzy
 	'renameusermove' => 'Renomar totes les pâges a l’usanciér vers lo novél nom',
 	'renameusersuppress' => 'Pas fâre de redirèccion de vers lo novél nom',
 	'renameuserreserve' => 'Resèrvar lo viely nom por un usâjo a vegnir',
@@ -1424,7 +1424,7 @@ $messages['fy'] = array(
 	'renameuser-desc' => "Foeget in [[Special:Renameuser|spesiale side]] ta om in meidoggersnamme te feroarjen (jo hawwe hjirfoar it ''renameuser'' rjocht nedich)",
 	'renameuserold' => 'Alde namme:',
 	'renameusernew' => 'Nije namme:',
-	'renameuserreason' => 'Reden foar nammewiziging:',
+	'renameuserreason' => 'Reden foar nammewiziging:', # Fuzzy
 	'renameusermove' => 'Werneam meidogger en oerlis siden (mei ûnderlizzende siden) nei de nije namme',
 	'renameuserreserve' => 'Takomst brûken fan de âlde meidoggersnamme foarkomme',
 	'renameuserwarnings' => 'Warskôgings:',
@@ -1473,7 +1473,7 @@ $messages['gl'] = array(
 	'renameuser-desc' => "Engade unha [[Special:Renameuser|páxina especial]] para renomear un usuario (precisa dereitos de ''renomear usuarios'')",
 	'renameuserold' => 'Nome de usuario actual:',
 	'renameusernew' => 'Novo nome de usuario:',
-	'renameuserreason' => 'Motivo para mudar o nome:',
+	'renameuserreason' => 'Motivo:',
 	'renameusermove' => 'Mover as páxinas de usuario e de conversa (xunto coas subpáxinas) ao novo nome',
 	'renameusersuppress' => 'Non crear a redirección cara ao novo nome',
 	'renameuserreserve' => 'Reservar o nome de usuario vello para un uso posterior',
@@ -1521,7 +1521,7 @@ $messages['gsw'] = array(
 	'renameuser-desc' => "Ergänzt e [[Special:Renameuser|Spezialsyte]] fir d Umnännig vun eme Benutzer (brucht s ''renameuser''-Rächt)",
 	'renameuserold' => 'Bishärige Benutzername:',
 	'renameusernew' => 'Neije Benutzername:',
-	'renameuserreason' => 'Grund:',
+	'renameuserreason' => 'Grund:', # Fuzzy
 	'renameusermove' => 'Verschieb Benutzer-/Diskussionssyte mit Untersyte uf dr neij Benutzername',
 	'renameusersuppress' => 'Kei Wyterleitig uf dr nej Benutzername aalege',
 	'renameuserreserve' => 'Blockier dr alt Benutzername fir e Neijregischtrierig',
@@ -1560,7 +1560,7 @@ $messages['gu'] = array(
 	'renameuser-desc' => "સભ્યનું નામાંતરણ કરવા માટે [[Special:Renameuser|special page]] ઉમેરે છે (''renameuser'' હક્ક જરૂરી)",
 	'renameuserold' => 'હાલનું સભ્યનામ:',
 	'renameusernew' => 'નવું સભ્યનામ:',
-	'renameuserreason' => 'નામ બદલવાનું કારણ:',
+	'renameuserreason' => 'નામ બદલવાનું કારણ:', # Fuzzy
 	'renameusermove' => 'સભ્ય અને ગપ્પાં પાનાંઓ (અને તેમનાં ઉપપાનાંઓ) નવાં નામ પર ખસેડો',
 	'renameusersuppress' => 'નવા નામ પર દિશા નિર્દેશનો ન રચશો',
 	'renameuserreserve' => 'જૂના સભ્યનામને ભવિષ્યનો વપરાશ પ્રતિબંધીત કરો',
@@ -1603,7 +1603,7 @@ $messages['he'] = array(
 	'renameuser-desc' => "הוספת [[Special:Renameuser|דף מיוחד]] לשינוי שם משתמש (דרושה הרשאת ''renameuser'')",
 	'renameuserold' => 'שם משתמש נוכחי:',
 	'renameusernew' => 'שם משתמש חדש:',
-	'renameuserreason' => 'סיבה לשינוי השם:',
+	'renameuserreason' => 'סיבה לשינוי השם:', # Fuzzy
 	'renameusermove' => 'העברת דפי המשתמש והשיחה (כולל דפי המשנה שלהם) לשם החדש',
 	'renameusersuppress' => 'לא ליצור הפניות לשם החדש',
 	'renameuserreserve' => 'חסימת שם המשתמש הישן לשימוש נוסף',
@@ -1642,7 +1642,7 @@ $messages['hi'] = array(
 	'renameuser-desc' => "सदस्यनाम बदलें (''सदस्यनाम बदलने अधिकार'' अनिवार्य)",
 	'renameuserold' => 'सद्य सदस्यनाम:',
 	'renameusernew' => 'नया सदस्यनाम:',
-	'renameuserreason' => 'नाम बदलने के कारण:',
+	'renameuserreason' => 'नाम बदलने के कारण:', # Fuzzy
 	'renameusermove' => 'सदस्य पृष्ठ और वार्ता पृष्ठ (और उनके सबपेज) नये नाम की ओर भेजें',
 	'renameusersuppress' => 'नूतन नाम को अनुप्रेषित ना करें',
 	'renameuserreserve' => 'पुरानी सदस्यनाम को अवरोध करें',
@@ -1661,7 +1661,7 @@ $messages['hi'] = array(
 	'renameuser-page-unmoved' => '$1 का नाम बदलकर $2 नहीं कर सकें हैं।',
 	'renameuserlogpage' => 'सदस्यनाम बदलाव सूची',
 	'renameuserlogpagetext' => 'यह सदस्यनामोंमें हुए बदलावोंकी सूची हैं',
-	'renameuserlogentry' => 'ने $1 को "$2" में बदल दिया हैं',
+	'renameuserlogentry' => 'ने $1 को "$2" में बदल दिया हैं', # Fuzzy
 	'renameuser-log' => '{{PLURAL:$1|1 बदलाव|$1 बदलाव}}. कारण: $2',
 	'renameuser-move-log' => '"[[User:$1|$1]]" को "[[User:$2|$2]]" करते वक्त अपने आप सदस्यपृष्ठ बदल दिया हैं',
 	'right-renameuser' => 'सदस्योंके नाम बदलें',
@@ -1677,7 +1677,7 @@ $messages['hif-latn'] = array(
 	'renameuser-desc' => "[[Special:Renameuser|special panna]] ke jorro ek sadasya  ke naam badle ke khatir (''renameuser'' ke hak maange hai)",
 	'renameuserold' => 'Abhi ke username:',
 	'renameusernew' => 'Nawaa username:',
-	'renameuserreason' => 'Naam badle ke kaaran:',
+	'renameuserreason' => 'Naam badle ke kaaran:', # Fuzzy
 	'renameusermove' => 'Sadasya aur salah waala panna (aur uske sub-panna) ke naam badlo',
 	'renameuserreserve' => 'Purana username ke aage use kare se roko',
 	'renameuserwarnings' => 'Chetauni:',
@@ -1715,7 +1715,7 @@ $messages['hr'] = array(
 	'renameuser-desc' => "Dodaje [[Special:Renameuser|posebnu stranicu]] za preimenovanje suradnika (potrebno je ''renameuser'' pravo)",
 	'renameuserold' => 'Trenutačno suradničko ime:',
 	'renameusernew' => 'Novo suradničko ime:',
-	'renameuserreason' => 'Razlog za preimenovanje:',
+	'renameuserreason' => 'Razlog za preimenovanje:', # Fuzzy
 	'renameusermove' => 'Premjesti suradnikove stranice (glavnu, stranicu za razgovor i podstranice, ako postoje) na novo ime',
 	'renameusersuppress' => 'Ne kreiraj preusmjeravanja na novo ime',
 	'renameuserreserve' => 'Zadrži staro suradničko ime od daljnje upotrebe',
@@ -1752,7 +1752,7 @@ $messages['hsb'] = array(
 	'renameuser-desc' => "Wužiwarja přemjenować (požada prawo ''renameuser'')",
 	'renameuserold' => 'Tuchwilne wužiwarske mjeno:',
 	'renameusernew' => 'Nowe wužiwarske mjeno:',
-	'renameuserreason' => 'Přičina za přemjenowanje:',
+	'renameuserreason' => 'Přičina:',
 	'renameusermove' => 'Wužiwarsku stronu a wužiwarsku diskusiju (a jeju podstrony) na nowe mjeno přesunyć',
 	'renameusersuppress' => 'Dalesposrědkowanja k nowemu mjenu njewutworić',
 	'renameuserreserve' => 'Stare wužiwarske mjeno za přichodne wužiwanje blokować',
@@ -1793,7 +1793,7 @@ $messages['hu'] = array(
 	'renameuser-desc' => "Lehetővé teszi egy felhasználó átnevezését (''renameuser'' jog szükséges)",
 	'renameuserold' => 'Jelenlegi felhasználónév:',
 	'renameusernew' => 'Új felhasználónév:',
-	'renameuserreason' => 'Átnevezés oka:',
+	'renameuserreason' => 'Átnevezés oka:', # Fuzzy
 	'renameusermove' => 'Felhasználói- és vitalapok (és azok allapjainak) áthelyezése az új név alá',
 	'renameusersuppress' => 'Ne készüljön átirányítás az új névre',
 	'renameuserreserve' => 'Régi név blokkolása a jövőbeli használat megakadályozására',
@@ -1830,7 +1830,7 @@ $messages['ia'] = array(
 	'renameuser-desc' => "Adde un [[Special:Renameuser|pagina special]] pro renominar un usator (require le privilegio ''renameuser'')",
 	'renameuserold' => 'Nomine de usator actual:',
 	'renameusernew' => 'Nove nomine de usator:',
-	'renameuserreason' => 'Motivo del renomination:',
+	'renameuserreason' => 'Motivo del renomination:', # Fuzzy
 	'renameusermove' => 'Renominar etiam le paginas de usator e de discussion (e lor subpaginas) verso le nove nomine',
 	'renameusersuppress' => 'Non crear redirectiones al nove nomine',
 	'renameuserreserve' => 'Blocar le ancian nomine de usator de esser usate in le futuro',
@@ -1873,7 +1873,7 @@ $messages['id'] = array(
 	'renameuser-desc' => "Mengganti nama pengguna (perlu hak akses ''renameuser'')",
 	'renameuserold' => 'Nama sekarang:',
 	'renameusernew' => 'Nama baru:',
-	'renameuserreason' => 'Alasan penggantian nama:',
+	'renameuserreason' => 'Alasan penggantian nama:', # Fuzzy
 	'renameusermove' => 'Pindahkan halaman pengguna dan pembicaraannya (berikut subhalamannya) ke nama baru',
 	'renameusersuppress' => 'Jangan membuat pengalihan untuk nama baru',
 	'renameuserreserve' => 'Cadangkan nama pengguna lama sehingga tidak dapat digunakan lagi',
@@ -1921,7 +1921,7 @@ $messages['ilo'] = array(
 	'renameuser-desc' => "Agnayon ti [[Special:Renameuser|espesial a panid]] tapno inaganan manen ti agar-aramat (masapul ti ''inaganan manen ti agar-aramat'' a karbengan)",
 	'renameuserold' => 'Agdama a nagan ti agar-aramat:',
 	'renameusernew' => 'Baro a nagan ti agar-aramat:',
-	'renameuserreason' => 'Rason ti panaginagan manen:',
+	'renameuserreason' => 'Rason ti panaginagan manen:', # Fuzzy
 	'renameusermove' => 'Iyalis ti agar-aramat ket tungtungan a pampanid (ken dagiti ap-apo a panid) iti baro a nagan',
 	'renameusersuppress' => 'Saan nga agpartuat kadagiti baw-ing idiay baro a nagan',
 	'renameuserreserve' => 'Serraan ti daan a nagan ti agar-aramat manipud ti masakbayan a panag-usar.',
@@ -1989,7 +1989,7 @@ $messages['is'] = array(
 	'renameuser-desc' => "Bætir við [[Special:Renameuser|kerfissíðu]] til að breyta notendanafni (þarfnast ''renameuser'' réttinda)",
 	'renameuserold' => 'Núverandi notandanafn:',
 	'renameusernew' => 'Nýja notandanafnið:',
-	'renameuserreason' => 'Ástæða:',
+	'renameuserreason' => 'Ástæða:', # Fuzzy
 	'renameusermove' => 'Færa notendasíðu og notendaspjallsíðu (og undirsíður þeirra) á nýja nafnið',
 	'renameusersuppress' => 'Ekki skilja eftir tilvísun',
 	'renameuserreserve' => 'Banna notkun á gamla notendanafninu',
@@ -2035,7 +2035,7 @@ $messages['it'] = array(
 	'renameuser-desc' => "Aggiunge una [[Special:Renameuser|pagina speciale]] per rinominare un utente (richiede i diritti di ''renameuser'')",
 	'renameuserold' => 'Nome utente attuale:',
 	'renameusernew' => 'Nuovo nome utente:',
-	'renameuserreason' => 'Motivo del cambio nome:',
+	'renameuserreason' => 'Motivo:',
 	'renameusermove' => 'Rinomina anche la pagina utente, la pagina di discussione e le relative sottopagine',
 	'renameusersuppress' => 'Non creare redirect al nuovo nome',
 	'renameuserreserve' => "Impedisci l'utilizzo del vecchio nome in futuro",
@@ -2082,7 +2082,7 @@ $messages['ja'] = array(
 	'renameuser-desc' => '利用者名変更のための[[Special:Renameuser|特別ページ]]を追加する(renameuser権限が必要)',
 	'renameuserold' => '現在の利用者名:',
 	'renameusernew' => '新しい利用者名:',
-	'renameuserreason' => '変更理由:',
+	'renameuserreason' => '理由:',
 	'renameusermove' => '利用者ページと会話ページ（およびそれらの下位ページ）を新しい名前に移動',
 	'renameusersuppress' => '新しい名前へのリダイレクトを作成しない',
 	'renameuserreserve' => '旧利用者名の今後の使用をブロック',
@@ -2120,7 +2120,7 @@ $messages['jut'] = array(
 	'renameuser-desc' => "Gæf en bruger en ny navn (''renameuser'' regt er nøteg)",
 	'renameuserold' => 'Nuværende brugernavn:',
 	'renameusernew' => 'Ny brugernavn:',
-	'renameuserreason' => "Før hvat dett'er dun:",
+	'renameuserreason' => "Før hvat dett'er dun:", # Fuzzy
 	'renameusermove' => 'Flyt bruger og diskusje sider (og deres substrøk) til ny navn',
 	'renameusersubmit' => 'Gå til',
 	'renameusererrordoesnotexist' => 'Æ bruger "<nowiki>$1</nowiki>" bestä ekke.',
@@ -2134,7 +2134,7 @@ $messages['jut'] = array(
 	'renameuser-page-unmoved' => 'Æ pæge $1 kon ekke flyttet være til $2.',
 	'renameuserlogpage' => 'Bruger hernåm log',
 	'renameuserlogpagetext' => "Dett'er en log der ændrenger til brugernavner",
-	'renameuserlogentry' => 'har hernåmt $1 til "$2"',
+	'renameuserlogentry' => 'har hernåmt $1 til "$2"', # Fuzzy
 	'renameuser-log' => '{{PLURAL:$1|en redigærenge|$1 redigærenger}}. Resån: $2',
 	'renameuser-move-log' => 'Åtåmatisk flyttet pæge hviil hernåm der bruger "[[User:$1|$1]]" til "[[User:$2|$2]]"',
 );
@@ -2151,7 +2151,7 @@ $messages['jv'] = array(
 	'renameuser-desc' => "Ngganti jeneng panganggo (perlu hak aksès ''renameuser'')",
 	'renameuserold' => 'Jeneng panganggo saiki:',
 	'renameusernew' => 'Jeneng panganggo anyar:',
-	'renameuserreason' => 'Alesan ganti jeneng:',
+	'renameuserreason' => 'Alesan ganti jeneng:', # Fuzzy
 	'renameusermove' => 'Mindhah kaca panganggo lan kaca dhiskusiné (sarta subkaca-kacané) menyang jeneng anyar',
 	'renameusersuppress' => 'Aja gawé pangalihan kanggo jeneng anyar',
 	'renameuserreserve' => 'Blokir utawa cadhangaké jeneng panganggo lawas supaya ora bisa dianggo manèh',
@@ -2195,7 +2195,7 @@ $messages['ka'] = array(
 	'renameuser-desc' => 'ამატებს მომხმარებლების სახელის გადარქმევის [[Special:Renameuser|შესაძლებლობას]] (საჭიროა უფლება <code>renameuser</code>)',
 	'renameuserold' => 'ამჟამინდელი მომხმარებლის სახელი:',
 	'renameusernew' => 'ახალი მომხმარებლის სახელი:',
-	'renameuserreason' => 'სახელის შეცვლის მიზეზი:',
+	'renameuserreason' => 'სახელის შეცვლის მიზეზი:', # Fuzzy
 	'renameusermove' => 'მომხმარებლისა და განხილვის გვერდების (და მათი დაქვემდებარებული გვერდების) გადატანა ახალ დასახელებაზე',
 	'renameusersuppress' => 'არ გადაამისამართოთ ახალ სახელზე',
 	'renameuserreserve' => 'ძველი მომხმარებლის სახელის სამომავლო გამოყენების აკრძალვა',
@@ -2223,12 +2223,13 @@ $messages['ka'] = array(
 ქვემოთ მოყვანილია სახელის გადარქმევის ჟურნალი.',
 );
 
-/** Kazakh (Arabic script) (قازاقشا (تٴوتە)‏) */
+/** Kazakh (Arabic script) (قازاقشا (تٴوتە)‏)
+ */
 $messages['kk-arab'] = array(
 	'renameuser' => 'قاتىسۋشىنى قايتا اتاۋ',
 	'renameuserold' => 'اعىمداعى قاتىسۋشى اتى:',
 	'renameusernew' => 'جاڭا قاتىسۋشى اتى:',
-	'renameuserreason' => 'قايتا اتاۋ سەبەبى:',
+	'renameuserreason' => 'قايتا اتاۋ سەبەبى:', # Fuzzy
 	'renameusermove' => 'قاتىسۋشىنىڭ جەكە جانە تالقىلاۋ بەتتەرىن (جانە دە ولاردىڭ تومەنگى بەتتەرىن) جاڭا اتاۋعا جىلجىتۋ',
 	'renameusersubmit' => 'جىبەرۋ',
 	'renameusererrordoesnotexist' => '«<nowiki>$1» دەگەن قاتىسۋشى جوق',
@@ -2245,12 +2246,13 @@ $messages['kk-arab'] = array(
 	'renameuser-move-log' => '«[[User:$1|$1]]» دەگەن قاتىسۋشى اتىن «[[User:$2|$2]]» دەگەنگە اۋىسقاندا بەت وزدىك تۇردە جىلجىتىلدى',
 );
 
-/** Kazakh (Cyrillic script) (қазақша (кирил)‎) */
+/** Kazakh (Cyrillic script) (қазақша (кирил)‎)
+ */
 $messages['kk-cyrl'] = array(
 	'renameuser' => 'Қатысушыны қайта атау',
 	'renameuserold' => 'Ағымдағы қатысушы аты:',
 	'renameusernew' => 'Жаңа қатысушы аты:',
-	'renameuserreason' => 'Қайта атау себебі:',
+	'renameuserreason' => 'Қайта атау себебі:', # Fuzzy
 	'renameusermove' => 'Қатысушының жеке және талқылау беттерін (және де олардың төменгі беттерін) жаңа атауға жылжыту',
 	'renameusersubmit' => 'Жіберу',
 	'renameusererrordoesnotexist' => '«<nowiki>$1</nowiki>» деген қатысушы жоқ',
@@ -2267,12 +2269,13 @@ $messages['kk-cyrl'] = array(
 	'renameuser-move-log' => '«[[User:$1|$1]]» деген қатысушы атын «[[User:$2|$2]]» дегенге ауысқанда бет өздік түрде жылжытылды',
 );
 
-/** Kazakh (Latin script) (qazaqşa (latın)‎) */
+/** Kazakh (Latin script) (qazaqşa (latın)‎)
+ */
 $messages['kk-latn'] = array(
 	'renameuser' => 'Qatıswşını qaýta ataw',
 	'renameuserold' => 'Ağımdağı qatıswşı atı:',
 	'renameusernew' => 'Jaña qatıswşı atı:',
-	'renameuserreason' => 'Qaýta ataw sebebi:',
+	'renameuserreason' => 'Qaýta ataw sebebi:', # Fuzzy
 	'renameusermove' => 'Qatıswşınıñ jeke jäne talqılaw betterin (jäne de olardıñ tömengi betterin) jaña atawğa jıljıtw',
 	'renameusersubmit' => 'Jiberw',
 	'renameusererrordoesnotexist' => '«<nowiki>$1</nowiki>» degen qatıswşı joq',
@@ -2302,7 +2305,7 @@ $messages['km'] = array(
 	'renameuser-desc' => "ប្តូរឈ្មោះអ្នកប្រើប្រាស់(ត្រូវការសិទ្ធិ ''ប្តូរឈ្មោះអ្នកប្រើប្រាស់'')",
 	'renameuserold' => 'ឈ្មោះអ្នកប្រើប្រាស់បច្ចុប្បន្ន ៖',
 	'renameusernew' => 'ឈ្មោះអ្នកប្រើប្រាស់ថ្មី៖',
-	'renameuserreason' => 'មូលហេតុ៖',
+	'renameuserreason' => 'មូលហេតុ៖', # Fuzzy
 	'renameusermove' => 'ប្តូរទីតាំងទំព័រអ្នកប្រើប្រាស់និងទំព័រពិភាក្សា(រួមទាំងទំព័ររងផងដែរ)ទៅឈ្មោះថ្មី',
 	'renameusersuppress' => 'កុំបង្កើតការបញ្ជូនបន្តទៅឈ្មោះថ្មី',
 	'renameuserreserve' => 'ហាមឃាត់គណនីចាស់ពីការប្រើប្រាស់នាពេលអនាគត',
@@ -2353,7 +2356,7 @@ $messages['ko'] = array(
 	'renameuser-desc' => "사용자 이름을 바꾸기를 위한 [[Special:Renameuser|특수 문서]]를 추가 ('''renameuser''' 권한 필요)",
 	'renameuserold' => '기존 사용자 이름:',
 	'renameusernew' => '새 사용자 이름:',
-	'renameuserreason' => '바꾸는 이유:',
+	'renameuserreason' => '이유:',
 	'renameusermove' => '사용자 문서와 토론 문서, 하위 문서를 새 사용자 이름으로 이동하기',
 	'renameusersuppress' => '새 이름으로 넘겨주기를 만들지 않기',
 	'renameuserreserve' => '나중에 이전의 이름이 사용되지 않도록 차단하기',
@@ -2392,7 +2395,7 @@ $messages['ksh'] = array(
 	'renameuser-desc' => '[[Special:Renameuser|Metmaacher ömdäufe]] — ävver do bruch mer et Rääsch „<i lang=en">renameuser</i>“ för.',
 	'renameuserold' => 'Dä ahle Metmaacher-Name',
 	'renameusernew' => 'Dä neue Metmaacher-Name',
-	'renameuserreason' => 'Jrund för et Ömdäufe:',
+	'renameuserreason' => 'Jrund för et Ömdäufe:', # Fuzzy
 	'renameusermove' => 'De Metmaachersigg met Klaaf- un Ungersigge op dä neue Metmaacher-Name ömstelle',
 	'renameusersuppress' => 'Donn kein Ömleidung op dä neue Name aanlääje',
 	'renameuserreserve' => 'Donn dä Name fun dämm Metmaacher dobei sperre, dat_e nit norrens neu aanjemelldt weed.',
@@ -2432,7 +2435,7 @@ $messages['ku-latn'] = array(
 	'renameuser-linkoncontribs-text' => 'Navê vî bikarhênerî biguherîne',
 	'renameuserold' => 'Navê niha:',
 	'renameusernew' => 'Navê nû:',
-	'renameuserreason' => 'Sedema navguherandinê:',
+	'renameuserreason' => 'Sedema navguherandinê:', # Fuzzy
 	'renameusermove' => 'Rûpelên bikarhêner û gotûbêjê xwe (û binrûpelên xwe) bigerîne berve navê nû',
 	'renameuserwarnings' => 'Hişyarî:',
 	'renameuserconfirm' => 'Erê, navê vî bikarhênerî biguherîne',
@@ -2461,7 +2464,7 @@ $messages['ky'] = array(
 	'renameuser-desc' => "Колдонуучуну атын өзгөртүү үчүн (''renameuser'' укугу талап кылынат) [[Special:Renameuser|special page]] кошулат",
 	'renameuserold' => 'Азыркы аты:',
 	'renameusernew' => 'Жаңы аты',
-	'renameuserreason' => 'Атты өзгөртүүнүн себеби:',
+	'renameuserreason' => 'Атты өзгөртүүнүн себеби:', # Fuzzy
 	'renameusermove' => 'Колдонуучу жана анын талкуу баракчаларын (ички баракчалары менен чогуу) жаңы атка өткөз',
 	'renameusersuppress' => 'Жаңы атка багыттама койбо',
 	'renameuserreserve' => 'Колдонуучунун эски атын кийин колдонуу үчүн ээлеп кой',
@@ -2479,7 +2482,7 @@ $messages['la'] = array(
 	'renameuser' => 'Usorem renominare',
 	'renameuserold' => 'Praesente nomen usoris:',
 	'renameusernew' => 'Novum nomen usoris:',
-	'renameuserreason' => 'Causa renominationis:',
+	'renameuserreason' => 'Causa:',
 	'renameusermove' => 'Movere paginas usoris et disputationis (et subpaginae) in nomen novum',
 	'renameusersubmit' => 'Renominare',
 	'renameusererrordoesnotexist' => 'Usor "<nowiki>$1</nowiki>" non existit',
@@ -2510,7 +2513,7 @@ $messages['lb'] = array(
 	'renameuser-desc' => "Benotzernumm änneren (Dir braucht dofir  ''renameuser''-Rechter)",
 	'renameuserold' => 'Aktuelle Benotzernumm:',
 	'renameusernew' => 'Neie Benotzernumm:',
-	'renameuserreason' => "Grond fir d'Ëmbenennung:",
+	'renameuserreason' => "Grond fir d'Ëmbenennung:", # Fuzzy
 	'renameusermove' => 'Benotzer- an Diskussiounssäiten (an déi jeweileg Ënnersäiten) op den neie Benotzernumm réckelen',
 	'renameusersuppress' => 'Maacht keng Viruleedungen op den neien Numm',
 	'renameuserreserve' => 'Den ale Benotzernumm fir de weitere Gebrauch spären',
@@ -2552,7 +2555,7 @@ $messages['li'] = array(
 	'renameuser-desc' => "Voog 'n [[Special:Renameuser|speciaal pazjwna]] toe óm 'ne gebroeker te hernömme (doe höbs hiej ''renameuser''-rech veur neudig)",
 	'renameuserold' => 'Hujige gebroekersnaam:',
 	'renameusernew' => 'Nuje gebroekersnaam:',
-	'renameuserreason' => 'Ree veur hernömme:',
+	'renameuserreason' => 'Ree veur hernömme:', # Fuzzy
 	'renameusermove' => "De gebroekerspazjena en euverlèkpazjena (en eventueel subpazjena's) hernömmme nao de nuje gebroekersnaam",
 	'renameusersuppress' => 'Maak gein redireks nao de nuje naam',
 	'renameuserreserve' => 'Veurkómme det de aaje gebroeker opnuuj wörd geregistreerd',
@@ -2593,7 +2596,7 @@ $messages['lt'] = array(
 	'renameuser-desc' => "Pervadinti naudotoją (reikia ''pervadintojo'' teisių)",
 	'renameuserold' => 'Esamas naudotojo vardas:',
 	'renameusernew' => 'Naujas naudotojo vardas:',
-	'renameuserreason' => 'Pervadinimo priežastis:',
+	'renameuserreason' => 'Pervadinimo priežastis:', # Fuzzy
 	'renameusermove' => 'Perkelti naudotojo ir aptarimo puslapius (bei jo subpuslapius) prie naujo vardo',
 	'renameuserreserve' => 'Užblokuoti senąjį naudotojo vardą nuo galimybių naudoti ateityje',
 	'renameuserwarnings' => 'Įspėjimai:',
@@ -2628,7 +2631,7 @@ $messages['lv'] = array(
 	'renameuser-linkoncontribs-text' => 'Pārsaukt šo lietotāju',
 	'renameuserold' => 'Pašreizējais lietotāja vārds:',
 	'renameusernew' => 'Jaunais lietotāja vārds:',
-	'renameuserreason' => 'Pārsaukšanas iemesls:',
+	'renameuserreason' => 'Pārsaukšanas iemesls:', # Fuzzy
 	'renameuserreserve' => 'Bloķēt veco lietotājvārdu no turpmākas izmantošanas',
 	'renameuserwarnings' => 'Brīdinājumi:',
 	'renameuserconfirm' => 'Jā, pārdēvēt lietotāju',
@@ -2651,7 +2654,7 @@ $messages['mg'] = array(
 	'renameuser-linkoncontribs-text' => "Hanova ny anaran'ity mpikambana ity",
 	'renameuserold' => 'Anaram-pikambana ankehitriny :',
 	'renameusernew' => 'Anaram-pikambana vaovao :',
-	'renameuserreason' => "Anton'ny fanovana anarana :",
+	'renameuserreason' => "Anton'ny fanovana anarana :", # Fuzzy
 	'renameusermove' => "Afindrany pejim-pikambana any amin'ny anarana vaovao",
 	'renameuserwarnings' => 'Fampitandremana :',
 	'renameuserconfirm' => 'Eny, soloy anarana ilay mpikambana',
@@ -2672,7 +2675,7 @@ $messages['mk'] = array(
 	'renameuser-desc' => "Додава [[Special:Renameuser|специјална страница]] за преименување на корисник (бара право на ''renameuser'')",
 	'renameuserold' => 'Сегашно корисничко име:',
 	'renameusernew' => 'Ново корисничко име:',
-	'renameuserreason' => 'Причина за преименувањето:',
+	'renameuserreason' => 'Причина:',
 	'renameusermove' => 'Премести корисничка страница и страници за разговор (и нивните потстраници) под новото име',
 	'renameusersuppress' => 'Не создавај пренасочувања кон новото име',
 	'renameuserreserve' => 'Блокирање на старото корисничко име, да не може да се користи во иднина',
@@ -2712,7 +2715,7 @@ $messages['ml'] = array(
 	'renameuser-desc' => "ഉപയോക്താവിനെ പുനർനാമകരണം ചെയ്യുവാനുള്ള (''പുനർനാമകരണ'' അവകാശം വേണം) ഒരു [[Special:Renameuser|പ്രത്യേക താൾ]] ചേർക്കുന്നു",
 	'renameuserold' => 'ഇപ്പോഴത്തെ ഉപയോക്തൃനാമം:',
 	'renameusernew' => 'പുതിയ ഉപയോക്തൃനാമം:',
-	'renameuserreason' => 'ഉപയോക്തൃനാമം മാറ്റാനുള്ള കാരണം:',
+	'renameuserreason' => 'കാരണം:',
 	'renameusermove' => 'നിലവിലുള്ള ഉപയോക്തൃതാളും, ഉപയോക്താവിന്റെ സം‌വാദം താളും (ഉപതാളുകൾ അടക്കം) പുതിയ നാമത്തിലേക്കു മാറ്റുക.',
 	'renameusersuppress' => 'പുതിയ നാമത്തിലേയ്ക്ക് തിരിച്ചുവിടലുകളൊന്നും സൃഷ്ടിക്കരുത്',
 	'renameuserreserve' => 'പഴയ ഉപയോക്തൃനാമം ഭാവിയിൽ ഉപയോഗിക്കുന്നതു തടയുക',
@@ -2760,7 +2763,7 @@ $messages['mr'] = array(
 	'renameuser-desc' => "सदस्यनाम बदला (यासाठी तुम्हाला ''सदस्यनाम बदलण्याचे अधिकार'' असणे आवश्यक आहे)",
 	'renameuserold' => 'सध्याचे सदस्यनाम:',
 	'renameusernew' => 'नवीन सदस्यनाम:',
-	'renameuserreason' => 'नाम बदलण्याचे कारण:',
+	'renameuserreason' => 'नाम बदलण्याचे कारण:', # Fuzzy
 	'renameusermove' => 'सदस्य तसेच सदस्य चर्चापान (तसेच त्यांची उपपाने) नवीन सदस्यनामाकडे स्थानांतरीत करा',
 	'renameusersuppress' => 'नवीन नावाकडे पुर्ननिर्देशने तयार करू नका',
 	'renameuserreserve' => 'जुने सदस्य खाते पुढील वापरासाठी अवरुद्ध करा',
@@ -2798,7 +2801,7 @@ $messages['ms'] = array(
 	'renameuser-desc' => "Menukar nama pengguna (memerlukan hak ''renameuser'')",
 	'renameuserold' => 'Nama semasa:',
 	'renameusernew' => 'Nama baru:',
-	'renameuserreason' => 'Sebab tukar:',
+	'renameuserreason' => 'Sebab:',
 	'renameusermove' => 'Pindahkan laman pengguna dan laman perbincangannya (berserta semua sublaman yang ada) ke nama baru',
 	'renameusersuppress' => 'Jangan buat lencongan ke nama baru',
 	'renameuserreserve' => 'Pelihara nama pengguna lama supaya tidak digunakan lagi',
@@ -2838,7 +2841,7 @@ $messages['mt'] = array(
 	'renameuser-desc' => "Iżżid [[Special:Renameuser|paġna speċjali]] sabiex issemmi utent mill-ġdid (huwa neċessarju li tħaddan id-dritt ''renameuser'')",
 	'renameuserold' => 'Isem tal-utent attwali:',
 	'renameusernew' => 'Isem tal-utent il-ġdid:',
-	'renameuserreason' => 'Raġuni għall-bidla fl-isem:',
+	'renameuserreason' => 'Raġuni għall-bidla fl-isem:', # Fuzzy
 	'renameusermove' => "Mexxi l-paġna tal-utent, il-paġna ta' diskussjoni u s-sottopaġni taħt l-isem il-ġdid",
 	'renameusersuppress' => 'Toħloqx rindirizzi lejn l-isem il-ġdid',
 	'renameuserreserve' => 'Imblokka l-użu tal-isem il-qadim fil-futur',
@@ -2883,7 +2886,8 @@ $messages['nah'] = array(
 	'renameusersubmit' => 'Tiquihuāz',
 );
 
-/** Min Nan Chinese (Bân-lâm-gú) */
+/** Min Nan Chinese (Bân-lâm-gú)
+ */
 $messages['nan'] = array(
 	'renameuser' => 'Kái iōng-chiá ê miâ',
 	'renameuser-page-moved' => '$1 í-keng sóa khì tī $2.',
@@ -2902,7 +2906,7 @@ $messages['nb'] = array(
 	'renameuser-desc' => "Legger til en [[Special:Renameuser|spesialside]] for å døpe om en bruker (krever ''renameuser''-rettigheter)",
 	'renameuserold' => 'Nåværende brukernavn:',
 	'renameusernew' => 'Nytt brukernavn:',
-	'renameuserreason' => 'Årsak for omdøping:',
+	'renameuserreason' => 'Årsak for omdøping:', # Fuzzy
 	'renameusermove' => 'Flytt bruker- og brukerdiskusjonssider (og deres undersider) til nytt navn',
 	'renameusersuppress' => 'Ikke opprett omdirigeringer til det nye navnet',
 	'renameuserreserve' => 'Blokker det gamle brukernavnet fra framtidig bruk',
@@ -2939,7 +2943,7 @@ $messages['nds'] = array(
 	'renameuser-desc' => "Föögt en [[Special:Renameuser|Spezialsied]] to för dat Ne’en-Naam-Geven för Brukers (''renameuser''-Recht nödig)",
 	'renameuserold' => 'Brukernaam nu:',
 	'renameusernew' => 'Nee Brukernaam:',
-	'renameuserreason' => 'Gründ för den ne’en Naam:',
+	'renameuserreason' => 'Gründ för den ne’en Naam:', # Fuzzy
 	'renameusermove' => 'Brukersieden op’n ne’en Naam schuven',
 	'renameuserreserve' => 'Den olen Brukernaam dor vör schulen, dat he noch wedder nee anmellt warrt',
 	'renameuserwarnings' => 'Wohrschauels:',
@@ -2970,7 +2974,7 @@ $messages['nds-nl'] = array(
 	'renameuser-linkoncontribs' => 'gebruker herneumen',
 	'renameuserold' => 'Gebrukersnaam noen',
 	'renameusernew' => 'Nieje gebrukersnaam:',
-	'renameuserreason' => 'Reden veur t herneumen:',
+	'renameuserreason' => 'Reden veur t herneumen:', # Fuzzy
 	'renameusermove' => 'Herneum gebruker en gebrukersziejen (en ziejen die deronder vallen) naor de nieje naam.',
 	'renameusersuppress' => 'Gien deurverwiezingen maken naor de nieje naam',
 	'renameuserreserve' => 'Veurkoemen dat de ouwe gebruker opniej eregistreerd wörden',
@@ -2993,7 +2997,8 @@ $messages['nds-nl'] = array(
 Hieronder vie-j t herneumlogboek as referensie.',
 );
 
-/** Nepali (नेपाली) */
+/** Nepali (नेपाली)
+ */
 $messages['ne'] = array(
 	'renameuserold' => 'अहिलेको प्रयोगकर्ता नाम:',
 	'renameusernew' => 'नयाँ प्रयोगकर्ता नाम:',
@@ -3015,7 +3020,7 @@ $messages['nl'] = array(
 	'renameuser-desc' => "Voegt een [[Special:Renameuser|speciale pagina]] toe om een gebruiker te hernoemen (u hebt hiervoor het recht ''renameuser'' nodig)",
 	'renameuserold' => 'Huidige gebruikersnaam:',
 	'renameusernew' => 'Nieuwe gebruikersnaam:',
-	'renameuserreason' => 'Reden voor hernoemen:',
+	'renameuserreason' => 'Reden:',
 	'renameusermove' => "De gebruikerspagina en overlegpagina (en eventuele subpagina's) hernoemen naar de nieuwe gebruikersnaam",
 	'renameusersuppress' => 'Geen doorverwijzingen maken naar de nieuwe naam',
 	'renameuserreserve' => 'Voorkomen dat de oude gebruiker opnieuw wordt geregistreerd',
@@ -3064,7 +3069,7 @@ $messages['nn'] = array(
 	'renameuser-desc' => "Legg til ei [[Special:Renameuser|spesialsida]] for å døypa om ein brukar (krev ''renameuser''-rettar)",
 	'renameuserold' => 'Brukarnamn no:',
 	'renameusernew' => 'Nytt brukarnamn:',
-	'renameuserreason' => 'Årsak for omdøyping:',
+	'renameuserreason' => 'Årsak for omdøyping:', # Fuzzy
 	'renameusermove' => 'Flytt brukar- og brukardiskusjonssider (og undersidene deira) til nytt namn',
 	'renameusersuppress' => 'Ikkje opprett omdirigeringar til det nye namnet',
 	'renameuserreserve' => 'Blokker det gamle brukarnamnet for framtidig bruk',
@@ -3098,7 +3103,7 @@ $messages['nso'] = array(
 	'renameuser' => 'Fetola leina la mošomiši',
 	'renameuserold' => 'Leina la bjale la mošomiši:',
 	'renameusernew' => 'Leina le lempsha la mošomiši:',
-	'renameuserreason' => 'Lebaka lago fetola leina:',
+	'renameuserreason' => 'Lebaka lago fetola leina:', # Fuzzy
 	'renameuser-page-moved' => 'Letlakala $1 le hudušitšwe go $2',
 );
 
@@ -3113,7 +3118,7 @@ $messages['oc'] = array(
 	'renameuser-desc' => "Torna nomenar un utilizaire (necessita los dreches de ''renameuser'')",
 	'renameuserold' => "Nom actual de l'utilizaire :",
 	'renameusernew' => "Nom novèl de l'utilizaire :",
-	'renameuserreason' => 'Motiu del cambiament de nom :',
+	'renameuserreason' => 'Motiu del cambiament de nom :', # Fuzzy
 	'renameusermove' => 'Desplaçar totas las paginas de l’utilizaire cap al nom novèl',
 	'renameuserreserve' => 'Reservar lo nom ancian per un usatge futur',
 	'renameuserwarnings' => 'Avertiments :',
@@ -3149,7 +3154,7 @@ $messages['or'] = array(
 	'renameuser-desc' => "ଜଣେ ସଭ୍ୟଙ୍କର ନାମ ବଦଳାଇବା ପାଇଁ ଏକ [[Special:Renameuser|ବିଶେଷ ପୃଷ୍ଠା]] ଯୋଡ଼ିଥାଏ ।(''ନୂଆ ନାମକରଣ'' ଅଧିକାର ଲୋଡ଼ା)",
 	'renameuserold' => 'ଏବେକାର ଇଉଜର ନାମ:',
 	'renameusernew' => 'ନୂଆ ଇଉଜର ନାମ:',
-	'renameuserreason' => 'ନାମ ବଦଳାଇବାର କାରଣ:',
+	'renameuserreason' => 'ନାମ ବଦଳାଇବାର କାରଣ:', # Fuzzy
 	'renameusermove' => 'ସଭ୍ୟ, ତାହାଙ୍କର ଆଲୋଚନା ପୃଷ୍ଠାମାନଙ୍କୁ (ତଥା ସାନପୃଷ୍ଠାମାନଙ୍କୁ)ନୂଆ ନାମକୁ ଘୁଞ୍ଚାଇବେ',
 	'renameusersuppress' => 'ନୂଆ ନାମକୁ ପୁନପ୍ରେରଣ କରନ୍ତୁ ନାହିଁ',
 	'renameuserreserve' => 'ଭବିଷ୍ୟତ ବ୍ୟବହାରରେ ପୁରୁଣା ଇଉଜର ନାମକୁ ଅଟକାଇ ଦିଅନ୍ତୁ',
@@ -3171,6 +3176,7 @@ $messages['or'] = array(
 	'renameuserlogentry' => '$1 ରୁ "$2" କୁ ନାମ ବଦଳାଗଲା',
 	'renameuser-log' => '{{PLURAL:$1|ସମ୍ପାଦନାଟିଏ|$1 ଗୋଟି ସମ୍ପାଦନା}} । କାରଣ: $2',
 	'renameuser-move-log' => 'ସଭ୍ୟ "[[User:$1|$1]]"ରୁ "[[User:$2|$2]]"କୁ ନାମ ବଦଳ କଲାବେଳେ ବେଳେ ଛାଏଁ ଛାଏଁ ପୃଷ୍ଠାଟି ଘୁଞ୍ଚାଇ ଦିଆଗଲା',
+	'action-renameuser' => 'ବ୍ୟବହାରକାରୀଙ୍କ ନାମବଦଳା',
 	'right-renameuser' => 'ସଭ୍ୟମାନଙ୍କ ନାମଟି ବଦଳାଇବେ',
 	'renameuser-renamed-notice' => 'ଏହି ସଭ୍ୟଙ୍କ ନାମ ବଦଳାଯାଇଅଛି ।
 ତଳେ ଅବଗତି ନିମନ୍ତେ ନାମ ବଦଳ ଇତିହାସ ଦିଆଗଲା ।',
@@ -3183,7 +3189,7 @@ $messages['os'] = array(
 	'renameuser' => 'Архайæджы ном баив',
 	'renameuserold' => 'Ныры ном:',
 	'renameusernew' => 'Ног ном:',
-	'renameuserreason' => 'Ном ивыны аххос:',
+	'renameuserreason' => 'Ном ивыны аххос:', # Fuzzy
 	'renameusersubmit' => 'Афтæ уæд',
 	'renameuserlogpage' => 'Архайджыты нæмттæ ивыны лог',
 );
@@ -3194,7 +3200,7 @@ $messages['os'] = array(
 $messages['pcd'] = array(
 	'renameuser' => "Canger ch'nom d'uzeu",
 	'renameusernew' => 'Nouvieu nom dechl uzeu',
-	'renameuserreason' => "Motif dech canjemint d'nom",
+	'renameuserreason' => "Motif dech canjemint d'nom", # Fuzzy
 	'renameuserwarnings' => 'Afute ! :',
 	'renameuserconfirm' => 'Oui, érlonmer echl uzeu',
 	'renameusererrorinvalid' => 'Ech nom  "<nowiki>$1</nowiki>" est non-val.',
@@ -3214,7 +3220,7 @@ $messages['pdc'] = array(
 	'renameuser' => 'Naame vum Yuuser ennere',
 	'renameuserold' => 'Current Yuusernaame:',
 	'renameusernew' => 'Nei Yuuser-Naame',
-	'renameuserreason' => 'Grund:',
+	'renameuserreason' => 'Grund:', # Fuzzy
 	'renameuserwarnings' => 'Warninge:',
 	'renameuserlogentry' => 'hot „$1“ nooch „$2“ gennert',
 	'renameuser-log' => '{{PLURAL:$1|1 Ennering|$1 Enneringe}}. Grund: $2',
@@ -3246,7 +3252,7 @@ $messages['pl'] = array(
 	'renameuser-desc' => "Zmiana nazwy użytkownika (wymaga posiadania uprawnień ''renameuser'')",
 	'renameuserold' => 'Obecna nazwa użytkownika:',
 	'renameusernew' => 'Nowa nazwa użytkownika:',
-	'renameuserreason' => 'Przyczyna zmiany nazwy:',
+	'renameuserreason' => 'Przyczyna zmiany nazwy:', # Fuzzy
 	'renameusermove' => 'Przeniesienie strony osobistej i strony dyskusji użytkownika (oraz ich podstron) pod nową nazwę użytkownika',
 	'renameusersuppress' => 'Nie twórz przekierowania do nowej nazwy',
 	'renameuserreserve' => 'Zablokuj starą nazwę użytkownika przed możliwością użycia jej',
@@ -3287,7 +3293,7 @@ $messages['pms'] = array(
 	'renameuser-desc' => "A gionta na [[Special:Renameuser|pàgina special]] për arnominé n'utent (a-i é dabzògn dël drit ''renameuser'')",
 	'renameuserold' => 'Stranòm corent:',
 	'renameusernew' => 'Stranòm neuv:',
-	'renameuserreason' => "Rason ch'as cambia stranòm:",
+	'renameuserreason' => "Rason ch'as cambia stranòm:", # Fuzzy
 	'renameusermove' => 'Tramuda ëdcò la pàgina utent e cola dle ciaciarade (con tute soe sotapàgine) a lë stranòm neuv',
 	'renameusersuppress' => 'Creé nen na ridiression al nòm neuv',
 	'renameuserreserve' => 'Blòca lë stanòm vej da future utilisassion',
@@ -3326,7 +3332,7 @@ $messages['pnb'] = array(
 	'renameuser-desc' => "جوڑدا اے اک [[Special:Renameuser|خاص صفہ]] اک ورتن والے نوں ہور ناں دین لئی ( ''renameuser'' حق دی لوڑ اے۔)",
 	'renameuserold' => 'ہن والا ورتن والا ناں:',
 	'renameusernew' => 'نواں ورتن والا ناں:',
-	'renameuserreason' => 'ہور ناں رکھن دی وجہ:',
+	'renameuserreason' => 'ہور ناں رکھن دی وجہ:', # Fuzzy
 	'renameusermove' => 'ورتن تے گل بات صفے نوں تے نال دے نکیاں صفیاں نوں نویں ناں ول لے چلو۔',
 	'renameusersuppress' => 'ایس نویں ناں نال ریڈائرکٹ ناں بناؤ۔',
 	'renameuserreserve' => 'پرانے ورتن والے ناں نوں اگے ورتے جان توں روکو',
@@ -3338,14 +3344,14 @@ $messages['pnb'] = array(
 	'renameusererrorinvalid' => 'ورتن ناں "<nowiki>$1</nowiki>" نئیں چل سکدا۔',
 	'renameuser-error-request' => 'گل منن چ مسلہ اے۔ مہربانی کرکے پچھے جاؤ تے فیر کوشش کرو۔',
 	'renameuser-error-same-user' => 'تسیں فیر پہلے وانگوں اک ورتن والے دا ناں فیر نئیں رکھ سکدے۔',
-	'renameusersuccess' => 'ورتن والا "<nowiki>$1</nowiki>" دا ناں بدل کے "<nowiki>$1</nowiki>" رکھ دتا گیا اے۔',
+	'renameusersuccess' => 'ورتن والا "<nowiki>$1</nowiki>" دا ناں بدل کے "<nowiki>$1</nowiki>" رکھ دتا گیا اے۔', # Fuzzy
 	'renameuser-page-exists' => 'صفہ $1 پہلے ای ہیگا اے تے ایدے تے اپنے آپ نئیں لکھیا جاسکدا۔',
 	'renameuser-page-moved' => 'صفہ $1 نوں $2 ول لجایا گیا اے۔',
 	'renameuser-page-unmoved' => 'صفہ $1 ، $2 ول نئیں لجایا جاسکدا۔',
 	'renameuserlogpage' => 'ورتن ہور ناں لاگ',
 	'renameuserlogpagetext' => 'ورتن ناواں چ تبدیلیاں دی اے لاگ اے۔',
 	'renameuserlogentry' => '$1 بدل کے "$2" رکھیا گیا۔',
-	'renameuser-log' => '{{PLURAL:$1|1 تبدیلی|1$ تبدیلیاں}}. وجہ: 2$',
+	'renameuser-log' => '{{PLURAL:$1|1 تبدیلی|1$ تبدیلیاں}}. وجہ: 2$', # Fuzzy
 	'renameuser-move-log' => 'اپنے آپ صفے ٹرے "[[User:$1|$1]]" دا ناں "[[User:$2|$2]]" پلٹدیاں ہویاں',
 	'right-renameuser' => 'ورتن والے دا ہور ناں',
 	'renameuser-renamed-notice' => 'ایس ورتن والے دا ناں بدلیا گیا اے۔
@@ -3361,7 +3367,7 @@ $messages['ps'] = array(
 	'renameuser-linkoncontribs-text' => 'د دې کارن نوم بدلول',
 	'renameuserold' => 'اوسنی کارن-نوم:',
 	'renameusernew' => 'نوی کارن-نوم:',
-	'renameuserreason' => 'د نوم د بدلون سبب:',
+	'renameuserreason' => 'د نوم د بدلون سبب:', # Fuzzy
 	'renameuserwarnings' => 'ګواښنې:',
 	'renameuserconfirm' => 'هو، کارن-نوم بدلوم',
 	'renameusersubmit' => 'سپارل',
@@ -3379,11 +3385,11 @@ $messages['ps'] = array(
 );
 
 /** Portuguese (português)
- * @author 555
  * @author Giro720
  * @author Hamilton Abreu
  * @author Malafaya
  * @author Waldir
+ * @author 555
  */
 $messages['pt'] = array(
 	'renameuser' => 'Alterar o nome do utilizador',
@@ -3392,7 +3398,7 @@ $messages['pt'] = array(
 	'renameuser-desc' => "[[Special:Renameuser|Página especial]] para alterar o nome de um utilizador (requer o privilégio ''renameuser'')",
 	'renameuserold' => 'Nome de utilizador actual:',
 	'renameusernew' => 'Novo nome de utilizador:',
-	'renameuserreason' => 'Motivo da alteração de nome:',
+	'renameuserreason' => 'Motivo da alteração de nome:', # Fuzzy
 	'renameusermove' => 'Mover as páginas e subpáginas de utilizador e as respectivas discussões para o novo nome',
 	'renameusersuppress' => 'Não criar redireccionamentos para o novo nome',
 	'renameuserreserve' => 'Impedir novos usos do antigo nome de utilizador',
@@ -3422,8 +3428,8 @@ Volte atrás e tente de novo, por favor.',
 );
 
 /** Brazilian Portuguese (português do Brasil)
- * @author 555
  * @author Giro720
+ * @author 555
  */
 $messages['pt-br'] = array(
 	'renameuser' => 'Renomear usuário',
@@ -3432,13 +3438,14 @@ $messages['pt-br'] = array(
 	'renameuser-desc' => "Adiciona uma [[Special:Renameuser|página especial]] para renomear um usuário (requer privilégio ''renameuser'')",
 	'renameuserold' => 'Nome de usuário atual:',
 	'renameusernew' => 'Novo nome de usuário:',
-	'renameuserreason' => 'Motivo da alteração de nome:',
+	'renameuserreason' => 'Motivo:',
 	'renameusermove' => 'Mover as páginas de usuário, páginas de discussão de usuário e sub-páginas para o novo nome',
 	'renameusersuppress' => 'Não criar redirecionamentos para o novo nome',
 	'renameuserreserve' => 'Impedir novos usos do antigo nome de usuário',
 	'renameuserwarnings' => 'Alertas:',
 	'renameuserconfirm' => 'Sim, renomeie o usuário',
 	'renameusersubmit' => 'Enviar',
+	'renameuser-submit-blocklog' => 'Mostrar registro de bloqueios do usuário',
 	'renameusererrordoesnotexist' => 'Não existe um usuário "<nowiki>$1</nowiki>".',
 	'renameusererrorexists' => 'Já existe um usuário "<nowiki>$1</nowiki>".',
 	'renameusererrorinvalid' => 'O nome de usuário "<nowiki>$1</nowiki>" é inválido.',
@@ -3454,6 +3461,7 @@ Retorne e tente novamente.',
 	'renameuserlogentry' => 'renomeou $1 para "$2"',
 	'renameuser-log' => '{{PLURAL:$1|1 edição|$1 edições}}. Motivo: $2',
 	'renameuser-move-log' => 'Páginas foram movidas automaticamente ao renomear o usuário "[[User:$1|$1]]" para "[[User:$2|$2]]"',
+	'action-renameuser' => 'renomear usuários',
 	'right-renameuser' => 'Renomear usuários',
 	'renameuser-renamed-notice' => 'Este usuário foi renomeado.
 O registro de renomeação é fornecido abaixo para referência.',
@@ -3469,7 +3477,7 @@ $messages['qu'] = array(
 	'renameuser-desc' => "[[Special:Renameuser|Sapaq p'anqatam]] yapan ruraqpa sutinta hukchanapaq (''renameuser'' hayñi kana tiyan)",
 	'renameuserold' => 'Kunan ruraqpa sutin:',
 	'renameusernew' => 'Musuq ruraqpa sutin:',
-	'renameuserreason' => 'Imarayku ruraqpa sutinta hukchasqa:',
+	'renameuserreason' => 'Imarayku ruraqpa sutinta hukchasqa:', # Fuzzy
 	'renameusermove' => "Ruraqpa p'anqanta, rimachinanta (urin p'anqankunatapas) musuq sutinman astay",
 	'renameusersuppress' => 'Musuq sutiman ama pusapunata kamariychu',
 	'renameuserreserve' => "Ruraqpa mawk'a sutinta qhipaq pacha suti kanamanta hark'ay",
@@ -3518,7 +3526,7 @@ $messages['ro'] = array(
 	'renameuser-desc' => "Adaugă o [[Special:Renameuser|pagină specială]] pentru a redenumi un utilizator (necesită drept de ''renameuser'')",
 	'renameuserold' => 'Numele de utilizator existent:',
 	'renameusernew' => 'Noul nume de utilizator:',
-	'renameuserreason' => 'Motivul schimbării numelui:',
+	'renameuserreason' => 'Motiv:',
 	'renameusermove' => 'Redenumește pagina de utilizator și pagina de discuții (și subpaginile lor) la noul nume',
 	'renameusersuppress' => 'Nu crea redirecționări către noul nume',
 	'renameuserreserve' => 'Blochează vechiul nume de utilizator pentru utilizări viitoare',
@@ -3557,7 +3565,7 @@ $messages['roa-tara'] = array(
 	'renameuser-desc' => "Aggiunge 'na [[Special:Renameuser|pàgena speciale]] pe renomena 'n'utende (abbesogne de le deritte ''renameuser'')",
 	'renameuserold' => "Nome de l'utende de mò:",
 	'renameusernew' => "Nome de l'utende nuève:",
-	'renameuserreason' => "Mutive d'u cangiamende:",
+	'renameuserreason' => "Mutive d'u cangiamende:", # Fuzzy
 	'renameusermove' => "Spuèste utende e pàgene de le 'ngazzaminde (e le sottopàggene) a 'u nome nuève",
 	'renameusersuppress' => "Nò ccrejà ridirezionaminde sus a 'u nome nuève",
 	'renameuserreserve' => "Blocche 'u nome utende vicchije da le ause future",
@@ -3600,7 +3608,7 @@ $messages['ru'] = array(
 	'renameuser-desc' => 'Добавляет [[Special:Renameuser|возможность]] переименования пользователей (требуется право <code>renameuser</code>)',
 	'renameuserold' => 'Имя в настоящий момент:',
 	'renameusernew' => 'Новое имя:',
-	'renameuserreason' => 'Причина переименования:',
+	'renameuserreason' => 'Причина переименования:', # Fuzzy
 	'renameusermove' => 'Переименовать также страницу участника, личное обсуждение и их подстраницы',
 	'renameusersuppress' => 'Не создавать перенаправлений на новое имя',
 	'renameuserreserve' => 'Зарезервировать старое имя участника для использования в будущем',
@@ -3638,7 +3646,7 @@ $messages['rue'] = array(
 	'renameuser-desc' => 'Придасть [[Special:Renameuser|шпеціалну сторінку]] про переменованя хоснователя (треба права "renameuser")',
 	'renameuserold' => 'Актуалне мено:',
 	'renameusernew' => 'Нове мено:',
-	'renameuserreason' => 'Причіна переменованя:',
+	'renameuserreason' => 'Причіна переменованя:', # Fuzzy
 	'renameusermove' => 'Переменовати тыж сторінкы хоснователя, сторінкы діскузії і їх підсторінкы',
 	'renameusersuppress' => 'Не створюйте напрямлїня на нову назву',
 	'renameuserreserve' => 'Блоковати нову реґістрацію старого мена хоснователя',
@@ -3677,7 +3685,7 @@ $messages['sa'] = array(
 	'renameuser-desc' => "योजकस्य पुनर्नामकरणं कर्तुं (''योजकपुनर्नाम''अधिकारः अपेक्षितः)  [[Special:Renameuser|विशेषपृष्ठम्]] योजयति",
 	'renameuserold' => 'प्रस्तुतयोजकनाम :',
 	'renameusernew' => 'नूतनयोजकनाम :',
-	'renameuserreason' => 'नामपरिवर्तनस्य कारणम् :',
+	'renameuserreason' => 'नामपरिवर्तनस्य कारणम् :', # Fuzzy
 	'renameusermove' => 'योजकः सम्भाषणपृष्ठं (तेषाम् उपपृष्ठानि) च नूतननाम प्रति चाल्यताम्',
 	'renameusersuppress' => 'नूतननाम्नः पुनर्निदेशनं न सृज्यताम्',
 	'renameuserreserve' => 'भविष्ये उपयोगाय पुरातनं योजकनाम अवरुद्ध्यताम्',
@@ -3716,7 +3724,7 @@ $messages['sah'] = array(
 	'renameuser-desc' => "Кыттааччы аатын уларытыы (''renameuser'' бырааба наада)",
 	'renameuserold' => 'Билиҥҥи аата:',
 	'renameusernew' => 'Саҥа аата:',
-	'renameuserreason' => 'Аатын уларыппыт төрүөтэ:',
+	'renameuserreason' => 'Аатын уларыппыт төрүөтэ:', # Fuzzy
 	'renameusermove' => 'Кыттааччы аатын кытта кэпсэтэр сирин, уонна атын сирэйдэрин ааттарын уларыт',
 	'renameusersuppress' => 'Саҥа аакка утаарыылары оҥорума',
 	'renameuserreserve' => 'Кыттааччы урукку аатын кэлин туттарга анаан хааллар',
@@ -3742,6 +3750,14 @@ $messages['sah'] = array(
 Аллара аат уларыйыытын сурунаала көстөр.',
 );
 
+/** ꢱꣃꢬꢵꢯ꣄ꢡ꣄ꢬꢵ (ꢱꣃꢬꢵꢯ꣄ꢡ꣄ꢬꢵ)
+ * @author MooRePrabu
+ */
+$messages['saz'] = array(
+	'renameuser' => 'ꢮꢮ꣄ꢬꢸꢥꢵꢬ꣄ ꢥꢵꢮ꣄ ꢪꢬ꣄ꢗꢶ',
+	'renameusernew' => 'ꢥꣁꢮ꣄ꢮꣁ  ꢮꢮ꣄ꢬꢸꢥꢵꢬ꣄ ꢥꢵꢮ꣄',
+);
+
 /** Sardinian (sardu)
  * @author Andria
  * @author Marzedu
@@ -3760,7 +3776,7 @@ $messages['scn'] = array(
 	'renameuser-desc' => "Funzioni pi rinuminari n'utenti (addumanna li diritti di ''renameuser'')",
 	'renameuserold' => 'Nomu utenti dô prisenti:',
 	'renameusernew' => 'Novu nomu utenti:',
-	'renameuserreason' => 'Mutivu dû caciu di nomu',
+	'renameuserreason' => 'Mutivu dû caciu di nomu', # Fuzzy
 	'renameusermove' => 'Rinòmina macari la pàggina utenti, la pàggina di discussioni e li suttapàggini',
 	'renameuserreserve' => 'Sarva lu vecchiu utenti pi futuri usi',
 	'renameuserwarnings' => 'Avvisi:',
@@ -3813,7 +3829,7 @@ $messages['si'] = array(
 	'renameuser-desc' => "පරිශීලකයෙක් යළි-නම්කරනු වස් [[Special:Renameuser|විශේෂ පිටුවක්]] එක් කරන්න (''renameuser'' අයිතිය අවශ්‍යයි)",
 	'renameuserold' => 'වත්මන් පරිශීලක නාමය:',
 	'renameusernew' => 'නව පරිශීලක නාමය:',
-	'renameuserreason' => 'යළි-නම්කිරීමට හේතුව:',
+	'renameuserreason' => 'යළි-නම්කිරීමට හේතුව:', # Fuzzy
 	'renameusermove' => 'පරිශීලක හා සාකච්ඡා පිටු   (හා  ඒවායේ උපපිටු) නව නම වෙතට ගෙන යන්න',
 	'renameusersuppress' => 'යළි යොමුවන් නම නාමයේ සැකසීමෙන් වළකින්න.',
 	'renameuserreserve' => 'පැරණි පරිශීලක නම අනාගත භාවිතයෙන් වාරණය කරන්න',
@@ -3853,7 +3869,7 @@ $messages['sk'] = array(
 	'renameuser-desc' => "Premenovať používateľa (vyžaduje právo ''renameuser'')",
 	'renameuserold' => 'Súčasné používateľské meno:',
 	'renameusernew' => 'Nové používateľské meno:',
-	'renameuserreason' => 'Dôvod premenovania:',
+	'renameuserreason' => 'Dôvod premenovania:', # Fuzzy
 	'renameusermove' => 'Presunúť používateľské a diskusné stránky (a ich podstránky) na nový názov',
 	'renameusersuppress' => 'Nevytvárať presmerovania na nový názov',
 	'renameuserreserve' => 'Vyhradiť staré používateľské meno (zabrániť ďalšiemu použitiu)',
@@ -3891,7 +3907,7 @@ $messages['sl'] = array(
 	'renameuser-desc' => "Doda [[Special:Renameuser|posebno stran]] za preimenovanje uporabnika (potrebna je pravica ''renameuser'')",
 	'renameuserold' => 'Trenutno uporabniško ime:',
 	'renameusernew' => 'Novo uporabniško ime:',
-	'renameuserreason' => 'Razlog preimenovanja:',
+	'renameuserreason' => 'Razlog:',
 	'renameusermove' => 'Prestavi uporabniške in pogovorne strani (ter njihove podstrani) na novo ime',
 	'renameusersuppress' => 'Ne ustvari preusmeritev na novo ime',
 	'renameuserreserve' => 'Blokiraj staro uporabniško ime pred nadaljnjo uporabo',
@@ -3926,7 +3942,7 @@ Dnevnik preimenovanja je naveden spodaj.',
 $messages['sli'] = array(
 	'renameuserold' => 'Bisheriger Benutzernoame:',
 	'renameusernew' => 'Neuer Benutzernoame:',
-	'renameuserreason' => 'Grund:',
+	'renameuserreason' => 'Grund:', # Fuzzy
 );
 
 /** Albanian (shqip)
@@ -3942,7 +3958,7 @@ $messages['sq'] = array(
 	'renameuser-desc' => "Shton një [[Special:Renameuser|faqe speciale]] për të riemëruar një përdorues (duhet e drejta ''renameuser'')",
 	'renameuserold' => 'Emri i tanishëm',
 	'renameusernew' => 'Emri i ri',
-	'renameuserreason' => 'Arsyeja për riemërim:',
+	'renameuserreason' => 'Arsyeja për riemërim:', # Fuzzy
 	'renameusermove' => 'Zhvendos faqet e përdoruesit dhe të diskutimit (dhe nën-faqet e tyre) tek emri i ri',
 	'renameusersuppress' => 'Mos krijoni përcjellime tek emri i ri',
 	'renameuserreserve' => 'Bllokoni emrin e vjetër të përdoruesit të përdorim në të ardhmen',
@@ -3986,7 +4002,7 @@ $messages['sr-ec'] = array(
 	'renameuser-desc' => "Додаје [[Special:Renameuser|посебну страницу]] за преименовање корисника (потребно право ''renameuser'')",
 	'renameuserold' => 'Тренутно корисничко име:',
 	'renameusernew' => 'Ново корисничко име:',
-	'renameuserreason' => 'Разлог:',
+	'renameuserreason' => 'Разлог:', # Fuzzy
 	'renameusermove' => 'Премести корисничку страницу и страницу за разговор (и њихове подстранице) на нови назив',
 	'renameusersuppress' => 'Не правите преусмерења на нови назив',
 	'renameuserreserve' => 'Блокирај старо корисничко име за даљу употребу',
@@ -4029,7 +4045,7 @@ $messages['sr-el'] = array(
 	'renameuser-desc' => "Dodaje [[Special:Renameuser|posebnu stranicu]] za preimenovanje korisnika (potrebno pravo ''renameuser'').",
 	'renameuserold' => 'Trenutno korisničko ime:',
 	'renameusernew' => 'Novo korisničko ime:',
-	'renameuserreason' => 'Razlog preimenovanja:',
+	'renameuserreason' => 'Razlog preimenovanja:', # Fuzzy
 	'renameusermove' => 'Premesti korisničku stranicu i stranicu za razgovor (i njihove podstranice) na novo ime',
 	'renameusersuppress' => 'Ne pravite preusmerenja na novi naziv',
 	'renameuserreserve' => 'Blokiraj staro korisničko ime za dalju upotrebu',
@@ -4066,7 +4082,7 @@ $messages['stq'] = array(
 	'renameuser-desc' => "Föiget ne [[Special:Renameuser|Spezioalsiede]] bietou tou Uumbenaamenge fon n Benutser (fräiget dät ''renameuser''-Gjucht)",
 	'renameuserold' => 'Benutsernoomer bithäär:',
 	'renameusernew' => 'Näie Benutsernoome:',
-	'renameuserreason' => 'Gruund foar Uumenaame:',
+	'renameuserreason' => 'Gruund foar Uumenaame:', # Fuzzy
 	'renameusermove' => 'Ferskuuwe Benutser-/Diskussionssiede inkl. Unnersieden ap dän näie Benutsernoome',
 	'renameuserreserve' => 'Blokkierje dän oolde Benutsernoome foar ne näie Registrierenge',
 	'renameuserwarnings' => 'Woarskauengen:',
@@ -4098,7 +4114,7 @@ $messages['su'] = array(
 	'renameuser-desc' => "Ganti ngaran pamaké (perlu kawenangan ''renameuser'')",
 	'renameuserold' => 'Ngaran pamaké ayeuna:',
 	'renameusernew' => 'Ngaran pamaké anyar:',
-	'renameuserreason' => 'Alesan ganti ngaran:',
+	'renameuserreason' => 'Alesan ganti ngaran:', # Fuzzy
 	'renameusermove' => 'Pindahkeun kaca pamaké jeung obrolanna (jeung sub-kacanna) ka ngaran anyar',
 	'renameusersubmit' => 'Kirim',
 	'renameusererrordoesnotexist' => 'Euweuh pamaké nu ngaranna "<nowiki>$1</nowiki>"',
@@ -4112,7 +4128,7 @@ $messages['su'] = array(
 	'renameuser-page-unmoved' => 'Kaca $1 teu bisa dipindahkeun ka $2.',
 	'renameuserlogpage' => 'Log ganti ngaran',
 	'renameuserlogpagetext' => 'Ieu minangka log parobahan ngaran pamaké',
-	'renameuserlogentry' => 'geus ngaganti ngaran $1 jadi "$2"',
+	'renameuserlogentry' => 'geus ngaganti ngaran $1 jadi "$2"', # Fuzzy
 	'renameuser-log' => '{{PLURAL:$1|1 édit|$1 édit}}. Alesan: $2',
 	'renameuser-move-log' => 'Otomatis mindahkeun kaca nalika ngaganti ngaran "[[User:$1|$1]]" jadi "[[User:$2|$2]]"',
 );
@@ -4121,6 +4137,7 @@ $messages['su'] = array(
  * @author Ainali
  * @author Boivie
  * @author Cohan
+ * @author Cybjit
  * @author Dafer45
  * @author Habj
  * @author Lejonel
@@ -4136,7 +4153,7 @@ $messages['sv'] = array(
 	'renameuser-desc' => "Lägger till en [[Special:Renameuser|specialsida]] för att byta namn på en användare (kräver behörigheten ''renameuser'')",
 	'renameuserold' => 'Nuvarande användarnamn:',
 	'renameusernew' => 'Nytt användarnamn:',
-	'renameuserreason' => 'Anledning till namnbytet:',
+	'renameuserreason' => 'Anledning:',
 	'renameusermove' => 'Flytta användarsidan och användardiskussionen (och deras undersidor) till det nya namnet',
 	'renameusersuppress' => 'Skapa inte omdirigeringar till det nya namnet',
 	'renameuserreserve' => 'Reservera det gamla användarnamnet från framtida användning',
@@ -4174,7 +4191,7 @@ $messages['sw'] = array(
 	'renameuser-linkoncontribs-text' => 'Badili jina la mtumiaji huyu',
 	'renameuserold' => 'Jina la sasa la mtumiaji:',
 	'renameusernew' => 'Jina lipya la mtumiaji:',
-	'renameuserreason' => 'Sababu ya kubadili jina:',
+	'renameuserreason' => 'Sababu ya kubadili jina:', # Fuzzy
 	'renameuserwarnings' => 'Ilani:',
 	'renameuserconfirm' => 'Ndiyo, badili jina la mtumiaji',
 	'renameusersubmit' => 'Wasilisha',
@@ -4197,7 +4214,7 @@ $messages['ta'] = array(
 	'renameuser-linkoncontribs-text' => 'இந்த பயனரை பெயர்மாற்று',
 	'renameuserold' => 'தற்போதைய பயனர் பெயர்:',
 	'renameusernew' => 'புதிய பயனர் பெயர்:',
-	'renameuserreason' => 'மறுபெயருக்கான காரணம்:',
+	'renameuserreason' => 'மறுபெயருக்கான காரணம்:', # Fuzzy
 	'renameusermove' => 'பயனர் பக்கம் மற்றும் பேச்சுப் பக்கங்களை (அவற்றின் துணைப்பக்கங்களுடன்) புதிய பெயருக்கு நகர்த்து',
 	'renameusersuppress' => 'புதுப் பெயருக்கு வழிமாற்றுகளை உருவாக்க வேண்டாம்',
 	'renameuserreserve' => 'எதிர்காலப் பயன்பாட்டிலிருந்து பழைய பயனர் பெயரைத் தடை செய்யவும்',
@@ -4236,7 +4253,7 @@ $messages['te'] = array(
 	'renameuser-desc' => "వాడుకరి పేరు మార్చండి (''renameuser'' అన్న అధికారం కావాలి)",
 	'renameuserold' => 'ప్రస్తుత వాడుకరి పేరు:',
 	'renameusernew' => 'కొత్త వాడుకరి పేరు:',
-	'renameuserreason' => 'పేరు మార్చడానికి కారణం:',
+	'renameuserreason' => 'పేరు మార్చడానికి కారణం:', # Fuzzy
 	'renameusermove' => 'వాడుకరి పేజీ, చర్చాపేజీలను (వాటి ఉపపేజీలతో సహా) కొత్త పేరుకు తరలించండి',
 	'renameusersuppress' => 'కొత్త పేరుకి దారిమార్పులు సృష్టించకు',
 	'renameuserreserve' => 'పాత వాడుకరిపేరుని భవిష్యత్తులో వాడకుండా నిరోధించు',
@@ -4270,7 +4287,7 @@ $messages['tet'] = array(
 	'renameuser-desc' => "Fó naran foun ba uza-na'in sira (presiza priviléjiu ''renameuser'')",
 	'renameuserold' => "Naran uza-na'in atuál:",
 	'renameusernew' => "Naran uza-na'in foun:",
-	'renameuserreason' => 'Motivu:',
+	'renameuserreason' => 'Motivu:', # Fuzzy
 	'renameusermove' => "Book pájina uza-na'in no diskusaun (no sub-pájina) ba naran foun",
 	'renameuserconfirm' => 'Sin, fó naran foun',
 	'renameusersubmit' => 'Fó naran foun',
@@ -4288,7 +4305,7 @@ $messages['tg-cyrl'] = array(
 	'renameuser-desc' => "Номи як корбарро тағйир медиҳад (ниёзманд ба ихтиёроти ''тағйирином'' аст)",
 	'renameuserold' => 'Номи корбари феълӣ:',
 	'renameusernew' => 'Номи корбари ҷадид:',
-	'renameuserreason' => 'Иллати тағйири номи корбарӣ:',
+	'renameuserreason' => 'Иллати тағйири номи корбарӣ:', # Fuzzy
 	'renameusermove' => 'Саҳифаи корбарӣ ва саҳифаи баҳси корбар (ва зерсаҳифаҳои он)ро интиқол бидеҳ',
 	'renameuserreserve' => 'Бастани номи корбарии кӯҳна аз истифодаи оянда',
 	'renameuserwarnings' => 'Ҳушдорҳо:',
@@ -4305,7 +4322,7 @@ $messages['tg-cyrl'] = array(
 	'renameuser-page-unmoved' => 'Имкони кӯчонидани саҳифаи $1 ба $2 вуҷуд надорад.',
 	'renameuserlogpage' => 'Гузориши тағйири номи корбар',
 	'renameuserlogpagetext' => 'Ин гузориши тағйири номи корбарон аст',
-	'renameuserlogentry' => 'номи $1ро ба "$2" тағйир дод',
+	'renameuserlogentry' => 'номи $1ро ба "$2" тағйир дод', # Fuzzy
 	'renameuser-log' => '{{PLURAL:$1|1 вироиш|$1 вироишҳо}}. Далел: $2',
 	'renameuser-move-log' => 'Саҳифа дар вақти тағйири номи корбар  "[[User:$1|$1]]" ба "[[User:$2|$2]]" ба таври худкор кӯчонида шуд',
 	'right-renameuser' => 'Тағйири номи корбарон',
@@ -4316,10 +4333,10 @@ $messages['tg-cyrl'] = array(
  */
 $messages['tg-latn'] = array(
 	'renameuser' => 'Taƣjiri nomi korbarī',
-	'renameuser-desc' => "Nomi jak korbarro taƣjir medihad (nijozmand ba ixtijoroti ''taƣjirinom'' ast)",
+	'renameuser-desc' => "Nomi jak korbarro taƣjir medihad (nijozmand ba ixtijoroti ''taƣjirinom'' ast)", # Fuzzy
 	'renameuserold' => "Nomi korbari fe'lī:",
 	'renameusernew' => 'Nomi korbari çadid:',
-	'renameuserreason' => 'Illati taƣjiri nomi korbarī:',
+	'renameuserreason' => 'Illati taƣjiri nomi korbarī:', # Fuzzy
 	'renameusermove' => 'Sahifai korbarī va sahifai bahsi korbar (va zersahifahoi on)ro intiqol bideh',
 	'renameuserreserve' => 'Bastani nomi korbariji kūhna az istifodai ojanda',
 	'renameuserwarnings' => 'Huşdorho:',
@@ -4351,7 +4368,7 @@ $messages['th'] = array(
 	'renameuser-desc' => "เพิ่ม[[Special:Renameuser|หน้าพิเศษ]] สำหรับเปลี่ยนชื่อผู้ใช้ (ต้องมีสิทธิ์ ''renameuser'' (เปลี่ยนชื่อผู้ใช้))",
 	'renameuserold' => 'ชื่อผู้ใช้ปัจจุบัน:',
 	'renameusernew' => 'ชื่อผู้ใช้ใหม่:',
-	'renameuserreason' => 'เหตุผลในการเปลี่ยนชื่อ:',
+	'renameuserreason' => 'เหตุผลในการเปลี่ยนชื่อ:', # Fuzzy
 	'renameusermove' => 'ย้ายหน้าผู้ใช้และหน้าพูดคุย (รวมถึงหน้าย่อยด้วย) ไปยังชื่อใหม่',
 	'renameuserreserve' => 'บล็อกชื่อผู้ใช้เดิมจากการใช้งานในอนาคต',
 	'renameuserwarnings' => 'คำเตือน:',
@@ -4385,7 +4402,7 @@ $messages['tk'] = array(
 	'renameuser-desc' => "Ulanyjyny täzeden atlandyrmak üçin [[Special:Renameuser|ýörite sahypa]] goşýar (''ulanyjynytäzedenatlandyr'' hukugy gerek)",
 	'renameuserold' => 'Häzirki ulanyjy ady:',
 	'renameusernew' => 'Täze ulanyjy ady:',
-	'renameuserreason' => 'At üýtgetmegiň sebäbi:',
+	'renameuserreason' => 'At üýtgetmegiň sebäbi:', # Fuzzy
 	'renameusermove' => 'Ulanyjy we pikir alyşma sahypalaryny (we kiçi sahypalaryny) täze ada geçir',
 	'renameusersuppress' => 'Täze ada gönükdirmeler döretme',
 	'renameuserreserve' => 'Köne ulanyjy adyny indi ulanylmakdan blokirle',
@@ -4422,7 +4439,7 @@ $messages['tl'] = array(
 	'renameuser-desc' => "Nagdaragdag ng isang [[Special:Renameuser|natatanging pahina]] para mapangalanang muli ang isang tagagamit (kailangang ang karapatang ''pangalanangmuliangtagagamit'')",
 	'renameuserold' => 'Pangkasalukuyang pangalan ng tagagamit:',
 	'renameusernew' => 'Bagong pangalan ng tagagamit:',
-	'renameuserreason' => 'Dahil para sa muling pagpapangalan:',
+	'renameuserreason' => 'Dahil para sa muling pagpapangalan:', # Fuzzy
 	'renameusermove' => 'Ilipat ang mga pahina ng tagagamit at pangusapan (at mga kabahaging pahina nila) patungo sa bagong pangalan',
 	'renameusersuppress' => 'Huwag lumikha ng mga pagpapapunta sa bagong  pangalan',
 	'renameuserreserve' => 'Hadlangan ang dating pangalan ng tagagamit mula sa muling paggamit sa hinaharap',
@@ -4451,7 +4468,8 @@ Magbalik lamang at subukan uli.',
 Ibinigay sa ibaba ang talaan ng pagpapangalang muli para masangguni.',
 );
 
-/** Tongan (lea faka-Tonga) */
+/** Tongan (lea faka-Tonga)
+ */
 $messages['to'] = array(
 	'renameuser' => 'Liliu hingoa ʻo e ʻetita',
 	'renameuserold' => 'Hingoa motuʻa ʻo e ʻetita:',
@@ -4479,7 +4497,7 @@ $messages['tr'] = array(
 	'renameuser-desc' => "Kullanıcıyı yeniden adlandırmak için bir [[Special:Renameuser|özel sayfa]] ekler (''kullanıcıyıyenidenadlandır'' hakkı gerekir)",
 	'renameuserold' => 'Şu anda ki kullanıcı adı:',
 	'renameusernew' => 'Yeni kullanıcı adı:',
-	'renameuserreason' => 'Neden:',
+	'renameuserreason' => 'Neden:', # Fuzzy
 	'renameusermove' => 'Kullanıcı ve tartışma sayfalarını (ve alt sayfalarını) yeni isme taşı',
 	'renameusersuppress' => 'Yeni ada yönlendirmeler oluşturma',
 	'renameuserreserve' => 'Eski kullanıcı adını ilerdeki kullanımlar için engelle',
@@ -4522,7 +4540,7 @@ $messages['uk'] = array(
 	'renameuser-desc' => "Перейменування користувача (потрібні права ''renameuser'')",
 	'renameuserold' => "Поточне ім'я:",
 	'renameusernew' => "Нове ім'я:",
-	'renameuserreason' => 'Причина перейменування:',
+	'renameuserreason' => 'Причина перейменування:', # Fuzzy
 	'renameusermove' => 'Перейменувати також сторінку користувача, сторінку обговорення та їхні підсторінки',
 	'renameusersuppress' => 'Не створюйте перенаправлення на нову назву',
 	'renameuserreserve' => "Зарезервувати старе ім'я користувача для подальшого використання",
@@ -4557,7 +4575,7 @@ $messages['ur'] = array(
 	'renameuser' => 'صارف کا نام تبدیل کریں',
 	'renameuserwarnings' => 'انتباہ:',
 	'renameusersubmit' => 'جمع کرائیں',
-	'renameuser-log' => 'جن کی $1 ترامیم تھیں. $2',
+	'renameuser-log' => 'جن کی $1 ترامیم تھیں. $2', # Fuzzy
 	'action-renameuser' => 'صارفین کو نیا نام دیںکے',
 	'right-renameuser' => 'صارفین کو نیا نام دیںکے',
 );
@@ -4580,7 +4598,7 @@ $messages['vec'] = array(
 	'renameuser-desc' => "Funsion par rinominar un utente (ghe vole i diriti de ''renameuser'')",
 	'renameuserold' => 'Vecio nome utente:',
 	'renameusernew' => 'Novo nome utente:',
-	'renameuserreason' => 'Motivo del canbio nome',
+	'renameuserreason' => 'Motivo del canbio nome', # Fuzzy
 	'renameusermove' => 'Rinomina anca la pagina utente, la pagina de discussion e le relative sotopagine',
 	'renameusersuppress' => 'No stà crear rimandi al nome novo',
 	'renameuserreserve' => "Tien da conto el vecio nome utente par inpedir che'l vegna doparà in futuro",
@@ -4613,7 +4631,7 @@ $messages['vep'] = array(
 	'renameuser' => 'Udesnimitada kävutajad',
 	'renameuserold' => 'Nügüdläine kävutajannimi:',
 	'renameusernew' => "Uz' kävutajan nimi:",
-	'renameuserreason' => 'Udesnimitandan sü:',
+	'renameuserreason' => 'Udesnimitandan sü:', # Fuzzy
 	'renameusersubmit' => 'Tehta',
 	'right-renameuser' => 'Udesnimitada kävutajid',
 );
@@ -4629,7 +4647,7 @@ $messages['vi'] = array(
 	'renameuser-desc' => "Đổi tên thành viên (cần có quyền ''renameuser'')",
 	'renameuserold' => 'Tên hiệu hiện nay:',
 	'renameusernew' => 'Tên hiệu mới:',
-	'renameuserreason' => 'Lý do đổi tên:',
+	'renameuserreason' => 'Lý do:',
 	'renameusermove' => 'Di chuyển trang thành viên và thảo luận thành viên (cùng với trang con của nó) sang tên mới',
 	'renameusersuppress' => 'Không tạo trang đổi hướng đến tên mới',
 	'renameuserreserve' => 'Không cho phép ai lấy tên cũ',
@@ -4668,7 +4686,7 @@ $messages['vo'] = array(
 	'renameuser-desc' => "Votanemön gebani (gität: ''renameuser'' zesüdon)",
 	'renameuserold' => 'Gebananem anuik:',
 	'renameusernew' => 'Gebananem nulik:',
-	'renameuserreason' => 'Kod votanemama:',
+	'renameuserreason' => 'Kod votanemama:', # Fuzzy
 	'renameusermove' => 'Topätükön padi e bespikapadi gebana (e donapadis onsik) ad nem nulik',
 	'renameuserreserve' => 'Neletön gebananemi rigik (pos votanemam) ad pagebön ün fütür',
 	'renameuserwarnings' => 'Nuneds:',
@@ -4698,7 +4716,7 @@ $messages['wa'] = array(
 	'renameuser' => 'Rilomer èn uzeu',
 	'renameuserold' => "No d' elodjaedje pol moumint:",
 	'renameusernew' => "Novea no d' elodjaedje:",
-	'renameuserreason' => 'Råjhon pol rilomaedje:',
+	'renameuserreason' => 'Råjhon pol rilomaedje:', # Fuzzy
 	'renameusermove' => "Displaecî les pådjes d' uzeu et d' copene (eyet leus dzo-pådjes) viè l' novea no",
 	'renameuserwarnings' => 'Adviertixhmints:',
 	'renameusersubmit' => 'Evoye',
@@ -4711,7 +4729,7 @@ $messages['wa'] = array(
 	'renameuser-page-unmoved' => 'Li pådje $1 èn pout nén esse displaeceye viè $2.',
 	'renameuserlogpage' => "Djournå des candjmints d' no d' uzeus",
 	'renameuserlogpagetext' => "Chal pa dzo c' est ene djivêye des uzeus k' ont candjî leu no d' elodjaedje.",
-	'renameuser-log' => "k' aveut ddja fwait $1 candjmints. $2",
+	'renameuser-log' => "k' aveut ddja fwait $1 candjmints. $2", # Fuzzy
 	'renameuser-move-log' => "Pådje displaeceye otomaticmint tot rlomant l' uzeu «[[User:$1|$1]]» viè «[[User:$2|$2]]»",
 );
 
@@ -4725,13 +4743,14 @@ $messages['yi'] = array(
 	'renameuser-desc' => "לייגט צו א [[Special:Renameuser|באַזונדערן בלאַט]] צו בײַטן א באַניצער נאָמען (פֿאדערט ''renameuser'' רעכט)",
 	'renameuserold' => 'לויפיגער באַניצער-נאָמען:',
 	'renameusernew' => 'נײַער באַניצער-נאָמען:',
-	'renameuserreason' => 'סיבה פֿאַר ענדערן נאָמען:',
+	'renameuserreason' => 'אורזאַך:',
 	'renameusermove' => 'באַוועגן באַניצער און שמועס בלעטער (מיט זייערע אונטערבלעטער) צו נײַעם נאָמען',
 	'renameusersuppress' => 'שאַפֿט נישט קיין ווייטערפֿירונגען צום נײַעם נאָמען',
 	'renameuserreserve' => 'בלאקירן דעם אַלטן באַניצער־נאָמען פֿון נוץ אין צוקונפֿט',
 	'renameuserwarnings' => 'ווארענונגען:',
 	'renameuserconfirm' => 'יאָ, ענדער דעם באַניצער־נאָמען',
 	'renameusersubmit' => 'אײַנגעבן',
+	'renameuser-submit-blocklog' => 'ווײַזן בלאקירן לאג פאר באניצער',
 	'renameusererrordoesnotexist' => 'דער באַניצער "<nowiki>$1</nowiki>" עקזיסטירט נישט.',
 	'renameusererrorexists' => 'דער באַניצער "<nowiki>$1</nowiki>" עקזיסטירט שוין.',
 	'renameusererrorinvalid' => 'דער באַניצער נאָמען  "<nowiki>$1</nowiki>" איז נישט גילטיק.',
@@ -4747,6 +4766,7 @@ $messages['yi'] = array(
 	'renameuserlogentry' => 'מ\'האט דעם נאָמען $1 געענדערט צו "$2"',
 	'renameuser-log' => '{{PLURAL:$1|1 רעדאַקטירונג|$1 רעדאַקטירונגען}}. גרונד: $2',
 	'renameuser-move-log' => 'אויטאמאַטיש באַוועגט בלאַט דורך ענדערן באַניצער־נאָמען פֿון "[[User:$1|$1]]" צו "[[User:$2|$2]]"',
+	'action-renameuser' => 'בײַטן באַניצער נעמען',
 	'right-renameuser' => 'בײַטן באַניצער נעמען',
 	'renameuser-renamed-notice' => 'דער נאָמען פֿון דעם באַניצער איז געענדערט געווארן.
 דער ענדערן נעמען לאגבוך ווערט געוויזן אונטן.',
@@ -4766,13 +4786,14 @@ $messages['yo'] = array(
 	'renameuser-log' => '{{PLURAL:$1|Àtúnṣe 1|Àwọn àtúnṣe $1}}. Ìdíẹ̀: $2',
 );
 
-/** Cantonese (粵語) */
+/** Cantonese (粵語)
+ */
 $messages['yue'] = array(
 	'renameuser' => '改用戶名',
 	'renameuser-desc' => "幫用戶改名 (需要 ''renameuser'' 權限)",
 	'renameuserold' => '現時嘅用戶名:',
 	'renameusernew' => '新嘅用戶名:',
-	'renameuserreason' => '改名嘅原因:',
+	'renameuserreason' => '改名嘅原因:', # Fuzzy
 	'renameusermove' => '搬用戶頁同埋佢嘅對話頁（同埋佢哋嘅細頁）到新名',
 	'renameuserwarnings' => '警告:',
 	'renameuserconfirm' => '係，改呢個用戶名',
@@ -4812,7 +4833,7 @@ $messages['zh-hans'] = array(
 	'renameuser-desc' => "添加更改用户名的[[Special:Renameuser|特殊页面]]（需要''renameuser''权限）",
 	'renameuserold' => '当前用户名：',
 	'renameusernew' => '新用户名：',
-	'renameuserreason' => '更名原因：',
+	'renameuserreason' => '更名原因：', # Fuzzy
 	'renameusermove' => '移动用户和讨论页面（和子页面）至新用户名',
 	'renameusersuppress' => '不创建至新用户名的重定向页',
 	'renameuserreserve' => '封锁旧用户名，使其不能在未来使用',
@@ -4855,7 +4876,7 @@ $messages['zh-hant'] = array(
 	'renameuser-desc' => "新增一個[[Special:Renameuser|特殊頁面]]來重命名用戶（需要''renameuser''權限）",
 	'renameuserold' => '現時用戶名：',
 	'renameusernew' => '新的使用者名稱：',
-	'renameuserreason' => '重新命名的原因：',
+	'renameuserreason' => '重新命名的原因：', # Fuzzy
 	'renameusermove' => '移動用戶頁及其對話頁（包括各子頁）到新的名字',
 	'renameusersuppress' => '不要建立重定向到新的名稱',
 	'renameuserreserve' => '封禁舊使用者名稱，使之不能在日後使用',
@@ -4884,8 +4905,8 @@ $messages['zh-hant'] = array(
 以下列出更改用戶名日誌以供參考。',
 );
 
-/** Zulu (isiZulu) */
+/** Zulu (isiZulu)
+ */
 $messages['zu'] = array(
 	'renameusersubmit' => 'Yisa',
 );
-

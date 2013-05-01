@@ -933,9 +933,9 @@ Clique o botão 'voltar' do seu browser para voltar à página de edição.",
 );
 
 /** Brazilian Portuguese (português do Brasil)
- * @author 555
  * @author Eduardo.mps
  * @author Giro720
+ * @author 555
  */
 $messages['pt-br'] = array(
 	'questycaptcha-addurl' => 'Sua edição inclui novas ligações externas.
@@ -1076,7 +1076,8 @@ $messages['sr-ec'] = array(
 	'questycaptcha-desc' => 'Стварач сликовног кода за потврду уређивања',
 );
 
-/** Serbian (Latin script) (srpski (latinica)‎) */
+/** Serbian (Latin script) (srpski (latinica)‎)
+ */
 $messages['sr-el'] = array(
 	'questycaptcha-desc' => 'Stvarač slikovnog koda za potvrdu uređivanja',
 );
@@ -1221,7 +1222,8 @@ $messages['yi'] = array(
 	'questycaptcha-create' => 'צו שאַפֿן דעם בלאַט, ביטע ענטפֿערט די פֿראַגע אונטן  ([[Special:Captcha/help|מער אינפֿארמאַציע]]):',
 );
 
-/** Simplified Chinese (中文（简体）‎) */
+/** Simplified Chinese (中文（简体）‎)
+ */
 $messages['zh-hans'] = array(
 	'questycaptcha-addurl' => '您的编辑内容中含有本网站以外的连结。为防止不当程式大量破坏，请回答以下的问题（[[Special:Captcha/help|相关资讯]]）：',
 	'questycaptcha-badlogin' => '为防止不当程式破解密码，请回答以下的问题（[[Special:Captcha/help|相关资讯]]）：',
@@ -1243,4 +1245,3 @@ $messages['zh-hant'] = array(
 	'questycaptcha-edit' => '為防破壞，如您想要編輯此頁面，請回答以下的問題（[[Special:Captcha/help|相關資訊]]）：',
 	'questycaptcha-sendemail' => '為防止不當程式破解密碼，請回答下列問題（[[Special:Captcha/help|相關資訊]]）：',
 );
-

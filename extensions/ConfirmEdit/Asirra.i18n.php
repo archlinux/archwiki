@@ -9,7 +9,6 @@
 
 $messages = array();
 
-/* English */
 $messages['en'] = array(
 	'asirra-desc' => 'Asirra module for ConfirmEdit',
 	'asirra-edit' => 'To help protect against automated edit spam, please select just the cat photos in the box below:', 
@@ -400,7 +399,8 @@ $messages['zh-hans'] = array(
 	'asirra-failed' => '请选出所有猫的图片',
 );
 
-/** Traditional Chinese (中文（繁體）‎) */
+/** Traditional Chinese (中文（繁體）‎)
+ */
 $messages['zh-hant'] = array(
 	'asirra-desc' => 'ConfirmEdit的Asirra模塊',
 	'asirra-edit' => '為了防止垃圾編輯攻擊，請在下面的方框中選出貓的圖片：',
@@ -412,4 +412,3 @@ $messages['zh-hant'] = array(
 	'asirra-nojs' => "'''請啟動JavaScript後再提交頁面。'''",
 	'asirra-failed' => '請選出所有貓的圖片',
 );
-

@@ -1154,7 +1154,8 @@ $messages['ka'] = array(
 	'pfunc_string_too_long' => 'შეცდომა: სტრიქონის ზომა აღემატება $1 სიმბოლოს ლიმიტს',
 );
 
-/** Kazakh (Arabic script) (قازاقشا (تٴوتە)‏) */
+/** Kazakh (Arabic script) (قازاقشا (تٴوتە)‏)
+ */
 $messages['kk-arab'] = array(
 	'pfunc_time_error' => 'قاتە: جارامسىز ۋاقىت',
 	'pfunc_time_too_long' => 'قاتە: #time شاقىرۋى تىم كوپ',
@@ -1173,7 +1174,8 @@ $messages['kk-arab'] = array(
 	'pfunc_expr_not_a_number' => '$1 دەگەندە: ناتىيجە سان ەمەس',
 );
 
-/** Kazakh (Cyrillic script) (қазақша (кирил)‎) */
+/** Kazakh (Cyrillic script) (қазақша (кирил)‎)
+ */
 $messages['kk-cyrl'] = array(
 	'pfunc_time_error' => 'Қате: жарамсыз уақыт',
 	'pfunc_time_too_long' => 'Қате: #time шақыруы тым көп',
@@ -1192,7 +1194,8 @@ $messages['kk-cyrl'] = array(
 	'pfunc_expr_not_a_number' => '$1 дегенде: нәтиже сан емес',
 );
 
-/** Kazakh (Latin script) (qazaqşa (latın)‎) */
+/** Kazakh (Latin script) (qazaqşa (latın)‎)
+ */
 $messages['kk-latn'] = array(
 	'pfunc_time_error' => 'Qate: jaramsız waqıt',
 	'pfunc_time_too_long' => 'Qate: #time şaqırwı tım köp',
@@ -1535,23 +1538,23 @@ $messages['ne'] = array(
  */
 $messages['nl'] = array(
 	'pfunc_desc' => 'Verrijkt de parser met logische functies',
-	'pfunc_time_error' => 'Fout: ongeldige tijd',
-	'pfunc_time_too_long' => 'Fout: #time te vaak aangeroepen',
+	'pfunc_time_error' => 'Fout: ongeldige tijd.',
+	'pfunc_time_too_long' => 'Fout: #time te vaak aangeroepen.',
 	'pfunc_time_too_big' => 'Fout: #time ondersteunt jaren tot maximaal 9999',
-	'pfunc_rel2abs_invalid_depth' => 'Fout: ongeldige diepte in pad: "$1" (probeerde een node boven de stamnode aan te roepen)',
-	'pfunc_expr_stack_exhausted' => 'Fout in uitdrukking: stack uitgeput',
-	'pfunc_expr_unexpected_number' => 'Fout in uitdrukking: onverwacht getal',
-	'pfunc_expr_preg_match_failure' => 'Fout in uitdrukking: onverwacht falen van preg_match',
-	'pfunc_expr_unrecognised_word' => 'Fout in uitdrukking: woord "$1" niet herkend',
-	'pfunc_expr_unexpected_operator' => 'Fout in uitdrukking: niet verwachte operator $1',
-	'pfunc_expr_missing_operand' => 'Fout in uitdrukking: operand voor $1 mist',
-	'pfunc_expr_unexpected_closing_bracket' => 'Fout in uitdrukking: haakje sluiten op onverwachte plaats',
-	'pfunc_expr_unrecognised_punctuation' => 'Fout in uitdrukking: niet herkend leesteken "$1"',
-	'pfunc_expr_unclosed_bracket' => 'Fout in uitdrukking: niet gesloten haakje openen',
+	'pfunc_rel2abs_invalid_depth' => 'Fout: ongeldige diepte in pad: "$1" (probeerde een node boven de stamnode aan te roepen).',
+	'pfunc_expr_stack_exhausted' => 'Fout in uitdrukking: stack uitgeput.',
+	'pfunc_expr_unexpected_number' => 'Fout in uitdrukking: onverwacht getal.',
+	'pfunc_expr_preg_match_failure' => 'Fout in uitdrukking: onverwacht falen van preg_match.',
+	'pfunc_expr_unrecognised_word' => 'Fout in uitdrukking: woord "$1" niet herkend.',
+	'pfunc_expr_unexpected_operator' => 'Fout in uitdrukking: niet verwachte operator $1.',
+	'pfunc_expr_missing_operand' => 'Fout in uitdrukking: operand voor $1 mist.',
+	'pfunc_expr_unexpected_closing_bracket' => 'Fout in uitdrukking: haakje sluiten op onverwachte plaats.',
+	'pfunc_expr_unrecognised_punctuation' => 'Fout in uitdrukking: niet herkend leesteken "$1".',
+	'pfunc_expr_unclosed_bracket' => 'Fout in uitdrukking: niet gesloten haakje openen.',
 	'pfunc_expr_division_by_zero' => 'Deling door nul',
 	'pfunc_expr_invalid_argument' => 'Ongeldige parameter voor $1: < -1 of > 1',
 	'pfunc_expr_invalid_argument_ln' => 'Ongeldige parameter voor ln: <= 0',
-	'pfunc_expr_unknown_error' => 'Fout in uitdrukking: onbekende fout ($1)',
+	'pfunc_expr_unknown_error' => 'Fout in uitdrukking: onbekende fout ($1).',
 	'pfunc_expr_not_a_number' => 'In $1: resultaat is geen getal',
 	'pfunc_string_too_long' => 'Fout: De tekst is langer dan de limiet van $1 {{PLURAL:$1|karakter|karakters}}',
 );
@@ -2505,4 +2508,3 @@ $messages['zh-hant'] = array(
 	'pfunc_expr_not_a_number' => '在 $1 中：結果不是數字',
 	'pfunc_string_too_long' => '錯誤：字符串超過$1字符限制',
 );
-

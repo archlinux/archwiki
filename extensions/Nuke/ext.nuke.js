@@ -6,13 +6,20 @@
  * @author Jeroen De Dauw <jeroendedauw at gmail dot com>
  */
 
-(function( $, mw ) { $( document ).ready( function() {
-	
-	function selectPages( check ) {
-		$( 'input[type=checkbox]' ).prop( 'checked', check )
-	}
-	
-	$( '#toggleall' ).click( function(){ selectPages( true ); } );
-	$( '#togglenone' ).click( function(){ selectPages( false ); } );
-	
-} ); })( window.jQuery, window.mediaWiki );
+( function ( $, mw ) {
+	'use strict';
+
+	$( document ).ready( function () {
+
+		function selectPages( check ) {
+			$( 'input[type=checkbox]' ).prop( 'checked', check );
+		}
+
+		$( '#toggleall' ).click( function () {
+			selectPages( true );
+		} );
+		$( '#togglenone' ).click( function () {
+			selectPages( false );
+		} );
+	} );
+} ) ( window.jQuery, window.mediaWiki );

@@ -441,7 +441,7 @@ class WikiImporter {
 
 		if ( $this->reader->name != 'mediawiki' ) {
 			libxml_disable_entity_loader( $oldDisable );
-			throw new MWException( "Expected <mediawiki> tag, got ".
+			throw new MWException( "Expected <mediawiki> tag, got " .
 				$this->reader->name );
 		}
 		$this->debug( "<mediawiki> tag is correct." );
