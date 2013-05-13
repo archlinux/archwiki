@@ -97,7 +97,7 @@ class FunnyQuestion {
 		return true;
 	}
 
-	public static function checkFunnyQuestionOnEditPage($editpage, $text, $section, $error) {
+	public static function checkFunnyQuestionOnEditPage($editor, $text, $section, &$error, $summary) {
 		global $wgUser;
 
 		if (!$wgUser->isLoggedIn() && !self::checkFunnyQuestion()) {
@@ -116,7 +116,7 @@ class FunnyQuestion {
 		return true;
 	}
 
-	public static function checkFunnyQuestionOnAbortNewAccount($user, $message) {
+	public static function checkFunnyQuestionOnAbortNewAccount($user, &$message) {
 		if (!self::checkFunnyQuestion()) {
 			$message = wfMsg('wrong-answer');
 			return false;

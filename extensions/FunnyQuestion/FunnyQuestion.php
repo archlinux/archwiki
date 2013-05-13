@@ -2,7 +2,7 @@
 
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FunnyQuestion',
-	'version' => '2.2',
+	'version' => '2.3',
 	'description' => 'Challenge-response authentication',
 	'author' => 'Pierre Schmitz',
 	'url' => 'https://pierre-schmitz.com/'
