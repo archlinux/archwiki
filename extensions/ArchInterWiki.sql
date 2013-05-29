@@ -16,11 +16,10 @@
  *   should do the job instead.
  */
 
-DELETE FROM interwiki WHERE iw_prefix='pt-br';
-
 REPLACE INTO
 	interwiki (iw_prefix, iw_url, iw_local, iw_trans)
 VALUES
+	('ar', 'https://wiki.archlinux.org/index.php/$1_(%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9)', 1, 0),
 	('bg', 'https://wiki.archlinux.org/index.php/$1_(%D0%91%D1%8A%D0%BB%D0%B3%D0%B0%D1%80%D1%81%D0%BA%D0%B8)', 1, 0),
 	('cs', 'https://wiki.archlinux.org/index.php/$1_(%C4%8Cesky)', 1, 0),
 	('da', 'https://wiki.archlinux.org/index.php/$1_(Dansk)', 1, 0),
