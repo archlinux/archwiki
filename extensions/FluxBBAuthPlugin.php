@@ -17,7 +17,7 @@ class FluxBBAuthPlugin extends AuthPlugin {
 
 	public static function isValidPassword($password) {
 		$length = strlen($password);
-		return ($length >= 4 && $length <= 25);
+		return $length >= 4;
 	}
 
 	private function getUserData($username) {
