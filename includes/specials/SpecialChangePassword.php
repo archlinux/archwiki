@@ -27,6 +27,9 @@
  * @ingroup SpecialPage
  */
 class SpecialChangePassword extends UnlistedSpecialPage {
+
+	protected $mUserName, $mOldpass, $mNewpass, $mRetype, $mDomain;
+
 	public function __construct() {
 		parent::__construct( 'ChangePassword' );
 	}
@@ -70,8 +73,10 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 				}
 
 				$this->attemptReset( $this->mNewpass, $this->mRetype );
-				$this->getOutput()->addWikiMsg( 'resetpass_success' );
-				if( !$user->isLoggedIn() ) {
+
+				if( $user->isLoggedIn() ) {
+					$this->doReturnTo();
+				} else {
 					LoginForm::setLoginToken();
 					$token = LoginForm::getLoginToken();
 					$data = array(
@@ -79,17 +84,13 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 						'wpName'       => $this->mUserName,
 						'wpDomain'     => $this->mDomain,
 						'wpLoginToken' => $token,
-						'wpPassword'   => $this->mNewpass,
-						'returnto'     => $request->getVal( 'returnto' ),
-					);
-					if( $request->getCheck( 'wpRemember' ) ) {
-						$data['wpRemember'] = 1;
-					}
+						'wpPassword'   => $request->getVal( 'wpNewPassword' ),
+					) + $request->getValues( 'wpRemember', 'returnto', 'returntoquery' );
 					$login = new LoginForm( new FauxRequest( $data, true ) );
 					$login->setContext( $this->getContext() );
 					$login->execute( null );
 				}
-				$this->doReturnTo();
+				return;
 			} catch( PasswordError $e ) {
 				$this->error( $e->getMessage() );
 			}
@@ -98,15 +99,20 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 	}
 
 	function doReturnTo() {
-		$titleObj = Title::newFromText( $this->getRequest()->getVal( 'returnto' ) );
+		$request = $this->getRequest();
+		$titleObj = Title::newFromText( $request->getVal( 'returnto' ) );
 		if ( !$titleObj instanceof Title ) {
 			$titleObj = Title::newMainPage();
 		}
-		$this->getOutput()->redirect( $titleObj->getFullURL() );
+		$query = $request->getVal( 'returntoquery' );
+		$this->getOutput()->redirect( $titleObj->getFullURL( $query ) );
 	}
 
+	/**
+	 * @param $msg string
+	 */
 	function error( $msg ) {
-		$this->getOutput()->addHTML( Xml::element('p', array( 'class' => 'error' ), $msg ) );
+		$this->getOutput()->addHTML( Xml::element( 'p', array( 'class' => 'error' ), $msg ) );
 	}
 
 	function showForm() {
@@ -142,6 +148,15 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 					array( 'wpRetype', 'retypenew', 'password', null ),
 				);
 		$prettyFields = array_merge( $prettyFields, $extraFields );
+		$hiddenFields = array(
+			'token' => $user->getEditToken(),
+			'wpName' => $this->mUserName,
+			'wpDomain' => $this->mDomain,
+		) + $this->getRequest()->getValues( 'returnto', 'returntoquery' );
+		$hiddenFieldsStr = '';
+		foreach( $hiddenFields as $fieldname => $fieldvalue ) {
+			$hiddenFieldsStr .= Html::hidden( $fieldname, $fieldvalue ) . "\n";
+		}
 		$this->getOutput()->addHTML(
 			Xml::fieldset( $this->msg( 'resetpass_header' )->text() ) .
 			Xml::openElement( 'form',
@@ -149,10 +164,7 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 					'method' => 'post',
 					'action' => $this->getTitle()->getLocalUrl(),
 					'id' => 'mw-resetpass-form' ) ) . "\n" .
-			Html::hidden( 'token', $user->getEditToken() ) . "\n" .
-			Html::hidden( 'wpName', $this->mUserName ) . "\n" .
-			Html::hidden( 'wpDomain', $this->mDomain ) . "\n" .
-			Html::hidden( 'returnto', $this->getRequest()->getVal( 'returnto' ) ) . "\n" .
+			$hiddenFieldsStr .
 			$this->msg( 'resetpass_text' )->parseAsBlock() . "\n" .
 			Xml::openElement( 'table', array( 'id' => 'mw-resetpass-table' ) ) . "\n" .
 			$this->pretty( $prettyFields ) . "\n" .
@@ -170,6 +182,10 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 		);
 	}
 
+	/**
+	 * @param $fields array
+	 * @return string
+	 */
 	function pretty( $fields ) {
 		$out = '';
 		foreach ( $fields as $list ) {
@@ -192,7 +208,7 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 			if ( $type != 'text' )
 				$out .= Xml::label( $this->msg( $label )->text(), $name );
 			else
-				$out .=  $this->msg( $label )->escaped();
+				$out .= $this->msg( $label )->escaped();
 			$out .= "</td>\n";
 			$out .= "\t<td class='mw-input'>";
 			$out .= $field;
@@ -206,7 +222,13 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 	 * @throws PasswordError when cannot set the new password because requirements not met.
 	 */
 	protected function attemptReset( $newpass, $retype ) {
-		$user = User::newFromName( $this->mUserName );
+		$isSelf = ( $this->mUserName === $this->getUser()->getName() );
+		if ( $isSelf ) {
+			$user = $this->getUser();
+		} else {
+			$user = User::newFromName( $this->mUserName );
+		}
+
 		if( !$user || $user->isAnon() ) {
 			throw new PasswordError( $this->msg( 'nosuchusershort', $this->mUserName )->text() );
 		}
@@ -227,7 +249,7 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 			throw new PasswordError( $this->msg( $abortMsg )->text() );
 		}
 
-		if( !$user->checkTemporaryPassword($this->mOldpass) && !$user->checkPassword($this->mOldpass) ) {
+		if( !$user->checkTemporaryPassword( $this->mOldpass ) && !$user->checkPassword( $this->mOldpass ) ) {
 			wfRunHooks( 'PrefsPasswordAudit', array( $user, $newpass, 'wrongpassword' ) );
 			throw new PasswordError( $this->msg( 'resetpass-wrong-oldpass' )->text() );
 		}
@@ -240,13 +262,22 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 		try {
 			$user->setPassword( $this->mNewpass );
 			wfRunHooks( 'PrefsPasswordAudit', array( $user, $newpass, 'success' ) );
-			$this->mNewpass = $this->mOldpass = $this->mRetypePass = '';
+			$this->mNewpass = $this->mOldpass = $this->mRetype = '';
 		} catch( PasswordError $e ) {
 			wfRunHooks( 'PrefsPasswordAudit', array( $user, $newpass, 'error' ) );
 			throw new PasswordError( $e->getMessage() );
 		}
 
-		$user->setCookies();
+		if ( $isSelf ) {
+			// This is needed to keep the user connected since
+			// changing the password also modifies the user's token.
+			$user->setCookies();
+		}
+
 		$user->saveSettings();
+	}
+
+	protected function getGroupName() {
+		return 'users';
 	}
 }

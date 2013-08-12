@@ -198,7 +198,6 @@ $messages = array(
 'qbbrowse' => 'Çım ra viarne',
 'qbedit' => 'Bıvurne',
 'qbpageoptions' => 'Na pele',
-'qbpageinfo' => 'Gire',
 'qbmyoptions' => 'Pelê mı',
 'qbspecialpages' => 'Pelê xısusiy',
 'faq' => 'PZP (Persê ke zaf perşinê)',
@@ -447,11 +446,8 @@ Sebebê ho ''$2'' dero.",
 # Login and logout pages
 'logouttext' => "'''Sıma nıka cı ra veciyê.'''
 
-Sıma şikinê dızdêni {{SITENAME}} de dewam kerê, ya jê eyni karberi ya ki jê jüyê de bini [[Special:UserLogin|oncia cıkuyê]].
+Sıma şikinê dızdêni {{SITENAME}} de dewam kerê, ya jê eyni karberi ya ki jê jüyê de bini <span class='plainlinks'>[$1 oncia cıkuyê]</span>.
 Beno ke taê peli sıma hona cıkote asnenê, hata ke sıma ''browser cache''ê ho kerd pak.",
-'welcomecreation' => '== Xêr amê, $1! ==
-Hesabê sıma vıraciya.
-Vurnaena [[Special:Preferences|melumatanê {{SITENAME}}]] ho vira mekerê.',
 'yourname' => 'Namê karberi:',
 'yourpassword' => 'Parola:',
 'yourpasswordagain' => 'Parola tekrar ke:',
@@ -848,8 +844,8 @@ Diqet kerê, beno ke tedeestê {{SITENAME}} uza endi rozane niyê.",
 'prefs-files' => 'Dosyey',
 'youremail' => 'E-poste:',
 'username' => 'Namê karberi:',
-'uid' => 'Kamiya karberi:',
-'prefs-memberingroups' => 'Ezaê de {{PLURAL:$1|gruba|grubunê}}:',
+'uid' => 'Kamiya {{GENDER:$1|karberi}}:',
+'prefs-memberingroups' => '{{GENDER:$2|Ezayê}} {{PLURAL:$1|grube|grubu}}:',
 'yourrealname' => 'Namo rastıkên:',
 'yourlanguage' => 'Zon:',
 'yourvariant' => 'Varyant:',
@@ -909,11 +905,12 @@ Kaberê bini ke şıma de kewti irtıbat, adresa e-postey şıma eşkera nêbena
 'right-delete' => 'Pelu bestere',
 'right-undelete' => 'Esterıtena na pele peyser bıcê',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Qeydê karberiê newey',
+
 # User rights log
 'rightslog' => 'Qeydê hequnê karberi',
 'rightslogtext' => 'No jü qeydê vurnaisê hequnê karberio.',
-'rightslogentry' => 'selahiyetê $1i $2 ra vurniya be $3i',
-'rightsnone' => '(qet jü)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'na pele bıwane',
@@ -1131,9 +1128,6 @@ Cêr [$2 pela arezekerdena dosya de] arezekerdene asnina.',
 # Special:ActiveUsers
 'activeusers' => 'Lista karberunê fealu',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Qeydê karberiê newey',
-
 # Special:ListGroupRights
 'listgrouprights-group' => 'Kome',
 'listgrouprights-rights' => 'Heqi',
@@ -1258,7 +1252,7 @@ Tı şikina sewiya sevekiyaena na pele bıvurnê, hema yê nae sevekiyaena qedem
 'blanknamespace' => '(Ser)',
 
 # Contributions
-'contributions' => 'İştırakê karberi',
+'contributions' => 'İştıraqê {{GENDER:$1|karber}}i',
 'contributions-title' => '$1 de iştırakê karberi',
 'mycontris' => 'İştıraqi',
 'contribsub2' => 'Serba $1 ($2)',
@@ -1606,5 +1600,8 @@ satır ê ke pê ney # # destpêkenê zey mışore/mıjore muamele vineno.
 # Special:ComparePages
 'compare-page1' => 'Pele 1',
 'compare-page2' => 'Pele 2',
+
+# New logging system
+'rightsnone' => '(qet jü)',
 
 );

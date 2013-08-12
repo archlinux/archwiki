@@ -59,10 +59,9 @@ Gebruik [//translatewiki.net/ translatewiki.net], het vertaalproject voor MediaW
 # Login and logout pages
 'logouttext' => "'''Je bent nu afgemeld.'''
 
-Je kunt {{SITENAME}} nu anoniem gebruiken of weer [[Special:UserLogin|aanmelden]] als dezelfde of een andere gebruiker.
+Je kunt {{SITENAME}} nu anoniem gebruiken of weer <span class='plainlinks'>[$1 aanmelden]</span> als dezelfde of een andere gebruiker.
 Mogelijk worden nog een aantal pagina's weergegeven alsof je aangemeld bent totdat je de cache van uw browser leegt.",
-'welcomecreation' => '== Welkom, $1! ==
-Je gebruiker is geregistreerd.
+'welcomecreation-msg' => 'Je gebruiker is aangemaakt.
 Vergeet niet je [[Special:Preferences|voorkeuren voor {{SITENAME}}]] aan te passen.',
 'yourpasswordagain' => 'Geef je wachtwoord opnieuw in:',
 'yourdomainname' => 'Je domein:',
@@ -148,6 +147,7 @@ Meld je aan en wijzig het wachtwoord nu. Als je dit verzoek niet zelf hebt gedaa
 # Special:ChangeEmail
 'changeemail-text' => 'Vul dit formulier in om je e-mailadres te wijzigen. Je moet je wachtwoord invoeren om deze wijziging te bevestigen.',
 'changeemail-no-info' => 'Je moet aangemeld zijn om rechtstreeks toegang te hebben tot deze pagina.',
+'changeemail-password' => 'Jouw wachtwoord voor {{SITENAME}}:',
 
 # Edit page toolbar
 'sig_tip' => 'Je handtekening met datum en tijd',
@@ -475,11 +475,9 @@ Toekomstige bewerkingen van deze pagina en de bijbehorende overlegpagina worden 
 'watcherrortext' => 'Er is een fout opgetreden tijdens het wijzigen van je volglijstinstellingen voor "$1".',
 
 'enotif_lastvisited' => 'Zie $1 voor alle wijzigingen sinds je laatste bezoek.',
-'enotif_body' => 'Beste $WATCHINGUSERNAME,
+'enotif_body' => 'Hoi $WATCHINGUSERNAME,
 
-De pagina $PAGETITLE op {{SITENAME}} is $CHANGEDORCREATED op $PAGEEDITDATE door $PAGEEDITOR. Zie $PAGETITLE_URL voor de huidige versie.
-
-$NEWPAGE
+$PAGEINTRO $NEWPAGE
 
 Samenvatting van de wijziging: $PAGESUMMARY $PAGEMINOREDIT
 

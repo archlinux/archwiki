@@ -153,7 +153,6 @@ $messages = array(
 'qbbrowse' => 'Escrucal',
 'qbedit' => 'Eital',
 'qbpageoptions' => 'Esta páhina',
-'qbpageinfo' => 'Contestu',
 'qbmyoptions' => 'Las mis páhinas',
 'qbspecialpages' => 'Páhinas especialis',
 'faq' => 'FAQ',
@@ -377,12 +376,8 @@ La razón es la siguienti: ''$2''.",
 
 # Login and logout pages
 'logouttext' => "'''Cuenta afechá corretamenti.'''<br />
-Pueis acontinal gastandu {{SITENAME}} de holma anónima, u [[Special:UserLogin|entral ena tu cuenta]] con el mesmu ussuáriu, u con otru.
+Pueis acontinal gastandu {{SITENAME}} de holma anónima, u <span class='plainlinks'>[$1 entral ena tu cuenta]</span> con el mesmu ussuáriu, u con otru.
 Dati cuenta que hata que nu esborris el caché del tu escrucaol pué paecel que la tu cuenta acontina abierta n'angunas páginas.",
-'welcomecreation' => "== Bienviniu, $1! ==
-
-La tu cuenta d'ussuáriu á siu criá.
-Alcuerdati de chambal las tus [[Special:Preferences|preferéncias de {{SITENAME}}]].",
 'yourname' => "Nombri d'usuáriu:",
 'yourpassword' => 'Consínia:',
 'yourpasswordagain' => 'Escrebi e nuevu la consínia:',
@@ -616,7 +611,6 @@ Embaju se muestra el rustriju d'acessu cumu referéncia:",
 'template-semiprotected' => '(abati-protehiu)',
 'hiddencategories' => 'Esta páhina preteneci a {{PLURAL:$1|1 categoria açonchá|$1 categorias açonchás}}:',
 'edittools' => '<!-- Esti testu apaicirá embahu los hormulárius d´eición i empuntu. -->',
-'nocreatetitle' => 'Criaeru e páhinas enlimitau',
 'nocreatetext' => 'Nu se premiti crial páhinas nuevas a usuárius anónimus.
 Pueis gorvel i eital anguna páhina ya desistenti, u [[Special:UserLogin|rustrilti]].',
 'nocreate-loggedin' => 'Nu tiés premissu pa crial nuevas páginas.',
@@ -954,11 +948,12 @@ Amás premiti qu'otrus ussuárius contatin contigu pol mé la tu página d'ussu�
 'right-userrights' => 'Eital los derechus de tolos usuárius',
 'right-siteadmin' => 'Atarugal i desatarugal la basi e datus',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Rustrihu de nuevus usuárius',
+
 # User rights log
 'rightslog' => 'Rustrihu e derechus de los usuárius',
 'rightslogtext' => 'Esti es un rustrihu e chambus enus derechus los usuárius.',
-'rightslogentry' => 'chambó el grupu al que preteneci $1: de $2 a $3',
-'rightsnone' => '(dengunu)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'leyel esta página',
@@ -1345,9 +1340,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-submit' => 'Muestral',
 'listusers-noresult' => 'Nu s´alcuentró dengún usuáriu.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Rustrihu de nuevus usuárius',
-
 # Special:ListGroupRights
 'listgrouprights' => "Derechus del grupu d'usuárius",
 'listgrouprights-group' => 'Grupu',
@@ -1422,11 +1414,7 @@ Si quieis ehal de vehilal la páhina, pursa sobri \"Ehal de vehilal\".",
 
 'enotif_mailer' => 'Notificaeru pol correu e {{SITENAME}}',
 'enotif_reset' => 'Aseñalal tolas páhinas vesitás',
-'enotif_newpagetext' => 'Esta páhina es nueva.',
 'enotif_impersonal_salutation' => 'usuáriu e {{SITENAME}}',
-'changed' => 'chambau',
-'created' => 'criá',
-'enotif_subject' => '{{SITENAME}}: la páhina $PAGETITLE á siu $CHANGEDORCREATED pol $PAGEEDITOR',
 'enotif_lastvisited' => 'Vai pa $1 pa visoreal tolos chambus hechus dendi la tu úrtima vesita.',
 'enotif_lastdiff' => 'Vai pa $1 pa visoreal esti chambu.',
 'enotif_anon_editor' => 'usuáriu anónimu $1',
@@ -1453,6 +1441,8 @@ Pa hazel chambus ena tu lista e seguimientu, vesita
 
 Ayua la Güiquipeya:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'criá',
+'changed' => 'chambau',
 
 # Delete
 'deletepage' => 'Esborral páhina',
@@ -2414,6 +2404,6 @@ Las imahin se muestran a resolución compreta; las demas crasis d'archivu s'ehec
 # New logging system
 'revdelete-restricted' => 'las restricionis a los çahorilis án siu apricás',
 'revdelete-unrestricted' => 'las restricionis a los çahorilis án siu esborrás',
-'newuserlog-byemail' => 'consínia enviá pol e-mail',
+'rightsnone' => '(dengunu)',
 
 );

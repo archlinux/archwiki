@@ -40,7 +40,7 @@ class ExternalEdit extends ContextSource {
 	 * Check whether external edit or diff should be used.
 	 *
 	 * @param $context IContextSource context to use
-	 * @param $type String can be either 'edit' or 'diff'
+	 * @param string $type can be either 'edit' or 'diff'
 	 * @return Bool
 	 */
 	public static function useExternalEngine( IContextSource $context, $type ) {
@@ -87,7 +87,7 @@ class ExternalEdit extends ContextSource {
 						'URL' => $image->getCanonicalURL()
 					)
 				);
-			} else{
+			} else {
 				$urls = array();
 			}
 		} else {

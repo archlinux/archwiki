@@ -199,7 +199,6 @@ $messages = array(
 'qbbrowse' => 'Гүүһәд хәләх',
 'qbedit' => 'Чиклх',
 'qbpageoptions' => 'Тер халх',
-'qbpageinfo' => 'Халхин туск',
 'qbmyoptions' => 'Тана халхс',
 'qbspecialpages' => 'Көдлхнә халхс',
 'faq' => 'Юм би',
@@ -397,11 +396,8 @@ $1',
 # Login and logout pages
 'logouttext' => "'''Та һарад бәәнәт.'''
 
-Та {{SITENAME}} гидг ормиг нертә уга олзлҗ чаднат, аль та [[Special:UserLogin|дәкәд орҗ]] цацу аль талдан нертә чаднат.
+Та {{SITENAME}} гидг ормиг нертә уга олзлҗ чаднат, аль та <span class='plainlinks'>[$1 дәкәд орҗ]</span> цацу аль талдан нертә чаднат.
 Зәрм халхс цааранднь та ода чигн орсн мет үзүлҗ чаддг тускар темдглтн (та хәләчин санлиг цеврлтл).",
-'welcomecreation' => '== Ирхитн эрҗәнәвидн, $1! ==
-Таднар шин бичгдлһн бүтв.
-Тадна [[Special:Preferences|{{SITENAME}} preferences]] сольҗ бичә мартн.',
 'yourname' => 'Демнчна нернь:',
 'yourpassword' => 'Нууц үг:',
 'yourpasswordagain' => 'Нууц үгиг давтн:',
@@ -712,9 +708,11 @@ $1',
 'grouppage-sysop' => '{{ns:project}}:Закрачуд',
 'grouppage-bureaucrat' => '{{ns:project}}:Нойнчуд',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Бичгдлһнә сеткүл',
+
 # User rights log
 'rightslog' => 'Демнчна зөвәнә сеткүл',
-'rightsnone' => '(уга)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'эн халхиг чиклх',
@@ -857,9 +855,6 @@ $1',
 # Special:LinkSearch
 'linksearch' => 'Һаза заалһуд',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Бичгдлһнә сеткүл',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(мөчүдин сеткүл)',
 
@@ -883,8 +878,6 @@ $1',
 'watching' => 'Шинҗллһнә бүтлклд немлһн...',
 'unwatching' => 'Шинҗлһнә бүрткләс һарһлһн...',
 
-'changed' => 'сольв',
-'created' => 'бүтәв',
 'enotif_body' => 'Мендвт, күндтә $WATCHINGUSERNAME,
 
 $PAGEEDITDATE цагт {{SITENAME}} төсвин $PAGETITLE халхиг $PAGEEDITOR $CHANGEDORCREATED. Ода болсн халхна янз үзҗ седхлә, $PAGETITLE_URL хәләтн.
@@ -907,6 +900,8 @@ e-mail\'ар $PAGEEDITOR_EMAIL
 
 Хәрү холва болн тус:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'бүтәв',
+'changed' => 'сольв',
 
 # Delete
 'deletepage' => 'Эн халхиг һарһҗ',
@@ -1270,5 +1265,8 @@ $2 шидрә һарһлһна төлә хәләтн.',
 # HTML forms
 'htmlform-reset' => 'Сольлһиг уга кех',
 'htmlform-selectorother-other' => 'Талдан',
+
+# New logging system
+'rightsnone' => '(уга)',
 
 );

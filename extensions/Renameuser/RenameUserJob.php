@@ -3,15 +3,15 @@
  * Custom job to perform updates on tables in busier environments
  */
 class RenameUserJob extends Job {
-
 	/**
 	 * Constructor
 	 *
 	 * @param Title $title Associated title
 	 * @param array $params Job parameters
+	 * @param int $id
 	 */
-	public function __construct( $title, $params ) {
-		parent::__construct( 'renameUser', $title, $params );
+	public function __construct( $title, $params = array(), $id = 0 ) {
+		parent::__construct( 'renameUser', $title, $params, $id );
 	}
 
 	/**

@@ -285,7 +285,6 @@ $messages = array(
 'qbbrowse' => "Ko'riw",
 'qbedit' => "O'zgertiw",
 'qbpageoptions' => 'Usı bet',
-'qbpageinfo' => 'Kontekst',
 'qbmyoptions' => "Menin' betlerim",
 'qbspecialpages' => 'Arnawlı betler',
 'faq' => 'KBS',
@@ -511,12 +510,8 @@ Keltirilgen sebep: ''$2''.",
 'logouttext' => "'''Siz endi sayttan shıqtın'ız.'''
 
 Siz {{SITENAME}} saytınan anonim halda paydalanıwın'ız mu'mkin.
-Yamasa siz ja'ne ha'zirgi yaki basqa paydalanıwshı atı menen [[Special:UserLogin|qaytadan sistemag'a kiriwin'izge]] boladı.
+Yamasa siz ja'ne ha'zirgi yaki basqa paydalanıwshı atı menen <span class='plainlinks'>[$1 qaytadan sistemag'a kiriwin'izge]</span> boladı.
 Sonı este saqlan', ayrım betler sizin' brauzerin'izdin' keshi tazalanbag'anlıg'ı sebebli sistemada kirgenin'izdey ko'riniste dawam ettire beriwi mu'mkin.",
-'welcomecreation' => "== Xosh keldin'iz, $1! ==
-
-Akkauntın'ız jaratıldı.
-[[Special:Preferences|{{SITENAME}} sazlawların'ızdı]] o'zgertiwdi umıtpan'.",
 'yourname' => 'Paydalanıwshı atı:',
 'yourpassword' => 'Parol:',
 'yourpasswordagain' => "Paroldi qayta kiritin':",
@@ -706,7 +701,6 @@ To'mende en' aqırg'ı jurnal mag'lıwmatları berilgen.",
 'template-protected' => "(qorg'alg'an)",
 'template-semiprotected' => "(yarım-qorg'alg'an)",
 'hiddencategories' => "Bul bet {{PLURAL:$1|1 jasırın kategoriyasının'|$1 jasırın kategoriyalarının'}} ag'zası:",
-'nocreatetitle' => 'Bet jaratıw sheklengen',
 'nocreatetext' => "{{SITENAME}} saytında taza betlerdi jaratıw sheklengen.
 Arqag'a qaytıp bar betti o'zgertiwin'izge yamasa [[Special:UserLogin|kiriwin'izge / akkaunt jaratıwın'ızg'a]] boladı.",
 'nocreate-loggedin' => "Taza betler jaratıwın'ızg'a ruxsatın'ız joq.",
@@ -1020,11 +1014,13 @@ Barlıq mag'lıwmat tu'rin (sonın' ishinde sa'wbet betlerdi, shablonlardı h.t.
 'right-userrights-interwiki' => "Basqa wikilerdegi paydalanıwshının' huquqların o'zgertiw",
 'right-siteadmin' => "Mag'lıwmatlar bazasın qulıplaw ha'm qulıplawın o'shiriw",
 
+# Special:Log/newusers
+'newuserlogpage' => 'Paydalanıwshılardı esapqa alıw jurnalı',
+'newuserlogpagetext' => 'Bul paydalanıwshılardı esapqa alıw jurnalı',
+
 # User rights log
 'rightslog' => 'Paydalanıwshı huquqları jurnalı',
 'rightslogtext' => "Bul paydalanıwshı huquqların o'zgertiw jurnalı.",
-'rightslogentry' => "$1 paydalanıwshısının' ag'za bolg'an toparları $2 degennen $3 degenge o'zgertti",
-'rightsnone' => '(hesh qanday)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'bul betti oqıw',
@@ -1371,10 +1367,6 @@ Ja'nede [[Special:WantedCategories|kerekli kategoriyalardı]] qarap ko'rin'.",
 'listusers-submit' => "Ko'rset",
 'listusers-noresult' => 'Paydalanıwshı tabılmadı.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Paydalanıwshılardı esapqa alıw jurnalı',
-'newuserlogpagetext' => 'Bul paydalanıwshılardı esapqa alıw jurnalı',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Paydalanıwshılar toparı huqıqları',
 'listgrouprights-group' => 'Topar',
@@ -1432,14 +1424,12 @@ Eger siz bul betti baqlaw dizimin'izden o'shirmekshi bolsan'ız bettin' joqarg'�
 
 'enotif_mailer' => '{{SITENAME}} eskertiw xatın jiberiw xızmeti',
 'enotif_reset' => "Barlıq betti ko'rip shıg'ıldı dep belgile",
-'enotif_newpagetext' => 'Bul taza bet.',
 'enotif_impersonal_salutation' => '{{SITENAME}} paydalanıwshısı',
-'changed' => "o'zgertilgen",
-'created' => "jaratılg'an",
-'enotif_subject' => '{{SITENAME}} proektindegi $PAGEEDITOR $PAGETITLE atamalı betti $CHANGEDORCREATED',
 'enotif_lastvisited' => "Son'g'ı kirwin'izden beri bolg'an o'zgerisler ushın $1 degendi ko'rin'iz.",
 'enotif_lastdiff' => "Usı o'zgeris ushın $1 degendi ko'rin'iz.",
 'enotif_anon_editor' => 'anonim paydalanıwshı $1',
+'created' => "jaratılg'an",
+'changed' => "o'zgertilgen",
 
 # Delete
 'deletepage' => "Betti o'shir",
@@ -1952,6 +1942,6 @@ Bul tastıyıqlaw kodının' pitetug'ın waqtı: $4.",
 # New logging system
 'revdelete-restricted' => "administratorlarg'a qollanılg'an sheklewler",
 'revdelete-unrestricted' => "administratorlardan alıp taslang'an sheklewler",
-'newuserlog-byemail' => 'parol e-mail arqalı jiberildi',
+'rightsnone' => '(hesh qanday)',
 
 );

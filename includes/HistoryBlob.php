@@ -19,10 +19,10 @@
  *
  * @file
  */
- 
+
 /**
- * Base class for general text storage via the "object" flag in old_flags, or 
- * two-part external storage URLs. Used for represent efficient concatenated 
+ * Base class for general text storage via the "object" flag in old_flags, or
+ * two-part external storage URLs. Used for represent efficient concatenated
  * storage, and migration-related pointer objects.
  */
 interface HistoryBlob
@@ -178,11 +178,10 @@ class ConcatenatedGzipHistoryBlob implements HistoryBlob
 	 * @return bool
 	 */
 	public function isHappy() {
-		return $this->mSize < $this->mMaxSize 
+		return $this->mSize < $this->mMaxSize
 			&& count( $this->mItems ) < $this->mMaxCount;
 	}
 }
-
 
 /**
  * Pointer object for an item within a CGZ blob stored in the text table.
@@ -199,7 +198,7 @@ class HistoryBlobStub {
 	var $mOldId, $mHash, $mRef;
 
 	/**
-	 * @param $hash string the content hash of the text
+	 * @param string $hash the content hash of the text
 	 * @param $oldid Integer the old_id for the CGZ object
 	 */
 	function __construct( $hash = '', $oldid = 0 ) {
@@ -232,8 +231,6 @@ class HistoryBlobStub {
 	 * @return string
 	 */
 	function getText() {
-		$fname = 'HistoryBlobStub::getText';
-
 		if( isset( self::$blobCache[$this->mOldId] ) ) {
 			$obj = self::$blobCache[$this->mOldId];
 		} else {
@@ -244,13 +241,12 @@ class HistoryBlobStub {
 			}
 			$flags = explode( ',', $row->old_flags );
 			if( in_array( 'external', $flags ) ) {
-				$url=$row->old_text;
+				$url = $row->old_text;
 				$parts = explode( '://', $url, 2 );
 				if ( !isset( $parts[1] ) || $parts[1] == '' ) {
-					wfProfileOut( $fname );
 					return false;
 				}
-				$row->old_text = ExternalStore::fetchFromUrl($url);
+				$row->old_text = ExternalStore::fetchFromUrl( $url );
 
 			}
 			if( !in_array( 'object', $flags ) ) {
@@ -287,7 +283,6 @@ class HistoryBlobStub {
 		return $this->mHash;
 	}
 }
-
 
 /**
  * To speed up conversion from 1.4 to 1.5 schema, text rows can refer to the
@@ -341,12 +336,12 @@ class DiffHistoryBlob implements HistoryBlob {
 	/** Total uncompressed size */
 	var $mSize = 0;
 
-	/** 
-	 * Array of diffs. If a diff D from A to B is notated D = B - A, and Z is 
+	/**
+	 * Array of diffs. If a diff D from A to B is notated D = B - A, and Z is
 	 * an empty string:
 	 *
 	 *              { item[map[i]] - item[map[i-1]]   where i > 0
-	 *    diff[i] = { 
+	 *    diff[i] = {
 	 *              { item[map[i]] - Z                where i = 0
 	 */
 	var $mDiffs;
@@ -379,7 +374,7 @@ class DiffHistoryBlob implements HistoryBlob {
 	 * The maximum number of text items before the object becomes sad
 	 */
 	var $mMaxCount = 100;
-	
+
 	/** Constants from xdiff.h */
 	const XDL_BDOP_INS = 1;
 	const XDL_BDOP_CPY = 2;
@@ -398,7 +393,7 @@ class DiffHistoryBlob implements HistoryBlob {
 	 */
 	function addItem( $text ) {
 		if ( $this->mFrozen ) {
-			throw new MWException( __METHOD__.": Cannot add more items after sleep/wakeup" );
+			throw new MWException( __METHOD__ . ": Cannot add more items after sleep/wakeup" );
 		}
 
 		$this->mItems[] = $text;
@@ -433,7 +428,7 @@ class DiffHistoryBlob implements HistoryBlob {
 	 * @throws MWException
 	 */
 	function compress() {
-		if ( !function_exists( 'xdiff_string_rabdiff' ) ){ 
+		if ( !function_exists( 'xdiff_string_rabdiff' ) ) {
 			throw new MWException( "Need xdiff 1.5+ support to write DiffHistoryBlob\n" );
 		}
 		if ( isset( $this->mDiffs ) ) {
@@ -534,18 +529,18 @@ class DiffHistoryBlob implements HistoryBlob {
 		# Pure PHP implementation
 
 		$header = unpack( 'Vofp/Vcsize', substr( $diff, 0, 8 ) );
-		
+
 		# Check the checksum if hash/mhash is available
 		$ofp = $this->xdiffAdler32( $base );
 		if ( $ofp !== false && $ofp !== substr( $diff, 0, 4 ) ) {
-			wfDebug( __METHOD__. ": incorrect base checksum\n" );
+			wfDebug( __METHOD__ . ": incorrect base checksum\n" );
 			return false;
 		}
 		if ( $header['csize'] != strlen( $base ) ) {
-			wfDebug( __METHOD__. ": incorrect base length\n" );
+			wfDebug( __METHOD__ . ": incorrect base length\n" );
 			return false;
 		}
-		
+
 		$p = 8;
 		$out = '';
 		while ( $p < strlen( $diff ) ) {
@@ -571,7 +566,7 @@ class DiffHistoryBlob implements HistoryBlob {
 				$out .= substr( $base, $x['off'], $x['csize'] );
 				break;
 			default:
-				wfDebug( __METHOD__.": invalid op\n" );
+				wfDebug( __METHOD__ . ": invalid op\n" );
 				return false;
 			}
 		}
@@ -579,7 +574,7 @@ class DiffHistoryBlob implements HistoryBlob {
 	}
 
 	/**
-	 * Compute a binary "Adler-32" checksum as defined by LibXDiff, i.e. with 
+	 * Compute a binary "Adler-32" checksum as defined by LibXDiff, i.e. with
 	 * the bytes backwards and initialised with 0 instead of 1. See bug 34428.
 	 *
 	 * Returns false if no hashing library is available
@@ -589,8 +584,8 @@ class DiffHistoryBlob implements HistoryBlob {
 		if ( $init === null ) {
 			$init = str_repeat( "\xf0", 205 ) . "\xee" . str_repeat( "\xf0", 67 ) . "\x02";
 		}
-		// The real Adler-32 checksum of $init is zero, so it initialises the 
-		// state to zero, as it is at the start of LibXDiff's checksum 
+		// The real Adler-32 checksum of $init is zero, so it initialises the
+		// state to zero, as it is at the start of LibXDiff's checksum
 		// algorithm. Appending the subject string then simulates LibXDiff.
 		if ( function_exists( 'hash' ) ) {
 			$hash = hash( 'adler32', $init . $s, true );
@@ -664,7 +659,7 @@ class DiffHistoryBlob implements HistoryBlob {
 		if ( isset( $info['base'] ) ) {
 			// Old format
 			$this->mDiffMap = range( 0, count( $this->mDiffs ) - 1 );
-			array_unshift( $this->mDiffs, 
+			array_unshift( $this->mDiffs,
 				pack( 'VVCV', 0, 0, self::XDL_BDOP_INSB, strlen( $info['base'] ) ) .
 				$info['base'] );
 		} else {
@@ -687,7 +682,7 @@ class DiffHistoryBlob implements HistoryBlob {
 	 * @return bool
 	 */
 	function isHappy() {
-		return $this->mSize < $this->mMaxSize 
+		return $this->mSize < $this->mMaxSize
 			&& count( $this->mItems ) < $this->mMaxCount;
 	}
 

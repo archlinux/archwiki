@@ -113,7 +113,7 @@ class SkinTemplate extends Skin {
 	 * roughly equivalent to PHPTAL 0.7.
 	 *
 	 * @param $classname String
-	 * @param $repository string: subdirectory where we keep template files
+	 * @param string $repository subdirectory where we keep template files
 	 * @param $cache_dir string
 	 * @return QuickTemplate
 	 * @private
@@ -169,7 +169,7 @@ class SkinTemplate extends Skin {
 			unset( $query['returnto'] );
 			unset( $query['returntoquery'] );
 		}
-		$this->thisquery = wfArrayToCGI( $query );
+		$this->thisquery = wfArrayToCgi( $query );
 		$this->loggedin = $user->isLoggedIn();
 		$this->username = $user->getName();
 
@@ -219,7 +219,7 @@ class SkinTemplate extends Skin {
 		if ( $subpagestr !== '' ) {
 			$subpagestr = '<span class="subpages">' . $subpagestr . '</span>';
 		}
-		$tpl->set( 'subtitle',  $subpagestr . $out->getSubtitle() );
+		$tpl->set( 'subtitle', $subpagestr . $out->getSubtitle() );
 
 		$undelete = $this->getUndeleteLink();
 		if ( $undelete === '' ) {
@@ -262,7 +262,7 @@ class SkinTemplate extends Skin {
 		$tpl->set( 'helppage', $this->msg( 'helppage' )->text() );
 		*/
 		$tpl->set( 'searchaction', $this->escapeSearchLink() );
-		$tpl->set( 'searchtitle', SpecialPage::getTitleFor( 'Search' )->getPrefixedDBKey() );
+		$tpl->set( 'searchtitle', SpecialPage::getTitleFor( 'Search' )->getPrefixedDBkey() );
 		$tpl->set( 'search', trim( $request->getVal( 'search' ) ) );
 		$tpl->setRef( 'stylepath', $wgStylePath );
 		$tpl->setRef( 'articlepath', $wgArticlePath );
@@ -273,7 +273,7 @@ class SkinTemplate extends Skin {
 
 		$userLang = $this->getLanguage();
 		$userLangCode = $userLang->getHtmlCode();
-		$userLangDir  = $userLang->getDir();
+		$userLangDir = $userLang->getDir();
 
 		$tpl->set( 'lang', $userLangCode );
 		$tpl->set( 'dir', $userLangDir );
@@ -398,12 +398,12 @@ class SkinTemplate extends Skin {
 		# not for special pages or file pages AND only when viewing AND if the page exists
 		# (or is in MW namespace, because that has default content)
 		if ( !in_array( $title->getNamespace(), array( NS_SPECIAL, NS_FILE ) ) &&
-			in_array( $request->getVal( 'action', 'view' ), array( 'view', 'historysubmit' ) ) &&
+			Action::getActionName( $this ) === 'view' &&
 			( $title->exists() || $title->getNamespace() == NS_MEDIAWIKI ) ) {
 			$pageLang = $title->getPageViewLanguage();
 			$realBodyAttribs['lang'] = $pageLang->getHtmlCode();
 			$realBodyAttribs['dir'] = $pageLang->getDir();
-			$realBodyAttribs['class'] = 'mw-content-'.$pageLang->getDir();
+			$realBodyAttribs['class'] = 'mw-content-' . $pageLang->getDir();
 		}
 
 		$out->mBodytext = Html::rawElement( 'div', $realBodyAttribs, $out->mBodytext );
@@ -413,25 +413,28 @@ class SkinTemplate extends Skin {
 		$language_urls = array();
 
 		if ( !$wgHideInterlanguageLinks ) {
-			foreach( $out->getLanguageLinks() as $l ) {
-				$tmp = explode( ':', $l, 2 );
-				$class = 'interwiki-' . $tmp[0];
-				unset( $tmp );
-				$nt = Title::newFromText( $l );
-				if ( $nt ) {
-					$ilLangName = Language::fetchLanguageName( $nt->getInterwiki() );
+			foreach( $out->getLanguageLinks() as $languageLinkText ) {
+				$languageLinkParts = explode( ':', $languageLinkText, 2 );
+				$class = 'interwiki-' . $languageLinkParts[0];
+				unset( $languageLinkParts );
+				$languageLinkTitle = Title::newFromText( $languageLinkText );
+				if ( $languageLinkTitle ) {
+					$ilInterwikiCode = $languageLinkTitle->getInterwiki();
+					$ilLangName = Language::fetchLanguageName( $ilInterwikiCode );
+
 					if ( strval( $ilLangName ) === '' ) {
-						$ilLangName = $l;
+						$ilLangName = $languageLinkText;
 					} else {
-						$ilLangName = $this->getLanguage()->ucfirst( $ilLangName );
+						$ilLangName = $this->formatLanguageName( $ilLangName );
 					}
+
 					$language_urls[] = array(
-						'href' => $nt->getFullURL(),
+						'href' => $languageLinkTitle->getFullURL(),
 						'text' => $ilLangName,
-						'title' => $nt->getText(),
+						'title' => $languageLinkTitle->getText(),
 						'class' => $class,
-						'lang' => $nt->getInterwiki(),
-						'hreflang' => $nt->getInterwiki(),
+						'lang' => $ilInterwikiCode,
+						'hreflang' => $ilInterwikiCode
 					);
 				}
 			}
@@ -499,6 +502,18 @@ class SkinTemplate extends Skin {
 	}
 
 	/**
+	 * Format language name for use in sidebar interlanguage links list.
+	 * By default it is capitalized.
+	 *
+	 * @param string $name Language name, e.g. "English" or "español"
+	 * @return string
+	 * @private
+	 */
+	function formatLanguageName( $name ) {
+		return $this->getLanguage()->ucfirst( $name );
+	}
+
+	/**
 	 * Output the string, or print error message if it's
 	 * an error object of the appropriate type.
 	 * For the base class, assume strings all around.
@@ -511,7 +526,7 @@ class SkinTemplate extends Skin {
 	}
 
 	/**
-	 * Output a boolean indiciating if buildPersonalUrls should output separate
+	 * Output a boolean indicating if buildPersonalUrls should output separate
 	 * login and create account links or output a combined link
 	 * By default we simply return a global config setting that affects most skins
 	 * This is setup as a method so that like with $wgLogo and getLogo() a skin
@@ -529,6 +544,8 @@ class SkinTemplate extends Skin {
 	 * @return array
 	 */
 	protected function buildPersonalUrls() {
+		global $wgSecureLogin;
+
 		$title = $this->getTitle();
 		$request = $this->getRequest();
 		$pageurl = $title->getLocalURL();
@@ -541,7 +558,11 @@ class SkinTemplate extends Skin {
 		# $this->getTitle() will just give Special:Badtitle, which is
 		# not especially useful as a returnto parameter. Use the title
 		# from the request instead, if there was one.
-		$page = Title::newFromURL( $request->getVal( 'title', '' ) );
+		if ( $this->getUser()->isAllowed( 'read' ) ) {
+			$page = $this->getTitle();
+		} else {
+			$page = Title::newFromText( $request->getVal( 'title', '' ) );
+		}
 		$page = $request->getVal( 'returnto', $page );
 		$a = array();
 		if ( strval( $page ) !== '' ) {
@@ -551,7 +572,12 @@ class SkinTemplate extends Skin {
 				$a['returntoquery'] = $query;
 			}
 		}
-		$returnto = wfArrayToCGI( $a );
+
+		if ( $wgSecureLogin && $request->detectProtocol() === 'https' ) {
+			$a['wpStickHTTPS'] = true;
+		}
+
+		$returnto = wfArrayToCgi( $a );
 		if( $this->loggedin ) {
 			$personal_urls['userpage'] = array(
 				'text' => $this->username,
@@ -620,7 +646,6 @@ class SkinTemplate extends Skin {
 			$is_signup = $request->getText( 'type' ) == 'signup';
 
 			# anonlogin & login are the same
-			global $wgSecureLogin;
 			$proto = $wgSecureLogin ? PROTO_HTTPS : null;
 
 			$login_id = $this->showIPinHeader() ? 'anonlogin' : 'login';
@@ -668,12 +693,14 @@ class SkinTemplate extends Skin {
 	}
 
 	/**
-	 * TODO document
-	 * @param  $title Title
-	 * @param  $message String message key
-	 * @param  $selected Bool
-	 * @param  $query String
-	 * @param  $checkEdit Bool
+	 * Builds an array with tab definition
+	 *
+	 * @param Title $title page where the tab links to
+	 * @param string|array $message message key or an array of message keys (will fall back)
+	 * @param boolean $selected display the tab as selected
+	 * @param string $query query string attached to tab URL
+	 * @param boolean $checkEdit check if $title exists and mark with .new if one doesn't
+	 *
 	 * @return array
 	 */
 	function tabAction( $title, $message, $selected, $query = '', $checkEdit = false ) {
@@ -683,7 +710,11 @@ class SkinTemplate extends Skin {
 		}
 		if( $checkEdit && !$title->isKnown() ) {
 			$classes[] = 'new';
-			$query = 'action=edit&redlink=1';
+			if ( $query !== '' ) {
+				$query = 'action=edit&redlink=1&' . $query;
+			} else {
+				$query = 'action=edit&redlink=1';
+			}
 		}
 
 		// wfMessageFallback will nicely accept $message as an array of fallbacks
@@ -748,7 +779,7 @@ class SkinTemplate extends Skin {
 	 * variants: Used to list the language variants for the page
 	 *
 	 * Each section's value is a key/value array of links for that section.
-	 * The links themseves have these common keys:
+	 * The links themselves have these common keys:
 	 * - class: The css classes to apply to the tab
 	 * - text: The text to display on the tab
 	 * - href: The href for the tab to point to
@@ -935,7 +966,7 @@ class SkinTemplate extends Skin {
 					}
 				}
 
-				if ( $title->getNamespace() !== NS_MEDIAWIKI && $title->quickUserCan( 'protect', $user ) ) {
+				if ( $title->getNamespace() !== NS_MEDIAWIKI && $title->quickUserCan( 'protect', $user ) && $title->getRestrictionTypes() ) {
 					$mode = $title->isProtected() ? 'unprotect' : 'protect';
 					$content_navigation['actions'][$mode] = array(
 						'class' => ( $onPage && $action == $mode ) ? 'selected' : false,
@@ -980,6 +1011,12 @@ class SkinTemplate extends Skin {
 					// Gets preferred variant (note that user preference is
 					// only possible for wiki content language variant)
 					$preferred = $pageLang->getPreferredVariant();
+					if ( Action::getActionName( $this ) === 'view' ) {
+						$params = $request->getQueryValues();
+						unset( $params['title'] );
+					} else {
+						$params = array();
+					}
 					// Loops over each variant
 					foreach( $variants as $code ) {
 						// Gets variant name from language code
@@ -993,7 +1030,7 @@ class SkinTemplate extends Skin {
 						$content_navigation['variants'][] = array(
 							'class' => ( $code == $preferred ) ? 'selected' : false,
 							'text' => $varname,
-							'href' => $title->getLocalURL( array( 'variant' => $code ) ),
+							'href' => $title->getLocalURL( array( 'variant' => $code ) + $params ),
 							'lang' => $code,
 							'hreflang' => $code
 						);
@@ -1014,7 +1051,7 @@ class SkinTemplate extends Skin {
 		}
 
 		// Equiv to SkinTemplateContentActions
-		wfRunHooks( 'SkinTemplateNavigation::Universal', array( &$this,  &$content_navigation ) );
+		wfRunHooks( 'SkinTemplateNavigation::Universal', array( &$this, &$content_navigation ) );
 
 		// Setup xml ids and tooltip info
 		foreach ( $content_navigation as $section => &$links ) {
@@ -1036,8 +1073,8 @@ class SkinTemplate extends Skin {
 		# We don't want to give the watch tab an accesskey if the
 		# page is being edited, because that conflicts with the
 		# accesskey on the watch checkbox.  We also don't want to
-		# give the edit tab an accesskey, because that's fairly su-
-		# perfluous and conflicts with an accesskey (Ctrl-E) often
+		# give the edit tab an accesskey, because that's fairly
+		# superfluous and conflicts with an accesskey (Ctrl-E) often
 		# used for editing in Safari.
 		if ( in_array( $action, array( 'edit', 'submit' ) ) ) {
 			if ( isset( $content_navigation['views']['edit'] ) ) {
@@ -1130,12 +1167,14 @@ class SkinTemplate extends Skin {
 
 		$nav_urls['print'] = false;
 		$nav_urls['permalink'] = false;
+		$nav_urls['info'] = false;
 		$nav_urls['whatlinkshere'] = false;
 		$nav_urls['recentchangeslinked'] = false;
 		$nav_urls['contributions'] = false;
 		$nav_urls['log'] = false;
 		$nav_urls['blockip'] = false;
 		$nav_urls['emailuser'] = false;
+		$nav_urls['userrights'] = false;
 
 		// A print stylesheet is attached to all pages, but nobody ever
 		// figures that out. :)  Add a link...
@@ -1166,6 +1205,12 @@ class SkinTemplate extends Skin {
 			$nav_urls['whatlinkshere'] = array(
 				'href' => SpecialPage::getTitleFor( 'Whatlinkshere', $this->thispage )->getLocalUrl()
 			);
+
+			$nav_urls['info'] = array(
+				'text' => $this->msg( 'pageinfo-toolboxlink' )->text(),
+				'href' => $this->getTitle()->getLocalURL( "action=info" )
+			);
+
 			if ( $this->getTitle()->getArticleID() ) {
 				$nav_urls['recentchangeslinked'] = array(
 					'href' => SpecialPage::getTitleFor( 'Recentchangeslinked', $this->thispage )->getLocalUrl()
@@ -1178,6 +1223,7 @@ class SkinTemplate extends Skin {
 			$rootUser = $user->getName();
 
 			$nav_urls['contributions'] = array(
+				'text' => $this->msg( 'contributions', $rootUser )->text(),
 				'href' => self::makeSpecialUrlSubpage( 'Contributions', $rootUser )
 			);
 
@@ -1194,6 +1240,13 @@ class SkinTemplate extends Skin {
 			if ( $this->showEmailUser( $user ) ) {
 				$nav_urls['emailuser'] = array(
 					'href' => self::makeSpecialUrlSubpage( 'Emailuser', $rootUser )
+				);
+			}
+
+			$sur = new UserrightsPage;
+			if ( $sur->userCanExecute( $this->getUser() ) ) {
+				$nav_urls['userrights'] = array(
+					'href' => self::makeSpecialUrlSubpage( 'Userrights', $rootUser )
 				);
 			}
 		}
@@ -1225,7 +1278,7 @@ abstract class QuickTemplate {
 	/**
 	 * Constructor
 	 */
-	public function QuickTemplate() {
+	function __construct() {
 		$this->data = array();
 		$this->translator = new MediaWiki_I18N();
 	}
@@ -1344,7 +1397,7 @@ abstract class BaseTemplate extends QuickTemplate {
 	/**
 	 * Get a Message object with its context set
 	 *
-	 * @param $name string message name
+	 * @param string $name message name
 	 * @return Message
 	 */
 	public function getMsg( $name ) {
@@ -1366,7 +1419,7 @@ abstract class BaseTemplate extends QuickTemplate {
 	/**
 	 * Create an array of common toolbox items from the data in the quicktemplate
 	 * stored by SkinTemplate.
-	 * The resulting array is built acording to a format intended to be passed
+	 * The resulting array is built according to a format intended to be passed
 	 * through makeListItem to generate the html.
 	 * @return array
 	 */
@@ -1394,7 +1447,7 @@ abstract class BaseTemplate extends QuickTemplate {
 				$toolbox['feeds']['links'][$key]['class'] = 'feedlink';
 			}
 		}
-		foreach ( array( 'contributions', 'log', 'blockip', 'emailuser', 'upload', 'specialpages' ) as $special ) {
+		foreach ( array( 'contributions', 'log', 'blockip', 'emailuser', 'userrights', 'upload', 'specialpages' ) as $special ) {
 			if ( isset( $this->data['nav_urls'][$special] ) && $this->data['nav_urls'][$special] ) {
 				$toolbox[$special] = $this->data['nav_urls'][$special];
 				$toolbox[$special]['id'] = "t-$special";
@@ -1417,6 +1470,11 @@ abstract class BaseTemplate extends QuickTemplate {
 				$toolbox['permalink']['id'] = 't-permalink';
 			}
 		}
+		if ( isset( $this->data['nav_urls']['info'] ) && $this->data['nav_urls']['info'] ) {
+			$toolbox['info'] = $this->data['nav_urls']['info'];
+			$toolbox['info']['id'] = 't-info';
+		}
+
 		wfRunHooks( 'BaseTemplateToolbox', array( &$this, &$toolbox ) );
 		wfProfileOut( __METHOD__ );
 		return $toolbox;
@@ -1425,7 +1483,7 @@ abstract class BaseTemplate extends QuickTemplate {
 	/**
 	 * Create an array of personal tools items from the data in the quicktemplate
 	 * stored by SkinTemplate.
-	 * The resulting array is built acording to a format intended to be passed
+	 * The resulting array is built according to a format intended to be passed
 	 * through makeListItem to generate the html.
 	 * This is in reality the same list as already stored in personal_urls
 	 * however it is reformatted so that you can just pass the individual items
@@ -1588,9 +1646,9 @@ abstract class BaseTemplate extends QuickTemplate {
 	 * Makes a link, usually used by makeListItem to generate a link for an item
 	 * in a list used in navigation lists, portlets, portals, sidebars, etc...
 	 *
-	 * @param $key string usually a key from the list you are generating this
+	 * @param string $key usually a key from the list you are generating this
 	 * link from.
-	 * @param $item array contains some of a specific set of keys.
+	 * @param array $item contains some of a specific set of keys.
 	 *
 	 * The text of the link will be generated either from the contents of the
 	 * "text" key in the $item array, if a "msg" key is present a message by
@@ -1607,7 +1665,7 @@ abstract class BaseTemplate extends QuickTemplate {
 	 *
 	 * If you don't want an accesskey, set $item['tooltiponly'] = true;
 	 *
-	 * @param $options array can be used to affect the output of a link.
+	 * @param array $options can be used to affect the output of a link.
 	 * Possible options are:
 	 *   - 'text-wrapper' key to specify a list of elements to wrap the text of
 	 *   a link in. This should be an array of arrays containing a 'tag' and
@@ -1720,7 +1778,7 @@ abstract class BaseTemplate extends QuickTemplate {
 			foreach ( array( 'id', 'class', 'active', 'tag' ) as $k ) {
 				unset( $link[$k] );
 			}
-			if ( isset( $item['id'] ) ) {
+			if ( isset( $item['id'] ) && !isset( $item['single-id'] ) ) {
 				// The id goes on the <li> not on the <a> for single links
 				// but makeSidebarLink still needs to know what id to use when
 				// generating tooltips and accesskeys.
@@ -1783,11 +1841,15 @@ abstract class BaseTemplate extends QuickTemplate {
 				);
 				unset( $buttonAttrs['src'] );
 				unset( $buttonAttrs['alt'] );
+				unset( $buttonAttrs['width'] );
+				unset( $buttonAttrs['height'] );
 				$imgAttrs = array(
 					'src' => $attrs['src'],
 					'alt' => isset( $attrs['alt'] )
 						? $attrs['alt']
 						: $this->translator->translate( 'searchbutton' ),
+					'width' => isset( $attrs['width'] ) ? $attrs['width'] : null,
+					'height' => isset( $attrs['height'] ) ? $attrs['height'] : null,
 				);
 				return Html::rawElement( 'button', $buttonAttrs, Html::element( 'img', $imgAttrs ) );
 			default:

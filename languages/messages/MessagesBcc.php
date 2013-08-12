@@ -16,6 +16,7 @@
 
 $fallback = 'fa';
 
+$rtl = true;
 
 $namespaceNames = array(
 	NS_MEDIA            => 'مدیا',
@@ -274,7 +275,6 @@ $messages = array(
 'qbbrowse' => 'بروز',
 'qbedit' => 'اصلاح',
 'qbpageoptions' => 'صفحه',
-'qbpageinfo' => 'متن',
 'qbmyoptions' => 'منی صفحات',
 'qbspecialpages' => 'حاصین صفحات',
 'faq' => 'ب.ج.س',
@@ -511,9 +511,6 @@ $2',
 
 شما تونیت چه {{SITENAME}} ناشناس استفاده کنیت یا شما تونیت دگه وراد بیت گون دگه یا هما کاربر.
 توجه بیت که لهتی صفحات شاید په داب هما وهدی که شما وراد بوتتیت پیش درگ بند تا وهدی که ذخیره بروزر وتی پاک کنیت.",
-'welcomecreation' => '== وش آتکی،$1! ==
-شمی حساب شر بیت.
- مه شموشیت وتی [[Special:Preferences|{{SITENAME}} ترجیحات]] ترجیحات عوض کنیت',
 'yourname' => 'نام کاربری',
 'yourpassword' => 'کلمه رمز',
 'yourpasswordagain' => 'کلمه رمز دگه نویس',
@@ -760,7 +757,6 @@ $2',
 'template-semiprotected' => '(نیم محافظتی)',
 'hiddencategories' => 'ای صفحه عضوی چه {{PLURAL:$1|1 hidden category|$1 پناهین دسته جات}}:',
 'edittools' => '<!-- <strong>په کپی و پست کتن چه CTRL+V , CTRL+C استفاده کنیت.</strong> -->',
-'nocreatetitle' => 'شرکتن صفحه محدودنت',
 'nocreatetext' => '{{SITENAME}} شما را چه شرکتن نوکین صفحه منه کته.
 شما تونیت برگردیت و یک پیشگین صفحه ای اصلاح کنیت، یا [[Special:UserLogin|وارد بیت یان یک حسابی شرکنیت]].',
 'nocreate-loggedin' => 'شما را اجازت په شرکتن نوکین صفحات نیست.',
@@ -1215,11 +1211,13 @@ $1",
 'right-siteadmin' => 'کبل و پچ دیتابیس',
 'right-override-export-depth' => 'درگیزگ صفحات گون صفحاتی لینک بوتگین ته سطح ۵',
 
+# Special:Log/newusers
+'newuserlogpage' => 'ورود شرکتن کاربر',
+'newuserlogpagetext' => '.شی یک ورودی چه شرکتن کاربر',
+
 # User rights log
 'rightslog' => 'ورودان حقوق کاربر',
 'rightslogtext' => 'شی یک آماری چه تغییرات په حقوق کاربری انت.',
-'rightslogentry' => 'عوض بوت عضویت گروهی په $1  چه $2 په $3',
-'rightsnone' => '(هچ یک)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'وانگ این صفحه',
@@ -1707,10 +1705,6 @@ PICT # misc.
 'activeusers-from' => 'پیشدار کاربرانی که شروع بنت گون :‌',
 'activeusers-noresult' => 'هچ کاربری درگیزگ نه بیت',
 
-# Special:Log/newusers
-'newuserlogpage' => 'ورود شرکتن کاربر',
-'newuserlogpagetext' => '.شی یک ورودی چه شرکتن کاربر',
-
 # Special:ListGroupRights
 'listgrouprights' => 'حقوق گروه کاربر',
 'listgrouprights-summary' => 'جهلیگین یک لیستی چه گروهان کاربری تعریف بوتگین ته ای ویکی انت گون آیانی حق دسترسی آن همراهنت.
@@ -1789,11 +1783,7 @@ PICT # misc.
 
 'enotif_mailer' => '{{SITENAME}} ایمیل دیم دهوک اخطاری',
 'enotif_reset' => 'نشان کن کل صفحات په داب چارتگین',
-'enotif_newpagetext' => 'شی یک نوکین صفحه ایت.',
 'enotif_impersonal_salutation' => '{{SITENAME}} کاربر',
-'changed' => 'عوض بوت.',
-'created' => 'شربوتت',
-'enotif_subject' => '{{SITENAME}} صفحه $PAGETITLE بوتت $CHANGEDORCREATED گون $PAGEEDITOR',
 'enotif_lastvisited' => 'بچار  $1 په کلین تغییرات چه شمی آهری چارگ.',
 'enotif_lastdiff' => 'بچار $1 په گندگ ای تغییر.',
 'enotif_anon_editor' => 'ناشناس کاربر $1',
@@ -1820,6 +1810,8 @@ $NEWPAGE
 
 نظرات و گیشترین کمک:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'شربوتت',
+'changed' => 'عوض بوت.',
 
 # Delete
 'deletepage' => 'حذف صفحه',
@@ -3128,6 +3120,6 @@ $5
 # New logging system
 'revdelete-restricted' => 'محدودیت آن په مدیران سیستم بوت',
 'revdelete-unrestricted' => 'به زور چه مدیران سیستم محدودیتان',
-'newuserlog-byemail' => 'کلمه رمز گون ایمیل دیم دهگ بوت',
+'rightsnone' => '(هچ یک)',
 
 );

@@ -62,12 +62,12 @@ abstract class DatabaseInstaller {
 	/**
 	 * Return the internal name, e.g. 'mysql', or 'sqlite'.
 	 */
-	public abstract function getName();
+	abstract public function getName();
 
 	/**
 	 * @return bool Returns true if the client library is compiled in.
 	 */
-	public abstract function isCompiled();
+	abstract public function isCompiled();
 
 	/**
 	 * Checks for installation prerequisites other than those checked by isCompiled()
@@ -85,7 +85,7 @@ abstract class DatabaseInstaller {
 	 *
 	 * If this is called, $this->parent can be assumed to be a WebInstaller.
 	 */
-	public abstract function getConnectForm();
+	abstract public function getConnectForm();
 
 	/**
 	 * Set variables based on the request array, assuming it was submitted
@@ -96,7 +96,7 @@ abstract class DatabaseInstaller {
 	 *
 	 * @return Status
 	 */
-	public abstract function submitConnectForm();
+	abstract public function submitConnectForm();
 
 	/**
 	 * Get HTML for a web form that retrieves settings used for installation.
@@ -127,7 +127,7 @@ abstract class DatabaseInstaller {
 	 *
 	 * @return Status
 	 */
-	public abstract function openConnection();
+	abstract public function openConnection();
 
 	/**
 	 * Create the database and return a Status object indicating success or
@@ -135,7 +135,7 @@ abstract class DatabaseInstaller {
 	 *
 	 * @return Status
 	 */
-	public abstract function setupDatabase();
+	abstract public function setupDatabase();
 
 	/**
 	 * Connect to the database using the administrative user/password currently
@@ -218,7 +218,7 @@ abstract class DatabaseInstaller {
 	 *
 	 * @return String
 	 */
-	public abstract function getLocalSettings();
+	abstract public function getLocalSettings();
 
 	/**
 	 * Override this to provide DBMS-specific schema variables, to be
@@ -240,7 +240,7 @@ abstract class DatabaseInstaller {
 		if ( $status->isOK() ) {
 			$status->value->setSchemaVars( $this->getSchemaVars() );
 		} else {
-			throw new MWException( __METHOD__.': unexpected DB connection error' );
+			throw new MWException( __METHOD__ . ': unexpected DB connection error' );
 		}
 	}
 
@@ -252,7 +252,7 @@ abstract class DatabaseInstaller {
 	public function enableLB() {
 		$status = $this->getConnection();
 		if ( !$status->isOK() ) {
-			throw new MWException( __METHOD__.': unexpected DB connection error' );
+			throw new MWException( __METHOD__ . ': unexpected DB connection error' );
 		}
 		LBFactory::setInstance( new LBFactory_Single( array(
 			'connection' => $status->value ) ) );
@@ -269,14 +269,15 @@ abstract class DatabaseInstaller {
 
 		$ret = true;
 		ob_start( array( $this, 'outputHandler' ) );
+		$up = DatabaseUpdater::newForDB( $this->db );
 		try {
-			$up = DatabaseUpdater::newForDB( $this->db );
 			$up->doUpdates();
 		} catch ( MWException $e ) {
 			echo "\nAn error occurred:\n";
 			echo $e->getText();
 			$ret = false;
 		}
+		$up->purgeCache();
 		ob_end_flush();
 		return $ret;
 	}
@@ -526,7 +527,7 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Get a standard web-user fieldset
-	 * @param $noCreateMsg String: Message to display instead of the creation checkbox.
+	 * @param string $noCreateMsg Message to display instead of the creation checkbox.
 	 *   Set this to false to show a creation checkbox.
 	 *
 	 * @return String

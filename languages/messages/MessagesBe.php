@@ -25,6 +25,42 @@
  * @author לערי ריינהארט
  */
 
+$namespaceNames = array(
+	NS_MEDIA            => 'Мультымедыя',
+	NS_SPECIAL          => 'Адмысловае',
+	NS_TALK             => 'Размовы',
+	NS_USER             => 'Удзельнік',
+	NS_USER_TALK        => 'Размовы_з_удзельнікам',
+	NS_PROJECT_TALK     => 'Размовы_пра_{{GRAMMAR:вінавальны|$1}}',
+	NS_FILE             => 'Файл',
+	NS_FILE_TALK        => 'Размовы_пра_файл',
+	NS_MEDIAWIKI        => 'MediaWiki',
+	NS_MEDIAWIKI_TALK   => 'Размовы_пра_MediaWiki',
+	NS_TEMPLATE         => 'Шаблон',
+	NS_TEMPLATE_TALK    => 'Размовы_пра_шаблон',
+	NS_HELP             => 'Даведка',
+	NS_HELP_TALK        => 'Размовы_пра_даведку',
+	NS_CATEGORY         => 'Катэгорыя',
+	NS_CATEGORY_TALK    => 'Размовы_пра_катэгорыю',
+);
+
+$namespaceAliases = array(
+	'$1_размовы' => NS_PROJECT_TALK,
+	'Выява' => NS_FILE,
+	'Размовы_пра_выяву' => NS_FILE_TALK,
+);
+
+$magicWords = array(
+	'img_thumbnail'             => array( '1', 'міні', 'мініяцюра', 'thumbnail', 'thumb' ),
+	'img_manualthumb'           => array( '1', 'міні=$1', 'мініяцюра=$1', 'thumbnail=$1', 'thumb=$1' ),
+	'img_right'                 => array( '1', 'справа', 'right' ),
+	'img_left'                  => array( '1', 'злева', 'left' ),
+	'img_none'                  => array( '1', 'няма', 'none' ),
+	'img_width'                 => array( '1', '$1пкс', '$1px' ),
+	'img_center'                => array( '1', 'цэнтр', 'center', 'centre' ),
+	'img_framed'                => array( '1', 'безрамкі', 'framed', 'enframed', 'frame' ),
+);
+
 $bookstoreList = array(
 	'OZ.by' => 'http://oz.by/search.phtml?what=books&isbn=$1',
 	'Amazon.com' => 'http://www.amazon.com/exec/obidos/ISBN=$1'
@@ -42,40 +78,6 @@ $dateFormats = array(
 	'dmy time' => 'H:i',
 	'dmy date' => 'j xg Y',
 	'dmy both' => 'H:i, j xg Y',
-);
-
-$namespaceNames = array(
-	NS_MEDIA            => 'Мультымедыя',
-	NS_SPECIAL          => 'Адмысловае',
-	NS_TALK             => 'Размовы',
-	NS_USER             => 'Удзельнік',
-	NS_USER_TALK        => 'Размовы_з_удзельнікам',
-	NS_PROJECT_TALK     => 'Размовы_пра_{{GRAMMAR:вінавальны|$1}}',
-	NS_FILE             => 'Выява',
-	NS_FILE_TALK        => 'Размовы_пра_выяву',
-	NS_MEDIAWIKI        => 'MediaWiki',
-	NS_MEDIAWIKI_TALK   => 'Размовы_пра_MediaWiki',
-	NS_TEMPLATE         => 'Шаблон',
-	NS_TEMPLATE_TALK    => 'Размовы_пра_шаблон',
-	NS_HELP             => 'Даведка',
-	NS_HELP_TALK        => 'Размовы_пра_даведку',
-	NS_CATEGORY         => 'Катэгорыя',
-	NS_CATEGORY_TALK    => 'Размовы_пра_катэгорыю',
-);
-
-$namespaceAliases = array(
-	'$1_размовы' => NS_PROJECT_TALK,
-);
-
-$magicWords = array(
-	'img_thumbnail'             => array( '1', 'міні', 'мініяцюра', 'thumbnail', 'thumb' ),
-	'img_manualthumb'           => array( '1', 'міні=$1', 'мініяцюра=$1', 'thumbnail=$1', 'thumb=$1' ),
-	'img_right'                 => array( '1', 'справа', 'right' ),
-	'img_left'                  => array( '1', 'злева', 'left' ),
-	'img_none'                  => array( '1', 'няма', 'none' ),
-	'img_width'                 => array( '1', '$1пкс', '$1px' ),
-	'img_center'                => array( '1', 'цэнтр', 'center', 'centre' ),
-	'img_framed'                => array( '1', 'безрамкі', 'framed', 'enframed', 'frame' ),
 );
 
 # Per discussion on http://translatewiki.net/wiki/Thread:Support/Customization_of number format
@@ -231,7 +233,6 @@ $messages = array(
 'qbbrowse' => 'Выбраць',
 'qbedit' => 'Правіць',
 'qbpageoptions' => 'Гэтая старонка',
-'qbpageinfo' => 'Кантэкст',
 'qbmyoptions' => 'Свае старонкі',
 'qbspecialpages' => 'Адмысловыя старонкі',
 'faq' => 'ЧАПЫ',
@@ -481,8 +482,10 @@ $2',
 # Login and logout pages
 'logouttext' => "'''Вы выйшлі з сістэмы.'''
 
-Можна працягваць працу на {{SITENAME}} ананімна, або можна [[Special:UserLogin|ўвайсці ў сістэму ізноў]], пад тым самым або пад іншым удзельніцкім імем. Заўважце, што некаторыя старонкі могуць паказвацца так, быццам вы яшчэ не выйшлі; у такім разе трэба ачысціць кэш вашага браўзера.",
-'welcomecreation' => '== Вітаем, $1! == Ваш  рахунак быў створаны. Не забудзьцеся дапасаваць свае [[Special:Preferences|{{SITENAME}} настáўленні]].',
+Можна працягваць працу на {{SITENAME}} ананімна, або можна <span class='plainlinks'>[$1 ўвайсці ў сістэму ізноў]</span>, пад тым самым або пад іншым удзельніцкім імем. Заўважце, што некаторыя старонкі могуць паказвацца так, быццам вы яшчэ не выйшлі; у такім разе трэба ачысціць кэш вашага браўзера.",
+'welcomeuser' => 'Вітаем, $1!',
+'welcomecreation-msg' => 'Ваш рахунак быў створаны.
+Не забудзьцеся дапасаваць [[Special:Preferences|персанальныя настаўленні]] для {{SITENAME}}.',
 'yourname' => 'Імя ўдзельніка',
 'yourpassword' => 'Пароль',
 'yourpasswordagain' => 'Паўтарыце пароль',
@@ -789,7 +792,6 @@ $2
 'template-protected' => '(ахоўваецца)',
 'template-semiprotected' => '(часткова ахоўвацца)',
 'hiddencategories' => 'Старонка належыць да {{PLURAL:$1|1 схаванай катэгорыі|$1 схаваных катэгорый}}:',
-'nocreatetitle' => 'Стварэнне старонак абмежавана',
 'nocreatetext' => 'На пляцоўцы {{SITENAME}} магчымасці стварэння новых старонак абмежаваныя.
 Вы можаце папрацаваць з існуючай старонкай, або [[Special:UserLogin|увайсці ў сістэму, або завесці сабе рахунак]].',
 'nocreate-loggedin' => 'Вам не дазволена ствараць новых старонак.',
@@ -1307,12 +1309,13 @@ $1",
 'right-sendemail' => 'Адправіць па электроннай пошце іншым карыстальнікам',
 'right-passwordreset' => 'прагляд электронных лістоў са змяненнем пароля',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Журнал рэгістрацыі ўдзельнікаў',
+'newuserlogpagetext' => 'Гэта журнал рэгістрацыі новых удзельнікаў.',
+
 # User rights log
 'rightslog' => 'Журнал правоў удзельнікаў',
 'rightslogtext' => 'Журнал змяненняў у дазволах, прыпісаных удзельнікам.',
-'rightslogentry' => 'зменена групавая прыналежнасць $1 з $2 на $3',
-'rightslogentry-autopromote' => 'быў аўтаматычна перакладзены з $2 да $3',
-'rightsnone' => '(няма)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'чытаць гэтую старонку',
@@ -1907,10 +1910,6 @@ $1',
 'activeusers-hidesysops' => 'Без адміністратараў',
 'activeusers-noresult' => 'Няма такіх удзельнікаў.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Журнал рэгістрацыі ўдзельнікаў',
-'newuserlogpagetext' => 'Гэта журнал рэгістрацыі новых удзельнікаў.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Дазволы для груп удзельнікаў',
 'listgrouprights-summary' => 'Гэты пералік вызначаных у гэтай вікі груп удзельнікаў, разам з прыпісанымі ім дазволамі.
@@ -2005,11 +2004,7 @@ $1',
 
 'enotif_mailer' => 'Апавяшчальнік {{SITENAME}}',
 'enotif_reset' => 'Пазначыць усе старонкі як наведаныя',
-'enotif_newpagetext' => 'Гэта новая старонка.',
 'enotif_impersonal_salutation' => 'Шаноўны ўдзельнік {{SITENAME}}',
-'changed' => 'зменена',
-'created' => 'створана',
-'enotif_subject' => 'Старонка {{SITENAME}} з назвай $PAGETITLE была $CHANGEDORCREATED удзельнікам $PAGEEDITOR',
 'enotif_lastvisited' => 'Гл. $1 каб бачыць усе мены пасля вашага апошняга наведвання.',
 'enotif_lastdiff' => 'Гл. $1 каб бачыць гэтую мену.',
 'enotif_anon_editor' => 'ананімны ўдзельнік $1',
@@ -2042,6 +2037,8 @@ $UNWATCHURL
 
 Зваротная сувязь і дапамога
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'створана',
+'changed' => 'зменена',
 
 # Delete
 'deletepage' => 'Сцерці старонку',
@@ -2603,7 +2600,6 @@ $1',
 
 # JavaScriptTest
 'javascripttest' => 'JavaScript-тэсты',
-'javascripttest-disabled' => 'Гэта функцыя выключаная.',
 'javascripttest-title' => 'Праводзіцца тэставанне $1',
 'javascripttest-pagetext-noframework' => 'Гэта старонка зарэзервавана для запуску тэстаў JavaScript',
 'javascripttest-pagetext-unknownframework' => 'Невядомая бібліятэка тэставання «$1».',
@@ -3531,7 +3527,7 @@ MediaWiki распаўсюджваецца, спадзеючыся на прыд
 'logentry-newusers-create' => '$1 стварыў уліковы запіс удзельніка',
 'logentry-newusers-create2' => '$1 стварыў уліковы запіс удзельніка $3',
 'logentry-newusers-autocreate' => 'Аўтаматычна створаны ўліковы запіс $1',
-'newuserlog-byemail' => 'пароль адасланы эл.поштай',
+'rightsnone' => '(няма)',
 
 # Feedback
 'feedback-bugornote' => 'Калі вы гатовыя падрабязна апісаць тэхнічную праблему, калі ласка, [$1 паведаміце пра памылку].

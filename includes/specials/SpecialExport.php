@@ -80,7 +80,7 @@ class SpecialExport extends SpecialPage {
 			$page = $request->getText( 'pages' );
 			$nsindex = $request->getText( 'nsindex', '' );
 
-			if ( strval( $nsindex ) !== ''  ) {
+			if ( strval( $nsindex ) !== '' ) {
 				/**
 				 * Same implementation as above, so same @todo
 				 */
@@ -124,7 +124,7 @@ class SpecialExport extends SpecialPage {
 			if ( $this->curonly ) {
 				$history = WikiExporter::CURRENT;
 			} elseif ( !$historyCheck ) {
-				if ( $limit > 0 && ($wgExportMaxHistory == 0 || $limit < $wgExportMaxHistory ) ) {
+				if ( $limit > 0 && ( $wgExportMaxHistory == 0 || $limit < $wgExportMaxHistory ) ) {
 					$history['limit'] = $limit;
 				}
 				if ( !is_null( $offset ) ) {
@@ -161,7 +161,7 @@ class SpecialExport extends SpecialPage {
 
 		$list_authors = $request->getCheck( 'listauthors' );
 		if ( !$this->curonly || !$wgExportAllowListContributors ) {
-			$list_authors = false ;
+			$list_authors = false;
 		}
 
 		if ( $this->doExport ) {
@@ -272,7 +272,7 @@ class SpecialExport extends SpecialPage {
 	/**
 	 * Do the actual page exporting
 	 *
-	 * @param $page String: user input on what page(s) to export
+	 * @param string $page user input on what page(s) to export
 	 * @param $history Mixed: one of the WikiExporter history export constants
 	 * @param $list_authors Boolean: Whether to add distinct author list (when
 	 *                      not returning full history)
@@ -286,7 +286,7 @@ class SpecialExport extends SpecialPage {
 		} else {
 
 			$pageSet = array(); // Inverted index of all pages to look up
-		
+
 			// Split up and normalize input
 			foreach( explode( "\n", $page ) as $pageName ) {
 				$pageName = trim( $pageName );
@@ -339,7 +339,7 @@ class SpecialExport extends SpecialPage {
 
 			// This might take a while... :D
 			wfSuppressWarnings();
-			set_time_limit(0);
+			set_time_limit( 0 );
 			wfRestoreWarnings();
 		}
 
@@ -405,7 +405,7 @@ class SpecialExport extends SpecialPage {
 
 		foreach ( $res as $row ) {
 			$n = $row->page_title;
-			if ($row->page_namespace) {
+			if ( $row->page_namespace ) {
 				$ns = $wgContLang->getNsText( $row->page_namespace );
 				$n = $ns . ':' . $n;
 			}
@@ -561,4 +561,7 @@ class SpecialExport extends SpecialPage {
 		return $pageSet;
 	}
 
+	protected function getGroupName() {
+		return 'pagetools';
+	}
 }

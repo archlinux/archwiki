@@ -331,6 +331,9 @@ Ná radbadal ák deskáne atíko matano.",
 
 'grouppage-sysop' => '{{ns:project}}:Amaldár ák',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Kárband joŕ kanning ná hisáb',
+
 # User rights log
 'rightslog' => 'Kárband hakk hisáb',
 
@@ -433,9 +436,6 @@ Ná radbadal ák deskáne atíko matano.",
 
 # Special:LinkSearch
 'linksearch' => 'Darí gańđ',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Kárband joŕ kanning ná hisáb',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(básk átá ridoband)',

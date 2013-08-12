@@ -84,7 +84,6 @@ $messages = array(
 
 # Cologne Blue skin
 'qbedit' => 'Editisar',
-'qbpageinfo' => 'Patrinyake janglimata',
 'qbspecialpages' => 'Uzalutne patrya',
 
 'errorpagetitle' => 'Dosh',
@@ -169,9 +168,6 @@ $messages = array(
 'logouttext' => "'''Akana san avryal i {{SITENAME}}.'''
 
 Shai te labyares {{SITENAME}} sar ekh bijanglo jeno vai shai te prinjares tut palem sar o jeno le kadale navesa vai le aver navesa.",
-'welcomecreation' => '== Mishto avilyan, $1! ==
-
-Akana si tuke ekh akont. Te na bistares te paruves, kana trebul tuke, tire kamimata kai {{SITENAME}}.',
 'yourname' => 'Tiro anav',
 'yourpassword' => 'O nakhavipnasko lav',
 'yourpasswordagain' => 'O nakhavipnasko lav de nevo',
@@ -391,7 +387,6 @@ Kana kamesa te khoses kadaya patrin andar tiri lista le patryange so arakhes len
 'wlnote' => 'Tele si le palutne $1 paruvimata ande palutne <b>$2</b> ore.',
 
 'enotif_reset' => 'Thov semno kai patrya so dikhlem',
-'enotif_newpagetext' => 'Kadaya si ek nevi patrin.',
 
 # Delete
 'deletepage' => 'Khos i patrin',

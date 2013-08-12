@@ -48,8 +48,7 @@ class SiteStats {
 			# Update schema
 			$u = new SiteStatsUpdate( 0, 0, 0 );
 			$u->doUpdate();
-			$dbr = wfGetDB( DB_SLAVE );
-			self::$row = $dbr->selectRow( 'site_stats', '*', false, __METHOD__ );
+			self::$row = self::doLoad( wfGetDB( DB_SLAVE ) );
 		}
 
 		self::$loaded = true;
@@ -91,7 +90,16 @@ class SiteStats {
 	 * @return Bool|ResultWrapper
 	 */
 	static function doLoad( $db ) {
-		return $db->selectRow( 'site_stats', '*', false, __METHOD__ );
+		return $db->selectRow( 'site_stats', array(
+				'ss_row_id',
+				'ss_total_views',
+				'ss_total_edits',
+				'ss_good_articles',
+				'ss_total_pages',
+				'ss_users',
+				'ss_active_users',
+				'ss_images',
+			), false, __METHOD__ );
 	}
 
 	/**
@@ -152,7 +160,7 @@ class SiteStats {
 
 	/**
 	 * Find the number of users in a given user group.
-	 * @param $group String: name of group
+	 * @param string $group name of group
 	 * @return Integer
 	 */
 	static function numberingroup( $group ) {
@@ -390,7 +398,7 @@ class SiteStatsUpdate implements DeferrableUpdate {
 
 	/**
 	 * @param $type string
-	 * @param $sign string ('+' or '-')
+	 * @param string $sign ('+' or '-')
 	 * @return string
 	 */
 	private function getTypeCacheKey( $type, $sign ) {
@@ -443,7 +451,7 @@ class SiteStatsUpdate implements DeferrableUpdate {
 
 	/**
 	 * Reduce pending delta counters after updates have been applied
-	 * @param Array $pd Result of getPendingDeltas(), used for DB update
+	 * @param array $pd Result of getPendingDeltas(), used for DB update
 	 * @return void
 	 */
 	protected function removePendingDeltas( array $pd ) {
@@ -566,7 +574,7 @@ class SiteStatsInit {
 	 * @param $database DatabaseBase|bool
 	 * - Boolean: whether to use the master DB
 	 * - DatabaseBase: database connection to use
-	 * @param $options Array of options, may contain the following values
+	 * @param array $options of options, may contain the following values
 	 * - update Boolean: whether to update the current stats (true) or write fresh (false) (default: false)
 	 * - views Boolean: when true, do not update the number of page views (default: true)
 	 * - activeUsers Boolean: whether to update the number of active users (default: false)

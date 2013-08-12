@@ -48,12 +48,20 @@ class ProfilerSimpleText extends ProfilerSimple {
 			$totalReal = isset( $this->mCollated['-total'] )
 				? $this->mCollated['-total']['real']
 				: 0; // profiling mismatch error?
-			uasort( $this->mCollated, array('self','sort') );
-			array_walk( $this->mCollated, array('self','format'), $totalReal );
-			if ( $this->visible ) {
-				print '<pre>'.self::$out.'</pre>';
-			} else {
+			uasort( $this->mCollated, array( 'self', 'sort' ) );
+			array_walk( $this->mCollated, array( 'self', 'format' ), $totalReal );
+			if ( PHP_SAPI === 'cli' ) {
 				print "<!--\n".self::$out."\n-->\n";
+			} elseif ( $this->getContentType() === 'text/html' ) {
+				if ( $this->visible ) {
+					print '<pre>'.self::$out.'</pre>';
+				} else {
+					print "<!--\n".self::$out."\n-->\n";
+				}
+			} elseif ( $this->getContentType() === 'text/javascript' ) {
+				print "\n/*\n".self::$out."*/\n";
+			} elseif ( $this->getContentType() === 'text/css' ) {
+				print "\n/*\n".self::$out."*/\n";
 			}
 		}
 	}

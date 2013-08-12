@@ -78,8 +78,14 @@ class PreprocessDump extends DumpIterator {
 	 * @param $rev Revision
 	 */
 	public function processRevision( $rev ) {
+		$content = $rev->getContent( Revision::RAW );
+
+		if ( $content->getModel() !== CONTENT_MODEL_WIKITEXT ) {
+			return;
+		}
+
 		try {
-			$this->mPreprocessor->preprocessToObj( $rev->getText(), 0 );
+			$this->mPreprocessor->preprocessToObj( strval( $content->getNativeData() ), 0 );
 		}
 		catch(Exception $e) {
 			$this->error("Caught exception " . $e->getMessage() . " in " . $rev->getTitle()->getPrefixedText() );
@@ -89,4 +95,3 @@ class PreprocessDump extends DumpIterator {
 
 $maintClass = "PreprocessDump";
 require_once( RUN_MAINTENANCE_IF_MAIN );
-

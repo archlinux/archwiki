@@ -18,9 +18,12 @@
 $rtl = true;
 
 $namespaceNames = array(
+	NS_MEDIA            => 'މީޑިއާ',
 	NS_SPECIAL          => 'ހާއްޞަ',
+	NS_MAIN             => '',
 	NS_TALK             => 'ޚިޔާލު',
 	NS_USER             => 'މެމްބަރު',
+	NS_USER_TALK        => 'މެމްބަރުގެ_ވާހަކަ',
 	NS_FILE             => 'ފައިލް',
 	NS_FILE_TALK        => 'ފައިލް_ޚިޔާލު',
 	NS_MEDIAWIKI        => 'މީޑިއާވިކީ',
@@ -302,8 +305,10 @@ $1',
 'ns-specialprotected' => 'ޚާއްސަ ޞަފްޙާތަކަށް އުނިއިތުރު ނުގެންނެވޭނެއެވެ.',
 
 # Login and logout pages
-'welcomecreation' => '== މަރުހަބާ، $1 ! ==
-ތިޔަބޭފުޅާގެ މެންބަރުޝިޕް ހެދިއްޖެއެވެ. ތިޔަ ބޭފުޅާގެ ވިކިޕީޑިއާގެ ތަރުޖީހުތައް ބަދަލުކުރައްވަން ހަނދުމަފުޅު ބަހައްޓަވާށެވެ.',
+'logouttext' => "'''ތިބޭފުޅާއަށް ބޭރަށް ވަޑައިގެންނެވިއްޖެ.'''
+
+ތިބޭފުޅާއަށް {{SITENAME}} ބޭނުންކުރެވޭނެއެވެ. ނަމަވެސް އެހެން މެމްބަރެއްގެ ގޮތުގައި <span class='plainlinks'>[$1 ވަދެވަޑައިގަނެވިދާނެއެވެ.]</span> ނުވަތަ ތި މެމްބަރުގެ ގޮތުގައި ވަދެވަޑައިގެންނެވޭނެއެވެ.",
+'welcomeuser' => 'މަރުޙަބާ،  $1!',
 'yourname' => 'މެންބަރުގެނަން',
 'yourpassword' => 'ސިއްރުބަސް',
 'yourpasswordagain' => 'ސިއްރުބަސް އަލުންލިޔުއްވާ',
@@ -359,6 +364,7 @@ $1',
 'changeemail-header' => 'އެކައުންޓްގެ އީމެއިލް އެޑްރެސް ބަދަލުކުރައްވާ',
 'changeemail-oldemail' => 'މިހާރު ބޭނުންކުރާ އީމެއިލް އެޑްރެސް:',
 'changeemail-newemail' => 'އައު އީމެއިލް އެޑްރެސް:',
+'changeemail-password' => 'ތިޔަބޭފުޅާގެ {{SITENAME}} ސިއްރުބަސް:',
 'changeemail-submit' => 'އީމެއިލް ބަދަލުކުރައްވާ',
 'changeemail-cancel' => 'މަންސޫޚް',
 
@@ -680,7 +686,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'blanknamespace' => '(މައި)',
 
 # Contributions
-'contributions' => 'މެންބަރު ގެ ހިއްސާ',
+'contributions' => '{{GENDER:$1|މެމްބަރުގެ}} ހިއްސާ',
 'mycontris' => 'މަގޭ ހިއްސާ',
 
 'sp-contributions-talk' => 'ވާހަކަ',
@@ -780,6 +786,9 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'tooltip-rollback' => '"ކުރީގެ ނުސްހާ އަކަށް ބަދަލުކުރައްވާ" އިން މި ޞަފްޙާއަށް އެންމެ ފަހުން އުނިއިތުރު ގެންނެވި މެމްބަރުގެ އުނިއިތުރު(އުނިއިތުރުތައް) ފޮހެލެވޭނެއެވެ.',
 'tooltip-undo' => '"ކުރީގެ ނުސްހާއަށް ބަދަލުކުރައްވާ" އިން މި ނުސްހާގެ ކުރީގައި އިން ނުސްހާއަށް ބަދަލުކޮށްދޭނެއެވެ. އަދި އުނިއިތުރުގެ ޚުލާސާ ލިޔުމުގެ ފުރުސަތު ދޭނެއެވެ.',
 'tooltip-summary' => 'ކުރު ޚުލާސާއެއް ލިޔުއްވާ',
+
+# Info page
+'pageinfo-toolboxlink' => 'ސަފްޙާ އާއި ބެހޭ މައުލޫމާތު',
 
 # Browsing diffs
 'previousdiff' => '→ ކުރީގެ ނުސްހާ',

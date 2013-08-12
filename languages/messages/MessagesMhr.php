@@ -615,6 +615,9 @@ $messages = array(
 'grouppage-bot' => '{{ns:project}}:Бот-влак',
 'grouppage-sysop' => '{{ns:project}}:Сайтвиктарыше-влак',
 
+# Special:Log/newusers
+'newuserlogpage' => 'У пайдаланыше регистрацийым эртарыме журнал',
+
 # User rights log
 'rightslog' => 'Пайдаланышын кертыж нерген журнал',
 
@@ -792,9 +795,6 @@ $messages = array(
 'activeusers-hidebots' => 'Бот-влакым шылташ',
 'activeusers-hidesysops' => 'Сайтвиктарыше-влакым шылташ',
 
-# Special:Log/newusers
-'newuserlogpage' => 'У пайдаланыше регистрацийым эртарыме журнал',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(тӱшкаште улшо-влак)',
 
@@ -820,8 +820,6 @@ $messages = array(
 # Displayed when you click the "watch" button and it is in the process of watching
 'watching' => 'Эскерымаш лӱмерыш ешарымаш...',
 'unwatching' => 'Эскерымаш лӱмер гыч шӧрымаш...',
-
-'enotif_newpagetext' => 'Тиде у лаштык.',
 
 # Delete
 'deletepage' => 'Лаштыкым шӧраш',

@@ -46,7 +46,7 @@ abstract class MediaHandler {
 	static function getHandler( $type ) {
 		global $wgMediaHandlers;
 		if ( !isset( $wgMediaHandlers[$type] ) ) {
-			wfDebug( __METHOD__ . ": no handler found for $type.\n");
+			wfDebug( __METHOD__ . ": no handler found for $type.\n" );
 			return false;
 		}
 		$class = $wgMediaHandlers[$type];
@@ -103,7 +103,7 @@ abstract class MediaHandler {
 	 * can't be determined.
 	 *
 	 * @param $image File: the image object, or false if there isn't one
-	 * @param $path String: the filename
+	 * @param string $path the filename
 	 * @return Array Follow the format of PHP getimagesize() internal function. See http://www.php.net/getimagesize
 	 */
 	abstract function getImageSize( $image, $path );
@@ -113,42 +113,42 @@ abstract class MediaHandler {
 	 *
 	 * @param $image File: the image object, or false if there isn't one.
 	 *   Warning, FSFile::getPropsFromPath might pass an (object)array() instead (!)
-	 * @param $path String: the filename
+	 * @param string $path the filename
 	 * @return String
 	 */
 	function getMetadata( $image, $path ) { return ''; }
 
 	/**
-	* Get metadata version.
-	*
-	* This is not used for validating metadata, this is used for the api when returning
-	* metadata, since api content formats should stay the same over time, and so things
-	* using ForiegnApiRepo can keep backwards compatibility
-	*
-	* All core media handlers share a common version number, and extensions can
-	* use the GetMetadataVersion hook to append to the array (they should append a unique
-	* string so not to get confusing). If there was a media handler named 'foo' with metadata
-	* version 3 it might add to the end of the array the element 'foo=3'. if the core metadata
-	* version is 2, the end version string would look like '2;foo=3'.
-	*
-	* @return string version string
-	*/
+	 * Get metadata version.
+	 *
+	 * This is not used for validating metadata, this is used for the api when returning
+	 * metadata, since api content formats should stay the same over time, and so things
+	 * using ForiegnApiRepo can keep backwards compatibility
+	 *
+	 * All core media handlers share a common version number, and extensions can
+	 * use the GetMetadataVersion hook to append to the array (they should append a unique
+	 * string so not to get confusing). If there was a media handler named 'foo' with metadata
+	 * version 3 it might add to the end of the array the element 'foo=3'. if the core metadata
+	 * version is 2, the end version string would look like '2;foo=3'.
+	 *
+	 * @return string version string
+	 */
 	static function getMetadataVersion () {
 		$version = Array( '2' ); // core metadata version
-		wfRunHooks('GetMetadataVersion', Array(&$version));
+		wfRunHooks( 'GetMetadataVersion', Array( &$version ) );
 		return implode( ';', $version);
-	 }
+	}
 
 	/**
-	* Convert metadata version.
-	*
-	* By default just returns $metadata, but can be used to allow
-	* media handlers to convert between metadata versions.
-	*
-	* @param $metadata Mixed String or Array metadata array (serialized if string)
-	* @param $version Integer target version
-	* @return Array serialized metadata in specified version, or $metadata on fail.
-	*/
+	 * Convert metadata version.
+	 *
+	 * By default just returns $metadata, but can be used to allow
+	 * media handlers to convert between metadata versions.
+	 *
+	 * @param $metadata Mixed String or Array metadata array (serialized if string)
+	 * @param $version Integer target version
+	 * @return Array serialized metadata in specified version, or $metadata on fail.
+	 */
 	function convertMetadataVersion( $metadata, $version = 1 ) {
 		if ( !is_array( $metadata ) ) {
 
@@ -181,7 +181,6 @@ abstract class MediaHandler {
 		return self::METADATA_GOOD;
 	}
 
-
 	/**
 	 * Get a MediaTransformOutput object representing an alternate of the transformed
 	 * output which will call an intermediary thumbnail assist script.
@@ -200,9 +199,9 @@ abstract class MediaHandler {
 	 * actually do the transform.
 	 *
 	 * @param $image File: the image object
-	 * @param $dstPath String: filesystem destination path
-	 * @param $dstUrl String: Destination URL to use in output HTML
-	 * @param $params Array: Arbitrary set of parameters validated by $this->validateParam()
+	 * @param string $dstPath filesystem destination path
+	 * @param string $dstUrl Destination URL to use in output HTML
+	 * @param array $params Arbitrary set of parameters validated by $this->validateParam()
 	 * @return MediaTransformOutput
 	 */
 	final function getTransform( $image, $dstPath, $dstUrl, $params ) {
@@ -214,9 +213,9 @@ abstract class MediaHandler {
 	 * transform unless $flags contains self::TRANSFORM_LATER.
 	 *
 	 * @param $image File: the image object
-	 * @param $dstPath String: filesystem destination path
-	 * @param $dstUrl String: destination URL to use in output HTML
-	 * @param $params Array: arbitrary set of parameters validated by $this->validateParam()
+	 * @param string $dstPath filesystem destination path
+	 * @param string $dstUrl destination URL to use in output HTML
+	 * @param array $params arbitrary set of parameters validated by $this->validateParam()
 	 * @param $flags Integer: a bitfield, may contain self::TRANSFORM_LATER
 	 *
 	 * @return MediaTransformOutput
@@ -241,6 +240,15 @@ abstract class MediaHandler {
 		// The extension is correct (true) or the mime type is unknown to
 		// MediaWiki (null)
 		return array( $ext, $mime );
+	}
+
+	/**
+	 * Get useful response headers for GET/HEAD requests for a file with the given metadata
+	 * @param $metadata mixed Result of the getMetadata() function of this handler for a file
+	 * @return Array
+	 */
+	public function getStreamHeaders( $metadata ) {
+		return array();
 	}
 
 	/**
@@ -352,11 +360,11 @@ abstract class MediaHandler {
 	 *
 	 * This is used by the media handlers that use the FormatMetadata class
 	 *
-	 * @param $metadataArray Array metadata array
+	 * @param array $metadataArray metadata array
 	 * @return array for use displaying metadata.
 	 */
 	function formatMetadataHelper( $metadataArray ) {
-		 $result = array(
+		$result = array(
 			'visible' => array(),
 			'collapsed' => array()
 		);
@@ -396,7 +404,6 @@ abstract class MediaHandler {
 		return $fields;
 	}
 
-
 	/**
 	 * This is used to generate an array element for each metadata value
 	 * That array is then used to generate the table of metadata values
@@ -405,17 +412,17 @@ abstract class MediaHandler {
 	 * @param &$array Array An array containing elements for each type of visibility
 	 * and each of those elements being an array of metadata items. This function adds
 	 * a value to that array.
-	 * @param $visibility string ('visible' or 'collapsed') if this value is hidden
+	 * @param string $visibility ('visible' or 'collapsed') if this value is hidden
 	 * by default.
-	 * @param $type String type of metadata tag (currently always 'exif')
-	 * @param $id String the name of the metadata tag (like 'artist' for example).
+	 * @param string $type type of metadata tag (currently always 'exif')
+	 * @param string $id the name of the metadata tag (like 'artist' for example).
 	 * its name in the table displayed is the message "$type-$id" (Ex exif-artist ).
-	 * @param $value String thingy goes into a wikitext table; it used to be escaped but
+	 * @param string $value thingy goes into a wikitext table; it used to be escaped but
 	 * that was incompatible with previous practise of customized display
 	 * with wikitext formatting via messages such as 'exif-model-value'.
 	 * So the escaping is taken back out, but generally this seems a confusing
 	 * interface.
-	 * @param $param String value to pass to the message for the name of the field
+	 * @param string $param value to pass to the message for the name of the field
 	 * as $1. Currently this parameter doesn't seem to ever be used.
 	 *
 	 * Note, everything here is passed through the parser later on (!)
@@ -512,7 +519,7 @@ abstract class MediaHandler {
 	 * match the handler class, a Status object should be returned containing
 	 * relevant errors.
 	 *
-	 * @param $fileName string The local path to the file.
+	 * @param string $fileName The local path to the file.
 	 * @return Status object
 	 */
 	function verifyUpload( $fileName ) {
@@ -523,8 +530,8 @@ abstract class MediaHandler {
 	 * Check for zero-sized thumbnails. These can be generated when
 	 * no disk space is available or some other error occurs
 	 *
-	 * @param $dstPath string The location of the suspect file
-	 * @param $retval int Return value of some shell process, file will be deleted if this is non-zero
+	 * @param string $dstPath The location of the suspect file
+	 * @param int $retval Return value of some shell process, file will be deleted if this is non-zero
 	 * @return bool True if removed, false otherwise
 	 */
 	function removeBadFile( $dstPath, $retval = 0 ) {
@@ -556,5 +563,14 @@ abstract class MediaHandler {
 	 */
 	public function filterThumbnailPurgeList( &$files, $options ) {
 		// Do nothing
+	}
+
+	/*
+	 * True if the handler can rotate the media
+	 * @since 1.21
+	 * @return bool
+	 */
+	public static function canRotate() {
+		return false;
 	}
 }

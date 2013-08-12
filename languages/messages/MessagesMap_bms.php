@@ -160,7 +160,6 @@ $messages = array(
 'qbbrowse' => 'Jelajahi',
 'qbedit' => 'Sunting',
 'qbpageoptions' => 'Kaca kiye',
-'qbpageinfo' => 'Konteks kaca',
 'qbmyoptions' => 'Kaca-ne inyong',
 'qbspecialpages' => 'Kaca-kaca astamiwa',
 'faq' => 'FAQ (Pitakonan sing sering ditakokna)',
@@ -183,6 +182,7 @@ $messages = array(
 'namespaces' => 'Bilik jeneng',
 'variants' => 'Varian',
 
+'navigation-heading' => 'Menu navigasi',
 'errorpagetitle' => 'Kasalahan',
 'returnto' => 'Bali maring $1.',
 'tagline' => 'Sekang {{SITENAME}}',
@@ -414,11 +414,8 @@ Alesane yakuwe "\'\'$2\'\'".',
 # Login and logout pages
 'logouttext' => "'''Rika uwis metu log sekang sistem.'''
 
-Rika teyeng terus nggunakna {{SITENAME}} kanthi anonim, utawa Rika teyeng [[Special:UserLogin|mlebu log maning]] nganggo jeneng panganggo sing padha utawa sejene.
+Rika teyeng terus nggunakna {{SITENAME}} kanthi anonim, utawa Rika teyeng <span class='plainlinks'>[$1 mlebu log maning]</span> nganggo jeneng panganggo sing padha utawa sejene.
 Digatekna ya, nek ana kaca sing esih terus nidokna nek rika esih mlebu log nnganti Rika mbusak singgahan nang panjelajah web-e Rika.",
-'welcomecreation' => '== Sugeng rawuh, $1! ==
-
-Akun Rika uwis digawe. Aja kelalen nata konfigurasi [[Special:Preferences|preferensi {{SITENAME}}]] Rika.',
 'yourname' => 'Jeneng panganggo:',
 'yourpassword' => 'Tembung sandhi:',
 'yourpasswordagain' => 'Balèni tembung sandhi:',
@@ -676,7 +673,6 @@ Entri cathetan pungkasan disadiakna nang ngisor kanggo referensi:",
 'template-protected' => '(direksa)',
 'template-semiprotected' => '(semi-pangreksan)',
 'hiddencategories' => 'Kaca kiye kuwe anggota sekang {{PLURAL:$1|1 kategori sing diumpetna|$1 kategori-kategori sing diumpetna}}:',
-'nocreatetitle' => 'Panggawéan kaca anyar diwatesi',
 'nocreatetext' => '{{SITENAME}} wis mbatesi panggawean kaca anyar.
 Rika teyeng mbalik lan nyunting kaca sing wis ana, utawa [[Special:UserLogin|mlebu utawa gawe akun]]',
 'nocreate-loggedin' => 'Rika ora duwe hak akses nggo gawe kaca anyar.',
@@ -1146,12 +1142,12 @@ Aja kuatir, alamat imele Rika ora ditidokna dong pangganggo sejen ngontak Rika.'
 'right-override-export-depth' => "Ekspor kaca sisan karo kaca sing kagandheng gutul lapisan (''depth'') kaping 5",
 'right-sendemail' => 'Ngirim imel maring panganggo liyane',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Log panganggo anyar',
+
 # User rights log
 'rightslog' => 'Log pangowahan hak akses panganggo',
 'rightslogtext' => 'Kiye log pangowahan maring hak-hak panganggo.',
-'rightslogentry' => 'Ngganti kaanggotaan kelompok nggo $1 sekang $2 dadi $3',
-'rightslogentry-autopromote' => 'otomatis dipromosikna sekang $2 dadi $3',
-'rightsnone' => '(ora ana)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'maca kaca kiye',
@@ -1455,9 +1451,6 @@ Rika teyeng mbatesi tampilan kanthi milih jinis log, jeneng panganggo (sensitif 
 # Special:LinkSearch
 'linksearch-line' => '$1 duwe pranala sekang  $2',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Log panganggo anyar',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(daftar anggota)',
 
@@ -1581,7 +1574,7 @@ Rika teyeng ngowaih tingkat pangreksan nggo kaca kiye, ningen perkara iku ora aw
 'blanknamespace' => '(Utama)',
 
 # Contributions
-'contributions' => 'Tulisan anggota',
+'contributions' => 'Kontribusi {{GENDER:$1|panganggo}}',
 'contributions-title' => 'Kontribusi panganggo kanggo $1',
 'mycontris' => 'Kontribusi',
 'contribsub2' => 'Kanggo $1 ($2)',
@@ -1819,5 +1812,8 @@ Sing liyane bakal diumpetna sacara ''default''.
 
 # Special:Tags
 'tag-filter' => 'Filter [[Special:Tags|Tag]]:',
+
+# New logging system
+'rightsnone' => '(ora ana)',
 
 );

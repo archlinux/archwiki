@@ -43,7 +43,7 @@
 # Variables / Configuration
 #
 
-if ( php_sapi_name() != 'cli' ) {
+if ( PHP_SAPI != 'cli' ) {
 	echo 'Run "' . __FILE__ . '" from the command line.';
 	die( -1 );
 }
@@ -116,8 +116,7 @@ function readaline( $prompt = '' ) {
  * @param $doxyGenerateMan Boolean
  * @return string
  */
-function generateConfigFile( $doxygenTemplate, $outputDirectory, $stripFromPath, $currentVersion, $input, $exclude, $excludePatterns, $doxyGenerateMan ) {
-	global $doxygenInputFilter;
+function generateConfigFile( $doxygenTemplate, $outputDirectory, $stripFromPath, $currentVersion, $input, $exclude, $excludePatterns, $doxyGenerateMan, $doxygenInputFilter ) {
 
 	$template = file_get_contents( $doxygenTemplate );
 	// Replace template placeholders by correct values.
@@ -134,7 +133,7 @@ function generateConfigFile( $doxygenTemplate, $outputDirectory, $stripFromPath,
 	);
 	$tmpCfg = str_replace( array_keys( $replacements ), array_values( $replacements ), $template );
 	$tmpFileName = tempnam( wfTempDir(), 'mwdocgen-' );
-	file_put_contents( $tmpFileName , $tmpCfg ) or die( "Could not write doxygen configuration to file $tmpFileName\n" );
+	file_put_contents( $tmpFileName, $tmpCfg ) or die( "Could not write doxygen configuration to file $tmpFileName\n" );
 
 	return $tmpFileName;
 }
@@ -248,7 +247,7 @@ case 6:
 $excludedPaths = $mwPath . join( " $mwPath", $mwExcludePaths );
 print "EXCLUDE: $excludedPaths\n\n";
 
-$generatedConf = generateConfigFile( $doxygenTemplate, $doxyOutput, $mwPath, $doxyVersion, $input, $excludedPaths, $excludePatterns, $doxyGenerateMan );
+$generatedConf = generateConfigFile( $doxygenTemplate, $doxyOutput, $mwPath, $doxyVersion, $input, $excludedPaths, $excludePatterns, $doxyGenerateMan, $doxygenInputFilter );
 $command = $doxygenBin . ' ' . $generatedConf;
 
 echo <<<TEXT
@@ -261,7 +260,8 @@ $command
 
 TEXT;
 
-passthru( $command );
+$exitcode = 1;
+passthru( $command, $exitcode );
 
 echo <<<TEXT
 ---------------------------------------------------
@@ -271,3 +271,5 @@ Check above for possible errors.
 You might want to delete the temporary file $generatedConf
 
 TEXT;
+
+exit( $exitcode );

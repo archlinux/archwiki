@@ -76,6 +76,7 @@
  * @author Meno25
  * @author Metalhead64
  * @author MichaelFrey
+ * @author Mido
  * @author Mihai
  * @author Minh Nguyen
  * @author Mormegil
@@ -91,6 +92,7 @@
  * @author Octahedron80
  * @author Od1n
  * @author Onecountry
+ * @author Opraco
  * @author OsamaK
  * @author PhiLiP
  * @author Piangpha
@@ -131,6 +133,7 @@
  * @author Usarker
  * @author Verdy p
  * @author Vinhtantran
+ * @author Vivaelcelta
  * @author Waldir
  * @author Whym
  * @author Yekrats
@@ -367,6 +370,11 @@ Message shown below the edit form, and if you click on it, you stop with editing
 
 Similar to {{msg-mw|morenotlisted}}.
 {{Identical|More...}}',
+'morenotlisted' => 'An indication that more of a templates list is not shown.
+
+Used as "More..." link for {{msg-mw|pageinfo-templates}} field.
+
+Similar to {{msg-mw|moredotdotdot}}.',
 'mypage' => "A text for the link to the user's user page in the links at the top of the page.
 {{Identical|Page}}",
 'mytalk' => 'In the personal URLs page section - right upper corner.
@@ -435,6 +443,7 @@ This can also appear in the credits page if the credits feature is enabled,for e
 'namespaces' => '{{Identical|Namespace}}',
 'variants' => 'Used by the Vector skin.',
 
+'navigation-heading' => 'Heading shown above the navigation menu (sidebar) for screen-readers (or in non-standard skins).',
 'errorpagetitle' => 'Message shown in browser title bar when encountering error operation.
 
 {{Identical|Error}}',
@@ -1026,8 +1035,10 @@ Parameters:
 'virus-unknownscanner' => 'Used as error message. This message is followed by the virus scanner name.',
 
 # Login and logout pages
-'logouttext' => 'Log out message',
-'welcomecreation' => 'The welcome message users see after registering a user account. $1 is the username of the new user.',
+'logouttext' => 'Log out message. Parameters:
+* $1 - an URL to [[Special:Userlogin]] containing <code>returnto</code> and <code>returntoquery</code> parameters',
+'welcomeuser' => 'Text for a welcome heading that users see after registering a user account. $1 is the username of the new user. See [[bugzilla:42215]]',
+'welcomecreation-msg' => 'A welcome message users see after registering a user account, following a welcomeuser heading. $1 is the username of the new user. Replaces welcomecreation in 1.21wmf5,see [[bugzilla:42215]]',
 'yourname' => "{{doc-important|<nowiki>{{</nowiki>[[Gender|GENDER]]<nowiki>}}</nowiki> is '''NOT''' supported.}}
 In user preferences.
 {{Identical|Username}}",
@@ -1087,7 +1098,9 @@ It is also used on the top of the page for logged out users, where it appears ne
 'gotaccountlink' => 'Text of the link to the log in form. Before that link, the message {{msg-mw|Gotaccount}} appears.
 {{Identical|Log in}}',
 'userlogin-resetlink' => 'Used on the login page.',
-'createaccountmail' => 'Button text for creating a new account and sending the new password to the specified e-mail address directly, as used on [[Special:UserLogin/signup]] if creating accounts by e-mail is allowed.',
+'createaccountmail' => 'Used as label for the checkbox for creating a new account and sending the new password to the specified e-mail address directly, as used on [[Special:UserLogin/signup]] if creating accounts by e-mail is allowed.
+
+See example: [{{canonicalurl:Special:UserLogin|type=signup&useNew=1}} Special:UserLogin?type=signup&useNew=1]',
 'createaccountreason' => '{{Identical|Reason}}',
 'badretype' => 'Used as error message when the new password and its retype do not match.',
 'userexists' => 'Used as error message in creating a user account.',
@@ -1186,6 +1199,7 @@ See also:
 # Email sending
 'php-mail-error-unknown' => 'Used as error message when <code>mail()</code> returned empty error message.',
 'user-mail-no-addy' => 'This is the error message in case an e-mail could not be sent because there was no e-mail address to send it to.',
+'user-mail-no-body' => 'This is the error message in case an e-mail has an empty or unreasonably short body',
 
 # Change password dialog
 'resetpass' => 'The caption of [[Special:ChangePassword]]
@@ -1270,6 +1284,7 @@ See also:
 'changeemail-none' => "Probably appears in 'Current E-mail address' field when no address held, in [[Special:ChangeEmail]].
 
 {{Identical|None}}",
+'changeemail-password' => 'Label for password field in [[Special:ChangeEmail]].',
 'changeemail-submit' => 'Submit button on [[Special:ChangeEmail]]',
 'changeemail-cancel' => 'Cancel button on [[Special:ChangeEmail]]
 
@@ -1584,6 +1599,36 @@ See also:
 * {{msg-mw|edit-conflict}}
 * {{msg-mw|edit-no-change}}',
 'defaultmessagetext' => 'Caption above the default message text shown on the left-hand side of a diff displayed after clicking "Show changes" when creating a new page in the MediaWiki: namespace',
+'content-failed-to-parse' => "Error message indicating that the page's content can not be saved because it is syntactically invalid. This may occurr for content types using serialization or a strict markup syntax.
+*$1 – content model ({{msg-mw|Content-model-wikitext}}, {{msg-mw|Content-model-javascript}}, {{msg-mw|Content-model-css}} or {{msg-mw|Content-model-text}})
+*$2 – content format as MIME type (e.g. <tt>text/css</tt>)
+*$3 – specific error message",
+'invalid-content-data' => "Error message indicating that the page's content can not be saved because it is invalid. This may occurr for content types with internal consistency constraints.",
+'content-not-allowed-here' => 'Error message indicating that the desired content model is not supported in given localtion.
+* $1 - the human readable name of the content model: {{msg-mw|Content-model-wikitext}}, {{msg-mw|Content-model-javascript}}, {{msg-mw|Content-model-css}} or {{msg-mw|Content-model-text}}
+* $2 - the title of the page in question',
+
+# Content models
+'content-model-wikitext' => 'Name for the wikitext content model, used when decribing what type of content a page contains.
+
+This message is substituted in:
+*{{msg-mw|Bad-target-model}}
+*{{msg-mw|Content-not-allowed-here}}',
+'content-model-text' => 'Name for the plain text content model, used when decribing what type of content a page contains.
+
+This message is substituted in:
+*{{msg-mw|Bad-target-model}}
+*{{msg-mw|Content-not-allowed-here}}',
+'content-model-javascript' => 'Name for the JavaScript content model, used when decribing what type of content a page contains.
+
+This message is substituted in:
+*{{msg-mw|Bad-target-model}}
+*{{msg-mw|Content-not-allowed-here}}',
+'content-model-css' => 'Name for the CSS content model, used when decribing what type of content a page contains.
+
+This message is substituted in:
+*{{msg-mw|Bad-target-model}}
+*{{msg-mw|Content-not-allowed-here}}',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'On some (expensive) [[MetaWikipedia:Help:ParserFunctions|parser functions]] (e.g. <code><nowiki>{{#ifexist:}}</nowiki></code>) there is a limit of how many times it may be used. This is an error message shown when the limit is exceeded.
@@ -2432,9 +2477,13 @@ This option lets your time zone setting use the one that is used on the wiki (of
 Also used on create account form.
 
 {{Identical|E-mail}}',
-'username' => '{{Identical|Username}}',
-'uid' => '{{Identical|User ID}}',
-'prefs-memberingroups' => 'This message is shown on [[Special:Preferences]], first tab. See also {{msg-mw|prefs-memberingroups-type}}.',
+'username' => 'Username field in [[Special:Preferences]]. $1 is the current user name for GENDER distinction (depends on sex setting).
+
+{{Identical|Username}}',
+'uid' => 'User ID field in [[Special:Preferences]]. $1 is the current user name for GENDER distinction (depends on sex setting).
+
+{{Identical|User ID}}',
+'prefs-memberingroups' => 'This message is shown on [[Special:Preferences]], first tab. See also {{msg-mw|prefs-memberingroups-type}}. $2 is the user name for GENDER.',
 'prefs-memberingroups-type' => '{{optional}}
 Parameters:
 * $1 is list of group names
@@ -2551,6 +2600,10 @@ Parameters:
 Parameters
 * $1 - the number of items in the list following the message, for PLURAL
 * $2 - the user name, for GENDER',
+'userrights-groupsmember-type' => '{{optional}}
+Parameters:
+* $1 is list of group names.
+* $2 is list of group member names. Used with labels {{msg-mw|userrights-groupsmember}} and {{msg-mw|userrights-groupsmember-auto}}',
 'userrights-groups-help' => 'Instructions displayed on [[Special:UserRights]]. Parameters:
 * $1 is a username - optional, can be used for GENDER',
 'userrights-reason' => 'Text beside log field when editing user groups
@@ -2744,27 +2797,17 @@ The rate limits have no effect on the groups that have this right. Rate limits i
 'right-sendemail' => '{{doc-right|sendemail}}',
 'right-passwordreset' => '{{doc-right|passwordreset}}',
 
+# Special:Log/newusers
+'newuserlogpage' => '{{doc-logpage}}
+
+Part of the "Newuserlog" extension. It is both the title of [[Special:Log/newusers]] and the link you can see in [[Special:RecentChanges]].',
+'newuserlogpagetext' => 'Part of the "Newuserlog" extension. It is the description you can see on [[Special:Log/newusers]].',
+
 # User rights log
 'rightslog' => '{{doc-logpage}}
 
 In [[Special:Log]]',
 'rightslogtext' => 'Text in [[Special:Log/rights]].',
-'rightslogentry' => 'This message is displayed in the [[Special:Log/rights|User Rights Log]] when a bureaucrat changes the user groups for a user.
-
-* Parameter $1 is the username
-* Parameters $2 and $3 are lists of user groups or {{msg-mw|Rightsnone}}
-
-The name of the bureaucrat who did this task appears before this message.
-
-Similar to {{msg-mw|Gur-rightslog-entry}}',
-'rightslogentry-autopromote' => 'This message is displayed in the [[Special:Log/rights|User Rights Log]] when a user is automatically promoted to a user group.
-
-Parameters:
-* $2 is a comma separated list of old user groups or {{msg-mw|Rightsnone}}
-* $3 is a comma separated list of new user groups',
-'rightsnone' => 'Default rights for registered users.
-
-{{Identical|None}}',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => '{{Doc-action|read}}',
@@ -3391,6 +3434,8 @@ See also:
 * $1 is a storage path.',
 'backend-fail-delete' => 'Parameters:
 * $1 is a file path.',
+'backend-fail-describe' => 'Parameters:
+* $1 is a file path.',
 'backend-fail-alreadyexists' => 'Parameters:
 * $1 is a filename.',
 'backend-fail-store' => 'Parameters:
@@ -3875,6 +3920,16 @@ This block of text is shown on [[:Special:Disambiguations]].
 
 \'\'\'Background information:\'\'\' Beyond telling about links going to disambiguation pages, that they are generally bad, it should explain which pages in the article namespace are seen as disambiguations: [[MediaWiki:Disambiguationspage]] usually holds a list of disambiguation templates of the local wiki. Pages linking to one of them (by transclusion) will count as disambiguation pages. Pages linking to these disambiguation pages, instead to the disambiguated article itself, are listed on [[:Special:Disambiguations]].',
 
+'pageswithprop' => '{{doc-special|PagesWithProp}}
+{{Identical|Page with page property}}',
+'pageswithprop-legend' => 'Legend for the input form on [[Special:PagesWithProp]].
+{{Identical|Page with page property}}',
+'pageswithprop-text' => 'Introductory text for the input form on [[Special:PagesWithProp]]',
+'pageswithprop-prop' => 'Label for the property name input field on [[Special:PagesWithProp]].
+{{Identical|Property name}}',
+'pageswithprop-submit' => 'Label for the submit button on [[Special:PagesWithProp]].
+{{Identical|Go}}',
+
 'doubleredirects' => '{{doc-special|DoubleRedirects}}',
 'doubleredirectstext' => 'Shown on top of [[Special:Doubleredirects]]',
 'double-redirect-fixed-move' => 'This is the message in the log when the software (under the username {{msg|double-redirect-fixer}}) updates the redirects after a page move. See also {{msg|fix-double-redirects}}.',
@@ -4170,12 +4225,6 @@ See also:
 * {{msg-mw|activeusers-hidebots|label for checkbox}}',
 'activeusers-noresult' => 'identical with {{msg-mw|listusers-noresult}}',
 
-# Special:Log/newusers
-'newuserlogpage' => '{{doc-logpage}}
-
-Part of the "Newuserlog" extension. It is both the title of [[Special:Log/newusers]] and the link you can see in [[Special:RecentChanges]].',
-'newuserlogpagetext' => 'Part of the "Newuserlog" extension. It is the description you can see on [[Special:Log/newusers]].',
-
 # Special:ListGroupRights
 'listgrouprights' => 'The name of the special page [[Special:ListGroupRights]].',
 'listgrouprights-summary' => 'The description used on [[Special:ListGroupRights]].',
@@ -4414,17 +4463,39 @@ See also:
 * {{msg-mw|Watchlist-options|fieldset}}
 * {{msg-mw|Watchlist-details|watchlist header}}
 * {{msg-mw|Wlheader-enotif|watchlist header}}",
-'enotif_newpagetext' => 'Part of text of a notification e-mail sent when a watched page has been created. See [[MediaWiki:Enotif body]] and screenshot [[File:Screenshot_MediaWiki_e-mail_notifier.PNG|150px|right]]',
 'enotif_impersonal_salutation' => 'Used for impersonal e-mail notifications, suitable for bulk mailing.',
-'changed' => '{{Optional}}
-Possible value for $CHANGEDORCREATED in the following messages:
-* {{msg|enotif_subject}}
-* {{msg|enotif_body}}',
-'created' => '{{Optional}}
-Possible value for $CHANGEDORCREATED in the following messages:
-* {{msg-mw|enotif_subject}}
-* {{msg-mw|enotif_body}}',
-'enotif_subject' => '$CHANGEDORCREATED can be one of {{msg|changed}} and {{msg|created}}. Can also be {{msg-wikia|blog-added}} or {{msg-wikia|blog-edited}} from Wikia.',
+'enotif_subject_deleted' => 'Email notification subject for deleted pages,
+* $1 - page title
+* $2 - page editor',
+'enotif_subject_created' => 'Email notification subject for new pages,
+* $1 - page title
+* $2 - page editor',
+'enotif_subject_moved' => 'Email notification subject for pages that get moved,
+* $1 - page title
+* $2 - page editor',
+'enotif_subject_restored' => 'Email notification subject for pages that get restored,
+* $1 - page title
+* $2 - page editor',
+'enotif_subject_changed' => 'Email notification subject for pages that get changed.
+* $1 - page title
+* $2 - page editor',
+'enotif_body_intro_deleted' => 'Email notification body intro text for deleted pages.
+* $1 - the page title
+* $2 - the page editor
+* $3 - page URL',
+'enotif_body_intro_created' => 'Email notification body intro text for new pages.
+* $1 - the page title
+* $2 - the page editor
+* $3 - page URL',
+'enotif_body_intro_moved' => 'Email notification body intro for pages that get moved.
+* $1 - the page title
+* $2 - the page editor
+* $3 - page URL',
+'enotif_body_intro_restored' => 'Email notification body intro for pages that get restored.
+* $1 - the page title
+* $2 - the page editor
+* $3 - page URL',
+'enotif_body_intro_changed' => 'Email notification body intro for pages that get changed, $1 is the page title, $2 is the page editor, $3 is page url.',
 'enotif_lastvisited' => '$1 is a URL address.',
 'enotif_lastdiff' => 'E-mail notification text to the latest page differences. Parameters:
 * $1 is a link to a diff, shown as a plain link.',
@@ -4432,7 +4503,36 @@ Possible value for $CHANGEDORCREATED in the following messages:
 * $1 is the anonymous user name (i.e. an IP address).',
 'enotif_body' => 'Text of a notification e-mail sent when a watched page has been edited or deleted.[[File:Screenshot_MediaWiki_e-mail_notifier.PNG|150px|right]]
 
-* <tt>$CHANGEDORCREATED</tt> can be one of {{msg-mw|changed}}, {{msg-mw|created}}, or {{msg-mw|deleted}}. Can also be {{msg-wikia|blog-added}} or {{msg-wikia|blog-edited}} from Wikia.',
+*$WATCHINGUSERNAME is the username of the user receiving the notification.
+*$PAGEINTRO is the first line of the message, saying what happened. It currently can be either of:
+**{{msg-mw|enotif body intro deleted}}
+**{{msg-mw|enotif body intro created}}
+**{{msg-mw|enotif body intro moved}}
+**{{msg-mw|enotif body intro restored}}
+**{{msg-mw|enotif body intro changed}} (for all the other cases).
+*$NEWPAGE consists of either
+**if the page is new (in older releases), {{msg-mw|enotif newpagetext}}
+**if the page has a previous revision,
+***{{msg-mw|enotif lastdiff}}
+***a newline
+***{{msg-mw|enotif lastvisited}}
+*$PAGEEDITOR_EMAIL and $PAGEEDITOR_WIKI are links respectively to the e-mail user special page and user page for the user who performed the action.
+*$PAGEEDITOR is the username of the user who performed the action.
+
+The subject of the e-mail is one of the following messages:
+*{{msg-mw|enotif subject deleted}}
+*{{msg-mw|enotif subject created}}
+*{{msg-mw|enotif subject moved}}
+*{{msg-mw|enotif subject restored}}
+*{{msg-mw|enotif subject changed}}',
+'created' => '{{Optional}}
+Possible value for $CHANGEDORCREATED in the following messages:
+* {{msg-mw|enotif_subject}}
+* {{msg-mw|enotif_body}}',
+'changed' => '{{Optional}}
+Possible value for $CHANGEDORCREATED in the following messages:
+* {{msg|enotif_subject}}
+* {{msg|enotif_body}}',
 
 # Delete
 'deletepage' => 'Used as Submit button text.
@@ -4564,6 +4664,8 @@ Example:
 'prot_1movedto2' => 'Message description: [[mw:Manual:Interface/1movedto2]]',
 'protect-badnamespace-title' => 'Title of error page when trying to access action=protect on a non-protectable namespace (currently this only for the MediaWiki: namespace).',
 'protect-badnamespace-text' => 'Content of the error page that goes with {{msg-mw|protect-badnamespace-title}}.',
+'protect-norestrictiontypes-text' => "Content of the error page in case there aren't any restriction types (like edit or create) available.",
+'protect-norestrictiontypes-title' => "Page title in case there aren't any restriction types (like edit or create) available ($1 represents the page title).",
 'protect-legend' => 'Legend of the fieldset around the input form of the protection form.',
 'protectcomment' => '{{Identical|Reason}}',
 'protectexpiry' => '{{Identical|Expires}}',
@@ -4591,6 +4693,11 @@ See example: {{canonicalurl:Main_Page|action=info}}',
 'protect-level-sysop' => 'Used as protect level.
 
 See example: {{canonicalurl:Main_Page|action=info}}',
+'protect-summary-desc' => '{{Optional}}
+Used in edit summary for description of a protecting restriction.
+* $1 is action, taken from restriction-*
+* $2 is restriction, taken from protect-level-*
+* $3 is {{msg-mw|protect-expiring}} or {{msg-mw|protect-expiry-indefinite}}',
 'protect-summary-cascade' => 'Used in edit summary when cascade protecting a page. Appears in protection log. See [[Special:Log]] and [[m:Special:Log]].
 
 Also used in [[Special:ProtectedPages]] when a page is cascade protected. See example: [[m:Special:ProtectedPages]].<br />
@@ -4743,7 +4850,8 @@ See also:
 See also:
 * {{msg-mw|Undeletedrevisions-files}}
 * {{msg-mw|Undeletedrevisions}}',
-'cannotundelete' => 'Used as error message in [[Special:Undelete]].',
+'cannotundelete' => 'Message shown when undeletion failed for some reason. Parameters:
+* $1 - the combined wikitext of messages for all errors that caused the failure',
 'undeletedpage' => '* $1 - page title',
 'undelete-header' => 'Used in [[Special:Undelete]].',
 'undelete-search-title' => 'Page title when showing the search form in [[Special:Undelete]].
@@ -4818,7 +4926,12 @@ This message has a tooltip {{msg-mw|tooltip-namespace association}}',
 'blanknamespace' => 'Name for main namespace (blank namespace) in drop-down menus at [[Special:RecentChanges]] and other special pages.',
 
 # Contributions
-'contributions' => "Display name for the 'User contributions', shown in the sidebar menu of all user pages and user talk pages. Also the page name of the target page. The target page shows an overview of the most recent contributions by a user.",
+'contributions' => "Display name for the 'User contributions', shown in the sidebar menu of all user pages and user talk pages. Also the page name of the target page. The target page shows an overview of the most recent contributions by a user.
+
+See also:
+* {{msg-mw|Contributions}}
+* {{msg-mw|Accesskey-t-contributions}}
+* {{msg-mw|Tooltip-t-contributions}}",
 'contributions-title' => 'The page title in your browser bar, but not the page title. See also {{msg|contributions}}. Parameter $1 is the username.
 
 {{Gender}}',
@@ -5730,6 +5843,14 @@ See also:
 * {{msg-mw|Immobile-source-page}}
 * {{msg-mw|Immobile-target-namespace}}
 * {{msg-mw|Immobile-target-page}}',
+'bad-target-model' => 'This message is shown when attempting to move a page, but the move would change the page\'s content model.
+This may be the case when [[mw:Manual:$wgContentHandlerUseDB|$wgContentHandlerUseDB]] is set to false, because then a page\'s content model is derived from the page\'s title.
+
+Parameters:
+* $1 - The localized name of the original page\'s content model:
+**{{msg-mw|Content-model-wikitext}}, {{msg-mw|Content-model-javascript}}, {{msg-mw|Content-model-css}} or {{msg-mw|Content-model-text}}
+* $2 - The localized name of the content model used by the destination title:
+**{{msg-mw|Content-model-wikitext}}, {{msg-mw|Content-model-javascript}}, {{msg-mw|Content-model-css}} or {{msg-mw|Content-model-text}}',
 'imagenocrossnamespace' => 'Used as error message.
 
 See also:
@@ -6052,6 +6173,15 @@ See also:
 'import-error-interwiki' => '* $1 - page title',
 'import-error-special' => '* $1 - page title',
 'import-error-invalid' => '* $1 - page title',
+'import-error-unserialize' => 'Import error message displayed when a revision could not be unserialized.
+
+This may happen if the content got corrupted or the serialization format is mis-reported.
+
+Parameters:
+* $1 - the name of the page the offending revision belongs to
+* $2 - the ID of the offending revision, as reported in the dump that is being imported
+* $3 - the content model reported for the offending revision in the dump that is being imported
+* $4 - the serialization format reported for the offending revision in the dump that is being imported',
 'import-options-wrong' => 'Used on [[Special:Import]], when one of the options has an error.',
 'import-rootpage-invalid' => 'Used on [[Special:Import]], when the root page is invalid.',
 'import-rootpage-nosubpage' => 'Used on [[Special:Import]], when the import namespace does not support subpages. Parameters:
@@ -6074,7 +6204,6 @@ See also:
 * {{msg-mw|Javascripttest|title}}
 * {{msg-mw|Javascripttest-pagetext-noframework|summary}}
 * {{msg-mw|Javascripttest-pagetext-unknownframework|error message}}',
-'javascripttest-disabled' => 'Message displayed on [[Special:JavaScriptTest]] if this feature is disabled (it is disabled by default).',
 'javascripttest-title' => 'Title of the special page when running a test suite. Parameters:
 * $1 is the name of the framework, for example QUnit.',
 'javascripttest-pagetext-noframework' => 'Used as summary when no framework specified.
@@ -6647,6 +6776,7 @@ See also:
 'pageinfo-default-sort' => 'The key by which the page is sorted in categories by default.',
 'pageinfo-length' => 'The length of the page, in bytes.',
 'pageinfo-article-id' => 'The numeric identifier of the page.',
+'pageinfo-language' => 'Language in which the page content is written.',
 'pageinfo-robot-policy' => 'The search engine status of the page.
 *{{msg-mw|Pageinfo-robot-index}}
 *{{msg-mw|Pageinfo-robot-noindex}}',
@@ -6654,6 +6784,7 @@ See also:
 'pageinfo-robot-noindex' => 'An indication that the page is not indexable (that is, is not listed on the results page of a search engine).',
 'pageinfo-views' => 'The number of times the page has been viewed.',
 'pageinfo-watchers' => 'The number of users watching the page.',
+'pageinfo-few-watchers' => 'Message displayed when there are fewer than $wgUnwatchedPageThreshold watchers. $1 is the value of $wgUnwatchedPageThreshold.',
 'pageinfo-redirects-name' => "The number of redirects to the page.
 
 Used as link text, linked to '{{int:Whatlinkshere-title}}' page ([[Special:WhatLinksHere]]).",
@@ -6685,6 +6816,33 @@ This message is followed by the total number of times the page has been edited.'
 * $1 is the number of templates transcluded within the current page.
 See also:
 * {{msg-mw|Pageinfo-transclusions}}',
+'pageinfo-transclusions' => 'The list of pages on which this page is transcluded. Parameters:
+* $1 is the number of pages the current page is transcluded on.
+See also:
+* {{msg-mw|Pageinfo-templates}}',
+'pageinfo-toolboxlink' => "Information link for the page (like 'What links here', but to action=info for the current page instead)",
+'pageinfo-redirectsto' => 'Key for the row shown if this page is a redirect. Verb. See [{{canonicalurl:w:Main_page|action=info}} example].',
+'pageinfo-redirectsto-info' => 'Text to put in parentheses for the link to the action=info of the redirect target.
+{{Identical|Info}}',
+'pageinfo-contentpage' => 'Key for the row shown on [{{fullurl:News|action=info}} action=info] if this page is [[mw:Manual:Article count|counted as a content page]]',
+'pageinfo-contentpage-yes' => 'Yes, this page is a content page',
+'pageinfo-protect-cascading' => 'Key for the row which shows whether this page has cascading protection enabled
+*{{msg-mw|Pageinfo-protect-cascading}}
+*{{msg-mw|Pageinfo-protect-cascading-yes}}',
+'pageinfo-protect-cascading-yes' => 'Yes, protections are cascading from here
+*{{msg-mw|Pageinfo-protect-cascading}}
+*{{msg-mw|Pageinfo-protect-cascading-yes}}',
+'pageinfo-protect-cascading-from' => 'Key for a list of pages where protections are cascading from',
+'pageinfo-category-info' => 'Showed on the page displaying information about the current page (add "?action=info" to the URL)',
+'pageinfo-category-pages' => 'See also:
+* {{msg-mw|Pageinfo-category-subcats}}
+* {{msg-mw|Pageinfo-category-files}}',
+'pageinfo-category-subcats' => 'See also:
+* {{msg-mw|Pageinfo-category-pages}}
+* {{msg-mw|Pageinfo-category-files}}',
+'pageinfo-category-files' => 'See also:
+* {{msg-mw|Pageinfo-category-pages}}
+* {{msg-mw|Pageinfo-category-subcats}}',
 
 # Skin names
 'skinname-standard' => '{{optional}}
@@ -6730,6 +6888,14 @@ The title for this error message is {{msg-mw|Markedaspatrollederror}}.
 
 The title for this error message is {{msg-mw|Markedaspatrollederror}}.
 {{Related|Markedaspatrolled}}',
+'markedaspatrollednotify' => 'Notification shown after the user has marked a change as patrolled successfully. Parameters:
+* $1 - the page title
+See also:
+* {{msg-mw|Markedaspatrollederrornotify}} - error message on failure',
+'markedaspatrollederrornotify' => 'Notification shown after the user has failed to mark a change as patrolled.
+
+See also:
+* {{msg-mw|Markedaspatrollednotify}} - notification on success',
 
 # Patrol log
 'patrol-log-page' => '{{doc-logpage}}',
@@ -6807,6 +6973,10 @@ Start with a lowercase letter, unless the first word is "SVG".',
 * $2 - the height in pixels
 * $3 - the file size including a unit (for example "10 KB")
 Non-animated images use {{msg-mw|svg-long-desc}}.',
+'svg-long-error' => 'Displayed for invalid SVG file metadata. Parameters:
+* $1 - the error message
+See also:
+* {{msg-mw|Thumbnail error}}',
 'show-big-image' => 'Displayed under an image at the image description page, when it is displayed smaller there than it was uploaded.',
 'show-big-image-preview' => 'Message shown under the image description page thumbnail, next to {{msg-mw|show-big-image-other}}.',
 'show-big-image-other' => 'Message shown under the image description page thumbnail, next to {{msg-mw|show-big-image-preview}}, if the image is in high resolution.',
@@ -6888,6 +7058,12 @@ See also {{msg-mw|Days-abbrev}}
 
 Part of variable $1 in {{msg-mw|Ago}}
 {{Identical|Day}}',
+'months' => 'Full word for "months". $1 is the number of months.
+
+Part of variable $1 in {{msg-mw|Ago}}',
+'years' => 'Full word for "years". $1 is the number of years.
+
+Part of variable $1 in {{msg-mw|Ago}}',
 'ago' => 'Phrase for indicating how long ago something happened. $1 is something like "3 days 10 hours", taken from these messages:
 *{{msg-mw|Seconds}}
 *{{msg-mw|Minutes}}
@@ -6895,6 +7071,7 @@ Part of variable $1 in {{msg-mw|Ago}}
 *{{msg-mw|Days}}
 *{{msg-mw|Months}}
 *{{msg-mw|Years}}',
+'just-now' => 'Phrase for indicating something happened just now.',
 
 # Bad image list
 'bad_image_list' => 'This message only appears to guide administrators to add links with the right format. This will not appear anywhere else in MediaWiki.',
@@ -7943,6 +8120,10 @@ See also [[MediaWiki:Confirmemail_body_changed]].
 
 * {{msg-mw|Scarytranscludefailed}}
 * {{msg-mw|Scarytranscludefailed-httpstatus}}',
+'scarytranscludefailed-httpstatus' => 'Identical to {{msg-mw|scarytranscludefailed}}, but shows the HTTP error which was received.
+
+* {{msg-mw|Scarytranscludefailed}}
+* {{msg-mw|Scarytranscludefailed-httpstatus}}',
 'scarytranscludetoolong' => 'The URL was too long.',
 
 # Delete conflict
@@ -8308,6 +8489,7 @@ This is being used in [[Special:Version]], preceeding the subversion revision nu
 * $1 - the current year
 * $2 - a list of selected MediaWiki authors',
 'version-poweredby-others' => 'Used at the very end of {{msg-mw|version-poweredby-credits}} on [[Special:Version]]. First, there\'s a long list of selected MediaWiki authors, then the word "and" (from {{msg-mw|and}}) follows and then this translation, which is supposed to credit the many other people than developer helping with MediaWiki.',
+'version-credits-summary' => 'Summary of the [[Special:Version/Credits]] sub page, which lists all developers etc. who contributed to MediaWiki. Shown at the top.',
 'version-license-info' => '[[wikipedia:GNU GPL|GNU GPL]] notice shown at [[Special:Version]]. See //www.gnu.org/licenses/old-licenses/gpl-2.0-translations.html for available translations.',
 'version-software' => 'Message shown on [[Special:Version]].
 This message is followed by the list of installed software (MediaWiki, PHP and MySQL).',
@@ -8522,17 +8704,17 @@ Parameters:
 * $1 - version',
 
 # New logging system
-'logentry-delete-delete' => '{{Logentry}}',
-'logentry-delete-restore' => '{{Logentry}}',
-'logentry-delete-event' => '{{Logentry}}
+'logentry-delete-delete' => '{{Logentry|[[Special:Log/delete]]}}',
+'logentry-delete-restore' => '{{Logentry|[[Special:Log/delete]]}}',
+'logentry-delete-event' => '{{Logentry|[[Special:Log/delete]]}}
 {{Logentryparam}}
-* $3 is the name of the log page inside parenthesis',
-'logentry-delete-revision' => '{{Logentry}}
+* $3 - the name of the log page inside parenthesis',
+'logentry-delete-revision' => '{{Logentry|[[Special:Log/delete]]}}
 {{Logentryparam}}
-* $5 is the number of affected revisions of the page $3.',
-'logentry-delete-event-legacy' => '{{Logentry}}
-$3 is the name of the log page inside parenthesis',
-'logentry-delete-revision-legacy' => '{{Logentry}}',
+* $5 - the number of affected revisions of the page $3.',
+'logentry-delete-event-legacy' => '{{Logentry|[[Special:Log/delete]]}}
+* $3 - the name of the log page inside parenthesis',
+'logentry-delete-revision-legacy' => '{{Logentry|[[Special:Log/delete]]}}',
 'logentry-suppress-delete' => "{{Logentry}}
 
 'Hid' is a possible alternative to 'suppressed' in this message.",
@@ -8541,7 +8723,7 @@ $3 is the name of the log page inside parenthesis',
 $3 is the name of the log page inside parenthesis',
 'logentry-suppress-revision' => '{{Logentry}}
 {{Logentryparam}}
-* $5 is the number of affected revisions of the page $3.',
+* $5 - the number of affected revisions of the page $3.',
 'logentry-suppress-event-legacy' => '{{Logentry}}
 $3 is the name of the log page inside parenthesis',
 'logentry-suppress-revision-legacy' => '{{Logentry}}',
@@ -8585,31 +8767,54 @@ $3 is the name of the log page inside parenthesis',
 * {{msg-mw|logentry-delete-revision}}
 * {{msg-mw|logentry-suppress-event}}
 * {{msg-mw|logentry-suppress-event}}',
-'logentry-move-move' => '{{Logentry}}
+'logentry-move-move' => '{{Logentry|[[Special:Log/move]]}}
 Parameter $4, the target page, is also not visible to parser functions.',
-'logentry-move-move-noredirect' => '{{Logentry}}
+'logentry-move-move-noredirect' => '{{Logentry|[[Special:Log/move]]}}
 Parameter $4, the target page, is also not visible to parser functions.',
-'logentry-move-move_redir' => '{{Logentry}}
+'logentry-move-move_redir' => '{{Logentry|[[Special:Log/move]]}}
 Parameter $4, the target page, is also not visible to parser functions.',
-'logentry-move-move_redir-noredirect' => '{{Logentry}}
+'logentry-move-move_redir-noredirect' => '{{Logentry|[[Special:Log/move]]}}
 Parameter $4, the target page, is also not visible to parser functions.',
-'logentry-patrol-patrol' => '{{Logentry}}
-* $4 is a formatted revision number, maybe linked to the diff.',
-'logentry-patrol-patrol-auto' => '{{Logentry}}
-* $4 is a formatted revision number, maybe linked to the diff.
+'logentry-patrol-patrol' => '{{Logentry|[[Special:Log/patrol]]}}
+* $4 - a formatted revision number, maybe linked to the diff.',
+'logentry-patrol-patrol-auto' => '{{Logentry|[[Special:Log/patrol]]}}
+* $4 - a formatted revision number, maybe linked to the diff.
 "Automatically" refers to users with autopatrol right who mark revisions automatically patrolled when editing.',
-'logentry-newusers-newusers' => 'Parameters:
-* $1 - user name',
-'logentry-newusers-create' => '{{Logentry}}
+'logentry-newusers-newusers' => '{{Logentry|[[Special:Log/newusers]]}}',
+'logentry-newusers-create' => '{{Logentry|[[Special:Log/newusers]]}}
 
 $4 is the gender of the target user.',
-'logentry-newusers-create2' => '{{Logentry}}
+'logentry-newusers-create2' => '{{Logentry|[[Special:Log/newusers]]}}
 
 $4 is the name of the user that was created.',
-'logentry-newusers-autocreate' => '{{Logentry}}
+'logentry-newusers-byemail' => '{{Logentry|[[Special:Log/newusers]]}}
+
+$4 is the name of the user that was created.',
+'logentry-newusers-autocreate' => '{{Logentry|[[Special:Log/newusers]]}}
 
 $4 is the gender of the target user.',
-'newuserlog-byemail' => 'Used as reason in [[Special:Log/newusers]].',
+'logentry-rights-rights' => '* $1 - username
+* $2 - (see below)
+* $3 - username
+* $4 - list of user groups or {{msg-mw|Rightsnone}}
+* $5 - list of user groups or {{msg-mw|Rightsnone}}
+----
+{{Logentry|[[Special:Log/rights]]}}',
+'logentry-rights-rights-legacy' => '* $1 - username
+* $2 - (see below)
+* $3 - username
+----
+{{Logentry|[[Special:Log/rights]]}}',
+'logentry-rights-autopromote' => '* $1 - username
+* $2 - (see below)
+* $3 - (see below)
+* $4 - comma separated list of old user groups or {{msg-mw|Rightsnone}}
+* $5 - comma separated list of new user groups
+----
+{{Logentry|[[Special:Log/rights]]}}',
+'rightsnone' => 'Default rights for registered users.
+
+{{Identical|None}}',
 
 # Feedback
 'feedback-bugornote' => 'When feedback dialog box is opened, this introductory message in small print explains the options to report a bug or add simple feedback. We expect that people in a hurry will not read this.',
@@ -8679,6 +8884,7 @@ $4 is the gender of the target user.',
 'api-error-ok-but-empty' => 'API error message that can be used for client side localisation of API errors.',
 'api-error-overwrite' => 'API error message that can be used for client side localisation of API errors.',
 'api-error-stashfailed' => 'API error message that can be used for client side localisation of API errors.',
+'api-error-publishfailed' => 'API error message that can be used for client side localisation of API errors.',
 'api-error-timeout' => 'API error message that can be used for client side localisation of API errors.',
 'api-error-unclassified' => 'API error message that can be used for client side localisation of API errors.',
 'api-error-unknown-code' => 'API error message that can be used for client side localisation of API errors. Parameters:
@@ -8702,5 +8908,8 @@ $4 is the gender of the target user.',
 'duration-decades' => '{{Related|Duration}}',
 'duration-centuries' => '{{Related|Duration}}',
 'duration-millennia' => '{{Related|Duration}}',
+
+# Image rotation
+'rotate-comment' => 'Edit summary for the act of rotating an image.',
 
 );

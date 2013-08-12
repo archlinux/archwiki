@@ -42,6 +42,7 @@
  * @author Mark85296341
  * @author MarkAHershberger
  * @author Mys 721tx
+ * @author Nemo bis
  * @author O
  * @author Onecountry
  * @author PhiLiP
@@ -116,7 +117,7 @@ $namespaceAliases = array(
 
 $specialPageAliases = array(
 	'Activeusers'               => array( '活跃用户' ),
-	'Allmessages'               => array( '所有信息' ),
+	'Allmessages'               => array( '所有消息' ),
 	'Allpages'                  => array( '所有页面' ),
 	'Ancientpages'              => array( '最早页面' ),
 	'Badtitle'                  => array( '无效标题' ),
@@ -161,6 +162,7 @@ $specialPageAliases = array(
 	'MIMEsearch'                => array( 'MIME搜索' ),
 	'Mostcategories'            => array( '最多分类页面' ),
 	'Mostimages'                => array( '最多链接文件' ),
+	'Mostinterwikis'            => array( '最多跨wiki链接页面' ),
 	'Mostlinked'                => array( '最多链接页面' ),
 	'Mostlinkedcategories'      => array( '最多链接分类' ),
 	'Mostlinkedtemplates'       => array( '最多链接模板' ),
@@ -184,17 +186,16 @@ $specialPageAliases = array(
 	'Recentchanges'             => array( '最近更改' ),
 	'Recentchangeslinked'       => array( '链出更改' ),
 	'Revisiondelete'            => array( '删除或恢复修订' ),
-	'RevisionMove'              => array( '修订版本移动' ),
 	'Search'                    => array( '搜索' ),
 	'Shortpages'                => array( '短页面' ),
 	'Specialpages'              => array( '特殊页面' ),
 	'Statistics'                => array( '统计信息' ),
 	'Tags'                      => array( '标签' ),
 	'Unblock'                   => array( '解除封禁' ),
-	'Uncategorizedcategories'   => array( '无分类分类' ),
-	'Uncategorizedimages'       => array( '无分类文件' ),
-	'Uncategorizedpages'        => array( '无分类页面' ),
-	'Uncategorizedtemplates'    => array( '无分类模板' ),
+	'Uncategorizedcategories'   => array( '未分类分类' ),
+	'Uncategorizedimages'       => array( '未分类文件' ),
+	'Uncategorizedpages'        => array( '未分类页面' ),
+	'Uncategorizedtemplates'    => array( '未分类模板' ),
 	'Undelete'                  => array( '恢复被删页面' ),
 	'Unlockdb'                  => array( '解除数据库锁定' ),
 	'Unusedcategories'          => array( '未使用分类' ),
@@ -239,7 +240,20 @@ $magicWords = array(
 	'numberofedits'             => array( '1', '编辑数', 'NUMBEROFEDITS' ),
 	'numberofviews'             => array( '1', '访问数', 'NUMBEROFVIEWS' ),
 	'pagename'                  => array( '1', '页面名', 'PAGENAME' ),
+	'pagenamee'                 => array( '1', '页面名E', 'PAGENAMEE' ),
+	'namespace'                 => array( '1', '名字空间', 'NAMESPACE' ),
+	'namespacee'                => array( '1', '名字空间E', 'NAMESPACEE' ),
+	'namespacenumber'           => array( '1', '名字空间编号', 'NAMESPACENUMBER' ),
+	'talkspace'                 => array( '1', '讨论名字空间', 'TALKSPACE' ),
+	'talkspacee'                => array( '1', '讨论名字空间E', 'TALKSPACEE' ),
 	'fullpagename'              => array( '1', '完整页面名', 'FULLPAGENAME' ),
+	'fullpagenamee'             => array( '1', '完整页面名E', 'FULLPAGENAMEE' ),
+	'subpagename'               => array( '1', '子页面名', 'SUBPAGENAME' ),
+	'subpagenamee'              => array( '1', '子页面名E', 'SUBPAGENAMEE' ),
+	'talkpagename'              => array( '1', '讨论页面名', 'TALKPAGENAME' ),
+	'talkpagenamee'             => array( '1', '讨论页面名E', 'TALKPAGENAMEE' ),
+	'subst'                     => array( '0', '替代:', 'SUBST:' ),
+	'safesubst'                 => array( '0', '安全替代:', 'SAFESUBST:' ),
 	'img_thumbnail'             => array( '1', '缩略图', 'thumbnail', 'thumb' ),
 	'img_manualthumb'           => array( '1', '缩略图=$1', 'thumbnail=$1', 'thumb=$1' ),
 	'img_right'                 => array( '1', '右', 'right' ),
@@ -247,14 +261,65 @@ $magicWords = array(
 	'img_none'                  => array( '1', '无', 'none' ),
 	'img_width'                 => array( '1', '$1像素', '$1px' ),
 	'img_center'                => array( '1', '居中', 'center', 'centre' ),
+	'img_framed'                => array( '1', '有框', 'framed', 'enframed', 'frame' ),
+	'img_frameless'             => array( '1', '无框', 'frameless' ),
 	'img_page'                  => array( '1', '页数=$1', '$1页', 'page=$1', 'page $1' ),
+	'img_border'                => array( '1', '有边', 'border' ),
 	'img_link'                  => array( '1', '链接=$1', 'link=$1' ),
 	'img_alt'                   => array( '1', '替代文本=$1', 'alt=$1' ),
+	'img_class'                 => array( '1', '类=$1', 'class=$1' ),
+	'int'                       => array( '0', '界面:', 'INT:' ),
+	'sitename'                  => array( '1', '站点名称', 'SITENAME' ),
+	'ns'                        => array( '0', '名字空间:', 'NS:' ),
+	'nse'                       => array( '0', '名字空间E:', 'NSE:' ),
+	'localurl'                  => array( '0', '本地URL:', 'LOCALURL:' ),
+	'localurle'                 => array( '0', '本地URLE:', 'LOCALURLE:' ),
+	'articlepath'               => array( '0', '条目路径', 'ARTICLEPATH' ),
+	'pageid'                    => array( '0', '页面ID', 'PAGEID' ),
+	'server'                    => array( '0', '服务器', 'SERVER' ),
+	'servername'                => array( '0', '服务器名', 'SERVERNAME' ),
+	'scriptpath'                => array( '0', '脚本路径', 'SCRIPTPATH' ),
+	'stylepath'                 => array( '0', '样式路径', 'STYLEPATH' ),
+	'grammar'                   => array( '0', '语法:', 'GRAMMAR:' ),
+	'gender'                    => array( '0', '性别:', 'GENDER:' ),
+	'notitleconvert'            => array( '0', '__不转换标题__', '__NOTITLECONVERT__', '__NOTC__' ),
+	'nocontentconvert'          => array( '0', '__不转换内容__', '__NOCONTENTCONVERT__', '__NOCC__' ),
+	'lcfirst'                   => array( '0', '小写首字:', 'LCFIRST:' ),
+	'ucfirst'                   => array( '0', '大写首字:', 'UCFIRST:' ),
+	'lc'                        => array( '0', '小写:', 'LC:' ),
+	'uc'                        => array( '0', '大写:', 'UC:' ),
+	'displaytitle'              => array( '1', '显示标题', 'DISPLAYTITLE' ),
 	'newsectionlink'            => array( '1', '__新段落链接__', '__NEWSECTIONLINK__' ),
 	'nonewsectionlink'          => array( '1', '__无新段落链接__', '__NONEWSECTIONLINK__' ),
+	'currentversion'            => array( '1', '当前版本', 'CURRENTVERSION' ),
+	'urlencode'                 => array( '0', 'URL编码:', 'URLENCODE:' ),
+	'anchorencode'              => array( '0', '锚编码', 'ANCHORENCODE' ),
+	'currenttimestamp'          => array( '1', '当前时间戳', 'CURRENTTIMESTAMP' ),
+	'localtimestamp'            => array( '1', '本地时间戳', 'LOCALTIMESTAMP' ),
+	'directionmark'             => array( '1', '方向标记', 'DIRECTIONMARK', 'DIRMARK' ),
 	'language'                  => array( '0', '#语言:', '#LANGUAGE:' ),
+	'contentlanguage'           => array( '1', '内容语言', 'CONTENTLANGUAGE', 'CONTENTLANG' ),
+	'pagesinnamespace'          => array( '1', '名字空间中页面数:', 'PAGESINNAMESPACE:', 'PAGESINNS:' ),
+	'numberofadmins'            => array( '1', '管理员数', 'NUMBEROFADMINS' ),
+	'formatnum'                 => array( '0', '格式化数字', 'FORMATNUM' ),
+	'padleft'                   => array( '0', '左填充', 'PADLEFT' ),
+	'padright'                  => array( '0', '右填充', 'PADRIGHT' ),
+	'special'                   => array( '0', '特殊', 'special' ),
+	'speciale'                  => array( '0', '特殊e', 'speciale' ),
+	'defaultsort'               => array( '1', '默认排序:', '默认排序关键字:', '默认分类排序:', 'DEFAULTSORT:', 'DEFAULTSORTKEY:', 'DEFAULTCATEGORYSORT:' ),
+	'filepath'                  => array( '0', '文件路径:', 'FILEPATH:' ),
 	'tag'                       => array( '0', '标记', 'tag' ),
+	'hiddencat'                 => array( '1', '__隐藏分类__', '__HIDDENCAT__' ),
+	'pagesincategory'           => array( '1', '分类中页面数', 'PAGESINCATEGORY', 'PAGESINCAT' ),
 	'pagesize'                  => array( '1', '页面大小', 'PAGESIZE' ),
+	'index'                     => array( '1', '__索引__', '__INDEX__' ),
+	'noindex'                   => array( '1', '__不索引__', '__NOINDEX__' ),
+	'numberingroup'             => array( '1', '组中用户数', 'NUMBERINGROUP', 'NUMINGROUP' ),
+	'staticredirect'            => array( '1', '__静态重定向__', '__STATICREDIRECT__' ),
+	'protectionlevel'           => array( '1', '保护级别', 'PROTECTIONLEVEL' ),
+	'formatdate'                => array( '0', '格式化日期', '日期格式化', 'formatdate', 'dateformat' ),
+	'defaultsort_noerror'       => array( '0', '不报错', 'noerror' ),
+	'defaultsort_noreplace'     => array( '0', '不替换', 'noreplace' ),
 );
 
 $linkTrail = '/^()(.*)$/sD';
@@ -418,6 +483,7 @@ $messages = array(
 'newwindow' => '（将于新窗口中打开）',
 'cancel' => '取消',
 'moredotdotdot' => '更多',
+'morenotlisted' => '更多未被列出的模板...',
 'mypage' => '页面',
 'mytalk' => '讨论',
 'anontalk' => '该IP地址的讨论',
@@ -429,7 +495,6 @@ $messages = array(
 'qbbrowse' => '浏览',
 'qbedit' => '编辑',
 'qbpageoptions' => '页面选项',
-'qbpageinfo' => '页面信息',
 'qbmyoptions' => '我的页面',
 'qbspecialpages' => '特殊页面',
 'faq' => '常见问题',
@@ -452,6 +517,7 @@ $messages = array(
 'namespaces' => '名字空间',
 'variants' => '变换',
 
+'navigation-heading' => '导航菜单',
 'errorpagetitle' => '错误',
 'returnto' => '返回$1。',
 'tagline' => '来自{{SITENAME}}',
@@ -688,9 +754,9 @@ $2',
 # Login and logout pages
 'logouttext' => "'''您现在已经退出。'''
 
-您可以继续以匿名方式使用{{SITENAME}}，或再次以相同或不同用户身份[[Special:UserLogin|登录]]。请注意一些页面可能仍然显示您为登录状态，直到您清空您的浏览器缓存为止。",
-'welcomecreation' => '== 欢迎，$1！ ==
-你的账户已创建。请别忘记更改你的[[Special:Preferences|{{SITENAME}}系统设置]]。',
+您可以继续以匿名方式使用{{SITENAME}}，或再次以相同或不同用户身份<span class='plainlinks'>[$1 登录]</span>。请注意一些页面可能仍然显示您为登录状态，直到您清空您的浏览器缓存为止。",
+'welcomeuser' => '欢迎，$1！',
+'welcomecreation-msg' => '你的账户已创建。请不要忘记更改你的[[Special:Preferences|{{SITENAME}}系统设置]]。',
 'yourname' => '用户名：',
 'yourpassword' => '密码：',
 'yourpasswordagain' => '再次输入密码：',
@@ -713,7 +779,7 @@ $2',
 'gotaccount' => '已经拥有账户？请$1。',
 'gotaccountlink' => '登录',
 'userlogin-resetlink' => '忘记了你的登录信息？',
-'createaccountmail' => '通过电子邮件',
+'createaccountmail' => '使用一个临时的随机密码，并将它发送到以下指定的电子邮件地址',
 'createaccountreason' => '原因：',
 'badretype' => '您所输入的密码并不相同。',
 'userexists' => '用户名已存在。请使用其他名称。',
@@ -774,6 +840,7 @@ $2',
 # Email sending
 'php-mail-error-unknown' => '在 PHP 的 mail() 函数中的未知错误',
 'user-mail-no-addy' => '尝试发送邮件而不附带电子邮件地址。',
+'user-mail-no-body' => '试图发送空的或者主体短得不合理的电子邮件。',
 
 # Change password dialog
 'resetpass' => '更改密码',
@@ -829,6 +896,7 @@ $2
 'changeemail-oldemail' => '当前电子邮件地址：',
 'changeemail-newemail' => '新的电子邮件地址：',
 'changeemail-none' => '（无）',
+'changeemail-password' => '你的{{SITENAME}}密码：',
 'changeemail-submit' => '更改电子邮件地址',
 'changeemail-cancel' => '取消',
 
@@ -982,7 +1050,6 @@ $2
 'template-semiprotected' => '（半保护）',
 'hiddencategories' => '本页面属于$1个隐藏分类：',
 'edittools' => '<!-- 这里的文字将显示在编辑和上传表格下面。 -->',
-'nocreatetitle' => '创建页面受限',
 'nocreatetext' => '{{SITENAME}}已经限制创建新页面功能。你可以返回编辑现有页面或[[Special:UserLogin|登录或创建账户]]。',
 'nocreate-loggedin' => '你没有权限创建新页面。',
 'sectioneditnotsupported-title' => '段落编辑不支持',
@@ -1004,6 +1071,15 @@ $2
 'edit-already-exists' => '不可以建立一个新页面。
 它已经存在。',
 'defaultmessagetext' => '默认消息文本',
+'content-failed-to-parse' => '未能将 $2 内容转换为 $1：$3',
+'invalid-content-data' => '无效的内容数据',
+'content-not-allowed-here' => '[[$2]]页面上不允许“$1”内容',
+
+# Content models
+'content-model-wikitext' => 'wiki语法',
+'content-model-text' => '纯文本',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => '警告：这个页面有太多高昂的语法功能调用。
@@ -1345,9 +1421,9 @@ $1",
 'prefs-emailconfirm-label' => '电子邮件确认：',
 'prefs-textboxsize' => '编辑框大小',
 'youremail' => '电子邮件：',
-'username' => '用户名：',
-'uid' => '用户ID：',
-'prefs-memberingroups' => '{{PLURAL:$1|用户组}}：',
+'username' => '{{GENDER:$1|用户名}}：',
+'uid' => '{{GENDER:$1|用户}}ID：',
+'prefs-memberingroups' => '{{GENDER:$2|用户}}{{PLURAL:$1|组}}：',
 'prefs-registration' => '注册时间：',
 'yourrealname' => '真实姓名：',
 'yourlanguage' => '语言：',
@@ -1494,12 +1570,13 @@ $1",
 'right-sendemail' => '电邮联系其他用户',
 'right-passwordreset' => '查看密码重置电子邮件',
 
+# Special:Log/newusers
+'newuserlogpage' => '用户创建日志',
+'newuserlogpagetext' => '这是用户创建的日志。',
+
 # User rights log
 'rightslog' => '用户权限日志',
 'rightslogtext' => '这是用户权限更改的日志。',
-'rightslogentry' => '将$1的用户组由$2更改为$3',
-'rightslogentry-autopromote' => '被自动提升自$2至$3',
-'rightsnone' => '（无）',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => '阅读本页',
@@ -1716,6 +1793,7 @@ $1',
 'backend-fail-notsame' => '$1已存在不同的文件。',
 'backend-fail-invalidpath' => '$1不是有效的存储路径。',
 'backend-fail-delete' => '无法删除文件“$1”。',
+'backend-fail-describe' => '无法修改文件“$1”的元数据。',
 'backend-fail-alreadyexists' => '“$1”页面已存在',
 'backend-fail-store' => '无法在$2存储文件$1。',
 'backend-fail-copy' => '无法复制文件$1到$2。',
@@ -1944,6 +2022,12 @@ $1',
 'disambiguationspage' => 'Template:消歧义',
 'disambiguations-text' => "以下的页面都有到'''消歧义页'''的链接，但它们可能可以链接到更适当的页面。<br />一个页面如果使用了[[MediaWiki:Disambiguationspage]]内的模板，则会被视为消歧义页。",
 
+'pageswithprop' => '有某页面属性的页面',
+'pageswithprop-legend' => '有某页面属性的页面',
+'pageswithprop-text' => '此页面列出了使用特定页面属性的页面名单。',
+'pageswithprop-prop' => '属性名称：',
+'pageswithprop-submit' => '提交',
+
 'doubleredirects' => '双重重定向页',
 'doubleredirectstext' => '本页面列出重定向至其他重定向页的页面。每行含有第一及第二重定向的链接和第二重定向的目标（通常是第一重定向应该指向的“真实”目标页面）。<del>带删除线的</del>条目已被解决。',
 'double-redirect-fixed-move' => '[[$1]]已被移动。它现在重定向至[[$2]]。',
@@ -2092,8 +2176,8 @@ $1',
 'linksearch-pat' => '搜索网址：',
 'linksearch-ns' => '名字空间：',
 'linksearch-ok' => '搜索',
-'linksearch-text' => '制作可以使用类似“*.wikipedia.org”的通配符。必须至少是顶级域名，例如“*.org”。<br />
-支持的协议：<code>$1</code>（如果没有设置协议则默认为<nowiki>http://</nowiki>）。',
+'linksearch-text' => '可以使用类似“*.wikipedia.org”的通配符。必须至少是顶级域名，例如“*.org”。<br />
+支持的{{PLURAL:$2|协议}}：<code>$1</code>（如果没有设置协议则默认为<nowiki>http://</nowiki>）。',
 'linksearch-line' => '$1 链自 $2',
 'linksearch-error' => '通配符仅可在主机名称的开头使用。',
 
@@ -2111,10 +2195,6 @@ $1',
 'activeusers-hidebots' => '隐藏机器人',
 'activeusers-hidesysops' => '隐藏管理员',
 'activeusers-noresult' => '找不到用户。',
-
-# Special:Log/newusers
-'newuserlogpage' => '用户创建日志',
-'newuserlogpagetext' => '这是用户创建的日志。',
 
 # Special:ListGroupRights
 'listgrouprights' => '用户组权限',
@@ -2208,11 +2288,17 @@ $1',
 
 'enotif_mailer' => '{{SITENAME}}通知发送器',
 'enotif_reset' => '标记所有页面为已访问',
-'enotif_newpagetext' => '该页面为新页面。',
 'enotif_impersonal_salutation' => '{{SITENAME}}用户',
-'changed' => '更改',
-'created' => '创建',
-'enotif_subject' => '{{SITENAME}}页面“$PAGETITLE”已被$PAGEEDITOR$CHANGEDORCREATED',
+'enotif_subject_deleted' => '{{SITENAME}}页面$1已被$2删除',
+'enotif_subject_created' => '{{SITENAME}}页面$1已被$2创建',
+'enotif_subject_moved' => '{{SITENAME}}页面$1已被$2移动',
+'enotif_subject_restored' => '{{SITENAME}}页面$1已被$2恢复',
+'enotif_subject_changed' => '{{SITENAME}}页面$1已被$2更改',
+'enotif_body_intro_deleted' => '{{SITENAME}}页面$1已于$PAGEEDITDATE被$2{{GENDER:$2|删除}}，请见$3。',
+'enotif_body_intro_created' => '{{SITENAME}}页面$1已于$PAGEEDITDATE被$2{{GENDER:$2|创建}}，请浏览<$3>查看当前版本。',
+'enotif_body_intro_moved' => '{{SITENAME}}页面$1已于$PAGEEDITDATE被$2{{GENDER:$2|移动}}，请浏览<$3>查看当前版本。',
+'enotif_body_intro_restored' => '{{SITENAME}}页面$1已于$PAGEEDITDATE被$2{{GENDER:$2|恢复}}，请浏览<$3>查看当前版本。',
+'enotif_body_intro_changed' => '{{SITENAME}}页面$1已于$PAGEEDITDATE被$2{{GENDER:$2|更改}}，请浏览 $3 查看当前版本。',
 'enotif_lastvisited' => '请浏览 $1 查看你上次访问后的所有更改。',
 'enotif_lastdiff' => '请浏览 $1 查看该更改。',
 'enotif_anon_editor' => '匿名用户$1',
@@ -2220,8 +2306,7 @@ $1',
 
 你好！
 
-{{SITENAME}}页面$PAGETITLE已于$PAGEEDITDATE被$PAGEEDITOR $CHANGEDORCREATED，请浏览 $PAGETITLE_URL 查看当前版本。
-$NEWPAGE
+$PAGEINTRO$NEWPAGE
 编辑摘要：$PAGESUMMARY $PAGEMINOREDIT
 
 你可以通过以下方式联系编者：
@@ -2232,7 +2317,6 @@ $NEWPAGE
 你也可以重设你的监视列表中所有监视页面的通知标志。
 
 {{SITENAME}}通知系统
-
 --
 更改邮件通知设置：
 {{canonicalurl:{{#special:Preferences}}}}
@@ -2242,6 +2326,8 @@ $NEWPAGE
 $UNWATCHURL
 反馈与其他帮助:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => '创建',
+'changed' => '更改',
 
 # Delete
 'deletepage' => '删除页面',
@@ -2307,6 +2393,8 @@ $UNWATCHURL
 'prot_1movedto2' => '[[$1]]移动至[[$2]]',
 'protect-badnamespace-title' => '不可被保护的名字空间',
 'protect-badnamespace-text' => '这个名字空间内的页面无法被保护。',
+'protect-norestrictiontypes-text' => '无法保护此页，因为没有可用的保护类型',
+'protect-norestrictiontypes-title' => '不可保护页面',
 'protect-legend' => '确认保护',
 'protectcomment' => '原因：',
 'protectexpiry' => '到期：',
@@ -2322,6 +2410,7 @@ $UNWATCHURL
 'protect-fallback' => '仅允许拥有“$1”权限的用户',
 'protect-level-autoconfirmed' => '仅允许自动确认用户',
 'protect-level-sysop' => '仅允许管理员',
+'protect-summary-desc' => '[$1=$2]（$3）',
 'protect-summary-cascade' => '联锁',
 'protect-expiring' => '终止于$1（UTC）',
 'protect-expiring-local' => '$1到期',
@@ -2382,7 +2471,8 @@ $UNWATCHURL
 'undeletedrevisions' => '$1个版本已恢复',
 'undeletedrevisions-files' => '$1个版本和$2个文件已恢复',
 'undeletedfiles' => '$1个文件已经被恢复',
-'cannotundelete' => '恢复删除失败；可能已有其他人先行恢复了此页面。',
+'cannotundelete' => '恢复删除失败：
+$1',
 'undeletedpage' => "'''$1已经被恢复'''
 
 参考[[Special:Log/delete|删除日志]]查看删除及恢复记录。",
@@ -2413,7 +2503,7 @@ $1',
 'blanknamespace' => '（主要）',
 
 # Contributions
-'contributions' => '用户贡献',
+'contributions' => '{{GENDER:$1|用户}}贡献',
 'contributions-title' => '$1的用户贡献',
 'mycontris' => '贡献',
 'contribsub2' => '$1的贡献（$2）',
@@ -2680,6 +2770,7 @@ $1被封禁的理由是：“$2”',
 'immobile-target-namespace-iw' => '在移动页面时，跨wiki链接不是有效的目标。',
 'immobile-source-page' => '此页面不能移动。',
 'immobile-target-page' => '无法移动至该目标标题。',
+'bad-target-model' => '要求的目标使用不同的内容模式。无法从$1转换到$2。',
 'imagenocrossnamespace' => '无法将文件移动到非文件名字空间',
 'nonfile-cannot-move-to-file' => '无法将非文件移动到文件名字空间',
 'imagetypemismatch' => '该新扩展名与其类型不匹配',
@@ -2787,6 +2878,7 @@ $1被封禁的理由是：“$2”',
 'import-error-interwiki' => '页面“$1”未能导入，因为它的名称需要使用外部跨wiki链接。',
 'import-error-special' => '页面“$1”未导入，因为它需要使用一个不能创建页面的特殊名字空间。',
 'import-error-invalid' => '页面“$1”未能导入，因为它的名字无效。',
+'import-error-unserialize' => '页面“$1”的版本$2无法反序列化。此版本使用内容模型$3序列化为$4。',
 'import-options-wrong' => '{{PLURAL:$2|选项}}出错：<nowiki>$1</nowiki>',
 'import-rootpage-invalid' => '根页面的标题无效。',
 'import-rootpage-nosubpage' => '名字空间为“$1”的根页面不允许子页面。',
@@ -2801,7 +2893,6 @@ $1被封禁的理由是：“$2”',
 
 # JavaScriptTest
 'javascripttest' => 'JavaScript测试',
-'javascripttest-disabled' => '该wiki站点上尚未启用此功能。',
 'javascripttest-title' => '运行$1测试',
 'javascripttest-pagetext-noframework' => '本页面被保留进行JavaScript测试。',
 'javascripttest-pagetext-unknownframework' => '未知的框架“$1”。',
@@ -2950,11 +3041,13 @@ $1被封禁的理由是：“$2”',
 'pageinfo-default-sort' => '默认排序字',
 'pageinfo-length' => '页面长度（字节）',
 'pageinfo-article-id' => '页面ID',
+'pageinfo-language' => '页面内容语言',
 'pageinfo-robot-policy' => '搜索引擎状态',
 'pageinfo-robot-index' => '可索引',
 'pageinfo-robot-noindex' => '不可索引',
 'pageinfo-views' => '查看次数',
 'pageinfo-watchers' => '页面监视者人数',
+'pageinfo-few-watchers' => '少于$1名监视者',
 'pageinfo-redirects-name' => '重定向到本页',
 'pageinfo-subpages-name' => '本页的子页面',
 'pageinfo-subpages-value' => '$1 （$2个重定向；$3个非重定向）',
@@ -2969,6 +3062,19 @@ $1被封禁的理由是：“$2”',
 'pageinfo-magic-words' => '魔术字（$1）',
 'pageinfo-hidden-categories' => '隐藏分类（$1）',
 'pageinfo-templates' => '使用的模板（$1）',
+'pageinfo-transclusions' => '$1个包含此页的页面',
+'pageinfo-toolboxlink' => '页面信息',
+'pageinfo-redirectsto' => '重定向到',
+'pageinfo-redirectsto-info' => '信息',
+'pageinfo-contentpage' => '计算为内容页',
+'pageinfo-contentpage-yes' => '是',
+'pageinfo-protect-cascading' => '从这里开始连锁保护',
+'pageinfo-protect-cascading-yes' => '是',
+'pageinfo-protect-cascading-from' => '保护级联自',
+'pageinfo-category-info' => '分类信息',
+'pageinfo-category-pages' => '页数',
+'pageinfo-category-subcats' => '子分类数',
+'pageinfo-category-files' => '文件数',
 
 # Skin names
 'skinname-standard' => '标准',
@@ -2987,6 +3093,8 @@ $1被封禁的理由是：“$2”',
 'markedaspatrollederror' => '不能标志为已检查',
 'markedaspatrollederrortext' => '你需要指定一个版本以标记为已巡查。',
 'markedaspatrollederror-noautopatrol' => '你不能把自己的更改标记为已检查。',
+'markedaspatrollednotify' => '$1的更改已被标记为已巡查。',
+'markedaspatrollederrornotify' => '标记为已巡查失败。',
 
 # Patrol log
 'patrol-log-page' => '巡查日志',
@@ -3019,6 +3127,7 @@ $1',
 'file-nohires' => '没有更高的分辨率。',
 'svg-long-desc' => 'SVG文件，尺寸为$1 × $2像素，文件大小：$3',
 'svg-long-desc-animated' => '动画SVG文件，尺寸为$1 × $2像素，文件大小：$3',
+'svg-long-error' => '无效的SVG文件：$1',
 'show-big-image' => '完全分辨率',
 'show-big-image-preview' => '本预览的尺寸：$1。',
 'show-big-image-other' => '其他{{PLURAL:$2|分辨率}}：$1。',
@@ -3052,7 +3161,10 @@ $1',
 'minutes' => '$1分',
 'hours' => '$1小时',
 'days' => '$1天',
+'months' => '{{PLURAL:$1|$1个月}}',
+'years' => '{{PLURAL:$1|$1年}}',
 'ago' => '$1前',
+'just-now' => '刚刚',
 
 # Bad image list
 'bad_image_list' => '请按照下列格式编写：
@@ -3567,6 +3679,7 @@ $5
 # Scary transclusion
 'scarytranscludedisabled' => '[跨网站的编码转换不可用]',
 'scarytranscludefailed' => '[提取$1失败]',
+'scarytranscludefailed-httpstatus' => '[模板$1读取失败：HTTP $2]',
 'scarytranscludetoolong' => '[URL过长]',
 
 # Delete conflict
@@ -3682,6 +3795,7 @@ $5
 'version-license' => '授权协议',
 'version-poweredby-credits' => "本Wiki由'''[//www.mediawiki.org/ MediaWiki]'''驱动，版权所有 © 2001-$1 $2。",
 'version-poweredby-others' => '其他',
+'version-credits-summary' => '我们感谢下列人士为[[Special:Version|MediaWiki]]作出的贡献。',
 'version-license-info' => "MediaWiki是自由软件，你可以依据自由软件基金会发行的'''GNU公众授权协议'''第2版或任意后续版本的条款，传播和/或修改本软件。
 
 MediaWiki发表时预期有用，但对此'''无任何保证'''，亦无隐含的'''可以销售'''或'''适合特定目的'''的保证。详情请见GNU公众授权协议。
@@ -3800,14 +3914,14 @@ MediaWiki发表时预期有用，但对此'''无任何保证'''，亦无隐含�
 'logentry-delete-delete' => '$1删除页面$3',
 'logentry-delete-restore' => '$1恢复页面$3',
 'logentry-delete-event' => '$1已更改$3中$5项日志的可见性：$4',
-'logentry-delete-revision' => '$1已更改$3中{{PLURAL:$5|$5个历史版本|$5个历史版本}}的可见性：$4',
-'logentry-delete-event-legacy' => '$1已更改$3中日志的可见性',
-'logentry-delete-revision-legacy' => '$1已更改$3中历史版本的可见性',
-'logentry-suppress-delete' => '$1已隐藏页面$3',
-'logentry-suppress-event' => '$1已不可见地更改$3中{{PLURAL:$5|$5项日志|$5项日志}}的可见性：$4',
-'logentry-suppress-revision' => '$1已不可见地更改$3中{{PLURAL:$5|$5个历史版本|$5个历史版本}}的可见性：$4',
-'logentry-suppress-event-legacy' => '$1已不可见地更改$3中日志的可见性',
-'logentry-suppress-revision-legacy' => '$1已不可见地更改$3中历史版本的可见性',
+'logentry-delete-revision' => '$1{{GENDER:$2|已更改}}$3中{{PLURAL:$5|$5个历史版本|$5个历史版本}}的可见性：$4',
+'logentry-delete-event-legacy' => '$1{{GENDER:$2|已更改}}$3中日志的可见性',
+'logentry-delete-revision-legacy' => '$1{{GENDER:$2|已更改}}$3中历史版本的可见性',
+'logentry-suppress-delete' => '$1{{GENDER:$2|已隐藏}}页面$3',
+'logentry-suppress-event' => '$1已不可见地{{GENDER:$2|更改}}$3中{{PLURAL:$5|$5项日志|$5项日志}}的可见性：$4',
+'logentry-suppress-revision' => '$1已不可见地{{GENDER:$2|更改}}$3中{{PLURAL:$5|$5个历史版本|$5个历史版本}}的可见性：$4',
+'logentry-suppress-event-legacy' => '$1已不可见地{{GENDER:$2|更改}}$3中日志的可见性',
+'logentry-suppress-revision-legacy' => '!$1已不可见地{{GENDER:$2|更改}}$3中历史版本的可见性',
 'revdelete-content-hid' => '隐藏内容',
 'revdelete-summary-hid' => '隐藏编辑摘要',
 'revdelete-uname-hid' => '隐藏用户名',
@@ -3820,13 +3934,17 @@ MediaWiki发表时预期有用，但对此'''无任何保证'''，亦无隐含�
 'logentry-move-move-noredirect' => '$1移动$3页面至$4，不留重定向',
 'logentry-move-move_redir' => '$1移动页面$3至$4覆盖重定向',
 'logentry-move-move_redir-noredirect' => '$1通过重定向移动$3页面至$4，不留重定向',
-'logentry-patrol-patrol' => '$1标记页面$3的版本$4为已巡查',
-'logentry-patrol-patrol-auto' => '$1自动标记页面$3的版本$4为已巡查',
-'logentry-newusers-newusers' => '已创建用户帐户 $1',
-'logentry-newusers-create' => '创建用户帐户$1',
+'logentry-patrol-patrol' => '$1{{GENDER:$2|标记}}页面$3的版本$4为已巡查',
+'logentry-patrol-patrol-auto' => '$1自动{{GENDER:$2|标记}}页面$3的版本$4为已巡查',
+'logentry-newusers-newusers' => '已{{GENDER:$2|创建}}用户帐户$1',
+'logentry-newusers-create' => '{{GENDER:$2|创建}}用户帐户$1',
 'logentry-newusers-create2' => '创建用户帐户 $3 由 $1',
-'logentry-newusers-autocreate' => '账户$1被自动创建',
-'newuserlog-byemail' => '密码已用电子邮件发送',
+'logentry-newusers-byemail' => '$1创建用户$3，并且密码已通过电子邮件发送',
+'logentry-newusers-autocreate' => '用户帐户$1已被自动{{GENDER:$2|创建}}',
+'logentry-rights-rights' => '$1将$3的用户组从$4改为$5',
+'logentry-rights-rights-legacy' => '$1更改$3的用户组',
+'logentry-rights-autopromote' => '$1的用户组已自动从$4改为$5',
+'rightsnone' => '（无）',
 
 # Feedback
 'feedback-bugornote' => '如果你准备好详细描述一个技术问题，请[$1 报告bug]。或者你可以使用下面的简单表格。你的评论及用户名将被添加至页面“[$3 $2]”。',
@@ -3879,6 +3997,7 @@ MediaWiki发表时预期有用，但对此'''无任何保证'''，亦无隐含�
 'api-error-ok-but-empty' => '内部错误：服务器没有响应。',
 'api-error-overwrite' => '不允许覆盖现有文件。',
 'api-error-stashfailed' => '内部错误：服务器保存临时文件失败。',
+'api-error-publishfailed' => '内部错误：服务器发布临时文件失败。',
 'api-error-timeout' => '服务器没有在预期内响应。',
 'api-error-unclassified' => '出现未知错误。',
 'api-error-unknown-code' => '未知错误：$1',
@@ -3898,5 +4017,8 @@ MediaWiki发表时预期有用，但对此'''无任何保证'''，亦无隐含�
 'duration-decades' => '$10年',
 'duration-centuries' => '$1个世纪',
 'duration-millennia' => '$1千年',
+
+# Image rotation
+'rotate-comment' => '图像已顺时针方向旋转了 $1 {{PLURAL:$1|度|度}}',
 
 );

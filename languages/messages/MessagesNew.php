@@ -290,9 +290,7 @@ MySQL नं इरर "<tt>$3: $4</tt>" क्यंगु दु।',
 'viewsource' => 'स्रोत स्वयादिसँ',
 
 # Login and logout pages
-'welcomecreation' => '== लसकुस, $1! ==
-छिगु खाता चायेके धुंकल।
-छिगु [[Special:Preferences|{{SITENAME}} प्राथमिकता]] हिलिगु लुमंकादिसँ।',
+'welcomeuser' => 'लसकुस, $1जु!',
 'yourname' => 'छ्य्‌लामि नां:',
 'yourpassword' => 'दुथखँग्वः (पासवर्द):',
 'yourpasswordagain' => 'दुथखँग्वः हानं तियादिसँ:',
@@ -348,6 +346,9 @@ MySQL नं इरर "<tt>$3: $4</tt>" क्यंगु दु।',
 'editconflict' => 'सम्पादन द्वंगु दु: $1',
 'yourtext' => 'छिगु आखः',
 'storedversion' => 'स्वथनातगु संस्करण',
+
+# Content models
+'content-model-text' => 'सादा आखः',
 
 # History pages
 'revisionasof' => '$1 तक्कया संस्करण',

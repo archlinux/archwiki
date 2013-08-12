@@ -550,6 +550,9 @@ Hirmid sagsd, das Du den dhägsd '''selbâr gschriim''' hasd, das däär dhägsd
 
 'grouppage-sysop' => '{{ns:project}}:Adminisdradoorn',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Brodoghol iwâr dii naja bearbajdâr-ôômeldunga',
+
 # User rights log
 'rightslog' => 'Brodoghol fo rächde-dsuudaalung an bearbajdâr',
 
@@ -648,9 +651,6 @@ S'gajd awâr aa â [[Special:WhatLinksHere/$2|lisdn mid alâ fârwajs]].",
 
 # Special:LinkSearch
 'linksearch' => 'Linggs nach ausârhalb',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Brodoghol iwâr dii naja bearbajdâr-ôômeldunga',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(Lisdn fon dâ midgliidâr)',

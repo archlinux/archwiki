@@ -44,6 +44,7 @@ class QuestyCaptcha extends SimpleCaptcha {
 				'name' => 'wpCaptchaWord',
 				'id'   => 'wpCaptchaWord',
 				'required',
+				'autocomplete' => 'off',
 				'tabindex' => 1 ) ) . // tab in before the edit textarea
 			"</p>\n" .
 			Xml::element( 'input', array(

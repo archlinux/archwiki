@@ -61,13 +61,13 @@ class SquidUpdate {
 			array( 'page_namespace', 'page_title' ),
 			array(
 				'pl_namespace' => $title->getNamespace(),
-				'pl_title'     => $title->getDBkey(),
+				'pl_title' => $title->getDBkey(),
 				'pl_from=page_id' ),
 			__METHOD__ );
 		$blurlArr = $title->getSquidURLs();
-		if ( $dbr->numRows( $res ) <= $wgMaxSquidPurgeTitles ) {
+		if ( $res->numRows() <= $wgMaxSquidPurgeTitles ) {
 			foreach ( $res as $BL ) {
-				$tobj = Title::makeTitle( $BL->page_namespace, $BL->page_title ) ;
+				$tobj = Title::makeTitle( $BL->page_namespace, $BL->page_title );
 				$blurlArr[] = $tobj->getInternalURL();
 			}
 		}
@@ -128,6 +128,8 @@ class SquidUpdate {
 		if( !$urlArr ) {
 			return;
 		}
+
+		wfDebug( "Squid purge: " . implode( ' ', $urlArr ) . "\n" );
 
 		if ( $wgHTCPMulticastRouting ) {
 			SquidUpdate::HTCPPurge( $urlArr );
@@ -249,11 +251,11 @@ class SquidUpdate {
 	static function expand( $url ) {
 		return wfExpandUrl( $url, PROTO_INTERNAL );
 	}
-	
+
 	/**
 	 * Find the HTCP routing rule to use for a given URL.
-	 * @param $url string URL to match
-	 * @param $rules array Array of rules, see $wgHTCPMulticastRouting for format and behavior
+	 * @param string $url URL to match
+	 * @param array $rules Array of rules, see $wgHTCPMulticastRouting for format and behavior
 	 * @return mixed Element of $rules that matched, or false if nothing matched
 	 */
 	static function getRuleForURL( $url, $rules ) {
@@ -264,5 +266,4 @@ class SquidUpdate {
 		}
 		return false;
 	}
-	
 }

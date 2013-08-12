@@ -30,10 +30,6 @@
  */
 class ApiUserrights extends ApiBase {
 
-	public function __construct( $main, $action ) {
-		parent::__construct( $main, $action );
-	}
-
 	private $mUser = null;
 
 	public function execute() {
@@ -140,9 +136,5 @@ class ApiUserrights extends ApiBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:User_group_membership';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

@@ -116,7 +116,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		) );
 
 		$userId = $user->getId();
-		$this->addJoinConds( array( 'watchlist' => array('INNER JOIN',
+		$this->addJoinConds( array( 'watchlist' => array( 'INNER JOIN',
 			array(
 				'wl_user' => $userId,
 				'wl_namespace=rc_namespace',
@@ -240,12 +240,14 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 
 		if ( $this->fld_user || $this->fld_userid ) {
 
-			if ( $this->fld_user ) {
-				$vals['user'] = $row->rc_user_text;
+			if ( $this->fld_userid ) {
+				$vals['userid'] = $row->rc_user;
+				// for backwards compatibility
+				$vals['user'] = $row->rc_user;
 			}
 
-			if ( $this->fld_userid ) {
-				$vals['user'] = $row->rc_user;
+			if ( $this->fld_user ) {
+				$vals['user'] = $row->rc_user_text;
 			}
 
 			if ( !$row->rc_user ) {
@@ -511,15 +513,11 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 			'api.php?action=query&list=watchlist&wlallrev=&wlprop=ids|title|timestamp|user|comment',
 			'api.php?action=query&generator=watchlist&prop=info',
 			'api.php?action=query&generator=watchlist&gwlallrev=&prop=revisions&rvprop=timestamp|user',
-			'api.php?action=query&list=watchlist&wlowner=Bob_Smith&wltoken=d8d562e9725ea1512894cdab28e5ceebc7f20237'
+			'api.php?action=query&list=watchlist&wlowner=Bob_Smith&wltoken=123ABC'
 		);
 	}
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Watchlist';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

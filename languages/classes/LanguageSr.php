@@ -35,7 +35,7 @@ require_once( __DIR__ . '/LanguageSr_el.php' );
  * @ingroup Language
  */
 class SrConverter extends LanguageConverter {
-	var $mToLatin = array(
+	public $mToLatin = array(
 		'а' => 'a', 'б' => 'b',  'в' => 'v', 'г' => 'g',  'д' => 'd',
 		'ђ' => 'đ', 'е' => 'e',  'ж' => 'ž', 'з' => 'z',  'и' => 'i',
 		'ј' => 'j', 'к' => 'k',  'л' => 'l', 'љ' => 'lj', 'м' => 'm',
@@ -51,7 +51,7 @@ class SrConverter extends LanguageConverter {
 		'Х' => 'H', 'Ц' => 'C',  'Ч' => 'Č', 'Џ' => 'Dž', 'Ш' => 'Š',
 	);
 
-	var $mToCyrillics = array(
+	public $mToCyrillics = array(
 		'a' => 'а', 'b'  => 'б', 'c' => 'ц', 'č' => 'ч', 'ć'  => 'ћ',
 		'd' => 'д', 'dž' => 'џ', 'đ' => 'ђ', 'e' => 'е', 'f'  => 'ф',
 		'g' => 'г', 'h'  => 'х', 'i' => 'и', 'j' => 'ј', 'k'  => 'к',
@@ -129,21 +129,6 @@ class SrConverter extends LanguageConverter {
 	}
 
 	/**
-	 * We want our external link captions to be converted in variants,
-	 * so we return the original text instead -{$text}-, except for URLs
-	 *
-	 * @param $text string
-	 * @param $noParse bool
-	 *
-	 * @return string
-	 */
-	function markNoConversion( $text, $noParse = false ) {
-		if ( $noParse || preg_match( "/^https?:\/\/|ftp:\/\/|irc:\/\//", $text ) )
-			return parent::markNoConversion( $text );
-		return $text;
-	}
-
-	/**
 	 * An ugly function wrapper for parsing Image titles
 	 * (to prevent image name conversion)
 	 *
@@ -182,6 +167,7 @@ class SrConverter extends LanguageConverter {
 		$matches = preg_split( $reg, $text, -1, PREG_SPLIT_OFFSET_CAPTURE );
 
 		$m = array_shift( $matches );
+		$this->loadTables();
 		if ( !isset( $this->mTables[$toVariant] ) ) {
 			throw new MWException( "Broken variant table: " . implode( ',', array_keys( $this->mTables ) ) );
 		}
@@ -246,7 +232,7 @@ class LanguageSr extends LanguageSr_ec {
 			'W' => 'W', 'реч'   => 'W', 'reč'   => 'W', 'ријеч' => 'W', 'riječ' => 'W'
 		);
 		$this->mConverter = new SrConverter( $this, 'sr', $variants, $variantfallbacks, $flags );
-		$wgHooks['ArticleSaveComplete'][] = $this->mConverter;
+		$wgHooks['PageContentSaveComplete'][] = $this->mConverter;
 	}
 
 	/**

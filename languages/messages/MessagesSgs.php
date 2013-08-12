@@ -198,7 +198,6 @@ $messages = array(
 'qbbrowse' => 'Naršītė',
 'qbedit' => 'Taisītė',
 'qbpageoptions' => 'Tas poslapis',
-'qbpageinfo' => 'Konteksts',
 'qbmyoptions' => 'Mona poslapē',
 'qbspecialpages' => 'Specēlė̅jė poslapē',
 'faq' => 'DOK',
@@ -393,11 +392,8 @@ Ožklausėms: $2',
 # Login and logout pages
 'logouttext' => "'''Daba Tamsta esat atsėjongės.'''
 
-Galat ė tuoliau nauduotė {{SITENAME}} anuonimėškā aba [[Special:UserLogin|prisėjonkat]] ėš naujė šėtuo patiu a kėto nauduotuojė vardu.
+Galat ė tuoliau nauduotė {{SITENAME}} anuonimėškā aba <span class='plainlinks'>[$1 prisėjonkat]</span> ėš naujė šėtuo patiu a kėto nauduotuojė vardu.
 Pastebiejims: katruos nekatruos poslapiuos ė tuoliau gal ruodītė būktā būtomiet prisėjongės lėgė tuol, kumet ėšvalīsėt sava naršīklės dietovė (''cache'').",
-'welcomecreation' => '== Svēkė, $1! ==
-
-Tamstas paskīra bova sokorta. Neožmėrškėt pakeistė sava [[Special:Preferences|{{SITENAME}} nustatīmu]].',
 'yourname' => 'Nauduotuojė vards:',
 'yourpassword' => 'Slaptažuodis:',
 'yourpasswordagain' => 'Pakartuoket slaptažuodė:',
@@ -617,7 +613,6 @@ tudie negaliesėt ėšsauguotė sava pakeitėmu daba. Tamsta galėt nosėkopėjo
 'template-protected' => '(apsauguots)',
 'template-semiprotected' => '(posiau apsauguots)',
 'hiddencategories' => 'Tas poslapis prėklausa $1 {{PLURAL:$1|pakavuotā kateguorėjē|pakavuotoms kateguorėjėms|pakavuotu kateguorėju}}:',
-'nocreatetitle' => 'Poslapiu kūrims aprėbuots',
 'nocreatetext' => '{{SITENAME}} aprėbuojė galėmībe kortė naujus poslapius.
 Tamsta galėt grīžtė ė redagoutė nūnā esonti poslapi, a [[Special:UserLogin|prėsėjongtė a sokortė paskīra]].',
 'permissionserrors' => 'Teisiu klaida',
@@ -881,11 +876,12 @@ Ana gal sodarītė ne daugiau kāp $1 {{PLURAL:$1|sėmbuolis|sėmbuolē|sėmbuol
 'right-read' => 'Skaitītė poslapius',
 'right-edit' => 'Keistė poslapius',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Nauduotuojė kūrėma regėstros',
+
 # User rights log
 'rightslog' => 'Nauduotuoju teisiu istuorėjė',
 'rightslogtext' => 'Pateikiams nauduotuoju teisiu pakeitėmu sārašos.',
-'rightslogentry' => 'pakeista $1 gropės narīstė ėš $2 i $3. Sveikėnam!',
-'rightsnone' => '(juokiū)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'redagoutė ta poslapi',
@@ -1230,9 +1226,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-submit' => 'Ruodītė',
 'listusers-noresult' => 'Nerast anėjuokiū nauduotuoju.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Nauduotuojė kūrėma regėstros',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Nauduotuoju gropiu teisės',
 'listgrouprights-group' => 'Gropė',
@@ -1291,10 +1284,9 @@ Jēgo bikumet ožsėnuorietomiet liautėis keravuotė straipsnė, spauskat \"neb
 'unwatching' => 'Šalėnama ėš keravuojamu sāraša...',
 
 'enotif_reset' => 'Pažīmietė vėsus poslapius kāp aplonkītus',
-'enotif_newpagetext' => 'Tas īr naus poslapis.',
-'changed' => 'pakeitė',
-'created' => 'sokūrė',
 'enotif_anon_editor' => 'anuonėminis nauduotuos $1',
+'created' => 'sokūrė',
+'changed' => 'pakeitė',
 
 # Delete
 'deletepage' => 'Trintė poslapi',
@@ -1970,6 +1962,6 @@ Tamsta tēpuogi galėt [[Special:EditWatchlist/raw|redagoutė grīnaji keravuoja
 'logentry-newusers-newusers' => '$1 padėrba nauduotuojė paskīra',
 'logentry-newusers-create2' => '$1 padėrba nauduotuojė paskīra $3',
 'logentry-newusers-autocreate' => 'Paskīra $1 bova padėrbta autuomatėškā',
-'newuserlog-byemail' => 'slaptažuodis ėšsiōsts par el. pašta',
+'rightsnone' => '(juokiū)',
 
 );

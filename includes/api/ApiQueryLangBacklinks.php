@@ -56,10 +56,7 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 
 		if ( !is_null( $params['continue'] ) ) {
 			$cont = explode( '|', $params['continue'] );
-			if ( count( $cont ) != 3 ) {
-				$this->dieUsage( 'Invalid continue param. You should pass the ' .
-					'original value returned by the previous query', '_badcontinue' );
-			}
+			$this->dieContinueUsageIf( count( $cont ) != 3 );
 
 			$db = $this->getDB();
 			$op = $params['dir'] == 'descending' ? '<' : '>';
@@ -233,7 +230,6 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 	public function getPossibleErrors() {
 		return array_merge( parent::getPossibleErrors(), array(
 			array( 'missingparam', 'lang' ),
-			array( 'code' => '_badcontinue', 'info' => 'Invalid continue param. You should pass the original value returned by the previous query' ),
 		) );
 	}
 
@@ -242,9 +238,5 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 			'api.php?action=query&list=langbacklinks&lbltitle=Test&lbllang=fr',
 			'api.php?action=query&generator=langbacklinks&glbltitle=Test&glbllang=fr&prop=info'
 		);
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

@@ -40,7 +40,7 @@ $wgExtensionCredits['antispam'][] = array(
 	'name' => 'ConfirmEdit',
 	'author' => array( 'Brion Vibber', '...' ),
 	'url' => 'https://www.mediawiki.org/wiki/Extension:ConfirmEdit',
-	'version' => '1.1',
+	'version' => '1.2',
 	'descriptionmsg' => 'captcha-desc',
 );
 
@@ -140,7 +140,7 @@ $wgCaptchaSessionExpiration = 30 * 60;
 $wgCaptchaBadLoginExpiration = 5 * 60;
 
 /**
- * Allow users who have confirmed their e-mail addresses to post
+ * Allow users who have confirmed their email addresses to post
  * URL links without being harassed by the captcha.
  */
 $ceAllowConfirmedEmail = false;

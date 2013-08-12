@@ -34,9 +34,17 @@ class MIMEsearchPage extends QueryPage {
 		parent::__construct( $name );
 	}
 
-	function isExpensive() { return true; }
-	function isSyndicated() { return false; }
-	function isCacheable() { return false; }
+	function isExpensive() {
+		return true;
+	}
+
+	function isSyndicated() {
+		return false;
+	}
+
+	function isCacheable() {
+		return false;
+	}
 
 	function linkParameters() {
 		return array( 'mime' => "{$this->major}/{$this->minor}" );
@@ -84,7 +92,6 @@ class MIMEsearchPage extends QueryPage {
 		parent::execute( $par );
 	}
 
-
 	function formatResult( $skin, $result ) {
 		global $wgContLang;
 
@@ -125,5 +132,9 @@ class MIMEsearchPage extends QueryPage {
 			'multipart'
 		);
 		return in_array( $type, $types );
+	}
+
+	protected function getGroupName() {
+		return 'media';
 	}
 }

@@ -29,9 +29,6 @@ class WikiEditorHooks {
 			'modules' => array(
 				'ext.wikiEditor.toolbar',
 			),
-			'configurations' => array(
-				'wgWikiEditorToolbarClickTracking',
-			),
 		),
 		'dialogs' => array(
 			'preferences' => array(

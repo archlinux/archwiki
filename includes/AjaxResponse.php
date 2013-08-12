@@ -172,7 +172,7 @@ class AjaxResponse {
 			# tell the client to use a cached copy, without a way to purge it.
 
 			if ( $wgUseSquid ) {
-				# Expect explicite purge of the proxy cache, but require end user agents
+				# Expect explicit purge of the proxy cache, but require end user agents
 				# to revalidate against the proxy on each visit.
 				# Surrogate-Control controls our Squid, Cache-Control downstream caches
 
@@ -204,7 +204,7 @@ class AjaxResponse {
 
 	/**
 	 * checkLastModified tells the client to use the client-cached response if
-	 * possible. If sucessful, the AjaxResponse is disabled so that
+	 * possible. If successful, the AjaxResponse is disabled so that
 	 * any future call to AjaxResponse::printText() have no effect.
 	 *
 	 * @param $timestamp string

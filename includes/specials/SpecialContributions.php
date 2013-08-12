@@ -152,7 +152,7 @@ class SpecialContributions extends SpecialPage {
 				$apiParams['month'] = $this->opts['month'];
 			}
 
-			$url = wfScript( 'api' ) . '?' . wfArrayToCGI( $apiParams );
+			$url = wfScript( 'api' ) . '?' . wfArrayToCgi( $apiParams );
 
 			$out->redirect( $url, '301' );
 			return;
@@ -191,7 +191,6 @@ class SpecialContributions extends SpecialPage {
 				);
 			}
 			$out->preventClickjacking( $pager->getPreventClickjacking() );
-
 
 			# Show the appropriate "footer" message - WHOIS tools, etc.
 			if ( $this->opts['contribs'] == 'newbie' ) {
@@ -360,7 +359,7 @@ class SpecialContributions extends SpecialPage {
 		if ( !isset( $this->opts['target'] ) ) {
 			$this->opts['target'] = '';
 		} else {
-			$this->opts['target'] = str_replace( '_' , ' ' , $this->opts['target'] );
+			$this->opts['target'] = str_replace( '_', ' ', $this->opts['target'] );
 		}
 
 		if ( !isset( $this->opts['namespace'] ) ) {
@@ -399,7 +398,7 @@ class SpecialContributions extends SpecialPage {
 			$this->opts['topOnly'] = false;
 		}
 
-		$form = Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript, 'class' => 'mw-contributions-form' ) );
+		$form = Html::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript, 'class' => 'mw-contributions-form' ) );
 
 		# Add hidden params for tracking except for parameters in $skipParameters
 		$skipParameters = array( 'namespace', 'nsInvert', 'deletedOnly', 'target', 'contribs', 'year', 'month', 'topOnly', 'associated' );
@@ -414,17 +413,17 @@ class SpecialContributions extends SpecialPage {
 
 		if ( $tagFilter ) {
 			$filterSelection =
-				Xml::tags( 'td', array( 'class' => 'mw-label' ), array_shift( $tagFilter ) ) .
-				Xml::tags( 'td', array( 'class' => 'mw-input' ), implode( '&#160', $tagFilter ) );
+				Html::rawElement( 'td', array( 'class' => 'mw-label' ), array_shift( $tagFilter ) ) .
+				Html::rawElement( 'td', array( 'class' => 'mw-input' ), implode( '&#160', $tagFilter ) );
 		} else {
-			$filterSelection = Xml::tags( 'td', array( 'colspan' => 2 ), '' );
+			$filterSelection = Html::rawElement( 'td', array( 'colspan' => 2 ), '' );
 		}
 
-		$targetSelection = Xml::tags( 'td', array( 'colspan' => 2 ),
+		$targetSelection = Html::rawElement( 'td', array( 'colspan' => 2 ),
 			Xml::radioLabel(
 				$this->msg( 'sp-contributions-newbies' )->text(),
 				'contribs',
-				'newbie' ,
+				'newbie',
 				'newbie',
 				$this->opts['contribs'] == 'newbie',
 				array( 'class' => 'mw-input' )
@@ -445,7 +444,7 @@ class SpecialContributions extends SpecialPage {
 					( $this->opts['target'] ? array() : array( 'autofocus' )
 				)
 			) . ' '
-		) ;
+		);
 
 		$namespaceSelection =
 			Xml::tags( 'td', array( 'class' => 'mw-label' ),
@@ -455,7 +454,7 @@ class SpecialContributions extends SpecialPage {
 					''
 				)
 			) .
-			Xml::tags( 'td', null,
+			Html::rawElement( 'td', null,
 				Html::namespaceSelector( array(
 					'selected' => $this->opts['namespace'],
 					'all'      => '',
@@ -483,10 +482,10 @@ class SpecialContributions extends SpecialPage {
 						array( 'title' => $this->msg( 'tooltip-namespace_association' )->text(), 'class' => 'mw-input' )
 					) . '&#160;'
 				)
-			) ;
+			);
 
-		$extraOptions = Xml::tags( 'td', array( 'colspan' => 2 ),
-			Html::rawElement( 'span', array( 'style' => 'white-space: nowrap' ),
+		if ( $this->getUser()->isAllowed( 'deletedhistory' ) ) {
+			$deletedOnlyCheck = Html::rawElement( 'span', array( 'style' => 'white-space: nowrap' ),
 				Xml::checkLabel(
 					$this->msg( 'history-show-deleted' )->text(),
 					'deletedOnly',
@@ -494,7 +493,13 @@ class SpecialContributions extends SpecialPage {
 					$this->opts['deletedOnly'],
 					array( 'class' => 'mw-input' )
 				)
-			) .
+			);
+		} else {
+			$deletedOnlyCheck = '';
+		}
+
+		$extraOptions = Html::rawElement( 'td', array( 'colspan' => 2 ),
+			$deletedOnlyCheck .
 			Html::rawElement( 'span', array( 'style' => 'white-space: nowrap' ),
 				Xml::checkLabel(
 					$this->msg( 'sp-contributions-toponly' )->text(),
@@ -504,7 +509,7 @@ class SpecialContributions extends SpecialPage {
 					array( 'class' => 'mw-input' )
 				)
 			)
-		) ;
+		);
 
 		$dateSelectionAndSubmit = Xml::tags( 'td', array( 'colspan' => 2 ),
 			Xml::dateMenu(
@@ -515,35 +520,29 @@ class SpecialContributions extends SpecialPage {
 				$this->msg( 'sp-contributions-submit' )->text(),
 				array( 'class' => 'mw-submit' )
 			)
-		) ;
+		);
 
 		$form .=
 			Xml::fieldset( $this->msg( 'sp-contributions-search' )->text() ) .
-			Xml::openElement( 'table', array( 'class' => 'mw-contributions-table' ) ) .
-				Xml::openElement( 'tr' ) .
-					$targetSelection .
-				Xml::closeElement( 'tr' ) .
-				Xml::openElement( 'tr' ) .
-					$namespaceSelection .
-				Xml::closeElement( 'tr' ) .
-				Xml::openElement( 'tr' ) .
-					$filterSelection .
-				Xml::closeElement( 'tr' ) .
-				Xml::openElement( 'tr' ) .
-					$extraOptions .
-				Xml::closeElement( 'tr' ) .
-				Xml::openElement( 'tr' ) .
-					$dateSelectionAndSubmit .
-				Xml::closeElement( 'tr' ) .
-			Xml::closeElement( 'table' );
+			Html::rawElement( 'table', array( 'class' => 'mw-contributions-table' ), "\n" .
+				Html::rawElement( 'tr', array(), $targetSelection ) . "\n" .
+				Html::rawElement( 'tr', array(), $namespaceSelection ) . "\n" .
+				Html::rawElement( 'tr', array(), $filterSelection ) . "\n" .
+				Html::rawElement( 'tr', array(), $extraOptions ) . "\n" .
+				Html::rawElement( 'tr', array(), $dateSelectionAndSubmit ) . "\n"
+			);
 
 		$explain = $this->msg( 'sp-contributions-explain' );
-		if ( $explain->exists() ) {
-			$form .= "<p id='mw-sp-contributions-explain'>{$explain}</p>";
+		if ( !$explain->isBlank() ) {
+			$form .= "<p id='mw-sp-contributions-explain'>{$explain->parse()}</p>";
 		}
 		$form .= Xml::closeElement( 'fieldset' ) .
 			Xml::closeElement( 'form' );
 		return $form;
+	}
+
+	protected function getGroupName() {
+		return 'users';
 	}
 }
 
@@ -598,7 +597,7 @@ class ContribsPager extends ReverseChronologicalPager {
 	 * This method basically executes the exact same code as the parent class, though with
 	 * a hook added, to allow extentions to add additional queries.
 	 *
-	 * @param $offset String: index offset, inclusive
+	 * @param string $offset index offset, inclusive
 	 * @param $limit Integer: exact query limit
 	 * @param $descending Boolean: query direction, false for ascending, true for descending
 	 * @return ResultWrapper
@@ -631,7 +630,7 @@ class ContribsPager extends ReverseChronologicalPager {
 		$result = array();
 
 		// loop all results and collect them in an array
-		foreach ( $data as $j => $query ) {
+		foreach ( $data as $query ) {
 			foreach ( $query as $i => $row ) {
 				// use index column as key, allowing us to easily sort in PHP
 				$result[$row->{$this->getIndexField()} . "-$i"] = $row;
@@ -731,10 +730,10 @@ class ContribsPager extends ReverseChronologicalPager {
 			}
 		}
 		if ( $this->deletedOnly ) {
-			$condition[] = "rev_deleted != '0'";
+			$condition[] = 'rev_deleted != 0';
 		}
 		if ( $this->topOnly ) {
-			$condition[] = "rev_id = page_latest";
+			$condition[] = 'rev_id = page_latest';
 		}
 		return array( $tables, $index, $condition, $join_conds );
 	}
@@ -831,7 +830,7 @@ class ContribsPager extends ReverseChronologicalPager {
 		 */
 		wfSuppressWarnings();
 		$rev = new Revision( $row );
-		$validRevision = $rev->getParentId() !== null;
+		$validRevision = (bool) $rev->getId();
 		wfRestoreWarnings();
 
 		if ( $validRevision ) {
@@ -950,8 +949,12 @@ class ContribsPager extends ReverseChronologicalPager {
 		// Let extensions add data
 		wfRunHooks( 'ContributionsLineEnding', array( $this, &$ret, $row, &$classes ) );
 
-		$classes = implode( ' ', $classes );
-		$ret = "<li class=\"$classes\">$ret</li>\n";
+		if ( $classes === array() && $ret === '' ) {
+			wfDebug( 'Dropping Special:Contribution row that could not be formatted' );
+			$ret = "<!-- Could not format Special:Contribution row. -->\n";
+		} else {
+			$ret = Html::rawElement( 'li', array( 'class' => $classes ), $ret ) . "\n";
+		}
 
 		wfProfileOut( __METHOD__ );
 		return $ret;

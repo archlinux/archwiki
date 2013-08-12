@@ -42,6 +42,7 @@ class SimpleCaptcha {
 			Xml::element( 'input', array(
 				'name' => 'wpCaptchaWord',
 				'id'   => 'wpCaptchaWord',
+				'autocomplete' => 'off',
 				'tabindex' => 1 ) ) . // tab in before the edit textarea
 			"</p>\n" .
 			Xml::element( 'input', array(
@@ -577,15 +578,23 @@ class SimpleCaptcha {
 
 	/**
 	 * @param $module ApiBase
-	 * @param $params array
 	 * @return bool
 	 */
-	public function APIGetAllowedParams( &$module, &$params ) {
-		if ( !$module instanceof ApiEditPage ) {
-			return true;
+	protected function isAPICaptchaModule( $module ) {
+		return $module instanceof ApiEditPage;
+	}
+
+	/**
+	 * @param $module ApiBase
+	 * @param $params array
+	 * @param $flags int
+	 * @return bool
+	 */
+	public function APIGetAllowedParams( &$module, &$params, $flags ) {
+		if ( $flags && $this->isAPICaptchaModule( $module ) ) {
+			$params['captchaword'] = null;
+			$params['captchaid'] = null;
 		}
-		$params['captchaword'] = null;
-		$params['captchaid'] = null;
 
 		return true;
 	}
@@ -596,11 +605,10 @@ class SimpleCaptcha {
 	 * @return bool
 	 */
 	public function APIGetParamDescription( &$module, &$desc ) {
-		if ( !$module instanceof ApiEditPage ) {
-			return true;
+		if ( $this->isAPICaptchaModule( $module ) ) {
+			$desc['captchaid'] = 'CAPTCHA ID from previous request';
+			$desc['captchaword'] = 'Answer to the CAPTCHA';
 		}
-		$desc['captchaid'] = 'CAPTCHA ID from previous request';
-		$desc['captchaword'] = 'Answer to the CAPTCHA';
 
 		return true;
 	}

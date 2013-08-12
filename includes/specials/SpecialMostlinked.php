@@ -36,8 +36,13 @@ class MostlinkedPage extends QueryPage {
 		parent::__construct( $name );
 	}
 
-	function isExpensive() { return true; }
-	function isSyndicated() { return false; }
+	function isExpensive() {
+		return true;
+	}
+
+	function isSyndicated() {
+		return false;
+	}
 
 	function getQueryInfo() {
 		return array (
@@ -76,7 +81,7 @@ class MostlinkedPage extends QueryPage {
 	 * Make a link to "what links here" for the specified title
 	 *
 	 * @param $title Title being queried
-	 * @param $caption String: text to display on the link
+	 * @param string $caption text to display on the link
 	 * @return String
 	 */
 	function makeWlhLink( $title, $caption ) {
@@ -101,5 +106,9 @@ class MostlinkedPage extends QueryPage {
 		$wlh = $this->makeWlhLink( $title,
 			$this->msg( 'nlinks' )->numParams( $result->value )->escaped() );
 		return $this->getLanguage()->specialList( $link, $wlh );
+	}
+
+	protected function getGroupName() {
+		return 'highuse';
 	}
 }

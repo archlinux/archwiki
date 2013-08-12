@@ -180,7 +180,6 @@ $messages = array(
 'qbbrowse' => 'Ἀλάου',
 'qbedit' => 'Μεταγράφειν',
 'qbpageoptions' => 'Ἥδε ἡ δέλτος',
-'qbpageinfo' => 'Συγκείμενον',
 'qbmyoptions' => 'Οἱ δέλτοι μου',
 'qbspecialpages' => 'Εἰδικαὶ δέλτοι',
 'faq' => 'Τὰ πολλάκις αἰτηθέντα',
@@ -413,11 +412,8 @@ $2',
 # Login and logout pages
 'logouttext' => "'''Νῦν γὰρ ἀποσυνδεδεμένος εἰ.'''
 
-Ἔξεστί σοι χρῆσθαι τῷ {{SITENAME}} ἀνωνύμως, ἢ ἔξεστί σοι [[Special:UserLogin|συνδεῖσθαι πάλιν]] ὡς ὁ αὐτὸς ἢ ὡς ἄλλος χρώμενος.
+Ἔξεστί σοι χρῆσθαι τῷ {{SITENAME}} ἀνωνύμως, ἢ ἔξεστί σοι <span class='plainlinks'>[$1 συνδεῖσθαι πάλιν]</span> ὡς ὁ αὐτὸς ἢ ὡς ἄλλος χρώμενος.
 Δέλτοι τινὲς δέ, ἐνδεχομένως, δειχθήσονται ὡς ἂν ἀκμὴν συνδεδεμένος ᾖς, μέχρι ὅτε καθαίρῃς τὴν λανθάνουσαν μνήμην τοῦ προγράμματος πλοηγήσεώς σου.",
-'welcomecreation' => '== Ὡς εὖ παρέστης, $1! ==
-
-Λογισμός σὸς πεποίηται. Μέμνησο μεταβάλλειν τὰς τοῦ [[Special:Preferences|{{SITENAME}} προαιρέσεις σου]].',
 'yourname' => 'Ὄνομα χρωμένου:',
 'yourpassword' => 'Σῆμα:',
 'yourpasswordagain' => 'Ἀνατυπῶσαι σύνθημα:',
@@ -624,7 +620,6 @@ $2',
 'template-protected' => '(φυλλάττεται)',
 'template-semiprotected' => '(ἡμιπεφυλαγμένη)',
 'hiddencategories' => 'Ἥδε ἡ δέλτος μέλος ἐστὶ {{PLURAL:$1|1 τῆς κεκρυμμένης κατηγορίας|$1 τῶν κεκρυμμένων κατηγοριῶν}}:',
-'nocreatetitle' => 'Ποίησις δέλτων περιωρισμένη',
 'nocreatetext' => "{{SITENAME}} οὐ σ'ἐᾷ νέας δέλτους ποιεῖν.
 Ἐᾷ σε δέλτον ἢδη οὖσαν μεταβάλλειν ἢ [[Special:UserLogin|συνδεῖσθαι ἢ λογισμὸν ποιεῖν]].",
 'nocreate-loggedin' => 'Οὐκ ἔξεστι σοι νέας δέλτους ποιεῖν.',
@@ -1050,11 +1045,13 @@ $1",
 'right-siteadmin' => 'Φράττειν καὶ ἀποφράττειν τὴν βάσιν δεδομένων',
 'right-override-export-depth' => 'Ἐξάγειν δέλτους περιλαμβανομένων συνδεδεμένων δέλτων ἕως βάθος τι 5 ἐπιπέδων',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Κατάλογος ποιήσεων λογισμῶν.',
+'newuserlogpagetext' => 'Ὅδε ἐστὶν κατάλογος τις τῶν ποιήσεων λογισμῶν.',
+
 # User rights log
 'rightslog' => 'Κατάλογος δικαιωμάτων χρωμένων',
 'rightslogtext' => 'Κατάλογος ἀλλαγῶν τῶν δικαιωμάτων χρωμένων.',
-'rightslogentry' => 'Μετεβλήθη ἡ μελότης (δικαιώματα μέλους) διὰ τὸν $1 ἐκ τῆς $2 εἰς τὴν $3',
-'rightsnone' => '(Οὐδέν)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'ἀναγιγνώσκειν τήνδε τὴν δέλτον',
@@ -1488,10 +1485,6 @@ $1",
 'activeusers-hidesysops' => 'Κρύπτειν ἐπιτρόπους',
 'activeusers-noresult' => 'Οὐδεὶς χρώμενος εὑρέθη.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Κατάλογος ποιήσεων λογισμῶν.',
-'newuserlogpagetext' => 'Ὅδε ἐστὶν κατάλογος τις τῶν ποιήσεων λογισμῶν.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Δικαιώματα ὁμάδος χρωμένου',
 'listgrouprights-group' => 'Ὁμάς',
@@ -1566,11 +1559,7 @@ $1",
 
 'enotif_mailer' => 'Σύστημα εἰδήσεως τοῦ {{SITENAME}} μέσῳ ἐπιστολῶν',
 'enotif_reset' => 'Σημαίνειν ἁπάσας τὰς ἐπεσκοπημένας δέλτους',
-'enotif_newpagetext' => 'Ἥδε νέα δέλτος ἐστίν.',
 'enotif_impersonal_salutation' => 'Χρώμενος τῷ {{SITENAME}}',
-'changed' => 'ἠλλαγμένη',
-'created' => 'ποιηθέν',
-'enotif_subject' => 'Ἡ τοῦ {{SITENAME}} δέλτος $PAGETITLE ἐποιἠθη $CHANGEDORCREATED ὑπὸ τὸν $PAGEEDITOR',
 'enotif_lastvisited' => 'Ἴδε $1 διὰ ἁπάσας τὰς ἀλλαγὰς ἐκ τῆς ὑστάτης ἐπισκέψεώς σου.',
 'enotif_lastdiff' => 'Ἴδε $1 διὰ τὸ ὁρᾶν τήνδε τὴν ἀλλαγήν.',
 'enotif_anon_editor' => 'ἀνώνυμος χρώμενος $1',
@@ -1597,6 +1586,8 @@ $NEWPAGE
 
 Ἀνάδρασις καὶ περαιτέρω βοήθεια:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'ποιηθέν',
+'changed' => 'ἠλλαγμένη',
 
 # Delete
 'deletepage' => 'Διαγράφειν τὴν δέλτον',
@@ -2710,7 +2701,7 @@ $5
 # New logging system
 'revdelete-restricted' => 'ἐφηρμοσμένοι περιορισμοὶ διὰ τοὺς ἐπιτρόπους',
 'revdelete-unrestricted' => 'αἱρεθέντες περιορισμοὶ διὰ τοὺς ἐπιτρόπους',
-'newuserlog-byemail' => 'σύνθημα ἀπεσταλμένον μέσῳ ἠλ-ταχυδρομείου',
+'rightsnone' => '(Οὐδέν)',
 
 # Feedback
 'feedback-cancel' => 'Ἀκυροῦν',

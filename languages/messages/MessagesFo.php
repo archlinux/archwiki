@@ -17,11 +17,6 @@
  * @author לערי ריינהארט
  */
 
-$bookstoreList = array(
-	'Bokasolan.fo' => 'http://www.bokasolan.fo/vleitari.asp?haattur=bok.alfa&Heiti=&Hovindur=&Forlag=&innbinding=Oell&bolkur=Allir&prisur=Allir&Aarstal=Oell&mal=Oell&status=Oell&ISBN=$1',
-	'inherit' => true,
-);
-
 $namespaceNames = array(
 	NS_MEDIA            => 'Miðil',
 	NS_SPECIAL          => 'Serstakt',
@@ -51,15 +46,6 @@ $namespaceAliases = array(
 	'Fyrimynd_kjak' => NS_TEMPLATE_TALK,
 	'Hjálp_kjak' => NS_HELP_TALK,
 	'Bólkur_kjak' => NS_CATEGORY_TALK,
-);
-
-
-$datePreferences = false;
-$defaultDateFormat = 'dmy';
-$dateFormats = array(
-	'dmy time' => 'H:i',
-	'dmy date' => 'j. M Y',
-	'dmy both' => 'j. M Y "kl." H:i',
 );
 
 $specialPageAliases = array(
@@ -107,6 +93,19 @@ $specialPageAliases = array(
 	'Version'                   => array( 'Útgáva' ),
 	'Wantedpages'               => array( 'Ynsktar síður' ),
 	'Watchlist'                 => array( 'Mítt eftirlit' ),
+);
+
+$datePreferences = false;
+$defaultDateFormat = 'dmy';
+$dateFormats = array(
+	'dmy time' => 'H:i',
+	'dmy date' => 'j. M Y',
+	'dmy both' => 'j. M Y "kl." H:i',
+);
+
+$bookstoreList = array(
+	'Bokasolan.fo' => 'http://www.bokasolan.fo/vleitari.asp?haattur=bok.alfa&Heiti=&Hovindur=&Forlag=&innbinding=Oell&bolkur=Allir&prisur=Allir&Aarstal=Oell&mal=Oell&status=Oell&ISBN=$1',
+	'inherit' => true,
 );
 
 $linkTrail = '/^([áðíóúýæøa-z]+)(.*)$/sDu';
@@ -245,6 +244,7 @@ $messages = array(
 'newwindow' => '(kemur í nýggjan glugga)',
 'cancel' => 'Ógilda',
 'moredotdotdot' => 'Meira...',
+'morenotlisted' => 'Meira, ið ikki verður víst',
 'mypage' => 'Síða',
 'mytalk' => 'Kjak',
 'anontalk' => 'Kjak til hesa ip-adressuna',
@@ -256,7 +256,6 @@ $messages = array(
 'qbbrowse' => 'Kaga',
 'qbedit' => 'Rætta',
 'qbpageoptions' => 'Henda síðan',
-'qbpageinfo' => 'Samanhangur',
 'qbmyoptions' => 'Mínar síður',
 'qbspecialpages' => 'Serstakar síður',
 'faq' => 'OSS',
@@ -279,6 +278,7 @@ $messages = array(
 'namespaces' => 'Navnarúm',
 'variants' => 'Ymisk sløg',
 
+'navigation-heading' => 'Navigatiónsskrá',
 'errorpagetitle' => 'Villa',
 'returnto' => 'Vend aftur til $1.',
 'tagline' => 'Frá {{SITENAME}}',
@@ -522,12 +522,11 @@ Umboðsstjórin sum stongdi hana, gav hesa frágreiðing: "$3".',
 
 # Login and logout pages
 'logouttext' => "'''Tú hevur nú ritað út.'''
-Tú kanst halda fram at brúka {{SITENAME}} sum dulnevndur, ella kanst tú [[Special:UserLogin|logga á aftur]] sum sami ella sum annar brúkari. 
+Tú kanst halda fram at brúka {{SITENAME}} sum dulnevndur, ella kanst tú <span class='plainlinks'>[\$1 logga á aftur]</span> sum sami ella sum annar brúkari. 
 Legg til merkis, at summar síður framvegis vera vístar, sum um tú enn vart loggaður á, til tú hevur reinsa tín brovsara fyri \"cache\".",
-'welcomecreation' => '== Vælkomin, $1! ==
-
-Tín konta er nú stovnað.
-Gloym ikki at broyta tínar [[Special:Preferences|{{SITENAME}} innstillingar]].',
+'welcomeuser' => 'Vælkomin, $1!',
+'welcomecreation-msg' => 'Tín konta er nú stovnað.
+Gloym ikki at broyta tínar [[Special:Preferences|{{SITENAME}}-innstillingar]].',
 'yourname' => 'Títt brúkaranavn:',
 'yourpassword' => 'Títt loyniorð:',
 'yourpasswordagain' => 'Skriva loyniorð umaftur:',
@@ -550,7 +549,7 @@ Gloym ikki at broyta tínar [[Special:Preferences|{{SITENAME}} innstillingar]].'
 'gotaccount' => "Hevur tú longu eina kontu? '''$1'''.",
 'gotaccountlink' => 'Rita inn',
 'userlogin-resetlink' => 'Hevur tú gloymt tínar logg inn upplýsingar',
-'createaccountmail' => 'eftur t-posti',
+'createaccountmail' => 'Nýt eitt fyribils tilvildarligt loyniorð og send tað til t-post adressuna niðanfyri',
 'createaccountreason' => 'Orsøk:',
 'badretype' => 'Loyniorðið tú hevur skriva er ikki rætt.',
 'userexists' => 'Brúkaranavnið sum tú valdi er longu í nýtslu.
@@ -627,6 +626,7 @@ Vinarliga bíða áðrenn tú roynir aftur.',
 # Email sending
 'php-mail-error-unknown' => "Ókend villa í PHP'sa teldupost () funktión.",
 'user-mail-no-addy' => 'Royndi at senda t-post uttan eina t-post adressu.',
+'user-mail-no-body' => 'Tú royndi at senda ein teldupost við ongum ella órímiliga stuttum innihaldi.',
 
 # Change password dialog
 'resetpass' => 'Broyt loyniorð',
@@ -691,6 +691,7 @@ Fyribils loyniorð: $2',
 'changeemail-oldemail' => 'Verandi t-post adressa:',
 'changeemail-newemail' => 'Nýggj t-post adressa:',
 'changeemail-none' => '(ongin)',
+'changeemail-password' => 'Títt {{SITENAME}} loyniorð:',
 'changeemail-submit' => 'Broyt t-post',
 'changeemail-cancel' => 'Ógilda',
 
@@ -876,7 +877,6 @@ Tann seinasti posturin í loggfíluni er vístur niðanfyri fyri kelduávísing:
 'template-protected' => '(friðað)',
 'template-semiprotected' => '(lutvíst vardar)',
 'hiddencategories' => 'Henda síðan er í {{PLURAL:$1|1 fjaldum bólki|$1 fjaldum bólkum}}:',
-'nocreatetitle' => 'Upprættan av síðu er avmarkað',
 'nocreatetext' => '{{SITENAME}} hevur noktað fyri møguleikanum at upprætta nýggjar síður.
 Tú kanst fara aftur og rætta eina síðu sum longu er til, ella [[Special:UserLogin|rita teg inn ella få tær eina konto]].',
 'nocreate-loggedin' => 'Tú hevur ikki loyvi til at upprætta nýggjar síður.',
@@ -901,6 +901,13 @@ Tað sær út til at hon er blivin strikað.',
 'edit-already-exists' => 'Tað var ikki møguligt at upprætta nýggja síðu.
 Síðan er longu til.',
 'defaultmessagetext' => 'Standard boðtekstur',
+'invalid-content-data' => 'Ógyldug innihalds dáta',
+'content-not-allowed-here' => '"$1" innihald er ikki loyvt á síðu [[$2]]',
+
+# Content models
+'content-model-text' => 'simpul tekstur',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-category' => 'Síður við ov nógvum dýrum parsara funktiónskallum',
@@ -1203,9 +1210,9 @@ Tú kanst ikki angra, tá tað fyrst er gjørt.',
 'prefs-emailconfirm-label' => 'Vátta tína t-post adressu:',
 'prefs-textboxsize' => 'Støddin á rættingar vindeyganum',
 'youremail' => 'T-postur (sjálvboðið)*:',
-'username' => 'Brúkaranavn:',
-'uid' => 'Brúkara ID:',
-'prefs-memberingroups' => 'Limir í {{PLURAL:$1|bólki|bólkum}}:',
+'username' => '{{GENDER:$1|Brúkaranavn}}:',
+'uid' => '{{GENDER:$1|Brúkari}} ID:',
+'prefs-memberingroups' => '{{GENDER:$2|Limur}} í {{PLURAL:$1|bólki|bólkum}}:',
 'prefs-registration' => 'Skrásett tíðspunkt:',
 'yourrealname' => 'Títt navn*:',
 'yourlanguage' => 'Mál til brúkaraflatu:',
@@ -1327,12 +1334,13 @@ Tín t-post adressa verður ikki avdúkað, tá aðrir brúkarir seta seg í sam
 'right-sendemail' => 'Send t-post til aðrir brúkarar',
 'right-passwordreset' => 'Sí teldupostar til nullstilling av loyniorði',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Brúkara logg',
+'newuserlogpagetext' => 'Hetta er ein listi yvir seinast stovnaðu brúkarar.',
+
 # User rights log
 'rightslog' => 'Rættindaloggur',
 'rightslogtext' => 'Hetta er ein loggur sum vísir broytingar í brúkararættindum.',
-'rightslogentry' => 'broyttar bólka limaskap fyri $1 frá $2 til $3',
-'rightslogentry-autopromote' => 'varð sjálvvirkandi fluttur upp frá $2 til $3',
-'rightsnone' => '(ongin)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'les hesa síðu',
@@ -1734,10 +1742,6 @@ Sí eisini [[Special:WantedCategories|ynsktir bólkar]].',
 'activeusers-hidesysops' => 'Fjal umboðsstjórar (administratorar)',
 'activeusers-noresult' => 'Ongir brúkarar funnir.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Brúkara logg',
-'newuserlogpagetext' => 'Hetta er ein listi yvir seinast stovnaðu brúkarar.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Brúkara bólka rættindi',
 'listgrouprights-summary' => 'Henda síða vísir ein lista av brúkarabólkum, sum eru útgreinaðir á hesi wiki og rættindini hjá teimum einstøku bólkunum.
@@ -1810,7 +1814,6 @@ Vilt tú flyta síðuna undan tínum eftirliti, kanst tú trýsta á \"Strika ef
 'watching' => 'Eftirlitir...',
 'unwatching' => 'Strikar eftirlit...',
 
-'enotif_newpagetext' => 'Hetta er ein nýggj síða.',
 'enotif_impersonal_salutation' => '{{SITENAME}}brúkari',
 'created' => 'stovnað',
 
@@ -1902,7 +1905,7 @@ broytti tað aftur til seinastu versjón hjá $2.',
 'blanknamespace' => '(Greinir)',
 
 # Contributions
-'contributions' => 'Brúkaraíkast',
+'contributions' => '{{GENDER:$1|Brúkaraíkøst}}',
 'contributions-title' => 'Brúkaraíkøst fyri $1',
 'mycontris' => 'Íkøst',
 'contribsub2' => 'Eftir $1 ($2)',
@@ -2302,6 +2305,9 @@ Hendan váttanarkoda fer úr gildi tann $4.',
 # Special:ComparePages
 'compare-page1' => 'Síða 1',
 'compare-page2' => 'Síða 2',
+
+# New logging system
+'rightsnone' => '(ongin)',
 
 # Search suggestions
 'searchsuggest-search' => 'Leita',

@@ -147,7 +147,6 @@ Pabusten ing pamanaliling dake kapamilatan [alilan] ning suglung',
 'qbbrowse' => 'Bation (browse)',
 'qbedit' => 'Mag-edit',
 'qbpageoptions' => 'Ining bulung',
-'qbpageinfo' => 'Kontekstu/kabilian',
 'qbmyoptions' => 'Deng kakung bulung',
 'qbspecialpages' => 'Bulung a makabukud',
 'faq' => 'Maralas a Kukutang (MAK)',
@@ -369,9 +368,6 @@ Iti ing binie nang sangkan: ''$2''.",
 
 Malyari mung isundu ing pamangamit mu king {{SITENAME}} a e ka papakilala, o malyari kang mag login pasibayu anting pareu o aliwang talagamit.
 Apansingan mung mapalyaring makalto la pa murin deng aliwang bulung a bala mu maka login ka pa murin, anggang e me lilinisan (clear) ing kekang browser cache.",
-'welcomecreation' => '== Malaus ka, $1! ==
-
-Melalang ne ing kekang account. E mo kakalingwan alilan deng kekang piniling {{SITENAME}}',
 'yourname' => 'Lagyung talagamit (Username):',
 'yourpassword' => 'Kekang password:',
 'yourpasswordagain' => 'Pakisulat meng pasibayu ing password:',
@@ -604,7 +600,6 @@ Maliari meng i-\"cut-n-paste\" ing sinulat mu king metung a text file, at i-save
 'template-protected' => '(protektadu)',
 'template-semiprotected' => '(maki dakeng protektadu)',
 'hiddencategories' => 'Kayabe ya ing bulung a ini king/karing {{PLURAL:$1|1 makasalikut a kategoriya|$1 makasalikut a kategoriya}}:',
-'nocreatetitle' => 'Maki angganan (limitadu) ing pamangawang bulung',
 'nocreatetext' => 'Lilimitan ning {{SITENAME}} ing pamangawa kareng bayung bulung.
 Malyari kang magbalik at mag-edit king bulung a atyu na, o makapag[[Special:UserLogin|log in ka at maglalang account]].',
 'nocreate-loggedin' => 'Ala kang paintulut a maglalang bayung bulung king {{SITENAME}}.',
@@ -955,11 +950,12 @@ Nung ibie me, magamit ya bang kilalanan ing kekang ambag.',
 'right-userrights-interwiki' => 'I-edit la reng katulirang talagamit (user rights) da reng talagamit kareng aliwang karinan a wiki',
 'right-siteadmin' => 'Isara ya ampong ibusni ing database',
 
+# Special:Log/newusers
+'newuserlogpage' => "Tala ning pamaglalang talagamit (''User creation log'')",
+
 # User rights log
 'rightslog' => 'Tala da reng katulirang talagamit (user rights log)',
 'rightslogtext' => 'Ini tala de reng miyalilan king katulirang talagamit (user rights).',
-'rightslogentry' => 'miyalilan ya ing grupu nung nu ya kayanib i $1 manibat king $2 paras king $3',
-'rightsnone' => '(ala)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'i-edit/alilan ya ing bulung a ini',
@@ -1327,9 +1323,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-submit' => 'Pakit',
 'listusers-noresult' => 'Alang meyakit a talagamit.',
 
-# Special:Log/newusers
-'newuserlogpage' => "Tala ning pamaglalang talagamit (''User creation log'')",
-
 # Special:ListGroupRights
 'listgrouprights' => 'Katuliran da reng grupung talagamit (user group rights)',
 'listgrouprights-summary' => 'Ing makatuki tala (list) de reng grupung talagamit a mituldu kening wiki, ampo reng karelang katuliran king pamaglub (access rights). Ating karagdagang impormasiun tungkul king katuliran ning balang metung [[{{MediaWiki:Listgrouprights-helppage}}|keni]].',
@@ -1395,11 +1388,7 @@ click me ing \"Tuknangan ing pamagbante\" (Unwatch) king gilid na ning bulung.",
 'unwatching' => 'E ne babanten...',
 
 'enotif_reset' => 'Dinan lang tanda deng eganaganang bulung a pintalan mu',
-'enotif_newpagetext' => 'Bayu yang bulung ini.',
 'enotif_impersonal_salutation' => 'talagamit king {{SITENAME}}',
-'changed' => 'miyalilan',
-'created' => 'melalang',
-'enotif_subject' => 'Ining bulung ning {{SITENAME}} a $PAGETITLE me$CHANGEDORCREATED ya kapamilatan nang $PAGEEDITOR',
 'enotif_lastvisited' => 'Lon me ing $1 para kareng eganaganang miyalilan
 manibat anyang tawli kang linabas.',
 'enotif_lastdiff' => 'Lon me ing $1 ba meng akit ining miyalilan.',
@@ -1427,6 +1416,8 @@ Ba mong ayalilan deng pakatuldu king kekang tala ring babanten (watchlist settin
 
 Keni ka magparalang puna/komentu at maniad karagdagang saup:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'melalang',
+'changed' => 'miyalilan',
 
 # Delete
 'deletepage' => 'Buran ya ing bulung',
@@ -2354,5 +2345,6 @@ Mayari/mapasu ya ining confirmation code keng $4.',
 # New logging system
 'revdelete-restricted' => 'ipairal la reng limitasiun kareng sysop',
 'revdelete-unrestricted' => 'ilako la reng makabawal kareng sysops',
+'rightsnone' => '(ala)',
 
 );

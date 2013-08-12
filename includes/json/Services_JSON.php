@@ -100,7 +100,7 @@ define('SERVICES_JSON_SUPPRESS_ERRORS', 32);
  * // create a new instance of Services_JSON
  * $json = new Services_JSON();
  *
- * // convert a complexe value to JSON notation, and send it to the browser
+ * // convert a complex value to JSON notation, and send it to the browser
  * $value = array('foo', 'bar', array(1, 2, 'baz'), array(3, array(4)));
  * $output = $json->encode($value);
  *
@@ -155,9 +155,9 @@ class Services_JSON
 	 *
 	 * Normally should be handled by mb_convert_encoding, but
 	 * provides a slower PHP-only method for installations
-	 * that lack the multibye string extension.
+	 * that lack the multibyte string extension.
 	 *
-	 * @param $utf16 String: UTF-16 character
+	 * @param string $utf16 UTF-16 character
 	 * @return String: UTF-8 character
 	 * @access private
 	 */
@@ -210,9 +210,9 @@ class Services_JSON
 	 *
 	 * Normally should be handled by mb_convert_encoding, but
 	 * provides a slower PHP-only method for installations
-	 * that lack the multibye string extension.
+	 * that lack the multibyte string extension.
 	 *
-	 * @param $utf8 String: UTF-8 character
+	 * @param string $utf8 UTF-8 character
 	 * @return String: UTF-16 character
 	 * @access private
 	 */
@@ -268,7 +268,7 @@ class Services_JSON
 	 *
 	 * @param $var Mixed: any number, boolean, string, array, or object to be encoded.
 	 *			see argument 1 to Services_JSON() above for array-parsing behavior.
-	 *			if var is a strng, note that encode() always expects it
+	 *			if var is a string, note that encode() always expects it
 	 *			to be in ASCII or UTF-8 format!
 	 * @param $pretty Boolean: pretty-print output with indents and newlines
 	 *
@@ -283,12 +283,12 @@ class Services_JSON
 		return $this->encode2($var);
 	}
 
-   	/**
+	/**
 	 * encodes an arbitrary variable into JSON format
 	 *
 	 * @param $var Mixed: any number, boolean, string, array, or object to be encoded.
 	 *			see argument 1 to Services_JSON() above for array-parsing behavior.
-	 *			if var is a strng, note that encode() always expects it
+	 *			if var is a string, note that encode() always expects it
 	 *			to be in ASCII or UTF-8 format!
 	 *
 	 * @return mixed JSON string representation of input var or an error if a problem occurs
@@ -424,7 +424,7 @@ class Services_JSON
 				*/
 
 				// treat as a JSON object
-				if (is_array($var) && count($var) && (array_keys($var) !== range(0, sizeof($var) - 1))) {
+				if (is_array($var) && count($var) && (array_keys($var) !== range(0, count($var) - 1))) {
 					$this->indent++;
 					$properties = array_map(array($this, 'name_value'),
 								array_keys($var),
@@ -480,7 +480,7 @@ class Services_JSON
 	/**
 	 * array-walking function for use in generating JSON-formatted name-value pairs
 	 *
-	 * @param $name String: name of key to use
+	 * @param string $name name of key to use
 	 * @param $value Mixed: reference to an array element to be encoded
 	 *
 	 * @return String: JSON-formatted name-value pair, like '"name":value'
@@ -500,7 +500,7 @@ class Services_JSON
 	/**
 	 * reduce a string by removing leading and trailing comments and whitespace
 	 *
-	 * @param $str String: string value to strip of comments and whitespace
+	 * @param string $str string value to strip of comments and whitespace
 	 *
 	 * @return String: string value stripped of comments and whitespace
 	 * @access private
@@ -527,7 +527,7 @@ class Services_JSON
 	/**
 	 * decodes a JSON string into appropriate variable
 	 *
-	 * @param $str String: JSON-formatted string
+	 * @param string $str JSON-formatted string
 	 *
 	 * @return mixed number, boolean, string, array, or object
 	 *		   corresponding to given JSON input string.

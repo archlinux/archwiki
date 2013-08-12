@@ -45,6 +45,8 @@ define( 'EXPR_TRUNC', 33 );
 define( 'EXPR_CEIL', 34 );
 define( 'EXPR_POW', 35 );
 define( 'EXPR_PI', 36 );
+define( 'EXPR_FMOD', 37 );
+define( 'EXPR_SQRT' , 38 );
 
 class ExprError extends MWException {
 	/**
@@ -52,6 +54,12 @@ class ExprError extends MWException {
 	 * @param $parameter string
 	 */
 	public function __construct( $msg, $parameter = '' ) {
+		// Give grep a chance to find the usages:
+		// pfunc_expr_stack_exhausted, pfunc_expr_unexpected_number, pfunc_expr_preg_match_failure,
+		// pfunc_expr_unrecognised_word, pfunc_expr_unexpected_operator, pfunc_expr_missing_operand,
+		// pfunc_expr_unexpected_closing_bracket, pfunc_expr_unrecognised_punctuation,
+		// pfunc_expr_unclosed_bracket, pfunc_expr_division_by_zero, pfunc_expr_invalid_argument,
+		// pfunc_expr_invalid_argument_ln, pfunc_expr_unknown_error, pfunc_expr_not_a_number
 		$msg = wfMessage( "pfunc_expr_$msg", $parameter )->inContentLanguage()->escaped();
 		$this->message = '<strong class="error">' . $msg . '</strong>';
 	}
@@ -77,10 +85,12 @@ class ExprParser {
 		EXPR_TRUNC => 9,
 		EXPR_CEIL => 9,
 		EXPR_NOT => 9,
+		EXPR_SQRT => 9,
 		EXPR_POW => 8,
 		EXPR_TIMES => 7,
 		EXPR_DIVIDE => 7,
 		EXPR_MOD => 7,
+		EXPR_FMOD => 7,
 		EXPR_PLUS => 6,
 		EXPR_MINUS => 6,
 		EXPR_ROUND => 5,
@@ -104,6 +114,7 @@ class ExprParser {
 		EXPR_TIMES => '*',
 		EXPR_DIVIDE => '/',
 		EXPR_MOD => 'mod',
+		EXPR_FMOD => 'fmod',
 		EXPR_PLUS => '+',
 		EXPR_MINUS => '-',
 		EXPR_ROUND => 'round',
@@ -130,11 +141,12 @@ class ExprParser {
 		EXPR_CEIL => 'ceil',
 		EXPR_POW => '^',
 		EXPR_PI => 'pi',
+		EXPR_SQRT => 'sqrt',
 	);
-
 
 	var $words = array(
 		'mod' => EXPR_MOD,
+		'fmod' => EXPR_FMOD,
 		'and' => EXPR_AND,
 		'or' => EXPR_OR,
 		'not' => EXPR_NOT,
@@ -154,6 +166,7 @@ class ExprParser {
 		'floor' => EXPR_FLOOR,
 		'ceil' => EXPR_CEIL,
 		'pi' => EXPR_PI,
+		'sqrt' => EXPR_SQRT,
 	);
 
 	/**
@@ -177,6 +190,7 @@ class ExprParser {
 		$p = 0;
 		$end = strlen( $expr );
 		$expecting = 'expression';
+		$name = '';
 
 		while ( $p < $end ) {
 			if ( count( $operands ) > $this->maxStackSize || count( $operators ) > $this->maxStackSize ) {
@@ -254,6 +268,7 @@ class ExprParser {
 				case EXPR_FLOOR:
 				case EXPR_TRUNC:
 				case EXPR_CEIL:
+				case EXPR_SQRT:
 					if ( $expecting != 'expression' ) {
 						throw new ExprError( 'unexpected_operator', $word );
 					}
@@ -412,7 +427,7 @@ class ExprParser {
 				}
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
-				if ( $right == 0 ) {
+				if ( !$right ) {
 					throw new ExprError( 'division_by_zero', $this->names[$op] );
 				}
 				$stack[] = $left / $right;
@@ -421,12 +436,23 @@ class ExprParser {
 				if ( count( $stack ) < 2 ) {
 					throw new ExprError( 'missing_operand', $this->names[$op] );
 				}
-				$right = array_pop( $stack );
-				$left = array_pop( $stack );
-				if ( $right == 0 ) {
+				$right = (int)array_pop( $stack );
+				$left = (int)array_pop( $stack );
+				if ( !$right ) {
 					throw new ExprError( 'division_by_zero', $this->names[$op] );
 				}
 				$stack[] = $left % $right;
+				break;
+			case EXPR_FMOD:
+				if ( count( $stack ) < 2 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
+				$right = (double)array_pop( $stack );
+				$left = (double)array_pop( $stack );
+				if ( !$right ) {
+					throw new ExprError( 'division_by_zero', $this->names[$op] );
+				}
+				$stack[] = fmod( $left, $right );
 				break;
 			case EXPR_PLUS:
 				if ( count( $stack ) < 2 ) {
@@ -633,6 +659,17 @@ class ExprParser {
 				if ( false === ( $stack[] = pow( $left, $right ) ) ) {
 					throw new ExprError( 'division_by_zero', $this->names[$op] );
 				}
+				break;
+			case EXPR_SQRT:
+				if ( count( $stack ) < 1 ) {
+					throw new ExprError( 'missing_operand', $this->names[$op] );
+				}
+				$arg = array_pop( $stack );
+				$result = sqrt( $arg );
+				if ( is_nan( $result ) ) {
+					throw new ExprError( 'not_a_number', $this->names[$op] );
+				}
+				$stack[] = $result;
 				break;
 			default:
 				// Should be impossible to reach here.

@@ -168,7 +168,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 					}
 				}
 				if ( isset( $prop['hasrelated'] ) && $result->hasRelated() ) {
-					$vals['hasrelated'] = "";
+					$vals['hasrelated'] = '';
 				}
 
 				// Add item to results and see whether it fits
@@ -205,7 +205,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 				ApiBase::PARAM_REQUIRED => true
 			),
 			'namespace' => array(
-				ApiBase::PARAM_DFLT => 0,
+				ApiBase::PARAM_DFLT => NS_MAIN,
 				ApiBase::PARAM_TYPE => 'namespace',
 				ApiBase::PARAM_ISMULTI => true,
 			),
@@ -358,9 +358,5 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Search';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

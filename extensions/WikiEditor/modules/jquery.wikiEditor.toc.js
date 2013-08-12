@@ -478,8 +478,6 @@ fn: {
 						//$( this ).removeClass( 'current' );
 						setTimeout( function() { $.wikiEditor.modules.toc.fn.unhighlight( context ); }, 1000 );
 
-						if ( typeof $.trackAction != 'undefined' )
-							$.trackAction( 'ntoc.heading' );
 						event.preventDefault();
 					} )
 					.text( structure[i].text );

@@ -181,6 +181,7 @@ $wgIgnoredMessages = array(
 	'deadendpages-summary',
 	'protectedpages-summary',
 	'disambiguations-summary',
+	'pageswithprop-summary',
 	'doubleredirects-summary',
 	'lonelypages-summary',
 	'unusedtemplates-summary',
@@ -214,10 +215,11 @@ $wgIgnoredMessages = array(
 	'1movedto2',
 	'1movedto2_redir',
 	'move-redirect-suppressed',
-	// 'newuserlog-byemail',
 	'newuserlog-create-entry',
 	'newuserlog-create2-entry',
 	'newuserlog-autocreate-entry',
+	'rightslogentry',
+	'rightslogentry-autopromote',
 	'suppressedarticle',
 	'deletedarticle',
 	// 'uploadedimage',
@@ -365,6 +367,7 @@ $wgOptionalMessages = array(
 	'exif-maxaperturevalue-value',
 	'exif-subjectnewscode-value',
 	'booksources-isbn',
+	'protect-summary-desc',
 	'sp-contributions-explain',
 	'sorbs',
 	'video-dims',
@@ -467,6 +470,7 @@ $wgOptionalMessages = array(
 	'backlinksubtitle',
 	'prefs-registration-date-time',
 	'prefs-memberingroups-type',
+	'userrights-groupsmember-type',
 	'shared-repo-name-wikimediacommons',
 	'usermessage-template',
 	'filepage.css',
@@ -479,6 +483,8 @@ $wgOptionalMessages = array(
 	'categoryviewer-pagedlinks',
 	'undelete-revisionrow',
 	'pageinfo-redirects-value',
+	'created', // @deprecated. Remove in MediaWiki 1.23.
+	'changed', // @deprecated. Remove in MediaWiki 1.23.
 );
 
 /** EXIF messages, which may be set as optional in several checks, but are generally mandatory */

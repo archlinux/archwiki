@@ -60,7 +60,6 @@ class FewestrevisionsPage extends QueryPage {
 		);
 	}
 
-
 	function sortDescending() {
 		return false;
 	}
@@ -93,5 +92,9 @@ class FewestrevisionsPage extends QueryPage {
 		) . $redirect;
 
 		return $this->getLanguage()->specialList( $plink, $nlink );
+	}
+
+	protected function getGroupName() {
+		return 'maintenance';
 	}
 }

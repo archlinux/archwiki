@@ -195,7 +195,6 @@ $messages = array(
 'qbbrowse' => 'Nàviga',
 'qbedit' => 'Acontza',
 'qbpageoptions' => 'Possibilidades de sa pàgina',
-'qbpageinfo' => 'Cuntestu de sa pàgina',
 'qbmyoptions' => 'Is preferèntzias meas',
 'qbspecialpages' => 'Pàginas spetziales',
 'faq' => 'Pregontas/Respostas (FAQ)',
@@ -392,11 +391,8 @@ Podet èsser stadu burradu dae calicunu àteru.',
 # Login and logout pages
 'logouttext' => "'''As acabadu sa sessione.'''
 
-Immoe podes sighire a impreare {{SITENAME}} in forma anònima, o ti podes [[Special:UserLogin|identificare torra]] comente su de prima o comente usuàriu diferente.
+Immoe podes sighire a impreare {{SITENAME}} in forma anònima, o ti podes <span class='plainlinks'>[$1 identificare torra]</span> comente su de prima o comente usuàriu diferente.
 Tene contu ca is pàginas ki sunt giai abertas in àteras bentanas podent sighire a pàrrer comente cando fias identificadu, fintzas a cando non ddas renfriscas.",
-'welcomecreation' => "== Benènnidu, $1! ==
-S'account tuo est istadu creadu.
-No iscaressa de personalizare sas [[Special:Preferences|preferèntzias de {{SITENAME}}]].",
 'yourname' => 'Nùmene usuàriu',
 'yourpassword' => 'Password:',
 'yourpasswordagain' => 'Repite sa password:',
@@ -557,7 +553,6 @@ Cun s'imbiu de custu scritu ses garantende, a responsabilidade tua, si su scritu
 'template-protected' => '(amparadu)',
 'template-semiprotected' => '(mesu-amparadu)',
 'hiddencategories' => 'Custa pàgina faghet parte de {{PLURAL:$1|1 categoria cuada|$1 categorias cuadas}}:',
-'nocreatetitle' => 'Creatzione de pàginas limitada',
 'nocreate-loggedin' => 'Non tenes su permissu de creare pàginas noas.',
 'permissionserrors' => 'Faddina de permissos',
 'permissionserrorstext-withaction' => 'Non tenes su permissu de $2, pro {{PLURAL:$1|custu motivu|custus motivus}}:',
@@ -777,9 +772,11 @@ Prova a seberare ''totu:'' pro chircare in totu su cuntènnidu (inclùdidas pàg
 'right-undelete' => 'Restaurare una pàgina',
 'right-siteadmin' => 'Bloccare e sbloccare su database',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Usuàrios nous',
+
 # User rights log
 'rightslog' => 'Deretos de is usuàrios',
-'rightsnone' => '(nisciunu)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'lègher custa pàgina',
@@ -1015,9 +1012,6 @@ Dia podent essere immàgines impreadas dae àteros giassos cun unu ligàmine dir
 'activeusers-hidebots' => 'Cua bots',
 'activeusers-hidesysops' => 'Cua amministradores',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Usuàrios nous',
-
 # Special:ListGroupRights
 'listgrouprights-group' => 'Grupu',
 'listgrouprights-members' => '(lista de is cumponentes)',
@@ -1067,7 +1061,6 @@ Is mudàntzias de custa pàgina e de sa pàgina de cuntierras sua ant a bennere 
 'watching' => 'Giunghende a sa watchlist...',
 'unwatching' => 'Boghende dae sa watchlist...',
 
-'enotif_newpagetext' => 'Custa est una pàgina noa.',
 'enotif_impersonal_salutation' => 'Usuàriu de {{SITENAME}}',
 'created' => 'creada',
 
@@ -1556,7 +1549,7 @@ Is acàpius chi sighint in sa matessi lìnia sunt cunsideraus comente eccetzione
 'htmlform-selectorother-other' => 'Àteru',
 
 # New logging system
-'newuserlog-byemail' => 'password imbiada via e-mail',
+'rightsnone' => '(nisciunu)',
 
 # Search suggestions
 'searchsuggest-search' => 'Chirca',

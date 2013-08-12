@@ -140,7 +140,6 @@ $messages = array(
 'qbbrowse' => 'Trifouille',
 'qbedit' => 'Editer',
 'qbpageoptions' => 'Chol pache-lo',
-'qbpageinfo' => 'Conteske',
 'qbmyoptions' => 'Mes paches',
 'qbspecialpages' => 'Espéciales paches',
 'faq' => 'FAQ',
@@ -315,10 +314,6 @@ Si s'n'est poin ch'cas-lo, pététe éq ch'est un bogue din ch'businkillache. <b
 'virus-unknownscanner' => 'intivirus poin connu:',
 
 # Login and logout pages
-'welcomecreation' => "== Binv'nute, $1 ! ==
-
-Vote compte o té créé.
-N'obliez poin d'parsonnaliser vos [[Special:Preferences|préférinches édseur {{SITENAME}}]].",
 'yourname' => "nom d'uzeu:",
 'yourpassword' => "Mot d'passe:",
 'yourpasswordagain' => "Intrer à nouvieu ch'mot d'passe:",
@@ -530,7 +525,7 @@ Léginde : ({{MediaWiki:Cur}}) = différinches aveuc el vérchon à ch'momint-ch
 'youremail' => 'Imèle:',
 'username' => "Nom d'uzeu:",
 'uid' => 'ID dech uzeu:',
-'prefs-memberingroups' => 'Mimbe éd {{PLURAL:$1|groupe|groupes}}:',
+'prefs-memberingroups' => '{{GENDER:$2|Mimbe}}  {{PLURAL:$1|du groupe|des groupes}}:',
 'yourrealname' => 'Vrai nom:',
 'yourlanguage' => 'Langache:',
 'badsiglength' => 'Vote signature est gramint longue.
@@ -555,6 +550,9 @@ Ale doét mie éte pu longue éq $1 {{PLURAL:$1|caracter|caractéres}}.',
 'group-bureaucrat-member' => '{{GENDER:$1|buroécrate}}',
 
 'grouppage-sysop' => '{{ns:project}}:Aménistrateus',
+
+# Special:Log/newusers
+'newuserlogpage' => "Jornal éd chés créachons d'comptes d'uzeu",
 
 # User rights log
 'rightslog' => "Jornal d'chés droés dechl uzeu",
@@ -752,9 +750,6 @@ Vir l'pache [$2 édseur Commons].",
 
 # Special:ActiveUsers
 'activeusers' => 'Lisse des ouvreus uzeus',
-
-# Special:Log/newusers
-'newuserlogpage' => "Jornal éd chés créachons d'comptes d'uzeu",
 
 # Special:ListGroupRights
 'listgrouprights-summary' => "L'pache-lo ch'est ène lisse d'chés groupes d'uzeus définis édseur ech wiki aveuc chés drouots d'intrèe achuchonnés.<br />I put y avoèr ichi d'eutes [[MediaWiki:Listgrouprights-helppage|informacions]] édseur chés drouots individuèls. ([[{{MediaWiki:Listgrouprights-helppage}}|vir]])",
@@ -993,6 +988,9 @@ Os pouvez vir l'source",
 'tooltip-undo' => "« Undo » ( ''démangler'' ) értire ch'canjemint-lo pi ouvre l' fénéte d'édichon din ch'mode ''prévir''. <br /> In put mette un motif din ch'résumé.",
 'tooltip-preferences-save' => 'Warder chés préférinches.',
 'tooltip-summary' => 'Intrer un tiot résumè',
+
+# Info page
+'pageinfo-toolboxlink' => "Informacions édseur l'page",
 
 # Browsing diffs
 'previousdiff' => '← Pu vieille édition',

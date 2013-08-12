@@ -126,7 +126,6 @@ $messages = array(
 'qbfind' => 'დოგორი',
 'qbedit' => 'რედაქტირება',
 'qbpageoptions' => 'თე ხასჷლა',
-'qbpageinfo' => 'კონტექსტი',
 'qbmyoptions' => 'ჩქიმი ხასჷლეფი',
 'qbspecialpages' => 'გჷშაკერძაფილი ხასჷლეფი',
 'faq' => 'ბხშირი კითხვეფი',
@@ -459,6 +458,9 @@ $messages = array(
 'grouppage-user' => '{{ns:project}}:მახვარებუეფ',
 'grouppage-sysop' => '{{ns:project}}:ხემანჯღვერეფი',
 
+# Special:Log/newusers
+'newuserlogpage' => 'მახვარებუშ რეგისტრაციაშ ჟურნალ',
+
 # User rights log
 'rightslog' => 'მახვარებუშ ნებეფიშ ჟურნალ',
 
@@ -600,9 +602,6 @@ $messages = array(
 # Special:LinkSearch
 'linksearch' => 'გალენ რცხიეფ',
 'linksearch-line' => '$1 მერცხიილი რე $2-შე',
-
-# Special:Log/newusers
-'newuserlogpage' => 'მახვარებუშ რეგისტრაციაშ ჟურნალ',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(მაკათურეფიშ ერკებული)',

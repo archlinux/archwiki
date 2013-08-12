@@ -140,7 +140,6 @@ $specialPageAliases = array(
 	'Recentchanges'             => array( 'TrocamientosFreskos' ),
 	'Recentchangeslinked'       => array( 'TrocamientosÈnterassados' ),
 	'Revisiondelete'            => array( 'EfassarRēvizyón' ),
-	'RevisionMove'              => array( 'TaxireaRēvizyón' ),
 	'Search'                    => array( 'Buscar' ),
 	'Shortpages'                => array( 'HojasKurtas' ),
 	'Specialpages'              => array( 'HojasEspesyales' ),
@@ -326,7 +325,6 @@ $messages = array(
 'qbbrowse' => 'Navigar',
 'qbedit' => 'Trocar',
 'qbpageoptions' => 'Esta hoja',
-'qbpageinfo' => 'Enformasyón de hoja',
 'qbmyoptions' => 'Mis hojas',
 'qbspecialpages' => 'Hojas especiales',
 'faq' => 'DAD',
@@ -751,6 +749,9 @@ Las búsquedas producen más o munco a buscar biervos comunes como «la» o «de
 'right-minoredit' => 'Marcar trocamientos como "chiquiticos"',
 'right-delete' => 'Efassar hojas',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Registro de creación de usuarios',
+
 # User rights log
 'rightslog' => 'Trocamientos de profil de usuario',
 
@@ -884,9 +885,6 @@ La descripción en su [$2 hoja de descripción del arxivo] está amostrada debax
 'linksearch' => 'Linkes eksternos',
 'linksearch-line' => 'Atamiento para $1 en la ója $2',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Registro de creación de usuarios',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(ver los miembros de este grupo)',
 
@@ -968,7 +966,7 @@ A continuación se mostran las opciones actuales de la hoja '''$1''':",
 'blanknamespace' => '(Principal)',
 
 # Contributions
-'contributions' => 'Ajustamientos del empleador',
+'contributions' => 'Ajustamientos {{GENDER:$1|del usador|de la usadora}}',
 'contributions-title' => 'Ajustamientos {{GENDER:$1|del usuario|de la usuaria}} $1',
 'mycontris' => 'Mis dados',
 'contribsub2' => '$1 ($2)',
@@ -1281,7 +1279,6 @@ Los otros campos se van a guardar por defecto.
 
 # New logging system
 'logentry-newusers-autocreate' => 'El cuento $1 fue crîado otomatika mente',
-'newuserlog-byemail' => 'kóddiche mandado con letral',
 
 # Feedback
 'feedback-subject' => 'Sujeto',

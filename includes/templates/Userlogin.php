@@ -25,8 +25,6 @@
  * @defgroup Templates Templates
  */
 
-if( !defined( 'MEDIAWIKI' ) ) die( -1 );
-
 /**
  * HTML template for Special:Userlogin form
  * @ingroup Templates
@@ -146,7 +144,7 @@ class UserloginTemplate extends QuickTemplate {
 			'tabindex' => '9'
 		) );
 		if ( $this->data['useemail'] && $this->data['canreset'] ) {
-			if( $this->data['resetlink'] === true ){
+			if( $this->data['resetlink'] === true ) {
 				echo '&#160;';
 				echo Linker::link(
 					SpecialPage::getTitleFor( 'PasswordReset' ),

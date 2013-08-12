@@ -262,9 +262,6 @@ For translations, please consider using [//translatewiki.net/wiki/Main_Page?setl
 
 E lava te ke hoko atu ʻo ngāueʻaki he {{SITENAME}} tatau mo e ʻetita taʻehingoa, pe te ke kau-ki-ai mo e hingoa tatau pe hingoa kehe.
 Tokanga, mahalo pē ʻe ʻi ai ha ngaahi peesi ʻoku ʻasi ko koe kei kau-ki-ai aʻu ki he taimi te ke fakaʻatā ʻa e fafaʻo fakapalausa.",
-'welcomecreation' => '== Tali fiefia, $1! ==
-
-Kuo fakatupu hoʻo tohi kau-ki-ai. ʻOua ʻe ngalo ke liliu hoʻo faʻiteliha {{SITENAME}}.',
 'yourname' => 'Hingoa ʻetita',
 'yourpassword' => 'Leatapu',
 'yourpasswordagain' => 'Toe ʻai leatapu',
@@ -388,7 +385,6 @@ Ko e ʻuhinga loka ko e $1 ia.",
 'templatesused' => 'Ngaahi sīpinga ʻoku ngāueʻaki he kupú ni:',
 'templatesusedpreview' => 'Ngaahi sīpinga ʻoku ngāueʻaki he vakaí ni:',
 'templatesusedsection' => 'Ngaahi sīpinga ʻoku ngāueʻaki he kongá ni:',
-'nocreatetitle' => 'ʻOku fakangatangata ʻa e fakatupu ʻo e peesi.',
 'nocreatetext' => 'Naʻe fakangatangata ʻe he tuʻuʻangá ni ʻa e lava ke fakatupu ha peesi foʻou. ʻOku ke lava ke foki pea fatu ha peesi tuʻu, pe [[Special:UserLogin|kau-ki-ai, pe fakatupu ha tohi-kau-ki-ai]].',
 
 # Account creation failure
@@ -499,10 +495,13 @@ Ko e ʻuhinga loka ko e $1 ia.",
 'group-sysop-member' => 'Pule fakafounga',
 'group-bureaucrat-member' => 'Pulelahi',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Tohinoa ʻo e fakatupu kau ʻetita',
+'newuserlogpagetext' => 'Ko e tohinoa ʻeni ʻo e fakatupu kau ʻetita.',
+
 # User rights log
 'rightslog' => 'Tohinoa ʻo e kau ʻetita honau maʻu mafai',
 'rightslogtext' => 'Ko e tohinoa ʻeni ʻo e ngaah liliu ʻo e kau ʻetita ʻenau maʻu mafai',
-'rightsnone' => '(hala)',
 
 # Recent changes
 'recentchanges' => 'Ngaahi toki liliu',
@@ -731,10 +730,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusersfrom' => 'ʻAsi mai kau ʻetita mei he:',
 'listusers-submit' => 'ʻAsi mai',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Tohinoa ʻo e fakatupu kau ʻetita',
-'newuserlogpagetext' => 'Ko e tohinoa ʻeni ʻo e fakatupu kau ʻetita.',
-
 # Email user
 'mailnologin' => 'ʻOku ʻikai ha tuʻasila ke tohila ki ai',
 'emailuser' => 'Tohila ki he ʻetitá ni',
@@ -781,9 +776,8 @@ Kapau ʻaho ʻe taha, te ke fietoʻo ʻa e pēsí mei hoʻo hokohoko leʻo, lomi
 'watching' => 'ʻOku leʻo...',
 'unwatching' => 'ʻOku taʻeleʻo...',
 
-'enotif_newpagetext' => 'Ko e peesi foʻou ia.',
-'changed' => 'ʻosi liliu',
 'created' => 'kuo fakatupu',
+'changed' => 'ʻosi liliu',
 
 # Delete
 'deletepage' => 'Tāmateʻi peesi',
@@ -1234,5 +1228,8 @@ Kātaki fakapapauʻi te ke fie toe fatu ʻa e kupu ni.",
 
 # Special:SpecialPages
 'specialpages' => 'Ngaahi peesi makehe',
+
+# New logging system
+'rightsnone' => '(hala)',
 
 );

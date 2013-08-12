@@ -73,7 +73,7 @@ abstract class Skin extends ContextSource {
 		return $wgValidSkinNames;
 	}
 
- 	/**
+	/**
 	 * Fetch the skinname messages for available skins.
 	 * @return array of strings
 	 */
@@ -107,7 +107,7 @@ abstract class Skin extends ContextSource {
 	 * Normalize a skin preference value to a form that can be loaded.
 	 * If a skin can't be found, it will fall back to the configured
 	 * default (or the old 'Classic' skin if that's broken).
-	 * @param $key String: 'monobook', 'standard', etc.
+	 * @param string $key 'monobook', 'standard', etc.
 	 * @return string
 	 */
 	static function normalizeKey( $key ) {
@@ -148,7 +148,7 @@ abstract class Skin extends ContextSource {
 
 	/**
 	 * Factory method for loading a skin of a given type
-	 * @param $key String: 'monobook', 'standard', etc.
+	 * @param string $key 'monobook', 'standard', etc.
 	 * @return Skin
 	 */
 	static function &newFromKey( $key ) {
@@ -167,7 +167,7 @@ abstract class Skin extends ContextSource {
 				require_once( "{$wgStyleDirectory}/{$skinName}.php" );
 			}
 
-			# Check if we got if not failback to default skin
+			# Check if we got if not fallback to default skin
 			if ( !MWInit::classExists( $className ) ) {
 				# DO NOT die if the class isn't found. This breaks maintenance
 				# scripts and can cause a user account to be unrecoverable
@@ -262,7 +262,7 @@ abstract class Skin extends ContextSource {
 	 * @return Title
 	 */
 	public function getRelevantTitle() {
-		if ( isset($this->mRelevantTitle) ) {
+		if ( isset( $this->mRelevantTitle ) ) {
 			return $this->mRelevantTitle;
 		}
 		return $this->getTitle();
@@ -286,12 +286,12 @@ abstract class Skin extends ContextSource {
 	 * @return User
 	 */
 	public function getRelevantUser() {
-		if ( isset($this->mRelevantUser) ) {
+		if ( isset( $this->mRelevantUser ) ) {
 			return $this->mRelevantUser;
 		}
 		$title = $this->getRelevantTitle();
-		if( $title->getNamespace() == NS_USER || $title->getNamespace() == NS_USER_TALK ) {
-			$rootUser = strtok( $title->getText(), '/' );
+		if( $title->hasSubjectNamespace( NS_USER ) ) {
+			$rootUser = $title->getRootText();
 			if ( User::isIP( $rootUser ) ) {
 				$this->mRelevantUser = User::newFromName( $rootUser, false );
 			} else {
@@ -435,7 +435,7 @@ abstract class Skin extends ContextSource {
 		$colon = $this->msg( 'colon-separator' )->escaped();
 
 		if ( !empty( $allCats['normal'] ) ) {
-			$t = $embed . implode( "{$pop}{$embed}" , $allCats['normal'] ) . $pop;
+			$t = $embed . implode( "{$pop}{$embed}", $allCats['normal'] ) . $pop;
 
 			$msg = $this->msg( 'pagecategories' )->numParams( count( $allCats['normal'] ) )->escaped();
 			$linkPage = wfMessage( 'pagecategorieslink' )->inContentLanguage()->text();
@@ -456,7 +456,7 @@ abstract class Skin extends ContextSource {
 
 			$s .= "<div id=\"mw-hidden-catlinks\" class=\"mw-hidden-catlinks$class\">" .
 				$this->msg( 'hidden-categories' )->numParams( count( $allCats['hidden'] ) )->escaped() .
-				$colon . '<ul>' . $embed . implode( "{$pop}{$embed}" , $allCats['hidden'] ) . $pop . '</ul>' .
+				$colon . '<ul>' . $embed . implode( "{$pop}{$embed}", $allCats['hidden'] ) . $pop . '</ul>' .
 				'</div>';
 		}
 
@@ -481,8 +481,8 @@ abstract class Skin extends ContextSource {
 	}
 
 	/**
-	 * Render the array as a serie of links.
-	 * @param $tree Array: categories tree returned by Title::getParentCategoryTree
+	 * Render the array as a series of links.
+	 * @param array $tree categories tree returned by Title::getParentCategoryTree
 	 * @return String separated by &gt;, terminate with "\n"
 	 */
 	function drawCategoryBrowser( $tree ) {
@@ -499,7 +499,7 @@ abstract class Skin extends ContextSource {
 
 			# add our current element to the list
 			$eltitle = Title::newFromText( $element );
-			$return .=  Linker::link( $eltitle, htmlspecialchars( $eltitle->getText() ) );
+			$return .= Linker::link( $eltitle, htmlspecialchars( $eltitle->getText() ) );
 		}
 
 		return $return;
@@ -612,7 +612,6 @@ abstract class Skin extends ContextSource {
 		if ( $this->getUser()->isAllowed( 'deletedhistory' ) &&
 			( $this->getTitle()->getArticleID() == 0 || $action == 'history' ) ) {
 			$n = $this->getTitle()->isDeleted();
-
 
 			if ( $n ) {
 				if ( $this->getUser()->isAllowed( 'undelete' ) ) {
@@ -851,16 +850,16 @@ abstract class Skin extends ContextSource {
 	}
 
 	/**
-	 * Renders a $wgFooterIcons icon acording to the method's arguments
-	 * @param $icon Array: The icon to build the html for, see $wgFooterIcons for the format of this array
-	 * @param $withImage Bool|String: Whether to use the icon's image or output a text-only footericon
+	 * Renders a $wgFooterIcons icon according to the method's arguments
+	 * @param array $icon The icon to build the html for, see $wgFooterIcons for the format of this array
+	 * @param bool|String $withImage Whether to use the icon's image or output a text-only footericon
 	 * @return String HTML
 	 */
 	function makeFooterIcon( $icon, $withImage = 'withImage' ) {
 		if ( is_string( $icon ) ) {
 			$html = $icon;
 		} else { // Assuming array
-			$url = isset($icon["url"]) ? $icon["url"] : null;
+			$url = isset( $icon["url"] ) ? $icon["url"] : null;
 			unset( $icon["url"] );
 			if ( isset( $icon["src"] ) && $withImage === 'withImage' ) {
 				$html = Html::element( 'img', $icon ); // do this the lazy way, just pass icon data as an attribute array
@@ -969,7 +968,7 @@ abstract class Skin extends ContextSource {
 	 * Return a fully resolved style path url to images or styles stored in the common folder.
 	 * This method returns a url resolved using the configured skin style path
 	 * and includes the style version inside of the url.
-	 * @param $name String: The name or path of a skin resource file
+	 * @param string $name The name or path of a skin resource file
 	 * @return String The fully resolved style path url including styleversion
 	 */
 	function getCommonStylePath( $name ) {
@@ -978,10 +977,10 @@ abstract class Skin extends ContextSource {
 	}
 
 	/**
-	 * Return a fully resolved style path url to images or styles stored in the curent skins's folder.
+	 * Return a fully resolved style path url to images or styles stored in the current skins's folder.
 	 * This method returns a url resolved using the configured skin style path
 	 * and includes the style version inside of the url.
-	 * @param $name String: The name or path of a skin resource file
+	 * @param string $name The name or path of a skin resource file
 	 * @return String The fully resolved style path url including styleversion
 	 */
 	function getSkinStylePath( $name ) {
@@ -1008,8 +1007,8 @@ abstract class Skin extends ContextSource {
 	 * If $proto is set to null, make a local URL. Otherwise, make a full
 	 * URL with the protocol specified.
 	 *
-	 * @param $name string Name of the Special page
-	 * @param $urlaction string Query to append
+	 * @param string $name Name of the Special page
+	 * @param string $urlaction Query to append
 	 * @param $proto Protocol to use or null for a local URL
 	 * @return String
 	 */
@@ -1102,7 +1101,7 @@ abstract class Skin extends ContextSource {
 
 	/**
 	 * Make URL details where the article exists (or at least it's convenient to think so)
-	 * @param $name String Article name
+	 * @param string $name Article name
 	 * @param $urlaction String
 	 * @return Array
 	 */
@@ -1132,7 +1131,23 @@ abstract class Skin extends ContextSource {
 	}
 
 	/**
-	 * Build an array that represents the sidebar(s), the navigation bar among them
+	 * Build an array that represents the sidebar(s), the navigation bar among them.
+	 *
+	 * BaseTemplate::getSidebar can be used to simplify the format and id generation in new skins.
+	 *
+	 * The format of the returned array is array( heading => content, ... ), where:
+	 * - heading is the heading of a navigation portlet. It is either:
+	 *   - magic string to be handled by the skins ('SEARCH' / 'LANGUAGES' / 'TOOLBOX' / ...)
+	 *   - a message name (e.g. 'navigation'), the message should be HTML-escaped by the skin
+	 *   - plain text, which should be HTML-escaped by the skin
+	 * - content is the contents of the portlet. It is either:
+	 *   - HTML text (<ul><li>...</li>...</ul>)
+	 *   - array of link data in a format accepted by BaseTemplate::makeListItem()
+	 *   - (for a magic string as a key, any value)
+	 *
+	 * Note that extensions can control the sidebar contents using the SkinBuildSidebar hook
+	 * and can technically insert anything in here; skin creators are expected to handle
+	 * values described above.
 	 *
 	 * @return array
 	 */
@@ -1366,7 +1381,7 @@ abstract class Skin extends ContextSource {
 	/**
 	 * Get a cached notice
 	 *
-	 * @param $name String: message name, or 'default' for $wgSiteNotice
+	 * @param string $name message name, or 'default' for $wgSiteNotice
 	 * @return String: HTML fragment
 	 */
 	private function getCachedNotice( $name ) {
@@ -1474,9 +1489,9 @@ abstract class Skin extends ContextSource {
 	 *
 	 * @param $nt      Title  The title being linked to (may not be the same as
 	 *   $wgTitle, if the section is included from a template)
-	 * @param $section string The designation of the section being pointed to,
+	 * @param string $section The designation of the section being pointed to,
 	 *   to be included in the link, like "&section=$section"
-	 * @param $tooltip string The tooltip to use for the link: will be escaped
+	 * @param string $tooltip The tooltip to use for the link: will be escaped
 	 *   and wrapped in the 'editsectionhint' message
 	 * @param $lang    string Language code
 	 * @return         string HTML to use for edit link
@@ -1534,8 +1549,9 @@ abstract class Skin extends ContextSource {
 	 * Use PHP's magic __call handler to intercept legacy calls to the linker
 	 * for backwards compatibility.
 	 *
-	 * @param $fname String Name of called method
-	 * @param $args Array Arguments to the method
+	 * @param string $fname Name of called method
+	 * @param array $args Arguments to the method
+	 * @throws MWException
 	 * @return mixed
 	 */
 	function __call( $fname, $args ) {

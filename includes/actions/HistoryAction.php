@@ -20,16 +20,18 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
+ * @ingroup Actions
  */
 
 /**
- * This class handles printing the history page for an article.  In order to
+ * This class handles printing the history page for an article. In order to
  * be efficient, it uses timestamps rather than offsets for paging, to avoid
  * costly LIMIT,offset queries.
  *
  * Construct it by passing in an Article, and call $h->history() to print the
  * history.
  *
+ * @ingroup Actions
  */
 class HistoryAction extends FormlessAction {
 	const DIR_PREV = 0;
@@ -132,7 +134,7 @@ class HistoryAction extends FormlessAction {
 				array( 'delete', 'move' ),
 				$this->getTitle(),
 				'',
-				array(  'lim' => 10,
+				array( 'lim' => 10,
 					'conds' => array( "log_action != 'revision'" ),
 					'showIfEmpty' => false,
 					'msgKey' => array( 'moveddeleted-notice' )
@@ -145,21 +147,25 @@ class HistoryAction extends FormlessAction {
 		/**
 		 * Add date selector to quickly get to a certain time
 		 */
-		$year        = $request->getInt( 'year' );
-		$month       = $request->getInt( 'month' );
-		$tagFilter   = $request->getVal( 'tagfilter' );
+		$year = $request->getInt( 'year' );
+		$month = $request->getInt( 'month' );
+		$tagFilter = $request->getVal( 'tagfilter' );
 		$tagSelector = ChangeTags::buildTagFilterSelector( $tagFilter );
 
 		/**
 		 * Option to show only revisions that have been (partially) hidden via RevisionDelete
 		 */
 		if ( $request->getBool( 'deleted' ) ) {
-			$conds = array( "rev_deleted != '0'" );
+			$conds = array( 'rev_deleted != 0' );
 		} else {
 			$conds = array();
 		}
-		$checkDeleted = Xml::checkLabel( $this->msg( 'history-show-deleted' )->text(),
+		if ( $this->getUser()->isAllowed( 'deletedhistory' ) ) {
+			$checkDeleted = Xml::checkLabel( $this->msg( 'history-show-deleted' )->text(),
 			'deleted', 'mw-show-deleted-only', $request->getBool( 'deleted' ) ) . "\n";
+		} else {
+			$checkDeleted = '';
+		}
 
 		// Add the general form
 		$action = htmlspecialchars( $wgScript );
@@ -170,16 +176,16 @@ class HistoryAction extends FormlessAction {
 				false,
 				array( 'id' => 'mw-history-search' )
 			) .
-			Html::hidden( 'title', $this->getTitle()->getPrefixedDBKey() ) . "\n" .
+			Html::hidden( 'title', $this->getTitle()->getPrefixedDBkey() ) . "\n" .
 			Html::hidden( 'action', 'history' ) . "\n" .
-			Xml::dateMenu( $year, $month ) . '&#160;' .
+			Xml::dateMenu( ( $year == null ? date( "Y" ) : $year ), $month ) . '&#160;' .
 			( $tagSelector ? ( implode( '&#160;', $tagSelector ) . '&#160;' ) : '' ) .
 			$checkDeleted .
 			Xml::submitButton( $this->msg( 'allpagessubmit' )->text() ) . "\n" .
 			'</fieldset></form>'
 		);
 
-		wfRunHooks( 'PageHistoryBeforeList', array( &$this->page ) );
+		wfRunHooks( 'PageHistoryBeforeList', array( &$this->page, $this->getContext() ) );
 
 		// Create and output the list.
 		$pager = new HistoryPager( $this, $year, $month, $tagFilter, $conds );
@@ -218,7 +224,7 @@ class HistoryAction extends FormlessAction {
 		}
 
 		if ( $offset ) {
-			$offsets = array( "rev_timestamp $oper '$offset'" );
+			$offsets = array( "rev_timestamp $oper " . $dbr->addQuotes( $dbr->timestamp( $offset ) ) );
 		} else {
 			$offsets = array();
 		}
@@ -227,7 +233,7 @@ class HistoryAction extends FormlessAction {
 
 		return $dbr->select( 'revision',
 			Revision::selectFields(),
-			array_merge( array( "rev_page=$page_id" ), $offsets ),
+			array_merge( array( 'rev_page' => $page_id ), $offsets ),
 			__METHOD__,
 			array( 'ORDER BY' => "rev_timestamp $dirs",
 				'USE INDEX' => 'page_timestamp', 'LIMIT' => $limit )
@@ -237,7 +243,7 @@ class HistoryAction extends FormlessAction {
 	/**
 	 * Output a subscription feed listing recent edits to this page.
 	 *
-	 * @param $type String: feed type
+	 * @param string $type feed type
 	 */
 	function feed( $type ) {
 		global $wgFeedClasses, $wgFeedLimit;
@@ -327,6 +333,7 @@ class HistoryAction extends FormlessAction {
 
 /**
  * @ingroup Pager
+ * @ingroup Actions
  */
 class HistoryPager extends ReverseChronologicalPager {
 	public $lastRow = false, $counter, $historyPage, $buttons, $conds;
@@ -436,7 +443,7 @@ class HistoryPager extends ReverseChronologicalPager {
 		$this->getOutput()->wrapWikiMsg( "<div class='mw-history-legend'>\n$1\n</div>", 'histlegend' );
 		$s = Html::openElement( 'form', array( 'action' => $wgScript,
 			'id' => 'mw-history-compare' ) ) . "\n";
-		$s .= Html::hidden( 'title', $this->getTitle()->getPrefixedDbKey() ) . "\n";
+		$s .= Html::hidden( 'title', $this->getTitle()->getPrefixedDBkey() ) . "\n";
 		$s .= Html::hidden( 'action', 'historysubmit' ) . "\n";
 
 		// Button container stored in $this->buttons for re-use in getEndBody()
@@ -504,14 +511,14 @@ class HistoryPager extends ReverseChronologicalPager {
 	/**
 	 * Creates a submit button
 	 *
-	 * @param $message String: text of the submit button, will be escaped
-	 * @param $attributes Array: attributes
+	 * @param string $message text of the submit button, will be escaped
+	 * @param array $attributes attributes
 	 * @return String: HTML output for the submit button
 	 */
 	function submitButton( $message, $attributes = array() ) {
 		# Disable submit button if history has 1 revision only
 		if ( $this->getNumRows() > 1 ) {
-			return Xml::submitButton( $message , $attributes );
+			return Xml::submitButton( $message, $attributes );
 		} else {
 			return '';
 		}
@@ -572,11 +579,11 @@ class HistoryPager extends ReverseChronologicalPager {
 		} elseif ( $rev->getVisibility() && $user->isAllowed( 'deletedhistory' ) ) {
 			// If revision was hidden from sysops, disable the link
 			if ( !$rev->userCan( Revision::DELETED_RESTRICTED, $user ) ) {
-				$cdel = Linker::revDeleteLinkDisabled( false );
+				$del = Linker::revDeleteLinkDisabled( false );
 			// Otherwise, show the link...
 			} else {
 				$query = array( 'type' => 'revision',
-					'target' => $this->getTitle()->getPrefixedDbkey(), 'ids' => $rev->getId() );
+					'target' => $this->getTitle()->getPrefixedDBkey(), 'ids' => $rev->getId() );
 				$del .= Linker::revDeleteLink( $query,
 					$rev->isDeleted( Revision::DELETED_RESTRICTED ), false );
 			}
@@ -598,19 +605,22 @@ class HistoryPager extends ReverseChronologicalPager {
 			$s .= ' ' . ChangesList::flag( 'minor' );
 		}
 
-		# Size is always public data
-		$prevSize = isset( $this->parentLens[$row->rev_parent_id] )
-			? $this->parentLens[$row->rev_parent_id]
-			: 0;
-		$sDiff = ChangesList::showCharacterDifference( $prevSize, $rev->getSize() );
-		$fSize = Linker::formatRevisionSize($rev->getSize());
-		$s .= ' <span class="mw-changeslist-separator">. .</span> ' . "$fSize $sDiff";
+		# Sometimes rev_len isn't populated
+		if ( $rev->getSize() !== null ) {
+			# Size is always public data
+			$prevSize = isset( $this->parentLens[$row->rev_parent_id] )
+				? $this->parentLens[$row->rev_parent_id]
+				: 0;
+			$sDiff = ChangesList::showCharacterDifference( $prevSize, $rev->getSize() );
+			$fSize = Linker::formatRevisionSize( $rev->getSize() );
+			$s .= ' <span class="mw-changeslist-separator">. .</span> ' . "$fSize $sDiff";
+		}
 
 		# Text following the character difference is added just before running hooks
 		$s2 = Linker::revComment( $rev, false, true );
 
 		if ( $notificationtimestamp && ( $row->rev_timestamp >= $notificationtimestamp ) ) {
-			$s2 .= ' <span class="updatedmarker">' .  $this->msg( 'updatedmarker' )->escaped() . '</span>';
+			$s2 .= ' <span class="updatedmarker">' . $this->msg( 'updatedmarker' )->escaped() . '</span>';
 			$classes[] = 'mw-history-line-updated';
 		}
 
@@ -619,9 +629,12 @@ class HistoryPager extends ReverseChronologicalPager {
 		# Rollback and undo links
 		if ( $prevRev && $this->getTitle()->quickUserCan( 'edit', $user ) ) {
 			if ( $latest && $this->getTitle()->quickUserCan( 'rollback', $user ) ) {
-				$this->preventClickjacking();
-				$tools[] = '<span class="mw-rollback-link">' .
-					Linker::buildRollbackLink( $rev, $this->getContext() ) . '</span>';
+				// Get a rollback link without the brackets
+				$rollbackLink = Linker::generateRollback( $rev, $this->getContext(), array( 'verify', 'noBrackets' ) );
+				if ( $rollbackLink ) {
+					$this->preventClickjacking();
+					$tools[] = $rollbackLink;
+				}
 			}
 
 			if ( !$rev->isDeleted( Revision::DELETED_TEXT )
@@ -644,6 +657,8 @@ class HistoryPager extends ReverseChronologicalPager {
 				$tools[] = "<span class=\"mw-history-undo\">{$undolink}</span>";
 			}
 		}
+		// Allow extension to add their own links here
+		wfRunHooks( 'HistoryRevisionTools', array( $rev, &$tools ) );
 
 		if ( $tools ) {
 			$s2 .= ' '. $this->msg( 'parentheses' )->rawParams( $lang->pipeList( $tools ) )->escaped();
@@ -661,7 +676,7 @@ class HistoryPager extends ReverseChronologicalPager {
 			$s .= ' <span class="mw-changeslist-separator">. .</span> ' . $s2;
 		}
 
-		wfRunHooks( 'PageHistoryLineEnding', array( $this, &$row , &$s, &$classes ) );
+		wfRunHooks( 'PageHistoryLineEnding', array( $this, &$row, &$s, &$classes ) );
 
 		$attribs = array();
 		if ( $classes ) {

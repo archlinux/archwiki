@@ -23,6 +23,9 @@
  * @author <evan@wikitravel.org>
  */
 
+/**
+ * @ingroup Actions
+ */
 class CreditsAction extends FormlessAction {
 
 	public function getName() {
@@ -55,8 +58,8 @@ class CreditsAction extends FormlessAction {
 	/**
 	 * Get a list of contributors
 	 *
-	 * @param $cnt Int: maximum list of contributors to show
-	 * @param $showIfMax Bool: whether to contributors if there more than $cnt
+	 * @param int $cnt maximum list of contributors to show
+	 * @param bool $showIfMax whether to contributors if there more than $cnt
 	 * @return String: html
 	 */
 	public function getCredits( $cnt, $showIfMax = true ) {
@@ -97,8 +100,8 @@ class CreditsAction extends FormlessAction {
 
 	/**
 	 * Get a list of contributors of $article
-	 * @param $cnt Int: maximum list of contributors to show
-	 * @param $showIfMax Bool: whether to contributors if there more than $cnt
+	 * @param int $cnt maximum list of contributors to show
+	 * @param bool $showIfMax whether to contributors if there more than $cnt
 	 * @return String: html
 	 */
 	protected function getContributors( $cnt, $showIfMax ) {
@@ -122,7 +125,7 @@ class CreditsAction extends FormlessAction {
 
 		# Sift for real versus user names
 		foreach ( $contributors as $user ) {
-			$cnt--; 
+			$cnt--;
 			if ( $user->isLoggedIn() ) {
 				$link = $this->link( $user );
 				if ( !in_array( 'realname', $wgHiddenPrefs ) && $user->getRealName() ) {

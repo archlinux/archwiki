@@ -40,3 +40,9 @@ The reCAPTCHA module was written by Mike Crawford and Ben Maurer.
 The Asirra module was written by Bachsau.
 
 Additional maintenance work was done by Yaron Koren.
+
+== Changelog ==
+
+= Version 1.2
+Fixes bug 46132 - ConfirmEdit fatal error when using MathCaptcha and current Math extension.
+See <https://bugzilla.wikimedia.org/show_bug.cgi?id=46132>.

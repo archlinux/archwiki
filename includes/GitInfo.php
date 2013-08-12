@@ -41,10 +41,18 @@ class GitInfo {
 	private static $viewers = false;
 
 	/**
-	 * @param $dir string The root directory of the repo where the .git dir can be found
+	 * @param string $dir The root directory of the repo where the .git dir can be found
 	 */
 	public function __construct( $dir ) {
-		$this->basedir = "{$dir}/.git/";
+		$this->basedir = "{$dir}/.git";
+		if ( is_readable( $this->basedir ) && !is_dir( $this->basedir ) ) {
+			$GITfile = file_get_contents( $this->basedir );
+			if ( strlen( $GITfile ) > 8 && substr( $GITfile, 0, 8 ) === 'gitdir: ' ) {
+				$path = rtrim( substr( $GITfile, 8 ), "\r\n" );
+				$isAbsolute = $path[0] === '/' || substr( $path, 1, 1 ) === ':';
+				$this->basedir = $isAbsolute ? $path : "{$dir}/{$path}";
+			}
+		}
 	}
 
 	/**
@@ -62,7 +70,7 @@ class GitInfo {
 	/**
 	 * Check if a string looks like a hex encoded SHA1 hash
 	 *
-	 * @param $str string The string to check
+	 * @param string $str The string to check
 	 * @return bool Whether or not the string looks like a SHA1
 	 */
 	public static function isSHA1( $str ) {
@@ -102,7 +110,7 @@ class GitInfo {
 		}
 
 		// If not a SHA1 it may be a ref:
-		$REFfile = "{$this->basedir}{$HEAD}";
+		$REFfile = "{$this->basedir}/{$HEAD}";
 		if ( !is_readable( $REFfile ) ) {
 			return false;
 		}

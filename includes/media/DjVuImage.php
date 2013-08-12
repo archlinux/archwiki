@@ -34,9 +34,19 @@
  * @ingroup Media
  */
 class DjVuImage {
+	/**
+	 * Constructor
+	 *
+	 * @param string $filename The DjVu file name.
+	 */
 	function __construct( $filename ) {
 		$this->mFilename = $filename;
 	}
+
+	/**
+	 * @const DJVUTXT_MEMORY_LIMIT Memory limit for the DjVu description software
+	 */
+	const DJVUTXT_MEMORY_LIMIT = 300000;
 
 	/**
 	 * Check if the given file is indeed a valid DjVu image file
@@ -47,7 +57,6 @@ class DjVuImage {
 		return $info !== false;
 	}
 
-
 	/**
 	 * Return data in the style of getimagesize()
 	 * @return array or false on failure
@@ -56,7 +65,7 @@ class DjVuImage {
 		$data = $this->getInfo();
 
 		if( $data !== false ) {
-			$width  = $data['width'];
+			$width = $data['width'];
 			$height = $data['height'];
 
 			return array( $width, $height, 'DjVu',
@@ -228,7 +237,7 @@ class DjVuImage {
 	function retrieveMetaData() {
 		global $wgDjvuToXML, $wgDjvuDump, $wgDjvuTxt;
 		wfProfileIn( __METHOD__ );
-		
+
 		if ( isset( $wgDjvuDump ) ) {
 			# djvudump is faster as of version 3.5
 			# http://sourceforge.net/tracker/index.php?func=detail&aid=1704049&group_id=32953&atid=406583
@@ -247,12 +256,12 @@ class DjVuImage {
 			$xml = null;
 		}
 		# Text layer
-		if ( isset( $wgDjvuTxt ) ) { 
+		if ( isset( $wgDjvuTxt ) ) {
 			wfProfileIn( 'djvutxt' );
-			$cmd = wfEscapeShellArg( $wgDjvuTxt ) . ' --detail=page ' . wfEscapeShellArg( $this->mFilename ) ;
-			wfDebug( __METHOD__.": $cmd\n" );
+			$cmd = wfEscapeShellArg( $wgDjvuTxt ) . ' --detail=page ' . wfEscapeShellArg( $this->mFilename );
+			wfDebug( __METHOD__ . ": $cmd\n" );
 			$retval = '';
-			$txt = wfShellExec( $cmd, $retval );
+			$txt = wfShellExec( $cmd, $retval, array(), array( 'memory' => self::DJVUTXT_MEMORY_LIMIT ) );
 			wfProfileOut( 'djvutxt' );
 			if( $retval == 0) {
 				# Strip some control characters
@@ -260,7 +269,7 @@ class DjVuImage {
 				$reg = <<<EOR
 					/\(page\s[\d-]*\s[\d-]*\s[\d-]*\s[\d-]*\s*"
 					((?>    # Text to match is composed of atoms of either:
-					  \\\\. # - any escaped character 
+					  \\\\. # - any escaped character
 					  |     # - any character different from " and \
 					  [^"\\\\]+
 					)*?)
@@ -271,7 +280,7 @@ EOR;
 				$txt = preg_replace_callback( $reg, array( $this, 'pageTextCallback' ), $txt );
 				$txt = "<DjVuTxt>\n<HEAD></HEAD>\n<BODY>\n" . $txt . "</BODY>\n</DjVuTxt>\n";
 				$xml = preg_replace( "/<DjVuXML>/", "<mw-djvu><DjVuXML>", $xml, 1 );
-				$xml = $xml . $txt. '</mw-djvu>' ;
+				$xml = $xml . $txt. '</mw-djvu>';
 			}
 		}
 		wfProfileOut( __METHOD__ );

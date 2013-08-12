@@ -176,7 +176,6 @@ $messages = array(
 'qbbrowse' => '查看',
 'qbedit' => '编写',
 'qbpageoptions' => '个页',
-'qbpageinfo' => '个页信息',
 'qbmyoptions' => '偶𠮶选项',
 'qbspecialpages' => '特殊页',
 'faq' => 'FAQ',
@@ -401,10 +400,7 @@ $2',
 # Login and logout pages
 'logouttext' => "'''汝退出正哩。'''
 
-接到汝得匿名使用{{SITENAME}}，或[[Special:UserLogin|登入过]]。除非汝删吥浏览器缓存，只把子页面可能会接到话汝系登入状态。",
-'welcomecreation' => '== 欢迎, $1! ==
-
-建正哩汝𠮶帐户，莫𫍧记设置 [[Special:Preferences|{{SITENAME}}𠮶个人参数]]。',
+接到汝得匿名使用{{SITENAME}}，或<span class='plainlinks'>[$1 登入过]</span>。除非汝删吥浏览器缓存，只把子页面可能会接到话汝系登入状态。",
 'yourname' => '用户名：',
 'yourpassword' => '密码：',
 'yourpasswordagain' => '输过道密码：',
@@ -608,7 +604,6 @@ $2',
 'template-semiprotected' => '（半保护）',
 'hiddencategories' => '个只版面系属于$1只隐藏类𠮶成员：',
 'edittools' => '<!--个首𠮶文本会到下底𠮶编辑同上传列表里坨显示。 -->',
-'nocreatetitle' => '新建页面拖限制',
 'nocreatetext' => '个只网站限制新建页面𠮶功能。倷可以回头去编辑有嘞𠮶页面，或者[[Special:UserLogin|登入或新开帐户]]。',
 'nocreate-loggedin' => '倷到 {{SITENAME}} 冇权新开页面。',
 'permissionserrors' => '权限错误',
@@ -872,11 +867,12 @@ $2',
 'grouppage-sysop' => '{{ns:project}}:操作员',
 'grouppage-bureaucrat' => '{{ns:project}}:行政员',
 
+# Special:Log/newusers
+'newuserlogpage' => '新开户𠮶人名单',
+
 # User rights log
 'rightslog' => '用户权限日志',
 'rightslogtext' => '底下记到用户权限𠮶更改记录。',
-'rightslogentry' => '拿 $1 𠮶权限从 $2 改到 $3',
-'rightsnone' => '（冇）',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => '编辑个页',
@@ -1234,9 +1230,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-submit' => '显示',
 'listusers-noresult' => '寻伓到用户。',
 
-# Special:Log/newusers
-'newuserlogpage' => '新开户𠮶人名单',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '（成员名单）',
 
@@ -1294,11 +1287,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 
 'enotif_mailer' => '{{SITENAME}}邮件报告员',
 'enotif_reset' => '拿全部文章标成已读',
-'enotif_newpagetext' => '个系新开𠮶页面。',
 'enotif_impersonal_salutation' => '{{SITENAME}}用户',
-'changed' => '改卟嘞',
-'created' => '建正嘞',
-'enotif_subject' => '{{SITENAME}}有页面 $PAGETITLE拖$PAGEEDITOR $CHANGEDORCREATED',
 'enotif_lastvisited' => '眵倷上回访问后𠮶全部改动请去$1。',
 'enotif_lastdiff' => '想眵改动请去$1。',
 'enotif_anon_editor' => '匿名用户$1',
@@ -1315,6 +1304,8 @@ $NEWPAGE
 {{SITENAME}}通知系统 – 会改卟倷𠮶监视列表设置，请去 {{canonicalurl:{{#special:EditWatchlist}}}}
 
 回馈同到别𠮶说明: {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => '建正嘞',
+'changed' => '改卟嘞',
 
 # Delete
 'deletepage' => '删卟页面',
@@ -2268,6 +2259,9 @@ $3
 
 # Special:Tags
 'tag-filter' => '[[Special:Tags|标签]]过滤器：',
+
+# New logging system
+'rightsnone' => '（冇）',
 
 # Search suggestions
 'searchsuggest-search' => '寻吖',

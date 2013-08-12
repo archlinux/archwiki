@@ -27,7 +27,7 @@
 # This must be done before any globals are set by the code
 if ( ini_get( 'register_globals' ) ) {
 	if ( isset( $_REQUEST['GLOBALS'] ) || isset( $_FILES['GLOBALS'] ) ) {
-		die( '<a href="http://www.hardened-php.net/globals-problem">$GLOBALS overwrite vulnerability</a>');
+		die( '<a href="http://www.hardened-php.net/globals-problem">$GLOBALS overwrite vulnerability</a>' );
 	}
 	$verboten = array(
 		'GLOBALS',
@@ -57,12 +57,12 @@ if ( ini_get( 'register_globals' ) ) {
 	}
 }
 
-# bug 15461: Make IE8 turn off content sniffing. Everbody else should ignore this
+# bug 15461: Make IE8 turn off content sniffing. Everybody else should ignore this
 # We're adding it here so that it's *always* set, even for alternate entry
 # points and when $wgOut gets disabled or overridden.
 header( 'X-Content-Type-Options: nosniff' );
 
-$wgRequestTime = microtime(true);
+$wgRequestTime = microtime( true );
 # getrusage() does not exist on the Microsoft Windows platforms, catching this
 if ( function_exists ( 'getrusage' ) ) {
 	$wgRUstart = getrusage();
@@ -80,11 +80,15 @@ define( 'MEDIAWIKI', true );
 
 # Full path to working directory.
 # Makes it possible to for example to have effective exclude path in apc.
-# Also doesn't break installations using symlinked includes, like
-# __DIR__ would do.
+# __DIR__ breaks symlinked includes, but realpath() returns false
+# if we don't have permissions on parent directories.
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
-	$IP = realpath( '.' );
+	if( realpath( '.' ) ) {
+		$IP = realpath( '.' );
+	} else {
+		$IP = dirname( __DIR__ );
+	}
 }
 
 if ( isset( $_SERVER['MW_COMPILED'] ) ) {
@@ -119,7 +123,7 @@ if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
 	MWFunction::call( MW_CONFIG_CALLBACK );
 } else {
 	if ( !defined( 'MW_CONFIG_FILE' ) ) {
-		define('MW_CONFIG_FILE', MWInit::interpretedPath( 'LocalSettings.php' ) );
+		define( 'MW_CONFIG_FILE', MWInit::interpretedPath( 'LocalSettings.php' ) );
 	}
 
 	# LocalSettings.php is the per site customization file. If it does not exist
@@ -156,4 +160,3 @@ wfProfileOut( 'WebStart.php-ob_start' );
 if ( !defined( 'MW_NO_SETUP' ) ) {
 	require_once( MWInit::compiledPath( "includes/Setup.php" ) );
 }
-

@@ -32,6 +32,7 @@
  * @author Morten LJ
  * @author Najami
  * @author Nghtwlkr
+ * @author Palnatoke
  * @author Peter Alberti
  * @author Peter Andersen
  * @author Purodha
@@ -40,6 +41,7 @@
  * @author Sarrus
  * @author Sir48
  * @author Slomox
+ * @author Steenth
  * @author Svip
  * @author Søren Løvborg
  * @author Tjernobyl
@@ -72,15 +74,6 @@ $namespaceAliases = array(
 	'MediaWiki-diskussion' => NS_MEDIAWIKI_TALK,
 	'Hjælp-diskussion'     => NS_HELP_TALK,
 );
-
-$bookstoreList = array(
-	"Bibliotek.dk" => "http://bibliotek.dk/vis.php?base=dfa&origin=kommando&field1=ccl&term1=is=$1&element=L&start=1&step=10",
-	"Bogguide.dk" => "http://www.bogguide.dk/find_boeger_bog.asp?ISBN=$1",
-	'inherit' => true,
-);
-
-$separatorTransformTable = array( ',' => '.', '.' => ',' );
-$linkTrail = '/^([a-zæøå]+)(.*)$/sDu';
 
 $specialPageAliases = array(
 	'Activeusers'               => array( 'Aktive_Brugere' ),
@@ -125,6 +118,7 @@ $specialPageAliases = array(
 	'MIMEsearch'                => array( 'MIME-type-søgning' ),
 	'Mostcategories'            => array( 'Sider_med_flest_kategorier' ),
 	'Mostimages'                => array( 'Mest_brugte_filer' ),
+	'Mostinterwikis'            => array( 'Flest_interwikilinks' ),
 	'Mostlinked'                => array( 'Sider_med_flest_henvisninger' ),
 	'Mostlinkedcategories'      => array( 'Kategorier_med_flest_sider' ),
 	'Mostlinkedtemplates'       => array( 'Hyppigst_brugte_skabeloner' ),
@@ -145,7 +139,6 @@ $specialPageAliases = array(
 	'Recentchanges'             => array( 'Seneste_ændringer' ),
 	'Recentchangeslinked'       => array( 'Relaterede_ændringer' ),
 	'Revisiondelete'            => array( 'Versionssletning' ),
-	'RevisionMove'              => array( 'Versionsflytning' ),
 	'Search'                    => array( 'Søgning' ),
 	'Shortpages'                => array( 'Korteste_sider' ),
 	'Specialpages'              => array( 'Specialsider' ),
@@ -185,6 +178,15 @@ $dateFormats = array(
 	'ymd date' => 'Y M j',
 	'ymd both' => 'Y M j, H:i'
 );
+
+$bookstoreList = array(
+	"Bibliotek.dk" => "http://bibliotek.dk/vis.php?base=dfa&origin=kommando&field1=ccl&term1=is=$1&element=L&start=1&step=10",
+	"Bogguide.dk" => "http://www.bogguide.dk/find_boeger_bog.asp?ISBN=$1",
+	'inherit' => true,
+);
+
+$separatorTransformTable = array( ',' => '.', '.' => ',' );
+$linkTrail = '/^([a-zæøå]+)(.*)$/sDu';
 
 $messages = array(
 # User preference toggles
@@ -321,6 +323,7 @@ $messages = array(
 'newwindow' => '(åbner i et nyt vindue)',
 'cancel' => 'Afbryd',
 'moredotdotdot' => 'Mere...',
+'morenotlisted' => 'Mere ikke angivet...',
 'mypage' => 'Side',
 'mytalk' => 'Diskussion',
 'anontalk' => 'Diskussionsside for denne IP-adresse',
@@ -332,7 +335,6 @@ $messages = array(
 'qbbrowse' => 'Gennemse',
 'qbedit' => 'Redigér',
 'qbpageoptions' => 'Indstillinger for side',
-'qbpageinfo' => 'Information om side',
 'qbmyoptions' => 'Mine indstillinger',
 'qbspecialpages' => 'Specielle sider',
 'faq' => 'OSS',
@@ -355,6 +357,7 @@ $messages = array(
 'namespaces' => 'Navnerum',
 'variants' => 'Varianter',
 
+'navigation-heading' => 'Navigationsmenu',
 'errorpagetitle' => 'Fejl',
 'returnto' => 'Tilbage til $1.',
 'tagline' => 'Fra {{SITENAME}}',
@@ -593,11 +596,11 @@ Administratoren, som skrivebeskyttede den, gav følgende begrundelse: "$3".',
 # Login and logout pages
 'logouttext' => "'''Du er nu logget af.'''
 
-Du kan fortsætte med at bruge {{SITENAME}} anonymt, eller du kan [[Special:UserLogin|logge på igen]] som den samme eller en anden bruger.
+Du kan fortsætte med at bruge {{SITENAME}} anonymt, eller du kan <span class='plainlinks'>[$1 logge på igen]</span> som den samme eller en anden bruger.
 Bemærk, at nogle sider stadigvæk kan vises som om du var logget på, indtil du tømmer din browsers cache.",
-'welcomecreation' => '== Velkommen, $1! ==
-
-Din konto er blevet oprettet. Glem ikke at personliggøre dine [[Special:Preferences|{{SITENAME}}-indstillinger]].',
+'welcomeuser' => 'Velkommen, $1!',
+'welcomecreation-msg' => 'Din konto er blevet oprettet.
+Glem ikke at ændre dine [[Special:Preferences|{{SITENAME}} indstillinger]].',
 'yourname' => 'Dit brugernavn:',
 'yourpassword' => 'Din adgangskode:',
 'yourpasswordagain' => 'Gentag adgangskode',
@@ -620,7 +623,7 @@ Din konto er blevet oprettet. Glem ikke at personliggøre dine [[Special:Prefere
 'gotaccount' => 'Har du allerede en konto? $1.',
 'gotaccountlink' => 'Log på',
 'userlogin-resetlink' => 'Har du glemt dine login oplysninger?',
-'createaccountmail' => 'via e-mail',
+'createaccountmail' => 'Brug en midlertidig tilfældig adgangskode og send den til e-mailadressen angivet nedenfor',
 'createaccountreason' => 'Begrundelse:',
 'badretype' => 'De indtastede adgangskoder er ikke ens.',
 'userexists' => 'Det brugernavn, du har valgt, er allerede i brug.
@@ -692,6 +695,7 @@ Vent venligst før du prøver igen.',
 # Email sending
 'php-mail-error-unknown' => "Ukendt fejl i PHP's mail()-funtion",
 'user-mail-no-addy' => 'Forsøgte at sende email uden en email-adresse',
+'user-mail-no-body' => 'Forsøgte at sende en e-mail med tomt eller urimeligt kort indhold.',
 
 # Change password dialog
 'resetpass' => 'Skift adgangskode',
@@ -749,6 +753,7 @@ Midlertidig adgangskode: $2',
 'changeemail-oldemail' => 'Nuværende email-adresse:',
 'changeemail-newemail' => 'Ny email-adresse:',
 'changeemail-none' => '(ingen)',
+'changeemail-password' => 'Din adgangskode til {{SITENAME}}:',
 'changeemail-submit' => 'Ændr email',
 'changeemail-cancel' => 'Afbryd',
 
@@ -932,7 +937,6 @@ Den seneste logpost vises nedenfor:",
 'template-semiprotected' => '(delvist beskyttet)',
 'hiddencategories' => 'Denne side er i {{PLURAL:$1|en skjult kategori|$1 skjulte kategorier}}:',
 'edittools' => '<!-- Denne tekst vises under formularen „Ændre“ samt "Upload". -->',
-'nocreatetitle' => 'Oprettelse af nye sider er begrænset.',
 'nocreatetext' => 'Serveren har begrænset oprettelse af nye sider. Bestående sider kan ændres eller [[Special:UserLogin|logge på]].',
 'nocreate-loggedin' => 'Du har ikke rettigheder til at oprette nye sider.',
 'sectioneditnotsupported-title' => 'Afsnitsredigering understøttes ikke',
@@ -953,6 +957,15 @@ Den ser du til at være slettet.',
 'edit-no-change' => 'Din ændring ignoreredes, fordi der ikke var ændring af teksten.',
 'edit-already-exists' => 'En ny side kunne ikke oprettes, fordi den allerede findes.',
 'defaultmessagetext' => 'Standardtekst',
+'content-failed-to-parse' => 'Kunne ikke fortolke $2-indholdet af $1-modellen: $3',
+'invalid-content-data' => 'Ugyldig indholdsdata',
+'content-not-allowed-here' => '"$1" indhold er ikke tilladt på siden [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'wikitekst',
+'content-model-text' => 'almindelig tekst',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Advarsel: Der er for mange beregningstunge oversætter-funktionskald på denne side.
@@ -1313,9 +1326,9 @@ Det kan ikke gøres om.',
 'prefs-emailconfirm-label' => 'Bekræftelse af e-mail:',
 'prefs-textboxsize' => 'Størrelse på redigeringsvindue',
 'youremail' => 'Din e-mailadresse:',
-'username' => 'Brugernavn:',
-'uid' => 'Brugernummer:',
-'prefs-memberingroups' => 'Medlem af {{PLURAL:$1|gruppen|grupperne}}:',
+'username' => '{{GENDER:$1|Brugernavn}}:',
+'uid' => '{{GENDER:$1|Brugernummer}}:',
+'prefs-memberingroups' => '{{GENDER:$2|Medlem}} af {{PLURAL:$1|gruppen|grupperne}}:',
 'prefs-registration' => 'Registreringstidspunkt:',
 'yourrealname' => 'Dit rigtige navn:',
 'yourlanguage' => 'Sprog:',
@@ -1463,12 +1476,13 @@ Hvis du vælger at oplyse dit navn, vil det blive brugt til at tilskrive dig dit
 'right-sendemail' => 'Sende e-mail til andre brugere',
 'right-passwordreset' => 'Se emails til nulstilling af adgangskoder',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Brugeroprettelseslog',
+'newuserlogpagetext' => 'Dette er en log over de senest oprettede brugere.',
+
 # User rights log
 'rightslog' => 'Rettighedslog',
 'rightslogtext' => 'Dette er en log over ændringer i brugeres rettigheder.',
-'rightslogentry' => 'ændrede grupperettigheder for „$1“ fra „$2“ til „$3“.',
-'rightslogentry-autopromote' => 'blev automatisk forfremmet fra $2 til $3',
-'rightsnone' => '(-)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'se denne side',
@@ -1705,6 +1719,7 @@ Informer venligst en [[Special:ListUsers/sysop|systemadministrator]].',
 'backend-fail-notsame' => 'En ikke-identisk fil eksisterer allerede som $1.',
 'backend-fail-invalidpath' => '$1 er ikke en gyldig lagringssti.',
 'backend-fail-delete' => 'Kunne ikke slette filen $1.',
+'backend-fail-describe' => 'Kunne ikke ændre metadata for filen "$1".',
 'backend-fail-alreadyexists' => 'Filen $1 findes allerede.',
 'backend-fail-store' => 'Kunne ikke gemme filen $1 i $2.',
 'backend-fail-copy' => 'Kunne ikke kopiere filen $1 til $2.',
@@ -1939,6 +1954,12 @@ Husk at kontrollere for andre henvisninger til skabelonerne før de slettes.',
 De bør henvise direkte til et mere passende emne i stedet.<br />
 En side behandles som en side med en flertydig titel hvis den bruger en skabelon som der er henvist til fra [[MediaWiki:Disambiguationspage]].",
 
+'pageswithprop' => 'Sider med en sideegenskab',
+'pageswithprop-legend' => 'Sider med en sideegenskab',
+'pageswithprop-text' => 'Denne side viser en liste over sider, der bruger en bestemt sideegenskaben.',
+'pageswithprop-prop' => 'Egenskabsnavn:',
+'pageswithprop-submit' => 'Gå',
+
 'doubleredirects' => 'Dobbelte omdirigeringer',
 'doubleredirectstext' => 'Dette er en liste over sider som omdirigerer til andre omdirigeringssider.
 Hver linje indeholder henvisninger til den første og den anden omdirigering, såvel som til målet for den anden omdirigering som sædvanligvis er den "rigtige" målside som den første omdirigering burde henvise til.
@@ -2091,7 +2112,7 @@ Se også [[Special:WantedCategories|ønskede kategorier]].',
 'linksearch-ok' => 'Søg',
 'linksearch-text' => 'Wildcards som "*.wikipedia.org" kan benyttes.
 Der skal som minimum angives et topniveau-domæne som f. eks. "*.org".<br />
-Understøttede protokoller: <code>$1</code> (bruger automatisk http:// hvis der ikke er angivet nogen protokol).',
+{{PLURAL:$2|Understøttet protokol|Understøttede protokoller}}: <code>$1</code> (bruger automatisk http:// hvis der ikke er angivet nogen protokol).',
 'linksearch-line' => '$2 linker til $1',
 'linksearch-error' => 'Wildcards må kun benyttes i starten af hostnavnet.',
 
@@ -2109,10 +2130,6 @@ Understøttede protokoller: <code>$1</code> (bruger automatisk http:// hvis der 
 'activeusers-hidebots' => 'Skjul robotter',
 'activeusers-hidesysops' => 'Skjul administratorer',
 'activeusers-noresult' => 'Ingen brugere fundet.',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Brugeroprettelseslog',
-'newuserlogpagetext' => 'Dette er en log over de senest oprettede brugere.',
 
 # Special:ListGroupRights
 'listgrouprights' => 'Brugergrupperettigheder',
@@ -2209,19 +2226,23 @@ Fremtidige ændringer af denne side og dens tilknyttede diskussionsside vil bliv
 
 'enotif_mailer' => '{{SITENAME}} informationsmail',
 'enotif_reset' => 'Marker alle sider som besøgt',
-'enotif_newpagetext' => 'Dette er en ny side.',
 'enotif_impersonal_salutation' => '{{SITENAME}} bruger',
-'changed' => 'ændret',
-'created' => 'oprettet',
-'enotif_subject' => '{{SITENAME}}-siden $PAGETITLE er blevet ændret af $PAGEEDITOR',
+'enotif_subject_deleted' => '{{SITENAME}} side $1 er blevet slettet af {{gender:$2|$2}}',
+'enotif_subject_created' => '{{SITENAME}} side $1 er blevet oprettet af {{gender:$2|$2}}',
+'enotif_subject_moved' => '{{SITENAME}} side $1 er blevet flyttet af {{gender:$2|$2}}',
+'enotif_subject_restored' => '{{SITENAME}} side $1 er blevet gendannet af {{gender:$2|$2}}',
+'enotif_subject_changed' => '{{SITENAME}} side $1 er blevet ændret af {{gender:$2|$2}}',
+'enotif_body_intro_deleted' => '{{SITENAME}}siden $1 er blevet slettet $PAGEEDITDATE af {{gender:$2|$2}}, se $3.',
+'enotif_body_intro_created' => '{{SITENAME}} siden $1 er blevet oprettet den $PAGEEDITDATE af {{gender:$2|$2}}, se $3 for den aktuelle version.',
+'enotif_body_intro_moved' => '{{SITENAME}} siden $1 er blevet flyttet den $PAGEEDITDATE af {{gender:$2|$2}}, se $3 for den aktuelle revision.',
+'enotif_body_intro_restored' => '{{SITENAME}} siden $1 er blevet gendannet den $PAGEEDITDATE af {{gender:$2|$2}}, se $3 for den aktuelle version.',
+'enotif_body_intro_changed' => '{{SITENAME}} siden $1 er blevet ændret den $PAGEEDITDATE af {{gender:$2|$2}}, se $3 for den aktuelle version.',
 'enotif_lastvisited' => 'Se $1 for alle ændringer siden dit sidste besøg.',
 'enotif_lastdiff' => 'Se $1 for at vise denne ændring.',
 'enotif_anon_editor' => 'anonym bruger $1',
-'enotif_body' => 'Kære $WATCHINGUSERNAME,
+'enotif_body' => 'Kære $WATCHINGUSERNAME
 
-{{SITENAME}}-siden $PAGETITLE er blevet $CHANGEDORCREATED den $PAGEEDITDATE af $PAGEEDITOR, se $PAGETITLE_URL for den aktuelle version.
-
-$NEWPAGE
+$PAGEINTRO $NEWPAGE
 
 Bidragyderens opsummering: $PAGESUMMARY $PAGEMINOREDIT
 
@@ -2229,13 +2250,12 @@ Kontakt bidragyderen:
 e-mail: $PAGEEDITOR_EMAIL
 wiki: $PAGEEDITOR_WIKI
 
-Du vil ikke modtage flere beskeder om yderligere ændringer medmindre du besøger denne side.
-På din overvågningsliste kan du også nulstille alle markeringer på de sider, du overvåger.
+Du vil ikke modtage flere beskeder om yderligere ændringer medmindre du besøger denne side. På din overvågningsliste kan du også nulstille alle markeringer for de sider, du overvåger.
 
              Med venlig hilsen {{SITENAME}}s informationssystem
 
 --
-For at ændre dine indstillinger for e-mail-notifikationer, besøg
+For at ændre dine indstillinger for e-mail meddelelser, besøg
 {{canonicalurl:{{#special:Preferences}}}}
 
 For at ændre indstillingerne for din overvågningsliste, besøg
@@ -2246,6 +2266,8 @@ $UNWATCHURL
 
 Tilbagemelding og yderligere hjælp:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'oprettet',
+'changed' => 'ændret',
 
 # Delete
 'deletepage' => 'Slet side',
@@ -2313,6 +2335,8 @@ Se [[Special:ProtectedPages|listen over beskyttede sider]] for listen over sideb
 'prot_1movedto2' => '$1 flyttet til $2',
 'protect-badnamespace-title' => 'Navnerum, der ikke kan beskyttes',
 'protect-badnamespace-text' => 'Sider i dette navnerum kan ikke beskyttes.',
+'protect-norestrictiontypes-text' => 'Denne side kan ikke beskyttes, da der er ikke er nogen tilgængelige begrænsningstyper.',
+'protect-norestrictiontypes-title' => 'Ikke muligt at beskytte side',
 'protect-legend' => 'Bekræft beskyttelse',
 'protectcomment' => 'Begrundelse:',
 'protectexpiry' => 'Udløb',
@@ -2394,7 +2418,8 @@ Teksten i de slettede versioner er kun tilgængelig for administratorer.',
 'undeletedrevisions' => '$1 {{PLURAL:$1|version|versioner}} gendannet',
 'undeletedrevisions-files' => '$1 {{plural:$1|version|versioner}} og $2 {{plural:$2|fil|filer}} gendannet',
 'undeletedfiles' => '$1 {{plural:$1|fil|filer}} gendannet',
-'cannotundelete' => 'Gendannelse mislykkedes; en anden har måske allerede gendannet siden.',
+'cannotundelete' => 'Gendannelse mislykkedes:
+$1',
 'undeletedpage' => "'''$1''' blev gendannet.
 
 I [[Special:Log/delete|slette-loggen]] findes en oversigt over de nyligt slettede og gendannede sider.",
@@ -2425,7 +2450,7 @@ $1',
 'blanknamespace' => '(Hoved)',
 
 # Contributions
-'contributions' => 'Brugerbidrag',
+'contributions' => '{{GENDER:$1|Brugerbidrag}}',
 'contributions-title' => 'Brugerbidrag for $1',
 'mycontris' => 'Bidrag',
 'contribsub2' => 'For $1 ($2)',
@@ -2691,6 +2716,7 @@ Artiklen "[[:$1]]" eksisterer allerede. Vil du slette den for at gøre plads til
 'immobile-target-namespace-iw' => 'En side kan ikke flyttes til en interwiki-henvisning.',
 'immobile-source-page' => 'Denne side kan ikke flyttes.',
 'immobile-target-page' => 'Kan ikke flytte til det navn.',
+'bad-target-model' => 'Den ønskede destination bruger en anden indholdsmodel. Kan ikke konvertere fra $1 til $2.',
 'imagenocrossnamespace' => 'Filer kan ikke flyttes til et navnerum der ikke indeholder filer',
 'nonfile-cannot-move-to-file' => 'Kan ikke flytte ikke-filer til fil-navnerummet',
 'imagetypemismatch' => 'Den nye filendelse passer ikke til filtypen',
@@ -2801,6 +2827,7 @@ Alle Transwiki import-aktioner protokolleres i [[Special:Log/import|import-logge
 'import-error-interwiki' => 'Siden "$1" importeres ikke, da dens navn er reserveret for eksterne henvisninger (interwiki).',
 'import-error-special' => 'Siden "$1" importeres ikke, da den tilhører et særligt navnerum, der ikke tillader sider.',
 'import-error-invalid' => 'Siden "$1" importeres ikke, da dens navn er ugyldigt.',
+'import-error-unserialize' => 'Ændring $2 af siden "$1" kunne ikke afserialiseres. Ændringen brugte indholdsmodel $3 serialiseret som $4.',
 'import-options-wrong' => '{{PLURAL:$2|Ugyldig indstilling|Ugyldige indstillinger}}: <nowiki>$1</nowiki>',
 'import-rootpage-invalid' => 'Den rodside der er angivet har en ugyldig titel.',
 'import-rootpage-nosubpage' => 'Navnerummet "$1" tillader ikke undersider af rodsiderne.',
@@ -2815,7 +2842,6 @@ Alle Transwiki import-aktioner protokolleres i [[Special:Log/import|import-logge
 
 # JavaScriptTest
 'javascripttest' => 'Test af JavaScript',
-'javascripttest-disabled' => 'Denne funktion er ikke aktiveret på denne wiki.',
 'javascripttest-title' => 'Kører $1 test',
 'javascripttest-pagetext-noframework' => 'Denne side er reserveret til at teste JavaScript.',
 'javascripttest-pagetext-unknownframework' => 'Ukendt testmiljø "$1".',
@@ -2939,11 +2965,13 @@ Dette skyldes sandsynligvis en henvisning til et sortlistet eksternt websted.',
 'pageinfo-default-sort' => 'Standardsorteringsnøgle',
 'pageinfo-length' => 'Sidelængde (i bytes)',
 'pageinfo-article-id' => 'Side-ID',
+'pageinfo-language' => 'Sprog for sideindholdet',
 'pageinfo-robot-policy' => 'Søgemaskinestatus',
 'pageinfo-robot-index' => 'Indekserbar',
 'pageinfo-robot-noindex' => 'Ikke indekserbar',
 'pageinfo-views' => 'Antal visninger',
 'pageinfo-watchers' => 'Antal brugere, der overvåger siden',
+'pageinfo-few-watchers' => 'Overvåget af færre end $1 {{PLURAL:$1|bruger|brugere}}',
 'pageinfo-redirects-name' => 'Omdirigeringer til denne side',
 'pageinfo-subpages-name' => 'Undersider til denne side',
 'pageinfo-subpages-value' => '$1 ($2 {{PLURAL:$2|omdirigering|omdirigeringer}}; $3 {{PLURAL:$3|der ikke er en omdirigering|der ikke er omdirigeringer}})',
@@ -2958,6 +2986,19 @@ Dette skyldes sandsynligvis en henvisning til et sortlistet eksternt websted.',
 'pageinfo-magic-words' => '{{PLURAL:$1|Magisk|Magiske}} ord ($1)',
 'pageinfo-hidden-categories' => '{{PLURAL:$1|Skjult kategori|Skjulte kategorier}} ($1)',
 'pageinfo-templates' => '{{PLURAL:$1|Transkluderet skabelon|Transkluderede skabeloner}} ($1)',
+'pageinfo-transclusions' => '{{PLURAL:$1|Side|Sider}} transkluderet på ( $1 )',
+'pageinfo-toolboxlink' => 'Oplysninger om siden',
+'pageinfo-redirectsto' => 'Omdirigerer til',
+'pageinfo-redirectsto-info' => 'info',
+'pageinfo-contentpage' => 'Talt som en indholdsside',
+'pageinfo-contentpage-yes' => 'Ja',
+'pageinfo-protect-cascading' => 'Kaskadebeskyttelser begynder her',
+'pageinfo-protect-cascading-yes' => 'Ja',
+'pageinfo-protect-cascading-from' => 'Kaskadebeskyttelser begynder fra',
+'pageinfo-category-info' => 'Kategorioplysninger',
+'pageinfo-category-pages' => 'Antal sider',
+'pageinfo-category-subcats' => 'Antal underkategorier',
+'pageinfo-category-files' => 'Antal filer',
 
 # Skin names
 'skinname-standard' => 'Klassik',
@@ -2979,6 +3020,8 @@ Dette skyldes sandsynligvis en henvisning til et sortlistet eksternt websted.',
 'markedaspatrollederror' => 'Markering som „kontrolleret“ ikke mulig.',
 'markedaspatrollederrortext' => 'Du skal vælge en sideændring.',
 'markedaspatrollederror-noautopatrol' => 'Du må ikke markere dine egne ændringer som kontrolleret.',
+'markedaspatrollednotify' => 'Denne ændring af $1 er blevet markeret som patruljeret.',
+'markedaspatrollederrornotify' => 'Markering som patruljeret mislykkedes.',
 
 # Patrol log
 'patrol-log-page' => 'Kontrollog',
@@ -3012,6 +3055,7 @@ Du kan beskadige dit system hvis du udfører den.",
 'file-nohires' => 'Ingen højere opløsning fundet.',
 'svg-long-desc' => 'SVG fil, basisstørrelse $1 × $2 punkters, størrelse: $3',
 'svg-long-desc-animated' => 'Animeret SVG-fil, basisstørrelse $1 × $2 punkter, filstørrelse: $3',
+'svg-long-error' => 'Ugyldig SVG-fil: $1',
 'show-big-image' => 'Version i større opløsning',
 'show-big-image-preview' => 'Størrelse af denne forhåndsvisning: $1.',
 'show-big-image-other' => '{{PLURAL:$2|Anden opløsning|Andre opløsninger}}: $1.',
@@ -3042,7 +3086,10 @@ Du kan beskadige dit system hvis du udfører den.",
 'minutes' => '{{PLURAL: $1|$1 minut|$1 minutter}}',
 'hours' => '{{PLURAL: $1|$1 time|$1 timer}}',
 'days' => '{{PLURAL: $1|$1 dag|$1 dage}}',
+'months' => '{{PLURAL:$1|$1 måned|$1 måneder}}',
+'years' => '{{PLURAL:$1|$1 år}}',
 'ago' => '$1 siden',
+'just-now' => 'lige nu',
 
 # Bad image list
 'bad_image_list' => 'Formatet er:
@@ -3530,6 +3577,7 @@ Denne bekræftelseskode vil udløbe den $4.',
 # Scary transclusion
 'scarytranscludedisabled' => '[Interwiki-tilkobling er deaktiveret]',
 'scarytranscludefailed' => '[Hentning af skabelon for $1 mislykkedes]',
+'scarytranscludefailed-httpstatus' => '[Hentning af skabelon for $1 mislykkedes: HTTP $2]',
 'scarytranscludetoolong' => "[URL'en er for lang]",
 
 # Delete conflict
@@ -3641,6 +3689,7 @@ Du kan også [[Special:EditWatchlist|bruge standard editoren]].',
 'version-license' => 'Licens',
 'version-poweredby-credits' => "Denne wiki er drevet af '''[//www.mediawiki.org/ MediaWiki ]''', copyright © 2001-$1 $2.",
 'version-poweredby-others' => 'andre',
+'version-credits-summary' => 'Vi vil gerne anerkende følgende personer for deres bidrag til [[Special:Version|MediaWiki]].',
 'version-license-info' => 'MediaWiki er fri software; du kan redistribuere det og/eller ændre det under betingelserne i GNU General Public License som offentliggjort af Free Software Foundation; enten version 2 af licensen eller (efter eget valg) enhver senere version. 
 
 MediaWiki distribueres i håb om at det vil være nyttigt, men UDEN NOGEN GARANTI; uden selv de underforståede garantier SALGBARHED eller EGNETHED TIL ET BESTEMT FORMÅL. Se GNU General Public License for yderligere detaljer. 
@@ -3754,17 +3803,17 @@ Billeder vises i fuld opløsning, og andre mediatyper vil blive aktiveret med de
 'sqlite-no-fts' => '$1 uden fuld-tekst søgnings support',
 
 # New logging system
-'logentry-delete-delete' => '$1 slettede siden $3',
-'logentry-delete-restore' => '$1 gendannede siden $3',
-'logentry-delete-event' => '$1 ændrede synligheden af {{PLURAL:$5|en loghændelse|$5 loghændelser}} for siden $3: $4',
-'logentry-delete-revision' => '$1 ændrede synligheden af {{PLURAL:$5|en version|$5 versioner}} af siden $3: $4',
-'logentry-delete-event-legacy' => '$1 ændrede synligheden af loghændelser for siden $3',
-'logentry-delete-revision-legacy' => '$1 ændrede synligheden af versioner af siden $3',
-'logentry-suppress-delete' => '$1 skjulte hændelser for siden $3',
-'logentry-suppress-event' => '$1 ændrede hemmeligt synligheden af {{PLURAL:$5|en loghændelse|$5 loghændelser}} for siden $3: $4',
-'logentry-suppress-revision' => '$1 ændrede hemmeligt synligheden af {{PLURAL:$5|en version|$5 versioner}} af siden $3: $4',
-'logentry-suppress-event-legacy' => '$1 ændrede hemmeligt synligheden af loghændelser for siden $3',
-'logentry-suppress-revision-legacy' => '$1 ændrede hemmeligt synligheden af versioner af siden $3',
+'logentry-delete-delete' => '$1 {{GENDER:$2|slettede}} siden $3',
+'logentry-delete-restore' => '$1 {{GENDER:$2|gendannede}} siden $3',
+'logentry-delete-event' => '$1 {{GENDER:$2|ændrede}} synligheden af {{PLURAL:$5|en loghændelse|$5 loghændelser}} for siden $3: $4',
+'logentry-delete-revision' => '$1 {{GENDER:$2|ændrede}} synligheden af {{PLURAL:$5|en version|$5 versioner}} af siden $3: $4',
+'logentry-delete-event-legacy' => '$1 {{GENDER:$2|ændrede}} synligheden af loghændelser for siden $3',
+'logentry-delete-revision-legacy' => '$1 {{GENDER:$2|ændrede}} synligheden af versioner af siden $3',
+'logentry-suppress-delete' => '$1 {{GENDER:$2|skjulte}} hændelser for siden $3',
+'logentry-suppress-event' => '$1 {{GENDER:$2|ændrede}} hemmeligt synligheden af {{PLURAL:$5|en loghændelse|$5 loghændelser}} for siden $3: $4',
+'logentry-suppress-revision' => '$1 {{GENDER:$2|ændrede}} hemmeligt synligheden af {{PLURAL:$5|en version|$5 versioner}} af siden $3: $4',
+'logentry-suppress-event-legacy' => '$1 {{GENDER:$2|ændrede}} hemmeligt synligheden af loghændelser for siden $3',
+'logentry-suppress-revision-legacy' => '$1 {{GENDER:$2|ændrede}} hemmeligt synligheden af versioner af siden $3',
 'revdelete-content-hid' => 'indhold skjult',
 'revdelete-summary-hid' => 'redigeringsbeskrivelse skjult',
 'revdelete-uname-hid' => 'brugernavnet er skjult',
@@ -3773,17 +3822,21 @@ Billeder vises i fuld opløsning, og andre mediatyper vil blive aktiveret med de
 'revdelete-uname-unhid' => 'brugernavnet er ikke længere skjult',
 'revdelete-restricted' => 'tilføjede begrænsninger for administratorer',
 'revdelete-unrestricted' => 'fjernede begrænsninger for administratorer',
-'logentry-move-move' => '$1 flyttede siden $3 til $4',
-'logentry-move-move-noredirect' => '$1 flyttede siden $3 til $4 uden at efterlade en omdirigering',
-'logentry-move-move_redir' => '$1 flyttede siden $3 til $4 hen over en omdirigering',
-'logentry-move-move_redir-noredirect' => '$1 flyttede siden $3 til $4 hen over en omdirigering og uden at efterlade en omdirigering',
-'logentry-patrol-patrol' => '$1 markerede version $4 af siden $3 som patruljeret',
-'logentry-patrol-patrol-auto' => '$1 markerede automatisk version $4 af siden $3 som patruljeret',
-'logentry-newusers-newusers' => 'Brugerkontoen $1 blev oprettet',
-'logentry-newusers-create' => 'Brugerkontoen $1 blev oprettet',
-'logentry-newusers-create2' => 'Brugerkontoen $3 blev oprettet af $1',
-'logentry-newusers-autocreate' => 'Kontoen $1 blev automatisk oprettet',
-'newuserlog-byemail' => 'kodeord tilsendt pr. e-mail',
+'logentry-move-move' => '$1 {{GENDER:$2|flyttede}} siden $3 til $4',
+'logentry-move-move-noredirect' => '$1 {{GENDER:$2|flyttede}} siden $3 til $4 uden at efterlade en omdirigering',
+'logentry-move-move_redir' => '$1 {{GENDER:$2|flyttede}} siden $3 til $4 hen over en omdirigering',
+'logentry-move-move_redir-noredirect' => '$1 {{GENDER:$2|flyttede}} siden $3 til $4 hen over en omdirigering og uden at efterlade en omdirigering',
+'logentry-patrol-patrol' => '$1 {{GENDER:$2|markerede}} version $4 af siden $3 som patruljeret',
+'logentry-patrol-patrol-auto' => '$1 {{GENDER:$2|markerede automatisk}} version $4 af siden $3 som patruljeret',
+'logentry-newusers-newusers' => 'Brugerkontoen $1 blev {{GENDER:$2|oprettet}}',
+'logentry-newusers-create' => 'Brugerkontoen $1 blev {{GENDER:$2|oprettet}}',
+'logentry-newusers-create2' => 'Brugerkontoen $3 blev {{GENDER:$2|oprettet}} af $1',
+'logentry-newusers-byemail' => 'Brugerkontoen $3 blev {{GENDER:$2|oprettet}} af $1, og adgangskoden er sendt via e-mail',
+'logentry-newusers-autocreate' => 'Brugerkontoen $1 blev automatisk {{GENDER:$2|oprettet}}',
+'logentry-rights-rights' => '$1 {{GENDER:$2|ændrede}} gruppemedlemskabet for $3 fra $4 til $5',
+'logentry-rights-rights-legacy' => '$1 {{GENDER:$2|ændrede}} gruppemedlemskabet for $3',
+'logentry-rights-autopromote' => '$1 blev automatisk {{GENDER:$2|forfremmet}} fra $4 til $5',
+'rightsnone' => '(-)',
 
 # Feedback
 'feedback-bugornote' => 'Hvis du er klar til at beskrive et teknisk problem i detaljer, bedes du [$1 rapportere en fejl].
@@ -3837,6 +3890,7 @@ Ellers kan du bruge den enkle formular nedenfor. Din kommentar vil blive tilføj
 'api-error-ok-but-empty' => 'Intern fejl: intet svar fra serveren.',
 'api-error-overwrite' => 'Det er ikke tilladt at overskrive en eksisterende fil.',
 'api-error-stashfailed' => 'Intern fejl: serveren kunne ikke gemme midlertidig fil.',
+'api-error-publishfailed' => 'Intern fejl: serveren kunne ikke udgive midlertidig fil.',
 'api-error-timeout' => 'Serveren svarede ikke tilbage inden for den forventede tid.',
 'api-error-unclassified' => 'En ukendt fejl opstod.',
 'api-error-unknown-code' => 'Ukendt fejl: "$1"',
@@ -3856,5 +3910,8 @@ Ellers kan du bruge den enkle formular nedenfor. Din kommentar vil blive tilføj
 'duration-decades' => '$1 {{PLURAL:$1|årti|årtier}}',
 'duration-centuries' => '$1 {{PLURAL:$1|århundrede|århundreder}}',
 'duration-millennia' => '$1 {{PLURAL:$1|årtusind|årtusinder}}',
+
+# Image rotation
+'rotate-comment' => 'Billedet roteres med $1 {{PLURAL:$1| grad|grader}} med uret',
 
 );

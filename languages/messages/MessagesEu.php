@@ -258,6 +258,7 @@ $messages = array(
 'newwindow' => '(leiho berrian irekitzen da)',
 'cancel' => 'Utzi',
 'moredotdotdot' => 'Gehiago...',
+'morenotlisted' => 'Zerrendatu gabeko gehiago...',
 'mypage' => 'Orrialdea',
 'mytalk' => 'Eztabaida',
 'anontalk' => 'IP honen eztabaida',
@@ -269,7 +270,6 @@ $messages = array(
 'qbbrowse' => 'Arakatu',
 'qbedit' => 'Aldatu',
 'qbpageoptions' => 'Orrialde hau',
-'qbpageinfo' => 'Testuingurua',
 'qbmyoptions' => 'Nire orrialdeak',
 'qbspecialpages' => 'Aparteko orrialdeak',
 'faq' => 'Maiz egindako galderak',
@@ -292,6 +292,7 @@ $messages = array(
 'namespaces' => 'Izen-tarteak',
 'variants' => 'Aldaerak',
 
+'navigation-heading' => 'Nabigazio menua',
 'errorpagetitle' => 'Errorea',
 'returnto' => '$1(e)ra itzuli.',
 'tagline' => '{{SITENAME}}(e)tik',
@@ -532,11 +533,9 @@ Blokeoa ezarri zuen administratzaileak honako arrazoia eman zuen: "$3".',
 # Login and logout pages
 'logouttext' => "'''Saioa itxi egin duzu.'''
 
-Erabiltzaile anonimo bezala jarrai dezakezu {{SITENAME}} erabiltzen, edo [[Special:UserLogin|saioa has dezakezu berriz]] erabiltzaile berdinarekin edo ezberdin batekin.
+Erabiltzaile anonimo bezala jarrai dezakezu {{SITENAME}} erabiltzen, edo <span class='plainlinks'>[$1 saioa has dezakezu berriz]</span> erabiltzaile berdinarekin edo ezberdin batekin.
 Kontuan izan orrialde batzuk saioa hasita bazenu bezala ikus ditzakezula nabigatzailearen katxea garbitu arte.",
-'welcomecreation' => '== Ongi etorri, $1! ==
-
-Zure kontua sortu egin da. Ez ahaztu [[Special:Preferences|{{SITENAME}}(e)ko hobespenak]] aldatzea.',
+'welcomeuser' => 'Ongi etorri, $1!',
 'yourname' => 'Erabiltzaile izena',
 'yourpassword' => 'Pasahitza:',
 'yourpasswordagain' => 'Pasahitza berriz',
@@ -558,7 +557,7 @@ Zure kontua sortu egin da. Ez ahaztu [[Special:Preferences|{{SITENAME}}(e)ko hob
 'gotaccount' => "Baduzu erabiltzaile kontua? '''$1'''.",
 'gotaccountlink' => 'Saioa hasi',
 'userlogin-resetlink' => 'Saioa hasteko datuak ahaztu dituzu?',
-'createaccountmail' => 'e-postaz',
+'createaccountmail' => 'Erabili behin-behineko pasahitz ausazko bat eta bidali behean agertzeko den e-posta helbidera',
 'createaccountreason' => 'Arrazoia:',
 'badretype' => 'Idatzitako pasahitzak ez dira berdinak.',
 'userexists' => 'Aukeratutako erabiltzaile izena hartuta dago.
@@ -832,7 +831,6 @@ Azken erregistroko sarrera ematen da azpian erreferentzia gisa:",
 'template-semiprotected' => '(erdi-babestua)',
 'hiddencategories' => 'Orrialde hau {{PLURAL:$1|kategoria izkutu bateko|$1 kategoria izkutuko}} kide da:',
 'edittools' => '<!-- Hemen jarritako testua aldaketa eta igoera formularioen azpian agertuko da. -->',
-'nocreatetitle' => 'Orrialdeak sortzea mugatuta',
 'nocreatetext' => 'Gune honek orrialde berriak sortzeko gaitasuna mugatu du. Atzera egin dezakezu existitzen den orrialde bat aldatzeko, edo [[Special:UserLogin|saio hasi edo kontua sortu]].',
 'nocreate-loggedin' => 'Ez duzu orri berriak sortzeko baimenik.',
 'sectioneditnotsupported-title' => 'Ezin dira atalak aldatu',
@@ -854,6 +852,12 @@ Ez du azalpenik eman.',
 'edit-no-change' => 'Zure edizioa baztertu da testua aldatu ez duzulako.',
 'edit-already-exists' => 'Ezin izan da orri berria sortu.
 Jada existitzen da.',
+
+# Content models
+'content-model-wikitext' => 'wikitestua',
+'content-model-text' => 'testu laua',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Adi: Orrialde honek parser funtzio deialdi oso garesti gehiegi ditu.
@@ -1199,9 +1203,9 @@ Saia zaitez zure eskeraren aurretik ''all:'' jartzen eduki guztien artean bilatz
 'prefs-emailconfirm-label' => 'E-posta baieztapena:',
 'prefs-textboxsize' => 'Editatze lehioaren tamaina',
 'youremail' => 'E-posta:',
-'username' => 'Erabiltzaile izena:',
-'uid' => 'Erabiltzaile zenbakia:',
-'prefs-memberingroups' => '{{PLURAL:$1|Taldeko|taldeetako}} kidea:',
+'username' => '{{GENDER:$1|Erabiltzaile izena}}:',
+'uid' => '{{GENDER:$1|Erabiltzaile}} zenbakia:',
+'prefs-memberingroups' => '{{PLURAL:$1|Taldeko|taldeetako}} {{GENDER:$2|kidea}}:',
 'prefs-registration' => 'Erregistratzeko unea:',
 'yourrealname' => 'Benetako izena:',
 'yourlanguage' => 'Hizkuntza:',
@@ -1346,11 +1350,13 @@ $1 {{PLURAL:$1|karakteretik|karakteretik}} behera izan behar ditu.',
 'right-override-export-depth' => '5eko sakonerararteko loturiko orrialdeak barne esportatu',
 'right-sendemail' => 'Beste erabiltzaileei e-posta bidali',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Erabiltzaile erregistroa',
+'newuserlogpagetext' => 'Hau azken erabiltzaileen sorreren erregistroa da.',
+
 # User rights log
 'rightslog' => 'Erabiltzaile eskubideen erregistroa',
 'rightslogtext' => 'Erabiltzaile eskubideetan izandako aldaketen erregistroa da hau.',
-'rightslogentry' => '$1(r)en partaidetza aldatu da $2(e)tik $3(e)ra',
-'rightsnone' => '(bat ere ez)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'orrialde hau irakurri',
@@ -1877,10 +1883,6 @@ Baimendutako protokoloak: <code>$1</code> (protokoloa zehazten ez bada http:// h
 'activeusers-hidesysops' => 'Ezkutatu administratzaileak',
 'activeusers-noresult' => 'Ez da lankiderik aurkitu.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Erabiltzaile erregistroa',
-'newuserlogpagetext' => 'Hau azken erabiltzaileen sorreren erregistroa da.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Erabiltzaile talde eskumenak',
 'listgrouprights-summary' => 'Ondorengo zerrendak wikian dauden lankide taldeak agertzen dira, beraien eskubideekin.
@@ -1967,11 +1969,7 @@ Jarraipen zerrendatik artikulua kentzeko, artikuluan ''ez jarraitu''ri eman.",
 
 'enotif_mailer' => '{{SITENAME}}(e)ko Oharpen Postaria',
 'enotif_reset' => 'Orrialde guztiak bisitatu bezala markatu',
-'enotif_newpagetext' => 'Honako hau orrialde berria da.',
 'enotif_impersonal_salutation' => '{{SITENAME}} erabiltzailea',
-'changed' => 'aldatu',
-'created' => 'sortu',
-'enotif_subject' => '{{SITENAME}}(e)ko $PAGETITLE orrialdea $PAGEEDITOR(e)k $CHANGEDORCREATED du',
 'enotif_lastvisited' => 'Jo $1 orrialdera zure azken bisitaz geroztik izandako aldaketa guztiak ikusteko.',
 'enotif_lastdiff' => 'Jo $1(e)ra aldaketa hau ikusteko.',
 'enotif_anon_editor' => '$1 erabiltzaile anonimoa',
@@ -2004,6 +2002,8 @@ $UNWATCHURL
 
 Laguntza:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'sortu',
+'changed' => 'aldatu',
 
 # Delete
 'deletepage' => 'Orrialdea ezabatu',
@@ -2180,7 +2180,7 @@ $1',
 'blanknamespace' => '(Nagusia)',
 
 # Contributions
-'contributions' => 'Lankidearen ekarpenak',
+'contributions' => '{{GENDER:$1|Lankidearen}} ekarpenak',
 'contributions-title' => '$1(r)entzat lankidearen ekarpenak',
 'mycontris' => 'Ekarpenak',
 'contribsub2' => '$1 ($2)',
@@ -2630,6 +2630,7 @@ Baliteke zerrenda beltzean dagoen kanpo lotura batek sortzea arazo hori.',
 'pageinfo-default-sort' => 'Ordenatze irizpide lehenetsia',
 'pageinfo-length' => 'Orriaren neurria (byteak)',
 'pageinfo-article-id' => 'Orriaren identifikazio zenbakia',
+'pageinfo-language' => 'Orriaren edukiaren hizkuntza',
 'pageinfo-robot-policy' => 'Bilaketa motorraren egoera',
 'pageinfo-robot-index' => 'Indexagarria',
 'pageinfo-robot-noindex' => 'Indexaezina',
@@ -2647,6 +2648,13 @@ Baliteke zerrenda beltzean dagoen kanpo lotura batek sortzea arazo hori.',
 'pageinfo-recent-authors' => 'Oraintsuko egileen kopurua',
 'pageinfo-hidden-categories' => 'Ezkutuko {{PLURAL:$1|kategoria|kategoriak}} ($1)',
 'pageinfo-templates' => 'Txertatutako {{PLURAL:$1|txantiloia|txantiloiak}} ($1)',
+'pageinfo-toolboxlink' => 'Orri honen datuak',
+'pageinfo-redirectsto-info' => 'Informazioa',
+'pageinfo-contentpage' => 'Eduki-orritzat zenbatua',
+'pageinfo-contentpage-yes' => 'Bai',
+'pageinfo-protect-cascading' => 'Serieko babesa, orri honetatik',
+'pageinfo-protect-cascading-yes' => 'Bai',
+'pageinfo-protect-cascading-from' => 'Serieko babesak aktibatuta. Sorburua:',
 
 # Skin names
 'skinname-standard' => 'Lehenetsia',
@@ -3347,17 +3355,19 @@ Irudiak bereizmen handienean daude, bestelako fitxategi motak beraiei esleitutak
 'htmlform-selectorother-other' => 'Beste bat',
 
 # New logging system
-'logentry-delete-delete' => '$1 wikilariak $3 orria ezabatu du',
+'logentry-delete-delete' => '$1 wikilariak «$3» orria ezabatu du',
+'logentry-delete-event' => '$1 wikilariak ikusgaitasuna aldatu {{PLURAL:$5|dio erregistroko sarrera bati|die erregistroko $5 sarrerari}}, $3 orrian: $4',
+'logentry-suppress-event' => '$1 wikilariak ezkutuan ikusgaitasuna aldatu {{PLURAL:$5|dio erregistroko sarrera bati|die erregistroko $5 sarrerari}}, $3 orrian: $4',
 'revdelete-restricted' => 'administratzaileentzako mugak ezarri dira',
 'revdelete-unrestricted' => 'administratzaileentzako mugak kendu dira',
 'logentry-move-move' => '$1 wikilariak «$3» orria «$4» izenera aldatu du',
 'logentry-move-move-noredirect' => '$1 wikilariak «$3» orria «$4» izenera aldatu du, birzuzenketarik utzi gabe',
 'logentry-move-move_redir' => '$1 wikilariak «$3» orria «$4» izenera aldatu du, birzuzenketaren gainetik',
 'logentry-move-move_redir-noredirect' => '$1 wikilariak «$3» orria «$4» izenera aldatu du, birzuzenketa bat gainidatzita, birzuzenketarik utzi gabe',
-'logentry-newusers-newusers' => '$1 wikilariak erabiltzaile kontu bat sortu du',
-'logentry-newusers-create' => '$1 wikilariak erabiltzaile kontu bat sortu du',
-'logentry-newusers-create2' => '$1 wikilariak $3 erabiltzaile kontu bat sortu du',
-'newuserlog-byemail' => 'pasahitza e-postaz bidali da',
+'logentry-newusers-newusers' => '$1 erabiltzaile kontua sortu da',
+'logentry-newusers-create' => '$1 erabiltzaile kontua sortu da',
+'logentry-newusers-create2' => '$1 wikilariak $3 erabiltzaile kontua sortu du',
+'rightsnone' => '(bat ere ez)',
 
 # Feedback
 'feedback-subject' => 'Gaia:',

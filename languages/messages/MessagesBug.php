@@ -12,7 +12,7 @@
  * @author Zaidpjd (on bug.wikipedia.org)
  */
 
-$fallback = "id";
+$fallback = 'id';
 
 $messages = array(
 # Dates
@@ -73,7 +73,6 @@ $messages = array(
 'qbbrowse' => 'Berowoso',
 'qbedit' => 'Padécéŋ',
 'qbpageoptions' => 'Édé leppa',
-'qbpageinfo' => 'Konteks',
 'qbmyoptions' => "Leppana iya'",
 'qbspecialpages' => 'Leppa spésiala',
 'faq' => 'FAQ',

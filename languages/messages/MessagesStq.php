@@ -189,7 +189,6 @@ $messages = array(
 'qbbrowse' => 'Bleederje',
 'qbedit' => 'Annerje',
 'qbpageoptions' => 'Disse Siede',
-'qbpageinfo' => 'Siedendoatäie',
 'qbmyoptions' => 'Mien Sieden',
 'qbspecialpages' => 'Spezialsieden',
 'faq' => 'Oafte stoalde Froagen',
@@ -443,12 +442,8 @@ Die Administrator, die dän Skrieuwtougriep speerde, roate foulgjenden Gruund an
 # Login and logout pages
 'logouttext' => "'''Du bäst nu oumälded.'''
 
-Du koast {{SITENAME}} nu anonym fääre benutsje, of die fonnäien unner dänsälge of n uur Benutsernoome wier [[Special:UserLogin|anmäldje]].
+Du koast {{SITENAME}} nu anonym fääre benutsje, of die fonnäien unner dänsälge of n uur Benutsernoome wier <span class='plainlinks'>[$1 anmäldje]</span>.
 Beoachtje, dät eenige Sieden noch anwiese konnen, dät du oumälded bäst, soloange du nit din Browsercache loosmoaked hääst.",
-'welcomecreation' => '== Wäilkuumen, $1 ==
-
-Dien Benutserkonto wuude iengjucht.
-Ferjeet nit, dien [[Special:Preferences|{{SITENAME}}-Ienstaalengen]] antoupaasjen.',
 'yourname' => 'Benutsernoome:',
 'yourpassword' => 'Paaswoud:',
 'yourpasswordagain' => 'Paaswoud wierhoalje:',
@@ -741,7 +736,6 @@ Gruund foar ju Speere: $1",
 'template-semiprotected' => '(Siedenskuts foar nit anmäldede un näie Benutsere)',
 'hiddencategories' => 'Disse Siede is Meeglid fon {{PLURAL:$1|1 ferstatte Kategorie|$1 ferstatte Kategorien}}:',
 'edittools' => '<!-- Text hier stoant unner Beoarbaidengsfäildere un Hoochleedefäildere. -->',
-'nocreatetitle' => 'Dät Moakjen fon näie Sieden is begränsed',
 'nocreatetext' => 'Ap {{SITENAME}} wuude dät Moakjen fon näie Sieden begränsed. Du koast al bestoundene Sieden beoarbaidje of die [[Special:UserLogin|anmäldje]].',
 'nocreate-loggedin' => 'Du hääst neen Begjuchtigenge, näie Sieden antoulääsen.',
 'sectioneditnotsupported-title' => 'Ju Beoarbaidenge fon Ousnitte wäd nit unnerstutsed',
@@ -1260,12 +1254,13 @@ Ju duur maximoal $1 {{PLURAL:$1|Teeken|Teekene}} loang weese.',
 'right-sendemail' => 'E-Mails an uur Benutsere seende',
 'right-passwordreset' => 'Paaswoud fon n Benutser touräächsätte ([[Special:PasswordReset|Spezioalsiede]])',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Näianmäldengs-Logbouk',
+'newuserlogpagetext' => 'Dit is dät Logbouk fon näi anmäldede Benutsere.',
+
 # User rights log
 'rightslog' => 'Gjuchte-Logbouk',
 'rightslogtext' => 'Dit is dät Logbouk fon do Annerengen fon do Benutsergjuchte.',
-'rightslogentry' => 'annerde ju Gruppentouheeregaid foar „$1“ fon „$2“ ap „$3“.',
-'rightslogentry-autopromote' => 'wuud automatisk fon „$2“ ätter „$3“ touoardend',
-'rightsnone' => '(-)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'disse Siede tou leesen',
@@ -1834,10 +1829,6 @@ Sjuch uk ju Lieste fon do [[Special:WantedCategories|wonskede Kategorien]].',
 'activeusers-hidesysops' => 'Administratore fersteete',
 'activeusers-noresult' => 'Neen Benutsere fuunen.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Näianmäldengs-Logbouk',
-'newuserlogpagetext' => 'Dit is dät Logbouk fon näi anmäldede Benutsere.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Benutsergruppen-Gjuchte',
 'listgrouprights-summary' => 'Dit is ne Lieste fon do in dissen Wiki definierde Benutsergruppen un do deermäd ferbuundene Gjuchte.
@@ -1933,11 +1924,7 @@ Wan du die Artikkel wier fon ju Foulgelieste ou hoalje moatest, klik ap ju Siede
 
 'enotif_mailer' => '{{SITENAME}} tält Beskeed uur Email',
 'enotif_reset' => 'Markier aal besoachte Sieden',
-'enotif_newpagetext' => 'Dit is ne näie Siede.',
 'enotif_impersonal_salutation' => '{{SITENAME}} Benutser',
-'changed' => 'annerd',
-'created' => 'näi anlaid',
-'enotif_subject' => '{{SITENAME}} Siede $PAGETITLE wuude $CHANGEDORCREATED fon $PAGEEDITOR',
 'enotif_lastvisited' => 'Aal Annerengen ap aan Blik: $1',
 'enotif_lastdiff' => '$1 wiest alle Annerengen mäd aan Glap.',
 'enotif_anon_editor' => 'Anonyme Benutser $1',
@@ -1969,6 +1956,8 @@ Uum ju Siede fon dien Kontrollieste tou läskjen, besäik
 $UNWATCHURL
 
 Touräächmäldengen un wiedere Hälpe: {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'näi anlaid',
+'changed' => 'annerd',
 
 # Delete
 'deletepage' => 'Siede läskje',
@@ -3297,7 +3286,7 @@ Ne [{{SERVER}}{{SCRIPTPATH}}/COPYING Kopie fon ju ''GNU General Public License''
 # New logging system
 'revdelete-restricted' => 'Einskränkengen jäilde uk foar Administratore',
 'revdelete-unrestricted' => 'Ienskränkengen foar Administratore wächhoald',
-'newuserlog-byemail' => 'dät Paaswoud wuud uur E-Mail fersoand',
+'rightsnone' => '(-)',
 
 # Search suggestions
 'searchsuggest-search' => 'Säik',

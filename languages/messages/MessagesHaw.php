@@ -192,7 +192,6 @@ $messages = array(
 'qbfind' => 'Loa‘a',
 'qbedit' => 'E ho‘ololi',
 'qbpageoptions' => 'Kēia ‘ao‘ao',
-'qbpageinfo' => 'Pō‘aiapili',
 'qbmyoptions' => 'Ka‘u mau ‘ao‘ao',
 'qbspecialpages' => 'Nā ‘ao‘ao kūikawā',
 
@@ -324,9 +323,6 @@ $2',
 'ns-specialprotected' => '‘A‘ole hiki ke ho‘opololei i nā ‘ao‘ao kūikawā',
 
 # Login and logout pages
-'welcomecreation' => '== E komo mai, $1! ==
-Ua hoʻokumu ʻia kāu moʻokāki.
-Mai poina e hoʻololi i [[Special:Preferences|kāu makemake ma {{SITENAME}}]].',
 'yourname' => "Inoa mea ho'ohana",
 'yourpassword' => 'ʻŌlelo hūnā:',
 'yourpasswordagain' => "Hua'ōlelo huna hou",

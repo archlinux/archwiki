@@ -230,7 +230,6 @@ $messages = array(
 'qbbrowse' => 'Iffuglia',
 'qbedit' => 'Mudifigga',
 'qbpageoptions' => 'Prifirenzi pàgina',
-'qbpageinfo' => "Infuimmazioni i' la pàgina",
 'qbmyoptions' => "Li me' pàgini",
 'qbspecialpages' => 'Pàgini ippiziari',
 'faq' => 'FAQ (infuimmazioni e aggiuddu)',
@@ -437,9 +436,6 @@ La rasgioni frunidda è ''$2''.",
 
 Si pò sighì a usà {{SITENAME}} cumenti utenti anònimu oppuru eseguì una noba intradda, cu' lu matessi innòmu utenti o un'innòmu dibessu.
 Zerthuni pàgini pudìani continuà a apparì cumenti si la iscidda nò fùssia avvinudda finaghì nò vèni puridda la mimória cache di lu propriu nabiggadori.",
-'welcomecreation' => '== Binvinuddu, $1! ==
-
-La registhrazioni è isthadda criadda currettamenti. No dimintiggà di passunarizzà li prifirenzi di {{SITENAME}}.',
 'yourname' => 'Innòmu utenti',
 'yourpassword' => "Paràura d'órdhini",
 'yourpasswordagain' => "Ripeti la paràura d'órdhini",
@@ -656,7 +652,6 @@ Inviendi lu testhu ài la ripunsabiriddai chi lu testhu sia toiu oppuru sia i lu
 'template-semiprotected' => '(mezu-prutiggiddu)',
 'hiddencategories' => 'Chistha pagina appartheni a {{PLURAL:$1|una categuria cuadda|$1 categurì cuaddi}}:',
 'edittools' => '<!-- Testhu chi appari in giossu lu mòdulu di mudìfiga e di carriggamentu. -->',
-'nocreatetitle' => 'Criazioni di li pàgini limitadda',
 'nocreatetext' => '{{SITENAME}} à limitaddu la pussibiliddai di crià nobi pagini a li sori utenti registhraddi. È pussìbiri turrà indareddu e mudìfiggà una pàgina esisthenti, oppuru [[Special:UserLogin|intrà o crià una noba registhrazioni]].',
 'nocreate-loggedin' => 'No si diponi di li pimmissi nezzessàri pa crià nobi pàgini in {{SITENAME}}.',
 'permissionserrors' => 'Errori i li pimmissi',
@@ -911,11 +906,12 @@ Cunsulthà lu [{{fullurl:{{#Special:Log}}/suppress|page={{FULLPAGENAMEE}}}} rigi
 'grouppage-sysop' => '{{ns:project}}:Amministhradori',
 'grouppage-bureaucrat' => '{{ns:project}}:Buròcrati',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Nobi utenti',
+
 # User rights log
 'rightslog' => 'Diritti di li utenti',
 'rightslogtext' => "Chisthu è lu rigisthru di lu mudìfigghi a li diritti assignaddi a l'utenti.",
-'rightslogentry' => "à mudìfiggaddu l'apparthinènzia di $1 da lu gruppu $2 a lu gruppu $3",
-'rightsnone' => '(nisciunu)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'mudìfiggà chistha pàgina',
@@ -1246,9 +1242,6 @@ Also see [[Special:WantedCategories|wanted categories]].",
 'listusers-submit' => 'Musthra',
 'listusers-noresult' => 'Nisciun utenti curripundi a li critéri impusthaddi.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Nobi utenti',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(erencu di li membri)',
 
@@ -1308,11 +1301,7 @@ Si daboi s'à gana d'eliminà la pàgina da la listha di l'abbaidaddi ippiziarii
 
 'enotif_mailer' => 'Sisthema di nutìfica via postha erettrònica di {{SITENAME}}',
 'enotif_reset' => 'Signa tutti li pàgini cumenti già visitaddi',
-'enotif_newpagetext' => 'Chistha è una pàgina nóba.',
 'enotif_impersonal_salutation' => 'Utenti di {{SITENAME}}',
-'changed' => 'ciambadda',
-'created' => 'criadda',
-'enotif_subject' => 'La pàgina $PAGETITLE di {{SITENAME}} è isthadda $CHANGEDORCREATED da $PAGEEDITOR',
 'enotif_lastvisited' => "Cunsultha $1 pa vidé tutti li mudìfigghi da l'ulthima visita tóia.",
 'enotif_lastdiff' => 'Vidé $1 pa visuarizzà la mudìfigga.',
 'enotif_anon_editor' => 'utenti anònimu $1',
@@ -1339,6 +1328,8 @@ Pa mudìfiggà l\'impusthazioni di la listha di l\'abbaidaddi ippiziari, visita
 
 Pa dì cosa ni pensi e dumandà assisthènzia:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'criadda',
+'changed' => 'ciambadda',
 
 # Delete
 'deletepage' => 'Canzella pàgina',
@@ -2047,5 +2038,8 @@ Pa piazeri, cunfèimma chi vòi ricrià avveru chistha pàgina.",
 'htmlform-submit' => 'Invia',
 'htmlform-reset' => 'Annulla mudifigghi',
 'htmlform-selectorother-other' => 'Althru',
+
+# New logging system
+'rightsnone' => '(nisciunu)',
 
 );

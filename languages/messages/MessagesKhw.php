@@ -159,7 +159,6 @@ $messages = array(
 'qbbrowse' => 'Browse/تصفّح',
 'qbedit' => 'ترمیم',
 'qbpageoptions' => 'ھیہ صفحہ',
-'qbpageinfo' => 'مفہوم',
 'qbmyoptions' => 'مہ صفحات',
 'qbspecialpages' => 'خاص صفحات',
 'faq' => 'عام معلومات',
@@ -394,10 +393,7 @@ MySQL جوابِ خطاء پرائے "$3: $4"',
 
 # Login and logout pages
 'logouttext' => "'''ھنیسے تو خارج بیتی آسوس'''<br />
-تو خفی الاسم {{SITENAME}}  استعمال جاری لاکھیکو بوس، یا دوبارہ ھیہ نامو یا مختلف نامان سورا داخل دی بیکو بوس۔  ھیہ یاد آوری کورے کہ ای کما صفحات ھش [[Special:UserLogin|دوباری لاگن بوس]] غیچھی گونی کہ تو ھنیسے خارج نو بیتی آسوس، کلہ پت کہ تو تان تفصحہ (براؤزرو) ابطن (cache) صاف نوکوروس۔\",",
-'welcomecreation' => '== رحمت عزیز چترالی تتے خوشان گیے ریران، $1 ! ==
-
-تہ  کھاتہ ساوزینو بیتی شیر تو تان [[Special:Preferences|{{SITENAME}} ترجیحات]]ن مرتب کوریکو مو روخڅے.',
+تو خفی الاسم {{SITENAME}}  استعمال جاری لاکھیکو بوس، یا دوبارہ ھیہ نامو یا مختلف نامان سورا داخل دی بیکو بوس۔  ھیہ یاد آوری کورے کہ ای کما صفحات ھش <span class='plainlinks'>[\$1 دوباری لاگن بوس]</span> غیچھی گونی کہ تو ھنیسے خارج نو بیتی آسوس، کلہ پت کہ تو تان تفصحہ (براؤزرو) ابطن (cache) صاف نوکوروس۔\",",
 'yourname' => 'اسمِ رکنیت',
 'yourpassword' => 'کلمۂ شناخت(پاسورڈ)',
 'yourpasswordagain' => 'کلمۂ شناخت(پاسورڈو)دوبارہ نیویشے',
@@ -570,6 +566,9 @@ MySQL جوابِ خطاء پرائے "$3: $4"',
 'moveddeleted-notice' => 'ھیہ ای حذف شدہ صفحہ شیر.
 صفحو نوشتۂ حذف شدگی و منتقلی ذیلا بطورِ حوالہ دیونو بویان.',
 
+# Content models
+'content-model-javascript' => 'جاوا اسکرپٹ',
+
 # Parser/template warnings
 'post-expand-template-inclusion-warning' => "'''خبردار:''' سانچو سایز بو لوٹ شیر.
 بعضی سانچہ شامل نو بونی.",
@@ -702,9 +701,11 @@ HTML tags لوڑے.',",
 'right-upload' => 'فائل انځاوے',
 'right-delete' => 'صفحان ضائع کورے',
 
+# Special:Log/newusers
+'newuserlogpage' => 'نوشتۂ آمد صارف',
+
 # User rights log
 'rightslog' => 'یوزروت مختص شدہ حقوق',
-'rightsnone' => '(نو)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'ھیہ صفحا ایڈیٹنگ کورے',
@@ -852,9 +853,6 @@ HTML tags لوڑے.',",
 'linksearch-ok' => 'Search/تلاش',
 'linksearch-line' => '$1 مربوط شیر $2 ری',
 
-# Special:Log/newusers
-'newuserlogpage' => 'نوشتۂ آمد صارف',
-
 # Special:ListGroupRights
 'listgrouprights-members' => 'ممبارانن فھرست',
 
@@ -922,7 +920,7 @@ HTML tags لوڑے.',",
 'blanknamespace' => '(مرکز)',
 
 # Contributions
-'contributions' => 'صارفو حصہ',
+'contributions' => ' $1 صارفو حصہ',
 'contributions-title' => '$1 صارفو حصہ',
 'mycontris' => 'مہ حصہ',
 'contribsub2' => 'براۓ $1 ($2)',
@@ -1143,6 +1141,9 @@ HTML tags لوڑے.',",
 
 # Special:ComparePages
 'compare-page1' => 'صفحہ 1',
+
+# New logging system
+'rightsnone' => '(نو)',
 
 # Feedback
 'feedback-message' => 'پیغام',

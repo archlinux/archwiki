@@ -41,7 +41,10 @@ class UncategorizedPagesPage extends PageQueryPage {
 	function isExpensive() {
 		return true;
 	}
-	function isSyndicated() { return false; }
+
+	function isSyndicated() {
+		return false;
+	}
 
 	function getQueryInfo() {
 		return array (
@@ -52,7 +55,7 @@ class UncategorizedPagesPage extends PageQueryPage {
 			// default for page_namespace is all content namespaces (if requestedNamespace is false)
 			// otherwise, page_namespace is requestedNamespace
 			'conds' => array ( 'cl_from IS NULL',
-					'page_namespace' => ( $this->requestedNamespace!==false ? $this->requestedNamespace : MWNamespace::getContentNamespaces() ),
+					'page_namespace' => ( $this->requestedNamespace !== false ? $this->requestedNamespace : MWNamespace::getContentNamespaces() ),
 					'page_is_redirect' => 0 ),
 			'join_conds' => array ( 'categorylinks' => array (
 					'LEFT JOIN', 'cl_from = page_id' ) )
@@ -65,5 +68,9 @@ class UncategorizedPagesPage extends PageQueryPage {
 		if( $this->requestedNamespace === false && count( MWNamespace::getContentNamespaces() ) > 1 )
 			return array( 'page_namespace', 'page_title' );
 		return array( 'page_title' );
+	}
+
+	protected function getGroupName() {
+		return 'maintenance';
 	}
 }

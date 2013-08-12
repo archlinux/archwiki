@@ -558,7 +558,6 @@ Dov dorje värrhtoedimmie gååvnese bielieh, jallh [[Special:UserLogin|logge s�
 'watching' => 'Sïektjeminie...',
 'unwatching' => 'Ov-sïektjedh...',
 
-'enotif_newpagetext' => 'Dïhte lea orre bielie.',
 'enotif_impersonal_salutation' => '{{SITENAME}} nuhtjien',
 'created' => 'skaepede',
 

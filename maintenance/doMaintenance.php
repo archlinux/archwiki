@@ -111,8 +111,18 @@ try {
 
 	// Potentially debug globals
 	$maintenance->globals();
+
+	// Perform deferred updates.
+	DeferredUpdates::doUpdates( 'commit' );
+
+	// log profiling info
+	wfLogProfilingData();
+
+	// Commit and close up!
+	$factory = wfGetLBFactory();
+	$factory->commitMasterChanges();
+	$factory->shutdown();
 } catch ( MWException $mwe ) {
 	echo( $mwe->getText() );
 	exit( 1 );
 }
-

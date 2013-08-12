@@ -50,27 +50,27 @@ if ( $wgLoadScript === false ) $wgLoadScript = "$wgScriptPath/load$wgScriptExten
 
 if ( $wgArticlePath === false ) {
 	if ( $wgUsePathInfo ) {
-		$wgArticlePath      = "$wgScript/$1";
+		$wgArticlePath = "$wgScript/$1";
 	} else {
-		$wgArticlePath      = "$wgScript?title=$1";
+		$wgArticlePath = "$wgScript?title=$1";
 	}
 }
 
-if ( !empty($wgActionPaths) && !isset($wgActionPaths['view']) ) {
+if ( !empty( $wgActionPaths ) && !isset( $wgActionPaths['view'] ) ) {
 	# 'view' is assumed the default action path everywhere in the code
 	# but is rarely filled in $wgActionPaths
 	$wgActionPaths['view'] = $wgArticlePath;
 }
 
-if ( !empty($wgActionPaths) && !isset($wgActionPaths['view']) ) {
+if ( !empty( $wgActionPaths ) && !isset( $wgActionPaths['view'] ) ) {
 	# 'view' is assumed the default action path everywhere in the code
 	# but is rarely filled in $wgActionPaths
-	$wgActionPaths['view'] = $wgArticlePath ;
+	$wgActionPaths['view'] = $wgArticlePath;
 }
 
 if ( $wgStylePath === false ) $wgStylePath = "$wgScriptPath/skins";
 if ( $wgLocalStylePath === false ) $wgLocalStylePath = "$wgScriptPath/skins";
-if ( $wgStyleDirectory === false ) $wgStyleDirectory   = "$IP/skins";
+if ( $wgStyleDirectory === false ) $wgStyleDirectory = "$IP/skins";
 if ( $wgExtensionAssetsPath === false ) $wgExtensionAssetsPath = "$wgScriptPath/extensions";
 
 if ( $wgLogo === false ) $wgLogo = "$wgStylePath/common/images/wiki.png";
@@ -317,19 +317,13 @@ if ( $wgUseFileCache || $wgUseSquid ) {
 	$wgDebugToolbar = false;
 }
 
-# $wgAllowRealName and $wgAllowUserSkin were removed in 1.16
-# in favor of $wgHiddenPrefs, handle b/c here
-if ( !$wgAllowRealName ) {
-	$wgHiddenPrefs[] = 'realname';
-}
-
 # Doesn't make sense to have if disabled.
 if ( !$wgEnotifMinorEdits ) {
 	$wgHiddenPrefs[] = 'enotifminoredits';
 }
 
 # $wgDisabledActions is deprecated as of 1.18
-foreach( $wgDisabledActions as $action ){
+foreach( $wgDisabledActions as $action ) {
 	$wgActions[$action] = false;
 }
 
@@ -343,7 +337,7 @@ if ( !$wgHtml5Version && $wgHtml5 && $wgAllowRdfaAttributes ) {
 }
 
 # Blacklisted file extensions shouldn't appear on the "allowed" list
-$wgFileExtensions = array_diff ( $wgFileExtensions, $wgFileBlacklist );
+$wgFileExtensions = array_values( array_diff ( $wgFileExtensions, $wgFileBlacklist ) );
 
 if ( $wgArticleCountMethod === null ) {
 	$wgArticleCountMethod = $wgUseCommaCount ? 'comma' : 'link';
@@ -359,17 +353,18 @@ if ( $wgAjaxUploadDestCheck ) {
 
 if ( $wgNewUserLog ) {
 	# Add a new log type
-	$wgLogTypes[]                        = 'newusers';
-	$wgLogNames['newusers']              = 'newuserlogpage';
-	$wgLogHeaders['newusers']            = 'newuserlogpagetext';
+	$wgLogTypes[] = 'newusers';
+	$wgLogNames['newusers'] = 'newuserlogpage';
+	$wgLogHeaders['newusers'] = 'newuserlogpagetext';
 	$wgLogActionsHandlers['newusers/newusers'] = 'NewUsersLogFormatter';
 	$wgLogActionsHandlers['newusers/create'] = 'NewUsersLogFormatter';
 	$wgLogActionsHandlers['newusers/create2'] = 'NewUsersLogFormatter';
+	$wgLogActionsHandlers['newusers/byemail'] = 'NewUsersLogFormatter';
 	$wgLogActionsHandlers['newusers/autocreate'] = 'NewUsersLogFormatter';
 }
 
 if ( $wgCookieSecure === 'detect' ) {
-	$wgCookieSecure = ( WebRequest::detectProtocol() === 'https:' );
+	$wgCookieSecure = ( WebRequest::detectProtocol() === 'https' );
 }
 
 // Disable MWDebug for command line mode, this prevents MWDebug from eating up
@@ -394,6 +389,11 @@ if ( !defined( 'MW_COMPILED' ) ) {
 	require_once( "$IP/includes/ProxyTools.php" );
 	require_once( "$IP/includes/normal/UtfNormalDefines.php" );
 	wfProfileOut( $fname . '-includes' );
+}
+
+if ( $wgSecureLogin && substr( $wgServer, 0, 2 ) !== '//' ) {
+	$wgSecureLogin = false;
+	wfWarn( 'Secure login was enabled on a server that only supports HTTP or HTTPS. Disabling secure login.' );
 }
 
 # Now that GlobalFunctions is loaded, set defaults that depend

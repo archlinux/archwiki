@@ -171,7 +171,6 @@ $messages = array(
 'qbbrowse' => 'गवेषण करू',
 'qbedit' => 'सम्पादन करू',
 'qbpageoptions' => 'ई पन्ना',
-'qbpageinfo' => 'विषय',
 'qbmyoptions' => 'हमर पन्ना सभ',
 'qbspecialpages' => 'विशेष पन्ना सभ',
 'faq' => 'त्वरित प्रश्नोत्तरी',
@@ -423,11 +422,8 @@ $2',
 # Login and logout pages
 'logouttext' => "'''अहाँ निष्क्रमण कऽ गेल छी।'''
 
-अहाँ {{अन्तर्जाल}} प्रयोग अनाम भऽ कऽ सकै छी, वा अहाँ [[Special:UserLogin|log in again]] वएह आकि कोनो आन प्रयोक्ताक रूपमे सेहू प्रयोक कऽ सकै छी।
+अहाँ {{अन्तर्जाल}} प्रयोग अनाम भऽ कऽ सकै छी, वा अहाँ <span class='plainlinks'>[$1 log in again]</span> वएह आकि कोनो आन प्रयोक्ताक रूपमे सेहू प्रयोक कऽ सकै छी।
 ई मोन राखू जे किछु पन्ना एना देखा पड़ि सकैए जेना अहाँ अखनो सम्प्रवेशित होइ, जावत अहाँ अपन गवेषकक उपस्मृति मेटा नै दै छी।",
-'welcomecreation' => '== स्वागत अछि, $1! ==
-अहाँक खाता खुजि गेल अछि।
-अपन [[Special:Preferences|{{अन्तर्जाल}} preferences]] बदलब नै बिसरू।',
 'yourname' => 'प्रयोक्ता:',
 'yourpassword' => 'कूटशब्द:',
 'yourpasswordagain' => 'कूटशब्द फेरसँ टाइप करू:',
@@ -754,7 +750,6 @@ $2
 'template-semiprotected' => '(अर्ध-रक्षित)',
 'hiddencategories' => 'ई पन्ना सदस्य अछि {{PLURAL:$1|1 नुकाएल संवर्ग|$1 नुकाएल संवर्ग सभ}}:',
 'edittools-upload' => '-',
-'nocreatetitle' => 'पन्ना निर्माण सीमित',
 'nocreatetext' => '{{अन्तर्जाल}} नव पन्ना निर्माणक क्षमताकेँ सीमित कऽ देने अछि।
 अहाँ आपस जा सकै छी आ कोनो पन्नाकेँ सम्पादित कऽ सकै छी, वा [[Special:UserLogin|log in or create an account]]',
 'nocreate-loggedin' => 'अहाँकेँ नव पन्ना बनेबाक अधिकार नै अछि।',
@@ -1285,12 +1280,13 @@ $3 द्वारा देल कारण अछि ''$2''",
 'right-sendemail' => 'ई-पत्र दोसर प्रयोक्ता लोकनिकेँ पठाउ',
 'right-passwordreset' => 'कूटशब्द पुनर्निर्धारण ई-पत्र देखू',
 
+# Special:Log/newusers
+'newuserlogpage' => 'प्रयोक्ता रचना वृत्तलेख',
+'newuserlogpagetext' => 'ई प्रयोक्ता निर्माणक वृत्तलेख अछि।',
+
 # User rights log
 'rightslog' => 'प्रयोक्ता अधिकार वृत्तलेख',
 'rightslogtext' => 'ई प्रयोक्ता अधिकार परिवर्तन सभक वृतलेख छी।',
-'rightslogentry' => 'वर्गक सदस्यता बदलल गेल $1 लेल $2 सँ $3',
-'rightslogentry-autopromote' => 'स्वयंचालित रूपमे $2 सँ $3 मे पदोन्नत भेल',
-'rightsnone' => '(कोनो नै)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'ई पन्ना पढ़ू',
@@ -1873,10 +1869,6 @@ $1',
 'activeusers-hidesysops' => 'संचालक नुकाउ',
 'activeusers-noresult' => 'कोनो प्रयोक्ता नै भेटल',
 
-# Special:Log/newusers
-'newuserlogpage' => 'प्रयोक्ता रचना वृत्तलेख',
-'newuserlogpagetext' => 'ई प्रयोक्ता निर्माणक वृत्तलेख अछि।',
-
 # Special:ListGroupRights
 'listgrouprights' => 'प्रयोक्ता संवर्ग अधिकार',
 'listgrouprights-summary' => 'ई सभ प्रयोक्ता संवर्गक एकटा सूची अछि जे ऐ विकीपरपरिभाषित अछि ओकर संसर्गित प्रवेश अधिकारक संग।
@@ -1970,11 +1962,7 @@ $1',
 
 'enotif_mailer' => '{{जालस्थल}} सूचना पत्रक',
 'enotif_reset' => 'सभ पन्नाकेँ देखल चिन्हित करू',
-'enotif_newpagetext' => 'ई एकटा नव पन्ना छी।',
 'enotif_impersonal_salutation' => '{{अन्तर्जाल}} प्रयोक्ता',
-'changed' => 'बदलल गेल',
-'created' => 'बनाएल गेल',
-'enotif_subject' => '{{अन्तर्जाल}} पन्ना $PAGETITLE भेल $CHANGEDORCREATED द्वारा $PAGEEDITOR',
 'enotif_lastvisited' => 'देखू $1 अपन अन्तिम बेर अएलाक बादक परिवर्तन लेल।',
 'enotif_lastdiff' => 'ऐ परिवर्तनकेँ देखबा लेल $1 देखू।',
 'enotif_anon_editor' => 'गुप्त प्रयोक्ता $1',
@@ -2007,6 +1995,8 @@ $UNWATCHURL
 
 अपन अनुभव बतेबा वा कोनो सहायता लेल:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'बनाएल गेल',
+'changed' => 'बदलल गेल',
 
 # Delete
 'deletepage' => 'पन्ना मेटाउ',
@@ -3536,7 +3526,7 @@ $5
 'logentry-newusers-create' => '$1 {{लिंग:$2|बनाएल}} एकटा प्रयोक्ता खाता',
 'logentry-newusers-create2' => '$1 {{लिंग:$2|बनाएल}} {{लिंग:$4|एकटा प्रयोक्ता खाता}} $3',
 'logentry-newusers-autocreate' => 'खाता $1 छल {{लिंग:$2|बनाएल}} स्वतः',
-'newuserlog-byemail' => 'कूटशब्द ई-पत्र द्वारा पठाएल गेल',
+'rightsnone' => '(कोनो नै)',
 
 # API errors
 'api-error-badaccess-groups' => 'अहि विकी सें अहां कोनो प्रारूप लोड नहि क सकब.',

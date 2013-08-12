@@ -133,7 +133,7 @@ class DatabaseMysql extends DatabaseBase {
 				substr( $password, 0, 3 ) . "..., error: " . $error . "\n" );
 
 			wfProfileOut( __METHOD__ );
-			$this->reportConnectionError( $error );
+			return $this->reportConnectionError( $error );
 		}
 
 		if ( $dbName != '' ) {
@@ -146,7 +146,7 @@ class DatabaseMysql extends DatabaseBase {
 					"from client host " . wfHostname() . "\n" );
 
 				wfProfileOut( __METHOD__ );
-				$this->reportConnectionError( "Error selecting database $dbName" );
+				return $this->reportConnectionError( "Error selecting database $dbName" );
 			}
 		}
 
@@ -193,7 +193,7 @@ class DatabaseMysql extends DatabaseBase {
 
 	/**
 	 * @param $res ResultWrapper
-	 * @return object|stdClass
+	 * @return object|bool
 	 * @throws DBUnexpectedError
 	 */
 	function fetchObject( $res ) {
@@ -208,7 +208,7 @@ class DatabaseMysql extends DatabaseBase {
 		// Unfortunately, mysql_fetch_object does not reset the last errno.
 		// Only check for CR_SERVER_LOST and CR_UNKNOWN_ERROR, as
 		// these are the only errors mysql_fetch_object can cause.
-		// See http://dev.mysql.com/doc/refman/5.0/es/mysql-fetch-row.html.
+		// See http://dev.mysql.com/doc/refman/5.0/en/mysql-fetch-row.html.
 		if( $errno == 2000 || $errno == 2013 ) {
 			throw new DBUnexpectedError( $this, 'Error in fetchObject(): ' . htmlspecialchars( $this->lastError() ) );
 		}
@@ -217,7 +217,7 @@ class DatabaseMysql extends DatabaseBase {
 
 	/**
 	 * @param $res ResultWrapper
-	 * @return array
+	 * @return array|bool
 	 * @throws DBUnexpectedError
 	 */
 	function fetchRow( $res ) {
@@ -232,7 +232,7 @@ class DatabaseMysql extends DatabaseBase {
 		// Unfortunately, mysql_fetch_array does not reset the last errno.
 		// Only check for CR_SERVER_LOST and CR_UNKNOWN_ERROR, as
 		// these are the only errors mysql_fetch_object can cause.
-		// See http://dev.mysql.com/doc/refman/5.0/es/mysql-fetch-row.html.
+		// See http://dev.mysql.com/doc/refman/5.0/en/mysql-fetch-row.html.
 		if( $errno == 2000 || $errno == 2013 ) {
 			throw new DBUnexpectedError( $this, 'Error in fetchRow(): ' . htmlspecialchars( $this->lastError() ) );
 		}
@@ -251,9 +251,11 @@ class DatabaseMysql extends DatabaseBase {
 		wfSuppressWarnings();
 		$n = mysql_num_rows( $res );
 		wfRestoreWarnings();
-		if( $this->lastErrno() ) {
-			throw new DBUnexpectedError( $this, 'Error in numRows(): ' . htmlspecialchars( $this->lastError() ) );
-		}
+		// Unfortunately, mysql_num_rows does not reset the last errno.
+		// We are not checking for any errors here, since
+		// these are no errors mysql_num_rows can cause.
+		// See http://dev.mysql.com/doc/refman/5.0/en/mysql-fetch-row.html.
+		// See https://bugzilla.wikimedia.org/42430
 		return $n;
 	}
 
@@ -361,7 +363,7 @@ class DatabaseMysql extends DatabaseBase {
 	 * @param $options string|array
 	 * @return int
 	 */
-	public function estimateRowCount( $table, $vars='*', $conds='', $fname = 'DatabaseMysql::estimateRowCount', $options = array() ) {
+	public function estimateRowCount( $table, $vars = '*', $conds = '', $fname = 'DatabaseMysql::estimateRowCount', $options = array() ) {
 		$options['EXPLAIN'] = true;
 		$res = $this->select( $table, $vars, $conds, $fname, $options );
 		if ( $res === false ) {
@@ -393,7 +395,7 @@ class DatabaseMysql extends DatabaseBase {
 		for( $i = 0; $i < $n; $i++ ) {
 			$meta = mysql_fetch_field( $res->result, $i );
 			if( $field == $meta->name ) {
-				return new MySQLField($meta);
+				return new MySQLField( $meta );
 			}
 		}
 		return false;
@@ -414,6 +416,7 @@ class DatabaseMysql extends DatabaseBase {
 		# http://dev.mysql.com/doc/mysql/en/SHOW_INDEX.html
 		$table = $this->tableName( $table );
 		$index = $this->indexName( $index );
+
 		$sql = 'SHOW INDEX FROM ' . $table;
 		$res = $this->query( $sql, $fname );
 
@@ -428,7 +431,6 @@ class DatabaseMysql extends DatabaseBase {
 				$result[] = $row;
 			}
 		}
-
 		return empty( $result ) ? false : $result;
 	}
 
@@ -449,7 +451,7 @@ class DatabaseMysql extends DatabaseBase {
 	function strencode( $s ) {
 		$sQuoted = mysql_real_escape_string( $s, $this->mConn );
 
-		if($sQuoted === false) {
+		if( $sQuoted === false ) {
 			$this->ping();
 			$sQuoted = mysql_real_escape_string( $s, $this->mConn );
 		}
@@ -597,10 +599,9 @@ class DatabaseMysql extends DatabaseBase {
 		if ( $res && $row = $this->fetchRow( $res ) ) {
 			wfProfileOut( $fname );
 			return $row[0];
-		} else {
-			wfProfileOut( $fname );
-			return false;
 		}
+		wfProfileOut( $fname );
+		return false;
 	}
 
 	/**
@@ -686,7 +687,7 @@ class DatabaseMysql extends DatabaseBase {
 
 	public function streamStatementEnd( &$sql, &$newLine ) {
 		if ( strtoupper( substr( $newLine, 0, 9 ) ) == 'DELIMITER' ) {
-			preg_match( '/^DELIMITER\s+(\S+)/' , $newLine, $m );
+			preg_match( '/^DELIMITER\s+(\S+)/', $newLine, $m );
 			$this->delimiter = $m[1];
 			$newLine = '';
 		}
@@ -696,8 +697,8 @@ class DatabaseMysql extends DatabaseBase {
 	/**
 	 * Check to see if a named lock is available. This is non-blocking.
 	 *
-	 * @param $lockName String: name of lock to poll
-	 * @param $method String: name of method calling us
+	 * @param string $lockName name of lock to poll
+	 * @param string $method name of method calling us
 	 * @return Boolean
 	 * @since 1.20
 	 */
@@ -722,7 +723,7 @@ class DatabaseMysql extends DatabaseBase {
 		if( $row->lockstatus == 1 ) {
 			return true;
 		} else {
-			wfDebug( __METHOD__." failed to acquire lock\n" );
+			wfDebug( __METHOD__ . " failed to acquire lock\n" );
 			return false;
 		}
 	}
@@ -745,6 +746,7 @@ class DatabaseMysql extends DatabaseBase {
 	 * @param $write array
 	 * @param $method string
 	 * @param $lowPriority bool
+	 * @return bool
 	 */
 	public function lockTables( $read, $write, $method, $lowPriority = true ) {
 		$items = array();
@@ -760,13 +762,16 @@ class DatabaseMysql extends DatabaseBase {
 		}
 		$sql = "LOCK TABLES " . implode( ',', $items );
 		$this->query( $sql, $method );
+		return true;
 	}
 
 	/**
 	 * @param $method string
+	 * @return bool
 	 */
 	public function unlockTables( $method ) {
 		$this->query( "UNLOCK TABLES", $method );
+		return true;
 	}
 
 	/**
@@ -805,7 +810,8 @@ class DatabaseMysql extends DatabaseBase {
 	 * @param $delVar string
 	 * @param $joinVar string
 	 * @param $conds array|string
-	 * @param $fname bool
+	 * @param bool|string $fname bool
+	 * @throws DBUnexpectedError
 	 * @return bool|ResultWrapper
 	 */
 	function deleteJoin( $delTable, $joinTable, $delVar, $joinVar, $conds, $fname = 'DatabaseBase::deleteJoin' ) {
@@ -889,8 +895,8 @@ class DatabaseMysql extends DatabaseBase {
 	/**
 	 * List all tables on the database
 	 *
-	 * @param $prefix string Only show tables with this prefix, e.g. mw_
-	 * @param $fname String: calling function name
+	 * @param string $prefix Only show tables with this prefix, e.g. mw_
+	 * @param string $fname calling function name
 	 * @return array
 	 */
 	function listTables( $prefix = null, $fname = 'DatabaseMysql::listTables' ) {
@@ -899,7 +905,7 @@ class DatabaseMysql extends DatabaseBase {
 		$endArray = array();
 
 		foreach( $result as $table ) {
-			$vars = get_object_vars($table);
+			$vars = get_object_vars( $table );
 			$table = array_pop( $vars );
 
 			if( !$prefix || strpos( $table, $prefix ) === 0 ) {
@@ -950,13 +956,6 @@ class DatabaseMysql extends DatabaseBase {
 	}
 
 }
-
-/**
- * Legacy support: Database == DatabaseMysql
- *
- * @deprecated in 1.16
- */
-class Database extends DatabaseMysql {}
 
 /**
  * Utility class.

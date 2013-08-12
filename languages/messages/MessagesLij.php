@@ -250,6 +250,7 @@ $messages = array(
 'newwindow' => "(O s'arve inte 'n âtro barcon)",
 'cancel' => 'Scancella',
 'moredotdotdot' => 'De ciû...',
+'morenotlisted' => 'Atro...',
 'mypage' => 'Paggina',
 'mytalk' => 'Discuscioin',
 'anontalk' => 'Discuscion pe questo indirisso IP',
@@ -261,7 +262,6 @@ $messages = array(
 'qbbrowse' => 'Navvega',
 'qbedit' => 'Cangia',
 'qbpageoptions' => "Opsioîn de 'sta paggina",
-'qbpageinfo' => 'Informassion inscia paggina',
 'qbmyoptions' => 'E mæ paggine',
 'qbspecialpages' => 'Pagine speçiä',
 'faq' => 'Domande frequenti',
@@ -283,6 +283,7 @@ $messages = array(
 'namespaces' => 'Namespaces',
 'variants' => 'Diferense',
 
+'navigation-heading' => 'Menu de navegaçion',
 'errorpagetitle' => 'Erô',
 'returnto' => 'Torna a $1.',
 'tagline' => 'Da {{SITENAME}}',
@@ -458,9 +459,6 @@ A raxon a l'è: ''$2''.",
 'virus-unknownscanner' => 'antivirus sconosciuo:',
 
 # Login and logout pages
-'welcomecreation' => "== Benvegnûo, $1! ==
-
-O teu account o l'è stæto creòu bén. No te ascordâ de cangiâ e teu {{SITENAME}}.[[Special:Preferences|preferençe de {{SITENAME}}]].",
 'yourname' => 'Nomme',
 'yourpassword' => 'Pòula segretta:',
 'yourpasswordagain' => 'Riscrivi a pòula segrétta:',
@@ -760,6 +758,9 @@ Legenda: (corr) = differense co-a verscion corrente, (prec) = differense co-a ve
 
 'grouppage-sysop' => '{{ns:project}}:Amministratoî',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Nêuvi utenti',
+
 # User rights log
 'rightslog' => "Diritti d'ûtente",
 
@@ -973,9 +974,6 @@ Ti te peu strinza a vista se ti te çerni un tipo de registro, un nomme de un ut
 'listusers-submit' => 'Fanni vedde',
 'listusers-noresult' => 'Utente non trovöo.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Nêuvi utenti',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(Elenco di membri)',
 
@@ -1013,8 +1011,8 @@ Ti te peu strinza a vista se ti te çerni un tipo de registro, un nomme de un ut
 'watching' => 'Inti osservæ speçiâli...',
 'unwatching' => 'Scassâ da-i osservæ speçiâli',
 
-'changed' => 'cangiâ',
 'enotif_anon_editor' => 'ûtente anònnimo $1',
+'changed' => 'cangiâ',
 
 # Delete
 'deletepage' => 'Scassa a paggina',
@@ -1091,7 +1089,7 @@ $1',
 'blanknamespace' => '(Prinçipâ)',
 
 # Contributions
-'contributions' => "Contribussioìn de l'utente",
+'contributions' => 'Contribuçioin {{GENDER:$1|utente}}',
 'contributions-title' => 'Contribuçioìn de $1',
 'mycontris' => 'Contribuçioin',
 'contribsub2' => 'Pe $1 ($2)',

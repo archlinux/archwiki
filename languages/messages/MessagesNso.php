@@ -319,9 +319,6 @@ Bega se go  [[Special:ListUsers/sysop|administrator]], o fana ka URL.',
 'namespaceprotected' => "Ga ona tokelo ya go fetola matlakala  go  '''$1''' .",
 
 # Login and logout pages
-'welcomecreation' => "Oa amogelwa, $1! ==
-
-Tšhupaleloko (''account'') ya gago e tlhodilwe. O seke wa lebala go fetola [[Special:Preferences|{{SITENAME}} dikgetho/thato tša gago]].",
 'yourname' => 'Leina la mošomiši:',
 'yourpassword' => 'Ditlhaka-tša-siphiri:',
 'yourpasswordagain' => 'Tlanya ditlhaka-tša-siphiri gape:',
@@ -650,6 +647,9 @@ Ga re fane ka e-poso ya gago go bašumiši ba bangwe ge ba polela le wena ka yon
 'right-edit' => 'Fetola matlakala',
 'right-move' => 'Huduša matlakala',
 
+# Special:Log/newusers
+'newuserlogpage' => '"Log" yago hlola mošumiši',
+
 # User rights log
 'rightslog' => "''log'' ya ditumello tša mošomiši",
 
@@ -866,9 +866,6 @@ Matlakala ago ba [[Special:Watchlist|lenanong la gago la matlakala ditlhapetšo]
 # Special:ListUsers
 'listusers-submit' => 'Bontšha',
 
-# Special:Log/newusers
-'newuserlogpage' => '"Log" yago hlola mošumiši',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(Lenano la ditho)',
 
@@ -906,13 +903,11 @@ Ga eba o nyaka go hloša letlaka le go lenano la ditlhapetšo tša gago, šomiš
 'unwatching' => 'Tlhapetšo eya tlošwa ...',
 
 'enotif_reset' => 'Swaya matlakala kamoka awe oa etetšego',
-'enotif_newpagetext' => 'Le, ke letlakala le lempsha.',
 'enotif_impersonal_salutation' => '{{SITENAME}} mošumiši',
-'changed' => 'fetotšwe',
-'created' => 'tlhodilwe',
-'enotif_subject' => '{{SITENAME}} letkalala $PAGETITLE le $CHANGEDORCREATED ke $PAGEEDITOR',
 'enotif_lastvisited' => 'Lebelela  $1 go bona diphetogo ka moka gotloga ge go tsena la mafelelo.',
 'enotif_lastdiff' => 'Bona $1 go nyakorela phetogo ye.',
+'created' => 'tlhodilwe',
+'changed' => 'fetotšwe',
 
 # Delete
 'deletepage' => 'Phumula letlakala',

@@ -79,11 +79,12 @@ class DatabaseSqlite extends DatabaseBase {
 	/** Open an SQLite database and return a resource handle to it
 	 *  NOTE: only $dbName is used, the other parameters are irrelevant for SQLite databases
 	 *
-	 * @param $server
-	 * @param $user
-	 * @param $pass
-	 * @param $dbName
+	 * @param string $server
+	 * @param string $user
+	 * @param string $pass
+	 * @param string $dbName
 	 *
+	 * @throws DBConnectionError
 	 * @return PDO
 	 */
 	function open( $server, $user, $pass, $dbName ) {
@@ -103,6 +104,7 @@ class DatabaseSqlite extends DatabaseBase {
 	 *
 	 * @param $fileName string
 	 *
+	 * @throws DBConnectionError
 	 * @return PDO|bool SQL connection or false if failed
 	 */
 	function openFile( $fileName ) {
@@ -125,6 +127,8 @@ class DatabaseSqlite extends DatabaseBase {
 		# set error codes only, don't raise exceptions
 		if ( $this->mOpened ) {
 			$this->mConn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT );
+			# Enforce LIKE to be case sensitive, just like MySQL
+			$this->query( 'PRAGMA case_sensitive_like = 1' );
 			return true;
 		}
 	}
@@ -140,8 +144,8 @@ class DatabaseSqlite extends DatabaseBase {
 
 	/**
 	 * Generates a database file name. Explicitly public for installer.
-	 * @param $dir String: Directory where database resides
-	 * @param $dbName String: Database name
+	 * @param string $dir Directory where database resides
+	 * @param string $dbName Database name
 	 * @return String
 	 */
 	public static function generateFileName( $dir, $dbName ) {
@@ -159,7 +163,7 @@ class DatabaseSqlite extends DatabaseBase {
 			$res = $this->query( "SELECT sql FROM sqlite_master WHERE tbl_name = '$table'", __METHOD__ );
 			if ( $res ) {
 				$row = $res->fetchRow();
-				self::$fulltextEnabled = stristr($row['sql'], 'fts' ) !== false;
+				self::$fulltextEnabled = stristr( $row['sql'], 'fts' ) !== false;
 			}
 		}
 		return self::$fulltextEnabled;
@@ -190,9 +194,9 @@ class DatabaseSqlite extends DatabaseBase {
 	 * Attaches external database to our connection, see http://sqlite.org/lang_attach.html
 	 * for details.
 	 *
-	 * @param $name String: database name to be used in queries like SELECT foo FROM dbname.table
-	 * @param $file String: database file name. If omitted, will be generated using $name and $wgSQLiteDataDir
-	 * @param $fname String: calling function name
+	 * @param string $name database name to be used in queries like SELECT foo FROM dbname.table
+	 * @param string $file database file name. If omitted, will be generated using $name and $wgSQLiteDataDir
+	 * @param string $fname calling function name
 	 *
 	 * @return ResultWrapper
 	 */
@@ -248,7 +252,7 @@ class DatabaseSqlite extends DatabaseBase {
 
 	/**
 	 * @param $res ResultWrapper
-	 * @return
+	 * @return object|bool
 	 */
 	function fetchObject( $res ) {
 		if ( $res instanceof ResultWrapper ) {
@@ -274,7 +278,7 @@ class DatabaseSqlite extends DatabaseBase {
 
 	/**
 	 * @param $res ResultWrapper
-	 * @return bool|mixed
+	 * @return array|bool
 	 */
 	function fetchRow( $res ) {
 		if ( $res instanceof ResultWrapper ) {
@@ -467,7 +471,7 @@ class DatabaseSqlite extends DatabaseBase {
 	 */
 	function makeSelectOptions( $options ) {
 		foreach ( $options as $k => $v ) {
-			if ( is_numeric( $k ) && $v == 'FOR UPDATE' ) {
+			if ( is_numeric( $k ) && ($v == 'FOR UPDATE' || $v == 'LOCK IN SHARE MODE') ) {
 				$options[$k] = '';
 			}
 		}
@@ -593,7 +597,7 @@ class DatabaseSqlite extends DatabaseBase {
 	 * @return bool
 	 */
 	function wasErrorReissuable() {
-		return $this->lastErrno() ==  17; // SQLITE_SCHEMA;
+		return $this->lastErrno() == 17; // SQLITE_SCHEMA;
 	}
 
 	/**
@@ -703,6 +707,14 @@ class DatabaseSqlite extends DatabaseBase {
 	function addQuotes( $s ) {
 		if ( $s instanceof Blob ) {
 			return "x'" . bin2hex( $s->fetch() ) . "'";
+		} else if ( strpos( $s, "\0" ) !== false ) {
+			// SQLite doesn't support \0 in strings, so use the hex representation as a workaround.
+			// This is a known limitation of SQLite's mprintf function which PDO should work around,
+			// but doesn't. I have reported this to php.net as bug #63419:
+			// https://bugs.php.net/bug.php?id=63419
+			// There was already a similar report for SQLite3::escapeString, bug #62361:
+			// https://bugs.php.net/bug.php?id=62361
+			return "x'" . bin2hex( $s ) . "'";
 		} else {
 			return $this->mConn->quote( $s );
 		}
@@ -819,12 +831,11 @@ class DatabaseSqlite extends DatabaseBase {
 		return $this->query( $sql, $fname );
 	}
 
-
 	/**
 	 * List all tables on the database
 	 *
-	 * @param $prefix string Only show tables with this prefix, e.g. mw_
-	 * @param $fname String: calling function name
+	 * @param string $prefix Only show tables with this prefix, e.g. mw_
+	 * @param string $fname calling function name
 	 *
 	 * @return array
 	 */
@@ -838,7 +849,7 @@ class DatabaseSqlite extends DatabaseBase {
 		$endArray = array();
 
 		foreach( $result as $table ) {
-			$vars = get_object_vars($table);
+			$vars = get_object_vars( $table );
 			$table = array_pop( $vars );
 
 			if( !$prefix || strpos( $table, $prefix ) === 0 ) {

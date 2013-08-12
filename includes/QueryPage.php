@@ -72,7 +72,6 @@ global $wgDisableCounters;
 if ( !$wgDisableCounters )
 	$wgQueryPages[] = array( 'PopularPagesPage', 'Popularpages' );
 
-
 /**
  * This is a class for doing query pages; since they're almost all the same,
  * we factor out some of the functionality into a superclass, and let
@@ -150,7 +149,8 @@ abstract class QueryPage extends SpecialPage {
 
 	/**
 	 * For back-compat, subclasses may return a raw SQL query here, as a string.
-	 * This is stronly deprecated; getQueryInfo() should be overridden instead.
+	 * This is strongly deprecated; getQueryInfo() should be overridden instead.
+	 * @throws MWException
 	 * @return string
 	 */
 	function getSQL() {
@@ -228,7 +228,7 @@ abstract class QueryPage extends SpecialPage {
 	}
 
 	/**
-	 * Sometime we dont want to build rss / atom feeds.
+	 * Sometime we don't want to build rss / atom feeds.
 	 *
 	 * @return Boolean
 	 */
@@ -301,55 +301,51 @@ abstract class QueryPage extends SpecialPage {
 			return false;
 		}
 
-		if ( $ignoreErrors ) {
-			$ignoreW = $dbw->ignoreErrors( true );
-			$ignoreR = $dbr->ignoreErrors( true );
-		}
-
-		# Clear out any old cached data
-		$dbw->delete( 'querycache', array( 'qc_type' => $this->getName() ), $fname );
-		# Do query
-		$res = $this->reallyDoQuery( $limit, false );
-		$num = false;
-		if ( $res ) {
-			$num = $res->numRows();
-			# Fetch results
-			$vals = array();
-			while ( $res && $row = $dbr->fetchObject( $res ) ) {
-				if ( isset( $row->value ) ) {
-					if ( $this->usesTimestamps() ) {
-						$value = wfTimestamp( TS_UNIX,
-							$row->value );
+		try {
+			# Clear out any old cached data
+			$dbw->delete( 'querycache', array( 'qc_type' => $this->getName() ), $fname );
+			# Do query
+			$res = $this->reallyDoQuery( $limit, false );
+			$num = false;
+			if ( $res ) {
+				$num = $res->numRows();
+				# Fetch results
+				$vals = array();
+				while ( $res && $row = $dbr->fetchObject( $res ) ) {
+					if ( isset( $row->value ) ) {
+						if ( $this->usesTimestamps() ) {
+							$value = wfTimestamp( TS_UNIX,
+								$row->value );
+						} else {
+							$value = intval( $row->value ); // @bug 14414
+						}
 					} else {
-						$value = intval( $row->value ); // @bug 14414
+						$value = 0;
 					}
-				} else {
-					$value = 0;
+
+					$vals[] = array( 'qc_type' => $this->getName(),
+							'qc_namespace' => $row->namespace,
+							'qc_title' => $row->title,
+							'qc_value' => $value );
 				}
 
-				$vals[] = array( 'qc_type' => $this->getName(),
-						'qc_namespace' => $row->namespace,
-						'qc_title' => $row->title,
-						'qc_value' => $value );
-			}
-
-			# Save results into the querycache table on the master
-			if ( count( $vals ) ) {
-				if ( !$dbw->insert( 'querycache', $vals, __METHOD__ ) ) {
-					// Set result to false to indicate error
-					$num = false;
+				# Save results into the querycache table on the master
+				if ( count( $vals ) ) {
+					$dbw->insert( 'querycache', $vals, __METHOD__ );
 				}
+				# Update the querycache_info record for the page
+				$dbw->delete( 'querycache_info', array( 'qci_type' => $this->getName() ), $fname );
+				$dbw->insert( 'querycache_info',
+					array( 'qci_type' => $this->getName(), 'qci_timestamp' => $dbw->timestamp() ),
+					$fname );
 			}
-			if ( $ignoreErrors ) {
-				$dbw->ignoreErrors( $ignoreW );
-				$dbr->ignoreErrors( $ignoreR );
+		} catch ( DBError $e ) {
+			if ( !$ignoreErrors ) {
+				throw $e; // report query error
 			}
-
-			# Update the querycache_info record for the page
-			$dbw->delete( 'querycache_info', array( 'qci_type' => $this->getName() ), $fname );
-			$dbw->insert( 'querycache_info', array( 'qci_type' => $this->getName(), 'qci_timestamp' => $dbw->timestamp() ), $fname );
-
+			$num = false; // set result to false to indicate error
 		}
+
 		return $num;
 	}
 
@@ -651,7 +647,7 @@ abstract class QueryPage extends SpecialPage {
 
 		if ( !$wgFeed ) {
 			$this->getOutput()->addWikiMsg( 'feed-unavailable' );
-			return;
+			return false;
 		}
 
 		global $wgFeedLimit;

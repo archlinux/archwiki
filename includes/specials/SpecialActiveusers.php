@@ -50,7 +50,7 @@ class ActiveUsersPager extends UsersPager {
 	/**
 	 * @param $context IContextSource
 	 * @param $group null Unused
-	 * @param $par string Parameter passed to the page
+	 * @param string $par Parameter passed to the page
 	 */
 	function __construct( IContextSource $context = null, $group = null, $par = null ) {
 		global $wgActiveUserDays;
@@ -93,37 +93,38 @@ class ActiveUsersPager extends UsersPager {
 	function getQueryInfo() {
 		$dbr = wfGetDB( DB_SLAVE );
 		$conds = array( 'rc_user > 0' ); // Users - no anons
-		$conds[] = 'ipb_deleted IS NULL'; // don't show hidden names
+		if( !$this->getUser()->isAllowed( 'hideuser' ) ) {
+			$conds[] = 'ipb_deleted IS NULL OR ipb_deleted = 0'; // don't show hidden names
+		}
 		$conds[] = 'rc_log_type IS NULL OR rc_log_type != ' . $dbr->addQuotes( 'newusers' );
-		$conds[] = 'rc_timestamp >= ' . $dbr->addQuotes( $dbr->timestamp( wfTimestamp( TS_UNIX ) - $this->RCMaxAge*24*3600 ) );
+		$conds[] = 'rc_timestamp >= ' . $dbr->addQuotes(
+			$dbr->timestamp( wfTimestamp( TS_UNIX ) - $this->RCMaxAge*24*3600 ) );
 
 		if( $this->requestedUser != '' ) {
 			$conds[] = 'rc_user_text >= ' . $dbr->addQuotes( $this->requestedUser );
 		}
 
-		$query = array(
-			'tables' => array( 'recentchanges', 'user', 'ipblocks' ),
-			'fields' => array( 'user_name' => 'rc_user_text', // inheritance
+		return array(
+			'tables' => array( 'recentchanges', 'ipblocks' ),
+			'fields' => array(
+				'user_name' => 'rc_user_text', // for Pager inheritance
 				'rc_user_text', // for Pager
-				'user_id',
+				'user_id' => 'rc_user',
 				'recentedits' => 'COUNT(*)',
-				'blocked' => 'MAX(ipb_user)'
+				'ipb_deleted' => 'MAX(ipb_deleted)'
 			),
 			'options' => array(
 				'GROUP BY' => array( 'rc_user_text', 'user_id' ),
 				'USE INDEX' => array( 'recentchanges' => 'rc_user_text' )
 			),
-			'join_conds' => array(
-				'user' => array( 'INNER JOIN', 'rc_user_text=user_name' ),
+			'join_conds' => array( // check for suppression blocks
 				'ipblocks' => array( 'LEFT JOIN', array(
-					'user_id=ipb_user',
-					'ipb_auto' => 0,
-					'ipb_deleted' => 1
+					'rc_user=ipb_user',
+					'ipb_auto' => 0 # avoid duplicate blocks
 				)),
 			),
 			'conds' => $conds
 		);
-		return $query;
 	}
 
 	function formatRow( $row ) {
@@ -162,9 +163,12 @@ class ActiveUsersPager extends UsersPager {
 		$groups = $lang->commaList( $list );
 
 		$item = $lang->specialList( $ulinks, $groups );
+		if( $row->ipb_deleted ) {
+			$item = "<span class=\"deleted\">$item</span>";
+		}
 		$count = $this->msg( 'activeusers-count' )->numParams( $row->recentedits )
 			->params( $userName )->numParams( $this->RCMaxAge )->escaped();
-		$blocked = $row->blocked ? ' ' . $this->msg( 'listusers-blocked', $userName )->escaped() : '';
+		$blocked = !is_null( $row->ipb_deleted ) ? ' ' . $this->msg( 'listusers-blocked', $userName )->escaped() : '';
 
 		return Html::rawElement( 'li', array(), "{$item} [{$count}]{$blocked}" );
 	}
@@ -240,4 +244,7 @@ class SpecialActiveUsers extends SpecialPage {
 		}
 	}
 
+	protected function getGroupName() {
+		return 'users';
+	}
 }

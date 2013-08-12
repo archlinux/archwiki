@@ -155,7 +155,6 @@ $messages = array(
 'qbbrowse' => 'Murur',
 'qbedit' => 'Viroiş',
 'qbpageoptions' => 'In sahifa',
-'qbpageinfo' => 'Boft',
 'qbmyoptions' => 'Sahifahoi man',
 'qbspecialpages' => 'Sahifahoi viƶa',
 'faq' => 'Savolhoi tez-tez pursidaşuda',
@@ -379,12 +378,8 @@ Daleli zikrşuda az in qaror ast ''$2''.",
 # Login and logout pages
 'logouttext' => "'''Aknun az sistem xoriç şudaed.'''
 
-Şumo metavoned gumnom az {{SITENAME}} istifodabariro idoma dihed, jo metavoned bo hamin nomi korbariaton va jo nomi korbariji digare [[Special:UserLogin|boz vurud kuned]].
+Şumo metavoned gumnom az {{SITENAME}} istifodabariro idoma dihed, jo metavoned bo hamin nomi korbariaton va jo nomi korbariji digare <span class='plainlinks'>[$1 boz vurud kuned]</span>.
 Tavvaçūh kuned, ki ba'ze az sahifaho qablan ci tavre namoiş şuda budan hamin tavr namoiş doda meşavand, to dame ki şumo hofizai mururgaratonro pok kuned.",
-'welcomecreation' => '== Xuş omaded, $1! ==
-
-Hisobi şumo eçod şud.
-Tanzim kardani [[Special:Preferences|tarçihoti {{SITENAME}}]] xudro faromūş nakuned.',
 'yourname' => 'Nomi korbar',
 'yourpassword' => 'Kalimai ubur\\parolь',
 'yourpasswordagain' => 'Kalimai uburro boz navised',
@@ -573,7 +568,6 @@ Hamin tavr şumo qavl medihed, ki xudatonro inro naviştaed jo onro az jak manba
 'template-protected' => '(hifzşuda)',
 'template-semiprotected' => '(nima-muhofizatşuda)',
 'hiddencategories' => 'In sahifa dar {{PLURAL:$1|1 gurūhi pinhon|$1 gurūhhoi pinhon}} qaror dorad:',
-'nocreatetitle' => 'Eçodi sahifa mahdud şudaast',
 'nocreatetext' => '{{SITENAME}} qobilijati eçodi sahifahoi çadidro mahdud karda ast.
 Şumo metavoned bozgaşta sahifai mavçudbudaro viroiş kuned, jo [[Special:UserLogin|ba sistem vurud kuned jo hisobi korbarī eçod kuned]].',
 'nocreate-loggedin' => 'Şumo içozati eçodi sahifai çadidro nadored.',
@@ -893,11 +887,13 @@ On bojad kamtar az $1 {{PLURAL:$1|alomat|alomatho}} boşad.',
 'right-userrights-interwiki' => 'Viroişi ixtijoroti korbariji korbaroni digar vikiho',
 'right-siteadmin' => 'Bastn va boz kardani pojgohi doda',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Guzorişi eçodi korbar',
+'newuserlogpagetext' => 'In guzoriş az nomhoi korbariji tozasoxtaşuda ast.',
+
 # User rights log
 'rightslog' => 'Guzorişi ixtijoroti korbar',
 'rightslogtext' => 'In guzoriş taƣjiroti ixtijoroti korbar ast.',
-'rightslogentry' => 'uzvijati $1 az gurūh $2 ba $3 taƣjir doda şud',
-'rightsnone' => '(heç)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'viroişi in sahifa',
@@ -1233,10 +1229,6 @@ Jak klik kardani rūi unvoni sutunho boisi taƣjiri tartibi namoişi parvandaho 
 'listusers-submit' => 'Nişon dodani',
 'listusers-noresult' => 'Heç korbare joft naşud.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Guzorişi eçodi korbar',
-'newuserlogpagetext' => 'In guzoriş az nomhoi korbariji tozasoxtaşuda ast.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Ixtijoroti gurūhhoi korbarī',
 'listgrouprights-group' => 'Gurūh',
@@ -1299,14 +1291,12 @@ Agar şumo dertar az fehristi nazarotaton in sahifaro hazv kardan xohed, dar men
 
 'enotif_mailer' => '{{SITENAME}} Ittilorasonī poctai elektronī',
 'enotif_reset' => 'Alomatrasoni hamai sahifaho ba unvoni bozdidşuda',
-'enotif_newpagetext' => 'In sahifai nav ast',
 'enotif_impersonal_salutation' => 'Korbari {{SITENAME}}',
-'changed' => 'taƣjirjofta',
-'created' => 'eçod şud',
-'enotif_subject' => 'Sahifai {{SITENAME}} $PAGETITLE az tarafi $PAGEEDITOR $CHANGEDORCREATED şud',
 'enotif_lastvisited' => 'Baroi didani hamai taƣjirot az oxirin bore, ki sar zadaed $1ro bubined.',
 'enotif_lastdiff' => 'Baroi namoişi in taƣjir $1ro bubined.',
 'enotif_anon_editor' => 'korbari noşinos $1',
+'created' => 'eçod şud',
+'changed' => 'taƣjirjofta',
 
 # Delete
 'deletepage' => 'Hazfi sahifa',
@@ -2345,6 +2335,6 @@ Nişonai pajvandro biduni peşvand "{{ns:file}}:" vorid kuned.',
 # New logging system
 'revdelete-restricted' => 'mahdudijatho ba mudiron amalī şudand',
 'revdelete-unrestricted' => 'mahdudijatho az mudiron bardoşta şudand',
-'newuserlog-byemail' => 'kalimai ubur ba poctai elektronī firistoda şud',
+'rightsnone' => '(heç)',
 
 );

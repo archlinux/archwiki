@@ -195,7 +195,6 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__បង្ខំមាតិកា__', '__បង្ខំបញ្ជីអត្ថបទ__', '__បង្ខំអោយបង្ហាញមាតិកា__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__មាតិកា__', '__បញ្ជីអត្ថបទ__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__ផ្នែកមិនត្រូវកែប្រែ__', '__មិនមានផ្នែកកែប្រែ__', '__លាក់ផ្នែកកែប្រែ__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__លាក់បឋមកថា__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'ខែនេះ', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonthname'          => array( '1', 'ឈ្មោះខែនេះ', 'CURRENTMONTHNAME' ),
 	'currentday'                => array( '1', 'ថ្ងៃនេះ', 'CURRENTDAY' ),
@@ -409,7 +408,6 @@ $messages = array(
 'qbbrowse' => 'រាវរក',
 'qbedit' => 'កែប្រែ',
 'qbpageoptions' => 'ទំព័រនេះ',
-'qbpageinfo' => 'ព័ត៌មានទំព័រ',
 'qbmyoptions' => 'ទំព័ររបស់ខ្ញុំ',
 'qbspecialpages' => 'ទំព័រពិសេសៗ',
 'faq' => 'សំណួរដែលសួរញឹកញាប់',
@@ -669,12 +667,11 @@ $2',
 # Login and logout pages
 'logouttext' => "'''ឥឡូវនេះលោកអ្នកបានកត់ឈ្មោះចេញពីគណនីរបស់លោកអ្នកហើយ។'''
 
-អ្នកអាចបន្តប្រើប្រាស់{{SITENAME}}ក្នុងភាពអនាមិក ឬ [[Special:UserLogin|កត់ឈ្មោះចូលម្ដងទៀត]]ក្នុងនាមជាអ្នកប្រើប្រាស់ដដែលឬផ្សេងទៀត។
+អ្នកអាចបន្តប្រើប្រាស់{{SITENAME}}ក្នុងភាពអនាមិក ឬ <span class='plainlinks'>[$1 កត់ឈ្មោះចូលម្ដងទៀត]</span>ក្នុងនាមជាអ្នកប្រើប្រាស់ដដែលឬផ្សេងទៀត។
 
-សូមកត់សម្គាល់ថាទំព័រមួយចំនួនប្រហែលជានៅតែបង្ហាញដូចពេលលោកអ្នកកត់ឈ្មោះចូលក្នុងគណនីរបស់លោកអ្នកដដែល។ ប្រសិនបើមានករណីនេះកើតឡើង សូមសំអាត សតិភ្ជាប់នៃកម្មវិធីរុករករបស់លោកអ្នក។",
-'welcomecreation' => '== សូមស្វាគមន៍ $1! ==
-
-គណនីរបស់អ្នកត្រូវបានបង្កើតហើយ។
+សូមកត់សំគាល់ថាទំព័រមួយចំនួនប្រហែលជានៅតែបង្ហាញដូចពេលលោកអ្នកកត់ឈ្មោះចូលក្នុងគណនីរបស់លោកអ្នកដដែល។ ប្រសិនបើមានករណីនេះកើតឡើង សូមសំអាត សតិភ្ជាប់នៃកម្មវិធីរុករករបស់លោកអ្នក។",
+'welcomeuser' => 'សូមស្វាគមន៍ $1!',
+'welcomecreation-msg' => 'គណនីរបស់អ្នកត្រូវបានបង្កើតហើយ។
 កុំភ្លេចផ្លាស់ប្ដូរ[[Special:Preferences|ចំណង់ចំណូលចិត្ត{{SITENAME}}]]របស់អ្នក។',
 'yourname' => 'អត្តនាម៖',
 'yourpassword' => 'ពាក្យសម្ងាត់៖',
@@ -699,7 +696,7 @@ $2',
 'gotaccount' => "បើលោកអ្នកមានគណនីសម្រាប់ប្រើហើយ  សូម'''$1'''។",
 'gotaccountlink' => 'កត់ឈ្មោះចូល',
 'userlogin-resetlink' => 'តើអ្នកភ្លេចព័ត៌មានលម្អិតសម្រាប់កត់ឈ្មោះចូលហើយ?',
-'createaccountmail' => 'តាមរយៈអ៊ីមែល',
+'createaccountmail' => 'ប្រើប្រាស់ពាក្យសំងាត់ព្រៀងបណ្ដោះអាសនុ្ន រួចផ្ញើវាទៅកាន់អាសយដ្ឋានអ៊ីមែលខាងក្រោម',
 'createaccountreason' => 'មូលហេតុ៖',
 'badretype' => 'ពាក្យសម្ងាត់ដែលអ្នកបានវាយបញ្ចូលនោះ គឺមិនស៊ីគ្នាទេ។',
 'userexists' => 'អត្តនាមដែលអ្នកបានវាយបញ្ចូលមានគេប្រើហើយ។
@@ -858,6 +855,7 @@ $2
 'changeemail-oldemail' => 'អាសយដ្ឋានអ៊ីមែលបច្ចុប្បន្ន៖',
 'changeemail-newemail' => 'អាសយដ្ឋានអ៊ីមែលថ្មី៖',
 'changeemail-none' => '(គ្មាន​)',
+'changeemail-password' => 'ពាក្យសំងាត់{{SITENAME}}របស់អ្នក:',
 'changeemail-submit' => 'ផ្លាស់ប្ដូរអ៊ីមែល',
 'changeemail-cancel' => 'បោះបង់',
 
@@ -1051,7 +1049,6 @@ $2
 'template-protected' => '(ត្រូវបានការពារ)',
 'template-semiprotected' => '(ត្រូវបានការពារពាក់កណ្តាល)',
 'hiddencategories' => 'ទំព័រនេះស្ថិតនៅក្នុង {{PLURAL:$1|ចំណាត់ថ្នាក់ក្រុមដែលត្រូវបានបិទបាំងមួយ|ចំណាត់ថ្នាក់ក្រុមដែលត្រូវបានបិទបាំងចំនួន$1}}:',
-'nocreatetitle' => 'ការបង្កើតទំព័រ​ត្រូវបានកម្រិត',
 'nocreatetext' => '{{SITENAME}} បានដាក់កំហិតលទ្ធភាពបង្កើតទំព័រថ្មី ។
 អ្នកអាចត្រឡប់ក្រោយ និង កែប្រែទំព័រមានស្រាប់ ឬ  [[Special:UserLogin|កត់ឈ្មោះចូលឬបង្កើតគណនី]]។',
 'nocreate-loggedin' => 'អ្នកគ្មានការអនុញ្ញាត​ឱ្យបង្កើតទំព័រថ្មី​ទេ។',
@@ -1076,6 +1073,10 @@ $2
 
 ទំព័រនេះមានរួចហើយ។',
 'defaultmessagetext' => 'អត្ថបទសារតាមលំនាំដើម',
+
+# Content models
+'content-model-wikitext' => 'អត្ថបទវិគី',
+'content-model-text' => 'អត្ថបទសុទ្ធ',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''ប្រយ័ត្ន៖''' ទំព័រនេះមានប្រើអនុគមន៍ញែកច្រើនពេកហើយ។
@@ -1422,9 +1423,9 @@ $1",
 'prefs-emailconfirm-label' => 'បញ្ជាក់ទទួលស្គាល់អ៊ីមែល៖',
 'prefs-textboxsize' => 'ទំហំរបស់ផ្ទាំងកែប្រែទំព័រ',
 'youremail' => 'អ៊ីមែល៖',
-'username' => 'អត្តនាម៖',
-'uid' => 'អត្តលេខ៖',
-'prefs-memberingroups' => 'សមាជិកក្នុង{{PLURAL:$1|ក្រុម|ក្រុម}}៖',
+'username' => '{{GENDER:$1|អត្តនាម}}៖',
+'uid' => 'អត្តលេខ{{GENDER:$1|អ្នកប្រើប្រាស់}}៖',
+'prefs-memberingroups' => '{{GENDER:$2|សមាជិក}}ក្នុង{{PLURAL:$1|ក្រុម|ក្រុម}}៖',
 'prefs-registration' => 'កាលបរិច្ឆេទចុះឈ្មោះ៖',
 'yourrealname' => 'ឈ្មោះពិត៖',
 'yourlanguage' => 'ភាសា៖',
@@ -1570,12 +1571,13 @@ $1",
 'right-sendemail' => 'ផ្ញើអ៊ីមែលទៅកាន់អ្នកប្រើដទៃ',
 'right-passwordreset' => 'មើលអ៊ីមែលសំរាប់កំណត់ពាក្យសម្ងាត់ឡើងវិញ',
 
+# Special:Log/newusers
+'newuserlogpage' => 'កំណត់ហេតុនៃការបង្កើតគណនី',
+'newuserlogpagetext' => 'នេះជាកំណត់ហេតុនៃការបង្កើតអ្នកប្រើប្រាស់។',
+
 # User rights log
 'rightslog' => 'កំណត់ហេតុនៃការប្តូរសិទ្ធិអ្នកប្រើប្រាស់',
 'rightslogtext' => 'នេះ​ជា​កំណត់ហេតុនៃបំលាស់ប្ដូរចំពោះកាប្ដូរក្រុមសមាជិកភាព​របស់​អ្នកប្រើប្រាស់។',
-'rightslogentry' => 'បានប្ដូរក្រុមសមាជិកភាពសម្រាប់ $1 ពី $2 ទៅ $3',
-'rightslogentry-autopromote' => 'ត្រូវបានតំលើងតំណែងដោយស្វ័យប្រវត្តិពី $2 ទៅជា $3',
-'rightsnone' => '(ទទេ)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'អានទំព័រនេះ',
@@ -2169,9 +2171,9 @@ $1',
 'linksearch-pat' => 'ស្វែងរកគំរូ៖',
 'linksearch-ns' => 'លំហឈ្មោះ៖',
 'linksearch-ok' => 'ស្វែងរក',
-'linksearch-text' => 'កូដពិសេសដូចជា "*.wikipedia.org" អាចប្រើបាន។
-តម្រូវអោយមានយ៉ាងហោចណាស់អោយមានដូម៉ែនកំរិតលើគេ ឧទាហារណ៍ "*.org"។<br />
-ប្រូតូខូលប្រើបាន៖ <code>$1</code> (កុំបន្ថែមវាទាំងនេះទៅក្នុងការស្វែងរករបស់អ្នកអោយសោះ)។',
+'linksearch-text' => 'Wildcards ដូចជា "*.wikipedia.org" អាចប្រើបាន។
+តំរូវអោយមានយ៉ាងហោចណាស់អោយមានដូម៉ែនកំរិតលើគេ ឧទាហរណ៍ "*.org"។<br />
+{{PLURAL:$2ប្រូតូខូល|ប្រូតូខូល}}ប្រើបាន៖ <code>$1</code>  (តាមលំនាំដើមជា http:// ប្រសិនបើគ្មានបញ្ជាក់ប្រូតូខូល)។',
 'linksearch-line' => '$1បានតភ្ជាប់ពី$2',
 
 # Special:ListUsers
@@ -2188,10 +2190,6 @@ $1',
 'activeusers-hidebots' => 'លាក់រូបយន្ត',
 'activeusers-hidesysops' => 'លាក់អភិបាល',
 'activeusers-noresult' => 'អ្នកប្រើប្រាស់​រកមិនឃើញ​។​',
-
-# Special:Log/newusers
-'newuserlogpage' => 'កំណត់ហេតុនៃការបង្កើតគណនី',
-'newuserlogpagetext' => 'នេះជាកំណត់ហេតុនៃការបង្កើតអ្នកប្រើប្រាស់។',
 
 # Special:ListGroupRights
 'listgrouprights' => 'សិទ្ធិនិងក្រុមអ្នកប្រើប្រាស់',
@@ -2285,11 +2283,7 @@ $1',
 
 'enotif_mailer' => 'ភ្នាក់ងារផ្ញើអ៊ីមែលផ្ដល់ដំណឹងរបស់ {{SITENAME}}',
 'enotif_reset' => 'កត់សម្គាល់រាល់គ្រប់ទំព័រដែលបានចូលមើល',
-'enotif_newpagetext' => 'នេះជាទំព័រថ្មី។',
 'enotif_impersonal_salutation' => 'អ្នកប្រើប្រាស់ {{SITENAME}}',
-'changed' => 'បានផ្លាស់ប្តូរ',
-'created' => 'បានបង្កើត',
-'enotif_subject' => 'ទំព័រ $PAGETITLE នៃ {{SITENAME}} ត្រូវបាន $CHANGEDORCREATED ដោយ $PAGEEDITOR',
 'enotif_lastvisited' => 'ពិនិត្យ $1 សម្រាប់គ្រប់បន្លាស់ប្តូរតាំងពីពេលចូលមើលចុងក្រោយ។',
 'enotif_lastdiff' => 'សូមពិនិត្យ $1 ដើម្បីមើលបំលាស់ប្តូរនេះ។',
 'enotif_anon_editor' => 'អ្នកប្រើប្រាស់អនាមិក $1',
@@ -2327,6 +2321,8 @@ $UNWATCHURL
 
 មតិ​យោបល់​និងជំនួយបន្ថែម ៖
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'បានបង្កើត',
+'changed' => 'បានផ្លាស់ប្តូរ',
 
 # Delete
 'deletepage' => 'លុបទំព័រចោល',
@@ -2516,7 +2512,7 @@ $1',
 'blanknamespace' => '(ទូទៅ)',
 
 # Contributions
-'contributions' => 'ការរួមចំណែក​របស់អ្នកប្រើប្រាស់',
+'contributions' => 'ការរួមចំណែក​របស់{{GENDER:$1|អ្នកប្រើប្រាស់}}',
 'contributions-title' => 'ការរួមចំណែករបស់អ្នកប្រើប្រាស់ $1',
 'mycontris' => 'ការរួមចំណែក',
 'contribsub2' => 'សម្រាប់ $1 ($2)',
@@ -2969,6 +2965,7 @@ $1',
 'pageinfo-default-sort' => 'ពាក្យគន្លឺះសំរាប់តំរៀប',
 'pageinfo-length' => 'ប្រវែងទំព័រ (គិតជាបៃ)',
 'pageinfo-article-id' => 'អត្តលេខទំព័រ',
+'pageinfo-language' => 'ភាសារបស់ខ្លឹមសារទំព័រ',
 'pageinfo-robot-policy' => 'ស្ថានភាពម៉ាស៊ីនស្វែងរក',
 'pageinfo-robot-index' => 'អាចដាក់ក្នុងលិបិក្រម',
 'pageinfo-robot-noindex' => 'មិនអាចដាក់ក្នុងលិបិក្រម',
@@ -2988,6 +2985,14 @@ $1',
 'pageinfo-magic-words' => '{{PLURAL:$1|ពាក្យ|ពាក្យ}} វេទមន្ត ($1)',
 'pageinfo-hidden-categories' => '{{PLURAL:$1|ចំណាត់ថ្នាក់ក្រុម|ចំណាត់ថ្នាក់ក្រុម}}ដែលបានលាក់ ($1)',
 'pageinfo-templates' => '{{PLURAL:$1|ទំព័រគំរូ|ទំព័រគំរូ}}ដែលទាញមកបញ្ចូល ($1)',
+'pageinfo-toolboxlink' => 'ព័ត៌មានអំពីទំព័រនេះ',
+'pageinfo-redirectsto' => 'បញ្ជូនបន្តទៅកាន់',
+'pageinfo-redirectsto-info' => 'ព័ត៌មាន​',
+'pageinfo-contentpage' => 'រាប់ជាទំព័រដែលមានខ្លឹមសារនៅខាងក្នុង',
+'pageinfo-contentpage-yes' => 'បាទ/ចាស',
+'pageinfo-protect-cascading' => 'ការការពារត្រូវបានដាក់ជាថ្នាក់ពីទីនេះទៅ',
+'pageinfo-protect-cascading-yes' => 'បាទ/ចាស',
+'pageinfo-protect-cascading-from' => 'ការការពារត្រូវបានដាក់ជាថ្នាក់ពី',
 
 # Skin names
 'skinname-standard' => 'បុរាណ',
@@ -3068,6 +3073,7 @@ $1',
 'hours' => '{{PLURAL:$1|$1 ម៉ោង|$1 ម៉ោង}}',
 'days' => '{{PLURAL:$1|$1 ថ្ងៃ|$1 ថ្ងៃ}}',
 'ago' => '$1 មុន',
+'just-now' => 'អំបាញ់មិញនេះ',
 
 # Bad image list
 'bad_image_list' => 'ទម្រង់ ដូចតទៅ ៖
@@ -3657,7 +3663,10 @@ $5
 'logentry-newusers-create' => 'បានបង្កើតគណនីអ្នកប្រើប្រាស់ $1',
 'logentry-newusers-create2' => ' $3 បានបង្កើតគណនីអ្នកប្រើប្រាស់ $1',
 'logentry-newusers-autocreate' => 'គណនី $1 ត្រូវបានបង្កើតដោយស្វ័យប្រវត្តិ',
-'newuserlog-byemail' => 'ពាក្យសំងាត់ត្រូវបានផ្ញើតាមអ៊ីមែល',
+'logentry-rights-rights' => '$1 បានផ្លាស់ប្ដូរសមាជិកភាពរបស់ $3 ពី $4 ទៅជា $5',
+'logentry-rights-rights-legacy' => '$1បានផ្លាស់ប្ដូរសមាជិកភាពរបស់ $3',
+'logentry-rights-autopromote' => '$1 ត្រូវបានតំលើងសមាជិកភាពពី $4 ជា $5',
+'rightsnone' => '(ទទេ)',
 
 # Feedback
 'feedback-subject' => 'កម្មវត្ថុ ៖',

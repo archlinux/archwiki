@@ -42,7 +42,7 @@ class LogEventsList extends ContextSource {
 	 *
 	 * @param $context IContextSource Context to use; formerly it was Skin object.
 	 * @param $unused void Unused; used to be an OutputPage object.
-	 * @param $flags int flags; can be a combinaison of self::NO_ACTION_LINK,
+	 * @param int $flags flags; can be a combinaison of self::NO_ACTION_LINK,
 	 *        self::NO_EXTRA_USER_LINKS or self::USE_REVDEL_CHECKBOXES.
 	 */
 	public function __construct( $context, $unused = null, $flags = 0 ) {
@@ -74,7 +74,7 @@ class LogEventsList extends ContextSource {
 	public function showHeader( $type ) {
 		wfDeprecated( __METHOD__, '1.19' );
 		// If only one log type is used, then show a special message...
-		$headerType = (count($type) == 1) ? $type[0] : '';
+		$headerType = (count( $type ) == 1) ? $type[0] : '';
 		$out = $this->getOutput();
 		if( LogPage::isLogType( $headerType ) ) {
 			$page = new LogPage( $headerType );
@@ -88,7 +88,7 @@ class LogEventsList extends ContextSource {
 	/**
 	 * Show options for the log list
 	 *
-	 * @param $types string or Array
+	 * @param string $types or Array
 	 * @param $user String
 	 * @param $page String
 	 * @param $pattern String
@@ -97,8 +97,8 @@ class LogEventsList extends ContextSource {
 	 * @param $filter: array
 	 * @param $tagFilter: array?
 	 */
-	public function showOptions( $types=array(), $user='', $page='', $pattern='', $year='',
-		$month = '', $filter = null, $tagFilter='' ) {
+	public function showOptions( $types=array(), $user = '', $page = '', $pattern = '', $year = '',
+		$month = '', $filter = null, $tagFilter = '' ) {
 		global $wgScript, $wgMiserMode;
 
 		$title = SpecialPage::getTitleFor( 'Log' );
@@ -117,7 +117,7 @@ class LogEventsList extends ContextSource {
 		$html .= $this->getExtraInputs( $types ) . "\n";
 
 		// Title pattern, if allowed
-		if (!$wgMiserMode) {
+		if ( !$wgMiserMode ) {
 			$html .= $this->getTitlePattern( $pattern ) . "\n";
 		}
 
@@ -125,12 +125,12 @@ class LogEventsList extends ContextSource {
 		$html .= Xml::tags( 'p', null, Xml::dateMenu( $year, $month ) );
 
 		// Tag filter
-		if ($tagSelector) {
+		if ( $tagSelector ) {
 			$html .= Xml::tags( 'p', null, implode( '&#160;', $tagSelector ) );
 		}
 
 		// Filter links
-		if ($filter) {
+		if ( $filter ) {
 			$html .= Xml::tags( 'p', null, $this->getFilterLinks( $filter ) );
 		}
 
@@ -162,7 +162,7 @@ class LogEventsList extends ContextSource {
 			$query = $this->getDefaultQuery();
 			$queryKey = "hide_{$type}_log";
 
-			$hideVal = 1 - intval($val);
+			$hideVal = 1 - intval( $val );
 			$query[$queryKey] = $hideVal;
 
 			$link = Linker::linkKnown(
@@ -176,7 +176,7 @@ class LogEventsList extends ContextSource {
 			$hiddens .= Html::hidden( "hide_{$type}_log", $val ) . "\n";
 		}
 		// Build links
-		return '<small>'.$this->getLanguage()->pipeList( $links ) . '</small>' . $hiddens;
+		return '<small>' . $this->getLanguage()->pipeList( $links ) . '</small>' . $hiddens;
 	}
 
 	private function getDefaultQuery() {
@@ -198,7 +198,7 @@ class LogEventsList extends ContextSource {
 	 * @return String: Formatted HTML
 	 */
 	private function getTypeMenu( $queryTypes ) {
-		$queryType = count($queryTypes) == 1 ? $queryTypes[0] : '';
+		$queryType = count( $queryTypes ) == 1 ? $queryTypes[0] : '';
 		$selector = $this->getTypeSelector();
 		$selector->setDefault( $queryType );
 		return $selector->getHtml();
@@ -212,7 +212,7 @@ class LogEventsList extends ContextSource {
 	public function getTypeSelector() {
 		$typesByName = array(); // Temporary array
 		// First pass to load the log names
-		foreach(  LogPage::validTypes() as $type ) {
+		foreach( LogPage::validTypes() as $type ) {
 			$page = new LogPage( $type );
 			$restriction = $page->getRestriction();
 			if ( $this->getUser()->isAllowed( $restriction ) ) {
@@ -221,7 +221,7 @@ class LogEventsList extends ContextSource {
 		}
 
 		// Second pass to sort by name
-		asort($typesByName);
+		asort( $typesByName );
 
 		// Always put "All public logs" on top
 		$public = $typesByName[''];
@@ -273,10 +273,10 @@ class LogEventsList extends ContextSource {
 	private function getExtraInputs( $types ) {
 		$offender = $this->getRequest()->getVal( 'offender' );
 		$user = User::newFromName( $offender, false );
-		if( !$user || ($user->getId() == 0 && !IP::isIPAddress($offender) ) ) {
+		if( !$user || ( $user->getId() == 0 && !IP::isIPAddress( $offender ) ) ) {
 			$offender = ''; // Blank field if invalid
 		}
-		if( count($types) == 1 && $types[0] == 'suppress' ) {
+		if( count( $types ) == 1 && $types[0] == 'suppress' ) {
 			return Xml::inputLabel( $this->msg( 'revdelete-offender' )->text(), 'offender',
 				'mw-log-offender', 20, $offender );
 		}
@@ -307,7 +307,6 @@ class LogEventsList extends ContextSource {
 		$formatter->setContext( $this->getContext() );
 		$formatter->setShowUserToolLinks( !( $this->flags & self::NO_EXTRA_USER_LINKS ) );
 
-		$title = $entry->getTarget();
 		$time = htmlspecialchars( $this->getLanguage()->userTimeAndDate(
 			$entry->getTimestamp(), $this->getUser() ) );
 
@@ -351,9 +350,9 @@ class LogEventsList extends ContextSource {
 		$user = $this->getUser();
 		// Don't show useless checkbox to people who cannot hide log entries
 		if( $user->isAllowed( 'deletedhistory' ) ) {
-			if( $row->log_deleted || $user->isAllowed( 'deletelogentry' ) ) {
-				$canHide = $user->isAllowed( 'deletelogentry' );
-				if ( $this->flags & self::USE_REVDEL_CHECKBOXES ) { // Show checkboxes instead of links.
+			$canHide = $user->isAllowed( 'deletelogentry' );
+			if( $row->log_deleted || $canHide ) {
+				if ( $canHide && $this->flags & self::USE_REVDEL_CHECKBOXES ) { // Show checkboxes instead of links.
 					if ( !self::userCan( $row, LogPage::DELETED_RESTRICTED, $user ) ) { // If event was hidden from sysops
 						$del = Xml::check( 'deleterevisions', false, array( 'disabled' => 'disabled' ) );
 					} else {
@@ -383,8 +382,8 @@ class LogEventsList extends ContextSource {
 	 * @param $right string
 	 * @return Boolean
 	 */
-	public static function typeAction( $row, $type, $action, $right='' ) {
-		$match = is_array($type) ?
+	public static function typeAction( $row, $type, $action, $right = '' ) {
+		$match = is_array( $type ) ?
 			in_array( $row->log_type, $type ) : $row->log_type == $type;
 		if( $match ) {
 			$match = is_array( $action ) ?
@@ -450,10 +449,10 @@ class LogEventsList extends ContextSource {
 	 * Show log extract. Either with text and a box (set $msgKey) or without (don't set $msgKey)
 	 *
 	 * @param $out OutputPage|String-by-reference
-	 * @param $types String|Array Log types to show
-	 * @param $page String|Title The page title to show log entries for
-	 * @param $user String The user who made the log entries
-	 * @param $param array Associative Array with the following additional options:
+	 * @param string|array $types Log types to show
+	 * @param string|Title $page The page title to show log entries for
+	 * @param string $user The user who made the log entries
+	 * @param array $param Associative Array with the following additional options:
 	 * - lim Integer Limit of items to show, default is 50
 	 * - conds Array Extra conditions for the query (e.g. "log_action != 'revision'")
 	 * - showIfEmpty boolean Set to false if you don't want any output in case the loglist is empty
@@ -468,13 +467,13 @@ class LogEventsList extends ContextSource {
 	 * @return Integer Number of total log items (not limited by $lim)
 	 */
 	public static function showLogExtract(
-		&$out, $types=array(), $page='', $user='', $param = array()
+		&$out, $types=array(), $page = '', $user = '', $param = array()
 	) {
 		$defaultParameters = array(
 			'lim' => 25,
 			'conds' => array(),
 			'showIfEmpty' => true,
-			'msgKey' => array(''),
+			'msgKey' => array( '' ),
 			'wrap' => "$1",
 			'flags' => 0
 		);
@@ -520,8 +519,8 @@ class LogEventsList extends ContextSource {
 				}
 			}
 			$s .= $loglist->beginLogEventsList() .
-				 $logBody .
-				 $loglist->endLogEventsList();
+				$logBody .
+				$loglist->endLogEventsList();
 		} else {
 			if ( $showIfEmpty ) {
 				$s = Html::rawElement( 'div', array( 'class' => 'mw-warning-logempty' ),
@@ -535,7 +534,7 @@ class LogEventsList extends ContextSource {
 			} elseif ( $page != '' ) {
 				$urlParam['page'] = $page;
 			}
-			if ( $user != '')
+			if ( $user != '' )
 				$urlParam['user'] = $user;
 			if ( !is_array( $types ) ) # Make it an array, if it isn't
 				$types = array( $types );
@@ -560,7 +559,7 @@ class LogEventsList extends ContextSource {
 		/* hook can return false, if we don't want the message to be emitted (Wikia BugId:7093) */
 		if ( wfRunHooks( 'LogEventsListShowLogExtract', array( &$s, $types, $page, $user, $param ) ) ) {
 			// $out can be either an OutputPage object or a String-by-reference
-			if ( $out instanceof OutputPage ){
+			if ( $out instanceof OutputPage ) {
 				$out->addHTML( $s );
 			} else {
 				$out = $s;
@@ -575,24 +574,31 @@ class LogEventsList extends ContextSource {
 	 *
 	 * @param $db DatabaseBase
 	 * @param $audience string, public/user
+	 * @param $user User object to check, or null to use $wgUser
 	 * @return Mixed: string or false
 	 */
-	public static function getExcludeClause( $db, $audience = 'public' ) {
-		global $wgLogRestrictions, $wgUser;
+	public static function getExcludeClause( $db, $audience = 'public', User $user = null ) {
+		global $wgLogRestrictions;
+
+		if ( $audience != 'public' && $user === null ) {
+			global $wgUser;
+			$user = $wgUser;
+		}
+
 		// Reset the array, clears extra "where" clauses when $par is used
 		$hiddenLogs = array();
+
 		// Don't show private logs to unprivileged users
 		foreach( $wgLogRestrictions as $logType => $right ) {
-			if( $audience == 'public' || !$wgUser->isAllowed($right) ) {
-				$safeType = $db->strencode( $logType );
-				$hiddenLogs[] = $safeType;
+			if( $audience == 'public' || !$user->isAllowed( $right ) ) {
+				$hiddenLogs[] = $logType;
 			}
 		}
-		if( count($hiddenLogs) == 1 ) {
+		if( count( $hiddenLogs ) == 1 ) {
 			return 'log_type != ' . $db->addQuotes( $hiddenLogs[0] );
 		} elseif( $hiddenLogs ) {
-			return 'log_type NOT IN (' . $db->makeList($hiddenLogs) . ')';
+			return 'log_type NOT IN (' . $db->makeList( $hiddenLogs ) . ')';
 		}
 		return false;
 	}
- }
+}

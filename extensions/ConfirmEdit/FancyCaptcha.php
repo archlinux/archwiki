@@ -58,3 +58,19 @@ $wgCaptchaDeleteOnSolve = false;
 
 $wgExtensionMessagesFiles['FancyCaptcha'] = $dir . '/FancyCaptcha.i18n.php';
 $wgAutoloadClasses['FancyCaptcha'] = $dir . '/FancyCaptcha.class.php';
+
+$wgResourceModules['ext.confirmEdit.fancyCaptcha.styles'] = array(
+	'localBasePath' => $dir . '/resources',
+	'remoteExtPath' => 'ConfirmEdit/resources',
+	'styles' => 'ext.confirmEdit.fancyCaptcha.css',
+);
+
+$wgResourceModules['ext.confirmEdit.fancyCaptcha'] = array(
+	'localBasePath' => $dir . '/resources',
+	'remoteExtPath' => 'ConfirmEdit/resources',
+	'scripts' => 'ext.confirmEdit.fancyCaptcha.js',
+	'dependencies' => 'mediawiki.api',
+);
+
+$wgAutoloadClasses['ApiFancyCaptchaReload'] = $dir . '/ApiFancyCaptchaReload.php';
+$wgAPIModules['fancycaptchareload'] = 'ApiFancyCaptchaReload';

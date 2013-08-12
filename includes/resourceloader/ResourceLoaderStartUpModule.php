@@ -114,6 +114,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 		$out = '';
 		$registrations = array();
 		$resourceLoader = $context->getResourceLoader();
+		$target = $context->getRequest()->getVal( 'target', 'desktop' );
 
 		// Register sources
 		$out .= ResourceLoader::makeLoaderSourcesScript( $resourceLoader->getSources() );
@@ -121,6 +122,10 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 		// Register modules
 		foreach ( $resourceLoader->getModuleNames() as $name ) {
 			$module = $resourceLoader->getModule( $name );
+			$moduleTargets = $module->getTargets();
+			if ( !in_array( $target, $moduleTargets ) ) {
+				continue;
+			}
 			$deps = $module->getDependencies();
 			$group = $module->getGroup();
 			$source = $module->getSource();
@@ -130,33 +135,33 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 				$version = wfTimestamp( TS_ISO_8601_BASIC,
 					$module->getModifiedTime( $context ) );
 				$out .= ResourceLoader::makeCustomLoaderScript( $name, $version, $deps, $group, $source, $loader );
+				continue;
 			}
+
 			// Automatically register module
+			// getModifiedTime() is supposed to return a UNIX timestamp, but it doesn't always
+			// seem to do that, and custom implementations might forget. Coerce it to TS_UNIX
+			$moduleMtime = wfTimestamp( TS_UNIX, $module->getModifiedTime( $context ) );
+			$mtime = max( $moduleMtime, wfTimestamp( TS_UNIX, $wgCacheEpoch ) );
+			// Modules without dependencies, a group or a foreign source pass two arguments (name, timestamp) to
+			// mw.loader.register()
+			if ( !count( $deps ) && $group === null && $source === 'local' ) {
+				$registrations[] = array( $name, $mtime );
+			}
+			// Modules with dependencies but no group or foreign source pass three arguments
+			// (name, timestamp, dependencies) to mw.loader.register()
+			elseif ( $group === null && $source === 'local' ) {
+				$registrations[] = array( $name, $mtime, $deps );
+			}
+			// Modules with a group but no foreign source pass four arguments (name, timestamp, dependencies, group)
+			// to mw.loader.register()
+			elseif ( $source === 'local' ) {
+				$registrations[] = array( $name, $mtime, $deps, $group );
+			}
+			// Modules with a foreign source pass five arguments (name, timestamp, dependencies, group, source)
+			// to mw.loader.register()
 			else {
-				// getModifiedTime() is supposed to return a UNIX timestamp, but it doesn't always
-				// seem to do that, and custom implementations might forget. Coerce it to TS_UNIX
-				$moduleMtime = wfTimestamp( TS_UNIX, $module->getModifiedTime( $context ) );
-				$mtime = max( $moduleMtime, wfTimestamp( TS_UNIX, $wgCacheEpoch ) );
-				// Modules without dependencies, a group or a foreign source pass two arguments (name, timestamp) to
-				// mw.loader.register()
-				if ( !count( $deps ) && $group === null && $source === 'local' ) {
-					$registrations[] = array( $name, $mtime );
-				}
-				// Modules with dependencies but no group or foreign source pass three arguments
-				// (name, timestamp, dependencies) to mw.loader.register()
-				elseif ( $group === null && $source === 'local' ) {
-					$registrations[] = array( $name, $mtime, $deps );
-				}
-				// Modules with a group but no foreign source pass four arguments (name, timestamp, dependencies, group)
-				// to mw.loader.register()
-				elseif ( $source === 'local' ) {
-					$registrations[] = array( $name, $mtime, $deps, $group );
-				}
-				// Modules with a foreign source pass five arguments (name, timestamp, dependencies, group, source)
-				// to mw.loader.register()
-				else {
-					$registrations[] = array( $name, $mtime, $deps, $group, $source );
-				}
+				$registrations[] = array( $name, $mtime, $deps, $group, $source );
 			}
 		}
 		$out .= ResourceLoader::makeLoaderRegisterScript( $registrations );
@@ -219,7 +224,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 				"};\n";
 
 			// Conditional script injection
-			$scriptTag = Html::linkedScript( $wgLoadScript . '?' . wfArrayToCGI( $query ) );
+			$scriptTag = Html::linkedScript( $wgLoadScript . '?' . wfArrayToCgi( $query ) );
 			$out .= "if ( isCompatible() ) {\n" .
 				"\t" . Xml::encodeJsCall( 'document.write', array( $scriptTag ) ) .
 				"}\n" .

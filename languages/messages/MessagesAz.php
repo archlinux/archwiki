@@ -227,7 +227,6 @@ $messages = array(
 'qbbrowse' => 'Gözdən keçir',
 'qbedit' => 'Redaktə',
 'qbpageoptions' => 'Bu səhifə',
-'qbpageinfo' => 'Məzmun',
 'qbmyoptions' => 'Mənim səhifələrim',
 'qbspecialpages' => 'Xüsusi səhifələr',
 'faq' => 'TSS',
@@ -250,6 +249,7 @@ $messages = array(
 'namespaces' => 'Adlar fəzası',
 'variants' => 'Variantlar',
 
+'navigation-heading' => 'Naviqasiya menyusu',
 'errorpagetitle' => 'Xəta',
 'returnto' => '$1 səhifəsinə qayıt.',
 'tagline' => '{{SITENAME}} saytından',
@@ -478,9 +478,9 @@ Göstərilən səbəb: "\'\'$2\'\'".',
 # Login and logout pages
 'logouttext' => "'''Sistemdən çıxdınız.'''
 
-Siz {{SITENAME}} saytını anonim olaraq istifadə etməyə davam edə bilər və ya eyni, yaxud başqa istifadəçi adı ilə [[Special:UserLogin|yenidən daxil ola]] bilərsiniz. Veb-brauzerin keş yaddaşını təmizləyənədək bəzi səhifələr hələ də sistemdə imişsiniz kimi görünə bilər.",
-'welcomecreation' => '== $1, xoş gəlmişsiniz! ==
-Hesabınız yaradıldı.
+Siz {{SITENAME}} saytını anonim olaraq istifadə etməyə davam edə bilər və ya eyni, yaxud başqa istifadəçi adı ilə <span class='plainlinks'>[$1 yenidən daxil ola]</span> bilərsiniz. Veb-brauzerin keş yaddaşını təmizləyənədək bəzi səhifələr hələ də sistemdə imişsiniz kimi görünə bilər.",
+'welcomeuser' => 'Xoş gəldin $1!',
+'welcomecreation-msg' => 'Hesabınız yaradıldı.
 [[Special:Preferences|{{SITENAME}} nizamlamalarınızı]] dəyişdirməyi unutmayın.',
 'yourname' => 'İstifadəçi adı',
 'yourpassword' => 'Parol:',
@@ -712,7 +712,6 @@ Siz eyni zamanda söz verirsiniz ki, bu yazıları siz özünüz yazmısınız v
 'template-semiprotected' => '(yarım-mühafizə)',
 'hiddencategories' => 'Bu səhifə {{PLURAL:$1|1 gizli kateqoriyaya|$1 gizli kateqoriyaya}} aiddir:',
 'edittools-upload' => '-',
-'nocreatetitle' => 'Səhifə yaratma məhdudlaşdırılıb.',
 'nocreatetext' => '{{SITENAME}} saytında yeni səhifələrin yaradılması imkanları məhdudlaşdırılıb.
 Siz geri qayıdıb mövcud səhifəni və ya  [[Special:UserLogin|sistemə təqdim olunma və ya yeni hesab açmaq]] səhifəsini redaktə edə bilərsiniz.',
 'nocreate-loggedin' => 'Sizin yeni səhifələr yaratmaq üçün icazəniz yoxdur.',
@@ -736,6 +735,9 @@ Məlumat üçün aşağıda bu səhifənin tarixçəsindən müvafiq silmə qeyd
 'edit-no-change' => 'Sizin redaktələr qeydə alınmamışdır. Belə ki, mətndə heç bir düzəliş edilməmişdir.',
 'edit-already-exists' => 'Yeni səhifəni yaratmaq mümkün deyil.
 Belə ki, bu adda səhifə artıq mövcuddur.',
+
+# Content models
+'content-model-javascript' => 'JavaScript',
 
 # Parser/template warnings
 'expensive-parserfunction-category' => 'Kifayət qədər böyük sayda genişresurslu funksiyaların müraciət olunduğu səhifələr',
@@ -1174,11 +1176,13 @@ Həmçinin kimliyinizi gostərmədən belə, başqalarının sizinlə istifadə�
 'right-siteadmin' => 'Məlumatlar bazasının bloklanması və blokun götürülməsi',
 'right-sendemail' => 'Digər istifadəçilərə elektron poçt göndər',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Yeni istifadəçilərin qeydiyyatı',
+'newuserlogpagetext' => 'Yeni qeydiyyatdan keçmiş istifadəçilərin siyahısı.',
+
 # User rights log
 'rightslog' => 'İstifadəçi hüquqları qeydləri',
 'rightslogtext' => 'İstifadəçi hüquqları dəyişikliyi qeydləri.',
-'rightslogentry' => '$1 adlı istifadəçinin istifadəçi qruplarındakı üzvlüyü dəyişdirildi: $2 ► $3',
-'rightsnone' => '(yoxdur)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'bu səhifənin oxunması',
@@ -1654,10 +1658,6 @@ Həmçinin, [[Special:WantedCategories|tələb olunan kateqoriyalara]] baxın.',
 'activeusers-hidesysops' => 'İdarəçiləri gizlə',
 'activeusers-noresult' => 'İstifadəçi tapılmadı.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Yeni istifadəçilərin qeydiyyatı',
-'newuserlogpagetext' => 'Yeni qeydiyyatdan keçmiş istifadəçilərin siyahısı.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'İstifadəçi qruplarının hüquqları',
 'listgrouprights-summary' => 'Bu vikidə olan istifadəçi siyahıları və onların hüquqları aşağıda göstərilmişdir.
@@ -1744,11 +1744,7 @@ Fərdi hüquqlar haqqında əlavə məlumatı [[{{MediaWiki:Listgrouprights-help
 
 'enotif_mailer' => '{{SITENAME}} Bildiriş Xidməti',
 'enotif_reset' => 'Baxılmış bütün səhifələri işarələ.',
-'enotif_newpagetext' => 'Bu səhifə yeni səhifədir.',
 'enotif_impersonal_salutation' => '{{SITENAME}} istifadəçisi',
-'changed' => 'dəyişdi',
-'created' => 'yaradıldı',
-'enotif_subject' => '{{SITENAME}} saytındakı $PAGETITLE səhifəsi $PAGEEDITOR tərəfindən $CHANGEDORCREATED',
 'enotif_lastvisited' => 'Sonuncu ziyarətinizdən indiyədək olan bütün dəyişiklikləri görmək üçün baxın: $1.',
 'enotif_lastdiff' => 'Bu dəyişikliyi görmək üçün $1 səhifəsinə baxın.',
 'enotif_anon_editor' => 'qeydiyyatsız istifadəçi $1',
@@ -1774,6 +1770,8 @@ Siz haqqında söhbət gedən səhifəyə baxanadək səhifədəki digər dəyi�
 
 Yardım və təklifləriniz üçün:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'yaradıldı',
+'changed' => 'dəyişdi',
 
 # Delete
 'deletepage' => 'Səhifəni sil',
@@ -2992,7 +2990,7 @@ Bu saytda texniki problemlər var.',
 'logentry-newusers-create' => '$1 istifadəçi hesabı yaratdı',
 'logentry-newusers-create2' => '$1 $3 üçün istifadəçi hesabı yaratdı',
 'logentry-newusers-autocreate' => '$1 hesabı avtomatik yaradıldı',
-'newuserlog-byemail' => 'parol e-maillə göndərildi',
+'rightsnone' => '(yoxdur)',
 
 # Feedback
 'feedback-subject' => 'Mövzu:',

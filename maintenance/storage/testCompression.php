@@ -1,5 +1,7 @@
 <?php
 /**
+ * Test revision text compression and decompression.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,8 +18,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance
- * @see wfWaitForSlaves()
+ * @ingroup Maintenance ExternalStorage
  */
 
 $optionsWithArgs = array( 'start', 'limit', 'type' );
@@ -65,7 +66,7 @@ $uncompressedSize = 0;
 $t = -microtime( true );
 foreach ( $res as $row ) {
 	$revision = new Revision( $row );
-	$text = $revision->getText();
+	$text = $revision->getSerializedData();
 	$uncompressedSize += strlen( $text );
 	$hashes[$row->rev_id] = md5( $text );
 	$keys[$row->rev_id] = $blob->addItem( $text );
@@ -98,4 +99,3 @@ foreach ( $keys as $id => $key ) {
 }
 $t += microtime( true );
 printf( "Decompression time: %5.2f ms\n", $t * 1000 );
-

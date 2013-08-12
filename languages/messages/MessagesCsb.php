@@ -177,7 +177,6 @@ $messages = array(
 'qbbrowse' => 'Przezeranié',
 'qbedit' => 'Edicëjô',
 'qbpageoptions' => 'Òptacëje starnë',
-'qbpageinfo' => 'Ò starnie',
 'qbmyoptions' => 'Mòje òptacëje',
 'qbspecialpages' => 'Specjalné starnë',
 'faq' => 'FAQ',
@@ -354,11 +353,8 @@ Przemëszlë dolmaczënié na [//translatewiki.net/wiki/Main_Page?setlang=csb tr
 
 # Login and logout pages
 'logouttext' => "'''Jes wëlogòwóny.'''
-Mòżesz robic dali na {{SITENAME}} jakno anonimòwi brëkòwnik abò sã [[Special:UserLogin|wlogòwac]] znowa jakno równy, a bò jinszi brëkòwnik.
+Mòżesz robic dali na {{SITENAME}} jakno anonimòwi brëkòwnik abò sã <span class='plainlinks'>[$1 wlogòwac]</span> znowa jakno równy, a bò jinszi brëkòwnik.
 Bôczë, że do czasu wëczëszczenia pòdrãczny pamiãcë przezérnika, niejedné starnë bãdą wëzdrzëc jakbë të bëł wlogòwóny.",
-'welcomecreation' => ' == Witôj, $1! ==
-Twòjé kònto òstało prawie ùsôdzoné.
-Nie zbëjë zmienic swòjich nastôwów na [[Special:Preferences|{{SITENAME}}]].',
 'yourname' => 'Miono brëkòwnika',
 'yourpassword' => 'Twòja parola',
 'yourpasswordagain' => 'Pòwtórzë parolã',
@@ -714,6 +710,9 @@ Mòżesz zezwòlëc jinszim brëkòwniką na łączbã z Tobą przez Twòją sta
 'right-autoconfirmed' => 'Edicëjô dzélowò zazychrowónych starnów',
 'right-bot' => 'Nacéchòwanié edicëjó jakno aùtomatnych',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Nowi brëkòwnicë',
+
 # User rights log
 'rightslog' => 'Prawa brëkòwnika',
 
@@ -888,9 +887,6 @@ Mòżesz zawãżëc wëszłosc przez wëbranié ôrtu registru, miona brëkòwni
 # Special:LinkSearch
 'linksearch' => 'Bùtnowé lënczi',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Nowi brëkòwnicë',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(lësta nôlëżników karna)',
 
@@ -933,8 +929,8 @@ Czej chcesz remôc starnã z lëste ùzéronëch artiklów, klikni ''Òprzestôj
 'unwatching' => 'Ju ni ùzéróm...',
 
 'enotif_reset' => 'Òznaczë wszëtczé artiklë jakno òbëzdrzóné',
-'changed' => 'zmienioné',
 'created' => 'zrobionô',
+'changed' => 'zmienioné',
 
 # Delete
 'deletepage' => 'Rëmôj starnã',

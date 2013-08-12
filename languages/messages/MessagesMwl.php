@@ -211,7 +211,6 @@ $messages = array(
 'qbbrowse' => 'Nabegar',
 'qbedit' => 'Eiditar',
 'qbpageoptions' => 'Esta páigina',
-'qbpageinfo' => 'Cuntesto',
 'qbmyoptions' => 'Mies páiginas',
 'qbspecialpages' => 'Páiginas speciales',
 'faq' => 'FAQ',
@@ -640,9 +639,11 @@ Causo l çponiblizes, este será outelizado pa te dar crédito pul tou trabalho.
 'right-move' => 'Arrastrar páiginas',
 'right-movefile' => 'Arrastrar fexeiros',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Registro de criaçon de outelizadores',
+
 # User rights log
 'rightslog' => 'Registro de dreitos de l outelizador',
-'rightsnone' => '(nanhun)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'lher esta páigina',
@@ -847,9 +848,6 @@ Páiginas que steian ne ls [[Special:Watchlist|tous begiados]] son amostradas an
 # Special:ListUsers
 'listusers-submit' => 'Amostrar',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Registro de criaçon de outelizadores',
-
 # Special:ListGroupRights
 'listgrouprights-rights' => 'Dreitos',
 'listgrouprights-members' => '(lista de nembros)',
@@ -876,8 +874,8 @@ Altaraçones feturas na tal páigina i páiginas de çcusson a eilha associadas 
 'watching' => 'A begiar...',
 'unwatching' => 'A deixar de begiar...',
 
-'changed' => 'demudada',
 'created' => 'criada',
+'changed' => 'demudada',
 
 # Delete
 'deletepage' => 'Botar fuora páigina',
@@ -1233,5 +1231,8 @@ Causo l fexeiro tenga sido demudado a partir de l sou stado oureginal, alguns de
 # Special:Tags
 'tags-title' => 'Eitiquetas',
 'tags-edit' => 'eiditar',
+
+# New logging system
+'rightsnone' => '(nanhun)',
 
 );

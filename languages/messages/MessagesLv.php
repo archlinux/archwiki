@@ -195,7 +195,6 @@ $messages = array(
 'qbbrowse' => 'Navigācija',
 'qbedit' => 'Izmainīšana',
 'qbpageoptions' => 'Šī lapa',
-'qbpageinfo' => 'Konteksts',
 'qbmyoptions' => 'Manas lapas',
 'qbspecialpages' => 'Īpašās lapas',
 'faq' => 'BUJ',
@@ -218,6 +217,7 @@ $messages = array(
 'namespaces' => 'Vārdtelpas',
 'variants' => 'Varianti',
 
+'navigation-heading' => 'Navigācijas izvēlne',
 'errorpagetitle' => 'Kļūda',
 'returnto' => 'Atgriezties: $1.',
 'tagline' => "No ''{{grammar:ģenitīvs|{{SITENAME}}}}''",
@@ -431,11 +431,9 @@ Norādītais iemesls bija ''$2''.",
 # Login and logout pages
 'logouttext' => "'''Tu esi izgājis no {{grammar:ģenitīvs|{{SITENAME}}}}.'''
 
-Vari turpināt to izmantot anonīmi, vari [[Special:UserLogin|atgriezties]] kā cits lietotājs vai varbūt tas pats.
+Vari turpināt to izmantot anonīmi, vari <span class='plainlinks'>[$1 atgriezties]</span> kā cits lietotājs vai varbūt tas pats.
 Ņem vērā, ka arī pēc iziešanas, dažas lapas var tikt parādītas tā, it kā tu vēl būtu iekšā, līdz tiks iztīrīta pārlūka kešatmiņa.",
-'welcomecreation' => '== Laipni lūdzam, $1! ==
-
-Tavs lietotāja konts ir izveidots. Neaizmirsti, ka ir iespējams mainīt [[Special:Preferences|{{grammar:ģenitīvs|{{SITENAME}}}} izmantošanas izvēles]].',
+'welcomeuser' => 'Laipni lūgts, $1!',
 'yourname' => 'Tavs lietotājvārds',
 'yourpassword' => 'Tava parole:',
 'yourpasswordagain' => 'Atkārto paroli',
@@ -458,7 +456,7 @@ Tavs lietotāja konts ir izveidots. Neaizmirsti, ka ir iespējams mainīt [[Spec
 'gotaccount' => "Tev jau ir lietotājvārds? '''$1'''!",
 'gotaccountlink' => 'Dodies iekšā',
 'userlogin-resetlink' => 'Esat aizmirsis savu pieslēgšanās informāciju?',
-'createaccountmail' => 'Pa e-pastu',
+'createaccountmail' => 'pa e-pastu',
 'createaccountreason' => 'Iemesls:',
 'badretype' => 'Tevis ievadītās paroles nesakrīt.',
 'userexists' => 'Ievadītais lietotājvārds jau ir aizņemts.
@@ -727,7 +725,6 @@ Pēdējais reģistra ieraksts ir apskatāms zemāk:",
 'template-protected' => '(aizsargāta)',
 'template-semiprotected' => '(daļēji aizsargāta)',
 'hiddencategories' => 'Šī lapa ietilpst {{PLURAL:$1|1 slēptajā kategorijā|$1 slēptajās kategorijās}}:',
-'nocreatetitle' => 'Lapu veidošana ierobežota',
 'nocreatetext' => '{{grammar:lokatīvs|{{SITENAME}}}} ir atslēgta iespēja izveidot jauinas lapas.
 Tu vari atgriezties atpakaļ un izmainīt esošu lapu, vai arī [[Special:UserLogin|ielogoties, vai izveidot kontu]].',
 'nocreate-loggedin' => 'Tev nav atļaujas veidot jaunas lapas.',
@@ -752,6 +749,11 @@ Izskatās, ka lapa ir dzēsta.',
 'edit-already-exists' => 'Nevar izveidot jaunu lapu.
 Tā jau eksistē.',
 'defaultmessagetext' => 'Noklusētais ziņojuma teksts',
+'invalid-content-data' => 'Nederīgi satura dati',
+
+# Content models
+'content-model-javascript' => 'JavaScript kods',
+'content-model-css' => 'CSS stils',
 
 # Parser/template warnings
 'expensive-parserfunction-category' => 'Lapas ar pārāk daudz laikietilpīgiem apstrādes funkciju izsaukumiem',
@@ -1044,7 +1046,7 @@ Ja vēlies, tu vari izmantot šo nejauši uzģenerēto kodu: $1',
 'prefs-emailconfirm-label' => 'E-pasta statuss:',
 'prefs-textboxsize' => 'Rediģēšanas loga izmērs',
 'youremail' => 'Tava e-pasta adrese:',
-'username' => 'Lietotājvārds:',
+'username' => '{{GENDER:$1|Lietotājvārds}}:',
 'uid' => 'Lietotāja ID:',
 'prefs-memberingroups' => 'Pieder {{PLURAL:$1|grupai|grupām}}:',
 'prefs-registration' => 'Reģistrēšanās datums:',
@@ -1187,11 +1189,13 @@ Ja tu izvēlies to norādīt, tas tiks izmantots, lai identificētu tavu darbu (
 'right-sendemail' => 'Sūtīt e-pastu citiem lietotājiem',
 'right-passwordreset' => 'Apskatīt paroles atiestatīšanas e-pasta ziņojumus',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Jauno lietotāju reģistrs',
+'newuserlogpagetext' => 'Jauno lietotājvārdu reģistrs.',
+
 # User rights log
 'rightslog' => 'Lietotāju tiesību reģistrs',
 'rightslogtext' => 'Šis ir lietotāju tiesību izmaiņu reģistrs.',
-'rightslogentry' => 'izmainīja $1 grupas no $2 uz $3',
-'rightsnone' => '(nav)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'lasīt šo lapu',
@@ -1737,10 +1741,6 @@ Skatīt arī [[Special:WantedCategories|''sarkanās'' kategorijas]].",
 'activeusers-hidesysops' => 'Paslēpt administratorus',
 'activeusers-noresult' => 'Neviens lietotājs nav atrasts.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Jauno lietotāju reģistrs',
-'newuserlogpagetext' => 'Jauno lietotājvārdu reģistrs.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Lietotāju grupu tiesības',
 'listgrouprights-summary' => 'Šis ir šajā wiki definēto lietotāju grupu uskaitījums, kopā ar tām atbilstošajām piekļuves tiesībām.
@@ -1825,11 +1825,7 @@ Ja vēlāk pārdomāsi un nevēlēsies vairs uzraudzīt šo lapu, klikšķini uz
 
 'enotif_mailer' => '{{SITENAME}} paziņojumu izsūtīšana',
 'enotif_reset' => 'Atzīmēt visas lapas kā apskatītas',
-'enotif_newpagetext' => 'Šī ir jauna lapa.',
 'enotif_impersonal_salutation' => '{{SITENAME}} lietotājs',
-'changed' => 'izmainīja',
-'created' => 'izveidoja',
-'enotif_subject' => '{{grammar:ģenitīvs|{{SITENAME}}}} lapu $PAGETITLE $CHANGEDORCREATED lietotājs $PAGEEDITOR',
 'enotif_lastvisited' => '$1 lai apskatītos visas izmaiņas kopš tava pēdējā apmeklējuma.',
 'enotif_lastdiff' => '$1 lai apskatītos šo izmaiņu.',
 'enotif_anon_editor' => 'anonīms lietotājs $1',
@@ -1860,6 +1856,8 @@ $UNWATCHURL
 
 Papildinformācija:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'izveidoja',
+'changed' => 'izmainīja',
 
 # Delete
 'deletepage' => 'Dzēst lapu',
@@ -2023,7 +2021,7 @@ $1',
 'blanknamespace' => '(Pamatlapa)',
 
 # Contributions
-'contributions' => 'Lietotāja devums',
+'contributions' => '{{GENDER:$1|Lietotāja|Lietotājas|Lietotāja}} devums',
 'contributions-title' => 'Lietotāja $1 devums',
 'mycontris' => 'Devums',
 'contribsub2' => 'Lietotājs: $1 ($2)',
@@ -2465,6 +2463,7 @@ To visticamāk izraisīja ārēja saite uz melnajā sarakstā esošu interneta v
 'pageinfo-header-properties' => 'Lapas parametri',
 'pageinfo-length' => 'Lapas garums (baitos)',
 'pageinfo-article-id' => 'Lapas ID',
+'pageinfo-language' => 'Lappuses satura valoda',
 'pageinfo-views' => 'Skatījumu skaits',
 'pageinfo-watchers' => 'Uzraudzītāju skaits',
 'pageinfo-redirects-name' => 'Pāradresācijas uz šo lapu',
@@ -2472,6 +2471,10 @@ To visticamāk izraisīja ārēja saite uz melnajā sarakstā esošu interneta v
 'pageinfo-lastuser' => 'Pēdējais labotājs',
 'pageinfo-edits' => 'Izmaiņu skaits',
 'pageinfo-authors' => 'Atsevišķu autoru skaits',
+'pageinfo-toolboxlink' => 'Lapas informācija',
+'pageinfo-redirectsto-info' => 'info',
+'pageinfo-contentpage-yes' => 'Jā',
+'pageinfo-protect-cascading-yes' => 'Jā',
 
 # Patrolling
 'markaspatrolleddiff' => 'Atzīmēt kā pārbaudītu',
@@ -2512,6 +2515,7 @@ $1',
 'file-info-size-pages' => '$1 × $2 pikseļi, faila izmērs: $3, MIME tips: $4, $5 {{PLURAL:$5|lapa|lapas}}',
 'file-nohires' => 'Augstāka izšķirtspēja nav pieejama.',
 'svg-long-desc' => 'SVG fails, definētais izmērs $1 × $2 pikseļi, faila izmērs: $3',
+'svg-long-error' => 'Nederīgs SVG fails: $1',
 'show-big-image' => 'Pilnā izmērā',
 'show-big-image-preview' => 'Šī priekšskata izmērs: $1.',
 'show-big-image-other' => '{{PLURAL:$2|Cits izmērs|Citi izmēri}}: $1.',
@@ -3117,7 +3121,7 @@ Var arī lietot [[Special:EditWatchlist|standarta izmainīšanas lapu]].',
 'logentry-newusers-create' => 'Lietotāja konts $1 tika izveidots',
 'logentry-newusers-create2' => 'Lietotāja kontu $3 izveidoja $1',
 'logentry-newusers-autocreate' => 'Konts $1 tika izveidots automātiski',
-'newuserlog-byemail' => 'parole nosūtīta pa e-pastu',
+'rightsnone' => '(nav)',
 
 # Feedback
 'feedback-subject' => 'Temats:',

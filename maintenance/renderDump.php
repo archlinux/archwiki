@@ -80,8 +80,6 @@ class DumpRenderer extends Maintenance {
 	 * @param $rev Revision
 	 */
 	public function handleRevision( $rev ) {
-		global $wgParserConf;
-
 		$title = $rev->getTitle();
 		if ( !$title ) {
 			$this->error( "Got bogus revision with null title!" );
@@ -100,10 +98,10 @@ class DumpRenderer extends Maintenance {
 		$this->output( sprintf( "%s\n", $filename, $display ) );
 
 		$user = new User();
-		$parser = new $wgParserConf['class']();
 		$options = ParserOptions::newFromUser( $user );
 
-		$output = $parser->parse( $rev->getText(), $title, $options );
+		$content = $rev->getContent();
+		$output = $content->getParserOutput( $title, null, $options );
 
 		file_put_contents( $filename,
 			"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" " .

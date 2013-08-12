@@ -149,7 +149,6 @@ $messages = array(
 'qbfind' => 'Truòva',
 'qbedit' => 'Càgna',
 'qbpageoptions' => 'Chesta paggena',
-'qbpageinfo' => "Nfrummazzione ncopp'â paggena",
 'qbmyoptions' => "'E ppaggene mie",
 'qbspecialpages' => 'Pàggene speciàle',
 'faq' => 'FAQ',
@@ -270,9 +269,7 @@ $messages = array(
 'logouttext' => "'''Site asciùte.'''
 
 Putite cuntinuà a ausà {{SITENAME}} comme n'utente senza nomme, o si nò putite trasì n'ata vota, cu 'o stesso nomme o cu n'ato nomme.",
-'welcomecreation' => "== Bemmenuto, $1! ==
-
-'O cunto è stato criato currettamente.  Nun scurdà 'e perzonalizzà 'e ppreferenze 'e {{SITENAME}}.",
+'welcomeuser' => 'Bemmenuto, $1!',
 'yourname' => 'Nomme utente',
 'yourpassword' => 'Password:',
 'remembermypassword' => 'Allicuordate d"a password (for a maximum of $1 {{PLURAL:$1|day|days}})',
@@ -389,9 +386,6 @@ Putite cuntinuà a ausà {{SITENAME}} comme n'utente senza nomme, o si nò putit
 'username' => 'Nomme utente',
 'yourlanguage' => 'Lengua:',
 
-# User rights log
-'rightsnone' => '(nisciuno)',
-
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'càgna chesta paggena',
 
@@ -495,7 +489,6 @@ Also see [[Special:WantedCategories|wanted categories]].",
 'unwatch' => 'Nun segui',
 'notanarticle' => 'Chesta paggena nun è na voce',
 
-'enotif_newpagetext' => 'Chesta è na paggena nòva.',
 'changed' => 'cagnata',
 
 # Delete
@@ -529,7 +522,7 @@ Also see [[Special:WantedCategories|wanted categories]].",
 'blanknamespace' => '(Prencepale)',
 
 # Contributions
-'contributions' => 'Contribbute utente',
+'contributions' => 'Contribbute {{GENDER:$1|utente}}',
 'mycontris' => "'E ffatiche d''e mmeje",
 'uctop' => '(ultima ppe a paggena)',
 
@@ -665,5 +658,8 @@ Also see [[Special:WantedCategories|wanted categories]].",
 
 # Special:SpecialPages
 'specialpages' => 'Paggene speciale',
+
+# New logging system
+'rightsnone' => '(nisciuno)',
 
 );

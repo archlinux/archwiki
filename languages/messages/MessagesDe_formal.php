@@ -71,12 +71,8 @@ Nutzen Sie bitte [//translatewiki.net/ translatewiki.net], das Lokalisierungspro
 # Login and logout pages
 'logouttext' => "'''Sie sind nun abgemeldet.'''
 
-Sie können {{SITENAME}} jetzt anonym weiternutzen, oder sich erneut unter demselben oder einem anderen Benutzernamen [[Special:UserLogin|anmelden]].
+Sie können {{SITENAME}} jetzt anonym weiternutzen, oder sich erneut unter demselben oder einem anderen Benutzernamen <span class='plainlinks'>[$1 anmelden]</span>.
 Beachten Sie, dass einige Seiten noch anzeigen können, dass Sie angemeldet sind, solange Sie nicht Ihren Browsercache geleert haben.",
-'welcomecreation' => '== Willkommen, $1! ==
-
-Ihr Benutzerkonto wurde soeben eingerichtet.
-Vergessen Sie nicht, Ihre [[Special:Preferences|Einstellungen]] anzupassen.',
 'yourdomainname' => 'Ihre Domain:',
 'password-change-forbidden' => 'Sie können auf diesem Wiki keine Passwörter ändern.',
 'externaldberror' => 'Entweder es liegt ein Fehler bei der externen Authentifizierung vor oder Sie dürfen Ihr externes Benutzerkonto nicht aktualisieren.',
@@ -478,11 +474,7 @@ Spätere Änderungen an dieser Seite und der dazugehörigen Diskussionsseite wer
 
 'enotif_body' => 'Hallo $WATCHINGUSERNAME,
 
-die {{SITENAME}}-Seite „$PAGETITLE“ wurde von $PAGEEDITOR am $PAGEEDITDATE um $PAGEEDITTIME Uhr $CHANGEDORCREATED.
-
-Aktuelle Version: $PAGETITLE_URL
-
-$NEWPAGE
+$PAGEINTRO $NEWPAGE
 
 Zusammenfassung des Bearbeiters: $PAGESUMMARY $PAGEMINOREDIT
 
@@ -490,7 +482,8 @@ Kontakt zum Bearbeiter:
 E-Mail: $PAGEEDITOR_EMAIL
 Wiki: $PAGEEDITOR_WIKI
 
-Bei weiterer Aktivität auf der Seite werden Ihnen so lange keine weiteren Benachrichtigungs-E-Mails gesendet, bis Sie die Seite wieder besucht haben. Auf Ihrer Beobachtungsliste können Sie alle Benachrichtigungsmarkierungen zusammen zurücksetzen.
+Bei weiterer Aktivität auf der Seite werden Ihnen so lange keine weiteren Benachrichtigungs-E-Mails gesendet, bis Sie die Seite wieder besucht haben.
+Auf Ihrer Beobachtungsliste können Sie alle Benachrichtigungsmarkierungen zusammen zurücksetzen.
 
 Ihr freundliches {{SITENAME}}-Benachrichtigungssystem
 

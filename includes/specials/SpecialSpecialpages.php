@@ -62,11 +62,15 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 		$groups = array();
 		foreach ( $pages as $page ) {
 			if ( $page->isListed() ) {
-				$group = SpecialPageFactory::getGroup( $page );
+				$group = $page->getFinalGroupName();
 				if( !isset( $groups[$group] ) ) {
 					$groups[$group] = array();
 				}
-				$groups[$group][$page->getDescription()] = array( $page->getTitle(), $page->isRestricted(), $page->isExpensive() );
+				$groups[$group][$page->getDescription()] = array(
+					$page->getTitle(),
+					$page->isRestricted(),
+					$page->isCached()
+				);
 			}
 		}
 
@@ -88,15 +92,14 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 	}
 
 	private function outputPageList( $groups ) {
-		global $wgMiserMode;
 		$out = $this->getOutput();
 
 		$includesRestrictedPages = false;
 		$includesCachedPages = false;
 
 		foreach ( $groups as $group => $sortedPages ) {
-			$middle = ceil( count( $sortedPages )/2 );
 			$total = count( $sortedPages );
+			$middle = ceil( $total / 2 );
 			$count = 0;
 
 			$out->wrapWikiMsg( "<h2 class=\"mw-specialpagesgroup\" id=\"mw-specialpagesgroup-$group\">$1</h2>\n", "specialpages-group-$group" );
@@ -107,10 +110,10 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 				Html::openElement( 'ul' ) . "\n"
 			);
 			foreach( $sortedPages as $desc => $specialpage ) {
-				list( $title, $restricted, $expensive) = $specialpage;
+				list( $title, $restricted, $cached ) = $specialpage;
 
 				$pageClasses = array();
-				if ( $expensive && $wgMiserMode ){
+				if ( $cached ) {
 					$includesCachedPages = true;
 					$pageClasses[] = 'mw-specialpagecached';
 				}
@@ -119,7 +122,7 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 					$pageClasses[] = 'mw-specialpagerestricted';
 				}
 
-				$link = Linker::linkKnown( $title , htmlspecialchars( $desc ) );
+				$link = Linker::linkKnown( $title, htmlspecialchars( $desc ) );
 				$out->addHTML( Html::rawElement( 'li', array( 'class' => implode( ' ', $pageClasses ) ), $link ) . "\n" );
 
 				# Split up the larger groups

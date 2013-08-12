@@ -37,7 +37,7 @@ class SkinModern extends SkinTemplate {
 	/**
 	 * @param $out OutputPage
 	 */
-	function setupSkinUserCss( OutputPage $out ){
+	function setupSkinUserCss( OutputPage $out ) {
 		parent::setupSkinUserCss( $out );
 		$out->addModuleStyles ('skins.modern');
 	}
@@ -65,7 +65,10 @@ class ModernTemplate extends MonoBookTemplate {
 ?>
 
 	<!-- heading -->
-	<div id="mw_header"><h1 id="firstHeading"><span dir="auto"><?php $this->html('title') ?></span></h1></div>
+	<div id="mw_header"><h1 id="firstHeading" lang="<?php
+		$this->data['pageLanguage'] = $this->getSkin()->getTitle()->getPageViewLanguage()->getCode();
+		$this->html( 'pageLanguage' );
+	?>"><span dir="auto"><?php $this->html('title') ?></span></h1></div>
 
 	<div id="mw_main">
 	<div id="mw_contentwrapper">
@@ -73,7 +76,7 @@ class ModernTemplate extends MonoBookTemplate {
 <?php $this->cactions(); ?>
 
 	<!-- content -->
-	<div id="mw_content">
+	<div id="mw_content" role="main">
 	<!-- contentholder does nothing by default, but it allows users to style the text inside
 	     the content area without affecting the meaning of 'em' in #mw_content, which is used
 	     for the margins -->
@@ -103,6 +106,7 @@ class ModernTemplate extends MonoBookTemplate {
 	</div><!-- mw_contentwrapper -->
 
 	<div id="mw_portlets"<?php $this->html("userlangattributes") ?>>
+	<h2><?php $this->msg( 'navigation-heading' ) ?></h2>
 
 	<!-- portlets -->
 	<?php $this->renderPortals( $this->data['sidebar'] ); ?>
@@ -115,8 +119,8 @@ class ModernTemplate extends MonoBookTemplate {
 	<div class="mw_clear"></div>
 
 	<!-- personal portlet -->
-	<div class="portlet" id="p-personal">
-		<h5><?php $this->msg('personaltools') ?></h5>
+	<div class="portlet" id="p-personal" role="navigation">
+		<h3><?php $this->msg('personaltools') ?></h3>
 		<div class="pBody">
 			<ul>
 <?php		foreach($this->getPersonalTools() as $key => $item) { ?>
@@ -129,7 +133,7 @@ class ModernTemplate extends MonoBookTemplate {
 
 
 	<!-- footer -->
-	<div id="footer"<?php $this->html('userlangattributes') ?>>
+	<div id="footer" role="contentinfo"<?php $this->html('userlangattributes') ?>>
 			<ul id="f-list">
 <?php
 		foreach( $this->getFooterLinks("flat") as $aLink ) {

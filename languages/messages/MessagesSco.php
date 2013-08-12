@@ -159,7 +159,6 @@ $messages = array(
 'qbbrowse' => 'Brouse',
 'qbedit' => 'Edit',
 'qbpageoptions' => 'This page',
-'qbpageinfo' => 'Context',
 'qbmyoptions' => 'Ma pages',
 'qbspecialpages' => 'Byordinar pages',
 'faq' => 'ASQ',
@@ -372,10 +371,6 @@ The grunds for this are: ''$2''.",
 
 Ye can continue to uise {{SITENAME}} namelessly, or ye can log in again as the same or as a different uiser.
 Mynd that some pages micht continue tae be displayed as if ye war aye loggit in, till ye clear yer brouser cache.",
-'welcomecreation' => '== Guid tae see ye, $1! ==
-
-Yer accoont haes been creatit.
-Mynd an chynge yer [[Special:Preferences|{{SITENAME}} preferences]].',
 'yourname' => 'Yer uiser name',
 'yourpassword' => 'Passwaird:',
 'yourpasswordagain' => 'Retype passwaird:',
@@ -600,7 +595,6 @@ lang, an that's langer than the maximum of $2 kilobytes. It canna be hained.'''"
 'template-protected' => '(protectit)',
 'template-semiprotected' => '(semi-protectit)',
 'hiddencategories' => 'This page is a member of {{PLURAL:$1|1 hidden category|$1 hidden categories}}:',
-'nocreatetitle' => 'Page makkin limitit',
 'nocreatetext' => 'This site haes restrictit the ability to mak new pages.
 Ye can go back an eik tae an existing page, or [[Special:UserLogin|log in or mak an accoont]].',
 'nocreate-loggedin' => 'Ye dinnae hae the richts tae mak new pages on this wiki.',
@@ -812,6 +806,9 @@ Yer e-mail address insae revealed whin ither uisers contact ye.",
 
 # Rights
 'right-delete' => 'Delete pages',
+
+# Special:Log/newusers
+'newuserlogpage' => 'Uiser creation log',
 
 # User rights log
 'rightslog' => 'Uiser richts log',
@@ -1059,9 +1056,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-submit' => 'Shaw',
 'listusers-blocked' => '(blockit)',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Uiser creation log',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(leet o members)',
 
@@ -1099,10 +1093,9 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'unwatching' => 'Unwatchin...',
 
 'enotif_reset' => 'Merk aa pages visitit',
-'changed' => 'chynged',
-'created' => 'creatit',
-'enotif_subject' => '{{SITENAME}} page $PAGETITLE haes been $CHANGEDORCREATED bi $PAGEEDITOR',
 'enotif_lastvisited' => 'Hae a leuk at $1 for aa chynges sin yer last visit.',
+'created' => 'creatit',
+'changed' => 'chynged',
 
 # Delete
 'deletepage' => 'Delete page',

@@ -87,6 +87,9 @@ class FileBackendGroup {
 			$thumbDir = isset( $info['thumbDir'] )
 				? $info['thumbDir']
 				: "{$directory}/thumb";
+			$transcodedDir = isset( $info['transcodedDir'] )
+				? $info['transcodedDir']
+				: "{$directory}/transcoded";
 			$fileMode = isset( $info['fileMode'] )
 				? $info['fileMode']
 				: 0644;
@@ -98,6 +101,7 @@ class FileBackendGroup {
 				'containerPaths' => array(
 					"{$repoName}-public"  => "{$directory}",
 					"{$repoName}-thumb"   => $thumbDir,
+					"{$repoName}-transcoded"   => $transcodedDir,
 					"{$repoName}-deleted" => $deletedDir,
 					"{$repoName}-temp"    => "{$directory}/temp"
 				),
@@ -122,7 +126,9 @@ class FileBackendGroup {
 				throw new MWException( "Cannot register a backend with no name." );
 			}
 			$name = $config['name'];
-			if ( !isset( $config['class'] ) ) {
+			if ( isset( $this->backends[$name] ) ) {
+				throw new MWException( "Backend with name `{$name}` already registered." );
+			} elseif ( !isset( $config['class'] ) ) {
 				throw new MWException( "Cannot register backend `{$name}` with no class." );
 			}
 			$class = $config['class'];
@@ -178,7 +184,7 @@ class FileBackendGroup {
 	 * @return FileBackend|null Backend or null on failure
 	 */
 	public function backendFromPath( $storagePath ) {
-		list( $backend, $c, $p ) = FileBackend::splitStoragePath( $storagePath );
+		list( $backend, , ) = FileBackend::splitStoragePath( $storagePath );
 		if ( $backend !== null && isset( $this->backends[$backend] ) ) {
 			return $this->get( $backend );
 		}

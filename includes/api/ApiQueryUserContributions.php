@@ -160,10 +160,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		// Handle continue parameter
 		if ( $this->multiUserMode && !is_null( $this->params['continue'] ) ) {
 			$continue = explode( '|', $this->params['continue'] );
-			if ( count( $continue ) != 2 ) {
-				$this->dieUsage( 'Invalid continue param. You should pass the original ' .
-					'value returned by the previous query', '_badcontinue' );
-			}
+			$this->dieContinueUsageIf( count( $continue ) != 2 );
 			$db = $this->getDB();
 			$encUser = $db->addQuotes( $continue[0] );
 			$encTS = $db->addQuotes( $db->timestamp( $continue[1] ) );
@@ -223,7 +220,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		) );
 
 		if ( isset( $show['patrolled'] ) || isset( $show['!patrolled'] ) ||
-				 $this->fld_patrolled ) {
+				$this->fld_patrolled ) {
 			if ( !$user->useRCPatrol() && !$user->useNPPatrol() ) {
 				$this->dieUsage( 'You need the patrol right to request the patrolled flag', 'permissiondenied' );
 			}
@@ -445,7 +442,7 @@ class ApiQueryContributions extends ApiQueryBase {
 			'end' => 'The end timestamp to return to',
 			'continue' => 'When more results are available, use this to continue',
 			'user' => 'The users to retrieve contributions for',
-			'userprefix' => "Retrieve contibutions for all users whose names begin with this value. Overrides {$p}user",
+			'userprefix' => "Retrieve contributions for all users whose names begin with this value. Overrides {$p}user",
 			'dir' => $this->getDirectionDescription( $p ),
 			'namespace' => 'Only list contributions in these namespaces',
 			'prop' => array(
@@ -545,9 +542,5 @@ class ApiQueryContributions extends ApiQueryBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Usercontribs';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

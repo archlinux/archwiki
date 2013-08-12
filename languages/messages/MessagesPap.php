@@ -164,9 +164,6 @@ Bo por haña un lista di tur [[Special:SpecialPages|{{int:specialpages}}]].',
 'viewsource' => 'Wak fuente',
 
 # Login and logout pages
-'welcomecreation' => '== Bon bini, $1! ==
-Bo kuenta ta trahá.
-No lubidá di kambia bo [[Special:Preferences|{{SITENAME}} preferensianan]].',
 'yourname' => 'Nòmber di uzadó',
 'yourpassword' => 'Kontraseña',
 'yourpasswordagain' => 'Hinka kontraseña atrobe',
@@ -309,8 +306,8 @@ Si despues bo ke kita e página for di bo lista di observashon, primi \"Stop di 
 'watchlistcontains' => 'Bo lista di observashon tin $1 {{PLURAL:$1|página|páginanan}}.',
 'wlshowlast' => 'Mustra último $1 oranan $2 dianan $3',
 
-'changed' => 'kambiá',
 'created' => 'trahá',
+'changed' => 'kambiá',
 
 # Delete
 'confirm' => 'Konfirmá',

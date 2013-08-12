@@ -292,7 +292,6 @@ $messages = array(
 'qbbrowse' => '覽',
 'qbedit' => '纂',
 'qbpageoptions' => '此頁',
-'qbpageinfo' => '內文',
 'qbmyoptions' => '吾好',
 'qbspecialpages' => '非凡',
 'faq' => '頻答問',
@@ -526,10 +525,12 @@ $2',
 # Login and logout pages
 'logouttext' => "'''子去簿矣'''
 
-子可匿名還覽{{SITENAME}}，或[[Special:UserLogin|復登]]同簿、異簿。
+子可匿名還覽{{SITENAME}}，或<span class='plainlinks'>[$1 復登]</span>同簿、異簿。
 未清謄本，覽器文舊，且慎之。",
-'welcomecreation' => '== $1大駕光臨! ==
-子簿增矣，敬更[[Special:Preferences|簿註]]。',
+'welcomeuser' => '$1居，惠迎！',
+'welcomecreation-msg' => '子簿建矣。
+
+請更簿註乎[[Special:Preferences|此]]。',
 'yourname' => '名',
 'yourpassword' => '符節',
 'yourpasswordagain' => '復核節',
@@ -763,7 +764,6 @@ $2',
 'template-protected' => '（錮）',
 'template-semiprotected' => '（半錮）',
 'hiddencategories' => '此頁屬隱類之員有$1：',
-'nocreatetitle' => '新題謝焉',
 'nocreatetext' => '舊題可修，新題謝焉。[[Special:UserLogin|登簿、增簿]]以逮權也。',
 'nocreate-loggedin' => '子權未逮，新頁謝焉。',
 'sectioneditnotsupported-title' => '不纂持節',
@@ -1254,9 +1254,12 @@ $1",
 'right-override-export-depth' => '出有五層深之頁',
 'right-sendemail' => '擬書傳予他簿',
 
+# Special:Log/newusers
+'newuserlogpage' => '誌簿',
+'newuserlogpagetext' => '此為誌簿之記也',
+
 # User rights log
 'rightslog' => '職權志',
-'rightsnone' => '（凡）',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => '閱此頁',
@@ -1760,10 +1763,6 @@ $1',
 'activeusers-hidesysops' => '藏有秩',
 'activeusers-noresult' => '無簿矣。',
 
-# Special:Log/newusers
-'newuserlogpage' => '誌簿',
-'newuserlogpagetext' => '此為誌簿之記也',
-
 # Special:ListGroupRights
 'listgrouprights' => '權任一覽',
 'listgrouprights-summary' => '此所列述，諸職所司也，各有異同。欲知其詳，請閱[[{{MediaWiki:Listgrouprights-helppage}}|此文]]。',
@@ -1847,11 +1846,7 @@ $1',
 
 'enotif_mailer' => '{{SITENAME}}報',
 'enotif_reset' => '令為盡閱',
-'enotif_newpagetext' => '新灶',
 'enotif_impersonal_salutation' => '貴客',
-'changed' => '易',
-'created' => '撰',
-'enotif_subject' => '{{SITENAME}}簿{$PAGEEDITOR}{$CHANGEDORCREATED}{$PAGETITLE}',
 'enotif_lastvisited' => '自子出簿，有易見$1。',
 'enotif_lastdiff' => '欲閱此易，見$1。',
 'enotif_anon_editor' => '過客$1',
@@ -1874,6 +1869,8 @@ $NEWPAGE
 欲刪之頁，惠訪$UNWATCHURL
 
 饋助之，惠訪{{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => '撰',
+'changed' => '易',
 
 # Delete
 'deletepage' => '刪頁',
@@ -2846,6 +2843,6 @@ MediaWiki乃為用之發，無擔之責也；亦無售目之默擔也。參GNU�
 # New logging system
 'revdelete-restricted' => '應限至有秩',
 'revdelete-unrestricted' => '除限自有秩',
-'newuserlog-byemail' => '號發自電郵',
+'rightsnone' => '（凡）',
 
 );

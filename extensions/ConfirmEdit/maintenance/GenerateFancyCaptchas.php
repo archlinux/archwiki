@@ -87,7 +87,7 @@ class GenerateFancyCaptchas extends Maintenance {
 
 			$this->output( "Generating $countGen new captchas...\n" );
 			$retVal = 1;
-			wfShellExec( $cmd, $retVal );
+			wfShellExec( $cmd, $retVal, array(), array( 'time' => 0 ) );
 			if ( $retVal != 0 ) {
 				wfRecursiveRemoveDir( $tmpDir );
 				$this->error( "Could not run generation script.\n", 1 );
@@ -105,9 +105,11 @@ class GenerateFancyCaptchas extends Maintenance {
 					continue;
 				}
 				list( $salt, $hash ) = $instance->hashFromImageName( $fileInfo->getBasename() );
+				$dest = $instance->imagePath( $salt, $hash );
+				$backend->prepare( array( 'dir' => dirname( $dest ) ) );
 				$status = $backend->quickStore( array(
 					'src' => $fileInfo->getPathname(),
-					'dst' => $instance->imagePath( $salt, $hash )
+					'dst' => $dest
 				) );
 				if ( !$status->isOK() ) {
 					$this->error( "Could not save file '{$fileInfo->getPathname()}'.\n" );

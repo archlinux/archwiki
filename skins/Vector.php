@@ -57,7 +57,7 @@ class SkinVector extends SkinTemplate {
 				"/{$this->stylename}/csshover{$min}.htc\")}</style><![endif]-->"
 		);
 
-		$out->addModuleScripts( 'skins.vector' );
+		$out->addModules( 'skins.vector.js' );
 	}
 
 	/**
@@ -65,14 +65,14 @@ class SkinVector extends SkinTemplate {
 	 * fixes bug 22916
 	 * @param $out OutputPage object
 	 */
-	function setupSkinUserCss( OutputPage $out ){
+	function setupSkinUserCss( OutputPage $out ) {
 		parent::setupSkinUserCss( $out );
 		$out->addModuleStyles( 'skins.vector' );
 	}
 
 	/**
 	 * Adds classes to the body element.
-	 * 
+	 *
 	 * @param $out OutputPage object
 	 * @param &$bodyAttrs Array of attributes that will be set on the body element
 	 */
@@ -156,7 +156,7 @@ class VectorTemplate extends BaseTemplate {
 		<div id="mw-page-base" class="noprint"></div>
 		<div id="mw-head-base" class="noprint"></div>
 		<!-- content -->
-		<div id="content" class="mw-body">
+		<div id="content" class="mw-body" role="main">
 			<a id="top"></a>
 			<div id="mw-js-message" style="display:none;"<?php $this->html( 'userlangattributes' ) ?>></div>
 			<?php if ( $this->data['sitenotice'] ): ?>
@@ -165,7 +165,10 @@ class VectorTemplate extends BaseTemplate {
 			<!-- /sitenotice -->
 			<?php endif; ?>
 			<!-- firstHeading -->
-			<h1 id="firstHeading" class="firstHeading"><span dir="auto"><?php $this->html( 'title' ) ?></span></h1>
+			<h1 id="firstHeading" class="firstHeading" lang="<?php
+				$this->data['pageLanguage'] = $this->getSkin()->getTitle()->getPageViewLanguage()->getCode();
+				$this->html( 'pageLanguage' );
+			?>"><span dir="auto"><?php $this->html( 'title' ) ?></span></h1>
 			<!-- /firstHeading -->
 			<!-- bodyContent -->
 			<div id="bodyContent">
@@ -191,7 +194,7 @@ class VectorTemplate extends BaseTemplate {
 				<!-- jumpto -->
 				<div id="jump-to-nav" class="mw-jump">
 					<?php $this->msg( 'jumpto' ) ?>
-					<a href="#mw-head"><?php $this->msg( 'jumptonavigation' ) ?></a><?php $this->msg( 'comma-separator' ) ?>
+					<a href="#mw-navigation"><?php $this->msg( 'jumptonavigation' ) ?></a><?php $this->msg( 'comma-separator' ) ?>
 					<a href="#p-search"><?php $this->msg( 'jumptosearch' ) ?></a>
 				</div>
 				<!-- /jumpto -->
@@ -224,27 +227,30 @@ class VectorTemplate extends BaseTemplate {
 			<!-- /bodyContent -->
 		</div>
 		<!-- /content -->
-		<!-- header -->
-		<div id="mw-head" class="noprint">
-			<?php $this->renderNavigation( 'PERSONAL' ); ?>
-			<div id="left-navigation">
-				<?php $this->renderNavigation( array( 'NAMESPACES', 'VARIANTS' ) ); ?>
+		<div id="mw-navigation">
+			<h2><?php $this->msg( 'navigation-heading' ) ?></h2>
+			<!-- header -->
+			<div id="mw-head">
+				<?php $this->renderNavigation( 'PERSONAL' ); ?>
+				<div id="left-navigation">
+					<?php $this->renderNavigation( array( 'NAMESPACES', 'VARIANTS' ) ); ?>
+				</div>
+				<div id="right-navigation">
+					<?php $this->renderNavigation( array( 'VIEWS', 'ACTIONS', 'SEARCH' ) ); ?>
+				</div>
 			</div>
-			<div id="right-navigation">
-				<?php $this->renderNavigation( array( 'VIEWS', 'ACTIONS', 'SEARCH' ) ); ?>
-			</div>
-		</div>
-		<!-- /header -->
-		<!-- panel -->
-			<div id="mw-panel" class="noprint">
+			<!-- /header -->
+			<!-- panel -->
+			<div id="mw-panel">
 				<!-- logo -->
-					<div id="p-logo"><a style="background-image: url(<?php $this->text( 'logopath' ) ?>);" href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>" <?php echo Xml::expandAttributes( Linker::tooltipAndAccesskeyAttribs( 'p-logo' ) ) ?>></a></div>
+					<div id="p-logo" role="banner"><a style="background-image: url(<?php $this->text( 'logopath' ) ?>);" href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>" <?php echo Xml::expandAttributes( Linker::tooltipAndAccesskeyAttribs( 'p-logo' ) ) ?>></a></div>
 				<!-- /logo -->
 				<?php $this->renderPortals( $this->data['sidebar'] ); ?>
 			</div>
-		<!-- /panel -->
+			<!-- /panel -->
+		</div>
 		<!-- footer -->
-		<div id="footer"<?php $this->html( 'userlangattributes' ) ?>>
+		<div id="footer" role="contentinfo"<?php $this->html( 'userlangattributes' ) ?>>
 			<?php foreach( $this->getFooterLinks() as $category => $links ): ?>
 				<ul id="footer-<?php echo $category ?>">
 					<?php foreach( $links as $link ): ?>
@@ -327,8 +333,8 @@ class VectorTemplate extends BaseTemplate {
 			$msg = $name;
 		}
 		?>
-<div class="portal" id='<?php echo Sanitizer::escapeId( "p-$name" ) ?>'<?php echo Linker::tooltip( 'p-' . $name ) ?>>
-	<h5<?php $this->html( 'userlangattributes' ) ?>><?php $msgObj = wfMessage( $msg ); echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $msg ); ?></h5>
+<div class="portal" role="navigation" id='<?php echo Sanitizer::escapeId( "p-$name" ) ?>'<?php echo Linker::tooltip( 'p-' . $name ) ?>>
+	<h3<?php $this->html( 'userlangattributes' ) ?>><?php $msgObj = wfMessage( $msg ); echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $msg ); ?></h3>
 	<div class="body">
 <?php
 		if ( is_array( $content ) ): ?>
@@ -377,8 +383,8 @@ class VectorTemplate extends BaseTemplate {
 			switch ( $element ) {
 				case 'NAMESPACES':
 ?>
-<div id="p-namespaces" class="vectorTabs<?php if ( count( $this->data['namespace_urls'] ) == 0 ) echo ' emptyPortlet'; ?>">
-	<h5><?php $this->msg( 'namespaces' ) ?></h5>
+<div id="p-namespaces" role="navigation" class="vectorTabs<?php if ( count( $this->data['namespace_urls'] ) == 0 ) echo ' emptyPortlet'; ?>">
+	<h3><?php $this->msg( 'namespaces' ) ?></h3>
 	<ul<?php $this->html( 'userlangattributes' ) ?>>
 		<?php foreach ( $this->data['namespace_urls'] as $link ): ?>
 			<li <?php echo $link['attributes'] ?>><span><a href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a></span></li>
@@ -389,15 +395,15 @@ class VectorTemplate extends BaseTemplate {
 				break;
 				case 'VARIANTS':
 ?>
-<div id="p-variants" class="vectorMenu<?php if ( count( $this->data['variant_urls'] ) == 0 ) echo ' emptyPortlet'; ?>">
-	<h4>
+<div id="p-variants" role="navigation" class="vectorMenu<?php if ( count( $this->data['variant_urls'] ) == 0 ) echo ' emptyPortlet'; ?>">
+	<h3 id="mw-vector-current-variant">
 	<?php foreach ( $this->data['variant_urls'] as $link ): ?>
 		<?php if ( stripos( $link['attributes'], 'selected' ) !== false ): ?>
 			<?php echo htmlspecialchars( $link['text'] ) ?>
 		<?php endif; ?>
 	<?php endforeach; ?>
-	</h4>
-	<h5><span><?php $this->msg( 'variants' ) ?></span><a href="#"></a></h5>
+	</h3>
+	<h3><span><?php $this->msg( 'variants' ) ?></span><a href="#"></a></h3>
 	<div class="menu">
 		<ul>
 			<?php foreach ( $this->data['variant_urls'] as $link ): ?>
@@ -410,8 +416,8 @@ class VectorTemplate extends BaseTemplate {
 				break;
 				case 'VIEWS':
 ?>
-<div id="p-views" class="vectorTabs<?php if ( count( $this->data['view_urls'] ) == 0 ) { echo ' emptyPortlet'; } ?>">
-	<h5><?php $this->msg('views') ?></h5>
+<div id="p-views" role="navigation" class="vectorTabs<?php if ( count( $this->data['view_urls'] ) == 0 ) { echo ' emptyPortlet'; } ?>">
+	<h3><?php $this->msg('views') ?></h3>
 	<ul<?php $this->html('userlangattributes') ?>>
 		<?php foreach ( $this->data['view_urls'] as $link ): ?>
 			<li<?php echo $link['attributes'] ?>><span><a href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
@@ -427,8 +433,8 @@ class VectorTemplate extends BaseTemplate {
 				break;
 				case 'ACTIONS':
 ?>
-<div id="p-cactions" class="vectorMenu<?php if ( count( $this->data['action_urls'] ) == 0 ) echo ' emptyPortlet'; ?>">
-	<h5><span><?php $this->msg( 'actions' ) ?></span><a href="#"></a></h5>
+<div id="p-cactions" role="navigation" class="vectorMenu<?php if ( count( $this->data['action_urls'] ) == 0 ) echo ' emptyPortlet'; ?>">
+	<h3><span><?php $this->msg( 'actions' ) ?></span><a href="#"></a></h3>
 	<div class="menu">
 		<ul<?php $this->html( 'userlangattributes' ) ?>>
 			<?php foreach ( $this->data['action_urls'] as $link ): ?>
@@ -441,21 +447,23 @@ class VectorTemplate extends BaseTemplate {
 				break;
 				case 'PERSONAL':
 ?>
-<div id="p-personal" class="<?php if ( count( $this->data['personal_urls'] ) == 0 ) echo ' emptyPortlet'; ?>">
-	<h5><?php $this->msg( 'personaltools' ) ?></h5>
+<div id="p-personal" role="navigation" class="<?php if ( count( $this->data['personal_urls'] ) == 0 ) echo ' emptyPortlet'; ?>">
+	<h3><?php $this->msg( 'personaltools' ) ?></h3>
 	<ul<?php $this->html( 'userlangattributes' ) ?>>
-<?php			foreach( $this->getPersonalTools() as $key => $item ) { ?>
-		<?php echo $this->makeListItem( $key, $item ); ?>
-
-<?php			} ?>
+<?php
+					$personalTools = $this->getPersonalTools();
+					foreach ( $personalTools as $key => $item ) {
+						echo $this->makeListItem( $key, $item );
+					}
+?>
 	</ul>
 </div>
 <?php
 				break;
 				case 'SEARCH':
 ?>
-<div id="p-search">
-	<h5<?php $this->html( 'userlangattributes' ) ?>><label for="searchInput"><?php $this->msg( 'search' ) ?></label></h5>
+<div id="p-search" role="search">
+	<h3<?php $this->html( 'userlangattributes' ) ?>><label for="searchInput"><?php $this->msg( 'search' ) ?></label></h3>
 	<form action="<?php $this->text( 'wgScript' ) ?>" id="searchform">
 		<?php if ( $wgVectorUseSimpleSearch && $this->getSkin()->getUser()->getOption( 'vector-simplesearch' ) ): ?>
 		<div id="simpleSearch">

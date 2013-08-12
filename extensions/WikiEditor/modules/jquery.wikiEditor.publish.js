@@ -105,6 +105,7 @@ fn: {
 							e.preventDefault();
 						});
 					},
+					immediateCreate: true,
 					dialog: {
 						buttons: {
 							'wikieditor-publish-dialog-publish': function () {
@@ -144,7 +145,10 @@ fn: {
 
 		context.fn.addButton( {
 			'captionMsg': 'wikieditor-publish-button-cancel',
-			'action': function () { }
+			'action': function () {
+				window.location.href = $( '#mw-editform-cancel' ).attr( 'href' );
+				return false;
+			}
 		} );
 	}
 }

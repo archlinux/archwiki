@@ -20,6 +20,7 @@
  * @author Demmy
  * @author Evropi
  * @author Flyax
+ * @author FocalPoint
  * @author Geraki
  * @author Glavkos
  * @author Grondin
@@ -43,7 +44,7 @@
  */
 
 /**
-  * Translation by Pasok Internet Volunteers
+  * Initial translation by Pasok Internet Volunteers
   * http://forum.pasok.gr
   * version 1.0 (initial release)
   *
@@ -72,7 +73,7 @@ $namespaceNames = array(
 	NS_TALK             => 'Συζήτηση',
 	NS_USER             => 'Χρήστης',
 	NS_USER_TALK        => 'Συζήτηση_χρήστη',
-	NS_PROJECT_TALK     => '$1_συζήτηση',
+	NS_PROJECT_TALK     => 'Συζήτηση_$1',
 	NS_FILE             => 'Αρχείο',
 	NS_FILE_TALK        => 'Συζήτηση_αρχείου',
 	NS_MEDIAWIKI        => 'MediaWiki',
@@ -86,8 +87,9 @@ $namespaceNames = array(
 );
 
 $namespaceAliases = array(
-	'Μέσον' => NS_MEDIA,
-	'Εικόνα' => NS_FILE,
+	'Μέσον'            => NS_MEDIA,
+	'$1_συζήτηση'      => NS_PROJECT_TALK,
+	'Εικόνα'           => NS_FILE,
 	'Συζήτηση_εικόνας' => NS_FILE_TALK,
 );
 
@@ -100,7 +102,7 @@ $specialPageAliases = array(
 	'Block'                     => array( 'Φραγή', 'ΦραγήIP', 'ΦραγήΧρήστη' ),
 	'Blockme'                   => array( 'ΦραγήΕμένα' ),
 	'Booksources'               => array( 'ΠηγέςΒιβλίων' ),
-	'BrokenRedirects'           => array( 'ΛανθασμένεςΑνακατευθύνσεις' ),
+	'BrokenRedirects'           => array( 'ΚατεστραμμένεςΑνακατευθύνσεις' ),
 	'Categories'                => array( 'Κατηγορίες' ),
 	'ChangePassword'            => array( 'ΑλλαγήΚωδικού', 'ΑρχικοποίησηΠάσου', 'ΑρχικοποίησηΚωδικού' ),
 	'Confirmemail'              => array( 'ΕπιβεβαίωσηEmail' ),
@@ -182,37 +184,6 @@ $specialPageAliases = array(
 	'Withoutinterwiki'          => array( 'ΧωρίςInterwiki' ),
 );
 
-$fallback8bitEncoding = 'iso-8859-7';
-$separatorTransformTable = array( ',' => '.', '.' => ',' );
-$linkTrail = '/^([a-zαβγδεζηθικλμνξοπρστυφχψωςΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩάέήίόύώϊϋΐΰΆΈΉΊΌΎΏΪΫ]+)(.*)$/sDu';
-
-
-$datePreferences = array(
-	'default',
-	'dmy',
-	'ISO 8601',
-);
-
-$defaultDateFormat = 'dmy';
-
-$datePreferenceMigrationMap = array(
-	'default',
-	'dmy',
-	'dmy',
-	'dmy'
-);
-
-$dateFormats = array(
-	'dmy time' => 'H:i',
-	'dmy date' => 'j xg Y',
-	'dmy both' => 'H:i, j xg Y',
-
-	'ISO 8601 time' => 'xnH:xni:xns',
-	'ISO 8601 date' => 'xnY-xnm-xnd',
-	'ISO 8601 both' => 'xnY-xnm-xnd"T"xnH:xni:xns',
-);
-
-
 $magicWords = array(
 	'redirect'                  => array( '0', '#ΑΝΑΚΑΤΕΥΘΥΝΣΗ', '#REDIRECT' ),
 	'notoc'                     => array( '0', '__ΧΩΡΙΣΠΠ__', '__NOTOC__' ),
@@ -220,7 +191,6 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__ΜΕΠΠ__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__ΠΠ__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__ΧΩΡΙΣΕΠΕΞΕΝΟΤ__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__ΧΩΡΙΣΚΕΦΑΛΙΔΑ__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'ΤΡΕΧΩΝΜΗΝΑΣ', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'ΤΡΕΧΩΝΜΗΝΑΣ1', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'ΤΡΕΧΩΝΜΗΝΑΣΟΝΟΜΑ', 'CURRENTMONTHNAME' ),
@@ -254,6 +224,7 @@ $magicWords = array(
 	'pagenamee'                 => array( '1', 'ΟΝΟΜΑΣΕΛΙΔΑΣΚ', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'ΠΕΡΙΟΧΗ', 'NAMESPACE' ),
 	'namespacee'                => array( '1', 'ΠΕΡΙΟΧΗΚ', 'NAMESPACEE' ),
+	'namespacenumber'           => array( '1', 'ΑΡΙΘΜΟΣΟΝΟΜΑΤΟΣΧΩΡΟΥ', 'NAMESPACENUMBER' ),
 	'talkspace'                 => array( '1', 'ΠΕΡΙΟΧΗΣΥΖΗΤΗΣΕΩΝ', 'TALKSPACE' ),
 	'talkspacee'                => array( '1', 'ΠΕΡΙΟΧΗΣΥΖΗΤΗΣΕΩΝΚ', 'TALKSPACEE' ),
 	'subjectspace'              => array( '1', 'ΠΕΡΙΟΧΗΘΕΜΑΤΩΝ', 'SUBJECTSPACE', 'ARTICLESPACE' ),
@@ -351,6 +322,35 @@ $magicWords = array(
 	'numberingroup'             => array( '1', 'ΟΜΑΔΑΑΡΙΘΜΗΣΗΣ', 'NUMBERINGROUP', 'NUMINGROUP' ),
 	'staticredirect'            => array( '1', '__ΣΤΑΤΙΚΗΑΝΑΚΑΤΕΥΘΥΝΣΗ__', '__STATICREDIRECT__' ),
 	'protectionlevel'           => array( '1', 'ΕΠΙΠΕΔΟΠΡΟΣΤΑΣΙΑΣ', 'PROTECTIONLEVEL' ),
+);
+
+$fallback8bitEncoding = 'iso-8859-7';
+$separatorTransformTable = array( ',' => '.', '.' => ',' );
+$linkTrail = '/^([a-zαβγδεζηθικλμνξοπρστυφχψωςΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩάέήίόύώϊϋΐΰΆΈΉΊΌΎΏΪΫ]+)(.*)$/sDu';
+
+$datePreferences = array(
+	'default',
+	'dmy',
+	'ISO 8601',
+);
+
+$defaultDateFormat = 'dmy';
+
+$datePreferenceMigrationMap = array(
+	'default',
+	'dmy',
+	'dmy',
+	'dmy'
+);
+
+$dateFormats = array(
+	'dmy time' => 'H:i',
+	'dmy date' => 'j xg Y',
+	'dmy both' => 'H:i, j xg Y',
+
+	'ISO 8601 time' => 'xnH:xni:xns',
+	'ISO 8601 date' => 'xnY-xnm-xnd',
+	'ISO 8601 both' => 'xnY-xnm-xnd"T"xnH:xni:xns',
 );
 
 $messages = array(
@@ -488,6 +488,7 @@ $messages = array(
 'newwindow' => '(ανοίγει σε ξεχωριστό παράθυρο)',
 'cancel' => 'Ακύρωση',
 'moredotdotdot' => 'Περισσότερα...',
+'morenotlisted' => 'Περισσότερα δεν αναφέρονται...',
 'mypage' => 'Σελίδα',
 'mytalk' => 'Συζήτηση',
 'anontalk' => 'Οι συζητήσεις αυτής της διεύθυνσης IP',
@@ -499,7 +500,6 @@ $messages = array(
 'qbbrowse' => 'Περιήγηση',
 'qbedit' => 'Επεξεργασία',
 'qbpageoptions' => 'Αυτή η σελίδα',
-'qbpageinfo' => 'Συμφραζόμενα',
 'qbmyoptions' => 'Οι σελίδες μου',
 'qbspecialpages' => 'Σελίδες λειτουργιών',
 'faq' => 'Συχνές ερωτήσεις (FAQ)',
@@ -522,6 +522,7 @@ $messages = array(
 'namespaces' => 'Χώροι ονομάτων',
 'variants' => 'Παραλλαγές',
 
+'navigation-heading' => 'Μενού πλοήγησης',
 'errorpagetitle' => 'Σφάλμα',
 'returnto' => 'Επιστροφή στη σελίδα $1.',
 'tagline' => 'Από {{SITENAME}}',
@@ -760,11 +761,11 @@ $2',
 # Login and logout pages
 'logouttext' => "'''Έχετε αποσυνδεθεί.'''
 
-Μπορείτε να παραμείνετε στο {{SITENAME}} ανώνυμα, ή μπορείτε [[Special:UserLogin|να συνδεθείτε ξανά]] με το ίδιο ή με διαφορετικό (εάν έχετε) όνομα χρήστη.
+Μπορείτε να παραμείνετε στο {{SITENAME}} ανώνυμα, ή μπορείτε <span class='plainlinks'>[$1 να συνδεθείτε ξανά]</span> με το ίδιο ή με διαφορετικό (εάν έχετε) όνομα χρήστη.
 Έχετε υπόψη σας πως αρκετές σελίδες θα συνεχίσουν να εμφανίζονται κανονικά, σαν να μην έχετε αποσυνδεθεί, μέχρι να καθαρίσετε τη λανθάνουσα μνήμη του φυλλομετρητή σας.",
-'welcomecreation' => '== Καλώς ήλθατε, $1! ==
-Ο λογαριασμός σας έχει δημιουργηθεί.
-Μην ξεχάσετε να ρυθμίσετε τις [[Special:Preferences|προτιμήσεις]] σας στο {{SITENAME}}.',
+'welcomeuser' => 'Καλώς ορίσατε, $1!',
+'welcomecreation-msg' => 'Ο λογαριασμός σας έχει δημιουργηθεί.
+Μην ξεχάσετε να αλλάξετε τις [[Special:Preferences|{{SITENAME}} προτιμήσεις]] σας.',
 'yourname' => 'Όνομα χρήστη:',
 'yourpassword' => 'Κωδικός:',
 'yourpasswordagain' => 'Πληκτρολογήστε ξανά τον κωδικό',
@@ -787,7 +788,7 @@ $2',
 'gotaccount' => "Έχετε ήδη έναν λογαριασμό; '''$1'''.",
 'gotaccountlink' => 'Είσοδος',
 'userlogin-resetlink' => 'Ξεχάσατε τα στοιχεία σύνδεσής σας;',
-'createaccountmail' => 'Μέσω ηλεκτρονικού ταχυδρομείου',
+'createaccountmail' => 'Χρήση τυχαίου προσωρινού κωδικού πρόσβασης και αποστολή του στη διεύθυνση ηλεκτρονικού ταχυδρομείου που καθορίζεται παρακάτω',
 'createaccountreason' => 'Αιτία:',
 'badretype' => 'Οι κωδικοί που έχετε δηλώσει δεν συμφωνούν μεταξύ τους.',
 'userexists' => 'Το όνομα χρήστη που εισαγάγατε βρίσκεται ήδη σε χρήση.
@@ -853,6 +854,7 @@ $2',
 # Email sending
 'php-mail-error-unknown' => 'Άγνωστο σφάλμα στη συνάρτηση mail() της PHP.',
 'user-mail-no-addy' => 'Προσπαθήσατε να στείλετε e-mail χωρίς μια διεύθυνση e-mail.',
+'user-mail-no-body' => 'Προσπάθησε να στείλει e-mail με ένα κενό ή αδικαιολόγητα σύντομο σώμα.',
 
 # Change password dialog
 'resetpass' => 'Αλλαγή κωδικού πρόσβασης',
@@ -900,7 +902,7 @@ $2
 Προσωρινός κωδικός πρόσβασης:$2',
 'passwordreset-emailsent' => 'Έχει αποσταλεί email επαναφοράς κωδικού.',
 'passwordreset-emailsent-capture' => 'Έχει αποσταλεί email επαναφοράς κωδικού, το οποίο φαίνεται πιο κάτω.',
-'passwordreset-emailerror-capture' => 'Ένα μήνυμα υπενθύμισης ηλεκτρονικού ταχυδρομείου έχει δημιουργηθεί, το οποίο φαίνεται πιο κάτω, αλλά απέτυχε η αποστολή του στο χρήστη: $1',
+'passwordreset-emailerror-capture' => 'Ένα email επαναφοράς κωδικού έχει δημιουργηθεί, το οποίο φαίνεται πιο κάτω, αλλά απέτυχε η αποστολή του στο χρήστη: $1',
 
 # Special:ChangeEmail
 'changeemail' => 'Αλλαγή της διεύθυνσης ηλεκτρονικού ταχυδρομείου',
@@ -910,6 +912,7 @@ $2
 'changeemail-oldemail' => 'Τρέχουσα διεύθυνση ηλεκτρονικού ταχυδρομείου:',
 'changeemail-newemail' => 'Νέα διεύθυνση ηλεκτρονικού ταχυδρομείου:',
 'changeemail-none' => '(κανένα)',
+'changeemail-password' => 'Ο κωδικός πρόσβασής σας στο εγχείρημα {{SITENAME}}:',
 'changeemail-submit' => 'Αλλαγή διεύθυνσης ηλεκτρονικού ταχυδρομείου',
 'changeemail-cancel' => 'Ακύρωση',
 
@@ -1082,7 +1085,6 @@ $2
 'template-semiprotected' => '(ημιπροστατευμένη)',
 'hiddencategories' => 'Αυτή η σελίδα είναι μέλος {{PLURAL:$1|μίας κρυμμένης κατηγορίας|$1 κρυμμένων κατηγοριών}}',
 'edittools' => '<!-- Το κείμενο εδώ θα φαίνεται κάτω από τις φόρμες επεξεργασίας και επιφόρτωσης. -->',
-'nocreatetitle' => 'Περιορισμένη δημιουργία σελίδων',
 'nocreatetext' => 'Το {{SITENAME}} έχει περιορίσει την ικανότητα δημιουργίας νέων σελίδων.
 Μπορείτε να πάτε πίσω και να επεξεργαστείτε μια υπάρχουσα σελίδα, ή να [[Special:UserLogin|συνδεθείτε ή να δημιουργήσετε ένα λογαριασμό]].',
 'nocreate-loggedin' => 'Δεν έχετε άδεια να δημιουργήσετε νέες σελίδες.',
@@ -1107,6 +1109,15 @@ $2
 'edit-already-exists' => 'Δεν ήταν εφικτό να δημιουργηθεί η νέα σελίδα.
 Υπάρχει ήδη.',
 'defaultmessagetext' => 'Προεπιλεγμένο κείμενο μηνύματος',
+'content-failed-to-parse' => 'Απέτυχε η ανάλυση  περιεχομένου του $2 για το μοντέλο $1:$3',
+'invalid-content-data' => 'Μη έγκυρα δεδομένα περιεχομένου',
+'content-not-allowed-here' => 'Το περιεχόμενο «$1» δεν επιτρέπεται στη σελίδα [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'βικικείμενο',
+'content-model-text' => 'απλό κείμενο',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Προειδοποίηση: Αυτή η σελίδα περιέχει πάρα πολύ ακριβό αναλυτή λειτουργικών κλήσεων.
@@ -1466,9 +1477,9 @@ $1",
 'prefs-emailconfirm-label' => 'Επιβεβαίωση e-mail:',
 'prefs-textboxsize' => 'Μέγεθος πλαίσιου επεξεργασίας',
 'youremail' => 'Ηλεκτρονική διεύθυνση*',
-'username' => 'Όνομα χρήστη:',
-'uid' => 'Αριθμός αναγνώρισης χρήστη:',
-'prefs-memberingroups' => 'Μέλος {{PLURAL:$1|ομάδας|ομάδων}}:',
+'username' => '{{GENDER:$1|Όνομα χρήστη}}:',
+'uid' => '{{GENDER:$1|Αναγνωριστικό χρήστη}}:',
+'prefs-memberingroups' => '{{GENDER:$2|Μέλος}} της {{PLURAL:$1|ομάδας|ομάδων}}:',
 'prefs-registration' => 'Χρόνος εγγραφής:',
 'yourrealname' => 'Πραγματικό όνομα:',
 'yourlanguage' => 'Γλώσσα:',
@@ -1616,12 +1627,13 @@ $1",
 'right-sendemail' => 'Αποστολή ηλεκτρονικού μηνύματος σε άλλους χρήστες',
 'right-passwordreset' => 'Εμφάνιση email επαναφοράς κωδικού πρόσβασης',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Αρχείο δημιουργίας χρηστών',
+'newuserlogpagetext' => 'Αυτή είναι μια καταγραφή δημιουργίας χρηστών.',
+
 # User rights log
 'rightslog' => 'Αρχείο καταγραφών δικαιωμάτων χρηστών',
 'rightslogtext' => 'Καταγραφές των αλλαγών στα δικαιώματα χρηστών.',
-'rightslogentry' => 'η ιδιότητα μέλους ομάδας για τον/την $1 από $2 σε $3 άλλαξε',
-'rightslogentry-autopromote' => 'προωθήθηκε αυτόματα από $2 σε $3',
-'rightsnone' => '(κανένα)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'να διαβάσετε αυτή τη σελίδα',
@@ -1859,6 +1871,7 @@ $1',
 'backend-fail-notsame' => 'Ένα μη-ταυτόσημο αρχείο υπάρχει ήδη στο $1.',
 'backend-fail-invalidpath' => '$1 δεν είναι έγκυρη διαδρομή αποθήκευσης.',
 'backend-fail-delete' => 'Αδύνατη η διαγραφή αρχείου $1.',
+'backend-fail-describe' => 'Δεν ήταν δυνατή η αλλαγή μεταδεδομένων για το αρχείο "$1".',
 'backend-fail-alreadyexists' => 'Το αρχείο $1 υπάρχει ήδη.',
 'backend-fail-store' => 'Αδύνατη η αποθήκευση του αρχείου $1 σε $2.',
 'backend-fail-copy' => 'Αδύνατη η αντιγραφή του αρχείου από $1 σε $2.',
@@ -2084,6 +2097,8 @@ $1',
 Αντιθέτως θα έπρεπε να κατευθύνουν στο κατάλληλο θέμα.<br />
 Μια σελίδα αντιμετωπίζεται ως σελίδα αποσαφήνισης αν χρησιμοποιεί ένα πρότυπο το οποίο συνδέεται από το [[MediaWiki:Disambiguationspage]]",
 
+'pageswithprop-prop' => 'Όνομα ιδιότητας:',
+
 'doubleredirects' => 'Διπλές ανακατευθύνσεις',
 'doubleredirectstext' => 'Αυτή η σελίδα συγκαταλέγει σελίδες οι οποίες ανακατευθύνουν σε άλλες σελίδες ανακατεύθυνσης. Κάθε σειρά περιέχει συνδέσμους προς την πρώτη και τη δεύτερη σελίδα ανακατεύθυνσης, όπως επίσης και την πρώτη αράδα του κειμένου στη δεύτερη σελίδα ανακατεύθυνσης η οποία και είναι, κανονικά, ο πραγματικός προορισμός της ανακατεύθυνσης -εκεί δηλαδή όπου θα έπρεπε να είχατε οδηγηθεί από την αρχή. Τα <del>διεγραμμένα</del> λήμματα έχουν επιλυθεί.',
 'double-redirect-fixed-move' => 'Η [[$1]] έχει μετακινηθεί, τώρα είναι ανακατεύθυνση στην [[$2]]',
@@ -2232,9 +2247,9 @@ $1',
 'linksearch-pat' => 'Μοτίβο αναζήτησης:',
 'linksearch-ns' => 'Περιοχή:',
 'linksearch-ok' => 'Αναζήτηση',
-'linksearch-text' => 'Μπορούν να χρησιμοποιηθούν χαρακτήρες-μπαλαντέρ όπως «*.wikipedia.org». 
-Χρειάζεται τουλάχιστον ένα domain ανωτάτου επιπέδου, για παράδειγμα «*.org».<br />
-Υποστηριζόμενα πρωτόκολλα: <code>$1</code> (η προεπιλογή είναι http:// αν δεν καθορίζεται πρωτόκολλο).',
+'linksearch-text' => 'Μπορούν να χρησιμοποιηθούν χαρακτήρες μπαλαντέρ όπως "*.wikipedia.org". 
+Χρειάζεται τουλάχιστον μια κατάληξη ανωτάτου επιπέδου, για παράδειγμα "*.org".<br />
+{{PLURAL:$2|Υποστηριζόμενο πρωτόκολλο|Υποστηριζόμενα πρωτόκολλα}}: <code>$1</code> (αν δεν οριστεί πρωτόκολλο η προεπιλογή είναι http://).',
 'linksearch-line' => 'Η $1 συνδεδεμένη από την $2',
 'linksearch-error' => 'Λέξεις-μπαλαντέρ μπορεί να εμφανιστούν μόνο στην αρχή τού ονόματος ιστοτόπου (hostname).',
 
@@ -2252,10 +2267,6 @@ $1',
 'activeusers-hidebots' => 'Απόκρυψη bots',
 'activeusers-hidesysops' => 'Απόκρυψη διαχειριστών',
 'activeusers-noresult' => 'Δεν βρέθηκε χρήστης.',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Αρχείο δημιουργίας χρηστών',
-'newuserlogpagetext' => 'Αυτή είναι μια καταγραφή δημιουργίας χρηστών.',
 
 # Special:ListGroupRights
 'listgrouprights' => 'Δικαιώματα ομάδων χρηστών',
@@ -2354,44 +2365,49 @@ $1',
 
 'enotif_mailer' => 'Σύστημα ειδοποίησης μέσω αλληλογραφίας του {{SITENAME}}',
 'enotif_reset' => 'Σημειώστε όλες τις σελίδες ως αναγνωσμένες.',
-'enotif_newpagetext' => 'Αυτή είναι μια νέα σελίδα.',
 'enotif_impersonal_salutation' => 'Χρήστης του ιστοτόπου "{{SITENAME}}"',
-'changed' => 'έχει αλλάξει',
-'created' => 'δημιουργήθηκε',
-'enotif_subject' => 'Η σελίδα $PAGETITLE του εγχειρήματος {{SITENAME}} $CHANGEDORCREATED από το χρήστη $PAGEEDITOR',
+'enotif_subject_deleted' => 'Η σελίδα $1 του ιστοχώρου {{SITENAME}} έχει διαγραφεί από {{gender:$2|τον|την}} $2',
+'enotif_subject_created' => 'Η σελίδα $1 του ιστοχώρου {{SITENAME}} έχει δημιουργηθεί από {{gender:$2|τον|την}} $2',
+'enotif_subject_moved' => 'Η σελίδα $1 του ιστοχώρου {{SITENAME}} έχει μετακινηθεί από {{gender:$2|τον|την}} $2',
+'enotif_subject_restored' => 'Η σελίδα $1 του ιστοχώρου {{SITENAME}} έχει αποκατασταθεί από {{gender:$2|τον|την}} $2',
+'enotif_subject_changed' => 'Η σελίδα $1 του ιστοχώρου {{SITENAME}} έχει αλλάξει από {{gender:$2|τον|την}} $2',
+'enotif_body_intro_deleted' => 'Η σελίδα $1 του ιστοχώρου {{SITENAME}} έχει διαγραφεί στις $PAGEEDITDATE από {{gender:$2|τον|την}} $2, βλ. $3.',
+'enotif_body_intro_created' => 'Η σελίδα $1 του ιστοχώρου {{SITENAME}} έχει δημιουργηθεί στις $PAGEEDITDATE από {{gender:$2|τον|την}} $2, βλ. $3 για την τρέχουσα αναθεώρηση.',
+'enotif_body_intro_moved' => 'Η σελίδα $1 του ιστοχώρου {{SITENAME}} έχει μετακινηθεί στις $PAGEEDITDATE από {{gender:$2|τον|την}} $2, βλ. $3 για την τρέχουσα αναθεώρηση.',
+'enotif_body_intro_restored' => 'Η σελίδα $1 του ιστοχώρου {{SITENAME}} έχει αποκατασταθεί στις $PAGEEDITDATE από {{gender:$2|τον|την}} $2, βλ. $3 για την τρέχουσα αναθεώρηση.',
+'enotif_body_intro_changed' => 'Η σελίδα $1 του ιστοχώρου {{SITENAME}} έχει αλλάξει στις $PAGEEDITDATE από {{gender:$2|τον|την}} $2, βλ. $3 για την τρέχουσα αναθεώρηση.',
 'enotif_lastvisited' => 'Δείτε το $1 για όλες τις αλλαγές που έγιναν από την τελευταία σας επίσκεψη.',
 'enotif_lastdiff' => 'Δείτε το $1 για να εμφανίσετε αυτή την αλλαγή.',
 'enotif_anon_editor' => 'ανώνυμος χρήστης $1',
 'enotif_body' => '{{GENDER:$WATCHINGUSERNAME|Αγαπητέ|Αγαπητή}} $WATCHINGUSERNAME,
 
-Η σελίδα $PAGETITLE του εγχειρήματος {{SITENAME}} $CHANGEDORCREATED στις $PAGEEDITDATE από {{GENDER:$PAGEEDITOR|τον χρήστη|την χρήστη}} $PAGEEDITOR - ακολουθήστε το σύνδεσμο $PAGETITLE_URL για να δείτε την τρέχουσα αναθεώρηση.
-
-$NEWPAGE
+$PAGEINTRO $NEWPAGE
 
 Περιγραφή επεξεργασίας: $PAGESUMMARY $PAGEMINOREDIT
 
-Επικοινωνήστε με {{GENDER:$PAGEEDITOR|το συγκεκριμένο χρήστη|τη συγκεκριμένη χρήστη}} :
-mail: $PAGEEDITOR_EMAIL
+Επικοινωνία με το χρήστη που έκανε την επεξεργασία:
+ηλεκτρονική διεύθυνση: $PAGEEDITOR_EMAIL
 wiki: $PAGEEDITOR_WIKI
 
-Δεν θα υπάρξουν άλλες ειδοποιήσεις για περαιτέρω αλλαγές αν δεν επισκεφθείτε τη σελίδα.
-Μπορείτε επίσης να επαναφέρετε την επιλογή ειδοποίησης για όλες τις παρακολουθούμενες σελίδες στη λίστα παρακολούθησής σας.
+Δεν θα υπάρξουν άλλες ειδοποιήσεις σε περίπτωση περαιτέρω δραστηριότητας αν δεν επισκεφθείτε τη σελίδα. Μπορείτε επίσης να επαναφέρετε την επιλογή ειδοποίησης για όλες τις παρακολουθούμενες σελίδες στη λίστα παρακολούθησής σας.
 
                          Φιλικά,
-                         Tο σύστημα ειδοποίησης του εγχειρήματος {{SITENAME}}
+                         Tο σύστημα ειδοποίησης του ιστοχώρου {{SITENAME}}
 
 --
-Για να αλλάξετε τις προτιμήσεις της ειδοποιήσεων email, ακολουθήστε το σύνδεσμο:
+Για να αλλάξετε τις προτιμήσεις των ειδοποιήσεων ηλεκτρονικού ταχυδρομείου, επισκεφτείτε το
 {{canonicalurl:{{#special:Preferences}}}}
 
-Για να αλλάξετε τις προτιμήσεις της λίστας παρακολούθησής σας, ακολουθήστε το σύνδεσμο:
+Για να αλλάξετε τις προτιμήσεις της λίστας παρακολούθησής σας, επισκεφτείτε το
 {{canonicalurl:{{#special:EditWatchlist}}}}
 
-Για να διαγράψετε την σελίδα από την λίστα παρακολούθησής σας:
+Για να διαγράψετε την σελίδα από την λίστα παρακολούθησής σας, επισκεφτείτε το
 $UNWATCHURL
 
-Ερωτήσεις και περισσότερες πληροφορίες:
+Παρατηρήσεις και περισσότερη βοήθεια:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'δημιουργήθηκε',
+'changed' => 'έχει αλλάξει',
 
 # Delete
 'deletepage' => 'Διαγραφή σελίδας',
@@ -2458,6 +2474,8 @@ $UNWATCHURL
 'prot_1movedto2' => 'Η [[$1]] μετακινήθηκε στη θέση [[$2]]',
 'protect-badnamespace-title' => 'Μη-προστατευόμενη ομάδα σελίδων',
 'protect-badnamespace-text' => 'Οι  σελίδες σε αυτόν τον ονοματοχώρο δεν μπορούν να κλειδωθούν.',
+'protect-norestrictiontypes-text' => 'Αυτή η σελίδα δεν μπορούν να προστατευθούν δεδομένου ότι δεν υπάρχουν διαθέσιμοι τύποι κλειδώματος.',
+'protect-norestrictiontypes-title' => 'Μη-προστατευόμενη σελίδα',
 'protect-legend' => 'Επιβεβαίωση κλειδώματος',
 'protectcomment' => 'Αιτία:',
 'protectexpiry' => 'Λήξη',
@@ -2541,7 +2559,7 @@ $UNWATCHURL
 'undeletedrevisions' => '{{PLURAL:$1|τροποποίηση|τροποποιήσεις}} αποκαταστάθηκαν',
 'undeletedrevisions-files' => '$1 {{PLURAL:$1|αναθεώρηση|αναθεωρήσεις}} και $2 {{PLURAL:$2|αρχείο|αρχεία}} επαναφέρθηκαν',
 'undeletedfiles' => '$1 {{PLURAL:$1|αρχείο|αρχεία}} επαναφέρθηκαν',
-'cannotundelete' => 'Η επαναφορά απέτυχε: κάποιος άλλος μπορεί να έχει επαναφέρει τη σελίδα πρώτος.',
+'cannotundelete' => 'Η αναίρεση διαγραφής απέτυχε: $1',
 'undeletedpage' => "'''Η $1 έχει επαναφερθεί'''
 
 Συμβουλευτείτε το [[Special:Log/delete|αρχείο καταγραφής διαγραφών]] για ένα μητρώο των πρόσφατων διαγραφών και επαναφορών.",
@@ -2572,7 +2590,7 @@ $1',
 'blanknamespace' => '(Αρχική περιοχή)',
 
 # Contributions
-'contributions' => 'Συνεισφορές χρήστη',
+'contributions' => 'Συνεισφορές {{GENDER:$1|χρήστη}}',
 'contributions-title' => 'Συνεισφορές του χρήστη $1',
 'mycontris' => 'Συνεισφορές',
 'contribsub2' => 'Για τον/την $1 ($2)',
@@ -2964,7 +2982,6 @@ $1',
 
 # JavaScriptTest
 'javascripttest' => 'Δοκιμή JavaScript',
-'javascripttest-disabled' => 'Αυτή η λειτουργία έχει απενεργοποιηθεί.',
 'javascripttest-title' => 'Εκτελούνται  $1  δοκιμές',
 'javascripttest-pagetext-noframework' => 'Αυτή η σελίδα είναι δεσμευμένη για την εκτέλεση δοκιμών σε JavaScript.',
 'javascripttest-pagetext-unknownframework' => 'Άγνωστο πλαίσιο δοκιμών " $1 ".',
@@ -3104,11 +3121,13 @@ $1',
 'pageinfo-default-sort' => 'Προεπιλεγμένο κλειδί ταξινόμησης',
 'pageinfo-length' => 'Μήκος σελίδας (σε bytes)',
 'pageinfo-article-id' => 'Αναγνωριστικό σελίδας',
+'pageinfo-language' => 'Γλώσσα σελίδας περιεχομένου',
 'pageinfo-robot-policy' => 'Στάτους μηχανής αναζήτησης',
 'pageinfo-robot-index' => 'Καταχωρήσιμο σε ευρετήριο',
 'pageinfo-robot-noindex' => 'Μη καταχωρήσιμο σε ευρετήριο',
 'pageinfo-views' => 'Αριθμός προβολών',
 'pageinfo-watchers' => 'Αριθμός παρατηρητών σελίδας',
+'pageinfo-few-watchers' => 'Λιγότεροι από $1 {{PLURAL:$1| ακόλουθος|ακόλουθοι}}',
 'pageinfo-redirects-name' => 'Ανακατευθύνσεις σε αυτή τη σελίδα',
 'pageinfo-redirects-value' => '$1',
 'pageinfo-subpages-name' => 'Υποσελίδες αυτής της σελίδας',
@@ -3124,6 +3143,19 @@ $1',
 'pageinfo-magic-words' => '{{PLURAL:$1|Μαγική λέξη|Μαγικές λέξεις}} ($1)',
 'pageinfo-hidden-categories' => '{{PLURAL:$1|Κρυφή κατηγορία|Κρυφές κατηγορίες}} ($1)',
 'pageinfo-templates' => 'Ενσωματωμένα {{PLURAL:$1|πρότυπο|πρότυπα}} ($1)',
+'pageinfo-transclusions' => '{{PLURAL:$1|Η σελίδα ενσωματώνεται|Οι σελίδες ενσωματώνονται}} σε ($1)',
+'pageinfo-toolboxlink' => 'Πληροφορίες σελίδας',
+'pageinfo-redirectsto' => 'Ανακατευθύνσεις σε',
+'pageinfo-redirectsto-info' => 'πληροφορίες',
+'pageinfo-contentpage' => 'Υπολογίζονται ως σελίδες περιεχομένου',
+'pageinfo-contentpage-yes' => 'Ναι',
+'pageinfo-protect-cascading' => 'Οι προστασίες ξεκινούν τη διαδοχή τους από εδώ',
+'pageinfo-protect-cascading-yes' => 'Ναι',
+'pageinfo-protect-cascading-from' => 'Οι προστασίες ξεκινούν τη διαδοχή τους από',
+'pageinfo-category-info' => 'Πληροφορίες κατηγορίας',
+'pageinfo-category-pages' => 'Αριθμός σελίδων',
+'pageinfo-category-subcats' => 'Αριθμός υποκατηγοριών',
+'pageinfo-category-files' => 'Αριθμός αρχείων',
 
 # Skin names
 'skinname-standard' => 'Κλασσικό',
@@ -3142,6 +3174,8 @@ $1',
 'markedaspatrollederror' => 'Δεν μπορεί να σημανθεί ως υπό περιπολία',
 'markedaspatrollederrortext' => 'Πρέπει να ορίσετε μια αναθεώρηση για να σημανθεί ως υπό περιπολία',
 'markedaspatrollederror-noautopatrol' => 'Δεν επιτρέπεται να σημάνετε τις δικές σας αλλάγες ως υπό περιπολία.',
+'markedaspatrollednotify' => 'Αυτή η αλλαγή σε $1 έχει επισημανθεί ως ελεγμένη.',
+'markedaspatrollederrornotify' => 'Σήμανση ως ελεγμένη απέτυχε.',
 
 # Patrol log
 'patrol-log-page' => 'Αρχείο καταγραφής περιπολιών',
@@ -3175,6 +3209,7 @@ $1',
 'file-nohires' => 'Δεν διατίθεται υψηλότερη ανάλυση.',
 'svg-long-desc' => "Αρχείο SVG, κατ' όνομα $1 × $2 εικονοστοιχεία, μέγεθος αρχείου: $3",
 'svg-long-desc-animated' => 'Κινούμενο αρχείο SVG, ονομαστικό μέγεθος σε pixels: $1 × $2, μέγεθος αρχείου: $3',
+'svg-long-error' => 'Μη έγκυρο αρχείο SVG: $1',
 'show-big-image' => 'Πλήρης ανάλυση',
 'show-big-image-preview' => 'Μέγεθος αυτής της προεπισκόπησης: $1 .',
 'show-big-image-other' => 'Άλλες {{PLURAL:$2|ανάλυση|αναλύσεις}}: $1.',
@@ -3204,7 +3239,10 @@ $1',
 'minutes' => '{{PLURAL:$1|$1 λεπτό|$1 λεπτά}}',
 'hours' => '{{PLURAL:$1|$1 ώρα|$1 ώρες}}',
 'days' => '{{PLURAL:$1|$1 μέρα|$1 μέρες}}',
+'months' => '{{PLURAL:$1|$1 μήνας|$1 μήνες}}',
+'years' => '{{PLURAL:$1|$1 έτος|$1 έτη}}',
 'ago' => '$1 πριν',
+'just-now' => 'μόλις τώρα',
 
 # Bad image list
 'bad_image_list' => 'Η σύνταξη είναι ως εξής:
@@ -3704,6 +3742,7 @@ $5
 # Scary transclusion
 'scarytranscludedisabled' => '[Η ενσωμάτωση εξωτερικών ιστοσελίδων σε αυτό το Wiki είναι απενεργοποιημένη.]',
 'scarytranscludefailed' => '[Η λήψη προτύπου για το $1 απέτυχε.]',
+'scarytranscludefailed-httpstatus' => '[Η λήψη προτύπου απέτυχε για  το $1: HTTP  $2]',
 'scarytranscludetoolong' => '[Η διεύθυνση URL είναι πολύ μεγάλη.]',
 
 # Delete conflict
@@ -3813,6 +3852,7 @@ $5
 'version-license' => 'Άδεια χρήσης',
 'version-poweredby-credits' => "Αυτό το wiki λειτουργεί με το λογισμικό '''[//www.mediawiki.org/ MediaWiki]''', πνευματική ιδιοκτησία © 2001-$1 $2.",
 'version-poweredby-others' => 'άλλοι',
+'version-credits-summary' => 'Θα θέλαμε να αναγνωρίσουμε τη συμβολή των παρακάτω προσώπων στο [[Special:Version|MediaWiki]].',
 'version-license-info' => "Το MediaWiki είναι ελεύθερο λογισμικό. Μπορείτε να το αναδιανείμετε ή/και να το τροποποιήσετε υπό τους όρους της άδειας GNU General Public License όπως αυτή εκδόθηκε από το Free Software Foundation· είτε της δεύτερης έκδοσης της άδειας, είτε (κατ' επιλογή σας) οποιασδήποτε επόμενης έκδοσης.
 
 Το MediaWiki διανέμεται με την ελπίδα ότι θα είναι χρήσιμο, αλλά ΧΩΡΙΣ ΚΑΜΙΑ ΕΓΓΥΗΣΗ· ούτε καν την σιωπηρή εγγύηση ΕΜΠΟΡΕΥΣΙΜΟΤΗΤΑΣ ή ΚΑΤΑΛΛΗΛΟΤΗΤΑΣ ΓΙΑ ΕΝΑ ΣΥΓΚΕΚΡΙΜΕΝΟ ΣΚΟΠΟ. Βλ. GNU General Public License για περισσότερες λεπτομέρειες.
@@ -3927,7 +3967,7 @@ $5
 
 # New logging system
 'logentry-delete-delete' => '{{GENDER:$1|Ο|Η}} $1 διέγραψε τη σελίδα $3',
-'logentry-delete-restore' => 'Ο/η $1 αποκατέστησε τη σελίδα $3',
+'logentry-delete-restore' => 'Ο/Η $1 αποκατέστησε τη σελίδα $3',
 'logentry-delete-event' => '{{GENDER:$1|Ο|Η}} $1 άλλαξε την ορατότητα σε {{PLURAL:$5|ένα γεγονός καταγραφής|$5 log events}} στο $3: $4',
 'logentry-delete-revision' => '{{GENDER:$1|Ο|Η}} $1 άλλαξε την ορατότητα {{PLURAL:$5|μιας έκδοσης|$5 εκδόσεων}} στη σελίδα $3: $4',
 'logentry-delete-event-legacy' => '{{GENDER:$2|Ο|Η}} $1 άλλαξε την ορατότητα των καταγραφόμενων συμβάντων στη σελίδα $3',
@@ -3948,14 +3988,18 @@ $5
 'logentry-move-move' => '{{GENDER:$1|Ο|Η}} $1 μετακίνησε τη σελίδα $3 στη $4',
 'logentry-move-move-noredirect' => '{{GENDER:$1|Ο|Η}} $1 μετακίνησε τη σελίδα $3 στη $4 χωρίς να αφήσει ανακατεύθυνση',
 'logentry-move-move_redir' => '{{GENDER:$1|Ο|Η}} $1 μετακίνησε τη σελίδα $3 στη $4 πάνω από την ανανακατεύθυνση',
-'logentry-move-move_redir-noredirect' => '{{GENDER:$1|Ο|Η}} $1 μετακίνησε την σελίδα $3 στην $4 πάνω από ανακατεύθυνση χωρίς να αφήσει ανακατεύθυνση',
-'logentry-patrol-patrol' => '{{GENDER:$1|Ο|Η}} $1 σήμανε την έκδοση $4 της σελίδας $3 ως ελεγμένη',
+'logentry-move-move_redir-noredirect' => '{{GENDER:$2|Ο|Η}} $1 μετακίνησε την σελίδα $3 στην $4 πάνω από μια ανακατεύθυνση χωρίς να αφήσει ανακατεύθυνση',
+'logentry-patrol-patrol' => '{{GENDER:$2|Ο|Η}} $1 επισήμανε την έκδοση $4 της σελίδας $3 ως ελεγμένη',
 'logentry-patrol-patrol-auto' => '{{GENDER:$1|Ο|Η}} $1 αυτόματα σήμανε την έκδοση $4 της σελίδας $3 ως ελεγμένη',
-'logentry-newusers-newusers' => 'Ο λογαριασμός χρήστη $1 δημιουργήθηκε',
-'logentry-newusers-create' => 'Ο λογαριασμός χρήστη $1 δημιουργήθηκε',
-'logentry-newusers-create2' => 'Ο λογαριασμός χρήστη $3 δημιουργήθηκε από {{GENDER:$1|τον|την}} $1',
+'logentry-newusers-newusers' => 'Ο λογαριασμός χρήστη $1 {{GENDER:$2|δημιουργήθηκε}}',
+'logentry-newusers-create' => 'Ο λογαριασμός χρήστη $1 {{GENDER:$2|δημιουργήθηκε}}',
+'logentry-newusers-create2' => 'Ο λογαριασμός χρήστη $3 δημιουργήθηκε από {{GENDER:$2|τον|την}} $1',
+'logentry-newusers-byemail' => 'Ο λογαριασμός χρήστη $3 δημιουργήθηκε από τον $1  και ο κωδικός πρόσβασης εστάλη μέσω ηλεκτρονικού ταχυδρομείου',
 'logentry-newusers-autocreate' => 'Ο λογαριασμός $1 δημιουργήθηκε αυτόματα',
-'newuserlog-byemail' => 'ο κωδικός έχει σταλεί μέσω ηλεκτρονικού μηνύματος',
+'logentry-rights-rights' => '{{GENDER:$1|Ο|Η}} $1 άλλαξε την ιδιότητα μέλους ομάδας για {{GENDER:$3|τον|την}} $3 από $4 σε $5',
+'logentry-rights-rights-legacy' => '{{GENDER:$1|Ο|Η}} $1 άλλαξε την ιδιότητα μέλους ομάδας {{GENDER:$1|του|της}} $3',
+'logentry-rights-autopromote' => '$1 προωθήθηκε αυτόματα από το $4 στο $5',
+'rightsnone' => '(κανένα)',
 
 # Feedback
 'feedback-bugornote' => 'Εάν είστε έτοιμοι να περιγράψετε ένα τεχνικό πρόβλημα λεπτομερώς παρακαλώ [ $1  κάντε μια αναφορά σφάλματος].
@@ -4009,6 +4053,7 @@ $5
 'api-error-ok-but-empty' => 'Εσωτερικό σφάλμα: δεν υπάρχει απάντηση από το διακομιστή.',
 'api-error-overwrite' => 'Αντικατάσταση ενός υπάρχοντος αρχείου δεν επιτρέπεται.',
 'api-error-stashfailed' => 'Εσωτερικό σφάλμα: ο διακομιστής απέτυχε να αποθηκεύσει το προσωρινό αρχείο.',
+'api-error-publishfailed' => 'Εσωτερικό σφάλμα: ο διακομιστής απέτυχε να αποθηκεύσει το προσωρινό αρχείο.',
 'api-error-timeout' => 'Ο διακομιστής δεν αποκρίθηκε εντός του αναμενόμενου χρόνου.',
 'api-error-unclassified' => 'Προέκυψε ένα άγνωστο σφάλμα.',
 'api-error-unknown-code' => 'Άγνωστο σφάλμα: "$1"',
@@ -4028,5 +4073,8 @@ $5
 'duration-decades' => '$1 {{PLURAL:$1|δεκαετία|δεκαετίες}}',
 'duration-centuries' => '$1 {{PLURAL:$1|αιώνα|αιώνες}}',
 'duration-millennia' => '$1 {{PLURAL:$1|χιλιετία|χιλιετίες}}',
+
+# Image rotation
+'rotate-comment' => 'Η εικόνα περιστράφηκε $1 {{PLURAL:$1| μοίρα|μοίρες}} δεξιόστροφα',
 
 );

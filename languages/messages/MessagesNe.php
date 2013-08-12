@@ -189,6 +189,7 @@ $messages = array(
 'newwindow' => '(नयाँ विन्डोमा खुल्छ)',
 'cancel' => 'रद्द',
 'moredotdotdot' => 'थप...',
+'morenotlisted' => 'थप जानकारी दिइएको  छैन',
 'mypage' => 'पृष्ठ',
 'mytalk' => 'वार्ता',
 'anontalk' => 'यस IP को वारेमा वार्तालाप गर्नुहोस्',
@@ -200,7 +201,6 @@ $messages = array(
 'qbbrowse' => 'ब्राउज गर्ने',
 'qbedit' => 'सम्पादन गर्ने',
 'qbpageoptions' => 'यो पेज',
-'qbpageinfo' => 'सन्दर्भ',
 'qbmyoptions' => 'मेरो पेज',
 'qbspecialpages' => 'विशेष पृष्ठहरु',
 'faq' => 'धैरै सोधिएका प्रश्नहरु',
@@ -223,6 +223,7 @@ $messages = array(
 'namespaces' => 'नेमस्पेस',
 'variants' => 'बहुरुपहरु',
 
+'navigation-heading' => 'नेविगेशन मेनू',
 'errorpagetitle' => 'त्रुटि',
 'returnto' => '$1 मा फर्कनुहोस् ।',
 'tagline' => '{{SITENAME}}बाट',
@@ -459,10 +460,9 @@ $2',
 
 # Login and logout pages
 'logouttext' => "'''तपाईं अहिले बाहिर निस्कनु भएको छ।'''
-तपाईंले नाम/खाताविनै पनि {{SITENAME}}मा प्रयोग गर्न सक्नुहुन्छ, अथवा अघिकै वा अर्कै कुनै नामको खाताबाट [[Special:UserLogin|फेरि प्रवेश गर्न]] पनि सक्नुहुन्छ।
+तपाईंले नाम/खाताविनै पनि {{SITENAME}}मा प्रयोग गर्न सक्नुहुन्छ, अथवा अघिकै वा अर्कै कुनै नामको खाताबाट <span class='plainlinks'>[$1 फेरि प्रवेश गर्न]</span> पनि सक्नुहुन्छ।
 याद राख्नुहोस् तपाईंले ब्राउजरको स्मरण भण्डार खालि नगर्दासम्म कुनै पृष्ठहरूमा तपाईं अझै प्रवेश गरिराखेको देखाउन सक्छ।",
-'welcomecreation' => '== स्वागतम् , $1! ==
-तपाँईको खाता खोलिएको छ। [[Special:Preferences|{{SITENAME}} preferences]]मा आफ्ना अभिरुचिहरू परिवर्तन गर्न नबिर्सिनुहोला।',
+'welcomeuser' => '$1जी स्वागत छ!',
 'yourname' => 'प्रयोगकर्ता नाम:',
 'yourpassword' => 'पासवर्ड',
 'yourpasswordagain' => 'पासवर्ड फेरि टाईप गर्नुहोस्',
@@ -789,7 +789,6 @@ $2
 'hiddencategories' => 'यो पृष्ठ निम्न {{PLURAL:$1|1 लुकाइएको श्रेणी|$1 लुकाइएका श्रेणीहरु}}को सदस्य हो :',
 'edittools' => '<!-- Text here will be shown below edit and upload forms. -->',
 'edittools-upload' => '-',
-'nocreatetitle' => 'पृष्ठ सृजना सीमित गरिएको',
 'nocreatetext' => '{{SITENAME}} ले नयाँ पृष्ठ सृजना गर्न सक्ने क्षमतामा रोक लगाएको छ।
 तपाईँ पछाडि जानु भइ रहिआएको पृष्ठ सम्पादन गर्नसक्नुहुन्छ , अथवा [[Special:UserLogin|प्रवेश गर्नुहोस या नयाँ खाता सृजना गर्नुहोस् ]]।',
 'nocreate-loggedin' => 'नयाँ पृष्ठ सृजनागर्नको लागि तपाईँलाई अनुमति छैन ।',
@@ -1307,12 +1306,12 @@ HTML ट्यागहरु जाँच्नुहोस् ।',
 'right-sendemail' => 'अन्य प्रयोगकर्ताहरुलाई इमेल गर्ने',
 'right-passwordreset' => 'पासवर्ड परिवर्तन गर्ने ईमेलहरु हेर्नुहोस',
 
+# Special:Log/newusers
+'newuserlogpage' => 'प्रयोगकर्ता श्रृजना लग',
+
 # User rights log
 'rightslog' => 'प्रयोगकर्ता अधिकार लग',
 'rightslogtext' => 'यो प्रयोगकर्ता अधिकारहरुको परिवर्तन लग हो ।',
-'rightslogentry' => '$1 समूह सदस्याता $2 बाट $3 मा परिवर्तन गरिएको छ',
-'rightslogentry-autopromote' => ' $2 बाट $3 मा स्वत: बढुवा गरिएको छ',
-'rightsnone' => '(कुनैपनि होइन)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'यो पृष्ठ पढ्ने',
@@ -1814,9 +1813,6 @@ $1',
 'activeusers-hidesysops' => 'प्रबन्धकहरु लुकाउने',
 'activeusers-noresult' => 'प्रयोगकर्ताहरु भेटिएनन्।',
 
-# Special:Log/newusers
-'newuserlogpage' => 'प्रयोगकर्ता श्रृजना लग',
-
 # Special:ListGroupRights
 'listgrouprights' => 'प्रयोगकर्ता समूह अधिकार',
 'listgrouprights-summary' => 'निम्न सूची यस विकिमा परिभाषित समूहहरु र तिनीहरुले प्रयोगगर्न सक्ने संबद्ध  अधिकारहरुको हो।
@@ -1907,11 +1903,7 @@ $1',
 
 'enotif_mailer' => '{{SITENAME}} जानकारी प्रेषक',
 'enotif_reset' => 'सबै पृष्ठहरु भनी दाग दिने',
-'enotif_newpagetext' => 'यो नयाँ पृष्ठ हो।',
 'enotif_impersonal_salutation' => '{{SITENAME}} प्रयोगकर्ता',
-'changed' => 'परिवर्तन भइसकेको',
-'created' => 'बनाइएको',
-'enotif_subject' => '$PAGEEDITORद्वारा {{SITENAME}} पृष्ठ $PAGETITLE $CHANGEDORCREATED गरिएको',
 'enotif_lastvisited' => 'अघिल्लो हेराइपछिका सबै परिवर्तनहरुको निम्ति हेर्नुहोस्: $1',
 'enotif_lastdiff' => 'यस परिवर्तनको निम्ति यो $1 हेर्नुहोस्',
 'enotif_anon_editor' => 'अज्ञात  प्रयोगकर्ता  $1',
@@ -1945,6 +1937,8 @@ $UNWATCHURL
 
 प्रतिक्रिया र अन्य सहयोगको निम्ति:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'बनाइएको',
+'changed' => 'परिवर्तन भइसकेको',
 
 # Delete
 'deletepage' => 'पृष्ठ मेट्नुहोस्',
@@ -3439,7 +3433,7 @@ $5
 'revdelete-restricted' => 'प्रबन्धकहरुमाथि सीमितता लागू गरियो',
 'revdelete-unrestricted' => 'प्रवन्धककोलागि निषेधहरु हटाइयो ।',
 'logentry-move-move' => '$1 द्वारा $3 पृष्ठलाई $4 मा सारियो',
-'newuserlog-byemail' => 'इ मेलबाट पठाइएको प्रवेशशव्द',
+'rightsnone' => '(कुनैपनि होइन)',
 
 # Feedback
 'feedback-subject' => 'विषय:',

@@ -114,7 +114,6 @@ $specialPageAliases = array(
 	'Recentchanges'             => array( 'Mga_huling_binago', 'HulingBinago' ),
 	'Recentchangeslinked'       => array( 'Nakakawing_ng_kamakailang_pagbabago', 'Kaugnay_na_mga_pagbabago' ),
 	'Revisiondelete'            => array( 'Pagbura_ng_pagbabago' ),
-	'RevisionMove'              => array( 'Paglipat_ng_Rebisyon' ),
 	'Search'                    => array( 'Maghanap' ),
 	'Shortpages'                => array( 'Maikling_mga_pahina' ),
 	'Specialpages'              => array( 'Natatanging_mga_pahina' ),
@@ -295,7 +294,6 @@ $messages = array(
 'qbbrowse' => 'Basa-basahin',
 'qbedit' => 'Baguhin',
 'qbpageoptions' => 'Itong pahina',
-'qbpageinfo' => 'Konteksto',
 'qbmyoptions' => 'Mga pahina ko',
 'qbspecialpages' => 'Mga natatanging pahina',
 'faq' => "Mga karaniwang itinatanong (''FAQ'')",
@@ -567,10 +565,10 @@ Ang tagapangasiwang nagkandado nito ay nag-alok ng ganitong paliwanag: "$3".',
 # Login and logout pages
 'logouttext' => "'''Nakaalis ka na sa pagkakalagda.'''
 
-Maaari kang tumuloy sa paggamit ng {{SITENAME}} nang hindi nakikilala (anonimo), o maaaring kang [[Special:UserLogin|lumagda/tumala muli]] bilang kapareho o ibang tagagamit.
+Maaari kang tumuloy sa paggamit ng {{SITENAME}} nang hindi nakikilala (anonimo), o maaaring kang <span class='plainlinks'>[$1 lumagda/tumala muli]</span> bilang kapareho o ibang tagagamit.
 Tandaan na may ilang pahinang maaaring magpatuloy na nagpapakitang parang nakalagda ka pa rin, hanggang sa linisin mo ang iyong baunang pambasa-basa (''browser cache'').",
-'welcomecreation' => '== Maligayang pagdating, $1! ==
-Nilikha na ang iyong kuwenta.
+'welcomeuser' => 'Mabuhay, $1!',
+'welcomecreation-msg' => 'Nilikha na ang iyong kuwenta.
 Huwag kalimutang baguhin ang iyong [[Special:Preferences|mga kagustuhan sa {{SITENAME}}]].',
 'yourname' => 'Bansag:',
 'yourpassword' => 'Hudyat:',
@@ -928,7 +926,6 @@ Ang pinakahuling entrada sa talaan ay ibinigay sa baba para sa inyong pagsasangg
 'hiddencategories' => 'Ang pahinang ito ay kasapi sa {{PLURAL:$1|1 nakatagong kategorya|$1 nakatagong kategorya}}:',
 'edittools' => '<!-- Ang teksto rito ay ipapakita sa ilalim ng mga pormularyo ng pagbabago at pagkarga. -->',
 'edittools-upload' => '-',
-'nocreatetitle' => 'May hangganan ang paglikha ng pahina',
 'nocreatetext' => 'Naglagay ng hangganan (restriksyon/limitasyon) ang {{SITENAME}} sa kakayahang makalikha ng bagong mga pahina.
 Maaari kang bumalik at magbago ng isang umiiral na pahina, o kaya [[Special:UserLogin|lumagda o lumikha ng kuwenta/akawnt]].',
 'nocreate-loggedin' => 'Wala kang pahintulot para lumikha ng bagong mga pahina.',
@@ -953,6 +950,10 @@ Tila binura na ito.',
 'edit-already-exists' => 'Hindi makalikha ng isang bagong pahina.
 Umiiral na ito.',
 'defaultmessagetext' => 'Nakatakdang teksto ng mensahe',
+
+# Content models
+'content-model-wikitext' => 'wikiteksto',
+'content-model-text' => 'purong teksto',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Babala: Naglalaman ang pahinang ito ng napakaraming mamahaling mga tawag na pantungkulin.
@@ -1315,7 +1316,7 @@ Hindi ito maibabalik sa dating gawi.',
 'prefs-emailconfirm-label' => 'Kumpirmasyon ng e-liham:',
 'prefs-textboxsize' => 'Sukat ng bintana ng pagbabago',
 'youremail' => 'E-liham:',
-'username' => 'Bansag:',
+'username' => '{{GENDER:$1|Bansag}}:',
 'uid' => 'ID ng tagagamit:',
 'prefs-memberingroups' => 'Kasapi ng {{PLURAL:$1|na pangkat|na mga pangkat}}:',
 'prefs-memberingroups-type' => '$1',
@@ -1470,12 +1471,13 @@ Kung pipiliin mong ibigay ito, gagamitin ito para mabigyan ka ng pagkilala para 
 'right-sendemail' => 'Magpadala ng e-liham sa ibang mga tagagamit',
 'right-passwordreset' => 'Tingnan ang mga e-liham ng muling pagtatakda ng hudyat',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Talaan ng paglikha ng tagagamit',
+'newuserlogpagetext' => 'Isa itong talaan ng mga paglikha ng tagagamit.',
+
 # User rights log
 'rightslog' => 'Tala ng mga karapatan ng tagagamit',
 'rightslogtext' => 'Isa itong tala ng mga pagbabago sa mga karapatan ng tagagamit.',
-'rightslogentry' => 'binago ang kasapiang pampangkat para kay $1 mula sa $2 patungong $3',
-'rightslogentry-autopromote' => 'ay kusang naitaas ang ranggo mula $2 upang maging $3',
-'rightsnone' => '(wala)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'basahin itong pahina',
@@ -1716,6 +1718,7 @@ Kapag nagpatuloy ang suliranin, makipagugnayan sa isang [[Special:ListUsers/syso
 'backend-fail-notsame' => 'Isang hindi kamukhang talaksan ang umiiral na sa $1.',
 'backend-fail-invalidpath' => 'Ang $1 ay hindi isang katanggap-tanggap na landas ng imbakan.',
 'backend-fail-delete' => 'Hindi mabura ang talaksang $1.',
+'backend-fail-describe' => 'Hindi mapalitan ang metadatos para sa talaksang "$1".',
 'backend-fail-alreadyexists' => 'Umiiral na ang pahinang $1.',
 'backend-fail-store' => 'Hindi maimbak ang talaksang $1 sa $2.',
 'backend-fail-copy' => 'Hindi makopya ang talaksang $1 sa $2.',
@@ -2125,10 +2128,6 @@ Sinusuportahang mga protokolo: <code>$1</code> (huwag idagdag ang anuman sa mga 
 'activeusers-hidesysops' => 'Itago ang mga tagapangasiwa',
 'activeusers-noresult' => 'Walang natagpuang mga tagagamit.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Talaan ng paglikha ng tagagamit',
-'newuserlogpagetext' => 'Isa itong talaan ng mga paglikha ng tagagamit.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Mga uri ng tagagamit',
 'listgrouprights-summary' => 'Ang sumusunod ay isang talaan ng mga pangkat ng tagagamit na binigyang kahulugang sa wiking ito, kasama ang kanilang mga kaugnay na mga karapatan.
@@ -2225,11 +2224,7 @@ Makikita doon ang lahat ng mga susunod na pagbabago sa pahinang ito pati na ang 
 
 'enotif_mailer' => 'Tagapagpadala ng mga Pahayag ng {{SITENAME}}',
 'enotif_reset' => 'Tatakan ang lahat ng pahina bilang nadalaw na',
-'enotif_newpagetext' => 'Isa itong bagong pahina.',
 'enotif_impersonal_salutation' => 'Tagagamit ng {{SITENAME}}',
-'changed' => 'binago',
-'created' => 'nilikha',
-'enotif_subject' => 'Ang pahinang $PAGETITLE sa {{SITENAME}} ay $CHANGEDORCREATED ni $PAGEEDITOR',
 'enotif_lastvisited' => 'Tingnan ang $1 para sa lahat ng mga pagbabago magmula noong huling pagdalaw mo.',
 'enotif_lastdiff' => 'Tingnan ang $1 para makita ang pagbabagong ito.',
 'enotif_anon_editor' => 'hindi nakikilalang tagagamit $1',
@@ -2263,6 +2258,8 @@ $UNWATCHURL
 
 Tugon at karagdagang tulong:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'nilikha',
+'changed' => 'binago',
 
 # Delete
 'deletepage' => 'Burahin ang pahina',
@@ -2447,7 +2444,7 @@ $1',
 'blanknamespace' => '(Pangunahin)',
 
 # Contributions
-'contributions' => 'Mga ambag ng tagagamit',
+'contributions' => 'Mga ambag ng {{GENDER:$1|tagagamit}}',
 'contributions-title' => 'Mga ambag ng tagagamit na si $1',
 'mycontris' => 'Mga ambag',
 'contribsub2' => 'Para kay $1 ($2)',
@@ -2848,7 +2845,6 @@ Sagipin mo ito sa iyong kompyuter at papaitaas na ikarga ito rito.',
 
 # JavaScriptTest
 'javascripttest' => 'Pagsubok sa JavaScript',
-'javascripttest-disabled' => 'Hindi gumagana ang tungkuling ito sa wiking ito.',
 'javascripttest-title' => 'Pinatatakbo ang mga pagsubok ng $1',
 'javascripttest-pagetext-noframework' => 'Nakalaan ang pahinang ito para sa pagpapatakbo ng mga pagsubok ng JavaScript.',
 'javascripttest-pagetext-unknownframework' => 'Hindi napag-aalamang balangkas ng pagsubok na "$1".',
@@ -4047,7 +4043,7 @@ Ipinapakita ang mga larawan sa buong kalinawan, tuwirang sinisimulan ang ibang u
 'logentry-newusers-create' => 'Lumikha si $1 ng isang kuwenta ng tagagamit',
 'logentry-newusers-create2' => 'Lumikha si $1 ng isang kuwenta ng tagagamit na $3',
 'logentry-newusers-autocreate' => 'Kusang nalikha ang akawnt na $1',
-'newuserlog-byemail' => 'Ipinadala ang hudyat sa pamamagitan ng e-liham',
+'rightsnone' => '(wala)',
 
 # Feedback
 'feedback-bugornote' => 'Kung handa ka nang detalyadong maglarawan ng isang suliraning teknikal mangyaring [$1 iulat ang sira].

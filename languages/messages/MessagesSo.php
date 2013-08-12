@@ -156,7 +156,6 @@ $messages = array(
 'qbbrowse' => 'Ka soo raadi',
 'qbedit' => 'Wax ka bedel',
 'qbpageoptions' => 'Boggaan',
-'qbpageinfo' => 'isku xiran',
 'qbmyoptions' => 'Boggageyga',
 'qbspecialpages' => 'Bogaga qaaska ah',
 'faq' => 'SIL',
@@ -179,6 +178,7 @@ $messages = array(
 'namespaces' => 'Xarun magaceedyada',
 'variants' => 'Isbedelada',
 
+'navigation-heading' => 'Liiska laga galo',
 'errorpagetitle' => 'Qalad',
 'returnto' => 'Ku noqo $1.',
 'tagline' => 'Ka {{SITENAME}}',
@@ -384,10 +384,8 @@ Sababta neh waxaa waaye "\'\'$2\'\'".',
 # Login and logout pages
 'logouttext' => "'''Hada waad ka baxday.'''
 
-Waad sii isticmaali kartaa {{SITENAME}} adoona lagu aqoon, ama [[Special:UserLogin|gudaha gal]] adiga oo isticmaalaya magacaagii hore ama mid ka duwan. OGEYSIIS waxaa lagayabaa bogyaasha qaarkood in ay yiraahdaan wali gudaha ayaad ku jirtaa, ilaa inta aad ka nadiifineesid browsahaaga Internetka.",
-'welcomecreation' => "== Soo dhawoow, $1! ==
-Akoon kaada  waa la sameeyay.
-Ha' hilmaamin in aad wax ka bedesho [[Special:Preferences|{{SITENAME}} dooqyadaada]].",
+Waad sii isticmaali kartaa {{SITENAME}} adoona lagu aqoon, ama <span class='plainlinks'>[$1 gudaha gal]</span> adiga oo isticmaalaya magacaagii hore ama mid ka duwan. OGEYSIIS waxaa lagayabaa bogyaasha qaarkood in ay yiraahdaan wali gudaha ayaad ku jirtaa, ilaa inta aad ka nadiifineesid browsahaaga Internetka.",
+'welcomeuser' => 'Soo dhowoow, $1',
 'yourname' => 'Magaca gudagalka:',
 'yourpassword' => 'Eraysir:',
 'yourpasswordagain' => 'Markale qor ereysirka:',
@@ -859,8 +857,8 @@ E-mailkaada mala sheegaayo markii ee dadka kale kula soo xiriirayaan.',
 'right-browsearchive' => 'Raadi maqaalada la tirtiray',
 'right-undelete' => 'Ha tirtirin bog',
 
-# User rights log
-'rightsnone' => '(waxna)',
+# Special:Log/newusers
+'newuserlogpage' => 'Gudagalaha Isticmaale sameeyay',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'akhri boggaan',
@@ -1067,9 +1065,6 @@ Tafaasiishiisa waxee ku qorantahay [$2 bogga tafaasiisha faylka] oo ka arki kart
 'listusers-noresult' => 'Lama helin isticmaale.',
 'listusers-blocked' => '(waa la mamnuucay)',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Gudagalaha Isticmaale sameeyay',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(Inta ka mid ah liiskooda)',
 
@@ -1117,9 +1112,41 @@ Hadii aad rabootid in aad boggan ka saartid wardiyeynta, dhagsii \"Ha' wardiyeyn
 # Displayed when you click the "watch" button and it is in the process of watching
 'watching' => 'Daawasho...',
 
+'enotif_subject_created' => '{{SITENAME}} Bogga $1 Qof ayaa sameeyey {{gender:$2|$2}}',
+'enotif_subject_changed' => '{{SITENAME}} Bogga $1 Waxaa {{GENDER:$2|Bedel}} ku sameeyey qof $2',
+'enotif_body_intro_created' => 'Bogga {{SITENAME}} ga $1 waxaa la sameeyey $PAGEEDITDATE qof {{gender:$2|$2}}, eeg $3 sida laga dhigay hadda.',
+'enotif_body_intro_restored' => 'Booga {{SITENAME}} $1 waa labadelay {{GENDER:$2|dib u habayn}} waqtigaan $PAGEEDITDATE waxaana badalay $2, eeg $3 sida hadda laga dhigay.',
+'enotif_body_intro_changed' => 'Bogga {{SITENAME}} ga $1 waxaa la badelay $PAGEEDITDATE qof {{gender:$2|$2}}, eeg $3 sida laga dhigay hadda.',
 'enotif_lastvisited' => 'Eeg $1 Dhamaan isbedeleda ilaa goortii kuugu dambaysay.',
 'enotif_lastdiff' => 'Eeg $1 si aad u aragto bedelkaan.',
 'enotif_anon_editor' => 'Aan la qoon $1',
+'enotif_body' => 'Mudane $WATCHINGUSERNAME,
+
+$PAGEINTRO $NEWPAGE
+
+Qaybta wax laga bedelay: $PAGESUMMARY $PAGEMINOREDIT
+
+La xariirka Tifaftiraha:
+mail: $PAGEEDITOR_EMAIL
+wiki: $PAGEEDITOR_WIKI
+
+Lama soo diri doono ogeysiin dambe hadii isbedel kale lagu sii sameeyo ilaa aad ka soo booqato bogga.
+Waxaad awoodaa inaad ka saarto liiska waardiyeha bogga.
+
+			 Nidaamka war gelinta {{SITENAME}} ee E-mailka
+
+--
+si aad ubedesho fariinta e-mail dooqyadiisa, Booqo
+{{canonicalurl:{{#special:Preferences}}}}
+
+Si aad ubedesho liiskaada waardiyaha, Booqo
+{{canonicalurl:{{#special:EditWatchlist}}}}
+
+si aad utirtirto liiskaada waardiyaha ee gaarka ah, Booqo
+$UNWATCHURL
+
+Faalada iyo helista caawinaad dheeraad ah:
+{{canonicalurl:{{MediaWiki:Helppage}}}}',
 
 # Delete
 'confirm' => 'Xaqiiji',
@@ -1350,6 +1377,7 @@ Waxaa fiiri kartaa cadaadkiisa',
 
 # Info page
 'pageinfo-title' => 'Macluumaad ku saabsan "$1"',
+'pageinfo-toolboxlink' => 'Macluumad ku saabsan',
 
 # Browsing diffs
 'previousdiff' => '← bedelkii ka duqsanaa',
@@ -1452,6 +1480,9 @@ waxaad awoodaa [[Special:EditWatchlist/raw|Liiska wax ka bedel]].',
 # HTML forms
 'htmlform-reset' => 'Ka noqo wax bedelka',
 'htmlform-selectorother-other' => 'kuwa kale',
+
+# New logging system
+'rightsnone' => '(waxna)',
 
 # Feedback
 'feedback-message' => 'Fariinta:',

@@ -26,8 +26,8 @@ $namespaceNames = array(
 	NS_PROJECT_TALK     => 'Marit_$1',
 	NS_FILE             => 'Beureukaih',
 	NS_FILE_TALK        => 'Marit_Beureukaih',
-	NS_MEDIAWIKI        => 'AlatWiki',
-	NS_MEDIAWIKI_TALK   => 'Marit_AlatWiki',
+	NS_MEDIAWIKI        => 'MediaWiki',
+	NS_MEDIAWIKI_TALK   => 'Marit_MediaWiki',
 	NS_TEMPLATE         => 'Pola',
 	NS_TEMPLATE_TALK    => 'Marit_Pola',
 	NS_HELP             => 'Beunantu',
@@ -38,28 +38,30 @@ $namespaceNames = array(
 
 $namespaceAliases = array(
 	'Istimewa'              => NS_SPECIAL,
+	'Bicara'                => NS_TALK,
 	'Pembicaraan'           => NS_TALK,
 	'Pengguna'              => NS_USER,
+	'Bicara_Pengguna'       => NS_USER_TALK,
 	'Pembicaraan_Pengguna'  => NS_USER_TALK,
 	'Pembicaraan_$1'        => NS_PROJECT_TALK,
 	'Berkas'                => NS_FILE,
+	'Gambar'                => NS_FILE,
 	'Pembicaraan_Berkas'    => NS_FILE_TALK,
+	'Pembicaraan_Gambar'    => NS_FILE_TALK,
+	'AlatWiki'              => NS_MEDIAWIKI,
+	'Marit_AlatWiki'        => NS_MEDIAWIKI_TALK,
 	'Pembicaraan_MediaWiki' => NS_MEDIAWIKI_TALK,
+	'MediaWiki_Pembicaraan' => NS_MEDIAWIKI_TALK,
 	'Templat'               => NS_TEMPLATE,
 	'Pembicaraan_Templat'   => NS_TEMPLATE_TALK,
+	'Templat_Pembicaraan'   => NS_TEMPLATE_TALK,
 	'Bantuan'               => NS_HELP,
+	'Bantuan_Pembicaraan'   => NS_HELP_TALK,
 	'Pembicaraan_Bantuan'   => NS_HELP_TALK,
 	'Kategori'              => NS_CATEGORY,
+	'Kategori_Pembicaraan'  => NS_CATEGORY_TALK,
 	'Pembicaraan_Kategori'  => NS_CATEGORY_TALK,
 	'Gambar_Pembicaraan'    => NS_FILE_TALK,
-	'MediaWiki_Pembicaraan' => NS_MEDIAWIKI_TALK,
-	'Templat_Pembicaraan'   => NS_TEMPLATE_TALK,
-	'Bantuan_Pembicaraan'   => NS_HELP_TALK,
-	'Kategori_Pembicaraan'  => NS_CATEGORY_TALK,
-	'Gambar'                => NS_FILE,
-	'Pembicaraan_Gambar'    => NS_FILE_TALK,
-	'Bicara'                => NS_TALK,
-	'Bicara_Pengguna'       => NS_USER_TALK,
 );
 
 $specialPageAliases = array(
@@ -290,6 +292,7 @@ $messages = array(
 'newwindow' => '(peuhah bak tingkap barô)',
 'cancel' => 'Peubateuë',
 'moredotdotdot' => 'Lom...',
+'morenotlisted' => 'Lom...',
 'mypage' => 'Ôn',
 'mytalk' => 'Marit',
 'anontalk' => 'Peugah haba IP nyoë.',
@@ -301,7 +304,6 @@ $messages = array(
 'qbbrowse' => 'Lop',
 'qbedit' => 'Andam',
 'qbpageoptions' => 'Ôn nyoe',
-'qbpageinfo' => 'Asoe ôn',
 'qbmyoptions' => 'Ôn lôn',
 'qbspecialpages' => 'Ôn kusuih',
 'faq' => 'FAQ',
@@ -324,6 +326,7 @@ $messages = array(
 'namespaces' => 'Ruweuëng nan',
 'variants' => 'Ragam',
 
+'navigation-heading' => 'Menu navigasi',
 'errorpagetitle' => 'Seunalah',
 'returnto' => 'Gisa u $1.',
 'tagline' => 'Nibak {{SITENAME}}',
@@ -532,9 +535,6 @@ Neuci lom lam padum minet.',
 'viewsourcetext' => 'Droëneuh  jeuët neu’eu',
 
 # Login and logout pages
-'welcomecreation' => '== Seulamat trok teuka, $1! ==
-
-Nan Droeneuh ka teupeugot. Neuato laju [[Special:Preferences|peue nyang neugalak {{SITENAME}}]].',
 'yourname' => 'Ureuëng nguy:',
 'yourpassword' => 'Lageuëm:',
 'yourpasswordagain' => 'Pasoë lom lageuëm:',
@@ -758,6 +758,9 @@ Surat-e droeneuh h'an geupeugah keu ureueng nyan.",
 
 'grouppage-sysop' => '{{ns:project}}:Ureuëng urôh',
 
+# Special:Log/newusers
+'newuserlogpage' => 'ureuëng nguy barô',
+
 # User rights log
 'rightslog' => 'Log neuubah hak peuhah',
 
@@ -933,9 +936,6 @@ Teuneurang bak [$2 on teuneurangjih] geupeuleumah di yup nyoe.",
 'linksearch-ok' => 'Mita',
 'linksearch-line' => '$1 meusambat nibak $2',
 
-# Special:Log/newusers
-'newuserlogpage' => 'ureuëng nguy barô',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(dapeuta anggèëta)',
 
@@ -1012,7 +1012,7 @@ Droëneuh jeuët neugantoë tingkat lindông keu ôn nyoë, tapi nyan hana peung
 'blanknamespace' => '(Keuë)',
 
 # Contributions
-'contributions' => 'Peuneugöt',
+'contributions' => 'Peuneugöt {{GENDER:$1|ureuëng nguy}}',
 'contributions-title' => 'Peuneugöt ureuëng nguy keu $1',
 'mycontris' => 'Peuneugöt',
 'contribsub2' => 'Keu $1 ($2)',

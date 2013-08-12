@@ -112,6 +112,9 @@ Please contact your Internet service provider or technical support of your organ
 Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and [//translatewiki.net translatewiki.net] if you wish to contribute to the generic MediaWiki localisation.',
 'allmessages-filter' => 'Filter by customisation state:',
 
+# Special:Import
+'import-error-unserialize' => 'Revision $2 of page "$1" could not be unserialised. The revision was reported to use content model $3 serialised as $4.',
+
 # Metadata
 'metadata-help' => 'This file contains additional information, probably added from the digital camera or scanner used to create or digitise it.
 If the file has been modified from its original state, some details may not fully reflect the modified file.',
@@ -156,6 +159,7 @@ If the file has been modified from its original state, some details may not full
 'confirmemail_invalidated' => 'E-mail address confirmation cancelled',
 
 # Special:Version
+'version-credits-summary' => 'We would like to recognise the following persons for their contribution to [[Special:Version|MediaWiki]].',
 'version-license-info' => 'MediaWiki is free software; you can redistribute it and/or modify it under the terms of the GNU General Public Licence as published by the Free Software Foundation; either version 2 of the Licence, or (at your option) any later version.
 
 MediaWiki is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public Licence for more details.

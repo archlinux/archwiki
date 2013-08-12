@@ -157,6 +157,7 @@ $specialPageAliases = array(
 	'Mytalk'                    => array( 'Minha_discussão' ),
 	'Newimages'                 => array( 'Ficheiros_novos', 'Imagens_novas', 'Arquivos_novos' ),
 	'Newpages'                  => array( 'Páginas_novas', 'Artigos_novos' ),
+	'PermanentLink'             => array( 'Ligação_permanente', 'Link_permanente' ),
 	'Popularpages'              => array( 'Páginas_populares', 'Artigos_populares' ),
 	'Preferences'               => array( 'Preferências' ),
 	'Prefixindex'               => array( 'Índice_por_prefixo', 'Índice_de_prefixo' ),
@@ -204,7 +205,6 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__FORCARTDC__', '__FORCARSUMARIO__', '__FORÇARTDC__', '__FORÇARSUMÁRIO__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__TDC__', '__SUMÁRIO__', '__SUMARIO__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__NÃOEDITARSEÇÃO__', '__SEMEDITARSEÇÃO__', '__NAOEDITARSECAO__', '__SEMEDITARSECAO__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__SEMCABECALHO__', '__SEMCABEÇALHO__', '__SEMTITULO__', '__SEMTÍTULO__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'MESATUAL', 'MESATUAL2', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'MESATUAL1', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'NOMEDOMESATUAL', 'CURRENTMONTHNAME' ),
@@ -446,6 +446,7 @@ $messages = array(
 'newwindow' => '(abre numa janela nova)',
 'cancel' => 'Cancelar',
 'moredotdotdot' => 'Mais...',
+'morenotlisted' => 'Mais não listadas...',
 'mypage' => 'Página',
 'mytalk' => 'Discussão',
 'anontalk' => 'Discussão para este IP',
@@ -457,7 +458,6 @@ $messages = array(
 'qbbrowse' => 'Navegar',
 'qbedit' => 'Editar',
 'qbpageoptions' => 'Esta página',
-'qbpageinfo' => 'Contexto',
 'qbmyoptions' => 'Minhas páginas',
 'qbspecialpages' => 'Páginas especiais',
 'faq' => 'FAQ',
@@ -480,6 +480,7 @@ $messages = array(
 'namespaces' => 'Espaços nominais',
 'variants' => 'Variantes',
 
+'navigation-heading' => 'Menu de navegação',
 'errorpagetitle' => 'Erro',
 'returnto' => 'Voltar para $1.',
 'tagline' => 'Da {{SITENAME}}',
@@ -720,11 +721,11 @@ O administrador que efetuou o bloqueio deu a seguinte explicação: "$3".',
 # Login and logout pages
 'logouttext' => "'''Já não está autenticado.'''
 
-Pode continuar a utilizar a {{SITENAME}} anonimamente, ou pode [[Special:UserLogin|autenticar-se novamente]] com o mesmo nome de utilizador ou com um nome de utilizador diferente.
+Pode continuar a utilizar a {{SITENAME}} anonimamente, ou pode <span class='plainlinks'>[$1 autenticar-se novamente]</span> com o mesmo nome de utilizador ou com um nome de utilizador diferente.
 Tenha em atenção que algumas páginas poderão continuar a ser apresentadas como se ainda estivesse autenticado até limpar a cache do seu browser.",
-'welcomecreation' => '== Bem-vindo, $1! ==
-A sua conta foi criada.
-Não se esqueça de personalizar as suas [[Special:Preferences|preferências na {{SITENAME}}]].',
+'welcomeuser' => 'Bem-vindo, $1!',
+'welcomecreation-msg' => 'A sua conta foi criada.
+Não se esqueça de personalizar as suas [[Special:Preferences|preferências]].',
 'yourname' => 'Nome de utilizador:',
 'yourpassword' => 'Palavra-chave:',
 'yourpasswordagain' => 'Repita a palavra-chave:',
@@ -747,7 +748,7 @@ Não se esqueça de personalizar as suas [[Special:Preferences|preferências na 
 'gotaccount' => "Já possui uma conta? '''$1'''.",
 'gotaccountlink' => 'Autentique-se',
 'userlogin-resetlink' => 'Esqueceu-se do seu nome de utilizador ou da palavra-chave?',
-'createaccountmail' => 'por correio electrónico',
+'createaccountmail' => 'Usar uma palavra passe aleatória e temporária e enviar para o endereço de e-mail especificado abaixo',
 'createaccountreason' => 'Motivo:',
 'badretype' => 'As palavras-chave que introduziu não são iguais.',
 'userexists' => 'O nome de utilizador introduzido já existe.
@@ -1069,7 +1070,6 @@ Para referência, é apresentada abaixo a última entrada do registo:",
 'template-semiprotected' => '(semi-protegida)',
 'hiddencategories' => 'Esta página pertence a {{PLURAL:$1|uma categoria oculta|$1 categorias ocultas}}:',
 'edittools' => '<!-- O texto colocado aqui será mostrado abaixo dos formulários de edição e de envio de ficheiros. -->',
-'nocreatetitle' => 'A criação de páginas encontra-se limitada',
 'nocreatetext' => 'A {{SITENAME}} restringe a criação de páginas novas por utilizadores anónimos.
 Pode voltar atrás e editar uma página já existente, ou [[Special:UserLogin|autenticar-se ou criar uma conta]].',
 'nocreate-loggedin' => 'Não possui permissão para criar novas páginas.',
@@ -1094,6 +1094,13 @@ Ela parece ter sido eliminada.',
 'edit-already-exists' => 'Não foi possível criar uma página nova.
 Ela já existia.',
 'defaultmessagetext' => 'Texto da mensagem padrão',
+'content-not-allowed-here' => 'Conteúdo do tipo "$1" não é permitido na página [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'wikitexto',
+'content-model-text' => 'texto simples',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Aviso: Esta página contém demasiadas chamadas de funções exigentes do analisador sintáctico.
@@ -1467,9 +1474,9 @@ Esta operação não pode ser desfeita.',
 'prefs-emailconfirm-label' => 'Confirmação do endereço:',
 'prefs-textboxsize' => 'Tamanho da janela de edição',
 'youremail' => 'Correio electrónico:',
-'username' => 'Nome de utilizador:',
+'username' => 'Nome de {{GENDER:$1|utilizador|utilizadora}}:',
 'uid' => 'Número de identificação:',
-'prefs-memberingroups' => 'Membro {{PLURAL:$1|do grupo|dos grupos}}:',
+'prefs-memberingroups' => '{{GENDER:$2|Membro}} {{PLURAL:$1|do grupo|dos grupos}}:',
 'prefs-registration' => 'Hora de registo:',
 'yourrealname' => 'Nome verdadeiro:',
 'yourlanguage' => 'Língua:',
@@ -1618,12 +1625,13 @@ Esta informação será pública.',
 'right-sendemail' => 'Enviar correio electrónico a outros utilizadores',
 'right-passwordreset' => 'Ver emails de reposição de palavras-chave',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Registo de criação de utilizadores',
+'newuserlogpagetext' => 'Este é um registo de novas contas de utilizador',
+
 # User rights log
 'rightslog' => 'Registo de privilégios de utilizador',
 'rightslogtext' => 'Este é um registo de mudanças nos privilégios dos utilizadores.',
-'rightslogentry' => 'alterou grupos de $1 (de $2 para $3)',
-'rightslogentry-autopromote' => 'foi automaticamente promovido de $2 para $3',
-'rightsnone' => '(nenhum)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'ler esta página',
@@ -2257,9 +2265,9 @@ Veja também as [[Special:WantedCategories|categorias desejadas]].',
 'linksearch-pat' => 'Padrão de busca:',
 'linksearch-ns' => 'Espaço nominal:',
 'linksearch-ok' => 'Prosseguir',
-'linksearch-text' => 'É possível usar caracteres de substituição \'\'(wildcards)\'\', como por exemplo: "*.wikipedia.org".
+'linksearch-text' => 'É possível usar caracteres de substituição \'\'(wildcards)\'\', tais como "*.wikipedia.org".
 É necessário, pelo menos, um domínio de topo, por exemplo "*.org".<br />
-Protocolos suportados: <code>$1</code> (não adicione nenhum destes na sua pesquisa).',
+{{PLURAL:$2|Protocolo suportado|Protocolos suportados}}: <code>$1</code> (será utilizado http:// se não for especificado um protocolo).',
 'linksearch-line' => 'Link para $1 na página $2',
 'linksearch-error' => "Caracteres de substituição ''(wildcards)'' só podem ser usados no início do endereço.",
 
@@ -2277,10 +2285,6 @@ Protocolos suportados: <code>$1</code> (não adicione nenhum destes na sua pesqu
 'activeusers-hidebots' => 'Esconder robôs',
 'activeusers-hidesysops' => 'Esconder administradores',
 'activeusers-noresult' => 'Nenhum utilizador encontrado.',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Registo de criação de utilizadores',
-'newuserlogpagetext' => 'Este é um registo de novas contas de utilizador',
 
 # Special:ListGroupRights
 'listgrouprights' => 'Privilégios dos grupos de utilizadores',
@@ -2376,20 +2380,13 @@ O nome desta página passará a aparecer a '''negrito''' na lista de [[Special:R
 
 'enotif_mailer' => 'Gerador de Notificações da {{SITENAME}}',
 'enotif_reset' => 'Marcar todas as páginas como visitadas',
-'enotif_newpagetext' => 'Esta é uma página nova.',
 'enotif_impersonal_salutation' => 'Utilizador da "{{SITENAME}}"',
-'changed' => 'alterada',
-'created' => 'criada',
-'enotif_subject' => '{{SITENAME}}: A página $PAGETITLE foi $CHANGEDORCREATED por $PAGEEDITOR',
 'enotif_lastvisited' => 'Consulte $1 para todas as alterações efectuadas desde a sua última visita.',
 'enotif_lastdiff' => 'Consulte $1 para ver esta alteração.',
 'enotif_anon_editor' => 'utilizador anónimo $1',
-'enotif_body' => 'Caro(a) $WATCHINGUSERNAME,
+'enotif_body' => '{{GENDER:$WATCHINGUSERNAME|Caro|Cara|Caro(a)}},
 
-
-A página $PAGETITLE da {{SITENAME}} foi $CHANGEDORCREATED a $PAGEEDITDATE por $PAGEEDITOR; consulte $PAGETITLE_URL para ver a versão actual.
-
-$NEWPAGE
+$PAGEINTRO $NEWPAGE
 
 Resumo da edição: $PAGESUMMARY $PAGEMINOREDIT
 
@@ -2414,6 +2411,8 @@ $UNWATCHURL
 
 Para comentários e pedidos de ajuda:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'criada',
+'changed' => 'alterada',
 
 # Delete
 'deletepage' => 'Eliminar página',
@@ -2567,7 +2566,8 @@ Pode ter usado um link incorrecto ou talvez a revisão tenha sido restaurada ou 
 'undeletedrevisions' => '$1 {{PLURAL:$1|edição restaurada|edições restauradas}}',
 'undeletedrevisions-files' => '$1 {{PLURAL:$2|edição restaurada|edições restauradas}} e $2 {{PLURAL:$2|ficheiro restaurado|ficheiros restaurados}}',
 'undeletedfiles' => '{{PLURAL:$1|ficheiro restaurado|$1 ficheiros restaurados}}',
-'cannotundelete' => 'Restauração falhada; alguém talvez já restaurou a página.',
+'cannotundelete' => 'Restauração falhada:
+$1',
 'undeletedpage' => "'''$1 foi restaurada'''
 
 Consulte o [[Special:Log/delete|registo de eliminações]] para um registo das eliminações e restaurações mais recentes.",
@@ -2598,7 +2598,7 @@ $1',
 'blanknamespace' => '(Principal)',
 
 # Contributions
-'contributions' => 'Contribuições do utilizador',
+'contributions' => 'Contribuições {{GENDER:$1|do utilizador|da utilizadora}}',
 'contributions-title' => 'Contribuições {{GENDER:$1|do utilizador|da utilizadora}} $1',
 'mycontris' => 'Contribuições',
 'contribsub2' => 'Para $1 ($2)',
@@ -2870,6 +2870,7 @@ não é possível mover uma página para ela mesma.',
 'immobile-target-namespace-iw' => 'Um link interwikis não é um destino válido para uma movimentação de página.',
 'immobile-source-page' => 'Esta página não pode ser movida.',
 'immobile-target-page' => 'Não é possível mover para esse título de destino.',
+'bad-target-model' => 'O destino pretendido usa um modelo de conteúdo diferente. Não é possível converter de $1 para $2.',
 'imagenocrossnamespace' => 'Não é possível mover imagem para espaço nominal que não de imagens',
 'nonfile-cannot-move-to-file' => 'Não é possível mover algo que não é um ficheiro para o espaço nominal de ficheiros',
 'imagetypemismatch' => 'A extensão do novo ficheiro não corresponde ao seu tipo',
@@ -2995,7 +2996,6 @@ Não há um directório temporário.',
 
 # JavaScriptTest
 'javascripttest' => 'Teste de JavaScript',
-'javascripttest-disabled' => 'Esta função está desabilitada neste wiki.',
 'javascripttest-title' => 'Executando os testes $1',
 'javascripttest-pagetext-noframework' => 'Esta página é reservada para a execução de testes de JavaScript.',
 'javascripttest-pagetext-unknownframework' => 'Estrutura de testes "$1" desconhecido.',
@@ -3136,6 +3136,7 @@ Este bloqueio foi provavelmente causado por um link para um site externo que con
 'pageinfo-display-title' => 'Exibir título',
 'pageinfo-length' => 'Tamanho da página (em bytes)',
 'pageinfo-article-id' => 'ID da página',
+'pageinfo-language' => 'Idioma do conteúdo da página',
 'pageinfo-robot-policy' => 'Status do mecanismo de pesquisa',
 'pageinfo-robot-index' => 'Indexável',
 'pageinfo-robot-noindex' => 'Não indexável',
@@ -3154,6 +3155,16 @@ Este bloqueio foi provavelmente causado por um link para um site externo que con
 'pageinfo-recent-authors' => 'Número recente de autores distintos',
 'pageinfo-magic-words' => '{{PLURAL:$1|Palavra mágica|Palavras mágicas}} ($1)',
 'pageinfo-hidden-categories' => '{{PLURAL:$1|Categoria oculta|Categorias ocultas}} ($1)',
+'pageinfo-toolboxlink' => 'Informações da página',
+'pageinfo-redirectsto' => 'Redireciona para',
+'pageinfo-redirectsto-info' => 'informação',
+'pageinfo-contentpage' => 'Contada como página de conteúdo',
+'pageinfo-contentpage-yes' => 'Sim',
+'pageinfo-protect-cascading-yes' => 'Sim',
+'pageinfo-category-info' => 'Informações da categoria',
+'pageinfo-category-pages' => 'Número de páginas',
+'pageinfo-category-subcats' => 'Número de subcategorias',
+'pageinfo-category-files' => 'Número de ficheiros',
 
 # Skin names
 'skinname-standard' => 'Clássico',
@@ -3209,6 +3220,7 @@ Executá-lo poderá comprometer a segurança do seu sistema.",
 'file-nohires' => 'Sem resolução maior disponível.',
 'svg-long-desc' => 'ficheiro SVG, de $1 × $2 pixels, tamanho: $3',
 'svg-long-desc-animated' => 'ficheiro SVG animado, de $1 × $2 pixels, tamanho: $3',
+'svg-long-error' => 'Ficheiro SVG inválido: $1',
 'show-big-image' => 'Resolução completa',
 'show-big-image-preview' => 'Tamanho desta antevisão: $1.',
 'show-big-image-other' => '{{PLURAL:$2|Outra resolução|Outras resoluções}}: $1.',
@@ -3238,7 +3250,10 @@ Executá-lo poderá comprometer a segurança do seu sistema.",
 'minutes' => '{{PLURAL:$1|um minuto|$1 minutos}}',
 'hours' => '{{PLURAL:$1|uma hora|$1 horas}}',
 'days' => '{{PLURAL:$1|um dia|$1 dias}}',
+'months' => '{{PLURAL:$1|1 mês|$1 meses}}',
+'years' => '{{PLURAL:$1|1 ano|$1 anos}}',
 'ago' => '$1 atrás',
+'just-now' => 'agora mesmo',
 
 # Bad image list
 'bad_image_list' => 'O formato é o seguinte:
@@ -3996,7 +4011,9 @@ Imagens serão apresentadas pelo browser na resolução máxima; ficheiros de ou
 'logentry-newusers-create' => 'A conta de utilizador $1 foi criada',
 'logentry-newusers-create2' => 'A conta de utilizador $3 foi criada por $1',
 'logentry-newusers-autocreate' => 'A conta $1 foi criada automaticamente',
-'newuserlog-byemail' => 'palavra-chave enviada por correio-electrónico',
+'logentry-rights-rights' => '$1 modificou os privilégios do utilizador  $3  de  $4  para $5',
+'logentry-rights-autopromote' => '$1 foi automaticamente {{GENDER:$2|promovido|promovida}} de $4 a $5',
+'rightsnone' => '(nenhum)',
 
 # Feedback
 'feedback-bugornote' => 'Se está pronto para descrever um problema técnico em detalhe, por favor, [$1 comunique o defeito].

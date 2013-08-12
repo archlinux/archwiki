@@ -56,7 +56,7 @@
  */
 
 $namespaceNames = array(
-	NS_MEDIA            => 'Medya',
+	NS_MEDIA            => 'Ortam',
 	NS_SPECIAL          => 'Özel',
 	NS_TALK             => 'Tartışma',
 	NS_USER             => 'Kullanıcı',
@@ -75,9 +75,10 @@ $namespaceNames = array(
 );
 
 $namespaceAliases = array(
-	'Resim' => NS_FILE,
-	'Resim_tartışma' => NS_FILE_TALK,
-	'MedyaViki' => NS_MEDIAWIKI,
+	'Medya'              => NS_MEDIA,
+	'Resim'              => NS_FILE,
+	'Resim_tartışma'     => NS_FILE_TALK,
+	'MedyaViki'          => NS_MEDIAWIKI,
 	'MedyaViki_tartışma' => NS_MEDIAWIKI_TALK,
 );
 
@@ -93,7 +94,8 @@ $specialPageAliases = array(
 	'Booksources'               => array( 'KitapKaynakları' ),
 	'BrokenRedirects'           => array( 'BozukYönlendirmeler' ),
 	'Categories'                => array( 'Kategoriler', 'Ulamlar' ),
-	'ChangePassword'            => array( 'ŞifreDeğiştir', 'ParolaDeğiştir', 'ŞifreSıfırla', 'ParolaSıfırla' ),
+	'ChangeEmail'               => array( 'E-postaDeğiştir' ),
+	'ChangePassword'            => array( 'ParolaDeğiştir', 'ParolaSıfırla' ),
 	'ComparePages'              => array( 'SayfaKarşılaştır' ),
 	'Confirmemail'              => array( 'E-postaDoğrula' ),
 	'Contributions'             => array( 'Katkılar' ),
@@ -110,6 +112,7 @@ $specialPageAliases = array(
 	'Filepath'                  => array( 'DosyaYolu', 'DosyaKonumu' ),
 	'Import'                    => array( 'İçeAktar', 'İçeriAktar' ),
 	'Invalidateemail'           => array( 'E-postaDoğrulamaİptal' ),
+	'JavaScriptTest'            => array( 'JavaScriptTesti' ),
 	'BlockList'                 => array( 'EngelListesi', 'IPEngelListesi', 'EngelListele' ),
 	'LinkSearch'                => array( 'BağArama', 'BağlantıArama' ),
 	'Listadmins'                => array( 'HizmetliListele', 'YöneticiListele', 'HizmetliListesi', 'YöneticiListesi' ),
@@ -120,12 +123,13 @@ $specialPageAliases = array(
 	'Listusers'                 => array( 'KullanıcıListesi', 'KullanıcıListele' ),
 	'Lockdb'                    => array( 'DBKilitle', 'VeritabanıKilitle' ),
 	'Log'                       => array( 'Günlük', 'Günlükler', 'Kayıt', 'Kayıtlar' ),
-	'Lonelypages'               => array( 'YalnızSayfalar' ),
+	'Lonelypages'               => array( 'YalnızSayfalar', 'YetimSayfalar' ),
 	'Longpages'                 => array( 'UzunSayfalar' ),
 	'MergeHistory'              => array( 'GeçmişBirleştir' ),
 	'MIMEsearch'                => array( 'MIMEArama' ),
 	'Mostcategories'            => array( 'EnFazlaKategorili' ),
 	'Mostimages'                => array( 'EnÇokBağlantıVerilenDosyalar' ),
+	'Mostinterwikis'            => array( 'EnFazlaİnterviki' ),
 	'Mostlinked'                => array( 'EnÇokBağlantıVerilenSayfalar' ),
 	'Mostlinkedcategories'      => array( 'EnÇokBağlantıVerilenKategoriler' ),
 	'Mostlinkedtemplates'       => array( 'EnÇokBağlantıVerilenŞablonlar' ),
@@ -149,7 +153,6 @@ $specialPageAliases = array(
 	'Recentchanges'             => array( 'SonDeğişiklikler' ),
 	'Recentchangeslinked'       => array( 'İlgiliDeğişiklikler' ),
 	'Revisiondelete'            => array( 'RevizyonSil' ),
-	'RevisionMove'              => array( 'RevizyonTaşı' ),
 	'Search'                    => array( 'Ara', 'Arama' ),
 	'Shortpages'                => array( 'KısaSayfalar' ),
 	'Specialpages'              => array( 'ÖzelSayfalar' ),
@@ -167,10 +170,11 @@ $specialPageAliases = array(
 	'Unusedtemplates'           => array( 'KullanılmayanŞablonlar' ),
 	'Unwatchedpages'            => array( 'İzlenmeyenSayfalar' ),
 	'Upload'                    => array( 'Yükle' ),
+	'UploadStash'               => array( 'ZulaYükle', 'ZulaYükleme' ),
 	'Userlogin'                 => array( 'KullanıcıOturumuAçma', 'KullanıcıGiriş' ),
 	'Userlogout'                => array( 'KullanıcıOturumuKapatma', 'KullanıcıÇıkış' ),
 	'Userrights'                => array( 'KullanıcıHakları' ),
-	'Version'                   => array( 'Sürüm' ),
+	'Version'                   => array( 'Sürüm', 'Versiyon' ),
 	'Wantedcategories'          => array( 'İstenenKategoriler' ),
 	'Wantedfiles'               => array( 'İstenenDosyalar' ),
 	'Wantedpages'               => array( 'İstenenSayfalar' ),
@@ -187,11 +191,10 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__İÇİNDEKİLERZORUNLU__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__İÇİNDEKİLER__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__DEĞİŞTİRYOK__', '__DÜZENLEMEYOK__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__BAŞLIKYOK__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'MEVCUTAY', 'MEVCUTAY2', 'GÜNCELAY', 'GÜNCELAY2', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'MEVCUTAY1', 'GÜNCELAY1', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'MEVCUTAYADI', 'GÜNCELAYADI', 'CURRENTMONTHNAME' ),
-	'currentmonthnamegen'       => array( '1', 'MEVCUTAYADIİYELİK', 'CURRENTMONTHNAMEGEN' ),
+	'currentmonthnamegen'       => array( '1', 'MEVCUTAYADIİYELİK', 'GÜNCELAYADIİYELİK', 'CURRENTMONTHNAMEGEN' ),
 	'currentmonthabbrev'        => array( '1', 'MEVCUTAYKISALTMASI', 'GÜNCELAYKISALTMASI', 'CURRENTMONTHABBREV' ),
 	'currentday'                => array( '1', 'MEVCUTGÜN', 'GÜNCELGÜN', 'CURRENTDAY' ),
 	'currentday2'               => array( '1', 'MEVCUTGÜN2', 'GÜNCELGÜN2', 'CURRENTDAY2' ),
@@ -221,6 +224,7 @@ $magicWords = array(
 	'pagenamee'                 => array( '1', 'SAYFAADIU', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'ADALANI', 'İSİMALANI', 'NAMESPACE' ),
 	'namespacee'                => array( '1', 'ADALANIU', 'İSİMALANIU', 'NAMESPACEE' ),
+	'namespacenumber'           => array( '1', 'ADALANINUMARASI', 'NAMESPACENUMBER' ),
 	'talkspace'                 => array( '1', 'TARTIŞMAALANI', 'TARTIŞMABOŞLUĞU', 'TALKSPACE' ),
 	'talkspacee'                => array( '1', 'TARTIŞMAALANIU', 'TARTIŞMABOŞLUĞUU', 'TALKSPACEE' ),
 	'subjectspace'              => array( '1', 'KONUALANI', 'MADDEALANI', 'KONUBOŞLUĞU', 'MADDEBOŞLUĞU', 'SUBJECTSPACE', 'ARTICLESPACE' ),
@@ -236,9 +240,9 @@ $magicWords = array(
 	'subjectpagename'           => array( '1', 'KONUSAYFASIADI', 'MADDESAYFASIADI', 'SUBJECTPAGENAME', 'ARTICLEPAGENAME' ),
 	'subjectpagenamee'          => array( '1', 'KONUSAYFASIADIU', 'MADDESAYFASIADIU', 'SUBJECTPAGENAMEE', 'ARTICLEPAGENAMEE' ),
 	'msg'                       => array( '0', 'MSJ:', 'İLT:', 'MSG:' ),
-	'subst'                     => array( '0', 'KOPYALA:', 'AKTAR:', 'SUBST:' ),
-	'safesubst'                 => array( '0', 'GÜVENLİAKTAR:', 'SAFESUBST:' ),
-	'msgnw'                     => array( '0', 'MSJNW:', 'MSGNW:' ),
+	'subst'                     => array( '0', 'YK:', 'YERİNEKOY:', 'KOPYALA:', 'AKTAR:', 'YAPIŞTIR:', 'SUBST:' ),
+	'safesubst'                 => array( '0', 'GÜVENLİYERİNEKOY:', 'GÜVENLİKOPYALA:', 'GÜVENLİAKTAR:', 'GÜVENLİYAPIŞTIR:', 'SAFESUBST:' ),
+	'msgnw'                     => array( '0', 'MSJYN:', 'İLTYN:', 'MSGNW:' ),
 	'img_thumbnail'             => array( '1', 'küçükresim', 'küçük', 'thumbnail', 'thumb' ),
 	'img_manualthumb'           => array( '1', 'küçükresim=$1', 'küçük=$1', 'thumbnail=$1', 'thumb=$1' ),
 	'img_right'                 => array( '1', 'sağ', 'right' ),
@@ -260,18 +264,20 @@ $magicWords = array(
 	'img_bottom'                => array( '1', 'taban', 'bottom' ),
 	'img_text_bottom'           => array( '1', 'metin-taban', 'text-bottom' ),
 	'img_link'                  => array( '1', 'bağlantı=$1', 'link=$1' ),
+	'img_class'                 => array( '1', 'sınıf=$1', 'class=$1' ),
 	'int'                       => array( '0', 'İNT:', 'INT:' ),
 	'sitename'                  => array( '1', 'SİTEADI', 'SITENAME' ),
 	'ns'                        => array( '0', 'AA:', 'AB:', 'NS:' ),
 	'nse'                       => array( '0', 'AAU:', 'ABU:', 'NSE:' ),
 	'localurl'                  => array( '0', 'YERELURL:', 'LOCALURL:' ),
 	'localurle'                 => array( '0', 'YERELURLU:', 'LOCALURLE:' ),
+	'articlepath'               => array( '0', 'MADDEYOLU', 'ARTICLEPATH' ),
 	'pageid'                    => array( '0', 'SAYFANO', 'PAGEID' ),
 	'server'                    => array( '0', 'SUNUCU', 'SERVER' ),
 	'servername'                => array( '0', 'SUNUCUADI', 'SERVERNAME' ),
 	'scriptpath'                => array( '0', 'BETİKYOLU', 'SCRIPTPATH' ),
 	'stylepath'                 => array( '0', 'BİÇEMYOLU', 'STYLEPATH' ),
-	'grammar'                   => array( '0', 'GRAMER:', 'GRAMMAR:' ),
+	'grammar'                   => array( '0', 'DİLBİLGİSİ:', 'GRAMER:', 'GRAMMAR:' ),
 	'gender'                    => array( '0', 'CİNSİYET:', 'GENDER:' ),
 	'notitleconvert'            => array( '0', '__BAŞLIKDÖNÜŞÜMÜYOK__', '__BDY__', '__NOTITLECONVERT__', '__NOTC__' ),
 	'nocontentconvert'          => array( '0', '__İÇERİKDÖNÜŞÜMÜYOK__', '__İDY__', '__NOCONTENTCONVERT__', '__NOCC__' ),
@@ -283,13 +289,15 @@ $magicWords = array(
 	'revisionday'               => array( '1', 'SÜRÜMGÜNÜ', 'REVISIONDAY' ),
 	'revisionday2'              => array( '1', 'SÜRÜMGÜNÜ2', 'REVISIONDAY2' ),
 	'revisionmonth'             => array( '1', 'SÜRÜMAYI', 'REVISIONMONTH' ),
+	'revisionmonth1'            => array( '1', 'SÜRÜMAYI1', 'REVISIONMONTH1' ),
 	'revisionyear'              => array( '1', 'SÜRÜMYILI', 'REVISIONYEAR' ),
 	'revisiontimestamp'         => array( '1', 'SÜRÜMZAMANBİLGİSİ', 'REVISIONTIMESTAMP' ),
 	'revisionuser'              => array( '1', 'SÜRÜMKULLANICI', 'REVISIONUSER' ),
 	'plural'                    => array( '0', 'ÇOĞUL:', 'PLURAL:' ),
 	'fullurl'                   => array( '0', 'TAMURL:', 'FULLURL:' ),
 	'fullurle'                  => array( '0', 'TAMURLU:', 'FULLURLE:' ),
-	'canonicalurl'              => array( '0', 'KANONİKURL', 'CANONICALURL:' ),
+	'canonicalurl'              => array( '0', 'KURALLIURL:', 'CANONICALURL:' ),
+	'canonicalurle'             => array( '0', 'KURALLIURLU:', 'CANONICALURLE:' ),
 	'lcfirst'                   => array( '0', 'KHİLK:', 'LCFIRST:' ),
 	'ucfirst'                   => array( '0', 'BHİLK:', 'UCFIRST:' ),
 	'lc'                        => array( '0', 'KH:', 'LC:' ),
@@ -299,15 +307,22 @@ $magicWords = array(
 	'newsectionlink'            => array( '1', '__YENİBAŞLIKBAĞLANTISI__', '__NEWSECTIONLINK__' ),
 	'nonewsectionlink'          => array( '1', '__YENİBAŞLIKBAĞLANTISIYOK__', '__NONEWSECTIONLINK__' ),
 	'currentversion'            => array( '1', 'MEVCUTSÜRÜM', 'GÜNCELSÜRÜM', 'CURRENTVERSION' ),
+	'urlencode'                 => array( '0', 'URLKODLAMA:', 'URLENCODE:' ),
+	'anchorencode'              => array( '0', 'ÇENGELKODLAMA:', 'ANCHORENCODE' ),
 	'currenttimestamp'          => array( '1', 'MEVCUTZAMANBİLGİSİ', 'GÜNCELZAMANBİLGİSİ', 'CURRENTTIMESTAMP' ),
 	'localtimestamp'            => array( '1', 'YERELZAMANBİLGİSİ', 'LOCALTIMESTAMP' ),
+	'directionmark'             => array( '1', 'YÖNİŞARETİ:', 'DIRECTIONMARK', 'DIRMARK' ),
 	'language'                  => array( '0', '#DİL:', '#LİSAN:', '#LANGUAGE:' ),
 	'contentlanguage'           => array( '1', 'İÇERİKDİLİ', 'İÇERİKLİSANI', 'CONTENTLANGUAGE', 'CONTENTLANG' ),
 	'pagesinnamespace'          => array( '1', 'İSİMALANINDAKİSAYFALAR', 'İADAKİSAYFALAR', 'PAGESINNAMESPACE:', 'PAGESINNS:' ),
 	'numberofadmins'            => array( '1', 'HİZMETLİSAYISI', 'NUMBEROFADMINS' ),
+	'formatnum'                 => array( '0', 'BİÇİMNUM', 'FORMATNUM' ),
+	'padleft'                   => array( '0', 'DOLSOL', 'PADLEFT' ),
+	'padright'                  => array( '0', 'DOLSAĞ', 'PADRIGHT' ),
 	'special'                   => array( '0', 'özel', 'special' ),
+	'speciale'                  => array( '0', 'özelu', 'speciale' ),
 	'defaultsort'               => array( '1', 'VARSAYILANSIRALA:', 'VARSAYILANSIRALAMAANAHTARI:', 'VARSAYILANKATEGORİSIRALA:', 'DEFAULTSORT:', 'DEFAULTSORTKEY:', 'DEFAULTCATEGORYSORT:' ),
-	'filepath'                  => array( '0', 'DOSYA_YOLU:', 'FILEPATH:' ),
+	'filepath'                  => array( '0', 'DOSYAYOLU:', 'DOSYA_YOLU:', 'FILEPATH:' ),
 	'tag'                       => array( '0', 'etiket', 'tag' ),
 	'hiddencat'                 => array( '1', '__GİZLİKAT__', '__GİZLİKATEGORİ__', '__HIDDENCAT__' ),
 	'pagesincategory'           => array( '1', 'KATEGORİDEKİSAYFALAR', 'KATTAKİSAYFALAR', 'PAGESINCATEGORY', 'PAGESINCAT' ),
@@ -317,8 +332,15 @@ $magicWords = array(
 	'numberingroup'             => array( '1', 'GRUPTAKİSAYI', 'GRUBUNSAYISI', 'NUMBERINGROUP', 'NUMINGROUP' ),
 	'staticredirect'            => array( '1', '__STATİKYÖNLENDİRME__', '__SABİTYÖNLENDİRME__', '__STATICREDIRECT__' ),
 	'protectionlevel'           => array( '1', 'KORUMASEVİYESİ', 'PROTECTIONLEVEL' ),
-	'formatdate'                => array( '0', 'formattarihi', 'tarihformatı', 'formatdate', 'dateformat' ),
+	'formatdate'                => array( '0', 'biçimtarih', 'tarihbiçimi', 'formattarihi', 'tarihformatı', 'formatdate', 'dateformat' ),
+	'url_path'                  => array( '0', 'YOL', 'PATH' ),
 	'url_wiki'                  => array( '0', 'VİKİ', 'WIKI' ),
+	'url_query'                 => array( '0', 'SORGU', 'QUERY' ),
+	'defaultsort_noerror'       => array( '0', 'hatayok', 'hatasız', 'noerror' ),
+	'pagesincategory_all'       => array( '0', 'tüm', 'all' ),
+	'pagesincategory_pages'     => array( '0', 'sayfalar', 'pages' ),
+	'pagesincategory_subcats'   => array( '0', 'altkategoriler', 'subcats' ),
+	'pagesincategory_files'     => array( '0', 'dosyalar', 'files' ),
 );
 
 $separatorTransformTable = array( ',' => '.', '.' => ',' );
@@ -470,7 +492,6 @@ $messages = array(
 'qbbrowse' => 'Tara',
 'qbedit' => 'Değiştir',
 'qbpageoptions' => 'Bu sayfa',
-'qbpageinfo' => 'Bağlam',
 'qbmyoptions' => 'Sayfalarım',
 'qbspecialpages' => 'Özel sayfalar',
 'faq' => 'SSS',
@@ -493,6 +514,7 @@ $messages = array(
 'namespaces' => 'Ad alanları',
 'variants' => 'Türevler',
 
+'navigation-heading' => 'Dolaşım menüsü',
 'errorpagetitle' => 'Hata',
 'returnto' => '$1 sayfasına geri dön.',
 'tagline' => '{{SITENAME}} sitesinden',
@@ -727,11 +749,10 @@ Verilen sebep: ''$2''.",
 # Login and logout pages
 'logouttext' => "'''Oturumu kapattınız.'''
 
-Şimdi anonim olarak {{SITENAME}} sitesini kullanmaya devam edebilirsiniz ya da aynı kullanıcı adıyla ya da ister başka bir kullanıcı adıyla [[Special:UserLogin|yeniden oturum açabilirsiniz]].
+Şimdi anonim olarak {{SITENAME}} sitesini kullanmaya devam edebilirsiniz ya da aynı kullanıcı adıyla ya da ister başka bir kullanıcı adıyla <span class='plainlinks'>[$1 yeniden oturum açabilirsiniz]</span>.
 Tarayıcınızın önbelleğini temizleyene kadar bazı sayfalar sanki hâlâ oturumunuz açıkmış gibi görünebilir.",
-'welcomecreation' => '== Hoş geldin, $1! ==
-
-Hesabınız açıldı.
+'welcomeuser' => 'Hoş geldin $1!',
+'welcomecreation-msg' => 'Hesabınız açıldı.
 [[Special:Preferences|{{SITENAME}} tercihlerinizi]] değiştirmeyi unutmayın.',
 'yourname' => 'Kullanıcı adı:',
 'yourpassword' => 'Parola:',
@@ -755,7 +776,7 @@ Hesabınız açıldı.
 'gotaccount' => 'Zaten bir hesabınız var mı? $1.',
 'gotaccountlink' => 'Oturum açın',
 'userlogin-resetlink' => 'Giriş bilgilerinizi mi unuttunuz?',
-'createaccountmail' => 'e-posta ile',
+'createaccountmail' => 'Geçici bir rastgele şifre kullan ve şifreyi aşağıda belirtilen e-posta adresine gönder',
 'createaccountreason' => 'Sebep:',
 'badretype' => 'Girdiğiniz şifreler birbirleriyle uyuşmuyor.',
 'userexists' => 'Girdiğiniz kullanıcı adı zaten kullanımda.
@@ -886,6 +907,7 @@ Geçici şifre: $2',
 'changeemail-oldemail' => 'Mevcut E-posta adresi:',
 'changeemail-newemail' => 'Yeni E-posta adresi:',
 'changeemail-none' => '(yok)',
+'changeemail-password' => '{{SITENAME}} parolanız:',
 'changeemail-submit' => "E-posta'yı değiştir",
 'changeemail-cancel' => 'İptal',
 
@@ -1055,7 +1077,6 @@ Son günlük girdisi referans amaçlı aşağıda verilmiştir:",
 'template-semiprotected' => '(yarı-korumada)',
 'hiddencategories' => 'Bu sayfa {{PLURAL:$1|1 gizli kategoriye|$1 gizli kategoriye}} mensuptur:',
 'edittools' => '<!-- Buradaki metin düzenleme ve yükleme formlarının altında gösterilecektir. -->',
-'nocreatetitle' => 'Sayfa oluşturulması sınırlandı',
 'nocreatetext' => '{{SITENAME}}, yeni sayfa oluşturulabilmesini engelledi.
 Geri giderek varolan sayfayı değiştirebilirsiniz ya da kayıtlı iseniz [[Special:UserLogin|oturum açabilir]], değilseniz [[Special:UserLogin|kayıt olabilirsiniz]].',
 'nocreate-loggedin' => 'Yeni sayfalar oluşturmaya yetkiniz yok.',
@@ -1080,6 +1101,14 @@ Silinmiş görünüyor.',
 'edit-already-exists' => 'Yeni sayfa oluşturulamıyor.
 Sayfa zaten mevcut.',
 'defaultmessagetext' => 'Varsayılan mesaj metni',
+'invalid-content-data' => 'Geçersiz içerik verisi',
+'content-not-allowed-here' => '"$1" içeriğine, [[$2]] sayfasında izin verilmemekte.',
+
+# Content models
+'content-model-wikitext' => 'vikimetin',
+'content-model-text' => 'düz metin',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Uyarı: Bu sayfa çok fazla zengin derleyici fonksiyonu çağrısı içeriyor.
@@ -1438,9 +1467,9 @@ Kullanabileceğiniz rastgele-üretilmiş bir değer: $1',
 'prefs-emailconfirm-label' => 'E-posta doğrulaması:',
 'prefs-textboxsize' => 'Değiştirme penceresinin boyutu',
 'youremail' => 'E-posta:',
-'username' => 'Kullanıcı adı:',
-'uid' => 'Kullanıcı kimliği:',
-'prefs-memberingroups' => '{{PLURAL:$1|Grup|Grup}} üyesi:',
+'username' => '{{GENDER:$1|Kullanıcı adı}}:',
+'uid' => '{{GENDER:$1|Kullanıcı}} kimliği:',
+'prefs-memberingroups' => '{{GENDER:$2|Üye}} {{PLURAL:$1|group|grupları}}:',
 'prefs-registration' => 'Kayıt zamanı:',
 'yourrealname' => 'Gerçek adınız:',
 'yourlanguage' => 'Dil:',
@@ -1588,12 +1617,13 @@ Diğer kullanıcılar sizinle bu yolla iletişime geçtiğinde e-posta adresiniz
 'right-sendemail' => 'Diğer kullanıcılara e-posta gönder',
 'right-passwordreset' => 'Parola sıfırlama e-postalarını görür',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Yeni kullanıcı kayıtları',
+'newuserlogpagetext' => 'En son kaydolan kullanıcı kayıtları.',
+
 # User rights log
 'rightslog' => 'Kullanıcı hakları kayıtları',
 'rightslogtext' => 'Kullanıcı hakları değişiklikleri kayıtları.',
-'rightslogentry' => '$1 adlı kullanıcının yetkileri $2 iken $3 olarak değiştirildi',
-'rightslogentry-autopromote' => '$2 otomatik olarak yükseltilerek $3 yapıldı.',
-'rightsnone' => '(hiçbiri)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'bu sayfayı okumaya',
@@ -2033,6 +2063,8 @@ Dosya açıklamasını düzenlemek isterseniz, [$2 dosya açıklama sayfası] bu
 'disambiguationspage' => 'Template:Anlam ayrımı',
 'disambiguations-text' => 'İlk satırda yer alan sayfalar bir anlam ayrım sayfasına iç bağlantı olduğunu gösterir. İkinci sırada yer alan sayfalar anlam ayrım sayfalarını gösterir. <br />Burada [[MediaWiki:Disambiguationspage]] tüm anlam ayrım şablonlarına bağlantılar verilmesi gerekmektedir.',
 
+'pageswithprop-submit' => 'Git',
+
 'doubleredirects' => 'Çift yönlendirmeler',
 'doubleredirectstext' => 'Bu sayfa diğer yönlendirme sayfalarına yönlendirme yapan sayfaları listeler.
 Her satırın içerdiği bağlantılar; birinci ve ikinci yönlendirme, ayrıca ikinci yönlendirmenin hedefi, ki bu genelde birinci yönlendirmenin göstermesi gereken "gerçek" hedef sayfasıdır.
@@ -2179,7 +2211,7 @@ Ayrıca [[Special:WantedCategories|İstenen kategoriler]]'e bakınız.",
 'linksearch-ok' => 'Ara',
 'linksearch-text' => '"*.wikipedia.org" gibi jokerler kullanılabilir.
 En az bir üst-seviye alan gerekir, örneğin "*.org".<br />
-Desteklenen iletişim kuralları: <code>$1</code> (bunların hiçbirini aramanıza eklemeyin).',
+Desteklenen {{PLURAL:$2|iletişim kuralı|iletişim kuralları}}: <code>$1</code> (herhangi bir iletişim kuralı belirtmezseniz http:// otomatik olarak eklenir).',
 'linksearch-line' => "$1'e $2'den bağlantı verilmiş",
 'linksearch-error' => 'Jokerler sadece ana makine adının başında görünebilir.',
 
@@ -2197,10 +2229,6 @@ Desteklenen iletişim kuralları: <code>$1</code> (bunların hiçbirini aramanı
 'activeusers-hidebots' => 'Botları gizle',
 'activeusers-hidesysops' => 'Yöneticileri gizle',
 'activeusers-noresult' => 'Kullanıcı bulunamadı.',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Yeni kullanıcı kayıtları',
-'newuserlogpagetext' => 'En son kaydolan kullanıcı kayıtları.',
 
 # Special:ListGroupRights
 'listgrouprights' => 'Kullanıcı grubu hakları',
@@ -2296,39 +2324,48 @@ Bundan sonra, bu sayfaya ve ilgili tartışma sayfasına yapılacak değişiklik
 
 'enotif_mailer' => '{{SITENAME}} Bildirim Postası',
 'enotif_reset' => 'Tüm sayfaları ziyaret edilmiş olarak işaretle',
-'enotif_newpagetext' => 'Yeni bir sayfa.',
 'enotif_impersonal_salutation' => '{{SITENAME}} kullanıcı',
-'changed' => 'değiştirildi',
-'created' => 'oluşturuldu',
-'enotif_subject' => '{{SITENAME}} sayfası $PAGETITLE, $PAGEEDITOR tarafından $CHANGEDORCREATED',
+'enotif_subject_deleted' => '{{SITENAME}} sayfası $1, $2 tarafından {{GENDER:$2|silindi}}.',
+'enotif_subject_created' => '{{SITENAME}} sayfası $1, $2 tarafından {{GENDER:$2|açıldı}}.',
+'enotif_subject_moved' => '{{SITENAME}} sayfası $1, $2 tarafından {{GENDER:$2|taşındı}}.',
+'enotif_subject_restored' => '{{SITENAME}} sayfası $1, $2 tarafından {{GENDER:$2|geri getirildi}}.',
+'enotif_subject_changed' => '{{SITENAME}} sayfası $1, $2 tarafından {{GENDER:$2|değiştirildi}}.',
+'enotif_body_intro_deleted' => '{{SITENAME}} sayfası $1, $2 tarafından $PAGEEDITDATE tarihinde {{GENDER:$2|silindi}}, bakınız: $3.',
+'enotif_body_intro_created' => '{{SITENAME}} sayfası $1, $2 tarafından $PAGEEDITDATE tarihinde {{GENDER:$2|açıldı}}, mevcut revizyon için bakınız: $3.',
+'enotif_body_intro_moved' => '{{SITENAME}} sayfası $1, $2 tarafından $PAGEEDITDATE tarihinde {{GENDER:$2|taşındı}}, mevcut revizyon için bakınız: $3.',
+'enotif_body_intro_restored' => '{{SITENAME}} sayfası $1, $2 tarafından $PAGEEDITDATE tarihinde {{GENDER:$2|geri getirildi}}, mevcut revizyon için bakınız: $3.',
+'enotif_body_intro_changed' => '{{SITENAME}} sayfası $1, $2 tarafından $PAGEEDITDATE tarihinde {{GENDER:$2|değiştirildi}}, mevcut revizyon için bakınız: $3.',
 'enotif_lastvisited' => "Son ziyaretinizden bu yana olan tüm değişiklikleri görmek için $1'e bakın.",
 'enotif_lastdiff' => 'Bu değişikliği görmek için, $1 sayfasına bakınız.',
 'enotif_anon_editor' => 'anonim kullanıcı $1',
 'enotif_body' => 'Sayın $WATCHINGUSERNAME,
 
-{{SITENAME}} bünyesindeki $PAGETITLE başlıklı sayfa $PAGEEDITDATE tarihinde $PAGEEDITOR tarafından $CHANGEDORCREATED. Sayfanın son haline $PAGETITLE_URL adresinden ulaşabilirsiniz.
+$PAGEINTRO $NEWPAGE
 
-$NEWPAGE
+Editörün girdiği özet: $PAGESUMMARY $PAGEMINOREDIT
 
-Değişikliği yapan kullanıcının açıklaması: $PAGESUMMARY $PAGEMINOREDIT
+Editörün iletişim bilgileri:
+e-posta: $PAGEEDITOR_EMAIL
+viki: $PAGEEDITOR_WIKI
 
-Sayfayı değiştiren kullanıcıya erişim bilgileri:
-E-posta: $PAGEEDITOR_EMAIL
-Viki: $PAGEEDITOR_WIKI
+Bahsi geçen sayfayı ziyaret edinceye kadar sayfayla ilgili başka bildirim gönderilmeyecektir. Ayrıca izleme listenizdeki tüm sayfaların bildirim durumlarını sıfırlayabilirsiniz.
 
-Bahsi geçen sayfayı ziyaret edinceye kadar sayfayla ilgili başka değişiklik bildirimi gönderilmeyecektir. İzleme listenizdeki tüm sayfalar bildirim durumlarını sıfırlayabilirsiniz.
-
-              {{SITENAME}} sitesinin uyarı sistemi.
+{{SITENAME}} bildirim sistemi
 
 --
-İzleme listesi ayarlarınızı değiştirmek için:
+E-posta bildirim ayarlarınızı değiştirmek için aşağıdaki sayfayı ziyaret ediniz:
+{{canonicalurl:{{#special:Preferences}}}}
+
+İzleme listesi ayarlarınızı değiştirmek için aşağıdaki sayfayı ziyaret ediniz:
 {{canonicalurl:{{#special:EditWatchlist}}}}
 
-Sayfayı izleme listenizden silmek için:
+Sayfayı izleme listenizden silmek için aşağıdaki sayfayı ziyaret ediniz:
 $UNWATCHURL
 
 Geri bildirim ve daha fazla yardım için:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'oluşturuldu',
+'changed' => 'değiştirildi',
 
 # Delete
 'deletepage' => 'Sayfayı sil',
@@ -2481,7 +2518,8 @@ Revizyon onarılmış veya arşivden silinmiş olabilir ya da sahip olduğunuz b
 'undeletedrevisions' => 'Toplam {{PLURAL:$1|1 kayıt|$1 kayıt}} geri getirildi.',
 'undeletedrevisions-files' => '{{PLURAL:$1|1 revizyon|$1 revizyon}} ve {{PLURAL:$2|1 dosya|$2 dosya}} eski konumuna getirildi',
 'undeletedfiles' => '{{PLURAL:$1|1 dosya|$1 dosya}} geri getirildi.',
-'cannotundelete' => 'Sayfayı ya da medyayı sizden önce bir başka kullanıcı geri getirdiğinden dolayı sizin geri getirme işleminiz geçersiz.',
+'cannotundelete' => 'Silme başarısız oldu:
+$1',
 'undeletedpage' => "'''$1 sayfası geri getirildi'''
 
 Önceki silme ve geri getirme işlemleri için [[Special:Log/delete|silme kayıtları]]na bakınız.",
@@ -2511,7 +2549,7 @@ $1',
 'blanknamespace' => '(Ana)',
 
 # Contributions
-'contributions' => 'Kullanıcının katkıları',
+'contributions' => '{{GENDER:$1|Kullanıcı}} katkıları',
 'contributions-title' => '$1 için kullanıcı katkıları',
 'mycontris' => 'Katkılar',
 'contribsub2' => '$1 ($2)',
@@ -2894,7 +2932,6 @@ Geçici dosya kayıp.',
 
 # JavaScriptTest
 'javascripttest' => 'JavaScript denemesi',
-'javascripttest-disabled' => 'Bu işlev, bu viki üzerinde etkinleştirilmedi.',
 'javascripttest-title' => '$1 testleri çalışıyor',
 'javascripttest-qunit-intro' => 'mediawiki.org üzerinden [$1 deneme belgelerine] bakınız.',
 'javascripttest-qunit-heading' => 'MediaWiki JavaScript QUnit deneme paketi',
@@ -3008,6 +3045,7 @@ Geçici dosya kayıp.',
 'pageinfo-default-sort' => 'Varsayılan sıralama anahtarı',
 'pageinfo-length' => 'Sayfa uzunluğu (bayt cinsinden)',
 'pageinfo-article-id' => 'Sayfa ID',
+'pageinfo-language' => 'Sayfa içeriğinin dili',
 'pageinfo-robot-policy' => 'Arama motoru durumu',
 'pageinfo-robot-index' => 'İndekslenebilir',
 'pageinfo-robot-noindex' => 'İndekslenemez',
@@ -3027,6 +3065,17 @@ Geçici dosya kayıp.',
 'pageinfo-magic-words' => 'Sihirli {{PLURAL:$1|kelimeler|kelimeler}} ($1)',
 'pageinfo-hidden-categories' => 'Gizli {{PLURAL:$1|kategori|kategoriler}} ($1)',
 'pageinfo-templates' => 'Görüntülenen {{PLURAL:$1|şablon|şablonlar}} ($1)',
+'pageinfo-toolboxlink' => 'Sayfa bilgisi',
+'pageinfo-redirectsto' => 'Yönlendirilen',
+'pageinfo-redirectsto-info' => 'bilgi',
+'pageinfo-contentpage' => 'Bir içerik sayfası sayılır',
+'pageinfo-contentpage-yes' => 'Evet',
+'pageinfo-protect-cascading-yes' => 'Evet',
+'pageinfo-protect-cascading-from' => 'Korumalar üzerinden geçiş',
+'pageinfo-category-info' => 'Kategori bilgileri',
+'pageinfo-category-pages' => 'Sayfa sayısı',
+'pageinfo-category-subcats' => 'Alt kategori sayısı',
+'pageinfo-category-files' => 'Dosya sayısı',
 
 # Skin names
 'skinname-standard' => 'Klasik',
@@ -3078,6 +3127,7 @@ Bunu çalıştırmak, sisteminizi tehlikeye atabilir.",
 'file-nohires' => 'Daha yüksek çözünürlük yok.',
 'svg-long-desc' => 'SVG dosyası, sözde $1 × $2 piksel, dosya boyutu: $3',
 'svg-long-desc-animated' => 'Hareketli SVG dosyası, sözde $1 × $2 piksel, dosya boyutu: $3',
+'svg-long-error' => 'Geçersiz SVG dosyası: $1',
 'show-big-image' => 'Tam çözünürlük',
 'show-big-image-preview' => 'Ön izleme boyutu: $1.',
 'show-big-image-other' => 'Diğer {{PLURAL:$2|çözünürlük|çözünürlükleri}}: $1.',
@@ -3109,7 +3159,10 @@ Bunu çalıştırmak, sisteminizi tehlikeye atabilir.",
 'minutes' => '{{PLURAL:$1|$1 dakika|$1 dakika}}',
 'hours' => '{{PLURAL:$1|$1 saat|$1 saat}}',
 'days' => '{{PLURAL:$1|$1 gün|$1 gün}}',
+'months' => '{{PLURAL:$1|$1 ay|$1 ay}}',
+'years' => '{{PLURAL:$1|$1 yıl|$1 yıl}}',
 'ago' => '$1 önce',
+'just-now' => 'Hemen şimdi',
 
 # Bad image list
 'bad_image_list' => 'Biçim aşağıdaki gibidir:
@@ -3865,7 +3918,7 @@ Resimler tam çözünürlükte görüntülenir, diğer dosya tipleri ilgili prog
 'logentry-newusers-create' => 'Kullanıcı hesabı $1 oluşturdu',
 'logentry-newusers-create2' => '$1 kullanıcı hesabı oluşturdu $3',
 'logentry-newusers-autocreate' => '$1 hesabı otomatik olarak oluşturuldu',
-'newuserlog-byemail' => 'e-posta yoluyla şifre gönderilmiştir',
+'rightsnone' => '(hiçbiri)',
 
 # Feedback
 'feedback-subject' => 'Konu:',

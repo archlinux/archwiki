@@ -123,7 +123,7 @@ class ObjectCache {
 	 * @return ObjectCache
 	 */
 	static function newAccelerator( $params ) {
-		if ( function_exists( 'apc_fetch') ) {
+		if ( function_exists( 'apc_fetch' ) ) {
 			$id = 'apc';
 		} elseif( function_exists( 'xcache_get' ) && wfIniGetBool( 'xcache.var_size' ) ) {
 			$id = 'xcache';
@@ -139,9 +139,9 @@ class ObjectCache {
 	/**
 	 * Factory function that creates a memcached client object.
 	 *
-	 * This always uses the PHP client, since the PECL client has a different 
-	 * hashing scheme and a different interpretation of the flags bitfield, so 
-	 * switching between the two clients randomly would be disasterous.
+	 * This always uses the PHP client, since the PECL client has a different
+	 * hashing scheme and a different interpretation of the flags bitfield, so
+	 * switching between the two clients randomly would be disastrous.
 	 *
 	 * @param $params array
 	 *

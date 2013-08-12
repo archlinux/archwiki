@@ -19,15 +19,110 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @since 1.20
+ * Non-abstract since 1.21
  *
  * @file ORMTable.php
  * @ingroup ORM
  *
- * @licence GNU GPL v2 or later
+ * @license GNU GPL v2 or later
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  */
 
-abstract class ORMTable implements IORMTable {
+class ORMTable extends DBAccessBase implements IORMTable {
+
+	/**
+	 * Cache for instances, used by the singleton method.
+	 *
+	 * @since 1.20
+	 * @deprecated since 1.21
+	 *
+	 * @var ORMTable[]
+	 */
+	protected static $instanceCache = array();
+
+	/**
+	 * @since 1.21
+	 *
+	 * @var string
+	 */
+	protected $tableName;
+
+	/**
+	 * @since 1.21
+	 *
+	 * @var string[]
+	 */
+	protected $fields = array();
+
+	/**
+	 * @since 1.21
+	 *
+	 * @var string
+	 */
+	protected $fieldPrefix = '';
+
+	/**
+	 * @since 1.21
+	 *
+	 * @var string
+	 */
+	protected $rowClass = 'ORMRow';
+
+	/**
+	 * @since 1.21
+	 *
+	 * @var array
+	 */
+	protected $defaults = array();
+
+	/**
+	 * ID of the database connection to use for read operations.
+	 * Can be changed via @see setReadDb.
+	 *
+	 * @since 1.20
+	 *
+	 * @var integer DB_ enum
+	 */
+	protected $readDb = DB_SLAVE;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 1.21
+	 *
+	 * @param string $tableName
+	 * @param string[] $fields
+	 * @param array $defaults
+	 * @param string|null $rowClass
+	 * @param string $fieldPrefix
+	 */
+	public function __construct( $tableName = '', array $fields = array(), array $defaults = array(), $rowClass = null, $fieldPrefix = '' ) {
+		$this->tableName = $tableName;
+		$this->fields = $fields;
+		$this->defaults = $defaults;
+
+		if ( is_string( $rowClass ) ) {
+			$this->rowClass = $rowClass;
+		}
+
+		$this->fieldPrefix = $fieldPrefix;
+	}
+
+	/**
+	 * @see IORMTable::getName
+	 *
+	 * @since 1.21
+	 *
+	 * @return string
+	 * @throws MWException
+	 */
+	public function getName() {
+		if ( $this->tableName === '' ) {
+			throw new MWException( 'The table name needs to be set' );
+		}
+
+		return $this->tableName;
+	}
 
 	/**
 	 * Gets the db field prefix.
@@ -36,24 +131,36 @@ abstract class ORMTable implements IORMTable {
 	 *
 	 * @return string
 	 */
-	protected abstract function getFieldPrefix();
+	protected function getFieldPrefix() {
+		return $this->fieldPrefix;
+	}
 
 	/**
-	 * Cache for instances, used by the singleton method.
+	 * @see IORMTable::getRowClass
 	 *
-	 * @since 1.20
-	 * @var array of DBTable
+	 * @since 1.21
+	 *
+	 * @return string
 	 */
-	protected static $instanceCache = array();
+	public function getRowClass() {
+		return $this->rowClass;
+	}
 
 	/**
-	 * The database connection to use for read operations.
-	 * Can be changed via @see setReadDb.
+	 * @see ORMTable::getFields
 	 *
-	 * @since 1.20
-	 * @var integer DB_ enum
+	 * @since 1.21
+	 *
+	 * @return array
+	 * @throws MWException
 	 */
-	protected $readDb = DB_SLAVE;
+	public function getFields() {
+		if ( $this->fields === array() ) {
+			throw new MWException( 'The table needs to have one or more fields' );
+		}
+
+		return $this->fields;
+	}
 
 	/**
 	 * Returns a list of default field values.
@@ -64,7 +171,7 @@ abstract class ORMTable implements IORMTable {
 	 * @return array
 	 */
 	public function getDefaults() {
-		return array();
+		return $this->defaults;
 	}
 
 	/**
@@ -94,8 +201,9 @@ abstract class ORMTable implements IORMTable {
 	 * @return ORMResult
 	 */
 	public function select( $fields = null, array $conditions = array(),
-							array $options = array(), $functionName  = null ) {
-		return new ORMResult( $this, $this->rawSelect( $fields, $conditions, $options, $functionName ) );
+							array $options = array(), $functionName = null ) {
+		$res = $this->rawSelect( $fields, $conditions, $options, $functionName );
+		return new ORMResult( $this, $res );
 	}
 
 	/**
@@ -109,10 +217,11 @@ abstract class ORMTable implements IORMTable {
 	 * @param array $options
 	 * @param string|null $functionName
 	 *
-	 * @return array of self
+	 * @return array of row objects
+	 * @throws DBQueryError if the query failed (even if the database was in ignoreErrors mode).
 	 */
 	public function selectObjects( $fields = null, array $conditions = array(),
-								   array $options = array(), $functionName  = null ) {
+								   array $options = array(), $functionName = null ) {
 		$result = $this->selectFields( $fields, $conditions, $options, false, $functionName );
 
 		$objects = array();
@@ -130,14 +239,15 @@ abstract class ORMTable implements IORMTable {
 	 * @since 1.20
 	 *
 	 * @param null|string|array $fields
-	 * @param array $conditions
-	 * @param array $options
-	 * @param null|string $functionName
+	 * @param array             $conditions
+	 * @param array             $options
+	 * @param null|string       $functionName
 	 *
 	 * @return ResultWrapper
+	 * @throws DBQueryError if the quey failed (even if the database was in ignoreErrors mode).
 	 */
 	public function rawSelect( $fields = null, array $conditions = array(),
-							   array $options = array(), $functionName  = null ) {
+							   array $options = array(), $functionName = null ) {
 		if ( is_null( $fields ) ) {
 			$fields = array_keys( $this->getFields() );
 		}
@@ -145,13 +255,39 @@ abstract class ORMTable implements IORMTable {
 			$fields = (array)$fields;
 		}
 
-		return wfGetDB( $this->getReadDb() )->select(
+		$dbr = $this->getReadDbConnection();
+		$result = $dbr->select(
 			$this->getName(),
 			$this->getPrefixedFields( $fields ),
 			$this->getPrefixedValues( $conditions ),
 			is_null( $functionName ) ? __METHOD__ : $functionName,
 			$options
 		);
+
+		/* @var Exception $error */
+		$error = null;
+
+		if ( $result === false ) {
+			// Database connection was in "ignoreErrors" mode. We don't like that.
+			// So, we emulate the DBQueryError that should have been thrown.
+			$error = new DBQueryError(
+				$dbr,
+				$dbr->lastError(),
+				$dbr->lastErrno(),
+				$dbr->lastQuery(),
+				is_null( $functionName ) ? __METHOD__ : $functionName
+			);
+		}
+
+		$this->releaseConnection( $dbr );
+
+		if ( $error ) {
+			// Note: construct the error before releasing the connection,
+			// but throw it after.
+			throw $error;
+		}
+
+		return $result;
 	}
 
 	/**
@@ -177,7 +313,7 @@ abstract class ORMTable implements IORMTable {
 	 * @return array of array
 	 */
 	public function selectFields( $fields = null, array $conditions = array(),
-								  array $options = array(), $collapse = true, $functionName  = null ) {
+								  array $options = array(), $collapse = true, $functionName = null ) {
 		$objects = array();
 
 		$result = $this->rawSelect( $fields, $conditions, $options, $functionName );
@@ -223,7 +359,7 @@ abstract class ORMTable implements IORMTable {
 
 		$objects = $this->select( $fields, $conditions, $options, $functionName );
 
-		return $objects->isEmpty() ? false : $objects->current();
+		return ( !$objects || $objects->isEmpty() ) ? false : $objects->current();
 	}
 
 	/**
@@ -241,15 +377,18 @@ abstract class ORMTable implements IORMTable {
 	 */
 	public function rawSelectRow( array $fields, array $conditions = array(),
 								  array $options = array(), $functionName = null ) {
-		$dbr = wfGetDB( $this->getReadDb() );
+		$dbr = $this->getReadDbConnection();
 
-		return $dbr->selectRow(
+		$result = $dbr->selectRow(
 			$this->getName(),
 			$fields,
 			$conditions,
 			is_null( $functionName ) ? __METHOD__ : $functionName,
 			$options
 		);
+
+		$this->releaseConnection( $dbr );
+		return $result;
 	}
 
 	/**
@@ -293,6 +432,21 @@ abstract class ORMTable implements IORMTable {
 	}
 
 	/**
+	 * Checks if the table exists
+	 *
+	 * @since 1.21
+	 *
+	 * @return boolean
+	 */
+	public function exists() {
+		$dbr = $this->getReadDbConnection();
+		$exists = $dbr->tableExists( $this->getName() );
+		$this->releaseConnection( $dbr );
+
+		return $exists;
+	}
+
+	/**
 	 * Returns the amount of matching records.
 	 * Condition field names get prefixed.
 	 *
@@ -310,7 +464,8 @@ abstract class ORMTable implements IORMTable {
 		$res = $this->rawSelectRow(
 			array( 'rowcount' => 'COUNT(*)' ),
 			$this->getPrefixedValues( $conditions ),
-			$options
+			$options,
+			__METHOD__
 		);
 
 		return $res->rowcount;
@@ -327,13 +482,18 @@ abstract class ORMTable implements IORMTable {
 	 * @return boolean Success indicator
 	 */
 	public function delete( array $conditions, $functionName = null ) {
-		return wfGetDB( DB_MASTER )->delete(
+		$dbw = $this->getWriteDbConnection();
+
+		$result = $dbw->delete(
 			$this->getName(),
 			$conditions === array() ? '*' : $this->getPrefixedValues( $conditions ),
-			$functionName
+			is_null( $functionName ) ? __METHOD__ : $functionName
 		) !== false; // DatabaseBase::delete does not always return true for success as documented...
+
+		$this->releaseConnection( $dbw );
+		return $result;
 	}
-	
+
 	/**
 	 * Get API parameters for the fields supported by this object.
 	 *
@@ -397,7 +557,7 @@ abstract class ORMTable implements IORMTable {
 	}
 
 	/**
-	 * Get the database type used for read operations.
+	 * Get the database ID used for read operations.
 	 *
 	 * @since 1.20
 	 *
@@ -408,7 +568,7 @@ abstract class ORMTable implements IORMTable {
 	}
 
 	/**
-	 * Set the database type to use for read operations.
+	 * Set the database ID to use for read operations, use DB_XXX constants or an index to the load balancer setup.
 	 *
 	 * @param integer $db
 	 *
@@ -416,6 +576,70 @@ abstract class ORMTable implements IORMTable {
 	 */
 	public function setReadDb( $db ) {
 		$this->readDb = $db;
+	}
+
+	/**
+	 * Get the ID of the any foreign wiki to use as a target for database operations
+	 *
+	 * @since 1.20
+	 *
+	 * @return String|bool The target wiki, in a form that  LBFactory understands (or false if the local wiki is used)
+	 */
+	public function getTargetWiki() {
+		return $this->wiki;
+	}
+
+	/**
+	 * Set the ID of the any foreign wiki to use as a target for database operations
+	 *
+	 * @param string|bool $wiki The target wiki, in a form that  LBFactory understands (or false if the local wiki shall be used)
+	 *
+	 * @since 1.20
+	 */
+	public function setTargetWiki( $wiki ) {
+		$this->wiki = $wiki;
+	}
+
+	/**
+	 * Get the database type used for read operations.
+	 * This is to be used instead of wfGetDB.
+	 *
+	 * @see LoadBalancer::getConnection
+	 *
+	 * @since 1.20
+	 *
+	 * @return DatabaseBase The database object
+	 */
+	public function getReadDbConnection() {
+		return $this->getConnection( $this->getReadDb(), array() );
+	}
+
+	/**
+	 * Get the database type used for read operations.
+	 * This is to be used instead of wfGetDB.
+	 *
+	 * @see LoadBalancer::getConnection
+	 *
+	 * @since 1.20
+	 *
+	 * @return DatabaseBase The database object
+	 */
+	public function getWriteDbConnection() {
+		return $this->getConnection( DB_MASTER, array() );
+	}
+
+	/**
+	 * Releases the lease on the given database connection. This is useful mainly
+	 * for connections to a foreign wiki. It does nothing for connections to the local wiki.
+	 *
+	 * @see LoadBalancer::reuseConnection
+	 *
+	 * @param DatabaseBase $db the database
+	 *
+	 * @since 1.20
+	 */
+	public function releaseConnection( DatabaseBase $db ) {
+		parent::releaseConnection( $db ); // just make it public
 	}
 
 	/**
@@ -431,14 +655,17 @@ abstract class ORMTable implements IORMTable {
 	 * @return boolean Success indicator
 	 */
 	public function update( array $values, array $conditions = array() ) {
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = $this->getWriteDbConnection();
 
-		return $dbw->update(
+		$result = $dbw->update(
 			$this->getName(),
 			$this->getPrefixedValues( $values ),
 			$this->getPrefixedValues( $conditions ),
 			__METHOD__
 		) !== false; // DatabaseBase::update does not always return true for success as documented...
+
+		$this->releaseConnection( $dbw );
+		return $result;
 	}
 
 	/**
@@ -450,6 +677,7 @@ abstract class ORMTable implements IORMTable {
 	 * @param array $conditions
 	 */
 	public function updateSummaryFields( $summaryFields = null, array $conditions = array() ) {
+		$slave = $this->getReadDb();
 		$this->setReadDb( DB_MASTER );
 
 		/**
@@ -461,7 +689,7 @@ abstract class ORMTable implements IORMTable {
 			$item->save();
 		}
 
-		$this->setReadDb( DB_SLAVE );
+		$this->setReadDb( $slave );
 	}
 
 	/**
@@ -559,6 +787,7 @@ abstract class ORMTable implements IORMTable {
 	 * Get an instance of this class.
 	 *
 	 * @since 1.20
+	 * @deprecated since 1.21
 	 *
 	 * @return IORMTable
 	 */

@@ -82,30 +82,37 @@ class TempFSFile extends FSFile {
 	 * Clean up the temporary file only after an object goes out of scope
 	 *
 	 * @param $object Object
-	 * @return void
+	 * @return TempFSFile This object
 	 */
 	public function bind( $object ) {
 		if ( is_object( $object ) ) {
+			if ( !isset( $object->tempFSFileReferences ) ) {
+				// Init first since $object might use __get() and return only a copy variable
+				$object->tempFSFileReferences = array();
+			}
 			$object->tempFSFileReferences[] = $this;
 		}
+		return $this;
 	}
 
 	/**
 	 * Set flag to not clean up after the temporary file
 	 *
-	 * @return void
+	 * @return TempFSFile This object
 	 */
 	public function preserve() {
 		$this->canDelete = false;
+		return $this;
 	}
 
 	/**
 	 * Set flag clean up after the temporary file
 	 *
-	 * @return void
+	 * @return TempFSFile This object
 	 */
 	public function autocollect() {
 		$this->canDelete = true;
+		return $this;
 	}
 
 	/**

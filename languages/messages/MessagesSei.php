@@ -133,7 +133,6 @@ $messages = array(
 'qbbrowse' => 'Quetzexal',
 'qbedit' => 'Ticpatlöx',
 'qbpageoptions' => 'Jan páhina',
-'qbpageinfo' => 'Contextua',
 'qbmyoptions' => 'Hepáhinám',
 'qbspecialpages' => 'Páhinám extravám',
 'faq' => 'Cocmíiit cmaa',
@@ -320,9 +319,6 @@ $2',
 
 Mecontinudad usadad {{SITENAME}} anon jïx me caápo dajcaitom ö jömcaitom.
 Páhinám pac continudad displayom dajme caápo, jánclearom mecachede browser.",
-'welcomecreation' => "== Q'$1! ==
-
-Mecaitom coccebj creatöx. Quiix hequáatlaácde {{SITENAME}} pos-poop.",
 'yourname' => 'Caitom ID:',
 'yourpassword' => 'Quimx canj:',
 'yourpasswordagain' => 'Vanquimx canj:',
@@ -508,7 +504,6 @@ Jan lajxepe occuram me usadad proxy service anon web-based buggy.'''",
 'templatesusedsection' => 'Automií usadad jan seccion iti:',
 'template-protected' => '(protectöx)',
 'template-semiprotected' => '(semi-protectöx)',
-'nocreatetitle' => 'Limiitde creacionde páhinám',
 'nocreatetext' => 'Jan site coccebj avlutuatl altede creatöx hun páhinám.
 Me pos-coccebj revertöx ö ticpatlöx janpáhinám jöx [[Special:UserLogin|caápo]].',
 'nocreate-loggedin' => 'Me necoccebj permiccionde creatöx hunpáhinám jan wiki iti.',
@@ -662,9 +657,6 @@ Informacion: (curt) = quiíxde vercion currentua,
 'grouppage-bot' => '{{ns:project}}:Botam',
 'grouppage-sysop' => '{{ns:project}}:Sysopam',
 'grouppage-bureaucrat' => '{{ns:project}}:Bureaucrátam',
-
-# User rights log
-'rightsnone' => '(zéro)',
 
 # Recent changes
 'nchanges' => '$1 {{PLURAL:$1|quiix|quíix}}',
@@ -890,11 +882,10 @@ iitom e-iitomde diijömde caitóm.',
 'watching' => 'Cáminot...',
 'unwatching' => 'Necáminot...',
 
-'enotif_newpagetext' => 'Jan coccebj hunpáhina.',
 'enotif_impersonal_salutation' => '{{SITENAME}} caitom',
-'changed' => 'quiixöx',
-'created' => 'creacöx',
 'enotif_anon_editor' => 'caitom anoniimom $1',
+'created' => 'creacöx',
+'changed' => 'quiixöx',
 
 # Delete
 'deletepage' => 'Delatar páhina',
@@ -1064,5 +1055,8 @@ iitom e-iitomde diijömde caitóm.',
 
 # Special:SpecialPages
 'specialpages' => 'Páhinám extravám',
+
+# New logging system
+'rightsnone' => '(zéro)',
 
 );

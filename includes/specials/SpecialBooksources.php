@@ -46,7 +46,7 @@ class SpecialBookSources extends SpecialPage {
 	/**
 	 * Show the special page
 	 *
-	 * @param $isbn string ISBN passed as a subpage parameter
+	 * @param string $isbn ISBN passed as a subpage parameter
 	 */
 	public function execute( $isbn ) {
 		$this->setHeaders();
@@ -62,8 +62,8 @@ class SpecialBookSources extends SpecialPage {
 	}
 
 	/**
-	 * Returns whether a given ISBN (10 or 13) is valid.  True indicates validity.
-	 * @param isbn string ISBN passed for check
+	 * Returns whether a given ISBN (10 or 13) is valid. True indicates validity.
+	 * @param string $isbn ISBN passed for check
 	 * @return bool
 	 */
 	public static function isValidISBN( $isbn ) {
@@ -71,7 +71,7 @@ class SpecialBookSources extends SpecialPage {
 		$sum = 0;
 		if( strlen( $isbn ) == 13 ) {
 			for( $i = 0; $i < 12; $i++ ) {
-				if($i % 2 == 0) {
+				if( $i % 2 == 0 ) {
 					$sum += $isbn[$i];
 				} else {
 					$sum += 3 * $isbn[$i];
@@ -79,19 +79,19 @@ class SpecialBookSources extends SpecialPage {
 			}
 
 			$check = (10 - ($sum % 10)) % 10;
-			if ($check == $isbn[12]) {
+			if ( $check == $isbn[12] ) {
 				return true;
 			}
 		} elseif( strlen( $isbn ) == 10 ) {
-			for($i = 0; $i < 9; $i++) {
+			for( $i = 0; $i < 9; $i++ ) {
 				$sum += $isbn[$i] * ($i + 1);
 			}
 
 			$check = $sum % 11;
-			if($check == 10) {
+			if( $check == 10 ) {
 				$check = "X";
 			}
-			if($check == $isbn[9]) {
+			if( $check == $isbn[9] ) {
 				return true;
 			}
 		}
@@ -101,7 +101,7 @@ class SpecialBookSources extends SpecialPage {
 	/**
 	 * Trim ISBN and remove characters which aren't required
 	 *
-	 * @param $isbn string Unclean ISBN
+	 * @param string $isbn Unclean ISBN
 	 * @return string
 	 */
 	private static function cleanIsbn( $isbn ) {
@@ -116,7 +116,7 @@ class SpecialBookSources extends SpecialPage {
 	private function makeForm() {
 		global $wgScript;
 
-		$form  = '<fieldset><legend>' . $this->msg( 'booksources-search-legend' )->escaped() . '</legend>';
+		$form = '<fieldset><legend>' . $this->msg( 'booksources-search-legend' )->escaped() . '</legend>';
 		$form .= Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) );
 		$form .= Html::hidden( 'title', $this->getTitle()->getPrefixedText() );
 		$form .= '<p>' . Xml::inputLabel( $this->msg( 'booksources-isbn' )->text(), 'isbn', 'isbn', 20, $this->isbn );
@@ -130,6 +130,7 @@ class SpecialBookSources extends SpecialPage {
 	 * Determine where to get the list of book sources from,
 	 * format and output them
 	 *
+	 * @throws MWException
 	 * @return string
 	 */
 	private function showList() {
@@ -144,8 +145,17 @@ class SpecialBookSources extends SpecialPage {
 		$title = Title::makeTitleSafe( NS_PROJECT, $page ); # Show list in content language
 		if( is_object( $title ) && $title->exists() ) {
 			$rev = Revision::newFromTitle( $title, false, Revision::READ_NORMAL );
-			$this->getOutput()->addWikiText( str_replace( 'MAGICNUMBER', $this->isbn, $rev->getText() ) );
-			return true;
+			$content = $rev->getContent();
+
+			if ( $content instanceof TextContent ) {
+				//XXX: in the future, this could be stored as structured data, defining a list of book sources
+
+				$text = $content->getNativeData();
+				$this->getOutput()->addWikiText( str_replace( 'MAGICNUMBER', $this->isbn, $text ) );
+				return true;
+			} else {
+				throw new MWException( "Unexpected content type for book sources: " . $content->getModel() );
+			}
 		}
 
 		# Fall back to the defaults given in the language file
@@ -161,12 +171,16 @@ class SpecialBookSources extends SpecialPage {
 	/**
 	 * Format a book source list item
 	 *
-	 * @param $label string Book source label
-	 * @param $url string Book source URL
+	 * @param string $label Book source label
+	 * @param string $url Book source URL
 	 * @return string
 	 */
 	private function makeListItem( $label, $url ) {
 		$url = str_replace( '$1', $this->isbn, $url );
 		return '<li><a href="' . htmlspecialchars( $url ) . '" class="external">' . htmlspecialchars( $label ) . '</a></li>';
+	}
+
+	protected function getGroupName() {
+		return 'other';
 	}
 }

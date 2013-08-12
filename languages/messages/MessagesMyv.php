@@ -329,7 +329,6 @@ $messages = array(
 'qbbrowse' => 'Ваномо-тееме',
 'qbedit' => 'Витнеме-петнеме',
 'qbpageoptions' => 'Те лопась',
-'qbpageinfo' => 'Косо-зярдо',
 'qbmyoptions' => 'Монь лопан',
 'qbspecialpages' => 'Башка тевень лопат',
 'faq' => 'Сеедьстэ кепедень кевкстемат',
@@ -527,9 +526,7 @@ $messages = array(
 'virus-unknownscanner' => 'апак содань антивирус:',
 
 # Login and logout pages
-'welcomecreation' => '== Совак, инеськеть, $1! ==
-Совамотаркат теезь.
-Иля стувто полавтнемс эсеть [[Special:Preferences|{{SITENAME}} ладсематнень]].',
+'welcomeuser' => 'Совак, $1, инеськеть!',
 'yourname' => 'Теицянь лем:',
 'yourpassword' => 'Салава валот:',
 'yourpasswordagain' => 'Омбоцеде сёрмадык кирдицянь леметь:',
@@ -551,7 +548,7 @@ $messages = array(
 'gotaccount' => "Совамотаркат ули? '''$1'''.",
 'gotaccountlink' => 'Совамс',
 'userlogin-resetlink' => 'Совамо эрявикстнэнь стувтыть?',
-'createaccountmail' => 'е-сёрмасо',
+'createaccountmail' => 'Тейть кодамо понгсь салавань вал, кучик сонзэ ало максозь е-сёрмапаргонтень',
 'createaccountreason' => 'Тувталось:',
 'badretype' => 'Сёрмадыть салава валот кавксть: сынь аволь вейкеть.',
 'userexists' => 'Те лемесь уш саезь.
@@ -627,6 +624,7 @@ $messages = array(
 'changeemail-oldemail' => 'Неень е-сёрмапаргот:',
 'changeemail-newemail' => 'Од е-сёрмапаргот:',
 'changeemail-none' => '(арась мезе невтемс)',
+'changeemail-password' => '«{{SITENAME}}» проектэнь салававалот:',
 'changeemail-submit' => 'Полавтомс е-сёрмапаргот',
 'changeemail-cancel' => 'Саемс мекев',
 
@@ -726,7 +724,6 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'template-protected' => '(ванстозь)',
 'template-semiprotected' => '(пельс ванстозь)',
 'hiddencategories' => 'Те лопась совавтови {{PLURAL:$1|кекшень 1 категорияс|кекшень $1 категорияс}}:',
-'nocreatetitle' => 'Лопань теемась аволь певтеме',
 'nocreatetext' => 'Те {{SITENAME}} лопасонть пирязь од лопань теемась. Тонь ули мелеть велявтомс удалов ды  питнемензе-витнемензе улиця лопанть, али [[Special:UserLogin|совамс али теемс од совама]].',
 'nocreate-loggedin' => 'Тонеть а мерить теемс-шкамс од лопат.',
 'permissionserrorstext' => 'Тонеть а мерить теемс тень, вана {{PLURAL:$1|тувталось|тувталтнэ}}:',
@@ -1047,9 +1044,12 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'right-siteadmin' => 'Датабазань сёлгомо ды панжомо',
 'right-passwordreset' => 'Ваномс теицянь салава валонь полавтома е-сёрмат',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Теицянь шкамодо-теемадо конёв',
+'newuserlogpagetext' => 'Те теицянь шкавксто журнал',
+
 # User rights log
 'rightslog' => 'Уськетеицянть видечинть кемекстома',
-'rightsnone' => '(арасть)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'те лопань ловномо',
@@ -1419,10 +1419,6 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'activeusers-hidesysops' => 'Кекшемс администратортнэнь',
 'activeusers-noresult' => 'Якинзэ-пакинзэ арасть',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Теицянь шкамодо-теемадо конёв',
-'newuserlogpagetext' => 'Те теицянь шкавксто журнал',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Теиця куронть видечинзэ',
 'listgrouprights-group' => 'Куро',
@@ -1471,12 +1467,11 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'watching' => 'Ванома...',
 'unwatching' => 'Аванома...',
 
-'enotif_newpagetext' => 'Те од лопа.',
 'enotif_impersonal_salutation' => '{{SITENAME}} теицясь',
-'changed' => 'полавтозь',
-'created' => 'теезь-шказь',
 'enotif_lastdiff' => 'Те полавтоманть ваномга вант $1.',
 'enotif_anon_editor' => 'лемтеме теиця $1',
+'created' => 'теезь-шказь',
+'changed' => 'полавтозь',
 
 # Delete
 'deletepage' => 'Нардамс лопанть',
@@ -1581,7 +1576,7 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'blanknamespace' => '(Прявкс)',
 
 # Contributions
-'contributions' => 'Теицянть-кирдицянть путовксозо',
+'contributions' => '{{GENDER:$1|Теицянть}} путовксонзо',
 'contributions-title' => 'Теицянть путовксонзо $1 таркантень',
 'mycontris' => 'Монь путовкстнэ',
 'contribsub2' => '$1 ($2) туртов',
@@ -2241,7 +2236,7 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'htmlform-selectorother-other' => 'Лия',
 
 # New logging system
-'newuserlog-byemail' => 'салава валот кучозь е-сёрмасо',
+'rightsnone' => '(арасть)',
 
 # Feedback
 'feedback-subject' => 'Мезде:',

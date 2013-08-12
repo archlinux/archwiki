@@ -202,7 +202,7 @@ $specialPageAliases = array(
 	'Allmessages'               => array( 'Բոլորուղերձները' ),
 	'Allpages'                  => array( 'Բոլորէջերը' ),
 	'Ancientpages'              => array( 'Ամենահինէջերը' ),
-	'Block'                     => array( 'Արգելափակելip' ),
+	'Block'                     => array( 'Արգելափակել այփին' ),
 	'Blockme'                   => array( 'Արգելափակել' ),
 	'Booksources'               => array( 'Գրքայինաղբյուրները' ),
 	'BrokenRedirects'           => array( 'Կոտրվածվերահղումները' ),
@@ -216,7 +216,7 @@ $specialPageAliases = array(
 	'Export'                    => array( 'Արտահանելէջերը' ),
 	'FileDuplicateSearch'       => array( 'Կրկնօրինակֆայլերիորոնում' ),
 	'Import'                    => array( 'Ներմուծել' ),
-	'BlockList'                 => array( 'ԱրգելափակվածIPները' ),
+	'BlockList'                 => array( 'Արգելափակված այփի ները' ),
 	'Listadmins'                => array( 'Ադմիններիցանկը' ),
 	'Listfiles'                 => array( 'Պատկերներիցանկը' ),
 	'Listredirects'             => array( 'Ցույցտալվերահղումները' ),
@@ -417,7 +417,6 @@ $messages = array(
 'qbbrowse' => 'Թերթել',
 'qbedit' => 'Խմբագրել',
 'qbpageoptions' => 'Այս էջը',
-'qbpageinfo' => 'Հոդվածի մասին',
 'qbmyoptions' => 'Իմ էջերը',
 'qbspecialpages' => 'Սպասարկող էջեր',
 'faq' => 'ՀՏՀ',
@@ -439,6 +438,7 @@ $messages = array(
 'namespaces' => 'Անվանատարածքներ',
 'variants' => 'Տարբերակներ',
 
+'navigation-heading' => 'Նավիգացիոն ցանկ',
 'errorpagetitle' => 'Սխալ',
 'returnto' => 'Վերադառնալ $1։',
 'tagline' => '{{SITENAME}}յից',
@@ -667,10 +667,10 @@ $2',
 # Login and logout pages
 'logouttext' => "'''Դուք դուրս եկաք համակարգից։'''
 
-Դուք կարող եք շարունակել օգտագործել {{SITENAME}} կայքը անանուն, կամ [[Special:UserLogin|կրկին մուտք գործել համակարգ]] նույն կամ մեկ այլ մասնակցի անվամբ։ Ի նկատի ունեցեք, որ որոշ էջեր կարող են ցուցադրվել այնպես՝ ինչպես եթե դեռ համակարգում լինեիք մինչև որ չջնջեք ձեր զննարկիչի հիշապահեստը։",
-'welcomecreation' => '== Բարի՛ գալուստ, $1 ==
-Ձեր հաշիվը ստեղծված է։
-Չմոռանաք անձնավորել ձեր [[Special:Preferences|նախընտրությունները]]։',
+Դուք կարող եք շարունակել օգտագործել {{SITENAME}} կայքը անանուն, կամ <span class='plainlinks'>[$1 կրկին մուտք գործել համակարգ]</span> նույն կամ մեկ այլ մասնակցի անվամբ։ Ի նկատի ունեցեք, որ որոշ էջեր կարող են ցուցադրվել այնպես՝ ինչպես եթե դեռ համակարգում լինեիք մինչև որ չջնջեք ձեր զննարկիչի հիշապահեստը։",
+'welcomeuser' => 'Բարի գալո՜ւստ, $1',
+'welcomecreation-msg' => 'Ձեր հաշիվն ստեղծված է։
+Չմոռանաք փոփոխել ձեր [[Special:Preferences|նախընտրությունները]]։',
 'yourname' => 'Մասնակցի անուն՝',
 'yourpassword' => 'Գաղտնաբառ՝',
 'yourpasswordagain' => 'Կրկնեք գաղտնաբառը',
@@ -791,6 +791,7 @@ $2',
 'changeemail-oldemail' => 'Ներկա էլ․ հասցե․',
 'changeemail-newemail' => 'Նոր էլ․ հասցե․',
 'changeemail-none' => '(ոչ մի)',
+'changeemail-password' => 'Քո {{SITENAME}} գաղտնաբառը՝',
 'changeemail-submit' => 'Փոխել էլ․ հասցեն',
 'changeemail-cancel' => 'Չեղարկել',
 
@@ -988,7 +989,6 @@ $2',
 <charinsert>ټ څ ځ ډ ړ ږ ښ ګ ڼ ؤ ي ې ۍ ئ </charinsert>
 <charinsert>{{{+}}} {{+}} {{subst:+}} <noinclude>+</noinclude></charinsert>
 </p></div>',
-'nocreatetitle' => 'Էջերի ստեղծումը սահմանափակված է',
 'nocreatetext' => '{{SITENAME}} կայքում էջերի ստեղծման հնարավորությունը սահմանափակված է։
 Դուք կարող եք վերադառնալ և խմբագրել գոյություն ունեցող էջ կամ էլ [[Special:UserLogin|գրանցվել կամ մտնել համակարգ]]։',
 'nocreate-loggedin' => 'Դուք չունեք նոր էջեր ստեղծելու թույլտվություն։',
@@ -1004,6 +1004,10 @@ $2',
 'edit-conflict' => 'Խմբագրման ընհարում։',
 'edit-no-change' => 'Ձեր խմբագրումը անտեսվել է, քանի որ ոչ մի փոփոխություն չի կատարվել տեքստի մեջ։',
 'defaultmessagetext' => 'Լռելյան տեքստը',
+
+# Content models
+'content-model-wikitext' => 'վիքիտեքստ',
+'content-model-javascript' => 'ՋավաՍկրիպտ',
 
 # "Undo" feature
 'undo-success' => 'Խմբագրումը կարող է հետ շրջվել։ Ստուգեք տարբերակների համեմատությունը ստորև, որպեսզի համոզվեք, որ դա է ձեզ հետաքրքրող փոփոխությունը և մատնահարեք «Հիշել էջը»՝ գործողությունն ավարտելու համար։',
@@ -1258,9 +1262,9 @@ $3 մասնակիցը տվել է հետևյալ պատճառը. ''$2''",
 'prefs-emailconfirm-label' => 'Էլ-փոստի վավերացում․',
 'prefs-textboxsize' => 'Խմբագրման պատուհանի չափը',
 'youremail' => 'Էլեկտրոնային փոստ.',
-'username' => 'Մասնակցի անուն՝',
-'uid' => 'Մասնակցի իդենտիֆիկատոր՝',
-'prefs-memberingroups' => 'Անդամակցության {{PLURAL:$1|խումբ|խմբեր}}՝',
+'username' => '{{GENDER:$1|Մասնակցի անուն}}՝',
+'uid' => 'Մասնակցի իդենտիֆիկատոր.',
+'prefs-memberingroups' => 'Անդամակցության {{PLURAL:$1|խումբ|խմբեր}}.',
 'prefs-registration' => 'Գրանցման ամսաթիվը․',
 'yourrealname' => 'Ձեր իրական անունը.',
 'yourlanguage' => 'Ինտերֆեյսի լեզուն.',
@@ -1349,11 +1353,13 @@ $3 մասնակիցը տվել է հետևյալ պատճառը. ''$2''",
 'right-upload_by_url' => 'Բեռնել նիշքեր ինտերնետային հասցեից',
 'right-delete' => 'Էջերի ջնջում',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Մասնակիցների գրանցման տեղեկամատյան',
+'newuserlogpagetext' => 'Սա նոր մասնակիցների գրանցման տեղեկամատյանն է.',
+
 # User rights log
 'rightslog' => 'Մասնակցի իրավունքների տեղեկամատյան',
 'rightslogtext' => 'Սա մասնակիցների իրավունքների փոփոխությունների տեղեկամատյանն է։',
-'rightslogentry' => '$1 մասնակցի անդամակցությունը փոխվել է $2-ից $3',
-'rightsnone' => '(ոչ մի)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'խմբագրել այս էջը',
@@ -1617,6 +1623,8 @@ $3 մասնակիցը տվել է հետևյալ պատճառը. ''$2''",
 Փոխարենը նրանք, հավանաբար, պետք է հղեն համապատասխան թեմային։<br />
 Էջը համարվում է երկիմաստության փարատման էջ, եթե այն պարունակում է [[MediaWiki:Disambiguationspage]] էջում ընդգրկված կաղապարներից որևէ մեկը։',
 
+'pageswithprop-submit' => 'Անցնել',
+
 'doubleredirects' => 'Կրկնակի վերահղումներ',
 'doubleredirectstext' => 'Այս էջում բերված են վերահղման էջերին վերահղող էջերը։ Յուրաքանչյուր տող պարունակում է հղումներ դեպի առաջին և երկրորդ վերահղումները, ինչպես նաև երկրորդ վերահղման նպատակային էջի առաջին տողը, որում սովորաբար նշված է էջի անվանումը, որին պետք է հղի նաև առաջին վերահղումը։',
 'double-redirect-fixed-move' => '«[[$1]]» էջը վերանվանված է և այժմ վերահղում է «[[$2]]» էջին։',
@@ -1751,10 +1759,6 @@ $1-ը հղվել է $2 ից',
 'activeusers' => 'Ակտիվ մասնակիցների ցանկ',
 'activeusers-noresult' => 'Այդպիսի մասնակիցներ չեն գտնվել։',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Մասնակիցների գրանցման տեղեկամատյան',
-'newuserlogpagetext' => 'Սա նոր մասնակիցների գրանցման տեղեկամատյանն է.',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(անդամների ցանկ)',
 'listgrouprights-addgroup' => 'Ավելացնեել {{PLURAL:$2|խումբ|խմբեր}}՝  $1',
@@ -1825,11 +1829,11 @@ $1-ը հղվել է $2 ից',
 
 'enotif_mailer' => '{{grammar:genitive|{{SITENAME}}}} Տեղեկացման ծառայություն',
 'enotif_reset' => 'Նշել բոլոր էջերը այցելված',
-'enotif_newpagetext' => 'Սա նոր էջ է։',
 'enotif_impersonal_salutation' => '{{grammar:genitive|{{SITENAME}}}} մասնակից',
-'changed' => 'փոփոխված է',
-'created' => 'ստեղծված է',
-'enotif_subject' => '{{grammar:genitive|{{SITENAME}}}} «$PAGETITLE» էջը $CHANGEDORCREATED $PAGEEDITOR մասնակցի կողմից',
+'enotif_subject_deleted' => '{{SITENAME}} էջը $1 {{GENDER:$2|ջնջվել է}} $2-ի կողմից',
+'enotif_subject_created' => '{{SITENAME}} էջը $1 {{GENDER:$2|ստեղծվել է}} $2-ի կողմից',
+'enotif_subject_moved' => '{{SITENAME}} էջը $1 {{GENDER:$2|վերահղվել է}} $2-ի կողմից',
+'enotif_body_intro_created' => '{{SITENAME}} էջը $1 {{GENDER:$2|ստեղծվել է}} ժամը $PAGEEDITDATE-ին $2-ի կողմից, նայիր $3 ընդացիկ տարբերակը:',
 'enotif_lastvisited' => 'Տես $1՝ ձեր վերջին այցից ի վեր կատարված փոփոխությունների համար։',
 'enotif_lastdiff' => 'Տես $1՝ այս փոփոխությունը դիտելու համար։',
 'enotif_anon_editor' => 'անանուն մասնակից $1',
@@ -1855,6 +1859,8 @@ $NEWPAGE
 
 Հետադարձ կապ և օգնություն՝
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'ստեղծված է',
+'changed' => 'փոփոխված է',
 
 # Delete
 'deletepage' => 'Ջնջել էջը',
@@ -2016,7 +2022,7 @@ $1',
 'blanknamespace' => '(Գլխավոր)',
 
 # Contributions
-'contributions' => 'Մասնակցի ներդրում',
+'contributions' => ' {{GENDER:$1|Մասնակցի}} ներդրում',
 'contributions-title' => '$1 մասնակցի ներդրումը',
 'mycontris' => 'Ներդրում',
 'contribsub2' => '$1-ի ներդրումները ($2)',
@@ -2406,6 +2412,7 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 'pageinfo-default-sort' => 'Լռելայն տեսակավորման բանալի',
 'pageinfo-length' => 'Ծավալ (բայթերով)',
 'pageinfo-article-id' => 'Էջի N',
+'pageinfo-language' => 'Բովանդակության լեզու',
 'pageinfo-robot-policy' => 'Կարգավիճակը որոնողական համակարգերում',
 'pageinfo-robot-index' => 'ինդեքսավորվող',
 'pageinfo-robot-noindex' => 'ինդեքսավորվող չէ',
@@ -2425,6 +2432,12 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 'pageinfo-magic-words' => 'Մոգական {{PLURAL:$1|բառ|բառեր}} ($1)',
 'pageinfo-hidden-categories' => 'Թաքնված {{PLURAL:$1|կաղապար|կաղապարներ}} ($1)',
 'pageinfo-templates' => 'Օգտագործված {{PLURAL:$1|կաղապար|կաղապարներ}} ($1)',
+'pageinfo-toolboxlink' => 'Էջի վիճակագրություն',
+'pageinfo-redirectsto' => 'Վերահղում է դեպի',
+'pageinfo-redirectsto-info' => 'տվյալներ',
+'pageinfo-contentpage' => 'Հաշվառված որպես բովանդակային էջ',
+'pageinfo-contentpage-yes' => 'Այո',
+'pageinfo-protect-cascading-yes' => 'Այո',
 
 # Skin names
 'skinname-standard' => 'Դասական',
@@ -2447,6 +2460,8 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 'markedaspatrollederror' => 'Չհաջողվեց նշել որպես ստուգված',
 'markedaspatrollederrortext' => 'Անհրաժեշտ է ընտրել տարբերակ՝ որպես ստուգված նշելու համար։',
 'markedaspatrollederror-noautopatrol' => 'Ձեզ չի թույլատրվում ձեր կատարած փոփոխությունները նշել որպես ստուգված։',
+'markedaspatrollednotify' => 'Այս փոփոխությունը $1 էջում նշվել է ստուգված',
+'markedaspatrollederrornotify' => 'Ստուգված նշել չհաջողվեց։',
 
 # Patrol log
 'patrol-log-page' => 'Պարեկման տեղեկամատյան',
@@ -2752,7 +2767,7 @@ $3
 'logentry-newusers-newusers' => '$1 մասնակիցը ստեղծեց նոր հաշիվ',
 'logentry-newusers-create' => '$1 մասնակիցը ստեղծեց նոր հաշիվ',
 'logentry-newusers-create2' => '$1 Ստեղծեց նոր հաշիվ $3',
-'newuserlog-byemail' => 'Գաղտնաբառն ուղարկված է էլ․ փոստով',
+'rightsnone' => '(ոչ մի)',
 
 # Feedback
 'feedback-subject' => 'Թեմա.',

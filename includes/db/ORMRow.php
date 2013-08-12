@@ -27,11 +27,11 @@
  * @file ORMRow.php
  * @ingroup ORM
  *
- * @licence GNU GPL v2 or later
+ * @license GNU GPL v2 or later
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  */
 
-abstract class ORMRow implements IORMRow {
+class ORMRow implements IORMRow {
 
 	/**
 	 * The fields of the object.
@@ -120,7 +120,8 @@ abstract class ORMRow implements IORMRow {
 			$result = $this->table->rawSelectRow(
 				$this->table->getPrefixedFields( $fields ),
 				array( $this->table->getPrefixedField( 'id' ) => $this->getId() ),
-				array( 'LIMIT' => 1 )
+				array( 'LIMIT' => 1 ),
+				__METHOD__
 			);
 
 			if ( $result !== false ) {
@@ -138,8 +139,9 @@ abstract class ORMRow implements IORMRow {
 	 *
 	 * @since 1.20
 	 *
-	 * @param string $name
-	 * @param mixed $default
+	 * @param string $name Field name
+	 * @param $default mixed: Default value to return when none is found
+	 * (default: null)
 	 *
 	 * @throws MWException
 	 * @return mixed
@@ -159,7 +161,7 @@ abstract class ORMRow implements IORMRow {
 	 *
 	 * @since 1.20
 	 *
-	 * @param string$name
+	 * @param $name string
 	 *
 	 * @return mixed
 	 */
@@ -259,11 +261,18 @@ abstract class ORMRow implements IORMRow {
 			if ( array_key_exists( $name, $this->fields ) ) {
 				$value = $this->fields[$name];
 
+				// Skip null id fields so that the DBMS can set the default.
+				if ( $name === 'id' && is_null ( $value ) ) {
+					continue;
+				}
+
 				switch ( $type ) {
 					case 'array':
 						$value = (array)$value;
+						// fall-through!
 					case 'blob':
 						$value = serialize( $value );
+						// fall-through!
 				}
 
 				$values[$this->table->getPrefixedField( $name )] = $value;
@@ -346,7 +355,7 @@ abstract class ORMRow implements IORMRow {
 	 * @return boolean Success indicator
 	 */
 	protected function saveExisting( $functionName = null ) {
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = $this->table->getWriteDbConnection();
 
 		$success = $dbw->update(
 			$this->table->getName(),
@@ -354,6 +363,8 @@ abstract class ORMRow implements IORMRow {
 			$this->table->getPrefixedValues( $this->getUpdateConditions() ),
 			is_null( $functionName ) ? __METHOD__ : $functionName
 		);
+
+		$this->table->releaseConnection( $dbw );
 
 		// DatabaseBase::update does not always return true for success as documented...
 		return $success !== false;
@@ -382,13 +393,13 @@ abstract class ORMRow implements IORMRow {
 	 * @return boolean Success indicator
 	 */
 	protected function insert( $functionName = null, array $options = null ) {
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = $this->table->getWriteDbConnection();
 
 		$success = $dbw->insert(
 			$this->table->getName(),
 			$this->getWriteValues(),
 			is_null( $functionName ) ? __METHOD__ : $functionName,
-			is_null( $options ) ? array( 'IGNORE' ) : $options
+			$options
 		);
 
 		// DatabaseBase::insert does not always return true for success as documented...
@@ -397,6 +408,8 @@ abstract class ORMRow implements IORMRow {
 		if ( $success ) {
 			$this->setField( 'id', $dbw->insertId() );
 		}
+
+		$this->table->releaseConnection( $dbw );
 
 		return $success;
 	}
@@ -411,7 +424,7 @@ abstract class ORMRow implements IORMRow {
 	public function remove() {
 		$this->beforeRemove();
 
-		$success = $this->table->delete( array( 'id' => $this->getId() ) );
+		$success = $this->table->delete( array( 'id' => $this->getId() ), __METHOD__ );
 
 		// DatabaseBase::delete does not always return true for success as documented...
 		$success = $success !== false;
@@ -446,8 +459,8 @@ abstract class ORMRow implements IORMRow {
 	}
 
 	/**
-	 * Gets called after successfull removal.
-	 * Can be overriden to get rid of linked data.
+	 * Gets called after successful removal.
+	 * Can be overridden to get rid of linked data.
 	 *
 	 * @since 1.20
 	 */
@@ -501,11 +514,7 @@ abstract class ORMRow implements IORMRow {
 					$value = (float)$value;
 					break;
 				case 'bool':
-					if ( is_string( $value ) ) {
-						$value = $value !== '0';
-					} elseif ( is_int( $value ) ) {
-						$value = $value !== 0;
-					}
+					$value = (bool)$value;
 					break;
 				case 'array':
 					if ( is_string( $value ) ) {
@@ -557,7 +566,7 @@ abstract class ORMRow implements IORMRow {
 		$absoluteAmount = abs( $amount );
 		$isNegative = $amount < 0;
 
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = $this->table->getWriteDbConnection();
 
 		$fullField = $this->table->getPrefixedField( $field );
 
@@ -571,6 +580,8 @@ abstract class ORMRow implements IORMRow {
 		if ( $success && $this->hasField( $field ) ) {
 			$this->setField( $field, $this->getField( $field ) + $amount );
 		}
+
+		$this->table->releaseConnection( $dbw );
 
 		return $success;
 	}

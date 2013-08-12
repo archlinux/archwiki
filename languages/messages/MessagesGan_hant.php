@@ -198,7 +198,6 @@ $messages = array(
 'qbbrowse' => '查看',
 'qbedit' => '編寫',
 'qbpageoptions' => '箇頁',
-'qbpageinfo' => '箇頁信息',
 'qbmyoptions' => '我嗰頁面',
 'qbspecialpages' => '特殊頁',
 'faq' => 'FAQ',
@@ -423,10 +422,7 @@ $2',
 # Login and logout pages
 'logouttext' => "'''汝退出正哩。'''
 
-接到汝得匿名使用{{SITENAME}}，或[[Special:UserLogin|登入過]]。除非汝刪吥瀏覽器緩存，隻把子頁面可能會接到話汝係登入狀態。",
-'welcomecreation' => '== 歡迎, $1! ==
-
-建正哩汝嗰帳戶，莫誺記設置 [[Special:Preferences|{{SITENAME}}嗰個人參數]]。',
+接到汝得匿名使用{{SITENAME}}，或<span class='plainlinks'>[$1 登入過]</span>。除非汝刪吥瀏覽器緩存，隻把子頁面可能會接到話汝係登入狀態。",
 'yourname' => '用戶名：',
 'yourpassword' => '密碼：',
 'yourpasswordagain' => '輸過道密碼：',
@@ -630,7 +626,6 @@ $2',
 'template-semiprotected' => '（半保護）',
 'hiddencategories' => '箇隻版面係屬於$1隻隱藏類嗰成員：',
 'edittools' => '<!--箇首嗰文本會到下底嗰編輯同上傳列表裡坨顯示。 -->',
-'nocreatetitle' => '新建頁面拕限制',
 'nocreatetext' => '箇隻網站限制新建頁面嗰功能。倷可以回頭去編輯有嘞嗰頁面，或者[[Special:UserLogin|登入或新開帳戶]]。',
 'nocreate-loggedin' => '倷到 {{SITENAME}} 冇權新開頁面。',
 'permissionserrors' => '許可權錯誤',
@@ -894,11 +889,12 @@ $2',
 'grouppage-sysop' => '{{ns:project}}:操作員',
 'grouppage-bureaucrat' => '{{ns:project}}:行政員',
 
+# Special:Log/newusers
+'newuserlogpage' => '新開戶嗰人名單',
+
 # User rights log
 'rightslog' => '用戶許可權日誌',
 'rightslogtext' => '底下記到用戶許可權嗰更改記錄。',
-'rightslogentry' => '拿 $1 嗰許可權從 $2 改到 $3',
-'rightsnone' => '（冇）',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => '編輯箇頁',
@@ -1256,9 +1252,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-submit' => '顯示',
 'listusers-noresult' => '尋伓到用戶。',
 
-# Special:Log/newusers
-'newuserlogpage' => '新開戶嗰人名單',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '（成員名單）',
 
@@ -1316,11 +1309,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 
 'enotif_mailer' => '{{SITENAME}}郵件報告員',
 'enotif_reset' => '拿全部文章標成已讀',
-'enotif_newpagetext' => '箇係新開嗰頁面。',
 'enotif_impersonal_salutation' => '{{SITENAME}}用戶',
-'changed' => '改卟嘞',
-'created' => '建正嘞',
-'enotif_subject' => '{{SITENAME}}有頁面 $PAGETITLE拕$PAGEEDITOR $CHANGEDORCREATED',
 'enotif_lastvisited' => '眵倷上回訪問後嗰全部改動請去$1。',
 'enotif_lastdiff' => '想眵改動請去$1。',
 'enotif_anon_editor' => '匿名用戶$1',
@@ -1337,6 +1326,8 @@ $NEWPAGE
 {{SITENAME}}通知系統 – 會改卟倷嗰監視列表設置，請去 {{canonicalurl:{{#special:EditWatchlist}}}}
 
 回饋同到別嗰説明: {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => '建正嘞',
+'changed' => '改卟嘞',
 
 # Delete
 'deletepage' => '刪卟頁面',
@@ -2290,6 +2281,9 @@ $3
 
 # Special:Tags
 'tag-filter' => '[[Special:Tags|標籤]]過濾器：',
+
+# New logging system
+'rightsnone' => '（冇）',
 
 # Search suggestions
 'searchsuggest-search' => '尋吖',

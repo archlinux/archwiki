@@ -94,6 +94,15 @@ Explicitely specified output language (Dutch)
 !! end
 
 !! test
+Preserve tags in #switch default value
+!! input
+{{#switch:a|b|<div>c</div>}}
+!! result
+<div>c</div>
+
+!! end
+
+!! test
 Bug 19093: Default values don't fall through in switch
 !! input
 <{{#switch: foo | bar | #default = DEF }}>
@@ -209,5 +218,17 @@ Bug 22866: #ifexpr should evaluate "-0" as false
 {{#ifexpr: (-1)*0 | true | false }}
 !! result
 <p>false
+</p>
+!! end
+
+!! test
+Templates: Parser functions don't strip whitespace from positional parameters
+!! input
+{{#if: {{foo}}
+| no-pre-then
+| no-pre-else
+}}
+!! result
+<p>no-pre-then
 </p>
 !! end

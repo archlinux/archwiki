@@ -239,7 +239,6 @@ $messages = array(
 'qbbrowse' => 'Sgarfe',
 'qbedit' => 'Cambie',
 'qbpageoptions' => 'Cheste pagjine',
-'qbpageinfo' => 'Contest',
 'qbmyoptions' => 'Mês pagjinis',
 'qbspecialpages' => 'Pagjinis speciâls',
 'faq' => 'Domandis plui frecuentis',
@@ -410,11 +409,8 @@ Al podarès vê dentri caratars che no podin jessi doprâts tai titui.',
 # Login and logout pages
 'logouttext' => "'''Tu sâs cumò lât fûr.'''
 
-Tu puedis continuâ a doprâ {{SITENAME}} come anonim, o tu puedis [[Special:UserLogin|jentrâ di gnûf]] cul stes o cuntun altri non utent.
+Tu puedis continuâ a doprâ {{SITENAME}} come anonim, o tu puedis <span class='plainlinks'>[$1 jentrâ di gnûf]</span> cul stes o cuntun altri non utent.
 Considere che cualchi pagjine e pues mostrâti ancjemò come jentrât tal sît fin cuant che no tu netis la memorie cache dal sgarfadôr.",
-'welcomecreation' => '== Mandi e benvignût $1! ==
-La tô identitât e je stade creade. 
-No stâ dismenteâti di gambiâ lis [[Special:Preferences|preferencis di {{SITENAME}}]].',
 'yourname' => 'Non utent',
 'yourpassword' => 'Peraule clâf',
 'yourpasswordagain' => 'Torne a scrivile',
@@ -579,7 +575,6 @@ L'aministradôr che al à blocât la base di dâts al à ufiert chest spiegazion
 'template-protected' => '(protezût)',
 'template-semiprotected' => '(semi-protezût)',
 'hiddencategories' => 'Cheste pagjine e je {{PLURAL:$1|intune categorie platade|in $1 categoriis platadis}}:',
-'nocreatetitle' => 'Creazion des pagjinis limitade',
 'nocreatetext' => '{{SITENAME}} al à limitât la pussibilitât di creâ gnovis pagjinis ai utents regjistrâts. Tu puedis tornâ indaûr e cambiâ une pagjine che e esist o se no [[Special:UserLogin|jentrâ o creâ une gnove identitât]].',
 'nocreate-loggedin' => 'No tu âs i permès che a coventin par creâ gnovis pagjinis.',
 'permissionserrors' => 'Erôr tai permès',
@@ -819,6 +814,10 @@ La tô direzion di pueste no ven mostrade cuant che i utents ti contatin.',
 'group-user-member' => '{{GENDER:$1|Utent}}',
 
 'grouppage-sysop' => '{{ns:project}}:Aministradôrs',
+
+# Special:Log/newusers
+'newuserlogpage' => 'Regjistri dai gnûfs utents',
+'newuserlogpagetext' => 'Ca sot tu cjatis un regjistri dai gnûfs utents creâts.',
 
 # User rights log
 'rightslog' => 'Regjistri dai dirits dai utents',
@@ -1118,10 +1117,6 @@ Cjale ancje lis [[Special:WantedCategories|categoriis desideradis]].',
 'activeusers-hidesysops' => 'Plate i aministradôrs',
 'activeusers-noresult' => 'Nissun utent cjatât.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Regjistri dai gnûfs utents',
-'newuserlogpagetext' => 'Ca sot tu cjatis un regjistri dai gnûfs utents creâts.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Dirits dai grups di utents',
 'listgrouprights-group' => 'Grup',
@@ -1178,9 +1173,9 @@ e la pagjine e sarà '''gruessute''' te [[Special:RecentChanges|liste dai ultins
 'enotif_mailer' => 'Sisteme di notifiche par pueste eletroniche di {{SITENAME}}',
 'enotif_reset' => 'Segne dutis lis pagjinis come visitadis',
 'enotif_impersonal_salutation' => 'Utent di {{SITENAME}}',
-'changed' => 'cambiade',
-'created' => 'creade',
 'enotif_anon_editor' => 'utent anonim $1',
+'created' => 'creade',
+'changed' => 'cambiade',
 
 # Delete
 'deletepage' => 'Elimine pagjine',
@@ -1260,7 +1255,7 @@ Tu puedis cambiâ il nivel di protezion di cheste pagjine, ma chest nol varà ef
 'blanknamespace' => '(Principâl)',
 
 # Contributions
-'contributions' => 'Contribûts dal utent',
+'contributions' => 'Contribûts {{GENDER:$1|dal utent|de utente}}',
 'contributions-title' => 'Contribûts di $1',
 'mycontris' => 'Contribûts',
 'contribsub2' => 'Par $1 ($2)',
@@ -1696,9 +1691,6 @@ Se il file al è stât cambiât rispiet al so stât origjinâl, cualchi informaz
 # HTML forms
 'htmlform-submit' => 'Invie',
 'htmlform-selectorother-other' => 'Altris',
-
-# New logging system
-'newuserlog-byemail' => 'peraule clâf mandade par pueste eletroniche',
 
 # Search suggestions
 'searchsuggest-search' => 'Ricercje',

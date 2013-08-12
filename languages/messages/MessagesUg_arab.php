@@ -174,6 +174,7 @@ $messages = array(
 'newwindow' => '(يېڭى كۆزنەكتە ئاچ)',
 'cancel' => 'ۋاز كەچ',
 'moredotdotdot' => 'تەپسىلىي…',
+'morenotlisted' => 'تەپسىلاتى كۆرسىتىلمىگەنلىرى…',
 'mypage' => 'بەتىم',
 'mytalk' => 'مۇنازىرە بېتىم',
 'anontalk' => 'بۇ IP نىڭ مۇنازىرە بېتى',
@@ -185,7 +186,6 @@ $messages = array(
 'qbbrowse' => 'كۆز يۈگۈرت',
 'qbedit' => 'تەھرىر',
 'qbpageoptions' => 'بۇ بەت',
-'qbpageinfo' => 'كونتېكست',
 'qbmyoptions' => 'بەتلەرىم',
 'qbspecialpages' => 'ئالاھىدە بەتلەر',
 'faq' => 'كۆپ كۆرۈلىدىغان مەسىلىلەر',
@@ -208,6 +208,7 @@ $messages = array(
 'namespaces' => 'ئات بوشلۇقى',
 'variants' => 'ۋارىيانتلار',
 
+'navigation-heading' => 'يولباشچى تىزىملىكى',
 'errorpagetitle' => 'خاتالىق',
 'returnto' => '$1 غا قايت.',
 'tagline' => 'ئورنى {{SITENAME}}',
@@ -472,11 +473,10 @@ $2',
 # Login and logout pages
 'logouttext' => "'''ھازىر تىزىمدىن چىقتىڭىز.'''
 
-سىز نامسىز ھالەتتە {{SITENAME}} نى ئىشلىتەلەيسىز ياكى ئوخشاش ۋە ياكى ئوخشاش بولمىغان ئىشلەتكۈچى سالاھىيىتىدە [[Special:UserLogin|تىزىمغا كىر]]ەلەيسىز.
+سىز نامسىز ھالەتتە {{SITENAME}} نى ئىشلىتەلەيسىز ياكى ئوخشاش ۋە ياكى ئوخشاش بولمىغان ئىشلەتكۈچى سالاھىيىتىدە <span class='plainlinks'>[$1 تىزىمغا كىر]</span>ەلەيسىز.
 دىققەت، بەزى بەتلەر توركۆرگۈنىڭ غەملىكى تازىلانمىغۇچە يەنىلا سىزنى تىزىمغا كىرگەن ھالەتتە كۆرسىتىشى مۇمكىن.",
-'welcomecreation' => '==  $1! خۇش كەپسىز ==
-
-ھېساباتىڭىز قۇرۇلدى.
+'welcomeuser' => '$1، خۇش كەپسىز!',
+'welcomecreation-msg' => 'ھېساباتىڭىز قۇرۇلدى.
 
 [[Special:Preferences|{{SITENAME}} تەڭشىكىڭىزنى تەڭشەشنى ئۇنتۇپ قالماڭ]].',
 'yourname' => 'ئىشلەتكۈچى ئاتى:',
@@ -501,7 +501,7 @@ $2',
 'gotaccount' => "ھېساباتىم بار؟ '''$1'''.",
 'gotaccountlink' => 'تىزىمغا كىر',
 'userlogin-resetlink' => 'تىزىمغا كىرىش تەپسىلاتىنى ئۇنۇتتىڭىز؟',
-'createaccountmail' => 'ئېلخەتتە',
+'createaccountmail' => 'ۋاقىتلىق ئىختىيارىي بىر ئېمنى ئىشلىتىدۇ ھەمدە تۆۋەندىكى بەلگىلەنگەن تورخەت ئادرېسىغا ئەۋەتىدۇ',
 'createaccountreason' => 'سەۋەب:',
 'badretype' => 'سىز كىرگۈزگەن ئىم ماس كەلمىدى.',
 'userexists' => 'كىرگۈزگەن ئىشلەتكۈچى ئاتى ئىشلىتىلىۋاتىدۇ.
@@ -589,6 +589,7 @@ cookies نى قوزغاتقانلىقىڭىزنى جەزملەڭ، بۇ بەتن
 # Email sending
 'php-mail-error-unknown' => 'PHP نىڭ mail() فونكسىيەسىدىكى يوچۇن خاتالىق',
 'user-mail-no-addy' => 'ئېلخەت ئادرېسسىز خەت يوللاشنى سىنىدى.',
+'user-mail-no-body' => 'بوش ياكى مەزمۇنى قىسقا مۇۋاپىق بولمىغان تورخەت ئەۋەتىشنى سىنىدى.',
 
 # Change password dialog
 'resetpass' => 'ئىم ئۆزگەرت',
@@ -654,6 +655,7 @@ $2
 'changeemail-oldemail' => 'نۆۋەتتىكى ئېلخەت ئادرېسى:',
 'changeemail-newemail' => 'يېڭى ئېلخەت ئادرېسى:',
 'changeemail-none' => '(يوق)',
+'changeemail-password' => '{{SITENAME}} دىكى ئىم:',
 'changeemail-submit' => 'ئېلخەت ئۆزگەرت',
 'changeemail-cancel' => 'ۋاز كەچ',
 
@@ -841,7 +843,6 @@ $2
 'hiddencategories' => 'بۇ بەت {{PLURAL:$1|1 يوشۇرۇن تۈر|$1 يوشۇرۇن تۈر}} نىڭ ئەزالىرىغا تەۋە:',
 'edittools' => '<!-- بۇ جايدىكى تېكىست تەھرىرلەش ۋە يوللاش جەدۋىلنىڭ ئاستى تەرىپىدە كۆرۈنىدۇ. -->',
 'edittools-upload' => '-',
-'nocreatetitle' => 'بەت قۇرۇش چەكلىمىسى',
 'nocreatetext' => '{{SITENAME}} يېڭى بەت قۇرۇش ئىقتىدارىنى چەكلىگەن.
 كەينىگە قايتىپ مەۋجۇد بەتنى تەھرىرلىيەلەيسىز ياكى [[Special:UserLogin|تىزىمغا كىر ياكى يېڭى بىر ھېسابات قۇر]]الايسىز.',
 'nocreate-loggedin' => 'يېڭى بەت قۇرۇش ھوقۇقىڭىز يوق.',
@@ -866,6 +867,15 @@ $2
 'edit-already-exists' => 'يېڭى بەت قۇرالمىدى
 ئۇ مەۋجۇد.',
 'defaultmessagetext' => 'كۆڭۈلدىكى ئۇچۇر تېكستى',
+'content-failed-to-parse' => '$2 نى $1 گە ئانالىز قلش مەغلۇپ بولدى: $3',
+'invalid-content-data' => 'مەزمۇن سانلىق مەلۇماتى ئىناۋەتسىز',
+'content-not-allowed-here' => '[[$2]] بەتتە "$1" مەزمۇنغا يول قويۇلمايدۇ',
+
+# Content models
+'content-model-wikitext' => 'wiki تېكىستى',
+'content-model-text' => 'ساپ تېكىست',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''ئاگاھلاندۇرۇش:''' بۇ بەت ناھايىتى كۆپ يۇقىرى سەرپىياتتىكى گىرامماتىكىلىق ئىقتىدارنى چاقىرغان.\\n
@@ -1233,9 +1243,9 @@ $1",
 'prefs-emailconfirm-label' => 'ئېلخەت جەزملەش:',
 'prefs-textboxsize' => 'تەھرىر كۆزنەك چوڭلۇقى',
 'youremail' => 'ئېلخەت:',
-'username' => 'ئىشلەتكۇچى ئىسمى:',
-'uid' => 'ئىشلەتكۈچى كىملىك:',
-'prefs-memberingroups' => '{{PLURAL:$1|بىر|كۆپ}} گۇرۇپپا ئەزاسى:',
+'username' => '{{GENDER:$1|ئىشلەتكۇچى ئىسمى}}:',
+'uid' => '{{GENDER:$1|ئىشلەتكۇچى}} كىملىك:',
+'prefs-memberingroups' => '{{PLURAL:$1|گۇرۇپپا}} دىكى{{GENDER:$2| ئەزا}}:',
 'prefs-memberingroups-type' => '$1',
 'prefs-registration' => 'خەتلەتكەن ۋاقىت:',
 'prefs-registration-date-time' => '$1',
@@ -1294,6 +1304,7 @@ HTML بەلگىسىنى تەكشۈرۈڭ.',
 'saveusergroups' => 'ئىشلەتكۈچى گۇرۇپپىسى ساقلا',
 'userrights-groupsmember' => 'ئەزاسى:',
 'userrights-groupsmember-auto' => 'مۇقىم ئەزاسى:',
+'userrights-groupsmember-type' => '$1',
 'userrights-groups-help' => 'سىز بۇ ئىشلەتكۈچى تەۋە گۇرۇپپىنى ئۆزگەرتەلەيسىز:\\n
 * تاللاش رامكىسى تاللاغلىق بولسا ئىشلەتكۈچى شۇ  گۇرۇپپىغا تەۋە:
 * تاللاش رامكىسى تاللاغلىق بولمىسا ئىشلەتكۈچى شۇ  گۇرۇپپىغا تەۋە ئەمەس.
@@ -1393,12 +1404,13 @@ HTML بەلگىسىنى تەكشۈرۈڭ.',
 'right-sendemail' => 'باشقا ئىشلەتكۈچىگە ئېلخەت يوللا',
 'right-passwordreset' => 'پارول ئەسلىگە قايتۇرۇش ئېلخەت ئادرېس كۆرۈش.',
 
+# Special:Log/newusers
+'newuserlogpage' => 'ئىشلەتكۈچى قۇرغان خاتىرە',
+'newuserlogpagetext' => '(چەكلەنگەن)',
+
 # User rights log
 'rightslog' => 'ئىشلەتكۈچى ھوقۇق خاتىرىسى',
 'rightslogtext' => 'ئىشلەتكۈچى ھوقۇق خاتىرىسى',
-'rightslogentry' => 'گۇرۇپپا ئەزاسى $1  نىڭ ھوقۇقىنى $2 دىن $3 غا ئۆزگەرت',
-'rightslogentry-autopromote' => 'ئۆزلۈكىدىن $2 دىن $3 غا ئۆرلىدى',
-'rightsnone' => '(يوق)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'بۇ بەتنى ئوقۇ',
@@ -1635,6 +1647,7 @@ $1',
 'backend-fail-notsame' => '"$1" دا ئوخشاش بولمىغان ھۆججەت مەۋجۇت.',
 'backend-fail-invalidpath' => '"$1" ئىناۋەتلىك ساقلاش يولى ئەمەس.',
 'backend-fail-delete' => '"$1" ھۆججەتنى ئۆچۈرەلمىدى.',
+'backend-fail-describe' => 'ھۆججەت "$1" نىڭ مېتا سانلىق مەلۇماتىنى ئۆزگەرتەلمىدى.',
 'backend-fail-alreadyexists' => '"$1" ھۆججەت ئاللىبۇرۇن مەۋجۇت.',
 'backend-fail-store' => 'ھۆججەت "$1" نى "$2"غا ساقلىيالمىدى.',
 'backend-fail-copy' => 'ھۆججەت "$1" نى "$2" غا كۆچۈرەلمىدى.',
@@ -2024,8 +2037,9 @@ URL نىڭ توغرىلىقى ۋە تور بېكەتنى زىيارەت قىلى
 'linksearch-pat' => 'ئىزدەش شەكلى:',
 'linksearch-ns' => 'ئات بوشلۇقى:',
 'linksearch-ok' => 'ئىزدەش',
-'linksearch-text' => ' \\"*.wikipedia.org\\" غا ئوخشاش ئورتاق بەلگە ئىشلىتىشكە بولىدۇ. <br />
-قوللايدىغان كېلىشىم: <code>$1</code>',
+'linksearch-text' => '"wikipedia.org.*" غا ئوخشاش ئورتاق بەلگە ئىشلىتىشكە بولىدۇ.
+ </br>ئالىي دەرىجىلىك دائىرە بۇلىشى كېرەك، مەسىلەن:"org.*".
+قوللايدىغان{{PLURAL:$2| كېلىشىم}}: <code>$1</code>.',
 'linksearch-line' => '$1 بولسا $2 دىن ئۇلانغان',
 'linksearch-error' => 'ئورتاق بەلگەنى پەقەت ئاساسىي ئاپپارات ئاتىنىڭ باشىدىلا ئىشلەتكىلى بولىدۇ.',
 
@@ -2043,10 +2057,6 @@ URL نىڭ توغرىلىقى ۋە تور بېكەتنى زىيارەت قىلى
 'activeusers-hidebots' => 'ماشىنا ئادەمنى يوشۇر',
 'activeusers-hidesysops' => 'باشقۇرغۇچىنى يوشۇر',
 'activeusers-noresult' => 'ئىشلەتكۈچى تېپىلمىدى.',
-
-# Special:Log/newusers
-'newuserlogpage' => 'ئىشلەتكۈچى قۇرغان خاتىرە',
-'newuserlogpagetext' => '(چەكلەنگەن)',
 
 # Special:ListGroupRights
 'listgrouprights' => 'ئىشلەتكۈچى گۇرۇپپا ھوقۇقى',
@@ -2145,21 +2155,25 @@ URL نىڭ توغرىلىقى ۋە تور بېكەتنى زىيارەت قىلى
 
 'enotif_mailer' => '{{SITENAME}} ئېلخەت ئۇقتۇرغۇچ',
 'enotif_reset' => 'ھەممە بەتكە ئوقۇلدى بەلگىسى سال',
-'enotif_newpagetext' => 'بۇ يېڭى بەت.',
 'enotif_impersonal_salutation' => '{{SITENAME}} ئىشلەتكۈچى',
-'changed' => 'ئۆزگەردى',
-'created' => 'قۇرغان',
-'enotif_subject' => '{{SITENAME}} نىڭ $PAGETITLE بېتىنى $CHANGEDORCREATED ئۆزگەرتكۈچى$PAGEEDITOR',
+'enotif_subject_deleted' => '{{SITENAME}}نىڭ $1 بەت{{gender:$2|$2}}تەرپىدىن ئۆچۈرۈلدى',
+'enotif_subject_created' => '{{SITENAME}}نىڭ $1 بەت{{gender:$2|$2}}تەرپىدىن قۇرۇلدى',
+'enotif_subject_moved' => '{{SITENAME}}نىڭ $1 بەت{{gender:$2|$2}}تەرپىدىن يۆتكىۋېتىلدى',
+'enotif_subject_restored' => '{{SITENAME}}نىڭ $1 بەت{{gender:$2|$2}}تەرپىدىن ئەسلىگە قايتۇرۇلدى',
+'enotif_subject_changed' => '{{SITENAME}}نىڭ $1 بەت{{gender:$2|$2}}تەرپىدىن ئۆزگەرتىلدى',
+'enotif_body_intro_deleted' => '{{SITENAME}}دىكى $1 بەت $PAGEEDITDATE {{gender:$2|$2}} تەرپىدىن ئۆچۈرۈلدى، $3 دىن كۈرىڭ.',
+'enotif_body_intro_created' => '{{SITENAME}}دىكى $1 بەت $PAGEEDITDATE {{gender:$2|$2}} تەرپىدىن قۇرۇلدى، $3 دىن ھازىرقى نەشرىنى كۈرىڭ.',
+'enotif_body_intro_moved' => '{{SITENAME}}دىكى $1 بەت$PAGEEDITDATE {{gender:$2|$2}} تەرپىدىن يۆتكىۋېتىلدى، $3 دىن ھازىرقى نەشرىنى كۈرىڭ.',
+'enotif_body_intro_restored' => '{{SITENAME}}دىكى $1 بەت $PAGEEDITDATE {{gender:$2|$2}} تەرپىدىن ئەسلىگە قايتۇرۇلدى، $3 دىن ھازىرقى نەشرىنى كۈرىڭ.',
+'enotif_body_intro_changed' => '{{SITENAME}}دىكى $1 بەت $PAGEEDITDATE {{gender:$2|$2}} تەرپىدىن ئۆزگەرتىلدى، $3 دىن ھازىرقى نەشرىنى كۈرىڭ.',
 'enotif_lastvisited' => 'ئالدىنقى قېتىملىق زىيارەتتىن كېيىنكى ھەممە ئۆزگەرتىشنى $1 كۆرۈڭ.',
 'enotif_lastdiff' => 'بۇ ئۆزگەرتىشنى كۆرمەكچى بولسىڭىز $1 كۆرۈڭ.',
 'enotif_anon_editor' => '$1 ئاتسىز ئىشلەتكۈچى',
 'enotif_body' => 'قەدىرلىك $WATCHINGUSERNAME،
 
-{{SITENAME}} بېكىتىدىكى $PAGETITLE ماۋزۇلۇق بەت $PAGEEDITDATE دا $PAGEEDITOR تەرىپىدىن $CHANGEDORCREATED،نۆۋەتتىكى تۈزىتىلگەن نەشرىنى كۆرۈش ئۈچۈن $PAGETITLE_URL غا يۆتكىلىڭ.
+PAGEINTRO $NEWPAGE$
 
-$NEWPAGE
-
-تەھرىر ئۈزۈندىسى: $PAGESUMMARY $PAGEMINOREDIT
+تەھرىر ئۈزۈندىسى: PAGESUMMARY $PAGEMINOREDIT$
 
 بۇ تەھرىر بىلەن ئالاقىلىشىڭ:
 
@@ -2180,6 +2194,8 @@ $UNWATCHURL نى زىيارەت قىلىڭ
 
 قايتما ئىنكاس ياكى تېخىمۇ كۆپ ياردەمگە ئېرىشمەكچى بولسىڭىز:
 {{canonicalurl:{{MediaWiki:Helppage}}}} نى زىيارەت قىلىڭ',
+'created' => 'قۇرغان',
+'changed' => 'ئۆزگەردى',
 
 # Delete
 'deletepage' => 'بەت ئۆچۈر',
@@ -2252,6 +2268,8 @@ $2 نىڭ ئاخىرقى تۈزىتىلگەن نەشرىگە ئۆزگەرتىل�
 'prot_1movedto2' => '[[$1]] دىن [[$2]]غا يۆتكەلدى',
 'protect-badnamespace-title' => 'قوغداتقل بولمايدىغان ئىسىم بوشلۇق',
 'protect-badnamespace-text' => 'بۇ ئىسىم بوشلۇقىدىكى بەتنى قوغدىغىلى بولمايدۇ.',
+'protect-norestrictiontypes-text' => 'بۇ بەتنى ساقلىيالمايدۇ سەۋەبى ئىشلەتكىلى بولىدىغان قوغداش تىپى يوق.',
+'protect-norestrictiontypes-title' => 'قوغدىغىلى بولمايدىغان بەت',
 'protect-legend' => 'قوغداش جەزملە',
 'protectcomment' => 'سەۋەب:',
 'protectexpiry' => 'قەرەلى:',
@@ -2337,8 +2355,8 @@ $2 نىڭ ئاخىرقى تۈزىتىلگەن نەشرىگە ئۆزگەرتىل�
 'undeletedrevisions' => '{{PLURAL:$1|1 تۈزىتىش|$1 تۈزىتىش}} ئەسلىگە كەلتۈرۈلدى',
 'undeletedrevisions-files' => '{{PLURAL:$1|1 تۈزىتىش|$1 تۈزىتىش}} ۋە {{PLURAL:$2|1 ھۆججەت|$2 ھۆججەت}}  ئەسلىگە كەلتۈرۈلدى',
 'undeletedfiles' => '{{PLURAL:$1|1 ھۆججەت|$1 ھۆججەت}}  ئەسلىگە كەلتۈرۈلدى',
-'cannotundelete' => 'ئەسلىگە كەلتۈرۈش مەغلۇپ بولدى؛
-باشقىلار بۇ بەتنى بايىلا ئەسلىگە كەلتۈرگەن بولۇشى مۇمكىن.',
+'cannotundelete' => 'ئەسلىگە كەلتۈرۈش مەغلۇپ بولدى:
+$1',
 'undeletedpage' => "'''$1 ئەسلىگە كەلتۈرۈلدى'''
 
  [[Special:Log/delete|ئۆچۈرۈش خاتىرىسى]]دىن پايدىلىنىپ ئۆچۈر ۋە ئەسلىگە كەلتۈر خاتىرىسىنى كۆرۈڭ.",
@@ -2371,7 +2389,7 @@ $1',
 'blanknamespace' => '(ئاساسىي)',
 
 # Contributions
-'contributions' => 'ئىشلەتكۈچى تۆھپىسى',
+'contributions' => '{{$1:GENDER|ئىشلەتكۈچى}} تۆھپىسى',
 'contributions-title' => '$1 نىڭ ئىشلەتكۈچى تۆھپىسى',
 'mycontris' => 'تۆھپە',
 'contribsub2' => '$1 نىڭ تۆھپىسى ($2)',
@@ -2656,6 +2674,7 @@ $1',
 'immobile-target-namespace-iw' => 'بەت يۆتكىگەندە wiki دىن ھالقىغان ئۇلانما ئىناۋەتلىك نىشان ئەمەس.',
 'immobile-source-page' => 'بۇ بەتنى يۆتكىگىلى بولمايدۇ.',
 'immobile-target-page' => 'بۇ نىشان ماۋزۇغا يۆتكىگىلى بولمايدۇ.',
+'bad-target-model' => 'تەلەپ قىلغان نىشان ئوخشاش بولمىغان مەزمۇن مودېلىنى ئىشلىتىدۇ. $1 دىن $2 غا ئايلاندۇرالمايدۇ.',
 'imagenocrossnamespace' => 'ھۆججەتنى غەيرى ھۆججەت ئات بوشلۇقىغا يۆتكىگىلى بولمايدۇ.',
 'nonfile-cannot-move-to-file' => 'غەيرى ھۆججەتنى ھۆججەت ئات بوشلۇقىغا يۆتكىگىلى بولمايدۇ.',
 'imagetypemismatch' => 'بۇ يېڭى كېڭەيتىلگەن ئات بىلەن باشقا تىپ ماسلاشمىدى.',
@@ -2770,6 +2789,7 @@ $1',
 'import-error-interwiki' => '"$1" بەتنى ئەكىرەلمىدى سەۋەبى ئۇنىڭ ئىسمى سىرتقى ۋىكى ئۇلانمىسى((interwiki))نى ئىشلىتىدۇ.',
 'import-error-special' => '"$1" بەتنى ئەكىرەلمىدى چۈنكى ئۇ بەت قۇرالمايدىغان ئالاھىدە ئات بوشلۇقى ئىشلىتىشكە ئېھتىياجلىق.',
 'import-error-invalid' => '"$1" بەتنى ئەكىرەلمىدى چۈنكى ئۇنىڭ ئىسمى ئىناۋەتسىز.',
+'import-error-unserialize' => '"$1" بەتنىڭ $2 تۈزىتىلگەن نەشرىنى تەرتىپسىزلەشتۈرەلمىدى. بۇ نەشرى ئىشلىتىدىغان مەزمۇن مودېلى $3  تەرتىپلەشتۈرۈش  $4.',
 'import-options-wrong' => '{{PLURAL:$2|تاللانما}} خاتالىقى: <nowiki>$1</nowiki>',
 'import-rootpage-invalid' => 'بېرىلگەن غول بەتنىڭ ماۋزۇسى ئىناۋەتسىز.',
 'import-rootpage-nosubpage' => '"$1" ئات بوشلۇقىنىڭ غول بېتى تارماق بەتكە يول قويمايدۇ.',
@@ -2784,7 +2804,6 @@ $1',
 
 # JavaScriptTest
 'javascripttest' => 'JavaScript سىناش',
-'javascripttest-disabled' => 'بۇ ۋىكىدا مەزكۇر ئىقتىدار قوزغىتىلمىغان.',
 'javascripttest-title' => '$1 نى تەكشۈرۈش يۈرگۈزۈۋاتىدۇ',
 'javascripttest-pagetext-noframework' => 'بۇ بەت JavaScript ئىجرا قىلىپ سىناشقا قالدۇرۇلغان.',
 'javascripttest-pagetext-unknownframework' => 'يوچۇن سىناق قۇرۇلما "$1".',
@@ -2935,6 +2954,7 @@ $1',
 'pageinfo-default-sort' => 'كۆڭۈلدىكى تەرتىپلەش ئاچقۇچى',
 'pageinfo-length' => 'بەت چوڭلۇقى (بايت)',
 'pageinfo-article-id' => 'بەت ID',
+'pageinfo-language' => 'بەت مەزمۇن تىلى',
 'pageinfo-robot-policy' => 'ئىزدەش ماتور ھالىتى',
 'pageinfo-robot-index' => 'ئىندېكىسلاشچان',
 'pageinfo-robot-noindex' => 'ئىندېكىسلانمايدىغان',
@@ -2955,6 +2975,19 @@ $1',
 'pageinfo-magic-words' => '{{PLURAL:$1|سېھرىي خەت}}',
 'pageinfo-hidden-categories' => '{{PLURAL:$1|يوشۇرۇلغان تۈر}}',
 'pageinfo-templates' => '{{PLURAL:$1|سىڭدۈرۈلگەن قېلىپ}}',
+'pageinfo-transclusions' => '($1) {{PLURAL:$1|بەت}}تە سىڭدۈرۈلگەن',
+'pageinfo-toolboxlink' => 'بەت ئۇچۇر',
+'pageinfo-redirectsto' => 'قايتا نىشانلىنىدىغىنى',
+'pageinfo-redirectsto-info' => ' ئۇچۇر',
+'pageinfo-contentpage' => 'مەزمۇن بېتى سۈپىتىدە ھېسابلىدى',
+'pageinfo-contentpage-yes' => 'ھەئە',
+'pageinfo-protect-cascading' => 'زەنجىرلىك قۇلۇپ بۇ جايدىن باشلىنىدۇ',
+'pageinfo-protect-cascading-yes' => 'ھەئە',
+'pageinfo-protect-cascading-from' => 'قوغداش دەرىجىسىنىڭ باغلىنىش ئورنى',
+'pageinfo-category-info' => 'تۈر ئۇچۇرى',
+'pageinfo-category-pages' => 'بەت سانى',
+'pageinfo-category-subcats' => 'تارماق تۈر سانى',
+'pageinfo-category-files' => 'ھۆججەت سانى',
 
 # Skin names
 'skinname-standard' => 'Classic',
@@ -2977,6 +3010,8 @@ $1',
 'markedaspatrollederror' => 'چارلاش بەلگىسى قويغىلى بولمايدۇ',
 'markedaspatrollederrortext' => 'مەلۇم نەشرىنى تاللىسىڭىز ئاندىن چارلاش بەلگىسى قويغىلى بولىدۇ.',
 'markedaspatrollederror-noautopatrol' => 'سىز ئۆزىڭىزنىڭ ئۆزگەرتىشىگە چارلاش بەلگىسى قويالمايسىز.',
+'markedaspatrollednotify' => '$1 نىڭ ئۆزگەرتىشىگە چارلاش بەلگىسى قويۇلدى.',
+'markedaspatrollederrornotify' => 'چارلىيالمىغانلىق بەلگىسى قويۇلدى.',
 
 # Patrol log
 'patrol-log-page' => 'چارلاش خاتىرىسى',
@@ -3010,6 +3045,7 @@ $1',
 'file-nohires' => 'يۇقىرىراق پەرق ئېتىش نىسبىتى يوق.',
 'svg-long-desc' => 'SVG ھۆججىتى، ئاتاقتىكى چوڭلۇقى $1 × $2 نۇقتا، ھۆججەت چوڭلۇقى: $3',
 'svg-long-desc-animated' => 'جانلاندۇرۇم SVG ھۆججەت، سۈرەت چوڭلۇقى $1×$2 پىكسېل، ھۆججەت چوڭلۇقى: $3',
+'svg-long-error' => 'ئۈنۈمسىز SVG ھۈججەت:$1',
 'show-big-image' => 'تولۇق ئېنىقلىق دەرىجىسى',
 'show-big-image-preview' => 'بۇ ئالدىن كۆزىتىشنىڭ چوڭلۇقى: $1.',
 'show-big-image-other' => 'باشقا {{PLURAL:$2|چوڭلۇقى}}: $1.',
@@ -3044,7 +3080,10 @@ $1',
 'minutes' => '{{PLURAL: $1|$1مىنۇت}}',
 'hours' => '{{PLURAL:$1|$1سائەت}}',
 'days' => '{{PLURAL:$1|$1 كۈن}}',
+'months' => '{{PLURAL:$1|$1 ئاي}}',
+'years' => '{{PLURAL:$1|$1 يىل}}',
 'ago' => '$1 بۇرۇن',
+'just-now' => 'بايا',
 
 # Bad image list
 'bad_image_list' => 'تۆۋەندىكى فورماتتا يېزىڭ:
@@ -3574,6 +3613,7 @@ $5
 # Scary transclusion
 'scarytranscludedisabled' => '[بېكەت ئاتلىغان كود ئايلاندۇرۇش چەكلەنگەن]',
 'scarytranscludefailed' => '[$1 نىڭ قېلىپىنى ئېلىش مەغلۇپ بولدى]',
+'scarytranscludefailed-httpstatus' => '[$1:HTTP $2 گە قېلىپ ئېرىشىش مەغلۇپ بولدى]',
 'scarytranscludetoolong' => '[URL بەك ئۇزۇن]',
 
 # Delete conflict
@@ -3685,6 +3725,7 @@ $5
 'version-license' => 'ئىجازەتنامە',
 'version-poweredby-credits' => "بۇ ۋىكىنى '''[//www.mediawiki.org/ MediaWiki]''' تېخنىكىلىق قوللايدۇ، نەشر ھوقۇقى © 2001-$1 $2",
 'version-poweredby-others' => 'باشقا',
+'version-credits-summary' => 'تۆۋەندىكى كىشىنىڭ [[Special:Version|MediaWiki]] غا تۆھپە قوشقانلىقىغا رەھمەت ئېيتىمىز.',
 'version-license-info' => 'MediaWiki ئەركىن يۇمشاق دېتال؛ سىز ئەركىن يۇمشاق دېتال ۋەخپىسىنىڭ ئېلان قىلغان GNU ئاممىباپ ئاممىۋى ئىجازەت ماددىلىرىدىكى بەلگىمىلەرگە ئاساسەن، بۇ پىروگراممىنى قايتا تارقىتىپ ياكى ئۆزگەرتەلەيسىز؛ مەيلى سىز مەزكۇر ئىجازەتنامىنىڭ ئىككىنچى نەشرى ياكى (ئۆزىڭىز تاللىغان) خالىغان كۈندە تارقىتىلغان نەشرىنى ئاساس قىلسىڭىز بولۇۋېرىدۇ.
 
 MediaWiki ئىشلىتىش مەقسىتىنى ئاساس قىلىپ ئېلان قىلىنغان، ئەمما ھېچقانداق كاپالەت مەسئۇلىيىتىنى ئۈستىگە ئالمايدۇ؛  سېتىشچانلىق ياكى مۇئەييەن مەقسەت بويىچە ئىشلىتىشچانلىققا كاپالەتلىك قىلمايدۇ. تەپسىلاتىنىGNU ئاممىباپ ئاممىۋى ئىجازەتنامىدىن پايدىلىنىڭ.
@@ -3827,8 +3868,12 @@ MediaWiki ئىشلىتىش مەقسىتىنى ئاساس قىلىپ ئېلان �
 'logentry-newusers-newusers' => 'ئەزا $1 قۇرۇلبولدى',
 'logentry-newusers-create' => 'ئەزا $1 قۇرۇلبولدى',
 'logentry-newusers-create2' => 'ئىشلەتكۈچى ھېساباتى $3 نى $1 قۇردى',
+'logentry-newusers-byemail' => 'ئىشلەتكۈچى ھېساباتى $3 نى $1 قۇردى ھەمدە ئىمنى تورخەتكە ئەۋەتتى',
 'logentry-newusers-autocreate' => 'ئىشلەتكۈچى $1 ئاپتوماتلىق قۇرۇلدى',
-'newuserlog-byemail' => 'ئىم ئىلخەتتە يوللاندى',
+'logentry-rights-rights' => '$3 نىڭ ئىشلەتكۈچى گۇرۇپپىسىنى $4 دىن $5 غا $1 ئالماشتۇردى',
+'logentry-rights-rights-legacy' => '$3 نىڭ ئىشلەتكۈچى گۇرۇپپىسىنى $1 ئۆزگەرتتى',
+'logentry-rights-autopromote' => '$1 نىڭ ئىشلەتكۈچى گۇرۇپپىسى ئۆزلۈكىدىن $4 دىن $5 غا يۈكسەلدى',
+'rightsnone' => '(يوق)',
 
 # Feedback
 'feedback-bugornote' => 'ئەگەر بىر تېخنىكىلىق مەسىلىنى تەپسىلىي بايان قىلىشقا تەييارلانماقچى بولسىڭىز، [$1 خاتالىق دوكلات]ى يوللاڭ. ياكى تۆۋەندىكى ئاددىي جەدۋەلنى ئىشلىتىڭ. ئىنكاسىڭىز "[$3 $2]" بەتكە قوشۇلىدۇ، ئىشلەتكۈچى ئاتىڭىز ۋە ئىشلەتكەن توركۆرگۈڭىز قوشۇپ قويۇلىدۇ.',
@@ -3881,6 +3926,7 @@ MediaWiki ئىشلىتىش مەقسىتىنى ئاساس قىلىپ ئېلان �
 'api-error-ok-but-empty' => 'ئىچكى خاتالىق: مۇلازىمېتىردا ئىنكاس يوق.',
 'api-error-overwrite' => 'مەۋجۇد ھۆججەت قاپلاشقا يول قويمايدۇ.',
 'api-error-stashfailed' => 'ئىچكى خاتالىق: مۇلازىمېتىر ۋاقىتلىق ھۆججەتنى ساقلىيالمىدى.',
+'api-error-publishfailed' => 'ئىچكى خاتالىق: مۇلازىمېتىر ۋاقىتلىق ھۆججەتنى تارقىتالمىدى.',
 'api-error-timeout' => 'مۇلازىمەت كومپيۇتېر كۆتكەن ۋاقتا ئىنكاس قايتۇرمىدى.',
 'api-error-unclassified' => 'نامەلۇم خاتالىق كۆرۈلدى.',
 'api-error-unknown-code' => 'نامەلۇم خاتالىق:"$1"',

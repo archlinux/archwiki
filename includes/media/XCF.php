@@ -72,7 +72,7 @@ class XCFHandler extends BitmapHandler {
 	 * @author Hexmode
 	 * @author Hashar
 	 *
-	 * @param $filename String Full path to a XCF file
+	 * @param string $filename Full path to a XCF file
 	 * @return bool|array metadata array just like PHP getimagesize()
 	 */
 	static function getXCFMetaData( $filename ) {
@@ -84,7 +84,7 @@ class XCFHandler extends BitmapHandler {
 		# The image structure always starts at offset 0 in the XCF file.
 		# So we just read it :-)
 		$binaryHeader = fread( $f, 26 );
-		fclose($f);
+		fclose( $f );
 
 		# Master image structure:
 		#

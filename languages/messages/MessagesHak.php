@@ -148,7 +148,6 @@ ke $1 ke tóng-on，khiung-yû $2 ke tóng-on.}}',
 'qbbrowse' => 'Chhà-khon',
 'qbedit' => 'Phiên-siá',
 'qbpageoptions' => 'Vùn-chông sién-hong',
-'qbpageinfo' => 'Vùn-chông chṳ̂-liau',
 'qbmyoptions' => 'Ngô-ke sién-hong',
 'qbspecialpages' => 'Thi̍t-sû hong-mien',
 'faq' => 'Sòng-kien mun-thì kié-tap',
@@ -353,7 +352,6 @@ For translations, please consider using [//translatewiki.net/wiki/Main_Page?setl
 'logouttext' => "'''Ngì hien-chhai yí-kîn thui-chhut.'''
 
 Ngì khó-yî ki-siu̍k yî ngia̍k-miàng fông-sṳt sṳ́-yung {{SITENAME}}, fe̍t-chá chai-chhṳ yî siông-thùng fe̍t-he mò-thùng yung-fu sṳ̂n-fun tên-ngi̍p.",
-'welcomecreation' => '<h2>Fôn-ngiàng, $1!</h2><p>Ngì-ke chong-ho yí-kîn kien-li̍p, put-yeu mong-ki sat-chṳ {{SITENAME}} ke-ngìn chhâm-sṳ.</p>',
 'yourname' => 'Yung-fu-miàng',
 'yourpassword' => 'Me̍t-ma:',
 'yourpasswordagain' => 'Chai-chhṳ sû-ngi̍p me̍t-ma:',
@@ -531,7 +529,6 @@ Ngì thùng-sṳ̀ ya-yeu hiong Wikimedia pó-chṳn ngì só thì-kâu ke nui-y
 'template-semiprotected' => '（pan-pó-fu）',
 'hiddencategories' => 'Liá-ya̍p he su̍k-yî $1-ke yún-chhòng fûn-lui ke sṳ̀n-yèn:',
 'edittools' => '<!-- Chhṳ́-chhu ke vùn-sṳ chiông-voi pûn hién-sṳ chhai yî-ha phiên-cho lâu song-chhòn péu-tân chûng. -->',
-'nocreatetitle' => 'Chhóng-kien vùn-chông su han-chṳ',
 'nocreatetext' => 'Chhṳ́ mióng-chham han-chṳ chhóng-chho sîn hong-mien ke kûng-yung. ngì khó-yî fán-fì pin phiên-cho yí-kîn yû ke hong-mien, fe̍t-chá [[Special:UserLogin|tên-liu̍k fe̍t-he chhóng-kien sîn chong-fu]].',
 'nocreate-loggedin' => 'Ngì chhai liá-ke wiki-tsûng hàn-mò hí-khó-khièn kien-li̍p sîn vùn-tsông.',
 'permissionserrors' => 'Khièn-han Tsho-ngu',
@@ -787,11 +784,13 @@ Tshòng-tón pit-sî chhai $1-ke sṳ-ngièn yî-ha.',
 'grouppage-bot' => '{{ns:project}}:Kî-hi-ngìn',
 'grouppage-sysop' => '{{ns:project}}:Kón-lî-yèn',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Sîn-chin yung-fu miàng-chhak',
+'newuserlogpagetext' => 'Liá-he yit-ke chui-khiun pûn chhóng-kien yung-fu ke ngit-ki.',
+
 # User rights log
 'rightslog' => 'Yung-fu khièn-han ngit-ki',
 'rightslogtext' => 'Yî-ha ki-liu̍k yung-fu khièn-han ke kiên-kói ki-liu̍k.',
-'rightslogentry' => 'Chiong $1 ke khièn-han chhiùng $2 kói-vi $3',
-'rightsnone' => '（mò）',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'phiên-siá pún-chông',
@@ -1085,10 +1084,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-submit' => 'Hién-sṳ',
 'listusers-noresult' => 'Cháu put-to yung-fu.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Sîn-chin yung-fu miàng-chhak',
-'newuserlogpagetext' => 'Liá-he yit-ke chui-khiun pûn chhóng-kien yung-fu ke ngit-ki.',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(sṳ̀n-yèn chhîn-tân)',
 
@@ -1145,15 +1140,13 @@ Also see [[Special:WantedCategories|wanted categories]].',
 
 'enotif_mailer' => '{{SITENAME}} email thûng-tî-hi',
 'enotif_reset' => 'Chiông só-yû hong-mien phêu-vi yí-kîn thu̍k-ko.',
-'enotif_newpagetext' => 'Liá-he sîn-kien vùn-chông.',
 'enotif_impersonal_salutation' => '{{SITENAME}} yung-fu',
-'changed' => 'siû-kói liáu',
-'created' => 'Yí-kîn kien-li̍p',
-'enotif_subject' => '{{SITENAME}} yû vùn-chông $PAGETITLE pûn $PAGEEDITOR $CHANGEDORCREATED',
 'enotif_lastvisited' => 'Kiám-sṳ ngì song-chhṳ fóng-mun heu ke só-yû kiên-kói chhián chhâm-siòng $1.',
 'enotif_lastdiff' => 'Kiám-chhà kiên-kói chhiáng chhâm-siòng $1.',
 'enotif_anon_editor' => 'ngia̍k-miàng yung-fu $1',
 'enotif_body' => 'Chhîn-oi ke $WATCHINGUSERNAME, $PAGEEDITOR yí-kîn chhai $PAGEEDITDATE $CHANGEDORCREATED{{SITENAME}} ke $PAGETITLE vùn-chông, chhiáng-to $PAGETITLE_URL kiám-sṳ siên-chhièn pán-pún.  $NEWPAGE phiên-si̍p chak-yeu: $PAGESUMMARY $PAGEMINOREDIT lièn-kiê chhṳ́ phiên-si̍p-chá: email: $PAGEEDITOR_EMAIL pún-chham: $PAGEEDITOR_WIKI chhai ngì fóng-mun chhṳ́-chông chṳ̂-chhièn, chiông-lòi ke kiên-kói vù-nèn hiong ngì thûng-tî. Ngì khó-yî chhûng-sat ngì só-yû kam-sṳ vùn-chông ke thûng-tî phêu-ki. {{SITENAME}} thûng-tî ne-thúng -- yeu kói-pien ngì-ke kam-sṳ lie̍t-péu sat-thin, chhiáng chhâm-siòng {{canonicalurl:{{#special:EditWatchlist}}}} chin-yit-phu ke pông-chhu: {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'Yí-kîn kien-li̍p',
+'changed' => 'siû-kói liáu',
 
 # Delete
 'deletepage' => 'Chhù-thet hong-mien',
@@ -1270,7 +1263,7 @@ Chhiáng chhâm-kháu [[Special:Log/delete|chhù-hi ngit-ki]] lòi chhà-chhut c
 'blanknamespace' => '（Chú）',
 
 # Contributions
-'contributions' => 'Yung-fu kung-hien',
+'contributions' => '{{GENDER:$1|Yung-fu}} kung-hien',
 'contributions-title' => '$1-ke yung-fu kung-hien',
 'mycontris' => 'Phiên-siû ki-liu̍k',
 'contribsub2' => '$1 （$2） ke kung-hien',
@@ -1778,5 +1771,6 @@ sû-ngi̍p chang-kûi péu-tha̍t-sṳt
 # New logging system
 'revdelete-restricted' => 'yí-kîn yin-yung han-tsṳ tsṳ tshâu-tsok-yèn',
 'revdelete-unrestricted' => 'yí-kîn yì-tshù yû-kûan tshâu-tsok-yè ke han-tsṳ',
+'rightsnone' => '（mò）',
 
 );

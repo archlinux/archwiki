@@ -50,16 +50,16 @@ class LogPage {
 	 */
 	var $target;
 
-	/* @acess public */
+	/* @access public */
 	var $updateRecentChanges, $sendToUDP;
 
 	/**
 	 * Constructor
 	 *
-	 * @param $type String: one of '', 'block', 'protect', 'rights', 'delete',
+	 * @param string $type one of '', 'block', 'protect', 'rights', 'delete',
 	 *               'upload', 'move'
 	 * @param $rc Boolean: whether to update recent changes as well as the logging table
-	 * @param $udp String: pass 'UDP' to send to the UDP feed if NOT sent to RC
+	 * @param string $udp pass 'UDP' to send to the UDP feed if NOT sent to RC
 	 */
 	public function __construct( $type, $rc = true, $udp = 'skipUDP' ) {
 		$this->type = $type;
@@ -181,7 +181,7 @@ class LogPage {
 	/**
 	 * Is $type a valid log type
 	 *
-	 * @param $type String: log type to check
+	 * @param string $type log type to check
 	 * @return Boolean
 	 */
 	public static function isLogType( $type ) {
@@ -191,7 +191,7 @@ class LogPage {
 	/**
 	 * Get the name for the given log type
 	 *
-	 * @param $type String: logtype
+	 * @param string $type logtype
 	 * @return String: log name
 	 * @deprecated in 1.19, warnings in 1.21. Use getName()
 	 */
@@ -210,7 +210,7 @@ class LogPage {
 	 * Get the log header for the given log type
 	 *
 	 * @todo handle missing log types
-	 * @param $type String: logtype
+	 * @param string $type logtype
 	 * @return String: headertext of this logtype
 	 * @deprecated in 1.19, warnings in 1.21. Use getDescription()
 	 */
@@ -220,15 +220,15 @@ class LogPage {
 	}
 
 	/**
-	 * Generate text for a log entry. 
+	 * Generate text for a log entry.
 	 * Only LogFormatter should call this function.
 	 *
-	 * @param $type String: log type
-	 * @param $action String: log action
+	 * @param string $type log type
+	 * @param string $action log action
 	 * @param $title Mixed: Title object or null
 	 * @param $skin Mixed: Skin object or null. If null, we want to use the wiki
 	 *              content language, since that will go to the IRC feed.
-	 * @param $params Array: parameters
+	 * @param array $params parameters
 	 * @param $filterWikilinks Boolean: whether to filter wiki links
 	 * @return HTML string
 	 */
@@ -253,29 +253,6 @@ class LogPage {
 			} else {
 				$titleLink = self::getTitleLink( $type, $langObjOrNull, $title, $params );
 
-				if( preg_match( '/^rights\/(rights|autopromote)/', $key ) ) {
-					$rightsnone = wfMessage( 'rightsnone' )->inLanguage( $langObj )->text();
-
-					if( $skin ) {
-						$username = $title->getText();
-						foreach ( $params as &$param ) {
-							$groupArray = array_map( 'trim', explode( ',', $param ) );
-							foreach( $groupArray as &$group ) {
-								$group = User::getGroupMember( $group, $username );
-							}
-							$param = $wgLang->listToText( $groupArray );
-						}
-					}
-
-					if( !isset( $params[0] ) || trim( $params[0] ) == '' ) {
-						$params[0] = $rightsnone;
-					}
-
-					if( !isset( $params[1] ) || trim( $params[1] ) == '' ) {
-						$params[1] = $rightsnone;
-					}
-				}
-
 				if( count( $params ) == 0 ) {
 					$rv = wfMessage( $wgLogActions[$key] )->rawParams( $titleLink )->inLanguage( $langObj )->escaped();
 				} else {
@@ -294,7 +271,7 @@ class LogPage {
 						$params[2] = isset( $params[2] ) ?
 							self::formatBlockFlags( $params[2], $langObj ) : '';
 					// Page protections
-					} elseif ( $type == 'protect' && count($params) == 3 ) {
+					} elseif ( $type == 'protect' && count( $params ) == 3 ) {
 						// Restrictions and expiries
 						if( $skin ) {
 							$details .= $wgLang->getDirMark() . htmlspecialchars( " {$params[1]}" );
@@ -350,8 +327,6 @@ class LogPage {
 	 * @return String
 	 */
 	protected static function getTitleLink( $type, $lang, $title, &$params ) {
-		global $wgContLang, $wgUserrightsInterwikiDelimiter;
-
 		if( !$lang ) {
 			return $title->getPrefixedText();
 		}
@@ -387,20 +362,6 @@ class LogPage {
 					$titleLink = Linker::userLink( $id, $title->getText() )
 						. Linker::userToolLinks( $id, $title->getText(), false, Linker::TOOL_LINKS_NOBLOCK );
 				}
-				break;
-			case 'rights':
-				$text = $wgContLang->ucfirst( $title->getText() );
-				$parts = explode( $wgUserrightsInterwikiDelimiter, $text, 2 );
-
-				if ( count( $parts ) == 2 ) {
-					$titleLink = WikiMap::foreignUserLink( $parts[1], $parts[0],
-						htmlspecialchars( $title->getPrefixedText() ) );
-
-					if ( $titleLink !== false ) {
-						break;
-					}
-				}
-				$titleLink = Linker::link( Title::makeTitle( NS_USER, $text ) );
 				break;
 			case 'merge':
 				$titleLink = Linker::link(
@@ -441,10 +402,10 @@ class LogPage {
 	/**
 	 * Add a log entry
 	 *
-	 * @param $action String: one of '', 'block', 'protect', 'rights', 'delete', 'upload', 'move', 'move_redir'
+	 * @param string $action one of '', 'block', 'protect', 'rights', 'delete', 'upload', 'move', 'move_redir'
 	 * @param $target Title object
-	 * @param $comment String: description associated
-	 * @param $params Array: parameters passed later to wfMessage function
+	 * @param string $comment description associated
+	 * @param array $params parameters passed later to wfMessage function
 	 * @param $doer User object: the user doing the action
 	 *
 	 * @return int log_id of the inserted log entry
@@ -459,6 +420,9 @@ class LogPage {
 		if ( $comment === null ) {
 			$comment = '';
 		}
+
+		# Trim spaces on user supplied text
+		$comment = trim( $comment );
 
 		# Truncate for whole multibyte characters.
 		$comment = $wgContLang->truncate( $comment, 255 );
@@ -549,7 +513,7 @@ class LogPage {
 	 * Convert a comma-delimited list of block log flags
 	 * into a more readable (and translated) form
 	 *
-	 * @param $flags string Flags to format
+	 * @param string $flags Flags to format
 	 * @param $lang Language object to use
 	 * @return String
 	 */
@@ -570,7 +534,7 @@ class LogPage {
 	/**
 	 * Translate a block log flag if possible
 	 *
-	 * @param $flag int Flag to translate
+	 * @param int $flag Flag to translate
 	 * @param $lang Language object to use
 	 * @return String
 	 */
@@ -597,7 +561,6 @@ class LogPage {
 
 		return $messages[$flag];
 	}
-
 
 	/**
 	 * Name of the log.

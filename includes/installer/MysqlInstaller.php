@@ -107,7 +107,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		}
 		if ( !strlen( $newValues['wgDBname'] ) ) {
 			$status->fatal( 'config-missing-db-name' );
-		} elseif ( !preg_match( '/^[a-z0-9_-]+$/i', $newValues['wgDBname'] ) ) {
+		} elseif ( !preg_match( '/^[a-z0-9+_-]+$/i', $newValues['wgDBname'] ) ) {
 			$status->fatal( 'config-invalid-db-name', $newValues['wgDBname'] );
 		}
 		if ( !preg_match( '/^[a-z0-9_-]*$/i', $newValues['wgDBprefix'] ) ) {
@@ -516,7 +516,8 @@ class MysqlInstaller extends DatabaseInstaller {
 		}
 
 		if( $tryToCreate ) {
-			$createHostList = array($server,
+			$createHostList = array(
+				$server,
 				'localhost',
 				'localhost.localdomain',
 				'%'
@@ -573,8 +574,8 @@ class MysqlInstaller extends DatabaseInstaller {
 
 	/**
 	 * Return a formal 'User'@'Host' username for use in queries
-	 * @param $name String Username, quotes will be added
-	 * @param $host String Hostname, quotes will be added
+	 * @param string $name Username, quotes will be added
+	 * @param string $host Hostname, quotes will be added
 	 * @return String
 	 */
 	private function buildFullUserName( $name, $host ) {
@@ -584,8 +585,8 @@ class MysqlInstaller extends DatabaseInstaller {
 	/**
 	 * Try to see if the user account exists. Our "superuser" may not have
 	 * access to mysql.user, so false means "no" or "maybe"
-	 * @param $host String Hostname to check
-	 * @param $user String Username to check
+	 * @param string $host Hostname to check
+	 * @param string $user Username to check
 	 * @return boolean
 	 */
 	private function userDefinitelyExists( $host, $user ) {
@@ -636,10 +637,10 @@ class MysqlInstaller extends DatabaseInstaller {
 		$tblOpts = LocalSettingsGenerator::escapePhpString( $this->getTableOptions() );
 		return
 "# MySQL specific settings
-\$wgDBprefix         = \"{$prefix}\";
+\$wgDBprefix = \"{$prefix}\";
 
 # MySQL table options to use during installation or update
-\$wgDBTableOptions   = \"{$tblOpts}\";
+\$wgDBTableOptions = \"{$tblOpts}\";
 
 # Experimental charset support for MySQL 5.0.
 \$wgDBmysql5 = {$dbmysql5};";

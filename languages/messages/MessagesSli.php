@@ -160,7 +160,6 @@ $messages = array(
 'qbfind' => 'Fenda',
 'qbedit' => 'Ändern',
 'qbpageoptions' => 'Seytaoptiona',
-'qbpageinfo' => 'Seytadata',
 'qbmyoptions' => 'Menne Seyta',
 'qbspecialpages' => 'Spezialseyta',
 'faq' => 'FAQ',
@@ -363,12 +362,8 @@ De Sperre wurde durch [[User:$1|$1]] miet der Begrindung ''„$2“'' eigerichte
 # Login and logout pages
 'logouttext' => "'''Du best nun obgemeldet.'''
 
-Du koast {{SITENAME}} jitz anonym wetter nutzen, oder diech erneut under damm selba oder a'm andern Nutzernoama [[Special:UserLogin|oamelda]].
+Du koast {{SITENAME}} jitz anonym wetter nutzen, oder diech erneut under damm selba oder a'm andern Nutzernoama <span class='plainlinks'>[$1 oamelda]</span>.
 Beachte, doas einige Seyta noo oazeiga kinna, doas du oagemeldet best, sulange du ne denn Browsercache gelaart host.",
-'welcomecreation' => '== Willkumma, $1! ==
-
-Dei Benutzerkonto wurde eigerichtet.
-Vergiss nä, denne [[Special:Preferences|{{SITENAME}}-Eistellunga]] oazupoassa.',
 'yourname' => 'Benutzernoame:',
 'yourpassword' => 'Passwort:',
 'yourpasswordagain' => 'Passwort wiederhola:',
@@ -602,7 +597,6 @@ Grund fier de Sperre: $1",
 'template-protected' => '(schreibgeschietzt)',
 'template-semiprotected' => '(schreibgeschietzt fier unoagemeldete und neue Nutzer)',
 'hiddencategories' => 'Diese Seite ies Mitglied vun {{PLURAL:$1|1 versteckter Kategorie|$1 versteckta Kategoria}}:',
-'nocreatetitle' => 'De Erstellung neuer Seyta ies eengeschränkt.',
 'nocreatetext' => 'Uff {{SITENAME}} wurde doas Erstalla neuer Seyta eengeschränkt. Du koast bestiehende Seyten ändern oder diech [[Special:UserLogin|oamelda]].',
 'nocreate-loggedin' => 'Du host kenne Berechtigung, neue Seyta zu erstalla.',
 'permissionserrorstext' => 'Du best ne berechtigt, de Aksjonn auszufiehra. {{PLURAL:$1|Grund|Grinde}}:',
@@ -962,9 +956,12 @@ Stelle sicher, doaß de Versionsgeschichte anner Seite historisch korrekt ies.',
 'right-siteadmin' => 'Datenbank sperra und entsperra',
 'right-sendemail' => 'E-Mails oa andere Nutzer senda',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Neuoameldungs-Logbuch',
+'newuserlogpagetext' => 'Dies ies a Logbuch fier neu erstellte Nutzerkonten.',
+
 # User rights log
 'rightslogtext' => 'Dies ies doas Logbuch dar Änderunga dar Nutzerrechte.',
-'rightslogentry' => 'änderte de Nutzerrechte fier „$1“ vu „$2“ uff „$3“',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'de Seite zu lasa',
@@ -1365,10 +1362,6 @@ Siehe au de Liste der [[Special:WantedCategories|gewinschta Kategorien]].',
 # Special:ActiveUsers
 'activeusers-noresult' => 'Kenne Benutzer gefunda.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Neuoameldungs-Logbuch',
-'newuserlogpagetext' => 'Dies ies a Logbuch fier neu erstellte Nutzerkonten.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Nutzergruppen-Rechte',
 'listgrouprights-summary' => 'Dies ies anne Liste dar ei diesem Wiki definierten Nutzergruppen und dar damit verbundenen Rechte.
@@ -1439,9 +1432,6 @@ Wenn du de Seite wieder vu denner Beobachtungsliste entferna mechtest, klicke uf
 
 'enotif_mailer' => '{{SITENAME}}-E-Mail-Benoachrichtigungsdienst',
 'enotif_reset' => 'Olle Seyta ols besucht markiern',
-'enotif_newpagetext' => 'Doas ies anne neue Seite.',
-'created' => 'erzeugt',
-'enotif_subject' => '[{{SITENAME}}] De Seite "$PAGETITLE" wurde vu $PAGEEDITOR $CHANGEDORCREATED',
 'enotif_lastvisited' => "Olle Änderunga uff a'n Blick: $1",
 'enotif_lastdiff' => 'Siehe $1 noach dieser Änderung.',
 'enotif_anon_editor' => 'Anonymer Nutzer $1',
@@ -1467,6 +1457,7 @@ Is waan sulange kenne wettera Benachrichtigungs-E-Mails gesendet, bis du de Seit
 Im de Einstellunga denner Beobachtungsliste oazupoaßa, besuche: {{canonicalurl:{{#special:EditWatchlist}}}}
 
 Rickmeldungen und wettere Hilfe: {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'erzeugt',
 
 # Delete
 'deletepage' => 'Seite läscha',
@@ -2371,6 +2362,5 @@ De Eengabe muuß ohne dann Zusatz „{{ns:file}}:“ erfolga.',
 # New logging system
 'revdelete-restricted' => 'Einschränkungen gelten au fier Administratorn',
 'revdelete-unrestricted' => 'Einschränkungen fier Administratorn uffgehobn',
-'newuserlog-byemail' => 'doas Passwurt wourde per E-Mail versandt',
 
 );

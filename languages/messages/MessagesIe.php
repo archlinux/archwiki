@@ -102,7 +102,6 @@ $specialPageAliases = array(
 	'Recentchanges'             => array( 'Nov_changes' ),
 	'Recentchangeslinked'       => array( 'Changes_referet', 'Changes_relatet' ),
 	'Revisiondelete'            => array( 'Deleter_revision' ),
-	'RevisionMove'              => array( 'Mover_revision' ),
 	'Search'                    => array( 'Serchar' ),
 	'Shortpages'                => array( 'Págines_curt' ),
 	'Specialpages'              => array( 'Págines_special' ),
@@ -263,7 +262,6 @@ $messages = array(
 'qbfind' => 'Constatar',
 'qbedit' => 'Redacter',
 'qbpageoptions' => 'Págine de optiones',
-'qbpageinfo' => 'Págine de information',
 'qbmyoptions' => 'Mi optiones',
 'qbspecialpages' => 'Págines special',
 'faq' => 'FAQ',
@@ -422,11 +420,8 @@ Li motive dat es "\'\'$2\'\'".',
 
 # Login and logout pages
 'logouttext' => "'''Vu ha terminat vor session.'''
-Vu posse continuar usar {{SITENAME}} anonimimen, o vu posse [[Special:UserLogin|aperter un session denov]] quam li sam usator o quam un diferent usator.
+Vu posse continuar usar {{SITENAME}} anonimimen, o vu posse <span class='plainlinks'>[$1 aperter un session denov]</span> quam li sam usator o quam un diferent usator.
 Nota que alcun págines posse continuar esser monstrat quam si vu esset registrat, til que vu vacua li cache de tui navigator.",
-'welcomecreation' => '== Benevenit, $1! == 
-Tui conto hat esset creat. 
-Ne oblivia de mutar tui [[Special:Preferences|preferenties de {{SITENAME}}]].',
 'yourname' => 'Nómine de usator:',
 'yourpassword' => 'Parol-clave:',
 'yourpasswordagain' => 'Parol-clave denov:',
@@ -720,9 +715,11 @@ Tui adresse de e-mail ne es revelat quande altri usatores contacter vu.',
 'grouppage-bureaucrat' => '{{ns:project}}:Burócrates',
 'grouppage-suppress' => '{{ns:project}}:Vigilatores',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Diarium de creation de usator',
+
 # User rights log
 'rightslog' => 'Diarium de jures de usator',
-'rightsnone' => '(null)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'redacter ti págine',
@@ -971,9 +968,6 @@ Li descrition es in li [$2 págine de descrition del file] ta e es monstrat in i
 'linksearch' => 'Catenunes extern',
 'linksearch-ns' => 'Spacie de nómine:',
 'linksearch-line' => '$1 es ligat de $2',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Diarium de creation de usator',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(liste de membres)',
@@ -1418,5 +1412,8 @@ Vu posse anc [[Special:EditWatchlist|usar li redactor uniform]].',
 'tags-hitcount-header' => 'Changes nómiat',
 'tags-edit' => 'redacter',
 'tags-hitcount' => '$1 {{PLURAL:$1|change|changes}}',
+
+# New logging system
+'rightsnone' => '(null)',
 
 );

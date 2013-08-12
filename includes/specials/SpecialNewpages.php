@@ -53,12 +53,13 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$opts->add( 'hidepatrolled', $this->getUser()->getBoolOption( 'newpageshidepatrolled' ) );
 		$opts->add( 'hidebots', false );
 		$opts->add( 'hideredirs', true );
-		$opts->add( 'limit', (int)$this->getUser()->getOption( 'rclimit' ) );
+		$opts->add( 'limit', $this->getUser()->getIntOption( 'rclimit' ) );
 		$opts->add( 'offset', '' );
 		$opts->add( 'namespace', '0' );
 		$opts->add( 'username', '' );
 		$opts->add( 'feed', '' );
 		$opts->add( 'tagfilter', '' );
+		$opts->add( 'invert', false );
 
 		$this->customFilters = array();
 		wfRunHooks( 'SpecialNewPagesFilters', array( $this, &$this->customFilters ) );
@@ -105,7 +106,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 			}
 			// PG offsets not just digits!
 			if ( preg_match( '/^offset=([^=]+)$/', $bit, $m ) ) {
-				$this->opts->setValue( 'offset',  intval( $m[1] ) );
+				$this->opts->setValue( 'offset', intval( $m[1] ) );
 			}
 			if ( preg_match( '/^username=(.*)$/', $bit, $m ) ) {
 				$this->opts->setValue( 'username', $m[1] );
@@ -113,7 +114,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 			if ( preg_match( '/^namespace=(.*)$/', $bit, $m ) ) {
 				$ns = $this->getLanguage()->getNsIndex( $m[1] );
 				if( $ns !== false ) {
-					$this->opts->setValue( 'namespace',  $ns );
+					$this->opts->setValue( 'namespace', $ns );
 				}
 			}
 		}
@@ -140,12 +141,13 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 			$feedType = $this->opts->getValue( 'feed' );
 			if( $feedType ) {
-				return $this->feed( $feedType );
+				$this->feed( $feedType );
+				return;
 			}
 
 			$allValues = $this->opts->getAllValues();
 			unset( $allValues['feed'] );
-			$out->setFeedAppendQuery( wfArrayToCGI( $allValues ) );
+			$out->setFeedAppendQuery( wfArrayToCgi( $allValues ) );
 		}
 
 		$pager = new NewPagesPager( $this, $this->opts );
@@ -164,8 +166,6 @@ class SpecialNewpages extends IncludableSpecialPage {
 	}
 
 	protected function filterLinks() {
-		global $wgGroupPermissions;
-
 		// show/hide links
 		$showhide = array( $this->msg( 'show' )->escaped(), $this->msg( 'hide' )->escaped() );
 
@@ -181,8 +181,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 		}
 
 		// Disable some if needed
-		# @todo FIXME: Throws E_NOTICEs if not set; and doesn't obey hooks etc.
-		if ( $wgGroupPermissions['*']['createpage'] !== true ) {
+		if ( !User::groupHasPermission( '*', 'createpage' ) ) {
 			unset( $filters['hideliu'] );
 		}
 		if ( !$this->getUser()->useNPPatrol() ) {
@@ -213,6 +212,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$namespace = $this->opts->consumeValue( 'namespace' );
 		$username = $this->opts->consumeValue( 'username' );
 		$tagFilterVal = $this->opts->consumeValue( 'tagfilter' );
+		$nsinvert = $this->opts->consumeValue( 'invert' );
 
 		// Check username input validity
 		$ut = Title::makeTitleSafe( NS_USER, $username );
@@ -248,6 +248,13 @@ class SpecialNewpages extends IncludableSpecialPage {
 							'id'    => 'namespace',
 							'class' => 'namespaceselector',
 						)
+					) . '&#160;' .
+					Xml::checkLabel(
+						$this->msg( 'invert' )->text(),
+						'invert',
+						'nsinvert',
+						$nsinvert,
+						array( 'title' => $this->msg( 'tooltip-invert' )->text() )
 					) .
 				'</td>
 			</tr>' . ( $tagFilter ? (
@@ -298,11 +305,11 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 		# Revision deletion works on revisions, so we should cast one
 		$row = array(
-					  'comment' => $result->rc_comment,
-					  'deleted' => $result->rc_deleted,
-					  'user_text' => $result->rc_user_text,
-					  'user' => $result->rc_user,
-					);
+			'comment' => $result->rc_comment,
+			'deleted' => $result->rc_deleted,
+			'user_text' => $result->rc_user_text,
+			'user' => $result->rc_user,
+		);
 		$rev = new Revision( $row );
 		$rev->setTitle( $title );
 
@@ -328,12 +335,13 @@ class SpecialNewpages extends IncludableSpecialPage {
 			$query['rcid'] = $result->rc_id;
 		}
 
-		$plink = Linker::linkKnown(
+		// Linker::linkKnown() uses 'known' and 'noclasses' options. This breaks the colouration for stubs.
+		$plink = Linker::link(
 			$title,
 			null,
 			array( 'class' => 'mw-newpages-pagename' ),
 			$query,
-			array( 'known' ) // Set explicitly to avoid the default of 'known','noclasses'. This breaks the colouration for stubs
+			array( 'known' )
 		);
 		$histLink = Linker::linkKnown(
 			$title,
@@ -459,13 +467,18 @@ class SpecialNewpages extends IncludableSpecialPage {
 	protected function feedItemDesc( $row ) {
 		$revision = Revision::newFromId( $row->rev_id );
 		if( $revision ) {
+			//XXX: include content model/type in feed item?
 			return '<p>' . htmlspecialchars( $revision->getUserText() ) .
 				$this->msg( 'colon-separator' )->inContentLanguage()->escaped() .
 				htmlspecialchars( FeedItem::stripComment( $revision->getComment() ) ) .
 				"</p>\n<hr />\n<div>" .
-				nl2br( htmlspecialchars( $revision->getText() ) ) . "</div>";
+				nl2br( htmlspecialchars( $revision->getContent()->serialize() ) ) . "</div>";
 		}
 		return '';
+	}
+
+	protected function getGroupName() {
+		return 'changes';
 	}
 }
 
@@ -488,7 +501,7 @@ class NewPagesPager extends ReverseChronologicalPager {
 	}
 
 	function getQueryInfo() {
-		global $wgEnableNewpagesUserFilter, $wgGroupPermissions;
+		global $wgEnableNewpagesUserFilter;
 		$conds = array();
 		$conds['rc_new'] = 1;
 
@@ -499,7 +512,11 @@ class NewPagesPager extends ReverseChronologicalPager {
 		$user = Title::makeTitleSafe( NS_USER, $username );
 
 		if( $namespace !== false ) {
-			$conds['rc_namespace'] = $namespace;
+			if ( $this->opts->getValue( 'invert' ) ) {
+				$conds[] = 'rc_namespace != ' . $this->mDb->addQuotes( $namespace );
+			} else {
+				$conds['rc_namespace'] = $namespace;
+			}
 			$rcIndexes = array( 'new_name_timestamp' );
 		} else {
 			$rcIndexes = array( 'rc_timestamp' );
@@ -510,7 +527,7 @@ class NewPagesPager extends ReverseChronologicalPager {
 			$conds['rc_user_text'] = $user->getText();
 			$rcIndexes = 'rc_user_text';
 		# If anons cannot make new pages, don't "exclude logged in users"!
-		} elseif( $wgGroupPermissions['*']['createpage'] && $this->opts->getValue( 'hideliu' ) ) {
+		} elseif( User::groupHasPermission( '*', 'createpage' ) && $this->opts->getValue( 'hideliu' ) ) {
 			$conds['rc_user'] = 0;
 		}
 		# If this user cannot see patrolled edits or they are off, don't do dumb queries!

@@ -48,6 +48,7 @@ class ParserCache {
 	 * May be a memcached client or a BagOStuff derivative.
 	 *
 	 * @param $memCached Object
+	 * @throws MWException
 	 */
 	protected function __construct( $memCached ) {
 		if ( !$memCached ) {
@@ -66,7 +67,7 @@ class ParserCache {
 
 		// idhash seem to mean 'page id' + 'rendering hash' (r3710)
 		$pageid = $article->getID();
-		$renderkey = (int)($wgRequest->getVal('action') == 'render');
+		$renderkey = (int)($wgRequest->getVal( 'action' ) == 'render');
 
 		$key = wfMemcKey( 'pcache', 'idhash', "{$pageid}-{$renderkey}!{$hash}" );
 		return $key;
@@ -200,8 +201,8 @@ class ParserCache {
 
 		wfDebug( "ParserOutput cache found.\n" );
 
-		// The edit section preference may not be the appropiate one in 
-		// the ParserOutput, as we are not storing it in the parsercache 
+		// The edit section preference may not be the appropiate one in
+		// the ParserOutput, as we are not storing it in the parsercache
 		// key. Force it here. See bug 31445.
 		$value->setEditSectionTokens( $popts->getEditSection() );
 

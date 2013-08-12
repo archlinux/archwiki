@@ -79,8 +79,8 @@ class RepoGroup {
 	/**
 	 * Construct a group of file repositories.
 	 *
-	 * @param $localInfo array Associative array for local repo's info
-	 * @param $foreignInfo Array of repository info arrays.
+	 * @param array $localInfo Associative array for local repo's info
+	 * @param array $foreignInfo of repository info arrays.
 	 *     Each info array is an associative array with the 'class' member
 	 *     giving the class name. The entire array is passed to the repository
 	 *     constructor as the first parameter.
@@ -96,7 +96,7 @@ class RepoGroup {
 	 * You can also use wfFindFile() to do this.
 	 *
 	 * @param $title Title|string Title object or string
-	 * @param $options array Associative array of options:
+	 * @param array $options Associative array of options:
 	 *     time:           requested time for an archived image, or false for the
 	 *                     current version. An image object will be returned which was
 	 *                     created at the specified time.
@@ -131,7 +131,7 @@ class RepoGroup {
 			$time = isset( $options['time'] ) ? $options['time'] : '';
 			$dbkey = $title->getDBkey();
 			if ( isset( $this->cache[$dbkey][$time] ) ) {
-				wfDebug( __METHOD__.": got File:$dbkey from process cache\n" );
+				wfDebug( __METHOD__ . ": got File:$dbkey from process cache\n" );
 				# Move it to the end of the list so that we can delete the LRU entry later
 				$this->pingCache( $dbkey );
 				# Return the entry
@@ -225,8 +225,8 @@ class RepoGroup {
 	 * Find an instance of the file with this key, created at the specified time
 	 * Returns false if the file does not exist.
 	 *
-	 * @param $hash String base 36 SHA-1 hash
-	 * @param $options array Option array, same as findFile()
+	 * @param string $hash base 36 SHA-1 hash
+	 * @param array $options Option array, same as findFile()
 	 * @return File object or false if it is not found
 	 */
 	function findFileFromKey( $hash, $options = array() ) {
@@ -247,7 +247,7 @@ class RepoGroup {
 	/**
 	 * Find all instances of files with this key
 	 *
-	 * @param $hash String base 36 SHA-1 hash
+	 * @param string $hash base 36 SHA-1 hash
 	 * @return Array of File objects
 	 */
 	function findBySha1( $hash ) {
@@ -266,7 +266,7 @@ class RepoGroup {
 	/**
 	 * Find all instances of files with this keys
 	 *
-	 * @param $hashes Array base 36 SHA-1 hashes
+	 * @param array $hashes base 36 SHA-1 hashes
 	 * @return Array of array of File objects
 	 */
 	function findBySha1s( array $hashes ) {
@@ -335,7 +335,7 @@ class RepoGroup {
 	 * first parameter.
 	 *
 	 * @param $callback Callback: the function to call
-	 * @param $params Array: optional additional parameters to pass to the function
+	 * @param array $params optional additional parameters to pass to the function
 	 * @return bool
 	 */
 	function forEachForeignRepo( $callback, $params = array() ) {
@@ -388,12 +388,12 @@ class RepoGroup {
 	 */
 	function splitVirtualUrl( $url ) {
 		if ( substr( $url, 0, 9 ) != 'mwrepo://' ) {
-			throw new MWException( __METHOD__.': unknown protocol' );
+			throw new MWException( __METHOD__ . ': unknown protocol' );
 		}
 
 		$bits = explode( '/', substr( $url, 9 ), 3 );
 		if ( count( $bits ) != 3 ) {
-			throw new MWException( __METHOD__.": invalid mwrepo URL: $url" );
+			throw new MWException( __METHOD__ . ": invalid mwrepo URL: $url" );
 		}
 		return $bits;
 	}
@@ -433,7 +433,7 @@ class RepoGroup {
 		while ( count( $this->cache ) >= self::MAX_CACHE_SIZE ) {
 			reset( $this->cache );
 			$key = key( $this->cache );
-			wfDebug( __METHOD__.": evicting $key\n" );
+			wfDebug( __METHOD__ . ": evicting $key\n" );
 			unset( $this->cache[$key] );
 		}
 	}

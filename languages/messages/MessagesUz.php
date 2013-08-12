@@ -52,6 +52,54 @@ $namespaceAliases = array(
 	'Kategoriya_munozarasi' => NS_CATEGORY_TALK,
 );
 
+$magicWords = array(
+	'redirect'                  => array( '0', '#YONALTIRISH', '#REDIRECT' ),
+	'notoc'                     => array( '0', '__ICHIDAGILARYOQ__', '__NOTOC__' ),
+	'nogallery'                 => array( '0', '__GALEREYAYOQ__', '__NOGALLERY__' ),
+	'forcetoc'                  => array( '0', '__ICHIDAGILARMAJBURIY__', '__FORCETOC__' ),
+	'toc'                       => array( '0', '__ICHIDAGILARI__', '__ICHIDAGILAR__', '__TOC__' ),
+	'noeditsection'             => array( '0', '__TAHRIRYOQ__', '__TARTIBLASHYOQ__', '__NOEDITSECTION__' ),
+	'currentmonth'              => array( '1', 'JORIYOY', 'JORIYOY2', 'CURRENTMONTH', 'CURRENTMONTH2' ),
+	'currentmonth1'             => array( '1', 'JORIYOY1', 'CURRENTMONTH1' ),
+	'currentmonthname'          => array( '1', 'JORIYOYNOMI', 'CURRENTMONTHNAME' ),
+	'currentmonthnamegen'       => array( '1', 'JORIYOYNOMIQARATQICH', 'CURRENTMONTHNAMEGEN' ),
+	'currentmonthabbrev'        => array( '1', 'JORIYOYQISQARTMASI', 'CURRENTMONTHABBREV' ),
+	'currentday'                => array( '1', 'JORIYKUN', 'CURRENTDAY' ),
+	'currentday2'               => array( '1', 'JORIYKUN2', 'CURRENTDAY2' ),
+	'currentdayname'            => array( '1', 'JORIYKUNNOMI', 'CURRENTDAYNAME' ),
+	'currentyear'               => array( '1', 'JORIYYIL', 'CURRENTYEAR' ),
+	'currenttime'               => array( '1', 'JORIYVAQT', 'CURRENTTIME' ),
+	'currenthour'               => array( '1', 'JORIYSOAT', 'CURRENTHOUR' ),
+	'localmonth'                => array( '1', 'MAHALLIYOY', 'MAHALLIYOY2', 'LOCALMONTH', 'LOCALMONTH2' ),
+	'localmonth1'               => array( '1', 'MAHALLIYOY1', 'LOCALMONTH1' ),
+	'localmonthname'            => array( '1', 'MAHALLIYOYNOMI', 'LOCALMONTHNAME' ),
+	'localmonthnamegen'         => array( '1', 'MAHALLIYOYQARATQICH', 'LOCALMONTHNAMEGEN' ),
+	'localmonthabbrev'          => array( '1', 'MAHALLIYOYQISQARTMASI', 'LOCALMONTHABBREV' ),
+	'localday'                  => array( '1', 'MAHALLIYKUN', 'LOCALDAY' ),
+	'localday2'                 => array( '1', 'MAHALLIYKUN2', 'LOCALDAY2' ),
+	'localdayname'              => array( '1', 'MAHALLIYKUNNOMI', 'LOCALDAYNAME' ),
+	'localyear'                 => array( '1', 'MAHALLIYYIL', 'LOCALYEAR' ),
+	'localtime'                 => array( '1', 'MAHALLIYVAQT', 'LOCALTIME' ),
+	'localhour'                 => array( '1', 'MAHALLIYSOAT', 'LOCALHOUR' ),
+	'numberofpages'             => array( '1', 'SAHIFASONI', 'NUMBEROFPAGES' ),
+	'numberofarticles'          => array( '1', 'MAQOLASONI', 'NUMBEROFARTICLES' ),
+	'numberoffiles'             => array( '1', 'FAYLSONI', 'NUMBEROFFILES' ),
+	'numberofusers'             => array( '1', 'FOYDALANUVCHISONI', 'NUMBEROFUSERS' ),
+	'numberofactiveusers'       => array( '1', 'FAOLFOYDALANUVCHISONI', 'NUMBEROFACTIVEUSERS' ),
+	'numberofedits'             => array( '1', 'OZGARISHSONI', 'NUMBEROFEDITS' ),
+	'numberofviews'             => array( '1', 'KORISHSONI', 'NUMBEROFVIEWS' ),
+	'pagename'                  => array( '1', 'SAHIFANOMI', 'PAGENAME' ),
+	'numberofadmins'            => array( '1', 'ADMINISTRATORSONI', 'NUMBEROFADMINS' ),
+	'special'                   => array( '0', 'maxsus', 'special' ),
+	'tag'                       => array( '0', 'yorliq', 'tag' ),
+	'hiddencat'                 => array( '1', '__YASHIRINTURKUM__', '__HIDDENCAT__' ),
+	'pagesincategory'           => array( '1', 'TURKUMDAGISAHIFALAR', 'PAGESINCATEGORY', 'PAGESINCAT' ),
+	'pagesize'                  => array( '1', 'SAHIFAHAJMI', 'PAGESIZE' ),
+	'index'                     => array( '1', '__INDEKS__', '__INDEX__' ),
+	'noindex'                   => array( '1', '__INDEKSYOQ__', '__NOINDEX__' ),
+	'url_wiki'                  => array( '0', 'VIKI', 'WIKI' ),
+);
+
 $linkTrail = '/^([a-zʻʼ“»]+)(.*)$/sDu';
 
 $messages = array(
@@ -191,6 +239,7 @@ $messages = array(
 'newwindow' => '(yangi oynada ochiladi)',
 'cancel' => 'Bekor qilish',
 'moredotdotdot' => 'Batafsil...',
+'morenotlisted' => 'Boshqa hech nima yoʻq...',
 'mypage' => 'Sahifa',
 'mytalk' => 'Munozara',
 'anontalk' => 'Ushbu IP-manzil munozarasi',
@@ -202,7 +251,6 @@ $messages = array(
 'qbbrowse' => 'Koʻrish',
 'qbedit' => 'Tahrirlash',
 'qbpageoptions' => 'Ushbu sahifa moslamalari',
-'qbpageinfo' => "Sahifa haqida ma'lumot",
 'qbmyoptions' => 'Moslamalarim',
 'qbspecialpages' => 'Maxsus sahifalar',
 'faq' => 'TSS',
@@ -225,6 +273,7 @@ $messages = array(
 'namespaces' => 'Nomfazolar',
 'variants' => 'Variantlar',
 
+'navigation-heading' => 'Navigatsiya',
 'errorpagetitle' => 'Xato',
 'returnto' => '$1 sahifasiga qaytish.',
 'tagline' => '{{SITENAME}} dan olingan',
@@ -402,9 +451,6 @@ Ushbu xabar tarjimasini qo'shish yoki o'zgartirish uchun, iltimos, MediaWikining
 
 {{SITENAME}} saytidan anonim holda foydalanishda davom etishindiz mumkin. Yoki siz yana hozirgi yoki boshqa foydalanuvchi nomi bilan qaytadan tizimga kirishingiz mumkin.
 Shuni e'tiborga olingki, ayrim sahifalar siz brauzeringiz keshini tozalamaguningizga qadar xuddi tizimga kirganingizdagidek ko'rinishda davom etaverishi mumkin.",
-'welcomecreation' => '== Xush kelibsiz, $1! ==
-Siz yangi hisob yaratdingiz.
-[[Special:Preferences|{{SITENAME}}dagi shaxsiy moslamalaringizni]] oʻzgartirish yodingizdan chiqmasin.',
 'yourname' => 'Foydalanuvchi nomi',
 'yourpassword' => 'Maxfiy soʻz',
 'yourpasswordagain' => 'Maxfiy so‘zni qayta kiriting:',
@@ -563,7 +609,6 @@ Bundan tashqari, siz ushbu ma'lumotlarni o'zingiz yozgan bo'lishingiz yoki ruxsa
 'template-protected' => '(himoyalangan)',
 'template-semiprotected' => '(yarim-himoyalangan)',
 'hiddencategories' => 'Ushbu sahifa {{PLURAL:$1|1 yashirin turkum|$1 yashirin turkumlar}}ga kiradi:',
-'nocreatetitle' => 'Sahifalarni yaratish cheklangan',
 'nocreatetext' => 'Ushbu saytda yangi sahifalar yaratish taqiqlagan.
 Ortga qaytib, mavjud sahifani tahrirlashingiz yoki [[Special:UserLogin|tizimga kirishingiz]] mumkin.',
 'nocreate-loggedin' => "Sizda yangi sahifalar yaratishga ruxsat yo'q.",
@@ -872,9 +917,12 @@ Agar siz uni ko'rsatsangiz, undan sahifa tahriri kim tomonidan kiritilganligini 
 'right-read' => "Sahifalarni o'qish",
 'right-edit' => 'Sahifalarni tahrirlash',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Foydalanuvchilarni roʻyxatga olish qaydlari',
+'newuserlogpagetext' => 'Yaqinda roʻyxatdan oʻtgan foydalanuvchilar roʻyxati',
+
 # User rights log
 'rightslog' => 'Foydalanuvchi huquqlari koʻrsatilgan qaydlar',
-'rightslogentry' => 'foydalanuvchi $1 $2 guruhidan $3 guruhiga oʻtkazildi',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'ushbu sahifani tahrirlash',
@@ -1088,10 +1136,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'activeusers-hidesysops' => 'Maʼmurlarni yashirish',
 'activeusers-noresult' => 'Foydalanuvchilar topilmadi.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Foydalanuvchilarni roʻyxatga olish qaydlari',
-'newuserlogpagetext' => 'Yaqinda roʻyxatdan oʻtgan foydalanuvchilar roʻyxati',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Foydalanuvchilar guruhi huquqlari',
 'listgrouprights-group' => 'Guruh',
@@ -1156,43 +1200,48 @@ Agar siz bu sahifani kuzatuv ro'yxatingizdan o'chirmoqchi bo'lsangiz \"Kuzatmasl
 
 'enotif_mailer' => "{{SITENAME}} Pochta orqali e'lon qilish xizmati",
 'enotif_reset' => "Hamma sahifalarni ko'rib chiqilgan deb belgilash",
-'enotif_newpagetext' => 'Bu yangi sahifa',
 'enotif_impersonal_salutation' => '{{SITENAME}} ishtirokchisi',
-'changed' => 'o‘zgartirildi',
-'created' => 'yaratildi',
-'enotif_subject' => '"{{SITENAME}}" loyihasining $PAGETITLE sahifasi $PAGEEDITOR tomonidan $CHANGEDORCREATED',
+'enotif_subject_deleted' => '{{SITENAME}} loyihasining $1 nomli sahifasi foydalanuvchi {{gender:$2|$2}} tomonidan o‘chirildi',
+'enotif_subject_created' => '{{SITENAME}} loyihasining $1 nomli sahifasi foydalanuvchi {{gender:$2|$2}} tomonidan yaratildi',
+'enotif_subject_moved' => '{{SITENAME}} loyihasining $1 nomli sahifasi foydalanuvchi {{gender:$2|$2}} tomonidan qayta nomlandi',
+'enotif_subject_restored' => '{{SITENAME}} loyihasining $1 nomli sahifasi foydalanuvchi {{gender:$2|$2}} tomonidan tiklandi',
+'enotif_subject_changed' => '{{SITENAME}} loyihasining $1 nomli sahifasi foydalanuvchi {{gender:$2|$2}} tomonidan oʻzgartirildi',
+'enotif_body_intro_deleted' => '{{SITENAME}} loyihasining $1 nomli sahifasi $PAGEEDITDATEda foydalanuvchi {{gender:$2|$2}} tomonidan o‘chirildi, qarang: $3.',
+'enotif_body_intro_created' => '{{SITENAME}} loyihasining $1 nomli sahifasi $PAGEEDITDATEda foydalanuvchi {{gender:$2|$2}} tomonidan yaratildi, joriy variantini ko‘rish uchun $3 ga qarang.',
+'enotif_body_intro_moved' => '{{SITENAME}} loyihasining $1 nomli sahifasi $PAGEEDITDATEda foydalanuvchi {{gender:$2|$2}} tomonidan qayta nomlandi, joriy variantini ko‘rish uchun $3 ga qarang.',
+'enotif_body_intro_restored' => '{{SITENAME}} loyihasining $1 nomli sahifasi $PAGEEDITDATEda foydalanuvchi {{gender:$2|$2}} tomonidan tiklandi, joriy variantini ko‘rish uchun $3 ga qarang.',
+'enotif_body_intro_changed' => '{{SITENAME}} loyihasining $1 nomli sahifasi $PAGEEDITDATEda foydalanuvchi {{gender:$2|$2}} tomonidan o‘zgartirildi, joriy variantini ko‘rish uchun $3 ga qarang.',
 'enotif_lastvisited' => "Oxirgi tashrifingizdan buyon sodir bo'lgan barcha o'zgarishlarni ko'rish uchun $1 ga qarang.",
 'enotif_lastdiff' => "O'zgarishlar bilan tanishish uchun $1 ga qarang.",
 'enotif_anon_editor' => 'anonim foydalanuvchi $1',
-'enotif_body' => "Hurmatli \$WATCHINGUSERNAME,
+'enotif_body' => 'Hurmatli $WATCHINGUSERNAME,
 
-\$PAGEEDITDATE kuni \"{{SITENAME}}\" loyihasining \$PAGETITLE sahifasi ishtirokchi \$PAGEEDITOR tomonidan \$CHANGEDORCREATED, joriy versiyani ko'rish uchun \$PAGETITLE_URL havolasi bo'yicha o'ting.
+$PAGEINTRO $NEWPAGE
 
-\$NEWPAGE
-
-O'zgarish bo'yicha qisqacha izoh: \$PAGESUMMARY \$PAGEMINOREDIT
+O‘zgarish bo‘yicha qisqacha izoh: $PAGESUMMARY $PAGEMINOREDIT
 
 Tahrirlovchiga murojaat qilish:
-el. pochta: \$PAGEEDITOR_EMAIL
-viki: \$PAGEEDITOR_WIKI
+el. pochta: $PAGEEDITOR_EMAIL
+viki: $PAGEEDITOR_WIKI
 
-Agar siz sahifaga o'tib ko'rmasangiz, u holda uning keyingi o'zgarishlari bo'yicha boshqa bildirish xabarlari kelmaydi.
-Siz shuningdek o'zingizning kuzatuv ro'yxatingizda barcha sahifalar uchun bildirish moslamasini o'chirishingiz mumkin.
+Agar siz sahifaga o‘tib ko‘rmasangiz, u holda uning keyingi o‘zgarishlari bo‘yicha boshqa bildirish xabarlari kelmaydi. Siz, shuningdek o‘z kuzatuv ro‘yxatingizda barcha sahifalar uchun xabar berish moslamasini o‘chirishingiz mumkin.
 
-             {{grammar:genitive|{{SITENAME}}}}ning axborot berish tizimi
+{{SITENAME}}ning xabar berish tizimi
 
 --
-Bildirishlar moslamalarini o'zgartirish
+Xabar berish moslamalarini o‘zgartirish uchun quyidagi havola bo‘yicha o‘ting
 {{canonicalurl:{{#special:Preferences}}}}
 
-O'zingizning kuzatuv ro'yxatingiz moslamalarini o'zgartirish
+Oʻz kuzatuv roʻyxatingiz moslamalarini o‘zgartirish uchun quyidagi havola bo‘yicha o‘ting
 {{canonicalurl:{{#special:EditWatchlist}}}}
 
-Sizning kuzatuv ro'yxatingizdagi sahifalarni o'chirish
-\$UNWATCHURL
+Oʻz kuzatuv roʻyxatingizdan sahifani o‘chirish uchun quyidagi havola bo‘yicha o‘ting
+$UNWATCHURL
 
 Qayta aloqa va yordam
-{{canonicalurl:{{MediaWiki:Helppage}}}}",
+{{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'yaratildi',
+'changed' => 'o‘zgartirildi',
 
 # Delete
 'deletepage' => "Sahifani o'chirish",
@@ -1286,7 +1335,7 @@ Yaqinda sodir etilgan yoʻqotishlar uchun $2ni koʻring.',
 'blanknamespace' => '(asosiy)',
 
 # Contributions
-'contributions' => 'Foydalanuvchining hissasi',
+'contributions' => '{{GENDER:$1|Foydalanuvchi}} hissasi',
 'contributions-title' => '{{GENDER:$1|Foydalanuvchi}} $1 hissasi',
 'mycontris' => 'Hissam',
 'contribsub2' => '$1 uchun ($2)',
@@ -1513,6 +1562,8 @@ Umumiy omborda [[:$1]] mavjud. Faylning bu nomga qayta nomlanishi faylning umumi
 'pageinfo-article-id' => 'Sahifa identifikatori',
 'pageinfo-watchers' => 'Sahifa kuzatuvchilari soni',
 'pageinfo-edits' => 'Jami tahrirlar soni',
+'pageinfo-toolboxlink' => 'Sahifa haqida maʼlumot',
+'pageinfo-redirectsto' => 'Qayta yoʻnaltirish',
 
 # Skin names
 'skinname-standard' => 'Klassik',

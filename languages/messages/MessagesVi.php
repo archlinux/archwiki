@@ -61,7 +61,7 @@ $specialPageAliases = array(
 	'Ancientpages'              => array( 'Trang_cũ' ),
 	'Badtitle'                  => array( 'Tựa_đề_hỏng' ),
 	'Blankpage'                 => array( 'Trang_trắng' ),
-	'Block'                     => array( 'Cấm_IP' ),
+	'Block'                     => array( 'Cấm', 'Cấm_IP', 'Cấm_thành_viên', 'Cấm_người_dùng' ),
 	'Blockme'                   => array( 'Khóa_tôi', 'Khoá_tôi' ),
 	'Booksources'               => array( 'Nguồn_sách' ),
 	'BrokenRedirects'           => array( 'Đổi_hướng_sai' ),
@@ -124,7 +124,6 @@ $specialPageAliases = array(
 	'Recentchanges'             => array( 'Thay_đổi_gần_đây' ),
 	'Recentchangeslinked'       => array( 'Thay_đổi_liên_quan' ),
 	'Revisiondelete'            => array( 'Xóa_phiên_bản' ),
-	'RevisionMove'              => array( 'Di_chuyển_phiên_bản' ),
 	'Search'                    => array( 'Tìm_kiếm' ),
 	'Shortpages'                => array( 'Trang_ngắn' ),
 	'Specialpages'              => array( 'Trang_đặc_biệt' ),
@@ -212,14 +211,17 @@ $magicWords = array(
 	'img_page'                  => array( '1', 'trang=$1', 'trang $1', 'page=$1', 'page $1' ),
 	'img_upright'               => array( '1', 'đứng', 'đứng=$1', 'đứng $1', 'upright', 'upright=$1', 'upright $1' ),
 	'img_link'                  => array( '1', 'liên_kết=$1', 'link=$1' ),
+	'img_class'                 => array( '1', 'lớp=$1', 'class=$1' ),
 	'int'                       => array( '0', 'NỘI:', 'INT:' ),
 	'sitename'                  => array( '1', 'TÊNMẠNG', 'SITENAME' ),
 	'ns'                        => array( '0', 'KGT:', 'NS:' ),
 	'localurl'                  => array( '0', 'URLĐỊAPHƯƠNG:', 'LOCALURL:' ),
-	'articlepath'               => array( '0', 'LỐIBÀI', 'ARTICLEPATH' ),
+	'articlepath'               => array( '0', 'ĐƯỜNGDẪNBÀI', 'LỐIBÀI', 'ARTICLEPATH' ),
+	'pageid'                    => array( '0', 'IDTRANG', 'PAGEID' ),
 	'server'                    => array( '0', 'MÁYCHỦ', 'SERVER' ),
 	'servername'                => array( '0', 'TÊNMÁYCHỦ', 'SERVERNAME' ),
-	'scriptpath'                => array( '0', 'ĐƯỜNGDẪNSCRIPT', 'SCRIPTPATH' ),
+	'scriptpath'                => array( '0', 'ĐƯỜNGDẪNKỊCHBẢN', 'ĐƯỜNGDẪNSCRIPT', 'SCRIPTPATH' ),
+	'stylepath'                 => array( '0', 'ĐƯỜNGDẪNKIỂU', 'STYLEPATH' ),
 	'grammar'                   => array( '0', 'NGỮPHÁP:', 'GRAMMAR:' ),
 	'gender'                    => array( '0', 'GIỐNG:', 'GENDER:' ),
 	'notitleconvert'            => array( '0', '__KHÔNGCHUYỂNTÊN__', '__NOTITLECONVERT__', '__NOTC__' ),
@@ -252,7 +254,9 @@ $magicWords = array(
 	'pagesize'                  => array( '1', 'CỠTRANG', 'PAGESIZE' ),
 	'numberingroup'             => array( '1', 'CỠNHÓM', 'NUMBERINGROUP', 'NUMINGROUP' ),
 	'staticredirect'            => array( '1', '__ĐỔIHƯỚNGNHẤTĐỊNH__', '__STATICREDIRECT__' ),
+	'protectionlevel'           => array( '1', 'MỨCKHÓA', 'MỨCKHOÁ', 'PROTECTIONLEVEL' ),
 	'url_path'                  => array( '0', 'ĐƯỜNGDẪN', 'PATH' ),
+	'url_query'                 => array( '0', 'TRUYVẤN', 'QUERY' ),
 );
 
 $datePreferences = array(
@@ -430,6 +434,7 @@ $messages = array(
 'newwindow' => '(mở cửa sổ mới)',
 'cancel' => 'Hủy bỏ',
 'moredotdotdot' => 'Thêm nữa…',
+'morenotlisted' => 'Có nhiều hơn danh sách này…',
 'mypage' => 'Trang cá nhân',
 'mytalk' => 'Tin nhắn',
 'anontalk' => 'Thảo luận với IP này',
@@ -441,7 +446,6 @@ $messages = array(
 'qbbrowse' => 'Duyệt',
 'qbedit' => 'Sửa đổi',
 'qbpageoptions' => 'Trang này',
-'qbpageinfo' => 'Ngữ cảnh',
 'qbmyoptions' => 'Trang cá nhân',
 'qbspecialpages' => 'Trang đặc biệt',
 'faq' => 'Câu hỏi thường gặp',
@@ -464,6 +468,7 @@ $messages = array(
 'namespaces' => 'Không gian tên',
 'variants' => 'Biến thể',
 
+'navigation-heading' => 'Trình đơn chuyển hướng',
 'errorpagetitle' => 'Lỗi',
 'returnto' => 'Quay lại $1.',
 'tagline' => 'Từ {{SITENAME}}',
@@ -701,9 +706,9 @@ Bảo quản viên khóa nó đưa lý do là: “$3”.',
 # Login and logout pages
 'logouttext' => "'''Bạn đã đăng xuất.'''
 
-Bạn có thể tiếp tục dùng {{SITENAME}} một cách vô danh, hoặc bạn có thể [[Special:UserLogin|đăng nhập lại]] dưới cùng tên người dùng này hoặc một tên người dùng khác. Xin lưu ý rằng một vài trang có thể vẫn hiển thị như khi bạn còn đăng nhập, cho đến khi bạn xóa vùng nhớ đệm (''cache'') của trình duyệt.",
-'welcomecreation' => '== Chào mừng, $1! ==
-Tài khoản của bạn đã được mở.
+Bạn có thể tiếp tục dùng {{SITENAME}} một cách vô danh, hoặc bạn có thể <span class='plainlinks'>[$1 đăng nhập lại]</span> dưới cùng tên người dùng này hoặc một tên người dùng khác. Xin lưu ý rằng một vài trang có thể vẫn hiển thị như khi bạn còn đăng nhập, cho đến khi bạn xóa vùng nhớ đệm (''cache'') của trình duyệt.",
+'welcomeuser' => 'Hoan nghênh, $1!',
+'welcomecreation-msg' => 'Tài khoản của bạn đã được mở.
 Hãy nhớ thay đổi [[Special:Preferences|tùy chọn cá nhân {{SITENAME}}]] của bạn.',
 'yourname' => 'Tên người dùng:',
 'yourpassword' => 'Mật khẩu:',
@@ -727,7 +732,7 @@ Hãy nhớ thay đổi [[Special:Preferences|tùy chọn cá nhân {{SITENAME}}]
 'gotaccount' => "Đã mở tài khoản rồi? '''$1'''.",
 'gotaccountlink' => 'Đăng nhập',
 'userlogin-resetlink' => 'Quên mất thông tin đăng nhập?',
-'createaccountmail' => 'qua thư điện tử',
+'createaccountmail' => 'Sử dụng mật khẩu ngẫu nhiên tạm và gửi nó cho địa chỉ thư điện tử được chỉ định ở dưới',
 'createaccountreason' => 'Lý do:',
 'badretype' => 'Hai mật khẩu không khớp.',
 'userexists' => 'Tên người dùng được nhập đã có người lấy.
@@ -789,6 +794,7 @@ Xin hãy đợi chốc lát rồi thử lại.',
 # Email sending
 'php-mail-error-unknown' => 'Lỗi không rõ trong hàm PHP mail()',
 'user-mail-no-addy' => 'Không có địa chỉ để gửi thư điện tử đến',
+'user-mail-no-body' => 'Không thể gửi thư điện tử rỗng hoặc có nội dung ngắn một cách vô lý.',
 
 # Change password dialog
 'resetpass' => 'Đổi mật khẩu',
@@ -844,7 +850,7 @@ mật khẩu cũ.',
 Mật khẩu tạm: $2',
 'passwordreset-emailsent' => 'Đã gửi thư điện tử để tái tạo mật khẩu.',
 'passwordreset-emailsent-capture' => 'Thư điện tử để tái tạo mật khẩu đã được gửi, nội dung như sau.',
-'passwordreset-emailerror-capture' => 'Không thể gửi thư điện tử nhắc nhở ở dưới cho người dùng: $1',
+'passwordreset-emailerror-capture' => 'Chúng tôi đã tạo thư tái tạo mật khẩu dưới đây, nhưng không thể gửi đến người dùng: $1',
 
 # Special:ChangeEmail
 'changeemail' => 'Đổi địa chỉ thư điện tử',
@@ -854,6 +860,7 @@ Mật khẩu tạm: $2',
 'changeemail-oldemail' => 'Địa chỉ thư điện tử hiện tại:',
 'changeemail-newemail' => 'Địa chỉ thư điện tử mới:',
 'changeemail-none' => '(không có)',
+'changeemail-password' => 'Mật khẩu của bạn tại {{SITENAME}}:',
 'changeemail-submit' => 'Đổi địa chỉ',
 'changeemail-cancel' => 'Hủy bỏ',
 
@@ -1030,7 +1037,6 @@ Thông tin mới nhất trong nhật trình được ghi dưới đây để ti�
 'template-semiprotected' => '(bị hạn chế sửa đổi)',
 'hiddencategories' => 'Trang này thuộc về {{PLURAL:$1|1 thể loại ẩn|$1 thể loại ẩn}}:',
 'edittools' => '<!-- Văn bản dưới đây sẽ xuất hiện phía dưới mẫu sửa đổi và tải lên. -->',
-'nocreatetitle' => 'Khả năng tạo trang bị hạn chế',
 'nocreatetext' => '{{SITENAME}} đã hạn chế khả năng tạo trang mới.
 Bạn có thể quay trở lại và sửa đổi các trang đã có, hoặc [[Special:UserLogin|đăng nhập hoặc tạo tài khoản]].',
 'nocreate-loggedin' => 'Bạn không có quyền tạo trang mới.',
@@ -1055,6 +1061,15 @@ Dường như trang này đã bị xóa.',
 'edit-already-exists' => 'Không thể tạo trang mới.
 Nó đã tồn tại.',
 'defaultmessagetext' => 'Nội dung mặc định',
+'content-failed-to-parse' => 'Thất bại phân tích nội dung $2 cho mô hình $1: $3',
+'invalid-content-data' => 'Dữ liệu nội dung không hợp lệ',
+'content-not-allowed-here' => 'Không cho phép đưa nội dung “$1” vào trang [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'mã wiki',
+'content-model-text' => 'văn bản thuần',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Cảnh báo: Trang này có quá nhiều lần gọi hàm cú pháp cần mức độ xử lý cao.
@@ -1418,9 +1433,9 @@ Không có thể lùi lại tác động này.',
 'prefs-emailconfirm-label' => 'Xác nhận thư điện tử:',
 'prefs-textboxsize' => 'Kích cỡ hộp sửa đổi',
 'youremail' => 'Thư điện tử:',
-'username' => 'Tên người dùng:',
-'uid' => 'Số thứ tự thành viên:',
-'prefs-memberingroups' => 'Thành viên của {{PLURAL:$1|nhóm|nhóm}}:',
+'username' => '{{GENDER:$1}}Tên người dùng:',
+'uid' => '{{GENDER:$1}}Số thứ tự thành viên:',
+'prefs-memberingroups' => '{{GENDER:$2}}Thành viên của {{PLURAL:$1|nhóm|các nhóm}}:',
 'prefs-registration' => 'Lúc mở tài khoản:',
 'yourrealname' => 'Tên thật:',
 'yourlanguage' => 'Ngôn ngữ:',
@@ -1570,12 +1585,13 @@ Nếu bạn đồng ý cung cấp, nó sẽ dùng để ghi nhận công lao c�
 'right-sendemail' => 'Gửi thư điện tử cho thành viên khác',
 'right-passwordreset' => 'Xem các thư điện tử đặt lại mật khẩu',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Nhật trình mở tài khoản',
+'newuserlogpagetext' => 'Đây là danh sách những tài khoản thành viên mở lên gần đây.',
+
 # User rights log
 'rightslog' => 'Nhật trình cấp quyền thành viên',
 'rightslogtext' => 'Đây là nhật trình lưu những thay đổi đối với các quyền hạn thành viên.',
-'rightslogentry' => 'đã đổi các nhóm liên kết của thành viên $1 từ $2 thành $3',
-'rightslogentry-autopromote' => 'được tự động phong cấp từ $2 đến $3',
-'rightsnone' => '(không có)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'đọc trang này',
@@ -1816,6 +1832,7 @@ Nếu vẫn còn bị lỗi, xin hãy liên hệ với một [[Special:ListUsers
 'backend-fail-notsame' => 'Một tập tin khác biệt đã tồn tại ở $1.',
 'backend-fail-invalidpath' => '$1 không phải đường dẫn lưu giữ hợp lệ.',
 'backend-fail-delete' => 'Không thể xóa tập tin $1.',
+'backend-fail-describe' => 'Không thể thay đổi siêu dữ liệu của tập tin “$1”.',
 'backend-fail-alreadyexists' => 'Tập tin $1 đã tồn tại.',
 'backend-fail-store' => 'Không thể lưu tập tin $1 tại $2.',
 'backend-fail-copy' => 'Không thể chép tập tin $1 đến $2.',
@@ -2049,6 +2066,12 @@ Hãy nhớ kiểm tra các liên kết khác đến bản mẫu trước khi xó
 'disambiguationspage' => 'Template:disambig',
 'disambiguations-text' => "Các trang này có liên kết đến ít nhất một '''trang định hướng''', những trang này có thể có liên kết đến các trang đúng nghĩa hơn.<br />Các trang định hướng là trang sử dụng những bản mẫu được liệt kê ở [[MediaWiki:Disambiguationspage]].",
 
+'pageswithprop' => 'Trang có thuộc tính trang',
+'pageswithprop-legend' => 'Các trang có thuộc tính trang',
+'pageswithprop-text' => 'Trang này liệt kê các trang sử dụng một thuộc tính trang nào đó.',
+'pageswithprop-prop' => 'Tên thuộc tính:',
+'pageswithprop-submit' => 'Xem',
+
 'doubleredirects' => 'Đổi hướng kép',
 'doubleredirectstext' => 'Trang này liệt kê các trang đổi hướng đến một trang đổi hướng khác.
 Mỗi hàng có chứa các liên kết đến trang đổi hướng thứ nhất và thứ hai, cũng như mục tiêu của trang đổi hướng thứ hai, thường là trang đích “thực sự”, là nơi mà trang đổi hướng đầu tiên nên trỏ đến.
@@ -2199,7 +2222,7 @@ Xem thêm [[Special:WantedCategories|thể loại cần thiết]].',
 'linksearch-pat' => 'Mẫu liên kết:',
 'linksearch-ns' => 'Không gian tên:',
 'linksearch-ok' => 'Tìm kiếm',
-'linksearch-text' => "Bạn có thể sử dụng ký tự đại diện (''wildcard''), ví dụ “*.wikipedia.org”; ít nhất phải có tên miền cấp cao nhất, thí dụ “*.org”.<br />Các giao thức này được hỗ trợ: <code>$1</code>; mặc định là <code>http://</code> nếu không định rõ giao thức trong truy vấn.",
+'linksearch-text' => "Bạn có thể sử dụng ký tự đại diện (''wildcard''), ví dụ “*.wikipedia.org”; ít nhất phải có tên miền cấp cao nhất, thí dụ “*.org”.<br />{{PLURAL:$2|Giao thức|Các giao thức}} này được hỗ trợ: <code>$1</code>; mặc định là <code>http://</code> nếu không định rõ giao thức trong truy vấn.",
 'linksearch-line' => '$1 được liên kết từ $2',
 'linksearch-error' => "Chỉ được sử dụng ký tự đại diện (''wildcard'') vào đầu tên miền (''hostname'').",
 
@@ -2217,10 +2240,6 @@ Xem thêm [[Special:WantedCategories|thể loại cần thiết]].',
 'activeusers-hidebots' => 'Ẩn robot',
 'activeusers-hidesysops' => 'Ẩn bảo quản viên',
 'activeusers-noresult' => 'Không thấy thành viên.',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Nhật trình mở tài khoản',
-'newuserlogpagetext' => 'Đây là danh sách những tài khoản thành viên mở lên gần đây.',
 
 # Special:ListGroupRights
 'listgrouprights' => 'Nhóm thành viên',
@@ -2316,20 +2335,23 @@ Những sửa đổi đối với trang này và trang thảo luận của nó s
 
 'enotif_mailer' => 'Thông báo của {{SITENAME}}',
 'enotif_reset' => 'Đánh dấu đã xem mọi trang',
-'enotif_newpagetext' => 'Trang này mới',
 'enotif_impersonal_salutation' => 'thành viên {{SITENAME}}',
-'changed' => 'thay đổi',
-'created' => 'viết mới',
-'enotif_subject' => '$PAGETITLE tại {{SITENAME}} đã được $CHANGEDORCREATED bởi $PAGEEDITOR',
+'enotif_subject_deleted' => 'Trang $1 tại {{SITENAME}} đã được xóa bởi $2.',
+'enotif_subject_created' => 'Trang $1 tại {{SITENAME}} đã được tạo ra bởi $2.',
+'enotif_subject_moved' => 'Trang $1 tại {{SITENAME}} đã được di chuyển bởi $2.',
+'enotif_subject_restored' => 'Trang $1 tại {{SITENAME}} đã được phục hồi bởi $2.',
+'enotif_subject_changed' => 'Trang $1 tại {{SITENAME}} đã được thay đổi bởi $2',
+'enotif_body_intro_deleted' => 'Trang $1 tại {{SITENAME}} đã được $2 xóa vào $PAGEEDITDATE. Xem $3 .',
+'enotif_body_intro_created' => 'Trang $1 tại {{SITENAME}} đã được $2 tạo ra vào $PAGEEDITDATE. Xem phiên bản hiện hành tại $3 .',
+'enotif_body_intro_moved' => 'Trang $1 tại {{SITENAME}} đã được $2 di chuyển vào $PAGEEDITDATE. Xem phiên bản hiện hành tại $3 .',
+'enotif_body_intro_restored' => 'Trang $1 tại {{SITENAME}} đã được $2 phục hồi vào $PAGEEDITDATE. Xem phiên bản hiện hành tại $3 .',
+'enotif_body_intro_changed' => 'Trang $1 tại {{SITENAME}} đã được $2 thay đổi vào $PAGEEDITDATE. Xem phiên bản hiện hành tại $3 .',
 'enotif_lastvisited' => 'Xem $1 để biết các thay đổi diễn ra từ lần xem cuối cùng của bạn.',
 'enotif_lastdiff' => 'Vào $1 để xem sự thay đổi này.',
 'enotif_anon_editor' => 'người dùng vô danh $1',
 'enotif_body' => 'Xin chào $WATCHINGUSERNAME,
 
-
-Trang $PAGETITLE tại {{SITENAME}} đã được $PAGEEDITOR $CHANGEDORCREATED vào $PAGEEDITDATE, xem phiên bản hiện hành tại $PAGETITLE_URL.
-
-$NEWPAGE
+$PAGEINTRO $NEWPAGE
 
 Tóm lược sửa đổi: $PAGESUMMARY $PAGEMINOREDIT
 
@@ -2337,8 +2359,7 @@ Liên lạc với người viết trang qua:
 thư: $PAGEEDITOR_EMAIL
 wiki: $PAGEEDITOR_WIKI
 
-Sẽ không có thông báo nào khác nếu có sự thay đổi tiếp theo trừ khi bạn xem trang đó.
-Bạn cũng có thể thiết lập lại việc nhắc nhở cho tất cả các trang nằm trong danh sách theo dõi của bạn.
+Sẽ không có thông báo nào khác nếu có sự thay đổi tiếp theo trừ khi bạn xem trang đó. Bạn cũng có thể thiết lập lại việc nhắc nhở cho tất cả các trang nằm trong danh sách theo dõi của bạn.
 
               Hệ thống báo tin {{SITENAME}} thân thiện của bạn
 
@@ -2354,6 +2375,8 @@ $UNWATCHURL
 
 Phản hồi và cần sự hỗ trợ:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'viết mới',
+'changed' => 'thay đổi',
 
 # Delete
 'deletepage' => 'Xóa trang',
@@ -2422,6 +2445,8 @@ quay về phiên bản cuối của $2.',
 'prot_1movedto2' => '[[$1]] đổi thành [[$2]]',
 'protect-badnamespace-title' => 'Không gian tên không thể khóa',
 'protect-badnamespace-text' => 'Không thể khóa các trang tại không gian tên này.',
+'protect-norestrictiontypes-text' => 'Không thể khóa trang này vì không có sẵn tác vụ nào để hạn chế.',
+'protect-norestrictiontypes-title' => 'Trang không khóa được',
 'protect-legend' => 'Xác nhận khóa',
 'protectcomment' => 'Lý do:',
 'protectexpiry' => 'Thời hạn:',
@@ -2505,8 +2530,8 @@ Chỉ có bảo quản viên mới xem được văn bản đầy đủ của nh
 'undeletedrevisions' => '$1 {{PLURAL:$1|bản|bản}} được phục hồi',
 'undeletedrevisions-files' => '$1 {{PLURAL:$1|bản|bản}} và $2 {{PLURAL:$2|tập tin|tập tin}} đã được phục hồi',
 'undeletedfiles' => '$1 {{PLURAL:$1|tập tin|tập tin}} đã được phục hồi',
-'cannotundelete' => 'Phục hồi thất bại;
-một người nào khác đã phục hồi trang này rồi.',
+'cannotundelete' => 'Phục hồi thất bại:
+$1',
 'undeletedpage' => "'''$1 đã được khôi phục'''
 
 Xem nhật trình xóa và phục hồi các trang gần đây tại [[Special:Log/delete|nhật trình xóa]].",
@@ -2537,7 +2562,7 @@ $1',
 'blanknamespace' => '(Chính)',
 
 # Contributions
-'contributions' => 'Đóng góp của thành viên',
+'contributions' => '{{GENDER:$1}}Đóng góp của thành viên',
 'contributions-title' => 'Đóng góp của thành viên $1',
 'mycontris' => 'Đóng góp',
 'contribsub2' => 'Của $1 ($2)',
@@ -2806,6 +2831,7 @@ Trang với tên “[[:$1]]” đã tồn tại. Bạn có muốn xóa nó để
 'immobile-target-namespace-iw' => 'Không cho phép di chuyển trang đến một liên kết liên wiki.',
 'immobile-source-page' => 'Bạn không thể di chuyển trang này.',
 'immobile-target-page' => 'Không thể di chuyển đến tựa đề đích.',
+'bad-target-model' => 'Trang đích sử dụng mô hình nội dung khác. Không thể chuyển đổi nội dung từ $1 đến $2.',
 'imagenocrossnamespace' => 'Không thể di chuyển tập tin ra khỏi không gian tên Tập tin',
 'nonfile-cannot-move-to-file' => 'Không thể di chuyển những gì không phải là tập tin vào không gian tên Tập tin',
 'imagetypemismatch' => 'Phần mở rộng trong tên tập tin mới không hợp dạng của tập tin',
@@ -2918,6 +2944,7 @@ Lưu nó vào máy tính của bạn rồi tải nó lên đây.',
 'import-error-interwiki' => 'Trang “$1” không được nhập vì tên của nó được dành riêng cho liên kết ngoài (liên wiki).',
 'import-error-special' => 'Trang “$1” không được nhập vì nó thuộc về không gian tên đặc biệt không cho phép các trang không mặc định.',
 'import-error-invalid' => 'Trang “$1” không được nhập vì tên của nó không hợp lệ.',
+'import-error-unserialize' => 'Không thể giải tuần tự hóa phiên bản $2 của trang “$1”. Tập tin kết xuất cho rằng phiên bản có mô hình nội dung $3 được tuần tự hóa theo định dạng $4.',
 'import-options-wrong' => '{{PLURAL:$2|Tùy chọn|Các tùy chọn}} có vấn đề: <nowiki>$1</nowiki>',
 'import-rootpage-invalid' => 'Trang đích không hợp lệ.',
 'import-rootpage-nosubpage' => 'Không gian tên “$1” của trang gốc không cho phép các trang con.',
@@ -2932,7 +2959,6 @@ Lưu nó vào máy tính của bạn rồi tải nó lên đây.',
 
 # JavaScriptTest
 'javascripttest' => 'Kiểm thử JavaScript',
-'javascripttest-disabled' => 'Chức năng này chưa được kích hoạt trên wiki này.',
 'javascripttest-title' => 'Đang chạy $1 ca kiểm thử',
 'javascripttest-pagetext-noframework' => 'Trang này dành cho việc chạy các ca kiểm thử JavaScript.',
 'javascripttest-pagetext-unknownframework' => 'Nền tảng kiểm thử không rõ “$1”.',
@@ -3081,11 +3107,13 @@ Lưu nó vào máy tính của bạn rồi tải nó lên đây.',
 'pageinfo-default-sort' => 'Từ khóa sắp xếp mặc định',
 'pageinfo-length' => 'Chiều dài của trang (byte)',
 'pageinfo-article-id' => 'Mã số trang',
+'pageinfo-language' => 'Ngôn ngữ nội dung trang',
 'pageinfo-robot-policy' => 'Trạng thái công cụ tìm kiếm',
 'pageinfo-robot-index' => 'Có thể ghi chỉ mục',
 'pageinfo-robot-noindex' => 'Không thể ghi chỉ mục',
 'pageinfo-views' => 'Số lần xem',
 'pageinfo-watchers' => 'Số người theo dõi trang',
+'pageinfo-few-watchers' => 'Không tới $1 người theo dõi',
 'pageinfo-redirects-name' => 'Số trang đổi hướng đến trang này',
 'pageinfo-redirects-value' => '$1',
 'pageinfo-subpages-name' => 'Số trang con của trang này',
@@ -3101,6 +3129,19 @@ Lưu nó vào máy tính của bạn rồi tải nó lên đây.',
 'pageinfo-magic-words' => 'Từ thần chú ($1)',
 'pageinfo-hidden-categories' => 'Thể loại ẩn ($1)',
 'pageinfo-templates' => '{{PLURAL:$1|Bản mẫu|Các bản mẫu}} được nhúng ($1)',
+'pageinfo-transclusions' => '{{PLURAL:$1|Trang|Các trang}} nhúng ($1)',
+'pageinfo-toolboxlink' => 'Thông tin trang',
+'pageinfo-redirectsto' => 'Đổi hướng đến',
+'pageinfo-redirectsto-info' => 'thông tin',
+'pageinfo-contentpage' => 'Tính là một trang nội dung',
+'pageinfo-contentpage-yes' => 'Có',
+'pageinfo-protect-cascading' => 'Khóa theo tầng từ đây',
+'pageinfo-protect-cascading-yes' => 'Có',
+'pageinfo-protect-cascading-from' => 'Khóa theo tầng từ',
+'pageinfo-category-info' => 'Thông tin về thể loại',
+'pageinfo-category-pages' => 'Số trang',
+'pageinfo-category-subcats' => 'Số thể loại con',
+'pageinfo-category-files' => 'Số tập tin',
 
 # Skin names
 'skinname-standard' => 'Cổ điển',
@@ -3121,6 +3162,8 @@ Lưu nó vào máy tính của bạn rồi tải nó lên đây.',
 'markedaspatrollederror' => 'Không thể đánh dấu tuần tra',
 'markedaspatrollederrortext' => 'Bạn phải chọn phiên bản để đánh dấu tuần tra.',
 'markedaspatrollederror-noautopatrol' => 'Bạn không được đánh dấu tuần tra vào sửa đổi của bạn.',
+'markedaspatrollednotify' => 'Đã được đánh dấu tuần tra vào thay đổi tại $1.',
+'markedaspatrollederrornotify' => 'Đánh dấu tuần tra bị thất bại.',
 
 # Patrol log
 'patrol-log-page' => 'Nhật trình tuần tra',
@@ -3155,6 +3198,7 @@ Nếu thực thi nó máy tính của bạn có thể bị tiếm quyền.",
 'file-nohires' => 'Không có độ phân giải cao hơn.',
 'svg-long-desc' => 'tập tin SVG, $1×$2 điểm ảnh trên danh nghĩa, kích thước: $3',
 'svg-long-desc-animated' => 'tập tin hình động SVG, $1×$2 điểm ảnh trên danh nghĩa, kích thước: $3',
+'svg-long-error' => 'Tập tin SVG có lỗi: $1',
 'show-big-image' => 'Độ phân giải tối đa',
 'show-big-image-preview' => 'Kích thước của ảnh xem thử: $1.',
 'show-big-image-other' => '{{PLURAL:$2|Độ phân giải|Các độ phân giải}} khác: $1.',
@@ -3189,7 +3233,10 @@ Nếu thực thi nó máy tính của bạn có thể bị tiếm quyền.",
 'minutes' => '$1 phút',
 'hours' => '$1 giờ',
 'days' => '$1 ngày',
+'months' => '$1 tháng',
+'years' => '$1 năm',
 'ago' => 'cách đây $1',
+'just-now' => 'hồi nãy',
 
 # Bad image list
 'bad_image_list' => 'Định dạng như sau:
@@ -3734,6 +3781,7 @@ Mã xác nhận này sẽ hết hạn vào $4.',
 # Scary transclusion
 'scarytranscludedisabled' => '[Nhúng giữa các wiki bị tắt]',
 'scarytranscludefailed' => '[Truy xuất bản mẫu $1 bị thất bại]',
+'scarytranscludefailed-httpstatus' => '[Truy xuất bản mẫu $1 bị thất bại: HTTP $2]',
 'scarytranscludetoolong' => '[Địa chỉ URL quá dài]',
 
 # Delete conflict
@@ -3902,6 +3950,7 @@ Bạn cũng có thể [[Special:EditWatchlist|dùng trang sửa đổi bình th�
 'version-license' => 'Giấy phép bản quyền',
 'version-poweredby-credits' => "Wiki này chạy trên '''[//www.mediawiki.org/ MediaWiki]''', bản quyền © 2001–$1 $2.",
 'version-poweredby-others' => 'những người khác',
+'version-credits-summary' => 'Chúng tôi muốn công nhận những người sau đã đóng góp vào [[Special:Version|MediaWiki]].',
 'version-license-info' => "MediaWiki là phần mềm tự do; bạn được phép tái phân phối và/hoặc sửa đổi nó theo những điều khoản của Giấy phép Công cộng GNU do Quỹ Phần mềm Tự do xuất bản; phiên bản 2 hay bất kỳ phiên bản nào mới hơn nào của Giấy phép.
 
 MediaWiki được phân phối với hy vọng rằng nó sẽ hữu ích, nhưng '''không có bất kỳ một bảo đảm nào cả''', ngay cả những bảo đảm ngụ ý cho '''các mục đích thương mại''' hoặc cho '''một mục đích đặc biệt nào đó'''. Xem Giấy phép Công cộng GNU để biết thêm chi tiết.
@@ -4023,17 +4072,17 @@ Các hình ảnh được hiển thị ở kích thước tối đa, còn các l
 'sqlite-no-fts' => '$1 không có hỗ trợ tìm kiếm toàn văn',
 
 # New logging system
-'logentry-delete-delete' => '$1 đã xóa trang “$3”',
-'logentry-delete-restore' => '$1 đã phục hồi trang “$3”',
-'logentry-delete-event' => '$1 đã thay đổi mức hiển thị của {{PLURAL:$5|một mục nhật trình|$5 mục nhật trình}} về $3: $4',
-'logentry-delete-revision' => '$1 đã thay đổi mức hiển thị của {{PLURAL:$5|một phiên bản|$5 phiên bản}} trang $3: $4',
-'logentry-delete-event-legacy' => '$1 đã thay đổi mức hiển thị của các mục nhật trình về $3',
-'logentry-delete-revision-legacy' => '$1 đã thay đổi mức hiển thị của các phiên bản trang $3',
-'logentry-suppress-delete' => '$1 đã ẩn trang $3',
-'logentry-suppress-event' => '$1 đã thay đổi mức hiển thị của {{PLURAL:$5|một mục nhật trình|$5 mục nhật trình}} về $3 một cách kín đáo: $4',
-'logentry-suppress-revision' => '$1 đã thay đổi mức hiển thị của {{PLURAL:$5|một phiên bản|$5 phiên bản}} trang $3 một cách kín đáo: $4',
-'logentry-suppress-event-legacy' => '$1 đã thay đổi mức hiển thị các mục nhật trình về $3 một cách kín đáo',
-'logentry-suppress-revision-legacy' => '$1 đã thay đổi mức hiển thị của các phiên bản trang $3 một cách kín đáo',
+'logentry-delete-delete' => '$1 {{GENDER:$2}}đã xóa trang “$3”',
+'logentry-delete-restore' => '$1 {{GENDER:$2}}đã phục hồi trang “$3”',
+'logentry-delete-event' => '$1 {{GENDER:$2}}đã thay đổi mức hiển thị của {{PLURAL:$5|một mục nhật trình|$5 mục nhật trình}} về $3: $4',
+'logentry-delete-revision' => '$1 {{GENDER:$2}}đã thay đổi mức hiển thị của {{PLURAL:$5|một phiên bản|$5 phiên bản}} trang $3: $4',
+'logentry-delete-event-legacy' => '$1 {{GENDER:$2}}đã thay đổi mức hiển thị của các mục nhật trình về $3',
+'logentry-delete-revision-legacy' => '$1 {{GENDER:$2}}đã thay đổi mức hiển thị của các phiên bản trang $3',
+'logentry-suppress-delete' => '$1 {{GENDER:$2}}đã ẩn trang $3',
+'logentry-suppress-event' => '$1 {{GENDER:$2}}đã thay đổi mức hiển thị của {{PLURAL:$5|một mục nhật trình|$5 mục nhật trình}} về $3 một cách kín đáo: $4',
+'logentry-suppress-revision' => '$1 {{GENDER:$2}}đã thay đổi mức hiển thị của {{PLURAL:$5|một phiên bản|$5 phiên bản}} trang $3 một cách kín đáo: $4',
+'logentry-suppress-event-legacy' => '$1 {{GENDER:$2}}đã thay đổi mức hiển thị các mục nhật trình về $3 một cách kín đáo',
+'logentry-suppress-revision-legacy' => '$1 {{GENDER:$2}}đã thay đổi mức hiển thị của các phiên bản trang $3 một cách kín đáo',
 'revdelete-content-hid' => 'đã ẩn nội dung',
 'revdelete-summary-hid' => 'đã ẩn tóm lược sửa đổi',
 'revdelete-uname-hid' => 'đã ẩn tên người dùng',
@@ -4042,17 +4091,21 @@ Các hình ảnh được hiển thị ở kích thước tối đa, còn các l
 'revdelete-uname-unhid' => 'đã hiện tên người dùng',
 'revdelete-restricted' => 'đã áp dụng hạn chế cho bảo quản viên',
 'revdelete-unrestricted' => 'đã gỡ bỏ hạn chế cho bảo quản viên',
-'logentry-move-move' => '$1 đã đổi $3 thành $4',
-'logentry-move-move-noredirect' => '$1 đã đổi $3 thành $4 (đã tắt đổi hướng)',
-'logentry-move-move_redir' => '$1 đã đổi $3 thành $4 qua đổi hướng',
-'logentry-move-move_redir-noredirect' => '$1 đã đổi $3 thành $4 qua đổi hướng (đã tắt đổi hướng)',
-'logentry-patrol-patrol' => '$1 đã đánh dấu tuần tra phiên bản $4 của trang $3',
-'logentry-patrol-patrol-auto' => '$1 đã tự động đánh dấu tuần tra phiên bản $4 của trang $3',
-'logentry-newusers-newusers' => 'Đã mở tài khoản người dùng $1',
-'logentry-newusers-create' => 'Đã mở tài khoản người dùng $1',
-'logentry-newusers-create2' => '$1 đã mở tài khoản người dùng $3',
-'logentry-newusers-autocreate' => 'Tài khoản $1 đã được mở tự động',
-'newuserlog-byemail' => 'gửi mật khẩu qua thư điện tử',
+'logentry-move-move' => '$1 {{GENDER:$2}}đã đổi $3 thành $4',
+'logentry-move-move-noredirect' => '$1 {{GENDER:$2}}đã đổi $3 thành $4 (đã tắt đổi hướng)',
+'logentry-move-move_redir' => '$1 {{GENDER:$2}}đã đổi $3 thành $4 qua đổi hướng',
+'logentry-move-move_redir-noredirect' => '$1 {{GENDER:$2}}đã đổi $3 thành $4 qua đổi hướng (đã tắt đổi hướng)',
+'logentry-patrol-patrol' => '$1 {{GENDER:$2}}đã đánh dấu tuần tra phiên bản $4 của trang $3',
+'logentry-patrol-patrol-auto' => '$1 {{GENDER:$2}}đã tự động đánh dấu tuần tra phiên bản $4 của trang $3',
+'logentry-newusers-newusers' => '{{GENDER:$2}}Đã mở tài khoản người dùng $1',
+'logentry-newusers-create' => '{{GENDER:$2}}Đã mở tài khoản người dùng $1',
+'logentry-newusers-create2' => '$1 {{GENDER:$2}}đã mở tài khoản người dùng $3',
+'logentry-newusers-byemail' => '$1 {{GENDER:$2}}đã mở tài khoản người dùng $3 và nhận mật khẩu qua thư điện tử',
+'logentry-newusers-autocreate' => 'Tài khoản $1 {{GENDER:$2}}đã được mở tự động',
+'logentry-rights-rights' => '$1 {{GENDER:$2}}đã đổi các nhóm bao gồm $3 từ $4 đến $5',
+'logentry-rights-rights-legacy' => '{{GENDER:$2}}$1 đã đổi các nhóm bao gồm $3',
+'logentry-rights-autopromote' => '$1 {{GENDER:$2}}đã được tự động phong cấp từ $4 đến $5',
+'rightsnone' => '(không có)',
 
 # Feedback
 'feedback-bugornote' => 'Nếu bạn đã sẵn sàng để miêu tả các chi tiết của một vấn đề kỹ thuật, xin vui lòng [$1 báo cáo lỗi].
@@ -4106,6 +4159,7 @@ Nếu không thì bạn có thể điền biểu mẫu đơn giản ở dưới.
 'api-error-ok-but-empty' => 'Lỗi nội bộ: Máy chủ không phản hồi.',
 'api-error-overwrite' => 'Không được ghi đè một tập tin đã tồn tại.',
 'api-error-stashfailed' => 'Lỗi nội bộ: Máy chủ bị thất bại trong việc lưu giữ tập tin tạm.',
+'api-error-publishfailed' => 'Lỗi nội bộ: Máy chủ bị thất bại trong việc xuất bản tập tin tạm.',
 'api-error-timeout' => 'Máy chủ không đáp ứng trong thời gian dự kiến.',
 'api-error-unclassified' => 'Gặp lỗi không ngờ',
 'api-error-unknown-code' => 'Lỗi không rõ: “$1”',
@@ -4125,5 +4179,8 @@ Nếu không thì bạn có thể điền biểu mẫu đơn giản ở dưới.
 'duration-decades' => '$1 thập niên',
 'duration-centuries' => '$1 thế kỷ',
 'duration-millennia' => '$1 thiên niên kỷ',
+
+# Image rotation
+'rotate-comment' => 'Đã quay hình $1 độ theo chiều kim đồng hồ',
 
 );

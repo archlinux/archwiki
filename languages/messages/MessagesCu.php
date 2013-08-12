@@ -14,12 +14,16 @@
  * @author ОйЛ
  */
 
-$separatorTransformTable = array(
-	',' => ".",
-	'.' => ','
+$specialPageAliases = array(
+	'Allpages'                  => array( 'Вьсѩ_страницѧ' ),
+	'Categories'                => array( 'Катигорїѩ' ),
+	'Contributions'             => array( 'Добродѣꙗниꙗ' ),
+	'Preferences'               => array( 'Строи' ),
+	'Recentchanges'             => array( 'Послѣдьнѩ_мѣнꙑ' ),
+	'Search'                    => array( 'Исканиѥ' ),
+	'Statistics'                => array( 'Статїстїка' ),
+	'Upload'                    => array( 'Положєниѥ_дѣла' ),
 );
-
-$linkPrefixExtension = true;
 
 $namespaceNames = array(
 	NS_MEDIA            => 'Срѣдьства',
@@ -64,6 +68,13 @@ $magicWords = array(
 	'redirect'                  => array( '0', '#ПРѢНАПРАВЛЄНИѤ', '#REDIRECT' ),
 	'language'                  => array( '0', '#ѨꙀꙐКЪ:', '#LANGUAGE:' ),
 );
+
+$separatorTransformTable = array(
+	',' => ".",
+	'.' => ','
+);
+
+$linkPrefixExtension = true;
 
 $defaultDateFormat = 'mdy';
 
@@ -445,6 +456,9 @@ $messages = array(
 'grouppage-sysop' => '{{ns:project}}:Съмотритєлє',
 'grouppage-bureaucrat' => '{{ns:project}}:Чинодатєлє',
 
+# Special:Log/newusers
+'newuserlogpage' => 'новъ мѣстъ сътворѥниꙗ їсторїꙗ',
+
 # User rights log
 'rightslog' => 'чинодатєльства їсторїꙗ',
 
@@ -596,9 +610,6 @@ $messages = array(
 # Special:ListUsers
 'listusers-submit' => 'виждь',
 
-# Special:Log/newusers
-'newuserlogpage' => 'новъ мѣстъ сътворѥниꙗ їсторїꙗ',
-
 # Email user
 'emailuser' => 'посъли єпїстолѫ',
 
@@ -737,6 +748,9 @@ $messages = array(
 'tooltip-ca-nstab-special' => 'си нарочьна страница ѥстъ · ѥѩжє иꙁмѣнꙗти нє можєши',
 'tooltip-minoredit' => 'оꙁначи ꙗко малоу мѣноу',
 'tooltip-watch' => 'си страницѧ блюдєниѥ',
+
+# Info page
+'pageinfo-toolboxlink' => 'страницѧ плирофорїꙗ',
 
 # Media information
 'file-info-size' => '$1 × $2 п҃ѯ · дѣла мѣра : $3 · MIME тѷпъ : $4',

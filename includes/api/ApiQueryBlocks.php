@@ -132,10 +132,10 @@ class ApiQueryBlocks extends ApiQueryBase {
 			$this->addWhereIf( 'ipb_user != 0', isset( $show['account'] ) );
 			$this->addWhereIf( 'ipb_user != 0 OR ipb_range_end > ipb_range_start', isset( $show['!ip'] ) );
 			$this->addWhereIf( 'ipb_user = 0 AND ipb_range_end = ipb_range_start', isset( $show['ip'] ) );
-			$this->addWhereIf( 'ipb_expiry =  '.$db->addQuotes($db->getInfinity()), isset( $show['!temp'] ) );
-			$this->addWhereIf( 'ipb_expiry != '.$db->addQuotes($db->getInfinity()), isset( $show['temp'] ) );
-			$this->addWhereIf( "ipb_range_end = ipb_range_start", isset( $show['!range'] ) );
-			$this->addWhereIf( "ipb_range_end > ipb_range_start", isset( $show['range'] ) );
+			$this->addWhereIf( 'ipb_expiry = ' . $db->addQuotes( $db->getInfinity() ), isset( $show['!temp'] ) );
+			$this->addWhereIf( 'ipb_expiry != ' . $db->addQuotes( $db->getInfinity() ), isset( $show['temp'] ) );
+			$this->addWhereIf( 'ipb_range_end = ipb_range_start', isset( $show['!range'] ) );
+			$this->addWhereIf( 'ipb_range_end > ipb_range_start', isset( $show['range'] ) );
 		}
 
 		if ( !$this->getUser()->isAllowed( 'hideuser' ) ) {
@@ -182,8 +182,8 @@ class ApiQueryBlocks extends ApiQueryBase {
 				$block['reason'] = $row->ipb_reason;
 			}
 			if ( $fld_range && !$row->ipb_auto ) {
-				$block['rangestart'] = IP::hexToQuad( $row->ipb_range_start );
-				$block['rangeend'] = IP::hexToQuad( $row->ipb_range_end );
+				$block['rangestart'] = IP::formatHex( $row->ipb_range_start );
+				$block['rangeend'] = IP::formatHex( $row->ipb_range_end );
 			}
 			if ( $fld_flags ) {
 				// For clarity, these flags use the same names as their action=block counterparts
@@ -301,7 +301,7 @@ class ApiQueryBlocks extends ApiQueryBase {
 			'dir' => $this->getDirectionDescription( $p ),
 			'ids' => 'List of block IDs to list (optional)',
 			'users' => 'List of users to search for (optional)',
-			'ip' => array(	'Get all blocks applying to this IP or CIDR range, including range blocks.',
+			'ip' => array( 'Get all blocks applying to this IP or CIDR range, including range blocks.',
 					'Cannot be used together with bkusers. CIDR ranges broader than /16 are not accepted' ),
 			'limit' => 'The maximum amount of blocks to list',
 			'prop' => array(
@@ -403,9 +403,5 @@ class ApiQueryBlocks extends ApiQueryBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Blocks';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

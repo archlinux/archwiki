@@ -41,8 +41,8 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * Override parent method to make sure to make sure the repo's DB is used
-	 * which may not necesarilly be the same as the local DB.
+	 * Override parent method to make sure the repo's DB is used
+	 * which may not necessarily be the same as the local DB.
 	 *
 	 * TODO: allow querying non-local repos.
 	 * @return DatabaseBase
@@ -93,7 +93,10 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 		$prop = array_flip( $params['prop'] );
 		$this->addFields( LocalFile::selectFields() );
 
-		$dir = ( in_array( $params['dir'], array( 'descending', 'older' ) ) ? 'older' : 'newer' );
+		$ascendingOrder = true;
+		if ( $params['dir'] == 'descending' || $params['dir'] == 'older' ) {
+			$ascendingOrder = false;
+		}
 
 		if ( $params['sort'] == 'name' ) {
 			// Check mutually exclusive params
@@ -110,19 +113,16 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 			// Pagination
 			if ( !is_null( $params['continue'] ) ) {
 				$cont = explode( '|', $params['continue'] );
-				if ( count( $cont ) != 1 ) {
-					$this->dieUsage( 'Invalid continue param. You should pass the ' .
-						'original value returned by the previous query', '_badcontinue' );
-				}
-				$op = ( $dir == 'older' ? '<' : '>' );
-				$cont_from = $db->addQuotes( $cont[0] );
-				$this->addWhere( "img_name $op= $cont_from" );
+				$this->dieContinueUsageIf( count( $cont ) != 1 );
+				$op = ( $ascendingOrder ? '>' : '<' );
+				$continueFrom = $db->addQuotes( $cont[0] );
+				$this->addWhere( "img_name $op= $continueFrom" );
 			}
 
 			// Image filters
 			$from = ( is_null( $params['from'] ) ? null : $this->titlePartToKey( $params['from'] ) );
 			$to = ( is_null( $params['to'] ) ? null : $this->titlePartToKey( $params['to'] ) );
-			$this->addWhereRange( 'img_name', $dir, $from, $to );
+			$this->addWhereRange( 'img_name', ( $ascendingOrder ? 'newer' : 'older' ), $from, $to );
 
 			if ( isset( $params['prefix'] ) ) {
 				$this->addWhere( 'img_name' . $db->buildLike( $this->titlePartToKey( $params['prefix'] ), $db->anyString() ) );
@@ -135,13 +135,13 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 					$this->dieUsage( "Parameter '{$prefix}{$pname}' can only be used with {$prefix}sort=name", 'badparams' );
 				}
 			}
-			if (!is_null( $params['user'] ) && $params['filterbots'] != 'all') {
+			if ( !is_null( $params['user'] ) && $params['filterbots'] != 'all' ) {
 				// Since filterbots checks if each user has the bot right, it doesn't make sense to use it with user
-				$this->dieUsage( "Parameters 'user' and 'filterbots' cannot be used together", 'badparams' );
+				$this->dieUsage( "Parameters '{$prefix}user' and '{$prefix}filterbots' cannot be used together", 'badparams' );
 			}
 
 			// Pagination
-			$this->addTimestampWhereRange( 'img_timestamp', $dir, $params['start'], $params['end'] );
+			$this->addTimestampWhereRange( 'img_timestamp', ( $ascendingOrder ? 'newer' : 'older' ), $params['start'], $params['end'] );
 
 			// Image filters
 			if ( !is_null( $params['user'] ) ) {
@@ -149,8 +149,6 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 			}
 			if ( $params['filterbots'] != 'all' ) {
 				$this->addTables( 'user_groups' );
-				$groupCond = ( $params['filterbots'] == 'nobots' ? 'NULL': 'NOT NULL' );
-				$this->addWhere( "ug_group IS $groupCond" );
 				$this->addJoinConds( array( 'user_groups' => array(
 					'LEFT JOIN',
 					array(
@@ -158,6 +156,8 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 						'ug_user = img_user'
 					)
 				) ) );
+				$groupCond = ( $params['filterbots'] == 'nobots' ? 'NULL': 'NOT NULL' );
+				$this->addWhere( "ug_group IS $groupCond" );
 			}
 		}
 
@@ -172,12 +172,13 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 
 		$sha1 = false;
 		if ( isset( $params['sha1'] ) ) {
-			if ( !$this->validateSha1Hash( $params['sha1'] ) ) {
+			$sha1 = strtolower( $params['sha1'] );
+			if ( !$this->validateSha1Hash( $sha1 ) ) {
 				$this->dieUsage( 'The SHA1 hash provided is not valid', 'invalidsha1hash' );
 			}
-			$sha1 = wfBaseConvert( $params['sha1'], 16, 36, 31 );
+			$sha1 = wfBaseConvert( $sha1, 16, 36, 31 );
 		} elseif ( isset( $params['sha1base36'] ) ) {
-			$sha1 = $params['sha1base36'];
+			$sha1 = strtolower( $params['sha1base36'] );
 			if ( !$this->validateSha1Base36Hash( $sha1 ) ) {
 				$this->dieUsage( 'The SHA1Base36 hash provided is not valid', 'invalidsha1base36hash' );
 			}
@@ -200,16 +201,19 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 
 		$limit = $params['limit'];
 		$this->addOption( 'LIMIT', $limit + 1 );
-		$sort = ( $dir == 'older' ? ' DESC' : '' );
+		$sortFlag = '';
+		if ( !$ascendingOrder ) {
+			$sortFlag = ' DESC';
+		}
 		if ( $params['sort'] == 'timestamp' ) {
-			$this->addOption( 'ORDER BY', 'img_timestamp' . $sort );
-			if ( $params['filterbots'] == 'all' ) {
-				$this->addOption( 'USE INDEX', array( 'image' => 'img_timestamp' ) );
-			} else {
+			$this->addOption( 'ORDER BY', 'img_timestamp' . $sortFlag );
+			if ( !is_null( $params['user'] ) ) {
 				$this->addOption( 'USE INDEX', array( 'image' => 'img_usertext_timestamp' ) );
+			} else {
+				$this->addOption( 'USE INDEX', array( 'image' => 'img_timestamp' ) );
 			}
 		} else {
-			$this->addOption( 'ORDER BY', 'img_name' . $sort );
+			$this->addOption( 'ORDER BY', 'img_name' . $sortFlag );
 		}
 
 		$res = $this->select( __METHOD__ );
@@ -272,7 +276,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 					'descending',
 					// sort=timestamp
 					'newer',
-					'older',
+					'older'
 				)
 			),
 			'from' => null,
@@ -373,12 +377,11 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 			array( 'code' => 'badparams', 'info' => "Parameter'{$p}from' can only be used with {$p}sort=name" ),
 			array( 'code' => 'badparams', 'info' => "Parameter'{$p}to' can only be used with {$p}sort=name" ),
 			array( 'code' => 'badparams', 'info' => "Parameter'{$p}prefix' can only be used with {$p}sort=name" ),
-			array( 'code' => 'badparams', 'info' => "Parameters 'user' and 'filterbots' cannot be used together" ),
+			array( 'code' => 'badparams', 'info' => "Parameters '{$p}user' and '{$p}filterbots' cannot be used together" ),
 			array( 'code' => 'unsupportedrepo', 'info' => 'Local file repository does not support querying all images' ),
 			array( 'code' => 'mimesearchdisabled', 'info' => 'MIME search disabled in Miser Mode' ),
 			array( 'code' => 'invalidsha1hash', 'info' => 'The SHA1 hash provided is not valid' ),
 			array( 'code' => 'invalidsha1base36hash', 'info' => 'The SHA1Base36 hash provided is not valid' ),
-			array( 'code' => '_badcontinue', 'info' => 'Invalid continue param. You should pass the original value returned by the previous query' ),
 		) );
 	}
 
@@ -401,9 +404,5 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Allimages';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

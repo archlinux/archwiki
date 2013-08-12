@@ -24,29 +24,34 @@ $messages['en'] = array(
 /** Message documentation (Message documentation)
  * @author 2nd-player
  * @author Beta16
+ * @author Shirayuki
  */
 $messages['qqq'] = array(
-	'asirra-desc' => '{{desc}}',
-	'asirra-edit' => 'See also
-*{{msg-mw|Captcha-edit}}
-*{{msg-mw|Questycaptcha-edit}}
-*{{msg-mw|Fancycaptcha-edit}}
-*{{msg-mw|Recaptcha-edit}}',
-	'asirra-addurl' => 'See also
-*{{msg-mw|Captcha-addurl}}
-*{{msg-mw|Questycaptcha-addurl}}
-*{{msg-mw|Fancycaptcha-addurl}}
-*{{msg-mw|Recaptcha-addurl}}',
-	'asirra-badpass' => 'See also
-*{{msg-mw|Captcha-badlogin}}
-*{{msg-mw|Questycaptcha-badlogin}}
-*{{msg-mw|Fancycaptcha-badlogin}}
-*{{msg-mw|Recaptcha-badpass}}',
-	'asirra-createaccount' => 'See also
-*{{msg-mw|Captcha-createaccount}}
-*{{msg-mw|Questycaptcha-createaccount}}
-*{{msg-mw|Fancycaptcha-createaccount}}
-*{{msg-mw|Recaptcha-createaccount}}',
+	'asirra-desc' => '{{desc|name=Asirra|url=http://www.mediawiki.org/wiki/Extension:Asirra}}',
+	'asirra-edit' => '{{Related|ConfirmEdit-edit}}',
+	'asirra-addurl' => '{{Related|ConfirmEdit-addurl}}',
+	'asirra-badpass' => '{{Related|ConfirmEdit-badlogin}}',
+	'asirra-createaccount' => '{{Related|ConfirmEdit-createaccount}}',
+	'asirra-createaccount-fail' => 'Used as failure message in JavaScript code.
+{{Related|ConfirmEdit-createaccount-fail}}',
+	'asirra-create' => '{{Related|ConfirmEdit-create}}',
+	'asirra-nojs' => 'Used in HTML <code><nowiki><noscript></nowiki></code> tag.',
+	'asirra-failed' => 'Used as alert message in JavaScript code.',
+);
+
+/** Asturian (asturianu)
+ * @author Xuacu
+ */
+$messages['ast'] = array(
+	'asirra-desc' => 'Módulu Asirra pa ConfirmEdit',
+	'asirra-edit' => "P'ayudanos a protexenos escontra el spam d'edición automática, esbille namái les fotos de gatos nel cuadru d'abaxo:",
+	'asirra-addurl' => "La so edición incluye enllaces esternos nuevos. P'ayudar a protexenos escontra'l spam automáticu, esbille namái les fotos de gatos nel cuadru d'abaxo:",
+	'asirra-badpass' => "P'ayudar a protexenos escontra'l frayamientu de claves automáticu, esbille namái les fotos de gatos nel cuadru d'abaxo:",
+	'asirra-createaccount' => "P'ayudar a protexenos escontra la creación de cuentes automática, esbille namái les fotos de gatos nel cuadru d'abaxo:",
+	'asirra-createaccount-fail' => 'Identifique correutamente los gatos.',
+	'asirra-create' => "P'ayudar a protexenos escontra la creación de páxines automática, esbille namái les fotos de gatos nel cuadru d'abaxo:",
+	'asirra-nojs' => "'''Por favor active JavaScript y vuelva a unviar la páxina.'''",
+	'asirra-failed' => 'Identifique toles imaxes de gatos',
 );
 
 /** Belarusian (Taraškievica orthography) (беларуская (тарашкевіца)‎)
@@ -64,6 +69,13 @@ $messages['be-tarask'] = array(
 	'asirra-create' => 'Для абароны супраць аўтаматычнага стварэньня старонак, калі ласка, выберыце толькі фота з катом ў полі ніжэй:',
 	'asirra-nojs' => "'''Калі ласка, дазвольце JavaScript і дашліце старонку зноў.'''",
 	'asirra-failed' => 'Калі ласка, вызначце ўсе выявы з катамі',
+);
+
+/** Czech (česky)
+ * @author Vks
+ */
+$messages['cs'] = array(
+	'asirra-createaccount-fail' => 'Prosíme, správně identifikujte kočky.',
 );
 
 /** German (Deutsch)
@@ -115,16 +127,32 @@ $messages['es'] = array(
 	'asirra-failed' => 'Identifique todas las imágenes de gatos',
 );
 
+/** Finnish (suomi)
+ * @author VezonThunder
+ */
+$messages['fi'] = array(
+	'asirra-desc' => 'Asirra-moduuli muokkauksen varmennukseen',
+	'asirra-edit' => 'Suojana automaattisia roskamuokkauksia vastaan sinun on valittava kissan kuvat laatikosta alla:',
+	'asirra-addurl' => 'Muokkauksesi sisältää uusia ulkoisia linkkejä. Suojana automaattista roskapostia vastaan sinun on valittava kissan kuvat laatikosta alla:',
+	'asirra-badpass' => 'Suojana automaattisia salasanamurtoja vastaan sinun on valittava kissan kuvat laatikosta alla:',
+	'asirra-createaccount' => 'Suojana automaattista tunnusten luontia vastaan sinun on valittava kissan kuvat laatikosta alla:',
+	'asirra-createaccount-fail' => 'Tunnista kissat.',
+	'asirra-create' => 'Suojana automaattista sivujen luontia vastaan sinun on valittava kissan kuvat laatikosta alla:',
+	'asirra-nojs' => "'''Salli JavaScript ja lähetä uudelleen.'''",
+	'asirra-failed' => 'Tunnista kaikki kissan kuvat',
+);
+
 /** French (français)
  * @author Gomoko
+ * @author Nicolas NALLET
  * @author Seb35
  */
 $messages['fr'] = array(
 	'asirra-desc' => 'Module Asirra pour ConfirmEdit',
-	'asirra-edit' => 'Pour aider à nous protéger contre le spam d’édition automatique, veuillez sélectionner uniquement les photos de chats dans la boîte ci-dessous :',
+	'asirra-edit' => "Pour aider à nous protéger contre le spam d’édition automatique, veuillez sélectionner '''uniquement les photos de chats''' dans la boîte ci-dessous :",
 	'asirra-addurl' => 'Votre édition contient des liens externes. Pour nous aider à nous protéger contre le spam automatique, veuillez sélectionner uniquement les photos de chats dans la boîte ci-dessous :',
 	'asirra-badpass' => 'Pour nous aider à nous protéger des essais automatiques de cassage de mot de passe, veuillez sélectionner uniquement les photos de chats dans la boîte ci-dessous :',
-	'asirra-createaccount' => 'Pour nous aider à nous protéger contre la création automatique de comptes, veuillez sélectionner uniquement les photos de chats dans la boîte ci-dessous :',
+	'asirra-createaccount' => "Pour nous aider à nous protéger contre la création automatique de comptes, veuillez sélectionner '''uniquement les photos de chats''' dans la boîte ci-dessous :",
 	'asirra-createaccount-fail' => 'Veuillez identifier correctement les chats.',
 	'asirra-create' => 'Pour nous aider à nous protéger contre la création automatique de pages, veuillez sélectionner uniquement les photos de chats dans la boîte ci-dessous :',
 	'asirra-nojs' => "'''Veuillez activer le JavaScript et re-soumettre la page.'''",
@@ -207,6 +235,21 @@ $messages['ja'] = array(
 	'asirra-failed' => '猫が写っている画像をすべて選択してください',
 );
 
+/** Korean (한국어)
+ * @author 아라
+ */
+$messages['ko'] = array(
+	'asirra-desc' => 'ConfirmEdit에 대한 Asirra 모듈',
+	'asirra-edit' => '자동화된 편집 스팸으로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:',
+	'asirra-addurl' => '편집에 새로운 바깥 링크가 포함되어 있습니다. 자동화된 스팸으로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:',
+	'asirra-badpass' => '비밀번호 깨기로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:',
+	'asirra-createaccount' => '자동화된 계정 만들기로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:',
+	'asirra-createaccount-fail' => '고양이를 올바르게 선택하세요.',
+	'asirra-create' => '자동화된 문서 만들기로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:',
+	'asirra-nojs' => "'''자바스크립트를 활성화하고 문서를 다시 제출하세요.'''",
+	'asirra-failed' => '고양이 그림을 모두 선택하세요',
+);
+
 /** Colognian (Ripoarisch)
  * @author Purodha
  */
@@ -248,6 +291,21 @@ $messages['mk'] = array(
 	'asirra-failed' => 'Изберете ги сликите што имаат мачка',
 );
 
+/** Malay (Bahasa Melayu)
+ * @author Anakmalaysia
+ */
+$messages['ms'] = array(
+	'asirra-desc' => 'Modul Asirra untuk ConfirmEdit',
+	'asirra-edit' => 'Untuk mencegah suntingan spam automatik, sila pilih gambar-gambar kucing sahaja dalam petak di bawah:',
+	'asirra-addurl' => 'Suntingan anda mengandungi pautan luar yang baru. Untuk mencegah spam janaan automatik, sila pilih gambar-gambar kucing sahaja dalam petak di bawah:',
+	'asirra-badpass' => 'Untuk mencegah pemecahan kata laluan automatik, sila pilih gambar-gambar kucing sahaja dalam petak di bawah:',
+	'asirra-createaccount' => 'Untuk mencegah pembukaan akaun automatik, sila pilih gambar-gambar kucing sahaja dalam petak di bawah:',
+	'asirra-createaccount-fail' => 'Sila kenal pasti kucing-kucing dengan betul.',
+	'asirra-create' => 'Untuk mencegah pembukaan halaman automatik, sila pilih gambar-gambar kucing sahaja dalam petak di bawah:',
+	'asirra-nojs' => "'''Sila hidupkan JavaScript dan hantar semula halaman ini.'''",
+	'asirra-failed' => 'Sila kenal pasti semua gambar kucing',
+);
+
 /** Maltese (Malti)
  * @author Chrisportelli
  */
@@ -275,6 +333,7 @@ $messages['nb'] = array(
 	'asirra-createaccount-fail' => 'Vennligst angi hva som er katter.',
 	'asirra-create' => 'Som beskyttelse mot automatisk opprettelse av sider, vennligst velg kun kattebildene i boksen under:',
 	'asirra-nojs' => "'''Vennligst åpne for JavaScript og lagre siden en gang til.'''",
+	'asirra-failed' => 'Vennligst merk alle kattebilder',
 );
 
 /** Dutch (Nederlands)
@@ -284,13 +343,20 @@ $messages['nb'] = array(
 $messages['nl'] = array(
 	'asirra-desc' => 'Asirra-module voor ConfirmEdit',
 	'asirra-edit' => 'Kies ter bescherming tegen geautomatiseerde spam de afbeeldingen met een poes in het onderstaande venster:',
-	'asirra-addurl' => "Uw bewerking bevat nieuwe externe verwijzingen. Om te helpen beschermen tegen geautomatiseerde spam, selecteer de foto's van katten in het vak hieronder:",
+	'asirra-addurl' => "Uw bewerking bevat nieuwe externe koppelingen. Selecteer de foto's van katten in het vak hieronder om te helpen beschermen tegen geautomatiseerde spam:",
 	'asirra-badpass' => 'Kies ter bescherming tegen het automatisch kraken van wachtwoorden de afbeeldingen met een poes in het onderstaande venster:',
 	'asirra-createaccount' => 'Kies om het automatisch aanmaken van gebruikers tegen te gaan de afbeeldingen met een poes in het onderstaande venster:',
 	'asirra-createaccount-fail' => 'Identificeer de katten juist.',
 	'asirra-create' => "Kies om het automatisch aanmaken van pagina's tegen te gaan de afbeeldingen met een poes in het onderstaande venster:",
 	'asirra-nojs' => "'''Schakel JavaScript in en probeer de pagina opnieuw op te slaan.'''",
 	'asirra-failed' => 'Identificeer alle afbeeldingen van katten.',
+);
+
+/** Nederlands (informeel)‎ (Nederlands (informeel)‎)
+ * @author Siebrand
+ */
+$messages['nl-informal'] = array(
+	'asirra-addurl' => "Je bewerking bevat nieuwe externe koppelingen. Selecteer de foto's van katten in het vak hieronder om te helpen beschermen tegen geautomatiseerde spam:",
 );
 
 /** Polish (polski)
@@ -338,6 +404,15 @@ $messages['pt'] = array(
 	'asirra-nojs' => "'''Possibilite o uso de JavaScript e reenvie a página, por favor.'''",
 );
 
+/** tarandíne (tarandíne)
+ * @author Joetaras
+ */
+$messages['roa-tara'] = array(
+	'asirra-desc' => 'Module Asirra pe confermà le cangiaminde',
+	'asirra-createaccount-fail' => 'Pe piacere idendifiche correttamende le categorije.',
+	'asirra-failed' => 'Pe piacere idendifiche tutte le categorije de le immaggine',
+);
+
 /** Russian (русский)
  * @author DCamer
  */
@@ -353,6 +428,21 @@ $messages['ru'] = array(
 	'asirra-failed' => 'Пожалуйста, идентифицируйте все фотографии кота',
 );
 
+/** Sinhala (සිංහල)
+ * @author පසිඳු කාවින්ද
+ */
+$messages['si'] = array(
+	'asirra-desc' => 'ConfirmEdit සඳහා Asirra මොඩියුලය',
+	'asirra-failed' => 'කරුණාකර සියලුම cat පින්තූරයන් හඳුනාගන්න',
+);
+
+/** Swedish (svenska)
+ * @author WikiPhoenix
+ */
+$messages['sv'] = array(
+	'asirra-failed' => 'Var god identifiera alla kattbilder',
+);
+
 /** Tagalog (Tagalog)
  * @author AnakngAraw
  */
@@ -366,6 +456,21 @@ $messages['tl'] = array(
 	'asirra-create' => 'Upang makatulong sa pagprutekta laban sa kusang paglikha ng pahina, paki piliin lamang iyong mga litrato ng pusa na nasa loob ng kahong nasa ibaba:',
 	'asirra-nojs' => "'''Paki paganahin ang JavaScript at muling ipasa ang pahina.'''",
 	'asirra-failed' => 'Paki kilalanin ang lahat ng mga imahe ng pusa',
+);
+
+/** Ukrainian (українська)
+ * @author Base
+ */
+$messages['uk'] = array(
+	'asirra-desc' => 'Модуль Asirra для ConfirmEdit',
+	'asirra-edit' => 'З метою захисту проти автоматичного спаму у статтях, будь ласка оберіть фотографії кота, у блоці нижче:',
+	'asirra-addurl' => 'Ваше повідомлення включає нові зовнішні посилання. З метою захисту проти автоматичного спаму у статтях, будь ласка оберіть фотографії кота, у блоці нижче:',
+	'asirra-badpass' => 'З метою захисту проти автоматичного підбору паролю, будь ласка оберіть фотографії кота, у блоці нижче:',
+	'asirra-createaccount' => 'З метою захисту проти автоматичного створення облікових записів, будь ласка оберіть фотографії кота, у блоці нижче:',
+	'asirra-createaccount-fail' => 'Будь ласка, правильно ідентифікуйте котів.',
+	'asirra-create' => 'З метою захисту проти автоматичного створення статей, будь ласка оберіть фотографії кота, у блоці нижче:',
+	'asirra-nojs' => "'''Будь ласка увімкніть JavaScript і оновіть сторінку.'''",
+	'asirra-failed' => 'Будь ласка, ідентифікуйте усі фотографії кота',
 );
 
 /** Walloon (walon)

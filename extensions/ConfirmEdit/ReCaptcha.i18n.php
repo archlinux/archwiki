@@ -19,10 +19,18 @@ $messages['en'] = array(
 );
 
 /** Message documentation (Message documentation)
+ * @author Shirayuki
  * @author Umherirrender
  */
 $messages['qqq'] = array(
-	'recaptcha-desc' => '{{desc}}',
+	'recaptcha-desc' => '{{Optional}}
+{{desc}}',
+	'recaptcha-edit' => '{{Related|ConfirmEdit-edit}}',
+	'recaptcha-addurl' => '{{Related|ConfirmEdit-addurl}}',
+	'recaptcha-badpass' => '{{Related|ConfirmEdit-badlogin}}',
+	'recaptcha-createaccount' => '{{Related|ConfirmEdit-createaccount}}',
+	'recaptcha-createaccount-fail' => '{{Related|ConfirmEdit-createaccount-fail}}',
+	'recaptcha-create' => '{{Related|ConfirmEdit-create}}',
 );
 
 /** Arabic (العربية)
@@ -155,6 +163,19 @@ $messages['es'] = array(
 	'recaptcha-create' => 'Para protegernos de la creación automática de páginas, escribe las dos palabras que ves en el cuadro de abajo:',
 );
 
+/** Finnish (suomi)
+ * @author Nedergard
+ * @author VezonThunder
+ */
+$messages['fi'] = array(
+	'recaptcha-edit' => 'Suojana automaattisia roskamuokkauksia vastaan sinun on syötettävä kaksi näkemääsi sanaa laatikkoon alla:',
+	'recaptcha-addurl' => 'Muokkauksesi sisältää uusia ulkoisia linkkejä. Suojana automaattista roskapostia vastaan sinun on syötettävä kaksi näkemääsi sanaa laatikkoon alla:',
+	'recaptcha-badpass' => 'Suojana automaattisia salasanamurtoja vastaan sinun on syötettävä kaksi näkemääsi sanaa laatikkoon alla:',
+	'recaptcha-createaccount' => 'Suojana automaattista tunnusten luontia vastaan sinun on syötettävä kaksi näkemääsi sanaa laatikkoon alla:',
+	'recaptcha-createaccount-fail' => 'Väärä tai puuttuva reCAPTCHA-vastaus.',
+	'recaptcha-create' => 'Suojana automaattista sivujen luontia vastaan sinun on syötettävä kaksi näkemääsi sanaa laatikkoon alla:',
+);
+
 /** French (français)
  * @author Urhixidur
  */
@@ -269,6 +290,12 @@ $messages['ja'] = array(
  */
 $messages['ko'] = array(
 	'recaptcha-desc' => '편집 확인에 대한 reCAPCHA 모듈',
+	'recaptcha-edit' => '자동화된 편집 스팸으로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:',
+	'recaptcha-addurl' => '편집에 새로운 바깥 링크가 포함되어 있습니다. 자동화된 스팸으로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:',
+	'recaptcha-badpass' => '자동화된 비밀번호 깨기로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:',
+	'recaptcha-createaccount' => '자동화된 계정 만들기로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:',
+	'recaptcha-createaccount-fail' => 'reCAPTCHA 답이 올바르지 않거나 없습니다.',
+	'recaptcha-create' => '자동화된 문서 만들기로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:',
 );
 
 /** Colognian (Ripoarisch)
@@ -354,20 +381,32 @@ $messages['nb'] = array(
  */
 $messages['nl'] = array(
 	'recaptcha-edit' => 'Voer ter bescherming tegen geautomatiseerde spam de twee woorden die u ziet in het invoervenster in:',
-	'recaptcha-addurl' => 'Uw bewerking bevat nieuwe externe verwijzingen. Voer ter bescherming tegen geautomatiseerde spam de twee woorden die u ziet in het invoervenster in:',
+	'recaptcha-addurl' => 'Uw bewerking bevat nieuwe externe koppelingen. Voer ter bescherming tegen geautomatiseerde spam de twee woorden die u ziet in het invoervenster in:',
 	'recaptcha-badpass' => 'Voer ter bescherming tegen het automatisch kraken van wachtwoorden de twee woorden die u ziet in het invoervenster in:',
 	'recaptcha-createaccount' => 'Om het automatisch aanmaken van gebruikers tegen te gaan moet u de twee woorden die u ziet invoeren:',
 	'recaptcha-createaccount-fail' => 'Het reCAPTCHA-antwoord is onjuist of niet ingevoerd.',
 	'recaptcha-create' => "Om het automatisch aanmaken van pagina's tegen te gaan moet u de twee woorden die u ziet invoeren:",
 );
 
+/** Nederlands (informeel)‎ (Nederlands (informeel)‎)
+ * @author Siebrand
+ */
+$messages['nl-informal'] = array(
+	'recaptcha-edit' => 'Voer ter bescherming tegen geautomatiseerde spam de twee woorden die je ziet in het invoervenster in:',
+	'recaptcha-addurl' => 'Je bewerking bevat nieuwe externe koppelingen. Voer ter bescherming tegen geautomatiseerde spam de twee woorden die je ziet in het invoervenster in:',
+	'recaptcha-badpass' => 'Voer ter bescherming tegen het automatisch kraken van wachtwoorden de twee woorden die je ziet in het invoervenster in:',
+	'recaptcha-createaccount' => 'Om het automatisch aanmaken van gebruikers tegen te gaan moet je de twee woorden die je ziet invoeren:',
+	'recaptcha-create' => "Om het automatisch aanmaken van pagina's tegen te gaan moet je de twee woorden die je ziet invoeren:",
+);
+
 /** Polish (polski)
+ * @author WTM
  */
 $messages['pl'] = array(
 	'recaptcha-edit' => 'Aby uchronić nas przed robotami, proszę wpisać dwa widoczne słowa w poniższym polu:',
 	'recaptcha-addurl' => 'Twoja edycja zawiera linki zewnętrzne. Aby uchronić nas przed robotami, proszę wpisać dwa widoczne słowa w poniższym polu:',
 	'recaptcha-badpass' => 'Aby uchronić nas przed złamaniem automatycznym haseł, proszę wpisać dwa widoczne słowa w poniższym polu:',
-	'recaptcha-createaccount' => 'Aby uchronić nas przed automatycznym stworzeniem użytkowników, proszę wpisać dwa widoczne słowa w poniższym polu:',
+	'recaptcha-createaccount' => 'Aby uchronić nas przed automatycznym tworzeniem użytkowników, proszę wpisać dwa widoczne słowa w poniższym polu:',
 	'recaptcha-createaccount-fail' => 'Odpowiedź na reCAPTCHA jest fałszywa lub brakująca.',
 	'recaptcha-create' => 'Aby uchronić nas przed tworzeniem stron przez robotów, proszę wpisać dwa widoczne słowa w poniższym polu:',
 );
@@ -408,6 +447,18 @@ $messages['pt-br'] = array(
 	'recaptcha-create' => 'Para ajudar a prevenir contra criação automatizada de páginas, por favor digite as duas palavras que você vê na caixa abaixo:',
 );
 
+/** tarandíne (tarandíne)
+ * @author Joetaras
+ */
+$messages['roa-tara'] = array(
+	'recaptcha-edit' => "Pe darne 'na màne a proteggere condre le cangiaminde automatece de le rummate, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:",
+	'recaptcha-addurl' => "Le cangiaminde tune 'ngludone collegaminde de fore nuève. Pe darne 'na màne a proteggere condre le cangiaminde automatece de le rummate, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:",
+	'recaptcha-badpass' => "Pe darne 'na màne a proteggere condre le futteminde automatece de le passuord, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:",
+	'recaptcha-createaccount' => "Pe darne 'na màne a proteggere condre le ccrejaziune automatece de le cunde, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:",
+	'recaptcha-createaccount-fail' => 'Resposte reCAPTCHA ingorrette o mangande.',
+	'recaptcha-create' => "Pe darne 'na màne a proteggere condre le ccrejaziune automatece de le pàggene, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:",
+);
+
 /** Russian (русский)
  * @author Александр Сигачёв
  */
@@ -418,6 +469,13 @@ $messages['ru'] = array(
 	'recaptcha-createaccount' => 'В целях защиты от автоматического создания учётных записей, пожалуйста, введите два слова, которые вы видите ниже:',
 	'recaptcha-createaccount-fail' => 'Ответ reCAPTCHA неправильный или отсутствует.',
 	'recaptcha-create' => 'В целях защиты от автоматического создания страниц, пожалуйста, введите два слова, которые вы видите ниже:',
+);
+
+/** Sinhala (සිංහල)
+ * @author පසිඳු කාවින්ද
+ */
+$messages['si'] = array(
+	'recaptcha-createaccount-fail' => 'වැරදි හෝ දක්නට නොමැති reCAPTCHA පිළිතුර.',
 );
 
 /** Serbian (Cyrillic script) (српски (ћирилица)‎)
@@ -470,10 +528,16 @@ $messages['tl'] = array(
 );
 
 /** Ukrainian (українська)
+ * @author Base
  * @author Тест
  */
 $messages['uk'] = array(
+	'recaptcha-edit' => 'Для запобігання автоматичному спаму у редагуваннях, будь ласка, введіть два слова, які Ви бачите у блоці нижче:',
+	'recaptcha-addurl' => 'Ваше редагування містить зовнішні посилання. Для запобігання автоматичному спаму у редагуваннях, будь ласка, введіть два слова, які Ви бачите у блоці нижче:',
+	'recaptcha-badpass' => 'Для запобігання автоматичному підбору паролю, будь ласка, введіть два слова, які Ви бачите у блоці нижче:',
+	'recaptcha-createaccount' => 'Для запобігання автоматичному створенню облікових записів, будь ласка, введіть два слова, які Ви бачите у блоці нижче:',
 	'recaptcha-createaccount-fail' => 'Відповідь reCAPTCHA неправильна або відсутня.',
+	'recaptcha-create' => 'Для запобігання автоматичному створенню сторінок, будь ласка, введіть два слова, які Ви бачите у блоці нижче:',
 );
 
 /** Vietnamese (Tiếng Việt)

@@ -185,7 +185,6 @@ $messages = array(
 'qbbrowse' => 'Kaeq',
 'qbedit' => 'Toimõndaq',
 'qbpageoptions' => 'Leheküle säädmine',
-'qbpageinfo' => 'Leheküle teedüs',
 'qbmyoptions' => 'Mu säädmiseq',
 'qbspecialpages' => 'Tallitusleheküleq',
 'faq' => 'Sagõhõhe küsüdüq küsümiseq',
@@ -423,9 +422,8 @@ $2',
 # Login and logout pages
 'logouttext' => "'''Olõt nime alt vällä lännüq.'''
 
-Võit {{SITENAME}}t ilma nimeldä edesi toimõndaq vai [[Special:UserLogin|vahtsõst sama vai tõõsõ nimega sisse minnäq]].
+Võit {{SITENAME}}t ilma nimeldä edesi toimõndaq vai <span class='plainlinks'>[$1 vahtsõst sama vai tõõsõ nimega sisse minnäq]</span>.
 Tähelepandmisõs: niikavva, ku sa olõ-i tühäs tennüq uma võrgokaeja vaihõmällo, võivaq mõnõq leheküleq iks viil näüdädäq, nigu sa olõsi nimega seen.",
-'welcomecreation' => '<h2>Tereq, $1!</h2><p>Su konto om valmis. Võit taa hindä perrä sisse säädäq.',
 'yourname' => 'Pruukjanimi',
 'yourpassword' => 'Salasõna',
 'yourpasswordagain' => 'Kirodaq viilkõrd salasõna',
@@ -648,7 +646,6 @@ Ku klõpsahtat nuppi \"{{int:savearticle}}\", sis pästetäs '''õnnõ''' ülemb
 'template-protected' => '(ärqkaidsõt)',
 'template-semiprotected' => '(ärqkaidsõduq nimeldä ja vahtsõq pruukjaq)',
 'hiddencategories' => 'Seo leht kuulus {{PLURAL:$1|1 käkitühe katõgooriahe|$1 käkitühe katõgooriahe}}:',
-'nocreatetitle' => 'Lehekülgi luuminõ piiret',
 'nocreatetext' => '{{SITENAME}} lupa-i luvvaq vahtsit lehti.
 Võit toimõndaq olõmanolõvit lehti vai [[Special:UserLogin|minnäq nimega sisse]].',
 'nocreate-loggedin' => 'Sul olõ-i lupa luvvaq vahtsit {{SITENAME}} lehti.',
@@ -951,11 +948,12 @@ Taa tohe-i ollaq rohkõmb ku $1 {{PLURAL:$1|märk|märki}}.",
 'right-ipblock-exempt' => 'Minnäq müüdä automaatsist kinniqpidämiisist ni aadrõsijao ja IP-kinniqpidämiisist',
 'right-proxyunbannable' => 'Minnäq müüdä automaatsist vaihõserveri kinniqpidämiisist',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Vahtsõq pruukjaq',
+
 # User rights log
 'rightslog' => 'Pruukmisõiguisi muutmisõ nimekiri',
 'rightslogtext' => 'Taa om pruukmisõiguisi muutmiisi nimekiri.',
-'rightslogentry' => 'Pruukja $1 õigusõq muudõti ümbre rühmäst $2 rühmä $3',
-'rightsnone' => '(olõ-i õiguisi)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'seod lehte toimõndaq',
@@ -1290,9 +1288,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-submit' => 'Näütäq',
 'listusers-noresult' => 'Olõ-s pruukjit.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Vahtsõq pruukjaq',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Pruukjarühmi õigusõq',
 'listgrouprights-members' => '(liikmidõ nimekiri)',
@@ -1351,11 +1346,7 @@ ja sul piät umin [[Special:Preferences|säädmiisin]] olõma e-postiaadrõs, et
 
 'enotif_mailer' => '{{SITENAME}} lehe muutumisteedüs',
 'enotif_reset' => 'Märgiq kõik leheq ülekaetuis',
-'enotif_newpagetext' => 'Taa om vahtsõnõ leht.',
 'enotif_impersonal_salutation' => '{{SITENAME}} pruukja',
-'changed' => 'lehte muutnuq',
-'created' => 'lehe loonuq',
-'enotif_subject' => '$PAGEEDITOR om $CHANGEDORCREATED $PAGETITLE',
 'enotif_lastvisited' => 'Lehel $1 ommaq kõik päält suq perämäst käümist tettüq muutmisõq.',
 'enotif_lastdiff' => 'Taa muutusõ nägemises kaeq: $1.',
 'enotif_anon_editor' => 'nimeldä pruukja $1',
@@ -1378,6 +1369,8 @@ Inämb seo lehe kotsilõ teedäqandmiisi saadõta-i. Võit ka kõik su perräkae
 Perräkaemisnimekirä säädmiisi saat muutaq lehe pääl: {{canonicalurl:Special:Watchlist/edit}}
 
 As\'a kotsilõ mano kaiaq ja küssü saat lehe päält: {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'lehe loonuq',
+'changed' => 'lehte muutnuq',
 
 # Delete
 'deletepage' => 'Kistudaq lehekülg ärq',
@@ -2268,5 +2261,8 @@ Prooviq harilikku kaehust.',
 'specialpages-group-pagetools' => 'Lehetüüriistaq',
 'specialpages-group-wiki' => 'Vikiteedüseq ja tüüriistaq',
 'specialpages-group-redirects' => 'Ümbrenäütämistallitusleheq',
+
+# New logging system
+'rightsnone' => '(olõ-i õiguisi)',
 
 );

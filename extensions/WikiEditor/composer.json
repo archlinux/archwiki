@@ -1,0 +1,11 @@
+{
+	"name": "mediawiki/wiki-editor",
+		"type": "mediawiki-extension",
+		"description": "WikiEditor is an extendable framework with a set of feature-based modules that improve the user experience of editing.",
+		"homepage": "http://www.mediawiki.org/wiki/Extension:WikiEditor",
+		"license" : "GPL-2.0",
+
+		"require": {
+			"composer/installers" : "*"
+		}
+}

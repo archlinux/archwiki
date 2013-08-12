@@ -144,7 +144,6 @@ $messages = array(
 'qbfind' => 'འཚོལ་བ།',
 'qbedit' => 'རྩོམ་སྒྲིག',
 'qbpageoptions' => 'ཤོག་ངོས་འདི།',
-'qbpageinfo' => 'འབྲེལ་ཆགས།',
 'qbmyoptions' => 'ངའི་ཤོག་ངོས།',
 'qbspecialpages' => 'དམིཊ་བསལ་གྱི་བཟོ་བཅོས།',
 'faq' => 'རྒྱུན་ལྡན་དྲི་བ།',
@@ -532,7 +531,6 @@ $messages = array(
 
 # User rights log
 'rightslog' => 'སྤྱོད་མིའི་ཐོབ་ཐང་།',
-'rightsnone' => '(སྟོང་པ།)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'ཤོག་ངོས་འདི་ཀློག་པ།',
@@ -702,9 +700,8 @@ $messages = array(
 'unwatching' => 'ལྟ་ཐོ་ལས་འདོར་བཞིན་པ་་་',
 
 'enotif_reset' => 'ཤོག་ངོས་ཚང་མ་བལྟས་ཟིན་དུ་རྟགས་རྒྱོབ།',
-'enotif_newpagetext' => 'ཤོག་ངོས་འདི་གསར་བ་རེད།',
-'changed' => 'བསྒྱུར་ཟིན།',
 'created' => 'བཟོས་ཟིན།',
+'changed' => 'བསྒྱུར་ཟིན།',
 
 # Delete
 'deletepage' => 'ཤོག་ངོས་འདོར་བ།',
@@ -880,5 +877,8 @@ $messages = array(
 
 # Special:SpecialPages
 'specialpages' => 'དམིགས་གསལ་ཤོག་ངོས།',
+
+# New logging system
+'rightsnone' => '(སྟོང་པ།)',
 
 );

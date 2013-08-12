@@ -466,9 +466,11 @@ Na tu yu tok tru nau olsem yu raitim dispela yu yet, o yu kisim long wanpela hap
 'right-delete' => 'Rausim ol pes',
 'right-suppressionlog' => 'Lukim ol praivet ripot',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Ripot long ol nupela yusa',
+
 # User rights log
 'rightslog' => 'Ripot long ol pawa bilong ol yusa',
-'rightsnone' => 'i nogat wanpela',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'ridim dispela pes',
@@ -608,9 +610,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Special:ListUsers
 'listusers-submit' => 'Soim',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Ripot long ol nupela yusa',
-
 # Special:ListGroupRights
 'listgrouprights-group' => 'Grup',
 'listgrouprights-members' => '(lista bilong ol memba)',
@@ -653,12 +652,10 @@ Sapos yu laik rausim dispela pes long lukautbuk bilong yu bihain, paitim \"Pinis
 'unwatching' => 'Wet liklik, i raus nau long lukautbuk...',
 
 'enotif_reset' => 'Makim olgeta pes olsem mi lukim pinis',
-'enotif_newpagetext' => 'Dispela emi nupela pes.',
 'enotif_impersonal_salutation' => 'yusa long {{SITENAME}}',
-'changed' => 'i senisim',
-'created' => 'i kirapim',
-'enotif_subject' => '$PAGEEDITOR $CHANGEDORCREATED pes $PAGETITLE long {{SITENAME}}',
 'enotif_anon_editor' => 'IP yusa $1',
+'created' => 'i kirapim',
+'changed' => 'i senisim',
 
 # Delete
 'deletepage' => 'Rausim dispela pes',
@@ -884,6 +881,9 @@ Yu inap lukim as tok bilong em',
 
 # HTML forms
 'htmlform-selectorother-other' => 'Narapela',
+
+# New logging system
+'rightsnone' => 'i nogat wanpela',
 
 # Search suggestions
 'searchsuggest-search' => 'Painim',

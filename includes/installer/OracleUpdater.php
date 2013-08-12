@@ -38,6 +38,8 @@ class OracleUpdater extends DatabaseUpdater {
 
 	protected function getCoreUpdateList() {
 		return array(
+			array( 'disableContentHandlerUseDB' ),
+
 			// 1.17
 			array( 'doNamespaceDefaults' ),
 			array( 'doFKRenameDeferr' ),
@@ -59,16 +61,33 @@ class OracleUpdater extends DatabaseUpdater {
 			array( 'addField', 'archive', 'ar_sha1', 'patch-ar_sha1_field.sql' ),
 			array( 'doRemoveNotNullEmptyDefaults2' ),
 			array( 'addIndex', 'page', 'i03', 'patch-page_redirect_namespace_len.sql' ),
-			array( 'modifyField', 'user_groups', 'ug_group', 'patch-ug_group-length-increase.sql' ),
 			array( 'addField', 'uploadstash', 'us_chunk_inx', 'patch-us_chunk_inx_field.sql' ),
 			array( 'addField', 'job', 'job_timestamp', 'patch-job_timestamp_field.sql' ),
 			array( 'addIndex', 'job', 'i02', 'patch-job_timestamp_index.sql' ),
 			array( 'doPageRestrictionsPKUKFix' ),
-			array( 'modifyField', 'user_former_groups', 'ufg_group', 'patch-ufg_group-length-increase.sql' ),
 
 			//1.20
 			array( 'addIndex', 'ipblocks', 'i05', 'patch-ipblocks_i05_index.sql' ),
 			array( 'addIndex', 'revision', 'i05', 'patch-revision_i05_index.sql' ),
+			array( 'dropField', 'category', 'cat_hidden', 'patch-cat_hidden.sql' ),
+
+			//1.21
+			array( 'addField',	'revision',	'rev_content_format',		'patch-revision-rev_content_format.sql' ),
+			array( 'addField',	'revision',	'rev_content_model',		'patch-revision-rev_content_model.sql' ),
+			array( 'addField',	'archive',	'ar_content_format',		'patch-archive-ar_content_format.sql' ),
+			array( 'addField',	'archive',	'ar_content_model',		    'patch-archive-ar_content_model.sql' ),
+			array( 'addField',	'page',     'page_content_model',		'patch-page-page_content_model.sql' ),
+			array( 'enableContentHandlerUseDB' ),
+
+			array( 'dropField', 'site_stats', 'ss_admins',  'patch-ss_admins.sql' ),
+			array( 'dropField', 'recentchanges', 'rc_moved_to_title', 'patch-rc_moved.sql' ),
+			array( 'addTable', 'sites',                            'patch-sites.sql' ),
+			array( 'addField', 'filearchive',   'fa_sha1',          'patch-fa_sha1.sql' ),
+			array( 'addField', 'job',           'job_token',         'patch-job_token.sql' ),
+			array( 'addField', 'job',           'job_attempts',       'patch-job_attempts.sql' ),
+			array( 'addField', 'uploadstash',      'us_props',      'patch-uploadstash-us_props.sql' ),
+			array( 'modifyField', 'user_groups', 'ug_group', 'patch-ug_group-length-increase-255.sql' ),
+			array( 'modifyField', 'user_former_groups', 'ufg_group', 'patch-ufg_group-length-increase-255.sql' ),
 
 			// KEEP THIS AT THE BOTTOM!!
 			array( 'doRebuildDuplicateFunction' ),
@@ -148,7 +167,7 @@ class OracleUpdater extends DatabaseUpdater {
 	 * converted to NULL in Oracle
 	 */
 	protected function doRemoveNotNullEmptyDefaults() {
-		$meta = $this->db->fieldInfo( 'categorylinks' , 'cl_sortkey_prefix' );
+		$meta = $this->db->fieldInfo( 'categorylinks', 'cl_sortkey_prefix' );
 		if ( $meta->isNullable() ) {
 			return;
 		}
@@ -156,7 +175,7 @@ class OracleUpdater extends DatabaseUpdater {
 	}
 
 	protected function doRemoveNotNullEmptyDefaults2() {
-		$meta = $this->db->fieldInfo( 'ipblocks' , 'ipb_by_text' );
+		$meta = $this->db->fieldInfo( 'ipblocks', 'ipb_by_text' );
 		if ( $meta->isNullable() ) {
 			return;
 		}
@@ -215,7 +234,7 @@ class OracleUpdater extends DatabaseUpdater {
 	/**
 	 * Overload: because of the DDL_MODE tablename escaping is a bit dodgy
 	 */
-	protected function purgeCache() {
+	public function purgeCache() {
 		# We can't guarantee that the user will be able to use TRUNCATE,
 		# but we know that DELETE is available to us
 		$this->output( "Purging caches..." );

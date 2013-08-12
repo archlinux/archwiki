@@ -42,7 +42,20 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 	/* Abstract Protected Methods */
 
 	/**
+	 * Subclasses should return an associative array of resources in the module.
+	 * Keys should be the title of a page in the MediaWiki or User namespace.
+	 *
+	 * Values should be a nested array of options.  The supported keys are 'type' and
+	 * (CSS only) 'media'.
+	 *
+	 * For scripts, 'type' should be 'script'.
+	 *
+	 * For stylesheets, 'type' should be 'style'.
+	 * There is an optional media key, the value of which can be the
+	 * medium ('screen', 'print', etc.) of the stylesheet.
+	 *
 	 * @param $context ResourceLoaderContext
+	 * @return array
 	 */
 	abstract protected function getPages( ResourceLoaderContext $context );
 
@@ -75,7 +88,22 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 		if ( !$revision ) {
 			return null;
 		}
-		return $revision->getRawText();
+
+		$content = $revision->getContent( Revision::RAW );
+
+		if ( !$content ) {
+			wfDebug( __METHOD__ . "failed to load content of JS/CSS page!\n" );
+			return null;
+		}
+
+		$model = $content->getModel();
+
+		if ( $model !== CONTENT_MODEL_CSS && $model !== CONTENT_MODEL_JAVASCRIPT ) {
+			wfDebug( __METHOD__ . "bad content model $model for JS/CSS page!\n" );
+			return null;
+		}
+
+		return $content->getNativeData(); //NOTE: this is safe, we know it's JS or CSS
 	}
 
 	/* Methods */
@@ -98,7 +126,7 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 			if ( strval( $script ) !== '' ) {
 				$script = $this->validateScriptFile( $titleText, $script );
 				if ( strpos( $titleText, '*/' ) === false ) {
-					$scripts .=  "/* $titleText */\n";
+					$scripts .= "/* $titleText */\n";
 				}
 				$scripts .= $script . "\n";
 			}
@@ -119,7 +147,7 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 				continue;
 			}
 			$title = Title::newFromText( $titleText );
-			if ( !$title || $title->isRedirect()  ) {
+			if ( !$title || $title->isRedirect() ) {
 				continue;
 			}
 			$media = isset( $options['media'] ) ? $options['media'] : 'all';
@@ -135,7 +163,7 @@ abstract class ResourceLoaderWikiModule extends ResourceLoaderModule {
 				$styles[$media] = array();
 			}
 			if ( strpos( $titleText, '*/' ) === false ) {
-				$style =  "/* $titleText */\n" . $style;
+				$style = "/* $titleText */\n" . $style;
 			}
 			$styles[$media][] = $style;
 		}

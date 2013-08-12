@@ -28,9 +28,9 @@
  * @ingroup Database
  */
 class DatabaseMssql extends DatabaseBase {
-	var $mInsertId = NULL;
-	var $mLastResult = NULL;
-	var $mAffectedRows = NULL;
+	var $mInsertId = null;
+	var $mLastResult = null;
+	var $mAffectedRows = null;
 
 	var $mPort;
 
@@ -61,6 +61,11 @@ class DatabaseMssql extends DatabaseBase {
 
 	/**
 	 * Usually aborts on failure
+	 * @param string $server
+	 * @param string $user
+	 * @param string $password
+	 * @param string $dbName
+	 * @throws DBConnectionError
 	 * @return bool|DatabaseBase|null
 	 */
 	function open( $server, $user, $password, $dbName ) {
@@ -97,7 +102,7 @@ class DatabaseMssql extends DatabaseBase {
 		$ntAuthPassTest = strtolower( $password );
 
 		// Decide which auth scenerio to use
-		if( $ntAuthPassTest == 'ntauth' && $ntAuthUserTest == 'ntauth' ){
+		if( $ntAuthPassTest == 'ntauth' && $ntAuthUserTest == 'ntauth' ) {
 			// Don't add credentials to $connectionInfo
 		} else {
 			$connectionInfo['UID'] = $user;
@@ -139,7 +144,7 @@ class DatabaseMssql extends DatabaseBase {
 		// $this->limitResult();
 		if ( preg_match( '/\bLIMIT\s*/i', $sql ) ) {
 			// massage LIMIT -> TopN
-			$sql = $this->LimitToTopN( $sql ) ;
+			$sql = $this->LimitToTopN( $sql );
 		}
 
 		// MSSQL doesn't have EXTRACT(epoch FROM XXX)
@@ -151,7 +156,7 @@ class DatabaseMssql extends DatabaseBase {
 		// perform query
 		$stmt = sqlsrv_query( $this->mConn, $sql );
 		if ( $stmt == false ) {
-			$message = "A database error has occurred.  Did you forget to run maintenance/update.php after upgrading?  See: http://www.mediawiki.org/wiki/Manual:Upgrading#Run_the_update_script\n" .
+			$message = "A database error has occurred. Did you forget to run maintenance/update.php after upgrading?  See: http://www.mediawiki.org/wiki/Manual:Upgrading#Run_the_update_script\n" .
 				"Query: " . htmlentities( $sql ) . "\n" .
 				"Function: " . __METHOD__ . "\n";
 			// process each error (our driver will give us an array of errors unlike other providers)
@@ -279,7 +284,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * @param $vars    Mixed: array or string, field name(s) to be retrieved
 	 * @param $conds   Mixed: array or string, condition(s) for WHERE
 	 * @param $fname   String: calling function name (use __METHOD__) for logs/profiling
-	 * @param $options Array: associative array of options (e.g. array('GROUP BY' => 'page_title')),
+	 * @param array $options associative array of options (e.g. array('GROUP BY' => 'page_title')),
 	 *                 see Database::makeSelectOptions code for list of supported stuff
 	 * @param $join_conds Array: Associative array of table join conditions (optional)
 	 *						   (e.g. array( 'page' => array('LEFT JOIN','page_latest=rev_id') )
@@ -304,7 +309,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * @param $vars    Mixed:  Array or string, field name(s) to be retrieved
 	 * @param $conds   Mixed:  Array or string, condition(s) for WHERE
 	 * @param $fname   String: Calling function name (use __METHOD__) for logs/profiling
-	 * @param $options Array:  Associative array of options (e.g. array('GROUP BY' => 'page_title')),
+	 * @param array $options  Associative array of options (e.g. array('GROUP BY' => 'page_title')),
 	 *                 see Database::makeSelectOptions code for list of supported stuff
 	 * @param $join_conds Array: Associative array of table join conditions (optional)
 	 *                    (e.g. array( 'page' => array('LEFT JOIN','page_latest=rev_id') )
@@ -314,7 +319,7 @@ class DatabaseMssql extends DatabaseBase {
 		if ( isset( $options['EXPLAIN'] ) ) {
 			unset( $options['EXPLAIN'] );
 		}
-		return parent::selectSQLText(  $table, $vars, $conds, $fname, $options, $join_conds );
+		return parent::selectSQLText( $table, $vars, $conds, $fname, $options, $join_conds );
 	}
 
 	/**
@@ -348,7 +353,7 @@ class DatabaseMssql extends DatabaseBase {
 		$sql = "sp_helpindex '" . $table . "'";
 		$res = $this->query( $sql, $fname );
 		if ( !$res ) {
-			return NULL;
+			return null;
 		}
 
 		$result = array();
@@ -380,6 +385,11 @@ class DatabaseMssql extends DatabaseBase {
 	 *
 	 * Usually aborts on failure
 	 * If errors are explicitly ignored, returns success
+	 * @param string $table
+	 * @param array $arrToInsert
+	 * @param string $fname
+	 * @param array $options
+	 * @throws DBQueryError
 	 * @return bool
 	 */
 	function insert( $table, $arrToInsert, $fname = 'DatabaseMssql::insert', $options = array() ) {
@@ -404,7 +414,7 @@ class DatabaseMssql extends DatabaseBase {
 		$identity = null;
 		$tableRaw = preg_replace( '#\[([^\]]*)\]#', '$1', $table ); // strip matching square brackets from table name
 		$res = $this->doQuery( "SELECT NAME AS idColumn FROM SYS.IDENTITY_COLUMNS WHERE OBJECT_NAME(OBJECT_ID)='{$tableRaw}'" );
-		if( $res && $res->numrows() ){
+		if( $res && $res->numrows() ) {
 			// There is an identity for this table.
 			$identity = array_pop( $res->fetch( SQLSRV_FETCH_ASSOC ) );
 		}
@@ -421,9 +431,9 @@ class DatabaseMssql extends DatabaseBase {
 				// iterate through
 				foreach ($a as $k => $v ) {
 					if ( $k == $identity ) {
-						if( !is_null($v) ){
+						if( !is_null($v) ) {
 							// there is a value being passed to us, we need to turn on and off inserted identity
-							$sqlPre = "SET IDENTITY_INSERT $table ON;" ;
+							$sqlPre = "SET IDENTITY_INSERT $table ON;";
 							$sqlPost = ";SET IDENTITY_INSERT $table OFF;";
 
 						} else {
@@ -474,7 +484,7 @@ class DatabaseMssql extends DatabaseBase {
 				} elseif ( is_array( $value ) || is_object( $value ) ) {
 					if ( is_object( $value ) && strtolower( get_class( $value ) ) == 'blob' ) {
 						$sql .= $this->addQuotes( $value );
-					}  else {
+					} else {
 						$sql .= $this->addQuotes( serialize( $value ) );
 					}
 				} else {
@@ -488,7 +498,7 @@ class DatabaseMssql extends DatabaseBase {
 
 			if ( $ret === false ) {
 				throw new DBQueryError( $this, $this->getErrors(), $this->lastErrno(), $sql, $fname );
-			} elseif ( $ret != NULL ) {
+			} elseif ( $ret != null ) {
 				// remember number of rows affected
 				$this->mAffectedRows = sqlsrv_rows_affected( $ret );
 				if ( !is_null($identity) ) {
@@ -510,7 +520,15 @@ class DatabaseMssql extends DatabaseBase {
 	 * Source items may be literals rather than field names, but strings should be quoted with Database::addQuotes()
 	 * $conds may be "*" to copy the whole table
 	 * srcTable may be an array of tables.
-	 * @return null|\ResultWrapper
+	 * @param string $destTable
+	 * @param array|string $srcTable
+	 * @param array $varMap
+	 * @param array $conds
+	 * @param string $fname
+	 * @param array $insertOptions
+	 * @param array $selectOptions
+	 * @throws DBQueryError
+	 * @return null|ResultWrapper
 	 */
 	function insertSelect( $destTable, $srcTable, $varMap, $conds, $fname = 'DatabaseMssql::insertSelect',
 		$insertOptions = array(), $selectOptions = array() ) {
@@ -518,12 +536,12 @@ class DatabaseMssql extends DatabaseBase {
 
 		if ( $ret === false ) {
 			throw new DBQueryError( $this, $this->getErrors(), $this->lastErrno(), /*$sql*/ '', $fname );
-		} elseif ( $ret != NULL ) {
+		} elseif ( $ret != null ) {
 			// remember number of rows affected
 			$this->mAffectedRows = sqlsrv_rows_affected( $ret );
 			return $ret;
 		}
-		return NULL;
+		return null;
 	}
 
 	/**
@@ -590,9 +608,9 @@ class DatabaseMssql extends DatabaseBase {
 		} else {
 			$sql = '
 				SELECT * FROM (
-				  SELECT sub2.*, ROW_NUMBER() OVER(ORDER BY sub2.line2) AS line3 FROM (
-					SELECT 1 AS line2, sub1.* FROM (' . $sql . ') AS sub1
-				  ) as sub2
+					SELECT sub2.*, ROW_NUMBER() OVER(ORDER BY sub2.line2) AS line3 FROM (
+						SELECT 1 AS line2, sub1.* FROM (' . $sql . ') AS sub1
+					) as sub2
 				) AS sub3
 				WHERE line3 BETWEEN ' . ( $offset + 1 ) . ' AND ' . ( $offset + $limit );
 			return $sql;
@@ -720,6 +738,8 @@ class DatabaseMssql extends DatabaseBase {
 	 * Escapes a identifier for use inm SQL.
 	 * Throws an exception if it is invalid.
 	 * Reference: http://msdn.microsoft.com/en-us/library/aa224033%28v=SQL.80%29.aspx
+	 * @param $identifier
+	 * @throws MWException
 	 * @return string
 	 */
 	private function escapeIdentifier( $identifier ) {
@@ -750,17 +770,17 @@ class DatabaseMssql extends DatabaseBase {
 		$newUser = $this->escapeIdentifier( $newUser );
 		$loginPassword = $this->addQuotes( $loginPassword );
 
-		$this->doQuery("CREATE DATABASE $dbName;");
-		$this->doQuery("USE $dbName;");
-		$this->doQuery("CREATE SCHEMA $dbName;");
-		$this->doQuery("
+		$this->doQuery( "CREATE DATABASE $dbName;" );
+		$this->doQuery( "USE $dbName;" );
+		$this->doQuery( "CREATE SCHEMA $dbName;" );
+		$this->doQuery( "
 						CREATE
 							LOGIN $newUser
 						WITH
 							PASSWORD=$loginPassword
 						;
-					");
-		$this->doQuery("
+					" );
+		$this->doQuery( "
 						CREATE
 							USER $newUser
 						FOR
@@ -768,8 +788,8 @@ class DatabaseMssql extends DatabaseBase {
 						WITH
 							DEFAULT_SCHEMA=$dbName
 						;
-					");
-		$this->doQuery("
+					" );
+		$this->doQuery( "
 						GRANT
 							BACKUP DATABASE,
 							BACKUP LOG,
@@ -784,17 +804,15 @@ class DatabaseMssql extends DatabaseBase {
 							DATABASE::$dbName
 						TO $newUser
 						;
-					");
-		$this->doQuery("
+					" );
+		$this->doQuery( "
 						GRANT
 							CONTROL
 						ON
 							SCHEMA::$dbName
 						TO $newUser
 						;
-					");
-
-
+					" );
 	}
 
 	function encodeBlob( $b ) {
@@ -873,7 +891,7 @@ class DatabaseMssql extends DatabaseBase {
 	/**
 	 * @private
 	 *
-	 * @param $options Array: an associative array of options to be turned into
+	 * @param array $options an associative array of options to be turned into
 	 *                 an SQL query, valid keys are listed in the function.
 	 * @return Array
 	 */
@@ -888,29 +906,23 @@ class DatabaseMssql extends DatabaseBase {
 			}
 		}
 
-		if ( isset( $options['GROUP BY'] ) ) {
-			$tailOpts .= " GROUP BY {$options['GROUP BY']}";
-		}
-		if ( isset( $options['HAVING'] ) ) {
-			$tailOpts .= " HAVING {$options['GROUP BY']}";
-		}
-		if ( isset( $options['ORDER BY'] ) ) {
-			$tailOpts .= " ORDER BY {$options['ORDER BY']}";
-		}
+		$tailOpts .= $this->makeGroupByWithHaving( $options );
+
+		$tailOpts .= $this->makeOrderBy( $options );
 
 		if ( isset( $noKeyOptions['DISTINCT'] ) && isset( $noKeyOptions['DISTINCTROW'] ) ) {
 			$startOpts .= 'DISTINCT';
 		}
 
 		// we want this to be compatible with the output of parent::makeSelectOptions()
-		return array( $startOpts, '' , $tailOpts, '' );
+		return array( $startOpts, '', $tailOpts, '' );
 	}
 
 	/**
 	 * Get the type of the DBMS, as it appears in $wgDBtype.
 	 * @return string
 	 */
-	function getType(){
+	function getType() {
 		return 'mssql';
 	}
 
@@ -1118,6 +1130,5 @@ class MssqlResult {
 
 	public function free() {
 		unset( $this->mRows );
-		return;
 	}
 }

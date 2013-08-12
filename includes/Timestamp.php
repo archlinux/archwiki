@@ -42,7 +42,6 @@ class MWTimestamp {
 		TS_RFC2822 => 'D, d M Y H:i:s',
 		TS_ORACLE => 'd-m-Y H:i:s.000000', // Was 'd-M-y h.i.s A' . ' +00:00' before r51500
 		TS_POSTGRES => 'Y-m-d H:i:s',
-		TS_DB2 => 'Y-m-d H:i:s',
 	);
 
 	/**
@@ -54,7 +53,9 @@ class MWTimestamp {
 		"seconds" => 1000, // 1000 milliseconds per second
 		"minutes" => 60, // 60 seconds per minute
 		"hours" => 60, // 60 minutes per hour
-		"days" => 24 // 24 hours per day
+		"days" => 24, // 24 hours per day
+		"months" => 30, // approximately 30 days per month
+		"years" => 12, // 12 months per year
 	);
 
 	/**
@@ -69,7 +70,9 @@ class MWTimestamp {
 	 * Make a new timestamp and set it to the specified time,
 	 * or the current time if unspecified.
 	 *
-	 * @param $timestamp bool|string Timestamp to set, or false for current time
+	 * @since 1.20
+	 *
+	 * @param bool|string $timestamp Timestamp to set, or false for current time
 	 */
 	public function __construct( $timestamp = false ) {
 		$this->setTimestamp( $timestamp );
@@ -81,7 +84,9 @@ class MWTimestamp {
 	 * Parse the given timestamp into either a DateTime object or a Unix timestamp,
 	 * and then store it.
 	 *
-	 * @param $ts string|bool Timestamp to store, or false for now
+	 * @since 1.20
+	 *
+	 * @param string|bool $ts Timestamp to store, or false for now
 	 * @throws TimestampException
 	 */
 	public function setTimestamp( $ts = false ) {
@@ -112,8 +117,6 @@ class MWTimestamp {
 			# TS_POSTGRES
 		} elseif ( preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)\.*\d* GMT$/', $ts, $da ) ) {
 			# TS_POSTGRES
-		} elseif (preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)\.\d\d\d$/', $ts, $da ) ) {
-			# TS_DB2
 		} elseif ( preg_match( '/^[ \t\r\n]*([A-Z][a-z]{2},[ \t\r\n]*)?' . # Day of week
 								'\d\d?[ \t\r\n]*[A-Z][a-z]{2}[ \t\r\n]*\d{2}(?:\d{2})?' .  # dd Mon yyyy
 								'[ \t\r\n]*\d\d[ \t\r\n]*:[ \t\r\n]*\d\d[ \t\r\n]*:[ \t\r\n]*\d\d/S', $ts ) ) { # hh:mm:ss
@@ -136,14 +139,10 @@ class MWTimestamp {
 			$strtime = call_user_func_array( "sprintf", $da );
 		}
 
-		if( function_exists( "date_create" ) ) {
-			try {
-				$final = new DateTime( $strtime, new DateTimeZone( 'GMT' ) );
-			} catch(Exception $e) {
-				throw new TimestampException( __METHOD__ . ' Invalid timestamp format.' );
-			}
-		} else {
-			$final = strtotime( $strtime );
+		try {
+			$final = new DateTime( $strtime, new DateTimeZone( 'GMT' ) );
+		} catch(Exception $e) {
+			throw new TimestampException( __METHOD__ . ' Invalid timestamp format.' );
 		}
 
 		if( $final === false ) {
@@ -158,7 +157,9 @@ class MWTimestamp {
 	 * Convert the internal timestamp to the specified format and then
 	 * return it.
 	 *
-	 * @param $style int Constant Output format for timestamp
+	 * @since 1.20
+	 *
+	 * @param int $style Constant Output format for timestamp
 	 * @throws TimestampException
 	 * @return string The formatted timestamp
 	 */
@@ -192,7 +193,9 @@ class MWTimestamp {
 	 * generate a readable timestamp by returning "<N> <units> ago", where the
 	 * largest possible unit is used.
 	 *
-	 * @return string Formatted timestamp
+	 * @since 1.20
+	 *
+	 * @return Message Formatted timestamp
 	 */
 	public function getHumanTimestamp() {
 		$then = $this->getTimestamp( TS_UNIX );
@@ -212,13 +215,15 @@ class MWTimestamp {
 
 		if( $message ) {
 			$initial = call_user_func_array( 'wfMessage', $message );
-			return wfMessage( 'ago', $initial );
+			return wfMessage( 'ago', $initial->parse() );
 		} else {
 			return wfMessage( 'just-now' );
 		}
 	}
 
 	/**
+	 * @since 1.20
+	 *
 	 * @return string
 	 */
 	public function __toString() {
@@ -226,4 +231,7 @@ class MWTimestamp {
 	}
 }
 
+/**
+ * @since 1.20
+ */
 class TimestampException extends MWException {}

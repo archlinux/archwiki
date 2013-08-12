@@ -153,6 +153,7 @@ $messages = array(
 'newwindow' => '(wårt önj en nai waning ääm mååged)',
 'cancel' => 'Oufbreege',
 'moredotdotdot' => 'Mör ...',
+'morenotlisted' => 'Öödern, ei apfeerd ...',
 'mypage' => 'Sidj',
 'mytalk' => 'Diskusjuun',
 'anontalk' => 'Diskusjoonssid foon jüdeer IP',
@@ -164,7 +165,6 @@ $messages = array(
 'qbbrowse' => 'Bleese',
 'qbedit' => 'Änre',
 'qbpageoptions' => 'Jüdeer sid',
-'qbpageinfo' => 'Sidedoote',
 'qbmyoptions' => 'Min side',
 'qbspecialpages' => 'Spetsjåålside',
 'faq' => 'FAQ',
@@ -187,6 +187,7 @@ $messages = array(
 'namespaces' => 'Noomerüme',
 'variants' => 'Fariante',
 
+'navigation-heading' => 'Nawigatsjuun',
 'errorpagetitle' => 'Fäägel',
 'returnto' => 'Tubääg tu jü side $1.',
 'tagline' => 'Üt {{SITENAME}}',
@@ -429,12 +430,11 @@ Di grünj faan di administraator as: „$3“.',
 # Login and logout pages
 'logouttext' => "'''Dü bast nü oufmälded.'''
 
-Dü koost {{SITENAME}} nü anonüüm widerbrüke, unti de wider uner diseelew unti en oudern brükernoome [[Special:UserLogin|önjmälde]].
+Dü koost {{SITENAME}} nü anonüüm widerbrüke, unti de wider uner diseelew unti en oudern brükernoome <span class='plainlinks'>[$1 önjmälde]</span>.
 Påås aw, dåt hu side nuch wise koone, dåt dü önjmälded bast, sülung dü ai dan browsercache lääsimååged heest.",
-'welcomecreation' => '== Wäljkiimen, $1! ==
-
-Din brükerkonto wörd inruchted.
-Ferjees ai, din [[Special:Preferences|{{SITENAME}}-önjstalinge]] önjtupååsen.',
+'welcomeuser' => 'Welkimen, $1!',
+'welcomecreation-msg' => 'Din brükerkonto as iinracht wurden.
+Ferjid det ei, an aachte üüb din [[Special:Preferences|{{SITENAME}} iinstelangen]].',
 'yourname' => 'Brükernoome:',
 'yourpassword' => 'Pååsuurd:',
 'yourpasswordagain' => 'Schriw pååsuurd nuch iinjsen:',
@@ -457,7 +457,7 @@ Ferjees ai, din [[Special:Preferences|{{SITENAME}}-önjstalinge]] önjtupååsen
 'gotaccount' => "Dü hääst ål en brükerkonto? '''$1'''.",
 'gotaccountlink' => 'Önjmälde',
 'userlogin-resetlink' => 'Heest dü din login dooten ferjiden?',
-'createaccountmail' => 'Auer e-mail',
+'createaccountmail' => 'E-mail tu det adres oner fersjüür mä en tufelag paaswurd',
 'createaccountreason' => 'Grün:',
 'badretype' => 'Da biise pååsuurde stime ai oueriinj.',
 'userexists' => 'Dideer brükernoome as ål ferjääwen.
@@ -531,6 +531,7 @@ Wees sü gödj än täif, bit dü wider ferseechst.',
 # Email sending
 'php-mail-error-unknown' => 'Ünbekäänd feeler mä det funktsjuun mail() faan PHP.',
 'user-mail-no-addy' => 'Köö niinj e-mail schake suner e-mail-adres.',
+'user-mail-no-body' => 'Dü wulst en e-mail saner tekst wechsjüür.',
 
 # Change password dialog
 'resetpass' => 'Pååsuurd änre',
@@ -587,6 +588,7 @@ Tidwis paasuurd: $2',
 'changeemail-oldemail' => 'Aktuel e-mail adres',
 'changeemail-newemail' => 'Nei e-mail adres',
 'changeemail-none' => '(niin)',
+'changeemail-password' => 'Din {{SITENAME}} paaswurd:',
 'changeemail-submit' => 'E-mail adres feranre',
 'changeemail-cancel' => 'Ufbreeg',
 
@@ -767,7 +769,6 @@ Uun't logbuk stäänt muar diartu:",
 'template-protected' => '(seekert)',
 'template-semiprotected' => '(hualew-seekert)',
 'hiddencategories' => 'Jüdeer sid as lasmoot foon {{PLURAL:$1|1 ferstäägen kategorii|$1 ferstäägene kategoriie}}:',
-'nocreatetitle' => 'Det maagin faan nei sidjen as ei saner aanj mögelk.',
 'nocreatetext' => 'Aw {{SITENAME}} wörd dåt måågen foon naie side begränsed.
 Dü koost bestönjene side änre unti de [[Special:UserLogin|önjmälde unti mååg en account]].',
 'nocreate-loggedin' => 'Dü heest niinj beruchtiging, naie side tu måågen.',
@@ -790,6 +791,15 @@ Jü wörd önjscheened sleeked.',
 'edit-already-exists' => 'Köö niinj nai sid mååge.
 Dåt bestöö ål.',
 'defaultmessagetext' => 'Standard tekst',
+'content-failed-to-parse' => "Parsing faan $2 för't model $1 ging skiaf: $3",
+'invalid-content-data' => 'Diar stäänt wat uun, wat diar ei hen hiart',
+'content-not-allowed-here' => '„$1“ mut ei skrewen wurd üüb sidj [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'wikitekst',
+'content-model-text' => 'normool tekst',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Woorschauing: Jüdeer sid önjthålt tu fool apteele foon widluftie parserfunksjoone.
@@ -1149,9 +1159,9 @@ Do san jo ual iinstelangen wech.',
 'prefs-emailconfirm-label' => 'E-Mail gudkäänd:',
 'prefs-textboxsize' => "Grate faan't wönang tu bewerkin",
 'youremail' => 'E-mail:',
-'username' => 'Brükernööm:',
-'uid' => 'Brüker ID:',
-'prefs-memberingroups' => 'Lasmoot faan {{PLURAL:$1|brükerskööl|brükersköölen}}:',
+'username' => '{{GENDER:$1|Brükernööm}}:',
+'uid' => '{{GENDER:$1|Brükerkäänang}}:',
+'prefs-memberingroups' => '{{GENDER:$2|Lasmoot}} faan {{PLURAL:$1|brükerskööl|brükersköölen}}:',
 'prefs-registration' => 'Uunmelde-tidj',
 'yourrealname' => 'Rocht nööm:',
 'yourlanguage' => 'Spräke:',
@@ -1265,9 +1275,11 @@ Do san jo ual iinstelangen wech.',
 'right-browsearchive' => 'Sjük stregen sidjen',
 'right-sendemail' => 'E-mails tu oudere brükere schake',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Nai-önjmäldings-logbök',
+
 # User rights log
 'rightslog' => 'Ruchte-logbök',
-'rightsnone' => '(-)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'jüdeer sid leese',
@@ -1434,9 +1446,6 @@ Det beskriiwang faan't [$2 beskriiwangssidj] woort oner uunwiset.",
 'linksearch-ok' => 'Säk',
 'linksearch-line' => '$2 ferwiset üüb $1',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Nai-önjmäldings-logbök',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(lasmoote-list)',
 
@@ -1555,7 +1564,8 @@ Di tekst faan det stregen sidj fu bluas administratooren uunwiset.',
 'undeletedrevisions' => '{{PLURAL:$1|1 wersjuun|$1 wersjuunen}} weder iinsteld',
 'undeletedrevisions-files' => '{{PLURAL:$1|1 wersjuun|$1 wersjuunen}} an {{PLURAL:$2|1 datei|$2 datein}} weder iinsteld',
 'undeletedfiles' => '{{PLURAL:$1|1 datei|$1 datein }} weder iinsteld',
-'cannotundelete' => 'Weder iinstelen hää ei loket; ferlicht hää hoker ööders det al weder iinsteld.',
+'cannotundelete' => 'Weder iinstelen hää ei loket:
+$1',
 'undeletedpage' => "'''„$1“''' as weder iinsteld wurden.
 Uun't [[Special:Log/delete|logbuk faan stregen sidjen]] stun a stregen an weder iinsteld sidjen.",
 'undelete-header' => "Luke uun't [[Special:Log/delete|logbuk för stregen sidjen]] efter stregen sidjen faan a leetst tidj.",
@@ -1580,7 +1590,7 @@ $1",
 'blanknamespace' => '(Side)',
 
 # Contributions
-'contributions' => 'Brüker bidracher',
+'contributions' => '{{GENDER:$1|Brüker}} bidracher',
 'contributions-title' => 'Brükertujeefte foon "$1"',
 'mycontris' => 'Bidracher',
 'contribsub2' => 'For $1 ($2)',
@@ -1862,25 +1872,29 @@ Deeraw föliende sidelinke önj dåtseelwi ra definiire ütnååme, önj di kont
 'htmlform-selectorother-other' => 'Oudere',
 
 # New logging system
-'logentry-delete-delete' => '$1 hää det sidj $3 stregen',
-'logentry-delete-restore' => '$1 hää det sidj $3 weder iinsteld',
-'logentry-delete-event' => '$1 hää det uunlukin feranert faan {{PLURAL:$5|en logbuk iindrach|$5 logbuk iindracher}} üüb $3: $4',
-'logentry-delete-revision' => '$1 hää det uunlukin feranert faan {{PLURAL:$5|ian wersjuun|$5 wersjuunen}} faan det sidj $3: $4',
-'logentry-delete-event-legacy' => '$1 hää det uunlukin feranert faan logbuk iindracher üüb $3',
-'logentry-delete-revision-legacy' => '$1 hää det uunlukin feranert faan wersjuunen faan det sidj $3',
-'logentry-suppress-delete' => '$1 hää det sidj $3 wechtrakt',
-'logentry-suppress-event' => '$1 hää stalswigin det uunlukin feranert faan {{PLURAL:$5|en logbuk iindrach|$5 logbuk iindracher}} üüb $3: $4',
-'logentry-suppress-revision' => '$1 hää stalswigin det uunlukin feranert faan {{PLURAL:$5|ian wersjuun|$5 wersjuunen}} faan det sidj $3: $4',
-'logentry-suppress-event-legacy' => '$1 hää stalswigin det uunlukin fernanert faan logbuk iindracher üüb $3',
-'logentry-suppress-revision-legacy' => '$1 hää stalswigin det uunlukin feranert faan wersjuunen faan det sidj $3',
+'logentry-delete-delete' => '$1 {{Gender:$2}} hää det sidj $3 stregen',
+'logentry-delete-restore' => '$1 {{GENDER:$2}} hää det sidj $3 weder iinsteld',
+'logentry-delete-event' => '$1 {{GENDER:$2}} hää det uunsicht feranert faan {{PLURAL:$5|en logbuk iindrach|$5 logbuk iindracher}} üüb $3: $4',
+'logentry-delete-revision' => '$1 {{GENDER:$2}} hää det uunsicht feranert faan {{PLURAL:$5|ian wersjuun|$5 wersjuunen}} faan det sidj $3: $4',
+'logentry-delete-event-legacy' => '$1 {{GENDER:$2}} hää det uunsicht feranert faan logbuk iindracher üüb $3',
+'logentry-delete-revision-legacy' => '$1 {{GENDER:$2}} hää det uunsicht feranert faan wersjuunen faan det sidj $3',
+'logentry-suppress-delete' => '$1 {{GENDER:$2}} hää det sidj $3 wechtrakt',
+'logentry-suppress-event' => '$1 {{GENDER:$2}} hää stalswigin det uunsicht feranert faan {{PLURAL:$5|en logbuk iindrach|$5 logbuk iindracher}} üüb $3: $4',
+'logentry-suppress-revision' => '$1 {{GENDER:$2}} hää stalswigin det uunsicht feranert faan {{PLURAL:$5|ian wersjuun|$5 wersjuunen}} faan det sidj $3: $4',
+'logentry-suppress-event-legacy' => '$1 {{GENDER:$2}} hää stalswigin det uunsicht feranert faan logbuk iindracher üüb $3',
+'logentry-suppress-revision-legacy' => '$1 {{GENDER:$2}} hää stalswigin det uunlukin feranert faan wersjuunen faan det sidj $3',
 'revdelete-uname-hid' => 'brükernoome ferstäägen',
 'revdelete-uname-unhid' => 'brükernoome frijääwen',
 'revdelete-restricted' => 'gränse jüle uk for administratoore',
 'revdelete-unrestricted' => 'gränse for administratoore wächnümen',
-'logentry-move-move' => '$1 hää det sidj $3 efter $4 fersköwen.',
-'logentry-move-move-noredirect' => '$1 hää det sidj $3 efter $4 saner widjerfeerang fersköwen.',
-'logentry-move-move_redir' => '$1 hää det sidj $3 efter $4 fersköwen an diarbi en widjerfeerang auerskrewen.',
-'logentry-move-move_redir-noredirect' => '$1 hää det sidj $3 efter $4 fersköwen an diarbi en widjerfeerang auerskrewen saner salew en widjerfeerang uuntuleien.',
+'logentry-move-move' => '$1 {{GENDER:$2}} hää det sidj $3 efter $4 fersköwen.',
+'logentry-move-move-noredirect' => '$1 {{GENDER:$2}} hää det sidj $3 efter $4 saner widjerfeerang fersköwen.',
+'logentry-move-move_redir' => '$1 {{GENDER:$2}} hää det sidj $3 efter $4 fersköwen an diarbi en widjerfeerang auerskrewen.',
+'logentry-move-move_redir-noredirect' => '$1 {{GENDER:$2}} hää det sidj $3 efter $4 fersköwen an diarbi en widjerfeerang auerskrewen saner salew en widjerfeerang uuntuleien.',
+'logentry-newusers-newusers' => 'Brükerkonto $1 as {{GENDER:$2|iinracht}} wurden',
+'logentry-newusers-create2' => 'Brükerkonto $3 as faan $1 {{GENDER:$2|iinracht}} wurden',
+'logentry-newusers-autocreate' => 'Brükerkonto $1 as automaatisk {{GENDER:$2|iinracht}} wurden',
+'rightsnone' => '(-)',
 
 # Search suggestions
 'searchsuggest-search' => 'Sjük',

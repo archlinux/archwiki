@@ -508,7 +508,7 @@ class languages {
 
 
 			if ( isset( $messages[$key] ) ) {
-				$messages[$key] = implode( $messages[$key],", " );
+				$messages[$key] = implode( $messages[$key], ", " );
 			}
 		}
 		return $messages;
@@ -581,14 +581,14 @@ class languages {
 		# Check default namespace name
 		if( isset( $this->mNamespaceNames[$code][NS_PROJECT_TALK] ) ) {
 			$default = $this->mNamespaceNames[$code][NS_PROJECT_TALK];
-			if ( strpos( $default, '$1' ) === FALSE ) {
+			if ( strpos( $default, '$1' ) === false ) {
 				$namespaces[$default] = 'default';
 			}
 		}
 
 		# Check namespace aliases
 		foreach( $this->mNamespaceAliases[$code] as $key => $value ) {
-			if ( $value == NS_PROJECT_TALK && strpos( $key, '$1' ) === FALSE ) {
+			if ( $value == NS_PROJECT_TALK && strpos( $key, '$1' ) === false ) {
 				$namespaces[$key] = '';
 			}
 		}
@@ -739,9 +739,8 @@ class extensionLanguages extends languages {
 	function __construct( MessageGroup $group ) {
 		$this->mMessageGroup = $group;
 
-		$bools = $this->mMessageGroup->getBools();
-		$this->mIgnoredMessages = $bools['ignored'];
-		$this->mOptionalMessages = $bools['optional'];
+		$this->mIgnoredMessages = $this->mMessageGroup->getIgnored();
+		$this->mOptionalMessages = $this->mMessageGroup->getOptional();
 	}
 
 	/**

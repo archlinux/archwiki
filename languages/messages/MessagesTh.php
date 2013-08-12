@@ -52,16 +52,20 @@ $namespaceAliases = array(
 );
 
 $specialPageAliases = array(
+	'Activeusers'               => array( 'ผู้ใช้ที่มีความเคลื่อนไหว' ),
 	'Allmessages'               => array( 'ข้อความทั้งหมด' ),
 	'Allpages'                  => array( 'หน้าทั้งหมด' ),
 	'Ancientpages'              => array( 'บทความที่ไม่ได้แก้ไขนานที่สุด' ),
+	'Badtitle'                  => array( 'ชื่อเรื่องไม่เหมาะสม' ),
 	'Blankpage'                 => array( 'หน้าว่าง' ),
 	'Block'                     => array( 'บล็อกไอพี' ),
 	'Blockme'                   => array( 'บล็อกฉัน' ),
 	'Booksources'               => array( 'แหล่งหนังสือ' ),
 	'BrokenRedirects'           => array( 'เปลี่ยนทางเสีย' ),
 	'Categories'                => array( 'หมวดหมู่' ),
-	'ChangePassword'            => array( 'ตั้งรหัสผ่านใหม่' ),
+	'ChangeEmail'               => array( 'เปลี่ยนอีเมล' ),
+	'ChangePassword'            => array( 'เปลี่ยนรหัสผ่าน' ),
+	'ComparePages'              => array( 'เปรียบเทียบหน้า' ),
 	'Confirmemail'              => array( 'ยืนยันอีเมล' ),
 	'Contributions'             => array( 'เรื่องที่เขียน' ),
 	'CreateAccount'             => array( 'สร้างบัญชีผู้ใช้ใหม่' ),
@@ -69,6 +73,7 @@ $specialPageAliases = array(
 	'DeletedContributions'      => array( 'การแก้ไขที่ถูกลบ' ),
 	'Disambiguations'           => array( 'แก้ความกำกวม' ),
 	'DoubleRedirects'           => array( 'เปลี่ยนทางซ้ำซ้อน' ),
+	'EditWatchlist'             => array( 'แก้ไขรายการเฝ้าดู' ),
 	'Emailuser'                 => array( 'อีเมลผู้ใช้' ),
 	'Export'                    => array( 'ส่งออก' ),
 	'Fewestrevisions'           => array( 'บทความที่ถูกแก้ไขน้อยที่สุด' ),
@@ -76,6 +81,7 @@ $specialPageAliases = array(
 	'Filepath'                  => array( 'พาธของไฟล์', 'ตำแหน่งไฟล์' ),
 	'Import'                    => array( 'นำเข้า' ),
 	'Invalidateemail'           => array( 'ยกเลิกการยืนยันทางอีเมล' ),
+	'JavaScriptTest'            => array( 'ทดสอบจาวาสคริปต์' ),
 	'BlockList'                 => array( 'รายชื่อผู้ใช้ที่ถูกบล็อก', 'รายการบล็อก', 'รายชื่อไอพีที่ถูกบล็อก' ),
 	'LinkSearch'                => array( 'ค้นหาเว็บลิงก์' ),
 	'Listadmins'                => array( 'รายชื่อผู้ดูแล' ),
@@ -100,8 +106,11 @@ $specialPageAliases = array(
 	'Mycontributions'           => array( 'เรื่องที่ฉันเขียน' ),
 	'Mypage'                    => array( 'หน้าของฉัน' ),
 	'Mytalk'                    => array( 'หน้าพูดคุยของฉัน' ),
+	'Myuploads'                 => array( 'ไฟล์ที่อัปโหลดของฉัน' ),
 	'Newimages'                 => array( 'ภาพใหม่' ),
 	'Newpages'                  => array( 'หน้าใหม่' ),
+	'PasswordReset'             => array( 'ตั้งรหัสผ่านใหม่' ),
+	'PermanentLink'             => array( 'ลิงก์ถาวร' ),
 	'Popularpages'              => array( 'หน้าที่ได้รับความนิยม' ),
 	'Preferences'               => array( 'การตั้งค่า', 'ตั้งค่า' ),
 	'Prefixindex'               => array( 'ดัชนีตามคำขึ้นต้น' ),
@@ -111,11 +120,13 @@ $specialPageAliases = array(
 	'Randomredirect'            => array( 'สุ่มหน้าเปลี่ยนทาง' ),
 	'Recentchanges'             => array( 'ปรับปรุงล่าสุด' ),
 	'Recentchangeslinked'       => array( 'การปรับปรุงที่โยงมา' ),
+	'Revisiondelete'            => array( 'ลบรุ่นการแก้ไข' ),
 	'Search'                    => array( 'ค้นหา' ),
 	'Shortpages'                => array( 'หน้าที่สั้นที่สุด' ),
 	'Specialpages'              => array( 'หน้าพิเศษ' ),
 	'Statistics'                => array( 'สถิติ' ),
 	'Tags'                      => array( 'ป้ายกำกับ' ),
+	'Unblock'                   => array( 'เลิกบล็อก' ),
 	'Uncategorizedcategories'   => array( 'หมวดหมู่ที่ไม่ได้จัดหมวดหมู่' ),
 	'Uncategorizedimages'       => array( 'ภาพที่ไม่ได้จัดหมวดหมู่' ),
 	'Uncategorizedpages'        => array( 'หน้าที่ไม่ได้จัดหมวดหมู่' ),
@@ -130,7 +141,7 @@ $specialPageAliases = array(
 	'Userlogin'                 => array( 'ล็อกอิน' ),
 	'Userlogout'                => array( 'ล็อกเอาต์' ),
 	'Userrights'                => array( 'สิทธิผู้ใช้' ),
-	'Version'                   => array( 'เวอร์ชั่น' ),
+	'Version'                   => array( 'เวอร์ชัน', 'เวอร์ชั่น' ),
 	'Wantedcategories'          => array( 'หมวดหมู่ที่ต้องการ' ),
 	'Wantedfiles'               => array( 'ไฟล์ที่ต้องการ' ),
 	'Wantedpages'               => array( 'หน้าที่ต้องการ', 'การเชื่อมโยงเสีย' ),
@@ -319,6 +330,7 @@ $messages = array(
 'newwindow' => '(เปิดหน้าต่างใหม่)',
 'cancel' => 'ยกเลิก',
 'moredotdotdot' => 'ดูเพิ่ม...',
+'morenotlisted' => 'มีที่ยังไม่แสดงอีก...',
 'mypage' => 'หน้า',
 'mytalk' => 'พูดคุย',
 'anontalk' => 'พูดคุยกับเลขที่อยู่ไอพีนี้',
@@ -330,7 +342,6 @@ $messages = array(
 'qbbrowse' => 'สืบค้น',
 'qbedit' => 'แก้ไข',
 'qbpageoptions' => 'หน้านี้',
-'qbpageinfo' => 'บริบท',
 'qbmyoptions' => 'หน้าของฉัน',
 'qbspecialpages' => 'หน้าพิเศษ',
 'faq' => 'คำถามถามบ่อย',
@@ -353,6 +364,7 @@ $messages = array(
 'namespaces' => 'เนมสเปซ',
 'variants' => 'สิ่งที่แตกต่าง',
 
+'navigation-heading' => 'รายการเลือกป้ายบอกทาง',
 'errorpagetitle' => 'มีข้อผิดพลาด',
 'returnto' => 'กลับไป $1',
 'tagline' => 'จาก {{SITENAME}}',
@@ -589,14 +601,13 @@ $1',
 'virus-unknownscanner' => 'ไม่รู้จักโปรแกรมป้องกันไวรัสตัวนี้:',
 
 # Login and logout pages
-'logouttext' => "'''ขณะนี้คุณได้ล็อกเอาต์ออกจากระบบ'''
+'logouttext' => "'''ขณะนี้คุณได้ล็อกเอาต์แล้ว'''
 
-คุณสามารถใช้งาน {{SITENAME}} ได้ต่อในฐานะผู้ใช้นิรนาม หรือคุณสามารถ[[Special:UserLogin|ล็อกอินกลับเข้าไป]]ด้วยชื่อผู้ใช้เดิมหรือชื่อผู้ใช้อื่นๆ
-อย่างไรก็ตามอาจจะมีบางหน้าที่ยังแสดงข้อความว่าคุณกำลังล็อกอินอยู่ จนกว่าคุณจะล้างแคชออกจากเว็บเบราว์เซอร์",
-'welcomecreation' => '== ยินดีต้อนรับ $1! ==
-
-ชื่อบัญชีผู้ใช้ของคุณถูกสร้างขึ้นแล้ว
-อย่าลืมเข้าไป[[Special:Preferences|ตั้งค่าผู้ใช้สำหรับ {{SITENAME}}]]',
+คุณสามารถใช้งาน {{SITENAME}} ต่อในฐานะผู้ใช้นิรนาม หรือคุณสามารถ<span class='plainlinks'>[$1 ล็อกอินกลับเข้าไป]</span>ด้วยชื่อผู้ใช้เดิมหรือชื่อผู้ใช้อื่น
+อย่างไรก็ตามอาจมีบางหน้าที่แสดงผลเสมือนว่าคุณกำลังล็อกอินอยู่ จนกว่าคุณจะล้างแคชเบราว์เซอร์ของคุณ",
+'welcomeuser' => 'ยินดีต้อนรับ $1!',
+'welcomecreation-msg' => 'บัญชีของคุณถูกสร้างขึ้นแล้ว
+อย่าลืมเปลี่ยนแปลง[[Special:Preferences|การตั้งค่าใน {{SITENAME}}]] ของคุณ',
 'yourname' => 'ชื่อผู้ใช้',
 'yourpassword' => 'รหัสผ่าน',
 'yourpasswordagain' => 'พิมพ์รหัสผ่านอีกครั้ง:',
@@ -619,7 +630,7 @@ $1',
 'gotaccount' => "มีบัญชีแล้วใช่ไหม '''$1'''",
 'gotaccountlink' => 'ล็อกอิน',
 'userlogin-resetlink' => 'ลืมรายละเอียดล็อกอินของคุณหรือ',
-'createaccountmail' => 'ผ่านทางอีเมล',
+'createaccountmail' => 'ใช้รหัสผ่านสุ่มชั่วคราวและส่งไปยังที่อยู่อีเมลที่ระบุด้านล่าง',
 'createaccountreason' => 'เหตุผล:',
 'badretype' => 'รหัสผ่านที่ใส่ไม่ตรงกัน',
 'userexists' => 'ชื่อผู้ใช้ที่กรอกมีผู้อื่นใช้ไปแล้ว กรุณาเลือกชื่ออื่น',
@@ -683,6 +694,7 @@ $1',
 # Email sending
 'php-mail-error-unknown' => 'เกิดข้อผิดพลาดไม่ทราบสาเหตุในฟังก์ชัน mail() ของพีเอชพี',
 'user-mail-no-addy' => 'พยายามส่งอีเมลโดยไม่มีที่อยู่อีเมล',
+'user-mail-no-body' => 'พยายามส่งอีเมลที่มีเนื้อหาว่างหรือสั้นอย่างไร้เหตุผล',
 
 # Change password dialog
 'resetpass' => 'เปลี่ยนรหัสผ่าน',
@@ -729,6 +741,7 @@ $2
 รหัสผ่านชั่วคราว: $2',
 'passwordreset-emailsent' => 'อีเมลตั้งรหัสผ่านใหม่ถูกส่งไปแล้ว',
 'passwordreset-emailsent-capture' => 'อีเมลตั้งรหัสผ่านใหม่ถูกส่งไปแล้ว ซึ่งแสดงด้านล่าง',
+'passwordreset-emailerror-capture' => 'อีเมลแจ้งเตือนถูกสร้างขึ้นแล้ว ซึ่งแสดงข้างล่าง แต่การส่งไปยังผู้ใช้ล้มเหลว: $1',
 
 # Special:ChangeEmail
 'changeemail' => 'เปลี่ยนที่อยู่อีเมล',
@@ -738,6 +751,7 @@ $2
 'changeemail-oldemail' => 'ที่อยู่อีเมลปัจจุบัน:',
 'changeemail-newemail' => 'ที่อยู่อีเมลใหม่:',
 'changeemail-none' => '(ไม่มี)',
+'changeemail-password' => 'รหัสผ่าน {{SITENAME}} ของคุณ:',
 'changeemail-submit' => 'เปลี่ยนอีเมล',
 'changeemail-cancel' => 'ยกเลิก',
 
@@ -913,7 +927,6 @@ $2
 'template-semiprotected' => '(ถูกกึ่งล็อก)',
 'hiddencategories' => 'หน้านี้มี {{PLURAL:$1|1 หมวดหมู่ที่ซ่อนอยู่|$1 หมวดหมู่ที่ซ่อนอยู่}}:',
 'edittools' => '<!-- ข้อความนี้จะแสดงผลใต้ฟอร์มสำหรับการแก้ไขและอัปโหลด -->',
-'nocreatetitle' => 'จำกัดการสร้างหน้าใหม่',
 'nocreatetext' => '{{SITENAME}} จำกัดการสร้างหน้าใหม่
 คุณสามารถย้อนกลับไปแก้ไขหน้าที่มีอยู่เดิม หรือ[[Special:UserLogin|ล็อกอินหรือสร้างบัญชีผู้ใช้]]',
 'nocreate-loggedin' => 'คุณไม่ได้รับอนุญาตให้สร้างหน้าใหม่',
@@ -938,6 +951,14 @@ $2
 'edit-already-exists' => 'ไม่สามารถสร้างหน้าใหม่ได้
 เพราะมีหน้านี้แล้ว',
 'defaultmessagetext' => 'ข้อความสารโดยปริยาย',
+'invalid-content-data' => 'ข้อมูลเนื้อหาไม่ถูกต้อง',
+'content-not-allowed-here' => 'เนื้อหา "$1" ไม่อนุญาตในหน้า [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'ข้อความวิกิ',
+'content-model-text' => 'ข้อความธรรมดา',
+'content-model-javascript' => 'จาวาสคริปต์',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''คำเตือน:''' หน้านี้มีการเรียกใช้ฟังก์ชันแจงส่วนมากเกินไป
@@ -1293,9 +1314,9 @@ $1",
 'prefs-emailconfirm-label' => 'การยืนยันอีเมล:',
 'prefs-textboxsize' => 'ขนาดหน้าต่างแก้ไข',
 'youremail' => 'อีเมล:',
-'username' => 'ชื่อผู้ใช้:',
-'uid' => 'รหัสผู้ใช้:',
-'prefs-memberingroups' => 'สมาชิกใน{{PLURAL:$1|กลุ่ม|กลุ่ม}}:',
+'username' => '{{GENDER:$1|ชื่อผู้ใช้}}:',
+'uid' => 'รหัสประจำตัว{{GENDER:$1|ผู้ใช้}}:',
+'prefs-memberingroups' => '{{GENDER:$2|สมาชิก}}ใน{{PLURAL:$1|กลุ่ม|กลุ่ม}}:',
 'prefs-registration' => 'เวลาลงทะเบียน:',
 'yourrealname' => 'ชื่อจริง:',
 'yourlanguage' => 'ภาษา:',
@@ -1442,11 +1463,13 @@ $1",
 'right-sendemail' => 'ส่งอีเมลหาผู้ใช้อื่น',
 'right-passwordreset' => 'ดูอีเมลตั้งรหัสผ่านใหม่',
 
+# Special:Log/newusers
+'newuserlogpage' => 'ปูมการสร้างผู้ใช้',
+'newuserlogpagetext' => 'นี่คือปูมการสร้างผู้ใช้',
+
 # User rights log
 'rightslog' => 'ปูมสิทธิผู้ใช้',
 'rightslogtext' => 'นี่คือปูมการเปลี่ยนแปลงสิทธิผู้ใช้',
-'rightslogentry' => '$1 ถูกเปลี่ยนกลุ่มจาก $2 เป็น $3',
-'rightsnone' => '(ไม่มี)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'อ่านหน้านี้',
@@ -2028,9 +2051,9 @@ $1',
 'linksearch-pat' => 'รูปแบบการค้นหา:',
 'linksearch-ns' => 'เนมสเปซ:',
 'linksearch-ok' => 'ค้นหา',
-'linksearch-text' => 'อักขระตัวแทนเช่น "*.wikipedia.org" สามารถใช้ได้
-โดเมนระดับบนสุดจำเป็นต้องมีเป็นอย่างน้อย เช่น "*.org"<br />
-โพรโทคอลที่รองรับ: <code>$1</code> (อย่าใส่คำเหล่านี้ในการสืบค้นของคุณ)',
+'linksearch-text' => 'สามารถใช้ตัวแทนเช่น "*.wikipedia.org" ได้
+ต้องการโดเมนระดับบนสุดเป็นอย่างน้อย เช่น "*.org"<br />
+โพรโทคอลที่รองรับ: <code>$1</code> (ค่าโดยปริยายเป็น http:// หากไม่ระบุโพรโทคอล)',
 'linksearch-line' => '$1 ถูกลิงก์จาก $2',
 'linksearch-error' => 'อักขระตัวแทนอยู่ได้เฉพาะหน้าชื่อโฮสต์เท่านั้น',
 
@@ -2048,10 +2071,6 @@ $1',
 'activeusers-hidebots' => 'ซ่อนบอต',
 'activeusers-hidesysops' => 'ซ่อนผู้ดูแลระบบ',
 'activeusers-noresult' => 'ไม่พบผู้ใช้',
-
-# Special:Log/newusers
-'newuserlogpage' => 'ปูมการสร้างผู้ใช้',
-'newuserlogpagetext' => 'นี่คือปูมการสร้างผู้ใช้',
 
 # Special:ListGroupRights
 'listgrouprights' => 'สิทธิกลุ่มผู้ใช้',
@@ -2146,41 +2165,48 @@ $1',
 
 'enotif_mailer' => 'แจ้งการแก้ไขจาก {{SITENAME}}',
 'enotif_reset' => 'ทำเครื่องหมายว่าชมทุกหน้าแล้ว',
-'enotif_newpagetext' => 'นี่คือหน้าใหม่',
 'enotif_impersonal_salutation' => 'ผู้ใช้{{SITENAME}}',
-'changed' => 'ถูกเปลี่ยนแปลง',
-'created' => 'ถูกสร้าง',
-'enotif_subject' => '{{SITENAME}} หน้า $PAGETITLE ได้ $CHANGEDORCREATED โดย $PAGEEDITOR',
+'enotif_subject_deleted' => 'หน้า $1 บน {{SITENAME}} ถูกลบโดย {{gender:$2|$2}}',
+'enotif_subject_created' => 'หน้า $1 บน {{SITENAME}} ถูกสร้างโดย {{gender:$2|$2}}',
+'enotif_subject_moved' => 'หน้า $1 บน {{SITENAME}} ถูกย้ายโดย {{gender:$2|$2}}',
+'enotif_subject_restored' => 'หน้า $1 บน {{SITENAME}} ถูก{{GENDER:$2|กู้คืน}}โดย $2',
+'enotif_subject_changed' => 'หน้า $1 บน {{SITENAME}} มีการเปลี่ยนแปลงโดย {{gender:$2|$2}}',
+'enotif_body_intro_deleted' => 'หน้า $1 บน {{SITENAME}} ถูก{{GENDER:$2|ลบ}}เมื่อ $PAGEEDITDATE โดย $2 ดู $3',
+'enotif_body_intro_created' => 'หน้า $1 บน {{SITENAME}} ถูก{{GENDER:$2|สร้าง}}เมื่อ $PAGEEDITDATE โดย $2 ดูรุ่นปัจจุบันที่ $3',
+'enotif_body_intro_moved' => 'หน้า $1 บน {{SITENAME}} ถูก{{GENDER:$2|เปลี่ยนชื่อ}}เมื่อ $PAGEEDITDATE โดย $2 ดูรุ่นปัจจุบันที่ $3',
+'enotif_body_intro_restored' => 'หน้า $1 บน {{SITENAME}} ถูก{{GENDER:$2|กู้คืน}}เมื่อ $PAGEEDITDATE โดย $2 ดูรุ่นปัจจุบันที่ $3',
+'enotif_body_intro_changed' => 'หน้า $1 บน {{SITENAME}} ถูก{{GENDER:$2|เปลี่ยนแปลง}}เมื่อ $PAGEEDITDATE โดย $2 ดูรุ่นปัจจุบันที่ $3',
 'enotif_lastvisited' => 'ดู $1 สำหรับการเปลี่ยนแปลงทั้งหมดตั้งแต่คุณเข้าชมครั้งล่าสุด',
 'enotif_lastdiff' => 'ดู $1 เพื่อดูการเปลี่ยนแปลงนี้',
 'enotif_anon_editor' => 'ผู้ใช้นิรนาม $1',
-'enotif_body' => 'เรียน $WATCHINGUSERNAME,
+'enotif_body' => 'เรียน $WATCHINGUSERNAME
 
+$PAGEINTRO $NEWPAGE
 
-ทางระบบจากเว็บ {{SITENAME}} ต้องการแจ้งให้ทราบว่า หน้า $PAGETITLE ได้ $CHANGEDORCREATED เมื่อ $PAGEEDITDATE โดย $PAGEEDITOR ดูรุ่นปัจจุบันได้ที่ $PAGETITLE_URL
+คำอธิบายอย่างย่อของผู้เขียน: $PAGESUMMARY $PAGEMINOREDIT
 
-$NEWPAGE
-
-คำสรุปการแก้ไข: $PAGESUMMARY $PAGEMINOREDIT
-
-ติดต่อผู้แก้ไข:
-อีเมล: $PAGEEDITOR_EMAIL
+ติดต่อผู้เขียน:
+เมล: $PAGEEDITOR_EMAIL
 วิกิ: $PAGEEDITOR_WIKI
 
-จะไม่มีการแจ้งเพิ่มเติมจนกว่าคุณจะได้แวะเข้าไปที่หน้านี้
-นอกจากนี้คุณสามารถตั้งค่ายกเลิกการแจ้งของหน้าที่อยู่ในรายการเฝ้าดูได้
+จะไม่มีประกาศอื่นหากมีกิจกรรมเพิ่มเติม เว้นเสียแต่คุณจะเข้าชมหน้านี้ คุณยังสามารถตั้งค่าตัวบ่งชี้ประกาศใหม่สำหรับหน้าที่คุณเฝ้าดูทุกหน้าในรายการเฝ้าดูของคุณ
 
-ระบบแจ้งอัตโนมัติจาก {{SITENAME}}
+ระบบประกาศ {{SITENAME}} ที่เป็นมิตรของคุณ
 
 --
-ถ้าต้องการเปลี่ยนแปลงรายการเฝ้าดู กรุณาไปที่:
+ในการเปลี่ยนการตั้งค่าประกาศอีเมลของคุณ โปรดดู
+{{canonicalurl:{{#special:Preferences}}}}
+
+ในการเปลี่ยนการตั้งค่ารายการเฝ้าดูของคุณ โปรดดู
 {{canonicalurl:{{#special:EditWatchlist}}}}
 
-ถ้าต้องการลบหน้านี้จากรายการเฝ้าดู กรุณาไปที่:
+ในการลบหน้าจากรายการเฝ้าดูของคุณ โปรดดู
 $UNWATCHURL
 
-ถ้าต้องการความช่วยเหลือเพิ่มเติม กรุณาไปที่:
+ผลป้อนกลับและความช่วยเหลือเพิ่มเติม:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'ถูกสร้าง',
+'changed' => 'ถูกเปลี่ยนแปลง',
 
 # Delete
 'deletepage' => 'ลบหน้า',
@@ -2248,6 +2274,8 @@ $UNWATCHURL
 'prot_1movedto2' => '[[$1]] ถูกเปลี่ยนชื่อเป็น [[$2]]',
 'protect-badnamespace-title' => 'เนมสเปซล็อกไม่ได้',
 'protect-badnamespace-text' => 'หน้าในเนมสเปซนี้ไม่สามารถป้องกันได้',
+'protect-norestrictiontypes-text' => 'หน้านี้ไม่สามารถถูกล็อก เพราะไม่มีประเภทการจำกัดที่ใช้ได้',
+'protect-norestrictiontypes-title' => 'หน้าที่ล็อกไม่ได้',
 'protect-legend' => 'ยืนยันการล็อก',
 'protectcomment' => 'เหตุผล:',
 'protectexpiry' => 'หมดอายุ:',
@@ -2330,7 +2358,8 @@ $UNWATCHURL
 'undeletedrevisions' => '$1 รุ่นการแก้ไขถูกกู้คืน',
 'undeletedrevisions-files' => '$1 รุ่น และ $2 ไฟล์ถูกกู้คืน',
 'undeletedfiles' => '$1 ไฟล์ถูกกู้คืน',
-'cannotundelete' => 'เรียกคืนไม่สำเร็จ อาจมีใครบางคนเรียกคืนหน้านั้นแล้ว',
+'cannotundelete' => 'การกู้คืนล้มเหลว:
+$1',
 'undeletedpage' => "'''$1 ถูกกู้คืน'''
 
 ดู[[Special:Log/delete|ปูมการลบ]] สำหรับรายชื่อการลบและการกู้คืนล่าสุด",
@@ -2362,7 +2391,7 @@ $1',
 'blanknamespace' => '(หลัก)',
 
 # Contributions
-'contributions' => 'เรื่องที่ผู้ใช้รายนี้เขียน',
+'contributions' => 'เรื่องที่เขียนโดย{{GENDER:$1|ผู้ใช้}}นี้',
 'contributions-title' => 'เรื่องที่เขียนโดย $1',
 'mycontris' => 'เรื่องที่เขียน',
 'contribsub2' => 'สำหรับ $1 ($2)',
@@ -2748,7 +2777,6 @@ $1',
 
 # JavaScriptTest
 'javascripttest' => 'การทดสอบจาวาสคริปต์',
-'javascripttest-disabled' => 'ฟังก์ชั่นการทำงานนี้ถูกปิดการใช้งานอยู่',
 'javascripttest-title' => 'กำลังดำเนินงานทดสอบ $1',
 'javascripttest-pagetext-noframework' => 'หน้านี้สงวนไว้สำหรับดำเนินงานการทดสอบจาวาสคริปต์',
 'javascripttest-pagetext-skins' => 'เลือกสกินที่จะดำเนินงานการทดสอบ:',
@@ -2894,9 +2922,11 @@ $1',
 'pageinfo-default-sort' => 'หลักการเรียงลำดับโดยปริยาย',
 'pageinfo-length' => 'ความยาวหน้า (ไบต์)',
 'pageinfo-article-id' => 'หมายเลขประจำหน้า',
+'pageinfo-language' => 'ภาษาเนื้อหาของหน้า',
 'pageinfo-robot-policy' => 'สถานะเสิร์ชเอนจิน',
 'pageinfo-views' => 'จำนวนการเข้าดู',
 'pageinfo-watchers' => 'จำนวนผู้เข้าดูหน้า',
+'pageinfo-few-watchers' => '{{PLURAL:$1|ผู้เฝ้าดู|ผู้เฝ้าดู}}น้อยกว่า $1 คน',
 'pageinfo-redirects-name' => 'หน้าเปลี่ยนทางมายังหน้านี้',
 'pageinfo-subpages-name' => 'หน้าย่อยของหน้านี้',
 'pageinfo-subpages-value' => '$1 ($2 หน้าเปลี่ยนทาง; $3 หน้าไม่เปลี่ยนทาง)',
@@ -2910,6 +2940,15 @@ $1',
 'pageinfo-recent-authors' => 'จำนวนผู้เขียนล่าสุด',
 'pageinfo-hidden-categories' => 'หมวดหมู่ที่ซ่อนอยู่ ($1)',
 'pageinfo-templates' => 'แม่แบบที่ใช้ ($1)',
+'pageinfo-toolboxlink' => 'ข้อมูลหน้า',
+'pageinfo-redirectsto' => 'เปลี่ยนทางไปยัง',
+'pageinfo-contentpage' => 'นับเป็นหน้าเนื้อหา',
+'pageinfo-contentpage-yes' => 'ใช่',
+'pageinfo-protect-cascading-yes' => 'ใช่',
+'pageinfo-category-info' => 'ข้อมูลหมวดหมู่',
+'pageinfo-category-pages' => 'จำนวนหน้า',
+'pageinfo-category-subcats' => 'จำนวนหมวดหมู่ย่อย',
+'pageinfo-category-files' => 'จำนวนไฟล์',
 
 # Skin names
 'skinname-standard' => 'คลาสสิก',
@@ -2932,6 +2971,8 @@ $1',
 'markedaspatrollederror' => 'ไม่สามารถทำเครื่องหมายว่าตรวจสอบแล้ว',
 'markedaspatrollederrortext' => 'คุณจำเป็นต้องระบุรุ่นการแก้ไขที่กำหนดว่าตรวจสอบแล้ว',
 'markedaspatrollederror-noautopatrol' => 'คุณไม่สามารถทำเครื่องหมายการแก้ไขของคุณเองว่าตรวจสอบแล้ว',
+'markedaspatrollednotify' => 'การเปลี่ยนแปลงไปยัง $1 ถูกทำเครื่องหมายว่าตรวจสอบแล้ว',
+'markedaspatrollederrornotify' => 'การทำเครื่องหมายว่าตรวจสอบแล้วล้มเหลว',
 
 # Patrol log
 'patrol-log-page' => 'ปูมการตรวจสอบ',
@@ -2964,6 +3005,7 @@ $1',
 'file-info-size-pages' => '$1 × $2 พิกเซล, ขนาดไฟล์: $3, ประเภท MIME: $4, $5 {{PLURAL:$5|หน้า|หน้า}}',
 'file-nohires' => 'ไม่มีความละเอียดสูงกว่านี้',
 'svg-long-desc' => 'ไฟล์ SVG, $1 × $2 พิกเซล พอเป็นพิธี, ขนาดไฟล์: $3',
+'svg-long-error' => 'ไฟล์ SVG ไม่ถูกต้อง: $1',
 'show-big-image' => 'ความละเอียดสูงสุด',
 'show-big-image-other' => 'อื่นๆ {{PLURAL:$2|resolution|resolutions}}: $1.',
 'show-big-image-size' => '$1 × $2 พิกเซล',
@@ -2994,7 +3036,10 @@ $1',
 'minutes' => '$1 นาที',
 'hours' => '$1 ชั่วโมง',
 'days' => '$1 วัน',
+'months' => '$1 เดือน',
+'years' => '$1 ปี',
 'ago' => '$1 มาแล้ว',
+'just-now' => 'เมื่อสักครู่นี้',
 
 # Bad image list
 'bad_image_list' => 'รูปแบบแสดงต่อไปนี้:
@@ -3660,7 +3705,7 @@ $5
 'logentry-newusers-create' => 'บัญชีผู้ใช้ $1 ถูกสร้างขึ้น',
 'logentry-newusers-create2' => 'บัญชีผู้ใช้ $3 ถูกสร้างขึ้นโดย $1',
 'logentry-newusers-autocreate' => 'บัญชี $1 ถูกสร้างขึ้นอัตโนมัติ',
-'newuserlog-byemail' => 'รหัสผ่านถูกส่งทางอีเมล',
+'rightsnone' => '(ไม่มี)',
 
 # Feedback
 'feedback-bugornote' => 'หากคุณได้อธิบายปัญหาทางเทคนิคในรายละเอียดแล้ว โปรด[$1 รายงานจุดบกพร่อง]

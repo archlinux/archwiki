@@ -22,9 +22,9 @@
 
 /**
  * Standard output handler for use with ob_start
- * 
+ *
  * @param $s string
- * 
+ *
  * @return string
  */
 function wfOutputHandler( $s ) {
@@ -85,14 +85,14 @@ function wfRequestExtension() {
 /**
  * Handler that compresses data with gzip if allowed by the Accept header.
  * Unlike ob_gzhandler, it works for HEAD requests too.
- * 
+ *
  * @param $s string
  *
  * @return string
  */
 function wfGzipHandler( $s ) {
 	if( !function_exists( 'gzencode' ) ) {
-		wfDebug( __FUNCTION__ . "() skipping compression (gzencode unavaible)\n" );
+		wfDebug( __FUNCTION__ . "() skipping compression (gzencode unavailable)\n" );
 		return $s;
 	}
 	if( headers_sent() ) {
@@ -156,7 +156,7 @@ function wfMangleFlashPolicy( $s ) {
  * @param $length int
  */
 function wfDoContentLength( $length ) {
-	if ( !headers_sent() && $_SERVER['SERVER_PROTOCOL'] == 'HTTP/1.0' ) {
+	if ( !headers_sent() && isset( $_SERVER['SERVER_PROTOCOL'] ) && $_SERVER['SERVER_PROTOCOL'] == 'HTTP/1.0' ) {
 		header( "Content-Length: $length" );
 	}
 }

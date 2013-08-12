@@ -276,7 +276,6 @@ $messages = array(
 'qbbrowse' => 'Navegar',
 'qbedit' => 'Editar',
 'qbpageoptions' => 'Ista pachina',
-'qbpageinfo' => 'Contexto',
 'qbmyoptions' => 'Pachinas propias',
 'qbspecialpages' => 'Pachinas especials',
 'faq' => 'Preguntas freqüents (FAQ)',
@@ -522,10 +521,7 @@ A razón data ye ''$2''.",
 # Login and logout pages
 'logouttext' => "'''Ha rematato a sesión.'''
 
-Puede continar navegando por {{SITENAME}} anonimament, u puede [[Special:UserLogin|encetar]] una nueva sesión con o mesmo nombre d'usuario u bell atro diferent. Pare cuenta que, entre que se limpia a caché d'o navegador, puet estar que bellas pachinas s'amuestren como si encara continase en a sesión anterior.",
-'welcomecreation' => "== ¡Bienveniu(da), $1! ==
-S'ha creyato a suya cuenta.
-No xublide de presonalizar [[Special:Preferences|as suyas preferencias en {{SITENAME}}]].",
+Puede continar navegando por {{SITENAME}} anonimament, u puede <span class='plainlinks'>[$1 encetar]</span> una nueva sesión con o mesmo nombre d'usuario u bell atro diferent. Pare cuenta que, entre que se limpia a caché d'o navegador, puet estar que bellas pachinas s'amuestren como si encara continase en a sesión anterior.",
 'yourname' => "Nombre d'usuario:",
 'yourpassword' => "Clau d'acceso:",
 'yourpasswordagain' => 'Torne a escribir a clau:',
@@ -822,7 +818,6 @@ Como información adicional s'amuestra contino a zaguera dentrada en o rechistro
 'hiddencategories' => 'Ista pachina fa parte de {{PLURAL:$1|1 categoría amagata|$1 categorías amagatas}}:',
 'edittools' => "<!-- Iste testo amanixerá baxo os formularios d'edizión y carga. -->",
 'edittools-upload' => '-',
-'nocreatetitle' => "S'ha restrinchito a creyación de pachinas",
 'nocreatetext' => '{{SITENAME}} ha restrinchito a creyación de nuevas pachinas. Puede tornar enta zaga y editar una pachina ya existent, [[Special:UserLogin|identificarse u creyar una cuenta]].',
 'nocreate-loggedin' => 'No tiene premiso ta creyar nuevas pachinas.',
 'sectioneditnotsupported-title' => 'A edición por seccions no ye suportada',
@@ -1343,12 +1338,13 @@ Habría de tener menos de $1 {{PLURAL:$1|carácter|carácters}}.',
 'right-sendemail' => 'Ninviar un correu electronico a atros usuarios',
 'right-passwordreset' => 'Veyer os correus electronicos de restabimiento de claus',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Rechistro de nuevos usuarios',
+'newuserlogpagetext' => "Isto ye un rechistro de creyación d'usuarios.",
+
 # User rights log
 'rightslog' => "Rechistro de cambios en os dreitos d'os usuarios",
 'rightslogtext' => "Iste ye un rechistro d'os cambios en os dreitos d'os usuarios",
-'rightslogentry' => "ha cambiato os dreitos d'usuario de $1: de $2 a $3",
-'rightslogentry-autopromote' => "S'ha promovito automaticament dende $2 ta $3",
-'rightsnone' => '(garra)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'leyer ista pachina',
@@ -1961,10 +1957,6 @@ Protocolos suportados: <code>$1</code> (no los adhiba en a suya busca).',
 'activeusers-hidesysops' => 'Amagar administradors',
 'activeusers-noresult' => "No s'han trobato usuarios.",
 
-# Special:Log/newusers
-'newuserlogpage' => 'Rechistro de nuevos usuarios',
-'newuserlogpagetext' => "Isto ye un rechistro de creyación d'usuarios.",
-
 # Special:ListGroupRights
 'listgrouprights' => "Dreitos d'a colla d'usuarios",
 'listgrouprights-summary' => "Contino trobará a lista de collas d'usuario definitas en iste wiki, con os suyos dreitos d'acceso asociatos. Tamién puet trobar aquí [[{{MediaWiki:Listgrouprights-helppage}}|información adicional]] sobre os dreitos individuals.",
@@ -2055,19 +2047,13 @@ L\'adreza de correu-e que endicó en as suyas [[Special:Preferences|preferencias
 
 'enotif_mailer' => 'Sistema de notificación por correu de {{SITENAME}}',
 'enotif_reset' => 'Marcar todas as pachinas como vesitatas',
-'enotif_newpagetext' => 'Ista ye una nueva pachina.',
 'enotif_impersonal_salutation' => 'usuario de {{SITENAME}}',
-'changed' => 'editata',
-'created' => 'creyata',
-'enotif_subject' => 'A pachina $PAGETITLE de {{SITENAME}} ha estato $CHANGEDORCREATED por $PAGEEDITOR',
 'enotif_lastvisited' => 'Vaiga ta $1 ta veyer totz os cambeos dende a suya zaguer vesita.',
 'enotif_lastdiff' => 'Vaiga ta $1 ta veyer iste cambeo.',
 'enotif_anon_editor' => 'usuario anonimo $1',
 'enotif_body' => 'Queriu/ida $WATCHINGUSERNAME,
 
-A pachina $PAGETITLE d\'o prochecto {{SITENAME}} s\'ha $CHANGEDORCREATED o día $PAGEEDITDATE por $PAGEEDITOR, veiga a versión actual en $PAGETITLE_URL.
-
-$NEWPAGE
+$PAGEINTRO $NEWPAGE
 
 Resumen de l\'editor: $PAGESUMMARY $PAGEMINOREDIT
 
@@ -2075,8 +2061,9 @@ Contacto con l\'editor:
 correu-e: $PAGEEDITOR_EMAIL
 wiki: $PAGEEDITOR_WIKI
 
-Si no visita a pachina, no recibirá mas notificacions de futuros cambios cambios. 
+Si no visita a pachina, no recibirá mas notificacions de futuros cambios. 
 Tamién puet cambiar o modo de notificación d\'as pachinas que cosira en a suya lista de seguimiento.
+
 Atentament,
 O servicio de notificacions d\'o prochecto {{SITENAME}}
 
@@ -2091,6 +2078,8 @@ Ta eliminar a pachina d\'a suya lista de seguimiento, vaiga ta $UNWATCHURL
 
 Sucherencias y aduya:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'creyata',
+'changed' => 'editata',
 
 # Delete
 'deletepage' => 'Borrar ista pachina',
@@ -2649,7 +2638,6 @@ Alce-lo en o suyo ordenador y cargue-lo aquí.",
 
 # JavaScriptTest
 'javascripttest' => 'Prebatinas de JavaScript',
-'javascripttest-disabled' => 'Ista función ye desactivata.',
 'javascripttest-title' => 'Fendo as prebas de $1',
 'javascripttest-pagetext-noframework' => 'Ista pachina ye reservada ta fer as prebas de JavaScrip.',
 'javascripttest-pagetext-unknownframework' => 'Bastida de prebas "$1" desconoixida.',
@@ -3612,7 +3600,7 @@ As imachens s'amuestran en resolución completa, a resta de fichers fan encetar 
 'logentry-newusers-create' => "$1 creyó una cuenta d'usuario",
 'logentry-newusers-create2' => "$1 creyó una cuenta d'usuario $3",
 'logentry-newusers-autocreate' => "S'ha creyau automaticament a cuenta $1",
-'newuserlog-byemail' => 'Clau ninviata por correu electronico',
+'rightsnone' => '(garra)',
 
 # Feedback
 'feedback-bugornote' => "Si creye que puede describir en detalle un problema tecnico, [$1 informe d'un bug] por favor.

@@ -398,7 +398,6 @@ class RevDel_ArchiveItem extends RevDel_RevisionItem {
 	}
 }
 
-
 /**
  * Item class for a archive table row by ar_rev_id -- actually
  * used via RevDel_RevisionList.
@@ -424,7 +423,7 @@ class RevDel_ArchivedRevisionItem extends RevDel_ArchiveItem {
 		$dbw->update( 'archive',
 			array( 'ar_deleted' => $bits ),
 			array( 'ar_rev_id' => $this->row->ar_rev_id,
-				   'ar_deleted' => $this->getBits()
+				'ar_deleted' => $this->getBits()
 			),
 			__METHOD__ );
 		return (bool)$dbw->affectedRows();
@@ -454,7 +453,9 @@ class RevDel_FileList extends RevDel_List {
 		foreach( $this->ids as $timestamp ) {
 			$archiveNames[] = $timestamp . '!' . $this->title->getDBkey();
 		}
-		return $db->select( 'oldimage', '*',
+		return $db->select(
+			'oldimage',
+			OldLocalFile::selectFields(),
 			array(
 				'oi_name'         => $this->title->getDBkey(),
 				'oi_archive_name' => $archiveNames
@@ -695,7 +696,9 @@ class RevDel_ArchivedFileList extends RevDel_FileList {
 	 */
 	public function doQuery( $db ) {
 		$ids = array_map( 'intval', $this->ids );
-		return $db->select( 'filearchive', '*',
+		return $db->select(
+			'filearchive',
+			ArchivedFile::selectFields(),
 			array(
 				'fa_name' => $this->title->getDBkey(),
 				'fa_id'   => $ids
@@ -899,7 +902,7 @@ class RevDel_LogItem extends RevDel_Item {
 		$action = $formatter->getActionText();
 		// Comment
 		$comment = $this->list->getLanguage()->getDirMark() . Linker::commentBlock( $this->row->log_comment );
-		if( LogEventsList::isDeleted($this->row,LogPage::DELETED_COMMENT) ) {
+		if( LogEventsList::isDeleted( $this->row, LogPage::DELETED_COMMENT ) ) {
 			$comment = '<span class="history-deleted">' . $comment . '</span>';
 		}
 

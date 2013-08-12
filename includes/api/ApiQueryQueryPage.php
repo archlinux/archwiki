@@ -75,6 +75,7 @@ class ApiQueryQueryPage extends ApiQueryGeneratorBase {
 		$params = $this->extractRequestParams();
 		$result = $this->getResult();
 
+		/** @var $qp QueryPage */
 		$qp = new $this->qpMap[$params['page']]();
 		if ( !$qp->userCanExecute( $this->getUser() ) ) {
 			$this->dieUsageMsg( 'specialpage-cantexecute' );
@@ -141,6 +142,7 @@ class ApiQueryQueryPage extends ApiQueryGeneratorBase {
 	}
 
 	public function getCacheMode( $params ) {
+		/** @var $qp QueryPage */
 		$qp = new $this->qpMap[$params['page']]();
 		if ( $qp->getRestriction() != '' ) {
 			return 'private';
@@ -211,7 +213,7 @@ class ApiQueryQueryPage extends ApiQueryGeneratorBase {
 
 	public function getPossibleErrors() {
 		return array_merge( parent::getPossibleErrors(), array(
-			 array( 'specialpage-cantexecute' )
+			array( 'specialpage-cantexecute' )
 		) );
 	}
 
@@ -219,9 +221,5 @@ class ApiQueryQueryPage extends ApiQueryGeneratorBase {
 		return array(
 			'api.php?action=query&list=querypage&qppage=Ancientpages'
 		);
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

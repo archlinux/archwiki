@@ -33,7 +33,7 @@ $wgPFEnableStringFunctions = false;
 $wgExtensionCredits['parserhook'][] = array(
 	'path' => __FILE__,
 	'name' => 'ParserFunctions',
-	'version' => '1.4.1',
+	'version' => '1.5.1',
 	'url' => 'https://www.mediawiki.org/wiki/Extension:ParserFunctions',
 	'author' => array( 'Tim Starling', 'Robert Rohde', 'Ross McClure', 'Juraj Simlovic' ),
 	'descriptionmsg' => 'pfunc_desc',
@@ -41,6 +41,7 @@ $wgExtensionCredits['parserhook'][] = array(
 
 $wgAutoloadClasses['ExtParserFunctions'] = dirname( __FILE__ ) . '/ParserFunctions_body.php';
 $wgAutoloadClasses['ExprParser'] = dirname( __FILE__ ) . '/Expr.php';
+$wgAutoloadClasses['ExprError'] = dirname( __FILE__ ) . '/Expr.php';
 
 $wgExtensionMessagesFiles['ParserFunctions'] = dirname( __FILE__ ) . '/ParserFunctions.i18n.php';
 $wgExtensionMessagesFiles['ParserFunctionsMagic'] = dirname( __FILE__ ) . '/ParserFunctions.i18n.magic.php';
@@ -83,5 +84,16 @@ function wfRegisterParserFunctions( $parser ) {
 		$parser->setFunctionHook( 'urldecode', 'ExtParserFunctions::runUrlDecode' );
 	}
 
+	return true;
+}
+
+$wgHooks['UnitTestsList'][] = 'wfParserFunctionsTests';
+
+/**
+ * @param $files array
+ * @return bool
+ */
+function wfParserFunctionsTests( &$files ) {
+	$files[] = dirname( __FILE__ ) . '/tests/ExpressionTest.php';
 	return true;
 }

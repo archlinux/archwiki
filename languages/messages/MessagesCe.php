@@ -69,7 +69,6 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__ТlЕДУЬЛЛУ_ЧУЛАЦАМБАР__', '__ТlЕДУЬЛ_ЧУЛ__', '__ОБЯЗАТЕЛЬНОЕ_ОГЛАВЛЕНИЕ__', '__ОБЯЗ_ОГЛ__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__ЧУЛАЦАМ__', '__ЧУЛ__', '__ОГЛАВЛЕНИЕ__', '__ОГЛ__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__ЦАМЕГ_РЕДАККХА_АГlОН__', '__БЕЗ_РЕДАКТИРОВАНИЯ_РАЗДЕЛА__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__КОЬРТА_ЙОЦАШ__', '__БЕЗ_ЗАГОЛОВКА__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'КАРАРА_БУТТ', 'КАРАРА_БУТТ_2', 'ТЕКУЩИЙ_МЕСЯЦ', 'ТЕКУЩИЙ_МЕСЯЦ_2', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'КАРАРА_БУТТ_1', 'ТЕКУЩИЙ_МЕСЯЦ_1', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'КАРАРАЧУ_БЕТТА_ЦlЕ', 'НАЗВАНИЕ_ТЕКУЩЕГО_МЕСЯЦА', 'CURRENTMONTHNAME' ),
@@ -166,7 +165,7 @@ $magicWords = array(
 	'revisionmonth'             => array( '1', 'БЕТТА_БАШХО', 'МЕСЯЦ_ВЕРСИИ', 'REVISIONMONTH' ),
 	'revisionyear'              => array( '1', 'ШО_БАШХО', 'ГОД_ВЕРСИИ', 'REVISIONYEAR' ),
 	'revisiontimestamp'         => array( '1', 'КЪАСТАМ_ХЕНА_БАШХО', 'ОТМЕТКА_ВРЕМЕНИ_ВЕРСИИ', 'REVISIONTIMESTAMP' ),
-	'revisionuser'              => array( '1', 'ДЕКЪАШХОН_БАШХО', 'ВЕРСИЯ_УЧАСНИКА', 'REVISIONUSER' ),
+	'revisionuser'              => array( '1', 'ДЕКЪАШХОН_БАШХО', 'ВЕРСИЯ_УЧАСНИКА', 'ВЕРСИЯ_УЧАСТНИКА', 'REVISIONUSER' ),
 	'plural'                    => array( '0', 'ДУКХАЛЛИН_ТЕРАХЬ:', 'МНОЖЕСТВЕННОЕ_ЧИСЛО:', 'PLURAL:' ),
 	'fullurl'                   => array( '0', 'МАЙАРРА_МЕТТИГ:', 'ПОЛНЫЙ_АДРЕС:', 'FULLURL:' ),
 	'fullurle'                  => array( '0', 'МАЙАРРА_МЕТТИГ_2:', 'ПОЛНЫЙ_АДРЕС_2:', 'FULLURLE:' ),
@@ -356,7 +355,6 @@ $messages = array(
 'qbbrowse' => 'Хьажар',
 'qbedit' => 'Нисйé',
 'qbpageoptions' => 'Агlо нисйар',
-'qbpageinfo' => 'Агlонах болу бовзам',
 'qbmyoptions' => 'Хьан нисдарш',
 'qbspecialpages' => 'Леррина агlонаш',
 'faq' => 'СиХХ',
@@ -829,6 +827,9 @@ $1',
 'grouppage-bureaucrat' => '{{ns:project}}:Даржахой',
 'grouppage-suppress' => '{{ns:project}}:Левисорхой',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Декъашхой дlабазбина тептар',
+
 # User rights log
 'rightslog' => 'Декъашхон бакъона тéптар',
 
@@ -1062,9 +1063,6 @@ PICT # тайп тайпан
 # Special:ActiveUsers
 'activeusers' => 'Жигар декъашхой могlам',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Декъашхой дlабазбина тептар',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Декъашхойн тобанаши бакъонаш',
 'listgrouprights-group' => 'Тоба',
@@ -1095,8 +1093,6 @@ PICT # тайп тайпан
 # Displayed when you click the "watch" button and it is in the process of watching
 'watching' => 'Тергаме мlогаман юкъаяккха…',
 'unwatching' => 'Тергаме мlогаман чура дlайаккха…',
-
-'enotif_newpagetext' => 'Хlара керла агlо ю.',
 
 # Delete
 'deletepage' => 'Дlайайá агlо',

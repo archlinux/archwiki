@@ -360,7 +360,6 @@ $messages = array(
 'qbbrowse' => 'Shfletoni',
 'qbedit' => 'Redaktoni',
 'qbpageoptions' => 'Kjo faqe',
-'qbpageinfo' => 'Kontekst',
 'qbmyoptions' => 'Faqet e mia',
 'qbspecialpages' => 'Faqet speciale',
 'faq' => 'Pyetje që bëhen shpesh',
@@ -383,6 +382,7 @@ $messages = array(
 'namespaces' => 'Hapsirat e emrit',
 'variants' => 'Variante',
 
+'navigation-heading' => 'Menuja e navigimit',
 'errorpagetitle' => 'Gabim',
 'returnto' => 'Kthehuni tek $1',
 'tagline' => 'Nga {{SITENAME}}',
@@ -625,11 +625,11 @@ Administratori i cili e mbylli atë e dha këtë shpjegim: "$3".',
 # Login and logout pages
 'logouttext' => "'''Ju keni dalë jashtë.''' 
 
- Ju mund të vazhdoni të përdorni {{SITENAME}} në mënyrë anonime, ose mund të [[Special:UserLogin|identifikoheni përsëri]] si përdoruesi i mëparshëm ose si një përdorues tjetër. 
+ Ju mund të vazhdoni të përdorni {{SITENAME}} në mënyrë anonime, ose mund të <span class='plainlinks'>[$1 identifikoheni përsëri]</span> si përdoruesi i mëparshëm ose si një përdorues tjetër. 
  Kini parasysh që disa faqe mund të shfaqen sikur të ishit i identifikuar derisa të fshini ''cache''-in e shfletuesit tuaj.",
-'welcomecreation' => '== Mirësevini, $1! == 
- Llogaria juaj është krijuar. 
- Mos harroni të ndryshoni [[Special:Preferences|{{SITENAME}} preferencat]] tuaja.',
+'welcomeuser' => 'Mirë se vini, $1!',
+'welcomecreation-msg' => 'Llogaria juaj u krijua. 
+Mos harroni të ndryshoni [[Special:Preferences|{{SITENAME}} preferencat]] tuaja.',
 'yourname' => 'Fusni nofkën tuaj',
 'yourpassword' => 'Fusni fjalëkalimin tuaj',
 'yourpasswordagain' => 'Fusni fjalëkalimin përsëri',
@@ -960,7 +960,6 @@ Regjistri më i vonshëm i hyrjeve është poshtë për referncë:",
 'template-semiprotected' => '(gjysëm-mbrojtur)',
 'hiddencategories' => 'Kjo faqe është nën {{PLURAL:$1|një kategori të fshehur|$1 kategori të fshehura}}:',
 'edittools' => '<!-- Teksti këtu do të tregohet poshtë kutive të redaktimit dhe ngarkimit të skedave. -->',
-'nocreatetitle' => 'Krijimi i faqeve të reja është i kufizuar.',
 'nocreatetext' => 'Mundësia për të krijuar faqe të reja është kufizuar. Duhet të [[Special:UserLogin|hyni ose të hapni një llogari]] për të krijuar faqe të reja, ose mund të ktheheni mbrapsh dhe të redaktoni një faqe ekzistuese.',
 'nocreate-loggedin' => 'Nuk ju lejohet të krijoni faqe të reja.',
 'sectioneditnotsupported-title' => 'Redaktimi i pjesës nuk është i mbështetur',
@@ -983,6 +982,9 @@ Duket se është grisur.',
 'edit-already-exists' => 'Faqja nuk mundej të hapet.
 Ajo tanimë ekziston.',
 'defaultmessagetext' => 'Teksti i porosisë së parazgjedhur',
+
+# Content models
+'content-model-text' => 'tekst i thejshtë',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Kujdes: Kjo faqe ka shumë kërkesa që kërkojnë analizë gramatikore të kushtueshme për sistemin.
@@ -1485,12 +1487,13 @@ Kjo informatë është publike.',
 'right-sendemail' => 'Dërgo e-mail tek përdoruesit e tjerë',
 'right-passwordreset' => 'Shiko e-mail-et e rivendosjes së fjalëkalimit',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Regjistri i llogarive',
+'newuserlogpagetext' => 'Ky është një regjistër i llogarive të fundit që janë hapur',
+
 # User rights log
 'rightslog' => 'Regjistri i privilegjeve të përdoruesit',
 'rightslogtext' => 'Ky është një regjistër për ndryshimet e privilegjeve të përdoruesit.',
-'rightslogentry' => 'u ndryshua anëtarësimi i grupit për $1 nga $2 tek $3',
-'rightslogentry-autopromote' => 'automatikisht u rrit në datyrë nga $2 në $3',
-'rightsnone' => '(asgjë)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'lexo këtë faqe',
@@ -2117,10 +2120,6 @@ Protokolle të mbështetura: <code>$1<code> (mos shtoni ndonjërin nga këta në
 'activeusers-hidesysops' => 'Fshih administratorët',
 'activeusers-noresult' => 'Asnjë përdorues nuk u gjet.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Regjistri i llogarive',
-'newuserlogpagetext' => 'Ky është një regjistër i llogarive të fundit që janë hapur',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Grupime përdoruesish me privilegje',
 'listgrouprights-summary' => 'Më poshtë jepet grupimi i përdoruesve sipas privilegjeve që ju janë dhënë në këtë wiki. Më shumë informacion rreth privilegjeve në veçanti mund të gjendet [[{{MediaWiki:Listgrouprights-helppage}}|këtu]].',
@@ -2213,11 +2212,7 @@ Në qoftë se dëshironi të hiqni një faqe nga lista mbikqyrëse më vonë, sh
 
 'enotif_mailer' => 'Postieri Njoftues i {{SITENAME}}',
 'enotif_reset' => 'Shëno të gjitha faqet e vizituara',
-'enotif_newpagetext' => 'Kjo është një faqe e re.',
 'enotif_impersonal_salutation' => 'Përdorues i {{SITENAME}}',
-'changed' => 'ndryshuar',
-'created' => 'u krijua',
-'enotif_subject' => '{{SITENAME}} faqja $PAGETITLE u $CHANGEDORCREATED prej $PAGEEDITOR',
 'enotif_lastvisited' => 'Shikoni $1 për të gjitha ndryshimet që prej vizitës tuaj të fundit.',
 'enotif_lastdiff' => 'Shikoni $1 për ndryshime.',
 'enotif_anon_editor' => 'përdorues anonim $1',
@@ -2273,6 +2268,8 @@ $UNWATCHURL
 
 Për të na dhënë përshtypjet tuaja ose për ndihmë të mëtejshme:
 {{canonicalurl:{{MediaWiki:Helpage}}}}',
+'created' => 'u krijua',
+'changed' => 'ndryshuar',
 
 # Delete
 'deletepage' => 'Grise faqen',
@@ -2453,7 +2450,7 @@ $1',
 'blanknamespace' => '(Artikujt)',
 
 # Contributions
-'contributions' => 'Kontributet',
+'contributions' => 'Kontributet e {{GENDER:$1|përdoruesit|përdorueses}}',
 'contributions-title' => 'Kontributet e përdoruesit për $1',
 'mycontris' => 'Kontributet',
 'contribsub2' => 'Për $1 ($2)',
@@ -2848,7 +2845,6 @@ Ju lutemi provoni përsëri.',
 
 # JavaScriptTest
 'javascripttest' => 'Duke testuar JavaScript',
-'javascripttest-disabled' => 'Ky funksion nuk është mundësuar në këtë wiki.',
 'javascripttest-title' => 'Duke kryer testet $1',
 'javascripttest-pagetext-noframework' => 'Kjo faqe është rezervuar për kryerjen e testimeve JavaScript.',
 'javascripttest-pagetext-unknownframework' => 'Kornizë pune e panjohur testuese "$1".',
@@ -3780,7 +3776,7 @@ Kjo faqe është duke përjetuar vështirësi teknike.',
 'logentry-newusers-create' => '$1 krijoi një llogari',
 'logentry-newusers-create2' => '$1 krijoi një llogari $3',
 'logentry-newusers-autocreate' => 'Llogaria $1 u krijua automatikisht',
-'newuserlog-byemail' => 'fjalëkalimi u dërgua në postën elektronike',
+'rightsnone' => '(asgjë)',
 
 # Feedback
 'feedback-bugornote' => 'Nëse jeni gati për të përshkruar një problem teknik me detaje ju lutemi [$1 raportoni një problem].

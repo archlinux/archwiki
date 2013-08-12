@@ -124,9 +124,8 @@ $messages = array(
 'internalerror' => 'Icala lingaphakathi',
 
 # Login and logout pages
-'welcomecreation' => '== Umbingelelo, $1! ==
-
-ikhawundi lakho liyadalwa. musa ukukhohlwa ukuguqula amakhethelo a-{{SITENAME}} wakho.',
+'welcomeuser' => 'Umbingelelo, $1!',
+'welcomecreation-msg' => 'Ikhawundi lakho liyadalwa. Musa ukukhohlwa ukuguqula [[Special:Preferences|amakhethelo]] a-Wikipedia wakho.',
 'yourname' => 'Isiga',
 'yourpassword' => 'Izwi elingenangozi',
 'yourpasswordagain' => 'Bhala izwi elingenangozi lakho kabusha',
@@ -258,8 +257,6 @@ ikhawundi lakho liyadalwa. musa ukukhohlwa ukuguqula amakhethelo a-{{SITENAME}} 
 'watch' => 'Bukela',
 'unwatch' => "Mus'ukubukela",
 'notanarticle' => 'Akulona ikhasi elinakho okuqukethwe',
-
-'enotif_newpagetext' => 'Lelikhasi liyasha.',
 
 # Delete
 'deletepage' => 'Sula ikhasi',

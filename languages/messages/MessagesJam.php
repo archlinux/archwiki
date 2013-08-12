@@ -156,7 +156,6 @@ Lef aaf dif afta pofaamin ruolbak',
 'qbbrowse' => 'Brouz',
 'qbedit' => 'Edit',
 'qbpageoptions' => 'Dis piej',
-'qbpageinfo' => 'Kantex',
 'qbmyoptions' => 'Mi piejdem',
 'qbspecialpages' => 'Peshal piejdem',
 'faq' => 'FAK',
@@ -403,11 +402,8 @@ Di riizn dehn gi a "\'\'$2\'\'".',
 # Login and logout pages
 'logouttext' => "'''Yu nou lag out.'''
 
-Yu kiahn kantiniu yuuz {{SITENAME}} ananimosli, ar yu kiahn [[Special:UserLogin|lag iin agen]] az di siem ar az difrant yuuza.
+Yu kiahn kantiniu yuuz {{SITENAME}} ananimosli, ar yu kiahn <span class='plainlinks'>[$1 lag iin agen]</span> az di siem ar az difrant yuuza.
 Nuot se som piej maita kantiniu fi displie laik se yu stil log iin, antel yu klier yu brouza kiash.",
-'welcomecreation' => '== Welkom, $1! ==
-Yu akount don kriet.
-No figat fi chienj yu [[Special:Preferences|{{SITENAME}} prefransdem]].',
 'yourname' => 'Yuuzaniem:',
 'yourpassword' => 'Paaswod:',
 'yourpasswordagain' => 'Ritaip paaswod:',
@@ -668,7 +664,6 @@ Yu de pramis wi alzwel se a yu rait dis yuself, ar kapi'i frahn a poblik domien 
 'template-protected' => '(protek)',
 'template-semiprotected' => '(semi-protek)',
 'hiddencategories' => 'Dis piej a memb a {{PLURAL:$1|1 idn kiatigari|$1 idn kiatigari}}:',
-'nocreatetitle' => 'Piej krieshan limit',
 'permissionserrors' => 'Permishan herro',
 'permissionserrorstext-withaction' => 'Yu no ab no poermishan fi $2, fi di falarin {{PLURAL:$1|riizn|riizndem}}:',
 'edit-conflict' => 'Hedit kanflik: $1',
@@ -739,6 +734,9 @@ Chrai priifix yu kwieri wid ''all:'' fi saach aal kantent (inkluudn taak piej, t
 'group-sysop' => 'Adminischrieta',
 
 'grouppage-sysop' => '{{ns:project}}:Adminischrieta',
+
+# Special:Log/newusers
+'newuserlogpage' => 'Yuuza krieshan lag',
 
 # User rights log
 'rightslog' => 'Yuuza raits lag',
@@ -829,9 +827,6 @@ Piej pahn [[Special:Watchlist|yu wachlis]] dem '''buol'''.",
 
 # Special:LinkSearch
 'linksearch' => 'Extoernal lingk',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Yuuza krieshan lag',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(lis a memba)',

@@ -112,7 +112,6 @@ $messages = array(
 'qbbrowse' => 'Bilid',
 'qbedit' => 'Iislan',
 'qbpageoptions' => 'Dya nga Pahina',
-'qbpageinfo' => 'Konteksto',
 'qbspecialpages' => 'Manga espesyal nga pahina',
 'faq' => 'FAQ',
 'faqpage' => 'Project:FAQ',

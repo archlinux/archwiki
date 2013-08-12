@@ -62,7 +62,7 @@ class SpecialBlock extends FormSpecialPage {
 	 * @throws ErrorPageError
 	 */
 	protected function checkExecutePermissions( User $user ) {
-		 parent::checkExecutePermissions( $user );
+		parent::checkExecutePermissions( $user );
 
 		# bug 15810: blocked admins should have limited access here
 		$status = self::checkUnblockSelf( $this->target, $user );
@@ -134,6 +134,7 @@ class SpecialBlock extends FormSpecialPage {
 				'tabindex' => '1',
 				'id' => 'mw-bi-target',
 				'size' => '45',
+				'autofocus' => true,
 				'required' => true,
 				'validation-callback' => array( __CLASS__, 'validateTargetField' ),
 			),
@@ -224,7 +225,7 @@ class SpecialBlock extends FormSpecialPage {
 	/**
 	 * If the user has already been blocked with similar settings, load that block
 	 * and change the defaults for the form fields to match the existing settings.
-	 * @param $fields Array HTMLForm descriptor array
+	 * @param array $fields HTMLForm descriptor array
 	 * @return Bool whether fields were altered (that is, whether the target is
 	 *     already blocked)
 	 */
@@ -239,7 +240,7 @@ class SpecialBlock extends FormSpecialPage {
 
 		if ( $block instanceof Block && !$block->mAuto # The block exists and isn't an autoblock
 			&& ( $this->type != Block::TYPE_RANGE # The block isn't a rangeblock
-			  || $block->getTarget() == $this->target ) # or if it is, the range is what we're about to block
+				|| $block->getTarget() == $this->target ) # or if it is, the range is what we're about to block
 			)
 		{
 			$fields['HardBlock']['default'] = $block->isHardblock();
@@ -386,7 +387,7 @@ class SpecialBlock extends FormSpecialPage {
 			);
 		}
 
-		$text =  Html::rawElement(
+		$text = Html::rawElement(
 			'p',
 			array( 'class' => 'mw-ipb-conveniencelinks' ),
 			$this->getLanguage()->pipeList( $links )
@@ -450,7 +451,7 @@ class SpecialBlock extends FormSpecialPage {
 	/**
 	 * Determine the target of the block, and the type of target
 	 * TODO: should be in Block.php?
-	 * @param $par String subpage parameter passed to setup, or data value from
+	 * @param string $par subpage parameter passed to setup, or data value from
 	 *     the HTMLForm
 	 * @param $request WebRequest optionally try and get data from a request too
 	 * @return array( User|string|null, Block::TYPE_ constant|null )
@@ -507,53 +508,74 @@ class SpecialBlock extends FormSpecialPage {
 	 * @return Message
 	 */
 	public static function validateTargetField( $value, $alldata, $form ) {
+		$status = self::validateTarget( $value, $form->getUser() );
+		if ( !$status->isOK() ) {
+			$errors = $status->getErrorsArray();
+			return call_user_func_array( array( $form, 'msg' ), $errors[0] );
+		} else {
+			return true;
+		}
+	}
+
+	/**
+	 * Validate a block target.
+	 *
+	 * @since 1.21
+	 * @param string $value Block target to check
+	 * @param User $user Performer of the block
+	 * @return Status
+	 */
+	public static function validateTarget( $value, User $user ) {
 		global $wgBlockCIDRLimit;
 
 		list( $target, $type ) = self::getTargetAndType( $value );
+		$status = Status::newGood( $target );
 
 		if ( $type == Block::TYPE_USER ) {
-			# TODO: why do we not have a User->exists() method?
-			if ( !$target->getId() ) {
-				return $form->msg( 'nosuchusershort',
-					wfEscapeWikiText( $target->getName() ) );
+			if ( $target->isAnon() ) {
+				$status->fatal(
+					'nosuchusershort',
+					wfEscapeWikiText( $target->getName() )
+				);
 			}
 
-			$status = self::checkUnblockSelf( $target, $form->getUser() );
-			if ( $status !== true ) {
-				return $form->msg( 'badaccess', $status );
+			$unblockStatus = self::checkUnblockSelf( $target, $user );
+			if ( $unblockStatus !== true ) {
+				$status->fatal( 'badaccess', $unblockStatus );
 			}
-
 		} elseif ( $type == Block::TYPE_RANGE ) {
 			list( $ip, $range ) = explode( '/', $target, 2 );
 
-			if ( ( IP::isIPv4( $ip ) && $wgBlockCIDRLimit['IPv4'] == 32 )
-				|| ( IP::isIPv6( $ip ) && $wgBlockCIDRLimit['IPv6'] == 128 ) )
-			{
-				# Range block effectively disabled
-				return $form->msg( 'range_block_disabled' );
+			if (
+				( IP::isIPv4( $ip ) && $wgBlockCIDRLimit['IPv4'] == 32 ) ||
+				( IP::isIPv6( $ip ) && $wgBlockCIDRLimit['IPv6'] == 128 )
+			) {
+				// Range block effectively disabled
+				$status->fatal( 'range_block_disabled' );
 			}
 
-			if ( ( IP::isIPv4( $ip ) && $range > 32 )
-				|| ( IP::isIPv6( $ip ) && $range > 128 ) )
-			{
-				# Dodgy range
-				return $form->msg( 'ip_range_invalid' );
+			if (
+				( IP::isIPv4( $ip ) && $range > 32 ) ||
+				( IP::isIPv6( $ip ) && $range > 128 )
+			) {
+				// Dodgy range
+				$status->fatal( 'ip_range_invalid' );
 			}
 
 			if ( IP::isIPv4( $ip ) && $range < $wgBlockCIDRLimit['IPv4'] ) {
-				return $form->msg( 'ip_range_toolarge', $wgBlockCIDRLimit['IPv4'] );
+				$status->fatal( 'ip_range_toolarge', $wgBlockCIDRLimit['IPv4'] );
 			}
 
 			if ( IP::isIPv6( $ip ) && $range < $wgBlockCIDRLimit['IPv6'] ) {
-				return $form->msg( 'ip_range_toolarge', $wgBlockCIDRLimit['IPv6'] );
+				$status->fatal( 'ip_range_toolarge', $wgBlockCIDRLimit['IPv6'] );
 			}
 		} elseif ( $type == Block::TYPE_IP ) {
 			# All is well
 		} else {
-			return $form->msg( 'badipaddress' );
+			$status->fatal( 'badipaddress' );
 		}
 
-		return true;
+		return $status;
 	}
 
 	/**
@@ -629,7 +651,7 @@ class SpecialBlock extends FormSpecialPage {
 		}
 
 		if ( $data['HideUser'] ) {
-			if ( !$performer->isAllowed('hideuser') ) {
+			if ( !$performer->isAllowed( 'hideuser' ) ) {
 				# this codepath is unreachable except by a malicious user spoofing forms,
 				# or by race conditions (user has oversight and sysop, loads block form,
 				# and is de-oversighted before submission); so need to fail completely
@@ -672,10 +694,16 @@ class SpecialBlock extends FormSpecialPage {
 		# Try to insert block. Is there a conflicting block?
 		$status = $block->insert();
 		if ( !$status ) {
+			# Indicates whether the user is confirming the block and is aware of
+			# the conflict (did not change the block target in the meantime)
+			$blockNotConfirmed = !$data['Confirm'] || ( array_key_exists( 'PreviousTarget', $data )
+				&& $data['PreviousTarget'] !== $target );
+
+			# Special case for API - bug 32434
+			$reblockNotAllowed = ( array_key_exists( 'Reblock', $data ) && !$data['Reblock'] );
+
 			# Show form unless the user is already aware of this...
-			if ( !$data['Confirm'] || ( array_key_exists( 'PreviousTarget', $data )
-				&& $data['PreviousTarget'] !== $target ) )
-			{
+			if( $blockNotConfirmed || $reblockNotAllowed ) {
 				return array( array( 'ipb_already_blocked', $block->getTarget() ) );
 			# Otherwise, try to update the block...
 			} else {
@@ -742,7 +770,7 @@ class SpecialBlock extends FormSpecialPage {
 			$logParams
 		);
 		# Relate log ID to block IDs (bug 25763)
-		$blockIds = array_merge( array( $status['id'] ), $status['autoIds']  );
+		$blockIds = array_merge( array( $status['id'] ), $status['autoIds'] );
 		$log->addRelations( 'ipb_id', $blockIds, $log_id );
 
 		# Report to the user
@@ -782,7 +810,7 @@ class SpecialBlock extends FormSpecialPage {
 	/**
 	 * Convert a submitted expiry time, which may be relative ("2 weeks", etc) or absolute
 	 * ("24 May 2034", etc), into an absolute timestamp we can put into the database.
-	 * @param $expiry String: whatever was typed into the form
+	 * @param string $expiry whatever was typed into the form
 	 * @return String: timestamp or "infinity" string for the DB implementation
 	 */
 	public static function parseExpiryInput( $expiry ) {
@@ -855,7 +883,7 @@ class SpecialBlock extends FormSpecialPage {
 	/**
 	 * Return a comma-delimited list of "flags" to be passed to the log
 	 * reader for this block, to provide more information in the logs
-	 * @param $data Array from HTMLForm data
+	 * @param array $data from HTMLForm data
 	 * @param $type Block::TYPE_ constant (USER, RANGE, or IP)
 	 * @return string
 	 */
@@ -917,6 +945,10 @@ class SpecialBlock extends FormSpecialPage {
 		$out = $this->getOutput();
 		$out->setPageTitle( $this->msg( 'blockipsuccesssub' ) );
 		$out->addWikiMsg( 'blockipsuccesstext', wfEscapeWikiText( $this->target ) );
+	}
+
+	protected function getGroupName() {
+		return 'users';
 	}
 }
 

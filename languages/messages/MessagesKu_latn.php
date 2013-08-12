@@ -51,6 +51,8 @@ $namespaceAliases = array(
 	'Kategorî_nîqaş'   => NS_CATEGORY_TALK,
 );
 
+$separatorTransformTable = array( ',' => '.', '.' => ',' );
+
 $specialPageAliases = array(
 	'Categories'                => array( 'Dara_kategoriyan' ),
 	'DoubleRedirects'           => array( 'Redirect\'ên_ducarî' ),
@@ -74,7 +76,6 @@ $magicWords = array(
 	'notoc'                     => array( '0', '_NAVEROKTUNE_', '__NOTOC__' ),
 	'nogallery'                 => array( '0', '_GALERÎTUNE_', '__NOGALLERY__' ),
 	'toc'                       => array( '0', '_NAVEROK_', '__TOC__' ),
-	'noheader'                  => array( '0', '_SERÎTUNE_', '__NOHEADER__' ),
 	'currentmonth1'             => array( '1', 'MEHANIHA1', 'CURRENTMONTH1' ),
 	'currentday'                => array( '1', 'ROJA_NIHA', 'CURRENTDAY' ),
 	'currentday2'               => array( '1', 'ROJA_NIHA2', 'CURRENTDAY2' ),
@@ -88,7 +89,7 @@ $magicWords = array(
 	'subpagename'               => array( '1', 'BINRÛPEL', 'SUBPAGENAME' ),
 	'img_right'                 => array( '1', 'rast', 'right' ),
 	'img_left'                  => array( '1', 'çep', 'left' ),
-	'img_link'                  => array( '1', 'girêdan=$', 'link=$1' ),
+	'img_link'                  => array( '1', 'girêdan=$1', 'link=$1' ),
 	'sitename'                  => array( '1', 'NAVÊ_PROJEYÊ', 'SITENAME' ),
 	'grammar'                   => array( '0', 'RÊZIMAN.', 'GRAMMAR:' ),
 	'gender'                    => array( '0', 'ZAYEND.', 'GENDER:' ),
@@ -238,7 +239,6 @@ $messages = array(
 'qbbrowse' => 'Bigere',
 'qbedit' => 'Biguherîne',
 'qbpageoptions' => 'Ev rûpel',
-'qbpageinfo' => 'Naverok',
 'qbmyoptions' => 'Rûpelên min',
 'qbspecialpages' => 'Rûpelên taybet',
 'faq' => 'PGP',
@@ -455,11 +455,8 @@ $2',
 # Login and logout pages
 'logouttext' => "'''Tu niha derketî.'''
 
-Tu dikarî {{SITENAME}} niha weke bikarhênerekî nediyarkirî bikarbînî, yan jî tu dikarî dîsa bi vî navê xwe yan navekî din wek bikarhêner [[Special:UserLogin|dîsa têkevî]].
+Tu dikarî {{SITENAME}} niha weke bikarhênerekî nediyarkirî bikarbînî, yan jî tu dikarî dîsa bi vî navê xwe yan navekî din wek bikarhêner <span class='plainlinks'>[$1 dîsa têkevî]</span>.
 Bila di bîra te de be ku gengaz e hin rûpel mîna ku tu hîn bi navê xwe qeyd kiriyî werin nîşandan, heta ku tu nîşanên çavlêgerandina (browser) xwe jênebî.",
-'welcomecreation' => '== Tu bi xêr hatî, $1! ==
-
-Hesabê te hate afirandin. Tu dikarî niha [[Special:Preferences|tercîhên xwe di {{SITENAME}}]] de biguherînî.',
 'yourname' => 'Navê bikarhêner:',
 'yourpassword' => 'Şîfre:',
 'yourpasswordagain' => 'Şîfreyê dîsa binivîse:',
@@ -1006,11 +1003,12 @@ Sedema qedexekirina $3 ev e: ''$2''",
 'right-userrights' => 'Hemû mafên bikarhêner biguherîne',
 'right-sendemail' => 'Ji bikarhênerên di re e-name bişîne',
 
+# Special:Log/newusers
+'newuserlogpage' => 'çêkirina hesabê nû',
+
 # User rights log
 'rightslog' => 'guhertina mafê bikarhêneriyê',
 'rightslogtext' => 'Ev guhertineke ji bo mafên bikarhêneriyê ye.',
-'rightslogentry' => 'grûpa bikarhêneran ji bo $1 ji $2 guherande $3',
-'rightsnone' => '(tune)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'vê rûpelê bixwîne',
@@ -1359,9 +1357,6 @@ Li [[Special:WantedCategories|kategoriyên xwestî]] binêre.',
 'activeusers-hidesysops' => 'Rêveberan veşêre',
 'activeusers-noresult' => 'Tu bikarhêner nehate dîtin.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'çêkirina hesabê nû',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Mafên koma bikarhêner',
 'listgrouprights-group' => 'Kom',
@@ -1427,11 +1422,7 @@ Gava tu bixwazî wê rûpelê ji nav lîsteya xwe ya şopandinê derbixî, li se
 'unwatching' => 'Neşopîne…',
 
 'enotif_reset' => 'Hemû rûpelan wek lêsekirî nîşanbide',
-'enotif_newpagetext' => 'Ev rûpeleke nû ye.',
 'enotif_impersonal_salutation' => 'Bikarhênerî {{SITENAME}}',
-'changed' => 'hate guhertin',
-'created' => 'hate afirandin',
-'enotif_subject' => '[{{SITENAME}}] Rûpelê "$PAGETITLE" ji $PAGEEDITOR hate $CANGEDORCREATED',
 'enotif_anon_editor' => 'Bikarhênerê/a neqeydkirî $1',
 'enotif_body' => 'Birêz $WATCHINGUSERNAME,
 
@@ -1454,6 +1445,8 @@ Heke tu dixwazî lîsteya xwe ya şopandinê biguherînî, li
 
 Paşagahîdan û alîkaraya din:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'hate afirandin',
+'changed' => 'hate guhertin',
 
 # Delete
 'deletepage' => 'Rûpelê jê bibe',
@@ -1878,6 +1871,12 @@ Ji ber ku girêdaneke derve di wê rûpelê de heye ev pirsgirêk pêk hat.',
 'pageinfo-views' => 'Hejmara dîtinê',
 'pageinfo-watchers' => 'Hejmara kesên dişopînin',
 'pageinfo-edits' => 'Hejmara guherandinan',
+'pageinfo-toolboxlink' => 'Agahiya rûpelê',
+'pageinfo-redirectsto-info' => 'agahî',
+'pageinfo-contentpage-yes' => 'Erê',
+'pageinfo-protect-cascading-yes' => 'Erê',
+'pageinfo-category-pages' => 'hejmara rûpelan',
+'pageinfo-category-subcats' => 'Hejmara binkategoriyan',
 
 # Patrolling
 'markaspatrolleddiff' => 'Wek serrastkirî nîşan bide',
@@ -2157,7 +2156,7 @@ Ji kerema xwe zanibe ku tu bi rastî dixwazî vê rûpelê dîsa çêkî.",
 'logentry-move-move_redir' => '$1 navê $3 guherand û kir $4',
 'logentry-newusers-newusers' => '$1 hesabekî bikarhêneriyê çêkir',
 'logentry-newusers-create' => '$1 hesabekî bikarhêneriyê çêkir',
-'newuserlog-byemail' => 'şîfre bi e-nameyê hate şandin',
+'rightsnone' => '(tune)',
 
 # Feedback
 'feedback-subject' => 'Mijar:',

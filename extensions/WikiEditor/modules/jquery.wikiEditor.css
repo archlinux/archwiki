@@ -9,6 +9,12 @@
 	width: 100%;
 	background-color: #E0EEf7;
 	border: solid silver 1px;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.wikiEditor-ui textarea {
+	width: 100%;
 }
 .wikiEditor-ui textarea:focus {
 	outline: none;

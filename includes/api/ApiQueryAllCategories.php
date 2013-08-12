@@ -60,10 +60,7 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 
 		if ( !is_null( $params['continue'] ) ) {
 			$cont = explode( '|', $params['continue'] );
-			if ( count( $cont ) != 1 ) {
-				$this->dieUsage( "Invalid continue param. You should pass the " .
-					"original value returned by the previous query", "_badcontinue" );
-			}
+			$this->dieContinueUsageIf( count( $cont ) != 1 );
 			$op = $params['dir'] == 'descending' ? '<' : '>';
 			$cont_from = $db->addQuotes( $cont[0] );
 			$this->addWhere( "cat_title $op= $cont_from" );
@@ -81,7 +78,6 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 		} else {
 			$this->addWhereRange( 'cat_pages', 'older', $max, $min);
 		}
-    
 
 		if ( isset( $params['prefix'] ) ) {
 			$this->addWhere( 'cat_title' . $db->buildLike( $this->titlePartToKey( $params['prefix'] ), $db->anyString() ) );
@@ -225,12 +221,6 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 		return 'Enumerate all categories';
 	}
 
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'code' => '_badcontinue', 'info' => 'Invalid continue param. You should pass the original value returned by the previous query' ),
-		) );
-	}
-
 	public function getExamples() {
 		return array(
 			'api.php?action=query&list=allcategories&acprop=size',
@@ -240,9 +230,5 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Allcategories';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

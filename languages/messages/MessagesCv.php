@@ -17,8 +17,6 @@
 
 $fallback = 'ru';
 
-$linkPrefixExtension = true;
-
 $namespaceNames = array(
 	NS_MEDIA            => 'Медиа',
 	NS_SPECIAL          => 'Ятарлă',
@@ -41,6 +39,7 @@ $namespaceNames = array(
 // Remove Russian aliases
 $namespaceGenderAliases = array();
 
+$linkPrefixExtension = true;
 $linkTrail = '/^([a-zа-яĕçăӳ"»]+)(.*)$/sDu';
 
 $messages = array(
@@ -174,7 +173,6 @@ $messages = array(
 'qbbrowse' => 'Курăм',
 'qbedit' => 'Тӳрлет',
 'qbpageoptions' => 'Страница ĕнерлевĕсем',
-'qbpageinfo' => 'Страница çинчен',
 'qbmyoptions' => 'Сирĕн ĕнĕрлевсем',
 'qbspecialpages' => 'Ятарлӑ страницӑсем',
 'faq' => 'ЫйХу',
@@ -385,9 +383,6 @@ $1',
 Сайт сире ятпа мар, IP-адрес урлă пĕлет.
 Эсир анонимла, е малтанхи евĕрлĕ çĕнĕ сеанс уçса, е  урăх ятпа ĕçлеме пултаратăр.
 Хăш-пĕр страницăсем эсир сайта кĕнĕ пек курăнма пултараççĕ, ăна тӳрлетмешкĕн браузер кэшне çĕнетĕр.',
-'welcomecreation' => '== Ырă сунса кĕтетпĕр, $1! ==
-Эсир пирĕн патăмăрта çырăнтăр.
-[[Special:Preferences|Сайт ĕнĕрлевĕсене хăвсамăра кирлĕ пек]] лартма ан манса кайăр.',
 'yourname' => 'Сирĕн ят',
 'yourpassword' => 'Вăрттăн сăмах:',
 'yourpasswordagain' => 'Вăрттăн сăмах тепре çырăр:',
@@ -523,7 +518,6 @@ $1 хутшăнакан патне, е ытти [[{{MediaWiki:Grouppage-sysop}}|
 'templatesusedsection' => 'Ку пайра усă курнă шаблонсем:',
 'template-protected' => '(сыхланă)',
 'template-semiprotected' => '(пĕр пайне сыхланă)',
-'nocreatetitle' => 'Страницăсене хатĕрлессине чакарнă',
 
 # Parser/template warnings
 'expensive-parserfunction-category' => 'Кунта эсир чылай ресурс ыйтакан функцисемпе нумай ĕçлекен страницăсене куратăр',
@@ -666,7 +660,6 @@ $1 хутшăнакан патне, е ытти [[{{MediaWiki:Grouppage-sysop}}|
 
 # User rights log
 'rightslogtext' => 'Ку пользовательсен прависене улăштарниссен журналě',
-'rightsnone' => '(çук)',
 
 # Recent changes
 'recentchanges' => 'Улшăнусем',
@@ -928,10 +921,9 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'unwatching' => 'Сăнав ят-йышĕнчен кăларса пăрахасси…',
 
 'enotif_reset' => 'Пур страницăсене те пăхнă пек палăрт',
-'enotif_newpagetext' => 'Ку çĕнĕ страница',
-'changed' => 'улăштарнă',
-'created' => 'хатĕрленĕ',
 'enotif_anon_editor' => '$1 анонимлă хутшăнакан',
+'created' => 'хатĕрленĕ',
+'changed' => 'улăштарнă',
 
 # Delete
 'deletepage' => 'Кăларса парахнă статьясем',
@@ -1220,5 +1212,8 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'specialpages-group-media' => 'Медиа-материалсемпе тултарăшсем',
 'specialpages-group-users' => 'Хутшăнакансем тата правасем',
 'specialpages-group-highuse' => 'Нумай усă куракан страницăсем',
+
+# New logging system
+'rightsnone' => '(çук)',
 
 );

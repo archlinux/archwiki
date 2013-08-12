@@ -21,6 +21,7 @@ getDefaultConfig: function() {
 								'cs': [2, -142],
 								'de': [2, -214],
 								'fr': [2, -286],
+								'gl': [2, -358],
 								'es': [2, -358],
 								'he': [2, -142],
 								'hu': [2, -214],
@@ -37,12 +38,15 @@ getDefaultConfig: function() {
 								'cs': 'format-bold-B.png',
 								'de': 'format-bold-F.png',
 								'fr': 'format-bold-G.png',
+								'gl': 'format-bold-N.png',
 								'es': 'format-bold-N.png',
+								'eu': 'format-bold-L.png',
 								'he': 'format-bold-B.png',
 								'hu': 'format-bold-F.png',
 								'it': 'format-bold-G.png',
 								'ka': 'format-bold-ka.png',
 								'nl': 'format-bold-V.png',
+								'os': 'format-bold-os.png',
 								'pt': 'format-bold-N.png',
 								'pt-br': 'format-bold-N.png',
 								'pl': 'format-bold-B.png',
@@ -70,6 +74,7 @@ getDefaultConfig: function() {
 								'cs': [2, -862],
 								'de': [2, -934],
 								'fr': [2, -862],
+								'gl': [2, -790],
 								'es': [2, -790],
 								'he': [2, -862],
 								'it': [2, -790],
@@ -86,12 +91,15 @@ getDefaultConfig: function() {
 								'cs': 'format-italic-I.png',
 								'de': 'format-italic-K.png',
 								'fr': 'format-italic-I.png',
+								'gl': 'format-italic-C.png',
 								'es': 'format-italic-C.png',
+								'eu': 'format-italic-E.png',
 								'he': 'format-italic-I.png',
 								'hu': 'format-italic-D.png',
 								'it': 'format-italic-C.png',
 								'ka': 'format-italic-ka.png',
 								'nl': 'format-italic-C.png',
+								'os': 'format-italic-K.png',
 								'pt': 'format-italic-I.png',
 								'pt-br': 'format-italic-I.png',
 								'pl': 'format-italic-I.png',
@@ -670,67 +678,141 @@ getDefaultConfig: function() {
 					'layout': 'characters',
 					'characters': [
 						"\u0410", "\u0430", // A
-						"\u04d8", "\u04d9", // Schwa
+						"\u04d0", "\u04d1", // A with breve (Chuvash)
+						"\u04d2", "\u04d3", // A with diaeresis (Mari, Gargauz, etc.)
+						"\u04d8", "\u04d9", // Schwa (Abkhaz, etc)
+						"\u04da", "\u04db", // Schwa with diaeresis (Khanty)
 						"\u0411", "\u0431", // B
 						"\u0412", "\u0432", // V
 						"\u0413", "\u0433", // G
-						"\u0490", "\u0491", // G with upturn
+						"\u0490", "\u0491", // G with upturn (Ukranian, etc)
+						"\u04f6", "\u04f7", // Ge with descender (Abkhaz, etc)
 						"\u0403", "\u0453", // G with acute (Macedonian)
+						"\u04fa", "\u04fb", // Ge with stroke and hook (Nivkh)
 						"\u0492", "\u0493", // G with stroke (Kazakh etc.)
 						"\u0494", "\u0495", // G with hook (Sakha etc.)
 						"\u0414", "\u0434", // D
-						"\u0402", "\u0452", // Dj
+						"\u0500", "\u0501", // De (Komi)
+						"\u0502", "\u0503", // Dje (Komi)
+						"\u0402", "\u0452", // Dj (Serbian, Montenegrin)
 						"\u0415", "\u0435", "\u0400", "\u0450", // IE
 						"\u0404", "\u0454", // Ukrainian IE
 						"\u0401", "\u0451", // IO
+						"\u04d6", "\u04d7", // Ye with breve (Chuvash)
+						"\u04bc", "\u04bd", // Che (Abkhazian)
+						"\u04be", "\u04bf", // Che with descender (Abkhazian)
 						"\u0416", "\u0436", // Zh
+						"\u0496", "\u0497", // Zhe with descender (Kalmyk, Tatar, etc)
+						"\u04c1", "\u04c2", // Zhe with breve (Moldovan, Gagauz)
+						"\u04dc", "\u04dd", // Zhe with diaeresis (Udmurt)
 						"\u0417", "\u0437", // Z
-						"\u0405", "\u0455", // Dz
+						"\u0498", "\u0499", // Ze with descender (Bashkir)
+						"\u04de", "\u04df", // Ze with diaeresis (Udmurt)
+						"\u0510", "\u0511", // Reversed Ze (Enets, Khanty)
+						"\u04e0", "\u04e1", // Dze (Abkhazian)
+						"\u0405", "\u0455", // Dz (Macedonian, Montenegrin)
+						"\u0504", "\u0505", // Zje (Komi)
+						"\u0506", "\u0507", // Dzje (Komi)
 						"\u0418", "\u0438", // I
-						"\u0406", "\u0456", // Dotted I
-						"\u0407", "\u0457", // I with dieresis
+						"\u0406", "\u0456", // Dotted I (Ukranian, etc)
+						"\u0407", "\u0457", // I with dieresis (Rusyn, Ukranian)
 						[ "\u25cc\u04c0", "\u04c0" ], // Palochka. Dotted circle to differentiate from I
+						[ "\u25cc\u04cf", "\u04cf" ], // Palochka. Dotted circle to differentiate from I
 						"\u0419", "\u0439", // Short I
-						"\u04e2", "\u04e3", // I with macron
-						"\u040D", "\u045D", // I with grave (Macedonian)
-						"\u0408", "\u0458", // J
+						"\u04e2", "\u04e3", // I with macron (Tajik)
+						"\u040d", "\u045d", // I with grave (Macedonian)
+						"\u048a", "\u048b", // Short I with tail (Kildin Sami)
+						"\u04e4", "\u04e5", // I with diaeresis (Udmurt)
+						"\u0408", "\u0458", // Je (Altai, Azerbaijani, etc)
 						"\u041a", "\u043a", // K
 						"\u040c", "\u045c", // K with acute (Macedonian)
 						"\u049a", "\u049b", // K with descender (Kazakh etc.)
+						"\u049c", "\u049d", // Ka with vertical stroke (Azerbaijani)
+						"\u049e", "\u049f", // Ka with stroke (Abkhaz)
+						"\u04a0", "\u04a1", // Ka (Bashkir)
+						"\u04c3", "\u04c4", // Ka with hook (Chukchi, etc)
+						"\u051a", "\u051b", // Qa (Kurdish, old Abkhaz)
 						"\u041b", "\u043b", // L
-						"\u0409", "\u0459", // Lj
+						"\u0409", "\u0459", // Lj (Serbian, Macedonian)
+						"\u0508", "\u0509", // Lje (Komi)
+						"\u0512", "\u0513", // El with hook (Chukchi, Itelmen, Khanty)
+						"\u04c5", "\u04c6", // El with tail (Itelmen, Kildin Sami)
 						"\u041c", "\u043c", // M
+						"\u04cd", "\u04ce", // Em with tail (Kildin Sami)
 						"\u041d", "\u043d", // N
-						"\u040a", "\u045a", // Nj
+						"\u040a", "\u045a", // Nj (Macedonian, Serbian)
 						"\u04a2", "\u04a3", // N with descender (Kazakh etc.)
+						"\u04a4", "\u04a5", // Ligature En Ghe (Aleut, Altai, etc)
+						"\u04c7", "\u04c8", // En with hook (Even, etc)
+						"\u050a", "\u050b", // Nje (Komi)
+						"\u04c9", "\u04ca", // En with tail (Kilidn Sami)
 						"\u041e", "\u043e", // O
-						"\u04e8", "\u04e9", // O with bar
+						"\u04a8", "\u04a9", // Ha (Abkhazian)
+						"\u04e6", "\u04e7", // O with diaeresis (Altay, Komi, etc)
+						"\u04e8", "\u04e9", // O with bar (Bashkir, etc)
+						"\u04ea", "\u04eb", // Barred O with diaeresis (Even, Khanty)
 						"\u041f", "\u043f", // P
+						"\u0524", "\u0525", // Pe with descender (Abkhaz)
+						"\u04a6", "\u04a7", // Pe with middle hook (Abkhaz)
 						"\u0420", "\u0440", // R
+						"\u048e", "\u048f", // Er with tick (Kildin Sami)
 						"\u0421", "\u0441", // S
+						"\u04aa", "\u04ab", // Es with descender (Bashkir, Chuvash)
 						"\u0422", "\u0442", // T
-						"\u040b", "\u045b", // Tsh
+						"\u040b", "\u045b", // Tsh (Serbian, Bosnian, etc)
+						"\u050c", "\u050d", // Sje (Komi)
+						"\u04ac", "\u04ad", // Te with descender (Abkhaz)
+						"\u050e", "\u050f", // The (Komi)
 						"\u0423", "\u0443", // U
-						"\u040e", "\u045e", // Short U
+						"\u040e", "\u045e", // Short U (Belarusian, Dungan, etc)
 						"\u04ee", "\u04ef", // U with macron (Tajik)
-						"\u04b0", "\u04b1", // Straight U with stroke
-						"\u04ae", "\u04af", // Straight U
+						"\u04f0", "\u04f1", // U with diaeresis (Altai, etc)
+						"\u04f2", "\u04f3", // U with double acute (Chuvash)
+						"\u04ae", "\u04af", // Straight U Bashkir, Buryat, etc)
+						"\u04b0", "\u04b1", // Straight U with stroke (Kazakh)
 						"\u0424", "\u0444", // F
 						"\u0425", "\u0445", // Kha
-						"\u04b2", "\u04b3", // Kha with descender
-						"\u04ba", "\u04bb", // Shha
+						"\u04b2", "\u04b3", // Kha with descender (Abkhaz, etc)
+						"\u04fc", "\u04fd", // Ha with hook (Itelmen, Nivkh)
+						"\u04fe", "\u04ff", // Ha with stroke (Nivkh)
+						"\u04ba", "\u04bb", // Shha (Azerbaijani, etc)
 						"\u0426", "\u0446", // Ts
 						"\u0427", "\u0447", // Ch
-						"\u04b6", "\u04b7", // Ch with descender
-						"\u040f", "\u045f", // Dzh
+						"\u04b4", "\u04b5", // Ligature Te Tse (Abkhaz)
+						"\u04b6", "\u04b7", // Ch with descender (Abkhaz, Tajik)
+						"\u04b8", "\u04b9", // Che with vertical stroke (Azeri)
+						"\u04cb", "\u04cc", // Che (Khakassian)
+						"\u04f4", "\u04f5", // Che with diaeresis (Udmurt)
+						"\u040f", "\u045f", // Dzh (Serbian, Macedonian, etc)
 						"\u0428", "\u0448", // Sh
 						"\u0429", "\u0449", // Sch
 						"\u042a", "\u044a", // Hard sign
 						"\u042b", "\u044b", // Yeru
+						"\u04f8", "\u04f9", // Yeru with diaeresis (mari)
 						"\u042c", "\u044c", // Soft sign
+						"\u048c", "\u048d", // Semisoft Sign (kildin)
 						"\u042d", "\u044d", // E
+						"\u04ec", "\u04ed", // E with diaeresis (kildin)
 						"\u042e", "\u044e", // Yu
-						"\u042f", "\u044f" // Ya
+						"\u042f", "\u044f", // Ya
+						"\u051c", "\u051d", // We (Kurdish)
+						"\u0460", "\u0461", // Omega
+						"\u0462", "\u0463", // Yat (old cyrillic)
+						"\u0464", "\u0465", // Iotified E (old cyrillic)
+						"\u0466", "\u0467", // Little Yus (old cyrillic)
+						"\u0468", "\u0469", // Iotified Little Yus (old cyrillic)
+						"\u046A", "\u046B", // Big Yus (old cyrillic)
+						"\u046C", "\u046D", // Iotified Big Yus (old cyrillic)
+						"\u046E", "\u046F", // Ksi (old cyrillic)
+						"\u0470", "\u0471", // Psi (old cyrillic)
+						"\u0472", "\u0473", // Fita (old cyrillic)
+						"\u0474", "\u0475", // Izhitsa (old cyrillic)
+						"\u0476", "\u0477", // Izhitsa with double grave accent (old cyrillic)
+						"\u0478", "\u0479", // Uk (old cyrillic)
+						"\u047A", "\u047B", // Round Omega (old cyrillic)
+						"\u047c", "\u047d", // Cyr Omega with Titlo (old cyrillic)
+						"\u047e", "\u047f", // Cyr Ot (old cyrillic)
+						"\u0480", "\u0481", // Cyr Koppa (old cyrillic)
 					]
 				},
 				// The core 28-letter alphabet, special letters for the Arabic language,

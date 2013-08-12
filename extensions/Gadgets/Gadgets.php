@@ -33,7 +33,7 @@ $wgHooks['BeforePageDisplay'][]             = 'GadgetHooks::beforePageDisplay';
 $wgHooks['UserGetDefaultOptions'][]         = 'GadgetHooks::userGetDefaultOptions';
 $wgHooks['GetPreferences'][]                = 'GadgetHooks::getPreferences';
 $wgHooks['ResourceLoaderRegisterModules'][] = 'GadgetHooks::registerModules';
-$wgHooks['UnitTestsList'][]                 = 'GadgetHooks::unitTestsList';
+$wgHooks['UnitTestsList'][]                 = 'GadgetHooks::onUnitTestsList';
 
 $dir = dirname( __FILE__ ) . '/';
 $wgExtensionMessagesFiles['Gadgets'] = $dir . 'Gadgets.i18n.php';

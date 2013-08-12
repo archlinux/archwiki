@@ -60,9 +60,9 @@ class CloneDatabase {
 	 * Constructor
 	 *
 	 * @param $db DatabaseBase A database subclass
-	 * @param $tablesToClone Array An array of tables to clone, unprefixed
-	 * @param $newTablePrefix String Prefix to assign to the tables
-	 * @param $oldTablePrefix String Prefix on current tables, if not $wgDBprefix
+	 * @param array $tablesToClone An array of tables to clone, unprefixed
+	 * @param string $newTablePrefix Prefix to assign to the tables
+	 * @param string $oldTablePrefix Prefix on current tables, if not $wgDBprefix
 	 * @param $dropCurrentTables bool
 	 */
 	public function __construct( DatabaseBase $db, array $tablesToClone,
@@ -77,7 +77,7 @@ class CloneDatabase {
 
 	/**
 	 * Set whether to use temporary tables or not
-	 * @param $u Bool Use temporary tables when cloning the structure
+	 * @param bool $u Use temporary tables when cloning the structure
 	 */
 	public function useTemporaryTables( $u = true ) {
 		$this->useTemporaryTables = $u;
@@ -87,35 +87,32 @@ class CloneDatabase {
 	 * Clone the table structure
 	 */
 	public function cloneTableStructure() {
-		
 		foreach( $this->tablesToClone as $tbl ) {
 			# Clean up from previous aborted run.  So that table escaping
 			# works correctly across DB engines, we need to change the pre-
 			# fix back and forth so tableName() works right.
-			
+
 			self::changePrefix( $this->oldTablePrefix );
 			$oldTableName = $this->db->tableName( $tbl, 'raw' );
-			
+
 			self::changePrefix( $this->newTablePrefix );
 			$newTableName = $this->db->tableName( $tbl, 'raw' );
-			
+
 			if( $this->dropCurrentTables && !in_array( $this->db->getType(), array( 'postgres', 'oracle' ) ) ) {
 				$this->db->dropTable( $tbl, __METHOD__ );
-				wfDebug( __METHOD__." dropping {$newTableName}\n", true);
+				wfDebug( __METHOD__ . " dropping {$newTableName}\n", true );
 				//Dropping the oldTable because the prefix was changed
 			}
 
 			# Create new table
-			wfDebug( __METHOD__." duplicating $oldTableName to $newTableName\n", true );
+			wfDebug( __METHOD__ . " duplicating $oldTableName to $newTableName\n", true );
 			$this->db->duplicateTableStructure( $oldTableName, $newTableName, $this->useTemporaryTables );
-			
 		}
-		
 	}
 
 	/**
 	 * Change the prefix back to the original.
-	 * @param $dropTables bool Optionally drop the tables we created
+	 * @param bool $dropTables Optionally drop the tables we created
 	 */
 	public function destroy( $dropTables = false ) {
 		if( $dropTables ) {

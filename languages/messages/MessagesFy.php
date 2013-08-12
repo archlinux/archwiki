@@ -281,7 +281,6 @@ $messages = array(
 'qbbrowse' => 'Blêdzje',
 'qbedit' => 'Bewurkje',
 'qbpageoptions' => 'Side-opsjes',
-'qbpageinfo' => 'Side-ynfo',
 'qbmyoptions' => 'Myn Opsjes',
 'qbspecialpages' => 'Bysûndere siden',
 'faq' => 'FAQ (faak stelde fragen)',
@@ -504,10 +503,8 @@ De oanfierde reden is ''$2''.",
 # Login and logout pages
 'logouttext' => "'''Jo binne no ôfmeld.'''
 
-Jo kinne de {{SITENAME}} fierders anonym brûke, of jo op 'e [[Special:UserLogin|nij oanmelde]] ûnder deselde of in oare namme.
+Jo kinne de {{SITENAME}} fierders anonym brûke, of jo op 'e <span class='plainlinks'>[$1 nij oanmelde]</span> ûnder deselde of in oare namme.
 Mûglik wurdt noch in tal siden werjûn as wiene Jo oanmeld, oant Jo de cache fan Jo browser leegje.",
-'welcomecreation' => '<h2>Wolkom, $1!</h2><p>Jo ynstellings binne oanmakke.
-Ferjit net se oan jo foarkar oan te passen.',
 'yourname' => 'Jo meidochnamme:',
 'yourpassword' => 'Jo wachtwurd',
 'yourpasswordagain' => 'Jo wachtwurd (nochris)',
@@ -740,7 +737,6 @@ In  behearder hat de database blokkearre om de folgjende reden: $1",
 'hiddencategories' => 'Dizze side falt yn de folgjende ferburgen
 {{PLURAL:$1|kategory|kategoryen}}:',
 'edittools' => '<!-- Tekst hjir stiet ûnder bewurkingsfjilden en oanbringfjilden.  -->',
-'nocreatetitle' => 'It oanmeitsjen fan siden is beheind',
 'nocreatetext' => '{{SITENAME}} hat de mûglikheid beheind om nije siden te meitsjen.
 Jo kinne al besteande siden feroarje of jo kinne [[Special:UserLogin|jo oanmelde of in brûker oanmeitsje]].',
 'nocreate-loggedin' => 'Jo meie gjin nije siden meitsje',
@@ -1158,11 +1154,13 @@ Jo kinne ek oaren de mûglikheid jaan kontakt mei jo op te nimmen troch in ferwi
 'right-siteadmin' => 'De database blokkearje en wer frij jaan',
 'right-override-export-depth' => 'Alle siden oant en mei in keppelingsdjipte fan fiif fuortskriuwe',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Ynskriuwingsloch',
+'newuserlogpagetext' => "Dit is in loch fan meidoggers dy't de lêste tiid ynskreaun binne.",
+
 # User rights log
 'rightslog' => 'Rjochten-loch',
 'rightslogtext' => 'Dit is in loch fan feroarings fan meidoggerrjochten.',
-'rightslogentry' => 'groep foar $1 feroare fan $2 yn $3',
-'rightsnone' => '(gjin)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'dizze side besjen',
@@ -1647,10 +1645,6 @@ Stipe protokollen: <code>$1</code>',
 'activeusers' => 'Aktive meidoggers',
 'activeusers-noresult' => 'Gjin meidoggers fûn.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Ynskriuwingsloch',
-'newuserlogpagetext' => "Dit is in loch fan meidoggers dy't de lêste tiid ynskreaun binne.",
-
 # Special:ListGroupRights
 'listgrouprights' => 'Rjochten fan brûkersgroepen',
 'listgrouprights-summary' => 'Op dizze side steane de brûkersgroepen yn dizze wiki beskreaun, mei har derby hearrende rjochten.
@@ -1715,10 +1709,7 @@ At jo letter in side net mear folgje wolle, dan brûke jo op dy side de keppelin
 'watching' => "Dwaande mei op'e folchlist te setten ...",
 'unwatching' => "Dwaande mei fan'e folchlist ôf te heljen ...",
 
-'enotif_newpagetext' => 'Dit is in nije side.',
 'enotif_impersonal_salutation' => 'meidogger fan {{SITENAME}}',
-'changed' => 'feroare',
-'created' => 'oanmakke',
 'enotif_body' => 'Bêste $WATCHINGUSERNAME,
 
 De {{SITENAME}}side \'$PAGETITLE\' is op $PAGEEDITDATE $CHANGEDORCREATED troch meidogger $PAGEEDITOR;
@@ -1742,6 +1733,8 @@ om jo folchlistynstellings te feroarjen.
 
 Reaksjes en fierdere help:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'oanmakke',
+'changed' => 'feroare',
 
 # Delete
 'deletepage' => 'Wisk side',
@@ -2362,6 +2355,6 @@ Wolle jo de side wier op 'e nij skriuwe?",
 # New logging system
 'revdelete-restricted' => 'hat beheinings oplein oan behearders',
 'revdelete-unrestricted' => 'hat beheinings foar behearders goedmakke',
-'newuserlog-byemail' => 'wachtwurd is ferstjoerd oer e-mail',
+'rightsnone' => '(gjin)',
 
 );

@@ -31,10 +31,6 @@
  */
 class ApiWatch extends ApiBase {
 
-	public function __construct( $main, $action ) {
-		parent::__construct( $main, $action );
-	}
-
 	public function execute() {
 		$user = $this->getUser();
 		if ( !$user->isLoggedIn() ) {
@@ -44,11 +40,19 @@ class ApiWatch extends ApiBase {
 		$params = $this->extractRequestParams();
 		$title = Title::newFromText( $params['title'] );
 
-		if ( !$title || $title->getNamespace() < 0 ) {
+		if ( !$title || $title->isExternal() || !$title->canExist() ) {
 			$this->dieUsageMsg( array( 'invalidtitle', $params['title'] ) );
 		}
 
 		$res = array( 'title' => $title->getPrefixedText() );
+
+		// Currently unnecessary, code to act as a safeguard against any change in current behavior of uselang
+		// Copy from ApiParse
+		$oldLang = null;
+		if ( isset( $params['uselang'] ) && $params['uselang'] != $this->getContext()->getLanguage()->getCode() ) {
+			$oldLang = $this->getContext()->getLanguage(); // Backup language
+			$this->getContext()->setLanguage( Language::factory( $params['uselang'] ) );
+		}
 
 		if ( $params['unwatch'] ) {
 			$res['unwatched'] = '';
@@ -59,6 +63,11 @@ class ApiWatch extends ApiBase {
 			$res['message'] = $this->msg( 'addedwatchtext', $title->getPrefixedText() )->title( $title )->parseAsBlock();
 			$success = WatchAction::doWatch( $title, $user );
 		}
+
+		if ( !is_null( $oldLang ) ) {
+			$this->getContext()->setLanguage( $oldLang ); // Reset language to $oldLang
+		}
+
 		if ( !$success ) {
 			$this->dieUsageMsg( 'hookaborted' );
 		}
@@ -88,6 +97,7 @@ class ApiWatch extends ApiBase {
 				ApiBase::PARAM_REQUIRED => true
 			),
 			'unwatch' => false,
+			'uselang' => null,
 			'token' => array(
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true
@@ -99,6 +109,7 @@ class ApiWatch extends ApiBase {
 		return array(
 			'title' => 'The page to (un)watch',
 			'unwatch' => 'If set the page will be unwatched rather than watched',
+			'uselang' => 'Language to show the message in',
 			'token' => 'A token previously acquired via prop=info',
 		);
 	}
@@ -135,9 +146,5 @@ class ApiWatch extends ApiBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Watch';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

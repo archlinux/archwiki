@@ -151,10 +151,10 @@ class SpecialChangeEmail extends UnlistedSpecialPage {
 		$items = array(
 			array( 'wpName', 'username', 'text', $user->getName() ),
 			array( 'wpOldEmail', 'changeemail-oldemail', 'text', $oldEmailText ),
-			array( 'wpNewEmail', 'changeemail-newemail', 'input', $this->mNewEmail ),
+			array( 'wpNewEmail', 'changeemail-newemail', 'email', $this->mNewEmail ),
 		);
 		if ( $wgRequirePasswordforEmailChange ) {
-			$items[] = array( 'wpPassword', 'yourpassword', 'password', $this->mPassword );
+			$items[] = array( 'wpPassword', 'changeemail-password', 'password', $this->mPassword );
 		}
 
 		$this->getOutput()->addHTML(
@@ -195,7 +195,7 @@ class SpecialChangeEmail extends UnlistedSpecialPage {
 			if ( $type != 'text' ) {
 				$out .= Xml::label( $this->msg( $label )->text(), $name );
 			} else {
-				$out .=  $this->msg( $label )->escaped();
+				$out .= $this->msg( $label )->escaped();
 			}
 			$out .= "</td>\n";
 			$out .= "\t<td class='mw-input'>";
@@ -213,6 +213,8 @@ class SpecialChangeEmail extends UnlistedSpecialPage {
 	 * @return bool|string true or string on success, false on failure
 	 */
 	protected function attemptChange( User $user, $pass, $newaddr ) {
+		global $wgAuth;
+
 		if ( $newaddr != '' && !Sanitizer::validateEmail( $newaddr ) ) {
 			$this->error( 'invalidemailaddress' );
 			return false;
@@ -248,6 +250,12 @@ class SpecialChangeEmail extends UnlistedSpecialPage {
 
 		$user->saveSettings();
 
+		$wgAuth->updateExternalDB( $user );
+
 		return $status->value;
+	}
+
+	protected function getGroupName() {
+		return 'users';
 	}
 }

@@ -269,7 +269,6 @@ $messages = array(
 'qbbrowse' => 'Vinjari',
 'qbedit' => 'Hariri',
 'qbpageoptions' => 'Ukurasa huu',
-'qbpageinfo' => 'Muktadha',
 'qbmyoptions' => 'Kurasa zangu',
 'qbspecialpages' => 'Kurasa za pekee',
 'faq' => 'Maswali ya kawaida',
@@ -292,6 +291,7 @@ $messages = array(
 'namespaces' => 'Maeneo ya wiki',
 'variants' => 'Vibadala',
 
+'navigation-heading' => 'Urambazaji',
 'errorpagetitle' => 'Hitilafu',
 'returnto' => 'Rudia $1.',
 'tagline' => 'Kutoka {{SITENAME}}',
@@ -527,10 +527,8 @@ Sababu zilizotolewa ni "\'\'$2\'\'".',
 # Login and logout pages
 'logouttext' => "'''Umetoka kwenye akaunti yako.'''
 
-Unaweza kuendelea kutumia {{SITENAME}} bila kutaja jina lako, au unaweza [[Special:UserLogin|kuingia tena]] kwenye akaunti yako. Kumbuka kwamba kurasa nyingine zitaendelea kuonekana kana kwamba bado hujatoka kwenye akaunti yako, hadi utakaposafisha kache ya kivinjari.",
-'welcomecreation' => '== Karibu, $1! ==
-Ushafunguliwa akaunti yako tayari.
-Usisahau kubadilisha mapendekezo yako ya [[Special:Preferences|{{SITENAME}}]].',
+Unaweza kuendelea kutumia {{SITENAME}} bila kutaja jina lako, au unaweza <span class='plainlinks'>[$1 kuingia tena]</span> kwenye akaunti yako. Kumbuka kwamba kurasa nyingine zitaendelea kuonekana kana kwamba bado hujatoka kwenye akaunti yako, hadi utakaposafisha kache ya kivinjari.",
+'welcomeuser' => 'Karibu, $1!',
 'yourname' => 'Jina la mtumiaji:',
 'yourpassword' => 'Neno la siri:',
 'yourpasswordagain' => 'Andika tena neno la siri',
@@ -865,7 +863,6 @@ Rejea kumbukumbu ya mwisho inayoandikwa chini:",
 'template-protected' => '(kulindwa)',
 'template-semiprotected' => '(ulindaji kwa kiasi)',
 'hiddencategories' => 'Ukurasa huu uliomo katika jamii $1 {{PLURAL:$1|iliofichwa|zilizofichwa}}:',
-'nocreatetitle' => 'Si wote wanaoweza kuanzisha ukurasa',
 'nocreatetext' => '{{SITENAME}} imebana uwezekano kutengeneza kurasa mpya. Unaweza kurudia na kuhariri kurasa zilizomo, au [[Special:UserLogin|ingia au anza akaunti]].',
 'nocreate-loggedin' => 'Huna ruhusa ya kuanzisha ukurasa mpya.',
 'sectioneditnotsupported-title' => 'Kuhariri sehemu kwa sehemu haiwezikani',
@@ -887,6 +884,9 @@ Inaonekana kwamba ukurasa umefutwa.',
 'edit-already-exists' => 'Haikufanikiwa kuanzisha ukurasa mpya.
 Ukurasa wa jina hilo unapatikana tayari.',
 'defaultmessagetext' => 'Ujumbe uliopo',
+
+# Content models
+'content-model-javascript' => 'HatiJava',
 
 # Parser/template warnings
 'post-expand-template-inclusion-warning' => "'''Ilani:''' Kigezo kinajumlisha ukubwa uliozidi mno.
@@ -1345,11 +1345,13 @@ Taarifa hii itakuwa wazi.',
 'right-sendemail' => 'Kutuma barua-pepe kwa watumiaji wengine',
 'right-passwordreset' => 'Onesha barua pepe zinazoweka neno la siri upya',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Kumbukumbu za kuanzisha akaunti za watumiaji',
+'newuserlogpagetext' => 'Hii ni kumbukumbu ya akaunti mpya zilizosajiliwa.',
+
 # User rights log
 'rightslog' => 'Kumbukumbu za vyeo vya watumiaji',
 'rightslogtext' => 'Hii ni kumbukumbu za mabadiliko za wezo za watumiaji.',
-'rightslogentry' => 'alibadilisha wezo za $1 aliyekuwa na wezo za kundi $2 awe mwanachama wa $3',
-'rightsnone' => '(hana)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'kusoma ukurasa huu',
@@ -1922,10 +1924,6 @@ Itifaki zinazoungwa mkono: <code>$1</code> (usiongeza hizi unapotafuta).',
 'activeusers-hidesysops' => 'Ficha wakabidhi',
 'activeusers-noresult' => 'Watumiaji hawakupatikana.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Kumbukumbu za kuanzisha akaunti za watumiaji',
-'newuserlogpagetext' => 'Hii ni kumbukumbu ya akaunti mpya zilizosajiliwa.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Wezo za kundi za watumiaji',
 'listgrouprights-summary' => 'Inafuata orodha ya kundi za watumiaji wa wiki hii, pamoja na maelezo ya wezo zao za kushughulika mambo.
@@ -2024,11 +2022,7 @@ Ukitaka kufuta ukurasa huo kutoka maangalizi yako baadaye, bonyeza \"Acha kufuat
 
 'enotif_mailer' => 'Huduma ya taarifa ya barua pepe kutoka kwa {{SITENAME}}',
 'enotif_reset' => 'Weka alama kwa kurasa zote zilizotembelewa',
-'enotif_newpagetext' => 'Ukurasa huu ni mpya.',
 'enotif_impersonal_salutation' => 'Kwa mtumiaji wa {{SITENAME}}',
-'changed' => 'alibadilisha',
-'created' => 'alianzisha',
-'enotif_subject' => '$PAGEEDITOR $CHANGEDORCREATED ukurasa wa $PAGETITLE kwenye {{SITENAME}}',
 'enotif_lastvisited' => 'Tazama $1 kwa mabadiliko yote tangu ziara yako ya mwisho.',
 'enotif_lastdiff' => 'Tazama badiliko hili hapo $1.',
 'enotif_anon_editor' => 'mtumiaji bila jina $1',
@@ -2059,6 +2053,8 @@ $UNWATCHURL
 
 Kutoa maoni yako au kupata msaada mwingine:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'alianzisha',
+'changed' => 'alibadilisha',
 
 # Delete
 'deletepage' => 'Futa ukurasa',
@@ -2204,7 +2200,7 @@ $1',
 'blanknamespace' => '(Kuu)',
 
 # Contributions
-'contributions' => 'Michango ya mtumiaji',
+'contributions' => 'Michango ya {{GENDER:$1|mtumiaji}}',
 'contributions-title' => 'Michango ya mtumiaji $1',
 'mycontris' => 'Michango',
 'contribsub2' => 'Kwa $1 ($2)',
@@ -2582,8 +2578,15 @@ Tafadhali jaribu tena.',
 'pageinfo-header-properties' => 'Sifa za ukurasa',
 'pageinfo-display-title' => 'Onyesha mada',
 'pageinfo-article-id' => 'ID ya ukurasa',
+'pageinfo-language' => 'Lugha ya maudhui ya ukurasa',
 'pageinfo-watchers' => 'Idadi ya wanaofuatilia',
 'pageinfo-edits' => 'Idadi ya maharirio',
+'pageinfo-toolboxlink' => 'Maelezo ya ukurasa',
+'pageinfo-contentpage-yes' => 'Ndiyo',
+'pageinfo-protect-cascading-yes' => 'Ndiyo',
+'pageinfo-category-info' => 'Maelezo ya jamii',
+'pageinfo-category-pages' => 'Idadi ya kurasa',
+'pageinfo-category-files' => 'Idadi ya mafaili',
 
 # Image deletion
 'deletedrevision' => 'Pitio la awali lililofutwa $1',
@@ -3155,7 +3158,7 @@ Tovuti hii inapata matatatizo wakati huu.',
 'logentry-newusers-create' => '$1 alianzisha akaunti ya mtumiaji',
 'logentry-newusers-create2' => '$1 alianzisha akaunti ya mtumiaji $3',
 'logentry-newusers-autocreate' => 'Akaunti ya mtumiaji $1 ilianzishwa na mashine',
-'newuserlog-byemail' => 'neno la siri limetumwa kwa barua pepe',
+'rightsnone' => '(hana)',
 
 # Feedback
 'feedback-subject' => 'Mada:',

@@ -17,8 +17,10 @@
  * @author Alexandr Efremov
  * @author Amikeco
  * @author Amire80
+ * @author Anonim.one
  * @author Askarmuk
  * @author Assele
+ * @author Biathlon
  * @author Bouron
  * @author Chilin
  * @author Claymore
@@ -43,6 +45,7 @@
  * @author Huuchin
  * @author Ignatus
  * @author Illusion
+ * @author Iltever
  * @author Incnis Mrsi
  * @author Iniquity
  * @author Innv
@@ -57,6 +60,7 @@
  * @author Lockal
  * @author MaxBioHazard
  * @author MaxSem
+ * @author NBS
  * @author Ola
  * @author Ole Yves
  * @author Putnik
@@ -202,7 +206,6 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__ОБЯЗАТЕЛЬНОЕ_ОГЛАВЛЕНИЕ__', '__ОБЯЗ_ОГЛ__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__ОГЛАВЛЕНИЕ__', '__ОГЛ__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__БЕЗ_РЕДАКТИРОВАНИЯ_РАЗДЕЛА__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__БЕЗ_ЗАГОЛОВКА__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'ТЕКУЩИЙ_МЕСЯЦ', 'ТЕКУЩИЙ_МЕСЯЦ_2', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'ТЕКУЩИЙ_МЕСЯЦ_1', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'НАЗВАНИЕ_ТЕКУЩЕГО_МЕСЯЦА', 'CURRENTMONTHNAME' ),
@@ -534,6 +537,7 @@ $messages = array(
 'newwindow' => '(в новом окне)',
 'cancel' => 'Отменить',
 'moredotdotdot' => 'Далее…',
+'morenotlisted' => 'Больше ничего нету...',
 'mypage' => 'Страница',
 'mytalk' => 'Обсуждение',
 'anontalk' => 'Обсуждение для этого IP-адреса',
@@ -545,7 +549,6 @@ $messages = array(
 'qbbrowse' => 'Просмотреть',
 'qbedit' => 'Править',
 'qbpageoptions' => 'Настройки страницы',
-'qbpageinfo' => 'Сведения о странице',
 'qbmyoptions' => 'Ваши настройки',
 'qbspecialpages' => 'Специальные страницы',
 'faq' => 'ЧаВО',
@@ -568,6 +571,7 @@ $messages = array(
 'namespaces' => 'Пространства имён',
 'variants' => 'Варианты',
 
+'navigation-heading' => 'Навигация',
 'errorpagetitle' => 'Ошибка',
 'returnto' => 'Возврат к странице $1.',
 'tagline' => 'Материал из {{grammar:genitive|{{SITENAME}}}}',
@@ -809,10 +813,10 @@ $2',
 # Login and logout pages
 'logouttext' => "'''Вы завершили сеанс работы.'''
 
-Вы можете продолжить участие в {{grammar:genitive|{{SITENAME}}}} анонимно или [[Special:UserLogin|представиться заново]] под тем же или другим именем.
+Вы можете продолжить участие в {{grammar:genitive|{{SITENAME}}}} анонимно или <span class='plainlinks'>[$1 представиться заново]</span> под тем же или другим именем.
 Некоторые страницы могут продолжать отображаться в том виде, как будто вы всё ещё представлены системе. Для борьбы с этим явлением обновите кэш браузера.",
-'welcomecreation' => '== Добро пожаловать, $1! ==
-Ваша учётная запись создана.
+'welcomeuser' => 'Добро пожаловать, $1!',
+'welcomecreation-msg' => 'Ваша учётная запись создана.
 Не забудьте провести [[Special:Preferences|персональную настройку]] сайта {{SITENAME}}.',
 'yourname' => 'Имя учётной записи:',
 'yourpassword' => 'Пароль:',
@@ -836,7 +840,7 @@ $2',
 'gotaccount' => "Вы уже зарегистрированы? '''$1'''.",
 'gotaccountlink' => 'Представьтесь',
 'userlogin-resetlink' => 'Забыли данные для входа?',
-'createaccountmail' => 'Выслать пароль по эл. почте',
+'createaccountmail' => 'Использовать сгенерированный случайным образом временный пароль и выслать мне его на указанный ниже адрес электронной почты:',
 'createaccountreason' => 'Причина:',
 'badretype' => 'Введённые вами пароли не совпадают.',
 'userexists' => 'Введённое имя участника уже используется.
@@ -911,6 +915,7 @@ $2',
 # Email sending
 'php-mail-error-unknown' => 'Неизвестная ошибка в PHP-функции mail()',
 'user-mail-no-addy' => 'Пытался отправить электронное письмо без адреса электронной почты',
+'user-mail-no-body' => 'Пытался отправить электронное письмо с пустым или бессмысленно коротким содержанием.',
 
 # Change password dialog
 'resetpass' => 'Изменение пароля',
@@ -974,6 +979,7 @@ $2
 'changeemail-oldemail' => 'Текущий адрес электронной почты:',
 'changeemail-newemail' => 'Новый адрес электронной почты:',
 'changeemail-none' => '(нет)',
+'changeemail-password' => 'Ваш пароль для проекта «{{SITENAME}}»:',
 'changeemail-submit' => 'Изменить адрес',
 'changeemail-cancel' => 'Отмена',
 
@@ -1157,7 +1163,6 @@ $2
 'template-semiprotected' => '(частично защищено)',
 'hiddencategories' => 'Эта страница относится к $1 {{PLURAL:$1|скрытой категории|скрытым категориям}}:',
 'edittools' => '<!-- Расположенный здесь текст будет показываться под формой редактирования и формой загрузки. -->',
-'nocreatetitle' => 'Создание страниц ограничено',
 'nocreatetext' => 'На этом сайте ограничена возможность создания новых страниц.
 Вы можете вернуться назад и отредактировать существующую страницу, [[Special:UserLogin|представиться системе или создать новую учётную запись]].',
 'nocreate-loggedin' => 'У вас нет разрешения создавать новые страницы.',
@@ -1182,6 +1187,15 @@ $2
 'edit-already-exists' => 'Невозможно создать новую страницу.
 Она уже существует.',
 'defaultmessagetext' => 'Текст по умолчанию',
+'content-failed-to-parse' => 'Содержимое $2 не соответствует типу $1: $3.',
+'invalid-content-data' => 'Недопустимые данные',
+'content-not-allowed-here' => 'Содержимое "$1" недопустимо на странице [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'вики-текст',
+'content-model-text' => 'обычный текст',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''Внимание!''' Эта страница содержит слишком много вызовов ресурсоёмких функций.
@@ -1544,9 +1558,9 @@ $1",
 'prefs-emailconfirm-label' => 'Подтверждение электронной почты:',
 'prefs-textboxsize' => 'Размер окна редактирования',
 'youremail' => 'Электронная почта:',
-'username' => 'Имя учётной записи:',
-'uid' => 'Идентификатор участника:',
-'prefs-memberingroups' => 'Член {{PLURAL:$1|группы|групп}}:',
+'username' => '{{GENDER:$1|Имя участника|Имя участницы}}:',
+'uid' => 'Код {{GENDER:$1|участника|участницы}}:',
+'prefs-memberingroups' => '{{GENDER:$2|Член|Член}} {{PLURAL:$1|группы|групп}}:',
 'prefs-registration' => 'Время регистрации:',
 'yourrealname' => 'Настоящее имя:',
 'yourlanguage' => 'Язык интерфейса:',
@@ -1696,12 +1710,13 @@ $1",
 'right-sendemail' => 'отправлять электронную почту другим участникам',
 'right-passwordreset' => 'просмотр электронных писем с изменением пароля',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Журнал регистрации участников',
+'newuserlogpagetext' => 'Список недавно зарегистрировавшихся участников',
+
 # User rights log
 'rightslog' => 'Журнал прав участника',
 'rightslogtext' => 'Это журнал изменений прав участника.',
-'rightslogentry' => 'изменил членство в группах для $1 с $2 на $3',
-'rightslogentry-autopromote' => 'был автоматически переведён из $2 в $3',
-'rightsnone' => '(нет)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'чтение этой страницы',
@@ -1941,6 +1956,7 @@ $1',
 'backend-fail-notsame' => 'Уже есть неидентичный файл $1.',
 'backend-fail-invalidpath' => '$1 не является допустимым путём хранения.',
 'backend-fail-delete' => 'Не удалось удалить файл  $1.',
+'backend-fail-describe' => 'Не удалось изменить метаданные файла «$1».',
 'backend-fail-alreadyexists' => 'Файл $1 уже существует.',
 'backend-fail-store' => 'Не удалось сохранить файл $1 на $2 .',
 'backend-fail-copy' => 'Не удалось скопировать файл $1 в $2 .',
@@ -2175,6 +2191,12 @@ $1',
 Вместо этого они, вероятно, должны указывать на соответствующую конкретную страницу.<br />
 Страница считается многозначной, если на ней размещён шаблон, имя которого указано на странице [[MediaWiki:Disambiguationspage]].",
 
+'pageswithprop' => 'Страницы с переопределёнными свойствами',
+'pageswithprop-legend' => 'Страницы с переопределёнными свойствами',
+'pageswithprop-text' => 'Здесь перечислены страницы, у которых были вручную переопределены отдельные свойства.',
+'pageswithprop-prop' => 'Название свойства:',
+'pageswithprop-submit' => 'Найти',
+
 'doubleredirects' => 'Двойные перенаправления',
 'doubleredirectstext' => 'На этой странице представлен список перенаправлений на другие перенаправления.
 Каждая строка содержит ссылки на первое и второе перенаправления, а также целевую страницу второго перенаправления, в которой обычно указывается название страницы, куда должно ссылаться первое перенаправление.
@@ -2328,7 +2350,7 @@ $1',
 'linksearch-ok' => 'Найти',
 'linksearch-text' => 'Можно использовать подстановочные символы, например, <code>*.wikipedia.org</code>.
 Необходим по крайней мере домен верхнего уровня, например <code>*.org</code><br />
-Поддерживаемые протоколы: <code>$1</code> (по умолчанию подставляется http://, если протокол явно не задан).',
+Поддерживаемые {{PLURAL:$2|протокол|протоколы}}: <code>$1</code> (по умолчанию подставляется http://, если протокол явно не задан).',
 'linksearch-line' => 'Ссылка на $1 из $2',
 'linksearch-error' => 'Подстановочные символы могут использоваться только в начале адресов.',
 
@@ -2346,10 +2368,6 @@ $1',
 'activeusers-hidebots' => 'Скрыть ботов',
 'activeusers-hidesysops' => 'Скрыть администраторов',
 'activeusers-noresult' => 'Не найдено участников.',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Журнал регистрации участников',
-'newuserlogpagetext' => 'Список недавно зарегистрировавшихся участников',
 
 # Special:ListGroupRights
 'listgrouprights' => 'Права групп участников',
@@ -2447,19 +2465,23 @@ $1',
 
 'enotif_mailer' => '{{SITENAME}} Служба извещений по почте',
 'enotif_reset' => 'Отметить все страницы как просмотренные',
-'enotif_newpagetext' => 'Это новая страница.',
 'enotif_impersonal_salutation' => 'Участник {{grammar:genitive|{{SITENAME}}}}',
-'changed' => 'изменена',
-'created' => 'создана',
-'enotif_subject' => 'Страница проекта «{{SITENAME}}» $PAGETITLE была $CHANGEDORCREATED участником $PAGEEDITOR',
+'enotif_subject_deleted' => 'Страница проекта «{{SITENAME}}» с именем «$1» была удалена {{gender:$2|участником|участницей}} $2',
+'enotif_subject_created' => 'Страница проекта «{{SITENAME}}» с именем «$1» была создана {{gender:$2|участником|участницей}} $2',
+'enotif_subject_moved' => 'Страница проекта «{{SITENAME}}» с именем «$1» была переименована {{gender:$2|участником|участницей}} $2',
+'enotif_subject_restored' => 'Страница проекта «{{SITENAME}}» с именем «$1» была восстановлена {{gender:$2|участником|участницей}} $2',
+'enotif_subject_changed' => 'Страница проекта «{{SITENAME}}» с именем «$1» была изменена {{gender:$2|участником|участницей}} $2',
+'enotif_body_intro_deleted' => '$PAGEEDITDATE {{gender:$2|участником|участницей}} $2 была удалена страница проекта «{{SITENAME}}» с именем «$1», см. $3.',
+'enotif_body_intro_created' => '$PAGEEDITDATE {{gender:$2|участником|участницей}} $2 была создана страница проекта «{{SITENAME}}» с именем «$1», см. текущую версию по ссылке: $3',
+'enotif_body_intro_moved' => '$PAGEEDITDATE {{gender:$2|участником|участницей}} $2 была переименована страница проекта «{{SITENAME}}» с именем «$1», см. текущую версию по ссылке: $3',
+'enotif_body_intro_restored' => '$PAGEEDITDATE {{gender:$2|участником|участницей}} $2 была восстановлена страница проекта «{{SITENAME}}» с именем «$1», см. текущую версию по ссылке: $3',
+'enotif_body_intro_changed' => '$PAGEEDITDATE {{gender:$2|участником|участницей}} $2 была изменена страница проекта «{{SITENAME}}» с именем «$1», см. текущую версию по ссылке: $3',
 'enotif_lastvisited' => 'См. $1 для просмотра всех изменений, произошедших с вашего последнего посещения.',
 'enotif_lastdiff' => 'См. $1 для ознакомления с изменением.',
 'enotif_anon_editor' => 'анонимный участник $1',
-'enotif_body' => 'Уважаемый(ая) $WATCHINGUSERNAME,
+'enotif_body' => 'Здравствуйте, $WATCHINGUSERNAME!
 
-$PAGEEDITDATE страница проекта «{{SITENAME}}» $PAGETITLE была $CHANGEDORCREATED участником $PAGEEDITOR, см. $PAGETITLE_URL для просмотра текущей версии.
-
-$NEWPAGE
+$PAGEINTRO $NEWPAGE
 
 Краткое описание изменения: $PAGESUMMARY $PAGEMINOREDIT
 
@@ -2467,8 +2489,7 @@ $NEWPAGE
 эл. почта: $PAGEEDITOR_EMAIL
 вики: $PAGEEDITOR_WIKI
 
-Если вы не посетите эту страницу, то в случае её дальнейших изменений уведомлений больше не будет.
-Вы можете также отключить опцию уведомления для всех страниц в вашем списке наблюдения.
+Если вы не посетите эту страницу, то в случае её дальнейших изменений уведомлений больше не будет. Вы можете также отключить опцию уведомления для всех страниц в вашем списке наблюдения.
 
              Система оповещения {{grammar:genitive|{{SITENAME}}}}
 
@@ -2484,6 +2505,8 @@ $UNWATCHURL
 
 Обратная связь и помощь
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'создана',
+'changed' => 'изменена',
 
 # Delete
 'deletepage' => 'Удалить страницу',
@@ -2554,6 +2577,8 @@ $UNWATCHURL
 'prot_1movedto2' => '[[$1]] переименована в [[$2]]',
 'protect-badnamespace-title' => 'Незащищаемое пространство имён',
 'protect-badnamespace-text' => 'Страницы в этом пространстве имён не могут быть защищены.',
+'protect-norestrictiontypes-text' => 'Эта страница не может быть защищена, как как для неё нет доступных типов ограничений.',
+'protect-norestrictiontypes-title' => 'Незащищаемая страница',
 'protect-legend' => 'Подтвердите установку защиты страницы',
 'protectcomment' => 'Причина:',
 'protectexpiry' => 'Истекает:',
@@ -2634,7 +2659,8 @@ $UNWATCHURL
 'undeletedrevisions' => '$1 {{PLURAL:$1|изменение|изменения|изменений}} восстановлено',
 'undeletedrevisions-files' => '$1 {{PLURAL:$1|версия|версии|версий}} и $2 {{PLURAL:$2|файл|файла|файлов}} восстановлено',
 'undeletedfiles' => '$1 {{PLURAL:$1|файл восстановлен|файла восстановлено|файлов восстановлено}}',
-'cannotundelete' => 'Ошибка восстановления. Возможно, кто-то другой уже восстановил страницу.',
+'cannotundelete' => 'Ошибка восстановления:
+$1',
 'undeletedpage' => "'''Страница «$1» была восстановлена.'''
 
 Для просмотра списка последних удалений и восстановлений см. [[Special:Log/delete|журнал удалений]].",
@@ -2665,7 +2691,7 @@ $1',
 'blanknamespace' => '(основное)',
 
 # Contributions
-'contributions' => 'Вклад участника',
+'contributions' => 'Вклад {{GENDER:$1|участника|участницы}}',
 'contributions-title' => 'Вклад {{GENDER:$1|участника|участницы}} $1',
 'mycontris' => 'Вклад',
 'contribsub2' => 'Вклад $1 ($2)',
@@ -2938,6 +2964,7 @@ $1',
 'immobile-target-namespace-iw' => 'Ссылка интервики не может быть использована для переименования.',
 'immobile-source-page' => 'Эту страницу нельзя переименовать.',
 'immobile-target-page' => 'Нельзя присвоить странице это имя.',
+'bad-target-model' => 'Невозможно преобразовать $1 в $2: несовместимые модели данных.',
 'imagenocrossnamespace' => 'Невозможно дать файлу имя из другого пространства имён',
 'nonfile-cannot-move-to-file' => 'Невозможно переименовывать страницы в файлы',
 'imagetypemismatch' => 'Новое расширение файла не соответствует его типу',
@@ -3048,6 +3075,7 @@ $1',
 'import-error-interwiki' => 'Страница «$1» не была импортирована, так как её название зарезервировано для внешних ссылок (интервики).',
 'import-error-special' => 'Страница «$1» не была импортирована, так как она относится к особому пространству имён, не позволяющему создавать страницы.',
 'import-error-invalid' => 'Страница «$1» не была импортирована из-за недопустимого названия.',
+'import-error-unserialize' => 'Версия $2 страницы «$1» не может быть структурирована (десериализована). Получено сообщение, что в этой версии использована модель содержимого $3,  сериализуемая в формате $4.',
 'import-options-wrong' => '{{PLURAL:$2|Неверная опция|Неверные опции}}: <nowiki>$1</nowiki>',
 'import-rootpage-invalid' => 'Указанное название корневой страницы некорректно.',
 'import-rootpage-nosubpage' => 'В пространстве имён указанной корневой страницы «$1» подстраницы запрещены.',
@@ -3062,7 +3090,6 @@ $1',
 
 # JavaScriptTest
 'javascripttest' => 'Проверка JavaScript',
-'javascripttest-disabled' => 'Эта функция отключена в этой вики.',
 'javascripttest-title' => 'Проводится проверка $1',
 'javascripttest-pagetext-noframework' => 'Эта страница зарезервирована для запуска JavaScript-тестов.',
 'javascripttest-pagetext-unknownframework' => 'Неизвестная среда тестирования «$1».',
@@ -3212,11 +3239,13 @@ The wiki server can't provide data in a format your client can read.",
 'pageinfo-default-sort' => 'Ключ сортировки по умолчанию',
 'pageinfo-length' => 'Длина страницы (в байтах)',
 'pageinfo-article-id' => 'Идентификатор страницы',
+'pageinfo-language' => 'Язык страницы',
 'pageinfo-robot-policy' => 'Индексация поисковыми службами',
 'pageinfo-robot-index' => 'Индексируется',
 'pageinfo-robot-noindex' => 'Не индексируется',
 'pageinfo-views' => 'Количество просмотров',
 'pageinfo-watchers' => 'Число наблюдающих',
+'pageinfo-few-watchers' => 'Менее $1 {{PLURAL:$1|следящего|следящих}}',
 'pageinfo-redirects-name' => 'Перенаправления на эту страницу',
 'pageinfo-redirects-value' => '$1',
 'pageinfo-subpages-name' => 'Подстраницы данной страницы',
@@ -3232,6 +3261,19 @@ The wiki server can't provide data in a format your client can read.",
 'pageinfo-magic-words' => '{{PLURAL:$1|Магическое слово|Магические слова}} ($1)',
 'pageinfo-hidden-categories' => '{{PLURAL:$1|Скрытая категория|Скрытых категорий}} ($1)',
 'pageinfo-templates' => '{{PLURAL:$1|Шаблон|Шаблонов}} ($1)',
+'pageinfo-transclusions' => '{{PLURAL:$1|Включаемые страницы|Включаемых страниц}} ($1)',
+'pageinfo-toolboxlink' => 'Сведения о странице',
+'pageinfo-redirectsto' => 'Перенаправление',
+'pageinfo-redirectsto-info' => 'сведения',
+'pageinfo-contentpage' => 'Учитывается счётчиком как содержательная страница',
+'pageinfo-contentpage-yes' => 'Да',
+'pageinfo-protect-cascading' => 'Каскадная защита отсюда',
+'pageinfo-protect-cascading-yes' => 'Да',
+'pageinfo-protect-cascading-from' => 'Каскадная защита от',
+'pageinfo-category-info' => 'Информация о категории',
+'pageinfo-category-pages' => 'Количество страниц',
+'pageinfo-category-subcats' => 'Количество подкатегорий',
+'pageinfo-category-files' => 'Количество файлов',
 
 # Skin names
 'skinname-standard' => 'Классическое',
@@ -3253,6 +3295,8 @@ The wiki server can't provide data in a format your client can read.",
 'markedaspatrollederror' => 'Невозможно отметить как проверенную',
 'markedaspatrollederrortext' => 'Вы должны указать версию, которая будет отмечена как проверенная.',
 'markedaspatrollederror-noautopatrol' => 'Вам не разрешено отмечать собственные правки как проверенные.',
+'markedaspatrollednotify' => 'Это изменение на странице «$1» было отмечено как проверенное.',
+'markedaspatrollederrornotify' => 'Отметить изменение как проверенное не удалось.',
 
 # Patrol log
 'patrol-log-page' => 'Журнал патрулирования',
@@ -3287,6 +3331,7 @@ $1',
 'file-nohires' => 'Нет версии с бо́льшим разрешением.',
 'svg-long-desc' => 'SVG-файл, номинально $1 × $2 {{PLURAL:$2|пиксель|пикселя|пикселей}}, размер файла: $3',
 'svg-long-desc-animated' => 'Анимированный SVG-файл, номинально $1 × $2 {{PLURAL:$2|пиксель|пикселя|пикселей}}, размер файла: $3',
+'svg-long-error' => 'неправильный SVG-файл: $1',
 'show-big-image' => 'Изображение в более высоком разрешении',
 'show-big-image-preview' => 'Размер при предпросмотре: $1.',
 'show-big-image-other' => '{{PLURAL:$2|Другое разрешение|Другие разрешения}}: $1.',
@@ -3321,7 +3366,10 @@ $1',
 'minutes' => '{{PLURAL:$1|$1 минута|$1 минуты|$1 минут}}',
 'hours' => '{{PLURAL:$1|$1 час|$1 часа|$1 часов}}',
 'days' => '{{PLURAL:$1|$1 день|$1 дня|$1 дней}}',
+'months' => '{{PLURAL:$1|$1 месяц|$1 месяца|$1 месяцев}}',
+'years' => '{{PLURAL:$1|$1 год|$1 года|$1 лет}}',
 'ago' => '$1 назад',
+'just-now' => 'только что',
 
 # Bad image list
 'bad_image_list' => 'Формат должен быть следующим:
@@ -3826,6 +3874,7 @@ $5
 # Scary transclusion
 'scarytranscludedisabled' => '[Интервики-включение отключено]',
 'scarytranscludefailed' => '[Ошибка обращения к шаблону $1]',
+'scarytranscludefailed-httpstatus' => '[Не удалось загрузить шаблон для $1: HTTP $2]',
 'scarytranscludetoolong' => '[Слишком длинный URL]',
 
 # Delete conflict
@@ -4011,6 +4060,7 @@ $5
 'version-license' => 'Лицензия',
 'version-poweredby-credits' => "Эта вики работает на движке '''[//www.mediawiki.org/ MediaWiki]''', copyright © 2001-$1 $2.",
 'version-poweredby-others' => 'другие',
+'version-credits-summary' => 'Хотим поблагодарить следующих участников за их вклад в развитие [[Special:Version|MediaWiki]].',
 'version-license-info' => 'MediaWiki является свободным программным обеспечением, которое вы можете распространять и/или изменять в соответствии с условиями лицензии GNU General Public License, опубликованной фондом свободного программного обеспечения; второй версии, либо любой более поздней версии.
 
 MediaWiki распространяется в надежде, что она будет полезной, но БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, даже без подразумеваемых гарантий КОММЕРЧЕСКОЙ ЦЕННОСТИ или ПРИГОДНОСТИ ДЛЯ ОПРЕДЕЛЕННОЙ ЦЕЛИ. См. лицензию GNU General Public License для более подробной информации.
@@ -4128,16 +4178,16 @@ MediaWiki распространяется в надежде, что она бу
 
 # New logging system
 'logentry-delete-delete' => '$1 {{GENDER:$2|удалил|удалила}} страницу $3',
-'logentry-delete-restore' => '$1 {{GENDER:$1|восстановил|восстановила}} страницу $3',
-'logentry-delete-event' => '$1 {{GENDER:$1|изменил|изменила}} видимость {{PLURAL:$5|$5 записи|$5 записей}} журнала на $3: $4',
-'logentry-delete-revision' => '$1 {{GENDER:$1|изменил|изменила}} видимость {{PLURAL:$5|$5 версии|$5 версий}} на странице $3: $4',
-'logentry-delete-event-legacy' => '$1 {{GENDER:$1|изменил|изменила}} видимость записей журнала $3',
-'logentry-delete-revision-legacy' => '$1 {{GENDER:$1|изменил|изменила}} видимость версий на странице $3',
-'logentry-suppress-delete' => '$1 {{GENDER:$1|подавил|подавила}} страницу $3',
-'logentry-suppress-event' => '$1 скрытно {{GENDER:$1|изменил|изменила}} видимость {{PLURAL:$5|$5 записи|$5 записей}} журнала на $3: $4',
-'logentry-suppress-revision' => '$1 скрытно {{GENDER:$1|изменил|изменила}} видимость {{PLURAL:$5|$5 версии|$5 версий}} на странице $3: $4',
-'logentry-suppress-event-legacy' => '$1 скрытно {{GENDER:$1|изменил|изменила}} видимость записей журнала $3',
-'logentry-suppress-revision-legacy' => '$1 скрытно {{GENDER:$1|изменил|изменила}} видимость версий на странице $3',
+'logentry-delete-restore' => '$1 {{GENDER:$2|восстановил|восстановила}} страницу $3',
+'logentry-delete-event' => '$1 {{GENDER:$2|изменил|изменила}} видимость {{PLURAL:$5|$5 записи|$5 записей}} журнала на $3: $4',
+'logentry-delete-revision' => '$1 {{GENDER:$2|изменил|изменила}} видимость {{PLURAL:$5|$5 версии|$5 версий}} на странице $3: $4',
+'logentry-delete-event-legacy' => '$1 {{GENDER:$2|изменил|изменила}} видимость записей журнала $3',
+'logentry-delete-revision-legacy' => '$1 {{GENDER:$2|изменил|изменила}} видимость версий на странице $3',
+'logentry-suppress-delete' => '$1 {{GENDER:$2|подавил|подавила}} страницу $3',
+'logentry-suppress-event' => '$1 скрытно {{GENDER:$2|изменил|изменила}} видимость {{PLURAL:$5|$5 записи|$5 записей}} журнала на $3: $4',
+'logentry-suppress-revision' => '$1 скрытно {{GENDER:$2|изменил|изменила}} видимость {{PLURAL:$5|$5 версии|$5 версий}} на странице $3: $4',
+'logentry-suppress-event-legacy' => '$1 скрытно {{GENDER:$2|изменил|изменила}} видимость записей журнала $3',
+'logentry-suppress-revision-legacy' => '$1 скрытно {{GENDER:$2|изменил|изменила}} видимость версий на странице $3',
 'revdelete-content-hid' => 'содержание скрыто',
 'revdelete-summary-hid' => 'описание правки скрыто',
 'revdelete-uname-hid' => 'имя участника скрыто',
@@ -4146,17 +4196,21 @@ MediaWiki распространяется в надежде, что она бу
 'revdelete-uname-unhid' => 'имя участника раскрыто',
 'revdelete-restricted' => 'ограничения применяются к администраторам',
 'revdelete-unrestricted' => 'ограничения сняты для администраторов',
-'logentry-move-move' => '$1 {{GENDER:$1|переименовал|переименовала}} страницу $3 в $4',
-'logentry-move-move-noredirect' => '$1 {{GENDER:$1|переименовал|переименовала}} страницу $3 в $4 без оставления перенаправления',
-'logentry-move-move_redir' => '$1 {{GENDER:$1|переименовал|переименовала}} страницу $3 в $4 поверх перенаправления',
-'logentry-move-move_redir-noredirect' => '$1 {{GENDER:$1|переименовал|переименовала}} страницу $3 в $4 поверх перенаправления и без оставления перенаправления',
-'logentry-patrol-patrol' => '$1 {{GENDER:$1|отпатрулировал|отпатрулировала}} версию $4 страницы $3',
-'logentry-patrol-patrol-auto' => '$1 автоматически {{GENDER:$1|отпатрулировал|отпатрулировала}} версию $4 страницы $3',
-'logentry-newusers-newusers' => 'Создана учётная запись $1',
-'logentry-newusers-create' => 'Создана учётная запись $1',
-'logentry-newusers-create2' => '$1 {{GENDER:$2|создал|создала}} учётную запись для $3',
-'logentry-newusers-autocreate' => 'Автоматически создана учётная запись $1',
-'newuserlog-byemail' => 'пароль отправлен по эл. почте',
+'logentry-move-move' => '$1 {{GENDER:$2|переименовал|переименовала}} страницу $3 в $4',
+'logentry-move-move-noredirect' => '$1 {{GENDER:$2|переименовал|переименовала}} страницу $3 в $4 без оставления перенаправления',
+'logentry-move-move_redir' => '$1 {{GENDER:$2|переименовал|переименовала}} страницу $3 в $4 поверх перенаправления',
+'logentry-move-move_redir-noredirect' => '$1 {{GENDER:$2|переименовал|переименовала}} страницу $3 в $4 поверх перенаправления и без оставления перенаправления',
+'logentry-patrol-patrol' => '$1 {{GENDER:$2|отпатрулировал|отпатрулировала}} версию $4 страницы $3',
+'logentry-patrol-patrol-auto' => '$1 автоматически {{GENDER:$2|отпатрулировал|отпатрулировала}} версию $4 страницы $3',
+'logentry-newusers-newusers' => '{{GENDER:$2|Участник создал|Участница создала}} учётную запись $1',
+'logentry-newusers-create' => '{{GENDER:$2|Участник создал|Участница создала}} учётную запись $1',
+'logentry-newusers-create2' => '$1 {{GENDER:$2|создал|создала}} учётную запись $3',
+'logentry-newusers-byemail' => '$1 {{GENDER:$2|создал|создала}} учётную запись $3 и пароль был отправлен по электронной почте',
+'logentry-newusers-autocreate' => 'Автоматически создана учётная запись {{GENDER:$2|участника|участницы}} $1',
+'logentry-rights-rights' => '$1 {{GENDER:$2|изменил|изменила}} членство в группах для $3 с $4 на $5',
+'logentry-rights-rights-legacy' => '$1 {{GENDER:$2|изменил|изменила}} членство в группах для $3',
+'logentry-rights-autopromote' => '$1 был{{GENDER:$2||а}} автоматически переведен{{GENDER:$2||а}} из $4 в $5',
+'rightsnone' => '(нет)',
 
 # Feedback
 'feedback-bugornote' => 'Если вы готовы подробно описать техническую проблему, пожалуйста, [$1 сообщите об ошибке].
@@ -4210,6 +4264,7 @@ MediaWiki распространяется в надежде, что она бу
 'api-error-ok-but-empty' => 'Внутренняя ошибка: нет ответа от сервера.',
 'api-error-overwrite' => 'Не допускается замена существующего файла.',
 'api-error-stashfailed' => 'Внутренняя ошибка: сервер не смог сохранить временный файл.',
+'api-error-publishfailed' => 'Внутренняя ошибка: сервер не смог сохранить временный файл.',
 'api-error-timeout' => 'Сервер не отвечает в течение ожидаемого времени.',
 'api-error-unclassified' => 'Произошла неизвестная ошибка',
 'api-error-unknown-code' => 'Неизвестная ошибка: «$1»',
@@ -4229,5 +4284,8 @@ MediaWiki распространяется в надежде, что она бу
 'duration-decades' => '$1 {{PLURAL:$1|десятилетие|десятилетия|десятилетий}}',
 'duration-centuries' => '$1 {{PLURAL:$1|век|века|веков}}',
 'duration-millennia' => '$1 {{PLURAL:$1|тысячелетие|тысячелетия|тысячелетий}}',
+
+# Image rotation
+'rotate-comment' => 'Изображение повёрнуто на $1 градус{{PLURAL:$1||а|ов}} по часовой стрелке',
 
 );

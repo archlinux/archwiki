@@ -21,7 +21,6 @@
  * @ingroup Database
  */
 
-
 /**
  * A multi-wiki, multi-master factory for Wikimedia and similar installations.
  * Ignores the old configuration globals
@@ -70,6 +69,7 @@ class LBFactory_Multi extends LBFactory {
 
 	/**
 	 * @param $conf array
+	 * @throws MWException
 	 */
 	function __construct( $conf ) {
 		$this->chronProt = new ChronologyProtector;
@@ -82,7 +82,7 @@ class LBFactory_Multi extends LBFactory {
 
 		foreach ( $required as $key ) {
 			if ( !isset( $conf[$key] ) ) {
-				throw new MWException( __CLASS__.": $key is required in configuration" );
+				throw new MWException( __CLASS__ . ": $key is required in configuration" );
 			}
 			$this->$key = $conf[$key];
 		}
@@ -153,13 +153,14 @@ class LBFactory_Multi extends LBFactory {
 	}
 
 	/**
-	 * @param $cluster
-	 * @param $wiki
+	 * @param string $cluster
+	 * @param bool $wiki
+	 * @throws MWException
 	 * @return LoadBalancer
 	 */
 	function newExternalLB( $cluster, $wiki = false ) {
 		if ( !isset( $this->externalLoads[$cluster] ) ) {
-			throw new MWException( __METHOD__.": Unknown cluster \"$cluster\"" );
+			throw new MWException( __METHOD__ . ": Unknown cluster \"$cluster\"" );
 		}
 		$template = $this->serverTemplate;
 		if ( isset( $this->externalTemplateOverrides ) ) {

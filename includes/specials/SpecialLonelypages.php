@@ -44,7 +44,10 @@ class LonelyPagesPage extends PageQueryPage {
 	function isExpensive() {
 		return true;
 	}
-	function isSyndicated() { return false; }
+
+	function isSyndicated() {
+		return false;
+	}
 
 	function getQueryInfo() {
 		return array (
@@ -77,5 +80,9 @@ class LonelyPagesPage extends PageQueryPage {
 		} else {
 			return array( 'page_title' );
 		}
+	}
+
+	protected function getGroupName() {
+		return 'maintenance';
 	}
 }

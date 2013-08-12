@@ -55,8 +55,9 @@ class ConfirmEditHooks {
 		return self::getInstance()->confirmEmailUser( $from, $to, $subject, $text, $error );
 	}
 
-	public static function APIGetAllowedParams( &$module, &$params ) {
-		return self::getInstance()->APIGetAllowedParams( $module, $params );
+	// Default $flags to 1 for backwards-compatible behavior
+	public static function APIGetAllowedParams( &$module, &$params, $flags = 1 ) {
+		return self::getInstance()->APIGetAllowedParams( $module, $params, $flags );
 	}
 
 	public static function APIGetParamDescription( &$module, &$desc ) {

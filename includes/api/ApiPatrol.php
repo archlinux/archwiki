@@ -30,10 +30,6 @@
  */
 class ApiPatrol extends ApiBase {
 
-	public function __construct( $main, $action ) {
-		parent::__construct( $main, $action );
-	}
-
 	/**
 	 * Patrols the article or provides the reason the patrol failed.
 	 */
@@ -119,9 +115,5 @@ class ApiPatrol extends ApiBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Patrol';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

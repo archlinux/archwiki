@@ -34,9 +34,17 @@ class ListredirectsPage extends QueryPage {
 		parent::__construct( $name );
 	}
 
-	function isExpensive() { return true; }
-	function isSyndicated() { return false; }
-	function sortDescending() { return false; }
+	function isExpensive() {
+		return true;
+	}
+
+	function isSyndicated() {
+		return false;
+	}
+
+	function sortDescending() {
+		return false;
+	}
 
 	function getQueryInfo() {
 		return array(
@@ -77,7 +85,7 @@ class ListredirectsPage extends QueryPage {
 		$batch->execute();
 
 		// Back to start for display
-		if ( $db->numRows( $res ) > 0 ) {
+		if ( $res->numRows() > 0 ) {
 			// If there are no rows we get an error seeking.
 			$db->dataSeek( $res, 0 );
 		}
@@ -117,5 +125,9 @@ class ListredirectsPage extends QueryPage {
 		} else {
 			return "<del>$rd_link</del>";
 		}
+	}
+
+	protected function getGroupName() {
+		return 'pages';
 	}
 }

@@ -230,7 +230,6 @@ $messages = array(
 'qbbrowse' => 'Farura',
 'qbedit' => 'Betara',
 'qbpageoptions' => 'Ikatcuksbu',
-'qbpageinfo' => 'Givabu',
 'qbmyoptions' => 'Jinaf ikatcukseem',
 'qbspecialpages' => 'Aptaf bueem',
 'faq' => 'NEB',
@@ -445,8 +444,6 @@ Batdume : ''$2''.",
 # Login and logout pages
 'logouttext' => 'Rin daletoe til solgluyanaf.
 Rin va {{SITENAME}} yoltiskon ware rofavel oke, bifoton kan ar yolt, va int toldogluyal.',
-'welcomecreation' => '<h2>Til drumbaf, $1!</h2><p>Rinaf favesikpata su zo redur.
-Me vulkul da rupeson va "Lodamaceem" bu va intaf {{SITENAME}} rotuilkal.',
 'yourname' => 'Rinaf favesikyolt',
 'yourpassword' => 'Rinaf remravlem',
 'yourpasswordagain' => 'Va rinaf remravlem tolon bazel',
@@ -662,7 +659,6 @@ Rin dere abdiplekul da va webeks miv suteyel ike mal sangiskafa ok gundafa nuyaf
 'template-protected' => '(nendana)',
 'template-semiprotected' => '(nendamana)',
 'hiddencategories' => 'Batu bu tir bewafu gu {{PLURAL:$1|1 palsena loma|$1 palsena loma}}:',
-'nocreatetitle' => 'Irutana buredura',
 'nocreatetext' => '{{SITENAME}} va roredura va warzafu bu irutar.
 Rodimal aze va tisu bu robetal oke [[Special:UserLogin|va int rodogluyal oke ropataredul]].',
 'nocreate-loggedin' => 'Rin va warzafu bu me ronoredul.',
@@ -1039,10 +1035,12 @@ Rinafe e-mail mane me zo razdar viele ar webesik uzerar.',
 'right-userrights-interwiki' => "Betara va favesikrokeem koe aro 'wiki' xo",
 'right-siteadmin' => 'Origakelekara is dimelekara',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Buredura "log"',
+
 # User rights log
 'rightslog' => '"Log" bu va favesikrokeem',
 'rightslogtext' => 'Tir "log" va betara va favesikroka.',
-'rightsnone' => '(mek)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'Redura va batu bu',
@@ -1418,9 +1416,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-submit' => 'Nedira',
 'listusers-noresult' => 'Mek trasiyin favesik.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Buredura "log"',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Rokeem ke favesiklospa',
 'listgrouprights-group' => 'Lospa',
@@ -1493,11 +1488,7 @@ Ta sulara va batu bu div rinafi suzdasiki, koe grablexo va « Mea suzdá » vule
 
 'enotif_mailer' => '{{SITENAME}} Kowalzesi Staksasiki',
 'enotif_reset' => 'Va kotu woranu bu tcalar',
-'enotif_newpagetext' => 'Batcoba tir warzafu bu',
 'enotif_impersonal_salutation' => '{{SITENAME}} favesik',
-'changed' => 'betayan',
-'created' => 'reduyun',
-'enotif_subject' => '{{SITENAME}} bu $PAGETITLE su zo $CHANGEDORCREATED gan $PAGEEDITOR',
 'enotif_lastvisited' => 'Va $1 disukel ta da va kot betaks mali ironokafa worara wil.',
 'enotif_lastdiff' => 'Ta wira va bat betaks va $1 disukel.',
 'enotif_anon_editor' => '$1 yoltiskaf favesik',
@@ -1525,6 +1516,8 @@ To change your watchlist settings, visit
 
 Feedback and further assistance:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'reduyun',
+'changed' => 'betayan',
 
 # Delete
 'deletepage' => 'Busulara',
@@ -2392,6 +2385,6 @@ This confirmation code will expire at $4.',
 # New logging system
 'revdelete-restricted' => 'irutara rewana pu ristusik',
 'revdelete-unrestricted' => 'irutara tiolteyena pu ristusik',
-'newuserlog-byemail' => 'remravlem staksayan kan e-mail',
+'rightsnone' => '(mek)',
 
 );

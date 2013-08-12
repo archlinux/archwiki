@@ -7,7 +7,25 @@
  * @author Niklas Laxstrom, Tim Starling
  *
  * @copyright Copyright © 2010-2012, Niklas Laxström
- * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0
+ * or later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ *
  * @file
  * @since 1.20
  */
@@ -81,6 +99,7 @@ class CLDRPluralRuleEvaluator {
 	 * @param $token string The token string
 	 * @param $left The left operand. If it is an object, its state may be destroyed.
 	 * @param $right The right operand
+	 * @throws CLDRPluralRuleError
 	 * @return mixed
 	 */
 	private static function doOperation( $token, $left, $right ) {
@@ -131,7 +150,7 @@ class CLDRPluralRuleEvaluator {
  * Evaluator helper class representing a range list.
  */
 class CLDRPluralRuleEvaluator_Range {
-	var $parts = array();
+	public $parts = array();
 
 	function __construct( $start, $end = false ) {
 		if ( $end === false ) {
@@ -208,9 +227,9 @@ class CLDRPluralRuleEvaluator_Range {
  * Helper class for converting rules to reverse polish notation (RPN).
  */
 class CLDRPluralRuleConverter {
-	var $rule, $pos, $end;
-	var $operators = array();
-	var $operands = array();
+	public $rule, $pos, $end;
+	public $operators = array();
+	public $operands = array();
 
 	/**
 	 * Precedence levels. Note that there's no need to worry about associativity
@@ -447,7 +466,7 @@ class CLDRPluralRuleConverter {
  * The base class for operators and expressions, describing a region of the input string.
  */
 class CLDRPluralRuleConverter_Fragment {
-	var $parser, $pos, $length, $end;
+	public $parser, $pos, $length, $end;
 
 	function __construct( $parser, $pos, $length ) {
 		$this->parser = $parser;
@@ -473,7 +492,7 @@ class CLDRPluralRuleConverter_Fragment {
  * validation.
  */
 class CLDRPluralRuleConverter_Expression extends CLDRPluralRuleConverter_Fragment {
-	var $type, $rpn;
+	public $type, $rpn;
 
 	function __construct( $parser, $type, $rpn, $pos, $length ) {
 		parent::__construct( $parser, $pos, $length );
@@ -498,7 +517,7 @@ class CLDRPluralRuleConverter_Expression extends CLDRPluralRuleConverter_Fragmen
  * messages), and the binary operator at that location.
  */
 class CLDRPluralRuleConverter_Operator extends CLDRPluralRuleConverter_Fragment {
-	var $name;
+	public $name;
 
 	/**
 	 * Each op type has three characters: left operand type, right operand type and result type

@@ -120,7 +120,7 @@ class LegacyTemplate extends BaseTemplate {
 		}
 
 		$s .= "\n<div id='content'>\n<div id='topbar'>\n" .
-		  "<table cellspacing='0' width='100%'>\n<tr>\n";
+			"<table cellspacing='0' style='width: 100%;'>\n<tr>\n";
 
 		if ( $this->getSkin()->qbSetting() == 0 ) {
 			$s .= "<td class='top' style='text-align: left; vertical-align: top;' rowspan='{$rows}'>\n" .
@@ -179,10 +179,10 @@ class LegacyTemplate extends BaseTemplate {
 		$search = $wgRequest->getText( 'search' );
 
 		$s = '<form id="searchform' . $this->searchboxes . '" name="search" class="inline" method="post" action="'
-		  . $this->getSkin()->escapeSearchLink() . "\">\n"
-		  . '<input type="text" id="searchInput' . $this->searchboxes . '" name="search" size="19" value="'
-		  . htmlspecialchars( substr( $search, 0, 256 ) ) . "\" />\n"
-		  . '<input type="submit" name="go" value="' . wfMessage( 'searcharticle' )->text() . '" />';
+			. $this->getSkin()->escapeSearchLink() . "\">\n"
+			. '<input type="text" id="searchInput' . $this->searchboxes . '" name="search" size="19" value="'
+			. htmlspecialchars( substr( $search, 0, 256 ) ) . "\" />\n"
+			. '<input type="submit" name="go" value="' . wfMessage( 'searcharticle' )->text() . '" />';
 
 		if ( $wgUseTwoButtonsSearchForm ) {
 			$s .= '&#160;<input type="submit" name="fulltext" value="' . wfMessage( 'searchbutton' )->text() . "\" />\n";
@@ -253,7 +253,7 @@ class LegacyTemplate extends BaseTemplate {
 		$lang = $title->getPageLanguage();
 		$variants = $lang->getVariants();
 
-		if ( !$wgDisableLangConversion && sizeof( $variants ) > 1
+		if ( !$wgDisableLangConversion && count( $variants ) > 1
 			&& !$title->isSpecialPage() ) {
 			foreach ( $variants as $code ) {
 				$varname = $lang->getVariantname( $code );
@@ -263,7 +263,7 @@ class LegacyTemplate extends BaseTemplate {
 				}
 				$s = $wgLang->pipeList( array(
 					$s,
-					'<a href="' . htmlspecialchars( $title->getLocalURL( 'variant=' . $code ) ) . '" lang="' . $code . '" hreflang="' . $code .  '">' . htmlspecialchars( $varname ) . '</a>'
+					'<a href="' . htmlspecialchars( $title->getLocalURL( 'variant=' . $code ) ) . '" lang="' . $code . '" hreflang="' . $code . '">' . htmlspecialchars( $varname ) . '</a>'
 				) );
 			}
 		}
@@ -345,7 +345,7 @@ class LegacyTemplate extends BaseTemplate {
 					$s .= $this->deleteThisPage();
 				}
 
-				if ( $wgUser->isAllowed( 'protect' ) ) {
+				if ( $wgUser->isAllowed( 'protect' ) && $title->getRestrictionTypes() ) {
 					$s .= $sep . $this->protectThisPage();
 				}
 
@@ -553,7 +553,7 @@ class LegacyTemplate extends BaseTemplate {
 	 */
 	function getQuickbarCompensator( $rows = 1 ) {
 		wfDeprecated( __METHOD__, '1.19' );
-		return "<td width='152' rowspan='{$rows}'>&#160;</td>";
+		return "<td style='width: 152px;' rowspan='{$rows}'>&#160;</td>";
 	}
 
 	function editThisPage() {
@@ -610,7 +610,7 @@ class LegacyTemplate extends BaseTemplate {
 		$diff = $wgRequest->getVal( 'diff' );
 		$title = $this->getSkin()->getTitle();
 
-		if ( $title->getArticleID() && ( ! $diff ) && $wgUser->isAllowed( 'protect' ) ) {
+		if ( $title->getArticleID() && ( ! $diff ) && $wgUser->isAllowed( 'protect' ) && $title->getRestrictionTypes() ) {
 			if ( $title->isProtected() ) {
 				$text = wfMessage( 'unprotectthispage' )->text();
 				$query = array( 'action' => 'unprotect' );
@@ -786,7 +786,7 @@ class LegacyTemplate extends BaseTemplate {
 			return '';
 		}
 
-		# __NEWSECTIONLINK___ changes behaviour here
+		# __NEWSECTIONLINK___ changes behavior here
 		# If it is present, the link points to this page, otherwise
 		# it points to the talk page
 		if ( !$title->isTalkPage() && !$wgOut->showNewSectionLink() ) {

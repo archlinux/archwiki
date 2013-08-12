@@ -16,6 +16,44 @@
 
 $fallback = 'de';
 
+$namespaceNames = array(
+	NS_MEDIA            => 'Medium',
+	NS_SPECIAL          => 'Schbezial',
+	NS_TALK             => 'Babble',
+	NS_USER             => 'Benudzer',
+	NS_USER_TALK        => 'Benudzer_Dischbediere',
+	NS_PROJECT_TALK     => '$1_Dischbediere',
+	NS_FILE             => 'Dadai',
+	NS_FILE_TALK        => 'Dadai_Dischbediere',
+	NS_MEDIAWIKI        => 'MediaWiki',
+	NS_MEDIAWIKI_TALK   => 'MediaWiki_Dischbediere',
+	NS_TEMPLATE         => 'Vorlach',
+	NS_TEMPLATE_TALK    => 'Vorlach_Dischbediere',
+	NS_HELP             => 'Hilf',
+	NS_HELP_TALK        => 'Hilf_Dischbediere',
+	NS_CATEGORY         => 'Kadegorie',
+	NS_CATEGORY_TALK    => 'Kadegorie_Dischbediere',
+);
+
+$namespaceAliases = array(
+	# German namespaces
+	'Medium'               => NS_MEDIA,
+	'Spezial'              => NS_SPECIAL,
+	'Diskussion'           => NS_TALK,
+	'Benutzer'             => NS_USER,
+	'Benutzer_Diskussion'  => NS_USER_TALK,
+	'$1_Diskussion'        => NS_PROJECT_TALK,
+	'Datei'                => NS_FILE,
+	'Datei_Diskussion'     => NS_FILE_TALK,
+	'MediaWiki_Diskussion' => NS_MEDIAWIKI_TALK,
+	'Vorlage'              => NS_TEMPLATE,
+	'Vorlage_Diskussion'   => NS_TEMPLATE_TALK,
+	'Hilfe'                => NS_HELP,
+	'Hilfe_Diskussion'     => NS_HELP_TALK,
+	'Kategorie'            => NS_CATEGORY,
+	'Kategorie_Diskussion' => NS_CATEGORY_TALK,
+);
+
 $messages = array(
 # User preference toggles
 'tog-showtoolbar' => "Werkzaich zum Bearwaide zaische (dodezu brauchd's JavaScript)",
@@ -386,9 +424,11 @@ Erklärung: '''({{int:cur}})''' = Unnerschied zu jetzert,
 
 'grouppage-sysop' => '{{ns:project}}:Adminischtratore',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Naiaameldungs-Logbuch',
+
 # User rights log
 'rightslog' => 'Benutzerrecht-Logbuch',
-'rightsnone' => '(-)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'die Said bearwaide',
@@ -508,9 +548,6 @@ Saide uff [[Special:Watchlist|Dainer Beowachdungslischt]] sin '''fett'''.",
 # Special:LinkSearch
 'linksearch' => 'Externe Links',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Naiaameldungs-Logbuch',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(Midgliederlischd)',
 
@@ -597,7 +634,7 @@ Der Schutzstatus vun derre Said kannscht ännere, awwer des hot kää Aifluss uf
 'blanknamespace' => '(Haaptsaid)',
 
 # Contributions
-'contributions' => 'Was der gemacht hot',
+'contributions' => '{{GENDER:$1|Wasa gemachd hod}}',
 'contributions-title' => 'Benutzerbaidräch vun $1',
 'mycontris' => 'Baidräsch',
 'contribsub2' => 'Fer $1 ($2)',
@@ -820,6 +857,9 @@ Annere Medadaade sinn noamalawais verschdegld.
 
 # Special:Tags
 'tags-edit' => 'bearwaide',
+
+# New logging system
+'rightsnone' => '(-)',
 
 # Feedback
 'feedback-close' => 'Erledischd',

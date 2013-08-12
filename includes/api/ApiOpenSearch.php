@@ -29,10 +29,6 @@
  */
 class ApiOpenSearch extends ApiBase {
 
-	public function __construct( $main, $action ) {
-		parent::__construct( $main, $action );
-	}
-
 	public function getCustomPrinter() {
 		return $this->getMain()->createPrinterByName( 'json' );
 	}
@@ -122,9 +118,5 @@ class ApiOpenSearch extends ApiBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Opensearch';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

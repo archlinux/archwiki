@@ -237,7 +237,6 @@ $messages = array(
 'qbbrowse' => 'Qaraw',
 'qbedit' => 'Üzgärtü',
 'qbpageoptions' => 'Bu bit',
-'qbpageinfo' => 'Bit turında mäğlümatlar',
 'qbmyoptions' => 'Bitlärem',
 'qbspecialpages' => 'Maxsus bitlär',
 'faq' => 'YBS',
@@ -477,11 +476,8 @@ Ul kürsätkän säbäp: ''$2''.",
 # Login and logout pages
 'logouttext' => "'''Sez xisap yazmağızdan çıqtığız.'''
 
-Sez {{SITENAME}} proyektında anonim räweştä qala yäisä şul uq yäki başqa isem belän yañadan [[Special:UserLogin|kerä]] alasız.
+Sez {{SITENAME}} proyektında anonim räweştä qala yäisä şul uq yäki başqa isem belän yañadan <span class='plainlinks'>[$1 kerä]</span> alasız.
 Qayber bitlär Sez kergän kebek kürsätelergä mömkin. Monı beterü öçen brauzer keşın çistartığız.",
-'welcomecreation' => '== Räxim itegez, $1! ==
-Sez terkäldegez.
-Saytnıñ şäxsi [[Special:Preferences|köylänmälären]] qararğa onıtmağız.',
 'yourname' => 'Qullanuçı iseme:',
 'yourpassword' => 'Sersüz:',
 'yourpasswordagain' => 'Sersüzne qabat kertü:',
@@ -735,7 +731,6 @@ Asta küzätü köndälegendäge soñğı yazma birelgän:",
 'template-protected' => '(yaqlanğan)',
 'template-semiprotected' => '(öleşçä yaqlanğan)',
 'hiddencategories' => 'Bu bit $1 {{PLURAL:$1|yäşeren törkemgä}} kerä:',
-'nocreatetitle' => 'Bitlär tözü çiklängän',
 'nocreatetext' => '{{SITENAME}}: saytta yaña bitlär tözü çiklängän.
 Sez artqa qaytıp, tözelgän bitne üzgärtä alasız. [[Special:UserLogin|Kerergä yäisä terkälergä]] täğdim itelä.',
 'nocreate-loggedin' => 'Sezgä yaña bitlär tözü xoquqı birelmägän.',
@@ -1118,10 +1113,12 @@ Ul $1 {{PLURAL:$1|xäreftän}} kübräk bulırğa tieş tügel.',
 'right-delete' => 'bitlärne beterü',
 'right-editinterface' => 'Qullanuçı interfeysın üzgärtü',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Qullanuçılarnı terkäw köndälege',
+'newuserlogpagetext' => 'Yaña terkälgän qullanuçılar isemlege',
+
 # User rights log
 'rightslog' => 'Qullanuçınıñ xoquqları köndälege',
-'rightslogentry' => '$1 qullanuçısın $2 gruppasınnan $3 gruppasına küçerde',
-'rightsnone' => '(yuq)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'bu bitne üzgärtergä',
@@ -1468,10 +1465,6 @@ Asta [[Special:UnusedCategories|qullanılmağan törkemnär]] kärsätelgän.
 'activeusers-hidesysops' => 'İdaräçelärne yäşer',
 'activeusers-noresult' => 'Qullanuçılar tabılmadı.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Qullanuçılarnı terkäw köndälege',
-'newuserlogpagetext' => 'Yaña terkälgän qullanuçılar isemlege',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Qullanuçı törkemnäreneñ xoquqları',
 'listgrouprights-group' => 'Törkem',
@@ -1515,11 +1508,7 @@ Bu bittä häm anıñ bäxäslegendä barlıq bulaçaq üzgärtülär şunda kü
 'watching' => 'Küzätü isemlegemä östäwe…',
 'unwatching' => 'Küzätü isemlegemnän çığaruı…',
 
-'enotif_newpagetext' => 'Bu yaña bit.',
 'enotif_impersonal_salutation' => '{{SITENAME}} qullanuçı',
-'changed' => 'üzgärtelde',
-'created' => 'tözergän',
-'enotif_subject' => '{{SITENAME}} proyektınıñ $PAGETITLE bite $PAGEEDITOR tarafınnan $CHANGEDORCREATED',
 'enotif_lastvisited' => 'Soñğı kerüegezdän soñ bulğan barlıq üzgärtülärne kürer öçen, bu sıltama aşa uzığız: $1',
 'enotif_body' => 'Xörmätle $WATCHINGUSERNAME,
 
@@ -1546,6 +1535,8 @@ $UNWATCHURL
 
 Elemtä häm yärdäm:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'tözergän',
+'changed' => 'üzgärtelde',
 
 # Delete
 'deletepage' => 'Bitne beterü',
@@ -2195,6 +2186,6 @@ Yulnıñ berençe sıltaması quyma öçen tıyılğan räsemgä sıltama bulır
 
 # New logging system
 'revdelete-restricted' => 'çikläwlär idaräçelärgä dä qullanıla',
-'newuserlog-byemail' => 'sersüz elektron poçta aşa cibärelde',
+'rightsnone' => '(yuq)',
 
 );

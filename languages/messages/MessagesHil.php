@@ -151,6 +151,7 @@ $messages = array(
 'newwindow' => '(gabukas sa bag-o nga bintana)',
 'cancel' => 'Kanselahon',
 'moredotdotdot' => 'Madamo pa...',
+'morenotlisted' => 'Madamu pa ang wala nalista...',
 'mypage' => 'Akon Panid',
 'mytalk' => 'Paghisayranay',
 'anontalk' => 'Paghisayranay sang sining IP address',
@@ -162,7 +163,6 @@ $messages = array(
 'qbbrowse' => 'Magbasa-basa',
 'qbedit' => 'Ilisan',
 'qbpageoptions' => 'Ining panid',
-'qbpageinfo' => 'Kahulugan/Konteksto',
 'qbmyoptions' => 'Akon mga panid',
 'qbspecialpages' => 'Pinasahi nga mga panid',
 'faq' => 'Mga masami pamangkoton',
@@ -185,6 +185,7 @@ $messages = array(
 'namespaces' => 'Ngalan-espasyo',
 'variants' => 'Mga nagkalain-lain',
 
+'navigation-heading' => 'Menu sang nabigasyon',
 'errorpagetitle' => 'Sala/Eror',
 'returnto' => 'Balik sa $1.',
 'tagline' => 'Halin sa {{SITENAME}}',
@@ -428,11 +429,11 @@ Ang administrador nga nag-kandado sini naghatag sang paathag nga: "$3".',
 # Login and logout pages
 'logouttext' => "'''Naka-guha ka na.'''
 
-Makapadayon ka sa gihapon sa paggamit sang {{SITENAME}} nga indi makilal-an, ukon mahimo ka man [[Special:UserLogin|magsulod liwat]] bilang amo sa gihapon ukon lain nga nga manug-gamit.
+Makapadayon ka sa gihapon sa paggamit sang {{SITENAME}} nga indi makilal-an, ukon mahimo ka man <span class='plainlinks'>[$1 magsulod liwat]</span> bilang amo sa gihapon ukon lain nga nga manug-gamit.
 Tandaan nga may mga panid nga mahimo ma-display sa gihapon nga daw nakasulod ka sa gihapon, hasta mapanas mo na ang tinago sang imo brawser.",
-'welcomecreation' => '== Pagtamyaw, $1! ==
-Ang imo account nahimo na.
-Indi pagkalimti ang pag-ilis sang imo mga [[Special:Preferences|{{SITENAME}} pagpasulabi]].',
+'welcomeuser' => 'Malipayon nga pag-abot. $1!',
+'welcomecreation-msg' => 'Nahimo na ang imo nga account.
+Indi pagkalimtan ang pag-ilis sa imo nga [[Special:Preferences|{{SITENAME}} pagpasulabi]].',
 'yourname' => 'Ngalan sang Manog-gamit:',
 'yourpassword' => 'Kontra-senyas:',
 'yourpasswordagain' => 'Suliton ang kontra-senyas:',
@@ -537,6 +538,7 @@ Palihog maghulat anay bag-o tilawan liwat.',
 # Email sending
 'php-mail-error-unknown' => 'Wala nahibaluan nga sala sa kapuslanan nga sulat() sang PHP.',
 'user-mail-no-addy' => 'Gintilawan nga magpadala sang e-mail biskan wala sang e-mail adres.',
+'user-mail-no-body' => 'Nakatilaw magpadala sang email nga waay unod ukon malip-ot katama ang unod sang mensahe.',
 
 # Change password dialog
 'resetpass' => 'Ilisan ang pasword',
@@ -602,6 +604,7 @@ Temporaryo nga pasword: $2',
 'changeemail-oldemail' => 'E-mail adres sa subong:',
 'changeemail-newemail' => 'Bag-o nga e-mail adres:',
 'changeemail-none' => '(wala)',
+'changeemail-password' => 'Ang imong {{SITENAME}} nga password:',
 'changeemail-submit' => 'Ilisan and E-mail',
 'changeemail-cancel' => 'Kanselahon',
 
@@ -790,7 +793,6 @@ Ang pinaka-ulihi nga log ginbutang sa idalom agod nga imo mahibaluan:",
 'template-protected' => '(protektado)',
 'template-semiprotected' => '(medyo-protektado)',
 'hiddencategories' => 'Ini nga pahina ay membro sang {{PLURAL:$1|1 tago nga kategorya|$1 mga tago nga kategorya}}:',
-'nocreatetitle' => 'Ginalimitahan ang pagbuhat sang panid',
 'nocreatetext' => 'Ang {{SITENAME}} nagapuggong sang abilidad nga magtuga sang mga bag-o nga panid.
 Mahimo ka nga magbalik kag mag-ilis sang naga-eksister nga panid, ukon[[Special:UserLogin|magsulod ukon maghimo sang akawnt]].',
 'nocreate-loggedin' => 'Wala ka sang lisensya sa pagbuhat sang bag-o nga mga panid.',
@@ -815,6 +817,15 @@ Ini nagapakita nga gindula na.',
 'edit-already-exists' => 'Indi mahimo ang bag-o nga panid.
 Naga-eksister na ini.',
 'defaultmessagetext' => 'Teksto sang mensahe nga wala pa ma-ilisan',
+'content-failed-to-parse' => 'Di matuman ang pag-parse $2 nga unod para sa $1 nga modelo: $3',
+'invalid-content-data' => 'May ara sala sa data.',
+'content-not-allowed-here' => '"$1" nga sulod indi pwede sa panid [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'tekstong wiki',
+'content-model-text' => 'tekstong ordinaryo',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''Pahibalo:''' Ang ini nga panid may yara sang madamo nga mahal nga pagtawag sang kapusalanan parser.
@@ -1337,10 +1348,13 @@ Ang imo adres sang e-mail wala ginapakita kon kontakon ka sang iban.',
 'right-sendemail' => 'Magpadala sang email sa iban nga naga-usar',
 'right-passwordreset' => 'Tan-awa ang mga email sang password reset',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Naga-usar nga ginhimo log',
+'newuserlogpagetext' => 'Ini ang isa ka log sang mga ginhimo sang naga-usar',
+
 # User rights log
 'rightslog' => 'Karapatan sang naga-usar log',
 'rightslogtext' => 'Ini ang lista sang mga ginbag-o nga mga kinamatarong sang naga-usar.',
-'rightsnone' => '(wala)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'Basahon ang ini nga panid',
@@ -1551,10 +1565,6 @@ Ang gusto nga {{PLURAL:\$3|tipo sang file amo|mga tipo sang file amo ang}} \$2."
 'linksearch-ok' => 'Pangita-a',
 'linksearch-line' => '$1 amo nakasugpon sa $2',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Naga-usar nga ginhimo log',
-'newuserlogpagetext' => 'Ini ang isa ka log sang mga ginhimo sang naga-usar',
-
 # Special:ListGroupRights
 'listgrouprights-group' => 'Grupo',
 'listgrouprights-members' => '(lista sang mga membro)',
@@ -1638,7 +1648,7 @@ Pwede mo mabag-o ang lebel sang proteksiyon sang pahina, pero indi ini ma apektu
 'blanknamespace' => '(Mayor)',
 
 # Contributions
-'contributions' => 'Naga-usar nga mga kontribusyon',
+'contributions' => 'Mga kontribusyon sang {{GENDER:$1|naga-usar}}',
 'contributions-title' => 'Mga Kontribusyon sang Naga-Usar para $1',
 'mycontris' => 'Kontribusyon',
 'contribsub2' => 'Para $1 ($2)',
@@ -1957,5 +1967,6 @@ Ang iban ay pagataguon sang default.
 # New logging system
 'revdelete-restricted' => 'ginapatuman nga pagbawal sa mga administrador',
 'revdelete-unrestricted' => 'ginkakas nga pagbawal sa mga administrador',
+'rightsnone' => '(wala)',
 
 );

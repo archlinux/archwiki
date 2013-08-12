@@ -164,7 +164,6 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__FORSIRANISADRŽAJ__', '__FORSIRANI_SADRŽAJ__', '__PRIMORANISADRŽAJ__', '__PRIMORANI_SADRŽAJ__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__SADRŽAJ__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__BEZIZMENA__', '__BEZ_IZMENA__', '__BEZIZMJENA__', '__BEZ_IZMJENA__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__BEZZAGLAVLJA__', '__BEZ_ZAGLAVLJA__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'TRENUTNIMESEC', 'TRENUTNI_MESEC', 'TEKUĆIMESEC', 'TEKUĆI_MESEC', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'TRENUTNIMESEC1', 'TRENUTNI_MESEC1', 'TEKUĆIMESEC1', 'TEKUĆI_MESEC1', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'TRENUTNIMESECIME', 'IMETEKUĆEGMESECA', 'IME_TEKUĆEG_MESECA', 'CURRENTMONTHNAME' ),
@@ -450,7 +449,6 @@ $messages = array(
 'qbbrowse' => 'Potraži',
 'qbedit' => 'Uredi',
 'qbpageoptions' => 'Postavke stranice',
-'qbpageinfo' => 'Sadržaj stranice',
 'qbmyoptions' => 'Moje stranice',
 'qbspecialpages' => 'Posebne stranice',
 'faq' => 'NPP',
@@ -722,12 +720,8 @@ Administrator koji ju je zaključao ponudio je sledeće objašnjenje: „$3“.'
 # Login and logout pages
 'logouttext' => "'''Odjavljeni ste.'''
 
-Možete da nastavite s korišćenjem ovog vikija kao gost, ili se [[Special:UserLogin|ponovo prijavite]] kao drugi korisnik.
+Možete da nastavite s korišćenjem ovog vikija kao gost, ili se <span class='plainlinks'>[$1 ponovo prijavite]</span> kao drugi korisnik.
 Imajte na umu da neke stranice mogu nastaviti da se prikazuju kao da ste još prijavljeni, sve dok ne očistite privremenu memoriju svog pregledača.",
-'welcomecreation' => '== Dobro došli, $1! ==
-
-Vaš nalog je otvoren.
-Ne zaboravite da prilagodite svoja [[Special:Preferences|podešavanja]].',
 'yourname' => 'Korisničko ime:',
 'yourpassword' => 'Lozinka:',
 'yourpasswordagain' => 'Potvrda lozinke:',
@@ -1074,7 +1068,6 @@ Poslednji zapis u dnevniku je prikazan ispod:",
 'hiddencategories' => 'Ova stranica je član {{PLURAL:$1|jedne skrivene kategorije|$1 skrivene kategorije|$1 skrivenih kategorija}}:',
 'edittools' => '<!-- Ovaj tekst će biti prikazan ispod obrasca za uređivanje i otpremanje. -->',
 'edittools-upload' => '-',
-'nocreatetitle' => 'Pravljenje stranice je ograničeno',
 'nocreatetext' => 'Na ovom vikiju je ograničeno pravljenje novih stranica.
 Možete se vratiti i urediti postojeću stranicu, ili se [[Special:UserLogin|prijavite ili otvorite nalog]].',
 'nocreate-loggedin' => 'Nemate dozvolu da pravite nove stranice.',
@@ -1099,6 +1092,15 @@ Izgleda da je obrisana.',
 'edit-already-exists' => 'Ne mogu da napravim stranicu.
 Izgleda da ona već postoji.',
 'defaultmessagetext' => 'Podrazumevani tekst poruke',
+'content-failed-to-parse' => 'Ne mogu da raščlanim sadržaj tipa $2 za model $1: $3',
+'invalid-content-data' => 'Neispravni podaci sadržaja',
+'content-not-allowed-here' => 'Sadržaj modela „$1“ nije dozvoljen na stranici [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'vikitekst',
+'content-model-text' => 'čist tekst',
+'content-model-javascript' => 'javaskript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''Upozorenje:''' ova stranica sadrži previše poziva za raščlanjivanje.
@@ -1624,12 +1626,13 @@ Ako izaberete da ga unesete, ono će biti korišćeno za pripisivanje vašeg rad
 'right-sendemail' => 'slanje e-poruka drugim korisnicima',
 'right-passwordreset' => 'pregledanje poruka za obnavljanje lozinke',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Dnevnik novih korisnika',
+'newuserlogpagetext' => 'Ovo je istorija novih korisnika.',
+
 # User rights log
 'rightslog' => 'Dnevnik korisničkih prava',
 'rightslogtext' => 'Ovo je dnevnik izmena korisničkih prava.',
-'rightslogentry' => '{{GENDER:|je promenio|je promenila|je promenio}} prava za člana $1 iz $2 u $3',
-'rightslogentry-autopromote' => 'je unapređen iz $2 u $3',
-'rightsnone' => '(ništa)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'čitanje ove stranice',
@@ -2295,10 +2298,6 @@ Podržani protokoli: <code>$1</code> (zadaje http:// ako ne navedete protokol).'
 'activeusers-hidesysops' => 'Sakrij administratore',
 'activeusers-noresult' => 'Korisnik nije pronađen.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Dnevnik novih korisnika',
-'newuserlogpagetext' => 'Ovo je istorija novih korisnika.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Prava korisničkih grupa',
 'listgrouprights-summary' => 'Sledi spisak korisničkih grupa na ovom vikiju, zajedno s pravima pristupa.
@@ -2398,11 +2397,7 @@ Ukoliko budete želeli da uklonite stranicu sa spiska nadgledanja, kliknite opet
 
 'enotif_mailer' => '{{SITENAME}} e-obaveštenje',
 'enotif_reset' => 'Označi sve stranice kao posećene',
-'enotif_newpagetext' => 'Ovo je nova stranica.',
 'enotif_impersonal_salutation' => '{{SITENAME}} korisnik',
-'changed' => 'izmenjena',
-'created' => 'napravljena',
-'enotif_subject' => '{{SITENAME}} stranica $PAGETITLE je $CHANGEDORCREATED od strane $PAGEEDITOR',
 'enotif_lastvisited' => 'Pogledajte $1 za sve izmene od vaše poslednje posete.',
 'enotif_lastdiff' => 'Pogledajte $1 da vidite ovu izmenu.',
 'enotif_anon_editor' => 'anoniman korisnik $1',
@@ -2436,6 +2431,8 @@ $UNWATCHURL
 
 Podrška i dalja pomoć:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'napravljena',
+'changed' => 'izmenjena',
 
 # Delete
 'deletepage' => 'Obriši stranicu',
@@ -2592,7 +2589,8 @@ Možda ste uneli pogrešnu vezu, ili je izmena vraćena ili uklonjena iz arhive.
 'undeletedrevisions' => '{{PLURAL:$1|Izmena je vraćena|$1 izmene su vraćene|$1 izmena je vraćeno}}',
 'undeletedrevisions-files' => '$1 {{PLURAL:$1|izmena|izmene|izmena}} i $2 {{PLURAL:$2|datoteka|datoteke|datoteka}} je vraćeno',
 'undeletedfiles' => '{{PLURAL:$1|Datoteka je vraćena|$1 datoteke su vraćene|$1 datoteka je vraćeno}}',
-'cannotundelete' => 'Neuspešno vraćanje. Neko drugi je to uradio pre vas.',
+'cannotundelete' => 'Vraćanje nije uspelo:
+$1',
 'undeletedpage' => "'''Stranica $1 je vraćena'''
 
 Pogledajte [[Special:Log/delete|istoriju brisanja]] za zapise o skorašnjim brisanjima i vraćanjima.",
@@ -2903,6 +2901,7 @@ ne mogu da premestim stranicu preko same sebe.',
 'immobile-target-namespace-iw' => 'Međuviki veza nije ispravno odredište za premeštanje stranice.',
 'immobile-source-page' => 'Ova stranica se ne može premestiti.',
 'immobile-target-page' => 'Ne mogu da premestim na željeni naslov.',
+'bad-target-model' => 'Željeno odredište koristi drugačiji model sadržaja. Ne mogu da pretvorim iz $1 u $2.',
 'imagenocrossnamespace' => 'Datoteka se ne može premestiti u imenski prostor koji ne pripada datotekama.',
 'nonfile-cannot-move-to-file' => 'Ne-datoteke ne možete premestiti u imenski prostor za datoteke',
 'imagetypemismatch' => 'Ekstenzija nove datoteke se ne poklapa s njenom vrstom',
@@ -3033,7 +3032,6 @@ Pokušajte ponovo.',
 
 # JavaScriptTest
 'javascripttest' => 'Javaskript test',
-'javascripttest-disabled' => 'Ova funkcija nije omogućena na ovom vikiju.',
 'javascripttest-title' => 'Izvršavanje testova za $1',
 'javascripttest-pagetext-noframework' => 'Ova stranica je rezervisana za izvršavanje javaskript testova.',
 'javascripttest-pagetext-unknownframework' => 'Nepoznati radni okvir „$1“.',
@@ -3182,6 +3180,7 @@ Ovo je verovatno izazvano vezom do spoljašnjeg sajta koji se nalazi na crnoj li
 'pageinfo-default-sort' => 'Podrazumevani ključ sortiranja',
 'pageinfo-length' => 'Dužina stranice (u bajtovima)',
 'pageinfo-article-id' => 'ID stranice',
+'pageinfo-language' => 'Jezik sadržaja stranice',
 'pageinfo-robot-policy' => 'Status pretraživača',
 'pageinfo-robot-index' => 'Može da se popiše',
 'pageinfo-robot-noindex' => 'Ne može da se popiše',
@@ -3201,6 +3200,14 @@ Ovo je verovatno izazvano vezom do spoljašnjeg sajta koji se nalazi na crnoj li
 'pageinfo-magic-words' => '{{PLURAL:$1|Magična reč|Magične reči}} ($1)',
 'pageinfo-hidden-categories' => '{{PLURAL:$1|Sakrivena kategorija|Sakrivene kategorije}} ($1)',
 'pageinfo-templates' => '{{PLURAL:$1|Uključeni šablon|Uključeni šabloni}} ($1)',
+'pageinfo-toolboxlink' => 'Podaci o stranici',
+'pageinfo-redirectsto' => 'Preusmerava na',
+'pageinfo-redirectsto-info' => 'podaci',
+'pageinfo-contentpage' => 'Računa se kao stranica sa sadržajem',
+'pageinfo-contentpage-yes' => 'Da',
+'pageinfo-protect-cascading' => 'Prenosiva zaštita stranica važi odavde',
+'pageinfo-protect-cascading-yes' => 'Da',
+'pageinfo-protect-cascading-from' => 'Stranice sa prenosivom zaštitom od',
 
 # Skin names
 'skinname-standard' => 'Klasično',
@@ -3223,6 +3230,8 @@ Ovo je verovatno izazvano vezom do spoljašnjeg sajta koji se nalazi na crnoj li
 'markedaspatrollederror' => 'Ne mogu da označim kao patrolirano',
 'markedaspatrollederrortext' => 'Morate izabrati izmenu da biste je označili kao pregledanu.',
 'markedaspatrollederror-noautopatrol' => 'Ne možete da označite svoje izmene kao patrolirane.',
+'markedaspatrollednotify' => 'Ova izmena na stranici „$1“ je označena kao pregledana.',
+'markedaspatrollederrornotify' => 'Nije uspešno označavanje ove stranice kao pregledanom.',
 
 # Patrol log
 'patrol-log-page' => 'Dnevnik patroliranja',
@@ -3880,6 +3889,7 @@ Ovaj potvrdni kod ističe $6 u $7.',
 # Scary transclusion
 'scarytranscludedisabled' => '[Međuviki uključivanje šablona je onemogućeno]',
 'scarytranscludefailed' => '[Dobavljanje šablona za $1 nije uspelo]',
+'scarytranscludefailed-httpstatus' => '[Ne mogu da preuzmem šablon $1: HTTP $2]',
 'scarytranscludetoolong' => '[URL adresa je predugačka]',
 
 # Delete conflict
@@ -4071,6 +4081,7 @@ Možete da [[Special:EditWatchlist|koristite i običan uređivač]].',
 'version-license' => 'Licenca',
 'version-poweredby-credits' => "Ovaj viki pokreće '''[//www.mediawiki.org/ Medijaviki]''', autorska prava © 2001-$1 $2.",
 'version-poweredby-others' => 'ostali',
+'version-credits-summary' => 'Želeli bismo da zahvalimo sledećim ljudima na njihovom doprinosu [[Special:Version|Medijavikiji]].',
 'version-license-info' => 'Medijaviki je slobodan softver; možete ga raspodeljivati i menjati pod uslovima GNU-ove opšte javne licence (OJL) koju je objavila Zadužbina za slobodan softver, bilo da je u pitanju drugo ili novije izdanje licence.
 
 Medijaviki se nudi u nadi da će biti od koristi, ali BEZ IKAKVE GARANCIJE; čak i bez podrazumevane garancije o PRODAJNOJ VREDNOSTI ili POGODNOSTI ZA ODREĐENE NAMENE. Pogledajte GNU-ovu opštu javnu licencu za više informacija.
@@ -4214,7 +4225,10 @@ Slike su prikazane u punoj veličini, a druge vrste datoteka se pokreću pomoću
 'logentry-newusers-create' => '$1 {{GENDER:|je otvorio|je otvorila|je otvorio}} korisnički nalog',
 'logentry-newusers-create2' => '$1 {{GENDER:|je otvorio|je otvorila|je otvorio}} korisnički nalog $3',
 'logentry-newusers-autocreate' => 'Nalog $1 je samostalno otvoren',
-'newuserlog-byemail' => 'lozinka je poslata e-poštom',
+'logentry-rights-rights' => '$1 {{GENDER:$1|je promenio|je promenila|je promenio}} članstvo grupe za $3 iz $4 u $5',
+'logentry-rights-rights-legacy' => '$1 {{GENDER:$1|je promenio|je promenila|je promenio}} članstvo grupe za $3',
+'logentry-rights-autopromote' => '$1 je automatski {{GENDER:$1|unapređen|unapređena|unapređen}} iz $4 u $5',
+'rightsnone' => '(ništa)',
 
 # Feedback
 'feedback-bugornote' => 'Ako ste spremni da detaljno opišete tehnički problem, onda [$1 prijavite grešku].

@@ -185,7 +185,6 @@ $messages = array(
 'qbbrowse' => 'ቃኝ',
 'qbedit' => 'አርም',
 'qbpageoptions' => 'ይህ ገጽ',
-'qbpageinfo' => 'አግባብ',
 'qbmyoptions' => 'የኔ ገጾች',
 'qbspecialpages' => 'ልዩ ገጾች',
 'faq' => 'ብጊየጥ (ብዙ ጊዜ የሚጠየቁ ጥያቀዎች)',
@@ -410,9 +409,7 @@ $2",
 
 አሁንም በቁጥር መታወቂያዎ ማዘጋጀት ይቻላል። ወይም ደግሞ እንደገና በብዕር ስምዎ መግባት ይችላሉ።
 በጥቂት ሴኮንድ ውስጥ ወደሚከተለው ገጽ በቀጥታ ይመለሳል፦",
-'welcomecreation' => '== ሰላምታ፣ $1! ==
-
-የብዕር ስምዎ ተፈጥሯል። ምርጫዎችዎን ለማስተካከል ይችላሉ።',
+'welcomeuser' => 'ሰላምታ $1!  እንኳን ደህናመጡ።',
 'yourname' => 'Username / የብዕር ስም:',
 'yourpassword' => 'Password / መግቢያ ቃል',
 'yourpasswordagain' => 'መግቢያ ቃልዎን ዳግመኛ ይስጡ',
@@ -526,6 +523,7 @@ $2",
 'changeemail-oldemail' => 'የቆየው ኢ-ሜል አድራሻዎ፦',
 'changeemail-newemail' => 'አዲስ ኢ-ሜል አድራሻ፦',
 'changeemail-none' => '(የለም)',
+'changeemail-password' => 'የ{{SITENAME}} መግቢያ ቃልዎ፦',
 'changeemail-submit' => 'አድራሻዎን ለመቀይር',
 'changeemail-cancel' => 'ይቅር',
 
@@ -652,7 +650,6 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'template-protected' => '(የተቆለፈ)',
 'template-semiprotected' => '(በከፊል የተቆለፈ)',
 'hiddencategories' => 'ይህ ገጽ በ{{PLURAL:$1|1 የተደበቀ መደብ|$1 የተደበቁ መድቦች}} ውስጥ ይገኛል።',
-'nocreatetitle' => 'የገጽ መፍጠር ተወሰነ',
 'nocreatetext' => '{{SITENAME}} አዳዲስ ገጾችን ለመፍጠር ያሚያስችል ሁኔታ ከለክሏል። ተመልሰው የቆየውን ገጽ ማዘጋጀት ይችላሉ፤ አለዚያ [[Special:UserLogin|በብዕር ስም መግባት]] ይችላሉ።',
 'nocreate-loggedin' => 'አዲስ ገጽ በ{{SITENAME}} ለመፍጠር ፈቃድ የለዎም።',
 'permissionserrors' => 'የፈቃድ ስሕተቶች',
@@ -674,6 +671,9 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'edit-already-exists' => 'አዲስ ገጽ ለመፍጠር አልተቻለም፤
 ገና ይኖራልና።',
 'defaultmessagetext' => 'የቆየው ጽሕፈት',
+
+# Content models
+'content-model-javascript' => 'ጃቫ ስክሪፕት',
 
 # "Undo" feature
 'undo-success' => "ያ ለውጥ በቀጥታ ሊገለበጥ ይቻላል። እባክዎ ከታች ያለውን ማነጻጸርያ ተመልክተው ይህ እንደሚፈልጉ ያረጋግጡና ለውጡ እንዲገለበጥ '''ገጹን ለማቅረብ''' ይጫኑ።",
@@ -1022,11 +1022,13 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'right-userrights' => 'ያባላት ሁሉ መብቶች ለማስተካከል',
 'right-sendemail' => 'ወደ ሌላ አባል ኢ-ሜል ለመላክ',
 
+# Special:Log/newusers
+'newuserlogpage' => 'የአባልነት መዝገብ (user log)',
+'newuserlogpagetext' => 'ይህ መዝገብ ወደ አባልነት የገቡትን ብዕር ስሞች ይዘርዝራል።',
+
 # User rights log
 'rightslog' => 'የአባል መብቶች መዝገብ',
 'rightslogtext' => 'ይህ መዝገብ የአባል መብቶች ሲለወጡ ይዘረዝራል።',
-'rightslogentry' => 'የ$1 ማዕረግ ከ$2 ወደ $3 ለወጠ',
-'rightsnone' => '(የለም)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'ይህን ገጽ ለማንበብ',
@@ -1480,10 +1482,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'activeusers-hidesysops' => 'መጋቢዎች ይደበቁ',
 'activeusers-noresult' => 'ማንም ተጠቃሚ አልተገኘም።',
 
-# Special:Log/newusers
-'newuserlogpage' => 'የአባልነት መዝገብ (user log)',
-'newuserlogpagetext' => 'ይህ መዝገብ ወደ አባልነት የገቡትን ብዕር ስሞች ይዘርዝራል።',
-
 # Special:ListGroupRights
 'listgrouprights' => 'የተጠቃሚ ስብስባ መብቶች',
 'listgrouprights-group' => 'ስብስባ',
@@ -1556,11 +1554,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 
 'enotif_mailer' => 'የ{{SITENAME}} ኢሜል-ማስታወቂያ',
 'enotif_reset' => 'ገጾች ሁሉ የተጎበኙ ሆነው ለማመልከት',
-'enotif_newpagetext' => 'ይህ አዲስ ገጽ ነው።',
 'enotif_impersonal_salutation' => '{{SITENAME}} ተጠቃሚ',
-'changed' => 'ተለወጠ',
-'created' => 'ተፈጠረ',
-'enotif_subject' => 'የ{{SITENAME}} ገጽ $PAGETITLE  በ$PAGEEDITOR $CHANGEDORCREATED',
 'enotif_lastvisited' => 'መጨረሻ ከጎበኙ ጀምሮ ለውጦችን ሁሉ ለመመልከት $1 ይዩ።',
 'enotif_lastdiff' => 'ይህን ለውጥ ለማመልከት $1 ይዩ።',
 'enotif_anon_editor' => 'ቁጥር አድራሻ $1',
@@ -1586,6 +1580,8 @@ $NEWPAGE
 
 በተጨማሪ ለመረዳት፦
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'ተፈጠረ',
+'changed' => 'ተለወጠ',
 
 # Delete
 'deletepage' => 'ገጹ ይጥፋ',
@@ -2071,6 +2067,9 @@ Please visit [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and 
 'pageinfo-lastuser' => 'የመጨረሻው አራሚ',
 'pageinfo-lasttime' => 'የመጨረሻው ዕትም ቀን',
 'pageinfo-edits' => 'ጠቅላላ የእርማት ቁጥር',
+'pageinfo-toolboxlink' => 'የዚህ ገጽ መረጃ',
+'pageinfo-contentpage-yes' => 'አዎ',
+'pageinfo-protect-cascading-yes' => 'አዎ',
 
 # Patrolling
 'markaspatrolleddiff' => 'የተሳለፈ ሆኖ ማመልከት',
@@ -2127,6 +2126,7 @@ $1',
 'hours' => '$1 ሰዓት',
 'days' => '$1 ቀን',
 'ago' => 'ከ$1 በፊት',
+'just-now' => 'ገና አሁን',
 
 # Bad image list
 'bad_image_list' => 'ሥርዓቱ እንዲህ ነው፦
@@ -2572,7 +2572,7 @@ $3
 
 # New logging system
 'logentry-delete-delete' => '$1 ገጹን $3 አጠፋ',
-'newuserlog-byemail' => 'ማለፊያ-ቃል በኤ-መልዕክት ተልኳል',
+'rightsnone' => '(የለም)',
 
 # Feedback
 'feedback-cancel' => 'ይቅር',

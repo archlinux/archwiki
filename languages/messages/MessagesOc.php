@@ -153,7 +153,6 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__FORÇARTAULA__', '__FORÇARSOMARI__', '__FORÇARTDM__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__TAULA__', '__SOMARI__', '__TDM__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__SECCIONNONEDITABLA__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__PASCAPDENTÈSTA__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'MESCORRENT', 'MESACTUAL', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonthname'          => array( '1', 'NOMMESCORRENT', 'NOMMESACTUAL', 'CURRENTMONTHNAME' ),
 	'currentmonthnamegen'       => array( '1', 'NOMGENMESCORRENT', 'NOMGENMESACTUAL', 'CURRENTMONTHNAMEGEN' ),
@@ -426,6 +425,7 @@ $messages = array(
 'newwindow' => '(dobrís una fenèstra novèla)',
 'cancel' => 'Anullar',
 'moredotdotdot' => 'E mai...',
+'morenotlisted' => 'Mai pas listat…',
 'mypage' => 'Pagina',
 'mytalk' => 'Discussion',
 'anontalk' => 'Discussion amb aquesta adreça IP',
@@ -437,7 +437,6 @@ $messages = array(
 'qbbrowse' => 'Far desfilar',
 'qbedit' => 'Modificar',
 'qbpageoptions' => 'Opcions de la pagina',
-'qbpageinfo' => 'Pagina d’entresenhas',
 'qbmyoptions' => 'Mas opcions',
 'qbspecialpages' => 'Paginas especialas',
 'faq' => 'FAQ',
@@ -460,6 +459,7 @@ $messages = array(
 'namespaces' => 'Espacis de noms',
 'variants' => 'Variantas',
 
+'navigation-heading' => 'Menú de navigacion',
 'errorpagetitle' => 'Error de títol',
 'returnto' => 'Tornar a la pagina $1.',
 'tagline' => 'Un article de {{SITENAME}}.',
@@ -692,11 +692,11 @@ Lo motiu avançat es « ''$2'' ».",
 # Login and logout pages
 'logouttext' => "'''Ara, sètz desconnect{{GENDER:||at|ada}}..'''
 
-Podètz contunhar d'utilizar {{SITENAME}} anonimament, o vos podètz [[Special:UserLogin|tornar connectar]] jol meteis nom o amb un autre nom.
+Podètz contunhar d'utilizar {{SITENAME}} anonimament, o vos podètz <span class='plainlinks'>[$1 tornar connectar]</span> jol meteis nom o amb un autre nom.
 Notatz que d'unas paginas pòdon èsser encara afichadas coma s'eratz encara connect{{GENDER:||at|ada}}, fins al moment qu'escafaretz l'amagatal de vòstre navigador.",
-'welcomecreation' => "== Benvenguda, $1 ! ==
-Vòstre compte d'utilizaire es estat creat.
-Doblidetz pas de personalizar vòstras [[Special:Preferences|{{SITENAME}} preferéncias]].",
+'welcomeuser' => 'Benvenguda, $1&nbsp;!',
+'welcomecreation-msg' => "Vòstre compte d'utilizaire es estat creat.
+Doblidetz pas de modificar [[Special:Preferences|vòstras preferéncias per {{SITENAME}}]].",
 'yourname' => "Nom d'utilizaire :",
 'yourpassword' => 'Vòstre senhal :',
 'yourpasswordagain' => 'Confirmar lo senhal :',
@@ -719,7 +719,7 @@ Doblidetz pas de personalizar vòstras [[Special:Preferences|{{SITENAME}} prefer
 'gotaccount' => "Ja avètz un compte ? '''$1'''.",
 'gotaccountlink' => 'Identificatz-vos',
 'userlogin-resetlink' => 'Avètz doblidat vòstres detalhs de connexion ?',
-'createaccountmail' => 'per corrièr electronic',
+'createaccountmail' => 'Utilizar un senhal aleatòri temporari e lo mandar a l’adreça de corrièl especificada çaijós',
 'createaccountreason' => 'Motiu :',
 'badretype' => "Los senhals qu'avètz picats son pas identics.",
 'userexists' => "Lo nom d'utilizaire qu'avètz picat ja es utilizat.
@@ -982,7 +982,6 @@ Aquesta proteccion es estada facha perque aquesta pagina es inclusa dins {{PLURA
 'template-semiprotected' => '(semiprotegit)',
 'hiddencategories' => "{{PLURAL:$1|Categoria amagada|Categorias amagadas}} qu'aquesta pagina ne fa partida :",
 'edittools' => '<!-- Tot tèxte picat aicí serà afichat jos las bóstias de modificacion o d’impòrt de fichièr. -->',
-'nocreatetitle' => 'Creacion de pagina limitada',
 'nocreatetext' => '{{SITENAME}} a restrencha la possibilitat de crear de paginas novèlas.
 Podètz tonar en rèire e modificar una pagina existenta, [[Special:UserLogin|vos connectar o crear un compte]].',
 'nocreate-loggedin' => 'Avètz pas la permission de crear de paginas novèlas.',
@@ -1007,6 +1006,12 @@ Sembla que siá estada suprimida.',
 'edit-already-exists' => 'La pagina novèla a pogut èsser creada .
 Existís ja.',
 'defaultmessagetext' => 'Messatge per defaut',
+
+# Content models
+'content-model-wikitext' => 'wikitèxte',
+'content-model-text' => 'tèxte brut',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Atencion : Aquesta pagina conten tròp d’apèls dispendioses de foncions del parser.
@@ -1353,9 +1358,9 @@ Vaquí una valor generada aleatòriament que podètz utilizar : $1',
 'prefs-emailconfirm-label' => 'Confirmacion del corrièr electronic :',
 'prefs-textboxsize' => 'Talha de la fenèstra de modificacion',
 'youremail' => 'Adreça de corrièr electronic :',
-'username' => "Nom de l'utilizaire :",
-'uid' => 'Numèro de l’utilizaire :',
-'prefs-memberingroups' => 'Membre {{PLURAL:$1|del grop|dels gropes}} :',
+'username' => "{{GENDER:$1|Nom d'utilizaire|Nom d'utilizaira}}:",
+'uid' => "Numèro d'{{GENDER:$1|utilizaire|utilizaira}}:",
+'prefs-memberingroups' => '{{GENDER:$2|Membre|Membra}} {{PLURAL:$1|del grop|dels gropes}}:',
 'prefs-registration' => 'Data de creacion del compte :',
 'yourrealname' => 'Nom vertadièr :',
 'yourlanguage' => "Lenga de l'interfàcia :",
@@ -1502,11 +1507,13 @@ Tanben podètz causir de permetre a d’autres de vos contactar per vòstra pagi
 'right-sendemail' => 'Mandar un corrièl als autres utilizaires',
 'right-passwordreset' => 'Tòrna inicializar lo senhal d’un utilizaire ([[Special:PasswordReset|pagina especiala]])',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Istoric de las creacions de comptes',
+'newuserlogpagetext' => "Jornal de las creacions de comptes d'utilizaires.",
+
 # User rights log
 'rightslog' => "Istoric de las modificacions d'estatut",
 'rightslogtext' => "Aquò es un jornal dels cambiaments d'estatut d’utilizaire.",
-'rightslogentry' => 'a modificat los dreches de l’utilizaire « $1 » de $2 a $3',
-'rightsnone' => '(cap)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'legir aquesta pagina',
@@ -2079,10 +2086,6 @@ Vejatz tanben [[Special:WantedCategories|las categorias demandadas]].',
 'activeusers-hidesysops' => 'Amagar los administrators',
 'activeusers-noresult' => "Cap d'utilizaire pas trobat.",
 
-# Special:Log/newusers
-'newuserlogpage' => 'Istoric de las creacions de comptes',
-'newuserlogpagetext' => "Jornal de las creacions de comptes d'utilizaires.",
-
 # Special:ListGroupRights
 'listgrouprights' => "Dreches dels gropes d'utilizaires",
 'listgrouprights-summary' => "Aquesta pagina conten una tièra de gropes definits sus aqueste wiki e mai los dreches d'accès qu'i son associats.
@@ -2177,11 +2180,12 @@ Las modificacions venentas d\'aquesta pagina e de la pagina de discussion associ
 
 'enotif_mailer' => 'Sistèma d’expedicion de notificacion de {{SITENAME}}',
 'enotif_reset' => 'Marcar totas las paginas coma visitadas',
-'enotif_newpagetext' => 'Aquò es una pagina novèla.',
 'enotif_impersonal_salutation' => 'Utilizaire de {{SITENAME}}',
-'changed' => 'modificada',
-'created' => 'creada',
-'enotif_subject' => 'La pagina $PAGETITLE de {{SITENAME}} es estada $CHANGEDORCREATED per $PAGEEDITOR',
+'enotif_subject_deleted' => 'La pagina $1 sus {{SITENAME}} es estada suprimida per {{GENDER:$2|$2}}',
+'enotif_subject_created' => 'La pagina $1 sus {{SITENAME}} es estada creada per {{GENDER:$2|$2}}',
+'enotif_subject_moved' => 'La pagina $1 sus {{SITENAME}} es estada renomenada per {{GENDER:$2|$2}}',
+'enotif_subject_restored' => 'La pagina $1 sus {{SITENAME}} es estada restablida per {{GENDER:$2|$2}}',
+'enotif_subject_changed' => 'La pagina $1 sus {{SITENAME}} es estada modificada per {{GENDER:$2|$2}}',
 'enotif_lastvisited' => 'Consultatz $1 per totes los cambiaments dempuèi vòstra darrièra visita.',
 'enotif_lastdiff' => 'Consultatz $1 per veire aquesta modificacion.',
 'enotif_anon_editor' => 'utilizaire anonim $1',
@@ -2211,6 +2215,8 @@ $UNWATCHURL
 
 Retorn e assisténcia :
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'creada',
+'changed' => 'modificada',
 
 # Delete
 'deletepage' => 'Suprimir la pagina',
@@ -2386,7 +2392,7 @@ $1",
 'blanknamespace' => '(Principal)',
 
 # Contributions
-'contributions' => "Contribucions d'aqueste contributor",
+'contributions' => "Contribucions de l'{{GENDER:$1|utilizaire|utilizaira}}",
 'contributions-title' => 'Tièra de las contribucions de l’utilizaire $1',
 'mycontris' => 'Contribucions',
 'contribsub2' => 'Lista de las contribucions de $1 ($2). Las paginas que son estadas escafadas son pas afichadas.',
@@ -2890,6 +2896,15 @@ Aquò es probablament causat per un ligam sus lista negra que punta cap a un sit
 'pageinfo-magic-words' => '{{PLURAL:$1|Mot magic|Mots magics}} ($1)',
 'pageinfo-hidden-categories' => '{{PLURAL:$1|Categoria amagada|Categorias amagadas}} ($1)',
 'pageinfo-templates' => '{{PLURAL:$1|Modèl inclús|Modèls incluses}} ($1)',
+'pageinfo-toolboxlink' => 'Informacion sus la pagina',
+'pageinfo-redirectsto' => 'Redirigir cap a',
+'pageinfo-redirectsto-info' => 'info',
+'pageinfo-contentpage-yes' => 'Òc',
+'pageinfo-protect-cascading-yes' => 'Òc',
+'pageinfo-category-info' => 'Informacions sus la categoria',
+'pageinfo-category-pages' => 'Nombre de paginas',
+'pageinfo-category-subcats' => 'Nombre de soscategorias',
+'pageinfo-category-files' => 'Nombre de fichièrs',
 
 # Skin names
 'skinname-standard' => 'Estandard',
@@ -2972,6 +2987,7 @@ Se l'executatz, vòstre sistèma pòt èsser compromés.",
 'hours' => '{{PLURAL:$1|$1 ora|$1 oras}}',
 'days' => '{{PLURAL:$1|$1 jorn|$1 jorns}}',
 'ago' => 'I a $1',
+'just-now' => 'sulpic',
 
 # Bad image list
 'bad_image_list' => "Lo format es lo seguent :
@@ -3657,6 +3673,8 @@ Los imatges son afichats en nauta resolucion, los fichièrs àudio e vidèo son 
 'htmlform-selectorother-other' => 'Autre',
 
 # New logging system
+'logentry-delete-delete' => '$1 a suprimit la pagina $3',
+'logentry-delete-restore' => '$1 a restablit la pagina $3',
 'revdelete-content-hid' => 'contengut amagat',
 'revdelete-summary-hid' => 'resumit de modificacion amagat',
 'revdelete-uname-hid' => 'nom d’utilizaire amagat',
@@ -3673,7 +3691,7 @@ Los imatges son afichats en nauta resolucion, los fichièrs àudio e vidèo son 
 'logentry-newusers-create' => "Lo compte d'utilizaire $1 es estat creat",
 'logentry-newusers-create2' => "Lo compte d'utilizaire $3 es estat creat per $1",
 'logentry-newusers-autocreate' => 'Lo compte $1 es estat creat automaticament',
-'newuserlog-byemail' => 'senhal mandat per corrièr electronic',
+'rightsnone' => '(cap)',
 
 # Feedback
 'feedback-subject' => 'Subjècte :',

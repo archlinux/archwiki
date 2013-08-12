@@ -71,7 +71,6 @@ $magicWords = array(
 	'notoc'                     => array( '0', '__БЕМЫНДӘРИҸОТ__', '__NOTOC__' ),
 	'forcetoc'                  => array( '0', '__МӘҸБУРИЈӘ_МЫНДӘРИҸОТ__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__МЫНДӘРИҸОТ__', '__TOC__' ),
-	'noheader'                  => array( '0', '__БЕСӘРЛОВҺӘ__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'ЕСӘТНӘ_МАНГ', 'ЕСӘТНӘ_МАНГ_2', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'ЕСӘТНӘ_МАНГ_1', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'ЕСӘТНӘ_МАНГИ_НОМ', 'CURRENTMONTHNAME' ),
@@ -264,7 +263,6 @@ $messages = array(
 'qbbrowse' => 'Дијә кардеј',
 'qbedit' => 'Сәрост кардеј',
 'qbpageoptions' => 'Ым сәһифә',
-'qbpageinfo' => 'Мәзмун.',
 'qbmyoptions' => 'Чымы сәһифон',
 'qbspecialpages' => 'Хысусијә сәһифон',
 'faq' => 'РАП',
@@ -637,8 +635,8 @@ $messages = array(
 'prefs-files' => 'Фајлон',
 'prefs-custom-css' => 'Хысуси CSS',
 'youremail' => 'E-номә:',
-'username' => 'Иштирокәкә ном:',
-'uid' => 'Иштирокәкә ID:',
+'username' => '{{GENDER:$1|Иштирокәкә ном}}:',
+'uid' => '{{GENDER:$1|Иштирокәкә}} ID:',
 'yourrealname' => 'Шымә әсыл ном:',
 'yourlanguage' => 'Зывон:',
 'email' => 'E-номә',
@@ -650,6 +648,9 @@ $messages = array(
 
 # Groups
 'group-user' => 'Иштирокәкон',
+
+# Special:Log/newusers
+'newuserlogpage' => 'Иштирокәкон ғеидијоти журнал',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-edit' => 'Ым сәһифә сәрост кардеј',
@@ -776,9 +777,6 @@ $messages = array(
 # Special:LinkSearch
 'linksearch-line' => '$2-ку сәбон вардә бә $1',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Иштирокәкон ғеидијоти журнал',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(иштирокәкон сијоһи)',
 
@@ -822,7 +820,7 @@ $messages = array(
 'blanknamespace' => '(Әсос)',
 
 # Contributions
-'contributions' => 'Иштирокәкә гәнҹ',
+'contributions' => '{{GENDER:$1|Иштирокәкә}} гәнҹ',
 'contributions-title' => 'Иштирокәкә гәнҹ $1',
 'mycontris' => 'Гәнҹ',
 'contribsub2' => 'Гәнҹ $1 ($2)',

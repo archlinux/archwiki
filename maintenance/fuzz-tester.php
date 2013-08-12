@@ -747,7 +747,7 @@ class wikiFuzz {
 	/**
 	 ** Randomly returns one element of the input array.
 	 */
-	static public function chooseInput( array $input ) {
+	public static function chooseInput( array $input ) {
 		$randindex = wikiFuzz::randnum( count( $input ) - 1 );
 		return $input[$randindex];
 	}
@@ -761,7 +761,7 @@ class wikiFuzz {
 	 * @param $start int
 	 * @return int
 	 */
-	static public function randnum( $finish, $start = 0 ) {
+	public static function randnum( $finish, $start = 0 ) {
 		return mt_rand( $start, $finish );
 	}
 
@@ -769,7 +769,7 @@ class wikiFuzz {
 	 * Returns a mix of random text and random wiki syntax.
 	 * @return string
 	 */
-	static private function randstring() {
+	private static function randstring() {
 		$thestring = "";
 
 		for ( $i = 0; $i < 40; $i++ ) {
@@ -801,7 +801,7 @@ class wikiFuzz {
 	 *        or random data from "other".
 	 * @return string
 	 */
-	static private function makestring() {
+	private static function makestring() {
 		$what = wikiFuzz::randnum( 2 );
 		if ( $what == 0 ) {
 			return wikiFuzz::randstring();
@@ -818,7 +818,7 @@ class wikiFuzz {
 	 * @param $matches
 	 * @return string
 	 */
-	static private function stringEscape( $matches ) {
+	private static function stringEscape( $matches ) {
 		return sprintf( "\\x%02x", ord( $matches[1] ) );
 	}
 
@@ -828,7 +828,7 @@ class wikiFuzz {
 	 * @param $str string
 	 * @return string
 	 */
-	static public function makeTitleSafe( $str ) {
+	public static function makeTitleSafe( $str ) {
 		$legalTitleChars = " %!\"$&'()*,\\-.\\/0-9:;=?@A-Z\\\\^_`a-z~\\x80-\\xFF";
 		return preg_replace_callback(
 				"/([^$legalTitleChars])/", 'wikiFuzz::stringEscape',
@@ -839,7 +839,7 @@ class wikiFuzz {
 	 ** Returns a string of fuzz text.
 	 * @return string
 	 */
-	static private function loop() {
+	private static function loop() {
 		switch ( wikiFuzz::randnum( 3 ) ) {
 			case 1: // an opening tag, with parameters.
 				$string = "";
@@ -868,7 +868,7 @@ class wikiFuzz {
 	 * Returns one of the three styles of random quote: ', ", and nothing.
 	 * @return string
 	 */
-	static private function getRandQuote() {
+	private static function getRandQuote() {
 		switch ( wikiFuzz::randnum( 3 ) ) {
 			case 1 : return "'";
 			case 2 : return "\"";
@@ -881,7 +881,7 @@ class wikiFuzz {
 	 * @param $maxtypes int
 	 * @return string
 	 */
-	static public function makeFuzz( $maxtypes = 2 ) {
+	public static function makeFuzz( $maxtypes = 2 ) {
 		$page = "";
 		for ( $k = 0; $k < $maxtypes; $k++ ) {
 			$page .= wikiFuzz::loop();
@@ -1490,7 +1490,7 @@ class specialBlockmeTest extends pageTest {
 	function __construct() {
 		$this->pagePath = "index.php?title=Special:Blockme";
 
-		$this->params = array ( );
+		$this->params = array ();
 
 		// sometimes we specify "ip", and sometimes we don't.
 		if ( wikiFuzz::randnum( 1 ) == 0 ) {
@@ -2041,7 +2041,7 @@ class api extends pageTest {
 	}
 
 	// Adds all the elements to the array, using the specified prefix.
-	private static function addListParams( &$array, $prefix, $elements )  {
+	private static function addListParams( &$array, $prefix, $elements ) {
 		foreach ( $elements as $element ) {
 			$array[$prefix . $element] = self::getParamDetails( $element );
 		}
@@ -2709,5 +2709,3 @@ for ( $count = 0; true; $count++ ) {
 		break;
 	}
 }
-
-

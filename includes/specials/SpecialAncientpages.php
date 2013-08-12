@@ -36,7 +36,9 @@ class AncientPagesPage extends QueryPage {
 		return true;
 	}
 
-	function isSyndicated() { return false; }
+	function isSyndicated() {
+		return false;
+	}
 
 	function getQueryInfo() {
 		return array(
@@ -68,5 +70,9 @@ class AncientPagesPage extends QueryPage {
 			htmlspecialchars( $wgContLang->convert( $title->getPrefixedText() ) )
 		);
 		return $this->getLanguage()->specialList( $link, htmlspecialchars( $d ) );
+	}
+
+	protected function getGroupName() {
+		return 'maintenance';
 	}
 }

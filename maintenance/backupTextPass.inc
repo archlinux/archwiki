@@ -169,7 +169,7 @@ class TextPassDumper extends BackupDumper {
 		$this->xmlwriterobj = new XmlDumpWriter();
 
 		$input = fopen( $this->input, "rt" );
-		$result = $this->readDump( $input );
+		$this->readDump( $input );
 
 		if ( $this->spawnProc ) {
 			$this->closeSpawn();
@@ -294,7 +294,7 @@ class TextPassDumper extends BackupDumper {
 	}
 
 	function setTimeExceeded() {
-		$this->timeExceeded = True;
+		$this->timeExceeded = true;
 	}
 
 	function checkIfTimeExceeded() {

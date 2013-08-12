@@ -17,7 +17,7 @@ class Asirra extends SimpleCaptcha {
 	function getForm() {
 		global $wgOut;
 
-		$wgOut->addModules( 'ext.confirmedit.asirra' );
+		$wgOut->addModules( 'ext.confirmEdit.asirra' );
 		$js = Html::linkedScript( $this->asirra_clientscript );
 
 		$message = Xml::encodeJsVar( wfMessage( 'asirra-createaccount-fail' )->plain() );

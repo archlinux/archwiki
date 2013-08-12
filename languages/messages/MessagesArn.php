@@ -110,7 +110,6 @@ $messages = array(
 'qbbrowse' => 'Kintun',
 'qbedit' => 'Pepikape',
 'qbpageoptions' => 'Tüfachi wülngiñ',
-'qbpageinfo' => 'Trokiñdungu',
 'qbmyoptions' => 'tañi nütramkawe',
 'qbspecialpages' => 'Kangelu',
 'faq' => 'Rumelfemkelu ramtun',
@@ -475,8 +474,8 @@ Rulpakünuy feychi kangelkülelu dungu.",
 'right-browsearchive' => 'kintun pakina ñamümüngelu',
 'right-undelete' => 'Wüñoñamümün kiñe pakina',
 
-# User rights log
-'rightsnone' => 'chemnorume',
+# Special:Log/newusers
+'newuserlogpage' => 'We kellufe ñi wirintukun',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'chillkatun tüfachi pakina',
@@ -634,9 +633,6 @@ Fey ñi chumngen mülelu ($2 fey ñi chumngen wülngiñ) pengeli tüfa mew.',
 # Special:ListUsers
 'listusers-submit' => 'Pengelün',
 
-# Special:Log/newusers
-'newuserlogpage' => 'We kellufe ñi wirintukun',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(koneltulu kellufe ñi wif)',
 
@@ -664,7 +660,6 @@ Fey ñi chumngen mülelu ($2 fey ñi chumngen wülngiñ) pengeli tüfa mew.',
 'watching' => 'Llaytumekey...',
 'unwatching' => 'Llaytumekewelay...',
 
-'enotif_newpagetext' => 'Tüfachi ta we pakina',
 'enotif_impersonal_salutation' => '{{SITENAME}} kellufe',
 'created' => 'Llituy',
 
@@ -976,5 +971,8 @@ Ka dungu ellkangeay wünedullin reke.
 
 # HTML forms
 'htmlform-selectorother-other' => 'Kakelu',
+
+# New logging system
+'rightsnone' => 'chemnorume',
 
 );

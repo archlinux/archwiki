@@ -98,7 +98,7 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 					$vals['user'] = $row->user_name;
 				}
 
-				if ( isset( $prop['user'] ) ) {
+				if ( isset( $prop['userid'] ) || /*B/C*/isset( $prop['user'] ) ) {
 					$vals['userid'] = $row->pt_user;
 				}
 
@@ -231,6 +231,9 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 				),
 				'userid' => 'integer'
 			),
+			'userid' => array(
+				'userid' => 'integer'
+			),
 			'comment' => array(
 				'comment' => 'string'
 			),
@@ -260,9 +263,5 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Protectedtitles';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

@@ -64,8 +64,8 @@ $magicWords = array(
 	'noeditsection'             => array( '0', '__KEENÄNNERNLINK__', '__ABSCHNITTE_NICHT_BEARBEITEN__', '__NOEDITSECTION__' ),
 	'currentmonth'              => array( '1', 'AKTMAAND', 'JETZIGER_MONAT', 'JETZIGER_MONAT_2', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonthname'          => array( '1', 'AKTMAANDNAAM', 'JETZIGER_MONATSNAME', 'CURRENTMONTHNAME' ),
-	'currentmonthnamegen'       => array( '1', 'AKTMAANDNAAMGEN', 'JETZIGER_MONATSNAME_GENITIV', 'CURRENTMONTHNAMEGEN' ),
-	'currentday'                => array( '1', 'AKTDAG', 'JETZIGER_KALENDERTAG', 'CURRENTDAY' ),
+	'currentmonthnamegen'       => array( '1', 'AKTMAANDNAAMGEN', 'JETZIGER_MONATSNAME_GENITIV', 'JETZIGER_MONATSNAME_GEN', 'CURRENTMONTHNAMEGEN' ),
+	'currentday'                => array( '1', 'AKTDAG', 'JETZIGER_KALENDERTAG', 'JETZIGER_TAG', 'CURRENTDAY' ),
 	'currentdayname'            => array( '1', 'AKTDAGNAAM', 'JETZIGER_WOCHENTAG', 'CURRENTDAYNAME' ),
 	'currentyear'               => array( '1', 'AKTJOHR', 'JETZIGES_JAHR', 'CURRENTYEAR' ),
 	'currenttime'               => array( '1', 'AKTTIED', 'JETZIGE_UHRZEIT', 'CURRENTTIME' ),
@@ -360,7 +360,6 @@ $messages = array(
 'qbbrowse' => 'Blädern',
 'qbedit' => 'Ännern',
 'qbpageoptions' => 'Disse Sied',
-'qbpageinfo' => 'Sietendaten',
 'qbmyoptions' => 'Instellen',
 'qbspecialpages' => 'Spezialsieten',
 'faq' => 'Faken stellte Fragen',
@@ -607,11 +606,8 @@ As Grund is angeven: ''$2''.",
 # Login and logout pages
 'logouttext' => "'''Du büst nu afmellt.'''
 
-Du kannst {{SITENAME}} nu anonym wiederbruken oder di ünner dissen oder en annern Brukernaam wedder [[Special:UserLogin|anmellen]].
+Du kannst {{SITENAME}} nu anonym wiederbruken oder di ünner dissen oder en annern Brukernaam wedder <span class='plainlinks'>[$1 anmellen]</span>.
 Denk dor an, dat welk Sieden ünner Ümstänn noch jümmer so wiest warrn köönt, as wenn du anmellt weerst. Dat ännert sik, wenn du den Cache vun dien Browser leddig maakst.",
-'welcomecreation' => '== Willkamen, $1! ==
-Dien Brukerkonto is nu inricht.
-Vergeet nich, de Sied för di persönlich [[Special:Preferences|intostellen]].',
 'yourname' => 'Dien Brukernaam',
 'yourpassword' => 'Dien Passwoort',
 'yourpasswordagain' => 'Passwoort nochmal ingeven',
@@ -884,7 +880,6 @@ Bruker mit Sysop-Rechten doran arbeiden könnt.'''",
 'template-semiprotected' => '(half-schuult)',
 'hiddencategories' => 'Disse Siet steiht in {{PLURAL:$1|ene verstekene Kategorie|$1 verstekene Kategorien}}:',
 'edittools' => '<!-- Disse Text warrt ünner de Finstern för dat Ännern un Hoochladen wiest. -->',
-'nocreatetitle' => 'Opstellen vun ne’e Sieden is inschränkt.',
 'nocreatetext' => '{{SITENAME}} verlööft di dat Opstellen vun ne’e Sieden nich. Du kannst blot Sieden ännern, de al dor sünd, oder du musst di [[Special:UserLogin|anmellen]].',
 'nocreate-loggedin' => 'Du hest keen Verlööf, ne’e Sieden antoleggen.',
 'permissionserrors' => 'Fehlers mit de Rechten',
@@ -902,6 +897,11 @@ Schient so, as wenn se wegdaan worrn is.',
 'edit-conflict' => 'Konflikt bi’t Sied ännern.',
 'edit-no-change' => 'Dien Ännern is nich afspiekert worrn, denn dor hett sik nix an’n Text ännert.',
 'edit-already-exists' => 'Kunn keen ne’e Sied opstellen, dat gifft ehr al.',
+
+# Content models
+'content-model-wikitext' => 'Wikitext',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Wohrschau: Disse Sied bruukt to veel opwännige Parserfunkschonen.
@@ -1352,11 +1352,13 @@ Dat kann nich wedder ungeschehn maakt warrn.',
 'right-siteadmin' => 'Datenbank sperren un wedder apen maken',
 'right-override-export-depth' => 'Exporteer Sieden, lenkt Sieden inslaten bet to en Deepd vun 5',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Ne’e-Bruker-Logbook',
+'newuserlogpagetext' => 'Dit is dat Logbook för nee opstellte Brukerkonten.',
+
 # User rights log
 'rightslog' => 'Brukerrechten-Logbook',
 'rightslogtext' => 'In dit Logbook staht Ännern an de Brukerrechten.',
-'rightslogentry' => 'Grupp bi $1 vun $2 op $3 ännert.',
-'rightsnone' => '(kene)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'de Sied to lesen',
@@ -1666,6 +1668,8 @@ Denk dor an, natokieken, wat nich noch annere Sieden na de Vörlagen wiest, ehrd
 'disambiguationspage' => 'Template:Mehrdüdig_Begreep',
 'disambiguations-text' => 'Disse Sieden wist na Sieden för mehrdüdige Begrepen. Se schöölt lever op de Sieden wiesen, de egentlich meent sünd.<br />Ene Siet warrt as Siet för en mehrdüdigen Begreep ansehn, wenn [[MediaWiki:Disambiguationspage]] na ehr wiest.<br />Lenken ut annere Naamrüüm sünd nich mit in de List.',
 
+'pageswithprop-submit' => 'Los',
+
 'doubleredirects' => 'Dubbelte Wiederleiden',
 'doubleredirectstext' => '<b>Wohrscho:</b> Disse List kann „falsche Positive“ bargen.
 Dat passeert denn, wenn en Wiederleiden blangen de Wiederleiden-Verwies noch mehr Text mit annere Verwiesen hett.
@@ -1820,10 +1824,6 @@ Kiek ok bi de [[Special:WantedCategories|wünschten Kategorien]].',
 'activeusers-hidesysops' => 'Administraters nich wiesen',
 'activeusers-noresult' => 'Keen Brukers funnen.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Ne’e-Bruker-Logbook',
-'newuserlogpagetext' => 'Dit is dat Logbook för nee opstellte Brukerkonten.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Brukergruppen-Rechten',
 'listgrouprights-summary' => 'Dit is en List vun de Brukergruppen, de in dit Wiki defineert sünd, un de Rechten, de dor mit verbunnen sünd.
@@ -1911,11 +1911,7 @@ Mehr Informatschonen över enkelte Rechten staht ünner [[{{MediaWiki:Listgroupr
 
 'enotif_mailer' => '{{SITENAME}} E-Mail-Bescheedgeevdeenst',
 'enotif_reset' => 'All Sieden as besöcht marken',
-'enotif_newpagetext' => 'Dit is en ne’e Siet.',
 'enotif_impersonal_salutation' => '{{SITENAME}}-Bruker',
-'changed' => 'ännert',
-'created' => 'opstellt',
-'enotif_subject' => '[{{SITENAME}}] De Siet „$PAGETITLE“ is vun $PAGEEDITOR $CHANGEDORCREATED worrn',
 'enotif_lastvisited' => 'All Ännern siet dien letzten Besöök op een Blick: $1',
 'enotif_lastdiff' => 'Kiek bi $1 för dit Ännern.',
 'enotif_anon_editor' => 'Anonymen Bruker $1',
@@ -1939,6 +1935,8 @@ Du kriggst solang keen Bescheedgeev-E-Mails mehr, bet dat du de Siet wedder bes�
 
 --
 De Instellungen vun dien Oppasslist to ännern, gah na: {{canonicalurl:Special:Watchlist/edit}}',
+'created' => 'opstellt',
+'changed' => 'ännert',
 
 # Delete
 'deletepage' => 'Siet wegsmieten',
@@ -2522,6 +2520,12 @@ All Transwiki-Import-Akschonen staht later ok in dat [[Special:Log/import|Import
 # Info page
 'pageinfo-title' => 'Informatschoon för "$1"',
 'pageinfo-article-id' => 'Sied-ID',
+'pageinfo-redirectsto-info' => 'Info',
+'pageinfo-contentpage-yes' => 'Jo',
+'pageinfo-protect-cascading-yes' => 'Jo',
+'pageinfo-category-info' => 'Kategorieinformatschoon',
+'pageinfo-category-pages' => 'Tall vun Sied',
+'pageinfo-category-subcats' => 'TAll vun Ünnerkategorien',
 
 # Skin names
 'skinname-standard' => 'Klassik',
@@ -3149,6 +3153,6 @@ Geev den Dateinaam ahn den Tosatz „{{ns:file}}:“ an.',
 # New logging system
 'revdelete-restricted' => 'Inschränkungen för Administraters instellt',
 'revdelete-unrestricted' => 'Inschränkungen för Administraters rutnahmen',
-'newuserlog-byemail' => 'Passwoord per E-Mail toschickt',
+'rightsnone' => '(kene)',
 
 );

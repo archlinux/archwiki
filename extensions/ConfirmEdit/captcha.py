@@ -170,7 +170,10 @@ def pick_word(words, blacklist, verbose, nwords, min_length, max_length):
 	sys.exit("Unable to find valid word combinations")
 
 def read_wordlist(filename):
-	return [x.strip().lower() for x in open(wordlist).readlines()]
+	f = open(filename)
+	words = [x.strip().lower() for x in f.readlines()]
+	f.close()
+	return words
 
 if __name__ == '__main__':
 	"""This grabs random words from the dictionary 'words' (one

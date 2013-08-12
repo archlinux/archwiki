@@ -182,17 +182,21 @@ class GadgetHooks {
 			}
 		}
 
-		$lb->execute( __METHOD__ );
 
-		$done = array();
+		// Allow other extensions, e.g. MobileFrontend, to disallow legacy gadgets
+		if ( wfRunHooks( 'Gadgets::allowLegacy', array( $out->getContext() ) ) ) {
+			$lb->execute( __METHOD__ );
 
-		foreach ( $pages as $page ) {
-			if ( isset( $done[$page] ) ) {
-				continue;
+			$done = array();
+
+			foreach ( $pages as $page ) {
+				if ( isset( $done[$page] ) ) {
+					continue;
+				}
+
+				$done[$page] = true;
+				self::applyScript( $page, $out );
 			}
-
-			$done[$page] = true;
-			self::applyScript( $page, $out );
 		}
 		wfProfileOut( __METHOD__ );
 
@@ -202,8 +206,8 @@ class GadgetHooks {
 	/**
 	 * Adds one legacy script to output.
 	 *
-	 * @param $page String: Unprefixed page title
-	 * @param $out OutputPage
+	 * @param string $page Unprefixed page title
+	 * @param OutputPage $out
 	 */
 	private static function applyScript( $page, $out ) {
 		global $wgJsMimeType;
@@ -227,12 +231,12 @@ class GadgetHooks {
 
 	/**
 	 * UnitTestsList hook handler
-	 * @param $files Array: List of extension test files
+	 * @param array $files
 	 * @return bool
 	 */
-	public static function unitTestsList( $files ) {
-		$files[] = dirname( __FILE__ ) . '/Gadgets_tests.php';
-
+	public static function onUnitTestsList( array &$files ) {
+		$testDir = __DIR__ . '/tests/';
+		$files = array_merge( $files, glob( "$testDir/*Test.php" ) );
 		return true;
 	}
 }
@@ -255,6 +259,7 @@ class Gadget {
 			$resourceLoaded = false,
 			$requiredRights = array(),
 			$requiredSkins = array(),
+			$targets = array( 'desktop' ),
 			$onByDefault = false,
 			$category;
 
@@ -301,6 +306,9 @@ class Gadget {
 					break;
 				case 'default':
 					$gadget->onByDefault = true;
+					break;
+				case 'targets':
+					$gadget->targets = $params;
 					break;
 			}
 		}
@@ -455,7 +463,7 @@ class Gadget {
 			return null;
 		}
 
-		return new GadgetResourceLoaderModule( $pages, $this->dependencies );
+		return new GadgetResourceLoaderModule( $pages, $this->dependencies, $this->targets );
 	}
 
 	/**
@@ -553,7 +561,7 @@ class Gadget {
 	 * Loads list of gadgets and returns it as associative array of sections with gadgets
 	 * e.g. array( 'sectionnname1' => array( $gadget1, $gadget2),
 	 *             'sectionnname2' => array( $gadget3 ) );
-	 * @param $forceNewText String: New text of MediaWiki:gadgets-sdefinition. If specified, will
+	 * @param $forceNewText String: New text of MediaWiki:gadgets-definition. If specified, will
 	 * 	      force a purge of cache and recreation of the gadget list.
 	 * @return Mixed: Array or false
 	 */
@@ -587,7 +595,7 @@ class Gadget {
 			$g = $forceNewText;
 		}
 
-		$g = preg_replace( '/<!--.*-->/s', '', $g );
+		$g = preg_replace( '/<!--.*?-->/s', '', $g );
 		$g = preg_split( '/(\r\n|\r|\n)+/', $g );
 
 		$gadgets = array();
@@ -624,17 +632,20 @@ class GadgetResourceLoaderModule extends ResourceLoaderWikiModule {
 
 	/**
 	 * Creates an instance of this class
+	 *
 	 * @param $pages Array: Associative array of pages in ResourceLoaderWikiModule-compatible
 	 * format, for example:
 	 * array(
-	 * 		'MediaWiki:Gadget-foo.js'  => array( 'type' => 'script' ),
-	 * 		'MediaWiki:Gadget-foo.css' => array( 'type' => 'style' ),
+	 *        'MediaWiki:Gadget-foo.js'  => array( 'type' => 'script' ),
+	 *        'MediaWiki:Gadget-foo.css' => array( 'type' => 'style' ),
 	 * )
 	 * @param $dependencies Array: Names of resources this module depends on
+	 * @param $targets Array: List of targets this module support
 	 */
-	public function __construct( $pages, $dependencies ) {
+	public function __construct( $pages, $dependencies, $targets ) {
 		$this->pages = $pages;
 		$this->dependencies = $dependencies;
+		$this->targets = $targets;
 	}
 
 	/**

@@ -52,6 +52,11 @@ class RunJobs extends Maintenance {
 
 	public function execute() {
 		global $wgTitle;
+
+		if ( wfReadOnly() ) {
+			$this->error( "Unable to run jobs; the wiki is in read-only mode.", 1 ); // die
+		}
+
 		if ( $this->hasOption( 'procs' ) ) {
 			$procs = intval( $this->getOption( 'procs' ) );
 			if ( $procs < 1 || $procs > 1000 ) {
@@ -68,44 +73,64 @@ class RunJobs extends Maintenance {
 		$type = $this->getOption( 'type', false );
 		$wgTitle = Title::newFromText( 'RunJobs.php' );
 		$dbw = wfGetDB( DB_MASTER );
-		$n = 0;
+		$jobsRun = 0; // counter
 
-		if ( $type === false ) {
-			$conds = Job::defaultQueueConditions( );
-		} else {
-			$conds = array( 'job_cmd' => $type );
+		$group = JobQueueGroup::singleton();
+		// Handle any required periodic queue maintenance
+		$count = $group->executeReadyPeriodicTasks();
+		if ( $count > 0 ) {
+			$this->runJobsLog( "Executed $count periodic queue task(s)." );
 		}
 
-		while ( $dbw->selectField( 'job', 'job_id', $conds, 'runJobs.php' ) ) {
-			$offset = 0;
-			for ( ; ; ) {
-				$job = !$type ? Job::pop( $offset ) : Job::pop_type( $type );
+		$lastTime = time();
+		do {
+			$job = ( $type === false )
+				? $group->pop( JobQueueGroup::TYPE_DEFAULT, JobQueueGroup::USE_CACHE )
+				: $group->pop( $type ); // job from a single queue
+			if ( $job ) { // found a job
+				++$jobsRun;
+				$this->runJobsLog( $job->toString() . " STARTING" );
 
-				if ( !$job ) {
-					break;
+				// Run the job...
+				$t = microtime( true );
+				try {
+					$status = $job->run();
+					$error = $job->getLastError();
+				} catch ( MWException $e ) {
+					$status = false;
+					$error = get_class( $e ) . ': ' . $e->getMessage();
+				}
+				$timeMs = intval( ( microtime( true ) - $t ) * 1000 );
+
+				// Mark the job as done on success or when the job cannot be retried
+				if ( $status !== false || !$job->allowRetries() ) {
+					$group->ack( $job ); // done
 				}
 
-				wfWaitForSlaves();
-				$t = microtime( true );
-				$offset = $job->id;
-				$this->runJobsLog( $job->toString() . " STARTING" );
-				$status = $job->run();
-				$t = microtime( true ) - $t;
-				$timeMs = intval( $t * 1000 );
 				if ( !$status ) {
-					$this->runJobsLog( $job->toString() . " t=$timeMs error={$job->error}" );
+					$this->runJobsLog( $job->toString() . " t=$timeMs error={$error}" );
 				} else {
 					$this->runJobsLog( $job->toString() . " t=$timeMs good" );
 				}
 
-				if ( $maxJobs && ++$n > $maxJobs ) {
-					break 2;
+				// Break out if we hit the job count or wall time limits...
+				if ( $maxJobs && $jobsRun >= $maxJobs ) {
+					break;
+				} elseif ( $maxTime && ( time() - $startTime ) > $maxTime ) {
+					break;
 				}
-				if ( $maxTime && time() - $startTime > $maxTime ) {
-					break 2;
+
+				// Don't let any of the main DB slaves get backed up
+				$timePassed = time() - $lastTime;
+				if ( $timePassed >= 5 || $timePassed < 0 ) {
+					wfWaitForSlaves();
+				}
+				// Don't let any queue slaves/backups fall behind
+				if ( $jobsRun > 0 && ( $jobsRun % 100 ) == 0 ) {
+					$group->waitForBackups();
 				}
 			}
-		}
+		} while ( $job ); // stop when there are no jobs
 	}
 
 	/**

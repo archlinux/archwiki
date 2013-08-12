@@ -37,14 +37,16 @@ class PopularPagesPage extends QueryPage {
 		return true;
 	}
 
-	function isSyndicated() { return false; }
+	function isSyndicated() {
+		return false;
+	}
 
 	function getQueryInfo() {
 		return array (
 			'tables' => array( 'page' ),
 			'fields' => array( 'namespace' => 'page_namespace',
 					'title' => 'page_title',
-					'value' => 'page_counter'),
+					'value' => 'page_counter' ),
 			'conds' => array( 'page_is_redirect' => 0,
 					'page_namespace' => MWNamespace::getContentNamespaces() ) );
 	}
@@ -69,5 +71,9 @@ class PopularPagesPage extends QueryPage {
 		);
 		$nv = $this->msg( 'nviews' )->numParams( $result->value )->escaped();
 		return $this->getLanguage()->specialList( $link, $nv );
+	}
+
+	protected function getGroupName() {
+		return 'wiki';
 	}
 }

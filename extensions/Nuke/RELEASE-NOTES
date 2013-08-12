@@ -46,7 +46,7 @@ Latest version of the release notes: https://gerrit.wikimedia.org/r/gitweb?p=med
 
 * Do not show author names when filtering on a single author.
 * Added "delete more pages" link.
-* Fixed Special:Nuke/authorname behaviour.
+* Fixed Special:Nuke/authorname behavior.
 
 === Version 1.1 ===
 (2011-2-14)

@@ -139,15 +139,15 @@ class SpecialListGroupRights extends SpecialPage {
 	/**
 	 * Create a user-readable list of permissions from the given array.
 	 *
-	 * @param $permissions Array of permission => bool (from $wgGroupPermissions items)
-	 * @param $revoke Array of permission => bool (from $wgRevokePermissions items)
-	 * @param $add Array of groups this group is allowed to add or true
-	 * @param $remove Array of groups this group is allowed to remove or true
-	 * @param $addSelf Array of groups this group is allowed to add to self or true
-	 * @param $removeSelf Array of group this group is allowed to remove from self or true
+	 * @param array $permissions of permission => bool (from $wgGroupPermissions items)
+	 * @param array $revoke of permission => bool (from $wgRevokePermissions items)
+	 * @param array $add of groups this group is allowed to add or true
+	 * @param array $remove of groups this group is allowed to remove or true
+	 * @param array $addSelf of groups this group is allowed to add to self or true
+	 * @param array $removeSelf of group this group is allowed to remove from self or true
 	 * @return string List of all granted permissions, separated by comma separator
 	 */
-	 private function formatPermissions( $permissions, $revoke, $add, $remove, $addSelf, $removeSelf ) {
+	private function formatPermissions( $permissions, $revoke, $add, $remove, $addSelf, $removeSelf ) {
 		$r = array();
 		foreach( $permissions as $permission => $granted ) {
 			//show as granted only if it isn't revoked to prevent duplicate display of permissions
@@ -170,7 +170,7 @@ class SpecialListGroupRights extends SpecialPage {
 		}
 		sort( $r );
 		$lang = $this->getLanguage();
-		if( $add === true ){
+		if( $add === true ) {
 			$r[] = $this->msg( 'listgrouprights-addgroup-all' )->escaped();
 		} elseif( is_array( $add ) && count( $add ) ) {
 			$add = array_values( array_unique( $add ) );
@@ -179,7 +179,7 @@ class SpecialListGroupRights extends SpecialPage {
 				count( $add )
 			)->parse();
 		}
-		if( $remove === true ){
+		if( $remove === true ) {
 			$r[] = $this->msg( 'listgrouprights-removegroup-all' )->escaped();
 		} elseif( is_array( $remove ) && count( $remove ) ) {
 			$remove = array_values( array_unique( $remove ) );
@@ -188,7 +188,7 @@ class SpecialListGroupRights extends SpecialPage {
 				count( $remove )
 			)->parse();
 		}
-		if( $addSelf === true ){
+		if( $addSelf === true ) {
 			$r[] = $this->msg( 'listgrouprights-addgroup-self-all' )->escaped();
 		} elseif( is_array( $addSelf ) && count( $addSelf ) ) {
 			$addSelf = array_values( array_unique( $addSelf ) );
@@ -197,7 +197,7 @@ class SpecialListGroupRights extends SpecialPage {
 				count( $addSelf )
 			)->parse();
 		}
-		if( $removeSelf === true ){
+		if( $removeSelf === true ) {
 			$r[] = $this->msg( 'listgrouprights-removegroup-self-all' )->parse();
 		} elseif( is_array( $removeSelf ) && count( $removeSelf ) ) {
 			$removeSelf = array_values( array_unique( $removeSelf ) );
@@ -211,5 +211,9 @@ class SpecialListGroupRights extends SpecialPage {
 		} else {
 			return '<ul><li>' . implode( "</li>\n<li>", $r ) . '</li></ul>';
 		}
+	}
+
+	protected function getGroupName() {
+		return 'users';
 	}
 }

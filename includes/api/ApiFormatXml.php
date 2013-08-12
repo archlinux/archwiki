@@ -36,10 +36,6 @@ class ApiFormatXml extends ApiFormatBase {
 	private $mIncludeNamespace = false;
 	private $mXslt = null;
 
-	public function __construct( $main, $format ) {
-		parent::__construct( $main, $format );
-	}
-
 	public function getMimeType() {
 		return 'text/xml';
 	}
@@ -92,7 +88,7 @@ class ApiFormatXml extends ApiFormatBase {
 	 *
 	 * @par Example:
 	 * @verbatim
-	 * name='root',  value = array( '_element'=>'page', 'x', 'y', 'z')
+	 * name='root', value = array( '_element'=>'page', 'x', 'y', 'z')
 	 * @endverbatim
 	 * creates:
 	 * @verbatim
@@ -105,7 +101,7 @@ class ApiFormatXml extends ApiFormatBase {
 	 *
 	 * @par Example:
 	 * @verbatim
-	 * name='root',  value = array( '*'=>'text', 'lang'=>'en', 'id'=>10)
+	 * name='root', value = array( '*'=>'text', 'lang'=>'en', 'id'=>10)
 	 * @endverbatim
 	 * creates:
 	 * @verbatim
@@ -205,7 +201,13 @@ class ApiFormatXml extends ApiFormatBase {
 				// ignore
 				break;
 			default:
-				$retval .= $indstr . Xml::element( $elemName, null, $elemValue );
+				// to make sure null value doesn't produce unclosed element,
+				// which is what Xml::element( $elemName, null, null ) returns
+				if ( $elemValue === null ) {
+					$retval .= $indstr . Xml::element( $elemName );
+				} else {
+					$retval .= $indstr . Xml::element( $elemName, null, $elemValue );
+				}
 				break;
 		}
 		return $retval;
@@ -247,9 +249,5 @@ class ApiFormatXml extends ApiFormatBase {
 
 	public function getDescription() {
 		return 'Output data in XML format' . parent::getDescription();
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

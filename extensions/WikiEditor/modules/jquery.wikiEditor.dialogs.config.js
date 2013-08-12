@@ -1000,6 +1000,7 @@ $.wikiEditor.modules.dialogs.config = {
 								return;
 							}
 							if ( ( rows * cols ) > 1000 ) {
+								// 1000 is in the English message. The parameter replacement is kept for BC.
 								alert( mw.msg( 'wikieditor-toolbar-tool-table-toomany', 1000 ) );
 								return;
 							}

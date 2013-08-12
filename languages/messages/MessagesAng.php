@@ -173,7 +173,6 @@ $messages = array(
 'qbbrowse' => 'Onbirȝe',
 'qbedit' => 'Ādihte',
 'qbpageoptions' => 'Þēos sīde',
-'qbpageinfo' => 'Ȝeƿef',
 'qbmyoptions' => 'Mīna sīdan',
 'qbspecialpages' => 'Syndriȝa sīdan',
 'faq' => 'Oftost ascoda ascunȝa',
@@ -359,11 +358,8 @@ Cȳþþuhord edƿende ƿōh "<tt>$3: $4</tt>"',
 # Login and logout pages
 'logouttext' => "'''Þū eart nū ūtmeldod.'''
 
-Þū canst ætfeolan tō brūcenne {{SITENAME}} ungecūðe, oþþe þū canst [[Special:UserLogin|inmeldian eft]] tō ylcan oþþe ōðrum brūcende.
+Þū canst ætfeolan tō brūcenne {{SITENAME}} ungecūðe, oþþe þū canst <span class='plainlinks'>[$1 inmeldian eft]</span> tō ylcan oþþe ōðrum brūcende.
 Cnāw þæt sume sīdan cunnon gelǣstende ēowod wesan swā þū wǣre gīet inmeldod, oþ þæt þū clǣnsie þīnes sēcendtōles gemynd.",
-'welcomecreation' => '== Ƿilcumen, $1! ==
-
-Þīn hordcleofa ƿearþ ȝescapen.  Ne forȝiet tō hƿierfenne þīna [[Special:Preferences|{{SITENAME}} foreberunga]].',
 'yourname' => 'Þīn brūcendnama',
 'yourpassword' => 'Þafungƿord:',
 'yourpasswordagain' => 'Þafungƿord edƿrītan:',
@@ -480,7 +476,6 @@ folcliċum āgnunge oþþe ȝelīċum frēom horde (sēo $1 for āscungum).
 'template-protected' => '(borgen)',
 'template-semiprotected' => '(sāmborgen)',
 'hiddencategories' => 'Þēos sīde is ȝesīþ {{PLURAL:$1|1 ȝehȳdedes flocces|$1 ȝehȳdeda flocca}}:',
-'nocreatetitle' => 'Sīdan ȝesceaft mǣte',
 'nocreate-loggedin' => 'Þū ne hæfst þafunge to scieppenne nīƿa sīdan.',
 'permissionserrors' => 'Þafunga ƿōh',
 'permissionserrorstext-withaction' => 'Þū ne hæfst þafunge for $2, forþǣm þe {{PLURAL:$1|race|racum}}:',
@@ -635,6 +630,9 @@ folcliċum āgnunge oþþe ȝelīċum frēom horde (sēo $1 for āscungum).
 'group-suppress-member' => 'oferȝesiht',
 
 'grouppage-sysop' => '{{ns:project}}:Beƿitendas',
+
+# Special:Log/newusers
+'newuserlogpage' => 'Brūcenda ȝesceaft ȝetalu',
 
 # User rights log
 'rightslog' => 'Brūcenda riht cranic',
@@ -838,9 +836,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Special:ActiveUsers
 'activeusers' => 'Hƿata brūcenda ȝetalu',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Brūcenda ȝesceaft ȝetalu',
-
 # Special:ListGroupRights
 'listgrouprights-group' => 'Clīeƿen',
 'listgrouprights-rights' => 'Riht',
@@ -878,13 +873,12 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'watching' => 'Ƿæccende...',
 'unwatching' => 'Unƿæccende...',
 
-'enotif_newpagetext' => 'Þēos is nīƿu sīde.',
 'enotif_impersonal_salutation' => '{{SITENAME}} brūcend',
-'changed' => 'hƿorfen',
-'created' => 'ȝescapen',
 'enotif_lastvisited' => 'Sēo $1 for eall hƿearfas siþþan þīn læst cyme.',
 'enotif_lastdiff' => 'Sēo $1 to sēonne þisne hƿearf.',
 'enotif_anon_editor' => 'uncūþ brūcend $1',
+'created' => 'ȝescapen',
+'changed' => 'hƿorfen',
 
 # Delete
 'deletepage' => 'Sīdan āfeorsian',

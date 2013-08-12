@@ -192,18 +192,18 @@ class LogFormatter {
 		$parameters = $entry->getParameters();
 		// @see LogPage::actionText()
 		// Text of title the action is aimed at.
-		$target = $entry->getTarget()->getPrefixedText() ;
+		$target = $entry->getTarget()->getPrefixedText();
 		$text = null;
 		switch( $entry->getType() ) {
 			case 'move':
 				switch( $entry->getSubtype() ) {
 					case 'move':
-						$movesource =  $parameters['4::target'];
+						$movesource = $parameters['4::target'];
 						$text = wfMessage( '1movedto2' )
 							->rawParams( $target, $movesource )->inContentLanguage()->escaped();
 						break;
 					case 'move_redir':
-						$movesource =  $parameters['4::target'];
+						$movesource = $parameters['4::target'];
 						$text = wfMessage( '1movedto2_redir' )
 							->rawParams( $target, $movesource )->inContentLanguage()->escaped();
 						break;
@@ -270,6 +270,7 @@ class LogFormatter {
 							->inContentLanguage()->escaped();
 						break;
 					case 'create2':
+					case 'byemail':
 						$text = wfMessage( 'newuserlog-create2-entry' )
 							->rawParams( $target )->inContentLanguage()->escaped();
 						break;
@@ -293,6 +294,28 @@ class LogFormatter {
 				}
 				break;
 
+			case 'rights':
+				if ( count( $parameters['4::oldgroups'] ) ) {
+					$oldgroups = implode( ', ', $parameters['4::oldgroups'] );
+				} else {
+					$oldgroups = wfMessage( 'rightsnone' )->inContentLanguage()->escaped();
+				}
+				if ( count( $parameters['5::newgroups'] ) ) {
+					$newgroups = implode( ', ', $parameters['5::newgroups'] );
+				} else {
+					$newgroups = wfMessage( 'rightsnone' )->inContentLanguage()->escaped();
+				}
+				switch( $entry->getSubtype() ) {
+					case 'rights':
+						$text = wfMessage( 'rightslogentry' )
+							->rawParams( $target, $oldgroups, $newgroups )->inContentLanguage()->escaped();
+						break;
+					case 'autopromote':
+						$text = wfMessage( 'rightslogentry-autopromote' )
+							->rawParams( $target, $oldgroups, $newgroups )->inContentLanguage()->escaped();
+						break;
+				}
+				break;
 
 			// case 'suppress' --private log -- aaron  (sign your messages so we know who to blame in a few years :-D)
 			// default:
@@ -379,9 +402,11 @@ class LogFormatter {
 
 		// Filter out parameters which are not in format #:foo
 		foreach ( $entry->getParameters() as $key => $value ) {
-			if ( strpos( $key, ':' ) === false ) continue;
-			list( $index, $type, $name ) = explode( ':', $key, 3 );
-			$params[$index - 1] = $value;
+			if ( strpos( $key, ':' ) === false ) {
+				continue;
+			}
+			list( $index, $type, ) = explode( ':', $key, 3 );
+			$params[$index - 1] = $this->formatParameterValue( $type, $value );
 		}
 
 		/* Message class doesn't like non consecutive numbering.
@@ -416,7 +441,7 @@ class LogFormatter {
 		$entry = $this->entry;
 		$params = $this->extractParameters();
 		$params[0] = Message::rawParam( $this->getPerformerElement() );
-		$params[1] = $entry->getPerformer()->getName();
+		$params[1] = $this->canView( LogPage::DELETED_USER ) ? $entry->getPerformer()->getName() : '';
 		$params[2] = Message::rawParam( $this->makePageLink( $entry->getTarget() ) );
 
 		// Bad things happens if the numbers are not in correct order
@@ -425,10 +450,83 @@ class LogFormatter {
 	}
 
 	/**
+	 * Formats parameters values dependent to their type
+	 * @param string $type The type of the value.
+	 *   Valid are currently:
+	 *     * - (empty) or plain: The value is returned as-is
+	 *     * raw: The value will be added to the log message
+	 *            as raw parameter (e.g. no escaping)
+	 *            Use this only if there is no other working
+	 *            type like user-link or title-link
+	 *     * msg: The value is a message-key, the output is
+	 *            the message in user language
+	 *     * msg-content: The value is a message-key, the output
+	 *                    is the message in content language
+	 *     * user: The value is a user name, e.g. for GENDER
+	 *     * user-link: The value is a user name, returns a
+	 *                  link for the user
+	 *     * title: The value is a page title,
+	 *              returns name of page
+	 *     * title-link: The value is a page title,
+	 *                   returns link to this page
+	 *     * number: Format value as number
+	 * @param string $value The parameter value that should
+	 *                      be formated
+	 * @return string or Message::numParam or Message::rawParam
+	 *         Formated value
+	 * @since 1.21
+	 */
+	protected function formatParameterValue( $type, $value ) {
+		$saveLinkFlood = $this->linkFlood;
+
+		switch( strtolower( trim( $type ) ) ) {
+			case 'raw':
+				$value = Message::rawParam( $value );
+				break;
+			case 'msg':
+				$value = $this->msg( $value )->text();
+				break;
+			case 'msg-content':
+				$value = $this->msg( $value )->inContentLanguage()->text();
+				break;
+			case 'number':
+				$value = Message::numParam( $value );
+				break;
+			case 'user':
+				$user = User::newFromName( $value );
+				$value = $user->getName();
+				break;
+			case 'user-link':
+				$this->setShowUserToolLinks( false );
+
+				$user = User::newFromName( $value );
+				$value = Message::rawParam( $this->makeUserLink( $user ) );
+
+				$this->setShowUserToolLinks( $saveLinkFlood );
+				break;
+			case 'title':
+				$title = Title::newFromText( $value );
+				$value = $title->getPrefixedText();
+				break;
+			case 'title-link':
+				$title = Title::newFromText( $value );
+				$value = Message::rawParam( $this->makePageLink( $title ) );
+				break;
+			case 'plain':
+				// Plain text, nothing to do
+			default:
+				// Catch other types and use the old behavior (return as-is)
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Helper to make a link to the page, taking the plaintext
 	 * value in consideration.
 	 * @param $title Title the page
-	 * @param $parameters array query parameters
+	 * @param array $parameters query parameters
+	 * @throws MWException
 	 * @return String
 	 */
 	protected function makePageLink( Title $title = null, $parameters = array() ) {
@@ -492,7 +590,7 @@ class LogFormatter {
 			return $this->msg( $message )->text();
 		}
 
-		$content =  $this->msg( $message )->escaped();
+		$content = $this->msg( $message )->escaped();
 		$attribs = array( 'class' => 'history-deleted' );
 		return Html::rawElement( 'span', $attribs, $content );
 	}
@@ -545,6 +643,16 @@ class LogFormatter {
 	 */
 	public function getPreloadTitles() {
 		return array();
+	}
+
+	/**
+	 * @return Output of getMessageParameters() for testing
+	 */
+	public function getMessageParametersForTesting() {
+		// This function was added because getMessageParameters() is
+		// protected and a change from protected to public caused
+		// problems with extensions
+		return $this->getMessageParameters();
 	}
 
 }
@@ -607,7 +715,7 @@ class LegacyLogFormatter extends LogFormatter {
 
 		$performer = $this->getPerformerElement();
 		if ( !$this->irctext ) {
-			$action = $performer .  $this->msg( 'word-separator' )->text() . $action;
+			$action = $performer . $this->msg( 'word-separator' )->text() . $action;
 		}
 
 		return $action;
@@ -786,9 +894,11 @@ class DeleteLogFormatter extends LogFormatter {
 		$params = parent::getMessageParameters();
 		$subtype = $this->entry->getSubtype();
 		if ( in_array( $subtype, array( 'event', 'revision' ) ) ) {
+			// $params[3] here is 'revision' for page revisions, 'oldimage' for file versions, or a comma-separated list of log_ids for log entries.
+			// $subtype here is 'revision' for page revisions and file versions, or 'event' for log entries.
 			if (
-				($subtype === 'event' && count( $params ) === 6 ) ||
-				($subtype === 'revision' && isset( $params[3] ) && $params[3] === 'revision' )
+				( $subtype === 'event' && count( $params ) === 6 ) ||
+				( $subtype === 'revision' && isset( $params[3] ) && ( $params[3] === 'revision' || $params[3] === 'oldimage' ) )
 			) {
 				$paramStart = $subtype === 'revision' ? 4 : 3;
 
@@ -805,8 +915,7 @@ class DeleteLogFormatter extends LogFormatter {
 				foreach ( $extra as $v ) {
 					$changes[] = $this->msg( $v )->plain();
 				}
-				$changeText =  $this->context->getLanguage()->listToText( $changes );
-
+				$changeText = $this->context->getLanguage()->listToText( $changes );
 
 				$newParams = array_slice( $params, 0, 3 );
 				$newParams[3] = $changeText;
@@ -849,7 +958,7 @@ class DeleteLogFormatter extends LogFormatter {
 				$this->msg( $message )->escaped(),
 				array(),
 				array( 'target' => $this->entry->getTarget()->getPrefixedDBkey() )
-			 );
+			);
 			return $this->msg( 'parentheses' )->rawParams( $revert )->escaped();
 
 		case 'revision': // If an edit was hidden from a page give a review link to the history
@@ -885,7 +994,7 @@ class DeleteLogFormatter extends LogFormatter {
 						$this->msg( 'diff' )->escaped(),
 						array(),
 						array(
-							'target'    => $this->entry->getTarget()->getPrefixedDBKey(),
+							'target'    => $this->entry->getTarget()->getPrefixedDBkey(),
 							'diff'      => 'prev',
 							'timestamp' => $ids[0]
 						)
@@ -978,7 +1087,8 @@ class PatrolLogFormatter extends LogFormatter {
 class NewUsersLogFormatter extends LogFormatter {
 	protected function getMessageParameters() {
 		$params = parent::getMessageParameters();
-		if ( $this->entry->getSubtype() === 'create2' ) {
+		$subtype = $this->entry->getSubtype();
+		if ( $subtype === 'create2' || $subtype === 'byemail' ) {
 			if ( isset( $params[3] ) ) {
 				$target = User::newFromId( $params[3] );
 			} else {
@@ -1001,10 +1111,98 @@ class NewUsersLogFormatter extends LogFormatter {
 	}
 
 	public function getPreloadTitles() {
-		if ( $this->entry->getSubtype() === 'create2' ) {
+		$subtype = $this->entry->getSubtype();
+		if ( $subtype === 'create2' || $subtype === 'byemail' ) {
 			//add the user talk to LinkBatch for the userLink
 			return array( Title::makeTitle( NS_USER_TALK, $this->entry->getTarget()->getText() ) );
 		}
 		return array();
+	}
+}
+
+/**
+ * This class formats rights log entries.
+ * @since 1.21
+ */
+class RightsLogFormatter extends LogFormatter {
+	protected function makePageLink( Title $title = null, $parameters = array() ) {
+		global $wgContLang, $wgUserrightsInterwikiDelimiter;
+
+		if ( !$this->plaintext ) {
+			$text = $wgContLang->ucfirst( $title->getText() );
+			$parts = explode( $wgUserrightsInterwikiDelimiter, $text, 2 );
+
+			if ( count( $parts ) === 2 ) {
+				$titleLink = WikiMap::foreignUserLink( $parts[1], $parts[0],
+					htmlspecialchars( $title->getPrefixedText() ) );
+
+				if ( $titleLink !== false ) {
+					return $titleLink;
+				}
+			}
+		}
+
+		return parent::makePageLink( $title, $parameters );
+	}
+
+	protected function getMessageKey() {
+		$key = parent::getMessageKey();
+		$params = $this->getMessageParameters();
+		if ( !isset( $params[3] ) && !isset( $params[4] ) ) {
+			$key .= '-legacy';
+		}
+		return $key;
+	}
+
+	protected function getMessageParameters() {
+		$params = parent::getMessageParameters();
+
+		// Really old entries
+		if ( !isset( $params[3] ) && !isset( $params[4] ) ) {
+			return $params;
+		}
+
+		$oldGroups = $params[3];
+		$newGroups = $params[4];
+
+		// Less old entries
+		if ( $oldGroups === '' ) {
+			$oldGroups = array();
+		} elseif ( is_string( $oldGroups ) ) {
+			$oldGroups = array_map( 'trim', explode( ',', $oldGroups ) );
+		}
+		if ( $newGroups === '' ) {
+			$newGroups = array();
+		} elseif ( is_string( $newGroups ) ) {
+			$newGroups = array_map( 'trim', explode( ',', $newGroups ) );
+		}
+
+		$userName = $this->entry->getTarget()->getText();
+		if ( !$this->plaintext && count( $oldGroups ) ) {
+			foreach ( $oldGroups as &$group ) {
+				$group = User::getGroupMember( $group, $userName );
+			}
+		}
+		if ( !$this->plaintext && count( $newGroups ) ) {
+			foreach ( $newGroups as &$group ) {
+				$group = User::getGroupMember( $group, $userName );
+			}
+		}
+
+		$lang = $this->context->getLanguage();
+		if ( count( $oldGroups ) ) {
+			$params[3] = $lang->listToText( $oldGroups );
+		} else {
+			$params[3] = $this->msg( 'rightsnone' )->text();
+		}
+		if ( count( $newGroups ) ) {
+			// Array_values is used here because of bug 42211
+			// see use of array_unique in UserrightsPage::doSaveUserGroups on $newGroups.
+			$params[4] = $lang->listToText( array_values( $newGroups ) );
+		} else {
+			$params[4] = $this->msg( 'rightsnone' )->text();
+		}
+
+		return $params;
 	}
 }

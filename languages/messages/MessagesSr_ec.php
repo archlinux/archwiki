@@ -141,7 +141,6 @@ $specialPageAliases = array(
 	'Protectedtitles'           => array( 'Заштићени_наслови' ),
 	'Randompage'                => array( 'СлучајнаСтрана', 'Насумична_страница' ),
 	'Recentchanges'             => array( 'СкорашњеИзмене', 'Скорашње_измене' ),
-	'RevisionMove'              => array( 'Премести_измену' ),
 	'Search'                    => array( 'Претражи' ),
 	'Shortpages'                => array( 'КраткиЧланци' ),
 	'Specialpages'              => array( 'СпецијалнеСтране', 'Посебне_странице' ),
@@ -252,7 +251,6 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__ФОРСИРАНИСАДРЖАЈ__', '__ФОРСИРАНИ_САДРЖАЈ__', '__ПРИМОРАНИСАДРЖАЈ__', '__ПРИМОРАНИ_САДРЖАЈ__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__САДРЖАЈ__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__БЕЗИЗМЕНА__', '__БЕЗ_ИЗМЕНА__', '__БЕЗИЗМЈЕНА__', '__БЕЗ_ИЗМЈЕНА__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__БЕЗЗАГЛАВЉА__', '__БЕЗ_ЗАГЛАВЉА__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'ТРЕНУТНИМЕСЕЦ', 'ТРЕНУТНИ_МЕСЕЦ', 'ТЕКУЋИМЕСЕЦ', 'ТЕКУЋИ_МЕСЕЦ', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'ТРЕНУТНИМЕСЕЦ1', 'ТРЕНУТНИ_МЕСЕЦ1', 'ТЕКУЋИМЕСЕЦ1', 'ТЕКУЋИ_МЕСЕЦ1', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'ТРЕНУТНИМЕСЕЦИМЕ', 'ИМЕТЕКУЋЕГМЕСЕЦА', 'ИМЕ_ТЕКУЋЕГ_МЕСЕЦА', 'CURRENTMONTHNAME' ),
@@ -541,7 +539,6 @@ $messages = array(
 'qbbrowse' => 'Потражи',
 'qbedit' => 'Уреди',
 'qbpageoptions' => 'Поставке странице',
-'qbpageinfo' => 'Садржај странице',
 'qbmyoptions' => 'Моје странице',
 'qbspecialpages' => 'Посебне странице',
 'faq' => 'НПП',
@@ -564,6 +561,7 @@ $messages = array(
 'namespaces' => 'Именски простори',
 'variants' => 'Варијанте',
 
+'navigation-heading' => 'Навигациони мени',
 'errorpagetitle' => 'Грешка',
 'returnto' => 'Назад на $1.',
 'tagline' => 'Извор: {{SITENAME}}',
@@ -813,12 +811,11 @@ $2',
 # Login and logout pages
 'logouttext' => "'''Одјављени сте.'''
 
-Можете да наставите с коришћењем овог викија као гост, или се [[Special:UserLogin|поново пријавите]] као други корисник.
+Можете да наставите с коришћењем овог викија као гост, или се <span class='plainlinks'>[$1 поново пријавите]</span> као други корисник.
 Имајте на уму да неке странице могу наставити да се приказују као да сте још пријављени, све док не очистите привремену меморију свог прегледача.",
-'welcomecreation' => '== Добро дошли, $1! ==
-
-Ваш налог је отворен.
-Не заборавите да прилагодите своја [[Special:Preferences|подешавања]].',
+'welcomeuser' => 'Добро дошли, $1!',
+'welcomecreation-msg' => 'Ваш налог је отворен.
+Не заборавите да промените своја [[Special:Preferences|подешавања]].',
 'yourname' => 'Корисничко име:',
 'yourpassword' => 'Лозинка:',
 'yourpasswordagain' => 'Потврда лозинке:',
@@ -977,6 +974,7 @@ $2
 'changeemail-oldemail' => 'Тренутна е-адреса:',
 'changeemail-newemail' => 'Нова е-адреса:',
 'changeemail-none' => '(ништа)',
+'changeemail-password' => 'Ваша лозинка:',
 'changeemail-submit' => 'Промени',
 'changeemail-cancel' => 'Откажи',
 
@@ -1165,7 +1163,6 @@ $2
 'hiddencategories' => 'Ова страница је члан {{PLURAL:$1|једне скривене категорије|$1 скривене категорије|$1 скривених категорија}}:',
 'edittools' => '<!-- Овај текст ће бити приказан испод обрасца за уређивање и отпремање. -->',
 'edittools-upload' => '-',
-'nocreatetitle' => 'Прављење странице је ограничено',
 'nocreatetext' => 'На овом викију је ограничено прављење нових страница.
 Можете се вратити и уредити постојећу страницу, или се [[Special:UserLogin|пријавите или отворите налог]].',
 'nocreate-loggedin' => 'Немате дозволу да правите нове странице.',
@@ -1190,6 +1187,15 @@ $2
 'edit-already-exists' => 'Не могу да направим страницу.
 Изгледа да она већ постоји.',
 'defaultmessagetext' => 'Подразумевани текст поруке',
+'content-failed-to-parse' => 'Не могу да рашчланим садржај типа $2 за модел $1: $3',
+'invalid-content-data' => 'Неисправни подаци садржаја',
+'content-not-allowed-here' => 'Садржај модела „$1“ није дозвољен на страници [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'викитекст',
+'content-model-text' => 'чист текст',
+'content-model-javascript' => 'јаваскрипт',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''Упозорење:''' ова страница садржи превише позива за рашчлањивање.
@@ -1715,12 +1721,13 @@ $1",
 'right-sendemail' => 'слање е-порука другим корисницима',
 'right-passwordreset' => 'прегледање порука за обнављање лозинке',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Дневник нових корисника',
+'newuserlogpagetext' => 'Ово је историја нових корисника.',
+
 # User rights log
 'rightslog' => 'Дневник корисничких права',
 'rightslogtext' => 'Ово је дневник измена корисничких права.',
-'rightslogentry' => '{{GENDER:|је променио|је променила|је променио}} права за члана $1 из $2 у $3',
-'rightslogentry-autopromote' => 'је унапређен из $2 у $3',
-'rightsnone' => '(ништа)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'читање ове странице',
@@ -1973,6 +1980,7 @@ $1',
 'backend-fail-notsame' => 'Већ постоји неистоветна датотека – $1.',
 'backend-fail-invalidpath' => '$1 није исправна путања за складиштење.',
 'backend-fail-delete' => 'Не могу да обришем датотеку $1.',
+'backend-fail-describe' => 'Не могу да променим метаподатке за датотеку „$1“.',
 'backend-fail-alreadyexists' => 'Датотека $1 већ постоји.',
 'backend-fail-store' => 'Не могу да сместим датотеку $1 у $2.',
 'backend-fail-copy' => 'Не могу да умножим датотеку $1 у $2.',
@@ -2386,10 +2394,6 @@ $1',
 'activeusers-hidesysops' => 'Сакриј администраторе',
 'activeusers-noresult' => 'Корисник није пронађен.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Дневник нових корисника',
-'newuserlogpagetext' => 'Ово је историја нових корисника.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Права корисничких група',
 'listgrouprights-summary' => 'Следи списак корисничких група на овом викију, заједно с правима приступа.
@@ -2489,11 +2493,17 @@ $1',
 
 'enotif_mailer' => '{{SITENAME}} е-обавештење',
 'enotif_reset' => 'Означи све странице као посећене',
-'enotif_newpagetext' => 'Ово је нова страница.',
 'enotif_impersonal_salutation' => '{{SITENAME}} корисник',
-'changed' => 'измењена',
-'created' => 'направљена',
-'enotif_subject' => '{{SITENAME}} страница $PAGETITLE је $CHANGEDORCREATED од стране $PAGEEDITOR',
+'enotif_subject_deleted' => 'Страницу $1 на {{SITENAME}} {{GENDER:$2|обрисао је|обрисала је|обрисао је}} $2',
+'enotif_subject_created' => 'Страницу $1 на {{SITENAME}} {{GENDER:$2|направио је|направила је|направио је}} $2',
+'enotif_subject_moved' => 'Страницу $1 на {{SITENAME}} {{GENDER:$2|преместио је|преместила је|преместио је}} $2',
+'enotif_subject_restored' => 'Страницу $1 на {{SITENAME}} {{GENDER:$2|вратио је|вратила је|вратио је}} $2',
+'enotif_subject_changed' => 'Страницу $1 на {{SITENAME}} {{GENDER:$2|променио је|променила је|променио је}} $2',
+'enotif_body_intro_deleted' => 'Страницу $1 на {{SITENAME}} {{GENDER:$2|обрисао је|обрисала је|обрисао је}} $2 дана $PAGEEDITDATE. Погледајте $3.',
+'enotif_body_intro_created' => 'Страницу $1 на {{SITENAME}} {{GENDER:$2|направио је|направила је|направио је}} $2 дана $PAGEEDITDATE. Тренутна измена налази се на $3.',
+'enotif_body_intro_moved' => 'Страницу $1 на {{SITENAME}} {{GENDER:$2|преместио је|преместила је|преместио је}} $2 дана $PAGEEDITDATE. Тренутна измена налази се на  $3.',
+'enotif_body_intro_restored' => 'Страницу $1 на {{SITENAME}} {{GENDER:$2|вратио је|вратила је|вратио је}} $2 дана $PAGEEDITDATE. Тренутна измена налази се на $3.',
+'enotif_body_intro_changed' => 'Страницу $1 на {{SITENAME}} {{GENDER:$2|променио је|променила је|променио је}} $2 дана $PAGEEDITDATE. Тренутна измена налази се на $3.',
 'enotif_lastvisited' => 'Погледајте $1 за све измене од ваше последње посете.',
 'enotif_lastdiff' => 'Погледајте $1 да видите ову измену.',
 'enotif_anon_editor' => 'анониман корисник $1',
@@ -2527,6 +2537,8 @@ $UNWATCHURL
 
 Подршка и даља помоћ:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'направљена',
+'changed' => 'измењена',
 
 # Delete
 'deletepage' => 'Обриши страницу',
@@ -2683,7 +2695,8 @@ $UNWATCHURL
 'undeletedrevisions' => '{{PLURAL:$1|Измена је враћена|$1 измене су враћене|$1 измена је враћено}}',
 'undeletedrevisions-files' => '$1 {{PLURAL:$1|измена|измене|измена}} и $2 {{PLURAL:$2|датотека|датотеке|датотека}} је враћено',
 'undeletedfiles' => '{{PLURAL:$1|Датотека је враћена|$1 датотеке су враћене|$1 датотека је враћено}}',
-'cannotundelete' => 'Неуспешно враћање. Неко други је то урадио пре вас.',
+'cannotundelete' => 'Враћање није успело:
+$1',
 'undeletedpage' => "'''Страница $1 је враћена'''
 
 Погледајте [[Special:Log/delete|историју брисања]] за записе о скорашњим брисањима и враћањима.",
@@ -2994,6 +3007,7 @@ $1',
 'immobile-target-namespace-iw' => 'Међувики веза није исправно одредиште за премештање странице.',
 'immobile-source-page' => 'Ова страница се не може преместити.',
 'immobile-target-page' => 'Не могу да преместим на жељени наслов.',
+'bad-target-model' => 'Жељено одредиште користи другачији модел садржаја. Не могу да претворим из $1 у $2.',
 'imagenocrossnamespace' => 'Датотека се не може преместити у именски простор који не припада датотекама.',
 'nonfile-cannot-move-to-file' => 'Не-датотеке не можете преместити у именски простор за датотеке',
 'imagetypemismatch' => 'Екстензија нове датотеке се не поклапа с њеном врстом',
@@ -3124,7 +3138,6 @@ $1',
 
 # JavaScriptTest
 'javascripttest' => 'Јаваскрипт тест',
-'javascripttest-disabled' => 'Ова функција није омогућена на овом викију.',
 'javascripttest-title' => 'Извршавање тестова за $1',
 'javascripttest-pagetext-noframework' => 'Ова страница је резервисана за извршавање јаваскрипт тестова.',
 'javascripttest-pagetext-unknownframework' => 'Непознати радни оквир „$1“.',
@@ -3273,6 +3286,7 @@ $1',
 'pageinfo-default-sort' => 'Подразумевани кључ сортирања',
 'pageinfo-length' => 'Дужина странице (у бајтовима)',
 'pageinfo-article-id' => 'ИД странице',
+'pageinfo-language' => 'Језик садржаја странице',
 'pageinfo-robot-policy' => 'Статус претраживача',
 'pageinfo-robot-index' => 'Може да се попише',
 'pageinfo-robot-noindex' => 'Не може да се попише',
@@ -3292,6 +3306,14 @@ $1',
 'pageinfo-magic-words' => '{{PLURAL:$1|Магична реч|Магичне речи}} ($1)',
 'pageinfo-hidden-categories' => '{{PLURAL:$1|Сакривена категорија|Сакривене категорије}} ($1)',
 'pageinfo-templates' => '{{PLURAL:$1|Укључени шаблон|Укључени шаблони}} ($1)',
+'pageinfo-toolboxlink' => 'Подаци о страници',
+'pageinfo-redirectsto' => 'Преусмерава на',
+'pageinfo-redirectsto-info' => 'подаци',
+'pageinfo-contentpage' => 'Рачуна се као страница са садржајем',
+'pageinfo-contentpage-yes' => 'Да',
+'pageinfo-protect-cascading' => 'Преносива заштита страница важи одавде',
+'pageinfo-protect-cascading-yes' => 'Да',
+'pageinfo-protect-cascading-from' => 'Странице са преносивом заштитом од',
 
 # Skin names
 'skinname-standard' => 'Класично',
@@ -3314,6 +3336,8 @@ $1',
 'markedaspatrollederror' => 'Не могу да означим као патролирано',
 'markedaspatrollederrortext' => 'Морате изабрати измену да бисте је означили као прегледану.',
 'markedaspatrollederror-noautopatrol' => 'Не можете да означите своје измене као патролиране.',
+'markedaspatrollednotify' => 'Ова измена на страници „$1“ је означена као прегледана.',
+'markedaspatrollederrornotify' => 'Није успешно означавање ове странице као прегледаном.',
 
 # Patrol log
 'patrol-log-page' => 'Дневник патролирања',
@@ -3971,6 +3995,7 @@ $5
 # Scary transclusion
 'scarytranscludedisabled' => '[Међувики укључивање шаблона је онемогућено]',
 'scarytranscludefailed' => '[Добављање шаблона за $1 није успело]',
+'scarytranscludefailed-httpstatus' => '[Не могу да преузмем шаблон $1: HTTP $2]',
 'scarytranscludetoolong' => '[URL адреса је предугачка]',
 
 # Delete conflict
@@ -4162,6 +4187,7 @@ $5
 'version-license' => 'Лиценца',
 'version-poweredby-credits' => "Овај вики покреће '''[//www.mediawiki.org/ Медијавики]''', ауторска права © 2001-$1 $2.",
 'version-poweredby-others' => 'остали',
+'version-credits-summary' => 'Желели бисмо да захвалимо следећим људима на њиховом доприносу [[Special:Version|Медијавикији]].',
 'version-license-info' => 'Медијавики је слободан софтвер; можете га расподељивати и мењати под условима ГНУ-ове опште јавне лиценце (ОЈЛ) коју је објавила Задужбина за слободан софтвер, било да је у питању друго или новије издање лиценце.
 
 Медијавики се нуди у нади да ће бити од користи, али БЕЗ ИКАКВЕ ГАРАНЦИЈЕ; чак и без подразумеване гаранције о ПРОДАЈНОЈ ВРЕДНОСТИ или ПОГОДНОСТИ ЗА ОДРЕЂЕНЕ НАМЕНЕ. Погледајте ГНУ-ову општу јавну лиценцу за више информација.
@@ -4305,7 +4331,10 @@ $5
 'logentry-newusers-create' => '$1 {{GENDER:|је отворио|је отворила|је отворио}} кориснички налог',
 'logentry-newusers-create2' => '$1 {{GENDER:|је отворио|је отворила|је отворио}} кориснички налог $3',
 'logentry-newusers-autocreate' => 'Налог $1 је самостално отворен',
-'newuserlog-byemail' => 'лозинка је послата е-поштом',
+'logentry-rights-rights' => '$1 {{GENDER:$1|је променио|је променила|је променио}} чланство групе за $3 из $4 у $5',
+'logentry-rights-rights-legacy' => '$1 {{GENDER:$1|је променио|је променила|је променио}} чланство групе за $3',
+'logentry-rights-autopromote' => '$1 је аутоматски {{GENDER:$1|унапређен|унапређена|унапређен}} из $4 у $5',
+'rightsnone' => '(ништа)',
 
 # Feedback
 'feedback-bugornote' => 'Ако сте спремни да детаљно опишете технички проблем, онда [$1 пријавите грешку].

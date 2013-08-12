@@ -35,8 +35,13 @@ class MostimagesPage extends ImageQueryPage {
 		parent::__construct( $name );
 	}
 
-	function isExpensive() { return true; }
-	function isSyndicated() { return false; }
+	function isExpensive() {
+		return true;
+	}
+
+	function isSyndicated() {
+		return false;
+	}
 
 	function getQueryInfo() {
 		return array (
@@ -53,4 +58,7 @@ class MostimagesPage extends ImageQueryPage {
 		return $this->msg( 'nimagelinks' )->numParams( $row->value )->escaped() . '<br />';
 	}
 
+	protected function getGroupName() {
+		return 'highuse';
+	}
 }

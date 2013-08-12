@@ -35,9 +35,17 @@ class UnusedtemplatesPage extends QueryPage {
 		parent::__construct( $name );
 	}
 
-	function isExpensive() { return true; }
-	function isSyndicated() { return false; }
-	function sortDescending() { return false; }
+	function isExpensive() {
+		return true;
+	}
+
+	function isSyndicated() {
+		return false;
+	}
+
+	function sortDescending() {
+		return false;
+	}
 
 	function getQueryInfo() {
 		return array (
@@ -76,5 +84,9 @@ class UnusedtemplatesPage extends QueryPage {
 
 	function getPageHeader() {
 		return $this->msg( 'unusedtemplatestext' )->parseAsBlock();
+	}
+
+	protected function getGroupName() {
+		return 'maintenance';
 	}
 }

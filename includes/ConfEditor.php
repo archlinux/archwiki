@@ -66,7 +66,6 @@ class ConfEditor {
 	 */
 	var $stateStack;
 
-
 	/**
 	 * The path stack is a stack of associative arrays with the following elements:
 	 *    name              The name of top level of the path
@@ -128,7 +127,7 @@ class ConfEditor {
 
 	/**
 	 * Edit the text. Returns the edited text.
-	 * @param $ops Array of operations.
+	 * @param array $ops of operations.
 	 *
 	 * Operations are given as an associative array, with members:
 	 *    type:     One of delete, set, append or insert (required)
@@ -159,6 +158,7 @@ class ConfEditor {
 	 * insert
 	 *    Insert a new element at the start of the array.
 	 *
+	 * @throws MWException
 	 * @return string
 	 */
 	public function edit( $ops ) {
@@ -306,7 +306,7 @@ class ConfEditor {
 	 * setVar( $arr, 'foo/bar', 'baz', 3 ); will set
 	 * $arr['foo']['bar']['baz'] = 3;
 	 * @param $array array
-	 * @param $path string slash-delimited path
+	 * @param string $path slash-delimited path
 	 * @param $key mixed Key
 	 * @param $value mixed Value
 	 */
@@ -392,6 +392,8 @@ class ConfEditor {
 	 * Finds the source byte region which you would want to delete, if $pathName
 	 * was to be deleted. Includes the leading spaces and tabs, the trailing line
 	 * break, and any comments in between.
+	 * @param $pathName
+	 * @throws MWException
 	 * @return array
 	 */
 	function findDeletionRegion( $pathName ) {
@@ -450,6 +452,8 @@ class ConfEditor {
 	 * or semicolon.
 	 *
 	 * The end position is the past-the-end (end + 1) value as per convention.
+	 * @param $pathName
+	 * @throws MWException
 	 * @return array
 	 */
 	function findValueRegion( $pathName ) {
@@ -1055,6 +1059,7 @@ class ConfEditorParseError extends MWException {
 				return "$line\n" .str_repeat( ' ', $this->colNum - 1 ) . "^\n";
 			}
 		}
+		return '';
 	}
 
 }
@@ -1089,4 +1094,3 @@ class ConfEditorToken {
 		return $this->type == 'END';
 	}
 }
-

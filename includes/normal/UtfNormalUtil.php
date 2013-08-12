@@ -71,7 +71,7 @@ function hexSequenceToUtf8( $sequence ) {
  * Take a UTF-8 string and return a space-separated series of hex
  * numbers representing Unicode code points. For debugging.
  *
- * @param $str String: UTF-8 string.
+ * @param string $str UTF-8 string.
  * @return string
  * @private
  */
@@ -114,7 +114,7 @@ function utf8ToCodepoint( $char ) {
 	$z >>= $length;
 
 	# Add in the free bits from subsequent bytes
-	for ( $i=1; $i<$length; $i++ ) {
+	for ( $i=1; $i < $length; $i++ ) {
 		$z <<= 6;
 		$z |= ord( $char[$i] ) & 0x3f;
 	}
@@ -125,7 +125,7 @@ function utf8ToCodepoint( $char ) {
 /**
  * Escape a string for inclusion in a PHP single-quoted string literal.
  *
- * @param $string String: string to be escaped.
+ * @param string $string string to be escaped.
  * @return String: escaped string.
  * @public
  */

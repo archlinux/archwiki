@@ -147,6 +147,7 @@ $messages = array(
 'newwindow' => '(ukabai id liligaon wagu)',
 'cancel' => 'Kinsilo',
 'moredotdotdot' => 'Gumu...',
+'morenotlisted' => 'Susuai poh ii awu nokosurat...',
 'mypage' => 'Bolikon',
 'mytalk' => 'Pogibabarasan',
 'anontalk' => 'Piboros montok diti nantadon IP',
@@ -158,7 +159,6 @@ $messages = array(
 'qbbrowse' => 'Pogihum',
 'qbedit' => 'Idito',
 'qbpageoptions' => 'Bolikon diti',
-'qbpageinfo' => 'Pogiromutan',
 'qbmyoptions' => 'Bobolikonku ngawi',
 'qbspecialpages' => 'Bobolikon suaikowokon',
 'faq' => 'Ponguhatan Koinsoruan om Poninimbar',
@@ -181,6 +181,7 @@ $messages = array(
 'namespaces' => 'Ponuratan ngaran',
 'variants' => 'Kopogisuaian',
 
+'navigation-heading' => 'Pipilion usuyon',
 'errorpagetitle' => 'Nosilopan',
 'returnto' => 'Gumuli hilo $1.',
 'tagline' => 'Mantad {{SITENAME}}',
@@ -425,11 +426,11 @@ Mongungulud di minongunsi pinopointalang do kointalangan diti: "$3".',
 # Login and logout pages
 'logouttext' => "'''Baino nakalabus log ko noh.'''
 
-Milo ko do monilombus mongoguno {{SITENAME}} poinlisok, toi [[Special:UserLogin|sumuang log koh kawagu]] miagal ngaran di tiinu toi mongoguno ngaran suai.
+Milo ko do monilombus mongoguno {{SITENAME}} poinlisok, toi <span class='plainlinks'>[$1 sumuang log koh kawagu]</span> miagal ngaran di tiinu toi mongoguno ngaran suai.
 Birio do kipipiro bolikon popokito do maso poinsuang log koh poh gisom no do opugas nu dangkob do pogigihumnu.",
-'welcomecreation' => '== Kopiwosian, $1! ==
-Nowonsoi no takaunnu.
-Soroho no do mongolon [[Special:Preferences|{{SITENAME}} komoisoonnu]].',
+'welcomeuser' => 'Kotobian dongkorikatan, $1!',
+'welcomecreation-msg' => 'Nowonsoi noh akaunnu.
+Soroho noh do mongolon do [[Special:Preferences|{{SITENAME}} komoisaannu]].',
 'yourname' => 'Ngarandait:',
 'yourpassword' => 'Kaatalib:',
 'yourpasswordagain' => 'Mintaipo kaatalib:',
@@ -452,7 +453,7 @@ Soroho no do mongolon [[Special:Preferences|{{SITENAME}} komoisoonnu]].',
 'gotaccount' => 'Kitakaun? $1',
 'gotaccountlink' => 'Sumuang log',
 'userlogin-resetlink' => 'Nolihuan ahal loginnu?',
-'createaccountmail' => 'Maya surat-i',
+'createaccountmail' => 'Gunoo nunu nopo kaatalib om pootodo id surat-i ii poinsurat id siriba diti',
 'createaccountreason' => 'Sabab:',
 'badretype' => 'Kaatalib pinosuang awu kopisangai.',
 'userexists' => 'Ngaranmoguno pinosuang noguno no.
@@ -530,6 +531,7 @@ Andado poh do toruhai pogulu do minsingumbal kawagu.',
 # Email sending
 'php-mail-error-unknown' => 'Awu nointutunan kinosilapan id don surat PHP () function',
 'user-mail-no-addy' => 'Mogumbal do papaatod surat-i tingaa o paatadan.',
+'user-mail-no-body' => 'Minogumbal koh do papaatod surat-i do ingaa suang toi nadalaan koniba.',
 
 # Change password dialog
 'resetpass' => 'Alanai kaatalib',
@@ -739,7 +741,6 @@ Mangakaun ko nogi do sinuratannu iti mopori, toi dinalin iri mantad domin ginumu
 'template-protected' => '(tingoligai)',
 'template-semiprotected' => '(noumoligan)',
 'hiddencategories' => 'Bolikon diti songkoruhang do {{PLURAL:$1|1 katogori poinlisok|$1 kakatogori poinlisok}}:',
-'nocreatetitle' => 'Momonsoi bolikon wagu pinatagal',
 'nocreatetext' => '{{SITENAME}} tinagal kasagaan momonsoi bobolikon kawawagu.
 Milo ko do gumuli om mongidit di bolikon poinsuang, toi ko [[Special:UserLogin|sumuang log toi momonsoi do takaun.]].',
 'nocreate-loggedin' => 'Ingaa kasagaannu do momonsoi bobolikon wagu.',
@@ -1062,6 +1063,9 @@ Imurai no do indik suang diti {{SITENAME}} nopo nga nokolipas.',
 
 'grouppage-sysop' => '{{ns:project}}:Mandur',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Log pinamansaian momomoguno',
+
 # User rights log
 'rightslog' => 'Log kasagaan momomoguno',
 
@@ -1220,9 +1224,6 @@ Kointalangan dilo [$2 kointalangan pail] okito id siriba.',
 'linksearch-ns' => 'Ponuratan ngaran:',
 'linksearch-ok' => 'Ihumo',
 'linksearch-line' => '$1 toput mantad $2',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Log pinamansaian momomoguno',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(lis do kinoruhangan)',

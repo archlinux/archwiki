@@ -174,8 +174,8 @@
 			if ( $secondary.children().length === 0 ) {
 				$secondary.remove();
 			} else {
-				$( '#p-lang' ).after( '<div id="p-lang-more" class="portal"><h5></h5><div class="body"></div></div>' );
-				$( '#p-lang-more h5' ).text( mw.msg( 'vector-collapsiblenav-more' ) );
+				$( '#p-lang' ).after( '<div id="p-lang-more" class="portal"><h3></h3><div class="body"></div></div>' );
+				$( '#p-lang-more h3' ).text( mw.msg( 'vector-collapsiblenav-more' ) );
 				$secondary.appendTo( $( '#p-lang-more .body' ) );
 			}
 			// Always show the primary interwiki language portal
@@ -194,7 +194,7 @@
 				var id = $(this).attr( 'id' ),
 					state = $.cookie( 'vector-nav-' + id );
 				// Add anchor tag to heading for better accessibility
-				$( this ).find( 'h5' ).wrapInner( $( '<a href="#"></a>' ).click( false ) );
+				$( this ).find( 'h3, h5' ).wrapInner( $( '<a href="#"></a>' ).click( false ) );
 				// In the case that we are not showing the new version, let's show the languages by default
 				if (
 					state === 'true' ||
@@ -220,7 +220,7 @@
 
 		/* Tab Indexing */
 
-		$headings = $( '#mw-panel > .portal:not(.persistent) > h5' );
+		$headings = $( '#mw-panel > .portal:not(.persistent) > h3, #mw-panel > .portal:not(.persistent) > h5' );
 
 		// Get the highest tab index
 		tabIndex = $( document ).lastTabIndex() + 1;
@@ -235,13 +235,13 @@
 
 		// Toggle the selected menu's class and expand or collapse the menu
 		$( '#mw-panel' )
-			.delegate( '.portal:not(.persistent) > h5', 'keydown', function ( e ) {
+			.delegate( '.portal:not(.persistent) > h3, .portal:not(.persistent) > h5', 'keydown', function ( e ) {
 				// Make the space and enter keys act as a click
 				if ( e.which === 13 /* Enter */ || e.which === 32 /* Space */ ) {
 					toggle( $(this) );
 				}
 			} )
-			.delegate( '.portal:not(.persistent) > h5', 'mousedown', function ( e ) {
+			.delegate( '.portal:not(.persistent) > h3, .portal:not(.persistent) > h5', 'mousedown', function ( e ) {
 				if ( e.which !== 3 ) { // Right mouse click
 					toggle( $(this) );
 					$(this).blur();

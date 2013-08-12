@@ -61,7 +61,7 @@ class DeleteOrphanedRevisions extends Maintenance {
 
 		# Nothing to do?
 		if ( $report || $count == 0 ) {
-			$dbw->commit();
+			$dbw->commit( __METHOD__ );
 			exit( 0 );
 		}
 
@@ -91,4 +91,3 @@ class DeleteOrphanedRevisions extends Maintenance {
 
 $maintClass = "DeleteOrphanedRevisions";
 require_once( RUN_MAINTENANCE_IF_MAIN );
-

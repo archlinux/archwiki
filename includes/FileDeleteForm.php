@@ -80,13 +80,13 @@ class FileDeleteForm {
 		$this->oldimage = $wgRequest->getText( 'oldimage', false );
 		$token = $wgRequest->getText( 'wpEditToken' );
 		# Flag to hide all contents of the archived revisions
-		$suppress = $wgRequest->getVal( 'wpSuppress' ) && $wgUser->isAllowed('suppressrevision');
+		$suppress = $wgRequest->getVal( 'wpSuppress' ) && $wgUser->isAllowed( 'suppressrevision' );
 
 		if( $this->oldimage ) {
 			$this->oldfile = RepoGroup::singleton()->getLocalRepo()->newFromArchiveName( $this->title, $this->oldimage );
 		}
 
-		if( !self::haveDeletableFile($this->file, $this->oldfile, $this->oldimage) ) {
+		if( !self::haveDeletableFile( $this->file, $this->oldfile, $this->oldimage ) ) {
 			$wgOut->addHTML( $this->prepareMessage( 'filedelete-nofile' ) );
 			$wgOut->addReturnTo( $this->title );
 			return;
@@ -140,10 +140,11 @@ class FileDeleteForm {
 	 *
 	 * @param $title Title object
 	 * @param File $file: file object
-	 * @param $oldimage String: archive name
-	 * @param $reason String: reason of the deletion
+	 * @param string $oldimage archive name
+	 * @param string $reason reason of the deletion
 	 * @param $suppress Boolean: whether to mark all deleted versions as restricted
 	 * @param $user User object performing the request
+	 * @throws MWException
 	 * @return bool|Status
 	 */
 	public static function doDelete( &$title, &$file, &$oldimage, $reason, $suppress, User $user = null ) {
@@ -308,7 +309,7 @@ class FileDeleteForm {
 	 * showing an appropriate message depending upon whether
 	 * it's a current file or an old version
 	 *
-	 * @param $message String: message base
+	 * @param string $message message base
 	 * @return String
 	 */
 	private function prepareMessage( $message ) {
@@ -343,7 +344,7 @@ class FileDeleteForm {
 	 *
 	 * @return bool
 	 */
-	public static function isValidOldSpec($oldimage) {
+	public static function isValidOldSpec( $oldimage ) {
 		return strlen( $oldimage ) >= 16
 			&& strpos( $oldimage, '/' ) === false
 			&& strpos( $oldimage, '\\' ) === false;
@@ -359,7 +360,7 @@ class FileDeleteForm {
 	 * @param $oldimage File
 	 * @return bool
 	 */
-	public static function haveDeletableFile(&$file, &$oldfile, $oldimage) {
+	public static function haveDeletableFile( &$file, &$oldfile, $oldimage ) {
 		return $oldimage
 			? $oldfile && $oldfile->exists() && $oldfile->isLocal()
 			: $file && $file->exists() && $file->isLocal();
@@ -374,8 +375,9 @@ class FileDeleteForm {
 		$q = array();
 		$q['action'] = 'delete';
 
-		if( $this->oldimage )
+		if( $this->oldimage ) {
 			$q['oldimage'] = $this->oldimage;
+		}
 
 		return $this->title->getLocalUrl( $q );
 	}

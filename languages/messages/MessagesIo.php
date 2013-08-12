@@ -234,7 +234,6 @@ $messages = array(
 'qbfind' => 'Trovez',
 'qbedit' => 'Redaktar',
 'qbpageoptions' => 'Ica pagino',
-'qbpageinfo' => 'Kuntexto',
 'qbmyoptions' => 'Mea pagini',
 'qbspecialpages' => 'Specala pagini',
 
@@ -409,11 +408,8 @@ nekorekta interlinguale od interwikale ligilo.',
 # Login and logout pages
 'logouttext' => "'''Vu nun esas nun ek {{SITENAME}}.'''
 
-Vu povas durar uzante {{SITENAME}} anonimale, o vu povas [[Special:UserLogin|enirar itere]] kom la sama o diferenta uzanto.
+Vu povas durar uzante {{SITENAME}} anonimale, o vu povas <span class='plainlinks'>[$1 enirar itere]</span> kom la sama o diferenta uzanto.
 Atencez ke kelka pagini posible duras montresar semblante ke vu ne ekirus, til vu vakuigas la tempala-magazino di vua navigilo.",
-'welcomecreation' => '== Bonveno, $1! ==
-Vua konto kreesis.
-Voluntez, ne obliviez chanjor vua [[Special:Preferences|preferaji en {{SITENAME}}]].',
 'yourname' => 'Vua uzantonomo:',
 'yourpassword' => 'Pasovorto:',
 'yourpasswordagain' => 'Riskribez la pasovorto:',
@@ -577,7 +573,6 @@ Publikigante vua skribajo hike, vu asertas ke olu skribesis da vu ipsa o kopiesi
 'template-protected' => '(protektita)',
 'template-semiprotected' => '(mi-protektita)',
 'hiddencategories' => 'Ca pagino esas membro di {{PLURAL:$1|1 celita kategorio|$1 celita kategorii}}:',
-'nocreatetitle' => 'Kreado di pagini limitita',
 'permissionserrorstext-withaction' => 'Vu ne darfas $2, pro la {{PLURAL:$1|kauzo|kauzi}} sequanta:',
 'moveddeleted-notice' => 'Ca pagino efacesabas.
 La efaco-registraro e movo-registraro dil pagino provizesar sequante por refero.',
@@ -792,9 +787,11 @@ Ol mustas ne havar plu kam $1 {{PLURAL:$1|litero|literi}}.',
 'right-browsearchive' => 'Serchar pagini efacita',
 'right-rollback' => 'Rapide retrorular la redakti da la lasta uzanto qua redaktis specigita pagino',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Uzanto-kreo-registro',
+
 # User rights log
 'rightslog' => 'Uzanto-yuri-registraro',
-'rightsnone' => '(nula)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'lektar ca pagino',
@@ -1034,9 +1031,6 @@ Volutez kontrolar <strong>[[:$1]]</strong> se vu ne esas certa pri chanjar olu.
 # Special:ActiveUsers
 'activeusers-noresult' => 'Nula uzanto trovesis.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Uzanto-kreo-registro',
-
 # Special:ListGroupRights
 'listgrouprights-group' => 'Grupo',
 'listgrouprights-members' => '(listo di membri)',
@@ -1084,7 +1078,6 @@ Volutez kontrolar <strong>[[:$1]]</strong> se vu ne esas certa pri chanjar olu.
 'watching' => 'Surveyanta…',
 'unwatching' => 'Cesanta surveyar…',
 
-'enotif_newpagetext' => 'Ico esas nula pagino.',
 'enotif_impersonal_salutation' => 'Uzanto di {{SITENAME}}',
 'enotif_anon_editor' => 'anonima uzanto $1',
 
@@ -1553,6 +1546,9 @@ Vu darfos adjuntar kauso en la rezumo.',
 # HTML forms
 'htmlform-reset' => 'Desfacar chanji',
 'htmlform-selectorother-other' => 'Altra',
+
+# New logging system
+'rightsnone' => '(nula)',
 
 # Search suggestions
 'searchsuggest-search' => 'Serchez',

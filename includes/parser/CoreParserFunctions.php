@@ -175,8 +175,8 @@ class CoreParserFunctions {
 	 * For links to "wiki"s, or similar software, spaces are encoded as '_',
 	 *
 	 * @param $parser Parser object
-	 * @param $s String: The text to encode.
-	 * @param $arg String (optional): The type of encoding.
+	 * @param string $s The text to encode.
+	 * @param string $arg (optional): The type of encoding.
 	 * @return string
 	 */
 	static function urlencode( $parser, $s = '', $arg = null ) {
@@ -269,12 +269,14 @@ class CoreParserFunctions {
 	/**
 	 * @param $parser Parser
 	 * @param string $num
-	 * @param null $raw
-	 * @return
+	 * @param string $arg
+	 * @return string
 	 */
-	static function formatnum( $parser, $num = '', $raw = null) {
-		if ( self::isRaw( $raw ) ) {
+	static function formatnum( $parser, $num = '', $arg = null ) {
+		if ( self::matchAgainstMagicword( 'rawsuffix', $arg ) ) {
 			$func = array( $parser->getFunctionLang(), 'parseFormattedNumber' );
+		} elseif ( self::matchAgainstMagicword( 'nocommafysuffix', $arg ) ) {
+			$func = array( $parser->getFunctionLang(), 'formatNumNoSeparators' );
 		} else {
 			$func = array( $parser->getFunctionLang(), 'formatNum' );
 		}
@@ -351,7 +353,7 @@ class CoreParserFunctions {
 	 * title which will normalise to the canonical title
 	 *
 	 * @param $parser Parser: parent parser
-	 * @param $text String: desired title text
+	 * @param string $text desired title text
 	 * @return String
 	 */
 	static function displaytitle( $parser, $text = '' ) {
@@ -386,20 +388,23 @@ class CoreParserFunctions {
 		return '';
 	}
 
-	static function isRaw( $param ) {
-		static $mwRaw;
-		if ( !$mwRaw ) {
-			$mwRaw =& MagicWord::get( 'rawsuffix' );
-		}
-		if ( is_null( $param ) ) {
+	/**
+	 * Matches the given value against the value of given magic word
+	 *
+	 * @param string $magicword magic word key
+	 * @param mixed $value value to match
+	 * @return boolean true on successful match
+	 */
+	static private function matchAgainstMagicword( $magicword, $value ) {
+		if ( strval( $value ) === '' ) {
 			return false;
-		} else {
-			return $mwRaw->match( $param );
 		}
+		$mwObject = MagicWord::get( $magicword );
+		return $mwObject->match( $value );
 	}
 
 	static function formatRaw( $num, $raw ) {
-		if( self::isRaw( $raw ) ) {
+		if( self::matchAgainstMagicword( 'rawsuffix', $raw ) ) {
 			return $num;
 		} else {
 			global $wgContLang;
@@ -422,7 +427,7 @@ class CoreParserFunctions {
 		return self::formatRaw( SiteStats::images(), $raw );
 	}
 	static function numberofadmins( $parser, $raw = null ) {
-		return self::formatRaw( SiteStats::numberingroup('sysop'), $raw );
+		return self::formatRaw( SiteStats::numberingroup( 'sysop' ), $raw );
 	}
 	static function numberofedits( $parser, $raw = null ) {
 		return self::formatRaw( SiteStats::edits(), $raw );
@@ -436,7 +441,6 @@ class CoreParserFunctions {
 	static function numberingroup( $parser, $name = '', $raw = null) {
 		return self::formatRaw( SiteStats::numberingroup( strtolower( $name ) ), $raw );
 	}
-
 
 	/**
 	 * Given a title, return the namespace name that would be given by the
@@ -585,7 +589,7 @@ class CoreParserFunctions {
 		static $cache = array();
 
 		// split the given option to its variable
-		if( self::isRaw( $arg1 ) ) {
+		if( self::matchAgainstMagicword( 'rawsuffix', $arg1 ) ) {
 			//{{pagesincategory:|raw[|type]}}
 			$raw = $arg1;
 			$type = $magicWords->matchStartToEnd( $arg2 );
@@ -641,7 +645,7 @@ class CoreParserFunctions {
 	 * @todo Document parameters
 	 *
 	 * @param $parser Parser
-	 * @param $page String TODO DOCUMENT (Default: empty string)
+	 * @param string $page TODO DOCUMENT (Default: empty string)
 	 * @param $raw TODO DOCUMENT (Default: null)
 	 * @return string
 	 */
@@ -662,21 +666,31 @@ class CoreParserFunctions {
 			$length = $cache[$page];
 		} elseif( $parser->incrementExpensiveFunctionCount() ) {
 			$rev = Revision::newFromTitle( $title, false, Revision::READ_NORMAL );
-			$id = $rev ? $rev->getPage() : 0;
+			$pageID = $rev ? $rev->getPage() : 0;
+			$revID = $rev ? $rev->getId() : 0;
 			$length = $cache[$page] = $rev ? $rev->getSize() : 0;
 
 			// Register dependency in templatelinks
-			$parser->mOutput->addTemplate( $title, $id, $rev ? $rev->getId() : 0 );
+			$parser->mOutput->addTemplate( $title, $pageID, $revID );
 		}
 		return self::formatRaw( $length, $raw );
 	}
 
 	/**
-	* Returns the requested protection level for the current page
+	 * Returns the requested protection level for the current page
+	 *
+	 * @param Parser $parser
+	 * @param string $type
+	 * @param string $title
+	 *
 	 * @return string
 	 */
-	static function protectionlevel( $parser, $type = '' ) {
-		$restrictions = $parser->mTitle->getRestrictions( strtolower( $type ) );
+	static function protectionlevel( $parser, $type = '', $title = '' ) {
+		$titleObject = Title::newFromText( $title );
+		if ( !( $titleObject instanceof Title ) ) {
+			$titleObject = $parser->mTitle;
+		}
+		$restrictions = $titleObject->getRestrictions( strtolower( $type ) );
 		# Title::getRestrictions returns an array, its possible it may have
 		# multiple values in the future
 		return implode( $restrictions, ',' );
@@ -685,8 +699,8 @@ class CoreParserFunctions {
 	/**
 	 * Gives language names.
 	 * @param $parser Parser
-	 * @param $code String  Language code (of which to get name)
-	 * @param $inLanguage String  Language code (in which to get name)
+	 * @param string $code  Language code (of which to get name)
+	 * @param string $inLanguage  Language code (in which to get name)
 	 * @return String
 	 */
 	static function language( $parser, $code = '', $inLanguage = '' ) {
@@ -739,7 +753,7 @@ class CoreParserFunctions {
 	 */
 	static function anchorencode( $parser, $text ) {
 		$text = $parser->killMarkers( $text );
-		return substr( $parser->guessSectionNameFromWikiText( $text ), 1);
+		return (string)substr( $parser->guessSectionNameFromWikiText( $text ), 1 );
 	}
 
 	static function special( $parser, $text ) {
@@ -758,8 +772,8 @@ class CoreParserFunctions {
 
 	/**
 	 * @param $parser Parser
-	 * @param $text String The sortkey to use
-	 * @param $uarg String Either "noreplace" or "noerror" (in en)
+	 * @param string $text The sortkey to use
+	 * @param string $uarg Either "noreplace" or "noerror" (in en)
 	 *   both suppress errors, and noreplace does nothing if
 	 *   a default sortkey already exists.
 	 * @return string
@@ -790,7 +804,7 @@ class CoreParserFunctions {
 
 	// Usage {{filepath|300}}, {{filepath|nowiki}}, {{filepath|nowiki|300}} or {{filepath|300|nowiki}}
 	// or {{filepath|300px}}, {{filepath|200x300px}}, {{filepath|nowiki|200x300px}}, {{filepath|200x300px|nowiki}}
-	public static function filepath( $parser, $name='', $argA='', $argB='' ) {
+	public static function filepath( $parser, $name = '', $argA = '', $argB = '' ) {
 		$file = wfFindFile( $name );
 
 		if( $argA == 'nowiki' ) {

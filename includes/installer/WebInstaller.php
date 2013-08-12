@@ -56,10 +56,11 @@ class WebInstaller extends Installer {
 
 	/**
 	 * The main sequence of page names. These will be displayed in turn.
-	 * To add one:
-	 *    * Add it here
-	 *    * Add a config-page-<name> message
-	 *    * Add a WebInstaller_<name> class
+	 *
+	 * To add a new installer page:
+	 *    * Add it to this WebInstaller::$pageSequence property
+	 *    * Add a "config-page-<name>" message
+	 *    * Add a "WebInstaller_<name>" class
 	 * @var array
 	 */
 	public $pageSequence = array(
@@ -139,7 +140,7 @@ class WebInstaller extends Installer {
 	/**
 	 * Main entry point.
 	 *
-	 * @param $session Array: initial session array
+	 * @param array $session initial session array
 	 *
 	 * @return Array: new session array
 	 */
@@ -425,7 +426,7 @@ class WebInstaller extends Installer {
 		$url = preg_replace( '/\?.*$/', '', $url );
 
 		if ( $query ) {
-			$url .= '?' . wfArrayToCGI( $query );
+			$url .= '?' . wfArrayToCgi( $query );
 		}
 
 		return $url;
@@ -460,7 +461,7 @@ class WebInstaller extends Installer {
 
 	/**
 	 * Set a session variable.
-	 * @param $name String key for the variable
+	 * @param string $name key for the variable
 	 * @param $value Mixed
 	 */
 	public function setSession( $name, $value ) {
@@ -609,7 +610,7 @@ class WebInstaller extends Installer {
 	/**
 	 * Get HTML for an error box with an icon.
 	 *
-	 * @param $text String: wikitext, get this with wfMessage()->plain()
+	 * @param string $text wikitext, get this with wfMessage()->plain()
 	 *
 	 * @return string
 	 */
@@ -620,7 +621,7 @@ class WebInstaller extends Installer {
 	/**
 	 * Get HTML for a warning box with an icon.
 	 *
-	 * @param $text String: wikitext, get this with wfMessage()->plain()
+	 * @param string $text wikitext, get this with wfMessage()->plain()
 	 *
 	 * @return string
 	 */
@@ -631,9 +632,9 @@ class WebInstaller extends Installer {
 	/**
 	 * Get HTML for an info box with an icon.
 	 *
-	 * @param $text String: wikitext, get this with wfMessage()->plain()
-	 * @param $icon String: icon name, file in skins/common/images
-	 * @param $class String: additional class name to add to the wrapper div
+	 * @param string $text wikitext, get this with wfMessage()->plain()
+	 * @param string $icon icon name, file in skins/common/images
+	 * @param string $class additional class name to add to the wrapper div
 	 *
 	 * @return string
 	 */
@@ -667,7 +668,7 @@ class WebInstaller extends Installer {
 
 	/**
 	 * Output a help box.
-	 * @param $msg String key for wfMessage()
+	 * @param string $msg key for wfMessage()
 	 */
 	public function showHelpBox( $msg /*, ... */ ) {
 		$args = func_get_args();
@@ -932,7 +933,7 @@ class WebInstaller extends Installer {
 	 * @return string
 	 */
 	public function getRadioSet( $params ) {
-		if ( !isset( $params['controlName']  ) ) {
+		if ( !isset( $params['controlName'] ) ) {
 			$params['controlName'] = 'config_' . $params['var'];
 		}
 
@@ -1005,7 +1006,7 @@ class WebInstaller extends Installer {
 	 * fake) passwords.
 	 *
 	 * @param $varNames Array
-	 * @param $prefix String: the prefix added to variables to obtain form names
+	 * @param string $prefix the prefix added to variables to obtain form names
 	 *
 	 * @return array
 	 */
@@ -1078,14 +1079,14 @@ class WebInstaller extends Installer {
 		) );
 		$anchor = Html::rawElement( 'a',
 			array( 'href' => $this->getURL( array( 'localsettings' => 1 ) ) ),
-			$img . ' ' . wfMessage( 'config-download-localsettings' )->escaped() );
+			$img . ' ' . wfMessage( 'config-download-localsettings' )->parse() );
 		return Html::rawElement( 'div', array( 'class' => 'config-download-link' ), $anchor );
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function envCheckPath( ) {
+	public function envCheckPath() {
 		// PHP_SELF isn't available sometimes, such as when PHP is CGI but
 		// cgi.fix_pathinfo is disabled. In that case, fall back to SCRIPT_NAME
 		// to get the path to the current script... hopefully it's reliable. SIGH
@@ -1095,7 +1096,7 @@ class WebInstaller extends Installer {
 		} elseif ( !empty( $_SERVER['SCRIPT_NAME'] ) ) {
 			$path = $_SERVER['SCRIPT_NAME'];
 		}
-		if ($path !== false) {
+		if ( $path !== false ) {
 			$uri = preg_replace( '{^(.*)/(mw-)?config.*$}', '$1', $path );
 			$this->setVar( 'wgScriptPath', $uri );
 		} else {

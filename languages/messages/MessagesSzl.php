@@ -208,7 +208,6 @@ $messages = array(
 'qbbrowse' => 'Uoglůndańy',
 'qbedit' => 'Sprowjej',
 'qbpageoptions' => 'Ta zajta',
-'qbpageinfo' => 'Kontekst',
 'qbmyoptions' => 'Moje zajty',
 'qbspecialpages' => 'Szpecyjalne zajty',
 'faq' => 'FAQ',
@@ -451,11 +450,8 @@ Administrator kery zawarł wćepał kůmyntorz: "$3".',
 # Login and logout pages
 'logouttext' => "'''Terozki ježeś wylůgowany'''.
 
-Možeš dali sam sprowjać zajty we {{SITENAME}} kej ńyzalůgowany užytkowńik, abo [[Special:UserLogin|zalůgować śe nazod]] kej tyn som abo inkšy užytkowńik.
+Možeš dali sam sprowjać zajty we {{SITENAME}} kej ńyzalůgowany užytkowńik, abo <span class='plainlinks'>[$1 zalůgować śe nazod]</span> kej tyn som abo inkšy užytkowńik.
 Dej pozůr, co na ńykerych zajtach přeglůndarka može dali pokozywać co ježeś zalůgowany, a bydźe tak aže uodśwjyžyš jeij cache.",
-'welcomecreation' => '== Witej, $1! ==
-Uotwarli my sam lo Ćebje kůnto.
-Ńy zapomńij poštalować [[Special:Preferences|preferencyji lo {{GRAMMAR:D.lp|{{SITENAME}}}}]].',
 'yourname' => 'Mjano użytkowńika:',
 'yourpassword' => 'Hasło:',
 'yourpasswordagain' => 'Naszkryflej ausdruk zaś',
@@ -741,7 +737,6 @@ Uostatńy wpis z rejera je ńyżej.",
 'template-protected' => '(zawrzity uod sprowjańo)',
 'template-semiprotected' => '(tajlowo zawarte)',
 'hiddencategories' => 'Ta zajta je {{PLURAL:$1|w jednyj schrůńunyj katygoryji|we $1 schrůńunych katygoryjach}}:',
-'nocreatetitle' => 'Uograńičůno wćepywańy zajtůw',
 'nocreatetext' => 'Na {{GRAMMAR:MS.lp|{{SITENAME}}}} twořyńy nowych zajtůw uograńičůno.
 Možeš sprowjać te co juž sům, abo [[Special:UserLogin|zalogować śe, abo zauožyć konto]].',
 'nocreate-loggedin' => 'Ńy moš uprowńyń do twořyńo nowych zajtůw.',
@@ -1185,11 +1180,13 @@ $1',
 'right-userrights-interwiki' => 'Sprowjej uprawńyńo užytkowńikůw na zajtach inkšych Wiki',
 'right-siteadmin' => 'Zawjerańy i uodmykańy bazy danych',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Nowe użytkowniki',
+'newuserlogpagetext' => 'To je rejer uostatńo utworzůnych kůnt użytkowńikůw',
+
 # User rights log
 'rightslog' => 'Uprawńyńa',
 'rightslogtext' => 'Rejer půmjyńań uprawńyń užytkowńikůw.',
-'rightslogentry' => 'půmjyńiu/a uprawńyńo užytkowńika $1 ($2 → $3)',
-'rightsnone' => 'podstawowo',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'přeglůndańo tyj zajty',
@@ -1632,10 +1629,6 @@ Uobsůgiwane protokoły: <code>$1</code>',
 'activeusers-hidesysops' => 'Schrůń adminy',
 'activeusers-noresult' => 'Ńy sům używacze.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Nowe użytkowniki',
-'newuserlogpagetext' => 'To je rejer uostatńo utworzůnych kůnt użytkowńikůw',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Uprawńyńo grup użytkowńikůw',
 'listgrouprights-summary' => 'Půńiży znojdowo śe spis grup użytkowńikůw zdefińjowanych na tyj wiki, s wyszczygůlńyńym przidźelůnych im prow dostympu.
@@ -1716,11 +1709,7 @@ Na tyi liśće bydźeš mjou rejer přišuych sprowjyń tyi zajty i jeji zajty g
 
 'enotif_mailer' => 'Powjadomjyńe s {{GRAMMAR:D.lp|{{SITENAME}}}}',
 'enotif_reset' => 'Uoznoč wšyjstke zajty kej uodwjydzůne',
-'enotif_newpagetext' => 'To je nowo zajta.',
 'enotif_impersonal_salutation' => 'užytkowńik {{GRAMMAR:D.lp|{{SITENAME}}}}',
-'changed' => 'pomjyńono',
-'created' => 'utwořono',
-'enotif_subject' => 'Zajta $PAGETITLE we {{GRAMMAR:MS.lp|{{SITENAME}}}} zostoua $CHANGEDORCREATED bez užytkowńika $PAGEEDITOR',
 'enotif_lastvisited' => 'Uobejřij na zajće $1 wšyjstke půmjyńańo uod Twojej uostatńij wizyty.',
 'enotif_lastdiff' => 'Uobejřij na zajće $1 te pomjyńeńe.',
 'enotif_anon_editor' => 'užytkowńik anůnimowy $1',
@@ -1747,6 +1736,8 @@ Kejbyś chćou půmjyńić štalowańo swojej listy zajtůw, na kere dowoš poz�
 
 Pomoc:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'utwořono',
+'changed' => 'pomjyńono',
 
 # Delete
 'deletepage' => 'Wyćep artikel',
@@ -2851,6 +2842,6 @@ Naškryflej sam mjano plika bez prefiksu „{{ns:file}}:”.',
 # New logging system
 'revdelete-restricted' => 'naštaluj uograničyńo do administratorůw',
 'revdelete-unrestricted' => 'wycofej uograničyńo do administratorůw',
-'newuserlog-byemail' => 'hasło uostało wysłane e-brifym',
+'rightsnone' => 'podstawowo',
 
 );

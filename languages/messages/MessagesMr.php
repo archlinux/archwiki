@@ -174,7 +174,6 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__अनुक्रमणिकाहवीच__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__अनुक्रमणिका__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__असंपादनक्षम__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__शीर्षकनाही__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'सद्यमहिना', 'सद्यमहिना२', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'सद्यमहिना१', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'सद्यमहिनानाव', 'CURRENTMONTHNAME' ),
@@ -458,6 +457,7 @@ $messages = array(
 'newwindow' => '(नवीन खिडकीत उघडते.)',
 'cancel' => 'खोडा',
 'moredotdotdot' => 'अजून...',
+'morenotlisted' => 'आणखी यादीत नाही...',
 'mypage' => 'माझे पान',
 'mytalk' => 'चर्चा',
 'anontalk' => 'या अंकपत्त्याचे चर्चा पान उघडा',
@@ -469,7 +469,6 @@ $messages = array(
 'qbbrowse' => 'न्याहाळा',
 'qbedit' => 'संपादन',
 'qbpageoptions' => 'हे पान',
-'qbpageinfo' => 'सामग्री',
 'qbmyoptions' => 'माझी पाने',
 'qbspecialpages' => 'विशेष पाने',
 'faq' => 'नेहमीची प्रश्नावली',
@@ -492,6 +491,7 @@ $messages = array(
 'namespaces' => 'नामविश्वे',
 'variants' => 'अस्थिर',
 
+'navigation-heading' => 'दिक्चालन यादी',
 'errorpagetitle' => 'चूक',
 'returnto' => '$1 कडे परत चला.',
 'tagline' => '{{SITENAME}} कडून',
@@ -719,11 +719,10 @@ $2',
 # Login and logout pages
 'logouttext' => "'''तुम्ही आता अदाखल झाला(logout)आहात.'''
 
-तुम्ही अनामिकपणे {{SITENAME}}चा उपयोग करत राहू शकता, किंवा त्याच अथवा वेगळ्या सदस्य नावाने [[Special:UserLogin| पुन्हा दाखल होऊ शकता]].
+तुम्ही अनामिकपणे {{SITENAME}}चा उपयोग करत राहू शकता, किंवा त्याच अथवा वेगळ्या सदस्य नावाने <span class='plainlinks'>[$1  पुन्हा दाखल होऊ शकता]</span>.
 आपण स्वत:च्या न्याहाळकाची सय (cache) रिकामी करत नाही तो पर्यंत काही पाने आपण अजून दाखल आहात, असे नुसतेच दाखवत राहू शकतील.",
-'welcomecreation' => '== सुस्वागतम, $1! ==
-
-तुमचे खाते उघडण्यात आले आहे.
+'welcomeuser' => 'स्वागत, $1!',
+'welcomecreation-msg' => 'तुमचे खाते उघडण्यात आले आहे.
 आपल्या [[Special:Preferences|{{SITENAME}} पसंती]] बदलण्यास विसरू नका.',
 'yourname' => 'तुमचे नाव',
 'yourpassword' => 'तुमचा परवलीचा शब्द',
@@ -865,6 +864,7 @@ $2',
 'changeemail-oldemail' => 'सध्याचा ईमेल पत्ता :',
 'changeemail-newemail' => 'नवा ईमेल पत्ता:',
 'changeemail-none' => '(दिलेला नाही)',
+'changeemail-password' => 'तुमचा {{SITENAME}} संकेतांक:',
 'changeemail-submit' => 'ईमेल बदला',
 'changeemail-cancel' => 'रद्द करा',
 
@@ -1016,7 +1016,6 @@ $2',
 'template-protected' => '(सुरक्षित)',
 'template-semiprotected' => '(अर्ध-सुरक्षीत)',
 'hiddencategories' => 'हे पान खालील {{PLURAL:$1|एका लपविलेल्या वर्गामध्ये|$1 लपविलेल्या वर्गांमध्ये}} आहे:',
-'nocreatetitle' => 'पान निर्मितीस मर्यादा',
 'nocreatetext' => '{{SITENAME}}वर नवीन लेख लिहिण्यास मज्जाव करण्यात आलेला आहे. आपण परत जाऊन अस्तित्वात असलेल्या लेखांचे संपादन करू शकता अथवा [[Special:UserLogin|नवीन सदस्यत्व घ्या/ प्रवेश करा]].',
 'nocreate-loggedin' => 'येथे तुम्हाला नवीन पाने बनवण्याची परवानगी नाही.',
 'sectioneditnotsupported-title' => 'विभाग संपादन समर्थित नाही.',
@@ -1039,6 +1038,13 @@ $2',
 'edit-already-exists' => 'नवीन पान तयार करता येऊ शकले नाही.
 या नावाचे पान आधीच अस्तित्वात आहे.',
 'defaultmessagetext' => 'कसूर पाठ्य मजकूर',
+'invalid-content-data' => 'अवैध माहिती',
+
+# Content models
+'content-model-wikitext' => 'विकिमजकूर',
+'content-model-text' => 'सामान्य मजकूर',
+'content-model-javascript' => 'जावास्क्रिप्ट',
+'content-model-css' => 'सीएसएस',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => '”’इशारा:”’ या पानावर खूप सारे खर्चीक पृथक्करण क्रिया कॉल्स आहेत.
@@ -1544,12 +1550,13 @@ $1",
 'right-sendemail' => 'इतर सदस्यांना विपत्रे पाठवा',
 'right-passwordreset' => 'परवलीचा शब्द (पासवर्ड) पुन:स्थापित केल्याची इ मेल पहा.',
 
+# Special:Log/newusers
+'newuserlogpage' => 'नवीन सदस्यांची नोंद',
+'newuserlogpagetext' => 'ही नवीन सदस्यांची नोंद यादी आहे.',
+
 # User rights log
 'rightslog' => 'सदस्य आधिकार नोंद',
 'rightslogtext' => 'ही सदस्य अधिकारांमध्ये झालेल्या बदलांची यादी आहे.',
-'rightslogentry' => '$1 चे ग्रुप सदस्यत्व $2 पासून $3 ला बदलण्यात आलेले आहे',
-'rightslogentry-autopromote' => '$2 ते $3 आपोआप नियुक्ती झाली.',
-'rightsnone' => '(काहीही नाही)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'हे पान वाचा',
@@ -1766,6 +1773,7 @@ $1',
 'backend-fail-notsame' => ' $1 येथे यापेक्षा विभिन्न असलेली संचिका पूर्वीच विद्यमान आहे',
 'backend-fail-invalidpath' => '$1 हा वैध संग्राहक-पथ नाही.',
 'backend-fail-delete' => '$1 ही संचिका (फाईल) बनवता आली नाही.',
+'backend-fail-describe' => '"$1" या संचिकेसाठी आपण मेटाडाटा बदलू शकत नाही.',
 'backend-fail-alreadyexists' => '$1 ही संचिका अगोदरच अस्तित्वात आहे.',
 'backend-fail-store' => '$1 ही संचिका $2मधे साठवू शकत नाही.',
 'backend-fail-copy' => '"$1" संचिकेची "$2" ही प्रत करता आली नाही.',
@@ -2156,10 +2164,6 @@ Input:contenttype/subtype, e.g. <code>image/jpeg</code>.',
 'activeusers-hidesysops' => 'प्रचालक लपवा',
 'activeusers-noresult' => 'एकही सदस्य सापडला नाही.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'नवीन सदस्यांची नोंद',
-'newuserlogpagetext' => 'ही नवीन सदस्यांची नोंद यादी आहे.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'सदस्य गट अधिकार',
 'listgrouprights-summary' => 'खाली या विकिवर दिलेली सदस्य गटांची यादी त्यांच्या अधिकारांसकट दर्शविलेली आहे. प्रत्येकाच्या अधिकारांची अधिक माहिती [[{{MediaWiki:Listgrouprights-helppage}}|इथे]] दिलेली आहे.',
@@ -2253,11 +2257,12 @@ Input:contenttype/subtype, e.g. <code>image/jpeg</code>.',
 
 'enotif_mailer' => '{{SITENAME}} सूचना विपत्र',
 'enotif_reset' => 'सर्व पानास भेट दिल्याचे नमूद करा',
-'enotif_newpagetext' => 'हे नवीन पान आहे.',
 'enotif_impersonal_salutation' => '{{SITENAME}} सदस्य',
-'changed' => 'बदलले',
-'created' => 'तयार केले',
-'enotif_subject' => '{{SITENAME}} पान $PAGETITLE $PAGEEDITOR ने $CHANGEDORCREATED आहे',
+'enotif_subject_deleted' => '{{SITENAME}} पानाला $1 {{gender:$2|$2}} ने वगळले',
+'enotif_subject_created' => '{{SITENAME}} पान $1  {{gender:$2|$2}} ने तयार केले',
+'enotif_subject_moved' => '{{SITENAME}}पान $1  {{gender:$2|$2}} ने हलविले',
+'enotif_subject_restored' => '{{SITENAME}} पान $1  {{gender:$2|$2}} ने पुनर्स्थापित केले',
+'enotif_subject_changed' => '{{SITENAME}} पान $1  {{gender:$2|$2}} ने बदलले',
 'enotif_lastvisited' => 'तुमच्या शेवटच्या भेटीनंतरचे बदल बघणयासाठी पहा - $1.',
 'enotif_lastdiff' => 'हा बदल पहाण्याकरिता $1 पहा.',
 'enotif_anon_editor' => 'अनामिक उपयोगकर्ता $1',
@@ -2287,6 +2292,8 @@ $UNWATCHURL
 
 पुढील साहाय्य आणि प्रतिक्रिया:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'तयार केले',
+'changed' => 'बदलले',
 
 # Delete
 'deletepage' => 'पान वगळा',
@@ -2352,6 +2359,8 @@ $UNWATCHURL
 'prot_1movedto2' => '"[[$1]]" हे पान "[[$2]]" मथळ्याखाली स्थानांतरित केले.',
 'protect-badnamespace-title' => 'असुरक्षणीय नामविश्व',
 'protect-badnamespace-text' => 'या नामविश्वातील पाने सुरक्षित करता येत नाहीत',
+'protect-norestrictiontypes-text' => 'हे पान सुरक्षित होऊ शकत नाही कारण कोणताही सुरक्षापातळी प्रकार उपलब्ध नाही.',
+'protect-norestrictiontypes-title' => 'सुरक्षापातळी नसलेले पान',
 'protect-legend' => 'सुरक्षापातळीतील बदल निर्धारित करा',
 'protectcomment' => 'कारण:',
 'protectexpiry' => 'संपण्याचा कालावधी:',
@@ -2853,7 +2862,6 @@ $1',
 
 # JavaScriptTest
 'javascripttest' => 'जावा स्क्रिप्ट तपासणी',
-'javascripttest-disabled' => 'हे कार्य अवरूद्ध केले आहे.',
 'javascripttest-title' => '$1 टेस्ट चालू आहेत',
 'javascripttest-pagetext-noframework' => 'हे पान जावा स्क्रिप्ट तपासणी साठी सुरक्षित केले आहे',
 'javascripttest-pagetext-unknownframework' => 'अज्ञात तपासणीचे ठिकाण $1',
@@ -2966,6 +2974,7 @@ $1',
 'pageinfo-header-properties' => 'पानाची माहिती',
 'pageinfo-display-title' => 'दृश्य शीर्षक',
 'pageinfo-length' => 'पानाचा आकार (बाइट्समध्ये)',
+'pageinfo-language' => 'पानाच्या मजकूराची भाषा',
 'pageinfo-robot-index' => 'आनुक्रमानीत',
 'pageinfo-robot-noindex' => 'आनुक्रमानीत करू शकत नाही',
 'pageinfo-views' => 'अभिप्रायांची संख्या',
@@ -2977,6 +2986,14 @@ $1',
 'pageinfo-lasttime' => 'अलीकडिल संपादनाचा दिनांक',
 'pageinfo-edits' => 'संपादनांची संख्या',
 'pageinfo-authors' => 'वेगळ्या लेखकांची संख्या',
+'pageinfo-toolboxlink' => 'पानाची माहिती',
+'pageinfo-redirectsto-info' => 'माहिती',
+'pageinfo-contentpage-yes' => 'होय',
+'pageinfo-protect-cascading-yes' => 'होय',
+'pageinfo-category-info' => 'वर्ग माहिती',
+'pageinfo-category-pages' => 'पानांची संख्या',
+'pageinfo-category-subcats' => 'उपवर्गांची संख्या',
+'pageinfo-category-files' => 'संचिकांची संख्या',
 
 # Skin names
 'skinname-standard' => 'अभिजात',
@@ -3030,6 +3047,7 @@ $1',
 'file-info-size-pages' => '$1 × $2 पिक्सेल, संचिका आकारमान: $3, एमआयएमई प्रकार: $4, $5 {{PLURAL:$5|पान|पाने}}',
 'file-nohires' => 'यापेक्षा मोठे चित्र उपलब्ध नाही.',
 'svg-long-desc' => 'SVG संचिका, साधारणपणे $1 × $2 pixels, संचिकेचा आकार: $3',
+'svg-long-error' => 'अयोग्य SVG प्रकारातील संचिका: $1',
 'show-big-image' => 'संपूर्ण रिजोल्यूशन',
 'show-big-image-preview' => 'या झलकेचा आकार: $1. पिक्सेल',
 'show-big-image-other' => 'इतर {{PLURAL:$2|resolution|resolutions}}: $1.',
@@ -3061,7 +3079,10 @@ $1',
 'minutes' => '{{PLURAL:$1|$1 मिनिट|$1 मिनिट}}',
 'hours' => '{{PLURAL:$1|$1 तास|$1 तास}}',
 'days' => '{{PLURAL:$1|$1 दिवस|$1 दिवस}}',
+'months' => '{{PLURAL:$1|$1 महिना|$1 महिने}}',
+'years' => '{{PLURAL:$1|$1 वर्ष|$1 वर्षे}}',
 'ago' => '$1 पूर्वी',
+'just-now' => 'लगेच',
 
 # Bad image list
 'bad_image_list' => 'रूपरेषा खालीलप्रमाणे आहे:
@@ -3792,7 +3813,7 @@ $5
 'revdelete-unrestricted' => 'प्रबंधकांची बंधने काढली',
 'logentry-move-move' => '  $3पान    $4 कडे  $1 स्थानांतरीत',
 'logentry-move-move-noredirect' => '$1 ने $3 हे पान पुनर्निर्देशीत न करता $4 येथे स्थानांतरीत केले',
-'logentry-move-move_redir' => '$1 यांनी $3 हे पान पुनर्निर्देशन लावुन $4 येथे हलवले',
+'logentry-move-move_redir' => '$1 यांनी $3 हे पान पुनर्निर्देशन लावून $4 येथे हलवले',
 'logentry-move-move_redir-noredirect' => '$1 ने $3 हे पान पुनर्निर्देशीत न करता $4 येथे पुर्ननिर्देशनावर  स्थानांतरीत केले',
 'logentry-patrol-patrol' => '  $3  पानाच्या  $1 सुचवलेल्या  $4 आवृत्तीस गस्त घातली',
 'logentry-patrol-patrol-auto' => '  $3  पानाच्या  $1 सुचवलेल्या  $4 आवृत्तीस स्वयंचलित गस्त घातली',
@@ -3800,7 +3821,8 @@ $5
 'logentry-newusers-create' => 'एक सदस्यखाते $1 तयार केले',
 'logentry-newusers-create2' => '$1  ने  सदस्य खाते $3  निर्मित केले  आहे.',
 'logentry-newusers-autocreate' => '$1  खाते स्वयमेव निर्मित झाले आहे.',
-'newuserlog-byemail' => 'परवलीचा शब्द ई-मेल मार्फत पाठविलेला आहे',
+'logentry-rights-rights-legacy' => '$1 ने $3 चे ग्रुप सदस्यत्व बदलले',
+'rightsnone' => '(काहीही नाही)',
 
 # Feedback
 'feedback-bugornote' => 'जर आपण तांत्रिक प्रश्न  विस्तृतपणे मांडण्यास तयार असाल तर कृपया ($1 गणकदोष वृतांत) पाठवा. नपेक्षा, खाली देण्यात आलेले सोपे आवेदनपत्र वापरा. आपली टिप्पणी "[ $3, $2]" या पानास आपले सदस्यनाव व आपण कोणता ब्राउजर वापरता यासह जोडण्यात येईल.',

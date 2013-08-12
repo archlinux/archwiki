@@ -14,8 +14,6 @@
 
 $fallback8bitEncoding = 'windows-1254';
 
-$separatorTransformTable = array( ','     => '.', '.'     => ',' );
-
 $namespaceNames = array(
 	NS_MEDIA            => 'Media',
 	NS_SPECIAL          => 'Mahsus',
@@ -35,8 +33,8 @@ $namespaceNames = array(
 	NS_CATEGORY_TALK    => 'Kategoriya_muzakeresi',
 );
 
-# Aliases to cyril namespaces
 $namespaceAliases = array(
+	# Aliases to Cyrillic (crh-cyrl) namespaces
 	"Медиа"                  => NS_MEDIA,
 	"Махсус"                 => NS_SPECIAL,
 	"Музакере"               => NS_TALK,
@@ -56,7 +54,6 @@ $namespaceAliases = array(
 	'Категория'              => NS_CATEGORY,
 	'Категория_музакереси'   => NS_CATEGORY_TALK
 );
-
 
 $datePreferences = array(
     'default',
@@ -98,6 +95,7 @@ $dateFormats = array(
     'ISO 8601 both' => 'xnY.xnm.xnd"T"xnH:xni:xns',
 );
 
+$separatorTransformTable = array( ',' => '.', '.' => ',' );
 $linkTrail = '/^([a-zâçğıñöşüа-яё“»]+)(.*)$/sDu';
 
 $messages = array(
@@ -236,6 +234,7 @@ $messages = array(
 'newwindow' => '(yañı bir pencerede açılır)',
 'cancel' => 'Lâğu',
 'moredotdotdot' => 'Daa...',
+'morenotlisted' => 'Başqa bir şey yoq...',
 'mypage' => 'Saife',
 'mytalk' => 'Muzakere',
 'anontalk' => 'Bu IP-niñ muzakeresi',
@@ -247,7 +246,6 @@ $messages = array(
 'qbbrowse' => 'Baqıp çıq',
 'qbedit' => 'Deñiştir',
 'qbpageoptions' => 'Bu saife',
-'qbpageinfo' => 'Saife aqqında malümat',
 'qbmyoptions' => 'Saifelerim',
 'qbspecialpages' => 'Mahsus saifeler',
 'faq' => 'Sıq berilgen sualler',
@@ -270,6 +268,7 @@ $messages = array(
 'namespaces' => 'İsim fezaları',
 'variants' => 'Variantlar',
 
+'navigation-heading' => 'Dolaşuv menüsi',
 'errorpagetitle' => 'Hata',
 'returnto' => '$1.',
 'tagline' => '{{GRAMMAR:ablative|{{SITENAME}}}}',
@@ -493,10 +492,7 @@ Sebep: ''$2''.",
 # Login and logout pages
 'logouttext' => "'''Oturımnı qapattıñız.'''
 
-Şimdi {{SITENAME}} saytını anonim olaraq qullanıp olasıñız, ya da yañıdan [[Special:UserLogin|oturım açıp]] olasıñız (ister aynı qullanıcı adınen, ister başqa bir qullanıcı adınen). Web brauzeriñiz keşini temizlegence bazı saifeler sanki alâ daa oturımıñız açıq eken kibi körünip olur.",
-'welcomecreation' => '== Hoş keldiñiz, $1! ==
-Esabıñız açıldı.
-Bu saytnıñ [[Special:Preferences|sazlamalarını]] şahsıñızğa köre deñiştirmege unutmañız.',
+Şimdi {{SITENAME}} saytını anonim olaraq qullanıp olasıñız, ya da yañıdan <span class='plainlinks'>[$1 oturım açıp]</span> olasıñız (ister aynı qullanıcı adınen, ister başqa bir qullanıcı adınen). Web brauzeriñiz keşini temizlegence bazı saifeler sanki alâ daa oturımıñız açıq eken kibi körünip olur.",
 'yourname' => 'Qullanıcı adıñız',
 'yourpassword' => 'Paroliñiz',
 'yourpasswordagain' => 'Parolni bir daa yazıñız:',
@@ -738,7 +734,6 @@ Jurnalnıñ soñki yazısı aşağıda berilgen:",
 'template-protected' => '(qorçalav altında)',
 'template-semiprotected' => '(qısmen qorçalav altında)',
 'hiddencategories' => 'Bu saife {{PLURAL:$1|1|$1}} gizli kategoriyağa mensüptir:',
-'nocreatetitle' => 'Saife yaratuv sıñırlıdır',
 'nocreatetext' => '{{SITENAME}} saytında yañı saife yaratuv sıñırlıdır.
 Keri qaytıp mevcut olğan saifeni deñiştire, [[Special:UserLogin|oturım aça ya da yañı bir esap yaratıp olasıñız]].',
 'nocreate-loggedin' => 'Yañı saifeler yaratmağa iziniñiz yoqtır.',
@@ -1030,6 +1025,10 @@ Eger bildirseñiz, saifelerdeki deñiştirmelerni kimniñ yapqanını köstermek
 'grouppage-sysop' => '{{ns:project}}:İdareciler',
 'grouppage-bureaucrat' => '{{ns:project}}:Bürokratlar',
 'grouppage-suppress' => '{{ns:project}}:Teftişçiler',
+
+# Special:Log/newusers
+'newuserlogpage' => 'Yañı qullanıcı jurnalı',
+'newuserlogpagetext' => 'Eñ sоñki qayd оlğan qullanıcı jurnalı.',
 
 # User rights log
 'rightslog' => 'Qullanıcınıñ aqları jurnalı',
@@ -1382,10 +1381,6 @@ Ayrıca [[Special:WantedCategories|talap etilgen kategoriyalarnıñ cedveline]] 
 'listusers-submit' => 'Köster',
 'listusers-noresult' => 'İç bir qullanıcı tapılmadı.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Yañı qullanıcı jurnalı',
-'newuserlogpagetext' => 'Eñ sоñki qayd оlğan qullanıcı jurnalı.',
-
 # Special:ListGroupRights
 'listgrouprights-members' => '(azalar cedveli)',
 
@@ -1444,21 +1439,14 @@ Bundan soñ, bu saifede ve onıñ muzakere saifesinde yapılacaq deñiştirmeler
 
 'enotif_mailer' => '{{SITENAME}} poçta vastasınen haber bergen hızmet',
 'enotif_reset' => 'Cümle saifelerni baqılğan olaraq işaretle',
-'enotif_newpagetext' => 'Bu yañı bir saifedir.',
 'enotif_impersonal_salutation' => '{{SITENAME}} qullanıcısı',
-'changed' => 'deñiştirildi',
-'created' => 'yaratıldı',
-'enotif_subject' => '"{{SITENAME}}" $PAGETITLE saifesi $PAGEEDITOR qullanıcı tarafından $CHANGEDORCREATED',
 'enotif_lastvisited' => 'Soñki ziyaretiñizden berli yapılğan deñiştirmelerni körmek içün $1 baqıñız.',
 'enotif_anon_editor' => 'adsız (anonim) qullanıcı $1',
 'enotif_body' => 'Sayğılı $WATCHINGUSERNAME,
 
+$PAGEINTRO $NEWPAGE
 
-{{SITENAME}} saytındaki $PAGETITLE saifesi $PAGEEDITDATE künü $PAGEEDITOR tarafından $CHANGEDORCREATED. Saifeniñ şimdiki alını $PAGETITLE_URL adresinde körip olasıñız.
-
-$NEWPAGE
-
-Deñişmeniñ qısqa tarifi: $PAGESUMMARY $PAGEMINOREDIT
+Deñiştirmeniñ qısqa tarifi: $PAGESUMMARY $PAGEMINOREDIT
 
 Saifeni deñiştirgen qullanıcınen bağlanmaq içün:
 e-mail adresi: $PAGEEDITOR_EMAIL
@@ -1466,9 +1454,10 @@ viki saifesi: $PAGEEDITOR_WIKI
 
 Bu saifeni ziyaret etmeseñiz, birev onı bir daa deñiştirse de, iç bir tenbi beyanatı yollanmaycaq. Közetüv cedveliñizdeki bütün saifeler içün tenbi sazlamalarını deñiştire bilesiñiz.
 
-{{SITENAME}} tenbi sisteması.
+{{SITENAME}} bildirüv sisteması
 
 --
+
 Bildirüv sazlamalarını deñiştirmek içün:
 {{canonicalurl:{{#special:Preferences}}}}
 
@@ -1480,6 +1469,8 @@ $UNWATCHURL
 
 Yardım ve teklifler içün:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'yaratıldı',
+'changed' => 'deñiştirildi',
 
 # Delete
 'deletepage' => 'Saifeni yoq et',
@@ -1571,7 +1562,7 @@ Bu saifeniñ qorçalav seviyesini deñiştirip olasıñız, amma kaskadlı qorç
 'blanknamespace' => '(Esas)',
 
 # Contributions
-'contributions' => 'Qullanıcınıñ isseleri',
+'contributions' => '{{GENDER:$1|Qullanıcınıñ}} isseleri',
 'contributions-title' => '$1 qullanıcısınıñ isseleri',
 'mycontris' => 'İsseler',
 'contribsub2' => '$1 ($2)',
@@ -2116,9 +2107,6 @@ Bitirgen soñ "{{int:Watchlistedit-raw-submit}}" yazısına basıñız.
 
 # HTML forms
 'htmlform-reset' => 'Deñişikliklerni keri al',
-
-# New logging system
-'newuserlog-byemail' => 'parol e-mail vastasınen yiberilgen',
 
 # Search suggestions
 'searchsuggest-containing' => 'içinde bu olğan...',

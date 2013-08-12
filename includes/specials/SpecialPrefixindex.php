@@ -29,13 +29,13 @@
 class SpecialPrefixindex extends SpecialAllpages {
 	// Inherit $maxPerPage
 
-	function __construct(){
+	function __construct() {
 		parent::__construct( 'Prefixindex' );
 	}
 
 	/**
 	 * Entry point : initialise variables and call subfunctions.
-	 * @param $par String: becomes "FOO" when called like Special:Prefixindex/FOO (default null)
+	 * @param string $par becomes "FOO" when called like Special:Prefixindex/FOO (default null)
 	 */
 	function execute( $par ) {
 		global $wgContLang;
@@ -83,14 +83,14 @@ class SpecialPrefixindex extends SpecialAllpages {
 	/**
 	 * HTML for the top form
 	 * @param $namespace Integer: a namespace constant (default NS_MAIN).
-	 * @param $from String: dbKey we are starting listing at.
-	 * @param $hideredirects Bool: hide redirects (default FALSE)
+	 * @param string $from dbKey we are starting listing at.
+	 * @param bool $hideredirects hide redirects (default FALSE)
 	 * @return string
 	 */
 	function namespacePrefixForm( $namespace = NS_MAIN, $from = '', $hideredirects = false ) {
 		global $wgScript;
 
-		$out  = Xml::openElement( 'div', array( 'class' => 'namespaceoptions' ) );
+		$out = Xml::openElement( 'div', array( 'class' => 'namespaceoptions' ) );
 		$out .= Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) );
 		$out .= Html::hidden( 'title', $this->getTitle()->getPrefixedText() );
 		$out .= Xml::openElement( 'fieldset' );
@@ -101,7 +101,7 @@ class SpecialPrefixindex extends SpecialAllpages {
 				Xml::label( $this->msg( 'allpagesprefix' )->text(), 'nsfrom' ) .
 				"</td>
 				<td class='mw-input'>" .
-					Xml::input( 'prefix', 30, str_replace('_',' ',$from), array( 'id' => 'nsfrom' ) ) .
+					Xml::input( 'prefix', 30, str_replace( '_', ' ', $from ), array( 'id' => 'nsfrom' ) ) .
 				"</td>
 			</tr>
 			<tr>
@@ -135,8 +135,8 @@ class SpecialPrefixindex extends SpecialAllpages {
 	/**
 	 * @param $namespace Integer, default NS_MAIN
 	 * @param $prefix String
-	 * @param $from String: list all pages from this name (default FALSE)
-	 * @param $hideredirects Bool: hide redirects (default FALSE)
+	 * @param string $from list all pages from this name (default FALSE)
+	 * @param bool $hideredirects hide redirects (default FALSE)
 	 */
 	function showPrefixChunk( $namespace = NS_MAIN, $prefix, $from = null, $hideredirects = false ) {
 		global $wgContLang;
@@ -145,8 +145,8 @@ class SpecialPrefixindex extends SpecialAllpages {
 			$from = $prefix;
 		}
 
-		$fromList = $this->getNamespaceKeyAndText($namespace, $from);
-		$prefixList = $this->getNamespaceKeyAndText($namespace, $prefix);
+		$fromList = $this->getNamespaceKeyAndText( $namespace, $from );
+		$prefixList = $this->getNamespaceKeyAndText( $namespace, $prefix );
 		$namespaces = $wgContLang->getNamespaces();
 
 		if ( !$prefixList || !$fromList ) {
@@ -227,7 +227,7 @@ class SpecialPrefixindex extends SpecialAllpages {
 		} else {
 			$nsForm = $this->namespacePrefixForm( $namespace, $prefix, $hideredirects );
 			$self = $this->getTitle();
-			$out2 = Xml::openElement( 'table', array( 'id' => 'mw-prefixindex-nav-table' ) )  .
+			$out2 = Xml::openElement( 'table', array( 'id' => 'mw-prefixindex-nav-table' ) ) .
 				'<tr>
 					<td>' .
 						$nsForm .
@@ -241,14 +241,14 @@ class SpecialPrefixindex extends SpecialAllpages {
 					'hideredirects' => $hideredirects,
 				);
 
-				if( $namespace || ($prefix == '')) {
+				if( $namespace || $prefix == '' ) {
 					// Keep the namespace even if it's 0 for empty prefixes.
 					// This tells us we're not just a holdover from old links.
 					$query['namespace'] = $namespace;
 				}
 				$nextLink = Linker::linkKnown(
 						$self,
-						$this->msg( 'nextpage', str_replace( '_',' ', $s->page_title ) )->escaped(),
+						$this->msg( 'nextpage', str_replace( '_', ' ', $s->page_title ) )->escaped(),
 						array(),
 						$query
 					);
@@ -262,5 +262,9 @@ class SpecialPrefixindex extends SpecialAllpages {
 		}
 
 		$this->getOutput()->addHTML( $out2 . $out . $footer );
+	}
+
+	protected function getGroupName() {
+		return 'pages';
 	}
 }

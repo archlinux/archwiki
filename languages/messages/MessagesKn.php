@@ -208,7 +208,6 @@ $messages = array(
 'qbbrowse' => 'ವಿಹರಿಸು',
 'qbedit' => 'ಸಂಪಾದಿಸು',
 'qbpageoptions' => 'ಈ ಪುಟ',
-'qbpageinfo' => 'ಸನ್ನಿವೇಶ',
 'qbmyoptions' => 'ನನ್ನ ಪುಟಗಳು',
 'qbspecialpages' => 'ವಿಶೇಷ ಪುಟಗಳು',
 'faq' => 'ಸಾಮಾನ್ಯವಾಗಿ ಕೇಳಲಾಗುವ ಪ್ರಶ್ನೆಗಳು',
@@ -449,11 +448,10 @@ $2',
 # Login and logout pages
 'logouttext' => "'''ನೀವು ಈಗ ಲಾಗ್ ಔಟ್ ಆಗಿರುವಿರಿ.'''
 
-ನೀವು {{SITENAME}} ಅನ್ನು ಅನಾಮಧೇಯವಾಗಿ ಉಪಯೋಗಿಸಬಹುದು, ಅಥವ ಮತ್ತೆ ಇದೇ ಹೆಸರಿನಲ್ಲಿ ಅಥವ ಬೇರೆ ಹೆಸರಿನಲ್ಲಿ [[Special:UserLogin|ಲಾಗ್ ಇನ್]] ಆಗಬಹುದು.
+ನೀವು {{SITENAME}} ಅನ್ನು ಅನಾಮಧೇಯವಾಗಿ ಉಪಯೋಗಿಸಬಹುದು, ಅಥವ ಮತ್ತೆ ಇದೇ ಹೆಸರಿನಲ್ಲಿ ಅಥವ ಬೇರೆ ಹೆಸರಿನಲ್ಲಿ <span class='plainlinks'>[$1 ಲಾಗ್ ಇನ್]</span> ಆಗಬಹುದು.
 ಗಮನಿಸಿ: ನಿಮ್ಮ ಬ್ರೌಸರ್‍ನ cache ಅನ್ನು ಅಳಿಸುವವರೆಗೂ ಕೆಲವು ಪುಟಗಳು ನೀವಿನ್ನೂ ಲಾಗ್ ಇನ್ ಆಗಿರುವಂತೆ ಪ್ರದರ್ಶಿತವಾಗಬಹುದು.",
-'welcomecreation' => '== ಸುಸ್ವಾಗತ, $1! ==
-ನಿಮ್ಮ ಅಕೌಂಟನ್ನು ಸೃಷ್ಟಿಸಲಾಗಿದೆ.
-ನಿಮ್ಮ [[Special:Preferences|{{SITENAME}} ಪ್ರಾಶಸ್ತ್ಯಗಳನ್ನು]] ಬದಲಾಯಿಸುವುದನ್ನು ಮರೆಯಬೇಡಿ.',
+'welcomeuser' => 'ಸುಸ್ವಾಗತ,$1!',
+'welcomecreation-msg' => 'ನಿಮ್ಮ ಖಾತೆ ತೆರೆಯಲಾಗಿದೆ.ನಿಮ್ಮ [[Special:Preferences|{{SITENAME}} preferences]]ಬದಲಾಯಿಸಲು ಮರೆಯಬೇಡಿ.',
 'yourname' => 'ನಿಮ್ಮ ಬಳಕೆಯ ಹೆಸರು',
 'yourpassword' => 'ನಿಮ್ಮ ಪ್ರವೇಶಪದ',
 'yourpasswordagain' => 'ಪ್ರವೇಶ ಪದ ಮತ್ತೊಮ್ಮೆ ಟೈಪ್ ಮಾಡಿ',
@@ -692,7 +690,6 @@ $2',
 'template-protected' => '(ಸಂರಕ್ಷಿತ)',
 'template-semiprotected' => '(ಅರೆ-ಸಂರಕ್ಷಿತ)',
 'hiddencategories' => 'ಈ ಪುಟವು {{PLURAL:$1|೧ ಗುಪ್ತ ವರ್ಗಕ್ಕೆ|$1 ಗುಪ್ತ ವರ್ಗಗಳಿಗೆ}} ಸೇರಿದೆ:',
-'nocreatetitle' => 'ಪುಟವನ್ನು ಸೃಷ್ಟಿಸುವುದನ್ನು ನಿಯಮಿಸಲಾಗಿದೆ',
 'nocreatetext' => '{{SITENAME}} ಅಲ್ಲಿ ಹೊಸ ಪುಟಗಳನ್ನು ಸೃಷ್ಟಿಸಲು ಕೆಲವು ನಿಬಂಧನೆಗಳಿವೆ.
 ನೀವು ಹಿಂದಿರುಗಿ ಆಗಲೇ ಅಸ್ಥಿತ್ವದಲ್ಲಿರುವ ಪುಟವೊಂದನ್ನು ಸಂಪಾದಿಸಿ, ಅಥವ [[Special:UserLogin|ಲಾಗ್ ಇನ್ ಆಗಿ ಅಥವ ಹೊಸ ಸದಸ್ಯರಾಗಿ]].',
 'nocreate-loggedin' => 'ಹೊಸ ಪುಟಗಳನ್ನು ಸೃಷ್ಟಿಸಲು ನಿಮಗೆ ಅನುಮತಿ ಇಲ್ಲ.',
@@ -1045,12 +1042,12 @@ $2',
 'right-sendemail' => 'ಇತರ ಬಳಕೆದಾರರಿಗೆ ಇಮೇಲ್ ಕಳುಹಿಸಿ',
 'right-passwordreset' => 'ಪಾಸ್ವರ್ಡ್ ಮತ್ತೆ ಜೋಡಿಸಲ್ಪಟ್ಟ  ಇಮೇಲ್ ಗಳನ್ನು ವೀಕ್ಷಿಸಿ',
 
+# Special:Log/newusers
+'newuserlogpage' => 'ಸದಸ್ಯತ್ವ ಸೃಷ್ಟಿಗಳ ದಾಖಲೆ',
+
 # User rights log
 'rightslog' => 'ಸದಸ್ಯರ ಹಕ್ಕುಗಳ ದಾಖಲೆಗಳು',
 'rightslogtext' => 'ಇದು ಬಳಕೆದಾರ ಹಕ್ಕುಗಳ ಬದಲಾವಣೆಗಳ ದಾಖಲೆ.',
-'rightslogentry' => '$1 ಅವರ ಗುಂಪು ಸದಸ್ಯತ್ವವನ್ನು $2 ಇಂದ $3 ಗೆ ಬದಲಾಯಿಸಲಾಯಿತು',
-'rightslogentry-autopromote' => 'ಸ್ವಯಂಚಾಲಿತವಾಗಿ $2 ರಿಂದ $3 ಬಡ್ತಿ ನೀಡಲಾಯಿತು',
-'rightsnone' => '(ಯಾವೂ ಇಲ್ಲ)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'ಈ ಪುಟವನ್ನು ಓದಿ',
@@ -1445,9 +1442,6 @@ $2',
 'activeusers' => 'ಸಕ್ರಿಯ ಸದಸ್ಯರ ಪಟ್ಟಿ',
 'activeusers-noresult' => 'ಯಾವ ಬಳಕೆದಾರರೂ ಸಿಗಲಿಲ್ಲ.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'ಸದಸ್ಯತ್ವ ಸೃಷ್ಟಿಗಳ ದಾಖಲೆ',
-
 # Special:ListGroupRights
 'listgrouprights' => 'ಬಳಕೆದಾರ ಗುಂಪು ಹಕ್ಕುಗಳು',
 'listgrouprights-summary' => 'ಈ ವಿಕಿಯಲ್ಲಿ ಪ್ರಚಲಿತವಾಗಿರುವ ಬಳಕೆದಾರ ಗುಂಪುಗಳು ಮತ್ತು ಆ ಗುಂಪುಗಳಿಗೆ ಅನ್ವಯಿಸುವ ಹಕ್ಕುಗಳು ಈ ಕೆಳಗಿನಂತಿದೆ.',
@@ -1506,12 +1500,11 @@ $2',
 'unwatching' => 'ವೀಕ್ಷಣೆಯಿಂದ ತೆಗೆಯಲಾಗುತ್ತಿದೆ...',
 
 'enotif_reset' => 'ಭೇಟಿಯಿತ್ತ ಎಲ್ಲಾ ಪುಟಗಳನ್ನು ಗುರುತು ಮಾಡಿ',
-'enotif_newpagetext' => 'ಇದೊಂದು ಹೊಸ ಪುಟ.',
 'enotif_impersonal_salutation' => '{{SITENAME}} ಸದಸ್ಯ',
-'changed' => 'ಬದಲಾಯಿಸಲಾಗಿದೆ',
-'created' => 'ಸೃಷ್ಟಿಸಲ್ಪಟ್ಟಿದೆ',
 'enotif_lastvisited' => 'ನಿಮ್ಮ ಕಳೆದ ಭೇಟಿಯ ನಂತರದ ಎಲ್ಲಾ ಬದಲಾವಣೆಗಳಿಗೆ $1 ನೋಡಿ.',
 'enotif_anon_editor' => 'ಅನಾಮಧೇಯ ಸದಸ್ಯ $1',
+'created' => 'ಸೃಷ್ಟಿಸಲ್ಪಟ್ಟಿದೆ',
+'changed' => 'ಬದಲಾಯಿಸಲಾಗಿದೆ',
 
 # Delete
 'deletepage' => 'ಪುಟವನ್ನು ಅಳಿಸಿ',
@@ -1888,6 +1881,10 @@ $2',
 'siteusers' => '{{SITENAME}} {{PLURAL:$2|ಸದಸ್ಯ|ಸದಸ್ಯರು}} $1',
 'creditspage' => 'ಪುಟದ ಗೌರವಗಳು',
 
+# Info page
+'pageinfo-toolboxlink' => 'ಪುಟದ ಮಾಹಿತಿ',
+'pageinfo-redirectsto' => 'ಪುನರ್ನಿರ್ದೇಶನ:',
+
 # Image deletion
 'deletedrevision' => 'ಹಳೆ ಆವೃತ್ತಿ $1 ಅನ್ನು ಅಳಿಸಲಾಗಿದೆ',
 'filedeleteerror-short' => 'ಈ ಫೈಲನ್ನು ಅಳಿಸುವುದರಲ್ಲಿ ದೋಷ: $1',
@@ -2196,6 +2193,7 @@ $5
 # New logging system
 'revdelete-restricted' => 'ನಿರ್ವಾಹಕರಿಗೆ ನಿಬಂಧನೆಗಳನ್ನು ಅನ್ವಯಿಸಲಾಯಿತು',
 'revdelete-unrestricted' => 'ನಿರ್ವಾಹಕರ ನಿಬಂಧನೆಗಳನ್ನು ತೆಗೆಯಲಾಯಿತು',
+'rightsnone' => '(ಯಾವೂ ಇಲ್ಲ)',
 
 # Durations
 'duration-seconds' => '$1 {{PLURAL:$1|ಕ್ಷಣ|ಕ್ಷಣಗಳು}}',

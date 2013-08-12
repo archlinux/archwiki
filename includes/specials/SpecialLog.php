@@ -182,7 +182,6 @@ class SpecialLog extends SpecialPage {
 		return $s;
 	}
 
-
 	/**
 	 * Set page title and show header for this log type
 	 * @param $type string
@@ -194,4 +193,7 @@ class SpecialLog extends SpecialPage {
 		$this->getOutput()->addHTML( $page->getDescription()->parseAsBlock() );
 	}
 
+	protected function getGroupName() {
+		return 'changes';
+	}
 }

@@ -262,9 +262,8 @@ No labay mon ekalen may bolong diad listaan na babantayan, tapik mo labat so \"e
 # Displayed when you click the "watch" button and it is in the process of watching
 'watching' => 'Babantayan...',
 
-'enotif_newpagetext' => 'Balo yan bolong.',
-'changed' => 'asalatan',
 'created' => 'agawa',
+'changed' => 'asalatan',
 
 # Delete
 'deletepage' => 'Buralen so bolong',

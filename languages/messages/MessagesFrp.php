@@ -151,7 +151,6 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__FORCIÉR_LO_SOMÈRO__', '__FORCIÉR_LA_TRÂBLA__', '__FORCERSOMMAIRE__', '__FORCERTDM__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__SOMÈRO__', '__TRÂBLA__', '__SOMMAIRE__', '__TDM__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__SÈCCION_QUE_PÔT_PAS_ÉTRE_CHANGIÊ__', '__SECTIONNONEDITABLE__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__NION_EN_TÉTA__', '__AUCUNENTETE__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'MÊS_D_ORA', 'MÊS_D_ORA_2', 'MOISACTUEL', 'MOIS2ACTUEL', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'MÊS_D_ORA_1', 'MOIS1ACTUEL', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'NOM_DU_MÊS_D_ORA', 'NOMMOISACTUEL', 'CURRENTMONTHNAME' ),
@@ -443,6 +442,7 @@ $messages = array(
 'newwindow' => '(ôvre na fenétra novèla)',
 'cancel' => 'Anular',
 'moredotdotdot' => 'Més...',
+'morenotlisted' => 'Més pas listâ...',
 'mypage' => 'Pâge',
 'mytalk' => 'Discussion',
 'anontalk' => 'Discussion avouéc cet’adrèce IP',
@@ -454,7 +454,6 @@ $messages = array(
 'qbbrowse' => 'Fâre dèfelar',
 'qbedit' => 'Changiér',
 'qbpageoptions' => 'Ceta pâge',
-'qbpageinfo' => 'Contèxto',
 'qbmyoptions' => 'Mes pâges',
 'qbspecialpages' => 'Pâges spèciâles',
 'faq' => 'Quèstions sovent posâyes',
@@ -477,6 +476,7 @@ $messages = array(
 'namespaces' => 'Èspâços de noms',
 'variants' => 'Variantes',
 
+'navigation-heading' => 'Menu de navigacion',
 'errorpagetitle' => 'Fôta',
 'returnto' => 'Tornar a la pâge $1.',
 'tagline' => 'De {{SITENAME}}',
@@ -719,12 +719,12 @@ L’administrator que l’at vèrrolyê at balyê cet’èxplicacion : « $3 ».
 'virus-unknownscanner' => 'antivirus encognu :',
 
 # Login and logout pages
-'logouttext' => "'''Ora vos éte dèbranchiê{{GENDER:||ye|(ye)}}.'''
+'logouttext' => "'''Ora vos éte dèbranchiê{{GENDER:||e|(e)}}.'''
 
-Vos pouede continuar a empleyér {{SITENAME}} de façon anonima ou ben [[Special:UserLogin|vos tornar branchiér]] desot lo mémo nom ou un ôtro.
-Notâd qu’y at des pâges que pôvont étre oncor fêtes vêre coment se vos érâd adés branchiê{{GENDER:||ye|(ye)}}, tant que vos èfaciéd lo cacho de voutron navigator.",
-'welcomecreation' => '== Benvegnua, $1 ! ==
-Voutron compto est étâ fêt.
+Vos pouede continuar a empleyér {{SITENAME}} de façon anonima ou ben <span class='plainlinks'>[$1 vos tornar branchiér]</span> desot lo mémo nom ou un ôtro.
+Notâd qu’y at des pâges que pôvont étre oncor fêtes vêre coment se vos érâd adés branchiê{{GENDER:||e|(e)}}, tant que vos èfaciéd lo cacho de voutron navigator.",
+'welcomeuser' => 'Benvegnua, $1 !',
+'welcomecreation-msg' => 'Voutron compto est étâ fêt.
 Oubliâd pas de changiér voutres [[Special:Preferences|prèferences dessus {{SITENAME}}]].',
 'yourname' => 'Nom d’utilisator :',
 'yourpassword' => 'Contresegno :',
@@ -748,7 +748,7 @@ Oubliâd pas de changiér voutres [[Special:Preferences|prèferences dessus {{SI
 'gotaccount' => "Vos éd ja un compto ? '''$1.'''",
 'gotaccountlink' => 'Branchiéd-vos',
 'userlogin-resetlink' => 'Vos éd oubliâ voutros dètalys de branchement ?',
-'createaccountmail' => 'per mèssageria èlèctronica',
+'createaccountmail' => 'Empleyér un contresegno temporèro fêt per hasârd et lo mandar a l’adrèce èlèctronica spècifiâye ce-desot',
 'createaccountreason' => 'Rêson :',
 'badretype' => 'Los contresegnos que vos éd buchiês sont pas pariérs.',
 'userexists' => 'Lo nom d’utilisator buchiê est ja empleyê.
@@ -828,6 +828,7 @@ Se vos plét, atende devant que tornar èprovar.',
 # Email sending
 'php-mail-error-unknown' => 'Fôta encognua dens la fonccion mail() de PHP.',
 'user-mail-no-addy' => 'Èprôva de mandar un mèssâjo sen adrèce èlèctronica.',
+'user-mail-no-body' => 'Èprôva de mandar un mèssâjo avouéc un côrp vouedo ou ben dèrêsonâblament côrt.',
 
 # Change password dialog
 'resetpass' => 'Changiér lo contresegno',
@@ -895,6 +896,7 @@ Contresegno temporèro : $2',
 'changeemail-oldemail' => 'Adrèce èlèctronica d’ora :',
 'changeemail-newemail' => 'Novèl’adrèce èlèctronica :',
 'changeemail-none' => '(pas yona)',
+'changeemail-password' => 'Voutron contresegno dessus {{SITENAME}} :',
 'changeemail-submit' => 'Changiér l’adrèce èlèctronica',
 'changeemail-cancel' => 'Anular',
 
@@ -1085,7 +1087,6 @@ Por refèrence, la dèrriére entrâ du jornal est balyêe ce-desot :",
 'template-semiprotected' => '(mié-protègiê)',
 'hiddencategories' => '{{PLURAL:$1|Catègorie cachiêe|Catègories cachiêes}} que ceta pâge est avouéc :',
 'edittools' => '<!-- Tot tèxto buchiê ique serat montrâ desot les bouètes d’èdicion ou ben los formulèros de tèlèchargement de fichiér. -->',
-'nocreatetitle' => 'Crèacion de pâge limitâ',
 'nocreatetext' => '{{SITENAME}} at rètrent la possibilitât de fâre de pâges novèles.
 Vos pouede tornar arriér et pués changiér na pâge ègzistenta ou ben [[Special:UserLogin|vos branchiér ou fâre un compto]].',
 'nocreate-loggedin' => 'Vos éd pas la pèrmission de fâre de pâges novèles.',
@@ -1110,6 +1111,15 @@ Semble que seye étâye suprimâye.',
 'edit-already-exists' => 'Y at pas moyen de fâre na pâge novèla.
 Ègziste ja.',
 'defaultmessagetext' => 'Mèssâjo per dèfôt',
+'content-failed-to-parse' => 'Falyita de l’analisa du contegnu de $2 por lo modèlo $1 : $3',
+'invalid-content-data' => 'Balyês du contegnu pas justes',
+'content-not-allowed-here' => 'Lo contegnu « $1 » est pas ôtorisâ sur la pâge [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'vouiquitèxto',
+'content-model-text' => 'tèxto bruto',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''Atencion :''' cela pâge contint trop d’apèls a des fonccions du parsor que revegnont chieres.
@@ -1480,9 +1490,9 @@ Cen pôt pas étre dèfêt.',
 'prefs-emailconfirm-label' => 'Confirmacion de l’adrèce èlèctronica :',
 'prefs-textboxsize' => 'Talye de la fenétra de changement',
 'youremail' => 'Adrèce èlèctronica :',
-'username' => 'Nom d’usanciér :',
-'uid' => 'Numerô d’usanciér :',
-'prefs-memberingroups' => 'Membro a {{PLURAL:$1|la tropa|les tropes}} :',
+'username' => 'Nom d’utilisat{{GENDER:$1|or|rice}} :',
+'uid' => 'Identifient d’utilisat{{GENDER:$1|or|rice}} :',
+'prefs-memberingroups' => '{{GENDER:$2|Membro}} de l{{PLURAL:$1|a tropa|es tropes}} :',
 'prefs-registration' => 'Dâta d’encartâjo :',
 'yourrealname' => 'Veré nom :',
 'yourlanguage' => 'Lengoua :',
@@ -1633,12 +1643,13 @@ Se vos chouèsésséd de lo balyér, serat empleyê por vos atribuar voutres ôv
 'right-sendemail' => 'Mandar un mèssâjo ux ôtros utilisators',
 'right-passwordreset' => 'Vêre los mèssâjos de remês’a zérô des contresegnos',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Jornal de les crèacions d’utilisators',
+'newuserlogpagetext' => 'O est un jornal de les crèacions d’utilisators.',
+
 # User rights log
 'rightslog' => 'Jornal des drêts d’utilisator',
 'rightslogtext' => 'O est un jornal des changements des drêts d’utilisator.',
-'rightslogentry' => 'at changiê los drêts de l’utilisator « $1 » de $2 a $3',
-'rightslogentry-autopromote' => 'est étâ nomâ ôtomaticament de $2 a $3',
-'rightsnone' => '(nion)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'liére cela pâge',
@@ -1890,6 +1901,7 @@ Se lo problèmo continue, veriéd-vos vers un [[Special:ListUsers/sysop|administ
 'backend-fail-notsame' => 'Un fichiér pas pariér ègziste ja a « $1 ».',
 'backend-fail-invalidpath' => '« $1 » est pas un chemin de stocâjo justo.',
 'backend-fail-delete' => 'Y at pas moyen de suprimar lo fichiér « $1 ».',
+'backend-fail-describe' => 'Y at pas moyen de changiér les mètabalyês du fichiér « $1 ».',
 'backend-fail-alreadyexists' => 'Lo fichiér « $1 » ègziste ja.',
 'backend-fail-store' => 'Y at pas moyen de stocar lo fichiér « $1 » dedens « $2 ».',
 'backend-fail-copy' => 'Y at pas moyen de copiyér lo fichiér « $1 » vers « $2 ».',
@@ -2128,6 +2140,12 @@ Oubliâd pas de controlar s’y at gins d’ôtro lim de vers los modèlos devan
 Devriant pletout pouentar vers na pâge que vat avouéc.<br />
 Na pâge est trètâye coment na pâge d’homonimia s’emplèye un modèlo liyê a [[MediaWiki:Disambiguationspage]].",
 
+'pageswithprop' => 'Pâges avouéc na propriètât de pâge',
+'pageswithprop-legend' => 'Pâges avouéc na propriètât de pâge',
+'pageswithprop-text' => 'Ceta pâge liste les pâges qu’emplèyont na propriètât de pâge particuliére.',
+'pageswithprop-prop' => 'Nom de la propriètât :',
+'pageswithprop-submit' => 'Alar trovar',
+
 'doubleredirects' => 'Redirèccions dobles',
 'doubleredirectstext' => 'Ceta pâge liste les pâges que redirijont vers d’ôtres pâges de redirèccion.
 Châque renche contint des lims de vers la premiére et la seconda redirèccion, et pués la ciba de la seconda redirèccion, cen que balye habituèlament la « veré » pâge ciba, de vers laquinta la premiére redirèccion devrêt pouentar.
@@ -2281,9 +2299,9 @@ Vêde asse-ben les [[Special:WantedCategories|catègories demandâyes]].',
 'linksearch-pat' => 'Modèlo de rechèrche :',
 'linksearch-ns' => 'Èspâço de noms :',
 'linksearch-ok' => 'Rechèrchiér',
-'linksearch-text' => 'Des caractèros j·oquères coment « *.wikipedia.org » pôvont étre utilisâs.
-Ils ont fôta d’u muens un domêno de nivél supèrior, per ègzemplo « *.org ».<br />
-Protocolos recognus : <code>$1</code> (apondéd gins de cetos dedens voutra rechèrche).',
+'linksearch-text' => 'Des caractèros j·oquères coment « *.wikipedia.org » pôvont étre empleyês.
+Ils ant fôta de por lo muens un domêno de nivél de dessus, per ègzemplo « *.org ».<br />
+{{PLURAL:$2|Protocolo recognu|Protocolos recognus}} : <code>$1</code> (http:// per dèfôt se nion protocolo est spècifiâ).',
 'linksearch-line' => '$1 est liyê dês $2',
 'linksearch-error' => 'Los caractèros j·oquères pôvont étre empleyês ren qu’u comencement du nom de domêno de l’hôto.',
 
@@ -2301,10 +2319,6 @@ Protocolos recognus : <code>$1</code> (apondéd gins de cetos dedens voutra rech
 'activeusers-hidebots' => 'Cachiér los robots',
 'activeusers-hidesysops' => 'Cachiér los administrators',
 'activeusers-noresult' => 'Nion utilisator trovâ.',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Jornal de les crèacions d’utilisators',
-'newuserlogpagetext' => 'O est un jornal de les crèacions d’utilisators.',
 
 # Special:ListGroupRights
 'listgrouprights' => 'Drêts de les tropes d’utilisators',
@@ -2401,20 +2415,23 @@ Los changements que vegnont de ceta pâge et de la sina pâge de discussion y se
 
 'enotif_mailer' => 'Sistèmo de notificacion per mèssageria èlèctronica de {{SITENAME}}',
 'enotif_reset' => 'Marcar totes les pâges coment visitâyes',
-'enotif_newpagetext' => 'O est una pâge novèla.',
 'enotif_impersonal_salutation' => 'Utilisator de {{SITENAME}}',
-'changed' => 'changiê',
-'created' => 'fêta',
-'enotif_subject' => 'La pâge « $PAGETITLE » de {{SITENAME}} at étâ $CHANGEDORCREATED per $PAGEEDITOR',
+'enotif_subject_deleted' => 'La pâge $1 dessus {{SITENAME}} est étâye suprimâye per {{GENDER:$2|$2}}',
+'enotif_subject_created' => 'La pâge $1 dessus {{SITENAME}} est étâye fêta per {{GENDER:$2|$2}}',
+'enotif_subject_moved' => 'La pâge $1 dessus {{SITENAME}} est étâye dèplaciêe per {{GENDER:$2|$2}}',
+'enotif_subject_restored' => 'La pâge $1 dessus {{SITENAME}} est étâye refêta per {{GENDER:$2|$2}}',
+'enotif_subject_changed' => 'La pâge $1 dessus {{SITENAME}} est étâye changiêe per {{GENDER:$2|$2}}',
+'enotif_body_intro_deleted' => 'La pâge $1 dessus {{SITENAME}} est étâye suprimâye lo $PAGEEDITDATE per {{GENDER:$2|$2}}, vêde $3.',
+'enotif_body_intro_created' => 'La pâge $1 dessus {{SITENAME}} est étâye fêta lo $PAGEEDITDATE per {{GENDER:$2|$2}}, vêde $3 por la vèrsion d’ora.',
+'enotif_body_intro_moved' => 'La pâge $1 dessus {{SITENAME}} est étâye dèplaciêe lo $PAGEEDITDATE per {{GENDER:$2|$2}}, vêde $3 por la vèrsion d’ora.',
+'enotif_body_intro_restored' => 'La pâge $1 dessus {{SITENAME}} est étâye refêta lo $PAGEEDITDATE per {{GENDER:$2|$2}}, vêde $3 por la vèrsion d’ora.',
+'enotif_body_intro_changed' => 'La pâge $1 dessus {{SITENAME}} est étâye changiêe lo $PAGEEDITDATE per {{GENDER:$2|$2}}, vêde $3 por la vèrsion d’ora.',
 'enotif_lastvisited' => 'Vêde $1 por tôs los changements dês voutra dèrriére visita.',
 'enotif_lastdiff' => 'Vêde $1 por vêre cél changement.',
 'enotif_anon_editor' => 'utilisator anonimo $1',
 'enotif_body' => 'Chier(a) $WATCHINGUSERNAME,
 
-
-la pâge « $PAGETITLE » de {{SITENAME}} est étâye $CHANGEDORCREATED lo $PAGEEDITDATE per « $PAGEEDITOR », vêde $PAGETITLE_URL por la vèrsion d’ora.
-
-$NEWPAGE
+$PAGEINTRO $NEWPAGE
 
 Rèsumâ du contributor : $PAGESUMMARY $PAGEMINOREDIT
 
@@ -2422,7 +2439,7 @@ Veriéd-vos vers lo contributor :
 mèl. : $PAGEEDITOR_EMAIL
 vouiqui : $PAGEEDITOR_WIKI
 
-Y arat gins d’ôtra notificacion en câs de changements a vegnir, a muens que vos visitâd cela pâge. Vos pouede asse-ben tornar inicialisar los segnalements de notificacion por totes les pâges de voutra lista de survelyence.
+Y arat gins d’ôtra notificacion en câs de changements a vegnir, du muens que vos visiteyâd cela pâge. Vos pouede asse-ben rebetar a zérô los segnalements de notificacion por totes les pâges de voutra lista de siuvu.
 
 Voutron sistèmo de notificacion de {{SITENAME}}
 
@@ -2430,14 +2447,16 @@ Voutron sistèmo de notificacion de {{SITENAME}}
 Por changiér la configuracion de notificacion per mèssageria èlèctronica, visitâd
 {{canonicalurl:{{#special:Preferences}}}}
 
-Por changiér la configuracion de voutra lista de survelyence, visitâd
+Por changiér la configuracion de voutra lista de siuvu, visitâd
 {{canonicalurl:{{#special:EditWatchlist}}}}
 
-Por suprimar la pâge de voutra lista de survelyence, visitâd
+Por suprimar la pâge de voutra lista de siuvu, visitâd
 $UNWATCHURL
 
 Avis et assistance de ples :
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'fêta',
+'changed' => 'changiê',
 
 # Delete
 'deletepage' => 'Suprimar la pâge',
@@ -2511,6 +2530,8 @@ Vêde la [[Special:ProtectedPages|lista de les pâges protègiêes]] por la list
 'prot_1movedto2' => 'at dèplaciê [[$1]] vers [[$2]]',
 'protect-badnamespace-title' => 'Èspâço de noms pas protèjâblo',
 'protect-badnamespace-text' => 'Les pâges dedens cet’èspâço de noms pôvont pas étre protègiêes.',
+'protect-norestrictiontypes-text' => 'Cela pâge pôt pas étre protègiêe, y at gins de tipo de rèstriccion disponiblo.',
+'protect-norestrictiontypes-title' => 'Pâge pas protèjâbla',
 'protect-legend' => 'Confirmar la protèccion',
 'protectcomment' => 'Rêson :',
 'protectexpiry' => 'Dâta d’èxpiracion :',
@@ -2596,8 +2617,8 @@ Pôt-étre vos éd un crouyo lim ou ben la vèrsion at possu étre refêta ou en
 'undeletedrevisions' => '$1 {{PLURAL:$1|vèrsion refêta|vèrsions refêtes}}',
 'undeletedrevisions-files' => '$1 vèrsion{{PLURAL:$1||s}} et $2 fichiér{{PLURAL:$2||s}} refêts',
 'undeletedfiles' => '$1 {{PLURAL:$1|fichiér refêt|fichiérs refêts}}',
-'cannotundelete' => 'La rèstoracion at pas reussia ;
-un ôtro usanciér at probâblament ja refêt la pâge.',
+'cannotundelete' => 'Falyita de la rèstoracion :
+$1',
 'undeletedpage' => "'''$1 est étâye refêta'''
 
 Vêde lo [[Special:Log/delete|jornal de les suprèssions]] por avêr na lista de les novèles suprèssions et rèstoracions.",
@@ -2629,7 +2650,7 @@ $1',
 'blanknamespace' => '(Principâl)',
 
 # Contributions
-'contributions' => 'Contribucions a l’usanciér',
+'contributions' => 'Contribucions de l’utilisat{{GENDER:$1|or|rice}}',
 'contributions-title' => 'Lista de les contribucions a l’usanciér $1',
 'mycontris' => 'Contribucions',
 'contribsub2' => 'Por $1 ($2)',
@@ -3034,7 +3055,6 @@ Volyéd tornar èprovar.',
 
 # JavaScriptTest
 'javascripttest' => 'Èprôva de JavaScript',
-'javascripttest-disabled' => 'Cela fonccion-que est pas étâye activâye sur ceti vouiqui.',
 'javascripttest-title' => 'Èprôves de $1 en cors',
 'javascripttest-qunit-intro' => 'Vêde la [$1 documentacion de les èprôves] dessus mediawiki.org.',
 'javascripttest-qunit-heading' => 'Suita d’èprôva QUnit de JavaScript dessus MediaWiki',
@@ -3181,6 +3201,7 @@ O est probâblament diu a un lim de vers un seto de defôr qu’aparêt sur la l
 'pageinfo-default-sort' => 'Cllâf de tri per dèfôt',
 'pageinfo-length' => 'Talye de la pâge (en octèts)',
 'pageinfo-article-id' => 'Numerô de la pâge',
+'pageinfo-language' => 'Lengoua du contegnu de la pâge',
 'pageinfo-robot-policy' => 'Statut de motor de rechèrche',
 'pageinfo-robot-index' => 'Endèxâblo',
 'pageinfo-robot-noindex' => 'Pas endèxâblo',
@@ -3200,6 +3221,12 @@ O est probâblament diu a un lim de vers un seto de defôr qu’aparêt sur la l
 'pageinfo-magic-words' => '{{PLURAL:$1|Mot magico|Mots magicos}} ($1)',
 'pageinfo-hidden-categories' => '{{PLURAL:$1|Catègorie cachiêye|Catègories cachiêyes}} ($1)',
 'pageinfo-templates' => '{{PLURAL:$1|Modèlo encllu|Modèlos encllus}} ($1)',
+'pageinfo-toolboxlink' => 'Enformacions sur la pâge',
+'pageinfo-redirectsto' => 'Redirige vers',
+'pageinfo-redirectsto-info' => 'enfô',
+'pageinfo-contentpage' => 'Comptâ coment pâge de contegnu',
+'pageinfo-contentpage-yes' => 'Ouè',
+'pageinfo-protect-cascading-yes' => 'Ouè',
 
 # Skin names
 'skinname-standard' => 'Estandârd',
@@ -3254,6 +3281,7 @@ Se vos l’ègzécutâd, voutron sistèmo pôt étre compromês.",
 'file-info-size-pages' => '$1 × $2 pixèls, talye du fichiér : $3, tipo MIME : $4, $5 pâge{{PLURAL:$5||s}}',
 'file-nohires' => 'Gins de rèsolucion ples hôta disponibla.',
 'svg-long-desc' => 'Fichiér SVG, rèsolucion de $1 × $2 pixèls, talye : $3',
+'svg-long-error' => 'Fichiér SVG envalido : $1',
 'show-big-image' => 'Émâge en rèsolucion ples hôta',
 'show-big-image-preview' => 'Talye de ceti apèrçu : $1.',
 'show-big-image-other' => '{{PLURAL:$2|Ôtra rèsolucion|Ôtres rèsolucions}} : $1.',
@@ -3283,6 +3311,7 @@ Se vos l’ègzécutâd, voutron sistèmo pôt étre compromês.",
 'hours' => '$1 hor{{PLURAL:$1|a|es}}',
 'days' => '$1 jorn{{PLURAL:$1||s}}',
 'ago' => 'cen fât $1',
+'just-now' => 'drêt-ora',
 
 # Bad image list
 'bad_image_list' => 'Lo format est ceti :
@@ -4116,7 +4145,10 @@ Les émâges sont montrâs dens lor plêna rèsolucion, los ôtros fichiérs son
 'logentry-newusers-create' => 'Lo compto utilisator $1 est étâ fêt',
 'logentry-newusers-create2' => 'Lo compto utilisator $3 est étâ fêt per $1',
 'logentry-newusers-autocreate' => 'Lo compto $1 at étâ fêt ôtomaticament',
-'newuserlog-byemail' => 'contresegno mandâ per mèssageria èlèctronica',
+'logentry-rights-rights' => '$1 at changiê l’apartegnence a la tropa por « $3 » de $4 a $5',
+'logentry-rights-rights-legacy' => '$1 at changiê l’apartegnence a la tropa por « $3 »',
+'logentry-rights-autopromote' => '$1 est étâ nomâ ôtomaticament de $4 a $5',
+'rightsnone' => '(nion)',
 
 # Feedback
 'feedback-bugornote' => 'Se vos éte prèst a dècrire un problèmo tècnico en dètaly, volyéd [$1 signalar una cofierie].

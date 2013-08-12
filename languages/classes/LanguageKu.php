@@ -30,7 +30,7 @@ require_once( __DIR__ . '/LanguageKu_ku.php' );
  * @ingroup Language
  */
 class KuConverter extends LanguageConverter {
-	var $mArabicToLatin = array(
+	public $mArabicToLatin = array(
 		'ب' => 'b', 'ج' => 'c', 'چ' => 'ç', 'د' => 'd', 'ف' => 'f', 'گ' => 'g', 'ھ' => 'h',
 		'ہ' => 'h', 'ه' => 'h', 'ح' => 'h', 'ژ' => 'j', 'ك' => 'k', 'ک' => 'k', 'ل' => 'l',
 		'م' => 'm', 'ن' => 'n', 'پ' => 'p', 'ق' => 'q', 'ر' => 'r', 'س' => 's', 'ش' => 'ş',
@@ -72,7 +72,7 @@ class KuConverter extends LanguageConverter {
 		'٩' => '9', # &#x0669;
 	);
 
-	var $mLatinToArabic = array(
+	public $mLatinToArabic = array(
 		'b' => 'ب', 'c' => 'ج', 'ç' => 'چ', 'd' => 'د', 'f' => 'ف', 'g' => 'گ',
 		'h' => 'ه', 'j' => 'ژ', 'k' => 'ک', 'l' => 'ل',
 		'm' => 'م', 'n' => 'ن', 'p' => 'پ', 'q' => 'ق', 'r' => 'ر', 's' => 'س', 'ş' => 'ش',
@@ -178,21 +178,6 @@ class KuConverter extends LanguageConverter {
 	}
 
 	/**
-	 * We want our external link captions to be converted in variants,
-	 * so we return the original text instead -{$text}-, except for URLs
-	 *
-	 * @param $text string
-	 * @param $noParse bool
-	 *
-	 * @return string
-	 */
-	function markNoConversion( $text, $noParse = false ) {
-		if ( $noParse || preg_match( "/^https?:\/\/|ftp:\/\/|irc:\/\//", $text ) )
-		    return parent::markNoConversion( $text );
-		return $text;
-	}
-
-	/**
 	 * An ugly function wrapper for parsing Image titles
 	 * (to prevent image name conversion)
 	 *
@@ -221,6 +206,7 @@ class KuConverter extends LanguageConverter {
 	 * @return string
 	 */
 	function translate( $text, $toVariant ) {
+		$this->loadTables();
 		/* From Kazakh interface, maybe we need it later
 		$breaks = '[^\w\x80-\xff]';
 		// regexp for roman numbers
@@ -273,6 +259,6 @@ class LanguageKu extends LanguageKu_ku {
 		);
 
 		$this->mConverter = new KuConverter( $this, 'ku', $variants, $variantfallbacks );
-		$wgHooks['ArticleSaveComplete'][] = $this->mConverter;
+		$wgHooks['PageContentSaveComplete'][] = $this->mConverter;
 	}
 }

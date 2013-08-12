@@ -46,10 +46,6 @@ $wgWikiEditorFeatures = array(
 
 );
 
-// If set to true and the ClickTracking extension is installed, track clicks
-// on the toolbar buttons
-$wgWikiEditorToolbarClickTracking = false;
-
 /* Setup */
 
 $wgExtensionCredits['other'][] = array(
@@ -125,6 +121,7 @@ $wgResourceModules += array(
 			'jquery.wikiEditor.toolbar.i18n',
 			'jquery.suggestions',
 			'mediawiki.Title',
+			'mediawiki.jqueryMsg',
 		),
 		'messages' => array(
 			'wikieditor-toolbar-tool-file-title',

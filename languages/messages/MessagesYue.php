@@ -158,7 +158,6 @@ $specialPageAliases = array(
 	'Recentchanges'             => array( '最近修改' ),
 	'Recentchangeslinked'       => array( '外鏈修改' ),
 	'Revisiondelete'            => array( '修訂版本刪除' ),
-	'RevisionMove'              => array( '修訂版本移動' ),
 	'Search'                    => array( '搜索' ),
 	'Shortpages'                => array( '短版' ),
 	'Specialpages'              => array( '特別頁' ),
@@ -376,7 +375,6 @@ $messages = array(
 'qbbrowse' => '瀏覽',
 'qbedit' => '編輯',
 'qbpageoptions' => '呢一頁',
-'qbpageinfo' => '附近文字',
 'qbmyoptions' => '我嘅選項',
 'qbspecialpages' => '特別頁',
 'faq' => 'FAQ',
@@ -614,11 +612,8 @@ $1',
 # Login and logout pages
 'logouttext' => "'''你而家已經登出咗。'''
 
-你重可以用匿名身份用{{SITENAME}}，又或者[[Special:UserLogin|重新登入]]。
+你重可以用匿名身份用{{SITENAME}}，又或者<span class='plainlinks'>[$1 重新登入]</span>。
 但係留意某啲頁面可能會繼續話你未登入，除非等你清除瀏覽器嘅快取儲存。",
-'welcomecreation' => '== 歡迎， $1！ ==
-
-你個戶口已經起好。唔好唔記得去改改你嘅[[Special:Preferences|{{SITENAME}}喜好設定]]喎。',
 'yourname' => '用戶名:',
 'yourpassword' => '密碼:',
 'yourpasswordagain' => '再輸入密碼:',
@@ -885,7 +880,6 @@ $1',
 'template-semiprotected' => '(半保護)',
 'hiddencategories' => '呢一版係屬於$1個隱藏類嘅成員:',
 'edittools' => '<!-- 喺呢度嘅文字會喺編輯框下面同埋上載表格中顯示。 -->',
-'nocreatetitle' => '頁面建立被限制',
 'nocreatetext' => '{{SITENAME}}已經限制咗起新版嘅能力。
 你可以番轉頭去編輯一啲已經存在嘅頁面，或者[[Special:UserLogin|登入或開個新戶口]]。',
 'nocreate-loggedin' => '你並無許可權去開新版。',
@@ -1398,11 +1392,13 @@ $1",
 'right-override-export-depth' => '倒出包含有五層深連版嘅頁面',
 'right-sendemail' => '寄電郵畀其他用戶',
 
+# Special:Log/newusers
+'newuserlogpage' => '使用者開戶記錄',
+'newuserlogpagetext' => '呢個係一個使用者開戶嘅日誌',
+
 # User rights log
 'rightslog' => '用戶權限日誌',
 'rightslogtext' => '呢個係用戶權力嘅修改日誌。',
-'rightslogentry' => '已經將$1嘅組別從$2改到去$3',
-'rightsnone' => '(無)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => '讀呢版',
@@ -1952,10 +1948,6 @@ Template:搞清楚',
 'activeusers-hidesysops' => '隱藏管理員',
 'activeusers-noresult' => '搵唔到用戶。',
 
-# Special:Log/newusers
-'newuserlogpage' => '使用者開戶記錄',
-'newuserlogpagetext' => '呢個係一個使用者開戶嘅日誌',
-
 # Special:ListGroupRights
 'listgrouprights' => '用戶組權限',
 'listgrouprights-summary' => '下面係一個響呢個wiki定義咗嘅用戶權限一覽，同埋佢哋嘅存取權。
@@ -2041,11 +2033,7 @@ Template:搞清楚',
 
 'enotif_mailer' => '{{SITENAME}}通知郵遞員',
 'enotif_reset' => '將所有頁面標成已視察',
-'enotif_newpagetext' => '呢個係一個新頁面。',
 'enotif_impersonal_salutation' => '{{SITENAME}}用戶',
-'changed' => '修改過',
-'created' => '建立過',
-'enotif_subject' => '{{SITENAME}}嘅頁面$PAGETITLE已由$PAGEEDITOR$CHANGEDORCREATED',
 'enotif_lastvisited' => '你上次視察以嚟嘅修改請睇$1。',
 'enotif_lastdiff' => '睇$1去睇吓呢一次更改。',
 'enotif_anon_editor' => '匿名用戶$1',
@@ -2072,6 +2060,8 @@ wiki: $PAGEEDITOR_WIKI
 
 回饋及更多幫助：
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => '建立過',
+'changed' => '修改過',
 
 # Delete
 'deletepage' => '刪除頁面',
@@ -2236,7 +2226,7 @@ $1',
 'blanknamespace' => '（主）',
 
 # Contributions
-'contributions' => '用戶貢獻',
+'contributions' => '{{GENDER:$1|用戶}}貢獻',
 'contributions-title' => '$1嘅用戶貢獻',
 'mycontris' => '個人貢獻',
 'contribsub2' => '$1嘅貢獻 ($2)',
@@ -3370,7 +3360,7 @@ MediaWiki是基於使用目的而加以發佈，但係就唔會負上任何嘅�
 # New logging system
 'revdelete-restricted' => '已經應用限制到操作員',
 'revdelete-unrestricted' => '已經拎走對於操作員嘅限制',
-'newuserlog-byemail' => '密碼已由電郵寄出',
+'rightsnone' => '(無)',
 
 # Search suggestions
 'searchsuggest-search' => '搵嘢',

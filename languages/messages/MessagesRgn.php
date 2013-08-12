@@ -157,7 +157,6 @@ $messages = array(
 'qbbrowse' => 'Sföja',
 'qbedit' => 'Mudèfica',
 'qbpageoptions' => 'Upziòn dla pàgina',
-'qbpageinfo' => 'Infurmaziòn sora la pàgina',
 'qbmyoptions' => 'Al mi pàgin',
 'qbspecialpages' => 'Pàgin particulèri',
 'faq' => 'Question frequenti',
@@ -380,6 +379,9 @@ Lezenda: '''({{int:cur}})''' = difarenzi cun la versiòn d'adès; '''({{int:last
 
 'grouppage-sysop' => '{{ns:project}}:Aministradór',
 
+# Special:Log/newusers
+'newuserlogpage' => "Regèstar d'j nov",
+
 # User rights log
 'rightslog' => "Dirètt d'j navigador",
 
@@ -470,9 +472,6 @@ $1 {{PLURAL:$1|elemént|elemént}}',
 
 # Special:LinkSearch
 'linksearch' => 'Ghènz int ê web',
-
-# Special:Log/newusers
-'newuserlogpage' => "Regèstar d'j nov",
 
 # Special:ListGroupRights
 'listgrouprights-members' => "(Lèsta d'j mèmbar)",

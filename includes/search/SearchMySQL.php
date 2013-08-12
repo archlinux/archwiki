@@ -58,7 +58,7 @@ class SearchMySQL extends SearchEngine {
 		# @todo FIXME: This doesn't handle parenthetical expressions.
 		$m = array();
 		if( preg_match_all( '/([-+<>~]?)(([' . $lc . ']+)(\*?)|"[^"]*")/',
-			  $filteredText, $m, PREG_SET_ORDER ) ) {
+				$filteredText, $m, PREG_SET_ORDER ) ) {
 			foreach( $m as $bits ) {
 				@list( /* all */, $modifier, $term, $nonQuoted, $wildcard ) = $bits;
 
@@ -156,7 +156,7 @@ class SearchMySQL extends SearchEngine {
 	/**
 	 * Perform a full text search query and return a result set.
 	 *
-	 * @param $term String: raw search term
+	 * @param string $term raw search term
 	 * @return MySQLSearchResultSet
 	 */
 	function searchText( $term ) {
@@ -166,7 +166,7 @@ class SearchMySQL extends SearchEngine {
 	/**
 	 * Perform a title-only search query and return a result set.
 	 *
-	 * @param $term String: raw search term
+	 * @param string $term raw search term
 	 * @return MySQLSearchResultSet
 	 */
 	function searchTitle( $term ) {
@@ -221,7 +221,7 @@ class SearchMySQL extends SearchEngine {
 	 */
 	protected function queryFeatures( &$query ) {
 		foreach ( $this->features as $feature => $value ) {
-			if ( $feature ===  'list-redirects' && !$value ) {
+			if ( $feature === 'list-redirects' && !$value ) {
 				$query['conds']['page_is_redirect'] = 0;
 			} elseif( $feature === 'title-suffix-filter' && $value ) {
 				$query['conds'][] = 'page_title' . $this->db->buildLike( $this->db->anyString(), $value );

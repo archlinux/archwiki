@@ -158,7 +158,6 @@ $messages = array(
 'qbbrowse' => 'Pangita-on',
 'qbedit' => 'Ilisan',
 'qbpageoptions' => 'Mini nga pahina',
-'qbpageinfo' => 'Konteksto',
 'qbmyoptions' => 'Akon mga pahina',
 'qbspecialpages' => 'Pinasahi nga mga pahina',
 'faq' => 'Mga perme napamangkot ("FAQ")',
@@ -408,11 +407,8 @@ Mini ang ginhatag nga kabangdanan "\'\'$2\'\'".',
 # Login and logout pages
 'logouttext' => "'''Nakagwa ka na.'''
 
-Pwede mo mapadayon usar ang {{SITENAME}}, ukon pwede ka [[Special:UserLogin|lmagsulod liwat]] bilang pareho ukon la-in nga manug-usar.
+Pwede mo mapadayon usar ang {{SITENAME}}, ukon pwede ka <span class='plainlinks'>[$1 lmagsulod liwat]</span> bilang pareho ukon la-in nga manug-usar.
 Tandaan nga ang iban nga pahina magapadayon nga ipakita nga nakasulod ka man gyapon kuno abi, asta panason mo ang cache sang imo browser.",
-'welcomecreation' => '==Malipayon nga pag-abot, $1! ==
-Nahimo na ang imo account.
-Indi pagkalimtan nga islan ang imo [[Special:Preferences|mga uyon mo sa {{SITENAME}}]].',
 'yourname' => 'Hayo (username):',
 'yourpassword' => 'Password:',
 'yourpasswordagain' => 'Liwata ka pindot ang password:',
@@ -611,6 +607,9 @@ Tistingan mo i-prefiks ang imo pamangkot upod sang ''tanan:'' para makita mo ang
 
 'grouppage-sysop' => '{{ns:project}}:Mga manugdumala',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Listahan sang pag-ubra sang manug-usar',
+
 # User rights log
 'rightslog' => 'Lista sang mga karapatan sang manug-usar',
 
@@ -717,9 +716,6 @@ Ang paglarawan nga yara sa ibabaw sang [$2 pahina sang paglarawan sang akta] sin
 
 # Special:LinkSearch
 'linksearch' => 'Panggwa nga mga link',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Listahan sang pag-ubra sang manug-usar',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(lista sang mga myembro)',

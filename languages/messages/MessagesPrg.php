@@ -152,7 +152,6 @@ Pāusai en kategōrijai "$1"',
 'qbbrowse' => 'Pradirēis',
 'qbedit' => 'Redigīs',
 'qbpageoptions' => 'Šin pāusan',
-'qbpageinfo' => 'Kōnteksts',
 'qbmyoptions' => 'Majāi pāusai',
 'qbspecialpages' => 'Speciālai pāusai',
 'faq' => 'Ukadeznai prasīsenei',
@@ -376,11 +375,8 @@ Drēudisnas pagrintinsna: "$2".',
 # Login and logout pages
 'logouttext' => "'''Tū assei teinū izgūbun.'''
 
-Tū mazzi ēmpirsin sadīntun tērpautun {{SITENAME}} kāigi niengūbuns tērpautajs, anga [[Special:UserLogin|enēitwei etkūmps]] kāigi šis sūbs anga kits tērpautajs.
+Tū mazzi ēmpirsin sadīntun tērpautun {{SITENAME}} kāigi niengūbuns tērpautajs, anga <span class='plainlinks'>[$1 enēitwei etkūmps]</span> kāigi šis sūbs anga kits tērpautajs.
 Endirēis, kāi ainuntai pāusai mazzi būtwei waidīntan ikāigi tū būlai ainatīngi engūbun, ērgi tū wīrst skistinnuns lasātlas rānkas minīsnan.",
-'welcomecreation' => '== Kaīls, $1! ==
-Twājs rekkens pastāi teīktan.
-Ni izmīrstais kitawīdintun Twajjans [[Special:Preferences|pirminiskwans per {{SITENAME}}]].',
 'yourname' => 'Twajā tērpautajas pabilisnā:',
 'yourpassword' => 'Twājs kliptaswīrds:',
 'yourpasswordagain' => 'Āntrinais kliptaswīrdan',
@@ -628,7 +624,6 @@ Teksts ni mazzi būtwei enpeisātan.",
 'template-protected' => '(pakūnstan)',
 'template-semiprotected' => '(delīkiskai pakūnstan)',
 'hiddencategories' => 'Šin pāusan ast en {{PLURAL:$1|ainassei kliptan kategōrijan|$1 kliptan kategōrijan}}:',
-'nocreatetitle' => 'Kānkē di mazīngiskwan stesses segīsnan stēisan nāunan pāusan',
 'nocreatetext' => 'Nāunan pāusan teīksnas mazīngisku en {{SITENAME}} pastāi arāikintan.
 Tū mazzi redigītun ekzistīntins pāusans anga [[Special:UserLogin|enēitwei anga teīktun nāunan rekkenan]].',
 'nocreate-loggedin' => 'Tū ni turri preiwērpsenin, kāi teīklai nāunans pāusans.',
@@ -1045,11 +1040,13 @@ Tū mazzi dīgi etrīnktun dātun kitēimans drāugautwei sen tin pra tērpautaj
 'right-override-export-depth' => 'Ekspōrtis pāusans ēmpiri sen pāusans prei kawīdans tenēi autenginna, ērgi gilluwan stēisan 5 autengīnsenin',
 'right-sendemail' => 'Tenginnais e-mailin kitēimans tērpautajans',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Nāunai tērpautajai',
+'newuserlogpagetext' => 'Sta ast registerin stēisan nāunai teīkatan rekkenan stēisan tērpautajan',
+
 # User rights log
 'rightslog' => 'Registerin stēisan tērpautajan enwarīnsenin',
 'rightslogtext' => 'Sta ast registerin stēisan tērpautajan ewarīnsenin kitawīdinsnan.',
-'rightslogentry' => 'ast kitawīdinuns(si) $1 perlānksnan prei gruppins ($2 → $3)',
-'rightsnone' => '(nisātausna)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'skaitātun šin pāusan',
@@ -1530,10 +1527,6 @@ Ebšlūzitai prōtokulai: <code>$1</code>',
 'activeusers-hidesysops' => 'Kliptinais perwaldītajans',
 'activeusers-noresult' => 'Ni aupalā di tērpautajans',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Nāunai tērpautajai',
-'newuserlogpagetext' => 'Sta ast registerin stēisan nāunai teīkatan rekkenan stēisan tērpautajan',
-
 # Special:ListGroupRights
 'listgrouprights' => 'Tērpautajan gruppin enwarīnsenei',
 'listgrouprights-summary' => 'Zemmais ast listi stēisan tērpautajan gruppin definītan en šissei wiki sen enwarīnsenins preipeisātan tenēimans.
@@ -1610,14 +1603,12 @@ Eraīna šisse pāusas ēnturas kitawīdinsna anga diskusiōnis pāusas sēitan 
 
 'enotif_mailer' => 'Pawakīsenis iz {{SITENAME}}',
 'enotif_reset' => 'Ebzentlis wissans pāusans per kāimalukitans',
-'enotif_newpagetext' => 'Sta ast nāunan pāusan.',
 'enotif_impersonal_salutation' => 'tērpautajs stesse {{SITENAME}}',
-'changed' => 'kitawīdintan',
-'created' => 'teīktan',
-'enotif_subject' => 'Pāusan $PAGETITLE en {{SITENAME}} pastāi $CHANGEDORCREATED pra $PAGEEDITOR',
 'enotif_lastvisited' => 'Wīdais en $1 wissans kitawīdinsnans ezze Twajjai panzdauman kāimalukisenin.',
 'enotif_lastdiff' => 'Wīdais en $1 šan kitawīdisnan.',
 'enotif_anon_editor' => 'anōnims tērpautajs $1',
+'created' => 'teīktan',
+'changed' => 'kitawīdintan',
 
 # Delete
 'deletepage' => 'Āupausinais pāusan',
@@ -2716,6 +2707,6 @@ Enpeisāis zūrbrukes pabilīsnan šlāit "{{ns:file}}:" prefiksan.',
 # New logging system
 'revdelete-restricted' => 'ensadinnais arāikinsenins per perwaldītajans',
 'revdelete-unrestricted' => 'āupausinais arāikinsenins per perwaldītajans',
-'newuserlog-byemail' => 'kliptaswīrds tengīntan pra e-mail',
+'rightsnone' => '(nisātausna)',
 
 );

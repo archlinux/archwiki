@@ -35,8 +35,13 @@ class MostinterwikisPage extends QueryPage {
 		parent::__construct( $name );
 	}
 
-	function isExpensive() { return true; }
-	function isSyndicated() { return false; }
+	function isExpensive() {
+		return true;
+	}
+
+	function isSyndicated() {
+		return false;
+	}
 
 	function getQueryInfo() {
 		return array (
@@ -108,5 +113,9 @@ class MostinterwikisPage extends QueryPage {
 		$count = $this->msg( 'ninterwikis' )->numParams( $result->value )->escaped();
 
 		return $this->getLanguage()->specialList( $link, $count );
+	}
+
+	protected function getGroupName() {
+		return 'highuse';
 	}
 }

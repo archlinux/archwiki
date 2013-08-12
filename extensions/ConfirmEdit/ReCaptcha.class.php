@@ -81,11 +81,21 @@ class ReCaptcha extends SimpleCaptcha {
 		return wfMessage( $name, $text )->isDisabled() ? wfMessage( 'recaptcha-edit' )->text() : $text;
 	}
 
-	public function APIGetAllowedParams( &$module, &$params ) {
+	public function APIGetAllowedParams( &$module, &$params, $flags ) {
+		if ( $flags && $this->isAPICaptchaModule( $module ) ) {
+			$params['recaptcha_challenge_field'] = null;
+			$params['recaptcha_response_field'] = null;
+		}
+
 		return true;
 	}
 
 	public function APIGetParamDescription( &$module, &$desc ) {
+		if ( $this->isAPICaptchaModule( $module ) ) {
+			$desc['recaptcha_challenge_field'] = 'Field from the ReCaptcha widget';
+			$desc['recaptcha_response_field'] = 'Field from the ReCaptcha widget';
+		}
+
 		return true;
 	}
 }

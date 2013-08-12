@@ -237,7 +237,6 @@ $messages = array(
 'qbbrowse' => 'Brabhsáil',
 'qbedit' => 'Cuir in eagar',
 'qbpageoptions' => 'An leathanach seo',
-'qbpageinfo' => 'Comhthéacs',
 'qbmyoptions' => 'Mo chuid leathanaigh',
 'qbspecialpages' => 'Leathanaigh speisialta',
 'faq' => 'Ceisteanna Coiteanta',
@@ -476,11 +475,8 @@ An fáth ná ''$2''.",
 # Login and logout pages
 'logouttext' => "'''Tá tú logáilte amach anois.'''
 
-Is féidir leat an {{SITENAME}} a úsáid fós gan ainm, nó is féidir leat [[Special:UserLogin|logáil isteach arís]] mar an úsáideoir céanna, nó mar úsáideoir eile.
+Is féidir leat an {{SITENAME}} a úsáid fós gan ainm, nó is féidir leat <span class='plainlinks'>[$1 logáil isteach arís]</span> mar an úsáideoir céanna, nó mar úsáideoir eile.
 Tabhair faoi deara go taispeáinfear roinnt leathanaigh mar atá tú logáilte isteach fós, go dtí go ghlanfá amach do taisce líonleitheora.",
-'welcomecreation' => '== Tá fáilte romhat, $1! ==
-
-Cruthaíodh do chuntas. Ná déan dearmad athrú a dhéanamh ar do chuid [[Special:Preferences|sainroghanna {{GRAMMAR:genitive|{{SITENAME}}}}]].',
 'yourname' => "D'ainm úsáideora",
 'yourpassword' => "D'fhocal faire",
 'yourpasswordagain' => "Athiontráil d'fhocal faire",
@@ -956,6 +952,9 @@ do chuid dreachtaí a chur i leith tusa.',
 'right-undelete' => 'Díscrios leathanach',
 'right-userrights' => 'Cur gach cearta usáideoira in eagar',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Log cruthú úsáideoira',
+
 # User rights log
 'rightslog' => 'Log cearta úsáideoira',
 
@@ -1250,9 +1249,6 @@ Féach freisin ar [[Special:WantedCategories|catagóirí faoi iarraidh]].',
 # Special:ListUsers
 'listusers-submit' => 'Taispeáin',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Log cruthú úsáideoira',
-
 # Special:ListGroupRights
 'listgrouprights-group' => 'Ghrúpa',
 'listgrouprights-rights' => 'Cearta',
@@ -1317,11 +1313,7 @@ taobh istigh den tréimhse atá roghnaithe agat.',
 
 'enotif_mailer' => 'Fógrasheoltóir as {{SITENAME}}',
 'enotif_reset' => 'Marcáil gach leathanach bheith tadhlaithe',
-'enotif_newpagetext' => 'Is leathanach nua é seo.',
 'enotif_impersonal_salutation' => 'úsáideoir {{SITENAME}}',
-'changed' => "D'athraigh",
-'created' => 'Chruthaigh',
-'enotif_subject' => '  $CHANGEDORCREATED $PAGEEDITOR an leathanach $PAGETITLE ag {{SITENAME}}.',
 'enotif_lastvisited' => 'Féach ar $1 le haghaidh gach athrú a rinneadh ó thús na cuairte seo caite a rinne tú.',
 'enotif_anon_editor' => 'úsáideoir gan ainm $1',
 'enotif_body' => 'A $WATCHINGUSERNAME, a chara,
@@ -1351,6 +1343,8 @@ $UNWATCHURL
 
 Aiseolas agus a thuilleadh cabhrach:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'Chruthaigh',
+'changed' => "D'athraigh",
 
 # Delete
 'deletepage' => 'Scrios an leathanach',
@@ -1467,7 +1461,7 @@ Is an téacs as na leagan scriosta seo ar fáil do riarthóirí amháin.',
 'blanknamespace' => '(Gnáth)',
 
 # Contributions
-'contributions' => 'Dréachtaí úsáideora',
+'contributions' => 'Dréachtaí {{GENDER:$1|úsáideora}}',
 'contributions-title' => 'Dréachtaí úsáideora do $1',
 'mycontris' => 'Dréachtaí',
 'contribsub2' => 'Do $1 ($2)',

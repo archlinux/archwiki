@@ -218,7 +218,6 @@ $messages = array(
 'qbbrowse' => 'Taramaa',
 'qbedit' => 'Diiştir',
 'qbpageoptions' => 'Bu sayfa',
-'qbpageinfo' => 'Kontekst',
 'qbmyoptions' => 'Sayfalarım',
 'qbspecialpages' => 'Maasus sayfalar',
 'faq' => 'SSS',
@@ -375,11 +374,8 @@ Yalvarêrız benneyiniz URL - i hem raport ediniz bunu bir [[Special:ListUsers/s
 'viewsourcetext' => 'Var nicä görmää hem kopiya etmää bu yapraa gelinirini:',
 
 # Login and logout pages
-'logouttext' => 'Sessiyayı kapattınız.
-Şindi var nicä devam etmää kullanmaa {{SITENAME}} saytını kimlik göstermedän yaki [[Special:UserLogin|enidän sessiya açmaa]] (ister hep o kullanıcı adıylan, ister başka bir kullanıcı adıylan). O zamana kadar ani web brauzerinizin keşi temizlenecek bir takım sayfalar var nicä görünsün sansın sessiya hep açık.',
-'welcomecreation' => '== Hoş geldiniz $1! ==
-
-Esapınız açıldı. Unutmayın [[Special:Preferences|{{SITENAME}} preferences]] seçimnerin diiştirmää.',
+'logouttext' => "Sessiyayı kapattınız.
+Şindi var nicä devam etmää kullanmaa {{SITENAME}} saytını kimlik göstermedän yaki <span class='plainlinks'>[$1 enidän sessiya açmaa]</span> (ister hep o kullanıcı adıylan, ister başka bir kullanıcı adıylan). O zamana kadar ani web brauzerinizin keşi temizlenecek bir takım sayfalar var nicä görünsün sansın sessiya hep açık.",
 'yourname' => 'Kullanıcı adınız',
 'yourpassword' => 'Parol',
 'yourpasswordagain' => 'Parolu enidän yaz',
@@ -620,6 +616,9 @@ Aaramaanızın önünä ''all:'' prefiksini koyun da deneyin hepsi içlii aarama
 
 'grouppage-sysop' => '{{ns:project}}:Önderciler',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Eni kullanıcı bennemäkleri',
+
 # User rights log
 'rightslog' => 'Kullanıcı hakları jurnalı',
 
@@ -794,9 +793,6 @@ Sizin bakmaa [[Special:Watchlist|listasındaki]] sayfalar verildi '''kalın''' b
 
 # Special:LinkSearch
 'linksearch' => 'İç baalantlar',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Eni kullanıcı bennemäkleri',
 
 # Special:ListGroupRights
 'listgrouprights-members' => '(azaların listası)',

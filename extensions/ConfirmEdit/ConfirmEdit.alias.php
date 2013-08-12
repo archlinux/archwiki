@@ -23,6 +23,11 @@ $specialPageAliases['arz'] = array(
 	'Captcha' => array( 'كابتشا' ),
 );
 
+/** Zazaki (Zazaki) */
+$specialPageAliases['diq'] = array(
+	'Captcha' => array( 'Qodaİtimadi' ),
+);
+
 /** Esperanto (Esperanto) */
 $specialPageAliases['eo'] = array(
 	'Captcha' => array( 'Kontraŭspamilo' ),

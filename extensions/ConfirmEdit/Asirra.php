@@ -24,17 +24,17 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	exit;
 }
 
-$dir = __DIR__ . '/';
-require_once( "$dir/ConfirmEdit.php" );
+$dir = __DIR__;
+require_once( $dir . '/ConfirmEdit.php' );
 
 $wgCaptchaClass = 'Asirra';
-$wgExtensionMessagesFiles['Asirra'] = "$dir/Asirra.i18n.php";
-$wgAutoloadClasses['Asirra'] = "$dir/Asirra.class.php";
+$wgExtensionMessagesFiles['Asirra'] = $dir . '/Asirra.i18n.php';
+$wgAutoloadClasses['Asirra'] = $dir . '/Asirra.class.php';
 
-$wgResourceModules['ext.confirmedit.asirra'] = array(
-	'localBasePath' => $dir,
-	'remoteExtPath' => 'ConfirmEdit',
-	'scripts' => 'ext.confirmedit.asirra.js',
+$wgResourceModules['ext.confirmEdit.asirra'] = array(
+	'localBasePath' => $dir . '/resources',
+	'remoteExtPath' => 'ConfirmEdit/resources',
+	'scripts' => 'ext.confirmEdit.asirra.js',
 	'messages' => array(
 		'asirra-failed',
 	),

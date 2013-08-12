@@ -88,7 +88,6 @@ abstract class Installer {
 		'postgres',
 		'oracle',
 		'sqlite',
-		'ibm_db2',
 	);
 
 	/**
@@ -313,19 +312,19 @@ abstract class Installer {
 	 * output format such as HTML or text before being sent to the user.
 	 * @param $msg
 	 */
-	public abstract function showMessage( $msg /*, ... */ );
+	abstract public function showMessage( $msg /*, ... */ );
 
 	/**
 	 * Same as showMessage(), but for displaying errors
 	 * @param $msg
 	 */
-	public abstract function showError( $msg /*, ... */ );
+	abstract public function showError( $msg /*, ... */ );
 
 	/**
 	 * Show a message to the installing user by using a Status object
 	 * @param $status Status
 	 */
-	public abstract function showStatusMessage( Status $status );
+	abstract public function showStatusMessage( Status $status );
 
 	/**
 	 * Constructor, always call this from child classes.
@@ -488,7 +487,7 @@ abstract class Installer {
 		if( !$_lsExists ) {
 			return false;
 		}
-		unset($_lsExists);
+		unset( $_lsExists );
 
 		require( "$IP/includes/DefaultSettings.php" );
 		require( "$IP/LocalSettings.php" );
@@ -927,7 +926,7 @@ abstract class Installer {
 	 * Helper function to be called from envCheckServer()
 	 * @return String
 	 */
-	protected abstract function envGetDefaultServer();
+	abstract protected function envGetDefaultServer();
 
 	/**
 	 * Environment check for setting $IP and $wgScriptPath.
@@ -989,7 +988,7 @@ abstract class Installer {
 				continue;
 			}
 
-			list( $all, $lang, $territory, $charset, $modifier ) = $m;
+			list( , $lang, , , ) = $m;
 
 			$candidatesByLocale[$m[0]] = $m;
 			$candidatesByLang[$lang][] = $m;
@@ -1073,23 +1072,22 @@ abstract class Installer {
 	 * @return string
 	 */
 	protected function unicodeChar( $c ) {
-		$c = hexdec($c);
-		if ($c <= 0x7F) {
-			return chr($c);
-		} elseif ($c <= 0x7FF) {
-			return chr(0xC0 | $c >> 6) . chr(0x80 | $c & 0x3F);
-		} elseif ($c <= 0xFFFF) {
-			return chr(0xE0 | $c >> 12) . chr(0x80 | $c >> 6 & 0x3F)
-				. chr(0x80 | $c & 0x3F);
-		} elseif ($c <= 0x10FFFF) {
-			return chr(0xF0 | $c >> 18) . chr(0x80 | $c >> 12 & 0x3F)
-				. chr(0x80 | $c >> 6 & 0x3F)
-				. chr(0x80 | $c & 0x3F);
+		$c = hexdec( $c );
+		if ( $c <= 0x7F ) {
+			return chr( $c );
+		} elseif ( $c <= 0x7FF ) {
+			return chr( 0xC0 | $c >> 6 ) . chr( 0x80 | $c & 0x3F );
+		} elseif ( $c <= 0xFFFF ) {
+			return chr( 0xE0 | $c >> 12 ) . chr( 0x80 | $c >> 6 & 0x3F )
+				. chr( 0x80 | $c & 0x3F );
+		} elseif ( $c <= 0x10FFFF ) {
+			return chr( 0xF0 | $c >> 18 ) . chr( 0x80 | $c >> 12 & 0x3F )
+				. chr( 0x80 | $c >> 6 & 0x3F )
+				. chr( 0x80 | $c & 0x3F );
 		} else {
 			return false;
 		}
 	}
-
 
 	/**
 	 * Check the libicu version
@@ -1105,8 +1103,8 @@ abstract class Installer {
 		 * Note that we use the hex representation to create the code
 		 * points in order to avoid any Unicode-destroying during transit.
 		 */
-		$not_normal_c = $this->unicodeChar("FA6C");
-		$normal_c = $this->unicodeChar("242EE");
+		$not_normal_c = $this->unicodeChar( "FA6C" );
+		$normal_c = $this->unicodeChar( "242EE" );
 
 		$useNormalizer = 'php';
 		$needsUpdate = false;
@@ -1174,8 +1172,8 @@ abstract class Installer {
 	 *
 	 * Used only by environment checks.
 	 *
-	 * @param $path String: path to search
-	 * @param $names Array of executable names
+	 * @param string $path path to search
+	 * @param array $names of executable names
 	 * @param $versionInfo Boolean false or array with two members:
 	 *		 0 => Command to run for version check, with $1 for the full executable name
 	 *		 1 => String to compare the output with
@@ -1279,7 +1277,7 @@ abstract class Installer {
 	/**
 	 * Checks for presence of an Apache module. Works only if PHP is running as an Apache module, too.
 	 *
-	 * @param $moduleName String: Name of module to check.
+	 * @param string $moduleName Name of module to check.
 	 * @return bool
 	 */
 	public static function apacheModulePresent( $moduleName ) {
@@ -1436,8 +1434,8 @@ abstract class Installer {
 	/**
 	 * Actually perform the installation.
 	 *
-	 * @param $startCB Array A callback array for the beginning of each step
-	 * @param $endCB Array A callback array for the end of each step
+	 * @param array $startCB A callback array for the beginning of each step
+	 * @param array $endCB A callback array for the end of each step
 	 *
 	 * @return Array of Status objects
 	 */
@@ -1594,13 +1592,16 @@ abstract class Installer {
 		$status = Status::newGood();
 		try {
 			$page = WikiPage::factory( Title::newMainPage() );
-			$page->doEdit( wfMessage( 'mainpagetext' )->inContentLanguage()->text() . "\n\n" .
-					wfMessage( 'mainpagedocfooter' )->inContentLanguage()->text(),
+			$content = new WikitextContent (
+				wfMessage( 'mainpagetext' )->inContentLanguage()->text() . "\n\n" .
+				wfMessage( 'mainpagedocfooter' )->inContentLanguage()->text()
+			);
+
+			$page->doEditContent( $content,
 					'',
 					EDIT_NEW,
 					false,
-					User::newFromName( 'MediaWiki default' )
-			);
+					User::newFromName( 'MediaWiki default' ) );
 		} catch (MWException $e) {
 			//using raw, because $wgShowExceptionDetails can not be set yet
 			$status->fatal( 'config-install-mainpage-failed', $e->getMessage() );
@@ -1641,9 +1642,9 @@ abstract class Installer {
 	/**
 	 * Add an installation step following the given step.
 	 *
-	 * @param $callback Array A valid installation callback array, in this form:
+	 * @param array $callback A valid installation callback array, in this form:
 	 *    array( 'name' => 'some-unique-name', 'callback' => array( $obj, 'function' ) );
-	 * @param $findStep String the step to find. Omit to put the step at the beginning
+	 * @param string $findStep the step to find. Omit to put the step at the beginning
 	 */
 	public function addInstallStep( $callback, $findStep = 'BEGINNING' ) {
 		$this->extraInstallSteps[$findStep][] = $callback;

@@ -106,6 +106,7 @@ Falls das Benutzerkonto irrtümlich angelegt wurde, kannst du diese Nachricht ig
 
 # Email sending
 'user-mail-no-addy' => 'Versuchte ein E-Mail ohne Angabe einer E-Mail-Adresse zu versenden',
+'user-mail-no-body' => 'Es wurde versucht, ein E-Mail mit einem leeren oder zu kurzen Textkörper zu versenden.',
 
 # Change password dialog
 'resetpass_announce' => 'Anmeldung mit dem per E-Mail zugesandten Code. Um die Anmeldung abzuschliessen, musst du jetzt ein neues Passwort wählen.',
@@ -229,10 +230,6 @@ Du hast darauf keinen Zugriff.',
 'right-override-export-depth' => 'Exportiere Seiten einschliesslich verlinkter Seiten bis zu einer Tiefe von 5',
 'right-passwordreset' => 'Passwort eines Benutzers zurücksetzen und das dazu verschickte E-Mail einsehen',
 
-# User rights log
-'rightslogentry' => 'änderte die Benutzerrechte für «$1» von «$2» auf «$3»',
-'rightslogentry-autopromote' => 'wurde automatisch von «$2» nach «$3» zugeordnet',
-
 # Recent changes
 'rc_categories' => 'Nur Seiten aus den Kategorien (getrennt mit «|»):',
 'rc-old-title' => 'ursprünglich erstellt als «$1»',
@@ -352,7 +349,7 @@ Die Ausgabe kann durch die Auswahl des Logbuchtyps, des Benutzers oder des Seite
 'allpages-bad-ns' => 'Der Namensraum «$1» ist in {{SITENAME}} nicht vorhanden.',
 
 # Special:LinkSearch
-'linksearch-text' => 'Diese Spezialseite ermöglicht die Suche nach Seiten, in denen bestimmte Weblinks enthalten sind. Dabei können Platzhalter wie beispielsweise <code>*.beispiel.ch</code> benutzt werden. Es muss mindestens eine Top-Level-Domain, z. B. «*.org». angegeben werden. <br />Unterstützte Protokolle: <code>$1</code> (Diese bitte nicht bei der Suchanfrage angeben.)',
+'linksearch-text' => 'Diese Spezialseite ermöglicht die Suche nach Seiten, in denen bestimmte Weblinks enthalten sind. Dabei können Platzhalter wie beispielsweise <code>*.beispiel.ch</code> benutzt werden. Es muss mindestens eine Top-Level-Domain, z. B. «*.org». angegeben werden. <br />{{PLURAL:$2|Unterstütztes Protokoll|Unterstützte Protokolle}}: <code>$1</code> (Standard ist http, falls kein Protokoll angegeben ist.)',
 
 # Email user
 'emailpagetext' => 'Du kannst {{GENDER:$1|dem Benutzer|der Benutzerin}} mit dem unten stehenden Formular ein E-Mail senden.
@@ -371,33 +368,6 @@ Spätere Änderungen an dieser Seite und der zugehörigen Diskussionsseite werde
 
 # Displayed when you click the "watch" button and it is in the process of watching
 'watcherrortext' => 'Beim Ändern der Beobachtungslisteneinstellungen für «$1» ist ein Fehler aufgetreten.',
-
-'enotif_body' => 'Hallo $WATCHINGUSERNAME,
-
-die {{SITENAME}}-Seite «$PAGETITLE» wurde von $PAGEEDITOR am $PAGEEDITDATE um $PAGEEDITTIME Uhr $CHANGEDORCREATED.
-
-Aktuelle Version: $PAGETITLE_URL
-
-$NEWPAGE
-
-Zusammenfassung des Bearbeiters: $PAGESUMMARY $PAGEMINOREDIT
-
-Kontakt zum Bearbeiter:
-E-Mail: $PAGEEDITOR_EMAIL
-Wiki: $PAGEEDITOR_WIKI
-
-Bei weiterer Aktivität auf der Seite werden dir so lange keine weiteren Benachrichtigungs-E-Mails gesendet, bis du die Seite wieder besucht hast. Auf deiner Beobachtungsliste kannst du alle Benachrichtigungsmarkierungen zusammen zurücksetzen.
-
-Dein freundliches {{SITENAME}}-Benachrichtigungssystem
-
---
-Um die Einstellungen der E-Mail-Benachrichtigung anzupassen, besuche {{canonicalurl:{{#special:Preferences}}}}.
-
-Um die Einstellungen deiner Beobachtungsliste anzupassen, besuche {{canonicalurl:{{#special:EditWatchlist}}}}.
-
-Um die Seite von deiner Beobachtungsliste herunterzunehmen, besuche $UNWATCHURL.
-
-Rückmeldungen und weitere Hilfe: {{canonicalurl:{{MediaWiki:Helppage}}}}',
 
 # Delete
 'excontent' => 'Inhalt war: «$1»',

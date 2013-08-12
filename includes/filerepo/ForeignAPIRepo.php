@@ -247,10 +247,10 @@ class ForeignAPIRepo extends FileRepo {
 	 * If the url has been requested today, get it from cache
 	 * Otherwise retrieve remote thumb url, check for local file.
 	 *
-	 * @param $name String is a dbkey form of a title
+	 * @param string $name is a dbkey form of a title
 	 * @param $width
 	 * @param $height
-	 * @param String $params Other rendering parameters (page number, etc) from handler's makeParamString.
+	 * @param string $params Other rendering parameters (page number, etc) from handler's makeParamString.
 	 * @return bool|string
 	 */
 	function getThumbUrlFromCache( $name, $width, $height, $params = "" ) {
@@ -267,14 +267,14 @@ class ForeignAPIRepo extends FileRepo {
 		$sizekey = "$width:$height:$params";
 
 		/* Get the array of urls that we already know */
-		$knownThumbUrls = $wgMemc->get($key);
+		$knownThumbUrls = $wgMemc->get( $key );
 		if( !$knownThumbUrls ) {
 			/* No knownThumbUrls for this file */
 			$knownThumbUrls = array();
 		} else {
 			if( isset( $knownThumbUrls[$sizekey] ) ) {
 				wfDebug( __METHOD__ . ': Got thumburl from local cache: ' .
-					"{$knownThumbUrls[$sizekey]} \n");
+					"{$knownThumbUrls[$sizekey]} \n" );
 				return $knownThumbUrls[$sizekey];
 			}
 			/* This size is not yet known */
@@ -294,9 +294,9 @@ class ForeignAPIRepo extends FileRepo {
 			wfDebug( __METHOD__ . " The deduced filename $fileName is not safe\n" );
 			return false;
 		}
-		$localPath =  $this->getZonePath( 'thumb' ) . "/" . $this->getHashPath( $name ) . $name;
+		$localPath = $this->getZonePath( 'thumb' ) . "/" . $this->getHashPath( $name ) . $name;
 		$localFilename = $localPath . "/" . $fileName;
-		$localUrl =  $this->getZoneUrl( 'thumb' ) . "/" . $this->getHashPath( $name ) . rawurlencode( $name ) . "/" . rawurlencode( $fileName );
+		$localUrl = $this->getZoneUrl( 'thumb' ) . "/" . $this->getHashPath( $name ) . rawurlencode( $name ) . "/" . rawurlencode( $fileName );
 
 		if( $backend->fileExists( array( 'src' => $localFilename ) )
 			&& isset( $metadata['timestamp'] ) )
@@ -320,7 +320,6 @@ class ForeignAPIRepo extends FileRepo {
 			return false;
 		}
 
-
 		# @todo FIXME: Delete old thumbs that aren't being used. Maintenance script?
 		$backend->prepare( array( 'dir' => dirname( $localFilename ) ) );
 		$params = array( 'dst' => $localFilename, 'content' => $thumb );
@@ -337,16 +336,17 @@ class ForeignAPIRepo extends FileRepo {
 	/**
 	 * @see FileRepo::getZoneUrl()
 	 * @param $zone String
+	 * @param string|null $ext Optional file extension
 	 * @return String
 	 */
-	function getZoneUrl( $zone ) {
+	function getZoneUrl( $zone, $ext = null ) {
 		switch ( $zone ) {
 			case 'public':
 				return $this->url;
 			case 'thumb':
 				return $this->thumbUrl;
 			default:
-				return parent::getZoneUrl( $zone );
+				return parent::getZoneUrl( $zone, $ext );
 		}
 	}
 

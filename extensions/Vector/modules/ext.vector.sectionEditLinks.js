@@ -38,20 +38,6 @@ if ( bucket <= 0 ) {
 }
 
 $(document).ready( function () {
-	// Transform the targets of section edit links to route through the click tracking API
-	var session = $.cookie( 'clicktracking-session' );
-	$( 'span.editsection a, #ca-edit a' ).each( function () {
-		var event = eventBase + bucket + '@' + experiment;
-		if ( $(this).is( '#ca-edit a' ) ) {
-			event += '-tab';
-		}
-		var href = $( this ).attr( 'href' );
-		var editUrl = href + ( href.indexOf( '?' ) >= 0 ? '&' : '?' ) + $.param( {
-			'clicktrackingsession': session,
-			'clicktrackingevent': event + '-save'
-		} );
-		$(this).attr( 'href', $.trackActionURL( editUrl, event + '-click' ) );
-	} );
 	if ( bucket == 2 ) {
 		// Move the link over to be next to the heading text and style it with an icon
 		$( 'span.mw-headline' ).each( function () {

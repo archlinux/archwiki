@@ -69,7 +69,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 		$opts->validateIntBounds( 'limit', 0, 5000 );
 
 		// Give precedence to subpage syntax
-		if ( isset($par) ) {
+		if ( isset( $par ) ) {
 			$opts->setValue( 'target', $par );
 		}
 
@@ -94,9 +94,9 @@ class SpecialWhatLinksHere extends SpecialPage {
 	}
 
 	/**
-	 * @param $level int     Recursion level
+	 * @param int $level     Recursion level
 	 * @param $target Title   Target title
-	 * @param $limit int     Number of entries to display
+	 * @param int $limit     Number of entries to display
 	 * @param $from Title   Display from this article ID
 	 * @param $back Title   Display from this article ID at backwards scrolling
 	 */
@@ -137,7 +137,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 		);
 
 		$namespace = $this->opts->getValue( 'namespace' );
-		if ( is_int($namespace) ) {
+		if ( is_int( $namespace ) ) {
 			$plConds['page_namespace'] = $namespace;
 			$tlConds['page_namespace'] = $namespace;
 			$ilConds['page_namespace'] = $namespace;
@@ -187,7 +187,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 				$joinConds);
 		}
 
-		if( ( !$fetchlinks || !$dbr->numRows($plRes) ) && ( $hidetrans || !$dbr->numRows($tlRes) ) && ( $hideimages || !$dbr->numRows($ilRes) ) ) {
+		if( ( !$fetchlinks || !$plRes->numRows() ) && ( $hidetrans || !$tlRes->numRows() ) && ( $hideimages || !$ilRes->numRows() ) ) {
 			if ( 0 == $level ) {
 				$out->addHTML( $this->whatlinkshereForm() );
 
@@ -195,7 +195,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 				if( $hidelinks || $hidetrans || $hideredirs || $hideimages )
 					$out->addHTML( $this->getFilterPanel() );
 
-				$errMsg = is_int($namespace) ? 'nolinkshere-ns' : 'nolinkshere';
+				$errMsg = is_int( $namespace ) ? 'nolinkshere-ns' : 'nolinkshere';
 				$out->addWikiMsg( $errMsg, $this->target->getPrefixedText() );
 			}
 			return;
@@ -360,7 +360,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 		$next = $this->msg( 'whatlinkshere-next' )->numParams( $currentLimit )->escaped();
 
 		$changed = $this->opts->getChangedValues();
-		unset($changed['target']); // Already in the request title
+		unset( $changed['target'] ); // Already in the request title
 
 		if ( 0 != $prevId ) {
 			$overrides = array( 'from' => $this->opts->getValue( 'back' ) );
@@ -446,7 +446,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 		$hide = $this->msg( 'hide' )->escaped();
 
 		$changed = $this->opts->getChangedValues();
-		unset($changed['target']); // Already in the request title
+		unset( $changed['target'] ); // Already in the request title
 
 		$links = array();
 		$types = array( 'hidetrans', 'hidelinks', 'hideredirs' );
@@ -459,9 +459,13 @@ class SpecialWhatLinksHere extends SpecialPage {
 			$chosen = $this->opts->getValue( $type );
 			$msg = $chosen ? $show : $hide;
 			$overrides = array( $type => !$chosen );
-			$links[] =  $this->msg( "whatlinkshere-{$type}" )->rawParams(
+			$links[] = $this->msg( "whatlinkshere-{$type}" )->rawParams(
 				$this->makeSelfLink( $msg, array_merge( $changed, $overrides ) ) )->escaped();
 		}
 		return Xml::fieldset( $this->msg( 'whatlinkshere-filters' )->text(), $this->getLanguage()->pipeList( $links ) );
+	}
+
+	protected function getGroupName() {
+		return 'pagetools';
 	}
 }

@@ -135,7 +135,10 @@ class DeletedContribsPager extends IndexPager {
 	function formatRow( $row ) {
 		wfProfileIn( __METHOD__ );
 
+		$page = Title::makeTitle( $row->ar_namespace, $row->ar_title );
+
 		$rev = new Revision( array(
+				'title'      => $page,
 				'id'         => $row->ar_rev_id,
 				'comment'    => $row->ar_comment,
 				'user'       => $row->ar_user,
@@ -144,8 +147,6 @@ class DeletedContribsPager extends IndexPager {
 				'minor_edit' => $row->ar_minor_edit,
 				'deleted'    => $row->ar_deleted,
 				) );
-
-		$page = Title::makeTitle( $row->ar_namespace, $row->ar_title );
 
 		$undelete = SpecialPage::getTitleFor( 'Undelete' );
 
@@ -167,7 +168,7 @@ class DeletedContribsPager extends IndexPager {
 
 		$user = $this->getUser();
 
-		if( $user->isAllowed('deletedtext') ) {
+		if( $user->isAllowed( 'deletedtext' ) ) {
 			$last = Linker::linkKnown(
 				$undelete,
 				$this->messages['diff'],
@@ -260,7 +261,7 @@ class DeletedContributionsPage extends SpecialPage {
 	 * Special page "deleted user contributions".
 	 * Shows a list of the deleted contributions of a user.
 	 *
-	 * @param	$par	String: (optional) user name of the user for which to show the contributions
+	 * @param string $par (optional) user name of the user for which to show the contributions
 	 */
 	function execute( $par ) {
 		global $wgQueryPageDefaultLimit;
@@ -464,7 +465,7 @@ class DeletedContributionsPage extends SpecialPage {
 
 	/**
 	 * Generates the namespace selector form with hidden attributes.
-	 * @param $options Array: the options to be included.
+	 * @param array $options the options to be included.
 	 * @return string
 	 */
 	function getForm( $options ) {
@@ -474,7 +475,7 @@ class DeletedContributionsPage extends SpecialPage {
 		if ( !isset( $options['target'] ) ) {
 			$options['target'] = '';
 		} else {
-			$options['target'] = str_replace( '_' , ' ' , $options['target'] );
+			$options['target'] = str_replace( '_', ' ', $options['target'] );
 		}
 
 		if ( !isset( $options['namespace'] ) ) {
@@ -498,7 +499,7 @@ class DeletedContributionsPage extends SpecialPage {
 			$f .= "\t" . Html::hidden( $name, $value ) . "\n";
 		}
 
-		$f .=  Xml::openElement( 'fieldset' ) .
+		$f .= Xml::openElement( 'fieldset' ) .
 			Xml::element( 'legend', array(), $this->msg( 'sp-contributions-search' )->text() ) .
 			Xml::tags( 'label', array( 'for' => 'target' ), $this->msg( 'sp-contributions-username' )->parse() ) . ' ' .
 			Html::input( 'target', $options['target'], 'text', array(
@@ -520,5 +521,9 @@ class DeletedContributionsPage extends SpecialPage {
 			Xml::closeElement( 'fieldset' ) .
 			Xml::closeElement( 'form' );
 		return $f;
+	}
+
+	protected function getGroupName() {
+		return 'users';
 	}
 }

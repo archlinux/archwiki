@@ -29,6 +29,7 @@
  * @author Enzoreg
  * @author Erkethan
  * @author Esbardu
+ * @author Fabrice Ferrer
  * @author Fryed-peach
  * @author Geoleplubo
  * @author Giro720
@@ -93,13 +94,6 @@
  * @author לערי ריינהארט
  */
 
-$bookstoreList = array(
-	'Amazon.fr'    => 'http://www.amazon.fr/exec/obidos/ISBN=$1',
-	'alapage.fr'   => 'http://www.alapage.com/mx/?tp=F&type=101&l_isbn=$1&donnee_appel=ALASQ&devise=&',
-	'fnac.com'     => 'http://www3.fnac.com/advanced/book.do?isbn=$1',
-	'chapitre.com' => 'http://www.chapitre.com/frame_rec.asp?isbn=$1',
-);
-
 $namespaceNames = array(
 	NS_MEDIA            => 'Média',
 	NS_SPECIAL          => 'Spécial',
@@ -129,20 +123,99 @@ $namespaceAliases = array(
 	'Discussion_Catégorie' => NS_CATEGORY_TALK
 );
 
-$linkTrail = '/^([a-zàâçéèêîôûäëïöüùÇÉÂÊÎÔÛÄËÏÖÜÀÈÙ]+)(.*)$/sDu';
-
-$dateFormats = array(
-	'mdy time' => 'H:i',
-	'mdy date' => 'F j, Y',
-	'mdy both' => 'F j, Y à H:i',
-
-	'dmy time' => 'H:i',
-	'dmy date' => 'j F Y',
-	'dmy both' => 'j F Y à H:i',
-
-	'ymd time' => 'H:i',
-	'ymd date' => 'Y F j',
-	'ymd both' => 'Y F j à H:i',
+$specialPageAliases = array(
+	'Activeusers'               => array( 'Utilisateurs_actifs', 'UtilisateursActifs' ),
+	'Allmessages'               => array( 'Messages_système', 'Messages_systeme', 'Messagessystème', 'Messagessysteme' ),
+	'Allpages'                  => array( 'Toutes_les_pages', 'ToutesLesPages' ),
+	'Ancientpages'              => array( 'Pages_anciennes', 'PagesAnciennes', 'Anciennes_pages', 'AnciennesPages' ),
+	'Badtitle'                  => array( 'MauvaisTitre', 'Mauvais_titre' ),
+	'Blankpage'                 => array( 'Page_blanche', 'PageBlanche' ),
+	'Block'                     => array( 'Bloquer', 'Blocage' ),
+	'Blockme'                   => array( 'Bloquez-moi', 'Bloquezmoi' ),
+	'Booksources'               => array( 'Ouvrages_de_référence', 'Ouvrages_de_reference', 'Ouvragesderéférence', 'Ouvragesdereference', 'Recherche_ISBN', 'Recherche_isbn', 'RechercheISBN', 'Rechercheisbn' ),
+	'BrokenRedirects'           => array( 'Redirections_cassées', 'RedirectionCassées', 'Redirections_cassees', 'RedirectionsCassees' ),
+	'Categories'                => array( 'Catégories' ),
+	'ChangeEmail'               => array( 'ChangerCouriel', 'Changer_courrielw' ),
+	'ChangePassword'            => array( 'Changement_du_mot_de_passe', 'ChangementDuMotDePasse' ),
+	'Confirmemail'              => array( 'Confirmer_l\'adresse_de_contact', 'Confirmer_le_courriel', 'ConfirmerLeCourriel' ),
+	'CreateAccount'             => array( 'Créer_un_compte', 'CréerUnCompte', 'CréerCompte' ),
+	'Deadendpages'              => array( 'Pages_en_impasse', 'PagesEnImpasse' ),
+	'DeletedContributions'      => array( 'Contributions_supprimées', 'ContributionsSupprimées', 'ContributionSupprimees' ),
+	'Disambiguations'           => array( 'Homonymies', 'Homonymie', 'Pages_d\'homonymie' ),
+	'DoubleRedirects'           => array( 'Doubles_redirections', 'DoublesRedirections', 'Redirections_doubles', 'RedirectionsDoubles' ),
+	'EditWatchlist'             => array( 'Éditer_Liste_de_suivi', 'ÉditerListeDeSuivi' ),
+	'Emailuser'                 => array( 'Envoyer_un_courriel', 'EnvoyerUnCourriel', 'Courriel', 'Envoyer_un_e-mail', 'EnvoyerUnEMail', 'E-mail', 'EMail' ),
+	'Export'                    => array( 'Exporter', 'Exportation' ),
+	'Fewestrevisions'           => array( 'Pages_les_moins_modifiées', 'PagesLesMoinsModifiées', 'Pages_les_moins_modifiees', 'PagesLesMoinsModifiees', 'Les_moins_modifiés', 'LesMoinsModifiés', 'Les_moins_modifies', 'LesMoinsModifies' ),
+	'FileDuplicateSearch'       => array( 'Recherche_fichier_en_double', 'RechercheFichierEnDouble' ),
+	'Filepath'                  => array( 'Chemin_du_fichier', 'CheminDuFichier', 'CheminFichier' ),
+	'Import'                    => array( 'Importer', 'Importation' ),
+	'Invalidateemail'           => array( 'Invalider_le_courriel', 'Invalider_courriel', 'InvaliderCourriel' ),
+	'BlockList'                 => array( 'Liste_des_blocages', 'ListeDesBlocages', 'Blocages', 'Utilisateurs_bloqués', 'UtilisateursBloqués', 'Utilisateurs_bloques', 'UtilisateursBloques', 'IP_bloquées', 'IPBloquees', 'IPBloquées' ),
+	'LinkSearch'                => array( 'Recherche_de_lien', 'Recherche_de_liens' ),
+	'Listadmins'                => array( 'Liste_des_administrateurs', 'Listedesadministrateurs', 'Liste_des_admins', 'Listedesadmins', 'Liste_admins', 'Listeadmins' ),
+	'Listbots'                  => array( 'Liste_des_bots', 'ListedesBots' ),
+	'Listfiles'                 => array( 'Liste_des_fichiers', 'ListeDesFichiers', 'Liste_des_images', 'ListeDesImages' ),
+	'Listgrouprights'           => array( 'Liste_des_droits_de_groupe', 'ListeDesDroitsDeGroupes' ),
+	'Listredirects'             => array( 'Liste_des_redirections', 'Listedesredirections', 'Liste_des_redirects', 'Listedesredirects', 'Liste_redirections', 'Listeredirections', 'Liste_redirects', 'Listeredirects' ),
+	'Listusers'                 => array( 'Liste_des_utilisateurs', 'ListeDesUtilisateurs', 'Utilisateurs' ),
+	'Lockdb'                    => array( 'Verrouiller_la_base', 'Verrouillerlabase', 'Verrouiller_base', 'Verrouillerbase', 'Verrouiller_BD', 'VerrouillerBD', 'Verrouiller_bd', 'Verrouillerbd' ),
+	'Log'                       => array( 'Journal', 'Journaux' ),
+	'Lonelypages'               => array( 'Pages_orphelines', 'PagesOrphelines' ),
+	'Longpages'                 => array( 'Pages_longues', 'PagesLongues' ),
+	'MergeHistory'              => array( 'Fusionner_les_historiques', 'FusionnerHistoriques', 'Fusionner_l\'historique', 'Fusionnerlhistorique' ),
+	'MIMEsearch'                => array( 'Recherche_MIME', 'RechercheMIME', 'Recherche_mime', 'Recherchemime' ),
+	'Mostcategories'            => array( 'Pages_les_plus_catégorisées', 'PagesLesPlusCatégorisées', 'Pages_les_plus_categorisees', 'PagesLesPlusCategorisees', 'Les_plus_catégorisés', 'LesPlusCatégorisés', 'Les_plus_categorises', 'LesPlusCategorises' ),
+	'Mostimages'                => array( 'Fichiers_les_plus_liés', 'FichiersLesPlusLiés', 'Fichiers_les_plus_lies', 'FichiersLesPlusLies', 'Fichiers_les_plus_utilisés', 'FichiersLesPlusUtilisés', 'Fichiers_les_plus_utilises', 'FichiersLesPlusUtilises', 'Images_les_plus_liées', 'ImagesLesPlusLiées', 'Images_les_plus_liees', 'ImagesLesPlusLiees', 'Images_les_plus_utilisées', 'ImagesLesPlusUtilisées', 'Images_les_plus_utilisees', 'ImagesLesPlusUtilisees' ),
+	'Mostlinked'                => array( 'Pages_les_plus_liées', 'PagesLesPlusLiées', 'Pages_les_plus_liees', 'PagesLesPlusLiees', 'Les_plus_liées', 'LesPlusLiées', 'Les_plus_liees', 'LesPlusLiees' ),
+	'Mostlinkedcategories'      => array( 'Catégories_les_plus_liées', 'CatégoriesLesPlusLiées', 'Categories_les_plus_liees', 'CategoriesLesPlusLiees', 'Catégories_les_plus_utilisées', 'CatégoriesLesPlusUtilisées', 'Categories_les_plus_utilisees', 'CategoriesLesPlusUtilisees' ),
+	'Mostlinkedtemplates'       => array( 'Modèles_les_plus_liés', 'ModèlesLesPlusLiés', 'Modeles_les_plus_lies', 'ModelesLesPlusLies', 'Modèles_les_plus_utilisés', 'ModèlesLesPlusUtilisés', 'Modeles_les_plus_utilises', 'ModelesLesPlusUtilises' ),
+	'Mostrevisions'             => array( 'Pages_les_plus_modifiées', 'PagesLesPlusModifiées', 'Pages_les_plus_modifiees', 'PagesLesPlusModifiees', 'Les_plus_modifiés', 'LesPlusModifiés', 'Les_plus_modifies', 'LesPlusModifies' ),
+	'Movepage'                  => array( 'Renommer_une_page', 'Renommer', 'Renommage' ),
+	'Mycontributions'           => array( 'Mes_contributions', 'Mescontributions' ),
+	'Mypage'                    => array( 'Ma_page', 'Mapage' ),
+	'Mytalk'                    => array( 'Mes_discussions', 'Mesdiscussions' ),
+	'Newimages'                 => array( 'Nouveaux_fichiers', 'NouveauxFichiers', 'Nouvelles_images', 'NouvellesImages' ),
+	'Newpages'                  => array( 'Nouvelles_pages', 'NouvellesPages', 'Pages_récentes', 'PagesRécentes', 'Pages_recentes', 'PagesRecentes' ),
+	'PasswordReset'             => array( 'Réinitialisation_du_mot_de_passe', 'RéinitialisationDuMotDePasse' ),
+	'PermanentLink'             => array( 'LienPermanent', 'Lien_permanent' ),
+	'Popularpages'              => array( 'Pages_les_plus_visitées', 'Pages_les_plus_visitees', 'Pageslesplusvisitées', 'Pageslesplusvisitees' ),
+	'Preferences'               => array( 'Préférences' ),
+	'Prefixindex'               => array( 'Index', 'Préfixes', 'Prefixes' ),
+	'Protectedpages'            => array( 'Pages_protégées', 'PagesProtégées', 'Pages_protegees', 'PagesProtegees' ),
+	'Protectedtitles'           => array( 'Titres_protégés', 'TitresProtégés', 'Titres_proteges', 'TitresProteges' ),
+	'Randompage'                => array( 'Page_au_hasard', 'PageAuHasard', 'Au_hasard', 'AuHasard', 'Aléatoire', 'Aleatoire' ),
+	'Randomredirect'            => array( 'Redirection_au_hasard', 'Redirect_au_hasard', 'Redirectionauhasard', 'Redirectauhasard', 'Redirection_aléatoire', 'Redirect_aléatoire', 'Redirectionaléatoire', 'Redirectaléatoire', 'Redirection_aleatoire', 'Redirect_aleatoire', 'Redirectionaleatoire', 'Redirectaleatoire' ),
+	'Recentchanges'             => array( 'Modifications_récentes', 'Modifications_recentes', 'ModificationsRécentes', 'ModificationsRecentes' ),
+	'Recentchangeslinked'       => array( 'Suivi_des_liens', 'SuiviDesLiens' ),
+	'Revisiondelete'            => array( 'Versions_supprimées', 'Versions_supprimees', 'Versionsupprimées', 'Versionsupprimees' ),
+	'Search'                    => array( 'Recherche', 'Rechercher', 'Chercher' ),
+	'Shortpages'                => array( 'Pages_courtes', 'PagesCourtes' ),
+	'Specialpages'              => array( 'Pages_spéciales', 'PagesSpéciales', 'Pages_speciales', 'PagesSpeciales' ),
+	'Statistics'                => array( 'Statistiques', 'Stats' ),
+	'Tags'                      => array( 'Balises' ),
+	'Unblock'                   => array( 'Débloquer', 'Déblocage' ),
+	'Uncategorizedcategories'   => array( 'Catégories_non_catégorisées', 'CatégoriesNonCatégorisées', 'Categories_non_categorisees', 'CategoriesNonCategorisees', 'Catégories_sans_catégorie', 'CatégoriesSansCatégorie', 'Categories_sans_categorie', 'CategoriesSansCategorie' ),
+	'Uncategorizedimages'       => array( 'Fichiers_non_catégorisés', 'FichiersNonCatégorisés', 'Fichiers_non_categorises', 'FichiersNonCategorises', 'Fichiers_sans_catégorie', 'FichiersSansCatégorie', 'Fichiers_sans_categorie', 'FichiersSansCategorie', 'Images_non_catégorisées', 'ImagesNonCatégorisées', 'Images_non_categorisees', 'ImagesNonCategorisees', 'Images_sans_catégorie', 'ImagesSansCatégorie', 'Images_sans_categorie', 'ImagesSansCategorie' ),
+	'Uncategorizedpages'        => array( 'Pages_non_catégorisées', 'PagesNonCatégorisées', 'Pages_non_categorisees', 'PagesNonCategorisees', 'Pages_sans_catégorie', 'PagesSansCatégorie', 'Pages_sans_categorie', 'PagesSansCategorie' ),
+	'Uncategorizedtemplates'    => array( 'Modèles_non_catégorisés', 'ModèlesNonCatégorisés', 'Modeles_non_categorises', 'ModelesNonCategorises', 'Modèles_sans_catégorie', 'ModèlesSansCatégorie', 'Modeles_sans_catégorie', 'ModelesSansCatégorie' ),
+	'Undelete'                  => array( 'Restaurer', 'Restauration' ),
+	'Unlockdb'                  => array( 'Déverrouiller_la_base', 'Déverrouillerlabase', 'Deverrouiller_la_base', 'Deverrouillerlabase', 'Déverrouiller_base', 'Déverrouillerbase', 'Deverrouiller_base', 'Deverrouillerbase', 'Déverrouiller_BD', 'DéverrouillerBD', 'Deverrouiller_BD', 'DeverrouillerBD', 'Déverrouiller_bd', 'Déverrouillerbd', 'Deverrouiller_bd', 'Deverrouillerbd' ),
+	'Unusedcategories'          => array( 'Catégories_inutilisées', 'CatégoriesInutilisées', 'Categories_inutilisees', 'CategoriesInutilisees', 'Catégories_non_utilisées', 'CatégoriesNonUtilisées', 'Categories_non_utilisees', 'CategoriesNonUtilisees' ),
+	'Unusedimages'              => array( 'Fichiers_inutilisés', 'FichiersInutilisés', 'Fichiers_inutilises', 'FichiersInutilises', 'Fichiers_non_utilisés', 'FichiersNon_utilisés', 'Fichiers_non_utilises', 'FichiersNon_utilises', 'Images_inutilisées', 'ImagesInutilisées', 'Images_inutilisees', 'ImagesInutilisees', 'Images_non_utilisées', 'ImagesNonUtilisées', 'Images_non_utilisees', 'ImagesNonUtilisees' ),
+	'Unusedtemplates'           => array( 'Modèles_inutilisés', 'Modèlesinutilisés', 'Modeles_inutilises', 'Modelesinutilises', 'Modèles_non_utilisés', 'Modèlesnonutilisés', 'Modeles_non_utilises', 'Modelesnonutilises' ),
+	'Unwatchedpages'            => array( 'Pages_non_suivies', 'Pagesnonsuivies' ),
+	'Upload'                    => array( 'Téléverser', 'Televerser', 'Téléversement', 'Televersement', 'Téléchargement', 'Telechargement' ),
+	'Userlogin'                 => array( 'Connexion', 'Identification' ),
+	'Userlogout'                => array( 'Déconnexion', 'Deconnexion' ),
+	'Userrights'                => array( 'Permissions', 'Droits', 'Droits_des_utilisateurs' ),
+	'Wantedcategories'          => array( 'Catégories_demandées', 'CatégoriesDemandées', 'Categories_demandees', 'CategoriesDemandees' ),
+	'Wantedfiles'               => array( 'Fichiers_demandés', 'FichiersDemandés', 'Fichiers_demandes', 'FichiersDemandes' ),
+	'Wantedpages'               => array( 'Pages_demandées', 'PagesDemandées', 'Pages_demandees', 'PagesDemandees', 'Liens_brisés', 'LiensBrisés', 'Liens_brises', 'LiensBrises' ),
+	'Wantedtemplates'           => array( 'Modèles_demandés', 'ModèlesDemandés', 'Modeles_demandes', 'ModelesDemandes' ),
+	'Watchlist'                 => array( 'Liste_de_suivi', 'ListeDeSuivi', 'Suivi' ),
+	'Whatlinkshere'             => array( 'Pages_liées', 'PagesLiées', 'Pages_liees', 'PagesLiees' ),
+	'Withoutinterwiki'          => array( 'Sans_interwiki', 'Sansinterwiki', 'Sans_interwikis', 'Sansinterwikis' ),
 );
 
 $magicWords = array(
@@ -152,7 +225,6 @@ $magicWords = array(
 	'forcetoc'                  => array( '0', '__FORCERSOMMAIRE__', '__FORCERTDM__', '__FORCETOC__' ),
 	'toc'                       => array( '0', '__SOMMAIRE__', '__TDM__', '__TOC__' ),
 	'noeditsection'             => array( '0', '__SECTIONNONEDITABLE__', '__NOEDITSECTION__' ),
-	'noheader'                  => array( '0', '__AUCUNENTETE__', '__NOHEADER__' ),
 	'currentmonth'              => array( '1', 'MOISACTUEL', 'MOIS2ACTUEL', 'CURRENTMONTH', 'CURRENTMONTH2' ),
 	'currentmonth1'             => array( '1', 'MOIS1ACTUEL', 'CURRENTMONTH1' ),
 	'currentmonthname'          => array( '1', 'NOMMOISACTUEL', 'CURRENTMONTHNAME' ),
@@ -186,6 +258,7 @@ $magicWords = array(
 	'pagenamee'                 => array( '1', 'NOMPAGEX', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'ESPACENOMMAGE', 'NAMESPACE' ),
 	'namespacee'                => array( '1', 'ESPACENOMMAGEX', 'NAMESPACEE' ),
+	'namespacenumber'           => array( '1', 'NOMBREESPACENOMMAGE', 'NAMESPACENUMBER' ),
 	'talkspace'                 => array( '1', 'ESPACEDISCUSSION', 'TALKSPACE' ),
 	'talkspacee'                => array( '1', 'ESPACEDISCUSSIONX', 'TALKSPACEE' ),
 	'subjectspace'              => array( '1', 'ESPACESUJET', 'ESPACEARTICLE', 'SUBJECTSPACE', 'ARTICLESPACE' ),
@@ -283,99 +356,31 @@ $magicWords = array(
 	'protectionlevel'           => array( '1', 'NIVEAUDEPROTECTION', 'PROTECTIONLEVEL' ),
 	'url_path'                  => array( '0', 'CHEMIN', 'PATH' ),
 	'url_query'                 => array( '0', 'QUESTION', 'QUERY' ),
+	'pagesincategory_all'       => array( '0', 'tous', 'all' ),
+	'pagesincategory_files'     => array( '0', 'fichier', 'files' ),
 );
 
-$specialPageAliases = array(
-	'Activeusers'               => array( 'Utilisateurs_actifs', 'UtilisateursActifs' ),
-	'Allmessages'               => array( 'Messages_système', 'Messages_systeme', 'Messagessystème', 'Messagessysteme' ),
-	'Allpages'                  => array( 'Toutes_les_pages', 'ToutesLesPages' ),
-	'Ancientpages'              => array( 'Pages_anciennes', 'PagesAnciennes', 'Anciennes_pages', 'AnciennesPages' ),
-	'Badtitle'                  => array( 'MauvaisTitre', 'Mauvais_titre' ),
-	'Blankpage'                 => array( 'Page_blanche', 'PageBlanche' ),
-	'Block'                     => array( 'Bloquer', 'Blocage' ),
-	'Blockme'                   => array( 'Bloquez-moi', 'Bloquezmoi' ),
-	'Booksources'               => array( 'Ouvrages_de_référence', 'Ouvrages_de_reference', 'Ouvragesderéférence', 'Ouvragesdereference', 'Recherche_ISBN', 'Recherche_isbn', 'RechercheISBN', 'Rechercheisbn' ),
-	'BrokenRedirects'           => array( 'Redirections_cassées', 'RedirectionCassées', 'Redirections_cassees', 'RedirectionsCassees' ),
-	'Categories'                => array( 'Catégories' ),
-	'ChangePassword'            => array( 'Changement_du_mot_de_passe', 'ChangementDuMotDePasse' ),
-	'Confirmemail'              => array( 'Confirmer_l\'adresse_de_contact', 'Confirmer_le_courriel', 'ConfirmerLeCourriel' ),
-	'CreateAccount'             => array( 'Créer_un_compte', 'CréerUnCompte', 'CréerCompte' ),
-	'Deadendpages'              => array( 'Pages_en_impasse', 'PagesEnImpasse' ),
-	'DeletedContributions'      => array( 'Contributions_supprimées', 'ContributionsSupprimées', 'ContributionSupprimees' ),
-	'Disambiguations'           => array( 'Homonymies', 'Homonymie', 'Pages_d\'homonymie' ),
-	'DoubleRedirects'           => array( 'Doubles_redirections', 'DoublesRedirections', 'Redirections_doubles', 'RedirectionsDoubles' ),
-	'Emailuser'                 => array( 'Envoyer_un_courriel', 'EnvoyerUnCourriel', 'Courriel', 'Envoyer_un_e-mail', 'EnvoyerUnEMail', 'E-mail', 'EMail' ),
-	'Export'                    => array( 'Exporter', 'Exportation' ),
-	'Fewestrevisions'           => array( 'Pages_les_moins_modifiées', 'PagesLesMoinsModifiées', 'Pages_les_moins_modifiees', 'PagesLesMoinsModifiees', 'Les_moins_modifiés', 'LesMoinsModifiés', 'Les_moins_modifies', 'LesMoinsModifies' ),
-	'FileDuplicateSearch'       => array( 'Recherche_fichier_en_double', 'RechercheFichierEnDouble' ),
-	'Filepath'                  => array( 'Chemin_du_fichier', 'CheminDuFichier', 'CheminFichier' ),
-	'Import'                    => array( 'Importer', 'Importation' ),
-	'Invalidateemail'           => array( 'Invalider_le_courriel', 'Invalider_courriel', 'InvaliderCourriel' ),
-	'BlockList'                 => array( 'Liste_des_blocages', 'ListeDesBlocages', 'Blocages', 'Utilisateurs_bloqués', 'UtilisateursBloqués', 'Utilisateurs_bloques', 'UtilisateursBloques', 'IP_bloquées', 'IPBloquees', 'IPBloquées' ),
-	'LinkSearch'                => array( 'Recherche_de_lien', 'Recherche_de_liens' ),
-	'Listadmins'                => array( 'Liste_des_administrateurs', 'Listedesadministrateurs', 'Liste_des_admins', 'Listedesadmins', 'Liste_admins', 'Listeadmins' ),
-	'Listbots'                  => array( 'Liste_des_bots', 'ListedesBots' ),
-	'Listfiles'                 => array( 'Liste_des_fichiers', 'ListeDesFichiers', 'Liste_des_images', 'ListeDesImages' ),
-	'Listgrouprights'           => array( 'Liste_des_droits_de_groupe', 'ListeDesDroitsDeGroupes' ),
-	'Listredirects'             => array( 'Liste_des_redirections', 'Listedesredirections', 'Liste_des_redirects', 'Listedesredirects', 'Liste_redirections', 'Listeredirections', 'Liste_redirects', 'Listeredirects' ),
-	'Listusers'                 => array( 'Liste_des_utilisateurs', 'ListeDesUtilisateurs', 'Utilisateurs' ),
-	'Lockdb'                    => array( 'Verrouiller_la_base', 'Verrouillerlabase', 'Verrouiller_base', 'Verrouillerbase', 'Verrouiller_BD', 'VerrouillerBD', 'Verrouiller_bd', 'Verrouillerbd' ),
-	'Log'                       => array( 'Journal', 'Journaux' ),
-	'Lonelypages'               => array( 'Pages_orphelines', 'PagesOrphelines' ),
-	'Longpages'                 => array( 'Pages_longues', 'PagesLongues' ),
-	'MergeHistory'              => array( 'Fusionner_les_historiques', 'FusionnerHistoriques', 'Fusionner_l\'historique', 'Fusionnerlhistorique' ),
-	'MIMEsearch'                => array( 'Recherche_MIME', 'RechercheMIME', 'Recherche_mime', 'Recherchemime' ),
-	'Mostcategories'            => array( 'Pages_les_plus_catégorisées', 'PagesLesPlusCatégorisées', 'Pages_les_plus_categorisees', 'PagesLesPlusCategorisees', 'Les_plus_catégorisés', 'LesPlusCatégorisés', 'Les_plus_categorises', 'LesPlusCategorises' ),
-	'Mostimages'                => array( 'Fichiers_les_plus_liés', 'FichiersLesPlusLiés', 'Fichiers_les_plus_lies', 'FichiersLesPlusLies', 'Fichiers_les_plus_utilisés', 'FichiersLesPlusUtilisés', 'Fichiers_les_plus_utilises', 'FichiersLesPlusUtilises', 'Images_les_plus_liées', 'ImagesLesPlusLiées', 'Images_les_plus_liees', 'ImagesLesPlusLiees', 'Images_les_plus_utilisées', 'ImagesLesPlusUtilisées', 'Images_les_plus_utilisees', 'ImagesLesPlusUtilisees' ),
-	'Mostlinked'                => array( 'Pages_les_plus_liées', 'PagesLesPlusLiées', 'Pages_les_plus_liees', 'PagesLesPlusLiees', 'Les_plus_liées', 'LesPlusLiées', 'Les_plus_liees', 'LesPlusLiees' ),
-	'Mostlinkedcategories'      => array( 'Catégories_les_plus_liées', 'CatégoriesLesPlusLiées', 'Categories_les_plus_liees', 'CategoriesLesPlusLiees', 'Catégories_les_plus_utilisées', 'CatégoriesLesPlusUtilisées', 'Categories_les_plus_utilisees', 'CategoriesLesPlusUtilisees' ),
-	'Mostlinkedtemplates'       => array( 'Modèles_les_plus_liés', 'ModèlesLesPlusLiés', 'Modeles_les_plus_lies', 'ModelesLesPlusLies', 'Modèles_les_plus_utilisés', 'ModèlesLesPlusUtilisés', 'Modeles_les_plus_utilises', 'ModelesLesPlusUtilises' ),
-	'Mostrevisions'             => array( 'Pages_les_plus_modifiées', 'PagesLesPlusModifiées', 'Pages_les_plus_modifiees', 'PagesLesPlusModifiees', 'Les_plus_modifiés', 'LesPlusModifiés', 'Les_plus_modifies', 'LesPlusModifies' ),
-	'Movepage'                  => array( 'Renommer_une_page', 'Renommer', 'Renommage' ),
-	'Mycontributions'           => array( 'Mes_contributions', 'Mescontributions' ),
-	'Mypage'                    => array( 'Ma_page', 'Mapage' ),
-	'Mytalk'                    => array( 'Mes_discussions', 'Mesdiscussions' ),
-	'Newimages'                 => array( 'Nouveaux_fichiers', 'NouveauxFichiers', 'Nouvelles_images', 'NouvellesImages' ),
-	'Newpages'                  => array( 'Nouvelles_pages', 'NouvellesPages', 'Pages_récentes', 'PagesRécentes', 'Pages_recentes', 'PagesRecentes' ),
-	'PasswordReset'             => array( 'Réinitialisation_du_mot_de_passe', 'RéinitialisationDuMotDePasse' ),
-	'PermanentLink'             => array( 'LienPermanent', 'Lien_permanent' ),
-	'Popularpages'              => array( 'Pages_les_plus_visitées', 'Pages_les_plus_visitees', 'Pageslesplusvisitées', 'Pageslesplusvisitees' ),
-	'Preferences'               => array( 'Préférences' ),
-	'Prefixindex'               => array( 'Index', 'Préfixes', 'Prefixes' ),
-	'Protectedpages'            => array( 'Pages_protégées', 'PagesProtégées', 'Pages_protegees', 'PagesProtegees' ),
-	'Protectedtitles'           => array( 'Titres_protégés', 'TitresProtégés', 'Titres_proteges', 'TitresProteges' ),
-	'Randompage'                => array( 'Page_au_hasard', 'PageAuHasard', 'Au_hasard', 'AuHasard', 'Aléatoire', 'Aleatoire' ),
-	'Randomredirect'            => array( 'Redirection_au_hasard', 'Redirect_au_hasard', 'Redirectionauhasard', 'Redirectauhasard', 'Redirection_aléatoire', 'Redirect_aléatoire', 'Redirectionaléatoire', 'Redirectaléatoire', 'Redirection_aleatoire', 'Redirect_aleatoire', 'Redirectionaleatoire', 'Redirectaleatoire' ),
-	'Recentchanges'             => array( 'Modifications_récentes', 'Modifications_recentes', 'ModificationsRécentes', 'ModificationsRecentes' ),
-	'Recentchangeslinked'       => array( 'Suivi_des_liens', 'SuiviDesLiens' ),
-	'Revisiondelete'            => array( 'Versions_supprimées', 'Versions_supprimees', 'Versionsupprimées', 'Versionsupprimees' ),
-	'Search'                    => array( 'Recherche', 'Rechercher', 'Chercher' ),
-	'Shortpages'                => array( 'Pages_courtes', 'PagesCourtes' ),
-	'Specialpages'              => array( 'Pages_spéciales', 'PagesSpéciales', 'Pages_speciales', 'PagesSpeciales' ),
-	'Statistics'                => array( 'Statistiques', 'Stats' ),
-	'Tags'                      => array( 'Balises' ),
-	'Unblock'                   => array( 'Débloquer', 'Déblocage' ),
-	'Uncategorizedcategories'   => array( 'Catégories_non_catégorisées', 'CatégoriesNonCatégorisées', 'Categories_non_categorisees', 'CategoriesNonCategorisees', 'Catégories_sans_catégorie', 'CatégoriesSansCatégorie', 'Categories_sans_categorie', 'CategoriesSansCategorie' ),
-	'Uncategorizedimages'       => array( 'Fichiers_non_catégorisés', 'FichiersNonCatégorisés', 'Fichiers_non_categorises', 'FichiersNonCategorises', 'Fichiers_sans_catégorie', 'FichiersSansCatégorie', 'Fichiers_sans_categorie', 'FichiersSansCategorie', 'Images_non_catégorisées', 'ImagesNonCatégorisées', 'Images_non_categorisees', 'ImagesNonCategorisees', 'Images_sans_catégorie', 'ImagesSansCatégorie', 'Images_sans_categorie', 'ImagesSansCategorie' ),
-	'Uncategorizedpages'        => array( 'Pages_non_catégorisées', 'PagesNonCatégorisées', 'Pages_non_categorisees', 'PagesNonCategorisees', 'Pages_sans_catégorie', 'PagesSansCatégorie', 'Pages_sans_categorie', 'PagesSansCategorie' ),
-	'Uncategorizedtemplates'    => array( 'Modèles_non_catégorisés', 'ModèlesNonCatégorisés', 'Modeles_non_categorises', 'ModelesNonCategorises', 'Modèles_sans_catégorie', 'ModèlesSansCatégorie', 'Modeles_sans_catégorie', 'ModelesSansCatégorie' ),
-	'Undelete'                  => array( 'Restaurer', 'Restauration' ),
-	'Unlockdb'                  => array( 'Déverrouiller_la_base', 'Déverrouillerlabase', 'Deverrouiller_la_base', 'Deverrouillerlabase', 'Déverrouiller_base', 'Déverrouillerbase', 'Deverrouiller_base', 'Deverrouillerbase', 'Déverrouiller_BD', 'DéverrouillerBD', 'Deverrouiller_BD', 'DeverrouillerBD', 'Déverrouiller_bd', 'Déverrouillerbd', 'Deverrouiller_bd', 'Deverrouillerbd' ),
-	'Unusedcategories'          => array( 'Catégories_inutilisées', 'CatégoriesInutilisées', 'Categories_inutilisees', 'CategoriesInutilisees', 'Catégories_non_utilisées', 'CatégoriesNonUtilisées', 'Categories_non_utilisees', 'CategoriesNonUtilisees' ),
-	'Unusedimages'              => array( 'Fichiers_inutilisés', 'FichiersInutilisés', 'Fichiers_inutilises', 'FichiersInutilises', 'Fichiers_non_utilisés', 'FichiersNon_utilisés', 'Fichiers_non_utilises', 'FichiersNon_utilises', 'Images_inutilisées', 'ImagesInutilisées', 'Images_inutilisees', 'ImagesInutilisees', 'Images_non_utilisées', 'ImagesNonUtilisées', 'Images_non_utilisees', 'ImagesNonUtilisees' ),
-	'Unusedtemplates'           => array( 'Modèles_inutilisés', 'Modèlesinutilisés', 'Modeles_inutilises', 'Modelesinutilises', 'Modèles_non_utilisés', 'Modèlesnonutilisés', 'Modeles_non_utilises', 'Modelesnonutilises' ),
-	'Unwatchedpages'            => array( 'Pages_non_suivies', 'Pagesnonsuivies' ),
-	'Upload'                    => array( 'Téléverser', 'Televerser', 'Téléversement', 'Televersement', 'Téléchargement', 'Telechargement' ),
-	'Userlogin'                 => array( 'Connexion', 'Identification' ),
-	'Userlogout'                => array( 'Déconnexion', 'Deconnexion' ),
-	'Userrights'                => array( 'Permissions', 'Droits', 'Droits_des_utilisateurs' ),
-	'Wantedcategories'          => array( 'Catégories_demandées', 'CatégoriesDemandées', 'Categories_demandees', 'CategoriesDemandees' ),
-	'Wantedfiles'               => array( 'Fichiers_demandés', 'FichiersDemandés', 'Fichiers_demandes', 'FichiersDemandes' ),
-	'Wantedpages'               => array( 'Pages_demandées', 'PagesDemandées', 'Pages_demandees', 'PagesDemandees', 'Liens_brisés', 'LiensBrisés', 'Liens_brises', 'LiensBrises' ),
-	'Wantedtemplates'           => array( 'Modèles_demandés', 'ModèlesDemandés', 'Modeles_demandes', 'ModelesDemandes' ),
-	'Watchlist'                 => array( 'Liste_de_suivi', 'ListeDeSuivi', 'Suivi' ),
-	'Whatlinkshere'             => array( 'Pages_liées', 'PagesLiées', 'Pages_liees', 'PagesLiees' ),
-	'Withoutinterwiki'          => array( 'Sans_interwiki', 'Sansinterwiki', 'Sans_interwikis', 'Sansinterwikis' ),
+$bookstoreList = array(
+	'Amazon.fr'    => 'http://www.amazon.fr/exec/obidos/ISBN=$1',
+	'alapage.fr'   => 'http://www.alapage.com/mx/?tp=F&type=101&l_isbn=$1&donnee_appel=ALASQ&devise=&',
+	'fnac.com'     => 'http://www3.fnac.com/advanced/book.do?isbn=$1',
+	'chapitre.com' => 'http://www.chapitre.com/frame_rec.asp?isbn=$1',
+);
+
+$linkTrail = '/^([a-zàâçéèêîôûäëïöüùÇÉÂÊÎÔÛÄËÏÖÜÀÈÙ]+)(.*)$/sDu';
+
+$dateFormats = array(
+	'mdy time' => 'H:i',
+	'mdy date' => 'F j, Y',
+	'mdy both' => 'F j, Y à H:i',
+
+	'dmy time' => 'H:i',
+	'dmy date' => 'j F Y',
+	'dmy both' => 'j F Y à H:i',
+
+	'ymd time' => 'H:i',
+	'ymd date' => 'Y F j',
+	'ymd both' => 'Y F j à H:i',
 );
 
 $separatorTransformTable = array( ',' => "\xc2\xa0", '.' => ',' );
@@ -515,6 +520,7 @@ $messages = array(
 'newwindow' => '(ouvre une nouvelle fenêtre)',
 'cancel' => 'Annuler',
 'moredotdotdot' => 'Plus...',
+'morenotlisted' => 'Davantage non listé…',
 'mypage' => 'Page',
 'mytalk' => 'Discussion',
 'anontalk' => 'Discussion avec cette adresse IP',
@@ -526,7 +532,6 @@ $messages = array(
 'qbbrowse' => 'Parcourir',
 'qbedit' => 'Modifier',
 'qbpageoptions' => 'Cette page',
-'qbpageinfo' => 'Contexte',
 'qbmyoptions' => 'Mes pages',
 'qbspecialpages' => 'Pages spéciales',
 'faq' => 'FAQ',
@@ -549,6 +554,7 @@ $messages = array(
 'namespaces' => 'Espaces de noms',
 'variants' => 'Variantes',
 
+'navigation-heading' => 'Menu de navigation',
 'errorpagetitle' => 'Erreur',
 'returnto' => 'Revenir à la page $1.',
 'tagline' => 'De {{SITENAME}}',
@@ -789,12 +795,11 @@ L’administrateur qui l’a verrouillé a fourni ce motif : « $3 ».',
 # Login and logout pages
 'logouttext' => "'''Vous êtes à présent déconnecté(e).'''
 
-Vous pouvez continuer à utiliser {{SITENAME}} de façon anonyme, [[Special:UserLogin|vous reconnecter]] sous le même nom ou un autre.
-Notez que certaines pages peuvent être encore affichées comme si vous étiez toujours connecté(e), jusqu’à ce que vous effaciez le cache de votre navigateur.",
-'welcomecreation' => "== Bienvenue, $1 ! ==
-
-Votre compte a été créé.
-N'oubliez pas de personnaliser vos [[Special:Preferences|préférences sur {{SITENAME}}]].",
+Vous pouvez continuer à utiliser {{SITENAME}} de façon anonyme, <span class='plainlinks'>[$1 vous reconnecter]</span> sous le même nom ou un autre.
+Notez que certaines pages peuvent être encore affichées comme si vous étiez toujours connecté(e), jusqu'à ce que vous effaciez le cache de votre navigateur.",
+'welcomeuser' => 'Bienvenue, $1&nbsp;!',
+'welcomecreation-msg' => "Votre compte a été créé.
+N'oubliez pas de modifier [[Special:Preferences|vos préférences pour {{SITENAME}}]].",
 'yourname' => "Nom d'utilisateur :",
 'yourpassword' => 'Mot de passe&nbsp;:',
 'yourpasswordagain' => 'Confirmez le mot de passe :',
@@ -817,7 +822,7 @@ N'oubliez pas de personnaliser vos [[Special:Preferences|préférences sur {{SIT
 'gotaccount' => "Vous avez déjà un compte ? '''$1'''.",
 'gotaccountlink' => 'Connectez-vous',
 'userlogin-resetlink' => 'Vous avez oublié vos détails de connexion ?',
-'createaccountmail' => 'par courriel',
+'createaccountmail' => 'Utiliser un mot de passe aléatoire temporaire et l’envoyer à l’adresse de courriel spécifiée ci-dessous',
 'createaccountreason' => 'Motif :',
 'badretype' => 'Les mots de passe que vous avez saisis ne correspondent pas.',
 'userexists' => "Nom d'utilisateur entré déjà utilisé.
@@ -888,6 +893,7 @@ Veuillez attendre avant d'essayer à nouveau.",
 # Email sending
 'php-mail-error-unknown' => 'Erreur inconnue dans la fonction mail() de PHP.',
 'user-mail-no-addy' => "Tenté d'envoyer un courriel sans adresse de courriel",
+'user-mail-no-body' => "Essai d'envoi d'un courriel avec un corps vide ou déraisonnablement court.",
 
 # Change password dialog
 'resetpass' => 'Changer de mot de passe',
@@ -933,7 +939,7 @@ $2
 Mot de passe temporaire : $2",
 'passwordreset-emailsent' => 'Un courriel de réinitialisation de mot de passe a été envoyé.',
 'passwordreset-emailsent-capture' => 'Un courriel de réinitialisation de mot de passe a été envoyé, qui est affiché ci-dessous.',
-'passwordreset-emailerror-capture' => "Un courriel de rappel a été généré, qui est affiché ci-dessous, mais l'envoi à l'utilisateur a échoué : $1",
+'passwordreset-emailerror-capture' => "Un courriel de réinitialisation de mot de passe a été généré, qui est affiché ci-dessous, mais l'envoi à l'utilisateur a échoué : $1",
 
 # Special:ChangeEmail
 'changeemail' => "Changer l'adresse de courriel",
@@ -943,6 +949,7 @@ Mot de passe temporaire : $2",
 'changeemail-oldemail' => 'Adresse de courriel actuelle :',
 'changeemail-newemail' => 'Nouvelle adresse de courriel :',
 'changeemail-none' => '(aucune)',
+'changeemail-password' => 'Votre mot de passe sur {{SITENAME}} :',
 'changeemail-submit' => "Changer l'adresse de courriel",
 'changeemail-cancel' => 'Annuler',
 
@@ -1121,7 +1128,6 @@ La dernière entrée du journal est affichée ci-dessous pour référence :",
 'template-semiprotected' => '(semi-protégé)',
 'hiddencategories' => '{{PLURAL:$1|Catégorie cachée|Catégories cachées}} dont cette page fait partie :',
 'edittools' => '<!-- Tout texte entré ici sera affiché sous les boîtes de modification ou les formulaires de téléversement de fichier. -->',
-'nocreatetitle' => 'Création de page limitée',
 'nocreatetext' => '{{SITENAME}} a restreint la possibilité de créer de nouvelles pages.
 Vous pouvez revenir en arrière et modifier une page existante, ou bien [[Special:UserLogin|vous connecter ou créer un compte]].',
 'nocreate-loggedin' => "Vous n'avez pas la permission de créer de nouvelles pages.",
@@ -1144,6 +1150,15 @@ Il semble qu'elle ait été supprimée.",
 'edit-already-exists' => "La nouvelle page n'a pas pu être créée.
 Elle existe déjà.",
 'defaultmessagetext' => 'Message par défaut',
+'content-failed-to-parse' => "Échec de l'analyse du contenu de $2 pour le modèle $1: $3",
+'invalid-content-data' => 'Données du contenu non valides',
+'content-not-allowed-here' => 'Le contenu "$1" n\'est pas autorisé sur la page [[$2]]',
+
+# Content models
+'content-model-wikitext' => 'wikitexte',
+'content-model-text' => 'texte brut',
+'content-model-javascript' => 'JavaScript',
+'content-model-css' => 'CSS',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "Attention : cette page contient de trop nombreux appels à des fonctions coûteuses de l'analyseur syntaxique.
@@ -1502,9 +1517,9 @@ Voici une valeur générée aléatoirement que vous pouvez utiliser : $1',
 'prefs-emailconfirm-label' => 'Confirmation du courriel :',
 'prefs-textboxsize' => 'Taille de la fenêtre de modification',
 'youremail' => 'Courriel :',
-'username' => "Nom d'utilisateur :",
-'uid' => "Numéro d'utilisateur :",
-'prefs-memberingroups' => 'Membre {{PLURAL:$1|du groupe|des groupes}} :',
+'username' => "{{GENDER:$1|Nom d'utilisateur|Nom d'utilisatrice}} :",
+'uid' => "Numéro d'{{GENDER:$1|utilisateur|utilisatrice}}:",
+'prefs-memberingroups' => '{{GENDER:$2|Membre}} {{PLURAL:$1|du groupe|des groupes}}:',
 'prefs-registration' => "Date d'inscription :",
 'yourrealname' => 'Nom réel :',
 'yourlanguage' => 'Langue :',
@@ -1653,12 +1668,13 @@ Elle ne doit pas dépasser $1 caractère{{PLURAL:$1||s}}.',
 'right-sendemail' => 'Envoyer un courriel aux autres utilisateurs',
 'right-passwordreset' => 'Voir les courriels de réinitialisation des mots de passe',
 
+# Special:Log/newusers
+'newuserlogpage' => 'Journal des créations de comptes utilisateur',
+'newuserlogpagetext' => "Cette page affiche l'historique des créations de comptes utilisateur.",
+
 # User rights log
 'rightslog' => "Journal des modifications de droits d'utilisateurs",
 'rightslogtext' => "Voici l'historique des modifications des droits des utilisateurs.",
-'rightslogentry' => "a modifié les droits de l'utilisateur « $1 » de $2 à $3",
-'rightslogentry-autopromote' => 'a été automatiquement promu de $2 à $3',
-'rightsnone' => '(aucun)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'lire cette page',
@@ -1900,6 +1916,7 @@ Si le problème persiste, contactez un [[Special:ListUsers/sysop|administrateur]
 'backend-fail-notsame' => 'Un fichier différent existe déjà pour $1 .',
 'backend-fail-invalidpath' => "$1 n'est pas un chemin de stockage valide.",
 'backend-fail-delete' => 'Impossible de supprimer le fichier $1.',
+'backend-fail-describe' => 'Impossible de modifier les métadonnées du fichier "$1".',
 'backend-fail-alreadyexists' => 'Le fichier $1 existe déjà.',
 'backend-fail-store' => 'Impossible de stocker le fichier $1 en $2.',
 'backend-fail-copy' => 'Impossible de copier le fichier $1 en $2.',
@@ -2136,6 +2153,12 @@ N'oubliez pas de vérifier s'il n'y a pas d'autres liens vers les modèles avant
 Elles devraient plutôt pointer vers le bon article.<br />
 Une page est considérée comme une page d'homonymie si elle utilise un modèle lié à [[MediaWiki:Disambiguationspage]]",
 
+'pageswithprop' => 'Pages avec une propriété de page',
+'pageswithprop-legend' => 'Pages avec une propriété de page',
+'pageswithprop-text' => 'Cette page liste les pages qui utilisent une propriété de page particulière.',
+'pageswithprop-prop' => 'Nom de la propriété:',
+'pageswithprop-submit' => 'Aller',
+
 'doubleredirects' => 'Doubles redirections',
 'doubleredirectstext' => 'Voici une liste des pages qui redirigent vers des pages qui sont elles-mêmes des pages de redirection.
 Chaque entrée contient des liens vers la première et la seconde redirections, ainsi que la première ligne de texte de la seconde page, ce qui fournit habituellement la « vraie » page cible, vers laquelle la première redirection devrait rediriger.
@@ -2289,7 +2312,7 @@ Voyez aussi [[Special:WantedCategories|les catégories demandées]].',
 'linksearch-ok' => 'Rechercher',
 'linksearch-text' => "Des caractères jokers comme « *.wikipedia.org » peuvent être utilisés.
 Ils nécessitent au moins un domaine de niveau supérieur, par exemple « *.org ».<br />
-Protocoles reconnus : <code>$1</code> (http:// par défaut si aucun protocole n'est indiqué).",
+{{PLURAL:$2|Protocole reconnu|Protocoles reconnus}}: <code>$1</code> (http:// par défaut si aucun protocole n'est indiqué).",
 'linksearch-line' => '$1 est lié depuis $2',
 'linksearch-error' => "Les caractères jokers ne peuvent être utilisés qu'au début du nom de domaine de l'hôte.",
 
@@ -2307,10 +2330,6 @@ Protocoles reconnus : <code>$1</code> (http:// par défaut si aucun protocole n'
 'activeusers-hidebots' => 'Masquer les robots',
 'activeusers-hidesysops' => 'Masquer les administrateurs',
 'activeusers-noresult' => 'Aucun utilisateur trouvé.',
-
-# Special:Log/newusers
-'newuserlogpage' => 'Journal des créations de comptes utilisateur',
-'newuserlogpagetext' => "Cette page affiche l'historique des créations de comptes utilisateur.",
 
 # Special:ListGroupRights
 'listgrouprights' => "Droits des groupes d'utilisateurs",
@@ -2406,19 +2425,23 @@ Les prochaines modifications de cette page et de la page de discussion associée
 
 'enotif_mailer' => 'Système de notification par courriel de {{SITENAME}}',
 'enotif_reset' => 'Marquer toutes les pages comme visitées',
-'enotif_newpagetext' => 'Ceci est une nouvelle page.',
 'enotif_impersonal_salutation' => 'Utilisateur de {{SITENAME}}',
-'changed' => 'modifiée',
-'created' => 'créée',
-'enotif_subject' => 'La page $PAGETITLE de {{SITENAME}} a été $CHANGEDORCREATED par $PAGEEDITOR',
+'enotif_subject_deleted' => 'La page $1 sur {{SITENAME}} a été supprimée par {{GENDER:$2|$2}}',
+'enotif_subject_created' => 'La page $1 sur {{SITENAME}} a été créée par {{GENDER:$2|$2}}',
+'enotif_subject_moved' => 'La page $1 sur {{SITENAME}} a été renommée par {{GENDER:$2|$2}}',
+'enotif_subject_restored' => 'La page $1 sur {{SITENAME}} a été restaurée par {{GENDER:$2|$2}}',
+'enotif_subject_changed' => 'La page $1 sur {{SITENAME}} a été modifiée par {{GENDER:$2|$2}}',
+'enotif_body_intro_deleted' => 'La page $1 sur {{SITENAME}} a été effacée le $PAGEEDITDATE par {{gender:$2|$2}}, voir $3 pour la révision actuelle.',
+'enotif_body_intro_created' => 'La page $1 sur {{SITENAME}} a été créée le $PAGEEDITDATE par {{GENDER:$2|$2}}, voir $3 pour la révision actuelle.',
+'enotif_body_intro_moved' => 'La page $1 sur {{SITENAME}} a été renommée le $PAGEEDITDATE par {{GENDER:$2|$2}}, voir $3 pour la révision actuelle.',
+'enotif_body_intro_restored' => 'La page $1 sur {{SITENAME}} a été restaurée le $PAGEEDITDATE par {{GENDER:$2|$2}}, voir $3 pour la révision actuelle.',
+'enotif_body_intro_changed' => 'La page $1 sur {{SITENAME}} a été modifiée le $PAGEEDITDATE par {{GENDER:$2|$2}}, voir $3 pour la révision actuelle.',
 'enotif_lastvisited' => 'Voyez $1 pour tous les changements depuis votre dernière visite.',
 'enotif_lastdiff' => 'Voyez $1 pour visualiser ces changements.',
 'enotif_anon_editor' => 'utilisateur non-enregistré $1',
 'enotif_body' => 'Cher $WATCHINGUSERNAME,
 
-La page « $PAGETITLE » de {{SITENAME}} a été $CHANGEDORCREATED le $PAGEEDITDATE par « $PAGEEDITOR », visitez $PAGETITLE_URL pour visualiser la version actuelle.
-
-$NEWPAGE
+$PAGEINTRO $NEWPAGE
 
 Résumé du contributeur : $PAGESUMMARY $PAGEMINOREDIT
 
@@ -2426,8 +2449,7 @@ Contactez ce contributeur :
 courriel : $PAGEEDITOR_EMAIL
 wiki : $PAGEEDITOR_WIKI
 
-Il n’y aura pas d’autres notifications en cas de changements ultérieurs, à moins que vous ne visitiez cette page.
-Vous pouvez aussi réinitialiser les drapeaux de notification pour toutes les pages de votre liste de suivi.
+Il n\'y aura pas d\'autres notifications en cas de changements ultérieurs, à moins que vous ne visitiez cette page. Vous pouvez aussi réinitialiser les drapeaux de notification pour toutes les pages de votre liste de suivi.
 
              Votre système de notification de {{SITENAME}}
 
@@ -2443,6 +2465,8 @@ $UNWATCHURL
 
 Retour et assistance :
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'créée',
+'changed' => 'modifiée',
 
 # Delete
 'deletepage' => 'Supprimer la page',
@@ -2515,6 +2539,8 @@ Consultez la [[Special:ProtectedPages|liste des pages protégées]] pour la list
 'prot_1movedto2' => '[[$1]] renommé en [[$2]]',
 'protect-badnamespace-title' => 'Espace de noms non protégeable',
 'protect-badnamespace-text' => 'Les pages dans cet espace de noms ne peuvent pas être protégées.',
+'protect-norestrictiontypes-text' => "Cette page ne peut pas être protégée car il n'y a pas de type de restriction disponible.",
+'protect-norestrictiontypes-title' => 'Page non protégeable',
 'protect-legend' => 'Confirmer la protection',
 'protectcomment' => 'Motif :',
 'protectexpiry' => "Date d'expiration :",
@@ -2599,8 +2625,8 @@ Vous avez peut-être un mauvais lien, ou la version a pu être restaurée ou sup
 'undeletedrevisions' => '$1 {{PLURAL:$1|version restaurée|versions restaurées}}',
 'undeletedrevisions-files' => '$1 version{{PLURAL:$1||s}} et $2 fichier{{PLURAL:$2||s}} restauré{{PLURAL:$2||s}}',
 'undeletedfiles' => '$1 {{PLURAL:$1|fichier restauré|fichiers restaurés}}',
-'cannotundelete' => 'La restauration a échoué ;
-un autre utilisateur a probablement déjà restauré la page.',
+'cannotundelete' => 'Échec de la restauration:
+$1',
 'undeletedpage' => "'''La page $1 a été restaurée.'''
 
 Consultez le [[Special:Log/delete|journal des suppressions]] pour obtenir la liste des récentes suppressions et restaurations.",
@@ -2632,7 +2658,7 @@ $1',
 'blanknamespace' => '(Principal)',
 
 # Contributions
-'contributions' => "Contributions de l'utilisateur",
+'contributions' => "Contributions de l'{{GENDER:$1|utilisateur|utilisatrice}}",
 'contributions-title' => "Liste des contributions de l'utilisateur $1",
 'mycontris' => 'Contributions',
 'contribsub2' => 'Pour $1 ($2)',
@@ -2899,6 +2925,7 @@ impossible de renommer une page sur elle-même.",
 'immobile-target-namespace-iw' => 'Les destinations interwikis ne sont pas une cible valide pour les déplacements.',
 'immobile-source-page' => "Cette page n'est pas renommable.",
 'immobile-target-page' => "Il n'est pas possible de renommer la page vers ce titre.",
+'bad-target-model' => 'La destination souhaitée utilise un autre modèle de contenu. Impossible de convertir de $1 vers $2.',
 'imagenocrossnamespace' => 'Impossible de renommer un fichier vers un espace de noms autre que fichier.',
 'nonfile-cannot-move-to-file' => "Impossible de renommer quelque chose d'autre qu'un fichier vers l'espace de noms fichier.",
 'imagetypemismatch' => 'La nouvelle extension de ce fichier ne correspond pas à son type.',
@@ -3012,6 +3039,7 @@ Un dossier temporaire est manquant.",
 'import-error-interwiki' => "La page « $1 » n'est pas importée parce que son nom est réservé pour un lien externe (interwiki).",
 'import-error-special' => 'La page « $1 » n’est pas importée parce qu’elle appartient à un espace de noms spécial qui n’en autorise aucune.',
 'import-error-invalid' => "Page « $1 » n'est pas importée parce que son nom n'est pas valide.",
+'import-error-unserialize' => 'La révision $2 de la page « $1 » ne peut pas être désérialisée. La révision est indiquée comme utilisant le modèle de contenu $3 sérialisé en $4.',
 'import-options-wrong' => '{{PLURAL:$2|Mauvaise option|Mauvaises options}} : <nowiki>$1</nowiki>',
 'import-rootpage-invalid' => 'La page racine fournie est un titre non valide.',
 'import-rootpage-nosubpage' => 'L’espace de noms « $1 » de la page racine n’autorise pas les sous-pages.',
@@ -3026,7 +3054,6 @@ Un dossier temporaire est manquant.",
 
 # JavaScriptTest
 'javascripttest' => 'Test de JavaScript',
-'javascripttest-disabled' => "Cette fonction n'a pas été activée sur ce wiki.",
 'javascripttest-title' => 'Exécution des tests $1',
 'javascripttest-pagetext-noframework' => "Cette page est réservée pour l'exécution des tests JavaScript.",
 'javascripttest-pagetext-unknownframework' => 'Structure « $1 » inconnue.',
@@ -3177,11 +3204,13 @@ Permet de rétablir la version précédente et d’ajouter un motif dans la boî
 'pageinfo-default-sort' => 'Clé de tri par défaut',
 'pageinfo-length' => 'Taille de la page (en octets)',
 'pageinfo-article-id' => 'Numéro de la page',
+'pageinfo-language' => 'Langue du contenu de la page',
 'pageinfo-robot-policy' => 'Statut de moteur de recherche',
 'pageinfo-robot-index' => 'Indexable',
 'pageinfo-robot-noindex' => 'Non indexable',
 'pageinfo-views' => 'Nombre de vues',
 'pageinfo-watchers' => 'Nombre de contributeurs ayant la page dans leur liste de suivi',
+'pageinfo-few-watchers' => 'Moins de $1 {{PLURAL:$1|observateur|observateurs}}',
 'pageinfo-redirects-name' => 'Redirections vers cette page',
 'pageinfo-subpages-name' => 'Sous-pages de cette page',
 'pageinfo-subpages-value' => '$1 ($2 {{PLURAL:$2|redirection|redirections}}; $3 {{PLURAL:$3|non-redirection|non-redirections}})',
@@ -3196,6 +3225,19 @@ Permet de rétablir la version précédente et d’ajouter un motif dans la boî
 'pageinfo-magic-words' => '{{PLURAL:$1|Mot magique|Mots magiques}} ($1)',
 'pageinfo-hidden-categories' => '{{PLURAL:$1|Catégorie cachée|Catégories cachées}} ($1)',
 'pageinfo-templates' => '{{PLURAL:$1|Modèle inclu|Modèles inclus}} ($1)',
+'pageinfo-transclusions' => '{{PLURAL:$1|Page traduite|Pages traduites}} sur ($1)',
+'pageinfo-toolboxlink' => 'Information sur la page',
+'pageinfo-redirectsto' => 'Rediriger vers',
+'pageinfo-redirectsto-info' => 'info',
+'pageinfo-contentpage' => 'Compté comme page de contenu',
+'pageinfo-contentpage-yes' => 'Oui',
+'pageinfo-protect-cascading' => "Les protections sont déduites d'ici",
+'pageinfo-protect-cascading-yes' => 'Oui',
+'pageinfo-protect-cascading-from' => 'Les protections sont déduites depuis',
+'pageinfo-category-info' => 'Informations sur la catégorie',
+'pageinfo-category-pages' => 'Nombre de pages',
+'pageinfo-category-subcats' => 'Nombre de sous-catégories',
+'pageinfo-category-files' => 'Nombre de fichiers',
 
 # Skin names
 'skinname-standard' => 'Standard',
@@ -3218,6 +3260,8 @@ Permet de rétablir la version précédente et d’ajouter un motif dans la boî
 'markedaspatrollederror' => 'Ne peut être marquée comme relue',
 'markedaspatrollederrortext' => 'Vous devez sélectionner une version pour pouvoir la marquer comme relue.',
 'markedaspatrollederror-noautopatrol' => "Vous n'avez pas le droit de marquer vos propres modifications comme relues.",
+'markedaspatrollednotify' => 'Cette modification de $1 a été marquée comme relue.',
+'markedaspatrollederrornotify' => 'Échec du marquage comme contrôlé.',
 
 # Patrol log
 'patrol-log-page' => 'Journal des relectures',
@@ -3251,6 +3295,7 @@ Si vous l'exécutez, votre système peut être compromis.",
 'file-nohires' => 'Pas de plus haute résolution disponible.',
 'svg-long-desc' => 'Fichier SVG, résolution de $1 × $2 pixels, taille : $3',
 'svg-long-desc-animated' => 'Fichier SVG animé, taille $1 x $2 pixels, taille du fichier: $3',
+'svg-long-error' => 'Fichier SVG non valide: $1',
 'show-big-image' => 'Image en plus haute résolution',
 'show-big-image-preview' => 'Taille de cet aperçu : $1.',
 'show-big-image-other' => '{{PLURAL:$2|Autre résolution|Autres résolutions}} : $1.',
@@ -3281,7 +3326,10 @@ Si vous l'exécutez, votre système peut être compromis.",
 'minutes' => '{{PLURAL:$1|$1 minute|$1 minutes}}',
 'hours' => '{{PLURAL:$1|$1 heure|$1 heures}}',
 'days' => '{{PLURAL:$1|$1 jour|$1 jours}}',
+'months' => '{{PLURAL:$1|$1 mois}}',
+'years' => '{{PLURAL:$1|$1 an|$1 ans}}',
 'ago' => 'Il y a $1',
+'just-now' => "à l'instant",
 
 # Bad image list
 'bad_image_list' => "Le format est le suivant :
@@ -3787,6 +3835,7 @@ $5",
 # Scary transclusion
 'scarytranscludedisabled' => '[La transclusion interwiki est désactivée]',
 'scarytranscludefailed' => '[La récupération de modèle a échoué pour $1]',
+'scarytranscludefailed-httpstatus' => '[Échec de la récupération du modèle pour  $1 : HTTP  $2 ]',
 'scarytranscludetoolong' => "[L'URL est trop longue]",
 
 # Delete conflict
@@ -3968,6 +4017,7 @@ Vous pouvez aussi [[Special:EditWatchlist|utiliser l'éditeur normal]].",
 'version-license' => 'Licence',
 'version-poweredby-credits' => "Ce wiki fonctionne grâce à '''[//www.mediawiki.org/ MediaWiki]''', copyright © 2001-$1 $2.",
 'version-poweredby-others' => 'autres',
+'version-credits-summary' => 'Nous tenons à remercier les personnes suivantes pour leur contribution à  [[Special:Version|MediaWiki]].',
 'version-license-info' => "MediaWiki est un logiciel libre, vous pouvez le redistribuer ou le modifier selon les termes de la Licence Publique Générale GNU telle que publiée par la Free Software Foundation ; soit la version 2 de la Licence, ou (à votre choix) toute version ultérieure.
 
 MediaWiki est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE GARANTIE, sans même la garantie implicite de COMMERCIALISATION ou D'ADAPTATION À UN USAGE PARTICULIER. Voir la Licence Publique Générale GNU pour plus de détails.
@@ -4084,17 +4134,17 @@ Les images sont montrées dans leur pleine résolution, les autres fichiers sont
 'sqlite-no-fts' => '$1 sans recherche en texte intégral supportée',
 
 # New logging system
-'logentry-delete-delete' => '$1 a supprimé la page $3',
-'logentry-delete-restore' => '$1 a restauré la page $3',
-'logentry-delete-event' => "$1 a modifié la visibilité {{PLURAL:$5|d'un événement du journal|de $5 événements du journal}} sur $3: $4",
-'logentry-delete-revision' => '$1 a modifié la visibilité {{PLURAL:$5|d’une révision|de $5 révisions}} sur la page $3&nbsp;: $4',
-'logentry-delete-event-legacy' => '$1 a modifié la visibilité des événements du journal sur $3',
-'logentry-delete-revision-legacy' => '$1 a modifié la visibilité des révisions sur la page $3',
-'logentry-suppress-delete' => '$1 a supprimé la page $3',
-'logentry-suppress-event' => "$1 a secrètement modifié la visibilité {{PLURAL:$5|d'un événement du journal|de $5 événements du journal}} sur $3: $4",
-'logentry-suppress-revision' => "$1 a secrètement modifié la visibilité {{PLURAL:$5|d'une révision|de $5 révisions}} sur la page $3: $4",
-'logentry-suppress-event-legacy' => '$1 a secrètement modifié la visibilité des événements du journal sur $3',
-'logentry-suppress-revision-legacy' => '$1 a secrètement modifié la visibilité des révisions sur la page $3',
+'logentry-delete-delete' => '$1 {{GENDER:$2|a supprimé}} la page $3',
+'logentry-delete-restore' => '$1 {{GENDER:$2|a restauré}} la page $3',
+'logentry-delete-event' => "$1 {{GENDER:$2|a modifié}} la visibilité {{PLURAL:$5|d'un événement du journal|de $5 événements du journal}} sur $3: $4",
+'logentry-delete-revision' => '$1 {{GENDER:$2|a modifié}} la visibilité {{PLURAL:$5|d’une révision|de $5 révisions}} sur la page $3: $4',
+'logentry-delete-event-legacy' => '$1 {{GENDER:$2|a modifié}} la visibilité des événements du journal sur $3',
+'logentry-delete-revision-legacy' => '$1 {{GENDER:$2|a modifié}} la visibilité des révisions sur la page $3',
+'logentry-suppress-delete' => '$1 {{GENDER:$2|a supprimé}} la page $3',
+'logentry-suppress-event' => "$1 {{GENDER:$2|a secrètement modifié}} la visibilité {{PLURAL:$5|d'un événement du journal|de $5 événements du journal}} sur $3: $4",
+'logentry-suppress-revision' => "$1 {{GENDER:$2|a secrètement modifié}} la visibilité {{PLURAL:$5|d'une révision|de $5 révisions}} sur la page $3: $4",
+'logentry-suppress-event-legacy' => '$1 {{GENDER:$2|a secrètement modifié}} la visibilité des événements du journal sur $3',
+'logentry-suppress-revision-legacy' => '$1 {{GENDER:$2|a secrètement modifié}} la visibilité des révisions sur la page $3',
 'revdelete-content-hid' => 'contenu masqué',
 'revdelete-summary-hid' => 'résumé de modification masqué',
 'revdelete-uname-hid' => 'nom d’utilisateur masqué',
@@ -4103,17 +4153,21 @@ Les images sont montrées dans leur pleine résolution, les autres fichiers sont
 'revdelete-uname-unhid' => 'nom d’utilisateur affiché',
 'revdelete-restricted' => 'restrictions appliquées aux administrateurs',
 'revdelete-unrestricted' => 'restrictions retirées pour les administrateurs',
-'logentry-move-move' => '$1 a déplacé la page $3 vers $4',
-'logentry-move-move-noredirect' => '$1 a déplacé la page $3 vers $4 sans laisser de redirection',
-'logentry-move-move_redir' => '$1 a déplacé la page $3 vers $4 par-dessus une redirection',
-'logentry-move-move_redir-noredirect' => '$1 a déplacé la page $3 vers $4 par-dessus une redirection sans laisser de redirection',
-'logentry-patrol-patrol' => '$1 a marqué la révision $4 de la page $3 comme relue',
-'logentry-patrol-patrol-auto' => '$1 a automatiquement marqué la révision $4 de la page $3 comme relue',
-'logentry-newusers-newusers' => 'Le compte utilisateur $1 a été créé',
-'logentry-newusers-create' => 'Le compte utilisateur $1 a été créé',
-'logentry-newusers-create2' => 'Le compte utilisateur $3 a été créé par $1',
-'logentry-newusers-autocreate' => 'Le compte $1 a été créé automatiquement',
-'newuserlog-byemail' => 'mot de passe envoyé par courriel',
+'logentry-move-move' => '$1 {{GENDER:$2|a déplacé}} la page $3 vers $4',
+'logentry-move-move-noredirect' => '$1 {{GENDER:$2|a déplacé}} la page $3 vers $4 sans laisser de redirection',
+'logentry-move-move_redir' => '$1 {{GENDER:$2|a déplacé}} la page $3 vers $4 par-dessus une redirection',
+'logentry-move-move_redir-noredirect' => '$1 {{GENDER:$2|a déplacé}} la page $3 vers $4 par-dessus une redirection sans laisser de redirection',
+'logentry-patrol-patrol' => '$1 {{GENDER:$2|a marqué}} la révision $4 de la page $3 comme relue',
+'logentry-patrol-patrol-auto' => '$1 {{GENDER:$2|a automatiquement marqué}} la révision $4 de la page $3 comme relue',
+'logentry-newusers-newusers' => 'Le compte utilisateur $1 {{GENDER:$2|a été créé}}',
+'logentry-newusers-create' => 'Le compte utilisateur $1 {{GENDER:$2|a été créé}}',
+'logentry-newusers-create2' => 'Le compte utilisateur $3 {{GENDER:$2|a été créé}} par $1',
+'logentry-newusers-byemail' => 'Le compte utilisateur $3 {{GENDER:$2|a été créé}} par $1 et le mot de passe a été envoyé par courriel',
+'logentry-newusers-autocreate' => 'Le compte $1 {{GENDER:$2|a été créé}} automatiquement',
+'logentry-rights-rights' => "$1 {{GENDER:$2|a modifié}} l'appartenance au groupe pour $3 de $4 à $5",
+'logentry-rights-rights-legacy' => "$1 {{GENDER:$2|a modifié}} l'appartenance au groupe pour $3",
+'logentry-rights-autopromote' => '$1 {{GENDER:$2|a été promu}} automatiquement de $4 à $5',
+'rightsnone' => '(aucun)',
 
 # Feedback
 'feedback-bugornote' => "Si vous êtes prêt à décrire un problème technique en détail, veuillez [$1 signaler un bogue].
@@ -4167,6 +4221,7 @@ Sinon, vous pouvez utiliser le formulaire simplifié ci-dessous. Votre commentai
 'api-error-ok-but-empty' => "Erreur interne : Le serveur n'a pas répondu.",
 'api-error-overwrite' => "Écraser un fichier existant n'est pas autorisé.",
 'api-error-stashfailed' => "Erreur interne : le serveur n'a pas pu enregistrer le fichier temporaire.",
+'api-error-publishfailed' => 'Erreur interne: Le serveur n’a pas pu publier le fichier temporaire.',
 'api-error-timeout' => "Le serveur n'a pas répondu dans le délai imparti.",
 'api-error-unclassified' => "Une erreur inconnue s'est produite",
 'api-error-unknown-code' => 'Erreur inconnue : « $1 »',
@@ -4186,5 +4241,8 @@ Sinon, vous pouvez utiliser le formulaire simplifié ci-dessous. Votre commentai
 'duration-decades' => '$1 décennie{{PLURAL:$1||s}}',
 'duration-centuries' => '$1 siècle{{PLURAL:$1||s}}',
 'duration-millennia' => '$1 millénaire{{PLURAL:$1||s}}',
+
+# Image rotation
+'rotate-comment' => 'Image pivotée de $1 {{PLURAL:$1|degré|degrés}} dans le sens des aiguilles d’une montre',
 
 );

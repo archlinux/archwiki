@@ -24,9 +24,9 @@
 /**
  * A repository for files accessible via the local filesystem.
  * Does not support database access or registration.
- * 
+ *
  * This is a mostly a legacy class. New uses should not be added.
- * 
+ *
  * @ingroup FileRepo
  * @deprecated since 1.19
  */
@@ -46,6 +46,9 @@ class FSRepo extends FileRepo {
 			$thumbDir = isset( $info['thumbDir'] )
 				? $info['thumbDir']
 				: "{$directory}/thumb";
+			$transcodedDir = isset( $info['transcodedDir'] )
+				? $info['transcodedDir']
+				: "{$directory}/transcoded";
 			$fileMode = isset( $info['fileMode'] )
 				? $info['fileMode']
 				: 0644;
@@ -59,6 +62,7 @@ class FSRepo extends FileRepo {
 					"{$repoName}-public"  => "{$directory}",
 					"{$repoName}-temp"    => "{$directory}/temp",
 					"{$repoName}-thumb"   => $thumbDir,
+					"{$repoName}-transcoded"   => $transcodedDir,
 					"{$repoName}-deleted" => $deletedDir
 				),
 				'fileMode'       => $fileMode,

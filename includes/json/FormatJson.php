@@ -1,6 +1,6 @@
 <?php
 /**
- * Simple wrapper for json_econde and json_decode that falls back on Services_JSON class.
+ * Simple wrapper for json_encode and json_decode that falls back on Services_JSON class.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,28 +31,23 @@ class FormatJson {
 	 * Returns the JSON representation of a value.
 	 *
 	 * @param $value Mixed: the value being encoded. Can be any type except a resource.
-	 * @param $isHtml Boolean
-	 *
-	 * @todo FIXME: "$isHtml" parameter's purpose is not documented. It appears to
-	 *        map to a parameter labeled "pretty-print output with indents and
-	 *        newlines" in Services_JSON::encode(), which has no string relation
-	 *        to HTML output.
+	 * @param $pretty Boolean: If true, adds non-significant whitespace to improve readability.
 	 *
 	 * @return string
 	 */
-	public static function encode( $value, $isHtml = false ) {
-		if ( !function_exists( 'json_encode' ) || ( $isHtml && version_compare( PHP_VERSION, '5.4.0', '<' ) ) ) {
+	public static function encode( $value, $pretty = false ) {
+		if ( !function_exists( 'json_encode' ) || ( $pretty && version_compare( PHP_VERSION, '5.4.0', '<' ) ) ) {
 			$json = new Services_JSON();
-			return $json->encode( $value, $isHtml );
+			return $json->encode( $value, $pretty );
 		} else {
-			return json_encode( $value, $isHtml ? JSON_PRETTY_PRINT : 0 );
+			return json_encode( $value, $pretty ? JSON_PRETTY_PRINT : 0 );
 		}
 	}
 
 	/**
 	 * Decodes a JSON string.
 	 *
-	 * @param $value String: the json string being decoded.
+	 * @param string $value the json string being decoded.
 	 * @param $assoc Boolean: when true, returned objects will be converted into associative arrays.
 	 *
 	 * @return Mixed: the value encoded in json in appropriate PHP type.

@@ -25,16 +25,12 @@
  */
 
 /**
-* API module that facilitates the changing of user's preferences.
-* Requires API write mode to be enabled.
-*
+ * API module that facilitates the changing of user's preferences.
+ * Requires API write mode to be enabled.
+ *
  * @ingroup API
  */
 class ApiOptions extends ApiBase {
-
-	public function __construct( $main, $action ) {
-		parent::__construct( $main, $action );
-	}
 
 	/**
 	 * Changes preferences of the current user.
@@ -54,7 +50,7 @@ class ApiOptions extends ApiBase {
 		}
 
 		if ( $params['reset'] ) {
-			$user->resetOptions();
+			$user->resetOptions( $params['resetkinds'] );
 			$changed = true;
 		}
 
@@ -74,13 +70,36 @@ class ApiOptions extends ApiBase {
 		}
 
 		$prefs = Preferences::getPreferences( $user, $this->getContext() );
+		$prefsKinds = $user->getOptionKinds( $this->getContext(), $changes );
+
 		foreach ( $changes as $key => $value ) {
-			if ( !isset( $prefs[$key] ) ) {
-				$this->setWarning( "Not a valid preference: $key" );
-				continue;
+			switch ( $prefsKinds[$key] ) {
+				case 'registered':
+					// Regular option.
+					$field = HTMLForm::loadInputFromParameters( $key, $prefs[$key] );
+					$validation = $field->validate( $value, $user->getOptions() );
+					break;
+				case 'registered-multiselect':
+				case 'registered-checkmatrix':
+					// A key for a multiselect or checkmatrix option.
+					$validation = true;
+					$value = $value !== null ? (bool) $value : null;
+					break;
+				case 'userjs':
+					// Allow non-default preferences prefixed with 'userjs-', to be set by user scripts
+					if ( strlen( $key ) > 255 ) {
+						$validation = "key too long (no more than 255 bytes allowed)";
+					} elseif ( preg_match( "/[^a-zA-Z0-9_-]/", $key ) !== 0 ) {
+						$validation = "invalid key (only a-z, A-Z, 0-9, _, - allowed)";
+					} else {
+						$validation = true;
+					}
+					break;
+				case 'unused':
+				default:
+					$validation = "not a valid preference";
+					break;
 			}
-			$field = HTMLForm::loadInputFromParameters( $key, $prefs[$key] );
-			$validation = $field->validate( $value, $user->getOptions() );
 			if ( $validation === true ) {
 				$user->setOption( $key, $value );
 				$changed = true;
@@ -106,12 +125,20 @@ class ApiOptions extends ApiBase {
 	}
 
 	public function getAllowedParams() {
+		$optionKinds = User::listOptionKinds();
+		$optionKinds[] = 'all';
+
 		return array(
 			'token' => array(
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true
 			),
 			'reset' => false,
+			'resetkinds' => array(
+				ApiBase::PARAM_TYPE => $optionKinds,
+				ApiBase::PARAM_DFLT => 'all',
+				ApiBase::PARAM_ISMULTI => true
+			),
 			'change' => array(
 				ApiBase::PARAM_ISMULTI => true,
 			),
@@ -139,15 +166,20 @@ class ApiOptions extends ApiBase {
 	public function getParamDescription() {
 		return array(
 			'token' => 'An options token previously obtained through the action=tokens',
-			'reset' => 'Resets all preferences to the site defaults',
-			'change' => 'List of changes, formatted name=value (e.g. skin=vector), value cannot contain pipe characters',
+			'reset' => 'Resets preferences to the site defaults',
+			'resetkinds' => 'List of types of options to reset when the "reset" option is set',
+			'change' => 'List of changes, formatted name=value (e.g. skin=vector), value cannot contain pipe characters. If no value is given (not even an equals sign), e.g., optionname|otheroption|..., the option will be reset to its default value',
 			'optionname' => 'A name of a option which should have an optionvalue set',
 			'optionvalue' => 'A value of the option specified by the optionname, can contain pipe characters',
 		);
 	}
 
 	public function getDescription() {
-		return 'Change preferences of the current user';
+		return array(
+			'Change preferences of the current user',
+			'Only options which are registered in core or in one of installed extensions,',
+			'or as options with keys prefixed with \'userjs-\' (intended to be used by user scripts), can be set.'
+		);
 	}
 
 	public function getPossibleErrors() {
@@ -175,9 +207,5 @@ class ApiOptions extends ApiBase {
 			'api.php?action=options&change=skin=vector|hideminor=1&token=123ABC',
 			'api.php?action=options&reset=&change=skin=monobook&optionname=nickname&optionvalue=[[User:Beau|Beau]]%20([[User_talk:Beau|talk]])&token=123ABC',
 		);
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

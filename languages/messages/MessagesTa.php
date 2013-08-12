@@ -226,7 +226,6 @@ $messages = array(
 'qbbrowse' => 'உலவு',
 'qbedit' => 'தொகு',
 'qbpageoptions' => 'பக்க விருப்பத் தேர்வுகள்',
-'qbpageinfo' => 'பக்கத் தகவல்கள்',
 'qbmyoptions' => 'என் விருப்பத்தேர்வுகள்',
 'qbspecialpages' => 'சிறப்புப் பக்கங்கள்',
 'faq' => 'அடிக்கடி கேட்கப்படும் கேள்விகள்',
@@ -251,6 +250,7 @@ $messages = array(
 
 மாற்றுருவங்கள்',
 
+'navigation-heading' => 'வழிசெலுத்தல் பட்டி',
 'errorpagetitle' => 'தவறு',
 'returnto' => '$1 பக்கத்துக்குத் திரும்பு.',
 'tagline' => '{{SITENAME}} இருந்து',
@@ -482,9 +482,9 @@ MySQL returned error "$3: $4".',
 # Login and logout pages
 'logouttext' => "'''நீங்கள் இப்பொழுது விடுபதிகையில் உள்ளீர்கள்.'''
 
-நீங்கள் தொடர்ந்து {{SITENAME}} தளத்தை அனானியாகப் பயன்படுத்தலாம், அல்லது அதே பயனராகவோ வேறு பயனராகவோ [[Special:UserLogin|மீண்டும் புகுபதிகை]] செய்யலாம். உங்கள் உலாவியின் இடைமாற்று நீக்கப்படும் வரை சில பக்கங்கள் தொடர்ந்தும் புகுபதிகையில் உள்ளது போன்றே காட்சி தரும் என்பதைக் கவனிக்கவும்.",
-'welcomecreation' => '==நல்வரவு, $1!==
-உங்களுக்கான பயனர் கணக்கு உருவாக்கப்பட்டுள்ளது. உங்களுக்கேற்றவாறு [[Special:Preferences|{{SITENAME}} விருப்பத்தேர்வுகளை]] மாற்றிக் கொள்ள மறவாதீர்கள்.',
+நீங்கள் தொடர்ந்து {{SITENAME}} தளத்தை அனானியாகப் பயன்படுத்தலாம், அல்லது அதே பயனராகவோ வேறு பயனராகவோ <span class='plainlinks'>[$1 மீண்டும் புகுபதிகை]</span> செய்யலாம். உங்கள் உலாவியின் இடைமாற்று நீக்கப்படும் வரை சில பக்கங்கள் தொடர்ந்தும் புகுபதிகையில் உள்ளது போன்றே காட்சி தரும் என்பதைக் கவனிக்கவும்.",
+'welcomeuser' => 'வருக $1',
+'welcomecreation-msg' => 'உங்களுக்கான பயனர் கணக்கு உருவாக்கப்பட்டுள்ளது. உங்களுக்கேற்றவாறு [[Special:Preferences|{{SITENAME}} விருப்பத்தேர்வுகளை]] மாற்றிக் கொள்ள மறவாதீர்கள்.',
 'yourname' => 'பயனர் பெயர்:',
 'yourpassword' => 'கடவுச்சொல்:',
 'yourpasswordagain' => 'கடவுச்சொல்லைத் திரும்ப தட்டச்சிடுக:',
@@ -575,6 +575,7 @@ MySQL returned error "$3: $4".',
 # Email sending
 'php-mail-error-unknown' => "PHP 's mail() செயல்பாட்டில் அறியப்படாத பிழை.",
 'user-mail-no-addy' => 'மின்னஞ்சல் முகவரி இல்லாமல் மின்னஞ்சல் அனுப்ப முயற்சித்தது.',
+'user-mail-no-body' => 'வெற்று அல்லது மிகவும் சிறிய அளவுள்ள மின்னஞ்சலை அனுப்ப முயற்சித்துள்ளீர்.',
 
 # Change password dialog
 'resetpass' => 'கடவுச்சொல்லை மாற்றியமை',
@@ -633,6 +634,7 @@ $2
 'changeemail-oldemail' => 'தற்பொழுதுள்ள மின்னஞ்சல் முகவரி:',
 'changeemail-newemail' => 'புதிய மின்னஞ்சல் முகவரி:',
 'changeemail-none' => '(எதுவுமில்லை)',
+'changeemail-password' => 'உங்கள் {{SITENAME}} கடவுச்சொல்:',
 'changeemail-submit' => 'மின்னஞ்சலை மாற்று',
 'changeemail-cancel' => 'விட்டுவிடு',
 
@@ -794,7 +796,6 @@ $1 எனும் பயனரையோ வேறு [[{{MediaWiki:Grouppage-sy
 'template-protected' => '(காக்கப்பட்டது)',
 'template-semiprotected' => '(பகுதியாகக் காக்கப்பட்டது)',
 'hiddencategories' => 'இப்பக்கம் {{PLURAL:$1|ஒரு மறைக்கப்பட்ட பகுப்பில்|$1 மறைக்கப்பட்ட பகுப்புகளில்}} அடங்குகிறது:',
-'nocreatetitle' => 'பக்கத் தொடக்கம் மட்டுப்படுத்தப்பட்டுள்ளது',
 'nocreatetext' => '{{SITENAME}} புதிய பக்கங்களை ஆக்குவதற்கான அனுமதியை மட்டுப்படுத்தியுள்ளது.
 நீங்கள் ஏற்கனவே இருக்கும் பக்கங்களைத் தொகுக்க முடியும் அல்லது [[Special:UserLogin|புகுபதிகை செய்யவும் அல்லது கணக்கொன்றை தொடங்குங்கள்]].',
 'nocreate-loggedin' => 'புதியப் பக்கங்களைத் தொடங்குவதற்கு உங்களுக்கு அனுமதி கிடையாது.',
@@ -821,6 +822,14 @@ $1 எனும் பயனரையோ வேறு [[{{MediaWiki:Grouppage-sy
 'edit-already-exists' => 'புதிய பக்கமொன்றை உருவாக்க முடியாது.
 இப்பக்கம் ஏற்கனவே உள்ளது.',
 'defaultmessagetext' => 'இயல்பிருப்பு தகவல் உரை',
+'invalid-content-data' => 'செல்லாத உள்ளடக்கத் தரவு',
+'content-not-allowed-here' => '"$1" உள்ளடக்கம் [[$2]] பக்கத்தில் அனுமதிக்கப்படவில்லை.',
+
+# Content models
+'content-model-wikitext' => 'விக்கிஉரை',
+'content-model-text' => 'எளிய உரை',
+'content-model-javascript' => 'ஜாவா ஸ்கிரிப்ட்',
+'content-model-css' => 'சிஎஸ்எஸ்',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'எச்சரிக்கை: இப்பக்கம் அதிகளவு இலக்கணப் பாகுபடுத்திச் சார்புகளைக் கொண்டுள்ளது.
@@ -1180,9 +1189,9 @@ $1",
 'prefs-emailconfirm-label' => 'மின்னஞ்சலை உறுதிசெய்தல்:',
 'prefs-textboxsize' => 'தொகுக்கும் சாளரத்தின் அளவு',
 'youremail' => 'மின்னஞ்சல்:',
-'username' => 'பயனர் பெயர்:',
-'uid' => 'பயனர்:',
-'prefs-memberingroups' => 'பின்வரும் {{PLURAL:$1|குழு|குழுக்களில்}} உறுப்பினர்:',
+'username' => '{{GENDER:$1|பயனர் பெயர்}}:',
+'uid' => '{{பாலினம்:$1|பயனர்}}:',
+'prefs-memberingroups' => 'பின்வரும் {{பன்மை:$1|குழு|குழுக்களில்}} {{பாலினம்:$2|உறுப்பினர்}}:',
 'prefs-registration' => 'பதிவு செய்யும் நேரம்:',
 'yourrealname' => 'உண்மைப் பெயர்:',
 'yourlanguage' => 'மொழி:',
@@ -1333,12 +1342,13 @@ $1",
 'right-sendemail' => 'மற்ற பயனர்களுக்கு மின்னஞ்சல் அனுப்பு',
 'right-passwordreset' => 'கடவுச்சொல் மீட்டமை மின்னஞ்சல்களை காண்.',
 
+# Special:Log/newusers
+'newuserlogpage' => 'பயனர் உருவாக்கம் பற்றிய குறிப்பு',
+'newuserlogpagetext' => 'இது பயனர் படைப்புகளின் பதிவு ஆகும்.',
+
 # User rights log
 'rightslog' => 'பயனர் உரிமைகள் பதிகை',
 'rightslogtext' => 'இது பயனர் உரிமைகள் தொடர்பான மாற்றங்களின் பதிகையாகும்.',
-'rightslogentry' => '$1 பயனருக்கான குழு உறுப்பியம் $2 குழுவிலிருந்து $3 குழுவிற்கு மாற்றப்பட்டது',
-'rightslogentry-autopromote' => '  $2  லிருந்து $3 க்கு தானாக உயர்ந்தது.',
-'rightsnone' => '(எதுவுமில்லை)',
 
 # Associated actions - in the sentence "You do not have permission to X"
 'action-read' => 'இப் பக்கத்தை வாசிக்கவும்',
@@ -1773,6 +1783,9 @@ $1',
 'disambiguationspage' => 'Template:பக்கவழி நெறிப்படுத்தல்',
 'disambiguations-text' => "பின்வரும் பக்கங்கள் '''பக்கவழி நெறிப்படுத்தல் பக்கத்துக்கு''' இணைக்கப்பட்டுள்ளன. மாறாக இவை பொருத்தமன தலைப்பிற்கு இணைக்கப்பட வேண்டும். <br />[[MediaWiki:Disambiguationspage|பக்கவழி நெறிப்படுத்தல் பக்கங்கத்தில்]] உள்ள வார்ப்புரு இணைக்கப்பட்ட பக்கங்கள்  பக்கவழி நெறிப்படுத்தல் பக்கங்கள் என் கருதப்படும்.",
 
+'pageswithprop' => 'பக்கப் பண்புடைய பக்கங்கள்',
+'pageswithprop-submit' => 'செல்க',
+
 'doubleredirects' => 'இரட்டை வழிமாற்றுகள்',
 'doubleredirectstext' => 'இந்தப் பட்டியல் போலியான நேர்மதிப்புக்களைக் கொண்டிருக்கக்கூடும். இது வழக்கமாக, இணைப்புடன் கூடிய மேலதிக உரை முதலாவது #வழிமாற்றுக்குக் கீழ் இருப்பதைக் குறிக்கும்.ஒவ்வொரு வரியும், முதலாம் இரண்டாம் வழிமாற்றுகளுக்கு இணைப்புகளைக் கொண்டிருப்பதுடன், இரண்டாவது வழிமாற்று உரையின் முதல் வரிக்கும் இணைப்பைக் கொண்டிருக்கும், இது வழக்கமாக முதலாவது வழிமாற்று குறித்துக் காட்ட வேண்டிய "உண்மையான" இலக்குக் கட்டுரையைக் கொடுக்கும்.',
 'double-redirect-fixed-move' => '[[$1]] நகர்த்தப்பட்டுவிட்டது. இப்பொழுது [[$2]] உக்கு வழிமாற்று தருகின்றது.',
@@ -1933,10 +1946,6 @@ $1',
 'activeusers-hidesysops' => 'நிர்வாகிகளை மறை',
 'activeusers-noresult' => 'எந்தவொரு பயனர்களும் காணப்படவில்லை.',
 
-# Special:Log/newusers
-'newuserlogpage' => 'பயனர் உருவாக்கம் பற்றிய குறிப்பு',
-'newuserlogpagetext' => 'இது பயனர் படைப்புகளின் பதிவு ஆகும்.',
-
 # Special:ListGroupRights
 'listgrouprights' => 'பயனர் குழு உரிமைகள்',
 'listgrouprights-key' => '<span class="listgrouprights-granted">உரிமை வழங்கப்பட்டது</span>
@@ -2030,11 +2039,7 @@ $1',
 
 'enotif_mailer' => '{{SITENAME}} தளத்தின் அறிவித்தல் அஞ்சல்காரர்',
 'enotif_reset' => 'எல்லாப் பக்கங்களையும் பார்வையிட்டதாக குறித்துக்கொள்',
-'enotif_newpagetext' => 'இது ஒரு புதிய பக்கமாகும்.',
 'enotif_impersonal_salutation' => '{{SITENAME}} பயனர்',
-'changed' => 'மாற்றப்பட்டது',
-'created' => 'தொடக்கப்பட்டது',
-'enotif_subject' => '{{SITENAME}} தளத்தின் $PAGETITLE என்றத் தலைப்புடையப் பக்கம் $PAGEEDITOR பயனரால் $CHANGEDORCREATED',
 'enotif_lastvisited' => 'உங்கள் கடைசி வருகைக்குப் பின்னர் நடைபெற்றுள்ள மாற்றங்களைக் காண $1 பக்கத்தைப் பார்க்கவும்.',
 'enotif_lastdiff' => 'மாற்றங்களைக் காண  $1 பக்கத்தைப் பார்.',
 'enotif_anon_editor' => 'அடையாளம் காட்டாத பயனர் $1',
@@ -2062,6 +2067,8 @@ $NEWPAGE
 
 பின்னூட்டம், மேலதிக உதவிகளுக்கு:
 {{canonicalurl:{{MediaWiki:Helppage}}}}',
+'created' => 'தொடக்கப்பட்டது',
+'changed' => 'மாற்றப்பட்டது',
 
 # Delete
 'deletepage' => 'பக்கத்தை நீக்கு',
@@ -2128,6 +2135,7 @@ $NEWPAGE
 'prot_1movedto2' => '[[$1]], [[$2]] என்றத் தலைப்புக்கு நகர்த்தப்பட்டுள்ளது.',
 'protect-badnamespace-title' => 'பாதுகாக்க முடியாத பெயரிடைவெளி',
 'protect-badnamespace-text' => 'இந்த பெயரிடைவெளியில் உள்ள  பக்கங்கள் பாதுகாக்கப்படாது.',
+'protect-norestrictiontypes-title' => 'பாதுகாக்க முடியாத பக்கங்கள்',
 'protect-legend' => 'காப்பை உறுதிப்படுத்து',
 'protectcomment' => 'காரணம்:',
 'protectexpiry' => 'முடிவுறுகிறது:',
@@ -2209,7 +2217,7 @@ $NEWPAGE
 'undeletedrevisions' => '{{PLURAL:$1|1 திருத்தம் மீட்கப்பட்டது|$1 திருத்தங்கள் மீட்கப்பட்டன}}',
 'undeletedrevisions-files' => '{{PLURAL:$1|1 திருத்தம்|$1 திருத்தங்கள்}} மற்றும் {{PLURAL:$2|1 கோப்பு|$2 கோப்புகள்}} மீட்கப்பட்டன.',
 'undeletedfiles' => '{{PLURAL:$1|ஒரு கோப்பு மீட்டெடுக்கப்பட்டது|$1 கோப்புகள் மீட்டெடுக்கப்பட்டன}}',
-'cannotundelete' => 'நீக்கம் தோல்வி; வேறு யாராவது முன்னதாக இப்பக்கத்தை நீக்கியிருக்கலாம்.',
+'cannotundelete' => 'மீள்வித்தல் தோல்வி: $1',
 'undeletedpage' => "'''$1 மீட்கப்பட்டது'''
 
 அண்மைய நீக்கல்களுக்கும் மீட்புக்களுக்கும் [[Special:Log/delete|நீக்கல் பதிவைப்]] பார்க்கவும்.",
@@ -2621,7 +2629,6 @@ $1',
 
 # JavaScriptTest
 'javascripttest' => 'சாவாநிரல் சோதனை நடக்கின்றது',
-'javascripttest-disabled' => 'இந்தச் செயல்பாடு முடக்கப்பட்டுள்ளது.',
 'javascripttest-title' => '$1 சோதனைகள் நடக்கின்றன',
 'javascripttest-pagetext-noframework' => 'இந்த பக்கம் JavaScript பரிசோதனை ஓட்டத்திற்காக ஒதுக்கப்பட்டுள்ளது',
 'javascripttest-pagetext-skins' => 'சோதனைகளை நடத்த முகப்புறை ஒன்றைத் தேர்வுசெய்:',
@@ -2727,11 +2734,13 @@ $1',
 'pageinfo-display-title' => 'காட்சித் தலைப்பு',
 'pageinfo-length' => 'பக்க நீளம் (எண்ணுண்மிகளில்)',
 'pageinfo-article-id' => 'பக்க அடையாள இலக்கம்',
+'pageinfo-language' => 'பக்க உள்ளடக்க மொழி',
 'pageinfo-robot-policy' => 'தேடற்பொறி நிலைமை',
 'pageinfo-robot-index' => 'வகைப்படக்கூடியது',
 'pageinfo-robot-noindex' => 'வகைப்படாதது.',
 'pageinfo-views' => 'காட்சிகள் எண்ணிக்கை',
 'pageinfo-watchers' => 'பக்கப் பார்வையாளர்கள் எண்ணிக்கை',
+'pageinfo-few-watchers' => 'விட குறைவானது $1 {{PLURAL:$1|watcher|watchers}}',
 'pageinfo-redirects-name' => 'இந்தப் பக்கத்திற்கான வழிமாற்றுகள்',
 'pageinfo-subpages-name' => 'இந்தப் பக்கத்தின் துணைப் பக்கங்கள்',
 'pageinfo-subpages-value' => '$1 ($2 {{PLURAL:$2|வழிமாற்று|வழிமாற்றுகள்}}; $3 {{PLURAL:$3|வழிமாற்றில்லாதது|வழிமாற்றில்லாதவை}})',
@@ -2746,6 +2755,15 @@ $1',
 'pageinfo-magic-words' => 'மாய {{PLURAL:$1|வார்த்தை|வார்த்தைகள்}} ($1)',
 'pageinfo-hidden-categories' => 'மறைக்கப்பட்ட {{PLURAL:$1|பகுப்பு|பகுப்புகள்}} ($1)',
 'pageinfo-templates' => 'பயன்படுத்தப்பட்ட {{PLURAL:$1|வார்ப்புரு|வார்ப்புருக்கள்}} ($1)',
+'pageinfo-toolboxlink' => 'பக்கத் தகவல்',
+'pageinfo-redirectsto' => 'வழிமாற்றவும்:',
+'pageinfo-redirectsto-info' => 'தகவல்',
+'pageinfo-contentpage' => 'உள்ளடக்கப் பக்கமாய்க் கணக்கிடப்பட்டது.',
+'pageinfo-contentpage-yes' => 'ஆம்',
+'pageinfo-protect-cascading-yes' => 'ஆம்',
+'pageinfo-category-info' => 'பகுப்புகளின் எண்ணிக்கை',
+'pageinfo-category-pages' => 'பக்கங்களின் எண்ணிக்கை',
+'pageinfo-category-files' => 'கோப்புகளின் எண்ணிக்கை',
 
 # Skin names
 'skinname-standard' => 'இயல்பான',
@@ -2762,6 +2780,7 @@ $1',
 'markedaspatrollederror' => 'ரோந்திட்டதாக குறிக்க முடியாது',
 'markedaspatrollederrortext' => 'ரோந்திட்டதாக குறிக்க நீங்கள் திருத்தமொன்றைக் குறிப்பிட வேண்டும்.',
 'markedaspatrollederror-noautopatrol' => 'உமது மாற்றங்களை நீரே ரோந்திட்டதாக குறிக்க அனுமதி கிடையாது.',
+'markedaspatrollednotify' => '$1 இல் மேற்கொள்ளப்பட்ட இம்மாற்றம் கண்காணிக்கப்பட்டதாய்க் குறிக்கப்பட்டது.',
 
 # Patrol log
 'patrol-log-page' => 'ரோந்துப் பதிகை',
@@ -2821,6 +2840,7 @@ $1',
 'hours' => '{{PLURAL:$1|$1மணி| $1  மணிகள்}}',
 'days' => '{{PLURAL:$1|$1நாள்|$1 நாட்கள்}}',
 'ago' => '$1 முன்பு',
+'just-now' => 'சடுதியில்.',
 
 # Bad image list
 'bad_image_list' => 'முறை பின்வருமாறு:
@@ -3553,7 +3573,7 @@ $5
 'logentry-newusers-create' => '$1 ஒரு புதிய பயனர் கணக்கை உருவாக்கியுள்ளார்.',
 'logentry-newusers-create2' => '$3 பயனர் கணக்கினை $1 உருவாக்கினார்',
 'logentry-newusers-autocreate' => 'கணக்கு  $1   தானாக    உருவாக்கப்பட்டது',
-'newuserlog-byemail' => 'மின்னஞ்சல் மூலம் கடவுச்சொல் அனுப்பப்பட்டுவிட்டது',
+'rightsnone' => '(எதுவுமில்லை)',
 
 # Feedback
 'feedback-bugornote' => 'நீங்கள் ஒரு தொழில்நுட்பக் கோளாறு குறித்து விரிவாக விளக்க தாயாராக இருந்தால் தயவுசெய்து [ $1  ஒரு bug பற்றி கூறு].

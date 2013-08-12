@@ -24,6 +24,11 @@ div#content {
 div#column-one {
 	padding-top: 160px;
 }
+/* Hide, but keep accessible for screen-readers */
+#column-one h2 {
+	position: absolute;
+	top: -9999px;
+}
 div#content {
 	background: white;
 	color: black;
@@ -71,6 +76,7 @@ a.new,
 }
 
 ul {
+	list-style-type: square;
 	/* @embed */
 	list-style-image: url(bullet.gif);
 }
@@ -224,30 +230,13 @@ table.rimage {
 	width: 11.6em;
 	overflow: hidden;
 }
-.portlet h4 {
-	font-size: 95%;
-	font-weight: normal;
-	white-space: nowrap;
-}
-.portlet h5 {
+.portlet h3 {
 	background: transparent;
 	padding: 0 1em 0 .5em;
 	display: inline;
 	height: 1em;
 	text-transform: lowercase;
 	font-size: 91%;
-	font-weight: normal;
-	white-space: nowrap;
-}
-.portlet h6 {
-	background: #ffae2e;
-	border: 1px solid #2f6fab;
-	border-style: solid solid none solid;
-	padding: 0 1em 0 1em;
-	text-transform: lowercase;
-	display: block;
-	font-size: 1em;
-	height: 1.2em;
 	font-weight: normal;
 	white-space: nowrap;
 }
@@ -259,18 +248,8 @@ table.rimage {
 	border: 1px solid #aaa;
 	padding: 0 .8em .3em .5em;
 }
-.portlet h1,
-.portlet h2,
-.portlet h3,
-.portlet h4 {
-	margin: 0;
-	padding: 0;
-}
 .portlet ul {
 	line-height: 1.5em;
-	list-style-type: square;
-	/* @embed */
-	list-style-image: url(bullet.gif);
 	font-size: 95%;
 }
 .portlet li {
@@ -291,7 +270,7 @@ table.rimage {
 	width: 12em;
 	overflow: visible;
 }
-#p-logo h5 {
+#p-logo h3 {
 	display: none;
 }
 #p-logo a,
@@ -352,7 +331,7 @@ input.searchButton {
 	overflow: visible;
 	line-height: 1.2em;
 }
-#p-personal h5 {
+#p-personal h3 {
 	display: none;
 }
 #p-personal .portlet,
@@ -372,7 +351,8 @@ input.searchButton {
 	padding: 0 2em 0 3em;
 	margin: 0;
 	text-align: right;
-	list-style: none;
+	list-style-type: none;
+	list-style-image: none;
 	z-index: 0;
 	background: none;
 	cursor: default;
@@ -432,11 +412,11 @@ li#pt-login {
 	background: none;
 	border-collapse: collapse;
 	padding-left: 1em;
-	list-style: none;
 	font-size: 95%;
 }
 #p-cactions ul {
-	list-style: none;
+	list-style-type: none;
+	list-style-image: none;
 }
 #p-cactions li {
 	display: inline;
@@ -474,7 +454,7 @@ li#pt-login {
 	text-decoration: none;
 	background-color: white;
 }
-#p-cactions h5 {
+#p-cactions h3 {
 	display: none;
 }
 #p-cactions li.istalk {
@@ -515,8 +495,7 @@ li#ca-print {
 }
 
 /* Override text-transform on languages where capitalization is significant */
-.capitalize-all-nouns .portlet h5,
-.capitalize-all-nouns .portlet h6,
+.capitalize-all-nouns .portlet h3,
 .capitalize-all-nouns #p-personal ul,
 .capitalize-all-nouns #p-cactions ul li a {
 	text-transform: none;
@@ -824,7 +803,8 @@ div#searchTarget {
 }
 
 div#searchTarget ul li {
-	list-style: none;
+	list-style-type: none;
+	list-style-image: none;
 }
 
 div#searchTarget ul li:before {

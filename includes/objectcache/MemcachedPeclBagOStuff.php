@@ -47,7 +47,7 @@ class MemcachedPeclBagOStuff extends MemcachedBagOStuff {
 		if ( $params['persistent'] ) {
 			// The pool ID must be unique to the server/option combination.
 			// The Memcached object is essentially shared for each pool ID.
-			// We can only resuse a pool ID if we keep the config consistent.
+			// We can only reuse a pool ID if we keep the config consistent.
 			$this->client = new Memcached( md5( serialize( $params ) ) );
 			if ( count( $this->client->getServerList() ) ) {
 				wfDebug( __METHOD__ . ": persistent Memcached object already loaded.\n" );
@@ -104,11 +104,16 @@ class MemcachedPeclBagOStuff extends MemcachedBagOStuff {
 
 	/**
 	 * @param $key string
+	 * @param $casToken[optional] float
 	 * @return Mixed
 	 */
-	public function get( $key ) {
+	public function get( $key, &$casToken = null ) {
+		wfProfileIn( __METHOD__ );
 		$this->debugLog( "get($key)" );
-		return $this->checkResult( $key, parent::get( $key ) );
+		$result = $this->client->get( $this->encodeKey( $key ), null, $casToken );
+		$result = $this->checkResult( $key, $result );
+		wfProfileOut( __METHOD__ );
+		return $result;
 	}
 
 	/**
@@ -120,6 +125,18 @@ class MemcachedPeclBagOStuff extends MemcachedBagOStuff {
 	public function set( $key, $value, $exptime = 0 ) {
 		$this->debugLog( "set($key)" );
 		return $this->checkResult( $key, parent::set( $key, $value, $exptime ) );
+	}
+
+	/**
+	 * @param $casToken float
+	 * @param $key string
+	 * @param $value
+	 * @param $exptime int
+	 * @return bool
+	 */
+	public function cas( $casToken, $key, $value, $exptime = 0 ) {
+		$this->debugLog( "cas($key)" );
+		return $this->checkResult( $key, parent::cas( $casToken, $key, $value, $exptime ) );
 	}
 
 	/**
@@ -189,7 +206,7 @@ class MemcachedPeclBagOStuff extends MemcachedBagOStuff {
 	 * the client, but some day we might find a case where it should be
 	 * different.
 	 *
-	 * @param $key string The key used by the caller, or false if there wasn't one.
+	 * @param string $key The key used by the caller, or false if there wasn't one.
 	 * @param $result Mixed The return value
 	 * @return Mixed
 	 */
@@ -224,9 +241,11 @@ class MemcachedPeclBagOStuff extends MemcachedBagOStuff {
 	 * @return Array
 	 */
 	public function getMulti( array $keys ) {
+		wfProfileIn( __METHOD__ );
 		$this->debugLog( 'getMulti(' . implode( ', ', $keys ) . ')' );
 		$callback = array( $this, 'encodeKey' );
 		$result = $this->client->getMulti( array_map( $callback, $keys ) );
+		wfProfileOut( __METHOD__ );
 		return $this->checkResult( false, $result );
 	}
 

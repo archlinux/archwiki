@@ -29,7 +29,7 @@
 class SpecialProtectedtitles extends SpecialPage {
 
 	protected $IdLevel = 'level';
-	protected $IdType  = 'type';
+	protected $IdType = 'type';
 
 	public function __construct() {
 		parent::__construct( 'Protectedtitles' );
@@ -76,11 +76,17 @@ class SpecialProtectedtitles extends SpecialPage {
 
 		static $infinity = null;
 
-		if( is_null( $infinity ) ){
+		if( is_null( $infinity ) ) {
 			$infinity = wfGetDB( DB_SLAVE )->getInfinity();
 		}
 
 		$title = Title::makeTitleSafe( $row->pt_namespace, $row->pt_title );
+		if( !$title ) {
+			return Html::rawElement( 'li', array(),
+				Html::element( 'span', array( 'class' => 'mw-invalidtitle' ),
+					Linker::getInvalidTitleDescription( $this->getContext(), $row->pt_namespace, $row->pt_title ) ) ) . "\n";
+		}
+
 		$link = Linker::link( $title );
 
 		$description_items = array ();
@@ -113,7 +119,7 @@ class SpecialProtectedtitles extends SpecialPage {
 	 * @return string
 	 * @private
 	 */
-	function showOptions( $namespace, $type='edit', $level ) {
+	function showOptions( $namespace, $type = 'edit', $level ) {
 		global $wgScript;
 		$action = htmlspecialchars( $wgScript );
 		$title = $this->getTitle();
@@ -161,13 +167,13 @@ class SpecialProtectedtitles extends SpecialPage {
 
 		// First pass to load the log names
 		foreach( $wgRestrictionLevels as $type ) {
-			if ( $type !='' && $type !='*') {
+			if ( $type != '' && $type != '*' ) {
 				$text = $this->msg( "restriction-level-$type" )->text();
 				$m[$text] = $type;
 			}
 		}
 		// Is there only one level (aside from "all")?
-		if( count($m) <= 2 ) {
+		if( count( $m ) <= 2 ) {
 			return '';
 		}
 		// Third pass generates sorted XHTML content
@@ -182,6 +188,10 @@ class SpecialProtectedtitles extends SpecialPage {
 				array( 'id' => $this->IdLevel, 'name' => $this->IdLevel ),
 				implode( "\n", $options ) );
 	}
+
+	protected function getGroupName() {
+		return 'maintenance';
+	}
 }
 
 /**
@@ -191,7 +201,7 @@ class SpecialProtectedtitles extends SpecialPage {
 class ProtectedTitlesPager extends AlphabeticPager {
 	public $mForm, $mConds;
 
-	function __construct( $form, $conds = array(), $type, $level, $namespace, $sizetype='', $size=0 ) {
+	function __construct( $form, $conds = array(), $type, $level, $namespace, $sizetype = '', $size = 0 ) {
 		$this->mForm = $form;
 		$this->mConds = $conds;
 		$this->level = $level;
@@ -234,11 +244,12 @@ class ProtectedTitlesPager extends AlphabeticPager {
 		$conds[] = 'pt_expiry>' . $this->mDb->addQuotes( $this->mDb->timestamp() );
 		if( $this->level )
 			$conds['pt_create_perm'] = $this->level;
-		if( !is_null($this->namespace) )
+		if( !is_null( $this->namespace ) )
 			$conds[] = 'pt_namespace=' . $this->mDb->addQuotes( $this->namespace );
 		return array(
 			'tables' => 'protected_titles',
-			'fields' => 'pt_namespace,pt_title,pt_create_perm,pt_expiry,pt_timestamp',
+			'fields' => array( 'pt_namespace', 'pt_title', 'pt_create_perm',
+				'pt_expiry', 'pt_timestamp' ),
 			'conds' => $conds
 		);
 	}
@@ -247,4 +258,3 @@ class ProtectedTitlesPager extends AlphabeticPager {
 		return 'pt_timestamp';
 	}
 }
-

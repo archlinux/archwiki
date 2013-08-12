@@ -22,7 +22,7 @@
  */
 
 /**
- * A special page called by proxy_check.php to block open proxies
+ * A special page called by proxyCheck.php to block open proxies
  *
  * @ingroup SpecialPage
  */
@@ -58,5 +58,9 @@ class SpecialBlockme extends UnlistedSpecialPage {
 		$block->insert();
 
 		$this->getOutput()->addWikiMsg( 'proxyblocksuccess' );
+	}
+
+	protected function getGroupName() {
+		return 'other';
 	}
 }
