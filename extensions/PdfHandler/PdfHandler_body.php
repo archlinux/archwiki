@@ -315,7 +315,7 @@ class PdfHandler extends ImageHandler {
 	 */
 	function pageCount( $image ) {
 		$data = $this->getMetaArray( $image );
-		if ( !$data || !isset( $data['Pages'] ) ) {
+		if ( !$data ) {
 			return false;
 		}
 		return intval( $data['Pages'] );

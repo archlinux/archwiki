@@ -400,13 +400,12 @@ $messages['nl-informal'] = array(
 );
 
 /** Polish (polski)
- * @author WTM
  */
 $messages['pl'] = array(
 	'recaptcha-edit' => 'Aby uchronić nas przed robotami, proszę wpisać dwa widoczne słowa w poniższym polu:',
 	'recaptcha-addurl' => 'Twoja edycja zawiera linki zewnętrzne. Aby uchronić nas przed robotami, proszę wpisać dwa widoczne słowa w poniższym polu:',
 	'recaptcha-badpass' => 'Aby uchronić nas przed złamaniem automatycznym haseł, proszę wpisać dwa widoczne słowa w poniższym polu:',
-	'recaptcha-createaccount' => 'Aby uchronić nas przed automatycznym tworzeniem użytkowników, proszę wpisać dwa widoczne słowa w poniższym polu:',
+	'recaptcha-createaccount' => 'Aby uchronić nas przed automatycznym stworzeniem użytkowników, proszę wpisać dwa widoczne słowa w poniższym polu:',
 	'recaptcha-createaccount-fail' => 'Odpowiedź na reCAPTCHA jest fałszywa lub brakująca.',
 	'recaptcha-create' => 'Aby uchronić nas przed tworzeniem stron przez robotów, proszę wpisać dwa widoczne słowa w poniższym polu:',
 );
