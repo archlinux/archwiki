@@ -15,13 +15,15 @@
 		 * @return {string} return.done.data Parsed HTML of `wikitext`.
 		 */
 		parse: function ( wikitext, ok, err ) {
-			var d = $.Deferred();
-			// Backwards compatibility (< MW 1.20)
-			d.done( ok );
-			d.fail( err );
+			var d = $.Deferred(),
+				apiPromise;
 
-			this.get( {
+			// Backwards compatibility (< MW 1.20)
+			d.done( ok ).fail( err );
+
+			apiPromise = this.get( {
 					action: 'parse',
+					contentmodel: 'wikitext',
 					text: wikitext
 				} )
 				.done( function ( data ) {
@@ -31,7 +33,7 @@
 				} )
 				.fail( d.reject );
 
-			return d.promise();
+			return d.promise( { abort: apiPromise.abort } );
 		}
 	} );
 

@@ -7,6 +7,7 @@
  * @ingroup Language
  * @file
  *
+ * @author Altai uul
  * @author Espreon
  * @author Gott wisst
  * @author JJohnson
@@ -60,9 +61,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Īwan þæt rīm behealdendra brūcenda',
 'tog-oldsig' => 'Genge selfmearc:',
 'tog-fancysig' => 'Dōn selfmearce tō wikitexte (lēas ǣr gedōnes hlencan)',
-'tog-externaleditor' => 'Nota ūtƿeardne ādihttōl tō ȝeƿunelicre ȝesetednesse (synderlīce tō sƿīðe cræftiȝum mannum - þearf ānlica ȝesetednessa on þīnum spearctelle)',
-'tog-externaldiff' => 'Nota ūtƿearde scādunȝe tō ȝeƿunelicre ȝesetednesse (synderlīce tō sƿīðe cræftiȝum mannum - þearf ānlica ȝesetednesse on þīnum spearctelle)',
-'tog-showjumplinks' => 'Þafian "gān tō" gefērra hlencena',
 'tog-uselivepreview' => 'Notian rihte īwde fōrebysene (on costnunge)',
 'tog-forceeditsummary' => 'Cȳðan mē þǣr ic ne wrīte adihtunge sceortnesse',
 'tog-watchlisthideown' => 'Hȳdan mīna adihtunga wiþ þæt behealdungtæl',
@@ -76,6 +74,8 @@ $messages = array(
 'tog-showhiddencats' => 'Īwan gehȳdede floccas',
 'tog-noconvertlink' => 'Ne lǣt hlencena titula āwendunge',
 'tog-norollbackdiff' => 'Forlǣtan scādunge siþþan edweorc sīe gedōn',
+'tog-useeditwarning' => 'Cȳðan mē þǣr ic afare fram adihtunge tramete þe gīet hæbbe unhordoda andwendunga.',
+'tog-prefershttps' => 'Brūc ā sicore þēodednesse þā þū sī inmeldod',
 
 'underline-always' => 'Ǣfre',
 'underline-never' => 'Nǣfre',
@@ -139,6 +139,18 @@ $messages = array(
 'oct' => 'Winterf',
 'nov' => 'Blō',
 'dec' => 'Æf Gē',
+'january-date' => '$1. Æfterran Gēolan',
+'february-date' => '$1. Solmōnaðes',
+'march-date' => '$1. Hrēðmōnaðes',
+'april-date' => '$1. Ēastermōnaðes',
+'may-date' => '$1. Þrimilces',
+'june-date' => '$1. Ǣrran Līðan',
+'july-date' => '$1. Æfterran Līðan',
+'august-date' => '$1. Wēodmōnaðes',
+'september-date' => '$1. Hāligmōnaðes',
+'october-date' => '$1. Winterfylleðes',
+'november-date' => '$1. Blōtmōnaðes',
+'december-date' => '$1. Ǣrran Gēolan',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Flocc|Floccas}}',
@@ -260,7 +272,7 @@ Wē biddaþ þæt þū abīde scortne tīman ǣr þū gesēce to sēonne þisne 
 $1',
 'pool-errorunknown' => 'Uncūþ wōh',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Gecȳþness ymbe {{SITENAME}}',
 'aboutpage' => 'Project:Gecȳþness',
 'copyright' => 'Man mæg innunge under $1 findan.',
@@ -270,7 +282,6 @@ $1',
 'disclaimers' => 'Ætsacunga',
 'disclaimerpage' => 'Project:Gemǣne ætsacung',
 'edithelp' => 'Help on adihtunge',
-'edithelppage' => 'Help:Ādihtung',
 'helppage' => 'Help:Innung',
 'mainpage' => 'Hēafodtramet',
 'mainpage-description' => 'Hēafodtramet',
@@ -343,12 +354,6 @@ Getæl gengra syndrigra trameta cann man findan be [[Special:SpecialPages|þǣm 
 # General errors
 'error' => 'Wōh',
 'databaseerror' => 'Cȳþþuhordes wōh',
-'dberrortext' => 'Cȳþþuhordes bēne endebyrdnesse wōh gelamp.
-Þis mæg mǣnan wōh on þǣre weorcwrithyrste.
-Sēo nīwoste gesōhte cȳþþuhordes bēn wæs:
-<blockquote><code>$1</code></blockquote>
-fram innan wyrcunge "<code>$2</code>".
-Cȳþþuhord ageaf wōh "<code>$3: $4</code>"',
 'laggedslavemode' => "'''Warnung:''' Wēnunga næbbe se tramet nīwlīca nīwunga.",
 'enterlockreason' => 'Wrīt race þǣre forwiernunge and apinsunge þæs tīman on þǣm bēo sēo forwiernung forlǣten',
 'missingarticle-rev' => '(nīwung#: $1)',
@@ -375,9 +380,17 @@ Cȳþþuhord ageaf wōh "<code>$3: $4</code>"',
 Cnāw þæt sume trametas mihten gīet wesan geīwde swā þū wǣre gīet inmeldod, oþ þæt þū clǣnsie þīnes sēcendtōles hord.",
 'welcomeuser' => 'Wilcume, $1!',
 'yourname' => 'Þīn brūcendnama:',
+'userlogin-yourname' => 'Brūcendnama:',
+'userlogin-yourname-ph' => 'Inwrīt þīnne brūcendnaman',
 'yourpassword' => 'Þafungword:',
+'userlogin-yourpassword' => 'Þafungword',
+'userlogin-yourpassword-ph' => 'Inwrīt þīn þafungword',
+'createacct-yourpassword-ph' => 'Inwrīt þafungword',
 'yourpasswordagain' => 'Wrītan þafungword eft:',
+'createacct-yourpasswordagain' => 'Asēð þafungword',
+'createacct-yourpasswordagain-ph' => 'Wrīt þafungword eft',
 'remembermypassword' => 'Gemynan mīne inmeldunge on þissum webbsēcende (oþ $1 {{PLURAL:$1|dæg|daga}} lengest)',
+'userlogin-remembermypassword' => 'Ætfeolan mīnre inmeldunge',
 'yourdomainname' => 'Þīn geweald:',
 'password-change-forbidden' => 'Þū ne canst awendan þafungword on þissum wiki.',
 'login' => 'Inmeldian',
@@ -388,6 +401,8 @@ Cnāw þæt sume trametas mihten gīet wesan geīwde swā þū wǣre gīet inmel
 'logout' => 'Ūtmeldian',
 'userlogout' => 'Ūtmeldian',
 'notloggedin' => 'Nā ingemeldod',
+'userlogin-noaccount' => '',
+'userlogin-joinproject' => '',
 'nologin' => 'Næfst þū reccinge? $1',
 'nologinlink' => 'Scieppan reccinge',
 'createaccount' => 'Scieppan reccinge',
@@ -565,7 +580,6 @@ folclicum āgnunge oþþe gelīcum frēom horde (sēo $1 for āscungum).
 'nextn' => 'nīehst {{PLURAL:$1|$1}}',
 'viewprevnext' => 'Sēon ($1 {{int:pipe-separator}} $2) ($3)',
 'searchmenu-new' => "'''Scieppan þone tramet \"[[:\$1]]\" on þissum wiki!'''",
-'searchhelp-url' => 'Help:Innung',
 'searchprofile-articles' => 'Innunge trametas',
 'searchprofile-project' => 'Helpes and Weorca trametas',
 'searchprofile-images' => 'Missenendebyrdness',
@@ -590,9 +604,6 @@ folclicum āgnunge oþþe gelīcum frēom horde (sēo $1 for āscungum).
 'powersearch-redir' => 'Settan edlǣdunge on getæle',
 'powersearch-field' => 'Sēcan',
 'search-external' => 'Ūtanweard sōcn',
-
-# Quickbar
-'qbsettings-none' => 'Nān',
 
 # Preferences page
 'preferences' => 'Fōreberunga',
@@ -1013,7 +1024,6 @@ Gif se brūcend asifte hine. synderlīce sind ymelan geīwda þǣre þe se brūc
 'contribslink' => 'forðunga',
 'unblocklogentry' => 'unfortȳnde $1',
 'block-log-flags-nocreate' => 'Forbēad tō scieppenne reccinge',
-'proxyblocksuccess' => 'Gedōn.',
 
 # Move page
 'movearticle' => 'Wegan tramet:',
@@ -1142,7 +1152,7 @@ Cēos ōðerne naman lā.',
 'metadata-expand' => 'Īwan ēacnode stafas',
 'metadata-collapse' => 'Hȳdan ēacnode stafas',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Wīdnes',
 'exif-imagelength' => 'Hīehþ',
 'exif-compression' => 'Ȝeþryccungmōd',
@@ -1162,7 +1172,7 @@ Cēos ōðerne naman lā.',
 'exif-gpsmeasuremode' => 'Mētungmōd',
 'exif-gpsimgdirection' => 'Rihtung þæs biliðes',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Unȝeþrycced',
 
 'exif-meteringmode-0' => 'Uncūþ',
@@ -1267,11 +1277,6 @@ $5
 'version-hooks' => 'Anglas',
 'version-hook-name' => 'Angelnama',
 'version-version' => '($1. fadung)',
-
-# Special:FilePath
-'filepath' => 'Ymelan pæþ',
-'filepath-page' => 'Ymele:',
-'filepath-submit' => 'Gān',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Ymelan nama:',

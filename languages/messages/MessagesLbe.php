@@ -99,7 +99,7 @@ $messages = array(
 # Special:Log
 'specialloguserlabel' => 'Гьурттучув:',
 
-# Email user
+# E-mail user
 'emailuser' => 'ГьурттучувначӀансса чагьар',
 
 # Watchlist

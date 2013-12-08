@@ -7,14 +7,24 @@
 
 /** Tests for MediaWiki languages/classes/LanguageSgs.php */
 class LanguageSgsTest extends LanguageClassesTestCase {
-
-	/** @dataProvider providePluralAllForms */
-	function testPluralAllForms( $result, $value ) {
+	/**
+	 * @dataProvider providePluralAllForms
+	 * @covers Language::convertPlural
+	 */
+	public function testPluralAllForms( $result, $value ) {
 		$forms = array( 'one', 'two', 'few', 'other' );
 		$this->assertEquals( $result, $this->getLang()->convertPlural( $value, $forms ) );
 	}
 
-	function providePluralAllForms() {
+	/**
+	 * @dataProvider providePluralAllForms
+	 * @covers Language::getPluralRuleType
+	 */
+	public function testGetPluralRuleType( $result, $value ) {
+		$this->assertEquals( $result, $this->getLang()->getPluralRuleType( $value ) );
+	}
+
+	public static function providePluralAllForms() {
 		return array(
 			array( 'few', 0 ),
 			array( 'one', 1 ),
@@ -32,13 +42,16 @@ class LanguageSgsTest extends LanguageClassesTestCase {
 		);
 	}
 
-	/** @dataProvider providePluralTwoForms */
-	function testPluralTwoForms( $result, $value ) {
+	/**
+	 * @dataProvider providePluralTwoForms
+	 * @covers Language::convertPlural
+	 */
+	public function testPluralTwoForms( $result, $value ) {
 		$forms = array( 'one', 'other' );
 		$this->assertEquals( $result, $this->getLang()->convertPlural( $value, $forms ) );
 	}
 
-	function providePluralTwoForms() {
+	public static function providePluralTwoForms() {
 		return array(
 			array( 'other', 0 ),
 			array( 'one', 1 ),

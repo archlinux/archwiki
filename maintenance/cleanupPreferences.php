@@ -23,7 +23,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that removes hidden preferences from the database.
@@ -36,7 +36,7 @@ class CleanupPreferences extends Maintenance {
 
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->begin( __METHOD__ );
-		foreach( $wgHiddenPrefs as $item ) {
+		foreach ( $wgHiddenPrefs as $item ) {
 			$dbw->delete(
 				'user_properties',
 				array( 'up_property' => $item ),
@@ -49,4 +49,4 @@ class CleanupPreferences extends Maintenance {
 }
 
 $maintClass = 'CleanupPreferences'; // Tells it to run the class
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -25,7 +25,7 @@
  *
  * This maintains WikiPage functions for backwards compatibility.
  *
- * @todo move and rewrite code to an Action class
+ * @todo Move and rewrite code to an Action class
  *
  * See design.txt for an overview.
  * Note: edit user interface and cache support functions have been
@@ -160,7 +160,7 @@ class Article implements Page {
 		$page = null;
 		wfRunHooks( 'ArticleFromTitle', array( &$title, &$page ) );
 		if ( !$page ) {
-			switch( $title->getNamespace() ) {
+			switch ( $title->getNamespace() ) {
 				case NS_FILE:
 					$page = new ImagePage( $title );
 					break;
@@ -385,7 +385,8 @@ class Article implements Page {
 
 		$content = $this->fetchContentObject();
 
-		$this->mContent = ContentHandler::getContentText( $content ); #@todo: get rid of mContent everywhere!
+		// @todo Get rid of mContent everywhere!
+		$this->mContent = ContentHandler::getContentText( $content );
 		ContentHandler::runLegacyHooks( 'ArticleAfterFetchContent', array( &$this, &$this->mContent ) );
 
 		wfProfileOut( __METHOD__ );
@@ -609,7 +610,7 @@ class Article implements Page {
 		$this->mParserOutput = false;
 
 		while ( !$outputDone && ++$pass ) {
-			switch( $pass ) {
+			switch ( $pass ) {
 				case 1:
 					wfRunHooks( 'ArticleViewHeader', array( &$this, &$outputDone, &$useParserCache ) );
 					break;
@@ -673,12 +674,12 @@ class Article implements Page {
 						wfDebug( __METHOD__ . ": showing CSS/JS source\n" );
 						$this->showCssOrJsPage();
 						$outputDone = true;
-					} elseif( !wfRunHooks( 'ArticleContentViewCustom',
+					} elseif ( !wfRunHooks( 'ArticleContentViewCustom',
 							array( $this->fetchContentObject(), $this->getTitle(), $outputPage ) ) ) {
 
 						# Allow extensions do their own custom view for certain pages
 						$outputDone = true;
-					} elseif( !ContentHandler::runLegacyHooks( 'ArticleViewCustom',
+					} elseif ( !ContentHandler::runLegacyHooks( 'ArticleViewCustom',
 							array( $this->fetchContentObject(), $this->getTitle(), $outputPage ) ) ) {
 
 						# Allow extensions do their own custom view for certain pages
@@ -787,7 +788,7 @@ class Article implements Page {
 	 * Show a diff page according to current request variables. For use within
 	 * Article::view() only, other callers should use the DifferenceEngine class.
 	 *
-	 * @todo: make protected
+	 * @todo Make protected
 	 */
 	public function showDiffPage() {
 		$request = $this->getContext()->getRequest();
@@ -854,11 +855,11 @@ class Article implements Page {
 	/**
 	 * Get the robot policy to be used for the current view
 	 * @param string $action the action= GET parameter
-	 * @param $pOutput ParserOutput
+	 * @param $pOutput ParserOutput|null
 	 * @return Array the policy that should be set
 	 * TODO: actions other than 'view'
 	 */
-	public function getRobotPolicy( $action, $pOutput ) {
+	public function getRobotPolicy( $action, $pOutput = null ) {
 		global $wgArticleRobotPolicies, $wgNamespaceRobotPolicies, $wgDefaultRobotPolicy;
 
 		$ns = $this->getTitle()->getNamespace();
@@ -875,7 +876,7 @@ class Article implements Page {
 			}
 			if ( Block::newFromTarget( $specificTarget, $vagueTarget ) instanceof Block ) {
 				return array(
-					'index'  => 'noindex',
+					'index' => 'noindex',
 					'follow' => 'nofollow'
 				);
 			}
@@ -884,19 +885,19 @@ class Article implements Page {
 		if ( $this->mPage->getID() === 0 || $this->getOldID() ) {
 			# Non-articles (special pages etc), and old revisions
 			return array(
-				'index'  => 'noindex',
+				'index' => 'noindex',
 				'follow' => 'nofollow'
 			);
 		} elseif ( $this->getContext()->getOutput()->isPrintable() ) {
 			# Discourage indexing of printable versions, but encourage following
 			return array(
-				'index'  => 'noindex',
+				'index' => 'noindex',
 				'follow' => 'follow'
 			);
 		} elseif ( $this->getContext()->getRequest()->getInt( 'curid' ) ) {
 			# For ?curid=x urls, disallow indexing
 			return array(
-				'index'  => 'noindex',
+				'index' => 'noindex',
 				'follow' => 'follow'
 			);
 		}
@@ -988,8 +989,9 @@ class Article implements Page {
 
 				// Set the fragment if one was specified in the redirect
 				if ( strval( $this->getTitle()->getFragment() ) != '' ) {
-					$fragment = Xml::escapeJsString( $this->getTitle()->getFragmentForURL() );
-					$outputPage->addInlineScript( "redirectToFragment(\"$fragment\");" );
+					$outputPage->addInlineScript( Xml::encodeJsCall(
+						'redirectToFragment', array( $this->getTitle()->getFragmentForURL() )
+					) );
 				}
 
 				// Add a <link rel="canonical"> tag
@@ -1035,11 +1037,10 @@ class Article implements Page {
 			$this->getContext()->getOutput()->addWikiMsg( 'anontalkpagetext' );
 		}
 
-		# If we have been passed an &rcid= parameter, we want to give the user a
-		# chance to mark this new article as patrolled.
-		$this->showPatrolFooter();
+		// Show a footer allowing the user to patrol the shown revision or page if possible
+		$patrolFooterShown = $this->showPatrolFooter();
 
-		wfRunHooks( 'ArticleViewFooter', array( $this ) );
+		wfRunHooks( 'ArticleViewFooter', array( $this, $patrolFooterShown ) );
 
 	}
 
@@ -1049,21 +1050,92 @@ class Article implements Page {
 	 * desired, does nothing.
 	 * Side effect: When the patrol link is build, this method will call
 	 * OutputPage::preventClickjacking() and load mediawiki.page.patrol.ajax.
+	 *
+	 * @return bool
 	 */
 	public function showPatrolFooter() {
-		$request = $this->getContext()->getRequest();
+		global $wgUseNPPatrol, $wgUseRCPatrol, $wgEnableAPI, $wgEnableWriteAPI;
+
 		$outputPage = $this->getContext()->getOutput();
 		$user = $this->getContext()->getUser();
-		$rcid = $request->getVal( 'rcid' );
+		$cache = wfGetMainCache();
+		$rc = false;
 
-		if ( !$rcid || !$this->getTitle()->quickUserCan( 'patrol', $user ) ) {
-			return;
+		if ( !$this->getTitle()->quickUserCan( 'patrol', $user ) || !( $wgUseRCPatrol || $wgUseNPPatrol ) ) {
+			// Patrolling is disabled or the user isn't allowed to
+			return false;
 		}
+
+		wfProfileIn( __METHOD__ );
+
+		// New page patrol: Get the timestamp of the oldest revison which
+		// the revision table holds for the given page. Then we look
+		// whether it's within the RC lifespan and if it is, we try
+		// to get the recentchanges row belonging to that entry
+		// (with rc_new = 1).
+
+		// Check for cached results
+		if ( $cache->get( wfMemcKey( 'NotPatrollablePage', $this->getTitle()->getArticleID() ) ) ) {
+			wfProfileOut( __METHOD__ );
+			return false;
+		}
+
+		if ( $this->mRevision && !RecentChange::isInRCLifespan( $this->mRevision->getTimestamp(), 21600 ) ) {
+			// The current revision is already older than what could be in the RC table
+			// 6h tolerance because the RC might not be cleaned out regularly
+			wfProfileOut( __METHOD__ );
+			return false;
+		}
+
+		$dbr = wfGetDB( DB_SLAVE );
+		$oldestRevisionTimestamp = $dbr->selectField(
+			'revision',
+			'MIN( rev_timestamp )',
+			array( 'rev_page' => $this->getTitle()->getArticleID() ),
+			__METHOD__
+		);
+
+		if ( $oldestRevisionTimestamp && RecentChange::isInRCLifespan( $oldestRevisionTimestamp, 21600 ) ) {
+			// 6h tolerance because the RC might not be cleaned out regularly
+			$rc = RecentChange::newFromConds(
+				array(
+					'rc_new' => 1,
+					'rc_timestamp' => $oldestRevisionTimestamp,
+					'rc_namespace' => $this->getTitle()->getNamespace(),
+					'rc_cur_id' => $this->getTitle()->getArticleID(),
+					'rc_patrolled' => 0
+				),
+				__METHOD__,
+				array( 'USE INDEX' => 'new_name_timestamp' )
+			);
+		}
+
+		if ( !$rc ) {
+			// No RC entry around
+
+			// Cache the information we gathered above in case we can't patrol
+			// Don't cache in case we can patrol as this could change
+			$cache->set( wfMemcKey( 'NotPatrollablePage', $this->getTitle()->getArticleID() ), '1' );
+
+			wfProfileOut( __METHOD__ );
+			return false;
+		}
+
+		if ( $rc->getPerformer()->getName() == $user->getName() ) {
+			// Don't show a patrol link for own creations. If the user could
+			// patrol them, they already would be patrolled
+			wfProfileOut( __METHOD__ );
+			return false;
+		}
+
+		$rcid = $rc->getAttribute( 'rc_id' );
 
 		$token = $user->getEditToken( $rcid );
 
 		$outputPage->preventClickjacking();
-		$outputPage->addModules( 'mediawiki.page.patrol.ajax' );
+		if ( $wgEnableAPI && $wgEnableWriteAPI && $user->isAllowed( 'writeapi' ) ) {
+			$outputPage->addModules( 'mediawiki.page.patrol.ajax' );
+		}
 
 		$link = Linker::linkKnown(
 			$this->getTitle(),
@@ -1081,6 +1153,9 @@ class Article implements Page {
 				wfMessage( 'markaspatrolledlink' )->rawParams( $link )->escaped() .
 			'</div>'
 		);
+
+		wfProfileOut( __METHOD__ );
+		return true;
 	}
 
 	/**
@@ -1090,6 +1165,7 @@ class Article implements Page {
 	public function showMissingArticle() {
 		global $wgSend404Code;
 		$outputPage = $this->getContext()->getOutput();
+		// Whether the page is a root user page of an existing user (but not a subpage)
 		$validUserPage = false;
 
 		# Show info in user (talk) namespace. Does the user exist? Is he blocked?
@@ -1099,7 +1175,7 @@ class Article implements Page {
 			$user = User::newFromName( $rootPart, false /* allow IP users*/ );
 			$ip = User::isIP( $rootPart );
 
-			if ( !($user && $user->isLoggedIn()) && !$ip ) { # User does not exist
+			if ( !( $user && $user->isLoggedIn() ) && !$ip ) { # User does not exist
 				$outputPage->wrapWikiMsg( "<div class=\"mw-userpage-userdoesnotexist error\">\n\$1\n</div>",
 					array( 'userpage-userdoesnotexist-view', wfEscapeWikiText( $rootPart ) ) );
 			} elseif ( $user->isBlocked() ) { # Show log extract if the user is currently blocked
@@ -1117,9 +1193,9 @@ class Article implements Page {
 						)
 					)
 				);
-				$validUserPage = true;
+				$validUserPage = !$this->getTitle()->isSubpage();
 			} else {
-				$validUserPage = true;
+				$validUserPage = !$this->getTitle()->isSubpage();
 			}
 		}
 
@@ -1137,6 +1213,13 @@ class Article implements Page {
 			// If there's no backing content, send a 404 Not Found
 			// for better machine handling of broken links.
 			$this->getContext()->getRequest()->response()->header( "HTTP/1.1 404 Not Found" );
+		}
+
+		if ( $validUserPage ) {
+			// Also apply the robot policy for nonexisting user pages (as those aren't served as 404)
+			$policy = $this->getRobotPolicy( 'view' );
+			$outputPage->setIndexPolicy( $policy['index'] );
+			$outputPage->setFollowPolicy( $policy['follow'] );
 		}
 
 		$hookResult = wfRunHooks( 'BeforeDisplayNoArticleText', array( $this ) );
@@ -1188,7 +1271,7 @@ class Article implements Page {
 		} elseif ( $this->getContext()->getRequest()->getInt( 'unhide' ) != 1 ) {
 			# Give explanation and add a link to view the revision...
 			$oldid = intval( $this->getOldID() );
-			$link = $this->getTitle()->getFullUrl( "oldid={$oldid}&unhide=1" );
+			$link = $this->getTitle()->getFullURL( "oldid={$oldid}&unhide=1" );
 			$msg = $this->mRevision->isDeleted( Revision::DELETED_RESTRICTED ) ?
 				'rev-suppressed-text-unhide' : 'rev-deleted-text-unhide';
 			$outputPage->wrapWikiMsg( "<div class='mw-warning plainlinks'>\n$1\n</div>\n",
@@ -1470,13 +1553,7 @@ class Article implements Page {
 
 			$this->doDelete( $reason, $suppress );
 
-			if ( $user->isLoggedIn() && $request->getCheck( 'wpWatch' ) != $user->isWatched( $title ) ) {
-				if ( $request->getCheck( 'wpWatch' ) ) {
-					WatchAction::doWatch( $title, $user );
-				} else {
-					WatchAction::doUnwatch( $title, $user );
-				}
-			}
+			WatchAction::doWatchOrUnwatch( $request->getCheck( 'wpWatch' ), $title, $user );
 
 			return;
 		}

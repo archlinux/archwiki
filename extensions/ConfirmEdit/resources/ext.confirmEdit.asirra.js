@@ -9,18 +9,17 @@
 \*======================================================================*/
 
 jQuery( function( $ ) {
-	var asirraform = $( "form#userlogin2" );
+	// Selectors for create account, login, and page edit forms.
+	var asirraform = $( 'form#userlogin2, #userloginForm form, form#editform' );
 	var submitButtonClicked = document.createElement("input");
 	var passThroughFormSubmit = false;
 
 	function PrepareSubmit() {
-		console.log( 'daa' );
 		submitButtonClicked.type = "hidden";
 		var inputFields = asirraform.find( "input" );
 		for (var i=0; i<inputFields.length; i++) {
 			if (inputFields[i].type === "submit") {
 				inputFields[i].onclick = function(event) {
-					console.log( this );
 					submitButtonClicked.name = this.name;
 					submitButtonClicked.value = this.value;
 				}
@@ -42,7 +41,7 @@ jQuery( function( $ ) {
 
 	function HumanCheckComplete(isHuman) {
 		if (!isHuman) {
-			alert( mw.msg( 'asirra-failed' ) );
+			window.alert( mediaWiki.msg( 'asirra-failed' ) );
 		} else {
 			asirraform.append(submitButtonClicked);
 			passThroughFormSubmit = true;

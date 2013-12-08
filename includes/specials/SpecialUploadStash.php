@@ -88,19 +88,19 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 			} else {
 				return $this->outputLocalFile( $params['file'] );
 			}
-		} catch( UploadStashFileNotFoundException $e ) {
+		} catch ( UploadStashFileNotFoundException $e ) {
 			$code = 404;
 			$message = $e->getMessage();
-		} catch( UploadStashZeroLengthFileException $e ) {
+		} catch ( UploadStashZeroLengthFileException $e ) {
 			$code = 500;
 			$message = $e->getMessage();
-		} catch( UploadStashBadPathException $e ) {
+		} catch ( UploadStashBadPathException $e ) {
 			$code = 500;
 			$message = $e->getMessage();
-		} catch( SpecialUploadStashTooLargeException $e ) {
+		} catch ( SpecialUploadStashTooLargeException $e ) {
 			$code = 500;
 			$message = 'Cannot serve a file larger than ' . self::MAX_SERVE_BYTES . ' bytes. ' . $e->getMessage();
-		} catch( Exception $e ) {
+		} catch ( Exception $e ) {
 			$code = 500;
 			$message = $e->getMessage();
 		}
@@ -134,8 +134,13 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 			$paramString = substr( $thumbPart, 0, $srcNamePos - 1 );
 
 			$handler = $file->getHandler();
-			$params = $handler->parseParamString( $paramString );
-			return array( 'file' => $file, 'type' => $type, 'params' => $params );
+			if ( $handler ) {
+				$params = $handler->parseParamString( $paramString );
+				return array( 'file' => $file, 'type' => $type, 'params' => $params );
+			} else {
+				throw new UploadStashBadPathException( 'No handler found for ' .
+						"mime {$file->getMimeType()} of file {$file->getPath()}" );
+			}
 		}
 
 		return array( 'file' => $file, 'type' => $type );
@@ -222,7 +227,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		global $wgUploadStashScalerBaseUrl;
 		$scalerBaseUrl = $wgUploadStashScalerBaseUrl;
 
-		if( preg_match( '/^\/\//', $scalerBaseUrl ) ) {
+		if ( preg_match( '/^\/\//', $scalerBaseUrl ) ) {
 			// this is apparently a protocol-relative URL, which makes no sense in this context,
 			// since this is used for communication that's internal to the application.
 			// default to http.
@@ -303,8 +308,6 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		header( "Content-Type: $contentType", true );
 		header( 'Content-Transfer-Encoding: binary', true );
 		header( 'Expires: Sun, 17-Jan-2038 19:14:07 GMT', true );
-		// Bug 53032 - It shouldn't be a problem here, but let's be safe and not cache
-		header( 'Cache-Control: private' );
 		header( "Content-Length: $size", true );
 	}
 
@@ -313,6 +316,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * Note the stash has to be recreated since this is being called in a static context.
 	 * This works, because there really is only one stash per logged-in user, despite appearances.
 	 *
+	 * @param array $formData
 	 * @return Status
 	 */
 	public static function tryClearStashedUploads( $formData ) {
@@ -339,15 +343,16 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		// create the form, which will also be used to execute a callback to process incoming form data
 		// this design is extremely dubious, but supposedly HTMLForm is our standard now?
 
+		$context = new DerivativeContext( $this->getContext() );
+		$context->setTitle( $this->getTitle() ); // Remove subpage
 		$form = new HTMLForm( array(
 			'Clear' => array(
 				'type' => 'hidden',
 				'default' => true,
 				'name' => 'clear',
 			)
-		), $this->getContext(), 'clearStashedUploads' );
+		), $context, 'clearStashedUploads' );
 		$form->setSubmitCallback( array( __CLASS__, 'tryClearStashedUploads' ) );
-		$form->setTitle( $this->getTitle() );
 		$form->setSubmitTextMsg( 'uploadstash-clear' );
 
 		$form->prepareForm();

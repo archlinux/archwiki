@@ -126,7 +126,8 @@ class Autopromote {
 				return false;
 			} elseif ( $cond[0] == '^' ) { // XOR (exactly one cond passes)
 				if ( count( $cond ) > 3 ) {
-					wfWarn( 'recCheckCondition() given XOR ("^") condition on three or more conditions. Check your $wgAutopromote and $wgAutopromoteOnce settings.' );
+					wfWarn( 'recCheckCondition() given XOR ("^") condition on three or more conditions.' .
+						' Check your $wgAutopromote and $wgAutopromoteOnce settings.' );
 				}
 				return self::recCheckCondition( $cond[1], $user )
 					xor self::recCheckCondition( $cond[2], $user );
@@ -165,7 +166,7 @@ class Autopromote {
 			return false;
 		}
 
-		switch( $cond[0] ) {
+		switch ( $cond[0] ) {
 			case APCOND_EMAILCONFIRMED:
 				if ( Sanitizer::validateEmail( $user->getEmail() ) ) {
 					if ( $wgEmailAuthentication ) {

@@ -5,6 +5,7 @@
  * @file
  * @ingroup Extensions
  */
+// @codingStandardsIgnoreFile
 
 $specialPageAliases = array();
 
@@ -23,9 +24,14 @@ $specialPageAliases['arz'] = array(
 	'Captcha' => array( 'كابتشا' ),
 );
 
+/** Min Dong Chinese (Mìng-dĕ̤ng-ngṳ̄) */
+$specialPageAliases['cdo'] = array(
+	'Captcha' => array( '驗證碼' ),
+);
+
 /** Zazaki (Zazaki) */
 $specialPageAliases['diq'] = array(
-	'Captcha' => array( 'Qodaİtimadi' ),
+	'Captcha' => array( 'Kodaİtimadi' ),
 );
 
 /** Esperanto (Esperanto) */

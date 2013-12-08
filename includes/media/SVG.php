@@ -56,7 +56,7 @@ class SvgHandler extends ImageHandler {
 		$metadata = $file->getMetadata();
 		if ( $metadata ) {
 			$metadata = $this->unpackMetadata( $metadata );
-			if( isset( $metadata['animated'] ) ) {
+			if ( isset( $metadata['animated'] ) ) {
 				return $metadata['animated'];
 			}
 		}
@@ -115,6 +115,7 @@ class SvgHandler extends ImageHandler {
 		$clientHeight = $params['height'];
 		$physicalWidth = $params['physicalWidth'];
 		$physicalHeight = $params['physicalHeight'];
+		$lang = isset( $params['lang'] ) ? $params['lang'] : 'en';
 
 		if ( $flags & self::TRANSFORM_LATER ) {
 			return new ThumbnailImage( $image, $dstUrl, $dstPath, $params );
@@ -132,7 +133,7 @@ class SvgHandler extends ImageHandler {
 		}
 
 		$srcPath = $image->getLocalRefPath();
-		$status = $this->rasterize( $srcPath, $dstPath, $physicalWidth, $physicalHeight );
+		$status = $this->rasterize( $srcPath, $dstPath, $physicalWidth, $physicalHeight, $lang );
 		if ( $status === true ) {
 			return new ThumbnailImage( $image, $dstUrl, $dstPath, $params );
 		} else {
@@ -147,10 +148,11 @@ class SvgHandler extends ImageHandler {
 	 * @param string $dstPath
 	 * @param string $width
 	 * @param string $height
+	 * @param string $lang Language code of the language to render the SVG in
 	 * @throws MWException
 	 * @return bool|MediaTransformError
 	 */
-	public function rasterize( $srcPath, $dstPath, $width, $height ) {
+	public function rasterize( $srcPath, $dstPath, $width, $height, $lang = false ) {
 		global $wgSVGConverters, $wgSVGConverter, $wgSVGConverterPath;
 		$err = false;
 		$retval = '';
@@ -158,7 +160,7 @@ class SvgHandler extends ImageHandler {
 			if ( is_array( $wgSVGConverters[$wgSVGConverter] ) ) {
 				// This is a PHP callable
 				$func = $wgSVGConverters[$wgSVGConverter][0];
-				$args = array_merge( array( $srcPath, $dstPath, $width, $height ),
+				$args = array_merge( array( $srcPath, $dstPath, $width, $height, $lang ),
 					array_slice( $wgSVGConverters[$wgSVGConverter], 1 ) );
 				if ( !is_callable( $func ) ) {
 					throw new MWException( "$func is not callable" );
@@ -175,10 +177,16 @@ class SvgHandler extends ImageHandler {
 						wfEscapeShellArg( $srcPath ),
 						wfEscapeShellArg( $dstPath ) ),
 					$wgSVGConverters[$wgSVGConverter]
-				) . " 2>&1";
+				);
+
+				$env = array();
+				if ( $lang !== false ) {
+					$env['LANG'] = $lang;
+				}
+
 				wfProfileIn( 'rsvg' );
 				wfDebug( __METHOD__ . ": $cmd\n" );
-				$err = wfShellExec( $cmd, $retval );
+				$err = wfShellExecWithStderr( $cmd, $retval, $env );
 				wfProfileOut( 'rsvg' );
 			}
 		}
@@ -263,11 +271,11 @@ class SvgHandler extends ImageHandler {
 		$metadata = array( 'version' => self::SVG_METADATA_VERSION );
 		try {
 			$metadata += SVGMetadataExtractor::getMetadata( $filename );
-		} catch( MWException $e ) { // @TODO: SVG specific exceptions
+		} catch ( MWException $e ) { // @todo SVG specific exceptions
 			// File not found, broken, etc.
 			$metadata['error'] = array(
 				'message' => $e->getMessage(),
-				'code'    => $e->getCode()
+				'code' => $e->getCode()
 			);
 			wfDebug( __METHOD__ . ': ' . $e->getMessage() . "\n" );
 		}
@@ -340,6 +348,7 @@ class SvgHandler extends ImageHandler {
 			'description' => 'imagedescription',
 			'title' => 'objectname',
 		);
+		$showMeta = false;
 		foreach ( $metadata as $name => $value ) {
 			$tag = strtolower( $name );
 			if ( isset( $conversion[$tag] ) ) {
@@ -348,6 +357,7 @@ class SvgHandler extends ImageHandler {
 				// Do not output other metadata not in list
 				continue;
 			}
+			$showMeta = true;
 			self::addMeta( $result,
 				in_array( $tag, $visibleFields ) ? 'visible' : 'collapsed',
 				'exif',
@@ -355,6 +365,70 @@ class SvgHandler extends ImageHandler {
 				$value
 			);
 		}
-		return $result;
+		return $showMeta ? $result : false;
+	}
+
+
+	/**
+	 * @param string $name Parameter name
+	 * @param $string $value Parameter value
+	 * @return bool Validity
+	 */
+	function validateParam( $name, $value ) {
+		if ( in_array( $name, array( 'width', 'height' ) ) ) {
+			// Reject negative heights, widths
+			return ( $value > 0 );
+		} elseif ( $name == 'lang' ) {
+			// Validate $code
+			if ( !Language::isValidBuiltinCode( $value ) ) {
+				wfDebug( "Invalid user language code\n" );
+				return false;
+			}
+			return true;
+		}
+		// Only lang, width and height are acceptable keys
+		return false;
+	}
+
+	/**
+	 * @param array $params name=>value pairs of parameters
+	 * @return string Filename to use
+	 */
+	function makeParamString( $params ) {
+		$lang = '';
+		if ( isset( $params['lang'] ) && $params['lang'] !== 'en' ) {
+			$params['lang'] = mb_strtolower( $params['lang'] );
+			$lang = "lang{$params['lang']}-";
+		}
+		if ( !isset( $params['width'] ) ) {
+			return false;
+		}
+		return "$lang{$params['width']}px";
+	}
+
+	function parseParamString( $str ) {
+		$m = false;
+		if ( preg_match( '/^lang([a-z]+(?:-[a-z]+)*)-(\d+)px$/', $str, $m ) ) {
+			return array( 'width' => array_pop( $m ), 'lang' => $m[1] );
+		} elseif ( preg_match( '/^(\d+)px$/', $str, $m ) ) {
+			return array( 'width' => $m[1], 'lang' => 'en' );
+		} else {
+			return false;
+		}
+	}
+
+	function getParamMap() {
+		return array( 'img_lang' => 'lang', 'img_width' => 'width' );
+	}
+
+	/**
+	 * @param $params
+	 * @return array
+	 */
+	function getScriptParams( $params ) {
+		return array(
+			'width' => $params['width'],
+			'lang' => $params['lang'],
+		);
 	}
 }

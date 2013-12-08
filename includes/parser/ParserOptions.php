@@ -240,6 +240,7 @@ class ParserOptions {
 	function getExternalLinkTarget()            { return $this->mExternalLinkTarget; }
 	function getDisableContentConversion()      { return $this->mDisableContentConversion; }
 	function getDisableTitleConversion()        { return $this->mDisableTitleConversion; }
+	/** @deprecated since 1.22 use User::getOption('math') instead */
 	function getMath()                          { $this->optionUsed( 'math' );
 												  return $this->mMath; }
 	function getThumbSize()                     { $this->optionUsed( 'thumbsize' );
@@ -280,9 +281,17 @@ class ParserOptions {
 	}
 
 	/**
+	 * Get the user language used by the parser for this page.
+	 *
 	 * You shouldn't use this. Really. $parser->getFunctionLang() is all you need.
-	 * Using this fragments the cache and is discouraged. Yes, {{int: }} uses this,
-	 * producing inconsistent tables (Bug 14404).
+	 *
+	 * To avoid side-effects where the page will be rendered based on the language
+	 * of the user who last saved, this function will triger a cache fragmentation.
+	 * Usage of this method is discouraged for that reason.
+	 *
+	 * When saving, this will return the default language instead of the user's.
+	 *
+	 * {{int: }} uses this which used to produce inconsistent link tables (bug 14404).
 	 *
 	 * @return Language object
 	 * @since 1.19
@@ -312,7 +321,7 @@ class ParserOptions {
 	function setAllowSpecialInclusion( $x )     { return wfSetVar( $this->mAllowSpecialInclusion, $x ); }
 	function setTidy( $x )                      { return wfSetVar( $this->mTidy, $x ); }
 
-	/** @deprecated in 1.19; will be removed in 1.20 */
+	/** @deprecated in 1.19 */
 	function setSkin( $x )                      { wfDeprecated( __METHOD__, '1.19' ); }
 	function setInterfaceMessage( $x )          { return wfSetVar( $this->mInterfaceMessage, $x ); }
 	function setTargetLanguage( $x )            { return wfSetVar( $this->mTargetLanguage, $x, true ); }
@@ -330,6 +339,7 @@ class ParserOptions {
 	function setExternalLinkTarget( $x )        { return wfSetVar( $this->mExternalLinkTarget, $x ); }
 	function disableContentConversion( $x = true ) { return wfSetVar( $this->mDisableContentConversion, $x ); }
 	function disableTitleConversion( $x = true ) { return wfSetVar( $this->mDisableTitleConversion, $x ); }
+	/** @deprecated since 1.22 */
 	function setMath( $x )                      { return wfSetVar( $this->mMath, $x ); }
 	function setUserLang( $x )                  {
 		if ( is_string( $x ) ) {
@@ -538,7 +548,7 @@ class ParserOptions {
 
 		// add in language specific options, if any
 		// @todo FIXME: This is just a way of retrieving the url/user preferred variant
-		if( !is_null( $title ) ) {
+		if ( !is_null( $title ) ) {
 			$confstr .= $title->getPageLanguage()->getExtraHashOptions();
 		} else {
 			global $wgContLang;
@@ -557,8 +567,9 @@ class ParserOptions {
 			$confstr .= '!printable=1';
 		}
 
-		if ( $this->mExtraKey != '' )
+		if ( $this->mExtraKey != '' ) {
 			$confstr .= $this->mExtraKey;
+		}
 
 		// Give a chance for extensions to modify the hash, if they have
 		// extra options or other effects on the parser cache.

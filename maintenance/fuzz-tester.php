@@ -118,7 +118,6 @@ Wiki configuration for testing:
   // Enable weird and wonderful options:
 							  // Increase default error reporting level.
   error_reporting (E_ALL);    // At a later date could be increased to E_ALL | E_STRICT
-  $wgBlockOpenProxies = true; // Some block pages require this to be true in order to test.
   $wgEnableUploads = true;    // enable uploads.
   $wgDBerrorLog = "/root/mediawiki-db-error-log.txt";  // log DB errors, replace with suitable path.
   $wgShowSQLErrors = true;    // Show SQL errors (instead of saying the query was hidden).
@@ -127,17 +126,17 @@ Wiki configuration for testing:
   $wgEnableWriteAPI = true;   // enable API.
 
   // Install & enable Parser Hook extensions to increase code coverage. E.g.:
-  require_once("extensions/ParserFunctions/ParserFunctions.php");
-  require_once("extensions/Cite/Cite.php");
-  require_once("extensions/inputbox/inputbox.php");
-  require_once("extensions/Sort/Sort.php");
-  require_once("extensions/wikihiero/wikihiero.php");
-  require_once("extensions/CharInsert/CharInsert.php");
-  require_once("extensions/FixedImage/FixedImage.php");
+  require_once "extensions/ParserFunctions/ParserFunctions.php";
+  require_once "extensions/Cite/Cite.php";
+  require_once "extensions/inputbox/inputbox.php";
+  require_once "extensions/Sort/Sort.php";
+  require_once "extensions/wikihiero/wikihiero.php";
+  require_once "extensions/CharInsert/CharInsert.php";
+  require_once "extensions/FixedImage/FixedImage.php";
 
   // Install & enable Special Page extensions to increase code coverage. E.g.:
-  require_once("extensions/Cite/SpecialCite.php");
-  require_once("extensions/Renameuser/SpecialRenameuser.php");
+  require_once "extensions/Cite/SpecialCite.php";
+  require_once "extensions/Renameuser/SpecialRenameuser.php";
   // --------- End ---------
 
   If you want to try E_STRICT error logging, add this to the above:
@@ -181,7 +180,7 @@ TODO:
 // ///////////////////////// COMMAND LINE HELP ////////////////////////////////////
 
 // This is a command line script, load MediaWiki env (gives command line options);
-require_once( __DIR__ . '/commandLine.inc' );
+require_once __DIR__ . '/commandLine.inc';
 
 // if the user asked for an explanation of command line options.
 if ( isset( $options["help"] ) ) {
@@ -657,6 +656,7 @@ class wikiFuzz {
 			"}}",
 			"{{INT:googlesearch|",
 			"}}",
+                        "{{ROOTPAGENAME}}",
 			"{{BASEPAGENAME}}",
 			"{{CONTENTLANGUAGE}}",
 			"{{PAGESINNAMESPACE:}}",
@@ -1482,24 +1482,6 @@ class watchlistTest extends pageTest {
 	}
 }
 
-
-/**
- ** a page test for "Special:Blockme"
- */
-class specialBlockmeTest extends pageTest {
-	function __construct() {
-		$this->pagePath = "index.php?title=Special:Blockme";
-
-		$this->params = array ();
-
-		// sometimes we specify "ip", and sometimes we don't.
-		if ( wikiFuzz::randnum( 1 ) == 0 ) {
-			$this->params["ip"] = wikiFuzz::chooseInput( array( "10.12.41.213", wikiFuzz::randnum( 8134, -10 ), wikiFuzz::makeFuzz( 2 ) ) );
-		}
-	}
-}
-
-
 /**
  ** a page test for "Special:Movepage"
  */
@@ -1972,7 +1954,7 @@ class specialChemicalsourcesTest extends pageTest {
  ** returns the help screen - so currently a lot of the tests aren't actually doing much
  ** because something wasn't right in the query.
  **
- ** @todo: Incomplete / unfinished; Runs too fast (suggests not much testing going on).
+ ** @todo Incomplete / unfinished; Runs too fast (suggests not much testing going on).
  */
 class api extends pageTest {
 
@@ -2160,7 +2142,7 @@ class GeSHi_Test extends pageTest {
 /**
  ** selects a page test to run.
  * @param $count
- * @return \api|\confirmEmail|\contributionsTest|\editPageTest|\imagelistTest|\imagepageTest|\ipblocklistTest|\listusersTest|\mimeSearchTest|\newImagesTest|\pageDeletion|\pageHistoryTest|\pageProtectionForm|\prefixindexTest|\profileInfo|\recentchangesTest|\redirectTest|\searchTest|\specialAllmessagesTest|\specialAllpagesTest|\specialBlockip|\specialBlockmeTest|\specialBooksourcesTest|\specialCategoryTree|\specialChemicalsourcesTest|\specialCitePageTest|\specialExportTest|\specialFilepathPageTest|\specialImportPageTest|\specialLinksearch|\specialLockdbPageTest|\specialLogTest|\specialMovePage|\specialNewpagesPageTest|\specialRenameuserPageTest|\specialRevisionDeletePageTest|\specialUndeletePageTest|\specialUnlockdbPageTest|\specialUserrights|\successfulUserLoginTest|\thumbTest|\userLoginTest|\viewPageTest|\watchlistTest
+ * @return \api|\confirmEmail|\contributionsTest|\editPageTest|\imagelistTest|\imagepageTest|\ipblocklistTest|\listusersTest|\mimeSearchTest|\newImagesTest|\pageDeletion|\pageHistoryTest|\pageProtectionForm|\prefixindexTest|\profileInfo|\recentchangesTest|\redirectTest|\searchTest|\specialAllmessagesTest|\specialAllpagesTest|\specialBlockip|\specialBooksourcesTest|\specialCategoryTree|\specialChemicalsourcesTest|\specialCitePageTest|\specialExportTest|\specialFilepathPageTest|\specialImportPageTest|\specialLinksearch|\specialLockdbPageTest|\specialLogTest|\specialMovePage|\specialNewpagesPageTest|\specialRenameuserPageTest|\specialRevisionDeletePageTest|\specialUndeletePageTest|\specialUnlockdbPageTest|\specialUserrights|\successfulUserLoginTest|\thumbTest|\userLoginTest|\viewPageTest|\watchlistTest
  */
 function selectPageTest( $count ) {
 
@@ -2196,7 +2178,6 @@ function selectPageTest( $count ) {
 		case 20: return new redirectTest();
 		case 21: return new confirmEmail();
 		case 22: return new watchlistTest();
-		case 23: return new specialBlockmeTest();
 		case 24: return new specialUndeletePageTest();
 		case 25: return new specialMovePage();
 		case 26: return new specialUnlockdbPageTest();
@@ -2542,7 +2523,7 @@ function runWikiTest( pageTest $test, &$testname, $can_overwrite = false ) {
 		if ( !$valid ) print "\nW3C web validation failed - view details with: html2text " . DIRECTORY . "/" . $testname . ".validator_output.html";
 	}
 
-	// Get tidy to check the page, unless we already know it produces non-XHTML output.
+	// Get tidy to check the page, unless we already know it produces non-(X)HTML output.
 	if ( $test->tidyValidate() ) {
 		$valid = tidyCheckFile( $testname . HTML_FILE ) && $valid;
 	}

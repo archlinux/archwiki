@@ -52,13 +52,14 @@ class ProcessCacheLRUTest extends MediaWikiTestCase {
 		for ( $i = $firstKey; $i <= $lastKey; $i++ ) {
 			$expected["cache-key-$i"] = array( "prop-$i" => "value-$i" );
 		}
+
 		return $expected;
 	}
 
 	/**
 	 * Highlight diff between assertEquals and assertNotSame
 	 */
-	function testPhpUnitArrayEquality() {
+	public function testPhpUnitArrayEquality() {
 		$one = array( 'A' => 1, 'B' => 2 );
 		$two = array( 'B' => 2, 'A' => 1 );
 		$this->assertEquals( $one, $two ); // ==
@@ -69,8 +70,8 @@ class ProcessCacheLRUTest extends MediaWikiTestCase {
 	 * @dataProvider provideInvalidConstructorArg
 	 * @expectedException MWException
 	 */
-	function testConstructorGivenInvalidValue( $maxSize ) {
-		$c = new ProcessCacheLRUTestable( $maxSize );
+	public function testConstructorGivenInvalidValue( $maxSize ) {
+		new ProcessCacheLRUTestable( $maxSize );
 	}
 
 	/**
@@ -87,7 +88,7 @@ class ProcessCacheLRUTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testAddAndGetAKey() {
+	public function testAddAndGetAKey() {
 		$oneCache = new ProcessCacheLRUTestable( 1 );
 		$this->assertCacheEmpty( $oneCache );
 
@@ -98,7 +99,7 @@ class ProcessCacheLRUTest extends MediaWikiTestCase {
 		$this->assertEquals( 'value1', $oneCache->get( 'cache-key', 'prop1' ) );
 	}
 
-	function testDeleteOldKey() {
+	public function testDeleteOldKey() {
 		$oneCache = new ProcessCacheLRUTestable( 1 );
 		$this->assertCacheEmpty( $oneCache );
 
@@ -116,7 +117,7 @@ class ProcessCacheLRUTest extends MediaWikiTestCase {
 	 * @param $cacheMaxEntries Maximum entry the created cache will hold
 	 * @param $entryToFill Number of entries to insert in the created cache.
 	 */
-	function testFillingCache( $cacheMaxEntries, $entryToFill, $msg = '' ) {
+	public function testFillingCache( $cacheMaxEntries, $entryToFill, $msg = '' ) {
 		$cache = new ProcessCacheLRUTestable( $cacheMaxEntries );
 		$this->fillCache( $cache, $entryToFill );
 
@@ -125,7 +126,6 @@ class ProcessCacheLRUTest extends MediaWikiTestCase {
 			$cache->getCache(),
 			"Filling a $cacheMaxEntries entries cache with $entryToFill entries"
 		);
-
 	}
 
 	/**
@@ -145,7 +145,7 @@ class ProcessCacheLRUTest extends MediaWikiTestCase {
 	 * Create a cache with only one remaining entry then update
 	 * the first inserted entry. Should bump it to the top.
 	 */
-	function testReplaceExistingKeyShouldBumpEntryToTop() {
+	public function testReplaceExistingKeyShouldBumpEntryToTop() {
 		$maxEntries = 3;
 
 		$cache = new ProcessCacheLRUTestable( $maxEntries );
@@ -164,7 +164,7 @@ class ProcessCacheLRUTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testRecentlyAccessedKeyStickIn() {
+	public function testRecentlyAccessedKeyStickIn() {
 		$cache = new ProcessCacheLRUTestable( 2 );
 		$cache->set( 'first', 'prop1', 'value1' );
 		$cache->set( 'second', 'prop2', 'value2' );
@@ -183,7 +183,7 @@ class ProcessCacheLRUTest extends MediaWikiTestCase {
 	 * Given a cache having 1,2,3 as key, updating 2 should bump 2 to
 	 * the top of the queue with the new value: 1,3,2* (* = updated).
 	 */
-	function testReplaceExistingKeyInAFullCacheShouldBumpToTop() {
+	public function testReplaceExistingKeyInAFullCacheShouldBumpToTop() {
 		$maxEntries = 3;
 
 		$cache = new ProcessCacheLRUTestable( $maxEntries );
@@ -204,7 +204,7 @@ class ProcessCacheLRUTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testBumpExistingKeyToTop() {
+	public function testBumpExistingKeyToTop() {
 		$cache = new ProcessCacheLRUTestable( 3 );
 		$this->fillCache( $cache, 3 );
 
@@ -218,9 +218,7 @@ class ProcessCacheLRUTest extends MediaWikiTestCase {
 			),
 			$cache->getCache()
 		);
-
 	}
-
 }
 
 /**

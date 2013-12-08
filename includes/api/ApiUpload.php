@@ -56,15 +56,19 @@ class ApiUpload extends ApiBase {
 		$this->mParams['chunk'] = $request->getFileName( 'chunk' );
 
 		// Copy the session key to the file key, for backward compatibility.
-		if( !$this->mParams['filekey'] && $this->mParams['sessionkey'] ) {
+		if ( !$this->mParams['filekey'] && $this->mParams['sessionkey'] ) {
 			$this->mParams['filekey'] = $this->mParams['sessionkey'];
 		}
 
 		// Select an upload module
-		if ( !$this->selectUploadModule() ) {
-			return; // not a true upload, but a status request or similar
-		} elseif ( !isset( $this->mUpload ) ) {
-			$this->dieUsage( 'No upload module set', 'nomodule' );
+		try {
+			if ( !$this->selectUploadModule() ) {
+				return; // not a true upload, but a status request or similar
+			} elseif ( !isset( $this->mUpload ) ) {
+				$this->dieUsage( 'No upload module set', 'nomodule' );
+			}
+		} catch ( UploadStashException $e ) { // XXX: don't spam exception log
+			$this->dieUsage( get_class( $e ) . ": " . $e->getMessage(), 'stasherror' );
 		}
 
 		// First check permission to upload
@@ -82,7 +86,7 @@ class ApiUpload extends ApiBase {
 		// Check if the uploaded file is sane
 		if ( $this->mParams['chunk'] ) {
 			$maxSize = $this->mUpload->getMaxUploadSize();
-			if( $this->mParams['filesize'] > $maxSize ) {
+			if ( $this->mParams['filesize'] > $maxSize ) {
 				$this->dieUsage( 'The file you submitted was too large', 'file-too-large' );
 			}
 			if ( !$this->mUpload->getTitle() ) {
@@ -106,9 +110,13 @@ class ApiUpload extends ApiBase {
 		}
 
 		// Get the result based on the current upload context:
-		$result = $this->getContextResult();
-		if ( $result['result'] === 'Success' ) {
-			$result['imageinfo'] = $this->mUpload->getImageInfo( $this->getResult() );
+		try {
+			$result = $this->getContextResult();
+			if ( $result['result'] === 'Success' ) {
+				$result['imageinfo'] = $this->mUpload->getImageInfo( $this->getResult() );
+			}
+		} catch ( UploadStashException $e ) { // XXX: don't spam exception log
+			$this->dieUsage( get_class( $e ) . ": " . $e->getMessage(), 'stasherror' );
 		}
 
 		$this->getResult()->addValue( null, $this->getModuleName(), $result );
@@ -144,7 +152,7 @@ class ApiUpload extends ApiBase {
 	 * @return array
 	 */
 	private function getStashResult( $warnings ) {
-		$result = array ();
+		$result = array();
 		// Some uploads can request they be stashed, so as not to publish them immediately.
 		// In this case, a failure to stash ought to be fatal
 		try {
@@ -216,27 +224,27 @@ class ApiUpload extends ApiBase {
 		// Check we added the last chunk:
 		if ( $this->mParams['offset'] + $chunkSize == $this->mParams['filesize'] ) {
 			if ( $this->mParams['async'] ) {
-				$progress = UploadBase::getSessionStatus( $this->mParams['filekey'] );
+				$progress = UploadBase::getSessionStatus( $filekey );
 				if ( $progress && $progress['result'] === 'Poll' ) {
 					$this->dieUsage( "Chunk assembly already in progress.", 'stashfailed' );
 				}
 				UploadBase::setSessionStatus(
-					$this->mParams['filekey'],
+					$filekey,
 					array( 'result' => 'Poll',
 						'stage' => 'queued', 'status' => Status::newGood() )
 				);
 				$ok = JobQueueGroup::singleton()->push( new AssembleUploadChunksJob(
-					Title::makeTitle( NS_FILE, $this->mParams['filekey'] ),
+					Title::makeTitle( NS_FILE, $filekey ),
 					array(
-						'filename'  => $this->mParams['filename'],
-						'filekey'   => $this->mParams['filekey'],
-						'session'   => $this->getContext()->exportSession()
+						'filename' => $this->mParams['filename'],
+						'filekey' => $filekey,
+						'session' => $this->getContext()->exportSession()
 					)
 				) );
 				if ( $ok ) {
 					$result['result'] = 'Poll';
 				} else {
-					UploadBase::setSessionStatus( $this->mParams['filekey'], false );
+					UploadBase::setSessionStatus( $filekey, false );
 					$this->dieUsage(
 						"Failed to start AssembleUploadChunks.php", 'stashfailed' );
 				}
@@ -358,11 +366,9 @@ class ApiUpload extends ApiBase {
 		}
 
 		if ( $this->mParams['chunk'] ) {
-			$this->checkChunkedEnabled();
-
 			// Chunk upload
 			$this->mUpload = new UploadFromChunks();
-			if( isset( $this->mParams['filekey'] ) ) {
+			if ( isset( $this->mParams['filekey'] ) ) {
 				// handle new chunk
 				$this->mUpload->continueChunks(
 					$this->mParams['filename'],
@@ -402,6 +408,10 @@ class ApiUpload extends ApiBase {
 
 			if ( !UploadFromUrl::isAllowedHost( $this->mParams['url'] ) ) {
 				$this->dieUsageMsg( 'copyuploadbaddomain' );
+			}
+
+			if ( !UploadFromUrl::isAllowedUrl( $this->mParams['url'] ) ) {
+				$this->dieUsageMsg( 'copyuploadbadurl' );
 			}
 
 			$async = false;
@@ -452,9 +462,9 @@ class ApiUpload extends ApiBase {
 		$verification = $this->mUpload->verifyUpload();
 		if ( $verification['status'] === UploadBase::OK ) {
 			return;
-		} else {
-			return $this->checkVerification( $verification );
 		}
+
+		$this->checkVerification( $verification );
 	}
 
 	/**
@@ -463,8 +473,8 @@ class ApiUpload extends ApiBase {
 	protected function checkVerification( array $verification ) {
 		global $wgFileExtensions;
 
-		// TODO: Move them to ApiBase's message map
-		switch( $verification['status'] ) {
+		// @todo Move them to ApiBase's message map
+		switch ( $verification['status'] ) {
 			// Recoverable errors
 			case UploadBase::MIN_LENGTH_PARTNAME:
 				$this->dieRecoverableError( 'filename-tooshort', 'filename' );
@@ -494,7 +504,7 @@ class ApiUpload extends ApiBase {
 			case UploadBase::FILETYPE_BADTYPE:
 				$extradata = array(
 					'filetype' => $verification['finalExt'],
-					'allowed' => $wgFileExtensions
+					'allowed' => array_values( array_unique( $wgFileExtensions ) )
 				);
 				$this->getResult()->setIndexedTagName( $extradata['allowed'], 'ext' );
 
@@ -555,7 +565,8 @@ class ApiUpload extends ApiBase {
 			if ( isset( $warnings['exists'] ) ) {
 				$warning = $warnings['exists'];
 				unset( $warnings['exists'] );
-				$warnings[$warning['warning']] = $warning['file']->getName();
+				$localFile = isset( $warning['normalizedFile'] ) ? $warning['normalizedFile'] : $warning['file'];
+				$warnings[$warning['warning']] = $localFile->getName();
 			}
 		}
 		return $warnings;
@@ -596,12 +607,12 @@ class ApiUpload extends ApiBase {
 			$ok = JobQueueGroup::singleton()->push( new PublishStashedFileJob(
 				Title::makeTitle( NS_FILE, $this->mParams['filename'] ),
 				array(
-					'filename'  => $this->mParams['filename'],
-					'filekey'   => $this->mParams['filekey'],
-					'comment'   => $this->mParams['comment'],
-					'text'      => $this->mParams['text'],
-					'watch'     => $watch,
-					'session'   => $this->getContext()->exportSession()
+					'filename' => $this->mParams['filename'],
+					'filekey' => $this->mParams['filekey'],
+					'comment' => $this->mParams['comment'],
+					'text' => $this->mParams['text'],
+					'watch' => $watch,
+					'session' => $this->getContext()->exportSession()
 				)
 			) );
 			if ( $ok ) {
@@ -650,13 +661,6 @@ class ApiUpload extends ApiBase {
 		global $wgAllowAsyncCopyUploads;
 		if ( !$wgAllowAsyncCopyUploads ) {
 			$this->dieUsage( 'Asynchronous copy uploads disabled', 'asynccopyuploaddisabled' );
-		}
-	}
-
-	protected function checkChunkedEnabled() {
-		global $wgAllowChunkedUploads;
-		if ( !$wgAllowChunkedUploads ) {
-			$this->dieUsage( 'Chunked uploads disabled', 'chunkeduploaddisabled' );
 		}
 	}
 
@@ -816,7 +820,7 @@ class ApiUpload extends ApiBase {
 				array( 'code' => 'publishfailed', 'info' => 'Publishing of stashed file failed' ),
 				array( 'code' => 'internal-error', 'info' => 'An internal error occurred' ),
 				array( 'code' => 'asynccopyuploaddisabled', 'info' => 'Asynchronous copy uploads disabled' ),
-				array( 'code' => 'chunkeduploaddisabled', 'info' => 'Chunked uploads disabled' ),
+				array( 'code' => 'stasherror', 'info' => 'An upload stash error occurred' ),
 				array( 'fileexists-forbidden' ),
 				array( 'fileexists-shared-forbidden' ),
 			)

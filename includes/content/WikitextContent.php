@@ -61,7 +61,8 @@ class WikitextContent extends TextContent {
 		$myModelId = $this->getModel();
 		$sectionModelId = $with->getModel();
 
-		if ( $sectionModelId != $myModelId  ) {
+		if ( $sectionModelId != $myModelId ) {
+			wfProfileOut( __METHOD__ );
 			throw new MWException( "Incompatible content model for section: " .
 				"document uses $myModelId but " .
 				"section uses $sectionModelId." );

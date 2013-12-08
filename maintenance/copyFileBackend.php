@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Copy all files in one container of one backend to another.
@@ -35,6 +35,8 @@ require_once( __DIR__ . '/Maintenance.php' );
  * @ingroup Maintenance
  */
 class CopyFileBackend extends Maintenance {
+	protected $statCache = array();
+
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Copy files in one backend to another.";
@@ -43,8 +45,10 @@ class CopyFileBackend extends Maintenance {
 		$this->addOption( 'containers', 'Pipe separated list of containers', true, true );
 		$this->addOption( 'subdir', 'Only do items in this child directory', false, true );
 		$this->addOption( 'ratefile', 'File to check periodically for batch size', false, true );
+		$this->addOption( 'prestat', 'Stat the destination files first (try to use listings)' );
 		$this->addOption( 'skiphash', 'Skip SHA-1 sync checks for files' );
 		$this->addOption( 'missingonly', 'Only copy files missing from destination listing' );
+		$this->addOption( 'syncviadelete', 'Delete destination files missing from source listing' );
 		$this->addOption( 'utf8only', 'Skip source files that do not have valid UTF-8 names' );
 		$this->setBatchSize( 50 );
 	}
@@ -53,7 +57,7 @@ class CopyFileBackend extends Maintenance {
 		$src = FileBackendGroup::singleton()->get( $this->getOption( 'src' ) );
 		$dst = FileBackendGroup::singleton()->get( $this->getOption( 'dst' ) );
 		$containers = explode( '|', $this->getOption( 'containers' ) );
-		$subDir = $this->getOption( rtrim( 'subdir', '/' ), '' );
+		$subDir = rtrim( $this->getOption( 'subdir', '' ), '/' );
 
 		$rateFile = $this->getOption( 'ratefile' );
 
@@ -61,7 +65,6 @@ class CopyFileBackend extends Maintenance {
 			$this->error( "Cannot check for UTF-8, mbstring extension missing.", 1 ); // die
 		}
 
-		$count = 0;
 		foreach ( $containers as $container ) {
 			if ( $subDir != '' ) {
 				$backendRel = "$container/$subDir";
@@ -71,40 +74,46 @@ class CopyFileBackend extends Maintenance {
 				$this->output( "Doing container '$container'...\n" );
 			}
 
-			$srcPathsRel = $src->getFileList( array(
-				'dir' => $src->getRootStoragePath() . "/$backendRel" ) );
-			if ( $srcPathsRel === null ) {
-				$this->error( "Could not list files in $container.", 1 ); // die
+			if ( $this->hasOption( 'missingonly' ) ) {
+				$this->output( "\tBuilding list of missing files..." );
+				$srcPathsRel = $this->getListingDiffRel( $src, $dst, $backendRel );
+				$this->output( count( $srcPathsRel ) . " file(s) need to be copied.\n" );
+			} else {
+				$srcPathsRel = $src->getFileList( array(
+					'dir' => $src->getRootStoragePath() . "/$backendRel",
+					'adviseStat' => true // avoid HEADs
+				) );
+				if ( $srcPathsRel === null ) {
+					$this->error( "Could not list files in $container.", 1 ); // die
+				}
 			}
 
-			// Do a listing comparison if specified
-			if ( $this->hasOption( 'missingonly' ) ) {
-				$relFilesSrc = array();
-				$relFilesDst = array();
-				foreach ( $srcPathsRel as $srcPathRel ) {
-					$relFilesSrc[] = $srcPathRel;
-				}
+			if ( $this->getOption( 'prestat' ) && !$this->hasOption( 'missingonly' ) ) {
+				// Build the stat cache for the destination files
+				$this->output( "\tBuilding destination stat cache..." );
 				$dstPathsRel = $dst->getFileList( array(
-					'dir' => $dst->getRootStoragePath() . "/$backendRel" ) );
+					'dir' => $dst->getRootStoragePath() . "/$backendRel",
+					'adviseStat' => true // avoid HEADs
+				) );
 				if ( $dstPathsRel === null ) {
 					$this->error( "Could not list files in $container.", 1 ); // die
 				}
+				$this->statCache = array(); // clear
 				foreach ( $dstPathsRel as $dstPathRel ) {
-					$relFilesDst[] = $dstPathRel;
+					$path = $dst->getRootStoragePath() . "/$backendRel/$dstPathRel";
+					$this->statCache[sha1( $path )] = $dst->getFileStat( array( 'src' => $path ) );
 				}
-				// Only copy the missing files over in the next loop
-				$srcPathsRel = array_diff( $relFilesSrc, $relFilesDst );
-				$this->output( count( $srcPathsRel ) . " file(s) need to be copied.\n" );
-				unset( $relFilesSrc );
-				unset( $relFilesDst );
+				$this->output( "done [" . count( $this->statCache ) . " file(s)]\n" );
 			}
 
+			$this->output( "\tCopying file(s)...\n" );
+			$count = 0;
 			$batchPaths = array();
 			foreach ( $srcPathsRel as $srcPathRel ) {
 				// Check up on the rate file periodically to adjust the concurrency
 				if ( $rateFile && ( !$count || ( $count % 500 ) == 0 ) ) {
 					$this->mBatchSize = max( 1, (int)file_get_contents( $rateFile ) );
-					$this->output( "Batch size is now {$this->mBatchSize}.\n" );
+					$this->output( "\tBatch size is now {$this->mBatchSize}.\n" );
 				}
 				$batchPaths[$srcPathRel] = 1; // remove duplicates
 				if ( count( $batchPaths ) >= $this->mBatchSize ) {
@@ -117,6 +126,36 @@ class CopyFileBackend extends Maintenance {
 				$this->copyFileBatch( array_keys( $batchPaths ), $backendRel, $src, $dst );
 				$batchPaths = array(); // done
 			}
+			$this->output( "\tCopied $count file(s).\n" );
+
+			if ( $this->hasOption( 'syncviadelete' ) ) {
+				$this->output( "\tBuilding list of excess destination files..." );
+				$delPathsRel = $this->getListingDiffRel( $dst, $src, $backendRel );
+				$this->output( count( $delPathsRel ) . " file(s) need to be deleted.\n" );
+
+				$this->output( "\tDeleting file(s)...\n" );
+				$count = 0;
+				$batchPaths = array();
+				foreach ( $delPathsRel as $delPathRel ) {
+					// Check up on the rate file periodically to adjust the concurrency
+					if ( $rateFile && ( !$count || ( $count % 500 ) == 0 ) ) {
+						$this->mBatchSize = max( 1, (int)file_get_contents( $rateFile ) );
+						$this->output( "\tBatch size is now {$this->mBatchSize}.\n" );
+					}
+					$batchPaths[$delPathRel] = 1; // remove duplicates
+					if ( count( $batchPaths ) >= $this->mBatchSize ) {
+						$this->delFileBatch( array_keys( $batchPaths ), $backendRel, $dst );
+						$batchPaths = array(); // done
+					}
+					++$count;
+				}
+				if ( count( $batchPaths ) ) { // left-overs
+					$this->delFileBatch( array_keys( $batchPaths ), $backendRel, $dst );
+					$batchPaths = array(); // done
+				}
+
+				$this->output( "\tDeleted $count file(s).\n" );
+			}
 
 			if ( $subDir != '' ) {
 				$this->output( "Finished container '$container', directory '$subDir'.\n" );
@@ -125,15 +164,58 @@ class CopyFileBackend extends Maintenance {
 			}
 		}
 
-		$this->output( "Done [$count file(s)].\n" );
+		$this->output( "Done.\n" );
 	}
 
+	/**
+	 * @param FileBackend $src
+	 * @param FileBackend $dst
+	 * @param string $backendRel
+	 * @return array (rel paths in $src minus those in $dst)
+	 */
+	protected function getListingDiffRel( FileBackend $src, FileBackend $dst, $backendRel ) {
+		$srcPathsRel = $src->getFileList( array(
+			'dir' => $src->getRootStoragePath() . "/$backendRel" ) );
+		if ( $srcPathsRel === null ) {
+			$this->error( "Could not list files in source container.", 1 ); // die
+		}
+		$dstPathsRel = $dst->getFileList( array(
+			'dir' => $dst->getRootStoragePath() . "/$backendRel" ) );
+		if ( $dstPathsRel === null ) {
+			$this->error( "Could not list files in destination container.", 1 ); // die
+		}
+		// Get the list of destination files
+		$relFilesDstSha1 = array();
+		foreach ( $dstPathsRel as $dstPathRel ) {
+			$relFilesDstSha1[sha1( $dstPathRel )] = 1;
+		}
+		unset( $dstPathsRel ); // free
+		// Get the list of missing files
+		$missingPathsRel = array();
+		foreach ( $srcPathsRel as $srcPathRel ) {
+			if ( !isset( $relFilesDstSha1[sha1( $srcPathRel )] ) ) {
+				$missingPathsRel[] = $srcPathRel;
+			}
+		}
+		unset( $srcPathsRel ); // free
+
+		return $missingPathsRel;
+	}
+
+	/**
+	 * @param array $srcPathsRel
+	 * @param string $backendRel
+	 * @param FileBackend $src
+	 * @param FileBackend $dst
+	 * @return void
+	 */
 	protected function copyFileBatch(
 		array $srcPathsRel, $backendRel, FileBackend $src, FileBackend $dst
 	) {
 		$ops = array();
 		$fsFiles = array();
 		$copiedRel = array(); // for output message
+		$wikiId = $src->getWikiId();
 
 		// Download the batch of source files into backend cache...
 		if ( $this->hasOption( 'missingonly' ) ) {
@@ -144,8 +226,8 @@ class CopyFileBackend extends Maintenance {
 			$t_start = microtime( true );
 			$fsFiles = $src->getLocalReferenceMulti( array( 'srcs' => $srcPaths, 'latest' => 1 ) );
 			$ellapsed_ms = floor( ( microtime( true ) - $t_start ) * 1000 );
-			$this->output( "\nDownloaded these file(s) [{$ellapsed_ms}ms]:\n" .
-				implode( "\n", $srcPaths ) . "\n\n" );
+			$this->output( "\n\tDownloaded these file(s) [{$ellapsed_ms}ms]:\n\t" .
+				implode( "\n\t", $srcPaths ) . "\n\n" );
 		}
 
 		// Determine what files need to be copied over...
@@ -153,22 +235,30 @@ class CopyFileBackend extends Maintenance {
 			$srcPath = $src->getRootStoragePath() . "/$backendRel/$srcPathRel";
 			$dstPath = $dst->getRootStoragePath() . "/$backendRel/$srcPathRel";
 			if ( $this->hasOption( 'utf8only' ) && !mb_check_encoding( $srcPath, 'UTF-8' ) ) {
-				$this->error( "Detected illegal (non-UTF8) path for $srcPath." );
+				$this->error( "$wikiId: Detected illegal (non-UTF8) path for $srcPath." );
 				continue;
-			} elseif ( $this->filesAreSame( $src, $dst, $srcPath, $dstPath ) ) {
-				$this->output( "Already have $srcPathRel.\n" );
+			} elseif ( !$this->hasOption( 'missingonly' )
+				&& $this->filesAreSame( $src, $dst, $srcPath, $dstPath ) )
+			{
+				$this->output( "\tAlready have $srcPathRel.\n" );
 				continue; // assume already copied...
 			}
 			$fsFile = array_key_exists( $srcPath, $fsFiles )
 				? $fsFiles[$srcPath]
 				: $src->getLocalReference( array( 'src' => $srcPath, 'latest' => 1 ) );
 			if ( !$fsFile ) {
-				$this->error( "Could not get local copy of $srcPath.", 1 ); // die
+				$src->clearCache( array( $srcPath ) );
+				if ( $src->fileExists( array( 'src' => $srcPath, 'latest' => 1 ) ) === false ) {
+					$this->error( "$wikiId: File '$srcPath' was listed but does not exist." );
+				} else {
+					$this->error( "$wikiId: Could not get local copy of $srcPath." );
+				}
+				continue;
 			} elseif ( !$fsFile->exists() ) {
 				// FSFileBackends just return the path for getLocalReference() and paths with
 				// illegal slashes may get normalized to a different path. This can cause the
 				// local reference to not exist...skip these broken files.
-				$this->error( "Detected possible illegal path for $srcPath." );
+				$this->error( "$wikiId: Detected possible illegal path for $srcPath." );
 				continue;
 			}
 			$fsFiles[] = $fsFile; // keep TempFSFile objects alive as needed
@@ -176,7 +266,7 @@ class CopyFileBackend extends Maintenance {
 			$status = $dst->prepare( array( 'dir' => dirname( $dstPath ), 'bypassReadOnly' => 1 ) );
 			if ( !$status->isOK() ) {
 				$this->error( print_r( $status->getErrorsArray(), true ) );
-				$this->error( "Could not copy $srcPath to $dstPath.", 1 ); // die
+				$this->error( "$wikiId: Could not copy $srcPath to $dstPath.", 1 ); // die
 			}
 			$ops[] = array( 'op' => 'store',
 				'src' => $fsFile->getPath(), 'dst' => $dstPath, 'overwrite' => 1 );
@@ -193,26 +283,75 @@ class CopyFileBackend extends Maintenance {
 		$ellapsed_ms = floor( ( microtime( true ) - $t_start ) * 1000 );
 		if ( !$status->isOK() ) {
 			$this->error( print_r( $status->getErrorsArray(), true ) );
-			$this->error( "Could not copy file batch.", 1 ); // die
+			$this->error( "$wikiId: Could not copy file batch.", 1 ); // die
 		} elseif ( count( $copiedRel ) ) {
-			$this->output( "\nCopied these file(s) [{$ellapsed_ms}ms]:\n" .
-				implode( "\n", $copiedRel ) . "\n\n" );
+			$this->output( "\n\tCopied these file(s) [{$ellapsed_ms}ms]:\n\t" .
+				implode( "\n\t", $copiedRel ) . "\n\n" );
 		}
 	}
 
+	/**
+	 * @param array $dstPathsRel
+	 * @param string $backendRel
+	 * @param FileBackend $dst
+	 * @return void
+	 */
+	protected function delFileBatch(
+		array $dstPathsRel, $backendRel, FileBackend $dst
+	) {
+		$ops = array();
+		$deletedRel = array(); // for output message
+		$wikiId = $dst->getWikiId();
+
+		// Determine what files need to be copied over...
+		foreach ( $dstPathsRel as $dstPathRel ) {
+			$dstPath = $dst->getRootStoragePath() . "/$backendRel/$dstPathRel";
+			$ops[] = array( 'op' => 'delete', 'src' => $dstPath );
+			$deletedRel[] = $dstPathRel;
+		}
+
+		// Delete the batch of source files...
+		$t_start = microtime( true );
+		$status = $dst->doQuickOperations( $ops, array( 'bypassReadOnly' => 1 ) );
+		if ( !$status->isOK() ) {
+			sleep( 10 ); // wait and retry copy again
+			$status = $dst->doQuickOperations( $ops, array( 'bypassReadOnly' => 1 ) );
+		}
+		$ellapsed_ms = floor( ( microtime( true ) - $t_start ) * 1000 );
+		if ( !$status->isOK() ) {
+			$this->error( print_r( $status->getErrorsArray(), true ) );
+			$this->error( "$wikiId: Could not delete file batch.", 1 ); // die
+		} elseif ( count( $deletedRel ) ) {
+			$this->output( "\n\tDeleted these file(s) [{$ellapsed_ms}ms]:\n\t" .
+				implode( "\n\t", $deletedRel ) . "\n\n" );
+		}
+	}
+
+	/**
+	 * @param FileBackend $src
+	 * @param FileBackend $dst
+	 * @param string $sPath
+	 * @param string $dPath
+	 * @return bool
+	 */
 	protected function filesAreSame( FileBackend $src, FileBackend $dst, $sPath, $dPath ) {
 		$skipHash = $this->hasOption( 'skiphash' );
+		$srcStat = $src->getFileStat( array( 'src' => $sPath ) );
+		$dPathSha1 = sha1( $dPath );
+		$dstStat = isset( $this->statCache[$dPathSha1] )
+			? $this->statCache[$dPathSha1]
+			: $dst->getFileStat( array( 'src' => $dPath ) );
 		return (
-			( $src->fileExists( array( 'src' => $sPath, 'latest' => 1 ) )
-				=== $dst->fileExists( array( 'src' => $dPath, 'latest' => 1 ) ) // short-circuit
-			) && ( $src->getFileSize( array( 'src' => $sPath, 'latest' => 1 ) )
-				=== $dst->getFileSize( array( 'src' => $dPath, 'latest' => 1 ) ) // short-circuit
-			) && ( $skipHash || ( $src->getFileSha1Base36( array( 'src' => $sPath, 'latest' => 1 ) )
+			is_array( $srcStat ) // sanity check that source exists
+			&& is_array( $dstStat ) // dest exists
+			&& $srcStat['size'] === $dstStat['size']
+			&& ( !$skipHash || $srcStat['mtime'] <= $dstStat['mtime'] )
+			&& ( $skipHash || $src->getFileSha1Base36( array( 'src' => $sPath, 'latest' => 1 ) )
 				=== $dst->getFileSha1Base36( array( 'src' => $dPath, 'latest' => 1 ) )
-			) )
+			)
 		);
 	}
 }
 
 $maintClass = 'CopyFileBackend';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

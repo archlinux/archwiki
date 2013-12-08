@@ -4,11 +4,16 @@
  * @group Database
  */
 class PreferencesTest extends MediaWikiTestCase {
-	/** Array of User objects */
+	/**
+	 * @var User[]
+	 */
 	private $prefUsers;
+	/**
+	 * @var RequestContext
+	 */
 	private $context;
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 
 		$this->prefUsers['noemail'] = new User;
@@ -30,14 +35,17 @@ class PreferencesTest extends MediaWikiTestCase {
 	protected function setUp() {
 		parent::setUp();
 
-		$this->setMwGlobals( 'wgEnableEmail', true );
+		$this->setMwGlobals( array(
+			'wgEnableEmail' => true,
+			'wgEmailAuthentication' => true,
+		) );
 	}
 
 	/**
 	 * Placeholder to verify bug 34302
 	 * @covers Preferences::profilePreferences
 	 */
-	function testEmailFieldsWhenUserHasNoEmail() {
+	public function testEmailFieldsWhenUserHasNoEmail() {
 		$prefs = $this->prefsFor( 'noemail' );
 		$this->assertArrayHasKey( 'cssclass',
 			$prefs['emailaddress']
@@ -49,7 +57,7 @@ class PreferencesTest extends MediaWikiTestCase {
 	 * Placeholder to verify bug 34302
 	 * @covers Preferences::profilePreferences
 	 */
-	function testEmailFieldsWhenUserEmailNotAuthenticated() {
+	public function testEmailFieldsWhenUserEmailNotAuthenticated() {
 		$prefs = $this->prefsFor( 'notauth' );
 		$this->assertArrayHasKey( 'cssclass',
 			$prefs['emailaddress']
@@ -61,7 +69,7 @@ class PreferencesTest extends MediaWikiTestCase {
 	 * Placeholder to verify bug 34302
 	 * @covers Preferences::profilePreferences
 	 */
-	function testEmailFieldsWhenUserEmailIsAuthenticated() {
+	public function testEmailFieldsWhenUserEmailIsAuthenticated() {
 		$prefs = $this->prefsFor( 'auth' );
 		$this->assertArrayHasKey( 'cssclass',
 			$prefs['emailaddress']
@@ -70,13 +78,14 @@ class PreferencesTest extends MediaWikiTestCase {
 	}
 
 	/** Helper */
-	function prefsFor( $user_key ) {
+	protected function prefsFor( $user_key ) {
 		$preferences = array();
 		Preferences::profilePreferences(
 			$this->prefUsers[$user_key]
 			, $this->context
 			, $preferences
 		);
+
 		return $preferences;
 	}
 }

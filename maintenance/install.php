@@ -22,14 +22,14 @@
  */
 
 if ( !function_exists( 'version_compare' ) || ( version_compare( phpversion(), '5.3.2' ) < 0 ) ) {
-	require_once( dirname( __FILE__ ) . '/../includes/PHPVersionError.php' );
+	require_once dirname( __FILE__ ) . '/../includes/PHPVersionError.php';
 	wfPHPVersionError( 'cli' );
 }
 
 define( 'MW_CONFIG_CALLBACK', 'Installer::overrideConfig' );
 define( 'MEDIAWIKI_INSTALL', true );
 
-require_once( dirname( __DIR__ )."/maintenance/Maintenance.php" );
+require_once dirname( __DIR__ ) . "/maintenance/Maintenance.php";
 
 /**
  * Maintenance script to install and configure MediaWiki
@@ -41,7 +41,7 @@ class CommandLineInstaller extends Maintenance {
 		parent::__construct();
 		global $IP;
 
-		$this->addArg( 'name', 'The name of the wiki', true);
+		$this->addArg( 'name', 'The name of the wiki', true );
 
 		$this->addArg( 'admin', 'The username of the wiki administrator (WikiSysop)', true );
 		$this->addOption( 'pass', 'The password for the wiki administrator.', false, true );
@@ -109,13 +109,13 @@ class CommandLineInstaller extends Maintenance {
 			InstallerOverrides::getCliInstaller( $siteName, $adminName, $this->mOptions );
 
 		$status = $installer->doEnvironmentChecks();
-		if( $status->isGood() ) {
+		if ( $status->isGood() ) {
 			$installer->showMessage( 'config-env-good' );
 		} else {
 			$installer->showStatusMessage( $status );
 			return;
 		}
-		if( !$this->hasOption( 'env-checks' ) ) {
+		if ( !$this->hasOption( 'env-checks' ) ) {
 			$installer->execute();
 			$installer->writeConfigurationFile( $this->getOption( 'confpath', $IP ) );
 		}
@@ -130,4 +130,4 @@ class CommandLineInstaller extends Maintenance {
 
 $maintClass = "CommandLineInstaller";
 
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -31,8 +31,8 @@ class XMPInfo {
 	/** get the items array
 	 * @return Array XMP item configuration array.
 	 */
-	public static function getItems () {
-		if( !self::$ranHooks ) {
+	public static function getItems() {
+		if ( !self::$ranHooks ) {
 			// This is for if someone makes a custom metadata extension.
 			// For example, a medical wiki might want to decode DICOM xmp properties.
 			wfRunHooks( 'XMPGetInfo', Array( &self::$items ) );
@@ -428,7 +428,7 @@ class XMPInfo {
 				'mode'      => XMPReader::MODE_SIMPLE,
 				'validate'  => 'validateClosed',
 				/* can't use a range, as it skips... */
-				'choices'   =>  array( '0' => true, '1' => true,
+				'choices'   => array( '0' => true, '1' => true,
 					'2' => true, '3' => true, '4' => true,
 					'9' => true, '10' => true, '11' => true,
 					'12' => true, '13' => true,

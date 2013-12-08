@@ -1,9 +1,15 @@
 <?php
+
 /**
  * @group FileRepo
  * @group medium
  */
 class StoreBatchTest extends MediaWikiTestCase {
+
+	protected $createdFiles;
+	protected $date;
+	/** @var FileRepo */
+	protected $repo;
 
 	protected function setUp() {
 		global $wgFileBackends;
@@ -60,6 +66,7 @@ class StoreBatchTest extends MediaWikiTestCase {
 	 * @param $originalName string The title of the image
 	 * @param $srcPath string The filepath or virtual URL
 	 * @param $flags integer Flags to pass into repo::store().
+	 * @return FileRepoStatus
 	 */
 	private function storeit( $originalName, $srcPath, $flags ) {
 		$hashPath = $this->repo->getHashPath( $originalName );
@@ -69,6 +76,7 @@ class StoreBatchTest extends MediaWikiTestCase {
 		$result = $this->repo->store( $srcPath, 'temp', $dstRel, $flags );
 		$result->value = $this->repo->getVirtualUrl( 'temp' ) . '/' . $dstUrlRel;
 		$this->createdFiles[] = $result->value;
+
 		return $result;
 	}
 
@@ -78,7 +86,7 @@ class StoreBatchTest extends MediaWikiTestCase {
 	 * @param $fn string The title of the image
 	 * @param $infn string The name of the file (in the filesystem)
 	 * @param $otherfn string The name of the different file (in the filesystem)
-	 * @param $fromrepo logical 'true' if we want to copy from a virtual URL out of the Repo.
+	 * @param $fromrepo bool 'true' if we want to copy from a virtual URL out of the Repo.
 	 */
 	private function storecohort( $fn, $infn, $otherfn, $fromrepo ) {
 		$f = $this->storeit( $fn, $infn, 0 );
@@ -115,6 +123,9 @@ class StoreBatchTest extends MediaWikiTestCase {
 		$this->assertEquals( $f->successCount, 0, "counts wrong {$f->successCount} {$f->failCount}" );
 	}
 
+	/**
+	 * @covers FileRepo::store
+	 */
 	public function teststore() {
 		global $IP;
 		$this->storecohort( "Test1.png", "$IP/skins/monobook/wiki.png", "$IP/skins/monobook/video.png", false );

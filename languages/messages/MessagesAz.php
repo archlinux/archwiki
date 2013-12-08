@@ -111,9 +111,6 @@ $messages = array(
 'tog-shownumberswatching' => 'İzləyən istifadəçilərin sayını göstər',
 'tog-oldsig' => 'Hazırkı imza:',
 'tog-fancysig' => 'Vikimətn şəklində imza (avtomatik keçid yaratmadan)',
-'tog-externaleditor' => 'Susmaya görə xarici müqayisə proqramlarından istifadə et',
-'tog-externaldiff' => 'Susmaya görə xarici müqayisə proqramlarından istifadə et',
-'tog-showjumplinks' => '"Keçid et:" linklərini aktivləşdir',
 'tog-uselivepreview' => 'Canlı sınaq baxışı xüsusiyyətindən istifadə et (JavaScript tələb edir, sınaq mərhələsindədir)',
 'tog-forceeditsummary' => 'Qısa məzmunu boş saxladıqda mənə bildir',
 'tog-watchlisthideown' => 'Mənim redaktələrimi izləmə siyahısında gizlət',
@@ -209,7 +206,7 @@ $messages = array(
 'noindex-category' => 'İndeksləşdirilməyən səhifələr',
 'broken-file-category' => 'İşləməyən fayl keçidləri olan səhifələr',
 
-'linkprefix' => '/^(.*?)([a-zA-Z\\x80-\\xff]+)$/sD',
+'linkprefix' => '/^((?>.*(?<![a-zA-Z\\x80-\\xff])))(.+)$/sD',
 
 'about' => 'Haqqında',
 'article' => 'Mündəricat',
@@ -314,7 +311,7 @@ $1',
 'pool-queuefull' => 'Çıxarış səhifəsi doludur',
 'pool-errorunknown' => 'naməlum xəta',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} haqqında',
 'aboutpage' => 'Project:İzah',
 'copyright' => 'Bu məzmun $1 əhatəsindədir.',
@@ -324,7 +321,6 @@ $1',
 'disclaimers' => 'Məsuliyyətdən imtina',
 'disclaimerpage' => 'Project:Məsuliyyətdən imtina',
 'edithelp' => 'Redaktə kömək',
-'edithelppage' => 'Help:Redaktə',
 'helppage' => 'Help:Mündəricat',
 'mainpage' => 'Ana Səhifə',
 'mainpage-description' => 'Ana Səhifə',
@@ -351,7 +347,6 @@ Bax: [[Special:Version|Versiyalar]].',
 'newmessagesdifflink' => 'Sonuncu və əvvəlki versiya arasındakı fərq',
 'youhavenewmessagesmulti' => '"$1"da yeni mesajınız var.',
 'editsection' => 'redaktə',
-'editsection-brackets' => '[$1]',
 'editold' => 'redaktə',
 'viewsourceold' => 'başlanğıc kodu nəzərdən keçir',
 'editlink' => 'redaktə',
@@ -403,16 +398,6 @@ Mövcud xüsusi səhifələrin siyahısı: [[Special:SpecialPages|Xüsusi səhif
 # General errors
 'error' => 'Xəta',
 'databaseerror' => 'Verilənlər bazası xətası',
-'dberrortext' => 'Verilənlər bazası sorğusunda sintaksis xətası yarandı.
-Bu proqram təminatındakı xəta ilə əlaqədar ola bilər.
-Verilənlər bazasına sonuncu sorğu "<tt>$2</tt>" funksiyasından 
-yaranan <blockquote><tt>$1</tt></blockquote>.
-Verilənlər bazasının göstərdiyi xəta "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'Verilənlər bazası sorğusunda sintaksis xətası yarandı.
-Verilənlər bazasına sonuncu sorğu:
-"$1"
-"$2" funksiyasından yaranmışdır.
-Verilənlər bazasının göstərdiyi xəta "$3: $4"',
 'laggedslavemode' => "'''Xəbərdarlıq:''' Səhifə son əlavələri əks etdirməyə bilər.",
 'readonly' => 'Verilənlər bazası bloklanıb',
 'enterlockreason' => 'Bloklamanın səbəbini və nəzərdə tutulan müddətini qeyd edin',
@@ -462,7 +447,6 @@ Sorğu: $2',
 'editinginterface' => "'''Diqqət!''' Siz proqram təminatı interfeysinin mətn olan səhifəsini redaktə edirsiniz.
 Onun dəyişdirilməsi digər istifadəçilərin interfeysinin xarici görünüşünə təsir göstərir.
 Tərcümə üçün daha yaxşı olar ki, MediaWiki-nin lokallaşması üçün olan [//translatewiki.net/wiki/Main_Page?setlang=az translatewiki.net]  layihəsindən istifadə edəsiniz.",
-'sqlhidden' => '(SQL gizli sorğu)',
 'cascadeprotected' => 'Səhifə mühafizə olunub, çünki o kaskad mühafizə olunan {{PLURAL:$1|növbəti səhifəyə|növbəti səhifələrə}} qoşulub:
 $2',
 'namespaceprotected' => 'Sizin adlarında $1 olan məqalələrdə redaktə etməyə icazəniz yoxdur.',
@@ -486,7 +470,6 @@ Siz {{SITENAME}} saytını anonim olaraq istifadə etməyə davam edə bilər v�
 'yourpassword' => 'Parol:',
 'yourpasswordagain' => 'Parolu təkrar yazın:',
 'remembermypassword' => 'Məni bu kompyuterdə xatırla (maksimum $1 {{PLURAL:$1|gün|gün}})',
-'securelogin-stick-https' => 'Daxil olduqdan sonra HTTPS-lə əlaqədə qal',
 'yourdomainname' => 'Sizin domain',
 'password-change-forbidden' => 'Bu vikidə parolunuzu dəyişdirə bilməzsiniz.',
 'externaldberror' => 'Verilənlər bazasının doğruluğunu yoxlamada xəta baş verib və yaxud sizin xarici istifadəçi qeydiyyatını yeniləmək hüququnuz yoxdur.',
@@ -574,7 +557,7 @@ Sistemə daxil olmanı yekunlaşdırmaq üçün yeni parolu bura yazmalısınız
 'newpassword' => 'Yeni parol:',
 'retypenew' => 'Yeni parolu təkrar yazın:',
 'resetpass_submit' => 'Parol yaradın və sistemə daxil olun',
-'resetpass_success' => 'Parolunuz dəyişdirldi! Hazırda sistemə daxil olursunuz...',
+'changepassword-success' => 'Parolunuz dəyişdirldi! Hazırda sistemə daxil olursunuz...',
 'resetpass_forbidden' => 'Parolu dəyişmək mümkün deyil',
 'resetpass-no-info' => 'Bu səhifəni birbaşa açmaq üçün sistemə daxil olmalısınız.',
 'resetpass-submit-loggedin' => 'Parolu dəyiş',
@@ -585,10 +568,8 @@ Ola bilər siz parolu müvəffəqiyyətlə dəyişmisiniz yaxud müvəqqəti par
 
 # Special:PasswordReset
 'passwordreset' => 'Parolu yenilə',
-'passwordreset-text' => 'Akkauntunuz haqqında xatırlatmanı elektron poçt vasitəsilə ala bilməniz üçün bu formanı doldurun.',
 'passwordreset-legend' => 'Parolu yenilə',
 'passwordreset-disabled' => 'Yenidən qurulma parolu bu vikidə işləmir',
-'passwordreset-pretext' => '{{PLURAL:$1||Enter one of the pieces of data below}}',
 'passwordreset-username' => 'İstifadəçi adı:',
 'passwordreset-domain' => 'Domen:',
 'passwordreset-email' => 'E-mail ünvanı:',
@@ -733,6 +714,7 @@ Məlumat üçün aşağıda bu səhifənin tarixçəsindən müvafiq silmə qeyd
 Çox güman ki, səhifə silinmişdir.',
 'edit-conflict' => 'Düzəlişlər münaqişəsi',
 'edit-no-change' => 'Sizin redaktələr qeydə alınmamışdır. Belə ki, mətndə heç bir düzəliş edilməmişdir.',
+'postedit-confirmation' => 'Redaktəniz qeyd edildi.',
 'edit-already-exists' => 'Yeni səhifəni yaratmaq mümkün deyil.
 Belə ki, bu adda səhifə artıq mövcuddur.',
 
@@ -911,7 +893,6 @@ $1",
 'searchmenu-legend' => 'Axtarış kriteriyaları',
 'searchmenu-exists' => "'''Bu vikidə \"[[:\$1]]\" adında səhifə mövcuddur'''",
 'searchmenu-new' => "'''Bu vikidə \"[[:\$1]]\" səhifəsini yarat!'''",
-'searchhelp-url' => 'Help:Mündəricət',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Bu cür prefiksli səhifələri göstər]]',
 'searchprofile-articles' => 'Məqalələr',
 'searchprofile-project' => 'Kömək və Layihə səhifələri',
@@ -952,14 +933,6 @@ $1",
 'powersearch-togglenone' => 'Heç biri',
 'search-external' => 'Xarici axtarış',
 
-# Quickbar
-'qbsettings' => 'Naviqasiya paneli',
-'qbsettings-none' => 'Heç biri',
-'qbsettings-fixedleft' => 'Sola sabitləndi',
-'qbsettings-fixedright' => 'Sağa sabitləndi',
-'qbsettings-floatingleft' => 'Sola əyilir',
-'qbsettings-floatingright' => 'Sağa əyilir',
-
 # Preferences page
 'preferences' => 'Nizamlamalar',
 'mypreferences' => 'Nizamlamalar',
@@ -991,7 +964,6 @@ $1",
 'resetprefs' => 'Yarat',
 'restoreprefs' => 'Bütün nizamlamaları bərpa et (bütün bölmələrdə)',
 'prefs-editing' => 'Redaktə',
-'prefs-edit-boxsize' => 'Redaktə pəncərəsinin həcmi',
 'rows' => 'Sıralar:',
 'columns' => 'Sütunlar:',
 'searchresultshead' => 'Axtar',
@@ -1002,9 +974,6 @@ $1",
 'recentchangesdays-max' => 'Maksimum $1 {{PLURAL:$1|gün|gün}}',
 'recentchangescount' => 'Son dəyişikliklərdə başlıq sayı:',
 'prefs-help-recentchangescount' => 'Buraya yeni dəyişikliklər, səhifələrin və jurnalların tarixçəsi daxildir.',
-'prefs-help-watchlist-token' => 'Bu sahəni gizli parolla doldurmağınız sizin izləmə siyahınız üçün RSS yayım kanalı yaradacaqdır.
-Bu parolu bilən hər kəs izləmə siyahınızı oxuya bilər, bu səbəbdən etibarlı parol seçin.
-Təsadüfi yolla seçilmiş bu paroldan istifadə edə bilərsiniz: $1',
 'savedprefs' => 'Seçiminiz qeyd edildi.',
 'timezonelegend' => 'Vaxt zonası:',
 'localtime' => 'Yerli vaxt:',
@@ -1033,7 +1002,6 @@ Təsadüfi yolla seçilmiş bu paroldan istifadə edə bilərsiniz: $1',
 'prefs-custom-js' => 'Xüsusi JavaScript',
 'prefs-common-css-js' => 'Bütün skinlər üçün ümumi CSS/JavaScript:',
 'prefs-emailconfirm-label' => 'E-poçtun təsdiqlənməsi:',
-'prefs-textboxsize' => 'Redaktə pəncərəsinin ölçüsü',
 'youremail' => 'E-məktub *',
 'username' => 'İstifadəçi adı:',
 'uid' => 'İstifadəçi ID:',
@@ -1261,7 +1229,6 @@ Həmçinin kimliyinizi gostərmədən belə, başqalarının sizinlə istifadə�
 'recentchangeslinked-feed' => 'Əlaqəli redaktələr',
 'recentchangeslinked-toolbox' => 'Əlaqəli redaktələr',
 'recentchangeslinked-title' => "''$1'' ilə əlaqəli dəyişikliklər",
-'recentchangeslinked-noresult' => 'Qeyd olunan dövrdə əlaqədar səhifələrdə heç bir dəyişiklik yoxdur.',
 'recentchangeslinked-summary' => "Aşağıdakı siyahı, qeyd olunan səhifəyə (və ya qeyd olunan kateqoriyadakı səhifələrə) daxili keçid verən səhifələrdə edilmiş son dəyişikliklərin siyahısıdır.
 [[Special:Watchlist|İzləmə siyahınızdakı]] səhifələr '''qalın''' şriftlə göstərilmişdir.",
 'recentchangeslinked-page' => 'Səhifə adı:',
@@ -1393,7 +1360,6 @@ $1',
 'http-read-error' => 'HTTP oxuma xətası',
 'http-timed-out' => 'HTTP istəyinin vaxtı bitdi.',
 'http-curl-error' => 'URL-ə yanlış müraciət: $1',
-'http-host-unreachable' => 'URL-ə çatmaq olmadı.',
 'http-bad-status' => 'HTTP müraciətin yoxlanması zamanı problem aşkarlanmışdır: $1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1514,11 +1480,6 @@ $1',
 'statistics-users-active' => 'Aktiv istifadəçilər',
 'statistics-users-active-desc' => 'Son {{PLURAL:$1|gün|$1 gündə}} iş görən istifadəçilər',
 'statistics-mostpopular' => 'Ən çox baxılan səhifələr',
-
-'disambiguations' => 'Dəqiqləşdirmə səhifələrinə keçid verən səhifələr',
-'disambiguationspage' => 'Template:dəqiqləşdirmə',
-'disambiguations-text' => "Aşağıdakı səhifələr '''dəqiqləşdirmə səhifələrinə''' keçid verir. Bunun əvəzinə onlar çox guman ki, müvafiq konkret bir məqaləni göstərməlidirlər.
-<br />Səhifə o zaman dəqiqləşdirmə səhifəsi hesab edilir ki, onda  [[MediaWiki:Disambiguationspage]]-dən keçid verilmiş şablon istifadə edilir.",
 
 'doubleredirects' => 'İkiqat istiqamətləndirmələr',
 'double-redirect-fixed-move' => '[[$1]] dəyişdirilib.
@@ -1726,10 +1687,9 @@ Fərdi hüquqlar haqqında əlavə məlumatı [[{{MediaWiki:Listgrouprights-help
 'unwatchthispage' => 'İzləmə',
 'notanarticle' => 'Səhifə boşdur',
 'notvisiblerev' => 'Başqa istifadıçinin son dəyişikliyi silinib',
-'watchnochange' => 'Verilən vaxt ərzində heç bir izlədiyiniz səhifə redaktə edilməmişdir.',
 'watchlist-details' => 'Müzakirə səhifələrini çıxmaq şərtilə {{PLURAL:$1|$1 səhifəni|$1 səhifəni}} izləyirsiniz.',
-'wlheader-enotif' => '*  E-məktubla bildiriş aktivdir.',
-'wlheader-showupdated' => "* Son ziyarətinizdən sonra edilən dəyişikliklər '''qalın şriftlərlə''' göstərilmişdir.",
+'wlheader-enotif' => ' E-məktubla bildiriş aktivdir.',
+'wlheader-showupdated' => "Son ziyarətinizdən sonra edilən dəyişikliklər '''qalın şriftlərlə''' göstərilmişdir.",
 'watchmethod-recent' => 'yeni dəyişikliklər izlənilən səhifələr üçün yoxlanılır',
 'watchmethod-list' => 'izlənilən səhifələr yeni dəyişikliklər üçün yoxlanılır',
 'watchlistcontains' => 'İzləmə siyahınızda $1 {{PLURAL:$1|səhifə|səhifə}} var.',
@@ -2068,10 +2028,7 @@ Bloklama şərtlərini dəyişmək istəyirsiniz?',
 'unblock-hideuser' => 'İstifadəçi adı gizli olduğu üçün, bi bloku götürə bilməzsiniz.',
 'ipb_cant_unblock' => 'Xəta: Bloklama IDsi $1 tapılmadı. Bloklamanın götürülməsi mümkündür.',
 'ip_range_invalid' => 'Yanlış IP',
-'blockme' => 'Məni blokla',
 'proxyblocker' => 'Proksi bloklayıcı',
-'proxyblocker-disabled' => 'Bu funksiya əngəlləndi.',
-'proxyblocksuccess' => 'Oldu.',
 'sorbs' => 'DNSBL',
 
 # Developer tools
@@ -2281,13 +2238,8 @@ Zəhmət olmasa başqa ad seçin.',
 
 # Stylesheets
 'common.css' => '/* Burada yerləşən CSS bütün skinlərə tətbiq olunur */',
-'standard.css' => '/* Burada yerləşən CSS Standard skin istifadəçilərinə tətbiq olunur */',
-'nostalgia.css' => '/* Burada yerləşən CSS Nostalgia skin istifadəçilərinə tətbiq olunur */',
 'cologneblue.css' => '/* Burada yerləşən CSS Cologne Blue skin istifadəçilərinə tətbiq olunur */',
 'monobook.css' => '/* Burada yerləşən CSS Monobook skin istifadəçilərinə tətbiq olunur */',
-'myskin.css' => '/* Burada yerləşən CSS MySkin skin istifadəçilərinə tətbiq olunur */',
-'chick.css' => '/* Burada yerləşən CSS Chick skin istifadəçilərinə tətbiq olunur */',
-'simple.css' => '/* Burada yerləşən CSS Simple skin istifadəçilərinə tətbiq olunur */',
 'modern.css' => '/* Burada yerləşən CSS Modern skin istifadəçilərinə tətbiq olunur */',
 'vector.css' => '/* Burada yerləşən CSS Vector istifadəçilərinə tətbiq olunur */',
 'group-autoconfirmed.css' => '/* Burada yerləşən CSS yalnız avtotəsdiqlənmiş istifadəçilərə şamil olunur */',
@@ -2297,13 +2249,8 @@ Zəhmət olmasa başqa ad seçin.',
 
 # Scripts
 'common.js' => '/* Burada istifadəçilərin hamısı üçün bütün səhifələrdə istənilən JavaScript yüklənəcək */',
-'standard.js' => '/* Burada Standard skin istifadəçiləri üçün istənilən JavaScript yüklənəcək */',
-'nostalgia.js' => '/* Burada Nostalgia skin istifadəçiləri üçün istənilən JavaScript yüklənəcək */',
 'cologneblue.js' => '/* Burada Cologne Blue skin istifadəçiləri üçün istənilən JavaScript yüklənəcək */',
 'monobook.js' => '/* Burada MonoBook skin istifadəçiləri üçün istənilən JavaScript yüklənəcək */',
-'myskin.js' => '/* Burada MySkin skin istifadəçiləri üçün istənilən JavaScript yüklənəcək */',
-'chick.js' => '/* Burada Chick skin istifadəçiləri üçün istənilən JavaScript yüklənəcək */',
-'simple.js' => '/* Burada Simple skin istifadəçiləri üçün istənilən JavaScript yüklənəcək */',
 'modern.js' => '/* Burada Modern skin istifadəçiləri üçün istənilən JavaScript yüklənəcək */',
 'vector.js' => '/* Burada Vector skin istifadəçiləri üçün istənilən JavaScript yüklənəcək */',
 'group-autoconfirmed.js' => '/* Burada istənilən JavaScript yalnız avtotəsdiqlənmiş istifadəçilər üçün yüklənəcək */',
@@ -2344,13 +2291,8 @@ Zəhmət olmasa başqa ad seçin.',
 'pageinfo-authors' => 'Fərqli müəlliflərin sayı',
 
 # Skin names
-'skinname-standard' => 'Classic',
-'skinname-nostalgia' => 'Nostalgia',
 'skinname-cologneblue' => 'Cologne Blue',
 'skinname-monobook' => 'MonoBook',
-'skinname-myskin' => 'MySkin',
-'skinname-chick' => 'Chick',
-'skinname-simple' => 'Simple',
 'skinname-modern' => 'Modern',
 'skinname-vector' => 'Vector',
 
@@ -2473,7 +2415,7 @@ Variants for Chinese language
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Genişlik',
 'exif-imagelength' => 'Hündürlük',
 'exif-compression' => 'Sıxılmamış',
@@ -2599,7 +2541,7 @@ Variants for Chinese language
 'exif-organisationinimage' => 'Təsvir edilmiş təşkilat',
 'exif-personinimage' => 'Təsvir edilmiş şəxs',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Sıxılmış',
 
 'exif-copyrighted-true' => 'Müəlliflik hüququ ilə qorunur',
@@ -2892,7 +2834,6 @@ Variants for Chinese language
 'version-skins' => 'Üzlük',
 'version-other' => 'Digər',
 'version-hooks' => 'Çəngəllər',
-'version-extension-functions' => 'Əlavə fubksiyalar',
 'version-hook-name' => 'Çəngəlin adı',
 'version-hook-subscribedby' => 'Abunə olan',
 'version-version' => '(Versiya $1)',
@@ -2902,11 +2843,6 @@ Variants for Chinese language
 'version-software-product' => 'Məhsul',
 'version-software-version' => 'Versiya',
 'version-entrypoints-header-url' => 'URL',
-
-# Special:FilePath
-'filepath' => 'Fayl yolu',
-'filepath-page' => 'Fayl:',
-'filepath-submit' => 'Get',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Dublikat fayl axtarışı',
@@ -2941,7 +2877,10 @@ Variants for Chinese language
 'tags-title' => 'Etiketlər',
 'tags-tag' => 'Etiket adı',
 'tags-description-header' => 'Anlamının tam açıqlaması',
+'tags-active-header' => 'Aktiv?',
 'tags-hitcount-header' => 'Etiketli dəyişikliklər',
+'tags-active-yes' => 'Bəli',
+'tags-active-no' => 'Xeyr',
 'tags-edit' => 'redaktə',
 'tags-hitcount' => '$1 {{PLURAL:$1|dəyişiklik|dəyişiklik}}',
 

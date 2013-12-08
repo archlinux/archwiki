@@ -105,7 +105,7 @@ $messages = array(
 'category-article-count' => '{{PLURAL:$2|Itymā kategorejā ir vīn dūtuo puslopa.|{{PLURAL:$1|Paruodeita $1 puslopa|Paruodeitys $1 puslopys}} nu $2.}}',
 'listingcontinuesabbrev' => '(tuoļuojums)',
 
-'linkprefix' => '/^(.*?)([a-zA-Z\\x80-\\xff]+)$/sD',
+'linkprefix' => '/^((?>.*(?<![a-zA-Z\\x80-\\xff])))(.+)$/sD',
 
 'about' => 'Aproksts',
 'article' => 'Rakstīņs',
@@ -182,7 +182,7 @@ $messages = array(
 'jumptonavigation' => 'navigaceja',
 'jumptosearch' => 'meklēt',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Ap {{grammar:akuzativs|{{SITENAME}}}}',
 'aboutpage' => 'Project:Ap',
 'copyright' => 'Turīņs ir daīmams pa $1.',
@@ -192,7 +192,6 @@ $messages = array(
 'disclaimers' => 'Daīšmu nūstatejumi',
 'disclaimerpage' => 'Project:Dasaīšonu nūstateišona',
 'edithelp' => 'Paleigs',
-'edithelppage' => 'Help:Pataiseišona',
 'helppage' => 'Help:Turīņs',
 'mainpage' => 'Suoku puslopa',
 'mainpage-description' => 'Suoku puslopa',
@@ -211,7 +210,6 @@ $messages = array(
 'newmessageslink' => 'jaunus viestejumus',
 'newmessagesdifflink' => 'pādejā pataise',
 'editsection' => 'pataiseit',
-'editsection-brackets' => '[$1]',
 'editold' => 'pataiseit',
 'editlink' => 'pataiseit',
 'viewsourcelink' => 'Apsavērt suokūtnejū kodu',
@@ -386,7 +384,6 @@ n = nasvareigs lobuojums.',
 'prevn' => 'īprīškejuos {{PLURAL:$1|$1}}',
 'nextn' => 'nuokamuos {{PLURAL:$1|$1}}',
 'viewprevnext' => 'Apsavērt ($1 {{int:pipe-separator}} $2) ($3 vīnā lopā).',
-'searchhelp-url' => 'Help:Turīņs',
 'searchprofile-articles' => 'Rakstīņuos',
 'search-result-size' => '$1 ({{PLURAL:$2|$2 vuords|$2 vuordi|$2 vuordi}})',
 'search-redirect' => '(puoradresiešona nu $1)',
@@ -891,9 +888,6 @@ Puorejī lauki, piec nūklusiejuma, byus nūglobuoti.
 'version-poweredby-others' => 'cyti',
 'version-software-product' => 'Produkts',
 'version-software-version' => 'Verseja',
-
-# Special:FilePath
-'filepath-page' => 'Fails:',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Faila pasauka:',

@@ -87,9 +87,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Ruodītė keravuojantiu nauduotuoju skatliu',
 'tog-oldsig' => 'Esams parašos:',
 'tog-fancysig' => 'Parašos kāp wiki tekstos (ba autuomatėniu nūruodu)',
-'tog-externaleditor' => 'Vagol nutīliejėma nauduotė ėšuorini radaktuoriu (tėktās specam, rēk specēliū nustatīmu kompioteriō. [//www.mediawiki.org/wiki/Manual:External_editors Daugiau infuormacėjės.])',
-'tog-externaldiff' => 'Palē nutīliejėma nauduotė ėšuorinė skėrtomu ruodīma pruograma (tėktās specam, rēk specēliū nustatīmu kompioteriō. [//www.mediawiki.org/wiki/Manual:External_editors Daugiau infuormacėjės.])',
-'tog-showjumplinks' => 'Ijongtė „paršuoktė i“ pasėikiamoma nūruodas',
 'tog-uselivepreview' => 'Nauduotė tėisiogėne parvėiza (JavaScript) (Eksperimentėnis)',
 'tog-forceeditsummary' => 'Klaustė, kumet palėiku toščē pakeitėma kuomentara',
 'tog-watchlisthideown' => 'Kavuotė mona pakeitėmos keravuojamu sarašė',
@@ -281,7 +278,7 @@ Prašuom palaukat ė mieginkat i ton poslapi patekt vieliau.
 $1',
 'pool-errorunknown' => 'Nežėnuoma klaida',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Aple {{SITENAME}}',
 'aboutpage' => 'Project:Aple',
 'copyright' => 'Turinīs pateikts so $1 licencėjė.',
@@ -291,7 +288,6 @@ $1',
 'disclaimers' => 'Atsakuomībės aprėbuojims',
 'disclaimerpage' => 'Project:Atsakuomībės aprėbuojims',
 'edithelp' => 'Kāp redagoutė',
-'edithelppage' => 'Help:Redagavėms',
 'helppage' => 'Help:Torėnīs',
 'mainpage' => 'Pėrms poslapis',
 'mainpage-description' => 'Pėrms poslapis',
@@ -385,7 +381,6 @@ Ožklausėms: $2',
 'viewsourcetext' => 'Tomsta galėt veizietė ėr kopėjoutė poslapė kuoda:',
 'protectedinterface' => 'Šėtom poslapi īr pruogramėnės ironguos sasajuos teksts katros īr apsauguots, kū neprietelē anū nasogadėntu.',
 'editinginterface' => "'''Diemesė:''' Tamsta keitat poslapi, katros īr nauduojams programėnės irongas sōsajės tekstė. Pakeitėmā tamė poslapū tēpuogi pakeis nauduotuojė sōsajės ėšruoda ė kėtėims nauduotujams. Jēgo nuorėt pargoldītė, siūluom pasėnauduotė [//translatewiki.net/wiki/Main_Page?setlang=bat-smg „translatewiki.net“], „MediaWiki“ lokalėzacėjės pruojėktu.",
-'sqlhidden' => '(SQL ožklausa pakavuota)',
 'namespaceprotected' => "Tamsta netorėt teisiu keistė poslapiu '''$1''' srėtī.",
 'ns-specialprotected' => 'Specēlė̅ jė poslapē negal būtė keitamė.',
 
@@ -473,7 +468,7 @@ nebus siontamas ni vėinam žemiau ėšvardėntam puoslaugiō.',
 'newpassword' => 'Naus slaptažuodis:',
 'retypenew' => 'Pakartuokėt nauja slaptažuodi:',
 'resetpass_submit' => 'Nostatītė slaptažuodi ė prėsėjongtė',
-'resetpass_success' => 'Tamstas slaptažuodis pakeists siekmėngā! Daba prėsėjongiama...',
+'changepassword-success' => 'Tamstas slaptažuodis pakeists siekmėngā! Daba prėsėjongiama...',
 'resetpass-temp-password' => 'Laikėns slaptažuodis:',
 
 # Edit page toolbar
@@ -725,7 +720,6 @@ Kėtė admėnėstratuorē šėtom pruojekte vėsdar galės pasėiktė pasliepta 
 'searchmenu-legend' => 'Paėiškuos nustatīmā',
 'searchmenu-exists' => "'''Poslapis pavadėnts „[[$1]]“ šėtuo wiki'''",
 'searchmenu-new' => "'''Sokortė poslapi „[[:$1]]“ šėtuo wiki!'''",
-'searchhelp-url' => 'Help:Torėnīs',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Ėiškuotė poslapiu so šėtuom prīšdielio]]',
 'searchprofile-articles' => 'Torėnė poslapē',
 'searchprofile-project' => 'Pagelbas ė pruojekta poslapē',
@@ -762,10 +756,6 @@ Kėtė admėnėstratuorē šėtom pruojekte vėsdar galės pasėiktė pasliepta 
 'powersearch-field' => 'Ėiškoutė',
 'search-external' => 'Ėšuorėnė paėiška',
 
-# Quickbar
-'qbsettings' => 'Greitasā pasėrėnkėms',
-'qbsettings-none' => 'Neruodītė',
-
 # Preferences page
 'preferences' => 'Nustatīmā',
 'mypreferences' => 'Mona nustatīmā',
@@ -790,7 +780,6 @@ Kėtė admėnėstratuorē šėtom pruojekte vėsdar galės pasėiktė pasliepta 
 'resetprefs' => 'Atstatītė nostatīmos',
 'restoreprefs' => 'Atstatītė vėsus numatītūsius nustatīmus',
 'prefs-editing' => 'Redagavėms',
-'prefs-edit-boxsize' => 'Redagavėma longa dėdoms.',
 'rows' => 'Eilotės:',
 'columns' => 'Štolpalē:',
 'searchresultshead' => 'Paėiškuos nostatīmā',
@@ -928,7 +917,6 @@ Ana gal sodarītė ne daugiau kāp $1 {{PLURAL:$1|sėmbuolis|sėmbuolē|sėmbuol
 'recentchangeslinked-feed' => 'Sosėjėn pakeitėmā',
 'recentchangeslinked-toolbox' => 'Sosėjėn pakeitėmā',
 'recentchangeslinked-title' => 'So $1 sosėje pakeitimā',
-'recentchangeslinked-noresult' => 'Nier juokiū pakeitėmu sosėitous poslapious douto čieso.',
 'recentchangeslinked-summary' => "Šėtom specēliajam poslapi ruodomė vielībė̅jė pakeitėmā poslapiūs, i katrūs īr nuruodoma. Poslapē ėš Tamstas [[Special:Watchlist|keravuojamu sāraša]] īr '''pastuorėntė'''.",
 'recentchangeslinked-page' => 'Poslapė pavadinėms:',
 'recentchangeslinked-to' => 'Ruodītė so doutu poslapiu sosėjosiu puslapiu pakeitėmus',
@@ -1102,9 +1090,6 @@ Infuormacėjė ėš [$2 faila aprašīma poslapė] īr pateikta žemiau.',
 'statistics-users-active' => 'Aktīviu nauduotuoju',
 'statistics-mostpopular' => 'Daugiausē ruodītė poslapē',
 
-'disambiguations' => 'Daugiareikšmiu žuodiu poslapē',
-'disambiguationspage' => 'Template:Tor daug reikšmiū',
-
 'doubleredirects' => 'Dvėgobė paradresavėmā',
 'doubleredirectstext' => 'Tėi paradresavėmā ruod i kėtus paradresavėma poslapius. Kuožnuo eilotē pamėnavuots pėrmasā ėr ontrasā paradresavėmā, tēpuogi ontrojė paradresavėma paskėrtis, katra paprastā ė paruod i tėkraji poslapi, i katra pėrmasā paradresavėms ė torietu ruodītė.',
 'double-redirect-fixed-move' => '[[$1]] bova parkelts, daba tas īr paradresavėms i [[$2]]',
@@ -1268,10 +1253,9 @@ Jēgo bikumet ožsėnuorietomiet liautėis keravuotė straipsnė, spauskat \"neb
 'unwatch' => 'Nebkeravuotė',
 'unwatchthispage' => 'Nustuotė keravuotė',
 'notanarticle' => 'Ne torėnė poslapis',
-'watchnochange' => 'Pasėrėnkto čieso nebova redagouts nė vėins keravuojams straipsnis.',
 'watchlist-details' => 'Keravuojama $1 {{PLURAL:$1|poslapis|$1 poslapē|$1 poslapiu}} neskaitlioujant aptarėmu poslapiu.',
-'wlheader-enotif' => '* El. pašta primėnėmā ijongtė īr.',
-'wlheader-showupdated' => "* Poslapē, katrėi pakeistė nu Tamstas paskotėnė apsėlonkėma čiesa anūs, īr pažīmietė '''pastuorintā'''",
+'wlheader-enotif' => 'El. pašta primėnėmā ijongtė īr.',
+'wlheader-showupdated' => "Poslapē, katrėi pakeistė nu Tamstas paskotėnė apsėlonkėma čiesa anūs, īr pažīmietė '''pastuorintā'''",
 'watchmethod-recent' => 'tėkrėnamė vielībė̅jė pakeitėmā keravuojamiems poslapiams',
 'watchmethod-list' => 'Ėiškuoma vielībūju pakeitėmu keravuojamūs poslapiūs',
 'watchlistcontains' => 'Tamstas kervuojamu sārašė īr $1 {{PLURAL:$1|poslapis|poslapē|poslapiu}}.',
@@ -1548,7 +1532,6 @@ onkstiau ožbluokoutam IP adresō a nauduotuojō.',
 'ipb_expiry_invalid' => 'Galiuojėma čiesos nelaistėns.',
 'ipb_already_blocked' => '„$1“ jau ožblokouts',
 'ipb-needreblock' => '$1 jau īr ožblokouts. A nuorėt pakeistė nustatīmus?',
-'proxyblocksuccess' => 'Padarīt.',
 
 # Developer tools
 'unlockdbtext' => 'Atrakėnos doumenū baze grōžėns galimībe vėsėm
@@ -1773,7 +1756,7 @@ Vėsas kėtas nūoruodas tuo patiuo eilotie īr laikomas ėšėmtim, tas rēšk 
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Platoms',
 'exif-imagelength' => 'Aukštoms',
 'exif-orientation' => 'Pasokims',
@@ -1907,10 +1890,6 @@ Tamsta tēpuogi galėt [[Special:EditWatchlist/raw|redagoutė grīnaji keravuoja
 # Special:Version
 'version' => 'Versėjė',
 'version-license' => 'Licenzėjė',
-
-# Special:FilePath
-'filepath' => 'Faila maršrots',
-'filepath-page' => 'Fails:',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Ėiškuotė doblikoutu failu',

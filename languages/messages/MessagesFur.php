@@ -141,11 +141,10 @@ $messages = array(
 'tog-enotifrevealaddr' => 'Distapone fûr il gno recapit email tai messaçs di notifiche',
 'tog-shownumberswatching' => 'Mostre il numar di utents che a stan tignint di voli',
 'tog-fancysig' => 'Interprete lis firmis come test wiki (cence un leam automatic)',
-'tog-externaleditor' => 'Dopre un editôr esterni come opzion predeterminade (dome par utents esperts, a coventin impuestazions specifichis, [//www.mediawiki.org/wiki/Manual:External_editors cjale culì par altris informazions.])',
-'tog-externaldiff' => 'Dopre editôr difarencis esterni come opzion predeterminade',
 'tog-watchlisthideown' => 'Plate i miei cambiaments inte liste des pagjinis tignudis di voli',
 'tog-ccmeonemails' => 'Mandimi une copie dai messaçs che o mandi ai altris utents',
 'tog-showhiddencats' => 'Mostre categoriis platadis',
+'tog-useeditwarning' => 'Visimi cuant che o stoi par lassâ une pagjine dulà che a son cambiaments no salvâts',
 
 'underline-always' => 'Simpri',
 'underline-never' => 'Mai',
@@ -316,7 +315,7 @@ $messages = array(
 'jumptosearch' => 'ricercje',
 'pool-errorunknown' => 'Erôr no cognossût',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Informazions su {{SITENAME}}',
 'aboutpage' => 'Project:Informazions',
 'copyright' => 'Il contignût al è disponibil sot de $1',
@@ -326,7 +325,6 @@ $messages = array(
 'disclaimers' => 'Avîs legâi',
 'disclaimerpage' => 'Project:Avîs gjenerâi',
 'edithelp' => 'Jutori pai cambiaments',
-'edithelppage' => 'Help:Cambiaments',
 'helppage' => 'Help:Contignûts',
 'mainpage' => 'Pagjine principâl',
 'mainpage-description' => 'Pagjine principâl',
@@ -668,7 +666,6 @@ Leiende: (cur) = difarencis cun la version atuâl, (prec) = difarencis cun la ve
 'searchmenu-legend' => 'Opzions de ricercje',
 'searchmenu-exists' => "'''E je une pagjine di non \"[[:\$1]]\" su cheste wiki'''",
 'searchmenu-new' => "'''Cree la pagjine \"[[:\$1]]\" su cheste wiki!'''",
-'searchhelp-url' => 'Help:Contignûts',
 'searchprofile-articles' => 'Pagjinis di contignûts',
 'searchprofile-project' => 'Pagjinis di jutori e sul progjet',
 'searchprofile-images' => 'Multimedia',
@@ -704,14 +701,6 @@ Leiende: (cur) = difarencis cun la version atuâl, (prec) = difarencis cun la ve
 'search-external' => 'Ricercje esterne',
 'searchdisabled' => 'La ricercje in {{SITENAME}} no je ative. Tu puedis doprâ Google intant. Sta atent che lis lôr tabelis sul contignût di {{SITENAME}} a puedin jessi pôc inzornadis.',
 
-# Quickbar
-'qbsettings' => 'Sbare svelte',
-'qbsettings-none' => 'Nissune',
-'qbsettings-fixedleft' => 'Fis a Çampe',
-'qbsettings-fixedright' => 'Fis a Drete',
-'qbsettings-floatingleft' => 'Flutuant a çampe',
-'qbsettings-floatingright' => 'Flutuant a diestre',
-
 # Preferences page
 'preferences' => 'Preferencis',
 'mypreferences' => 'Preferencis',
@@ -735,7 +724,6 @@ Leiende: (cur) = difarencis cun la version atuâl, (prec) = difarencis cun la ve
 'resetprefs' => 'Predeterminât',
 'restoreprefs' => 'Torne a lis impostazions predeterminadis',
 'prefs-editing' => 'Cambiament',
-'prefs-edit-boxsize' => 'Dimensions dal barcon pai cambiaments.',
 'rows' => 'Riis',
 'columns' => 'Colonis:',
 'searchresultshead' => 'Ricercje',
@@ -864,7 +852,6 @@ La tô direzion di pueste no ven mostrade cuant che i utents ti contatin.',
 'recentchangeslinked-feed' => 'Cambiaments leâts',
 'recentchangeslinked-toolbox' => 'Cambiaments leâts',
 'recentchangeslinked-title' => 'Cambiaments leâts a "$1"',
-'recentchangeslinked-noresult' => 'Nissun cambiament aes pagjinis leadis tal periodi specificât.',
 'recentchangeslinked-summary' => "Cheste pagjine speciâl e mostre i cambiaments plui recents aes pagjinis leadis a chê specificade (o leadis ai elements intune categorie specificade). Lis [[Special:Watchlist|pagjinis tignudis di voli]] a son mostradis in '''gruessut'''.",
 'recentchangeslinked-page' => 'Non de pagjine:',
 'recentchangeslinked-to' => 'Mostre dome i cambiaments aes pagjinis leadis a chê specificade',
@@ -992,9 +979,6 @@ La descrizion su la sô [$2 pagjine di descrizion] e je mostrade ca sot.',
 'statistics-users-active' => 'Utents atîfs',
 'statistics-users-active-desc' => 'Utents che a àn fat une azion {{PLURAL:$1|intal ultin dì|intai ultins $1 dîs}}',
 'statistics-mostpopular' => 'Pagjinis plui visitadis',
-
-'disambiguations' => 'Pagjinis di disambiguazion',
-'disambiguationspage' => 'Template:disambig',
 
 'doubleredirects' => 'Re-indreçaments doplis',
 
@@ -1157,10 +1141,9 @@ e la pagjine e sarà '''gruessute''' te [[Special:RecentChanges|liste dai ultins
 'unwatch' => 'No stâ tignî di voli',
 'unwatchthispage' => 'No stâ tignî di voli plui',
 'notanarticle' => 'Cheste pagjine no je une vôs',
-'watchnochange' => 'Nissun element di chei tignûts di voli al è stât cambiât tal periodi mostrât.',
 'watchlist-details' => '{{PLURAL:$1|E je $1 pagjine tignude|A son $1 pagjinis tignudis}} di voli, cence contâ lis pagjinis di discussion.',
-'wlheader-enotif' => '* Notifiche par pueste eletroniche ativade.',
-'wlheader-showupdated' => "* Lis pagjinis gambiadis de ultime volte che tu lis âs cjaladis a son mostradis in '''gruessut'''",
+'wlheader-enotif' => 'Notifiche par pueste eletroniche ativade.',
+'wlheader-showupdated' => "Lis pagjinis gambiadis de ultime volte che tu lis âs cjaladis a son mostradis in '''gruessut'''",
 'watchlistcontains' => 'Tu stâs tignint di voli $1 {{PLURAL:$1|pagjine|pagjinis}}.',
 'wlnote' => "Ca sot {{PLURAL:$1|al è il cambiament plui recent|a son i '''$1''' cambiaments plui recents}} {{PLURAL:$2|inte ultime ore|intes '''$2''' oris passadis}}.",
 'wlshowlast' => 'Mostre ultimis $1 oris $2 zornadis $3',
@@ -1482,8 +1465,6 @@ Par plasê va su [//www.mediawiki.org/wiki/Localisation MediaWiki Localisation] 
 'nocredits' => 'Nissune informazion sui ricognossiments disponibil par cheste pagjine.',
 
 # Skin names
-'skinname-standard' => 'Classiche',
-'skinname-nostalgia' => 'Nostalgjie',
 'skinname-modern' => 'Moderne',
 
 # Browsing diffs
@@ -1535,7 +1516,7 @@ Se il file al è stât cambiât rispiet al so stât origjinâl, cualchi informaz
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Largjece',
 'exif-imagelength' => 'Altece',
 'exif-orientation' => 'Orientament',
@@ -1553,7 +1534,7 @@ Se il file al è stât cambiât rispiet al so stât origjinâl, cualchi informaz
 'exif-contrast' => 'Control contrast',
 'exif-gpsaltitude' => 'Altitudin',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Cence compression',
 
 'exif-unknowndate' => 'Date no cognossude',
@@ -1637,9 +1618,6 @@ Se il file al è stât cambiât rispiet al so stât origjinâl, cualchi informaz
 'version-version' => '(Version $1)',
 'version-license' => 'Licence',
 'version-software-version' => 'Version',
-
-# Special:FilePath
-'filepath-page' => 'Non dal file:',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Non dal file:',

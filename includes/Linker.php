@@ -199,7 +199,7 @@ class Linker {
 			return "<!-- ERROR -->$html";
 		}
 
-		if( is_string( $query ) ) {
+		if ( is_string( $query ) ) {
 			// some functions withing core using this still hand over query strings
 			wfDeprecated( __METHOD__ . ' with parameter $query as string (should be array)', '1.20' );
 			$query = wfCgiToArray( $query );
@@ -238,7 +238,7 @@ class Linker {
 		# Note: we want the href attribute first, for prettiness.
 		$attribs = array( 'href' => self::linkUrl( $target, $query, $options ) );
 		if ( in_array( 'forcearticlepath', $options ) && $oldquery ) {
-			$attribs['href'] = wfAppendQuery( $attribs['href'], wfArrayToCgi( $oldquery ) );
+			$attribs['href'] = wfAppendQuery( $attribs['href'], $oldquery );
 		}
 
 		$attribs = array_merge(
@@ -612,7 +612,7 @@ class Linker {
 				$hp['width'] = $file->getWidth( $page );
 			}
 
-			if ( isset( $fp['thumbnail'] ) || isset( $fp['framed'] ) || isset( $fp['frameless'] ) || !$hp['width'] ) {
+			if ( isset( $fp['thumbnail'] ) || isset( $fp['manualthumb'] ) || isset( $fp['framed'] ) || isset( $fp['frameless'] ) || !$hp['width'] ) {
 				global $wgThumbLimits, $wgThumbUpright;
 				if ( $widthOption === null || !isset( $wgThumbLimits[$widthOption] ) ) {
 					$widthOption = User::getDefaultOption( 'thumbsize' );
@@ -644,7 +644,7 @@ class Linker {
 			# If a thumbnail width has not been provided, it is set
 			# to the default user option as specified in Language*.php
 			if ( $fp['align'] == '' ) {
-				if( $parser instanceof Parser ) {
+				if ( $parser instanceof Parser ) {
 					$fp['align'] = $parser->getTargetLanguage()->alignEnd();
 				} else {
 					# backwards compatibility, remove with makeImageLink2()
@@ -786,10 +786,18 @@ class Linker {
 		$hp =& $handlerParams;
 
 		$page = isset( $hp['page'] ) ? $hp['page'] : false;
-		if ( !isset( $fp['align'] ) ) $fp['align'] = 'right';
-		if ( !isset( $fp['alt'] ) ) $fp['alt'] = '';
-		if ( !isset( $fp['title'] ) ) $fp['title'] = '';
-		if ( !isset( $fp['caption'] ) ) $fp['caption'] = '';
+		if ( !isset( $fp['align'] ) ) {
+			$fp['align'] = 'right';
+		}
+		if ( !isset( $fp['alt'] ) ) {
+			$fp['alt'] = '';
+		}
+		if ( !isset( $fp['title'] ) ) {
+			$fp['title'] = '';
+		}
+		if ( !isset( $fp['caption'] ) ) {
+			$fp['caption'] = '';
+		}
 
 		if ( empty( $hp['width'] ) ) {
 			// Reduce width for upright images when parameter 'upright' is used
@@ -797,6 +805,7 @@ class Linker {
 		}
 		$thumb = false;
 		$noscale = false;
+		$manualthumb = false;
 
 		if ( !$exists ) {
 			$outerWidth = $hp['width'] + 2;
@@ -808,6 +817,7 @@ class Linker {
 					$manual_img = wfFindFile( $manual_title );
 					if ( $manual_img ) {
 						$thumb = $manual_img->getUnscaledThumb( $hp );
+						$manualthumb = true;
 					} else {
 						$exists = false;
 					}
@@ -838,7 +848,13 @@ class Linker {
 		# zoom icon still needs it, so we make a unique query for it. See bug 14771
 		$url = $title->getLocalURL( $query );
 		if ( $page ) {
-			$url = wfAppendQuery( $url, 'page=' . urlencode( $page ) );
+			$url = wfAppendQuery( $url, array( 'page' => $page ) );
+		}
+		if ( $manualthumb &&
+		     !isset( $fp['link-title'] ) &&
+		     !isset( $fp['link-url'] ) &&
+		     !isset( $fp['no-link'] ) ) {
+			$fp['link-url'] = $url;
 		}
 
 		$s = "<div class=\"thumb t{$fp['align']}\"><div class=\"thumbinner\" style=\"width:{$outerWidth}px;\">";
@@ -849,7 +865,7 @@ class Linker {
 			$s .= wfMessage( 'thumbnail_error', '' )->escaped();
 			$zoomIcon = '';
 		} else {
-			if ( !$noscale ) {
+			if ( !$noscale && !$manualthumb ) {
 				self::processResponsiveImages( $file, $thumb, $hp );
 			}
 			$params = array(
@@ -961,17 +977,18 @@ class Linker {
 	 */
 	protected static function getUploadUrl( $destFile, $query = '' ) {
 		global $wgUploadMissingFileUrl, $wgUploadNavigationUrl;
-		$q = 'wpDestFile=' . $destFile->getPartialUrl();
-		if ( $query != '' )
+		$q = 'wpDestFile=' . $destFile->getPartialURL();
+		if ( $query != '' ) {
 			$q .= '&' . $query;
+		}
 
 		if ( $wgUploadMissingFileUrl ) {
 			return wfAppendQuery( $wgUploadMissingFileUrl, $q );
-		} elseif( $wgUploadNavigationUrl ) {
+		} elseif ( $wgUploadNavigationUrl ) {
 			return wfAppendQuery( $wgUploadNavigationUrl, $q );
 		} else {
 			$upload = SpecialPage::getTitleFor( 'Upload' );
-			return $upload->getLocalUrl( $q );
+			return $upload->getLocalURL( $q );
 		}
 	}
 
@@ -1442,8 +1459,9 @@ class Linker {
 				$trail = "";
 			}
 			$linkRegexp = '/\[\[(.*?)\]\]' . preg_quote( $trail, '/' ) . '/';
-			if ( isset( $match[1][0] ) && $match[1][0] == ':' )
+			if ( isset( $match[1][0] ) && $match[1][0] == ':' ) {
 				$match[1] = substr( $match[1], 1 );
+			}
 			list( $inside, $trail ) = self::splitTrail( $trail );
 
 			$linkText = $text;
@@ -1527,7 +1545,7 @@ class Linker {
 					$nodotdot = substr( $nodotdot, 3 );
 				}
 				if ( $dotdotcount > 0 ) {
-					$exploded = explode( '/', $contextTitle->GetPrefixedText() );
+					$exploded = explode( '/', $contextTitle->getPrefixedText() );
 					if ( count( $exploded ) > $dotdotcount ) { # not allowed to go below top level page
 						$ret = implode( '/', array_slice( $exploded, 0, -$dotdotcount ) );
 						# / at the end means don't show full path
@@ -1670,10 +1688,10 @@ class Linker {
 		$lang = wfGetLangObj( $lang );
 		$title = wfMessage( 'toc' )->inLanguage( $lang )->escaped();
 
-		return '<table id="toc" class="toc"><tr><td>'
+		return '<div id="toc" class="toc">'
 			. '<div id="toctitle"><h2>' . $title . "</h2></div>\n"
 			. $toc
-			. "</ul>\n</td></tr></table>\n";
+			. "</ul>\n</div>\n";
 	}
 
 	/**
@@ -1687,13 +1705,14 @@ class Linker {
 		$toc = '';
 		$lastLevel = 0;
 		foreach ( $tree as $section ) {
-			if ( $section['toclevel'] > $lastLevel )
+			if ( $section['toclevel'] > $lastLevel ) {
 				$toc .= self::tocIndent();
-			elseif ( $section['toclevel'] < $lastLevel )
+			} elseif ( $section['toclevel'] < $lastLevel ) {
 				$toc .= self::tocUnindent(
 					$lastLevel - $section['toclevel'] );
-			else
+			} else {
 				$toc .= self::tocLineEnd();
+			}
 
 			$toc .= self::tocLine( $section['anchor'],
 				$section['line'], $section['number'],
@@ -1721,8 +1740,8 @@ class Linker {
 	 */
 	public static function makeHeadline( $level, $attribs, $anchor, $html, $link, $legacyAnchor = false ) {
 		$ret = "<h$level$attribs"
+			. "<span class=\"mw-headline\" id=\"$anchor\">$html</span>"
 			. $link
-			. " <span class=\"mw-headline\" id=\"$anchor\">$html</span>"
 			. "</h$level>";
 		if ( $legacyAnchor !== false ) {
 			$ret = "<div id=\"$legacyAnchor\"></div>$ret";
@@ -1887,21 +1906,21 @@ class Linker {
 		}
 
 		$disableRollbackEditCount = false;
-		if( $wgMiserMode ) {
-			foreach( $disableRollbackEditCountSpecialPage as $specialPage ) {
-				if( $context->getTitle()->isSpecial( $specialPage ) ) {
+		if ( $wgMiserMode ) {
+			foreach ( $disableRollbackEditCountSpecialPage as $specialPage ) {
+				if ( $context->getTitle()->isSpecial( $specialPage ) ) {
 					$disableRollbackEditCount = true;
 					break;
 				}
 			}
 		}
 
-		if( !$disableRollbackEditCount && is_int( $wgShowRollbackEditCount ) && $wgShowRollbackEditCount > 0 ) {
+		if ( !$disableRollbackEditCount && is_int( $wgShowRollbackEditCount ) && $wgShowRollbackEditCount > 0 ) {
 			if ( !is_numeric( $editCount ) ) {
 				$editCount = self::getRollbackEditCount( $rev, false );
 			}
 
-			if( $editCount > $wgShowRollbackEditCount ) {
+			if ( $editCount > $wgShowRollbackEditCount ) {
 				$editCount_output = $context->msg( 'rollbacklinkcount-morethan' )->numParams( $wgShowRollbackEditCount )->parse();
 			} else {
 				$editCount_output = $context->msg( 'rollbacklinkcount' )->numParams( $editCount )->parse();
@@ -1941,6 +1960,7 @@ class Linker {
 	 * @return String: HTML output
 	 */
 	public static function formatTemplates( $templates, $preview = false, $section = false, $more = null ) {
+		global $wgLang;
 		wfProfileIn( __METHOD__ );
 
 		$outText = '';
@@ -1968,13 +1988,28 @@ class Linker {
 
 			usort( $templates, 'Title::compare' );
 			foreach ( $templates as $titleObj ) {
-				$r = $titleObj->getRestrictions( 'edit' );
-				if ( in_array( 'sysop', $r ) ) {
-					$protected = wfMessage( 'template-protected' )->parse();
-				} elseif ( in_array( 'autoconfirmed', $r ) ) {
-					$protected = wfMessage( 'template-semiprotected' )->parse();
-				} else {
-					$protected = '';
+				$protected = '';
+				$restrictions = $titleObj->getRestrictions( 'edit' );
+				if ( $restrictions ) {
+					// Check backwards-compatible messages
+					$msg = null;
+					if ( $restrictions === array( 'sysop' ) ) {
+						$msg = wfMessage( 'template-protected' );
+					} elseif ( $restrictions === array( 'autoconfirmed' ) ) {
+						$msg = wfMessage( 'template-semiprotected' );
+					}
+					if ( $msg && !$msg->isDisabled() ) {
+						$protected = $msg->parse();
+					} else {
+						// Construct the message from restriction-level-*
+						// e.g. restriction-level-sysop, restriction-level-autoconfirmed
+						$msgs = array();
+						foreach ( $restrictions as $r ) {
+							$msgs[] = wfMessage( "restriction-level-$r" )->parse();
+						}
+						$protected = wfMessage( 'parentheses' )
+							->rawParams( $wgLang->commaList( $msgs ) )->escaped();
+					}
 				}
 				if ( $titleObj->quickUserCan( 'edit' ) ) {
 					$editLink = self::link(

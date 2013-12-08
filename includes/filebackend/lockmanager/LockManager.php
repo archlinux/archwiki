@@ -56,7 +56,7 @@ abstract class LockManager {
 	protected $domain; // string; domain (usually wiki ID)
 	protected $lockTTL; // integer; maximum time locks can be held
 
-	/* Lock types; stronger locks have higher values */
+	/** Lock types; stronger locks have higher values */
 	const LOCK_SH = 1; // shared lock (for reads)
 	const LOCK_UW = 2; // shared lock (for reads used to write elsewhere)
 	const LOCK_EX = 3; // exclusive lock (for writes)
@@ -76,10 +76,10 @@ abstract class LockManager {
 		if ( isset( $config['lockTTL'] ) ) {
 			$this->lockTTL = max( 1, $config['lockTTL'] );
 		} elseif ( PHP_SAPI === 'cli' ) {
-			$this->lockTTL = 2*3600;
+			$this->lockTTL = 2 * 3600;
 		} else {
 			$met = ini_get( 'max_execution_time' ); // this is 0 in CLI mode
-			$this->lockTTL = max( 5*60, 2*(int)$met );
+			$this->lockTTL = max( 5 * 60, 2 * (int)$met );
 		}
 	}
 
@@ -88,11 +88,36 @@ abstract class LockManager {
 	 *
 	 * @param array $paths List of resource names
 	 * @param $type integer LockManager::LOCK_* constant
+	 * @param integer $timeout Timeout in seconds (0 means non-blocking) (since 1.21)
 	 * @return Status
 	 */
-	final public function lock( array $paths, $type = self::LOCK_EX ) {
+	final public function lock( array $paths, $type = self::LOCK_EX, $timeout = 0 ) {
+		return $this->lockByType( array( $type => $paths ), $timeout );
+	}
+
+	/**
+	 * Lock the resources at the given abstract paths
+	 *
+	 * @param array $pathsByType Map of LockManager::LOCK_* constants to lists of paths
+	 * @param integer $timeout Timeout in seconds (0 means non-blocking) (since 1.21)
+	 * @return Status
+	 * @since 1.22
+	 */
+	final public function lockByType( array $pathsByType, $timeout = 0 ) {
 		wfProfileIn( __METHOD__ );
-		$status = $this->doLock( array_unique( $paths ), $this->lockTypeMap[$type] );
+		$status = Status::newGood();
+		$pathsByType = $this->normalizePathsByType( $pathsByType );
+		$msleep = array( 0, 50, 100, 300, 500 ); // retry backoff times
+		$start = microtime( true );
+		do {
+			$status = $this->doLockByType( $pathsByType );
+			$elapsed = microtime( true ) - $start;
+			if ( $status->isOK() || $elapsed >= $timeout || $elapsed < 0 ) {
+				break; // success, timeout, or clock set back
+			}
+			usleep( 1e3 * ( next( $msleep ) ?: 1000 ) ); // use 1 sec after enough times
+			$elapsed = microtime( true ) - $start;
+		} while ( $elapsed < $timeout && $elapsed >= 0 );
 		wfProfileOut( __METHOD__ );
 		return $status;
 	}
@@ -100,13 +125,25 @@ abstract class LockManager {
 	/**
 	 * Unlock the resources at the given abstract paths
 	 *
-	 * @param array $paths List of storage paths
+	 * @param array $paths List of paths
 	 * @param $type integer LockManager::LOCK_* constant
 	 * @return Status
 	 */
 	final public function unlock( array $paths, $type = self::LOCK_EX ) {
+		return $this->unlockByType( array( $type => $paths ) );
+	}
+
+	/**
+	 * Unlock the resources at the given abstract paths
+	 *
+	 * @param array $pathsByType Map of LockManager::LOCK_* constants to lists of paths
+	 * @return Status
+	 * @since 1.22
+	 */
+	final public function unlockByType( array $pathsByType ) {
 		wfProfileIn( __METHOD__ );
-		$status = $this->doUnlock( array_unique( $paths ), $this->lockTypeMap[$type] );
+		$pathsByType = $this->normalizePathsByType( $pathsByType );
+		$status = $this->doUnlockByType( $pathsByType );
 		wfProfileOut( __METHOD__ );
 		return $status;
 	}
@@ -136,20 +173,74 @@ abstract class LockManager {
 	}
 
 	/**
+	 * Normalize the $paths array by converting LOCK_UW locks into the
+	 * appropriate type and removing any duplicated paths for each lock type.
+	 *
+	 * @param array $paths Map of LockManager::LOCK_* constants to lists of paths
+	 * @return Array
+	 * @since 1.22
+	 */
+	final protected function normalizePathsByType( array $pathsByType ) {
+		$res = array();
+		foreach ( $pathsByType as $type => $paths ) {
+			$res[$this->lockTypeMap[$type]] = array_unique( $paths );
+		}
+		return $res;
+	}
+
+	/**
+	 * @see LockManager::lockByType()
+	 * @param array $paths Map of LockManager::LOCK_* constants to lists of paths
+	 * @return Status
+	 * @since 1.22
+	 */
+	protected function doLockByType( array $pathsByType ) {
+		$status = Status::newGood();
+		$lockedByType = array(); // map of (type => paths)
+		foreach ( $pathsByType as $type => $paths ) {
+			$status->merge( $this->doLock( $paths, $type ) );
+			if ( $status->isOK() ) {
+				$lockedByType[$type] = $paths;
+			} else {
+				// Release the subset of locks that were acquired
+				foreach ( $lockedByType as $type => $paths ) {
+					$status->merge( $this->doUnlock( $paths, $type ) );
+				}
+				break;
+			}
+		}
+		return $status;
+	}
+
+	/**
 	 * Lock resources with the given keys and lock type
 	 *
-	 * @param array $paths List of storage paths
+	 * @param array $paths List of paths
 	 * @param $type integer LockManager::LOCK_* constant
-	 * @return string
+	 * @return Status
 	 */
 	abstract protected function doLock( array $paths, $type );
 
 	/**
+	 * @see LockManager::unlockByType()
+	 * @param array $paths Map of LockManager::LOCK_* constants to lists of paths
+	 * @return Status
+	 * @since 1.22
+	 */
+	protected function doUnlockByType( array $pathsByType ) {
+		$status = Status::newGood();
+		foreach ( $pathsByType as $type => $paths ) {
+			$status->merge( $this->doUnlock( $paths, $type ) );
+		}
+		return $status;
+	}
+
+	/**
 	 * Unlock resources with the given keys and lock type
 	 *
-	 * @param array $paths List of storage paths
+	 * @param array $paths List of paths
 	 * @param $type integer LockManager::LOCK_* constant
-	 * @return string
+	 * @return Status
 	 */
 	abstract protected function doUnlock( array $paths, $type );
 }
@@ -159,22 +250,10 @@ abstract class LockManager {
  * @since 1.19
  */
 class NullLockManager extends LockManager {
-	/**
-	 * @see LockManager::doLock()
-	 * @param $paths array
-	 * @param $type int
-	 * @return Status
-	 */
 	protected function doLock( array $paths, $type ) {
 		return Status::newGood();
 	}
 
-	/**
-	 * @see LockManager::doUnlock()
-	 * @param $paths array
-	 * @param $type int
-	 * @return Status
-	 */
 	protected function doUnlock( array $paths, $type ) {
 		return Status::newGood();
 	}

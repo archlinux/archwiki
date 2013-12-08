@@ -133,8 +133,7 @@ class ApiQueryTags extends ApiQueryBase {
 
 	public function getAllowedParams() {
 		return array(
-			'continue' => array(
-			),
+			'continue' => null,
 			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
 				ApiBase::PARAM_TYPE => 'limit',
@@ -194,5 +193,9 @@ class ApiQueryTags extends ApiQueryBase {
 		return array(
 			'api.php?action=query&list=tags&tgprop=displayname|description|hitcount'
 		);
+	}
+
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Tags';
 	}
 }

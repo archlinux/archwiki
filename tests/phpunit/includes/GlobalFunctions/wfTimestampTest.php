@@ -1,17 +1,18 @@
 <?php
 /*
- * Tests for wfTimestamp()
+ * @covers ::wfTimestamp
  */
 class WfTimestampTest extends MediaWikiTestCase {
 	/**
 	 * @dataProvider provideNormalTimestamps
 	 */
-	function testNormalTimestamps( $input, $format, $output, $desc ) {
+	public function testNormalTimestamps( $input, $format, $output, $desc ) {
 		$this->assertEquals( $output, wfTimestamp( $format, $input ), $desc );
 	}
 
-	function provideNormalTimestamps() {
+	public static function provideNormalTimestamps() {
 		$t = gmmktime( 12, 34, 56, 1, 15, 2001 );
+
 		return array(
 			// TS_UNIX
 			array( $t, TS_MW, '20010115123456', 'TS_UNIX to TS_MW' ),
@@ -56,11 +57,11 @@ class WfTimestampTest extends MediaWikiTestCase {
 	 * See r74778 and bug 25451
 	 * @dataProvider provideOldTimestamps
 	 */
-	function testOldTimestamps( $input, $format, $output, $desc ) {
+	public function testOldTimestamps( $input, $format, $output, $desc ) {
 		$this->assertEquals( $output, wfTimestamp( $format, $input ), $desc );
 	}
 
-	function provideOldTimestamps() {
+	public static function provideOldTimestamps() {
 		return array(
 			array( '19011213204554', TS_RFC2822, 'Fri, 13 Dec 1901 20:45:54 GMT', 'Earliest time according to php documentation' ),
 			array( '20380119031407', TS_RFC2822, 'Tue, 19 Jan 2038 03:14:07 GMT', 'Latest 32 bit time' ),
@@ -95,11 +96,11 @@ class WfTimestampTest extends MediaWikiTestCase {
 	 * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3.1
 	 * @dataProvider provideHttpDates
 	 */
-	function testHttpDate( $input, $output, $desc ) {
+	public function testHttpDate( $input, $output, $desc ) {
 		$this->assertEquals( $output, wfTimestamp( TS_MW, $input ), $desc );
 	}
 
-	function provideHttpDates() {
+	public static function provideHttpDates() {
 		return array(
 			array( 'Sun, 06 Nov 1994 08:49:37 GMT', '19941106084937', 'RFC 822 date' ),
 			array( 'Sunday, 06-Nov-94 08:49:37 GMT', '19941106084937', 'RFC 850 date' ),
@@ -113,9 +114,9 @@ class WfTimestampTest extends MediaWikiTestCase {
 	 * There are a number of assumptions in our codebase where wfTimestamp()
 	 * should give the current date but it is not given a 0 there. See r71751 CR
 	 */
-	function testTimestampParameter() {
+	public function testTimestampParameter() {
 		$now = wfTimestamp( TS_UNIX );
-		// We check that wfTimestamp doesn't return false (error) and use a LessThan assert 
+		// We check that wfTimestamp doesn't return false (error) and use a LessThan assert
 		// for the cases where the test is run in a second boundary.
 
 		$zero = wfTimestamp( TS_UNIX, 0 );

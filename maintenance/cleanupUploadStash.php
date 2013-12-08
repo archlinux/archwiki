@@ -25,7 +25,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to remove old or broken uploads from temporary uploaded
@@ -65,7 +65,7 @@ class UploadStashCleanup extends Maintenance {
 		} else {
 			// finish the read before starting writes.
 			$keys = array();
-			foreach( $res as $row ) {
+			foreach ( $res as $row ) {
 				array_push( $keys, $row->us_key );
 			}
 
@@ -76,15 +76,15 @@ class UploadStashCleanup extends Maintenance {
 			$stash = new UploadStash( $repo );
 
 			$i = 0;
-			foreach( $keys as $key ) {
+			foreach ( $keys as $key ) {
 				$i++;
 				try {
 					$stash->getFile( $key, true );
 					$stash->removeFileNoAuth( $key );
 				} catch ( UploadStashBadPathException $ex ) {
-					$this->output( "Failed removing stashed upload with key: $key\n"  );
+					$this->output( "Failed removing stashed upload with key: $key\n" );
 				} catch ( UploadStashZeroLengthFileException $ex ) {
-					$this->output( "Failed removing stashed upload with key: $key\n"  );
+					$this->output( "Failed removing stashed upload with key: $key\n" );
 				}
 				if ( $i % 100 == 0 ) {
 					$this->output( "$i\n" );
@@ -94,7 +94,7 @@ class UploadStashCleanup extends Maintenance {
 		}
 
 		// Delete all the corresponding thumbnails...
-		$dir      = $tempRepo->getZonePath( 'thumb' );
+		$dir = $tempRepo->getZonePath( 'thumb' );
 		$iterator = $tempRepo->getBackend()->getFileList( array( 'dir' => $dir ) );
 		$this->output( "Deleting old thumbnails...\n" );
 		$i = 0;
@@ -112,8 +112,8 @@ class UploadStashCleanup extends Maintenance {
 		$this->output( "$i done\n" );
 
 		// Apparently lots of stash files are not registered in the DB...
-		$dir      = $tempRepo->getZonePath( 'public' );
-		$iterator = $tempRepo->getBackend()->getFileList( array( 'dir' => $dir ) );
+		$dir = $tempRepo->getZonePath( 'public' );
+		$iterator = $tempRepo->getBackend()->getFileList( array( 'dir' => $dir, 'adviseStat' => 1 ) );
 		$this->output( "Deleting orphaned temp files...\n" );
 		if ( strpos( $dir, '/local-temp' ) === false ) { // sanity check
 			$this->error( "Temp repo is not using the temp container.", 1 ); // die
@@ -140,4 +140,4 @@ class UploadStashCleanup extends Maintenance {
 }
 
 $maintClass = "UploadStashCleanup";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

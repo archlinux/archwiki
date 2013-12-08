@@ -15,11 +15,14 @@
  * @author AlexSm
  * @author Alexander Sigachov (alexander.sigachov@gmail.com)
  * @author Alexandr Efremov
+ * @author Altai uul
+ * @author Am81
  * @author Amikeco
  * @author Amire80
  * @author Anonim.one
  * @author Askarmuk
  * @author Assele
+ * @author BellaIlabekyan
  * @author Biathlon
  * @author Bouron
  * @author Chilin
@@ -30,6 +33,7 @@
  * @author Daniyar
  * @author Dim Grits
  * @author Don Alessandro
+ * @author Ekulikovdo
  * @author Eleferen
  * @author Erdemaslancan
  * @author EugeneZelenko
@@ -61,6 +65,8 @@
  * @author KorneySan
  * @author Kv75
  * @author Lockal
+ * @author Lord Dimetr
+ * @author Lunacy1911
  * @author Matma Rex
  * @author MaxBioHazard
  * @author MaxSem
@@ -75,6 +81,7 @@
  * @author Sagan
  * @author Shirayuki
  * @author Sk
+ * @author Soul Train
  * @author Spider
  * @author Sunpriat
  * @author TarzanASG
@@ -87,6 +94,7 @@
  * @author Гусейн
  * @author ОйЛ
  * @author Умар
+ * @author Чаховіч Уладзіслаў
  * @author לערי ריינהארט
  * @author გიორგიმელა
  */
@@ -124,16 +132,17 @@ $specialPageAliases = array(
 	'Activeusers'               => array( 'Активные_участники' ),
 	'Allmessages'               => array( 'Системные_сообщения' ),
 	'Allpages'                  => array( 'Все_страницы' ),
+	'Badtitle'                  => array( 'Недопустимое_название' ),
 	'Blankpage'                 => array( 'Пустая_страница' ),
 	'Block'                     => array( 'Заблокировать' ),
 	'Blockme'                   => array( 'Заблокируй_меня' ),
 	'Booksources'               => array( 'Источники_книг' ),
 	'BrokenRedirects'           => array( 'Разорванные_перенаправления' ),
 	'Categories'                => array( 'Категории' ),
-	'ChangeEmail'               => array( 'Сменить_e-mail' ),
+	'ChangeEmail'               => array( 'Сменить_e-mail', 'Сменить_почту' ),
 	'ChangePassword'            => array( 'Сменить_пароль' ),
 	'ComparePages'              => array( 'Сравнение_страниц' ),
-	'Confirmemail'              => array( 'Подтвердить_e-mail' ),
+	'Confirmemail'              => array( 'Подтвердить_e-mail', 'Подтвердить_почту' ),
 	'Contributions'             => array( 'Вклад' ),
 	'CreateAccount'             => array( 'Создать_учётную_запись', 'Создать_пользователя', 'Зарегистрироваться' ),
 	'Deadendpages'              => array( 'Тупиковые_страницы' ),
@@ -143,9 +152,12 @@ $specialPageAliases = array(
 	'EditWatchlist'             => array( 'Править_список_наблюдения' ),
 	'Emailuser'                 => array( 'Письмо_участнику', 'Отправить_письмо' ),
 	'Export'                    => array( 'Экспорт', 'Выгрузка' ),
+	'Fewestrevisions'           => array( 'Редко_редактируемые' ),
 	'FileDuplicateSearch'       => array( 'Поиск_дубликатов_файлов' ),
 	'Filepath'                  => array( 'Путь_к_файлу' ),
 	'Import'                    => array( 'Импорт' ),
+	'Invalidateemail'           => array( 'Отменить_подтверждение_адреса' ),
+	'JavaScriptTest'            => array( 'Тестирование_JavaScript' ),
 	'BlockList'                 => array( 'Список_блокировок', 'Блокировки' ),
 	'LinkSearch'                => array( 'Поиск_ссылок' ),
 	'Listadmins'                => array( 'Список_администраторов' ),
@@ -160,7 +172,13 @@ $specialPageAliases = array(
 	'Longpages'                 => array( 'Длинные_страницы' ),
 	'MergeHistory'              => array( 'Объединение_историй' ),
 	'MIMEsearch'                => array( 'Поиск_по_MIME' ),
+	'Mostcategories'            => array( 'Самые_категоризованные' ),
 	'Mostimages'                => array( 'Самые_используемые_файлы' ),
+	'Mostinterwikis'            => array( 'Наибольшее_количество_интервики-ссылок' ),
+	'Mostlinked'                => array( 'Самые_используемые_страницы' ),
+	'Mostlinkedcategories'      => array( 'Самые_используемые_категории' ),
+	'Mostlinkedtemplates'       => array( 'Самые_используемые_шаблоны' ),
+	'Mostrevisions'             => array( 'Наибольшее_количество_версий' ),
 	'Movepage'                  => array( 'Переименовать_страницу', 'Переименование', 'Переименовать' ),
 	'Mycontributions'           => array( 'Мой_вклад' ),
 	'Mypage'                    => array( 'Моя_страница' ),
@@ -172,9 +190,11 @@ $specialPageAliases = array(
 	'PermanentLink'             => array( 'Постоянная_ссылка' ),
 	'Popularpages'              => array( 'Популярные_страницы' ),
 	'Preferences'               => array( 'Настройки' ),
+	'Prefixindex'               => array( 'Указатель_по_началу_названия' ),
 	'Protectedpages'            => array( 'Защищённые_страницы' ),
 	'Protectedtitles'           => array( 'Защищённые_названия' ),
 	'Randompage'                => array( 'Случайная_страница', 'Случайная' ),
+	'Randomredirect'            => array( 'Случайное_перенаправление' ),
 	'Recentchanges'             => array( 'Свежие_правки' ),
 	'Recentchangeslinked'       => array( 'Связанные_правки' ),
 	'Revisiondelete'            => array( 'Удаление_правки' ),
@@ -189,6 +209,7 @@ $specialPageAliases = array(
 	'Uncategorizedpages'        => array( 'Некатегоризованные_страницы' ),
 	'Uncategorizedtemplates'    => array( 'Некатегоризованные_шаблоны' ),
 	'Undelete'                  => array( 'Восстановить', 'Восстановление' ),
+	'Unlockdb'                  => array( 'Разблокировка_БД' ),
 	'Unusedcategories'          => array( 'Неиспользуемые_категории' ),
 	'Unusedimages'              => array( 'Неиспользуемые_файлы' ),
 	'Unusedtemplates'           => array( 'Неиспользуемые_шаблоны' ),
@@ -247,6 +268,7 @@ $magicWords = array(
 	'pagenamee'                 => array( '1', 'НАЗВАНИЕ_СТРАНИЦЫ_2', 'PAGENAMEE' ),
 	'namespace'                 => array( '1', 'ПРОСТРАНСТВО_ИМЁН', 'NAMESPACE' ),
 	'namespacee'                => array( '1', 'ПРОСТРАНСТВО_ИМЁН_2', 'NAMESPACEE' ),
+	'namespacenumber'           => array( '1', 'НОМЕР_ПРОСТРАНСТВА_ИМЁН', 'NAMESPACENUMBER' ),
 	'talkspace'                 => array( '1', 'ПРОСТРАНСТВО_ОБСУЖДЕНИЙ', 'TALKSPACE' ),
 	'talkspacee'                => array( '1', 'ПРОСТРАНСТВО_ОБСУЖДЕНИЙ_2', 'TALKSPACEE' ),
 	'subjectspace'              => array( '1', 'ПРОСТРАНСТВО_СТАТЕЙ', 'SUBJECTSPACE', 'ARTICLESPACE' ),
@@ -294,6 +316,7 @@ $magicWords = array(
 	'localurl'                  => array( '0', 'ЛОКАЛЬНЫЙ_АДРЕС:', 'LOCALURL:' ),
 	'localurle'                 => array( '0', 'ЛОКАЛЬНЫЙ_АДРЕС_2:', 'LOCALURLE:' ),
 	'articlepath'               => array( '0', 'ПУТЬ_К_СТАТЬЕ', 'ARTICLEPATH' ),
+	'pageid'                    => array( '0', 'ИДЕНТИФИКАТОР_СТРАНИЦЫ', 'PAGEID' ),
 	'server'                    => array( '0', 'СЕРВЕР', 'SERVER' ),
 	'servername'                => array( '0', 'НАЗВАНИЕ_СЕРВЕРА', 'SERVERNAME' ),
 	'scriptpath'                => array( '0', 'ПУТЬ_К_СКРИПТУ', 'SCRIPTPATH' ),
@@ -355,6 +378,10 @@ $magicWords = array(
 	'url_path'                  => array( '0', 'ПУТЬ', 'PATH' ),
 	'url_wiki'                  => array( '0', 'ВИКИ', 'WIKI' ),
 	'url_query'                 => array( '0', 'ЗАПРОС', 'QUERY' ),
+	'pagesincategory_all'       => array( '0', 'все', 'all' ),
+	'pagesincategory_pages'     => array( '0', 'страницы', 'pages' ),
+	'pagesincategory_subcats'   => array( '0', 'подкатегории', 'subcats' ),
+	'pagesincategory_files'     => array( '0', 'файлы', 'files' ),
 );
 
 
@@ -441,9 +468,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Показывать число участников, включивших страницу в свой список наблюдения',
 'tog-oldsig' => 'Текущая подпись:',
 'tog-fancysig' => 'Собственная вики-разметка подписи (без автоматической ссылки)',
-'tog-externaleditor' => 'Использовать по умолчанию внешний редактор (только для специалистов, необходима особая настройка компьютера; [//www.mediawiki.org/wiki/Manual:External_editors подробнее])',
-'tog-externaldiff' => 'Использовать по умолчанию внешнюю программу сравнения (только для специалистов, необходима особая настройка компьютера; [//www.mediawiki.org/wiki/Manual:External_editors подробнее])',
-'tog-showjumplinks' => 'Включить вспомогательные ссылки «перейти к»',
 'tog-uselivepreview' => 'Использовать быстрый предварительный просмотр (экспериментально)',
 'tog-forceeditsummary' => 'Предупреждать, когда не заполнено поле описания правки',
 'tog-watchlisthideown' => 'Скрывать мои правки из списка наблюдения',
@@ -457,6 +481,8 @@ $messages = array(
 'tog-showhiddencats' => 'Показывать скрытые категории',
 'tog-noconvertlink' => 'Отключить ссылку на преобразование заголовка',
 'tog-norollbackdiff' => 'Не показывать разницу версий после выполнения отката',
+'tog-useeditwarning' => 'Предупреждать, когда я покидаю страницу с несохранёнными изменениями',
+'tog-prefershttps' => 'Всегда использовать защищённое соединение после представления системе',
 
 'underline-always' => 'Всегда',
 'underline-never' => 'Никогда',
@@ -520,6 +546,18 @@ $messages = array(
 'oct' => 'окт',
 'nov' => 'ноя',
 'dec' => 'дек',
+'january-date' => 'Январь $1',
+'february-date' => 'Февраль $1',
+'march-date' => 'Март $1',
+'april-date' => 'Апрель $1',
+'may-date' => 'Май $1',
+'june-date' => 'Июнь $1',
+'july-date' => 'Июль $1',
+'august-date' => 'Август $1',
+'september-date' => 'Сентябрь $1',
+'october-date' => 'Октябрь $1',
+'november-date' => 'Ноябрь $1',
+'december-date' => 'Декабрь $1',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Категория|Категории}}',
@@ -601,6 +639,7 @@ $messages = array(
 'create-this-page' => 'Создать эту страницу',
 'delete' => 'Удалить',
 'deletethispage' => 'Удалить эту страницу',
+'undeletethispage' => 'Восстановить эту страницу',
 'undelete_short' => 'Восстановить $1 {{PLURAL:$1|правку|правки|правок}}',
 'viewdeleted_short' => 'Просмотр $1 {{PLURAL:$1|удалённой правки|удалённых правок|удалённых правок}}',
 'protect' => 'Защитить',
@@ -644,7 +683,7 @@ $1',
 'pool-queuefull' => 'Накопитель запросов полон',
 'pool-errorunknown' => 'Неизвестная ошибка',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Описание {{grammar:genitive|{{SITENAME}}}}',
 'aboutpage' => 'Project:Описание',
 'copyright' => 'Содержимое доступно по лицензии $1 (если не указано иное).',
@@ -654,7 +693,6 @@ $1',
 'disclaimers' => 'Отказ от ответственности',
 'disclaimerpage' => 'Project:Отказ от ответственности',
 'edithelp' => 'Справка по редактированию',
-'edithelppage' => 'Help:Как править статьи',
 'helppage' => 'Help:Содержание',
 'mainpage' => 'Заглавная страница',
 'mainpage-description' => 'Заглавная страница',
@@ -732,17 +770,12 @@ $1',
 # General errors
 'error' => 'Ошибка',
 'databaseerror' => 'Ошибка базы данных',
-'dberrortext' => 'Обнаружена ошибка синтаксиса запроса к базе данных.
-Это может означать ошибку в программном обеспечении.
-Последний запрос к базе данных:
-: <code>$1</code>
-произошёл из функции «<code>$2</code>».
-База данных возвратила ошибку «<code>$3: $4</code>».',
-'dberrortextcl' => 'Обнаружена ошибка синтаксиса запроса к базе данных.
-Последний запрос к базе данных:
-: «<code>$1</code>»
-произошёл из функции «<code>$2</code>».
-База данных возвратила ошибку «<code>$3: $4</code>».',
+'databaseerror-text' => 'Произошла ошибка в базе данных.
+Это может указывать на ошибку в программном обеспечении.',
+'databaseerror-textcl' => 'Произошла ошибка в базе данных.',
+'databaseerror-query' => 'Запрос: $1',
+'databaseerror-function' => 'Функция: $1',
+'databaseerror-error' => 'Ошибка: $1',
 'laggedslavemode' => 'Внимание: страница может не содержать последних обновлений.',
 'readonly' => 'Запись в базу данных заблокирована',
 'enterlockreason' => 'Укажите причину и намеченный срок блокировки.',
@@ -775,6 +808,7 @@ $1',
 'cannotdelete-title' => 'Нельзя удалить страницу «$1»',
 'delete-hook-aborted' => 'Правка отменена процедурой-перехватчиком.
 Дополнительных пояснений не приведено.',
+'no-null-revision' => 'Не удалось создать новую нулевую правку для страницы «$1»',
 'badtitle' => 'Недопустимое название',
 'badtitletext' => 'Запрашиваемое название страницы неправильно, пусто, либо неверно указано межъязыковое или интервики название. Возможно, в названии используются недопустимые символы.',
 'perfcached' => 'Следующие данные взяты из кэша и могут не учитывать последних изменений. В кэше хранится не более $1 {{PLURAL:$1|записи|записей|записей}}.',
@@ -796,12 +830,15 @@ $1',
 'editinginterface' => "'''Внимание:''' Вы редактируете страницу, содержащую текст интерфейса программного обеспечения.
 Её изменение повлияет на внешний вид интерфейса для других пользователей этой вики.
 Чтобы добавить или изменить перевод этого сообщения, пожалуйста, используйте сайт локализации MediaWiki [//translatewiki.net/ translatewiki.net].",
-'sqlhidden' => '(SQL запрос скрыт)',
 'cascadeprotected' => 'Страница защищена от изменений, поскольку она включена в {{PLURAL:$1|следующую страницу, для которой|следующие страницы, для которых}} включена каскадная защита:
 $2',
 'namespaceprotected' => 'У вас нет разрешения редактировать страницы в пространстве имён «$1».',
 'customcssprotected' => 'У вас нет разрешения редактировать эту CSS-страницу, так как она содержит личные настройки другого участника.',
 'customjsprotected' => 'У вас нет разрешения редактировать эту JavaScript-страницу, так как она содержит личные настройки другого участника.',
+'mycustomcssprotected' => 'У вас нет прав для редактирования этого CSS страницы.',
+'mycustomjsprotected' => 'У вас нет прав для редактирования JavaScript на странице.',
+'myprivateinfoprotected' => 'У вас нет разрешения на изменение вашей личной информации',
+'mypreferencesprotected' => 'У вас нет прав для редактирования ваших настроек.',
 'ns-specialprotected' => 'Страницы пространства имён «{{ns:special}}» не могут правиться.',
 'titleprotected' => "Создание страницы с таким заголовком было запрещено участником [[Участник:$1|$1]].
 Указана следующая причина: ''$2''.",
@@ -826,10 +863,19 @@ $2',
 'welcomecreation-msg' => 'Ваша учётная запись создана.
 Не забудьте провести [[Special:Preferences|персональную настройку]] сайта {{SITENAME}}.',
 'yourname' => 'Имя учётной записи:',
+'userlogin-yourname' => 'Имя учётной записи',
+'userlogin-yourname-ph' => 'Введите имя вашей учётной записи',
+'createacct-another-username-ph' => 'Введите имя вашей учётной записи',
 'yourpassword' => 'Пароль:',
+'userlogin-yourpassword' => 'Пароль',
+'userlogin-yourpassword-ph' => 'Введите свой пароль',
+'createacct-yourpassword-ph' => 'Введите пароль',
 'yourpasswordagain' => 'Повторный набор пароля:',
+'createacct-yourpasswordagain' => 'Подтвердите пароль',
+'createacct-yourpasswordagain-ph' => 'Введите пароль еще раз',
 'remembermypassword' => 'Помнить мою учётную запись на этом компьютере (не более $1 {{PLURAL:$1|дня|дней|дней}})',
-'securelogin-stick-https' => 'Продолжить подключение по HTTPS после входа',
+'userlogin-remembermypassword' => 'Оставаться в системе',
+'userlogin-signwithsecure' => 'Защищённое соединение',
 'yourdomainname' => 'Ваш домен:',
 'password-change-forbidden' => 'Вы не можете изменить пароль в этой вики.',
 'externaldberror' => 'Произошла ошибка при аутентификации с помощью внешней базы данных или у вас недостаточно прав для внесения изменений в свою внешнюю учётную запись.',
@@ -841,18 +887,44 @@ $2',
 'logout' => 'Завершение сеанса',
 'userlogout' => 'Завершение сеанса',
 'notloggedin' => 'Вы не представились системе',
+'userlogin-noaccount' => 'Нет учетной записи?',
+'userlogin-joinproject' => 'Присоединиться к проекту',
 'nologin' => 'Нет учётной записи? $1.',
 'nologinlink' => 'Создать учётную запись',
 'createaccount' => 'Создать учётную запись',
 'gotaccount' => "Вы уже зарегистрированы? '''$1'''.",
 'gotaccountlink' => 'Представьтесь',
 'userlogin-resetlink' => 'Забыли данные для входа?',
+'userlogin-resetpassword-link' => 'Сброс пароля',
+'helplogin-url' => 'Help:Представление системе',
+'userlogin-helplink' => '[[{{MediaWiki:helplogin-url}}|Помощь со входом в систему]]',
+'userlogin-loggedin' => 'Вы уже вошли как {{GENDER:$1|$1}}.
+Используйте форму ниже, чтобы войти под другим пользователем.',
+'userlogin-createanother' => 'Создать другую учётную запись',
+'createacct-join' => 'Введите свои данные ниже.',
+'createacct-another-join' => 'Введите данные новой учётной записи ниже.',
+'createacct-emailrequired' => 'Адрес электронной почты',
+'createacct-emailoptional' => 'Адрес электронной почты (необязательно)',
+'createacct-email-ph' => 'Введите свой адрес электронной почты',
+'createacct-another-email-ph' => 'Введите адрес электронной почты',
 'createaccountmail' => 'Использовать сгенерированный случайным образом временный пароль и выслать мне его на указанный адрес электронной почты',
+'createacct-realname' => 'Настоящее имя (необязательно)',
 'createaccountreason' => 'Причина:',
+'createacct-reason' => 'Причина',
+'createacct-reason-ph' => 'Зачем вы создаёте другую учетную запись',
+'createacct-captcha' => 'Проверка безопасности',
+'createacct-imgcaptcha-ph' => 'Введите текст, который вы видите выше',
+'createacct-submit' => 'Создать учётную запись',
+'createacct-another-submit' => 'Создать ещё одну учётную запись',
+'createacct-benefit-heading' => '{{SITENAME}} создана такими же людьми, как вы.',
+'createacct-benefit-body1' => '{{PLURAL:$1|правка|правки|правок}}',
+'createacct-benefit-body2' => '{{PLURAL:$1|статья|статьи|статей}}',
+'createacct-benefit-body3' => '{{PLURAL:$1|участник|участника|участников}} за последнее время',
 'badretype' => 'Введённые вами пароли не совпадают.',
 'userexists' => 'Введённое имя участника уже используется.
 Пожалуйста, выберите другое имя.',
 'loginerror' => 'Ошибка опознавания участника',
+'createacct-error' => 'Ошибка создания учётной записи',
 'createaccounterror' => 'Невозможно создать учётную запись: $1',
 'nocookiesnew' => 'Участник зарегистрирован, но не представлен. {{SITENAME}} использует «cookies» для представления участников. У вас «cookies» запрещены. Пожалуйста, разрешите их, а затем представьтесь со своиим новым именем участника и паролем.',
 'nocookieslogin' => '{{SITENAME}} использует «cookies» для представления участников. Вы их отключили. Пожалуйста, включите их и попробуйте снова.',
@@ -914,10 +986,12 @@ $2',
 Проигнорируйте данное сообщение, если учётная запись была создана по ошибке.',
 'usernamehasherror' => 'Имя участника не может содержать символ «решётки»',
 'login-throttled' => 'Вы сделали слишком много попыток представиться системе.
-Пожалуйста, подождите перед тем, как попробовать снова.',
+Пожалуйста, подождите $1 перед тем, как попробовать снова.',
 'login-abort-generic' => 'Неудачная попытка представиться системе',
 'loginlanguagelabel' => 'Язык: $1',
 'suspicious-userlogout' => 'Ваш запрос на завершение сеанса отклонён, так как он похож на запрос, отправленный некорректным браузером или кэширующим прокси.',
+'createacct-another-realname-tip' => 'Настоящее имя (необязательное поле).
+Если вы укажете его, то оно будет использовано для того, чтобы показать, кем была внесена правка страницы.',
 
 # Email sending
 'php-mail-error-unknown' => 'Неизвестная ошибка в PHP-функции mail()',
@@ -933,8 +1007,7 @@ $2',
 'newpassword' => 'Новый пароль:',
 'retypenew' => 'Повторите ввод нового пароля:',
 'resetpass_submit' => 'Установить пароль и представиться',
-'resetpass_success' => 'Ваш пароль был успешно изменён!
-Производится вход в систему…',
+'changepassword-success' => 'Ваш пароль был успешно изменён!',
 'resetpass_forbidden' => 'Пароль не может быть изменён',
 'resetpass-no-info' => 'Чтобы обращаться непосредственно к этой странице, вам следует представиться системе.',
 'resetpass-submit-loggedin' => 'Изменить пароль',
@@ -946,10 +1019,11 @@ $2',
 
 # Special:PasswordReset
 'passwordreset' => 'Сброс пароля',
-'passwordreset-text' => 'Чтобы сбросить свой пароль, заполните эту форму.',
+'passwordreset-text-one' => 'Заполните эту форму, чтобы сбросить свой пароль.',
+'passwordreset-text-many' => '{{PLURAL:$1|Заполните одно из полей для сброса пароля.}}',
 'passwordreset-legend' => 'Сбросить пароль',
 'passwordreset-disabled' => 'Сбросы пароля отключены на этой вики.',
-'passwordreset-pretext' => '{{PLURAL:$1||Введите одну из частей данных, показанных ниже}}',
+'passwordreset-emaildisabled' => 'Функции электронной почты отключены в этой вики.',
 'passwordreset-username' => 'Имя участника:',
 'passwordreset-domain' => 'Домен:',
 'passwordreset-capture' => 'Просмотреть получившееся письмо?',
@@ -978,7 +1052,7 @@ $2
 Временный пароль: $2',
 'passwordreset-emailsent' => 'Отправлено электронное письмо с информацией о сбросе пароля.',
 'passwordreset-emailsent-capture' => 'Отправлено электронное письмо с информацией о сбросе пароля, текст которого можно увидеть ниже.',
-'passwordreset-emailerror-capture' => 'Ниже приведено созданное письмо-напоминание, его отправка не удалась по причине: $1',
+'passwordreset-emailerror-capture' => 'Было создано электронное письмо с информацией о сбросе пароля, текст которого можно увидеть ниже, однако его не удалось отправить {{GENDER:$2|участнику|участнице}} по следующей причине: $1',
 
 # Special:ChangeEmail
 'changeemail' => 'Изменить адрес электронной почты',
@@ -991,6 +1065,19 @@ $2
 'changeemail-password' => 'Ваш пароль для проекта «{{SITENAME}}»:',
 'changeemail-submit' => 'Изменить адрес',
 'changeemail-cancel' => 'Отмена',
+
+# Special:ResetTokens
+'resettokens' => 'Сбросить токены',
+'resettokens-text' => 'Вы можете сбросить токены, которые позволяют иметь доступ к некоторым личным данным, которые связаны с вашей учётной записью. 
+
+Вам необходимо сделать это, если вы случайно поделился ими с кем-то, или если ваш аккаунт был взломан.',
+'resettokens-no-tokens' => 'Нет токенов для сброса.',
+'resettokens-legend' => 'Сбросить токены',
+'resettokens-tokens' => 'Токены:',
+'resettokens-token-label' => '$1 (текущее значение: $2)',
+'resettokens-watchlist-token' => 'Токен для веб-канала (Atom/RSS)  [[Special:Watchlist|изменений страниц в вашем списке наблюдения]]',
+'resettokens-done' => 'Токены сброшены.',
+'resettokens-resetbutton' => 'Сбросить выбранные токены',
 
 # Edit page toolbar
 'bold_sample' => 'Полужирное начертание',
@@ -1193,12 +1280,15 @@ $2
 Вероятно, она была удалена.',
 'edit-conflict' => 'Конфликт редактирования.',
 'edit-no-change' => 'Ваша правка была отклонена, так как в тексте не было сделано изменений.',
+'postedit-confirmation' => 'Ваша правка сохранена.',
 'edit-already-exists' => 'Невозможно создать новую страницу.
 Она уже существует.',
 'defaultmessagetext' => 'Текст по умолчанию',
 'content-failed-to-parse' => 'Содержимое $2 не соответствует типу $1: $3.',
 'invalid-content-data' => 'Недопустимые данные',
 'content-not-allowed-here' => 'Содержимое "$1" недопустимо на странице [[$2]]',
+'editwarning-warning' => 'Переход на другую страницу может привести к потере сделанных вами изменений.
+Если вы зарегистрированы в системе, то вы можете отключить это предупреждение в разделе «Редактирование» ваших настроек.',
 
 # Content models
 'content-model-wikitext' => 'вики-текст',
@@ -1233,6 +1323,7 @@ $2
 'undo-failure' => 'Правка не может быть отменена из-за несовместимости промежуточных изменений.',
 'undo-norev' => 'Правка не может быть отменена, так как её не существует или она была удалена.',
 'undo-summary' => 'Отмена правки $1, сделанной {{GENDER:$2|участником|участницей}} [[Special:Contributions/$2|$2]] ([[User talk:$2|обс.]])',
+'undo-summary-username-hidden' => 'Отмена правки $1, сделанной участником, чьё имя скрыто',
 
 # Account creation failure
 'cantcreateaccounttitle' => 'Невозможно создать учётную запись',
@@ -1412,6 +1503,7 @@ $1",
 'compareselectedversions' => 'Сравнить выбранные версии',
 'showhideselectedversions' => 'Показать/скрыть выбранные версии',
 'editundo' => 'отменить',
+'diff-empty' => '(нет различий)',
 'diff-multi' => '({{PLURAL:$1|не показана $1 промежуточная версия|не показаны $1 промежуточные версии|не показаны $1 промежуточных версий}} {{PLURAL:$2|$2 участника|$2 участников}})',
 'diff-multi-manyusers' => '(не {{PLURAL:$1|показана $1 промежуточная версия|показаны $1 промежуточные версии|показаны $1 промежуточных версий}}, сделанные более чем $2 {{PLURAL:$2|участником|участниками}})',
 'difference-missing-revision' => '{{PLURAL:$2|$2 версия|$2 версии|$2 версий}} для этого сравнения ($1) {{PLURAL:$2|не обнаружена|не обнаружены}}.
@@ -1439,7 +1531,6 @@ $1",
 'searchmenu-legend' => 'Настройки поиска',
 'searchmenu-exists' => "'''В этой вики есть страница «[[:$1]]»'''",
 'searchmenu-new' => "'''Создать страницу «[[:$1]]» в этом вики-проекте!'''",
-'searchhelp-url' => 'Help:Содержание',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Показать страницы с этим префиксом]]',
 'searchprofile-articles' => 'Основные страницы',
 'searchprofile-project' => 'Страницы справки и проекта',
@@ -1480,15 +1571,7 @@ $1",
 'powersearch-togglenone' => 'Ничего',
 'search-external' => 'Внешний поиск',
 'searchdisabled' => 'Извините, но встроенный полнотекстовый поиск выключен. Вы можете воспользоваться поиском по сайту через поисковые системы общего назначения, однако имейте в виду, что копия сайта в их кэше может быть несколько устаревшей.',
-
-# Quickbar
-'qbsettings' => 'Панель навигации',
-'qbsettings-none' => 'Не показывать',
-'qbsettings-fixedleft' => 'Неподвижная слева',
-'qbsettings-fixedright' => 'Неподвижная справа',
-'qbsettings-floatingleft' => 'Плавающая слева',
-'qbsettings-floatingright' => 'Плавающая справа',
-'qbsettings-directionality' => 'Закреплённая, в зависимости от направления письменности вашего языка',
+'search-error' => 'Произошла ошибка при поиске: $1',
 
 # Preferences page
 'preferences' => 'Настройки',
@@ -1522,7 +1605,6 @@ $1",
 'resetprefs' => 'Сбросить',
 'restoreprefs' => 'Восстановить настройки по умолчанию',
 'prefs-editing' => 'Редактирование',
-'prefs-edit-boxsize' => 'Размер окна редактирования.',
 'rows' => 'Строк:',
 'columns' => 'Столбцов:',
 'searchresultshead' => 'Поиск',
@@ -1533,9 +1615,8 @@ $1",
 'recentchangesdays-max' => '(не более $1 {{PLURAL:$1|дня|дней|дней}})',
 'recentchangescount' => 'Количество правок, отображаемое по умолчанию:',
 'prefs-help-recentchangescount' => 'Включает свежие правки, истории страниц, журналы.',
-'prefs-help-watchlist-token' => 'Заполнение этого поля секретным ключом будет создавать RSS-трансляцию для вашего списка наблюдений.
-Каждый, кто знает ключ в этом поле, сможет читать ваш список наблюдения, поэтому выбирайте секретное значение.
-Вы можете использовать сгенерированное случайным образом значение: $1',
+'prefs-help-watchlist-token2' => 'Это секретный ключ для веб-канала вашего списка наблюдений.
+Любой, кто знает его, сможет читать ваш список наблюдения, поэтому не сообщайте его другим. [[Special:ResetTokens|Нажмите здесь, если вам нужно сбросить его]].',
 'savedprefs' => 'Ваши настройки сохранены.',
 'timezonelegend' => 'Часовой пояс:',
 'localtime' => 'Местное время:',
@@ -1566,7 +1647,6 @@ $1",
 'prefs-reset-intro' => 'Эта страница может быть использована для сброса ваших настроек на настройки по умолчанию.
 Подтвердив данное действие, вы не сможете его отменить.',
 'prefs-emailconfirm-label' => 'Подтверждение электронной почты:',
-'prefs-textboxsize' => 'Размер окна редактирования',
 'youremail' => 'Электронная почта:',
 'username' => '{{GENDER:$1|Имя участника|Имя участницы}}:',
 'uid' => 'Код {{GENDER:$1|участника|участницы}}:',
@@ -1600,6 +1680,8 @@ $1",
 'prefs-dateformat' => 'Формат даты',
 'prefs-timeoffset' => 'Смещение поясного времени',
 'prefs-advancedediting' => 'Общие параметры',
+'prefs-editor' => 'редактор',
+'prefs-preview' => 'предварительный просмотр',
 'prefs-advancedrc' => 'Расширенные настройки',
 'prefs-advancedrendering' => 'Расширенные настройки',
 'prefs-advancedsearchoptions' => 'Расширенные настройки',
@@ -1607,7 +1689,9 @@ $1",
 'prefs-displayrc' => 'Настройки отображения',
 'prefs-displaysearchoptions' => 'Настройки отображения',
 'prefs-displaywatchlist' => 'Настройки отображения',
+'prefs-tokenwatchlist' => 'Токен',
 'prefs-diffs' => 'Разница версий',
+'prefs-help-prefershttps' => 'Эта настройка будет применена после следующего представления системе.',
 
 # User preference: email validation using jQuery
 'email-address-validity-valid' => 'Выглядит корректно',
@@ -1634,6 +1718,8 @@ $1",
 'userrights-notallowed' => 'У вас нет разрешения добавлять и удалять права участников.',
 'userrights-changeable-col' => 'Группы, которые вы можете изменять',
 'userrights-unchangeable-col' => 'Группы, которые вы не можете изменять',
+'userrights-conflict' => 'Конфликт изменения прав участника! Пожалуйста, проверьте и примените изменения заново.',
+'userrights-removed-self' => 'Вы успешно удалили собственные права. Таким образом, вы больше не сможете получить доступ к этой странице.',
 
 # Groups
 'group' => 'Группа:',
@@ -1699,11 +1785,19 @@ $1",
 'right-proxyunbannable' => 'обход автоматической блокировки прокси',
 'right-unblockself' => 'Разблокировать себя',
 'right-protect' => 'Изменение уровня защиты страниц и правка каскадно защищённых страниц',
-'right-editprotected' => 'Редактировать защищённые страницы (без каскадной защиты)',
+'right-editprotected' => 'Правка страниц, защищённых как «{{int:protect-level-sysop}}»',
+'right-editsemiprotected' => 'Правка страниц, защищённых как «{{int:protect-level-autoconfirmed}}»',
 'right-editinterface' => 'изменение пользовательского интерфейса',
 'right-editusercssjs' => 'правка CSS- и JS-файлов других участников',
 'right-editusercss' => 'правка CSS-файлов других участников',
 'right-edituserjs' => 'правка JavaScript-файлов других участников',
+'right-editmyusercss' => 'Редактирование файлов CSS пользователя',
+'right-editmyuserjs' => 'Редактировать свои пользовательские JavaScript-файлы',
+'right-viewmywatchlist' => 'Посмотреть свой список наблюдения',
+'right-editmywatchlist' => 'Редактировать свой список наблюдения. Обратите внимание, что некоторые действия будут добавлять страницы даже без такого права.',
+'right-viewmyprivateinfo' => 'Просмотр собственных личных данных (например, адрес электронной почты, настоящее имя)',
+'right-editmyprivateinfo' => 'Правка собственных личных данных (например, адрес электронной почты, настоящее имя)',
+'right-editmyoptions' => 'Редактировать собственные предпочтения',
 'right-rollback' => 'быстрый откат правок последнего участника на определенной странице',
 'right-markbotedits' => 'отметка откатываемых правок как правок бота',
 'right-noratelimit' => 'нет ограничений по скорости',
@@ -1765,12 +1859,19 @@ $1",
 'action-userrights-interwiki' => 'изменение прав участников в других вики',
 'action-siteadmin' => 'блокировка и разблокировка базы данных',
 'action-sendemail' => 'отправка электронных писем',
+'action-editmywatchlist' => 'редактирование вашего списка наблюдения',
+'action-viewmywatchlist' => 'просмотр вашего списка наблюдения',
+'action-viewmyprivateinfo' => 'просмотр вашей частной информации',
+'action-editmyprivateinfo' => 'редактирование вашей частной информации',
 
 # Recent changes
 'nchanges' => '$1 {{PLURAL:$1|изменение|изменения|изменений}}',
+'enhancedrc-since-last-visit' => '$1 с последнего посещения',
+'enhancedrc-history' => 'история',
 'recentchanges' => 'Свежие правки',
 'recentchanges-legend' => 'Настройки свежих правок',
 'recentchanges-summary' => 'Ниже в хронологическом порядке перечислены последние изменения на страницах {{grammar:genitive|{{SITENAME}}}}.',
+'recentchanges-noresult' => 'Изменений в указанный период, соответствующих указанным условиям, нет.',
 'recentchanges-feed-description' => 'Отслеживать в этом потоке последние изменения в вики.',
 'recentchanges-label-newpage' => 'Этой правкой была создана новая страница.',
 'recentchanges-label-minor' => 'Это незначительное изменение',
@@ -1808,7 +1909,6 @@ $1",
 'recentchangeslinked-feed' => 'Связанные правки',
 'recentchangeslinked-toolbox' => 'Связанные правки',
 'recentchangeslinked-title' => 'Связанные правки для «$1»',
-'recentchangeslinked-noresult' => 'На связанных страницах не было изменений за указанный период.',
 'recentchangeslinked-summary' => "Это список недавних изменений в страницах, на которые ссылается указанная страница (или входящих в указанную категорию).
 Страницы, входящие в [[Special:Watchlist|ваш список наблюдения]] '''выделены'''.",
 'recentchangeslinked-page' => 'Название страницы:',
@@ -1820,7 +1920,7 @@ $1",
 'reuploaddesc' => 'Вернуться к форме загрузки',
 'upload-tryagain' => 'Отправить изменённое описание файла',
 'uploadnologin' => 'Вы не представились системе',
-'uploadnologintext' => 'Вы должны [[Special:UserLogin|представиться системе]], чтобы иметь возможность загружать файлы.',
+'uploadnologintext' => 'Вы должны $1, чтобы загружать файлы на сервер.',
 'upload_directory_missing' => 'Директория для загрузок ($1) отсутствует и не может быть создана веб-сервером.',
 'upload_directory_read_only' => 'Веб-сервер не имеет прав записи в папку ($1), в которой предполагается хранить загружаемые файлы.',
 'uploaderror' => 'Ошибка загрузки файла',
@@ -2045,7 +2145,6 @@ $1',
 'http-read-error' => 'Ошибка чтения HTTP.',
 'http-timed-out' => 'Истекло время ожидания HTTP-запроса.',
 'http-curl-error' => 'Ошибка обращения к URL: $1',
-'http-host-unreachable' => 'Невозможно обратиться по указанному URL.',
 'http-bad-status' => 'Во время обработки HTTP-запроса обнаружена проблема: $1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -2073,6 +2172,10 @@ $1',
 'listfiles_size' => 'Размер',
 'listfiles_description' => 'Описание',
 'listfiles_count' => 'Версий',
+'listfiles-show-all' => 'Включить старые версии изображений',
+'listfiles-latestversion' => 'Текущая версия',
+'listfiles-latestversion-yes' => 'Да',
+'listfiles-latestversion-no' => 'Нет',
 
 # File description page
 'file-anchor-link' => 'Файл',
@@ -2169,6 +2272,13 @@ $1',
 'randompage' => 'Случайная статья',
 'randompage-nopages' => 'В {{PLURAL:$2|следующем пространстве имён отсутствуют страницы|следующих пространствах имён нет страниц}}: $1.',
 
+# Random page in category
+'randomincategory' => 'Случайная страница в категории',
+'randomincategory-invalidcategory' => 'Категории «$1» не существует.',
+'randomincategory-nopages' => 'Нет страниц в категории [[:Category:$1]].',
+'randomincategory-selectcategory' => 'Перейти на случайную страницу из категории: $1 $2.',
+'randomincategory-selectcategory-submit' => 'Перейти',
+
 # Random redirect
 'randomredirect' => 'Случайное перенаправление',
 'randomredirect-nopages' => 'Пространство имён «$1» не содержит перенаправлений.',
@@ -2194,17 +2304,13 @@ $1',
 'statistics-users-active-desc' => 'Участники, совершившие какое-либо действие за {{PLURAL:$1|последний $1 день|последние $1 дня|последние $1 дней}}',
 'statistics-mostpopular' => 'Наиболее часто просматриваемые страницы',
 
-'disambiguations' => 'Страницы, ссылающиеся на страницы разрешения неоднозначности',
-'disambiguationspage' => 'Template:Неоднозначность',
-'disambiguations-text' => "Следующие страницы содержат по меньшей мере одну ссылку на '''многозначную страницу'''.
-Вместо этого они, вероятно, должны указывать на соответствующую конкретную страницу.<br />
-Страница считается многозначной, если на ней размещён шаблон, имя которого указано на странице [[MediaWiki:Disambiguationspage]].",
-
 'pageswithprop' => 'Страницы с переопределёнными свойствами',
 'pageswithprop-legend' => 'Страницы с переопределёнными свойствами',
 'pageswithprop-text' => 'Здесь перечислены страницы, у которых были вручную переопределены отдельные свойства.',
 'pageswithprop-prop' => 'Название свойства:',
 'pageswithprop-submit' => 'Найти',
+'pageswithprop-prophidden-long' => 'длинное значение текстового свойства скрыто ($1)',
+'pageswithprop-prophidden-binary' => 'значение двоичного свойства скрыто ($1)',
 
 'doubleredirects' => 'Двойные перенаправления',
 'doubleredirectstext' => 'На этой странице представлен список перенаправлений на другие перенаправления.
@@ -2262,6 +2368,7 @@ $1',
 'mostrevisions' => 'Наиболее часто редактировавшиеся страницы',
 'prefixindex' => 'Указатель по началу названий страниц',
 'prefixindex-namespace' => 'Указатель по началу страниц (пространство имён «{{ns:$1}}»)',
+'prefixindex-strip' => 'Скрыть префикс в списке результатов',
 'shortpages' => 'Короткие страницы',
 'longpages' => 'Длинные страницы',
 'deadendpages' => 'Тупиковые страницы',
@@ -2277,6 +2384,7 @@ $1',
 'listusers' => 'Список участников',
 'listusers-editsonly' => 'Показать только тех участников, кто сделал хотя бы одну правку',
 'listusers-creationsort' => 'Упорядочить по дате создания',
+'listusers-desc' => 'Сортировать по убыванию',
 'usereditcount' => '$1 {{PLURAL:$1|правка|правки|правок}}',
 'usercreated' => '{{GENDER:$3|зарегистрировался|зарегистрировалась}} $1 в $2',
 'newpages' => 'Новые страницы',
@@ -2456,10 +2564,9 @@ $1',
 'unwatchthispage' => 'Прекратить наблюдение',
 'notanarticle' => 'Не статья',
 'notvisiblerev' => 'Версия была удалена',
-'watchnochange' => 'За этот период ни одна страница из списка наблюдения не менялась.',
 'watchlist-details' => 'В вашем списке наблюдения $1 {{PLURAL:$1|страница|страницы|страниц}}, не считая страниц обсуждения.',
-'wlheader-enotif' => '* Уведомление по эл. почте включено.',
-'wlheader-showupdated' => "* Страницы, изменившиеся с вашего последнего их посещения, выделены '''жирным''' шрифтом.",
+'wlheader-enotif' => 'Уведомления по эл. почте включены.',
+'wlheader-showupdated' => "Страницы, изменившиеся с вашего последнего их посещения, выделены '''жирным''' шрифтом.",
 'watchmethod-recent' => 'просмотр последних изменений для наблюдаемых страниц',
 'watchmethod-list' => 'просмотр наблюдаемых страниц для последних изменений',
 'watchlistcontains' => 'Ваш список наблюдения содержит $1 {{PLURAL:$1|страница|страницы|страниц}}.',
@@ -2706,7 +2813,7 @@ $1',
 'contributions' => 'Вклад {{GENDER:$1|участника|участницы}}',
 'contributions-title' => 'Вклад {{GENDER:$1|участника|участницы}} $1',
 'mycontris' => 'Вклад',
-'contribsub2' => 'Для $1 ($2)',
+'contribsub2' => 'Вклад {{GENDER:$3|$1}} ($2)',
 'nocontribs' => 'Изменений, соответствующих заданным условиям, найдено не было.',
 'uctop' => '(текущая)',
 'month' => 'С месяца (и ранее):',
@@ -2860,13 +2967,11 @@ $1',
 'ipb_blocked_as_range' => 'Ошибка: IP-адрес $1 был заблокирован не напрямую и не может быть разблокирован. Однако, он принадлежит к заблокированному диапазону $2, который можно разблокировать.',
 'ip_range_invalid' => 'Недопустимый диапазон IP-адресов.',
 'ip_range_toolarge' => 'Блокировки диапазонов свыше /$1 запрещены.',
-'blockme' => 'Заблокируй меня',
 'proxyblocker' => 'Блокировка прокси',
-'proxyblocker-disabled' => 'Функция отключена.',
 'proxyblockreason' => 'Ваш IP-адрес заблокирован потому, что это открытый прокси-сервер. Пожалуйста, свяжитесь со своиим интернет-провайдером или службой поддержки, и сообщите им об этой серьёзной проблеме безопасности.',
-'proxyblocksuccess' => 'Выполнено.',
 'sorbsreason' => 'Ваш IP-адрес числится как открытый прокси в DNSBL.',
 'sorbs_create_account_reason' => 'Ваш IP-адрес числится как открытый прокси в DNSBL. Вы не можете создать учётную запись.',
+'xffblockreason' => 'Был заблокирован IP-адрес, присутствующий в заголовке X-Forwarded-For и принадлежащий либо вам, либо используемому вами прокси-серверу. Первоначальная причина блокировки была следующей: $1',
 'cant-block-while-blocked' => 'Вы не можете блокировать других участников, пока вы сами заблокированы.',
 'cant-see-hidden-user' => 'Участник, которого вы пытаетесь заблокировать, уже заблокирован и скрыт. Поскольку у вас нет разрешения на работу по сокрытию участников, вы не можете просмотреть или изменить данную блокировку.',
 'ipbblocked' => 'Вы не можете блокировать или разблокировать других участников, так как вы сами заблокированы',
@@ -3034,6 +3139,8 @@ $1',
 'thumbnail-more' => 'Увеличить',
 'filemissing' => 'Файл не найден',
 'thumbnail_error' => 'Ошибка создания миниатюры: $1',
+'thumbnail_error_remote' => 'Сообщение об ошибке от $1:
+$2',
 'djvu_page_error' => 'Номер страницы DjVu вне досягаемости',
 'djvu_no_xml' => 'Невозможно получить XML для DjVu',
 'thumbnail-temp-create' => 'Не удаётся создать временный файл эскиза',
@@ -3178,20 +3285,15 @@ $1',
 'tooltip-undo' => 'Убрать внесённую правку и показать предпросмотр, с возможностью указать причину отмены',
 'tooltip-preferences-save' => 'Сохранить настройки',
 'tooltip-summary' => 'Введите краткое описание',
+'tooltip-iwiki' => '$1 — $2',
 
 # Stylesheets
 'common.css' => '/* Размещённый здесь CSS будет применяться ко всем темам оформления */',
-'standard.css' => '/* Размещённый здесь CSS будет применяться к теме оформления Standard */',
-'nostalgia.css' => '/* Размещённый здесь CSS будет применяться к теме оформления Nostalgia */',
 'cologneblue.css' => '/* Размещённый здесь CSS будет применяться к теме оформления Cologne Blue */',
 'monobook.css' => '/* Размещённый здесь CSS будет применяться к теме оформления Monobook */',
-'myskin.css' => '/* Размещённый здесь CSS будет применяться к теме оформления MySkin */',
-'chick.css' => '/* Размещённый здесь CSS будет применяться к теме оформления Chick */',
-'simple.css' => '/* Размещённый здесь CSS будет применяться к теме оформления Simple */',
 'modern.css' => '/* Размещённый здесь CSS будет применяться к теме оформления Modern */',
 'vector.css' => '/* Размещённый здесь CSS будет применяться к векторной теме оформления  */',
 'print.css' => '/* Размещённый здесь CSS будет применяться к версии для печати */',
-'handheld.css' => '/* Размещённый здесь CSS-код будет применяться для мобильных устройств, использующих тему оформления, указанную в $wgHandheldStyle */',
 'noscript.css' => '/* Размещённый здесь CSS будет применяться для участников с отключенным JavaScript  */',
 'group-autoconfirmed.css' => '/* Размещённый здесь CSS будет применяться для автоподтверждённых участников */',
 'group-bot.css' => '/* Размещённый здесь CSS будет применяться только для ботов */',
@@ -3200,13 +3302,8 @@ $1',
 
 # Scripts
 'common.js' => '/* Размещённый здесь код JavaScript будет загружаться пользователям при обращении к каждой странице */',
-'standard.js' => '/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления Standard */',
-'nostalgia.js' => '/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления Nostalgia */',
 'cologneblue.js' => '/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления Cologne Blue */',
 'monobook.js' => '/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления MonoBook */',
-'myskin.js' => '/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления MySkin  */',
-'chick.js' => '/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления Chick */',
-'simple.js' => '/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления Simple */',
 'modern.js' => '/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления Modern */',
 'vector.js' => '/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления Vector */',
 'group-autoconfirmed.js' => '/* Размещённый здесь код JavaScript будет загружаться только участникам, имеющим статус автоподтверждённых (autoconfirmed) */',
@@ -3288,12 +3385,7 @@ The wiki server can't provide data in a format your client can read.",
 'pageinfo-category-files' => 'Количество файлов',
 
 # Skin names
-'skinname-standard' => 'Классическое',
-'skinname-nostalgia' => 'Ностальгия',
 'skinname-cologneblue' => 'Кёльнская тоска',
-'skinname-myskin' => 'Своё',
-'skinname-chick' => 'Цыпа',
-'skinname-simple' => 'Простое',
 'skinname-modern' => 'Современное',
 'skinname-vector' => 'Векторное',
 
@@ -3378,10 +3470,24 @@ $1',
 'minutes' => '{{PLURAL:$1|$1 минута|$1 минуты|$1 минут}}',
 'hours' => '{{PLURAL:$1|$1 час|$1 часа|$1 часов}}',
 'days' => '{{PLURAL:$1|$1 день|$1 дня|$1 дней}}',
+'weeks' => '{{PLURAL:$1|$1 неделя|$1 недели|$1 недель}}',
 'months' => '{{PLURAL:$1|$1 месяц|$1 месяца|$1 месяцев}}',
 'years' => '{{PLURAL:$1|$1 год|$1 года|$1 лет}}',
 'ago' => '$1 назад',
 'just-now' => 'только что',
+
+# Human-readable timestamps
+'hours-ago' => '$1 {{PLURAL:$1|час|часа|часов}} назад',
+'minutes-ago' => '$1 {{PLURAL:$1|минуту|минуты|минут}} назад',
+'seconds-ago' => '$1 {{PLURAL:$1|секунду|секунды|секунд}} назад',
+'monday-at' => 'в понедельник в $1',
+'tuesday-at' => 'во вторник в $1',
+'wednesday-at' => 'в среду в $1',
+'thursday-at' => 'в четверг в $1',
+'friday-at' => 'в пятницу в $1',
+'saturday-at' => 'в субботу в $1',
+'sunday-at' => 'в воскресенье в $1',
+'yesterday-at' => 'Вчера в $1',
 
 # Bad image list
 'bad_image_list' => 'Формат должен быть следующим:
@@ -3410,7 +3516,7 @@ $1',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Ширина',
 'exif-imagelength' => 'Высота',
 'exif-bitspersample' => 'Глубина цвета',
@@ -3589,7 +3695,7 @@ $1',
 'exif-originalimageheight' => 'Высота изображения до кадрирования',
 'exif-originalimagewidth' => 'Ширина изображения до кадрирования',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Несжатый',
 'exif-compression-2' => 'CCITT Group 3, 1-мерная модификация кодирования длин серий Хаффмана',
 'exif-compression-3' => 'CCITT Group 3, факсовое кодирование',
@@ -4065,7 +4171,6 @@ $5
 'version-other' => 'Иное',
 'version-mediahandlers' => 'Обработчики медиа',
 'version-hooks' => 'Перехватчики',
-'version-extension-functions' => 'Функции расширений',
 'version-parser-extensiontags' => 'Теги расширений синтаксического анализатора',
 'version-parser-function-hooks' => 'Перехватчики функций синтаксического анализатора',
 'version-hook-name' => 'Имя перехватчика',
@@ -4074,6 +4179,7 @@ $5
 'version-license' => 'Лицензия',
 'version-poweredby-credits' => "Эта вики работает на движке '''[//www.mediawiki.org/ MediaWiki]''', copyright © 2001-$1 $2.",
 'version-poweredby-others' => 'другие',
+'version-poweredby-translators' => 'переводчики translatewiki.net',
 'version-credits-summary' => 'Хотим поблагодарить следующих участников за их вклад в развитие [[Special:Version|MediaWiki]].',
 'version-license-info' => 'MediaWiki является свободным программным обеспечением, которое вы можете распространять и/или изменять в соответствии с условиями лицензии GNU General Public License, опубликованной фондом свободного программного обеспечения; второй версии, либо любой более поздней версии.
 
@@ -4089,12 +4195,17 @@ MediaWiki распространяется в надежде, что она бу
 'version-entrypoints-articlepath' => '[https://www.mediawiki.org/wiki/Manual:$wgArticlePath Путь к статье]',
 'version-entrypoints-scriptpath' => '[https://www.mediawiki.org/wiki/Manual:$wgScriptPath Путь к скрипту]',
 
-# Special:FilePath
-'filepath' => 'Путь к файлу',
-'filepath-page' => 'Файл:',
-'filepath-submit' => 'Перейти',
-'filepath-summary' => 'Данная служебная страница возвращает полный путь к файлу.
-Изображения показываются в полном разрешении, другие типы файлов открываются напрямую в связанных с ними программах.',
+# Special:Redirect
+'redirect' => 'Перенаправление с файла, участника или идентификатора версии',
+'redirect-legend' => 'Перенаправление на файл или страницу',
+'redirect-summary' => 'Эта специальная страница перенаправляет на файл (с имени файла), страницу (с идентификатора версии) или страницу участника (с числового идентификатора участника).',
+'redirect-submit' => 'Перейти',
+'redirect-lookup' => 'Поиск:',
+'redirect-value' => 'Значение:',
+'redirect-user' => 'Идентификатор участника',
+'redirect-revision' => 'Версия страницы',
+'redirect-file' => 'Название файла',
+'redirect-not-exists' => 'Значение не найдено',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Поиск одинаковых файлов',
@@ -4144,12 +4255,16 @@ MediaWiki распространяется в надежде, что она бу
 'tags' => 'Действующие метки изменений',
 'tag-filter' => 'Фильтр [[Special:Tags|меток]]:',
 'tag-filter-submit' => 'Отфильтровать',
+'tag-list-wrapper' => '([[Special:Tags|{{PLURAL:$1|Метка|Метки}}]]: $2)',
 'tags-title' => 'Метки',
 'tags-intro' => 'На этой странице приведён список меток, которыми программное обеспечение отмечает правки, а также значения этих меток.',
 'tags-tag' => 'Имя метки',
 'tags-display-header' => 'Отображение в списках изменений',
 'tags-description-header' => 'Полное описание значения',
+'tags-active-header' => 'Активна?',
 'tags-hitcount-header' => 'Отмеченные правки',
+'tags-active-yes' => 'Да',
+'tags-active-no' => 'Нет',
 'tags-edit' => 'править',
 'tags-hitcount' => '$1 {{PLURAL:$1|изменение|изменения|изменений}}',
 
@@ -4170,6 +4285,7 @@ MediaWiki распространяется в надежде, что она бу
 'dberr-problems' => 'Извините! На данном сайте возникли технические трудности.',
 'dberr-again' => 'Попробуйте обновить страницу через несколько минут.',
 'dberr-info' => '(невозможно соединиться с сервером баз данных: $1)',
+'dberr-info-hidden' => '(Невозможно соединиться с сервером баз данных)',
 'dberr-usegoogle' => 'Пока вы можете попробовать поискать с помощью Google.',
 'dberr-outofdate' => 'Но имейте в виду, что его индекс может оказаться устаревшим.',
 'dberr-cachederror' => 'Ниже представлена закэшированная версия запрашиваемой страницы, возможно, она не отражает последних изменений.',
@@ -4185,6 +4301,9 @@ MediaWiki распространяется в надежде, что она бу
 'htmlform-submit' => 'Отправить',
 'htmlform-reset' => 'Отменить изменения',
 'htmlform-selectorother-other' => 'Иное',
+'htmlform-no' => 'Нет',
+'htmlform-yes' => 'Да',
+'htmlform-chosen-placeholder' => 'Выберите вариант',
 
 # SQLite database support
 'sqlite-has-fts' => '$1 с поддержкой полнотекстового поиска',
@@ -4301,5 +4420,20 @@ MediaWiki распространяется в надежде, что она бу
 
 # Image rotation
 'rotate-comment' => 'Изображение повёрнуто на $1 градус{{PLURAL:$1||а|ов}} по часовой стрелке',
+
+# Limit report
+'limitreport-title' => 'Данные анализатора:',
+'limitreport-cputime' => 'Использование времени процессора',
+'limitreport-cputime-value' => '$1 {{PLURAL:$1|секунда|секунды|секунд}}',
+'limitreport-walltime' => 'Использование в режиме реального времени',
+'limitreport-walltime-value' => '$1 {{PLURAL:$1|секунда|секунды|секунд}}',
+'limitreport-ppvisitednodes' => 'Количество узлов, посещённых препроцессором',
+'limitreport-ppgeneratednodes' => 'Количество сгенерированных препроцессором узлов',
+'limitreport-postexpandincludesize' => 'Размер раскрытых включений',
+'limitreport-postexpandincludesize-value' => '$1/$2 {{PLURAL:$2|байт|байта|байтов}}',
+'limitreport-templateargumentsize' => 'Размер аргумента шаблона',
+'limitreport-templateargumentsize-value' => '$1/$2 {{PLURAL:$2|байт|байта|байтов}}',
+'limitreport-expansiondepth' => 'Наибольшая глубина расширения',
+'limitreport-expensivefunctioncount' => 'Количество «дорогих» функций анализатора',
 
 );

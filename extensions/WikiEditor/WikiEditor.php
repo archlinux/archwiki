@@ -239,6 +239,7 @@ $wgResourceModules += array(
 			'wikieditor-toolbar-tool-link-int-target-status-invalid',
 			'wikieditor-toolbar-tool-link-int-target-status-external',
 			'wikieditor-toolbar-tool-link-int-target-status-loading',
+			'wikieditor-toolbar-tool-link-int-target-status-disambig',
 			'wikieditor-toolbar-tool-link-int-invalid',
 			'wikieditor-toolbar-tool-link-lookslikeinternal',
 			'wikieditor-toolbar-tool-link-lookslikeinternal-int',

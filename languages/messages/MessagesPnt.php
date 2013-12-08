@@ -233,7 +233,7 @@ $messages = array(
 'jumptonavigation' => 'Πορπάτεμαν',
 'jumptosearch' => 'Αράεμαν',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Περί {{SITENAME}}',
 'aboutpage' => 'Project:Σχετικά',
 'copyright' => 'Το περιεχόμενον εν άμον ντο λεει η $1.',
@@ -243,7 +243,6 @@ $messages = array(
 'disclaimers' => 'Ιμπρέσουμ',
 'disclaimerpage' => 'Project:Ιμπρέσουμ',
 'edithelp' => "Βοήθεια για τ' αλλαγμαν",
-'edithelppage' => 'Help:Άλλαγμαν',
 'helppage' => 'Help:Περιεχόμενα',
 'mainpage' => 'Αρχικόν σελίδα',
 'mainpage-description' => 'Αρχικόν σελίδα',
@@ -413,7 +412,7 @@ $messages = array(
 'newpassword' => 'Καινούρεον σημάδιν:',
 'retypenew' => 'Γράψον ξαν το νέον σημάδιν:',
 'resetpass_submit' => 'Ορίστεν το σημάδιν κι ελάτεν απές',
-'resetpass_success' => 'Το σημάδιν ελλάεν!
+'changepassword-success' => 'Το σημάδιν ελλάεν!
 Ατώρα συνδέουμε σας...',
 'resetpass_forbidden' => "Τα σημάδια για να εμπάτεν 'κ επορούν ν'αλλάζνε",
 'resetpass-no-info' => "Επρέπ να ελάτεν απές για ν'ελέπετε αούτον τη σελίδαν κιάλλο τογρία.",
@@ -593,7 +592,6 @@ $messages = array(
 'prevn' => '{{PLURAL:$1|$1}} προηγουμένων',
 'nextn' => '{{PLURAL:$1|$1}} επομένων',
 'viewprevnext' => 'Τέρεν ($1 {{int:pipe-separator}} $2) ($3)',
-'searchhelp-url' => 'Help:Περιεχόμενα',
 'searchprofile-images' => 'Πολυμέσα',
 'searchprofile-everything' => 'Όλεα',
 'search-result-size' => '$1 ({{PLURAL:$2|1 λέξη|$2 λέξεις}})',
@@ -613,9 +611,6 @@ $messages = array(
 'powersearch-toggleall' => 'Όλια',
 'powersearch-togglenone' => 'Τιδέν',
 'search-external' => 'Εύρον σα εξ μερέαν',
-
-# Quickbar
-'qbsettings-none' => 'Τιδέν',
 
 # Preferences page
 'preferences' => 'Αγαπεμένα',
@@ -750,7 +745,6 @@ $messages = array(
 'recentchangeslinked-feed' => 'Σχετικά αλλαγάς',
 'recentchangeslinked-toolbox' => 'Σχετικά αλλαγάς',
 'recentchangeslinked-title' => 'Αλλαγάς τη "$1"',
-'recentchangeslinked-noresult' => "Σ' αβούτα τα σελίδας 'κ εγένταν αλλαγάς.",
 'recentchangeslinked-summary' => "Αβούτος εν κατάλογον με τ' υστερνά τ' αλλαγάς σελιδίων με σύνδεσμον ασ' έναν συγκεκριμένον σελίδαν (για σε σελίδας συγκεκριμένου κατηγορίας).
 Τα σελίδας σον [[Special:Watchlist|κατάλογον ωριαγματί]] είν' '''σκηρά'''.",
 'recentchangeslinked-page' => 'Όνεμαν σελίδας:',
@@ -851,8 +845,6 @@ $messages = array(
 # Statistics
 'statistics' => 'Στατιστικήν',
 'statistics-pages' => 'Σελίδας',
-
-'disambiguations' => 'Σελίδας εξηγησίων',
 
 'doubleredirects' => 'Περισσά διπλά συνδέσμ',
 
@@ -1110,8 +1102,6 @@ $messages = array(
 'blocklogentry' => 'εσπάλισεν [[$1]] για $2 $3',
 'unblocklogentry' => 'άνοιγμαν ασπαλιγματί τη $1',
 'block-log-flags-nocreate' => "ποίσιμον λογαρίας 'κ ίνεται",
-'blockme' => 'Ασπάλισον με',
-'proxyblocksuccess' => 'Εγέντον.',
 
 # Developer tools
 'lockdb' => 'Ασπάλιγμαν βάσης δογμενίων',
@@ -1306,7 +1296,7 @@ $messages = array(
 * gpslongitude
 * gpsaltitude",
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Πλάτος',
 'exif-imagelength' => 'Ύψηλος',
 'exif-bitspersample' => 'Bits ανά στοιχείο',
@@ -1407,10 +1397,6 @@ $messages = array(
 'version-license' => 'Ἀδεια',
 'version-software' => "Λογισμικόν ντ'εθέκεν",
 'version-software-version' => 'Έκδοση',
-
-# Special:FilePath
-'filepath-page' => 'Αρχείον:',
-'filepath-submit' => 'Δέβα',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Όνεμα αρχείου:',

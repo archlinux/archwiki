@@ -96,11 +96,12 @@ class ProfilerSimple extends Profiler {
 				$this->mCollated[$functionname] =& $entry;
 			}
 			$entry['cpu'] += $elapsedcpu;
-			$entry['cpu_sq'] += $elapsedcpu*$elapsedcpu;
+			$entry['cpu_sq'] += $elapsedcpu * $elapsedcpu;
 			$entry['real'] += $elapsedreal;
-			$entry['real_sq'] += $elapsedreal*$elapsedreal;
+			$entry['real_sq'] += $elapsedreal * $elapsedreal;
 			$entry['count']++;
 
+			$this->updateTrxProfiling( $functionname, $elapsedreal );
 		}
 	}
 

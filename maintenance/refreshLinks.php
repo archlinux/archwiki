@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to refresh link tables.
@@ -160,7 +160,7 @@ class RefreshLinks extends Maintenance {
 			}
 
 			if ( !$redirectsOnly ) {
-				$this->output( "Refreshing links table.\n" );
+				$this->output( "Refreshing links tables.\n" );
 				$this->output( "Starting from page_id $start of $end.\n" );
 
 				for ( $id = $start; $id <= $end; $id++ ) {
@@ -281,12 +281,13 @@ class RefreshLinks extends Maintenance {
 			$this->output( "Retrieving illegal entries from $table... " );
 
 			// SELECT DISTINCT( $field ) FROM $table LEFT JOIN page ON $field=page_id WHERE page_id IS NULL;
-			$results = $dbr->select( array( $table, 'page' ),
-						  $field,
-						  array( 'page_id' => null ),
-						  __METHOD__,
-						  'DISTINCT',
-						  array( 'page' => array( 'LEFT JOIN', "$field=page_id" ) )
+			$results = $dbr->select(
+				array( $table, 'page' ),
+				$field,
+				array( 'page_id' => null ),
+				__METHOD__,
+				'DISTINCT',
+				array( 'page' => array( 'LEFT JOIN', "$field=page_id" ) )
 			);
 
 			$counter = 0;
@@ -315,4 +316,4 @@ class RefreshLinks extends Maintenance {
 }
 
 $maintClass = 'RefreshLinks';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

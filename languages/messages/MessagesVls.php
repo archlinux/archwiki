@@ -169,9 +169,6 @@ $messages = array(
 # Search results
 'search-result-size' => '$1 ({{PLURAL:$2|1 woord|$2 woordn}})',
 
-# Special:Log/newusers
-'newuserlogpage' => 'Logboek nieuwe gebrukers',
-
 # Recent changes
 'recentchanges' => 'Juste veranderd',
 
@@ -191,6 +188,9 @@ $messages = array(
 # Miscellaneous special pages
 'newpages' => 'Nieuwe bloadn',
 'newpages-username' => 'Gebrukersnoame:',
+
+# Special:Log/newusers
+'newuserlogpage' => 'Logboek nieuwe gebrukers',
 
 # Watchlist
 'mywatchlist' => 'Myn volglyste',

@@ -43,8 +43,6 @@ $messages = array(
 'tog-enotifrevealaddr' => "Ves miin e-mail-adresse i mails ve besked ændrenger'm",
 'tog-shownumberswatching' => 'Ves åntal brugere, der åvervåger',
 'tog-fancysig' => 'Signaturer uden åtåmatisk henvesnenge',
-'tog-externaleditor' => 'Brug ekstern redigærengsmåskiin åtåmatisk',
-'tog-externaldiff' => 'Brug ekstern førskelsvesnenge åtåmatisk',
 'tog-showjumplinks' => 'Ves tilgængelegheds-henvesnenger',
 'tog-uselivepreview' => 'Brug åtåmatisk førhåndsvesnenge (JavaScript) (eksperimentel)',
 'tog-forceeditsummary' => 'Advar, hves sammenfatnenge mangler ve gemnenge',
@@ -206,7 +204,6 @@ $messages = array(
 'disclaimers' => 'Førbeholt',
 'disclaimerpage' => 'Project:Huses førbeholt',
 'edithelp' => 'Hjælp til redigærenge',
-'edithelppage' => "Help:Vordan redigærer a'n side",
 'helppage' => 'Help:Hjælpførside',
 'mainpage' => 'Førsit',
 'mainpage-description' => 'Førsit',
@@ -441,7 +438,6 @@ hersenenge, (førge) = førskel til den førge hersenenge, l = lile til mendre �
 'prevn' => 'førge {{PLURAL:$1|$1}}',
 'nextn' => 'nægste {{PLURAL:$1|$1}}',
 'viewprevnext' => 'Ves ($1 {{int:pipe-separator}} $2) ($3)',
-'searchhelp-url' => 'Help:Hjælpførside',
 'searchall' => 'ål',
 'powersearch' => 'Søĝ',
 
@@ -489,7 +485,6 @@ hersenenge, (førge) = førskel til den førge hersenenge, l = lile til mendre �
 'recentchangeslinked-feed' => 'Relaterede ændrenger',
 'recentchangeslinked-toolbox' => 'Relaterede ændrenger',
 'recentchangeslinked-title' => 'Ændrenger der vegånde til "$1"',
-'recentchangeslinked-noresult' => 'I det udvalgte tidsrum blev der ekke føretaget ændrenger på siderne der henveses til.',
 'recentchangeslinked-summary' => "Denne sonstside beser de seneste ændrenger på de sider der henveses til. Sider på din åvervågnengsliste er vest ve '''fed''' skreft.",
 
 # Upload

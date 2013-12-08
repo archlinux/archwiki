@@ -147,7 +147,7 @@ $magicWords = array(
 	'img_middle'                => array( '1', 'midden', 'middle' ),
 	'img_bottom'                => array( '1', 'benejen', 'beneden', 'bottom' ),
 	'img_text_bottom'           => array( '1', 'tekste-benejen', 'tekst-beneden', 'text-bottom' ),
-	'img_link'                  => array( '1', 'verwiezing=$1', 'verwijzing=$1', 'link=$1' ),
+	'img_link'                  => array( '1', 'verwiezing=$1', 'verwijzing=$1', 'koppeling=$1', 'link=$1' ),
 	'sitename'                  => array( '1', 'WEBSTEENAAM', 'SITENAAM', 'SITENAME' ),
 	'ns'                        => array( '0', 'NR:', 'NS:' ),
 	'localurl'                  => array( '0', 'LOKALEURL', 'LOCALURL:' ),
@@ -180,7 +180,7 @@ $magicWords = array(
 	'raw'                       => array( '0', 'RAUW:', 'RUW:', 'RAW:' ),
 	'displaytitle'              => array( '1', 'TEUNTITEL', 'TOONTITEL', 'TITELTONEN', 'WEERGEGEVENTITEL', 'DISPLAYTITLE' ),
 	'newsectionlink'            => array( '1', '__NIEJESECTIEVERWIEZING__', '__NIEUWESECTIELINK__', '__NIEUWESECTIEKOPPELING__', '__NEWSECTIONLINK__' ),
-	'nonewsectionlink'          => array( '1', '__GIENNIEJKOPJENVERWIEZING__', '__GEENNIEUWKOPJEVERWIJZING__', '__GEENNIEUWESECTIELINK__', '__NONEWSECTIONLINK__' ),
+	'nonewsectionlink'          => array( '1', '__GIENNIEJKOPJENVERWIEZING__', '__GEENNIEUWKOPJEVERWIJZING__', '__GEENNIEUWESECTIELINK__', '__GEENNIEUWKOPJEKOPPELING__', '__NONEWSECTIONLINK__' ),
 	'currentversion'            => array( '1', 'DISSEVERSIE', 'HUIDIGEVERSIE', 'CURRENTVERSION' ),
 	'urlencode'                 => array( '0', 'URLKODEREN', 'URLCODEREN', 'CODEERURL', 'URLENCODE:' ),
 	'anchorencode'              => array( '0', 'ANKERKODEREN', 'ANKERCODEREN', 'CODEERANKER', 'ANCHORENCODE' ),
@@ -337,9 +337,6 @@ $messages = array(
 'tog-shownumberswatching' => 't Antal gebrukers bekieken die disse zied volgt',
 'tog-oldsig' => 'Bestaonde haandtekening:',
 'tog-fancysig' => 'Ondertekening zien as wikitekste (zonder automatiese verwiezing)',
-'tog-externaleditor' => 'Standard n externe tekstbewarker gebruken (allinnig veur gevorderden - veur disse funksie bin spesiale instellingen neudig. [//www.mediawiki.org/wiki/Manual:External_editors Meer informasie]).',
-'tog-externaldiff' => 'Standard n extern vergeliekingsprogramma gebruken (allinnig veur gevorderden - veur disse funksie bin spesiale instellingen neudig. [//www.mediawiki.org/wiki/Manual:External_editors Meer informasie]).',
-'tog-showjumplinks' => '"Gao naor"-verwiezingen toelaoten',
 'tog-uselivepreview' => 'Gebruuk "rechtstreeks naokieken" (experimenteel)',
 'tog-forceeditsummary' => 'Geef n melding bie n lege samenvatting',
 'tog-watchlisthideown' => 'Verbarg mien eigen bewarkingen',
@@ -353,6 +350,8 @@ $messages = array(
 'tog-showhiddencats' => 'Laot verbörgen kategorieën zien',
 'tog-noconvertlink' => 'Ziednaamkonversie uutschakelen',
 'tog-norollbackdiff' => 'Wiezigingen vortlaoten nao t weerummedreien',
+'tog-useeditwarning' => "Waorschuw mien a'k n bewörken zied aof wil sluten die nog niet op-esleugen is",
+'tog-prefershttps' => "Altied n beveiligde verbiending gebruken a'j an-emeld bin",
 
 'underline-always' => 'Altied',
 'underline-never' => 'Nooit',
@@ -416,6 +415,18 @@ $messages = array(
 'oct' => 'okt',
 'nov' => 'nov',
 'dec' => 'des',
+'january-date' => '$1 jannewaori',
+'february-date' => '$1 febrewaori',
+'march-date' => '$1 meert',
+'april-date' => '$1 april',
+'may-date' => '$1 mei',
+'june-date' => '$1 juni',
+'july-date' => '$1 juli',
+'august-date' => '$1 augustus',
+'september-date' => '$1 september',
+'october-date' => '$1 oktober',
+'november-date' => '$1 november',
+'december-date' => '$1 desember',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Kategorie|Kategorieën}}',
@@ -497,6 +508,7 @@ $messages = array(
 'create-this-page' => 'Disse zied anmaken',
 'delete' => 'Vortdoon',
 'deletethispage' => 'Disse zied vortdoon',
+'undeletethispage' => 'Zied weerummeplaotsen',
 'undelete_short' => '$1 {{PLURAL:$1|versie|versies}} weerummeplaotsen',
 'viewdeleted_short' => '{{PLURAL:$1|Eén versie die vortedaon is|$1 versies die vortedaon bin}} bekieken',
 'protect' => 'Beveiligen',
@@ -540,7 +552,7 @@ $1",
 'pool-queuefull' => 'De wachtrie van de poel is vol',
 'pool-errorunknown' => 'Onbekende fout',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Over {{SITENAME}}',
 'aboutpage' => 'Project:Info',
 'copyright' => 'De inhoud is beschikbaor onder de $1 as der niks aanders an-egeven is.',
@@ -550,7 +562,6 @@ $1",
 'disclaimers' => 'Veurbehold',
 'disclaimerpage' => 'Project:Veurbehoud',
 'edithelp' => 'Hulpe mit bewarken',
-'edithelppage' => 'Help:Uutleg',
 'helppage' => 'Help:Inhoud',
 'mainpage' => 'Veurblad',
 'mainpage-description' => 'Veurblad',
@@ -627,19 +638,12 @@ n Lieste mit bestaonde spesiale ziejen ku'j vienen op [[Special:SpecialPages|{{i
 # General errors
 'error' => 'Foutmelding',
 'databaseerror' => 'Fout in de databanke',
-'dberrortext' => 'Bie t zeuken is n syntaxisfout in de databanke op-etrejen.
-De oorzake hiervan kan dujen op n fout in de programmatuur.
-Der is n syntaxisfout in t databankeverzeuk op-etrejen.
-t Kan ween dat der n fout in de programmatuur zit.
-De leste zeukpoging in de databanke was:
-<blockquote><code>$1</code></blockquote>
-vanuut de funksie "<code>$2</code>".
-De databanke gaf de volgende foutmelding "<samp>$3: $4</samp>".',
-'dberrortextcl' => 'Der is n syntaxisfout in t databankeverzeuk op-etrejen.
-t Leste veurzeuk an de databanke was:
-"$1"
-vanuut de funksie "$2"
-De databanke gaf de volgende foutmelding: "$3: $4"',
+'databaseerror-text' => 'Der is wat mis egaon bie n databankzeukopdrachte.
+Dit kan betekenen dat der n fout in de programmtuur zit.',
+'databaseerror-textcl' => 'Der is wat mis egaon bie n databankzeukopdrachte.',
+'databaseerror-query' => 'Zeukopdrachte: $1',
+'databaseerror-function' => 'Funksie: $1',
+'databaseerror-error' => 'Fout: $1',
 'laggedslavemode' => '<strong>Waorschuwing:</strong> t is meugelik dat leste wiezigingen in de tekste van dit artikel nog niet verwarkt bin.',
 'readonly' => 'De databanke is beveiligd',
 'enterlockreason' => 'Waorumme en veur hoe lange is t eblokkeerd?',
@@ -671,6 +675,7 @@ t Kan ween dat n aander t al vortedaon hef.',
 'cannotdelete-title' => 'Zied "$1" kan niet vortedaon wörden',
 'delete-hook-aborted' => 't Vortdoon wörden in t wiere eschopt deur n MediaWiki-programmatuuruutbreiding.
 Der is gien veerdere informasie beschikbaor.',
+'no-null-revision' => 'Kon gien lege nieje versie maken veur de zied "$1"',
 'badtitle' => 'Ongeldige naam',
 'badtitletext' => 'De naam van de op-evreugen zied is niet geldig, leeg, of n interwiki-verwiezing naor n onbekende of ongeldige wiki.',
 'perfcached' => 'Disse gegevens koemen uut t tussengeheugen en bin misschien niet aktueel. Der {{PLURAL:$1|is hooguut een resultaot|bin hooguut $1 resultaoten}} beschikbaor in t tussengeheugen.',
@@ -689,12 +694,15 @@ Zeukopdrachte: $2',
 'protectedinterface' => "Op disse zied steet tekste die gebruukt wörden veur systeemteksten van disse wiki. Allinnig beheerders kunnen disse zied bewarken.
 Um vertalingen veur alle wiki's derbie te zetten of te wiezigen, gebruuk [//translatewiki.net/ translatewiki.net], t vertaalprojekt veur MediaWiki.",
 'editinginterface' => "'''Waorschuwing:''' je bewarken n zied die gebruukt wörden deur de programmatuur. Wa'j hier wiezigen, is van invleud op de hele wiki. Um vertalingen derbie te zetten of te wiezigen veur alle wiki's, gebruuk [//translatewiki.net/wiki/Main_Page?setlang=nds-nl translatewiki.net], t vertalingsprojekt veur MediaWiki.",
-'sqlhidden' => '(SQL-zeukopdrachte verbörgen)',
 'cascadeprotected' => 'Disse zied is beveiligd umdat t veurkömp in de volgende {{PLURAL:$1|zied|ziejen}}, die beveiligd {{PLURAL:$1|is|bin}} mit de "kaskade"-opsie:
 $2',
 'namespaceprotected' => "Je maggen gien ziejen in de '''$1'''-naamruumte bewarken.",
 'customcssprotected' => 'Je kunnen disse CSS-zied niet bewarken, umdat der persoonlike instellingen van n aandere gebruker in staon.',
 'customjsprotected' => 'Je kunnen disse JavaScript-zied niet bewarken, umdat der persoonlike instellingen van n aandere gebruker in staon.',
+'mycustomcssprotected' => 'Je hebben gien toestemming um disse CSS-zied te bewarken.',
+'mycustomjsprotected' => 'Je hebben gien rechten um disse JavaScript-zied te bewarken.',
+'myprivateinfoprotected' => 'Je hebben gien rechten um joew priveegegevens an te passen.',
+'mypreferencesprotected' => 'Je hebben gien rechten um joew veurkeuren an te passen.',
 'ns-specialprotected' => 'Spesiale ziejen kunnen niet bewarkt wörden.',
 'titleprotected' => "t Anmaken van disse zied is beveiligd deur [[User:$1|$1]].
 De op-egeven reden is ''$2''.",
@@ -719,10 +727,19 @@ t Kan ween dat der wat ziejen bin die weeregeven wörden as of je an-emeld bin t
 'welcomecreation-msg' => 'Joew gebruker is an-emaakt.
 Vergeet niet joew [[Special:Preferences|veurkeuren veur {{SITENAME}}]] an te passen.',
 'yourname' => 'Gebrukersnaam',
+'userlogin-yourname' => 'Gebrukersnaam',
+'userlogin-yourname-ph' => 'Geef joew gebrukersnaam op',
+'createacct-another-username-ph' => 'Vul de gebrukersnaam in',
 'yourpassword' => 'Wachtwoord',
+'userlogin-yourpassword' => 'Wachtwoord',
+'userlogin-yourpassword-ph' => 'Geef joew wachtwoord op',
+'createacct-yourpassword-ph' => 'Geef n wachtwoord op',
 'yourpasswordagain' => 'Opniej invoeren',
+'createacct-yourpasswordagain' => 'Wachtwoord bevestigen',
+'createacct-yourpasswordagain-ph' => 'Geef t wachtwoord opniej op',
 'remembermypassword' => 'Vanzelf anmelden (hooguut $1 {{PLURAL:$1|dag|dagen}})',
-'securelogin-stick-https' => "Verbunnen blieven via HTTPS naoda'j an-emeld bin",
+'userlogin-remembermypassword' => 'Vanzelf anmelden',
+'userlogin-signwithsecure' => 'Beveiligde verbiending gebruken',
 'yourdomainname' => 'Joew domein',
 'password-change-forbidden' => 'Je kunnen joew wachtwoord niet wiezigen op disse wiki.',
 'externaldberror' => 'Der gung iets fout bie de externe authentisering, of je maggen je gebrukersprofiel niet bewarken.',
@@ -734,18 +751,44 @@ Vergeet niet joew [[Special:Preferences|veurkeuren veur {{SITENAME}}]] an te pas
 'logout' => 'Aofmelden',
 'userlogout' => 'Aofmelden',
 'notloggedin' => 'Niet an-emeld',
+'userlogin-noaccount' => "He'j nog gien gebrukersnaam?",
+'userlogin-joinproject' => 'Wörd lid van {{SITENAME}}',
 'nologin' => "He'j nog gien gebrukersnaam? $1.",
 'nologinlink' => 'Maak n gebrukersprofiel an',
 'createaccount' => 'Inschrieven',
 'gotaccount' => "Stao'j al in-eschreven? '''$1'''.",
 'gotaccountlink' => 'Anmelden',
 'userlogin-resetlink' => "Bi'j de anmeldgegevens kwiet?",
+'userlogin-resetpassword-link' => 'Joew wachtwoord opniej instellen',
+'helplogin-url' => 'Help:Anmelden',
+'userlogin-helplink' => '[[{{MediaWiki:helplogin-url}}|Hulpe bie t anmelden]]',
+'userlogin-loggedin' => 'Je bin al an-emeld as {{GENDER:$1|$1}}.
+Gebruuk t onderstaonde formulier um an te melden as n aandere gebruker.',
+'userlogin-createanother' => 'n Aandere gebrukerskonto anmaken',
+'createacct-join' => 'Geef joew gegevens hieronder op.',
+'createacct-another-join' => 'Vul hieronder de informasie van de nieje gebruker in.',
+'createacct-emailrequired' => 'Netpostadres',
+'createacct-emailoptional' => 'Netpostadres (niet verplicht)',
+'createacct-email-ph' => 'Geef joew netpostadres op',
+'createacct-another-email-ph' => 'Vul joew netpostadres in',
 'createaccountmail' => 'Gebruuk n tiejelik wachtwoord dat joe netzelde is en stuur t naor t op-egeven netpostadres',
+'createacct-realname' => 'Echte naam (niet verplicht)',
 'createaccountreason' => 'Reden:',
+'createacct-reason' => 'Reden',
+'createacct-reason-ph' => 'Waorumme je n aandere gebrukerskonto anmaken',
+'createacct-captcha' => 'Veiligheidskontraole',
+'createacct-imgcaptcha-ph' => "Voer de tekste in die'j hierboven zien",
+'createacct-submit' => 'Gebrukerskonto anmaken',
+'createacct-another-submit' => 'n Aandere gebrukerskonto anmaken',
+'createacct-benefit-heading' => '{{SITENAME}} wörden emaakt deur meensen zo as jie.',
+'createacct-benefit-body1' => 'bewarking{{PLURAL:$1||en}}',
+'createacct-benefit-body2' => '{{PLURAL:$1|zied|ziejen}}',
+'createacct-benefit-body3' => 'aktieve {{PLURAL:$1|biedrager|biedragers}}',
 'badretype' => "De wachtwoorden die'j in-etikt hebben bin niet liek alleens.",
 'userexists' => 'Disse gebrukersnaam is al gebruuk.
 Kies n aandere naam.',
 'loginerror' => 'Anmeldingsfout',
+'createacct-error' => 'Fout bie t anmaken van n gebruker',
 'createaccounterror' => 'Kon de gebrukersnaam niet anmaken: $1',
 'nocookiesnew' => 'De gebrukersnaam is an-emaakt, mer je bin niet an-emeld.
 {{SITENAME}} gebruuk scheumbestaanden (cookies) um gebrukers an te melden.
@@ -806,10 +849,12 @@ Meld je eigen noen an en wiezig t wachtwoord.
 Negeer dit bericht as disse gebruker zonder joew toestemming an-emaakt is.',
 'usernamehasherror' => "In n gebrukersnaam ma'j gien hekjen gebruken.",
 'login-throttled' => "Je hebben lestens te vake eprobeerd um an te melden mit n verkeerd wachtwoord.
-Je mutten effen wachten veurda'j t opniej proberen kunnen.",
+Je mutten effen $1 wachten veurda'j t opniej proberen.",
 'login-abort-generic' => 'Je bin niet an-emeld. De procedure is aofebreuken.',
 'loginlanguagelabel' => 'Taal: $1',
 'suspicious-userlogout' => 'Joew verzeuk um of te melden is aofewezen umdat t dernaor uutziet dat t verstuurd is deur n kepotte webkieker of tussenopslagbuffer',
+'createacct-another-realname-tip' => "Joew echte naam opgeven is niet verplicht.
+A'j t invullen, dan zu'w t gebruken um erkenning te geven veur joew warkzaamhejen.",
 
 # Email sending
 'php-mail-error-unknown' => 'Der was n onbekende fout mit de mail()-funksie van PHP',
@@ -825,8 +870,7 @@ Je mutten effen wachten veurda'j t opniej proberen kunnen.",
 'newpassword' => 'Niej wachtwoord',
 'retypenew' => 'Niej wachtwoord (opniej)',
 'resetpass_submit' => 'Voer t wachtwoord in en meld je an',
-'resetpass_success' => 'Joew wachtwoord is ewiezigd!
-Je wörden noen an-emeld...',
+'changepassword-success' => 'Joew wachtwoord is ewiezigd!',
 'resetpass_forbidden' => 'Wachtwoorden kunnen niet ewiezigd wörden',
 'resetpass-no-info' => "Je mutten an-emeld ween veurda'j disse zied gebruken kunnen.",
 'resetpass-submit-loggedin' => 'Wachtwoord wiezigen',
@@ -838,10 +882,11 @@ Misschien he'j t wachtwoord al ewiezigd of n niej veurlopig wachtwoord an-evreug
 
 # Special:PasswordReset
 'passwordreset' => 'Wachtwoord opniej instellen',
-'passwordreset-text' => 'Vul dit formulier in um joew wachtwoord opniej in te stellen.',
+'passwordreset-text-one' => 'Vul dit formulier in um joew wachtwoord opniej in te stellen.',
+'passwordreset-text-many' => '{{PLURAL:$1|Vul een van de gegevensvelden in um joew wachtwoord opniej in te stellen.}}',
 'passwordreset-legend' => 'Wachtwoord opniej instellen',
 'passwordreset-disabled' => 'Je kunnen op disse wiki joew wachtwoord niet opniej instellen.',
-'passwordreset-pretext' => '{{PLURAL:$1||Voer één van de onderstaonde velden in}}',
+'passwordreset-emaildisabled' => 'Netpostmeugelikhejen bin uutezet op disse wiki.',
 'passwordreset-username' => 'Gebruker:',
 'passwordreset-domain' => 'Domein:',
 'passwordreset-capture' => 'De resulterende netpost bekieken?',
@@ -866,7 +911,7 @@ Meld je eigen noen an en wiezig t wachtwoord. A'j dit verzeuk niet zelf edaon he
 Tiedelik wachtwoord: $2',
 'passwordreset-emailsent' => 'Der is n bericht verstuurd um t wachtwoord opniej in te stellen.',
 'passwordreset-emailsent-capture' => "Der is n bericht verstuurd um joew wachtwoord opniej in te stellen. Dit ku'j hieronder lezen.",
-'passwordreset-emailerror-capture' => "Der is n bericht veur t opniej instellen van joew wachtwoord an-emaakt, dit ku'j hieronder lezen. t Versturen naor de gebruker is mislokt um de volgende reden: $1",
+'passwordreset-emailerror-capture' => "Der is n bericht veur t opniej opstellen van joew wachwoord an-emaakt, dit ku'j hieronder lezen. t Versturen naor de {{GENDER:$2|gebruker}} is mislokt um de volgende reden: $1",
 
 # Special:ChangeEmail
 'changeemail' => 'Wiezig netpostadres',
@@ -879,6 +924,19 @@ Tiedelik wachtwoord: $2',
 'changeemail-password' => 'Joew wachtwoord veur {{SITENAME}}:',
 'changeemail-submit' => 'Netpostadres wiezigen',
 'changeemail-cancel' => 'Aofbreken',
+
+# Special:ResetTokens
+'resettokens' => 'Tokens ongedaonmaken',
+'resettokens-text' => "Je kunnen hier tokens opniej instellen die toegang geven tot bepaolde persoonlike gegevens die ekoppeld bin an joew gebruker.
+
+Do dit a'j ze per ongelok mit ene edeeld hebben of as onbevoegden toegang ekregen hebben tot joew gebruker.",
+'resettokens-no-tokens' => 'Der bin gien tokens um ongedaon te maken.',
+'resettokens-legend' => 'Tokens ongedaonmaken',
+'resettokens-tokens' => 'Tokens:',
+'resettokens-token-label' => '$1 (aktuele weerde: $2)',
+'resettokens-watchlist-token' => 'Token veur webvoer (Atom/RSS) van [[Special:Watchlist|wiezigingen van ziejen die joew volglieste staon]]',
+'resettokens-done' => 'Tokens ongedaonmaken.',
+'resettokens-resetbutton' => 'Ekeuzen tokens ongedaonmaken',
 
 # Edit page toolbar
 'bold_sample' => 'Vet-edrokten tekste',
@@ -1074,12 +1132,15 @@ Der is gien reden op-egeven.',
 t Schient dat t vortedaon is.',
 'edit-conflict' => 'Tegelieke bewörken.',
 'edit-no-change' => 'Joew bewarking is enegeerd, umdat der gien wieziging an de tekste edaon is.',
+'postedit-confirmation' => 'Joew bewarking is op-esleugen',
 'edit-already-exists' => 'De zied kon niet an-emaakt wörden.
 t Besteet al.',
 'defaultmessagetext' => 'Standardtekste',
 'content-failed-to-parse' => 'Kon de inhoud van t MIME-type $2 veur t model $1 niet verwarken: $3.',
 'invalid-content-data' => 'Ongeldige inhoudsgegevens',
 'content-not-allowed-here' => 'De inhoud "$1" is niet toe-estaan op de zied [[$2]].',
+'editwarning-warning' => "A'j disse zied verlaoten dan bi'j de wieziging die'j emaakt hebben waorschienlik kwiet.
+A'j an-emeld bin, dan ku'j disse waorschuwing uutzetten in t tabblad \"Bewarkingsveld\" in joew veurkeuren.",
 
 # Content models
 'content-model-wikitext' => 'wikitekste',
@@ -1113,6 +1174,7 @@ Sommigen mallen wörden niet in-evoegd.',
 'undo-failure' => 'De wieziging kon niet weerummedreid wörden umdat t ondertussen awweer ewiezigd is.',
 'undo-norev' => 'De bewarking kon niet weerummedreid wörden, umdat t niet besteet of vortedaon is.',
 'undo-summary' => 'Versie $1 van [[Special:Contributions/$2|$2]] ([[User talk:$2|overleg]]) weerummedreid.',
+'undo-summary-username-hidden' => 'Versie $1 deur n verbörgen gebruker weerummedreid',
 
 # Account creation failure
 'cantcreateaccounttitle' => 'Anmaken van n gebrukersprofiel is niet meugelik',
@@ -1287,6 +1349,7 @@ In de [[Special:BlockList|blokkeerlieste]] bin de blokkeringen, die noen van toe
 'compareselectedversions' => 'Vergeliek de ekeuzen versies',
 'showhideselectedversions' => 'Ekeuzen versies bekieken/verbargen',
 'editundo' => 'weerummedreien',
+'diff-empty' => '(Gien verschil)',
 'diff-multi' => '(Hier {{PLURAL:$1|zit nog 1 versie|zitten nog $1 versies}} van {{PLURAL:$2|1 gebruker|$2 gebrukers}} tussen die der niet bie staon.)',
 'diff-multi-manyusers' => '($1 tussenliggende {{PLURAL:$1|versie|versies}} deur meer as $2 {{PLURAL:$2|gebruker|gebrukers}} niet weeregeven)',
 'difference-missing-revision' => "{{PLURAL:$2|Eén versie|$2 versies}} van disse verschillen ($1) {{PLURAL:$2|is|bin}} niet evunnen.
@@ -1314,7 +1377,6 @@ Waorschienlik ku'j der meer gegevens over vienen in t [{{fullurl:{{#Special:Log}
 'searchmenu-legend' => 'Zeukopsies',
 'searchmenu-exists' => "'''Der is n zied mit de naam \"[[:\$1]]\" op disse wiki.'''",
 'searchmenu-new' => "'''De zied \"[[:\$1]]\" op disse wiki anmaken!'''",
-'searchhelp-url' => 'Help:Inhold',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Ziednamen mit dit veurvoegsel laoten zien]]',
 'searchprofile-articles' => 'Artikels',
 'searchprofile-project' => 'Hulp- en projektziejen',
@@ -1355,15 +1417,7 @@ Waorschienlik ku'j der meer gegevens over vienen in t [{{fullurl:{{#Special:Log}
 'powersearch-togglenone' => 'Gien',
 'search-external' => 'Extern zeuken',
 'searchdisabled' => 'Zeuken in {{SITENAME}} is niet meugelik. Je kunnen gebruukmaken van Google. De gegevens over {{SITENAME}} bin misschien niet bie-ewörken.',
-
-# Quickbar
-'qbsettings' => 'Lieste mit ziejen',
-'qbsettings-none' => 'Gien',
-'qbsettings-fixedleft' => 'Links, vaste',
-'qbsettings-fixedright' => 'Rechts, vaste',
-'qbsettings-floatingleft' => 'Links, zweven',
-'qbsettings-floatingright' => 'Rechts, zweven',
-'qbsettings-directionality' => 'Vaste, aofhankelik van de schriefrichtige van joew taal',
+'search-error' => 'Der is wat mis-egaon bie t zeuken: $1',
 
 # Preferences page
 'preferences' => 'Veurkeuren',
@@ -1397,7 +1451,6 @@ Waorschienlik ku'j der meer gegevens over vienen in t [{{fullurl:{{#Special:Log}
 'resetprefs' => 'Standardveurkeuren herstellen',
 'restoreprefs' => 'Alle standardinstellingen weerummezetten (veur alle seksies)',
 'prefs-editing' => 'Bewarkingsveld',
-'prefs-edit-boxsize' => 'Aofmetingen van t bewarkingsvienster.',
 'rows' => 'Regels',
 'columns' => 'Kolommen',
 'searchresultshead' => 'Zeukresultaoten',
@@ -1408,9 +1461,9 @@ Waorschienlik ku'j der meer gegevens over vienen in t [{{fullurl:{{#Special:Log}
 'recentchangesdays-max' => '(hooguut $1 {{PLURAL:$1|dag|dagen}})',
 'recentchangescount' => 'Standard antal bewarkingen um te laoten zien:',
 'prefs-help-recentchangescount' => 'Dit geldt veur leste wiezigingen, ziedgeschiedenisse en logboekziejen',
-'prefs-help-watchlist-token' => "A'j in dit veld n geheime kode invullen, dan maakt t RSS-voer an veur joew volglieste.
-Iederene die disse kode weet kan joew volglieste bekieken, kies dus n veilige kode.
-Je kunnen oek disse egenereren standardkode gebruken: $1",
+'prefs-help-watchlist-token2' => "Dit is de geheime sleutel veur de webvoer van joew volglieste.
+Iederene die t token kent, kan joew volglieste bekieken, dus deel dit token niet.
+Je kunnen de [[Special:ResetTokens|tokens opniej instellen]] a'j dat willen.",
 'savedprefs' => 'Veurkeuren bin op-esleugen.',
 'timezonelegend' => 'Tiedzone:',
 'localtime' => 'Plaotselike tied:',
@@ -1441,7 +1494,6 @@ Je kunnen oek disse egenereren standardkode gebruken: $1",
 'prefs-reset-intro' => 'Je kunnen disse zied gebruken um joew veurkeuren naor de standardinstellingen weerumme te zetten.
 Disse haandeling kan niet ongedaonemaakt wörden.',
 'prefs-emailconfirm-label' => 'Netpostbevestiging:',
-'prefs-textboxsize' => 'Aofmetingen bewarkingsscharm',
 'youremail' => 'Netpostadres (niet verplicht) *',
 'username' => '{{GENDER:$1|Gebrukersnaam}}:',
 'uid' => '{{GENDER:$1|Gebrukersnummer}}:',
@@ -1475,6 +1527,8 @@ Disse informasie is zichtbaor veur aandere gebrukers.',
 'prefs-dateformat' => 'Daotumopmaak:',
 'prefs-timeoffset' => 'Tiedsverschil',
 'prefs-advancedediting' => 'Algemene opsies',
+'prefs-editor' => 'Bewarkingsprogramma',
+'prefs-preview' => 'Naokieken',
 'prefs-advancedrc' => 'Aandere instellingen',
 'prefs-advancedrendering' => 'Aandere instellingen',
 'prefs-advancedsearchoptions' => 'Aandere instellingen',
@@ -1482,7 +1536,9 @@ Disse informasie is zichtbaor veur aandere gebrukers.',
 'prefs-displayrc' => 'Weergave-instellingen',
 'prefs-displaysearchoptions' => 'Weergave-instellingen',
 'prefs-displaywatchlist' => 'Weergave-instellingen',
+'prefs-tokenwatchlist' => 'Token',
 'prefs-diffs' => 'Verschillen',
+'prefs-help-prefershttps' => "Disse veurkeur wörden toe-epast a'j je eigen de volgende keer anmelden.",
 
 # User preference: email validation using jQuery
 'email-address-validity-valid' => 'Geldig netpostadres',
@@ -1509,6 +1565,8 @@ Disse informasie is zichtbaor veur aandere gebrukers.',
 'userrights-notallowed' => 'Je hebben gien rechten um gebrukersrechten toe te kunnen wiezen of in te trekken.',
 'userrights-changeable-col' => "Groepen die'j beheren kunnen",
 'userrights-unchangeable-col' => "Groepen die'j niet beheren kunnen",
+'userrights-conflict' => 'Konflikt bie t wiezigen van gebrukersrechten! Kiek joew wiezigingen nao en bevestig t.',
+'userrights-removed-self' => 'Je hebben joew eigen bevoegdhejen in-etrökken. Je kunnen disse zied niet meer gebruken.',
 
 # Groups
 'group' => 'Groep:',
@@ -1574,11 +1632,19 @@ Disse informasie is zichtbaor veur aandere gebrukers.',
 'right-proxyunbannable' => "Blokkeringen veur proxy's gelden niet",
 'right-unblockself' => 'Eigen gebruker deblokkeren',
 'right-protect' => "Beveiligingsnivo's wiezigen",
-'right-editprotected' => 'Beveiligden ziejen bewarken',
+'right-editprotected' => 'Ziejen bewarken die beveiligd bin as "{{int:protect-level-sysop}}"',
+'right-editsemiprotected' => 'Ziejen bewarken die beveiligd bin as "{{int:protect-level-autoconfirmed}}"',
 'right-editinterface' => 'Systeemteksten bewarken',
 'right-editusercssjs' => 'De CSS- en JS-bestaanden van aandere gebrukers bewarken',
 'right-editusercss' => 'De CSS-bestaanden van aandere gebrukers bewarken',
 'right-edituserjs' => 'De JS-bestaanden van aandere gebrukers bewarken',
+'right-editmyusercss' => 'Joew eigen CSS-ziejen bewarken',
+'right-editmyuserjs' => 'Joew eigen JavaScript-ziejen bewarken',
+'right-viewmywatchlist' => 'Joew eigen volglieste bekieken',
+'right-editmywatchlist' => 'Joew eigen volglieste bewarken. Via sommige haandelingen kunnen nog altied ziejen derbie ezet wörden, zelfs zonder disse bevoegdheid',
+'right-viewmyprivateinfo' => 'Joew eigen priveegegevens bekieken (bieveurbeeld netpostadres, echte naam)',
+'right-editmyprivateinfo' => 'Joew eigen priveegegevens bewarken (bieveurbeeld netpostadres, echte naam)',
+'right-editmyoptions' => 'Joew eigen veurkeuren bewarken',
 'right-rollback' => 'Gauw de leste bewarking(en) van n gebruker an n zied weerummedreien',
 'right-markbotedits' => 'Weerummedreien bewarkingen markeren as botbewarkingen',
 'right-noratelimit' => 'Hef gien tiedsaofhankelike beparkingen',
@@ -1640,12 +1706,19 @@ Disse informasie is zichtbaor veur aandere gebrukers.',
 'action-userrights-interwiki' => "de rechten van gebrukers op aandere wiki's bewarken",
 'action-siteadmin' => 'de databanke blokkeren of vriegeven',
 'action-sendemail' => 'netpostberichten versturen',
+'action-editmywatchlist' => 'joew eigen volglieste bewarken',
+'action-viewmywatchlist' => 'joew eigen volglieste bekieken',
+'action-viewmyprivateinfo' => 'joew eigen priveegegevens bekieken',
+'action-editmyprivateinfo' => 'joew eigen priveegegevens bewarken',
 
 # Recent changes
 'nchanges' => '$1 {{PLURAL:$1|wieziging|wiezigingen}}',
+'enhancedrc-since-last-visit' => '$1 {{PLURAL:$1|sinds joew leste bezeuk}}',
+'enhancedrc-history' => 'geschiedenisse',
 'recentchanges' => 'Leste wiezigingen',
 'recentchanges-legend' => 'Opsies veur leste wiezigingen',
 'recentchanges-summary' => "Op disse zied ku'j de leste wiezigingen van disse wiki bekieken.",
+'recentchanges-noresult' => 'Der waren in disse periode gien wiezigingen die an de kriteria voldoon.',
 'recentchanges-feed-description' => 'Zeuk naor de alderleste wiezingen op disse wiki in disse voer.',
 'recentchanges-label-newpage' => 'Mit disse bewarking is n nieje zied an-emaakt',
 'recentchanges-label-minor' => 'Dit is n kleine wieziging',
@@ -1683,7 +1756,6 @@ Disse informasie is zichtbaor veur aandere gebrukers.',
 'recentchangeslinked-feed' => 'Volg verwiezigingen',
 'recentchangeslinked-toolbox' => 'Volg verwiezigingen',
 'recentchangeslinked-title' => 'Wiezigingen verwaant an $1',
-'recentchangeslinked-noresult' => 'Gien wiezigingen of zied waornaor verwezen wörden in disse periode.',
 'recentchangeslinked-summary' => "Op disse spesiale zied steet n lieste mit de leste wieziginen op ziejen waornaor verwezen wörden. Ziejen op [[Special:Watchlist|joew volglieste]] staon '''vet-edrokt'''.",
 'recentchangeslinked-page' => 'Ziednaam:',
 'recentchangeslinked-to' => 'Bekiek wiezigingen op ziejen mit verwiezingen naor disse zied',
@@ -1694,7 +1766,7 @@ Disse informasie is zichtbaor veur aandere gebrukers.',
 'reuploaddesc' => 'Weerumme naor de opstuurzied',
 'upload-tryagain' => 'Bestaandsbeschrieving biewarken',
 'uploadnologin' => 'Niet an-emeld',
-'uploadnologintext' => 'Je mutten [[Special:UserLogin|an-emeld]] ween um bestaanden toe te kunnen voegen.',
+'uploadnologintext' => 'Je mutten $1 ween um bestaanden op te kunnen sturen.',
 'upload_directory_missing' => 'De inlaojmap veur bestaanden ($1) is vort en kon niet an-emaakt wörden deur de webserver.',
 'upload_directory_read_only' => "Op t moment ku'j gien bestaanden opsturen vanwegen techniese problemen ($1).",
 'uploaderror' => 'Fout bie t inlaojen van t bestaand',
@@ -1910,7 +1982,6 @@ Um beveiligingsredens is img_auth.php uutezet.',
 'http-read-error' => 'Fout bie t lezen van HTTP',
 'http-timed-out' => 'Tiedsoverschriejing bie t HTTP-verzeuk',
 'http-curl-error' => 'Fout bie t ophaolen van t webadres: $1',
-'http-host-unreachable' => 'Kon webadres niet bereiken.',
 'http-bad-status' => 'Der is n probleem mit t HTTP-verzeuk: $1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1938,6 +2009,10 @@ Um beveiligingsredens is img_auth.php uutezet.',
 'listfiles_size' => 'Grootte (bytes)',
 'listfiles_description' => 'Beschrieving',
 'listfiles_count' => 'Versies',
+'listfiles-show-all' => 'Ouwe versies van aofbeeldingen opnemen',
+'listfiles-latestversion' => 'Aktuele versie',
+'listfiles-latestversion-yes' => 'Ja',
+'listfiles-latestversion-no' => 'Nee',
 
 # File description page
 'file-anchor-link' => 'Bestaand',
@@ -2031,6 +2106,13 @@ Vergeet niet de verwiezingen nao te kieken veurda\'j de mal vortdoon.',
 'randompage' => 'Netzelde welk artikel',
 'randompage-nopages' => 'Der staon gien ziejen in de {{PLURAL:$2|naamruumte|naamruumtes}}: $1.',
 
+# Random page in category
+'randomincategory' => 'Netzelde welke zied in n kategorie',
+'randomincategory-invalidcategory' => '"$1" is gien geldige kategorienaam.',
+'randomincategory-nopages' => 'Der bin gien ziejen in [[:Category:$1]].',
+'randomincategory-selectcategory' => 'Netzelde welke zied uut de kategorie: $1 $2',
+'randomincategory-selectcategory-submit' => 'Laot kulen',
+
 # Random redirect
 'randomredirect' => 'Netzelde welke deurverwiezing',
 'randomredirect-nopages' => 'Der staon gien deurverwiezingen in de naamruumte "$1".',
@@ -2056,17 +2138,13 @@ Vergeet niet de verwiezingen nao te kieken veurda\'j de mal vortdoon.',
 'statistics-users-active-desc' => 'Gebrukers die de veurbieje {{PLURAL:$1|dag|$1 dagen}} n haandeling uutevoerd hebben',
 'statistics-mostpopular' => 'Meestbekeken ziejen',
 
-'disambiguations' => 'Ziejen die verwiezen naor deurverwiesziejen',
-'disambiguationspage' => 'Template:Dv',
-'disambiguations-text' => "Hieronder staon ziejen mit tenminsten één verwiezing naor n '''deurverwieszied'''. 
-Feitelik mutten ze rechtstreeks verwiezen naor t juuste onderwarp.<br />
-Ziejen wörden ezien as n deurverwieszied, as de mal gebruukt wörden die vermeld steet op [[MediaWiki:Disambiguationspage]].",
-
 'pageswithprop' => 'Ziejen mit n ziedeigenschap',
 'pageswithprop-legend' => 'Ziejen mit n zied-eigenschap',
 'pageswithprop-text' => 'Op disse zied staon ziejen mit n bepaolde ziedeigenschap.',
 'pageswithprop-prop' => 'Naam van de eigenschap:',
 'pageswithprop-submit' => 'Zeuk',
+'pageswithprop-prophidden-long' => 'lange teksteigenschapsweerde verbörgen ($1)',
+'pageswithprop-prophidden-binary' => 'binaere eigenschapsweerde verbörgen ($1)',
 
 'doubleredirects' => 'Dubbele deurverwiezingen',
 'doubleredirectstext' => 'Op disse lieste staon alle ziejen die deurverwiezen naor aandere deurverwiezingen.
@@ -2124,6 +2202,7 @@ Meestentieds is leste zied de gewunste doelzied, waor oek de eerste zied heer zo
 'mostrevisions' => 'Artikels mit de meeste bewarkingen',
 'prefixindex' => 'Alle ziejen op veurvoegsel',
 'prefixindex-namespace' => 'Alle ziejen mit t veurvoegsel (naamruumte $1)',
+'prefixindex-strip' => 'Veurvoegsel in lieste vortdoon',
 'shortpages' => 'Korte artikels',
 'longpages' => 'Lange artikels',
 'deadendpages' => 'Ziejen zonder verwiezingen',
@@ -2139,6 +2218,7 @@ Meestentieds is leste zied de gewunste doelzied, waor oek de eerste zied heer zo
 'listusers' => 'Gebrukerslieste',
 'listusers-editsonly' => 'Allinnig gebrukers mit bewarkingen laoten zien',
 'listusers-creationsort' => 'Sorteren op inschriefdaotum',
+'listusers-desc' => 'Sorteren in aoflopende volgorde',
 'usereditcount' => '$1 {{PLURAL:$1|bewarking|bewarkingen}}',
 'usercreated' => '{{GENDER:$3|Eregistreerd}} op $1 um $2',
 'newpages' => 'Nieje artikels',
@@ -2319,10 +2399,9 @@ Toekomstige wiezigingen op disse zied en de overlegzied zullen hier vermeld wör
 'unwatchthispage' => 'Niet volgen',
 'notanarticle' => 'Gien artikel',
 'notvisiblerev' => 'Bewarking is vortedaon',
-'watchnochange' => 'Gien van de ziejen op joew volglieste is in disse periode ewiezigd',
 'watchlist-details' => 'Der {{PLURAL:$1|steet één zied|staon $1 ziejen}} op joew volglieste, zonder de overlegziejen mee-erekend.',
 'wlheader-enotif' => 'Je kriegen bericht per netpost',
-'wlheader-showupdated' => "* Ziejen die sinds joew leste bezeuk bie-ewörken bin, staon '''vet-edrokt'''.",
+'wlheader-showupdated' => "Ziejen die sinds joew leste bezeuk bie-ewörken bin, staon '''vet-edrokt'''.",
 'watchmethod-recent' => "leste wiezigingen an t naokieken op ziejen die'j volgen",
 'watchmethod-list' => 'Kik joew nao volglieste veur de leste wiezigingen',
 'watchlistcontains' => 'Der {{PLURAL:$1|steet 1 zied|staon $1 ziejen}} op joew volglieste.',
@@ -2566,7 +2645,7 @@ $1',
 'contributions' => '{{GENDER:$1|Biedragen van disse gebruker}}',
 'contributions-title' => 'Biedragen van $1',
 'mycontris' => 'Mien biedragen',
-'contribsub2' => 'Veur $1 ($2)',
+'contribsub2' => 'Veur {{GENDER:$3|$1}} ($2)',
 'nocontribs' => 'Gien wiezigingen evunnen die an de estelde criteria voldoon.',
 'uctop' => '(leste wieziging)',
 'month' => 'Maond:',
@@ -2723,14 +2802,12 @@ Wi'j de instellingen wiezigen?",
 De blokkering is onderdeel van de reeks $2, waorvan de blokkering wel op-eheven kan wörden.',
 'ip_range_invalid' => 'Ongeldige IP-reeks',
 'ip_range_toolarge' => 'Groeps-IP-adressen die groter bin as /$1, bin niet toe-estaon.',
-'blockme' => 'Mien blokkeren',
 'proxyblocker' => 'Proxyblokker',
-'proxyblocker-disabled' => 'Disse funksie is uutezet.',
 'proxyblockreason' => "Dit is n automatiese preventieve blokkering umda'j gebruukmaken van n open proxyserver.",
-'proxyblocksuccess' => 'Suksesvol.',
 'sorbsreason' => "Joew IP-adres is op-eneumen as open proxyserver in de zwarte lieste van DNS die'w veur {{SITENAME}} gebruken.",
 'sorbs_create_account_reason' => "Joew IP-adres is op-eneumen as open proxyserver in de zwarte lieste van DNS, die'w veur {{SITENAME}} gebruken.
 Je kunnen gien gebrukerszied anmaken.",
+'xffblockreason' => "n IP-adres dat jie gebruken is eblokkeerd. Dit steet in de kop 'X-Forwarded-For'. De oorspronkelike reden veur de blokkerings is: $1",
 'cant-block-while-blocked' => "Je kunnen aandere gebrukers niet blokkeren a'j zelf oek eblokkeerd bin.",
 'cant-see-hidden-user' => "De gebruker die'j proberen te blokkeren is al eblokkeerd en verbörgen.
 Umda'j gien rech hebben um gebrukers te verbargen, ku'j de blokkering van de gebruker niet bekieken of bewarken.",
@@ -2889,6 +2966,8 @@ Kiek oek effen bie [//www.mediawiki.org/wiki/Localisation MediaWiki-lokalisasie]
 'thumbnail-more' => 'vergroten',
 'filemissing' => 'Bestaand ontbrik',
 'thumbnail_error' => 'Fout bie t laojen van de miniatuuraofbeelding: $1',
+'thumbnail_error_remote' => 'Foutmelding van $1:
+$2',
 'djvu_page_error' => 'DjVu-zied buten bereik',
 'djvu_no_xml' => 'Kon de XML-gegevens veur t DjVu-bestaand niet oproepen',
 'thumbnail-temp-create' => 'Kon gien tiedelik miniatuurbestaand anmaken.',
@@ -3038,6 +3117,7 @@ De tiedelike map is niet anwezig.',
 Iej könt in de bewearkingssamenvatting n reden opgeven.',
 'tooltip-preferences-save' => 'Vuurkeuren opsloan',
 'tooltip-summary' => 'Voer ne korte samenvatting in',
+'tooltip-iwiki' => '$1 – $2',
 
 # Metadata
 'notacceptable' => 'De wikiserver kan de gegevens niet leveren in n vorm die joew kliënt kan lezen.',
@@ -3111,13 +3191,8 @@ Meestentieds kömp dit deur n uutgaonde verwiezing die op de zwarte lieste steet
 'pageinfo-category-files' => 'Antal bestaanden',
 
 # Skin names
-'skinname-standard' => 'Klassiek',
-'skinname-nostalgia' => 'Nostalgie',
 'skinname-cologneblue' => 'Keuls blauw',
 'skinname-monobook' => 'Monobook',
-'skinname-myskin' => 'MienSkin',
-'skinname-chick' => 'Deftig',
-'skinname-simple' => 'Eenvoudig',
 'skinname-modern' => 'Niejmoeds',
 
 # Patrolling
@@ -3195,10 +3270,24 @@ $1',
 'minutes' => '{{PLURAL:$1|$1 minuut|$1 minuten}}',
 'hours' => '{{PLURAL:$1|$1 ure|$1 uren}}',
 'days' => '{{PLURAL:$1|$1 dag|$1 dagen}}',
+'weeks' => '{{PLURAL: $1|één weke|$1 weken}}',
 'months' => '{{PLURAL:$1|een maond|$1 maonden}}',
 'years' => '{{PLURAL:$1|één jaor|$1 jaor}}',
 'ago' => '$1 eleen',
 'just-now' => 'onderlest',
+
+# Human-readable timestamps
+'hours-ago' => '$1 {{PLURAL:$1|uur}} elejen',
+'minutes-ago' => '$1 {{PLURAL:$1|minuut|minuten}} elejen',
+'seconds-ago' => '$1 {{PLURAL:$1|sekonde|sekonden}} elejen',
+'monday-at' => 'Maondag um $1',
+'tuesday-at' => 'Diensdag um $1',
+'wednesday-at' => 'Woonsdag um $1',
+'thursday-at' => 'Donderdag um $1',
+'friday-at' => 'Vriedag um $1',
+'saturday-at' => 'Zaoterdag um $1',
+'sunday-at' => 'Zundag um $1',
+'yesterday-at' => 'Gisteren um $1',
 
 # Bad image list
 'bad_image_list' => 'De opmaak is as volgt:
@@ -3228,7 +3317,7 @@ Aandere velden wörden verbörgen.
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Wiedte',
 'exif-imagelength' => 'Heugte',
 'exif-bitspersample' => 'Bits per komponent',
@@ -3406,7 +3495,7 @@ Aandere velden wörden verbörgen.
 'exif-originalimageheight' => 'Heugte van de aofbeelding veur biesniejen',
 'exif-originalimagewidth' => 'Breedte van de aofbeelding veur biesniejen',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Niet ekomprimeerd',
 'exif-compression-2' => 'CCITT-groep 3 1-dimensionale an-epasten "Huffman run length"-kodering',
 'exif-compression-3' => 'CCITT-groep 3 faxcodering',
@@ -3793,7 +3882,6 @@ Je kunnen oek [[Special:EditWatchlist|t standardbewarkingsscharm gebruken]].',
 'version-other' => 'Overige',
 'version-mediahandlers' => 'Mediaverwarkers',
 'version-hooks' => 'Hoeken',
-'version-extension-functions' => 'Uutbreidingsfunksies',
 'version-parser-extensiontags' => 'Parseruutbreidingsplaotjes',
 'version-parser-function-hooks' => 'Parserfunksiehoeken',
 'version-hook-name' => 'Hooknaam',
@@ -3802,6 +3890,7 @@ Je kunnen oek [[Special:EditWatchlist|t standardbewarkingsscharm gebruken]].',
 'version-license' => 'Lisensie',
 'version-poweredby-credits' => "Disse wiki wörden an-estuurd deur '''[//www.mediawiki.org/ MediaWiki]''', auteursrecht © 2001-$1 $2.",
 'version-poweredby-others' => 'aanderen',
+'version-poweredby-translators' => 'vertalers van translatewiki.net',
 'version-credits-summary' => 'Wulen erkennen grege de volgende personen veur der biedrage an [[Special:Version|MediaWiki]].',
 'version-license-info' => 'MediaWiki is vrieje programmatuur; je kunnen MediaWiki verspreien en/of anpassen onder de veurweerden van de GNU General Public License zo as epubliceerd deur de Free Software Foundation; of versie 2 van de Lisensie, of - naor eigen wuns - n laotere versie.
 
@@ -3815,13 +3904,17 @@ Samen mit dit programma heur je n [{{SERVER}}{{SCRIPTPATH}}/COPYING kopie van de
 'version-entrypoints-header-entrypoint' => 'Ingang',
 'version-entrypoints-header-url' => 'Webadres',
 
-# Special:FilePath
-'filepath' => 'Bestaandslokasie',
-'filepath-page' => 'Bestaand:',
-'filepath-submit' => 'Zeuken',
-'filepath-summary' => 'Disse spesiale zied gif t hele pad veur n bestaand. 
-Aofbeeldingen wörden in resolusie helemaole weeregeven. 
-Aandere bestaandstypen wörden gelieke in t mit t MIME-type verbunnen programma opend.',
+# Special:Redirect
+'redirect' => 'Deurverwiezen op bestaandsnaam, gebrukersnummer of versienummer',
+'redirect-legend' => 'Deurverwiezen naor n bestaand of zied',
+'redirect-summary' => 'Disse spesiale zied verwis deur naor n bestaand (as n bestaandsnaam op-egeven wörden), n zied (as n versienummer op-egeven wörden) of n gebrukerszied (as t gebrukersnummer op-egeven wörden).',
+'redirect-submit' => 'Zeuk',
+'redirect-lookup' => 'Opzeuken:',
+'redirect-value' => 'Weerde:',
+'redirect-user' => 'Gebrukersnummer',
+'redirect-revision' => 'Ziedversie',
+'redirect-file' => 'Bestaandsnaam',
+'redirect-not-exists' => 'Weerde niet evunnen',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Dubbele bestaanden zeuken',
@@ -3871,12 +3964,16 @@ Aandere bestaandstypen wörden gelieke in t mit t MIME-type verbunnen programma 
 'tags' => 'Geldige wiezigingsetiketten',
 'tag-filter' => '[[Special:Tags|Etiketfilter]]:',
 'tag-filter-submit' => 'Filtreren',
+'tag-list-wrapper' => '([[Special:Tags|Etiket{{PLURAL:$1||ten}}]]: $2)',
 'tags-title' => 'Etiket',
 'tags-intro' => 'Op disse zied staon de etiketten waormee de programmatuur elke bewarking kan markeren, en de betekenisse dervan.',
 'tags-tag' => 'Etiketnaam',
 'tags-display-header' => 'Weergave in wiezigingsliesten',
 'tags-description-header' => 'Beschrieving van de betekenisse',
+'tags-active-header' => 'Aktief?',
 'tags-hitcount-header' => 'Bewarkingen mit etiket',
+'tags-active-yes' => 'Ja',
+'tags-active-no' => 'Nee',
 'tags-edit' => 'bewarking',
 'tags-hitcount' => '$1 {{PLURAL:$1|wieziging|wiezigingen}}',
 
@@ -3897,6 +3994,7 @@ Aandere bestaandstypen wörden gelieke in t mit t MIME-type verbunnen programma 
 'dberr-problems' => 't Spiet ons, mer disse webstee hef op t moment wat techniese problemen.',
 'dberr-again' => 'Wach n paor minuten en probeer t daornao opniej.',
 'dberr-info' => '(Kan gien verbiending maken mit de databankeserver: $1)',
+'dberr-info-hidden' => '(Kan gien verbiending maken mit de databankserver)',
 'dberr-usegoogle' => "Misschien ku'j ondertussen zeuken via Google.",
 'dberr-outofdate' => 'Let op: indexen die zee hebben van onze ziejen bin misschien niet aktueel.',
 'dberr-cachederror' => 'Disse zied is n kopie uut t tussengeheugen en is misschien niet aktueel.',
@@ -3912,6 +4010,9 @@ Aandere bestaandstypen wörden gelieke in t mit t MIME-type verbunnen programma 
 'htmlform-submit' => 'Opslaon',
 'htmlform-reset' => 'Wiezigingen ongedaonmaken',
 'htmlform-selectorother-other' => 'Aanders',
+'htmlform-no' => 'Nee',
+'htmlform-yes' => 'Ja',
+'htmlform-chosen-placeholder' => 'Kies n opsie',
 
 # SQLite database support
 'sqlite-has-fts' => 'Versie $1 mit ondersteuning veur "full-text" zeuken',
@@ -4028,5 +4129,20 @@ Aanders ku\'j oek t eenvoudige formulier hieronder gebruken. Joew kommentaar zal
 
 # Image rotation
 'rotate-comment' => 'Aofbeelding is $1 {{PLURAL:$1|graod|graojen}} mit de klokke mee edreid',
+
+# Limit report
+'limitreport-title' => 'Parser-profieldata:',
+'limitreport-cputime' => 'Tiedsgebruuk van de prosessor',
+'limitreport-cputime-value' => '$1 {{PLURAL:$1|sekonde|sekonden}}',
+'limitreport-walltime' => 'Reëel tiedsgebruuk',
+'limitreport-walltime-value' => '$1 {{PLURAL:$1|sekonde|sekonden}}',
+'limitreport-ppvisitednodes' => 'Antal verbiendingsknopen bezöcht tiejens de veurverwarking:',
+'limitreport-ppgeneratednodes' => 'Antal verbiedingsknopen an-emaakt tiejens de veurverwarking:',
+'limitreport-postexpandincludesize' => 'Inklusiegrootte nao uutbreien',
+'limitreport-postexpandincludesize-value' => '$1/$2 {{PLURAL:$2|byte|bytes}}',
+'limitreport-templateargumentsize' => 'Grootte van malparameters',
+'limitreport-templateargumentsize-value' => '$1/$2 {{PLURAL:$2|byte|bytes}}',
+'limitreport-expansiondepth' => 'Hoogste uutbreidingsdiepte',
+'limitreport-expensivefunctioncount' => 'Antal kostbaore parserfunksies',
 
 );

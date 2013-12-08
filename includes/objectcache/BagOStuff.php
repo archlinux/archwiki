@@ -170,12 +170,12 @@ abstract class BagOStuff {
 	 */
 	public function lock( $key, $timeout = 60 ) {
 		$timestamp = microtime( true ); // starting UNIX timestamp
-		if ( $this->add( "{$key}:lock", $timeout ) ) {
+		if ( $this->add( "{$key}:lock", 1, $timeout ) ) {
 			return true;
 		}
 
 		$uRTT = ceil( 1e6 * ( microtime( true ) - $timestamp ) ); // estimate RTT (us)
-		$sleep = 2*$uRTT; // rough time to do get()+set()
+		$sleep = 2 * $uRTT; // rough time to do get()+set()
 
 		$locked = false; // lock acquired
 		$attempts = 0; // failed attempts
@@ -186,8 +186,8 @@ abstract class BagOStuff {
 				$sleep *= 2;
 			}
 			usleep( $sleep ); // back off
-			$locked = $this->add( "{$key}:lock", $timeout );
-		} while( !$locked );
+			$locked = $this->add( "{$key}:lock", 1, $timeout );
+		} while ( !$locked );
 
 		return $locked;
 	}

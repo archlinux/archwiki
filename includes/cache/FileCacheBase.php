@@ -35,7 +35,7 @@ abstract class FileCacheBase {
 	/* lazy loaded */
 	protected $mCached;
 
-	/* @TODO: configurable? */
+	/* @todo configurable? */
 	const MISS_FACTOR = 15; // log 1 every MISS_FACTOR cache misses
 	const MISS_TTL_SEC = 3600; // how many seconds ago is "recent"
 
@@ -138,7 +138,7 @@ abstract class FileCacheBase {
 	 * @return string
 	 */
 	public function fetchText() {
-		if( $this->useGzip() ) {
+		if ( $this->useGzip() ) {
 			$fh = gzopen( $this->cachePath(), 'rb' );
 			return stream_get_contents( $fh );
 		} else {
@@ -163,7 +163,7 @@ abstract class FileCacheBase {
 
 		$this->checkCacheDirs(); // build parent dir
 		if ( !file_put_contents( $this->cachePath(), $text, LOCK_EX ) ) {
-			wfDebug( __METHOD__ . "() failed saving ". $this->cachePath() . "\n" );
+			wfDebug( __METHOD__ . "() failed saving " . $this->cachePath() . "\n" );
 			$this->mCached = null;
 			return false;
 		}

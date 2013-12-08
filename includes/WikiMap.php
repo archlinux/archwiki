@@ -37,13 +37,18 @@ class WikiMap {
 		$wgConf->loadFullData();
 
 		list( $major, $minor ) = $wgConf->siteFromDB( $wikiID );
-		if( $major === null ) {
+		if ( $major === null ) {
 			return null;
 		}
-		$canonicalServer = $wgConf->get( 'wgCanonicalServer', $wikiID, $major,
-			array( 'lang' => $minor, 'site' => $major ) );
 		$server = $wgConf->get( 'wgServer', $wikiID, $major,
 			array( 'lang' => $minor, 'site' => $major ) );
+
+		$canonicalServer = $wgConf->get( 'wgCanonicalServer', $wikiID, $major,
+			array( 'lang' => $minor, 'site' => $major ) );
+		if ( $canonicalServer === false || $canonicalServer === null ) {
+			$canonicalServer = $server;
+		}
+
 		$path = $wgConf->get( 'wgArticlePath', $wikiID, $major,
 			array( 'lang' => $minor, 'site' => $major ) );
 		return new WikiReference( $major, $minor, $canonicalServer, $path, $server );
@@ -73,7 +78,7 @@ class WikiMap {
 	 * @param string $text link's text; optional, default to "User:$user"
 	 * @return String: HTML link or false if the wiki was not found
 	 */
-	public static function foreignUserLink( $wikiID, $user, $text=null ) {
+	public static function foreignUserLink( $wikiID, $user, $text = null ) {
 		return self::makeForeignLink( $wikiID, "User:$user", $text );
 	}
 
@@ -85,7 +90,7 @@ class WikiMap {
 	 * @param string $text link's text; optional, default to $page
 	 * @return String: HTML link or false if the wiki was not found
 	 */
-	public static function makeForeignLink( $wikiID, $page, $text=null ) {
+	public static function makeForeignLink( $wikiID, $page, $text = null ) {
 		if ( !$text ) {
 			$text = $page;
 		}
@@ -211,15 +216,14 @@ class WikiReference {
 	}
 
 	/**
-	 * Get a URL based on $wgServer, like Title::getFullUrl() would produce
+	 * Get a URL based on $wgServer, like Title::getFullURL() would produce
 	 * when called locally on the wiki.
 	 *
 	 * @param string $page page name (must be normalized before calling this function!)
 	 * @return String: URL
 	 */
 	public function getFullUrl( $page ) {
-		return
-			$this->mServer .
+		return $this->mServer .
 			$this->getLocalUrl( $page );
 	}
 }

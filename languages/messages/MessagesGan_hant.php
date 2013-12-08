@@ -85,9 +85,6 @@ $messages = array(
 'tog-shownumberswatching' => '顯示有幾多人監視',
 'tog-oldsig' => '現有嗰簽名：',
 'tog-fancysig' => '搦簽名以維基字對待（冇自動連結）',
-'tog-externaleditor' => '默認用外部編輯器（專家用嗰功能，要到倷嗰電腦上頭特別嗰設置一下）',
-'tog-externaldiff' => '默認用外部差異比較器（專家用嗰功能，要到汝嗰電腦上頭特別嗰設置下。[//www.mediawiki.org/wiki/Manual:External_editors 別嗰信息]）',
-'tog-showjumplinks' => '啟用“跳到”訪問連結',
 'tog-uselivepreview' => '使用即時預覽（JavaScript）（實驗中）',
 'tog-forceeditsummary' => '冇改動注解時要同我話',
 'tog-watchlisthideown' => '監視列表弆到我嗰編輯',
@@ -280,7 +277,7 @@ $messages = array(
 
 $1',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '關於 {{SITENAME}}',
 'aboutpage' => 'Project:關於',
 'copyright' => '箇版嗰內容係根據$1嗰條款發佈。',
@@ -290,7 +287,6 @@ $1',
 'disclaimers' => '免責聲明',
 'disclaimerpage' => 'Project:免責聲明',
 'edithelp' => '編寫幫助',
-'edithelppage' => 'Help:啷編寫文章',
 'helppage' => 'Help:説明',
 'mainpage' => '封面',
 'mainpage-description' => '封面',
@@ -359,17 +355,6 @@ $1',
 # General errors
 'error' => '錯誤',
 'databaseerror' => '資料庫錯誤',
-'dberrortext' => '資料庫查詢語法有錯。
-可能係軟件有錯。
-最晏嗰資料庫指令係:
-<blockquote><tt>$1</tt></blockquote>
-來自函數 "<tt>$2</tt>"。
-MySQL回到錯誤 "<tt>$3: $4</tt>"。',
-'dberrortextcl' => '資料庫查詢語法有錯。
-最晏嗰資料庫指令係:
-“$1”
-來自函數“$2”。
-MySQL回到錯誤“$3: $4”。',
 'laggedslavemode' => '警告：頁面可能冇有新近內容。',
 'readonly' => '資料庫上正鎖哩',
 'enterlockreason' => '請輸入鎖到資料庫嗰理由，包括預計幾時間解鎖',
@@ -410,7 +395,6 @@ MySQL回到錯誤“$3: $4”。',
 'editinginterface' => "'''Warning:''' You are editing a page which is used to provide interface text for the software.
 Changes to this page will affect the appearance of the user interface for other users.
 For translations, please consider using [//translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net], the MediaWiki localisation project.",
-'sqlhidden' => '（SQL 弆到嗰查詢）',
 'cascadeprotected' => '箇頁已拕保護，因為佢拕「聯鎖保護」嗰{{PLURAL:$1|一隻|幾隻}}拕保護頁包到：
 $2',
 'namespaceprotected' => "倷冇權編寫'''$1'''空間裡度嗰頁面。",
@@ -490,7 +474,7 @@ $2',
 'newpassword' => '新密碼：',
 'retypenew' => '確認密碼:',
 'resetpass_submit' => '設定密碼同到登入',
-'resetpass_success' => '汝嗰密碼改正哩！箇下汝登入嘚...',
+'changepassword-success' => '汝嗰密碼改正哩！箇下汝登入嘚...',
 'resetpass_forbidden' => '到{{SITENAME}}上改伓正密碼',
 'resetpass-submit-loggedin' => '設過帳戶密碼',
 'resetpass-submit-cancel' => '取消',
@@ -765,7 +749,6 @@ $2',
 'viewprevnext' => '望下（$1 {{int:pipe-separator}} $2） （$3）',
 'searchmenu-exists' => "'''箇隻wiki已有一隻叫「[[:$1]]」嗰頁。'''",
 'searchmenu-new' => "'''到箇隻wiki上建立「[[:$1]]」頁！'''",
-'searchhelp-url' => 'Help:説明',
 'searchprofile-articles' => '內容頁',
 'searchprofile-project' => '幫助同得計劃頁',
 'searchprofile-images' => '多媒體',
@@ -797,14 +780,6 @@ $2',
 'powersearch-redir' => '重定向嗰表單',
 'powersearch-field' => '尋',
 'searchdisabled' => '{{SITENAME}}嗰搜索功能已經關閉。倷可以用Google尋吖。但係佢嗰索引可能係早先嗰。',
-
-# Quickbar
-'qbsettings' => '快捷導航條',
-'qbsettings-none' => '冇',
-'qbsettings-fixedleft' => '左首固定',
-'qbsettings-fixedright' => '右首固定',
-'qbsettings-floatingleft' => '左首漂移',
-'qbsettings-floatingright' => '左首漂移',
 
 # Preferences page
 'preferences' => '參數設置',
@@ -938,7 +913,6 @@ $2',
 'recentchangeslinked-feed' => '連結頁嗰更改',
 'recentchangeslinked-toolbox' => '連結頁嗰更改',
 'recentchangeslinked-title' => '連結頁嗰改動到 "$1"',
-'recentchangeslinked-noresult' => '箇段時間嗰連結頁冇更改。',
 'recentchangeslinked-summary' => "箇隻特殊頁列出箇頁連出去頁面嗰頂晏嗰改動（或係某隻分類嗰頁面）。
 [[Special:Watchlist|汝嗰監視列表]]頁面會用'''粗體'''顯到。",
 'recentchangeslinked-page' => '頁面名子：',
@@ -1134,11 +1108,6 @@ $2',
 'statistics-users-active-desc' => '頭$1日操作過嗰用戶',
 'statistics-mostpopular' => '眵嗰人頂多嗰頁面',
 
-'disambiguations' => '扤清楚頁',
-'disambiguationspage' => 'Template:舞清楚',
-'disambiguations-text' => "底下嗰頁面都有到'''扤清楚頁'''嗰連結, 但係佢俚應當係連到正當嗰標題。<br />
-如果一隻頁面係連結自[[MediaWiki:Disambiguationspage]]，佢會拕當成扤清楚頁。",
-
 'doubleredirects' => '雙重重定向頁面',
 'doubleredirectstext' => '底下嗰重定向連結到別隻重定向頁面:',
 'double-redirect-fixed-move' => '[[$1]]拕移動正，佢箇下拕重定向到[[$2]]。',
@@ -1291,10 +1260,9 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'unwatch' => '莫眏到',
 'unwatchthispage' => '莫眏到箇頁',
 'notanarticle' => '伓係文章',
-'watchnochange' => '一徑到顯示嗰時間之內，倷眏到嗰頁面冇改動。',
 'watchlist-details' => '$1隻頁面（伓算討論頁） 拕眏到哩',
-'wlheader-enotif' => '* 啟動嘞email通知功能。',
-'wlheader-showupdated' => "* 上回倷眵嗰頁面改動嗰部分用'''粗體'''顯到",
+'wlheader-enotif' => '啟動哩email通知功能。',
+'wlheader-showupdated' => "上回倷眵嗰頁面改動嗰部分用'''粗體'''顯到",
 'watchmethod-recent' => '眵吖拕眏到嗰頁面嗰頂晏嗰編輯',
 'watchmethod-list' => '望吖監視頁裡頭頂晏嗰改動',
 'watchlistcontains' => '倷嗰監視列表包含$1隻頁面。',
@@ -1569,11 +1537,8 @@ $1',
 'ipb_already_blocked' => '鎖到哩"$1"',
 'ipb_cant_unblock' => '錯誤: 冇發現Block ID $1。箇隻IP話伓定拕解封哩。',
 'ip_range_invalid' => '冇用嗰IP範圍。',
-'blockme' => '封吥我去',
 'proxyblocker' => '代理封鎖器',
-'proxyblocker-disabled' => '箇隻功能用伓正哩。',
 'proxyblockreason' => '汝嗰IP係一隻公開嗰代理，佢拕封到哩。請聯絡汝嗰Internet服務提供商或技術幫助再告誦佢俚箇隻嚴重嗰安全問題。',
-'proxyblocksuccess' => '舞正哩。',
 'sorbsreason' => '{{SITENAME}}用嗰 DNSBL 查到汝嗰IP地址係隻公開代理服務器。',
 'sorbs_create_account_reason' => '{{SITENAME}}用嗰 DNSBL 檢查到汝嗰IP地址係隻公開代理服務器，汝也就新開伓正帳戶。',
 
@@ -1880,7 +1845,7 @@ $1',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => '闊',
 'exif-imagelength' => '高',
 'exif-bitspersample' => '每像素byte數',
@@ -1994,7 +1959,7 @@ $1',
 'exif-gpsdatestamp' => 'GPS日期',
 'exif-gpsdifferential' => 'GPS差動修正',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => '冇壓縮',
 
 'exif-unknowndate' => '未知嗰日期',
@@ -2246,7 +2211,6 @@ $3
 'version-variables' => '變量',
 'version-other' => '別嗰',
 'version-mediahandlers' => '媒體處理程序',
-'version-extension-functions' => '擴展功能',
 'version-parser-extensiontags' => '解析器擴展標籤',
 'version-hook-name' => '鉤子名',
 'version-hook-subscribedby' => '訂閱人',
@@ -2255,11 +2219,6 @@ $3
 'version-poweredby-credits' => "箇隻 Wiki 由 '''[//www.mediawiki.org/ MediaWiki]''' 驅動，版權所有 © 2001-$1 $2。",
 'version-software' => '裝正嗰軟件',
 'version-software-version' => '版本',
-
-# Special:FilePath
-'filepath' => '文件路徑',
-'filepath-page' => '文件：',
-'filepath-submit' => '路徑',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => '文件名:',

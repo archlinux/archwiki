@@ -48,9 +48,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Ipakita ang numero sang mga nagalantaw nga manug-gamit',
 'tog-oldsig' => 'Nagapabilin nga pirma:',
 'tog-fancysig' => 'Tratoha ang pirma bilang wikitext (wala sang tabid nga dayon)',
-'tog-externaleditor' => 'Gamiton dayon ang pang-guha nga manug-ilis (para sa mga sagad lamang, nagakinahanglan sang espesyal nga pagkay-o sa imo computer. [//www.mediawiki.org/wiki/Manual:External_editors Mas madamo pa nga impormasyon.])',
-'tog-externaldiff' => 'Gamiton dayon ang pang-guha nga diff (para sa mga sagad lamang, nagakinahanglan sang espesyal nga pagkay-o sa imo computer. [//www.mediawiki.org/wiki/Manual:External_editors Mas madamo pa nga impormasyon.])',
-'tog-showjumplinks' => 'Sugtan ang "maglumpat sa" nga mga tabid sang paalagyan',
 'tog-uselivepreview' => 'Gamiton ang preview nga live (nagakinahanglan sang JavaScript) (experimentohanon)',
 'tog-forceeditsummary' => 'Sugidi ako kon magasulod ako sa blanko nga kabilogan sang pag-ilis',
 'tog-watchlisthideown' => 'Tagua ang akon mga pag-ilis sa akon ginabantayan',
@@ -250,7 +247,7 @@ $1',
 'pool-queuefull' => 'Ang pila sang linaw puno na',
 'pool-errorunknown' => 'Wala mahibaluan nga sala',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Nahanungod sa {{SITENAME}}',
 'aboutpage' => 'Project:Nahanungod',
 'copyright' => 'Ang unod nga abeylabol nga naga paidalum $1.',
@@ -260,7 +257,6 @@ $1',
 'disclaimers' => 'Diskleymer',
 'disclaimerpage' => 'Project:Kabilogan nga diskleymer',
 'edithelp' => 'Bulig sa pag Ilis',
-'edithelppage' => 'Help:I-husto',
 'helppage' => 'Help:Mga Unod',
 'mainpage' => 'Mayor nga Panid',
 'mainpage-description' => 'Mayor nga Panid',
@@ -338,17 +334,6 @@ May lista sang mga nagaka-igo nga mga espesyal nga mga panid sa [[Special:Specia
 # General errors
 'error' => 'Sala/Eror',
 'databaseerror' => 'May sala sa database',
-'dberrortext' => 'May sala sa syntax sang pagpangita sa database.
-Ini nagakahulogan nga basi may sapat-sapat/bug sa software.
-Ang pinaka-ulihe nga pagtilaw sa pagpangita sa database amo ang:
-<blockquote><code>$1</code></blockquote>
-nga halin sa buluhaton nga "<code>$2</code>".
-Ang database nagbalik sang sala/eror nga "<samp>$3: $4</samp>".',
-'dberrortextcl' => 'May sala sa syntax sang pagpangita sa database.
-Ang pinaka-ulihe nga pamilit sa pagpangita sa database amo ang:
-"$1"
-nga halin sa buluhaton nga "$2".
-Ang database nagbalik sang sala/eror nga "$3: $4"',
 'laggedslavemode' => "'''Pahibalo:''' Ang panid indi dapat maka-angkon sang mga ulihe nga pagbag-o.",
 'readonly' => 'Naka-kandado ang database',
 'enterlockreason' => 'Magbutang sang rason para sa pagkandado, upod na ang paghaum-haom kon san-o ang kandado pagabuksan',
@@ -404,7 +389,6 @@ Palihog tilawan mo liwat pagkatapos sang malip-ot nga tinion.',
 'editinginterface' => "'''Pahibalo:''' Naga-ilis ka sang panid nga ginagamit sa paghatag sang mga teksto sang interface para sa software.
 Ang mga pagbag-o sang sini nga panid maga-apekto sa hitsura sang interface sang panid sang manug-gamit sang iban.
 Para sa mga paglubad/pagbadbad, palihog kilalanon ang paggamit sang [//translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net], ang proyekto sang MediaWiki para sa localisasyon.",
-'sqlhidden' => '(Nakatago ang pagpamangkot sang SQL)',
 'cascadeprotected' => 'Ang ini nga panid ginpangapinan agod nga indi ma-ilisan, bangud nga ini nadal sa masunod nga {{PLURAL:$1|panid, nga|mga panid, nga}} ginapangapinan sang naga-"kaskad" nga pililian nga naga-andar:
 $2',
 'namespaceprotected' => "Wala ka ginapasugtan nga mag-ilis sang mga panid sa '''$1''' nga lugar-espasyo.",
@@ -438,7 +422,6 @@ Indi pagkalimtan ang pag-ilis sa imo nga [[Special:Preferences|{{SITENAME}} pagp
 'yourpassword' => 'Kontra-senyas:',
 'yourpasswordagain' => 'Suliton ang kontra-senyas:',
 'remembermypassword' => 'Dumdumon ang akon pagsulod sa sini nga brawser (para sa indi magsobra $1 {{PLURAL:$1|nga adlaw|nga mga adlaw}})',
-'securelogin-stick-https' => 'Magpabilin nga nakatakod sa HTTPS pagkatapos magsulod',
 'yourdomainname' => 'Imo dominyo',
 'password-change-forbidden' => 'Indi ka mahimo nga makailis sang pasword sa sini nga wiki.',
 'externaldberror' => 'Mahimo nga may ara sang sala sa pagpamatood sang database ukon wala ka sa lugar nga magbag-o sang imo pang-guha nga akawnt.',
@@ -549,7 +532,7 @@ Agod nga makatapos ka sa pagsulod, kinahanglan mo magbutang sang bag-o nga paswo
 'newpassword' => 'Bag-o nga pasword:',
 'retypenew' => 'Suliton ang bag-o nga pasword:',
 'resetpass_submit' => 'Ibutang ang pasword kag magsulod',
-'resetpass_success' => 'Ang imo pasword madinalag-on nga gin-ilisan!
+'changepassword-success' => 'Ang imo pasword madinalag-on nga gin-ilisan!
 Ginapasulod ka na...',
 'resetpass_forbidden' => 'Ang mga pasword indi mahimo nga paga-ilisan',
 'resetpass-no-info' => 'Kinahanglan nga nakasulod ka agod nga makadtoan ang ini nga panid sing derecho.',
@@ -561,10 +544,8 @@ Mahimo nga madinalag-on mo nga nga gin-ilisan ang imo pasword ukon nagpangabay k
 
 # Special:PasswordReset
 'passwordreset' => 'Liwaton ang pasword',
-'passwordreset-text' => 'Taposon ang ini nga formas agod nga makabaton sang e-mail nga nagapahanumdom sang mga detalye sang imo akawnt.',
 'passwordreset-legend' => 'Liwaton ang pasword',
 'passwordreset-disabled' => 'Ang mga pagliwat sang pasword gin-untat sa sini nga wiki.',
-'passwordreset-pretext' => '{{PLURAL:$1||Magbutang sang isa sang mga datos sa idalom}}',
 'passwordreset-username' => 'Ngalan sang Manog-gamit"',
 'passwordreset-domain' => 'Domeyn:',
 'passwordreset-capture' => 'Lantawon ang nagresuta nga e-mail?',
@@ -1065,7 +1046,6 @@ Ang mga detalye mahimo nga makita sa [{{fullurl:{{#Special:Log}}/delete|page={{F
 'searchmenu-legend' => 'Mga pililian sa pagpangita',
 'searchmenu-exists' => "'''May yara sang panid nga ginhingalanan nga \"[[:\$1]]\" sa sini nga wiki.'''",
 'searchmenu-new' => "'''Gintuga ang panid nga \"[[:\$1]]\" sa sini nga wiki!'''",
-'searchhelp-url' => 'Help:Mga Unod',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Magbasa-basa sang mga panid gamit ang ini nga unpali]]',
 'searchprofile-articles' => 'Mga panid sang unod',
 'searchprofile-project' => 'Mga panid sang Bulig kag Proyekto',
@@ -1110,15 +1090,6 @@ Testingan mo i-prefiks ang imo pamangkot upod sang ''tanan:'' para makita mo ang
 Mahimo ka nga magpangita gamit ang Google sa sini nga tion.
 Tandai nga ang ila nga palasulundan sang mga unod sang {{SITENAME}} mahimo nga madaan na.',
 
-# Quickbar
-'qbsettings' => 'Bar nga mahapos',
-'qbsettings-none' => 'Wala',
-'qbsettings-fixedleft' => 'Gintadlong sa wala',
-'qbsettings-fixedright' => 'Gintadlong sa too',
-'qbsettings-floatingleft' => 'Nagalutaw sa wala',
-'qbsettings-floatingright' => 'Nagalutaw sa too',
-'qbsettings-directionality' => 'Indi na maliwat, depende sa direksyon sang iskrip sang imo lenggwahe',
-
 # Preferences page
 'preferences' => 'Mga Ginabasehan',
 'mypreferences' => 'Mga Ginabasehan',
@@ -1151,7 +1122,6 @@ Tandai nga ang ila nga palasulundan sang mga unod sang {{SITENAME}} mahimo nga m
 'resetprefs' => 'Panason ang mga wala matipon nga mga pagbag-o',
 'restoreprefs' => 'Ibalik ang tanan nga default settings',
 'prefs-editing' => 'Pag-ilis',
-'prefs-edit-boxsize' => 'Ang kadakoon sang bintana sang pag-ilis.',
 'rows' => 'Mga linya:',
 'columns' => 'Mga kulumna:',
 'searchresultshead' => 'Pangita-a',
@@ -1162,9 +1132,6 @@ Tandai nga ang ila nga palasulundan sang mga unod sang {{SITENAME}} mahimo nga m
 'recentchangesdays-max' => 'Indi magtaas sa $1 {{PLURAL:$1|ka adlaw|ka mga adlaw}}',
 'recentchangescount' => 'Numero sang mga pag-ilis nga ipakita by default:',
 'prefs-help-recentchangescount' => 'Nadala diri ang mga bag-o nga gin-ilisan, kasaysayan sang mga panid, kag mga log.',
-'prefs-help-watchlist-token' => 'Ang pagsulat sa sini nga lugar gamit ang sekreto nga yabi magatuga sang RSS feed para sa lista sang imo ginabantayn.
-Ang bisan sin-o nga nakahibalo sang sini nga yabi sa sini nga lugar mahimo nga makabasa sang imo lista, gani magpili sang segurado nga balor.
-Ini isa ka wala pinilian nga balor nga imo mahimo gamiton: $1',
 'savedprefs' => 'Ang imo mga pagpalabi gintipon na.',
 'timezonelegend' => 'Sona sang oras:',
 'localtime' => 'Lokal nga oras:',
@@ -1195,7 +1162,6 @@ Ini isa ka wala pinilian nga balor nga imo mahimo gamiton: $1',
 'prefs-reset-intro' => 'Indi mo magamit ang ini nga panid agod mailisan ang imo mga pagpalabi sa mga default sang site.
 Indi na ini maliwat pa.',
 'prefs-emailconfirm-label' => 'Paagkumperma sang e-mail:',
-'prefs-textboxsize' => 'Kadakoon sang bintana sang pag-ilis',
 'youremail' => 'E-mail:',
 'username' => 'Ngalan sang Manog-gamit:',
 'uid' => 'ID sang manuggamit:',
@@ -1433,7 +1399,6 @@ Ang imo adres sang e-mail wala ginapakita kon kontakon ka sang iban.',
 'recentchangeslinked-feed' => 'May labot nga pag-ilis',
 'recentchangeslinked-toolbox' => 'May labot nga pag-ilis',
 'recentchangeslinked-title' => 'Mga ginlain nga kapareho kay "$1"',
-'recentchangeslinked-noresult' => 'Wala mga pagbag-o sa mga sugpon nga mga panid sa ginhatag nga tiempo.',
 'recentchangeslinked-summary' => "Ini ang mga lista sang mga bag-o lang gid nga nahimo nga mga pahina nga gintabid halin sa gin klaro nga pahina (o mga katapo sa mga kategorya nga gin klaro).
 Mga Pahina sa [[Special:Watchlist|imo lista-lantaw]] ay '''dukot'''.",
 'recentchangeslinked-page' => 'Ngalan ka Pahina:',
@@ -1519,8 +1484,6 @@ Ang gusto nga {{PLURAL:\$3|tipo sang file amo|mga tipo sang file amo ang}} \$2."
 
 # Statistics
 'statistics' => 'Mga Statistik',
-
-'disambiguationspage' => 'Template:disambig',
 
 'brokenredirects-edit' => 'ilisan',
 'brokenredirects-delete' => 'panason',
@@ -1900,7 +1863,7 @@ Ang iban ay pagataguon sang default.
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-lightsource' => 'Ginghalinan sang sanag',
 'exif-flash' => 'Igpat',
 'exif-subjectarea' => 'Subject area',

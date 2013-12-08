@@ -63,9 +63,6 @@ $messages = array(
 'tog-shownumberswatching' => '显示有几多人监视',
 'tog-oldsig' => '现有𠮶签名：',
 'tog-fancysig' => '搦签名以维基字对待（冇自动连结）',
-'tog-externaleditor' => '默认用外部编辑器（专家用𠮶功能，要到倷𠮶电脑上头特别𠮶设置一下）',
-'tog-externaldiff' => '默认用外部差异比较器（专家用𠮶功能，要到汝𠮶电脑上头特别𠮶设置下。[//www.mediawiki.org/wiki/Manual:External_editors 别𠮶信息]）',
-'tog-showjumplinks' => '启用“跳到”访问链接',
 'tog-uselivepreview' => '使用即时预览（JavaScript）（实验中）',
 'tog-forceeditsummary' => '冇改动注解时要同偶话',
 'tog-watchlisthideown' => '监视列表弆到偶𠮶编辑',
@@ -258,7 +255,7 @@ $messages = array(
 
 $1',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '关于 {{SITENAME}}',
 'aboutpage' => 'Project:关于',
 'copyright' => '个版𠮶内容系根据$1𠮶条款发布。',
@@ -268,7 +265,6 @@ $1',
 'disclaimers' => '免责声明',
 'disclaimerpage' => 'Project:免责声明',
 'edithelp' => '编写帮助',
-'edithelppage' => 'Help:啷编写文章',
 'helppage' => 'Help:说明',
 'mainpage' => '封面',
 'mainpage-description' => '封面',
@@ -337,17 +333,6 @@ $1',
 # General errors
 'error' => '错误',
 'databaseerror' => '数据库错误',
-'dberrortext' => '数据库查询语法有错。
-可能系软件有错。
-最晏𠮶数据库指令系:
-<blockquote><tt>$1</tt></blockquote>
-来自函数 "<tt>$2</tt>"。
-MySQL回到错误 "<tt>$3: $4</tt>"。',
-'dberrortextcl' => '数据库查询语法有错。
-最晏𠮶数据库指令系:
-“$1”
-来自函数“$2”。
-MySQL回到错误“$3: $4”。',
 'laggedslavemode' => '警告：页面可能冇有新近内容。',
 'readonly' => '数据库上正锁啰',
 'enterlockreason' => '请输入锁到数据库𠮶理由，包括预计几时间解锁',
@@ -388,7 +373,6 @@ MySQL回到错误“$3: $4”。',
 'editinginterface' => "'''Warning:''' You are editing a page which is used to provide interface text for the software.
 Changes to this page will affect the appearance of the user interface for other users.
 For translations, please consider using [//translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net], the MediaWiki localisation project.",
-'sqlhidden' => '（SQL 弆到𠮶查询）',
 'cascadeprotected' => '个页已拖保护，因为佢拖“联锁保护”𠮶{{PLURAL:$1|一只|几只}}拖保护页包到：
 $2',
 'namespaceprotected' => "倷冇权编写'''$1'''空间里度𠮶页面。",
@@ -468,7 +452,7 @@ $2',
 'newpassword' => '新密码：',
 'retypenew' => '确认密码:',
 'resetpass_submit' => '设定密码同到登入',
-'resetpass_success' => '倷𠮶密码改正喽！正帮倷登入...',
+'changepassword-success' => '倷𠮶密码改正喽！正帮倷登入...',
 'resetpass_forbidden' => '到{{SITENAME}}上改伓正密码',
 'resetpass-submit-loggedin' => '设过帐户密码',
 'resetpass-submit-cancel' => '取消',
@@ -743,7 +727,6 @@ $2',
 'viewprevnext' => '眵吖（$1 {{int:pipe-separator}} $2） （$3）',
 'searchmenu-exists' => "'''个只wiki已有一只叫「[[:$1]]」𠮶页。'''",
 'searchmenu-new' => "'''嘚个只wiki上建立「[[:$1]]」页！'''",
-'searchhelp-url' => 'Help:说明',
 'searchprofile-articles' => '内容页',
 'searchprofile-project' => '帮助同得计划页',
 'searchprofile-images' => '多媒体',
@@ -775,14 +758,6 @@ $2',
 'powersearch-redir' => '重定向𠮶表单',
 'powersearch-field' => '寻',
 'searchdisabled' => '{{SITENAME}}𠮶搜索功能已经关闭。倷可以用Google寻吖。但系佢𠮶索引可能系早先𠮶。',
-
-# Quickbar
-'qbsettings' => '快捷导航条',
-'qbsettings-none' => '冇',
-'qbsettings-fixedleft' => '左首固定',
-'qbsettings-fixedright' => '右首固定',
-'qbsettings-floatingleft' => '左首漂移',
-'qbsettings-floatingright' => '左首漂移',
 
 # Preferences page
 'preferences' => '参数设置',
@@ -916,7 +891,6 @@ $2',
 'recentchangeslinked-feed' => '链接页𠮶更改',
 'recentchangeslinked-toolbox' => '链接页𠮶更改',
 'recentchangeslinked-title' => '链接页𠮶改动到 "$1"',
-'recentchangeslinked-noresult' => '个段时间𠮶链接页冇更改。',
 'recentchangeslinked-summary' => "个只特殊页列出个页连出去页面𠮶最晏改动（或系某只分类𠮶页面）。
 [[Special:Watchlist|倷𠮶监视列表]]页面会用'''粗体'''显到。",
 'recentchangeslinked-page' => '页面名子：',
@@ -1112,11 +1086,6 @@ $2',
 'statistics-users-active-desc' => '头$1日操作过𠮶用户',
 'statistics-mostpopular' => '眵𠮶人最多𠮶页面',
 
-'disambiguations' => '扤清楚页',
-'disambiguationspage' => 'Template:扤清楚',
-'disambiguations-text' => "底下𠮶页面都有到'''扤清楚页'''𠮶链接, 但系佢俚应当系连到正当𠮶标题。<br />
-如果一只页面系链接自[[MediaWiki:Disambiguationspage]]，佢会拖当成扤清楚页。",
-
 'doubleredirects' => '双重重定向页面',
 'doubleredirectstext' => '底下𠮶重定向链接到别只重定向页面:',
 'double-redirect-fixed-move' => '[[$1]]拕移动正，佢个下拕重定向到[[$2]]。',
@@ -1269,10 +1238,9 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'unwatch' => '莫眏到',
 'unwatchthispage' => '莫眏到个页',
 'notanarticle' => '伓系文章',
-'watchnochange' => '一径到显示𠮶时间之内，倷眏到𠮶页面冇改动。',
 'watchlist-details' => '$1只页面（伓算讨论页） 拖眏到哩',
-'wlheader-enotif' => '* 启动嘞email通知功能。',
-'wlheader-showupdated' => "* 上回倷眵𠮶页面改动𠮶部分用'''粗体'''显到",
+'wlheader-enotif' => '启动嘞email通知功能。',
+'wlheader-showupdated' => "上回倷眵𠮶页面改动𠮶部分用'''粗体'''显到",
 'watchmethod-recent' => '眵吖拖眏到𠮶页面𠮶最近编辑',
 'watchmethod-list' => '望吖监视页里头最晏𠮶改动',
 'watchlistcontains' => '倷𠮶监视列表包含$1只页面。',
@@ -1547,11 +1515,8 @@ $1',
 'ipb_already_blocked' => '锁到嘞"$1"',
 'ipb_cant_unblock' => '错误: 冇发现Block ID $1。个只IP话伓定拖解封喽。',
 'ip_range_invalid' => '冇用𠮶IP范围。',
-'blockme' => '封吥偶去',
 'proxyblocker' => '代理封锁器',
-'proxyblocker-disabled' => '个只功能用伓正喽。',
 'proxyblockreason' => '倷𠮶IP系一只公开𠮶代理，佢拖封到嘞。请联络倷𠮶Internet服务提供商或技术帮助再告诵佢俚个只严重𠮶安全问题。',
-'proxyblocksuccess' => '扤正啰。',
 'sorbsreason' => '{{SITENAME}}用𠮶 DNSBL 查到倷𠮶IP地址系只公开代理服务器。',
 'sorbs_create_account_reason' => '{{SITENAME}}用𠮶 DNSBL 检查到倷𠮶IP地址系只公开代理服务器，倷也就新开伓正帐户。',
 
@@ -1858,7 +1823,7 @@ $1',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => '阔',
 'exif-imagelength' => '高',
 'exif-bitspersample' => '每像素byte数',
@@ -1972,7 +1937,7 @@ $1',
 'exif-gpsdatestamp' => 'GPS日期',
 'exif-gpsdifferential' => 'GPS差动修正',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => '冇压缩',
 
 'exif-unknowndate' => '未知𠮶日期',
@@ -2224,7 +2189,6 @@ $3
 'version-variables' => '变量',
 'version-other' => '别𠮶',
 'version-mediahandlers' => '媒体处理程序',
-'version-extension-functions' => '扩展功能',
 'version-parser-extensiontags' => '解析器扩展标签',
 'version-hook-name' => '钩子名',
 'version-hook-subscribedby' => '订阅人',
@@ -2233,11 +2197,6 @@ $3
 'version-poweredby-credits' => "个只 Wiki 由 '''[//www.mediawiki.org/ MediaWiki]''' 驱动，版权所有 © 2001-$1 $2。",
 'version-software' => '装正𠮶软件',
 'version-software-version' => '版本',
-
-# Special:FilePath
-'filepath' => '文件路径',
-'filepath-page' => '文件：',
-'filepath-submit' => '路径',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => '文件名:',

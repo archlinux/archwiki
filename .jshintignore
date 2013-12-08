@@ -1,3 +1,7 @@
+# Generated documentation
+docs/html/
+docs/js/
+
 # third-party libs
 extensions/
 node_modules/
@@ -19,9 +23,7 @@ resources/jquery.effects/
 resources/jquery.tipsy/
 resources/jquery.ui/
 resources/mediawiki.libs/
-
-# legacy scripts
-skins/common/
+resources/jquery.chosen/chosen.jquery.js
 
 # github.com/jshint/jshint/issues/729
 tests/qunit/suites/resources/mediawiki/mediawiki.jscompat.test.js

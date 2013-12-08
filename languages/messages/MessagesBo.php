@@ -221,7 +221,7 @@ $messages = array(
 'jumptosearch' => 'འཚོལ།',
 'pool-errorunknown' => 'ངོས་མ་ཟིན་པའི་ནོར་འཁྲུལ།',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}}ངེད་ཀྱི་སྐོར།',
 'aboutpage' => 'Project: ཡི་སྐོར།',
 'copyright' => 'དྲ་བའི་ནང་དོན་$1སྟེང་དུ་ཡོད།',
@@ -231,7 +231,6 @@ $messages = array(
 'disclaimers' => 'དགག་བྱ།',
 'disclaimerpage' => 'Project:སྤྱིའི་དགག་བྱ།',
 'edithelp' => 'རྩོམ་སྒྲིག་རོགས་རམ།',
-'edithelppage' => 'Help:རྩོམ་སྒྲིག',
 'helppage' => 'Help:ནང་དོན་',
 'mainpage' => 'གཙོ་ངོས།',
 'mainpage-description' => 'གཙོ་ངོས།',
@@ -333,7 +332,7 @@ $messages = array(
 'newpassword' => 'ལམ་ཡིག་གསར་བ།',
 'retypenew' => 'ལམ་ཡིག་གསར་བ་བསྐྱར་འཇུག་བྱོས།',
 'resetpass_submit' => 'ལམ་ཡིག་བསྒྲིགས་ནས་ནང་འཛུལ་བྱེད་པ།',
-'resetpass_success' => 'ལམ་ཡིག་བདེ་ལེགས་ངང་བརྗེས་ཟིན། ད་ནི་ནང་འཛུལ་བྱེད་བཞིན་པ་་་',
+'changepassword-success' => 'ལམ་ཡིག་བདེ་ལེགས་ངང་བརྗེས་ཟིན། ད་ནི་ནང་འཛུལ་བྱེད་བཞིན་པ་་་',
 'resetpass_forbidden' => 'ལམ་ཡིག་བརྗེ་མི་ཐུབ།',
 'resetpass-submit-loggedin' => 'ལམ་ཡིག་བརྗེ་བ།',
 'resetpass-submit-cancel' => 'རྩིས་མེད་ཐོངས།',

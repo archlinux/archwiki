@@ -183,6 +183,7 @@ if __name__ == '__main__':
 	To check a reply, hash it in the same way with the same salt and
 	secret key, then compare with the hash value given.
 	"""
+	script_dir = os.path.dirname(os.path.realpath(__file__))
 	parser = OptionParser()
 	parser.add_option("--wordlist", help="A list of words (required)", metavar="WORDS.txt")
 	parser.add_option("--random", help="Use random charcters instead of a wordlist", action="store_true")
@@ -191,7 +192,7 @@ if __name__ == '__main__':
 	parser.add_option("--font", help="The font to use (required)", metavar="FONT.ttf")
 	parser.add_option("--font-size", help="The font size (default 40)", metavar="N", type='int', default=40)
 	parser.add_option("--count", help="The maximum number of images to make (default 20)", metavar="N", type='int', default=20)
-	parser.add_option("--blacklist", help="A blacklist of words that should not be used", metavar="FILE")
+	parser.add_option("--blacklist", help="A blacklist of words that should not be used", metavar="FILE", default=os.path.join(script_dir, "blacklist"))
 	parser.add_option("--fill", help="Fill the output directory to contain N files, overrides count, cannot be used with --dirs", metavar="N", type='int')
 	parser.add_option("--dirs", help="Put the images into subdirectories N levels deep - $wgCaptchaDirectoryLevels", metavar="N", type='int')
 	parser.add_option("--verbose", "-v", help="Show debugging information", action='store_true')
@@ -219,8 +220,8 @@ if __name__ == '__main__':
 		font = opts.font
 	else:
 		sys.exit("Need to specify the location of a font")
-	
-	blacklistfile = opts.blacklist
+
+	blacklist = read_wordlist(opts.blacklist)
 	count = opts.count
 	fill = opts.fill
 	dirs = opts.dirs
@@ -236,12 +237,7 @@ if __name__ == '__main__':
 		words = [x for x in words
 			if len(x) in (4,5) and x[0] != "f"
 			and x[0] != x[1] and x[-1] != x[-2]]
-	
-	if blacklistfile:
-		blacklist = read_wordlist(blacklistfile)
-	else:
-		blacklist = []
-	
+
 	for i in range(count):
 		word = pick_word(words, blacklist, verbose, opts.number_words, opts.min_length, opts.max_length)
 		salt = "%08x" % random.randrange(2**32)

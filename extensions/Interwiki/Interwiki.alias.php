@@ -5,6 +5,7 @@
  * @file
  * @ingroup Extensions
  */
+// @codingStandardsIgnoreFile
 
 $specialPageAliases = array();
 
@@ -41,6 +42,16 @@ $specialPageAliases['br'] = array(
 /** Bosnian (bosanski) */
 $specialPageAliases['bs'] = array(
 	'Interwiki' => array( 'Medjuwiki' ),
+);
+
+/** Min Dong Chinese (Mìng-dĕ̤ng-ngṳ̄) */
+$specialPageAliases['cdo'] = array(
+	'Interwiki' => array( '跨維基' ),
+);
+
+/** Chechen (нохчийн) */
+$specialPageAliases['ce'] = array(
+	'Interwiki' => array( 'Юкъарвики' ),
 );
 
 /** German (Deutsch) */

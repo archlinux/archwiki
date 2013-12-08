@@ -48,7 +48,10 @@ $wgExtensionCredits['parserhook']['SyntaxHighlight_GeSHi'] = array(
 	'url'            => 'https://www.mediawiki.org/wiki/Extension:SyntaxHighlight_GeSHi',
 );
 
-$wgSyntaxHighlightDefaultLang = null; //Change this in LocalSettings.php
+// Change these in LocalSettings.php
+$wgSyntaxHighlightDefaultLang = null;
+$wgSyntaxHighlightKeywordLinks = false;
+
 $dir = dirname(__FILE__) . '/';
 $wgExtensionMessagesFiles['SyntaxHighlight_GeSHi'] = $dir . 'SyntaxHighlight_GeSHi.i18n.php';
 $wgAutoloadClasses['SyntaxHighlight_GeSHi'] = $dir . 'SyntaxHighlight_GeSHi.class.php';

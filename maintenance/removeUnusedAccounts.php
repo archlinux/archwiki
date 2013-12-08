@@ -23,7 +23,7 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that removes unused user accounts from the database.
@@ -74,9 +74,12 @@ class RemoveUnusedAccounts extends Maintenance {
 
 		# If required, go back and delete each marked account
 		if ( $count > 0 && $this->hasOption( 'delete' ) ) {
-			$this->output( "\nDeleting inactive accounts..." );
+			$this->output( "\nDeleting unused accounts..." );
 			$dbw = wfGetDB( DB_MASTER );
 			$dbw->delete( 'user', array( 'user_id' => $del ), __METHOD__ );
+			$dbw->delete( 'user_groups', array( 'ug_user' => $del ), __METHOD__ );
+			$dbw->delete( 'user_former_groups', array( 'ufg_user' => $del ), __METHOD__ );
+			$dbw->delete( 'user_properties', array( 'up_user' => $del ), __METHOD__ );
 			$dbw->delete( 'logging', array( 'log_user' => $del ), __METHOD__ );
 			$dbw->delete( 'recentchanges', array( 'rc_user' => $del ), __METHOD__ );
 			$this->output( "done.\n" );
@@ -124,4 +127,4 @@ class RemoveUnusedAccounts extends Maintenance {
 }
 
 $maintClass = "RemoveUnusedAccounts";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

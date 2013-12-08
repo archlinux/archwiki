@@ -97,15 +97,21 @@ $namespaceGenderAliases = array(
 $dateFormats = array(
 	'mdy time' => 'H:i',
 	'mdy date' => 'M j, Y',
+	'mdy monthonly' => 'F Y',
 	'mdy both' => 'H:i, M j, Y',
+	'mdy pretty' => 'j xg',
 
 	'dmy time' => 'H:i',
 	'dmy date' => 'j M Y',
+	'dmy monthonly' => 'F Y',
 	'dmy both' => 'H:i, j M Y',
+	'dmy pretty' => 'j xg',
 
 	'ymd time' => 'H:i',
 	'ymd date' => 'Y M j',
+	'ymd monthonly' => 'Y F',
 	'ymd both' => 'H:i, Y M j',
+	'ymd pretty' => 'j xg',
 );
 
 $fallback8bitEncoding = 'iso-8859-2';
@@ -333,9 +339,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Pokaż liczbę użytkowników obserwujących stronę',
 'tog-oldsig' => 'Twój obecny podpis',
 'tog-fancysig' => 'Traktuj podpis jako wikikod (nie linkuj automatycznie całości)',
-'tog-externaleditor' => 'Domyślnie używaj zewnętrznego edytora (tylko dla zaawansowanych użytkowników; wymaga odpowiedniego skonfigurowania komputera)',
-'tog-externaldiff' => 'Domyślnie używaj zewnętrznego programu pokazującego zmiany (tylko dla zaawansowanych użytkowników; wymaga odpowiedniego skonfigurowania komputera)',
-'tog-showjumplinks' => 'Włącz odnośniki „skocz do”',
 'tog-uselivepreview' => 'Używaj dynamicznego podglądu (eksperymentalny)',
 'tog-forceeditsummary' => 'Informuj o niewypełnieniu opisu zmian',
 'tog-watchlisthideown' => 'Ukryj moje edycje na liście obserwowanych',
@@ -349,6 +352,8 @@ $messages = array(
 'tog-showhiddencats' => 'Pokazuj ukryte kategorie',
 'tog-noconvertlink' => 'Wyłącz konwersję tytułów w linkach',
 'tog-norollbackdiff' => 'Pomiń pokazywanie zmian po użyciu funkcji „cofnij”',
+'tog-useeditwarning' => 'Ostrzegaj mnie, gdy opuszczam stronę edycji bez zapisania zmian',
+'tog-prefershttps' => 'Zawsze używaj bezpiecznego połączenia po zalogowaniu',
 
 'underline-always' => 'zawsze',
 'underline-never' => 'nigdy',
@@ -412,6 +417,18 @@ $messages = array(
 'oct' => 'paź',
 'nov' => 'lis',
 'dec' => 'gru',
+'january-date' => '$1 stycznia',
+'february-date' => '$1 lutego',
+'march-date' => '$1 marca',
+'april-date' => '$1 kwietnia',
+'may-date' => '$1 maja',
+'june-date' => '$1 czerwca',
+'july-date' => '$1 lipca',
+'august-date' => '$1 sierpnia',
+'september-date' => '$1 września',
+'october-date' => '$1 października',
+'november-date' => '$1 listopada',
+'december-date' => '$1 grudnia',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Kategoria|Kategorie}}',
@@ -493,6 +510,7 @@ $messages = array(
 'create-this-page' => 'Utwórz tę stronę',
 'delete' => 'Usuń',
 'deletethispage' => 'Usuń tę stronę',
+'undeletethispage' => 'Przywróć tę stronę',
 'undelete_short' => 'odtwórz {{PLURAL:$1|1 wersję|$1 wersje|$1 wersji}}',
 'viewdeleted_short' => 'Podgląd {{PLURAL:$1|usuniętej|$1 usuniętych}} wersji',
 'protect' => 'Zabezpiecz',
@@ -536,7 +554,7 @@ $1',
 'pool-queuefull' => 'Kolejka zadań jest pełna',
 'pool-errorunknown' => 'Błąd nieznany',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'O {{GRAMMAR:MS.lp|{{SITENAME}}}}',
 'aboutpage' => 'Project:O {{GRAMMAR:MS.lp|{{SITENAME}}}}',
 'copyright' => 'Treść udostępniana na licencji $1, jeśli nie podano inaczej.',
@@ -546,7 +564,6 @@ $1',
 'disclaimers' => 'Informacje prawne',
 'disclaimerpage' => 'Project:Informacje prawne',
 'edithelp' => 'Pomoc w edycji',
-'edithelppage' => 'Help:Jak edytować stronę',
 'helppage' => 'Help:Spis treści',
 'mainpage' => 'Strona główna',
 'mainpage-description' => 'Strona główna',
@@ -624,17 +641,12 @@ Listę dostępnych stron specjalnych znajdziesz [[Special:SpecialPages|tutaj]].'
 # General errors
 'error' => 'Błąd',
 'databaseerror' => 'Błąd bazy danych',
-'dberrortext' => 'Wystąpił błąd składni w zapytaniu do bazy danych.
-Może to oznaczać błąd w oprogramowaniu.
-Ostatnie, nieudane zapytanie to:
-<blockquote><code>$1</code></blockquote>
-wysłane przez funkcję „<code>$2</code>”.
-Baza danych zgłosiła błąd „<samp>$3: $4</samp>”.',
-'dberrortextcl' => 'Wystąpił błąd składni w zapytaniu do bazy danych.
-Ostatnie, nieudane zapytanie to:
-„$1”
-wywołane zostało przez funkcję „$2”.
-Baza danych zgłosiła błąd „$3: $4”',
+'databaseerror-text' => 'Wystąpił błąd podczas wykonywania zapytania do bazy danych.
+Może to wskazywać na błąd w oprogramowaniu.',
+'databaseerror-textcl' => 'Wystąpił błąd podczas wykonywania zapytania do bazy danych.',
+'databaseerror-query' => 'Zapytanie: $1',
+'databaseerror-function' => 'Funkcja: $1',
+'databaseerror-error' => 'Błąd: $1',
 'laggedslavemode' => 'Uwaga! Ta strona może nie zawierać najnowszych aktualizacji.',
 'readonly' => 'Baza danych jest zablokowana',
 'enterlockreason' => 'Podaj powód zablokowania bazy oraz szacunkowy termin jej odblokowania',
@@ -668,6 +680,7 @@ Możliwe, że zostały już usunięte przez kogoś innego.',
 'cannotdelete-title' => 'Nie można usunąć strony „$1”.',
 'delete-hook-aborted' => 'Usuwanie przerwane przez hak.
 Przyczyna nieokreślona.',
+'no-null-revision' => 'Nie można utworzyć zerowej wersji strony "$1"',
 'badtitle' => 'Niepoprawny tytuł',
 'badtitletext' => 'Podano niepoprawny tytuł strony. Prawdopodobnie jest pusty lub zawiera znaki, których użycie jest zabronione.',
 'perfcached' => 'Poniższe dane są kopią z pamięci podręcznej i mogą być nieaktualne. Maksymalnie {{PLURAL:$1|jeden wynik jest|$1 wyniki są|$1 wyników jest}} w pamięci podręcznej.',
@@ -688,12 +701,15 @@ By dodać lub zmienić tłumaczenia wszystkich serwisów wiki, użyj [//translat
 'editinginterface' => "'''Ostrzeżenie:''' Edytujesz stronę, która zawiera tekst interfejsu oprogramowania.
 Zmiany na tej stronie zmienią wygląd interfejsu dla innych użytkowników tej wiki.
 By dodać lub zmienić tłumaczenia wszystkich wiki, użyj [//translatewiki.net/wiki/Main_Page?setlang=pl translatewiki.net], specjalizowany projekt lokalizacji oprogramowania MediaWiki.",
-'sqlhidden' => '(ukryto zapytanie SQL)',
 'cascadeprotected' => 'Ta strona została zabezpieczona przed edycją, ponieważ jest ona zawarta na {{PLURAL:$1|następującej stronie, która została zabezpieczona|następujących stronach, które zostały zabezpieczone}} z włączoną opcją dziedziczenia:
 $2',
 'namespaceprotected' => "Nie masz uprawnień do edytowania stron w przestrzeni nazw '''$1'''.",
 'customcssprotected' => 'Nie jesteś uprawniony do edytowania tej strony CSS, ponieważ zawiera ona ustawienia osobiste innego użytkownika.',
 'customjsprotected' => 'Nie jesteś uprawniony do edytowania tej strony JavaScript, ponieważ zawiera ona ustawienia osobiste innego użytkownika.',
+'mycustomcssprotected' => 'Nie masz uprawnień do edytowania tej strony CSS.',
+'mycustomjsprotected' => 'Nie masz uprawnień do edytowania tej strony JavaScript.',
+'myprivateinfoprotected' => 'Nie masz uprawnień do edytowania swoich prywatnych danych.',
+'mypreferencesprotected' => 'Nie masz uprawnień do edytowania swoich preferencji.',
 'ns-specialprotected' => 'Stron specjalnych nie można edytować.',
 'titleprotected' => "Utworzenie strony o tej nazwie zostało zablokowane przez [[User:$1|$1]].
 Uzasadnienie blokady: ''$2''.",
@@ -718,10 +734,19 @@ Zauważ, że do momentu wyczyszczenia pamięci podręcznej przeglądarki niektó
 'welcomecreation-msg' => 'Twoje konto zostało utworzone.
 Nie zapomnij dostosować [[Special:Preferences|preferencji]].',
 'yourname' => 'Nazwa {{GENDER:|użytkownika|użytkowniczki}}',
+'userlogin-yourname' => 'Nazwa użytkownika',
+'userlogin-yourname-ph' => 'Wprowadź swoją nazwę użytkownika',
+'createacct-another-username-ph' => 'Wprowadź nazwę użytkownika',
 'yourpassword' => 'Hasło',
+'userlogin-yourpassword' => 'Hasło',
+'userlogin-yourpassword-ph' => 'Wpisz swoje hasło',
+'createacct-yourpassword-ph' => 'Wprowadź hasło',
 'yourpasswordagain' => 'Powtórz hasło',
+'createacct-yourpasswordagain' => 'Potwierdź hasło',
+'createacct-yourpasswordagain-ph' => 'Wprowadź hasło jeszcze raz',
 'remembermypassword' => 'Zapamiętaj moje hasło na tym komputerze (maksymalnie przez $1 {{PLURAL:$1|dzień|dni}})',
-'securelogin-stick-https' => 'Po zalogowaniu utrzymuj połączenie poprzez HTTPS',
+'userlogin-remembermypassword' => 'Nie wylogowuj mnie',
+'userlogin-signwithsecure' => 'Użyj bezpiecznego połączenia',
 'yourdomainname' => 'Twoja domena',
 'password-change-forbidden' => 'Nie można zmieniać haseł na tej wiki.',
 'externaldberror' => 'Wystąpił błąd zewnętrznej bazy autentyfikacyjnej lub nie posiadasz uprawnień koniecznych do aktualizacji zewnętrznego konta.',
@@ -733,18 +758,41 @@ Nie zapomnij dostosować [[Special:Preferences|preferencji]].',
 'logout' => 'Wyloguj',
 'userlogout' => 'Wyloguj',
 'notloggedin' => 'Nie jesteś zalogowany',
+'userlogin-noaccount' => 'Nie masz konta?',
+'userlogin-joinproject' => 'Dołącz do {{GRAMMAR:D.lp|{{SITENAME}}}}',
 'nologin' => 'Nie masz konta? $1.',
 'nologinlink' => 'Zarejestruj się',
 'createaccount' => 'Załóż nowe konto',
 'gotaccount' => "Masz już konto? '''$1'''.",
 'gotaccountlink' => 'Zaloguj się',
 'userlogin-resetlink' => 'Zapomniałeś danych do zalogowania się?',
+'userlogin-resetpassword-link' => 'Nie pamiętasz hasła?',
+'helplogin-url' => 'Help:Logowanie',
+'userlogin-helplink' => '[[{{MediaWiki:helplogin-url}}|Pomoc z logowaniem]]',
+'createacct-join' => 'Wpisz poniżej swoje dane.',
+'createacct-another-join' => 'Wprowadź szczegóły nowego konta poniżej.',
+'createacct-emailrequired' => 'Adres e‐mail',
+'createacct-emailoptional' => 'Adres e-mail (opcjonalnie)',
+'createacct-email-ph' => 'Wpisz swój adres e-mail',
+'createacct-another-email-ph' => 'Podaj adres e-mail',
 'createaccountmail' => 'Użyj tymczasowego hasła wygenerowanego losowo i wyślij je na podany adres e-mail',
+'createacct-realname' => 'Prawdziwe imię i nazwisko (opcjonalnie)',
 'createaccountreason' => 'Powód',
+'createacct-reason' => 'Powód',
+'createacct-reason-ph' => 'Dlaczego zakładasz kolejne konto',
+'createacct-captcha' => 'Kontrola bezpieczeństwa',
+'createacct-imgcaptcha-ph' => 'Wpisz tekst widoczny powyżej',
+'createacct-submit' => 'Utwórz konto',
+'createacct-another-submit' => 'Utwórz kolejne konto',
+'createacct-benefit-heading' => '{{grammar:B.lp|{{SITENAME}}}} tworzą ludzie tacy jak Ty.',
+'createacct-benefit-body1' => '{{PLURAL:$1|edycja|edycje|edycji}}',
+'createacct-benefit-body2' => '{{PLURAL:$1|strona|strony|stron}}',
+'createacct-benefit-body3' => '{{PLURAL:$1|użytkownik|użytkowników}} w ostatnim czasie',
 'badretype' => 'Wprowadzone hasła różnią się między sobą.',
 'userexists' => 'Wybrana przez Ciebie nazwa użytkownika jest już zajęta.
 Wybierz inną nazwę użytkownika.',
 'loginerror' => 'Błąd logowania',
+'createacct-error' => 'Błąd tworzenia konta',
 'createaccounterror' => 'Nie można utworzyć konta $1',
 'nocookiesnew' => 'Konto użytkownika zostało utworzone, ale nie jesteś zalogowany.
 {{SITENAME}} używa ciasteczek do przechowywania informacji o zalogowaniu się.
@@ -809,10 +857,12 @@ Zaloguj się teraz i je zmień.
 Możesz zignorować tę wiadomość, jeśli konto zostało utworzone przez pomyłkę.',
 'usernamehasherror' => 'Nazwa użytkownika nie może zawierać znaków kratki „#”',
 'login-throttled' => 'Zbyt wiele razy próbowałeś zalogować się na to konto.
-Odczekaj chwilę zanim ponowisz próbę.',
+Odczekaj $1 zanim ponowisz próbę.',
 'login-abort-generic' => 'Logowanie nieudane – przerwano',
 'loginlanguagelabel' => 'Język: $1',
 'suspicious-userlogout' => 'Żądanie wylogowania zostało odrzucone ponieważ wygląda na to, że zostało wysłane przez uszkodzoną przeglądarkę lub buforujący serwer proxy.',
+'createacct-another-realname-tip' => 'Wpisanie imienia i nazwiska nie jest obowiązkowe.
+Jeśli zdecydujesz się je podać, zostaną użyte, by udokumentować Twoje autorstwo.',
 
 # Email sending
 'php-mail-error-unknown' => 'Wystąpił nieznany błąd w funkcji PHP mail()',
@@ -829,8 +879,7 @@ Aby zakończyć proces logowania, musisz ustawić nowe hasło:',
 'newpassword' => 'Nowe hasło',
 'retypenew' => 'Powtórz nowe hasło',
 'resetpass_submit' => 'Ustaw hasło i zaloguj się',
-'resetpass_success' => 'Hasło zostało pomyślnie zmienione!
-Zaraz zostanesz zalogowany ...',
+'changepassword-success' => 'Twoje hasło zostało pomyślnie zmienione!',
 'resetpass_forbidden' => 'Hasła nie mogą zostać zmienione',
 'resetpass-no-info' => 'Musisz być zalogowany, by uzyskać bezpośredni dostęp do tej strony.',
 'resetpass-submit-loggedin' => 'Zmień hasło',
@@ -842,10 +891,11 @@ Być może właśnie zmienił{{GENDER:|eś|aś|eś(‐aś)}} swoje hasło lub po
 
 # Special:PasswordReset
 'passwordreset' => 'Wyczyść hasło',
-'passwordreset-text' => 'Wypełnij formularz, aby zresetować swoje hasło.',
+'passwordreset-text-one' => 'Wypełnij ten formularz, aby zresetować hasło.',
+'passwordreset-text-many' => '{{PLURAL:$1|Wypełnij jedno z poniższych pól, aby zresetować hasło.}}',
 'passwordreset-legend' => 'Zresetuj hasło',
 'passwordreset-disabled' => 'Na tej wiki wyłączono możliwość resetowania haseł.',
-'passwordreset-pretext' => '{{PLURAL:$1||Wprowadź jedną z danych poniżej}}',
+'passwordreset-emaildisabled' => 'Wysyłanie emaili zostało wyłączone na tej wiki',
 'passwordreset-username' => 'Nazwa użytkownika:',
 'passwordreset-domain' => 'Domena',
 'passwordreset-capture' => 'Czy pokazywać treść wiadomości e‐mail?',
@@ -868,7 +918,7 @@ Powinieneś zalogować się i zmienić hasło na nowe. Jeśli to ktoś inny popr
 Tymczasowe hasło – $2',
 'passwordreset-emailsent' => 'E‐mail pozwalający na zresetowanie hasła został wysłany.',
 'passwordreset-emailsent-capture' => 'Wyświetlony poniżej e‐mail pozwalający na zresetowanie hasła został wysłany.',
-'passwordreset-emailerror-capture' => 'Poniżej wyświetlony e‐mail z przypomnieniem został wygenerowany, ale nie udało się wysłać go do użytkownika: $1',
+'passwordreset-emailerror-capture' => 'Poniżej wyświetlony e‐mail pozwalający na zresetowanie hasła został wygenerowany, ale nie udało się wysłać go do {{GENDER:$2|użytkownika|użytkowniczki}}: $1',
 
 # Special:ChangeEmail
 'changeemail' => 'Zmiana adresu e‐mail',
@@ -881,6 +931,19 @@ Tymczasowe hasło – $2',
 'changeemail-password' => 'Hasło {{SITENAME}}:',
 'changeemail-submit' => 'Zapisz nowy',
 'changeemail-cancel' => 'Anuluj',
+
+# Special:ResetTokens
+'resettokens' => 'Resetuj tokeny',
+'resettokens-text' => 'Na tej stronie możesz zresetować tokeny, które umożliwiają dostęp do pewnych prywatnych danych związanych z Twoim kontem.
+
+Należy to zrobić, jeśli ktoś je poznał lub zdobył hasło do Twojego konta.',
+'resettokens-no-tokens' => 'Brak tokenów do zresetowania.',
+'resettokens-legend' => 'Resetuj tokeny',
+'resettokens-tokens' => 'Tokeny:',
+'resettokens-token-label' => '$1 (obecna wartość: $2)',
+'resettokens-watchlist-token' => 'Token kanału internetowego (Atom/RSS) zmian w [[Special:Watchlist|obserwowanych stronach]]',
+'resettokens-done' => 'Tokeny zresetowane.',
+'resettokens-resetbutton' => 'Zresetuj wybrane tokeny',
 
 # Edit page toolbar
 'bold_sample' => 'Tekst tłustą czcionką',
@@ -1084,12 +1147,15 @@ Wystąpił z nieokreślonej przyczyny.',
 Zdaje się, że została skasowana.',
 'edit-conflict' => 'Konflikt edycji.',
 'edit-no-change' => 'Twoja edycja została zignorowana, ponieważ nie zmienił{{GENDER:|eś|aś|eś(‐aś)}} niczego w tekście.',
+'postedit-confirmation' => 'Twoja edycja została zapisana.',
 'edit-already-exists' => 'Nie udało się stworzyć nowej strony.
 Strona już istnieje.',
 'defaultmessagetext' => 'Domyślny tekst komunikatu',
 'content-failed-to-parse' => 'Format zawartości typu $2 (dla modelu: $1) nieprawidłowy: $3',
 'invalid-content-data' => 'Zawartość strony zawiera nieprawidłowe dane',
 'content-not-allowed-here' => 'Zawartość tego typu ($1) nie jest dozwolona na stronie [[$2]]',
+'editwarning-warning' => 'Opuszczenie tej strony może spowodować utratę wprowadzonych przez Ciebie zmian.
+Jeśli jesteś zalogowany możesz wyłączyć wyświetlanie tego ostrzeżenia w zakładce Edycja w swoich preferencjach.',
 
 # Content models
 'content-model-wikitext' => 'wikitekst',
@@ -1124,6 +1190,7 @@ Argument ten będzie pominięty.',
 'undo-failure' => 'Edycja nie może zostać wycofana z powodu konfliktu z wersjami pośrednimi.',
 'undo-norev' => 'Edycja nie może być cofnięta, ponieważ nie istnieje lub została usunięta.',
 'undo-summary' => 'Anulowanie wersji $1 autora [[Special:Contributions/$2|$2]] ([[User talk:$2|dyskusja]])',
+'undo-summary-username-hidden' => 'Anulowanie wersji $1 autorstwa ukrytego użytkownika',
 
 # Account creation failure
 'cantcreateaccounttitle' => 'Nie można utworzyć konta',
@@ -1303,6 +1370,7 @@ Użycie linków nawigacyjnych kasuje wybór w kolumnie.',
 'compareselectedversions' => 'porównaj wybrane wersje',
 'showhideselectedversions' => 'Pokaż lub ukryj zaznaczone wersje',
 'editundo' => 'anuluj edycję',
+'diff-empty' => '(Brak różnic)',
 'diff-multi' => '(Nie pokazano $1 wersji {{PLURAL:$1|utworzonej|utworzonych}} przez {{PLURAL:$2|jednego użytkownika|$2 użytkowników}})',
 'diff-multi-manyusers' => '(Nie pokazano $1 {{PLURAL:$1|pośredniej wersji utworzonej|pośrednich wersji utworzonych}} przez {{PLURAL:$2|jednego użytkownika|$2 użytkowników}})',
 'difference-missing-revision' => '{{PLURAL:$2|Wersja|$2 wersje|$2 wersji}} #$1 strony "{{PAGENAME}}" nie {{PLURAL:$2|została znaleziona|zostały znalezione|zostało znalezionych}}.
@@ -1329,7 +1397,6 @@ Zazwyczaj jest to spowodowane przestarzałym linkiem do usuniętej strony. Powó
 'searchmenu-legend' => 'Opcje wyszukiwania',
 'searchmenu-exists' => "* Strona '''[[$1]]'''",
 'searchmenu-new' => "'''Utwórz stronę „[[:$1|$1]]” na tej wiki.'''",
-'searchhelp-url' => 'Help:Spis treści',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Przeglądaj strony zaczynające się od tego przedrostka]]',
 'searchprofile-articles' => 'Strony',
 'searchprofile-project' => 'Strony pomocy i projektu',
@@ -1372,15 +1439,7 @@ Zazwyczaj jest to spowodowane przestarzałym linkiem do usuniętej strony. Powó
 'searchdisabled' => 'Wyszukiwanie w {{GRAMMAR:MS.lp|{{SITENAME}}}} zostało wyłączone.
 W międzyczasie możesz skorzystać z wyszukiwania Google.
 Jednak informacje o treści {{GRAMMAR:D.lp|{{SITENAME}}}} mogą być w Google nieaktualne.',
-
-# Quickbar
-'qbsettings' => 'Pasek szybkiego dostępu',
-'qbsettings-none' => 'Brak',
-'qbsettings-fixedleft' => 'Stały, z lewej',
-'qbsettings-fixedright' => 'Stały, z prawej',
-'qbsettings-floatingleft' => 'Unoszący się, z lewej',
-'qbsettings-floatingright' => 'Unoszący się, z prawej',
-'qbsettings-directionality' => 'Ustawione na stałe, zgodnie z kierunkiem zapisywania w wybranym języku',
+'search-error' => 'Wystąpił błąd podczas wyszukiwania:$1',
 
 # Preferences page
 'preferences' => 'Preferencje',
@@ -1414,7 +1473,6 @@ Jednak informacje o treści {{GRAMMAR:D.lp|{{SITENAME}}}} mogą być w Google ni
 'resetprefs' => 'Cofnij niezapisane zmiany',
 'restoreprefs' => 'Przywróć wszystkie domyślne preferencje (we wszystkich sekcjach)',
 'prefs-editing' => 'Edycja',
-'prefs-edit-boxsize' => 'Rozmiar okna edycji.',
 'rows' => 'Wiersze',
 'columns' => 'Kolumny',
 'searchresultshead' => 'Wyszukiwanie',
@@ -1425,9 +1483,9 @@ Jednak informacje o treści {{GRAMMAR:D.lp|{{SITENAME}}}} mogą być w Google ni
 'recentchangesdays-max' => '(maksymalnie $1 {{PLURAL:$1|dzień|dni}})',
 'recentchangescount' => 'Domyślna liczba wyświetlanych edycji',
 'prefs-help-recentchangescount' => 'Uwzględnia ostatnie zmiany, historię stron i rejestry.',
-'prefs-help-watchlist-token' => 'Wypełnianie tego pola tajnym kluczem spowoduje wygenerowanie RSS dla Twojej listy obserwowanych.
-Każdy znający ten klucz będzie mógł zobaczyć listę obserwowanych, należy więc wybrać bezpieczną wartość.
-Wygenerowany losowo klucz, którego możesz użyć to $1',
+'prefs-help-watchlist-token2' => 'To jest tajny klucz umożliwiający dostęp do kanału internetowego zmian w obserwowanych przez ciebie stronach.
+Każdy, kto go zna, będzie mógł je zobaczyć, więc zachowaj go dla siebie.
+[[Special:ResetTokens|Kliknij tu, jeśli musisz go zresetować]].',
 'savedprefs' => 'Twoje preferencje zostały zapisane.',
 'timezonelegend' => 'Strefa czasowa',
 'localtime' => 'Czas lokalny',
@@ -1458,7 +1516,6 @@ Wygenerowany losowo klucz, którego możesz użyć to $1',
 'prefs-reset-intro' => 'Na tej stronie można przywrócić domyślne ustawienia preferencji dla tej witryny.
 Tej operacji nie można później cofnąć.',
 'prefs-emailconfirm-label' => 'Potwierdzenie adresu e‐mail',
-'prefs-textboxsize' => 'Rozmiar okna edycji',
 'youremail' => 'Twój adres e‐mail',
 'username' => '{{GENDER:$1|Nazwa użytkownika}}:',
 'uid' => '{{GENDER:$1|Identyfikator użytkownika}}:',
@@ -1490,6 +1547,8 @@ Jeśli zdecydujesz się je podać, zostaną użyte, by udokumentować Twoje auto
 'prefs-dateformat' => 'Format daty',
 'prefs-timeoffset' => 'Różnica czasu',
 'prefs-advancedediting' => 'Opcje ogólne',
+'prefs-editor' => 'Edytor',
+'prefs-preview' => 'Podgląd',
 'prefs-advancedrc' => 'Zaawansowane',
 'prefs-advancedrendering' => 'Zaawansowane',
 'prefs-advancedsearchoptions' => 'Zaawansowane',
@@ -1497,7 +1556,9 @@ Jeśli zdecydujesz się je podać, zostaną użyte, by udokumentować Twoje auto
 'prefs-displayrc' => 'Opcje wyświetlania',
 'prefs-displaysearchoptions' => 'Opcje wyświetlania',
 'prefs-displaywatchlist' => 'Opcje wyświetlania',
+'prefs-tokenwatchlist' => 'Token',
 'prefs-diffs' => 'Zmiany',
+'prefs-help-prefershttps' => 'Ta opcja zacznie działać przy twoim następnym zalogowaniu.',
 
 # User preference: email validation using jQuery
 'email-address-validity-valid' => 'Wygląda na prawidłowy',
@@ -1524,6 +1585,8 @@ Jeśli zdecydujesz się je podać, zostaną użyte, by udokumentować Twoje auto
 'userrights-notallowed' => 'Nie jesteś upoważniony do nadawania i odbierania uprawnień użytkownikom.',
 'userrights-changeable-col' => 'Grupy, które możesz wybrać',
 'userrights-unchangeable-col' => 'Grupy, których nie możesz wybrać',
+'userrights-conflict' => 'Konflikt zmiany uprawnień użytkownika! Proszę sprawdzić i potwierdzić swoje zmiany.',
+'userrights-removed-self' => 'Pomyślnie odebrałeś sobie uprawnienia. W związku z tym nie masz już dostępu do tej strony.',
 
 # Groups
 'group' => 'Grupa',
@@ -1589,11 +1652,19 @@ Jeśli zdecydujesz się je podać, zostaną użyte, by udokumentować Twoje auto
 'right-proxyunbannable' => 'Obejście automatycznych blokad proxy',
 'right-unblockself' => 'Odblokowanie samego siebie',
 'right-protect' => 'Zmiana stopnia zabezpieczenia i dostęp do edycji stron zabezpieczonych kaskadowo',
-'right-editprotected' => 'Dostęp do edycji zabezpieczonych stron (bez zabezpieczenia dziedziczonego)',
+'right-editprotected' => 'Edycja stron zabezpieczonych na poziomie „{{int:protect-level-sysop}}”',
+'right-editsemiprotected' => 'Edycja stron zabezpieczonych na poziomie „{{int:protect-level-autoconfirmed}}”',
 'right-editinterface' => 'Edycja interfejsu użytkownika',
 'right-editusercssjs' => 'Edycja plików CSS i JS innych użytkowników',
 'right-editusercss' => 'Edycja plików CSS innych użytkowników',
 'right-edituserjs' => 'Edycja plików JS innych użytkowników',
+'right-editmyusercss' => 'Edytuj własne pliki CSS',
+'right-editmyuserjs' => 'Edytuj własne pliki JavaScript',
+'right-viewmywatchlist' => 'Podgląd swojej listy obserwowanych stron',
+'right-editmywatchlist' => 'Edycja swojej listy obserwowanych stron. Niektóre akcje mogą dodawać strony do obserwowanych bez tego uprawnienia.',
+'right-viewmyprivateinfo' => 'Podgląd swoich prywatnych danych (np. adres e-mail, prawdziwe imię i nazwisko)',
+'right-editmyprivateinfo' => 'Edycja swoich prywatnych danych (np. adres e-mail, prawdziwe imię i nazwisko)',
+'right-editmyoptions' => 'Edycja swoich preferencji',
 'right-rollback' => 'Szybkie wycofanie zmian wprowadzonych przez użytkownika, który jako ostatni edytował jakąś stronę',
 'right-markbotedits' => 'Oznaczanie rewertu jako edycji bota',
 'right-noratelimit' => 'Brak ograniczeń przepustowości',
@@ -1655,12 +1726,19 @@ Jeśli zdecydujesz się je podać, zostaną użyte, by udokumentować Twoje auto
 'action-userrights-interwiki' => 'edytowania uprawnień użytkowników na innych witrynach wiki',
 'action-siteadmin' => 'blokowania i odblokowywania bazy danych',
 'action-sendemail' => 'wysyłania e-maili',
+'action-editmywatchlist' => 'edycji swojej listy obserwowanych stron',
+'action-viewmywatchlist' => 'zobaczenia swojej listy obserwowanych stron',
+'action-viewmyprivateinfo' => 'zobaczenia swoich prywatnych danych',
+'action-editmyprivateinfo' => 'edycji swoich prywatnych danych',
 
 # Recent changes
 'nchanges' => '$1 {{PLURAL:$1|zmiana|zmiany|zmian}}',
+'enhancedrc-since-last-visit' => '$1 {{PLURAL:$1|od ostatniej wizyty}}',
+'enhancedrc-history' => 'historia',
 'recentchanges' => 'Ostatnie zmiany',
 'recentchanges-legend' => 'Opcje ostatnich zmian',
 'recentchanges-summary' => 'Ta strona przedstawia historię ostatnich zmian w tej wiki.',
+'recentchanges-noresult' => 'Brak zmian w wybranym okresie spełniających twoje kryteria.',
 'recentchanges-feed-description' => 'Obserwuj najświeższe zmiany w tej wiki.',
 'recentchanges-label-newpage' => 'W tej edycji utworzono nową stronę',
 'recentchanges-label-minor' => 'To jest drobna zmiana',
@@ -1697,7 +1775,6 @@ Jeśli zdecydujesz się je podać, zostaną użyte, by udokumentować Twoje auto
 'recentchangeslinked-feed' => 'Zmiany w linkowanych',
 'recentchangeslinked-toolbox' => 'Zmiany w linkowanych',
 'recentchangeslinked-title' => 'Zmiany w linkowanych z „$1”',
-'recentchangeslinked-noresult' => 'Nie było żadnych zmian na (zależnie od ustawień) linkowanych lub linkujących stronach w wybranym okresie.',
 'recentchangeslinked-summary' => "Poniżej znajduje się lista ostatnich zmian na stronach linkowanych z podanej strony (lub we wszystkich stronach należących do podanej kategorii).
 Strony z [[Special:Watchlist|listy obserwowanych]] są '''wytłuszczone'''.",
 'recentchangeslinked-page' => 'Tytuł strony',
@@ -1709,7 +1786,7 @@ Strony z [[Special:Watchlist|listy obserwowanych]] są '''wytłuszczone'''.",
 'reuploaddesc' => 'Przerwij wysyłanie i wróć do formularza wysyłki',
 'upload-tryagain' => 'Zapisz zmieniony opis pliku',
 'uploadnologin' => 'Nie jesteś zalogowany',
-'uploadnologintext' => 'Musisz się [[Special:UserLogin|zalogować]] przed przesłaniem plików.',
+'uploadnologintext' => 'Musisz $1 przed przesłaniem plików.',
 'upload_directory_missing' => 'Katalog dla przesyłanych plików ($1) nie istnieje i nie może zostać utworzony przez serwer WWW.',
 'upload_directory_read_only' => 'Serwer nie może zapisywać do katalogu ($1) przeznaczonego na przesyłane pliki.',
 'uploaderror' => 'Błąd wysyłania',
@@ -1941,7 +2018,6 @@ Ponieważ ta wiki została skonfigurowana jako publiczna dla zapewnienia optymal
 'http-read-error' => 'Błąd odczytu HTTP.',
 'http-timed-out' => 'Przekroczony czas żądania HTTP.',
 'http-curl-error' => 'Błąd pobierania z adresu $1',
-'http-host-unreachable' => 'Adres jest nieosiągalny.',
 'http-bad-status' => 'Wystąpił problem z realizacją żądania HTTP $1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1971,6 +2047,10 @@ Możesz także spróbować w czasie mniejszego obciążenia serwera.',
 'listfiles_size' => 'Wielkość',
 'listfiles_description' => 'Opis',
 'listfiles_count' => 'Wersje',
+'listfiles-show-all' => 'Uwzględnij starsze wersje zdjęć',
+'listfiles-latestversion' => 'Aktualna wersja',
+'listfiles-latestversion-yes' => 'Tak',
+'listfiles-latestversion-no' => 'Nie',
 
 # File description page
 'file-anchor-link' => 'Plik',
@@ -2068,6 +2148,13 @@ Sprawdź inne linki do szablonów, zanim usuniesz tę stronę.',
 'randompage' => 'Losowa strona',
 'randompage-nopages' => 'Brak stron w {{PLURAL:$2|przestrzeni nazw|przestrzeniach nazw:}} $1.',
 
+# Random page in category
+'randomincategory' => 'Losowa strona w kategorii',
+'randomincategory-invalidcategory' => '"$1" nie jest prawidłową nazwą kategorii.',
+'randomincategory-nopages' => 'Nie ma żadnych stron w [[:Category:$1]].',
+'randomincategory-selectcategory' => 'Pobierz losową stronę z kategorii: $1 $2.',
+'randomincategory-selectcategory-submit' => 'Dalej',
+
 # Random redirect
 'randomredirect' => 'Losowe przekierowanie',
 'randomredirect-nopages' => 'Brak jakichkolwiek przekierowań w przestrzeni nazw „$1”.',
@@ -2093,17 +2180,13 @@ Sprawdź inne linki do szablonów, zanim usuniesz tę stronę.',
 'statistics-users-active-desc' => 'Użytkownicy, którzy byli aktywni w ciągu {{PLURAL:$1|ostatniego dnia|ostatnich $1 dni}}',
 'statistics-mostpopular' => 'Najczęściej odwiedzane strony',
 
-'disambiguations' => 'Strony linkujące do stron ujednoznaczniających',
-'disambiguationspage' => 'Template:disambig',
-'disambiguations-text' => "Poniższe strony odwołują się do '''stron ujednoznaczniających''',
-a powinny odwoływać się bezpośrednio do stron treści.<br />
-Strona uznawana jest za ujednoznaczniającą, jeśli zawiera szablon linkowany przez stronę [[MediaWiki:Disambiguationspage]]",
-
 'pageswithprop' => 'Strony z właściwościami',
 'pageswithprop-legend' => 'Strony z właściwościami',
 'pageswithprop-text' => 'Ta strona zawiera listę stron korzystających z właściwości.',
 'pageswithprop-prop' => 'Nazwa właściwości:',
 'pageswithprop-submit' => 'Pokaż',
+'pageswithprop-prophidden-long' => 'długa wartość własności ukryta ($1)',
+'pageswithprop-prophidden-binary' => 'binarna wartość własności ukryta ($1)',
 
 'doubleredirects' => 'Podwójne przekierowania',
 'doubleredirectstext' => 'Lista zawiera strony z przekierowaniami do stron, które przekierowują do innej strony.
@@ -2161,6 +2244,7 @@ Każdy wiersz zawiera linki do pierwszego i drugiego przekierowania oraz link, d
 'mostrevisions' => 'Strony o największej liczbie wersji',
 'prefixindex' => 'Wszystkie strony o prefiksie',
 'prefixindex-namespace' => 'Wszystkie strony z prefiksem (przestrzeń nazw $1)',
+'prefixindex-strip' => 'Ukryj prefiks na liście wyników',
 'shortpages' => 'Najkrótsze strony',
 'longpages' => 'Najdłuższe strony',
 'deadendpages' => 'Strony bez linków wewnętrznych',
@@ -2176,6 +2260,7 @@ Każdy wiersz zawiera linki do pierwszego i drugiego przekierowania oraz link, d
 'listusers' => 'Lista użytkowników',
 'listusers-editsonly' => 'Pokaż tylko użytkowników z edycjami',
 'listusers-creationsort' => 'Sortuj według daty utworzenia',
+'listusers-desc' => 'Sortuj w kolejności malejącej',
 'usereditcount' => '$1 {{PLURAL:$1|edycja|edycje|edycji}}',
 'usercreated' => '{{GENDER:$3|Utworzył|Utworzyła|Utworzone}} $1 o $2',
 'newpages' => 'Nowe strony',
@@ -2352,10 +2437,9 @@ Każda zmiana treści tej strony lub związanej z nią strony dyskusji zostanie 
 'unwatchthispage' => 'Nie obserwuj',
 'notanarticle' => 'To nie jest artykuł',
 'notvisiblerev' => 'Wersja została usunięta',
-'watchnochange' => 'Żadna z obserwowanych stron nie była edytowana w podanym okresie.',
 'watchlist-details' => 'Lista obserwowanych przez Ciebie stron zawiera {{PLURAL:$1|$1 pozycję|$1 pozycje|$1 pozycji}}, nie licząc stron dyskusji.',
-'wlheader-enotif' => '* Wysyłanie powiadomień na adres e‐mail jest włączone.',
-'wlheader-showupdated' => "* '''Wytłuszczone''' zostały strony, które zostały zmodyfikowane od Twojej ostatniej na nich wizyty.",
+'wlheader-enotif' => 'Wysyłanie powiadomień na adres e‐mail jest włączone.',
+'wlheader-showupdated' => "'''Wytłuszczone''' zostały strony, które zostały zmodyfikowane od Twojej ostatniej wizyty na nich.",
 'watchmethod-recent' => 'poszukiwanie ostatnich zmian wśród obserwowanych stron',
 'watchmethod-list' => 'poszukiwanie obserwowanych stron wśród ostatnich zmian',
 'watchlistcontains' => 'Na liście obserwowanych przez Ciebie stron {{PLURAL:$1|znajduje się 1 pozycja|znajdują się $1 pozycje|znajduje się $1 pozycji}}.',
@@ -2603,7 +2687,7 @@ $1',
 'contributions' => 'Wkład {{GENDER:$1|użytkownika|użytkowniczki}}',
 'contributions-title' => 'Wkład {{GENDER:$1|użytkownika|użytkowniczki}} $1',
 'mycontris' => 'Edycje',
-'contribsub2' => 'Dla użytkownika $1 ($2)',
+'contribsub2' => 'Dla {{GENDER:$3|użytkownika|użytkowniczki}} $1 ($2)',
 'nocontribs' => 'Brak zmian odpowiadających tym kryteriom.',
 'uctop' => '(ostatnia)',
 'month' => 'Do miesiąca (włącznie)',
@@ -2761,15 +2845,13 @@ By przejrzeć listę obecnie aktywnych blokad, przejdź na stronę [[Special:Blo
 Należy on do zablokowanego zakresu adresów $2. Odblokować można tylko cały zakres.',
 'ip_range_invalid' => 'Niepoprawny zakres adresów IP.',
 'ip_range_toolarge' => 'Zakresy IP większe niż /$1 są niedozwolone.',
-'blockme' => 'Zablokuj mnie',
 'proxyblocker' => 'Blokowanie proxy',
-'proxyblocker-disabled' => 'Ta funkcja jest wyłączona.',
 'proxyblockreason' => 'Twój adres IP został zablokowany, ponieważ jest to adres otwartego proxy.
 O tym poważnym problemie dotyczącym bezpieczeństwa należy poinformować dostawcę Internetu lub pomoc techniczną.',
-'proxyblocksuccess' => 'Wykonano.',
 'sorbsreason' => 'Twój adres IP znajduje się na liście serwerów open proxy w DNSBL, używanej przez {{GRAMMAR:B.lp|{{SITENAME}}}}.',
 'sorbs_create_account_reason' => 'Twój adres IP znajduje się na liście serwerów open proxy w DNSBL, używanej przez {{GRAMMAR:B.lp|{{SITENAME}}}}.
 Nie możesz utworzyć konta',
+'xffblockreason' => 'Adres IP obecny w nagłówku X-Forwarded-For – twój lub serwera proxy, z którego korzystasz – został zablokowany. Powód blokady to: $1',
 'cant-block-while-blocked' => 'Nie możesz zablokować innych użytkowników, kiedy sam jesteś zablokowany.',
 'cant-see-hidden-user' => 'Konto użytkownika, które próbujesz zablokować, zostało już zablokowane oraz ukryte. Bez uprawnienia do ukrywania kont nie możesz zobaczyć oraz modyfikować blokady tego użytkownika.',
 'ipbblocked' => 'Nie możesz blokować i odblokowywać innych użytkowników, ponieważ sam jesteś zablokowany',
@@ -2933,6 +3015,8 @@ Odwiedź [//www.mediawiki.org/wiki/Localisation Tłumaczenie MediaWiki] oraz [//
 'thumbnail-more' => 'Powiększ',
 'filemissing' => 'Brak pliku',
 'thumbnail_error' => 'Błąd przy generowaniu miniatury $1',
+'thumbnail_error_remote' => 'Komunikat o błędzie z {{grammar:2sg|$1}}:
+$2',
 'djvu_page_error' => 'Strona DjVu poza zakresem',
 'djvu_no_xml' => 'Nie można pobrać danych w formacie XML dla pliku DjVu',
 'thumbnail-temp-create' => 'Nie można utworzyć pliku tymczasowego miniatury',
@@ -3083,17 +3167,11 @@ Pozwala na wpisanie powodu w opisie zmian.',
 
 # Stylesheets
 'common.css' => '/* Umieszczony tutaj kod CSS zostanie zastosowany we wszystkich skórkach */',
-'standard.css' => '/* Umieszczony tutaj kod CSS wpłynie na wygląd skórki Standardowa */',
-'nostalgia.css' => '/* Umieszczony tutaj kod CSS wpłynie na wygląd skórki Tęsknota */',
 'cologneblue.css' => '/* Umieszczony tutaj kod CSS wpłynie na wygląd skórki Błękit */',
 'monobook.css' => '/* Umieszczony tutaj kod CSS wpłynie na wygląd skórki Książka */',
-'myskin.css' => '/* Umieszczony tutaj kod CSS wpłynie na wygląd skórki Moja skórka */',
-'chick.css' => '/* Umieszczony tutaj kod CSS wpłynie na wygląd skórki Kurczaczek */',
-'simple.css' => '/* Umieszczony tutaj kod CSS wpłynie na wygląd skórki Prosta */',
 'modern.css' => '/* Umieszczony tutaj kod CSS wpłynie na wygląd skórki Nowoczesna */',
 'vector.css' => '/* Umieszczony tutaj kod CSS wpłynie na wygląd skórki Wektor */',
 'print.css' => '/* Umieszczony tutaj kod CSS wpłynie na wygląd wydruku */',
-'handheld.css' => '/* Umieszczony tutaj kod CSS wpłynie na wygląd na urządzeniach kieszonkowych skórki ustawionej w zmiennej $wgHandheldStyle */',
 'noscript.css' => '/* Umieszczony tu arkusz stylów CSS będzie wykorzystywany dla użytkowników z wyłączoną obsługą JavaScript */',
 'group-autoconfirmed.css' => '/* CSS tutaj umieszczony będzie dotyczyć tylko automatycznie zatwierdzonych użytkowników */',
 'group-bot.css' => '/* CSS tutaj umieszczony będzie obowiązywał tylko dla botów */',
@@ -3102,13 +3180,8 @@ Pozwala na wpisanie powodu w opisie zmian.',
 
 # Scripts
 'common.js' => '/* Umieszczony tutaj kod JavaScript zostanie załadowany przez każdego użytkownika, podczas każdego ładowania strony. */',
-'standard.js' => '/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Standardowa */',
-'nostalgia.js' => '/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Tęsknota */',
 'cologneblue.js' => '/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Błękit */',
 'monobook.js' => '/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Książka */',
-'myskin.js' => '/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Moja skórka */',
-'chick.js' => '/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Kurczaczek */',
-'simple.js' => '/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Prosta */',
 'modern.js' => '/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Nowoczesna */',
 'vector.js' => '/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Wektor */',
 
@@ -3184,13 +3257,8 @@ Najprawdopodobniej zostało to spowodowane przez link do zewnętrznej strony int
 'pageinfo-category-files' => 'Liczba plików',
 
 # Skin names
-'skinname-standard' => 'Standardowa',
-'skinname-nostalgia' => 'Tęsknota',
 'skinname-cologneblue' => 'Błękit',
 'skinname-monobook' => 'Książka',
-'skinname-myskin' => 'Moja skórka',
-'skinname-chick' => 'Kurczaczek',
-'skinname-simple' => 'Prosta',
 'skinname-modern' => 'Nowoczesna',
 'skinname-vector' => 'Wektor',
 
@@ -3272,10 +3340,24 @@ Jeśli go otworzysz, możesz zarazić swój system.",
 'minutes' => '{{PLURAL:$1|$1 minuta|$1 minuty|$1 minut}}',
 'hours' => '{{PLURAL:$1|$1 godzina|$1 godziny|$1 godzin}}',
 'days' => '{{PLURAL:$1|$1 dzień|$1 dni}}',
+'weeks' => '{{PLURAL:$1|$1 tydzień|$1 tygodnie|$1 tygodni}}',
 'months' => '{{PLURAL:$1|$1 miesiąc|$1 miesiące|$1 miesięcy}}',
 'years' => '{{PLURAL:$1|$1 rok|$1 lata|$1 lat}}',
 'ago' => '$1 temu',
 'just-now' => 'przed chwilą',
+
+# Human-readable timestamps
+'hours-ago' => '{{PLURAL:$1|przed godziną|$1 godziny temu|$1 godzin temu}}',
+'minutes-ago' => '{{PLURAL:$1|przed minutą|$1 minuty temu|$1 minut temu}}',
+'seconds-ago' => '{{PLURAL:$1|przed sekundą|$1 sekundy temu|$1 sekund temu}}',
+'monday-at' => 'poniedziałek, $1',
+'tuesday-at' => 'wtorek, $1',
+'wednesday-at' => 'środa, $1',
+'thursday-at' => 'czwartek, $1',
+'friday-at' => 'piątek, $1',
+'saturday-at' => 'sobota, $1',
+'sunday-at' => 'niedziela, $1',
+'yesterday-at' => 'wczoraj, $1',
 
 # Bad image list
 'bad_image_list' => 'Dane należy wprowadzić w formacie:
@@ -3306,7 +3388,7 @@ Pozostałe pola zostaną domyślnie ukryte.
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Szerokość',
 'exif-imagelength' => 'Wysokość',
 'exif-bitspersample' => 'Bitów na próbkę',
@@ -3486,7 +3568,7 @@ Pozostałe pola zostaną domyślnie ukryte.
 'exif-originalimageheight' => 'Wysokość obrazu zanim został przycięty',
 'exif-originalimagewidth' => 'Szerokość obrazu zanim został przycięty',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'nieskompresowany',
 'exif-compression-2' => 'CCITT Grupa 3 Jednowymiarowe zmodyfikowane kodowanie długości algorytmem Huffmana',
 'exif-compression-3' => 'CCITT Grupa 3 kodowanie faksowe',
@@ -3806,7 +3888,6 @@ Czy na pewno chcesz ją ponownie utworzyć?",
 'confirm-unwatch-top' => 'Usunąć tę stronę z listy obserwowanych?',
 
 # Separators for various lists, etc.
-'autocomment-prefix' => '–&#32;',
 'percent' => '$1&#160;%',
 
 # Multipage image navigation
@@ -3932,7 +4013,6 @@ Możesz także użyć [[Special:EditWatchlist|standardowego edytora obserwowanyc
 'version-other' => 'Pozostałe',
 'version-mediahandlers' => 'Wtyczki obsługi mediów',
 'version-hooks' => 'Haki (ang. hooks)',
-'version-extension-functions' => 'Funkcje rozszerzeń',
 'version-parser-extensiontags' => 'Znaczniki rozszerzeń dla analizatora składni',
 'version-parser-function-hooks' => 'Funkcje haków analizatora składni (ang. parser function hooks)',
 'version-hook-name' => 'Nazwa haka (ang. hook name)',
@@ -3941,6 +4021,7 @@ Możesz także użyć [[Special:EditWatchlist|standardowego edytora obserwowanyc
 'version-license' => 'Licencja',
 'version-poweredby-credits' => "Ta wiki korzysta z oprogramowania '''[//www.mediawiki.org/ MediaWiki]''', copyright © 2001‐$1 $2.",
 'version-poweredby-others' => 'inni',
+'version-poweredby-translators' => 'tłumacze translatewiki.net',
 'version-credits-summary' => 'Następujące osoby wniosły istotny wkład w rozwój oprogramowania [[Special:Version|MediaWiki]].',
 'version-license-info' => 'MediaWiki jest wolnym oprogramowaniem – możesz je dystrybuować i modyfikować zgodnie z warunkami licencji GNU General Public License opublikowanej przez Free Software Foundation w wersji 2 tej licencji lub (jeśli wolisz) dowolnej późniejszej.
 
@@ -3954,12 +4035,17 @@ Powinieneś otrzymać [{{SERVER}}{{SCRIPTPATH}}/COPYING kopię licencji GNU Gene
 'version-entrypoints-header-entrypoint' => 'Punkt wejścia',
 'version-entrypoints-header-url' => 'URL',
 
-# Special:FilePath
-'filepath' => 'Ścieżka do pliku',
-'filepath-page' => 'Plik',
-'filepath-submit' => 'Przejdź',
-'filepath-summary' => 'Ta strona specjalna zwraca pełną ścieżkę do pliku.
-Grafiki są pokazywane w pełnej rozdzielczości. Inne typy plików są otwierane w skojarzonym z nimi programie.',
+# Special:Redirect
+'redirect' => 'Przekierowanie według pliku, użytkownika albo identyfikatora wersji',
+'redirect-legend' => 'Przekieruj do pliku lub strony',
+'redirect-summary' => 'Ta strona specjalna przekierowuje do pliku (wg nazwy pliku), do strony (wg numeru wersji) albo do strony użytkownika (wg liczbowego identyfikatora użytkownika)',
+'redirect-submit' => 'Przejdź',
+'redirect-lookup' => 'Wyszukaj:',
+'redirect-value' => 'Wartość:',
+'redirect-user' => 'ID użytkownika',
+'redirect-revision' => 'Wersja strony',
+'redirect-file' => 'Nazwa pliku',
+'redirect-not-exists' => 'Nie znaleziono wartości',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Szukaj duplikatów pliku',
@@ -4008,12 +4094,16 @@ Grafiki są pokazywane w pełnej rozdzielczości. Inne typy plików są otwieran
 'tags' => 'Sprawdź zmiany w oparciu o wzorce tekstu',
 'tag-filter' => 'Filtr [[Special:Tags|wzorców tekstu]]',
 'tag-filter-submit' => 'Filtr',
+'tag-list-wrapper' => '([[Special:Tags|{{PLURAL:$1|Znacznik|Znaczniki}}]]: $2)',
 'tags-title' => 'Znaczniki',
 'tags-intro' => 'Na tej stronie znajduje się lista wzorców tekstu, dla których oprogramowanie może oznaczyć edycje, dodatkowo wskazując ich znaczenie.',
 'tags-tag' => 'Nazwa znacznika',
 'tags-display-header' => 'Wystąpienia na listach zmian',
 'tags-description-header' => 'Pełny opis znaczenia',
+'tags-active-header' => 'Aktywny?',
 'tags-hitcount-header' => 'Oznaczone zmiany',
+'tags-active-yes' => 'Tak',
+'tags-active-no' => 'Nie',
 'tags-edit' => 'edytuj',
 'tags-hitcount' => '$1 {{PLURAL:$1|zmiana|zmiany|zmian}}',
 
@@ -4034,6 +4124,7 @@ Grafiki są pokazywane w pełnej rozdzielczości. Inne typy plików są otwieran
 'dberr-problems' => 'Przepraszamy! Witryna ma problemy techniczne.',
 'dberr-again' => 'Spróbuj przeładować stronę za kilka minut.',
 'dberr-info' => '(Brak komunikacji z serwerem bazy danych – $1)',
+'dberr-info-hidden' => '(Nie można skontaktować się z serwerem bazy danych)',
 'dberr-usegoogle' => 'Możesz spróbować wyszukać w międzyczasie za pomocą Google.',
 'dberr-outofdate' => 'Uwaga – indeksy zawartości serwisu mogą być nieaktualne.',
 'dberr-cachederror' => 'Strona została pobrana z pamięci podręcznej i może być nieaktualna.',
@@ -4049,6 +4140,9 @@ Grafiki są pokazywane w pełnej rozdzielczości. Inne typy plików są otwieran
 'htmlform-submit' => 'Zapisz',
 'htmlform-reset' => 'Cofnij zmiany',
 'htmlform-selectorother-other' => 'Inne',
+'htmlform-no' => 'Nie',
+'htmlform-yes' => 'Tak',
+'htmlform-chosen-placeholder' => 'Wybierz opcję',
 
 # SQLite database support
 'sqlite-has-fts' => '$1 z obsługą pełnotekstowego wyszukiwania',
@@ -4165,5 +4259,20 @@ W przeciwnym wypadku można użyć prostego formularza poniżej. Komentarz zosta
 
 # Image rotation
 'rotate-comment' => 'Obraz został odwrócony o $1 {{PLURAL:$1|stopień|stopnie|stopni}} (w kierunku zgodnym z ruchem wskazówek zegara)',
+
+# Limit report
+'limitreport-title' => 'Dane profilowania parsera:',
+'limitreport-cputime' => 'Czas pracy (CPU)',
+'limitreport-cputime-value' => '$1 {{PLURAL:$1|sekunda|sekund}}',
+'limitreport-walltime' => 'Czas pracy (faktyczny)',
+'limitreport-walltime-value' => '$1 {{PLURAL:$1|sekunda|sekund}}',
+'limitreport-ppvisitednodes' => 'Liczba odwiedzonych węzłów preprocesora',
+'limitreport-ppgeneratednodes' => 'Liczba wygenerowanych węzłów preprocesora',
+'limitreport-postexpandincludesize' => 'Rozmiar dołączonych elementów po ekspansji',
+'limitreport-postexpandincludesize-value' => '$1/$2 {{PLURAL:$2|bajt|bajty|bajtów}}',
+'limitreport-templateargumentsize' => 'Rozmiar argumentów szablonów',
+'limitreport-templateargumentsize-value' => '$1/$2 {{PLURAL:$2|bajt|bajty|bajtów}}',
+'limitreport-expansiondepth' => 'Największa głębokość ekspansji',
+'limitreport-expensivefunctioncount' => 'Liczba wywołań kosztownych funkcji parsera',
 
 );

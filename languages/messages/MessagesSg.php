@@ -137,6 +137,7 @@ $messages = array(
 'qbbrowse' => 'Hasa',
 'qbedit' => 'Sepe',
 'qbpageoptions' => 'Lêmbëtï sô',
+'qbpageinfo' => 'Ndongoro',
 'qbmyoptions' => 'Âlêmbëtï tî mbï',
 'qbspecialpages' => 'Âlêmbëtï ndê',
 'faq' => 'Âhûnda',

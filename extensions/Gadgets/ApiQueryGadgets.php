@@ -54,6 +54,10 @@ class ApiQueryGadgets extends ApiQueryBase {
 	private function getList() {
 		$gadgets = Gadget::loadStructuredList();
 
+		if ( $gadgets === false ) {
+			return array();
+		}
+
 		$result = array();
 		foreach ( $gadgets as $category => $list ) {
 			if ( $this->categories && !isset( $this->categories[$category] ) ) {

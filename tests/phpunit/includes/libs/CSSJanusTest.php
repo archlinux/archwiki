@@ -4,12 +4,14 @@
  * CSSJanus libary:
  * http://code.google.com/p/cssjanus/source/browse/trunk/cssjanus_test.py
  * Ported to PHP for ResourceLoader and has been extended since.
+ *
+ * @covers CSSJanus
  */
 class CSSJanusTest extends MediaWikiTestCase {
 	/**
 	 * @dataProvider provideTransformCases
 	 */
-	function testTransform( $cssA, $cssB = null ) {
+	public function testTransform( $cssA, $cssB = null ) {
 
 		if ( $cssB ) {
 			$transformedA = CSSJanus::transform( $cssA );
@@ -28,7 +30,7 @@ class CSSJanusTest extends MediaWikiTestCase {
 	/**
 	 * @dataProvider provideTransformAdvancedCases
 	 */
-	function testTransformAdvanced( $code, $expectedOutput, $options = array() ) {
+	public function testTransformAdvanced( $code, $expectedOutput, $options = array() ) {
 		$swapLtrRtlInURL = isset( $options['swapLtrRtlInURL'] ) ? $options['swapLtrRtlInURL'] : false;
 		$swapLeftRightInURL = isset( $options['swapLeftRightInURL'] ) ? $options['swapLeftRightInURL'] : false;
 
@@ -44,7 +46,7 @@ class CSSJanusTest extends MediaWikiTestCase {
 	 * @dataProvider provideTransformBrokenCases
 	 * @group Broken
 	 */
-	function testTransformBroken( $code, $expectedOutput ) {
+	public function testTransformBroken( $code, $expectedOutput ) {
 		$flipped = CSSJanus::transform( $code );
 
 		$this->assertEquals( $expectedOutput, $flipped, 'Test flipping' );
@@ -54,7 +56,7 @@ class CSSJanusTest extends MediaWikiTestCase {
 	 * These transform cases are tested *in both directions*
 	 * No need to declare a principle twice in both directions here.
 	 */
-	function provideTransformCases() {
+	public static function provideTransformCases() {
 		return array(
 			// Property keys
 			array(
@@ -137,10 +139,15 @@ class CSSJanusTest extends MediaWikiTestCase {
 				'.foo { padding: 1px inherit 3px auto; }',
 				'.foo { padding: 1px auto 3px inherit; }'
 			),
+			// border-radius assigns different meanings to the values
 			array(
 				'.foo { border-radius: .25em 15px 0pt 0ex; }',
-				'.foo { border-radius: .25em 0ex 0pt 15px; }'
+				'.foo { border-radius: 15px .25em 0ex 0pt; }'
 			),
+			array(
+				'.foo { border-radius: 0px 0px 5px 5px; }',
+			),
+			// Ensure the rule doesn't break other stuff
 			array(
 				'.foo { x-unknown: a b c d; }'
 			),
@@ -151,14 +158,26 @@ class CSSJanusTest extends MediaWikiTestCase {
 				'#settings td p strong'
 			),
 			array(
-				# Not sure how 4+ values should behave,
-				# testing to make sure changes are detected
-				'.foo { x-unknown: 1 2 3 4 5; }',
-				'.foo { x-unknown: 1 4 3 2 5; }',
+				// Color names
+				'.foo { border-color: red green blue white }',
+				'.foo { border-color: red white blue green }',
 			),
 			array(
-				'.foo { x-unknown: 1 2 3 4 5 6; }',
-				'.foo { x-unknown: 1 4 3 2 5 6; }',
+				// Color name, hexdecimal, RGB & RGBA
+				'.foo { border-color: red #f00 rgb(255, 0, 0) rgba(255, 0, 0, 0.5) }',
+				'.foo { border-color: red rgba(255, 0, 0, 0.5) rgb(255, 0, 0) #f00 }',
+			),
+			array(
+				// Color name, hexdecimal, HSL & HSLA
+				'.foo { border-color: red #f00 hsl(0, 100%, 50%) hsla(0, 100%, 50%, 0.5) }',
+				'.foo { border-color: red hsla(0, 100%, 50%, 0.5) hsl(0, 100%, 50%) #f00 }',
+			),
+			array(
+				// Do not mangle 5 or more values
+				'.foo { -x-unknown: 1 2 3 4 5; }'
+			),
+			array(
+				'.foo { -x-unknown: 1 2 3 4 5 6; }'
 			),
 
 			// Shorthand / Three notation
@@ -177,6 +196,28 @@ class CSSJanusTest extends MediaWikiTestCase {
 			// Shorthand / One notation
 			array(
 				'.foo { padding: 1px; }'
+			),
+
+			// text-shadow and box-shadow
+			array(
+				'.foo { box-shadow: -6px 3px 8px 5px rgba(0, 0, 0, 0.25); }',
+				'.foo { box-shadow: 6px 3px 8px 5px rgba(0, 0, 0, 0.25); }',
+			),
+			array(
+				'.foo { box-shadow: inset -6px 3px 8px 5px rgba(0, 0, 0, 0.25); }',
+				'.foo { box-shadow: inset 6px 3px 8px 5px rgba(0, 0, 0, 0.25); }',
+			),
+			array(
+				'.foo { text-shadow: orange 2px 0; }',
+				'.foo { text-shadow: orange -2px 0; }',
+			),
+			array(
+				'.foo { text-shadow: 2px 0 orange; }',
+				'.foo { text-shadow: -2px 0 orange; }',
+			),
+			array(
+				// Don't mangle zeroes
+				'.foo { text-shadow: orange 0 2px; }'
 			),
 
 			// Direction
@@ -377,6 +418,11 @@ class CSSJanusTest extends MediaWikiTestCase {
 				'/* @noflip */ div { float: left; } .foo { float: right; }'
 			),
 			array(
+				// support parentheses in selector
+				'/* @noflip */ .test:not(:first) { margin-right: -0.25em; margin-left: 0.25em; }',
+				'/* @noflip */ .test:not(:first) { margin-right: -0.25em; margin-left: 0.25em; }'
+			),
+			array(
 				// after multiple rules
 				'.foo { float: left; } /* @noflip */ div { float: left; }',
 				'.foo { float: right; } /* @noflip */ div { float: left; }'
@@ -476,7 +522,7 @@ class CSSJanusTest extends MediaWikiTestCase {
 	 * If both ways can be tested, either put both versions in here or move
 	 * it to provideTransformCases().
 	 */
-	function provideTransformAdvancedCases() {
+	public static function provideTransformAdvancedCases() {
 		$bgPairs = array(
 			# [ - _ . ] <-> [ left right ltr rtl ]
 			'foo.jpg' => 'foo.jpg',
@@ -542,7 +588,7 @@ class CSSJanusTest extends MediaWikiTestCase {
 	 * Cases that are currently failing, but
 	 * should be looked at in the future as enhancements and/or bug fix
 	 */
-	function provideTransformBrokenCases() {
+	public static function provideTransformBrokenCases() {
 		return array(
 			// Guard against selectors that look flippable
 			array(

@@ -29,7 +29,6 @@
  * @author Petr Kadlec <mormegil@centrum.cz>
  */
 class SpecialListGroupRights extends SpecialPage {
-
 	/**
 	 * Constructor
 	 */
@@ -51,11 +50,13 @@ class SpecialListGroupRights extends SpecialPage {
 		$out = $this->getOutput();
 		$out->addModuleStyles( 'mediawiki.special' );
 
+		$out->wrapWikiMsg( "<div class=\"mw-listgrouprights-key\">\n$1\n</div>", 'listgrouprights-key' );
+
 		$out->addHTML(
 			Xml::openElement( 'table', array( 'class' => 'wikitable mw-listgrouprights-table' ) ) .
 				'<tr>' .
-					Xml::element( 'th', null, $this->msg( 'listgrouprights-group' )->text() ) .
-					Xml::element( 'th', null, $this->msg( 'listgrouprights-rights' )->text() ) .
+				Xml::element( 'th', null, $this->msg( 'listgrouprights-group' )->text() ) .
+				Xml::element( 'th', null, $this->msg( 'listgrouprights-rights' )->text() ) .
 				'</tr>'
 		);
 
@@ -85,7 +86,7 @@ class SpecialListGroupRights extends SpecialPage {
 				$msg->text() :
 				MWNamespace::getCanonicalName( NS_PROJECT ) . ':' . $groupname;
 
-			if( $group == '*' ) {
+			if ( $group == '*' ) {
 				// Do not make a link for the generic * group
 				$grouppage = htmlspecialchars( $groupnameLocalized );
 			} else {
@@ -124,16 +125,13 @@ class SpecialListGroupRights extends SpecialPage {
 				"
 				<td>$grouppage$grouplink</td>
 					<td>" .
-						$this->formatPermissions( $permissions, $revoke, $addgroups, $removegroups,
-							$addgroupsSelf, $removegroupsSelf ) .
+					$this->formatPermissions( $permissions, $revoke, $addgroups, $removegroups,
+						$addgroupsSelf, $removegroupsSelf ) .
 					'</td>
 				'
 			) );
 		}
-		$out->addHTML(
-			Xml::closeElement( 'table' ) . "\n<br /><hr />\n"
-		);
-		$out->wrapWikiMsg( "<div class=\"mw-listgrouprights-key\">\n$1\n</div>", 'listgrouprights-key' );
+		$out->addHTML( Xml::closeElement( 'table' ) );
 	}
 
 	/**
@@ -149,9 +147,9 @@ class SpecialListGroupRights extends SpecialPage {
 	 */
 	private function formatPermissions( $permissions, $revoke, $add, $remove, $addSelf, $removeSelf ) {
 		$r = array();
-		foreach( $permissions as $permission => $granted ) {
+		foreach ( $permissions as $permission => $granted ) {
 			//show as granted only if it isn't revoked to prevent duplicate display of permissions
-			if( $granted && ( !isset( $revoke[$permission] ) || !$revoke[$permission] ) ) {
+			if ( $granted && ( !isset( $revoke[$permission] ) || !$revoke[$permission] ) ) {
 				$description = $this->msg( 'listgrouprights-right-display',
 					User::getRightDescription( $permission ),
 					'<span class="mw-listgrouprights-right-name">' . $permission . '</span>'
@@ -159,8 +157,8 @@ class SpecialListGroupRights extends SpecialPage {
 				$r[] = $description;
 			}
 		}
-		foreach( $revoke as $permission => $revoked ) {
-			if( $revoked ) {
+		foreach ( $revoke as $permission => $revoked ) {
+			if ( $revoked ) {
 				$description = $this->msg( 'listgrouprights-right-revoked',
 					User::getRightDescription( $permission ),
 					'<span class="mw-listgrouprights-right-name">' . $permission . '</span>'
@@ -168,45 +166,52 @@ class SpecialListGroupRights extends SpecialPage {
 				$r[] = $description;
 			}
 		}
+
 		sort( $r );
+
 		$lang = $this->getLanguage();
-		if( $add === true ) {
+
+		if ( $add === true ) {
 			$r[] = $this->msg( 'listgrouprights-addgroup-all' )->escaped();
-		} elseif( is_array( $add ) && count( $add ) ) {
+		} elseif ( is_array( $add ) && count( $add ) ) {
 			$add = array_values( array_unique( $add ) );
 			$r[] = $this->msg( 'listgrouprights-addgroup',
 				$lang->listToText( array_map( array( 'User', 'makeGroupLinkWiki' ), $add ) ),
 				count( $add )
 			)->parse();
 		}
-		if( $remove === true ) {
+
+		if ( $remove === true ) {
 			$r[] = $this->msg( 'listgrouprights-removegroup-all' )->escaped();
-		} elseif( is_array( $remove ) && count( $remove ) ) {
+		} elseif ( is_array( $remove ) && count( $remove ) ) {
 			$remove = array_values( array_unique( $remove ) );
 			$r[] = $this->msg( 'listgrouprights-removegroup',
 				$lang->listToText( array_map( array( 'User', 'makeGroupLinkWiki' ), $remove ) ),
 				count( $remove )
 			)->parse();
 		}
-		if( $addSelf === true ) {
+
+		if ( $addSelf === true ) {
 			$r[] = $this->msg( 'listgrouprights-addgroup-self-all' )->escaped();
-		} elseif( is_array( $addSelf ) && count( $addSelf ) ) {
+		} elseif ( is_array( $addSelf ) && count( $addSelf ) ) {
 			$addSelf = array_values( array_unique( $addSelf ) );
 			$r[] = $this->msg( 'listgrouprights-addgroup-self',
 				$lang->listToText( array_map( array( 'User', 'makeGroupLinkWiki' ), $addSelf ) ),
 				count( $addSelf )
 			)->parse();
 		}
-		if( $removeSelf === true ) {
+
+		if ( $removeSelf === true ) {
 			$r[] = $this->msg( 'listgrouprights-removegroup-self-all' )->parse();
-		} elseif( is_array( $removeSelf ) && count( $removeSelf ) ) {
+		} elseif ( is_array( $removeSelf ) && count( $removeSelf ) ) {
 			$removeSelf = array_values( array_unique( $removeSelf ) );
 			$r[] = $this->msg( 'listgrouprights-removegroup-self',
 				$lang->listToText( array_map( array( 'User', 'makeGroupLinkWiki' ), $removeSelf ) ),
 				count( $removeSelf )
 			)->parse();
 		}
-		if( empty( $r ) ) {
+
+		if ( empty( $r ) ) {
 			return '';
 		} else {
 			return '<ul><li>' . implode( "</li>\n<li>", $r ) . '</li></ul>';

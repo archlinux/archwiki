@@ -1,10 +1,13 @@
 <?php
 
+/**
+ * @covers ::wfShorthandToInteger
+ */
 class WfShorthandToIntegerTest extends MediaWikiTestCase {
 	/**
 	 * @dataProvider provideABunchOfShorthands
 	 */
-	function testWfShorthandToInteger( $input, $output, $description ) {
+	public function testWfShorthandToInteger( $input, $output, $description ) {
 		$this->assertEquals(
 			wfShorthandToInteger( $input ),
 			$output,
@@ -12,7 +15,7 @@ class WfShorthandToIntegerTest extends MediaWikiTestCase {
 		);
 	}
 
-	function provideABunchOfShorthands() {
+	public static function provideABunchOfShorthands() {
 		return array(
 			array( '', -1, 'Empty string' ),
 			array( '     ', -1, 'String of spaces' ),
@@ -24,5 +27,4 @@ class WfShorthandToIntegerTest extends MediaWikiTestCase {
 			array( '1k', 1024, 'One kb lowercased' ),
 		);
 	}
-
 }

@@ -2,10 +2,10 @@
 	'use strict';
 
 	var notification,
-		isPageReady = false,
-		preReadyNotifQueue = [],
 		// The #mw-notification-area div that all notifications are contained inside.
-		$area = null;
+		$area,
+		isPageReady = false,
+		preReadyNotifQueue = [];
 
 	/**
 	 * Creates a Notification object for 1 message.
@@ -350,7 +350,9 @@
 	 * @ignore
 	 */
 	function init() {
-		$area = $( '<div id="mw-notification-area"></div>' )
+		var offset, $window = $( window );
+
+		$area = $( '<div id="mw-notification-area" class="mw-notification-area mw-notification-area-layout"></div>' )
 			// Pause auto-hide timers when the mouse is in the notification area.
 			.on( {
 				mouseenter: notification.pause,
@@ -371,6 +373,19 @@
 
 		// Prepend the notification area to the content area and save it's object.
 		mw.util.$content.prepend( $area );
+		offset = $area.offset();
+
+		function updateAreaMode() {
+			var isFloating = $window.scrollTop() > offset.top;
+			$area
+				.toggleClass( 'mw-notification-area-floating', isFloating )
+				.toggleClass( 'mw-notification-area-layout', !isFloating );
+		}
+
+		$window.on( 'scroll', updateAreaMode );
+
+		// Initial mode
+		updateAreaMode();
 	}
 
 	/**
@@ -411,6 +426,7 @@
 		 * @param {HTMLElement|jQuery|mw.Message|string} message
 		 * @param {Object} options The options to use for the notification.
 		 *  See #defaults for details.
+		 * @return {Object} Object with a close function to close the notification
 		 */
 		notify: function ( message, options ) {
 			var notif;
@@ -423,6 +439,7 @@
 			} else {
 				preReadyNotifQueue.push( notif );
 			}
+			return { close: $.proxy( notif.close, notif ) };
 		},
 
 		/**

@@ -10,7 +10,7 @@ Simple <ref>, no <references/>
 Wikipedia rocks!<ref>Proceeds of Rockology, vol. XXI</ref>
 !! result
 <p>Wikipedia rocks!<sup id="cite_ref-1" class="reference"><a href="#cite_note-1">[1]</a></sup>
-<br /><strong class="error">Cite error: <code>&lt;ref&gt;</code> tags exist, but no <code>&lt;references/&gt;</code> tag was found</strong>
+<br /><strong class="error mw-ext-cite-error">Cite error: <code>&lt;ref&gt;</code> tags exist, but no <code>&lt;references/&gt;</code> tag was found</strong>
 </p>
 !! end
 
@@ -122,7 +122,7 @@ Templating<ref>Text<!--comment--></ref>
 !! result
 <p><sup id="cite_ref-1" class="reference"><a href="#cite_note-1">[1]</a></sup>
 </p>
-<ul class="gallery">
+<ul class="gallery mw-gallery-traditional">
 		<li class="gallerybox" style="width: 155px"><div style="width: 155px">
 			<div class="thumb" style="width: 150px;"><div style="margin:68px auto;"><a href="/wiki/File:Foobar.jpg" class="image"><img alt="Foobar.jpg" src="http://example.com/images/thumb/3/3a/Foobar.jpg/120px-Foobar.jpg" width="120" height="14" /></a></div></div>
 			<div class="gallerytext">
@@ -142,7 +142,7 @@ Templating<ref>Text<!--comment--></ref>
 {{REVISIONID}}<ref>elite</ref>
 !! result
 <p>1337<sup id="cite_ref-1" class="reference"><a href="#cite_note-1">[1]</a></sup>
-<br /><strong class="error">Cite error: <code>&lt;ref&gt;</code> tags exist, but no <code>&lt;references/&gt;</code> tag was found</strong>
+<br /><strong class="error mw-ext-cite-error">Cite error: <code>&lt;ref&gt;</code> tags exist, but no <code>&lt;references/&gt;</code> tag was found</strong>
 </p>
 !! end
 
@@ -253,23 +253,23 @@ Erroneous refs
 
 <references />
 !! result
-<p><strong class="error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+<p><strong class="error mw-ext-cite-error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
 name cannot be a simple integer. Use a descriptive title</strong>
 </p><p><sup id="cite_ref-1" class="reference"><a href="#cite_note-1">[1]</a></sup>
-</p><p><strong class="error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+</p><p><strong class="error mw-ext-cite-error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
 refs with no content must have a name</strong>
 </p><p><sup id="cite_ref-bar_2-0" class="reference"><a href="#cite_note-bar-2">[2]</a></sup>
 </p><p><sup id="cite_ref-blankwithnoreference_3-0" class="reference"><a href="#cite_note-blankwithnoreference-3">[3]</a></sup>
-</p><p><strong class="error">Cite error: Invalid <code>&lt;references&gt;</code> tag;
+</p><p><strong class="error mw-ext-cite-error">Cite error: Invalid <code>&lt;references&gt;</code> tag;
 parameter "group" is allowed only.
 Use <code>&lt;references /&gt;</code>, or <code>&lt;references group="..." /&gt;</code></strong>
 </p>
 <ol class="references">
 <li id="cite_note-1"><span class="mw-cite-backlink"><a href="#cite_ref-1">↑</a></span> <span class="reference-text">Also zero, but differently! (Normal ref)</span>
 </li>
-<li id="cite_note-bar"><span class="mw-cite-backlink"><a href="#cite_ref-bar_0">↑</a></span> <strong class="error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+<li id="cite_note-bar"><span class="mw-cite-backlink"><a href="#cite_ref-bar_0">↑</a></span> <strong class="error mw-ext-cite-error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
 no text was provided for refs named <code>bar</code></strong></li>
-<li id="cite_note-blankwithnoreference"><span class="mw-cite-backlink"><a href="#cite_ref-blankwithnoreference_0">↑</a></span> <strong class="error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+<li id="cite_note-blankwithnoreference"><span class="mw-cite-backlink"><a href="#cite_ref-blankwithnoreference_0">↑</a></span> <strong class="error mw-ext-cite-error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
 no text was provided for refs named <code>blankwithnoreference</code></strong></li>
 </ol>
 
@@ -311,16 +311,20 @@ AAA<ref group="参">ref a</ref>BBB<ref group="注">note b</ref>CCC<ref group="�
 !! result
 <p>AAA<sup id="cite_ref-1" class="reference"><a href="#cite_note-1">[参 1]</a></sup>BBB<sup id="cite_ref-2" class="reference"><a href="#cite_note-2">[注 1]</a></sup>CCC<sup id="cite_ref-3" class="reference"><a href="#cite_note-3">[参 2]</a></sup>
 </p>
-<dl><dt>refs
-</dt></dl>
+<dl>
+<dt>refs
+</dt>
+</dl>
 <ol class="references">
 <li id="cite_note-1"><span class="mw-cite-backlink"><a href="#cite_ref-1">↑</a></span> <span class="reference-text">ref a</span>
 </li>
 <li id="cite_note-3"><span class="mw-cite-backlink"><a href="#cite_ref-3">↑</a></span> <span class="reference-text">ref c</span>
 </li>
 </ol>
-<dl><dt>notes
-</dt></dl>
+<dl>
+<dt>notes
+</dt>
+</dl>
 <ol class="references">
 <li id="cite_note-2"><span class="mw-cite-backlink"><a href="#cite_ref-2">↑</a></span> <span class="reference-text">note b</span>
 </li>
@@ -379,12 +383,12 @@ AAA<ref group="参">ref a</ref>BBB<ref group="注">note b</ref>CCC<ref group="�
 <p><sup id="cite_ref-foo_1-0" class="reference"><a href="#cite_note-foo-1">[2 1]</a></sup>
 </p>
 <ol class="references">
-<li id="cite_note-foo"><span class="mw-cite-backlink"><a href="#cite_ref-foo_0">↑</a></span> <strong class="error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+<li id="cite_note-foo"><span class="mw-cite-backlink"><a href="#cite_ref-foo_0">↑</a></span> <strong class="error mw-ext-cite-error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
 no text was provided for refs named <code>foo</code></strong></li>
 </ol>
-<p><strong class="error">Cite error: <code>&lt;ref&gt;</code> tag with name "unused" defined in <code>&lt;references&gt;</code> is not used in prior text.</strong><br />
-<strong class="error">Cite error: <code>&lt;ref&gt;</code> tag in <code>&lt;references&gt;</code> has conflicting group attribute "1".</strong><br />
-<strong class="error">Cite error: <code>&lt;ref&gt;</code> tag defined in <code>&lt;references&gt;</code> has no name attribute.</strong>
+<p><strong class="error mw-ext-cite-error">Cite error: <code>&lt;ref&gt;</code> tag with name "unused" defined in <code>&lt;references&gt;</code> is not used in prior text.</strong><br />
+<strong class="error mw-ext-cite-error">Cite error: <code>&lt;ref&gt;</code> tag in <code>&lt;references&gt;</code> has conflicting group attribute "1".</strong><br />
+<strong class="error mw-ext-cite-error">Cite error: <code>&lt;ref&gt;</code> tag defined in <code>&lt;references&gt;</code> has no name attribute.</strong>
 </p>
 !! end
 

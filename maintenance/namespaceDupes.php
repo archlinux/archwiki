@@ -24,7 +24,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that checks for articles to fix after
@@ -185,7 +185,7 @@ class NamespaceConflictChecker extends Maintenance {
 	}
 
 	/**
-	 * @todo: do this for reals
+	 * @todo Do this for real
 	 * @param $key
 	 * @param $prefix
 	 * @param $fix
@@ -207,10 +207,10 @@ class NamespaceConflictChecker extends Maintenance {
 	 * @return array
 	 */
 	private function getConflicts( $ns, $name ) {
-		$page  = 'page';
+		$page = 'page';
 		$table = $this->db->tableName( $page );
 
-		$prefix     = $this->db->strencode( $name );
+		$prefix = $this->db->strencode( $name );
 		$encNamespace = $this->db->addQuotes( $ns );
 
 		$titleSql = "TRIM(LEADING '$prefix:' FROM {$page}_title)";
@@ -318,12 +318,12 @@ class NamespaceConflictChecker extends Maintenance {
 		$this->db->update( $table,
 			array(
 				"{$prefix}_namespace" => $newTitle->getNamespace(),
-				"{$prefix}_title"     => $newTitle->getDBkey(),
+				"{$prefix}_title" => $newTitle->getDBkey(),
 			),
 			array(
 				// "{$prefix}_namespace" => 0,
-				// "{$prefix}_title"     => $row->oldtitle,
-				"{$prefix}_id"		 => $row->id,
+				// "{$prefix}_title" => $row->oldtitle,
+				"{$prefix}_id" => $row->id,
 			),
 			__METHOD__ );
 		$this->output( "ok.\n" );
@@ -332,4 +332,4 @@ class NamespaceConflictChecker extends Maintenance {
 }
 
 $maintClass = "NamespaceConflictChecker";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

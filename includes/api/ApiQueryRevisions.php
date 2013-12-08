@@ -146,17 +146,17 @@ class ApiQueryRevisions extends ApiQueryBase {
 		$prop = array_flip( $params['prop'] );
 
 		// Optional fields
-		$this->fld_ids = isset ( $prop['ids'] );
+		$this->fld_ids = isset( $prop['ids'] );
 		// $this->addFieldsIf('rev_text_id', $this->fld_ids); // should this be exposed?
-		$this->fld_flags = isset ( $prop['flags'] );
-		$this->fld_timestamp = isset ( $prop['timestamp'] );
-		$this->fld_comment = isset ( $prop['comment'] );
-		$this->fld_parsedcomment = isset ( $prop['parsedcomment'] );
-		$this->fld_size = isset ( $prop['size'] );
-		$this->fld_sha1 = isset ( $prop['sha1'] );
-		$this->fld_contentmodel = isset ( $prop['contentmodel'] );
+		$this->fld_flags = isset( $prop['flags'] );
+		$this->fld_timestamp = isset( $prop['timestamp'] );
+		$this->fld_comment = isset( $prop['comment'] );
+		$this->fld_parsedcomment = isset( $prop['parsedcomment'] );
+		$this->fld_size = isset( $prop['size'] );
+		$this->fld_sha1 = isset( $prop['sha1'] );
+		$this->fld_contentmodel = isset( $prop['contentmodel'] );
 		$this->fld_userid = isset( $prop['userid'] );
-		$this->fld_user = isset ( $prop['user'] );
+		$this->fld_user = isset( $prop['user'] );
 		$this->token = $params['token'];
 
 		if ( !empty( $params['contentformat'] ) ) {
@@ -189,8 +189,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 			$this->addTables( 'change_tag' );
 			$this->addJoinConds( array( 'change_tag' => array( 'INNER JOIN', array( 'rev_id=ct_rev_id' ) ) ) );
 			$this->addWhereFld( 'ct_tag', $params['tag'] );
-			global $wgOldChangeTagsIndex;
-			$index['change_tag'] = $wgOldChangeTagsIndex ? 'ct_tag' : 'change_tag_tag_id';
+			$index['change_tag'] = 'change_tag_tag_id';
 		}
 
 		if ( isset( $prop['content'] ) || !is_null( $this->difftotext ) ) {
@@ -520,7 +519,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 				} else {
 					$this->setWarning( "Conversion to XML is supported for wikitext only, " .
 										$title->getPrefixedDBkey() .
-										" uses content model " . $content->getModel() . ")" );
+										" uses content model " . $content->getModel() );
 				}
 			}
 
@@ -533,7 +532,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 				} else {
 					$this->setWarning( "Template expansion is supported for wikitext only, " .
 						$title->getPrefixedDBkey() .
-						" uses content model " . $content->getModel() . ")" );
+						" uses content model " . $content->getModel() );
 
 					$text = false;
 				}
@@ -550,7 +549,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 				if ( !$content->isSupportedFormat( $format ) ) {
 					$name = $title->getPrefixedDBkey();
 
-					$this->dieUsage( "The requested format {$this->contentFormat} is not supported ".
+					$this->dieUsage( "The requested format {$this->contentFormat} is not supported " .
 									"for content model $model used by $name", 'badformat' );
 				}
 
@@ -593,7 +592,7 @@ class ApiQueryRevisions extends ApiQueryBase {
 
 						$name = $title->getPrefixedDBkey();
 
-						$this->dieUsage( "The requested format {$this->contentFormat} is not supported for ".
+						$this->dieUsage( "The requested format {$this->contentFormat} is not supported for " .
 											"content model $model used by $name", 'badformat' );
 					}
 

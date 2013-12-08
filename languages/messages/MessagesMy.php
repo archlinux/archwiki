@@ -100,6 +100,7 @@ $messages = array(
 'tog-ccmeonemails' => 'ကျွန်ုပ် အခြားအသုံးပြုသူများထံပို့သော အီးမေးမိတ္တူကို ကျွန်ုပ်ထံ ပြန်ပို့ရန်',
 'tog-diffonly' => 'ကွဲပြားမှုများအောက်ရှိ စာမျက်နှာတွင်ပါဝင်သည်များကို မပြပါနှင့်',
 'tog-showhiddencats' => 'ဝှက်ထားသော ကဏ္ဍများကို ပြရန်',
+'tog-useeditwarning' => 'မသိမ်းရသေးသော ပြောင်းလဲမှုများ နှင့် တည်းဖြတ်ဆဲစာမျက်နှာမှ ထွက်သွားလျှင် သတိပေးပါ',
 
 'underline-always' => 'အမြဲ',
 'underline-never' => 'ဘယ်သောအခါမျှ',
@@ -163,6 +164,18 @@ $messages = array(
 'oct' => 'အောက်',
 'nov' => 'နို',
 'dec' => 'ဒီ',
+'january-date' => 'ဇန်နဝါရီ $1',
+'february-date' => 'ဖေဖော်ဝါရီ $1',
+'march-date' => 'မတ် $1',
+'april-date' => 'ဧပြီ $1',
+'may-date' => 'မေ $1',
+'june-date' => 'ဂျွန် $1',
+'july-date' => 'ဂျူလိုင် $1',
+'august-date' => 'ဩဂုတ် $1',
+'september-date' => 'စက်တင်ဘာ $1',
+'october-date' => 'အောက်တိုဘာ $1',
+'november-date' => 'နိုဝင်ဘာ $1',
+'december-date' => 'ဒီဇင်ဘာ $1',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|ကဏ္ဍ|ကဏ္ဍ}}',
@@ -284,7 +297,7 @@ $messages = array(
 $1',
 'pool-errorunknown' => 'အမည်မသိအမှား',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} အကြောင်း',
 'aboutpage' => 'Project: အကြောင်းအရာ',
 'copyright' => '$1 အောက်တွင် ဤအကြောင်းအရာကို ရရှိနိုင်သည်။',
@@ -294,7 +307,6 @@ $1',
 'disclaimers' => 'သတိပြုစရာများ',
 'disclaimerpage' => 'Project: အထွေထွေ သတိပြုဖွယ်',
 'edithelp' => 'ပြင်​ဆင်​ရန် အ​ကူ​အ​ညီ​',
-'edithelppage' => 'Help: တည်းဖြတ်ခြင်း',
 'helppage' => 'Help: မာတိကာ',
 'mainpage' => 'ဗဟိုစာမျက်နှာ',
 'mainpage-description' => 'ဗ​ဟို​စာ​မျက်​နှာ​',
@@ -453,7 +465,7 @@ $1',
 'newpassword' => 'စကားဝှက် အသစ် -',
 'retypenew' => 'စကားဝှက် အသစ်ကို ထပ်ရိုက်ပါ -',
 'resetpass_submit' => 'စကားဝှက်ကို သတ်မှတ်ပြီးနောက် Log in ဝင်ရန်',
-'resetpass_success' => 'သင့်စကားဝှက်ကို အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။ အခု Log in ဝင်နေပါပြီ...',
+'changepassword-success' => 'သင့်စကားဝှက်ကို အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။ အခု Log in ဝင်နေပါပြီ...',
 'resetpass_forbidden' => 'စကားဝှက် ပြောင်းမရနိုင်ပါ',
 'resetpass-no-info' => 'ဤစာမျက်နှာကို တိုက်ရိုက်အသုံးပြုနိုင်ရန်အတွက် Log in ဝင်ထားရပါမည်။',
 'resetpass-submit-loggedin' => 'စကားဝှက်ပြောင်းရန်',
@@ -677,7 +689,6 @@ Legend: '''({{int:cur}})''' = နောက်ဆုံးမူနှင့် �
 'searchmenu-legend' => 'ရှာဖွေရန် ရွေးချယ်မှု',
 'searchmenu-exists' => "'''ဤဝီကီတွင် \"[[:\$1]]\" အမည်နှင့် စာမျက်နှာတစ်ခုရှိသည်။'''",
 'searchmenu-new' => "'''ဤဝီကီတွင် \"[[:\$1]]\" အမည်နှင့် စာမျက်နှာကို ဖန်တီးပါ။'''",
-'searchhelp-url' => 'Help: မာတိကာ',
 'searchprofile-articles' => 'မာတိကာစာမျက်နှာများ',
 'searchprofile-project' => 'အကူအညီနှင့် ပရောဂျက်စာမျက်နှာများ',
 'searchprofile-images' => 'မာလတီမီဒီယာ',
@@ -720,13 +731,6 @@ Try prefixing your query with ''all:'' to search all content (including talk pag
 'powersearch-togglenone' => 'အမည်ညွှန်းမရှိ',
 'search-external' => 'အပြင်တွင် ရှာရန်',
 
-# Quickbar
-'qbsettings-none' => 'အမည်ညွှန်းမရှိ',
-'qbsettings-fixedleft' => 'ဘယ်ဘက်ကို အသေထားရန်',
-'qbsettings-fixedright' => 'ညာဘက်ကို အသေထားရန်',
-'qbsettings-floatingleft' => 'ဘယ်ဘက်ကို အရှင်ထားရန်',
-'qbsettings-floatingright' => 'ညာဘက်ကို အရှင်ထားရန်',
-
 # Preferences page
 'preferences' => '​ရွေး​ချယ်​စ​ရာ​များ​',
 'mypreferences' => '​ရွေး​ချယ်​စ​ရာ​များ​',
@@ -753,7 +757,6 @@ Try prefixing your query with ''all:'' to search all content (including talk pag
 'resetprefs' => 'မသိမ်းရသေးသော အပြောင်းအလဲများကို ရှင်းလင်းရန်',
 'restoreprefs' => 'မူလဆက်တင်များသို့ အားလုံး ပြန်ပြောင်းရန်',
 'prefs-editing' => 'တည်းဖြတ်ခြင်း',
-'prefs-edit-boxsize' => 'တည်းဖြတ်သည့် သေတ္တာအရွယ်အစား။',
 'rows' => 'အလျားလိုက်တန်း -',
 'columns' => 'ဒေါင်လိုက်တန်း -',
 'searchresultshead' => 'ရှာ​ဖွေ​ရန်​',
@@ -789,7 +792,6 @@ Try prefixing your query with ''all:'' to search all content (including talk pag
 'prefs-custom-css' => 'စိတ်ကြိုက် CSS',
 'prefs-custom-js' => 'စိတ်ကြိုက် Javascript',
 'prefs-emailconfirm-label' => 'အီးမေးအတည်ပြုရန်',
-'prefs-textboxsize' => 'တည်းဖြတ်မှုဝင်းဒိုး၏အရွယ်အစား',
 'youremail' => 'အီး​မေး -',
 'username' => 'အသုံးပြုသူအမည် -',
 'uid' => 'အသုံးပြုသူ ​ID -',
@@ -979,7 +981,6 @@ Your e-mail address is not revealed when other users contact you.
 'recentchangeslinked-feed' => 'ဆက်စပ်သော ​အ​ပြောင်း​အ​လဲ​များ​',
 'recentchangeslinked-toolbox' => 'ဆက်​စပ်​သော​အ​ပြောင်း​အ​လဲ​များ​',
 'recentchangeslinked-title' => '"$1" နှင့် ဆက်စပ်သော အပြောင်းအလဲများ',
-'recentchangeslinked-noresult' => 'ပေးထားသော အချိန်အတွင်း လင့်ချိတ်ထားသော စာမျက်နှာများတွင် အပြောင်းအလဲမရှိပါ။',
 'recentchangeslinked-summary' => 'ဤသည်မှာ သီးသန့်ပြထားသော စာမျက်နှာ (သို့ သီးသန့်ကဏ္ဍများ) မှ ညွှန်းထားသော စာမျက်နှာများ၏ လတ်တလော ပြောင်းလဲမှုများ၏ စာရင်းဖြစ်သည်။ [[Special:Watchlist|စောင့်ကြည့်စာရင်း]] မှ စာမျက်နှာများကို စာလုံးမည်းဖြင့် ပြထားသည်။',
 'recentchangeslinked-page' => 'စာမျက်နှာ အမည် -',
 'recentchangeslinked-to' => 'ပေးထားသော စာမျက်နှာများအစား လင့်များနှင့် ဆက်စပ်နေသာ စာမျက်နှာများ၏ အပြောင်းအလဲများကို ပြရန်',
@@ -1053,7 +1054,6 @@ Your e-mail address is not revealed when other users contact you.
 
 # HTTP errors
 'http-invalid-url' => 'တရားမဝင်သော URL လင့် - $1',
-'http-host-unreachable' => 'URL လင့်သို့ သွားမရပါ။',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
 'upload-curl-error6' => 'URL လင့်သို့ သွားမရပါ',
@@ -1164,8 +1164,6 @@ Your e-mail address is not revealed when other users contact you.
 'statistics-users' => 'မှတ်ပုံတင်ထားသော [[Special:ListUsers|အသုံးပြုသူများ]]',
 'statistics-users-active' => 'လက်ရှိလုပ်ကိုင်နေသော အသုံးပြုသူများ',
 'statistics-mostpopular' => 'အများဆုံးကြည့်သော စာမျက်နှာများ',
-
-'disambiguationspage' => 'Template:သံတူကြောင်းကွဲများ',
 
 'doubleredirects' => 'နှစ်ဆင့်ပြန် ပြန်ညွှန်းများ',
 'double-redirect-fixed-move' => '[[$1]] ကို ရွှေ့ပြောင်းပြီးဖြစ်သည်။ ယခုအခါ [[$2]] သို့ ပြန်ညွှန်းထားသည်။',
@@ -1511,8 +1509,6 @@ Your e-mail address is not revealed when other users contact you.
 'block-log-flags-hiddenname' => 'အသုံးပြုသူအမည် ဝှက်ထားသည်',
 'ipb_expiry_invalid' => 'သက်တမ်းကုန်လွန်မည့် အချိန်သည် တရားမဝင်ပါ။',
 'ipb_already_blocked' => '"$1" ကို အစကတည်းက ပိတ်ထားသည်',
-'blockme' => 'ကျွန်ုပ်ကို ပိတ်ရန်',
-'proxyblocksuccess' => 'ပြီးပါပြီ။',
 
 # Move page
 'move-page' => '$1 ကို ရွှေ့ရန်',
@@ -1717,7 +1713,7 @@ Your e-mail address is not revealed when other users contact you.
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'အကျယ်',
 'exif-imagelength' => 'အမြင့်',
 'exif-bitspersample' => 'အစိတ်အပိုင်းတစ်ခုတွင်ပါဝင်သော အပိုင်းငယ်များ',
@@ -1846,11 +1842,6 @@ Your e-mail address is not revealed when other users contact you.
 'version-software' => 'သွင်းထားသော ဆော့ဝဲ',
 'version-software-product' => 'ထုတ်ကုန်',
 'version-software-version' => 'ဗားရှင်း',
-
-# Special:FilePath
-'filepath' => 'ဖိုင်လမ်းကြောင်း',
-'filepath-page' => 'ဖိုင်:',
-'filepath-submit' => 'သွား',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'နှစ်ခုထပ်နေသောဖိုင်များကို ရှာရန်',

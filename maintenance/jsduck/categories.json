@@ -9,19 +9,28 @@
 					"mw.Map",
 					"mw.Message",
 					"mw.loader",
+					"mw.log",
 					"mw.html",
 					"mw.html.Cdata",
-					"mw.html.Raw"
+					"mw.html.Raw",
+					"mw.hook"
 				]
 			},
 			{
 				"name": "General",
 				"classes": [
 					"mw.Title",
+					"mw.inspect",
+					"mw.inspect.reports",
 					"mw.notification",
+					"mw.user",
 					"mw.util",
-					"mw.plugin.notify"
+					"mw.plugin.*"
 				]
+			},
+			{
+				"name": "Actions",
+				"classes": ["mw.toolbar"]
 			},
 			{
 				"name": "API",
@@ -33,20 +42,20 @@
 		"name": "jQuery",
 		"groups": [
 			{
-				"name": "Core",
-				"classes": ["jQuery", "jQuery.Event", "jQuery.Promise", "jQuery.Deferred", "jQuery.jqXHR"]
-			},
-			{
 				"name": "Plugins",
 				"classes": ["jQuery.plugin.*"]
 			}
 		]
 	},
 	{
-		"name": "Misc",
+		"name": "Upstream",
 		"groups": [
 			{
-				"name": "Native",
+				"name": "jQuery",
+				"classes": ["jQuery", "jQuery.Event", "jQuery.Callbacks", "jQuery.Promise", "jQuery.Deferred", "jQuery.jqXHR", "QUnit"]
+			},
+			{
+				"name": "JavaScript",
 				"classes": ["Array", "Boolean", "Date", "Function", "Number", "Object", "RegExp", "String"]
 			}
 		]

@@ -195,7 +195,7 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 			'prop' => array(
 				'Which properties to get',
 				' lllang         - Adds the language code of the language link',
-				' lltitle        - Adds the title of the language ink',
+				' lltitle        - Adds the title of the language link',
 			),
 			'limit' => 'How many total pages to return',
 			'dir' => 'The direction in which to list',
@@ -223,7 +223,8 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 		return array( 'Find all pages that link to the given language link.',
 			'Can be used to find all links with a language code, or',
 			'all links to a title (with a given language).',
-			'Using neither parameter is effectively "All Language Links"',
+			'Using neither parameter is effectively "All Language Links".',
+			'Note that this may not consider language links added by extensions.',
 		);
 	}
 
@@ -238,5 +239,9 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 			'api.php?action=query&list=langbacklinks&lbltitle=Test&lbllang=fr',
 			'api.php?action=query&generator=langbacklinks&glbltitle=Test&glbllang=fr&prop=info'
 		);
+	}
+
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Langbacklinks';
 	}
 }

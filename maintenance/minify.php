@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that minifies a file or set of files.
@@ -144,4 +144,4 @@ class MinifyScript extends Maintenance {
 }
 
 $maintClass = 'MinifyScript';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

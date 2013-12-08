@@ -20,13 +20,21 @@ $.wikiEditor.modules.highlight = {
 	 * Internally used event handlers
 	 */
 	evt: {
+		/**
+		 * @param context
+		 * @param event
+		 */
 		delayedChange: function ( context, event ) {
-			if ( event.data.scope == 'realchange' ) {
+			if ( event.data.scope === 'realchange' ) {
 				$.wikiEditor.modules.highlight.fn.scan( context );
 				$.wikiEditor.modules.highlight.fn.mark( context, event.data.scope );
 			}
 		},
-		ready: function ( context, event ) {
+		/**
+		 * @param context
+		 * @param event
+		 */
+		ready: function ( context ) {
 			$.wikiEditor.modules.highlight.fn.scan( context );
 			$.wikiEditor.modules.highlight.fn.mark( context, 'ready' );
 		}
@@ -39,19 +47,22 @@ $.wikiEditor.modules.highlight = {
 		/**
 		 * Creates a highlight module within a wikiEditor
 		 *
+		 * @param context
 		 * @param config Configuration object to create module from
 		 */
-		create: function ( context, config ) {
+		create: function ( context ) {
 			context.modules.highlight.markersStr = '';
 		},
 		/**
 		 * Scans text division for tokens
 		 *
+		 * @param context
 		 * @param division
 		 */
-		scan: function ( context, division ) {
+		scan: function ( context ) {
 			var tokenArray, text, module, exp,
-				left, right, match;
+				left, right, match,
+				regex, label, markAfter, offset;
 			/*jshint eqnull: true */
 
 			// Remove all existing tokens
@@ -65,11 +76,11 @@ $.wikiEditor.modules.highlight = {
 				if ( module in $.wikiEditor.modules && 'exp' in $.wikiEditor.modules[module] ) {
 					for ( exp in $.wikiEditor.modules[module].exp ) {
 						// Prepare configuration
-						var regex = $.wikiEditor.modules[module].exp[exp].regex;
-						var label = $.wikiEditor.modules[module].exp[exp].label;
-						var markAfter = $.wikiEditor.modules[module].exp[exp].markAfter || false;
+						regex = $.wikiEditor.modules[module].exp[exp].regex;
+						label = $.wikiEditor.modules[module].exp[exp].label;
+						markAfter = $.wikiEditor.modules[module].exp[exp].markAfter || false;
 						// Search for tokens
-						var offset = 0;
+						offset = 0;
 						while ( ( match = text.substr( offset ).match( regex ) ) != null ) {
 							right = ( left = offset + match.index ) + match[0].length;
 							tokenArray[tokenArray.length] = {
@@ -95,16 +106,19 @@ $.wikiEditor.modules.highlight = {
 		/**
 		 * Marks up text with HTML
 		 *
+		 * @param context
 		 * @param division
 		 * @param tokens
 		 */
 		// FIXME: What do division and tokens do?
 		// TODO: Document the scan() and mark() APIs somewhere
-		mark: function ( context, division, tokens ) {
-			var i, subtracted, oldLength, j, o;
+		mark: function ( context, division ) {
+			/*jshint eqeqeq:false, onevar:false */
+			var i, subtracted, oldLength, j, o,
+				markers;
 
 			// Reset markers
-			var markers = [];
+			markers = [];
 
 			// Recycle markers that will be skipped in this run
 			if ( context.modules.highlight.markers && division !== '' ) {
@@ -353,8 +367,9 @@ $.wikiEditor.modules.highlight = {
 					// Don't remove these either
 					return true;
 				}
-				if ( marker && typeof marker.beforeUnwrap === 'function' )
+				if ( marker && typeof marker.beforeUnwrap === 'function' ) {
 					marker.beforeUnwrap( this );
+				}
 				if ( ( marker && marker.anchor === 'tag' ) || $(this).is( 'p' ) ) {
 					// Remove all classes
 					$(this).removeAttr( 'class' );

@@ -1,5 +1,6 @@
 /* TemplateEditor module for wikiEditor */
-( function( $ ) { $.wikiEditor.modules.templateEditor = {
+/*jshint quotmark:false, onevar:false */
+( function ( $ ) { $.wikiEditor.modules.templateEditor = {
 /**
  * Name mappings, dirty hack which will be removed once "TemplateInfo" extension is more fully supported
  */
@@ -37,9 +38,13 @@
  */
 evt: {
 
-	mark: function( context, event ) {
+	/**
+	 * @param context
+	 * @param event
+	 */
+	mark: function( context ) {
 		// The markers returned by this function are skipped on realchange, so don't regenerate them in that case
-		if ( context.modules.highlight.currentScope == 'realchange' ) {
+		if ( context.modules.highlight.currentScope === 'realchange' ) {
 			return;
 		}
 
@@ -47,10 +52,9 @@ evt: {
 		var markers = context.modules.highlight.markers;
 		var tokenArray = context.modules.highlight.tokenArray;
 		// Collect matching level 0 template call boundaries from the tokenArray
-		var level = 0;
 		var tokenIndex = 0;
 		while ( tokenIndex < tokenArray.length ){
-			while ( tokenIndex < tokenArray.length && tokenArray[tokenIndex].label != 'TEMPLATE_BEGIN' ) {
+			while ( tokenIndex < tokenArray.length && tokenArray[tokenIndex].label !== 'TEMPLATE_BEGIN' ) {
 				tokenIndex++;
 			}
 			//open template
@@ -58,19 +62,18 @@ evt: {
 				var beginIndex = tokenIndex;
 				var endIndex = -1; //no match found
 				var openTemplates = 1;
-				var templatesMatched = false;
-				while ( tokenIndex < tokenArray.length - 1 && endIndex == -1 ) {
+				while ( tokenIndex < tokenArray.length - 1 && endIndex === -1 ) {
 					tokenIndex++;
-					if ( tokenArray[tokenIndex].label == 'TEMPLATE_BEGIN' ) {
+					if ( tokenArray[tokenIndex].label === 'TEMPLATE_BEGIN' ) {
 						openTemplates++;
-					} else if ( tokenArray[tokenIndex].label == 'TEMPLATE_END' ) {
+					} else if ( tokenArray[tokenIndex].label === 'TEMPLATE_END' ) {
 						openTemplates--;
-						if ( openTemplates == 0 ) {
+						if ( openTemplates === 0 ) {
 							endIndex = tokenIndex;
 						} //we can stop looping
 					}
 				}//while finding template ending
-				if ( endIndex != -1 ) {
+				if ( endIndex !== -1 ) {
 					markers.push( {
 						start: tokenArray[beginIndex].offset,
 						end: tokenArray[endIndex].offset,
@@ -92,7 +95,7 @@ evt: {
 							}
 						},
 						onSkip: function( node ) {
-							if ( $( node ).html() == $( node ).data( 'oldHTML' ) ) {
+							if ( $( node ).html() === $( node ).data( 'oldHTML' ) ) {
 								// No change
 								return;
 							}
@@ -104,7 +107,7 @@ evt: {
 							if ( $( node ).parent().hasClass( 'wikiEditor-template' ) ) {
 								var $label = $( node ).parent().find( '.wikiEditor-template-label' );
 								var displayName = $.wikiEditor.modules.templateEditor.fn.getTemplateDisplayName( model );
-								if ( $label.text() != displayName ) {
+								if ( $label.text() !== displayName ) {
 									$label.text( displayName );
 								}
 							}
@@ -119,7 +122,7 @@ evt: {
 								$.wikiEditor.modules.templateEditor.fn.bindTemplateEvents( $( node ) );
 							}
 						},
-						getAnchor: function( ca1, ca2 ) {
+						getAnchor: function( ca1 ) {
 							return $( ca1.parentNode ).is( 'span.wikiEditor-template-text' ) ?
 								ca1.parentNode : null;
 						},
@@ -142,7 +145,9 @@ evt: {
 		var $evtElem = event.jQueryNode;
 		if ( $evtElem.hasClass( 'wikiEditor-template-label' ) ) {
 			// Allow anything if the command or control key are depressed
-			if ( event.ctrlKey || event.metaKey ) return true;
+			if ( event.ctrlKey || event.metaKey ) {
+				return true;
+			}
 			switch ( event.which ) {
 				case 13: // Enter
 					$evtElem.click();
@@ -177,14 +182,22 @@ evt: {
 			}
 		}
 	},
-	keyup: function( context, event ) {
+	/**
+	 * @param context
+	 * @param event
+	 */
+	keyup: function( context ) {
 		// Rest our ignoreKeypress variable if it's set to true
 		if ( context.$iframe.data( 'ignoreKeypress' ) ) {
 			context.$iframe.data( 'ignoreKeypress', false );
 		}
 		return true;
 	},
-	keypress: function( context, event ) {
+	/**
+	 * @param context
+	 * @param event
+	 */
+	keypress: function( context ) {
 		// If this event is from a keydown event which we want to block, ignore it
 		return ( context.$iframe.data( 'ignoreKeypress' ) ? false : true );
 	}
@@ -210,7 +223,7 @@ fn: {
 	 * @param context Context object of editor to create module in
 	 * @param config Configuration object to create module from
 	 */
-	create: function( context, config ) {
+	create: function( context ) {
 		// Initialize module within the context
 		context.modules.templateEditor = {};
 	},
@@ -220,8 +233,7 @@ fn: {
 	 */
 	wrapTemplate: function( $wrapper ) {
 		var model = $wrapper.data( 'model' );
-		var context = $wrapper.data( 'marker' ).context;
-		var $template = $wrapper
+		$wrapper
 			.wrap( '<span class="wikiEditor-template"></span>' )
 			.addClass( 'wikiEditor-template-text wikiEditor-template-text-shrunken' )
 			.parent()
@@ -249,7 +261,7 @@ fn: {
 	bindTemplateEvents: function( $wrapper ) {
 		var $template = $wrapper.parent( '.wikiEditor-template' );
 
-		if ( typeof ( opera ) == "undefined" ) {
+		if ( typeof opera === 'undefined' ) {
 			$template.parent().attr('contentEditable', 'false');
 		}
 
@@ -274,7 +286,7 @@ fn: {
 	 * Toggle the visisbilty of the wikitext for a given template
 	 * @param $wrapper The origianl wrapper we want expand/collapse
 	 */
-	 toggleWikiTextEditor: function( $wrapper ) {
+	toggleWikiTextEditor: function( $wrapper ) {
 		var context = $wrapper.data( 'marker' ).context;
 		var $template = $wrapper.parent( '.wikiEditor-template' );
 		context.fn.purgeOffsets();
@@ -285,11 +297,11 @@ fn: {
 		var $templateText = $template.find( '.wikiEditor-template-text' );
 		$templateText.toggleClass( 'wikiEditor-template-text-shrunken' );
 		$templateText.toggleClass( 'wikiEditor-template-text-visible' );
-		if( $templateText.hasClass('wikiEditor-template-text-shrunken') ){
+		if ( $templateText.hasClass('wikiEditor-template-text-shrunken') ){
 			//we just closed the template
 
 			// Update the model if we need to
-			if ( $templateText.html() != $templateText.data( 'oldHTML' ) ) {
+			if ( $templateText.html() !== $templateText.data( 'oldHTML' ) ) {
 				var templateModel = $.wikiEditor.modules.templateEditor.fn.updateModel( $templateText );
 
 				//this is the only place the template name can be changed; keep the template name in sync
@@ -350,7 +362,7 @@ fn: {
 					var $templateText = $templateDiv.children( '.wikiEditor-template-text' );
 					var templateModel = $templateText.data( 'model' );
 					// Update the model if we need to
-					if ( $templateText.html() != $templateText.data( 'oldHTML' ) ) {
+					if ( $templateText.html() !== $templateText.data( 'oldHTML' ) ) {
 						templateModel = $.wikiEditor.modules.templateEditor.fn.updateModel( $templateText );
 					}
 
@@ -362,11 +374,11 @@ fn: {
 					var $rows = $fields.find( '.wikiEditor-template-dialog-field-wrapper' );
 					for ( var paramIndex in params ) {
 						var param = params[paramIndex];
-						if ( typeof param.name == 'undefined' ) {
+						if ( typeof param.name === 'undefined' ) {
 							// param is the template name, skip it
 							continue;
 						}
-						var paramText = typeof param == 'string' ?
+						var paramText = typeof param === 'string' ?
 							param.name.replace( /[\_\-]/g, ' ' ) :
 							param.name;
 						var paramVal = templateModel.getValue( param.name );
@@ -397,11 +409,13 @@ fn: {
 								.data( 'expanded', false )
 								.bind( 'cut paste keypress click change', function( e ) {
 									// If this was fired by a tab keypress, let it go
-									if ( e.keyCode == '9' ) return true;
+									if ( e.keyCode === 9 || e.keyCode === '9' ) {
+										return true;
+									}
 									var $this = $( this );
 									setTimeout( function() {
 										var expanded = $this.data( 'expanded' );
-										if ( $this.val().indexOf( '\n' ) != -1 || $this.val().length > 24 ) {
+										if ( $this.val().indexOf( '\n' ) !== -1 || $this.val().length > 24 ) {
 											if ( !expanded ) {
 												$this.animate( { 'height': '4.5em' }, 'fast' );
 												$this.data( 'expanded', true );
@@ -455,7 +469,7 @@ fn: {
 	updateModel: function( $templateText, model ) {
 		var context = $templateText.data( 'marker' ).context;
 		var text;
-		if ( typeof model == 'undefined' ) {
+		if ( typeof model === 'undefined' ) {
 			text = context.fn.htmlToText( $templateText.html() );
 		} else {
 			text = model.getText();
@@ -464,7 +478,7 @@ fn: {
 		$templateText.text( text );
 		$templateText.html( $templateText.html().replace( /\n/g, '<br />' ) );
 		$templateText.data( 'oldHTML', $templateText.html() );
-		if ( typeof model == 'undefined' ) {
+		if ( typeof model === 'undefined' ) {
 			model = new $.wikiEditor.modules.templateEditor.fn.model( text );
 			$templateText.data( 'model', model );
 		}
@@ -476,9 +490,9 @@ fn: {
 	 */
 	getTemplateDisplayName: function ( model ) {
 		var tName = model.getName();
-		if( model.getValue( 'name' ) != '' ) {
+		if( model.getValue( 'name' ) !== '' ) {
 			return tName + ': ' + model.getValue( 'name' );
-		} else if( model.getValue( 'Name' ) != '' ) {
+		} else if( model.getValue( 'Name' ) !== '' ) {
 			return tName + ': ' + model.getValue( 'Name' );
 		} else if( tName.toLowerCase() in $.wikiEditor.modules.templateEditor.nameMappings ) {
 			return tName + ': ' + model.getValue( $.wikiEditor.modules.templateEditor.nameMappings[tName.toLowerCase()] );
@@ -541,27 +555,28 @@ fn: {
 			var retVal;
 			if ( isNaN( name ) ) {
 				// It's a string!
-				if ( typeof paramsByName[name] == 'undefined' ) {
+				if ( typeof paramsByName[name] === 'undefined' ) {
 					// Does not exist
-					return "";
+					return '';
 				}
 				rangeIndex = paramsByName[name];
 			} else {
 				// It's a number!
-				rangeIndex = parseInt( name );
+				rangeIndex = parseInt( name, 10 );
 			}
-			if ( typeof params[rangeIndex]  == 'undefined' ) {
+			if ( typeof params[rangeIndex] === 'undefined' ) {
 				// Does not exist
-				return "";
+				return '';
 			}
 			valueRange = ranges[params[rangeIndex].valueIndex];
-			if ( typeof valueRange.newVal == 'undefined' || original ) {
+			if ( typeof valueRange.newVal === 'undefined' || original ) {
 				// Value unchanged, return original wikitext
 				retVal = wikitext.substring( valueRange.begin, valueRange.end );
 			} else {
 				// New value exists, return new value
 				retVal = valueRange.newVal;
 			}
+			/*jshint eqnull:true */
 			if ( value != null ) {
 				ranges[params[rangeIndex].valueIndex].newVal = value;
 			}
@@ -574,7 +589,7 @@ fn: {
 		 * Get template name
 		 */
 		this.getName = function() {
-			if( typeof ranges[templateNameIndex].newVal == 'undefined' ) {
+			if( typeof ranges[templateNameIndex].newVal === 'undefined' ) {
 				return wikitext.substring( ranges[templateNameIndex].begin, ranges[templateNameIndex].end );
 			} else {
 				return ranges[templateNameIndex].newVal;
@@ -635,9 +650,9 @@ fn: {
 		 * Get modified template text
 		 */
 		this.getText = function() {
-			newText = "";
-			for ( i = 0 ; i < ranges.length; i++ ) {
-				if( typeof ranges[i].newVal == 'undefined' ) {
+			var newText = "";
+			for ( var i = 0 ; i < ranges.length; i++ ) {
+				if( typeof ranges[i].newVal === 'undefined' ) {
 					newText += wikitext.substring( ranges[i].begin, ranges[i].end );
 				} else {
 					newText += ranges[i].newVal;
@@ -659,7 +674,7 @@ fn: {
 			var adjustment = 0;
 			for (var i = 0 ; i < ranges.length; i++ ) {
 				ranges[i].begin += adjustment;
-				if( typeof ranges[i].adjust != 'undefined' ) {
+				if ( typeof ranges[i].adjust !== 'undefined' ) {
 					adjustment += ranges[i].adjust();
 					// NOTE: adjust should be a function that has the information necessary to calculate the length of
 					// this 'segment'
@@ -680,15 +695,16 @@ fn: {
 		// Get rid of first {{ with whitespace
 		var sanatizedStr = wikitext.replace( /{{/, "  " );
 		// Replace end
-		endBraces = sanatizedStr.match( /}}\s*$/ );
+		var endBraces = sanatizedStr.match( /}}\s*$/ );
 		if ( endBraces ) {
 			sanatizedStr = sanatizedStr.substring( 0, endBraces.index ) + "  " +
 				sanatizedStr.substring( endBraces.index + 2 );
 		}
 
+		var startIndex, endIndex, sanatizedSegment, openBraces, brace;
 
 		//treat HTML comments like whitespace
-		while ( sanatizedStr.indexOf( '<!' ) != -1 ) {
+		while ( sanatizedStr.indexOf( '<!' ) !== -1 ) {
 			startIndex = sanatizedStr.indexOf( '<!' );
 			endIndex = sanatizedStr.indexOf('-->') + 3;
 			if( endIndex < 3 ){
@@ -700,26 +716,26 @@ fn: {
 		}
 
 		// Match the open braces we just found with equivalent closing braces note, works for any level of braces
-		while ( sanatizedStr.indexOf( '{{' ) != -1 ) {
+		while ( sanatizedStr.indexOf( '{{' ) !== -1 ) {
 			startIndex = sanatizedStr.indexOf( '{{' ) + 1;
 			openBraces = 2;
 			endIndex = startIndex;
 			while ( (openBraces > 0)  && (endIndex < sanatizedStr.length) ) {
-				var brace = sanatizedStr[++endIndex];
-				openBraces += brace == '}' ? -1 : brace == '{' ? 1 : 0;
+				brace = sanatizedStr[++endIndex];
+				openBraces += brace === '}' ? -1 : brace === '{' ? 1 : 0;
 			}
 			sanatizedSegment = sanatizedStr.substring( startIndex,endIndex ).replace( /[{}|=]/g , 'X' );
 			sanatizedStr =
 				sanatizedStr.substring( 0, startIndex ) + sanatizedSegment + sanatizedStr.substring( endIndex );
 		}
 		//links, images, etc, which also can nest
-		while ( sanatizedStr.indexOf( '[[' ) != -1 ) {
+		while ( sanatizedStr.indexOf( '[[' ) !== -1 ) {
 			startIndex = sanatizedStr.indexOf( '[[' ) + 1;
 			openBraces = 2;
 			endIndex = startIndex;
 			while ( (openBraces > 0)  && (endIndex < sanatizedStr.length) ) {
-				var brace = sanatizedStr[++endIndex];
-				openBraces += brace == ']' ? -1 : brace == '[' ? 1 : 0;
+				brace = sanatizedStr[++endIndex];
+				openBraces += brace === ']' ? -1 : brace === '[' ? 1 : 0;
 			}
 			sanatizedSegment = sanatizedStr.substring( startIndex,endIndex ).replace( /[\[\]|=]/g , 'X' );
 			sanatizedStr =
@@ -733,14 +749,16 @@ fn: {
 		var params = [];
 		var templateNameIndex = 0;
 		var doneParsing = false;
-		oldDivider = 0;
-		divider = sanatizedStr.indexOf( '|', oldDivider );
-		if ( divider == -1 ) {
+		var oldDivider = 0;
+		var divider = sanatizedStr.indexOf( '|', oldDivider );
+		if ( divider === -1 ) {
 			divider = sanatizedStr.length;
 			doneParsing = true;
 			collapsible = false; //zero params
 		}
-		nameMatch = sanatizedStr.substring( 0, divider ).match( /[^\s]/ );
+		var nameMatch = sanatizedStr.substring( 0, divider ).match( /[^\s]/ );
+		var nameEndMatch;
+		/*jshint eqnull:true */
 		if ( nameMatch != null ) {
 			ranges.push( new Range( 0 ,nameMatch.index ) ); //whitespace and squiggles upto the name
 			nameEndMatch = sanatizedStr.substring( 0 , divider ).match( /[^\s]\s*$/ ); //last nonwhitespace character
@@ -758,18 +776,21 @@ fn: {
 		 * Start looping over params
 		 */
 		var currentParamNumber = 0;
+		var currentField, currentValue, valueBeginIndex, valueBegin, valueEnd;
+		var nameIndex, equalsIndex, valueIndex;
+		var currentName, nameBegin, nameBeginIndex, nameEnd, nameEndIndex;
 		var valueEndIndex = ranges[templateNameIndex].end;
 		var paramsByName = [];
 		while ( !doneParsing ) {
 			currentParamNumber++;
 			oldDivider = divider;
 			divider = sanatizedStr.indexOf( '|', oldDivider + 1 );
-			if ( divider == -1 ) {
+			if ( divider === -1 ) {
 				divider = sanatizedStr.length;
 				doneParsing = true;
 			}
 			currentField = sanatizedStr.substring( oldDivider+1, divider );
-			if ( currentField.indexOf( '=' ) == -1 ) {
+			if ( currentField.indexOf( '=' ) === -1 ) {
 				// anonymous field, gets a number
 
 				//default values, since we'll allow empty values

@@ -15,6 +15,7 @@
  * @author Growingup
  * @author Kgbek
  * @author Muratjumashev
+ * @author Tynchtyk Chorotegin
  * @author Ztimur
  * @author Викиней
  */
@@ -64,9 +65,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Көзөмөлдөп жаткан колдонуучулардын санын көрсөтүү',
 'tog-oldsig' => 'Учурдагы кол тамга:',
 'tog-fancysig' => 'Кол тамгамдын уики-белгиси гана (автоматтык шилтемесиз)',
-'tog-externaleditor' => 'Тышкы редакторду жарыяланбасча колдонуу (адистер үчүн гана, компьютериңизде өзгөчө ырастоолор керек. [//www.mediawiki.org/wiki/Manual:External_editors кошумча маалымат.])',
-'tog-externaldiff' => 'Салыштыруу үчүн тышкы программаны жарыяланбасча колдонуу (адистер үчүн гана, компьютериңизде өзгөчө ырастоолор керек. [//www.mediawiki.org/wiki/Manual:External_editors кошумча маалымат.])',
-'tog-showjumplinks' => '«өтүү» деген жардамчы шилтемелерди жандыруу',
 'tog-uselivepreview' => 'Тез алдын ала көрсөтүүнү колдонуу (JavaScript талап кылынат) (эксперименталдык)',
 'tog-forceeditsummary' => 'Оңдоо баяндоосунун көзөнөгү бош калган кезинде мага эскертүү',
 'tog-watchlisthideown' => 'Көзөмөлдөө тизмесинен менин оңдоолорумду жашыруу',
@@ -79,6 +77,7 @@ $messages = array(
 'tog-diffonly' => 'Айырмаларды салыштыруунун астынан барактын мазмунун көрсөтпөө',
 'tog-showhiddencats' => 'Жашыруун категорияларды көрсөтүү',
 'tog-norollbackdiff' => 'Кетенчиктөөнү аткаргандан кийин версиялардын айырмасын көрсөтпөө',
+'tog-useeditwarning' => 'Барактан өзгөртүүлөрүмдү сактабастан чыгып баратканымда эскертүү',
 
 'underline-always' => 'Дайыма',
 'underline-never' => 'Эч качан',
@@ -142,6 +141,9 @@ $messages = array(
 'oct' => 'Окт',
 'nov' => 'Ноя',
 'dec' => 'Дек',
+'january-date' => 'Январь (Үчтүн айы) $1',
+'february-date' => '$1-феврал',
+'march-date' => '$1-март',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Категория|Категориялар}}',
@@ -223,6 +225,7 @@ $messages = array(
 'create-this-page' => 'Бул баракты түзүү',
 'delete' => 'Өчүрүү',
 'deletethispage' => 'Бул баракты өчүрүү',
+'undeletethispage' => 'Баракты калыбына келтирүү',
 'undelete_short' => '$1 {{PLURAL:$1|оңдоону|$1 оңдоолорду}} калыбына келтирүү',
 'viewdeleted_short' => 'Өчүрүлгөн {{PLURAL:$1|оңдоону|$1 оңдоолорду}} көрүү',
 'protect' => 'Коргоо',
@@ -266,7 +269,7 @@ $1',
 'pool-queuefull' => 'Суроо жыйнагыч толгон',
 'pool-errorunknown' => 'Белгисиз ката',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} тууралуу',
 'aboutpage' => 'Project:Долбоор тууралуу',
 'copyright' => '$1 лицензиясына ылайык жеткиликтүү мазмун.',
@@ -276,7 +279,6 @@ $1',
 'disclaimers' => 'Жоопкерчиликтен баш тартуу',
 'disclaimerpage' => 'Project:Жоопкерчиликтен баш тартуу',
 'edithelp' => 'Оңдоп-түзөөгө жардам',
-'edithelppage' => 'Help:Редакторлоо',
 'helppage' => 'Help:Мазмуну',
 'mainpage' => 'Баш барак',
 'mainpage-description' => 'Баш барак',
@@ -344,12 +346,6 @@ $1',
 # General errors
 'error' => 'Ката',
 'databaseerror' => 'Маалымат базасынын катасы',
-'dberrortext' => 'Маалымат базасынын суроо синтаксисинде ката табылды.
-Бул программалык камсыздоодо ката бар болгонун билдирет.
-Акыркы маалымат базасынын суроосу:
-<blockquote><code>$1</code></blockquote>
-«<code>$2</code>» функциясынан пайда болду.
-Маалымат базасы «<samp>$3: $4</samp>» катасын кайтарды.',
 'laggedslavemode' => "'''Эскертүү:''' баракта акыркы жаңыртуулар жок болуп калышы мүмкүн.",
 'readonly' => 'Маалымат базасы бөгөттөлгөн',
 'enterlockreason' => 'Бөгөттөөнүн себебин жана мөөнөтүн көрсөтүңүз',
@@ -384,7 +380,6 @@ $1',
 'viewsource-title' => '$1 барагынын баштапкы кодун көрүү',
 'actionthrottled' => 'Аралык боюнча чектөө',
 'viewsourcetext' => 'Сиз бул барактын баштапкы кодун көрүп жана көчүрүп алсаңыз болот:',
-'sqlhidden' => '(SQL суроо жашырылган)',
 'ns-specialprotected' => 'Кызматык барактарды оңдоого мүмкүн эмес.',
 'invalidtitle-unknownnamespace' => 'Туура эмес баш сөз',
 'exception-nologin' => 'Сиз системге кирген жоксуз',
@@ -402,10 +397,18 @@ $1',
 'welcomecreation-msg' => 'Сиздин эсеп жазууңуз жаратылды.
 {{SITENAME}} сайтынын [[Special:Preferences|ырастоолорун]] өзгөртүүнү унутпаңыз.',
 'yourname' => 'Колдонуучу аты:',
+'userlogin-yourname' => 'Колдонуучунун аты',
+'userlogin-yourname-ph' => 'Колдонуучу атыңызды териңиз',
 'yourpassword' => 'Сырсөз:',
+'userlogin-yourpassword' => 'Сырсөз',
+'userlogin-yourpassword-ph' => 'Сырсөзүңүздү териңиз',
+'createacct-yourpassword-ph' => 'Сырсөздү териңиз',
 'yourpasswordagain' => 'Сырсөздү кайра терүү:',
+'createacct-yourpasswordagain' => 'Сырсөздү тастыктаңыз',
+'createacct-yourpasswordagain-ph' => 'Сырсөздү кайра киргизиңиз',
 'remembermypassword' => 'Бул браузерде колдонуучу атымды ($1 {{PLURAL:$1|күнгө}} чейин сактоо)',
-'securelogin-stick-https' => 'Киргенден кийин HTTPS аркылуу туташтырууну улантуу',
+'userlogin-remembermypassword' => 'Мени системге кирген боюнча калтыр',
+'userlogin-signwithsecure' => 'Коопсуз байланышты колдонуу',
 'yourdomainname' => 'Сиздин домен:',
 'password-change-forbidden' => 'Сиз бул уикиден сырсөзүңүздү өзгөртө албайсыз.',
 'externaldberror' => 'Маалымат базасында ката кетти же сизге сырткы эсебиңизди жаңыртууга уруксат берилген эмес.',
@@ -417,18 +420,38 @@ $1',
 'logout' => 'Чыгуу',
 'userlogout' => 'Чыгуу',
 'notloggedin' => 'Сиз системге кире элексиз',
+'userlogin-noaccount' => 'Эсеп жазууңуз жокпу?',
+'userlogin-joinproject' => ' {{SITENAME}} кошулуңуз',
 'nologin' => 'Катталган эмессизби? $1.',
 'nologinlink' => 'Катталуу',
 'createaccount' => 'Катталуу',
 'gotaccount' => "Катталгансызбы? '''$1'''.",
 'gotaccountlink' => 'Кирүү',
 'userlogin-resetlink' => 'Кирүүчү маалыматарыңызды эсиңизден чыгардыңызбы?',
+'userlogin-resetpassword-link' => 'Сырсөздү алмаштыруу',
+'helplogin-url' => 'Help:Эсепке кирүү',
+'userlogin-helplink' => '[[{{MediaWiki:helplogin-url}}|Системге кирүүгө жардам]]',
+'createacct-join' => 'Маалыматыңызды төмөнгө териңиз.',
+'createacct-emailrequired' => 'Эмейл дарек',
+'createacct-emailoptional' => 'Эмейл дарек (милдеттүү эмес)',
+'createacct-email-ph' => 'Эмейл дарегиңизди киргизиңиз',
 'createaccountmail' => 'Убактылуу түзүлгөн сырсөздү колдон жана аны көрсөтүлгөн эмейл дарекке жөнөт',
+'createacct-realname' => 'Чыныгы ысымы (милдеттүү эмес)',
 'createaccountreason' => 'Себеби:',
+'createacct-reason' => 'Себеп',
+'createacct-reason-ph' => 'Эмне үчүн башка эсеп жазуу түзүп жатасыз',
+'createacct-captcha' => 'Коопсуздук текшерүүсү',
+'createacct-imgcaptcha-ph' => 'Жогорудагы текстти териңиз',
+'createacct-submit' => 'Катталыңыз',
+'createacct-benefit-heading' => '{{SITENAME}} сиз сыяктуу кишилер тарабынан түзүлгөн.',
+'createacct-benefit-body1' => '{{PLURAL:$1|оңдоо|оңдоолор}}',
+'createacct-benefit-body2' => '{{PLURAL:$1|барак|барактар}}',
+'createacct-benefit-body3' => 'акыркы {{PLURAL:$1|салым|салымдар}}',
 'badretype' => 'Сиз терген сырсөздөр дал келишпейт',
 'userexists' => 'Сиз тандаган колдонуучу ат бош эмес.
 Сураныч, башка атты тандаңыз.',
 'loginerror' => 'Кирүү катасы',
+'createacct-error' => 'Катталууда ката кетти',
 'createaccounterror' => '$1 эсеп жазуусун түзүү мүмкүн эмес',
 'nocookiesnew' => 'Колдонуучунун эсеби түзүлгөн, бирок сиз аны менен али кире элексиз. {{SITENAME}} колдонуучу кирүүсү үчүн куки колдонот. Сиздин кукилер өчүрүлгөн.
 Аларды жандырып, анан жаңы колдонуучу атыңыз жана сырсөзүңүз менен кириңиз.',
@@ -472,6 +495,7 @@ $1',
 'accountcreated' => 'Эсеп жазуусу түзүлдү',
 'createaccount-title' => '{{SITENAME}} үчүн эсеп жазуусун түзүү',
 'usernamehasherror' => 'Колдонуучунун атында торчо (#) белгисине жол берилбейт',
+'login-throttled' => 'Сиз системге кирүүгө өтө көп аракет кылдыңыз. Сураныч, аракетиңизди бир аз тыныгуудан соң улантыңыз.',
 'login-abort-generic' => 'Сиздин кирүүңүз ийгиликсиз болду - Үзүлдү',
 'loginlanguagelabel' => 'Тили: $1',
 
@@ -485,7 +509,7 @@ $1',
 'newpassword' => 'Жаңы сырсөз:',
 'retypenew' => 'Жаңы сырсөздү кайра териңиз:',
 'resetpass_submit' => 'Сырсөздү терип анан кирүү',
-'resetpass_success' => 'Сиздин сырсөзүңүз ийгиликтүү өзгөртүлдү!
+'changepassword-success' => 'Сиздин сырсөзүңүз ийгиликтүү өзгөртүлдү!
 Системага кирүү аткарылып жатат...',
 'resetpass_forbidden' => 'Сырсөздү өзгөртүүгө мүмкүн эмес',
 'resetpass-no-info' => 'Бул баракка түз кайрылыш үчүн, сиз системага киришиңиз керек.',
@@ -495,6 +519,7 @@ $1',
 
 # Special:PasswordReset
 'passwordreset' => 'Сырсөздү түшүрүү',
+'passwordreset-text-one' => 'Сырсөздү алмаштыруу үчүн бул үлгүнү толтуруңуз.',
 'passwordreset-legend' => 'Сырсөздү түшүрүү',
 'passwordreset-disabled' => 'Бул уикиде сырсөздү түшүрүү мүмкүнчүлүгү өчүрүлгөн.',
 'passwordreset-username' => 'Колдонуучу аты:',
@@ -506,7 +531,7 @@ $1',
 Убактылуу сырсөз: $2',
 'passwordreset-emailsent' => 'Сырсөздү алмаштыруу эмейлге жөнөтүлдү.',
 'passwordreset-emailsent-capture' => 'Төмөндө көрсөтүлгөн эмейлге сырсөздү алмаштыруучу кат жөнөтүлдү.',
-'passwordreset-emailerror-capture' => 'Жаратылган эске салуу каты астында көрсөтүлүп турат, бирок аны катышуучуга жөнөтүү оңунан чыккан жок: $1',
+'passwordreset-emailerror-capture' => 'Төмөндө көрсөтүлгөн дарекке сырсөздү алмаштыруу кат түзүлдү,бирок аны  {{GENDER:$2|катышуучуга}} жөнөтүү оңунан чыккан жок: $1',
 
 # Special:ChangeEmail
 'changeemail' => 'E-mail даректи өзгөртүү',
@@ -601,6 +626,7 @@ IP дарегиңиз бул барактын оңдоо тарыхына жаз
 Маалымат үчүн төмөндө өчүрүүлөрдүн жана өзгөртүүлөрдүн тизмеси берилген.',
 'log-fulllog' => 'Журналды бүтүн бойдон көрүү',
 'edit-conflict' => 'Оңдоолор конфликти',
+'postedit-confirmation' => 'Оңдооңуз сакталды',
 'edit-already-exists' => 'Жаңы барак түзүү мүмкүн эмес. Мындай барак бар',
 'defaultmessagetext' => 'Жарыяланбасча текст',
 
@@ -718,7 +744,6 @@ IP дарегиңиз бул барактын оңдоо тарыхына жаз
 'searchmenu-legend' => 'Издөө опциялары',
 'searchmenu-exists' => "'''Бул Уикиде \"[[:\$1]]\" деп аталган барак бар.'''",
 'searchmenu-new' => "'''Бул Уикиде \"[[:\$1]]\" барагын түз!'''",
-'searchhelp-url' => 'Help:Мазмун',
 'searchprofile-articles' => 'Негизги барактар',
 'searchprofile-project' => 'Жардам жана Долбоор барактары',
 'searchprofile-images' => 'Мултимедиа',
@@ -755,14 +780,6 @@ IP дарегиңиз бул барактын оңдоо тарыхына жаз
 'powersearch-togglenone' => 'Эчнерсе',
 'search-external' => 'Тышкы издөө',
 
-# Quickbar
-'qbsettings' => 'Навигация панели',
-'qbsettings-none' => 'Көрсөтпөө',
-'qbsettings-fixedleft' => 'Жылбаган сол',
-'qbsettings-fixedright' => 'Жылбаган оң',
-'qbsettings-floatingleft' => 'Оомо сол',
-'qbsettings-floatingright' => 'Оомо оң',
-
 # Preferences page
 'preferences' => 'Ырастоолор',
 'mypreferences' => 'Ырастоолор',
@@ -791,7 +808,6 @@ IP дарегиңиз бул барактын оңдоо тарыхына жаз
 'resetprefs' => 'Сакталбаган өзгөртүүлөрдү тазалоо',
 'restoreprefs' => 'Жарыяланбасча ырастоолорду калыбына келтирүү',
 'prefs-editing' => 'Оңдоп-түзөө',
-'prefs-edit-boxsize' => 'Редакторлоо терезесинин өлчөмү.',
 'rows' => 'Сап:',
 'columns' => 'Тилке:',
 'searchresultshead' => 'Издөө',
@@ -819,7 +835,6 @@ IP дарегиңиз бул барактын оңдоо тарыхына жаз
 'prefs-custom-css' => 'Өз CSS',
 'prefs-custom-js' => 'Өз JavaScript',
 'prefs-emailconfirm-label' => 'Эл. почтаны аныктоо:',
-'prefs-textboxsize' => 'Редакторлоо терезесинин өлчөмү',
 'youremail' => 'Электрондук дарек:',
 'username' => '{{GENDER:$1|Колдонуучу аты}}:',
 'uid' => '{{GENDER:$1|Колдонуучунун}} коду:',
@@ -957,7 +972,6 @@ HTML-тегдеринин тууралыгын текшериңиз.',
 'recentchangeslinked-feed' => 'Тиешелүү өзгөрүүлөр',
 'recentchangeslinked-toolbox' => 'Байланыштуу өзгөрүүлөр',
 'recentchangeslinked-title' => '"$1" үчүн тийиштүү өзгөртүүлөр',
-'recentchangeslinked-noresult' => 'Берилген мөөнөттө шилтемеленген барактарда өзгөртүү жок.',
 'recentchangeslinked-summary' => 'Бул көрсөтүлгөн (же көрсөтүлгөн категорияга кирген) барактан шилтемеленген барактардагы жакын арада жасалган өзгөрүүлөрдүн тизмеси.
 [[Special:Watchlist|Көзөмөл тизмеңиз]]деги барактар калын арип менен белгиленген.',
 'recentchangeslinked-page' => 'Барактын аталышы:',
@@ -1076,8 +1090,6 @@ To include a file in a page, use a link in one of the following forms:
 'statistics-articles' => 'Макалалар',
 'statistics-pages' => 'Барактар',
 'statistics-files' => 'Жүктөлгөн файлдар',
-
-'disambiguationspage' => 'Template:көп маанилүү',
 
 'brokenredirects-edit' => 'оңдоо',
 'brokenredirects-delete' => 'өчүрүү',
@@ -1297,7 +1309,6 @@ To include a file in a page, use a link in one of the following forms:
 'block-log-flags-nocreate' => 'эсеп жазуусун жаратуу өчүрүлгөн',
 'block-log-flags-noemail' => 'кат жөнөтүүгө тыюу салынган',
 'block-log-flags-hiddenname' => 'колдонуучу аты жашырылган',
-'blockme' => 'Мени бөгөттө',
 'proxyblocker' => 'Проксини блокировкалоо',
 
 # Developer tools
@@ -1536,7 +1547,7 @@ To include a file in a page, use a link in one of the following forms:
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Туурасы',
 'exif-imagelength' => 'Бийиктиги',
 'exif-imagedescription' => 'Сүрөт аты',
@@ -1581,7 +1592,7 @@ To include a file in a page, use a link in one of the following forms:
 'exif-intellectualgenre' => 'Объекттин түрү',
 'exif-subjectnewscode' => 'Теманын коду',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Кыстырылбаган',
 
 'exif-copyrighted-true' => 'Автордук укук менен корголгон',
@@ -1732,11 +1743,6 @@ To include a file in a page, use a link in one of the following forms:
 'version-software-product' => 'Продукт',
 'version-software-version' => 'Версия',
 'version-entrypoints-header-url' => 'URL',
-
-# Special:FilePath
-'filepath' => 'Файл жолу',
-'filepath-page' => 'Файл:',
-'filepath-submit' => 'Өтүү',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Файл аты:',

@@ -156,6 +156,18 @@ $messages = array(
 'oct' => 'ок҃т',
 'nov' => 'но҃є',
 'dec' => 'дє҃к',
+'january-date' => 'ꙗноуарїꙗ $1 числа',
+'february-date' => 'фєвроуарїꙗ $1 числа',
+'march-date' => 'мартїꙗ $1 числа',
+'april-date' => 'апрїлїꙗ $1 числа',
+'may-date' => 'маїꙗ $1 числа',
+'june-date' => 'їоунїꙗ $1 числа',
+'july-date' => 'їоулїꙗ $1 числа',
+'august-date' => 'аѷгоуста $1 числа',
+'september-date' => 'сєптємврїꙗ $1 числа',
+'october-date' => 'октѡврїꙗ $1 числа',
+'november-date' => 'ноємврїꙗ $1 числа',
+'december-date' => 'дєкємврїꙗ $1 числа',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Катигорїꙗ|Катигорїи|Катигорїѩ|Катигорїѩ}}',
@@ -168,7 +180,7 @@ $messages = array(
 'category-subcat-count' => '{{PLURAL:$2|Сѥи катигорїи тъкъмо сꙗ подъкатигорїꙗ ѥстъ|Сѥи катигорїи {{PLURAL:$1|ѥдина подъкатигорїꙗ ѥстъ|2 подъкатигорїи ѥстє|$1 подъкатигорїѩ сѫтъ}} · а вьсѩ жє подъкатигорїѩ число $2 ѥстъ}}',
 'listingcontinuesabbrev' => '· вѧщє',
 
-'linkprefix' => '/^(.*?)(„|«)$/sD',
+'linkprefix' => '/^((?>.*(?<!(?:„|«)$)))(.+)$/sDu',
 
 'about' => 'опьсаниѥ',
 'article' => 'члѣнъ',
@@ -240,7 +252,7 @@ $messages = array(
 'jumptosearch' => 'исканиѥ',
 'pool-errorunknown' => 'нєвѣдома блаꙁна',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'О {{grammar:instrumental|{{SITENAME}}}}',
 'aboutpage' => 'Project:О сѥмь опꙑтьствовании',
 'copyright' => 'подъ прощєниѥмь $1 пьсано ѥстъ',
@@ -248,7 +260,6 @@ $messages = array(
 'currentevents' => 'сѫщѧѩ вѣщи',
 'currentevents-url' => 'Project:Сѫщѧѩ вѣщи',
 'edithelp' => 'помощь по исправлѥниѭ',
-'edithelppage' => 'Help:Исправлѥниѥ страницѧ',
 'helppage' => 'Help:Каталогъ',
 'mainpage' => 'главьна страница',
 'mainpage-description' => 'главьна страница',
@@ -302,8 +313,15 @@ $messages = array(
 'welcomecreation-msg' => 'твоѥ польꙃєватєльско мѣсто сътворєно ѥстъ ⁙
 нꙑнѣ иꙁмѣнити [[Special:Preferences|{{GRAMMAR:genitive|{{SITENAME}}}} строи]] можєши',
 'yourname' => 'твоѥ имѧ',
+'userlogin-yourname' => 'польꙃєватєлꙗ имѧ',
+'userlogin-yourname-ph' => 'твоѥ польꙃєватєлꙗ имѧ напьши',
 'yourpassword' => 'таино слово напиши',
+'userlogin-yourpassword' => 'таино слово',
+'userlogin-yourpassword-ph' => 'твоѥ таино слово напьши',
+'createacct-yourpassword-ph' => 'таино слово напьши',
 'yourpasswordagain' => 'опакꙑ таиноѥ слово напиши',
+'createacct-yourpasswordagain' => 'таина слова оувѣрѥниѥ',
+'createacct-yourpasswordagain-ph' => 'опакꙑ жє таино слово напьши',
 'login' => 'въниди',
 'nav-login-createaccount' => 'въниди / съꙁижди си мѣсто',
 'userlogin' => 'въниди / съꙁижди си мѣсто',
@@ -315,10 +333,17 @@ $messages = array(
 'createaccount' => 'съꙁижди си мѣсто',
 'gotaccount' => 'мѣсто ти ѥстъ ли? $1',
 'gotaccountlink' => 'въниди',
+'helplogin-url' => 'Help:Въниждѥниѥ',
 'createaccountreason' => 'какъ съмꙑслъ :',
+'createacct-reason' => 'какъ съмꙑслъ',
+'createacct-submit' => 'съꙁижди си мѣсто',
+'createacct-benefit-heading' => '{{SITENAME}} съꙁьдаѥтъ сѧ чьловѣкꙑ · ижє ꙗко тꙑ сѫтъ',
+'createacct-benefit-body1' => '{{PLURAL:$1|мѣна|мѣнꙑ|мѣнъ}}',
+'createacct-benefit-body2' => '{{PLURAL:$1|страница|страници|страницѧ}}',
 'userexists' => 'сѫщє польꙃєватєлꙗ имѧ пьса ⁙
 бѫди добръ · ино сѥ иꙁобрѧщи',
 'loginerror' => 'въхода блаꙁна',
+'createacct-error' => 'мѣста сътворѥниꙗ блаꙁна',
 'loginsuccess' => "'''нꙑнѣ тꙑ {{GENDER|въшьлъ|въшьла}} въ {{grammar:locative|{{SITENAME}}}} подь имьньмъ ⁖ $1 ⁖.'''",
 'mailmypassword' => 'посъли ново таино слово',
 'accountcreated' => 'мѣсто сътворєно ѥстъ',
@@ -382,6 +407,7 @@ $messages = array(
 'template-protected' => '(ꙁабранєно ѥстъ)',
 'template-semiprotected' => '(чѧстьно ꙁабранѥно)',
 'hiddencategories' => 'сꙗ страница въ {{PLURAL:$1|1 съкрꙑтѣи катигорїи|$1 съкрꙑтѣхъ катигорїѩ}} сѧ авлꙗѥтъ :',
+'postedit-confirmation' => 'твоꙗ мѣна съхранѥна ѥстъ',
 
 # History pages
 'viewpagelogs' => 'си страницѧ їсторїѩ',
@@ -423,7 +449,6 @@ $messages = array(
 'viewprevnext' => 'виждь ($1 {{int:pipe-separator}} $2) ($3)',
 'searchmenu-exists' => "'''страница имєньмь ⁖ [[:$1]] ⁖ ѥстъ створѥна ю'''",
 'searchmenu-new' => "'''страницѫ ⁖ [[:$1]] ⁖ сътворити можєши'''",
-'searchhelp-url' => 'Help:Каталогъ',
 'searchprofile-articles' => 'члѣни',
 'searchprofile-project' => 'опꙑтьствовании и помощи страницѧ',
 'searchprofile-images' => 'дѣла',
@@ -622,9 +647,6 @@ $messages = array(
 'statistics-pages-desc' => 'вьсѩ страницѧ въкоупомь съ бѣсєдꙑ · прѣнаправлѥниꙗ и инꙑ',
 'statistics-files' => 'положєнꙑ дѣла',
 'statistics-users-active' => 'дѣꙗтєльнꙑ польꙃєватєлє',
-
-'disambiguations' => 'страницѧ ижє съвѧꙁи съ мъногосъмꙑслиꙗ имѫтъ',
-'disambiguationspage' => 'Template:мъногосъмꙑслиѥ',
 
 'brokenredirects-edit' => 'исправи',
 'brokenredirects-delete' => 'поничьжєниѥ',
@@ -876,7 +898,17 @@ $messages = array(
 'showhidebots' => '($1 аѵтоматъ)',
 'ilsubmit' => 'ищи',
 
-# EXIF tags
+# Human-readable timestamps
+'monday-at' => 'понєдѣл҄ьникъ · $1',
+'tuesday-at' => 'въторьникъ · $1',
+'wednesday-at' => 'срѣда · $1',
+'thursday-at' => 'чєтврьтъкъ · $1',
+'friday-at' => 'пѧтъкъ · $1',
+'saturday-at' => 'сѫбота · $1',
+'sunday-at' => 'нєдѣлꙗ · $1',
+'yesterday-at' => 'вьчєра · $1',
+
+# Exif tags
 'exif-artist' => 'творьць',
 'exif-languagecode' => 'ѩꙁꙑкъ',
 'exif-iimcategory' => 'катигорїꙗ',
@@ -928,8 +960,9 @@ $messages = array(
 'version-license' => 'прощєниѥ',
 'version-software-version' => 'обраꙁъ',
 
-# Special:FilePath
-'filepath-page' => 'дѣло :',
+# Special:Redirect
+'redirect-submit' => 'прѣиди',
+'redirect-file' => 'дѣла имѧ',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'дѣла имѧ :',
@@ -944,6 +977,10 @@ $messages = array(
 
 # Database error messages
 'dberr-header' => 'Вики тєхнїчьнꙑ отѧжєниꙗ имѣтъ',
+
+# HTML forms
+'htmlform-no' => 'нѣтъ',
+'htmlform-yes' => 'да',
 
 # New logging system
 'logentry-delete-delete' => '$1 {{GENDER:$2|поничьжилъ|поничьжила}} страницѫ ⁖ $3 ⁖',

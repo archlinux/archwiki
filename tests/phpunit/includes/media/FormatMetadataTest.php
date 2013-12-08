@@ -1,10 +1,19 @@
 <?php
+
+/**
+ * @todo covers tags
+ */
 class FormatMetadataTest extends MediaWikiTestCase {
+
+	/** @var FSFileBackend */
+	protected $backend;
+	/** @var FSRepo */
+	protected $repo;
 
 	protected function setUp() {
 		parent::setUp();
 
-		if ( !wfDl( 'exif' ) ) {
+		if ( !extension_loaded( 'exif' ) ) {
 			$this->markTestSkipped( "This test needs the exif extension." );
 		}
 		$filePath = __DIR__ . '/../../data/media';

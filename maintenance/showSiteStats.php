@@ -29,7 +29,7 @@
  * @license GNU General Public License 2.0 or later
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to show the cached statistics.
@@ -48,6 +48,7 @@ class ShowSiteStats extends Maintenance {
 			'ss_good_articles' => 'Number of articles',
 			'ss_total_pages' => 'Total pages',
 			'ss_users' => 'Number of users',
+			'ss_active_users' => 'Active users',
 			'ss_images' => 'Number of images',
 		);
 
@@ -59,7 +60,7 @@ class ShowSiteStats extends Maintenance {
 		$max_length_value = $max_length_desc = 0;
 		foreach ( $fields as $field => $desc ) {
 			$max_length_value = max( $max_length_value, strlen( $stats->$field ) );
-			$max_length_desc  = max( $max_length_desc,  strlen( $desc ) ) ;
+			$max_length_desc = max( $max_length_desc, strlen( $desc ) );
 		}
 
 		// Show them
@@ -70,4 +71,4 @@ class ShowSiteStats extends Maintenance {
 }
 
 $maintClass = "ShowSiteStats";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

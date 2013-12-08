@@ -158,7 +158,7 @@ class UploadStash {
 	 * @param string $key key under which file information is stored
 	 * @return Array
 	 */
-	public function getMetadata ( $key ) {
+	public function getMetadata( $key ) {
 		$this->getFile( $key );
 		return $this->fileMetadata[$key];
 	}
@@ -169,7 +169,7 @@ class UploadStash {
 	 * @param string $key key under which file information is stored
 	 * @return Array
 	 */
-	public function getFileProps ( $key ) {
+	public function getFileProps( $key ) {
 		$this->getFile( $key );
 		return $this->fileProps[$key];
 	}
@@ -209,7 +209,7 @@ class UploadStash {
 		list( $usec, $sec ) = explode( ' ', microtime() );
 		$usec = substr( $usec, 2 );
 		$key = wfBaseConvert( $sec . $usec, 10, 36 ) . '.' .
-			wfBaseConvert( mt_rand(), 10, 36 ) . '.'.
+			wfBaseConvert( mt_rand(), 10, 36 ) . '.' .
 			$this->userId . '.' .
 			$extension;
 
@@ -338,7 +338,7 @@ class UploadStash {
 			__METHOD__
 		);
 
-		if( !$row ) {
+		if ( !$row ) {
 			throw new UploadStashNoSuchKeyException( "No such key ($key), cannot remove" );
 		}
 
@@ -358,7 +358,7 @@ class UploadStash {
 		wfDebug( __METHOD__ . " clearing row $key\n" );
 
 		// Ensure we have the UploadStashFile loaded for this key
-		$this->getFile( $key );
+		$this->getFile( $key, true );
 
 		$dbw = $this->repo->getMasterDb();
 
@@ -463,7 +463,7 @@ class UploadStash {
 	protected function fetchFileMetadata( $key, $readFromDB = DB_SLAVE ) {
 		// populate $fileMetadata[$key]
 		$dbr = null;
-		if( $readFromDB === DB_MASTER ) {
+		if ( $readFromDB === DB_MASTER ) {
 			// sometimes reading from the master is necessary, if there's replication lag.
 			$dbr = $this->repo->getMasterDb();
 		} else {
@@ -675,11 +675,12 @@ class UploadStashFile extends UnregisteredLocalFile {
 
 }
 
-class UploadStashNotAvailableException extends MWException {};
-class UploadStashFileNotFoundException extends MWException {};
-class UploadStashBadPathException extends MWException {};
-class UploadStashFileException extends MWException {};
-class UploadStashZeroLengthFileException extends MWException {};
-class UploadStashNotLoggedInException extends MWException {};
-class UploadStashWrongOwnerException extends MWException {};
-class UploadStashNoSuchKeyException extends MWException {};
+class UploadStashException extends MWException {};
+class UploadStashNotAvailableException extends UploadStashException {};
+class UploadStashFileNotFoundException extends UploadStashException {};
+class UploadStashBadPathException extends UploadStashException {};
+class UploadStashFileException extends UploadStashException {};
+class UploadStashZeroLengthFileException extends UploadStashException {};
+class UploadStashNotLoggedInException extends UploadStashException {};
+class UploadStashWrongOwnerException extends UploadStashException {};
+class UploadStashNoSuchKeyException extends UploadStashException {};

@@ -180,7 +180,7 @@ $messages = array(
 'jumptonavigation' => 'ნავიგაცია',
 'jumptosearch' => 'გორუა',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}}-შენი',
 'aboutpage' => 'Project:შენი',
 'copyright' => 'დინორე მიწორინაფილი რე $1–იშ ჯოხოთ.',
@@ -190,7 +190,6 @@ $messages = array(
 'disclaimers' => 'გამამინჯალაშ ვარება',
 'disclaimerpage' => 'Project:გამამინჯალაშ ვარება',
 'edithelp' => 'მოხვარა რედაქტირაფას',
-'edithelppage' => 'Help:ტექსტიშ რედაქტირაფა',
 'helppage' => 'Help:დინორე',
 'mainpage' => 'დუდხასჷლა',
 'mainpage-description' => 'დუდხასჷლა',
@@ -411,7 +410,6 @@ $messages = array(
 'viewprevnext' => 'ქოძირ  ($1 {{int:pipe-separator}} $2) ($3).',
 'searchmenu-exists' => 'თე ვიკის "[[:$1]]" ჯოხოთ ხასჷლა რე',
 'searchmenu-new' => "''ქჷდარსხი \"[[:\$1]]\" ხასჷლა თე ვიკის'''",
-'searchhelp-url' => 'Help:მოხვარა',
 'searchprofile-articles' => 'სტატიეფი',
 'searchprofile-project' => 'მოხვარაშ დო პროექტიშ ხასჷლეფი',
 'searchprofile-images' => 'მულტიმედია',
@@ -502,7 +500,6 @@ $messages = array(
 'recentchangeslinked-feed' => 'აკოხვალამირ თირაფეფ',
 'recentchangeslinked-toolbox' => 'აკოხვალამირ თირაფეფ',
 'recentchangeslinked-title' => '"$1"-შა მებუნაფილ თირაფეფი',
-'recentchangeslinked-noresult' => 'წურაფილ პერიოდს თირაფეფ აკოხვალამირ ხასილეფს ვა ჸოფერენ.',
 'recentchangeslinked-summary' => "თენა რე მეწურაფილი ხასილაწკუმა (ვარა მეწურაფილი კატეგორიაშ მაკათურეფწკუმა) გინორცხუაფილი ხასილეფს ეკონია ბორჯის ღოლამირი თირაფეფიშ ერკებულ. ხასილეფი [[Special:Watchlist|your watchlist]] გიმორთილი რე '''ფსქელას'''.\"",
 'recentchangeslinked-page' => 'ხასილაშ ჯოხო:',
 'recentchangeslinked-to' => 'მანგიერო ქაძირე ათე ხასილაშა მერცხილ ხასილეფშა მიშაღალირ თირაფეფ',
@@ -549,8 +546,6 @@ $messages = array(
 
 # Statistics
 'statistics' => 'სტატისტიკა',
-
-'disambiguationspage' => 'Template:ანდობურმნიშვნელიანი',
 
 'withoutinterwiki' => 'ხასილეფ ნინაშ რსხილეფიშ გარეშე',
 
@@ -882,7 +877,7 @@ $messages = array(
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'სიგანე',
 'exif-imagelength' => 'სიმაღალე',
 

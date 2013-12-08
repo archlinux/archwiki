@@ -140,7 +140,13 @@ class RedisBagOStuff extends BagOStuff {
 				$conn->setex( $key, $expiry, $value );
 			}
 
-			$result = $conn->exec();
+			/*
+			 * multi()/exec() (transactional mode) allows multiple values to
+			 * be set/get at once and will return an array of results, in
+			 * the order they were set/get. In this case, we only set 1
+			 * value, which should (in case of success) result in true.
+			 */
+			$result = ( $conn->exec() == array( true ) );
 		} catch ( RedisException $e ) {
 			$result = false;
 			$this->handleException( $server, $conn, $e );
@@ -263,38 +269,6 @@ class RedisBagOStuff extends BagOStuff {
 		}
 
 		$this->logRequest( 'replace', $key, $server, $result );
-		wfProfileOut( __METHOD__ );
-		return $result;
-	}
-
-	/**
-	 * Non-atomic implementation of incr().
-	 *
-	 * Probably all callers actually want incr() to atomically initialise
-	 * values to zero if they don't exist, as provided by the Redis INCR
-	 * command. But we are constrained by the memcached-like interface to
-	 * return null in that case. Once the key exists, further increments are
-	 * atomic.
-	 */
-	public function incr( $key, $value = 1 ) {
-		wfProfileIn( __METHOD__ );
-		list( $server, $conn ) = $this->getConnection( $key );
-		if ( !$conn ) {
-			wfProfileOut( __METHOD__ );
-			return false;
-		}
-		if ( !$conn->exists( $key ) ) {
-			wfProfileOut( __METHOD__ );
-			return null;
-		}
-		try {
-			$result = $conn->incrBy( $key, $value );
-		} catch ( RedisException $e ) {
-			$result = false;
-			$this->handleException( $server, $conn, $e );
-		}
-
-		$this->logRequest( 'incr', $key, $server, $result );
 		wfProfileOut( __METHOD__ );
 		return $result;
 	}

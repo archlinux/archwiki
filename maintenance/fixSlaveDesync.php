@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that fixes erroneous page_latest values
@@ -106,10 +106,10 @@ class FixSlaveDesync extends Maintenance {
 			$db = wfGetDB( $i );
 			/*
 			if ( !$db->masterPosWait( $masterFile, $masterPos, 10 ) ) {
-				   $this->output( "Slave is too lagged, aborting\n" );
-				   $dbw->commit( __METHOD__ );
-				   sleep(10);
-				   return;
+				$this->output( "Slave is too lagged, aborting\n" );
+				$dbw->commit( __METHOD__ );
+				sleep(10);
+				return;
 			}*/
 			$latest = $db->selectField( 'page', 'page_latest', array( 'page_id' => $pageID ), __METHOD__ );
 			$max = $db->selectField( 'revision', 'MAX(rev_id)', false, __METHOD__ );
@@ -213,4 +213,4 @@ class FixSlaveDesync extends Maintenance {
 }
 
 $maintClass = "FixSlaveDesync";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

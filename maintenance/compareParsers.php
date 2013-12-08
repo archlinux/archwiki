@@ -28,7 +28,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/dumpIterator.php' );
+require_once __DIR__ . '/dumpIterator.php';
 
 /**
  * Maintenance script to take page text out of an XML dump file and render
@@ -55,8 +55,8 @@ class CompareParsers extends DumpIterator {
 	}
 
 	public function checkOptions() {
-		if ( $this->hasOption('save-failed') ) {
-			$this->saveFailed = $this->getOption('save-failed');
+		if ( $this->hasOption( 'save-failed' ) ) {
+			$this->saveFailed = $this->getOption( 'save-failed' );
 		}
 
 		$this->stripParametersEnabled = $this->hasOption( 'strip-parameters' );
@@ -87,8 +87,9 @@ class CompareParsers extends DumpIterator {
 
 	public function conclusions() {
 		$this->error( "{$this->failed} failed revisions out of {$this->count}" );
-		if ($this->count > 0)
+		if ( $this->count > 0 ) {
 			$this->output( " (" . ( $this->failed / $this->count ) . "%)\n" );
+		}
 	}
 
 	function stripParameters( $text ) {
@@ -155,4 +156,4 @@ class CompareParsers extends DumpIterator {
 }
 
 $maintClass = "CompareParsers";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

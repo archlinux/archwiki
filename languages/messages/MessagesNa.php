@@ -97,7 +97,7 @@ $messages = array(
 # Special:AllPages
 'allpagessubmit' => 'nuwa ko',
 
-# Email user
+# E-mail user
 'emailuser' => 'Emaileiy amune',
 'emailfrom' => 'Atsiu',
 'emailto' => 'Animwen',

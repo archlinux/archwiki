@@ -25,7 +25,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that fixes double redirects.
@@ -134,4 +134,4 @@ class FixDoubleRedirects extends Maintenance {
 }
 
 $maintClass = "FixDoubleRedirects";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -340,7 +340,7 @@ $messages = array(
 'pool-timeout' => 'Че блоки чәш кардә вахт сәбе.',
 'pool-errorunknown' => 'Номәлумә сәһв',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Təsvir {{SITENAME}}',
 'aboutpage' => 'Project: Тәсвир',
 'copyrightpage' => '{{ns:project}}:Мыәллифә һуғуғ',
@@ -349,7 +349,6 @@ $messages = array(
 'disclaimers' => 'Çe məsuliyyətiku imtino.',
 'disclaimerpage' => 'Project:Дејни бә гиј ныгәтеј',
 'edithelp' => 'Арајиш бо редактә кардеј',
-'edithelppage' => 'Help:Арајиш бо сәрост кардеј',
 'helppage' => 'Help:Мындәриҹот',
 'mainpage' => 'Əsosə səhifə',
 'mainpage-description' => 'Әсосә сәһифә',
@@ -591,7 +590,6 @@ $messages = array(
 'searchmenu-legend' => 'Бо нәве кукон',
 'searchmenu-exists' => "'''Бы вики-нәхшәдә һесте сәһифә «[[:$1]]»'''",
 'searchmenu-new' => "'''Сәһифә офәјеј «[[:$1]]» бә ым вики-нахшәдә!'''",
-'searchhelp-url' => 'Help:Мындәриҹот',
 'searchprofile-articles' => 'Әсосә сәһифон',
 'searchprofile-project' => 'Че араијшон ијән нахшон сәһифон',
 'searchprofile-images' => 'Мултимедијә',
@@ -691,7 +689,6 @@ $messages = array(
 'recentchangeslinked' => 'Ангыл кардә быә дәгишон',
 'recentchangeslinked-toolbox' => 'Ангыл кардә быә дәгишон',
 'recentchangeslinked-title' => 'Ангыл кардә быә дәгишон бо "$1"',
-'recentchangeslinked-noresult' => 'Нишо доә быә мыддәтәдә, ангыл кардә быә сәһифонәдә дәгишон бәнин.',
 'recentchangeslinked-summary' => "Бә ым сәһифонәдә охонә дәгишон сијоһије, бә кон сәһифон сәбон вардә ын сәһифә (јаанки дахыл кардә быән бә нишо доә быә категоријә).
 [[Special:Watchlist|Шымә ноғо доә сијоһиәдә]] быә сәһифон, де '''ғалинә''' шрифти нишо доә быән.",
 'recentchangeslinked-page' => 'Сәһифә ном:',
@@ -744,8 +741,6 @@ $messages = array(
 
 # Statistics
 'statistics' => 'Статистика',
-
-'disambiguationspage' => 'Template:дәгиг кардеј',
 
 # Miscellaneous special pages
 'nbytes' => '$1 {{PLURAL:$1|бајт|бајтон}}',
@@ -993,7 +988,7 @@ $messages = array(
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Һовужи',
 'exif-imagelength' => 'Былынди',
 'exif-source' => 'Сәвон',
@@ -1029,10 +1024,6 @@ $messages = array(
 'version' => 'Рәвојәт',
 'version-specialpages' => 'Хысусијә сәһифон',
 'version-entrypoints-header-url' => 'URL',
-
-# Special:FilePath
-'filepath-page' => 'Фајл:',
-'filepath-submit' => 'Давард',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-submit' => 'Нәве',

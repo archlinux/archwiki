@@ -26,7 +26,7 @@
 
 #$optionsWithArgs = array( 'begin', 'max-slave-lag' );
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that will find all rows in the categorylinks table
@@ -81,6 +81,10 @@ TEXT;
 			$collationName = $wgCategoryCollation;
 			$collation = Collation::singleton();
 		}
+
+		// Collation sanity check: in some cases the constructor will work,
+		// but this will raise an exception, breaking all category pages
+		$collation->getFirstLetter( 'MediaWiki' );
 
 		$options = array(
 			'LIMIT' => self::BATCH_SIZE,
@@ -303,4 +307,4 @@ TEXT;
 }
 
 $maintClass = "UpdateCollation";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -76,6 +76,10 @@ $wgHooks['CentralAuthAutoCreate'][] = 'TitleBlacklistHooks::centralAuthAutoCreat
 $wgHooks['EditFilter'][] = 'TitleBlacklistHooks::validateBlacklist';
 $wgHooks['ArticleSaveComplete'][] = 'TitleBlacklistHooks::clearBlacklist';
 $wgHooks['UserCreateForm'][] = 'TitleBlacklistHooks::addOverrideCheckbox';
+$wgHooks['UnitTestsList'][] = function( &$files ) {
+	$files += glob( __DIR__ . '/tests/*Test.php' );
+	return true;
+};
 
 $wgResourceModules['mediawiki.api.titleblacklist'] = array(
 	'scripts' => 'mediawiki.api.titleblacklist.js',

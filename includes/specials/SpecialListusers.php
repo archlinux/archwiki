@@ -49,7 +49,10 @@ class UsersPager extends AlphabeticPager {
 		$par = ( $par !== null ) ? $par : '';
 		$parms = explode( '/', $par );
 		$symsForAll = array( '*', 'user' );
-		if ( $parms[0] != '' && ( in_array( $par, User::getAllGroups() ) || in_array( $par, $symsForAll ) ) ) {
+
+		if ( $parms[0] != '' &&
+			( in_array( $par, User::getAllGroups() ) || in_array( $par, $symsForAll ) )
+		) {
 			$this->requestedGroup = $par;
 			$un = $request->getText( 'username' );
 		} elseif ( count( $parms ) == 2 ) {
@@ -59,20 +62,25 @@ class UsersPager extends AlphabeticPager {
 			$this->requestedGroup = $request->getVal( 'group' );
 			$un = ( $par != '' ) ? $par : $request->getText( 'username' );
 		}
+
 		if ( in_array( $this->requestedGroup, $symsForAll ) ) {
 			$this->requestedGroup = '';
 		}
 		$this->editsOnly = $request->getBool( 'editsOnly' );
 		$this->creationSort = $request->getBool( 'creationSort' );
 		$this->including = $including;
+		$this->mDefaultDirection = $request->getBool( 'desc' );
 
 		$this->requestedUser = '';
+
 		if ( $un != '' ) {
 			$username = Title::makeTitleSafe( NS_USER, $un );
-			if( ! is_null( $username ) ) {
+
+			if ( !is_null( $username ) ) {
 				$this->requestedUser = $username->getText();
 			}
 		}
+
 		parent::__construct();
 	}
 
@@ -89,27 +97,28 @@ class UsersPager extends AlphabeticPager {
 	function getQueryInfo() {
 		$dbr = wfGetDB( DB_SLAVE );
 		$conds = array();
+
 		// Don't show hidden names
-		if( !$this->getUser()->isAllowed( 'hideuser' ) ) {
+		if ( !$this->getUser()->isAllowed( 'hideuser' ) ) {
 			$conds[] = 'ipb_deleted IS NULL OR ipb_deleted = 0';
 		}
 
 		$options = array();
 
-		if( $this->requestedGroup != '' ) {
+		if ( $this->requestedGroup != '' ) {
 			$conds['ug_group'] = $this->requestedGroup;
-		} else {
-			//$options['USE INDEX'] = $this->creationSort ? 'PRIMARY' : 'user_name';
 		}
-		if( $this->requestedUser != '' ) {
+
+		if ( $this->requestedUser != '' ) {
 			# Sorted either by account creation or name
-			if( $this->creationSort ) {
+			if ( $this->creationSort ) {
 				$conds[] = 'user_id >= ' . intval( User::idFromName( $this->requestedUser ) );
 			} else {
 				$conds[] = 'user_name >= ' . $dbr->addQuotes( $this->requestedUser );
 			}
 		}
-		if( $this->editsOnly ) {
+
+		if ( $this->editsOnly ) {
 			$conds[] = 'user_editcount > 0';
 		}
 
@@ -129,15 +138,18 @@ class UsersPager extends AlphabeticPager {
 			'options' => $options,
 			'join_conds' => array(
 				'user_groups' => array( 'LEFT JOIN', 'user_id=ug_user' ),
-				'ipblocks' => array( 'LEFT JOIN', array(
-					'user_id=ipb_user',
-					'ipb_auto' => 0
-				)),
+				'ipblocks' => array(
+					'LEFT JOIN', array(
+						'user_id=ipb_user',
+						'ipb_auto' => 0
+					)
+				),
 			),
 			'conds' => $conds
 		);
 
 		wfRunHooks( 'SpecialListusersQueryInfo', array( $this, &$query ) );
+
 		return $query;
 	}
 
@@ -153,42 +165,55 @@ class UsersPager extends AlphabeticPager {
 		$userName = $row->user_name;
 
 		$ulinks = Linker::userLink( $row->user_id, $userName );
-		$ulinks .= Linker::userToolLinksRedContribs( $row->user_id, $userName, intval( $row->edits ) );
+		$ulinks .= Linker::userToolLinksRedContribs(
+			$row->user_id,
+			$userName,
+			(int)$row->edits
+		);
 
 		$lang = $this->getLanguage();
 
 		$groups = '';
 		$groups_list = self::getGroups( $row->user_id );
-		if( !$this->including && count( $groups_list ) > 0 ) {
+
+		if ( !$this->including && count( $groups_list ) > 0 ) {
 			$list = array();
-			foreach( $groups_list as $group )
+			foreach ( $groups_list as $group ) {
 				$list[] = self::buildGroupLink( $group, $userName );
+			}
 			$groups = $lang->commaList( $list );
 		}
 
 		$item = $lang->specialList( $ulinks, $groups );
-		if( $row->ipb_deleted ) {
+
+		if ( $row->ipb_deleted ) {
 			$item = "<span class=\"deleted\">$item</span>";
 		}
 
 		$edits = '';
 		global $wgEdititis;
 		if ( !$this->including && $wgEdititis ) {
-			$edits = ' [' . $this->msg( 'usereditcount' )->numParams( $row->edits )->escaped() . ']';
+			// @fixme i18n issue: Hardcoded square brackets.
+			$edits = ' [' .
+				$this->msg( 'usereditcount' )->numParams( $row->edits )->escaped() .
+				']';
 		}
 
 		$created = '';
-		# Some rows may be NULL
-		if( !$this->including && $row->creation ) {
+		# Some rows may be null
+		if ( !$this->including && $row->creation ) {
 			$user = $this->getUser();
 			$d = $lang->userDate( $row->creation, $user );
 			$t = $lang->userTime( $row->creation, $user );
 			$created = $this->msg( 'usercreated', $d, $t, $row->user_name )->escaped();
 			$created = ' ' . $this->msg( 'parentheses' )->rawParams( $created )->escaped();
 		}
-		$blocked = !is_null( $row->ipb_deleted ) ? ' ' . $this->msg( 'listusers-blocked', $userName )->escaped() : '';
+		$blocked = !is_null( $row->ipb_deleted ) ?
+			' ' . $this->msg( 'listusers-blocked', $userName )->escaped() :
+			'';
 
 		wfRunHooks( 'SpecialListusersFormatRow', array( &$item, $row ) );
+
 		return Html::rawElement( 'li', array(), "{$item}{$edits}{$created}{$blocked}" );
 	}
 
@@ -212,7 +237,10 @@ class UsersPager extends AlphabeticPager {
 		list( $self ) = explode( '/', $this->getTitle()->getPrefixedDBkey() );
 
 		# Form tag
-		$out = Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript, 'id' => 'mw-listusers-form' ) ) .
+		$out = Xml::openElement(
+			'form',
+			array( 'method' => 'get', 'action' => $wgScript, 'id' => 'mw-listusers-form' )
+		) .
 			Xml::fieldset( $this->msg( 'listusers' )->text() ) .
 			Html::hidden( 'title', $self );
 
@@ -233,12 +261,30 @@ class UsersPager extends AlphabeticPager {
 		$out .= Xml::label( $this->msg( 'group' )->text(), 'group' ) . ' ' .
 			Xml::openElement( 'select', array( 'name' => 'group', 'id' => 'group' ) ) .
 			Xml::option( $this->msg( 'group-all' )->text(), '' );
-		foreach( $this->getAllGroups() as $group => $groupText )
+		foreach ( $this->getAllGroups() as $group => $groupText ) {
 			$out .= Xml::option( $groupText, $group, $group == $this->requestedGroup );
+		}
 		$out .= Xml::closeElement( 'select' ) . '<br />';
-		$out .= Xml::checkLabel( $this->msg( 'listusers-editsonly' )->text(), 'editsOnly', 'editsOnly', $this->editsOnly );
+		$out .= Xml::checkLabel(
+			$this->msg( 'listusers-editsonly' )->text(),
+			'editsOnly',
+			'editsOnly',
+			$this->editsOnly
+		);
 		$out .= '&#160;';
-		$out .= Xml::checkLabel( $this->msg( 'listusers-creationsort' )->text(), 'creationSort', 'creationSort', $this->creationSort );
+		$out .= Xml::checkLabel(
+			$this->msg( 'listusers-creationsort' )->text(),
+			'creationSort',
+			'creationSort',
+			$this->creationSort
+		);
+		$out .= '&#160;';
+		$out .= Xml::checkLabel(
+			$this->msg( 'listusers-desc' )->text(),
+			'desc',
+			'desc',
+			$this->mDefaultDirection
+		);
 		$out .= '<br />';
 
 		wfRunHooks( 'SpecialListusersHeaderForm', array( $this, &$out ) );
@@ -259,10 +305,11 @@ class UsersPager extends AlphabeticPager {
 	 */
 	function getAllGroups() {
 		$result = array();
-		foreach( User::getAllGroups() as $group ) {
+		foreach ( User::getAllGroups() as $group ) {
 			$result[$group] = User::getGroupName( $group );
 		}
 		asort( $result );
+
 		return $result;
 	}
 
@@ -272,13 +319,14 @@ class UsersPager extends AlphabeticPager {
 	 */
 	function getDefaultQuery() {
 		$query = parent::getDefaultQuery();
-		if( $this->requestedGroup != '' ) {
+		if ( $this->requestedGroup != '' ) {
 			$query['group'] = $this->requestedGroup;
 		}
-		if( $this->requestedUser != '' ) {
+		if ( $this->requestedUser != '' ) {
 			$query['username'] = $this->requestedUser;
 		}
 		wfRunHooks( 'SpecialListusersDefaultQuery', array( $this, &$query ) );
+
 		return $query;
 	}
 
@@ -291,6 +339,7 @@ class UsersPager extends AlphabeticPager {
 	protected static function getGroups( $uid ) {
 		$user = User::newFromId( $uid );
 		$groups = array_diff( $user->getEffectiveGroups(), User::getImplicitGroups() );
+
 		return $groups;
 	}
 
@@ -302,7 +351,10 @@ class UsersPager extends AlphabeticPager {
 	 * @return string
 	 */
 	protected static function buildGroupLink( $group, $username ) {
-		return User::makeGroupLinkHtml( $group, htmlspecialchars( User::getGroupMember( $group, $username ) ) );
+		return User::makeGroupLinkHtml(
+			$group,
+			htmlspecialchars( User::getGroupMember( $group, $username ) )
+		);
 	}
 }
 
@@ -310,7 +362,6 @@ class UsersPager extends AlphabeticPager {
  * @ingroup SpecialPage
  */
 class SpecialListUsers extends IncludableSpecialPage {
-
 	/**
 	 * Constructor
 	 */
@@ -337,7 +388,7 @@ class SpecialListUsers extends IncludableSpecialPage {
 			$s = $up->getPageHeader();
 		}
 
-		if( $usersbody ) {
+		if ( $usersbody ) {
 			$s .= $up->getNavigationBar();
 			$s .= Html::rawElement( 'ul', array(), $usersbody );
 			$s .= $up->getNavigationBar();

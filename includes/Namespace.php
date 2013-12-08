@@ -334,7 +334,7 @@ class MWNamespace {
 	public static function getContentNamespaces() {
 		global $wgContentNamespaces;
 		if ( !is_array( $wgContentNamespaces ) || $wgContentNamespaces === array() ) {
-			return NS_MAIN;
+			return array( NS_MAIN );
 		} elseif ( !in_array( NS_MAIN, $wgContentNamespaces ) ) {
 			// always force NS_MAIN to be part of array (to match the algorithm used by isContent)
 			return array_merge( array( NS_MAIN ), $wgContentNamespaces );
@@ -387,9 +387,9 @@ class MWNamespace {
 		if ( in_array( $index, self::$alwaysCapitalizedNamespaces ) ) {
 			return true;
 		}
-		if ( isset( $wgCapitalLinkOverrides[ $index ] ) ) {
+		if ( isset( $wgCapitalLinkOverrides[$index] ) ) {
 			// $wgCapitalLinkOverrides is explicitly set
-			return $wgCapitalLinkOverrides[ $index ];
+			return $wgCapitalLinkOverrides[$index];
 		}
 		// Default to the global setting
 		return $wgCapitalLinks;

@@ -73,9 +73,6 @@ $messages = array(
 'tog-shownumberswatching' => "'t Antal gebrukers weerheven 't a deêze pahina volg",
 'tog-oldsig' => 'Bestaende onderteêkenienge',
 'tog-fancysig' => "As wikitekst behandel'n (zonder automaotische verwiezienge ni de gebrukersbladzie)",
-'tog-externaleditor' => 'Standard een externe tekstbewerker gebruken (alleêne vò experts - vò deêze functie ben speciaole ienstellienge nudig. [//www.mediawiki.org/wiki/Manual:External_editors Meê informaosie]).',
-'tog-externaldiff' => 'Standard een extern verheliekiengsprohramma gebruken (alleên vò experts - vò deêze functie ben speciaole ienstelliengen nudig. [//www.mediawiki.org/wiki/Manual:External_editors Meê informaosie]).',
-'tog-showjumplinks' => '“hi nae”-toehankelijkeidslienks inschaokelen',
 'tog-uselivepreview' => '“live voevertoônienge” gebruken (JavaScript vereist – experimenteêl)',
 'tog-forceeditsummary' => 'Heef me een meldieng bie een lehe saemenvattieng',
 'tog-watchlisthideown' => 'Eihen bewerkiengen op men volglieste verberhen',
@@ -273,7 +270,7 @@ $1",
 'pool-queuefull' => 'De wachtrieë von de poel is vaol',
 'pool-errorunknown' => "Er is 'n onbekande fout ophetreed'n",
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Over {{SITENAME}}',
 'aboutpage' => 'Project:Info',
 'copyright' => 'Den inoud is beschikbaer onder de $1.',
@@ -283,7 +280,6 @@ $1",
 'disclaimers' => 'Voebehoud',
 'disclaimerpage' => 'Project:Alhemeên voebehoud',
 'edithelp' => "Ulpe bie't bewerken",
-'edithelppage' => 'Help:Bewerken',
 'helppage' => 'Help:Inoud',
 'mainpage' => 'Vòblad',
 'mainpage-description' => 'Vòblad',
@@ -350,17 +346,6 @@ Een lieste mie speciaole pagina’s sti op [[Special:SpecialPages|speciaole pagi
 # General errors
 'error' => 'Fout',
 'databaseerror' => 'Databasefout',
-'dberrortext' => "Der is een syntaxisfout in 't databaseverzoek opetreeën.
-Meuhlijk zit der een fout in de software.
-'t Lèste verzoek an de database was:
-<blockquote><tt>$1</tt></blockquote>
-vanuut de functie “<tt>$2</tt>”.
-MySQL haf de foutmeldieng “<tt>$3: $4</tt>”.",
-'dberrortextcl' => "Der is een syntaxisfout in 't databaseverzoek opetreeën.
-'t Lèste verzoek an de database was:
-“$1”
-vanuut de functie “$2”.
-MySQL haf de volhende foutmeldieng: “$3: $4”",
 'laggedslavemode' => "Waerschuwieng: de pahina zou verouwerd kunn'n zien.",
 'readonly' => 'Database heblokkeerd',
 'enterlockreason' => 'Heef een reeën op voe de blokkaode en heef op wunnir a die warschijnlijk wor opeheven',
@@ -404,7 +389,6 @@ Probeer 't over een antal menuten wee.",
 'viewsourcetext' => 'Je kan de brontekst van deêze pagina bekieken en kopiëren:',
 'protectedinterface' => "Deêze pagina bevat tekst voe berichen van de software en is beveiligd om misbruuk te voorkomm'n.",
 'editinginterface' => "'''Waerschuwienge:''' Je bewerk een pagina die a gebruukt wor deur de software. Bewerkiengen op deêze pagina beïnvloeden de gebrukersinterface van iedereên. Overweeg voe vertaeliengen om [//translatewiki.net/wiki/Main_Page?setlang=zea translatewiki.net] te gebruken, 't vertaeliengsproject voe MediaWiki.",
-'sqlhidden' => '(SQL-zoekopdracht verborhen)',
 'cascadeprotected' => "Deêze pagina kan nie bewerkt worn, omda 't een is openomen in de volhende {{PLURAL:$1|pagina|pagina's}} die beveiligd {{PLURAL:$1|is|zien}} mie de cascaode-optie:
 $2",
 'namespaceprotected' => "Je ei hin rechen om pagina's in de naemruumte '''$1''' te bewerken.",
@@ -495,7 +479,7 @@ Neheer dit bericht as deêze gebruker zonder joe medeweten is anemikt.',
 'newpassword' => 'Nieuw wachtwoôrd:',
 'retypenew' => 'Herhaolieng nieuwe wachtwoôrd:',
 'resetpass_submit' => "Wachtwoôrd instell'n en anmelden",
-'resetpass_success' => 'Je wachtwoord is ewiezigd. Bezig mie anmelden ...',
+'changepassword-success' => 'Je wachtwoord is ewiezigd. Bezig mie anmelden ...',
 'resetpass_forbidden' => "Wachtwoôrden kunn'n op {{SITENAME}} nie ewiezigd worn",
 
 # Edit page toolbar
@@ -811,7 +795,6 @@ Zurg da je bie deêze wiezigieng de heschiedenisdeurloôpendeid van de pagina be
 'viewprevnext' => 'Bekiek ($1 {{int:pipe-separator}} $2) ($3).',
 'searchmenu-exists' => "'''Er is 'n pagina genaemd \"[[:\$1]]\" op deêze wiki.'''",
 'searchmenu-new' => "'''De pagina \"[[:\$1]]\" anmaek'n op deêze wiki.'''",
-'searchhelp-url' => 'Help:Inoud',
 'searchprofile-articles' => "Inhoudelike pagina's",
 'searchprofile-project' => "Hilp- en projectpagina's",
 'searchprofile-images' => 'Multimedia',
@@ -841,14 +824,6 @@ Zurg da je bie deêze wiezigieng de heschiedenisdeurloôpendeid van de pagina be
 'searchdisabled' => "Zoeken in {{SITENAME}} is nie meuhlijk.
 Je kan gebruuk maeken van Google.
 De hehevens over {{SITENAME}} zien meuhlijk nie bie'ewerkt.",
-
-# Quickbar
-'qbsettings' => 'Menubalke',
-'qbsettings-none' => 'Uuteschaokeld',
-'qbsettings-fixedleft' => 'Lienks vast',
-'qbsettings-fixedright' => 'Rechs vast',
-'qbsettings-floatingleft' => 'Lienks zwevend',
-'qbsettings-floatingright' => 'Rechs zwevend',
 
 # Preferences page
 'preferences' => 'Vòkeuren',
@@ -991,7 +966,6 @@ Een nie anekruusd vienkvakje beteêken da de gebruker hin lid is van de hroep.",
 'recentchangeslinked-feed' => 'Gerelateerde bewerkiengen',
 'recentchangeslinked-toolbox' => 'Gerelateerde bewerkiengen',
 'recentchangeslinked-title' => 'Wiezigiengen verwant an "$1"',
-'recentchangeslinked-noresult' => "Der zien hin bewerkiengen in de heheven periode ewist op de pagina's die an vanaf ier elienkt worn.",
 'recentchangeslinked-summary' => "Deze speciaole pagina geeft de laetste bewerkiengen weer op pagina's waerheê verwezen òdt vanof 'n angegeven pagina of vanuut pagina's in 'n angegeven categorie.
 Pagina's die op [[Special:Watchlist|je volglieste]] staen wòdde '''vet''' weergegeven.",
 'recentchangeslinked-page' => 'Paginanaem:',
@@ -1061,8 +1035,6 @@ De [$2 pagina mè de bestandsbeschrievienge] wòdt hieronder weergegeev'n.",
 
 # Statistics
 'statistics' => "Stattistiek'n",
-
-'disambiguationspage' => 'Template:Deurverwiespagina',
 
 'brokenredirectstext' => 'De volgende deuverwieziengen stiere deu nae bladzie die nie bestae:',
 
@@ -1136,7 +1108,6 @@ A je de bladzie laeter weêr van je volglieste afaele wil, klik dan op \"nie me�
 'watch' => 'Volg',
 'watchthispage' => 'Bekiek deêze bladzie',
 'unwatch' => 'Nie meêr volge',
-'watchnochange' => "D'r is in d'n opgevrogen tied niks op je volglieste veranderd.",
 'watchlist-details' => "Er {{PLURAL:$1|sti eên pagina|staen $1 pagina's}} op je volglieste, exclusief overlegpagina's.",
 'watchlistcontains' => 'Uw volglieste bevat $1 {{PLURAL:$1|bladzie|bladzies}}.',
 'wlshowlast' => 'Laetste $1 uur, $2 daegen bekieken ($3)',

@@ -2,7 +2,7 @@
 
 $wgExtensionCredits['other'][] = array(
 	'name' => 'FluxBBAuthPlugin',
-	'version' => '1.5',
+	'version' => '1.6',
 	'description' => 'Use FluxBB accounts in MediaWiki',
 	'author' => 'Pierre Schmitz',
 	'url' => 'https://pierre-schmitz.com/'
@@ -59,7 +59,6 @@ class FluxBBAuthPlugin extends AuthPlugin {
 
 	public function modifyUITemplate( &$template, &$type ) {
 		$template->set( 'usedomain', false );
-		$template->set('link', 'Um Dich hier anzumelden, nutze Deine Konto-Daten aus dem <a href="https://bbs.archlinux.de/">archlinux.de-Forum</a>.');
 	}
 
 	public function updateUser( &$user ) {
@@ -95,6 +94,10 @@ class FluxBBAuthPlugin extends AuthPlugin {
 	}
 
 	public function updateExternalDB( $user ) {
+		return false;
+	}
+
+	public function updateExternalDBGroups( $user, $addgroups, $delgroups = array() ) {
 		return false;
 	}
 

@@ -155,7 +155,6 @@ $messages = array(
 'tog-shownumberswatching' => "Mostra o numero di utenti che tegnan d'oeuggio sta pagina",
 'tog-oldsig' => 'Firma attuale:',
 'tog-fancysig' => 'Tratta a firma comme wikitesto (sensa un collegamento aotomatico)',
-'tog-showjumplinks' => 'Attiva i collegamenti d\'accescibilitæ "sata a"',
 'tog-uselivepreview' => "Doeuvia l'anteprimma in diretta (ghe voeu o JavaScript)(sperimentâ)",
 'tog-watchlisthideown' => "Ascondi e mæ modiffiche da-a lista che tegno d'oeuggio",
 'tog-watchlisthidebots' => "Ascondi e modiffiche di bot da-a lista che tegno d'oeuggio",
@@ -167,6 +166,7 @@ $messages = array(
 'tog-diffonly' => 'No mostrâ o contegnuo da paggina sotta o confronto tra verscioin',
 'tog-showhiddencats' => 'Fa vedde e categorîe ascose',
 'tog-norollbackdiff' => "Ometti o confronto tra verscioin doppo ch'ho fæto o ripristino",
+'tog-useeditwarning' => "Avertime se lascio 'na paggina de modiffica sens'avei sarvou i cangi",
 
 'underline-always' => 'Sempre',
 'underline-never' => 'Mâi',
@@ -225,6 +225,16 @@ $messages = array(
 'oct' => 'Öto',
 'nov' => 'Nov',
 'dec' => 'Dex',
+'january-date' => '$1 zenâ',
+'february-date' => '$1 frevâ',
+'march-date' => '$1 março',
+'april-date' => '$1 arvî',
+'may-date' => '$1 mazzo',
+'june-date' => '$1 zugno',
+'july-date' => '$1 luggio',
+'september-date' => '$1 setenbre',
+'october-date' => '$1 otobre',
+'december-date' => '$1 dexenbre',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Categorîa|Categorîe}}',
@@ -304,6 +314,7 @@ $messages = array(
 'create-this-page' => "Crea 'sta paggina",
 'delete' => 'Scancella',
 'deletethispage' => "Scassa 'sta paggina",
+'undeletethispage' => 'Recuppera sta paggina',
 'undelete_short' => 'Recuppera {{PLURAL:$1|una revixon|$1 revixoin}}',
 'protect' => 'Protezi',
 'protect_change' => 'cangia',
@@ -344,7 +355,7 @@ Aspeta quarche menuto primma de çercâ torna d'accede a sta pagina.
 $1",
 'pool-errorunknown' => 'Aro sconosciuo',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Informaçioìn in sciô {{SITENAME}}',
 'aboutpage' => 'Project:Informaçioìn',
 'copyright' => 'O contegnûo o se peu trovâ a $1.',
@@ -354,7 +365,6 @@ $1",
 'disclaimers' => 'Avertense',
 'disclaimerpage' => 'Project:Avertense generâli',
 'edithelp' => 'Agiùtto',
-'edithelppage' => 'Help:Modiffica',
 'helppage' => 'Help:Contegnûi',
 'mainpage' => 'Pàgina prinçipâ',
 'mainpage-description' => 'Pagina prinçipâ',
@@ -462,7 +472,11 @@ A raxon a l'è: ''$2''.",
 'yourname' => 'Nomme',
 'yourpassword' => 'Pòula segretta:',
 'yourpasswordagain' => 'Riscrivi a pòula segrétta:',
+'createacct-yourpasswordagain' => 'Conferma a password',
+'createacct-yourpasswordagain-ph' => "Conferma a password un'atra votta",
 'remembermypassword' => 'Aregòrda a mæ login in sto navegatô (pe in mascimo de $1 {{PLURAL:$1|giórno|giórni}})',
+'userlogin-remembermypassword' => 'Mantegnime collegou',
+'userlogin-signwithsecure' => 'Adoeuvia una conescion segua',
 'yourdomainname' => 'Indirisso do scito:',
 'password-change-forbidden' => 'No ti peu cangiâ poula segretta in questa wiki.',
 'login' => 'Intra',
@@ -479,12 +493,21 @@ A raxon a l'è: ''$2''.",
 'gotaccount' => "Ti ghe l'æ za 'n' utensa? '''$1'''.",
 'gotaccountlink' => 'Intra',
 'userlogin-resetlink' => "T'æ ascordòu i teu dæti de acesso?",
+'userlogin-resetpassword-link' => 'Reimposta a to password',
+'userlogin-helplink' => '[[{{MediaWiki:helplogin-url}}|Agiutto co-o login]]',
+'createacct-join' => 'Inserisci i to dæti chi sotta.',
 'createaccountmail' => "Doeuvia una password temporanea abrettio e mandila a l'adresso de posta elettronica speçificou",
 'createaccountreason' => 'Raxon:',
+'createacct-imgcaptcha-ph' => "Scrivi quello che ti veddi de d'ato",
+'createacct-submit' => 'Crea a to utensa',
+'createacct-another-submit' => "Crea un'atra utensa",
+'createacct-benefit-body2' => '{{PLURAL:$1|paggina|paggine}}',
+'createacct-benefit-body3' => '{{PLURAL:$1|contribuiou|contribuioei}}',
 'badretype' => "E paròlle d'ordine che t'hæ scrîo son despægie.",
 'userexists' => "O nomme ûtente inserîo o l'è za doeuviao.<br />
 Çernine 'n âtro.",
 'loginerror' => "Errô inte l'accesso",
+'createacct-error' => "Errô inta la creaçion de l'utença",
 'createaccounterror' => "Imposcibbile creâ l'account: $1",
 'noname' => "O nomme d'ûtente o l'è sballiòu.",
 'loginsuccesstitle' => 'Accesso effettuòu',
@@ -535,6 +558,7 @@ Pe abilitâ l'invîo de messaggi e-mail pe quest'accesso, o se deive seguî l'is
 'newpassword' => 'Neuva poula segretta',
 'retypenew' => "Ripette a nêuva paròlla d'ordine:",
 'resetpass_submit' => 'Çerni a poula segretta e intra',
+'changepassword-success' => "O cangio de password o l'é anæto ben!",
 'resetpass_forbidden' => "No l'é poscìbile cangiâ e paròlle segrétte",
 'resetpass-submit-loggedin' => 'Cangia a password',
 'resetpass-submit-cancel' => 'Anulla',
@@ -554,6 +578,9 @@ Poula segretta temporannia: $2',
 'changeemail-password' => 'A to password pe {{SITENAME}}:',
 'changeemail-submit' => 'Cangia e-mail',
 'changeemail-cancel' => 'Annulla',
+
+# Special:ResetTokens
+'resettokens-token-label' => "$1 (oua o l'è: $2)",
 
 # Edit page toolbar
 'bold_sample' => 'Grascetto',
@@ -729,7 +756,6 @@ Legenda: (corr) = differense co-a verscion corrente, (prec) = differense co-a ve
 'viewprevnext' => 'Veddi ($1 {{int:pipe-separator}} $2) ($3).',
 'searchmenu-exists' => "'''Inte questa wiki gh'è za 'na pàgina co-o nómme \"[[:\$1]]\"'''",
 'searchmenu-new' => 'Crea a pagina "[[:$1]]" insce questo scito',
-'searchhelp-url' => 'Help:Contegnûi',
 'searchprofile-articles' => 'Pàgina di contegnûi',
 'searchprofile-project' => 'Pàgine de agiùtto e relative a-o progetto',
 'searchprofile-images' => 'Moltimedia',
@@ -827,7 +853,6 @@ Legenda: (corr) = differense co-a verscion corrente, (prec) = differense co-a ve
 'recentchangeslinked-feed' => 'Cangiamenti correlæ',
 'recentchangeslinked-toolbox' => 'Cangiaménti corelæ',
 'recentchangeslinked-title' => 'Modiffiche correlæ a "$1"',
-'recentchangeslinked-noresult' => 'Nisciûn cangiamento a-e paggine collegæ into periodo speçificòu.',
 'recentchangeslinked-summary' => "Sta pàgina a fa védde i cangiaménti ciù reçenti a-e pàgine colegæ a questa.
 E pàgine che t'æ in oservaçion inti [[Special:Watchlist|oservæ speciâli]] son in '''grascetto'''.",
 'recentchangeslinked-page' => 'Nómme da pàgina:',
@@ -905,9 +930,6 @@ Chì apreuvo ti peu védde a descriçión inta [$2 pàgina de descriçión do fi
 
 # Statistics
 'statistics' => 'Statistiche',
-
-'disambiguations' => 'Paggine de desambiguassion',
-'disambiguationspage' => 'Template:Omonimia',
 
 'doubleredirects' => 'Rindirissamenti doggi',
 
@@ -1322,6 +1344,16 @@ Inte 'sti câxi, se o se vêu fâ coscì, o se deive stramûâ ò azzonze manual
 'ilsubmit' => 'Çerca',
 'bydate' => 'pe dâta',
 
+# Human-readable timestamps
+'monday-at' => 'Lunesdì a $1',
+'tuesday-at' => 'Matesdì a $1',
+'wednesday-at' => 'Mâcordì a $1',
+'thursday-at' => 'Zoeuggia a $1',
+'friday-at' => 'Venardì a $1',
+'saturday-at' => 'Sabbo a $1',
+'sunday-at' => 'Domenega a $1',
+'yesterday-at' => 'Vei a $1',
+
 # Bad image list
 'bad_image_list' => "O formato o l'è coscì:
 Van conscideræ sôlo e righe che comensan co-o càratere *.
@@ -1348,7 +1380,7 @@ I inganci sucescivi, in scia mæxima riga, van conscideræ comme eceçioìn (pag
 * gpslongitude
 * gpsaltitude",
 
-# EXIF tags
+# Exif tags
 'exif-datetime' => 'Data e öa do cangiamento do papê',
 'exif-artist' => 'Autô',
 'exif-copyright' => "Diritti d'autô de",

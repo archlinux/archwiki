@@ -50,9 +50,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Ńelok laṛcaṛkoaḱ songkha uduḱme',
 'tog-oldsig' => 'Menaḱ signạtar',
 'tog-fancysig' => 'Signạcar do wikiṭesk hisạbte moneyemẽ (jahan acte hoyoḱ joṛao bạgikate)',
-'tog-externaleditor' => 'Etohoṕre bahre reaḱ sompadonićaḱ beohar hoyoḱma (khali sẽṛa beoharić lạgit́te, kompeuṭare asokae seṭing jạruṛa. [//www.mediawiki.org/wiki/manual:External_editors More information.])',
-'tog-externaldiff' => 'Etohoṕre bahre reaḱ sompadonićaḱ beohar hoyoḱma (khali sẽṛa beoharić lạgit́te, kompeuṭare asokae seṭing jạruṛa. [//www.mediawiki.org/wiki/manual:External_editors More information.])',
-'tog-showjumplinks' => '"Calaḱmẽ" beohar joṛao ehop hoyoḱma',
 'tog-uselivepreview' => 'Jewet́ ńeloḱ beoharme (JavaScript jaruṛ menaḱa)',
 'tog-forceeditsummary' => 'Khạli sompadon guṭkatha em oktere iń baḍae ocoyiń hoyoḱma',
 'tog-watchlisthideown' => 'Ńeloḱ talikare ińaḱ joṛao kamiko danaṅme',
@@ -249,7 +246,7 @@ $1',
 'pool-queuefull' => 'Pul reaḱ sakam perećena',
 'pool-errorunknown' => 'Bań baḍayaḱ bhul',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'babo̠tre',
 'aboutpage' => 'Project: Babo̠t',
 'copyright' => '$1 re bhitrire ńamoḱa.',
@@ -259,7 +256,6 @@ $1',
 'disclaimers' => 'Dạbi bạnuḱko',
 'disclaimerpage' => 'Project: Sadharon ḍiskleimarko(General disclaimer)',
 'edithelp' => 'Tońge goṛo',
-'edithelppage' => 'Help:So̠mpado̠n',
 'helppage' => 'Help: Bhitri renaḱ',
 'mainpage' => 'Mukhiạ Sakam',
 'mainpage-description' => 'Mukhiạ sakam',
@@ -332,17 +328,6 @@ Noa do noṅkanaḱ menkana je {{SITENAME}} sayeṭre beoharen sofṭower re mit
 # General errors
 'error' => 'bhul',
 'databaseerror' => 'Ḍaṭabase vul',
-'dberrortext' => 'Database query syntexre vul hoeakana.
-Sofṭoyerre jahan bag karonte noa do hoe daṛeyaḱa.
-Joto khon mucạt́ database query do tahẽkana noṅka:
-<blockquote><tt>$1</tt><blockquote>
-"<tt>$2</tt>" bhitrire tahẽna.
-Database okaṭaḱ vule em akada:"<tt>$3: $4</tt>".',
-'dberrortextcl' => 'Ḍaṭabes query sintxexṭre vul hoeakana.
-Mucạt́ ḍaṭabes query do tahẽkana:
-"$1"
-"$2" faṅson reaḱ bhitri khon.
-Ḍatabes okaṭaḱ vule kulakaḱ: "$3: $4:',
 'laggedslavemode' => "'''Sontoroḱme:''' sakamre do nahaḱ nãwãnaḱko paseć bạnuḱa.",
 'readonly' => 'Ḍaṭabes do talagea',
 'enterlockreason' => 'Cạbie reaḱ karon do cet́kana ma lạimẽ, Saõte tinre tala cạbim jhija ona okte hõ lạimẽ',
@@ -385,7 +370,6 @@ Query: $2',
 'viewsourcetext' => 'Noa sakam do am ńel ar ńamoḱaḱ ṭhạiem kopi hatao daṛeaḱa:',
 'viewyourtext' => "Am do '''Amaḱ sompadon''' noa sakam ńel arem kopi hatao daṛeaḱa:",
 'protectedinterface' => 'Noa sakam reaḱ babotko do wiki sofṭoyer reaḱ mit́ṭen inṭarfes khobore ema, onate noa do rukhiyạ doho hoeakana.',
-'sqlhidden' => '(SQL query do ukure menaḱa)',
 'cascadeprotected' => 'Noa sakam do sompadon khon rukhiyạre menaḱa, karon sakam do latar reaḱ {{PLURAL:$1 gan sakam reaḱ gan sakam reaḱ}} bhitrire, oka sakam do (cascading) te rukhiyạ menaḱa:
 $2',
 'namespaceprotected' => "Amaḱ do sakamko joṛao lạgit́te ạidạri banuḱ tama '''$1''' ńutumjayga.",
@@ -400,10 +384,10 @@ $2',
 'welcomeuser' => 'Johar',
 'welcomecreation-msg' => 'Amaḱ ekaunṭ do̠ jhićena. Amaḱ pạsindko bodol alom hiṛińa.',
 'yourname' => 'Beoboharicaḱ ńutum',
+'userlogin-yourname-ph' => 'Amaḱ beohar ńutum emme.',
 'yourpassword' => 'Uku namber',
 'yourpasswordagain' => 'Arhõ oku namber olme',
 'remembermypassword' => 'Mitṭen khon bạṛti khata reaḱ cạbi disạ dohoḱma (Jạsti $1 {{PLURAL:$1 din reaḱ din reaḱ}} lạgit)',
-'securelogin-stick-https' => 'Bhitri bolo kate HTTPS re soṅge tãhenme',
 'yourdomainname' => 'Amaḱ ḍomen:',
 'externaldberror' => 'Hoe daṛeyaḱa jahan bahre reaḱ jacaeaḱ ḍaṭabes vul hoeakana se amaḱ bahre reaḱ ekaunṭ do nahaḱ halot aguire ạidạri bạnuḱa.',
 'login' => "bolok' duar",
@@ -484,7 +468,7 @@ Arhõ kurumuṭue lahare dayakate thoṛagan tạṅgiemẽ.',
 'newpassword' => 'Nãwã oku nomber',
 'retypenew' => 'Doṛhate oku namber olme',
 'resetpass_submit' => 'Oku namber joṛao ar bhitri bolok',
-'resetpass_success' => 'Amaḱ oku namber do napayte bodolena!
+'changepassword-success' => 'Amaḱ oku namber do napayte bodolena!
 Nitoḱ do am bhitritem boloḱkana...',
 'resetpass_forbidden' => 'Oku namber do baṅ bodoloklena',
 'resetpass-no-info' => 'Noa sakam sojhete laṛcaṛ lạgit́te am do bhitri boloḱ hoyoḱtama.',
@@ -494,10 +478,8 @@ Nitoḱ do am bhitritem boloḱkana...',
 
 # Special:PasswordReset
 'passwordreset' => 'Nãwãte oku nambar emme',
-'passwordreset-text' => 'Amaḱ ekaunṭ reaḱ purapuri thuti e-mail hotete ńam lạgit́te latar reaḱ forom purạomẽ.',
 'passwordreset-legend' => 'Nãwãte oku nambar emme',
 'passwordreset-disabled' => 'Noa wikire amaḱ uku nambar nãwãte em lạgit subita do bando gea.',
-'passwordreset-pretext' => '{{PLURAL:$1 latar re menaḱ ḍaṭako khon mit́ṭen emmẽ}}',
 'passwordreset-username' => 'Beoharicaḱ ńutum:',
 'passwordreset-domain' => 'Ḍomen:',
 'passwordreset-capture' => 'Sendra fol reaḱ e-mail ńelmẽ?',
@@ -713,7 +695,6 @@ Unuduḱ: '''({{int:cur}})''' = nahaḱ nãwã aroeko saõte tulạo, '''({{int:
 'viewprevnext' => 'Ńelme ($1 {{int:pipe-separator}} $2) ($3)',
 'searchmenu-exists' => "'''Noa wiki re do \"[[:\$1]] ńutum sakam menaḱa",
 'searchmenu-new' => 'wiki re [[:$1]]nãwã sakam tear',
-'searchhelp-url' => 'Help: Goṛawaḱ',
 'searchprofile-articles' => 'Menaḱaḱ sakamko',
 'searchprofile-project' => 'Go̠ṛo ar Project sakam',
 'searchprofile-images' => 'Multimedia',
@@ -739,9 +720,6 @@ Unuduḱ: '''({{int:cur}})''' = nahaḱ nãwã aroeko saõte tulạo, '''({{int:
 'powersearch-togglelabel' => 'Sendra',
 'powersearch-toggleall' => 'Sanamaḱ',
 'powersearch-togglenone' => 'Okaṭaḱ hõ baṅ',
-
-# Quickbar
-'qbsettings-none' => 'Okaṭaḱ hõ baṅ',
 
 # Preferences page
 'preferences' => 'Pạsindko',
@@ -838,7 +816,6 @@ Amaḱ e-mail ṭhikạna do bań cabaḱa tinre onko do ko beohara',
 'recentchangeslinked' => 'Sãotenaḱ bodolko',
 'recentchangeslinked-toolbox' => 'Noṛjoṛ palaṭko',
 'recentchangeslinked-title' => 'Bodolaḱko do "$1" sãote joṛao geya',
-'recentchangeslinked-noresult' => 'Joṛao sakam re emoḱ oktere jahanaḱ bodolko bạnuḱa.',
 'recentchangeslinked-summary' => "Noa do ona tạlika kana oka do nebetarge bodol hoyakan oka do asokayte hatao akan sakam khon.
 
 [[Special:Watchlist|your watchlist]] renaḱ sakamko do '''bold''' .",
@@ -895,8 +872,6 @@ Noa reaḱ pasnao katha [$2 rẽt pasnao sakam] latare emena',
 # Statistics
 'statistics' => 'Halot',
 'statistics-pages' => 'Sakamko',
-
-'disambiguationspage' => 'sujhi',
 
 # Miscellaneous special pages
 'nbytes' => '$1 {{PLURAL:$1|baiṭ|baiṭ}}',
@@ -1060,8 +1035,6 @@ Noa reaḱ pasnao katha [$2 rẽt pasnao sakam] latare emena',
 'block-log-flags-nocreate' => 'Ekaunṭ benao do bondogeya',
 'block-log-flags-noemail' => 'E-mail do esetgea',
 'block-log-flags-hiddenname' => 'Beoharićaḱ ńutum do ukugea',
-'blockme' => 'Esedińmẽ',
-'proxyblocksuccess' => 'Hoena',
 
 # Move page
 'movepagebtn' => 'Sakam ocogmẽ, Sakam kulmẽ',
@@ -1181,7 +1154,7 @@ f nombor
 isospeeddratings
 jeleń',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Ganḍe',
 'exif-imagelength' => 'Usul',
 'exif-datetime' => 'Rẽt bodol reaḱ tạrikh ar okte',

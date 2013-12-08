@@ -1,2 +1,4 @@
 # upstream lib from Google
 modules/contentCollector.js
+# messy
+modules/jquery.wikiEditor.iframe.js

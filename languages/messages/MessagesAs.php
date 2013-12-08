@@ -213,9 +213,6 @@ $messages = array(
 'tog-shownumberswatching' => 'লক্ষ্য কৰি থকা সদস্য সমূহৰ সংখ্যা দেখুৱাওক',
 'tog-oldsig' => 'বৰ্তমানৰ স্বাক্ষৰ:',
 'tog-fancysig' => 'স্বাক্ষৰ ৱিকিটেক্সট হিচাপে ব্যৱহাৰ কৰক (স্বয়ংক্ৰিয় সংযোগ অবিহনে)',
-'tog-externaleditor' => 'ডিফ’ল্ট ভাবে বাহ্যিক সম্পাদন-সঁজুলি ব্যৱহাৰ কৰক (দক্ষ জনৰ বাবেহে, আপোনাৰ কম্পিউটাৰত বিশেষ ব্যৱস্থা থাকিব লাগিব । [//www.mediawiki.org/wiki/Manual:External_editors সবিশেষ ।])',
-'tog-externaldiff' => 'ডিফ’ল্ট ভাবে বাহ্যিক তফাৎ (diff) ব্যৱহাৰ কৰক (দক্ষ জনৰ বাবেহে, আপোনাৰ কম্পিউটাৰত বিশেষ ব্যৱস্থা থাকিব লাগিব । [//www.mediawiki.org/wiki/Manual:External_editors সবিশেষ ।])',
-'tog-showjumplinks' => '"জঁপিয়াই যাওক" সংযোগ সক্ৰিয় কৰক',
 'tog-uselivepreview' => 'সম্পাদনাৰ লগে লগে খচৰা দেখুৱাওক (পৰীক্ষামূলক)',
 'tog-forceeditsummary' => 'সম্পাদনাৰ সাৰাংশ নিদিলে মোক জনাব',
 'tog-watchlisthideown' => 'মোৰ লক্ষ্য-তালিকাত মোৰ সম্পাদনা নেদেখুৱাব',
@@ -228,6 +225,8 @@ $messages = array(
 'tog-diffonly' => 'পার্থক্যৰ তলত পৃষ্ঠাৰ বিষয়বস্তু নেদেখুৱাব',
 'tog-showhiddencats' => 'নিহিত শ্ৰেণী সমূহ দেখুৱাওক',
 'tog-norollbackdiff' => 'পূৰ্বৱত কৰা পাছত পাৰ্থক্য নেদেখুৱাব',
+'tog-useeditwarning' => 'সালসলনি সংৰক্ষণ নকৰাকৈ সম্পাদনা পৃষ্ঠা ত্যাগৰ সময়ত মোক সাৱধান কৰক',
+'tog-prefershttps' => 'প্ৰৱেশ কৰোঁতে সদায় সুৰক্ষিত সংযোগ ব্যৱহাৰ কৰক',
 
 'underline-always' => 'সদায়',
 'underline-never' => 'কেতিয়াও নহয়',
@@ -291,6 +290,18 @@ $messages = array(
 'oct' => 'অক্টোবৰ:',
 'nov' => 'নৱেম্বৰ:',
 'dec' => 'ডিচেম্বৰ:',
+'january-date' => 'জানুৱাৰী $1',
+'february-date' => 'ফেব্ৰুৱাৰী $1',
+'march-date' => 'মাৰ্চ $1',
+'april-date' => 'এপ্ৰিল $1',
+'may-date' => "মে' $1",
+'june-date' => 'জুন $1',
+'july-date' => 'জুলাই $1',
+'august-date' => 'আগষ্ট $1',
+'september-date' => 'ছেপ্টেম্বৰ $1',
+'october-date' => 'অক্টোবৰ $1',
+'november-date' => 'নৱেম্বৰ $1',
+'december-date' => 'ডিচেম্বৰ $1',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|শ্ৰেণী|শ্ৰেণীসমূহ}}',
@@ -372,6 +383,7 @@ $messages = array(
 'create-this-page' => 'নতুন পৃষ্ঠা সৃষ্টি কৰক',
 'delete' => 'বিলোপ',
 'deletethispage' => 'এই পৃষ্ঠাখন বিলোপ কৰক',
+'undeletethispage' => 'এই পৃষ্ঠা পুনৰুদ্ধাৰ কৰক',
 'undelete_short' => '{{PLURAL:$1|বিলোপিত পৃষ্ঠাৰ|$1 সংখ্যক বিলোপিত পৃষ্ঠাৰ}} পূৰ্ববৎকৰণ',
 'viewdeleted_short' => '{{PLURAL:$1| এটা বিলুপ্ত সম্পাদনা|$1 টা বিলুপ্ত সম্পাদনা}} দেখুৱাওক',
 'protect' => 'সুৰক্ষিত কৰক',
@@ -415,7 +427,7 @@ $1',
 'pool-queuefull' => 'পোল কিউ (pool queue) সমূল',
 'pool-errorunknown' => 'অপৰিচিত ত্ৰুটি',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}}ৰ বিষয়ে',
 'aboutpage' => 'Project:ইতিবৃত্ত',
 'copyright' => 'এই বিষয়বস্তু $1 ৰ আওতাত উপলব্ধ।',
@@ -425,7 +437,6 @@ $1',
 'disclaimers' => 'দায়লুপ্তি',
 'disclaimerpage' => 'Project:সাধাৰণ দায়লুপ্তি',
 'edithelp' => 'সম্পাদনাৰ বাবে সহায়',
-'edithelppage' => 'Help:সম্পাদনা',
 'helppage' => 'Help:সমল',
 'mainpage' => 'বেটুপাত',
 'mainpage-description' => 'বেটুপাত',
@@ -502,17 +513,11 @@ $1',
 # General errors
 'error' => 'ভুল',
 'databaseerror' => 'তথ্যকোষৰ ভুল',
-'dberrortext' => 'Database query syntaxত ত্ৰুটি হৈছে।
-ছফ্টৱেৰত থকা কোনো বাগৰ বাবে এনে হব পাৰে।
-অন্তিমবাৰ চেষ্টা কৰা ডাটাবেচ কুৱেৰীটো আছিল এনেধৰণৰ:
-<blockquote><code>$1</code></blockquote>
-"<code>$2</code>" ফাংচনৰ পৰা।
-ডাটাবেচে প্ৰেৰণ কৰা ত্ৰুটি: "<samp>$3: $4</samp>"।',
-'dberrortextcl' => 'এক ডাটাবেচ চিণ্টেক্স ত্ৰুটি ঘটিছে।
-অন্তিমবাৰ চেষ্টা কৰা ডাটাবেচ কুৱেৰীটো আছিল এনেধৰণৰ:
-"$1"
-"$2" ফাংচনৰ পৰা
-ডাটাবেচে প্ৰেৰণ কৰা ত্ৰুটি "$3: $4"',
+'databaseerror-text' => "এটা ডেটাবে'ছ কুৱেৰী ত্ৰুটি হৈছে।
+ইয়ে ছফ্টৱেৰটোত কিবা বাগ্‌ থকাটো সূচাব পাৰে।",
+'databaseerror-textcl' => "এটা ডেটাবে'ছ কুৱেৰী ত্ৰুটি হৈছে।",
+'databaseerror-function' => 'ফাংচন: $1',
+'databaseerror-error' => 'ত্ৰুটি: $1',
 'laggedslavemode' => 'সাৱধানবাণী: ইয়াত সাম্প্ৰতিক সাল-সলনি নাথাকিব পাৰে',
 'readonly' => 'তথ্যকোষ বন্ধ কৰা আছে',
 'enterlockreason' => 'বন্ধ কৰাৰ কাৰণ দিয়ক, লগতে কেতিয়ামানে খোলা হব তাকো জনাব।',
@@ -546,6 +551,7 @@ $1',
 'cannotdelete-title' => '"$1" পৃষ্ঠা বিলোপ কৰিব নোৱাৰি',
 'delete-hook-aborted' => 'হুকৰ দ্বাৰা সম্পাদনা প্ৰত্যাখ্যান কৰা হৈছে ।
 ইয়াৰ কোনো ব্যাখ্যা নাই ।',
+'no-null-revision' => '"$1" পৃষ্ঠাৰ বাবে নতুন শূন্য সংশোধন সৃষ্টি কৰিব পৰা নগ\'ল',
 'badtitle' => 'অগ্ৰহণীয় শিৰোনামা',
 'badtitletext' => 'আপুনি বিচৰা পৃষ্ঠাটোৰ শিৰোনামা অযোগ্য, খালী বা ভুলকৈ জড়িত আন্তৰ্ভাষিক বা আন্তৰ্ৱিকি শিৰোনামা। ইয়াত এক বা ততোধিক বৰ্ণ আছে যাক শিৰোনামাত ব্যৱহাৰ কৰিব নোৱাৰি।',
 'perfcached' => "তলত দিয়া তথ্যখিনি আগতে জমা কৰি থোৱা (cached) আৰু সাম্প্ৰতিক নহ'ব পাৰে। এই তথ্যখিনিত সৰ্বোচ্চ {{PLURAL:$1|এটা ফলাফল|$1টা ফলাফল}} উপলব্ধ।",
@@ -566,12 +572,15 @@ $1',
 'editinginterface' => "'''সাৱধানবাণী:''' আপুনি যিখন পৃষ্ঠা সম্পাদনা কৰিছে সেইখন এই ছফ্টৱেৰৰ ইণ্টাৰফে’চ বাৰ্তা দিবলৈ ব্যৱহাৰ হয়।
 এই পৃষ্ঠাৰ সাল-সলনিয়ে আন ব্যৱহাৰকাৰীৰ বাবে ইণ্টাৰফে’চত প্ৰভাৱ পেলাব।
 সকলো ৱিকিৰ বাবে অনুবাদৰ বাবে অনুগ্ৰহ কৰি মিডিয়াৱিকি স্থানীয়কৰণ প্ৰকল্প [//translatewiki.net/ translatewiki.net] ব্যৱহাৰ কৰক ।",
-'sqlhidden' => '(নিহিত SQL query)',
 'cascadeprotected' => 'এই পৃষ্ঠাখন সম্পাদনাৰ পৰা সুৰক্ষিত কাৰণ এই {{PLURAL:$1|পৃষ্ঠা, যিখন|পৃষ্ঠা, যিবোৰ}} "প্ৰপাতাকাৰ" (cascading) বিকল্পৰ সহযোগত সুৰক্ষিত কৰা হৈছে: 
 $2',
 'namespaceprotected' => "আপোনাৰ '''$1''' নামস্থানৰ পৃষ্ঠাসমূহ সম্পাদনা কৰাৰ অধিকাৰ নাই।",
 'customcssprotected' => 'এই CSS পৃষ্ঠা সম্পাদনা কৰাৰ অধিকাৰ আপোনাৰ নাই, কাৰণ ইয়াত আন সদস্যৰ ব্যক্তিগত পছন্দসমূহত আছে ।',
 'customjsprotected' => 'এই জাভালিপিৰ পৃষ্ঠা সম্পাদনা কৰাৰ অধিকাৰ আপোনাৰ নাই, কাৰণ ইয়াত আন সদস্যৰ ব্যক্তিগত পছন্দসমূহত আছে ।',
+'mycustomcssprotected' => 'এই CSS পৃষ্ঠা সম্পাদনা কৰিবলৈ আপোনাৰ অনুমতি নাই।',
+'mycustomjsprotected' => 'এই JavaScript পৃষ্ঠা সম্পাদনা কৰিবলৈ আপোনাৰ অনুমতি নাই।',
+'myprivateinfoprotected' => 'ব্যক্তিগত তথ্য সম্পাদনা কৰিবলৈ আপোনাৰ অনুমতি নাই।',
+'mypreferencesprotected' => 'পছন্দসমূহ সম্পাদনা কৰিবলৈ আপোনাৰ অনুমতি  নাই।',
 'ns-specialprotected' => 'বিশেষ পৃষ্ঠা সম্পাদিত কৰিব নোৱাৰি।',
 'titleprotected' => "[[User:$1|$1]] সদস্যজনে এই শিৰোনাণমাৰ লিখনী লিখা ৰোধ কৰিছে ।
 ইয়াৰ কাৰণ হৈছে ''$2'' ।",
@@ -596,10 +605,19 @@ $2',
 আপোনাৰ সদস্যভুক্তি হৈ গ’ল ।
 [[Special:Preferences|{{SITENAME}}ৰ পছন্দসমূহ]]ত আপোনাৰ পছন্দমতে ব্যক্তিগতকৰণ কৰি ল’বলৈ নাপাহৰে যেন ।',
 'yourname' => 'সদস্যনাম:',
+'userlogin-yourname' => 'সদস্যনাম',
+'userlogin-yourname-ph' => 'আপোনাৰ সদস্যনাম লিখক',
+'createacct-another-username-ph' => 'সদস্যনাম লিখক',
 'yourpassword' => 'আপোনাৰ গুপ্তশব্দ',
+'userlogin-yourpassword' => 'গুপ্তশব্দ',
+'userlogin-yourpassword-ph' => 'আপোনাৰ গুপ্তশব্দ লিখক',
+'createacct-yourpassword-ph' => 'এটা গুপ্তশব্দ লিখক',
 'yourpasswordagain' => 'গুপ্তশব্দ আকৌ এবাৰ লিখক',
+'createacct-yourpasswordagain' => 'গুপ্তশব্দ নিশ্চিত কৰক',
+'createacct-yourpasswordagain-ph' => 'গুপ্তশব্দ আকৌ লিখক',
 'remembermypassword' => 'মোৰ প্ৰৱেশ এই কম্পিউটাৰত মনত ৰাখিব (সৰ্বাধিক $1 {{PLURAL:$1|দিনলৈ|দিনলৈ}})',
-'securelogin-stick-https' => 'প্ৰৱেশ কৰা পাছত HTTPS-ৰ দ্বাৰা সংযোগ ৰাখক',
+'userlogin-remembermypassword' => 'মোক লগ্‌-ইন কৰাই ৰাখক',
+'userlogin-signwithsecure' => 'নিৰাপদ সংযোগ ব্যৱহাৰ কৰক',
 'yourdomainname' => 'আপোনাৰ ডমেইন:',
 'password-change-forbidden' => 'আপুনি এই ৱিকিত গুপ্তশব্দ সলাব নোৱাৰে।',
 'externaldberror' => 'কোনো প্ৰামাণ্যকৰণ তথ্যকোষৰ ত্ৰুটি ঘটিছে নতুবা আপোনাৰ বৰ্হি-একাউণ্ট নৱীকৰণ কৰাৰ অনুমতি নাই ।',
@@ -611,18 +629,41 @@ $2',
 'logout' => 'প্ৰস্থান',
 'userlogout' => 'প্ৰস্থান',
 'notloggedin' => 'প্ৰৱেশ কৰা নাই',
+'userlogin-noaccount' => 'কোনো একাউণ্ট নাই?',
+'userlogin-joinproject' => '{{SITENAME}}ত যোগদান কৰক',
 'nologin' => "ৱিকিপিডিয়াত আপোনাৰ একাউণ্ট নাই নেকি? তেনে '''$1'''।",
 'nologinlink' => 'নতুন একাউণ্ট খোলক',
 'createaccount' => 'সভ্যভুক্ত হবলৈ',
 'gotaccount' => "আপুনি সদস্য হয়নে? '''$1'''",
 'gotaccountlink' => 'প্ৰৱেশ',
 'userlogin-resetlink' => 'আপোনাৰ প্ৰৱেশ তথ্য পাহৰিছে?',
+'userlogin-resetpassword-link' => 'আপোনাৰ গুপ্তশব্দ ন-কৈ বহুৱাওক',
+'helplogin-url' => 'Help:প্ৰৱেশ/লগ্‌-ইন',
+'userlogin-helplink' => '[[{{MediaWiki:helplogin-url}}|প্ৰৱেশ সম্পৰ্কীয় সাহায্য]]',
+'createacct-join' => 'আপোনাৰ তথ্যসমূহ তলত লিখক।',
+'createacct-another-join' => 'নতুন একাউণ্টৰ তথ্যসমূহ তলত লিখক।',
+'createacct-emailrequired' => 'ই-মেইল ঠিকনা',
+'createacct-emailoptional' => 'ই-মেইল ঠিকনা (বৈকল্পিক)',
+'createacct-email-ph' => 'আপোনাৰ ই-মেইল ঠিকনা লিখক',
+'createacct-another-email-ph' => 'ইমেইল ঠিকনা লিখক',
 'createaccountmail' => 'এটা যাদৃচ্ছিক অস্থায়ী গুপ্তশব্দ ব্যৱহাৰ কৰক আৰু ইয়াক তলত দিয়া ইমেইল ঠিকনাটোলৈ পঠিয়াই দিয়ক',
+'createacct-realname' => 'প্ৰকৃত নাম (বৈকল্পিক)',
 'createaccountreason' => 'কাৰণ:',
+'createacct-reason' => 'কাৰণ',
+'createacct-reason-ph' => 'আপুনি কিয় আন এটা একাউণ্ট সৃষ্টি কৰিছে',
+'createacct-captcha' => 'সুৰক্ষা পৰীক্ষা',
+'createacct-imgcaptcha-ph' => 'ওপৰত দেখা পোৱা পাঠ্য লিখক',
+'createacct-submit' => 'আপোনাৰ একাউণ্ট সৃষ্টি কৰক',
+'createacct-another-submit' => 'আন এটা একাউণ্ট সৃষ্টি কৰক',
+'createacct-benefit-heading' => 'আপোনাৰ দৰে মানুহেই {{SITENAME}} তৈয়াৰ কৰিছে',
+'createacct-benefit-body1' => '{{PLURAL:$1|সম্পাদনা}}',
+'createacct-benefit-body2' => '{{PLURAL:$1|পৃষ্ঠা|পৃষ্ঠাসমূহ}}',
+'createacct-benefit-body3' => 'শেহতীয়া {{PLURAL:$1|অৱদানকাৰী|অৱদানকাৰীসকল}}',
 'badretype' => 'আপুনি দিয়া গুপ্ত শব্দ দুটা মিলা নাই।',
 'userexists' => 'আপুনি দিয়া সদস্যনাম আগৰে পৰাই ব্যৱহাৰ হৈ আছে।
 অনুগ্ৰহ কৰি বেলেগ সদস্যনাম এটা নিৰ্বাচন কৰক।',
 'loginerror' => 'প্ৰৱেশ সমস্যা',
+'createacct-error' => 'একাউণ্ট সৃষ্টিত ত্ৰুটি',
 'createaccounterror' => "একাউন্ট সৃষ্টি কৰা নহ'ল: $1",
 'nocookiesnew' => 'আপোনাৰ সদস্যভুক্তি হৈ গৈছে, কিন্তু আপুনি প্ৰৱেশ কৰা নাই।
 {{SITENAME}}ত প্ৰৱেশ কৰিবলৈ কুকি সক্ৰিয় থাকিব লাগিব।
@@ -685,10 +726,12 @@ $2',
 যদি এইয়া ভুলতে হৈছে, তেনেহলে আপুনি এই বাৰ্তাটো অবজ্ঞা কৰিব পাৰে ।',
 'usernamehasherror' => 'সদস্যনামত হেচ্‌ চিহ্ন থাকিব নোৱাৰে',
 'login-throttled' => 'আপুনি স‍ম্প্ৰতি অজস্ৰবাৰ লগ্‌-ইনৰ প্ৰয়াস কৰিছে ।
-অনুগ্ৰহ কৰি কিছু সময় অপেক্ষা কৰি আকৌ প্ৰয়াস কৰক ।',
+অনুগ্ৰহ কৰি $1 সময়ৰ পিছত আকৌ চেষ্টা কৰক ।',
 'login-abort-generic' => 'আপোনাৰ প্ৰৱেশ অসফল হৈছে- বাতিল কৰা হ’ল',
 'loginlanguagelabel' => 'ভাষা: $1',
 'suspicious-userlogout' => 'আপোনাৰ প্ৰস্থানৰ অনুৰোধ বাতিল কৰা হৈছে কাৰণ হয়তো আপোনাৰ ব্ৰাউজাৰ অসম্পূৰ্ণ নতুবা পূৰ্বৱতী তথ্য পঠাইছে ।',
+'createacct-another-realname-tip' => "প্ৰকৃত নাম দিয়াটো বৈকল্পিক।
+আপুনি নামটো দিলে সেইটো আপোনাৰ বৰঙণিসমূহৰ বাবে স্বীকৃতি প্ৰদানত ব্যৱহাৰ কৰা হ'ব।",
 
 # Email sending
 'php-mail-error-unknown' => 'পি.এইছ.পি মেইল () কাৰ্যত অজ্ঞাত ত্ৰুটি ।',
@@ -704,7 +747,7 @@ $2',
 'newpassword' => 'নতুন গুপ্তশব্দ:',
 'retypenew' => 'নতুন গুপ্তশব্দ আকৌ লিখক',
 'resetpass_submit' => 'গুপ্তশব্দ বহুৱাওক আৰু প্ৰৱেশ কৰক',
-'resetpass_success' => 'আপোনাৰ গুপ্তশব্দ সফলতাৰে সলনি কৰা হৈছে, এতিয়া আপুনি প্ৰৱেশ কৰি আছে...',
+'changepassword-success' => 'আপোনাৰ গুপ্তশব্দ সফলতাৰে সলনি কৰা হৈছে!',
 'resetpass_forbidden' => 'গুপ্তশব্দ সলনি কৰিব নোৱাৰি',
 'resetpass-no-info' => 'এই পৃষ্ঠা প্ৰত্যক্ষ ভাৱে ঢুকি পাবলৈ আপুনি প্ৰৱেশ কৰিব লাগিব ।',
 'resetpass-submit-loggedin' => 'গুপ্তশব্দ সলনি কৰক',
@@ -716,10 +759,10 @@ $2',
 
 # Special:PasswordReset
 'passwordreset' => 'গুপ্তশব্দ ন-কৈ বহুৱাওক',
-'passwordreset-text' => ' আপোনাৰ গুপ্তশব্দ ন-কৈ বহুৱাবলৈ তলৰ প্ৰপত্ৰ সম্পূৰ্ণ কৰক।',
+'passwordreset-text-one' => 'আপোনাৰ গুপ্তশব্দ ন-কৈ বহুৱাবলৈ এই প্ৰপত্ৰ পূৰণ কৰক।',
 'passwordreset-legend' => 'গুপ্তশব্দ ন-কৈ বহাওক',
 'passwordreset-disabled' => 'এই ৱিকিত গুপ্তশব্দ নবীকৰণ নিষ্ক্ৰিয় কৰা হৈছে ।',
-'passwordreset-pretext' => '{{PLURAL:$1||তলত উল্লেখ কৰা তথ্যৰ কোনো অংশ ভৰাওক}}',
+'passwordreset-emaildisabled' => 'এই ৱিকিত ই-মেইল বৈশিষ্টসমূহ নিষ্ক্ৰিয় কৰা হৈছে।',
 'passwordreset-username' => 'সদস্যনাম',
 'passwordreset-domain' => 'ডমেইন :',
 'passwordreset-capture' => 'ফলাফল ই-মেইলখন চাবলৈ বিচাৰিছে ?',
@@ -740,7 +783,7 @@ $2
 অস্থায়ী গুপ্তশব্দ: $2',
 'passwordreset-emailsent' => 'এখন গুপ্তশব্দ উদ্ধাৰ ই-মেইল পঠিওৱা হৈছে।',
 'passwordreset-emailsent-capture' => 'এখন গুপ্তশব্দ উদ্ধাৰ ইমেইল পঠিওৱা হৈছে, এইখন তলত দেখা পাব।',
-'passwordreset-emailerror-capture' => "এখন গুপ্তশব্দ উদ্ধাৰ ইমেইল সৃষ্টি কৰা হ'ল কিন্তু সদস্যজনলৈ পঠিয়াব পৰা নগ'ল, এইখন তলত দেখুওৱা হৈছে: $1",
+'passwordreset-emailerror-capture' => "এখন গুপ্তশব্দ উদ্ধাৰ ইমেইল সৃষ্টি কৰা হ'ল, কিন্তু {{GENDER:$2|সদস্যজনলৈ}} পঠিয়াব পৰা নগ'ল। সেইখন তলত দেখুওৱা হৈছে: $1",
 
 # Special:ChangeEmail
 'changeemail' => 'ই-মেইল ঠিকনা সলনি কৰক',
@@ -753,6 +796,9 @@ $2
 'changeemail-password' => 'আপোনাৰ  {{SITENAME}} গুপ্তশব্দ:',
 'changeemail-submit' => 'ই-মেইল ঠিকনা সলনি কৰক',
 'changeemail-cancel' => 'বাতিল কৰক',
+
+# Special:ResetTokens
+'resettokens' => "ট'কেন ৰিছে'ট কৰক",
 
 # Edit page toolbar
 'bold_sample' => 'গাঢ় পাঠ্য',
@@ -961,12 +1007,14 @@ $1ৰ দ্বাৰা এই অৱৰোধ কৰা হৈছে ।
 সম্ভৱতঃ পৃষ্ঠাখন বিলোপ কৰা হৈছে ।',
 'edit-conflict' => 'সম্পাদনা দ্বন্দ্ব ।',
 'edit-no-change' => 'আপোনাৰ সম্পাদনা আওকাণ কৰা হৈছে, কাৰণ লেখাত কোনো তফাৎ নাই',
+'postedit-confirmation' => "আপোনাৰ সম্পাদনা সংৰক্ষিত কৰা হ'ল ।",
 'edit-already-exists' => "নতুন পৃষ্ঠা সৃষ্টি কৰা নহ'ল ।
 পৃষ্ঠাখন ইতিমধ্যে আছেই ।",
 'defaultmessagetext' => 'সাধাৰণ বাৰ্তা পাঠ্য',
 'content-failed-to-parse' => '$1 মডেলৰ বাবে $2ৰ তথ্য নিকা কৰিব পৰা নগ’ল: $3',
 'invalid-content-data' => 'অবৈধ সমল তথ্য',
 'content-not-allowed-here' => '[[$2]] পৃষ্ঠাত "$1" সমল অনুমোদিত নহয়',
+'editwarning-warning' => 'এই পৃষ্ঠাটো এৰিলে আপুনি কৰা পৰিবৰ্তনসমূহ হেৰাব পাৰে। যদি আপুনি প্ৰৱেশ কৰা অৱস্থাত আছে, আপুনি এই সতৰ্কবাৰ্তাক আপোনাৰ পছন্দসমূহৰ "সম্পাদনা" অংশত অসামৰ্থবান কৰিব পাৰিব।',
 
 # Content models
 'content-model-wikitext' => 'ৱিকিপাঠ্য',
@@ -1212,7 +1260,6 @@ $1",
 'searchmenu-legend' => 'সন্ধান বিকল্পসমূহ',
 'searchmenu-exists' => 'এই ৱিকিত "[[:$1]]" নামৰ পৃষ্ঠা এখন আছে ।',
 'searchmenu-new' => "'''এই ৱিকিত \"[[:\$1]]\" পৃষ্ঠাখন সৃষ্টি কৰক!'''",
-'searchhelp-url' => 'Help:সমল',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|এই উপসৰ্গ থকা পৃষ্ঠাসমূহ ব্ৰাউজ কৰক]]',
 'searchprofile-articles' => 'বিষয়বস্তুৰ পৃষ্ঠা',
 'searchprofile-project' => 'সহায় আৰু প্ৰকল্প পৃষ্ঠাসমূহ',
@@ -1256,15 +1303,7 @@ $1",
 'searchdisabled' => '{{SITENAME}} ত অনুসন্ধান কৰা সাময়িক ভাবে নিষ্ক্ৰিয় কৰা হৈছে।
 তেতিয়ালৈকে গুগলত অনুসন্ধান কৰক।
 মনত ৰাখিব যে তেঁওলোকৰ {{SITENAME}}ৰ ইণ্ডেক্স পুৰণি হব পাৰে।',
-
-# Quickbar
-'qbsettings' => 'শীঘ্ৰদণ্ডিকা',
-'qbsettings-none' => 'একেবাৰে নহয়',
-'qbsettings-fixedleft' => 'বাঁওফাল স্থিৰ',
-'qbsettings-fixedright' => 'সোঁফাল স্থিৰ',
-'qbsettings-floatingleft' => 'বাঁওফাল অস্থিৰ',
-'qbsettings-floatingright' => 'সোঁফাল অস্থিৰ',
-'qbsettings-directionality' => 'আপোনাৰ ভাষাৰ আৰু লিপিৰ দিশৰ ওপৰত নিৰ্ভৰ কৰি ঠিক কৰা হ’ল',
+'search-error' => 'অনুসন্ধানৰ সময়ত এটা ত্ৰুটি হৈছে: $1',
 
 # Preferences page
 'preferences' => 'পছন্দসমূহ',
@@ -1298,7 +1337,6 @@ $1",
 'resetprefs' => 'অসঞ্চিত সাল-সলনি বাতিল কৰক',
 'restoreprefs' => 'সকলো পূৰ্বনিৰ্ধাৰিত ছেটিং ঘূৰাই আনক',
 'prefs-editing' => 'সম্পাদন',
-'prefs-edit-boxsize' => "সম্পাদনা ৱিণ্ড'ৰ আকাৰ",
 'rows' => 'পথালী শাৰী:',
 'columns' => 'ঠিয় শাৰী:',
 'searchresultshead' => 'অনুসন্ধান',
@@ -1309,8 +1347,6 @@ $1",
 'recentchangesdays-max' => 'সৰ্বোচ্চ $1 {{PLURAL:$1|দিন|দিন}}',
 'recentchangescount' => 'শেহতীয়া সাল-সলনি, ইতিহাস আৰু লগ পৃষ্ঠাত দেখুৱাব লগা সম্পাদনাৰ সংখ্যা:',
 'prefs-help-recentchangescount' => 'ইয়াত শেহতীয়া সাল-সলনি, পৃষ্ঠাৰ ইতিহাস আৰু লগ অন্তৰ্ভুক্ত ।',
-'prefs-help-watchlist-token' => 'এই ঘৰটো এটা গোপন শব্দ চাবিৰে পূৰণ কৰিলে আপোনাৰ লক্ষ্য-তালিকাৰ বাবে এটা আৰ.এচ.এচ. ফিড তৈয়াৰ হ’ব । এই শব্দচাবি জনা সদস্যই আপোনাৰ লক্ষ্য-তালিকা চাব পাৰিব, সেয়ে এটা সুৰক্ষিত মান ব্যৱহাৰ কৰক ।
-আপুনি ব্যৱহাৰ কৰিব পৰাকৈ এটা যাদৃচ্ছিক মান দিয়া হ’ল: $1',
 'savedprefs' => 'আপোনাৰ পছন্দসমূহ সাঁচি ৰখা হ’ল।',
 'timezonelegend' => 'সময় স্থান:',
 'localtime' => 'স্থানীয় সময়:',
@@ -1341,7 +1377,6 @@ $1",
 'prefs-reset-intro' => 'আপুনি এই পৃষ্ঠা ব্যৱহাৰ কৰি আপোনাৰ পছন্দসমূহক চাইটৰ পূৰ্বনিৰ্ধাৰিত ছেটঙলৈ ঘূৰাই নিব পাৰে ।
 এই পৰিৱৰ্তন পিছত সলাব পৰা নাযাব ।',
 'prefs-emailconfirm-label' => 'ইমেইল নিশ্চিতকৰণ:',
-'prefs-textboxsize' => 'সম্পাদনা ৱিণ্ড’ৰ আকাৰ',
 'youremail' => 'আপোনাৰ ই-মেইল *',
 'username' => '{{GENDER:$1|সদস্যনাম}}:',
 'uid' => '{{GENDER:$1|User}} চিহ্ন:',
@@ -1408,6 +1443,8 @@ $1",
 'userrights-notallowed' => 'সদস্যৰ অধিকাৰ যোগ কৰিবলৈ বা আঁতৰ কৰিবলৈ আপোনাৰ একাউণ্টৰ অনুমতি নাই ।',
 'userrights-changeable-col' => 'আপুনি সলনি কৰিব পৰা গোটসমূহ',
 'userrights-unchangeable-col' => 'আপুনি সলনি কৰিব নোৱাৰা গোটসমূহ',
+'userrights-conflict' => 'সদস্য অধিকাৰ দ্বন্দ্ব! অনুগ্ৰহ কৰি আপোনাৰ সালসলনি আকৌ এবাৰ প্ৰয়োগ কৰক।',
+'userrights-removed-self' => 'আপুনি সফলতাৰে নিজৰ অধিকাৰসমূহ আঁতৰ কৰিলে। গতিকে আপুনি এতিয়া এই পৃষ্ঠা চাব নোৱাৰে।',
 
 # Groups
 'group' => 'গোট:',
@@ -1478,6 +1515,9 @@ $1",
 'right-editusercssjs' => 'আন সদস্যৰ CSS আৰু JavaScript  সম্পাদনা কৰক',
 'right-editusercss' => 'আন সদস্যৰ CSS ফাইল সম্পাদনা কৰক',
 'right-edituserjs' => 'আন সদস্যৰ JavaScript ফাইল  সম্পাদনা কৰক',
+'right-editmyusercss' => 'আপোনাৰ নিজৰ সদস্য CSS ফাইলসমূহ সম্পাদনা কৰক।',
+'right-editmyuserjs' => 'আপোনাৰ নিজৰ সদস্য JavaScript ফাইলসমূহ সম্পাদনা কৰক',
+'right-viewmywatchlist' => 'আপোনাৰ নিজৰ লক্ষ্য-তালিকা চাওক',
 'right-rollback' => 'শেষৰজন সদস্যই এখন নিৰ্দিষ্ট পৃষ্টাত কৰা সম্পাদনা পূৰ্বৰ অৱস্থালৈ ঘূৰাই আনক',
 'right-markbotedits' => 'ৰ’ল্ড-বেক সম্পাদনাসমূহ বট সম্পাদনা বুলি চিহ্নিত কৰক',
 'right-noratelimit' => 'গতি সীমাৰ দ্বাৰা প্ৰভাৱিত নহ’ব',
@@ -1581,7 +1621,6 @@ $1",
 'recentchangeslinked-feed' => 'প্ৰাসংগিক সালসলনিসমূহ',
 'recentchangeslinked-toolbox' => 'প্ৰাসংগিক সালসলনিসমূহ',
 'recentchangeslinked-title' => '"$1"ৰ লগত জড়িত সাল-সলনি',
-'recentchangeslinked-noresult' => 'দিয়া সময়ৰ ভিতৰত সংযোজিত পৃষ্ঠা সমূহত সাল-সলনি হোৱা নাই ।',
 'recentchangeslinked-summary' => "এখন নিৰ্দিষ্ট পৃষ্ঠাৰ লগত সংযুক্ত পৃষ্ঠাসমূহৰ( বা এটা নিৰ্দিষ্ট শ্ৰেণীৰ সদস্যসমূহৰ) শেহতীয়া সালসলনিৰ তালিকা তলত দিয়া হৈছে ।
 [[Special:Watchlist|আপুনি চকু ৰখা পৃষ্ঠাসমূহৰ তালিকা]] ত থকা পৃষ্ঠাসমূহ '''গাঢ়''' দেখা পাব ।",
 'recentchangeslinked-page' => 'পৃষ্ঠাৰ নাম:',
@@ -1817,7 +1856,6 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization চাওক।",
 'http-read-error' => 'HTTP পঠন ত্ৰুটি ।',
 'http-timed-out' => 'HTTP অনুৰোধৰ সময় পাৰ হৈছে ।',
 'http-curl-error' => 'URL অনাত ত্ৰুটি হৈছে: $1',
-'http-host-unreachable' => 'URL পাব পৰা নগ’ল ।',
 'http-bad-status' => 'HTTP অনুৰোধৰ সময়ত কোনো সমস্যা হৈছে: $1, $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1970,12 +2008,6 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization চাওক।",
 'statistics-users-active' => 'সক্ৰিয় সদস্য',
 'statistics-users-active-desc' => 'শেষ {{PLURAL:$1|দিনত|$1 দিনত}} কোনো কাম কৰা সদস্যসমূহ',
 'statistics-mostpopular' => 'সৰ্বোচ্চ দৰ্শন কৰা পৃষ্ঠাসমূহ',
-
-'disambiguations' => 'দ্ব্যৰ্থতা-দূৰীকৰণ পৃষ্ঠাসমূহলৈ সংযোগ থকা পৃষ্ঠাসমূহ',
-'disambiguationspage' => 'সাঁচ:দ্ব্যৰ্থতা-দূৰীকৰণ',
-'disambiguations-text' => "তলৰ পৃষ্ঠাখনসমূহত অন্ততঃ এটা হ'লেই '''দ্ব্যৰ্থতা দূৰীকৰণ পৃষ্ঠা'''ৰ সংযোগ আছে।
-তাৰ সলনি সেইবোৰত উপযুক্ত পৃষ্ঠাৰ লগত সংযোগ থাকিব পাৰে।
-[[MediaWiki:Disambiguationspage]]ৰ পৰা সংযোগ থকা কোনো সাঁচ ব্যৱহাৰ কৰিলে এখন পৃষ্ঠাক দ্ব্যৰ্থতা দূৰীকৰণ পৃষ্ঠা হিছাপে গণ্য কৰা হয়।",
 
 'pageswithprop' => 'পৃষ্ঠা উপাদান সম্বলিত পৃষ্ঠাসমূহ',
 'pageswithprop-legend' => 'পৃষ্ঠা উপাদান সম্বলিত পৃষ্ঠাসমূহ',
@@ -2230,10 +2262,9 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization চাওক।",
 'unwatchthispage' => 'চকু দিয়া বন্ধ কৰক',
 'notanarticle' => 'বিষয়বস্তু পৃষ্ঠা নহয়',
 'notvisiblerev' => 'অন্য কোনো সদস্যই কৰা সংশোধনী বিলোপ কৰা হৈছে',
-'watchnochange' => 'আপুনি চকু ৰখা আইটেমসমূহ প্ৰদৰ্শিত সময়সীমাৰ ভিতৰত সম্পাদনা কৰা হোৱা নাই ।',
 'watchlist-details' => 'আলোচনা পৃষ্ঠা সমূহ লেখত নধৰি {{PLURAL:$1|$1 খন পৃষ্ঠা|$1 খন পৃষ্ঠা}} আপোনাৰ লক্ষ্য-তালিকাত আছে ।',
-'wlheader-enotif' => '* ই-পত্ৰ জাননী সক্ৰিয় কৰা হৈছে ।',
-'wlheader-showupdated' => "* আপোনাৰ শেষ পৰিদৰ্শনৰ পিছত হোৱা পৰিৱৰ্তনসমূহ '''গাঢ়''' আখৰত দেখুওৱা হৈছে",
+'wlheader-enotif' => 'ইমেইল জাননী সক্ৰিয় কৰা হৈছে।',
+'wlheader-showupdated' => "আপোনাৰ শেষ পৰিদৰ্শনৰ পিছত সলনি হোৱা পৃষ্ঠাসমূহ '''গাঢ়''' আখৰত দেখুওৱা হৈছে।",
 'watchmethod-recent' => 'লক্ষ্য কৰা পৃষ্ঠাসমূহ শেহতীয়া সম্পাদনাৰ বাবে পৰীক্ষা কৰা হৈছে',
 'watchmethod-list' => 'লক্ষ্য কৰা পৃষ্ঠাসমূহ শেহতীয়া সম্পাদনাৰ বাবে পৰীক্ষা কৰা হৈছে',
 'watchlistcontains' => 'আপোনাৰ লক্ষ্য-তালিকাত $1 খন {{PLURAL:$1|পৃষ্ঠা|পৃষ্ঠা}} আছে ।',
@@ -2645,12 +2676,9 @@ $1ৰ অৱৰোধৰ কাৰণ: "$2"',
 কিন্তু এইটো $2 পৰিসীমাৰ অন্তৰ্গত যাৰ বাধা আঁতৰাব পাৰি ।',
 'ip_range_invalid' => 'অবৈধ আই.পি. পৰিসৰ ।',
 'ip_range_toolarge' => '/$1তকৈ ডাঙৰ প্ৰতিবন্ধক পৰিসৰ অনুমোদিত নহয় ।',
-'blockme' => 'মোক বাৰণ কৰক',
 'proxyblocker' => 'প্ৰক্সী অৱৰোধকাৰী',
-'proxyblocker-disabled' => 'এই ফাংচনটো নিষ্ক্ৰিয়',
 'proxyblockreason' => 'আপোনাৰ আই.পি. ঠিকনা অৱৰোধ কৰা হৈছে কাৰণ এইটো এটা মুক্ত প্ৰক্সী ।
 অনুগ্ৰহ কৰি আপোনাৰ ইণ্টাৰনেট সেৱা প্ৰদানকাৰী বা কাৰিকৰী সহায়কৰ্তাৰ লগত যোগাযোগ কৰক আৰু এই গুৰুতৰ সুৰক্ষা সমস্যাৰ বিষয়ে জনাওক ।',
-'proxyblocksuccess' => 'সম্পন্ন কৰা হ’ল ।',
 'sorbsreason' => '{{SITENAME}}ত ব্যৱহাৰ কৰা DNSBLত আপোনাৰ আই.পি. ঠিকনা মুক্ত প্ৰক্সী হিছাপে তালিকাভুক্ত হৈ আছে ।',
 'sorbs_create_account_reason' => '{{SITENAME}}ত ব্যৱহাৰ কৰা DNSBLত আপোনাৰ আই.পি. ঠিকনা মুক্ত প্ৰক্সী হিছাপে তালিকাভুক্ত হৈ আছে ।
 আপুনি একাউণ্ট সৃষ্টি কৰিব নোৱাৰে',
@@ -2821,6 +2849,8 @@ $1ৰ অৱৰোধৰ কাৰণ: "$2"',
 'thumbnail-more' => 'ডাঙৰকৈ চাওক',
 'filemissing' => 'ফাইল বিচাৰি পোৱা নগ’ল',
 'thumbnail_error' => 'ক্ষুদ্ৰ প্ৰতিকৃতি সৃষ্টি কৰাত অসুবিধা হৈছে: $1',
+'thumbnail_error_remote' => '$1ৰপৰা ত্ৰুটি বাৰ্তা:
+$2',
 'djvu_page_error' => 'DjVu পৃষ্ঠা পৰিসীমাৰ বাহিৰত',
 'djvu_no_xml' => "DjVu ফাইলৰ বাবে XML আনিব পৰা নগ'ল",
 'thumbnail-temp-create' => 'অস্থায়ী থাম্বনেইল নথিপত্ৰ সৃষ্টি কৰিবলে অক্ষম',
@@ -3117,10 +3147,24 @@ $1',
 'minutes' => '{{PLURAL:$1|$1 মিনিট|$1 মিনিট}}',
 'hours' => '{{PLURAL:$1|$1 ঘন্টা|$1 ঘন্টা}}',
 'days' => '{{PLURAL:$1|$1 দিন|$1 দিন}}',
+'weeks' => '{{PLURAL:$1|$1 সপ্তাহ}}',
 'months' => '{{PLURAL:$1|$1 মাহ}}',
 'years' => '{{PLURAL:$1|$1বছৰ|$1 বছৰ}}',
 'ago' => '$1 আগেয়ে',
 'just-now' => 'এইমাত্ৰ',
+
+# Human-readable timestamps
+'hours-ago' => '$1 {{PLURAL:$1|ঘন্টা}} আগেয়ে',
+'minutes-ago' => '$1 {{PLURAL:$1|মাহ}} আগেয়ে',
+'seconds-ago' => '$1 {{PLURAL:$1|ছেকেন্ড}} আগতে',
+'monday-at' => 'সোমবাৰে $1ত',
+'tuesday-at' => 'মঙ্গলবাৰে  $1’ত',
+'wednesday-at' => 'বুধবাৰে $1’ত',
+'thursday-at' => 'বৃহস্পতিবাৰে $1’ত',
+'friday-at' => 'শুক্ৰবাৰে $1’ত',
+'saturday-at' => 'শনিবাৰে $1’ত',
+'sunday-at' => 'দেওবাৰে $1’ত',
+'yesterday-at' => 'কালি $1’ত',
 
 # Bad image list
 'bad_image_list' => 'The format is as follows:
@@ -3151,7 +3195,7 @@ Any subsequent links on the same line are considered to be exceptions, i.e. page
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'প্ৰস্থ',
 'exif-imagelength' => 'উচ্চতা',
 'exif-bitspersample' => 'প্ৰতি অংশৰ বিট',
@@ -3329,7 +3373,7 @@ Any subsequent links on the same line are considered to be exceptions, i.e. page
 'exif-originalimageheight' => "ক্ৰ'প কৰাৰ আগত ছবিৰ উচ্চতা",
 'exif-originalimagewidth' => "ক্ৰ'প কৰাৰ আগত ছবিৰ প্ৰস্থতা",
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'অসংকুচিত',
 'exif-compression-2' => "CCITT দল ৩ ১-পৰিসৰ পৰিৱৰ্তীত Huffman চলন দৈৰ্ঘ্য এনক'ডিং",
 'exif-compression-3' => "CCITT দল ৩ ফেক্স এনক'ডিং",
@@ -3725,7 +3769,6 @@ $5
 'version-other' => 'অন্য',
 'version-mediahandlers' => 'মাধ্যম ব্যৱস্থাপকসমূহ',
 'version-hooks' => 'হুকসমূহ',
-'version-extension-functions' => 'সম্প্ৰসাৰন ফলনসমূহ',
 'version-parser-extensiontags' => 'পাৰ্চাৰ এক্সটেনচন টেগসমূহ',
 'version-parser-function-hooks' => 'পাৰ্চাৰ ফাংচন হুকসমূহ',
 'version-hook-name' => 'হুক নাম',
@@ -3749,12 +3792,17 @@ $5
 'version-entrypoints-header-entrypoint' => 'প্ৰৱেশ পইণ্ট',
 'version-entrypoints-header-url' => 'ইউআৰএল',
 
-# Special:FilePath
-'filepath' => 'নথিৰ পথ',
-'filepath-page' => 'নথি:',
-'filepath-submit' => 'যাওক',
-'filepath-summary' => 'এই বিশেষ পৃষ্ঠায় এটা নথিপত্ৰৰ বাবে সম্পূৰ্ণ পথ ঘুৰাই পঠায়।
-ছবিসমূহক সম্পূৰ্ণ বিভেদনত দেখুৱা হয়, অন্য নথিপত্ৰ ধৰণসমূহ সিহতৰ সংলঘ্ন প্ৰগ্ৰামৰ সৈতে প্ৰত্যক্ষভাৱে আৰম্ভ হয়।',
+# Special:Redirect
+'redirect' => 'ফাইল, সদস্য, বা সংশোধন আই ডিৰে পুনঃনিৰ্দেশ',
+'redirect-legend' => 'এটা ফাইল বা এখন এখন পৃষ্ঠালৈ পুনঃনিৰ্দেশ',
+'redirect-summary' => 'এই বিশেষ পৃষ্ঠাটোৱে আপোনাক পুনঃনির্দেশিত কৰিছে অন্য এটা নথিপত্রলৈ (নথিপত্রৰ নাম), এটা পৃষ্ঠালৈ (পৃষ্ঠাৰ নাম), অথবা অন্য সদস্যৰ পৃষ্ঠালৈ(সংখ্যাৰে লিখা সদস্যৰ আইডি) ।',
+'redirect-submit' => 'যাওক',
+'redirect-lookup' => 'চাওক:',
+'redirect-value' => 'মূল্য:',
+'redirect-user' => 'সদস্য আই ডি',
+'redirect-revision' => 'পৃষ্ঠা সংশোধন',
+'redirect-file' => 'ফাইলৰ নাম',
+'redirect-not-exists' => "মূল্য পোৱা নগ'ল",
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'প্ৰতিলিপি পৃষ্ঠাসমূহ অনুসন্ধান কৰক',
@@ -3845,6 +3893,9 @@ $5
 'htmlform-submit' => 'দাখিল কৰক',
 'htmlform-reset' => 'সাল-সলনি বাতিল কৰক',
 'htmlform-selectorother-other' => 'অন্য',
+'htmlform-no' => 'নহয়',
+'htmlform-yes' => 'হয়',
+'htmlform-chosen-placeholder' => 'এটা বিকল্প বাছনি কৰক',
 
 # SQLite database support
 'sqlite-has-fts' => '$1 সম্পূৰ্ণ-পাঠ অনুসন্ধান সমৰ্থন সহ',

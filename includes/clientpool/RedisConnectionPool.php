@@ -1,6 +1,6 @@
 <?php
 /**
- * PhpRedis client connection pooling manager.
+ * Redis client connection pooling manager.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  */
 
 /**
- * Helper class to manage redis connections using PhpRedis.
+ * Helper class to manage Redis connections.
  *
  * This can be used to get handle wrappers that free the handle when the wrapper
  * leaves scope. The maximum number of free handles (connections) is configurable.
@@ -36,39 +36,43 @@
  * @since 1.21
  */
 class RedisConnectionPool {
-	// Settings for all connections in this pool
-	protected $connectTimeout; // string; connection timeout
-	protected $persistent; // bool; whether connections persist
-	protected $password; // string; plaintext auth password
-	protected $serializer; // integer; the serializer to use (Redis::SERIALIZER_*)
+	/**
+	 * @name Pool settings.
+	 * Settings there are shared for any connection made in this pool.
+	 * See the singleton() method documentation for more details.
+	 * @{
+	 */
+	/** @var string Connection timeout in seconds */
+	protected $connectTimeout;
+	/** @var string Plaintext auth password */
+	protected $password;
+	/** @var bool Whether connections persist */
+	protected $persistent;
+	/** @var integer Serializer to use (Redis::SERIALIZER_*) */
+	protected $serializer;
+	/** @} */
 
-	protected $idlePoolSize = 0; // integer; current idle pool size
+	/** @var integer Current idle pool size */
+	protected $idlePoolSize = 0;
 
 	/** @var Array (server name => ((connection info array),...) */
 	protected $connections = array();
 	/** @var Array (server name => UNIX timestamp) */
 	protected $downServers = array();
 
-	/** @var Array */
-	protected static $instances = array(); // (pool ID => RedisConnectionPool)
+	/** @var Array (pool ID => RedisConnectionPool) */
+	protected static $instances = array();
 
-	const SERVER_DOWN_TTL = 30; // integer; seconds to cache servers as "down"
+	/** integer; seconds to cache servers as "down". */
+	const SERVER_DOWN_TTL = 30;
 
 	/**
-	 * $options include:
-	 *   - connectTimeout : The timeout for new connections, in seconds.
-	 *                      Optional, default is 1 second.
-	 *   - persistent     : Set this to true to allow connections to persist across
-	 *                      multiple web requests. False by default.
-	 *   - password       : The authentication password, will be sent to Redis in clear text.
-	 *                      Optional, if it is unspecified, no AUTH command will be sent.
-	 *   - serializer     : Set to "php", "igbinary", or "none". Default is "php".
 	 * @param array $options
 	 */
 	protected function __construct( array $options ) {
-		if ( !extension_loaded( 'redis' ) ) {
-			throw new MWException( __CLASS__. ' requires the phpredis extension: ' .
-				'https://github.com/nicolasff/phpredis' );
+		if ( !class_exists( 'Redis' ) ) {
+			throw new MWException( __CLASS__ . ' requires a Redis client library. ' .
+				'See https://www.mediawiki.org/wiki/Redis#Setup' );
 		}
 		$this->connectTimeout = $options['connectTimeout'];
 		$this->persistent = $options['persistent'];
@@ -103,6 +107,14 @@ class RedisConnectionPool {
 
 	/**
 	 * @param $options Array
+	 * $options include:
+	 *   - connectTimeout : The timeout for new connections, in seconds.
+	 *                      Optional, default is 1 second.
+	 *   - persistent     : Set this to true to allow connections to persist across
+	 *                      multiple web requests. False by default.
+	 *   - password       : The authentication password, will be sent to Redis in clear text.
+	 *                      Optional, if it is unspecified, no AUTH command will be sent.
+	 *   - serializer     : Set to "php", "igbinary", or "none". Default is "php".
 	 * @return RedisConnectionPool
 	 */
 	public static function singleton( array $options ) {
@@ -164,7 +176,7 @@ class RedisConnectionPool {
 			// TCP connection
 			$hostPort = IP::splitHostAndPort( $server );
 			if ( !$hostPort ) {
-				throw new MWException( __CLASS__.": invalid configured server \"$server\"" );
+				throw new MWException( __CLASS__ . ": invalid configured server \"$server\"" );
 			}
 			list( $host, $port ) = $hostPort;
 			if ( $port === false ) {
@@ -302,6 +314,38 @@ class RedisConnRef {
 		return call_user_func_array( array( $this->conn, $name ), $arguments );
 	}
 
+	/**
+	 * @param string $script
+	 * @param array $params
+	 * @param integer $numKeys
+	 * @return mixed
+	 * @throws RedisException
+	 */
+	public function luaEval( $script, array $params, $numKeys ) {
+		$sha1 = sha1( $script ); // 40 char hex
+		$conn = $this->conn; // convenience
+
+		// Try to run the server-side cached copy of the script
+		$conn->clearLastError();
+		$res = $conn->evalSha( $sha1, $params, $numKeys );
+		// If the script is not in cache, use eval() to retry and cache it
+		if ( preg_match( '/^NOSCRIPT/', $conn->getLastError() ) ) {
+			$conn->clearLastError();
+			$res = $conn->eval( $script, $params, $numKeys );
+			wfDebugLog( 'redis', "Used eval() for Lua script $sha1." );
+		}
+
+		if ( $conn->getLastError() ) { // script bug?
+			wfDebugLog( 'redis', "Lua script error: " . $conn->getLastError() );
+		}
+
+		return $res;
+	}
+
+	/**
+	 * @param RedisConnRef $conn
+	 * @return bool
+	 */
 	public function isConnIdentical( Redis $conn ) {
 		return $this->conn === $conn;
 	}

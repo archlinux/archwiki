@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Api module to reload FancyCaptcha
  *

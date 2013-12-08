@@ -45,11 +45,34 @@ var language = {
 	 */
 	convertPlural: function ( count, forms ) {
 		var pluralRules,
+			formCount,
+			form,
+			index,
+			equalsPosition,
 			pluralFormIndex = 0;
 
 		if ( !forms || forms.length === 0 ) {
 			return '';
 		}
+
+		// Handle for explicit n= forms
+		for ( index = 0; index < forms.length; index++ ) {
+			form = forms[index];
+			if ( /^\d+=/.test( form ) ) {
+				equalsPosition = form.indexOf( '=' );
+				formCount = parseInt( form.substring( 0, equalsPosition ), 10 );
+				if ( formCount === count ) {
+					return form.substr( equalsPosition + 1 );
+				}
+				forms[index] = undefined;
+			}
+		}
+
+		// Remove explicit plural forms from the forms.
+		forms = $.map( forms, function ( form ) {
+			return form;
+		} );
+
 		pluralRules = mw.language.getData( mw.config.get( 'wgUserLanguage' ), 'pluralRules' );
 		if ( !pluralRules ) {
 			// default fallback.

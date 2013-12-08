@@ -97,9 +97,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Shfaqe numrin e përdoruesve mbikëqyrës',
 'tog-oldsig' => 'Parapamja e nënshkrimit ekzistues:',
 'tog-fancysig' => 'Trajto nënshkrimin si tekst (pa vegëz automatike)',
-'tog-externaleditor' => 'Përdor program të jashtëm për redaktim (vetëm për eksperta, lyp përcaktime speciale në kompjuterin tuej)',
-'tog-externaldiff' => 'Përdor program të jashtëm për dallime (vetëm për eksperta, lyp përcaktime speciale në kompjuterin tuej)',
-'tog-showjumplinks' => 'Lejo lidhjet é afrueshmerisë "kapërce tek"',
 'tog-uselivepreview' => 'Trego parapamjén meniheré (JavaScript) (Eksperimentale)',
 'tog-forceeditsummary' => 'Pyetem kur e le përmbledhjen e redaktimit zbrazt',
 'tog-watchlisthideown' => "M'sheh redaktimet e mia nga lista mbikqyrëse",
@@ -113,6 +110,7 @@ $messages = array(
 'tog-showhiddencats' => 'Trego kategoritë e mshefta',
 'tog-noconvertlink' => 'Mos lejo konvertimin e titullit vegëz',
 'tog-norollbackdiff' => 'Trego ndryshimin mbas procedurës së kthimit mbrapa',
+'tog-useeditwarning' => 'Paralajmëron mua kur unë të lë një redakto faqe me ndryshimet e para shpëtimit',
 
 'underline-always' => 'gjithmonë',
 'underline-never' => 'kurrë',
@@ -292,7 +290,7 @@ Ju lutem pritni pak para se me tentue me iu qasë faqes prap.
 
 $1',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Rreth {{SITENAME}}',
 'aboutpage' => 'Project:Rreth',
 'copyright' => 'Përmbajtja mundësohet simbas $1.',
@@ -302,7 +300,6 @@ $1',
 'disclaimers' => 'Shfajsime',
 'disclaimerpage' => 'Project:Shfajsimet e përgjithshme',
 'edithelp' => 'Ndihmë për redaktim',
-'edithelppage' => 'Help:Redaktimi',
 'helppage' => 'Help:Përmbajtja',
 'mainpage' => 'Faqja kryesore',
 'mainpage-description' => 'Faqja Kryesore',
@@ -374,17 +371,6 @@ Lista e faqeve speciale valide gjindet te [[Special:SpecialPages|{{int:specialpa
 # General errors
 'error' => 'Gabim',
 'databaseerror' => 'Gabim në databazë',
-'dberrortext' => 'Ka ndodh nji gabim sintaksor në kërkesën në databazë.
-Kjo mundet me tregue gabim në software.
-Kërkesa e fundit në databazë ishte:
-<blockquote><tt>$1</tt></blockquote>
-mbrenda funksionit "<tt>$2</tt>".
-Databaza ktheu gabimin "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'Ka ndodh nji gabim sintaksor në kërkesën në databazë.
-Kërkesa e fundit në databazë ishte:
-"$1"
-mbrenda funksionit "$2".
-Databaza ktheu gabimin "$3: $4".',
 'laggedslavemode' => "'''Kujdes:''' Kjo faqe mundet mos me përmbajtë ndryshime të reja.",
 'readonly' => 'Databaza âsht e bllokueme',
 'enterlockreason' => 'Futni një arsye për bllokimin, gjithashtu futni edhe kohën se kur pritet të çbllokohet',
@@ -434,7 +420,6 @@ Ju lutemi provoni prap mbas disa minutave.',
 'editinginterface' => "'''Kujdes:''' Po redaktoni nji faqe që përdoret për me ofrue tekst të interfaceit të softwareit.
 Ndryshimet në këtë faqe do të prekin pamjen e interfaceit për të gjithë përdoruesit tjerë.
 Për përkthim, konsideroni ju lutem përdorimin e [//translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net], projektin e MediaWiki për përshtatje gjuhësore.",
-'sqlhidden' => '(Kërkesa SQL e msheftë)',
 'cascadeprotected' => 'Kjo faqe âsht e mbrojtun prej redaktimit, për shkak se âsht e përfshime në {{PLURAL:$1|faqen, e cila âsht e mbrojtun|faqet, të cilat janë të mbrojtuna}} me opcionin "zinxhir" të zgjedhun:
 $2',
 'namespaceprotected' => "Nuk keni tagër me redaktue faqe në hapësinën '''$1'''.",
@@ -554,7 +539,7 @@ Për me krye kyçjen, specifikoni fjalëkalimin e ri këtu:',
 'newpassword' => 'Fajlëkalimi i ri:',
 'retypenew' => 'Fjalëkalimi i ri përsëdyti',
 'resetpass_submit' => 'Vendos fjalëkalimin dhe kyçu',
-'resetpass_success' => 'Fjalëkalimi juej u ndryshue me sukses! Tash po kyçeni...',
+'changepassword-success' => 'Fjalëkalimi juej u ndryshue me sukses! Tash po kyçeni...',
 'resetpass_forbidden' => 'Fjalëkalimet nuk mujnë me u ndryshue',
 'resetpass-no-info' => 'Duheni me qenë të kyçun për me iu qasë kësaj faqeje direkt.',
 'resetpass-submit-loggedin' => 'Ndrysho fjalëkalimin',
@@ -750,6 +735,7 @@ Duket se është grisur.',
 'edit-no-change' => 'Redaktimi juaj është anashkaluar pasi që asnjë ndryshim nuk u bë në tekst.',
 'edit-already-exists' => 'Faqja nuk mundej të hapet.
 Ajo tanimë ekziston.',
+'editwarning-warning' => 'Duke e lënë këtë faqe mund të bëjë që ju të humbni ndonjë ndryshim që keni bërë. Nëse ju jeni regjistruar, ju mund ta çaktivizoni këtë paralajmërim në "Tue redaktue" seksionin e preferencave tuaja.',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Kujdes: Kjo faqe ka shumë kërkesa që kërkojnë analizë gramatikore të kushtueshme për sistemin.
@@ -903,7 +889,6 @@ Kini kujdes se përdorimi i lidhjeve të shfletimit do të ndryshojë përzgjedh
 'searchmenu-legend' => 'Opcionet e kërkimit',
 'searchmenu-exists' => "'''Në këtë wiki âsht nji faqe me titullin \"[[:\$1]]\"'''",
 'searchmenu-new' => "'''Krijo faqen \"[[:\$1]]\" në këtë wiki!'''",
-'searchhelp-url' => 'Help:Përmbajtja',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Shfleto faqet me këtë prefiks]]',
 'searchprofile-articles' => 'Faqet me përmbajtje',
 'searchprofile-project' => 'Faqet e ndihmës dhe projekteve',
@@ -947,14 +932,6 @@ Provoni me ia parashtue kërkesës tuej ''tâna:'' që me lypë tânë përmbajt
 Ndërkohë mundeni me lypë me Google.
 Vini re se indeksat e tyne të përmbajtjes së {{SITENAME}} munden me qenë të vjetëruem.',
 
-# Quickbar
-'qbsettings' => 'Vegla të shpejta',
-'qbsettings-none' => 'Asnji',
-'qbsettings-fixedleft' => 'Lidhun majtas',
-'qbsettings-fixedright' => 'Lidhun djathtas',
-'qbsettings-floatingleft' => 'Pezull majtas',
-'qbsettings-floatingright' => 'Pezull djathtas',
-
 # Preferences page
 'preferences' => 'Parapëlqimet',
 'mypreferences' => 'Parapëlqimet e mija',
@@ -983,7 +960,6 @@ Vini re se indeksat e tyne të përmbajtjes së {{SITENAME}} munden me qenë të
 'resetprefs' => 'Fshij ndryshimet e paruejtuna',
 'restoreprefs' => 'Kthe tâna përcaktimet si në fillim',
 'prefs-editing' => 'Tue redaktue',
-'prefs-edit-boxsize' => 'Madhësia e dritares redaktuese.',
 'rows' => 'Rreshta:',
 'columns' => 'Kolona:',
 'searchresultshead' => 'Kërkimi',
@@ -1503,27 +1479,16 @@ Lejon dhânien e arsyes në përmbledhje.',
 
 # Stylesheets
 'common.css' => '/* CSSi i vendosun këtu ka me u zbatue në tâna dukjet */',
-'standard.css' => '/* CSSi i vendosun këtu ka me i prekë përdoruesit e dukjes standarde */',
-'nostalgia.css' => '/* CSS i vendosun këtu ka me i prekë shfrytëzuesit e dukjes Nostalgia */',
 'cologneblue.css' => '/* CSS i vendosun këtu ka me i prekë shfrytëzuesit e dukjes Cologne Blue */',
 'monobook.css' => '/* CSS i vednosun këtu ka me i prekë shfrytëzuesit e dukjes Monobook */',
-'myskin.css' => '/* CSSi i vednosun këtu ka me i prekë shfrytëzuesit e dukjes MySkin */',
-'chick.css' => '/* CSSi i vednosun këtu ka me i prekë shfrytëzuesit e dukjes Chick */',
-'simple.css' => '/* CSSi i vednosun këtu ka me i prekë shfrytëzuesit e dukjes Simple */',
 'modern.css' => '/* CSSi i vednosun këtu ka me i prekë shfrytëzuesit e dukjes Modern */',
 'vector.css' => '/* CSSi i vednosun këtu ka me i prekë shfrytëzuesit e dukjes Vector */',
 'print.css' => '/* CSSi i vednosun këtu ka me e prekë pamjen e shtypjes */',
-'handheld.css' => '/* CSSi i vednosun këtu ka me i prekë shfletuesit mobil (të dorës) në dukje e konfigurueme në $wgHandheldStyle */',
 
 # Scripts
 'common.js' => '/* Çdo JavaScript këtu ka me u ngarkue për të gjithë përdoruesit në secilën thirrje të faqes. */',
-'standard.js' => '/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen Standard */',
-'nostalgia.js' => '/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen Nostalgia */',
 'cologneblue.js' => '/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen Cologne Blue */',
 'monobook.js' => '/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen MonoBook */',
-'myskin.js' => '/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen MySkin */',
-'chick.js' => '/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen Chick */',
-'simple.js' => '/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen Simple */',
 'modern.js' => '/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen Modern */',
 'vector.js' => '/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen Vector */',
 

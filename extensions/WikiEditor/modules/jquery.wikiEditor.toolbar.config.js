@@ -1,7 +1,8 @@
 /**
  * Configuration of Toolbar module for wikiEditor
  */
-( function( $ ) { $.wikiEditor.modules.toolbar.config = {
+/*jshint camelcase:false, quotmark:false */
+( function ( $, mw ) { $.wikiEditor.modules.toolbar.config = {
 
 getDefaultConfig: function() {
 	var fileNamespace = mw.config.get( 'wgFormattedNamespaces' )[6];
@@ -45,6 +46,7 @@ getDefaultConfig: function() {
 								'hu': 'format-bold-F.png',
 								'it': 'format-bold-G.png',
 								'ka': 'format-bold-ka.png',
+								'ky': 'format-bold-ru.png',
 								'nl': 'format-bold-V.png',
 								'os': 'format-bold-os.png',
 								'pt': 'format-bold-N.png',
@@ -78,6 +80,7 @@ getDefaultConfig: function() {
 								'es': [2, -790],
 								'he': [2, -862],
 								'it': [2, -790],
+								'ky': [2, -934],
 								'nl': [2, -790],
 								'pt': [2, -862],
 								'pt-br': [2, -862],
@@ -98,6 +101,7 @@ getDefaultConfig: function() {
 								'hu': 'format-italic-D.png',
 								'it': 'format-italic-C.png',
 								'ka': 'format-italic-ka.png',
+								'ky': 'format-italic-K.png',
 								'nl': 'format-italic-C.png',
 								'os': 'format-italic-K.png',
 								'pt': 'format-italic-I.png',
@@ -812,7 +816,7 @@ getDefaultConfig: function() {
 						"\u047A", "\u047B", // Round Omega (old cyrillic)
 						"\u047c", "\u047d", // Cyr Omega with Titlo (old cyrillic)
 						"\u047e", "\u047f", // Cyr Ot (old cyrillic)
-						"\u0480", "\u0481", // Cyr Koppa (old cyrillic)
+						"\u0480", "\u0481"  // Cyr Koppa (old cyrillic)
 					]
 				},
 				// The core 28-letter alphabet, special letters for the Arabic language,
@@ -1449,4 +1453,4 @@ getDefaultConfig: function() {
 	} };
 }
 
-}; } ) ( jQuery );
+}; } ) ( jQuery, mediaWiki );

@@ -56,11 +56,11 @@ class ApiQueryInfo extends ApiQueryBase {
 	 * @return void
 	 */
 	public function requestExtraData( $pageSet ) {
-		global $wgDisableCounters;
+		global $wgDisableCounters, $wgContentHandlerUseDB;
 
 		$pageSet->requestField( 'page_restrictions' );
 		// when resolving redirects, no page will have this field
-		if( !$pageSet->isResolvingRedirects() ) {
+		if ( !$pageSet->isResolvingRedirects() ) {
 			$pageSet->requestField( 'page_is_redirect' );
 		}
 		$pageSet->requestField( 'page_is_new' );
@@ -70,6 +70,9 @@ class ApiQueryInfo extends ApiQueryBase {
 		$pageSet->requestField( 'page_touched' );
 		$pageSet->requestField( 'page_latest' );
 		$pageSet->requestField( 'page_len' );
+		if ( $wgContentHandlerUseDB ) {
+			$pageSet->requestField( 'page_content_model' );
+		}
 	}
 
 	/**
@@ -348,6 +351,10 @@ class ApiQueryInfo extends ApiQueryBase {
 		$titleExists = $pageid > 0; //$title->exists() needs pageid, which is not set for all title objects
 		$ns = $title->getNamespace();
 		$dbkey = $title->getDBkey();
+
+		$pageInfo['contentmodel'] = $title->getContentModel();
+		$pageInfo['pagelanguage'] = $title->getPageLanguage()->getCode();
+
 		if ( $titleExists ) {
 			global $wgDisableCounters;
 
@@ -476,7 +483,7 @@ class ApiQueryInfo extends ApiQueryBase {
 				$this->protections[$title->getNamespace()][$title->getDBkey()][] = $a;
 			}
 			// Also check old restrictions
-			foreach( $this->titles as $pageId => $title ) {
+			foreach ( $this->titles as $pageId => $title ) {
 				if ( $this->pageRestrictions[$pageId] ) {
 					$namespace = $title->getNamespace();
 					$dbKey = $title->getDBkey();
@@ -662,7 +669,9 @@ class ApiQueryInfo extends ApiQueryBase {
 	private function getWatchedInfo() {
 		$user = $this->getUser();
 
-		if ( $user->isAnon() || count( $this->everything ) == 0 ) {
+		if ( $user->isAnon() || count( $this->everything ) == 0
+			|| !$user->isAllowed( 'viewmywatchlist' )
+		) {
 			return;
 		}
 
@@ -819,7 +828,8 @@ class ApiQueryInfo extends ApiQueryBase {
 				'starttimestamp' => array(
 					ApiBase::PROP_TYPE => 'timestamp',
 					ApiBase::PROP_NULLABLE => true
-				)
+				),
+				'contentmodel' => 'string',
 			),
 			'watched' => array(
 				'watched' => 'boolean'

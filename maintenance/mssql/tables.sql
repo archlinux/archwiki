@@ -159,6 +159,7 @@ CREATE TABLE /*$wgDBprefix*/text (
 -- Cannot reasonably create views on this table, due to the presence of TEXT
 -- columns.
 CREATE TABLE /*$wgDBprefix*/archive (
+   ar_id NOT NULL PRIMARY KEY clustered IDENTITY,
    ar_namespace SMALLINT NOT NULL DEFAULT 0,
    ar_title NVARCHAR(255) NOT NULL DEFAULT '',
    ar_text NVARCHAR(MAX) NOT NULL,
@@ -298,23 +299,13 @@ CREATE INDEX /*$wgDBprefix*/lc_lang_key ON /*$wgDBprefix*/l10n_cache (lc_lang, l
 -- Track links to external URLs
 -- IE >= 4 supports no more than 2083 characters in a URL
 CREATE TABLE /*$wgDBprefix*/externallinks (
+   el_id INT NOT NULL PRIMARY KEY clustered IDENTITY,
    el_from INT NOT NULL DEFAULT '0',
    el_to VARCHAR(2083) NOT NULL,
    el_index VARCHAR(896) NOT NULL,
 );
 -- Maximum key length ON SQL Server is 900 bytes
 CREATE INDEX /*$wgDBprefix*/externallinks_index   ON /*$wgDBprefix*/externallinks(el_index);
-
---
--- Track external user accounts, if ExternalAuth is used
---
-CREATE TABLE /*$wgDBprefix*/external_user (
-	-- Foreign key to user_id
-	eu_local_id INT NOT NULL PRIMARY KEY,
-	-- opaque identifier provided by the external database
-	eu_external_id NVARCHAR(255) NOT NULL,
-);
-CREATE UNIQUE INDEX /*$wgDBprefix*/eu_external_idx ON /*$wgDBprefix*/external_user(eu_external_id);
 
 --
 -- Track INTerlanguage links
@@ -516,8 +507,6 @@ CREATE TABLE /*$wgDBprefix*/recentchanges (
    rc_this_oldid INT DEFAULT 0,
    rc_last_oldid INT DEFAULT 0,
    rc_type tinyint DEFAULT 0,
-   rc_moved_to_ns BIT DEFAULT 0,
-   rc_moved_to_title NVARCHAR(255)  DEFAULT '',
    rc_patrolled BIT DEFAULT 0,
    rc_ip NCHAR(40) DEFAULT '',
    rc_old_len INT DEFAULT 0,

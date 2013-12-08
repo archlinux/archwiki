@@ -429,7 +429,7 @@ Si vu voli plu tardim ekarta li pagine fro vun observa-liste, klikta \"Desobserv
 'ilsubmit' => 'Sercha',
 'bydate' => 'segun date',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Larjeso',
 'exif-imagelength' => 'Alteso',
 'exif-imagedescription' => 'Title de imaje',

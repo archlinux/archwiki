@@ -74,6 +74,10 @@ abstract class WebInstallerPage {
 		);
 	}
 
+	/**
+	 * @param string|bool $continue
+	 * @param string|bool $back
+	 */
 	public function endForm( $continue = 'continue', $back = 'back' ) {
 		$s = "<div class=\"config-submit\">\n";
 		$id = $this->getId();
@@ -84,25 +88,36 @@ abstract class WebInstallerPage {
 
 		if ( $continue ) {
 			// Fake submit button for enter keypress (bug 26267)
-			$s .= Xml::submitButton( wfMessage( "config-$continue" )->text(),
-				array( 'name' => "enter-$continue", 'style' =>
-					'visibility:hidden;overflow:hidden;width:1px;margin:0' ) ) . "\n";
+			// Messages: config-continue, config-restart, config-regenerate
+			$s .= Xml::submitButton(
+				wfMessage( "config-$continue" )->text(),
+				array(
+					'name' => "enter-$continue",
+					'style' => 'visibility:hidden;overflow:hidden;width:1px;margin:0'
+				)
+			) . "\n";
 		}
 
 		if ( $back ) {
-			$s .= Xml::submitButton( wfMessage( "config-$back" )->text(),
+			// Message: config-back
+			$s .= Xml::submitButton(
+				wfMessage( "config-$back" )->text(),
 				array(
 					'name' => "submit-$back",
 					'tabindex' => $this->parent->nextTabIndex()
-				) ) . "\n";
+				)
+			) . "\n";
 		}
 
 		if ( $continue ) {
-			$s .= Xml::submitButton( wfMessage( "config-$continue" )->text(),
+			// Messages: config-continue, config-restart, config-regenerate
+			$s .= Xml::submitButton(
+				wfMessage( "config-$continue" )->text(),
 				array(
 					'name' => "submit-$continue",
 					'tabindex' => $this->parent->nextTabIndex(),
-				) ) . "\n";
+				)
+			) . "\n";
 		}
 
 		$s .= "</div></form></div>\n";
@@ -204,6 +219,7 @@ class WebInstaller_Language extends WebInstallerPage {
 				if ( isset( $languages[$contLang] ) ) {
 					$this->setVar( 'wgLanguageCode', $contLang );
 				}
+
 				return 'continue';
 			}
 		} elseif ( $this->parent->showSessionWarning ) {
@@ -251,13 +267,15 @@ class WebInstaller_Language extends WebInstallerPage {
 		$languages = Language::fetchLanguageNames();
 		ksort( $languages );
 		foreach ( $languages as $code => $lang ) {
-			if ( isset( $wgDummyLanguageCodes[$code] ) ) continue;
+			if ( isset( $wgDummyLanguageCodes[$code] ) ) {
+				continue;
+			}
 			$s .= "\n" . Xml::option( "$code - $lang", $code, $code == $selectedCode );
 		}
 		$s .= "\n</select>\n";
+
 		return $this->parent->label( $label, $name, $s );
 	}
-
 }
 
 class WebInstaller_ExistingWiki extends WebInstallerPage {
@@ -271,8 +289,8 @@ class WebInstaller_ExistingWiki extends WebInstallerPage {
 		// Check if the upgrade key supplied to the user has appeared in LocalSettings.php
 		if ( $vars['wgUpgradeKey'] !== false
 			&& $this->getVar( '_UpgradeKeySupplied' )
-			&& $this->getVar( 'wgUpgradeKey' ) === $vars['wgUpgradeKey'] )
-		{
+			&& $this->getVar( 'wgUpgradeKey' ) === $vars['wgUpgradeKey']
+		) {
 			// It's there, so the user is authorized
 			$status = $this->handleExistingUpgrade( $vars );
 			if ( $status->isOK() ) {
@@ -281,6 +299,7 @@ class WebInstaller_ExistingWiki extends WebInstallerPage {
 				$this->startForm();
 				$this->parent->showStatusBox( $status );
 				$this->endForm( 'continue' );
+
 				return 'output';
 			}
 		}
@@ -299,6 +318,7 @@ class WebInstaller_ExistingWiki extends WebInstallerPage {
 					$this->getVar( 'wgUpgradeKey' ) . "';</pre>" )->plain()
 			) );
 			$this->endForm( 'continue' );
+
 			return 'output';
 		}
 
@@ -307,9 +327,10 @@ class WebInstaller_ExistingWiki extends WebInstallerPage {
 		$r = $this->parent->request;
 		if ( $r->wasPosted() ) {
 			$key = $r->getText( 'config_wgUpgradeKey' );
-			if( !$key || $key !== $vars['wgUpgradeKey'] ) {
+			if ( !$key || $key !== $vars['wgUpgradeKey'] ) {
 				$this->parent->showError( 'config-localsettings-badkey' );
 				$this->showKeyForm();
+
 				return 'output';
 			}
 			// Key was OK
@@ -319,10 +340,12 @@ class WebInstaller_ExistingWiki extends WebInstallerPage {
 			} else {
 				$this->parent->showStatusBox( $status );
 				$this->showKeyForm();
+
 				return 'output';
 			}
 		} else {
 			$this->showKeyForm();
+
 			return 'output';
 		}
 	}
@@ -333,7 +356,7 @@ class WebInstaller_ExistingWiki extends WebInstallerPage {
 	protected function showKeyForm() {
 		$this->startForm();
 		$this->addHTML(
-			$this->parent->getInfoBox( wfMessage( 'config-localsettings-upgrade' )->plain() ).
+			$this->parent->getInfoBox( wfMessage( 'config-localsettings-upgrade' )->plain() ) .
 			'<br />' .
 			$this->parent->getTextBox( array(
 				'var' => 'wgUpgradeKey',
@@ -352,6 +375,7 @@ class WebInstaller_ExistingWiki extends WebInstallerPage {
 			}
 			$this->setVar( $name, $vars[$name] );
 		}
+
 		return $status;
 	}
 
@@ -363,7 +387,8 @@ class WebInstaller_ExistingWiki extends WebInstallerPage {
 	protected function handleExistingUpgrade( $vars ) {
 		// Check $wgDBtype
 		if ( !isset( $vars['wgDBtype'] ) ||
-			 !in_array( $vars['wgDBtype'], Installer::getDBTypes() ) ) {
+			!in_array( $vars['wgDBtype'], Installer::getDBTypes() )
+		) {
 			return Status::newFatal( 'config-localsettings-connection-error', '' );
 		}
 
@@ -393,11 +418,13 @@ class WebInstaller_ExistingWiki extends WebInstallerPage {
 			// Adjust the error message to explain things correctly
 			$status->replaceMessage( 'config-connection-error',
 				'config-localsettings-connection-error' );
+
 			return $status;
 		}
 
 		// All good
 		$this->setVar( '_ExistingDBSettings', true );
+
 		return $status;
 	}
 }
@@ -422,9 +449,9 @@ class WebInstaller_Welcome extends WebInstallerPage {
 		} else {
 			$this->parent->showStatusMessage( $status );
 		}
+
 		return '';
 	}
-
 }
 
 class WebInstaller_DBConnect extends WebInstallerPage {
@@ -440,6 +467,7 @@ class WebInstaller_DBConnect extends WebInstallerPage {
 
 			if ( $status->isGood() ) {
 				$this->setVar( '_UpgradeDone', false );
+
 				return 'continue';
 			} else {
 				$this->parent->showStatusBox( $status );
@@ -452,8 +480,10 @@ class WebInstaller_DBConnect extends WebInstallerPage {
 		$settings = '';
 		$defaultType = $this->getVar( 'wgDBtype' );
 
+		// Messages: config-support-mysql, config-support-postgres, config-support-oracle,
+		// config-support-sqlite
 		$dbSupport = '';
-		foreach( $this->parent->getDBTypes() as $type ) {
+		foreach ( $this->parent->getDBTypes() as $type ) {
 			$link = DatabaseBase::factory( $type )->getSoftwareLink();
 			$dbSupport .= wfMessage( "config-support-$type", $link )->plain() . "\n";
 		}
@@ -481,20 +511,23 @@ class WebInstaller_DBConnect extends WebInstallerPage {
 				) .
 				"</li>\n";
 
-			$settings .=
-				Html::openElement( 'div', array( 'id' => 'DB_wrapper_' . $type,
-						'class' => 'dbWrapper' ) ) .
+			// Messages: config-header-mysql, config-header-postgres, config-header-oracle,
+			// config-header-sqlite
+			$settings .= Html::openElement(
+					'div',
+					array(
+						'id' => 'DB_wrapper_' . $type,
+						'class' => 'dbWrapper'
+					)
+				) .
 				Html::element( 'h3', array(), wfMessage( 'config-header-' . $type )->text() ) .
 				$installer->getConnectForm() .
 				"</div>\n";
 		}
+
 		$types .= "</ul><br style=\"clear: left\"/>\n";
 
-		$this->addHTML(
-			$this->parent->label( 'config-db-type', false, $types ) .
-			$settings
-		);
-
+		$this->addHTML( $this->parent->label( 'config-db-type', false, $types ) . $settings );
 		$this->endForm();
 	}
 
@@ -509,9 +542,9 @@ class WebInstaller_DBConnect extends WebInstallerPage {
 		if ( !$installer ) {
 			return Status::newFatal( 'config-invalid-db-type' );
 		}
+
 		return $installer->submitConnectForm();
 	}
-
 }
 
 class WebInstaller_Upgrade extends WebInstallerPage {
@@ -532,6 +565,7 @@ class WebInstaller_Upgrade extends WebInstallerPage {
 				// Show the done message again
 				// Make them click back again if they want to do the upgrade again
 				$this->showDoneMessage();
+
 				return 'output';
 			}
 		}
@@ -555,11 +589,12 @@ class WebInstaller_Upgrade extends WebInstallerPage {
 			if ( $result ) {
 				// If they're going to possibly regenerate LocalSettings, we
 				// need to create the upgrade/secret keys. Bug 26481
-				if( !$this->getVar( '_ExistingDBSettings' ) ) {
+				if ( !$this->getVar( '_ExistingDBSettings' ) ) {
 					$this->parent->generateKeys();
 				}
 				$this->setVar( '_UpgradeDone', true );
 				$this->showDoneMessage();
+
 				return 'output';
 			}
 		}
@@ -583,15 +618,14 @@ class WebInstaller_Upgrade extends WebInstallerPage {
 			$this->parent->getInfoBox(
 				wfMessage( $msg,
 					$this->getVar( 'wgServer' ) .
-						$this->getVar( 'wgScriptPath' ) . '/index' .
-						$this->getVar( 'wgScriptExtension' )
+					$this->getVar( 'wgScriptPath' ) . '/index' .
+					$this->getVar( 'wgScriptExtension' )
 				)->plain(), 'tick-32.png'
 			)
 		);
 		$this->parent->restoreLinkPopups();
 		$this->endForm( $regenerate ? 'regenerate' : false, false );
 	}
-
 }
 
 class WebInstaller_DBSettings extends WebInstallerPage {
@@ -620,7 +654,6 @@ class WebInstaller_DBSettings extends WebInstallerPage {
 		$this->addHTML( $form );
 		$this->endForm();
 	}
-
 }
 
 class WebInstaller_Name extends WebInstallerPage {
@@ -657,6 +690,9 @@ class WebInstaller_Name extends WebInstallerPage {
 				'label' => 'config-site-name',
 				'help' => $this->parent->getHelpBox( 'config-site-name-help' )
 			) ) .
+			// getRadioSet() builds a set of labeled radio buttons.
+			// For grep: The following messages are used as the item labels:
+			// config-ns-site-name, config-ns-generic, config-ns-other
 			$this->parent->getRadioSet( array(
 				'var' => '_NamespaceType',
 				'label' => 'config-project-namespace',
@@ -668,9 +704,8 @@ class WebInstaller_Name extends WebInstallerPage {
 			) ) .
 			$this->parent->getTextBox( array(
 				'var' => 'wgMetaNamespace',
-				'label' => '', //TODO: Needs a label?
-				'attribs' => array( 'readonly' => 'readonly', 'class' => 'enabledByOther' ),
-
+				'label' => '', // @todo Needs a label?
+				'attribs' => array( 'readonly' => 'readonly', 'class' => 'enabledByOther' )
 			) ) .
 			$this->getFieldSetStart( 'config-admin-box' ) .
 			$this->parent->getTextBox( array(
@@ -698,6 +733,9 @@ class WebInstaller_Name extends WebInstallerPage {
 			) ) .
 			$this->getFieldSetEnd() .
 			$this->parent->getInfoBox( wfMessage( 'config-almost-done' )->text() ) .
+			// getRadioSet() builds a set of labeled radio buttons.
+			// For grep: The following messages are used as the item labels:
+			// config-optional-continue, config-optional-skip
 			$this->parent->getRadioSet( array(
 				'var' => '_SkipOptional',
 				'itemLabelPrefix' => 'config-optional-',
@@ -709,6 +747,7 @@ class WebInstaller_Name extends WebInstallerPage {
 		$this->setVar( 'wgMetaNamespace', $metaNS );
 
 		$this->endForm();
+
 		return 'output';
 	}
 
@@ -761,7 +800,7 @@ class WebInstaller_Name extends WebInstallerPage {
 		// Make sure it won't conflict with any existing namespaces
 		global $wgContLang;
 		$nsIndex = $wgContLang->getNsIndex( $name );
-		if( $nsIndex !== false && $nsIndex !== NS_PROJECT ) {
+		if ( $nsIndex !== false && $nsIndex !== NS_PROJECT ) {
 			$this->parent->showError( 'config-ns-conflict', $name );
 			$retVal = false;
 		}
@@ -809,24 +848,22 @@ class WebInstaller_Name extends WebInstallerPage {
 
 		// Validate e-mail if provided
 		$email = $this->getVar( '_AdminEmail' );
-		if( $email && !Sanitizer::validateEmail( $email ) ) {
+		if ( $email && !Sanitizer::validateEmail( $email ) ) {
 			$this->parent->showError( 'config-admin-error-bademail' );
 			$retVal = false;
 		}
 		// If they asked to subscribe to mediawiki-announce but didn't give
 		// an e-mail, show an error. Bug 29332
-		if( !$email && $this->getVar( '_Subscribe' ) ) {
+		if ( !$email && $this->getVar( '_Subscribe' ) ) {
 			$this->parent->showError( 'config-subscribe-noemail' );
 			$retVal = false;
 		}
 
 		return $retVal;
 	}
-
 }
 
 class WebInstaller_Options extends WebInstallerPage {
-
 	public function execute() {
 		if ( $this->getVar( '_SkipOptional' ) == 'skip' ) {
 			return 'skip';
@@ -841,6 +878,9 @@ class WebInstaller_Options extends WebInstallerPage {
 		$this->startForm();
 		$this->addHTML(
 			# User Rights
+			// getRadioSet() builds a set of labeled radio buttons.
+			// For grep: The following messages are used as the item labels:
+			// config-profile-wiki, config-profile-no-anon, config-profile-fishbowl, config-profile-private
 			$this->parent->getRadioSet( array(
 				'var' => '_RightsProfile',
 				'label' => 'config-profile',
@@ -850,6 +890,11 @@ class WebInstaller_Options extends WebInstallerPage {
 			$this->parent->getInfoBox( wfMessage( 'config-profile-help' )->plain() ) .
 
 			# Licensing
+			// getRadioSet() builds a set of labeled radio buttons.
+			// For grep: The following messages are used as the item labels:
+			// config-license-cc-by, config-license-cc-by-sa, config-license-cc-by-nc-sa,
+			// config-license-cc-0, config-license-pd, config-license-gfdl,
+			// config-license-none, config-license-cc-choose
 			$this->parent->getRadioSet( array(
 				'var' => '_LicenseCode',
 				'label' => 'config-license',
@@ -900,18 +945,27 @@ class WebInstaller_Options extends WebInstallerPage {
 
 		$extensions = $this->parent->findExtensions();
 
-		if( $extensions ) {
+		if ( $extensions ) {
 			$extHtml = $this->getFieldSetStart( 'config-extensions' );
 
-			foreach( $extensions as $ext ) {
+			/* Force a recache, so we load extensions descriptions */
+			global $wgLang;
+			$lc = Language::getLocalisationCache();
+			$lc->initialisedLangs = array();
+			$lc->getItem( $wgLang->mCode, '' );
+			LinkCache::singleton()->useDatabase( false );
+
+			foreach ( $extensions as $ext ) {
 				$extHtml .= $this->parent->getCheckBox( array(
-					'var' => "ext-$ext",
-					'rawtext' => $ext,
-				) );
+						'var' => "ext-{$ext['name']}",
+						'rawtext' => "<b>{$ext['name']}</b>: " .
+						wfMessage( $ext['descriptionmsg'] )->useDatabase( false )->parse(),
+					) );
+
 			}
 
 			$extHtml .= $this->parent->getHelpBox( 'config-extensions-help' ) .
-			$this->getFieldSetEnd();
+				$this->getFieldSetEnd();
 			$this->addHTML( $extHtml );
 		}
 
@@ -963,7 +1017,7 @@ class WebInstaller_Options extends WebInstallerPage {
 		);
 
 		$caches = array( 'none' );
-		if( count( $this->getVar( '_Caches' ) ) ) {
+		if ( count( $this->getVar( '_Caches' ) ) ) {
 			$caches[] = 'accel';
 		}
 		$caches[] = 'memcached';
@@ -976,11 +1030,14 @@ class WebInstaller_Options extends WebInstallerPage {
 			// or going back!
 			$cacheval = 'none';
 		}
-		$hidden = ($cacheval == 'memcached') ? '' : 'display: none';
+		$hidden = ( $cacheval == 'memcached' ) ? '' : 'display: none';
 		$this->addHTML(
 			# Advanced settings
 			$this->getFieldSetStart( 'config-advanced-settings' ) .
 			# Object cache settings
+			// getRadioSet() builds a set of labeled radio buttons.
+			// For grep: The following messages are used as the item labels:
+			// config-cache-none, config-cache-accel, config-cache-memcached
 			$this->parent->getRadioSet( array(
 				'var' => 'wgMainCacheType',
 				'label' => 'config-cache-options',
@@ -1023,6 +1080,7 @@ class WebInstaller_Options extends WebInstallerPage {
 				'lang' => $this->getVar( '_UserLang' ),
 				'stylesheet' => $styleUrl,
 			) );
+
 		return $iframeUrl;
 	}
 
@@ -1040,10 +1098,9 @@ class WebInstaller_Options extends WebInstallerPage {
 		} else {
 			$iframeAttribs['src'] = $this->getCCPartnerUrl();
 		}
-		$wrapperStyle = ($this->getVar( '_LicenseCode' ) == 'cc-choose') ? '' : 'display: none';
+		$wrapperStyle = ( $this->getVar( '_LicenseCode' ) == 'cc-choose' ) ? '' : 'display: none';
 
-		return
-			"<div class=\"config-cc-wrapper\" id=\"config-cc-wrapper\" style=\"$wrapperStyle\">\n" .
+		return "<div class=\"config-cc-wrapper\" id=\"config-cc-wrapper\" style=\"$wrapperStyle\">\n" .
 			Html::element( 'iframe', $iframeAttribs, '', false /* not short */ ) .
 			"</div>\n";
 	}
@@ -1053,13 +1110,13 @@ class WebInstaller_Options extends WebInstallerPage {
 		// If you change this height, also change it in config.css
 		$expandJs = str_replace( '$1', '54em', $js );
 		$reduceJs = str_replace( '$1', '70px', $js );
-		return
-			'<p>'.
+
+		return '<p>' .
 			Html::element( 'img', array( 'src' => $this->getVar( 'wgRightsIcon' ) ) ) .
 			'&#160;&#160;' .
 			htmlspecialchars( $this->getVar( 'wgRightsText' ) ) .
 			"</p>\n" .
-			"<p style=\"text-align: center\">" .
+			"<p style=\"text-align: center;\">" .
 			Html::element( 'a',
 				array(
 					'href' => $this->getCCPartnerUrl(),
@@ -1068,7 +1125,7 @@ class WebInstaller_Options extends WebInstallerPage {
 				wfMessage( 'config-cc-again' )->text()
 			) .
 			"</p>\n" .
-			"<script type=\"text/javascript\">\n" .
+			"<script>\n" .
 			# Reduce the wrapper div height
 			htmlspecialchars( $reduceJs ) .
 			"\n" .
@@ -1080,6 +1137,7 @@ class WebInstaller_Options extends WebInstallerPage {
 			array( 'wgRightsUrl', 'wgRightsText', 'wgRightsIcon' ) );
 		if ( count( $newValues ) != 3 ) {
 			$this->parent->showError( 'config-cc-error' );
+
 			return;
 		}
 		$this->setVar( '_CCDone', true );
@@ -1094,8 +1152,8 @@ class WebInstaller_Options extends WebInstallerPage {
 			'wgUseInstantCommons' ) );
 
 		if ( !in_array( $this->getVar( '_RightsProfile' ),
-			array_keys( $this->parent->rightsProfiles ) ) )
-		{
+			array_keys( $this->parent->rightsProfiles ) )
+		) {
 			reset( $this->parent->rightsProfiles );
 			$this->setVar( '_RightsProfile', key( $this->parent->rightsProfiles ) );
 		}
@@ -1104,9 +1162,14 @@ class WebInstaller_Options extends WebInstallerPage {
 		if ( $code == 'cc-choose' ) {
 			if ( !$this->getVar( '_CCDone' ) ) {
 				$this->parent->showError( 'config-cc-not-chosen' );
+
 				return false;
 			}
 		} elseif ( in_array( $code, array_keys( $this->parent->licenses ) ) ) {
+			// Messages:
+			// config-license-cc-by, config-license-cc-by-sa, config-license-cc-by-nc-sa,
+			// config-license-cc-0, config-license-pd, config-license-gfdl, config-license-none,
+			// config-license-cc-choose
 			$entry = $this->parent->licenses[$code];
 			if ( isset( $entry['text'] ) ) {
 				$this->setVar( 'wgRightsText', $entry['text'] );
@@ -1121,41 +1184,47 @@ class WebInstaller_Options extends WebInstallerPage {
 			$this->setVar( 'wgRightsIcon', '' );
 		}
 
-		$extsAvailable = $this->parent->findExtensions();
+		$extsAvailable = array_map( function($e) { if( isset($e['name']) ) return $e['name']; }, $this->parent->findExtensions() );
 		$extsToInstall = array();
-		foreach( $extsAvailable as $ext ) {
-			if( $this->parent->request->getCheck( 'config_ext-' . $ext ) ) {
-				$extsToInstall[] = $ext;
+		foreach ( $extsAvailable as $key => $ext ) {
+				var_dump("config_ext-$ext");
+			if ( $this->parent->request->getCheck( 'config_ext-' . $ext ) ) {
+				$extsToInstall[] = $extsAvailable[ $key ];
 			}
 		}
 		$this->parent->setVar( '_Extensions', $extsToInstall );
 
-		if( $this->getVar( 'wgMainCacheType' ) == 'memcached' ) {
+		if ( $this->getVar( 'wgMainCacheType' ) == 'memcached' ) {
 			$memcServers = explode( "\n", $this->getVar( '_MemCachedServers' ) );
-			if( !$memcServers ) {
+			if ( !$memcServers ) {
 				$this->parent->showError( 'config-memcache-needservers' );
+
 				return false;
 			}
 
-			foreach( $memcServers as $server ) {
+			foreach ( $memcServers as $server ) {
 				$memcParts = explode( ":", $server, 2 );
 				if ( !isset( $memcParts[0] )
-						|| ( !IP::isValid( $memcParts[0] )
-							&& ( gethostbyname( $memcParts[0] ) == $memcParts[0] ) ) ) {
+					|| ( !IP::isValid( $memcParts[0] )
+						&& ( gethostbyname( $memcParts[0] ) == $memcParts[0] ) )
+				) {
 					$this->parent->showError( 'config-memcache-badip', $memcParts[0] );
+
 					return false;
-				} elseif( !isset( $memcParts[1] )  ) {
+				} elseif ( !isset( $memcParts[1] ) ) {
 					$this->parent->showError( 'config-memcache-noport', $memcParts[0] );
+
 					return false;
-				} elseif( $memcParts[1] < 1 || $memcParts[1] > 65535 ) {
+				} elseif ( $memcParts[1] < 1 || $memcParts[1] > 65535 ) {
 					$this->parent->showError( 'config-memcache-badport', 1, 65535 );
+
 					return false;
 				}
 			}
 		}
+
 		return true;
 	}
-
 }
 
 class WebInstaller_Install extends WebInstallerPage {
@@ -1164,11 +1233,11 @@ class WebInstaller_Install extends WebInstallerPage {
 	}
 
 	public function execute() {
-		if( $this->getVar( '_UpgradeDone' ) ) {
+		if ( $this->getVar( '_UpgradeDone' ) ) {
 			return 'skip';
-		} elseif( $this->getVar( '_InstallDone' ) ) {
+		} elseif ( $this->getVar( '_InstallDone' ) ) {
 			return 'continue';
-		} elseif( $this->parent->request->wasPosted() ) {
+		} elseif ( $this->parent->request->wasPosted() ) {
 			$this->startForm();
 			$this->addHTML( "<ul>" );
 			$results = $this->parent->performInstallation(
@@ -1187,11 +1256,16 @@ class WebInstaller_Install extends WebInstallerPage {
 			$this->addHTML( $this->parent->getInfoBox( wfMessage( 'config-install-begin' )->plain() ) );
 			$this->endForm();
 		}
+
 		return true;
 	}
 
 	public function startStage( $step ) {
-		$this->addHTML( "<li>" . wfMessage( "config-install-$step" )->escaped() . wfMessage( 'ellipsis' )->escaped() );
+		// Messages: config-install-database, config-install-tables, config-install-interwiki,
+		// config-install-stats, config-install-keys, config-install-sysop, config-install-mainpage
+		$this->addHTML( "<li>" . wfMessage( "config-install-$step" )->escaped() .
+			wfMessage( 'ellipsis' )->escaped() );
+
 		if ( $step == 'extension-tables' ) {
 			$this->startLiveBox();
 		}
@@ -1211,25 +1285,23 @@ class WebInstaller_Install extends WebInstallerPage {
 			$html = "<span class=\"error\">$html</span>";
 		}
 		$this->addHTML( $html . "</li>\n" );
-		if( !$status->isGood() ) {
+		if ( !$status->isGood() ) {
 			$this->parent->showStatusBox( $status );
 		}
 	}
-
 }
 
 class WebInstaller_Complete extends WebInstallerPage {
-
 	public function execute() {
 		// Pop up a dialog box, to make it difficult for the user to forget
 		// to download the file
 		$lsUrl = $this->getVar( 'wgServer' ) . $this->parent->getURL( array( 'localsettings' => 1 ) );
 		if ( isset( $_SERVER['HTTP_USER_AGENT'] ) &&
-			 strpos( $_SERVER['HTTP_USER_AGENT'], 'MSIE' ) !== false ) {
-			// JS appears the only method that works consistently with IE7+
-			$this->addHtml( "\n<script type=\"" . $GLOBALS['wgJsMimeType'] .
-				'">jQuery( document ).ready( function() { document.location=' .
-				Xml::encodeJsVar( $lsUrl) . "; } );</script>\n" );
+			strpos( $_SERVER['HTTP_USER_AGENT'], 'MSIE' ) !== false
+		) {
+			// JS appears to be the only method that works consistently with IE7+
+			$this->addHtml( "\n<script>jQuery( function () { document.location = " .
+			Xml::encodeJsVar( $lsUrl ) . "; } );</script>\n" );
 		} else {
 			$this->parent->request->response()->header( "Refresh: 0;url=$lsUrl" );
 		}
@@ -1241,12 +1313,15 @@ class WebInstaller_Complete extends WebInstallerPage {
 				wfMessage( 'config-install-done',
 					$lsUrl,
 					$this->getVar( 'wgServer' ) .
-						$this->getVar( 'wgScriptPath' ) . '/index' .
-						$this->getVar( 'wgScriptExtension' ),
+					$this->getVar( 'wgScriptPath' ) . '/index' .
+					$this->getVar( 'wgScriptExtension' ),
 					'<downloadlink/>'
 				)->plain(), 'tick-32.png'
 			)
 		);
+		$this->addHTML( $this->parent->getInfoBox(
+			wfMessage( 'config-extension-link' )->text() ) );
+
 		$this->parent->restoreLinkPopups();
 		$this->endForm( false, false );
 	}
@@ -1261,6 +1336,7 @@ class WebInstaller_Restart extends WebInstallerPage {
 			if ( $really ) {
 				$this->parent->reset();
 			}
+
 			return 'continue';
 		}
 
@@ -1269,14 +1345,13 @@ class WebInstaller_Restart extends WebInstallerPage {
 		$this->addHTML( $s );
 		$this->endForm( 'restart' );
 	}
-
 }
 
 abstract class WebInstaller_Document extends WebInstallerPage {
 
 	abstract protected function getFileName();
 
-	public  function execute() {
+	public function execute() {
 		$text = $this->getFileContents();
 		$text = InstallDocFormatter::format( $text );
 		$this->parent->output->addWikiText( $text );
@@ -1286,23 +1361,25 @@ abstract class WebInstaller_Document extends WebInstallerPage {
 
 	public function getFileContents() {
 		$file = __DIR__ . '/../../' . $this->getFileName();
-		if( ! file_exists( $file ) ) {
+		if ( !file_exists( $file ) ) {
 			return wfMessage( 'config-nofile', $file )->plain();
 		}
+
 		return file_get_contents( $file );
 	}
-
 }
 
 class WebInstaller_Readme extends WebInstaller_Document {
-	protected function getFileName() { return 'README'; }
+	protected function getFileName() {
+		return 'README';
+	}
 }
 
 class WebInstaller_ReleaseNotes extends WebInstaller_Document {
 	protected function getFileName() {
 		global $wgVersion;
 
-		if( !preg_match( '/^(\d+)\.(\d+).*/i', $wgVersion, $result ) ) {
+		if ( !preg_match( '/^(\d+)\.(\d+).*/i', $wgVersion, $result ) ) {
 			throw new MWException( 'Variable $wgVersion has an invalid value.' );
 		}
 
@@ -1311,9 +1388,13 @@ class WebInstaller_ReleaseNotes extends WebInstaller_Document {
 }
 
 class WebInstaller_UpgradeDoc extends WebInstaller_Document {
-	protected function getFileName() { return 'UPGRADE'; }
+	protected function getFileName() {
+		return 'UPGRADE';
+	}
 }
 
 class WebInstaller_Copying extends WebInstaller_Document {
-	protected function getFileName() { return 'COPYING'; }
+	protected function getFileName() {
+		return 'COPYING';
+	}
 }

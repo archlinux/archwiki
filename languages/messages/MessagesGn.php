@@ -540,11 +540,6 @@ Reomĩsérõ ta'ãnga peteĩ kuatiaroguépe, eipuru peteĩ joaju:
 # Special:Version
 'version' => "Mba'ereko",
 
-# Special:FilePath
-'filepath' => 'Ruta de archivo',
-'filepath-page' => 'Archivo:',
-'filepath-submit' => 'Ruta',
-
 # Special:SpecialPages
 'specialpages' => 'Kuatiarogue hekochĩchĩva',
 

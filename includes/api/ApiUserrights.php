@@ -38,6 +38,7 @@ class ApiUserrights extends ApiBase {
 		$user = $this->getUrUser();
 
 		$form = new UserrightsPage;
+		$form->setContext( $this->getContext() );
 		$r['user'] = $user->getName();
 		$r['userid'] = $user->getId();
 		list( $r['added'], $r['removed'] ) =
@@ -62,10 +63,10 @@ class ApiUserrights extends ApiBase {
 		$params = $this->extractRequestParams();
 
 		$form = new UserrightsPage;
+		$form->setContext( $this->getContext() );
 		$status = $form->fetchUser( $params['user'] );
 		if ( !$status->isOK() ) {
-			$errors = $status->getErrorsArray();
-			$this->dieUsageMsg( $errors[0] );
+			$this->dieStatus( $status );
 		} else {
 			$user = $status->value;
 		}
@@ -83,7 +84,7 @@ class ApiUserrights extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		return array (
+		return array(
 			'user' => array(
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true

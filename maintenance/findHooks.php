@@ -34,7 +34,7 @@
  * @author Antoine Musso <hashar at free dot fr>
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that compares documented and actually present mismatches.
@@ -248,4 +248,4 @@ class FindHooks extends Maintenance {
 }
 
 $maintClass = 'FindHooks';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -159,7 +159,7 @@ $messages = array(
 # Special:AllPages
 'allpagessubmit' => 'Lako',
 
-# Email user
+# E-mail user
 'defemailsubject' => '{{SITENAME}} I vola livaliva',
 
 # Watchlist

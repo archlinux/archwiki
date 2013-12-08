@@ -100,7 +100,10 @@ class DerivativeContext extends ContextSource {
 	 *
 	 * @param Title $t
 	 */
-	public function setTitle( Title $t ) {
+	public function setTitle( $t ) {
+		if ( $t !== null && !$t instanceof Title ) {
+			throw new MWException( __METHOD__ . " expects an instance of Title" );
+		}
 		$this->title = $t;
 	}
 
@@ -209,7 +212,7 @@ class DerivativeContext extends ContextSource {
 	/**
 	 * Set the Language object
 	 *
-	 * @deprecated 1.19 Use setLanguage instead
+	 * @deprecated since 1.19 Use setLanguage instead
 	 * @param Language|string $l Language instance or language code
 	 */
 	public function setLang( $l ) {
@@ -237,7 +240,7 @@ class DerivativeContext extends ContextSource {
 	}
 
 	/**
-	 * @deprecated 1.19 Use getLanguage instead
+	 * @deprecated since 1.19 Use getLanguage instead
 	 * @return Language
 	 */
 	public function getLang() {
@@ -280,5 +283,21 @@ class DerivativeContext extends ContextSource {
 		} else {
 			return $this->getContext()->getSkin();
 		}
+	}
+
+	/**
+	 * Get a message using the current context.
+	 *
+	 * This can't just inherit from ContextSource, since then
+	 * it would set only the original context, and not take
+	 * into account any changes.
+	 *
+	 * @param String Message name
+	 * @param Variable number of message arguments
+	 * @return Message
+	 */
+	public function msg() {
+		$args = func_get_args();
+		return call_user_func_array( 'wfMessage', $args )->setContext( $this );
 	}
 }

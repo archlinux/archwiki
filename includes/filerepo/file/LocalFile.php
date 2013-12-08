@@ -382,6 +382,7 @@ class LocalFile extends File {
 				$this->$name = $value;
 			}
 		} else {
+			wfProfileOut( $fname );
 			throw new MWException( "Could not find data for image '{$this->getName()}'." );
 		}
 
@@ -531,15 +532,15 @@ class LocalFile extends File {
 
 		$dbw->update( 'image',
 			array(
-				'img_size'       => $this->size, // sanity
-				'img_width'      => $this->width,
-				'img_height'     => $this->height,
-				'img_bits'       => $this->bits,
+				'img_size' => $this->size, // sanity
+				'img_width' => $this->width,
+				'img_height' => $this->height,
+				'img_bits' => $this->bits,
 				'img_media_type' => $this->media_type,
 				'img_major_mime' => $major,
 				'img_minor_mime' => $minor,
-				'img_metadata'   => $this->metadata,
-				'img_sha1'       => $this->sha1,
+				'img_metadata' => $dbw->encodeBlob($this->metadata),
+				'img_sha1' => $this->sha1,
 			),
 			array( 'img_name' => $this->getName() ),
 			__METHOD__
@@ -603,17 +604,23 @@ class LocalFile extends File {
 	 * Return the width of the image
 	 *
 	 * @param $page int
-	 * @return bool|int Returns false on error
+	 * @return int
 	 */
 	public function getWidth( $page = 1 ) {
 		$this->load();
 
 		if ( $this->isMultipage() ) {
-			$dim = $this->getHandler()->getPageDimensions( $this, $page );
+			$handler = $this->getHandler();
+			if ( !$handler ) {
+				return 0;
+			}
+			$dim = $handler->getPageDimensions( $this, $page );
 			if ( $dim ) {
 				return $dim['width'];
 			} else {
-				return false;
+				// For non-paged media, the false goes through an
+				// intval, turning failure into 0, so do same here.
+				return 0;
 			}
 		} else {
 			return $this->width;
@@ -624,17 +631,23 @@ class LocalFile extends File {
 	 * Return the height of the image
 	 *
 	 * @param $page int
-	 * @return bool|int Returns false on error
+	 * @return int
 	 */
 	public function getHeight( $page = 1 ) {
 		$this->load();
 
 		if ( $this->isMultipage() ) {
-			$dim = $this->getHandler()->getPageDimensions( $this, $page );
+			$handler = $this->getHandler();
+			if ( !$handler ) {
+				return 0;
+			}
+			$dim = $handler->getPageDimensions( $this, $page );
 			if ( $dim ) {
 				return $dim['height'];
 			} else {
-				return false;
+				// For non-paged media, the false goes through an
+				// intval, turning failure into 0, so do same here.
+				return 0;
 			}
 		} else {
 			return $this->height;
@@ -775,10 +788,12 @@ class LocalFile extends File {
 
 		$backend = $this->repo->getBackend();
 		$files = array( $dir );
-		$iterator = $backend->getFileList( array( 'dir' => $dir ) );
-		foreach ( $iterator as $file ) {
-			$files[] = $file;
-		}
+		try {
+			$iterator = $backend->getFileList( array( 'dir' => $dir ) );
+			foreach ( $iterator as $file ) {
+				$files[] = $file;
+			}
+		} catch ( FileBackendError $e ) {} // suppress (bug 54674)
 
 		return $files;
 	}
@@ -793,7 +808,9 @@ class LocalFile extends File {
 	}
 
 	/**
-	 * Purge the shared history (OldLocalFile) cache
+	 * Purge the shared history (OldLocalFile) cache.
+	 *
+	 * @note This used to purge old thumbnails as well.
 	 */
 	function purgeHistory() {
 		global $wgMemc;
@@ -801,20 +818,20 @@ class LocalFile extends File {
 		$hashedName = md5( $this->getName() );
 		$oldKey = $this->repo->getSharedCacheKey( 'oldfile', $hashedName );
 
-		// Must purge thumbnails for old versions too! bug 30192
-		foreach( $this->getHistory() as $oldFile ) {
-			$oldFile->purgeThumbnails();
-		}
-
 		if ( $oldKey ) {
 			$wgMemc->delete( $oldKey );
 		}
 	}
 
 	/**
-	 * Delete all previously generated thumbnails, refresh metadata in memcached and purge the squid
+	 * Delete all previously generated thumbnails, refresh metadata in memcached and purge the squid.
+	 *
+	 * @param Array $options An array potentially with the key forThumbRefresh.
+	 *
+	 * @note This used to purge old thumbnails by default as well, but doesn't anymore.
 	 */
 	function purgeCache( $options = array() ) {
+		wfProfileIn( __METHOD__ );
 		// Refresh metadata cache
 		$this->purgeMetadataCache();
 
@@ -823,6 +840,7 @@ class LocalFile extends File {
 
 		// Purge squid cache for this file
 		SquidUpdate::purge( array( $this->getURL() ) );
+		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -844,7 +862,7 @@ class LocalFile extends File {
 		// Purge the squid
 		if ( $wgUseSquid ) {
 			$urls = array();
-			foreach( $files as $file ) {
+			foreach ( $files as $file ) {
 				$urls[] = $this->getArchiveThumbUrl( $archiveName, $file );
 			}
 			SquidUpdate::purge( $urls );
@@ -865,7 +883,7 @@ class LocalFile extends File {
 		// Always purge all files from squid regardless of handler filters
 		if ( $wgUseSquid ) {
 			$urls = array();
-			foreach( $files as $file ) {
+			foreach ( $files as $file ) {
 				$urls[] = $this->getThumbUrl( $file );
 			}
 			array_shift( $urls ); // don't purge directory
@@ -1195,20 +1213,20 @@ class LocalFile extends File {
 		# doesn't deadlock. SELECT FOR UPDATE causes a deadlock for every race condition.
 		$dbw->insert( 'image',
 			array(
-				'img_name'        => $this->getName(),
-				'img_size'        => $this->size,
-				'img_width'       => intval( $this->width ),
-				'img_height'      => intval( $this->height ),
-				'img_bits'        => $this->bits,
-				'img_media_type'  => $this->media_type,
-				'img_major_mime'  => $this->major_mime,
-				'img_minor_mime'  => $this->minor_mime,
-				'img_timestamp'   => $timestamp,
+				'img_name' => $this->getName(),
+				'img_size' => $this->size,
+				'img_width' => intval( $this->width ),
+				'img_height' => intval( $this->height ),
+				'img_bits' => $this->bits,
+				'img_media_type' => $this->media_type,
+				'img_major_mime' => $this->major_mime,
+				'img_minor_mime' => $this->minor_mime,
+				'img_timestamp' => $timestamp,
 				'img_description' => $comment,
-				'img_user'        => $user->getId(),
-				'img_user_text'   => $user->getName(),
-				'img_metadata'    => $this->metadata,
-				'img_sha1'        => $this->sha1
+				'img_user' => $user->getId(),
+				'img_user_text' => $user->getName(),
+				'img_metadata' => $dbw->encodeBlob($this->metadata),
+				'img_sha1' => $this->sha1
 			),
 			__METHOD__,
 			'IGNORE'
@@ -1258,7 +1276,7 @@ class LocalFile extends File {
 					'img_description' => $comment,
 					'img_user'        => $user->getId(),
 					'img_user_text'   => $user->getName(),
-					'img_metadata'    => $this->metadata,
+					'img_metadata'    => $dbw->encodeBlob($this->metadata),
 					'img_sha1'        => $this->sha1
 				),
 				array( 'img_name' => $this->getName() ),
@@ -1274,20 +1292,45 @@ class LocalFile extends File {
 		$wikiPage->setFile( $this );
 
 		# Add the log entry
-		$log = new LogPage( 'upload' );
 		$action = $reupload ? 'overwrite' : 'upload';
-		$logId = $log->addEntry( $action, $descTitle, $comment, array(), $user );
 
-		wfProfileIn( __METHOD__ . '-edit' );
+		$logEntry = new ManualLogEntry( 'upload', $action );
+		$logEntry->setPerformer( $user );
+		$logEntry->setComment( $comment );
+		$logEntry->setTarget( $descTitle );
+
+		// Allow people using the api to associate log entries with the upload.
+		// Log has a timestamp, but sometimes different from upload timestamp.
+		$logEntry->setParameters(
+			array(
+				'img_sha1' => $this->sha1,
+				'img_timestamp' => $timestamp,
+			)
+		);
+		// Note we keep $logId around since during new image
+		// creation, page doesn't exist yet, so log_page = 0
+		// but we want it to point to the page we're making,
+		// so we later modify the log entry.
+		// For a similar reason, we avoid making an RC entry
+		// now and wait until the page exists.
+		$logId = $logEntry->insert();
+
 		$exists = $descTitle->exists();
+		if ( $exists ) {
+			// Page exists, do RC entry now (otherwise we wait for later).
+			$logEntry->publish( $logId );
+		}
+		wfProfileIn( __METHOD__ . '-edit' );
 
 		if ( $exists ) {
 			# Create a null revision
 			$latest = $descTitle->getLatestRevID();
+			$editSummary = LogFormatter::newFromEntry( $logEntry )->getPlainActionText();
+
 			$nullRevision = Revision::newNullRevision(
 				$dbw,
 				$descTitle->getArticleID(),
-				$log->getRcComment(),
+				$editSummary,
 				false
 			);
 			if ( !is_null( $nullRevision ) ) {
@@ -1315,16 +1358,20 @@ class LocalFile extends File {
 			$content = ContentHandler::makeContent( $pageText, $descTitle );
 			$status = $wikiPage->doEditContent( $content, $comment, EDIT_NEW | EDIT_SUPPRESS_RC, false, $user );
 
-			if ( isset( $status->value['revision'] ) ) { // XXX; doEdit() uses a transaction
-				$dbw->begin( __METHOD__ );
+			$dbw->begin( __METHOD__ ); // XXX; doEdit() uses a transaction
+			// Now that the page exists, make an RC entry.
+			$logEntry->publish( $logId );
+			if ( isset( $status->value['revision'] ) ) {
 				$dbw->update( 'logging',
 					array( 'log_page' => $status->value['revision']->getPage() ),
 					array( 'log_id' => $logId ),
 					__METHOD__
 				);
-				$dbw->commit( __METHOD__ ); // commit before anything bad can happen
 			}
+			$dbw->commit( __METHOD__ ); // commit before anything bad can happen
 		}
+
+
 		wfProfileOut( __METHOD__ . '-edit' );
 
 		# Save to cache and purge the squid
@@ -1351,11 +1398,17 @@ class LocalFile extends File {
 		# Invalidate cache for all pages using this file
 		$update = new HTMLCacheUpdate( $this->getTitle(), 'imagelinks' );
 		$update->doUpdate();
+		if ( !$reupload ) {
+			LinksUpdate::queueRecursiveJobsForTable( $this->getTitle(), 'imagelinks' );
+		}
 
 		# Invalidate cache for all pages that redirects on this page
 		$redirs = $this->getTitle()->getRedirectsHere();
 
 		foreach ( $redirs as $redir ) {
+			if ( !$reupload && $redir->getNamespace() === NS_FILE ) {
+				LinksUpdate::queueRecursiveJobsForTable( $redir, 'imagelinks' );
+			}
 			$update = new HTMLCacheUpdate( $redir, 'imagelinks' );
 			$update->doUpdate();
 		}
@@ -1405,7 +1458,7 @@ class LocalFile extends File {
 
 		$this->lock(); // begin
 
-		$archiveName = wfTimestamp( TS_MW ) . '!'. $this->getName();
+		$archiveName = wfTimestamp( TS_MW ) . '!' . $this->getName();
 		$archiveRel = 'archive/' . $this->getHashPath() . $archiveName;
 		$flags = $flags & File::DELETE_SOURCE ? LocalRepo::DELETE_SOURCE : 0;
 		$status = $this->repo->publish( $srcPath, $dstRel, $archiveRel, $flags, $options );
@@ -1454,18 +1507,27 @@ class LocalFile extends File {
 
 		wfDebugLog( 'imagemove', "Finished moving {$this->name}" );
 
-		$this->purgeEverything();
-		foreach ( $archiveNames as $archiveName ) {
-			$this->purgeOldThumbnails( $archiveName );
-		}
+		// Purge the source and target files...
+		$oldTitleFile = wfLocalFile( $this->title );
+		$newTitleFile = wfLocalFile( $target );
+		// Hack: the lock()/unlock() pair is nested in a transaction so the locking is not
+		// tied to BEGIN/COMMIT. To avoid slow purges in the transaction, move them outside.
+		$this->getRepo()->getMasterDB()->onTransactionIdle(
+			function() use ( $oldTitleFile, $newTitleFile, $archiveNames ) {
+				$oldTitleFile->purgeEverything();
+				foreach ( $archiveNames as $archiveName ) {
+					$oldTitleFile->purgeOldThumbnails( $archiveName );
+				}
+				$newTitleFile->purgeEverything();
+			}
+		);
+
 		if ( $status->isOK() ) {
 			// Now switch the object
 			$this->title = $target;
 			// Force regeneration of the name and hashpath
 			unset( $this->name );
 			unset( $this->hashPath );
-			// Purge the new image
-			$this->purgeEverything();
 		}
 
 		return $status;
@@ -1484,7 +1546,6 @@ class LocalFile extends File {
 	 * @return FileRepoStatus object.
 	 */
 	function delete( $reason, $suppress = false ) {
-		global $wgUseSquid;
 		if ( $this->getRepo()->getReadOnlyReason() !== false ) {
 			return $this->readOnlyFatalStatus();
 		}
@@ -1502,19 +1563,28 @@ class LocalFile extends File {
 			DeferredUpdates::addUpdate( SiteStatsUpdate::factory( array( 'images' => -1 ) ) );
 		}
 
-		$this->purgeEverything();
-		foreach ( $archiveNames as $archiveName ) {
-			$this->purgeOldThumbnails( $archiveName );
-		}
+		// Hack: the lock()/unlock() pair is nested in a transaction so the locking is not
+		// tied to BEGIN/COMMIT. To avoid slow purges in the transaction, move them outside.
+		$file = $this;
+		$this->getRepo()->getMasterDB()->onTransactionIdle(
+			function() use ( $file, $archiveNames ) {
+				global $wgUseSquid;
 
-		if ( $wgUseSquid ) {
-			// Purge the squid
-			$purgeUrls = array();
-			foreach ($archiveNames as $archiveName ) {
-				$purgeUrls[] = $this->getArchiveUrl( $archiveName );
+				$file->purgeEverything();
+				foreach ( $archiveNames as $archiveName ) {
+					$file->purgeOldThumbnails( $archiveName );
+				}
+
+				if ( $wgUseSquid ) {
+					// Purge the squid
+					$purgeUrls = array();
+					foreach ( $archiveNames as $archiveName ) {
+						$purgeUrls[] = $file->getArchiveUrl( $archiveName );
+					}
+					SquidUpdate::purge( $purgeUrls );
+				}
 			}
-			SquidUpdate::purge( $purgeUrls );
-		}
+		);
 
 		return $status;
 	}
@@ -1606,21 +1676,27 @@ class LocalFile extends File {
 	 * @return String
 	 */
 	function getDescriptionUrl() {
-		return $this->title->getLocalUrl();
+		return $this->title->getLocalURL();
 	}
 
 	/**
 	 * Get the HTML text of the description page
 	 * This is not used by ImagePage for local files, since (among other things)
 	 * it skips the parser cache.
+	 *
+	 * @param $lang Language What language to get description in (Optional)
 	 * @return bool|mixed
 	 */
-	function getDescriptionText() {
+	function getDescriptionText( $lang = null ) {
 		$revision = Revision::newFromTitle( $this->title, false, Revision::READ_NORMAL );
-		if ( !$revision ) return false;
+		if ( !$revision ) {
+			return false;
+		}
 		$content = $revision->getContent();
-		if ( !$content ) return false;
-		$pout = $content->getParserOutput( $this->title, null, new ParserOptions() );
+		if ( !$content ) {
+			return false;
+		}
+		$pout = $content->getParserOutput( $this->title, null, new ParserOptions( null, $lang ) );
 		return $pout->getText();
 	}
 
@@ -1674,11 +1750,13 @@ class LocalFile extends File {
 	}
 
 	/**
-	 * @return bool
+	 * @return bool Whether to cache in RepoGroup (this avoids OOMs)
 	 */
 	function isCacheable() {
 		$this->load();
-		return strlen( $this->metadata ) <= self::CACHE_FIELD_MAX_LEN; // avoid OOMs
+		// If extra data (metadata) was not loaded then it must have been large
+		return $this->extraDataLoaded
+			&& strlen( serialize( $this->metadata ) ) <= self::CACHE_FIELD_MAX_LEN;
 	}
 
 	/**
@@ -1695,6 +1773,16 @@ class LocalFile extends File {
 				$this->lockedOwnTrx = true;
 			}
 			$this->locked++;
+			// Bug 54736: use simple lock to handle when the file does not exist.
+			// SELECT FOR UPDATE only locks records not the gaps where there are none.
+			$cache = wfGetMainCache();
+			$key = $this->getCacheKey();
+			if ( !$cache->lock( $key, 60 ) ) {
+				throw new MWException( "Could not acquire lock for '{$this->getName()}.'" );
+			}
+			$dbw->onTransactionIdle( function() use ( $cache, $key ) {
+				$cache->unlock( $key ); // release on commit
+			} );
 		}
 
 		return $dbw->selectField( 'image', '1',
@@ -2189,7 +2277,7 @@ class LocalFileRestoreBatch {
 			$deletedRel = $this->file->repo->getDeletedHashPath( $row->fa_storage_key ) . $row->fa_storage_key;
 			$deletedUrl = $this->file->repo->getVirtualUrl() . '/deleted/' . $deletedRel;
 
-			if( isset( $row->fa_sha1 ) ) {
+			if ( isset( $row->fa_sha1 ) ) {
 				$sha1 = $row->fa_sha1;
 			} else {
 				// old row, populate from key

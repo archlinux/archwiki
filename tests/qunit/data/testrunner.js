@@ -38,6 +38,8 @@
 		tooltip: 'Enable debug mode in ResourceLoader'
 	} );
 
+	QUnit.config.requireExpects = true;
+
 	/**
 	 * Load TestSwarm agent
 	 */
@@ -48,13 +50,14 @@
 	// of MediaWiki has actually been configured with the required url to that inject.js
 	// script. By default it is false.
 	if ( QUnit.urlParams.swarmURL && mw.config.get( 'QUnitTestSwarmInjectJSPath' ) ) {
-		document.write( '<scr' + 'ipt src="' + QUnit.fixurl( mw.config.get( 'QUnitTestSwarmInjectJSPath' ) ) + '"></scr' + 'ipt>' );
+		jQuery.getScript( QUnit.fixurl( mw.config.get( 'QUnitTestSwarmInjectJSPath' ) ) );
 	}
 
 	/**
 	 * CompletenessTest
+	 *
+	 * Adds toggle checkbox to header
 	 */
-	 // Adds toggle checkbox to header
 	QUnit.config.urlConfig.push( {
 		id: 'completenesstest',
 		label: 'Run CompletenessTest',
@@ -93,8 +96,9 @@
 
 	/**
 	 * Test environment recommended for all QUnit test modules
+	 *
+	 * Whether to log environment changes to the console
 	 */
-	 // Whether to log environment changes to the console
 	QUnit.config.urlConfig.push( 'mwlogenv' );
 
 	/**
@@ -345,6 +349,25 @@
 		assert.equal( mw.html.escape( 'foo' ), 'mocked-2', 'extra setup() callback was re-ran.' );
 		assert.equal( mw.config.get( 'testVar' ), 'foo', 'config object restored and re-applied after test()' );
 		assert.equal( mw.messages.get( 'testMsg' ), 'Foo.', 'messages object restored and re-applied after test()' );
+	} );
+
+	QUnit.test( 'Loader status', 2, function ( assert ) {
+		var i, len, state,
+			modules = mw.loader.getModuleNames(),
+			error = [],
+			missing = [];
+
+		for ( i = 0, len = modules.length; i < len; i++ ) {
+			state = mw.loader.getState( modules[i] );
+			if ( state === 'error' ) {
+				error.push( modules[i] );
+			} else if ( state === 'missing' ) {
+				missing.push( modules[i] );
+			}
+		}
+
+		assert.deepEqual( error, [], 'Modules in error state' );
+		assert.deepEqual( missing, [], 'Modules in missing state' );
 	} );
 
 	QUnit.test( 'htmlEqual', 8, function ( assert ) {

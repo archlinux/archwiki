@@ -67,7 +67,7 @@ class CLDRPluralRuleEvaluator {
 	public static function evaluateCompiled( $number, array $rules ) {
 		// The compiled form is RPN, with tokens strictly delimited by
 		// spaces, so this is a simple RPN evaluator.
-		foreach ( $rules as $i => $rule  ) {
+		foreach ( $rules as $i => $rule ) {
 			$stack = array();
 			$zero = ord( '0' );
 			$nine = ord( '9' );
@@ -104,7 +104,7 @@ class CLDRPluralRuleEvaluator {
 	 */
 	private static function doOperation( $token, $left, $right ) {
 		if ( in_array( $token, array( 'in', 'not-in', 'within', 'not-within' ) ) ) {
-			if ( !($right instanceof CLDRPluralRuleEvaluator_Range ) ) {
+			if ( !( $right instanceof CLDRPluralRuleEvaluator_Range ) ) {
 				$right = new CLDRPluralRuleEvaluator_Range( $right );
 			}
 		}
@@ -127,7 +127,7 @@ class CLDRPluralRuleEvaluator {
 				return !$right->isNumberWithin( $left );
 			case 'mod':
 				if ( is_int( $left ) ) {
-					return (int) fmod( $left, $right );
+					return (int)fmod( $left, $right );
 				}
 				return fmod( $left, $right );
 			case ',':
@@ -305,7 +305,7 @@ class CLDRPluralRuleConverter {
 				continue;
 			} else {
 				// Operator
-				if  ( !$expectOperator ) {
+				if ( !$expectOperator ) {
 					$token->error( 'unexpected operator' );
 				}
 				// Resolve higher precedence levels
@@ -381,7 +381,7 @@ class CLDRPluralRuleConverter {
 
 		// Word
 		if ( !preg_match( self::WORD_REGEX, $this->rule, $m, 0, $this->pos ) ) {
-			$this->error( 'unexpected character "' . $this->rule[$this->pos] . '"'  );
+			$this->error( 'unexpected character "' . $this->rule[$this->pos] . '"' );
 		}
 		$word1 = strtolower( $m[0] );
 		$word2 = '';

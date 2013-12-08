@@ -115,7 +115,7 @@ class HistoryAction extends FormlessAction {
 
 		// Setup page variables.
 		$out->setFeedAppendQuery( 'action=history' );
-		$out->addModules( array( 'mediawiki.legacy.history', 'mediawiki.action.history' ) );
+		$out->addModules( 'mediawiki.action.history' );
 
 		// Handle atom/RSS feeds.
 		$feedType = $request->getVal( 'feed' );
@@ -178,7 +178,7 @@ class HistoryAction extends FormlessAction {
 			) .
 			Html::hidden( 'title', $this->getTitle()->getPrefixedDBkey() ) . "\n" .
 			Html::hidden( 'action', 'history' ) . "\n" .
-			Xml::dateMenu( ( $year == null ? date( "Y" ) : $year ), $month ) . '&#160;' .
+			Xml::dateMenu( ( $year == null ? MWTimestamp::getLocalInstance()->format( 'Y' ) : $year ), $month ) . '&#160;' .
 			( $tagSelector ? ( implode( '&#160;', $tagSelector ) . '&#160;' ) : '' ) .
 			$checkDeleted .
 			Xml::submitButton( $this->msg( 'allpagessubmit' )->text() ) . "\n" .
@@ -211,7 +211,7 @@ class HistoryAction extends FormlessAction {
 	 */
 	function fetchRevisions( $limit, $offset, $direction ) {
 		// Fail if article doesn't exist.
-		if( !$this->getTitle()->exists() ) {
+		if ( !$this->getTitle()->exists() ) {
 			return new FakeResultWrapper( array() );
 		}
 
@@ -256,15 +256,14 @@ class HistoryAction extends FormlessAction {
 			$this->getTitle()->getPrefixedText() . ' - ' .
 			$this->msg( 'history-feed-title' )->inContentLanguage()->text(),
 			$this->msg( 'history-feed-description' )->inContentLanguage()->text(),
-			$this->getTitle()->getFullUrl( 'action=history' )
+			$this->getTitle()->getFullURL( 'action=history' )
 		);
 
 		// Get a limit on number of feed entries. Provide a sane default
 		// of 10 if none is defined (but limit to $wgFeedLimit max)
 		$limit = $request->getInt( 'limit', 10 );
-		if ( $limit > $wgFeedLimit || $limit < 1 ) {
-			$limit = 10;
-		}
+		$limit = min( max( $limit, 1 ), $wgFeedLimit );
+
 		$items = $this->fetchRevisions( $limit, 0, HistoryPage::DIR_NEXT );
 
 		// Generate feed elements enclosed between header and footer.
@@ -283,10 +282,10 @@ class HistoryAction extends FormlessAction {
 		return new FeedItem(
 			$this->msg( 'nohistory' )->inContentLanguage()->text(),
 			$this->msg( 'history-feed-empty' )->inContentLanguage()->parseAsBlock(),
-			$this->getTitle()->getFullUrl(),
+			$this->getTitle()->getFullURL(),
 			wfTimestamp( TS_MW ),
 			'',
-			$this->getTitle()->getTalkPage()->getFullUrl()
+			$this->getTitle()->getTalkPage()->getFullURL()
 		);
 	}
 
@@ -323,10 +322,10 @@ class HistoryAction extends FormlessAction {
 		return new FeedItem(
 			$title,
 			$text,
-			$this->getTitle()->getFullUrl( 'diff=' . $rev->getId() . '&oldid=prev' ),
+			$this->getTitle()->getFullURL( 'diff=' . $rev->getId() . '&oldid=prev' ),
 			$rev->getTimestamp(),
 			$rev->getUserText(),
-			$this->getTitle()->getTalkPage()->getFullUrl()
+			$this->getTitle()->getTalkPage()->getFullURL()
 		);
 	}
 }
@@ -367,15 +366,13 @@ class HistoryPager extends ReverseChronologicalPager {
 
 	function getQueryInfo() {
 		$queryInfo = array(
-			'tables'  => array( 'revision', 'user' ),
-			'fields'  => array_merge( Revision::selectFields(), Revision::selectUserFields() ),
-			'conds'   => array_merge(
+			'tables' => array( 'revision', 'user' ),
+			'fields' => array_merge( Revision::selectFields(), Revision::selectUserFields() ),
+			'conds' => array_merge(
 				array( 'rev_page' => $this->getWikiPage()->getId() ),
 				$this->conds ),
 			'options' => array( 'USE INDEX' => array( 'revision' => 'page_timestamp' ) ),
-			'join_conds' => array(
-				'user'        => Revision::userJoinCond(),
-				'tag_summary' => array( 'LEFT JOIN', 'ts_rev_id=rev_id' ) ),
+			'join_conds' => array( 'user' => Revision::userJoinCond() ),
 		);
 		ChangeTags::modifyDisplayQuery(
 			$queryInfo['tables'],
@@ -413,10 +410,10 @@ class HistoryPager extends ReverseChronologicalPager {
 		$batch = new LinkBatch();
 		$revIds = array();
 		foreach ( $this->mResult as $row ) {
-			if( $row->rev_parent_id ) {
+			if ( $row->rev_parent_id ) {
 				$revIds[] = $row->rev_parent_id;
 			}
-			if( !is_null( $row->user_name ) ) {
+			if ( !is_null( $row->user_name ) ) {
 				$batch->add( NS_USER, $row->user_name );
 				$batch->add( NS_USER_TALK, $row->user_name );
 			} else { # for anons or usernames of imported revisions
@@ -649,9 +646,9 @@ class HistoryPager extends ReverseChronologicalPager {
 					$this->msg( 'editundo' )->escaped(),
 					$undoTooltip,
 					array(
-						'action'    => 'edit',
+						'action' => 'edit',
 						'undoafter' => $prevRev->getId(),
-						'undo'      => $rev->getId()
+						'undo' => $rev->getId()
 					)
 				);
 				$tools[] = "<span class=\"mw-history-undo\">{$undolink}</span>";
@@ -661,7 +658,7 @@ class HistoryPager extends ReverseChronologicalPager {
 		wfRunHooks( 'HistoryRevisionTools', array( $rev, &$tools ) );
 
 		if ( $tools ) {
-			$s2 .= ' '. $this->msg( 'parentheses' )->rawParams( $lang->pipeList( $tools ) )->escaped();
+			$s2 .= ' ' . $this->msg( 'parentheses' )->rawParams( $lang->pipeList( $tools ) )->escaped();
 		}
 
 		# Tags
@@ -788,13 +785,13 @@ class HistoryPager extends ReverseChronologicalPager {
 	function diffButtons( $rev, $firstInList ) {
 		if ( $this->getNumRows() > 1 ) {
 			$id = $rev->getId();
-			$radio = array( 'type'  => 'radio', 'value' => $id );
-			/** @todo: move title texts to javascript */
+			$radio = array( 'type' => 'radio', 'value' => $id );
+			/** @todo Move title texts to javascript */
 			if ( $firstInList ) {
 				$first = Xml::element( 'input',
 					array_merge( $radio, array(
 						'style' => 'visibility:hidden',
-						'name'  => 'oldid',
+						'name' => 'oldid',
 						'id' => 'mw-oldid-null' ) )
 				);
 				$checkmark = array( 'checked' => 'checked' );
@@ -811,13 +808,13 @@ class HistoryPager extends ReverseChronologicalPager {
 				}
 				$first = Xml::element( 'input',
 					array_merge( $radio, $checkmark, array(
-						'name'  => 'oldid',
+						'name' => 'oldid',
 						'id' => "mw-oldid-$id" ) ) );
 				$checkmark = array();
 			}
 			$second = Xml::element( 'input',
 				array_merge( $radio, $checkmark, array(
-					'name'  => 'diff',
+					'name' => 'diff',
 					'id' => "mw-diff-$id" ) ) );
 			return $first . $second;
 		} else {

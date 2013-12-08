@@ -101,7 +101,7 @@ class XMPValidate {
 			$val = null;
 			return;
 		} else {
-			$nVal = (float) $val;
+			$nVal = (float)$val;
 			if ( $nVal < 0 ) {
 				// We do < 0 here instead of < -1 here, since
 				// the values between 0 and -1 are also illegal
@@ -214,7 +214,7 @@ class XMPValidate {
 			// this only validates standalone properties, not arrays, etc
 			return;
 		}
-		if ( !preg_match( '/^[-A-Za-z0-9]{2,}$/D', $val) ) {
+		if ( !preg_match( '/^[-A-Za-z0-9]{2,}$/D', $val ) ) {
 			//this is a rather naive check.
 			wfDebugLog( 'XMP', __METHOD__ . " Expected Lang code but got $val" );
 			$val = null;
@@ -335,7 +335,7 @@ class XMPValidate {
 	 *           or DDD,MM.mmk form
 	 * @param $standalone Boolean if its a simple prop (should always be true)
 	 */
-	public static function validateGPS ( $info, &$val, $standalone ) {
+	public static function validateGPS( $info, &$val, $standalone ) {
 		if ( !$standalone ) {
 			return;
 		}
@@ -346,8 +346,8 @@ class XMPValidate {
 			$val, $m )
 		) {
 			$coord = intval( $m[1] );
-			$coord += intval( $m[2] ) * (1/60);
-			$coord += intval( $m[3] ) * (1/3600);
+			$coord += intval( $m[2] ) * ( 1 / 60 );
+			$coord += intval( $m[3] ) * ( 1 / 3600 );
 			if ( $m[4] === 'S' || $m[4] === 'W' ) {
 				$coord = -$coord;
 			}
@@ -358,7 +358,7 @@ class XMPValidate {
 			$val, $m )
 		) {
 			$coord = intval( $m[1] );
-			$coord += floatval( $m[2] ) * (1/60);
+			$coord += floatval( $m[2] ) * ( 1 / 60 );
 			if ( $m[3] === 'S' || $m[3] === 'W' ) {
 				$coord = -$coord;
 			}

@@ -240,9 +240,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Битне күзәтү исемлекләренә өстәгән кулланучылар санын күрсәтелсен',
 'tog-oldsig' => 'Хәзерге имза:',
 'tog-fancysig' => 'Имзаның шәхси вики-билгеләмәсе (автоматик сылтамасыз)',
-'tog-externaleditor' => 'Тышкы редактор куллану (бары тик белгечләргә генә һәм санак махсус көйләнгән булу зарур; [//www.mediawiki.org/wiki/Manual:External_editors тулырак...])',
-'tog-externaldiff' => 'Тышкы версия чагыштыру программасын куллану (бары тик белгечләр өчен һшм санак махсус көйләнгән булу зарур; [//www.mediawiki.org/wiki/Manual:External_editors тулырак...])',
-'tog-showjumplinks' => '«Күчү» ярдәмче сылтамалары ялгансын',
 'tog-uselivepreview' => 'Тиз карап алу кулланылсын (JavaScript, эксперименталь)',
 'tog-forceeditsummary' => 'Үзгәртүләрне тасвирлау юлы тутырылмаган булса, кисәтү',
 'tog-watchlisthideown' => 'Минем үзгәртүләрем күзәтү исемлегеннән яшерелсен',
@@ -255,6 +252,7 @@ $messages = array(
 'tog-diffonly' => 'Юрама чагыштыру астында бит эчтәлеге күрсәтелмәсен',
 'tog-showhiddencats' => 'Яшерен төркемнәр күрсәтелсен',
 'tog-norollbackdiff' => 'Кире кайтару ясагач юрамалар аермасы күрсәтелмәсен',
+'tog-useeditwarning' => 'Битне сакламыйча китү вакытында мине кисәтергә',
 
 'underline-always' => 'Һәрвакыт',
 'underline-never' => 'Бервакытта да',
@@ -318,6 +316,18 @@ $messages = array(
 'oct' => 'окт',
 'nov' => 'ноя',
 'dec' => 'дек',
+'january-date' => '$1 Гыйнвар',
+'february-date' => '$1 Февраль',
+'march-date' => '$1 Март',
+'april-date' => '$1 Апрель',
+'may-date' => '$1 Май',
+'june-date' => '$1 Июнь',
+'july-date' => '$1 Июль',
+'august-date' => '$1 Август',
+'september-date' => '$1 Сентябрь',
+'october-date' => '$1 Октябрь',
+'november-date' => '$1 Ноябрь',
+'december-date' => '$1 Декабрь',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Төркем|Төркемнәр}}',
@@ -338,7 +348,7 @@ $messages = array(
 'noindex-category' => 'Индексланмаган битләр',
 'broken-file-category' => 'Файлларга эшләми торган сылтамалар булган битләр',
 
-'linkprefix' => '/^(.*?)([a-zA-Z\\x80-\\xff]+)$/sD',
+'linkprefix' => '/^((?>.*(?<![a-zA-Z\\x80-\\xff])))(.+)$/sD',
 
 'about' => 'Тасвирлама',
 'article' => 'Мәкалә',
@@ -400,6 +410,7 @@ $messages = array(
 'create-this-page' => 'Бу битне төзү',
 'delete' => 'Бетерү',
 'deletethispage' => 'Бу битне бетерү',
+'undeletethispage' => 'Бу битне кайтарырга',
 'undelete_short' => '$1 {{PLURAL:$1|үзгәртмәне}} торгызу',
 'viewdeleted_short' => '{{PLURAL:$1|1 бетерелгән үзгәртүне|$1 бетерелгән үзгәртүне}} карау',
 'protect' => 'Яклау',
@@ -443,7 +454,7 @@ $1',
 'pool-queuefull' => 'Сорауларны саклау  бите тулы',
 'pool-errorunknown' => 'Билгесез  хата',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} турында',
 'aboutpage' => 'Project:Тасвирлама',
 'copyright' => 'Мәгълүмат $1 буенча таратыла.',
@@ -453,7 +464,6 @@ $1',
 'disclaimers' => 'Җаваплылыктан баш тарту',
 'disclaimerpage' => 'Project:Җаваплылыктан баш тарту',
 'edithelp' => 'Үзгәртү буенча ярдәм',
-'edithelppage' => 'Help:Үзгәртү',
 'helppage' => 'Help:Эчтәлек',
 'mainpage' => 'Баш бит',
 'mainpage-description' => 'Баш бит',
@@ -483,7 +493,6 @@ $1',
 'newmessagesdifflinkplural' => '{{PLURAL:$1|соңгы үзгәртү|соңгы үзгәртүләр}}',
 'youhavenewmessagesmulti' => 'Сезгә монда яңа хәбәрләр бар: $1',
 'editsection' => 'үзгәртү',
-'editsection-brackets' => '[$1]',
 'editold' => 'үзгәртү',
 'viewsourceold' => 'башлангыч кодны карау',
 'editlink' => 'үзгәртү',
@@ -535,17 +544,6 @@ $1',
 # General errors
 'error' => 'Хата',
 'databaseerror' => 'Мәгълүматлар базасында хата',
-'dberrortext' => 'Мәгълүматлар базасына җибәрелгән сорауда синтаксис хатасы табылды.
-Программада хата булырга мөмкин.
-Мәгълүматлар базасына җибәрелгән соңгы сорау:
-<blockquote><tt>$1</tt></blockquote>
-<tt>«$2»</tt> функциясеннән.
-База <tt>«$3: $4»</tt> хатасын кайтарды.',
-'dberrortextcl' => 'Мәгълүматлар базасына җибәрелгән сорауда синтаксик хата табылды.
-Мәгълүматлар базасына җибәрелгән соңгы сорау:
-"$1"
-«$2» функциясеннән.
-База «$3: $4» хатасын кайтарды.',
 'laggedslavemode' => 'Игътибар: биттә соңгы яңартулар күрсәтелмәгән булырга мөмкин.',
 'readonly' => 'Мәгълүматлар базасына язу ябылган',
 'enterlockreason' => 'Ябылу сәбәбен һәм вакытын күрсәтегез.',
@@ -595,12 +593,13 @@ $1',
 'viewyourtext' => "Сез '''үз төзәтмәләрегезне''' бу сәхифәдә карый һәм чыгарылма текстны күчермәли аласыз:",
 'protectedinterface' => 'Бу биттә программа тәэминатының интерфейс хәбәрләре бар. Вандализмга каршы көрәш сәбәпле, бу битне үзгәртү тыела. Әлеге хәбәрнең тәрҗемәсен өстәү яки үзгәртү өчен, зинһар өчен, MediaWiki [//translatewiki.net/ translatewiki.net] тәрҗемәләү сайтын кулланыгыз.',
 'editinginterface' => "'''Игътибар:''' Сез программа тәэминатының интерфейс тексты булган битне үзгәртәсез. Бу башка кулланучыларга да тәэсир итәчәк. Тәрҗемә өчен [//translatewiki.net/wiki/Main_Page?setlang=tt-cyrl translatewiki.net] локализацияләү проектын кулланыгыз.",
-'sqlhidden' => '(SQL-сорау яшерелгән)',
 'cascadeprotected' => 'Бу бит үзгәртүләрдән сакланган, чөнки ул каскадлы саклау кабул ителгән {{PLURAL:$1|биткә|битләргә}} өстәлгән:
 $2',
 'namespaceprotected' => "'''$1''' исем киңлегендәге битләрне үзгәртү өчен сезнең рөхсәтегез юк.",
 'customcssprotected' => 'Сез бу CSS-сәхифәне үзгәртә алмыйсыз, чөнки монда башка кулланучының шәхси көйләнмәләре саклана',
 'customjsprotected' => 'Сез бу JavaScript-сәхифәне үзгәртә алмыйсыз, чөнк монда башка кулланучының шәхси көйләнмәләре саклана',
+'mycustomcssprotected' => 'Сезнең әлеге CSS битен үзгәртергә хокукыгыз юк.',
+'mycustomjsprotected' => 'Сезнең биттә JavaScript үзгәртергә хокукларыгыз юк.',
 'ns-specialprotected' => 'Махсус битләрне үзгәртеп булмый.',
 'titleprotected' => "Бу исем белән бит ясау [[User:$1|$1]] тарафыннан тыелган.
 Ул күрсәткән сәбәп: ''$2''.",
@@ -617,10 +616,19 @@ $2',
 Кайбер битләр Сез кергән кебек күрсәтелергә мөмкин. Моны бетерү өчен браузер кэшын чистартыгыз.",
 'welcomeuser' => 'Хуш килдегез, $1!',
 'yourname' => 'Кулланучы исеме:',
+'userlogin-yourname' => 'Кулланучы исеме',
+'userlogin-yourname-ph' => 'Хисап язмасының исемен кертегез',
+'createacct-another-username-ph' => 'Хисап язмасының исемен кертегез',
 'yourpassword' => 'Серсүз:',
+'userlogin-yourpassword' => 'Серсүз',
+'userlogin-yourpassword-ph' => 'Серсүзне языгыз',
+'createacct-yourpassword-ph' => 'Серсүзне кертегез',
 'yourpasswordagain' => 'Серсүзне кабат кертү:',
+'createacct-yourpasswordagain' => 'Серсүзне раслагыз',
+'createacct-yourpasswordagain-ph' => 'Серсүзне кабаттан кертегез',
 'remembermypassword' => 'Хисап язмамны бу браузерда саклансын (иң күп $1 {{PLURAL:$1|көн|көн|көн}}гә кадәр)',
-'securelogin-stick-https' => 'Керүдән соң HTTPS буенча тоташтыру дәвам ителсен',
+'userlogin-remembermypassword' => 'Системада калырга',
+'userlogin-signwithsecure' => 'Якланган кушылу',
 'yourdomainname' => 'Сезнең доменыгыз:',
 'password-change-forbidden' => 'Сез бу викидә серсүзне үзгәртә алмыйсыз.',
 'externaldberror' => 'Тышкы мәгълүмат базасы ярдәмендә аутентификация үткәндә хата чыкты, яисә тышкы хисап язмагызга үзгәрешләр кертү хокукыгыз юк.',
@@ -632,6 +640,8 @@ $2',
 'logout' => 'Чыгу',
 'userlogout' => 'Чыгу',
 'notloggedin' => 'Сез хисап язмагызга кермәгәнсез',
+'userlogin-noaccount' => 'Аккаунт юкмы?',
+'userlogin-joinproject' => 'Проектка керү',
 'nologin' => "Кулланучы исемең юкмы? '''$1'''",
 'nologinlink' => 'Хисап язмасы төзегез',
 'createaccount' => 'Яңа кулланучы теркәү',
@@ -709,7 +719,7 @@ $2',
 'newpassword' => 'Яңа серсүз:',
 'retypenew' => 'Яңа серсүзне кабатлагыз:',
 'resetpass_submit' => 'Серсүз куеп керү',
-'resetpass_success' => 'Сезнең серсүз уңышлы үзгәртелде! Системага керү башкарыла...',
+'changepassword-success' => 'Сезнең серсүз уңышлы үзгәртелде! Системага керү башкарыла...',
 'resetpass_forbidden' => 'Серсүз үзгәртелә алмый',
 'resetpass-no-info' => 'Бу битне карау өчен сез системага үз хисап язмагыз ярдәмендә керергә тиеш.',
 'resetpass-submit-loggedin' => 'Серсүзне үзгәртү',
@@ -720,10 +730,8 @@ $2',
 
 # Special:PasswordReset
 'passwordreset' => 'Серсүзне бетерү',
-'passwordreset-text' => 'Сезнең хисап язмасының параметрлары турында хат алыр өчен, түбәндәгеләрне тутырыгыз',
 'passwordreset-legend' => 'Серсүзне яңадан кую',
 'passwordreset-disabled' => 'Бу викида серсүз бетереп булмый',
-'passwordreset-pretext' => '{{PLURAL:$1||Түбәндә күрсәтелгән мәгълүматларның бер өлешен языгыз}}',
 'passwordreset-username' => 'Кулланучы исеме:',
 'passwordreset-domain' => 'Домен:',
 'passwordreset-capture' => 'Килеп чыккан хатны күрсәтелсенме?',
@@ -961,6 +969,8 @@ $2
 'edit-no-change' => 'Текстта үзгәешләр ясалмау сәбәпле, сезнең үзгәртү кире кагыла.',
 'edit-already-exists' => 'Яңа бит төзеп булмый.
 Ул инде бар.',
+'editwarning-warning' => 'Башка биткә күчү вакытында бу мәкаләгә керткән үзгәрешләр югалырга мөмкин.
+Әгәрдә сез теркәлгән булсагыз, бу искәрмәне сез «Көйләнмәләрем» өлешендә үзгәртә аласыз.',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''Игътибар:''' бу биттә хәтерне еш кулланучы функцияләр артык күп.
@@ -1136,7 +1146,6 @@ $1",
 'searchmenu-legend' => 'Эзләү көйләнмәләре',
 'searchmenu-exists' => "'''Бу вики-проекта «[[:$1]]» исемле бит бар инде'''",
 'searchmenu-new' => "'''«[[:$1]]»  исемле яңа бит ясау'''",
-'searchhelp-url' => 'Help:Эчтәлек',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Бу префикслы битләрне күрсәтү]]',
 'searchprofile-articles' => 'Төп битләр',
 'searchprofile-project' => 'Ярдәм һәм проектлар бите',
@@ -1178,14 +1187,6 @@ $1",
 'powersearch-togglenone' => 'Бирни дә юк',
 'search-external' => 'Тышкы эзләү',
 
-# Quickbar
-'qbsettings' => 'Күчешләр аслыгы',
-'qbsettings-none' => 'Күрсәтмәү',
-'qbsettings-fixedleft' => 'Сулда күчерелмәс',
-'qbsettings-fixedright' => 'Уңда күчерелмәс',
-'qbsettings-floatingleft' => 'Сулда йөзмә',
-'qbsettings-floatingright' => 'Уңда йөзмә',
-
 # Preferences page
 'preferences' => 'Көйләнмәләр',
 'mypreferences' => 'Көйләнмәләр',
@@ -1215,7 +1216,6 @@ $1",
 'resetprefs' => 'Сакланмаган үзгәртүләрне бетерү',
 'restoreprefs' => 'Баштагы көйләнмәләрне кире кайтару',
 'prefs-editing' => 'Үзгәртү',
-'prefs-edit-boxsize' => 'Үзгәртү тәрәзәсенең зурлыгы',
 'rows' => 'Юллар:',
 'columns' => 'Баганалар:',
 'searchresultshead' => 'Эзләү',
@@ -1226,7 +1226,6 @@ $1",
 'recentchangesdays-max' => '( $1 {{PLURAL:$1|көннән}} дә артык булмаска тиеш)',
 'recentchangescount' => 'Төп буларак кулланучы үзгәртүләр саны:',
 'prefs-help-recentchangescount' => 'Үз өченә үзгәртүләрне, битләрнең тарихын һәм язлу көндәлеген дә кертә.',
-'prefs-help-watchlist-token' => 'Әлеге юлны серсүз белән тутыру сезнең күзәтү исемлегегезнең RSS-тасмасын барлыкка китерәчәк. Мондагы серсүзне белүче һәрбер кеше сезнең күзәтү исемлегегезне карый ала, шуңа күрә автоматик рәвештә ясалган серсүзне кулланыгыз: $1',
 'savedprefs' => 'Көйләнмәләрегез сакланды.',
 'timezonelegend' => 'Сәгать поясы:',
 'localtime' => 'Җирле вакыт',
@@ -1256,7 +1255,6 @@ $1",
 'prefs-common-css-js' => 'Барлык бизәлешләр өчен гомуми CSS/JS:',
 'prefs-reset-intro' => 'Бу бит сезнең көйләнмәләрегезне бетерү өчен кулланыла. Бу эшне башкару нәтиҗәсендә сез яңадан үз көйләнмәләрне яңадан кайтара алмыйсыз.',
 'prefs-emailconfirm-label' => 'E-mail раслау',
-'prefs-textboxsize' => 'Үзгәртү тәрәзәсенең зурлыгы',
 'youremail' => 'Электрон почта:',
 'username' => 'Кулланучы исеме:',
 'uid' => 'Кулланучының идентификаторы:',
@@ -1408,7 +1406,6 @@ $1",
 'recentchangeslinked-feed' => 'Бәйләнешле үзгәртүләр',
 'recentchangeslinked-toolbox' => 'Бәйләнешле үзгәртүләр',
 'recentchangeslinked-title' => '"$1" битенә бәйләнешле үзгәртүләр',
-'recentchangeslinked-noresult' => 'Күрсәтелгән вакытта сылташкан битләрнең үзгәртелмәләре юк иде.',
 'recentchangeslinked-summary' => "Бу күрсәтелгән бит белән сылталган (йә күрсәтелгән төркемгә керткән) битләрнең үзгәртелмәләре исемлеге.
 [[Special:Watchlist|Күзәтү исемлегегезгә]] керә торган битләр '''калын'''.",
 'recentchangeslinked-page' => 'Битнең исеме:',
@@ -1598,9 +1595,6 @@ PICT # төрле
 'statistics-users-active' => 'Актив кулланучылар',
 'statistics-users-active-desc' => '{{PLURAL:$1|$1 көн }} өчендә нинди дә булса үзгәртүләр керткән кулланучылар',
 'statistics-mostpopular' => 'Иң күп каралучы битләр',
-
-'disambiguations' => 'Күп мәгънәле сүзләр турында битләр',
-'disambiguationspage' => 'Template:disambig',
 
 'doubleredirects' => 'Икеләтә юнәлтүләр',
 
@@ -1998,7 +1992,6 @@ $1',
 'block-log-flags-noemail' => 'хат җибәрү тыелган',
 'block-log-flags-hiddenname' => 'кулланучының исеме яшерелгән',
 'proxyblocker' => 'Прокси тыю',
-'proxyblocksuccess' => 'Эшләнде',
 'sorbsreason' => 'Сезнең IP адресыгыз DNSBLда ачык прокси дип санала.',
 
 # Developer tools
@@ -2174,13 +2167,8 @@ $1',
 'pageinfo-toolboxlink' => 'Бит турында мәгълүмат',
 
 # Skin names
-'skinname-standard' => 'Классик',
-'skinname-nostalgia' => 'Искә алу',
 'skinname-cologneblue' => 'Зәңгәр сагыш',
 'skinname-monobook' => 'Китап',
-'skinname-myskin' => 'Үзем',
-'skinname-chick' => 'Чеби',
-'skinname-simple' => 'Гади',
 'skinname-modern' => 'Замана',
 'skinname-vector' => 'Сызымлы',
 
@@ -2250,7 +2238,7 @@ $1',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Киңлек',
 'exif-imagelength' => 'Биеклек',
 'exif-imagedescription' => 'Рәсемнең исеме',
@@ -2459,11 +2447,6 @@ $1',
 'version-software' => 'Урнаштырылган программа белән тәэмин ителешне',
 'version-software-product' => 'Продукт',
 'version-software-version' => 'Версия',
-
-# Special:FilePath
-'filepath' => 'Файлга юл',
-'filepath-page' => 'Файл:',
-'filepath-submit' => 'Күчү',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Бер үк файлларны эзләү',

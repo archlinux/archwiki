@@ -7,15 +7,17 @@
 
 /** Tests for MediaWiki languages/classes/LanguageGd.php */
 class LanguageGdTest extends LanguageClassesTestCase {
-
-	/** @dataProvider providerPlural */
-	function testPlural( $result, $value ) {
+	/**
+	 * @dataProvider providerPlural
+	 * @covers Language::convertPlural
+	*/
+	public function testPlural( $result, $value ) {
 		$forms = array( 'one', 'two', 'few', 'other' );
 		$this->assertEquals( $result, $this->getLang()->convertPlural( $value, $forms ) );
 	}
 
-	function providerPlural() {
-		return array (
+	public static function providerPlural() {
+		return array(
 			array( 'other', 0 ),
 			array( 'one', 1 ),
 			array( 'two', 2 ),
@@ -27,22 +29,25 @@ class LanguageGdTest extends LanguageClassesTestCase {
 		);
 	}
 
-	/** @dataProvider providerPluralExplicit */
-	function testExplicitPlural( $result, $value ) {
+	/**
+	 * @dataProvider providerPluralExplicit
+	 * @covers Language::convertPlural
+	 */
+	public function testExplicitPlural( $result, $value ) {
 		$forms = array( 'one', 'two', 'few', 'other', '11=Form11', '12=Form12' );
 		$this->assertEquals( $result, $this->getLang()->convertPlural( $value, $forms ) );
 	}
 
-	function providerPluralExplicit() {
-		return array (
-				array( 'other', 0 ),
-				array( 'one', 1 ),
-				array( 'two', 2 ),
-				array( 'Form11', 11 ),
-				array( 'Form12', 12 ),
-				array( 'few', 3 ),
-				array( 'few', 19 ),
-				array( 'other', 200 ),
+	public static function providerPluralExplicit() {
+		return array(
+			array( 'other', 0 ),
+			array( 'one', 1 ),
+			array( 'two', 2 ),
+			array( 'Form11', 11 ),
+			array( 'Form12', 12 ),
+			array( 'few', 3 ),
+			array( 'few', 19 ),
+			array( 'other', 200 ),
 		);
 	}
 }

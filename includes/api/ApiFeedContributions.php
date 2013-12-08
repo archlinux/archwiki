@@ -43,11 +43,11 @@ class ApiFeedContributions extends ApiBase {
 
 		global $wgFeed, $wgFeedClasses, $wgSitename, $wgLanguageCode;
 
-		if( !$wgFeed ) {
+		if ( !$wgFeed ) {
 			$this->dieUsage( 'Syndication feeds are not available', 'feed-unavailable' );
 		}
 
-		if( !isset( $wgFeedClasses[$params['feedformat']] ) ) {
+		if ( !isset( $wgFeedClasses[$params['feedformat']] ) ) {
 			$this->dieUsage( 'Invalid subscription feed type', 'feed-invalid' );
 		}
 
@@ -82,7 +82,7 @@ class ApiFeedContributions extends ApiBase {
 		) );
 
 		$feedItems = array();
-		if( $pager->getNumRows() > 0 ) {
+		if ( $pager->getNumRows() > 0 ) {
 			foreach ( $pager->mResult as $row ) {
 				$feedItems[] = $this->feedItem( $row );
 			}
@@ -93,7 +93,7 @@ class ApiFeedContributions extends ApiBase {
 
 	protected function feedItem( $row ) {
 		$title = Title::makeTitle( intval( $row->page_namespace ), $row->page_title );
-		if( $title ) {
+		if ( $title && $title->userCan( 'read', $this->getUser() ) ) {
 			$date = $row->rev_timestamp;
 			$comments = $title->getTalkPage()->getFullURL();
 			$revision = Revision::newFromRow( $row );
@@ -106,9 +106,8 @@ class ApiFeedContributions extends ApiBase {
 				$this->feedItemAuthor( $revision ),
 				$comments
 			);
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -124,7 +123,7 @@ class ApiFeedContributions extends ApiBase {
 	 * @return string
 	 */
 	protected function feedItemDesc( $revision ) {
-		if( $revision ) {
+		if ( $revision ) {
 			$msg = wfMessage( 'colon-separator' )->inContentLanguage()->text();
 			$content = $revision->getContent();
 
@@ -149,7 +148,7 @@ class ApiFeedContributions extends ApiBase {
 	public function getAllowedParams() {
 		global $wgFeedClasses;
 		$feedFormatNames = array_keys( $wgFeedClasses );
-		return array (
+		return array(
 			'feedformat' => array(
 				ApiBase::PARAM_DFLT => 'rss',
 				ApiBase::PARAM_TYPE => $feedFormatNames

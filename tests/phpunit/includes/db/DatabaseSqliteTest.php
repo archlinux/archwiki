@@ -9,6 +9,7 @@ class MockDatabaseSqlite extends DatabaseSqliteStandalone {
 
 	function query( $sql, $fname = '', $tempIgnore = false ) {
 		$this->lastQuery = $sql;
+
 		return true;
 	}
 
@@ -26,6 +27,10 @@ class MockDatabaseSqlite extends DatabaseSqliteStandalone {
  * @group medium
  */
 class DatabaseSqliteTest extends MediaWikiTestCase {
+
+	/**
+	 * @var MockDatabaseSqlite
+	 */
 	var $db;
 
 	protected function setUp() {
@@ -82,6 +87,7 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider provideAddQuotes()
+	 * @covers DatabaseSqlite::addQuotes
 	 */
 	public function testAddQuotes( $value, $expected ) {
 		// check quoting
@@ -104,6 +110,9 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 		}
 	}
 
+	/**
+	 * @covers DatabaseSqlite::replaceVars
+	 */
 	public function testReplaceVars() {
 		$this->assertEquals( 'foo', $this->replaceVars( 'foo' ), "Don't break anything accidentally" );
 
@@ -142,6 +151,9 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 		);
 	}
 
+	/**
+	 * @covers DatabaseSqlite::tableName
+	 */
 	public function testTableName() {
 		// @todo Moar!
 		$db = new DatabaseSqliteStandalone( ':memory:' );
@@ -152,6 +164,9 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 		$this->assertEquals( 'foobar', $db->tableName( 'bar' ) );
 	}
 
+	/**
+	 * @covers DatabaseSqlite::duplicateTableStructure
+	 */
 	public function testDuplicateTableStructure() {
 		$db = new DatabaseSqliteStandalone( ':memory:' );
 		$db->query( 'CREATE TABLE foo(foo, barfoo)' );
@@ -173,6 +188,9 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 		);
 	}
 
+	/**
+	 * @covers DatabaseSqlite::duplicateTableStructure
+	 */
 	public function testDuplicateTableStructureVirtual() {
 		$db = new DatabaseSqliteStandalone( ':memory:' );
 		if ( $db->getFulltextSearchModule() != 'FTS3' ) {
@@ -193,6 +211,9 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 		);
 	}
 
+	/**
+	 * @covers DatabaseSqlite::deleteJoin
+	 */
 	public function testDeleteJoin() {
 		$db = new DatabaseSqliteStandalone( ':memory:' );
 		$db->query( 'CREATE TABLE a (a_1)', __METHOD__ );
@@ -232,7 +253,7 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 
 	/**
 	 * Runs upgrades of older databases and compares results with current schema
-	 * @todo: currently only checks list of tables
+	 * @todo Currently only checks list of tables
 	 */
 	public function testUpgrades() {
 		global $IP, $wgVersion, $wgProfileToDatabase;
@@ -305,13 +326,19 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 		}
 	}
 
+	/**
+	 * @covers DatabaseSqlite::insertId
+	 */
 	public function testInsertIdType() {
 		$db = new DatabaseSqliteStandalone( ':memory:' );
-		$this->assertInstanceOf( 'ResultWrapper',
-			$db->query( 'CREATE TABLE a ( a_1 )', __METHOD__ ), "Database creationg" );
-		$this->assertTrue( $db->insert( 'a', array( 'a_1' => 10 ), __METHOD__ ),
-			"Insertion worked" );
-		$this->assertEquals( "integer", gettype( $db->insertId() ), "Actual typecheck" );
+
+		$databaseCreation = $db->query( 'CREATE TABLE a ( a_1 )', __METHOD__ );
+		$this->assertInstanceOf( 'ResultWrapper', $databaseCreation, "Database creation" );
+
+		$insertion = $db->insert( 'a', array( 'a_1' => 10 ), __METHOD__ );
+		$this->assertTrue( $insertion, "Insertion worked" );
+
+		$this->assertInternalType( 'integer', $db->insertId(), "Actual typecheck" );
 		$this->assertTrue( $db->close(), "closing database" );
 	}
 
@@ -327,12 +354,14 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 		$db->sourceFile( "$IP/tests/phpunit/data/db/sqlite/tables-$version.sql" );
 		$updater = DatabaseUpdater::newForDB( $db, false, $maint );
 		$updater->doUpdates( array( 'core' ) );
+
 		return $db;
 	}
 
 	private function getTables( $db ) {
 		$list = array_flip( $db->listTables() );
 		$excluded = array(
+			'external_user', // removed from core in 1.22
 			'math', // moved out of core in 1.18
 			'trackbacks', // removed from core in 1.19
 			'searchindex',
@@ -348,6 +377,7 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 		}
 		$list = array_flip( $list );
 		sort( $list );
+
 		return $list;
 	}
 
@@ -359,6 +389,7 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 			$cols[$col->name] = $col;
 		}
 		ksort( $cols );
+
 		return $cols;
 	}
 
@@ -376,10 +407,11 @@ class DatabaseSqliteTest extends MediaWikiTestCase {
 			$indexes[$index->name] = $index;
 		}
 		ksort( $indexes );
+
 		return $indexes;
 	}
 
-	function testCaseInsensitiveLike() {
+	public function testCaseInsensitiveLike() {
 		// TODO: Test this for all databases
 		$db = new DatabaseSqliteStandalone( ':memory:' );
 		$res = $db->query( 'SELECT "a" LIKE "A" AS a' );

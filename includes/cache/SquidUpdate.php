@@ -26,32 +26,42 @@
  * @ingroup Cache
  */
 class SquidUpdate {
-	var $urlArr, $mMaxTitles;
 
 	/**
-	 * @param $urlArr array
-	 * @param $maxTitles bool|int
+	 * Collection of URLs to purge.
+	 * @var array
 	 */
-	function __construct( $urlArr = array(), $maxTitles = false ) {
+	protected $urlArr;
+
+	/**
+	 * @param array $urlArr Collection of URLs to purge
+	 * @param bool|int $maxTitles Maximum number of unique URLs to purge
+	 */
+	public function __construct( $urlArr = array(), $maxTitles = false ) {
 		global $wgMaxSquidPurgeTitles;
 		if ( $maxTitles === false ) {
-			$this->mMaxTitles = $wgMaxSquidPurgeTitles;
-		} else {
-			$this->mMaxTitles = $maxTitles;
+			$maxTitles = $wgMaxSquidPurgeTitles;
 		}
-		$urlArr = array_unique( $urlArr ); // Remove duplicates
-		if ( count( $urlArr ) > $this->mMaxTitles ) {
-			$urlArr = array_slice( $urlArr, 0, $this->mMaxTitles );
+
+		// Remove duplicate URLs from list
+		$urlArr = array_unique( $urlArr );
+		if ( count( $urlArr ) > $maxTitles ) {
+			// Truncate to desired maximum URL count
+			$urlArr = array_slice( $urlArr, 0, $maxTitles );
 		}
 		$this->urlArr = $urlArr;
 	}
 
 	/**
-	 * @param $title Title
+	 * Create a SquidUpdate from the given Title object.
 	 *
+	 * The resulting SquidUpdate will purge the given Title's URLs as well as
+	 * the pages that link to it. Capped at $wgMaxSquidPurgeTitles total URLs.
+	 *
+	 * @param Title $title
 	 * @return SquidUpdate
 	 */
-	static function newFromLinksTo( &$title ) {
+	public static function newFromLinksTo( Title $title ) {
 		global $wgMaxSquidPurgeTitles;
 		wfProfileIn( __METHOD__ );
 
@@ -79,12 +89,11 @@ class SquidUpdate {
 	/**
 	 * Create a SquidUpdate from an array of Title objects, or a TitleArray object
 	 *
-	 * @param $titles array
-	 * @param $urlArr array
-	 *
+	 * @param array $titles
+	 * @param array $urlArr
 	 * @return SquidUpdate
 	 */
-	static function newFromTitles( $titles, $urlArr = array() ) {
+	public static function newFromTitles( $titles, $urlArr = array() ) {
 		global $wgMaxSquidPurgeTitles;
 		$i = 0;
 		foreach ( $titles as $title ) {
@@ -97,20 +106,19 @@ class SquidUpdate {
 	}
 
 	/**
-	 * @param $title Title
-	 *
+	 * @param Title $title
 	 * @return SquidUpdate
 	 */
-	static function newSimplePurge( &$title ) {
+	public static function newSimplePurge( Title $title ) {
 		$urlArr = $title->getSquidURLs();
 		return new SquidUpdate( $urlArr );
 	}
 
 	/**
-	 * Purges the list of URLs passed to the constructor
+	 * Purges the list of URLs passed to the constructor.
 	 */
-	function doUpdate() {
-		SquidUpdate::purge( $this->urlArr );
+	public function doUpdate() {
+		self::purge( $this->urlArr );
 	}
 
 	/**
@@ -119,27 +127,30 @@ class SquidUpdate {
 	 * (example: $urlArr[] = 'http://my.host/something')
 	 * XXX report broken Squids per mail or log
 	 *
-	 * @param $urlArr array
-	 * @return void
+	 * @param array $urlArr List of full URLs to purge
 	 */
-	static function purge( $urlArr ) {
-		global $wgSquidServers, $wgHTCPMulticastRouting;
+	public static function purge( $urlArr ) {
+		global $wgSquidServers, $wgHTCPRouting;
 
-		if( !$urlArr ) {
+		if ( !$urlArr ) {
 			return;
 		}
 
-		wfDebug( "Squid purge: " . implode( ' ', $urlArr ) . "\n" );
+		wfDebugLog( 'squid', __METHOD__ . ': ' . implode( ' ', $urlArr ) . "\n" );
 
-		if ( $wgHTCPMulticastRouting ) {
-			SquidUpdate::HTCPPurge( $urlArr );
+		if ( $wgHTCPRouting ) {
+			self::HTCPPurge( $urlArr );
 		}
 
 		wfProfileIn( __METHOD__ );
 
-		$urlArr = array_unique( $urlArr ); // Remove duplicates
-		$maxSocketsPerSquid = 8; //  socket cap per Squid
-		$urlsPerSocket = 400; // 400 seems to be a good tradeoff, opening a socket takes a while
+		// Remove duplicate URLs
+		$urlArr = array_unique( $urlArr );
+		// Maximum number of parallel connections per squid
+		$maxSocketsPerSquid = 8;
+		// Number of requests to send per socket
+		// 400 seems to be a good tradeoff, opening a socket takes a while
+		$urlsPerSocket = 400;
 		$socketsPerSquid = ceil( count( $urlArr ) / $urlsPerSocket );
 		if ( $socketsPerSquid > $maxSocketsPerSquid ) {
 			$socketsPerSquid = $maxSocketsPerSquid;
@@ -162,17 +173,20 @@ class SquidUpdate {
 	}
 
 	/**
+	 * Send Hyper Text Caching Protocol (HTCP) CLR requests.
+	 *
 	 * @throws MWException
-	 * @param $urlArr array
+	 * @param array $urlArr Collection of URLs to purge
 	 */
-	static function HTCPPurge( $urlArr ) {
-		global $wgHTCPMulticastRouting, $wgHTCPMulticastTTL;
+	public static function HTCPPurge( $urlArr ) {
+		global $wgHTCPRouting, $wgHTCPMulticastTTL;
 		wfProfileIn( __METHOD__ );
 
-		$htcpOpCLR = 4; // HTCP CLR
+		// HTCP CLR operation
+		$htcpOpCLR = 4;
 
 		// @todo FIXME: PHP doesn't support these socket constants (include/linux/in.h)
-		if( !defined( "IPPROTO_IP" ) ) {
+		if ( !defined( "IPPROTO_IP" ) ) {
 			define( "IPPROTO_IP", 0 );
 			define( "IP_MULTICAST_LOOP", 34 );
 			define( "IP_MULTICAST_TTL", 33 );
@@ -180,55 +194,73 @@ class SquidUpdate {
 
 		// pfsockopen doesn't work because we need set_sock_opt
 		$conn = socket_create( AF_INET, SOCK_DGRAM, SOL_UDP );
-		if ( $conn ) {
-			// Set socket options
-			socket_set_option( $conn, IPPROTO_IP, IP_MULTICAST_LOOP, 0 );
-			if ( $wgHTCPMulticastTTL != 1 )
-				socket_set_option( $conn, IPPROTO_IP, IP_MULTICAST_TTL,
-					$wgHTCPMulticastTTL );
+		if ( ! $conn ) {
+			$errstr = socket_strerror( socket_last_error() );
+			wfDebugLog( 'squid', __METHOD__ .
+				": Error opening UDP socket: $errstr\n" );
+			wfProfileOut( __METHOD__ );
+			return;
+		}
 
-			$urlArr = array_unique( $urlArr ); // Remove duplicates
-			foreach ( $urlArr as $url ) {
-				if( !is_string( $url ) ) {
-					throw new MWException( 'Bad purge URL' );
-				}
-				$url = SquidUpdate::expand( $url );
-				$conf = self::getRuleForURL( $url, $wgHTCPMulticastRouting );
-				if ( !$conf ) {
-					wfDebug( "No HTCP rule configured for URL $url , skipping\n" );
-					continue;
-				}
-				if ( !isset( $conf['host'] ) || !isset( $conf['port'] ) ) {
+		// Set socket options
+		socket_set_option( $conn, IPPROTO_IP, IP_MULTICAST_LOOP, 0 );
+		if ( $wgHTCPMulticastTTL != 1 ) {
+			// Set multicast time to live (hop count) option on socket
+			socket_set_option( $conn, IPPROTO_IP, IP_MULTICAST_TTL,
+				$wgHTCPMulticastTTL );
+		}
+
+		// Remove duplicate URLs from collection
+		$urlArr = array_unique( $urlArr );
+		foreach ( $urlArr as $url ) {
+			if ( !is_string( $url ) ) {
+				wfProfileOut( __METHOD__ );
+				throw new MWException( 'Bad purge URL' );
+			}
+			$url = self::expand( $url );
+			$conf = self::getRuleForURL( $url, $wgHTCPRouting );
+			if ( !$conf ) {
+				wfDebugLog( 'squid', __METHOD__ .
+					"No HTCP rule configured for URL {$url} , skipping\n" );
+				continue;
+			}
+
+			if ( isset( $conf['host'] ) && isset( $conf['port'] ) ) {
+				// Normalize single entries
+				$conf = array( $conf );
+			}
+			foreach ( $conf as $subconf ) {
+				if ( !isset( $subconf['host'] ) || !isset( $subconf['port'] ) ) {
+					wfProfileOut( __METHOD__ );
 					throw new MWException( "Invalid HTCP rule for URL $url\n" );
 				}
-
-				// Construct a minimal HTCP request diagram
-				// as per RFC 2756
-				// Opcode 'CLR', no response desired, no auth
-				$htcpTransID = rand();
-
-				$htcpSpecifier = pack( 'na4na*na8n',
-					4, 'HEAD', strlen( $url ), $url,
-					8, 'HTTP/1.0', 0 );
-
-				$htcpDataLen = 8 + 2 + strlen( $htcpSpecifier );
-				$htcpLen = 4 + $htcpDataLen + 2;
-
-				// Note! Squid gets the bit order of the first
-				// word wrong, wrt the RFC. Apparently no other
-				// implementation exists, so adapt to Squid
-				$htcpPacket = pack( 'nxxnCxNxxa*n',
-					$htcpLen, $htcpDataLen, $htcpOpCLR,
-					$htcpTransID, $htcpSpecifier, 2);
-
-				// Send out
-				wfDebug( "Purging URL $url via HTCP\n" );
-				socket_sendto( $conn, $htcpPacket, $htcpLen, 0,
-					$conf['host'], $conf['port'] );
 			}
-		} else {
-			$errstr = socket_strerror( socket_last_error() );
-			wfDebug( __METHOD__ . "(): Error opening UDP socket: $errstr\n" );
+
+			// Construct a minimal HTCP request diagram
+			// as per RFC 2756
+			// Opcode 'CLR', no response desired, no auth
+			$htcpTransID = rand();
+
+			$htcpSpecifier = pack( 'na4na*na8n',
+				4, 'HEAD', strlen( $url ), $url,
+				8, 'HTTP/1.0', 0 );
+
+			$htcpDataLen = 8 + 2 + strlen( $htcpSpecifier );
+			$htcpLen = 4 + $htcpDataLen + 2;
+
+			// Note! Squid gets the bit order of the first
+			// word wrong, wrt the RFC. Apparently no other
+			// implementation exists, so adapt to Squid
+			$htcpPacket = pack( 'nxxnCxNxxa*n',
+				$htcpLen, $htcpDataLen, $htcpOpCLR,
+				$htcpTransID, $htcpSpecifier, 2 );
+
+			wfDebugLog( 'squid', __METHOD__ .
+				"Purging URL $url via HTCP\n" );
+			foreach ( $conf as $subconf ) {
+				socket_sendto( $conn, $htcpPacket, $htcpLen, 0,
+					$subconf['host'], $subconf['port'] );
+			}
 		}
 		wfProfileOut( __METHOD__ );
 	}
@@ -244,21 +276,20 @@ class SquidUpdate {
 	 *
 	 * Client functions should not need to call this.
 	 *
-	 * @param $url string
-	 *
+	 * @param string $url
 	 * @return string
 	 */
-	static function expand( $url ) {
+	public static function expand( $url ) {
 		return wfExpandUrl( $url, PROTO_INTERNAL );
 	}
 
 	/**
 	 * Find the HTCP routing rule to use for a given URL.
 	 * @param string $url URL to match
-	 * @param array $rules Array of rules, see $wgHTCPMulticastRouting for format and behavior
+	 * @param array $rules Array of rules, see $wgHTCPRouting for format and behavior
 	 * @return mixed Element of $rules that matched, or false if nothing matched
 	 */
-	static function getRuleForURL( $url, $rules ) {
+	private static function getRuleForURL( $url, $rules ) {
 		foreach ( $rules as $regex => $routing ) {
 			if ( $regex === '' || preg_match( $regex, $url ) ) {
 				return $routing;

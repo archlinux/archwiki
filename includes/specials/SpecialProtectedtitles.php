@@ -27,7 +27,6 @@
  * @ingroup SpecialPage
  */
 class SpecialProtectedtitles extends SpecialPage {
-
 	protected $IdLevel = 'level';
 	protected $IdType = 'type';
 
@@ -58,8 +57,8 @@ class SpecialProtectedtitles extends SpecialPage {
 		if ( $pager->getNumRows() ) {
 			$this->getOutput()->addHTML(
 				$pager->getNavigationBar() .
-				'<ul>' . $pager->getBody() . '</ul>' .
-				$pager->getNavigationBar()
+					'<ul>' . $pager->getBody() . '</ul>' .
+					$pager->getNavigationBar()
 			);
 		} else {
 			$this->getOutput()->addWikiMsg( 'protectedtitlesempty' );
@@ -69,6 +68,7 @@ class SpecialProtectedtitles extends SpecialPage {
 	/**
 	 * Callback function to output a restriction
 	 *
+	 * @param object $row Database row
 	 * @return string
 	 */
 	function formatRow( $row ) {
@@ -76,28 +76,40 @@ class SpecialProtectedtitles extends SpecialPage {
 
 		static $infinity = null;
 
-		if( is_null( $infinity ) ) {
+		if ( is_null( $infinity ) ) {
 			$infinity = wfGetDB( DB_SLAVE )->getInfinity();
 		}
 
 		$title = Title::makeTitleSafe( $row->pt_namespace, $row->pt_title );
-		if( !$title ) {
-			return Html::rawElement( 'li', array(),
-				Html::element( 'span', array( 'class' => 'mw-invalidtitle' ),
-					Linker::getInvalidTitleDescription( $this->getContext(), $row->pt_namespace, $row->pt_title ) ) ) . "\n";
+		if ( !$title ) {
+			wfProfileOut( __METHOD__ );
+
+			return Html::rawElement(
+				'li',
+				array(),
+				Html::element(
+					'span',
+					array( 'class' => 'mw-invalidtitle' ),
+					Linker::getInvalidTitleDescription(
+						$this->getContext(),
+						$row->pt_namespace,
+						$row->pt_title
+					)
+				)
+			) . "\n";
 		}
 
 		$link = Linker::link( $title );
-
-		$description_items = array ();
-
+		$description_items = array();
+		// Messages: restriction-level-sysop, restriction-level-autoconfirmed
 		$protType = $this->msg( 'restriction-level-' . $row->pt_create_perm )->escaped();
-
 		$description_items[] = $protType;
-
 		$lang = $this->getLanguage();
-		$expiry = strlen( $row->pt_expiry ) ? $lang->formatExpiry( $row->pt_expiry, TS_MW ) : $infinity;
-		if( $expiry != $infinity ) {
+		$expiry = strlen( $row->pt_expiry ) ?
+			$lang->formatExpiry( $row->pt_expiry, TS_MW ) :
+			$infinity;
+
+		if ( $expiry != $infinity ) {
 			$user = $this->getUser();
 			$description_items[] = $this->msg(
 				'protect-expiring-local',
@@ -109,6 +121,7 @@ class SpecialProtectedtitles extends SpecialPage {
 
 		wfProfileOut( __METHOD__ );
 
+		// @todo i18n: This should use a comma separator instead of a hard coded comma, right?
 		return '<li>' . $lang->specialList( $link, implode( $description_items, ', ' ) ) . "</li>\n";
 	}
 
@@ -124,6 +137,7 @@ class SpecialProtectedtitles extends SpecialPage {
 		$action = htmlspecialchars( $wgScript );
 		$title = $this->getTitle();
 		$special = htmlspecialchars( $title->getPrefixedDBkey() );
+
 		return "<form action=\"$action\" method=\"get\">\n" .
 			'<fieldset>' .
 			Xml::element( 'legend', array(), $this->msg( 'protectedtitles' )->text() ) .
@@ -148,42 +162,45 @@ class SpecialProtectedtitles extends SpecialPage {
 				'all' => '',
 				'label' => $this->msg( 'namespace' )->text()
 			), array(
-				'name'  => 'namespace',
-				'id'    => 'namespace',
+				'name' => 'namespace',
+				'id' => 'namespace',
 				'class' => 'namespaceselector',
 			)
 		);
 	}
 
 	/**
+	 * @param string $pr_level Determines which option is selected as default
 	 * @return string Formatted HTML
 	 * @private
 	 */
 	function getLevelMenu( $pr_level ) {
 		global $wgRestrictionLevels;
 
-		$m = array( $this->msg( 'restriction-level-all' )->text() => 0 ); // Temporary array
+		// Temporary array
+		$m = array( $this->msg( 'restriction-level-all' )->text() => 0 );
 		$options = array();
 
 		// First pass to load the log names
-		foreach( $wgRestrictionLevels as $type ) {
+		foreach ( $wgRestrictionLevels as $type ) {
 			if ( $type != '' && $type != '*' ) {
+				// Messages: restriction-level-sysop, restriction-level-autoconfirmed
 				$text = $this->msg( "restriction-level-$type" )->text();
 				$m[$text] = $type;
 			}
 		}
+
 		// Is there only one level (aside from "all")?
-		if( count( $m ) <= 2 ) {
+		if ( count( $m ) <= 2 ) {
 			return '';
 		}
 		// Third pass generates sorted XHTML content
-		foreach( $m as $text => $type ) {
-			$selected = ($type == $pr_level );
+		foreach ( $m as $text => $type ) {
+			$selected = ( $type == $pr_level );
 			$options[] = Xml::option( $text, $type, $selected );
 		}
 
-		return
-			Xml::label( $this->msg( 'restriction-level' )->text(), $this->IdLevel ) . '&#160;' .
+		return Xml::label( $this->msg( 'restriction-level' )->text(), $this->IdLevel ) . '&#160;' .
 			Xml::tags( 'select',
 				array( 'id' => $this->IdLevel, 'name' => $this->IdLevel ),
 				implode( "\n", $options ) );
@@ -201,12 +218,14 @@ class SpecialProtectedtitles extends SpecialPage {
 class ProtectedTitlesPager extends AlphabeticPager {
 	public $mForm, $mConds;
 
-	function __construct( $form, $conds = array(), $type, $level, $namespace, $sizetype = '', $size = 0 ) {
+	function __construct( $form, $conds = array(), $type, $level, $namespace,
+		$sizetype = '', $size = 0
+	) {
 		$this->mForm = $form;
 		$this->mConds = $conds;
 		$this->level = $level;
 		$this->namespace = $namespace;
-		$this->size = intval($size);
+		$this->size = intval( $size );
 		parent::__construct( $form->getContext() );
 	}
 
@@ -222,6 +241,7 @@ class ProtectedTitlesPager extends AlphabeticPager {
 
 		$lb->execute();
 		wfProfileOut( __METHOD__ );
+
 		return '';
 	}
 
@@ -242,10 +262,14 @@ class ProtectedTitlesPager extends AlphabeticPager {
 	function getQueryInfo() {
 		$conds = $this->mConds;
 		$conds[] = 'pt_expiry>' . $this->mDb->addQuotes( $this->mDb->timestamp() );
-		if( $this->level )
+		if ( $this->level ) {
 			$conds['pt_create_perm'] = $this->level;
-		if( !is_null( $this->namespace ) )
+		}
+
+		if ( !is_null( $this->namespace ) ) {
 			$conds[] = 'pt_namespace=' . $this->mDb->addQuotes( $this->namespace );
+		}
+
 		return array(
 			'tables' => 'protected_titles',
 			'fields' => array( 'pt_namespace', 'pt_title', 'pt_create_perm',

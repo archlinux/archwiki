@@ -105,7 +105,7 @@ abstract class RevisionListBase extends ContextSource {
 	 * @return int
 	 */
 	public function length() {
-		if( !$this->res ) {
+		if ( !$this->res ) {
 			return 0;
 		} else {
 			return $this->res->numRows();
@@ -352,8 +352,7 @@ class RevisionItem extends RevisionItemBase {
 		if ( $this->isDeleted() && !$this->canViewContent() ) {
 			return $this->context->msg( 'diff' )->escaped();
 		} else {
-			return
-				Linker::link(
+			return Linker::link(
 					$this->list->title,
 					$this->context->msg( 'diff' )->escaped(),
 					array(),

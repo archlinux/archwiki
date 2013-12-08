@@ -197,14 +197,14 @@ define( 'EDIT_AUTOSUMMARY', 64 );
 define( 'LIST_COMMA', 0 );
 define( 'LIST_AND', 1 );
 define( 'LIST_SET', 2 );
-define( 'LIST_NAMES', 3);
-define( 'LIST_OR', 4);
+define( 'LIST_NAMES', 3 );
+define( 'LIST_OR', 4 );
 /**@}*/
 
 /**
  * Unicode and normalisation related
  */
-require_once __DIR__.'/normal/UtfNormalDefines.php';
+require_once __DIR__ . '/normal/UtfNormalDefines.php';
 
 /**@{
  * Hook support constants
@@ -235,11 +235,6 @@ define( 'OT_PLAIN', 4 );
 define( 'SFH_NO_HASH', 1 );
 define( 'SFH_OBJECT_ARGS', 2 );
 /**@}*/
-
-/**
- * Flags for Parser::setLinkHook
- */
-define( 'SLH_PATTERN', 1 );
 
 /**
  * Flags for Parser::replaceLinkHolders

@@ -23,7 +23,7 @@
  */
 
 $optionsWithArgs = RecompressTracked::getOptionsWithArgs();
-require( __DIR__ . '/../commandLine.inc' );
+require __DIR__ . '/../commandLine.inc';
 
 if ( count( $args ) < 1 ) {
 	echo "Usage: php recompressTracked.php [options] <cluster> [... <cluster>...]
@@ -279,7 +279,7 @@ class RecompressTracked {
 	 */
 	function dispatchToSlave( $slaveId, $args ) {
 		$args = (array)$args;
-		$cmd = implode( ' ',  $args );
+		$cmd = implode( ' ', $args );
 		fwrite( $this->slavePipes[$slaveId], "$cmd\n" );
 	}
 

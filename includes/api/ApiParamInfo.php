@@ -149,7 +149,7 @@ class ApiParamInfo extends ApiBase {
 				$item = array();
 				if ( is_numeric( $k ) ) {
 					$retval['examples'] .= $v;
-					$result->setContent( $item, $v );
+					ApiResult::setContent( $item, $v );
 				} else {
 					if ( !is_array( $v ) ) {
 						$item['description'] = $v;
@@ -157,7 +157,7 @@ class ApiParamInfo extends ApiBase {
 						$item['description'] = implode( $v, "\n" );
 					}
 					$retval['examples'] .= $item['description'] . ' ' . $k;
-					$result->setContent( $item, $k );
+					ApiResult::setContent( $item, $k );
 				}
 				$retval['allexamples'][] = $item;
 			}
@@ -300,7 +300,7 @@ class ApiParamInfo extends ApiBase {
 		}
 
 		// Errors
-		$retval['errors'] = $this->parseErrors( $obj->getPossibleErrors() );
+		$retval['errors'] = $this->parseErrors( $obj->getFinalPossibleErrors() );
 		$result->setIndexedTagName( $retval['errors'], 'error' );
 
 		return $retval;

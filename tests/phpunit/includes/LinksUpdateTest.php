@@ -7,7 +7,7 @@
  */
 class LinksUpdateTest extends MediaWikiTestCase {
 
-	function  __construct( $name = null, array $data = array(), $dataName = '' ) {
+	function __construct( $name = null, array $data = array(), $dataName = '' ) {
 		parent::__construct( $name, $data, $dataName );
 
 		$this->tablesUsed = array_merge( $this->tablesUsed,
@@ -60,18 +60,30 @@ class LinksUpdateTest extends MediaWikiTestCase {
 		$po->addLink( Title::newFromText( "linksupdatetest:Foo" ) ); // interwiki link should be ignored
 		$po->addLink( Title::newFromText( "#Foo" ) ); // hash link should be ignored
 
-		$this->assertLinksUpdate( $t, $po, 'pagelinks', 'pl_namespace, pl_title', 'pl_from = 111', array(
+		$update = $this->assertLinksUpdate( $t, $po, 'pagelinks', 'pl_namespace, pl_title', 'pl_from = 111', array(
 			array( NS_MAIN, 'Foo' ),
 		) );
+		$this->assertArrayEquals( array(
+			Title::makeTitle( NS_MAIN, 'Foo' ),  // newFromText doesn't yield the same internal state....
+		), $update->getAddedLinks() );
 
 		$po = new ParserOutput();
 		$po->setTitleText( $t->getPrefixedText() );
 
 		$po->addLink( Title::newFromText( "Bar" ) );
+		$po->addLink( Title::newFromText( "Talk:Bar" ) );
 
-		$this->assertLinksUpdate( $t, $po, 'pagelinks', 'pl_namespace, pl_title', 'pl_from = 111', array(
+		$update = $this->assertLinksUpdate( $t, $po, 'pagelinks', 'pl_namespace, pl_title', 'pl_from = 111', array(
 			array( NS_MAIN, 'Bar' ),
+			array( NS_TALK, 'Bar' ),
 		) );
+		$this->assertArrayEquals( array(
+			Title::makeTitle( NS_MAIN, 'Bar' ),
+			Title::makeTitle( NS_TALK, 'Bar' ),
+		), $update->getAddedLinks() );
+		$this->assertArrayEquals( array(
+			Title::makeTitle( NS_MAIN, 'Foo' ),
+		), $update->getRemovedLinks() );
 	}
 
 	public function testUpdate_externallinks() {
@@ -122,7 +134,6 @@ class LinksUpdateTest extends MediaWikiTestCase {
 
 		$po->addImage( "Foo.png" );
 
-
 		$this->assertLinksUpdate( $t, $po, 'imagelinks', 'il_to', 'il_from = 111', array(
 			array( 'Foo.png' ),
 		) );
@@ -132,7 +143,6 @@ class LinksUpdateTest extends MediaWikiTestCase {
 		list( $t, $po ) = $this->makeTitleAndParserOutput( "Testing", 111 );
 
 		$po->addLanguageLink( Title::newFromText( "en:Foo" )->getFullText() );
-
 
 		$this->assertLinksUpdate( $t, $po, 'langlinks', 'll_lang, ll_title', 'll_from = 111', array(
 			array( 'En', 'Foo' ),
@@ -149,7 +159,7 @@ class LinksUpdateTest extends MediaWikiTestCase {
 		) );
 	}
 
-	#@todo: test recursive, too!
+	// @todo test recursive, too!
 
 	protected function assertLinksUpdate( Title $title, ParserOutput $parserOutput, $table, $fields, $condition, array $expectedRows ) {
 		$update = new LinksUpdate( $title, $parserOutput );
@@ -160,5 +170,6 @@ class LinksUpdateTest extends MediaWikiTestCase {
 		$update->commitTransaction();
 
 		$this->assertSelect( $table, $fields, $condition, $expectedRows );
+		return $update;
 	}
 }

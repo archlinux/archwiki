@@ -12,7 +12,7 @@ class WikiEditorHooks {
 
 	protected static $features = array(
 
-		/* Beta Features */
+		/* Toolbar Features */
 
 		'toolbar' => array(
 			'preferences' => array(
@@ -20,7 +20,7 @@ class WikiEditorHooks {
 				'usebetatoolbar' => array(
 					'type' => 'toggle',
 					'label-message' => 'wikieditor-toolbar-preference',
-					'section' => 'editing/beta',
+					'section' => 'editing/editor',
 				),
 			),
 			'requirements' => array(
@@ -36,7 +36,7 @@ class WikiEditorHooks {
 				'usebetatoolbar-cgd' => array(
 					'type' => 'toggle',
 					'label-message' => 'wikieditor-toolbar-dialogs-preference',
-					'section' => 'editing/beta',
+					'section' => 'editing/editor',
 				),
 			),
 			'requirements' => array(
@@ -52,7 +52,7 @@ class WikiEditorHooks {
 				'wikieditor-toolbar-hidesig' => array(
 					'type' => 'toggle',
 					'label-message' => 'wikieditor-toolbar-hidesig',
-					'section' => 'editing/beta',
+					'section' => 'editing/editor',
 				),
 			),
 			'requirements' => array(

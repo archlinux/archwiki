@@ -15,7 +15,7 @@ class ApiPurgeTest extends ApiTestCase {
 	/**
 	 * @group Broken
 	 */
-	function testPurgeMainPage() {
+	public function testPurgeMainPage() {
 		if ( !Title::newFromText( 'UTPage' )->exists() ) {
 			$this->markTestIncomplete( "The article [[UTPage]] does not exist" );
 		}
@@ -37,5 +37,4 @@ class ApiPurgeTest extends ApiTestCase {
 			$this->assertArrayHasKey( $pages[$v['title']], $v );
 		}
 	}
-
 }

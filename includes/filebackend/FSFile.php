@@ -28,7 +28,7 @@
  */
 class FSFile {
 	protected $path; // path to file
-	private $sha1Base36 = null; // File Sha1Base36
+	protected $sha1Base36; // file SHA-1 in base 36
 
 	/**
 	 * Sets up the file object
@@ -98,7 +98,7 @@ class FSFile {
 	 * Get an associative array containing information about
 	 * a file with the given storage path.
 	 *
-	 * @param $ext Mixed: the file extension, or true to extract it from the filename.
+	 * @param Mixed $ext: the file extension, or true to extract it from the filename.
 	 *             Set it to false to ignore the extension.
 	 *
 	 * @return array
@@ -171,7 +171,7 @@ class FSFile {
 	/**
 	 * Exract image size information
 	 *
-	 * @param $gis array
+	 * @param array $gis
 	 * @return Array
 	 */
 	protected function extractImageSizeInfo( array $gis ) {
@@ -194,7 +194,7 @@ class FSFile {
 	 * 160 log 2 / log 36 = 30.95, so the 160-bit hash fills 31 digits in base 36
 	 * fairly neatly.
 	 *
-	 * @param $recache bool
+	 * @param bool $recache
 	 * @return bool|string False on failure
 	 */
 	public function getSha1Base36( $recache = false ) {
@@ -220,7 +220,7 @@ class FSFile {
 	/**
 	 * Get the final file extension from a file system path
 	 *
-	 * @param $path string
+	 * @param string $path
 	 * @return string
 	 */
 	public static function extensionFromPath( $path ) {
@@ -232,9 +232,8 @@ class FSFile {
 	 * Get an associative array containing information about a file in the local filesystem.
 	 *
 	 * @param string $path absolute local filesystem path
-	 * @param $ext Mixed: the file extension, or true to extract it from the filename.
+	 * @param Mixed $ext: the file extension, or true to extract it from the filename.
 	 *             Set it to false to ignore the extension.
-	 *
 	 * @return array
 	 */
 	public static function getPropsFromPath( $path, $ext = true ) {
@@ -249,19 +248,11 @@ class FSFile {
 	 * 160 log 2 / log 36 = 30.95, so the 160-bit hash fills 31 digits in base 36
 	 * fairly neatly.
 	 *
-	 * @param $path string
-	 * @param $recache bool
-	 *
+	 * @param string $path
 	 * @return bool|string False on failure
 	 */
-	public static function getSha1Base36FromPath( $path, $recache = false ) {
-		static $sha1Base36 = array();
-
-		if ( !isset( $sha1Base36[$path] ) || $recache ) {
-			$fsFile = new self( $path );
-			$sha1Base36[$path] = $fsFile->getSha1Base36();
-		}
-
-		return $sha1Base36[$path];
+	public static function getSha1Base36FromPath( $path ) {
+		$fsFile = new self( $path );
+		return $fsFile->getSha1Base36();
 	}
 }

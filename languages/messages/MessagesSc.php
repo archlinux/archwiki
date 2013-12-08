@@ -177,7 +177,7 @@ $messages = array(
 'index-category' => 'Pàginas indicizadas',
 'noindex-category' => 'Pàginas no indicitzadas',
 
-'linkprefix' => '/^(.*?)([a-zA-Z\\x80-\\xff]+)$/sD',
+'linkprefix' => '/^((?>.*(?<![a-zA-Z\\x80-\\xff])))(.+)$/sD',
 
 'about' => 'A propòsitu de',
 'article' => 'Artìculu',
@@ -270,7 +270,7 @@ $messages = array(
 'jumptosearch' => 'chirca',
 'pool-errorunknown' => 'Faddina disconnota',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'A propòsitu de {{SITENAME}}',
 'aboutpage' => 'Project:Informatziones',
 'copyright' => 'Cuntènnidu a suta licèntzia $1.',
@@ -280,7 +280,6 @@ $messages = array(
 'disclaimers' => 'Abbertimentos',
 'disclaimerpage' => 'Project:Abbertimentos generales',
 'edithelp' => "Agiudu pro s'acontzu o sa scritura",
-'edithelppage' => 'Help:Acontzare',
 'helppage' => 'Help:Agiudu',
 'mainpage' => 'Pàgina Base',
 'mainpage-description' => 'Pàgina Base',
@@ -300,7 +299,6 @@ $messages = array(
 'newmessagesdifflink' => 'ùrtima mudàntzia',
 'youhavenewmessagesmulti' => 'Tenes messàgios noos in $1',
 'editsection' => 'acontza',
-'editsection-brackets' => '[$1]',
 'editold' => 'acontza',
 'viewsourceold' => 'càstia mitza',
 'editlink' => 'acontza',
@@ -346,12 +344,6 @@ Una lista de pàginas ispetziales bàlidas d'agatas in [[Special:SpecialPages|{{
 # General errors
 'error' => 'Faddina',
 'databaseerror' => 'Faddina de su database',
-'dberrortext' => 'Faddina de sintassi in sa pregunta fata a su database.
-Custu podet indicare unu sbàlliu de su software.
-S\'ùrtima consulta imbiada a su database est istada:
-<blockquote><tt>$1</tt></blockquote>
-aintru de sa funtzione "<tt>$2</tt>".
-Su database at torradu custa faddina "<tt>$3: $4</tt>".',
 'readonly' => 'Database bloccadu',
 'enterlockreason' => 'Inserta su motivu de su bloccu, ispetzifichende su momentu probabile chi su bloccu at a acabai',
 'readonlytext' => "In custu momentu su database est bloccadu dae aciunturas e àteras modificas, probabilmente pro ordinaria manutentzione a su database, a pustis de custas at a èssere normale torra.
@@ -380,7 +372,6 @@ Podet èsser stadu burradu dae calicunu àteru.',
 'badtitletext' => "Su tìtulu de sa pàgina ch'as pediu est bùidu, isballiau, o iscritu in is cullegamentus inter-wiki in manera non currègia o cun caràteres no amìtius.",
 'viewsource' => 'Càstia mitza',
 'actionthrottled' => 'Atzione rimandada',
-'sqlhidden' => '(Consulta SQL cuada)',
 'namespaceprotected' => "Non tenes su permissu de acontzare is pàginas in su nùmene-lugu '''$1'''.",
 'ns-specialprotected' => 'Is pàginas ispetziales non podent èssere acontzadas.',
 
@@ -631,7 +622,6 @@ Cosas de ammentare: '''({{int:cur}})''' = diferèntzias cun sa versione currente
 'shown-title' => 'Ammustra $1 {{PLURAL:$1|resurtadu|resurtados}} pro pàgina',
 'viewprevnext' => 'Càstia ($1 {{int:pipe-separator}} $2) ($3).',
 'searchmenu-legend' => 'Possibilidades de chirca',
-'searchhelp-url' => 'Help:Agiudu',
 'searchprofile-everything' => 'Totu',
 'searchprofile-advanced' => 'Avantzada',
 'searchprofile-articles-tooltip' => 'Chirca in $1',
@@ -659,14 +649,6 @@ Prova a seberare ''totu:'' pro chircare in totu su cuntènnidu (inclùdidas pàg
 'powersearch-togglelabel' => 'Seletziona:',
 'powersearch-toggleall' => 'Totu',
 'powersearch-togglenone' => 'Nudda',
-
-# Quickbar
-'qbsettings' => 'Settaggio della barra menu',
-'qbsettings-none' => 'Nessuno',
-'qbsettings-fixedleft' => 'Fisso a sinistra',
-'qbsettings-fixedright' => 'Fisso a destra',
-'qbsettings-floatingleft' => 'Fluttuante a sinistra',
-'qbsettings-floatingright' => 'Fluttuante a destra',
 
 # Preferences page
 'preferences' => 'Preferèntzias',
@@ -924,8 +906,6 @@ Càstia sa [[Special:NewFiles|galleria de files nous]] pro una presentada prus b
 'statistics' => 'Statìsticas',
 'statistics-header-users' => 'Statìsticas subra is usuàrios',
 'statistics-pages' => 'Pàginas',
-
-'disambiguationspage' => 'Template:Disambìgua',
 
 'doubleredirects' => 'Redirects dòpios',
 'doubleredirectstext' => 'Custa pàgina cuntenet una lista de pàginas ki re-indiritzant a àteras pàginas de re-indiritzamentu.
@@ -1228,8 +1208,6 @@ Abbàida sa [[Special:BlockList|lista de IP bloccados]] pro bìder sas bloccadur
 'blocklogentry' => 'bloccau [[$1]] pro unu tempu de $2 $3',
 'unblocklogentry' => 'at sbloccau $1',
 'block-log-flags-nocreate' => 'creatzione account bloccada',
-'blockme' => 'Blocca·mi',
-'proxyblocksuccess' => 'Fatu.',
 'sorbs' => 'DNSBL',
 
 # Developer tools
@@ -1428,14 +1406,14 @@ Is acàpius chi sighint in sa matessi lìnia sunt cunsideraus comente eccetzione
 * gpslongitude
 * gpsaltitude",
 
-# EXIF tags
+# Exif tags
 'exif-artist' => 'Autore',
 'exif-exposuretime-format' => '$1 s ($2)',
 'exif-fnumber-format' => 'f/$1',
 'exif-flash' => 'Flash',
 'exif-focallength-format' => '$1 mm',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-6' => 'JPEG',
 
 'exif-photometricinterpretation-2' => 'RGB',
@@ -1483,7 +1461,6 @@ Is acàpius chi sighint in sa matessi lìnia sunt cunsideraus comente eccetzione
 'semicolon-separator' => ';&#32;',
 'comma-separator' => ',&#32;',
 'colon-separator' => ':&#32;',
-'autocomment-prefix' => '-&#32;',
 'word-separator' => '&#32;',
 'ellipsis' => '…',
 'percent' => '$1%',
@@ -1530,10 +1507,6 @@ Is acàpius chi sighint in sa matessi lìnia sunt cunsideraus comente eccetzione
 'version-version' => '(Versione $1)',
 'version-license' => 'Licèntzia',
 'version-software-version' => 'Versione',
-
-# Special:FilePath
-'filepath-page' => 'Nùmene de su file:',
-'filepath-submit' => 'Bae',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-submit' => 'Chirca',

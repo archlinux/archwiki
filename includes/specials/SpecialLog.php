@@ -29,7 +29,6 @@
  * @ingroup SpecialPage
  */
 class SpecialLog extends SpecialPage {
-
 	/**
 	 * List log type for which the target is a user
 	 * Thus if the given target is in NS_MAIN we can alter it to be an NS_USER
@@ -75,14 +74,14 @@ class SpecialLog extends SpecialPage {
 			$opts->setValue( 'month', '' );
 		}
 
-		// Reset the log type to default (nothing) if it's invalid or if the
-		// user does not possess the right to view it
+		// If the user doesn't have the right permission to view the specific
+		// log type, throw a PermissionsError
+		// If the log type is invalid, just show all public logs
 		$type = $opts->getValue( 'type' );
-		if ( !LogPage::isLogType( $type )
-			|| ( isset( $wgLogRestrictions[$type] )
-				&& !$this->getUser()->isAllowed( $wgLogRestrictions[$type] ) )
-		) {
+		if ( !LogPage::isLogType( $type ) ) {
 			$opts->setValue( 'type', '' );
+		} elseif ( isset( $wgLogRestrictions[$type] ) && !$this->getUser()->isAllowed( $wgLogRestrictions[$type] ) ) {
+			throw new PermissionsError( $wgLogRestrictions[$type] );
 		}
 
 		# Handle type-specific inputs
@@ -99,10 +98,10 @@ class SpecialLog extends SpecialPage {
 		# Some log types are only for a 'User:' title but we might have been given
 		# only the username instead of the full title 'User:username'. This part try
 		# to lookup for a user by that name and eventually fix user input. See bug 1697.
-		if( in_array( $opts->getValue( 'type' ), $this->typeOnUser ) ) {
+		if ( in_array( $opts->getValue( 'type' ), $this->typeOnUser ) ) {
 			# ok we have a type of log which expect a user title.
 			$target = Title::newFromText( $opts->getValue( 'page' ) );
-			if( $target && $target->getNamespace() === NS_MAIN ) {
+			if ( $target && $target->getNamespace() === NS_MAIN ) {
 				# User forgot to add 'User:', we are adding it for him
 				$opts->setValue( 'page',
 					Title::makeTitleSafe( NS_USER, $opts->getValue( 'page' ) )
@@ -117,9 +116,11 @@ class SpecialLog extends SpecialPage {
 		global $wgLogTypes;
 
 		# Get parameters
-		$parms = explode( '/', ($par = ( $par !== null ) ? $par : '' ) );
+		$parms = explode( '/', ( $par = ( $par !== null ) ? $par : '' ) );
 		$symsForAll = array( '*', 'all' );
-		if ( $parms[0] != '' && ( in_array( $par, $wgLogTypes ) || in_array( $par, $symsForAll ) ) ) {
+		if ( $parms[0] != '' &&
+			( in_array( $par, $wgLogTypes ) || in_array( $par, $symsForAll ) )
+		) {
 			$opts->setValue( 'type', $par );
 		} elseif ( count( $parms ) == 2 ) {
 			$opts->setValue( 'type', $parms[0] );
@@ -131,10 +132,22 @@ class SpecialLog extends SpecialPage {
 
 	private function show( FormOptions $opts, array $extraConds ) {
 		# Create a LogPager item to get the results and a LogEventsList item to format them...
-		$loglist = new LogEventsList( $this->getContext(), null, LogEventsList::USE_REVDEL_CHECKBOXES );
-		$pager = new LogPager( $loglist, $opts->getValue( 'type' ), $opts->getValue( 'user' ),
-			$opts->getValue( 'page' ), $opts->getValue( 'pattern' ), $extraConds, $opts->getValue( 'year' ),
-			$opts->getValue( 'month' ), $opts->getValue( 'tagfilter' ) );
+		$loglist = new LogEventsList(
+			$this->getContext(),
+			null,
+			LogEventsList::USE_REVDEL_CHECKBOXES
+		);
+		$pager = new LogPager(
+			$loglist,
+			$opts->getValue( 'type' ),
+			$opts->getValue( 'user' ),
+			$opts->getValue( 'page' ),
+			$opts->getValue( 'pattern' ),
+			$extraConds,
+			$opts->getValue( 'year' ),
+			$opts->getValue( 'month' ),
+			$opts->getValue( 'tagfilter' )
+		);
 
 		$this->addHeader( $opts->getValue( 'type' ) );
 
@@ -144,16 +157,28 @@ class SpecialLog extends SpecialPage {
 		}
 
 		# Show form options
-		$loglist->showOptions( $pager->getType(), $opts->getValue( 'user' ), $pager->getPage(), $pager->getPattern(),
-			$pager->getYear(), $pager->getMonth(), $pager->getFilterParams(), $opts->getValue( 'tagfilter' ) );
+		$loglist->showOptions(
+			$pager->getType(),
+			$opts->getValue( 'user' ),
+			$pager->getPage(),
+			$pager->getPattern(),
+			$pager->getYear(),
+			$pager->getMonth(),
+			$pager->getFilterParams(),
+			$opts->getValue( 'tagfilter' )
+		);
 
 		# Insert list
 		$logBody = $pager->getBody();
 		if ( $logBody ) {
 			$this->getOutput()->addHTML(
 				$pager->getNavigationBar() .
-				$this->getRevisionButton( $loglist->beginLogEventsList() . $logBody . $loglist->endLogEventsList() ) .
-				$pager->getNavigationBar()
+					$this->getRevisionButton(
+						$loglist->beginLogEventsList() .
+							$logBody .
+							$loglist->endLogEventsList()
+					) .
+					$pager->getNavigationBar()
 			);
 		} else {
 			$this->getOutput()->addWikiMsg( 'logempty' );
@@ -161,19 +186,27 @@ class SpecialLog extends SpecialPage {
 	}
 
 	private function getRevisionButton( $formcontents ) {
-		# If the user doesn't have the ability to delete log entries, don't bother showing him/her the button.
+		# If the user doesn't have the ability to delete log entries,
+		# don't bother showing them the button.
 		if ( !$this->getUser()->isAllowedAll( 'deletedhistory', 'deletelogentry' ) ) {
 			return $formcontents;
 		}
 
 		# Show button to hide log entries
 		global $wgScript;
-		$s = Html::openElement( 'form', array( 'action' => $wgScript, 'id' => 'mw-log-deleterevision-submit' ) ) . "\n";
+		$s = Html::openElement(
+			'form',
+			array( 'action' => $wgScript, 'id' => 'mw-log-deleterevision-submit' )
+		) . "\n";
 		$s .= Html::hidden( 'title', SpecialPage::getTitleFor( 'Revisiondelete' ) ) . "\n";
 		$s .= Html::hidden( 'target', SpecialPage::getTitleFor( 'Log' ) ) . "\n";
 		$s .= Html::hidden( 'type', 'logging' ) . "\n";
-		$button = Html::element( 'button',
-			array( 'type' => 'submit', 'class' => "deleterevision-log-submit mw-log-deleterevision-button" ),
+		$button = Html::element(
+			'button',
+			array(
+				'type' => 'submit',
+				'class' => "deleterevision-log-submit mw-log-deleterevision-button"
+			),
 			$this->msg( 'showhideselectedlogentries' )->text()
 		) . "\n";
 		$s .= $button . $formcontents . $button;

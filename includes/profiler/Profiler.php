@@ -31,9 +31,11 @@
  * @param string $functionname name of the function we will profile
  */
 function wfProfileIn( $functionname ) {
-	global $wgProfiler;
-	if ( $wgProfiler instanceof Profiler || isset( $wgProfiler['class'] ) ) {
-		Profiler::instance()->profileIn( $functionname );
+	if ( Profiler::$__instance === null ) { // use this directly to reduce overhead
+		Profiler::instance();
+	}
+	if ( !( Profiler::$__instance instanceof ProfilerStub ) ) {
+		Profiler::$__instance->profileIn( $functionname );
 	}
 }
 
@@ -42,9 +44,49 @@ function wfProfileIn( $functionname ) {
  * @param string $functionname name of the function we have profiled
  */
 function wfProfileOut( $functionname = 'missing' ) {
-	global $wgProfiler;
-	if ( $wgProfiler instanceof Profiler || isset( $wgProfiler['class'] ) ) {
-		Profiler::instance()->profileOut( $functionname );
+	if ( Profiler::$__instance === null ) { // use this directly to reduce overhead
+		Profiler::instance();
+	}
+	if ( !( Profiler::$__instance instanceof ProfilerStub ) ) {
+		Profiler::$__instance->profileOut( $functionname );
+	}
+}
+
+/**
+ * Class for handling function-scope profiling
+ *
+ * @since 1.22
+ */
+class ProfileSection {
+	protected $name; // string; method name
+	protected $enabled = false; // boolean; whether profiling is enabled
+
+	/**
+	 * Begin profiling of a function and return an object that ends profiling of
+	 * the function when that object leaves scope. As long as the object is not
+	 * specifically linked to other objects, it will fall out of scope at the same
+	 * moment that the function to be profiled terminates.
+	 *
+	 * This is typically called like:
+	 * <code>$section = new ProfileSection( __METHOD__ );</code>
+	 *
+	 * @param string $name Name of the function to profile
+	 */
+	public function __construct( $name ) {
+		$this->name = $name;
+		if ( Profiler::$__instance === null ) { // use this directly to reduce overhead
+			Profiler::instance();
+		}
+		if ( !( Profiler::$__instance instanceof ProfilerStub ) ) {
+			$this->enabled = true;
+			Profiler::$__instance->profileIn( $this->name );
+		}
+	}
+
+	function __destruct() {
+		if ( $this->enabled ) {
+			Profiler::$__instance->profileOut( $this->name );
+		}
 	}
 }
 
@@ -53,11 +95,19 @@ function wfProfileOut( $functionname = 'missing' ) {
  * @todo document
  */
 class Profiler {
-	protected $mStack = array(), $mWorkStack = array (), $mCollated = array (),
-		$mCalls = array (), $mTotals = array ();
+	protected $mStack = array(), $mWorkStack = array(), $mCollated = array(),
+		$mCalls = array(), $mTotals = array();
 	protected $mTimeMetric = 'wall';
 	protected $mProfileID = false, $mCollateDone = false, $mTemplated = false;
-	private static $__instance = null;
+
+	protected $mDBLockThreshold = 5.0; // float; seconds
+	/** @var Array DB/server name => (active trx count,timestamp) */
+	protected $mDBTrxHoldingLocks = array();
+	/** @var Array DB/server name => list of (method, elapsed time) */
+	protected $mDBTrxMethodTimes = array();
+
+	/** @var Profiler */
+	public static $__instance = null; // do not call this outside Profiler and ProfileSection
 
 	function __construct( $params ) {
 		if ( isset( $params['timeMetric'] ) ) {
@@ -75,22 +125,18 @@ class Profiler {
 	 * @return Profiler
 	 */
 	public static function instance() {
-		if( is_null( self::$__instance ) ) {
+		if ( self::$__instance === null ) {
 			global $wgProfiler;
-			if( is_array( $wgProfiler ) ) {
-				if( !isset( $wgProfiler['class'] ) ) {
-					wfDebug( __METHOD__ . " called without \$wgProfiler['class']"
-						. " set, falling back to ProfilerStub for safety\n" );
+			if ( is_array( $wgProfiler ) ) {
+				if ( !isset( $wgProfiler['class'] ) ) {
 					$class = 'ProfilerStub';
 				} else {
 					$class = $wgProfiler['class'];
 				}
 				self::$__instance = new $class( $wgProfiler );
-			} elseif( $wgProfiler instanceof Profiler ) {
+			} elseif ( $wgProfiler instanceof Profiler ) {
 				self::$__instance = $wgProfiler; // back-compat
 			} else {
-				wfDebug( __METHOD__ . ' called with bogus $wgProfiler setting,'
-						. " falling back to ProfilerStub for safety\n" );
 				self::$__instance = new ProfilerStub( $wgProfiler );
 			}
 		}
@@ -157,7 +203,7 @@ class Profiler {
 	 */
 	public function profileIn( $functionname ) {
 		global $wgDebugFunctionEntry;
-		if( $wgDebugFunctionEntry ) {
+		if ( $wgDebugFunctionEntry ) {
 			$this->debug( str_repeat( ' ', count( $this->mWorkStack ) ) . 'Entering ' . $functionname . "\n" );
 		}
 
@@ -174,7 +220,7 @@ class Profiler {
 		$memory = memory_get_usage();
 		$time = $this->getTime();
 
-		if( $wgDebugFunctionEntry ) {
+		if ( $wgDebugFunctionEntry ) {
 			$this->debug( str_repeat( ' ', count( $this->mWorkStack ) - 1 ) . 'Exiting ' . $functionname . "\n" );
 		}
 
@@ -183,21 +229,19 @@ class Profiler {
 		if ( !$bit ) {
 			$this->debug( "Profiling error, !\$bit: $functionname\n" );
 		} else {
-			//if( $wgDebugProfiling ) {
-				if( $functionname == 'close' ) {
-					$message = "Profile section ended by close(): {$bit[0]}";
-					$this->debug( "$message\n" );
-					$this->mStack[] = array( $message, 0, 0.0, 0, 0.0, 0 );
-				}
-				elseif( $bit[0] != $functionname ) {
-					$message = "Profiling error: in({$bit[0]}), out($functionname)";
-					$this->debug( "$message\n" );
-					$this->mStack[] = array( $message, 0, 0.0, 0, 0.0, 0 );
-				}
-			//}
+			if ( $functionname == 'close' ) {
+				$message = "Profile section ended by close(): {$bit[0]}";
+				$this->debug( "$message\n" );
+				$this->mStack[] = array( $message, 0, 0.0, 0, 0.0, 0 );
+			} elseif ( $bit[0] != $functionname ) {
+				$message = "Profiling error: in({$bit[0]}), out($functionname)";
+				$this->debug( "$message\n" );
+				$this->mStack[] = array( $message, 0, 0.0, 0, 0.0, 0 );
+			}
 			$bit[] = $time;
 			$bit[] = $memory;
 			$this->mStack[] = $bit;
+			$this->updateTrxProfiling( $functionname, $time );
 		}
 	}
 
@@ -205,8 +249,85 @@ class Profiler {
 	 * Close opened profiling sections
 	 */
 	public function close() {
-		while( count( $this->mWorkStack ) ) {
+		while ( count( $this->mWorkStack ) ) {
 			$this->profileOut( 'close' );
+		}
+	}
+
+	/**
+	 * Mark a DB as in a transaction with one or more writes pending
+	 *
+	 * Note that there can be multiple connections to a single DB.
+	 *
+	 * @param string $server DB server
+	 * @param string $db DB name
+	 */
+	public function transactionWritingIn( $server, $db ) {
+		$name = "{$server} ({$db})";
+		if ( isset( $this->mDBTrxHoldingLocks[$name] ) ) {
+			++$this->mDBTrxHoldingLocks[$name]['refs'];
+		} else {
+			$this->mDBTrxHoldingLocks[$name] = array( 'refs' => 1, 'start' => microtime( true ) );
+			$this->mDBTrxMethodTimes[$name] = array();
+		}
+	}
+
+	/**
+	 * Register the name and time of a method for slow DB trx detection
+	 *
+	 * @param string $method Function name
+	 * @param float $realtime Wal time ellapsed
+	 */
+	protected function updateTrxProfiling( $method, $realtime ) {
+		if ( !$this->mDBTrxHoldingLocks ) {
+			return; // short-circuit
+		// @TODO: hardcoded check is a tad janky (what about FOR UPDATE?)
+		} elseif ( !preg_match( '/^query-m: (?!SELECT)/', $method )
+			&& $realtime < $this->mDBLockThreshold )
+		{
+			return; // not a DB master query nor slow enough
+		}
+		$now = microtime( true );
+		foreach ( $this->mDBTrxHoldingLocks as $name => $info ) {
+			// Hacky check to exclude entries from before the first TRX write
+			if ( ( $now - $realtime ) >= $info['start'] ) {
+				$this->mDBTrxMethodTimes[$name][] = array( $method, $realtime );
+			}
+		}
+	}
+
+	/**
+	 * Mark a DB as no longer in a transaction
+	 *
+	 * This will check if locks are possibly held for longer than
+	 * needed and log any affected transactions to a special DB log.
+	 * Note that there can be multiple connections to a single DB.
+	 *
+	 * @param string $server DB server
+	 * @param string $db DB name
+	 */
+	public function transactionWritingOut( $server, $db ) {
+		$name = "{$server} ({$db})";
+		if ( --$this->mDBTrxHoldingLocks[$name]['refs'] <= 0 ) {
+			$slow = false;
+			foreach ( $this->mDBTrxMethodTimes[$name] as $info ) {
+				list( $method, $realtime ) = $info;
+				if ( $realtime >= $this->mDBLockThreshold ) {
+					$slow = true;
+					break;
+				}
+			}
+			if ( $slow ) {
+				$dbs = implode( ', ', array_keys( $this->mDBTrxHoldingLocks ) );
+				$msg = "Sub-optimal transaction on DB(s) {$dbs}:\n";
+				foreach ( $this->mDBTrxMethodTimes[$name] as $i => $info ) {
+					list( $method, $realtime ) = $info;
+					$msg .= sprintf( "%d\t%.6f\t%s\n", $i, $realtime, $method );
+				}
+				wfDebugLog( 'DBPerformance', $msg );
+			}
+			unset( $this->mDBTrxHoldingLocks[$name] );
+			unset( $this->mDBTrxMethodTimes[$name] );
 		}
 	}
 
@@ -228,11 +349,11 @@ class Profiler {
 		global $wgDebugFunctionEntry, $wgProfileCallTree;
 		$wgDebugFunctionEntry = false;
 
-		if( !count( $this->mStack ) && !count( $this->mCollated ) ) {
+		if ( !count( $this->mStack ) && !count( $this->mCollated ) ) {
 			return "No profiling output\n";
 		}
 
-		if( $wgProfileCallTree ) {
+		if ( $wgProfileCallTree ) {
 			return $this->getCallTree();
 		} else {
 			return $this->getFunctionReport();
@@ -254,16 +375,16 @@ class Profiler {
 	 * @return array
 	 */
 	function remapCallTree( $stack ) {
-		if( count( $stack ) < 2 ) {
+		if ( count( $stack ) < 2 ) {
 			return $stack;
 		}
-		$outputs = array ();
-		for( $max = count( $stack ) - 1; $max > 0; ) {
+		$outputs = array();
+		for ( $max = count( $stack ) - 1; $max > 0; ) {
 			/* Find all items under this entry */
 			$level = $stack[$max][1];
-			$working = array ();
-			for( $i = $max -1; $i >= 0; $i-- ) {
-				if( $stack[$i][1] > $level ) {
+			$working = array();
+			for ( $i = $max -1; $i >= 0; $i-- ) {
+				if ( $stack[$i][1] > $level ) {
 					$working[] = $stack[$i];
 				} else {
 					break;
@@ -271,7 +392,7 @@ class Profiler {
 			}
 			$working = $this->remapCallTree( array_reverse( $working ) );
 			$output = array();
-			foreach( $working as $item ) {
+			foreach ( $working as $item ) {
 				array_push( $output, $item );
 			}
 			array_unshift( $output, $stack[$max] );
@@ -280,8 +401,8 @@ class Profiler {
 			array_unshift( $outputs, $output );
 		}
 		$final = array();
-		foreach( $outputs as $output ) {
-			foreach( $output as $item ) {
+		foreach ( $outputs as $output ) {
+			foreach ( $output as $item ) {
 				$final[] = $item;
 			}
 		}
@@ -391,18 +512,17 @@ class Profiler {
 
 		# First, subtract the overhead!
 		$overheadTotal = $overheadMemory = $overheadInternal = array();
-		foreach( $this->mStack as $entry ) {
+		foreach ( $this->mStack as $entry ) {
 			$fname = $entry[0];
 			$start = $entry[2];
 			$end = $entry[4];
 			$elapsed = $end - $start;
 			$memory = $entry[5] - $entry[3];
 
-			if( $fname == '-overhead-total' ) {
+			if ( $fname == '-overhead-total' ) {
 				$overheadTotal[] = $elapsed;
 				$overheadMemory[] = $memory;
-			}
-			elseif( $fname == '-overhead-internal' ) {
+			} elseif ( $fname == '-overhead-internal' ) {
 				$overheadInternal[] = $elapsed;
 			}
 		}
@@ -411,7 +531,7 @@ class Profiler {
 		$overheadInternal = $overheadInternal ? array_sum( $overheadInternal ) / count( $overheadInternal ) : 0;
 
 		# Collate
-		foreach( $this->mStack as $index => $entry ) {
+		foreach ( $this->mStack as $index => $entry ) {
 			$fname = $entry[0];
 			$start = $entry[2];
 			$end = $entry[4];
@@ -420,16 +540,16 @@ class Profiler {
 			$memory = $entry[5] - $entry[3];
 			$subcalls = $this->calltreeCount( $this->mStack, $index );
 
-			if( !preg_match( '/^-overhead/', $fname ) ) {
+			if ( !preg_match( '/^-overhead/', $fname ) ) {
 				# Adjust for profiling overhead (except special values with elapsed=0
-				if( $elapsed ) {
+				if ( $elapsed ) {
 					$elapsed -= $overheadInternal;
-					$elapsed -= ($subcalls * $overheadTotal);
-					$memory -= ($subcalls * $overheadMemory);
+					$elapsed -= ( $subcalls * $overheadTotal );
+					$memory -= ( $subcalls * $overheadMemory );
 				}
 			}
 
-			if( !array_key_exists( $fname, $this->mCollated ) ) {
+			if ( !array_key_exists( $fname, $this->mCollated ) ) {
 				$this->mCollated[$fname] = 0;
 				$this->mCalls[$fname] = 0;
 				$this->mMemory[$fname] = 0;
@@ -467,11 +587,21 @@ class Profiler {
 
 		$total = isset( $this->mCollated['-total'] ) ? $this->mCollated['-total'] : 0;
 
-		foreach( $this->mCollated as $fname => $elapsed ) {
+		foreach ( $this->mCollated as $fname => $elapsed ) {
 			$calls = $this->mCalls[$fname];
 			$percent = $total ? 100. * $elapsed / $total : 0;
 			$memory = $this->mMemory[$fname];
-			$prof .= sprintf( $format, substr( $fname, 0, $nameWidth ), $calls, (float) ($elapsed * 1000), (float) ($elapsed * 1000) / $calls, $percent, $memory, ( $this->mMin[$fname] * 1000.0 ), ( $this->mMax[$fname] * 1000.0 ), $this->mOverhead[$fname] );
+			$prof .= sprintf( $format,
+				substr( $fname, 0, $nameWidth ),
+				$calls,
+				(float)( $elapsed * 1000 ),
+				(float)( $elapsed * 1000 ) / $calls,
+				$percent,
+				$memory,
+				( $this->mMin[$fname] * 1000.0 ),
+				( $this->mMax[$fname] * 1000.0 ),
+				$this->mOverhead[$fname]
+			);
 		}
 		$prof .= "\nTotal: $total\n\n";
 
@@ -483,7 +613,7 @@ class Profiler {
 	 */
 	protected static function calculateOverhead( $profileCount ) {
 		wfProfileIn( '-overhead-total' );
-		for( $i = 0; $i < $profileCount; $i++ ) {
+		for ( $i = 0; $i < $profileCount; $i++ ) {
 			wfProfileIn( '-overhead-internal' );
 			wfProfileOut( '-overhead-internal' );
 		}
@@ -515,16 +645,16 @@ class Profiler {
 		global $wgProfilePerHost, $wgProfileToDatabase;
 
 		# Do not log anything if database is readonly (bug 5375)
-		if( wfReadOnly() || !$wgProfileToDatabase ) {
+		if ( wfReadOnly() || !$wgProfileToDatabase ) {
 			return;
 		}
 
 		$dbw = wfGetDB( DB_MASTER );
-		if( !is_object( $dbw ) ) {
+		if ( !is_object( $dbw ) ) {
 			return;
 		}
 
-		if( $wgProfilePerHost ) {
+		if ( $wgProfilePerHost ) {
 			$pfhost = wfHostname();
 		} else {
 			$pfhost = '';
@@ -533,15 +663,15 @@ class Profiler {
 		try {
 			$this->collateData();
 
-			foreach( $this->mCollated as $name => $elapsed ) {
+			foreach ( $this->mCollated as $name => $elapsed ) {
 				$eventCount = $this->mCalls[$name];
-				$timeSum = (float) ($elapsed * 1000);
+				$timeSum = (float)( $elapsed * 1000 );
 				$memorySum = (float)$this->mMemory[$name];
-				$name = substr($name, 0, 255);
+				$name = substr( $name, 0, 255 );
 
 				// Kludge
-				$timeSum = ($timeSum >= 0) ? $timeSum : 0;
-				$memorySum = ($memorySum >= 0) ? $memorySum : 0;
+				$timeSum = $timeSum >= 0 ? $timeSum : 0;
+				$memorySum = $memorySum >= 0 ? $memorySum : 0;
 
 				$dbw->update( 'profiling',
 					array(
@@ -557,9 +687,9 @@ class Profiler {
 
 				$rc = $dbw->affectedRows();
 				if ( $rc == 0 ) {
-					$dbw->insert( 'profiling', array ( 'pf_name' => $name, 'pf_count' => $eventCount,
+					$dbw->insert( 'profiling', array( 'pf_name' => $name, 'pf_count' => $eventCount,
 						'pf_time' => $timeSum, 'pf_memory' => $memorySum, 'pf_server' => $pfhost ),
-						__METHOD__, array ( 'IGNORE' ) );
+						__METHOD__, array( 'IGNORE' ) );
 				}
 				// When we upgrade to mysql 4.1, the insert+update
 				// can be merged into just a insert with this construct added:
@@ -585,7 +715,7 @@ class Profiler {
 	 * @param string $s to output
 	 */
 	function debug( $s ) {
-		if( defined( 'MW_COMPILED' ) || function_exists( 'wfDebug' ) ) {
+		if ( function_exists( 'wfDebug' ) ) {
 			wfDebug( $s );
 		}
 	}

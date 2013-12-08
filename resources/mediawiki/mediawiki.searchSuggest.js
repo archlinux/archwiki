@@ -2,7 +2,7 @@
  * Add search suggestions to the search form.
  */
 ( function ( mw, $ ) {
-	$( document ).ready( function ( $ ) {
+	$( function () {
 		var map, resultRenderCache, searchboxesSelectors,
 			// Region where the suggestions box will appear directly below
 			// (using the same width). Can be a container element or the input
@@ -130,8 +130,6 @@
 		searchboxesSelectors = [
 			// Primary searchbox on every page in standard skins
 			'#searchInput',
-			// Secondary searchbox in legacy skins (LegacyTemplate::searchForm uses id "searchInput + unique id")
-			'#searchInput2',
 			// Special:Search
 			'#powerSearchText',
 			'#searchText',
@@ -141,36 +139,27 @@
 		$( searchboxesSelectors.join(', ') )
 			.suggestions( {
 				fetch: function ( query ) {
-					var $el, jqXhr;
+					var $el;
 
 					if ( query.length !== 0 ) {
-						$el = $(this);
-						jqXhr = $.ajax( {
-							url: mw.util.wikiScript( 'api' ),
-							data: {
-								format: 'json',
-								action: 'opensearch',
-								search: query,
-								namespace: 0,
-								suggest: ''
-							},
-							dataType: 'json',
-							success: function ( data ) {
-								if ( $.isArray( data ) && data.length ) {
-									$el.suggestions( 'suggestions', data[1] );
-								}
-							}
-						});
-						$el.data( 'request', jqXhr );
+						$el = $( this );
+						$el.data( 'request', ( new mw.Api() ).get( {
+							action: 'opensearch',
+							search: query,
+							namespace: 0,
+							suggest: ''
+						} ).done( function ( data ) {
+							$el.suggestions( 'suggestions', data[1] );
+						} ) );
 					}
 				},
 				cancel: function () {
-					var jqXhr = $(this).data( 'request' );
+					var apiPromise = $( this ).data( 'request' );
 					// If the delay setting has caused the fetch to have not even happened
-					// yet, the jqXHR object will have never been set.
-					if ( jqXhr && $.isFunction( jqXhr.abort ) ) {
-						jqXhr.abort();
-						$(this).removeData( 'request' );
+					// yet, the apiPromise object will have never been set.
+					if ( apiPromise && $.isFunction( apiPromise.abort ) ) {
+						apiPromise.abort();
+						$( this ).removeData( 'request' );
 					}
 				},
 				result: {
@@ -195,11 +184,6 @@
 			// not actually enabled (anymore).
 			return;
 		}
-
-		// Placeholder text for search box
-		$searchInput
-			.attr( 'placeholder', mw.msg( 'searchsuggest-search' ) )
-			.placeholder();
 
 		// Special suggestions functionality for skin-provided search box
 		$searchInput.suggestions( {

@@ -21,7 +21,7 @@
  * @ingroup Language
  */
 
-require_once( __DIR__ . '/../LanguageConverter.php' );
+require_once __DIR__ . '/../LanguageConverter.php';
 
 /**
  * Conversion script between Latin and Syllabics for Inuktitut.
@@ -92,7 +92,7 @@ class IuConverter extends LanguageConverter {
 			'lowercase' => new ReplacementArray( $this->mUpperToLowerCaseLatin ),
 			'ike-cans' => new ReplacementArray( $this->mToSyllabics ),
 			'ike-latn' => new ReplacementArray( $this->mToLatin ),
-			'iu'    => new ReplacementArray()
+			'iu' => new ReplacementArray()
 		);
 	}
 
@@ -144,17 +144,19 @@ class IuConverter extends LanguageConverter {
 	 * @param $ignoreOtherCond bool
 	 */
 	function findVariantLink( &$link, &$nt, $ignoreOtherCond = false ) {
-		 // check for user namespace
+		// check for user namespace
 		if ( is_object( $nt ) ) {
 			$ns = $nt->getNamespace();
-			if ( $ns == NS_USER || $ns == NS_USER_TALK )
+			if ( $ns == NS_USER || $ns == NS_USER_TALK ) {
 				return;
+			}
 		}
 
 		$oldlink = $link;
 		parent::findVariantLink( $link, $nt, $ignoreOtherCond );
-		if ( $this->getPreferredVariant() == $this->mMainLanguageCode )
+		if ( $this->getPreferredVariant() == $this->mMainLanguageCode ) {
 			$link = $oldlink;
+		}
 	}
 
 	/**
@@ -168,9 +170,11 @@ class IuConverter extends LanguageConverter {
 	 */
 	function autoConvert( $text, $toVariant = false ) {
 		global $wgTitle;
-		if ( is_object( $wgTitle ) && $wgTitle->getNameSpace() == NS_FILE ) {
+		if ( is_object( $wgTitle ) && $wgTitle->getNamespace() == NS_FILE ) {
 			$imagename = $wgTitle->getNsText();
-			if ( preg_match( "/^$imagename:/", $text ) ) return $text;
+			if ( preg_match( "/^$imagename:/", $text ) ) {
+				return $text;
+			}
 		}
 		return parent::autoConvert( $text, $toVariant );
 	}
@@ -189,7 +193,7 @@ class IuConverter extends LanguageConverter {
 		if ( trim( $text ) ) {
 			$this->loadTables();
 			// To syllabics, first translate uppercase to lowercase Latin
-			if($toVariant == 'ike-cans') {
+			if ( $toVariant == 'ike-cans' ) {
 				$text = $this->mTables['lowercase']->replace( $text );
 			}
 			$text = $this->mTables[$toVariant]->replace( $text );

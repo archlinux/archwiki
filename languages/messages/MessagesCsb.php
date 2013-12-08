@@ -68,9 +68,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Pòkażë lëczba ùzérającëch brëkòwników',
 'tog-oldsig' => 'Pòdzérk wëzdrzatkù twòjegò pòdpisënka',
 'tog-fancysig' => 'Wzérôj na pòdpisënk jakno na wikikòd (bez aùtomatnych lënków)',
-'tog-externaleditor' => 'Brëkùjë domëslno bùtnowégò editora (blós dlô ekspertów, je nót ekstra nastôwów w twòjim kòmpùtrze)',
-'tog-externaldiff' => 'Brëkùjë domëslno bùtnowégò nôrzãdza diff (blós dlô ekspertów.je nót ekstra nastôwów w twòjim kòmpùtrze)',
-'tog-showjumplinks' => 'Włączë lënczi przëstãpù "òbaczë téż"',
 'tog-uselivepreview' => 'Brëkùjë wtimczasnegò pòdzérkù (JavaScript) (eksperimentalné)',
 'tog-forceeditsummary' => 'Pëtôj przed wéńdzenim do pùstégò pòdrechòwania edicëji',
 'tog-watchlisthideown' => 'Zatacë mòjé edicëje z lëstë ùzérónëch artiklów',
@@ -253,7 +250,7 @@ $messages = array(
 'jumptonavigation' => 'nawigacëji',
 'jumptosearch' => 'szëkbë',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Ò {{SITENAME}}',
 'aboutpage' => 'Project:Ò_{{SITENAME}}',
 'copyright' => 'Zamkłosc hewòtny starnë je ùżëczónô wedle reglów $1.',
@@ -263,7 +260,6 @@ $messages = array(
 'disclaimers' => 'Prawné zastrzedżi',
 'disclaimerpage' => 'Project:Prawné zastrzedżi',
 'edithelp' => 'Pòmòc do edicëji',
-'edithelppage' => 'Help:Editowanié starnë',
 'helppage' => 'Help:Spisënk zamkłoscë',
 'mainpage' => 'Przédnô starna',
 'mainpage-description' => 'Przédnô starna',
@@ -583,9 +579,6 @@ Spróbùjë szëkbë z przëdôwkã ''all:'' dlô całowny zamkłoscë starnów 
 'powersearch-redir' => 'Lësta przeczerowaniów',
 'powersearch-field' => 'Szëkba za',
 
-# Quickbar
-'qbsettings' => 'Sztrépk chùtczégò przistãpù',
-
 # Preferences page
 'preferences' => 'Preferencëje',
 'mypreferences' => 'Mòje nastôwë',
@@ -642,7 +635,6 @@ Spróbùjë szëkbë z przëdôwkã ''all:'' dlô całowny zamkłoscë starnów 
 'prefs-reset-intro' => 'Na ti starnie mòże doprowôdzëc nazôd domëslné nastôwë dlô ti starnë.
 Negò dzéjaniô ni mòżé pòzdze ju copnąc.',
 'prefs-emailconfirm-label' => 'Pòcwierdzenié e-mailowi adresë:',
-'prefs-textboxsize' => 'Miara edicjowégò òkna',
 'youremail' => 'E-mail:',
 'username' => 'Miono brëkòwnika:',
 'uid' => 'ID brëkòwnika:',
@@ -819,8 +811,6 @@ Wszëtczé gòdzënë tikają conë ùniwersalnégò czasë.',
 'statistics' => 'Statisticzi',
 'statistics-header-users' => 'Statistika brëkòwników',
 
-'disambiguationspage' => 'Template:Starnë_ùjednoznacznieniô',
-
 'doubleredirects' => 'Dëbeltné przeczérowania',
 
 'brokenredirects' => 'Zerwóné przeczerowania',
@@ -917,7 +907,7 @@ Czej chcesz remôc starnã z lëste ùzéronëch artiklów, klikni ''Òprzestôj
 'unwatchthispage' => 'Òprzestôj ùzerac ną starnã',
 'notanarticle' => 'To nie je artikel',
 'watchlist-details' => 'Ùzérôsz {{PLURAL:$1|$1 artikel|$1 artikle/-ów}}, nie rechùjąc diskùsëjów.',
-'wlheader-showupdated' => "* Artiklë jakczé òsta zmienioné òd Twòji slédny wizytë są wëapratnioné '''pògrëbieniém'''",
+'wlheader-showupdated' => "Artiklë jakczé òsta zmienioné òd Twòji slédny wizytë są wëapratnioné '''pògrëbieniém'''",
 'watchmethod-list' => 'szëkba ùzérónëch artiklów westrzód pòslédnëch edicëjów',
 'watchlistcontains' => 'Na twòji lësce ùzérónëch artiklów {{PLURAL:$1|je 1 strana|są $1 starnë|je $1 starnów}}.',
 'wlnote' => "Niżi môsz wëskrzënioné {{PLURAL:$1|slédną zmianã|'''$1''' slédnëch zmianów}} zrobioné òb {{PLURAL:$2|gòdzënã|'''$2''' gòdzënë/gòdzënów}}.",
@@ -1051,7 +1041,6 @@ Biéj do [[Special:BlockList|lëstë zascëgónëch adresów IP]] abë òbaczëc
 'blocklogentry' => 'zablokòwôł [[$1]], czas blokadë: $2 $3',
 'unblocklogentry' => 'òdblokòwôł $1',
 'block-log-flags-nocreate' => 'blokada ùsôdzaniô kònta',
-'proxyblocksuccess' => 'Fertich.',
 
 # Developer tools
 'lockbtn' => 'Zascëgôj bazã pòdôwków',
@@ -1227,7 +1216,7 @@ Jinszé pòla bãdą domëslno zataconé.
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-source' => 'Zdrój',
 'exif-languagecode' => 'Jãzëk',
 

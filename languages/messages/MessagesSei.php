@@ -42,9 +42,6 @@ $messages = array(
 'tog-enotifrevealaddr' => 'Xuniim henadressade e-iitom notificacionde e-iitóm',
 'tog-shownumberswatching' => 'Cohuatlöx caitóm cáminotómde numberam',
 'tog-fancysig' => 'Signaturenám brazzinám (sans linkám automaticám)',
-'tog-externaleditor' => 'Usadad ticpatlöx externöx auto',
-'tog-externaldiff' => 'Usadad diff extern auto',
-'tog-showjumplinks' => 'Záj "jumpöx" accessibilitiit linkám',
 'tog-uselivepreview' => 'Usadad cuáxiit live (JavaScript) (Experimentam)',
 'tog-forceeditsummary' => 'Ixuniimticpatlöx he jan nenenterom abvuatlde ticpatlöx',
 'tog-watchlisthideown' => 'Cíiitám he ticpatlöxde listade cáminot zo',
@@ -190,7 +187,7 @@ $messages = array(
 'jumptonavigation' => 'navigacion',
 'jumptosearch' => 'Yahöx',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} mii',
 'aboutpage' => 'Project:Miilà',
 'copyright' => 'Contentua coitáamb $1 tan.',
@@ -200,7 +197,6 @@ $messages = array(
 'disclaimers' => 'Isój cacóomx',
 'disclaimerpage' => 'Project:Isoj cacóomx geniiraloj',
 'edithelp' => 'Help ticpatlöx',
-'edithelppage' => 'Help:Ticpatlöx',
 'helppage' => 'Help:Caálixötöj',
 'mainpage' => 'Caálixötöj',
 'mainpage-description' => 'Caálixötöj',
@@ -262,17 +258,6 @@ Meccan páhina extrava valide pac [[Special:SpecialPages]] iti.',
 # General errors
 'error' => 'Römj',
 'databaseerror' => 'Römjde database',
-'dberrortext' => 'Römjde syntaxde database query coccebj icmaaniit.
-Jan pos-coccebj bug zo software zo iti.
-Hunattemptöx database query coccebjöx:
-<blockquote><tt>$1</tt></blockquote>
-funccion xi "<tt>$2</tt>".
-MySQL returnöx römj iti "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'Römjde syntaxde database query coccebj icmaaniit.
-Hunattemptöx database query coccebjöx:
-"$1"
-funccion xi "$2".
-MySQL returnöx römj iti "$3: $4"',
 'laggedslavemode' => 'Attencion: Páhina necoccebj updatenám cmaa.',
 'readonly' => 'Database protectáme',
 'enterlockreason' => 'Enterom raede lockom zo, includom estimacionde janxepe lockom zo releasom',
@@ -308,7 +293,6 @@ Query: $2',
 'editinginterface' => "'''Warning:''' You are editing a page which is used to provide interface text for the software.
 Changes to this page will affect the appearance of the user interface for other users.
 For translations, please consider using [//translatewiki.net/wiki/Main_Page?setlang=en translatewiki.net], the MediaWiki localisation project.",
-'sqlhidden' => '(SQL querynam cíiitámöx)',
 'cascadeprotected' => 'Jan páhina coccebj protectöxde ticpatlöx, zo coccebj cascadande jan {{PLURAL:$1|páhina|páhinám}}, jan coccebj protëctox cascadanöx opcion zo mii:
 $2',
 'namespaceprotected' => "Me necoccebj permiccion ticpatlöx páhinám '''$1''' ipartuatl zo iti.",
@@ -386,7 +370,7 @@ confirmom account zo coccebj de'me.",
 'newpassword' => 'Hunquimx canj:',
 'retypenew' => 'Vanhunquimx canj:',
 'resetpass_submit' => 'Vanquimx canj ö caápo',
-'resetpass_success' => 'Me quimx canj coccebj quiixde success! Caápo cmaa...',
+'changepassword-success' => 'Me quimx canj coccebj quiixde success! Caápo cmaa...',
 'resetpass_forbidden' => 'Quimx cánj nereset jan wiki iti',
 
 # Edit page toolbar
@@ -579,12 +563,7 @@ Informacion: (curt) = quiíxde vercion currentua,
 'prevn' => 'jan {{PLURAL:$1|$1}}',
 'nextn' => 'hun {{PLURAL:$1|$1}}',
 'viewprevnext' => 'Cohuatlöx ($1 {{int:pipe-separator}} $2) ($3)',
-'searchhelp-url' => 'Help:Caálixötöj',
 'powersearch' => 'Yahöx',
-
-# Quickbar
-'qbsettings' => 'Zuónaát',
-'qbsettings-none' => 'Nepartám',
 
 # Preferences page
 'preferences' => 'Quáatlaác',
@@ -1023,7 +1002,7 @@ iitom e-iitomde diijömde caitóm.',
 'ilsubmit' => 'Yahöx',
 'bydate' => 'de datum',
 
-# EXIF tags
+# Exif tags
 'exif-fnumber' => 'F Numberam',
 'exif-gpslatitude' => 'Latitudam',
 'exif-gpslongitude' => 'Longitudam',

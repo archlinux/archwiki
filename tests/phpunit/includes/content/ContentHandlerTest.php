@@ -10,9 +10,9 @@
  */
 class ContentHandlerTest extends MediaWikiTestCase {
 
-	public function setup() {
+	public function setUp() {
 		global $wgContLang;
-		parent::setup();
+		parent::setUp();
 
 		$this->setMwGlobals( array(
 			'wgExtraNamespaces' => array(
@@ -70,6 +70,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider dataGetDefaultModelFor
+	 * @covers ContentHandler::getDefaultModelFor
 	 */
 	public function testGetDefaultModelFor( $title, $expectedModelId ) {
 		$title = Title::newFromText( $title );
@@ -78,6 +79,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider dataGetDefaultModelFor
+	 * @covers ContentHandler::getForTitle
 	 */
 	public function testGetForTitle( $title, $expectedContentModel ) {
 		$title = Title::newFromText( $title );
@@ -97,6 +99,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider dataGetLocalizedName
+	 * @covers ContentHandler::getLocalizedName
 	 */
 	public function testGetLocalizedName( $id, $expected ) {
 		$name = ContentHandler::getLocalizedName( $id );
@@ -131,6 +134,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider dataGetPageLanguage
+	 * @covers ContentHandler::getPageLanguage
 	 */
 	public function testGetPageLanguage( $title, $expected ) {
 		if ( is_string( $title ) ) {
@@ -145,62 +149,81 @@ class ContentHandlerTest extends MediaWikiTestCase {
 		$this->assertEquals( $expected->getCode(), $lang->getCode() );
 	}
 
-	public function testGetContentText_Null() {
-		global $wgContentHandlerTextFallback;
+	public static function dataGetContentText_Null() {
+		return array(
+			array( 'fail' ),
+			array( 'serialize' ),
+			array( 'ignore' ),
+		);
+	}
+
+	/**
+	 * @dataProvider dataGetContentText_Null
+	 * @covers ContentHandler::getContentText
+	 */
+	public function testGetContentText_Null( $contentHandlerTextFallback ) {
+		$this->setMwGlobals( 'wgContentHandlerTextFallback', $contentHandlerTextFallback );
 
 		$content = null;
 
-		$wgContentHandlerTextFallback = 'fail';
-		$text = ContentHandler::getContentText( $content );
-		$this->assertEquals( '', $text );
-
-		$wgContentHandlerTextFallback = 'serialize';
-		$text = ContentHandler::getContentText( $content );
-		$this->assertEquals( '', $text );
-
-		$wgContentHandlerTextFallback = 'ignore';
 		$text = ContentHandler::getContentText( $content );
 		$this->assertEquals( '', $text );
 	}
 
-	public function testGetContentText_TextContent() {
-		global $wgContentHandlerTextFallback;
+	public static function dataGetContentText_TextContent() {
+		return array(
+			array( 'fail' ),
+			array( 'serialize' ),
+			array( 'ignore' ),
+		);
+	}
+
+	/**
+	 * @dataProvider dataGetContentText_TextContent
+	 * @covers ContentHandler::getContentText
+	 */
+	public function testGetContentText_TextContent( $contentHandlerTextFallback ) {
+		$this->setMwGlobals( 'wgContentHandlerTextFallback', $contentHandlerTextFallback );
 
 		$content = new WikitextContent( "hello world" );
 
-		$wgContentHandlerTextFallback = 'fail';
-		$text = ContentHandler::getContentText( $content );
-		$this->assertEquals( $content->getNativeData(), $text );
-
-		$wgContentHandlerTextFallback = 'serialize';
-		$text = ContentHandler::getContentText( $content );
-		$this->assertEquals( $content->serialize(), $text );
-
-		$wgContentHandlerTextFallback = 'ignore';
 		$text = ContentHandler::getContentText( $content );
 		$this->assertEquals( $content->getNativeData(), $text );
 	}
 
-	public function testGetContentText_NonTextContent() {
-		global $wgContentHandlerTextFallback;
+	/**
+	 * ContentHandler::getContentText should have thrown an exception for non-text Content object
+	 * @expectedException MWException
+	 * @covers ContentHandler::getContentText
+	 */
+	public function testGetContentText_NonTextContent_fail() {
+		$this->setMwGlobals( 'wgContentHandlerTextFallback', 'fail' );
 
 		$content = new DummyContentForTesting( "hello world" );
 
-		$wgContentHandlerTextFallback = 'fail';
+		ContentHandler::getContentText( $content );
+	}
 
-		try {
-			$text = ContentHandler::getContentText( $content );
+	/**
+	 * @covers ContentHandler::getContentText
+	 */
+	public function testGetContentText_NonTextContent_serialize() {
+		$this->setMwGlobals( 'wgContentHandlerTextFallback', 'serialize' );
 
-			$this->fail( "ContentHandler::getContentText should have thrown an exception for non-text Content object" );
-		} catch ( MWException $ex ) {
-			// as expected
-		}
+		$content = new DummyContentForTesting( "hello world" );
 
-		$wgContentHandlerTextFallback = 'serialize';
 		$text = ContentHandler::getContentText( $content );
 		$this->assertEquals( $content->serialize(), $text );
+	}
 
-		$wgContentHandlerTextFallback = 'ignore';
+	/**
+	 * @covers ContentHandler::getContentText
+	 */
+	public function testGetContentText_NonTextContent_ignore() {
+		$this->setMwGlobals( 'wgContentHandlerTextFallback', 'ignore' );
+
+		$content = new DummyContentForTesting( "hello world" );
+
 		$text = ContentHandler::getContentText( $content );
 		$this->assertNull( $text );
 	}
@@ -231,6 +254,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider dataMakeContent
+	 * @covers ContentHandler::makeContent
 	 */
 	public function testMakeContent( $data, $title, $modelId, $format, $expectedModelId, $expectedNativeData, $shouldFail ) {
 		$title = Title::newFromText( $title );
@@ -247,8 +271,7 @@ class ContentHandlerTest extends MediaWikiTestCase {
 		} catch ( MWException $ex ) {
 			if ( !$shouldFail ) {
 				$this->fail( "ContentHandler::makeContent failed unexpectedly: " . $ex->getMessage() );
-			}
-			else {
+			} else {
 				// dummy, so we don't get the "test did not perform any assertions" message.
 				$this->assertTrue( true );
 			}
@@ -261,6 +284,9 @@ class ContentHandlerTest extends MediaWikiTestCase {
 	}
 	*/
 
+	/**
+	 * @covers ContentHandler::runLegacyHooks
+	 */
 	public function testRunLegacyHooks() {
 		Hooks::register( 'testRunLegacyHooks', __CLASS__ . '::dummyHookHandler' );
 
@@ -308,6 +334,7 @@ class DummyContentHandlerForTesting extends ContentHandler {
 	 */
 	public function unserializeContent( $blob, $format = null ) {
 		$d = unserialize( $blob );
+
 		return new DummyContentForTesting( $d );
 	}
 

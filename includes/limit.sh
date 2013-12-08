@@ -6,6 +6,7 @@
 # and is available on most Linux systems. If Perl was distributed with
 # BSD::Resource included, we would happily use that instead, but it isn't.
 
+MW_INCLUDE_STDERR=
 MW_CPU_LIMIT=0
 MW_CGROUP=
 MW_MEM_LIMIT=0
@@ -14,6 +15,10 @@ MW_WALL_CLOCK_LIMIT=0
 
 # Override settings
 eval "$2"
+
+if [ -n "$MW_INCLUDE_STDERR" ]; then
+	exec 2>&1
+fi
 
 if [ "$MW_CPU_LIMIT" -gt 0 ]; then
 	ulimit -t "$MW_CPU_LIMIT"
@@ -55,7 +60,7 @@ fi
 
 # Clean up cgroup
 cleanup() {
-	# First we have to move the current task into a "garbage" group, otherwise 
+	# First we have to move the current task into a "garbage" group, otherwise
 	# the cgroup will not be empty, and attempting to remove it will fail with
 	# "Device or resource busy"
 	if [ -w "$MW_CGROUP"/tasks ]; then
@@ -84,7 +89,7 @@ if [ -n "$MW_CGROUP" ]; then
 	updateTaskCount
 
 	if [ $NUM_TASKS -gt 1 ]; then
-		# Spawn a monitor process which will continue to poll for completion 
+		# Spawn a monitor process which will continue to poll for completion
 		# of all processes in the cgroup after termination of the parent shell
 		(
 			while [ $NUM_TASKS -gt 1 ]; do

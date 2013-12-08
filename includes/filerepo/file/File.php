@@ -48,6 +48,7 @@
  * @ingroup FileAbstraction
  */
 abstract class File {
+	// Bitfield values akin to the Revision deletion constants
 	const DELETED_FILE = 1;
 	const DELETED_COMMENT = 2;
 	const DELETED_USER = 4;
@@ -201,9 +202,9 @@ abstract class File {
 			'mpeg' => 'mpg',
 			'tiff' => 'tif',
 			'ogv' => 'ogg' );
-		if( isset( $squish[$lower] ) ) {
+		if ( isset( $squish[$lower] ) ) {
 			return $squish[$lower];
-		} elseif( preg_match( '/^[0-9a-z]+$/', $lower ) ) {
+		} elseif ( preg_match( '/^[0-9a-z]+$/', $lower ) ) {
 			return $lower;
 		} else {
 			return '';
@@ -241,7 +242,7 @@ abstract class File {
 	 * @return array ("text", "html") etc
 	 */
 	public static function splitMime( $mime ) {
-		if( strpos( $mime, '/' ) !== false ) {
+		if ( strpos( $mime, '/' ) !== false ) {
 			return explode( '/', $mime, 2 );
 		} else {
 			return array( $mime, 'unknown' );
@@ -518,7 +519,7 @@ abstract class File {
 	 * @param $version integer version number.
 	 * @return Array containing metadata, or what was passed to it on fail (unserializing if not array)
 	 */
-	public function convertMetadataVersion($metadata, $version) {
+	public function convertMetadataVersion( $metadata, $version ) {
 		$handler = $this->getHandler();
 		if ( !is_array( $metadata ) ) {
 			// Just to make the return type consistent
@@ -681,7 +682,7 @@ abstract class File {
 		if ( $mime === "unknown/unknown" ) {
 			return false; #unknown type, not trusted
 		}
-		if ( in_array( $mime, $wgTrustedMediaFormats) ) {
+		if ( in_array( $mime, $wgTrustedMediaFormats ) ) {
 			return true;
 		}
 
@@ -737,7 +738,7 @@ abstract class File {
 			if ( $this->repo ) {
 				$script = $this->repo->getThumbScriptUrl();
 				if ( $script ) {
-					$this->transformScript = "$script?f=" . urlencode( $this->getName() );
+					$this->transformScript = wfAppendQuery( $script, array( 'f' => $this->getName() ) );
 				}
 			}
 		}
@@ -841,8 +842,9 @@ abstract class File {
 	protected function transformErrorOutput( $thumbPath, $thumbUrl, $params, $flags ) {
 		global $wgIgnoreImageErrors;
 
-		if ( $wgIgnoreImageErrors && !( $flags & self::RENDER_NOW ) ) {
-			return $this->getHandler()->getTransform( $this, $thumbPath, $thumbUrl, $params );
+		$handler = $this->getHandler();
+		if ( $handler && $wgIgnoreImageErrors && !( $flags & self::RENDER_NOW ) ) {
+			return $handler->getTransform( $this, $thumbPath, $thumbUrl, $params );
 		} else {
 			return new MediaTransformError( 'thumbnail_error',
 				$params['width'], 0, wfMessage( 'thumbnail-dest-create' )->text() );
@@ -910,8 +912,7 @@ abstract class File {
 						// XXX: Pass in the storage path even though we are not rendering anything
 						// and the path is supposed to be an FS path. This is due to getScalerType()
 						// getting called on the path and clobbering $thumb->getUrl() if it's false.
-						$thumb = $handler->getTransform(
-							$this, $thumbPath, $thumbUrl, $params );
+						$thumb = $handler->getTransform( $this, $thumbPath, $thumbUrl, $params );
 						$thumb->setStoragePath( $thumbPath );
 						break;
 					}
@@ -1000,7 +1001,7 @@ abstract class File {
 	/**
 	 * Get a MediaHandler instance for this file
 	 *
-	 * @return MediaHandler
+	 * @return MediaHandler|boolean Registered MediaHandler for file's mime type or false if none found
 	 */
 	function getHandler() {
 		if ( !isset( $this->handler ) ) {
@@ -1097,7 +1098,7 @@ abstract class File {
 	 *
 	 * @return array
 	 */
-	function getHistory( $limit = null, $start = null, $end = null, $inc=true ) {
+	function getHistory( $limit = null, $start = null, $end = null, $inc = true ) {
 		return array();
 	}
 
@@ -1500,7 +1501,7 @@ abstract class File {
 	 * Is this file a "deleted" file in a private archive?
 	 * STUB
 	 *
-	 * @param $field
+	 * @param integer $field one of DELETED_* bitfield constants
 	 *
 	 * @return bool
 	 */
@@ -1656,18 +1657,22 @@ abstract class File {
 	/**
 	 * Get the HTML text of the description page, if available
 	 *
+	 * @param $lang Language Optional language to fetch description in
 	 * @return string
 	 */
-	function getDescriptionText() {
+	function getDescriptionText( $lang = false ) {
 		global $wgMemc, $wgLang;
 		if ( !$this->repo || !$this->repo->fetchDescription ) {
 			return false;
 		}
-		$renderUrl = $this->repo->getDescriptionRenderUrl( $this->getName(), $wgLang->getCode() );
+		if ( !$lang ) {
+			$lang = $wgLang;
+		}
+		$renderUrl = $this->repo->getDescriptionRenderUrl( $this->getName(), $lang->getCode() );
 		if ( $renderUrl ) {
 			if ( $this->repo->descriptionCacheExpiry > 0 ) {
 				wfDebug( "Attempting to get the description from cache..." );
-				$key = $this->repo->getLocalCacheKey( 'RemoteFileDescription', 'url', $wgLang->getCode(),
+				$key = $this->repo->getLocalCacheKey( 'RemoteFileDescription', 'url', $lang->getCode(),
 									$this->getName() );
 				$obj = $wgMemc->get( $key );
 				if ( $obj ) {

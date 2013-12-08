@@ -156,10 +156,10 @@ class DateFormatter {
 		}
 		for ( $i = 1; $i <= self::LAST; $i++ ) {
 			$this->mSource = $i;
-			if ( isset ( $this->rules[$preference][$i] ) ) {
+			if ( isset( $this->rules[$preference][$i] ) ) {
 				# Specific rules
 				$this->mTarget = $this->rules[$preference][$i];
-			} elseif ( isset ( $this->rules[self::ALL][$i] ) ) {
+			} elseif ( isset( $this->rules[self::ALL][$i] ) ) {
 				# General rules
 				$this->mTarget = $this->rules[self::ALL][$i];
 			} elseif ( $preference ) {
@@ -198,14 +198,15 @@ class DateFormatter {
 	function replace( $matches ) {
 		# Extract information from $matches
 		$linked = true;
-		if ( isset( $this->mLinked ) )
+		if ( isset( $this->mLinked ) ) {
 			$linked = $this->mLinked;
+		}
 
 		$bits = array();
 		$key = $this->keys[$this->mSource];
 		for ( $p = 0; $p < strlen( $key ); $p++ ) {
 			if ( $key[$p] != ' ' ) {
-				$bits[$key[$p]] = $matches[$p+1];
+				$bits[$key[$p]] = $matches[$p + 1];
 			}
 		}
 
@@ -232,10 +233,12 @@ class DateFormatter {
 		$fail = false;
 
 		// Pre-generate y/Y stuff because we need the year for the <span> title.
-		if ( !isset( $bits['y'] ) && isset( $bits['Y'] ) )
+		if ( !isset( $bits['y'] ) && isset( $bits['Y'] ) ) {
 			$bits['y'] = $this->makeIsoYear( $bits['Y'] );
-		if ( !isset( $bits['Y'] ) && isset( $bits['y'] ) )
+		}
+		if ( !isset( $bits['Y'] ) && isset( $bits['y'] ) ) {
 			$bits['Y'] = $this->makeNormalYear( $bits['y'] );
+		}
 
 		if ( !isset( $bits['m'] ) ) {
 			$m = $this->makeIsoMonth( $bits['F'] );
@@ -293,8 +296,9 @@ class DateFormatter {
 		}
 
 		$isoBits = array();
-		if ( isset( $bits['y'] ) )
+		if ( isset( $bits['y'] ) ) {
 			$isoBits[] = $bits['y'];
+		}
 		$isoBits[] = $bits['m'];
 		$isoBits[] = $bits['d'];
 		$isoDate = implode( '-', $isoBits );
@@ -312,7 +316,7 @@ class DateFormatter {
 	 */
 	function getMonthRegex() {
 		$names = array();
-		for( $i = 1; $i <= 12; $i++ ) {
+		for ( $i = 1; $i <= 12; $i++ ) {
 			$names[] = $this->lang->getMonthName( $i );
 			$names[] = $this->lang->getMonthAbbreviation( $i );
 		}
@@ -337,7 +341,7 @@ class DateFormatter {
 	function makeIsoYear( $year ) {
 		# Assumes the year is in a nice format, as enforced by the regex
 		if ( substr( $year, -2 ) == 'BC' ) {
-			$num = intval(substr( $year, 0, -3 )) - 1;
+			$num = intval( substr( $year, 0, -3 ) ) - 1;
 			# PHP bug note: sprintf( "%04d", -1 ) fails poorly
 			$text = sprintf( '-%04d', $num );
 
@@ -353,7 +357,7 @@ class DateFormatter {
 	 */
 	function makeNormalYear( $iso ) {
 		if ( $iso[0] == '-' ) {
-			$text = (intval( substr( $iso, 1 ) ) + 1) . ' BC';
+			$text = ( intval( substr( $iso, 1 ) ) + 1 ) . ' BC';
 		} else {
 			$text = intval( $iso );
 		}

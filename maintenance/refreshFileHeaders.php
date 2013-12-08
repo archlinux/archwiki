@@ -24,7 +24,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to refresh file headers from metadata
@@ -90,4 +90,4 @@ class RefreshFileHeaders extends Maintenance {
 }
 
 $maintClass = 'RefreshFileHeaders';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

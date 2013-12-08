@@ -1,6 +1,6 @@
 <?php
 
-require_once( dirname( __DIR__ ) . '/includes/upload/UploadFromUrlTest.php' );
+require_once dirname( __DIR__ ) . '/includes/upload/UploadFromUrlTest.php';
 
 class UploadFromUrlTestSuite extends PHPUnit_Framework_TestSuite {
 	public $savedGlobals = array();
@@ -16,16 +16,16 @@ class UploadFromUrlTestSuite extends PHPUnit_Framework_TestSuite {
 	}
 
 	protected function setUp() {
-		global $wgParser, $wgParserConf, $IP, $messageMemc, $wgMemc,
-			$wgUser, $wgLang, $wgOut, $wgRequest, $wgStyleDirectory, $wgEnableParserCache,
-			$wgNamespaceAliases, $wgNamespaceProtection, $parserMemc;
+		global $wgParser, $wgParserConf, $IP, $messageMemc, $wgMemc, $wgUser,
+			$wgLang, $wgOut, $wgRequest, $wgStyleDirectory,
+			$wgEnableParserCache, $wgNamespaceAliases, $wgNamespaceProtection,
+			$parserMemc;
 
 		$tmpGlobals = array();
 
 		$tmpGlobals['wgScript'] = '/index.php';
 		$tmpGlobals['wgScriptPath'] = '/';
 		$tmpGlobals['wgArticlePath'] = '/wiki/$1';
-		$tmpGlobals['wgStyleSheetPath'] = '/skins';
 		$tmpGlobals['wgStylePath'] = '/skins';
 		$tmpGlobals['wgThumbnailScriptPath'] = false;
 		$tmpGlobals['wgLocalFileRepo'] = array(
@@ -55,7 +55,6 @@ class UploadFromUrlTestSuite extends PHPUnit_Framework_TestSuite {
 		$wgNamespaceProtection[NS_MEDIAWIKI] = 'editinterface';
 		$wgNamespaceAliases['Image'] = NS_FILE;
 		$wgNamespaceAliases['Image_talk'] = NS_FILE_TALK;
-
 
 		$wgEnableParserCache = false;
 		DeferredUpdates::clearPendingUpdates();
@@ -184,6 +183,7 @@ class UploadFromUrlTestSuite extends PHPUnit_Framework_TestSuite {
 
 		if ( file_exists( $dir ) ) {
 			wfDebug( "Already exists!\n" );
+
 			return $dir;
 		}
 
@@ -201,6 +201,7 @@ class UploadFromUrlTestSuite extends PHPUnit_Framework_TestSuite {
 		// the UploadFromUrlTest class
 		class_exists( 'UploadFromUrlTest' );
 		$suite = new UploadFromUrlTestSuite( 'UploadFromUrlTest' );
+
 		return $suite;
 	}
 }

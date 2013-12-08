@@ -18,6 +18,7 @@
  * @author Red Baron
  * @author Reedy
  * @author Slaven Kosanovic
+ * @author TheStefan12345
  * @author Жељко Тодоровић
  * @author Михајло Анђелковић
  * @author לערי ריינהארט
@@ -334,9 +335,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Prikaži broj korisnika koji nadgledaju',
 'tog-oldsig' => 'Tekući potpis:',
 'tog-fancysig' => 'Smatraj potpis kao vikitekst (bez samopovezivanja)',
-'tog-externaleditor' => 'Uvek koristi spoljni uređivač (samo za napredne — potrebne su posebne postavke na računaru)',
-'tog-externaldiff' => 'Uvek koristi spoljni program za upoređivanje (samo za napredne — potrebne su posebne postavke na računaru)',
-'tog-showjumplinks' => 'Omogući pomoćne veze „Idi na“',
 'tog-uselivepreview' => 'Koristi trenutan pregled (eksperimentalno)',
 'tog-forceeditsummary' => 'Upozori me kada ne unesem opis izmene',
 'tog-watchlisthideown' => 'Sakrij moje izmene sa spiska nadgledanja',
@@ -350,6 +348,7 @@ $messages = array(
 'tog-showhiddencats' => 'Prikaži skrivene kategorije',
 'tog-noconvertlink' => 'Onemogući pretvaranje naslova veza',
 'tog-norollbackdiff' => 'Izostavi razliku nakon izvršenog vraćanja',
+'tog-useeditwarning' => 'Upozori me kada napuštam stranicu sa nesačuvanim promenama',
 
 'underline-always' => 'uvek podvlači',
 'underline-never' => 'nikad ne podvlači',
@@ -413,6 +412,18 @@ $messages = array(
 'oct' => 'okt',
 'nov' => 'nov',
 'dec' => 'dec',
+'january-date' => '$1. januar',
+'february-date' => '$1. februar',
+'march-date' => '$1. mart',
+'april-date' => '$1. april',
+'may-date' => '$1. maj',
+'june-date' => '$1. jun',
+'july-date' => '$1. jul',
+'august-date' => '$1. august',
+'september-date' => '$1. septembar',
+'october-date' => '$1. oktobar',
+'november-date' => '$1. novembar',
+'december-date' => '$1. decembar',
 
 # Categories related messages
 'pagecategories' => '{{PLURAL:$1|Kategorija|Kategorije}}',
@@ -433,7 +444,7 @@ $messages = array(
 'noindex-category' => 'Nepopisane stranice',
 'broken-file-category' => 'Stranice s neispravnim vezama do datoteka',
 
-'linkprefix' => '/^(.*?)([a-zA-Z\\x80-\\xff]+)$/sD',
+'linkprefix' => '/^((?>.*(?<![a-zA-Z\\x80-\\xff])))(.+)$/sD',
 
 'about' => 'O nama',
 'article' => 'Stranica sa sadržajem',
@@ -538,7 +549,7 @@ $1',
 'pool-queuefull' => 'Red je pun zahteva',
 'pool-errorunknown' => 'Nepoznata greška',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'O projektu {{SITENAME}}',
 'aboutpage' => 'Project:O nama',
 'copyright' => 'Sadržaj je dostupan pod licencom $1.',
@@ -548,7 +559,6 @@ $1',
 'disclaimers' => 'Odricanje odgovornosti',
 'disclaimerpage' => 'Project:Odricanje odgovornosti',
 'edithelp' => 'Pomoć pri uređivanju',
-'edithelppage' => 'Help:Uređivanje',
 'helppage' => 'Help:Sadržaj',
 'mainpage' => 'Glavna strana',
 'mainpage-description' => 'Glavna strana',
@@ -580,7 +590,6 @@ Pogledajte stranicu za [[Special:Version|izdanje]].',
 'newmessagesdifflinkplural' => '{{PLURAL:$1|poslednju izmenu|poslednje izmene}}',
 'youhavenewmessagesmulti' => 'Imate novih poruka na $1',
 'editsection' => 'uredi',
-'editsection-brackets' => '[$1]',
 'editold' => 'uredi',
 'viewsourceold' => 'izvornik',
 'editlink' => 'uredi',
@@ -632,17 +641,6 @@ Spisak svih posebnih stranica nalazi se [[Special:SpecialPages|ovde]].',
 # General errors
 'error' => 'Greška',
 'databaseerror' => 'Greška u bazi podataka',
-'dberrortext' => 'Došlo je do sintaktičke greške u bazi.
-Možda se radi o grešci u softveru.
-Poslednji pokušaj upita je glasio:
-<blockquote><code>$1</code></blockquote>
-unutar funkcije „<code>$2</code>“.
-Baza podataka je prijavila grešku „<samp>$3: $4</samp>“.',
-'dberrortextcl' => 'Došlo je do sintaktičke greške u bazi.
-Poslednji pokušaj upita je glasio:
-„$1“
-unutar funkcije „$2“.
-Baza podataka je prijavila grešku „$3: $4“',
 'laggedslavemode' => "'''Upozorenje:''' stranica je možda zastarela.",
 'readonly' => 'Baza podataka je zaključana',
 'enterlockreason' => 'Unesite razlog za zaključavanje, uključujući i vreme otključavanja',
@@ -698,7 +696,6 @@ Da biste dodali ili izmenili prevode svih vikija, posetite [//translatewiki.net/
 'editinginterface' => "'''Upozorenje:''' uređujete stranicu koja se koristi za prikazivanje teksta korisničkog okruženja.
 Izmene na ovoj stranici će uticati na sve korisnike ovog vikija.
 Da biste dodali ili izmenili prevode svih vikija, posetite [//translatewiki.net/wiki/Main_Page?setlang=sr_ec Translejtviki], projekat za lokalizaciju Medijavikija.",
-'sqlhidden' => '(SQL upit je sakriven)',
 'cascadeprotected' => 'Ova stranica je zaključana jer sadrži {{PLURAL:$1|sledeću stranicu koja je zaštićena|sledeće stranice koje su zaštićene}} „prenosivom“ zaštitom:
 $2',
 'namespaceprotected' => "Nemate dozvolu da uređujete stranice u imenskom prostoru '''$1'''.",
@@ -726,10 +723,18 @@ Administrator koji ju je zaključao ponudio je sledeće objašnjenje: „$3“.'
 Imajte na umu da neke stranice mogu nastaviti da se prikazuju kao da ste još prijavljeni, sve dok ne očistite privremenu memoriju svog pregledača.",
 'welcomeuser' => 'Dobrodošli, $1!',
 'yourname' => 'Korisničko ime:',
+'userlogin-yourname' => 'Korisničko ime',
+'userlogin-yourname-ph' => 'Unesite vaše korisničko ime',
 'yourpassword' => 'Lozinka:',
+'userlogin-yourpassword' => 'Lozinka',
+'userlogin-yourpassword-ph' => 'Unesite vašu lozinku',
+'createacct-yourpassword-ph' => 'Unesite novu lozinku',
 'yourpasswordagain' => 'Potvrda lozinke:',
+'createacct-yourpasswordagain' => 'Potvrdite lozinku',
+'createacct-yourpasswordagain-ph' => 'Unesite lozinku još jednom',
 'remembermypassword' => 'Zapamti me na ovom pregledaču (najduže $1 {{PLURAL:$1|dan|dana|dana}})',
-'securelogin-stick-https' => 'Ostanite povezani sa HTTPS nakon prijave',
+'userlogin-remembermypassword' => 'Ostavi me prijavljenog/u',
+'userlogin-signwithsecure' => 'Koristite sigurnu konekciju',
 'yourdomainname' => 'Domen:',
 'password-change-forbidden' => 'Ne možete da promenite lozinku na ovom vikiju.',
 'externaldberror' => 'Došlo je do greške pri prepoznavanju baze podataka ili nemate ovlašćenja da ažurirate svoj spoljni nalog.',
@@ -741,17 +746,35 @@ Imajte na umu da neke stranice mogu nastaviti da se prikazuju kao da ste još pr
 'logout' => 'Odjava',
 'userlogout' => 'Odjavi me',
 'notloggedin' => 'Niste prijavljeni',
+'userlogin-noaccount' => 'Nemate nalog?',
+'userlogin-joinproject' => 'Otvorite ga',
 'nologin' => 'Nemate nalog? Idite na stranicu $1.',
 'nologinlink' => 'Otvaranje naloga',
 'createaccount' => 'Otvori nalog',
 'gotaccount' => 'Već imate nalog? Idite na stranicu „$1“.',
 'gotaccountlink' => 'Prijava',
 'userlogin-resetlink' => 'Zaboravili ste podatke za prijavu?',
+'userlogin-resetpassword-link' => 'Resetuj lozinku',
+'helplogin-url' => 'Help:Logging in',
+'userlogin-helplink' => '[[{{MediaWiki:helplogin-url}}|Pomoć pri prijavljivanju]]',
+'createacct-join' => 'Unesite svoje podatke ispod.',
+'createacct-emailrequired' => 'Adresa e-pošte',
+'createacct-emailoptional' => 'Adresa e-pošte (opciono)',
+'createacct-email-ph' => 'Unesite vašu adresu e-pоšte',
 'createaccountmail' => 'Koristite privremenu, slučajno stvorenu lozinku i pošaljite na navedenu adresu elektronske pošte',
+'createacct-realname' => 'Pravo ime (opciono)',
 'createaccountreason' => 'Razlog:',
+'createacct-reason' => 'Razlog',
+'createacct-reason-ph' => 'Zašto pravite još jedan nalog?',
+'createacct-captcha' => 'Sigurnosna provera',
+'createacct-imgcaptcha-ph' => 'Unesite tekst koji vidite iznad',
+'createacct-submit' => 'Otvori nalog',
+'createacct-benefit-heading' => '{{SITENAME}} je napravljen od strane ljudi kao što ste vi.',
+'createacct-benefit-body3' => 'skorašnjih {{PLURAL:$1|doprinosa}}',
 'badretype' => 'Unete lozinke se ne poklapaju.',
 'userexists' => 'Korisničko ime je zauzeto. Izaberite drugo.',
 'loginerror' => 'Greška pri prijavljivanju',
+'createacct-error' => 'Došlo je do greške pri kreiranju naloga',
 'createaccounterror' => 'Ne mogu da otvorim nalog: $1',
 'nocookiesnew' => 'Korisnički nalog je otvoren, ali niste prijavljeni.
 Ovaj viki koristi kolačiće za prijavu. Vama su kolačići onemogućeni.
@@ -813,8 +836,8 @@ Prijavite se i promenite svoju lozinku.
 
 Ako je ovo greška, zanemarite ovu poruku.',
 'usernamehasherror' => 'Korisničko ime ne može sadržati tarabe',
-'login-throttled' => 'Previše puta ste pokušali da se prijavite.
-Sačekajte nekoliko minuta i pokušajte ponovo.',
+'login-throttled' => 'Previše puta ste pokušali da se prijavite. 
+Molimo vas da sačekate $1 pre nego što pokušate ponovo.',
 'login-abort-generic' => 'Neuspešna prijava – prekinuto',
 'loginlanguagelabel' => 'Jezik: $1',
 'suspicious-userlogout' => 'Vaš zahtev za odjavu je odbijen jer je poslat od strane neispravnog pregledača ili posrednika.',
@@ -833,8 +856,7 @@ Da biste završili prijavu, podesite novu lozinku ovde:',
 'newpassword' => 'Nova lozinka:',
 'retypenew' => 'Potvrda lozinke:',
 'resetpass_submit' => 'Postavi lozinku i prijavi me',
-'resetpass_success' => 'Vaša lozinka je promenjena.
-Prijavljivanje je u toku…',
+'changepassword-success' => 'Vaša lozinka je uspešno promenjena.',
 'resetpass_forbidden' => 'Lozinka ne može biti promenjena',
 'resetpass-no-info' => 'Morate biti prijavljeni da biste pristupili ovoj stranici.',
 'resetpass-submit-loggedin' => 'Promeni lozinku',
@@ -845,10 +867,9 @@ Možda ste već promenili lozinku ili ste zatražili novu privremenu lozinku.',
 
 # Special:PasswordReset
 'passwordreset' => 'Obnavljanje lozinke',
-'passwordreset-text' => 'Popunite ovaj obrazac da biste primili e-poruku sa svojim podacima za prijavu.',
+'passwordreset-text-one' => 'Popunite ovaj obrazac da biste resetovali lozinku.',
 'passwordreset-legend' => 'Poništi lozinku',
 'passwordreset-disabled' => 'Obnavljanje lozinke je onemogućeno na ovom vikiju.',
-'passwordreset-pretext' => '{{PLURAL:$1||Unesite jedan od delova podataka ispod}}',
 'passwordreset-username' => 'Korisničko ime:',
 'passwordreset-domain' => 'Domen:',
 'passwordreset-capture' => 'Pogledati krajnju poruku?',
@@ -873,7 +894,7 @@ Prijavite se i izaberite novu lozinku. Ako je neko drugi zahtevao ovu radnju ili
 Privremena lozinka: $2',
 'passwordreset-emailsent' => 'Podsetnik o lozinci je poslat na vašu adresu.',
 'passwordreset-emailsent-capture' => 'Poslat je podsetnik preko e-pošte (prikazan dole).',
-'passwordreset-emailerror-capture' => 'Napravljen je podsetnik za slanje preko e-pošte (prikazan dole), ali ga ne mogu poslati korisniku: $1',
+'passwordreset-emailerror-capture' => 'E-poruka za resetovanje lozinke, prikazana ispod je poslata, ali slanje {{GENDER:$2|korisniku|korisnici}} nije uspelo: $1',
 
 # Special:ChangeEmail
 'changeemail' => 'Promena e-adrese',
@@ -1090,12 +1111,15 @@ Nije dato nikakvo obrazloženje.',
 Izgleda da je obrisana.',
 'edit-conflict' => 'Sukob izmena.',
 'edit-no-change' => 'Vaša izmena je zanemarena jer nije bilo nikakvih izmena u tekstu.',
+'postedit-confirmation' => 'Vaša izmena je sačuvana.',
 'edit-already-exists' => 'Ne mogu da napravim stranicu.
 Izgleda da ona već postoji.',
 'defaultmessagetext' => 'Podrazumevani tekst poruke',
 'content-failed-to-parse' => 'Ne mogu da raščlanim sadržaj tipa $2 za model $1: $3',
 'invalid-content-data' => 'Neispravni podaci sadržaja',
 'content-not-allowed-here' => 'Sadržaj modela „$1“ nije dozvoljen na stranici [[$2]]',
+'editwarning-warning' => 'Ako napustite ovu stranicu, izgubićete sve izmene koje ste napravili.
+Ako ste prijavljeni, možete onemogućiti ovo upozorenje u svojim podešavanjima, u odeljku „Uređivanje“.',
 
 # Content models
 'content-model-wikitext' => 'vikitekst',
@@ -1339,7 +1363,6 @@ Više informacija možete pronaći u [{{fullurl:{{#Special:Log}}/delete|page={{F
 'searchmenu-legend' => 'Postavke pretrage',
 'searchmenu-exists' => "'''Postoji i članak pod nazivom „[[:$1]]“.'''",
 'searchmenu-new' => "'''Napravite stranicu „[[:$1]]“.'''",
-'searchhelp-url' => 'Help:Sadržaj',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Pregledaj stranice s ovim prefiksom]]',
 'searchprofile-articles' => 'Članci',
 'searchprofile-project' => 'Stranice pomoći i projekata',
@@ -1384,15 +1407,6 @@ Ako želite sve da pretražite, dodajte prefiks '''all:''' ispred traženog sadr
 U međuvremenu možete tražiti preko Gugla.
 Upamtite da njegovi popisi ovog vikija mogu biti zastareli.',
 
-# Quickbar
-'qbsettings' => 'Bočna paleta',
-'qbsettings-none' => 'Ništa',
-'qbsettings-fixedleft' => 'Pričvršćena levo',
-'qbsettings-fixedright' => 'Pričvršćena desno',
-'qbsettings-floatingleft' => 'Plutajuća levo',
-'qbsettings-floatingright' => 'Plutajuća desno',
-'qbsettings-directionality' => 'Fiksno, u zavisnosti od smera pisanja vašeg jezika',
-
 # Preferences page
 'preferences' => 'Podešavanja',
 'mypreferences' => 'Podešavanja',
@@ -1425,7 +1439,6 @@ Upamtite da njegovi popisi ovog vikija mogu biti zastareli.',
 'resetprefs' => 'Očisti nesačuvane izmene',
 'restoreprefs' => 'Vrati sve na podrazumevano (u svim odeljcima)',
 'prefs-editing' => 'Uređivanje',
-'prefs-edit-boxsize' => 'Veličina okvira za uređivanje.',
 'rows' => 'Redova:',
 'columns' => 'Kolone:',
 'searchresultshead' => 'Pretraga',
@@ -1436,9 +1449,6 @@ Upamtite da njegovi popisi ovog vikija mogu biti zastareli.',
 'recentchangesdays-max' => '(najviše $1 {{PLURAL:$1|dan|dana|dana}})',
 'recentchangescount' => 'Broj izmena za prikaz:',
 'prefs-help-recentchangescount' => 'Podrazumeva skorašnje izmene, istorije stranica i dnevnike.',
-'prefs-help-watchlist-token' => 'Popunjavanjem ovog polja s tajnom šifrom napraviće RSS dovod vašeg spiska nadgledanja.
-Svako ko zna tu šifru biće u mogućnosti da vidi vaša nadgledanja, zato izaberite bezbednu.
-Na primer: $1',
 'savedprefs' => 'Vaša podešavanja su sačuvana.',
 'timezonelegend' => 'Vremenska zona:',
 'localtime' => 'Lokalno vreme:',
@@ -1469,7 +1479,6 @@ Na primer: $1',
 'prefs-reset-intro' => 'Možete koristiti ovu stranicu da poništite svoje postavke na podrazumevane vrednosti.
 Ova radnja se ne može vratiti.',
 'prefs-emailconfirm-label' => 'Potvrda e-adrese:',
-'prefs-textboxsize' => 'Veličina okvira za uređivanje',
 'youremail' => 'E-adresa:',
 'username' => '{{GENDER:$1|Korisničko ime}}:',
 'uid' => '{{GENDER:$1|Korisnički}} ID:',
@@ -1605,7 +1614,7 @@ Ako izaberete da ga unesete, ono će biti korišćeno za pripisivanje vašeg rad
 'right-proxyunbannable' => 'zaobilaženje samoblokiranja posrednika',
 'right-unblockself' => 'Odblokiraj samog sebe',
 'right-protect' => 'Promeni nivoe zaštite i uredi kaskadno zaštićene stranice',
-'right-editprotected' => 'uređivanje zaštićenih stranica (s prenosivom zaštitom)',
+'right-editprotected' => 'Uredi stranice pod zaštitom „{{int:protect-level-sysop}}“',
 'right-editinterface' => 'uređivanje korisničkog sučelja',
 'right-editusercssjs' => 'uređivanje tuđih CSS i javaskript datoteka',
 'right-editusercss' => 'uređivanje tuđih CSS datoteka',
@@ -1715,7 +1724,6 @@ Ako izaberete da ga unesete, ono će biti korišćeno za pripisivanje vašeg rad
 'recentchangeslinked-feed' => 'Srodne izmene',
 'recentchangeslinked-toolbox' => 'Srodne izmene',
 'recentchangeslinked-title' => 'Srodne izmene sa „$1“',
-'recentchangeslinked-noresult' => 'Nema izmena na povezanim stranicama u zadanom periodu.',
 'recentchangeslinked-summary' => "Ova posebna stranica prikazuje spisak poslednjih izmena na stranicama koje su povezane (ili članovi određene kategorije).
 Stranice s [[Special:Watchlist|vašeg spiska nadgledanja]] su '''podebljane'''.",
 'recentchangeslinked-page' => 'Naziv stranice:',
@@ -1727,7 +1735,7 @@ Stranice s [[Special:Watchlist|vašeg spiska nadgledanja]] su '''podebljane'''."
 'reuploaddesc' => 'Nazad na obrazac za otpremanje',
 'upload-tryagain' => 'Pošalji izmenjeni opis datoteke',
 'uploadnologin' => 'Niste prijavljeni',
-'uploadnologintext' => 'Morate biti [[Special:UserLogin|prijavljeni]] da biste otpremali datoteke.',
+'uploadnologintext' => 'Morate biti $1 da biste otpremali datoteke.',
 'upload_directory_missing' => 'Fascikla za slanje ($1) nedostaje i server je ne može napraviti.',
 'upload_directory_read_only' => 'Server ne može da piše po fascikli za slanje ($1).',
 'uploaderror' => 'Greška pri otpremanju',
@@ -1965,7 +1973,6 @@ Radi sigurnosti, img_auth.php je onemogućen.',
 'http-read-error' => 'HTTP greška pri čitanju.',
 'http-timed-out' => 'Zahtev HTTP je istekao.',
 'http-curl-error' => 'Greška pri otvaranju adrese: $1',
-'http-host-unreachable' => 'Ne mogu da pristupim adresi.',
 'http-bad-status' => 'Došlo je do problema tokom zahteva HTTP: $1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -2118,12 +2125,6 @@ Pre brisanja proverite da li druge stranice vode do tih šablona.',
 'statistics-users-active' => 'Aktivni korisnici',
 'statistics-users-active-desc' => 'Korisnici koji su izvršili bar jednu radnju {{PLURAL:$1|prethodni dan|u poslednja $1 dana|u poslednjih $1 dana}}',
 'statistics-mostpopular' => 'Najposećenije stranice',
-
-'disambiguations' => 'Stranice do višeznačnih odrednica',
-'disambiguationspage' => 'Template:Višeznačna odrednica',
-'disambiguations-text' => "Sledeće stranice sadrže bar jednu vezu do '''višeznačne odrednice'''.
-Umesto toga, valjalo bi da vode do odgovarajuće teme.
-Stranica se smatra višeznačnom odrednicom ako koristi šablon koji vodi od [[MediaWiki:Disambiguationspage]].",
 
 'pageswithprop-prop' => 'Ime osobine:',
 'pageswithprop-submit' => 'Idi',
@@ -2381,10 +2382,9 @@ Buduće izmene ove stranice i njene stranice za razgovor biće navedene tamo.',
 'unwatchthispage' => 'Prekini nadgledanje',
 'notanarticle' => 'Nije stranica sa sadržajem',
 'notvisiblerev' => 'Izmena je obrisana',
-'watchnochange' => 'Ništa što nadgledate nije promenjeno u prikazanom vremenu.',
 'watchlist-details' => '{{PLURAL:$1|$1 stranica|$1 stranice|$1 stranica}} na vašem spisku nadgledanja, ne računajući stranice za razgovor.',
-'wlheader-enotif' => '* E-obaveštenje je omogućeno.',
-'wlheader-showupdated' => "* Stranice koje su izmenjene otkad ste ih poslednji put posetili su '''podebljane'''",
+'wlheader-enotif' => 'Obaveštenje e-porukom je omogućeno.',
+'wlheader-showupdated' => "Stranice koje su izmenjene otkad ste ih poslednji put posetili su '''podebljane'''.",
 'watchmethod-recent' => 'proverava se da li ima nadgledanih stranica u skorašnjim izmenama',
 'watchmethod-list' => 'proverava se da li ima skorašnjih izmena u nadgledanim stranicama',
 'watchlistcontains' => 'Vaš spisak nadgledanja sadrži $1 {{PLURAL:$1|stranicu|stranice|stranica}}.',
@@ -2629,7 +2629,7 @@ $1',
 'contributions' => '{{GENDER:$1|Korisnički}} doprinosi',
 'contributions-title' => 'Doprinosi {{GENDER:$1|korisnika|korisnice|korisnika}} $1',
 'mycontris' => 'Doprinosi',
-'contribsub2' => 'Za $1 ($2)',
+'contribsub2' => 'Za {{GENDER:$3|$1}} ($2)',
 'nocontribs' => 'Izmene koje odgovaraju ovim uslovima nisu pronađene.',
 'uctop' => '(poslednja)',
 'month' => 'od meseca (i ranije):',
@@ -2787,12 +2787,9 @@ Tekuće zabrane i blokiranja možete naći [[Special:BlockList|ovde]].',
 Ona je blokirana kao deo blokade $2, koja može biti deblokirana.',
 'ip_range_invalid' => 'Neispravan raspod IP adresa.',
 'ip_range_toolarge' => 'Opsežna blokiranja veća od /$1 nisu dozvoljena.',
-'blockme' => 'Blokiraj me',
 'proxyblocker' => 'Bloker posrednika',
-'proxyblocker-disabled' => 'Ova funkcija je onemogućena.',
 'proxyblockreason' => 'Vaša IP adresa je blokirana jer predstavlja otvoreni posrednik.
 Obratite se vašem dobavljaču internet usluga ili tehničku podršku i obavestite ih o ovom ozbiljnom bezbednosnom problemu.',
-'proxyblocksuccess' => 'Urađeno.',
 'sorbs' => 'DNSBL',
 'sorbsreason' => 'Vaša IP adresa je navedena kao otvoreni posrednik u DNSBL-u koji koristi {{SITENAME}}.',
 'sorbs_create_account_reason' => 'Vaša IP adresa je navedena kao otvoreni posrednik u DNSBL-u koji koristi {{SITENAME}}.
@@ -3115,17 +3112,11 @@ Pokušajte ponovo.',
 
 # Stylesheets
 'common.css' => '/** CSS postavljen ovde će se odraziti na sve teme */',
-'standard.css' => '/* CSS postavljen ovde će uticati na sve korisnike teme „Standardno“ */',
-'nostalgia.css' => '/* CSS postavljen ovde će uticati na sve korisnike teme „Nostalgija“ */',
 'cologneblue.css' => '/* CSS postavljen ovde će uticati na sve korisnike teme „Kelnsko plava“ */',
 'monobook.css' => '/* CSS postavljen ovde će uticati na sve korisnike teme „Monobuk“ */',
-'myskin.css' => '/* CSS postavljen ovde će uticati na sve korisnike teme „Moja tema“ */',
-'chick.css' => '/* CSS postavljen ovde će uticati na sve korisnike teme „Šik“ */',
-'simple.css' => '/* CSS postavljen ovde će uticati na sve korisnike teme „Prosto“ */',
 'modern.css' => '/* CSS postavljen ovde će uticati na sve korisnike teme „Savremeno“ */',
 'vector.css' => '/* CSS postavljen ovde će uticati na sve korisnike teme „Vektorsko“ */',
 'print.css' => '/* CSS postavljen ovde će uticati na izdanje za štampu */',
-'handheld.css' => '/* CSS postavljen ovde će uticati na ručne uređaje s temom prilagođenom u $wgHandheldStyle */',
 'noscript.css' => '/* CSS postavljen ovde će uticati na sve korisnike kojima je onemogućen javaskript */',
 'group-autoconfirmed.css' => '/* CSS postavljen ovde će uticati na samopotvrđene korisnike */',
 'group-bot.css' => '/* CSS postavljen ovde će uticati samo na botove */',
@@ -3134,13 +3125,8 @@ Pokušajte ponovo.',
 
 # Scripts
 'common.js' => '/* Javaskript postavljen ovde će se koristiti za sve korisnike pri otvaranju svake stranice. */',
-'standard.js' => '/* Javaskript postavljen ovde će se učitati za sve one koji koriste temu „Standardno“ */',
-'nostalgia.js' => '/* Javaskript postavljen ovde će se učitati za sve one koji koriste temu „Nostalgija“ */',
 'cologneblue.js' => '/* Javaskript postavljen ovde će se učitati za sve one koji koriste temu „Kelnsko plava“ */',
 'monobook.js' => '/* Javaskript postavljen ovde će se učitati za sve one koji koriste temu „Monobuk“ */',
-'myskin.js' => '/* Javaskript postavljen ovde će se učitati za sve one koji koriste „Moju temu“ */',
-'chick.js' => '/* Javaskript postavljen ovde će se učitati za sve one koji koriste temu „Šik“ */',
-'simple.js' => '/* Javaskript postavljen ovde će se učitati za sve one koji koriste temu „Prosto“ */',
 'modern.js' => '/* Javaskript postavljen ovde će se učitati za sve one koji koriste temu „Savremeno“ */',
 'vector.js' => '/* Javaskript postavljen ovde će se učitati za sve one koji koriste temu „Vektorsko“ */',
 'group-autoconfirmed.js' => '/* Javaskript postavljen ovde će se učitati za samopotvrđene korisnike */',
@@ -3219,13 +3205,8 @@ Ovo je verovatno izazvano vezom do spoljašnjeg sajta koji se nalazi na crnoj li
 'pageinfo-category-files' => 'Broj datoteka',
 
 # Skin names
-'skinname-standard' => 'Klasično',
-'skinname-nostalgia' => 'Nostalgija',
 'skinname-cologneblue' => 'Kelnsko plava',
 'skinname-monobook' => 'Monobuk',
-'skinname-myskin' => 'Moja tema',
-'skinname-chick' => 'Šik',
-'skinname-simple' => 'Prosto',
 'skinname-modern' => 'Savremeno',
 'skinname-vector' => 'Vektorsko',
 
@@ -3396,7 +3377,7 @@ Ako je prvobitno stanje datoteke promenjeno, moguće je da neki detalji ne opisu
 'metadata-langitem' => "'''$2:''' $1",
 'metadata-langitem-default' => '$1',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Širina',
 'exif-imagelength' => 'Visina',
 'exif-bitspersample' => 'Dubina boje',
@@ -3589,7 +3570,7 @@ $4, $5, $6 $7
 $8',
 'exif-subjectnewscode-value' => '$2 ($1)',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Nesažeto',
 'exif-compression-2' => 'CCITT Group 3 1 – Dimenzionalno izmenjeno Hafmanovo kodiranje po dužini',
 'exif-compression-3' => 'CCITT Group 3 faks kodiranje',
@@ -3928,7 +3909,6 @@ Potvrdite da stvarno želite da napravite stranicu.",
 'semicolon-separator' => ';&#32;',
 'comma-separator' => ',&#32;',
 'colon-separator' => ':&#32;',
-'autocomment-prefix' => '-&#32;',
 'pipe-separator' => '&#32;•&#32;',
 'word-separator' => '&#32;',
 'ellipsis' => '…',
@@ -4082,7 +4062,6 @@ Možete da [[Special:EditWatchlist|koristite i običan uređivač]].',
 'version-other' => 'Drugo',
 'version-mediahandlers' => 'Rukovodioci medijima',
 'version-hooks' => 'Kuke',
-'version-extension-functions' => 'Funkcije',
 'version-parser-extensiontags' => 'Oznake',
 'version-parser-function-hooks' => 'Kuke',
 'version-hook-name' => 'Naziv kuke',
@@ -4105,12 +4084,12 @@ Trebalo bi da ste primili [{{SERVER}}{{SCRIPTPATH}}/COPYING primerak GNU-ove op�
 'version-entrypoints-header-entrypoint' => 'Ulazna tačka',
 'version-entrypoints-header-url' => 'Adresa',
 
-# Special:FilePath
-'filepath' => 'Putanja datoteke',
-'filepath-page' => 'Datoteka:',
-'filepath-submit' => 'Idi',
-'filepath-summary' => 'Ova posebna stranica prikazuje potpunu putanju datoteke.
-Slike su prikazane u punoj veličini, a druge vrste datoteka se pokreću pomoću njima pridruženim programima.',
+# Special:Redirect
+'redirect-legend' => 'Preusmeri na datoteku ili stranicu',
+'redirect-submit' => 'Idi',
+'redirect-value' => 'Vrednost:',
+'redirect-file' => 'Naziv datoteke',
+'redirect-not-exists' => 'Vrednost nije pronađen',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Pretraga duplikata',
@@ -4201,6 +4180,9 @@ Slike su prikazane u punoj veličini, a druge vrste datoteka se pokreću pomoću
 'htmlform-submit' => 'Pošalji',
 'htmlform-reset' => 'Vrati izmene',
 'htmlform-selectorother-other' => 'Drugo',
+'htmlform-no' => 'Ne',
+'htmlform-yes' => 'Da',
+'htmlform-chosen-placeholder' => 'Izaberite opciju',
 
 # SQLite database support
 'sqlite-has-fts' => '$1 s podrškom pretrage celog teksta',

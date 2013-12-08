@@ -53,8 +53,8 @@ class SpecialBookSources extends SpecialPage {
 		$this->outputHeader();
 		$this->isbn = self::cleanIsbn( $isbn ? $isbn : $this->getRequest()->getText( 'isbn' ) );
 		$this->getOutput()->addHTML( $this->makeForm() );
-		if( strlen( $this->isbn ) > 0 ) {
-			if( !self::isValidISBN( $this->isbn ) ) {
+		if ( strlen( $this->isbn ) > 0 ) {
+			if ( !self::isValidISBN( $this->isbn ) ) {
 				$this->getOutput()->wrapWikiMsg( "<div class=\"error\">\n$1\n</div>", 'booksources-invalid-isbn' );
 			}
 			$this->showList();
@@ -69,32 +69,33 @@ class SpecialBookSources extends SpecialPage {
 	public static function isValidISBN( $isbn ) {
 		$isbn = self::cleanIsbn( $isbn );
 		$sum = 0;
-		if( strlen( $isbn ) == 13 ) {
-			for( $i = 0; $i < 12; $i++ ) {
-				if( $i % 2 == 0 ) {
+		if ( strlen( $isbn ) == 13 ) {
+			for ( $i = 0; $i < 12; $i++ ) {
+				if ( $i % 2 == 0 ) {
 					$sum += $isbn[$i];
 				} else {
 					$sum += 3 * $isbn[$i];
 				}
 			}
 
-			$check = (10 - ($sum % 10)) % 10;
+			$check = ( 10 - ( $sum % 10 ) ) % 10;
 			if ( $check == $isbn[12] ) {
 				return true;
 			}
-		} elseif( strlen( $isbn ) == 10 ) {
-			for( $i = 0; $i < 9; $i++ ) {
-				$sum += $isbn[$i] * ($i + 1);
+		} elseif ( strlen( $isbn ) == 10 ) {
+			for ( $i = 0; $i < 9; $i++ ) {
+				$sum += $isbn[$i] * ( $i + 1 );
 			}
 
 			$check = $sum % 11;
-			if( $check == 10 ) {
+			if ( $check == 10 ) {
 				$check = "X";
 			}
-			if( $check == $isbn[9] ) {
+			if ( $check == $isbn[9] ) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -116,13 +117,14 @@ class SpecialBookSources extends SpecialPage {
 	private function makeForm() {
 		global $wgScript;
 
-		$form = '<fieldset><legend>' . $this->msg( 'booksources-search-legend' )->escaped() . '</legend>';
-		$form .= Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) );
-		$form .= Html::hidden( 'title', $this->getTitle()->getPrefixedText() );
-		$form .= '<p>' . Xml::inputLabel( $this->msg( 'booksources-isbn' )->text(), 'isbn', 'isbn', 20, $this->isbn );
-		$form .= '&#160;' . Xml::submitButton( $this->msg( 'booksources-go' )->text() ) . '</p>';
-		$form .= Xml::closeElement( 'form' );
-		$form .= '</fieldset>';
+		$form = Html::openElement( 'fieldset' ) . "\n";
+		$form .= Html::element( 'legend', array(), $this->msg( 'booksources-search-legend' )->text() ) . "\n";
+		$form .= Html::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) ) . "\n";
+		$form .= Html::hidden( 'title', $this->getTitle()->getPrefixedText() ) . "\n";
+		$form .= '<p>' . Xml::inputLabel( $this->msg( 'booksources-isbn' )->text(), 'isbn', 'isbn', 20, $this->isbn, array( 'autofocus' => true ) );
+		$form .= '&#160;' . Xml::submitButton( $this->msg( 'booksources-go' )->text() ) . "</p>\n";
+		$form .= Html::closeElement( 'form' ) . "\n";
+		$form .= Html::closeElement( 'fieldset' ) . "\n";
 		return $form;
 	}
 
@@ -143,7 +145,7 @@ class SpecialBookSources extends SpecialPage {
 		# Check for a local page such as Project:Book_sources and use that if available
 		$page = $this->msg( 'booksources' )->inContentLanguage()->text();
 		$title = Title::makeTitleSafe( NS_PROJECT, $page ); # Show list in content language
-		if( is_object( $title ) && $title->exists() ) {
+		if ( is_object( $title ) && $title->exists() ) {
 			$rev = Revision::newFromTitle( $title, false, Revision::READ_NORMAL );
 			$content = $rev->getContent();
 
@@ -152,6 +154,7 @@ class SpecialBookSources extends SpecialPage {
 
 				$text = $content->getNativeData();
 				$this->getOutput()->addWikiText( str_replace( 'MAGICNUMBER', $this->isbn, $text ) );
+
 				return true;
 			} else {
 				throw new MWException( "Unexpected content type for book sources: " . $content->getModel() );
@@ -162,9 +165,11 @@ class SpecialBookSources extends SpecialPage {
 		$this->getOutput()->addWikiMsg( 'booksources-text' );
 		$this->getOutput()->addHTML( '<ul>' );
 		$items = $wgContLang->getBookstoreList();
-		foreach( $items as $label => $url )
+		foreach ( $items as $label => $url ) {
 			$this->getOutput()->addHTML( $this->makeListItem( $label, $url ) );
+		}
 		$this->getOutput()->addHTML( '</ul>' );
+
 		return true;
 	}
 
@@ -177,7 +182,9 @@ class SpecialBookSources extends SpecialPage {
 	 */
 	private function makeListItem( $label, $url ) {
 		$url = str_replace( '$1', $this->isbn, $url );
-		return '<li><a href="' . htmlspecialchars( $url ) . '" class="external">' . htmlspecialchars( $label ) . '</a></li>';
+
+		return Html::rawElement( 'li', array(),
+			Html::element( 'a', array( 'href' => $url, 'class' => 'external' ), $label ) );
 	}
 
 	protected function getGroupName() {

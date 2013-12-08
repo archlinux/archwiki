@@ -27,6 +27,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 	/* Protected Members */
 
 	protected $modifiedTime = array();
+	protected $targets = array( 'desktop', 'mobile' );
 
 	/* Protected Methods */
 
@@ -51,7 +52,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 		 */
 		$namespaceIds = $wgContLang->getNamespaceIds();
 		$caseSensitiveNamespaces = array();
-		foreach( MWNamespace::getCanonicalNamespaces() as $index => $name ) {
+		foreach ( MWNamespace::getCanonicalNamespaces() as $index => $name ) {
 			$namespaceIds[$wgContLang->lc( $name )] = $index;
 			if ( !MWNamespace::isCapitalized( $index ) ) {
 				$caseSensitiveNamespaces[] = $index;
@@ -83,7 +84,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			'wgFormattedNamespaces' => $wgContLang->getFormattedNamespaces(),
 			'wgNamespaceIds' => $namespaceIds,
 			'wgSiteName' => $wgSitename,
-			'wgFileExtensions' => array_values( $wgFileExtensions ),
+			'wgFileExtensions' => array_values( array_unique( $wgFileExtensions ) ),
 			'wgDBname' => $wgDBname,
 			// This sucks, it is only needed on Special:Upload, but I could
 			// not find a way to add vars only for a certain module
@@ -94,6 +95,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			'wgCookiePrefix' => $wgCookiePrefix,
 			'wgResourceLoaderMaxQueryLength' => $wgResourceLoaderMaxQueryLength,
 			'wgCaseSensitiveNamespaces' => $caseSensitiveNamespaces,
+			'wgLegalTitleChars' => Title::convertByteClassToUnicodeClass( Title::legalChars() ),
 		);
 
 		wfRunHooks( 'ResourceLoaderGetConfigVars', array( &$vars ) );
@@ -184,7 +186,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 	 * @return string
 	 */
 	public function getScript( ResourceLoaderContext $context ) {
-		global $IP, $wgLoadScript, $wgLegacyJavaScriptGlobals;
+		global $IP, $wgLegacyJavaScriptGlobals;
 
 		$out = file_get_contents( "$IP/resources/startup.js" );
 		if ( $context->getOnly() === 'scripts' ) {
@@ -224,7 +226,7 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 				"};\n";
 
 			// Conditional script injection
-			$scriptTag = Html::linkedScript( $wgLoadScript . '?' . wfArrayToCgi( $query ) );
+			$scriptTag = Html::linkedScript( wfAppendQuery( wfScript( 'load' ), $query ) );
 			$out .= "if ( isCompatible() ) {\n" .
 				"\t" . Xml::encodeJsCall( 'document.write', array( $scriptTag ) ) .
 				"}\n" .

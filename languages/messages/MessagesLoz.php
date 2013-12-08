@@ -35,9 +35,6 @@ $messages = array(
 'tog-enotifrevealaddr' => 'Kamukile zwa adress di meli di xete peson kwa melina notifikasyona',
 'tog-shownumberswatching' => 'Kamukile tali di kentezi sebelu',
 'tog-fancysig' => "Ro sebu e data (dicon ling'ki auto)",
-'tog-externaleditor' => "Sebelize hloli ye ng'i ektenali dauto",
-'tog-externaldiff' => 'Sebelize petuho ektenali dauto',
-'tog-showjumplinks' => 'Nyembulisize "sinkumukezi" ling\'ki',
 'tog-uselivepreview' => 'Sebelize live PendiBe (bulukezi JavaScript) (yem nca)',
 'tog-watchlisthideown' => 'Cwankekile zwa afina di zwa mukoloko di kentezi',
 'tog-watchlisthidebots' => 'Cwankekile roboti di zwa mukoloko di kentezi',
@@ -181,7 +178,7 @@ $messages = array(
 'jumptonavigation' => 'muya',
 'jumptosearch' => 'fatukile',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => "Ngesi ye ng'i atulile {{SITENAME}}",
 'aboutpage' => "Project:Ngesi ye ng'i atulile",
 'copyright' => 'Bye sa ilonungi di $1.',
@@ -191,7 +188,6 @@ $messages = array(
 'disclaimers' => 'Dikulemi',
 'disclaimerpage' => 'Project:Dikulemi generali',
 'edithelp' => "Hloli ye ng'i",
-'edithelppage' => "Help:Hloli ye ng'i",
 'helppage' => 'Help:Buinaneli di petulo',
 'mainpage' => 'Petulo yem efro',
 'mainpage-description' => 'Petulo yem efro',
@@ -267,7 +263,6 @@ Fung'ksyun: $1<br />
 Query: $2",
 'viewsource' => "Kamukile ng'i",
 'viewsourcetext' => 'A sa kamukile wiki-selt di bye petulo:',
-'sqlhidden' => '(SQL query sa cwankekile)',
 
 # Login and logout pages
 'yourname' => 'Sebelu:',
@@ -455,14 +450,10 @@ Informasi: (bye) = petuho a nca selt,
 'prevn' => 'kona {{PLURAL:$1|$1}}',
 'nextn' => 'lila {{PLURAL:$1|$1}}',
 'viewprevnext' => 'Kamukile ($1 {{int:pipe-separator}} $2) ($3)',
-'searchhelp-url' => 'Help:Buinaneli di petulo',
 'searchall' => 'xete',
 'showingresults' => "Kamukile opi {{PLURAL:$1|'''1''' ekali|'''$1''' ekalina}} di #'''$2'''.",
 'showingresultsnum' => "Kamukile {{PLURAL:$3|'''1''' ekali|'''$3''' ekalina}} di #'''$2'''.",
 'powersearch' => 'Fatukile',
-
-# Quickbar
-'qbsettings-none' => 'Ni',
 
 # Preferences page
 'preferences' => 'Petohoni di sebelu',
@@ -533,7 +524,6 @@ Informasi: (bye) = petuho a nca selt,
 'recentchangeslinked-feed' => 'Petuho adusi',
 'recentchangeslinked-toolbox' => 'Petuho adusi',
 'recentchangeslinked-title' => 'Petuho dadusi di "$1"',
-'recentchangeslinked-noresult' => "Ni petuhoni kwa ling'ki petulo kwa bye datum.",
 'recentchangeslinked-summary' => "Bye petulo zwenti kamukile lapu-kona petuho di petulo sa ling'ki. Petulo di zwa mukoloko di kentezi sa '''ombelu'''.",
 
 # Upload
@@ -610,8 +600,6 @@ di uplodezi media.',
 # Statistics
 'statistics' => 'Mukoloko di kamukile',
 'statistics-header-users' => 'Mukoloko di kamukile di sebelu',
-
-'disambiguations' => 'Disamebigasina',
 
 'doubleredirects' => 'Petulo abezi sa dužemi',
 
@@ -849,7 +837,6 @@ Petohoni di petulo '''$1''' sa:",
 'contribslink' => 'afina',
 'blocklogpage' => 'Desu di bolok',
 'blocklogentry' => 'sa bolok [[$1]] e simpekile sa $2 $3',
-'proxyblocksuccess' => 'Afi.',
 
 # Move page
 'move-page-legend' => 'Nyanganyisize petulo',
@@ -1019,7 +1006,7 @@ Xete ling'ki kwa lina sa konsidisize desepo. Petulo dimedi inlinenikusize.",
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagedescription' => 'Sebu di imegi',
 
 # External editor support

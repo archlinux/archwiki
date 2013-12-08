@@ -13,7 +13,7 @@
 		 * (don't call before document ready)
 		 */
 		init: function () {
-			var profile, $tocTitle, $tocToggleLink, hideTocCookie;
+			var profile;
 
 			/* Set tooltipAccessKeyPrefix */
 			profile = $.client.profile();
@@ -53,8 +53,9 @@
 							|| profile.name === 'konqueror' ) ) {
 				util.tooltipAccessKeyPrefix = 'ctrl-';
 
-			// Firefox 2.x and later
-			} else if ( profile.name === 'firefox' && profile.versionBase > '1' ) {
+			// Firefox/Iceweasel 2.x and later
+			} else if ( ( profile.name === 'firefox' || profile.name === 'iceweasel' )
+				&& profile.versionBase > '1' ) {
 				util.tooltipAccessKeyPrefix = 'alt-shift-';
 			}
 
@@ -105,29 +106,32 @@
 			} )();
 
 			// Table of contents toggle
-			$tocTitle = $( '#toctitle' );
-			$tocToggleLink = $( '#togglelink' );
-			// Only add it if there is a TOC and there is no toggle added already
-			if ( $( '#toc' ).length && $tocTitle.length && !$tocToggleLink.length ) {
-				hideTocCookie = $.cookie( 'mw_hidetoc' );
+			mw.hook( 'wikipage.content' ).add( function () {
+				var $tocTitle, $tocToggleLink, hideTocCookie;
+				$tocTitle = $( '#toctitle' );
+				$tocToggleLink = $( '#togglelink' );
+				// Only add it if there is a TOC and there is no toggle added already
+				if ( $( '#toc' ).length && $tocTitle.length && !$tocToggleLink.length ) {
+					hideTocCookie = $.cookie( 'mw_hidetoc' );
 					$tocToggleLink = $( '<a href="#" class="internal" id="togglelink"></a>' )
 						.text( mw.msg( 'hidetoc' ) )
 						.click( function ( e ) {
 							e.preventDefault();
 							util.toggleToc( $(this) );
 						} );
-				$tocTitle.append(
-					$tocToggleLink
-						.wrap( '<span class="toctoggle"></span>' )
-						.parent()
-							.prepend( '&nbsp;[' )
-							.append( ']&nbsp;' )
-				);
+					$tocTitle.append(
+						$tocToggleLink
+							.wrap( '<span class="toctoggle"></span>' )
+							.parent()
+								.prepend( '&nbsp;[' )
+								.append( ']&nbsp;' )
+					);
 
-				if ( hideTocCookie === '1' ) {
-					util.toggleToc( $tocToggleLink );
+					if ( hideTocCookie === '1' ) {
+						util.toggleToc( $tocToggleLink );
+					}
 				}
-			}
+			} );
 		},
 
 		/* Main body */
@@ -160,11 +164,18 @@
 		 * Get the link to a page name (relative to `wgServer`),
 		 *
 		 * @param {string} str Page name to get the link for.
+		 * @param {Object} params A mapping of query parameter names to values,
+		 *     e.g. { action: 'edit' }. Optional.
 		 * @return {string} Location for a page with name of `str` or boolean false on error.
 		 */
-		wikiGetlink: function ( str ) {
-			return mw.config.get( 'wgArticlePath' ).replace( '$1',
+		getUrl: function ( str, params ) {
+			var url = mw.config.get( 'wgArticlePath' ).replace( '$1',
 				util.wikiUrlencode( typeof str === 'string' ? str : mw.config.get( 'wgPageName' ) ) );
+			if ( params && !$.isEmptyObject( params ) ) {
+				url += url.indexOf( '?' ) !== -1 ? '&' : '?';
+				url += $.param( params );
+			}
+			return url;
 		},
 
 		/**
@@ -251,7 +262,7 @@
 		 * Returns null if not found.
 		 *
 		 * @param {string} param The parameter name.
-		 * @param {string} [url] URL to search through.
+		 * @param {string} [url=document.location.href] URL to search through, defaulting to the current document's URL.
 		 * @return {Mixed} Parameter value or null.
 		 */
 		getParamValue: function ( param, url ) {
@@ -279,8 +290,17 @@
 		/**
 		 * @property {RegExp}
 		 * Regex to match accesskey tooltips.
+		 *
+		 * Should match:
+		 *
+		 * - "ctrl-option-"
+		 * - "alt-shift-"
+		 * - "ctrl-alt-"
+		 * - "ctrl-"
+		 *
+		 * The accesskey is matched in group $6.
 		 */
-		tooltipAccessKeyRegexp: /\[(ctrl-)?(alt-)?(shift-)?(esc-)?(.)\]$/,
+		tooltipAccessKeyRegexp: /\[(ctrl-)?(option-)?(alt-)?(shift-)?(esc-)?(.)\]$/,
 
 		/**
 		 * Add the appropriate prefix to the accesskey shown in the tooltip.
@@ -301,9 +321,9 @@
 			}
 
 			$nodes.attr( 'title', function ( i, val ) {
-				if ( val && util.tooltipAccessKeyRegexp.exec( val ) ) {
+				if ( val && util.tooltipAccessKeyRegexp.test( val ) ) {
 					return val.replace( util.tooltipAccessKeyRegexp,
-						'[' + util.tooltipAccessKeyPrefix + '$5]' );
+						'[' + util.tooltipAccessKeyPrefix + '$6]' );
 				}
 				return val;
 			} );
@@ -364,87 +384,86 @@
 				$link.attr( 'title', tooltip );
 			}
 
-			// Some skins don't have any portlets
-			// just add it to the bottom of their 'sidebar' element as a fallback
-			switch ( mw.config.get( 'skin' ) ) {
-			case 'standard':
-				$( '#quickbar' ).append( $link.after( '<br/>' ) );
-				return $link[0];
-			case 'nostalgia':
-				$( '#searchform' ).before( $link ).before( ' &#124; ' );
-				return $link[0];
-			default: // Skins like chick, modern, monobook, myskin, simple, vector...
+			// Select the specified portlet
+			$portlet = $( '#' + portlet );
+			if ( $portlet.length === 0 ) {
+				return null;
+			}
+			// Select the first (most likely only) unordered list inside the portlet
+			$ul = $portlet.find( 'ul' ).eq( 0 );
 
-				// Select the specified portlet
-				$portlet = $( '#' + portlet );
-				if ( $portlet.length === 0 ) {
-					return null;
-				}
-				// Select the first (most likely only) unordered list inside the portlet
-				$ul = $portlet.find( 'ul' ).eq( 0 );
+			// If it didn't have an unordered list yet, create it
+			if ( $ul.length === 0 ) {
 
-				// If it didn't have an unordered list yet, create it
-				if ( $ul.length === 0 ) {
+				$ul = $( '<ul>' );
 
-					$ul = $( '<ul>' );
-
-					// If there's no <div> inside, append it to the portlet directly
-					if ( $portlet.find( 'div:first' ).length === 0 ) {
-						$portlet.append( $ul );
-					} else {
-						// otherwise if there's a div (such as div.body or div.pBody)
-						// append the <ul> to last (most likely only) div
-						$portlet.find( 'div' ).eq( -1 ).append( $ul );
-					}
-				}
-				// Just in case..
-				if ( $ul.length === 0 ) {
-					return null;
-				}
-
-				// Unhide portlet if it was hidden before
-				$portlet.removeClass( 'emptyPortlet' );
-
-				// Wrap the anchor tag in a list item (and a span if $portlet is a Vector tab)
-				// and back up the selector to the list item
-				if ( $portlet.hasClass( 'vectorTabs' ) ) {
-					$item = $link.wrap( '<li><span></span></li>' ).parent().parent();
+				// If there's no <div> inside, append it to the portlet directly
+				if ( $portlet.find( 'div:first' ).length === 0 ) {
+					$portlet.append( $ul );
 				} else {
-					$item = $link.wrap( '<li></li>' ).parent();
+					// otherwise if there's a div (such as div.body or div.pBody)
+					// append the <ul> to last (most likely only) div
+					$portlet.find( 'div' ).eq( -1 ).append( $ul );
 				}
+			}
+			// Just in case..
+			if ( $ul.length === 0 ) {
+				return null;
+			}
 
-				// Implement the properties passed to the function
-				if ( id ) {
-					$item.attr( 'id', id );
-				}
+			// Unhide portlet if it was hidden before
+			$portlet.removeClass( 'emptyPortlet' );
+
+			// Wrap the anchor tag in a list item (and a span if $portlet is a Vector tab)
+			// and back up the selector to the list item
+			if ( $portlet.hasClass( 'vectorTabs' ) ) {
+				$item = $link.wrap( '<li><span></span></li>' ).parent().parent();
+			} else {
+				$item = $link.wrap( '<li></li>' ).parent();
+			}
+
+			// Implement the properties passed to the function
+			if ( id ) {
+				$item.attr( 'id', id );
+			}
+
+			if ( tooltip ) {
+				// Trim any existing accesskey hint and the trailing space
+				tooltip = $.trim( tooltip.replace( util.tooltipAccessKeyRegexp, '' ) );
 				if ( accesskey ) {
-					$link.attr( 'accesskey', accesskey );
 					tooltip += ' [' + accesskey + ']';
-					$link.attr( 'title', tooltip );
 				}
-				if ( accesskey && tooltip ) {
+				$link.attr( 'title', tooltip );
+				if ( accesskey ) {
 					util.updateTooltipAccessKeys( $link );
 				}
-
-				// Where to put our node ?
-				// - nextnode is a DOM element (was the only option before MW 1.17, in wikibits.js)
-				if ( nextnode && nextnode.parentNode === $ul[0] ) {
-					$(nextnode).before( $item );
-
-				// - nextnode is a CSS selector for jQuery
-				} else if ( typeof nextnode === 'string' && $ul.find( nextnode ).length !== 0 ) {
-					$ul.find( nextnode ).eq( 0 ).before( $item );
-
-				// If the jQuery selector isn't found within the <ul>,
-				// or if nextnode was invalid or not passed at all,
-				// then just append it at the end of the <ul> (this is the default behavior)
-				} else {
-					$ul.append( $item );
-				}
-
-
-				return $item[0];
 			}
+
+			if ( accesskey ) {
+				$link.attr( 'accesskey', accesskey );
+			}
+
+			if ( nextnode ) {
+				if ( nextnode.nodeType || typeof nextnode === 'string' ) {
+					// nextnode is a DOM element (was the only option before MW 1.17, in wikibits.js)
+					// or nextnode is a CSS selector for jQuery
+					nextnode = $ul.find( nextnode );
+				} else if ( !nextnode.jquery || ( nextnode.length && nextnode[0].parentNode !== $ul[0] ) ) {
+					// Fallback
+					$ul.append( $item );
+					return $item[0];
+				}
+				if ( nextnode.length === 1 ) {
+					// nextnode is a jQuery object that represents exactly one element
+					nextnode.before( $item );
+					return $item[0];
+				}
+			}
+
+			// Fallback (this is the default behavior)
+			$ul.append( $item );
+			return $item[0];
+
 		},
 
 		/**
@@ -454,7 +473,7 @@
 		 *
 		 * @param {Mixed} message The DOM-element, jQuery object or HTML-string to be put inside the message box.
 		 * to allow CSS/JS to hide different boxes. null = no class used.
-		 * @deprecated Use mw#notify
+		 * @deprecated since 1.20 Use mw#notify
 		 */
 		jsMessage: function ( message ) {
 			if ( !arguments.length || message === '' || message === null ) {
@@ -592,6 +611,13 @@
 				&& address.search( /::/ ) !== -1 && address.search( /::.*::/ ) === -1;
 		}
 	};
+
+	/**
+	 * @method wikiGetlink
+	 * @inheritdoc #getUrl
+	 * @deprecated since 1.23 Use #getUrl instead.
+	 */
+	mw.log.deprecate( util, 'wikiGetlink', util.getUrl, 'Use mw.util.getUrl instead.' );
 
 	mw.util = util;
 

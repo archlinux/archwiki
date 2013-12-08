@@ -83,7 +83,7 @@ class ApiMain extends ApiBase {
 		'import' => 'ApiImport',
 		'userrights' => 'ApiUserrights',
 		'options' => 'ApiOptions',
-		'imagerotate' =>'ApiImageRotate',
+		'imagerotate' => 'ApiImageRotate',
 	);
 
 	/**
@@ -274,7 +274,7 @@ class ApiMain extends ApiBase {
 			return;
 		}
 
-		if ( !User::groupHasPermission( '*', 'read' ) ) {
+		if ( !User::isEveryoneAllowed( 'read' ) ) {
 			// Private wiki, only private headers
 			if ( $mode !== 'private' ) {
 				wfDebug( __METHOD__ . ": ignoring request for $mode cache mode, private wiki\n" );
@@ -383,13 +383,8 @@ class ApiMain extends ApiBase {
 			wfRunHooks( 'ApiMain::onException', array( $this, $e ) );
 
 			// Log it
-			if ( $e instanceof MWException && !( $e instanceof UsageException ) ) {
-				global $wgLogExceptionBacktrace;
-				if ( $wgLogExceptionBacktrace ) {
-					wfDebugLog( 'exception', $e->getLogMessage() . "\n" . $e->getTraceAsString() . "\n" );
-				} else {
-					wfDebugLog( 'exception', $e->getLogMessage() );
-				}
+			if ( !( $e instanceof UsageException ) ) {
+				MWExceptionHandler::logException( $e );
 			}
 
 			// Handle any kind of exception by outputting properly formatted error message.
@@ -418,7 +413,7 @@ class ApiMain extends ApiBase {
 		}
 
 		// Log the request whether or not there was an error
-		$this->logRequest( microtime( true ) - $t);
+		$this->logRequest( microtime( true ) - $t );
 
 		// Send cache headers after any code which might generate an error, to
 		// avoid sending public cache headers for errors.
@@ -609,7 +604,7 @@ class ApiMain extends ApiBase {
 
 		$result = $this->getResult();
 		// Printer may not be initialized if the extractRequestParams() fails for the main module
-		if ( !isset ( $this->mPrinter ) ) {
+		if ( !isset( $this->mPrinter ) ) {
 			// The printer has not been created yet. Try to manually get formatter value.
 			$value = $this->getRequest()->getVal( 'format', self::API_DEFAULT_FORMAT );
 			if ( !$this->mModuleMgr->isDefined( $value, 'format' ) ) {
@@ -763,7 +758,7 @@ class ApiMain extends ApiBase {
 	 */
 	protected function checkExecutePermissions( $module ) {
 		$user = $this->getUser();
-		if ( $module->isReadMode() && !User::groupHasPermission( '*', 'read' ) &&
+		if ( $module->isReadMode() && !User::isEveryoneAllowed( 'read' ) &&
 			!$user->isAllowed( 'read' ) )
 		{
 			$this->dieUsageMsg( 'readrequired' );
@@ -782,7 +777,7 @@ class ApiMain extends ApiBase {
 
 		// Allow extensions to stop execution for arbitrary reasons.
 		$message = false;
-		if( !wfRunHooks( 'ApiCheckCanExecute', array( $module, $user, &$message ) ) ) {
+		if ( !wfRunHooks( 'ApiCheckCanExecute', array( $module, $user, &$message ) ) ) {
 			$this->dieUsageMsg( $message );
 		}
 	}
@@ -857,7 +852,7 @@ class ApiMain extends ApiBase {
 			' ' . $request->getMethod() .
 			' ' . wfUrlencode( str_replace( ' ', '_', $this->getUser()->getName() ) ) .
 			' ' . $request->getIP() .
-			' T=' . $milliseconds .'ms';
+			' T=' . $milliseconds . 'ms';
 		foreach ( $this->getParamsUsed() as $name ) {
 			$value = $request->getVal( $name );
 			if ( $value === null ) {
@@ -944,7 +939,7 @@ class ApiMain extends ApiBase {
 			$unusedParams = array_diff( $allParams, $paramsUsed );
 		}
 
-		if( count( $unusedParams ) ) {
+		if ( count( $unusedParams ) ) {
 			$s = count( $unusedParams ) > 1 ? 's' : '';
 			$this->setWarning( "Unrecognized parameter$s: '" . implode( $unusedParams, "', '" ) . "'" );
 		}
@@ -957,7 +952,7 @@ class ApiMain extends ApiBase {
 	 */
 	protected function printResult( $isError ) {
 		global $wgDebugAPI;
-		if( $wgDebugAPI !== false ) {
+		if ( $wgDebugAPI !== false ) {
 			$this->setWarning( 'SECURITY WARNING: $wgDebugAPI is enabled' );
 		}
 
@@ -1002,7 +997,7 @@ class ApiMain extends ApiBase {
 				ApiBase::PARAM_DFLT => 'help',
 				ApiBase::PARAM_TYPE => $this->mModuleMgr->getNames( 'action' )
 			),
-			'maxlag'  => array(
+			'maxlag' => array(
 				ApiBase::PARAM_TYPE => 'integer'
 			),
 			'smaxage' => array(
@@ -1014,7 +1009,7 @@ class ApiMain extends ApiBase {
 				ApiBase::PARAM_DFLT => 0
 			),
 			'requestid' => null,
-			'servedby'  => false,
+			'servedby' => false,
 			'origin' => null,
 		);
 	}
@@ -1042,6 +1037,7 @@ class ApiMain extends ApiBase {
 			'servedby' => 'Include the hostname that served the request in the results. Unconditionally shown on error',
 			'origin' => array(
 				'When accessing the API using a cross-domain AJAX request (CORS), set this to the originating domain.',
+				'This must be included in any pre-flight request, and therefore must be part of the request URI (not the POST body).',
 				'This must match one of the origins in the Origin: header exactly, so it has to be set to something like http://en.wikipedia.org or https://meta.wikimedia.org .',
 				'If this parameter does not match the Origin: header, a 403 response will be returned.',
 				'If this parameter matches the Origin: header and the origin is whitelisted, an Access-Control-Allow-Origin header will be set.',
@@ -1114,7 +1110,7 @@ class ApiMain extends ApiBase {
 		return array(
 			'API developers:',
 			'    Roan Kattouw "<Firstname>.<Lastname>@gmail.com" (lead developer Sep 2007-2009)',
-			'    Victor Vasiliev - vasilvv at gee mail dot com',
+			'    Victor Vasiliev - vasilvv @ gmail . com',
 			'    Bryan Tong Minh - bryan . tongminh @ gmail . com',
 			'    Sam Reed - sam @ reedyboy . net',
 			'    Yuri Astrakhan "<Firstname><Lastname>@gmail.com" (creator, lead developer Sep 2006-Sep 2007, 2012-present)',
@@ -1143,7 +1139,7 @@ class ApiMain extends ApiBase {
 		$this->setHelp();
 		// Get help text from cache if present
 		$key = wfMemcKey( 'apihelp', $this->getModuleName(),
-			SpecialVersion::getVersion( 'nodb' ) );
+			str_replace( ' ', '_', SpecialVersion::getVersion( 'nodb' ) ) );
 		if ( $wgAPICacheHelpTimeout > 0 ) {
 			$cached = $wgMemc->get( $key );
 			if ( $cached ) {

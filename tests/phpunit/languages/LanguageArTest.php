@@ -6,8 +6,11 @@
 
 /** Tests for MediaWiki languages/LanguageAr.php */
 class LanguageArTest extends LanguageClassesTestCase {
-
-	function testFormatNum() {
+	/**
+	 * @covers Language::formatNum
+	 * @todo split into a test and a dataprovider
+	 */
+	public function testFormatNum() {
 		$this->assertEquals( '١٬٢٣٤٬٥٦٧', $this->getLang()->formatNum( '1234567' ) );
 		$this->assertEquals( '-١٢٫٨٩', $this->getLang()->formatNum( -12.89 ) );
 	}
@@ -15,12 +18,13 @@ class LanguageArTest extends LanguageClassesTestCase {
 	/**
 	 * Mostly to test the raw ascii feature.
 	 * @dataProvider providerSprintfDate
+	 * @covers Language::sprintfDate
 	 */
-	function testSprintfDate( $format, $date, $expected ) {
+	public function testSprintfDate( $format, $date, $expected ) {
 		$this->assertEquals( $expected, $this->getLang()->sprintfDate( $format, $date ) );
 	}
 
-	function providerSprintfDate() {
+	public static function providerSprintfDate() {
 		return array(
 			array(
 				'xg "vs" g',
@@ -45,13 +49,24 @@ class LanguageArTest extends LanguageClassesTestCase {
 		);
 	}
 
-	/** @dataProvider providePlural */
-	function testPlural( $result, $value ) {
+	/**
+	 * @dataProvider providePlural
+	 * @covers Language::convertPlural
+	 */
+	public function testPlural( $result, $value ) {
 		$forms = array( 'zero', 'one', 'two', 'few', 'many', 'other' );
 		$this->assertEquals( $result, $this->getLang()->convertPlural( $value, $forms ) );
 	}
 
-	function providePlural() {
+	/**
+	 * @dataProvider providePlural
+	 * @covers Language::getPluralRuleType
+	 */
+	public function testGetPluralRuleType( $result, $value ) {
+		$this->assertEquals( $result, $this->getLang()->getPluralRuleType( $value ) );
+	}
+
+	public static function providePlural() {
 		return array(
 			array( 'zero', 0 ),
 			array( 'one', 1 ),

@@ -72,9 +72,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Харж буй хэрэглэгчдийн тоог үзүүлэх',
 'tog-oldsig' => 'Одоогийн гарын үсэг:',
 'tog-fancysig' => 'Түүхий гарын үсэг （автомат холбоосгүй）',
-'tog-externaleditor' => 'Үндсэн горимд нэмэлт засварлах багаж хэрэглэх（экспертүүдэд зориулагдсан, таны компьютерт тусгай тохиргоо шаардлагатай）',
-'tog-externaldiff' => 'Үндсэн горим гадаад харьцуулагч программ ашиглах （экспертүүдэд зориулав, таны компьютерт тусгай тохиргоо шаардлагатай）',
-'tog-showjumplinks' => '"Шууд очих" хялбар линкүүдийг ажиллагаатай болгох',
 'tog-uselivepreview' => 'Шууд байдлаар урьдчилж харах （ЖаваСкрипт） （Туршилт）',
 'tog-forceeditsummary' => 'Товч агуулгын талбарыг хоосон үлдээхэд надад мэдэгдэх',
 'tog-watchlisthideown' => 'Хянах жагсаалтаас миний засваруудыг нуух',
@@ -273,7 +270,7 @@ $1',
 'pool-queuefull' => 'Пүүлийн дараалал дүүрсэн байна',
 'pool-errorunknown' => 'Үл мэдэгдэх алдаа',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}}-н тухай',
 'aboutpage' => 'Project:Тухай',
 'copyright' => 'Агуулгыг $1-н хувьд хэрэглэх боломжтой.',
@@ -283,7 +280,6 @@ $1',
 'disclaimers' => 'Татгалзлууд',
 'disclaimerpage' => 'Project:Ерөнхий татгалзал',
 'edithelp' => 'Засвар хийх тухай тусламж',
-'edithelppage' => 'Help:Засварлах',
 'helppage' => 'Help:Агуулга',
 'mainpage' => 'Нүүр хуудас',
 'mainpage-description' => 'Нүүр хуудас',
@@ -362,17 +358,6 @@ $1',
 # General errors
 'error' => 'Aлдаа',
 'databaseerror' => 'Өгөгдлийн сангийн алдаа',
-'dberrortext' => 'Өгөгдлийн сан дахь хайлтанд синтаксийн алдаа гарлаа.
-Энэ нь програм хангамжид алдаа байгааг харуулж байж болзошгүй.
-Хамгийн сүүлд гүйцэтгэсэн өгөгдлийн сан дахь хайлт нь:
-"<tt>$2</tt>" функц доторх
-<blockquote><tt>$1</tt></blockquote> байна.
-Өгөгдлийн сан нь "<tt>$3: $4</tt>" гэсэн алдааг буцаав.',
-'dberrortextcl' => 'Өгөгдлийн сан дахь хайлтанд синтаксийн алдаа гарлаа.
-Хамгийн сүүлд гүйцэтгэсэн мэдээллийн бааз дахь хайлт нь
-"$2" функц доторх:
-"$1" байна.
-Өгөгдлийн сан нь "$3: $4" алдааг буцаав',
 'laggedslavemode' => 'Анхаар: Энэ хуудас нь хамгийн сүүлийн өөрчлөлтүүдийг хамруулаагүй байж болно.',
 'readonly' => 'Мэдээллийн сан түгжигдсэн байна',
 'enterlockreason' => 'Түгжих болсон шалтгаан болон хэзээ уг түгжээ нь тайлагдах тухай оруулна уу.',
@@ -425,7 +410,6 @@ $1',
 'editinginterface' => "'''Анхаар''': Та программын харагдах байдалд ашиглагддаг текстийг агуулсан хуудсыг засварлах гэж байна.
 Энэ хуудсанд өөрчлөлт оруулснаар бусад хэрэглэгчдийн программын харагдах байдалд нөлөөлөх болно.
 Орчуулга хийх гэж байгаа бол МедиаВикигийн орчуулгын төсөл болох, [//translatewiki.net/wiki/Main_Page?setlang=mn Бетавики]-г хэрэглэхийг санал болгож байна.",
-'sqlhidden' => '（SQL илэрц харагдахгүй байна）',
 'cascadeprotected' => 'Энэ хуудас нь давхар хамгаалалттай дараах {{PLURAL:$1|хуудсанд|хуудсуудад}} орсон тул засварлагдахаас хамгаалагдсан байна:
 $2',
 'namespaceprotected' => "Таньд '''$1''' нэрний зай дахь хуудсуудыг засварлах зөвшөөрөл байхгүй байна.",
@@ -459,7 +443,6 @@ $2',
 'yourpassword' => 'Нууц үг:',
 'yourpasswordagain' => 'Нууц үгээ дахин оруулах:',
 'remembermypassword' => 'Энэ компьютер дээрх миний нэвтрэлтийг сана (хамгийн дээд талдаа $1 {{PLURAL:$1|өдрийн|өдрийн}} туршид)',
-'securelogin-stick-https' => 'Нэвтэрсний дараа HTTPS -д нэвтэрсэн хэвээр байх',
 'yourdomainname' => 'Таны домэйн:',
 'password-change-forbidden' => 'Та энэ вики дээрх нууц үгээ сольж болохгүй.',
 'externaldberror' => 'Нэг бол гадны баталгаажуулах мэдээллийн сангийн алдаа гарсан, эсвэл та өөрийн гадны бүртгэлээ шинэчлэх эрхгүй байна.',
@@ -564,7 +547,7 @@ $2',
 'newpassword' => 'Шинэ нууц үг:',
 'retypenew' => 'Шинэ нууц үгээ дахин оруулах:',
 'resetpass_submit' => 'Нууц үгээ тогтоож нэвтрэх',
-'resetpass_success' => 'Таны нууц үг амжилттай солигдлоо! Та одоо нэвтэрч байна...',
+'changepassword-success' => 'Таны нууц үг амжилттай солигдлоо! Та одоо нэвтэрч байна...',
 'resetpass_forbidden' => 'Нууц үг өөрчлөх боломжгүй',
 'resetpass-no-info' => 'Энэ хуудсыг шууд үзэхийн тулд нэвтэрч орсон байх шаардлагатай.',
 'resetpass-submit-loggedin' => 'Нууц үгээ солих',
@@ -575,10 +558,8 @@ $2',
 
 # Special:PasswordReset
 'passwordreset' => 'Нууц үгийг сэргээх',
-'passwordreset-text' => 'Энэхүү маягтыг бөглөж хэрэглэгчийн мэдээллээ аваарай.',
 'passwordreset-legend' => 'Нууц үгээ сэргээх',
 'passwordreset-disabled' => 'Энэ вики-д нууц үгийг сэргээх боломжгүй байна.',
-'passwordreset-pretext' => '{{PLURAL:$1||Доорх өгөгдлийн аль нэг хэсгийг оруулна уу}}',
 'passwordreset-username' => 'Хэрэглэгчийн нэр:',
 'passwordreset-domain' => 'Домайн:',
 'passwordreset-capture' => 'Цахим шуудангийн нууц үг сэргээх шууданг үзэх',
@@ -1052,7 +1033,6 @@ $1",
 'searchmenu-legend' => 'Хайх сонголтууд',
 'searchmenu-exists' => "'''Энэ викид \"[[:\$1]]\" гэсэн хуудас байна'''",
 'searchmenu-new' => "'''Энэ викид \"[[:\$1]]\" гэсэн хуудсыг үүсгэх!'''",
-'searchhelp-url' => 'Help:Агуулга',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Энэ угтвартай хуудсуудыг гүйлгэж харах]]',
 'searchprofile-articles' => 'Агуулгын хуудсууд',
 'searchprofile-project' => 'Тусламжийн болон төслийн хуудсууд',
@@ -1097,15 +1077,6 @@ $1",
 Та одоохондоо Google-г ашиглан хайх боломжтой.
 Анхааруулж хэлэхэд, тэдний {{SITENAME}}-н агуулгын индексүүд хоцрогдсон байж магадгүй.',
 
-# Quickbar
-'qbsettings' => 'Шуурхай тавцан',
-'qbsettings-none' => 'Байхгүй',
-'qbsettings-fixedleft' => 'Зүүн талд бэхжүүлсэн',
-'qbsettings-fixedright' => 'Баруун талд бэхжүүлсэн',
-'qbsettings-floatingleft' => 'Зүүн талд хөвсөн',
-'qbsettings-floatingright' => 'Баруун талд хөвсөн',
-'qbsettings-directionality' => 'Тухай хэлний барилаас хамаарч хэлбэрийг бий болгох',
-
 # Preferences page
 'preferences' => 'Хэрэглэгчийн тохиргоо',
 'mypreferences' => 'Миний тохиргоо',
@@ -1138,7 +1109,6 @@ $1",
 'resetprefs' => 'Хадгалаагүй өөрчлөлтүүдийг арилгах',
 'restoreprefs' => 'Бүх тохиргоог анхны байдалд оруулах',
 'prefs-editing' => 'Засварлах',
-'prefs-edit-boxsize' => 'Засварлах цонхны хэмжээ.',
 'rows' => 'Мөр:',
 'columns' => 'Багана:',
 'searchresultshead' => 'Хайлт',
@@ -1149,9 +1119,6 @@ $1",
 'recentchangesdays-max' => 'Хамгийн ихдээ $1 өдөр',
 'recentchangescount' => 'Үзүүлэх засварын тоо (анхны байдалд):',
 'prefs-help-recentchangescount' => 'Энд сүүлийн өөрчлөлтүүд, хуудасны түүхүүд, логууд орно.',
-'prefs-help-watchlist-token' => 'Энэхүү талбарыг нууц түлхүүртэйгээр бөглөвөл таны хянаж буй хуудсуудын жагсаалтаар RSS фийд үүсгэгдэнэ.
-Тус түлхүүрийг мэдсэн хүн бүр таны хянаж буй хуудсуудын жагсаалтыг харах боломжтой тул чанартай утга сонгоорой.
-Таны хэрэглэж болох санамсаргүй утга: $1',
 'savedprefs' => 'Таны тохиргоо хадгалагдлаа.',
 'timezonelegend' => 'Цагийн бүс:',
 'localtime' => 'Орон нутгийн цаг:',
@@ -1182,7 +1149,6 @@ $1",
 'prefs-reset-intro' => 'Та энэ хуудсыг ашиглан өөрийн тохиргоог сайтын анхны тохиргооо руу шилжүүлэх боломжтой.
 Энэ үйлдлийг буцаах боломжгүй.',
 'prefs-emailconfirm-label' => 'Мэйлийн баталгаажуулалт:',
-'prefs-textboxsize' => 'Засварлах талбарын хэмжээ',
 'youremail' => 'Мэйл хаяг:',
 'username' => '{{GENDER:$1|Хэрэглэгчийн нэр}}:',
 'uid' => '{{GENDER:$1|Хэрэглэгчийн}} ID:',
@@ -1421,7 +1387,6 @@ $1 тэмдэгтээс богино байх ёстой.',
 'recentchangeslinked-feed' => 'Холбогдох өөрчлөлтүүд',
 'recentchangeslinked-toolbox' => 'Холбогдох өөрчлөлтүүд',
 'recentchangeslinked-title' => '"$1"-тай холбоотой засварууд',
-'recentchangeslinked-noresult' => 'Өгөгдсөн хугацаанд холбогдсон хуудсууд дээр засвар хийгдээгүй байна.',
 'recentchangeslinked-summary' => "Энэ хуудас бол тодорхой хуудаснаас （эсвэл тодорхой ангиллын доторх хуудсууд） холбогдсон хуудсуудад хийгдсэн өөрчлөлтийн жагсаалт юм.
 Таны [[Special:Watchlist|хянах жагсаалтанд]] буй хуудсууд '''тодруулагдсан''' байгаа.",
 'recentchangeslinked-page' => 'Хуудасны нэр:',
@@ -1659,7 +1624,6 @@ https://www.mediawiki.org/wiki/Manual:Image_Authorization -г харна уу.',
 'http-read-error' => 'HTTP-г унших алдаа.',
 'http-timed-out' => 'HTTP хүсэлтийн хугацаа дуусав.',
 'http-curl-error' => 'Дараах URL-г авчрахад алдаа гарав: $1',
-'http-host-unreachable' => 'URL-д хүрч чадсангүй.',
 'http-bad-status' => 'HTTP хандалтын үед асуудал үүсэв: $1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1804,12 +1768,6 @@ URL нь зөв болон сайт ажиллагаатай байгаа эсэ
 'statistics-users-active' => 'Байнгын оролцоотой хэрэглэгч',
 'statistics-users-active-desc' => 'Сүүлийн {{PLURAL:$1|өдөрт|$1 өдөрт}} үйлдэл хийсэн хэрэглэгчид',
 'statistics-mostpopular' => 'Хамгийн олон удаа үзсэн хуудсууд',
-
-'disambiguations' => 'Өөр агуулгатай хуудсуудтай холбоотой хуудсууд',
-'disambiguationspage' => 'Template:Салаа утгатай',
-'disambiguations-text' => "Дараах хуудсууд '''салаа утгатай үгнүүдийн хуудас''' руу холбогдоно.
-Тэдгээр нь зөв сэдэв руу холбогдох ёстой.<br />
-[[MediaWiki:Disambiguationspage]]-с холбогдсон загвар хэрэглэж байвал хуудас нь салаа утгатай үгнүүдийн хуудас гэж тооцогдоно.",
 
 'doubleredirects' => 'Давхар чиглүүлэгчүүд',
 'doubleredirectstext' => 'Энэ хуудсанд өөр хуудсуудыг давхар заасан хуудсуудыг жагсаасан байна
@@ -2045,10 +2003,9 @@ URL нь зөв болон сайт ажиллагаатай байгаа эсэ
 'unwatchthispage' => 'Хянахаа зогсоох',
 'notanarticle' => 'Агуулгагүй хуудас',
 'notvisiblerev' => 'Засвар устгагдлаа',
-'watchnochange' => 'Дурьдагдсан хугацаанд таны хянаж буй хуудсуудад өөрчлөлт ороогүй байна.',
 'watchlist-details' => 'Хяналтын жагсаалтад {{PLURAL:$1|$1 хуудас|$1 хуудаснууд}} байна.',
-'wlheader-enotif' => '* И-мэйл мэдэгдэл хүчинтэй боллоо.',
-'wlheader-showupdated' => "* Таны хамгийн сүүлд айлчилснаас хойш өөрчлөгдсөн хуудсууд '''тодоор''' бичигдсэн байгаа",
+'wlheader-enotif' => 'И-мэйл мэдэгдэл хүчинтэй боллоо.',
+'wlheader-showupdated' => "Таны хамгийн сүүлд айлчилснаас хойш өөрчлөгдсөн хуудсууд '''тодоор''' бичигдсэн байгаа",
 'watchmethod-recent' => 'хяналтад буй хуудсуудад шинэ өөрчлөлт орсон эсэхийг шалгаж байна',
 'watchmethod-list' => 'хяналтад буй хуудсуудад саяхан өөрчлөлт орсон эсэхийг шалгаж байна',
 'watchlistcontains' => 'Таны хянах жагсаалтанд $1 хуудас байна.',
@@ -2441,12 +2398,9 @@ $1',
 Харин энэ нь $2 хэсгийн хэсэг болж түгжигдсэн байгаа бөгөөд үүнийг тайлах боломжтой.',
 'ip_range_invalid' => 'Хүчингүй IP-н хүрээ.',
 'ip_range_toolarge' => '/$1-с том хэмжээтэй түгжээ нь хориотой.',
-'blockme' => 'Намайг түгж',
 'proxyblocker' => 'Түгжигч прокси',
-'proxyblocker-disabled' => 'Энэ функцийг хаасан байна.',
 'proxyblockreason' => 'Таны IP хаяг нь чөлөөт прокси учраас түгжигдсэн байна.
 Та өөрийн ISP-тэйгээ холбоо барьж техникийн зөвлөгөө авч энэ асуудлынхаа тухай хэлнэ үү.',
-'proxyblocksuccess' => 'Гүйцэтгэсэн.',
 'sorbsreason' => '{{SITENAME}}-н хэрэглэдэг DNSBL-д таны IP хаягийг чөлөөт прокси хэмээн тодорхойлсон байна.',
 'sorbs_create_account_reason' => '{{SITENAME}}-н хэрэглэдэг DNSBL-д таны IP хаягийг чөлөөт прокси гэж тэмдэглэсэн байна.
 Та бүртгэл үүсгэх боломжгүй.',
@@ -2886,7 +2840,7 @@ $1',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Өргөн',
 'exif-imagelength' => 'Өндөр',
 'exif-bitspersample' => 'Бүрэлдэхүүн хэсэг бүр дэх бит',
@@ -3040,7 +2994,7 @@ $1',
 'exif-giffilecomment' => 'GIF файлын тэмдэглэгээ',
 'exif-intellectualgenre' => 'Зүйлийн төрөл',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Шахагдаагүй',
 
 'exif-unknowndate' => 'Мэдэгдэхгүй огноо',
@@ -3366,7 +3320,6 @@ $5
 'version-other' => 'Бусад',
 'version-mediahandlers' => 'Медиа боловсруулагч',
 'version-hooks' => 'Гогцоо',
-'version-extension-functions' => 'Өргөтгөлүүдийн функцууд',
 'version-parser-extensiontags' => 'Парсер нэмэлт тагууд',
 'version-parser-function-hooks' => 'Парсер функцийн тагууд',
 'version-hook-name' => 'Хүүкийн нэр',
@@ -3378,13 +3331,6 @@ $5
 'version-software' => 'Суулгасан программ',
 'version-software-product' => 'Бүтээгдэхүүн',
 'version-software-version' => 'Хувилбар',
-
-# Special:FilePath
-'filepath' => 'Файлын зам',
-'filepath-page' => 'Файл:',
-'filepath-submit' => 'Явах',
-'filepath-summary' => 'Энэхүү тусгай хуудас нь файлын бүтэн замыг дуудна.
-Зургууд нь бүтэн хэмжээгээрээ гарах ба бусад файлын төрлүүд нь тохирох програмаараа шууд нээгдэнэ.',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Давхардсан файлуудыг хайх',

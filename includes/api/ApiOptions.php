@@ -42,6 +42,10 @@ class ApiOptions extends ApiBase {
 			$this->dieUsage( 'Anonymous users cannot change preferences', 'notloggedin' );
 		}
 
+		if ( !$user->isAllowed( 'editmyoptions' ) ) {
+			$this->dieUsage( 'You don\'t have permission to edit your options', 'permissiondenied' );
+		}
+
 		$params = $this->extractRequestParams();
 		$changed = false;
 
@@ -50,7 +54,7 @@ class ApiOptions extends ApiBase {
 		}
 
 		if ( $params['reset'] ) {
-			$user->resetOptions( $params['resetkinds'] );
+			$user->resetOptions( $params['resetkinds'], $this->getContext() );
 			$changed = true;
 		}
 
@@ -83,7 +87,7 @@ class ApiOptions extends ApiBase {
 				case 'registered-checkmatrix':
 					// A key for a multiselect or checkmatrix option.
 					$validation = true;
-					$value = $value !== null ? (bool) $value : null;
+					$value = $value !== null ? (bool)$value : null;
 					break;
 				case 'userjs':
 					// Allow non-default preferences prefixed with 'userjs-', to be set by user scripts

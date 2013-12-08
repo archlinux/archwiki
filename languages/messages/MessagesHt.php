@@ -171,9 +171,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Montre kantite itlizatè k’ap swiv',
 'tog-oldsig' => 'Gade pou wè siyati ki egziste deja:',
 'tog-fancysig' => 'Konsidere siyati sa tankou yon wikitèks (san lyen ki ta otomatik)',
-'tog-externaleditor' => 'Itilize editè ki pa nan sistèm wikimedya pa defo',
-'tog-externaldiff' => 'Itilize yon konparatè ki pa nan sitsèm wikimedya pa defo',
-'tog-showjumplinks' => 'Pèmèt lyen aksesibilite « ale nan »',
 'tog-uselivepreview' => 'Itilize kout je an dirèk (sa mande JavaScrip) (Esperimantal)',
 'tog-forceeditsummary' => 'Notifye m lè m ap antre yon somè modifikasyon vid',
 'tog-watchlisthideown' => 'Kache modifikasyon m yo nan lis swivi mwen a',
@@ -370,7 +367,7 @@ $1',
 'pool-queuefull' => 'Fil pou travay la plen',
 'pool-errorunknown' => 'Erè nou pa konnen',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Apwopo {{SITENAME}}',
 'aboutpage' => 'Project:Apwopo',
 'copyright' => 'Kontni disponib anba $1.',
@@ -380,7 +377,6 @@ $1',
 'disclaimers' => 'Avètisman',
 'disclaimerpage' => 'Project:Avètisman jeneral yo',
 'edithelp' => 'Èd pou modifye paj',
-'edithelppage' => 'Help:Modifye yon paj',
 'helppage' => 'Help:Èd',
 'mainpage' => 'Paj prensipal',
 'mainpage-description' => 'Paj prensipal',
@@ -451,17 +447,6 @@ Ou ka jwenn yon lis paj espesial ki valid yo la [[Special:SpecialPages|{{int:spe
 # General errors
 'error' => 'Erè',
 'databaseerror' => 'Erè nan bazdone.',
-'dberrortext' => 'Yon rekèt nan bazdone a bay yon erè.
-Sa kapab vle di genyen yon erè nan lojisyèl nan.
-Dènye esè a te :
-<blockquote><tt>$1</tt></blockquote>
-depi fonksyon sa « <tt>$2</tt> ».
-Bazdone ritounen erè sa « <tt>$3 : $4</tt> ».',
-'dberrortextcl' => 'Yon rekèt nan bazdone a bay yon erè.
-Dènye esè nan baz done a te:
-« $1 »
-depi fonksyon sa « $2 ».
-Bazdone a te bay mesaj erè sa « $3 : $4 ».',
 'laggedslavemode' => "'''Atansyon:''' paj sa a kapab pa anrejistre modifikasyon ki fèk fèt yo.",
 'readonly' => 'Bazdone a fèmen toutbon.',
 'enterlockreason' => 'Bay yon rezon pou fème bazdone a ak yon estimasyon ki lè w ap ouvri l ankò',
@@ -507,7 +492,6 @@ Demann : $2',
 'viewsourcetext' => 'Ou kapab gade epitou modifye kontni atik sa a pou ou travay anlè li :',
 'protectedinterface' => 'Paj sa ap bay tèks pou entèfas lojisyèl an e li pwoteje pou anpeche move itilizasyon nou ta kapab fè ak li.',
 'editinginterface' => "'''Pòte atansyon :''' ou ap modifye yon paj ki itilize nan kreyasyon tèks entèfas lojisyèl an. Chanjman yo ap ritounen, li ap depann de kèk sityasyon, nan tout paj ke lòt itilizatè yo kapab wè tou. Pou tradiksyon yo, nap envite w itilize pwojè MediaWiki pou mesaj entènasyonal yo (tradiksyon) nan paj sa [//translatewiki.net/wiki/Main_Page?setlang=fr translatewiki.net].",
-'sqlhidden' => '(Demann SQL an kache)',
 'cascadeprotected' => 'Paj sa pwoteje kounye a paske l nan {{PLURAL:$1|paj ki douvan l|paj yo ki douvan l}}, paske {{PLURAL:$1|l te pwoteje|yo te pwoteje}} ak opsyon « pwoteksyon pou tout paj ki nan premye paj an - kaskad » aktive :
 $2',
 'namespaceprotected' => "Ou pa gen dwa modifye paj nan espas non « '''$1''' ».",
@@ -529,7 +513,6 @@ Note ke kèk paj gendwa afiche tankou ou te toujou konekte tank ou pa efase kach
 'yourpassword' => 'Mopas ou an :',
 'yourpasswordagain' => 'Mete mopas ou an ankò :',
 'remembermypassword' => 'Sonje mopas mwen an nan òdinatè mwen an (pou yon maximum de $1 {{PLURAL:$1|jou|jou}})',
-'securelogin-stick-https' => 'Kontinye itilize HTTPS toujou apre koneksyon',
 'yourdomainname' => 'Domèn ou an',
 'externaldberror' => 'Li sanble ke yon erè pwodui ak bazdone a pou idantifikasyon ki pa nan sistèm an, oubyen ou pa otorize pou mete a jou kont ou genyen nan lòt sistèm yo.',
 'login' => 'Konekte ou',
@@ -611,7 +594,7 @@ Pa pòte atansyon pou mesaj sa si kont sa kreye pa erè.',
 'newpassword' => 'Nouvo mopas:',
 'retypenew' => 'Konfime nouvo mopas an :',
 'resetpass_submit' => 'Chanje mopas epitou konekte',
-'resetpass_success' => 'Nou chanje mopas ou an avèk siksè ! Nap konekte ou kounye a...',
+'changepassword-success' => 'Nou chanje mopas ou an avèk siksè ! Nap konekte ou kounye a...',
 'resetpass_forbidden' => 'Nou pa kapab chanje mopas yo nan sistèm sa',
 'resetpass-no-info' => 'Ou dwe konekte ou pou ou kapab jwenn paj sa.',
 'resetpass-submit-loggedin' => 'Modifye mopas sa',
@@ -890,7 +873,6 @@ Lejand : ({{MediaWiki:Cur}}) = diferans ak vèsyon kounye a, ({{MediaWiki:Last}}
 'prevn' => '{{PLURAL:$1|$1}} anvan yo',
 'nextn' => '{{PLURAL:$1|$1}} swivan yo',
 'viewprevnext' => 'Wè ($1 {{int:pipe-separator}} $2) ($3).',
-'searchhelp-url' => 'Help:Èd',
 'searchprofile-everything' => 'Tout',
 'search-result-size' => '$1 ({{PLURAL:$2| mo|$2 mo yo}})',
 'search-redirect' => '(redireksyon depi $1)',
@@ -972,7 +954,6 @@ Si ou mete li, n ap itilize li pou nou ka nonmen ou pou kontribisyon ou yo.',
 'recentchangeslinked-feed' => 'Swivi pou lyen yo',
 'recentchangeslinked-toolbox' => 'Swivi pou lyen yo',
 'recentchangeslinked-title' => 'Chanjman ki an relasyon ak "$1"',
-'recentchangeslinked-noresult' => 'Pa genyen pyès chanjman nan paj lye sa yo pou peryòd ou bay la.',
 'recentchangeslinked-summary' => "Paj espesyal sa a ap montre dènye chanjman nan paj ki genyen lyen depi yon paj spesifie (oubyen pou manm you kategori spesifie) yo. Paj yo ki nan [[Special:Watchlist|lis swivi]] ou an ap ekri '''fonse'''",
 'recentchangeslinked-page' => 'Non paj la :',
 'recentchangeslinked-to' => 'Afiche modifikasyon yo ki genyen yon lyen vè paj yo ba ou a plito',
@@ -1021,8 +1002,6 @@ Si ou mete li, n ap itilize li pou nou ka nonmen ou pou kontribisyon ou yo.',
 
 # Statistics
 'statistics' => 'Estatistik',
-
-'disambiguations' => 'Paj yo ki genyen menm non',
 
 'doubleredirects' => 'Redireksyon de fwa',
 

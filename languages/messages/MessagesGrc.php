@@ -67,9 +67,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Δεικνύναι τὸν ἀριθμὸν τῶν παρακολουθούντων χρωμένων',
 'tog-oldsig' => 'Προθεώρησις τῆς ὑπαρχούσης ὑπογραφῆς:',
 'tog-fancysig' => 'Ἀκατέργασται ὑπογραφαί ἐν εἴδει βικι-κειμένου (ἄνευ αὐτομάτου συνδέσμου)',
-'tog-externaleditor' => 'Χρῆσθαι ἐξωτέρῳ προγράμματι ἐπεξεργασίας κειμένων κατὰ προεπιλογήν (πρὸς εἰδικοὺς μόνον· ἀπαραίτητοι εἰσὶν εἰδικαὶ ῥυθμίσεις τινὲς ἐν τῇ σῇ ὑπολογιστικῇ μηχανῇ)',
-'tog-externaldiff' => 'Χρῆσθαι ἐξωτέρῳ λογισμικῷ ἀντιπαραβολῆς κατὰ προεπιλογὴν (πρὸς εἰδικοὺς μόνον· ἀπαραίτητοι εἰσὶν εἰδικαὶ ῥυθμίσεις τινες ἐν τῇ σῇ ὑπολογιστικῇ μηχανῇ)',
-'tog-showjumplinks' => 'Ἐνεργοποιεῖν τοὺς "ἅλμα πρὸς" συνδέσμους προσβασιμότητος',
 'tog-uselivepreview' => 'Χρῆσθαι ἀμέσῳ προθεωρήσει (JavaScript) (Πειραστικόν)',
 'tog-forceeditsummary' => 'Προμήνυσόν με εἰ εἰσάγω κενὴν σύνοψιν μεταγραφῆς',
 'tog-watchlisthideown' => 'Οὐ δηλοῦν τὰς ἐμὰς μεταβολὰς ἐν τοῖς ἐφορωμένοις μου',
@@ -263,7 +260,7 @@ $1',
 'pool-queuefull' => 'Δεξαμενὴ δεδομένων πλήρης',
 'pool-errorunknown' => 'Ἄγνωστον σφάλμα',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Περὶ {{SITENAME}}',
 'aboutpage' => 'Project:Περὶ',
 'copyright' => 'Ἡ διάθεσις τοῦδε περιεχομένου ἐστιν ὑπὸ $1.',
@@ -273,7 +270,6 @@ $1',
 'disclaimers' => 'Ἀποποιήσεις',
 'disclaimerpage' => 'Project:Γενικὴ ἀποποίησις',
 'edithelp' => 'Βοήθεια περὶ τοῦ μεταγράφειν',
-'edithelppage' => 'Help:Βοήθεια περὶ τοῦ μεταγράφειν',
 'helppage' => 'Help:Περιεχόμενα',
 'mainpage' => 'Κυρία Δέλτος',
 'mainpage-description' => 'Κυρία Δέλτος',
@@ -345,17 +341,6 @@ $1',
 # General errors
 'error' => 'Σφάλμα',
 'databaseerror' => 'Σφάλμα βάσεως δεδομένων',
-'dberrortext' => 'Σφάλμα τι συντάξεως πεύσεως τινὸς πρὸς τὴν βάσιν δεδομένων ἀπήντησεν,
-ὅπερ ὑποδηλοῖ τὴν ὕπαρξιν βλάβης τινὸς ἐν τῷ λογισμικῷ.
-Ἡ ἐσχάτη ἀποπειραθεῖσα πεῦσις πρὸς τὴν βάσιν δεδομένων ἦν:
-<blockquote><tt>$1</tt></blockquote>
-ὑπὸ τῆς συναρτήσεως "<tt>$2</tt>".
-Ἡ βάσις δεδομένων ἐπέστρεψεν σφάλμα "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'Σφάλμα τι συντάξεως πεύσεως τινὸς πρὸς τὴν βάσιν δεδομένων ἀπήντησεν.
-Ἡ ὑστάτη ἀπόπειρα πεύσεως πρὸς τὴν βάσιν δεδομένων ἦτο:
-"$1"
-ὑπὸ τῆς συναρτήσεως "$2".
-Ἡ βάσις δεδομένων ἐπέστρεψεν σφάλμα "$3: $4"',
 'laggedslavemode' => 'Προσοχή: Ἡ δέλτος ἐνδέχεται οὐ περιέχειν προσφάτους μεταβολάς.',
 'readonly' => 'Βάσις δεδομένων ἀποκεκλεισμένη',
 'enterlockreason' => 'Λέγε διὰ τὶ τὸ ἀποκλῄειν τε καὶ ὅτε τοῦτο ἀρθήσεται',
@@ -396,7 +381,6 @@ $1',
 'protectedpagetext' => 'Ἥδε ἡ δέλτος ἀποκεκλῃμένη ἐστὶν εἰς ἀποτροπὴν τοῦ μεταγράφειν.',
 'viewsourcetext' => 'Ἔξεστί σοι ὁρᾶν τε καὶ ἀντιγράφειν τὴν τῆς δέλτου πηγήν:',
 'protectedinterface' => 'Ἥδε ἡ δέλτος παρέχει κείμενον διεπιφανείας διὰ τὸ λογισμικὸν καὶ κεκλῃσμένη ἐστὶ προς ἀποφυγὴν καταχρήσεων.',
-'sqlhidden' => '(πεῦσις SQL κεκρυμμένη)',
 'cascadeprotected' => 'Ἥδε ἡ δέλτος πεφύλακται, διότι συμπεριλαμβάνεται ἐν {{PLURAL:$1|τῇ ἑξῆς δέλτῳ ἥπερ πεφυλαγμένη ἐστὶ|ταῖς ἑξῆς δέλτοις αἵπερ πεφυλαγμέναι εἰσὶ}} μέσῳ τῆς ἐνεργοποιηθεῖσας διαδοχικῆς προστασίας ἐν τῷ:
 $2',
 'namespaceprotected' => "Οὐκ ἔξεστί σοι μεταγράφειν δέλτους ἐν τῷ ὀνοματείῳ '''$1'''.",
@@ -487,7 +471,7 @@ $2',
 'newpassword' => 'Νέον σύνθημα:',
 'retypenew' => 'Ἀνατύπωσις νέου συνθήματος:',
 'resetpass_submit' => 'Ἀναδιορισμὸς συνθήματος καὶ σύνδεσις',
-'resetpass_success' => 'Τὸ σὸν σύνθημα εὖ μεταβεβλημένον ἐστίν! Νῦν συνδέῃ...',
+'changepassword-success' => 'Τὸ σὸν σύνθημα εὖ μεταβεβλημένον ἐστίν! Νῦν συνδέῃ...',
 'resetpass_forbidden' => 'Οὐκ ἔξεστι τοῖς συνθήμασιν ἀλλαγῆναι',
 'resetpass-no-info' => 'Ἐὰν μὴ συνδέῃ οὐκ ἔξεστί σοι εὐθέως δεῦρο βαίνειν.',
 'resetpass-submit-loggedin' => 'Ἀλλάττειν σύνθημα',
@@ -798,7 +782,6 @@ $1",
 'searchmenu-legend' => 'Ἐπιλογαὶ ζητήσεως',
 'searchmenu-exists' => "'''Ὑπάρχει δέλτος τις ὀνόματι \"[[:\$1]]\" ἐν τῷδε τῷ βίκι'''",
 'searchmenu-new' => "'''Ποιεῖν τὴν δέλτον \"[[:\$1]]\" ἐν τῷδε τῷ βίκι'''",
-'searchhelp-url' => 'Help:Περιεχόμενα',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Ζήτησις δέλτων ἐχουσῶν τόδε τὸ πρόθεμα]]',
 'searchprofile-articles' => 'Δέλτοι περιεχομένων',
 'searchprofile-project' => 'Βοήθεια  καὶ δέλτοι ἐγχειρήματος',
@@ -839,14 +822,6 @@ $1",
 'powersearch-togglenone' => 'Οὐδέν',
 'search-external' => 'Ἐξωτέρα ἀναζήτησις',
 
-# Quickbar
-'qbsettings' => 'Ταχεῖα πρόσβασις',
-'qbsettings-none' => 'Οὐδέν',
-'qbsettings-fixedleft' => 'Σταθερὰ ἀριστερώς',
-'qbsettings-fixedright' => 'Σταθερὰ δεξιώς',
-'qbsettings-floatingleft' => 'Πλανώμενα αριστερώς',
-'qbsettings-floatingright' => 'Πλανώμενα δεξιώς',
-
 # Preferences page
 'preferences' => 'Προαιρέσεις',
 'mypreferences' => 'Αἱ προαιρέσεις μου',
@@ -876,7 +851,6 @@ $1",
 'resetprefs' => 'Ἐκκαθαίρειν ἀσώτους ἀλλαγάς',
 'restoreprefs' => 'Ἐπανιστάναι ἁπάσας τὰς προκαθωρισμένας ῥυθμίσεις',
 'prefs-editing' => 'Τὸ μεταγράφειν',
-'prefs-edit-boxsize' => 'Μέγεθος τῆς θυρίδος μεταγραφῆς.',
 'rows' => 'Σειραί:',
 'columns' => 'Στῆλαι:',
 'searchresultshead' => 'Ζητεῖν',
@@ -914,7 +888,6 @@ $1",
 'prefs-custom-css' => 'CSS παραγγελτόν',
 'prefs-custom-js' => 'JS παραγγελτόν',
 'prefs-emailconfirm-label' => 'Ἐπιβεβαίωσις ἠλ.-διευθύνσεως:',
-'prefs-textboxsize' => 'Μέγεθος τῆς θυρίδος μεταγραφῆς',
 'youremail' => 'Ἠλεκτρονικαὶ ἐπιστολαί:',
 'username' => 'Ὄνομα χρωμένου:',
 'uid' => 'Ταυτότης χρωμένου:',
@@ -1127,7 +1100,6 @@ $1",
 'recentchangeslinked-feed' => 'Οἰκεῖαι μεταβολαί',
 'recentchangeslinked-toolbox' => 'Οἰκεῖαι μεταβολαί',
 'recentchangeslinked-title' => 'Μεταβολαὶ οἰκεῖαι "$1"',
-'recentchangeslinked-noresult' => 'Οὐδεμία ἀλλαγὴ τῶν συνδεδεμένων δέλτων ἐν τῇ δεδομένῃ χρονικῇ περιόδῳ.',
 'recentchangeslinked-summary' => "Ὅδε ἐστὶ κατάλογος τῶν νέων μεταβόλων κατὰ δέλτους συνδεδεμένας σὺν δέλτῳ τινί (ἢ κατὰ μέλη κατηγορίας τινός).
 Δέλτοι ἐν τῷ [[Special:Watchlist|καταλόγῳ ἐφορωμένων]] σου '''ἔντονοι''' εἰσίν.",
 'recentchangeslinked-page' => 'Ὄνομα δέλτου:',
@@ -1344,9 +1316,6 @@ $1",
 'statistics-users-active-desc' => 'Χρώμενοι δραστήριοι ἐν τῷ παρελθόντι μηνί {{PLURAL:$1|ἡμέρα|$1 ἡμέραι}}',
 'statistics-mostpopular' => 'Αἱ πλέον θεωρουμέναι δέλτοι',
 
-'disambiguations' => 'Σαφηνίσεως δέλτοι',
-'disambiguationspage' => 'Template:σαφήνισις',
-
 'doubleredirects' => 'Ἀναδιευθύνσεις διπλότυπαι',
 'doubleredirectstext' => 'Ἥδε ἡ δέλτος συγκαταλέγει δέλτους αἵπερ ἀνακατευθύνουσι πρὸς ἑτέρας δέλτους ἀνακατευθύνσεως. Πᾶσα σειρά περιέχει συνδέσμους πρὸς τὴν τε πρώτην καὶ τὴν τε δευτέραν δέλτον ἀνακατευθύνσεως καὶ τὸν τε προορισμὸν τῆς δευτέρας δέλτου ἀνακατευθύνσεως ἥπερ ἐστὶ συνήθως ὁ πραγματικὸς προορισμὸς τῆς ἀνακατευθύνσεως ὅπου σὲ ἔδει δεδεγμένος εἶναι. Τὰ <del>διαγεγραμμένα</del> λήμματα ἐπιλέλυνται.',
 'double-redirect-fixed-move' => 'Ἡ [[$1]] κεκίνηται, τὸ νῦν ἀναδιευθύνεται πρὸς τὴν [[$2]]',
@@ -1542,9 +1511,8 @@ $1",
 'unwatchthispage' => 'Παῦσαι τὸ ἐφορᾶν',
 'notanarticle' => 'Μὴ δέλτος χρήματος',
 'notvisiblerev' => 'Ἀναθεώρησις διαγεγραμμένη',
-'watchnochange' => 'Οὐδὲν ἐκ τῶν ἐφορωμένων τεμαχίων σου μετεγράφη τῷ δεικνυμένῳ χρόνῳ.',
 'watchlist-details' => '{{PLURAL:$1|$1 δέλτος|$1 δέλτοι}} ἐφορωμέναι, ἄνευ τῶν δέλτων διαλέξεως περιλαμβανομένων.',
-'wlheader-enotif' => '* Σύστημα εἰδήσεως μέσῳ ἠλ-ἐπιστολῶν ἐνεργόν.',
+'wlheader-enotif' => 'Σύστημα εἰδήσεως μέσῳ ἠλ-ἐπιστολῶν ἐνεργόν.',
 'watchmethod-recent' => 'ἐλέγχειν προσφάτους μεταγραφὰς περὶ ἐφορωμένων δέλτων',
 'watchmethod-list' => 'ἐλέγχειν ἐφορωμένας δέλτους περὶ μεταγραφὰς προσφάτους',
 'watchlistcontains' => 'Ἡ ἐφοροδιαλογὴ σου περιέχει $1 {{PLURAL:$1|δέλτον|δέλτους}}.',
@@ -1843,10 +1811,7 @@ $1',
 'ipb_cant_unblock' => 'Σφάλμα: Ἡ φραγὴ τῆς ID $1 οὐχ εὑρέθη.
 Εἰκότως ἀποπεφραγμένη ἤδη ἐστίν.',
 'ip_range_invalid' => 'Ἄκυρον IP-εὖρος.',
-'blockme' => 'Φράξον με',
 'proxyblocker' => 'Ἐργαλεῖον φραγῆς διακομιστῶν',
-'proxyblocker-disabled' => 'Ἥδε ἡ ἐνέργεια κατεσταλμένη εστίν.',
-'proxyblocksuccess' => 'Γενομένη.',
 'cant-block-while-blocked' => 'Οὐκ ἔξεστί σοι φράττειν ἑτέρους χρωμένους ἐν ὅσῳ πεφραγμένος εἶ.',
 
 # Developer tools
@@ -2197,7 +2162,7 @@ $1',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Πλάτος',
 'exif-imagelength' => 'Ὕψος',
 'exif-bitspersample' => 'Δυφία ἀνὰ συνιστῶσαν',
@@ -2319,7 +2284,7 @@ $1',
 'exif-label' => 'Ἐπιγραφή',
 'exif-disclaimer' => 'Ἀποποίησις εὐθύνης',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Ἀσυμπίεστος',
 
 'exif-copyrighted-true' => 'Ὑποκείμενον έν δικαιώμασιν',
@@ -2602,7 +2567,6 @@ $5
 'version-other' => 'Ἄλλα',
 'version-mediahandlers' => 'Χειρισταὶ μέσων',
 'version-hooks' => 'Ἀγγύλαι',
-'version-extension-functions' => 'Ἐνέργειαι ἐπεκτάσεων',
 'version-parser-extensiontags' => 'Σἠμαντρα ἐπεκτάσεων λεξιαναλυτικοῦ προγράμματος',
 'version-parser-function-hooks' => 'Ἀγγύλαι ἐνεργειῶν λεξιαναλυτικοῦ προγράμματος',
 'version-hook-name' => 'Ὄνομα ἀγκύλης',
@@ -2613,11 +2577,6 @@ $5
 'version-software' => 'Ἐγκατεστημένον λογισμικόν',
 'version-software-product' => 'Προϊόν',
 'version-software-version' => 'Ἔκδοσις',
-
-# Special:FilePath
-'filepath' => 'Διαδρομὴ ἀρχείου',
-'filepath-page' => 'Ἀρχεῖον:',
-'filepath-submit' => 'Ἰέναι',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Ζήτησις διπλότυπων ἀρχείων',

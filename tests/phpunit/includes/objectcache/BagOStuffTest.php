@@ -15,7 +15,6 @@ class BagOStuffTest extends MediaWikiTestCase {
 			$name = $this->getCliArg( 'use-bagostuff=' );
 
 			$this->cache = ObjectCache::newFromId( $name );
-
 		} else {
 			// no type defined - use simple hash
 			$this->cache = new HashBagOStuff;
@@ -117,6 +116,18 @@ class BagOStuffTest extends MediaWikiTestCase {
 		$key = wfMemcKey( 'test' );
 		$this->cache->add( $key, $value );
 		$this->assertEquals( $this->cache->get( $key ), $value );
+	}
+
+	/**
+	 * @covers BagOStuff::incr
+	 */
+	public function testIncr() {
+		$key = wfMemcKey( 'test' );
+		$this->cache->add( $key, 0 );
+		$this->cache->incr( $key );
+		$expectedValue = 1;
+		$actualValue = $this->cache->get( $key );
+		$this->assertEquals( $expectedValue, $actualValue, 'Value should be 1 after incrementing' );
 	}
 
 	public function testGetMulti() {

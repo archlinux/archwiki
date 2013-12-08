@@ -33,6 +33,10 @@
  */
 class ApiFeedWatchlist extends ApiBase {
 
+	private $watchlistModule = null;
+	private $linkToDiffs = false;
+	private $linkToSections = false;
+
 	/**
 	 * This module uses a custom feed wrapper printer.
 	 *
@@ -41,8 +45,6 @@ class ApiFeedWatchlist extends ApiBase {
 	public function getCustomPrinter() {
 		return new ApiFormatFeedWrapper( $this->getMain() );
 	}
-
-	private $linkToDiffs = false;
 
 	/**
 	 * Make a nested call to the API to request watchlist items in the last $hours.
@@ -54,11 +56,11 @@ class ApiFeedWatchlist extends ApiBase {
 		try {
 			$params = $this->extractRequestParams();
 
-			if( !$wgFeed ) {
+			if ( !$wgFeed ) {
 				$this->dieUsage( 'Syndication feeds are not available', 'feed-unavailable' );
 			}
 
-			if( !isset( $wgFeedClasses[$params['feedformat']] ) ) {
+			if ( !isset( $wgFeedClasses[$params['feedformat']] ) ) {
 				$this->dieUsage( 'Invalid subscription feed type', 'feed-invalid' );
 			}
 
@@ -74,7 +76,7 @@ class ApiFeedWatchlist extends ApiBase {
 				'wlprop' => 'title|user|comment|timestamp',
 				'wldir' => 'older', // reverse order - from newest to oldest
 				'wlend' => $endTime, // stop at this time
-				'wllimit' => ( 50 > $wgFeedLimit ) ? $wgFeedLimit : 50
+				'wllimit' => min( 50, $wgFeedLimit )
 			);
 
 			if ( $params['wlowner'] !== null ) {
@@ -86,11 +88,23 @@ class ApiFeedWatchlist extends ApiBase {
 			if ( $params['wlexcludeuser'] !== null ) {
 				$fauxReqArr['wlexcludeuser'] = $params['wlexcludeuser'];
 			}
+			if ( $params['wlshow'] !== null ) {
+				$fauxReqArr['wlshow'] = $params['wlshow'];
+			}
+			if ( $params['wltype'] !== null ) {
+				$fauxReqArr['wltype'] = $params['wltype'];
+			}
 
 			// Support linking to diffs instead of article
 			if ( $params['linktodiffs'] ) {
 				$this->linkToDiffs = true;
 				$fauxReqArr['wlprop'] .= '|ids';
+			}
+
+			// Support linking directly to sections when possible
+			// (possible only if section name is present in comment)
+			if ( $params['linktosections'] ) {
+				$this->linkToSections = true;
 			}
 
 			// Check for 'allrev' parameter, and if found, show all revisions to each page on wl.
@@ -160,6 +174,18 @@ class ApiFeedWatchlist extends ApiBase {
 			$titleUrl = $title->getFullURL();
 		}
 		$comment = isset( $info['comment'] ) ? $info['comment'] : null;
+
+		// Create an anchor to section.
+		// The anchor won't work for sections that have dupes on page
+		// as there's no way to strip that info from ApiWatchlist (apparently?).
+		// RegExp in the line below is equal to Linker::formatAutocomments().
+		if ( $this->linkToSections && $comment !== null && preg_match( '!(.*)/\*\s*(.*?)\s*\*/(.*)!', $comment, $matches ) ) {
+			global $wgParser;
+			$sectionTitle = $wgParser->stripSectionName( $matches[2] );
+			$sectionTitle = Sanitizer::normalizeSectionNameWhitespace( $sectionTitle );
+			$titleUrl .= Title::newFromText( '#' . $sectionTitle )->getFragmentForURL();
+		}
+
 		$timestamp = $info['timestamp'];
 		$user = $info['user'];
 
@@ -168,10 +194,18 @@ class ApiFeedWatchlist extends ApiBase {
 		return new FeedItem( $titleStr, $completeText, $titleUrl, $timestamp, $user );
 	}
 
-	public function getAllowedParams() {
+	private function getWatchlistModule() {
+		if ( $this->watchlistModule === null ) {
+			$this->watchlistModule = $this->getMain()->getModuleManager()->getModule( 'query' )
+				->getModuleManager()->getModule( 'watchlist' );
+		}
+		return $this->watchlistModule;
+	}
+
+	public function getAllowedParams( $flags = 0 ) {
 		global $wgFeedClasses;
 		$feedFormatNames = array_keys( $wgFeedClasses );
-		return array (
+		$ret = array(
 			'feedformat' => array(
 				ApiBase::PARAM_DFLT => 'rss',
 				ApiBase::PARAM_TYPE => $feedFormatNames
@@ -182,29 +216,41 @@ class ApiFeedWatchlist extends ApiBase {
 				ApiBase::PARAM_MIN => 1,
 				ApiBase::PARAM_MAX => 72,
 			),
-			'allrev' => false,
-			'wlowner' => array(
-				ApiBase::PARAM_TYPE => 'user'
-			),
-			'wltoken' => array(
-				ApiBase::PARAM_TYPE => 'string'
-			),
-			'wlexcludeuser' => array(
-				ApiBase::PARAM_TYPE => 'user'
-			),
 			'linktodiffs' => false,
+			'linktosections' => false,
 		);
+		if ( $flags ) {
+			$wlparams = $this->getWatchlistModule()->getAllowedParams( $flags );
+			$ret['allrev'] = $wlparams['allrev'];
+			$ret['wlowner'] = $wlparams['owner'];
+			$ret['wltoken'] = $wlparams['token'];
+			$ret['wlshow'] = $wlparams['show'];
+			$ret['wltype'] = $wlparams['type'];
+			$ret['wlexcludeuser'] = $wlparams['excludeuser'];
+		} else {
+			$ret['allrev'] = null;
+			$ret['wlowner'] = null;
+			$ret['wltoken'] = null;
+			$ret['wlshow'] = null;
+			$ret['wltype'] = null;
+			$ret['wlexcludeuser'] = null;
+		}
+		return $ret;
 	}
 
 	public function getParamDescription() {
+		$wldescr = $this->getWatchlistModule()->getParamDescription();
 		return array(
 			'feedformat' => 'The format of the feed',
-			'hours'      => 'List pages modified within this many hours from now',
-			'allrev'     => 'Include multiple revisions of the same page within given timeframe',
-			'wlowner'    => "The user whose watchlist you want (must be accompanied by {$this->getModulePrefix()}wltoken if it's not you)",
-			'wltoken'    => 'Security token that requested user set in their preferences',
-			'wlexcludeuser' => 'A user whose edits should not be shown in the watchlist',
+			'hours' => 'List pages modified within this many hours from now',
 			'linktodiffs' => 'Link to change differences instead of article pages',
+			'linktosections' => 'Link directly to changed sections if possible',
+			'allrev' => $wldescr['allrev'],
+			'wlowner' => $wldescr['owner'],
+			'wltoken' => $wldescr['token'],
+			'wlshow' => $wldescr['show'],
+			'wltype' => $wldescr['type'],
+			'wlexcludeuser' => $wldescr['excludeuser'],
 		);
 	}
 

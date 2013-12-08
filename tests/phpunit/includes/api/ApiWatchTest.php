@@ -7,32 +7,25 @@
  * @todo This test suite is severly broken and need a full review
  */
 class ApiWatchTest extends ApiTestCase {
-
 	protected function setUp() {
 		parent::setUp();
 		$this->doLogin();
 	}
 
 	function getTokens() {
-		$data = $this->getTokenList( self::$users['sysop'] );
-
-		$keys = array_keys( $data[0]['query']['pages'] );
-		$key = array_pop( $keys );
-		$pageinfo = $data[0]['query']['pages'][$key];
-
-		return $pageinfo;
+		return $this->getTokenList( self::$users['sysop'] );
 	}
 
 	/**
 	 */
-	function testWatchEdit() {
-		$pageinfo = $this->getTokens();
+	public function testWatchEdit() {
+		$tokens = $this->getTokens();
 
 		$data = $this->doApiRequest( array(
 			'action' => 'edit',
 			'title' => 'Help:UTPage', // Help namespace is hopefully wikitext
 			'text' => 'new text',
-			'token' => $pageinfo['edittoken'],
+			'token' => $tokens['edittoken'],
 			'watchlist' => 'watch' ) );
 		$this->assertArrayHasKey( 'edit', $data[0] );
 		$this->assertArrayHasKey( 'result', $data[0]['edit'] );
@@ -44,9 +37,8 @@ class ApiWatchTest extends ApiTestCase {
 	/**
 	 * @depends testWatchEdit
 	 */
-	function testWatchClear() {
-
-		$pageinfo = $this->getTokens();
+	public function testWatchClear() {
+		$tokens = $this->getTokens();
 
 		$data = $this->doApiRequest( array(
 			'action' => 'query',
@@ -60,7 +52,7 @@ class ApiWatchTest extends ApiTestCase {
 					'action' => 'watch',
 					'title' => $page['title'],
 					'unwatch' => true,
-					'token' => $pageinfo['watchtoken'] ) );
+					'token' => $tokens['watchtoken'] ) );
 			}
 		}
 		$data = $this->doApiRequest( array(
@@ -75,13 +67,12 @@ class ApiWatchTest extends ApiTestCase {
 
 	/**
 	 */
-	function testWatchProtect() {
-
-		$pageinfo = $this->getTokens();
+	public function testWatchProtect() {
+		$tokens = $this->getTokens();
 
 		$data = $this->doApiRequest( array(
 			'action' => 'protect',
-			'token' => $pageinfo['protecttoken'],
+			'token' => $tokens['protecttoken'],
 			'title' => 'Help:UTPage',
 			'protections' => 'edit=sysop',
 			'watchlist' => 'unwatch' ) );
@@ -94,9 +85,8 @@ class ApiWatchTest extends ApiTestCase {
 
 	/**
 	 */
-	function testGetRollbackToken() {
-
-		$pageinfo = $this->getTokens();
+	public function testGetRollbackToken() {
+		$this->getTokens();
 
 		if ( !Title::newFromText( 'Help:UTPage' )->exists() ) {
 			$this->markTestSkipped( "The article [[Help:UTPage]] does not exist" ); //TODO: just create it?
@@ -131,7 +121,7 @@ class ApiWatchTest extends ApiTestCase {
 	 *
 	 * @depends testGetRollbackToken
 	 */
-	function testWatchRollback( $data ) {
+	public function testWatchRollback( $data ) {
 		$keys = array_keys( $data[0]['query']['pages'] );
 		$key = array_pop( $keys );
 		$pageinfo = $data[0]['query']['pages'][$key];
@@ -154,24 +144,5 @@ class ApiWatchTest extends ApiTestCase {
 				$this->fail( "Received error '" . $ue->getCodeString() . "'" );
 			}
 		}
-	}
-
-	/**
-	 */
-	function testWatchDelete() {
-		$pageinfo = $this->getTokens();
-
-		$data = $this->doApiRequest( array(
-			'action' => 'delete',
-			'token' => $pageinfo['deletetoken'],
-			'title' => 'Help:UTPage' ) );
-		$this->assertArrayHasKey( 'delete', $data[0] );
-		$this->assertArrayHasKey( 'title', $data[0]['delete'] );
-
-		$data = $this->doApiRequest( array(
-			'action' => 'query',
-			'list' => 'watchlist' ) );
-
-		$this->markTestIncomplete( 'This test needs to verify the deleted article was added to the users watchlist' );
 	}
 }

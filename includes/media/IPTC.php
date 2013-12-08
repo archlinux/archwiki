@@ -63,7 +63,7 @@ class IPTC {
 				wfDebugLog( 'iptc', "IPTC tag $tag had only whitespace as its value." );
 				continue;
 			}
-			switch( $tag ) {
+			switch ( $tag ) {
 				case '2#120': /*IPTC caption. mapped with exif ImageDescription*/
 					$data['ImageDescription'] = self::convIPTC( $val, $c );
 					break;
@@ -396,7 +396,7 @@ class IPTC {
 			return null;
 		}
 
-		$tz = ( intval( substr( $time, 7, 2 ) ) *60*60 )
+		$tz = ( intval( substr( $time, 7, 2 ) ) * 60 * 60 )
 			+ ( intval( substr( $time, 9, 2 ) ) * 60 );
 
 		if ( substr( $time, 6, 1 ) === '-' ) {
@@ -423,7 +423,7 @@ class IPTC {
 	 *
 	 * @return string|array
 	 */
-	private static function convIPTC ( $data, $charset ) {
+	private static function convIPTC( $data, $charset ) {
 		if ( is_array( $data ) ) {
 			foreach ( $data as &$val ) {
 				$val = self::convIPTCHelper( $val, $charset );
@@ -441,7 +441,7 @@ class IPTC {
 	 *
 	 * @return string
 	 */
-	private static function convIPTCHelper ( $data, $charset ) {
+	private static function convIPTCHelper( $data, $charset ) {
 		if ( $charset ) {
 			wfSuppressWarnings();
 			$data = iconv( $charset, "UTF-8//IGNORE", $data );

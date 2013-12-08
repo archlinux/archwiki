@@ -129,9 +129,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Közetken qullanıcı sayısını köster',
 'tog-oldsig' => 'Şimdiki imza:',
 'tog-fancysig' => 'İmza vikimetin kibi olsun (avtomatik bağlantı olmaz)',
-'tog-externaleditor' => 'Tış türlendirgiç (redaktor) qullan (tecribeli qullanıcılar içün; kompyuteriñizni mahsus sazlamaq kerek. [ //www.mediawiki.org/wiki/Manual:External_editors tafsilâtlı malümat mında])',
-'tog-externaldiff' => 'Teñeştimek içün tış bir programma qullan (tecribeli qullanıcılar içün; kompyuteriñizni mahsus sazlamaq kerek. [ //www.mediawiki.org/wiki/Manual:External_editors tafsilâtlı malümat mında])',
-'tog-showjumplinks' => '"Bar" bağlantısını faalleştir',
 'tog-uselivepreview' => 'Canlı baqıp çıquv hususiyetini qullan (JavaScript) (daa deñeme alında)',
 'tog-forceeditsummary' => 'Deñiştirmeniñ qısqa tarifini boş taşlasam meni tenbile',
 'tog-watchlisthideown' => 'Közetüv cedvelimden menim deñiştirmelerimni gizle',
@@ -227,7 +224,7 @@ $messages = array(
 'noindex-category' => 'İndekssiz saifeler',
 'broken-file-category' => 'İçinde bozuq fayl bağlantıları olğan saifeler',
 
-'linkprefix' => '/^(.*?)([a-zâçğıñöşüA-ZÂÇĞİÑÖŞÜa-яёА-ЯЁ«„]+)$/sDu',
+'linkprefix' => '/^((?>.*(?<![a-zâçğıñöşüA-ZÂÇĞİÑÖŞÜa-яёА-ЯЁ«„])))(.+)$/sDu',
 
 'about' => 'Aqqında',
 'article' => 'Saife',
@@ -331,7 +328,7 @@ $1',
 'pool-queuefull' => 'Soratma toplayıcısı tolu',
 'pool-errorunknown' => 'Bilinmegen hata',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} aqqında',
 'aboutpage' => 'Project:Aqqında',
 'copyright' => 'Malümat $1 binaen keçilip ola.',
@@ -341,7 +338,6 @@ $1',
 'disclaimers' => 'Cevapkârlıq redi',
 'disclaimerpage' => 'Project:Umumiy Malümat Muqavelesi',
 'edithelp' => 'Saifeler nasıl deñiştirilir?',
-'edithelppage' => 'Help:Saife nasıl deñiştirilir',
 'helppage' => 'Help:Münderice',
 'mainpage' => 'Baş Saife',
 'mainpage-description' => 'Baş Saife',
@@ -418,16 +414,6 @@ Bar olğan bütün mahsus saifelerni [[Special:SpecialPages|{{int:specialpages}}
 # General errors
 'error' => 'Hata',
 'databaseerror' => 'Malümat bazasınıñ hatası',
-'dberrortext' => 'Malümat bazasından soratqanda sintaksis hatası oldı.
-Bu programmadaki bir hata ola bile.
-"<tt>$2</tt>" funktsiyasından olğan malümat bazasından soñki soratma:
-<blockquote><tt>$1</tt></blockquote>.
-Malümat bazasınıñ bildirgen hatası "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'Malümat bazasından soratqanda sintaksis hatası oldı.
-Malümat bazasından soñki soratma:
-"$1"
-Qullanılğan funktsiya "$2".
-Malümat bazasınıñ bildirgen hatası "$3: $4".',
 'laggedslavemode' => 'Diqqat! Bu saifede soñki yañaruv olmay bile.',
 'readonly' => 'Malümat bazası kilitlendi',
 'enterlockreason' => 'Blok etüvniñ sebebini ve devamını kirsetiñiz.',
@@ -476,7 +462,6 @@ Soratma: $2',
 'viewsourcetext' => 'Saifeniñ kodunı közden keçirip kopiyalay bilesiñiz:',
 'protectedinterface' => 'Bu saifede viki interfeysiniñ metni bar. Onıñ içün mında bir hata çıqmasın dep onı deñiştirmek yasaq.',
 'editinginterface' => "'''Tenbi''': MediaWiki sistemasınıñ interfeys saifesini deñiştireyatasız. Bu saifedeki deñiştirmeler interfeysniñ körünişini bu vikiniñ başqa qullanıcıları içün de deñiştirecek. Lütfen, viki interfeysini tercime etmek içün [//translatewiki.net/wiki/Main_Page?setlang=crh translatewiki.net] saytını (MediaWiki resmiy lokalizatsiya leyhası) qullanıñız.",
-'sqlhidden' => '(SQL istintağı saqlı)',
 'cascadeprotected' => 'Bu saifeni deñiştirip olamazsıñız, çünki kaskad qorçalav altında bulunğan {{PLURAL:$1|saifege|saifelerge}} mensüptir:
 $2',
 'namespaceprotected' => "'''$1''' isim fezasında saifeler deñiştirmege aqqıñız yoq.",
@@ -497,7 +482,6 @@ Sebep: ''$2''.",
 'yourpassword' => 'Paroliñiz',
 'yourpasswordagain' => 'Parolni bir daa yazıñız:',
 'remembermypassword' => 'Kirişimni bu kompyuterde hatırla (eñ çoq $1 {{PLURAL:$1|kün|kün}} içün)',
-'securelogin-stick-https' => 'Kirgen soñ HTTPS-ge bağlanıp tur',
 'yourdomainname' => 'Domen adıñız',
 'externaldberror' => 'Saytqa kirgende bir hata oldı. Bu tış esabıñıznı deñiştirmek aqqıñız olmağanından sebep meydanğa kelip ola.',
 'login' => 'Kiriş',
@@ -581,7 +565,7 @@ Lütfen, qayta kirmezden evel biraz bekleñiz.',
 'newpassword' => 'Yañı parol',
 'retypenew' => 'Yañı parolni tekrar yazıñız',
 'resetpass_submit' => 'Parol qoyıp kir',
-'resetpass_success' => 'Paroliñiz muvafaqiyetnen deñiştirildi! Oturımıñız açılmaqta...',
+'changepassword-success' => 'Paroliñiz muvafaqiyetnen deñiştirildi! Oturımıñız açılmaqta...',
 'resetpass_forbidden' => 'Parol deñiştirmek yasaq',
 'resetpass-no-info' => 'Bu saifege doğrudan irişmek içün oturım açmaq kereksiñiz.',
 'resetpass-submit-loggedin' => 'Parolni deñiştir',
@@ -849,7 +833,6 @@ Vikide bu saifege oşağan saifelerni [[Special:Search|tapıp baqıñız]].',
 'searchmenu-legend' => 'Qıdıruv sazlamaları',
 'searchmenu-exists' => "'''Bu vikide \"[[:\$1]]\" adlı bir saife bar'''",
 'searchmenu-new' => "'''Bu vikide \"[[:\$1]]\" saifesini yarat!'''",
-'searchhelp-url' => 'Help:Münderice',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Bu prefiksli saifelerni köster]]',
 'searchprofile-articles' => 'Malümat saifeleri',
 'searchprofile-project' => 'Yardım ve leyha saifeleri',
@@ -889,9 +872,6 @@ Vikide bu saifege oşağan saifelerni [[Special:Search|tapıp baqıñız]].',
 'search-external' => 'Tış qıdıruv',
 'searchdisabled' => '{{SITENAME}} saytında qıdıruv yapma vaqtınca toqtatıldı. Bu arada Google qullanıp {{SITENAME}} içinde qıdıruv yapıp olasıñız. Qıdıruv saytlarında indekslemeleriniñ biraz eski qalğan ola bilecegini köz ögüne alıñız.',
 
-# Quickbar
-'qbsettings' => 'Vızlı irişim sutun sazlamaları',
-
 # Preferences page
 'preferences' => 'Sazlamalar',
 'mypreferences' => 'Sazlamalar',
@@ -919,7 +899,6 @@ Vikide bu saifege oşağan saifelerni [[Special:Search|tapıp baqıñız]].',
 'resetprefs' => 'Saqlanmağan sazlamalarnı ilk alına ketir',
 'restoreprefs' => 'Bütün ög belgilengen sazlamalarnı qaytar',
 'prefs-editing' => 'Saifelerni deñiştirüv',
-'prefs-edit-boxsize' => 'Yazuv penceresiniñ ölçüleri.',
 'rows' => 'Satır',
 'columns' => 'Sutun',
 'searchresultshead' => 'Qıdıruv',
@@ -954,7 +933,6 @@ Vikide bu saifege oşağan saifelerni [[Special:Search|tapıp baqıñız]].',
 'prefs-files' => 'Fayllar',
 'prefs-reset-intro' => 'Bu saifeni sazlamalarıñıznı sayt ög belgilengenine qaytarmaq içün qullana bilesiñiz. Bu lâğu etilip olamaz.',
 'prefs-emailconfirm-label' => 'E-mail tasdıqlanması:',
-'prefs-textboxsize' => 'Yazuv penceresiniñ ölçüleri',
 'youremail' => 'E-mail adresiñiz:',
 'username' => 'Qullanıcı adı:',
 'uid' => 'Qayd nomeri:',
@@ -1075,7 +1053,6 @@ Eger bildirseñiz, saifelerdeki deñiştirmelerni kimniñ yapqanını köstermek
 'recentchangeslinked-feed' => 'Bağlı deñiştirmeler',
 'recentchangeslinked-toolbox' => 'Bağlı deñiştirmeler',
 'recentchangeslinked-title' => '"$1" ile bağlı deñiştirmeler',
-'recentchangeslinked-noresult' => 'Saylanğan vaqıtta bağlı saifelerde iç bir deñiştirme olmadı.',
 'recentchangeslinked-summary' => "Bu mahsus saifede bağlı saifelerde soñki yapılğan deñiştirmeler cedveli bar. [[Special:Watchlist|Közetüv cedveliñiz]]deki saifeler '''qalın''' olaraq kösterile.",
 'recentchangeslinked-page' => 'Saife adı:',
 'recentchangeslinked-to' => 'Berilgen saife yerine berilgen saifege bağlantı bergen olğan saifelerni köster',
@@ -1265,12 +1242,6 @@ Sutun serlevasına bir basuv sortirlemeniñ tertibini deñiştirir.',
 'statistics-header-hooks' => 'Diger statistika',
 'statistics-mostpopular' => 'Eñ sıq baqılğan saifeler',
 
-'disambiguations' => 'Çoq manalı terminler saifeleri',
-'disambiguationspage' => '{{ns:template}}:disambig',
-'disambiguations-text' => "Aşağıdıki saifeler '''çoq manalı saifeler'''ge bağlantı ola.
-Belki de olar bir konkret saifege bağlantı olmalı.<br />
-Eger saifede, [[MediaWiki:Disambiguationspage]] saifesinde adı keçken şablon yerleştirilgen olsa, o saife çoq manalıdır.",
-
 'doubleredirects' => 'Yollamağa olğan yollamalar',
 'doubleredirectstext' => 'Bu saifede diger yollama saifelerine yollanma olğan saifeleri kösterile.
 Er satırda birinci ve ekinci yollamağa bağlantılar da, ekinci yollamanıñ maqsat saifesi (adetince o birinci yollamanıñ kerekli maqsadı ola) da bar.
@@ -1421,10 +1392,9 @@ Bundan soñ, bu saifede ve onıñ muzakere saifesinde yapılacaq deñiştirmeler
 'unwatch' => 'Közetme',
 'unwatchthispage' => 'Bu saifeni közetme',
 'notanarticle' => 'Malümat saifesi degil',
-'watchnochange' => 'Kösterilgen zaman aralığında közetüv cedveliñizdeki saifelerniñ iç biri deñiştirilmegen.',
 'watchlist-details' => 'Muzakere saifelerini esapqa almayıp, közetüv cedveliñizde {{PLURAL:$1|1|$1}} saife bar.',
-'wlheader-enotif' => '* E-mail ile haber berüv açıldı.',
-'wlheader-showupdated' => "* Soñki ziyaretiñizden soñ deñiştirilgen saifeler '''qalın ariflernen''' kösterildi.",
+'wlheader-enotif' => 'E-mail ile haber berüv açıldı.',
+'wlheader-showupdated' => "Soñki ziyaretiñizden soñ deñiştirilgen saifeler '''qalın ariflernen''' kösterildi.",
 'watchmethod-recent' => 'soñki deñiştirmeler arasında közetken saifeleriñiz qıdırıla',
 'watchmethod-list' => 'közetüv cedvelindeki saifeler teşkerile',
 'watchlistcontains' => 'Siziñ közetüv cedveliñizde {{PLURAL:$1|1|$1}} saife bar.',
@@ -1812,13 +1782,8 @@ MediaWiki interfeysiniñ çeşit tillerge tercime etüvde iştirak etmege istese
 'spam_blanking' => 'Bar olğan versiyalarda $1 saytına bağlantılar bar, temizlev',
 
 # Skin names
-'skinname-standard' => 'Standart',
-'skinname-nostalgia' => 'Nostalgiya',
 'skinname-cologneblue' => 'Köln asretligi',
 'skinname-monobook' => 'MonoBook',
-'skinname-myskin' => 'Öz resimleme',
-'skinname-chick' => 'Çipçe',
-'skinname-simple' => 'Adiy',
 
 # Patrol log
 'patrol-log-page' => 'Teşkerüv jurnalı',
@@ -1891,7 +1856,7 @@ Er satır * işaretinen başlamalı. Satırnıñ birinci bağlantısı qоşmağ
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-make' => 'Kamera markası',
 'exif-model' => 'Kamera modeli',
 'exif-artist' => 'Yaratıcısı',
@@ -1916,7 +1881,7 @@ Er satır * işaretinen başlamalı. Satırnıñ birinci bağlantısı qоşmağ
 'exif-gpstimestamp' => 'GPS saatı (atom saatı)',
 'exif-gpssatellites' => 'Ölçemek içün qullanğanı sputnikler',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Sıqıştırılmağan',
 
 'exif-orientation-3' => '180° aylandırılğan',

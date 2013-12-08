@@ -71,7 +71,7 @@
 
 		actionPaths = mw.config.get( 'wgActionPaths' );
 
-		// @todo: Does MediaWiki give action path or query param
+		// @todo Does MediaWiki give action path or query param
 		// precedence ? If the former, move this to the bottom
 		action = mw.util.getParamValue( 'action', url );
 		if ( action !== null ) {
@@ -100,7 +100,7 @@
 		updateWatchLink: updateWatchLink
 	};
 
-	$( document ).ready( function () {
+	$( function () {
 		var $links = $( '.mw-watchlink a, a.mw-watchlink, ' +
 			'#ca-watch a, #ca-unwatch a, #mw-unwatch-link1, ' +
 			'#mw-unwatch-link2, #mw-watch-link2, #mw-watch-link1' );
@@ -161,7 +161,7 @@
 					cleanTitle = title.replace( /_/g, ' ' );
 					link = mw.html.element(
 						'a', {
-							href: mw.util.wikiGetlink( title ),
+							href: mw.util.getUrl( title ),
 							title: cleanTitle
 						}, cleanTitle
 					);

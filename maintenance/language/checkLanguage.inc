@@ -25,7 +25,7 @@
  * @ingroup MaintenanceLanguage
  */
 class CheckLanguageCLI {
-	protected $code  = null;
+	protected $code = null;
 	protected $level = 2;
 	protected $doLinks = false;
 	protected $linksPrefix = '';
@@ -46,7 +46,7 @@ class CheckLanguageCLI {
 	public function __construct( array $options ) {
 		if ( isset( $options['help'] ) ) {
 			echo $this->help();
-			exit(1);
+			exit( 1 );
 		}
 
 		if ( isset( $options['lang'] ) ) {
@@ -134,24 +134,24 @@ class CheckLanguageCLI {
 	protected function getChecks() {
 		return array(
 			'untranslated' => 'getUntranslatedMessages',
-			'duplicate'    => 'getDuplicateMessages',
-			'obsolete'     => 'getObsoleteMessages',
-			'variables'    => 'getMessagesWithMismatchVariables',
-			'plural'       => 'getMessagesWithoutPlural',
-			'empty'        => 'getEmptyMessages',
-			'whitespace'   => 'getMessagesWithWhitespace',
-			'xhtml'        => 'getNonXHTMLMessages',
-			'chars'        => 'getMessagesWithWrongChars',
-			'links'        => 'getMessagesWithDubiousLinks',
-			'unbalanced'   => 'getMessagesWithUnbalanced',
-			'namespace'    => 'getUntranslatedNamespaces',
-			'projecttalk'  => 'getProblematicProjectTalks',
-			'magic'        => 'getUntranslatedMagicWords',
-			'magic-old'    => 'getObsoleteMagicWords',
-			'magic-over'   => 'getOverridingMagicWords',
-			'magic-case'   => 'getCaseMismatchMagicWords',
-			'special'      => 'getUntraslatedSpecialPages',
-			'special-old'  => 'getObsoleteSpecialPages',
+			'duplicate' => 'getDuplicateMessages',
+			'obsolete' => 'getObsoleteMessages',
+			'variables' => 'getMessagesWithMismatchVariables',
+			'plural' => 'getMessagesWithoutPlural',
+			'empty' => 'getEmptyMessages',
+			'whitespace' => 'getMessagesWithWhitespace',
+			'xhtml' => 'getNonXHTMLMessages',
+			'chars' => 'getMessagesWithWrongChars',
+			'links' => 'getMessagesWithDubiousLinks',
+			'unbalanced' => 'getMessagesWithUnbalanced',
+			'namespace' => 'getUntranslatedNamespaces',
+			'projecttalk' => 'getProblematicProjectTalks',
+			'magic' => 'getUntranslatedMagicWords',
+			'magic-old' => 'getObsoleteMagicWords',
+			'magic-over' => 'getOverridingMagicWords',
+			'magic-case' => 'getCaseMismatchMagicWords',
+			'special' => 'getUntraslatedSpecialPages',
+			'special-old' => 'getObsoleteSpecialPages',
 		);
 	}
 
@@ -163,14 +163,14 @@ class CheckLanguageCLI {
 	 */
 	protected function getTotalCount() {
 		return array(
-			'namespace'    => array( 'getNamespaceNames', 'en' ),
-			'projecttalk'  => null,
-			'magic'        => array( 'getMagicWords', 'en' ),
-			'magic-old'    => array( 'getMagicWords', null ),
-			'magic-over'   => array( 'getMagicWords', null ),
-			'magic-case'   => array( 'getMagicWords', null ),
-			'special'      => array( 'getSpecialPageAliases', 'en' ),
-			'special-old'  => array( 'getSpecialPageAliases', null ),
+			'namespace' => array( 'getNamespaceNames', 'en' ),
+			'projecttalk' => null,
+			'magic' => array( 'getMagicWords', 'en' ),
+			'magic-old' => array( 'getMagicWords', null ),
+			'magic-over' => array( 'getMagicWords', null ),
+			'magic-case' => array( 'getMagicWords', null ),
+			'special' => array( 'getSpecialPageAliases', 'en' ),
+			'special-old' => array( 'getSpecialPageAliases', null ),
 		);
 	}
 
@@ -181,24 +181,24 @@ class CheckLanguageCLI {
 	protected function getDescriptions() {
 		return array(
 			'untranslated' => '$1 message(s) of $2 are not translated to $3, but exist in en:',
-			'duplicate'    => '$1 message(s) of $2 are translated the same in en and $3:',
-			'obsolete'     => '$1 message(s) of $2 do not exist in en or are in the ignore list, but exist in $3:',
-			'variables'    => '$1 message(s) of $2 in $3 don\'t match the variables used in en:',
-			'plural'       => '$1 message(s) of $2 in $3 don\'t use {{plural}} while en uses:',
-			'empty'        => '$1 message(s) of $2 in $3 are empty or -:',
-			'whitespace'   => '$1 message(s) of $2 in $3 have trailing whitespace:',
-			'xhtml'        => '$1 message(s) of $2 in $3 contain illegal XHTML:',
-			'chars'        => '$1 message(s) of $2 in $3 include hidden chars which should not be used in the messages:',
-			'links'        => '$1 message(s) of $2 in $3 have problematic link(s):',
-			'unbalanced'   => '$1 message(s) of $2 in $3 have unbalanced {[]}:',
-			'namespace'    => '$1 namespace name(s) of $2 are not translated to $3, but exist in en:',
-			'projecttalk'  => '$1 namespace name(s) and alias(es) in $3 are project talk namespaces without the parameter:',
-			'magic'        => '$1 magic word(s) of $2 are not translated to $3, but exist in en:',
-			'magic-old'    => '$1 magic word(s) of $2 do not exist in en, but exist in $3:',
-			'magic-over'   => '$1 magic word(s) of $2 in $3 do not contain the original en word(s):',
-			'magic-case'   => '$1 magic word(s) of $2 in $3 change the case-sensitivity of the original en word:',
-			'special'      => '$1 special page alias(es) of $2 are not translated to $3, but exist in en:',
-			'special-old'  => '$1 special page alias(es) of $2 do not exist in en, but exist in $3:',
+			'duplicate' => '$1 message(s) of $2 are translated the same in en and $3:',
+			'obsolete' => '$1 message(s) of $2 do not exist in en or are in the ignore list, but exist in $3:',
+			'variables' => '$1 message(s) of $2 in $3 don\'t match the variables used in en:',
+			'plural' => '$1 message(s) of $2 in $3 don\'t use {{plural}} while en uses:',
+			'empty' => '$1 message(s) of $2 in $3 are empty or -:',
+			'whitespace' => '$1 message(s) of $2 in $3 have trailing whitespace:',
+			'xhtml' => '$1 message(s) of $2 in $3 contain illegal XHTML:',
+			'chars' => '$1 message(s) of $2 in $3 include hidden chars which should not be used in the messages:',
+			'links' => '$1 message(s) of $2 in $3 have problematic link(s):',
+			'unbalanced' => '$1 message(s) of $2 in $3 have unbalanced {[]}:',
+			'namespace' => '$1 namespace name(s) of $2 are not translated to $3, but exist in en:',
+			'projecttalk' => '$1 namespace name(s) and alias(es) in $3 are project talk namespaces without the parameter:',
+			'magic' => '$1 magic word(s) of $2 are not translated to $3, but exist in en:',
+			'magic-old' => '$1 magic word(s) of $2 do not exist in en, but exist in $3:',
+			'magic-over' => '$1 magic word(s) of $2 in $3 do not contain the original en word(s):',
+			'magic-case' => '$1 magic word(s) of $2 in $3 change the case-sensitivity of the original en word:',
+			'special' => '$1 special page alias(es) of $2 are not translated to $3, but exist in en:',
+			'special-old' => '$1 special page alias(es) of $2 do not exist in en, but exist in $3:',
 		);
 	}
 
@@ -222,7 +222,7 @@ Parameters:
 	--links: Link the message values (default off).
 	--prefix: prefix to add to links.
 	--wikilang: For the links, what is the content language of the wiki to display the output in (default en).
-	--noexif: Do not check for EXIF messages (a bit hard and boring to translate), if you know
+	--noexif: Do not check for Exif messages (a bit hard and boring to translate), if you know
 		that they are currently not translated and want to focus on other problems (default off).
 	--whitelist: Do only the following checks (form: code,code).
 	--blacklist: Do not do the following checks (form: code,code).
@@ -299,6 +299,7 @@ ENDS;
 	 */
 	protected function getCheckBlacklist() {
 		global $checkBlacklist;
+
 		return $checkBlacklist;
 	}
 
@@ -313,6 +314,7 @@ ENDS;
 		$results = array();
 		if ( $this->level === 0 ) {
 			$this->L->getMessages( $code );
+
 			return $results;
 		}
 
@@ -320,7 +322,8 @@ ENDS;
 		$checkBlacklist = $this->getCheckBlacklist();
 		foreach ( $this->checks as $check ) {
 			if ( isset( $checkBlacklist[$code] ) &&
-				in_array( $check, $checkBlacklist[$code] ) ) {
+				in_array( $check, $checkBlacklist[$code] )
+			) {
 				$results[$check] = array();
 				continue;
 			}
@@ -384,7 +387,7 @@ ENDS;
 						echo "[messages are hidden]\n";
 					} else {
 						foreach ( $messages as $key => $value ) {
-							if( !in_array( $check, $this->nonMessageChecks() ) ) {
+							if ( !in_array( $check, $this->nonMessageChecks() ) ) {
 								$key = $this->formatKey( $key, $code );
 							}
 							if ( $this->level == 2 || empty( $value ) ) {
@@ -411,7 +414,7 @@ ENDS;
 			$problems = 0;
 			$detailTextForLangChecks = array();
 			foreach ( $results as $check => $messages ) {
-				if( in_array( $check, $this->nonMessageChecks() ) ) {
+				if ( in_array( $check, $this->nonMessageChecks() ) ) {
 					continue;
 				}
 				$count = count( $messages );
@@ -427,7 +430,6 @@ ENDS;
 				} else {
 					$numbers[] = $count;
 				}
-
 			}
 
 			if ( count( $detailTextForLangChecks ) ) {
@@ -463,13 +465,14 @@ EOL;
 	 * @return bool True if there are any results, false if not.
 	 */
 	protected function isEmpty() {
-		foreach( $this->results as $results ) {
-			foreach( $results as $messages ) {
-				if( !empty( $messages ) ) {
+		foreach ( $this->results as $results ) {
+			foreach ( $results as $messages ) {
+				if ( !empty( $messages ) ) {
 					return false;
 				}
 			}
 		}
+
 		return true;
 	}
 }
@@ -488,7 +491,7 @@ class CheckExtensionsCLI extends CheckLanguageCLI {
 	public function __construct( array $options, $extension ) {
 		if ( isset( $options['help'] ) ) {
 			echo $this->help();
-			exit(1);
+			exit( 1 );
 		}
 
 		if ( isset( $options['lang'] ) ) {
@@ -645,16 +648,16 @@ ENDS;
 	 * @throws MWException
 	 */
 	protected function checkLanguage( $code ) {
-		foreach( $this->extensions as $extension ) {
+		foreach ( $this->extensions as $extension ) {
 			$this->L = $extension;
 			$this->results = array();
 			$this->results[$code] = parent::checkLanguage( $code );
 
-			if( !$this->isEmpty() ) {
+			if ( !$this->isEmpty() ) {
 				echo $extension->name() . ":\n";
 
-				if( $this->level > 0 ) {
-					switch( $this->output ) {
+				if ( $this->level > 0 ) {
+					switch ( $this->output ) {
 						case 'plain':
 							$this->outputText();
 							break;
@@ -675,48 +678,49 @@ ENDS;
 # Blacklist some checks for some languages
 $checkBlacklist = array(
 #'code'        => array( 'check1', 'check2' ... )
-'az'           => array( 'plural' ),
-'bo'           => array( 'plural' ),
-'dz'           => array( 'plural' ),
-'id'           => array( 'plural' ),
-'fa'           => array( 'plural' ),
-'gan'          => array( 'plural' ),
-'gan-hans'     => array( 'plural' ),
-'gan-hant'     => array( 'plural' ),
-'gn'           => array( 'plural' ),
-'hak'          => array( 'plural' ),
-'hu'           => array( 'plural' ),
-'ja'           => array( 'plural' ), // Does not use plural
-'jv'           => array( 'plural' ),
-'ka'           => array( 'plural' ),
-'kk-arab'      => array( 'plural' ),
-'kk-cyrl'      => array( 'plural' ),
-'kk-latn'      => array( 'plural' ),
-'km'           => array( 'plural' ),
-'kn'           => array( 'plural' ),
-'ko'           => array( 'plural' ),
-'lzh'          => array( 'plural' ),
-'mn'           => array( 'plural' ),
-'ms'           => array( 'plural' ),
-'my'           => array( 'plural', 'chars' ),  // Uses a lot zwnj
-'sah'          => array( 'plural' ),
-'sq'           => array( 'plural' ),
-'tet'          => array( 'plural' ),
-'th'           => array( 'plural' ),
-'to'           => array( 'plural' ),
-'tr'           => array( 'plural' ),
-'vi'           => array( 'plural' ),
-'wuu'          => array( 'plural' ),
-'xmf'          => array( 'plural' ),
-'yo'           => array( 'plural' ),
-'yue'          => array( 'plural' ),
-'zh'           => array( 'plural' ),
-'zh-classical' => array( 'plural' ),
-'zh-cn'        => array( 'plural' ),
-'zh-hans'      => array( 'plural' ),
-'zh-hant'      => array( 'plural' ),
-'zh-hk'        => array( 'plural' ),
-'zh-sg'        => array( 'plural' ),
-'zh-tw'        => array( 'plural' ),
-'zh-yue'       => array( 'plural' ),
+	'az' => array( 'plural' ),
+	'bo' => array( 'plural' ),
+	'cdo' => array( 'plural' ),
+	'dz' => array( 'plural' ),
+	'id' => array( 'plural' ),
+	'fa' => array( 'plural' ),
+	'gan' => array( 'plural' ),
+	'gan-hans' => array( 'plural' ),
+	'gan-hant' => array( 'plural' ),
+	'gn' => array( 'plural' ),
+	'hak' => array( 'plural' ),
+	'hu' => array( 'plural' ),
+	'ja' => array( 'plural' ), // Does not use plural
+	'jv' => array( 'plural' ),
+	'ka' => array( 'plural' ),
+	'kk-arab' => array( 'plural' ),
+	'kk-cyrl' => array( 'plural' ),
+	'kk-latn' => array( 'plural' ),
+	'km' => array( 'plural' ),
+	'kn' => array( 'plural' ),
+	'ko' => array( 'plural' ),
+	'lzh' => array( 'plural' ),
+	'mn' => array( 'plural' ),
+	'ms' => array( 'plural' ),
+	'my' => array( 'plural', 'chars' ), // Uses a lot zwnj
+	'sah' => array( 'plural' ),
+	'sq' => array( 'plural' ),
+	'tet' => array( 'plural' ),
+	'th' => array( 'plural' ),
+	'to' => array( 'plural' ),
+	'tr' => array( 'plural' ),
+	'vi' => array( 'plural' ),
+	'wuu' => array( 'plural' ),
+	'xmf' => array( 'plural' ),
+	'yo' => array( 'plural' ),
+	'yue' => array( 'plural' ),
+	'zh' => array( 'plural' ),
+	'zh-classical' => array( 'plural' ),
+	'zh-cn' => array( 'plural' ),
+	'zh-hans' => array( 'plural' ),
+	'zh-hant' => array( 'plural' ),
+	'zh-hk' => array( 'plural' ),
+	'zh-sg' => array( 'plural' ),
+	'zh-tw' => array( 'plural' ),
+	'zh-yue' => array( 'plural' ),
 );

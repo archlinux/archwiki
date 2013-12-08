@@ -5,7 +5,7 @@
  */
 
 class Asirra extends SimpleCaptcha {
-	public $asirra_clientscript = 'http://challenge.asirra.com/js/AsirraClientSide.js';
+	public $asirra_clientscript = '//challenge.asirra.com/js/AsirraClientSide.js';
 
 	// As we don't have to store anything but some other things to do,
 	// we're going to replace that constructor completely.

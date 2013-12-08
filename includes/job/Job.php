@@ -68,7 +68,7 @@ abstract class Job {
 	 */
 	public static function factory( $command, Title $title, $params = false, $id = 0 ) {
 		global $wgJobClasses;
-		if( isset( $wgJobClasses[$command] ) ) {
+		if ( isset( $wgJobClasses[$command] ) ) {
 			$class = $wgJobClasses[$command];
 			return new $class( $title, $params, $id );
 		}
@@ -84,7 +84,7 @@ abstract class Job {
 	 *
 	 * @param array $jobs of Job objects
 	 * @return bool
-	 * @deprecated 1.21
+	 * @deprecated since 1.21
 	 */
 	public static function batchInsert( $jobs ) {
 		return JobQueueGroup::singleton()->push( $jobs );
@@ -99,10 +99,10 @@ abstract class Job {
 	 *
 	 * @param array $jobs of Job objects
 	 * @return bool
-	 * @deprecated 1.21
+	 * @deprecated since 1.21
 	 */
 	public static function safeBatchInsert( $jobs ) {
-		return JobQueueGroup::singleton()->push( $jobs, JobQueue::QoS_Atomic );
+		return JobQueueGroup::singleton()->push( $jobs, JobQueue::QOS_ATOMIC );
 	}
 
 	/**
@@ -112,7 +112,7 @@ abstract class Job {
 	 *
 	 * @param $type string
 	 * @return Job|bool Returns false if there are no jobs
-	 * @deprecated 1.21
+	 * @deprecated since 1.21
 	 */
 	public static function pop_type( $type ) {
 		return JobQueueGroup::singleton()->get( $type )->pop();
@@ -123,7 +123,7 @@ abstract class Job {
 	 * This is subject to $wgJobTypesExcludedFromDefaultQueue.
 	 *
 	 * @return Job or false if there's no jobs
-	 * @deprecated 1.21
+	 * @deprecated since 1.21
 	 */
 	public static function pop() {
 		return JobQueueGroup::singleton()->pop();
@@ -150,6 +150,7 @@ abstract class Job {
 
 	/**
 	 * @return integer May be 0 for jobs stored outside the DB
+	 * @deprecated since 1.22
 	 */
 	public function getId() {
 		return $this->id;
@@ -177,6 +178,16 @@ abstract class Job {
 	}
 
 	/**
+	 * @return integer|null UNIX timestamp to delay running this job until, otherwise null
+	 * @since 1.22
+	 */
+	public function getReleaseTimestamp() {
+		return isset( $this->params['jobReleaseTimestamp'] )
+			? wfTimestampOrNull( TS_UNIX, $this->params['jobReleaseTimestamp'] )
+			: null;
+	}
+
+	/**
 	 * @return bool Whether only one of each identical set of jobs should be run
 	 */
 	public function ignoreDuplicates() {
@@ -185,34 +196,43 @@ abstract class Job {
 
 	/**
 	 * @return bool Whether this job can be retried on failure by job runners
+	 * @since 1.21
 	 */
 	public function allowRetries() {
 		return true;
 	}
 
 	/**
-	 * Subclasses may need to override this to make duplication detection work
+	 * Subclasses may need to override this to make duplication detection work.
+	 * The resulting map conveys everything that makes the job unique. This is
+	 * only checked if ignoreDuplicates() returns true, meaning that duplicate
+	 * jobs are supposed to be ignored.
 	 *
 	 * @return Array Map of key/values
+	 * @since 1.21
 	 */
 	public function getDeduplicationInfo() {
 		$info = array(
-			'type'      => $this->getType(),
+			'type' => $this->getType(),
 			'namespace' => $this->getTitle()->getNamespace(),
-			'title'     => $this->getTitle()->getDBkey(),
-			'params'    => $this->getParams()
+			'title' => $this->getTitle()->getDBkey(),
+			'params' => $this->getParams()
 		);
-		// Identical jobs with different "root" jobs should count as duplicates
 		if ( is_array( $info['params'] ) ) {
+			// Identical jobs with different "root" jobs should count as duplicates
 			unset( $info['params']['rootJobSignature'] );
 			unset( $info['params']['rootJobTimestamp'] );
+			// Likewise for jobs with different delay times
+			unset( $info['params']['jobReleaseTimestamp'] );
 		}
 		return $info;
 	}
 
 	/**
+	 * @see JobQueue::deduplicateRootJob()
 	 * @param string $key A key that identifies the task
 	 * @return Array
+	 * @since 1.21
 	 */
 	public static function newRootJobParams( $key ) {
 		return array(
@@ -222,7 +242,9 @@ abstract class Job {
 	}
 
 	/**
+	 * @see JobQueue::deduplicateRootJob()
 	 * @return Array
+	 * @since 1.21
 	 */
 	public function getRootJobParams() {
 		return array(
@@ -236,9 +258,19 @@ abstract class Job {
 	}
 
 	/**
+	 * @see JobQueue::deduplicateRootJob()
+	 * @return bool
+	 * @since 1.22
+	 */
+	public function hasRootJobParams() {
+		return isset( $this->params['rootJobSignature'] )
+			&& isset( $this->params['rootJobTimestamp'] );
+	}
+
+	/**
 	 * Insert a single job into the queue.
 	 * @return bool true on success
-	 * @deprecated 1.21
+	 * @deprecated since 1.21
 	 */
 	public function insert() {
 		return JobQueueGroup::singleton()->push( $this );

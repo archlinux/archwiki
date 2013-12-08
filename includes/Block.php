@@ -65,11 +65,11 @@ class Block {
 		$timestamp = 0, $auto = 0, $expiry = '', $anonOnly = 0, $createAccount = 0, $enableAutoblock = 0,
 		$hideName = 0, $blockEmail = 0, $allowUsertalk = 0, $byText = '' )
 	{
-		if( $timestamp === 0 ) {
+		if ( $timestamp === 0 ) {
 			$timestamp = wfTimestampNow();
 		}
 
-		if( count( func_get_args() ) > 0 ) {
+		if ( count( func_get_args() ) > 0 ) {
 			# Soon... :D
 			# wfDeprecated( __METHOD__ . " with arguments" );
 		}
@@ -206,16 +206,16 @@ class Block {
 	 */
 	public function load( $address = '', $user = 0 ) {
 		wfDeprecated( __METHOD__, '1.18' );
-		if( $user ) {
+		if ( $user ) {
 			$username = User::whoIs( $user );
 			$block = self::newFromTarget( $username, $address );
 		} else {
 			$block = self::newFromTarget( null, $address );
 		}
 
-		if( $block instanceof Block ) {
+		if ( $block instanceof Block ) {
 			# This is mildly evil, but hey, it's B/C :D
-			foreach( $block as $variable => $value ) {
+			foreach ( $block as $variable => $value ) {
 				$this->$variable = $value;
 			}
 			return true;
@@ -237,7 +237,7 @@ class Block {
 	protected function newLoad( $vagueTarget = null ) {
 		$db = wfGetDB( $this->mFromMaster ? DB_MASTER : DB_SLAVE );
 
-		if( $this->type !== null ) {
+		if ( $this->type !== null ) {
 			$conds = array(
 				'ipb_address' => array( (string)$this->target ),
 			);
@@ -247,9 +247,9 @@ class Block {
 
 		# Be aware that the != '' check is explicit, since empty values will be
 		# passed by some callers (bug 29116)
-		if( $vagueTarget != '' ) {
+		if ( $vagueTarget != '' ) {
 			list( $target, $type ) = self::parseTarget( $vagueTarget );
-			switch( $type ) {
+			switch ( $type ) {
 				case self::TYPE_USER:
 					# Slightly weird, but who are we to argue?
 					$conds['ipb_address'][] = (string)$target;
@@ -285,20 +285,20 @@ class Block {
 		# This is begging for $this = $bestBlock, but that's not allowed in PHP :(
 		$bestBlockPreventsEdit = null;
 
-		foreach( $res as $row ) {
+		foreach ( $res as $row ) {
 			$block = self::newFromRow( $row );
 
 			# Don't use expired blocks
-			if( $block->deleteIfExpired() ) {
+			if ( $block->deleteIfExpired() ) {
 				continue;
 			}
 
 			# Don't use anon only blocks on users
-			if( $this->type == self::TYPE_USER && !$block->isHardblock() ) {
+			if ( $this->type == self::TYPE_USER && !$block->isHardblock() ) {
 				continue;
 			}
 
-			if( $block->getType() == self::TYPE_RANGE ) {
+			if ( $block->getType() == self::TYPE_RANGE ) {
 				# This is the number of bits that are allowed to vary in the block, give
 				# or take some floating point errors
 				$end = wfBaseconvert( $block->getRangeEnd(), 16, 10 );
@@ -313,14 +313,14 @@ class Block {
 				$score = $block->getType();
 			}
 
-			if( $score < $bestBlockScore ) {
+			if ( $score < $bestBlockScore ) {
 				$bestBlockScore = $score;
 				$bestRow = $row;
 				$bestBlockPreventsEdit = $block->prevents( 'edit' );
 			}
 		}
 
-		if( $bestRow !== null ) {
+		if ( $bestRow !== null ) {
 			$this->initFromRow( $bestRow );
 			$this->prevents( 'edit', $bestBlockPreventsEdit );
 			return true;
@@ -511,7 +511,7 @@ class Block {
 	 * @return Array
 	 */
 	protected function getDatabaseArray( $db = null ) {
-		if( !$db ) {
+		if ( !$db ) {
 			$db = wfGetDB( DB_SLAVE );
 		}
 		$expiry = $db->encodeExpiry( $this->mExpiry );
@@ -579,7 +579,7 @@ class Block {
 		global $wgPutIPinRC;
 
 		// No IPs are in recentchanges table, so nothing to select
-		if( !$wgPutIPinRC ) {
+		if ( !$wgPutIPinRC ) {
 			return;
 		}
 
@@ -601,7 +601,9 @@ class Block {
 			foreach ( $res as $row ) {
 				if ( $row->rc_ip ) {
 					$id = $block->doAutoblock( $row->rc_ip );
-					if ( $id ) $blockIds[] = $id;
+					if ( $id ) {
+						$blockIds[] = $id;
+					}
 				}
 			}
 		}
@@ -681,7 +683,7 @@ class Block {
 		if ( $ipblock ) {
 			# Check if the block is an autoblock and would exceed the user block
 			# if renewed. If so, do nothing, otherwise prolong the block time...
-			if ( $ipblock->mAuto && // @TODO: why not compare $ipblock->mExpiry?
+			if ( $ipblock->mAuto && // @todo Why not compare $ipblock->mExpiry?
 				$this->mExpiry > Block::getAutoblockExpiry( $ipblock->mTimestamp )
 			) {
 				# Reset block timestamp to now and its expiry to
@@ -793,7 +795,7 @@ class Block {
 	 * @return String IP in Hex form
 	 */
 	public function getRangeStart() {
-		switch( $this->type ) {
+		switch ( $this->type ) {
 			case self::TYPE_USER:
 				return '';
 			case self::TYPE_IP:
@@ -801,17 +803,18 @@ class Block {
 			case self::TYPE_RANGE:
 				list( $start, /*...*/ ) = IP::parseRange( $this->target );
 				return $start;
-			default: throw new MWException( "Block with invalid type" );
+			default:
+				throw new MWException( "Block with invalid type" );
 		}
 	}
 
 	/**
-	 * Get the IP address at the start of the range in Hex form
+	 * Get the IP address at the end of the range in Hex form
 	 * @throws MWException
 	 * @return String IP in Hex form
 	 */
 	public function getRangeEnd() {
-		switch( $this->type ) {
+		switch ( $this->type ) {
 			case self::TYPE_USER:
 				return '';
 			case self::TYPE_IP:
@@ -819,7 +822,8 @@ class Block {
 			case self::TYPE_RANGE:
 				list( /*...*/, $end ) = IP::parseRange( $this->target );
 				return $end;
-			default: throw new MWException( "Block with invalid type" );
+			default:
+				throw new MWException( "Block with invalid type" );
 		}
 	}
 
@@ -907,7 +911,7 @@ class Block {
 	 * @return Bool
 	 */
 	public function prevents( $action, $x = null ) {
-		switch( $action ) {
+		switch ( $action ) {
 			case 'edit':
 				# For now... <evil laugh>
 				return true;
@@ -997,11 +1001,16 @@ class Block {
 	 * Purge expired blocks from the ipblocks table
 	 */
 	public static function purgeExpired() {
-		if ( !wfReadOnly() ) {
-			$dbw = wfGetDB( DB_MASTER );
-			$dbw->delete( 'ipblocks',
-				array( 'ipb_expiry < ' . $dbw->addQuotes( $dbw->timestamp() ) ), __METHOD__ );
+		if ( wfReadOnly() ) {
+			return;
 		}
+
+		$method = __METHOD__;
+		$dbw = wfGetDB( DB_MASTER );
+		$dbw->onTransactionIdle( function() use ( $dbw, $method ) {
+			$dbw->delete( 'ipblocks',
+				array( 'ipb_expiry < ' . $dbw->addQuotes( $dbw->timestamp() ) ), $method );
+		} );
 	}
 
 	/**
@@ -1050,28 +1059,214 @@ class Block {
 	public static function newFromTarget( $specificTarget, $vagueTarget = null, $fromMaster = false ) {
 
 		list( $target, $type ) = self::parseTarget( $specificTarget );
-		if( $type == Block::TYPE_ID || $type == Block::TYPE_AUTO ) {
+		if ( $type == Block::TYPE_ID || $type == Block::TYPE_AUTO ) {
 			return Block::newFromID( $target );
 
-		} elseif( $target === null && $vagueTarget == '' ) {
+		} elseif ( $target === null && $vagueTarget == '' ) {
 			# We're not going to find anything useful here
 			# Be aware that the == '' check is explicit, since empty values will be
 			# passed by some callers (bug 29116)
 			return null;
 
-		} elseif( in_array( $type, array( Block::TYPE_USER, Block::TYPE_IP, Block::TYPE_RANGE, null ) ) ) {
+		} elseif ( in_array( $type, array( Block::TYPE_USER, Block::TYPE_IP, Block::TYPE_RANGE, null ) ) ) {
 			$block = new Block();
 			$block->fromMaster( $fromMaster );
 
-			if( $type !== null ) {
+			if ( $type !== null ) {
 				$block->setTarget( $target );
 			}
 
-			if( $block->newLoad( $vagueTarget ) ) {
+			if ( $block->newLoad( $vagueTarget ) ) {
 				return $block;
 			}
 		}
 		return null;
+	}
+
+
+	/**
+	 * Get all blocks that match any IP from an array of IP addresses
+	 *
+	 * @param Array $ipChain list of IPs (strings), usually retrieved from the
+	 *	   X-Forwarded-For header of the request
+	 * @param Bool $isAnon Exclude anonymous-only blocks if false
+	 * @param Bool $fromMaster Whether to query the master or slave database
+	 * @return Array of Blocks
+	 * @since 1.22
+	 */
+	public static function getBlocksForIPList( array $ipChain, $isAnon, $fromMaster = false ) {
+		if ( !count( $ipChain ) ) {
+			return array();
+		}
+
+		wfProfileIn( __METHOD__ );
+		$conds = array();
+		foreach ( array_unique( $ipChain ) as $ipaddr ) {
+			# Discard invalid IP addresses. Since XFF can be spoofed and we do not
+			# necessarily trust the header given to us, make sure that we are only
+			# checking for blocks on well-formatted IP addresses (IPv4 and IPv6).
+			# Do not treat private IP spaces as special as it may be desirable for wikis
+			# to block those IP ranges in order to stop misbehaving proxies that spoof XFF.
+			if ( !IP::isValid( $ipaddr ) ) {
+				continue;
+			}
+			# Don't check trusted IPs (includes local squids which will be in every request)
+			if ( wfIsTrustedProxy( $ipaddr ) ) {
+				continue;
+			}
+			# Check both the original IP (to check against single blocks), as well as build
+			# the clause to check for rangeblocks for the given IP.
+			$conds['ipb_address'][] = $ipaddr;
+			$conds[] = self::getRangeCond( IP::toHex( $ipaddr ) );
+		}
+
+		if ( !count( $conds ) ) {
+			wfProfileOut( __METHOD__ );
+			return array();
+		}
+
+		if ( $fromMaster ) {
+			$db = wfGetDB( DB_MASTER );
+		} else {
+			$db = wfGetDB( DB_SLAVE );
+		}
+		$conds = $db->makeList( $conds, LIST_OR );
+		if ( !$isAnon ) {
+			$conds = array( $conds, 'ipb_anon_only' => 0 );
+		}
+		$selectFields = array_merge(
+			array( 'ipb_range_start', 'ipb_range_end' ),
+			Block::selectFields()
+		);
+		$rows = $db->select( 'ipblocks',
+			$selectFields,
+			$conds,
+			__METHOD__
+		);
+
+		$blocks = array();
+		foreach ( $rows as $row ) {
+			$block = self::newFromRow( $row );
+			if ( !$block->deleteIfExpired()  ) {
+				$blocks[] = $block;
+			}
+		}
+
+		wfProfileOut( __METHOD__ );
+		return $blocks;
+	}
+
+	/**
+	 * From a list of multiple blocks, find the most exact and strongest Block.
+	 * The logic for finding the "best" block is:
+	 *  - Blocks that match the block's target IP are preferred over ones in a range
+	 *  - Hardblocks are chosen over softblocks that prevent account creation
+	 *  - Softblocks that prevent account creation are chosen over other softblocks
+	 *  - Other softblocks are chosen over autoblocks
+	 *  - If there are multiple exact or range blocks at the same level, the one chosen
+	 *    is random
+
+	 * @param Array $ipChain list of IPs (strings). This is used to determine how "close"
+	 * 	  a block is to the server, and if a block matches exactly, or is in a range.
+	 *	  The order is furthest from the server to nearest e.g., (Browser, proxy1, proxy2,
+	 *	  local-squid, ...)
+	 * @param Array $block Array of blocks
+	 * @return Block|null the "best" block from the list
+	 */
+	public static function chooseBlock( array $blocks, array $ipChain ) {
+		if ( !count( $blocks ) ) {
+			return null;
+		} elseif ( count( $blocks ) == 1 ) {
+			return $blocks[0];
+		}
+
+		wfProfileIn( __METHOD__ );
+
+		// Sort hard blocks before soft ones and secondarily sort blocks
+		// that disable account creation before those that don't.
+		usort( $blocks, function( Block $a, Block $b ) {
+			$aWeight = (int)$a->isHardblock() . (int)$a->prevents( 'createaccount' );
+			$bWeight = (int)$b->isHardblock() . (int)$b->prevents( 'createaccount' );
+			return strcmp( $bWeight, $aWeight ); // highest weight first
+		} );
+
+		$blocksListExact = array(
+			'hard' => false,
+			'disable_create' => false,
+			'other' => false,
+			'auto' => false
+		);
+		$blocksListRange = array(
+			'hard' => false,
+			'disable_create' => false,
+			'other' => false,
+			'auto' => false
+		);
+		$ipChain = array_reverse( $ipChain );
+
+		foreach ( $blocks as $block ) {
+			// Stop searching if we have already have a "better" block. This
+			// is why the order of the blocks matters
+			if ( !$block->isHardblock() && $blocksListExact['hard'] ) {
+				break;
+			} elseif ( !$block->prevents( 'createaccount' ) && $blocksListExact['disable_create'] ) {
+				break;
+			}
+
+			foreach ( $ipChain as $checkip ) {
+				$checkipHex = IP::toHex( $checkip );
+				if ( (string)$block->getTarget() === $checkip ) {
+					if ( $block->isHardblock() ) {
+						$blocksListExact['hard'] = $blocksListExact['hard'] ?: $block;
+					} elseif ( $block->prevents( 'createaccount' ) ) {
+						$blocksListExact['disable_create'] = $blocksListExact['disable_create'] ?: $block;
+					} elseif ( $block->mAuto ) {
+						$blocksListExact['auto'] = $blocksListExact['auto'] ?: $block;
+					} else {
+						$blocksListExact['other'] = $blocksListExact['other'] ?: $block;
+					}
+					// We found closest exact match in the ip list, so go to the next Block
+					break;
+				} elseif ( array_filter( $blocksListExact ) == array()
+					&& $block->getRangeStart() <= $checkipHex
+					&& $block->getRangeEnd() >= $checkipHex
+				) {
+					if ( $block->isHardblock() ) {
+						$blocksListRange['hard'] = $blocksListRange['hard'] ?: $block;
+					} elseif ( $block->prevents( 'createaccount' ) ) {
+						$blocksListRange['disable_create'] = $blocksListRange['disable_create'] ?: $block;
+					} elseif ( $block->mAuto ) {
+						$blocksListRange['auto'] = $blocksListRange['auto'] ?: $block;
+					} else {
+						$blocksListRange['other'] = $blocksListRange['other'] ?: $block;
+					}
+					break;
+				}
+			}
+		}
+
+		if ( array_filter( $blocksListExact ) == array() ) {
+			$blocksList = &$blocksListRange;
+		} else {
+			$blocksList = &$blocksListExact;
+		}
+
+		$chosenBlock = null;
+		if ( $blocksList['hard'] ) {
+			$chosenBlock = $blocksList['hard'];
+		} elseif ( $blocksList['disable_create'] ) {
+			$chosenBlock = $blocksList['disable_create'];
+		} elseif ( $blocksList['other'] ) {
+			$chosenBlock = $blocksList['other'];
+		} elseif ( $blocksList['auto'] ) {
+			$chosenBlock = $blocksList['auto'];
+		} else {
+			wfProfileOut( __METHOD__ );
+			throw new MWException( "Proxy block found, but couldn't be classified." );
+		}
+
+		wfProfileOut( __METHOD__ );
+		return $chosenBlock;
 	}
 
 	/**
@@ -1085,13 +1280,13 @@ class Block {
 	 */
 	public static function parseTarget( $target ) {
 		# We may have been through this before
-		if( $target instanceof User ) {
-			if( IP::isValid( $target->getName() ) ) {
+		if ( $target instanceof User ) {
+			if ( IP::isValid( $target->getName() ) ) {
 				return array( $target, self::TYPE_IP );
 			} else {
 				return array( $target, self::TYPE_USER );
 			}
-		} elseif( $target === null ) {
+		} elseif ( $target === null ) {
 			return array( null, null );
 		}
 
@@ -1112,7 +1307,7 @@ class Block {
 
 		# Consider the possibility that this is not a username at all
 		# but actually an old subpage (bug #29797)
-		if( strpos( $target, '/' ) !== false ) {
+		if ( strpos( $target, '/' ) !== false ) {
 			# An old subpage, drill down to the user behind it
 			$parts = explode( '/', $target );
 			$target = $parts[0];
@@ -1197,5 +1392,44 @@ class Block {
 	 */
 	public function setBlocker( $user ) {
 		$this->blocker = $user;
+	}
+
+	/**
+	 * Get the key and parameters for the corresponding error message.
+	 *
+	 * @since 1.22
+	 * @param IContextSource $context
+	 * @return array
+	 */
+	public function getPermissionsError( IContextSource $context ) {
+		$blocker = $this->getBlocker();
+		if ( $blocker instanceof User ) { // local user
+			$blockerUserpage = $blocker->getUserPage();
+			$link = "[[{$blockerUserpage->getPrefixedText()}|{$blockerUserpage->getText()}]]";
+		} else { // foreign user
+			$link = $blocker;
+		}
+
+		$reason = $this->mReason;
+		if ( $reason == '' ) {
+			$reason = $context->msg( 'blockednoreason' )->text();
+		}
+
+		/* $ip returns who *is* being blocked, $intended contains who was meant to be blocked.
+		 * This could be a username, an IP range, or a single IP. */
+		$intended = $this->getTarget();
+
+		$lang = $context->getLanguage();
+		return array(
+			$this->mAuto ? 'autoblockedtext' : 'blockedtext',
+			$link,
+			$reason,
+			$context->getRequest()->getIP(),
+			$this->getByName(),
+			$this->getId(),
+			$lang->formatExpiry( $this->mExpiry ),
+			(string)$intended,
+			$lang->timeanddate( wfTimestamp( TS_MW, $this->mTimestamp ), true ),
+		);
 	}
 }

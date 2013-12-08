@@ -50,7 +50,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		$fld_user = isset( $prop['user'] );
 		$fld_userid = isset( $prop['userid'] );
 		$fld_comment = isset( $prop['comment'] );
-		$fld_parsedcomment = isset ( $prop['parsedcomment'] );
+		$fld_parsedcomment = isset( $prop['parsedcomment'] );
 		$fld_minor = isset( $prop['minor'] );
 		$fld_len = isset( $prop['len'] );
 		$fld_sha1 = isset( $prop['sha1'] );
@@ -79,13 +79,13 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 
 		if ( $mode == 'revs' || $mode == 'user' ) {
 			// Ignore namespace and unique due to inability to know whether they were purposely set
-			foreach( array( 'from', 'to', 'prefix', /*'namespace', 'unique'*/ ) as $p ) {
+			foreach ( array( 'from', 'to', 'prefix', /*'namespace', 'unique'*/ ) as $p ) {
 				if ( !is_null( $params[$p] ) ) {
 					$this->dieUsage( "The '{$p}' parameter cannot be used in modes 1 or 2", 'badparams' );
 				}
 			}
 		} else {
-			foreach( array( 'start', 'end' ) as $p ) {
+			foreach ( array( 'start', 'end' ) as $p ) {
 				if ( !is_null( $params[$p] ) ) {
 					$this->dieUsage( "The {$p} parameter cannot be used in mode 3", 'badparams' );
 				}

@@ -221,7 +221,7 @@ class RenameuserSQL {
 		}
 
 		if ( count( $jobs ) > 0 ) {
-			Job::safeBatchInsert( $jobs ); // don't commit yet
+			JobQueueGroup::singleton()->push( $jobs, JobQueue::QOS_ATOMIC ); // don't commit yet
 		}
 
 		// Commit the transaction

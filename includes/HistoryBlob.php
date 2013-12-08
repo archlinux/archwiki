@@ -143,7 +143,7 @@ class ConcatenatedGzipHistoryBlob implements HistoryBlob
 	 * Compress the bulk data in the object
 	 */
 	public function compress() {
-		if ( !$this->mCompressed  ) {
+		if ( !$this->mCompressed ) {
 			$this->mItems = gzdeflate( serialize( $this->mItems ) );
 			$this->mCompressed = true;
 		}
@@ -231,16 +231,16 @@ class HistoryBlobStub {
 	 * @return string
 	 */
 	function getText() {
-		if( isset( self::$blobCache[$this->mOldId] ) ) {
+		if ( isset( self::$blobCache[$this->mOldId] ) ) {
 			$obj = self::$blobCache[$this->mOldId];
 		} else {
 			$dbr = wfGetDB( DB_SLAVE );
 			$row = $dbr->selectRow( 'text', array( 'old_flags', 'old_text' ), array( 'old_id' => $this->mOldId ) );
-			if( !$row ) {
+			if ( !$row ) {
 				return false;
 			}
 			$flags = explode( ',', $row->old_flags );
-			if( in_array( 'external', $flags ) ) {
+			if ( in_array( 'external', $flags ) ) {
 				$url = $row->old_text;
 				$parts = explode( '://', $url, 2 );
 				if ( !isset( $parts[1] ) || $parts[1] == '' ) {
@@ -249,11 +249,11 @@ class HistoryBlobStub {
 				$row->old_text = ExternalStore::fetchFromUrl( $url );
 
 			}
-			if( !in_array( 'object', $flags ) ) {
+			if ( !in_array( 'object', $flags ) ) {
 				return false;
 			}
 
-			if( in_array( 'gzip', $flags ) ) {
+			if ( in_array( 'gzip', $flags ) ) {
 				// This shouldn't happen, but a bug in the compress script
 				// may at times gzip-compress a HistoryBlob object row.
 				$obj = unserialize( gzinflate( $row->old_text ) );
@@ -261,7 +261,7 @@ class HistoryBlobStub {
 				$obj = unserialize( $row->old_text );
 			}
 
-			if( !is_object( $obj ) ) {
+			if ( !is_object( $obj ) ) {
 				// Correct for old double-serialization bug.
 				$obj = unserialize( $obj );
 			}
@@ -318,7 +318,7 @@ class HistoryBlobCurStub {
 	function getText() {
 		$dbr = wfGetDB( DB_SLAVE );
 		$row = $dbr->selectRow( 'cur', array( 'cur_text' ), array( 'cur_id' => $this->mCurId ) );
-		if( !$row ) {
+		if ( !$row ) {
 			return false;
 		}
 		return $row->cur_text;
@@ -530,7 +530,7 @@ class DiffHistoryBlob implements HistoryBlob {
 
 		$header = unpack( 'Vofp/Vcsize', substr( $diff, 0, 8 ) );
 
-		# Check the checksum if hash/mhash is available
+		# Check the checksum if hash extension is available
 		$ofp = $this->xdiffAdler32( $base );
 		if ( $ofp !== false && $ofp !== substr( $diff, 0, 4 ) ) {
 			wfDebug( __METHOD__ . ": incorrect base checksum\n" );
@@ -577,24 +577,23 @@ class DiffHistoryBlob implements HistoryBlob {
 	 * Compute a binary "Adler-32" checksum as defined by LibXDiff, i.e. with
 	 * the bytes backwards and initialised with 0 instead of 1. See bug 34428.
 	 *
-	 * Returns false if no hashing library is available
+	 * @param string $s
+	 * @return string|bool: false if the hash extension is not available
 	 */
 	function xdiffAdler32( $s ) {
+		if ( !function_exists( 'hash' ) ) {
+			return false;
+		}
+
 		static $init;
 		if ( $init === null ) {
 			$init = str_repeat( "\xf0", 205 ) . "\xee" . str_repeat( "\xf0", 67 ) . "\x02";
 		}
+
 		// The real Adler-32 checksum of $init is zero, so it initialises the
 		// state to zero, as it is at the start of LibXDiff's checksum
 		// algorithm. Appending the subject string then simulates LibXDiff.
-		if ( function_exists( 'hash' ) ) {
-			$hash = hash( 'adler32', $init . $s, true );
-		} elseif ( function_exists( 'mhash' ) ) {
-			$hash = mhash( MHASH_ADLER32, $init . $s );
-		} else {
-			return false;
-		}
-		return strrev( $hash );
+		return strrev( hash( 'adler32', $init . $s, true ) );
 	}
 
 	function uncompress() {

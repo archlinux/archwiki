@@ -1,4 +1,4 @@
-MediaWiki 1.21 is a collaborative project released under the
+MediaWiki 1.22 is a collaborative project released under the
 GNU General Public License v2. We would like to recognize the
 following names for their contribution to the product.
 
@@ -22,6 +22,7 @@ following names for their contribution to the product.
 * church of emacs
 * Daniel Friesen
 * Daniel Kinzler
+* Daniel Renfro
 * Danny B.
 * David McCabe
 * Derk-Jan Hartman
@@ -80,7 +81,7 @@ following names for their contribution to the product.
 * Thomas Bleher
 * Tim Starling
 * Timo Tijhof
-* Tom Gries
+* Thomas Gries
 * Trevor Parscal
 * Victor Vasiliev
 * Yesid Carrillo
@@ -122,6 +123,7 @@ following names for their contribution to the product.
 * David Baumgarten
 * Denny Vrandecic
 * Dévai Tamás
+* Ebrahim Byagowi
 * Edward Z. Yang
 * Elvis Stansvik
 * Erwin Dokter
@@ -143,6 +145,7 @@ following names for their contribution to the product.
 * Jimmy Xu
 * Jonathan Wiltshire
 * John N
+* JuneHyeon Bae
 * Jure Kajzer
 * Karun Dambiec
 * Katie Filbert
@@ -159,7 +162,7 @@ following names for their contribution to the product.
 * Manuel Menal
 * Marcin Cieślak
 * Marcus Buck
-* Mark A. Pelletier
+* Marc-André Pelletier
 * Mark Hershberger
 * Mark Holmquist
 * Marooned
@@ -234,10 +237,5 @@ following names for their contribution to the product.
 * Zachary Hauri
 
 == Translators ==
-* Anders Wegge Jakobsen
-* Hk kng
-* Hojjat
-* Meno25
-* Rotem Liss
-* Shinjiman
-* [https://translatewiki.net/wiki/Special:ListUsers/translator Translatewiki.net Translators]
+
+* [https://translatewiki.net/wiki/Translating:MediaWiki/Credits Translators on translatewiki.net and others]

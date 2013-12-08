@@ -55,6 +55,14 @@ p, pre, .mw-code, td, th, li, dd, dt {
 
 textarea {
 	overflow: auto;
+	width: 100%;
+}
+
+#editform textarea {
+	display: block;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 #footer {
@@ -135,10 +143,6 @@ h1 {
 	line-height: 21pt;
 }
 
-h1 .editsection {
-	font-size: 55.6%;
-}
-
 h1#firstHeading {
 	padding-bottom: 0;
 	margin-bottom: 0;
@@ -197,8 +201,8 @@ input.mw-searchInput {
 
 
 #sitetitle, #sitesub, #toplinks, #linkcollection {
-	margin-top: 0; 
-	margin-bottom: 0; 
+	margin-top: 0;
+	margin-bottom: 0;
 }
 
 #sitetitle, #toplinks {
@@ -216,7 +220,7 @@ input.mw-searchInput {
 }
 #sitetitle a, #toplinks a {
 	color: white;
-	text-decoration: none; 
+	text-decoration: none;
 }
 /* Bring #sitetitle to top. Otherwise #toplinks is overlaid over it, making the link unclickable. */
 #sitetitle a {
@@ -263,6 +267,7 @@ input.mw-searchInput {
 	font-size: small;
 	margin-right: 8px;
 	text-align: right;
+	padding-left: 140px;
 }
 /* Override text justification (user preference), see bug 31990 */
 #linkcollection * {

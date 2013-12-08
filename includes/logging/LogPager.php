@@ -34,14 +34,14 @@ class LogPager extends ReverseChronologicalPager {
 	/**
 	 * Constructor
 	 *
-	 * @param $list LogEventsList
+	 * @param LogEventsList $list
 	 * @param string $types or Array: log types to show
 	 * @param string $performer the user who made the log entries
 	 * @param string|Title $title the page title the log entries are for
 	 * @param string $pattern do a prefix search rather than an exact title match
 	 * @param array $conds extra conditions for the query
-	 * @param $year Integer: the year to start from
-	 * @param $month Integer: the month to start from
+	 * @param int $year The year to start from
+	 * @param int $month The month to start from
 	 * @param string $tagFilter tag
 	 */
 	public function __construct( $list, $types = array(), $performer = '', $title = '', $pattern = '',
@@ -71,16 +71,17 @@ class LogPager extends ReverseChronologicalPager {
 	public function getFilterParams() {
 		global $wgFilterLogTypes;
 		$filters = array();
-		if( count( $this->types ) ) {
+		if ( count( $this->types ) ) {
 			return $filters;
 		}
-		foreach( $wgFilterLogTypes as $type => $default ) {
+		foreach ( $wgFilterLogTypes as $type => $default ) {
 			// Avoid silly filtering
-			if( $type !== 'patrol' || $this->getUser()->useNPPatrol() ) {
+			if ( $type !== 'patrol' || $this->getUser()->useNPPatrol() ) {
 				$hide = $this->getRequest()->getInt( "hide_{$type}_log", $default );
 				$filters[$type] = $hide;
-				if( $hide )
+				if ( $hide ) {
 					$this->mConds[] = 'log_type != ' . $this->mDb->addQuotes( $type );
+				}
 			}
 		}
 		return $filters;
@@ -98,11 +99,11 @@ class LogPager extends ReverseChronologicalPager {
 
 		$user = $this->getUser();
 		// If $types is not an array, make it an array
-		$types = ($types === '') ? array() : (array)$types;
+		$types = ( $types === '' ) ? array() : (array)$types;
 		// Don't even show header for private logs; don't recognize it...
 		$needReindex = false;
 		foreach ( $types as $type ) {
-			if( isset( $wgLogRestrictions[$type] )
+			if ( isset( $wgLogRestrictions[$type] )
 				&& !$user->isAllowed( $wgLogRestrictions[$type] )
 			) {
 				$needReindex = true;
@@ -119,13 +120,15 @@ class LogPager extends ReverseChronologicalPager {
 		// Also, only show them upon specific request to avoid suprises.
 		$audience = $types ? 'user' : 'public';
 		$hideLogs = LogEventsList::getExcludeClause( $this->mDb, $audience, $user );
-		if( $hideLogs !== false ) {
+		if ( $hideLogs !== false ) {
 			$this->mConds[] = $hideLogs;
 		}
-		if( count( $types ) ) {
+		if ( count( $types ) ) {
 			$this->mConds['log_type'] = $types;
 			// Set typeCGI; used in url param for paging
-			if( count( $types ) == 1 ) $this->typeCGI = $types[0];
+			if ( count( $types ) == 1 ) {
+				$this->typeCGI = $types[0];
+			}
 		}
 	}
 
@@ -136,16 +139,16 @@ class LogPager extends ReverseChronologicalPager {
 	 * @return bool
 	 */
 	private function limitPerformer( $name ) {
-		if( $name == '' ) {
+		if ( $name == '' ) {
 			return false;
 		}
 		$usertitle = Title::makeTitleSafe( NS_USER, $name );
-		if( is_null( $usertitle ) ) {
+		if ( is_null( $usertitle ) ) {
 			return false;
 		}
 		/* Fetch userid at first, if known, provides awesome query plan afterwards */
 		$userid = User::idFromName( $name );
-		if( !$userid ) {
+		if ( !$userid ) {
 			/* It should be nicer to abort query at all,
 			   but for now it won't pass anywhere behind the optimizer */
 			$this->mConds[] = "NULL";
@@ -153,9 +156,9 @@ class LogPager extends ReverseChronologicalPager {
 			$this->mConds['log_user'] = $userid;
 			// Paranoia: avoid brute force searches (bug 17342)
 			$user = $this->getUser();
-			if( !$user->isAllowed( 'deletedhistory' ) ) {
+			if ( !$user->isAllowed( 'deletedhistory' ) ) {
 				$this->mConds[] = $this->mDb->bitAnd( 'log_deleted', LogPage::DELETED_USER ) . ' = 0';
-			} elseif( !$user->isAllowed( 'suppressrevision' ) ) {
+			} elseif ( !$user->isAllowed( 'suppressrevision' ) ) {
 				$this->mConds[] = $this->mDb->bitAnd( 'log_deleted', LogPage::SUPPRESSED_USER ) .
 					' != ' . LogPage::SUPPRESSED_USER;
 			}
@@ -178,7 +181,7 @@ class LogPager extends ReverseChronologicalPager {
 			$title = $page;
 		} else {
 			$title = Title::newFromText( $page );
-			if( strlen( $page ) == 0 || !$title instanceof Title ) {
+			if ( strlen( $page ) == 0 || !$title instanceof Title ) {
 				return false;
 			}
 		}
@@ -198,7 +201,7 @@ class LogPager extends ReverseChronologicalPager {
 		# use the page_time index.  That should have no more than a few hundred
 		# log entries for even the busiest pages, so it can be safely scanned
 		# in full to satisfy an impossible condition on user or similar.
-		if( $pattern && !$wgMiserMode ) {
+		if ( $pattern && !$wgMiserMode ) {
 			$this->mConds['log_namespace'] = $ns;
 			$this->mConds[] = 'log_title ' . $db->buildLike( $title->getDBkey(), $db->anyString() );
 			$this->pattern = $pattern;
@@ -208,10 +211,10 @@ class LogPager extends ReverseChronologicalPager {
 		}
 		// Paranoia: avoid brute force searches (bug 17342)
 		$user = $this->getUser();
-		if( !$user->isAllowed( 'deletedhistory' ) ) {
-			$this->mConds[] = $db->bitAnd( 'log_deleted', LogPage::DELETED_ACTION) . ' = 0';
-		} elseif( !$user->isAllowed( 'suppressrevision' ) ) {
-			$this->mConds[] = $db->bitAnd( 'log_deleted', LogPage::SUPPRESSED_ACTION) .
+		if ( !$user->isAllowed( 'deletedhistory' ) ) {
+			$this->mConds[] = $db->bitAnd( 'log_deleted', LogPage::DELETED_ACTION ) . ' = 0';
+		} elseif ( !$user->isAllowed( 'suppressrevision' ) ) {
+			$this->mConds[] = $db->bitAnd( 'log_deleted', LogPage::SUPPRESSED_ACTION ) .
 				' != ' . LogPage::SUPPRESSED_ACTION;
 		}
 	}
@@ -234,7 +237,7 @@ class LogPager extends ReverseChronologicalPager {
 		# Add log_search table if there are conditions on it.
 		# This filters the results to only include log rows that have
 		# log_search records with the specified ls_field and ls_value values.
-		if( array_key_exists( 'ls_field', $this->mConds ) ) {
+		if ( array_key_exists( 'ls_field', $this->mConds ) ) {
 			$tables[] = 'log_search';
 			$index['log_search'] = 'ls_field_val';
 			$index['logging'] = 'PRIMARY';
@@ -246,28 +249,18 @@ class LogPager extends ReverseChronologicalPager {
 				# no duplicate log rows. Otherwise, we need to remove the duplicates.
 				$options[] = 'DISTINCT';
 			}
-		# Avoid usage of the wrong index by limiting
-		# the choices of available indexes. This mainly
-		# avoids site-breaking filesorts.
-		} elseif( $this->title || $this->pattern || $this->performer ) {
-			$index['logging'] = array( 'page_time', 'user_time' );
-			if( count( $this->types ) == 1 ) {
-				$index['logging'][] = 'log_user_type_time';
-			}
-		} elseif( count( $this->types ) == 1 ) {
-			$index['logging'] = 'type_time';
-		} else {
-			$index['logging'] = 'times';
 		}
-		$options['USE INDEX'] = $index;
+		if ( count( $index ) ) {
+			$options['USE INDEX'] = $index;
+		}
 		# Don't show duplicate rows when using log_search
 		$joins['log_search'] = array( 'INNER JOIN', 'ls_log_id=log_id' );
 
 		$info = array(
-			'tables'     => $tables,
-			'fields'     => $fields,
-			'conds'      => array_merge( $conds, $this->mConds ),
-			'options'    => $options,
+			'tables' => $tables,
+			'fields' => $fields,
+			'conds' => array_merge( $conds, $this->mConds ),
+			'options' => $options,
 			'join_conds' => $joins,
 		);
 		# Add ChangeTags filter query
@@ -295,7 +288,7 @@ class LogPager extends ReverseChronologicalPager {
 	public function getStartBody() {
 		wfProfileIn( __METHOD__ );
 		# Do a link batch query
-		if( $this->getNumRows() > 0 ) {
+		if ( $this->getNumRows() > 0 ) {
 			$lb = new LinkBatch;
 			foreach ( $this->mResult as $row ) {
 				$lb->add( $row->log_namespace, $row->log_title );

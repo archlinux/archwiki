@@ -38,14 +38,16 @@ Compatibility
 -----------
 
 This extension is primarily maintained to run on the latest release version
-of MediaWiki (1.9.x as of this writing) and development versions.
+of MediaWiki (1.22.x as of this writing) and development versions, however
+the current version should work up to 1.21.
 
-The current version *may* work as far back as 1.6.x, but will *not* work
-with 1.5.x or older. You may be able to dig older versions out of the
-Subversion repository which work with those versions, but if using
-Wikimedia's blacklist file you will likely have problems with failure
-due to the large size of the blacklist not being handled by old versions
-of the code.
+If you are using an older version of MediaWiki, you can checkout an
+older release branch, for example MediaWiki 1.20 would use REL1_20.
+
+For even older versions, you may be able to dig older versions out of the
+Git repository which work, but if using Wikimedia's blacklist file
+you will likely have problems with failure due to the large size of the
+blacklist not being handled by old versions of the code.
 
 
 File format
@@ -141,6 +143,21 @@ contains something you nonetheless want to link to.
 A local whitelist can be maintained by creating a [[MediaWiki:Spam-whitelist]]
 page and listing hostnames in it, using the same format as the blacklists.
 URLs matching the whitelist will be ignored locally.
+
+Logging
+-------
+
+To aid with tracking which domains are being spammed, this extension has
+multiple logging features. By default, hits are included in the standard
+debug log (controlled by $wgDebugLogFile). You can grep for 'SpamBlacklistHit',
+which includes the IP of the user and the URL they tried to submit. This
+file is only availible for people with server access and includes private info.
+
+You can also enable logging to [[Special:Log]] by setting $wgLogSpamBlacklistHits to
+true. This will include the account which tripped the blacklist, the page title the
+edit was attempted on, and the specific URL. By default this log is only viewable
+to wiki administrators, and you can grant other groups access by giving them the
+"spamblacklistlog" permission.
 
 Copyright
 ---------

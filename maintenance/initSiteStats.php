@@ -23,7 +23,7 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to re-initialise or update the site statistics table
@@ -48,7 +48,7 @@ class InitSiteStats extends Maintenance {
 		$edits = $counter->edits();
 		$this->output( "{$edits}\nCounting number of articles..." );
 
-		$good  = $counter->articles();
+		$good = $counter->articles();
 		$this->output( "{$good}\nCounting total pages..." );
 
 		$pages = $counter->pages();
@@ -85,4 +85,4 @@ class InitSiteStats extends Maintenance {
 }
 
 $maintClass = "InitSiteStats";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -67,7 +67,7 @@ class FileRepo {
 	 */
 	public function __construct( array $info = null ) {
 		// Verify required settings presence
-		if(
+		if (
 			$info === null
 			|| !array_key_exists( 'name', $info )
 			|| !array_key_exists( 'backend', $info )
@@ -259,19 +259,19 @@ class FileRepo {
 	 */
 	public function resolveVirtualUrl( $url ) {
 		if ( substr( $url, 0, 9 ) != 'mwrepo://' ) {
-			throw new MWException( __METHOD__.': unknown protocol' );
+			throw new MWException( __METHOD__ . ': unknown protocol' );
 		}
 		$bits = explode( '/', substr( $url, 9 ), 3 );
 		if ( count( $bits ) != 3 ) {
-			throw new MWException( __METHOD__.": invalid mwrepo URL: $url" );
+			throw new MWException( __METHOD__ . ": invalid mwrepo URL: $url" );
 		}
 		list( $repo, $zone, $rel ) = $bits;
 		if ( $repo !== $this->name ) {
-			throw new MWException( __METHOD__.": fetching from a foreign repo is not supported" );
+			throw new MWException( __METHOD__ . ": fetching from a foreign repo is not supported" );
 		}
 		$base = $this->getZonePath( $zone );
 		if ( !$base ) {
-			throw new MWException( __METHOD__.": invalid zone: $zone" );
+			throw new MWException( __METHOD__ . ": invalid zone: $zone" );
 		}
 		return $base . '/' . rawurldecode( $rel );
 	}
@@ -383,7 +383,7 @@ class FileRepo {
 			return false;
 		}
 		$redir = $this->checkRedirect( $title );
-		if ( $redir && $title->getNamespace() == NS_FILE) {
+		if ( $redir && $title->getNamespace() == NS_FILE ) {
 			$img = $this->newFile( $redir );
 			if ( !$img ) {
 				return false;
@@ -794,10 +794,10 @@ class FileRepo {
 				}
 			}
 			$operations[] = array(
-				'op'            => $opName,
-				'src'           => $srcPath,
-				'dst'           => $dstPath,
-				'overwrite'     => $flags & self::OVERWRITE,
+				'op' => $opName,
+				'src' => $srcPath,
+				'dst' => $dstPath,
+				'overwrite' => $flags & self::OVERWRITE,
 				'overwriteSame' => $flags & self::OVERWRITE_SAME,
 			);
 		}
@@ -917,9 +917,9 @@ class FileRepo {
 			$src = $this->resolveToStoragePath( $src );
 			$dst = $this->resolveToStoragePath( $dst );
 			$operations[] = array(
-				'op'          => FileBackend::isStoragePath( $src ) ? 'copy' : 'store',
-				'src'         => $src,
-				'dst'         => $dst,
+				'op' => FileBackend::isStoragePath( $src ) ? 'copy' : 'store',
+				'src' => $src,
+				'dst' => $dst,
 				'disposition' => isset( $triple[2] ) ? $triple[2] : null
 			);
 			$status->merge( $this->initDirectory( dirname( $dst ) ) );
@@ -942,8 +942,8 @@ class FileRepo {
 		$operations = array();
 		foreach ( $paths as $path ) {
 			$operations[] = array(
-				'op'                  => 'delete',
-				'src'                 => $this->resolveToStoragePath( $path ),
+				'op' => 'delete',
+				'src' => $this->resolveToStoragePath( $path ),
 				'ignoreMissingSource' => true
 			);
 		}
@@ -965,7 +965,7 @@ class FileRepo {
 	public function storeTemp( $originalName, $srcPath ) {
 		$this->assertWritableRepo(); // fail out if read-only
 
-		$date = gmdate( "YmdHis" );
+		$date = MWTimestamp::getInstance()->format( 'YmdHis' );
 		$hashPath = $this->getHashPath( $originalName );
 		$dstUrlRel = $hashPath . $date . '!' . rawurlencode( $originalName );
 		$virtualUrl = $this->getVirtualUrl( 'temp' ) . '/' . $dstUrlRel;
@@ -987,7 +987,7 @@ class FileRepo {
 
 		$temp = $this->getVirtualUrl( 'temp' );
 		if ( substr( $virtualUrl, 0, strlen( $temp ) ) != $temp ) {
-			wfDebug( __METHOD__.": Invalid temp virtual URL\n" );
+			wfDebug( __METHOD__ . ": Invalid temp virtual URL\n" );
 			return false;
 		}
 
@@ -1132,9 +1132,9 @@ class FileRepo {
 			// race conditions unless an functioning LockManager is used.
 			// LocalFile also uses SELECT FOR UPDATE for synchronization.
 			$operations[] = array(
-				'op'                  => 'copy',
-				'src'                 => $dstPath,
-				'dst'                 => $archivePath,
+				'op' => 'copy',
+				'src' => $dstPath,
+				'dst' => $archivePath,
 				'ignoreMissingSource' => true
 			);
 
@@ -1142,28 +1142,28 @@ class FileRepo {
 			if ( FileBackend::isStoragePath( $srcPath ) ) {
 				if ( $flags & self::DELETE_SOURCE ) {
 					$operations[] = array(
-						'op'        => 'move',
-						'src'       => $srcPath,
-						'dst'       => $dstPath,
+						'op' => 'move',
+						'src' => $srcPath,
+						'dst' => $dstPath,
 						'overwrite' => true, // replace current
-						'headers'   => $headers
+						'headers' => $headers
 					);
 				} else {
 					$operations[] = array(
-						'op'        => 'copy',
-						'src'       => $srcPath,
-						'dst'       => $dstPath,
+						'op' => 'copy',
+						'src' => $srcPath,
+						'dst' => $dstPath,
 						'overwrite' => true, // replace current
-						'headers'   => $headers
+						'headers' => $headers
 					);
 				}
 			} else { // FS source path
 				$operations[] = array(
-					'op'        => 'store',
-					'src'       => $srcPath,
-					'dst'       => $dstPath,
+					'op' => 'store',
+					'src' => $srcPath,
+					'dst' => $dstPath,
 					'overwrite' => true, // replace current
-					'headers'   => $headers
+					'headers' => $headers
 				);
 				if ( $flags & self::DELETE_SOURCE ) {
 					$sourceFSFilesToDelete[] = $srcPath;
@@ -1306,9 +1306,9 @@ class FileRepo {
 		foreach ( $sourceDestPairs as $pair ) {
 			list( $srcRel, $archiveRel ) = $pair;
 			if ( !$this->validateFilename( $srcRel ) ) {
-				throw new MWException( __METHOD__.':Validation error in $srcRel' );
+				throw new MWException( __METHOD__ . ':Validation error in $srcRel' );
 			} elseif ( !$this->validateFilename( $archiveRel ) ) {
-				throw new MWException( __METHOD__.':Validation error in $archiveRel' );
+				throw new MWException( __METHOD__ . ':Validation error in $archiveRel' );
 			}
 
 			$publicRoot = $this->getZonePath( 'public' );
@@ -1324,9 +1324,9 @@ class FileRepo {
 			}
 
 			$operations[] = array(
-				'op'            => 'move',
-				'src'           => $srcPath,
-				'dst'           => $archivePath,
+				'op' => 'move',
+				'src' => $srcPath,
+				'dst' => $archivePath,
 				// We may have 2+ identical files being deleted,
 				// all of which will map to the same destination file
 				'overwriteSame' => true // also see bug 31792
@@ -1564,7 +1564,7 @@ class FileRepo {
 	public function newFatal( $message /*, parameters...*/ ) {
 		$params = func_get_args();
 		array_unshift( $params, $this );
-		return MWInit::callStaticMethod( 'FileRepoStatus', 'newFatal', $params );
+		return call_user_func_array( array( 'FileRepoStatus', 'newFatal' ), $params );
 	}
 
 	/**
@@ -1671,29 +1671,29 @@ class FileRepo {
 	 */
 	public function getTempRepo() {
 		return new TempFileRepo( array(
-			'name'      => "{$this->name}-temp",
-			'backend'   => $this->backend,
-			'zones'     => array(
+			'name' => "{$this->name}-temp",
+			'backend' => $this->backend,
+			'zones' => array(
 				'public' => array(
 					'container' => $this->zones['temp']['container'],
 					'directory' => $this->zones['temp']['directory']
 				),
-				'thumb'  => array(
+				'thumb' => array(
 					'container' => $this->zones['thumb']['container'],
 					'directory' => ( $this->zones['thumb']['directory'] == '' )
 						? 'temp'
 						: $this->zones['thumb']['directory'] . '/temp'
 				),
-				'transcoded'  => array(
+				'transcoded' => array(
 					'container' => $this->zones['transcoded']['container'],
 					'directory' => ( $this->zones['transcoded']['directory'] == '' )
 						? 'temp'
 						: $this->zones['transcoded']['directory'] . '/temp'
 				)
 			),
-			'url'        => $this->getZoneUrl( 'temp' ),
-			'thumbUrl'   => $this->getZoneUrl( 'thumb' ) . '/temp',
-			'transcodedUrl'   => $this->getZoneUrl( 'transcoded' ) . '/temp',
+			'url' => $this->getZoneUrl( 'temp' ),
+			'thumbUrl' => $this->getZoneUrl( 'thumb' ) . '/temp',
+			'transcodedUrl' => $this->getZoneUrl( 'transcoded' ) . '/temp',
 			'hashLevels' => $this->hashLevels // performance
 		) );
 	}
@@ -1716,6 +1716,22 @@ class FileRepo {
 	 * @throws MWException
 	 */
 	protected function assertWritableRepo() {}
+
+
+	/**
+	 * Return information about the repository.
+	 *
+	 * @return array
+	 * @since 1.22
+	 */
+	public function getInfo() {
+		return array(
+			'name' => $this->getName(),
+			'displayname' => $this->getDisplayName(),
+			'rootUrl' => $this->getRootUrl(),
+			'local' => $this->isLocal(),
+		);
+	}
 }
 
 /**

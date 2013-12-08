@@ -107,9 +107,6 @@ $messages = array(
 'tog-enotifrevealaddr' => 'Rebelar l miu andereço de correio eiletrónico nas noteficaçones',
 'tog-shownumberswatching' => "Amostrar l númaro d'outelizadores a begiar",
 'tog-fancysig' => 'Tratar assinatura cumo wikitesto (sin lhigaçon outomática)',
-'tog-externaleditor' => 'Por oumisson, outelizar un eiditor sterno (solo para outelizadores abançados, eisige cunfiguraçones adecionales ne l tou cumputador)',
-'tog-externaldiff' => 'Por oumisson, outelizar defrenças sternas (solo para outelizadores abançados, eisige cunfiguraçones adicionales ne l tou cumputador)',
-'tog-showjumplinks' => 'Posseblitar lhigaçones d\'acessibelidade "{{ant:jumpto}}"',
 'tog-uselivepreview' => "Ousar l'antebison an tiempo rial (JavaScrit) (Spurmental)",
 'tog-forceeditsummary' => 'Abisar-me al antroduzir un sumairo bazio',
 'tog-watchlisthideown' => 'Scunder las mies eidiçones al lhistar mudanças a las páiginas begiadas',
@@ -265,7 +262,7 @@ $messages = array(
 'jumptonavigation' => 'nabegaçon',
 'jumptosearch' => 'percura',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Subre {{SITENAME}}',
 'aboutpage' => 'Project:Subre',
 'copyright' => 'Cuntenido çponible subre la lhicença $1.',
@@ -275,7 +272,6 @@ $messages = array(
 'disclaimers' => 'Abiso de Cuntenido',
 'disclaimerpage' => 'Project:Abiso giral',
 'edithelp' => 'Ajuda de eidiçon',
-'edithelppage' => 'Help:Eiditar',
 'helppage' => 'Help:Cuntenidos',
 'mainpage' => 'Páigina Percipal',
 'mainpage-description' => 'Páigina Percipal',
@@ -555,7 +551,6 @@ Legenda: (atu) = defrénças de la berson atual,
 'prevn' => 'anteriores {{PLURAL:$1|$1}}',
 'nextn' => 'próssimos {{PLURAL:$1|$1}}',
 'viewprevnext' => 'Ber ($1 {{int:pipe-separator}} $2) ($3)',
-'searchhelp-url' => 'Help:Conteúdos',
 'searchprofile-images' => 'Multimédia',
 'searchprofile-everything' => 'Todo',
 'searchprofile-advanced' => 'Abançado',
@@ -685,7 +680,6 @@ Causo l çponiblizes, este será outelizado pa te dar crédito pul tou trabalho.
 'recentchangeslinked-feed' => 'Alterações relacionadas',
 'recentchangeslinked-toolbox' => 'Alterações relacionadas',
 'recentchangeslinked-title' => 'Altaraçones que ténen a ber cun "$1"',
-'recentchangeslinked-noresult' => 'Nun houbo alteraçones an páiginas relacionadas ne l anterbalo de tiempo.',
 'recentchangeslinked-summary' => "Esta páigina special amostra las redadeiras altaraçones de páiginas que téngan ua lhigaçon a outra (ó de nembros dua catadorie speceficada).
 Páiginas que steian ne ls [[Special:Watchlist|tous begiados]] son amostradas an '''negrito'''.",
 'recentchangeslinked-page' => 'Nome de la páigina:',
@@ -769,8 +763,6 @@ Páiginas que steian ne ls [[Special:Watchlist|tous begiados]] son amostradas an
 'statistics-pages' => 'Páiginas',
 'statistics-views-total' => 'Total de bejitas',
 'statistics-users-active' => 'Outelizadores atibos',
-
-'disambiguations' => 'Páigina de zambiguaçon',
 
 'doubleredirects' => 'Ancaminamientos duplos',
 
@@ -1087,13 +1079,8 @@ Por fabor, scuolhe outro nome.',
 Premite ajuntar la rezon de la eidiçon ne l sumário.',
 
 # Skin names
-'skinname-standard' => 'Clássico',
-'skinname-nostalgia' => 'Suidade',
 'skinname-cologneblue' => 'Azul',
 'skinname-monobook' => 'Lhibro',
-'skinname-myskin' => 'Piel',
-'skinname-chick' => 'Cipe-Çape',
-'skinname-simple' => 'Simpre',
 'skinname-modern' => 'Moderno',
 
 # Browsing diffs
@@ -1138,7 +1125,7 @@ Causo l fexeiro tenga sido demudado a partir de l sou stado oureginal, alguns de
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Ancho',
 'exif-imagelength' => 'Altura',
 'exif-imagedescription' => 'Títalo de la eimaige',
@@ -1212,11 +1199,6 @@ Causo l fexeiro tenga sido demudado a partir de l sou stado oureginal, alguns de
 'version-license' => 'Licença',
 'version-software-product' => 'Perduto',
 'version-software-version' => 'Berson',
-
-# Special:FilePath
-'filepath' => 'Camino de l fexeiro',
-'filepath-page' => 'Fexeiro',
-'filepath-submit' => 'Camino',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Nome de l fexeiro',

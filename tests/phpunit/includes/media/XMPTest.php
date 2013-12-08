@@ -1,9 +1,13 @@
 <?php
+
+/**
+ * @todo covers tags
+ */
 class XMPTest extends MediaWikiTestCase {
 
 	protected function setUp() {
 		parent::setUp();
-		if ( !wfDl( 'xml' ) ) {
+		if ( !extension_loaded( 'xml' ) ) {
 			$this->markTestSkipped( 'Requires libxml to do XMP parsing' );
 		}
 	}
@@ -15,6 +19,7 @@ class XMPTest extends MediaWikiTestCase {
 	 * @param $expected Array expected result of parsing the xmp.
 	 * @param $info String Short sentence on what's being tested.
 	 *
+	 * @throws Exception
 	 * @dataProvider provideXMPParse
 	 */
 	public function testXMPParse( $xmp, $expected, $info ) {
@@ -62,9 +67,10 @@ class XMPTest extends MediaWikiTestCase {
 			// result array, but it seems kind of big to put directly in the test
 			// file.
 			$result = null;
-			include( $xmpPath . $file[0] . '.result.php' );
+			include $xmpPath . $file[0] . '.result.php';
 			$data[] = array( $xmp, $result, '[' . $file[0] . '.xmp] ' . $file[1] );
 		}
+
 		return $data;
 	}
 
@@ -74,7 +80,7 @@ class XMPTest extends MediaWikiTestCase {
 	 * @todo This is based on what the standard says. Need to find a real
 	 * world example file to double check the support for this is right.
 	 */
-	function testExtendedXMP() {
+	public function testExtendedXMP() {
 		$xmpPath = __DIR__ . '/../../data/xmp/';
 		$standardXMP = file_get_contents( $xmpPath . 'xmpExt.xmp' );
 		$extendedXMP = file_get_contents( $xmpPath . 'xmpExt2.xmp' );
@@ -104,7 +110,7 @@ class XMPTest extends MediaWikiTestCase {
 	 * This test has an extended XMP block with a wrong guid (md5sum)
 	 * and thus should only return the StandardXMP, not the ExtendedXMP.
 	 */
-	function testExtendedXMPWithWrongGUID() {
+	public function testExtendedXMPWithWrongGUID() {
 		$xmpPath = __DIR__ . '/../../data/xmp/';
 		$standardXMP = file_get_contents( $xmpPath . 'xmpExt.xmp' );
 		$extendedXMP = file_get_contents( $xmpPath . 'xmpExt2.xmp' );
@@ -133,7 +139,7 @@ class XMPTest extends MediaWikiTestCase {
 	 * Have a high offset to simulate a missing packet,
 	 * which should cause it to ignore the ExtendedXMP packet.
 	 */
-	function testExtendedXMPMissingPacket() {
+	public function testExtendedXMPMissingPacket() {
 		$xmpPath = __DIR__ . '/../../data/xmp/';
 		$standardXMP = file_get_contents( $xmpPath . 'xmpExt.xmp' );
 		$extendedXMP = file_get_contents( $xmpPath . 'xmpExt2.xmp' );
@@ -157,5 +163,4 @@ class XMPTest extends MediaWikiTestCase {
 
 		$this->assertEquals( $expected, $actual );
 	}
-
 }

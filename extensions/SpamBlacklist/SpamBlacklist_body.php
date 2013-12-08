@@ -5,8 +5,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 class SpamBlacklist extends BaseBlacklist {
-	var $files = array( "http://meta.wikimedia.org/w/index.php?title=Spam_blacklist&action=raw&sb_ver=1" );
-	var $ignoreEditSummary = false;
 
 	/**
 	 * Returns the code for the blacklist implementation
@@ -18,49 +16,45 @@ class SpamBlacklist extends BaseBlacklist {
 	}
 
 	/**
-	 * @param Title $title
-	 * @param string $text Text of section, or entire text if $editPage!=false
-	 * @param string $section Section number or name
-	 * @param string $editsummary Edit summary if one exists, some people use urls there too
-	 * @param EditPage $editPage EditPage if EditFilterMerged was called, null otherwise
+	 * Apply some basic anti-spoofing to the links before they get filtered,
+	 * see @bug 12896
+	 *
+	 * @param string $text
+	 *
+	 * @return string
+	 */
+	protected function antiSpoof( $text ) {
+		$text = str_replace( '．', '.', $text );
+		return $text;
+	}
+
+	/**
+	 * @param string[] $links An array of links to check against the blacklist
+	 * @param Title  $title The title of the page to which the filter shall be applied.
+	 *               This is used to load the old links already on the page, so
+	 *               the filter is only applied to links that got added. If not given,
+	 *               the filter is applied to all $links.
+	 *
 	 * @return Array Matched text(s) if the edit should not be allowed, false otherwise
 	 */
-	function filter( &$title, $text, $section, $editsummary = '', EditPage &$editPage = null ) {
-		/**
-		 * @var $wgParser Parser
-		 */
-		global $wgParser, $wgUser;
-
+	function filter( array $links, Title $title = null ) {
 		$fname = 'wfSpamBlacklistFilter';
 		wfProfileIn( $fname );
-
-		# These don't do anything, commenting out...
-		#$this->title = $title;
-		#$this->text = $text;
-		#$this->section = $section;
-		$text = str_replace( '．', '.', $text ); //@bug 12896
 
 		$blacklists = $this->getBlacklists();
 		$whitelists = $this->getWhitelists();
 
 		if ( count( $blacklists ) ) {
-			# Run parser to strip SGML comments and such out of the markup
-			# This was being used to circumvent the filter (see bug 5185)
-			if ( $editPage ) {
-				$editInfo = $editPage->mArticle->prepareTextForEdit( $text );
-				$out = $editInfo->output;
-			} else {
-				$options = new ParserOptions();
-				$text = $wgParser->preSaveTransform( $text, $title, $wgUser, $options );
-				$out = $wgParser->parse( $text, $title, $options );
-			}
-			$newLinks = array_keys( $out->getExternalLinks() );
-			$oldLinks = $this->getCurrentLinks( $title );
-			$addedLinks = array_diff( $newLinks, $oldLinks );
+			// poor man's anti-spoof, see bug 12896
+			$newLinks = array_map( array( $this, 'antiSpoof' ), $links );
 
-			// We add the edit summary if one exists
-			if ( !$this->ignoreEditSummary && !empty( $editsummary ) ) {
-				$addedLinks[] = $editsummary;
+			$oldLinks = array();
+			if ( $title !== null ) {
+				$oldLinks = $this->getCurrentLinks( $title );
+				$addedLinks = array_diff( $newLinks, $oldLinks );
+			} else {
+				// can't load old links, so treat all links as added.
+				$addedLinks = $newLinks;
 			}
 
 			wfDebugLog( 'SpamBlacklist', "Old URLs: " . implode( ', ', $oldLinks ) );
@@ -99,11 +93,15 @@ class SpamBlacklist extends BaseBlacklist {
 					$ip = $wgRequest->getIP();
 					$imploded = implode( ' ', $matches[0] );
 					wfDebugLog( 'SpamBlacklistHit', "$ip caught submitting spam: $imploded\n" );
+					$this->logFilterHit( $title, $imploded ); // Log it
 					if( $retVal === false ){
 						$retVal = array();
 					}
-					$retVal = array_merge( $retVal, $matches[0] );
+					$retVal = array_merge( $retVal, $matches[1] );
 				}
+			}
+			if ( is_array( $retVal ) ) {
+				$retVal = array_unique( $retVal );
 			}
 		} else {
 			$retVal = false;
@@ -149,5 +147,25 @@ class SpamBlacklist extends BaseBlacklist {
 	 */
 	public function getRegexEnd( $batchSize ) {
 		return ')' . parent::getRegexEnd( $batchSize );
+	}
+	/**
+	 * Logs the filter hit to Special:Log if
+	 * $wgLogSpamBlacklistHits is enabled.
+	 *
+	 * @param Title $title
+	 * @param string $url URL that the user attempted to add
+	 */
+	public function logFilterHit( $title, $url ) {
+		global $wgUser, $wgLogSpamBlacklistHits;
+		if ( $wgLogSpamBlacklistHits ) {
+			$logEntry = new ManualLogEntry( 'spamblacklist', 'hit' );
+			$logEntry->setPerformer( $wgUser );
+			$logEntry->setTarget( $title );
+			$logEntry->setParameters( array(
+				'4::url' => $url,
+			) );
+			$logid = $logEntry->insert();
+			$logEntry->publish( $logid, "rc" );
+		}
 	}
 }

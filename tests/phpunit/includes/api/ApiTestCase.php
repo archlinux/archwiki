@@ -52,6 +52,7 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 	protected function editPage( $pageName, $text, $summary = '', $defaultNs = NS_MAIN ) {
 		$title = Title::newFromText( $pageName, $defaultNs );
 		$page = WikiPage::factory( $title );
+
 		return $page->doEditContent( ContentHandler::makeContent( $text, $title ), $summary );
 	}
 
@@ -131,17 +132,22 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 			$session['wsEditToken'] = $session['wsToken'];
 			// add token to request parameters
 			$params['token'] = md5( $session['wsToken'] ) . User::EDIT_TOKEN_SUFFIX;
+
 			return $this->doApiRequest( $params, $session, false, $user );
 		} else {
 			throw new Exception( "request data not in right format" );
 		}
 	}
 
-	protected function doLogin() {
+	protected function doLogin( $user = 'sysop' ) {
+		if ( !array_key_exists( $user, self::$users ) ) {
+			throw new MWException( "Can not log in to undefined user $user" );
+		}
+
 		$data = $this->doApiRequest( array(
 			'action' => 'login',
-			'lgname' => self::$users['sysop']->username,
-			'lgpassword' => self::$users['sysop']->password ) );
+			'lgname' => self::$users[ $user ]->username,
+			'lgpassword' => self::$users[ $user ]->password ) );
 
 		$token = $data[0]['login']['token'];
 
@@ -149,8 +155,8 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 			array(
 				'action' => 'login',
 				'lgtoken' => $token,
-				'lgname' => self::$users['sysop']->username,
-				'lgpassword' => self::$users['sysop']->password,
+				'lgname' => self::$users[ $user ]->username,
+				'lgpassword' => self::$users[ $user ]->password,
 			),
 			$data[2]
 		);
@@ -160,11 +166,15 @@ abstract class ApiTestCase extends MediaWikiLangTestCase {
 
 	protected function getTokenList( $user, $session = null ) {
 		$data = $this->doApiRequest( array(
-			'action' => 'query',
-			'titles' => 'Main Page',
-			'intoken' => 'edit|delete|protect|move|block|unblock|watch',
-			'prop' => 'info' ), $session, false, $user->user );
-		return $data;
+			'action' => 'tokens',
+			'type' => 'edit|delete|protect|move|block|unblock|watch'
+		), $session, false, $user->user );
+
+		if ( !array_key_exists( 'tokens', $data[0] ) ) {
+			throw new MWException( 'Api failed to return a token list' );
+		}
+
+		return $data[0]['tokens'];
 	}
 
 	public function testApiTestGroup() {
@@ -204,11 +214,14 @@ class UserWrapper {
 }
 
 class MockApi extends ApiBase {
-	public function execute() {}
+	public function execute() {
+	}
 
-	public function getVersion() {}
+	public function getVersion() {
+	}
 
-	public function __construct() {}
+	public function __construct() {
+	}
 
 	public function getAllowedParams() {
 		return array(
@@ -234,6 +247,7 @@ class ApiTestContext extends RequestContext {
 		if ( $user !== null ) {
 			$context->setUser( $user );
 		}
+
 		return $context;
 	}
 }

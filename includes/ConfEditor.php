@@ -278,19 +278,23 @@ class ConfEditor {
 	function getVars() {
 		$vars = array();
 		$this->parse();
-		foreach( $this->pathInfo as $path => $data ) {
-			if ( $path[0] != '$' )
+		foreach ( $this->pathInfo as $path => $data ) {
+			if ( $path[0] != '$' ) {
 				continue;
+			}
 			$trimmedPath = substr( $path, 1 );
 			$name = $data['name'];
-			if ( $name[0] == '@' )
+			if ( $name[0] == '@' ) {
 				continue;
-			if ( $name[0] == '$' )
+			}
+			if ( $name[0] == '$' ) {
 				$name = substr( $name, 1 );
+			}
 			$parentPath = substr( $trimmedPath, 0,
 				strlen( $trimmedPath ) - strlen( $name ) );
-			if( substr( $parentPath, -1 ) == '/' )
+			if ( substr( $parentPath, -1 ) == '/' ) {
 				$parentPath = substr( $parentPath, 0, -1 );
+			}
 
 			$value = substr( $this->text, $data['valueStartByte'],
 				$data['valueEndByte'] - $data['valueStartByte']
@@ -315,13 +319,15 @@ class ConfEditor {
 		$target =& $array;
 		if ( $path !== '' ) {
 			foreach ( $pathArr as $p ) {
-				if( !isset( $target[$p] ) )
+				if ( !isset( $target[$p] ) ) {
 					$target[$p] = array();
+				}
 				$target =& $target[$p];
 			}
 		}
-		if ( !isset( $target[$key] ) )
+		if ( !isset( $target[$key] ) ) {
 			$target[$key] = $value;
+		}
 	}
 
 	/**
@@ -329,25 +335,30 @@ class ConfEditor {
 	 * @return mixed Parsed value
 	 */
 	function parseScalar( $str ) {
-		if ( $str !== '' && $str[0] == '\'' )
+		if ( $str !== '' && $str[0] == '\'' ) {
 			// Single-quoted string
 			// @todo FIXME: trim() call is due to mystery bug where whitespace gets
 			// appended to the token; without it we ended up reading in the
 			// extra quote on the end!
 			return strtr( substr( trim( $str ), 1, -1 ),
 				array( '\\\'' => '\'', '\\\\' => '\\' ) );
-		if ( $str !== '' && $str[0] == '"' )
+		}
+		if ( $str !== '' && $str[0] == '"' ) {
 			// Double-quoted string
 			// @todo FIXME: trim() call is due to mystery bug where whitespace gets
 			// appended to the token; without it we ended up reading in the
 			// extra quote on the end!
 			return stripcslashes( substr( trim( $str ), 1, -1 ) );
-		if ( substr( $str, 0, 4 ) == 'true' )
+		}
+		if ( substr( $str, 0, 4 ) == 'true' ) {
 			return true;
-		if ( substr( $str, 0, 5 ) == 'false' )
+		}
+		if ( substr( $str, 0, 5 ) == 'false' ) {
 			return false;
-		if ( substr( $str, 0, 4 ) == 'null' )
+		}
+		if ( substr( $str, 0, 4 ) == 'null' ) {
 			return null;
+		}
 		// Must be some kind of numeric value, so let PHP's weak typing
 		// be useful for a change
 		return $str;
@@ -537,7 +548,7 @@ class ConfEditor {
 	 */
 	function getIndent( $pos, $key = false, $arrowPos = false ) {
 		$arrowIndent = ' ';
-		if ( $pos == 0 || $this->text[$pos-1] == "\n" ) {
+		if ( $pos == 0 || $this->text[$pos - 1] == "\n" ) {
 			$indentLength = strspn( $this->text, " \t", $pos );
 			$indent = substr( $this->text, $pos, $indentLength );
 		} else {
@@ -559,7 +570,7 @@ class ConfEditor {
 	public function parse() {
 		$this->initParse();
 		$this->pushState( 'file' );
-		$this->pushPath( '@extra-' . ($this->serial++) );
+		$this->pushPath( '@extra-' . ( $this->serial++ ) );
 		$token = $this->firstToken();
 
 		while ( !$token->isEnd() ) {
@@ -617,19 +628,21 @@ class ConfEditor {
 				$this->expect( '=' );
 				$this->skipSpace();
 				$this->startPathValue();
-				if ( $arrayAssign )
+				if ( $arrayAssign ) {
 					$this->pushState( 'expression', 'array assign end' );
-				else
+				} else {
 					$this->pushState( 'expression', 'statement end' );
+				}
 				break;
 			case 'array assign end':
 			case 'statement end':
 				$this->endPathValue();
-				if ( $state == 'array assign end' )
+				if ( $state == 'array assign end' ) {
 					$this->popPath();
+				}
 				$this->skipSpace();
 				$this->expect( ';' );
-				$this->nextPath( '@extra-' . ($this->serial++) );
+				$this->nextPath( '@extra-' . ( $this->serial++ ) );
 				break;
 			case 'expression':
 				$token = $this->skipSpace();
@@ -649,7 +662,7 @@ class ConfEditor {
 				$this->skipSpace();
 				$this->expect( '(' );
 				$this->skipSpace();
-				$this->pushPath( '@extra-' . ($this->serial++) );
+				$this->pushPath( '@extra-' . ( $this->serial++ ) );
 				if ( $this->isAhead( ')' ) ) {
 					// Empty array
 					$this->pushState( 'array end' );
@@ -681,7 +694,7 @@ class ConfEditor {
 					$this->endPathValue();
 					$this->markComma();
 					$this->nextToken();
-					$this->nextPath( '@extra-' . ($this->serial++) );
+					$this->nextPath( '@extra-' . ( $this->serial++ ) );
 					// Look ahead to find ending bracket
 					if ( $this->isAhead( ")" ) ) {
 						// Found ending bracket, no continuation
@@ -1056,7 +1069,7 @@ class ConfEditorParseError extends MWException {
 		$lines = StringUtils::explode( "\n", $text );
 		foreach ( $lines as $lineNum => $line ) {
 			if ( $lineNum == $this->lineNum - 1 ) {
-				return "$line\n" .str_repeat( ' ', $this->colNum - 1 ) . "^\n";
+				return "$line\n" . str_repeat( ' ', $this->colNum - 1 ) . "^\n";
 			}
 		}
 		return '';

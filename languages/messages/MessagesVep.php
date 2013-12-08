@@ -118,9 +118,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Ozutada niiden kävutajiden lugu, kudambad oma mülütanuded lehtpolen ičeze kaclendnimikirjutesihe',
 'tog-oldsig' => 'Nügüdläine allekirjutez',
 'tog-fancysig' => 'Ičeze allekirjutesen wiki-znamišt (avtomatižeta kosketuseta)',
-'tog-externaleditor' => 'Kävutada irdredaktor augotižjärgendusen mödhe (vaiše ekspertoiden täht; pidab järgeta specialižikš kompjuter; [//www.mediawiki.org/wiki/Manual:External_editors Enamb informacijad.])',
-'tog-externaldiff' => 'Kävutada irdredaktor augotižjärgendusen mödhe (vaiše ekspertoiden täht; pidab järgeta specialižikš kompjuter; [//www.mediawiki.org/wiki/Manual:External_editors Enamb informacijad.])',
-'tog-showjumplinks' => 'Ližata "hüpähtada..."-abukosketused',
 'tog-uselivepreview' => 'Kävutada hered ezikacund (JavaScript) (Eksperimentaline)',
 'tog-forceeditsummary' => 'Varutada, kunz toižetusen ümbrikirjutandan pöud ei ole täuttud',
 'tog-watchlisthideown' => 'Peitta minun redakcijad kaclendnimikirjutesespäi',
@@ -319,7 +316,7 @@ $1",
 'pool-queuefull' => 'Ecindoiden varadim om üläkormatud.',
 'pool-errorunknown' => 'Tundmatoi petuz',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Informacii saitas {{SITENAME}}',
 'aboutpage' => 'Project:Informacii',
 'copyright' => 'südäiolend kävutadas $1-licenzijan mödhe.',
@@ -329,7 +326,6 @@ $1",
 'disclaimers' => 'Pučind vastusenpidandaspäi',
 'disclaimerpage' => 'Project:Pučind vastusenpidandaspäi',
 'edithelp' => 'Abu redaktiruindas',
-'edithelppage' => 'Help:Abu redaktiruindas',
 'helppage' => 'Help:südäiolend',
 'mainpage' => 'Pälehtpol’',
 'mainpage-description' => 'Pälehtpol’',
@@ -403,11 +399,6 @@ Kc. [[Special:SpecialPages|specialižiden lehtpoliden nimikirj]].",
 # General errors
 'error' => 'Petuz',
 'databaseerror' => 'Andmusiden bazan petuz',
-'dberrortextcl' => 'Andmusiden bazas ectes ozaižihe petuz.
-Jäl\'gmäine ecind andmusiden bazas oli:
-"$1"
-funkcijaspäi "$2".
-Andmusiden baz pördi petusen "$3: $4"',
 'laggedslavemode' => "Varutuz: voib olda, lehtpolen versijal ei ole jäl'gmäižid ližadusid.",
 'readonly' => 'Andmusiden baz om luklostadud',
 'enterlockreason' => 'Kirjutagat sü da pandud blokiruindan strok',
@@ -455,7 +446,6 @@ Ecind: $2',
 'editinginterface' => "'''Homaikat:''' Tö ladit redaktiruida lehtpol't, kudambal om programman interfeistekst.
 Mugoi tegend toižetab interfeisan irdnägu toižiden kävutajiden täht.
 Kändmižen täht om paremb kävutada [//translatewiki.net/wiki/Main_Page?setlang=vep translatewiki.net] - MediaWikin lokalizacijan projekt.",
-'sqlhidden' => '(SQL-küzelend om peittud)',
 'namespaceprotected' => "Teil ei ole oiktust redaktiruida lehtpolid '''$1'''-nimiavaruses.",
 'customcssprotected' => 'Teil ei ole oiktust redaktiruida nece CSS-lehtpol’, sikš sil oma toižen ühtnijan personaližed järgendused.',
 'customjsprotected' => 'Teil ei ole oiktust redaktiruida nece JavaScript-lehtpol’, sikš sil oma toižen ühtnijan personaližed järgendused.',
@@ -477,7 +467,6 @@ Otkat sil'mnägubale, miše erasid lehtpolid ozutaškatas mugažo, kut i edel te
 'yourpassword' => 'Peitsana:',
 'yourpasswordagain' => 'Kirjutagat peitsana udes:',
 'remembermypassword' => 'Panda muštho minun tulendandmused neciš kompjuteras (enintään $1 {{PLURAL:$1|päivä|päivää}})',
-'securelogin-stick-https' => "Jäda sidotud HTTPS-ha tulendan jäl'ghe",
 'yourdomainname' => 'Teiden domen:',
 'externaldberror' => 'Ozaižihe petuz autentifikacijan, kudamb tehtihe andmusiden irdbazan turbiš, aigan, vai teile ei ulotu oiktusid toižetada ičetoi irdregistracijad.',
 'login' => 'Kirjutadas sistemha',
@@ -559,7 +548,7 @@ Miše tulda sistemha lopuližikš, teile pidab säta uz' peitsana naku:",
 'newpassword' => "Uz' peitsana:",
 'retypenew' => "Toštkat uz' peitsana:",
 'resetpass_submit' => 'Säta peitsana da kirjutadas sistemha',
-'resetpass_success' => 'Teiden peisana om vajehtadud jügedusita! Tulend sistemha...',
+'changepassword-success' => 'Teiden peisana om vajehtadud jügedusita! Tulend sistemha...',
 'resetpass_forbidden' => 'Ei voi vajehtada peitsanad',
 'resetpass-no-info' => 'Miše kirjutada necil lehtpolel, teile pidab kirjutadas sistemha.',
 'resetpass-submit-loggedin' => 'Vajehtada peitsana',
@@ -929,7 +918,6 @@ Tö ei voigoi kävutada sidä.',
 'searchmenu-legend' => 'Ecindan järgendused',
 'searchmenu-exists' => "'''Neciš Wikiš om jo lehtpol' ningoižen nimenke: \"[[:\$1]]\"'''",
 'searchmenu-new' => "'''Säta lehtpol' \"[[:\$1]]\" neciš Wikiš!'''",
-'searchhelp-url' => 'Help:Südäiolend',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Ozutada kaik lehtpoled necen prefiksanke]]',
 'searchprofile-articles' => 'Südäimištlehtpoled',
 'searchprofile-project' => 'Abun da projektoiden lehtpoled',
@@ -974,14 +962,6 @@ Kävutagat prefiks ''all:'', miše ectä kaikes südäimištospäi (lodulehtpoli
 Tö voit nügüd' ectä Google'n turbiš.
 Otkat sil'mnägubale üks-se, miše {{SITENAME}}-saitan sädäimišt voib olda vanhtunuden.",
 
-# Quickbar
-'qbsettings' => "Navigacijan panel'",
-'qbsettings-none' => 'Ala ozuta',
-'qbsettings-fixedleft' => 'Likumatoi huralpäi',
-'qbsettings-fixedright' => 'Likumatoi oiktalpäi',
-'qbsettings-floatingleft' => 'Ujui huralpäi',
-'qbsettings-floatingright' => 'Ujui oiktalpäi',
-
 # Preferences page
 'preferences' => 'Järgendused',
 'mypreferences' => 'Järgendused',
@@ -1013,7 +993,6 @@ Otkat sil'mnägubale üks-se, miše {{SITENAME}}-saitan sädäimišt voib olda v
 'resetprefs' => 'Čuta kaičematomad toižetused',
 'restoreprefs' => 'Endištada kaik augotižjärgendused',
 'prefs-editing' => 'Redaktiruind',
-'prefs-edit-boxsize' => 'Redaktiruindan iknan suruz.',
 'rows' => 'Rivid:',
 'columns' => 'Pachid:',
 'searchresultshead' => 'Ecind',
@@ -1054,7 +1033,6 @@ Otkat sil'mnägubale üks-se, miše {{SITENAME}}-saitan sädäimišt voib olda v
 'prefs-reset-intro' => "Tö sat kävutada nece lehtpol', miše pördutada teiden järgendused saitan ezijärgendusidennoks.
 Necidä tegendad ei sa toižetada.",
 'prefs-emailconfirm-label' => 'E-počtan vahvištand:',
-'prefs-textboxsize' => 'Redaktiruindan iknan suruz',
 'youremail' => 'E-počt:',
 'username' => 'Kävutajan nimi:',
 'uid' => 'Kävutajan nomer:',
@@ -1282,7 +1260,6 @@ Ku tö kirjutat sen, nece nimi kävutadas, miše ozutada lehtpolen toižetajad.'
 'recentchangeslinked-feed' => 'Sidotud toižetused',
 'recentchangeslinked-toolbox' => 'Sidotud toižetused',
 'recentchangeslinked-title' => '"$1"-lehtpol\'he sidotud toižetused',
-'recentchangeslinked-noresult' => 'Sidotud lehtpolil ei olend toižetusid anttud pordon aigan.',
 'recentchangeslinked-summary' => "Neciš nimikirjuteses om tantoižid toižetusid lehtpoliš, kudambid kosketab ozutadud lehtpol'.
 [[Special:Watchlist|Teiden kaclendnimikirjutesen]] lehtpoled oma erigoittud lihavoitud šriftal.",
 'recentchangeslinked-page' => 'Lehtpolen nimi:',
@@ -1409,7 +1386,6 @@ Ku problem jäb jäl'ghepäi-ki, säkat pagin [[Special:ListUsers/sysop|sistemad
 'http-read-error' => "HTTP'd lugemižen petuz.",
 'http-timed-out' => 'HTTP-he küzelendan aig om lopnus.',
 'http-curl-error' => "Petuz URL'ad ecmäs: $1",
-'http-host-unreachable' => 'Ei voi säta sidod URL:anke',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
 'upload-curl-error6' => 'Ei voi säta sidod URL:anke',
@@ -1539,9 +1515,6 @@ Informacijad sen [$2 andmusiden lehtpolelpäi] om anttud alemba.',
 'statistics-users-active' => 'Activižed kävutajad',
 'statistics-users-active-desc' => "Kävutajad, kudambad ozutiba aktivižut {{PLURAL:$1|jäl’gmäižen päivän|$1 jäl'gmäižil päivil}}",
 'statistics-mostpopular' => 'Kaikiš populärižembad lehtpoled',
-
-'disambiguations' => 'Lehtpoled, kudambil om kosketusid lehtpolihe, kus om äiznamoičendusen laskendoid.',
-'disambiguationspage' => 'Template:Äiznamoičenduz',
 
 'doubleredirects' => 'Kaksitadud läbikosketused',
 'double-redirect-fixed-move' => "[[$1]]-lehtpol' om udesnimitadud. Se läbikosketab nügüd' [[$2]]-lehtpolele.",
@@ -1749,7 +1722,7 @@ Kc. mugažo [[Special:WantedCategories|ectud kategorijoiden nimikirjutez]].',
 'notanarticle' => "Nece ei ole lehtpol'",
 'notvisiblerev' => 'Versijad oma čutud',
 'watchlist-details' => "Teiden kaclendnimikirjuteses om {{PLURAL:$1|$1 lehtpol'|$1 lehtpol't}}. Lodulehtpoled ei olgoi neciš lugus.",
-'wlheader-enotif' => '* Tedotand e-počtadme om kävutamas.',
+'wlheader-enotif' => 'Tedotand e-počtadme om kävutamas.',
 'watchmethod-recent' => 'ozutadas kaceltud lehtpoliden tantoižed toižetused',
 'watchmethod-list' => 'kaceltud lehtpoliden kodvind tantoižid toižetusid ectes',
 'watchlistcontains' => "Teiden kaclendnimikirjuteses om $1 {{PLURAL:$1|lehtpol'|lehtpol't}}.",
@@ -2102,12 +2075,9 @@ Alemba om anttud blokiruindaiglehtez:',
 'ipb_cant_unblock' => 'Petuz: ei voi löuta ID $1:n blokiruindad.
 Voib olda, se om jo heittud.',
 'ip_range_invalid' => 'Vär IP-diapazon.',
-'blockme' => 'Blokiruigat mindai',
 'proxyblocker' => 'Proxy-blokator',
-'proxyblocker-disabled' => 'Nece funkcii ei ole kävutamas.',
 'proxyblockreason' => 'Teiden IP-adres om blokiruidud, sikš miše se om avoin proksi.
 Olgat hüväd, säkat pagin teiden Internet-provaideranke i kirjutagat hänele necen varuitomuden problemas.',
-'proxyblocksuccess' => 'Vaumiž.',
 'sorbsreason' => 'Teiden IP-adres om ozutadud kut avaitud proksi {{SITENAME}}-saitan DNSBL-an mustas nimikirjuteses.',
 'cant-block-while-blocked' => 'Teile ei sa blokiruida toižid kävutajid, sikš miše tö iče olet blokiruidud.',
 
@@ -2371,13 +2341,8 @@ Voib olda, necil lehtpolel om kosketuz irdsaitale, kudamb om mustas nimikirjutes
 'pageinfo-authors' => 'Erazvuiččiden avtoroiden lugu',
 
 # Skin names
-'skinname-standard' => 'Klassine',
-'skinname-nostalgia' => "Nostal'gii",
 'skinname-cologneblue' => "Köl'nan sinine",
 'skinname-monobook' => 'MonoBook',
-'skinname-myskin' => 'Ičeze',
-'skinname-chick' => 'Cipuine',
-'skinname-simple' => 'Koveritoi',
 'skinname-modern' => "Nügüd'aigaine",
 
 # Patrolling
@@ -2478,7 +2443,7 @@ Ku fail redaktiruidihe sändan polhe, erased parametrad voidas erineda nügüdl�
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Leveduz',
 'exif-imagelength' => 'Korktuz’',
 'exif-bitspersample' => 'Mujun süvuz',
@@ -2610,7 +2575,7 @@ Ku fail redaktiruidihe sändan polhe, erased parametrad voidas erineda nügüdl�
 'exif-label' => 'Arbaine',
 'exif-pngfilecomment' => 'Kommentarii PNG-failha',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Ahtištamatoi',
 
 'exif-unknowndate' => 'Tundmatoi dat',
@@ -2945,7 +2910,6 @@ Kävutagat normaline ezikacund.',
 'version-other' => 'Toine',
 'version-mediahandlers' => 'Median radimed',
 'version-hooks' => 'Sabutajad',
-'version-extension-functions' => 'Ližoiden funkcijad',
 'version-parser-extensiontags' => 'Sintaksižen analizatoran ližoiden virgad',
 'version-parser-function-hooks' => 'Sintaksižen analizatoran funkcijoiden sabutajad',
 'version-hook-name' => 'Sabustajan nimi',
@@ -2957,11 +2921,6 @@ Kävutagat normaline ezikacund.',
 'version-software-product' => 'Produkt',
 'version-software-version' => 'Versii',
 'version-entrypoints-header-url' => 'URL',
-
-# Special:FilePath
-'filepath' => 'Te failannoks',
-'filepath-page' => 'Fail:',
-'filepath-submit' => 'Te',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Ectä kaksitadud failad',

@@ -104,9 +104,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Zi onuogụgụ ndi na banife nke ne lé',
 'tog-oldsig' => 'Létu ntakiri ndẹlu ejị a ma gí:',
 'tog-fancysig' => 'Mesò ka nkábi nwéré édé wiki (nké énwéghị jikodo nke nọr na onwe)',
-'tog-externaleditor' => 'Jí irü èzí nà áká (màkà ndi òkà nání, ȯ chọrọ ndósé nke kárí na nsónùsòrò gi)',
-'tog-externaldiff' => 'Jí nkéichè èzí nà áká (màkà ndi òkà nání, ȯ chọrọ ndósé nke kárí na nsónùsòrò gi)',
-'tog-showjumplinks' => 'Kwé ka njikodo "mani énū" I mé',
 'tog-uselivepreview' => 'Jí nlé ntàkírí dí ndụ (Í gí nwé JavaScript) (mmètú kanyí lé)',
 'tog-forceeditsummary' => 'Gwam mgbè okwu nsem màkà orüm rürü a díghị',
 'tog-watchlisthideown' => 'Zonari orüm fwuör ndetu ihem ne lé',
@@ -304,7 +301,7 @@ $1',
 'pool-queuefull' => 'Pool kyu zùrù',
 'pool-errorunknown' => 'Nsogbu nke námaghi',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Maka {{SITENAME}}',
 'aboutpage' => 'Project:Ihe owù',
 'copyright' => 'Ihe di ime nọr okpúrụ $1',
@@ -314,7 +311,6 @@ $1',
 'disclaimers' => 'Ihe anyí chọrọ ki ma',
 'disclaimerpage' => 'Project:Ihe I kweshiri ma',
 'edithelp' => 'Inyetuáká I rüwa',
-'edithelppage' => 'Help: I rüwa',
 'helppage' => 'Help: Ihe di ime',
 'mainpage' => 'Ihü Mbu',
 'mainpage-description' => 'Ihü Mbu',
@@ -426,7 +422,6 @@ Orürü: $1<br />
 'editinginterface' => "'''Okwu egú:''' I na rü ihü né nyé ihu maka mkpurụ edemede nke eji-a-rü nka.
 Gbanwere më ihüa ga mètú ihu élélé nke onye-na-banife maka ndi ozor.
 Maka ikuwaria na asụsụ nke ozor, biko chetu I ji [//translatewiki.net/wiki/Main_Page?setlang=ig translatewiki.net], ihe orü MediaWiki di na ama ama.",
-'sqlhidden' => '(nchowa SQL zonari a zonari)',
 'namespaceprotected' => "I weghị ike I rüwa élu ihü nor na '''$1''' áháama.",
 'ns-specialprotected' => 'Ihü mkpà, a nweriki ru na ya.',
 
@@ -493,7 +488,7 @@ Biko meríáríá ya.',
 'newpassword' => 'Mkpurụ okwu ejị a gafẹ nke ohúrù',
 'retypenew' => 'Dechákwari mkpurụ okwu ejị a gafẹ nke ohúrù:',
 'resetpass_submit' => 'Bá okwu éjị gáfè na áhà Í bànyè',
-'resetpass_success' => 'Mkpurụ okwu ejị a gafẹ a gbanwere nke oma!
+'changepassword-success' => 'Mkpurụ okwu ejị a gafẹ a gbanwere nke oma!
 I na á banye...',
 'resetpass_forbidden' => 'Okwu éjị à gáfè enwéghịkị gabnwe',
 'resetpass-submit-loggedin' => 'Gbanwe okwu éjị à gáfe',
@@ -715,7 +710,6 @@ Okwu ụmà: '''({{int:cur}})''' = gbánwe na nké orü mbu, '''({{int:last}})''
 'viewprevnext' => 'Lé ($1 {{int:pipe-separator}} $2) ($3)',
 'searchmenu-legend' => 'Màkà nchöwa',
 'searchmenu-new' => "'''Ké ihü \"[[:\$1]]\" na wiki nke á!'''",
-'searchhelp-url' => 'Help:Ihe di ime',
 'searchprofile-articles' => 'Ihü ihe dị',
 'searchprofile-project' => 'Ihü Nkwádo na Orürü',
 'searchprofile-images' => 'Nkaníle',
@@ -748,14 +742,6 @@ Nwàné ótù okwu íshí na ihe Í nè tú jí ''háníle:'' Í tuó ihe nílé
 'powersearch-togglelabel' => 'Lechányá:',
 'powersearch-toggleall' => 'Haníle',
 'powersearch-togglenone' => 'Efù',
-
-# Quickbar
-'qbsettings' => 'Mkpọrọ-ȯsȯ-ọsọ',
-'qbsettings-none' => 'Efù',
-'qbsettings-fixedleft' => 'Gbado na áká èkpè',
-'qbsettings-fixedright' => 'Gbado na áká ìkengà',
-'qbsettings-floatingleft' => 'Ne fé na áká èkpè',
-'qbsettings-floatingright' => 'Ne fé na áká nrí',
 
 # Preferences page
 'preferences' => 'Otu ha dosẹrẹ ihe',
@@ -1021,8 +1007,6 @@ Ihü nọr na [[Special:Watchlist|ndétu ihe Í ne lé]] di na mkpụrụ edemed
 'statistics-files' => 'Usòrò hé tinyèrè',
 'statistics-views-total' => 'Há hụrụ ya olé níle',
 'statistics-users-active' => "Ọ'bànifé di galagala",
-
-'disambiguationspage' => 'Template:ọlúchịgị',
 
 'double-redirect-fixed-move' => '[[$1]] a puziele.
 Ubwa, o na ga [[$2]].',
@@ -1301,8 +1285,6 @@ Ngá bu ihe hé mèkwàrà nà ihü '''$1''':",
 'unblocklogentry' => 'àkwáchị gị $1',
 'block-log-flags-nocreate' => "Í ké ọ'bànifé bàchìrì",
 'block-log-flags-noemail' => 'ha kwàchịrị e-mail',
-'blockme' => 'Kwàchím',
-'proxyblocksuccess' => 'Ọméchá.',
 
 # Developer tools
 'lockdb' => 'Gbàchí uche nsónùsòrò',
@@ -1524,7 +1506,7 @@ Nke ozor gí zonari na áká onwe ha.
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Àsáa',
 'exif-imagelength' => 'Ógólógó',
 'exif-orientation' => 'Ívú nà àsáa',
@@ -1694,11 +1676,6 @@ Nke ozor gí zonari na áká onwe ha.
 'version-software-version' => 'Ùdị',
 'version-entrypoints-header-entrypoint' => 'Ébé ọ̀bụ̀bà',
 'version-entrypoints-header-url' => 'URL',
-
-# Special:FilePath
-'filepath' => 'Uzọ usòrò',
-'filepath-page' => 'Usòrò:',
-'filepath-submit' => 'Gá',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Áhà usòrò:',

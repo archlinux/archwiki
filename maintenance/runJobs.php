@@ -25,7 +25,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that runs pending jobs.
@@ -61,10 +61,11 @@ class RunJobs extends Maintenance {
 			$procs = intval( $this->getOption( 'procs' ) );
 			if ( $procs < 1 || $procs > 1000 ) {
 				$this->error( "Invalid argument to --procs", true );
-			}
-			$fc = new ForkController( $procs );
-			if ( $fc->start() != 'child' ) {
-				exit( 0 );
+			} elseif ( $procs != 1 ) {
+				$fc = new ForkController( $procs );
+				if ( $fc->start() != 'child' ) {
+					exit( 0 );
+				}
 			}
 		}
 		$maxJobs = $this->getOption( 'maxjobs', false );
@@ -72,7 +73,6 @@ class RunJobs extends Maintenance {
 		$startTime = time();
 		$type = $this->getOption( 'type', false );
 		$wgTitle = Title::newFromText( 'RunJobs.php' );
-		$dbw = wfGetDB( DB_MASTER );
 		$jobsRun = 0; // counter
 
 		$group = JobQueueGroup::singleton();
@@ -82,16 +82,20 @@ class RunJobs extends Maintenance {
 			$this->runJobsLog( "Executed $count periodic queue task(s)." );
 		}
 
-		$lastTime = time();
+		$flags = JobQueueGroup::USE_CACHE | JobQueueGroup::USE_PRIORITY;
+		$lastTime = time(); // time since last slave check
 		do {
 			$job = ( $type === false )
-				? $group->pop( JobQueueGroup::TYPE_DEFAULT, JobQueueGroup::USE_CACHE )
+				? $group->pop( JobQueueGroup::TYPE_DEFAULT, $flags )
 				: $group->pop( $type ); // job from a single queue
 			if ( $job ) { // found a job
 				++$jobsRun;
 				$this->runJobsLog( $job->toString() . " STARTING" );
 
+				// Set timer to stop the job if too much CPU time is used
+				set_time_limit( $maxTime ?: 0 );
 				// Run the job...
+				wfProfileIn( __METHOD__ . '-' . get_class( $job ) );
 				$t = microtime( true );
 				try {
 					$status = $job->run();
@@ -99,15 +103,19 @@ class RunJobs extends Maintenance {
 				} catch ( MWException $e ) {
 					$status = false;
 					$error = get_class( $e ) . ': ' . $e->getMessage();
+					$e->report(); // write error to STDERR and the log
 				}
 				$timeMs = intval( ( microtime( true ) - $t ) * 1000 );
+				wfProfileOut( __METHOD__ . '-' . get_class( $job ) );
+				// Disable the timer
+				set_time_limit( 0 );
 
 				// Mark the job as done on success or when the job cannot be retried
 				if ( $status !== false || !$job->allowRetries() ) {
 					$group->ack( $job ); // done
 				}
 
-				if ( !$status ) {
+				if ( $status === false ) {
 					$this->runJobsLog( $job->toString() . " t=$timeMs error={$error}" );
 				} else {
 					$this->runJobsLog( $job->toString() . " t=$timeMs good" );
@@ -124,13 +132,39 @@ class RunJobs extends Maintenance {
 				$timePassed = time() - $lastTime;
 				if ( $timePassed >= 5 || $timePassed < 0 ) {
 					wfWaitForSlaves();
+					$lastTime = time();
 				}
 				// Don't let any queue slaves/backups fall behind
 				if ( $jobsRun > 0 && ( $jobsRun % 100 ) == 0 ) {
 					$group->waitForBackups();
 				}
+
+				// Bail if near-OOM instead of in a job
+				$this->assertMemoryOK();
 			}
 		} while ( $job ); // stop when there are no jobs
+	}
+
+	/**
+	 * Make sure that this script is not too close to the memory usage limit
+	 * @throws MWException
+	 */
+	private function assertMemoryOK() {
+		static $maxBytes = null;
+		if ( $maxBytes === null ) {
+			$m = array();
+			if ( preg_match( '!^(\d+)(k|m|g|)$!i', ini_get( 'memory_limit' ), $m ) ) {
+				list( , $num, $unit ) = $m;
+				$conv = array( 'g' => 1024 * 1024 * 1024, 'm' => 1024 * 1024, 'k' => 1024, '' => 1 );
+				$maxBytes = $num * $conv[strtolower( $unit )];
+			} else {
+				$maxBytes = 0;
+			}
+		}
+		$usedBytes = memory_get_usage();
+		if ( $maxBytes && $usedBytes >= 0.95 * $maxBytes ) {
+			throw new MWException( "Detected excessive memory usage ($usedBytes/$maxBytes)." );
+		}
 	}
 
 	/**
@@ -144,4 +178,4 @@ class RunJobs extends Maintenance {
 }
 
 $maintClass = "RunJobs";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

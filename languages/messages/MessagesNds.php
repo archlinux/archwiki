@@ -246,9 +246,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Wies de Tall vun Brukers, de op disse Siet oppasst',
 'tog-oldsig' => 'Gellen Ünnerschrift',
 'tog-fancysig' => 'Signatur as Wikitext behanneln (ahn automaatsch Lenk)',
-'tog-externaleditor' => 'Extern Editor as Standard bruken (Blots för Lüüd, de sik dormit utkennt. Dor mutt noch mehr op dien Reekner instellt warrn, dat dat geiht. [//www.mediawiki.org/wiki/Manual:External_editors Wiedere Informatschonen hierto.])',
-'tog-externaldiff' => 'Extern Warktüüch to’n Wiesen vun Ünnerscheden as Standard bruken (Blots för Lüüd, de sik dormit utkennt. Dor mutt noch mehr op dien Reekner instellt warrn, dat dat geiht. [//www.mediawiki.org/wiki/Manual:External_editors Wiedere Informatschonen hierto.])',
-'tog-showjumplinks' => '„Wesseln-na“-Lenken tolaten',
 'tog-uselivepreview' => 'Live-Vörschau bruken (JavaScript) (Experimental)',
 'tog-forceeditsummary' => 'Segg mi bescheid, wenn ik keen Tosamenfaten geven heff, wat ik allens ännert heff',
 'tog-watchlisthideown' => 'Ännern vun mi sülvs op de Oppasslist nich wiesen',
@@ -447,7 +444,7 @@ $1",
 'pool-queuefull' => 'Pooltöövslang is vull',
 'pool-errorunknown' => 'Unbekannten Fehler',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Över {{SITENAME}}',
 'aboutpage' => 'Project:Över_{{SITENAME}}',
 'copyright' => 'Inholt is verfögbor ünner de $1.',
@@ -457,7 +454,6 @@ $1",
 'disclaimers' => 'Impressum',
 'disclaimerpage' => 'Project:Impressum',
 'edithelp' => 'Bearbeidenshülp',
-'edithelppage' => 'Help:Ännern',
 'helppage' => 'Help:Hülp',
 'mainpage' => 'Hööftsiet',
 'mainpage-description' => 'Hööftsiet',
@@ -530,17 +526,6 @@ En List vun de Spezialsieden gifft dat ünner [[Special:SpecialPages|{{int:speci
 # General errors
 'error' => 'Fehler',
 'databaseerror' => 'Fehler in de Datenbank',
-'dberrortext' => 'Dor weer en Syntaxfehler in de Datenbankaffraag.
-De Grund kann en Programmeerfehler ween
-De letzte Datenbankaffraag weer:
-
-<blockquote><tt>$1</tt></blockquote>
-
-ut de Funkschoon <tt>$2</tt>.
-MySQL mell den Fehler <tt>$3: $4</tt>.',
-'dberrortextcl' => 'Dor weer en Syntaxfehler in de Datenbankaffraag.
-De letzte Datenbankaffraag weer: $1 ut de Funkschoon <tt>$2</tt>.
-MySQL mell den Fehler: <tt>$3: $4</tt>.',
 'laggedslavemode' => 'Wohrschau: Disse Siet is villicht nich mehr op den ne’esten Stand.',
 'readonly' => 'Datenbank is sparrt',
 'enterlockreason' => 'Giff den Grund an, worüm de Datenbank sparrt warrn schall un taxeer, wo lang de Sparr duert',
@@ -589,7 +574,6 @@ Query: $2',
 'editinginterface' => "'''Wohrschau:''' Disse Siet bargt Text, de vun de MediaWiki-Software för ehr Böverflach bruukt warrt.
 Wat du hier ännerst, warkt sik op dat kumplette Wiki ut.
 Wenn du Text översetten wist, de betherto noch gornich översett is, denn maak dat opbest op [//translatewiki.net/wiki/Main_Page?setlang=nds translatewiki.net], dat Översett-Projekt vun MediaWiki.",
-'sqlhidden' => '(SQL-Affraag versteken)',
 'cascadeprotected' => 'Disse Siet is sperrt un kann nich ännert warrn. Dat kummt dorvun dat se in disse {{PLURAL:$1|Siet|Sieden}} inbunnen is, de över Kaskadensperr schuult {{PLURAL:$1|is|sünd}}:
 $2',
 'namespaceprotected' => "Du hest keen Rechten, Sieden in’n Naamruum '''$1''' to ännern.",
@@ -699,7 +683,7 @@ Tööv en Stoot, ehrdat du dat noch wedder versöchst.',
 'newpassword' => 'Nee Passwoort',
 'retypenew' => 'Nee Passwoort (nochmal)',
 'resetpass_submit' => 'Passwoort instellen un inloggen',
-'resetpass_success' => 'Dien Passwoort is mit Spood ännert worrn. Warrst nu anmellt …',
+'changepassword-success' => 'Dien Passwoort is mit Spood ännert worrn. Warrst nu anmellt …',
 'resetpass_forbidden' => 'Passwöör köönt nich ännert warrn.',
 'resetpass-no-info' => 'Du musst anmellt wesen, dat du disse Sied direkt opropen kannst.',
 'resetpass-submit-loggedin' => 'Passwoord ännern',
@@ -1087,7 +1071,6 @@ Seh to, dat de Versionsgeschicht vun’n Artikel vun de Historie her bi de Reeg 
 'searchmenu-legend' => 'Söökoptionen',
 'searchmenu-exists' => "* Sied '''[[$1]]'''",
 'searchmenu-new' => "'''Stell de Sied „[[:$1]]“ in dit Wiki nee op!'''",
-'searchhelp-url' => 'Help:Hülp',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Wies Sieden, de mit disse Bookstaven anfangt]]',
 'searchprofile-articles' => 'Inholdsieden',
 'searchprofile-project' => 'Hülp- un Projektsieden',
@@ -1131,14 +1114,6 @@ Du kannst dat Woord ''all:'' vör dien Söökwoord setten, dat all Naamrüüm (o
 'searchdisabled' => '<p>De Vulltextsöök is wegen Överlast en Stoot deaktiveert. In disse Tied kannst du disse Google-Söök verwennen,
 de aver nich jümmer den aktuellsten Stand weerspegelt.<p>',
 
-# Quickbar
-'qbsettings' => 'Siedenliest',
-'qbsettings-none' => 'Keen',
-'qbsettings-fixedleft' => 'Links, fast',
-'qbsettings-fixedright' => 'Rechts, fast',
-'qbsettings-floatingleft' => 'Links, sweven',
-'qbsettings-floatingright' => 'Rechts, sweven',
-
 # Preferences page
 'preferences' => 'Instellen',
 'mypreferences' => 'För mi Instellen',
@@ -1166,7 +1141,6 @@ de aver nich jümmer den aktuellsten Stand weerspegelt.<p>',
 'resetprefs' => 'Trüchsetten',
 'restoreprefs' => 'All Standardinstellungen wedderhalen',
 'prefs-editing' => 'Grött vun’t Textfeld',
-'prefs-edit-boxsize' => 'Grött vun dat Finster för Ännern.',
 'rows' => 'Regen',
 'columns' => 'Spalten',
 'searchresultshead' => 'Söökresultaten',
@@ -1177,9 +1151,6 @@ de aver nich jümmer den aktuellsten Stand weerspegelt.<p>',
 'recentchangesdays-max' => '(Maximal $1 {{PLURAL:$1|Dag|Daag}})',
 'recentchangescount' => 'Antall Ännern, de wiest warrt:',
 'prefs-help-recentchangescount' => 'Dor höört de Ne’esten Ännern, Versionsgeschichten un Logböker to.',
-'prefs-help-watchlist-token' => 'Wenn du in dit Feld in gehemen Slötel ingiffst, denn warrt för dien Oppasslist en RSS-Feed opstellt.
-Elkeen, de den Slötel kennt, kann denn dien Oppasslist ankieken. Söök di also en good Slötel ut.
-Hier is en Tofalls-Slötel, den du bruken kannst: $1',
 'savedprefs' => 'Allens spiekert.',
 'timezonelegend' => 'Tiedrebeed:',
 'localtime' => 'Oortstied:',
@@ -1210,7 +1181,6 @@ Hier is en Tofalls-Slötel, den du bruken kannst: $1',
 'prefs-reset-intro' => 'Du kannst disse Sied bruken, dien Instellungen al op de Standardinstellung trüchtosetten.
 Dat kann nich wedder ungeschehn maakt warrn.',
 'prefs-emailconfirm-label' => 'E-Mail-Bestätigung:',
-'prefs-textboxsize' => 'Grött vun dat Änner-Finster',
 'youremail' => 'Dien E-Mail (kene Plicht) *',
 'username' => 'Brukernaam:',
 'uid' => 'Bruker-ID:',
@@ -1435,7 +1405,6 @@ Dat kann nich wedder ungeschehn maakt warrn.',
 'recentchangeslinked-feed' => 'Ännern an lenkte Sieden',
 'recentchangeslinked-toolbox' => 'Ännern an lenkte Sieden',
 'recentchangeslinked-title' => 'Ännern an Sieden, de vun „$1“ ut lenkt sünd',
-'recentchangeslinked-noresult' => 'In disse Tiet hett nüms de lenkten Sieden ännert.',
 'recentchangeslinked-summary' => "Disse List wiest de letzten Ännern an de Sieden, de vun en bestimmte Siet ut verlenkt oder in en bestimmte Kategorie in sünd. Sieden, de op diene [[Special:Watchlist|Oppasslist]] staht, sünd '''fett''' schreven.",
 'recentchangeslinked-page' => 'Siet:',
 'recentchangeslinked-to' => 'Wies Ännern op Sieden, de hierher wiest',
@@ -1664,10 +1633,6 @@ Denk dor an, natokieken, wat nich noch annere Sieden na de Vörlagen wiest, ehrd
 'statistics-users-active-desc' => 'Brukers, de {{PLURAL:$1|in de vergahn 24 Stünnen|in de vergahn $1 Daag}} wat daan hebbt',
 'statistics-mostpopular' => 'opmehrst ankekene Sieden',
 
-'disambiguations' => 'Mehrdüdige Begrepen',
-'disambiguationspage' => 'Template:Mehrdüdig_Begreep',
-'disambiguations-text' => 'Disse Sieden wist na Sieden för mehrdüdige Begrepen. Se schöölt lever op de Sieden wiesen, de egentlich meent sünd.<br />Ene Siet warrt as Siet för en mehrdüdigen Begreep ansehn, wenn [[MediaWiki:Disambiguationspage]] na ehr wiest.<br />Lenken ut annere Naamrüüm sünd nich mit in de List.',
-
 'pageswithprop-submit' => 'Los',
 
 'doubleredirects' => 'Dubbelte Wiederleiden',
@@ -1893,10 +1858,9 @@ Mehr Informatschonen över enkelte Rechten staht ünner [[{{MediaWiki:Listgroupr
 'unwatchthispage' => 'Nich mehr oppassen',
 'notanarticle' => 'Keen Artikel',
 'notvisiblerev' => 'Version wegsmeten',
-'watchnochange' => 'Kene Siet op dien Oppasslist is in den wiesten Tietruum ännert worrn.',
 'watchlist-details' => '{{PLURAL:$1|Ene Siet is|$1 Sieden sünd}} op dien Oppasslist (ahn Diskuschoonssieden).',
 'wlheader-enotif' => 'Benarichtigen per E-Mail is anstellt.',
-'wlheader-showupdated' => "* Sieden, de siet dien letzten Besöök ännert worrn sünd, warrt '''fett''' wiest.",
+'wlheader-showupdated' => "Sieden, de siet dien letzten Besöök ännert worrn sünd, warrt '''fett''' wiest.",
 'watchmethod-recent' => 'letzte Ännern no Oppasslist pröven',
 'watchmethod-list' => 'Oppasslist na letzte Ännern nakieken',
 'watchlistcontains' => 'Diene Oppasslist bargt {{PLURAL:$1|ene Siet|$1 Sieden}}.',
@@ -2230,12 +2194,9 @@ Kiek [[Special:BlockList|IP-Blocklist]] för en List vun den blockten Brukern.',
 'ipb_cant_unblock' => 'Fehler: Block-ID $1 nich funnen. De Sperr is villicht al wedder ophoven.',
 'ipb_blocked_as_range' => 'Fehler: De IP-Adress $1 is as Deel vun de IP-Reeg $2 indirekt sperrt worrn. De Sperr trüchnehmen för $1 alleen geiht nich.',
 'ip_range_invalid' => 'Ungüllig IP-Addressrebeet.',
-'blockme' => 'Sperr mi',
 'proxyblocker' => 'Proxyblocker',
-'proxyblocker-disabled' => 'Disse Funkschoon is afstellt.',
 'proxyblockreason' => 'Dien IP-Adress is blockt, vun wegen dat se en apenen Proxy is.
 Kontakteer dien Provider oder diene Systemtechnik un informeer se över dat möögliche Sekerheitsproblem.',
-'proxyblocksuccess' => 'Trech.',
 'sorbsreason' => 'Diene IP-Adress steiht in de DNSBL vun {{SITENAME}} as apen PROXY.',
 'sorbs_create_account_reason' => 'Diene IP-Adress steiht in de DNSBL vun {{SITENAME}} as apen PROXY. Du kannst keen Brukerkonto nee opstellen.',
 'cant-block-while-blocked' => 'Du kannst kene annern Brukers sperren, wenn du sülvst sperrt büst.',
@@ -2528,10 +2489,7 @@ All Transwiki-Import-Akschonen staht later ok in dat [[Special:Log/import|Import
 'pageinfo-category-subcats' => 'TAll vun Ünnerkategorien',
 
 # Skin names
-'skinname-standard' => 'Klassik',
-'skinname-nostalgia' => 'Nostalgie',
 'skinname-cologneblue' => 'Kölsch Blau',
-'skinname-chick' => 'Küken',
 
 # Patrolling
 'markaspatrolleddiff' => 'As nakeken marken',
@@ -2620,7 +2578,7 @@ Wiedere warrt standardmatig nich anwiest:
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Breed',
 'exif-imagelength' => 'Hööchd',
 'exif-bitspersample' => 'Bits je Farvkomponent',
@@ -2738,7 +2696,7 @@ Wiedere warrt standardmatig nich anwiest:
 'exif-languagecode' => 'Spraak',
 'exif-iimcategory' => 'Kategorie',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Unkomprimeert',
 
 'exif-unknowndate' => 'Unbekannt Datum',
@@ -3038,7 +2996,6 @@ Du kannst ok de [[Special:EditWatchlist|normale Sied to’n Ännern]] bruken.',
 'version-other' => 'Annern Kraam',
 'version-mediahandlers' => 'Medien-Handlers',
 'version-hooks' => 'Hooks',
-'version-extension-functions' => 'Extension-Funkschonen',
 'version-parser-extensiontags' => "Parser-Extensions ''(Tags)''",
 'version-parser-function-hooks' => 'Parser-Funkschonen',
 'version-hook-name' => 'Hook-Naam',
@@ -3051,14 +3008,6 @@ Du kannst ok de [[Special:EditWatchlist|normale Sied to’n Ännern]] bruken.',
 'version-software-product' => 'Produkt',
 'version-software-version' => 'Version',
 'version-entrypoints-header-url' => 'URL',
-
-# Special:FilePath
-'filepath' => 'Dateipadd',
-'filepath-page' => 'Datei:',
-'filepath-submit' => 'Los',
-'filepath-summary' => 'Disse Spezialsiet gifft den kumpletten Padd för ene Datei trüch. Biller warrt in vull Oplösen wiest, annere Datein warrt glieks mit dat Programm opropen, dat för de Soort Datein instellt is.
-
-Geev den Dateinaam ahn den Tosatz „{{ns:file}}:“ an.',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Söök na Datein, de jüst gliek sünd',

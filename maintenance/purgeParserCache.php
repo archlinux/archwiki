@@ -22,7 +22,7 @@
  * @ingroup Maintenance
  */
 
-require( __DIR__ . '/Maintenance.php' );
+require __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to remove old objects from the parser cache.
@@ -81,4 +81,4 @@ class PurgeParserCache extends Maintenance {
 	}
 }
 $maintClass = 'PurgeParserCache';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -228,7 +228,7 @@ $messages = array(
 'jumptonavigation' => 'hatudu-dalan',
 'jumptosearch' => 'buka',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Kona-ba {{SITENAME}}',
 'aboutpage' => 'Project:Kona-ba',
 'copyright' => 'Testu pájina nian iha $1 okos.',
@@ -238,7 +238,6 @@ $messages = array(
 'disclaimers' => 'Avisu legál',
 'disclaimerpage' => 'Project:Avisu legál',
 'edithelp' => 'Ajuda kona-ba edita',
-'edithelppage' => 'Help:Edita',
 'helppage' => 'Help:Konteúdu',
 'mainpage' => 'Pájina Mahuluk',
 'mainpage-description' => 'Pájina Mahuluk',
@@ -859,10 +858,7 @@ Ita-nia mudansa la armazenadu seidauk!",
 'siteusers' => "{{PLURAL:$2|uza-na'in|uza-na'in}} {{SITENAME}} nian $1",
 
 # Skin names
-'skinname-standard' => 'Klásiku',
 'skinname-cologneblue' => 'Kolónia azúl',
-'skinname-myskin' => 'MySkin',
-'skinname-chick' => 'Manu',
 
 # Browsing diffs
 'previousdiff' => '←Versaun molok',
@@ -882,7 +878,7 @@ Liña hotu tenke komesa ho *
 Ligasaun uluk iha liña tenke ligasaun bá imajen aat.
 Ligasaun seluk iha liña - ne'e pájina sira iha ne'ebé bele inklui imajen aat.",
 
-# EXIF tags
+# Exif tags
 'exif-make' => 'Fabrikante kámara nian',
 'exif-model' => 'Kámara',
 'exif-artist' => 'Autór',
@@ -962,10 +958,6 @@ Ligasaun seluk iha liña - ne'e pájina sira iha ne'ebé bele inklui imajen aat.
 'version-poweredby-others' => 'ema seluk',
 'version-software-product' => 'Produtu',
 'version-software-version' => 'Versaun',
-
-# Special:FilePath
-'filepath-page' => 'Fail:',
-'filepath-submit' => 'Bá',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-submit' => 'Buka',

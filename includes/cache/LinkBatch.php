@@ -39,7 +39,7 @@ class LinkBatch {
 	protected $caller;
 
 	function __construct( $arr = array() ) {
-		foreach( $arr as $item ) {
+		foreach ( $arr as $item ) {
 			$this->addObj( $item );
 		}
 	}
@@ -98,7 +98,7 @@ class LinkBatch {
 	 * @return bool
 	 */
 	public function isEmpty() {
-		return ($this->getSize() == 0);
+		return $this->getSize() == 0;
 	}
 
 	/**

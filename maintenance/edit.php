@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to make a page edit.
@@ -52,6 +52,8 @@ class EditCLI extends Maintenance {
 		$noRC = $this->hasOption( 'no-rc' );
 
 		$wgUser = User::newFromName( $userName );
+		$context = RequestContext::getMain();
+		$context->setUser( $wgUser );
 		if ( !$wgUser ) {
 			$this->error( "Invalid username", true );
 		}
@@ -63,6 +65,7 @@ class EditCLI extends Maintenance {
 		if ( !$wgTitle ) {
 			$this->error( "Invalid title", true );
 		}
+		$context->setTitle( $wgTitle );
 
 		$page = WikiPage::factory( $wgTitle );
 
@@ -92,4 +95,4 @@ class EditCLI extends Maintenance {
 }
 
 $maintClass = "EditCLI";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

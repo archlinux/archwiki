@@ -5,6 +5,7 @@
  * @file
  * @ingroup Extensions
  */
+// @codingStandardsIgnoreFile
 
 $specialPageAliases = array();
 
@@ -58,7 +59,12 @@ $specialPageAliases['ca'] = array(
 	'Renameuser' => array( 'Reanomena_usuari' ),
 );
 
-/** Czech (česky) */
+/** Chechen (нохчийн) */
+$specialPageAliases['ce'] = array(
+	'Renameuser' => array( 'Декъашхочун_цӀе_хийца' ),
+);
+
+/** Czech (čeština) */
 $specialPageAliases['cs'] = array(
 	'Renameuser' => array( 'Přejmenovat_uživatele' ),
 );
@@ -70,7 +76,7 @@ $specialPageAliases['de'] = array(
 
 /** Zazaki (Zazaki) */
 $specialPageAliases['diq'] = array(
-	'Renameuser' => array( 'NamedayışêKarberi' ),
+	'Renameuser' => array( 'NamedayışéKarberi' ),
 );
 
 /** Lower Sorbian (dolnoserbski) */
@@ -190,7 +196,7 @@ $specialPageAliases['km'] = array(
 
 /** Korean (한국어) */
 $specialPageAliases['ko'] = array(
-	'Renameuser' => array( '이름바꾸기', '계정이름바꾸기', '사용자이름바꾸기' ),
+	'Renameuser' => array( '이름바꾸기', '사용자이름바꾸기', '계정이름바꾸기' ),
 );
 
 /** Colognian (Ripoarisch) */
@@ -336,6 +342,11 @@ $specialPageAliases['tl'] = array(
 /** Turkish (Türkçe) */
 $specialPageAliases['tr'] = array(
 	'Renameuser' => array( 'KullanıcıAdınıDeğiştir', 'KullanıcıİsminiDeğiştir' ),
+);
+
+/** Ukrainian (українська) */
+$specialPageAliases['uk'] = array(
+	'Renameuser' => array( 'Перейменувати_користувача' ),
 );
 
 /** Vietnamese (Tiếng Việt) */

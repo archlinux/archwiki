@@ -23,7 +23,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that outputs page text to stdout.
@@ -62,4 +62,4 @@ class GetTextMaint extends Maintenance {
 }
 
 $maintClass = "GetTextMaint";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

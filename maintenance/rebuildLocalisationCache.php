@@ -29,7 +29,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to rebuild the localisation cache.
@@ -43,6 +43,8 @@ class RebuildLocalisationCache extends Maintenance {
 		$this->addOption( 'force', 'Rebuild all files, even ones not out of date' );
 		$this->addOption( 'threads', 'Fork more than one thread', false, true );
 		$this->addOption( 'outdir', 'Override the output directory (normally $wgCacheDirectory)',
+			false, true );
+		$this->addOption( 'lang', 'Only rebuild these languages, comma separated.',
 			false, true );
 	}
 
@@ -59,7 +61,7 @@ class RebuildLocalisationCache extends Maintenance {
 		# no l10n cache. Break the cycle by forcing $wgLanguageCode = 'en'.
 		global $wgLanguageCode;
 		$wgLanguageCode = 'en';
-		return parent::finalSetup();
+		parent::finalSetup();
 	}
 
 	public function execute() {
@@ -90,7 +92,19 @@ class RebuildLocalisationCache extends Maintenance {
 		}
 		$lc = new LocalisationCache_BulkLoad( $conf );
 
-		$codes = array_keys( Language::fetchLanguageNames( null, 'mwfile' ) );
+		$allCodes = array_keys( Language::fetchLanguageNames( null, 'mwfile' ) );
+		if ( $this->hasOption( 'lang' ) ) {
+			# Validate requested languages
+			$codes = array_intersect( $allCodes,
+				explode( ',', $this->getOption( 'lang' ) ) );
+			# Bailed out if nothing is left
+			if ( count( $codes ) == 0 ) {
+				$this->error( 'None of the languages specified exists.', 1 );
+			}
+		} else {
+			# By default get all languages
+			$codes = $allCodes;
+		}
 		sort( $codes );
 
 		// Initialise and split into chunks
@@ -162,4 +176,4 @@ class RebuildLocalisationCache extends Maintenance {
 }
 
 $maintClass = "RebuildLocalisationCache";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -87,7 +87,7 @@ $messages['arz'] = array(
 	'pdf_page_error' => 'رقم الصفحة ليس فى النطاق',
 );
 
-/** Assamese (অসমীয়া)
+/** Assamese (অসমীয়া)
  * @author Bishnu Saikia
  */
 $messages['as'] = array(
@@ -126,6 +126,19 @@ $messages['ba'] = array(
 	'pdf-desc' => 'PDF файлдарҙы рәсемдәр рәүешендә ҡарау өсөн эшкәртеүсе ҡорал',
 	'pdf_no_metadata' => 'PDF-тан мета-мәғлүмәтте алыу мөмкин түгел',
 	'pdf_page_error' => 'Бит һаны биттәр һанынан ашҡан',
+);
+
+/** Bikol Central (Bikol Central)
+ * @author Geopoet
+ */
+$messages['bcl'] = array(
+	'pdf-desc' => 'An tagapagkapot para sa pagtatanaw kan PDF na mga sagunson na yaon sa moda nin imahe.',
+	'pdf_no_metadata' => 'Dae makakakua nin datos na meta gikan sa PDF.',
+	'pdf_page_error' => 'An numero kan pahina dae tabi abot.',
+	'exif-pdf-producer' => 'Programa nin kombersyon',
+	'exif-pdf-version' => 'Bersyon kan PDF pormat',
+	'exif-pdf-encrypted' => 'Enkriptado',
+	'exif-pdf-pagesize' => 'Sukol kan pahina',
 );
 
 /** Belarusian (Taraškievica orthography) (беларуская (тарашкевіца)‎)
@@ -203,6 +216,7 @@ $messages['ce'] = array(
 	'pdf-desc' => 'Хьажа аттон кечйо PDF-файлаш суьрта куьцехь',
 	'pdf_no_metadata' => 'схьацаэцало чура бух оцу PDF',
 	'pdf_page_error' => 'Агlон терахь дозан чулацамца дац',
+	'exif-pdf-pagesize' => 'АгӀона барам',
 );
 
 /** Sorani Kurdish (کوردی)
@@ -310,6 +324,13 @@ $messages['el'] = array(
 	'pdf_page_error' => 'Αριθμός σελίδας εκτός ορίου',
 );
 
+/** British English (British English)
+ * @author Shirayuki
+ */
+$messages['en-gb'] = array(
+	'exif-pdf-producer' => 'Conversion programme',
+);
+
 /** Esperanto (Esperanto)
  * @author Yekrats
  */
@@ -358,7 +379,7 @@ $messages['et'] = array(
  * @author Wayiran
  */
 $messages['fa'] = array(
-	'pdf-desc' => 'گرداننده‌ای برای مشاهده فایل های پی‌دی‌اف در حالت تصویر',
+	'pdf-desc' => 'گرداننده‌ای برای مشاهدهٔ پرونده‌های پی‌دی‌اف در حالت تصویر',
 	'pdf_no_metadata' => 'نمی‌توان فراداده‌ها را از پی‌دی‌اف گرفت',
 	'pdf_page_error' => 'شماره صفحه در محدوده نیست',
 	'exif-pdf-producer' => 'برنامهٔ مبدل',
@@ -636,7 +657,7 @@ $messages['ksh'] = array(
 	'exif-pdf-pagesize' => 'Dä Sigg(e) ier Jrüüße', # Fuzzy
 );
 
-/** Kirghiz (Кыргызча)
+/** Kyrgyz (Кыргызча)
  * @author Chorobek
  */
 $messages['ky'] = array(
@@ -651,6 +672,7 @@ $messages['lb'] = array(
 	'pdf-desc' => '"Programm" den et erméiglecht PDF-Fichieren als Bild ze kucken',
 	'pdf_no_metadata' => 'Meta-Informatiounen aus dem PDF Dokument kënnen net gelies ginn',
 	'pdf_page_error' => "D'Säitenzuel ass net an dem Beräich.",
+	'exif-pdf-producer' => 'Ëmwandlungsprogramm',
 	'exif-pdf-version' => 'Versioun vum PDF-Format',
 	'exif-pdf-encrypted' => 'Verschlësselt',
 	'exif-pdf-pagesize' => 'Gréisst vun der Säit',
@@ -663,6 +685,13 @@ $messages['li'] = array(
 	'pdf-desc' => "Hanjeltj PDF-bestenj aaf en maak 't meugelik die es aafbeildjing te zeen",
 	'pdf_no_metadata' => 'Kèn gein metadata vanne PDF kriege',
 	'pdf_page_error' => 'paginanómmer besteit neet',
+);
+
+/** لوری (لوری)
+ * @author Mogoeilor
+ */
+$messages['lrc'] = array(
+	'exif-pdf-pagesize' => 'انازه بلگه',
 );
 
 /** Lithuanian (lietuvių)
@@ -705,11 +734,12 @@ $messages['ml'] = array(
 /** Marathi (मराठी)
  * @author Kaustubh
  * @author Sankalpdravid
+ * @author V.narsikar
  */
 $messages['mr'] = array(
 	'pdf-desc' => 'चित्र मोडमध्ये पीडीएफ संचिका पाहण्यासाठी आवश्यक प्रणाली',
 	'pdf_no_metadata' => 'पीडीएफमधून मेटाडाटा घेऊ शकत नाही',
-	'pdf_page_error' => 'पान क्रमांक सीमेमध्ये नाही',
+	'pdf_page_error' => 'पान क्रमांक आवाक्यात नाही',
 );
 
 /** Malay (Bahasa Melayu)
@@ -732,7 +762,7 @@ $messages['mt'] = array(
 	'pdf_page_error' => 'In-numru tal-paġna ma jinsabx fl-intervall',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  * @author Jsoby
  */
 $messages['nb'] = array(
@@ -750,16 +780,16 @@ $messages['nb'] = array(
  * @author Wiki13
  */
 $messages['nl'] = array(
-	'pdf-desc' => 'Handelt PDF-bestanden af en maakt het mogelijk ze als afbeeldingen te bekijken',
-	'pdf_no_metadata' => 'De metadata van het PDF-bestand kan niet uitgelezen worden',
+	'pdf-desc' => 'Handelt pdfbestanden af en maakt het mogelijk ze als afbeeldingen te bekijken',
+	'pdf_no_metadata' => 'De metadata van het pdfbestand kan niet uitgelezen worden',
 	'pdf_page_error' => 'Het paginanummer ligt niet binnen het bereik',
 	'exif-pdf-producer' => 'Conversieprogramma',
-	'exif-pdf-version' => 'Versie van PDF-opmaak',
+	'exif-pdf-version' => 'Versie van pdfopmaak',
 	'exif-pdf-encrypted' => 'Versleuteld',
 	'exif-pdf-pagesize' => 'Papierformaat',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Harald Khan
  * @author Njardarlogar
  */
@@ -782,7 +812,7 @@ $messages['oc'] = array(
 	'exif-pdf-pagesize' => 'Talha de la pagina',
 );
 
-/** Oriya (ଓଡ଼ିଆ)
+/** Oriya (ଓଡ଼ିଆ)
  * @author Jnanaranjan Sahu
  * @author Psubhashish
  */
@@ -1150,11 +1180,12 @@ $messages['zh-hans'] = array(
 );
 
 /** Traditional Chinese (中文（繁體）‎)
+ * @author Justincheng12345
  * @author Mark85296341
  * @author Simon Shek
  */
 $messages['zh-hant'] = array(
-	'pdf-desc' => '在圖片模式中 PDF 檔的處理器',
+	'pdf-desc' => '在圖片模式中查看PDF檔案的處理器',
 	'pdf_no_metadata' => '無法在 PDF 中擷取元數據',
 	'pdf_page_error' => '頁數不在範圍中',
 	'exif-pdf-producer' => '轉換程式',

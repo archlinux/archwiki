@@ -38,7 +38,7 @@ class PNGHandler extends BitmapHandler {
 	function getMetadata( $image, $filename ) {
 		try {
 			$metadata = BitmapMetadataHandler::PNG( $filename );
-		} catch( Exception $e ) {
+		} catch ( Exception $e ) {
 			// Broken file?
 			wfDebug( __METHOD__ . ': ' . $e->getMessage() . "\n" );
 			return self::BROKEN_FILE;
@@ -76,7 +76,9 @@ class PNGHandler extends BitmapHandler {
 		$ser = $image->getMetadata();
 		if ( $ser ) {
 			$metadata = unserialize( $ser );
-			if( $metadata['frameCount'] > 1 ) return true;
+			if ( $metadata['frameCount'] > 1 ) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -105,13 +107,13 @@ class PNGHandler extends BitmapHandler {
 		wfRestoreWarnings();
 
 		if ( !$data || !is_array( $data ) ) {
-			wfDebug( __METHOD__ . ' invalid png metadata' );
+			wfDebug( __METHOD__ . " invalid png metadata\n" );
 			return self::METADATA_BAD;
 		}
 
 		if ( !isset( $data['metadata']['_MW_PNG_VERSION'] )
 			|| $data['metadata']['_MW_PNG_VERSION'] != PNGMetadataExtractor::VERSION ) {
-			wfDebug( __METHOD__ . ' old but compatible png metadata' );
+			wfDebug( __METHOD__ . " old but compatible png metadata\n" );
 			return self::METADATA_COMPATIBLE;
 		}
 		return self::METADATA_GOOD;
@@ -129,8 +131,9 @@ class PNGHandler extends BitmapHandler {
 		$metadata = unserialize( $image->getMetadata() );
 		wfRestoreWarnings();
 
-		if( !$metadata || $metadata['frameCount'] <= 0 )
+		if ( !$metadata || $metadata['frameCount'] <= 0 ) {
 			return $original;
+		}
 
 		$info = array();
 		$info[] = $original;

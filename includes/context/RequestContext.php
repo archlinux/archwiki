@@ -90,7 +90,10 @@ class RequestContext implements IContextSource {
 	 *
 	 * @param Title $t
 	 */
-	public function setTitle( Title $t ) {
+	public function setTitle( $t ) {
+		if ( $t !== null && !$t instanceof Title ) {
+			throw new MWException( __METHOD__ . " expects an instance of Title" );
+		}
 		$this->title = $t;
 		// Erase the WikiPage so a new one with the new title gets created.
 		$this->wikipage = null;
@@ -233,7 +236,7 @@ class RequestContext implements IContextSource {
 	/**
 	 * Set the Language object
 	 *
-	 * @deprecated 1.19 Use setLanguage instead
+	 * @deprecated since 1.19 Use setLanguage instead
 	 * @param Language|string $l Language instance or language code
 	 */
 	public function setLang( $l ) {
@@ -261,7 +264,7 @@ class RequestContext implements IContextSource {
 	}
 
 	/**
-	 * @deprecated 1.19 Use getLanguage instead
+	 * @deprecated since 1.19 Use getLanguage instead
 	 * @return Language
 	 */
 	public function getLang() {
@@ -401,10 +404,10 @@ class RequestContext implements IContextSource {
 	 */
 	public function exportSession() {
 		return array(
-			'ip'        => $this->getRequest()->getIP(),
-			'headers'   => $this->getRequest()->getAllHeaders(),
+			'ip' => $this->getRequest()->getIP(),
+			'headers' => $this->getRequest()->getAllHeaders(),
 			'sessionId' => session_id(),
-			'userId'    => $this->getUser()->getId()
+			'userId' => $this->getUser()->getId()
 		);
 	}
 
@@ -417,7 +420,9 @@ class RequestContext implements IContextSource {
 	 * This will setup the session from the given ID. This is useful when
 	 * background scripts inherit context when acting on behalf of a user.
 	 *
-	 * $param array $params Result of RequestContext::exportSession()
+	 * @note suhosin.session.encrypt may interfere with this method.
+	 *
+	 * @param array $params Result of RequestContext::exportSession()
 	 * @return ScopedCallback
 	 * @throws MWException
 	 * @since 1.21

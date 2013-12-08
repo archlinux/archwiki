@@ -1,16 +1,16 @@
 <?php
+
 /**
  * @group ContentHandler
  * @group Database
  * ^--- important, causes temporary tables to be used instead of the real database
  * @group medium
  **/
-
 class WikiPageTest extends MediaWikiLangTestCase {
 
-	var $pages_to_delete;
+	protected $pages_to_delete;
 
-	function  __construct( $name = null, array $data = array(), $dataName = '' ) {
+	function __construct( $name = null, array $data = array(), $dataName = '' ) {
 		parent::__construct( $name, $data, $dataName );
 
 		$this->tablesUsed = array_merge(
@@ -90,6 +90,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		return $page;
 	}
 
+	/**
+	 * @covers WikiPage::doEditContent
+	 */
 	public function testDoEditContent() {
 		$page = $this->newPage( "WikiPageTest_testDoEditContent" );
 		$title = $page->getTitle();
@@ -143,6 +146,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertEquals( 2, $n, 'pagelinks should contain two links from the page' );
 	}
 
+	/**
+	 * @covers WikiPage::doEdit
+	 */
 	public function testDoEdit() {
 		$this->hideDeprecated( "WikiPage::doEdit" );
 		$this->hideDeprecated( "WikiPage::getText" );
@@ -200,6 +206,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertEquals( 2, $n, 'pagelinks should contain two links from the page' );
 	}
 
+	/**
+	 * @covers WikiPage::doQuickEdit
+	 */
 	public function testDoQuickEdit() {
 		global $wgUser;
 
@@ -216,6 +225,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertEquals( $text, $page->getText() );
 	}
 
+	/**
+	 * @covers WikiPage::doQuickEditContent
+	 */
 	public function testDoQuickEditContent() {
 		global $wgUser;
 
@@ -229,6 +241,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertTrue( $content->equals( $page->getContent() ) );
 	}
 
+	/**
+	 * @covers WikiPage::doDeleteArticle
+	 */
 	public function testDoDeleteArticle() {
 		$page = $this->createPage( "WikiPageTest_testDoDeleteArticle", "[[original text]] foo", CONTENT_MODEL_WIKITEXT );
 		$id = $page->getId();
@@ -253,6 +268,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertEquals( 0, $n, 'pagelinks should contain no more links from the page' );
 	}
 
+	/**
+	 * @covers WikiPage::doDeleteUpdates
+	 */
 	public function testDoDeleteUpdates() {
 		$page = $this->createPage( "WikiPageTest_testDoDeleteArticle", "[[original text]] foo", CONTENT_MODEL_WIKITEXT );
 		$id = $page->getId();
@@ -268,6 +286,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertEquals( 0, $n, 'pagelinks should contain no more links from the page' );
 	}
 
+	/**
+	 * @covers WikiPage::getRevision
+	 */
 	public function testGetRevision() {
 		$page = $this->newPage( "WikiPageTest_testGetRevision" );
 
@@ -283,6 +304,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertEquals( "some text", $rev->getContent()->getNativeData() );
 	}
 
+	/**
+	 * @covers WikiPage::getContent
+	 */
 	public function testGetContent() {
 		$page = $this->newPage( "WikiPageTest_testGetContent" );
 
@@ -296,6 +320,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertEquals( "some text", $content->getNativeData() );
 	}
 
+	/**
+	 * @covers WikiPage::getText
+	 */
 	public function testGetText() {
 		$this->hideDeprecated( "WikiPage::getText" );
 
@@ -311,6 +338,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertEquals( "some text", $text );
 	}
 
+	/**
+	 * @covers WikiPage::getRawText
+	 */
 	public function testGetRawText() {
 		$this->hideDeprecated( "WikiPage::getRawText" );
 
@@ -326,6 +356,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertEquals( "some text", $text );
 	}
 
+	/**
+	 * @covers WikiPage::getContentModel
+	 */
 	public function testGetContentModel() {
 		global $wgContentHandlerUseDB;
 
@@ -339,6 +372,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertEquals( CONTENT_MODEL_JAVASCRIPT, $page->getContentModel() );
 	}
 
+	/**
+	 * @covers WikiPage::getContentHandler
+	 */
 	public function testGetContentHandler() {
 		global $wgContentHandlerUseDB;
 
@@ -352,6 +388,9 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertEquals( 'JavaScriptContentHandler', get_class( $page->getContentHandler() ) );
 	}
 
+	/**
+	 * @covers WikiPage::exists
+	 */
 	public function testExists() {
 		$page = $this->newPage( "WikiPageTest_testExists" );
 		$this->assertFalse( $page->exists() );
@@ -383,6 +422,7 @@ class WikiPageTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideHasViewableContent
+	 * @covers WikiPage::hasViewableContent
 	 */
 	public function testHasViewableContent( $title, $viewable, $create = false ) {
 		$page = $this->newPage( $title );
@@ -406,6 +446,7 @@ class WikiPageTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideGetRedirectTarget
+	 * @covers WikiPage::getRedirectTarget
 	 */
 	public function testGetRedirectTarget( $title, $model, $text, $target ) {
 		$page = $this->createPage( $title, $text, $model );
@@ -421,6 +462,7 @@ class WikiPageTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideGetRedirectTarget
+	 * @covers WikiPage::isRedirect
 	 */
 	public function testIsRedirect( $title, $model, $text, $target ) {
 		$page = $this->createPage( $title, $text, $model );
@@ -537,6 +579,7 @@ class WikiPageTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideIsCountable
+	 * @covers WikiPage::isCountable
 	 */
 	public function testIsCountable( $title, $model, $text, $mode, $expected ) {
 		global $wgContentHandlerUseDB;
@@ -569,12 +612,13 @@ class WikiPageTest extends MediaWikiLangTestCase {
 	public static function provideGetParserOutput() {
 		return array(
 			array( CONTENT_MODEL_WIKITEXT, "hello ''world''\n", "<p>hello <i>world</i></p>" ),
-			// @todo: more...?
+			// @todo more...?
 		);
 	}
 
 	/**
 	 * @dataProvider provideGetParserOutput
+	 * @covers WikiPage::getParserOutput
 	 */
 	public function testGetParserOutput( $model, $text, $expectedHtml ) {
 		$page = $this->createPage( 'WikiPageTest_testGetParserOutput', $text, $model );
@@ -587,9 +631,13 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$text = preg_replace( '!\s*(</p>)!sm', '\1', $text ); # don't let tidy confuse us
 
 		$this->assertEquals( $expectedHtml, $text );
+
 		return $po;
 	}
 
+	/**
+	 * @covers WikiPage::getParserOutput
+	 */
 	public function testGetParserOutput_nonexisting() {
 		static $count = 0;
 		$count++;
@@ -602,13 +650,16 @@ class WikiPageTest extends MediaWikiLangTestCase {
 		$this->assertFalse( $po, "getParserOutput() shall return false for non-existing pages." );
 	}
 
+	/**
+	 * @covers WikiPage::getParserOutput
+	 */
 	public function testGetParserOutput_badrev() {
 		$page = $this->createPage( 'WikiPageTest_testGetParserOutput', "dummy", CONTENT_MODEL_WIKITEXT );
 
 		$opt = new ParserOptions();
 		$po = $page->getParserOutput( $opt, $page->getLatest() + 1234 );
 
-		//@todo: would be neat to also test deleted revision
+		// @todo would be neat to also test deleted revision
 
 		$this->assertFalse( $po, "getParserOutput() shall return false for non-existing revisions." );
 	}
@@ -678,6 +729,7 @@ more stuff
 
 	/**
 	 * @dataProvider dataReplaceSection
+	 * @covers WikiPage::replaceSection
 	 */
 	public function testReplaceSection( $title, $model, $text, $section, $with, $sectionTitle, $expected ) {
 		$this->hideDeprecated( "WikiPage::replaceSection" );
@@ -691,6 +743,7 @@ more stuff
 
 	/**
 	 * @dataProvider dataReplaceSection
+	 * @covers WikiPage::replaceSectionContent
 	 */
 	public function testReplaceSectionContent( $title, $model, $text, $section, $with, $sectionTitle, $expected ) {
 		$page = $this->createPage( $title, $text, $model );
@@ -801,6 +854,7 @@ more stuff
 
 	/**
 	 * @todo FIXME: the above rollback test is better, but it keeps failing in jenkins for some reason.
+	 * @covers WikiPage::doRollback
 	 */
 	public function testDoRollback() {
 		$admin = new User();
@@ -877,6 +931,7 @@ more stuff
 
 	/**
 	 * @dataProvider provideGetAutoSummary
+	 * @covers WikiPage::getAutosummary
 	 */
 	public function testGetAutosummary( $old, $new, $flags, $expected ) {
 		$this->hideDeprecated( "WikiPage::getAutosummary" );
@@ -949,6 +1004,7 @@ more stuff
 
 	/**
 	 * @dataProvider provideGetAutoDeleteReason
+	 * @covers WikiPage::getAutoDeleteReason
 	 */
 	public function testGetAutoDeleteReason( $edits, $expectedResult, $expectedHistory ) {
 		global $wgUser;
@@ -1002,6 +1058,7 @@ more stuff
 
 	/**
 	 * @dataProvider providePreSaveTransform
+	 * @covers WikiPage::preSaveTransform
 	 */
 	public function testPreSaveTransform( $text, $expected ) {
 		$this->hideDeprecated( 'WikiPage::preSaveTransform' );
@@ -1014,5 +1071,4 @@ more stuff
 
 		$this->assertEquals( $expected, $text );
 	}
-
 }

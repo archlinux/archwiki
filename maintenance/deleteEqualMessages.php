@@ -19,7 +19,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that deletes all pages in the MediaWiki namespace
@@ -41,7 +41,7 @@ class DeleteEqualMessages extends Maintenance {
 	 * @param string|bool $langCode See --lang-code option.
 	 */
 	protected function fetchMessageInfo( $langCode, array &$messageInfo ) {
-		global $wgUser, $wgContLang;
+		global $wgContLang;
 
 		if ( $langCode ) {
 			$this->output( "\n... fetching message info for language: $langCode" );
@@ -70,7 +70,13 @@ class DeleteEqualMessages extends Maintenance {
 				$default = wfMessage( $key )->inLanguage( $langCode )->useDatabase( false )->plain();
 
 				$messageInfo['relevantPages']++;
-				if ( $actual === $default ) {
+
+				if (
+					// Exclude messages that are empty by default, such as sitenotice, specialpage
+					// summaries and accesskeys.
+					$default !== '' && $default !== '-' &&
+						$actual === $default
+				) {
 					$hasTalk = isset( $statuses['talks'][$key] );
 					$messageInfo['results'][] = array(
 						'title' => $key . $titleSuffix,
@@ -152,6 +158,7 @@ class DeleteEqualMessages extends Maintenance {
 		if ( !$user ) {
 			$this->error( "Invalid username", true );
 		}
+		global $wgUser;
 		$wgUser = $user;
 
 		// Hide deletions from RecentChanges
@@ -183,4 +190,4 @@ class DeleteEqualMessages extends Maintenance {
 }
 
 $maintClass = "DeleteEqualMessages";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -1,9 +1,16 @@
 <?php
 /**
- * Tests for the PathRouter parsing
+ * Tests for the PathRouter parsing.
+ *
+ * @todo Add covers tags.
  */
 
 class PathRouterTest extends MediaWikiTestCase {
+
+	/**
+	 * @var PathRouter
+	 */
+	protected $basicRouter;
 
 	protected function setUp() {
 		parent::setUp();
@@ -151,18 +158,20 @@ class PathRouterTest extends MediaWikiTestCase {
 		$router->add( array( 'qwerty' => "/qwerty/$1" ), array( 'qwerty' => '$key' ) );
 		$router->add( "/$2/$1", array( 'restricted-to-y' => '$2' ), array( '$2' => 'y' ) );
 
-		foreach ( array(
-					'/Foo' => array( 'title' => 'Foo' ),
-					'/Bar' => array( 'ping' => 'pong' ),
-					'/Baz' => array( 'marco' => 'polo' ),
-					'/asdf-foo' => array( 'title' => 'qwerty-foo' ),
-					'/qwerty-bar' => array( 'title' => 'asdf-bar' ),
-					'/a/Foo' => array( 'title' => 'Foo' ),
-					'/asdf/Foo' => array( 'title' => 'Foo' ),
-					'/qwerty/Foo' => array( 'title' => 'Foo', 'qwerty' => 'qwerty' ),
-					'/baz/Foo' => array( 'title' => 'Foo', 'unrestricted' => 'baz' ),
-					'/y/Foo' => array( 'title' => 'Foo', 'restricted-to-y' => 'y' ),
-				) as $path => $result ) {
+		foreach (
+			array(
+				'/Foo' => array( 'title' => 'Foo' ),
+				'/Bar' => array( 'ping' => 'pong' ),
+				'/Baz' => array( 'marco' => 'polo' ),
+				'/asdf-foo' => array( 'title' => 'qwerty-foo' ),
+				'/qwerty-bar' => array( 'title' => 'asdf-bar' ),
+				'/a/Foo' => array( 'title' => 'Foo' ),
+				'/asdf/Foo' => array( 'title' => 'Foo' ),
+				'/qwerty/Foo' => array( 'title' => 'Foo', 'qwerty' => 'qwerty' ),
+				'/baz/Foo' => array( 'title' => 'Foo', 'unrestricted' => 'baz' ),
+				'/y/Foo' => array( 'title' => 'Foo', 'restricted-to-y' => 'y' ),
+			) as $path => $result
+		) {
 			$this->assertEquals( $router->parse( $path ), $result );
 		}
 	}
@@ -251,5 +260,4 @@ class PathRouterTest extends MediaWikiTestCase {
 		$matches = $router->parse( "/wiki/Foo" );
 		$this->assertEquals( $matches, array( 'title' => 'bar%20$1' ) );
 	}
-
 }

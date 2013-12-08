@@ -16,6 +16,9 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 		$this->handler = ContentHandler::getForModelID( CONTENT_MODEL_WIKITEXT );
 	}
 
+	/**
+	 * @covers WikitextContentHandler::serializeContent
+	 */
 	public function testSerializeContent() {
 		$content = new WikitextContent( 'hello world' );
 
@@ -30,6 +33,9 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 		}
 	}
 
+	/**
+	 * @covers WikitextContentHandler::unserializeContent
+	 */
 	public function testUnserializeContent() {
 		$content = $this->handler->unserializeContent( 'hello world' );
 		$this->assertEquals( 'hello world', $content->getNativeData() );
@@ -45,6 +51,9 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 		}
 	}
 
+	/**
+	 * @covers WikitextContentHandler::makeEmptyContent
+	 */
 	public function testMakeEmptyContent() {
 		$content = $this->handler->makeEmptyContent();
 
@@ -61,7 +70,39 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 	}
 
 	/**
+	 * @dataProvider provideMakeRedirectContent
+	 * @param Title|string $title Title object or string for Title::newFromText()
+	 * @param string $expected Serialized form of the content object built
+	 * @covers WikitextContentHandler::makeRedirectContent
+	 */
+	public function testMakeRedirectContent( $title, $expected ) {
+		global $wgContLang;
+		$wgContLang->resetNamespaces();
+
+		if ( is_string( $title ) ) {
+			$title = Title::newFromText( $title );
+		}
+		$content = $this->handler->makeRedirectContent( $title );
+		$this->assertEquals( $expected, $content->serialize() );
+	}
+
+	public static function provideMakeRedirectContent() {
+		return array(
+			array( 'Hello', '#REDIRECT [[Hello]]' ),
+			array( 'Template:Hello', '#REDIRECT [[Template:Hello]]' ),
+			array( 'Hello#section', '#REDIRECT [[Hello#section]]' ),
+			array( 'user:john_doe#section', '#REDIRECT [[User:John doe#section]]' ),
+			array( 'MEDIAWIKI:FOOBAR', '#REDIRECT [[MediaWiki:FOOBAR]]' ),
+			array( 'Category:Foo', '#REDIRECT [[:Category:Foo]]' ),
+			array( Title::makeTitle( NS_MAIN, 'en:Foo' ), '#REDIRECT [[en:Foo]]' ),
+			array( Title::makeTitle( NS_MAIN, 'Foo', '', 'en' ), '#REDIRECT [[:en:Foo]]' ),
+			array( Title::makeTitle( NS_MAIN, 'Bar', 'fragment', 'google' ), '#REDIRECT [[google:Bar#fragment]]' ),
+		);
+	}
+
+	/**
 	 * @dataProvider dataIsSupportedFormat
+	 * @covers WikitextContentHandler::isSupportedFormat
 	 */
 	public function testIsSupportedFormat( $format, $supported ) {
 		$this->assertEquals( $supported, $this->handler->isSupportedFormat( $format ) );
@@ -101,6 +142,7 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider dataMerge3
+	 * @covers WikitextContentHandler::merge3
 	 */
 	public function testMerge3( $old, $mine, $yours, $expected ) {
 		$this->checkHasDiff3();
@@ -158,6 +200,7 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider dataGetAutosummary
+	 * @covers WikitextContentHandler::getAutosummary
 	 */
 	public function testGetAutosummary( $old, $new, $flags, $expected ) {
 		$oldContent = is_null( $old ) ? null : new WikitextContent( $old );
@@ -181,5 +224,4 @@ class WikitextContentHandlerTest extends MediaWikiLangTestCase {
 	/*
 	public function testGetUndoContent( Revision $current, Revision $undo, Revision $undoafter = null ) {}
 	*/
-
 }

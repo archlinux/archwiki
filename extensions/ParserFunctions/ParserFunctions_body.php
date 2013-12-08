@@ -360,9 +360,6 @@ class ExtParserFunctions {
 				return $else;
 			} else {
 				$pdbk = $title->getPrefixedDBkey();
-				if ( !$parser->incrementExpensiveFunctionCount() ) {
-					return $else;
-				}
 				$lc = LinkCache::singleton();
 				$id = $lc->getGoodLinkID( $pdbk );
 				if ( $id != 0 ) {
@@ -370,6 +367,9 @@ class ExtParserFunctions {
 					return $then;
 				} elseif ( $lc->isBadLink( $pdbk ) ) {
 					$parser->mOutput->addLink( $title, 0 );
+					return $else;
+				}
+				if (  !$parser->incrementExpensiveFunctionCount() ) {
 					return $else;
 				}
 				$id = $title->getArticleID();

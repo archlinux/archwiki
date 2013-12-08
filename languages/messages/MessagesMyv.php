@@ -216,9 +216,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Невтемс зяро теицятнеде, конат аравтызь лопанть эсест ванома лемрисьментень',
 'tog-oldsig' => 'Уликс кедьпутовксось:',
 'tog-fancysig' => 'Лемпутовксось прок викитекст (сонсь теевиця сюлмавома певтеме)',
-'tog-externaleditor' => 'Нолдамс тевс ушоёнонь витнемканть, зярс лиякс апак аравто (ансяк тевень содыйтненень, арсий машинасот эрявить башка ёнкст-аравтомат [//www.mediawiki.org/wiki/Manual:External_editors подробнее])',
-'tog-externaldiff' => 'Нолдамс тевс ушоёнонь diff, зярс лиякс апак аравто (ансяк тевень содыйтненень, арсий машинасот эрявить башка ёнкст-аравтомат [//www.mediawiki.org/wiki/Manual:External_editors подробнее])',
-'tog-showjumplinks' => 'Меремс "тёкадемс" маласпонгомань сюлмавомапетнес',
 'tog-uselivepreview' => 'Максомс эряй васнянь невтевкс (JavaScript) (Варчамонь)',
 'tog-forceeditsummary' => 'Невтик монень, мезе сёрмадомс витнемадо-петнемадо ёвтамонь вальминентень',
 'tog-watchlisthideown' => 'Кекшить монь теевть витневкстнэнь ванома лемрисьменть эйстэ',
@@ -406,7 +403,7 @@ $messages = array(
 'jumptosearch' => 'вешнэме',
 'pool-errorunknown' => 'Апак содань ильведькс',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} ланга',
 'aboutpage' => 'Project:Эстэдензэ',
 'copyright' => '$1-сто муят мезе тесэ.',
@@ -416,7 +413,6 @@ $messages = array(
 'disclaimers' => 'Видечинь кортамотне',
 'disclaimerpage' => 'Project:Видечинь прякс кортнема',
 'edithelp' => 'Витнемань-петнемань лезкс',
-'edithelppage' => 'Help:Витнема-петнема',
 'helppage' => 'Help:Лопась мезе кирди',
 'mainpage' => 'Прякслопа',
 'mainpage-description' => 'Прякслопа',
@@ -514,7 +510,6 @@ $messages = array(
 'actionthrottled' => 'Тев тееманть курокксчизэ киртязь',
 'protectedpagetext' => 'Те лопась панжома экшсэ, илязо понго витнемс-петнемс эли лия тевс.',
 'viewsourcetext' => 'Те лопанть лисьмапрясь маштови ваномскак, лангстонзо саемс копияяк:',
-'sqlhidden' => '(SQL вешнемась кекшезь)',
 'namespaceprotected' => "'''$1''' лемпотмосонть арась видечить витнемс-петнемс лопатнесэ.",
 'ns-specialprotected' => '{{ns:special}} лем марто лопатне а витневить-петневить.',
 'titleprotected' => "Те коняксонть ванстызе [[Теиця:$1|$1]], кияк иляссо тее.
@@ -531,7 +526,6 @@ $messages = array(
 'yourpassword' => 'Салава валот:',
 'yourpasswordagain' => 'Омбоцеде сёрмадык кирдицянь леметь:',
 'remembermypassword' => 'Ледстемс совамом те бравзерсэнть (сех кувать $1 {{PLURAL:$1|чи|чить}})',
-'securelogin-stick-https' => 'Кирдемс "HTTPS" сюлмавкс совамодо мейлеяк',
 'yourdomainname' => 'Эсеть доменэть:',
 'password-change-forbidden' => 'Те викисэнть а полавтсак салававалот.',
 'login' => 'Совамо',
@@ -606,7 +600,7 @@ $messages = array(
 'newpassword' => 'Од совамо валот:',
 'retypenew' => 'Сёрмадык омбоцеде совамо валот:',
 'resetpass_submit' => 'Тештик совамо валот ды совак',
-'resetpass_success' => 'Совамо валот полавтовсь теть! Совавтыть эйсэть системас...',
+'changepassword-success' => 'Совамо валот полавтовсь теть! Совавтыть эйсэть системас...',
 'resetpass_forbidden' => 'Совамо валтнэ а полавтовить',
 'resetpass-submit-loggedin' => 'Полавтомс совамо валот',
 'resetpass-submit-cancel' => 'Саемс мекев',
@@ -855,7 +849,6 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'searchmenu-legend' => 'Вешнемань аравтомкат',
 'searchmenu-exists' => "'''Те викисэнть ули \"[[\$1]]\" лем марто лопа'''",
 'searchmenu-new' => "'''Шкик \"[[:\$1]]\" лопанть те викисэнть!'''",
-'searchhelp-url' => 'Help:Лопась мезе кирди',
 'searchprofile-articles' => 'Потмокс лопат',
 'searchprofile-project' => 'Лезкс ды проекттэ лопат',
 'searchprofile-images' => 'Мультимедия',
@@ -892,14 +885,6 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'powersearch-togglenone' => 'Арась мезе невтемс',
 'search-external' => 'Ушо йондонь вешнема',
 
-# Quickbar
-'qbsettings' => 'Навигациянь лазнэ',
-'qbsettings-none' => 'Арась мезе невтемс',
-'qbsettings-fixedleft' => 'Керш ёндо кирдезь',
-'qbsettings-fixedright' => 'Вить ёндо кирдезь',
-'qbsettings-floatingleft' => 'Керш ёнга уи',
-'qbsettings-floatingright' => 'Вить ёнга уи',
-
 # Preferences page
 'preferences' => 'Аравтомат',
 'mypreferences' => 'Аравтомат',
@@ -929,7 +914,6 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'resetprefs' => 'Нардамс апак вансто полавтнемат',
 'restoreprefs' => 'Велявтомс мекев весе ушодкс ладсематнень',
 'prefs-editing' => 'Витнема-петнема',
-'prefs-edit-boxsize' => 'Витнема-петнема вальманть сэрензэ-келензэ.',
 'rows' => 'Валчилькстнэ (строкатне):',
 'columns' => 'Палманть:',
 'searchresultshead' => 'Вешнема',
@@ -958,7 +942,6 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'prefs-namespaces' => 'Лем потмот',
 'default' => 'зярдо лиякс апак йовта',
 'prefs-files' => 'Файлат',
-'prefs-textboxsize' => 'Витнемань-петнемань вальманть покшолмазо',
 'youremail' => 'Е-сёрма:',
 'username' => 'Теицянь леметь:',
 'uid' => 'Теицянь ID:',
@@ -1117,7 +1100,6 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'recentchangeslinked-feed' => 'Сюлмавозь лиякстоматне',
 'recentchangeslinked-toolbox' => 'Сюлмавозь лиякстоматне',
 'recentchangeslinked-title' => 'Полавтнемат-лиякстомтомат конат кандовить теватезэнь "$1"',
-'recentchangeslinked-noresult' => 'Максозь шкастонть кодаткак полавтовомат сюлмавозь лопатнесэ арасельть.',
 'recentchangeslinked-summary' => "Тесэ максозь меельсе шкань витнемат-петнемат, конат теезельть башка максозь лопа вельде (эли категорияс совавтовиця тевнес). Ванома лопасот лопатне максозь '''эчкстэ тештезь'''",
 'recentchangeslinked-page' => 'Лопанть лемезэ:',
 'recentchangeslinked-to' => 'Тень таркас невтить те лопанть марто сюлмазь лопатнесэ полавтнематнень',
@@ -1293,9 +1275,6 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'statistics-views-peredit' => 'Зяроксть ванозь апак витне апак петне',
 'statistics-users-active' => 'Чистэ лисийть-совийть',
 'statistics-mostpopular' => 'Весемеде сеедьстэ ванозь лопат',
-
-'disambiguations' => 'Лопат, конатне сюлмазь чарькодевтемань ламо терминэнь лопас',
-'disambiguationspage' => 'Template:смустень коряс явома',
 
 'doubleredirects' => 'Кавксть ютавтозь',
 'double-redirect-fixer' => 'Печтевтемс витнема-петнема пель',
@@ -1659,8 +1638,6 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'block-log-flags-noemail' => 'е-сёрма озавтозь саймес',
 'block-log-flags-hiddenname' => 'лисиенть-совиенть лемезэ кекшезь',
 'ipb_already_blocked' => '"$1" уш саймас саезь',
-'blockme' => 'Озавтомак саймес',
-'proxyblocksuccess' => 'Озавтовсь.',
 
 # Developer tools
 'lockdb' => 'Сёлгомс датабазанть',
@@ -1856,10 +1833,6 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'pageinfo-authors' => 'Весемезэ зяро авторонзо',
 
 # Skin names
-'skinname-standard' => 'Классикань',
-'skinname-nostalgia' => 'ОдПингеньМазы',
-'skinname-myskin' => 'ЭсьМелемКоряс',
-'skinname-simple' => 'Шожда',
 'skinname-modern' => 'НееньШкань',
 
 # Patrolling
@@ -1928,7 +1901,7 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Келе',
 'exif-imagelength' => 'Сэрь',
 'exif-bitspersample' => 'Эрьва компонентс зяро битт',
@@ -1980,7 +1953,7 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'exif-languagecode' => 'Кель',
 'exif-iimcategory' => 'Явовкс',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Апак сювордо',
 
 'exif-unknowndate' => 'Апак содань чи',
@@ -2187,11 +2160,6 @@ IP-тешкстэть — $3, саймас совавтоманть ID-сь — 
 'version-software' => 'Нолдань программат',
 'version-software-product' => 'Шкавкс-нолдавкс',
 'version-software-version' => 'Верзия',
-
-# Special:FilePath
-'filepath' => 'Файлас яннэ',
-'filepath-page' => 'Файлась:',
-'filepath-submit' => 'Ютак',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Вешнэмс кавтаське файлат',

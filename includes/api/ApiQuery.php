@@ -64,6 +64,7 @@ class ApiQuery extends ApiBase {
 	 */
 	private static $QueryListModules = array(
 		'allcategories' => 'ApiQueryAllCategories',
+		'allfileusages' => 'ApiQueryAllLinks',
 		'allimages' => 'ApiQueryAllImages',
 		'alllinks' => 'ApiQueryAllLinks',
 		'allpages' => 'ApiQueryAllPages',
@@ -102,6 +103,7 @@ class ApiQuery extends ApiBase {
 		'allmessages' => 'ApiQueryAllMessages',
 		'siteinfo' => 'ApiQuerySiteinfo',
 		'userinfo' => 'ApiQueryUserInfo',
+		'filerepoinfo' => 'ApiQueryFileRepoInfo',
 	);
 
 	/**
@@ -382,7 +384,6 @@ class ApiQuery extends ApiBase {
 		$modules = $allModules;
 		$tmp = $completeModules;
 		$wasPosted = $this->getRequest()->wasPosted();
-		$main = $this->getMain();
 
 		/** @var $module ApiQueryBase */
 		foreach ( $allModules as $moduleName => $module ) {
@@ -513,7 +514,7 @@ class ApiQuery extends ApiBase {
 			ApiQueryBase::addTitleInfo( $vals, $title );
 			$vals['special'] = '';
 			if ( $title->isSpecialPage() &&
-					!SpecialPageFactory::exists( $title->getDbKey() ) ) {
+					!SpecialPageFactory::exists( $title->getDBkey() ) ) {
 				$vals['missing'] = '';
 			} elseif ( $title->getNamespace() == NS_MEDIA &&
 					!wfFindFile( $title ) ) {
@@ -697,7 +698,7 @@ class ApiQuery extends ApiBase {
 	}
 
 	public function getParamDescription() {
-		return $this->getPageSet()->getParamDescription() + array(
+		return $this->getPageSet()->getFinalParamDescription() + array(
 			'prop' => 'Which properties to get for the titles/revisions/pageids. Module help is available below',
 			'list' => 'Which lists to get. Module help is available below',
 			'meta' => 'Which metadata to get about the site. Module help is available below',
@@ -723,7 +724,7 @@ class ApiQuery extends ApiBase {
 	public function getPossibleErrors() {
 		return array_merge(
 			parent::getPossibleErrors(),
-			$this->getPageSet()->getPossibleErrors()
+			$this->getPageSet()->getFinalPossibleErrors()
 		);
 	}
 
@@ -736,6 +737,7 @@ class ApiQuery extends ApiBase {
 
 	public function getHelpUrls() {
 		return array(
+			'https://www.mediawiki.org/wiki/API:Query',
 			'https://www.mediawiki.org/wiki/API:Meta',
 			'https://www.mediawiki.org/wiki/API:Properties',
 			'https://www.mediawiki.org/wiki/API:Lists',

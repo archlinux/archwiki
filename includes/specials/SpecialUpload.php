@@ -90,10 +90,9 @@ class SpecialUpload extends SpecialPage {
 
 		// Guess the desired name from the filename if not provided
 		$this->mDesiredDestName = $request->getText( 'wpDestFile' );
-		if( !$this->mDesiredDestName && $request->getFileName( 'wpUploadFile' ) !== null ) {
+		if ( !$this->mDesiredDestName && $request->getFileName( 'wpUploadFile' ) !== null ) {
 			$this->mDesiredDestName = $request->getFileName( 'wpUploadFile' );
 		}
-		$this->mComment = $request->getText( 'wpUploadDescription' );
 		$this->mLicense = $request->getText( 'wpLicense' );
 
 		$this->mDestWarningAck = $request->getText( 'wpDestFileWarningAck' );
@@ -104,6 +103,14 @@ class SpecialUpload extends SpecialPage {
 		$this->mCopyrightSource = $request->getText( 'wpUploadSource' );
 
 		$this->mForReUpload = $request->getBool( 'wpForReUpload' ); // updating a file
+
+		$commentDefault = '';
+		$commentMsg = wfMessage( 'upload-default-description' )->inContentLanguage();
+		if ( !$this->mForReUpload && !$commentMsg->isDisabled() ) {
+			$commentDefault = $commentMsg->plain();
+		}
+		$this->mComment = $request->getText( 'wpUploadDescription', $commentDefault );
+
 		$this->mCancelUpload = $request->getCheck( 'wpCancelUpload' )
 			|| $request->getCheck( 'wpReUpload' ); // b/w compat
 
@@ -135,19 +142,19 @@ class SpecialUpload extends SpecialPage {
 		$this->outputHeader();
 
 		# Check uploading enabled
-		if( !UploadBase::isEnabled() ) {
+		if ( !UploadBase::isEnabled() ) {
 			throw new ErrorPageError( 'uploaddisabled', 'uploaddisabledtext' );
 		}
 
 		# Check permissions
 		$user = $this->getUser();
 		$permissionRequired = UploadBase::isAllowed( $user );
-		if( $permissionRequired !== true ) {
+		if ( $permissionRequired !== true ) {
 			throw new PermissionsError( $permissionRequired );
 		}
 
 		# Check blocks
-		if( $user->isBlocked() ) {
+		if ( $user->isBlocked() ) {
 			throw new UserBlockedError( $user->getBlock() );
 		}
 
@@ -172,7 +179,7 @@ class SpecialUpload extends SpecialPage {
 			$this->processUpload();
 		} else {
 			# Backwards compatibility hook
-			if( !wfRunHooks( 'UploadForm:initial', array( &$this ) ) ) {
+			if ( !wfRunHooks( 'UploadForm:initial', array( &$this ) ) ) {
 				wfDebug( "Hook 'UploadForm:initial' broke output of the upload form" );
 				return;
 			}
@@ -214,6 +221,8 @@ class SpecialUpload extends SpecialPage {
 	 */
 	protected function getUploadForm( $message = '', $sessionKey = '', $hideIgnoreWarning = false ) {
 		# Initialize form
+		$context = new DerivativeContext( $this->getContext() );
+		$context->setTitle( $this->getTitle() ); // Remove subpage
 		$form = new UploadForm( array(
 			'watch' => $this->getWatchCheck(),
 			'forreupload' => $this->mForReUpload,
@@ -225,11 +234,10 @@ class SpecialUpload extends SpecialPage {
 			'texttop' => $this->uploadFormTextTop,
 			'textaftersummary' => $this->uploadFormTextAfterSummary,
 			'destfile' => $this->mDesiredDestName,
-		), $this->getContext() );
-		$form->setTitle( $this->getTitle() );
+		), $context );
 
 		# Check the token, but only if necessary
-		if(
+		if (
 			!$this->mTokenOk && !$this->mCancelUpload &&
 			( $this->mUpload && $this->mUploadClicked )
 		) {
@@ -275,7 +283,7 @@ class SpecialUpload extends SpecialPage {
 		$title = Title::makeTitleSafe( NS_FILE, $this->mDesiredDestName );
 		$user = $this->getUser();
 		// Show a subtitle link to deleted revisions (to sysops et al only)
-		if( $title instanceof Title ) {
+		if ( $title instanceof Title ) {
 			$count = $title->isDeleted();
 			if ( $count > 0 && $user->isAllowed( 'deletedhistory' ) ) {
 				$restorelink = Linker::linkKnown(
@@ -333,15 +341,15 @@ class SpecialUpload extends SpecialPage {
 
 		$warningHtml = '<h2>' . $this->msg( 'uploadwarning' )->escaped() . "</h2>\n"
 			. '<ul class="warning">';
-		foreach( $warnings as $warning => $args ) {
-			if( $warning == 'badfilename' ) {
+		foreach ( $warnings as $warning => $args ) {
+			if ( $warning == 'badfilename' ) {
 				$this->mDesiredDestName = Title::makeTitle( NS_FILE, $args )->getText();
 			}
-			if( $warning == 'exists' ) {
+			if ( $warning == 'exists' ) {
 				$msg = "\t<li>" . self::getExistsWarning( $args ) . "</li>\n";
-			} elseif( $warning == 'duplicate' ) {
-				$msg = self::getDupeWarning( $args );
-			} elseif( $warning == 'duplicate-archive' ) {
+			} elseif ( $warning == 'duplicate' ) {
+				$msg = $this->getDupeWarning( $args );
+			} elseif ( $warning == 'duplicate-archive' ) {
 				$msg = "\t<li>" . $this->msg( 'file-deleted-duplicate',
 						Title::makeTitle( NS_FILE, $args )->getPrefixedText() )->parse()
 					. "</li>\n";
@@ -387,12 +395,12 @@ class SpecialUpload extends SpecialPage {
 	protected function processUpload() {
 		// Fetch the file if required
 		$status = $this->mUpload->fetchFile();
-		if( !$status->isOK() ) {
+		if ( !$status->isOK() ) {
 			$this->showUploadError( $this->getOutput()->parse( $status->getWikiText() ) );
 			return;
 		}
 
-		if( !wfRunHooks( 'UploadForm:BeforeProcessing', array( &$this ) ) ) {
+		if ( !wfRunHooks( 'UploadForm:BeforeProcessing', array( &$this ) ) ) {
 			wfDebug( "Hook 'UploadForm:BeforeProcessing' broke processing the file.\n" );
 			// This code path is deprecated. If you want to break upload processing
 			// do so by hooking into the appropriate hooks in UploadBase::verifyUpload
@@ -411,7 +419,7 @@ class SpecialUpload extends SpecialPage {
 
 		// Verify permissions for this title
 		$permErrors = $this->mUpload->verifyTitlePermissions( $this->getUser() );
-		if( $permErrors !== true ) {
+		if ( $permErrors !== true ) {
 			$code = array_shift( $permErrors[0] );
 			$this->showRecoverableUploadError( $this->msg( $code, $permErrors[0] )->parse() );
 			return;
@@ -420,15 +428,15 @@ class SpecialUpload extends SpecialPage {
 		$this->mLocalFile = $this->mUpload->getLocalFile();
 
 		// Check warnings if necessary
-		if( !$this->mIgnoreWarning ) {
+		if ( !$this->mIgnoreWarning ) {
 			$warnings = $this->mUpload->checkWarnings();
-			if( $this->showUploadWarning( $warnings ) ) {
+			if ( $this->showUploadWarning( $warnings ) ) {
 				return;
 			}
 		}
 
 		// Get the page text if this is not a reupload
-		if( !$this->mForReUpload ) {
+		if ( !$this->mForReUpload ) {
 			$pageText = self::getInitialPageText( $this->mComment, $this->mLicense,
 				$this->mCopyrightStatus, $this->mCopyrightSource );
 		} else {
@@ -456,15 +464,14 @@ class SpecialUpload extends SpecialPage {
 	 */
 	public static function getInitialPageText( $comment = '', $license = '', $copyStatus = '', $source = '' ) {
 		global $wgUseCopyrightUpload, $wgForceUIMsgAsContentMsg;
-		$wgForceUIMsgAsContentMsg = (array) $wgForceUIMsgAsContentMsg;
 
 		$msg = array();
 		/* These messages are transcluded into the actual text of the description page.
 		 * Thus, forcing them as content messages makes the upload to produce an int: template
 		 * instead of hardcoding it there in the uploader language.
 		 */
-		foreach( array( 'license-header', 'filedesc', 'filestatus', 'filesource' ) as $msgName ) {
-			if ( in_array( $msgName, $wgForceUIMsgAsContentMsg ) ) {
+		foreach ( array( 'license-header', 'filedesc', 'filestatus', 'filesource' ) as $msgName ) {
+			if ( in_array( $msgName, (array)$wgForceUIMsgAsContentMsg ) ) {
 				$msg[$msgName] = "{{int:$msgName}}";
 			} else {
 				$msg[$msgName] = wfMessage( $msgName )->inContentLanguage()->text();
@@ -505,13 +512,13 @@ class SpecialUpload extends SpecialPage {
 	 * @return Bool|String
 	 */
 	protected function getWatchCheck() {
-		if( $this->getUser()->getOption( 'watchdefault' ) ) {
+		if ( $this->getUser()->getOption( 'watchdefault' ) ) {
 			// Watch all edits!
 			return true;
 		}
 
 		$local = wfLocalFile( $this->mDesiredDestName );
-		if( $local && $local->exists() ) {
+		if ( $local && $local->exists() ) {
 			// We're uploading a new version of an existing file.
 			// No creation, so don't watch it if we're not already.
 			return $this->getUser()->isWatched( $local->getTitle() );
@@ -530,7 +537,7 @@ class SpecialUpload extends SpecialPage {
 	protected function processVerificationError( $details ) {
 		global $wgFileExtensions;
 
-		switch( $details['status'] ) {
+		switch ( $details['status'] ) {
 
 			/** Statuses that only require name changing **/
 			case UploadBase::MIN_LENGTH_PARTNAME:
@@ -564,8 +571,9 @@ class SpecialUpload extends SpecialPage {
 				} else {
 					$msg->params( $details['finalExt'] );
 				}
-				$msg->params( $this->getLanguage()->commaList( $wgFileExtensions ),
-					count( $wgFileExtensions ) );
+				$extensions = array_unique( $wgFileExtensions );
+				$msg->params( $this->getLanguage()->commaList( $extensions ),
+					count( $extensions ) );
 
 				// Add PLURAL support for the first parameter. This results
 				// in a bit unlogical parameter sequence, but does not break
@@ -635,10 +643,10 @@ class SpecialUpload extends SpecialPage {
 		$filename = $file->getTitle()->getPrefixedText();
 		$warning = '';
 
-		if( $exists['warning'] == 'exists' ) {
+		if ( $exists['warning'] == 'exists' ) {
 			// Exact match
 			$warning = wfMessage( 'fileexists', $filename )->parse();
-		} elseif( $exists['warning'] == 'page-exists' ) {
+		} elseif ( $exists['warning'] == 'page-exists' ) {
 			// Page exists but file does not
 			$warning = wfMessage( 'filepageexists', $filename )->parse();
 		} elseif ( $exists['warning'] == 'exists-normalized' ) {
@@ -674,42 +682,19 @@ class SpecialUpload extends SpecialPage {
 	}
 
 	/**
-	 * Get a list of warnings
-	 *
-	 * @param string $filename local filename, e.g. 'file exists', 'non-descriptive filename'
-	 * @return Array: list of warning messages
-	 */
-	public static function ajaxGetExistsWarning( $filename ) {
-		$file = wfFindFile( $filename );
-		if( !$file ) {
-			// Force local file so we have an object to do further checks against
-			// if there isn't an exact match...
-			$file = wfLocalFile( $filename );
-		}
-		$s = '&#160;';
-		if ( $file ) {
-			$exists = UploadBase::getExistsWarning( $file );
-			$warning = self::getExistsWarning( $exists );
-			if ( $warning !== '' ) {
-				$s = "<div>$warning</div>";
-			}
-		}
-		return $s;
-	}
-
-	/**
 	 * Construct a warning and a gallery from an array of duplicate files.
 	 * @param $dupes array
 	 * @return string
 	 */
-	public static function getDupeWarning( $dupes ) {
+	public function getDupeWarning( $dupes ) {
 		if ( !$dupes ) {
 			return '';
 		}
 
-		$gallery = new ImageGallery;
+		$gallery = ImageGalleryBase::factory();
+		$gallery->setContext( $this->getContext() );
 		$gallery->setShowBytes( false );
-		foreach( $dupes as $file ) {
+		foreach ( $dupes as $file ) {
 			$gallery->add( $file->getTitle() );
 		}
 		return '<li>' .
@@ -843,10 +828,13 @@ class UploadForm extends HTMLForm {
 			'upload-type' => 'File',
 			'radio' => &$radio,
 			'help' => $this->msg( 'upload-maxfilesize',
-					$this->getContext()->getLanguage()->formatSize( $this->mMaxUploadSize['file'] )
-				)->parse() . ' ' . $this->msg( 'upload_source_file' )->escaped(),
+				$this->getContext()->getLanguage()->formatSize( $this->mMaxUploadSize['file'] ) )
+				->parse() .
+				$this->msg( 'word-separator' )->escaped() .
+				$this->msg( 'upload_source_file' )->escaped(),
 			'checked' => $selectedSourceType == 'file',
 		);
+
 		if ( $canUploadByUrl ) {
 			$this->mMaxUploadSize['url'] = UploadBase::getMaxUploadSize( 'url' );
 			$descriptor['UploadFileURL'] = array(
@@ -857,8 +845,10 @@ class UploadForm extends HTMLForm {
 				'upload-type' => 'url',
 				'radio' => &$radio,
 				'help' => $this->msg( 'upload-maxfilesize',
-						$this->getContext()->getLanguage()->formatSize( $this->mMaxUploadSize['url'] )
-					)->parse() . ' ' . $this->msg( 'upload_source_url' )->escaped(),
+					$this->getContext()->getLanguage()->formatSize( $this->mMaxUploadSize['url'] ) )
+					->parse() .
+					$this->msg( 'word-separator' )->escaped() .
+					$this->msg( 'upload_source_url' )->escaped(),
 				'checked' => $selectedSourceType == 'url',
 			);
 		}
@@ -884,21 +874,21 @@ class UploadForm extends HTMLForm {
 		global $wgCheckFileExtensions, $wgStrictFileExtensions,
 		$wgFileExtensions, $wgFileBlacklist;
 
-		if( $wgCheckFileExtensions ) {
-			if( $wgStrictFileExtensions ) {
+		if ( $wgCheckFileExtensions ) {
+			if ( $wgStrictFileExtensions ) {
 				# Everything not permitted is banned
 				$extensionsList =
 					'<div id="mw-upload-permitted">' .
-					$this->msg( 'upload-permitted', $this->getContext()->getLanguage()->commaList( $wgFileExtensions ) )->parseAsBlock() .
+					$this->msg( 'upload-permitted', $this->getContext()->getLanguage()->commaList( array_unique( $wgFileExtensions ) ) )->parseAsBlock() .
 					"</div>\n";
 			} else {
 				# We have to list both preferred and prohibited
 				$extensionsList =
 					'<div id="mw-upload-preferred">' .
-						$this->msg( 'upload-preferred', $this->getContext()->getLanguage()->commaList( $wgFileExtensions ) )->parseAsBlock() .
+						$this->msg( 'upload-preferred', $this->getContext()->getLanguage()->commaList( array_unique( $wgFileExtensions ) ) )->parseAsBlock() .
 					"</div>\n" .
 					'<div id="mw-upload-prohibited">' .
-						$this->msg( 'upload-prohibited', $this->getContext()->getLanguage()->commaList( $wgFileBlacklist ) )->parseAsBlock() .
+						$this->msg( 'upload-prohibited', $this->getContext()->getLanguage()->commaList( array_unique( $wgFileBlacklist ) ) )->parseAsBlock() .
 					"</div>\n";
 			}
 		} else {

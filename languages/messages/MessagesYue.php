@@ -13,6 +13,7 @@
  * @author Kaganer
  * @author KaiesTse
  * @author Mark85296341
+ * @author Nemo bis
  * @author Simon Shek
  * @author Waihorace
  * @author William915
@@ -263,9 +264,6 @@ $messages = array(
 'tog-shownumberswatching' => '顯示有幾多人監視',
 'tog-oldsig' => '原有簽名嘅預覽：',
 'tog-fancysig' => '將簽名以維基字對待（冇自動連結）',
-'tog-externaleditor' => '預設用外掛編輯器（高階者專用，需要響你部電腦度做一啲特別設定。[//www.mediawiki.org/wiki/Manual:External_editors 更多資訊。]）',
-'tog-externaldiff' => '預設用外掛比較器（高階者專用，需要響你部電腦度做一啲特別設定。[//www.mediawiki.org/wiki/Manual:External_editors 更多資訊。]）',
-'tog-showjumplinks' => '啟用 "跳至" 協助連結',
 'tog-uselivepreview' => '用即時預覽（需要JavaScript）（實驗緊）',
 'tog-forceeditsummary' => '我冇入修改註解時通知我',
 'tog-watchlisthideown' => '響監視清單度隱藏我嘅編輯',
@@ -279,6 +277,8 @@ $messages = array(
 'tog-showhiddencats' => '顯示隱藏類',
 'tog-noconvertlink' => '唔轉連結標題',
 'tog-norollbackdiff' => '進行反轉之後略過差異',
+'tog-useeditwarning' => '當我離開未保存好嘅修改嗰陣警告我',
+'tog-prefershttps' => '簽到後繼續用加密連線',
 
 'underline-always' => '全部',
 'underline-never' => '永不',
@@ -463,7 +463,7 @@ $1',
 'pool-queuefull' => '隊池已滿',
 'pool-errorunknown' => '未知嘅錯誤',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '關於{{SITENAME}}',
 'aboutpage' => 'Project:關於',
 'copyright' => '響版度嘅內容係根據$1嘅條款發佈。',
@@ -473,7 +473,6 @@ $1',
 'disclaimers' => '免責聲明',
 'disclaimerpage' => 'Project:一般免責聲明',
 'edithelp' => '編輯協助',
-'edithelppage' => 'Help:編輯',
 'helppage' => 'Help:目錄',
 'mainpage' => '頭版',
 'mainpage-description' => '頭版',
@@ -544,17 +543,6 @@ $1',
 # General errors
 'error' => '錯誤',
 'databaseerror' => '資料庫錯誤',
-'dberrortext' => '資料庫查詢語法錯咗。
-咁係可能指出軟件中可能有臭蟲。
-最後一次資料庫嘅嘗試係：
-<blockquote><tt>$1</tt></blockquote>
-於 "<tt>$2</tt>" 功能中。
-數據庫嘅錯誤回應 "<tt>$3: $4</tt>"。',
-'dberrortextcl' => '資料庫查詢語法錯咗。
-最後一次資料庫嘅嘗試係：
-"$1"
-於 "$2"功能中。
-數據庫嘅錯誤回應 "$3: $4"',
 'laggedslavemode' => '警告：呢頁可能未包括最新嘅更新。',
 'readonly' => '資料庫鎖咗',
 'enterlockreason' => '輸入鎖資料庫嘅原因，同埋預計幾耐後會解鎖',
@@ -600,7 +588,6 @@ $1',
 'viewsourcetext' => '你可以睇吓或者複製呢一頁嘅原始碼：',
 'protectedinterface' => '呢一頁提供軟件嘅介面文字，呢一頁已經保護咗以預防濫用。',
 'editinginterface' => "'''警告：'''你而家編輯緊嘅呢一個用嚟提供介面文字嘅頁面。響呢一頁嘅更改會影響到其他用戶使用中嘅介面外觀。要翻譯，請考慮利用[//translatewiki.net/wiki/Main_Page?setlang=yue translatewiki.net]，一個用來為MediaWiki軟件本地化嘅計劃。",
-'sqlhidden' => '(SQL 查詢隱藏)',
 'cascadeprotected' => '呢一版已經保護咗唔能夠編輯，因為佢係響以下嘅{{PLURAL:$1|一|幾}}頁度包含咗，當中啟用咗"連串"保護選項來保護嗰一版: $2',
 'namespaceprotected' => "你無權編輯響'''$1'''空間名裏面嘅呢一版。",
 'ns-specialprotected' => '特別頁係唔可以編輯嘅。',
@@ -620,7 +607,6 @@ $1',
 'yourpassword' => '密碼:',
 'yourpasswordagain' => '再輸入密碼:',
 'remembermypassword' => '響呢個瀏覽器度記住我嘅登入資料 (最高維持$1{{PLURAL:$1|日|日}})',
-'securelogin-stick-https' => '登入後繼續以HTTPS連接',
 'yourdomainname' => '你嘅網域:',
 'externaldberror' => '驗證資料庫出錯，或者唔允許你更新你嘅外部帳戶。',
 'login' => '登入',
@@ -677,7 +663,7 @@ $1',
 'passwordsent' => '新嘅密碼已經寄咗畀呢位用戶 "$1" 嘅電郵地址。收到之後請重新登入。',
 'blocked-mailpassword' => '你嘅IP地址被鎖住，唔可以用密碼復原功能以防止濫用。',
 'eauthentsent' => '確認電郵已經傳送到指定嘅電郵地址。喺其它嘅郵件傳送到呢個戶口之前，你需要按電郵嘅指示，嚟確認呢個戶口真係屬於你嘅。',
-'throttled-mailpassword' => '一個密碼提醒已經響$1個鐘頭之前發送咗。為咗防止濫用，響$1個鐘頭之內只可以發送一個密碼提醒。',
+'throttled-mailpassword' => '一個密碼提醒已經響$1{{PLURAL:$1|個鐘頭}}之前發送咗。為咗防止濫用，響$1{{PLURAL:$1|個鐘頭}}之內只可以發送一個密碼提醒。',
 'mailerror' => '傳送電郵錯誤： $1',
 'acct_creation_throttle_hit' => '利用你呢個IP地址嘅訪客響上一日已經開咗 $1 個戶口，係響呢段時間嘅上限。
 結果，利用呢個IP地址嘅訪客唔可以響呢段時間再開多個戶口。',
@@ -709,7 +695,7 @@ $1',
 'newpassword' => '新密碼:',
 'retypenew' => '打多次新密碼:',
 'resetpass_submit' => '設定密碼同登入',
-'resetpass_success' => '你嘅密碼已經成功噉改咗！
+'changepassword-success' => '你嘅密碼已經成功噉改咗！
 而家幫你登入緊...',
 'resetpass_forbidden' => '唔可以更改密碼',
 'resetpass-no-info' => '你一定要登入咗去直接入來呢一版。',
@@ -905,6 +891,8 @@ $1',
 'edit-no-change' => '你嘅編輯已經略過，因為文字無改過。',
 'edit-already-exists' => '唔可以開一新版。
 佢已經存在。',
+'editwarning-warning' => '離開呢一版會令到你嘅修改唔見咗。
+你可以響你嘅喜好設定嘅"{{int:prefs-editing}}"小節度停用呢個警告。',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => '警告: 呢一版有太多耗費嘅語法功能呼叫。
@@ -1122,7 +1110,6 @@ $1",
 'searchmenu-legend' => '搵嘢選項',
 'searchmenu-exists' => "'''響呢個wiki度有一版叫做\"[[:\$1]]\"。'''",
 'searchmenu-new' => "'''響呢個wiki度開呢版\"[[:\$1]]\"！'''",
-'searchhelp-url' => 'Help:目錄',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|去睇以呢個做開頭嘅版]]',
 'searchprofile-articles' => '內容頁',
 'searchprofile-project' => '幫手同計劃頁',
@@ -1164,14 +1151,6 @@ $1",
 'search-external' => '出面搵嘢',
 'searchdisabled' => '{{SITENAME}}嘅搜尋功能已經關閉。你可以利用Google嚟搵。不過佢哋對{{SITENAME}}嘅索引可能唔係最新嘅。',
 
-# Quickbar
-'qbsettings' => '快捷列',
-'qbsettings-none' => '無',
-'qbsettings-fixedleft' => '左邊固定',
-'qbsettings-fixedright' => '右邊固定',
-'qbsettings-floatingleft' => '左邊浮動',
-'qbsettings-floatingright' => '右邊浮動',
-
 # Preferences page
 'preferences' => '喜好設定',
 'mypreferences' => '自訂喜好',
@@ -1201,7 +1180,6 @@ $1",
 'resetprefs' => '清除未保存嘅更改',
 'restoreprefs' => '恢復全部預設設定',
 'prefs-editing' => '編輯中',
-'prefs-edit-boxsize' => '編寫框大細',
 'rows' => '列：',
 'columns' => '行：',
 'searchresultshead' => '搵嘢',
@@ -1212,9 +1190,6 @@ $1",
 'recentchangesdays-max' => '最多 $1 日',
 'recentchangescount' => '預設顯示嘅編輯數：',
 'prefs-help-recentchangescount' => '呢個包埋最近修改、頁歷史同埋日誌紀錄。',
-'prefs-help-watchlist-token' => '響呢欄加入一個秘密匙會生成一個對你監視清單嘅RSS源。
-任何一位知道響呢個欄位嘅匙會睇到你嘅監視清單，請揀一個安全嘅值。
-呢度有一個任意生成嘅值，你係可以去揀嘅: $1',
 'savedprefs' => '你嘅喜好設定已經儲存。',
 'timezonelegend' => '時區:',
 'localtime' => '本地時間:',
@@ -1244,7 +1219,6 @@ $1",
 'prefs-common-css-js' => '共有嘅CSS同埋JavaScript畀所有畫面用：',
 'prefs-reset-intro' => '你可以用呢版去重設你嘅喜好設定到網站預設值。呢個動作無得番轉頭。',
 'prefs-emailconfirm-label' => '電郵確認:',
-'prefs-textboxsize' => '編寫框大細',
 'youremail' => '電郵:',
 'username' => '用戶名:',
 'uid' => '用戶 ID:',
@@ -1476,7 +1450,6 @@ $1",
 'recentchangeslinked-feed' => '連結頁嘅更改',
 'recentchangeslinked-toolbox' => '連結頁嘅更改',
 'recentchangeslinked-title' => '對「$1」有關嘅更改',
-'recentchangeslinked-noresult' => '響呢一段時間內連結頁並無更改。',
 'recentchangeslinked-summary' => "呢一個特別頁列示咗''由''所畀到嘅一版連結到頁嘅最近更改（或者係指定分類嘅成員）。
 響[[Special:Watchlist|你張監視清單]]嘅版會以'''粗體'''顯示。",
 'recentchangeslinked-page' => '頁名:',
@@ -1646,7 +1619,6 @@ $1',
 'http-read-error' => 'HTTP讀取錯誤。',
 'http-timed-out' => 'HTTP請求已過時。',
 'http-curl-error' => '擷取URL嗰陣出錯：$1',
-'http-host-unreachable' => '到唔到URL。',
 'http-bad-status' => '當做緊HTTP請求嗰陣出現咗問題：$1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1788,11 +1760,6 @@ $1',
 'statistics-users-active' => '活躍用戶',
 'statistics-users-active-desc' => '響$1日前做過動作嘅用戶',
 'statistics-mostpopular' => '最多人睇嘅頁',
-
-'disambiguations' => '搞清楚頁',
-'disambiguationspage' => 'Template:disambig
-Template:搞清楚',
-'disambiguations-text' => "以下呢啲頁面連結去一個'''搞清楚頁'''。佢哋先至應該指去正確嘅主題。<br />如果一個頁面連結自[[MediaWiki:Disambiguationspage]]，噉就會當佢係搞清楚頁。",
 
 'doubleredirects' => '雙重跳轉',
 'doubleredirectstext' => '每一行都順次序寫住第一頁名，佢嘅目的頁，同埋目的頁再指去邊度。改嘅時候，應該將第一個跳轉頁轉入第三頁。
@@ -2017,10 +1984,9 @@ Template:搞清楚',
 'unwatchthispage' => '停止監視',
 'notanarticle' => '唔係一個內容頁',
 'notvisiblerev' => '上次由唔同用戶嘅修訂已經刪除咗',
-'watchnochange' => '響顯示嘅時間之內，你所監視嘅頁面並無任何嘅更改。',
 'watchlist-details' => '唔計討論頁，有 $1 版響你個監視清單度。',
-'wlheader-enotif' => '* 電子郵件通知已經啟用。',
-'wlheader-showupdated' => "* '''粗體字'''嘅頁響你上次嚟之後被人改過",
+'wlheader-enotif' => '電子郵件通知已經啟用。',
+'wlheader-showupdated' => "'''粗體字'''嘅頁響你上次嚟之後被人改過",
 'watchmethod-recent' => '睇緊最近修改中有邊頁監視緊',
 'watchmethod-list' => '睇緊被監視頁有乜新修改',
 'watchlistcontains' => '你嘅監視清單裏面有$1頁。',
@@ -2362,11 +2328,8 @@ $1',
 'ipb_blocked_as_range' => '錯誤：個IP $1 無直接封鎖，唔可以解封。但係佢係響 $2 嘅封鎖範圍之內，嗰段範圍係可以解封嘅。',
 'ip_range_invalid' => '無效嘅IP範圍',
 'ip_range_toolarge' => '大過 /$1 嘅封鎖範圍係唔容許嘅。',
-'blockme' => '封鎖我',
 'proxyblocker' => 'Proxy 封鎖器',
-'proxyblocker-disabled' => '呢個功能已經停用。',
 'proxyblockreason' => '你嘅IP係一個公開（指任何人都可以用，無須身份認證？）嘅代理地址，因此被封鎖。請聯絡你嘅Internet服務提供商或技術支援，向佢哋報告呢個嚴重嘅安全問題。',
-'proxyblocksuccess' => '完成。',
 'sorbsreason' => '你嘅IP地址已經畀響{{SITENAME}}度用嘅DNSBL列咗做公開代理。',
 'sorbs_create_account_reason' => '你嘅IP地址已經畀響{{SITENAME}}度用嘅DNSBL列咗做公開代理。你唔可以開新戶口。',
 'cant-block-while-blocked' => '當你被封鎖嗰陣唔可以封鎖其他用戶。',
@@ -2646,27 +2609,16 @@ $1',
 
 # Stylesheets
 'common.css' => '/* 響呢度放 CSS 碼來改成個網站嘅畫面 */',
-'standard.css' => '/* 響呢度放 CSS 碼去改用戶用嘅傳統畫面 */',
-'nostalgia.css' => '/* 響呢度放 CSS 碼去改用戶用嘅懷舊畫面 */',
 'cologneblue.css' => '/* 響呢度放 CSS 碼去改用戶用嘅科隆藍畫面 */',
 'monobook.css' => '/* 響呢度放 CSS 碼去改用戶用嘅 Monobook 畫面 */',
-'myskin.css' => '/* 響呢度放 CSS 碼去改用戶用嘅我嘅畫面 */',
-'chick.css' => '/* 響呢度放 CSS 碼去改用戶用嘅俏畫面 */',
-'simple.css' => '/* 響呢度放 CSS 碼去改用戶用嘅簡單畫面 */',
 'modern.css' => '/* 響呢度放 CSS 碼去改用戶用嘅摩登畫面 */',
 'vector.css' => '/* 響呢度放 CSS 碼去改用戶用嘅域達畫面 */',
 'print.css' => '/* 響呢度放 CSS 碼去改打印輸出 */',
-'handheld.css' => '/* 響呢度放 CSS 碼去改響 $wgHandheldStyle 設定手提裝置畫面 */',
 
 # Scripts
 'common.js' => '/* 響每一次個頁面載入時，所有用戶都會載入呢度任何嘅JavaScript。 */',
-'standard.js' => '/* 響每一次個頁面載入時，用標準畫面嘅用戶都會載入呢度任何嘅JavaScript */',
-'nostalgia.js' => '/* 響每一次個頁面載入時，用懷舊畫面嘅用戶都會載入呢度任何嘅JavaScript */',
 'cologneblue.js' => '/* 響每一次個頁面載入時，用科隆藍畫面嘅用戶都會載入呢度任何嘅JavaScript */',
 'monobook.js' => '/* 響每一次個頁面載入時，用 Monobook 畫面嘅用戶都會載入呢度任何嘅JavaScript */',
-'myskin.js' => '/* 響每一次個頁面載入時，用我嘅畫面嘅用戶都會載入呢度任何嘅JavaScript */',
-'chick.js' => '/* 響每一次個頁面載入時，用俏畫面嘅用戶都會載入呢度任何嘅JavaScript */',
-'simple.js' => '/* 響每一次個頁面載入時，用簡單畫面嘅用戶都會載入呢度任何嘅JavaScript */',
 'modern.js' => '/* 響每一次個頁面載入時，用摩登畫面嘅用戶都會載入呢度任何嘅JavaScript */',
 'vector.js' => '/* 響每一次個頁面載入時，用域達畫面嘅用戶都會載入呢度任何嘅JavaScript */',
 
@@ -2695,13 +2647,8 @@ $1',
 'spam_blanking' => '全部版本都含有指去$1嘅連結，留空',
 
 # Skin names
-'skinname-standard' => '傳統',
-'skinname-nostalgia' => '懷舊',
 'skinname-cologneblue' => '科隆藍',
 'skinname-monobook' => 'MonoBook',
-'skinname-myskin' => '我嘅畫面',
-'skinname-chick' => '俏',
-'skinname-simple' => '簡單',
 'skinname-modern' => '摩登',
 'skinname-vector' => 'Vector',
 
@@ -2765,6 +2712,12 @@ $1',
 'bydate' => '以時間',
 'sp-newimages-showfrom' => '顯示由$1 $2嘅新檔',
 
+# Video information, used by Language::formatTimePeriod() to format lengths in the above messages
+'hours' => '$1{{PLURAL:$1|個鐘}}',
+
+# Human-readable timestamps
+'hours-ago' => '$1{{PLURAL:$1|個鐘}}之前',
+
 # Bad image list
 'bad_image_list' => '請根據下面嘅格式去寫:
 
@@ -2818,7 +2771,7 @@ Variants for Chinese language
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => '闊',
 'exif-imagelength' => '高',
 'exif-bitspersample' => '每部位位元數',
@@ -2934,7 +2887,7 @@ Variants for Chinese language
 'exif-gpsdifferential' => 'GPS 差動修正',
 'exif-objectname' => '短標題',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => '未壓過',
 
 'exif-unknowndate' => '未知日期',
@@ -3069,7 +3022,7 @@ Variants for Chinese language
 'exif-gpsmeasuremode-3' => '三維量度',
 
 # Pseudotags used for GPSSpeedRef
-'exif-gpsspeed-k' => '千米/小時',
+'exif-gpsspeed-k' => '公里/小時',
 'exif-gpsspeed-m' => '英里/小時',
 'exif-gpsspeed-n' => '浬/小時',
 
@@ -3244,7 +3197,6 @@ $5
 'version-other' => '其他',
 'version-mediahandlers' => '媒體處理器',
 'version-hooks' => '鈎',
-'version-extension-functions' => '擴展函數',
 'version-parser-extensiontags' => '語法擴展標籤',
 'version-parser-function-hooks' => '語法函數鈎',
 'version-hook-name' => '鈎名',
@@ -3261,12 +3213,6 @@ MediaWiki是基於使用目的而加以發佈，但係就唔會負上任何嘅�
 'version-software' => '裝咗嘅軟件',
 'version-software-product' => '產品',
 'version-software-version' => '版本',
-
-# Special:FilePath
-'filepath' => '檔案路徑',
-'filepath-page' => '檔名:',
-'filepath-submit' => '去',
-'filepath-summary' => '呢個特別頁拎一個檔案嘅完整路徑。圖像會以完整嘅解像度顯示，其它嘅檔案類型會以同佢哋關聯咗嘅程式啟動。',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => '㨂重覆檔案',
@@ -3366,5 +3312,8 @@ MediaWiki是基於使用目的而加以發佈，但係就唔會負上任何嘅�
 # Search suggestions
 'searchsuggest-search' => '搵嘢',
 'searchsuggest-containing' => '名單傳送緊...',
+
+# Durations
+'duration-hours' => '$1{{PLURAL:$1|個鐘}}',
 
 );

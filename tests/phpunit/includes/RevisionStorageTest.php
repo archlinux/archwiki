@@ -17,7 +17,7 @@ class RevisionStorageTest extends MediaWikiTestCase {
 	 */
 	var $the_page;
 
-	function  __construct( $name = null, array $data = array(), $dataName = '' ) {
+	function __construct( $name = null, array $data = array(), $dataName = '' ) {
 		parent::__construct( $name, $data, $dataName );
 
 		$this->tablesUsed = array_merge( $this->tablesUsed,
@@ -38,7 +38,7 @@ class RevisionStorageTest extends MediaWikiTestCase {
 				'iwlinks' ) );
 	}
 
-	public function setUp() {
+	protected function setUp() {
 		global $wgExtraNamespaces, $wgNamespaceContentModels, $wgContentHandlers, $wgContLang;
 
 		parent::setUp();
@@ -365,7 +365,7 @@ class RevisionStorageTest extends MediaWikiTestCase {
 		$page = $this->createPage( 'RevisionStorageTest_testIsCurrent', 'Lorem Ipsum', CONTENT_MODEL_WIKITEXT );
 		$rev1 = $page->getRevision();
 
-		# @todo: find out if this should be true
+		# @todo find out if this should be true
 		# $this->assertTrue( $rev1->isCurrent() );
 
 		$rev1x = Revision::newFromId( $rev1->getId() );
@@ -374,7 +374,7 @@ class RevisionStorageTest extends MediaWikiTestCase {
 		$page->doEditContent( ContentHandler::makeContent( 'Bla bla', $page->getTitle(), CONTENT_MODEL_WIKITEXT ), 'second rev' );
 		$rev2 = $page->getRevision();
 
-		# @todo: find out if this should be true
+		# @todo find out if this should be true
 		# $this->assertTrue( $rev2->isCurrent() );
 
 		$rev1x = Revision::newFromId( $rev1->getId() );
@@ -456,15 +456,15 @@ class RevisionStorageTest extends MediaWikiTestCase {
 	 * @dataProvider provideUserWasLastToEdit
 	 */
 	public function testUserWasLastToEdit( $sinceIdx, $expectedLast ) {
-		$userA = \User::newFromName( "RevisionStorageTest_userA" );
-		$userB = \User::newFromName( "RevisionStorageTest_userB" );
+		$userA = User::newFromName( "RevisionStorageTest_userA" );
+		$userB = User::newFromName( "RevisionStorageTest_userB" );
 
 		if ( $userA->getId() === 0 ) {
-			$userA = \User::createNew( $userA->getName() );
+			$userA = User::createNew( $userA->getName() );
 		}
 
 		if ( $userB->getId() === 0 ) {
-			$userB = \User::createNew( $userB->getName() );
+			$userB = User::createNew( $userB->getName() );
 		}
 
 		$ns = $this->getDefaultWikitextNS();

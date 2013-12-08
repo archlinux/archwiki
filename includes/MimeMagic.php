@@ -39,7 +39,7 @@
  * appending MM_WELL_KNOWN_MIME_TYPES behind $wgMimeTypeFile, but who knows
  * what will break? In practice this probably isn't a problem anyway -- Bryan)
  */
-define('MM_WELL_KNOWN_MIME_TYPES', <<<END_STRING
+define( 'MM_WELL_KNOWN_MIME_TYPES', <<<END_STRING
 application/ogg ogx ogg ogm ogv oga spx
 application/pdf pdf
 application/vnd.oasis.opendocument.chart odc
@@ -91,7 +91,7 @@ END_STRING
  * An extensive list of well known mime types is provided by
  * the file mime.info in the includes directory.
  */
-define('MM_WELL_KNOWN_MIME_INFO', <<<END_STRING
+define( 'MM_WELL_KNOWN_MIME_INFO', <<<END_STRING
 application/pdf [OFFICE]
 application/vnd.oasis.opendocument.chart [OFFICE]
 application/vnd.oasis.opendocument.chart-template [OFFICE]
@@ -169,10 +169,6 @@ class MimeMagic {
 	 */
 	private static $instance;
 
-	/** True if the fileinfo extension has been loaded
-	 */
-	private static $extensionLoaded = false;
-
 	/** Initializes the MimeMagic object. This is called by MimeMagic::singleton().
 	 *
 	 * This constructor parses the mime.types and mime.info files and build internal mappings.
@@ -182,17 +178,12 @@ class MimeMagic {
 		 *   --- load mime.types ---
 		 */
 
-		global $wgMimeTypeFile, $IP, $wgLoadFileinfoExtension;
+		global $wgMimeTypeFile, $IP;
 
 		$types = MM_WELL_KNOWN_MIME_TYPES;
 
 		if ( $wgMimeTypeFile == 'includes/mime.types' ) {
 			$wgMimeTypeFile = "$IP/$wgMimeTypeFile";
-		}
-
-		if ( $wgLoadFileinfoExtension && !self::$extensionLoaded ) {
-			self::$extensionLoaded = true;
-			wfDl( 'fileinfo' );
 		}
 
 		if ( $wgMimeTypeFile ) {
@@ -231,7 +222,7 @@ class MimeMagic {
 			}
 
 			$mime = substr( $s, 0, $i );
-			$ext = trim( substr( $s, $i+1 ) );
+			$ext = trim( substr( $s, $i + 1 ) );
 
 			if ( empty( $ext ) ) {
 				continue;
@@ -432,7 +423,7 @@ class MimeMagic {
 		$ext = explode( ' ', $ext );
 
 		$extension = strtolower( $extension );
-		return  in_array( $extension, $ext );
+		return in_array( $extension, $ext );
 	}
 
 	/**
@@ -560,7 +551,7 @@ class MimeMagic {
 
 		$mime = $this->doGuessMimeType( $file, $ext );
 
-		if( !$mime ) {
+		if ( !$mime ) {
 			wfDebug( __METHOD__ . ": internal type detection failed for $file (.$ext)...\n" );
 			$mime = $this->detectMimeType( $file, $ext );
 		}
@@ -587,7 +578,7 @@ class MimeMagic {
 		$f = fopen( $file, 'rt' );
 		wfRestoreWarnings();
 
-		if( !$f ) {
+		if ( !$f ) {
 			return 'unknown/unknown';
 		}
 		$head = fread( $f, 1024 );
@@ -628,7 +619,7 @@ class MimeMagic {
 			$doctype = strpos( $head, "\x42\x82" );
 			if ( $doctype ) {
 				// Next byte is datasize, then data (sizes larger than 1 byte are very stupid muxers)
-				$data = substr( $head, $doctype+3, 8 );
+				$data = substr( $head, $doctype + 3, 8 );
 				if ( strncmp( $data, "matroska", 8 ) == 0 ) {
 					wfDebug( __METHOD__ . ": recognized file as video/x-matroska\n" );
 					return "video/x-matroska";
@@ -642,7 +633,7 @@ class MimeMagic {
 		}
 
 		/* Look for WebP */
-		if ( strncmp( $head, "RIFF", 4 ) == 0 && strncmp( substr( $head, 8, 8), "WEBPVP8 ", 8 ) == 0 ) {
+		if ( strncmp( $head, "RIFF", 4 ) == 0 && strncmp( substr( $head, 8, 8 ), "WEBPVP8 ", 8 ) == 0 ) {
 			wfDebug( __METHOD__ . ": recognized file as image/webp\n" );
 			return "image/webp";
 		}
@@ -689,11 +680,11 @@ class MimeMagic {
 		$script_type = null;
 
 		# detect by shebang
-		if ( substr( $head, 0, 2) == "#!" ) {
+		if ( substr( $head, 0, 2 ) == "#!" ) {
 			$script_type = "ASCII";
-		} elseif ( substr( $head, 0, 5) == "\xef\xbb\xbf#!" ) {
+		} elseif ( substr( $head, 0, 5 ) == "\xef\xbb\xbf#!" ) {
 			$script_type = "UTF-8";
-		} elseif ( substr( $head, 0, 7) == "\xfe\xff\x00#\x00!" ) {
+		} elseif ( substr( $head, 0, 7 ) == "\xfe\xff\x00#\x00!" ) {
 			$script_type = "UTF-16BE";
 		} elseif ( substr( $head, 0, 7 ) == "\xff\xfe#\x00!" ) {
 			$script_type = "UTF-16LE";
@@ -705,8 +696,8 @@ class MimeMagic {
 				$pack = array( 'UTF-16BE' => 'n*', 'UTF-16LE' => 'v*' );
 				$chars = unpack( $pack[$script_type], substr( $head, 2 ) );
 				$head = '';
-				foreach( $chars as $codepoint ) {
-					if( $codepoint < 128 ) {
+				foreach ( $chars as $codepoint ) {
+					if ( $codepoint < 128 ) {
 						$head .= chr( $codepoint );
 					} else {
 						$head .= '?';
@@ -733,7 +724,7 @@ class MimeMagic {
 		$gis = getimagesize( $file );
 		wfRestoreWarnings();
 
-		if( $gis && isset( $gis['mime'] ) ) {
+		if ( $gis && isset( $gis['mime'] ) ) {
 			$mime = $gis['mime'];
 			wfDebug( __METHOD__ . ": getimagesize detected $file as $mime\n" );
 			return $mime;
@@ -741,7 +732,7 @@ class MimeMagic {
 
 		// Also test DjVu
 		$deja = new DjVuImage( $file );
-		if( $deja->isValid() ) {
+		if ( $deja->isValid() ) {
 			wfDebug( __METHOD__ . ": detected $file as image/vnd.djvu\n" );
 			return 'image/vnd.djvu';
 		}
@@ -763,7 +754,7 @@ class MimeMagic {
 	 * @return string
 	 */
 	function detectZipType( $header, $tail = null, $ext = false ) {
-		if( $ext ) { # TODO: remove $ext param
+		if ( $ext ) { # TODO: remove $ext param
 			wfDebug( __METHOD__ . ": WARNING: use of the \$ext parameter is deprecated. " .
 				"Use improveTypeFromExtension(\$mime, \$ext) instead.\n" );
 		}
@@ -804,7 +795,7 @@ class MimeMagic {
 				 * These mime's are stored in the database, where we don't really want
 				 * x-opc+zip, because we use it only for internal purposes
 				 */
-				if ( $this->isMatchingExtension( $ext, $mime) ) {
+				if ( $this->isMatchingExtension( $ext, $mime ) ) {
 					/* A known file extension for an OPC file,
 					 * find the proper mime type for that file extension
 					 */
@@ -815,12 +806,12 @@ class MimeMagic {
 			}
 			wfDebug( __METHOD__ . ": detected an Open Packaging Conventions archive: $mime\n" );
 		} elseif ( substr( $header, 0, 8 ) == "\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1" &&
-				($headerpos = strpos( $tail, "PK\x03\x04" ) ) !== false &&
+				( $headerpos = strpos( $tail, "PK\x03\x04" ) ) !== false &&
 				preg_match( $openxmlRegex, substr( $tail, $headerpos + 30 ) ) ) {
-			if ( substr( $header, 512, 4) == "\xEC\xA5\xC1\x00" ) {
+			if ( substr( $header, 512, 4 ) == "\xEC\xA5\xC1\x00" ) {
 				$mime = "application/msword";
 			}
-			switch( substr( $header, 512, 6) ) {
+			switch ( substr( $header, 512, 6 ) ) {
 				case "\xEC\xA5\xC1\x00\x0E\x00":
 				case "\xEC\xA5\xC1\x00\x1C\x00":
 				case "\xEC\xA5\xC1\x00\x43\x00":
@@ -876,9 +867,8 @@ class MimeMagic {
 
 		$m = null;
 		if ( $wgMimeDetectorCommand ) {
-			// @todo FIXME: Use wfShellExec
-			$fn = wfEscapeShellArg( $file );
-			$m = `$wgMimeDetectorCommand $fn`;
+			$args = wfEscapeShellArg( $file );
+			$m = wfShellExec( "$wgMimeDetectorCommand $args" );
 		} elseif ( function_exists( "finfo_open" ) && function_exists( "finfo_file" ) ) {
 
 			# This required the fileinfo extension by PECL,
@@ -897,7 +887,7 @@ class MimeMagic {
 				$m = finfo_file( $mime_magic_resource, $file );
 				finfo_close( $mime_magic_resource );
 			} else {
-				wfDebug( __METHOD__ . ": finfo_open failed on ".FILEINFO_MIME."!\n" );
+				wfDebug( __METHOD__ . ": finfo_open failed on " . FILEINFO_MIME . "!\n" );
 			}
 		} elseif ( function_exists( "mime_content_type" ) ) {
 
@@ -935,7 +925,7 @@ class MimeMagic {
 			$ext = strtolower( $i ? substr( $file, $i + 1 ) : '' );
 		}
 		if ( $ext ) {
-			if( $this->isRecognizableExtension( $ext ) ) {
+			if ( $this->isRecognizableExtension( $ext ) ) {
 				wfDebug( __METHOD__ . ": refusing to guess mime type for .$ext file, we should have recognized it\n" );
 			} else {
 				$m = $this->guessTypesForExtension( $ext );
@@ -968,12 +958,12 @@ class MimeMagic {
 	 * @return (int?string?) a value to be used with the MEDIATYPE_xxx constants.
 	 */
 	function getMediaType( $path = null, $mime = null ) {
-		if( !$mime && !$path ) {
+		if ( !$mime && !$path ) {
 			return MEDIATYPE_UNKNOWN;
 		}
 
 		// If mime type is unknown, guess it
-		if( !$mime ) {
+		if ( !$mime ) {
 			$mime = $this->guessMimeType( $path, false );
 		}
 
@@ -983,22 +973,30 @@ class MimeMagic {
 
 			// Read a chunk of the file
 			$f = fopen( $path, "rt" );
-			if ( !$f ) return MEDIATYPE_UNKNOWN;
+			if ( !$f ) {
+				return MEDIATYPE_UNKNOWN;
+			}
 			$head = fread( $f, 256 );
 			fclose( $f );
 
 			$head = strtolower( $head );
 
 			// This is an UGLY HACK, file should be parsed correctly
-			if ( strpos( $head, 'theora' ) !== false ) return MEDIATYPE_VIDEO;
-			elseif ( strpos( $head, 'vorbis' ) !== false ) return MEDIATYPE_AUDIO;
-			elseif ( strpos( $head, 'flac' ) !== false ) return MEDIATYPE_AUDIO;
-			elseif ( strpos( $head, 'speex' ) !== false ) return MEDIATYPE_AUDIO;
-			else return MEDIATYPE_MULTIMEDIA;
+			if ( strpos( $head, 'theora' ) !== false ) {
+				return MEDIATYPE_VIDEO;
+			} elseif ( strpos( $head, 'vorbis' ) !== false ) {
+				return MEDIATYPE_AUDIO;
+			} elseif ( strpos( $head, 'flac' ) !== false ) {
+				return MEDIATYPE_AUDIO;
+			} elseif ( strpos( $head, 'speex' ) !== false ) {
+				return MEDIATYPE_AUDIO;
+			} else {
+				return MEDIATYPE_MULTIMEDIA;
+			}
 		}
 
 		// Check for entry for full mime type
-		if( $mime ) {
+		if ( $mime ) {
 			$type = $this->findMediaType( $mime );
 			if ( $type !== MEDIATYPE_UNKNOWN ) {
 				return $type;
@@ -1029,7 +1027,7 @@ class MimeMagic {
 			}
 		}
 
-		if( !$type ) {
+		if ( !$type ) {
 			$type = MEDIATYPE_UNKNOWN;
 		}
 

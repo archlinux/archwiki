@@ -40,11 +40,7 @@
  */
 
 define( 'MW_NO_OUTPUT_COMPRESSION', 1 );
-if ( isset( $_SERVER['MW_COMPILED'] ) ) {
-	require ( 'core/includes/WebStart.php' );
-} else {
-	require ( __DIR__ . '/includes/WebStart.php' );
-}
+require __DIR__ . '/includes/WebStart.php';
 wfProfileIn( 'img_auth.php' );
 
 # Set action base paths so that WebRequest::getPathInfo()
@@ -117,6 +113,8 @@ function wfImageAuthMain() {
 	}
 
 	// Run hook for extension authorization plugins
+	/** @var $result array */
+	$result = null;
 	if ( !wfRunHooks( 'ImgAuthBeforeStream', array( &$title, &$path, &$name, &$result ) ) ) {
 		wfForbidden( $result[0], $result[1], array_slice( $result, 2 ) );
 		return;

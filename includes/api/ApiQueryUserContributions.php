@@ -48,7 +48,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		$this->fld_ids = isset( $prop['ids'] );
 		$this->fld_title = isset( $prop['title'] );
 		$this->fld_comment = isset( $prop['comment'] );
-		$this->fld_parsedcomment = isset ( $prop['parsedcomment'] );
+		$this->fld_parsedcomment = isset( $prop['parsedcomment'] );
 		$this->fld_size = isset( $prop['size'] );
 		$this->fld_sizediff = isset( $prop['sizediff'] );
 		$this->fld_flags = isset( $prop['flags'] );
@@ -83,10 +83,10 @@ class ApiQueryContributions extends ApiQueryBase {
 		// Do the actual query.
 		$res = $this->select( __METHOD__ );
 
-		if( $this->fld_sizediff ) {
+		if ( $this->fld_sizediff ) {
 			$revIds = array();
 			foreach ( $res as $row ) {
-				if( $row->rev_parent_id ) {
+				if ( $row->rev_parent_id ) {
 					$revIds[] = $row->rev_parent_id;
 				}
 			}
@@ -255,7 +255,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		$this->addFieldsIf( 'rev_comment', $this->fld_comment || $this->fld_parsedcomment );
 		$this->addFieldsIf( 'rev_len', $this->fld_size || $this->fld_sizediff );
 		$this->addFieldsIf( 'rev_minor_edit', $this->fld_flags );
-		$this->addFieldsIf( 'rev_parent_id', $this->fld_flags || $this->fld_sizediff );
+		$this->addFieldsIf( 'rev_parent_id', $this->fld_flags || $this->fld_sizediff || $this->fld_ids );
 		$this->addFieldsIf( 'rc_patrolled', $this->fld_patrolled );
 
 		if ( $this->fld_tags ) {
@@ -268,8 +268,7 @@ class ApiQueryContributions extends ApiQueryBase {
 			$this->addTables( 'change_tag' );
 			$this->addJoinConds( array( 'change_tag' => array( 'INNER JOIN', array( 'rev_id=ct_rev_id' ) ) ) );
 			$this->addWhereFld( 'ct_tag', $this->params['tag'] );
-			global $wgOldChangeTagsIndex;
-			$index['change_tag'] = $wgOldChangeTagsIndex ? 'ct_tag' : 'change_tag_tag_id';
+			$index['change_tag'] = 'change_tag_tag_id';
 		}
 
 		if ( $this->params['toponly'] ) {
@@ -297,6 +296,10 @@ class ApiQueryContributions extends ApiQueryBase {
 			$vals['pageid'] = intval( $row->rev_page );
 			$vals['revid'] = intval( $row->rev_id );
 			// $vals['textid'] = intval( $row->rev_text_id ); // todo: Should this field be exposed?
+
+			if ( !is_null( $row->rev_parent_id ) ) {
+				$vals['parentid'] = intval( $row->rev_parent_id );
+			}
 		}
 
 		$title = Title::makeTitle( $row->page_namespace, $row->page_title );
@@ -474,7 +477,11 @@ class ApiQueryContributions extends ApiQueryBase {
 			),
 			'ids' => array(
 				'pageid' => 'integer',
-				'revid' => 'integer'
+				'revid' => 'integer',
+				'parentid' => array(
+					ApiBase::PROP_TYPE => 'integer',
+					ApiBase::PROP_NULLABLE => true
+				)
 			),
 			'title' => array(
 				'ns' => 'namespace',

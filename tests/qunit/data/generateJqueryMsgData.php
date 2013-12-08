@@ -61,7 +61,7 @@
  * </code>
  */
 
-require( __DIR__ . '/../../../maintenance/Maintenance.php' );
+require __DIR__ . '/../../../maintenance/Maintenance.php';
 
 class GenerateJqueryMsgData extends Maintenance {
 
@@ -147,4 +147,4 @@ class GenerateJqueryMsgData extends Maintenance {
 }
 
 $maintClass = "GenerateJqueryMsgData";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

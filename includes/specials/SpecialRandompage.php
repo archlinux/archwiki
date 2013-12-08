@@ -41,8 +41,8 @@ class RandomPage extends SpecialPage {
 		return $this->namespaces;
 	}
 
-	public function setNamespace ( $ns ) {
-		if( !$ns || $ns < NS_MAIN ) {
+	public function setNamespace( $ns ) {
+		if ( !$ns || $ns < NS_MAIN ) {
 			$ns = NS_MAIN;
 		}
 		$this->namespaces = array( $ns );
@@ -62,17 +62,19 @@ class RandomPage extends SpecialPage {
 
 		$title = $this->getRandomTitle();
 
-		if( is_null( $title ) ) {
+		if ( is_null( $title ) ) {
 			$this->setHeaders();
+			// Message: randompage-nopages, randomredirect-nopages
 			$this->getOutput()->addWikiMsg( strtolower( $this->getName() ) . '-nopages',
 				$this->getNsList(), count( $this->namespaces ) );
+
 			return;
 		}
 
 		$redirectParam = $this->isRedirect() ? array( 'redirect' => 'no' ) : array();
 		$query = array_merge( $this->getRequest()->getValues(), $redirectParam );
 		unset( $query['title'] );
-		$this->getOutput()->redirect( $title->getFullUrl( $query ) );
+		$this->getOutput()->redirect( $title->getFullURL( $query ) );
 	}
 
 	/**
@@ -83,13 +85,14 @@ class RandomPage extends SpecialPage {
 	private function getNsList() {
 		global $wgContLang;
 		$nsNames = array();
-		foreach( $this->namespaces as $n ) {
-			if( $n === NS_MAIN ) {
+		foreach ( $this->namespaces as $n ) {
+			if ( $n === NS_MAIN ) {
 				$nsNames[] = $this->msg( 'blanknamespace' )->plain();
 			} else {
 				$nsNames[] = $wgContLang->getNsText( $n );
 			}
 		}
+
 		return $wgContLang->commaList( $nsNames );
 	}
 
@@ -100,10 +103,14 @@ class RandomPage extends SpecialPage {
 	public function getRandomTitle() {
 		$randstr = wfRandom();
 		$title = null;
-		if ( !wfRunHooks( 'SpecialRandomGetRandomTitle', array( &$randstr, &$this->isRedir, &$this->namespaces,
-			&$this->extra, &$title ) ) ) {
+
+		if ( !wfRunHooks(
+			'SpecialRandomGetRandomTitle',
+			array( &$randstr, &$this->isRedir, &$this->namespaces, &$this->extra, &$title )
+		) ) {
 			return $title;
 		}
+
 		$row = $this->selectRandomPageFromDB( $randstr );
 
 		/* If we picked a value that was higher than any in
@@ -113,15 +120,15 @@ class RandomPage extends SpecialPage {
 		 * any more bias than what the page_random scheme
 		 * causes anyway.  Trust me, I'm a mathematician. :)
 		 */
-		if( !$row ) {
+		if ( !$row ) {
 			$row = $this->selectRandomPageFromDB( "0" );
 		}
 
-		if( $row ) {
+		if ( $row ) {
 			return Title::makeTitleSafe( $row->page_namespace, $row->page_title );
-		} else {
-			return null;
 		}
+
+		return null;
 	}
 
 	protected function getQueryInfo( $randstr ) {

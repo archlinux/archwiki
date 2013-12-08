@@ -16,18 +16,17 @@ class BitmapMetadataHandlerTest extends MediaWikiTestCase {
 	 * Basically the file has IPTC and XMP metadata, the
 	 * IPTC should override the XMP, except for the multilingual
 	 * translation (to en) where XMP should win.
+	 * @covers BitmapMetadataHandler::Jpeg
 	 */
 	public function testMultilingualCascade() {
-		global $wgShowEXIF;
-
-		if ( !wfDl( 'exif' ) ) {
+		if ( !extension_loaded( 'exif' ) ) {
 			$this->markTestSkipped( "This test needs the exif extension." );
 		}
-		if ( !wfDl( 'xml' ) ) {
+		if ( !extension_loaded( 'xml' ) ) {
 			$this->markTestSkipped( "This test needs the xml extension." );
 		}
 
-		$wgShowEXIF = true;
+		$this->setMwGlobals( 'wgShowEXIF', true );
 
 		$meta = BitmapMetadataHandler::Jpeg( $this->filePath .
 			'/Xmp-exif-multilingual_test.jpg' );
@@ -50,6 +49,7 @@ class BitmapMetadataHandlerTest extends MediaWikiTestCase {
 	 *
 	 * There's more extensive tests of comment extraction in
 	 * JpegMetadataExtractorTests.php
+	 * @covers BitmapMetadataHandler::Jpeg
 	 */
 	public function testJpegComment() {
 		$meta = BitmapMetadataHandler::Jpeg( $this->filePath .
@@ -62,6 +62,7 @@ class BitmapMetadataHandlerTest extends MediaWikiTestCase {
 	/**
 	 * Make sure a bad iptc block doesn't stop the other metadata
 	 * from being extracted.
+	 * @covers BitmapMetadataHandler::Jpeg
 	 */
 	public function testBadIPTC() {
 		$meta = BitmapMetadataHandler::Jpeg( $this->filePath .
@@ -69,6 +70,9 @@ class BitmapMetadataHandlerTest extends MediaWikiTestCase {
 		$this->assertEquals( 'Created with GIMP', $meta['JPEGFileComment'][0] );
 	}
 
+	/**
+	 * @covers BitmapMetadataHandler::Jpeg
+	 */
 	public function testIPTCDates() {
 		$meta = BitmapMetadataHandler::Jpeg( $this->filePath .
 			'iptc-timetest.jpg' );
@@ -80,6 +84,7 @@ class BitmapMetadataHandlerTest extends MediaWikiTestCase {
 	/**
 	 * File has an invalid time (+ one valid but really weird time)
 	 * that shouldn't be included
+	 * @covers BitmapMetadataHandler::Jpeg
 	 */
 	public function testIPTCDatesInvalid() {
 		$meta = BitmapMetadataHandler::Jpeg( $this->filePath .
@@ -93,6 +98,8 @@ class BitmapMetadataHandlerTest extends MediaWikiTestCase {
 	 * XMP data should take priority over iptc data
 	 * when hash has been updated, but not when
 	 * the hash is wrong.
+	 * @covers BitmapMetadataHandler::addMetadata
+	 * @covers BitmapMetadataHandler::getMetadataArray
 	 */
 	public function testMerging() {
 		$merger = new BitmapMetadataHandler();
@@ -116,8 +123,11 @@ class BitmapMetadataHandlerTest extends MediaWikiTestCase {
 		$this->assertEquals( $expected, $actual );
 	}
 
+	/**
+	 * @covers BitmapMetadataHandler::png
+	 */
 	public function testPNGXMP() {
-		if ( !wfDl( 'xml' ) ) {
+		if ( !extension_loaded( 'xml' ) ) {
 			$this->markTestSkipped( "This test needs the xml extension." );
 		}
 		$handler = new BitmapMetadataHandler();
@@ -136,6 +146,9 @@ class BitmapMetadataHandlerTest extends MediaWikiTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	/**
+	 * @covers BitmapMetadataHandler::png
+	 */
 	public function testPNGNative() {
 		$handler = new BitmapMetadataHandler();
 		$result = $handler->png( $this->filePath . 'Png-native-test.png' );
@@ -143,10 +156,12 @@ class BitmapMetadataHandlerTest extends MediaWikiTestCase {
 		$this->assertEquals( $expected, $result['metadata']['Identifier']['x-default'] );
 	}
 
+	/**
+	 * @covers BitmapMetadataHandler::getTiffByteOrder
+	 */
 	public function testTiffByteOrder() {
 		$handler = new BitmapMetadataHandler();
 		$res = $handler->getTiffByteOrder( $this->filePath . 'test.tiff' );
 		$this->assertEquals( 'LE', $res );
 	}
-
 }

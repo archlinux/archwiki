@@ -51,11 +51,11 @@ class ExifBitmapHandler extends BitmapHandler {
 
 		// Treat Software as a special case because in can contain
 		// an array of (SoftwareName, Version).
-		if (isset( $metadata['Software'] )
+		if ( isset( $metadata['Software'] )
 			&& is_array( $metadata['Software'] )
-			&& is_array( $metadata['Software'][0])
+			&& is_array( $metadata['Software'][0] )
 			&& isset( $metadata['Software'][0][0] )
-			&& isset( $metadata['Software'][0][1])
+			&& isset( $metadata['Software'][0][1] )
 		) {
 			$metadata['Software'] = $metadata['Software'][0][0] . ' (Version '
 				. $metadata['Software'][0][1] . ')';
@@ -84,7 +84,7 @@ class ExifBitmapHandler extends BitmapHandler {
 			return self::METADATA_GOOD;
 		}
 		if ( $metadata === self::OLD_BROKEN_FILE ) {
-			# Old special value indicating that there is no EXIF data in the file.
+			# Old special value indicating that there is no Exif data in the file.
 			# or that there was an error well extracting the metadata.
 			wfDebug( __METHOD__ . ": back-compat version\n" );
 			return self::METADATA_COMPATIBLE;

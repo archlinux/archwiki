@@ -206,7 +206,7 @@ class ImagePage extends Article {
 		}
 
 		// Add remote Filepage.css
-		if( !$this->repo->isLocal() ) {
+		if ( !$this->repo->isLocal() ) {
 			$css = $this->repo->getDescriptionStylesheetUrl();
 			if ( $css ) {
 				$out->addStyle( $css );
@@ -250,7 +250,7 @@ class ImagePage extends Article {
 	 *
 	 * @todo FIXME: Bad interface, see note on MediaHandler::formatMetadata().
 	 *
-	 * @param array $metadata the array containing the EXIF data
+	 * @param array $metadata the array containing the Exif data
 	 * @return String The metadata table. This is treated as Wikitext (!)
 	 */
 	protected function makeMetadataTable( $metadata ) {
@@ -311,6 +311,12 @@ class ImagePage extends Article {
 			} else {
 				$params = array( 'page' => $page );
 			}
+
+			$renderLang = $request->getVal( 'lang' );
+			if ( !is_null( $renderLang ) ) {
+				$params['lang'] = $renderLang;
+			}
+
 			$width_orig = $this->displayImg->getWidth( $page );
 			$width = $width_orig;
 			$height_orig = $this->displayImg->getHeight( $page );
@@ -395,6 +401,7 @@ class ImagePage extends Article {
 
 				$isMulti = $this->displayImg->isMultipage() && $this->displayImg->pageCount() > 1;
 				if ( $isMulti ) {
+					$out->addModules( 'mediawiki.page.image.pagination' );
 					$out->addHTML( '<table class="multipageimage"><tr><td>' );
 				}
 
@@ -444,7 +451,6 @@ class ImagePage extends Article {
 					$formParams = array(
 						'name' => 'pageselector',
 						'action' => $wgScript,
-						'onchange' => 'document.pageselector.submit();',
 					);
 					$options = array();
 					for ( $i = 1; $i <= $count; $i++ ) {
@@ -597,7 +603,7 @@ EOT
 		$descText = $this->mPage->getFile()->getDescriptionText();
 
 		/* Add canonical to head if there is no local page for this shared file */
-		if( $descUrl && $this->mPage->getID() == 0 ) {
+		if ( $descUrl && $this->mPage->getID() == 0 ) {
 			$out->setCanonicalUrl( $descUrl );
 		}
 
@@ -631,7 +637,7 @@ EOT
 	 * external editing (and instructions link) etc.
 	 */
 	protected function uploadLinksBox() {
-		global $wgEnableUploads, $wgUseExternalEditor;
+		global $wgEnableUploads;
 
 		if ( !$wgEnableUploads ) {
 			return;
@@ -652,25 +658,6 @@ EOT
 			$out->addHTML( "<li id=\"mw-imagepage-reupload-link\"><div class=\"plainlinks\">{$ulink}</div></li>\n" );
 		} else {
 			$out->addHTML( "<li id=\"mw-imagepage-upload-disallowed\">" . $this->getContext()->msg( 'upload-disallowed-here' )->escaped() . "</li>\n" );
-		}
-
-		# External editing link
-		if ( $wgUseExternalEditor ) {
-			$elink = Linker::linkKnown(
-				$this->getTitle(),
-				wfMessage( 'edit-externally' )->escaped(),
-				array(),
-				array(
-					'action' => 'edit',
-					'externaledit' => 'true',
-					'mode' => 'file'
-				)
-			);
-			$out->addHTML(
-				'<li id="mw-imagepage-edit-external">' . $elink . ' <small>' .
-					wfMessage( 'edit-externally-help' )->parse() .
-					"</small></li>\n"
-			);
 		}
 
 		$out->addHTML( "</ul>\n" );
@@ -719,7 +706,7 @@ EOT
 		$limit = 100;
 
 		$out = $this->getContext()->getOutput();
-		$res = $this->queryImageLinks( $this->getTitle()->getDbKey(), $limit + 1);
+		$res = $this->queryImageLinks( $this->getTitle()->getDBkey(), $limit + 1 );
 		$rows = array();
 		$redirects = array();
 		foreach ( $res as $row ) {
@@ -772,13 +759,21 @@ EOT
 
 		// Create links for every element
 		$currentCount = 0;
-		foreach( $rows as $element ) {
+		foreach ( $rows as $element ) {
 			$currentCount++;
 			if ( $currentCount > $limit ) {
 				break;
 			}
 
-			$link = Linker::linkKnown( Title::makeTitle( $element->page_namespace, $element->page_title ) );
+			$query = array();
+			# Add a redirect=no to make redirect pages reachable
+			if ( isset( $redirects[$element->page_title] ) ) {
+				$query['redirect'] = 'no';
+			}
+			$link = Linker::linkKnown(
+				Title::makeTitle( $element->page_namespace, $element->page_title ),
+				null, array(), $query
+			);
 			if ( !isset( $redirects[$element->page_title] ) ) {
 				# No redirects
 				$liContents = $link;

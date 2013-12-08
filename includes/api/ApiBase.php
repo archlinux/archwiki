@@ -304,15 +304,14 @@ abstract class ApiBase extends ContextSource {
 			}
 
 			$examples = $this->getExamples();
-			if ( $examples !== false && $examples !== '' ) {
+			if ( $examples ) {
 				if ( !is_array( $examples ) ) {
 					$examples = array(
 						$examples
 					);
 				}
 				$msg .= "Example" . ( count( $examples ) > 1 ? 's' : '' ) . ":\n";
-				foreach( $examples as $k => $v ) {
-
+				foreach ( $examples as $k => $v ) {
 					if ( is_numeric( $k ) ) {
 						$msg .= "  $v\n";
 					} else {
@@ -445,7 +444,7 @@ abstract class ApiBase extends ContextSource {
 								$hintPipeSeparated = false;
 								break;
 							case 'limit':
-								$desc .= $paramPrefix . "No more than {$paramSettings[self :: PARAM_MAX]}";
+								$desc .= $paramPrefix . "No more than {$paramSettings[self::PARAM_MAX]}";
 								if ( isset( $paramSettings[self::PARAM_MAX2] ) ) {
 									$desc .= " ({$paramSettings[self::PARAM_MAX2]} for bots)";
 								}
@@ -689,9 +688,9 @@ abstract class ApiBase extends ContextSource {
 			array( $this, "parameterNotEmpty" ) ) ), $required );
 
 		if ( count( $intersection ) > 1 ) {
-			$this->dieUsage( "The parameters {$p}" . implode( ", {$p}", $intersection ) . ' can not be used together', "{$p}invalidparammix" );
+			$this->dieUsage( "The parameters {$p}" . implode( ", {$p}", $intersection ) . ' can not be used together', 'invalidparammix' );
 		} elseif ( count( $intersection ) == 0 ) {
-			$this->dieUsage( "One of the parameters {$p}" . implode( ", {$p}", $required ) . ' is required', "{$p}missingparam" );
+			$this->dieUsage( "One of the parameters {$p}" . implode( ", {$p}", $required ) . ' is required', 'missingparam' );
 		}
 	}
 
@@ -725,7 +724,7 @@ abstract class ApiBase extends ContextSource {
 			array( $this, "parameterNotEmpty" ) ) ), $required );
 
 		if ( count( $intersection ) > 1 ) {
-			$this->dieUsage( "The parameters {$p}" . implode( ", {$p}", $intersection ) . ' can not be used together', "{$p}invalidparammix" );
+			$this->dieUsage( "The parameters {$p}" . implode( ", {$p}", $intersection ) . ' can not be used together', 'invalidparammix' );
 		}
 	}
 
@@ -822,9 +821,9 @@ abstract class ApiBase extends ContextSource {
 	 * 	If not set will magically default to either watchdefault or watchcreations
 	 * @return bool
 	 */
-	protected function getWatchlistValue ( $watchlist, $titleObj, $userOption = null ) {
+	protected function getWatchlistValue( $watchlist, $titleObj, $userOption = null ) {
 
-		$userWatching = $this->getUser()->isWatched( $titleObj );
+		$userWatching = $this->getUser()->isWatched( $titleObj, WatchedItem::IGNORE_USER_RIGHTS );
 
 		switch ( $watchlist ) {
 			case 'watch':
@@ -866,12 +865,7 @@ abstract class ApiBase extends ContextSource {
 			return;
 		}
 
-		$user = $this->getUser();
-		if ( $value ) {
-			WatchAction::doWatch( $titleObj, $user );
-		} else {
-			WatchAction::doUnwatch( $titleObj, $user );
-		}
+		WatchAction::doWatchOrUnwatch( $value, $titleObj, $this->getUser() );
 	}
 
 	/**
@@ -967,9 +961,9 @@ abstract class ApiBase extends ContextSource {
 						}
 						break;
 					case 'integer': // Force everything using intval() and optionally validate limits
-						$min = isset ( $paramSettings[self::PARAM_MIN] ) ? $paramSettings[self::PARAM_MIN] : null;
-						$max = isset ( $paramSettings[self::PARAM_MAX] ) ? $paramSettings[self::PARAM_MAX] : null;
-						$enforceLimits = isset ( $paramSettings[self::PARAM_RANGE_ENFORCE] )
+						$min = isset( $paramSettings[self::PARAM_MIN] ) ? $paramSettings[self::PARAM_MIN] : null;
+						$max = isset( $paramSettings[self::PARAM_MAX] ) ? $paramSettings[self::PARAM_MAX] : null;
+						$enforceLimits = isset( $paramSettings[self::PARAM_RANGE_ENFORCE] )
 								? $paramSettings[self::PARAM_RANGE_ENFORCE] : false;
 
 						if ( is_array( $value ) ) {
@@ -1081,7 +1075,7 @@ abstract class ApiBase extends ContextSource {
 
 		if ( !$allowMultiple && count( $valuesList ) != 1 ) {
 			// Bug 33482 - Allow entries with | in them for non-multiple values
-			if ( in_array( $value, $allowedValues ) ) {
+			if ( in_array( $value, $allowedValues, true ) ) {
 				return $value;
 			}
 
@@ -1165,7 +1159,7 @@ abstract class ApiBase extends ContextSource {
 	/**
 	 * Validate and normalize of parameters of type 'user'
 	 * @param string $value Parameter value
-	 * @param string $encParamName Parameter value
+	 * @param string $encParamName Parameter name
 	 * @return string Validated and normalized parameter
 	 */
 	private function validateUser( $value, $encParamName ) {
@@ -1220,6 +1214,44 @@ abstract class ApiBase extends ContextSource {
 	public function dieUsage( $description, $errorCode, $httpRespCode = 0, $extradata = null ) {
 		Profiler::instance()->close();
 		throw new UsageException( $description, $this->encodeParamName( $errorCode ), $httpRespCode, $extradata );
+	}
+
+	/**
+	 * Throw a UsageException based on the errors in the Status object.
+	 *
+	 * @since 1.22
+	 * @param Status $status Status object
+	 * @throws UsageException
+	 */
+	public function dieStatus( $status ) {
+		if ( $status->isGood() ) {
+			throw new MWException( 'Successful status passed to ApiBase::dieStatus' );
+		}
+
+		$errors = $status->getErrorsArray();
+		if ( !$errors ) {
+			// No errors? Assume the warnings should be treated as errors
+			$errors = $status->getWarningsArray();
+		}
+		if ( !$errors ) {
+			// Still no errors? Punt
+			$errors = array( array( 'unknownerror-nocode' ) );
+		}
+
+		// Cannot use dieUsageMsg() because extensions might return custom
+		// error messages.
+		if ( $errors[0] instanceof Message ) {
+			$msg = $errors[0];
+			$code = $msg->getKey();
+		} else {
+			$code = array_shift( $errors[0] );
+			$msg = wfMessage( $code, $errors[0] );
+		}
+		if ( isset( ApiBase::$messageMap[$code] ) ) {
+			// Translate message to code, for backwards compatability
+			$code = ApiBase::$messageMap[$code]['code'];
+		}
+		$this->dieUsage( $msg->inLanguage( 'en' )->useDatabase( false )->plain(), $code );
 	}
 
 	/**
@@ -1372,6 +1404,7 @@ abstract class ApiBase extends ContextSource {
 		'uploaddisabled' => array( 'code' => 'uploaddisabled', 'info' => 'Uploads are not enabled. Make sure $wgEnableUploads is set to true in LocalSettings.php and the PHP ini setting file_uploads is true' ),
 		'copyuploaddisabled' => array( 'code' => 'copyuploaddisabled', 'info' => 'Uploads by URL is not enabled. Make sure $wgAllowCopyUploads is set to true in LocalSettings.php.' ),
 		'copyuploadbaddomain' => array( 'code' => 'copyuploadbaddomain', 'info' => 'Uploads by URL are not allowed from this domain.' ),
+		'copyuploadbadurl' => array( 'code' => 'copyuploadbadurl', 'info' => 'Upload not allowed from this URL.' ),
 
 		'filename-tooshort' => array( 'code' => 'filename-tooshort', 'info' => 'The filename is too short' ),
 		'filename-toolong' => array( 'code' => 'filename-toolong', 'info' => 'The filename is too long' ),
@@ -1397,7 +1430,7 @@ abstract class ApiBase extends ContextSource {
 	public function dieUsageMsg( $error ) {
 		# most of the time we send a 1 element, so we might as well send it as
 		# a string and make this an array here.
-		if( is_string( $error ) ) {
+		if ( is_string( $error ) ) {
 			$error = array( $error );
 		}
 		$parsed = $this->parseMsg( $error );
@@ -1412,10 +1445,10 @@ abstract class ApiBase extends ContextSource {
 	 */
 	public function dieUsageMsgOrDebug( $error ) {
 		global $wgDebugAPI;
-		if( $wgDebugAPI !== true ) {
+		if ( $wgDebugAPI !== true ) {
 			$this->dieUsageMsg( $error );
 		} else {
-			if( is_string( $error ) ) {
+			if ( is_string( $error ) ) {
 				$error = array( $error );
 			}
 			$parsed = $this->parseMsg( $error );
@@ -1448,7 +1481,7 @@ abstract class ApiBase extends ContextSource {
 
 		// Check whether the error array was nested
 		// array( array( <code>, <params> ), array( <another_code>, <params> ) )
-		if( is_array( $key ) ) {
+		if ( is_array( $key ) ) {
 			$error = $key;
 			$key = array_shift( $error );
 		}
@@ -1470,7 +1503,7 @@ abstract class ApiBase extends ContextSource {
 	 * @param string $message Error message
 	 */
 	protected static function dieDebug( $method, $message ) {
-		wfDebugDieBacktrace( "Internal error in $method: $message" );
+		throw new MWException( "Internal error in $method: $message" );
 	}
 
 	/**
@@ -1535,7 +1568,7 @@ abstract class ApiBase extends ContextSource {
 	public function getWatchlistUser( $params ) {
 		if ( !is_null( $params['owner'] ) && !is_null( $params['token'] ) ) {
 			$user = User::newFromName( $params['owner'], false );
-			if ( !($user && $user->getId()) ) {
+			if ( !( $user && $user->getId() ) ) {
 				$this->dieUsage( 'Specified user does not exist', 'bad_wlowner' );
 			}
 			$token = $user->getOption( 'watchlisttoken' );
@@ -1545,6 +1578,9 @@ abstract class ApiBase extends ContextSource {
 		} else {
 			if ( !$this->getUser()->isLoggedIn() ) {
 				$this->dieUsage( 'You must be logged-in to have a watchlist', 'notloggedin' );
+			}
+			if ( !$this->getUser()->isAllowed( 'viewmywatchlist' ) ) {
+				$this->dieUsage( 'You don\'t have permission to view your watchlist', 'permissiondenied' );
 			}
 			$user = $this->getUser();
 		}
@@ -1560,6 +1596,10 @@ abstract class ApiBase extends ContextSource {
 
 	/**
 	 * Returns a list of all possible errors returned by the module
+	 *
+	 * Don't call this function directly: use getFinalPossibleErrors() to allow
+	 * hooks to modify parameters as needed.
+	 *
 	 * @return array in the format of array( key, param1, param2, ... ) or array( 'code' => ..., 'info' => ... )
 	 */
 	public function getPossibleErrors() {
@@ -1574,10 +1614,9 @@ abstract class ApiBase extends ContextSource {
 			}
 			if ( array_key_exists( 'continue', $params ) ) {
 				$ret[] = array(
-					array(
-						'code' => 'badcontinue',
-						'info' => 'Invalid continue param. You should pass the original value returned by the previous query'
-					) );
+					'code' => 'badcontinue',
+					'info' => 'Invalid continue param. You should pass the original value returned by the previous query'
+				);
 			}
 		}
 
@@ -1595,11 +1634,29 @@ abstract class ApiBase extends ContextSource {
 		}
 
 		if ( $this->needsToken() ) {
-			$ret[] = array( 'missingparam', 'token' );
+			if ( !isset( $params['token'][ApiBase::PARAM_REQUIRED] )
+				|| !$params['token'][ApiBase::PARAM_REQUIRED]
+			) {
+				// Add token as possible missing parameter, if not already done
+				$ret[] = array( 'missingparam', 'token' );
+			}
 			$ret[] = array( 'sessionfailure' );
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Get final list of possible errors, after hooks have had a chance to
+	 * tweak it as needed.
+	 *
+	 * @return array
+	 * @since 1.22
+	 */
+	public function getFinalPossibleErrors() {
+		$possibleErrors = $this->getPossibleErrors();
+		wfRunHooks( 'APIGetPossibleErrors', array( $this, &$possibleErrors ) );
+		return $possibleErrors;
 	}
 
 	/**

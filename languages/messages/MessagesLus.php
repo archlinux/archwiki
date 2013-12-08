@@ -42,9 +42,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Ralvèngtu zât tilang rawh',
 'tog-oldsig' => 'Khàrna hming hman mék:',
 'tog-fancysig' => 'Khàrna hming wikithu angah ngai rawh (zawmna insiam ţül lovin)',
-'tog-externaleditor' => 'Sawi ngai lovin pawnlam siamţhatu hmang rawh (mithiam tan chauh, i khawlthluakneiah setting bîk a ngai. [//www.mediawiki.org/wiki/Manual:External_editors More information.])',
-'tog-externaldiff' => 'Sawi ngai lovin pawnlam diff hmang rawh (mithiam tan chauh, i khawlthluakneiah setting bîk a ngai. [//www.mediawiki.org/wiki/Manual:External_editors More information.])',
-'tog-showjumplinks' => '"Zuan kahlên rawh" tih zawmna awmtir rawh',
 'tog-uselivepreview' => 'Endikna nung hmang rawh (JavaScript a ngai) (hei hi chhinna chauh a la ni)',
 'tog-forceeditsummary' => 'Siamţhatna ruak ka dahluh palhin min hrilh rawh',
 'tog-watchlisthideown' => 'Ka siamţhatho ka ralvènah telh suh',
@@ -57,6 +54,7 @@ $messages = array(
 'tog-diffonly' => 'Dnglmn hnuaiah phêk chhúng tilang suh',
 'tog-showhiddencats' => 'Pawl thuhrûkho tilang rawh',
 'tog-norollbackdiff' => 'Lumlêt hnuah dnglmn kalkan rawh',
+'tog-useeditwarning' => 'Ka phêk siam danglamna ka dahţhat theihnghilh palh chuan min hrilh rawh',
 
 'underline-always' => 'Ziah/ngei ngei',
 'underline-never' => 'Ngai lo',
@@ -244,7 +242,7 @@ $1',
 'pool-queuefull' => 'Hnathawhna hmun awl a awm tawh lo',
 'pool-errorunknown' => 'Kan hriatthiam loh dikhlel a awm tlat',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}}  chungchang',
 'aboutpage' => 'Project:Chungchang',
 'copyright' => 'A chhung thute hi $1 hmanga lakchhawn phal a ni.',
@@ -254,7 +252,6 @@ $1',
 'disclaimers' => 'Intlawhkhalhna',
 'disclaimerpage' => 'Project: Intlawhkhalhna Dan',
 'edithelp' => 'Siamţhat zirna',
-'edithelppage' => 'Help: Siamţhat dàn',
 'helppage' => 'Help: A chhunga thu awmte',
 'mainpage' => 'Phekpui',
 'mainpage-description' => 'Phekpui',
@@ -332,12 +329,6 @@ Vohbik phekte chu hetah hian a en theih [[Special:SpecialPages|{{int:specialpage
 # General errors
 'error' => 'Dik lo',
 'databaseerror' => 'Database dik loh',
-'dberrortext' => 'Zémpui zawhna tih dik loh a awm palh.
-Kháwlthlûakah hrik a awm tihna a ni mai thei.
-Zémpui zawhna hnuhnüng ber chu:
-<blockquote><tt>$1<tt></blockquote>,
-"<<tt>$2</tt>" tih hnathawh chhúng aṭang.
-Zémpuiin dikhlelhna "<tt>$3: $4</tt>" a rawn khawhkïr.',
 'laggedslavemode' => "'''Vaukhanna:''' He phêk hian tun hnaia siam thar a pho lang lo mai thei.",
 'readonly' => 'Database kalh a ni',
 'enterlockreason' => 'I kalhna chhan leh i hawn leh hun tura i rin sawi rawh',
@@ -381,7 +372,6 @@ Thil zawn: $2',
 'viewsourcetext' => 'A hnar i lachhawngin i en thei ang:',
 'viewyourtext' => "'''I siamţhatte''' chu he phêkah hian i enin i lachhawng thei ang.",
 'protectedinterface' => 'He phêk hian khawlthluak tan hmangtu-ţawng a phuhru a, hman khawloh a nih loh nan venhim hrih a ni. Lehlinna tidanglam tur emaw belh tur chuan [//translatewiki.net/ translatewiki.net], MediaWiki lehzauna hmachhawp hi i hmang dawn nia.',
-'sqlhidden' => '(SQL zawhna thuhrûk hrih a ni)',
 'cascadeprotected' => 'He phêk hi siam danglam phal a ni hrih lo, a chhan chu {{PLURAL:$1|he phêk|hêng phêk}}, "a huhova venhim" tih hmanga ven chhunga awm a nih vang a ni: 
 $2',
 'namespaceprotected' => "'''$1''' tih hminghmun chhunga phêkte siamţhat phalna i nei lo.",
@@ -410,7 +400,6 @@ I fangtu cache i thenfai hma chu phêk ţhenkhat intar lang a awm reng mai thei,
 'yourpassword' => 'Thurûk:',
 'yourpasswordagain' => 'Thurûk ziak nawn leh rawh le:',
 'remembermypassword' => 'He ka rangpuifanna hman mék (browser)-ah hian ka luhna (a rei berah ni {{PLURAL:$1||}}$1) min vawnsak rawh, thurûk ziah nawn ngai lo tùrin.',
-'securelogin-stick-https' => 'Luh hnuah HTTPS-ah hian chëng reng rawh.',
 'yourdomainname' => 'I ram:',
 'password-change-forbidden' => 'Hë wiki-ah hian thurûk i thlâk thei lo.',
 'externaldberror' => 'Insawifiahna felfai lo a awm lo a nih loh vëk pawhin i pawnlam siangchan tihdanglam phalsak i ni lo a ni ang.',
@@ -492,7 +481,7 @@ I tum leh hmain nghâk lawk ang che.',
 'newpassword' => 'Thurûk thar:',
 'retypenew' => 'Thurûk ziak nawn leh rawh le:',
 'resetpass_submit' => 'Thurûk siamfel la inziaklût rawh',
-'resetpass_success' => 'I thurûk hlawhtling taka thlâk a ni.
+'changepassword-success' => 'I thurûk hlawhtling taka thlâk a ni.
 Kan hruai lût mék a che...',
 'resetpass_forbidden' => 'Thurûk thlâk theih a ni lo.',
 'resetpass-no-info' => 'He phêk lut mai tùr chuan i inziahluh a ngai.',
@@ -504,7 +493,6 @@ I thurûk i thlâk hlawhtling tawh a nih loh pawhin thurûk lailâwk i dil a ni 
 
 # Special:PasswordReset
 'passwordreset' => 'Thurûk ziakţha rawh',
-'passwordreset-text' => 'I thurûk thlâk turin ahnuaia lehkha khu dah khat ang che.',
 'passwordreset-legend' => 'Thurûk ziakţha rawh',
 'passwordreset-username' => 'Hmangtu hming:',
 'passwordreset-domain' => 'Huamchin:',
@@ -738,7 +726,6 @@ Lamtawi hmante: '''({{int:cur}})'''= ennawnna thar ber nena danglamna, '''({{int
 'searchmenu-legend' => 'Zawn duhthlanna',
 'searchmenu-exists' => "'''He wiki-ah hian \"[[:\$1]]\" tia koh phêk a awm.'''",
 'searchmenu-new' => "'''[[:$1]] phek hi he wiki-ah hian siam rawh le!'''",
-'searchhelp-url' => 'Help:A chhunga thu awmte',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|He thuhmabet nei phêkte hi zawng rawh]]',
 'searchprofile-articles' => 'A chhunga thu awm',
 'searchprofile-project' => 'Ţanpuina leh hna-hmachhawp phekte',
@@ -779,15 +766,6 @@ Lamtawi hmante: '''({{int:cur}})'''= ennawnna thar ber nena danglamna, '''({{int
 Google hmangin i lo zawng hrih thei ang.
 {{SITENAME}} chhung zawnawlna hi a hlui lutuk tawh mai thei tih hria ang che.',
 
-# Quickbar
-'qbsettings' => 'Hmanrawliang',
-'qbsettings-none' => 'Pakhat mah',
-'qbsettings-fixedleft' => 'Veilam',
-'qbsettings-fixedright' => 'Dinglam',
-'qbsettings-floatingleft' => 'Veilama lang',
-'qbsettings-floatingright' => 'Dinglama lang',
-'qbsettings-directionality' => 'Bet, i ţawng inziahdàn hawzawnga zirin',
-
 # Preferences page
 'preferences' => 'Duhdàn',
 'mypreferences' => 'Duhthlanna',
@@ -820,7 +798,6 @@ Google hmangin i lo zawng hrih thei ang.
 'resetprefs' => 'Tihdanglamna dahţhat loh tifai rawh',
 'restoreprefs' => 'A awmdàn siamsaah dah lêt vek rawh',
 'prefs-editing' => 'Siamţhat',
-'prefs-edit-boxsize' => 'Siamţhatna tukverh lenzawng',
 'rows' => 'Tlar:',
 'columns' => 'Thlur:',
 'searchresultshead' => 'Zawnna',
@@ -860,7 +837,6 @@ Google hmangin i lo zawng hrih thei ang.
 'prefs-reset-intro' => 'He phêk hi ränghmuna i duhthlansa tihdanglam nan i hmang thei.
 A sûtlêt theih loh.',
 'prefs-emailconfirm-label' => 'E-chenhmun tihchianna:',
-'prefs-textboxsize' => 'Siamţhatna tukverh lenzawng',
 'youremail' => 'E-chenhmun:',
 'username' => 'Hmangtu hming:',
 'uid' => 'Hmangtu ID',
@@ -1046,7 +1022,6 @@ Hmangtuten e-lehkha an thawn chein i e-chenhmun hrilh an ni chuang lo vang.',
 'recentchangeslinked-feed' => 'Tihdanglam anpuite',
 'recentchangeslinked-toolbox' => 'Tihdanglam anpuite',
 'recentchangeslinked-title' => '"$1" kaihhnawih tihdanglamnate',
-'recentchangeslinked-noresult' => 'I hun thlan chhungah hian a phek zawmpui tihdanglam pakhat mah a awm lo.',
 'recentchangeslinked-summary' => "Hei hi phek pakhat (emaw pawl pakhata telte) aţanga zawm chhuah phek-hova tihdanglam thar ziah chhuahna a ni.
 [[Special:Watchlist|I ralvèn]] phêkte chu '''hawrawp thau'''-a tihlan a ni.",
 'recentchangeslinked-page' => 'Phek hming:',
@@ -1248,9 +1223,6 @@ Taksa sawifiahna hi i siamṭha duh a nih chuan  [$2 taksa sawifiahna phêk] a�
 'statistics-users-active-desc' => 'Ni {{PLURAL:$1|khat|$1}} kaltâ chhunga thiltih nei hmangtuho',
 'statistics-mostpopular' => 'Phêk thlir zin deuh deuhte',
 
-'disambiguations' => 'Thliarfelna phêk zawmtu phêkte',
-'disambiguationspage' => 'Template:thliar',
-
 'doubleredirects' => 'Hruailuhna phír',
 'double-redirect-fixed-move' => '[[$1]] sawn a ni ta.
 [[$2]] lama hruailuhna siam nghâl a ni.',
@@ -1437,7 +1409,6 @@ Hetah hian [[Special:UnusedCategories|pawl hman lohho]] pholan tel a ni lo.
 'unwatchthispage' => 'Vil tihtawpna',
 'notanarticle' => 'Phêk dikdawh a ni lo.',
 'notvisiblerev' => 'Hmangtu dang tihdanglamna thar paihbo a ni.',
-'watchnochange' => 'I hun sawi chhungah khan i ralvèn khawih buai a ni lo.',
 'watchlist-details' => 'I ralvèn zing aţanga {{PLURAL:$1| phêk $1 |phêk $1}}, sawihona phêk chhiar lohvin.',
 'wlheader-enotif' => '*E-lehkha inhriattirna tihnun a ni.',
 'wlheader-showupdated' => "I tlawh hnuhnun ber hnua tihdanglam phêk te chu a '''thau'''va tihlan a ni.",
@@ -1838,7 +1809,7 @@ A bak zawng chu thuhrûk sa vek a ni ang.
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Zàuzáwng',
 'exif-imagelength' => 'Sànzáwng',
 'exif-bitspersample' => 'Péng khata mal(bit) awm zât',

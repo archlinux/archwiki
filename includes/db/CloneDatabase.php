@@ -87,7 +87,7 @@ class CloneDatabase {
 	 * Clone the table structure
 	 */
 	public function cloneTableStructure() {
-		foreach( $this->tablesToClone as $tbl ) {
+		foreach ( $this->tablesToClone as $tbl ) {
 			# Clean up from previous aborted run.  So that table escaping
 			# works correctly across DB engines, we need to change the pre-
 			# fix back and forth so tableName() works right.
@@ -98,7 +98,7 @@ class CloneDatabase {
 			self::changePrefix( $this->newTablePrefix );
 			$newTableName = $this->db->tableName( $tbl, 'raw' );
 
-			if( $this->dropCurrentTables && !in_array( $this->db->getType(), array( 'postgres', 'oracle' ) ) ) {
+			if ( $this->dropCurrentTables && !in_array( $this->db->getType(), array( 'postgres', 'oracle' ) ) ) {
 				$this->db->dropTable( $tbl, __METHOD__ );
 				wfDebug( __METHOD__ . " dropping {$newTableName}\n", true );
 				//Dropping the oldTable because the prefix was changed
@@ -115,9 +115,9 @@ class CloneDatabase {
 	 * @param bool $dropTables Optionally drop the tables we created
 	 */
 	public function destroy( $dropTables = false ) {
-		if( $dropTables ) {
+		if ( $dropTables ) {
 			self::changePrefix( $this->newTablePrefix );
-			foreach( $this->tablesToClone as $tbl ) {
+			foreach ( $this->tablesToClone as $tbl ) {
 				$this->db->dropTable( $tbl );
 			}
 		}
@@ -127,7 +127,7 @@ class CloneDatabase {
 	/**
 	 * Change the table prefix on all open DB connections/
 	 *
-	 * @param  $prefix
+	 * @param $prefix
 	 * @return void
 	 */
 	public static function changePrefix( $prefix ) {
@@ -137,8 +137,8 @@ class CloneDatabase {
 	}
 
 	/**
-	 * @param  $lb LoadBalancer
-	 * @param  $prefix
+	 * @param $lb LoadBalancer
+	 * @param $prefix
 	 * @return void
 	 */
 	public static function changeLBPrefix( $lb, $prefix ) {
@@ -146,8 +146,8 @@ class CloneDatabase {
 	}
 
 	/**
-	 * @param  $db DatabaseBase
-	 * @param  $prefix
+	 * @param $db DatabaseBase
+	 * @param $prefix
 	 * @return void
 	 */
 	public static function changeDBPrefix( $db, $prefix ) {

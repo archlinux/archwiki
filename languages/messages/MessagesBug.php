@@ -248,9 +248,6 @@ $messages = array(
 'search-result-size' => '$1 ({{PLURAL:$2|1 ada|$2 ada}})',
 'search-redirect' => '(redirect $1)',
 
-# Quickbar
-'qbsettings-none' => 'Dégaga',
-
 # Preferences page
 'mypreferences' => 'Bérékkeŋeŋna iyya',
 'prefsnologin' => "Déppa ma'log attama'",

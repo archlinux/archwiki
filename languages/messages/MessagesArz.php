@@ -334,9 +334,6 @@ $messages = array(
 'tog-shownumberswatching' => 'بين عدد اليوزرز المراقبين',
 'tog-oldsig' => 'الامضا دلوقتى:',
 'tog-fancysig' => 'امضا خام (من غير لينك أوتوماتيك)',
-'tog-externaleditor' => 'استخدم محرر خارجى بشكل افتراضى (للخبرا بس، يحتاج إعدادات خاصة على كومبيوترك) ([//www.mediawiki.org/wiki/Manual:External_editors لمزيد من المعلومات].)',
-'tog-externaldiff' => 'استخدم فرق خارجى بشكل افتراضى (للخبرا بس، يحتاج إعدادات خاصة على كومبيوترك) ([//www.mediawiki.org/wiki/Manual:External_editors لمعلومات اكتر].)',
-'tog-showjumplinks' => 'خلى وصلات "روح لـ" تكون شغالة.',
 'tog-uselivepreview' => 'استخدم البروفة السريعة (جافاسكريبت) (تجريبي)',
 'tog-forceeditsummary' => 'نبهنى عند تدخيل ملخص للتعديل  فاضي',
 'tog-watchlisthideown' => 'خبى التعديلات بتاعتى من لستة المراقبة',
@@ -350,6 +347,7 @@ $messages = array(
 'tog-showhiddencats' => 'بين التّصنيفات المستخبية',
 'tog-noconvertlink' => 'عطل تحويل عناوين الوصلات',
 'tog-norollbackdiff' => 'الغى الاختلافات بعد ما تعمل الرول باك',
+'tog-useeditwarning' => 'حذّرنى لما اسيب صفحة تعديل فيها تغييرات مش متسييڤه',
 
 'underline-always' => 'دايما',
 'underline-never' => 'ابدا',
@@ -531,7 +529,7 @@ $1',
 'pool-queuefull' => 'طابور الانتخاب مليان',
 'pool-errorunknown' => 'غلط مش معروف',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'عن {{SITENAME}}',
 'aboutpage' => 'Project:معلومات عن',
 'copyright' => 'المحتوى موجود تحت $1.',
@@ -541,7 +539,6 @@ $1',
 'disclaimers' => 'تنازل عن مسئوليه',
 'disclaimerpage' => 'Project:تنازل عن مسئوليه عمومى',
 'edithelp' => 'مساعده فى التعديل',
-'edithelppage' => 'Help:تعديل',
 'helppage' => 'Help:محتويات',
 'mainpage' => 'الصفحه الرئيسيه',
 'mainpage-description' => 'الصفحه الرئيسيه',
@@ -611,17 +608,6 @@ $1',
 # General errors
 'error' => 'غلطه',
 'databaseerror' => 'غلط فى قاعدة البيانات (database)',
-'dberrortext' => 'حصل غلط فى صيغة الاستعلام فى قاعدة البيانات (database).
-ممكن يكون بسبب عيب فى البرنامج.
-آخر محاوله استعلام اتطلبت من قاعدة البيانات كانت:
-<blockquote><tt>$1</tt></blockquote>
-من جوه الخاصيه "<tt>$2</tt>".
-قاعدة البيانات رجعت الغلط "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'حصل غلط فى صيغة الاستعلام فى قاعدة البيانات (database).
-آخر محاوله استعلام اتطلبت من قاعدة البيانات كانت:
-"$1"
-من جوه الخاصيه "$2".
-قاعدة البيانات رجعت الغلط "$3: $4"',
 'laggedslavemode' => "'''تحذير:''' الصفحه يمكن ما يكونش فيها تحديثات جديده.",
 'readonly' => 'قاعدة البيانات (الـ database) مقفوله',
 'enterlockreason' => 'اكتب سبب القفل, و قول امتى تقريبا ح يتلغى القفل',
@@ -669,7 +655,6 @@ $1',
 'viewsourcetext' => 'ممكن تشوف وتنسخ مصدر  الصفحه دى:',
 'protectedinterface' => 'الصفحة دى هى اللى بتوفر نص الواجهة بتاعة البرنامج،وهى مقفولة لمنع التخريب.',
 'editinginterface' => "'''تحذير''': أنت بتعدل صفحة بتستخدم فى الواجهة النصية  بتاعة البرنامج. التغييرات فى الصفحة دى ها تأثر على مظهر واجهة اليوزر لليوزرز التانيين. للترجمات، لو سمحت استخدم [//translatewiki.net/wiki/Main_Page?setlang=ar بيتاويكى]، مشروع ترجمة الميدياويكى.",
-'sqlhidden' => '(استعلام إس‌كيو‌إل متخبي)',
 'cascadeprotected' => 'الصفحة دى محمية من التعديل، بسبب انها مدمجة فى {{PLURAL:$1|الصفحة|الصفحات}} دي، اللى مستعمل فيها خاصية "حماية الصفحات المدمجة" :
 $2',
 'namespaceprotected' => "ما عندكش صلاحية تعديل الصفحات  اللى فى نطاق '''$1'''.",
@@ -783,7 +768,7 @@ $2',
 'newpassword' => 'الباسورد جديدة:',
 'retypenew' => 'اكتب الباسورد الجديده تانى:',
 'resetpass_submit' => 'اظبط الباسورد و ادخل',
-'resetpass_success' => 'الباسورد بتاعتك اتغيرت بنجاح! دلوقتى  بنسجل دخولك...',
+'changepassword-success' => 'الباسورد بتاعتك اتغيرت بنجاح! دلوقتى  بنسجل دخولك...',
 'resetpass_forbidden' => 'مش ممكن تغيير الباسورد',
 'resetpass-no-info' => 'لازم تسجل دخولك علشان تقدر توصل للصفحة دى على طول.',
 'resetpass-submit-loggedin' => 'غير الباسورد',
@@ -981,6 +966,8 @@ $2',
 'edit-no-change' => 'تعديلك تم تجاهله، لأن ما حصلش أى تعديل للنص.',
 'edit-already-exists' => 'لم يمكن إنشاء صفحة جديدة.
 هى موجودة بالفعل.',
+'editwarning-warning' => 'لو سيبت الصفحه دى ممكن يخلّيك تضيّع اى تغييرات عملتها.
+لو انت مسجّل دخولك, ممكن تعطّل التحذير ده من الجزء بتاع "تعديل" فى تفضيلاتك.',
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'تحذير: الصفحه دى فيهااستدعاءات دالة محلل كثيرة مكلفة.
@@ -1201,7 +1188,6 @@ $1",
 'searchmenu-legend' => 'اختيارات التدوير',
 'searchmenu-exists' => "*الصفحة '''[[$1]]'''",
 'searchmenu-new' => "'''ابتدى الصفحه \"[[:\$1]]\" ع الويكى دا!'''",
-'searchhelp-url' => 'Help:محتويات',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|استعرض الصفحات اللى بتبتدى بالبريفيكس دا]]',
 'searchprofile-articles' => 'صفحات محتوى',
 'searchprofile-project' => 'صفحات  المساعده و المشروع',
@@ -1246,14 +1232,6 @@ $1",
 ممكن تدور فى جوجل دلوقتي.
 لاحظ أن فهارسه لمحتوى {{SITENAME}} يمكن تكون مش متحدثة.',
 
-# Quickbar
-'qbsettings' => 'البار السريع',
-'qbsettings-none' => 'ما فى ش',
-'qbsettings-fixedleft' => 'متثبت فى الشمال',
-'qbsettings-fixedright' => 'متثبت فى اليمين',
-'qbsettings-floatingleft' => 'عايم على الشمال',
-'qbsettings-floatingright' => 'عايم على اليمين',
-
 # Preferences page
 'preferences' => 'تفضيلات',
 'mypreferences' => 'تفضيلاتى',
@@ -1283,7 +1261,6 @@ $1",
 'resetprefs' => 'امسح التغييرات اللى مش المحفوظة',
 'restoreprefs' => 'استرجع التظبيطات الاصليه',
 'prefs-editing' => 'تعديل',
-'prefs-edit-boxsize' => 'كُبر الويندو بتاعة التحرير',
 'rows' => 'صفوف:',
 'columns' => 'عمدان:',
 'searchresultshead' => 'تدوير',
@@ -1294,9 +1271,6 @@ $1",
 'recentchangesdays-max' => '(الحد الاقصى $1 {{PLURAL:$1|يوم|ايام}})',
 'recentchangescount' => 'عدد التعديلات اللى بتظهر اوتوماتيكى فى اخر التغييرات, تواريخ الصفحه, و فى السجلات, :',
 'prefs-help-recentchangescount' => 'بيحتوى على احدث التغييرات ، تواريخ الصفحات و السجلات.',
-'prefs-help-watchlist-token' => 'ملى الحقل ده بمفتاح سرى حيعمل تلقيم RSS لقايمه مراقبتك.
-اى واحد بعرف المفتاح فى الحقل ده ممكن يقرأ قايمه مراقبتك، علشان كده اختار قيمه متأمنه.
-دى قيمه متولده عشوائى وممكن تستخدمها: $1',
 'savedprefs' => 'التفضيلات بتاعتك اتحفظت.',
 'timezonelegend' => 'منطقة التوقيت',
 'localtime' => 'التوقيت المحلى',
@@ -1326,7 +1300,6 @@ $1",
 'prefs-reset-intro' => 'ممكن تستعمل الصفحه دى عشان تعيد ظبط التفضيلات بتاعتك و تخليها زى الحاله الافتراضيه للموقع.
 ماينفعش الرجوع فى التعديل دا.',
 'prefs-emailconfirm-label' => 'التأكد من الايميل:',
-'prefs-textboxsize' => 'حجم شباك التعديل',
 'youremail' => 'الايميل:',
 'username' => 'اسم اليوزر:',
 'uid' => 'رقم اليوزر:',
@@ -1560,7 +1533,6 @@ $1",
 'recentchangeslinked-feed' => 'تعديلات  ليها علاقه',
 'recentchangeslinked-toolbox' => 'تعديلات  ليها علاقه',
 'recentchangeslinked-title' => 'التعديلات المرتبطه  ب "$1"',
-'recentchangeslinked-noresult' => 'مافيش تعديلات حصلت فى الصفحات اللى ليها وصلات هنا خلال الفترة المحدده.',
 'recentchangeslinked-summary' => "دى ليستة تغييرات اتعملت قريب فى صفح معمول ليها لينك من صفح مخصوصه (او لاعضاء فى تصنيف معين).
 الصفح اللى فى [[Special:Watchlist|لستة الصفح اللى بتراقبها]] معروضه '''بالـbold'''",
 'recentchangeslinked-page' => 'اسم الصفحه :',
@@ -1572,7 +1544,7 @@ $1",
 'reuploaddesc' => 'إلغى التحميل وارجع لاستمارة التحميل',
 'upload-tryagain' => 'نفذ وصف الملف المتعدل',
 'uploadnologin' => 'ما سجلتش الدخول',
-'uploadnologintext' => 'لازم تكون [[Special:UserLogin|مسجل الدخول]] علشان تقدر تحمل الملفات.',
+'uploadnologintext' => 'لازم تكون  $1 علشان تقدر تحمل الملفات.',
 'upload_directory_missing' => 'مجلد التحميل($1) ضايع السيرفير وماقدرش يعمل واحد تاني.',
 'upload_directory_read_only' => 'مجلد التحميل ($1) مش ممكن الكتابة عليه بواسطة سيرڨر الويب.',
 'uploaderror' => 'غلطه فى التحميل',
@@ -1717,7 +1689,6 @@ PICT # misc.
 'http-read-error' => 'فى غلط فى قراية ال HTTP',
 'http-timed-out' => 'طلب ال HTTP خلص وقته',
 'http-curl-error' => 'حصل غلط و احنا بنجيب الURL : $1',
-'http-host-unreachable' => 'ما قدرناش نوصل لل URL.',
 'http-bad-status' => 'HTTP : حصلت مشكله وقت طلب ال $1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1864,12 +1835,6 @@ PICT # misc.
 'statistics-users-active' => 'يوزرز نشطين',
 'statistics-users-active-desc' => 'اليوزرز اللى نفذو عمليه فى الـ {{PLURAL:$1|يوم|$1 ايام}} اللى فاتو',
 'statistics-mostpopular' => 'اكتر صفحات اتشافت',
-
-'disambiguations' => 'صفحات التوضيح',
-'disambiguationspage' => 'Template:توضيح',
-'disambiguations-text' => "الصفحات دى بتوصل لـ '''صفحة توضيح'''.
-المفروض على العكس انهم يوصلو ل للصفحات المناسبة. <br />
-أى صفحة بتتعامل على انها صفحة توضيح إذا كانت بتستعمل قالب موجود فى [[MediaWiki:Disambiguationspage]]",
 
 'doubleredirects' => 'تحويلات مزدوجه',
 'doubleredirectstext' => 'الصفحة دى فيها لستة الصفحات اللى فيها تحويلة لصفحة تانية فيها تحويلة.
@@ -2087,10 +2052,9 @@ PICT # misc.
 'unwatchthispage' => 'اتوقف عن المراقبة',
 'notanarticle' => 'دى مش صفحة بتاعة محتوى',
 'notvisiblerev' => 'النسحة اتمسحت',
-'watchnochange' => 'مافيش ولا صفحة اتعدلت فى لستة مراقبتك فى الفترة الزمنية اللى حددتها.',
 'watchlist-details' => '{{PLURAL:$1|$1 صفحه|$1 صفحه}} فى قايمه مراقبتك، بدون عد صفحات المناقشه.',
 'wlheader-enotif' => '*خاصية الاعلام بالايميل متفعلة',
-'wlheader-showupdated' => "* الصفحات اللى اتغيرت  بعد زيارتك ليها اخر مرة معروضة بالخط '''العريض'''",
+'wlheader-showupdated' => "الصفحات اللى اتغيرت  بعد زيارتك ليها اخر مرة معروضة بالخط '''العريض'''",
 'watchmethod-recent' => 'التشييك على التعديلات الاخيرة للصفحات المتراقبة',
 'watchmethod-list' => 'التشييك فى الصفحات المتراقبة على التعديلات الاخيرة',
 'watchlistcontains' => 'لستة المراقبة بتاعتك فيها $1 {{PLURAL:$1|صفحة|صفحات}}.',
@@ -2459,12 +2423,9 @@ $1',
 بس هو، على الرغم من كدا،ممنوع لانه جزء من النطاق $2، و اللى ممكن رفع المنع عنه.',
 'ip_range_invalid' => 'نطاق عناوين الأيبى مش صحيح.',
 'ip_range_toolarge' => 'حدود المنع اللى اكبر من /$1 مش مسموح بيها.',
-'blockme' => 'امنعنى',
 'proxyblocker' => 'مانع البروكسي',
-'proxyblocker-disabled' => 'الخاصية دى متعطلة.',
 'proxyblockreason' => 'عنوان الأيبى بتاعك اتمنع لانه بروكسى مفتوح.
 لو سمحت تتصل بمزود خدمة الإنترنت بتاعك أو الدعم الفنى و قولهم على المشكلة الامنية الخطيرة دي.',
-'proxyblocksuccess' => 'خلاص.',
 'sorbs' => 'دى إن إس بى إل',
 'sorbsreason' => 'عنوان الأيبى بتاعك موجود كبروكسى مفتوح فى DNSBL اللى بيستعمله{{SITENAME}}.',
 'sorbs_create_account_reason' => 'عنوان الأيبى بتاعك موجود كبروكسى مفتوح فى ال DNSBL اللى بيستعمله {{SITENAME}}.
@@ -2739,27 +2700,16 @@ $1',
 
 # Stylesheets
 'common.css' => '/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على كل الواجهات */',
-'standard.css' => '/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على مستخدمى واجهة ستاندرد */',
-'nostalgia.css' => '/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على مستخدمى واجهة نوستالشيا */',
 'cologneblue.css' => '/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على مستخدمى واجهة كولون بلو */',
 'monobook.css' => '/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على مستخدمى واجهة مونوبوك */',
-'myskin.css' => '/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على مستخدمى واجهة ماى سكين */',
-'chick.css' => '/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على مستخدمى واجهة تشيك */',
-'simple.css' => '/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على مستخدمى واجهة سيمبل */',
 'modern.css' => '/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على مستخدمى واجهة مودرن */',
 'vector.css' => '/* CSS اللى هنا حتأثر على اليوزرز اللى بيستخدموا واجهة فكتور */',
 'print.css' => '/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على ناتج الطباعة */',
-'handheld.css' => '/* الأنماط المتراصة CSS المعروضة هنا ستؤثر على الأجهزة المحمولة بالاعتماد على الواجهة المضبوطة فى $wgHandheldStyle */',
 
 # Scripts
 'common.js' => '/*  أى جافاسكريبت  هناح يتحمل لكل اليوزرز مع كل تحميل للصفحة. */',
-'standard.js' => '/* أى جافاسكريبت هنا ح تتحمل لليوزرز اللى بيستعملو واجهة ستاندرد */',
-'nostalgia.js' => '/* أى جافاسكريبت هنا ح تتحمل لليوزرز اللى بيستعملو واجهة نوستالجيا */',
 'cologneblue.js' => '/* أى جافاسكريبت هنا ح تتحمل لليوزرز اللى بيستعملو واجهة كولون بلو */',
 'monobook.js' => '/* أى جافاسكريبت هنا ح تتحمل لليوزرز اللى بيستعملو واجهة مونوبوك */',
-'myskin.js' => '/* أى جافاسكريبت هنا ح تتحمل لليوزرز اللى بيستعملو واجهة ماى سكين */',
-'chick.js' => '/* أى جافاسكريبت هنا ح تتحمل لليوزرز اللى بيستعملو واجهة تشيك */',
-'simple.js' => '/* أى جافاسكريبت هنا ح تتحمل لليوزرز اللى بيستعملو واجهة سيمبل */',
 'modern.js' => '/* أى جافاسكريبت هنا ح تتحمل لليوزرز اللى بيستعملو واجهة مودرن */',
 'vector.js' => '/* اى جافاسكريبت هنا حتتحمل لكل يوزر بيستخدم واجهة فكتور */',
 
@@ -2788,13 +2738,8 @@ $1',
 'spam_blanking' => 'كل النسخ فيها لينكات ل $1، فضيها',
 
 # Skin names
-'skinname-standard' => 'كلاسيك',
-'skinname-nostalgia' => 'نوستالجيا',
 'skinname-cologneblue' => 'كولون بلو',
 'skinname-monobook' => 'مونوبوك',
-'skinname-myskin' => 'ماى سكين',
-'skinname-chick' => 'تشيك',
-'skinname-simple' => 'سيمبل',
 'skinname-modern' => 'مودرن',
 
 # Patrolling
@@ -2889,7 +2834,7 @@ $1',
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'العرض',
 'exif-imagelength' => 'الطول',
 'exif-bitspersample' => 'بتس لكل مكون',
@@ -3005,7 +2950,7 @@ $1',
 'exif-gpsdatestamp' => 'تاريخ GPS',
 'exif-gpsdifferential' => 'تصحيح GPS التفاضلي',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'مش مضغوط',
 'exif-compression-6' => 'جيه بى إى جي',
 
@@ -3375,7 +3320,6 @@ $5
 'version-other' => 'تانية',
 'version-mediahandlers' => 'متحكمات الميديا',
 'version-hooks' => 'الخطاطيف',
-'version-extension-functions' => 'وظايف الامتداد',
 'version-parser-extensiontags' => 'التاجز بتوع امتداد البريزر',
 'version-parser-function-hooks' => 'خطاطيف دالة المحلل',
 'version-hook-name' => 'اسم الخطاف',
@@ -3385,13 +3329,6 @@ $5
 'version-software' => 'السوفتوير المتستاب',
 'version-software-product' => 'المنتج',
 'version-software-version' => 'النسخه',
-
-# Special:FilePath
-'filepath' => 'مسار ملف',
-'filepath-page' => 'الملف:',
-'filepath-submit' => 'المسار',
-'filepath-summary' => 'الصفحة المخصوصة دى بتعرض المسار الكامل  بتاع ملف.
-الصور بتتعرض  بدقة كاملة، أنواع الملفات التانية ح تشتغل فى البرنامج بتاعهم مباشرة.',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'دور على الملفات المتكررة',

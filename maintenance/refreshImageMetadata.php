@@ -27,7 +27,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to refresh image metadata fields.
@@ -99,7 +99,7 @@ class RefreshImageMetadata extends Maintenance {
 
 			if ( $res->numRows() > 0 ) {
 				$row1 = $res->current();
-				$this->output( "Processing next {$this->mBatchSize} rows starting with {$row1->img_name}.\n");
+				$this->output( "Processing next {$this->mBatchSize} rows starting with {$row1->img_name}.\n" );
 				$res->rewind();
 			} else {
 				$this->error( "No images to process.", 4 );
@@ -123,7 +123,7 @@ class RefreshImageMetadata extends Maintenance {
 						$this->output( "Warning: File:{$row->img_name} used to have " .
 						"$oldLength bytes of metadata but now has $newLength bytes.\n" );
 					} elseif ( $verbose ) {
-						$this->output("Refreshed File:{$row->img_name}.\n" );
+						$this->output( "Refreshed File:{$row->img_name}.\n" );
 					}
 				} else {
 					$leftAlone++;
@@ -138,7 +138,7 @@ class RefreshImageMetadata extends Maintenance {
 
 						}
 						if ( $verbose ) {
-							$this->output("Forcibly refreshed File:{$row->img_name}.\n" );
+							$this->output( "Forcibly refreshed File:{$row->img_name}.\n" );
 						}
 					}
 					else {
@@ -151,7 +151,7 @@ class RefreshImageMetadata extends Maintenance {
 			}
 			$conds2 = array( 'img_name > ' . $dbw->addQuotes( $row->img_name ) );
 			wfWaitForSlaves();
-		} while( $res->numRows() === $this->mBatchSize );
+		} while ( $res->numRows() === $this->mBatchSize );
 
 		$total = $upgraded + $leftAlone;
 		if ( $force ) {
@@ -173,7 +173,7 @@ class RefreshImageMetadata extends Maintenance {
 		$like = $this->getOption( 'metadata-contains', false );
 
 		if ( $end !== false ) {
-			$conds[] = 'img_name <= ' . $dbw->addQuotes( $end ) ;
+			$conds[] = 'img_name <= ' . $dbw->addQuotes( $end );
 		}
 		if ( $mime !== false ) {
 			list( $major, $minor ) = File::splitMime( $mime );
@@ -209,4 +209,4 @@ class RefreshImageMetadata extends Maintenance {
 
 
 $maintClass = 'RefreshImageMetadata';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

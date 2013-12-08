@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to cleanup all spam from a given hostname.
@@ -141,4 +141,4 @@ class CleanupSpam extends Maintenance {
 }
 
 $maintClass = "CleanupSpam";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

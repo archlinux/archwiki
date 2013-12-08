@@ -187,9 +187,6 @@ $messages = array(
 'tog-shownumberswatching' => "'t Aantal gebroekers tuine die dees pagina volg",
 'tog-oldsig' => 'Bestaonde ongerteikening:',
 'tog-fancysig' => 'Es wikiteks behanjele (zonder autematische verwiezing)',
-'tog-externaleditor' => "Sjtanderd 'ne externe teksbewirker gebroeke (inkel veur experts, speciaal instellinge zien nudig. [//www.mediawiki.org/wiki/Manual:External_editors Mie infermasie])",
-'tog-externaldiff' => "Sjtanderd 'n extern vergeliekingsprogramma gebroeke (inkel veur experts, speciaal instellinge zien nudig [//www.mediawiki.org/wiki/Manual:External_editors Mie infermasie])",
-'tog-showjumplinks' => '"gank nao"-toegankelikheidslinks mäögelik make',
 'tog-uselivepreview' => '"live veurbesjouwing" gebroeke (vereis JavaScript - experimenteel)',
 'tog-forceeditsummary' => "'n Melding gaeve bie 'n laeg samevatting",
 'tog-watchlisthideown' => 'Eige bewirkinge verberge op mien volglies',
@@ -202,6 +199,7 @@ $messages = array(
 'tog-diffonly' => 'Pagina-inhaud zónger verangeringe neet tuine',
 'tog-showhiddencats' => 'Verbórge categorië tuine',
 'tog-norollbackdiff' => 'Wieziginge eweglaote nao trökdrieje',
+'tog-useeditwarning' => "Waorssjoew mich es ich 'n bewerkdje pagina die nag neet is opgeslage wil verlaote",
 
 'underline-always' => 'Altied',
 'underline-never' => 'Noets',
@@ -387,7 +385,7 @@ $1',
 'pool-queuefull' => 'De wachrie van de pool is vól',
 'pool-errorunknown' => 'Ónbekènde fout',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Euver {{SITENAME}}',
 'aboutpage' => 'Project:Info',
 'copyright' => 'De inhawd is besjikbaar ónger de $1.',
@@ -397,7 +395,6 @@ $1',
 'disclaimers' => 'Aafwiezinge aansjprakelikheid',
 'disclaimerpage' => 'Project:Algemein aafwiezing aansjprakelikheid',
 'edithelp' => 'Hulp bie bewirke',
-'edithelppage' => 'Help:Instructies',
 'helppage' => 'Help:Help',
 'mainpage' => 'Veurblaad',
 'mainpage-description' => 'Veurblaad',
@@ -470,17 +467,6 @@ Mäögelik höbs te 'n typefout gemaak in de URL, of 'n verkierde verwiezing gev
 # General errors
 'error' => 'Fout',
 'databaseerror' => 'Databasefout',
-'dberrortext' => 'Bie \'t zeuke is \'n syntaxfout in de database opgetraoje.
-Dit kan zien veroorzaak door \'n fout in de software.
-De lètste zeukpoging in de database waor:
-<blockquote><tt>$1</tt></blockquote>
-vanoet de functie "<tt>$2</tt>".
-Database gaof de foutmelding "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'Dao is \'n syntaxfout opgetreje bie \'t zeuke in de database.
-De lèste opgevraogde zeukactie waor:
-"$1"
-vanoet de functie "$2".
-Database brach fout "$3" nao veure: "$4"',
 'laggedslavemode' => 'Waarsjoewing: de pagina kin verauwerd zien.',
 'readonly' => 'Database geblokkeerd',
 'enterlockreason' => "Gaef 'n rae veur de blokkering en wie lank 't dinkelik zal dore. De ingegaeve rae zal aan de gebroekers getuind waere.",
@@ -532,7 +518,6 @@ Query: $2',
 'viewyourtext' => 'Doe kans "dien bewèrkinge" ane brónteks van dees pagina bekieke en euverkopiëre:',
 'protectedinterface' => 'Deze pagina bevat teks veur berichte van de software en is beveilig om misbroek te veurkomme.',
 'editinginterface' => "'''Waarsjoewing:''' Doe bewirks 'n pagina die gebroek waert door de software. Bewirkinge op dees pagina beïnvlode de gebroekersinterface van jederein. Euverwaeg veur euverzèttinge [//translatewiki.net/wiki/Main_Page?setlang=li translatewiki.net] te gebroeke, 't euverzèttingssprojek veur MediaWiki.",
-'sqlhidden' => '(SQL query verborge)',
 'cascadeprotected' => "Deze pagina kin neet bewirk waere, omdet zie is opgenome in de volgende {{PLURAL:$1|pagina|pagina's}} die beveilig {{PLURAL:$1|is|zeen}} mèt de kaskaad-optie:
 $2",
 'namespaceprotected' => "Doe höbs gein rechte om pagina's in de naamruumde '''$1''' te bewirke.",
@@ -563,7 +548,6 @@ Mäögelik waert nog 'n deil pagina's getuind esofs te nog aangemeld bis pès te
 'yourpassword' => 'Die wachwaord',
 'yourpasswordagain' => 'Wachwaord opnuuj intype',
 'remembermypassword' => 'Mien wachwaord onthouwe veur later sessies (hoegstens $1 {{PLURAL:$1|daag|daag}})',
-'securelogin-stick-https' => 'Verbónje blieve via HTTPS nao aanmelle',
 'yourdomainname' => 'Die domein',
 'externaldberror' => "d'r Is 'n fout opgetraoje biej 't aanmelje biej de database of doe höbs gén toesjtömming diene externe gebroeker biej te wèrke.",
 'login' => 'Aanmèlde',
@@ -657,7 +641,7 @@ Doe mós effe wachte ierdets te 't obbenuuts kens perbere.",
 'newpassword' => 'Nuuj wachwaord',
 'retypenew' => "Veur 't nuuj wachwaord nogins in",
 'resetpass_submit' => 'Wachwaord instelle en aanmelje',
-'resetpass_success' => 'Dien wachwaord is verangerd. Bezig mèt aanmelje...',
+'changepassword-success' => 'Dien wachwaord is verangerd. Bezig mèt aanmelje...',
 'resetpass_forbidden' => 'Wachwäörd kónne neet verangerd waere',
 'resetpass-no-info' => 'Doe moos aangemeld zien ierdets doe dees pagina gebroeke kens.',
 'resetpass-submit-loggedin' => 'Wachwaord wiezige',
@@ -668,10 +652,8 @@ Meugelik höbs doe dien wachwaord al gewiezig of 'n nuuj tiedelik wachwaord aang
 
 # Special:PasswordReset
 'passwordreset' => 'Wachwaord obbenuuts insjtèlle',
-'passwordreset-text' => "Völ dit form aan zodet weer dich 'ne mail kinne sjikk mit dien gebroekersgegaeves.",
 'passwordreset-legend' => 'Wachwaord obbenuuts insjtèlle',
 'passwordreset-disabled' => "'t Is hie neet meugelik óm die wachwaord óbbenuits in te sjtelle.",
-'passwordreset-pretext' => '{{PLURAL:$1||Veur ei van de vèljer hieónger in}}',
 'passwordreset-username' => 'Gebroekersnaam:',
 'passwordreset-domain' => 'Domein:',
 'passwordreset-capture' => 'Bekiek de resulterenden e-mail?',
@@ -892,6 +874,8 @@ Ze lik eweggesjaf te zien.',
 'edit-already-exists' => 'De pagina is neet aangemaak.
 Zie besjteit al.',
 'defaultmessagetext' => 'Obligaten teks',
+'editwarning-warning' => "Es se dees pagina verleets verluus se meugelik wieziginge die se haes gemaak.
+Es se bös aangemeld, kins se dees waorsjoewing oetzètten in 't bewerkingstabblaad in dien veurkäöre.",
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => "'''Waarschuwing:''' dees pagina gebroek te väöl kosbare parserfuncties.
@@ -1121,7 +1105,6 @@ Wees zeker det deze wieziging de gesjiedenisdoorloupendheid van de pagina zal be
 'searchmenu-legend' => 'Zeukopties',
 'searchmenu-exists' => "* Pagina '''[[$1]]'''",
 'searchmenu-new' => "'''De pagina \"[[:\$1]]\" aanmake op deze wiki'''",
-'searchhelp-url' => 'Help:Help',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Paginanaome mit dit veurveugsel weergaeve]]',
 'searchprofile-articles' => "Inhaudelike pagina's",
 'searchprofile-project' => "Help- en projekpagina's",
@@ -1167,15 +1150,6 @@ Doe kans ouch 'n naamruumde es veurvoegsel gebroeke.",
 Zoelang as de servers nog neet sjterk genog zunt kins e zeuke bie Google.
 Mèrk op dat hun indexe van {{SITENAME}} content e bietje gedatierd kint zien.',
 
-# Quickbar
-'qbsettings' => 'Menubalkinsjtèllinge',
-'qbsettings-none' => 'Oetgesjakeld',
-'qbsettings-fixedleft' => 'Links vas',
-'qbsettings-fixedright' => 'Rechts vas',
-'qbsettings-floatingleft' => 'Links zjwevend',
-'qbsettings-floatingright' => 'Rechs zjwevend',
-'qbsettings-directionality' => 'Vas, aafhenkelik vanne sjrifrichting van dien sjpraok',
-
 # Preferences page
 'preferences' => 'Veurkäöre',
 'mypreferences' => 'Mien veurkäöre',
@@ -1208,7 +1182,6 @@ Mèrk op dat hun indexe van {{SITENAME}} content e bietje gedatierd kint zien.',
 'resetprefs' => 'Sjtandaardveurkäöre hersjtèlle',
 'restoreprefs' => 'Terug nao standaardinstellinge',
 'prefs-editing' => 'Aafmeitinge tèksveld',
-'prefs-edit-boxsize' => "Aafmetinge van 't bewirkingsvinster.",
 'rows' => 'Regels',
 'columns' => 'Kolomme',
 'searchresultshead' => 'Insjtèllinge veur zeukresultate',
@@ -1219,9 +1192,6 @@ Mèrk op dat hun indexe van {{SITENAME}} content e bietje gedatierd kint zien.',
 'recentchangesdays-max' => '(maximaal $1 {{PLURAL:$1|daag|daag}})',
 'recentchangescount' => 'Standerd aantal waer te gaeve bewèrkinge:',
 'prefs-help-recentchangescount' => "Dit gelt veur recente wieziginge, paginagesjiedenis en logbookpagina's.",
-'prefs-help-watchlist-token' => 'Door hie ne geheime sleutel in te vulle wurt nen RSS-feed veur dien volglies aangemaak.
-Ederein dae deze sleutel kint kin dien volglies laeze, dus kees ne veilige sleutel.
-Hie volg n willekäörig gegenereerde waerde die se kins gebroeke: $1',
 'savedprefs' => 'Dien veurkäöre zint opgesjlage.',
 'timezonelegend' => 'Tiedzone:',
 'localtime' => 'Plaatselike tied',
@@ -1252,7 +1222,6 @@ Hie volg n willekäörig gegenereerde waerde die se kins gebroeke: $1',
 'prefs-reset-intro' => 'Gebroek dees functie om dien veurkäöre te herstelle nao de standaardinstellinge.
 Dees hanjeling kin neet ongedaon gemaak waere.',
 'prefs-emailconfirm-label' => 'E-mailbevestiging:',
-'prefs-textboxsize' => 'Aafmaetinge bewirkingssjerm',
 'youremail' => 'Dien e-mailadres',
 'username' => 'Gebroekersnaam:',
 'uid' => 'Gebroekersnómmer:',
@@ -1492,7 +1461,6 @@ Deze informatie is zichbaar veur angere gebroekers.',
 'recentchangeslinked-feed' => 'Volg links',
 'recentchangeslinked-toolbox' => 'Volg links',
 'recentchangeslinked-title' => 'Verangeringe verwant mit "$1"',
-'recentchangeslinked-noresult' => "d'r Zeen gein bewerkinge in de gegaeve periode gewaes op de pagina's die vanaaf hiej gelink waere.",
 'recentchangeslinked-summary' => "Dees speciaal pagina tuint de lètste bewirkinge op pagina's die gelink waere vanaaf deze pagina. Pagina's die op [[Special:Watchlist|dien volglies]] staon waere '''vet''' weergegaeve.",
 'recentchangeslinked-page' => 'Paginanaam:',
 'recentchangeslinked-to' => "Verangeringe weergaeve nao de gelinkde pagina's",
@@ -1715,7 +1683,6 @@ Om beveiligingsrede is img_auth.php oetgesjakeld.",
 'http-read-error' => 'HTTP-laezingsfout.',
 'http-timed-out' => 'HTTP-verzeuktimeout',
 'http-curl-error' => 'Óphaolingsfout URL: $1',
-'http-host-unreachable' => 'Kòs de URL neet bereike',
 'http-bad-status' => "d'r Is e perbleem ópgetraoje bie 't HTTP-verzeuk: $1 $2",
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1859,12 +1826,6 @@ De [$2 pagina mit de besjtandjsbesjrieving] wurt hiejónger weergegaeve.',
 'statistics-users-active' => 'Actieve gebroekers',
 'statistics-users-active-desc' => "Gebroekers die in de aafgeloupe {{PLURAL:$1|daag|$1 daag}} 'ne hanjeling höbbe oetgevoerd",
 'statistics-mostpopular' => "Meisbekeke pazjena's",
-
-'disambiguations' => "Links nao verdudelikingspazjena's",
-'disambiguationspage' => 'Template:Verdudeliking',
-'disambiguations-text' => "Hiej onger staon pagina's die verwieze nao 'ne '''redirect'''.
-Deze heure waarsjienlik direct nao 't zjuste ongerwerp te verwiezen.<br />
-'ne pagina wörd gezeen es redirect wen d'r 'n sjabloon op stuit det gelink is vanaaf [[MediaWiki:Disambiguationspage]]",
 
 'doubleredirects' => 'Dobbel redirects',
 'doubleredirectstext' => "Dees lies haet paazjes mit redireks die nao anger redireks gaon.
@@ -2110,10 +2071,9 @@ Toekomstige verangeringe aan dees pagina en de biebehurende euverlèkpagina weur
 'unwatchthispage' => 'Neet mië volge',
 'notanarticle' => 'Is gein artikel',
 'notvisiblerev' => 'Bewèrking is verwiederd',
-'watchnochange' => 'Gein van dien gevolgde items is aangepas in dees periode.',
 'watchlist-details' => "D'r {{PLURAL:$1|sjteit ein pagina|sjtaon $1 pagina's}} op dien volglies mit oetzunjering van de euverlèkpagina's.",
-'wlheader-enotif' => '* Doe wörs per e-mail gewaarsjuwd',
-'wlheader-showupdated' => "* Pazjena's die verangerd zeen saers doe ze veur 't lètste bekeeks sjtaon '''vet'''",
+'wlheader-enotif' => 'Doe wörs per e-mail gewaarsjuwd',
+'wlheader-showupdated' => "Pazjena's die verangerd zeen saers doe ze veur 't lètste bekeeks sjtaon '''vet'''",
 'watchmethod-recent' => "Controleer recènte verangere veur gevolgde pazjena's",
 'watchmethod-list' => "controlere van gevolgde pazjena's veur recènte verangeringe",
 'watchlistcontains' => "Dien volglies bevat $1 {{PLURAL:$1|pazjena|pazjena's}}.",
@@ -2490,11 +2450,8 @@ Wils se de instellinge wiezige?',
 'ipb_blocked_as_range' => "Fout: 't IP-adres $1 is neet direct geblokkeerd en de blokkade kan neet opgeheve waere. De blokkade is ongerdeil van de reeks $2, wovan de blokkade waal opgeheve kan waere.",
 'ip_range_invalid' => 'Ongeldige IP-reeks',
 'ip_range_toolarge' => 'Reeksblokkades groeater es /$1 kènne neet.',
-'blockme' => 'Blokkeer mich',
 'proxyblocker' => 'Proxyblokker',
-'proxyblocker-disabled' => 'Deze functie is oetgesjakeld.',
 'proxyblockreason' => "Dien IP-adres is geblokkeerd ómdat 't 'n aope proxy is. Contacteer estebleef diene internet service provider of technische óngersjteuning en informeer ze euver dit serjeus veiligheidsprebleem.",
-'proxyblocksuccess' => 'Klaor.',
 'sorbsreason' => 'Dien IP-adres is opgenaome in de DNS-blacklist es open proxyserver, dae {{SITENAME}} gebroek.',
 'sorbs_create_account_reason' => 'Dien IP-adres is opgenómme in de DNS-blacklist es open proxyserver, dae {{SITENAME}} gebroek. De kèns gein gebroekersaccount aanmake.',
 'cant-block-while-blocked' => 'De kins anger gebroekers neet blokkere terwiel se zelf geblokkeerd bös.',
@@ -2830,8 +2787,6 @@ Meistal wörd dit door 'ne zwarte externe link veroorzaak.",
 'pageinfo-authors' => 'Aantal versjillende sjrievers',
 
 # Skin names
-'skinname-standard' => 'Standaard',
-'skinname-nostalgia' => 'Nostalgie',
 'skinname-cologneblue' => 'Keuls blauw',
 
 # Patrolling
@@ -2930,7 +2885,7 @@ Alle volgende links die op dezelfde regel sjtaon, waere behanjeld es oetzunjerin
 * gpslongitude
 * gpsaltitude",
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Breidte',
 'exif-imagelength' => 'Hoogte',
 'exif-bitspersample' => 'Bits per componènt',
@@ -3108,7 +3063,7 @@ Alle volgende links die op dezelfde regel sjtaon, waere behanjeld es oetzunjerin
 'exif-originalimageheight' => 'Heugdje vanne aafbeilding veur biesnieje',
 'exif-originalimagewidth' => 'Brèdje vanne aafbeilding veur biesnieje',
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Óngecómprimeerd',
 'exif-compression-2' => 'CCITT Groep 3 1-dimensionale aangepasde "Huffman run length"-codering',
 'exif-compression-3' => 'CCITT Groep 3 faxcodering',
@@ -3495,7 +3450,6 @@ De kèns ouch [[Special:EditWatchlist|'t sjtanderd bewirkingssjirm gebroeke]].",
 'version-other' => 'Euverige',
 'version-mediahandlers' => 'Mediaverwerkers',
 'version-hooks' => 'Heuk',
-'version-extension-functions' => 'Oetbreijingsfuncties',
 'version-parser-extensiontags' => 'Parseroetbreijingstags',
 'version-parser-function-hooks' => 'Parserfunctieheuk',
 'version-hook-name' => 'Hooknaam',
@@ -3515,13 +3469,6 @@ Same mit dit programma heurs se 'n [{{SERVER}}{{SCRIPTPATH}}/COPYING kopie van d
 'version-entrypoints' => 'Ingang-URLs',
 'version-entrypoints-header-entrypoint' => 'Ingank',
 'version-entrypoints-header-url' => 'URL',
-
-# Special:FilePath
-'filepath' => 'Bestandjspaad',
-'filepath-page' => 'Bestandj:',
-'filepath-submit' => 'Zeuk',
-'filepath-summary' => "Dees speciaal pazjena guf 't vollejig paad veur 'n bestandj.
-Aafbeildinge waere in häör vollejige resolutie getoeandj. Anger bestandjstypes waere drèk in 't mit 't MIME-type verbónje programma geäöpendj.",
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Zeuk veur döbbelbestaondje bestenj',

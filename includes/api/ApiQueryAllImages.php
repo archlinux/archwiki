@@ -189,7 +189,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 
 		if ( !is_null( $params['mime'] ) ) {
 			global $wgMiserMode;
-			if ( $wgMiserMode  ) {
+			if ( $wgMiserMode ) {
 				$this->dieUsage( 'MIME search disabled in Miser Mode', 'mimesearchdisabled' );
 			}
 
@@ -260,7 +260,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 	}
 
 	public function getAllowedParams() {
-		return array (
+		return array(
 			'sort' => array(
 				ApiBase::PARAM_DFLT => 'name',
 				ApiBase::PARAM_TYPE => array(

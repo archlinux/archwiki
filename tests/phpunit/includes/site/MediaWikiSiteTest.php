@@ -54,6 +54,7 @@ class MediaWikiSiteTest extends SiteTest {
 
 	/**
 	 * @dataProvider fileUrlProvider
+	 * @covers MediaWikiSite::getFileUrl
 	 */
 	public function testGetFileUrl( $url, $filePath, $pathArgument, $expected ) {
 		$site = new MediaWikiSite();
@@ -62,7 +63,7 @@ class MediaWikiSiteTest extends SiteTest {
 		$this->assertEquals( $expected, $site->getFileUrl( $pathArgument ) );
 	}
 
-	public function provideGetPageUrl() {
+	public static function provideGetPageUrl() {
 		return array(
 			// path, page, expected substring
 			array( 'http://acme.test/wiki/$1', 'Berlin', '/wiki/Berlin' ),
@@ -77,6 +78,7 @@ class MediaWikiSiteTest extends SiteTest {
 
 	/**
 	 * @dataProvider provideGetPageUrl
+	 * @covers MediaWikiSite::getPageUrl
 	 */
 	public function testGetPageUrl( $path, $page, $expected ) {
 		$site = new MediaWikiSite();
@@ -85,5 +87,4 @@ class MediaWikiSiteTest extends SiteTest {
 		$this->assertContains( $path, $site->getPageUrl() );
 		$this->assertContains( $expected, $site->getPageUrl( $page ) );
 	}
-
 }

@@ -55,7 +55,8 @@
 #wikieditor-toolbar-link-int-target-status-exists,
 #wikieditor-toolbar-link-int-target-status-notexists,
 #wikieditor-toolbar-link-int-target-status-invalid,
-#wikieditor-toolbar-link-int-target-status-external {
+#wikieditor-toolbar-link-int-target-status-external,
+#wikieditor-toolbar-link-int-target-status-disambig {
 	padding-left: 30px;
 	background-position: 0 50%;
 	background-repeat: no-repeat;
@@ -78,6 +79,11 @@
 #wikieditor-toolbar-link-int-target-status-external {
 	/* @embed */
 	background-image: url(images/dialogs/insert-link-external.png);
+	background-position: left;
+}
+#wikieditor-toolbar-link-int-target-status-disambig {
+	/* @embed */
+	background-image: url(images/dialogs/insert-disambiguation.png);
 	background-position: left;
 }
 /* File dialog */

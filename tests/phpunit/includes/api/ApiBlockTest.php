@@ -6,7 +6,6 @@
  * @group medium
  */
 class ApiBlockTest extends ApiTestCase {
-
 	protected function setUp() {
 		parent::setUp();
 		$this->doLogin();
@@ -35,9 +34,8 @@ class ApiBlockTest extends ApiTestCase {
 	 * Which made the Block/Unblock API to actually verify the token
 	 * previously always considered valid (bug 34212).
 	 */
-	function testMakeNormalBlock() {
-
-		$data = $this->getTokens();
+	public function testMakeNormalBlock() {
+		$tokens = $this->getTokens();
 
 		$user = User::newFromName( 'UTApiBlockee' );
 
@@ -45,19 +43,15 @@ class ApiBlockTest extends ApiTestCase {
 			$this->markTestIncomplete( "The user UTApiBlockee does not exist" );
 		}
 
-		if ( !isset( $data[0]['query']['pages'] ) ) {
+		if ( !array_key_exists( 'blocktoken', $tokens ) ) {
 			$this->markTestIncomplete( "No block token found" );
 		}
 
-		$keys = array_keys( $data[0]['query']['pages'] );
-		$key = array_pop( $keys );
-		$pageinfo = $data[0]['query']['pages'][$key];
-
-		$data = $this->doApiRequest( array(
+		$this->doApiRequest( array(
 			'action' => 'block',
 			'user' => 'UTApiBlockee',
 			'reason' => 'Some reason',
-			'token' => $pageinfo['blocktoken'] ), null, false, self::$users['sysop']->user );
+			'token' => $tokens['blocktoken'] ), null, false, self::$users['sysop']->user );
 
 		$block = Block::newFromTarget( 'UTApiBlockee' );
 
@@ -66,7 +60,6 @@ class ApiBlockTest extends ApiTestCase {
 		$this->assertEquals( 'UTApiBlockee', (string)$block->getTarget() );
 		$this->assertEquals( 'Some reason', $block->mReason );
 		$this->assertEquals( 'infinity', $block->mExpiry );
-
 	}
 
 	/**
@@ -77,7 +70,7 @@ class ApiBlockTest extends ApiTestCase {
 	 * @dataProvider provideBlockUnblockAction
 	 * @expectedException UsageException
 	 */
-	function testBlockingActionWithNoToken( $action ) {
+	public function testBlockingActionWithNoToken( $action ) {
 		$this->doApiRequest(
 			array(
 				'action' => $action,
@@ -93,7 +86,7 @@ class ApiBlockTest extends ApiTestCase {
 	/**
 	 * Just provide the 'block' and 'unblock' action to test both API calls
 	 */
-	function provideBlockUnblockAction() {
+	public static function provideBlockUnblockAction() {
 		return array(
 			array( 'block' ),
 			array( 'unblock' ),

@@ -82,12 +82,6 @@ class FSFileBackend extends FileBackendStore {
 		}
 	}
 
-	/**
-	 * @see FileBackendStore::resolveContainerPath()
-	 * @param $container string
-	 * @param $relStoragePath string
-	 * @return null|string
-	 */
 	protected function resolveContainerPath( $container, $relStoragePath ) {
 		// Check that container has a root directory
 		if ( isset( $this->containerPaths[$container] ) || isset( $this->basePath ) ) {
@@ -121,8 +115,8 @@ class FSFileBackend extends FileBackendStore {
 	 * Given the short (unresolved) and full (resolved) name of
 	 * a container, return the file system path of the container.
 	 *
-	 * @param $shortCont string
-	 * @param $fullCont string
+	 * @param string $shortCont
+	 * @param string $fullCont
 	 * @return string|null
 	 */
 	protected function containerFSRoot( $shortCont, $fullCont ) {
@@ -153,10 +147,6 @@ class FSFileBackend extends FileBackendStore {
 		return $fsPath;
 	}
 
-	/**
-	 * @see FileBackendStore::isPathUsableInternal()
-	 * @return bool
-	 */
 	public function isPathUsableInternal( $storagePath ) {
 		$fsPath = $this->resolveToFSPath( $storagePath );
 		if ( $fsPath === null ) {
@@ -178,10 +168,6 @@ class FSFileBackend extends FileBackendStore {
 		return $ok;
 	}
 
-	/**
-	 * @see FileBackendStore::doCreateInternal()
-	 * @return Status
-	 */
 	protected function doCreateInternal( array $params ) {
 		$status = Status::newGood();
 
@@ -235,10 +221,6 @@ class FSFileBackend extends FileBackendStore {
 		}
 	}
 
-	/**
-	 * @see FileBackendStore::doStoreInternal()
-	 * @return Status
-	 */
 	protected function doStoreInternal( array $params ) {
 		$status = Status::newGood();
 
@@ -284,10 +266,6 @@ class FSFileBackend extends FileBackendStore {
 		}
 	}
 
-	/**
-	 * @see FileBackendStore::doCopyInternal()
-	 * @return Status
-	 */
 	protected function doCopyInternal( array $params ) {
 		$status = Status::newGood();
 
@@ -319,7 +297,7 @@ class FSFileBackend extends FileBackendStore {
 			$status->value = new FSFileOpHandle( $this, $params, 'Copy', $cmd, $dest );
 		} else { // immediate write
 			$this->trapWarnings();
-			$ok = copy( $source, $dest );
+			$ok = ( $source === $dest ) ? true : copy( $source, $dest );
 			$this->untrapWarnings();
 			// In some cases (at least over NFS), copy() returns true when it fails
 			if ( !$ok || ( filesize( $source ) !== filesize( $dest ) ) ) {
@@ -348,10 +326,6 @@ class FSFileBackend extends FileBackendStore {
 		}
 	}
 
-	/**
-	 * @see FileBackendStore::doMoveInternal()
-	 * @return Status
-	 */
 	protected function doMoveInternal( array $params ) {
 		$status = Status::newGood();
 
@@ -383,7 +357,7 @@ class FSFileBackend extends FileBackendStore {
 			$status->value = new FSFileOpHandle( $this, $params, 'Move', $cmd );
 		} else { // immediate write
 			$this->trapWarnings();
-			$ok = rename( $source, $dest );
+			$ok = ( $source === $dest ) ? true : rename( $source, $dest );
 			$this->untrapWarnings();
 			clearstatcache(); // file no longer at source
 			if ( !$ok ) {
@@ -405,10 +379,6 @@ class FSFileBackend extends FileBackendStore {
 		}
 	}
 
-	/**
-	 * @see FileBackendStore::doDeleteInternal()
-	 * @return Status
-	 */
 	protected function doDeleteInternal( array $params ) {
 		$status = Status::newGood();
 
@@ -454,10 +424,6 @@ class FSFileBackend extends FileBackendStore {
 		}
 	}
 
-	/**
-	 * @see FileBackendStore::doPrepareInternal()
-	 * @return Status
-	 */
 	protected function doPrepareInternal( $fullCont, $dirRel, array $params ) {
 		$status = Status::newGood();
 		list( , $shortCont, ) = FileBackend::splitStoragePath( $params['dir'] );
@@ -481,10 +447,6 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
-	/**
-	 * @see FileBackendStore::doSecureInternal()
-	 * @return Status
-	 */
 	protected function doSecureInternal( $fullCont, $dirRel, array $params ) {
 		$status = Status::newGood();
 		list( , $shortCont, ) = FileBackend::splitStoragePath( $params['dir'] );
@@ -512,10 +474,6 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
-	/**
-	 * @see FileBackendStore::doPublishInternal()
-	 * @return Status
-	 */
 	protected function doPublishInternal( $fullCont, $dirRel, array $params ) {
 		$status = Status::newGood();
 		list( , $shortCont, ) = FileBackend::splitStoragePath( $params['dir'] );
@@ -543,10 +501,6 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
-	/**
-	 * @see FileBackendStore::doCleanInternal()
-	 * @return Status
-	 */
 	protected function doCleanInternal( $fullCont, $dirRel, array $params ) {
 		$status = Status::newGood();
 		list( , $shortCont, ) = FileBackend::splitStoragePath( $params['dir'] );
@@ -560,10 +514,6 @@ class FSFileBackend extends FileBackendStore {
 		return $status;
 	}
 
-	/**
-	 * @see FileBackendStore::doFileExists()
-	 * @return array|bool|null
-	 */
 	protected function doGetFileStat( array $params ) {
 		$source = $this->resolveToFSPath( $params['src'] );
 		if ( $source === null ) {
@@ -577,7 +527,7 @@ class FSFileBackend extends FileBackendStore {
 		if ( $stat ) {
 			return array(
 				'mtime' => wfTimestamp( TS_MW, $stat['mtime'] ),
-				'size'  => $stat['size']
+				'size' => $stat['size']
 			);
 		} elseif ( !$hadError ) {
 			return false; // file does not exist
@@ -593,10 +543,6 @@ class FSFileBackend extends FileBackendStore {
 		clearstatcache(); // clear the PHP file stat cache
 	}
 
-	/**
-	 * @see FileBackendStore::doDirectoryExists()
-	 * @return bool|null
-	 */
 	protected function doDirectoryExists( $fullCont, $dirRel, array $params ) {
 		list( , $shortCont, ) = FileBackend::splitStoragePath( $params['dir'] );
 		$contRoot = $this->containerFSRoot( $shortCont, $fullCont ); // must be valid
@@ -647,10 +593,6 @@ class FSFileBackend extends FileBackendStore {
 		return new FSFileBackendFileList( $dir, $params );
 	}
 
-	/**
-	 * @see FileBackendStore::doGetLocalReferenceMulti()
-	 * @return Array
-	 */
 	protected function doGetLocalReferenceMulti( array $params ) {
 		$fsFiles = array(); // (path => FSFile)
 
@@ -666,10 +608,6 @@ class FSFileBackend extends FileBackendStore {
 		return $fsFiles;
 	}
 
-	/**
-	 * @see FileBackendStore::doGetLocalCopyMulti()
-	 * @return Array
-	 */
 	protected function doGetLocalCopyMulti( array $params ) {
 		$tmpFiles = array(); // (path => TempFSFile)
 
@@ -702,18 +640,10 @@ class FSFileBackend extends FileBackendStore {
 		return $tmpFiles;
 	}
 
-	/**
-	 * @see FileBackendStore::directoriesAreVirtual()
-	 * @return bool
-	 */
 	protected function directoriesAreVirtual() {
 		return false;
 	}
 
-	/**
-	 * @see FileBackendStore::doExecuteOpHandlesInternal()
-	 * @return Array List of corresponding Status objects
-	 */
 	protected function doExecuteOpHandlesInternal( array $fileOpHandles ) {
 		$statuses = array();
 
@@ -807,11 +737,12 @@ class FSFileBackend extends FileBackendStore {
 	}
 
 	/**
-	 * @param $errno integer
-	 * @param $errstr string
+	 * @param integer $errno
+	 * @param string $errstr
 	 * @return bool
+	 * @access private
 	 */
-	private function handleWarning( $errno, $errstr ) {
+	public function handleWarning( $errno, $errstr ) {
 		wfDebugLog( 'FSFileBackend', $errstr ); // more detailed error logging
 		$this->hadWarningErrors[count( $this->hadWarningErrors ) - 1] = true;
 		return true; // suppress from PHP handler
@@ -826,13 +757,15 @@ class FSFileOpHandle extends FileBackendStoreOpHandle {
 	public $chmodPath; // string; file to chmod
 
 	/**
-	 * @param $backend
-	 * @param $params array
-	 * @param $call
-	 * @param $cmd
-	 * @param $chmodPath null
+	 * @param FSFileBackend $backend
+	 * @param array $params
+	 * @param string $call
+	 * @param string $cmd
+	 * @param integer|null $chmodPath
 	 */
-	public function __construct( $backend, array $params, $call, $cmd, $chmodPath = null ) {
+	public function __construct(
+		FSFileBackend $backend, array $params, $call, $cmd, $chmodPath = null
+	) {
 		$this->backend = $backend;
 		$this->params = $params;
 		$this->call = $call;
@@ -858,11 +791,11 @@ abstract class FSFileBackendList implements Iterator {
 
 	/**
 	 * @param string $dir file system directory
-	 * @param $params array
+	 * @param array $params
 	 */
 	public function __construct( $dir, array $params ) {
 		$path = realpath( $dir ); // normalize
-		if( $path === false ) {
+		if ( $path === false ) {
 			$path = $dir;
 		}
 		$this->suffixStart = strlen( $path ) + 1; // size of "path/to/dir/"
@@ -921,8 +854,8 @@ abstract class FSFileBackendList implements Iterator {
 		try {
 			$this->iter->next();
 			$this->filterViaNext();
-		} catch ( UnexpectedValueException $e ) {
-			$this->iter = null;
+		} catch ( UnexpectedValueException $e ) { // bad permissions? deleted?
+			throw new FileBackendError( "File iterator gave UnexpectedValueException." );
 		}
 		++$this->pos;
 	}
@@ -936,8 +869,8 @@ abstract class FSFileBackendList implements Iterator {
 		try {
 			$this->iter->rewind();
 			$this->filterViaNext();
-		} catch ( UnexpectedValueException $e ) {
-			$this->iter = null;
+		} catch ( UnexpectedValueException $e ) { // bad permissions? deleted?
+			throw new FileBackendError( "File iterator gave UnexpectedValueException." );
 		}
 	}
 
@@ -958,12 +891,12 @@ abstract class FSFileBackendList implements Iterator {
 	 * Return only the relative path and normalize slashes to FileBackend-style.
 	 * Uses the "real path" since the suffix is based upon that.
 	 *
-	 * @param $path string
+	 * @param string $path
 	 * @return string
 	 */
 	protected function getRelPath( $dir ) {
 		$path = realpath( $dir );
-		if( $path === false ) {
+		if ( $path === false ) {
 			$path = $dir;
 		}
 		return strtr( substr( $path, $this->suffixStart ), '\\', '/' );

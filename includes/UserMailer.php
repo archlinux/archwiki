@@ -119,7 +119,7 @@ class UserMailer {
 	 */
 	static function arrayToHeaderString( $headers, $endl = "\n" ) {
 		$strings = array();
-		foreach( $headers as $name => $value ) {
+		foreach ( $headers as $name => $value ) {
 			$strings[] = "$name: $value";
 		}
 		return implode( $endl, $strings );
@@ -241,7 +241,7 @@ class UserMailer {
 			$headers['Reply-To'] = $replyto->toString();
 		}
 
-		$headers['Date'] = date( 'r' );
+		$headers['Date'] = MWTimestamp::getLocalInstance()->format( 'r' );
 		$headers['Message-ID'] = self::makeMsgId();
 		$headers['X-Mailer'] = 'MediaWiki mailer';
 
@@ -258,14 +258,16 @@ class UserMailer {
 			wfDebug( "Assembling multipart mime email\n" );
 			if ( !stream_resolve_include_path( 'Mail/mime.php' ) ) {
 				wfDebug( "PEAR Mail_Mime package is not installed. Falling back to text email.\n" );
+				// remove the html body for text email fall back
+				$body = $body['text'];
 			}
 			else {
-				require_once( 'Mail/mime.php' );
+				require_once 'Mail/mime.php';
 				if ( wfIsWindows() ) {
 					$body['text'] = str_replace( "\n", "\r\n", $body['text'] );
 					$body['html'] = str_replace( "\n", "\r\n", $body['html'] );
 				}
-				$mime = new Mail_mime( array( 'eol' => $endl ) );
+				$mime = new Mail_mime( array( 'eol' => $endl, 'text_charset' => 'UTF-8', 'html_charset' => 'UTF-8' ) );
 				$mime->setTXTBody( $body['text'] );
 				$mime->setHTMLBody( $body['html'] );
 				$body = $mime->get(); // must call get() before headers()
@@ -300,7 +302,7 @@ class UserMailer {
 			if ( !stream_resolve_include_path( 'Mail.php' ) ) {
 				throw new MWException( 'PEAR mail package is not installed' );
 			}
-			require_once( 'Mail.php' );
+			require_once 'Mail.php';
 
 			wfSuppressWarnings();
 
@@ -338,7 +340,7 @@ class UserMailer {
 			#
 			# PHP mail()
 			#
-			if( count( $to ) > 1 ) {
+			if ( count( $to ) > 1 ) {
 				$headers['To'] = 'undisclosed-recipients:;';
 			}
 			$headers = self::arrayToHeaderString( $headers, $endl );
@@ -409,7 +411,7 @@ class UserMailer {
 	 */
 	public static function quotedPrintable( $string, $charset = '' ) {
 		# Probably incomplete; see RFC 2045
-		if( empty( $charset ) ) {
+		if ( empty( $charset ) ) {
 			$charset = 'UTF-8';
 		}
 		$charset = strtoupper( $charset );
@@ -417,7 +419,7 @@ class UserMailer {
 
 		$illegal = '\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff=';
 		$replace = $illegal . '\t ?_';
-		if( !preg_match( "/[$illegal]/", $string ) ) {
+		if ( !preg_match( "/[$illegal]/", $string ) ) {
 			return $string;
 		}
 		$out = "=?$charset?Q?";
@@ -605,6 +607,7 @@ class EmailNotification {
 
 		wfRunHooks( 'UpdateUserMailerFormattedPageStatus', array( &$formattedPageStatus ) );
 		if ( !in_array( $this->pageStatus, $formattedPageStatus ) ) {
+			wfProfileOut( __METHOD__ );
 			throw new MWException( 'Not a valid page status!' );
 		}
 
@@ -667,11 +670,13 @@ class EmailNotification {
 			} elseif ( $targetUser->getOption( 'enotifusertalkpages' ) &&
 				( !$minorEdit || $targetUser->getOption( 'enotifminoredits' ) ) )
 			{
-				if ( $targetUser->isEmailConfirmed() ) {
+				if ( !$targetUser->isEmailConfirmed() ) {
+					wfDebug( __METHOD__ . ": talk page owner doesn't have validated email\n" );
+				} elseif ( !wfRunHooks( 'AbortTalkPageEmailNotification', array( $targetUser, $title ) ) ) {
+					wfDebug( __METHOD__ . ": talk page update notification is aborted for this user\n" );
+				} else {
 					wfDebug( __METHOD__ . ": sending talk page update notification\n" );
 					return true;
-				} else {
-					wfDebug( __METHOD__ . ": talk page owner doesn't have validated email\n" );
 				}
 			} else {
 				wfDebug( __METHOD__ . ": talk page owner doesn't want notifications\n" );
@@ -696,20 +701,20 @@ class EmailNotification {
 
 		$keys = array();
 		$postTransformKeys = array();
-		$pageTitleUrl = $this->title->getCanonicalUrl();
+		$pageTitleUrl = $this->title->getCanonicalURL();
 		$pageTitle = $this->title->getPrefixedText();
 
 		if ( $this->oldid ) {
 			// Always show a link to the diff which triggered the mail. See bug 32210.
 			$keys['$NEWPAGE'] = "\n\n" . wfMessage( 'enotif_lastdiff',
-				$this->title->getCanonicalUrl( 'diff=next&oldid=' . $this->oldid ) )
+				$this->title->getCanonicalURL( array( 'diff' => 'next', 'oldid' => $this->oldid ) ) )
 				->inContentLanguage()->text();
 
 			if ( !$wgEnotifImpersonal ) {
 				// For personal mail, also show a link to the diff of all changes
 				// since last visited.
 				$keys['$NEWPAGE'] .= "\n\n" . wfMessage( 'enotif_lastvisited',
-					$this->title->getCanonicalUrl( 'diff=0&oldid=' . $this->oldid ) )
+					$this->title->getCanonicalURL( array( 'diff' => '0', 'oldid' => $this->oldid ) ) )
 					->inContentLanguage()->text();
 			}
 			$keys['$OLDID'] = $this->oldid;
@@ -724,10 +729,10 @@ class EmailNotification {
 		}
 
 		$keys['$PAGETITLE'] = $this->title->getPrefixedText();
-		$keys['$PAGETITLE_URL'] = $this->title->getCanonicalUrl();
+		$keys['$PAGETITLE_URL'] = $this->title->getCanonicalURL();
 		$keys['$PAGEMINOREDIT'] = $this->minorEdit ?
 			wfMessage( 'minoredit' )->inContentLanguage()->text() : '';
-		$keys['$UNWATCHURL'] = $this->title->getCanonicalUrl( 'action=unwatch' );
+		$keys['$UNWATCHURL'] = $this->title->getCanonicalURL( 'action=unwatch' );
 
 		if ( $this->editor->isAnon() ) {
 			# real anon (user:xxx.xxx.xxx.xxx)
@@ -738,18 +743,25 @@ class EmailNotification {
 		} else {
 			$keys['$PAGEEDITOR'] = $wgEnotifUseRealName ? $this->editor->getRealName() : $this->editor->getName();
 			$emailPage = SpecialPage::getSafeTitleFor( 'Emailuser', $this->editor->getName() );
-			$keys['$PAGEEDITOR_EMAIL'] = $emailPage->getCanonicalUrl();
+			$keys['$PAGEEDITOR_EMAIL'] = $emailPage->getCanonicalURL();
 		}
 
-		$keys['$PAGEEDITOR_WIKI'] = $this->editor->getUserPage()->getCanonicalUrl();
+		$keys['$PAGEEDITOR_WIKI'] = $this->editor->getUserPage()->getCanonicalURL();
 
 		# Replace this after transforming the message, bug 35019
 		$postTransformKeys['$PAGESUMMARY'] = $this->summary == '' ? ' - ' : $this->summary;
 
-		# Now build message's subject and body
+		// Now build message's subject and body
+
+		// Messages:
+		// enotif_subject_deleted, enotif_subject_created, enotif_subject_moved,
+		// enotif_subject_restored, enotif_subject_changed
 		$this->subject = wfMessage( 'enotif_subject_' . $this->pageStatus )->inContentLanguage()
 			->params( $pageTitle, $keys['$PAGEEDITOR'] )->text();
 
+		// Messages:
+		// enotif_body_intro_deleted, enotif_body_intro_created, enotif_body_intro_moved,
+		// enotif_body_intro_restored, enotif_body_intro_changed
 		$keys['$PAGEINTRO'] = wfMessage( 'enotif_body_intro_' . $this->pageStatus )
 			->inContentLanguage()->params( $pageTitle, $keys['$PAGEEDITOR'], $pageTitleUrl )
 			->text();
@@ -790,8 +802,9 @@ class EmailNotification {
 	function compose( $user ) {
 		global $wgEnotifImpersonal;
 
-		if ( !$this->composed_common )
+		if ( !$this->composed_common ) {
 			$this->composeCommonMailtext();
+		}
 
 		if ( $wgEnotifImpersonal ) {
 			$this->mailTargets[] = new MailAddress( $user );

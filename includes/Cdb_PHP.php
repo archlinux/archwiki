@@ -73,10 +73,10 @@ class CdbFunctions {
 	public static function hash( $s ) {
 		$h = 5381;
 		for ( $i = 0; $i < strlen( $s ); $i++ ) {
-			$h5 = ($h << 5) & 0xffffffff;
+			$h5 = ( $h << 5 ) & 0xffffffff;
 			// Do a 32-bit sum
 			// Inlined here for speed
-			$sum = ($h & 0x3fffffff) + ($h5 & 0x3fffffff);
+			$sum = ( $h & 0x3fffffff ) + ( $h5 & 0x3fffffff );
 			$h =
 				(
 					( $sum & 0x40000000 ? 1 : 0 )
@@ -138,7 +138,7 @@ class CdbReader_PHP extends CdbReader {
 	}
 
 	function close() {
-		if( isset( $this->handle ) ) {
+		if ( isset( $this->handle ) ) {
 			fclose( $this->handle );
 		}
 		unset( $this->handle );
@@ -332,7 +332,7 @@ class CdbWriter_PHP extends CdbWriter {
 	 */
 	public function close() {
 		$this->finish();
-		if( isset( $this->handle ) ) {
+		if ( isset( $this->handle ) ) {
 			fclose( $this->handle );
 		}
 		if ( wfIsWindows() && file_exists( $this->realFileName ) ) {
@@ -411,7 +411,7 @@ class CdbWriter_PHP extends CdbWriter {
 		// Calculate the number of items that will be in each hashtable
 		$counts = array_fill( 0, 256, 0 );
 		foreach ( $this->hplist as $item ) {
-			++ $counts[ 255 & $item['h'] ];
+			++ $counts[255 & $item['h']];
 		}
 
 		// Fill in $starts with the *end* indexes
@@ -450,9 +450,11 @@ class CdbWriter_PHP extends CdbWriter {
 				$hp = $packedTables[$starts[$i] + $u];
 				$where = CdbFunctions::unsignedMod(
 					CdbFunctions::unsignedShiftRight( $hp['h'], 8 ), $len );
-				while ( $hashtable[$where]['p'] )
-					if ( ++$where == $len )
+				while ( $hashtable[$where]['p'] ) {
+					if ( ++$where == $len ) {
 						$where = 0;
+					}
+				}
 				$hashtable[$where] = $hp;
 			}
 

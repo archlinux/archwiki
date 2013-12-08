@@ -22,7 +22,7 @@
  * @author Tyler Romeo
  */
 
-require_once( __DIR__ . '/Benchmarker.php' );
+require_once __DIR__ . '/Benchmarker.php';
 
 /**
  * Maintenance script that benchmarks wfBaseConvert().
@@ -74,4 +74,4 @@ class bench_wfBaseConvert extends Benchmarker {
 }
 
 $maintClass = 'bench_wfBaseConvert';
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

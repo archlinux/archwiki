@@ -28,12 +28,6 @@ class SyntaxHighlight_GeSHi {
 		// Don't trim leading spaces away, just the linefeeds
 		$text = preg_replace( '/^\n+/', '', $text );
 
-		if( $wgUseTidy ) {
-			// HTML Tidy will convert tabs to spaces incorrectly (bug 30930).
-			// Preemptively replace the spaces in a more controlled fashion.
-			$text = self::tabsToSpaces( $text );
-		}
-
 		// Validate language
 		if( isset( $args['lang'] ) && $args['lang'] ) {
 			$lang = $args['lang'];
@@ -100,6 +94,12 @@ class SyntaxHighlight_GeSHi {
 		// Armour for Parser::doBlockLevels()
 		if( $enclose === GESHI_HEADER_DIV ) {
 			$out = str_replace( "\n", '', $out );
+		}
+		// HTML Tidy will convert tabs to spaces incorrectly (bug 30930).
+		// But the conversion from tab to space occurs while reading the input,
+		// before the conversion from &#9; to tab, so we can armor it that way.
+		if( $wgUseTidy ) {
+			$out = str_replace( "\t", '&#9;', $out );
 		}
 		// Register CSS
 		$parser->getOutput()->addHeadItem( self::buildHeadItem( $geshi ), "source-{$lang}" );
@@ -327,6 +327,9 @@ class SyntaxHighlight_GeSHi {
 	 * @return GeSHi
 	 */
 	public static function prepare( $text, $lang ) {
+
+		global $wgSyntaxHighlightKeywordLinks;
+
 		self::initialise();
 		$geshi = new GeSHi( $text, $lang );
 		if( $geshi->error() == GESHI_ERROR_NO_SUCH_LANG ) {
@@ -335,7 +338,7 @@ class SyntaxHighlight_GeSHi {
 		$geshi->set_encoding( 'UTF-8' );
 		$geshi->enable_classes();
 		$geshi->set_overall_class( "source-$lang" );
-		$geshi->enable_keyword_links( false );
+		$geshi->enable_keyword_links( $wgSyntaxHighlightKeywordLinks );
 
 		// If the source code is over 100 kB, disable higlighting of symbols.
 		// If over 200 kB, disable highlighting of strings too.
@@ -484,36 +487,5 @@ class SyntaxHighlight_GeSHi {
 	 */
 	public static function hOldSpecialVersion_GeSHi( &$sp, &$extensionTypes ) {
 		return self::hSpecialVersion_GeSHi( $extensionTypes );
-	}
-
-	/**
-	 * Convert tabs to spaces
-	 *
-	 * @param string $text
-	 * @return string
-	 */
-	private static function tabsToSpaces( $text ) {
-		$lines = explode( "\n", $text );
-		$lines = array_map( array( __CLASS__, 'tabsToSpacesLine' ), $lines );
-		return implode( "\n", $lines );
-	}
-
-	/**
-	 * Convert tabs to spaces for a single line
-	 *
-	 * @param $line
-	 * @internal param string $text
-	 * @return string
-	 */
-	private static function tabsToSpacesLine( $line ) {
-		$parts = explode( "\t", $line );
-		$width = 8; // To match tidy's config & typical browser defaults
-		$out = $parts[0];
-		foreach( array_slice( $parts, 1 ) as $chunk ) {
-			$spaces = $width - (strlen( $out ) % $width);
-			$out .= str_repeat( ' ', $spaces );
-			$out .= $chunk;
-		}
-		return $out;
 	}
 }

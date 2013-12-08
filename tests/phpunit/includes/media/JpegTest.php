@@ -1,13 +1,17 @@
 <?php
+/**
+ * @todo covers tags
+ */
 class JpegTest extends MediaWikiTestCase {
 
 	protected function setUp() {
 		parent::setUp();
-
-		$this->filePath = __DIR__ . '/../../data/media/';
-		if ( !wfDl( 'exif' ) ) {
+		if ( !extension_loaded( 'exif' ) ) {
 			$this->markTestSkipped( "This test needs the exif extension." );
 		}
+
+		$this->filePath = __DIR__ . '/../../data/media/';
+
 
 		$this->setMwGlobals( 'wgShowEXIF', true );
 	}

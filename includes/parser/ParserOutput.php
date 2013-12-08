@@ -47,11 +47,14 @@ class ParserOutput extends CacheTime {
 		$mEditSectionTokens = false,  # prefix/suffix markers if edit sections were output as tokens
 		$mProperties = array(),       # Name/value pairs to be cached in the DB
 		$mTOCHTML = '',               # HTML of the TOC
-		$mTimestamp;                  # Timestamp of the revision
+		$mTimestamp,                  # Timestamp of the revision
+		$mTOCEnabled = true;          # Whether TOC should be shown, can't override __NOTOC__
 		private $mIndexPolicy = '';       # 'index' or 'noindex'?  Any other value will result in no change.
 		private $mAccessedOptions = array(); # List of ParserOptions (stored in the keys)
 		private $mSecondaryDataUpdates = array(); # List of DataUpdate, used to save info from the page somewhere else.
 		private $mExtensionData = array(); # extra data used by extensions
+		private $mLimitReportData = array(); # Parser limit report data
+		private $mParseStartTime = array(); # Timestamps for getTimeSinceStart()
 
 	const EDITSECTION_REGEX = '#<(?:mw:)?editsection page="(.*?)" section="(.*?)"(?:/>|>(.*?)(</(?:mw:)?editsection>))#';
 
@@ -66,11 +69,27 @@ class ParserOutput extends CacheTime {
 	}
 
 	function getText() {
+		wfProfileIn( __METHOD__ );
+		$text = $this->mText;
 		if ( $this->mEditSectionTokens ) {
-			return preg_replace_callback( ParserOutput::EDITSECTION_REGEX,
-				array( &$this, 'replaceEditSectionLinksCallback' ), $this->mText );
+			$text = preg_replace_callback( ParserOutput::EDITSECTION_REGEX,
+				array( &$this, 'replaceEditSectionLinksCallback' ), $text );
+		} else {
+			$text = preg_replace( ParserOutput::EDITSECTION_REGEX, '', $text );
 		}
-		return preg_replace( ParserOutput::EDITSECTION_REGEX, '', $this->mText );
+
+		// If you have an old cached version of this class - sorry, you can't disable the TOC
+		if ( isset( $this->mTOCEnabled ) && $this->mTOCEnabled ) {
+			$text = str_replace( array( Parser::TOC_START, Parser::TOC_END ), '', $text );
+		} else {
+			$text = preg_replace(
+				'#'. preg_quote( Parser::TOC_START ) . '.*?' . preg_quote( Parser::TOC_END ) . '#s',
+				'',
+				$text
+			);
+		}
+		wfProfileOut( __METHOD__ );
+		return $text;
 	}
 
 	/**
@@ -120,6 +139,8 @@ class ParserOutput extends CacheTime {
 	function getIndexPolicy()            { return $this->mIndexPolicy; }
 	function getTOCHTML()                { return $this->mTOCHTML; }
 	function getTimestamp()              { return $this->mTimestamp; }
+	function getLimitReportData()        { return $this->mLimitReportData; }
+	function getTOCEnabled()             { return $this->mTOCEnabled; }
 
 	function setText( $text )            { return wfSetVar( $this->mText, $text ); }
 	function setLanguageLinks( $ll )     { return wfSetVar( $this->mLanguageLinks, $ll ); }
@@ -131,6 +152,7 @@ class ParserOutput extends CacheTime {
 	function setIndexPolicy( $policy )   { return wfSetVar( $this->mIndexPolicy, $policy ); }
 	function setTOCHTML( $tochtml )      { return wfSetVar( $this->mTOCHTML, $tochtml ); }
 	function setTimestamp( $timestamp )  { return wfSetVar( $this->mTimestamp, $timestamp ); }
+	function setTOCEnabled( $flag )      { return wfSetVar( $this->mTOCEnabled, $flag ); }
 
 	function addCategory( $c, $sort )    { $this->mCategories[$c] = $sort; }
 	function addLanguageLink( $t )       { $this->mLanguageLinks[] = $t; }
@@ -143,10 +165,10 @@ class ParserOutput extends CacheTime {
 	function setNewSection( $value ) {
 		$this->mNewSection = (bool)$value;
 	}
-	function hideNewSection ( $value ) {
+	function hideNewSection( $value ) {
 		$this->mHideNewSection = (bool)$value;
 	}
-	function getHideNewSection () {
+	function getHideNewSection() {
 		return (bool)$this->mHideNewSection;
 	}
 	function getNewSection() {
@@ -176,10 +198,10 @@ class ParserOutput extends CacheTime {
 		global $wgServer, $wgRegisterInternalExternals;
 
 		$registerExternalLink = true;
-		if( !$wgRegisterInternalExternals ) {
+		if ( !$wgRegisterInternalExternals ) {
 			$registerExternalLink = !self::isLinkInternal( $wgServer, $url );
 		}
-		if( $registerExternalLink ) {
+		if ( $registerExternalLink ) {
 			$this->mExternalLinks[$url] = 1;
 		}
 	}
@@ -201,11 +223,11 @@ class ParserOutput extends CacheTime {
 		if ( $ns == NS_MEDIA ) {
 			// Normalize this pseudo-alias if it makes it down here...
 			$ns = NS_FILE;
-		} elseif( $ns == NS_SPECIAL ) {
+		} elseif ( $ns == NS_SPECIAL ) {
 			// We don't record Special: links currently
 			// It might actually be wise to, but we'd need to do some normalization.
 			return;
-		} elseif( $dbk === '' ) {
+		} elseif ( $dbk === '' ) {
 			// Don't record self links -  [[#Foo]]
 			return;
 		}
@@ -258,7 +280,7 @@ class ParserOutput extends CacheTime {
 	 */
 	function addInterwikiLink( $title ) {
 		$prefix = $title->getInterwiki();
-		if( $prefix == '' ) {
+		if ( $prefix == '' ) {
 			throw new MWException( 'Non-interwiki link passed, internal parser error.' );
 		}
 		if ( !isset( $this->mInterwikiLinks[$prefix] ) ) {
@@ -281,7 +303,7 @@ class ParserOutput extends CacheTime {
 	}
 
 	public function addModules( $modules ) {
-		$this->mModules = array_merge( $this->mModules, (array) $modules );
+		$this->mModules = array_merge( $this->mModules, (array)$modules );
 	}
 
 	public function addModuleScripts( $modules ) {
@@ -329,7 +351,7 @@ class ParserOutput extends CacheTime {
 	 */
 	public function getDisplayTitle() {
 		$t = $this->getTitleText();
-		if( $t === '' ) {
+		if ( $t === '' ) {
 			return false;
 		}
 		return $t;
@@ -544,4 +566,67 @@ class ParserOutput extends CacheTime {
 		return null;
 	}
 
+	private static function getTimes( $clock = null ) {
+		$ret = array();
+		if ( !$clock || $clock === 'wall' ) {
+			$ret['wall'] = microtime( true );
+		}
+		if ( ( !$clock || $clock === 'cpu' ) && function_exists( 'getrusage' ) ) {
+			$ru = getrusage();
+			$ret['cpu'] = $ru['ru_utime.tv_sec'] + $ru['ru_utime.tv_usec'] / 1e6;
+			$ret['cpu'] += $ru['ru_stime.tv_sec'] + $ru['ru_stime.tv_usec'] / 1e6;
+		}
+		return $ret;
+	}
+
+	/**
+	 * Resets the parse start timestamps for future calls to getTimeSinceStart()
+	 * @since 1.22
+	 */
+	function resetParseStartTime() {
+		$this->mParseStartTime = self::getTimes();
+	}
+
+	/**
+	 * Returns the time since resetParseStartTime() was last called
+	 *
+	 * Clocks available are:
+	 *  - wall: Wall clock time
+	 *  - cpu: CPU time (requires getrusage)
+	 *
+	 * @since 1.22
+	 * @param string $clock
+	 * @return float|null
+	 */
+	function getTimeSinceStart( $clock ) {
+		if ( !isset( $this->mParseStartTime[$clock] ) ) {
+			return null;
+		}
+
+		$end = self::getTimes( $clock );
+		return $end[$clock] - $this->mParseStartTime[$clock];
+	}
+
+	/**
+	 * Sets parser limit report data for a key
+	 *
+	 * The key is used as the prefix for various messages used for formatting:
+	 *  - $key: The label for the field in the limit report
+	 *  - $key-value-text: Message used to format the value in the "NewPP limit
+	 *      report" HTML comment. If missing, uses $key-format.
+	 *  - $key-value-html: Message used to format the value in the preview
+	 *      limit report table. If missing, uses $key-format.
+	 *  - $key-value: Message used to format the value. If missing, uses "$1".
+	 *
+	 * Note that all values are interpreted as wikitext, and so should be
+	 * encoded with htmlspecialchars() as necessary, but should avoid complex
+	 * HTML for sanity of display in the "NewPP limit report" comment.
+	 *
+	 * @since 1.22
+	 * @param string $key Message key
+	 * @param mixed $value Appropriate for Message::params()
+	 */
+	function setLimitReportData( $key, $value ) {
+		$this->mLimitReportData[$key] = $value;
+	}
 }

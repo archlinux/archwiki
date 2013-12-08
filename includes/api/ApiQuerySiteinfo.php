@@ -121,13 +121,28 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		$data = array();
 		$mainPage = Title::newMainPage();
 		$data['mainpage'] = $mainPage->getPrefixedText();
-		$data['base'] = wfExpandUrl( $mainPage->getFullUrl(), PROTO_CURRENT );
+		$data['base'] = wfExpandUrl( $mainPage->getFullURL(), PROTO_CURRENT );
 		$data['sitename'] = $GLOBALS['wgSitename'];
+		$data['logo'] = $GLOBALS['wgLogo'];
 		$data['generator'] = "MediaWiki {$GLOBALS['wgVersion']}";
 		$data['phpversion'] = phpversion();
 		$data['phpsapi'] = PHP_SAPI;
 		$data['dbtype'] = $GLOBALS['wgDBtype'];
 		$data['dbversion'] = $this->getDB()->getServerVersion();
+
+		$allowFrom = array( '' );
+		$allowException = true;
+		if ( !$GLOBALS['wgAllowExternalImages'] ) {
+			if ( $GLOBALS['wgEnableImageWhitelist'] ) {
+				$data['imagewhitelistenabled'] = '';
+			}
+			$allowFrom = $GLOBALS['wgAllowExternalImagesFrom'];
+			$allowException = !empty( $allowFrom );
+		}
+		if ( $allowException ) {
+			$data['externalimages'] = (array)$allowFrom;
+			$this->getResult()->setIndexedTagName( $data['externalimages'], 'prefix' );
+		}
 
 		if ( !$wgDisableLangConversion ) {
 			$data['langconversion'] = '';
@@ -170,15 +185,15 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		$data['lang'] = $GLOBALS['wgLanguageCode'];
 
 		$fallbacks = array();
-		foreach( $wgContLang->getFallbackLanguages() as $code ) {
+		foreach ( $wgContLang->getFallbackLanguages() as $code ) {
 			$fallbacks[] = array( 'code' => $code );
 		}
 		$data['fallback'] = $fallbacks;
 		$this->getResult()->setIndexedTagName( $data['fallback'], 'lang' );
 
-		if( $wgContLang->hasVariants() ) {
+		if ( $wgContLang->hasVariants() ) {
 			$variants = array();
-			foreach( $wgContLang->getVariants() as $code ) {
+			foreach ( $wgContLang->getVariants() as $code ) {
 				$variants[] = array( 'code' => $code );
 			}
 			$data['variants'] = $variants;
@@ -281,6 +296,8 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 			$data[] = $item;
 		}
 
+		sort( $data );
+
 		$this->getResult()->setIndexedTagName( $data, 'ns' );
 		return $this->getResult()->addValue( 'query', $property, $data );
 	}
@@ -345,10 +362,10 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 				$val['language'] = $langNames[$prefix];
 			}
 			$val['url'] = wfExpandUrl( $row['iw_url'], PROTO_CURRENT );
-			if( isset( $row['iw_wikiid'] ) ) {
+			if ( isset( $row['iw_wikiid'] ) ) {
 				$val['wikiid'] = $row['iw_wikiid'];
 			}
-			if( isset( $row['iw_api'] ) ) {
+			if ( isset( $row['iw_api'] ) ) {
 				$val['api'] = $row['iw_api'];
 			}
 
@@ -404,11 +421,15 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		$data['activeusers'] = intval( SiteStats::activeUsers() );
 		$data['admins'] = intval( SiteStats::numberingroup( 'sysop' ) );
 		$data['jobs'] = intval( SiteStats::jobs() );
+
+		wfRunHooks( 'APIQuerySiteInfoStatisticsInfo', array( &$data ) );
+
 		return $this->getResult()->addValue( 'query', $property, $data );
 	}
 
 	protected function appendUserGroups( $property, $numberInGroup ) {
-		global $wgGroupPermissions, $wgAddGroups, $wgRemoveGroups, $wgGroupsAddToSelf, $wgGroupsRemoveFromSelf;
+		global $wgGroupPermissions, $wgAddGroups, $wgRemoveGroups;
+		global $wgGroupsAddToSelf, $wgGroupsRemoveFromSelf;
 
 		$data = array();
 		$result = $this->getResult();
@@ -456,7 +477,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		global $wgFileExtensions;
 
 		$data = array();
-		foreach ( $wgFileExtensions as $ext ) {
+		foreach ( array_unique( $wgFileExtensions ) as $ext ) {
 			$data[] = array( 'ext' => $ext );
 		}
 		$this->getResult()->setIndexedTagName( $data, 'fe' );
@@ -520,7 +541,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 
 		$data = array(
 			'url' => $url ? $url : '',
-			'text' => $text ?  $text : ''
+			'text' => $text ? $text : ''
 		);
 
 		return $this->getResult()->addValue( 'query', $property, $data );
@@ -544,9 +565,17 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 
 	public function appendSkins( $property ) {
 		$data = array();
+		$usable = Skin::getUsableSkins();
+		$default = Skin::normalizeKey( 'default' );
 		foreach ( Skin::getSkinNames() as $name => $displayName ) {
 			$skin = array( 'code' => $name );
 			ApiResult::setContent( $skin, $displayName );
+			if ( !isset( $usable[$name] ) ) {
+				$skin['unusable'] = '';
+			}
+			if ( $name === $default ) {
+				$skin['default'] = '';
+			}
 			$data[] = $skin;
 		}
 		$this->getResult()->setIndexedTagName( $data, 'skin' );
@@ -661,13 +690,15 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 				' specialpagealiases    - List of special page aliases',
 				' magicwords            - List of magic words and their aliases',
 				' statistics            - Returns site statistics',
-				" interwikimap          - Returns interwiki map (optionally filtered, (optionally localised by using {$p}inlanguagecode))",
+				" interwikimap          - Returns interwiki map " .
+					"(optionally filtered, (optionally localised by using {$p}inlanguagecode))",
 				' dbrepllag             - Returns database server with the highest replication lag',
 				' usergroups            - Returns user groups and the associated permissions',
 				' extensions            - Returns extensions installed on the wiki',
 				' fileextensions        - Returns list of file extensions allowed to be uploaded',
 				' rightsinfo            - Returns wiki rights (license) information if available',
-				" languages             - Returns a list of languages MediaWiki supports (optionally localised by using {$p}inlanguagecode)",
+				" languages             - Returns a list of languages MediaWiki supports" .
+					"(optionally localised by using {$p}inlanguagecode)",
 				' skins                 - Returns a list of all enabled skins',
 				' extensiontags         - Returns a list of parser extension tags',
 				' functionhooks         - Returns a list of parser function hooks',
@@ -675,7 +706,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 				' variables             - Returns a list of variable IDs',
 				' protocols             - Returns a list of protocols that are allowed in external links.',
 			),
-			'filteriw' =>  'Return only local or only nonlocal entries of the interwiki map',
+			'filteriw' => 'Return only local or only nonlocal entries of the interwiki map',
 			'showalldb' => 'List all database servers, not just the one lagging the most',
 			'numberingroup' => 'Lists the number of users in user groups',
 			'inlanguagecode' => 'Language code for localised language names (best effort, use CLDR extension)',
@@ -687,9 +718,10 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	}
 
 	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'code' => 'includeAllDenied', 'info' => 'Cannot view all servers info unless $wgShowHostnames is true' ),
-		) );
+		return array_merge( parent::getPossibleErrors(), array( array(
+			'code' => 'includeAllDenied',
+			'info' => 'Cannot view all servers info unless $wgShowHostnames is true'
+		), ) );
 	}
 
 	public function getExamples() {

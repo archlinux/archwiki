@@ -1,6 +1,6 @@
 <?php
 /**
- * Internationalisation file for extension FindSpam.
+ * Internationalisation file for extension ImageMap.
  *
  * @file
  * @ingroup Extensions
@@ -48,7 +48,9 @@ This message indicates that an image must be specified in the first line.',
 * $1 - line number',
 	'imagemap_missing_coord' => 'Used as error message. Parameters:
 * $1 - line number',
-	'imagemap_unrecognised_shape' => '{{doc-important|Do not translate the parameters <code>default</code>, <code>rect</code>, <code>circle</code> or <code>poly</code>.}}',
+	'imagemap_unrecognised_shape' => '{{doc-important|Do not translate the parameters <code>default</code>, <code>rect</code>, <code>circle</code> or <code>poly</code>.}}
+Used as error message. Parameters:
+* $1 - line number',
 	'imagemap_invalid_coord' => 'Used as error message. Parameters:
 * $1 - line number',
 	'imagemap_invalid_desc' => 'Used as error message. Parameters:
@@ -132,7 +134,7 @@ $messages['arz'] = array(
 	'imagemap_poly_odd' => 'خطأ: تم العثور على مضلع بعدد فردى من الأضلاع فى السطر $1',
 );
 
-/** Assamese (অসমীয়া)
+/** Assamese (অসমীয়া)
  * @author Bishnu Saikia
  * @author Gitartha.bordoloi
  */
@@ -220,9 +222,21 @@ $messages['bcc'] = array(
 
 /** Bikol Central (Bikol Central)
  * @author Filipinayzd
+ * @author Geopoet
  */
 $messages['bcl'] = array(
+	'imagemap_desc' => 'Minatugot sa lado nin kliyente an puwedeng ma-klik na mga imahe nin mapa na ginagamit an <code>&lt;imagemap&gt;</code> na tatak',
+	'imagemap_no_image' => 'Kasalaan:Kaipuhan isambit an imahe sa enot na linya.',
+	'imagemap_invalid_image' => 'Kasalaan: An imahe imbalido o bakong eksistido.',
+	'imagemap_bad_image' => 'Kasalaan:An imahe pinagbawal sa pahinang ini.',
+	'imagemap_no_link' => 'Kasalaan:Mayo nin balidong sugpon an manumpungan sa tapos kan linya na $1.',
+	'imagemap_invalid_title' => 'Kasalaan:Imbalido an titulo na yaon sa sugpon sa linya na $1.',
+	'imagemap_missing_coord' => 'Kasalaan:Bakong supisiyente an mga koordinato para sa kahitsurahan kan linya $1.',
+	'imagemap_unrecognised_shape' => 'Kasalaan: Bakong rekonosido an kahitsurahan sa linya $1, an lambang linya kaipong magpoon na igwang saro kan: <code>default</code>, <code>rect</code>, <code>circle</code> or <code>poly</code>.',
+	'imagemap_invalid_coord' => 'Kasalaan:Imbalidong koordinato sa linya $1, kaipohan na sarong numero.',
+	'imagemap_invalid_desc' => 'Kasalaan: Imbalido an deskripsyon nin espesipikasyon, kaipohan na saro sa:<code>$1</code>.',
 	'imagemap_description' => 'Manónongod sa retratong ini',
+	'imagemap_poly_odd' => 'Kasalaan:Nanumpungan an poli na igwang butal na numero kan koordinato sa may linya na $1',
 );
 
 /** Belarusian (Taraškievica orthography) (беларуская (тарашкевіца)‎)
@@ -348,9 +362,13 @@ $messages['ca'] = array(
 
 /** Chechen (нохчийн)
  * @author Sasan700
+ * @author Умар
  */
 $messages['ce'] = array(
-	'imagemap_invalid_image' => 'Гlалат: нийса дац йа ишта сурт дац кху чохь',
+	'imagemap_invalid_image' => 'ГӀалат: нийса дац я ишта сурт дац кху чохь',
+	'imagemap_no_link' => 'ГӀалат: $1 могӀанан чаккхехь нийса йоцу хьажораг ю',
+	'imagemap_invalid_title' => 'ГӀалат: могӀана $1 хьажориган корта нийса яц',
+	'imagemap_description' => 'Суьртах лаьцна',
 );
 
 /** Corsican (corsu)
@@ -382,6 +400,11 @@ $messages['cs'] = array(
  * @author Lloffiwr
  */
 $messages['cy'] = array(
+	'imagemap_no_image' => 'Gwall: Rhaid nodi delwedd yn y llinell gyntaf.',
+	'imagemap_invalid_image' => "Gwall: Nid yw'r ddelwedd yn ddilys, neu nid yw'n bod.",
+	'imagemap_bad_image' => "Gwall: Mae'r ddelwedd wedi ei gwahardd rhag ei defnyddio ar y dudalen hon.",
+	'imagemap_no_link' => 'Gwall: Ni chafwyd unrhyw gyswllt dilys ar ddiwedd y llinell $1.',
+	'imagemap_invalid_title' => 'Gwall: Teitl annilys yn y cyswllt ar linell $1.',
 	'imagemap_description' => "Ynglŷn â'r ddelwedd hon",
 );
 
@@ -570,20 +593,21 @@ $messages['ext'] = array(
 );
 
 /** Persian (فارسی)
+ * @author Ebraminio
  * @author Huji
  * @author ZxxZxxZ
  */
 $messages['fa'] = array(
 	'imagemap_desc' => 'امکان ایجاد نقشه‌های تصویری قابل کلیک کردن در سمت کاربر را با استفاده از برچسب <code>&lt;imagemap&gt;</code> فراهم می‌آورد',
 	'imagemap_no_image' => '<imagemap>: باید در اولین سطر یک تصویر را مشخص کنید',
-	'imagemap_invalid_image' => '<imagemap>: تصویر غیرمجاز است یا وجود ندارد',
+	'imagemap_invalid_image' => '<imagemap>: تصویر نامحاز است یا وجود ندارد',
 	'imagemap_bad_image' => 'خطا: تصویر در این صفحه در فهرست سیاه قرار دارد',
 	'imagemap_no_link' => 'خطا: هیچ پیوند مجازی در انتهای خط $1 یافت نشد',
-	'imagemap_invalid_title' => '<imagemap>: عنوان غیرمجاز در پیوند سطر $1',
+	'imagemap_invalid_title' => '<imagemap>: عنوان نامجاز در پیوند سطر $1',
 	'imagemap_missing_coord' => '<imagemap>: تعداد مختصات در سطر $1 برای شکل کافی نیست',
 	'imagemap_unrecognised_shape' => '<imagemap>: شکل ناشناخته در سطر $1، هر سطر باید با یکی از این دستورات آغاز شود: <code>default</code>، <code>rect</code>، <code>circle</code> یا <code>poly</code>',
-	'imagemap_invalid_coord' => '<imagemap>: مختصات غیرمجاز در سطر $1، مختصات باید عدد باشد',
-	'imagemap_invalid_desc' => '<imagemap>: توضیحات غیرمجاز، باید یکی از این موارد باشد: <code>$1</code>',
+	'imagemap_invalid_coord' => '<imagemap>: مختصات نامجاز در سطر $1، مختصات باید عدد باشد',
+	'imagemap_invalid_desc' => '<imagemap>: توضیحات نامجاز، باید یکی از این موارد باشد: <code>$1</code>',
 	'imagemap_description' => 'دربارهٔ این تصویر',
 	'imagemap_poly_odd' => 'خطا: چند ضلعی با تعداد فرعی از مختصات در سطر $1 پیدا شد',
 );
@@ -1048,18 +1072,19 @@ $messages['km'] = array(
  * @author Klutzy
  * @author Kwj2772
  * @author Yknok29
+ * @author 아라
  */
 $messages['ko'] = array(
-	'imagemap_desc' => '사용자가 이미지맵을 사용할 수 있도록 <code>&lt;imagemap&gt;</code> 태그를 추가',
+	'imagemap_desc' => '<code>&lt;imagemap&gt;</code> 태그로 클라이언트 측에서 클릭할 수 있는 이미지 맵을 사용할 수 있습니다',
 	'imagemap_no_image' => '오류: 첫 줄에 그림이 제시되어야 합니다.',
 	'imagemap_invalid_image' => '오류: 그림이 잘못되었거나 존재하지 않습니다.',
-	'imagemap_bad_image' => '오류: 이 그림은 이 문서에서 사용이 금지되어 있습니다.',
-	'imagemap_no_link' => '오류: $1번째 줄에서 유효한 링크를 찾을 수 없습니다',
+	'imagemap_bad_image' => '오류: 그림은 이 문서에서 사용이 금지되어 있습니다.',
+	'imagemap_no_link' => '오류: $1번째 줄에서 올바른 링크를 찾을 수 없습니다',
 	'imagemap_invalid_title' => '오류: $1번째 줄의 링크 제목이 잘못되었습니다',
 	'imagemap_missing_coord' => '오류: $1줄에 정의된 도형의 좌표 값이 충분하지 않습니다.',
 	'imagemap_unrecognised_shape' => '오류: $1줄에서 도형을 인식할 수 없음, 각 줄은 다음으로 시작해야 합니다: <code>default</code>, <code>rect</code>, <code>circle</code>, <code>poly</code>',
 	'imagemap_invalid_coord' => '오류: $1번째 줄에서 좌표가 잘못되었습니다. 좌표는 반드시 숫자여야 합니다.',
-	'imagemap_invalid_desc' => '오류: 질못된 desc 설정. 다음 중 하나가 되어야 함: <code>$1</code>',
+	'imagemap_invalid_desc' => '오류: 질못된 desc 설정으로, 다음 중 하나여야 합니다: <code>$1</code>',
 	'imagemap_description' => '이 그림에 대한 정보',
 	'imagemap_poly_odd' => '오류: $1번째 줄에 정의된 좌표 값의 수가 홀수 개입니다.',
 );
@@ -1101,6 +1126,7 @@ $messages['la'] = array(
 
 /** Luxembourgish (Lëtzebuergesch)
  * @author Robby
+ * @author Soued031
  */
 $messages['lb'] = array(
 	'imagemap_desc' => 'Erlaabt et Biller ze benotzen déi een uklicke ka mat Hëllef vum Tag <code>&lt;imagemap&gt;</code>.',
@@ -1113,7 +1139,7 @@ $messages['lb'] = array(
 	'imagemap_unrecognised_shape' => 'Feeler: Onbekannte Form an der Zeil $1. All Zeile muss matt engem vun dëse Parameter ufänken: <tt><code>default</code>, <code>rect</code>, <code>circle</code></tt> oder <tt><code>poly</code></tt>',
 	'imagemap_invalid_coord' => 'Feeler: Ongëlteg Koordinaten an der Zeil $1: et sinn nëmmen Zuelen erlaabt',
 	'imagemap_invalid_desc' => 'Feeler: Ongëltegen „desc“-Parameter, méiglech sinn: <code>$1</code>',
-	'imagemap_description' => 'Iwwert dëst Bild',
+	'imagemap_description' => 'Iwwer dëst Bild',
 	'imagemap_desc_types' => 'uewe-riets, ënne-riets, ënne-lénks, uewe-lénks, keen',
 	'imagemap_poly_odd' => 'Feeler: e Polygon mat enger ongerueder Zuel vu Koordinate gouf an der Linn $1 fonnt',
 );
@@ -1267,7 +1293,7 @@ $messages['myv'] = array(
 	'imagemap_description' => 'Те артовкстонть',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  */
 $messages['nb'] = array(
 	'imagemap_desc' => 'Gjør at man kan bruke klikkbare bilder ved hjelp av <code>&lt;imagemap&gt;</code>.',
@@ -1302,12 +1328,14 @@ $messages['nds'] = array(
 	'imagemap_poly_odd' => 'Fehler: Polygon mit unevene Tall Koordinaten in Reeg $1',
 );
 
-/** Nedersaksies (Nedersaksies)
+/** Low Saxon (Netherlands) (Nedersaksies)
  * @author Servien
  */
 $messages['nds-nl'] = array(
+	'imagemap_desc' => 'Maakt anklikbaore verwiezingen op aofbeeldingen meugelik mit t etiket <code>&lt;imagemap&gt;</code>',
 	'imagemap_no_image' => 'Fout: geef n aofbeelding op in de eerste regel',
 	'imagemap_invalid_image' => 'Fout: aofbeelding is ongeldig of besteet niet',
+	'imagemap_bad_image' => 'Fout: de aofbeelding steet op de zwarte lieste veur disse zied',
 	'imagemap_no_link' => 'Fout: der is gien geldige verwiezing evunnen an t einde van regel $1',
 	'imagemap_invalid_title' => 'Fout: ongeldige titel in de verwiezing op regel $1',
 	'imagemap_missing_coord' => 'Fout: niet genog koördinaoten veur vorm op regel $1',
@@ -1315,6 +1343,7 @@ $messages['nds-nl'] = array(
 	'imagemap_invalid_coord' => 'Fout: ongeldige koördinaot in regel $1, mut n getal ween',
 	'imagemap_invalid_desc' => 'Fout: ongeldige beschrievingsspesifikasie, mut n van: <code>$1</code> ween',
 	'imagemap_description' => 'Over disse aofbeelding',
+	'imagemap_poly_odd' => 'Fout: polygoon evunnen mit n oneffen antal koördinaoten op regel $1',
 );
 
 /** Nepali (नेपाली)
@@ -1342,7 +1371,7 @@ $messages['nl'] = array(
 	'imagemap_poly_odd' => 'Fout: polygoon gevonden met een oneven aantal coördinaten op regel $1',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Frokor
  */
 $messages['nn'] = array(
@@ -1367,7 +1396,7 @@ $messages['oc'] = array(
 	'imagemap_desc' => "Permet qu'una mapa imatge clienta siá clicabla en utilizant la balisa <code>&lt;imagemap&gt;</code>",
 	'imagemap_no_image' => 'Error : vos cal especificar un imatge dins la primièra linha',
 	'imagemap_invalid_image' => 'Error : l’imatge es invalid o existís pas',
-	'imagemap_bad_image' => 'Error : l’imatge es sus la tièra negra sus aquesta pagina',
+	'imagemap_bad_image' => 'Error : l’imatge es sus la lista negra sus aquesta pagina',
 	'imagemap_no_link' => 'Error : cap de ligam valid es pas estat trobat a la fin de la linha $1',
 	'imagemap_invalid_title' => 'Error : títol invalid dins lo ligam a la linha $1',
 	'imagemap_missing_coord' => 'Error : pas pro de coordenadas per la forma a la linha $1',
@@ -1378,7 +1407,7 @@ $messages['oc'] = array(
 	'imagemap_poly_odd' => 'Error : trobat un poligòn amb un nombre impar de coordenadas a la linha $1',
 );
 
-/** Oriya (ଓଡ଼ିଆ)
+/** Oriya (ଓଡ଼ିଆ)
  * @author Psubhashish
  */
 $messages['or'] = array(

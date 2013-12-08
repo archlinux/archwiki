@@ -100,7 +100,7 @@ class ApiEditPage extends ApiBase {
 			$name = $titleObj->getPrefixedDBkey();
 			$model = $contentHandler->getModelID();
 
-			$this->dieUsage( "The requested format $contentFormat is not supported for content model ".
+			$this->dieUsage( "The requested format $contentFormat is not supported for content model " .
 							" $model used by $name", 'badformat' );
 		}
 
@@ -146,7 +146,7 @@ class ApiEditPage extends ApiBase {
 				}
 			}
 
-			// @todo: Add support for appending/prepending to the Content interface
+			// @todo Add support for appending/prepending to the Content interface
 
 			if ( !( $content instanceof TextContent ) ) {
 				$mode = $contentHandler->getModelID();
@@ -159,12 +159,17 @@ class ApiEditPage extends ApiBase {
 					$this->dieUsage( "Sections are not supported for this content model: $modelName.", 'sectionsnotsupported' );
 				}
 
-				// Process the content for section edits
-				$section = intval( $params['section'] );
-				$content = $content->getSection( $section );
+				if ( $params['section'] == 'new' ) {
+					// DWIM if they're trying to prepend/append to a new section.
+					$content = null;
+				} else {
+					// Process the content for section edits
+					$section = intval( $params['section'] );
+					$content = $content->getSection( $section );
 
-				if ( !$content ) {
-					$this->dieUsage( "There is no section {$section}.", 'nosuchsection' );
+					if ( !$content ) {
+						$this->dieUsage( "There is no section {$section}.", 'nosuchsection' );
+					}
 				}
 			}
 
@@ -262,7 +267,7 @@ class ApiEditPage extends ApiBase {
 			$requestArray['wpStarttime'] = wfTimestampNow(); // Fake wpStartime
 		}
 
-		if ( $params['minor'] || ( !$params['notminor'] && $user->getOption( 'minordefault' ) ) )	{
+		if ( $params['minor'] || ( !$params['notminor'] && $user->getOption( 'minordefault' ) ) ) {
 			$requestArray['wpMinoredit'] = '';
 		}
 
@@ -274,6 +279,10 @@ class ApiEditPage extends ApiBase {
 			$section = intval( $params['section'] );
 			if ( $section == 0 && $params['section'] != '0' && $params['section'] != 'new' ) {
 				$this->dieUsage( "The section parameter must be set to an integer or 'new'", "invalidsection" );
+			}
+			$content = $pageObj->getContent();
+			if ( $section !== 0 && ( !$content || !$content->getSection( $section ) ) ) {
+				$this->dieUsage( "There is no section {$section}.", 'nosuchsection' );
 			}
 			$requestArray['wpSection'] = $params['section'];
 		} else {
@@ -292,6 +301,10 @@ class ApiEditPage extends ApiBase {
 		if ( $watch ) {
 			$requestArray['wpWatchthis'] = '';
 		}
+
+		// Pass through anything else we might have been given, to support extensions
+		// This is kind of a hack but it's the best we can do to make extensions work
+		$requestArray += $this->getRequest()->getValues();
 
 		global $wgTitle, $wgRequest;
 
@@ -316,11 +329,37 @@ class ApiEditPage extends ApiBase {
 
 		$ep->setContextTitle( $titleObj );
 		$ep->importFormData( $req );
+		$content = $ep->textbox1;
+
+		// The following is needed to give the hook the full content of the
+		// new revision rather than just the current section. (Bug 52077)
+		if ( !is_null( $params['section'] ) && $contentHandler->supportsSections() && $titleObj->exists() ) {
+
+			$sectionTitle = '';
+			// If sectiontitle is set, use it, otherwise use the summary as the section title (for
+			// backwards compatibility with old forms/bots).
+			if ( $ep->sectiontitle !== '' ) {
+				$sectionTitle = $ep->sectiontitle;
+			} else {
+				$sectionTitle = $ep->summary;
+			}
+
+			$contentObj = $contentHandler->unserializeContent( $content, $contentFormat );
+
+			$fullContentObj = $articleObject->replaceSectionContent( $params['section'], $contentObj, $sectionTitle );
+			if ( $fullContentObj ) {
+				$content = $fullContentObj->serialize( $contentFormat );
+			} else {
+				// This most likely means we have an edit conflict which means that the edit
+				// wont succeed anyway.
+				$this->dieUsageMsg( 'editconflict' );
+			}
+		}
 
 		// Run hooks
 		// Handle APIEditBeforeSave parameters
 		$r = array();
-		if ( !wfRunHooks( 'APIEditBeforeSave', array( $ep, $ep->textbox1, &$r ) ) ) {
+		if ( !wfRunHooks( 'APIEditBeforeSave', array( $ep, $content, &$r ) ) ) {
 			if ( count( $r ) ) {
 				$r['result'] = 'Failure';
 				$apiResult->addValue( null, $this->getModuleName(), $r );
@@ -342,7 +381,7 @@ class ApiEditPage extends ApiBase {
 		$wgRequest = $oldRequest;
 		global $wgMaxArticleSize;
 
-		switch( $status->value ) {
+		switch ( $status->value ) {
 			case EditPage::AS_HOOK_ERROR:
 			case EditPage::AS_HOOK_ERROR_EXPECTED:
 				$this->dieUsageMsg( 'hookaborted' );

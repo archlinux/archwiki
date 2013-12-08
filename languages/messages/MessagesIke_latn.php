@@ -127,6 +127,8 @@ $messages = array(
 'editinginterface' => "'''iniqtiruti—''' aaha suqusiqpaa iqiak mappitaq atuinnasivuq iijatsaq qarasaujaq taqsaliqpaa ikiaq aqittuq qaritaujaup titirarvinga. asiaNngutuq ikiaq mappitaq inuktitut uikipitia allanguqtuaq nakimaqpuq qatannguti.",
 
 # Login and logout pages
+'welcomecreation' => "== ariunngaipaa, $1! ==
+pigivuq qatannguti uikipitia kiinaujaqutiqarvik isuillingaitjapaa. iqtuu suqusiqpa{{SITENAME}} inniatuq—«''nipi ami''»",
 'yourname' => 'uikipitia atiq',
 'yourpassword' => 'uikipitia palanngasauti',
 'yourpasswordagain' => 'tamatumaniiqpaa iksigaqtuq uikipitia palanngasauti',
@@ -248,7 +250,7 @@ $messages = array(
 # Special:Categories
 'categories' => 'nuapput',
 
-# Email user
+# E-mail user
 'emailfrom' => 'nakit',
 'emailmessage' => 'kiggapaa',
 'emailsend' => 'qiutsavigivaa',

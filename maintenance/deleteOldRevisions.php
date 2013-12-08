@@ -22,7 +22,7 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that deletes old (non-current) revisions from the database.
@@ -100,4 +100,4 @@ class DeleteOldRevisions extends Maintenance {
 }
 
 $maintClass = "DeleteOldRevisions";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

@@ -24,6 +24,10 @@ Do '''NOT''' fill this in!",
  * @author The Evil IP address
  */
 $messages['qqq'] = array(
+	'simpleantispam' => 'Unused at this time.',
+	'simpleantispam-label' => 'Used as label for the input box in "Edit" page.
+
+The label and the input box are always hidden.',
 	'simpleantispam-desc' => '{{desc|name=Simple Anti Spam|url=http://www.mediawiki.org/wiki/Extension:SimpleAntiSpam}}',
 );
 
@@ -76,7 +80,7 @@ $messages['arz'] = array(
 	'simpleantispam-desc' => 'بيضيف اختبار سبام/بوت بسيط للاستمارات',
 );
 
-/** Assamese (অসমীয়া)
+/** Assamese (অসমীয়া)
  * @author Gitartha.bordoloi
  */
 $messages['as'] = array(
@@ -114,6 +118,16 @@ $messages['bcc'] = array(
 	'simpleantispam-label' => "کنترل ضد اسپم.
 ای شیء پر ''مکن''",
 	'simpleantispam-desc' => 'اضافه کنت یم ساده اسپم/روبوت چک په کنترل فرم آن',
+);
+
+/** Bikol Central (Bikol Central)
+ * @author Geopoet
+ */
+$messages['bcl'] = array(
+	'simpleantispam' => 'An saimong pagliwat nakapagkiblit kan anti-espam na mekanismo',
+	'simpleantispam-label' => 'Narikisa kan anti-espam.
+"Dae" ka magkaag nin laman digde!',
+	'simpleantispam-desc' => 'Minadugang nin simplihong rikisa kan espam/panalnga sa mga porma',
 );
 
 /** Belarusian (Taraškievica orthography) (беларуская (тарашкевіца)‎)
@@ -196,6 +210,16 @@ $messages['cy'] = array(
 	'simpleantispam-label' => "Prawf gwrth-sbam.
 '''Peidiwch''' â llenwi hwn!",
 	'simpleantispam-desc' => 'Yn ychwanegu prawf sbam/bot syml i ffurflenni',
+);
+
+/** Danish (dansk)
+ * @author HenrikKbh
+ */
+$messages['da'] = array(
+	'simpleantispam' => 'Din redigering udløste anti-spam mekanismen',
+	'simpleantispam-label' => "Anti-spam tjek.
+Udfyld ''' ikke ''' dette!",
+	'simpleantispam-desc' => 'Tilføjer en simpel spam/bot kontrol til formularer',
 );
 
 /** German (Deutsch)
@@ -466,7 +490,7 @@ $messages['it'] = array(
  * @author Shirayuki
  */
 $messages['ja'] = array(
-	'simpleantispam' => 'SPAM防止機能が有効になりました',
+	'simpleantispam' => '編集内容が原因でスパム防止機能が発動しました',
 	'simpleantispam-label' => "SPAM防止チェックです。
 決してここに値を入力'''しない'''でください。",
 	'simpleantispam-desc' => 'フォームに簡単なスパム/ボット チェックを追加',
@@ -497,12 +521,13 @@ $messages['ka'] = array(
  * @author Klutzy
  * @author Kwj2772
  * @author Yknok29
+ * @author 아라
  */
 $messages['ko'] = array(
 	'simpleantispam' => '현재 편집이 스팸 방지 장치에 탐지되었습니다',
 	'simpleantispam-label' => "스팸 방지 검사입니다.
 이것을 입력하지 '''마세요'''!",
-	'simpleantispam-desc' => '스팸/봇 확인 장치를 추가',
+	'simpleantispam-desc' => '양식에 간단한 스팸/봇 확인 장치를 추가합니다',
 );
 
 /** Colognian (Ripoarisch)
@@ -604,7 +629,7 @@ $messages['ms'] = array(
 	'simpleantispam-desc' => 'Menambah pemeriksaan spam/bot ringkas di borang sunting',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  */
 $messages['nb'] = array(
 	'simpleantispam' => 'Redigeringen din utløste antispammekanismen',
@@ -639,7 +664,7 @@ $messages['nl-informal'] = array(
 	'simpleantispam' => 'Je bewerking heeft het antispammechanisme in werking gesteld',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Harald Khan
  * @author Njardarlogar
  */
@@ -660,7 +685,7 @@ Inscrigatz '''PAS RES''' dedins !",
 	'simpleantispam-desc' => 'Apond al formulari la verificacion d’un bòt tarabastejaire',
 );
 
-/** Oriya (ଓଡ଼ିଆ)
+/** Oriya (ଓଡ଼ିଆ)
  * @author Psubhashish
  */
 $messages['or'] = array(

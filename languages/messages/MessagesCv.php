@@ -72,9 +72,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Страницăна миçе хутшăнакан сăнав списокне кĕртнине кăтартмалла',
 'tog-oldsig' => 'Хальхи алӑ пусни:',
 'tog-fancysig' => 'Хăвăр тунă алă пуснин вики-паллисем',
-'tog-externaleditor' => 'Палăртман чухне тулашри редактора усă курмалла',
-'tog-externaldiff' => 'Палăртман чухне версисене танлаштарма тулашри программăна усă курмалла',
-'tog-showjumplinks' => '«... патне куç» хушма каçăсене усă курмалла',
 'tog-uselivepreview' => 'Хăвăрт кăтартакан малтанхи курăнăва усă курмалла (JavaScript, экспериментлă)',
 'tog-forceeditsummary' => 'Тӳрлетӳсен кĕске ăнлантарăвне кăтартман чухне асăрхаттармалла',
 'tog-watchlisthideown' => 'Сăнав списокĕнче эпĕ тунă тӳрлетӳсене кăтартмалла мар',
@@ -156,7 +153,7 @@ $messages = array(
 'category-file-count-limited' => 'Ку категоринче $1 файл.',
 'listingcontinuesabbrev' => '(малалли)',
 
-'linkprefix' => '/^(.*?)([a-zA-Z\\x80-\\xff«"]+)$/sD',
+'linkprefix' => '/^((?>.*(?<![a-zA-Z\\x80-\\xff«"])))(.+)$/sD',
 
 'about' => 'Ăнлантаркăч',
 'article' => 'Статья',
@@ -244,7 +241,7 @@ $messages = array(
 'jumptonavigation' => 'çӳрев',
 'jumptosearch' => 'Шырав',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} çинчен',
 'aboutpage' => 'Project:çинчен',
 'copyright' => 'Ку ăшлăх $1 килĕшӳллĕн сарăлать.',
@@ -254,7 +251,6 @@ $messages = array(
 'disclaimers' => 'Яваплăха тивĕçтерменни',
 'disclaimerpage' => 'Project:Яваплăха тивĕçтерменни',
 'edithelp' => 'Улшăнусене кĕртме пулăшакан пулăшу',
-'edithelppage' => 'Help:Улшăнусене кĕртме пулăшакан пулăшу',
 'helppage' => 'Help:Пулăшу',
 'mainpage' => 'Тĕп страница',
 'mainpage-description' => 'Тĕп страницă',
@@ -318,16 +314,6 @@ $messages = array(
 # General errors
 'error' => 'Йăнăш',
 'databaseerror' => 'Пĕлĕм пуххин йăнăшĕ',
-'dberrortext' => 'Пĕлĕм пуххине янă ыйтăвĕнче синтаксис йăнăшĕ пур.
-Пĕлĕм пуххине янă юлашки ыйту:
-<blockquote><tt>$1</tt></blockquote>
-<tt>«$2»</tt> функци ыйтнă.
-MySQL çак йăнăша тавăрнă <tt>«$3: $4»</tt>.',
-'dberrortextcl' => 'Пĕлĕм пуххине янă ыйтăвĕнче синтаксис йăнăшĕ пур.
-Пĕлĕм пуххине янă юлашки ыйту:
-«$1»
-«$2» функци ыйтнă.
-MySQL çак йăнăша тавăрнă «$3: $4».',
 'laggedslavemode' => 'Асăрхăр! Страница çинче юлашки улшăнусене кăтартмасăр пултарнă.',
 'readonly' => 'Пĕлĕм пуххине çырассине чарса хунă',
 'enterlockreason' => 'Чарнин сăлтавне тата палăртнă вăхăта кăтартăр.',
@@ -368,7 +354,6 @@ $1',
 'protectedpagetext' => 'Ку страницăна тӳрлетме май çук, хӳтĕленĕ.',
 'viewsourcetext' => 'Эсир ку страницăн малтанхи текстне пăхма тата копилеме пултаратăр:',
 'protectedinterface' => "Ку страница çинче MediaWiki'н системлă çырăвĕ вырнаçнă, ăна проект администраторĕсем çеç улăштарма пултараççĕ.",
-'sqlhidden' => '(SQL ыйтăва пытарнă)',
 'namespaceprotected' => 'Сирĕн «$1» ят уçлăхĕнчи статьясене тӳрлетмелли май çук..',
 'ns-specialprotected' => '«{{ns:special}}» ят уçлăхĕнчи страницăсене эсир тӳрлетейместĕр.',
 'titleprotected' => "Ку ятлă страницăна хатĕрлессине [[Хутшăнакан:$1|$1]] хутшăнакан чарса хунă.
@@ -581,15 +566,11 @@ $1 хутшăнакан патне, е ытти [[{{MediaWiki:Grouppage-sysop}}|
 'textmatches' => 'Статьясенчи текст пĕрпеклĕхĕ',
 'prevn' => 'малтанхи {{PLURAL:$1|$1}}',
 'nextn' => 'малалли {{PLURAL:$1|$1}}',
-'searchhelp-url' => 'Help:Пулăшу',
 'search-result-size' => '$1 ({{PLURAL:$2|1 сăмах|$2 сăмах}})',
 'showingresults' => 'Аяларах эсир <b>#$2</b> пуçласа кăтартнă <b>$1</b> йĕркене куратăр.',
 'showingresultsheader' => "{{PLURAL:$5|Результат '''$1'''  '''$3''' хушшинчен|Результатсем'''$1 - $2''' '''$3''' хушшинчен}}  '''$4''' валли",
 'powersearch' => 'Анлă шырав',
 'powersearch-legend' => 'Анлă шырав',
-
-# Quickbar
-'qbsettings' => 'Навигаци хăми',
 
 # Preferences page
 'preferences' => 'Ĕнерлевсем',
@@ -796,12 +777,6 @@ $1 хутшăнакан патне, е ытти [[{{MediaWiki:Grouppage-sysop}}|
 'statistics' => 'Статистика',
 'statistics-header-users' => 'Хутшăнакансен статистики',
 'statistics-mostpopular' => 'Чи нумай пăхакан страницăсем',
-
-'disambiguations' => 'Нумай пĕлтерĕшлĕ статьясене кăтартакан страницăсем',
-'disambiguationspage' => 'Template:Disambig',
-'disambiguations-text' => "Çак статьясем '''нумай пĕлтерĕшле страницăсем'''çине куçараççĕ.
-Унта куçарас вырăнне вĕсем кирлĕ страницăсем çине куçармалла пулĕ.<br />
-Енчен те страница çинче [[MediaWiki:Disambiguationspage]] страницăра кăтартнă шаблон ятне вырнаçтарнă пулсан вăл нумай пĕлтерĕшлĕ страница шутланать.",
 
 'doubleredirects' => 'Икĕ хут куçаракансем',
 
@@ -1129,7 +1104,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # Metadata
 'metadata' => 'Метаданнăйсем:',
 
-# EXIF tags
+# Exif tags
 'exif-exifversion' => 'Exif версийĕ',
 'exif-flashpixversion' => 'Ĕçлеме пултаракан FlashPix версийĕ',
 'exif-gpsversionid' => 'GPS-информаци блокĕн версийĕ',
@@ -1193,10 +1168,6 @@ Also see [[Special:WantedCategories|wanted categories]].',
 
 # Special:Version
 'version' => 'MediaWiki версийĕ',
-
-# Special:FilePath
-'filepath' => 'Файл çулĕ',
-'filepath-submit' => 'Çул',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Пĕр пек файлсен шыравĕ',

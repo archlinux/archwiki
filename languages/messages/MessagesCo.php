@@ -491,7 +491,7 @@ U to indirizzu IP serà registratu indu a cronolugia di ista pagina.",
 'ilsubmit' => 'Ricerca',
 'bydate' => 'per data',
 
-# EXIF tags
+# Exif tags
 'exif-orientation' => 'Orientazione',
 'exif-imagedescription' => "Titulu di l'imagine",
 'exif-artist' => 'Autore',
@@ -531,9 +531,6 @@ U to indirizzu IP serà registratu indu a cronolugia di ista pagina.",
 
 # Special:Version
 'version' => 'Versione',
-
-# Special:FilePath
-'filepath-page' => 'Schedariu:',
 
 # Special:SpecialPages
 'specialpages' => 'Pagine spiciale',

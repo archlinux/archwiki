@@ -40,7 +40,7 @@ abstract class Collation {
 	 * @return Collation
 	 */
 	static function factory( $collationName ) {
-		switch( $collationName ) {
+		switch ( $collationName ) {
 			case 'uppercase':
 				return new UppercaseCollation;
 			case 'identity':
@@ -49,7 +49,7 @@ abstract class Collation {
 				return new IcuCollation( 'root' );
 			default:
 				$match = array();
-				if ( preg_match( '/^uca-([a-z-]+)$/', $collationName, $match ) ) {
+				if ( preg_match( '/^uca-([a-z@=-]+)$/', $collationName, $match ) ) {
 					return new IcuCollation( $match[1] );
 				}
 
@@ -62,7 +62,7 @@ abstract class Collation {
 				}
 
 				// If all else fails...
-				throw new MWException( __METHOD__.": unknown collation type \"$collationName\"" );
+				throw new MWException( __METHOD__ . ": unknown collation type \"$collationName\"" );
 		}
 	}
 
@@ -214,6 +214,7 @@ class IcuCollation extends Collation {
 		'pt' => array(),
 		'ru' => array(),
 		'sv' => array( "Å", "Ä", "Ö" ),
+		'sv@collation=standard' => array( "Å", "Ä", "Ö" ),
 		'uk' => array( "Ґ", "Ь" ),
 		'vi' => array( "Ă", "Â", "Đ", "Ê", "Ô", "Ơ", "Ư" ),
 		// Not verified, but likely correct
@@ -235,6 +236,7 @@ class IcuCollation extends Collation {
 		'es' => array( "Ñ" ),
 		'et' => array( "Š", "Ž", "Õ", "Ä", "Ö", "Ü" ),
 		'eu' => array( "Ñ" ),
+		'fa' => array( "آ", "ء", "ه" ),
 		'fo' => array( "Á", "Ð", "Í", "Ó", "Ú", "Ý", "Æ", "Ø", "Å" ),
 		'fr' => array(),
 		'fur' => array( "À", "Á", "Â", "È", "Ì", "Ò", "Ù" ),
@@ -349,21 +351,21 @@ class IcuCollation extends Collation {
 		$cacheEntry = $cache->get( $cacheKey );
 
 		if ( $cacheEntry && isset( $cacheEntry['version'] )
-			&& $cacheEntry['version'] == self::FIRST_LETTER_VERSION ) 
-		{
+			&& $cacheEntry['version'] == self::FIRST_LETTER_VERSION
+		) {
 			$this->firstLetterData = $cacheEntry;
 			return $this->firstLetterData;
 		}
 
 		// Generate data from serialized data file
 
-		if ( isset ( self::$tailoringFirstLetters[$this->locale] ) ) {
+		if ( isset( self::$tailoringFirstLetters[$this->locale] ) ) {
 			$letters = wfGetPrecompiledData( "first-letters-root.ser" );
 			// Append additional characters
 			$letters = array_merge( $letters, self::$tailoringFirstLetters[$this->locale] );
 			// Remove unnecessary ones, if any
-			if ( isset( self::$tailoringFirstLetters[ '-' . $this->locale ] ) ) {
-				$letters = array_diff( $letters, self::$tailoringFirstLetters[ '-' . $this->locale ] );
+			if ( isset( self::$tailoringFirstLetters['-' . $this->locale] ) ) {
+				$letters = array_diff( $letters, self::$tailoringFirstLetters['-' . $this->locale] );
 			}
 		} else {
 			$letters = wfGetPrecompiledData( "first-letters-{$this->locale}.ser" );
@@ -430,7 +432,7 @@ class IcuCollation extends Collation {
 
 		$prev = false;
 		$duplicatePrefixes = array();
-		foreach( $letterMap as $key => $value ) {
+		foreach ( $letterMap as $key => $value ) {
 			// Remove terminator byte. Otherwise the prefix
 			// comparison will get hung up on that.
 			$trimmedKey = rtrim( $key, "\0" );
@@ -456,7 +458,7 @@ class IcuCollation extends Collation {
 			}
 			$prev = $trimmedKey;
 		}
-		foreach( $duplicatePrefixes as $badKey ) {
+		foreach ( $duplicatePrefixes as $badKey ) {
 			wfDebug( "Removing '{$letterMap[$badKey]}' from first letters." );
 			unset( $letterMap[$badKey] );
 			// This code assumes that unsetting does not change sort order.

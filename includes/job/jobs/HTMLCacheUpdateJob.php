@@ -79,8 +79,16 @@ class HTMLCacheUpdateJob extends Job {
 	 * Update all of the backlinks
 	 */
 	protected function doFullUpdate() {
+		global $wgMaxBacklinksInvalidate;
+
 		# Get an estimate of the number of rows from the BacklinkCache
-		$numRows = $this->blCache->getNumLinks( $this->params['table'] );
+		$max = max( $this->rowsPerJob * 2, $wgMaxBacklinksInvalidate ) + 1;
+		$numRows = $this->blCache->getNumLinks( $this->params['table'], $max );
+		if ( $wgMaxBacklinksInvalidate !== false && $numRows > $wgMaxBacklinksInvalidate ) {
+			wfDebug( "Skipped HTML cache invalidation of {$this->title->getPrefixedText()}." );
+			return true;
+		}
+
 		if ( $numRows > $this->rowsPerJob * 2 ) {
 			# Do fast cached partition
 			$this->insertPartitionJobs();
@@ -90,12 +98,13 @@ class HTMLCacheUpdateJob extends Job {
 			# Check if the row count estimate was correct
 			if ( $titleArray->count() > $this->rowsPerJob * 2 ) {
 				# Not correct, do accurate partition
-				wfDebug( __METHOD__.": row count estimate was incorrect, repartitioning\n" );
+				wfDebug( __METHOD__ . ": row count estimate was incorrect, repartitioning\n" );
 				$this->insertJobsFromTitles( $titleArray );
 			} else {
 				$this->invalidateTitles( $titleArray ); // just do the query
 			}
 		}
+
 		return true;
 	}
 
@@ -145,7 +154,7 @@ class HTMLCacheUpdateJob extends Job {
 					array(
 						'table' => $this->params['table'],
 						'start' => $start,
-						'end'   => $id - 1
+						'end' => $id - 1
 					) + $rootJobParams // carry over information for de-duplication
 				);
 				$start = $id;
@@ -158,16 +167,16 @@ class HTMLCacheUpdateJob extends Job {
 			array(
 				'table' => $this->params['table'],
 				'start' => $start,
-				'end'   => $this->params['end']
+				'end' => $this->params['end']
 			) + $rootJobParams // carry over information for de-duplication
 		);
-		wfDebug( __METHOD__.": repartitioning into " . count( $jobs ) . " jobs\n" );
+		wfDebug( __METHOD__ . ": repartitioning into " . count( $jobs ) . " jobs\n" );
 
 		if ( count( $jobs ) < 2 ) {
 			# I don't think this is possible at present, but handling this case
 			# makes the code a bit more robust against future code updates and
 			# avoids a potential infinite loop of repartitioning
-			wfDebug( __METHOD__.": repartitioning failed!\n" );
+			wfDebug( __METHOD__ . ": repartitioning failed!\n" );
 			$this->invalidateTitles( $titleArray );
 		} else {
 			JobQueueGroup::singleton()->push( $jobs );
@@ -194,7 +203,7 @@ class HTMLCacheUpdateJob extends Job {
 				array(
 					'table' => $this->params['table'],
 					'start' => $start,
-					'end'   => $end,
+					'end' => $end,
 				) + $rootJobParams // carry over information for de-duplication
 			);
 		}
@@ -245,7 +254,7 @@ class HTMLCacheUpdateJob extends Job {
 		}
 
 		# Update file cache
-		if  ( $wgUseFileCache ) {
+		if ( $wgUseFileCache ) {
 			foreach ( $titleArray as $title ) {
 				HTMLFileCache::clearFileCache( $title );
 			}

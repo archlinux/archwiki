@@ -183,7 +183,7 @@ class _DiffEngine {
 	 * @param $to_lines
 	 * @return array
 	 */
-	function diff ( $from_lines, $to_lines ) {
+	function diff( $from_lines, $to_lines ) {
 		wfProfileIn( __METHOD__ );
 
 		// Diff and store locally
@@ -241,7 +241,7 @@ class _DiffEngine {
 	 * @param $from_lines
 	 * @param $to_lines
 	 */
-	function diff_local ( $from_lines, $to_lines ) {
+	function diff_local( $from_lines, $to_lines ) {
 		global $wgExternalDiffEngine;
 		wfProfileIn( __METHOD__ );
 
@@ -271,7 +271,8 @@ class _DiffEngine {
 				$this->xchanged[$skip] = $this->ychanged[$skip] = false;
 			}
 			// Skip trailing common lines.
-			$xi = $n_from; $yi = $n_to;
+			$xi = $n_from;
+			$yi = $n_to;
 			for ( $endskip = 0; --$xi > $skip && --$yi > $skip; $endskip++ ) {
 				if ( $from_lines[$xi] !== $to_lines[$yi] ) {
 					break;
@@ -394,7 +395,7 @@ class _DiffEngine {
 						break;
 					}
 				}
-				while ( list ( , $y ) = each( $matches ) ) {
+				while ( list( , $y ) = each( $matches ) ) {
 					if ( $y > $this->seq[$k -1] ) {
 						assert( '$y < $this->seq[$k]' );
 						// Optimization: this is a common case:
@@ -469,10 +470,9 @@ class _DiffEngine {
 	 * @param $yoff
 	 * @param $ylim
 	 */
-	function _compareseq ( $xoff, $xlim, $yoff, $ylim ) {
+	function _compareseq( $xoff, $xlim, $yoff, $ylim ) {
 		// Slide down the bottom initial diagonal.
-		while ( $xoff < $xlim && $yoff < $ylim
-		&& $this->xv[$xoff] == $this->yv[$yoff] ) {
+		while ( $xoff < $xlim && $yoff < $ylim && $this->xv[$xoff] == $this->yv[$yoff] ) {
 			++$xoff;
 			++$yoff;
 		}
@@ -491,7 +491,7 @@ class _DiffEngine {
 			// $nchunks = sqrt(min($xlim - $xoff, $ylim - $yoff) / 2.5);
 			// $nchunks = max(2,min(8,(int)$nchunks));
 			$nchunks = min( 7, $xlim - $xoff, $ylim - $yoff ) + 1;
-			list ( $lcs, $seps ) = $this->_diag( $xoff, $xlim, $yoff, $ylim, $nchunks );
+			list( $lcs, $seps ) = $this->_diag( $xoff, $xlim, $yoff, $ylim, $nchunks );
 		}
 
 		if ( $lcs == 0 ) {
@@ -508,7 +508,7 @@ class _DiffEngine {
 			reset( $seps );
 			$pt1 = $seps[0];
 			while ( $pt2 = next( $seps ) ) {
-				$this->_compareseq ( $pt1[0], $pt2[0], $pt1[1], $pt2[1] );
+				$this->_compareseq( $pt1[0], $pt2[0], $pt1[1], $pt2[1] );
 				$pt1 = $pt2;
 			}
 		}
@@ -554,9 +554,11 @@ class _DiffEngine {
 
 			while ( $i < $len && ! $changed[$i] ) {
 				assert( '$j < $other_len && ! $other_changed[$j]' );
-				$i++; $j++;
-				while ( $j < $other_len && $other_changed[$j] )
+				$i++;
 				$j++;
+				while ( $j < $other_len && $other_changed[$j] ) {
+					$j++;
+				}
 			}
 
 			if ( $i == $len ) {
@@ -690,7 +692,7 @@ class Diff {
 	/**
 	 * Check for empty diff.
 	 *
-	 * @return bool True iff two sequences were identical.
+	 * @return bool True if two sequences were identical.
 	 */
 	function isEmpty() {
 		foreach ( $this->edits as $edit ) {
@@ -1109,7 +1111,7 @@ class ArrayDiffFormatter extends DiffFormatter {
 		$newline = 1;
 		$retval = array();
 		foreach ( $diff->edits as $edit ) {
-			switch( $edit->type ) {
+			switch ( $edit->type ) {
 				case 'add':
 					foreach ( $edit->closing as $l ) {
 						$retval[] = array(
@@ -1204,7 +1206,7 @@ class _HWLDF_WordAccumulator {
 	 * @param $words
 	 * @param $tag string
 	 */
-	function addWords ( $words, $tag = '' ) {
+	function addWords( $words, $tag = '' ) {
 		if ( $tag != $this->_tag ) {
 			$this->_flushGroup( $tag );
 		}
@@ -1244,7 +1246,7 @@ class WordLevelDiff extends MappedDiff {
 	 * @param $orig_lines
 	 * @param $closing_lines
 	 */
-	function __construct ( $orig_lines, $closing_lines ) {
+	function __construct( $orig_lines, $closing_lines ) {
 		wfProfileIn( __METHOD__ );
 
 		list( $orig_words, $orig_stripped ) = $this->_split( $orig_lines );
@@ -1282,8 +1284,12 @@ class WordLevelDiff extends MappedDiff {
 				if ( preg_match_all( '/ ( [^\S\n]+ | [0-9_A-Za-z\x80-\xff]+ | . ) (?: (?!< \n) [^\S\n])? /xs',
 					$line, $m ) )
 				{
-					$words = array_merge( $words, $m[0] );
-					$stripped = array_merge( $stripped, $m[1] );
+					foreach ( $m[0] as $word ) {
+						$words[] = $word;
+					}
+					foreach ( $m[1] as $stripped_word ) {
+						$stripped[] = $stripped_word;
+					}
 				}
 			}
 		}

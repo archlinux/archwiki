@@ -49,7 +49,6 @@ $messages = array(
 'tog-enotifminoredits' => "E-mail yu' lokkue' ni mandikike' na tinilaika gi påhina siha.",
 'tog-enotifrevealaddr' => "Na'annok iyo-ku e-mail address gi notifikasion e-mail.",
 'tog-shownumberswatching' => "Na'annok i numirun muna'sesetbi siha ni mana'atan.",
-'tog-showjumplinks' => "Na'sedi i ina'chetton ni \"ta'yoki guatu\"",
 'tog-forceeditsummary' => "Na'tungo' yu' annai mamo'lu yu' summaria gueku",
 'tog-watchlisthideown' => "Nå'na' tinilaika-hu gi listan pinilan",
 'tog-watchlisthidebots' => "Nå'na' i tinilaikan bot gi listan pinilan",
@@ -203,7 +202,7 @@ $messages = array(
 'jumptonavigation' => 'nabegasion',
 'jumptosearch' => 'aligao',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Pot {{SITENAME}}',
 'aboutpage' => 'Project:Pot',
 'copyright' => 'Guåha i sinahguan gi halom $1.',
@@ -213,7 +212,6 @@ $messages = array(
 'disclaimers' => 'Diklarasion Inadahi',
 'disclaimerpage' => 'Project:Diklarasion inadahi henerat',
 'edithelp' => 'Ayudo tumulaika',
-'edithelppage' => 'Help:Tumulaika',
 'helppage' => 'Help:Guinaha',
 'mainpage' => 'Fanhaluman',
 'mainpage-description' => 'Fanhaluman',
@@ -631,7 +629,6 @@ Fanapunta na para u na'nuebu i kolumna anggen un usa i inachetton nabegasion.",
 'prevn' => "{{PLURAL:$1|$1}} ni manmå'pos",
 'nextn' => "{{PLURAL:$1|$1}} ni manmamaila'",
 'viewprevnext' => 'Atan i ($1 {{int:pipe-separator}} $2) ($3)',
-'searchhelp-url' => 'Help:Guinaha',
 'search-result-size' => '$1 ({{PLURAL:$2|1 na palabra|$2 na palabra siha}})',
 'search-result-score' => 'Prinisisu: $1%',
 'search-redirect' => "(na'dirihi $1)",
@@ -656,13 +653,6 @@ Fanapunta na para u na'nuebu i kolumna anggen un usa i inachetton nabegasion.",
 'searchdisabled' => "Mana'påra i inaligao {{SITENAME}}.
 Siña hao manaligao gi Google gi entretanto.
 Fanapunta na fana'an ti gus nuebu i listan-ñiha i guinahan {{SITENAME}}.",
-
-# Quickbar
-'qbsettings-none' => "Tåya'",
-'qbsettings-fixedleft' => 'Maplanta gi akague',
-'qbsettings-fixedright' => "Maplanta gi agapa'",
-'qbsettings-floatingleft' => "Mamå'ya gi akague",
-'qbsettings-floatingright' => "Mamå'ya gi agapa'",
 
 # Preferences page
 'preferences' => "I ga'ña-mu",
@@ -755,7 +745,6 @@ Yanggen un decidi mamo'lu, ma'usa ha' sempre para muna'i hao ni kreditu ni che'c
 'recentchangeslinked-feed' => 'Umachetton na tinilaika siha',
 'recentchangeslinked-toolbox' => 'Umachetton na tinilaika siha',
 'recentchangeslinked-title' => 'Tinilaika pumarehu yan "$1"',
-'recentchangeslinked-noresult' => "Tåya' na tinilaika siha ni maninachetton na påhina gi tiempon ma'ayek.",
 'recentchangeslinked-summary' => "Lista este ni tinilaika siha gi halacha ginen un påhina ma'ayek (pat ni miembro siha ginen un katigoria ma'ayek).
 '''Potpot''' i påhina siha ginen [[Special:Watchlist|Listan pinilan-mu]].",
 'recentchangeslinked-page' => "Nå'an i påhina:",
@@ -802,9 +791,6 @@ Yanggen un decidi mamo'lu, ma'usa ha' sempre para muna'i hao ni kreditu ni che'c
 
 # Statistics
 'statistics-mostpopular' => "Påhina siha ni mas ma'atan",
-
-'disambiguations' => "Ti mania'abak na påhina siha",
-'disambiguationspage' => 'Template:disambig',
 
 'doubleredirects' => "Mandoble na inachetton ma'dirihi siha",
 

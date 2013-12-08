@@ -33,24 +33,17 @@ define( 'RE_IP_BLOCK', RE_IP_ADD . '\/' . RE_IP_PREFIX );
 // An IPv6 address is made up of 8 words (each x0000 to xFFFF).
 // However, the "::" abbreviation can be used on consecutive x0000 words.
 define( 'RE_IPV6_WORD', '([0-9A-Fa-f]{1,4})' );
-define( 'RE_IPV6_PREFIX', '(12[0-8]|1[01][0-9]|[1-9]?\d)');
+define( 'RE_IPV6_PREFIX', '(12[0-8]|1[01][0-9]|[1-9]?\d)' );
 define( 'RE_IPV6_ADD',
 	'(?:' . // starts with "::" (including "::")
 		':(?::|(?::' . RE_IPV6_WORD . '){1,7})' .
 	'|' . // ends with "::" (except "::")
 		RE_IPV6_WORD . '(?::' . RE_IPV6_WORD . '){0,6}::' .
-	'|' . // contains one "::" in the middle, ending in "::WORD"
-		RE_IPV6_WORD . '(?::' . RE_IPV6_WORD . '){0,5}' . '::' . RE_IPV6_WORD .
-	'|' . // contains one "::" in the middle, not ending in "::WORD" (regex for PCRE 4.0+)
-		RE_IPV6_WORD . '(?::(?P<abn>:(?P<iabn>))?' . RE_IPV6_WORD . '(?!:(?P=abn))){1,5}' .
-			':' . RE_IPV6_WORD . '(?P=iabn)' .
-		// NOTE: (?!(?P=abn)) fails iff "::" used twice; (?P=iabn) passes iff a "::" was found.
+	'|' . // contains one "::" in the middle (the ^ makes the test fail if none found)
+		RE_IPV6_WORD . '(?::((?(-1)|:))?' . RE_IPV6_WORD . '){1,6}(?(-2)|^)' .
 	'|' . // contains no "::"
 		RE_IPV6_WORD . '(?::' . RE_IPV6_WORD . '){7}' .
 	')'
-	// NOTE: With PCRE 7.2+, we can combine the two '"::" in the middle' cases into:
-	//		RE_IPV6_WORD . '(?::((?(-1)|:))?' . RE_IPV6_WORD . '){1,6}(?(-2)|^)'
-	// This also improves regex concatenation by using relative references.
 );
 // An IPv6 block is an IP address and a prefix (d1 to d128)
 define( 'RE_IPV6_BLOCK', RE_IPV6_ADD . '\/' . RE_IPV6_PREFIX );
@@ -212,7 +205,7 @@ class IP {
 					$longest = $match;
 					$longestPos = $pos;
 				}
-				$offset += ( $pos + strlen( $match ) ); // advance
+				$offset = ( $pos + strlen( $match ) ); // advance
 			}
 			if ( $longest !== false ) {
 				// Replace this portion of the string with the '::' abbreviation
@@ -392,11 +385,11 @@ class IP {
 		static $privateRanges = false;
 		if ( !$privateRanges ) {
 			$privateRanges = array(
-				array( '10.0.0.0',    '10.255.255.255' ),   # RFC 1918 (private)
-				array( '172.16.0.0',  '172.31.255.255' ),   #     "
-				array( '192.168.0.0', '192.168.255.255' ),  #     "
-				array( '0.0.0.0',     '0.255.255.255' ),    # this network
-				array( '127.0.0.0',   '127.255.255.255' ),  # loopback
+				array( '10.0.0.0', '10.255.255.255' ), # RFC 1918 (private)
+				array( '172.16.0.0', '172.31.255.255' ), # RFC 1918 (private)
+				array( '192.168.0.0', '192.168.255.255' ), # RFC 1918 (private)
+				array( '0.0.0.0', '0.255.255.255' ), # this network
+				array( '127.0.0.0', '127.255.255.255' ), # loopback
 			);
 		}
 
@@ -492,6 +485,11 @@ class IP {
 			$n = ip2long( $ip );
 			if ( $n < 0 ) {
 				$n += pow( 2, 32 );
+				# On 32-bit platforms (and on Windows), 2^32 does not fit into an int,
+				# so $n becomes a float. We convert it to string instead.
+				if ( is_float( $n ) ) {
+					$n = (string)$n;
+				}
 			}
 		}
 		return $n;
@@ -526,7 +524,7 @@ class IP {
 			if ( $bits == 0 ) {
 				$network = 0;
 			} else {
-				$network &= ~( ( 1 << ( 32 - $bits ) ) - 1);
+				$network &= ~( ( 1 << ( 32 - $bits ) ) - 1 );
 			}
 			# Convert to unsigned
 			if ( $network < 0 ) {

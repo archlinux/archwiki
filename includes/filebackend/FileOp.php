@@ -46,7 +46,7 @@ abstract class FileOp {
 
 	protected $doOperation = true; // boolean; operation is not a no-op
 	protected $sourceSha1; // string
-	protected $destSameAsSource; // boolean
+	protected $overwriteSameCase; // boolean
 	protected $destExists; // boolean
 
 	/* Object life-cycle */
@@ -55,17 +55,19 @@ abstract class FileOp {
 	const STATE_ATTEMPTED = 3;
 
 	/**
-	 * Build a new file operation transaction
+	 * Build a new batch file operation transaction
 	 *
-	 * @param $backend FileBackendStore
-	 * @param $params Array
+	 * @param FileBackendStore $backend
+	 * @param Array $params
 	 * @throws MWException
 	 */
 	final public function __construct( FileBackendStore $backend, array $params ) {
 		$this->backend = $backend;
 		list( $required, $optional ) = $this->allowedParams();
+		// @todo normalizeAnyStoragePaths() calls are overzealous, use a parameter list
 		foreach ( $required as $name ) {
 			if ( isset( $params[$name] ) ) {
+				// Normalize paths so the paths to the same file have the same string
 				$this->params[$name] = self::normalizeAnyStoragePaths( $params[$name] );
 			} else {
 				throw new MWException( "File operation missing parameter '$name'." );
@@ -73,6 +75,7 @@ abstract class FileOp {
 		}
 		foreach ( $optional as $name ) {
 			if ( isset( $params[$name] ) ) {
+				// Normalize paths so the paths to the same file have the same string
 				$this->params[$name] = self::normalizeAnyStoragePaths( $params[$name] );
 			}
 		}
@@ -82,7 +85,7 @@ abstract class FileOp {
 	/**
 	 * Normalize $item or anything in $item that is a valid storage path
 	 *
-	 * @param $item string|array
+	 * @param string $item|array
 	 * @return string|Array
 	 */
 	protected function normalizeAnyStoragePaths( $item ) {
@@ -102,7 +105,7 @@ abstract class FileOp {
 	/**
 	 * Normalize a string if it is a valid storage path
 	 *
-	 * @param $path string
+	 * @param string $path
 	 * @return string
 	 */
 	protected static function normalizeIfValidStoragePath( $path ) {
@@ -116,7 +119,7 @@ abstract class FileOp {
 	/**
 	 * Set the batch UUID this operation belongs to
 	 *
-	 * @param $batchId string
+	 * @param string $batchId
 	 * @return void
 	 */
 	final public function setBatchId( $batchId ) {
@@ -126,7 +129,7 @@ abstract class FileOp {
 	/**
 	 * Get the value of the parameter with the given name
 	 *
-	 * @param $name string
+	 * @param string $name
 	 * @return mixed Returns null if the parameter is not set
 	 */
 	final public function getParam( $name ) {
@@ -209,22 +212,22 @@ abstract class FileOp {
 		$pathsUsed = array_merge( $this->storagePathsRead(), $this->storagePathsChanged() );
 		foreach ( array_unique( $pathsUsed ) as $path ) {
 			$nullEntries[] = array( // assertion for recovery
-				'op'      => 'null',
-				'path'    => $path,
+				'op' => 'null',
+				'path' => $path,
 				'newSha1' => $this->fileSha1( $path, $oPredicates )
 			);
 		}
 		foreach ( $this->storagePathsChanged() as $path ) {
 			if ( $nPredicates['sha1'][$path] === false ) { // deleted
 				$deleteEntries[] = array(
-					'op'      => 'delete',
-					'path'    => $path,
+					'op' => 'delete',
+					'path' => $path,
 					'newSha1' => ''
 				);
 			} else { // created/updated
 				$updateEntries[] = array(
-					'op'      => $this->fileExists( $path, $oPredicates ) ? 'update' : 'create',
-					'path'    => $path,
+					'op' => $this->fileExists( $path, $oPredicates ) ? 'update' : 'create',
+					'path' => $path,
 					'newSha1' => $nPredicates['sha1'][$path]
 				);
 			}
@@ -237,7 +240,7 @@ abstract class FileOp {
 	 * This must update $predicates for each path that the op can change
 	 * except when a failing status object is returned.
 	 *
-	 * @param $predicates Array
+	 * @param Array $predicates
 	 * @return Status
 	 */
 	final public function precheck( array &$predicates ) {
@@ -314,7 +317,7 @@ abstract class FileOp {
 	/**
 	 * Adjust params to FileBackendStore internal file calls
 	 *
-	 * @param $params Array
+	 * @param Array $params
 	 * @return Array (required params list, optional params list)
 	 */
 	protected function setFlags( array $params ) {
@@ -341,10 +344,10 @@ abstract class FileOp {
 
 	/**
 	 * Check for errors with regards to the destination file already existing.
-	 * Also set the destExists, destSameAsSource and sourceSha1 member variables.
+	 * Also set the destExists, overwriteSameCase and sourceSha1 member variables.
 	 * A bad status will be returned if there is no chance it can be overwritten.
 	 *
-	 * @param $predicates Array
+	 * @param Array $predicates
 	 * @return Status
 	 */
 	protected function precheckDestExistence( array $predicates ) {
@@ -354,7 +357,7 @@ abstract class FileOp {
 		if ( $this->sourceSha1 === null ) { // file in storage?
 			$this->sourceSha1 = $this->fileSha1( $this->params['src'], $predicates );
 		}
-		$this->destSameAsSource = false;
+		$this->overwriteSameCase = false;
 		$this->destExists = $this->fileExists( $this->params['dst'], $predicates );
 		if ( $this->destExists ) {
 			if ( $this->getParam( 'overwrite' ) ) {
@@ -368,7 +371,7 @@ abstract class FileOp {
 					// Give an error if the files are not identical
 					$status->fatal( 'backend-fail-notsame', $this->params['dst'] );
 				} else {
-					$this->destSameAsSource = true; // OK
+					$this->overwriteSameCase = true; // OK
 				}
 				return $status; // do nothing; either OK or bad status
 			} else {
@@ -381,7 +384,7 @@ abstract class FileOp {
 
 	/**
 	 * precheckDestExistence() helper function to get the source file SHA-1.
-	 * Subclasses should overwride this iff the source is not in storage.
+	 * Subclasses should overwride this if the source is not in storage.
 	 *
 	 * @return string|bool Returns false on failure
 	 */
@@ -393,7 +396,7 @@ abstract class FileOp {
 	 * Check if a file will exist in storage when this operation is attempted
 	 *
 	 * @param string $source Storage path
-	 * @param $predicates Array
+	 * @param Array $predicates
 	 * @return bool
 	 */
 	final protected function fileExists( $source, array $predicates ) {
@@ -409,7 +412,7 @@ abstract class FileOp {
 	 * Get the SHA-1 of a file in storage when this operation is attempted
 	 *
 	 * @param string $source Storage path
-	 * @param $predicates Array
+	 * @param Array $predicates
 	 * @return string|bool False on failure
 	 */
 	final protected function fileSha1( $source, array $predicates ) {
@@ -435,7 +438,7 @@ abstract class FileOp {
 	/**
 	 * Log a file operation failure and preserve any temp files
 	 *
-	 * @param $action string
+	 * @param string $action
 	 * @return void
 	 */
 	final public function logFailure( $action ) {
@@ -457,7 +460,7 @@ abstract class FileOp {
 class CreateFileOp extends FileOp {
 	protected function allowedParams() {
 		return array( array( 'content', 'dst' ),
-			array( 'overwrite', 'overwriteSame', 'disposition', 'headers' ) );
+			array( 'overwrite', 'overwriteSame', 'headers' ) );
 	}
 
 	protected function doPrecheck( array &$predicates ) {
@@ -485,27 +488,18 @@ class CreateFileOp extends FileOp {
 		return $status; // safe to call attempt()
 	}
 
-	/**
-	 * @return Status
-	 */
 	protected function doAttempt() {
-		if ( !$this->destSameAsSource ) {
+		if ( !$this->overwriteSameCase ) {
 			// Create the file at the destination
 			return $this->backend->createInternal( $this->setFlags( $this->params ) );
 		}
 		return Status::newGood();
 	}
 
-	/**
-	 * @return bool|String
-	 */
 	protected function getSourceSha1Base36() {
 		return wfBaseConvert( sha1( $this->params['content'] ), 16, 36, 31 );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function storagePathsChanged() {
 		return array( $this->params['dst'] );
 	}
@@ -516,18 +510,11 @@ class CreateFileOp extends FileOp {
  * Parameters for this operation are outlined in FileBackend::doOperations().
  */
 class StoreFileOp extends FileOp {
-	/**
-	 * @return array
-	 */
 	protected function allowedParams() {
 		return array( array( 'src', 'dst' ),
-			array( 'overwrite', 'overwriteSame', 'disposition', 'headers' ) );
+			array( 'overwrite', 'overwriteSame', 'headers' ) );
 	}
 
-	/**
-	 * @param $predicates array
-	 * @return Status
-	 */
 	protected function doPrecheck( array &$predicates ) {
 		$status = Status::newGood();
 		// Check if the source file exists on the file system
@@ -557,20 +544,14 @@ class StoreFileOp extends FileOp {
 		return $status; // safe to call attempt()
 	}
 
-	/**
-	 * @return Status
-	 */
 	protected function doAttempt() {
-		// Store the file at the destination
-		if ( !$this->destSameAsSource ) {
+		if ( !$this->overwriteSameCase ) {
+			// Store the file at the destination
 			return $this->backend->storeInternal( $this->setFlags( $this->params ) );
 		}
 		return Status::newGood();
 	}
 
-	/**
-	 * @return bool|string
-	 */
 	protected function getSourceSha1Base36() {
 		wfSuppressWarnings();
 		$hash = sha1_file( $this->params['src'] );
@@ -591,18 +572,11 @@ class StoreFileOp extends FileOp {
  * Parameters for this operation are outlined in FileBackend::doOperations().
  */
 class CopyFileOp extends FileOp {
-	/**
-	 * @return array
-	 */
 	protected function allowedParams() {
 		return array( array( 'src', 'dst' ),
-			array( 'overwrite', 'overwriteSame', 'ignoreMissingSource', 'disposition' ) );
+			array( 'overwrite', 'overwriteSame', 'ignoreMissingSource', 'headers' ) );
 	}
 
-	/**
-	 * @param $predicates array
-	 * @return Status
-	 */
 	protected function doPrecheck( array &$predicates ) {
 		$status = Status::newGood();
 		// Check if the source file exists
@@ -634,30 +608,26 @@ class CopyFileOp extends FileOp {
 		return $status; // safe to call attempt()
 	}
 
-	/**
-	 * @return Status
-	 */
 	protected function doAttempt() {
-		// Do nothing if the src/dst paths are the same
-		if ( $this->params['src'] !== $this->params['dst'] ) {
-			// Copy the file into the destination
-			if ( !$this->destSameAsSource ) {
-				return $this->backend->copyInternal( $this->setFlags( $this->params ) );
-			}
+		if ( $this->overwriteSameCase ) {
+			$status = Status::newGood(); // nothing to do
+		} elseif ( $this->params['src'] === $this->params['dst'] ) {
+			// Just update the destination file headers
+			$headers = $this->getParam( 'headers' ) ?: array();
+			$status = $this->backend->describeInternal( $this->setFlags( array(
+				'src' => $this->params['dst'], 'headers' => $headers
+			) ) );
+		} else {
+			// Copy the file to the destination
+			$status = $this->backend->copyInternal( $this->setFlags( $this->params ) );
 		}
-		return Status::newGood();
+		return $status;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function storagePathsRead() {
 		return array( $this->params['src'] );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function storagePathsChanged() {
 		return array( $this->params['dst'] );
 	}
@@ -668,18 +638,11 @@ class CopyFileOp extends FileOp {
  * Parameters for this operation are outlined in FileBackend::doOperations().
  */
 class MoveFileOp extends FileOp {
-	/**
-	 * @return array
-	 */
 	protected function allowedParams() {
 		return array( array( 'src', 'dst' ),
-			array( 'overwrite', 'overwriteSame', 'ignoreMissingSource', 'disposition' ) );
+			array( 'overwrite', 'overwriteSame', 'ignoreMissingSource', 'headers' ) );
 	}
 
-	/**
-	 * @param $predicates array
-	 * @return Status
-	 */
 	protected function doPrecheck( array &$predicates ) {
 		$status = Status::newGood();
 		// Check if the source file exists
@@ -713,34 +676,34 @@ class MoveFileOp extends FileOp {
 		return $status; // safe to call attempt()
 	}
 
-	/**
-	 * @return Status
-	 */
 	protected function doAttempt() {
-		// Do nothing if the src/dst paths are the same
-		if ( $this->params['src'] !== $this->params['dst'] ) {
-			if ( !$this->destSameAsSource ) {
-				// Move the file into the destination
-				return $this->backend->moveInternal( $this->setFlags( $this->params ) );
+		if ( $this->overwriteSameCase ) {
+			if ( $this->params['src'] === $this->params['dst'] ) {
+				// Do nothing to the destination (which is also the source)
+				$status = Status::newGood();
 			} else {
-				// Just delete source as the destination needs no changes
-				$params = array( 'src' => $this->params['src'] );
-				return $this->backend->deleteInternal( $this->setFlags( $params ) );
+				// Just delete the source as the destination file needs no changes
+				$status = $this->backend->deleteInternal( $this->setFlags(
+					array( 'src' => $this->params['src'] )
+				) );
 			}
+		} elseif ( $this->params['src'] === $this->params['dst'] ) {
+			// Just update the destination file headers
+			$headers = $this->getParam( 'headers' ) ?: array();
+			$status = $this->backend->describeInternal( $this->setFlags(
+				array( 'src' => $this->params['dst'], 'headers' => $headers )
+			) );
+		} else {
+			// Move the file to the destination
+			$status = $this->backend->moveInternal( $this->setFlags( $this->params ) );
 		}
-		return Status::newGood();
+		return $status;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function storagePathsRead() {
 		return array( $this->params['src'] );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function storagePathsChanged() {
 		return array( $this->params['src'], $this->params['dst'] );
 	}
@@ -751,17 +714,10 @@ class MoveFileOp extends FileOp {
  * Parameters for this operation are outlined in FileBackend::doOperations().
  */
 class DeleteFileOp extends FileOp {
-	/**
-	 * @return array
-	 */
 	protected function allowedParams() {
 		return array( array( 'src' ), array( 'ignoreMissingSource' ) );
 	}
 
-	/**
-	 * @param $predicates array
-	 * @return Status
-	 */
 	protected function doPrecheck( array &$predicates ) {
 		$status = Status::newGood();
 		// Check if the source file exists
@@ -788,17 +744,11 @@ class DeleteFileOp extends FileOp {
 		return $status; // safe to call attempt()
 	}
 
-	/**
-	 * @return Status
-	 */
 	protected function doAttempt() {
 		// Delete the source file
 		return $this->backend->deleteInternal( $this->setFlags( $this->params ) );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function storagePathsChanged() {
 		return array( $this->params['src'] );
 	}
@@ -809,17 +759,10 @@ class DeleteFileOp extends FileOp {
  * Parameters for this operation are outlined in FileBackend::doOperations().
  */
 class DescribeFileOp extends FileOp {
-	/**
-	 * @return array
-	 */
 	protected function allowedParams() {
-		return array( array( 'src' ), array( 'disposition', 'headers' ) );
+		return array( array( 'src' ), array( 'headers' ) );
 	}
 
-	/**
-	 * @param $predicates array
-	 * @return Status
-	 */
 	protected function doPrecheck( array &$predicates ) {
 		$status = Status::newGood();
 		// Check if the source file exists
@@ -840,17 +783,11 @@ class DescribeFileOp extends FileOp {
 		return $status; // safe to call attempt()
 	}
 
-	/**
-	 * @return Status
-	 */
 	protected function doAttempt() {
 		// Update the source file's metadata
 		return $this->backend->describeInternal( $this->setFlags( $this->params ) );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function storagePathsChanged() {
 		return array( $this->params['src'] );
 	}

@@ -60,7 +60,7 @@ class ExternalStore {
 
 		$class = 'ExternalStore' . ucfirst( $proto );
 		// Any custom modules should be added to $wgAutoLoadClasses for on-demand loading
-		return MWInit::classExists( $class ) ? new $class( $params ) : false;
+		return class_exists( $class ) ? new $class( $params ) : false;
 	}
 
 	/**
@@ -88,6 +88,39 @@ class ExternalStore {
 		}
 
 		return $store->fetchFromURL( $url );
+	}
+
+	/**
+	 * Fetch data from multiple URLs with a minimum of round trips
+	 *
+	 * @param array $urls The URLs of the text to get
+	 * @return array Map from url to its data.  Data is either string when found
+	 *     or false on failure.
+	 */
+	public static function batchFetchFromURLs( array $urls ) {
+		$batches = array();
+		foreach ( $urls as $url ) {
+			$scheme = parse_url( $url, PHP_URL_SCHEME );
+			if ( $scheme ) {
+				$batches[$scheme][] = $url;
+			}
+		}
+		$retval = array();
+		foreach ( $batches as $proto => $batchedUrls ) {
+			$store = self::getStoreObject( $proto );
+			if ( $store === false ) {
+				continue;
+			}
+			$retval += $store->batchFetchFromURLs( $batchedUrls );
+		}
+		// invalid, not found, db dead, etc.
+		$missing = array_diff( $urls, array_keys( $retval ) );
+		if ( $missing ) {
+			foreach ( $missing as $url ) {
+				$retval[$url] = false;
+			}
+		}
+		return $retval;
 	}
 
 	/**
@@ -123,9 +156,10 @@ class ExternalStore {
 	/**
 	 * Like insert() above, but does more of the work for us.
 	 * This function does not need a url param, it builds it by
-	 * itself. It also fails-over to the next possible clusters.
+	 * itself. It also fails-over to the next possible clusters
+	 * provided by $wgDefaultExternalStore.
 	 *
-	 * @param $data string
+	 * @param string $data
 	 * @param array $params Associative array of ExternalStoreMedium parameters
 	 * @return string|bool The URL of the stored data item, or false on error
 	 * @throws MWException
@@ -133,8 +167,23 @@ class ExternalStore {
 	public static function insertToDefault( $data, array $params = array() ) {
 		global $wgDefaultExternalStore;
 
+		return self::insertWithFallback( (array)$wgDefaultExternalStore, $data, $params );
+	}
+
+	/**
+	 * Like insert() above, but does more of the work for us.
+	 * This function does not need a url param, it builds it by
+	 * itself. It also fails-over to the next possible clusters
+	 * as provided in the first parameter.
+	 *
+	 * @param array $tryStores refer to $wgDefaultExternalStore
+	 * @param string $data
+	 * @param array $params Associative array of ExternalStoreMedium parameters
+	 * @return string|bool The URL of the stored data item, or false on error
+	 * @throws MWException
+	 */
+	public static function insertWithFallback( array $tryStores, $data, array $params = array() ) {
 		$error = false;
-		$tryStores = (array)$wgDefaultExternalStore;
 		while ( count( $tryStores ) > 0 ) {
 			$index = mt_rand( 0, count( $tryStores ) - 1 );
 			$storeUrl = $tryStores[$index];

@@ -80,9 +80,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Soim hamas yusa i lukautim pes',
 'tog-oldsig' => 'Olsem wanem yu raitim nem nau',
 'tog-fancysig' => 'Dispela rot yu raitim long nem stap wikitext (i no gat otomatik link)',
-'tog-externaleditor' => 'Yusim long ausait edita oltaim (tasol long man bilong save, i nidim sipesol setap antap long komputa bilong yu. [//www.mediawiki.org/wiki/Manual:External_editors Lukim moa infomesen.])',
-'tog-externaldiff' => 'Yusim long ausait diff oltaim (tasol long man bilong save, i nidim sipesol setap antap long komputa bilong yu. [//www.mediawiki.org/wiki/Manual:External_editors Lukim moa infomesen.])',
-'tog-showjumplinks' => ' Setap ol "Go stret long" links bilong helpim',
 'tog-uselivepreview' => 'Soim ol senis kwiktaim taim mi wokim (i nidim Javascript)',
 'tog-forceeditsummary' => 'Tokim mi long wanem taim raitim mi nating long liklik toksave bilong senis',
 'tog-watchlisthideown' => 'Haitim ol senis mi wokim long lukautbuk bilong mi',
@@ -236,7 +233,7 @@ $messages = array(
 'jumptonavigation' => 'ol bikpela pes',
 'jumptosearch' => 'painim',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Long {{SITENAME}}',
 'aboutpage' => 'Project:Long',
 'copyrightpage' => '{{ns:project}}:Ol laisens',
@@ -245,7 +242,6 @@ $messages = array(
 'disclaimers' => 'Ol toksave bilong lo',
 'disclaimerpage' => 'Project:Ol tok warn long lo',
 'edithelp' => 'Halivim mi long pasin bilong wokim senis',
-'edithelppage' => 'Help:Senisim',
 'mainpage' => 'Fran Pes',
 'mainpage-description' => 'Fran Pes',
 'portal' => 'Bung ples',
@@ -396,9 +392,6 @@ Na tu yu tok tru nau olsem yu raitim dispela yu yet, o yu kisim long wanpela hap
 'powersearch-field' => 'Painim long',
 'powersearch-toggleall' => 'Olgeta',
 'powersearch-togglenone' => 'I nogat wanpela',
-
-# Quickbar
-'qbsettings-none' => 'I nogat wanpela',
 
 # Preferences page
 'preferences' => 'Ol laik',
@@ -643,7 +636,7 @@ Sapos yu laik rausim dispela pes long lukautbuk bilong yu bihain, paitim \"Pinis
 'unwatch' => 'Pinis long lukautim',
 'unwatchthispage' => 'Pinis long lukautim',
 'watchlist-details' => '$1 pes istap long lukautbuk (dispela namba i no kaunim ol pes bilong toktok).',
-'wlheader-showupdated' => "* Ol pes i senis pinis bihain long taim yu lukim ol igat nem i '''strongpela'''",
+'wlheader-showupdated' => "Ol pes i senis pinis bihain long taim yu lukim ol igat nem i '''strongpela'''",
 'wlshowlast' => 'Lukim dispela $1 aua $2 de $3',
 'watchlist-options' => 'Ol laik bilong Lukautbuk',
 
@@ -805,7 +798,7 @@ Yu inap lukim as tok bilong em',
 # Metadata
 'metadata' => 'Metadata',
 
-# EXIF tags
+# Exif tags
 'exif-imagedescription' => 'Nem bilong piksa',
 
 'exif-meteringmode-255' => 'Narapela',
@@ -857,10 +850,6 @@ Yu inap lukim as tok bilong em',
 'version-other' => 'Narapela',
 'version-license' => 'Laisens',
 'version-poweredby-others' => 'ol narapela',
-
-# Special:FilePath
-'filepath-page' => 'Fail:',
-'filepath-submit' => 'Go',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Nem bilong fail:',

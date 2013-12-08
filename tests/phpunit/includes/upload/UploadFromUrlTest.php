@@ -6,14 +6,14 @@
  * @group Database
  */
 class UploadFromUrlTest extends ApiTestCase {
-
 	protected function setUp() {
-		global $wgEnableUploads, $wgAllowCopyUploads, $wgAllowAsyncCopyUploads;
 		parent::setUp();
 
-		$wgEnableUploads = true;
-		$wgAllowCopyUploads = true;
-		$wgAllowAsyncCopyUploads = true;
+		$this->setMwGlobals( array(
+			'wgEnableUploads' => true,
+			'wgAllowCopyUploads' => true,
+			'wgAllowAsyncCopyUploads' => true,
+		) );
 		wfSetupSession();
 
 		if ( wfLocalFile( 'UploadFromUrlTest.png' )->exists() ) {
@@ -30,6 +30,7 @@ class UploadFromUrlTest extends ApiTestCase {
 		$module->execute();
 
 		wfSetupSession( $sessionId );
+
 		return array( $module->getResultData(), $req );
 	}
 
@@ -174,7 +175,6 @@ class UploadFromUrlTest extends ApiTestCase {
 
 		$this->user->addGroup( 'users' );
 
-
 		$data = $this->doAsyncUpload( $token );
 
 		$this->assertEquals( $data[0]['upload']['result'], 'Warning' );
@@ -235,7 +235,7 @@ class UploadFromUrlTest extends ApiTestCase {
 
 		$this->assertFalse( (bool)$talk->getArticleID( Title::GAID_FOR_UPDATE ), 'User talk does not exist' );
 
-		$data = $this->doApiRequest( array(
+		$this->doApiRequest( array(
 			'action' => 'upload',
 			'filename' => 'UploadFromUrlTest.png',
 			'url' => 'http://bits.wikimedia.org/skins-1.5/common/images/poweredby_mediawiki_88x31.png',
@@ -259,7 +259,7 @@ class UploadFromUrlTest extends ApiTestCase {
 
 		$exception = false;
 		try {
-			$data = $this->doApiRequest( array(
+			$this->doApiRequest( array(
 				'action' => 'upload',
 				'filename' => 'UploadFromUrlTest.png',
 				'url' => 'http://bits.wikimedia.org/skins-1.5/common/images/poweredby_mediawiki_88x31.png',
@@ -277,7 +277,6 @@ class UploadFromUrlTest extends ApiTestCase {
 		$this->assertFalse( $job );
 
 		return;
-
 		/*
 		// Broken until using leavemessage with ignorewarnings is supported
 		$job->run();
@@ -329,7 +328,6 @@ class UploadFromUrlTest extends ApiTestCase {
 
 		return $data;
 	}
-
 
 	/**
 	 *

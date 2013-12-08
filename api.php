@@ -36,16 +36,12 @@ define( 'MW_API', true );
 // Bail if PHP is too low
 if ( !function_exists( 'version_compare' ) || version_compare( phpversion(), '5.3.2' ) < 0 ) {
 	// We need to use dirname( __FILE__ ) here cause __DIR__ is PHP5.3+
-	require( dirname( __FILE__ ) . '/includes/PHPVersionError.php' );
+	require dirname( __FILE__ ) . '/includes/PHPVersionError.php';
 	wfPHPVersionError( 'api.php' );
 }
 
 // Initialise common code.
-if ( isset( $_SERVER['MW_COMPILED'] ) ) {
-	require ( 'core/includes/WebStart.php' );
-} else {
-	require ( __DIR__ . '/includes/WebStart.php' );
-}
+require __DIR__ . '/includes/WebStart.php';
 
 wfProfileIn( 'api.php' );
 $starttime = microtime( true );
@@ -58,8 +54,8 @@ if ( !$wgRequest->checkUrlExtension() ) {
 // Verify that the API has not been disabled
 if ( !$wgEnableAPI ) {
 	header( $_SERVER['SERVER_PROTOCOL'] . ' 500 MediaWiki configuration Error', true, 500 );
-	echo( 'MediaWiki API is not enabled for this site. Add the following line to your LocalSettings.php'
-		. '<pre><b>$wgEnableAPI=true;</b></pre>' );
+	echo 'MediaWiki API is not enabled for this site. Add the following line to your LocalSettings.php'
+		. '<pre><b>$wgEnableAPI=true;</b></pre>';
 	die( 1 );
 }
 

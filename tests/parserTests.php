@@ -27,8 +27,8 @@
 $otions = array( 'quick', 'color', 'quiet', 'help', 'show-output', 'record', 'run-disabled', 'run-parsoid' );
 $optionsWithArgs = array( 'regex', 'filter', 'seed', 'setversion' );
 
-require_once( __DIR__ . '/../maintenance/commandLine.inc' );
-require_once( __DIR__ . '/TestsAutoLoader.php' );
+require_once __DIR__ . '/../maintenance/commandLine.inc';
+require_once __DIR__ . '/TestsAutoLoader.php';
 
 if ( isset( $options['help'] ) ) {
 	echo <<<ENDS
@@ -84,11 +84,11 @@ if ( isset( $options['file'] ) ) {
 
 # Print out software version to assist with locating regressions
 $version = SpecialVersion::getVersion();
-echo( "This is MediaWiki version {$version}.\n\n" );
+echo "This is MediaWiki version {$version}.\n\n";
 
 if ( isset( $options['fuzz'] ) ) {
 	$tester->fuzzTest( $files );
 } else {
 	$ok = $tester->runTestsFromFiles( $files );
-	exit ( $ok ? 0 : 1 );
+	exit( $ok ? 0 : 1 );
 }

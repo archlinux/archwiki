@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to clear the cache of interwiki prefixes for all local wikis.
@@ -55,4 +55,4 @@ class ClearInterwikiCache extends Maintenance {
 }
 
 $maintClass = "ClearInterwikiCache";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

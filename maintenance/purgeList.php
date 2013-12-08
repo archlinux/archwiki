@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that sends purge requests for listed pages to squid.
@@ -44,7 +44,7 @@ class PurgeList extends Maintenance {
 		if ( $this->hasOption( 'all' ) ) {
 			$this->purgeNamespace( false );
 		} elseif ( $this->hasOption( 'namespace' ) ) {
-			$this->purgeNamespace( intval( $this->getOption( 'namespace') ) );
+			$this->purgeNamespace( intval( $this->getOption( 'namespace' ) ) );
 		} else {
 			$this->doPurge();
 		}
@@ -63,7 +63,7 @@ class PurgeList extends Maintenance {
 			} elseif ( $page !== '' ) {
 				$title = Title::newFromText( $page );
 				if ( $title ) {
-					$url = $title->getInternalUrl();
+					$url = $title->getInternalURL();
 					$this->output( "$url\n" );
 					$urls[] = $url;
 					if ( $this->getOption( 'purge' ) ) {
@@ -74,7 +74,7 @@ class PurgeList extends Maintenance {
 				}
 			}
 		}
-		$this->output( "Purging " . count( $urls ). " urls\n" );
+		$this->output( "Purging " . count( $urls ) . " urls\n" );
 		$this->sendPurgeRequest( $urls );
 	}
 
@@ -88,7 +88,7 @@ class PurgeList extends Maintenance {
 			$conds = array( 'page_namespace' => $namespace );
 		}
 		while ( true ) {
-			$res = $dbr->select( 'page', 
+			$res = $dbr->select( 'page',
 				array( 'page_id', 'page_namespace', 'page_title' ),
 				$conds + array( 'page_id > ' . $dbr->addQuotes( $startId ) ),
 				__METHOD__,
@@ -104,7 +104,7 @@ class PurgeList extends Maintenance {
 			$urls = array();
 			foreach ( $res as $row ) {
 				$title = Title::makeTitle( $row->page_namespace, $row->page_title );
-				$url = $title->getInternalUrl();
+				$url = $title->getInternalURL();
 				$urls[] = $url;
 				$startId = $row->page_id;
 			}
@@ -129,7 +129,7 @@ class PurgeList extends Maintenance {
 			}
 		} else {
 			if ( $this->hasOption( 'verbose' ) ) {
-				$this->output( implode( "\n", $urls ) . "\n"  );
+				$this->output( implode( "\n", $urls ) . "\n" );
 			}
 			$u = new SquidUpdate( $urls );
 			$u->doUpdate();
@@ -139,4 +139,4 @@ class PurgeList extends Maintenance {
 }
 
 $maintClass = "PurgeList";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

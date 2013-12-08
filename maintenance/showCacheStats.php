@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that shows statistics from the cache.
@@ -103,4 +103,4 @@ class ShowCacheStats extends Maintenance {
 }
 
 $maintClass = "ShowCacheStats";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

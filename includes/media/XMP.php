@@ -180,12 +180,12 @@ class XMPReader {
 		) {
 			// the is_array is just paranoia. It should always
 			// be an array.
-			foreach( $data['xmp-special']['LocationShown'] as $loc ) {
+			foreach ( $data['xmp-special']['LocationShown'] as $loc ) {
 				if ( !is_array( $loc ) ) {
 					// To avoid copying over the _type meta-fields.
 					continue;
 				}
-				foreach( $loc as $field => $val ) {
+				foreach ( $loc as $field => $val ) {
 					$data['xmp-general'][$field . 'Dest'][] = $val;
 				}
 			}
@@ -195,12 +195,12 @@ class XMPReader {
 		) {
 			// the is_array is just paranoia. It should always
 			// be an array.
-			foreach( $data['xmp-special']['LocationCreated'] as $loc ) {
+			foreach ( $data['xmp-special']['LocationCreated'] as $loc ) {
 				if ( !is_array( $loc ) ) {
 					// To avoid copying over the _type meta-fields.
 					continue;
 				}
-				foreach( $loc as $field => $val ) {
+				foreach ( $loc as $field => $val ) {
 					$data['xmp-general'][$field . 'Created'][] = $val;
 				}
 			}
@@ -391,7 +391,9 @@ class XMPReader {
 			throw new MWException( 'Unexpected character data before first rdf:Description element' );
 		}
 
-		if ( $this->mode[0] === self::MODE_IGNORE ) return;
+		if ( $this->mode[0] === self::MODE_IGNORE ) {
+			return;
+		}
 
 		if ( $this->mode[0] !== self::MODE_SIMPLE
 			&& $this->mode[0] !== self::MODE_QDESC
@@ -414,7 +416,7 @@ class XMPReader {
 	 *
 	 * @param string $elm Namespace of element followed by a space and then tag name of element.
 	 */
-	private function endElementModeIgnore ( $elm ) {
+	private function endElementModeIgnore( $elm ) {
 		if ( $this->curItem[0] === $elm ) {
 			array_shift( $this->curItem );
 			array_shift( $this->mode );
@@ -436,7 +438,7 @@ class XMPReader {
 	 *
 	 * @param string $elm namespace, space, and tag name.
 	 */
-	private function endElementModeSimple ( $elm ) {
+	private function endElementModeSimple( $elm ) {
 		if ( $this->charContent !== false ) {
 			if ( $this->processingArray ) {
 				// if we're processing an array, use the original element
@@ -639,7 +641,7 @@ class XMPReader {
 			throw new MWException( "Hit end element </$elm> but no curItem" );
 		}
 
-		switch( $this->mode[0] ) {
+		switch ( $this->mode[0] ) {
 			case self::MODE_IGNORE:
 				$this->endElementModeIgnore( $elm );
 				break;
@@ -993,15 +995,15 @@ class XMPReader {
 		if ( $elm !== self::NS_RDF . ' li' ) {
 			throw new MWException( __METHOD__ . " <rdf:li> expected but got $elm." );
 		}
-		if ( !isset( $attribs[ self::NS_XML . ' lang'] )
-			|| !preg_match( '/^[-A-Za-z0-9]{2,}$/D', $attribs[ self::NS_XML . ' lang' ] ) )
+		if ( !isset( $attribs[self::NS_XML . ' lang'] )
+			|| !preg_match( '/^[-A-Za-z0-9]{2,}$/D', $attribs[self::NS_XML . ' lang'] ) )
 		{
 			throw new MWException( __METHOD__
 				. " <rdf:li> did not contain, or has invalid xml:lang attribute in lang alternative" );
 		}
 
 		// Lang is case-insensitive.
-		$this->itemLang = strtolower( $attribs[ self::NS_XML . ' lang' ] );
+		$this->itemLang = strtolower( $attribs[self::NS_XML . ' lang'] );
 
 		// need to add curItem[0] on again since one is for the specific item
 		// and one is for the entire group.
@@ -1058,7 +1060,7 @@ class XMPReader {
 				. "encountered <$elm> with no mode" );
 		}
 
-		switch( $this->mode[0] ) {
+		switch ( $this->mode[0] ) {
 			case self::MODE_IGNORE:
 				$this->startElementModeIgnore( $elm );
 				break;

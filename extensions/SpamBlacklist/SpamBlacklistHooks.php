@@ -5,34 +5,53 @@
  */
 class SpamBlacklistHooks {
 	/**
-	 * Hook function for EditFilterMerged
+	 * Hook function for EditFilterMergedContent
 	 *
-	 * @param $editPage EditPage
-	 * @param $text string
-	 * @param $hookErr string
-	 * @param $editSummary string
+	 * @param IContextSource $context
+	 * @param Content        $content
+	 * @param Status         $status
+	 * @param string         $summary
+	 * @param User           $user
+	 * @param bool           $minoredit
+	 *
 	 * @return bool
 	 */
-	static function filterMerged( $editPage, $text, &$hookErr, $editSummary ) {
-		global $wgTitle;
-		if( is_null( $wgTitle ) ) {
-			# API mode
-			# wfSpamBlacklistFilterAPIEditBeforeSave already checked the blacklist
+	static function filterMergedContent( IContextSource $context, Content $content, Status $status, $summary, User $user, $minoredit ) {
+		$title = $context->getTitle();
+
+		if ( isset( $title->spamBlackListFiltered ) && $title->spamBlackListFiltered ) {
+			// already filtered
 			return true;
 		}
 
-		$spamObj = BaseBlacklist::getInstance( 'spam' );
-		$title = $editPage->mArticle->getTitle();
-		$ret = $spamObj->filter( $title, $text, '', $editSummary, $editPage );
-		if ( $ret !== false ) {
-			$editPage->spamPageWithContent( $ret );
+		// get the link from the not-yet-saved page content.
+		$pout = $content->getParserOutput( $title );
+		$links = array_keys( $pout->getExternalLinks() );
+
+		// HACK: treat the edit summary as a link
+		if ( $summary !== '' ) {
+			$links[] = $summary;
 		}
-		// Return convention for hooks is the inverse of $wgFilterCallback
-		return ( $ret === false );
+
+		$spamObj = BaseBlacklist::getInstance( 'spam' );
+		$matches = $spamObj->filter( $links, $title );
+
+		if ( $matches !== false ) {
+			$status->fatal( 'spamprotectiontext' );
+
+			foreach ( $matches as $match ) {
+				$status->fatal( 'spamprotectionmatch', $match );
+			}
+		}
+
+		// Always return true, EditPage will look at $status->isOk().
+		return true;
 	}
 
 	/**
-	 * Hook function for APIEditBeforeSave
+	 * Hook function for APIEditBeforeSave.
+	 * This allows blacklist matches to be reported directly in the result structure
+	 * of the API call.
 	 *
 	 * @param $editPage EditPage
 	 * @param $text string
@@ -40,14 +59,37 @@ class SpamBlacklistHooks {
 	 * @return bool
 	 */
 	static function filterAPIEditBeforeSave( $editPage, $text, &$resultArr ) {
-		$spamObj = BaseBlacklist::getInstance( 'spam' );
 		$title = $editPage->mArticle->getTitle();
-		$ret = $spamObj->filter( $title, $text, '', '', $editPage );
-		if ( $ret!==false ) {
-			$resultArr['spamblacklist'] = implode( '|', $ret );
+
+		// get the links from the not-yet-saved page content.
+		$content = ContentHandler::makeContent(
+			$text,
+			$editPage->getTitle(),
+			$editPage->contentModel,
+			$editPage->contentFormat
+		);
+		$editInfo = $editPage->mArticle->prepareContentForEdit( $content, null, null, $editPage->contentFormat );
+		$pout = $editInfo->output;
+		$links = array_keys( $pout->getExternalLinks() );
+
+		// HACK: treat the edit summary as a link
+		$summary = $editPage->summary;
+		if ( $summary !== '' ) {
+			$links[] = $summary;
 		}
-		// Return convention for hooks is the inverse of $wgFilterCallback
-		return ( $ret === false );
+
+		$spamObj = BaseBlacklist::getInstance( 'spam' );
+		$matches = $spamObj->filter( $links, $title );
+
+		if ( $matches !== false ) {
+			$resultArr['spamblacklist'] = implode( '|', $matches );
+		}
+
+		// mark the title, so filterMergedContent can skip it.
+		$title->spamBlackListFiltered = true;
+
+		// return convention for hooks is the inverse of $wgFilterCallback
+		return ( $matches === false );
 	}
 
 	/**
@@ -136,20 +178,37 @@ class SpamBlacklistHooks {
 	}
 
 	/**
-	 * Hook function for ArticleSaveComplete
+	 * Hook function for PageContentSaveComplete
 	 * Clear local spam blacklist caches on page save.
 	 *
-	 * @param $article Article
-	 * @param $user User
-	 * @param $text string
-	 * @param $summary string
-	 * @param $isminor
-	 * @param $iswatch
-	 * @param $section
+	 * @param Page $wikiPage
+	 * @param User     $user
+	 * @param Content  $content
+	 * @param string   $summary
+	 * @param bool     $isMinor
+	 * @param bool     $isWatch
+	 * @param string   $section
+	 * @param int      $flags
+	 * @param int      $revision
+	 * @param Status   $status
+	 * @param int      $baseRevId
+	 *
 	 * @return bool
 	 */
-	static function articleSave( &$article, &$user, $text, $summary, $isminor, $iswatch, $section ) {
-		if( !BaseBlacklist::isLocalSource( $article->getTitle() ) ) {
+	static function pageSaveContent(
+		Page $wikiPage,
+		User $user,
+		Content $content,
+		$summary,
+		$isMinor,
+		$isWatch,
+		$section,
+		$flags,
+		$revision,
+		Status $status,
+		$baseRevId
+	) {
+		if( !BaseBlacklist::isLocalSource( $wikiPage->getTitle() ) ) {
 			return true;
 		}
 		global $wgMemc, $wgDBname;

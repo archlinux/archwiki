@@ -30,39 +30,39 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 		parent::tearDown();
 	}
 
-	function testGetPreferredVariantDefaults() {
+	public function testGetPreferredVariantDefaults() {
 		$this->assertEquals( 'tg', $this->lc->getPreferredVariant() );
 	}
 
-	function testGetPreferredVariantHeaders() {
+	public function testGetPreferredVariantHeaders() {
 		global $wgRequest;
 		$wgRequest->setHeader( 'Accept-Language', 'tg-latn' );
 
 		$this->assertEquals( 'tg-latn', $this->lc->getPreferredVariant() );
 	}
 
-	function testGetPreferredVariantHeaderWeight() {
+	public function testGetPreferredVariantHeaderWeight() {
 		global $wgRequest;
 		$wgRequest->setHeader( 'Accept-Language', 'tg;q=1' );
 
 		$this->assertEquals( 'tg', $this->lc->getPreferredVariant() );
 	}
 
-	function testGetPreferredVariantHeaderWeight2() {
+	public function testGetPreferredVariantHeaderWeight2() {
 		global $wgRequest;
 		$wgRequest->setHeader( 'Accept-Language', 'tg-latn;q=1' );
 
 		$this->assertEquals( 'tg-latn', $this->lc->getPreferredVariant() );
 	}
 
-	function testGetPreferredVariantHeaderMulti() {
+	public function testGetPreferredVariantHeaderMulti() {
 		global $wgRequest;
 		$wgRequest->setHeader( 'Accept-Language', 'en, tg-latn;q=1' );
 
 		$this->assertEquals( 'tg-latn', $this->lc->getPreferredVariant() );
 	}
 
-	function testGetPreferredVariantUserOption() {
+	public function testGetPreferredVariantUserOption() {
 		global $wgUser;
 
 		$wgUser = new User;
@@ -75,7 +75,21 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 		$this->assertEquals( 'tg-latn', $this->lc->getPreferredVariant() );
 	}
 
-	function testGetPreferredVariantHeaderUserVsUrl() {
+	public function testGetPreferredVariantUserOptionForForeignLanguage() {
+		global $wgContLang, $wgUser;
+
+		$wgContLang = Language::factory( 'en' );
+		$wgUser = new User;
+		$wgUser->load(); // from 'defaults'
+		$wgUser->mId = 1;
+		$wgUser->mDataLoaded = true;
+		$wgUser->mOptionsLoaded = true;
+		$wgUser->setOption( 'variant-tg', 'tg-latn' );
+
+		$this->assertEquals( 'tg-latn', $this->lc->getPreferredVariant() );
+	}
+
+	public function testGetPreferredVariantHeaderUserVsUrl() {
 		global $wgContLang, $wgRequest, $wgUser;
 
 		$wgContLang = Language::factory( 'tg-latn' );
@@ -85,19 +99,19 @@ class LanguageConverterTest extends MediaWikiLangTestCase {
 		$wgUser->mFrom = 'defaults';
 		$wgUser->mOptionsLoaded = true;
 		// The user's data is ignored because the variant is set in the URL.
-		$wgUser->setOption( 'variant', 'tg-latn' ); 
+		$wgUser->setOption( 'variant', 'tg-latn' );
 		$this->assertEquals( 'tg', $this->lc->getPreferredVariant() );
 	}
 
 
-	function testGetPreferredVariantDefaultLanguageVariant() {
+	public function testGetPreferredVariantDefaultLanguageVariant() {
 		global $wgDefaultLanguageVariant;
 
 		$wgDefaultLanguageVariant = 'tg-latn';
 		$this->assertEquals( 'tg-latn', $this->lc->getPreferredVariant() );
 	}
 
-	function testGetPreferredVariantDefaultLanguageVsUrlVariant() {
+	public function testGetPreferredVariantDefaultLanguageVsUrlVariant() {
 		global $wgDefaultLanguageVariant, $wgRequest, $wgContLang;
 
 		$wgContLang = Language::factory( 'tg-latn' );
@@ -123,7 +137,6 @@ class TestConverter extends LanguageConverter {
 			'tg' => new ReplacementArray()
 		);
 	}
-
 }
 
 class LanguageToTest extends Language {

@@ -218,7 +218,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 	}
 
 	public function getAllowedParams() {
-		return array (
+		return array(
 			'from' => null,
 			'continue' => null,
 			'to' => null,
@@ -281,7 +281,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 				' parseddescription - Parse the description on the version',
 				' mime              - Adds MIME of the image',
 				' mediatype         - Adds the media type of the image',
-				' metadata          - Lists EXIF metadata for the version of the image',
+				' metadata          - Lists Exif metadata for the version of the image',
 				' bitdepth          - Adds the bit depth of the version',
 				' archivename       - Adds the file name of the archive version for non-latest versions'
 			),
@@ -372,5 +372,9 @@ class ApiQueryFilearchive extends ApiQueryBase {
 				'Show a list of all deleted files',
 			),
 		);
+	}
+
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Filearchive';
 	}
 }

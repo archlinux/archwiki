@@ -44,7 +44,6 @@ $messages = array(
 'tog-shownumberswatching' => 'Näytä kuinka moni käyttäjä valvoo sivua',
 'tog-oldsig' => 'Nykynen allekirjotus',
 'tog-fancysig' => 'Mookkaamaton allekirjotus ilman auttomaattista linkkiä',
-'tog-externaleditor' => 'Käytä ekterniä tekstiedituuria stantartina. Vain kokenheile käyttäjile, vaatii taattorin asetuksitten muuttamista. Käytä eksterniä tekstiedituuria oletuksena. Vain kokeneille käyttäjille, vaatii selaimen asetusten muuttamista. ([//www.mediawiki.org/wiki/Manual:External_editors Ohje])',
 
 # Dates
 'sunday' => 'pyhä',

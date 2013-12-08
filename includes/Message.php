@@ -234,7 +234,13 @@ class Message {
 	 * @return string
 	 */
 	public function getKey() {
-		return $this->key;
+		if ( is_array( $this->key ) ) {
+			// May happen if some kind of fallback is applied.
+			// For now, just use the first key. We really need a better solution.
+			return $this->key[0];
+		} else {
+			return $this->key;
+		}
 	}
 
 	/**
@@ -326,7 +332,7 @@ class Message {
 		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
 			$params = $params[0];
 		}
-		foreach( $params as $param ) {
+		foreach ( $params as $param ) {
 			$this->parameters[] = self::rawParam( $param );
 		}
 		return $this;
@@ -344,8 +350,98 @@ class Message {
 		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
 			$params = $params[0];
 		}
-		foreach( $params as $param ) {
+		foreach ( $params as $param ) {
 			$this->parameters[] = self::numParam( $param );
+		}
+		return $this;
+	}
+
+	/**
+	 * Add parameters that are durations of time and will be passed through
+	 * Language::formatDuration before substitution
+	 * @since 1.22
+	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
+	 * @return Message: $this
+	 */
+	public function durationParams( /*...*/ ) {
+		$params = func_get_args();
+		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
+		}
+		foreach ( $params as $param ) {
+			$this->parameters[] = self::durationParam( $param );
+		}
+		return $this;
+	}
+
+	/**
+	 * Add parameters that are expiration times and will be passed through
+	 * Language::formatExpiry before substitution
+	 * @since 1.22
+	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
+	 * @return Message: $this
+	 */
+	public function expiryParams( /*...*/ ) {
+		$params = func_get_args();
+		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
+		}
+		foreach ( $params as $param ) {
+			$this->parameters[] = self::expiryParam( $param );
+		}
+		return $this;
+	}
+
+	/**
+	 * Add parameters that are time periods and will be passed through
+	 * Language::formatTimePeriod before substitution
+	 * @since 1.22
+	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
+	 * @return Message: $this
+	 */
+	public function timeperiodParams( /*...*/ ) {
+		$params = func_get_args();
+		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
+		}
+		foreach ( $params as $param ) {
+			$this->parameters[] = self::timeperiodParam( $param );
+		}
+		return $this;
+	}
+
+	/**
+	 * Add parameters that are file sizes and will be passed through
+	 * Language::formatSize before substitution
+	 * @since 1.22
+	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
+	 * @return Message: $this
+	 */
+	public function sizeParams( /*...*/ ) {
+		$params = func_get_args();
+		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
+		}
+		foreach ( $params as $param ) {
+			$this->parameters[] = self::sizeParam( $param );
+		}
+		return $this;
+	}
+
+	/**
+	 * Add parameters that are bitrates and will be passed through
+	 * Language::formatBitrate before substitution
+	 * @since 1.22
+	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
+	 * @return Message: $this
+	 */
+	public function bitrateParams( /*...*/ ) {
+		$params = func_get_args();
+		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
+		}
+		foreach ( $params as $param ) {
+			$this->parameters[] = self::bitrateParam( $param );
 		}
 		return $this;
 	}
@@ -377,7 +473,7 @@ class Message {
 		if ( $lang instanceof Language || $lang instanceof StubUserLang ) {
 			$this->language = $lang;
 		} elseif ( is_string( $lang ) ) {
-			if( $this->language->getCode() != $lang ) {
+			if ( $this->language->getCode() != $lang ) {
 				$this->language = Language::factory( $lang );
 			}
 		} else {
@@ -417,7 +513,7 @@ class Message {
 	 * @since 1.20
 	 */
 	public function setInterfaceMessageFlag( $value ) {
-		$this->interface = (bool) $value;
+		$this->interface = (bool)$value;
 		return $this;
 	}
 
@@ -428,7 +524,7 @@ class Message {
 	 * @return Message: $this
 	 */
 	public function useDatabase( $value ) {
-		$this->useDatabase = (bool) $value;
+		$this->useDatabase = (bool)$value;
 		return $this;
 	}
 
@@ -484,17 +580,17 @@ class Message {
 		$string = $this->replaceParameters( $string, 'before' );
 
 		# Maybe transform using the full parser
-		if( $this->format === 'parse' ) {
+		if ( $this->format === 'parse' ) {
 			$string = $this->parseText( $string );
 			$m = array();
-			if( preg_match( '/^<p>(.*)\n?<\/p>\n?$/sU', $string, $m ) ) {
+			if ( preg_match( '/^<p>(.*)\n?<\/p>\n?$/sU', $string, $m ) ) {
 				$string = $m[1];
 			}
-		} elseif( $this->format === 'block-parse' ) {
+		} elseif ( $this->format === 'block-parse' ) {
 			$string = $this->parseText( $string );
-		} elseif( $this->format === 'text' ) {
+		} elseif ( $this->format === 'text' ) {
 			$string = $this->transformText( $string );
-		} elseif( $this->format === 'escaped' ) {
+		} elseif ( $this->format === 'escaped' ) {
 			$string = $this->transformText( $string );
 			$string = htmlspecialchars( $string, ENT_QUOTES, 'UTF-8', false );
 		}
@@ -633,6 +729,51 @@ class Message {
 	}
 
 	/**
+	 * @since 1.22
+	 * @param $value
+	 * @return array
+	 */
+	public static function durationParam( $value ) {
+		return array( 'duration' => $value );
+	}
+
+	/**
+	 * @since 1.22
+	 * @param $value
+	 * @return array
+	 */
+	public static function expiryParam( $value ) {
+		return array( 'expiry' => $value );
+	}
+
+	/**
+	 * @since 1.22
+	 * @param $value
+	 * @return array
+	 */
+	public static function timeperiodParam( $value ) {
+		return array( 'period' => $value );
+	}
+
+	/**
+	 * @since 1.22
+	 * @param $value
+	 * @return array
+	 */
+	public static function sizeParam( $value ) {
+		return array( 'size' => $value );
+	}
+
+	/**
+	 * @since 1.22
+	 * @param $value
+	 * @return array
+	 */
+	public static function bitrateParam( $value ) {
+		return array( 'bitrate' => $value );
+	}
+
+	/**
 	 * Substitutes any parameters into the message text.
 	 * @since 1.17
 	 * @param string $message the message text
@@ -641,10 +782,10 @@ class Message {
 	 */
 	protected function replaceParameters( $message, $type = 'before' ) {
 		$replacementKeys = array();
-		foreach( $this->parameters as $n => $param ) {
+		foreach ( $this->parameters as $n => $param ) {
 			list( $paramType, $value ) = $this->extractParam( $param );
 			if ( $type === $paramType ) {
-				$replacementKeys['$' . ($n + 1)] = $value;
+				$replacementKeys['$' . ( $n + 1 )] = $value;
 			}
 		}
 		$message = strtr( $message, $replacementKeys );
@@ -658,20 +799,37 @@ class Message {
 	 * @return Tuple(type, value)
 	 */
 	protected function extractParam( $param ) {
-		if ( is_array( $param ) && isset( $param['raw'] ) ) {
-			return array( 'after', $param['raw'] );
-		} elseif ( is_array( $param ) && isset( $param['num'] ) ) {
-			// Replace number params always in before step for now.
-			// No support for combined raw and num params
-			return array( 'before', $this->language->formatNum( $param['num'] ) );
-		} elseif ( !is_array( $param ) ) {
-			return array( 'before', $param );
+		if ( is_array( $param ) ) {
+			if ( isset( $param['raw'] ) ) {
+				return array( 'after', $param['raw'] );
+			} elseif ( isset( $param['num'] ) ) {
+				// Replace number params always in before step for now.
+				// No support for combined raw and num params
+				return array( 'before', $this->language->formatNum( $param['num'] ) );
+			} elseif ( isset( $param['duration'] ) ) {
+				return array( 'before', $this->language->formatDuration( $param['duration'] ) );
+			} elseif ( isset( $param['expiry'] ) ) {
+				return array( 'before', $this->language->formatExpiry( $param['expiry'] ) );
+			} elseif ( isset( $param['period'] ) ) {
+				return array( 'before', $this->language->formatTimePeriod( $param['period'] ) );
+			} elseif ( isset( $param['size'] ) ) {
+				return array( 'before', $this->language->formatSize( $param['size'] ) );
+			} elseif ( isset( $param['bitrate'] ) ) {
+				return array( 'before', $this->language->formatBitrate( $param['bitrate'] ) );
+			} else {
+				trigger_error(
+					"Invalid message parameter: " . htmlspecialchars( serialize( $param ) ),
+					E_USER_WARNING
+				);
+				return array( 'before', '[INVALID]' );
+			}
+		} elseif ( $param instanceof Message ) {
+			// Message objects should not be before parameters because
+			// then they'll get double escaped. If the message needs to be
+			// escaped, it'll happen right here when we call toString().
+			return array( 'after', $param->toString() );
 		} else {
-			trigger_error(
-				"Invalid message parameter: " . htmlspecialchars( serialize( $param ) ),
-				E_USER_WARNING
-			);
-			return array( 'before', '[INVALID]' );
+			return array( 'before', $param );
 		}
 	}
 
@@ -760,7 +918,7 @@ class RawMessage extends Message {
 	 */
 	public function fetchMessage() {
 		// Just in case the message is unset somewhere.
-		if( !isset( $this->message ) ) {
+		if ( !isset( $this->message ) ) {
 			$this->message = $this->key;
 		}
 		return $this->message;

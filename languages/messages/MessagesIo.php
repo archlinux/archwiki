@@ -138,7 +138,6 @@ $messages = array(
 'tog-enotifrevealaddr' => 'Montrez mea e-posto adreso en notifiko e-posti',
 'tog-shownumberswatching' => 'Montrez nombro di surveyanta uzanti',
 'tog-fancysig' => 'Traktez signaturo kom wikikodo (sen automata ligilo)',
-'tog-externaleditor' => 'Uzez extera redaktanto nespecigite (nur por experti, bezonas specala moderi ye vua komputoro .[//www.mediawiki.org/wiki/Manual:External_editors Plusa informo.])',
 'tog-forceeditsummary' => 'Notifikez me kande skribanta vakua redakto-rezumo',
 'tog-watchlisthideown' => 'Celez mea redaktaji de la surveyaji',
 'tog-watchlisthidebots' => 'Celez redaktaji da roboti de la surveyaji',
@@ -308,7 +307,7 @@ $messages = array(
 'jumptonavigation' => 'pilotado',
 'jumptosearch' => 'serchez',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Pri {{SITENAME}}',
 'aboutpage' => 'Project:Pri {{SITENAME}}',
 'copyright' => 'La kontenajo esas disponebla sub $1.',
@@ -318,7 +317,6 @@ $messages = array(
 'disclaimers' => 'Legala averto',
 'disclaimerpage' => 'Project:Generala des-agnosko',
 'edithelp' => 'Helpo pri redaktado',
-'edithelppage' => 'Help:Redaktado',
 'helppage' => 'Help:Helpo',
 'mainpage' => 'Frontispico',
 'mainpage-description' => 'Frontispico',
@@ -469,7 +467,7 @@ Voluntez enirar altrafoye pos recevar ol.',
 'newpassword' => 'Nova pasovorto:',
 'retypenew' => 'Riskribez la nova pasovorto:',
 'resetpass_submit' => 'Establisez pasovoro ed enirez',
-'resetpass_success' => 'Vua chanjo di pasovorto sucesis! Nun, vu eniras...',
+'changepassword-success' => 'Vua chanjo di pasovorto sucesis! Nun, vu eniras...',
 'resetpass-submit-loggedin' => 'Chanjar pasovorto',
 'resetpass-temp-password' => 'Provizora pasovorto:',
 
@@ -658,7 +656,6 @@ Surskriburo: '''({{int:cur}})''' = diferi kun l'aktuala versiono,
 'nextn-title' => 'Sequanta $1 {{PLURAL:$1|rezultajo|rezultaji}}',
 'viewprevnext' => 'Vidar ($1 {{int:pipe-separator}} $2) ($3).',
 'searchmenu-new' => "'''Kreez la pagino \"[[:\$1]]\" in ca wiki!'''",
-'searchhelp-url' => 'Help:Helpo',
 'searchprofile-articles' => 'Temala pagini',
 'searchprofile-project' => 'Helpo',
 'searchprofile-images' => "''Media''",
@@ -689,10 +686,6 @@ Probez prefixizar vua demando kun ''all:'' por serchar omna kontenajo (inkluzant
 'powersearch-togglenone' => 'Nula',
 'search-external' => 'Extera sercho',
 'searchdisabled' => 'La sercho en la kompleta texto desaktivigesis temporale pro superkargo dil servanto. Ni esperas riaktivigar ol pos facar ula proxima aktualigi. Dum ica tempo, vu povas serchar per Google.',
-
-# Quickbar
-'qbsettings' => 'Preferaji pri "Quickbar"',
-'qbsettings-none' => 'Nula',
 
 # Preferences page
 'preferences' => 'Preferaji',
@@ -944,8 +937,6 @@ Volutez kontrolar <strong>[[:$1]]</strong> se vu ne esas certa pri chanjar olu.
 'statistics-pages' => 'Pagini',
 'statistics-mostpopular' => 'Maxim ofte vizitita pagini',
 
-'disambiguations' => 'Pagini di desambiguizo',
-
 'doubleredirects' => 'Duopla ridirektili',
 
 'brokenredirects' => 'Ridirektili nekorekta',
@@ -1073,7 +1064,6 @@ Volutez kontrolar <strong>[[:$1]]</strong> se vu ne esas certa pri chanjar olu.
 'unwatch' => 'Ne plus surveyar',
 'unwatchthispage' => 'Ne plus surveyar',
 'notanarticle' => 'Ne esas artiklo',
-'watchnochange' => 'Nula artikli ek vua listo di surveyaji redaktesis dum la tempo montrata.',
 'watchmethod-recent' => 'serchante recenta chanji en la listo di surveyaji',
 'watchmethod-list' => 'serchante recenta redakti en la listo di surveyaji',
 'watchlistcontains' => 'Vua listo di surveyaji kontenas $1 {{PLURAL:$1|pagino|pagini}}.',
@@ -1256,7 +1246,6 @@ Videz [[Special:BlockList|IP-blokuslisto]] por revizor blokusadi.',
 'unblocklogentry' => 'desblokusis "$1"',
 'ipb_expiry_invalid' => 'Nevalida expiro-tempo.',
 'ip_range_invalid' => 'Nevalida IP-rango.',
-'proxyblocksuccess' => 'Facita.',
 
 # Developer tools
 'lockdb' => 'Blokusar datumaro',
@@ -1428,7 +1417,7 @@ Vu darfos adjuntar kauso en la rezumo.',
 # Metadata
 'metadata' => 'Metadonaji',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Larjeso',
 'exif-imagelength' => 'Alteso',
 'exif-artist' => 'Autoro',
@@ -1528,9 +1517,6 @@ Vu darfos adjuntar kauso en la rezumo.',
 'version-license' => 'Licenco',
 'version-software-product' => 'Produkturo',
 'version-software-version' => 'Versiono',
-
-# Special:FilePath
-'filepath-page' => 'Arkivo:',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-submit' => 'Serchar',

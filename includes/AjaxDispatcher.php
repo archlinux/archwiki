@@ -63,7 +63,7 @@ class AjaxDispatcher {
 			$this->mode = "post";
 		}
 
-		switch( $this->mode ) {
+		switch ( $this->mode ) {
 			case 'get':
 				$this->func_name = isset( $_GET["rs"] ) ? $_GET["rs"] : '';
 				if ( ! empty( $_GET["rsargs"] ) ) {
@@ -111,15 +111,13 @@ class AjaxDispatcher {
 			wfHttpError(
 				400,
 				'Bad Request',
-				"unknown function " . (string) $this->func_name
+				"unknown function " . $this->func_name
 			);
-		} elseif ( !in_array( 'read', User::getGroupPermissions( array( '*' ) ), true )
-			&& !$wgUser->isAllowed( 'read' ) )
-		{
+		} elseif ( !User::isEveryoneAllowed( 'read' ) && !$wgUser->isAllowed( 'read' ) ) {
 			wfHttpError(
 				403,
 				'Forbidden',
-				'You must log in to view pages.' );
+				'You are not allowed to view pages.' );
 		} else {
 			wfDebug( __METHOD__ . ' dispatching ' . $this->func_name . "\n" );
 

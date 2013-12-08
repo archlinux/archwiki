@@ -209,7 +209,7 @@ $messages = array(
 'jumptonavigation' => 'Faahre-Gnepp',
 'jumptosearch' => 'guck uff',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Iwwer {{SITENAME}}',
 'aboutpage' => 'Project:Iwwer_{{SITENAME}}',
 'copyright' => 'Was do drin schdeht iss unner $1 verfiechbar',
@@ -217,7 +217,6 @@ $messages = array(
 'disclaimers' => 'Impressum',
 'disclaimerpage' => 'Project:Impressum',
 'edithelp' => 'Hilf zum Ennere',
-'edithelppage' => 'Help:Tscheensche',
 'helppage' => 'Help:Hilf',
 'mainpage' => 'Haaptblatt',
 'mainpage-description' => 'Haaptblatt',
@@ -399,7 +398,6 @@ Paesswatt fer nau: $2',
 'nextn' => 'neegschte {{PLURAL:$1|$1}}',
 'viewprevnext' => 'Zeige ($1 {{int:pipe-separator}} $2) ($3)',
 'searchmenu-new' => "'''Schtaert des Blatt „[[:$1|$1]]“ uf dem Wiki.'''",
-'searchhelp-url' => 'Help:Hilf',
 'searchprofile-everything' => 'Abaddiche',
 'searchprofile-articles-tooltip' => 'Uffgucke in $1',
 'searchprofile-project-tooltip' => 'Uffgucke in $1',
@@ -419,9 +417,6 @@ Paesswatt fer nau: $2',
 'powersearch-toggleall' => 'All',
 'powersearch-togglenone' => 'Ken',
 'search-external' => 'Guck im Gewebb',
-
-# Quickbar
-'qbsettings-none' => 'Ken',
 
 # Preferences page
 'preferences' => 'Paerseenlich Profil',
@@ -795,7 +790,6 @@ Guck $2 fer e Lischt vun de letscht Leschunge.',
 'infiniteblock' => 'fer immer',
 'blocklink' => 'Aabinne',
 'contribslink' => 'Ardickele',
-'proxyblocksuccess' => 'Geduh.',
 
 # Move page
 'move-page' => '„$1“ ziehe',
@@ -906,7 +900,7 @@ Guck $2 fer e Lischt vun de letscht Leschunge.',
 # Metadata
 'metadata' => 'Metadaade',
 
-# EXIF tags
+# Exif tags
 'exif-imagelength' => 'Leng',
 'exif-software' => 'Geyuust Software',
 'exif-usercomment' => 'Anmaerrickinge vun Yuuser',
@@ -975,11 +969,6 @@ Guck $2 fer e Lischt vun de letscht Leschunge.',
 'version-version' => '(Version $1)',
 'version-poweredby-others' => 'annere',
 'version-software-version' => 'Version',
-
-# Special:FilePath
-'filepath' => 'Feilpaad',
-'filepath-page' => 'Feil:',
-'filepath-submit' => 'Geh',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Feilnaame:',

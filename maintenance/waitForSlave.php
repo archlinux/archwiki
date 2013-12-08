@@ -22,7 +22,7 @@
  * @see wfWaitForSlaves()
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to wait until slave lag goes under a certain value.
@@ -40,4 +40,4 @@ class WaitForSlave extends Maintenance {
 }
 
 $maintClass = "WaitForSlave";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

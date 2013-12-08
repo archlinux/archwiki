@@ -124,9 +124,6 @@ $messages = array(
 'tog-enotifrevealaddr' => 'Bildirmää maillerinde e-mail adresimi göster.',
 'tog-shownumberswatching' => 'İzlään kullanıcı sayısın göster',
 'tog-fancysig' => 'Çii imza (İmzanız görüner nesoy onu yukarda belirttiniz. Sayfanıza avtomatik baalantı yaratılmaycêk)',
-'tog-externaleditor' => 'Düzmää başka editor programmasılan yap',
-'tog-externaldiff' => 'Karşılaştırmakları dış programmalan yap.',
-'tog-showjumplinks' => '"Git" baalantısın işlet',
 'tog-uselivepreview' => 'Tez cannı ön siiri kullan (JavaScript) (êksperimental)',
 'tog-forceeditsummary' => 'Bana haber ver ne zaman ani kısa annatmanı boş braacam',
 'tog-watchlisthideown' => 'Bakmaa listamdan benim diişmäklerimi sakla',
@@ -280,7 +277,7 @@ $messages = array(
 'jumptonavigation' => 'kullan',
 'jumptosearch' => 'ara',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '{{SITENAME}} için',
 'aboutpage' => 'Project:Uurunda',
 'copyright' => 'İçersindeki $1 altında.',
@@ -290,7 +287,6 @@ $messages = array(
 'disclaimers' => 'Cuvapçılık reti',
 'disclaimerpage' => 'Project:Genel cuvapçılık reti',
 'edithelp' => 'Nesoy var nicä diiştirmää?',
-'edithelppage' => 'Help:Nesoy var nicä sayfa diiştirmää',
 'helppage' => 'Help:İçindekilär',
 'mainpage' => 'Baş yaprak',
 'mainpage-description' => 'Baş yaprak',
@@ -576,7 +572,6 @@ Nışannar: (bitki) = şindiki versiyalan aradaki fark,
 'prevn' => 'ilerki {{PLURAL:$1|$1}}',
 'nextn' => 'geeriki {{PLURAL:$1|$1}}',
 'viewprevnext' => '($1 {{int:pipe-separator}} $2) ($3).',
-'searchhelp-url' => 'Help:İçindekilär',
 'search-result-size' => '$1 ({{PLURAL:$2|1 laf|$2 laf}})',
 'search-redirect' => '(göndermää $1)',
 'search-section' => '(bölüm $1)',
@@ -655,7 +650,6 @@ Aaramaanızın önünä ''all:'' prefiksini koyun da deneyin hepsi içlii aarama
 'recentchangeslinked-feed' => 'İlgili diişilmäklär',
 'recentchangeslinked-toolbox' => 'İlgili diişilmäklär',
 'recentchangeslinked-title' => '"$1" ilgili diişmäklär',
-'recentchangeslinked-noresult' => 'Baalantılı sayfalarda verilmiş devirde diişmäk olmadı.',
 'recentchangeslinked-summary' => "Bu maasus sayfa baalantılı sayfalardaki diişmäkleri sayêr.
 Sizin bakmaa [[Special:Watchlist|listasındaki]] sayfalar verildi '''kalın''' bukvalarnan.",
 'recentchangeslinked-page' => 'Yaprak adı:',
@@ -723,8 +717,6 @@ Sizin bakmaa [[Special:Watchlist|listasındaki]] sayfalar verildi '''kalın''' b
 'statistics-users-active' => 'Aktivli kullanıcılar',
 'statistics-users-active-desc' => 'Bitki {{PLURAL:$1|gün|$1 günde}} çalışmaa yapmaa kullanıcılar',
 'statistics-mostpopular' => 'En anılmış yazılar',
-
-'disambiguations' => 'Maana aydınnatmak yaprakları',
 
 'doubleredirects' => 'İki kerä yönnendirmeler',
 

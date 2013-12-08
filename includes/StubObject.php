@@ -25,6 +25,12 @@
  * their associated module code by deferring initialisation until the first
  * method call.
  *
+ * Note on reference parameters:
+ *
+ * If the called method takes any parameters by reference, the __call magic
+ * here won't work correctly. The solution is to unstub the object before
+ * calling the method.
+ *
  * Note on unstub loops:
  *
  * Unstub loops (infinite recursion) sometimes occur when a constructor calls
@@ -60,7 +66,21 @@ class StubObject {
 	 * @return Boolean: true if $obj is not an instance of StubObject class.
 	 */
 	static function isRealObject( $obj ) {
-		return is_object( $obj ) && !($obj instanceof StubObject);
+		return is_object( $obj ) && !$obj instanceof StubObject;
+	}
+
+	/**
+	 * Unstubs an object, if it is a stub object. Can be used to break a
+	 * infinite loop when unstubbing an object or to avoid reference parameter
+	 * breakage.
+	 *
+	 * @param $obj Object to check.
+	 * @return void
+	 */
+	static function unstub( $obj ) {
+		if ( $obj instanceof StubObject ) {
+			$obj->_unstub( 'unstub', 3 );
+		}
 	}
 
 	/**
@@ -113,7 +133,7 @@ class StubObject {
 	function _unstub( $name = '_unstub', $level = 2 ) {
 		static $recursionLevel = 0;
 
-		if ( !($GLOBALS[$this->mGlobal] instanceof StubObject) ) {
+		if ( !$GLOBALS[$this->mGlobal] instanceof StubObject ) {
 			return $GLOBALS[$this->mGlobal]; // already unstubbed.
 		}
 
@@ -122,6 +142,7 @@ class StubObject {
 			wfProfileIn( $fname );
 			$caller = wfGetCaller( $level );
 			if ( ++$recursionLevel > 2 ) {
+				wfProfileOut( $fname );
 				throw new MWException( "Unstub loop detected on call of \${$this->mGlobal}->$name from $caller\n" );
 			}
 			wfDebug( "Unstubbing \${$this->mGlobal} on call of \${$this->mGlobal}::$name from $caller\n" );

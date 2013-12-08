@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script to remove all statistics tracking from the cache.
@@ -57,4 +57,4 @@ class ClearCacheStats extends Maintenance {
 }
 
 $maintClass = "ClearCacheStats";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

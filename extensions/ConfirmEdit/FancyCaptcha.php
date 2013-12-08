@@ -62,6 +62,7 @@ $wgAutoloadClasses['FancyCaptcha'] = $dir . '/FancyCaptcha.class.php';
 $wgResourceModules['ext.confirmEdit.fancyCaptcha.styles'] = array(
 	'localBasePath' => $dir . '/resources',
 	'remoteExtPath' => 'ConfirmEdit/resources',
+	'targets' => array( 'mobile', 'desktop' ),
 	'styles' => 'ext.confirmEdit.fancyCaptcha.css',
 );
 
@@ -70,6 +71,16 @@ $wgResourceModules['ext.confirmEdit.fancyCaptcha'] = array(
 	'remoteExtPath' => 'ConfirmEdit/resources',
 	'scripts' => 'ext.confirmEdit.fancyCaptcha.js',
 	'dependencies' => 'mediawiki.api',
+);
+
+// FIXME: remove, add mobile target to ext.confirmEdit.fancyCaptcha and update
+// MobileFrontend accordingly when bug 57629 is resolved
+$wgResourceModules['ext.confirmEdit.fancyCaptchaMobile'] = array(
+	'localBasePath' => $dir . '/resources',
+	'remoteExtPath' => 'ConfirmEdit/resources',
+	'scripts' => 'ext.confirmEdit.fancyCaptcha.js',
+	'targets' => array( 'mobile', 'desktop' ),
+	'dependencies' => 'mobile.startup',
 );
 
 $wgAutoloadClasses['ApiFancyCaptchaReload'] = $dir . '/ApiFancyCaptchaReload.php';

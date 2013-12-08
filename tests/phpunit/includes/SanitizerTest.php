@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @todo Tests covering decodeCharReferences can be refactored into a single
+ * method and dataprovider.
+ */
 class SanitizerTest extends MediaWikiTestCase {
 
 	protected function setUp() {
@@ -8,7 +12,10 @@ class SanitizerTest extends MediaWikiTestCase {
 		AutoLoader::loadClass( 'Sanitizer' );
 	}
 
-	function testDecodeNamedEntities() {
+	/**
+	 * @covers Sanitizer::decodeCharReferences
+	 */
+	public function testDecodeNamedEntities() {
 		$this->assertEquals(
 			"\xc3\xa9cole",
 			Sanitizer::decodeCharReferences( '&eacute;cole' ),
@@ -16,7 +23,10 @@ class SanitizerTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testDecodeNumericEntities() {
+	/**
+	 * @covers Sanitizer::decodeCharReferences
+	 */
+	public function testDecodeNumericEntities() {
 		$this->assertEquals(
 			"\xc4\x88io bonas dans l'\xc3\xa9cole!",
 			Sanitizer::decodeCharReferences( "&#x108;io bonas dans l'&#233;cole!" ),
@@ -24,7 +34,10 @@ class SanitizerTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testDecodeMixedEntities() {
+	/**
+	 * @covers Sanitizer::decodeCharReferences
+	 */
+	public function testDecodeMixedEntities() {
 		$this->assertEquals(
 			"\xc4\x88io bonas dans l'\xc3\xa9cole!",
 			Sanitizer::decodeCharReferences( "&#x108;io bonas dans l'&eacute;cole!" ),
@@ -32,7 +45,10 @@ class SanitizerTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testDecodeMixedComplexEntities() {
+	/**
+	 * @covers Sanitizer::decodeCharReferences
+	 */
+	public function testDecodeMixedComplexEntities() {
 		$this->assertEquals(
 			"\xc4\x88io bonas dans l'\xc3\xa9cole! (mais pas &#x108;io dans l'&eacute;cole)",
 			Sanitizer::decodeCharReferences(
@@ -42,7 +58,10 @@ class SanitizerTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testInvalidAmpersand() {
+	/**
+	 * @covers Sanitizer::decodeCharReferences
+	 */
+	public function testInvalidAmpersand() {
 		$this->assertEquals(
 			'a & b',
 			Sanitizer::decodeCharReferences( 'a & b' ),
@@ -50,7 +69,10 @@ class SanitizerTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testInvalidEntities() {
+	/**
+	 * @covers Sanitizer::decodeCharReferences
+	 */
+	public function testInvalidEntities() {
 		$this->assertEquals(
 			'&foo;',
 			Sanitizer::decodeCharReferences( '&foo;' ),
@@ -58,7 +80,10 @@ class SanitizerTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testInvalidNumberedEntities() {
+	/**
+	 * @covers Sanitizer::decodeCharReferences
+	 */
+	public function testInvalidNumberedEntities() {
 		$this->assertEquals( UTF8_REPLACEMENT, Sanitizer::decodeCharReferences( "&#88888888888888;" ), 'Invalid numbered entity' );
 	}
 
@@ -69,10 +94,8 @@ class SanitizerTest extends MediaWikiTestCase {
 	 * @param String $tag Name of an HTML5 element (ie: 'video')
 	 * @param Boolean $escaped Wheter sanitizer let the tag in or escape it (ie: '&lt;video&gt;')
 	 */
-	function testRemovehtmltagsOnHtml5Tags( $tag, $escaped ) {
+	public function testRemovehtmltagsOnHtml5Tags( $tag, $escaped ) {
 		$this->setMwGlobals( array(
-			# Enable HTML5 mode
-			'wgHtml5' => true,
 			'wgUseTidy' => false
 		) );
 
@@ -90,7 +113,7 @@ class SanitizerTest extends MediaWikiTestCase {
 	/**
 	 * Provide HTML5 tags
 	 */
-	function provideHtml5Tags() {
+	public static function provideHtml5Tags() {
 		$ESCAPED = true; # We want tag to be escaped
 		$VERBATIM = false; # We want to keep the tag
 		return array(
@@ -101,31 +124,57 @@ class SanitizerTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testSelfClosingTag() {
-		$this->setMwGlobals( array(
-			'wgUseTidy' => false
-		) );
-
-		$this->assertEquals(
-			'<div>Hello world</div>',
-			Sanitizer::removeHTMLtags( '<div>Hello world</div />' ),
-			'Self-closing closing div'
+	function dataRemoveHTMLtags() {
+		return array(
+			// former testSelfClosingTag
+			array(
+				'<div>Hello world</div />',
+				'<div>Hello world</div>',
+				'Self-closing closing div'
+			),
+			// Make sure special nested HTML5 semantics are not broken
+			// http://www.whatwg.org/html/text-level-semantics.html#the-kbd-element
+			array(
+				'<kbd><kbd>Shift</kbd>+<kbd>F3</kbd></kbd>',
+				'<kbd><kbd>Shift</kbd>+<kbd>F3</kbd></kbd>',
+				'Nested <kbd>.'
+			),
+			// http://www.whatwg.org/html/text-level-semantics.html#the-sub-and-sup-elements
+			array(
+				'<var>x<sub><var>i</var></sub></var>, <var>y<sub><var>i</var></sub></var>',
+				'<var>x<sub><var>i</var></sub></var>, <var>y<sub><var>i</var></sub></var>',
+				'Nested <var>.'
+			),
+			// http://www.whatwg.org/html/text-level-semantics.html#the-dfn-element
+			array(
+				'<dfn><abbr title="Garage Door Opener">GDO</abbr></dfn>',
+				'<dfn><abbr title="Garage Door Opener">GDO</abbr></dfn>',
+				'<abbr> inside <dfn>',
+			),
 		);
 	}
 
+	/**
+	 * @dataProvider dataRemoveHTMLtags
+	 * @covers Sanitizer::removeHTMLtags
+	 */
+	public function testRemoveHTMLtags( $input, $output, $msg = null ) {
+		$GLOBALS['wgUseTidy'] = false;
+		$this->assertEquals( $output, Sanitizer::removeHTMLtags( $input ), $msg );
+	}
 
 	/**
 	 * @dataProvider provideTagAttributesToDecode
 	 * @covers Sanitizer::decodeTagAttributes
 	 */
-	function testDecodeTagAttributes( $expected, $attributes, $message = '' ) {
+	public function testDecodeTagAttributes( $expected, $attributes, $message = '' ) {
 		$this->assertEquals( $expected,
 			Sanitizer::decodeTagAttributes( $attributes ),
 			$message
 		);
 	}
 
-	function provideTagAttributesToDecode() {
+	public static function provideTagAttributesToDecode() {
 		return array(
 			array( array( 'foo' => 'bar' ), 'foo=bar', 'Unquoted attribute' ),
 			array( array( 'foo' => 'bar' ), '    foo   =   bar    ', 'Spaced attribute' ),
@@ -148,7 +197,6 @@ class SanitizerTest extends MediaWikiTestCase {
 			array( array( 'foo.' => 'baz' ), 'foo.=baz', 'A . is allowed as last character' ),
 			array( array( 'foo6' => 'baz' ), 'foo6=baz', 'Numbers are allowed' ),
 
-
 			# This bit is more relaxed than XML rules, but some extensions use
 			# it, like ProofreadPage (see bug 27539)
 			array( array( '1foo' => 'baz' ), '1foo=baz', 'Leading numbers are allowed' ),
@@ -167,7 +215,7 @@ class SanitizerTest extends MediaWikiTestCase {
 	 * @dataProvider provideDeprecatedAttributes
 	 * @covers Sanitizer::fixTagAttributes
 	 */
-	function testDeprecatedAttributesUnaltered( $inputAttr, $inputEl, $message = '' ) {
+	public function testDeprecatedAttributesUnaltered( $inputAttr, $inputEl, $message = '' ) {
 		$this->assertEquals( " $inputAttr",
 			Sanitizer::fixTagAttributes( $inputAttr, $inputEl ),
 			$message
@@ -195,7 +243,7 @@ class SanitizerTest extends MediaWikiTestCase {
 	 * @dataProvider provideCssCommentsFixtures
 	 * @covers Sanitizer::checkCss
 	 */
-	function testCssCommentsChecking( $expected, $css, $message = '' ) {
+	public function testCssCommentsChecking( $expected, $css, $message = '' ) {
 		$this->assertEquals( $expected,
 			Sanitizer::checkCss( $css ),
 			$message
@@ -205,10 +253,14 @@ class SanitizerTest extends MediaWikiTestCase {
 	public static function provideCssCommentsFixtures() {
 		/** array( <expected>, <css>, [message] ) */
 		return array(
-			array( ' ', '/**/' ),
+			// Valid comments spanning entire input
+			array( '/**/', '/**/' ),
+			array( '/* comment */', '/* comment */' ),
+			// Weird stuff
 			array( ' ', '/****/' ),
-			array( ' ', '/* comment */' ),
-			array( ' ', "\\2f\\2a foo \\2a\\2f",
+			array( ' ', '/* /* */' ),
+			array( 'display: block;', "display:/* foo */block;" ),
+			array( 'display: block;', "display:\\2f\\2a foo \\2a\\2f block;",
 				'Backslash-escaped comments must be stripped (bug 28450)' ),
 			array( '', '/* unfinished comment structure',
 				'Remove anything after a comment-start token' ),
@@ -229,7 +281,7 @@ class SanitizerTest extends MediaWikiTestCase {
 	/**
 	 * Test for support or lack of support for specific attributes in the attribute whitelist.
 	 */
-	function provideAttributeSupport() {
+	public static function provideAttributeSupport() {
 		/** array( <attributes>, <expected>, <message> ) */
 		return array(
 			array( 'div', ' role="presentation"', ' role="presentation"', 'Support for WAI-ARIA\'s role="presentation".' ),
@@ -239,12 +291,12 @@ class SanitizerTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider provideAttributeSupport
+	 * @covers Sanitizer::fixTagAttributes
 	 */
-	function testAttributeSupport( $tag, $attributes, $expected, $message ) {
+	public function testAttributeSupport( $tag, $attributes, $expected, $message ) {
 		$this->assertEquals( $expected,
 			Sanitizer::fixTagAttributes( $attributes, $tag ),
 			$message
 		);
 	}
-
 }

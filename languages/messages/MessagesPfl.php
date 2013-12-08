@@ -21,8 +21,8 @@ $namespaceNames = array(
 	NS_MEDIA            => 'Medium',
 	NS_SPECIAL          => 'Schbezial',
 	NS_TALK             => 'Babble',
-	NS_USER             => 'Benudzer',
-	NS_USER_TALK        => 'Benudzer_Dischbediere',
+	NS_USER             => 'Middawaida',
+	NS_USER_TALK        => 'Middawaida_Dischbediere',
 	NS_PROJECT_TALK     => '$1_Dischbediere',
 	NS_FILE             => 'Dadai',
 	NS_FILE_TALK        => 'Dadai_Dischbediere',
@@ -32,27 +32,31 @@ $namespaceNames = array(
 	NS_TEMPLATE_TALK    => 'Vorlach_Dischbediere',
 	NS_HELP             => 'Hilf',
 	NS_HELP_TALK        => 'Hilf_Dischbediere',
-	NS_CATEGORY         => 'Kadegorie',
-	NS_CATEGORY_TALK    => 'Kadegorie_Dischbediere',
+	NS_CATEGORY         => 'Sachgrubb',
+	NS_CATEGORY_TALK    => 'Sachgrubb_Dischbediere',
 );
 
 $namespaceAliases = array(
 	# German namespaces
-	'Medium'               => NS_MEDIA,
-	'Spezial'              => NS_SPECIAL,
-	'Diskussion'           => NS_TALK,
-	'Benutzer'             => NS_USER,
-	'Benutzer_Diskussion'  => NS_USER_TALK,
-	'$1_Diskussion'        => NS_PROJECT_TALK,
-	'Datei'                => NS_FILE,
-	'Datei_Diskussion'     => NS_FILE_TALK,
-	'MediaWiki_Diskussion' => NS_MEDIAWIKI_TALK,
-	'Vorlage'              => NS_TEMPLATE,
-	'Vorlage_Diskussion'   => NS_TEMPLATE_TALK,
-	'Hilfe'                => NS_HELP,
-	'Hilfe_Diskussion'     => NS_HELP_TALK,
-	'Kategorie'            => NS_CATEGORY,
-	'Kategorie_Diskussion' => NS_CATEGORY_TALK,
+	'Medium'                 => NS_MEDIA,
+	'Spezial'                => NS_SPECIAL,
+	'Diskussion'             => NS_TALK,
+	'Benutzer'               => NS_USER,
+	'Benutzer_Diskussion'    => NS_USER_TALK,
+	'Benudzer'               => NS_USER,
+	'Benudzer_Dischbediere'  => NS_USER_TALK,
+	'$1_Diskussion'          => NS_PROJECT_TALK,
+	'Datei'                  => NS_FILE,
+	'Datei_Diskussion'       => NS_FILE_TALK,
+	'MediaWiki_Diskussion'   => NS_MEDIAWIKI_TALK,
+	'Vorlage'                => NS_TEMPLATE,
+	'Vorlage_Diskussion'     => NS_TEMPLATE_TALK,
+	'Hilfe'                  => NS_HELP,
+	'Hilfe_Diskussion'       => NS_HELP_TALK,
+	'Kategorie'              => NS_CATEGORY,
+	'Kategorie_Diskussion'   => NS_CATEGORY_TALK,
+	'Kadegorie'              => NS_CATEGORY,
+	'Kadegorie_Dischbediere' => NS_CATEGORY_TALK,
 );
 
 $messages = array(
@@ -65,7 +69,6 @@ $messages = array(
 'tog-previewontop' => 'Vorbligg owwahalwb vum Beaawaidungsfenschda zaische',
 'tog-previewonfirst' => 'Zaischen Vorbligg baim erschdemol Schaffe',
 'tog-oldsig' => 'Voahonneni Unnaschfrid',
-'tog-showjumplinks' => 'Schdellde "Hubs uff"-Lingg',
 'tog-uselivepreview' => 'Uuvazeschada Vorbligg (bneedischd JavaScript) (vasugswais)',
 'tog-showhiddencats' => 'Zaisch vaschdeglde Grubbe',
 
@@ -240,7 +243,7 @@ Waad ä bissl un brobieas nomol.
 $1',
 'pool-errorunknown' => 'Ubkonnde Irrdumm',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Iwwa {{SITENAME}}',
 'aboutpage' => 'Project:Iwwa',
 'copyright' => 'Was do drin schded isch unna $1 vafieschba.',
@@ -250,7 +253,6 @@ $1',
 'disclaimers' => 'Hafdungsausschluß',
 'disclaimerpage' => 'Project:Impressum',
 'edithelp' => 'Unaschdizung fas Beawaide',
-'edithelppage' => 'Help:Ännere',
 'helppage' => 'Help:Inhald',
 'mainpage' => 'Schdadsaid',
 'mainpage-description' => 'Schdadsaid',
@@ -599,9 +601,6 @@ Ealaidarung: '''({{int:cur}})''' = Unnaschied zu jezd,
 'powersearch-toggleall' => 'Alli',
 'powersearch-togglenone' => 'Kään',
 
-# Quickbar
-'qbsettings-none' => 'Kään',
-
 # Preferences page
 'preferences' => 'Obzione',
 'mypreferences' => 'Oischdellunge',
@@ -723,7 +722,6 @@ Doi Address werd ned gzaischd, wõnse midda babbln.',
 'recentchangeslinked-feed' => 'Ännarunge on valinggde Saide',
 'recentchangeslinked-toolbox' => 'Ännarunge uff verlingde Saide',
 'recentchangeslinked-title' => 'Ännarunge õn Saide, wu „$1“ druff verlinggd',
-'recentchangeslinked-noresult' => 'Do isch nix gännad worre inde Zaid.',
 'recentchangeslinked-summary' => "Die Lischd zaischd ledschdi Ännarunge, vunna bschdimmde Said, wu do valinggd isch (odda ä Midglied vunna bschdimmde Sachgrubb isch).
 Saide uff [[Special:Watchlist|Doina Beowachdungslischd]] sinn '''fedd'''.",
 'recentchangeslinked-page' => 'Saide:',
@@ -792,8 +790,6 @@ Saide uff [[Special:Watchlist|Doina Beowachdungslischd]] sinn '''fedd'''.",
 # Statistics
 'statistics' => 'Schdadischdigge',
 'statistics-pages' => 'Saide',
-
-'disambiguationspage' => 'Template:Vadaidlischung',
 
 'brokenredirects-edit' => 'beawaide',
 'brokenredirects-delete' => 'lesche',
@@ -964,7 +960,7 @@ Der Schutzstatus vun derre Said kannscht ännere, awwer des hot kää Aifluss uf
 'contributions' => '{{GENDER:$1|Wassa gemachd hodd}}',
 'contributions-title' => 'Middawaidabaidräsch vun $1',
 'mycontris' => 'Baidräsch',
-'contribsub2' => 'Fer $1 ($2)',
+'contribsub2' => 'Fa $1 ($2)',
 'uctop' => '(geschewedisch)',
 'month' => 'än Monad (un frieja):',
 'year' => 'Abm Johr (un frieja):',
@@ -1177,7 +1173,7 @@ Wonn die Dadai vaännad worre isch, donn konns soi, daß zusedzlischi Õgawe fa 
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-iimcategory' => 'Sachgrubb',
 'exif-iimsupplementalcategory' => 'Ergenzndi Sachgrubbe',
 

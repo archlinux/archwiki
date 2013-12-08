@@ -161,9 +161,6 @@ $messages = array(
 'tog-shownumberswatching' => "Amostrar o numero d'usuarios que cosiran un articlo",
 'tog-oldsig' => 'Sinyadura actual',
 'tog-fancysig' => 'Tratar as sinyaduras como wikitexto (sin de vinclo automatico)',
-'tog-externaleditor' => "Fer servir l'editor externo por defecto (nomás ta espiertos, cal que faiga achustes especials en o suyo ordenador.  [//www.mediawiki.org/wiki/Manual:External_editors Mas información.])",
-'tog-externaldiff' => 'Fer servir o visualizador de diferencias externo por defecto (nomás ta expertos, cal que faiga achustes especials en o suyo ordenador.  [//www.mediawiki.org/wiki/Manual:External_editors Mas información.])',
-'tog-showjumplinks' => 'Activar vinclos d\'accesibilidat "blincar enta"',
 'tog-uselivepreview' => 'Activar previsualización automatica (cal JavaScript) (Esperimental)',
 'tog-forceeditsummary' => 'Avisar-me quan o campo de resumen siga buedo.',
 'tog-watchlisthideown' => 'Amagar as mías edicions en a lista de seguimiento',
@@ -177,6 +174,7 @@ $messages = array(
 'tog-showhiddencats' => 'Amostrar categorías amagatas',
 'tog-noconvertlink' => 'Desactivar a conversión de titol de vinclo',
 'tog-norollbackdiff' => 'No amostrar as diferencias dimpués de revertir',
+'tog-useeditwarning' => "Alvertir-me quan salga d'una pachina d'edición sin alzar os cambios",
 
 'underline-always' => 'Siempre',
 'underline-never' => 'Nunca',
@@ -362,7 +360,7 @@ $1",
 'pool-queuefull' => 'A coda de treballo ye plena',
 'pool-errorunknown' => 'Error desconoixida',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Información sobre {{SITENAME}}',
 'aboutpage' => 'Project:Sobre',
 'copyright' => 'O conteniu ye disponible baixo a licencia $1.',
@@ -372,7 +370,6 @@ $1",
 'disclaimers' => 'Alvertencias chenerals',
 'disclaimerpage' => 'Project:Alvertencias chenerals',
 'edithelp' => 'Aduya ta editar pachinas',
-'edithelppage' => "Help:Cómo s'edita una pachina",
 'helppage' => 'Help:Aduya',
 'mainpage' => 'Portalada',
 'mainpage-description' => 'Portalada',
@@ -446,17 +443,6 @@ Puede trobar una lista de pachinas especials en [[Special:SpecialPages|{{int:spe
 # General errors
 'error' => 'Error',
 'databaseerror' => "Error d'a base de datos",
-'dberrortext' => 'Ha sucedito una error de sintaxi en una consulta a la base de datos.
-Isto podría marcar una error en o programa.
-A zaguera consulta estió:
-<blockquote><tt>$1</tt></blockquote>
-dende adintro d\'a función "<tt>$2</tt>".
-A error retornata por a base de datos estió "<tt>$3: $4</tt>".',
-'dberrortextcl' => 'S\'ha producito una error de sintaxi en una consulta a la base de datos.
-A zaguera consulta estió:
-"$1"
-dende adintro d\'a función "$2".
-A base de datos retornó a error "$3: $4"',
 'laggedslavemode' => "Pare cuenta: podrían faltar as zagueras edicions d'ista pachina.",
 'readonly' => 'Base de datos bloqueyata',
 'enterlockreason' => "Esplique a causa d'o bloqueyo, incluyendo una estimación de quán se producirá o desbloqueyo",
@@ -504,7 +490,6 @@ Consulta: $2',
 'viewyourtext' => "Puet veyer y copiar o codigo d''''as suyas edicions''' en ista pachina:",
 'protectedinterface' => "Ista pachina furne o texto d'a interfaz ta o software. Ye protechita ta privar o vandalismo. Si creye que bi ha bella error, contacte con un administrador.",
 'editinginterface' => "'''Pare cuenta:''' Ye editando una pachina emplegata ta furnir o texto d'a interfaz de {{SITENAME}}. Os cambeos en ista pachina tendrán efecto en l'aparencia d'a interfaz ta os atros usuarios. Ta fer traduccions d'a interfaz, puede considerar fer servir [//translatewiki.net/wiki/Main_Page?setlang=an translatewiki.net], o prochecto de localización de MediaWiki.",
-'sqlhidden' => '(Consulta SQL amagata)',
 'cascadeprotected' => 'Ista pachina ye protechita y no se puede editar porque ye incluyita en {{PLURAL:$1|a siguient pachina|as siguients pachinas}}, que son protechitas con a opción de "cascada": $2',
 'namespaceprotected' => "No tiene premiso ta editar as pachinas d'o espacio de nombres '''$1'''.",
 'customcssprotected' => 'No tiene permisos ta editar a pachina CSS porque contién parametros personal de belatro usuario.',
@@ -526,7 +511,6 @@ Puede continar navegando por {{SITENAME}} anonimament, u puede <span class='plai
 'yourpassword' => "Clau d'acceso:",
 'yourpasswordagain' => 'Torne a escribir a clau:',
 'remembermypassword' => "Remerar o mío nombre d'usuario y a clau entre sesions en iste navegador (como muito por $1 {{PLURAL:$1|día|días}})",
-'securelogin-stick-https' => "Continar connectau con HTTPS dimpués d'encetar sesión",
 'yourdomainname' => 'Dominio:',
 'externaldberror' => "Bi habió una error d'autenticación externa d'a base de datos u bien no tiene premisos ta esviellar a suya cuenta externa.",
 'login' => 'Encetar sesión',
@@ -615,7 +599,7 @@ Si a cuenta s\'ha creyato por error, simplament ignore iste mensache.',
 'newpassword' => 'Nueva clau:',
 'retypenew' => 'Torne a escribir a nueva clau:',
 'resetpass_submit' => 'Cambiar a clau y identificar-se',
-'resetpass_success' => 'A suya clau ya ye cambiata. Agora ya puede dentrar-ie...',
+'changepassword-success' => 'A suya clau ya ye cambiata. Agora ya puede dentrar-ie...',
 'resetpass_forbidden' => "No se puede cambiar as claus d'acceso",
 'resetpass-no-info' => 'Debe identificar-se como usuario ta poder acceder dreitament ta ista pachina.',
 'resetpass-submit-loggedin' => 'Cambiar a clau',
@@ -626,10 +610,8 @@ Talment ya ha cambiato a suya clau u ha demandato una nueva clau temporal.',
 
 # Special:PasswordReset
 'passwordreset' => "Restablir a clau d'acceso",
-'passwordreset-text' => "Completar ista forma ta recibir un recordatorio por correu con os detalles d'a suya cuenta.",
 'passwordreset-legend' => "Restablir a clau d'acceso",
 'passwordreset-disabled' => "S'ha desactivau o restablimiento de claus en ista wiki.",
-'passwordreset-pretext' => "{{PLURAL:$1||Introduzca uno d'os siguients datos}}",
 'passwordreset-username' => "Nombre d'usuario:",
 'passwordreset-domain' => 'Dominio:',
 'passwordreset-capture' => 'Veyer o mensache resultant?',
@@ -840,6 +822,7 @@ Pareix que la hesen borrau.",
 'edit-no-change' => "S'ha ignorato a suya edición, pos no s'ha feito garra cambeo ta o texto.",
 'edit-already-exists' => "No s'ha puesto creyar una pachina nueva.
 Ya existe.",
+'editwarning-warning' => "Si sale d'ista pachina perderá totz os cambios que haiga feito. Si tiene una cuenta d'usuario, puet eliminar ista alvertencia en a sección «Caixa d'edición» d'as suyas preferencies.",
 
 # Parser/template warnings
 'expensive-parserfunction-warning' => 'Pare cuenta: Ista pachina tiene masiadas cridas ta funcions de preproceso (parser functions) costosas.
@@ -1059,7 +1042,6 @@ Asegure-se que iste cambio no trencará a continidat de l'historial d'a pachina.
 'searchmenu-legend' => 'Opcions de busca',
 'searchmenu-exists' => "'''Bi ha una pachina clamada \"[[\$1]]\" en ista wiki'''",
 'searchmenu-new' => "'''Creyar a pachina \"[[:\$1]]\" en ista wiki!'''",
-'searchhelp-url' => 'Help:Aduya',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|Veyer pachinas con iste prefixo]]',
 'searchprofile-articles' => 'Pachinas de conteniu',
 'searchprofile-project' => "Pachinas d'aduya y d'o prochecto",
@@ -1101,15 +1083,6 @@ Asegure-se que iste cambio no trencará a continidat de l'historial d'a pachina.
 'search-external' => 'Busca externa',
 'searchdisabled' => 'A busca en {{SITENAME}} ye temporalment desactivata. Entremistanto, puede mirar en {{SITENAME}} fendo servir buscadors externos, pero pare cuenta que os suyos endices de {{SITENAME}} puede no estar esviellatos.',
 
-# Quickbar
-'qbsettings' => 'Preferencias de "Quickbar"',
-'qbsettings-none' => 'Garra',
-'qbsettings-fixedleft' => 'Fixa a la zurda',
-'qbsettings-fixedright' => 'Fixa a la dreita',
-'qbsettings-floatingleft' => 'Flotant a la zurda',
-'qbsettings-floatingright' => 'Flotant a la dreita',
-'qbsettings-directionality' => "Fixato, pendendo en a direccionalidat d'o suyo script y o suyo luengache",
-
 # Preferences page
 'preferences' => 'Preferencias',
 'mypreferences' => 'Preferencias',
@@ -1141,7 +1114,6 @@ Asegure-se que iste cambio no trencará a continidat de l'historial d'a pachina.
 'resetprefs' => "Tornar t'as preferencias por defecto",
 'restoreprefs' => 'Restaure todas as confeguracions por defecto',
 'prefs-editing' => 'Edición',
-'prefs-edit-boxsize' => "Grandaria d'a finestra d'edición.",
 'rows' => 'Ringleras:',
 'columns' => 'Columnas:',
 'searchresultshead' => 'Mirar',
@@ -1152,9 +1124,6 @@ Asegure-se que iste cambio no trencará a continidat de l'historial d'a pachina.
 'recentchangesdays-max' => '(masimo $1 {{PLURAL:$1|día|días}})',
 'recentchangescount' => "Numero d'edicions a amostrar, por defecto:",
 'prefs-help-recentchangescount' => 'Inclui os zaguers cambeos, historials de pachina y rechistros.',
-'prefs-help-watchlist-token' => "Si plena iste campo con una clau secreta se chenerará n filo RSS t'a suya lista de seguimeinto.
-Qui conoixca ista clau podrá leyer a suya lista de seguimiento, asinas que esliya una clau segura.
-Contino se i amuestra una calu chenerata de traza aleatoria que puede fer servir si quiere: $1",
 'savedprefs' => "S'han alzato as suyas preferencias.",
 'timezonelegend' => 'Fuso horario:',
 'localtime' => 'Hora local:',
@@ -1185,7 +1154,6 @@ Contino se i amuestra una calu chenerata de traza aleatoria que puede fer servir
 'prefs-reset-intro' => "Puet emplegar ista pachina ta restaurar as suyas preferencias a las valuras por defecto d'o sitio.
 No se podrá desfer iste cambio.",
 'prefs-emailconfirm-label' => 'Confirmación de correu electronico:',
-'prefs-textboxsize' => "Mida d'a pachina d'edición",
 'youremail' => 'Adreza de correu electronico:',
 'username' => "Nombre d'usuario:",
 'uid' => "ID d'usuario:",
@@ -1423,7 +1391,6 @@ Habría de tener menos de $1 {{PLURAL:$1|carácter|carácters}}.',
 'recentchangeslinked-feed' => 'Cambeos relacionatos',
 'recentchangeslinked-toolbox' => 'Cambios relacionatos',
 'recentchangeslinked-title' => 'Cambeos relacionatos con "$1"',
-'recentchangeslinked-noresult' => 'No bi habió cambeos en as pachinas vinculatas en o intervalo de tiempo indicato.',
 'recentchangeslinked-summary' => "Ista ye una lista d'os zaguers cambios feitos en pachinas con vinclos dende una pachina especifica (u ta miembros d'una categoría especificata).  S'amuestran en '''negreta''' as pachinas d'a suya [[Special:Watchlist|lista de seguimiento]].",
 'recentchangeslinked-page' => "Nombre d'a pachina:",
 'recentchangeslinked-to' => "En cuentas d'ixo, amostrar os cambios en pachinas con vinclos enta a pachina data",
@@ -1646,7 +1613,6 @@ Por seguridat, s'ha desactivau img_auth.php.",
 'http-read-error' => 'Error de lectura HTTP.',
 'http-timed-out' => 'A requesta HTTP ha circumducito.',
 'http-curl-error' => 'Error en recuperar a URL: $1',
-'http-host-unreachable' => "No s'ha puesto acceder t'a URL.",
 'http-bad-status' => 'Ha habiu un problema en a requesta HTTP: $1 $2',
 
 # Some likely curl errors. More could be added from <http://curl.haxx.se/libcurl/c/libcurl-errors.html>
@@ -1789,12 +1755,6 @@ Debaixo s'amuestra a descripción d'a suya [$2 pachina de descripción].",
 'statistics-users-active' => 'Usuarios activos',
 'statistics-users-active-desc' => 'Usuarios que han feito qualsiquier acción en {{PLURAL:$1|o zaguer día|os zaguers $1 días}}',
 'statistics-mostpopular' => 'Pachinas más vistas',
-
-'disambiguations' => 'Pachinas con vinclos enta pachinas de desambigación',
-'disambiguationspage' => 'Template:Desambigación',
-'disambiguations-text' => "As siguients pachinas tienen vinclos ta una '''pachina de desambigación'''.
-Ixos vinclos habrían de ir millor t'a pachina especifica apropiada.<br />
-Una pachina se considera pachina de desambigación si fa servir una plantilla provenient de  [[MediaWiki:Disambiguationspage]].",
 
 'doubleredirects' => 'Reendreceras dobles',
 'doubleredirectstext' => "En ista pachina s'amuestran as pachinas que son reendreceras enta atras pachinas reendrezatas.
@@ -2028,10 +1988,9 @@ L\'adreza de correu-e que endicó en as suyas [[Special:Preferences|preferencias
 'unwatchthispage' => 'Deixar de cosirar',
 'notanarticle' => 'No ye una pachina de conteniu',
 'notvisiblerev' => "S'ha borrato a revisión",
-'watchnochange' => "Dengún d'os articlos d'a suya lista de seguimiento no s'ha editato en o periodo de tiempo amostrato.",
 'watchlist-details' => '{{PLURAL:$1|$1 pachina|$1 pachinas}} en a suya lista de seguimiento, sin contar-ie as pachinas de descusión.',
-'wlheader-enotif' => '* A notificación por correu electronico ye activata',
-'wlheader-showupdated' => "* Las pachinas cambiadas dende a suya zaguer vesita s'amuestran en '''negreta'''",
+'wlheader-enotif' => 'A notificación por correu electronico ye activata',
+'wlheader-showupdated' => "Las pachinas cambiadas dende a suya zaguer vesita s'amuestran en '''negreta'''",
 'watchmethod-recent' => 'Mirando pachinas cosiratas en os zaguers cambeos',
 'watchmethod-list' => 'mirando edicions recients en as pachinas cosiratas',
 'watchlistcontains' => 'A suya lista de seguimiento tiene $1 {{PLURAL:$1|pachina|pachinas}}.',
@@ -2256,7 +2215,7 @@ $1",
 'contributions' => "Contribucions de {{GENDER:$1|l'usuario|la usuaria}}",
 'contributions-title' => "Contribucions de l'usuario $1",
 'mycontris' => 'Contribucions',
-'contribsub2' => 'De $1 ($2)',
+'contribsub2' => 'Ta {{GENDER:$3|$1}} ($2)',
 'nocontribs' => "No s'han trobato cambeos que concordasen con ixos criterios",
 'uctop' => '(zaguer cambeo)',
 'month' => 'Dende o mes (y anteriors):',
@@ -2412,11 +2371,8 @@ Ta más detalles, debaixo s'amuestra o rechistro de supresions:",
 'ipb_blocked_as_range' => "Error: L'adreza IP $1 no s'ha bloqueyato dreitament y por ixo no se puede desbloqueyar. Manimenos, ye bloqueyata por estar parte d'o rango $2, que sí puede desbloqueyar-se de conchunta.",
 'ip_range_invalid' => "O rango d'adrezas IP no ye conforme.",
 'ip_range_toolarge' => 'No se permiten os bloqueyos de rangos más grans que /$1.',
-'blockme' => 'bloqueyar-me',
 'proxyblocker' => 'bloqueyador de proxies',
-'proxyblocker-disabled' => 'Ista función ye desactivata.',
 'proxyblockreason' => "S'ha bloqueyato a suya adreza IP porque ye un proxy ubierto. Por favor, contaute on o suyo furnidor de servicios d'Internet u con o suyo servicio d'asistencia tecnica e informe-les d'iste grau problema de seguridat.",
-'proxyblocksuccess' => 'Feito.',
 'sorbsreason' => 'A suya adreza IP ye en a lista de proxies ubiertos en a DNSBL de {{SITENAME}}.',
 'sorbs_create_account_reason' => 'A suya adreza IP ye en a lista de proxies ubiertos en a DNSBL de {{SITENAME}}. No puede creyar una cuenta',
 'cant-block-while-blocked' => 'No puet bloqueyar a atros usuarios en o tiempo que ye bloqueyato.',
@@ -2718,17 +2674,11 @@ Puede veyer-ne, manimenos, o codigo fuent.',
 
 # Stylesheets
 'common.css' => '/* Os estilos CSS definius aquí aplicarán a todas as apariencias (skins) */',
-'standard.css' => "/* Os estilos CSS colocaus aquí s'aplicarán ta totz os usuarios que faigan servir l'apariencia Standard */",
-'nostalgia.css' => "/* Os estilos CSS colocaus aquí s'aplicarán ta totz os usuarios que faigan servir l'apariencia Nostalgia */",
 'cologneblue.css' => "/* Os estilos CSS colocaus aquí s'aplicarán ta totz os usuarios que faigan servir l'apariencia Cologne Blue */",
 'monobook.css' => "/* Os estilos CSS colocaus aquí s'aplicarán ta totz os usuarios que faigan servir l'apariencia Monobook */",
-'myskin.css' => "/* Os estilos CSS colocaus aquí s'aplicarán ta totz os usuarios que que faigan servir l'apariencia MySkin */",
-'chick.css' => "/* Os estilos CSS colocaus aquí s'aplicarán ta totz os usuarios que faigan servir l'apariencia Chick */",
-'simple.css' => "/* Os estilos CSS colocaus aquí s'aplicarán ta totz os usuarios que faigan servir l'apariencia Simpla */",
 'modern.css' => "/* Os estilos CSS colocaus aquí s'aplicarán ta totz os usuarios que faigan servir l'apariencia Modern */",
 'vector.css' => "/* Os estilos CSS colocaus aquí s'aplicarán ta totz os usuarios que faigan servir l'apariencia Vector */",
 'print.css' => '/* Os estilos CSS colocaus aquí afectarán a la impresión */',
-'handheld.css' => '/* Os estilos CSS colocaus aquí afectarán a os dispositivos mobils basaus en as apariencias configuradas en $wgHandheldStyle */',
 'noscript.css' => "/* Os estilos CSS colocaus aquí s'aplicarán ta totz os usuarios que tiengan desactivato JavaScript */",
 'group-autoconfirmed.css' => "/* Os estilos CSS colocaus aquí s'aplicarán nomás a os usuarios autoconfirmatos*/",
 'group-bot.css' => "/* Os estilos CSS colocaus aquí s'aplicarán nomás a os bots*/",
@@ -2737,13 +2687,8 @@ Puede veyer-ne, manimenos, o codigo fuent.',
 
 # Scripts
 'common.js' => '/* Qualsiquier codigo Javascript escrito aquí se cargará ta totz os usuarios en cada carga de pachina */',
-'standard.js' => "/* Qualsiquier codigo Javascript escrito aquí se cargará ta totz os usuarios que faigan servir l'apariencia Estandar */",
-'nostalgia.js' => "/* Qualsiquier codigo Javascript escrito aquí se cargará ta totz os usuarios que faigan servir l'apariencia Nostalgia. */",
 'cologneblue.js' => "/* Qualsiquier codigo Javascript escrito aquí se cargará ta totz os usuarios que faigan servir l'apariencia Colonia azul */",
 'monobook.js' => "/* O codigo Javascript que se meta aquí será cargau por os usuarios faigan servir l'apariencia MonoBook */",
-'myskin.js' => "/* Qualsiquier codigo Javascript escrito aquí se cargará ta totz os usuarios que faigan servir l'apariencia MySkin */",
-'chick.js' => "/* Qualsiquier codigo Javascript escrito aquí se cargará ta totz os usuarios que faigan servir l'apariencia Chick */",
-'simple.js' => "/* Qualsiquier codigo Javascript escrito aquí se cargará ta totz os usuarios que faigan servir l'apariencia Simple */",
 'modern.js' => "/* O codigo Javascript que se meta aquí será cargau por os usuarios faigan servir l'apariencia Modern */",
 'vector.js' => '/* Qualsiquier codigo Javascript escrito aquí se cargará ta totz os usuarios que usen a piel Vector */',
 'group-autoconfirmed.js' => '/* Qualsiquier codigo Javascript escrito aquí se cargará nomás ta os usuarios autoconfirmatos */',
@@ -2783,13 +2728,8 @@ Puede veyer-ne, manimenos, o codigo fuent.',
 'pageinfo-authors' => "Numero d'autors diferents",
 
 # Skin names
-'skinname-standard' => 'Clasica (Classic)',
-'skinname-nostalgia' => 'Recosiros (Nostalgia)',
 'skinname-cologneblue' => 'Colonia Azul (Cologne Blue)',
 'skinname-monobook' => 'MonoBook',
-'skinname-myskin' => 'A mía aparencia (MySkin)',
-'skinname-chick' => 'Chick',
-'skinname-simple' => 'Simpla (Simple)',
 'skinname-modern' => 'Moderna',
 'skinname-vector' => 'Vector',
 
@@ -2890,7 +2830,7 @@ Os campos de metadatos d'a imachen que amaneixen en iste mensache s'amostrarán 
 * gpslongitude
 * gpsaltitude",
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Amplaria',
 'exif-imagelength' => 'Altaria',
 'exif-bitspersample' => 'Bits por component',
@@ -3068,7 +3008,7 @@ Os campos de metadatos d'a imachen que amaneixen en iste mensache s'amostrarán 
 'exif-originalimageheight' => "Altaria d'a imachen antes d'estar retallada",
 'exif-originalimagewidth' => "Amplaria d'a imachen antes d'estar retallada",
 
-# EXIF attributes
+# Exif attributes
 'exif-compression-1' => 'Sin de compresión',
 'exif-compression-2' => 'CCITT Group 3 1-Dimensional Modified Huffman run length encoding',
 'exif-compression-3' => 'Codificación de fax CCITT grupo 3',
@@ -3452,7 +3392,6 @@ Tamién puede fer servir o [[Special:EditWatchlist|editor estándar]].",
 'version-other' => 'Atros',
 'version-mediahandlers' => 'Maneyador de fichers multimedia',
 'version-hooks' => 'Grifios (Hooks)',
-'version-extension-functions' => "Funcions d'a estensión",
 'version-parser-extensiontags' => "Etiquetas d'estensión d'o parseyador",
 'version-parser-function-hooks' => "Grifios d'as funcions d'o parseyador",
 'version-hook-name' => "Nombre d'o grifio",
@@ -3469,13 +3408,6 @@ Con iste programa ha d'haber recibiu [{{SERVER}}{{SCRIPTPATH}}/COPYING una copia
 'version-software' => 'Software instalato',
 'version-software-product' => 'Producto',
 'version-software-version' => 'Versión',
-
-# Special:FilePath
-'filepath' => "Camín d'o fichero",
-'filepath-page' => 'Fichero:',
-'filepath-submit' => 'Ir-ie',
-'filepath-summary' => "Ista pachina especial le retorna o camín completo d'un fichero.
-As imachens s'amuestran en resolución completa, a resta de fichers fan encetar dreitament os suyos programas asociatos.",
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch' => 'Mirar fichers duplicatos',

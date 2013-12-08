@@ -22,7 +22,7 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that sends SQL queries from the specified file to the database.
@@ -34,16 +34,42 @@ class MwSql extends Maintenance {
 		parent::__construct();
 		$this->mDescription = "Send SQL queries to a MediaWiki database";
 		$this->addOption( 'cluster', 'Use an external cluster by name', false, true );
+		$this->addOption( 'slave', 'Use a slave server (either "any" or by name)', false, true );
 	}
 
 	public function execute() {
-		// Get a DB handle (with this wiki's DB select) from the appropriate load balancer
+		// Get the appropriate load balancer (for this wiki)
 		if ( $this->hasOption( 'cluster' ) ) {
 			$lb = wfGetLBFactory()->getExternalLB( $this->getOption( 'cluster' ) );
-			$dbw = $lb->getConnection( DB_MASTER ); // master for external LB
 		} else {
-			$dbw = wfGetDB( DB_MASTER ); // master for primary LB for this wiki
+			$lb = wfGetLB();
 		}
+		// Figure out which server to use
+		if ( $this->hasOption( 'slave' ) ) {
+			$server = $this->getOption( 'slave' );
+			if ( $server === 'any' ) {
+				$index = DB_SLAVE;
+			} else {
+				$index = null;
+				for ( $i = 0; $i < $lb->getServerCount(); ++$i ) {
+					if ( $lb->getServerName( $i ) === $server ) {
+						$index = $i;
+						break;
+					}
+				}
+				if ( $index === null ) {
+					$this->error( "No slave server configured with the name '$server'.", 1 );
+				}
+			}
+		} else {
+			$index = DB_MASTER;
+		}
+		// Get a DB handle (with this wiki's DB selected) from the appropriate load balancer
+		$dbw = $lb->getConnection( $index );
+		if ( $this->hasOption( 'slave' ) && $dbw->getLBInfo( 'master' ) !== null ) {
+			$this->error( "The server selected ({$dbw->getServer()}) is not a slave.", 1 );
+		}
+
 		if ( $this->hasArg( 0 ) ) {
 			$file = fopen( $this->getArg( 0 ), 'r' );
 			if ( !$file ) {
@@ -70,9 +96,9 @@ class MwSql extends Maintenance {
 
 		$wholeLine = '';
 		$newPrompt = '> ';
-		$prompt    = $newPrompt;
+		$prompt = $newPrompt;
 		while ( ( $line = Maintenance::readconsole( $prompt ) ) !== false ) {
-			if( !$line ) {
+			if ( !$line ) {
 				# User simply pressed return key
 				continue;
 			}
@@ -91,12 +117,12 @@ class MwSql extends Maintenance {
 				readline_add_history( $wholeLine . $dbw->getDelimiter() );
 				readline_write_history( $historyFile );
 			}
-			try{
+			try {
 				$res = $dbw->query( $wholeLine );
 				$this->sqlPrintResult( $res, $dbw );
-				$prompt    = $newPrompt;
+				$prompt = $newPrompt;
 				$wholeLine = '';
-			} catch (DBQueryError $e) {
+			} catch ( DBQueryError $e ) {
 				$doDie = ! Maintenance::posix_isatty( 0 );
 				$this->error( $e, $doDie );
 			}
@@ -132,4 +158,4 @@ class MwSql extends Maintenance {
 }
 
 $maintClass = "MwSql";
-require_once( RUN_MAINTENANCE_IF_MAIN );
+require_once RUN_MAINTENANCE_IF_MAIN;

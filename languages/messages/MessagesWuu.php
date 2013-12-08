@@ -49,9 +49,6 @@ $messages = array(
 'tog-shownumberswatching' => '顯示關注人數',
 'tog-oldsig' => '能界签名先望：',
 'tog-fancysig' => '畀簽名當wiki文本（弗自動鏈接）',
-'tog-externaleditor' => '默认使用外部编辑器（仅供高手使用，需要来许电脑上作出特殊设置）',
-'tog-externaldiff' => '默认使用外部分析（仅供高手使用，需要来许电脑上作出特殊设置）',
-'tog-showjumplinks' => '启用“跳转”链接',
 'tog-uselivepreview' => '用当场先望（试验）',
 'tog-forceeditsummary' => '編要空白到提醒我',
 'tog-watchlisthideown' => '關注表裏囥脫我所編',
@@ -64,6 +61,8 @@ $messages = array(
 'tog-diffonly' => '比較兩版弗樣到弗顯示頁內容',
 'tog-showhiddencats' => '顯示囥脫分類',
 'tog-norollbackdiff' => '执行退回之后弗显示两样',
+'tog-useeditwarning' => '離開編頁朆保存到提醒我',
+'tog-prefershttps' => '登录后老世用保险连接',
 
 'underline-always' => '老世',
 'underline-never' => '老世弗',
@@ -127,6 +126,18 @@ $messages = array(
 'oct' => '10月',
 'nov' => '11月',
 'dec' => '12月',
+'january-date' => '1月 $1',
+'february-date' => '2月 $1',
+'march-date' => '3月 $1',
+'april-date' => '4月 $1',
+'may-date' => '5月 $1',
+'june-date' => '6月 $1',
+'july-date' => '7月 $1',
+'august-date' => '8月 $1',
+'september-date' => '9月 $1',
+'october-date' => '10月 $1',
+'november-date' => '11月 $1',
+'december-date' => '12月 $1',
 
 # Categories related messages
 'pagecategories' => '$1个分类',
@@ -207,6 +218,7 @@ $messages = array(
 'create-this-page' => '建箇頁',
 'delete' => '刪',
 'deletethispage' => '刪箇頁',
+'undeletethispage' => '弗删箇页',
 'undelete_short' => '復原消脫個$1個編寫',
 'viewdeleted_short' => '望̺$1个删脱编写',
 'protect' => '保',
@@ -250,7 +262,7 @@ $1',
 'pool-queuefull' => '池队列满哉',
 'pool-errorunknown' => '弗识个错误',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => '有关{{SITENAME}}',
 'aboutpage' => 'Project:有关',
 'copyright' => '内容侪拉$1下底发布。',
@@ -260,7 +272,6 @@ $1',
 'disclaimers' => '甮追問',
 'disclaimerpage' => 'Project:甮追問',
 'edithelp' => '编写帮助',
-'edithelppage' => 'Help:如何编辑页面',
 'helppage' => 'Help:目录',
 'mainpage' => '封面',
 'mainpage-description' => '封面',
@@ -331,12 +342,12 @@ $1',
 # General errors
 'error' => '错误',
 'databaseerror' => '数据库错误',
-'dberrortext' => '发生仔数据库查询语法错误，作兴是软件自身个错误所引起个。压末一趟数据库查询指令是：
-<blockquote><tt>$1</tt></blockquote>
-来自函数“<tt>$2</tt>”内。数据库返回错误“<tt>$3: $4</tt>”。',
-'dberrortextcl' => '发生了数据库查询语法错误。压末一趟数据库查询指令是：
-“$1”
-来自函数“$2”内。数据库返回错误“$3: $4”。',
+'databaseerror-text' => '數據庫討信出錯。
+嘸數說明軟件裏有一個bug。',
+'databaseerror-textcl' => '數據庫討信出錯。',
+'databaseerror-query' => '討信：$1',
+'databaseerror-function' => '功能ː $1',
+'databaseerror-error' => '出錯：$1',
 'laggedslavemode' => '警告: 页面可能弗包含最近个更新。',
 'readonly' => '數據庫鎖牢',
 'enterlockreason' => '请输入锁定个原因，包括预计解锁个辰光',
@@ -368,6 +379,7 @@ $1',
 'cannotdelete' => '无处删除页面或图像 "$1"。
 渠作兴已经拨别人家删除脱哉。',
 'cannotdelete-title' => '"$1"箇页删弗爻',
+'no-null-revision' => '"$1"页呒处建新个修改',
 'badtitle' => '坏标题',
 'badtitletext' => '所请求页面个标题是无效个、弗存在，跨语言或跨wiki链接个标题错误。渠作兴包含一只或多只弗好用拉标题里向字符。',
 'perfcached' => '下向是缓存数据，呒数弗是最新个。 A maximum of {{PLURAL:$1|one result is|$1 results are}} available in the cache.',
@@ -385,12 +397,15 @@ $1',
 'protectedinterface' => '箇页为箇维基个软件提供界面文本，锁牢定防乱用。
 加改全部维基个译文，用[//translatewiki.net/ translatewiki.net]，MediaWiki软件个本地化计划。',
 'editinginterface' => "'''警告：''' 侬来里编写个页面是畀软件用个界面文本。箇页变化会影响各许人个界面样子。假使要畀全部维基翻译，用 [//translatewiki.net/wiki/Main_Page?setlang=zh-hans translatewiki.net]，MediaWiki软件个本地化计划。",
-'sqlhidden' => '（SQL查询已隐藏）',
 'cascadeprotected' => '箇只页面拨保护拉许，因为箇只页面拨下底已经标注“联锁保护”个{{PLURAL:$1|一只|多只}}被保护页面包含：
 $2',
 'namespaceprotected' => "侬无没编辑'''$1'''名字空间里向页面个权限。",
 'customcssprotected' => '箇CSS页你呒处编，箇页有各许用户个私人设置。',
 'customjsprotected' => '箇JavaScript页你呒处编，箇页有各许用户个私人设置。',
+'mycustomcssprotected' => '箇CSS页你呒处编。',
+'mycustomjsprotected' => '箇JavaScript页你呒处编。',
+'myprivateinfoprotected' => '你个私人信息你呒处编。',
+'mypreferencesprotected' => '你个私人偏好你呒处编。',
 'ns-specialprotected' => '特殊页编辑是弗来三个。',
 'titleprotected' => "箇只标题已经拨[[User:$1|$1]]保护以防止创建。理由是''$2''。",
 'filereadonlyerror' => '"$1"文件呒处改，文件存勒 "$2" 是只读模式。管理员考虑畀渠锁牢个理由是："$3"。',
@@ -412,9 +427,16 @@ $2',
 'welcomecreation-msg' => '你个账号建起来哉。
 覅忘记哉走去改你个[[Special:Preferences|{{SITENAME}}个私人偏好]]。',
 'yourname' => '用户名:',
+'userlogin-yourname-ph' => '打进你侬个用户名',
+'createacct-another-username-ph' => '打进用户名',
 'yourpassword' => '密码:',
+'userlogin-yourpassword-ph' => '密码打进去',
+'createacct-yourpassword-ph' => '密码打进去',
 'yourpasswordagain' => '密码再打一遍:',
+'createacct-yourpasswordagain-ph' => '密码打一遍添',
 'remembermypassword' => '徕箇浏览器里畀我登进去个记牢（记$1{{PLURAL:$1|日|日}}）',
+'userlogin-remembermypassword' => '长期徕线里',
+'userlogin-signwithsecure' => '用保险链接',
 'yourdomainname' => '侬个域名：',
 'password-change-forbidden' => '箇wiki裏呒处改你侬个密码。',
 'externaldberror' => '迭个作兴是由于验证数据库错误或者侬拨禁止更新侬个外部账号。',
@@ -426,17 +448,42 @@ $2',
 'logout' => '登出',
 'userlogout' => '登出',
 'notloggedin' => '弗曾登录',
+'userlogin-noaccount' => '账号还呒？',
+'userlogin-joinproject' => '加进{{SITENAME}}',
 'nologin' => "你侬还呒有账号？'''$1'''。",
 'nologinlink' => '建新账号',
 'createaccount' => '建账号',
 'gotaccount' => "已经有仔帐号哉？ '''$1'''。",
 'gotaccountlink' => '登录',
 'userlogin-resetlink' => '忘记登录细节？',
+'userlogin-resetpassword-link' => '转设密码',
+'helplogin-url' => '帮助ː登进',
+'userlogin-helplink' => '[[{{MediaWiki:helplogin-url}}|登进帮忙]]',
+'userlogin-loggedin' => '你侬用{{GENDER:$1|$1}}登进来哉。用下向个表以别样身份登进。',
+'userlogin-createanother' => '建别样账号',
+'createacct-join' => '下向打进你侬个信息。',
+'createacct-another-join' => '下向打进新账号个信息。',
+'createacct-emailrequired' => '电子信地址',
+'createacct-emailoptional' => '电子信地址（填弗填由你）',
+'createacct-email-ph' => '畀你侬个电子信地址打进去',
+'createacct-another-email-ph' => '电子信地址打进去',
 'createaccountmail' => '用临时随便密码发到指定个电子信地址',
+'createacct-realname' => '真名字（随意）',
 'createaccountreason' => '理由：',
+'createacct-reason' => '理由：',
+'createacct-reason-ph' => '为何物建别样账号',
+'createacct-captcha' => '保险检查',
+'createacct-imgcaptcha-ph' => '畀上向望着个字打箇里',
+'createacct-submit' => '建你侬个账号',
+'createacct-another-submit' => '建别样账号',
+'createacct-benefit-heading' => '{{SITENAME}} 是搭你侬样个人建起个。',
+'createacct-benefit-body1' => '{{PLURAL:$1|编写}}',
+'createacct-benefit-body2' => '{{PLURAL:$1|页}}',
+'createacct-benefit-body3' => '此垡 {{PLURAL:$1|出力个人}}',
 'badretype' => '倷输入个密码搭倪个档案弗配。',
 'userexists' => '用戶名有人用哉。相勞爾揀別樣名字。',
 'loginerror' => '登录错误',
+'createacct-error' => '建账号出错',
 'createaccounterror' => '无法建立账户：$1',
 'nocookiesnew' => '侬个账户创建成功！Cookies像煞拨侬关拉许，请开开来再登录。',
 'nocookieslogin' => '本站利用Cookies进行用户登录，侬个Cookies像煞关拉许，请开开来再登录。',
@@ -486,8 +533,8 @@ $2',
 
 如果箇个账户创建错误个说话，侬可以忽略此信息。',
 'usernamehasherror' => '用户名里向弗好包含hash字符',
-'login-throttled' => '登录尝试忒多哉。
-请等脱歇再试。',
+'login-throttled' => '你侬试登忒多次哉。
+等 $1 再试试凑相。',
 'login-abort-generic' => '登录弗成功 - 流产',
 'loginlanguagelabel' => '语言：$1',
 'suspicious-userlogout' => '侬登出个要求已经拨回头脱，因为渠可能是由已损坏个浏览器或者缓存代理传送个。',
@@ -500,8 +547,8 @@ $2',
 'newpassword' => '新密码:',
 'retypenew' => '再打一遍新密码:',
 'resetpass_submit' => '设置密码再登录',
-'resetpass_success' => '密码修改成功！
-现在垃许登录...',
+'changepassword-success' => '密碼改好哉！
+能界登錄當中...',
 'resetpass_forbidden' => '密码弗好更改',
 'resetpass-no-info' => '侬必须登录仔再好直接进入箇只页面。',
 'resetpass-submit-loggedin' => '更改密码',
@@ -900,7 +947,6 @@ $1",
 'searchmenu-legend' => '搜索选项',
 'searchmenu-exists' => "'''箇wiki里有一页名字“[[:$1]]”哉'''",
 'searchmenu-new' => "'''徕箇wiki里建“[[:$1]]”页！'''",
-'searchhelp-url' => 'Help:目录',
 'searchmenu-prefix' => '[[Special:PrefixIndex/$1|浏览带箇只前缀个页面]]',
 'searchprofile-articles' => '内容页',
 'searchprofile-project' => '帮助搭项目页',
@@ -942,14 +988,6 @@ $1",
 'search-external' => '外部搜索',
 'searchdisabled' => '{{SITENAME}}个搜索已禁用。侬可以暂时使用Google搜索，须注意渠拉索引个{{SITENAME}}内容作兴会过时。',
 
-# Quickbar
-'qbsettings' => '快速导航排',
-'qbsettings-none' => '呒',
-'qbsettings-fixedleft' => '左许固定',
-'qbsettings-fixedright' => '右许固定',
-'qbsettings-floatingleft' => '左许氽移',
-'qbsettings-floatingright' => '右许氽移',
-
 # Preferences page
 'preferences' => '偏好',
 'mypreferences' => '偏好设定',
@@ -977,7 +1015,6 @@ $1",
 'resetprefs' => '清除弗曾保存个更改',
 'restoreprefs' => '复原全部默认设定',
 'prefs-editing' => '编辑',
-'prefs-edit-boxsize' => '编辑框尺寸',
 'rows' => '行：',
 'columns' => '列：',
 'searchresultshead' => '搜索',
@@ -987,7 +1024,6 @@ $1",
 'recentchangesdays-max' => '最长 $1 日',
 'recentchangescount' => '默认显示个编辑数：',
 'prefs-help-recentchangescount' => '箇个包括近段辰光个改动、页面历史以及日志。',
-'prefs-help-watchlist-token' => '此栏填写个密钥可以生成侬监视列表个RSS源。任何知晓本栏密钥个人侪好阅读侬个监视列表，因此请使用安全数值。箇搭已提供一只随机生成个数值供侬挑拣：$1',
 'savedprefs' => '倷个偏好已经保存哉。',
 'timezonelegend' => '时区：',
 'localtime' => '当地辰光：',
@@ -1054,6 +1090,7 @@ $1",
 'right-reupload' => '文件以舊換新',
 'right-delete' => '刪頁面',
 'right-browsearchive' => '搜尋已刪頁',
+'right-viewmywatchlist' => '望自己個關注表',
 'right-sendemail' => '發郵件畀各許人',
 
 # Special:Log/newusers
@@ -1083,9 +1120,14 @@ $1",
 'action-userrights-interwiki' => '編用戶徠各許維基個權',
 'action-siteadmin' => '數據庫鎖牢要勿開鎖',
 'action-sendemail' => '發郵件',
+'action-editmywatchlist' => '編關注表',
+'action-viewmywatchlist' => '望關注表',
+'action-viewmyprivateinfo' => '望私人信息',
+'action-editmyprivateinfo' => '編私人信息',
 
 # Recent changes
 'nchanges' => '$1趟更改',
+'enhancedrc-history' => '歷史',
 'recentchanges' => '箇阶段个变化',
 'recentchanges-legend' => '箇阶段个变化选项',
 'recentchanges-summary' => '登该个页面浪跟踪最近对维基百科个改动。',
@@ -1200,6 +1242,8 @@ $1",
 'listfiles_user' => '用户',
 'listfiles_size' => '尺寸 （bytes）',
 'listfiles_description' => '描述',
+'listfiles-latestversion-yes' => '正是',
+'listfiles-latestversion-no' => '弗是',
 
 # File description page
 'file-anchor-link' => '文件',
@@ -1251,6 +1295,10 @@ $1",
 
 # Random page
 'randompage' => '随便望望',
+
+# Random page in category
+'randomincategory' => '分類裏個隨便一頁',
+'randomincategory-selectcategory-submit' => '去',
 
 # Statistics
 'statistics' => '统计',
@@ -1497,7 +1545,6 @@ $1",
 'blocklogtext' => '箇是用戶封搭解封操作個記錄。自動封個IP地址弗排。到[[Special:BlockList|IP 封表]]裏望目前生效個封表。',
 'unblocklogentry' => '$1已经拨解封',
 'block-log-flags-nocreate' => '建账号禁用哉',
-'proxyblocksuccess' => '好哉。',
 
 # Developer tools
 'lockdb' => '鎖數據庫',
@@ -1618,6 +1665,7 @@ $1",
 'tooltip-rollback' => '揿一记“回转”就回退到上一位贡献者个编辑状态',
 'tooltip-undo' => '“撤销”可以恢复该编辑并且垃拉预览模式下头打开编辑表单。渠允许垃拉摘要里向说明原因。',
 'tooltip-summary' => '打进短摘要',
+'tooltip-iwiki' => '̩$1 - $2',
 
 # Attribution
 'anonymous' => '{{SITENAME}}浪个匿名用户',
@@ -1676,7 +1724,7 @@ Variants for Chinese language
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-artist' => '作者',
 
 'exif-componentsconfiguration-0' => '弗存在',
@@ -1770,13 +1818,15 @@ $5
 # Special:Version
 'version' => '版本',
 
-# Special:FilePath
-'filepath' => '文件路径',
-'filepath-page' => '文件：',
-'filepath-submit' => '路径',
-
 # Special:SpecialPages
 'specialpages' => '特殊页',
+
+# Special:Tags
+'tags-active-yes' => '好',
+'tags-active-no' => '弗',
+
+# Database error messages
+'dberr-info-hidden' => '（數據庫服務器連弗上）',
 
 # New logging system
 'revdelete-restricted' => '已将限制应用到管理员',

@@ -81,8 +81,8 @@ class ApiQueryIWLinks extends ApiQueryBase {
 				$this->addOption( 'ORDER BY', 'iwl_from' . $sort );
 			} else {
 				$this->addOption( 'ORDER BY', array(
-						'iwl_title' . $sort,
-						'iwl_from' . $sort
+						'iwl_from' . $sort,
+						'iwl_title' . $sort
 				));
 			}
 		} else {
@@ -90,9 +90,10 @@ class ApiQueryIWLinks extends ApiQueryBase {
 			if ( count( $this->getPageSet()->getGoodTitles() ) == 1 ) {
 				$this->addOption( 'ORDER BY', 'iwl_prefix' . $sort );
 			} else {
-				$this->addOption( 'ORDER BY', array (
+				$this->addOption( 'ORDER BY', array(
 						'iwl_from' . $sort,
-						'iwl_prefix' . $sort
+						'iwl_prefix' . $sort,
+						'iwl_title' . $sort
 				));
 			}
 		}
@@ -191,5 +192,9 @@ class ApiQueryIWLinks extends ApiQueryBase {
 		return array(
 			'api.php?action=query&prop=iwlinks&titles=Main%20Page' => 'Get interwiki links from the [[Main Page]]',
 		);
+	}
+
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Iwlinks';
 	}
 }

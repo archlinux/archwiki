@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @group WebRequest
+ */
 class WebRequestTest extends MediaWikiTestCase {
 	protected $oldServer;
 
@@ -17,8 +20,9 @@ class WebRequestTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider provideDetectServer
+	 * @covers WebRequest::detectServer
 	 */
-	function testDetectServer( $expected, $input, $description ) {
+	public function testDetectServer( $expected, $input, $description ) {
 		$_SERVER = $input;
 		$result = WebRequest::detectServer();
 		$this->assertEquals( $expected, $result, $description );
@@ -100,12 +104,23 @@ class WebRequestTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider provideGetIP
+	 * @covers WebRequest::getIP
 	 */
-	function testGetIP( $expected, $input, $squid, $private, $description ) {
-		global $wgSquidServersNoPurge, $wgUsePrivateIPs;
+	public function testGetIP( $expected, $input, $squid, $xffList, $private, $description ) {
 		$_SERVER = $input;
-		$wgSquidServersNoPurge = $squid;
-		$wgUsePrivateIPs = $private;
+		$this->setMwGlobals( array(
+			'wgSquidServersNoPurge' => $squid,
+			'wgUsePrivateIPs' => $private,
+			'wgHooks' => array(
+				'IsTrustedProxy' => array(
+					function( &$ip, &$trusted ) use ( $xffList ) {
+						$trusted = $trusted || in_array( $ip, $xffList );
+						return true;
+					}
+				)
+			)
+		) );
+
 		$request = new WebRequest();
 		$result = $request->getIP();
 		$this->assertEquals( $expected, $result, $description );
@@ -119,6 +134,7 @@ class WebRequestTest extends MediaWikiTestCase {
 					'REMOTE_ADDR' => '127.0.0.1'
 				),
 				array(),
+				array(),
 				false,
 				'Simple IPv4'
 			),
@@ -128,8 +144,20 @@ class WebRequestTest extends MediaWikiTestCase {
 					'REMOTE_ADDR' => '::1'
 				),
 				array(),
+				array(),
 				false,
 				'Simple IPv6'
+			),
+			array(
+				'12.0.0.1',
+				array(
+					'REMOTE_ADDR' => 'abcd:0001:002:03:4:555:6666:7777',
+					'HTTP_X_FORWARDED_FOR' => '12.0.0.1, abcd:0001:002:03:4:555:6666:7777',
+				),
+				array( 'ABCD:1:2:3:4:555:6666:7777' ),
+				array(),
+				false,
+				'IPv6 normalisation'
 			),
 			array(
 				'12.0.0.3',
@@ -138,6 +166,7 @@ class WebRequestTest extends MediaWikiTestCase {
 					'HTTP_X_FORWARDED_FOR' => '12.0.0.3, 12.0.0.2'
 				),
 				array( '12.0.0.1', '12.0.0.2' ),
+				array(),
 				false,
 				'With X-Forwaded-For'
 			),
@@ -147,6 +176,7 @@ class WebRequestTest extends MediaWikiTestCase {
 					'REMOTE_ADDR' => '12.0.0.1',
 					'HTTP_X_FORWARDED_FOR' => '12.0.0.3, 12.0.0.2'
 				),
+				array(),
 				array(),
 				false,
 				'With X-Forwaded-For and disallowed server'
@@ -158,6 +188,73 @@ class WebRequestTest extends MediaWikiTestCase {
 					'HTTP_X_FORWARDED_FOR' => '12.0.0.3, 12.0.0.2'
 				),
 				array( '12.0.0.1' ),
+				array(),
+				false,
+				'With multiple X-Forwaded-For and only one allowed server'
+			),
+			array(
+				'10.0.0.3',
+				array(
+					'REMOTE_ADDR' => '12.0.0.2',
+					'HTTP_X_FORWARDED_FOR' => '10.0.0.4, 10.0.0.3, 12.0.0.2'
+				),
+				array( '12.0.0.1', '12.0.0.2' ),
+				array(),
+				false,
+				'With X-Forwaded-For and private IP (from cache proxy)'
+			),
+			array(
+				'10.0.0.4',
+				array(
+					'REMOTE_ADDR' => '12.0.0.2',
+					'HTTP_X_FORWARDED_FOR' => '10.0.0.4, 10.0.0.3, 12.0.0.2'
+				),
+				array( '12.0.0.1', '12.0.0.2', '10.0.0.3' ),
+				array(),
+				true,
+				'With X-Forwaded-For and private IP (allowed)'
+			),
+			array(
+				'10.0.0.4',
+				array(
+					'REMOTE_ADDR' => '12.0.0.2',
+					'HTTP_X_FORWARDED_FOR' => '10.0.0.4, 10.0.0.3, 12.0.0.2'
+				),
+				array( '12.0.0.1', '12.0.0.2' ),
+				array( '10.0.0.3' ),
+				true,
+				'With X-Forwaded-For and private IP (allowed)'
+			),
+			array(
+				'10.0.0.3',
+				array(
+					'REMOTE_ADDR' => '12.0.0.2',
+					'HTTP_X_FORWARDED_FOR' => '10.0.0.4, 10.0.0.3, 12.0.0.2'
+				),
+				array( '12.0.0.1', '12.0.0.2' ),
+				array( '10.0.0.3' ),
+				false,
+				'With X-Forwaded-For and private IP (disallowed)'
+			),
+			array(
+				'12.0.0.3',
+				array(
+					'REMOTE_ADDR' => '12.0.0.1',
+					'HTTP_X_FORWARDED_FOR' => '12.0.0.3, 12.0.0.2'
+				),
+				array(),
+				array( '12.0.0.1', '12.0.0.2' ),
+				false,
+				'With X-Forwaded-For'
+			),
+			array(
+				'12.0.0.2',
+				array(
+					'REMOTE_ADDR' => '12.0.0.1',
+					'HTTP_X_FORWARDED_FOR' => '12.0.0.3, 12.0.0.2'
+				),
+				array(),
+				array( '12.0.0.1' ),
 				false,
 				'With multiple X-Forwaded-For and only one allowed server'
 			),
@@ -167,27 +264,19 @@ class WebRequestTest extends MediaWikiTestCase {
 					'REMOTE_ADDR' => '12.0.0.2',
 					'HTTP_X_FORWARDED_FOR' => '10.0.0.3, 12.0.0.2'
 				),
-				array( '12.0.0.1', '12.0.0.2' ),
+				array(),
+				array( '12.0.0.2' ),
 				false,
-				'With X-Forwaded-For and private IP'
-			),
-			array(
-				'10.0.0.3',
-				array(
-					'REMOTE_ADDR' => '12.0.0.2',
-					'HTTP_X_FORWARDED_FOR' => '10.0.0.3, 12.0.0.2'
-				),
-				array( '12.0.0.1', '12.0.0.2' ),
-				true,
-				'With X-Forwaded-For and private IP (allowed)'
+				'With X-Forwaded-For and private IP and hook (disallowed)'
 			),
 		);
 	}
 
 	/**
 	 * @expectedException MWException
+	 * @covers WebRequest::getIP
 	 */
-	function testGetIpLackOfRemoteAddrThrowAnException() {
+	public function testGetIpLackOfRemoteAddrThrowAnException() {
 		$request = new WebRequest();
 		# Next call throw an exception about lacking an IP
 		$request->getIP();
@@ -211,8 +300,9 @@ class WebRequestTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider provideLanguageData
+	 * @covers WebRequest::getAcceptLang
 	 */
-	function testAcceptLang( $acceptLanguageHeader, $expectedLanguages, $description ) {
+	public function testAcceptLang( $acceptLanguageHeader, $expectedLanguages, $description ) {
 		$_SERVER = array( 'HTTP_ACCEPT_LANGUAGE' => $acceptLanguageHeader );
 		$request = new WebRequest();
 		$this->assertSame( $request->getAcceptLang(), $expectedLanguages, $description );

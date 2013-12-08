@@ -588,9 +588,6 @@ Wòateŋu akpɔ alesi woŋlɔe.',
 # Special:Version
 'version' => 'Tata',
 
-# Special:FilePath
-'filepath-submit' => 'Yi',
-
 # Special:FileDuplicateSearch
 'fileduplicatesearch-submit' => 'Dii',
 

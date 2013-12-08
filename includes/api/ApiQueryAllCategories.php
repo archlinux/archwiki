@@ -76,7 +76,7 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 		if ( $dir == 'newer' ) {
 			$this->addWhereRange( 'cat_pages', 'newer', $min, $max );
 		} else {
-			$this->addWhereRange( 'cat_pages', 'older', $max, $min);
+			$this->addWhereRange( 'cat_pages', 'older', $max, $min );
 		}
 
 		if ( isset( $params['prefix'] ) ) {
@@ -121,7 +121,7 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 				$pages[] = $titleObj;
 			} else {
 				$item = array();
-				$result->setContent( $item, $titleObj->getText() );
+				ApiResult::setContent( $item, $titleObj->getText() );
 				if ( isset( $prop['size'] ) ) {
 					$item['size'] = intval( $row->cat_pages );
 					$item['pages'] = $row->cat_pages - $row->cat_subcats - $row->cat_files;

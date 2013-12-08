@@ -123,17 +123,17 @@ class MediaWikiSite extends Site {
 				'converttitles' => true,
 				'format' => 'json',
 				'titles' => $pageName,
-				//@todo: options for maxlag and maxage
+				// @todo options for maxlag and maxage
 				// Note that maxlag will lead to a long delay before a reply is made,
 				// but that maxage can avoid the extreme delay. On the other hand
 				// maxage could be nice to use anyhow as it stops unnecessary requests.
 				// Also consider smaxage if maxage is used.
 			);
 
-			$url = $this->getFileUrl( 'api.php' ) . '?' . wfArrayToCgi( $args );
+			$url = wfAppendQuery( $this->getFileUrl( 'api.php' ), $args );
 
 			// Go on call the external site
-			//@todo: we need a good way to specify a timeout here.
+			// @todo we need a good way to specify a timeout here.
 			$ret = Http::get( $url );
 		}
 
@@ -185,7 +185,7 @@ class MediaWikiSite extends Site {
 		// the single page in the "pages" substructure.
 		if ( isset( $externalData['query']['pages'] ) ) {
 			$pages = array_values( $externalData['query']['pages'] );
-			if ( count( $pages) === 1 ) {
+			if ( count( $pages ) === 1 ) {
 				return $pages[0];
 			}
 		}

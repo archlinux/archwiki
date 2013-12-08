@@ -1,9 +1,16 @@
 <?php
 
 class PreprocessorTest extends MediaWikiTestCase {
-	var $mTitle = 'Page title';
-	var $mPPNodeCount = 0;
-	var $mOptions;
+	protected $mTitle = 'Page title';
+	protected $mPPNodeCount = 0;
+	/**
+	 * @var ParserOptions
+	 */
+	protected $mOptions;
+	/**
+	 * @var Preprocessor
+	 */
+	protected $mPreprocessor;
 
 	protected function setUp() {
 		global $wgParserConf, $wgContLang;
@@ -18,7 +25,7 @@ class PreprocessorTest extends MediaWikiTestCase {
 		return array( 'gallery', 'display map' /* Used by Maps, see r80025 CR */, '/foo' );
 	}
 
-	function provideCases() {
+	public static function provideCases() {
 		return array(
 			array( "Foo", "<root>Foo</root>" ),
 			array( "<!-- Foo -->", "<root><comment>&lt;!-- Foo --&gt;</comment></root>" ),
@@ -115,7 +122,7 @@ class PreprocessorTest extends MediaWikiTestCase {
 	 * @param string $wikiText
 	 * @return string
 	 */
-	function preprocessToXml( $wikiText ) {
+	protected function preprocessToXml( $wikiText ) {
 		if ( method_exists( $this->mPreprocessor, 'preprocessToXml' ) ) {
 			return $this->normalizeXml( $this->mPreprocessor->preprocessToXml( $wikiText ) );
 		}
@@ -134,21 +141,22 @@ class PreprocessorTest extends MediaWikiTestCase {
 	 * @param string $xml
 	 * @return string
 	 */
-	function normalizeXml( $xml ) {
+	protected function normalizeXml( $xml ) {
 		return preg_replace( '!<([a-z]+)/>!', '<$1></$1>', str_replace( ' />', '/>', $xml ) );
 	}
 
 	/**
 	 * @dataProvider provideCases
+	 * @covers Preprocessor_DOM::preprocessToXml
 	 */
-	function testPreprocessorOutput( $wikiText, $expectedXml ) {
+	public function testPreprocessorOutput( $wikiText, $expectedXml ) {
 		$this->assertEquals( $this->normalizeXml( $expectedXml ), $this->preprocessToXml( $wikiText ) );
 	}
 
 	/**
 	 * These are more complex test cases taken out of wiki articles.
 	 */
-	function provideFiles() {
+	public static function provideFiles() {
 		return array(
 			array( "QuoteQuran" ), # http://en.wikipedia.org/w/index.php?title=Template:QuoteQuran/sandbox&oldid=237348988 GFDL + CC-BY-SA by Striver
 			array( "Factorial" ), # http://en.wikipedia.org/w/index.php?title=Template:Factorial&oldid=98548758 GFDL + CC-BY-SA by Polonium
@@ -160,8 +168,9 @@ class PreprocessorTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider provideFiles
+	 * @covers Preprocessor_DOM::preprocessToXml
 	 */
-	function testPreprocessorOutputFiles( $filename ) {
+	public function testPreprocessorOutputFiles( $filename ) {
 		$folder = __DIR__ . "/../../../parser/preprocess";
 		$wikiText = file_get_contents( "$folder/$filename.txt" );
 		$output = $this->preprocessToXml( $wikiText );
@@ -180,7 +189,7 @@ class PreprocessorTest extends MediaWikiTestCase {
 	/**
 	 * Tests from Bug 28642 · https://bugzilla.wikimedia.org/28642
 	 */
-	function provideHeadings() {
+	public static function provideHeadings() {
 		return array( /* These should become headings: */
 			array( "== h ==<!--c1-->", "<root><h level=\"2\" i=\"1\">== h ==<comment>&lt;!--c1--&gt;</comment></h></root>" ),
 			array( "== h == 	<!--c1-->", "<root><h level=\"2\" i=\"1\">== h == 	<comment>&lt;!--c1--&gt;</comment></h></root>" ),
@@ -209,11 +218,11 @@ class PreprocessorTest extends MediaWikiTestCase {
 			array( "== h ==  <!--c1-->  <!--c2--><!--c3-->  ", "<root><h level=\"2\" i=\"1\">== h ==  <comment>&lt;!--c1--&gt;</comment>  <comment>&lt;!--c2--&gt;</comment><comment>&lt;!--c3--&gt;</comment>  </h></root>" ),
 			array( "== h ==  <!--c1--><!--c2-->  <!--c3-->  ", "<root><h level=\"2\" i=\"1\">== h ==  <comment>&lt;!--c1--&gt;</comment><comment>&lt;!--c2--&gt;</comment>  <comment>&lt;!--c3--&gt;</comment>  </h></root>" ),
 			array( "== h ==  <!--c1-->  <!--c2-->  <!--c3-->  ", "<root><h level=\"2\" i=\"1\">== h ==  <comment>&lt;!--c1--&gt;</comment>  <comment>&lt;!--c2--&gt;</comment>  <comment>&lt;!--c3--&gt;</comment>  </h></root>" ),
+			array( "== h ==<!--c1--> 	<!--c2-->", "<root><h level=\"2\" i=\"1\">== h ==<comment>&lt;!--c1--&gt;</comment> 	<comment>&lt;!--c2--&gt;</comment></h></root>" ),
+			array( "== h == 	<!--c1--> 	<!--c2-->", "<root><h level=\"2\" i=\"1\">== h == 	<comment>&lt;!--c1--&gt;</comment> 	<comment>&lt;!--c2--&gt;</comment></h></root>" ),
+			array( "== h ==<!--c1--> 	<!--c2--> 	", "<root><h level=\"2\" i=\"1\">== h ==<comment>&lt;!--c1--&gt;</comment> 	<comment>&lt;!--c2--&gt;</comment> 	</h></root>" ),
 
 			/* These are not working: */
-			array( "== h ==<!--c1--> 	<!--c2-->", "<root>== h ==<comment>&lt;!--c1--&gt;</comment> 	<comment>&lt;!--c2--&gt;</comment></root>" ),
-			array( "== h == 	<!--c1--> 	<!--c2-->", "<root>== h == 	<comment>&lt;!--c1--&gt;</comment> 	<comment>&lt;!--c2--&gt;</comment></root>" ),
-			array( "== h ==<!--c1--> 	<!--c2--> 	", "<root>== h ==<comment>&lt;!--c1--&gt;</comment> 	<comment>&lt;!--c2--&gt;</comment> 	</root>" ),
 			array( "== h == x <!--c1--><!--c2--><!--c3-->  ", "<root>== h == x <comment>&lt;!--c1--&gt;</comment><comment>&lt;!--c2--&gt;</comment><comment>&lt;!--c3--&gt;</comment>  </root>" ),
 			array( "== h ==<!--c1--> x <!--c2--><!--c3-->  ", "<root>== h ==<comment>&lt;!--c1--&gt;</comment> x <comment>&lt;!--c2--&gt;</comment><comment>&lt;!--c3--&gt;</comment>  </root>" ),
 			array( "== h ==<!--c1--><!--c2--><!--c3--> x ", "<root>== h ==<comment>&lt;!--c1--&gt;</comment><comment>&lt;!--c2--&gt;</comment><comment>&lt;!--c3--&gt;</comment> x </root>" ),
@@ -222,8 +231,9 @@ class PreprocessorTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider provideHeadings
+	 * @covers Preprocessor_DOM::preprocessToXml
 	 */
-	function testHeadings( $wikiText, $expectedXml ) {
+	public function testHeadings( $wikiText, $expectedXml ) {
 		$this->assertEquals( $this->normalizeXml( $expectedXml ), $this->preprocessToXml( $wikiText ) );
 	}
 }

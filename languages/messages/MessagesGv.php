@@ -59,13 +59,13 @@ $messages = array(
 'tog-shownumberswatching' => 'Taishbyn earroo ny h-ymmydeyryn ta freill arrey',
 'tog-oldsig' => "Roie-haishbynys jeh'n screeuys t'ayn hannah:",
 'tog-fancysig' => 'Stiur y screeuys myr wikiteks (gyn kiangley seyr-obbragh)',
-'tog-showjumplinks' => 'Doostey kianglaghyn roshtynagh "lheim dys"',
 'tog-watchlisthideown' => 'Follee my arraghyn hene er my rolley arrey',
 'tog-watchlisthidebots' => 'Follee arraghyn botyn er my rolley arrey',
 'tog-watchlisthideminor' => 'Follee myn-arraghyn er my rolley arrey',
 'tog-watchlisthidepatrolled' => 'Follee arraghyn er nyn scrutaghey er my rolley arrey',
 'tog-ccmeonemails' => 'Cur coip dou jeh dagh post-l verrym da ymmydeyr elley',
 'tog-showhiddencats' => 'Taishbyn ny ronnaghyn follit',
+'tog-useeditwarning' => 'Cur raaue dou my ta mee faagail duillag reaghey gyn sauail yn obbyr jeant aym',
 
 'underline-always' => 'Dagh keayrt',
 'underline-never' => 'Ny jean eh arragh',
@@ -240,7 +240,7 @@ $messages = array(
 'jumptosearch' => 'ronsee',
 'pool-errorunknown' => 'Doilleeid gyn enney',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Mychione {{SITENAME}}',
 'aboutpage' => 'Project:Mychione',
 'copyright' => 'Ta stoo ry-gheddyn rere $1.',
@@ -250,7 +250,6 @@ $messages = array(
 'disclaimers' => 'Jiooldeyderyn',
 'disclaimerpage' => 'Project:Obbalys cadjin',
 'edithelp' => 'Cooney reaghee',
-'edithelppage' => 'Help:Reaghey',
 'helppage' => 'Help:Cummal',
 'mainpage' => 'Ard-ghuillag',
 'mainpage-description' => 'Ard-ghuillag',
@@ -332,7 +331,6 @@ Cur-shiu coontey jeh da [[Special:ListUsers/sysop|reireyder]], as goaill stiagh 
 'actionthrottledtext' => "Myr saase noi-spam, cha nod oo jannoo yn obbyr shoh rouyr keayrtyn ayns tammylt beg, as t'ou er roshtyn yn earroo smoo.  Jean eab noa dy gerrid, my saillt.",
 'protectedpagetext' => "Ta'n duillag shoh fo ghlass, as cha nod oo eshyn y reaghey.",
 'viewsourcetext' => 'Foddee oo jeeagh as jean aascreeuyn er bun ny duillag shoh:',
-'sqlhidden' => '(briaght SQL follit)',
 'namespaceprotected' => "Cha nel kiart ayd duillagyn 'sy reamys '''$1''' y reaghey.",
 'ns-specialprotected' => 'Cha nod oo reaghey duillagyn er lheh.',
 
@@ -504,6 +502,8 @@ Foddee shiu goll er ash as reaghey duillag t'ayn nish, ny [[Special:UserLogin|lo
 
 By chair dhyt smooinagh vel eh kiart goll er oai lesh reaghey yn duillag shoh.<br />
 Ta lioar ny scryssaghyn magh kiarit ayns shoh rere dty chaays hene:",
+'editwarning-warning' => "My faagys oo y duillag, hed caghlaaghyn erbee er coayl, foddee.
+My t'ou uss loggalt stiagh, foddee oo lhiettal y raaue shoh 'sy tosheeaghtyn ayd, 'sy rheynn \"Reaghey\".",
 
 # Account creation failure
 'cantcreateaccounttitle' => 'Cha nod coontys y chroo',
@@ -577,7 +577,6 @@ Ogher: '''({{int:cur}})''' = anchaslyssyn rish y lhieggan t'ayn nish,
 'shown-title' => 'Taishbyn $1 {{PLURAL:$1|eiyrtys|eiyrtyssyn}} er dagh duillag',
 'viewprevnext' => 'Jeeagh er ($1 {{int:pipe-separator}} $2) ($3)',
 'searchmenu-new' => "'''Croo yn duillag \"[[:\$1]]\" er y wiki shoh!'''",
-'searchhelp-url' => 'Help:Cummal',
 'searchprofile-articles' => 'Duillagyn cummal',
 'searchprofile-project' => 'Duillagyn Coonee as Shalee',
 'searchprofile-everything' => 'Dagh red',
@@ -605,9 +604,6 @@ My t'ou uss son ronsaghey dagh cooid (as shen goaill stiagh duillagyn resooney, 
 'powersearch-redir' => 'Cur aa-enmyssyn er y rolley',
 'powersearch-field' => 'Ronsee er son',
 'search-external' => 'Ronsaghey mooie',
-
-# Quickbar
-'qbsettings-none' => 'Veg',
 
 # Preferences page
 'preferences' => 'Tosheeaghtyn',
@@ -776,7 +772,6 @@ My bailliu eh y chiarail, bee eh ymmydit son cur gys lieh y chur dhyt er son yn 
 'recentchangeslinked-feed' => 'Caghlaaghyn-vooinjerys',
 'recentchangeslinked-toolbox' => 'Caghlaaghyn conastagh',
 'recentchangeslinked-title' => 'Caghlaaghyn bentyn rish "$1"',
-'recentchangeslinked-noresult' => 'Cha nel caghlaa erbee er duillagyn kianglt car y traa taishbynit.',
 'recentchangeslinked-summary' => "Shoh rolley caghlaaghyn va jeant er duillagyn kianglt veih duillag sonrit (ny er olteynyn ronney sonrit).<br />
 Ta duillagyn er [[Special:Watchlist|dty rolley arrey]] ayns '''clou trome'''.",
 'recentchangeslinked-page' => 'Ennym y duillag:',
@@ -875,8 +870,6 @@ Ta duillagyn er [[Special:Watchlist|dty rolley arrey]] ayns '''clou trome'''.",
 'statistics' => 'Staydraa',
 'statistics-header-users' => 'Staydraa ymmydeyr',
 'statistics-pages' => 'Duillagyn',
-
-'disambiguations' => 'Duillagyn ta kianglt rish duillagyn reddaghey',
 
 'doubleredirects' => 'Aa-enmyssyn dooblagh',
 
@@ -1193,7 +1186,6 @@ Shoh ny reaghaghyn roie da'n duillag '''$1''':",
 'unblocklogentry' => '$1 er ny neughlassey magh',
 'block-log-flags-anononly' => 'ymmydeyryn neuenmyssit ynrican',
 'block-log-flags-nocreate' => 'gyn kiart coontyssyn y chroo',
-'proxyblocksuccess' => 'Jeant.',
 
 # Move page
 'move-page' => '$1 y scughey',
@@ -1367,7 +1359,7 @@ Bee adsyn elley follit dy seyr-obbragh.<br />
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Lheead',
 'exif-imagelength' => 'Yrjid',
 'exif-ycbcrpositioning' => 'Soie Y as C',
@@ -1464,9 +1456,6 @@ Bee adsyn elley follit dy seyr-obbragh.<br />
 'version-version' => '(Lhieggan $1)',
 'version-license' => 'Kiedoonys',
 'version-software-version' => 'Lhieggan',
-
-# Special:FilePath
-'filepath-page' => 'Coadan:',
 
 # Special:FileDuplicateSearch
 'fileduplicatesearch-filename' => 'Ennym y choadan:',

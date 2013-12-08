@@ -34,7 +34,7 @@ class RandomImageGenerator {
 	private $shapesToDraw = 5;
 
 	/**
-	 * Orientations: 0th row, 0th column, EXIF orientation code, rotation 2x2 matrix that is opposite of orientation
+	 * Orientations: 0th row, 0th column, Exif orientation code, rotation 2x2 matrix that is opposite of orientation
 	 * n.b. we do not handle the 'flipped' orientations, which is why there is no entry for 2, 4, 5, or 7. Those
 	 * seem to be rare in real images anyway
 	 * (we also would need a non-symmetric shape for the images to test those, like a letter F)
@@ -108,6 +108,7 @@ class RandomImageGenerator {
 		foreach ( $filenames as $filename ) {
 			$this->{$imageWriteMethod}( $this->getImageSpec(), $format, $filename );
 		}
+
 		return $filenames;
 	}
 
@@ -156,7 +157,6 @@ class RandomImageGenerator {
 		}
 
 		return $filenames;
-
 	}
 
 
@@ -196,7 +196,6 @@ class RandomImageGenerator {
 				array( 'x' => $originX, 'y' => $originY - $radius )
 			);
 			$draws[] = $draw;
-
 		}
 
 		$spec['draws'] = $draws;
@@ -216,6 +215,7 @@ class RandomImageGenerator {
 		foreach ( $shape as $point ) {
 			$points[] = $point['x'] . ',' . $point['y'];
 		}
+
 		return join( " ", $points );
 	}
 
@@ -304,7 +304,7 @@ class RandomImageGenerator {
 
 	/**
 	 * Given an image specification, produce rotated version
-	 * This is used when simulating a rotated image capture with EXIF orientation
+	 * This is used when simulating a rotated image capture with Exif orientation
 	 * @param $spec Object returned by getImageSpec
 	 * @param $matrix 2x2 transformation matrix
 	 * @return transformed Spec
@@ -337,6 +337,7 @@ class RandomImageGenerator {
 			}
 			$tSpec['draws'][] = $tDraw;
 		}
+
 		return $tSpec;
 	}
 
@@ -384,6 +385,7 @@ class RandomImageGenerator {
 		$command = wfEscapeShellArg( $wgImageMagickConvertCommand ) . " " . implode( " ", $args );
 		$retval = null;
 		wfShellExec( $command, $retval );
+
 		return ( $retval === 0 );
 	}
 
@@ -397,6 +399,7 @@ class RandomImageGenerator {
 		for ( $i = 0; $i <= 2; $i++ ) {
 			$components[] = mt_rand( 0, 255 );
 		}
+
 		return 'rgb(' . join( ', ', $components ) . ')';
 	}
 
@@ -414,6 +417,7 @@ class RandomImageGenerator {
 		for ( $i = 0; $i < $count; $i += 2 ) {
 			$pairs[] = array( $lines[$i], $lines[$i + 1] );
 		}
+
 		return $pairs;
 	}
 
@@ -461,5 +465,4 @@ class RandomImageGenerator {
 
 		return $lines;
 	}
-
 }

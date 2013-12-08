@@ -37,10 +37,42 @@ abstract class RevDel_List extends RevisionListBase {
 	 * Get the DB field name associated with the ID list.
 	 * This used to populate the log_search table for finding log entries.
 	 * Override this function.
-	 * @return null
+	 * @return string|null
 	 */
 	public static function getRelationType() {
 		return null;
+	}
+
+	/**
+	 * Get the user right required for this list type
+	 * Override this function.
+	 * @since 1.22
+	 * @return string|null
+	 */
+	public static function getRestriction() {
+		return null;
+	}
+
+	/**
+	 * Get the revision deletion constant for this list type
+	 * Override this function.
+	 * @since 1.22
+	 * @return int|null
+	 */
+	public static function getRevdelConstant() {
+		return null;
+	}
+
+	/**
+	 * Suggest a target for the revision deletion
+	 * Optionally override this function.
+	 * @since 1.22
+	 * @param Title|null $target User-supplied target
+	 * @param array $ids
+	 * @return Title|null
+	 */
+	public static function suggestTarget( $target, array $ids ) {
+		return $target;
 	}
 
 	/**
@@ -68,11 +100,11 @@ abstract class RevDel_List extends RevisionListBase {
 
 		for ( $this->reset(); $this->current(); $this->next() ) {
 			$item = $this->current();
-			unset( $missing[ $item->getId() ] );
+			unset( $missing[$item->getId()] );
 
 			$oldBits = $item->getBits();
 			// Build the actual new rev_deleted bitfield
-			$newBits = SpecialRevisionDelete::extractBitfield( $bitPars, $oldBits );
+			$newBits = RevisionDeleter::extractBitfield( $bitPars, $oldBits );
 
 			if ( $oldBits == $newBits ) {
 				$status->warning( 'revdelete-no-change', $item->formatDate(), $item->formatTime() );
@@ -94,14 +126,14 @@ abstract class RevDel_List extends RevisionListBase {
 			}
 			if ( !$item->canView() ) {
 				// Cannot access this revision
-				$msg = ($opType == 'show') ?
+				$msg = ( $opType == 'show' ) ?
 					'revdelete-show-no-access' : 'revdelete-modify-no-access';
 				$status->error( $msg, $item->formatDate(), $item->formatTime() );
 				$status->failCount++;
 				continue;
 			}
 			// Cannot just "hide from Sysops" without hiding any fields
-			if( $newBits == Revision::DELETED_RESTRICTED ) {
+			if ( $newBits == Revision::DELETED_RESTRICTED ) {
 				$status->warning( 'revdelete-only-restricted', $item->formatDate(), $item->formatTime() );
 				$status->failCount++;
 				continue;
@@ -113,9 +145,9 @@ abstract class RevDel_List extends RevisionListBase {
 			if ( $ok ) {
 				$idsForLog[] = $item->getId();
 				$status->successCount++;
-				if( $item->getAuthorId() > 0 ) {
+				if ( $item->getAuthorId() > 0 ) {
 					$authorIds[] = $item->getAuthorId();
-				} elseif( IP::isIPAddress( $item->getAuthorName() ) ) {
+				} elseif ( IP::isIPAddress( $item->getAuthorName() ) ) {
 					$authorIPs[] = $item->getAuthorName();
 				}
 			} else {
@@ -189,7 +221,7 @@ abstract class RevDel_List extends RevisionListBase {
 	protected function updateLog( $params ) {
 		// Get the URL param's corresponding DB field
 		$field = RevisionDeleter::getRelationType( $this->getType() );
-		if( !$field ) {
+		if ( !$field ) {
 			throw new MWException( "Bad log URL param type!" );
 		}
 		// Put things hidden from sysops in the oversight log
@@ -203,7 +235,7 @@ abstract class RevDel_List extends RevisionListBase {
 		// Actually add the deletion log entry
 		$log = new LogPage( $logType );
 		$logid = $log->addEntry( $this->getLogAction(), $params['title'],
-			$params['comment'], $logParams );
+			$params['comment'], $logParams, $this->getUser() );
 		// Allow for easy searching of deletion log items for revision/log items
 		$log->addRelations( $field, $params['ids'], $logid );
 		$log->addRelations( 'target_author_id', $params['authorIds'], $logid );

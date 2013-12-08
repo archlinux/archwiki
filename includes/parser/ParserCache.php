@@ -67,7 +67,7 @@ class ParserCache {
 
 		// idhash seem to mean 'page id' + 'rendering hash' (r3710)
 		$pageid = $article->getID();
-		$renderkey = (int)($wgRequest->getVal( 'action' ) == 'render');
+		$renderkey = (int)( $wgRequest->getVal( 'action' ) == 'render' );
 
 		$key = wfMemcKey( 'pcache', 'idhash', "{$pageid}-{$renderkey}!{$hash}" );
 		return $key;
@@ -128,7 +128,7 @@ class ParserCache {
 	public function getKey( $article, $popts, $useOutdated = true ) {
 		global $wgCacheEpoch;
 
-		if( $popts instanceof User ) {
+		if ( $popts instanceof User ) {
 			wfWarn( "Use of outdated prototype ParserCache::getKey( &\$article, &\$user )\n" );
 			$popts = ParserOptions::newFromUser( $popts );
 		}
@@ -223,19 +223,19 @@ class ParserCache {
 	 * @param $parserOutput ParserOutput
 	 * @param $article Article
 	 * @param $popts ParserOptions
+	 * @param $cacheTime Time when the cache was generated
 	 */
-	public function save( $parserOutput, $article, $popts ) {
+	public function save( $parserOutput, $article, $popts, $cacheTime = null ) {
 		$expire = $parserOutput->getCacheExpiry();
-
-		if( $expire > 0 ) {
-			$now = wfTimestampNow();
+		if ( $expire > 0 ) {
+			$cacheTime = $cacheTime ?: wfTimestampNow();
 
 			$optionsKey = new CacheTime;
 			$optionsKey->mUsedOptions = $parserOutput->getUsedOptions();
 			$optionsKey->updateCacheExpiry( $expire );
 
-			$optionsKey->setCacheTime( $now );
-			$parserOutput->setCacheTime( $now );
+			$optionsKey->setCacheTime( $cacheTime );
+			$parserOutput->setCacheTime( $cacheTime );
 
 			$optionsKey->setContainsOldMagic( $parserOutput->containsOldMagic() );
 
@@ -245,8 +245,8 @@ class ParserCache {
 			// Save the timestamp so that we don't have to load the revision row on view
 			$parserOutput->setTimestamp( $article->getTimestamp() );
 
-			$parserOutput->mText .= "\n<!-- Saved in parser cache with key $parserOutputKey and timestamp $now -->\n";
-			wfDebug( "Saved in parser cache with key $parserOutputKey and timestamp $now\n" );
+			$parserOutput->mText .= "\n<!-- Saved in parser cache with key $parserOutputKey and timestamp $cacheTime\n -->\n";
+			wfDebug( "Saved in parser cache with key $parserOutputKey and timestamp $cacheTime\n" );
 
 			// Save the parser output
 			$this->mMemc->set( $parserOutputKey, $parserOutput, $expire );

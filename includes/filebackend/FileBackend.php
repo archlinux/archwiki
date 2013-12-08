@@ -1,7 +1,6 @@
 <?php
 /**
  * @defgroup FileBackend File backend
- * @ingroup  FileRepo
  *
  * File backend is used to interact with file storage systems,
  * such as the local file system, NFS, or cloud storage systems.
@@ -95,7 +94,7 @@ abstract class FileBackend {
 	 *                   Allowed values are "implicit", "explicit" and "off".
 	 *   - concurrency : How many file operations can be done in parallel.
 	 *
-	 * @param $config Array
+	 * @param array $config
 	 * @throws MWException
 	 */
 	public function __construct( array $config ) {
@@ -191,7 +190,6 @@ abstract class FileBackend {
 	 *         'content'             => <string of new file contents>,
 	 *         'overwrite'           => <boolean>,
 	 *         'overwriteSame'       => <boolean>,
-	 *         'disposition'         => <Content-Disposition header value>,
 	 *         'headers'             => <HTTP header name/value map> # since 1.21
 	 *     );
 	 * @endcode
@@ -204,7 +202,6 @@ abstract class FileBackend {
 	 *         'dst'                 => <storage path>,
 	 *         'overwrite'           => <boolean>,
 	 *         'overwriteSame'       => <boolean>,
-	 *         'disposition'         => <Content-Disposition header value>,
 	 *         'headers'             => <HTTP header name/value map> # since 1.21
 	 *     )
 	 * @endcode
@@ -218,7 +215,7 @@ abstract class FileBackend {
 	 *         'overwrite'           => <boolean>,
 	 *         'overwriteSame'       => <boolean>,
 	 *         'ignoreMissingSource' => <boolean>, # since 1.21
-	 *         'disposition'         => <Content-Disposition header value>
+	 *         'headers'             => <HTTP header name/value map> # since 1.21
 	 *     )
 	 * @endcode
 	 *
@@ -231,7 +228,7 @@ abstract class FileBackend {
 	 *         'overwrite'           => <boolean>,
 	 *         'overwriteSame'       => <boolean>,
 	 *         'ignoreMissingSource' => <boolean>, # since 1.21
-	 *         'disposition'         => <Content-Disposition header value>
+	 *         'headers'             => <HTTP header name/value map> # since 1.21
 	 *     )
 	 * @endcode
 	 *
@@ -249,7 +246,6 @@ abstract class FileBackend {
 	 *     array(
 	 *         'op'                  => 'describe',
 	 *         'src'                 => <storage path>,
-	 *         'disposition'         => <Content-Disposition header value>,
 	 *         'headers'             => <HTTP header name/value map>
 	 *     )
 	 * @endcode
@@ -265,19 +261,19 @@ abstract class FileBackend {
 	 *   - ignoreMissingSource : The operation will simply succeed and do
 	 *                           nothing if the source file does not exist.
 	 *   - overwrite           : Any destination file will be overwritten.
-	 *   - overwriteSame       : An error will not be given if a file already
-	 *                           exists at the destination that has the same
-	 *                           contents as the new contents to be written there.
-	 *   - disposition         : If supplied, the backend will return a Content-Disposition
-	 *                           header when GETs/HEADs of the destination file are made.
-	 *                           Backends that don't support metadata ignore this.
-	 *                           See http://tools.ietf.org/html/rfc6266. (since 1.20)
-	 *   - headers             : If supplied, the backend will return these headers when
-	 *                           GETs/HEADs of the destination file are made. Header values
-	 *                           should be smaller than 256 bytes, often options or numbers.
-	 *                           Existing headers will remain, but these will replace any
-	 *                           conflicting previous headers, and headers will be removed
-	 *                           if they are set to an empty string.
+	 *   - overwriteSame       : If a file already exists at the destination with the
+	 *                           same contents, then do nothing to the destination file
+	 *                           instead of giving an error. This does not compare headers.
+	 *                           This option is ignored if 'overwrite' is already provided.
+	 *   - headers             : If supplied, the result of merging these headers with any
+	 *                           existing source file headers (replacing conflicting ones)
+	 *                           will be set as the destination file headers. Headers are
+	 *                           deleted if their value is set to the empty string. When a
+	 *                           file has headers they are included in responses to GET and
+	 *                           HEAD requests to the backing store for that file.
+	 *                           Header values should be no larger than 255 bytes, except for
+	 *                           Content-Disposition. The system might ignore or truncate any
+	 *                           headers that are too long to store (exact limits will vary).
 	 *                           Backends that don't support metadata ignore this. (since 1.21)
 	 *
 	 * $opts is an associative of boolean flags, including:
@@ -318,8 +314,16 @@ abstract class FileBackend {
 		if ( empty( $opts['bypassReadOnly'] ) && $this->isReadOnly() ) {
 			return Status::newFatal( 'backend-fail-readonly', $this->name, $this->readOnly );
 		}
+		if ( !count( $ops ) ) {
+			return Status::newGood(); // nothing to do
+		}
 		if ( empty( $opts['force'] ) ) { // sanity
 			unset( $opts['nonLocking'] );
+		}
+		foreach ( $ops as &$op ) {
+			if ( isset( $op['disposition'] ) ) { // b/c (MW 1.20)
+				$op['headers']['Content-Disposition'] = $op['disposition'];
+			}
 		}
 		$scope = $this->getScopedPHPBehaviorForOps(); // try to ignore client aborts
 		return $this->doOperationsInternal( $ops, $opts );
@@ -452,7 +456,6 @@ abstract class FileBackend {
 	 *         'op'                  => 'create',
 	 *         'dst'                 => <storage path>,
 	 *         'content'             => <string of new file contents>,
-	 *         'disposition'         => <Content-Disposition header value>,
 	 *         'headers'             => <HTTP header name/value map> # since 1.21
 	 *     )
 	 * @endcode
@@ -463,7 +466,6 @@ abstract class FileBackend {
 	 *         'op'                  => 'store',
 	 *         'src'                 => <file system path>,
 	 *         'dst'                 => <storage path>,
-	 *         'disposition'         => <Content-Disposition header value>,
 	 *         'headers'             => <HTTP header name/value map> # since 1.21
 	 *     )
 	 * @endcode
@@ -475,7 +477,7 @@ abstract class FileBackend {
 	 *         'src'                 => <storage path>,
 	 *         'dst'                 => <storage path>,
 	 *         'ignoreMissingSource' => <boolean>, # since 1.21
-	 *         'disposition'         => <Content-Disposition header value>
+	 *         'headers'             => <HTTP header name/value map> # since 1.21
 	 *     )
 	 * @endcode
 	 *
@@ -486,7 +488,7 @@ abstract class FileBackend {
 	 *         'src'                 => <storage path>,
 	 *         'dst'                 => <storage path>,
 	 *         'ignoreMissingSource' => <boolean>, # since 1.21
-	 *         'disposition'         => <Content-Disposition header value>
+	 *         'headers'             => <HTTP header name/value map> # since 1.21
 	 *     )
 	 * @endcode
 	 *
@@ -504,7 +506,6 @@ abstract class FileBackend {
 	 *     array(
 	 *         'op'                  => 'describe',
 	 *         'src'                 => <storage path>,
-	 *         'disposition'         => <Content-Disposition header value>,
 	 *         'headers'             => <HTTP header name/value map>
 	 *     )
 	 * @endcode
@@ -519,13 +520,11 @@ abstract class FileBackend {
 	 * @par Boolean flags for operations (operation-specific):
 	 *   - ignoreMissingSource : The operation will simply succeed and do
 	 *                           nothing if the source file does not exist.
-	 *   - disposition         : When supplied, the backend will add a Content-Disposition
-	 *                           header when GETs/HEADs of the destination file are made.
-	 *                           Backends that don't support file metadata will ignore this.
-	 *                           See http://tools.ietf.org/html/rfc6266 (since 1.20).
 	 *   - headers             : If supplied with a header name/value map, the backend will
 	 *                           reply with these headers when GETs/HEADs of the destination
 	 *                           file are made. Header values should be smaller than 256 bytes.
+	 *                           Content-Disposition headers can be longer, though the system
+	 *                           might ignore or truncate ones that are too long to store.
 	 *                           Existing headers will remain, but these will replace any
 	 *                           conflicting previous headers, and headers will be removed
 	 *                           if they are set to an empty string.
@@ -549,8 +548,14 @@ abstract class FileBackend {
 		if ( empty( $opts['bypassReadOnly'] ) && $this->isReadOnly() ) {
 			return Status::newFatal( 'backend-fail-readonly', $this->name, $this->readOnly );
 		}
+		if ( !count( $ops ) ) {
+			return Status::newGood(); // nothing to do
+		}
 		foreach ( $ops as &$op ) {
 			$op['overwrite'] = true; // avoids RTTs in key/value stores
+			if ( isset( $op['disposition'] ) ) { // b/c (MW 1.20)
+				$op['headers']['Content-Disposition'] = $op['disposition'];
+			}
 		}
 		$scope = $this->getScopedPHPBehaviorForOps(); // try to ignore client aborts
 		return $this->doQuickOperationsInternal( $ops );
@@ -683,6 +688,8 @@ abstract class FileBackend {
 	 * The 'noAccess' and 'noListing' parameters works the same as in secure(),
 	 * except they are only applied *if* the directory/container had to be created.
 	 * These flags should always be set for directories that have private files.
+	 * However, setting them is not guaranteed to actually do anything.
+	 * Additional server configuration may be needed to achieve the desired effect.
 	 *
 	 * @param array $params
 	 * $params include:
@@ -710,7 +717,9 @@ abstract class FileBackend {
 	 * the container it belongs to. FS backends might add .htaccess
 	 * files whereas key/value store backends might revoke container
 	 * access to the storage user representing end-users in web requests.
-	 * This is not guaranteed to actually do anything.
+	 *
+	 * This is not guaranteed to actually make files or listings publically hidden.
+	 * Additional server configuration may be needed to achieve the desired effect.
 	 *
 	 * @param array $params
 	 * $params include:
@@ -739,6 +748,9 @@ abstract class FileBackend {
 	 * files whereas key/value store backends might grant container
 	 * access to the storage user representing end-users in web requests.
 	 * This essentially can undo the result of secure() calls.
+	 *
+	 * This is not guaranteed to actually make files or listings publically viewable.
+	 * Additional server configuration may be needed to achieve the desired effect.
 	 *
 	 * @param array $params
 	 * $params include:
@@ -797,7 +809,9 @@ abstract class FileBackend {
 	final protected function getScopedPHPBehaviorForOps() {
 		if ( php_sapi_name() != 'cli' ) { // http://bugs.php.net/bug.php?id=47540
 			$old = ignore_user_abort( true ); // avoid half-finished operations
-			return new ScopedCallback( function() use ( $old ) { ignore_user_abort( $old ); } );
+			return new ScopedCallback( function() use ( $old ) {
+				ignore_user_abort( $old );
+			} );
 		}
 		return null;
 	}
@@ -1029,7 +1043,7 @@ abstract class FileBackend {
 	 *
 	 * Storage backends with eventual consistency might return stale data.
 	 *
-	 * @param $params array
+	 * @param array $params
 	 * $params include:
 	 *   - dir : storage directory
 	 * @return bool|null Returns null on failure
@@ -1047,7 +1061,9 @@ abstract class FileBackend {
 	 *
 	 * Storage backends with eventual consistency might return stale data.
 	 *
-	 * @param $params array
+	 * Failures during iteration can result in FileBackendError exceptions (since 1.22).
+	 *
+	 * @param array $params
 	 * $params include:
 	 *   - dir     : storage directory
 	 *   - topOnly : only return direct child dirs of the directory
@@ -1062,7 +1078,9 @@ abstract class FileBackend {
 	 *
 	 * Storage backends with eventual consistency might return stale data.
 	 *
-	 * @param $params array
+	 * Failures during iteration can result in FileBackendError exceptions (since 1.22).
+	 *
+	 * @param array $params
 	 * $params include:
 	 *   - dir : storage directory
 	 * @return Traversable|Array|null Returns null on failure
@@ -1082,10 +1100,13 @@ abstract class FileBackend {
 	 *
 	 * Storage backends with eventual consistency might return stale data.
 	 *
-	 * @param $params array
+	 * Failures during iteration can result in FileBackendError exceptions (since 1.22).
+	 *
+	 * @param array $params
 	 * $params include:
-	 *   - dir     : storage directory
-	 *   - topOnly : only return direct child files of the directory (since 1.20)
+	 *   - dir        : storage directory
+	 *   - topOnly    : only return direct child files of the directory (since 1.20)
+	 *   - adviseStat : set to true if stat requests will be made on the files (since 1.22)
 	 * @return Traversable|Array|null Returns null on failure
 	 */
 	abstract public function getFileList( array $params );
@@ -1096,9 +1117,12 @@ abstract class FileBackend {
 	 *
 	 * Storage backends with eventual consistency might return stale data.
 	 *
-	 * @param $params array
+	 * Failures during iteration can result in FileBackendError exceptions (since 1.22).
+	 *
+	 * @param array $params
 	 * $params include:
-	 *   - dir : storage directory
+	 *   - dir        : storage directory
+	 *   - adviseStat : set to true if stat requests will be made on the files (since 1.22)
 	 * @return Traversable|Array|null Returns null on failure
 	 * @since 1.20
 	 */
@@ -1131,10 +1155,11 @@ abstract class FileBackend {
 	 * Callers should consider using getScopedFileLocks() instead.
 	 *
 	 * @param array $paths Storage paths
-	 * @param $type integer LockManager::LOCK_* constant
+	 * @param integer $type LockManager::LOCK_* constant
 	 * @return Status
 	 */
 	final public function lockFiles( array $paths, $type ) {
+		$paths = array_map( 'FileBackend::normalizeStoragePath', $paths );
 		return $this->lockManager->lock( $paths, $type );
 	}
 
@@ -1142,10 +1167,11 @@ abstract class FileBackend {
 	 * Unlock the files at the given storage paths in the backend.
 	 *
 	 * @param array $paths Storage paths
-	 * @param $type integer LockManager::LOCK_* constant
+	 * @param integer $type LockManager::LOCK_* constant
 	 * @return Status
 	 */
 	final public function unlockFiles( array $paths, $type ) {
+		$paths = array_map( 'FileBackend::normalizeStoragePath', $paths );
 		return $this->lockManager->unlock( $paths, $type );
 	}
 
@@ -1157,12 +1183,21 @@ abstract class FileBackend {
 	 * Once the return value goes out scope, the locks will be released and
 	 * the status updated. Unlock fatals will not change the status "OK" value.
 	 *
-	 * @param array $paths Storage paths
-	 * @param $type integer LockManager::LOCK_* constant
-	 * @param $status Status Status to update on lock/unlock
+	 * @see ScopedLock::factory()
+	 *
+	 * @param array $paths List of storage paths or map of lock types to path lists
+	 * @param integer|string $type LockManager::LOCK_* constant or "mixed"
+	 * @param Status $status Status to update on lock/unlock
 	 * @return ScopedLock|null Returns null on failure
 	 */
 	final public function getScopedFileLocks( array $paths, $type, Status $status ) {
+		if ( $type === 'mixed' ) {
+			foreach ( $paths as &$typePaths ) {
+				$typePaths = array_map( 'FileBackend::normalizeStoragePath', $typePaths );
+			}
+		} else {
+			$paths = array_map( 'FileBackend::normalizeStoragePath', $paths );
+		}
 		return ScopedLock::factory( $this->lockManager, $paths, $type, $status );
 	}
 
@@ -1178,7 +1213,7 @@ abstract class FileBackend {
 	 * @see FileBackend::doOperations()
 	 *
 	 * @param array $ops List of file operations to FileBackend::doOperations()
-	 * @param $status Status Status to update on lock/unlock
+	 * @param Status $status Status to update on lock/unlock
 	 * @return Array List of ScopedFileLocks or null values
 	 * @since 1.20
 	 */
@@ -1219,7 +1254,7 @@ abstract class FileBackend {
 	 * Check if a given path is a "mwstore://" path.
 	 * This does not do any further validation or any existence checks.
 	 *
-	 * @param $path string
+	 * @param string $path
 	 * @return bool
 	 */
 	final public static function isStoragePath( $path ) {
@@ -1231,7 +1266,7 @@ abstract class FileBackend {
 	 * and a relative file path. The relative path may be the empty string.
 	 * This does not do any path normalization or traversal checks.
 	 *
-	 * @param $storagePath string
+	 * @param string $storagePath
 	 * @return Array (backend, container, rel object) or (null, null, null)
 	 */
 	final public static function splitStoragePath( $storagePath ) {
@@ -1253,7 +1288,7 @@ abstract class FileBackend {
 	 * Normalize a storage path by cleaning up directory separators.
 	 * Returns null if the path is not of the format of a valid storage path.
 	 *
-	 * @param $storagePath string
+	 * @param string $storagePath
 	 * @return string|null
 	 */
 	final public static function normalizeStoragePath( $storagePath ) {
@@ -1274,7 +1309,7 @@ abstract class FileBackend {
 	 * This returns a path like "mwstore://backend/container",
 	 * "mwstore://backend/container/...", or null if there is no parent.
 	 *
-	 * @param $storagePath string
+	 * @param string $storagePath
 	 * @return string|null
 	 */
 	final public static function parentStoragePath( $storagePath ) {
@@ -1286,7 +1321,7 @@ abstract class FileBackend {
 	/**
 	 * Get the final extension from a storage or FS path
 	 *
-	 * @param $path string
+	 * @param string $path
 	 * @return string
 	 */
 	final public static function extensionFromPath( $path ) {
@@ -1297,7 +1332,7 @@ abstract class FileBackend {
 	/**
 	 * Check if a relative path has no directory traversals
 	 *
-	 * @param $path string
+	 * @param string $path
 	 * @return bool
 	 * @since 1.20
 	 */
@@ -1363,3 +1398,9 @@ abstract class FileBackend {
 		return $path;
 	}
 }
+
+/**
+ * @ingroup FileBackend
+ * @since 1.22
+ */
+class FileBackendError extends MWException {}

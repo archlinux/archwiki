@@ -23,6 +23,40 @@
 
 $fallback = 'ru';
 
+$namespaceNames = array(
+	NS_MEDIA            => 'Медиа',
+	NS_TALK             => 'веревирд_авун',
+	NS_USER             => 'Уртах',
+	NS_USER_TALK        => 'Уртахдин_веревирд_авун',
+	NS_PROJECT_TALK     => '$1_веревирд_авун',
+	NS_FILE             => 'Файл',
+	NS_FILE_TALK        => 'Файл_веревирд_авун',
+	NS_MEDIAWIKI        => 'MediaWiki',
+	NS_MEDIAWIKI_TALK   => 'MediaWiki_веревирд_авун',
+	NS_TEMPLATE         => 'Шаблон',
+	NS_TEMPLATE_TALK    => 'Шаблон_веревирд_авун',
+	NS_CATEGORY         => 'Категория',
+	NS_CATEGORY_TALK    => 'Категория_веревирд_авун',
+);
+
+$namespaceAliases = array(
+	# Russian namespaces
+	'Обсуждение'                         => NS_TALK,
+	'Участник'                           => NS_USER,
+	'Обсуждение_участника'               => NS_USER_TALK,
+	'Обсуждение_{{GRAMMAR:genitive|$1}}' => NS_PROJECT_TALK,
+	'Обсуждение_файла'                   => NS_FILE_TALK,
+	'Обсуждение_MediaWiki'               => NS_MEDIAWIKI_TALK,
+	'Обсуждение_шаблона'                 => NS_TEMPLATE_TALK,
+	'Справка'                            => NS_HELP,
+	'Обсуждение_справки'                 => NS_HELP_TALK,
+	'Категория'                          => NS_CATEGORY,
+	'Обсуждение_категории'               => NS_CATEGORY_TALK,
+);
+
+// Remove Russian gender aliases
+$namespaceGenderAliases = array();
+
 $messages = array(
 # User preference toggles
 'tog-underline' => 'ЭлячӀунрин кӀаникай цӀар чӀугун',
@@ -228,7 +262,7 @@ $messages = array(
 'pool-queuefull' => 'ТӀалабар кӀватзавайди ацӀа я',
 'pool-errorunknown' => 'Малумтушир гъалатӀ',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => ' {{SITENAME}}кай',
 'aboutpage' => 'Project:Гьакъиндай',
 'copyright' => 'Къене авайбур $1 жугъуриз жеда.',
@@ -238,7 +272,6 @@ $messages = array(
 'disclaimers' => 'Жавабдарвал хивяй акъудун',
 'disclaimerpage' => 'Project:Жавабдарвал хивяй акъудун',
 'edithelp' => 'Дуьзар хъувун патал куьмек',
-'edithelppage' => 'Help:Дуьзар хъувун',
 'helppage' => 'Help:Къене авайбур',
 'mainpage' => 'Кьилин ччин',
 'mainpage-description' => 'Кьилин ччин',
@@ -550,7 +583,6 @@ $messages = array(
 'searchmenu-legend' => 'Жагъурунин низамарунар',
 'searchmenu-exists' => "'''И вики-проектда \"[[:\$1]]\" тlвар алай ччин ава.'''",
 'searchmenu-new' => "'''И вики-проектда \"[[:\$1]]\" ччин туькlуьрун !'''",
-'searchhelp-url' => 'Help:КЪене авайбур',
 'searchprofile-articles' => 'Асул ччинар',
 'searchprofile-project' => 'Куьмек гунин ва проектдин ччинар',
 'searchprofile-images' => 'Мультимедиа',
@@ -585,14 +617,6 @@ $messages = array(
 'powersearch-toggleall' => 'Вири',
 'powersearch-togglenone' => 'Садни',
 
-# Quickbar
-'qbsettings' => 'КЪекъуьнрин панел',
-'qbsettings-none' => 'Садни',
-'qbsettings-fixedleft' => 'Чапла патахъай юзан тийир',
-'qbsettings-fixedright' => 'ЭрчIи патахъай юзан тийир',
-'qbsettings-floatingleft' => 'Чапла патаз алгъурзава',
-'qbsettings-floatingright' => 'ЭрчIи патаз алгъурзава',
-
 # Preferences page
 'preferences' => 'Туькlуьрун',
 'mypreferences' => 'Зи низамарунар',
@@ -620,7 +644,6 @@ $messages = array(
 'resetprefs' => 'Хуьн тавунвай дегишвилер алудун',
 'restoreprefs' => 'Авайл хьиз кьунвай низамарунар туькIуьр хъувун',
 'prefs-editing' => 'Дуьзар хъувун',
-'prefs-edit-boxsize' => 'Дуьзар хъувунин дакIардин кьадар',
 'rows' => 'ЦIарар',
 'columns' => 'Гулар:',
 'searchresultshead' => 'Ахтармишун',
@@ -750,7 +773,6 @@ $messages = array(
 'recentchangeslinked-feed' => 'Галкlанвай дуьзар хъувунар',
 'recentchangeslinked-toolbox' => 'Галкlанвай масакIавилер',
 'recentchangeslinked-title' => '"$1" галаз галкlанавай масакIавилер',
-'recentchangeslinked-noresult' => 'Ганвай чlава галкlанавай ччинра са масакIавални хьанвайд туш',
 'recentchangeslinked-summary' => 'Им къалурай ччиниз (ва я къалурай категориядиз гьатзавай ччинриз) элячӀзавай ччинра мукьвара хьайи масакӀавилерин сиягь я. Куь [[Special:Watchlist|вилив хуьнин сиягь диз]] гьатзавай ччинар яцӀу шрифтдал къалурнава.',
 'recentchangeslinked-page' => 'Ччинин тlвар:',
 'recentchangeslinked-to' => 'Аксина, къалурай ччиниз элячlзавай ччинра масакIавилер къалура',
@@ -862,8 +884,6 @@ $messages = array(
 'statistics-files' => 'Ппарнавай файлар',
 'statistics-views-total' => 'Вири килигунар',
 'statistics-users-active' => 'Актив уртахар',
-
-'disambiguationspage' => 'Template:гзафманавал',
 
 'brokenredirects-edit' => 'дегишарун',
 'brokenredirects-delete' => 'алудун',
@@ -1228,7 +1248,7 @@ Cиягьда авай анжах (* лишандихъ галаз эгечIза
 * gpslongitude
 * gpsaltitude',
 
-# EXIF tags
+# Exif tags
 'exif-imagewidth' => 'Гьяркьуь',
 'exif-planarconfiguration' => 'Ганайбур тешкил авун',
 'exif-ycbcrsubsampling' => ' Y  ва C компонентрин кьадаррин нисбет',

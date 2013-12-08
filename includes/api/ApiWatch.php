@@ -36,6 +36,9 @@ class ApiWatch extends ApiBase {
 		if ( !$user->isLoggedIn() ) {
 			$this->dieUsage( 'You must be logged-in to have a watchlist', 'notloggedin' );
 		}
+		if ( !$user->isAllowed( 'editmywatchlist' ) ) {
+			$this->dieUsage( 'You don\'t have permission to edit your watchlist', 'permissiondenied' );
+		}
 
 		$params = $this->extractRequestParams();
 		$title = Title::newFromText( $params['title'] );
@@ -57,19 +60,19 @@ class ApiWatch extends ApiBase {
 		if ( $params['unwatch'] ) {
 			$res['unwatched'] = '';
 			$res['message'] = $this->msg( 'removedwatchtext', $title->getPrefixedText() )->title( $title )->parseAsBlock();
-			$success = UnwatchAction::doUnwatch( $title, $user );
+			$status = UnwatchAction::doUnwatch( $title, $user );
 		} else {
 			$res['watched'] = '';
 			$res['message'] = $this->msg( 'addedwatchtext', $title->getPrefixedText() )->title( $title )->parseAsBlock();
-			$success = WatchAction::doWatch( $title, $user );
+			$status = WatchAction::doWatch( $title, $user );
 		}
 
 		if ( !is_null( $oldLang ) ) {
 			$this->getContext()->setLanguage( $oldLang ); // Reset language to $oldLang
 		}
 
-		if ( !$success ) {
-			$this->dieUsageMsg( 'hookaborted' );
+		if ( !$status->isOK() ) {
+			$this->dieStatus( $status );
 		}
 		$this->getResult()->addValue( null, $this->getModuleName(), $res );
 	}

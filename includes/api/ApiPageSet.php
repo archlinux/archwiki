@@ -69,6 +69,9 @@ class ApiPageSet extends ApiBase {
 	private $mFakePageId = -1;
 	private $mCacheMode = 'public';
 	private $mRequestedPageFields = array();
+	/**
+	 * @var int
+	 */
 	private $mDefaultNamespace = NS_MAIN;
 
 	/**
@@ -149,7 +152,6 @@ class ApiPageSet extends ApiBase {
 			if ( !$isDryRun ) {
 				$generator->executeGenerator( $this );
 				wfRunHooks( 'APIQueryGeneratorAfterExecute', array( &$generator, &$this ) );
-				$this->resolvePendingRedirects();
 			} else {
 				// Prevent warnings from being reported on these parameters
 				$main = $this->getMain();
@@ -159,6 +161,10 @@ class ApiPageSet extends ApiBase {
 			}
 			$generator->profileOut();
 			$this->profileIn();
+
+			if ( !$isDryRun ) {
+				$this->resolvePendingRedirects();
+			}
 
 			if ( !$isQuery ) {
 				// If this pageset is not part of the query, we called profileIn() above
@@ -185,7 +191,7 @@ class ApiPageSet extends ApiBase {
 
 			if ( !$isDryRun ) {
 				// Populate page information with the original user input
-				switch( $dataSource ) {
+				switch ( $dataSource ) {
 					case 'titles':
 						$this->initFromTitles( $this->mParams['titles'] );
 						break;
@@ -404,7 +410,7 @@ class ApiPageSet extends ApiBase {
 	 * @return array of raw_prefixed_title (string) => prefixed_title (string)
 	 * @since 1.21
 	 */
-	public function getNormalizedTitlesAsResult( $result = null  ) {
+	public function getNormalizedTitlesAsResult( $result = null ) {
 		$values = array();
 		foreach ( $this->getNormalizedTitles() as $rawTitleStr => $titleStr ) {
 			$values[] = array(
@@ -595,13 +601,13 @@ class ApiPageSet extends ApiBase {
 		}
 
 		foreach ( $this->mRequestedPageFields as $fieldName => &$fieldValues ) {
-			$fieldValues[$pageId] = $row-> $fieldName;
+			$fieldValues[$pageId] = $row->$fieldName;
 		}
 	}
 
 	/**
 	 * Do not use, does nothing, will be removed
-	 * @deprecated 1.21
+	 * @deprecated since 1.21
 	 */
 	public function finishPageSetGeneration() {
 		wfDeprecated( __METHOD__, '1.21' );
@@ -859,7 +865,7 @@ class ApiPageSet extends ApiBase {
 			$from = $this->mPendingRedirectIDs[$rdfrom]->getPrefixedText();
 			$to = Title::makeTitle( $row->rd_namespace, $row->rd_title, $row->rd_fragment, $row->rd_interwiki );
 			unset( $this->mPendingRedirectIDs[$rdfrom] );
-			if ( !isset( $this->mAllPages[$row->rd_namespace][$row->rd_title] ) ) {
+			if ( !$to->isExternal() && !isset( $this->mAllPages[$row->rd_namespace][$row->rd_title] ) ) {
 				$lb->add( $row->rd_namespace, $row->rd_title );
 			}
 			$this->mRedirectTitles[$from] = $to;

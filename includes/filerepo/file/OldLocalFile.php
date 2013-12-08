@@ -218,6 +218,7 @@ class OldLocalFile extends LocalFile {
 				$this->$name = $value;
 			}
 		} else {
+			wfProfileOut( __METHOD__ );
 			throw new MWException( "Could not find data for image '{$this->archive_name}'." );
 		}
 
@@ -290,7 +291,7 @@ class OldLocalFile extends LocalFile {
 	 */
 	function isDeleted( $field ) {
 		$this->load();
-		return ($this->deleted & $field) == $field;
+		return ( $this->deleted & $field ) == $field;
 	}
 
 	/**

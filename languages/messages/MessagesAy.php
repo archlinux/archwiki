@@ -127,6 +127,7 @@ $messages = array(
 'qbbrowse' => 'Wampuña',
 'qbedit' => 'Turkaña',
 'qbpageoptions' => 'Uñstawitaki ajllita',
+'qbpageinfo' => "Uñstawxat uñt'ayawi",
 'qbmyoptions' => 'Ajllitanakaja',
 
 'errorpagetitle' => 'Pantja',

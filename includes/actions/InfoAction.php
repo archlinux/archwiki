@@ -28,6 +28,8 @@
  * @ingroup Actions
  */
 class InfoAction extends FormlessAction {
+	const CACHE_VERSION = '2013-03-17';
+
 	/**
 	 * Returns the name of the action this object responds to.
 	 *
@@ -53,6 +55,22 @@ class InfoAction extends FormlessAction {
 	 */
 	public function requiresWrite() {
 		return false;
+	}
+
+	/**
+	 * Clear the info cache for a given Title.
+	 *
+	 * @since 1.22
+	 * @param Title $title Title to clear cache for
+	 */
+	public static function invalidateCache( Title $title ) {
+		global $wgMemc;
+		// Clear page info.
+		$revision = WikiPage::factory( $title )->getRevision();
+		if ( $revision !== null ) {
+			$key = wfMemcKey( 'infoaction', sha1( $title->getPrefixedText() ), $revision->getId() );
+			$wgMemc->delete( $key );
+		}
 	}
 
 	/**
@@ -100,12 +118,16 @@ class InfoAction extends FormlessAction {
 
 		// Render page information
 		foreach ( $pageInfo as $header => $infoTable ) {
+			// Messages:
+			// pageinfo-header-basic, pageinfo-header-edits, pageinfo-header-restrictions,
+			// pageinfo-header-properties, pageinfo-category-info
 			$content .= $this->makeHeader( $this->msg( "pageinfo-${header}" )->escaped() ) . "\n";
 			$table = "\n";
 			foreach ( $infoTable as $infoRow ) {
 				$name = ( $infoRow[0] instanceof Message ) ? $infoRow[0]->escaped() : $infoRow[0];
 				$value = ( $infoRow[1] instanceof Message ) ? $infoRow[1]->escaped() : $infoRow[1];
-				$table = $this->addRow( $table, $name, $value ) . "\n";
+				$id = ( $infoRow[0] instanceof Message ) ? $infoRow[0]->getKey() : null;
+				$table = $this->addRow( $table, $name, $value, $id ) . "\n";
 			}
 			$content = $this->addTable( $content, $table ) . "\n";
 		}
@@ -126,7 +148,7 @@ class InfoAction extends FormlessAction {
 	/**
 	 * Creates a header that can be added to the output.
 	 *
-	 * @param $header The header text.
+	 * @param string $header The header text.
 	 * @return string The HTML.
 	 */
 	protected function makeHeader( $header ) {
@@ -140,10 +162,11 @@ class InfoAction extends FormlessAction {
 	 * @param string $table The table that will be added to the content
 	 * @param string $name The name of the row
 	 * @param string $value The value of the row
+	 * @param string $id The ID to use for the 'tr' element
 	 * @return string The table with the row added
 	 */
-	protected function addRow( $table, $name, $value ) {
-		return $table . Html::rawElement( 'tr', array(),
+	protected function addRow( $table, $name, $value, $id ) {
+		return $table . Html::rawElement( 'tr', $id === null ? array() : array( 'id' => 'mw-' . $id ),
 			Html::rawElement( 'td', array( 'style' => 'vertical-align: top;' ), $name ) .
 			Html::rawElement( 'td', array(), $value )
 		);
@@ -169,18 +192,22 @@ class InfoAction extends FormlessAction {
 	 * @return array
 	 */
 	protected function pageInfo() {
-		global $wgContLang, $wgRCMaxAge, $wgMemc, $wgUnwatchedPageThreshold, $wgPageInfoTransclusionLimit;
+		global $wgContLang, $wgRCMaxAge, $wgMemc,
+			$wgUnwatchedPageThreshold, $wgPageInfoTransclusionLimit;
 
 		$user = $this->getUser();
 		$lang = $this->getLanguage();
 		$title = $this->getTitle();
 		$id = $title->getArticleID();
 
-		$memcKey = wfMemcKey( 'infoaction', sha1( $title->getPrefixedText() ), $this->page->getLatest() );
+		$memcKey = wfMemcKey( 'infoaction',
+			sha1( $title->getPrefixedText() ), $this->page->getLatest() );
 		$pageCounts = $wgMemc->get( $memcKey );
-		if ( $pageCounts === false ) {
+		$version = isset( $pageCounts['cacheversion'] ) ? $pageCounts['cacheversion'] : false;
+		if ( $pageCounts === false || $version !== self::CACHE_VERSION ) {
 			// Get page information that would be too "expensive" to retrieve by normal means
 			$pageCounts = self::pageCounts( $title );
+			$pageCounts['cacheversion'] = self::CACHE_VERSION;
 
 			$wgMemc->set( $memcKey, $pageCounts );
 		}
@@ -229,7 +256,7 @@ class InfoAction extends FormlessAction {
 		}
 
 		// Default sort key
-		$sortKey = $title->getCategorySortKey();
+		$sortKey = $title->getCategorySortkey();
 		if ( !empty( $pageProperties['defaultsort'] ) ) {
 			$sortKey = $pageProperties['defaultsort'];
 		}
@@ -259,6 +286,7 @@ class InfoAction extends FormlessAction {
 		// Use robot policy logic
 		$policy = $this->page->getRobotPolicy( 'view', $pOutput );
 		$pageInfo['header-basic'][] = array(
+			// Messages: pageinfo-robot-index, pageinfo-robot-noindex
 			$this->msg( 'pageinfo-robot-policy' ), $this->msg( "pageinfo-robot-${policy['index']}" )
 		);
 
@@ -373,6 +401,7 @@ class InfoAction extends FormlessAction {
 				$message = $this->msg( 'protect-default' )->escaped();
 			} else {
 				// Administrators only
+				// Messages: protect-level-autoconfirmed, protect-level-sysop
 				$message = $this->msg( "protect-level-$protectionLevel" );
 				if ( $message->isDisabled() ) {
 					// Require "$1" permission
@@ -382,6 +411,8 @@ class InfoAction extends FormlessAction {
 				}
 			}
 
+			// Messages: restriction-edit, restriction-move, restriction-create,
+			// restriction-upload
 			$pageInfo['header-restrictions'][] = array(
 				$this->msg( "restriction-$restrictionType" ), $message
 			);
@@ -587,7 +618,7 @@ class InfoAction extends FormlessAction {
 
 		if ( !$wgDisableCounters ) {
 			// Number of views
-			$views = (int) $dbr->selectField(
+			$views = (int)$dbr->selectField(
 				'page',
 				'page_counter',
 				array( 'page_id' => $id ),
@@ -597,19 +628,19 @@ class InfoAction extends FormlessAction {
 		}
 
 		// Number of page watchers
-		$watchers = (int) $dbr->selectField(
+		$watchers = (int)$dbr->selectField(
 			'watchlist',
 			'COUNT(*)',
 			array(
 				'wl_namespace' => $title->getNamespace(),
-				'wl_title'     => $title->getDBkey(),
+				'wl_title' => $title->getDBkey(),
 			),
 			__METHOD__
 		);
 		$result['watchers'] = $watchers;
 
 		// Total number of edits
-		$edits = (int) $dbr->selectField(
+		$edits = (int)$dbr->selectField(
 			'revision',
 			'COUNT(rev_page)',
 			array( 'rev_page' => $id ),
@@ -618,7 +649,7 @@ class InfoAction extends FormlessAction {
 		$result['edits'] = $edits;
 
 		// Total number of distinct authors
-		$authors = (int) $dbr->selectField(
+		$authors = (int)$dbr->selectField(
 			'revision',
 			'COUNT(DISTINCT rev_user_text)',
 			array( 'rev_page' => $id ),
@@ -630,7 +661,7 @@ class InfoAction extends FormlessAction {
 		$threshold = $dbr->timestamp( time() - $wgRCMaxAge );
 
 		// Recent number of edits
-		$edits = (int) $dbr->selectField(
+		$edits = (int)$dbr->selectField(
 			'revision',
 			'COUNT(rev_page)',
 			array(
@@ -642,7 +673,7 @@ class InfoAction extends FormlessAction {
 		$result['recent_edits'] = $edits;
 
 		// Recent number of distinct authors
-		$authors = (int) $dbr->selectField(
+		$authors = (int)$dbr->selectField(
 			'revision',
 			'COUNT(DISTINCT rev_user_text)',
 			array(
@@ -660,7 +691,7 @@ class InfoAction extends FormlessAction {
 
 			// Subpages of this page (redirects)
 			$conds['page_is_redirect'] = 1;
-			$result['subpages']['redirects'] = (int) $dbr->selectField(
+			$result['subpages']['redirects'] = (int)$dbr->selectField(
 				'page',
 				'COUNT(page_id)',
 				$conds,
@@ -668,7 +699,7 @@ class InfoAction extends FormlessAction {
 
 			// Subpages of this page (non-redirects)
 			$conds['page_is_redirect'] = 0;
-			$result['subpages']['nonredirects'] = (int) $dbr->selectField(
+			$result['subpages']['nonredirects'] = (int)$dbr->selectField(
 				'page',
 				'COUNT(page_id)',
 				$conds,
@@ -681,7 +712,7 @@ class InfoAction extends FormlessAction {
 		}
 
 		// Counts for the number of transclusion links (to/from)
-		$result['transclusion']['to'] = (int) $dbr->selectField(
+		$result['transclusion']['to'] = (int)$dbr->selectField(
 			'templatelinks',
 			'COUNT(tl_from)',
 			array(
@@ -691,7 +722,7 @@ class InfoAction extends FormlessAction {
 			__METHOD__
 		);
 
-		$result['transclusion']['from'] = (int) $dbr->selectField(
+		$result['transclusion']['from'] = (int)$dbr->selectField(
 			'templatelinks',
 			'COUNT(*)',
 			array( 'tl_from' => $title->getArticleID() ),

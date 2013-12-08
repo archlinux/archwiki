@@ -239,9 +239,9 @@ class UIDGenerator {
 		$data = explode( ' ', fgets( $handle ) ); // "<clk seq> <sec> <msec> <counter> <offset>"
 		$clockChanged = false; // clock set back significantly?
 		if ( count( $data ) == 5 ) { // last UID info already initialized
-			$clkSeq = (int) $data[0] % $clockSeqSize;
-			$prevTime = array( (int) $data[1], (int) $data[2] );
-			$offset = (int) $data[4] % $counterSize; // random counter offset
+			$clkSeq = (int)$data[0] % $clockSeqSize;
+			$prevTime = array( (int)$data[1], (int)$data[2] );
+			$offset = (int)$data[4] % $counterSize; // random counter offset
 			$counter = 0; // counter for UIDs with the same timestamp
 			// Delay until the clock reaches the time of the last ID.
 			// This detects any microtime() drift among processes.
@@ -251,7 +251,7 @@ class UIDGenerator {
 				$time = self::millitime();
 			} elseif ( $time == $prevTime ) {
 				// Bump the counter if there are timestamp collisions
-				$counter = (int) $data[3] % $counterSize;
+				$counter = (int)$data[3] % $counterSize;
 				if ( ++$counter >= $counterSize ) { // sanity (starts at 0)
 					flock( $handle, LOCK_UN ); // abort
 					throw new MWException( "Counter overflow for timestamp value." );
@@ -304,7 +304,7 @@ class UIDGenerator {
 			if ( $ct >= $time ) { // http://php.net/manual/en/language.operators.comparison.php
 				return $ct; // current timestamp is higher than $time
 			}
-		} while ( ( ( $time[0] - $ct[0] )*1000 + ( $time[1] - $ct[1] ) ) <= 10 );
+		} while ( ( ( $time[0] - $ct[0] ) * 1000 + ( $time[1] - $ct[1] ) ) <= 10 );
 
 		return false;
 	}
@@ -315,25 +315,12 @@ class UIDGenerator {
 	 */
 	protected function millisecondsSinceEpochBinary( array $time ) {
 		list( $sec, $msec ) = $time;
-		if ( PHP_INT_SIZE >= 8 ) { // 64 bit integers
-			$ts = ( 1000 * $sec + $msec );
-			$id_bin = str_pad( decbin( $ts % pow( 2, 46 ) ), 46, '0', STR_PAD_LEFT );
-		} elseif ( extension_loaded( 'gmp' ) ) {
-			$ts = gmp_mod( // wrap around
-				gmp_add( gmp_mul( (string) $sec, (string) 1000 ), (string) $msec ),
-				gmp_pow( '2', '46' )
-			);
-			$id_bin = str_pad( gmp_strval( $ts, 2 ), 46, '0', STR_PAD_LEFT );
-		} elseif ( extension_loaded( 'bcmath' ) ) {
-			$ts = bcmod( // wrap around
-				bcadd( bcmul( $sec, 1000 ), $msec ),
-				bcpow( 2, 46 )
-			);
-			$id_bin = wfBaseConvert( $ts, 10, 2, 46 );
-		} else {
-			throw new MWException( 'bcmath or gmp extension required for 32 bit machines.' );
+		$ts = 1000 * $sec + $msec;
+		if ( $ts > pow( 2, 52 ) ) {
+			throw new MWException( __METHOD__ .
+				': sorry, this function doesn\'t work after the year 144680' );
 		}
-		return $id_bin;
+		return substr( wfBaseConvert( $ts, 10, 2, 46 ), -46 );
 	}
 
 	/**
@@ -341,7 +328,7 @@ class UIDGenerator {
 	 */
 	protected static function millitime() {
 		list( $msec, $sec ) = explode( ' ', microtime() );
-		return array( (int) $sec, (int) ( $msec * 1000 ) );
+		return array( (int)$sec, (int)( $msec * 1000 ) );
 	}
 
 	function __destruct() {

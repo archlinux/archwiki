@@ -39,6 +39,9 @@ class ApiSetNotificationTimestamp extends ApiBase {
 		if ( $user->isAnon() ) {
 			$this->dieUsage( 'Anonymous users cannot use watchlist change notifications', 'notloggedin' );
 		}
+		if ( !$user->isAllowed( 'editmywatchlist' ) ) {
+			$this->dieUsage( 'You don\'t have permission to edit your watchlist', 'permissiondenied' );
+		}
 
 		$params = $this->extractRequestParams();
 		$this->requireMaxOneParameter( $params, 'timestamp', 'torevid', 'newerthanrevid' );
@@ -212,7 +215,7 @@ class ApiSetNotificationTimestamp extends ApiBase {
 	}
 
 	public function getParamDescription() {
-		return $this->getPageSet()->getParamDescription() + array(
+		return $this->getPageSet()->getFinalParamDescription() + array(
 			'entirewatchlist' => 'Work on all watched pages',
 			'timestamp' => 'Timestamp to which to set the notification timestamp',
 			'torevid' => 'Revision to set the notification timestamp to (one page only)',
@@ -270,7 +273,7 @@ class ApiSetNotificationTimestamp extends ApiBase {
 		$ps = $this->getPageSet();
 		return array_merge(
 			parent::getPossibleErrors(),
-			$ps->getPossibleErrors(),
+			$ps->getFinalPossibleErrors(),
 			$this->getRequireMaxOneParameterErrorMessages(
 				array( 'timestamp', 'torevid', 'newerthanrevid' ) ),
 			$this->getRequireOnlyOneParameterErrorMessages(

@@ -37,24 +37,31 @@ class DatabaseMssql extends DatabaseBase {
 	function cascadingDeletes() {
 		return true;
 	}
+
 	function cleanupTriggers() {
 		return true;
 	}
+
 	function strictIPs() {
 		return true;
 	}
+
 	function realTimestamps() {
 		return true;
 	}
+
 	function implicitGroupby() {
 		return false;
 	}
+
 	function implicitOrderby() {
 		return false;
 	}
+
 	function functionalIndexes() {
 		return true;
 	}
+
 	function unionSupportsOrderAndLimit() {
 		return false;
 	}
@@ -89,7 +96,7 @@ class DatabaseMssql extends DatabaseBase {
 
 		$connectionInfo = array();
 
-		if( $dbName ) {
+		if ( $dbName ) {
 			$connectionInfo['Database'] = $dbName;
 		}
 
@@ -102,7 +109,7 @@ class DatabaseMssql extends DatabaseBase {
 		$ntAuthPassTest = strtolower( $password );
 
 		// Decide which auth scenerio to use
-		if( $ntAuthPassTest == 'ntauth' && $ntAuthUserTest == 'ntauth' ) {
+		if ( $ntAuthPassTest == 'ntauth' && $ntAuthUserTest == 'ntauth' ) {
 			// Don't add credentials to $connectionInfo
 		} else {
 			$connectionInfo['UID'] = $user;
@@ -148,7 +155,7 @@ class DatabaseMssql extends DatabaseBase {
 		}
 
 		// MSSQL doesn't have EXTRACT(epoch FROM XXX)
-		if ( preg_match('#\bEXTRACT\s*?\(\s*?EPOCH\s+FROM\b#i', $sql, $matches ) ) {
+		if ( preg_match( '#\bEXTRACT\s*?\(\s*?EPOCH\s+FROM\b#i', $sql, $matches ) ) {
 			// This is same as UNIX_TIMESTAMP, we need to calc # of seconds from 1970
 			$sql = str_replace( $matches[0], "DATEDIFF(s,CONVERT(datetime,'1/1/1970'),", $sql );
 		}
@@ -202,9 +209,9 @@ class DatabaseMssql extends DatabaseBase {
 		$retErrors = sqlsrv_errors( SQLSRV_ERR_ALL );
 		if ( $retErrors != null ) {
 			foreach ( $retErrors as $arrError ) {
-				$strRet .= "SQLState: " . $arrError[ 'SQLSTATE'] . "\n";
-				$strRet .= "Error Code: " . $arrError[ 'code'] . "\n";
-				$strRet .= "Message: " . $arrError[ 'message'] . "\n";
+				$strRet .= "SQLState: " . $arrError['SQLSTATE'] . "\n";
+				$strRet .= "Error Code: " . $arrError['code'] . "\n";
+				$strRet .= "Message: " . $arrError['message'] . "\n";
 			}
 		} else {
 			$strRet = "No errors found";
@@ -290,7 +297,7 @@ class DatabaseMssql extends DatabaseBase {
 	 *						   (e.g. array( 'page' => array('LEFT JOIN','page_latest=rev_id') )
 	 * @return Mixed: database result resource (feed to Database::fetchObject or whatever), or false on failure
 	 */
-	function select( $table, $vars, $conds = '', $fname = 'DatabaseMssql::select', $options = array(), $join_conds = array() )
+	function select( $table, $vars, $conds = '', $fname = __METHOD__, $options = array(), $join_conds = array() )
 	{
 		$sql = $this->selectSQLText( $table, $vars, $conds, $fname, $options, $join_conds );
 		if ( isset( $options['EXPLAIN'] ) ) {
@@ -315,7 +322,7 @@ class DatabaseMssql extends DatabaseBase {
 	 *                    (e.g. array( 'page' => array('LEFT JOIN','page_latest=rev_id') )
 	 * @return string, the SQL text
 	 */
-	function selectSQLText( $table, $vars, $conds = '', $fname = 'DatabaseMssql::select', $options = array(), $join_conds = array() ) {
+	function selectSQLText( $table, $vars, $conds = '', $fname = __METHOD__, $options = array(), $join_conds = array() ) {
 		if ( isset( $options['EXPLAIN'] ) ) {
 			unset( $options['EXPLAIN'] );
 		}
@@ -330,14 +337,16 @@ class DatabaseMssql extends DatabaseBase {
 	 * Takes same arguments as Database::select()
 	 * @return int
 	 */
-	function estimateRowCount( $table, $vars = '*', $conds = '', $fname = 'DatabaseMssql::estimateRowCount', $options = array() ) {
+	function estimateRowCount( $table, $vars = '*', $conds = '', $fname = __METHOD__, $options = array() ) {
 		$options['EXPLAIN'] = true;// http://msdn2.microsoft.com/en-us/library/aa259203.aspx
 		$res = $this->select( $table, $vars, $conds, $fname, $options );
 
 		$rows = -1;
 		if ( $res ) {
 			$row = $this->fetchRow( $res );
-			if ( isset( $row['EstimateRows'] ) ) $rows = $row['EstimateRows'];
+			if ( isset( $row['EstimateRows'] ) ) {
+				$rows = $row['EstimateRows'];
+			}
 		}
 		return $rows;
 	}
@@ -347,7 +356,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * If errors are explicitly ignored, returns NULL on failure
 	 * @return array|bool|null
 	 */
-	function indexInfo( $table, $index, $fname = 'DatabaseMssql::indexExists' ) {
+	function indexInfo( $table, $index, $fname = __METHOD__ ) {
 		# This does not return the same info as MYSQL would, but that's OK because MediaWiki never uses the
 		# returned value except to check for the existance of indexes.
 		$sql = "sp_helpindex '" . $table . "'";
@@ -392,7 +401,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * @throws DBQueryError
 	 * @return bool
 	 */
-	function insert( $table, $arrToInsert, $fname = 'DatabaseMssql::insert', $options = array() ) {
+	function insert( $table, $arrToInsert, $fname = __METHOD__, $options = array() ) {
 		# No rows to insert, easy just return now
 		if ( !count( $arrToInsert ) ) {
 			return true;
@@ -414,7 +423,7 @@ class DatabaseMssql extends DatabaseBase {
 		$identity = null;
 		$tableRaw = preg_replace( '#\[([^\]]*)\]#', '$1', $table ); // strip matching square brackets from table name
 		$res = $this->doQuery( "SELECT NAME AS idColumn FROM SYS.IDENTITY_COLUMNS WHERE OBJECT_NAME(OBJECT_ID)='{$tableRaw}'" );
-		if( $res && $res->numrows() ) {
+		if ( $res && $res->numrows() ) {
 			// There is an identity for this table.
 			$identity = array_pop( $res->fetch( SQLSRV_FETCH_ASSOC ) );
 		}
@@ -427,11 +436,11 @@ class DatabaseMssql extends DatabaseBase {
 			$identityClause = '';
 
 			// if we have an identity column
-			if( $identity ) {
+			if ( $identity ) {
 				// iterate through
-				foreach ($a as $k => $v ) {
+				foreach ( $a as $k => $v ) {
 					if ( $k == $identity ) {
-						if( !is_null($v) ) {
+						if ( !is_null( $v ) ) {
 							// there is a value being passed to us, we need to turn on and off inserted identity
 							$sqlPre = "SET IDENTITY_INSERT $table ON;";
 							$sqlPost = ";SET IDENTITY_INSERT $table OFF;";
@@ -501,7 +510,7 @@ class DatabaseMssql extends DatabaseBase {
 			} elseif ( $ret != null ) {
 				// remember number of rows affected
 				$this->mAffectedRows = sqlsrv_rows_affected( $ret );
-				if ( !is_null($identity) ) {
+				if ( !is_null( $identity ) ) {
 					// then we want to get the identity column value we were assigned and save it off
 					$row = sqlsrv_fetch_object( $ret );
 					$this->mInsertId = $row->$identity;
@@ -530,7 +539,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * @throws DBQueryError
 	 * @return null|ResultWrapper
 	 */
-	function insertSelect( $destTable, $srcTable, $varMap, $conds, $fname = 'DatabaseMssql::insertSelect',
+	function insertSelect( $destTable, $srcTable, $varMap, $conds, $fname = __METHOD__,
 		$insertOptions = array(), $selectOptions = array() ) {
 		$ret = parent::insertSelect( $destTable, $srcTable, $varMap, $conds, $fname, $insertOptions, $selectOptions );
 
@@ -645,7 +654,7 @@ class DatabaseMssql extends DatabaseBase {
 	/**
 	 * @return string wikitext of a link to the server software's web site
 	 */
-	public static function getSoftwareLink() {
+	public function getSoftwareLink() {
 		return "[http://www.microsoft.com/sql/ MS SQL Server]";
 	}
 
@@ -661,11 +670,11 @@ class DatabaseMssql extends DatabaseBase {
 		return $version;
 	}
 
-	function tableExists ( $table, $fname = __METHOD__, $schema = false ) {
+	function tableExists( $table, $fname = __METHOD__, $schema = false ) {
 		$res = sqlsrv_query( $this->mConn, "SELECT * FROM information_schema.tables
 			WHERE table_type='BASE TABLE' AND table_name = '$table'" );
 		if ( $res === false ) {
-			print( "Error in tableExists query: " . $this->getErrors() );
+			print "Error in tableExists query: " . $this->getErrors();
 			return false;
 		}
 		if ( sqlsrv_fetch( $res ) ) {
@@ -679,12 +688,12 @@ class DatabaseMssql extends DatabaseBase {
 	 * Query whether a given column exists in the mediawiki schema
 	 * @return bool
 	 */
-	function fieldExists( $table, $field, $fname = 'DatabaseMssql::fieldExists' ) {
+	function fieldExists( $table, $field, $fname = __METHOD__ ) {
 		$table = $this->tableName( $table );
 		$res = sqlsrv_query( $this->mConn, "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.Columns
 			WHERE TABLE_NAME = '$table' AND COLUMN_NAME = '$field'" );
 		if ( $res === false ) {
-			print( "Error in fieldExists query: " . $this->getErrors() );
+			print "Error in fieldExists query: " . $this->getErrors();
 			return false;
 		}
 		if ( sqlsrv_fetch( $res ) ) {
@@ -699,7 +708,7 @@ class DatabaseMssql extends DatabaseBase {
 		$res = sqlsrv_query( $this->mConn, "SELECT * FROM INFORMATION_SCHEMA.Columns
 			WHERE TABLE_NAME = '$table' AND COLUMN_NAME = '$field'" );
 		if ( $res === false ) {
-			print( "Error in fieldInfo query: " . $this->getErrors() );
+			print "Error in fieldInfo query: " . $this->getErrors();
 			return false;
 		}
 		$meta = $this->fetchRow( $res );
@@ -712,7 +721,7 @@ class DatabaseMssql extends DatabaseBase {
 	/**
 	 * Begin a transaction, committing any previously open transaction
 	 */
-	protected function doBegin( $fname = 'DatabaseMssql::begin' ) {
+	protected function doBegin( $fname = __METHOD__ ) {
 		sqlsrv_begin_transaction( $this->mConn );
 		$this->mTrxLevel = 1;
 	}
@@ -720,7 +729,7 @@ class DatabaseMssql extends DatabaseBase {
 	/**
 	 * End a transaction
 	 */
-	protected function doCommit( $fname = 'DatabaseMssql::commit' ) {
+	protected function doCommit( $fname = __METHOD__ ) {
 		sqlsrv_commit( $this->mConn );
 		$this->mTrxLevel = 0;
 	}
@@ -729,7 +738,7 @@ class DatabaseMssql extends DatabaseBase {
 	 * Rollback a transaction.
 	 * No-op on non-transactional databases.
 	 */
-	protected function doRollback( $fname = 'DatabaseMssql::rollback' ) {
+	protected function doRollback( $fname = __METHOD__ ) {
 		sqlsrv_rollback( $this->mConn );
 		$this->mTrxLevel = 0;
 	}
@@ -952,7 +961,7 @@ class DatabaseMssql extends DatabaseBase {
  */
 class MssqlField implements Field {
 	private $name, $tablename, $default, $max_length, $nullable, $type;
-	function __construct ( $info ) {
+	function __construct( $info ) {
 		$this->name = $info['COLUMN_NAME'];
 		$this->tablename = $info['TABLE_NAME'];
 		$this->default = $info['COLUMN_DEFAULT'];
@@ -1002,7 +1011,7 @@ class MssqlResult {
 
 		$rows = sqlsrv_fetch_array( $queryresult, SQLSRV_FETCH_ASSOC );
 
-		foreach( $rows as $row ) {
+		foreach ( $rows as $row ) {
 			if ( $row !== null ) {
 				foreach ( $row as $k => $v ) {
 					if ( is_object( $v ) && method_exists( $v, 'format' ) ) {// DateTime Object
@@ -1040,7 +1049,7 @@ class MssqlResult {
 				$arrNum[] = $value;
 			}
 		}
-		switch( $mode ) {
+		switch ( $mode ) {
 			case SQLSRV_FETCH_ASSOC:
 				$ret = $this->mRows[$this->mCursor];
 				break;
@@ -1093,37 +1102,96 @@ class MssqlResult {
 			$i++;
 		}
 		// http://msdn.microsoft.com/en-us/library/cc296183.aspx contains type table
-		switch( $intType ) {
-			case SQLSRV_SQLTYPE_BIGINT: 		$strType = 'bigint'; break;
-			case SQLSRV_SQLTYPE_BINARY: 		$strType = 'binary'; break;
-			case SQLSRV_SQLTYPE_BIT: 			$strType = 'bit'; break;
-			case SQLSRV_SQLTYPE_CHAR: 			$strType = 'char'; break;
-			case SQLSRV_SQLTYPE_DATETIME: 		$strType = 'datetime'; break;
-			case SQLSRV_SQLTYPE_DECIMAL/*($precision, $scale)*/: $strType = 'decimal'; break;
-			case SQLSRV_SQLTYPE_FLOAT: 			$strType = 'float'; break;
-			case SQLSRV_SQLTYPE_IMAGE: 			$strType = 'image'; break;
-			case SQLSRV_SQLTYPE_INT: 			$strType = 'int'; break;
-			case SQLSRV_SQLTYPE_MONEY: 			$strType = 'money'; break;
-			case SQLSRV_SQLTYPE_NCHAR/*($charCount)*/: $strType = 'nchar'; break;
-			case SQLSRV_SQLTYPE_NUMERIC/*($precision, $scale)*/: $strType = 'numeric'; break;
-			case SQLSRV_SQLTYPE_NVARCHAR/*($charCount)*/: $strType = 'nvarchar'; break;
-			// case SQLSRV_SQLTYPE_NVARCHAR('max'): $strType = 'nvarchar(MAX)'; break;
-			case SQLSRV_SQLTYPE_NTEXT: 			$strType = 'ntext'; break;
-			case SQLSRV_SQLTYPE_REAL: 			$strType = 'real'; break;
-			case SQLSRV_SQLTYPE_SMALLDATETIME: 	$strType = 'smalldatetime'; break;
-			case SQLSRV_SQLTYPE_SMALLINT: 		$strType = 'smallint'; break;
-			case SQLSRV_SQLTYPE_SMALLMONEY: 	$strType = 'smallmoney'; break;
-			case SQLSRV_SQLTYPE_TEXT: 			$strType = 'text'; break;
-			case SQLSRV_SQLTYPE_TIMESTAMP: 		$strType = 'timestamp'; break;
-			case SQLSRV_SQLTYPE_TINYINT: 		$strType = 'tinyint'; break;
-			case SQLSRV_SQLTYPE_UNIQUEIDENTIFIER: $strType = 'uniqueidentifier'; break;
-			case SQLSRV_SQLTYPE_UDT: 			$strType = 'UDT'; break;
-			case SQLSRV_SQLTYPE_VARBINARY/*($byteCount)*/: $strType = 'varbinary'; break;
-			// case SQLSRV_SQLTYPE_VARBINARY('max'): $strType = 'varbinary(MAX)'; break;
-			case SQLSRV_SQLTYPE_VARCHAR/*($charCount)*/: $strType = 'varchar'; break;
-			// case SQLSRV_SQLTYPE_VARCHAR('max'): $strType = 'varchar(MAX)'; break;
-			case SQLSRV_SQLTYPE_XML: 			$strType = 'xml'; break;
-			default: $strType = $intType;
+		switch ( $intType ) {
+			case SQLSRV_SQLTYPE_BIGINT:
+				$strType = 'bigint';
+				break;
+			case SQLSRV_SQLTYPE_BINARY:
+				$strType = 'binary';
+				break;
+			case SQLSRV_SQLTYPE_BIT:
+				$strType = 'bit';
+				break;
+			case SQLSRV_SQLTYPE_CHAR:
+				$strType = 'char';
+				break;
+			case SQLSRV_SQLTYPE_DATETIME:
+				$strType = 'datetime';
+				break;
+			case SQLSRV_SQLTYPE_DECIMAL: // ($precision, $scale)
+				$strType = 'decimal';
+				break;
+			case SQLSRV_SQLTYPE_FLOAT:
+				$strType = 'float';
+				break;
+			case SQLSRV_SQLTYPE_IMAGE:
+				$strType = 'image';
+				break;
+			case SQLSRV_SQLTYPE_INT:
+				$strType = 'int';
+				break;
+			case SQLSRV_SQLTYPE_MONEY:
+				$strType = 'money';
+				break;
+			case SQLSRV_SQLTYPE_NCHAR: // ($charCount):
+				$strType = 'nchar';
+				break;
+			case SQLSRV_SQLTYPE_NUMERIC: // ($precision, $scale):
+				$strType = 'numeric';
+				break;
+			case SQLSRV_SQLTYPE_NVARCHAR: // ($charCount)
+				$strType = 'nvarchar';
+				break;
+			// case SQLSRV_SQLTYPE_NVARCHAR('max'):
+			//	 $strType = 'nvarchar(MAX)';
+			//	 break;
+			case SQLSRV_SQLTYPE_NTEXT:
+				$strType = 'ntext';
+				break;
+			case SQLSRV_SQLTYPE_REAL:
+				$strType = 'real';
+				break;
+			case SQLSRV_SQLTYPE_SMALLDATETIME:
+				$strType = 'smalldatetime';
+				break;
+			case SQLSRV_SQLTYPE_SMALLINT:
+				$strType = 'smallint';
+				break;
+			case SQLSRV_SQLTYPE_SMALLMONEY:
+				$strType = 'smallmoney';
+				break;
+			case SQLSRV_SQLTYPE_TEXT:
+				$strType = 'text';
+				break;
+			case SQLSRV_SQLTYPE_TIMESTAMP:
+				$strType = 'timestamp';
+				break;
+			case SQLSRV_SQLTYPE_TINYINT:
+				$strType = 'tinyint';
+				break;
+			case SQLSRV_SQLTYPE_UNIQUEIDENTIFIER:
+				$strType = 'uniqueidentifier';
+				break;
+			case SQLSRV_SQLTYPE_UDT:
+				$strType = 'UDT';
+				break;
+			case SQLSRV_SQLTYPE_VARBINARY: // ($byteCount)
+				$strType = 'varbinary';
+				break;
+			// case SQLSRV_SQLTYPE_VARBINARY('max'):
+			//	 $strType = 'varbinary(MAX)';
+			//	 break;
+			case SQLSRV_SQLTYPE_VARCHAR: // ($charCount)
+				$strType = 'varchar';
+				break;
+			// case SQLSRV_SQLTYPE_VARCHAR('max'):
+			//	 $strType = 'varchar(MAX)';
+			//	 break;
+			case SQLSRV_SQLTYPE_XML:
+				$strType = 'xml';
+				break;
+			default:
+				$strType = $intType;
 		}
 		return $strType;
 	}

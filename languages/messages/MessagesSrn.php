@@ -179,9 +179,6 @@ $messages = array(
 'tog-enotifminoredits' => 'E-mail mi fu pikin kenki fu peprewoysi opo mi sirey',
 'tog-enotifrevealaddr' => 'Sori mi e-mail nen ini den e-mail boskopu',
 'tog-shownumberswatching' => 'Sori omeni kebroikiman e tan luku a papira disi',
-'tog-externaleditor' => 'Tan kebroiki wan dorosey kenki-wrokosani (soso gi sabiman - spesrutu seti de fanowdu gi disi)',
-'tog-externaldiff' => 'Tan kebroiki wan dorosey agersi-wrokosani (soso gi sabiman - spesrutu set de fanowdu gi disi)',
-'tog-showjumplinks' => 'Sori den "go na" miti',
 'tog-uselivepreview' => 'Kebroiki "wanten sori-na-fesi" (JavaScript – ondrosuku fasi)',
 'tog-forceeditsummary' => 'Gi wan boskopu efu a "Syatu" boksu leygi',
 'tog-watchlisthideown' => 'Kibri mi eygi kenki ini mi Tan luku réy',
@@ -338,7 +335,7 @@ $messages = array(
 'jumptonavigation' => 'fenipresi',
 'jumptosearch' => 'suku',
 
-# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
+# All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage).
 'aboutsite' => 'Abra {{SITENAME}}',
 'aboutpage' => 'Project:Abra',
 'copyright' => 'Ala san skrifi dyaso de ondro $1.',
@@ -348,7 +345,6 @@ $messages = array(
 'disclaimers' => 'Disclaimers',
 'disclaimerpage' => 'Project:Disclaimer gi ala',
 'edithelp' => 'Yepi nanga kenki',
-'edithelppage' => 'Help:Kenki',
 'helppage' => 'Help:San de',
 'mainpage' => 'Fesipapira',
 'mainpage-description' => 'Fesipapira',
@@ -638,16 +634,7 @@ A kan ben trowe efu dribi.
 'prevn' => '{{PLURAL:$1|$1}} di psa',
 'nextn' => '{{PLURAL:$1|$1}} trawan',
 'viewprevnext' => 'Luku ($1 {{int:pipe-separator}} $2) ($3).',
-'searchhelp-url' => 'Help:San de',
 'powersearch' => 'Suku moro dipi',
-
-# Quickbar
-'qbsettings' => 'Kwikbak',
-'qbsettings-none' => 'Nowan',
-'qbsettings-fixedleft' => 'Set na ku',
-'qbsettings-fixedright' => 'Set na pe',
-'qbsettings-floatingleft' => 'Han na ku',
-'qbsettings-floatingright' => 'Han na pe',
 
 # Preferences page
 'preferences' => 'Seti',
@@ -756,7 +743,6 @@ A kan ben trowe efu dribi.
 'recentchangeslinked-feed' => 'Kenki di abi wan sani fu du nanga disi',
 'recentchangeslinked-toolbox' => 'Kenki di abi wan sani fu du nanga disi',
 'recentchangeslinked-title' => 'Kenki di abi wan sani fu du nanga "$1"',
-'recentchangeslinked-noresult' => 'Noti ben kenki ini den miti papira ini a pisi di gi.',
 'recentchangeslinked-summary' => "A spesrutu papira disi e sori den laste kenki di ben meki tapu papira di miti tapu wan papira di sori (noso go na memre fu wan grupu di sori).
 Papira ini [[Special:Watchlist|yu Tan Luku réy]] '''fatu'''.",
 
@@ -850,8 +836,6 @@ Papira ini [[Special:Watchlist|yu Tan Luku réy]] '''fatu'''.",
 # Statistics
 'statistics' => 'Den statistiek',
 'statistics-header-users' => 'Masyininfrumasi',
-
-'disambiguations' => 'Seni doro papira',
 
 'doubleredirects' => 'Seni doro tu leisi',
 'doubleredirectstext' => 'Disi rei abi peprewoysi dy stir na trawan stir. Ies rei abi skaki na a foswan nanga a fostu stirpapira nanga wan skaki na a duli fu a fosty stirpapira. Pasa den ten ben a bakaseywan papira a tru duli.',
