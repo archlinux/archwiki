@@ -2,4 +2,3 @@
 .*[Ff]ail.*
 .*[Nn]yancat.* <errmsg=blacklisted-nyancat>
 .*evil_acc.* <newaccountonly>
-AW{1,10} <antispoof>

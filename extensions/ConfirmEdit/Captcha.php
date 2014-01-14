@@ -355,38 +355,26 @@ class SimpleCaptcha {
 	 */
 	function filterLink( $url ) {
 		global $wgCaptchaWhitelist;
-		static $regexes = null;
+		$source = wfMessage( 'captcha-addurl-whitelist' )->inContentLanguage()->text();
 
-		if ( $regexes === null ) {
-			$source = wfMessage( 'captcha-addurl-whitelist' )->inContentLanguage();
+		$whitelist = wfMessage( 'captcha-addurl-whitelist', $source )->isDisabled()
+			? false
+			: $this->buildRegexes( explode( "\n", $source ) );
 
-			$regexes = $source->isDisabled()
-				? array()
-				: $this->buildRegexes( explode( "\n", $source->plain() ) );
+		$cwl = $wgCaptchaWhitelist !== false ? preg_match( $wgCaptchaWhitelist, $url ) : false;
+		$wl  = $whitelist          !== false ? preg_match( $whitelist, $url )          : false;
 
-			if ( $wgCaptchaWhitelist !== false ) {
-				array_unshift( $regexes, $wgCaptchaWhitelist );
-			}
-		}
-
-		foreach ( $regexes as $regex ) {
-			if ( preg_match( $regex, $url ) ) {
-				return false;
-			}
-		}
-
-		return true;
+		return !( $cwl || $wl );
 	}
 
 	/**
 	 * Build regex from whitelist
 	 * @param $lines string from [[MediaWiki:Captcha-addurl-whitelist]]
-	 * @return array Regexes
+	 * @return string Regex or bool false if whitelist is empty
 	 * @access private
 	 */
 	function buildRegexes( $lines ) {
 		# Code duplicated from the SpamBlacklist extension (r19197)
-		# and later modified.
 
 		# Strip comments and whitespace, then remove blanks
 		$lines = array_filter( array_map( 'trim', preg_replace( '/#.*$/', '', $lines ) ) );
@@ -394,59 +382,34 @@ class SimpleCaptcha {
 		# No lines, don't make a regex which will match everything
 		if ( count( $lines ) == 0 ) {
 			wfDebug( "No lines\n" );
-			return array();
+			return false;
 		} else {
 			# Make regex
 			# It's faster using the S modifier even though it will usually only be run once
 			// $regex = 'http://+[a-z0-9_\-.]*(' . implode( '|', $lines ) . ')';
 			// return '/' . str_replace( '/', '\/', preg_replace('|\\\*/|', '/', $regex) ) . '/Si';
-			$regexes = array();
-			$regexStart = array(
-				'normal' => '/^https?:\/\/+[a-z0-9_\-.]*(?:',
-				'noprotocol' => '/^(?:',
-			);
-			$regexEnd = array(
-				'normal' => ')/Si',
-				'noprotocol' => ')/Si',
-			);
+			$regexes = '';
+			$regexStart = '/^https?:\/\/+[a-z0-9_\-.]*(';
+			$regexEnd = ')/Si';
 			$regexMax = 4096;
-			$build = array();
+			$build = false;
 			foreach ( $lines as $line ) {
-				# Extract flags from the line
-				$options = array();
-				if ( preg_match( '/^(.*?)\s*<([^<>]*)>$/', $line, $matches ) ) {
-					if ( $matches[1] === '' ) {
-						wfDebug( "Line with empty regex\n" );
-						continue;
-					}
-					$line = $matches[1];
-					$opts = preg_split( '/\s*\|\s*/', trim( $matches[2] ) );
-					foreach ( $opts as $opt ) {
-						$opt = strtolower( $opt );
-						if ( $opt == 'noprotocol' ) {
-							$options['noprotocol'] = true;
-						}
-					}
-				}
-
-				$key = isset( $options['noprotocol'] ) ? 'noprotocol' : 'normal';
-
 				// FIXME: not very robust size check, but should work. :)
-				if ( !isset( $build[$key] ) ) {
-					$build[$key] = $line;
-				} elseif ( strlen( $build[$key] ) + strlen( $line ) > $regexMax ) {
-					$regexes[] = $regexStart[$key] .
-						str_replace( '/', '\/', preg_replace( '|\\\*/|', '/', $build[$key] ) ) .
-						$regexEnd[$key];
-					$build[$key] = $line;
+				if ( $build === false ) {
+					$build = $line;
+				} elseif ( strlen( $build ) + strlen( $line ) > $regexMax ) {
+					$regexes .= $regexStart .
+						str_replace( '/', '\/', preg_replace( '|\\\*/|', '/', $build ) ) .
+						$regexEnd;
+					$build = $line;
 				} else {
-					$build[$key] .= '|' . $line;
+					$build .= '|' . $line;
 				}
 			}
-			foreach ( $build as $key => $value ) {
-				$regexes[] = $regexStart[$key] .
-					str_replace( '/', '\/', preg_replace( '|\\\*/|', '/', $build[$key] ) ) .
-					$regexEnd[$key];
+			if ( $build !== false ) {
+				$regexes .= $regexStart .
+					str_replace( '/', '\/', preg_replace( '|\\\*/|', '/', $build ) ) .
+					$regexEnd;
 			}
 			return $regexes;
 		}

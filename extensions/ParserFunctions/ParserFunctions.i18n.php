@@ -1233,33 +1233,6 @@ $messages['id'] = array(
 	'pfunc_string_too_long' => 'Kesalahan: String melebihi limit $1 karakter',
 );
 
-/** Iloko (Ilokano)
- * @author Lam-ang
- */
-$messages['ilo'] = array(
-	'pfunc_desc' => 'Napasayaat a parser nga adda kadagiti lohikal nga annong',
-	'pfunc_time_error' => 'Biddut: Imbalido nga oras.',
-	'pfunc_time_too_long' => 'Biddut: Adu unay dagiti panagtawag ti #time.',
-	'pfunc_time_too_big' => 'Biddut: Ti #time ket suportaranna laeng dagiti tawen aginggana iti 9999.',
-	'pfunc_time_too_small' => 'Biddut: ti #time ket suportaranna laeng dagiti tawen manipud ti 0.',
-	'pfunc_rel2abs_invalid_depth' => 'Biddut: Imbalido a kauneg iti dalan: "$1" (nagpadas a nangserrek ti nodo iti ngato ti ramut a nodo).',
-	'pfunc_expr_stack_exhausted' => 'Biddut a panangiyebkas: Naibusen ti tuon.',
-	'pfunc_expr_unexpected_number' => 'Biddut a panangiyebkas:Di nanamnama a bilang.',
-	'pfunc_expr_preg_match_failure' => 'Biddut a panangiyebkas: Di nanamnama a pannakapaay ti preg_match.',
-	'pfunc_expr_unrecognised_word' => 'Biddut a panangiyebkas: Di mabigbigan a balikas ti "$1".',
-	'pfunc_expr_unexpected_operator' => 'Biddut a panangiyebkas: Di nanamnama nga operator ti $1.',
-	'pfunc_expr_missing_operand' => 'Biddut a panangiyebkas: Napukaw nga operand para iti $1.',
-	'pfunc_expr_unexpected_closing_bracket' => 'Biddut a panangiyebkas: Di nanamnama a pangrikep a braket.',
-	'pfunc_expr_unrecognised_punctuation' => 'Biddut a panangiyebkas: Di nanamnama a karakter ti tuldek ti "$1".',
-	'pfunc_expr_unclosed_bracket' => 'Biddut a panangiyebkas: Di narikpan a braket.',
-	'pfunc_expr_division_by_zero' => 'Panagbingbingay babaen ti sero.',
-	'pfunc_expr_invalid_argument' => 'Imbalido nga argumento para iti $1: < -1 wenno > 1.',
-	'pfunc_expr_invalid_argument_ln' => 'Imbalido nga argumento para iti ln: <= 0.',
-	'pfunc_expr_unknown_error' => 'Biddut a panangiyebkas: Di ammo a biddut ($1).',
-	'pfunc_expr_not_a_number' => 'Iti $1: Ti resulta ket saan a bilang.',
-	'pfunc_string_too_long' => 'Biddut: Ti kuerdas ket nasurokanna ti limitado ti karakter iti $1.',
-);
-
 /** Ido (Ido)
  * @author Malafaya
  */
@@ -1521,7 +1494,6 @@ $messages['lb'] = array(
 	'pfunc_time_error' => 'Feeler: ongëlteg Zäit',
 	'pfunc_time_too_long' => 'Feeler: ze dacks #time opgeruff',
 	'pfunc_time_too_big' => 'Feeler: #time ënnerstëtzt nëmme Jore bis 9999',
-	'pfunc_time_too_small' => 'Feeler: #time ënnerstëtzt nëmme Jore vun 0 un.',
 	'pfunc_expr_stack_exhausted' => 'Expressiouns-Feeler: Stack iwwergelaf',
 	'pfunc_expr_unexpected_number' => 'Expressiouns-Feeler: Onerwarten Zuel',
 	'pfunc_expr_unrecognised_word' => 'Expressiouns-Feeler: Onerkantent Wuert "$1"',
@@ -1926,7 +1898,6 @@ $messages['pms'] = array(
 	'pfunc_time_error' => 'Eror: temp nen bon',
 	'pfunc_time_too_long' => 'Eror: #time a ven ciamà tròpe vire',
 	'pfunc_time_too_big' => "Eror: #time a përmët mach j'agn fin al 9999.",
-	'pfunc_time_too_small' => "Eror: #time a përmet j'agn mach da 0.",
 	'pfunc_rel2abs_invalid_depth' => 'Eror: profondità nen bon-a ant ël përcors: "$1" (a l\'é provasse a ciamé un grop dzora a la rèis)',
 	'pfunc_expr_stack_exhausted' => "Eror ëd l'espression: stach esaurìa",
 	'pfunc_expr_unexpected_number' => "Eror ëd l'espression: nùmer pa spetà",
@@ -2408,7 +2379,6 @@ $messages['sv'] = array(
 	'pfunc_time_error' => 'Fel: ogiltig tid',
 	'pfunc_time_too_long' => 'Fel: för många anrop av #time',
 	'pfunc_time_too_big' => 'Fel: # tid stöder endast år fram till 9999',
-	'pfunc_time_too_small' => 'Fel: #tid stödjer enbart år från 0.',
 	'pfunc_rel2abs_invalid_depth' => 'Fel: felaktig djup i sökväg: "$1" (försöker nå en nod ovanför rotnoden)',
 	'pfunc_expr_stack_exhausted' => 'Fel i uttryck: Stackutrymmet tog slut',
 	'pfunc_expr_unexpected_number' => 'Fel i uttryck: Oväntat tal',

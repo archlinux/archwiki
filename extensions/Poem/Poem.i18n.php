@@ -310,7 +310,7 @@ $messages['id'] = array(
  * @author Lam-ang
  */
 $messages['ilo'] = array(
-	'poem-desc' => 'Agnayon ti etiketa ti <code>&lt;poem&gt;</code> para iti panagporma ti daniw',
+	'poem-desc' => 'Ikkan na iti<code>&lt;poem&gt;</code> nga tag para ti pagporma ti daniw',
 );
 
 /** Italian (italiano)

@@ -19,6 +19,9 @@
 .wikiEditor-ui textarea:focus {
 	outline: none;
 }
+.wikiEditor-ui .wikiEditor-ui-bottom {
+	
+}
 .wikiEditor-ui .wikiEditor-ui-text {
 	line-height: 0;
 }

@@ -74,7 +74,7 @@ $specialPageAliases['ce'] = array(
 	'Cite' => array( 'Дош' ),
 );
 
-/** Czech (čeština) */
+/** Czech (česky) */
 $specialPageAliases['cs'] = array(
 	'Cite' => array( 'Citovat' ),
 );

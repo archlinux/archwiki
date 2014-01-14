@@ -59,7 +59,7 @@ $specialPageAliases['ce'] = array(
 	'Gadgets' => array( 'Гаджеташ' ),
 );
 
-/** Czech (čeština) */
+/** Czech (česky) */
 $specialPageAliases['cs'] = array(
 	'Gadgets' => array( 'Udělátka' ),
 );

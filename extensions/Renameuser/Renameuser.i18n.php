@@ -1022,7 +1022,6 @@ Zur Information folgt das Benutzernamenänderungs-Logbuch.',
 /** Zazaki (Zazaki)
  * @author Aspar
  * @author Erdemaslancan
- * @author Gorizon
  * @author Mirzali
  * @author Xoser
  */
@@ -1037,7 +1036,7 @@ $messages['diq'] = array(
 	'renameusermove' => 'nameyê karberan u pelê werêaameyişan bıkırışi nameyo newe',
 	'renameusersuppress' => 'Name de newi re hetenayışo newe vıraştış',
 	'renameuserreserve' => 'nameyê karberi yo verini bloke bıker.',
-	'renameuserwarnings' => 'İğtari:',
+	'renameuserwarnings' => 'hişyariyi',
 	'renameuserconfirm' => 'bele karberi newe ra name bıker',
 	'renameusersubmit' => 'bierşawê/biruşnê',
 	'renameuser-submit-blocklog' => 'Rocekanê bloqandê karbari bıvin',
@@ -2682,13 +2681,6 @@ $messages['li'] = array(
 Relevante regels oet 't logbook staon hieónger.",
 );
 
-/** لوری (لوری)
- * @author Mogoeilor
- */
-$messages['lrc'] = array(
-	'renameuserreason' => 'دلیل:',
-);
-
 /** Lithuanian (lietuvių)
  * @author Eitvys200
  * @author Homo
@@ -2881,7 +2873,7 @@ $messages['mr'] = array(
 	'renameuserreserve' => 'जुने सदस्य खाते पुढील वापरासाठी अवरुद्ध करा',
 	'renameuserwarnings' => 'ताकीद:',
 	'renameuserconfirm' => 'होय, सदस्याचे नाव बदला',
-	'renameusersubmit' => 'सादर करा',
+	'renameusersubmit' => 'पाठवा',
 	'renameusererrordoesnotexist' => '"<nowiki>$1</nowiki>" नावाचा सदस्य अस्तित्वात नाही.',
 	'renameusererrorexists' => '"<nowiki>$1</nowiki>" नावाचा सदस्य अगोदरच अस्तित्वात आहे',
 	'renameusererrorinvalid' => '"<nowiki>$1</nowiki>" हे नाव चुकीचे आहे.',
@@ -4753,7 +4745,7 @@ $messages['vo'] = array(
 	'renameuser-desc' => "Votanemön gebani (gität: ''renameuser'' zesüdon)",
 	'renameuserold' => 'Gebananem anuik:',
 	'renameusernew' => 'Gebananem nulik:',
-	'renameuserreason' => 'Kod:',
+	'renameuserreason' => 'Kod votanemama:', # Fuzzy
 	'renameusermove' => 'Topätükön padi e bespikapadi gebana (e donapadis onsik) ad nem nulik',
 	'renameuserreserve' => 'Neletön gebananemi rigik (pos votanemam) ad pagebön ün fütür',
 	'renameuserwarnings' => 'Nuneds:',
@@ -4844,7 +4836,6 @@ $messages['yo'] = array(
 );
 
 /** Cantonese (粵語)
- * @author Liuxinyu970226
  */
 $messages['yue'] = array(
 	'renameuser' => '改用戶名',

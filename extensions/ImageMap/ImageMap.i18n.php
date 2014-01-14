@@ -1,6 +1,6 @@
 <?php
 /**
- * Internationalisation file for extension ImageMap.
+ * Internationalisation file for extension FindSpam.
  *
  * @file
  * @ingroup Extensions
@@ -366,7 +366,6 @@ $messages['ca'] = array(
  */
 $messages['ce'] = array(
 	'imagemap_invalid_image' => 'ГӀалат: нийса дац я ишта сурт дац кху чохь',
-	'imagemap_no_link' => 'ГӀалат: $1 могӀанан чаккхехь нийса йоцу хьажораг ю',
 	'imagemap_invalid_title' => 'ГӀалат: могӀана $1 хьажориган корта нийса яц',
 	'imagemap_description' => 'Суьртах лаьцна',
 );

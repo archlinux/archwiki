@@ -688,11 +688,10 @@ $messages['ksh'] = array(
 /** Luxembourgish (Lëtzebuergesch)
  * @author Les Meloures
  * @author Robby
- * @author Soued031
  */
 $messages['lb'] = array(
 	'syntaxhighlight-desc' => "Syntax-Ervirhiewung <code>&lt;syntaxhighlight&gt;</code> mat Hëllef vu [http://qbnz.com/highlighter/ 'GeSHi Highlighter']",
-	'syntaxhighlight-specify' => 'Déi gewënscht Sprooch muss sou definéiert ginn:',
+	'syntaxhighlight-specify' => 'Déi gewënscht Sprooch muss esou definéiert ginn:',
 	'syntaxhighlight-supported' => "Ënnerstëtzte Sprooche fir d'Syntax faarweg ze markéieren",
 	'syntaxhighlight-err-loading' => '(Feeler beim Luede vun der Lëscht vun den ënnerstëtzte Sproochen)',
 	'syntaxhighlight-err-language' => 'Net valabel Sprooch.',

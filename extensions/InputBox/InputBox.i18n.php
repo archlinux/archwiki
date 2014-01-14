@@ -355,7 +355,6 @@ $messages['cdo'] = array(
  * @author Умар
  */
 $messages['ce'] = array(
-	'inputbox-error-no-type' => 'Ахьа язъечу меттиган тайп билгала йина яц.',
 	'tryexact' => 'Леррина лахар',
 	'searchfulltext' => 'Дуьззина йозанца лахар',
 	'createarticle' => 'Яззам кхоллар',
@@ -950,14 +949,14 @@ $messages['ig'] = array(
  * @author Lam-ang
  */
 $messages['ilo'] = array(
-	'inputbox-desc' => 'Mangipalubos ti panangiraman kadagiti nasakbayan a naipalawag a porma ti HTML',
-	'inputbox-error-no-type' => 'Saanmo pay a nainaganan no ania a kita ti partuaten a kahon ti pagikabilan.',
-	'inputbox-error-bad-type' => 'Ti kita ti kahon a pigikabilan ti "$1" ket saan a mabigbigan.
-Pangngaasi nga inaganam ti "agpartuat", "komento", "biruken", "biruken2", "wenno sibubukel a testo".',
+	'inputbox-desc' => 'Pakabaelan na nga agikabil kadagiti napalasin a kinabuklan ti HTML',
+	'inputbox-error-no-type' => 'Saan mo pay nga imbaga no ania a kita ti pagikabilan a kahon ti aramiden.',
+	'inputbox-error-bad-type' => 'Ti kita ti pigikabilan a kahon "$1" ket saan a ma-ammoan.
+Pangaasi ta ibagam nga "agaramid", "komentario", "biruken", "biruken2", "wenno sibubukel a testo".',
 	'tryexact' => 'Padasem to pudno a kapada',
-	'searchfulltext' => 'Agbiruk ti napno a testo',
-	'createarticle' => 'Agpartuat ti panid',
-	'inputbox-ns-main' => 'Nangruna',
+	'searchfulltext' => 'Agbiruk ti sibubukel a testo',
+	'createarticle' => 'Agaramid ti panid',
+	'inputbox-ns-main' => 'Dati',
 );
 
 /** Ido (Ido)
@@ -1125,7 +1124,7 @@ $messages['ko'] = array(
 	'inputbox-error-bad-type' => '"$1" 입력 상자 종류는 정의되어 있지 않습니다.
 "create", "comment", "search", "search2"나 "fulltext" 중 하나를 지정하세요.',
 	'tryexact' => '일치하는 항목 찾기',
-	'searchfulltext' => '전체 글 검색',
+	'searchfulltext' => '전체 글 찾기',
 	'createarticle' => '문서 만들기',
 	'inputbox-ns-main' => '문서',
 );
@@ -1349,7 +1348,7 @@ $messages['mn'] = array(
  */
 $messages['mr'] = array(
 	'inputbox-desc' => 'पूर्वी लिहिलेले HTML अर्ज वापरण्याची परवानगी द्या',
-	'inputbox-error-no-type' => 'कुठल्या प्रकारची पृष्ठपेटी तयार करायची ते तुम्ही स्पष्ट केलेले नाही.',
+	'inputbox-error-no-type' => 'तुम्ही कुठल्या प्रकारची पृष्ठपेटी तयार करायची ते स्पष्ट केलेले नाही.',
 	'inputbox-error-bad-type' => 'तुम्ही दिलेला पृष्ठपेटीचा "$1" हा प्रकार ओळखीचा नाही. 
 कृपया "create", "comment", "search" किंवा "search2"  किंवा "fulltext".यातील एक निवडा.',
 	'tryexact' => 'दिलेलेच शब्द शोधा',

@@ -105,28 +105,6 @@ class ApiQueryTitleBlacklistTest extends ApiTestCase {
 			$listed[0]['titleblacklist']['line'],
 			'Correct blacklist line is returned'
 		);
-	}
-
-	/**
-	 * Tests integration with the AntiSpoof extension
-	 */
-	function testAntiSpoofIntegration() {
-		if ( !class_exists( 'AntiSpoof') ) {
-			$this->markTestSkipped( "This test requires the AntiSpoof extension" );
-		}
-
-		$listed = $this->doApiRequest( array(
-			'action' => 'titleblacklist',
-			'tbtitle' => 'AVVVV',
-			'tbaction' => 'create',
-			'tbnooverride' => true,
-		) );
-
-		$this->assertEquals(
-			'blacklisted',
-			$listed[0]['titleblacklist']['result'],
-			'Spoofed title is blacklisted'
-		);
 
 	}
 }

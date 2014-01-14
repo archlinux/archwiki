@@ -175,7 +175,7 @@ class TitleBlacklist {
 		}
 		$blacklist = $this->getBlacklist();
 		foreach ( $blacklist as $item ) {
-			if ( $item->matches( $title->getFullText(), $action ) ) {
+			if ( $item->matches( $title, $action ) ) {
 				if ( $this->isWhitelisted( $title, $action ) ) {
 					return false;
 				}
@@ -199,7 +199,7 @@ class TitleBlacklist {
 		}
 		$whitelist = $this->getWhitelist();
 		foreach ( $whitelist as $item ) {
-			if ( $item->matches( $title->getFullText(), $action ) ) {
+			if ( $item->matches( $title, $action ) ) {
 				return true;
 			}
 		}
@@ -343,7 +343,7 @@ class TitleBlacklistEntry {
 	 * Check whether a user can perform the specified action
 	 * on the specified Title
 	 *
-	 * @param $title string to check
+	 * @param $title Title to check
 	 * @param $action %Action to check
 	 * @return bool TRUE if the the regex matches the title, and is not overridden
 	 * else false if it doesn't match (or was overridden)
@@ -357,17 +357,8 @@ class TitleBlacklistEntry {
 			return false;
 		}
 
-		if ( isset( $this->mParams['antispoof'] ) && is_callable( 'AntiSpoof::checkUnicodeString' ) ) {
-			list( $ok, $norm ) = AntiSpoof::checkUnicodeString( $title );
-			if ( $ok == "OK" ) {
-				list( $ver, $title ) = explode( ':', $norm, 2 );
-			} else {
-				wfDebugLog( 'TitleBlacklist', 'AntiSpoof could not normalize "' . $title . '".' );
-			}
-		}
-
 		wfSuppressWarnings();
-		$match = preg_match( "/^(?:{$this->mRegex})$/us" . ( isset( $this->mParams['casesensitive'] ) ? '' : 'i' ), $title );
+		$match = preg_match( "/^(?:{$this->mRegex})$/us" . ( isset( $this->mParams['casesensitive'] ) ? '' : 'i' ), $title->getFullText() );
 		wfRestoreWarnings();
 
 		global $wgUser;
@@ -435,9 +426,6 @@ class TitleBlacklistEntry {
 			}
 			if ( preg_match( '/errmsg\s*=\s*(.+)/i', $opt, $matches ) ) {
 				$options['errmsg'] = $matches[1];
-			}
-			if ( $opt2 == 'antispoof' ) {
-				$options['antispoof'] = true;
 			}
 		}
 		// Process magic words

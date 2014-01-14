@@ -1,7 +1,8 @@
 /*
  * JavaScript for WikiEditor Table of Contents
  */
-jQuery( document ).ready( function ( $ ) {
+
+$( document ).ready( function() {
 	// Add table of contents module
 	$( '#wpTextbox1' ).wikiEditor( 'addModule', 'toc' );
 } );

@@ -980,14 +980,12 @@ Definěruj dalšne w powěsći <nowiki>[[MediaWiki:$2]]</nowiki>.',
 za ref z mjenim <code>$1</code> njejo se tekst pódał',
 	'cite_error_included_ref' => 'Kóńceca toflicka <code>&lt;/ref&gt;</code> felujo za toflicku <code>&lt;ref&gt;</code>',
 	'cite_error_refs_without_references' => 'Toflicki <code>&lt;ref&gt;</code> eksistěruju, ale toflicka <code>&lt;references/&gt;</code> njejo se namakała',
-	'cite_error_group_refs_without_references' => 'Toflicki <code>&lt;ref&gt;</code> eksistěruju za kupku z mjenim "$1", ale wótpowědujuca toflicka <code>&lt;references group="$1"/&gt;</code> njejo se namakała abo zacynjacy <code>&lt;/ref&gt;</code> felujo',
+	'cite_error_group_refs_without_references' => 'Toflicki <code>&lt;ref&gt;</code> eksistěruju za kupku z mjenim "$1", ale wótpowědujuca toflicka <code>&lt;references group="$1"/&gt;</code> njejo se namakała', # Fuzzy
 	'cite_error_references_group_mismatch' => 'Toflicka <code>&lt;ref&gt;</code> w <code>&lt;references&gt;</code> jo ze kupkowym atributom "$1" w konflikśe.',
 	'cite_error_references_missing_group' => 'Toflicka <code>&lt;ref&gt;</code>, kótaraž jo w <code>&lt;references&gt;</code> definěrowana, ma kupkowy atribut "$1", kótaryž njepokazujo se w pjerwjejšnem teksće.',
 	'cite_error_references_missing_key' => 'Toflicka <code>&lt;ref&gt;</code> z mjenim "$1", kótaraž jo w <code>&lt;references&gt;</code> definěrowana, njewužywa se w pjerwjejšnem teksće.',
 	'cite_error_references_no_key' => 'Toflicka <code>&lt;ref&gt;</code>, kótaraž jo w <code>&lt;references&gt;</code> definěrowana, njama mjenjowy atribut.',
 	'cite_error_empty_references_define' => 'Toflicka <code>&lt;ref&gt;</code>, kótaraž jo w <code>&lt;references&gt;</code> z mjenim "$1" definěrowana, njama wopśimjeśe.',
-	'cite_references_link_accessibility_label' => 'Górjej skócyś',
-	'cite_references_link_many_accessibility_label' => 'Górjej skócys do:',
 );
 
 /** Greek (Ελληνικά)
@@ -1072,9 +1070,7 @@ neniu teksto estis donita por ref-oj nomataj <code>$1</code>',
  * @author Crazymadlover
  * @author Drini
  * @author Erdemaslancan
- * @author Fitoschido
  * @author Gustronico
- * @author Ihojose
  * @author Locos epraix
  * @author Manuelt15
  * @author McDutchie
@@ -1108,15 +1104,13 @@ Define más en el mensaje <nowiki>[[MediaWiki:$2]]</nowiki>.',
 no se ha definido el contenido de las referencias llamadas <code>$1</code>',
 	'cite_error_included_ref' => 'Etiqueta de apertura <code>&lt;ref&gt;</code> sin su correspondiente cierre <code>&lt;/ref&gt;</code>',
 	'cite_error_refs_without_references' => 'Existen etiquetas <code>&lt;ref&gt;</code>, pero no se encontró una etiqueta <code>&lt;references /&gt;</code>',
-	'cite_error_group_refs_without_references' => 'Existen etiquetas <code>&lt;ref&gt;</code> para un grupo llamado «$1», pero no se encontró la etiqueta <code>&lt;references group="$1"/&gt;</code> correspondiente, o falta la etiqueta <code>&lt;/ref&gt;</code> de cierre',
+	'cite_error_group_refs_without_references' => 'Existen etiquetas <code>&lt;ref&gt;</code> para un grupo llamado "$1", pero no se encontró una etiqueta <code>&lt;references group="$1"/&gt;</code>', # Fuzzy
 	'cite_error_references_group_mismatch' => 'La etiqueta <code>&lt;ref&gt;</code> en <code>&lt;references&gt;</code> presenta el atributo de grupo "$1" en conflicto.',
 	'cite_error_references_missing_group' => 'La etiqueta <code>&lt;ref&gt;</code> definida en <code>&lt;references&gt;</code> pertenece al grupo "$1" no declarado en el texto precedente.',
 	'cite_error_references_missing_key' => 'La etiqueta <code>&lt;ref&gt;</code> con nombre "$1" definida en <code>&lt;references&gt;</code> no se utiliza en el texto precedente.',
 	'cite_error_references_no_key' => 'La etiqueta <code>&lt;ref&gt;</code> definida en <code>&lt;references&gt;</code> no tiene atributo de nombre.',
 	'cite_error_empty_references_define' => 'La etiqueta <code>&lt;ref&gt;</code> definida en <code>&lt;references&gt;</code> con nombre "$1" no tiene contenido.',
 	'cite_references_link_many_format_backlink_labels' => 'a b c d e f g h i j k l m n o p q r s t u v w x y z aa ab ac ad ae af ag ah ai aj ak al am an ao ap aq ar as at au av aw ax ay az ba bb bc bd be bf bg bh bi bj bk bl bm bn bo bp bq br bs bt bu bv bw bx by bz ca cb cc cd ce cf cg ch ci cj ck cl cm cn co cp cq cr cs ct cu cv cw cx cy cz da db dc dd de df dg dh di dj dk dl dm dn do dp dq dr ds dt du dv dw dx dy dz ea eb ec ed ee ef eg eh ei ej ek el em en eo ep eq er es et eu ev ew ex ey ez fa fb fc fd fe ff fg fh fi fj fk fl fm fn fo fp fq fr fs ft fu fv fw fx fy fz ga gb gc gd ge gf gg gh gi gj gk gl gm gn go gp gq gr gs gt gu gv gw gx gy gz ha hb hc hd he hf hg hh hi hj hk hl hm hn ho hp hq hr hs ht hu hv hw hx hy hz ia ib ic id ie if ig ih ii ij ik il im in io ip iq ir is it iu iv iw ix iy iz ja jb jc jd je jf jg jh ji jj jk jl jm jn jo jp jq jr js jt ju jv jw jx jy jz ka kb kc kd ke kf kg kh ki kj kk kl km kn ko kp kq kr ks kt ku kv kw kx ky kz la lb lc ld le lf lg lh li lj lk ll lm ln lo lp lq lr ls lt lu lv lw lx ly lz ma mb mc md me mf mg mh mi mj mk ml mm mn mo mp mq mr ms mt mu mv mw mx my mz na nb nc nd ne nf ng nh ni nj nk nl nm nn no np nq nr ns nt nu nv nw nx ny nz oa ob oc od oe of og oh oi oj ok ol om on oo op oq or os ot ou ov ow ox oy oz pa pb pc pd pe pf pg ph pi pj pk pl pm pn po pp pq pr ps pt pu pv pw px py pz qa qb qc qd qe qf qg qh qi qj qk ql qm qn qo qp qq qr qs qt qu qv qw qx qy qz ra rb rc rd re rf rg rh ri rj rk rl rm rn ro rp rq rr rs rt ru rv rw rx ry rz sa sb sc sd se sf sg sh si sj sk sl sm sn so sp sq sr ss st su sv sw sx sy sz ta tb tc td te tf tg th ti tj tk tl tm tn to tp tq tr ts tt tu tv tw tx ty tz ua ub uc ud ue uf ug uh ui uj uk ul um un uo up uq ur us ut uu uv uw ux uy uz va vb vc vd ve vf vg vh vi vj vk vl vm vn vo vp vq vr vs vt vu vv vw vx vy vz wa wb wc wd we wf wg wh wi wj wk wl wm wn wo wp wq wr ws wt wu wv ww wx wy wz xa xb xc xd xe xf xg xh xi xj xk xl xm xn xo xp xq xr xs xt xu xv xw xx xy xz ya yb yc yd ye yf yg yh yi yj yk yl ym yn yo yp yq yr ys yt yu yv yw yx yy yz za zb zc zd ze zf zg zh zi zj zk zl zm zn zo zp zq zr zs zt zu zv zw zx zy zz',
-	'cite_references_link_accessibility_label' => 'Ir a',
-	'cite_references_link_many_accessibility_label' => 'Ir a:',
 );
 
 /** Estonian (eesti)
@@ -1186,7 +1180,7 @@ $messages['fa'] = array(
 	'cite_error_references_no_text' => 'برچسب <code><ref></code> نامجاز؛ متنی برای یادکردهای با نام <code>$1</code> وارد نشده‌است',
 	'cite_error_included_ref' => 'برچسب تمام کنندهٔ <code>&lt;/ref&gt;</code> بدون برچسب <code>&lt;ref&gt;</code>',
 	'cite_error_refs_without_references' => 'برچسب <code>&lt;ref&gt;</code> وجود دارد اما برچسب <code>&lt;references/&gt;</code> پیدا نشد',
-	'cite_error_group_refs_without_references' => 'برچسب <code>&lt;ref&gt;</code> برای گروهی به نام «$1» وجود دارد، اما برچسب متناظر با <code>&lt;references group="$1"/&gt;</code> یافت نشد یا <code>&lt;/ref&gt;</code> بسته جا گذاشته شده‌است.',
+	'cite_error_group_refs_without_references' => 'برچسب <code>&lt;ref&gt;</code> برای گروهی به نام «$1» وجود دارد، اما برچسب <code>&lt;references group="$1"/&gt;</code> متناظر پیدا نشد', # Fuzzy
 	'cite_error_references_group_mismatch' => 'برچسپ <code>&lt;ref&gt;</code> درون <code>&lt;references&gt;</code> در تضاد با ویژگی‌های گروه «$1» است.',
 	'cite_error_references_missing_group' => 'برچسپ <code>&lt;ref&gt;</code> در <code>&lt;references&gt;</code> تعریف شده، ویژگی‌های گروهی «$1» را دارد که درون متن قبل از آن ظاهر نمی‌شود.',
 	'cite_error_references_missing_key' => 'پرچسپ <code>&lt;ref&gt;</code> که با نام «$1» درون <code>&lt;references&gt;</code> تعریف شده، در متن قبل از آن استفاده نشده‌است.',
@@ -1194,8 +1188,6 @@ $messages['fa'] = array(
 	'cite_error_empty_references_define' => 'برچسپ <code>&lt;ref&gt;</code> تعریف شده درون <code>&lt;references&gt;</code> با نام «$1» محتوایی ندارد.',
 	'cite_reference_link_key_with_num' => '$1_$2',
 	'cite_reference_link_prefix' => 'cite_ref-',
-	'cite_references_link_accessibility_label' => 'پرش به بالا',
-	'cite_references_link_many_accessibility_label' => 'پرش به بالا به:',
 );
 
 /** Finnish (suomi)
@@ -1587,14 +1579,12 @@ Definuj dalše w zdźělence <nowiki>[[MediaWiki:$2]]</nowiki>.',
 	'cite_error_references_no_text' => 'Njepłaćiwa referenca formy <code>&lt;ref&gt;</code>; žadyn tekst za referency z mjenom  <code>$1</code> podaty.',
 	'cite_error_included_ref' => 'Kónčny <code>&lt;/ref&gt;</code> za tafličku <code>&lt;ref&gt;</code> faluje',
 	'cite_error_refs_without_references' => 'Taflički <code>&lt;ref&gt;</code> ekistuja, ale žana taflička code>&lt;references/&gt;</code> je so namakała',
-	'cite_error_group_refs_without_references' => 'Taflički <code>&lt;ref&gt;</code> eksistuja za skupinu z mjenom "$1", ale njeje so wotpowědowaca taflička <code>&lt;references group="$1"/&gt;</code> namakała abo začinjacy <code>&lt;/ref&gt;</code> faluje',
+	'cite_error_group_refs_without_references' => 'Taflički <code>&lt;ref&gt;</code> eksistuja za skupinu z mjenom "$1", ale njeje so wotpowědowaca taflička <code>&lt;references group="$1"/&gt;</code> namakała', # Fuzzy
 	'cite_error_references_group_mismatch' => 'Taflička <code>&lt;ref&gt;</code> w <code>&lt;references&gt;</code> je ze skupinskim atributom "$1" w konflikće.',
 	'cite_error_references_missing_group' => 'Taflička <code>&lt;ref&gt;</code>, kotraž je w <code>&lt;references&gt;</code> definowana, ma skupinski atribut "$1", kotryž so w prjedawšim teksće njejewi.',
 	'cite_error_references_missing_key' => 'Taflička <code>&lt;ref&gt;</code> z mjenom "$1", kotraž je w <code>&lt;references&gt;</code> definowana, so w prjedawšim teksće njewužiwa.',
 	'cite_error_references_no_key' => 'Taflička <code>&lt;ref&gt;</code>, kotraž je w <code>&lt;references&gt;</code> definowana, mjenowy atribut nima.',
 	'cite_error_empty_references_define' => 'Taflička <code>&lt;ref&gt;</code>, kotraž je w <code>&lt;references&gt;</code> z mjenom "$1" definowana, wobsah nima.',
-	'cite_references_link_accessibility_label' => 'Horje skočić',
-	'cite_references_link_many_accessibility_label' => 'Horje skočić do:',
 );
 
 /** Haitian (Kreyòl ayisyen)
@@ -1744,38 +1734,38 @@ $messages['ig'] = array(
  * @author Lam-ang
  */
 $messages['ilo'] = array(
-	'cite-desc' => 'Aginayon kadagiti etiketa ti <nowiki><ref[ name=id]></nowiki> ken <nowiki><references/></nowiki>, para kadagiti panagdakamat',
+	'cite-desc' => 'Agnayon ti <nowiki><ref[ name=id]></nowiki> ken <nowiki><references/></nowiki> nga etiketa, para kadagiti pagdakamat',
 	'cite_error' => 'Biddut ti dakamat: $1',
-	'cite_error_ref_numeric_key' => 'Imbalido ti etiketa ti <code>&lt;ref&gt;</code>;
-ti nagan ket saan a mabalin a nalaka a sibubukel. Agusar ti makaipalawag a titulo',
-	'cite_error_ref_no_key' => 'Imbalido nga etiketa ti  <code>&lt;ref&gt;</code> ;
-dagita ref nga awan nagyanna ket masapul nga adda naganna',
-	'cite_error_ref_too_many_keys' => 'Imbalido nga etiketa ti <code>&lt;ref&gt;</code> ;
+	'cite_error_ref_numeric_key' => 'Imbalido a <code>&lt;ref&gt;</code> nga etiketa;
+ti nagan ket saan a mabalin a nalaka a sibubukel. Agusar ti agipalpalawag a titulo',
+	'cite_error_ref_no_key' => 'Imbalido a  <code>&lt;ref&gt;</code> nga etiketa;
+dagita ref nga awan nagyanna ket masapul a managanan',
+	'cite_error_ref_too_many_keys' => 'Imbalido a  <code>&lt;ref&gt;</code> nga etiketa;
 imbalido a nag-nagan, a kas adu unay',
-	'cite_error_ref_no_input' => 'Imbalido nga etiketa ti <code>&lt;ref&gt;</code> ;
+	'cite_error_ref_no_input' => 'Imbalido a <code>&lt;ref&gt;</code> nga etiketa;
 dagiti ref nga awan ti naganna ket masapul nga addaan ti nagyan',
-	'cite_error_references_invalid_parameters' => 'Imbalido nga etiketa ti <code>&lt;references&gt;</code>;
-saan a maipalubos dagiti parametro.
+	'cite_error_references_invalid_parameters' => 'Imbalido a <code>&lt;references&gt;</code> nga etiketa
+awan dagiti parametro a maipalubos.
 Usaren ti <code>&lt;references /&gt;</code>',
-	'cite_error_references_invalid_parameters_group' => 'Imbalido nga etiketa ti <code>&lt;references&gt;</code> ;
-maipalubos laeng ti parametro ti "grupo" .
+	'cite_error_references_invalid_parameters_group' => 'Imbalido a <code>&lt;references&gt;</code> nga etiketa;
+parametro a "grupo" ket ti maipalubos laeng.
 Usaren ti <code>&lt;references /&gt;</code> , wenno<code>&lt;references group="..." /&gt;</code>',
-	'cite_error_references_no_backlink_label' => 'Naibusan kadagiti etiketa ti naisangayan a silpo ti likud.
-Ipalawag pay ti adu idiay mensahe ti <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>',
-	'cite_error_no_link_label_group' => 'Naibusan kadagiti etiketa ti nangruna a silpo para iti grupo ti "$1".
-Ipalawag pay ti adu idiay mensahe ti <nowiki>[[MediaWiki:$2]]</nowiki> .',
-	'cite_error_references_no_text' => 'Imbalido nga etiketa ti <code>&lt;ref&gt;</code> ;
-awan ti testo a naited para kadagiti ref a nanaganan <code>$1</code>',
-	'cite_error_included_ref' => 'Irikepen ti <code>&lt;/ref&gt;</code> napukaw para iti etiketa ti <code>&lt;ref&gt;</code>',
-	'cite_error_refs_without_references' => 'Ti etiketa ti <code>&lt;ref&gt;</code> ket addan, ngem awan ti etiketa ti <code>&lt;references/&gt;</code> a nabirukan',
-	'cite_error_group_refs_without_references' => 'Adda dagiti etiketa ti <code>&lt;ref&gt;</code> para iti grupo a nanaganan ti "$1", ngem awan ti kapada nga etiketa ti <code>&lt;references group="$1"/&gt;</code> a nabirukan, wenno awan ti pangrikep ti <code>&lt;/ref&gt;</code>',
-	'cite_error_references_group_mismatch' => 'Ti etiketa ti <code>&lt;ref&gt;</code> iday <code>&lt;references&gt;</code> ket addan ti kasinnungat a gupit ti grupo ti "$1".',
-	'cite_error_references_missing_group' => 'Ti etiketa ti <code>&lt;ref&gt;</code> a naipalawag idiay <code>&lt;references&gt;</code> ket addaan ti gupit ti grupo ti "$1" a saan nga agparang iti napalabas a testo.',
-	'cite_error_references_missing_key' => 'Ti etiketa ti <code>&lt;ref&gt;</code> nga addaan ti nagan ti "$1" a naipalawag idiay <code>&lt;references&gt;</code> ket saan a nausar iti napalabas a testo.',
-	'cite_error_references_no_key' => 'Ti etiketa ti <code>&lt;ref&gt;</code> a naipalawag idiay <code>&lt;references&gt;</code> ket awan ti nainagan a gupit.',
-	'cite_error_empty_references_define' => 'Ti etiketa ti <code>&lt;ref&gt;</code> a naipalawag idiay <code>&lt;references&gt;</code> nga addaan ti nagan a "$1" ket awan ti nagyanna.',
-	'cite_references_link_accessibility_label' => 'Mapan iti ngato',
-	'cite_references_link_many_accessibility_label' => 'Mapan aginggana iti:',
+	'cite_error_references_no_backlink_label' => 'Naibusan kadagiti nagrunaan a likud ti silpo nga etiketa.
+Ipalawag pay ti adu idiay <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> a mensahe',
+	'cite_error_no_link_label_group' => 'Naibusan ti nangruna a silpo nga etiketa para iti grupo ti "$1".
+Ipalawag pay ti adu idiay <nowiki>[[MediaWiki:$2]]</nowiki> a mensahe.',
+	'cite_error_references_no_text' => 'Imbalido a <code>&lt;ref&gt;</code> nga etiketa;
+awan ti testo a naited para dagiti ref a nanaganan <code>$1</code>',
+	'cite_error_included_ref' => 'Irikrikep ti <code>&lt;/ref&gt;</code> napukaw para iti <code>&lt;ref&gt;</code> nga etiketa',
+	'cite_error_refs_without_references' => 'Ti <code>&lt;ref&gt;</code> nga etiketa ket addan, ngem awan ti <code>&lt;references/&gt;</code> nga etiketa a nabirukan',
+	'cite_error_group_refs_without_references' => 'Adda dagiti <code>&lt;ref&gt;</code> para iti grupo a nanaganan ti "$1", ngem awan ti kapada a <code>&lt;references group="$1"/&gt;</code> nga etiketa ti nabirukan, wenno pangrikep a <code>&lt;/ref&gt;</code> ket awan',
+	'cite_error_references_group_mismatch' => 'Ti <code>&lt;ref&gt;</code> nga etiketa iday <code>&lt;references&gt;</code> ket addan ti nagsungat a gupit ti grupo "$1".',
+	'cite_error_references_missing_group' => 'Ti <code>&lt;ref&gt;</code> nga etiketa a naipalawag idiay <code>&lt;references&gt;</code> ket addaan ti gupit ti grupo ti "$1" a saan nga agparang iti napalabas a testo.',
+	'cite_error_references_missing_key' => 'Ti <code>&lt;ref&gt;</code> nga etiketa nga addaan ti nagan ti "$1" a naipalawag idiay <code>&lt;references&gt;</code> ket saan a nausar iti napalabas a testo.',
+	'cite_error_references_no_key' => 'Ti <code>&lt;ref&gt;</code> nga etiketa a naipalawag idiay <code>&lt;references&gt;</code> ket awan ti nainagan a gupit.',
+	'cite_error_empty_references_define' => 'Ti <code>&lt;ref&gt;</code> nga etiketa a naipalawag idiay <code>&lt;references&gt;</code> nga addaan ti nagan a "$1" ket awan ti nagyanna.',
+	'cite_references_link_accessibility_label' => 'Lumagto ti ngato',
+	'cite_references_link_many_accessibility_label' => 'Lumagto ti ngato iti:',
 );
 
 /** Ido (Ido)
@@ -1888,8 +1878,6 @@ $messages['ja'] = array(
 	'cite_error_references_missing_key' => '<code>&lt;references&gt;</code> で定義されている <code>&lt;ref&gt;</code> タグ (name="$1") は、先行するテキスト内で使用されていません。',
 	'cite_error_references_no_key' => '<code>&lt;references&gt;</code> で定義されている <code>&lt;ref&gt;</code> タグに name 属性がありません。',
 	'cite_error_empty_references_define' => '<code>&lt;references&gt;</code> で定義されている <code>&lt;ref&gt;</code> タグ (name="$1") に内容がありません。',
-	'cite_references_link_accessibility_label' => '元の位置に戻る',
-	'cite_references_link_many_accessibility_label' => '以下の位置に戻る:',
 );
 
 /** Jutish (jysk)
@@ -1983,7 +1971,7 @@ $messages['ka'] = array(
 სქოლიოსათვის <code>$1</code> არ არის მითითებული ტექსტი',
 	'cite_error_included_ref' => 'დამხურავი ტეგი <code>&lt;/ref&gt;</code> დაკარგულია',
 	'cite_error_refs_without_references' => 'არსებული ტეგისათვის <code>&lt;ref&gt;</code> ვერ მოიძებნა შესაბამისი ტეგი <code>&lt;references/&gt;</code>',
-	'cite_error_group_refs_without_references' => 'ჯგუფი „$1“ არსებული ტეგებისათვის <code>&lt;ref&gt;</code> ვერ მოიძებნა შესაბამისი ტეგი <code>&lt;references group="$1"/&gt;</code>, ან გამოტოვებულია დამხურავი ტეგი <code>&lt;/ref&gt;</code>',
+	'cite_error_group_refs_without_references' => 'ჯგუფი „$1“ არსებული ტეგებისათვის <code>&lt;ref&gt;</code> ვერ მოიძებნა შესაბამისი ტეგი <code>&lt;references group="$1"/&gt;</code>', # Fuzzy
 	'cite_error_references_group_mismatch' => 'ტეგს <code>&lt;ref&gt;</code> <code>&lt;references&gt;</code>-ში გააჩნია ატრიბუტთა კონფლიქტური ჯგუფები „$1“.',
 	'cite_error_references_missing_group' => 'ტეგს <code>&lt;ref&gt;</code>, განმარტებულს <code>&lt;references&gt;</code>-ში, გააჩნია ჯგუფის ატრიბუტი „$1“, რომელიც ადრეულ ტექსტში არ მოიხსენიება.',
 	'cite_error_references_missing_key' => 'ტეგი <code>&lt;ref&gt;</code> სახელად „$1“, გარკვეული <code>&lt;references&gt;</code>-ში, არ გამოიყენება წინა ტექსტში.',
@@ -2207,15 +2195,6 @@ Doe kans d\'r mier insjtelle in \'t sysyeemberich <nowiki>[[MediaWiki:$2]]</nowi
 	'cite_error_empty_references_define' => 'De tag <code>&lt;ref&gt;</code> dae is gedefinieerd in <code>&lt;references&gt;</code> mit de naam "$1" haet geinen inhawd.',
 );
 
-/** لوری (لوری)
- * @author Mogoeilor
- */
-$messages['lrc'] = array(
-	'cite_error' => 'خطا جاگه:$1',
-	'cite_references_link_accessibility_label' => 'بالا پرسن',
-	'cite_references_link_many_accessibility_label' => 'پرستن د',
-);
-
 /** Lithuanian (lietuvių)
  * @author Garas
  * @author Homo
@@ -2374,8 +2353,6 @@ $messages['ml'] = array(
 	'cite_error_empty_references_define' => ' <code>&lt;references&gt;</code> ആവശ്യത്തിനായി "$1" എന്ന പേരിൽ നിർ‌വചിക്കപ്പെട്ട <code>&lt;ref&gt;</code> റ്റാഗിന് ഉള്ളടക്കമൊന്നുമില്ല.',
 	'cite_reference_link_prefix' => 'ഉദ്ധരിണി_അവലംബം-',
 	'cite_references_link_prefix' => 'ഉദ്ധരിണി_കുറിപ്പ്-',
-	'cite_references_link_accessibility_label' => 'മുകളിലേയ്ക്ക്',
-	'cite_references_link_many_accessibility_label' => 'മുകളിൽ ഇവിടേയ്ക്ക്:',
 );
 
 /** Mongolian (монгол)
@@ -2393,7 +2370,7 @@ $messages['mn'] = array(
  * @author V.narsikar
  */
 $messages['mr'] = array(
-	'cite-desc' => '<nowiki><ref[ name=id]></nowiki> व <nowiki><references/></nowiki> हे दोन संदर्भ देण्यासाठी वापरण्यात येणारे शब्द जोडल्या जातील.',
+	'cite-desc' => '<nowiki><ref[ name=id]></nowiki> व <nowiki><references/></nowiki> हे दोन संदर्भ देण्यासाठी वापरण्यात येणारे शब्द वाढविले जातील.',
 	'cite_error' => 'त्रूटी उधृत करा: $1',
 	'cite_error_ref_numeric_key' => '<code>&lt;ref&gt;</code> चुकीचा कोड; नाव हे पूर्णांकी संख्या असू शकत नाही, कृपया माहितीपूर्ण शीर्षक द्या',
 	'cite_error_ref_no_key' => '<code>&lt;ref&gt;</code> चुकीचा कोड; रिकाम्या संदर्भांना नाव असणे गरजेचे आहे',
@@ -2406,17 +2383,14 @@ $messages['mr'] = array(
 	'cite_error_no_link_label_group' => '"$1" करिता नमूदकेलेल्या कस्टम लिंक खूणा संपल्या .
 <nowiki>[[MediaWiki:$2]]</nowiki> संदेशात अधिक खूणा नमूद करा',
 	'cite_error_references_no_text' => '<code>&lt;ref&gt;</code> चुकीचा कोड; <code>$1</code> नावाने दिलेल्या संदर्भांमध्ये काहीही माहिती नाही',
-	'cite_error_included_ref' => '<code>&lt;ref&gt;</code> ला बंद करणारी <code>&lt;/ref&gt;</code> ही खूणपताका गायब आहे.',
-	'cite_error_refs_without_references' => "या पानामधे \"<code>&lt;ref&gt;</code>\" ही खूणपताका(संदर्भटॅग) आहे, परंतु <code>&lt;references/&gt;</code> अथवा <code> <nowiki>{{</nowiki>
-</code>संदर्भयादी<code><nowiki>}}</nowiki></code>या  पैकी एकही  लावण्यात आलेले नाही.''' या पानात \"<code><nowiki>{{</nowiki></code>संदर्भयादी<code><nowiki>}}</nowiki></code>\" हा साचा कॉपीपेस्ट करावा''' ''कारण,त्याशिवाय पानाच्या तळाशी संदर्भांचे तपशील दिसणार नाहीत.''",
+	'cite_error_included_ref' => '<code>&lt;ref&gt;</code> ला बंद करणारी <code>&lt;/ref&gt;</code> ही खूण गायब आहे.',
+	'cite_error_refs_without_references' => 'पानामधे <code>&lt;ref&gt;</code> (संदर्भ) आहे, परंतु <code>&lt;references/&gt;</code> (<nowiki>{{संदर्भयादी}}<nowiki />) सापडले नाही. <nowiki>{{संदर्भयादी}}<nowiki /> असल्याशिवाय पानाच्या तळाशी संदर्भांचे तपशील दिसणार नाहीत.',
 	'cite_error_group_refs_without_references' => '"$1" नावाच्या गटाकरिता <code>&lt;ref&gt;</code>खूणपताका उपलब्ध आहेत, पण संबंधीत <code>&lt;references group="$1"/&gt;</code>  खूण मिळाली नाही.',
-	'cite_error_references_group_mismatch' => '<code>&lt;references&gt;</code>मधील खूणपताकेस<code>&lt;ref&gt;</code> खूणांशी विसंवाद असणारे  group attribute "$1" आहे.',
-	'cite_error_references_missing_group' => 'गट "$1" मधील <code>&lt;ref&gt;</code> खूणपताका <code>&lt;references&gt;</code> ह्या पूर्वी वापल्या गेलेल्या नाहीत.',
-	'cite_error_references_missing_key' => '<code>&lt;references&gt;</code> ह्या मध्ये टाकलेला <code>&lt;ref&gt;</code>  "$1" ह्या नावाची खूणपताका  ह्या पूर्वी वापरण्यात आलेली नाही.',
-	'cite_error_references_no_key' => '<code>&lt;ref&gt;</code>खूणपताकेत नमूद गोष्टींना <code>&lt;references&gt;</code> ला नाम-गुणधर्म नाहीत.',
-	'cite_error_empty_references_define' => '<code>&lt;ref&gt;</code>खूणपताकेत नमूद गोष्टींना, <code>&lt;references&gt;</code> ज्या  "$1" ह्या नावाने संबोधल्या आहेत, त्यात माहिती नाही.',
-	'cite_references_link_accessibility_label' => 'वर उडी मारा',
-	'cite_references_link_many_accessibility_label' => 'ला वर उडी मारा:',
+	'cite_error_references_group_mismatch' => 'tag in <code>&lt;references&gt;</code>मधील <code>&lt;ref&gt;</code>  खूणांना खटका उडणारे  group attribute "$1" आहे.',
+	'cite_error_references_missing_group' => 'गट "$1" मधील <code>&lt;ref&gt;</code> ट्याग   <code>&lt;references&gt;</code> ह्या पूर्वी वापल्या गेलेले नाही',
+	'cite_error_references_missing_key' => '<code>&lt;references&gt;</code> ह्या मध्ये सांगितलेला  <code>&lt;ref&gt;</code>  "$1" ह्या नावाचा  ट्याग ह्या पूर्वी वापरण्यात आलेला नाही.',
+	'cite_error_references_no_key' => '<code>&lt;ref&gt;</code> ट्याग मध्ये विशारद गोष्टींना <code>&lt;references&gt;</code> ला नाम गुणधर्म नाहीत',
+	'cite_error_empty_references_define' => '<code>&lt;ref&gt;</code> ट्याग मध्ये विशारद गोष्टीं <code>&lt;references&gt;</code> ज्या  "$1" ह्या नावाने संबोधल्या आहेत त्यात माहिती नाही',
 );
 
 /** Malay (Bahasa Melayu)
@@ -2534,7 +2508,6 @@ $messages['nds-nl'] = array(
 );
 
 /** Dutch (Nederlands)
- * @author Flightmare
  * @author Niels
  * @author Romaine
  * @author Siebrand
@@ -2571,8 +2544,6 @@ er is geen tekst opgegeven voor refs met de naam <code>$1</code>',
 	'cite_error_references_missing_key' => 'De tag <code>&lt;ref&gt;</code> met de naam "$1" gedefinieerd in <code>&lt;references&gt;</code> wordt niet eerder in de tekst gebruikt.',
 	'cite_error_references_no_key' => 'De tag <code>&lt;ref&gt;</code> die is gedefinieerd in <code>&lt;references&gt;</code> heeft geen eigenschapsnaam.',
 	'cite_error_empty_references_define' => 'De tag <code>&lt;ref&gt;</code> die is gedefinieerd in <code>&lt;references&gt;</code> met de naam "$1" heeft geen inhoud.',
-	'cite_references_link_accessibility_label' => 'Omhoog',
-	'cite_references_link_many_accessibility_label' => 'Omhoog naar:',
 );
 
 /** Norwegian Nynorsk (norsk nynorsk)
@@ -2625,8 +2596,6 @@ pas de tèxte per las referéncias nomenadas <code>$1</code>.',
 	'cite_error_references_missing_key' => 'La balisa <code>&lt;ref&gt;</code> amb lo nom « $1 » definida dins <code>&lt;references&gt;</code> es pas utilizada dins lo tèxte precedent.',
 	'cite_error_references_no_key' => 'La balisa <code>&lt;ref&gt;</code> definida dins <code>&lt;references&gt;</code> a pas de nom d’atribut.',
 	'cite_error_empty_references_define' => 'La balisa <code>&lt;ref&gt;</code> definida dins <code>&lt;references&gt;</code> amb lo nom « $1 » a pas de contengut.',
-	'cite_references_link_accessibility_label' => 'Anar',
-	'cite_references_link_many_accessibility_label' => 'Anar a :',
 );
 
 /** Oriya (ଓଡ଼ିଆ)
@@ -3420,16 +3389,12 @@ Definera fler i <nowiki>[[MediaWiki:$2]]</nowiki>-meddelandet.',
 );
 
 /** Tamil (தமிழ்)
- * @author Jayarathina
  * @author Shanmugamp7
  * @author செல்வா
  */
 $messages['ta'] = array(
 	'cite-desc' => 'சேர்க்கிறது <nowiki><ref[ name=id]></nowiki>மற்றும் <nowiki><references/></nowiki> குறிச்சொற்கள், மேற்கோள்களுக்காக',
 	'cite_error' => 'பிழை காட்டு: $1',
-	'cite_error_references_no_text' => 'செல்லாத <code>&lt;ref&gt;</code> குறிச்சொல்;
-<code>$1</code> என்னும் பெயரில் உள்ள ref குறிச்சொல்லுக்கு உரையேதும் வழங்கப்படவில்லை',
-	'cite_error_refs_without_references' => '<code>&lt;ref&gt;</code> குறிச்சொல் உள்ளது, ஆனால் <code>&lt;references/&gt;</code> குறிச்சொல் காணப்படவில்லை',
 );
 
 /** Telugu (తెలుగు)

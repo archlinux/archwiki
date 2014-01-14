@@ -1,6 +1,6 @@
 /* IFrame extension for wikiEditor */
-/*jshint onevar:false, boss:true */
-( function ( $ ) { $.wikiEditor.extensions.iframe = function ( context ) {
+
+( function( $ ) { $.wikiEditor.extensions.iframe = function( context ) {
 
 /*
  * Event Handlers
@@ -14,18 +14,18 @@ context.evt = $.extend( context.evt, {
 	 * function is to both classify the scope of changes as 'division' or 'character' and to prevent further
 	 * processing of events which did not actually change the content of the iframe.
 	 */
-	keydown: function ( event ) {
+	'keydown': function( event ) {
 		switch ( event.which ) {
 			case 90: // z
 			case 89: // y
-				if ( event.which === 89 && !$.browser.msie ) {
+				if ( event.which == 89 && !$.browser.msie ) {
 					// only handle y events for IE
 					return true;
 				} else if ( ( event.ctrlKey || event.metaKey ) && context.history.length ) {
 					// HistoryPosition is a negative number between -1 and -context.history.length, in other words
 					// it's the number of steps backwards from the latest state.
 					var newPosition;
-					if ( event.shiftKey || event.which === 89 ) {
+					if ( event.shiftKey || event.which == 89 ) {
 						// Redo
 						newPosition = context.historyPosition + 1;
 					} else {
@@ -35,7 +35,7 @@ context.evt = $.extend( context.evt, {
 					// Only act if we are switching to a valid state
 					if ( newPosition >= ( context.history.length * -1 ) && newPosition < 0 ) {
 						// Make sure we run the history storing code before we make this change
-						context.fn.updateHistory( context.oldDelayedHTML !== context.$content.html() );
+						context.fn.updateHistory( context.oldDelayedHTML != context.$content.html() );
 						context.oldDelayedHistoryPosition = context.historyPosition;
 						context.historyPosition = newPosition;
 						// Change state
@@ -65,8 +65,8 @@ context.evt = $.extend( context.evt, {
 						var $tabindexList = $( '[tabindex]:visible' ).sort( function( a, b ) {
 							return a.tabIndex - b.tabIndex;
 						} );
-						for ( var i=0; i < $tabindexList.length; i++ ) {
-							if ( $tabindexList.eq( i ).attr( 'id' ) === context.$iframe.attr( 'id' ) ) {
+						for( var i=0; i < $tabindexList.length; i++ ) {
+							if( $tabindexList.eq( i ).attr( 'id' ) == context.$iframe.attr( 'id' ) ) {
 								$tabindexList.get( i + 1 ).focus();
 								break;
 							}
@@ -74,48 +74,48 @@ context.evt = $.extend( context.evt, {
 						return false;
 					}
 				break;
-			case 86: //v
-				if ( event.ctrlKey && $.browser.msie && 'paste' in context.evt ) {
-					//paste, intercepted for IE
-					context.evt.paste( event );
-				}
-				break;
+			 case 86: //v
+				 if ( event.ctrlKey && $.browser.msie && 'paste' in context.evt ) {
+					 //paste, intercepted for IE
+					 context.evt.paste( event );
+				 }
+				 break;
 		}
 		return true;
 	},
-	change: function ( event ) {
+	'change': function( event ) {
 		event.data.scope = 'division';
 		var newHTML = context.$content.html();
-		if ( context.oldHTML !== newHTML ) {
+		if ( context.oldHTML != newHTML ) {
 			context.fn.purgeOffsets();
 			context.oldHTML = newHTML;
 			event.data.scope = 'realchange';
 		}
 		// Never let the body be totally empty
-		if ( context.$content.children().length === 0 ) {
+		if ( context.$content.children().length == 0 ) {
 			context.$content.append( '<p></p>' );
 		}
 		return true;
 	},
-	delayedChange: function ( event ) {
+	'delayedChange': function( event ) {
 		event.data.scope = 'division';
 		var newHTML = context.$content.html();
-		if ( context.oldDelayedHTML !== newHTML ) {
+		if ( context.oldDelayedHTML != newHTML ) {
 			context.oldDelayedHTML = newHTML;
 			event.data.scope = 'realchange';
 			// Surround by <p> if it does not already have it
 			var cursorPos = context.fn.getCaretPosition();
 			var t = context.fn.getOffset( cursorPos[0] );
-			if ( ! $.browser.msie && t && t.node.nodeName === '#text' && t.node.parentNode.nodeName.toLowerCase() === 'body' ) {
-				$( t.node ).wrap( '<p></p>' );
+			if ( ! $.browser.msie && t && t.node.nodeName == '#text' && t.node.parentNode.nodeName.toLowerCase() == 'body' ) {
+				$( t.node ).wrap( "<p></p>" );
 				context.fn.purgeOffsets();
 				context.fn.setSelection( { start: cursorPos[0], end: cursorPos[1] } );
 			}
 		}
-		context.fn.updateHistory( event.data.scope === 'realchange' );
+		context.fn.updateHistory( event.data.scope == 'realchange' );
 		return true;
 	},
-	cut: function ( event ) {
+	'cut': function( event ) {
 		setTimeout( function() {
 			context.$content.find( 'br' ).each( function() {
 				if ( $(this).parent().is( 'body' ) ) {
@@ -125,7 +125,7 @@ context.evt = $.extend( context.evt, {
 		}, 100 );
 		return true;
 	},
-	paste: function ( event ) {
+	'paste': function( event ) {
 		// Save the cursor position to restore it after all this voodoo
 		var cursorPos = context.fn.getCaretPosition();
 		var oldLength = context.fn.getContents().length;
@@ -138,7 +138,6 @@ context.evt = $.extend( context.evt, {
 		}
 
 		setTimeout( function() {
-			/*jshint eqnull:true */
 			// Kill stuff we know we don't want
 			context.$content.find( 'script,style,img,input,select,textarea,hr,button,link,meta' ).remove();
 			var nodeToDelete = [];
@@ -153,31 +152,30 @@ context.evt = $.extend( context.evt, {
 			}
 			if ( elementAtCursor == null || elementAtCursor.node == null ) {
 				context.$content.prepend( '<p class = wikiEditor></p>' );
-				firstDirtyNode = context.$content.children()[0];
+				firstDirtyNode 	= context.$content.children()[0];
 			} else {
 				firstDirtyNode = elementAtCursor.node;
 			}
 
-			// This is ugly but seems like the best way to handle the case where we select and replace all editor contents
+			//this is ugly but seems like the best way to handle the case where we select and replace all editor contents
 			try {
-				/*jshint expr:true */
 				firstDirtyNode.parentNode;
 			} catch ( err ) {
 				context.$content.prepend( '<p class = wikiEditor></p>' );
-				firstDirtyNode = context.$content.children()[0];
+				firstDirtyNode 	= context.$content.children()[0];
 			}
 
 			while ( firstDirtyNode != null ) {
 				//we're going to replace the contents of the entire parent node.
-				while ( firstDirtyNode.parentNode && firstDirtyNode.parentNode.nodeName !== 'BODY' &&
-					!$( firstDirtyNode ).hasClass( 'wikiEditor' )
-				) {
+				while ( firstDirtyNode.parentNode && firstDirtyNode.parentNode.nodeName != 'BODY'
+					 && ! $( firstDirtyNode ).hasClass( 'wikiEditor' )
+					) {
 					firstDirtyNode = firstDirtyNode.parentNode;
 				}
 				//go back till we find the first pasted node
-				while ( firstDirtyNode.previousSibling != null &&
-						!$( firstDirtyNode.previousSibling ).hasClass( 'wikiEditor' )
-				) {
+				while ( firstDirtyNode.previousSibling != null
+						&& ! $( firstDirtyNode.previousSibling ).hasClass( 'wikiEditor' )
+					) {
 
 					if ( $( firstDirtyNode.previousSibling ).hasClass( '#comment' ) ) {
 						$( firstDirtyNode ).remove();
@@ -187,9 +185,9 @@ context.evt = $.extend( context.evt, {
 				}
 
 				if ( firstDirtyNode.previousSibling != null ) {
-					$lastDirtyNode = $( firstDirtyNode.previousSibling );
+					$lastDirtyNode 	= $( firstDirtyNode.previousSibling );
 				} else {
-					$lastDirtyNode = $( firstDirtyNode );
+					$lastDirtyNode 	= $( firstDirtyNode );
 				}
 
 				var cc = makeContentCollector( $.browser, null );
@@ -220,7 +218,7 @@ context.evt = $.extend( context.evt, {
 					}
 
 
-					if ( !pastedPretty && $.browser.msie && i === 0 ) {
+					if( !pastedPretty && $.browser.msie && i == 0 ) {
 						continue;
 					}
 					$newElement = $( '<p class="wikiEditor pasted" ></p>' );
@@ -243,7 +241,7 @@ context.evt = $.extend( context.evt, {
 
 				//anything without wikiEditor class was pasted.
 				$selection = context.$content.find( ':not(.wikiEditor)' );
-				if ( $selection.length === 0 ) {
+				if  ( $selection.length == 0 ) {
 					break;
 				} else {
 					firstDirtyNode = $selection.eq( 0 )[0];
@@ -262,7 +260,7 @@ context.evt = $.extend( context.evt, {
 		}, 0 );
 		return true;
 	},
-	ready: function ( event ) {
+	'ready': function( event ) {
 		// Initialize our history queue
 		if ( context.$content ) {
 			context.history.push( { 'html': context.$content.html(), 'sel':  context.fn.getCaretPosition() } );
@@ -277,11 +275,7 @@ context.evt = $.extend( context.evt, {
  * Internally used functions
  */
 context.fn = $.extend( context.fn, {
-	/**
-	 * @param {jQuery} $element
-	 * @param mode
-	 */
-	highlightLine: function ( $element ) {
+	'highlightLine': function( $element, mode ) {
 		if ( !$element.is( 'p' ) ) {
 			$element = $element.closest( 'p' );
 		}
@@ -289,7 +283,7 @@ context.fn = $.extend( context.fn, {
 		setTimeout( function() { $element.animate( { 'backgroundColor': 'white' }, 'slow' ); }, 100 );
 		setTimeout( function() { $element.css( 'backgroundColor', 'white' ); }, 1000 );
 	},
-	htmlToText: function ( html ) {
+	'htmlToText': function( html ) {
 		// This function is slow for large inputs, so aggressively cache input/output pairs
 		if ( html in context.htmlToTextMap ) {
 			return context.htmlToTextMap[html];
@@ -300,15 +294,15 @@ context.fn = $.extend( context.fn, {
 		// IE does overzealous whitespace collapsing for $( '<pre />' ).html( html );
 		// We also do <br> and easy cases for <p> conversion here, complicated cases are handled later
 		html = html
-			.replace( /\r?\n/g, '' ) // IE7 inserts newlines before block elements
-			.replace( /&nbsp;/g, ' ' ) // We inserted these to prevent IE from collapsing spaces
-			.replace( /<br[^\>]*\><\/p\>/gi, '</p>' ) // Remove trailing <br> from <p>
-			.replace( /<\/p\>\s*<p[^\>]*\>/gi, '\n' ) // Easy case for <p> conversion
-			.replace( /<br[^\>]*\>/gi, '\n' ) // <br> conversion
-			.replace( /<\/p\>(\n*)<p[^\>]*\>/gi, '$1\n' )
+			.replace( /\r?\n/g, "" ) // IE7 inserts newlines before block elements
+			.replace( /&nbsp;/g, " " ) // We inserted these to prevent IE from collapsing spaces
+			.replace( /\<br[^\>]*\>\<\/p\>/gi, '</p>' ) // Remove trailing <br> from <p>
+			.replace( /\<\/p\>\s*\<p[^\>]*\>/gi, "\n" ) // Easy case for <p> conversion
+			.replace( /\<br[^\>]*\>/gi, "\n" ) // <br> conversion
+			.replace( /\<\/p\>(\n*)\<p[^\>]*\>/gi, "$1\n" )
 			// Un-nest <p> tags
-			.replace( /<p[^\>]*\><p[^\>]*\>/gi, '<p>' )
-			.replace( /<\/p\><\/p\>/gi, '</p>' );
+			.replace( /\<p[^\>]*\><p[^\>]*\>/gi, '<p>' )
+			.replace( /\<\/p\><\/p\>/gi, '</p>' );
 		// Save leading and trailing whitespace now and restore it later. IE eats it all, and even Firefox
 		// won't leave everything alone
 		var leading = html.match( /^\s*/ )[0];
@@ -317,8 +311,8 @@ context.fn = $.extend( context.fn, {
 		var $pre = $( '<pre>' + html + '</pre>' );
 		$pre.find( '.wikiEditor-noinclude' ).each( function() { $( this ).remove(); } );
 		// Convert tabs, <p>s and <br>s back
-		$pre.find( '.wikiEditor-tab' ).each( function() { $( this ).text( '\t' ); } );
-		$pre.find( 'br' ).each( function() { $( this ).replaceWith( '\n' ); } );
+		$pre.find( '.wikiEditor-tab' ).each( function() { $( this ).text( "\t" ); } );
+		$pre.find( 'br' ).each( function() { $( this ).replaceWith( "\n" ); } );
 		// Converting <p>s is wrong if there's nothing before them, so check that.
 		// .find( '* + p' ) isn't good enough because textnodes aren't considered
 		$pre.find( 'p' ).each( function() {
@@ -329,21 +323,21 @@ context.fn = $.extend( context.fn, {
 
 			// Check for preceding text
 			var t = new context.fn.rawTraverser( this.firstChild, this, $pre.get( 0 ), true ).prev();
-			while ( t && t.node.nodeName !== '#text' && t.node.nodeName !== 'BR' && t.node.nodeName !== 'P' ) {
+			while ( t && t.node.nodeName != '#text' && t.node.nodeName != 'BR' && t.node.nodeName != 'P' ) {
 				t = t.prev();
 			}
 			if ( t ) {
-				text = '\n' + text;
+				text = "\n" + text;
 			}
 
 			// Check for following text
 			t = new context.fn.rawTraverser( this.lastChild, this, $pre.get( 0 ), true ).next();
-			while ( t && t.node.nodeName !== '#text' && t.node.nodeName !== 'BR' && t.node.nodeName !== 'P' ) {
+			while ( t && t.node.nodeName != '#text' && t.node.nodeName != 'BR' && t.node.nodeName != 'P' ) {
 				t = t.next();
 			}
-			if ( t && !t.inP && t.node.nodeName === '#text' && t.node.nodeValue.charAt( 0 ) !== '\n' &&
-					t.node.nodeValue.charAt( 0 ) !== '\r' ) {
-				text += '\n';
+			if ( t && !t.inP && t.node.nodeName == '#text' && t.node.nodeValue.charAt( 0 ) != '\n'
+					&& t.node.nodeValue.charAt( 0 ) != '\r' ) {
+				text += "\n";
 			}
 			$( this ).text( text );
 		} );
@@ -363,8 +357,8 @@ context.fn = $.extend( context.fn, {
 	 * @param strict If true, the element the selection starts in cannot match (default: false)
 	 * @return jQuery object or null if unknown
 	 */
-	beforeSelection: function ( classname, strict ) {
-		if ( typeof classname === 'undefined' ) {
+	'beforeSelection': function( classname, strict ) {
+		if ( typeof classname == 'undefined' ) {
 			classname = '';
 		}
 		var e = null, offset = null;
@@ -387,7 +381,7 @@ context.fn = $.extend( context.fn, {
 			// When the cursor is on an empty line, Opera gives us a bogus range object with
 			// startContainer=endContainer=body and startOffset=endOffset=1
 			var body = context.$iframe[0].contentWindow.document.body;
-			if ( $.browser.opera && e === body && offset === 1 ) {
+			if ( $.browser.opera && e == body && offset == 1 ) {
 				return null;
 			}
 		}
@@ -406,14 +400,14 @@ context.fn = $.extend( context.fn, {
 				return null;
 			}
 			var seekPos = context.fn.htmlToText( range2.htmlText ).length;
-			offset = context.fn.getOffset( seekPos );
+			var offset = context.fn.getOffset( seekPos );
 			e = offset ? offset.node : null;
 			offset = offset ? offset.offset : null;
 			if ( !e ) {
 				return null;
 			}
 		}
-		if ( e.nodeName !== '#text' ) {
+		if ( e.nodeName != '#text' ) {
 			// The selection is not in a textnode, but between two non-text nodes
 			// (usually inside the <body> between two <br>s). Go to the rightmost
 			// child of the node just before the selection
@@ -431,7 +425,7 @@ context.fn = $.extend( context.fn, {
 		// constructor thousands of times is very inefficient
 		var classStr = ' ' + classname + ' ';
 		while ( e ) {
-			if ( !strict && ( !classname || ( ' ' + e.className + ' ' ).indexOf( classStr ) !== -1 ) ) {
+			if ( !strict && ( !classname || ( ' ' + e.className + ' ' ).indexOf( classStr ) != -1 ) ) {
 				return $( e );
 			}
 			var next = e.previousSibling;
@@ -446,7 +440,7 @@ context.fn = $.extend( context.fn, {
 	/**
 	 * Object used by traverser(). Don't use this unless you know what you're doing
 	 */
-	rawTraverser: function ( node, inP, ancestor, skipNoinclude ) {
+	'rawTraverser': function( node, inP, ancestor, skipNoinclude ) {
 		this.node = node;
 		this.inP = inP;
 		this.ancestor = ancestor;
@@ -456,16 +450,16 @@ context.fn = $.extend( context.fn, {
 			var nextInP = this.inP;
 			while ( p && !p.nextSibling ) {
 				p = p.parentNode;
-				if ( p === this.ancestor ) {
+				if ( p == this.ancestor ) {
 					// We're back at the ancestor, stop here
 					p = null;
 				}
-				if ( p && p.nodeName === 'P' ) {
+				if ( p && p.nodeName == "P" ) {
 					nextInP = null;
 				}
 			}
 			p = p ? p.nextSibling : null;
-			if ( p && p.nodeName === 'P' ) {
+			if ( p && p.nodeName == "P" ) {
 				nextInP = p;
 			}
 			do {
@@ -473,13 +467,13 @@ context.fn = $.extend( context.fn, {
 				// Don't use $( p ).hasClass( 'wikiEditor-noinclude' ) because
 				// $() is slow in a tight loop
 				if ( this.skipNoinclude ) {
-					while ( p && ( ' ' + p.className + ' ' ).indexOf( ' wikiEditor-noinclude ' ) !== -1 ) {
+					while ( p && ( ' ' + p.className + ' ' ).indexOf( ' wikiEditor-noinclude ' ) != -1 ) {
 						p = p.nextSibling;
 					}
 				}
 				if ( p && p.firstChild ) {
 					p = p.firstChild;
-					if ( p.nodeName === 'P' ) {
+					if ( p.nodeName == "P" ) {
 						nextInP = p;
 					}
 				}
@@ -493,16 +487,16 @@ context.fn = $.extend( context.fn, {
 			var prevInP = this.inP;
 			while ( p && !p.previousSibling ) {
 				p = p.parentNode;
-				if ( p === this.ancestor ) {
+				if ( p == this.ancestor ) {
 					// We're back at the ancestor, stop here
 					p = null;
 				}
-				if ( p && p.nodeName === 'P' ) {
+				if ( p && p.nodeName == "P" ) {
 					prevInP = null;
 				}
 			}
 			p = p ? p.previousSibling : null;
-			if ( p && p.nodeName === 'P' ) {
+			if ( p && p.nodeName == "P" ) {
 				prevInP = p;
 			}
 			do {
@@ -516,7 +510,7 @@ context.fn = $.extend( context.fn, {
 				}
 				if ( p && p.lastChild ) {
 					p = p.lastChild;
-					if ( p.nodeName == 'P' ) {
+					if ( p.nodeName == "P" ) {
 						prevInP = p;
 					}
 				}
@@ -534,28 +528,28 @@ context.fn = $.extend( context.fn, {
 	 * @return Traverser object, use .next() or .prev() to get a traverser object referring to the
 	 *  previous/next node
 	 */
-	traverser: function ( start ) {
+	'traverser': function( start ) {
 		// Find the leftmost leaf node in the tree
 		var startNode = start.jquery ? start.get( 0 ) : start;
 		var node = startNode;
-		var inP = node.nodeName === 'P' ? node : null;
+		var inP = node.nodeName == "P" ? node : null;
 		do {
 			// Filter nodes with the wikiEditor-noinclude class
 			// Don't use $( p ).hasClass( 'wikiEditor-noinclude' ) because
 			// $() is slow in a tight loop
-			while ( node && ( ' ' + node.className + ' ' ).indexOf( ' wikiEditor-noinclude ' ) !== -1 ) {
+			while ( node && ( ' ' + node.className + ' ' ).indexOf( ' wikiEditor-noinclude ' ) != -1 ) {
 				node = node.nextSibling;
 			}
 			if ( node && node.firstChild ) {
 				node = node.firstChild;
-				if ( node.nodeName === 'P' ) {
+				if ( node.nodeName == "P" ) {
 					inP = node;
 				}
 			}
 		} while ( node && node.firstChild );
 		return new context.fn.rawTraverser( node, inP, startNode, true );
 	},
-	getOffset: function ( offset ) {
+	'getOffset': function( offset ) {
 		if ( !context.offsets ) {
 			context.fn.refreshOffsets();
 		}
@@ -584,21 +578,21 @@ context.fn = $.extend( context.fn, {
 			'lastTextNode': base.lastTextNode
 		};
 	},
-	purgeOffsets: function () {
+	'purgeOffsets': function() {
 		context.offsets = null;
 	},
-	refreshOffsets: function () {
+	'refreshOffsets': function() {
 		context.offsets = [ ];
 		var t = context.fn.traverser( context.$content );
 		var pos = 0, lastTextNode = null;
 		while ( t ) {
-			if ( t.node.nodeName !== '#text' && t.node.nodeName !== 'BR' ) {
+			if ( t.node.nodeName != '#text' && t.node.nodeName != 'BR' ) {
 				t = t.next();
 				continue;
 			}
-			var nextPos = t.node.nodeName === '#text' ? pos + t.node.nodeValue.length : pos + 1;
+			var nextPos = t.node.nodeName == '#text' ? pos + t.node.nodeValue.length : pos + 1;
 			var nextT = t.next();
-			var leavingP = t.node.nodeName === '#text' && t.inP && nextT && ( !nextT.inP || nextT.inP !== t.inP );
+			var leavingP = t.node.nodeName == '#text' && t.inP && nextT && ( !nextT.inP || nextT.inP != t.inP );
 			context.offsets[pos] = {
 				'node': t.node,
 				'offset': 0,
@@ -616,27 +610,27 @@ context.fn = $.extend( context.fn, {
 				};
 			}
 			pos = nextPos + ( leavingP ? 1 : 0 );
-			if ( t.node.nodeName === '#text' ) {
+			if ( t.node.nodeName == '#text' ) {
 				lastTextNode = t.node;
 			}
 			t = nextT;
 		}
 	},
-	saveCursorAndScrollTop: function () {
+	'saveCursorAndScrollTop': function() {
 		// Stub out textarea behavior
 		return;
 	},
-	restoreCursorAndScrollTop: function () {
+	'restoreCursorAndScrollTop': function() {
 		// Stub out textarea behavior
 		return;
 	},
-	saveSelection: function () {
+	'saveSelection': function() {
 		if ( $.client.profile().name === 'msie' ) {
 			context.$iframe[0].contentWindow.focus();
 			context.savedSelection = context.$iframe[0].contentWindow.document.selection.createRange();
 		}
 	},
-	restoreSelection: function () {
+	'restoreSelection': function() {
 		if ( $.client.profile().name === 'msie' && context.savedSelection !== null ) {
 			context.$iframe[0].contentWindow.focus();
 			context.savedSelection.select();
@@ -646,10 +640,10 @@ context.fn = $.extend( context.fn, {
 	/**
 	 * Update the history queue
 	 *
-	 * @param htmlChange Pass true or false to inidicate if there was a text change that should potentially
+	 * @param htmlChange pass true or false to inidicate if there was a text change that should potentially
 	 * 	be given a new history state.
 	 */
-	updateHistory: function ( htmlChange ) {
+	'updateHistory': function( htmlChange ) {
 		var newHTML = context.$content.html();
 		var newSel = context.fn.getCaretPosition();
 		// Was text changed? Was it because of a REDO or UNDO action?
@@ -681,7 +675,7 @@ context.fn = $.extend( context.fn, {
 	/**
 	 * Sets up the iframe in place of the textarea to allow more advanced operations
 	 */
-	setupIframe: function () {
+	'setupIframe': function() {
 		context.$iframe = $( '<iframe></iframe>' )
 			.attr( {
 				'frameBorder': 0,
@@ -840,7 +834,7 @@ context.fn = $.extend( context.fn, {
 	 * equivilant functionality to the otherwise textarea-based functionality.
 	 */
 
-	getElementAtCursor: function () {
+	'getElementAtCursor': function() {
 		if ( context.$iframe[0].contentWindow.getSelection ) {
 			// Firefox and Opera
 			var selection = context.$iframe[0].contentWindow.getSelection();
@@ -861,7 +855,7 @@ context.fn = $.extend( context.fn, {
 	/**
 	 * Gets the complete contents of the iframe (in plain text, not HTML)
 	 */
-	getContents: function () {
+	'getContents': function() {
 		// For <p></p>, .html() returns <p>&nbsp;</p> in IE
 		// This seems to convince IE while not affecting display
 		if ( !context.$content ) {
@@ -886,7 +880,7 @@ context.fn = $.extend( context.fn, {
 	 * Gets the currently selected text in the content
 	 * DO NOT CALL THIS DIRECTLY, use $.textSelection( 'functionname', options ) instead
 	 */
-	getSelection: function () {
+	'getSelection': function() {
 		var retval;
 		if ( context.$iframe[0].contentWindow.getSelection ) {
 			// Firefox and Opera
@@ -921,7 +915,7 @@ context.fn = $.extend( context.fn, {
 	 * selection is empty.
 	 * DO NOT CALL THIS DIRECTLY, use $.textSelection( 'functionname', options ) instead
 	 */
-	encapsulateSelection: function ( options ) {
+	'encapsulateSelection': function( options ) {
 		var selText = $(this).textSelection( 'getSelection' );
 		var selTextArr;
 		var collapseToEnd = false;
@@ -1133,7 +1127,7 @@ context.fn = $.extend( context.fn, {
 	 * Gets the position (in resolution of bytes not nessecarily characters) in a textarea
 	 * DO NOT CALL THIS DIRECTLY, use $.textSelection( 'functionname', options ) instead
 	 */
-	getCaretPosition: function ( options ) {
+	'getCaretPosition': function( options ) {
 		var startPos = null, endPos = null;
 		if ( context.$iframe[0].contentWindow.getSelection ) {
 			var selection = context.$iframe[0].contentWindow.getSelection();
@@ -1270,7 +1264,7 @@ context.fn = $.extend( context.fn, {
 	 * @param startContainer Element in iframe to start selection in. If not set, start is a character offset
 	 * @param endContainer Element in iframe to end selection in. If not set, end is a character offset
 	 */
-	setSelection: function ( options ) {
+	'setSelection': function( options ) {
 		var sc = options.startContainer, ec = options.endContainer;
 		sc = sc && sc.jquery ? sc[0] : sc;
 		ec = ec && ec.jquery ? ec[0] : ec;
@@ -1357,7 +1351,7 @@ context.fn = $.extend( context.fn, {
 	 * Scroll a textarea to the current cursor position. You can set the cursor position with setSelection()
 	 * DO NOT CALL THIS DIRECTLY, use $.textSelection( 'functionname', options ) instead
 	 */
-	scrollToCaretPosition: function ( options ) {
+	'scrollToCaretPosition': function( options ) {
 		context.fn.scrollToTop( context.fn.getElementAtCursor(), true );
 	},
 	/**
@@ -1367,7 +1361,7 @@ context.fn = $.extend( context.fn, {
 	 * @param $element jQuery object containing an element in the iframe
 	 * @param force If true, scroll the element even if it's already visible
 	 */
-	scrollToTop: function ( $element, force ) {
+	'scrollToTop': function( $element, force ) {
 		var html = context.$content.closest( 'html' ),
 			body = context.$content.closest( 'body' ),
 			parentHtml = $( 'html' ),

@@ -304,10 +304,9 @@ $messages['ksh'] = array(
 
 /** Luxembourgish (Lëtzebuergesch)
  * @author Robby
- * @author Soued031
  */
 $messages['lb'] = array(
-	'localisationupdate-desc' => 'hält déi lokaliséiert Messagen sou aktuell wéi méiglech.',
+	'localisationupdate-desc' => 'hält déi lokaliséiert Messagen esou aktuell wéi méiglech.',
 );
 
 /** Macedonian (македонски)

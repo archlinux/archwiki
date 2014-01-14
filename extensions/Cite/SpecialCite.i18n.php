@@ -1955,77 +1955,6 @@ $messages['frp'] = array(
 	'cite_submit' => 'Citar',
 );
 
-/** Northern Frisian (Nordfriisk)
- * @author Murma174
- */
-$messages['frr'] = array(
-	'cite_article_desc' => 'Diar komt en nei [[Special:Cite|spezial-sidj]] tu, am sitiarin ianfacher tu maagin, an uk en ferwisang bi a werktjüügen',
-	'cite_article_link' => 'Detdiar sidj sitiare',
-	'tooltip-cite-article' => 'Hü detdiar sidj sitiaret wurd koon',
-	'cite' => 'Sitiare',
-	'cite_page' => 'Sidj:',
-	'cite_submit' => 'Sitiare',
-	'cite_text' => "__NOTOC__
-<div class=\"mw-specialcite-bibliographic\">
-
-== Bibliograafisk dooten för {{FULLPAGENAME}} ==
-
-* Sidj: {{FULLPAGENAME}}
-* Skriiwer: {{SITENAME}} contributors
-* Ütjden faan: ''{{SITENAME}}, {{int:sitesubtitle}}''.
-* Leetst feranrang: {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC
-* Ufrepen: <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC</citation>
-* Permanent URL: {{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
-* Sidjenwerjuun ID: {{REVISIONID}}
-
-</div>
-<div class=\"plainlinks mw-specialcite-styles\">
-
-== Sitiarmuudin för {{FULLPAGENAME}} ==
-
-=== [[APA muude]] ===
-{{FULLPAGENAME}}. ({{CURRENTYEAR}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}). ''{{SITENAME}}, {{int:sitesubtitle}}''. Ufrepen <citation>{{CURRENTTIME}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> faan {{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
-
-=== [[MLA muude]] ===
-\"{{FULLPAGENAME}}.\" ''{{SITENAME}}, {{int:sitesubtitle}}''. {{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC. <citation>{{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}}</citation> &lt;{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;.
-
-=== [[MHRA muude]] ===
-{{SITENAME}} bewerkern, '{{FULLPAGENAME}}', ''{{SITENAME}}, {{int:sitesubtitle}},'' {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC, &lt;{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt; [accessed <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}</citation>]
-
-=== [[Chicago muude]] ===
-{{SITENAME}} bewerkern, \"{{FULLPAGENAME}},\" ''{{SITENAME}}, {{int:sitesubtitle}},'' {{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (ufrepen <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>).
-
-=== [[CBE/CSE muude]] ===
-{{SITENAME}} bewerkern. {{FULLPAGENAME}} [Internet]. {{SITENAME}}, {{int:sitesubtitle}}; {{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}, {{CURRENTTIME}} UTC [sitiaret <citation>{{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}</citation>]. Tu fun faan:
-{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
-
-=== [[Bluebook muude]] ===
-{{FULLPAGENAME}}, {{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (ufrepen <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>).
-
-=== [[BibTeX]] iindrach ===
-
-  @misc{ wiki:xxx,
-    author = \"{{SITENAME}}\",
-    title = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}\",
-    year = \"{{CURRENTYEAR}}\",
-    url = \"{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}\",
-    note = \"[Online; ufrepen <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"
-  }
-
-Wan det [[LaTeX]]-moduul (<code>\\usepackage{url}</code> uun't iinfeerang) mä en smoker wääb-adres brükt woort, as det ferlicht neter so:
-
-  @misc{ wiki:xxx,
-    author = \"{{SITENAME}}\",
-    title = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}\",
-    year = \"{{CURRENTYEAR}}\",
-    url = \"'''\\url{'''{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''\",
-    note = \"[Online; ufrepen <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"
-  }
-
-
-</div> <!--closing div for \"plainlinks\"-->",
-);
-
 /** Friulian (furlan)
  * @author Klenje
  * @author MF-Warburg
@@ -3656,7 +3585,6 @@ $messages['kw'] = array(
 );
 
 /** Latin (Latina)
- * @author Autokrator
  * @author MissPetticoats
  * @author SPQRobin
  * @author UV
@@ -3664,7 +3592,6 @@ $messages['kw'] = array(
 $messages['la'] = array(
 	'cite_article_desc' => ' Addet [[Special:Cite|citation]] specialem paginam et arcam instrumenti', # Fuzzy
 	'cite_article_link' => 'Hanc paginam citare',
-	'tooltip-cite-article' => 'Institutiones de hanc pagina citanda',
 	'cite' => 'Paginam citare',
 	'cite_page' => 'Pagina:',
 	'cite_submit' => 'Citare',
@@ -3673,10 +3600,9 @@ $messages['la'] = array(
 /** Luxembourgish (Lëtzebuergesch)
  * @author Kaffi
  * @author Robby
- * @author Soued031
  */
 $messages['lb'] = array(
-	'cite_article_desc' => "Setzt eng [[Special:Cite|Zitatioun op dëser Spezialsäit]] bei an e Link an d'Geschiirkëscht",
+	'cite_article_desc' => "Setzt eng [[Special:Cite|Zitatioun op dëser Spezialsäit]] bäi an e Link an d'Geschiirkëscht",
 	'cite_article_link' => 'Dës Säit zitéieren',
 	'tooltip-cite-article' => 'Informatioune wéi een dës Säit zitéiere kann',
 	'cite' => 'Zitéierhëllef',
@@ -3803,10 +3729,7 @@ $messages['lo'] = array(
  * @author Mogoeilor
  */
 $messages['lrc'] = array(
-	'cite_article_link' => 'جاگه ای بلگه',
-	'cite' => 'جاگه',
 	'cite_page' => 'بلگه',
-	'cite_submit' => 'جاگه',
 );
 
 /** Lithuanian (lietuvių)
@@ -4163,7 +4086,7 @@ $messages['mn'] = array(
  * @author V.narsikar
  */
 $messages['mr'] = array(
-	'cite_article_desc' => 'एक  [[Special:Cite|बाह्यदुवे]] देणारे विशेषपान व साधनपेटीचा दुवा जोडते',
+	'cite_article_desc' => 'एक विशेष [[Special:Cite|बाह्यदुवे]] देणारे पान व टूलबॉक्सची लिंक तयार करा',
 	'cite_article_link' => 'हे पान उधृत करा',
 	'tooltip-cite-article' => 'हे पृष्ठ बघण्यासाठीची माहिती',
 	'cite' => 'उधृत करा',
@@ -5675,12 +5598,11 @@ $messages['sr-ec'] = array(
 /** Serbian (Latin script) (srpski (latinica)‎)
  * @author Liangent
  * @author Michaello
- * @author Milicevic01
  * @author Жељко Тодоровић
  */
 $messages['sr-el'] = array(
 	'cite_article_desc' => 'Dodaje specijalnu stranu za [[Special:Cite|citiranje]] i vezu ka oruđima.',
-	'cite_article_link' => 'Bibliografski podaci',
+	'cite_article_link' => 'citiranje ove strane',
 	'tooltip-cite-article' => 'Informacije o tome kako citirati ovu stranu',
 	'cite' => 'citat',
 	'cite_page' => 'Stranica:',

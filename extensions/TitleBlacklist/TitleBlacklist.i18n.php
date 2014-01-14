@@ -404,7 +404,6 @@ molimo da {{PLURAL:$1|ga|ih}} ispravite prije spremanja:',
  * @author Aleator
  * @author El libre
  * @author Jordi Roqué
- * @author Papapep
  * @author Pitort
  * @author SMP
  * @author Vriullop
@@ -418,7 +417,7 @@ $messages['ca'] = array(
 # Per defecte, no distingeix majúscules de minúscules',
 	'titleblacklist-forbidden-edit' => 'El títol «$2» està prohibit i no es pot crear. Concorda amb la següent entrada de la llista negra: <code>$1</code>',
 	'titleblacklist-forbidden-move' => "No es pot moure «$2» a «$3», perquè el títol «$3» està prohibit. Concorda amb l'entrada de la llista negra següent: <code>$1</code>",
-	'titleblacklist-forbidden-upload' => "S'ha prohibit el nom de fitxer «$2» i se n'impedeix la creació. Concorda amb la següent línia de la llista negra: <code>$1</code>",
+	'titleblacklist-forbidden-upload' => "El nom de fitxer «$2» ha estat prohibit i se n'impedeix la creació. Concorda amb la següent línia de la llista negra: <code>$1</code>",
 	'titleblacklist-forbidden-new-account' => "No es pot crear el nom d'usuari «$2». Coincideix amb la següent entrada de la llista negra: <code>$1</code>",
 	'titleblacklist-invalid' => '{{PLURAL:$1|La línia següent|Les línies següents}} de la llista negra no {{PLURAL:$1|és vàlida|són vàlides}}; heu de corregir-{{PLURAL:$1|la|les}} abans de guardar:',
 	'titleblacklist-override' => 'Ignora la llista negra',
@@ -558,7 +557,6 @@ $messages['de-formal'] = array(
 /** Zazaki (Zazaki)
  * @author Aspar
  * @author Erdemaslancan
- * @author Marmase
  */
 $messages['diq'] = array(
 	'titleblacklist-desc' => 'serkaran re desturê vıraştışê pel u hesabê karberan dano, qey qedexekerdışi re yew [[MediaWiki:Titleblacklist|listeya risiyayan]] u [[MediaWiki:Titlewhitelist|listeya risıpiyan]] dano.',
@@ -575,8 +573,8 @@ malumatê ey na listeyasiya de zepê ya: <code>$1</code>',
 malumatê ey na listeyasiya de zêpê ya: <code>$1</code>',
 	'titleblacklist-forbidden-new-account' => 'vıraştışê nameyê karberê"$2" i qedexe bı.
 malumatê ey na listeyasiya de zêpê ya: <code>$1</code>',
-	'titleblacklist-invalid' => 'Na  ğırab lista dı {{PLURAL:$1|en asatır|ené satıri}}  néravérené;
-Verdé qeyd kerdışi  timar keré:',
+	'titleblacklist-invalid' => 'nê {{PLURAL:$1|satır o ke|satır ê ke}} listeyasiyayi de qedexe yê;
+kerem kerê verqeydkerdışi de raşt kerê:',
 	'titleblacklist-override' => 'Tenilisti mehesebne',
 	'right-tboverride' => 'Siya listeya sernuşti nêravêrde ke',
 	'right-tboverride-account' => 'Tenilisteya naman dê karberan mehesebnê',
@@ -1376,15 +1374,14 @@ Hic titulus congruit cum expressione regulari: <code>$1</code>',
 
 /** Luxembourgish (Lëtzebuergesch)
  * @author Robby
- * @author Soued031
  */
 $messages['lb'] = array(
 	'titleblacklist-desc' => "Erlaabt den Administrateuren et d'Uleeë vu Säiten a Benotzerkonte mat spezifeschen Titelen iwwer eng [[MediaWiki:Titleblacklist|schwaarz Lëscht]] an eng [[MediaWiki:Titlewhitelist|wäiss Lëscht]] ze verbidden",
 	'titleblacklist' => '# Dëst ass een Titel deen op enger schwaarzer Lëscht steet. Titelen a Benotzernimm op déi dës Ausdréck passe kann net ugeluecht ginn
 # Benotzt "#" fir Bemierkungen
-# Et gëtt tëscht groussen a klenge Buchstawen ënnerscheet',
+# Et gëtt tëschent groussen a klenge Buchstawen ënnerscheed',
 	'titlewhitelist' => "# Dëst ass d'''Whitelist'' vun den Titelen. Benotzt \"#\" fir Bemierkungen.
-# Et gëtt een Ënnerscheed tëscht groussen a klenge Buchstawe gemaach",
+# Et gëtt een Ënnerscheed tëschent groussen a klenge Buchstawe gemaach",
 	'titleblacklist-forbidden-edit' => 'Den Titel "$2" dàerf net ugeluecht ginn.
 En ass op der schwaarzer Lëscht wéint folgendem Begrëff: <code>$1</code>',
 	'titleblacklist-forbidden-move' => '"$2" kann net op "$3" geréckelt ginn, well den Titel "$3" net däerf ugeluecht ginn.
@@ -1392,7 +1389,7 @@ En entsprécht dëser Rubrik vun der schwaarzr Lëscht: <code>$1</code>',
 	'titleblacklist-forbidden-upload' => 'De Fichiersnumm "$2" kann net benotzt ginn.
 Hien ass identesch mat dësem Numm vun der schwaarzer Lëscht (black list): <code>$1</code>',
 	'titleblacklist-forbidden-new-account' => 'De Benotzermumm "$2" gouf gespaart fir benotzt ze ginn.
-En ass sou op der \'\'schwaarzer Lëscht\'\': <code>$1</code>',
+En ass esou op der \'\'schwaarzer Lëscht\'\': <code>$1</code>',
 	'titleblacklist-invalid' => 'Dës {{PLURAL:$1|Linn|Linnen}} op der schwaarzer Lëscht vun den {{PLURAL:$1|Titelen ass|Titele sinn}} net valabel;
 verbessert se virum späicheren:',
 	'titleblacklist-override' => 'Schwaarz Lëscht ignoréieren',
@@ -1501,10 +1498,9 @@ $messages['ml'] = array(
  * @author Kaustubh
  * @author Mahitgar
  * @author Rahuldeshmukh101
- * @author V.narsikar
  */
 $messages['mr'] = array(
-	'titleblacklist-desc' => '[[MediaWiki:Titleblacklist|ब्लॅकलीस्ट]] व [[MediaWiki:Titlewhitelist|व्हाईट लीस्ट]] ला अनुसरून पाने आणि सदस्य खात्यांना प्रतिबंधित करण्याची प्रचालकांना परवानगी द्या',
+	'titleblacklist-desc' => '[[MediaWiki:Titleblacklist|ब्लॅकलीस्ट]] व [[MediaWiki:Titlewhitelist|व्हाईट लीस्ट]] ला अनुसरून पाने आणि सदस्य खात्यांना प्रतिबंधतीअ करण्याची प्रचालकांना परवानगी द्या',
 	'titleblacklist' => '# ही ब्लॉक केलेल्या शीर्षकांची यादी आहे. या यादीत असलेल्या शीर्षकांचे लेख लिहिता येणार नाहीत.
 # शेरा देण्यासाठी "#" वापरा.',
 	'titlewhitelist' => '# ही वापरू शकत असलेल्या शीर्षकांची यादी आहे. शेरा देण्यासाठी "#" वापरा',

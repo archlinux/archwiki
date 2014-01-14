@@ -20,7 +20,7 @@ To protect the wiki against automated spam, we kindly ask you to solve the simpl
 	'captcha-create'             => 'To create the page, please solve the simple sum below and enter the answer in the box ([[Special:Captcha/help|more info]]):',
 	'captcha-sendemail'          => 'To protect the wiki against automated spamming, we kindly ask you to solve the simple sum below and enter the answer in the box ([[Special:Captcha/help|more info]]):',
 	'captcha-sendemail-fail'     => 'Incorrect or missing confirmation code.',
-	'captcha-disabledinapi'      => 'This action requires a CAPTCHA, so it cannot be performed through the API.',
+	'captcha-disabledinapi'      => 'This action requires a captcha, so it cannot be performed through the API.',
 	'captchahelp-title'          => 'CAPTCHA help',
 	'captchahelp-cookies-needed' => 'You will need to have cookies enabled in your browser for this to work.',
 	'captchahelp-text'           => "Web sites that accept postings from the public, like this wiki, are often abused by spammers who use automated tools to post their links to many sites.
@@ -31,7 +31,7 @@ Since this is a task that's hard to automate, it will allow most real humans to 
 
 Unfortunately this may inconvenience users with limited vision or using text-based or speech-based browsers.
 At the moment we do not have an audio alternative available.
-Please contact the [[Special:ListAdmins|site administrators]] for assistance if this is unexpectedly preventing you from making legitimate actions.
+Please contact the  [[Special:ListAdmins|site administrators]] for assistance if this is unexpectedly preventing you from making legitimate actions.
 
 Hit the \"back\" button in your browser to return to the page editor.",
 	'captcha-addurl-whitelist'   => ' #<!-- leave this line exactly as it is --> <pre>
@@ -822,7 +822,6 @@ Gwasgwch botwm 'nôl' eich porwr er mwyn dychwelyd at y dudalen golygu.",
 /** Danish (dansk)
  * @author Aputtu
  * @author Byrial
- * @author Christian List
  * @author Hylle
  * @author Kaare
  * @author Peter Alberti
@@ -835,7 +834,7 @@ $messages['da'] = array(
 Som beskyttelse af wikien mod automatiseret spam, skal du løse det enkle regnestykke nedenfor og skrive resultatet i boksen, for at kunne gemme din redigering ([[Special:Captcha/help|flere oplysninger]]):',
 	'captcha-badlogin' => 'For at beskytte wikien mod automatiseret adgangskodegætning, skal du løse det enkle regnestykke nedenfor og skrive resultatet i boksen ([[Special:Captcha/help|flere oplysninger]]):',
 	'captcha-createaccount' => 'For at beskytte wikien mod automatisk oprettelse af brugernavne, skal du løse det enkle regnestykke nedenfor og skrive resultatet i boksen ([[Special:Captcha/help|flere oplysninger]]):',
-	'captcha-createaccount-fail' => 'Forkert eller manglende bekræftelseskode.',
+	'captcha-createaccount-fail' => 'Forkert eller manglende kodeord.',
 	'captcha-create' => 'For at oprette en ny side, skal du give svaret på regnestyket nedenfor, og angive resultatet i feltet under det. ([[Special:Captcha/help|mere information]]):',
 	'captcha-sendemail' => 'For at beskytte wikien mod automatisk spamning, skal du løse det enkle regnestykke nedenfor og skrive resultatet i boksen ([[Special:Captcha/help|flere oplysninger]]):',
 	'captcha-sendemail-fail' => 'Forkert eller manglende bekræftelseskode.',
@@ -1580,14 +1579,13 @@ $messages['gu'] = array(
 
 /** Hebrew (עברית)
  * @author Amire80
- * @author Guycn2
  * @author Rotem Liss
  * @author Rotemliss
  * @author YaronSh
  */
 $messages['he'] = array(
 	'captcha-edit' => 'כדי לערוך את הדף, אנא פתרו את תרגיל החיבור הפשוט שלהלן והקלידו את התשובה בתיבה ([[Special:Captcha/help|מידע נוסף]]):',
-	'captcha-desc' => 'מתן טכניקות CAPTCHA להגנה נגד ספאם וניחוש סיסמאות',
+	'captcha-desc' => 'מתן טכניקות CAPTCHA להגנה נגד זיבול וניחוש ססמאות',
 	'captcha-label' => 'CAPTCHA',
 	'captcha-addurl' => 'עריכתכם כוללת קישורים חיצוניים חדשים.
 לשם הגנה מפני ספאם אוטומטי, אנא פתרו את תרגיל החיבור הפשוט שלהלן והקלידו את התשובה בתיבה כדי לשמור את עריכתכם ([[Special:Captcha/help|מידע נוסף]]):',
@@ -1832,22 +1830,20 @@ Clicca le button 'retro' in tu navigator pro retornar al pagina de modification.
  * @author Ilham151096
  * @author IvanLanin
  * @author Iwan Novirion
- * @author Kenrick95
  * @author Rex
  */
 $messages['id'] = array(
 	'captcha-edit' => 'Untuk menyunting halaman ini, harap pecahkan penjumlahan sederhana di bawah ini dan masukkan jawaban di kotak yang tersedia ([[Special:Captcha/help|info lengkap]]):',
 	'captcha-desc' => 'Menyediakan teknik captcha untuk melindungi terhadap spam dan penebakan sandi',
 	'captcha-label' => 'CAPTCHA',
-	'captcha-addurl' => "Suntingan Anda menyertakan pranala luar baru.
-Sebagai pelindungan terhadap ''spam'' otomatis, Anda harus mengetikkan hasil perhitungan sederhana berikut ini 
-([[Special:Captcha/help|info lengkap]]):",
-	'captcha-badlogin' => 'Untuk melindungi wiki ini dari perengkahan kunci sandi otomatis, harap masukkan hasil perhitungan sederhana berikut dalam kotak yang tersedia ([[Special:Captcha/help|info lengkap]]):',
-	'captcha-createaccount' => 'Untuk melindungi wiki ini dari pembuatan akun otomatis, kami meminta Anda untuk mengetikkan hasil perhitungan sederhana di bawah ini dalam kotak yang tersedia 
-([[Special:Captcha/help|info lengkap]]):',
+	'captcha-addurl' => "Suntingan Anda menyertakan pranala luar baru. Sebagai pelindungan terhadap ''spam'' otomatis, Anda harus mengetikkan kata atau hasil perhitungan yang tertera berikut ini:<br />
+([[Special:Captcha/help|info lengkap]])", # Fuzzy
+	'captcha-badlogin' => 'Untuk membantu pelindungan terhadap perengkahan kunci sandi otomatis, tolong masukkan kata atau hasil perhitungan sederhana berikut dalam kotak yang tersedia ([[Special:Captcha/help|info lengkap]]):', # Fuzzy
+	'captcha-createaccount' => 'Sebagai pelindungan terhadap spam, Anda diharuskan untuk mengetikkan kata atau hasil perhitungan di bawah ini di kotak yang tersedia untuk dapat mendaftarkan pengguna baru:<br />
+([[Special:Captcha/help|info lengkap]])', # Fuzzy
 	'captcha-createaccount-fail' => 'Kode konfirmasi salah atau belum diisi.',
 	'captcha-create' => 'Untuk menyunting halaman ini, silakan pecahkan penjumlahan sederhana di bawah ini dan masukkan jawaban di kotak yang tersedia ([[Special:Captcha/help|info lengkap]]):',
-	'captcha-sendemail' => 'Untuk melindungi wiki ini dari spam otomatis, kami meminta Anda untuk memecahkan penjumlahan sederhana di bawah ini dan masukkan jawaban di kotak yang tersedia ([[Special:Captcha/help|more info]]):',
+	'captcha-sendemail' => 'Sebagai pelindungan terhadap spam, silakan pecahkan penjumlahan sederhana di bawah ini dan masukkan jawaban di kotak yang tersedia ([[Special:Captcha/help|more info]]):', # Fuzzy
 	'captcha-sendemail-fail' => 'Kode konfirmasi salah atau belum diisi.',
 	'captcha-disabledinapi' => 'Tindakan ini membutuhkan captcha, sehingga tidak dapat dilakukan melalui API.',
 	'captchahelp-title' => 'Mengenai Captcha',
@@ -2017,7 +2013,6 @@ $messages['ja'] = array(
 );
 
 /** Jutish (jysk)
- * @author Christian List
  * @author Huslåke
  * @author Ælsån
  */
@@ -2025,9 +2020,9 @@ $messages['jut'] = array(
 	'captcha-edit' => 'For at redigere denne side, skal du give svaret på regnestyket nedenfor, og angive resultatet i feltet under det. ([[Special:Captcha/help|mere information]]):',
 	'captcha-desc' => 'Semple captcha implementåsje', # Fuzzy
 	'captcha-addurl' => 'Din redigering tilføjer nye eksterne henvisninger til artiklen. Som beskyttelse mod automatiseret spam, skal du give svaret på regnestyket nedenfor, og angive resultatet i feltet under det. ([[Special:Captcha/help|mere information]]):', # Fuzzy
-	'captcha-badlogin' => 'For at beskytte mod automatiske forsøg på at gætte adgangskoden, skal du give svaret på regnestykket nedenfor, og angive resultatet i feltet under det. ([[Special:Captcha/help|mere information]]):',
+	'captcha-badlogin' => 'For at beskytte mod automatiserede gæt på kodeord, skal du give svaret på regnestyket nedenfor, og angive resultatet i feltet under det. ([[Special:Captcha/help|mere information]]):', # Fuzzy
 	'captcha-createaccount' => 'For at beskytte mod automatisk oprettelse af brugernavne, skal du give svaret på regnestyket nedenfor, og angive resultatet i feltet under det. ([[Special:Captcha/help|mere information]]):', # Fuzzy
-	'captcha-createaccount-fail' => 'Forkert eller manglende bekræftelseskode.',
+	'captcha-createaccount-fail' => 'Forkert eller manglende kodeord.',
 	'captcha-create' => 'For at oprette en ny side, skal du give svaret på regnestyket nedenfor, og angive resultatet i feltet under det. ([[Special:Captcha/help|mere information]]):',
 	'captchahelp-title' => 'Captcha-hjælp',
 	'captchahelp-cookies-needed' => 'Din browser skal understøtte cookies, før dette kan gennemføres.',
@@ -2213,9 +2208,9 @@ Bet öñdewine qaýtw barw üşin «Artqa» degen tüýmesin basıñız.', # Fuz
 $messages['km'] = array(
 	'captcha-edit' => 'ដើម្បីកែប្រែ​ទំព័រនេះ សូមដោះស្រាយ​ប្រមាណវិធីបូក​ខាងក្រោម​នេះរួច​បញ្ជូលចម្លើយ​ទៅក្នុង​ប្រអប់សិន([[Special:Captcha/help|ព័ត៌មាន​បន្ថែម]])៖',
 	'captcha-desc' => 'ផ្ដល់បច្ចេកទេស CAPTCHA ដើម្បីការពារពីស្ប៉ាមនិងការការទាយពាក្យសំងាត់',
-	'captcha-addurl' => 'កំណែ​របស់អ្នក​មាន​តំណភ្ជាប់ក្រៅ​ថ្មី។ ដើម្បី​ជួយបង្ការ​ស្ប៉ាម​ស្វ័យប្រវត្តិ សូមដោះស្រាយ​ប្រមាណវិធីបូក​ខាងក្រោម​នេះរួច​បញ្ជូលចម្លើយ​ទៅក្នុង​ប្រអប់សិនមុនពេលរក្សាទុកកំណែរបស់អ្នក([[Special:Captcha/help|ព័ត៌មាន​បន្ថែម]])៖',
-	'captcha-badlogin' => 'ដើម្បីការពារការបំបែកពាក្យសម្ងាត់ដោយស្វ័យប្រវត្តិ សូមដោះស្រាយផលបូកខាងក្រោមរួចបញ្ជូលចម្លើយទៅក្នុងប្រអប់ ([[Special:Captcha/help|ព័ត៌មានបន្ថែម]])៖',
-	'captcha-createaccount' => 'ដើម្បី​បង្ការការបង្កើត​គណនី​ស្វ័យប្រវត្តិ សូមដោះស្រាយ​ប្រមាណវិធីបូក​ខាងក្រោម​នេះរួច​បញ្ជូលចម្លើយ​ទៅក្នុង​ប្រអប់សិន([[Special:Captcha/help|ព័ត៌មាន​បន្ថែម]])៖',
+	'captcha-addurl' => 'កំណែ​របស់អ្នក​មាន​តំណភ្ជាប់ក្រៅ​ថ្មី។ ដើម្បី​ជួយបង្ការ​ស្ប៉ាម​ស្វ័យប្រវត្តិ សូមដោះស្រាយ​ប្រមាណវិធីបូក​ខាងក្រោម​នេះរួច​បញ្ជូលចម្លើយ​ទៅក្នុង​ប្រអប់សិន([[Special:Captcha/help|ព័ត៌មាន​បន្ថែម]])៖', # Fuzzy
+	'captcha-badlogin' => 'ដើម្បីការពារការបំបែកពាក្យសំងាត់ដោយស្វ័យប្រវត្តិ សូមដោះស្រាយផលបូកខាងក្រោមរួចបញ្ជូលចម្លើយទៅក្នុងប្រអប់ ([[Special:Captcha/help|ព័ត៌មានបន្ថែម]])៖', # Fuzzy
+	'captcha-createaccount' => 'ដើម្បី​បង្ការការបង្កើត​គណនី​ស្វ័យប្រវត្តិ សូមដោះស្រាយ​ប្រមាណវិធីបូក​ខាងក្រោម​នេះរួច​បញ្ជូលចម្លើយ​ទៅក្នុង​ប្រអប់សិន([[Special:Captcha/help|ព័ត៌មាន​បន្ថែម]])៖', # Fuzzy
 	'captcha-createaccount-fail' => 'កូដផ្ទៀងផ្ទាត់បាត់បង់ឬមិនត្រឹមត្រូវ។',
 	'captcha-create' => 'ដើម្បី​បង្កើត​ទំព័រ សូមដោះស្រាយ​ប្រមាណវិធីបូក​ខាងក្រោម​នេះរួច​បញ្ជូលចម្លើយ​ទៅក្នុង​ប្រអប់សិន([[Special:Captcha/help|ព័ត៌មាន​បន្ថែម]])៖',
 	'captchahelp-title' => 'ជំនួយអំពី Captcha',
@@ -2363,11 +2358,11 @@ Fir dës Wiki virun automatiséiertem Spam ze schütze froe mir Iech fir déi fo
 	'captcha-disabledinapi' => 'Dës Aktioun brauch e Captcha, dofir ka se net mat enger API gemaach ginn.',
 	'captchahelp-title' => 'Captcha-Hëllef',
 	'captchahelp-cookies-needed' => 'Dir musst Cookien an Ärem Browser erlabe fir dat dëst funktionéiert.',
-	'captchahelp-text' => "Websäiten, déi et jiddwerengem erlaben Ännerunge virzehuelen, sou wéi op dëser Wiki, ginn dacks vu sougenannte Spammer mëssbraucht, déi automatiséiert hir Linken op vill Internetsäite setzen. Sou Spam-Linke kënne wuel geläscht ginn, mä se sinn trotzdem eng grouss Plo.
+	'captchahelp-text' => "Websäiten, déi et jiddwerengem erlaben Ännerunge virzehuelen, sou wéi op dëser Wiki, ginn dacks vu sougenannte Spammer mëssbraucht, déi automatiséiert hir Linken op vill Internetsäite setzen. Esou Spam-Linke kënne wuel geläscht ginn, mä se sinn trotzdem eng grouss Plo.
 
 Heiansdo, besonnesch wann nei Internet-Linken op eng Säit derbäigesat ginn, weist dës Wiki Iech e Bild mat faarwegem oder verzerrtem Text a freet Iech fir déi gewise Wierder anzetipppen. Well dëst eng Aufgab ass déi schwéier ze automatiséieren ass, erlaabt dëst, datt Mënschen hir Ännerunge kënnen agi während déi meescht Spammer an aner Roboter-Attacke kënnen ofgewiert ginn.
 
-Leider kann dat zu Schwierigkeete féiere fir Persounen déi net sou gutt gesinn oder déi text-baséiert oder sprooch-baséiert Browser benotzen.
+Leider kann dat zu Schwierigkeete féiere fir Persounen déi net esou gutt gesinn oder déi text-baséiert oder sprooch-baséiert Browser benotzen.
 Zu dësem Zäitpunkt hu mir leider keng audio-Alternativ zu eiser Verfügung.
 Kontaktéiert w.e.g. [[Special:ListAdmins|een Administrateur]] fir Hëllef wann dëst iech onerwaarter Weis vu legitimen Editen ofhält.
 
@@ -2785,9 +2780,9 @@ Mit den „Trüch“-Knopp vun dien Browser kummst du trüch na dat Ännerfinste
  */
 $messages['nds-nl'] = array(
 	'captcha-edit' => "Um disse zied te bewarken, mu'j eerst t antwoord op disse eenvoudige somme invullen ([[Special:Captcha/help|meer informasie]]):",
-	'captcha-desc' => 'Biedt CAPTCHA-technieken um bescharming te biejen tegen spam en t raojen van wachtwoorden',
+	'captcha-desc' => 'Biejt CAPTCHA-technieken um bescharming te biejen tegen moekpost en t raojen van wachtwoorden',
 	'captcha-addurl' => 'In joew bewarking staon nieje uutgaonde verwiezingen.
-Vul ter de bescharming van disse wiki tegen automatiese moekbiedragen t antwoord op de somme in, in t invoerveld dat hieronder steet, um joew bewarking op te slaon:<br />
+Vul ter de bescharming van disse wiki tegen automatiese moekpost t antwoord op de somme in, in t invoerveld dat hieronder steet, um joew bewarking op te slaon:<br />
 ([[Special:Captcha/help|meer informasie]])',
 	'captcha-badlogin' => 'Vul ter de bescharming van disse wiki tegen t automaties kraken van wachtwoorden t antwoord op de somme in, in t invoerveld ([[Special:Captcha/help|meer informasie]]):',
 	'captcha-createaccount' => 'Vul ter bescharming van disse wiki tegen t automaties anmaken van gebrukers t antwoord op de somme in, in t invoerveld ([[Special:Captcha/help|meer informasie]]):',
@@ -2915,10 +2910,9 @@ Trykk på «attende»-knappen for å kome tilbake til endringssida.',
  */
 $messages['oc'] = array(
 	'captcha-edit' => "Per modificar aquesta pagina, vos cal efectuar lo calcul çaijós e n'inscriure lo resultat dins lo camp ([[Special:Captcha/help|Mai d’entresenhas]]) :",
-	'captcha-desc' => 'Ofèrta de tecnicas CAPTCHA per protegir contra lo spam e la descobèrta dels senhals per ensages multiples',
+	'captcha-desc' => 'Implementacion captcha simpla', # Fuzzy
 	'captcha-label' => 'CAPTCHA',
-	'captcha-addurl' => "Vòstra modificacion inclutz de ligams extèrnes.
-Per nos ajudar dins la proteccion contra lo corrièr indesirable automatizat, calculatz l'operacion simpla çaijós e inscrivissètz-ne lo resultat dins lo camp ([[Special:Captcha/help|mai d'informacions]]) :",
+	'captcha-addurl' => "Vòstra modificacion inclutz de ligams URL novèla ; per empachar las connexions automatizadas, vos cal picar los mots que s’afichan dins l’imatge que seguís : <br />([[Special:Captcha/help|Qu'es aquò?]])", # Fuzzy
 	'captcha-badlogin' => "Per ensajar de contornar las temptativas de cracatge de senhals automatizadas per de robòts, recopiatz lo tèxte çaijós dins la bóstia de tèxte plaçada al dejós d'aqueste. ([[Special:Captcha/help|Mai d’entresenhas]])", # Fuzzy
 	'captcha-createaccount' => 'Coma proteccion contra las creacions de compte abusivas, entratz lo resultat de l’addicion dins la bóstia çaijós:<br />
 ([[Special:Captcha/help|mai d’entresenhas]])', # Fuzzy
@@ -3222,7 +3216,6 @@ Pressione o botão 'voltar' de seu navegador para retornar à página de ediçã
  * @author AlimanRuna
  */
 $messages['qu'] = array(
-	'captcha-badlogin' => 'Wikita kikinmanta millay ruraq yaykuna rima chamqaymanta amachanapaqqa, kay qatiq yapayta ruraspa yapasqata kahachapi yaykuchiy ([[Special:Captcha/help|astawan yachay]]):',
 	'captchahelp-title' => 'Captcha nisqamanta yanapay',
 );
 
@@ -4135,8 +4128,7 @@ Nhấn chuột vào nút “Back” của trình duyệt để trở lại trang
  */
 $messages['vo'] = array(
 	'captcha-edit' => 'Ad redakön yegedi at, dunolös, begö! saedami dono e penolös saedoti in bokil ([[Special:Captcha/help|nüns pluik]]):',
-	'captcha-addurl' => 'Redakam olik keninükon yümis plödik nulik.
-Ad jelön siti ta peneds badik itjäfidik, dunolös, begö! saedami balugik sököl, e penolös saedoti in bokil ad dakipön redakam ola ([[Special:Captcha/help|nüns pluik]]):',
+	'captcha-addurl' => 'Redakam olik keninükon yümis plödik nulik. Ad jelön siti ta peneds itjäfidik, dunolös, begö! saedami sököl, e penolös saedoti in bokil ([[Special:Captcha/help|nüns pluik]]):', # Fuzzy
 	'captcha-badlogin' => 'Ad jelön siti ta daget itjäfidik letavödas, dunolös, begö! saedami sököl e penolös saedoti in bokil ([[Special:Captcha/help|nüns pluik]]):', # Fuzzy
 	'captcha-createaccount' => 'Ad jelön siti ta kalijafam itjäfidik, dunolös, begö! saedami sököl e penolös saedoti in bokil ([[Special:Captcha/help|nüns pluik]]):', # Fuzzy
 	'captcha-createaccount-fail' => 'Kot fümükama paneveräton u paseleton.',
