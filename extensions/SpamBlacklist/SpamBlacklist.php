@@ -18,6 +18,10 @@ $wgExtensionCredits['antispam'][] = array(
 $dir = __DIR__ . '/';
 $wgExtensionMessagesFiles['SpamBlackList'] = $dir . 'SpamBlacklist.i18n.php';
 
+// Register the API method
+$wgAutoloadClasses['ApiSpamBlacklist'] = "$dir/api/ApiSpamBlacklist.php";
+$wgAPIModules['spamblacklist'] = 'ApiSpamBlacklist';
+
 /**
  * Array of settings for blacklist classes
  */

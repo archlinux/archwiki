@@ -41,7 +41,7 @@
 //
 
 /** The version of this GeSHi file */
-define('GESHI_VERSION', '1.0.8.11');
+define('GESHI_VERSION', '1.0.8.11-wmf1');  // WMF fix for Haskell (bug 52509)
 
 // Define the root directory for the GeSHi code tree
 if (!defined('GESHI_ROOT')) {

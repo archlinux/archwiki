@@ -76,10 +76,28 @@ $messages['be-tarask'] = array(
  * @author Fohanno
  */
 $messages['br'] = array(
+	'asirra-desc' => 'Modulenn Asirra evit ConfirmEdit',
+	'asirra-edit' => 'Evit sikour da wareziñ ar wiki diouzh ar stroboù emgefre, diuzit ar skeudennoù kizhier er voest dindan :',
 	'asirra-nojs' => "'''Gweredekait JavaScript, mar plij, hag adkasit ar bajenn.'''",
+	'asirra-failed' => 'Diuzit an holl skeudennoù kizhier, mar plij',
 );
 
-/** Czech (česky)
+/** Catalan (català)
+ * @author Toniher
+ */
+$messages['ca'] = array(
+	'asirra-desc' => 'Mòdul Asirra de ConfirmEdit',
+	'asirra-edit' => 'Per tal de protegir el wiki contra les edicions brosses, us demanem que seleccioneu només les fotos de gats del requadre a continuació:',
+	'asirra-addurl' => "La modificació inclou nous enllaços externs. Per tal de protegir el wiki davant d'edicions brossa, us demanem que seleccioneu només les fotos de gots del requadre a continuació:",
+	'asirra-badlogin' => 'Per tal de protegir el wiki contra els intents de trencament de contrasenyes, us demanem que seleccioneu només les fotos de gats del requadre a continuació:',
+	'asirra-createaccount' => 'Per tal de protegir el wiki contra la creació automatitzada de comptes, us demanem que seleccioneu només les fotos de gats del requadre a continuació:',
+	'asirra-createaccount-fail' => 'Identifiqueu correctament els gats.',
+	'asirra-create' => 'Per tal de protegir el wiki contra la creació automàtica de pàgines, us demanem que seleccioneu només les fotos de gats del requadre a continuació:',
+	'asirra-nojs' => "'''Habilitieu el JavaScript i torneu a enviar la pàgina.'''",
+	'asirra-failed' => 'Identifiqueu totes les imatges de gats',
+);
+
+/** Czech (čeština)
  * @author Vks
  */
 $messages['cs'] = array(
@@ -123,17 +141,33 @@ $messages['diq'] = array(
 
 /** Spanish (español)
  * @author Armando-Martin
+ * @author Ciencia Al Poder
  */
 $messages['es'] = array(
 	'asirra-desc' => 'Módulo de Asirra para ConfirmEdit',
 	'asirra-edit' => 'Para ayudar a protegernos contra el spam de edición automática, seleccione sólo las fotos de gatos en el cuadro siguiente:', # Fuzzy
-	'asirra-addurl' => 'Su edición incluye nuevos enlaces externos. Para ayudar a protegernos contra el spam automatizado, por favor, seleccione solo las fotos de gato en el cuadro siguiente:', # Fuzzy
-	'asirra-badlogin' => 'Para ayudar a protegernos del robo automatizado de contraseñas, seleccione sólo las fotos de gatos en el cuadro siguiente:', # Fuzzy
-	'asirra-createaccount' => 'Para ayudar a protegernos contra la creación automatizada de cuentas, seleccione sólo las fotos de gato en el cuadro siguiente:', # Fuzzy
+	'asirra-addurl' => 'Tu edición incluye nuevos enlaces externos. Para proteger el wiki contra el spam automatizado, por favor, te pedimos que selecciones solo las fotos de gatos en el cuadro siguiente:',
+	'asirra-badlogin' => 'Para proteger el wiki contra el robo automatizado de contraseñas, te pedimos por favor que selecciones únicamente las fotos de gatos en el cuadro siguiente:',
+	'asirra-createaccount' => 'Para proteger el wiki contra la creación automatizada de cuentas de usuario, te pedimos por favor que selecciones únicamente las fotos de gatos en el cuadro siguiente:',
 	'asirra-createaccount-fail' => 'Identifique correctamente los gatos.',
-	'asirra-create' => 'Para ayudar a protegernos contra la creación automática de páginas, seleccione sólo las fotos de gato en el cuadro siguiente:', # Fuzzy
+	'asirra-create' => 'Para proteger el wiki contra la creación automatizada de páginas, te pedimos por favor que selecciones únicamente las fotos de gatos en el cuadro siguiente:',
 	'asirra-nojs' => "'''Por favor active JavaScript y vuelva a la página.'''",
 	'asirra-failed' => 'Identifique todas las imágenes de gatos',
+);
+
+/** Persian (فارسی)
+ * @author Armin1392
+ */
+$messages['fa'] = array(
+	'asirra-desc' => 'بخش آسیرا برای تایید ویرایش',
+	'asirra-edit' => ' برای محافظت ویکی دربرابر ویرایش خودکار اسپم، ما دوستانه از شما درخواست می‌کنیم که تنها عکس‌های گربه را در جعبهٔ زیر انتخاب کنید:',
+	'asirra-addurl' => 'ویرایش شما شامل لینک‌های خارجی جدید است.برای محافظت ویکی دربرابر ویرایش خودکار اسپم، ما دوستانه از شما درخواست می‌کنیم که تنها عکس‌های گربه را در جعبهٔ زیر انتخاب کنید:',
+	'asirra-badlogin' => 'برای محافظت ویکی دربرابر رخنه به رمز‌ عبور به طور خودکار، ما دوستانه از شما درخواست می‌کنیم که تنها عکس‌های گربه را در جعبهٔ زیر انتخاب کنید:',
+	'asirra-createaccount' => 'برای محافظت ویکی دربرابر ایجاد حساب به طور خودکار، ما دوستانه از شما درخواست می‌کنیم که تنها عکس‌های گربه را در جعبهٔ زیر انتخاب کنید:',
+	'asirra-createaccount-fail' => 'لطفاً این گربه‌ها را به درستی شناسایی کنید.',
+	'asirra-create' => 'برای محافظت ویکی دربرابر ایجاد صفحه به طور خودکار، ما دوستانه از شما درخواست می‌کنیم که تنها عکس‌های گربه را در جعبهٔ زیر انتخاب کنید:',
+	'asirra-nojs' => "'''لطفاً جاوااسکریپت را فعال کنید و صفحه را دوباره ارائه کنید.'''",
+	'asirra-failed' => 'لطفاً همهٔ عکس‌های گربه را شناسایی کنید',
 );
 
 /** Finnish (suomi)
@@ -183,17 +217,33 @@ $messages['gl'] = array(
 	'asirra-failed' => 'Identifique todas as fotos de gatos',
 );
 
+/** Hebrew (עברית)
+ * @author Yona b
+ * @author ערן
+ */
+$messages['he'] = array(
+	'asirra-desc' => 'מודול Asirra  לאישור עריכה (ConfirmEdit)',
+	'asirra-edit' => 'כדי להגן על הוויקי מעריכות ספאם אוטומטיות, נבקשך לבחור רק את תמונות החתולים בתיבה שלהלן:',
+	'asirra-addurl' => 'העריכה שלך כוללת קישורים חיצוניים חדשים. כדי להגן על הויקי מעריכות ספאם אוטומטיות, נבקשך לבחור רק את תמונות החתולים בתיבה שלהלן:',
+	'asirra-badlogin' => 'כדי להגן על הוויקי מפיצוח אוטומטי של סיסמאות, נבקשך לבחור רק את תמונות החתולים בתיבה שלהלן:',
+	'asirra-createaccount' => 'כדי להגן על הוויקי מפני יצירה אוטומטית של חשבונות, נבקשך לבחור רק את תמונות החתולים בתיבה שלהלן:',
+	'asirra-createaccount-fail' => 'יש לזהות כראוי את החתולים.',
+	'asirra-create' => 'כדי להגן על הוויקי מפני יצירה אוטומטית של דפים, נבקשך לבחור רק את תמונות החתולים בתיבה שלהלן:',
+	'asirra-nojs' => "'''יש לאפשר JavaScript ולשלוח מחדש את הדף.'''",
+	'asirra-failed' => 'יש לזהות את כל תמונות החתולים',
+);
+
 /** Upper Sorbian (hornjoserbsce)
  * @author Michawiki
  */
 $messages['hsb'] = array(
 	'asirra-desc' => 'Modul Asirra za ConfirmEdit',
-	'asirra-edit' => 'Za škit přećiwo awtomatizowanemu spamej, prošu wubjer jenož fota kóčkow w slědowacym polu:', # Fuzzy
-	'asirra-addurl' => 'Twoja změna wobsahuje nowe eksterne wotkazy. Za škit přećiwo awtomatizowanemu spamej, prošu wubjer jenož fota kóčkow w slědowacym polu:', # Fuzzy
-	'asirra-badlogin' => 'Za škit přećiwo awtomatizowanemu złamanju hesłow, prošu wubjer jenož fota kóčkow w slědowacym polu:', # Fuzzy
-	'asirra-createaccount' => 'Za škit přećiwo awtomatiskemu wutworjenju konta, prošu wubjer jenož fota kóčkow w slědowacym polu:', # Fuzzy
+	'asirra-edit' => 'Za škit přećiwo awtomatizowanemu spamej, prošu wubjer jenož fota kóčkow w slědowacym polu:',
+	'asirra-addurl' => 'Twoja změna wobsahuje nowe eksterne wotkazy. Za škit přećiwo awtomatizowanemu spamej, prošu wubjer jenož fota kóčkow w slědowacym polu:',
+	'asirra-badlogin' => 'Za škit přećiwo awtomatizowanemu złamanju hesłow, prošu wubjer jenož fota kóčkow w slědowacym polu:',
+	'asirra-createaccount' => 'Za škit přećiwo awtomatiskemu wutworjenju konta, prošu wubjer jenož fota kóčkow w slědowacym polu:',
 	'asirra-createaccount-fail' => 'Prošu identifikuj kóčki.',
-	'asirra-create' => 'Za škit přećiwo awtomatiskemu wutworjenju strony, prošu wubjer jenož fota kóčkow w slědowacym polu:', # Fuzzy
+	'asirra-create' => 'Za škit přećiwo awtomatiskemu wutworjenju strony, prošu wubjer jenož fota kóčkow w slědowacym polu:',
 	'asirra-nojs' => "'''Prošu zmóžń JavaScript a składuj stronu hišće raz.'''",
 	'asirra-failed' => 'Prošu identifikuj wšě wobrazy z kóčkami',
 );
@@ -245,16 +295,17 @@ $messages['ja'] = array(
 );
 
 /** Korean (한국어)
+ * @author Hym411
  * @author 아라
  */
 $messages['ko'] = array(
 	'asirra-desc' => 'ConfirmEdit에 대한 Asirra 모듈',
-	'asirra-edit' => '자동화된 편집 스팸으로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:', # Fuzzy
-	'asirra-addurl' => '편집에 새로운 바깥 링크가 포함되어 있습니다. 자동화된 스팸으로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:', # Fuzzy
-	'asirra-badlogin' => '비밀번호 깨기로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:', # Fuzzy
-	'asirra-createaccount' => '자동화된 계정 만들기로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:', # Fuzzy
+	'asirra-edit' => '자동화된 편집 스팸으로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:',
+	'asirra-addurl' => '편집에 새로운 바깥 링크가 포함되어 있습니다. 자동화된 스팸으로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:',
+	'asirra-badlogin' => '자동화된 비밀번호 크래킹으로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:',
+	'asirra-createaccount' => '자동화된 계정 만들기로부터 위키를 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:',
 	'asirra-createaccount-fail' => '고양이를 올바르게 선택하세요.',
-	'asirra-create' => '자동화된 문서 만들기로부터 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:', # Fuzzy
+	'asirra-create' => '자동화된 문서 만들기로부터 위키를 보호하기 위해, 아래 상자에 있는 고양이 사진을 선택하세요:',
 	'asirra-nojs' => "'''자바스크립트를 활성화하고 문서를 다시 제출하세요.'''",
 	'asirra-failed' => '고양이 그림을 모두 선택하세요',
 );
@@ -421,12 +472,12 @@ $messages['pt'] = array(
  */
 $messages['roa-tara'] = array(
 	'asirra-desc' => 'Module Asirra pe confermà le cangiaminde',
-	'asirra-edit' => "Pe darne 'na màne a proteggere condre le cangiaminde automatece de le rummate, pe piacere scacchie ìa categorije de le fote jndr'à buatte aqquà sotte:", # Fuzzy
-	'asirra-addurl' => "Le cangiaminde tune 'ngludone collegaminde de fore nuève. Pe darne 'na màne a proteggere condre le cangiaminde automatece de le rummate, pe piacere scacchie 'a categorije d'a fote 'ndruche jndr'à buatte aqquà sotte:", # Fuzzy
-	'asirra-badlogin' => "Pe darne 'na màne a proteggere condre le futteminde automatece de le passuord, pe piacere scacchie 'a categorije de le fote jndr'à buatte aqquà sotte:", # Fuzzy
-	'asirra-createaccount' => "Pe darne 'na màne a proteggere condre le ccrejaziune automatece de le cunde, pe piacere scacchie 'a categorije de le fote jndr'à buatte aqquà sotte:", # Fuzzy
+	'asirra-edit' => "Pe proteggere condre le cangiaminde automatece de le rummate, pe piacere scacchie 'a categorije de le fote jndr'à buatte aqquà sotte:",
+	'asirra-addurl' => "Le cangiaminde tune 'ngludone collegaminde de fore nuève. Pe proteggere condre le cangiaminde automatece de le rummate, pe piacere scacchie 'a categorije d'a fote 'ndruche jndr'à buatte aqquà sotte:",
+	'asirra-badlogin' => "Pe proteggere condre le futteminde automatece de le passuord, pe piacere scacchie 'a categorije de le fote jndr'à buatte aqquà sotte:",
+	'asirra-createaccount' => "Pe proteggere condre le ccrejaziune automatece de le cunde, pe piacere scacchie 'a categorije de le fote jndr'à buatte aqquà sotte:",
 	'asirra-createaccount-fail' => 'Pe piacere idendifiche correttamende le categorije.',
-	'asirra-create' => "Pe darne 'na màne a proteggere condre le ccrejaziune automatece de le pàggene, pe piacere scacchie 'a categorije de le fote jndr'à buatte aqquà sotte:", # Fuzzy
+	'asirra-create' => "Pe proteggere condre le ccrejaziune automatece de le pàggene, pe piacere scacchie 'a categorije de le fote jndr'à buatte aqquà sotte:",
 	'asirra-nojs' => "'''Pe piacere abbilite JavaScript e conferme arrete 'a pàgene.'''",
 	'asirra-failed' => 'Pe piacere idendifiche tutte le categorije de le immaggine',
 );
@@ -459,6 +510,7 @@ $messages['si'] = array(
 /** Swedish (svenska)
  * @author Jopparn
  * @author Rotsee
+ * @author Tobulos1
  * @author WikiPhoenix
  */
 $messages['sv'] = array(
@@ -466,6 +518,7 @@ $messages['sv'] = array(
 	'asirra-addurl' => 'Din redigering innehåller nya externa länkar. För att skydda wikin mot automatiserat redigerings-spam ber vi dig att endast markera fotografierna på katter i rutan nedan:',
 	'asirra-badlogin' => 'För att skydda wikin mot automatiserade försök att knäcka lösenord ber vi dig att endast markera fotografierna på katter i rutan nedan:',
 	'asirra-createaccount' => 'För att skydda wikin mot automatiserat kontoskapande ber vi dig att endast markera fotografierna på katter i rutan nedan:',
+	'asirra-createaccount-fail' => 'Vänligen identifiera katterna korrekt.',
 	'asirra-create' => 'För att skydda wikin mot automatiserat sidskapande ber vi dig att endast markera fotografierna på katter i rutan nedan:',
 	'asirra-nojs' => "'''Var god aktivera JavaScript och hämta sidan igen.'''",
 	'asirra-failed' => 'Var god identifiera alla kattbilder',

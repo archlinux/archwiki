@@ -1,9 +1,33 @@
 {
+	/* Common */
+
+	// Enforcing
+	"camelcase": true,
+	"curly": true,
+	"eqeqeq": true,
+	"immed": true,
+	"latedef": true,
+	"newcap": true,
+	"noarg": true,
+	"noempty": true,
+	"nonew": true,
+	"quotmark": "single",
+	"trailing": true,
+	"undef": true,
+	"unused": true,
+	// Legacy
+	"onevar": true,
+
+	/* Local */
+
+	// Relaxing
+	"loopfunc": true,
+	"multistr": true,
+	// Environment
+	"browser": true,
+
 	"predef": [
 		"mediaWiki",
 		"jQuery"
-	],
-	"browser": true,
-	"smarttabs": true,
-	"multistr": true
+	]
 }

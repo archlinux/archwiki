@@ -142,7 +142,7 @@ $messages['as'] = array(
 অনুগ্ৰহ কৰি "create", "comment", "search", "search2" বা "fulltext" নিৰ্ধাৰণ কৰক',
 	'tryexact' => 'কেবল দিয়া শব্দহে বিচাৰিব',
 	'searchfulltext' => 'সম্পূৰ্ণ পাঠ্য বিচাৰিব',
-	'createarticle' => 'পৃষ্ঠা বনাওক',
+	'createarticle' => 'পৃষ্ঠা সৃষ্টি কৰক',
 	'inputbox-ns-main' => 'মূখ্য',
 );
 
@@ -355,9 +355,11 @@ $messages['cdo'] = array(
  * @author Умар
  */
 $messages['ce'] = array(
+	'inputbox-desc' => 'Аьтту хуьлуьйту хьалхе билгалйина HTML-формаш лато',
+	'inputbox-error-no-type' => 'Ахьа язъечу меттиган тайп билгала йина яц.',
 	'tryexact' => 'Леррина лахар',
 	'searchfulltext' => 'Дуьззина йозанца лахар',
-	'createarticle' => 'Яззам кхоллар',
+	'createarticle' => 'АгӀо кхолла',
 );
 
 /** Sorani Kurdish (کوردی)
@@ -791,11 +793,12 @@ $messages['hak'] = array(
 
 /** Hebrew (עברית)
  * @author Amire80
+ * @author Guycn2
  * @author Rotem Liss
  */
 $messages['he'] = array(
 	'inputbox-desc' => 'אפשרות להכללת טופסי HTML שהוגדרו מראש',
-	'inputbox-error-no-type' => 'לא ציינתם את סוג תיבת הקלט ליצירה.',
+	'inputbox-error-no-type' => 'לא ציינת את סוג תיבת הקלט ליצירה.',
 	'inputbox-error-bad-type' => 'סוג תיבת הקלט "$1" אינו ידוע.
 אנא ציינו "create", "comment", "search", "search2" או "fulltext".',
 	'tryexact' => 'לדף בשם זה',
@@ -949,14 +952,14 @@ $messages['ig'] = array(
  * @author Lam-ang
  */
 $messages['ilo'] = array(
-	'inputbox-desc' => 'Pakabaelan na nga agikabil kadagiti napalasin a kinabuklan ti HTML',
-	'inputbox-error-no-type' => 'Saan mo pay nga imbaga no ania a kita ti pagikabilan a kahon ti aramiden.',
-	'inputbox-error-bad-type' => 'Ti kita ti pigikabilan a kahon "$1" ket saan a ma-ammoan.
-Pangaasi ta ibagam nga "agaramid", "komentario", "biruken", "biruken2", "wenno sibubukel a testo".',
+	'inputbox-desc' => 'Mangipalubos ti panangiraman kadagiti nasakbayan a naipalawag a porma ti HTML',
+	'inputbox-error-no-type' => 'Saanmo pay a nainaganan no ania a kita ti partuaten a kahon ti pagikabilan.',
+	'inputbox-error-bad-type' => 'Ti kita ti kahon a pigikabilan ti "$1" ket saan a mabigbigan.
+Pangngaasi nga inaganam ti "agpartuat", "komento", "biruken", "biruken2", "wenno sibubukel a testo".',
 	'tryexact' => 'Padasem to pudno a kapada',
-	'searchfulltext' => 'Agbiruk ti sibubukel a testo',
-	'createarticle' => 'Agaramid ti panid',
-	'inputbox-ns-main' => 'Dati',
+	'searchfulltext' => 'Agbiruk ti napno a testo',
+	'createarticle' => 'Agpartuat ti panid',
+	'inputbox-ns-main' => 'Nangruna',
 );
 
 /** Ido (Ido)
@@ -1063,11 +1066,12 @@ $messages['kaa'] = array(
 
 /** Kabyle (Taqbaylit)
  * @author Agurzil
+ * @author Mmistmurt
  */
 $messages['kab'] = array(
 	'tryexact' => 'Nadi ɣef uzwel kif-kif',
 	'searchfulltext' => 'Nadi aḍris ettmam',
-	'createarticle' => 'Xleq amagrad', # Fuzzy
+	'createarticle' => 'Xleq amagrad',
 );
 
 /** Kazakh (Arabic script) (قازاقشا (تٴوتە)‏)
@@ -1124,7 +1128,7 @@ $messages['ko'] = array(
 	'inputbox-error-bad-type' => '"$1" 입력 상자 종류는 정의되어 있지 않습니다.
 "create", "comment", "search", "search2"나 "fulltext" 중 하나를 지정하세요.',
 	'tryexact' => '일치하는 항목 찾기',
-	'searchfulltext' => '전체 글 찾기',
+	'searchfulltext' => '전체 글 검색',
 	'createarticle' => '문서 만들기',
 	'inputbox-ns-main' => '문서',
 );
@@ -1161,6 +1165,13 @@ $messages['ku-latn'] = array(
  */
 $messages['la'] = array(
 	'createarticle' => 'Paginam creare',
+);
+
+/** Ladino (Ladino)
+ * @author Menachem.Moreira
+ */
+$messages['lad'] = array(
+	'createarticle' => 'Krear pajina',
 );
 
 /** Luxembourgish (Lëtzebuergesch)
@@ -1231,9 +1242,11 @@ $messages['lo'] = array(
 );
 
 /** لوری (لوری)
+ * @author Bonevarluri
  * @author Mogoeilor
  */
 $messages['lrc'] = array(
+	'searchfulltext' => 'پی جوری متنی',
 	'createarticle' => 'راس كردن بلگه',
 	'inputbox-ns-main' => 'اصلی',
 );
@@ -1348,7 +1361,7 @@ $messages['mn'] = array(
  */
 $messages['mr'] = array(
 	'inputbox-desc' => 'पूर्वी लिहिलेले HTML अर्ज वापरण्याची परवानगी द्या',
-	'inputbox-error-no-type' => 'तुम्ही कुठल्या प्रकारची पृष्ठपेटी तयार करायची ते स्पष्ट केलेले नाही.',
+	'inputbox-error-no-type' => 'कुठल्या प्रकारची पृष्ठपेटी तयार करायची ते तुम्ही स्पष्ट केलेले नाही.',
 	'inputbox-error-bad-type' => 'तुम्ही दिलेला पृष्ठपेटीचा "$1" हा प्रकार ओळखीचा नाही. 
 कृपया "create", "comment", "search" किंवा "search2"  किंवा "fulltext".यातील एक निवडा.',
 	'tryexact' => 'दिलेलेच शब्द शोधा',
@@ -1654,6 +1667,7 @@ Por favor, especifique "create", "comment", "search", "search2" ou "fulltext".',
  * @author Brunoy Anastasiya Seryozhenko
  * @author Eduardo.mps
  * @author MetalBrasil
+ * @author Opraco
  */
 $messages['pt-br'] = array(
 	'inputbox-desc' => 'Permite a inclusão de formulários definidos de HTML',
@@ -1662,7 +1676,7 @@ $messages['pt-br'] = array(
 Por favor, especifique "create", "comment", "search", "search2" ou "fulltext".',
 	'tryexact' => 'Tentar a expressão exata',
 	'searchfulltext' => 'Pesquisar em todo o texto.',
-	'createarticle' => 'Criar página.',
+	'createarticle' => 'Criar página',
 	'inputbox-ns-main' => 'Principal',
 );
 
@@ -1808,6 +1822,13 @@ $messages['sg'] = array(
  */
 $messages['sgs'] = array(
 	'searchfulltext' => 'Ėiškuotė pėlna teksta',
+);
+
+/** Serbo-Croatian (srpskohrvatski / српскохрватски)
+ * @author Kolega2357
+ */
+$messages['sh'] = array(
+	'searchfulltext' => 'Pretraži cijeli tekst - Претражи цео текст',
 );
 
 /** Sinhala (සිංහල)

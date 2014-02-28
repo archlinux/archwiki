@@ -58,7 +58,7 @@ class SpecialRenameuser extends SpecialPage {
 		}
 
 		$out->addHTML(
-			Xml::openElement( 'form', array( 'method' => 'post', 'action' => $this->getTitle()->getLocalUrl(), 'id' => 'renameuser' ) ) .
+			Xml::openElement( 'form', array( 'method' => 'post', 'action' => $this->getPageTitle()->getLocalUrl(), 'id' => 'renameuser' ) ) .
 			Xml::openElement( 'fieldset' ) .
 			Xml::element( 'legend', null, $this->msg( 'renameuser' )->text() ) .
 			Xml::openElement( 'table', array( 'id' => 'mw-renameuser-table' ) ) .

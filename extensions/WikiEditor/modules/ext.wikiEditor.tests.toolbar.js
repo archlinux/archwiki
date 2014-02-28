@@ -4,7 +4,7 @@
 var textareaId = '#wpTextbox1';
 var wikiEditorTests = {
 	// Add emoticons section
-	add_sections_toolbar: {
+	'add_sections_toolbar': {
 		call: 'addToToolbar',
 		data: {
 			'sections': {
@@ -159,8 +159,8 @@ var wikiEditorTests = {
 		data: {
 			section: 'info',
 			page: 'removeme'
-	    },
-	    test: '*[rel=info].section *[rel=removeme].page',
+		},
+		test: '*[rel=info].section *[rel=removeme].page',
 		pre: 1,
 		post: 0
 	},
@@ -171,8 +171,8 @@ var wikiEditorTests = {
 			section: 'info',
 			page: 'emoticons',
 			'character': ':))'
-	    },
-	    test: '*[rel=info].section *[rel=emoticons].page *[rel=":))"]',
+		},
+		test: '*[rel=info].section *[rel=emoticons].page *[rel=":))"]',
 		pre: 1,
 		post: 0
 	},
@@ -211,7 +211,7 @@ jQuery(document).ready( function ( $ ) {
 				return false;
 			}
 
-			var test, pre, post,
+			var test, pre, post, i,
 				messages = [ 'Running tests for wikiEditor API' ],
 				$target = $( textareaId ),
 				$ui = $target.data( 'wikiEditor-context' ).$ui,
@@ -234,13 +234,13 @@ jQuery(document).ready( function ( $ ) {
 			}
 
 			if ( window.console ) {
-				for ( var i = 0; i < messages.length; i++ ) {
+				for ( i = 0; i < messages.length; i++ ) {
 					window.console.log( messages[i] );
 				}
 			}
 
 			$(this)
-				.attr( 'title', messages.join( " | " ) )
+				.attr( 'title', messages.join( ' | ' ) )
 				.text( passes + ' / ' + tests + ' were successful' )
 				.css( 'backgroundColor', passes < tests ? 'red' : 'green' )
 				.data( 'testDone', 'true' )

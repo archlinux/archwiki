@@ -1,8 +1,7 @@
 /*
  * JavaScript for WikiEditor Highlighting
  */
-
-$( document ).ready( function() {
+jQuery( document ).ready( function ( $ ) {
 	// Add highlight module
 	$( '#wpTextbox1' ).wikiEditor( 'addModule', 'highlight' );
 } );

@@ -14,7 +14,8 @@ class FancyCaptcha extends SimpleCaptcha {
 			if ( !$backend ) {
 				$backend = new FSFileBackend( array(
 					'name'           => 'captcha-backend',
-					'lockManager'    => 'nullLockManager',
+					'wikiId'	 => wfWikiId(),
+					'lockManager'    => new NullLockManager( array() ),
 					'containerPaths' => array( 'captcha-render' => $wgCaptchaDirectory ),
 					'fileMode'       => 777
 				) );

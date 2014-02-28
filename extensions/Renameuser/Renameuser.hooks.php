@@ -9,14 +9,14 @@ class RenameuserHooks {
 	 * @return bool
 	 */
 	public static function onShowMissingArticle( $article ) {
-		global $wgOut;
 		$title = $article->getTitle();
 		$oldUser = User::newFromName( $title->getBaseText() );
 		if ( ($title->getNamespace() == NS_USER || $title->getNamespace() == NS_USER_TALK ) && ($oldUser && $oldUser->isAnon() )) {
 			// Get the title for the base userpage
 			$page = Title::makeTitle( NS_USER, str_replace( ' ', '_', $title->getBaseText() ) )->getPrefixedDBkey();
+			$out = $article->getContext()->getOutput();
 			LogEventsList::showLogExtract(
-				$wgOut,
+				$out,
 				'renameuser',
 				$page,
 				'',
@@ -51,6 +51,16 @@ class RenameuserHooks {
 				array( 'oldusername' => $nt->getText() )
 			);
 		}
+		return true;
+	}
+
+	/**
+	 * So users can just type in a username for target and it'll work
+	 * @param array $types
+	 * @return bool
+	 */
+	public static function onGetLogTypesOnUser( array &$types ) {
+		$types[] = 'renameuser';
 		return true;
 	}
 }

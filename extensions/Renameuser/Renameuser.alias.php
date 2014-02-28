@@ -64,7 +64,7 @@ $specialPageAliases['ce'] = array(
 	'Renameuser' => array( 'Декъашхочун_цӀе_хийца' ),
 );
 
-/** Czech (česky) */
+/** Czech (čeština) */
 $specialPageAliases['cs'] = array(
 	'Renameuser' => array( 'Přejmenovat_uživatele' ),
 );
@@ -131,7 +131,7 @@ $specialPageAliases['frp'] = array(
 
 /** Galician (galego) */
 $specialPageAliases['gl'] = array(
-	'Renameuser' => array( 'Renomear_o_usuario' ),
+	'Renameuser' => array( 'Renomear_o_usuario', 'Renomear_usuario', 'Renomear_a_usuaria', 'Renomear_usuaria' ),
 );
 
 /** Swiss German (Alemannisch) */

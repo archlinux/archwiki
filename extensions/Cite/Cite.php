@@ -18,8 +18,6 @@ if ( ! defined( 'MEDIAWIKI' ) )
  */
 
 $wgHooks['ParserFirstCallInit'][] = 'wfCite';
-$wgHooks['BeforePageDisplay'][] = 'wfCiteBeforePageDisplay';
-
 
 $wgExtensionCredits['parserhook'][] = array(
 	'path' => __FILE__,
@@ -97,23 +95,5 @@ $wgResourceModules['ext.rtlcite'] = $citeResourceTemplate + array(
 	'styles' => 'ext.rtlcite.css',
 	'position' => 'top',
 );
-
-/**
- * @param $out OutputPage
- * @param $sk Skin
- * @return bool
- */
-function wfCiteBeforePageDisplay( $out, &$sk ) {
-	global $wgCiteEnablePopups;
-
-	$out->addModules( 'ext.cite' );
-	if ( $wgCiteEnablePopups ) {
-		$out->addModules( 'ext.cite.popups' );
-	}
-
-	/* RTL support quick-fix module */
-	$out->addModuleStyles( 'ext.rtlcite' );
-	return true;
-}
 
 /**#@-*/

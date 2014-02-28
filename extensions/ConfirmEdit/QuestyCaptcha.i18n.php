@@ -208,17 +208,17 @@ Per ajudar a protegir-se contra la brossa automàtica, responeu la pregunta que 
 	'questycaptcha-create' => 'Per crear la pàgina, per favor responeu la pregunta que apareix a continuació ([[Special:Captcha/help|més informació]]):',
 );
 
-/** Czech (česky)
+/** Czech (čeština)
  * @author Mormegil
  */
 $messages['cs'] = array(
 	'questycaptcha-addurl' => 'Vaše editace obsahuje nové externí odkazy.
-V zájmu ochrany před automatickým spamováním musíte zodpovědět níže uvedenou otázku ([[Special:Captcha/help|další informace]]):', # Fuzzy
-	'questycaptcha-badlogin' => 'V rámci ochrany proti automatickým pokusům uhodnout heslo musíte zodpovědět níže uvedenou otázku ([[Special:Captcha/help|další informace]]):', # Fuzzy
-	'questycaptcha-createaccount' => 'V rámci ochrany před automatickým vytvářením účtů musíte pro provedení registrace zodpovědět níže uvedenou otázku ([[Special:Captcha/help|další informace]]):', # Fuzzy
+V zájmu ochrany této wiki před automatickým spamováním vás prosíme o zodpovězení níže uvedené otázky ([[Special:Captcha/help|další informace]]):',
+	'questycaptcha-badlogin' => 'V zájmu ochrany této wiki proti automatickým pokusům uhodnout heslo vás prosíme o zodpovězení níže uvedené otázky ([[Special:Captcha/help|další informace]]):',
+	'questycaptcha-createaccount' => 'V zájmu ochrany této wiki před automatickým vytvářením účtů vás prosíme o zodpovězení níže uvedené otázky ([[Special:Captcha/help|další informace]]):',
 	'questycaptcha-create' => 'Abyste mohli založit stránku, musíte zodpovědět níže uvedenou otázku ([[Special:Captcha/help|další informace]]):',
 	'questycaptcha-edit' => 'Abyste mohli editovat tuto stránku, musíte zodpovědět níže uvedenou otázku ([[Special:Captcha/help|další informace]]):',
-	'questycaptcha-sendemail' => 'V rámci ochrany proti automatickému spamování musíte zodpovědět níže zobrazenou otázku ([[Special:Captcha/help|více informací]]):', # Fuzzy
+	'questycaptcha-sendemail' => 'V zájmu ochrany této wiki před automatickým spamováním vás prosíme o zodpovězení níže uvedené otázky ([[Special:Captcha/help|další informace]]):',
 	'questycaptchahelp-text' => 'Webové stránky, do kterých mohou přispívat jejich návštěvníci (jako například tato wiki), jsou často terčem spammerů, kteří pomocí automatických nástrojů vkládají své odkazy na velké množství stránek. Přestože lze tento spam odstranit, představuje nepříjemné obtěžování.
 
 Někdy, zvláště při přidávání nových webových odkazů, vás wiki může požádat o zodpovězení otázky.
@@ -303,12 +303,12 @@ Der „Zurück“-Knopf des Browsers führt zurück zum Bearbeitungsfenster.', #
  */
 $messages['dsb'] = array(
 	'questycaptcha-addurl' => 'Twója změna wopśimujo nowe eksterne wótkaze.
-Za šćit pśeśiwo zawtomatizěrowanemu spamoju, wótegroń pšosym na pšašanje, kótarež pokazujo se dołojce ([[Special:Captcha/help|dalšne informacije]]):', # Fuzzy
-	'questycaptcha-badlogin' => 'Za šćit pśeśiwo zawtomatizěrowanemu wusnuchlenjeju gronidła, wótegroń pšosym na pšašanje, kótarež pokazujo se dołojce ([[Special:Captcha/help|dalšne informacije]]):', # Fuzzy
-	'questycaptcha-createaccount' => 'Za šćit pśeśiwo zawtomatizěrowanemu napóranjeju kontow, wótegroń pšosym na pšašanje, kótarež pokazujo se dołojce ([[Special:Captcha/help|dalšne informacije]]):', # Fuzzy
+Aby wiki pśeśiwo zawtomatizěrowanemu spamoju šćitał, wótegroń pšosym na pšašanje, kótarež pokazujo se dołojce ([[Special:Captcha/help|dalšne informacije]]):',
+	'questycaptcha-badlogin' => 'Aby wiki pśeśiwo zawtomatizěrowanemu wusnuchlenjeju gronidła šćitał, wótegroń pšosym na pšašanje, kótarež pokazujo se dołojce ([[Special:Captcha/help|dalšne informacije]]):',
+	'questycaptcha-createaccount' => 'Aby wiki pśeśiwo zawtomatizěrowanemu napóranjeju kontow šćitał, wótegroń pšosym na pšašanje, kótarež pokazujo se dołojce ([[Special:Captcha/help|dalšne informacije]]):',
 	'questycaptcha-create' => 'Aby napórał bok, wótegroń pšosym na pšašanje, kótarež pokazujo se dołojce ([[Special:Captcha/help|dalšne informacije]]):',
 	'questycaptcha-edit' => 'Aby wobźěłał toś ten bok, wótegroń pšosym na pšašanje, kótarež pokazujo se dołojce ([[Special:Captcha/help|dalšne informacije]]):',
-	'questycaptcha-sendemail' => 'Za šćit pśeśiwo awtomatiskemu spamowanjeju, wótegroń pšosym pšašanje, kótarež pokazujo se dołojce ([[Special:Captcha/help|dalšne informacije]]):', # Fuzzy
+	'questycaptcha-sendemail' => 'Aby wiki pśeśiwo awtomatiskemu spamowanjeju šćitał, wótegroń pšosym pšašanje, kótarež pokazujo se dołojce ([[Special:Captcha/help|dalšne informacije]]):',
 	'questycaptchahelp-text' => 'Websedła, kótarež akceptěruju zjawne pśinoski, ako toś ten wiki, znjewužywaju se cesto wót spamowarjow, kótarež wužywaju zawtomatizěrowane rědy, aby pśidali swóje wótkaze na wjele sedłow. Lěcrownož toś te spamowe wótkaze daju se wótpóraś, su wóne bejna pógóršota. 
 
 Wótergi, wósebnje, gaž se nowe wótkaze pśidawaju bokoju, jo móžno, až se śi wiki něco pšaša. 
@@ -557,12 +557,12 @@ $messages['he'] = array(
  */
 $messages['hsb'] = array(
 	'questycaptcha-addurl' => 'Twoja změna wobsahuje nowe eksterne wotkazy.
-Za škit přećiwo awtomatizowanemu spamej, wotmołw prošu na prašenje, kotrež so deleka jewi ([[Special:Captcha/help|dalše informacije]]):', # Fuzzy
-	'questycaptcha-badlogin' => 'Za škit přećiwo awtomatiskemu kradnjenju hesła, wotmołw prošu na prašenje, kotrež so deleka jewi ([[Special:Captcha/help|dalše informacije]]):', # Fuzzy
-	'questycaptcha-createaccount' => 'Za škit přećiwo awtomatizowanemu tworjenju kontow, wotmołw prošu na prašenje, kotrež so deleka jewi ([[Special:Captcha/help|dalš informacije]]):', # Fuzzy
+Za škit přećiwo awtomatizowanemu spamej, wotmołw prošu na prašenje, kotrež so deleka jewi ([[Special:Captcha/help|dalše informacije]]):',
+	'questycaptcha-badlogin' => 'Za škit přećiwo awtomatiskemu kradnjenju hesła, wotmołw prošu na prašenje, kotrež so deleka jewi ([[Special:Captcha/help|dalše informacije]]):',
+	'questycaptcha-createaccount' => 'Za škit přećiwo awtomatizowanemu tworjenju kontow, wotmołw prošu na prašenje, kotrež so deleka jewi ([[Special:Captcha/help|dalše informacije]]):',
 	'questycaptcha-create' => 'Zo by stronu wutworił, wotmołw prošu na prašenje, kotrež so deleka jewi ([[Special:Captcha/help|dalše informacije]]):',
 	'questycaptcha-edit' => 'Zo by tutu stronu změnił, wotmołw prošu na prašenje, kotrež so deleka jewi ([[Special:Captcha/help|dalše informacije]]):',
-	'questycaptcha-sendemail' => 'Za škit přećiwo awtomatiskemu spamowanju, wotmołw prošu na prašenje, kotrež so deleka jewi ([[Special:Captcha/help|dalše informacije]]):', # Fuzzy
+	'questycaptcha-sendemail' => 'Za škit přećiwo awtomatiskemu spamowanju, wotmołw prošu na prašenje, kotrež so deleka jewi ([[Special:Captcha/help|dalše informacije]]):',
 	'questycaptchahelp-text' => 'Websydła, kotrež přinoški ze zjawnosće akceptuja, kaž tutón wiki, so často wot spamarjow znjewužiwaja, kotřiž awtomatizowane nastroje wužiwaja, zo bychu swoje wotkazy wjele sydłam přidali. Hačrunjež so tute spamowe wotkazy hodźa wotstronić, su wone njesnadne mjerzanje.
 
 Druhdy, wosebje, hdyž so nowe webwotkazy stronje přidawaja, wiki so ći něčeho praša.
@@ -715,17 +715,18 @@ $messages['ja'] = array(
 
 /** Korean (한국어)
  * @author Kwj2772
+ * @author Priviet
  * @author 아라
  */
 $messages['ko'] = array(
 	'questycaptcha-desc' => '편집 확인에 대한 탐구적인 CAPCHA(캡차) 생성기',
-	'questycaptcha-addurl' => '편집에 새로운 바깥 링크가 포함되어 있습니다.
-자동화된 스팸으로부터 보호하기 위해, 아래에 보이는 질문에 답해주세요 ([[Special:Captcha/help|자세한 정보]]):', # Fuzzy
-	'questycaptcha-badlogin' => '자동화된 비밀번호 깨기로부터 보호하기 위해, 아래에 보이는 질문에 답해주세요 ([[Special:Captcha/help|자세한 정보]]):', # Fuzzy
-	'questycaptcha-createaccount' => '자동화된 계정 만들기로부터 보호하기 위해, 아래에 보이는 질문에 답해주세요 ([[Special:Captcha/help|자세한 정보]]):', # Fuzzy
+	'questycaptcha-addurl' => '편집에 새로운 바깥 고리가 포함되어 있습니다.
+자동 편집 스팸으로부터 보호하기 위해, 아래에 보이는 질문에 답해주세요 ([[Special:Captcha/help|자세한 정보]]):',
+	'questycaptcha-badlogin' => '자동 비밀번호 크래킹으로부터 보호하기 위해, 아래에 보이는 질문에 답해주세요 ([[Special:Captcha/help|자세한 정보]]):',
+	'questycaptcha-createaccount' => '자동 계정 만들기로부터 보호하기 위해, 아래에 보이는 질문에 답해주세요 ([[Special:Captcha/help|자세한 정보]]):',
 	'questycaptcha-create' => '문서를 만드려면 아래에 보이는 질문에 답해주세요 ([[Special:Captcha/help|자세한 정보]]):',
 	'questycaptcha-edit' => '이 문서를 편집하려면 아래에 보이는 질문에 답해주세요 ([[Special:Captcha/help|자세한 정보]]):',
-	'questycaptcha-sendemail' => '자동화된 스팸으로부터 보호하기 위해, 아래에 보이는 질문에 답해주세요 ([[Special:Captcha/help|자세한 정보]]):', # Fuzzy
+	'questycaptcha-sendemail' => '자동 스팸으로부터 보호하기 위해, 아래에 보이는 질문에 답해주세요 ([[Special:Captcha/help|자세한 정보]]):',
 	'questycaptchahelp-text' => '이 위키와 같이 사람의 공개적인 참여가 가능한 웹 사이트에서는 자동 프로그램이 스팸을 뿌리는 경우가 있습니다.
 물론 이러한 스팸은 제거할 수는 있지만 번거로운 작업이 늘어납니다.
 
@@ -793,7 +794,7 @@ Fir d'Wiki géint automatesche Spam-Ännerungen ze schützen, froe mir Iech d'Fr
 	'questycaptcha-edit' => "Fir dës Säit z'änneren, beäntwert w.e.g. déi Fro hei ënnedrënner ([[Special:Captcha/help|méi Informatiounen]]):",
 	'questycaptcha-sendemail' => 'Fir ze hëllefe dës Wiki géint automatiséierte Spam ze schütze, beäntwert w.e.g. déi Fro hei ënnendrënner ([[Special:Captcha/help|méi Informatiounen]]):',
 	'questycaptchahelp-text' => "Websäiten, déi et jiddwerengem erlaben Ännerunge virzehuelen, sou wéi dës Wiki, ginn dacks vu sougenannte Spammer mëssbraucht, déi automatiséiert hir Linken op vill Internetsäite setzen.
-Esou Spam-Linke kënne wuel geläscht ginn, mä si sinn trotzdem eng grouss Plo.
+Sou Spam-Linke kënne wuel geläscht ginn, mä si sinn trotzdeem eng grouss Plo.
 
 Heiansdo, besonnesch wann nei Internet-Linken op eng Säit derbäigesat ginn, freet dës Wiki Iech eng Fro ze beäntwerten.
 Well dëst eng Aufgab ass déi schwéier z'automatiséieren ass, erlaabt dëst datt Mënschen hir Ännerunge kënnen agi während déi meescht Spammer an aner Roboter-Attacke kënnen ofgewiert ginn.
@@ -837,7 +838,7 @@ $messages['mk'] = array(
 
 Контактирајте ги [[Special:ListAdmins|администраторите на страната]] за помош доколку ова неочекувано ве спречува во правењето на искрени придонеси.
 
-Кликнете на копчето „назад“ во вашиот прелисувач за да се вратите на уредувањето на страницата.',
+Стиснете на копчето „назад“ во вашиот прелисувач за да се вратите на уредувањето на страницата.',
 );
 
 /** Malayalam (മലയാളം)
@@ -1108,13 +1109,13 @@ Apăsați butonul „Înapoi” al navigatorului pentru a vă reîntoarce la pag
  * @author Joetaras
  */
 $messages['roa-tara'] = array(
-	'questycaptcha-addurl' => "'U cangiamende tue inglude de le collegaminde esterne.
-Pe aiutà a proteggere condre a 'u spam automateche, pe piacere respunne a 'a domande ca combare sotte ([[Special:Captcha/help|cchiù 'mbormaziune]]):", # Fuzzy
-	'questycaptcha-badlogin' => "Pe aiutà a proteggere condre a futteminde automatece de password, pe piacere respunne a 'a domande ca combare aqquà sotte ([[Special:Captcha/help|more info]]):", # Fuzzy
-	'questycaptcha-createaccount' => "Pe aiutà a proteggere condre a ccreazione automateche de cunde utinde, pe piacere respunne a 'a domande ca combare aqquà sotte ([[Special:Captcha/help|more info]]):", # Fuzzy
+	'questycaptcha-addurl' => "'U cangiamende tune 'nglude de le collegaminde de fore.
+Peproteggere condre a 'u spam automateche, pe piacere respunne a 'a domande ca iesse sotte ([[Special:Captcha/help|cchiù 'mbormaziune]]):",
+	'questycaptcha-badlogin' => "Pe proteggere condre a futteminde automatece de password, pe piacere respunne a 'a domande ca iesse aqquà sotte ([[Special:Captcha/help|cchiù 'mbormaziune]]):",
+	'questycaptcha-createaccount' => "Pe proteggere condre a ccreazione automateche de cunde utinde, pe piacere respunne a 'a domande ca iesse aqquà sotte ([[Special:Captcha/help|cchiù 'mbormaziune]]):",
 	'questycaptcha-create' => "Pe ccrejà sta pàgene, pe piacere respunne a 'a domande ca combare aqquà sotte ([[Special:Captcha/help|more info]]):",
 	'questycaptcha-edit' => "Pe cangià sta pàgene, pe piacere respunne a 'a domande ca combare aqquà sotte ([[Special:Captcha/help|more info]]):",
-	'questycaptcha-sendemail' => "Pe aiutà a proteggere condre a spam automatece, pe piacere respunne a 'a domande ca combare aqquà sotte ([[Special:Captcha/help|cchiù 'mbormaziune]]):", # Fuzzy
+	'questycaptcha-sendemail' => "Pe proteggere condre a spam automatece, pe piacere respunne a 'a domande ca iesse aqquà sotte ([[Special:Captcha/help|cchiù 'mbormaziune]]):",
 	'questycaptchahelp-text' => "Le site web ca accettane condrebbute da 'u pubbleche, cumme sta Uicchi, sonde spesse abusate da le ''spammer'' ca ausane struminde automatece e aggiungene le lore collegaminde a 'nu sacche de site.<br />
 Pure ca chiste collegaminde de spam ponne essere luate, lore sò sembre 'nu scassamende de palle.<br />
 <br />

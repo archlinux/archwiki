@@ -1,7 +1,8 @@
 /**
  * Configuration of Toolbar module for wikiEditor
  */
-( function( $ ) { $.wikiEditor.modules.toolbar.config = {
+/*jshint camelcase:false, quotmark:false */
+( function ( $, mw ) { $.wikiEditor.modules.toolbar.config = {
 
 getDefaultConfig: function() {
 	var fileNamespace = mw.config.get( 'wgFormattedNamespaces' )[6];
@@ -43,6 +44,7 @@ getDefaultConfig: function() {
 								'eu': 'format-bold-L.png',
 								'he': 'format-bold-B.png',
 								'hu': 'format-bold-F.png',
+								'hy': 'format-bold-hy.png',
 								'it': 'format-bold-G.png',
 								'ka': 'format-bold-ka.png',
 								'ky': 'format-bold-ru.png',
@@ -98,6 +100,7 @@ getDefaultConfig: function() {
 								'eu': 'format-italic-E.png',
 								'he': 'format-italic-I.png',
 								'hu': 'format-italic-D.png',
+								'hy': 'format-italic-hy.png',
 								'it': 'format-italic-C.png',
 								'ka': 'format-italic-ka.png',
 								'ky': 'format-italic-K.png',
@@ -1452,4 +1455,4 @@ getDefaultConfig: function() {
 	} };
 }
 
-}; } ) ( jQuery );
+}; } ) ( jQuery, mediaWiki );

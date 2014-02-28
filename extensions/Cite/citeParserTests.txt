@@ -311,16 +311,20 @@ AAA<ref group="参">ref a</ref>BBB<ref group="注">note b</ref>CCC<ref group="�
 !! result
 <p>AAA<sup id="cite_ref-1" class="reference"><a href="#cite_note-1">[参 1]</a></sup>BBB<sup id="cite_ref-2" class="reference"><a href="#cite_note-2">[注 1]</a></sup>CCC<sup id="cite_ref-3" class="reference"><a href="#cite_note-3">[参 2]</a></sup>
 </p>
-<dl><dt>refs
-</dt></dl>
+<dl>
+<dt>refs
+</dt>
+</dl>
 <ol class="references">
 <li id="cite_note-1"><span class="mw-cite-backlink"><a href="#cite_ref-1">↑</a></span> <span class="reference-text">ref a</span>
 </li>
 <li id="cite_note-3"><span class="mw-cite-backlink"><a href="#cite_ref-3">↑</a></span> <span class="reference-text">ref c</span>
 </li>
 </ol>
-<dl><dt>notes
-</dt></dl>
+<dl>
+<dt>notes
+</dt>
+</dl>
 <ol class="references">
 <li id="cite_note-2"><span class="mw-cite-backlink"><a href="#cite_ref-2">↑</a></span> <span class="reference-text">note b</span>
 </li>

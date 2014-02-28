@@ -202,11 +202,12 @@ $messages['ca'] = array(
  * @author Умар
  */
 $messages['ce'] = array(
+	'syntaxhighlight-desc' => 'Таро хуьлуьйту тег <code>&lt;syntaxhighlight&gt;</code> лело [http://qbnz.com/highlighter/ GeSHi Highlighter] гӀоьнца синтаксисан бос хилийта',
 	'syntaxhighlight-supported' => 'Ловш долу меттанаш:',
 	'geshi.css' => '/* CSS-код, кху чу хlоттайахь, оцо болх бийра бу сизашдо беснашна хlокхуньца GeSHI */',
 );
 
-/** Czech (česky)
+/** Czech (čeština)
  * @author Li-sung
  * @author Matěj Grabovský
  */
@@ -320,7 +321,7 @@ $messages['es'] = array(
 $messages['et'] = array(
 	'syntaxhighlight-desc' => 'Võimaldab [http://qbnz.com/highlighter/ GeSHi] abil <code>&lt;syntaxhighlight&gt;</code>-silti kasutades süntaksit esile tõsta.',
 	'syntaxhighlight-specify' => 'Sa pead täpsustama keelt nõnda:',
-	'syntaxhighlight-supported' => 'Süntaksi esiletoomise on toetatud järgnevates keeltes:',
+	'syntaxhighlight-supported' => 'Süntaksi esiletõstu toetavad keeled:',
 	'syntaxhighlight-err-loading' => '(toetatud keelte loetelu laadimisel esines viga)',
 	'syntaxhighlight-err-language' => 'Vigane keel.',
 	'geshi.css' => '/* CSS mis on asetatud siia, määrab GeSHi süntaksi esiletoomise stiili */',
@@ -442,11 +443,12 @@ $messages['gu'] = array(
 );
 
 /** Hebrew (עברית)
+ * @author Guycn2
  * @author Rotem Liss
  */
 $messages['he'] = array(
 	'syntaxhighlight-desc' => 'אפשרות לסימון קוד מקור בצבעים עם התגית <code>&lt;syntaxhighlight&gt;</code> באמצעות [http://qbnz.com/highlighter/ GeSHi Highlighter]',
-	'syntaxhighlight-specify' => 'עליכם לציין שפה באופן הבא:',
+	'syntaxhighlight-specify' => 'יש לציין שפה באופן הבא:',
 	'syntaxhighlight-supported' => 'שפות נתמכות:',
 	'syntaxhighlight-err-loading' => '(שגיאה בטעינת הרשימה של השפות הנתמכות)',
 	'syntaxhighlight-err-language' => 'שפה שגויה.',
@@ -543,6 +545,18 @@ $messages['ie'] = array(
  */
 $messages['ig'] = array(
 	'syntaxhighlight-err-language' => 'Asụsụ ámághị.',
+);
+
+/** Iloko (Ilokano)
+ * @author Lam-ang
+ */
+$messages['ilo'] = array(
+	'syntaxhighlight-desc' => 'Mangited ti panangimaris ti eskritu <code>&lt;syntaxhighlight&gt;</code> nga agus-usar iti [http://qbnz.com/highlighter/ GeSHi - Generic Syntax Highlighter]',
+	'syntaxhighlight-specify' => 'Nasken nga inaganan ti pagsasao a kasla daytoy:',
+	'syntaxhighlight-supported' => 'Dagiti nasuportaran a pagsasao para iti panangimaris ti eskritu:',
+	'syntaxhighlight-err-loading' => '(biddut ti panangikarga ti listaan ti nasuportaran a pagsasao)',
+	'syntaxhighlight-err-language' => 'Imbalido a pagsasao.',
+	'geshi.css' => '/* Ti CSS a maikabil ditoy ket maipakatto iti panangimaris ti eskritu ti GeSHi */',
 );
 
 /** Ido (Ido)
@@ -688,10 +702,11 @@ $messages['ksh'] = array(
 /** Luxembourgish (Lëtzebuergesch)
  * @author Les Meloures
  * @author Robby
+ * @author Soued031
  */
 $messages['lb'] = array(
 	'syntaxhighlight-desc' => "Syntax-Ervirhiewung <code>&lt;syntaxhighlight&gt;</code> mat Hëllef vu [http://qbnz.com/highlighter/ 'GeSHi Highlighter']",
-	'syntaxhighlight-specify' => 'Déi gewënscht Sprooch muss esou definéiert ginn:',
+	'syntaxhighlight-specify' => 'Déi gewënscht Sprooch muss sou definéiert ginn:',
 	'syntaxhighlight-supported' => "Ënnerstëtzte Sprooche fir d'Syntax faarweg ze markéieren",
 	'syntaxhighlight-err-loading' => '(Feeler beim Luede vun der Lëscht vun den ënnerstëtzte Sproochen)',
 	'syntaxhighlight-err-language' => 'Net valabel Sprooch.',
@@ -936,7 +951,6 @@ $messages['pt'] = array(
 
 /** Brazilian Portuguese (português do Brasil)
  * @author Helder.wiki
- * @author Heldergeovane
  */
 $messages['pt-br'] = array(
 	'syntaxhighlight-desc' => 'Providencia realce de sintaxe <code>&lt;syntaxhighlight&gt;</code> através do [http://qbnz.com/highlighter/ GeSHi Highlighter]',
@@ -1124,12 +1138,13 @@ $messages['ta'] = array(
 );
 
 /** Telugu (తెలుగు)
+ * @author Chaduvari
  * @author Veeven
  */
 $messages['te'] = array(
 	'syntaxhighlight-specify' => 'భాషని ఈ విధంగా ఇవ్వాలి:',
 	'syntaxhighlight-supported' => 'ఛందస్సు ఉద్దీపనకి తోడ్పాటు ఉన్న భాషలు:',
-	'syntaxhighlight-err-loading' => '(తోడ్పాటున్న భాషల జాబితా లోడింగులో పొరపాటు జరిగింది)',
+	'syntaxhighlight-err-loading' => '(తోడ్పాటున్న భాషల జాబితా లోడింగులో లోపం జరిగింది)',
 	'syntaxhighlight-err-language' => 'చెల్లని భాష.',
 );
 

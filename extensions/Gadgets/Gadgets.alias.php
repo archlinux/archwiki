@@ -59,7 +59,7 @@ $specialPageAliases['ce'] = array(
 	'Gadgets' => array( 'Гаджеташ' ),
 );
 
-/** Czech (česky) */
+/** Czech (čeština) */
 $specialPageAliases['cs'] = array(
 	'Gadgets' => array( 'Udělátka' ),
 );
@@ -136,7 +136,7 @@ $specialPageAliases['haw'] = array(
 
 /** Hebrew (עברית) */
 $specialPageAliases['he'] = array(
-	'Gadgets' => array( 'סקריפטים' ),
+	'Gadgets' => array( 'גאדג\'טים', 'סקריפטים' ),
 );
 
 /** Hindi (हिन्दी) */

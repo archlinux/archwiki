@@ -5,7 +5,7 @@
  * @file
  * @ingroup Extensions
  */
- 
+
 $messages = array();
 
 /** English
@@ -102,7 +102,14 @@ $messages['ca'] = array(
 	'localisationupdate-desc' => 'Manté els missatges localitzats tan actualitzats com sigui possible',
 );
 
-/** Czech (česky)
+/** Chechen (нохчийн)
+ * @author Умар
+ */
+$messages['ce'] = array(
+	'localisationupdate-desc' => 'Таро ма хуьйла хаамашан болх бан гӀо до',
+);
+
+/** Czech (čeština)
  * @author Mormegil
  */
 $messages['cs'] = array(
@@ -304,9 +311,10 @@ $messages['ksh'] = array(
 
 /** Luxembourgish (Lëtzebuergesch)
  * @author Robby
+ * @author Soued031
  */
 $messages['lb'] = array(
-	'localisationupdate-desc' => 'hält déi lokaliséiert Messagen esou aktuell wéi méiglech.',
+	'localisationupdate-desc' => 'hält déi lokaliséiert Messagen sou aktuell wéi méiglech.',
 );
 
 /** Macedonian (македонски)

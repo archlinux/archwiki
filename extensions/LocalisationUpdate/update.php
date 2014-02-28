@@ -5,9 +5,9 @@ $IP = strval( getenv( 'MW_INSTALL_PATH' ) ) !== ''
 	: realpath( dirname( __FILE__ ) . "/../../" );
 
 // TODO: migrate to maintenance class
-require_once( "$IP/maintenance/commandLine.inc" );
+require_once "$IP/maintenance/commandLine.inc";
 
-if( isset( $options['help'] ) ) {
+if ( isset( $options['help'] ) ) {
 	print "Fetches updated localisation files from MediaWiki development SVN\n";
 	print "and saves into local database to merge with release defaults.\n";
 	print "\n";
@@ -22,7 +22,6 @@ if( isset( $options['help'] ) ) {
 	print "\n";
 	exit( 0 );
 }
-
 
 $starttime = microtime( true );
 

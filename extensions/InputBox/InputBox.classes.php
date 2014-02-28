@@ -84,10 +84,10 @@ class InputBox {
 
 		// Use button label fallbacks
 		if ( !$this->mButtonLabel ) {
-			$this->mButtonLabel = wfMessage( 'tryexact' )->escaped();
+			$this->mButtonLabel = wfMessage( 'tryexact' )->text();
 		}
 		if ( !$this->mSearchButtonLabel ) {
-			$this->mSearchButtonLabel = wfMessage( 'searchfulltext' )->escaped();
+			$this->mSearchButtonLabel = wfMessage( 'searchfulltext' )->text();
 		}
 
 		// Build HTML
@@ -101,7 +101,7 @@ class InputBox {
 				'name' => 'searchbox',
 				'id' => 'searchbox',
 				'class' => 'searchbox',
-				'action' => SpecialPage::getTitleFor( 'Search' )->escapeLocalUrl(),
+				'action' => SpecialPage::getTitleFor( 'Search' )->getLocalUrl(),
 			)
 		);
 		$htmlOut .= Xml::element( 'input',
@@ -239,7 +239,7 @@ class InputBox {
 	public function getSearchForm2() {
 		// Use button label fallbacks
 		if ( !$this->mButtonLabel ) {
-			$this->mButtonLabel = wfMessage( 'tryexact' )->escaped();
+			$this->mButtonLabel = wfMessage( 'tryexact' )->text();
 		}
 
 		$id = Sanitizer::escapeId( $this->mID, 'noninitial' );
@@ -255,7 +255,7 @@ class InputBox {
 				'name' => 'bodySearch' . $id,
 				'id' => 'bodySearch' . $id,
 				'class' => 'bodySearch',
-				'action' => SpecialPage::getTitleFor( 'Search' )->escapeLocalUrl(),
+				'action' => SpecialPage::getTitleFor( 'Search' )->getLocalUrl(),
 				'style' => $this->mInline ? 'display: inline;' : ''
 			)
 		);
@@ -312,11 +312,11 @@ class InputBox {
 
 		if ( $this->mType == "comment" ) {
 			if ( !$this->mButtonLabel ) {
-				$this->mButtonLabel = wfMessage( "postcomment" )->escaped();
+				$this->mButtonLabel = wfMessage( 'postcomment' )->text();
 			}
 		} else {
 			if ( !$this->mButtonLabel ) {
-				$this->mButtonLabel = wfMessage( 'createarticle' )->escaped();
+				$this->mButtonLabel = wfMessage( 'createarticle' )->text();
 			}
 		}
 
@@ -427,7 +427,7 @@ class InputBox {
 		global $wgScript;
 
 		if ( !$this->mButtonLabel ) {
-				$this->mButtonLabel = wfMessage( "postcomment" )->escaped();
+				$this->mButtonLabel = wfMessage( 'postcomment' )->text();
 		}
 
 		$htmlOut = Xml::openElement( 'div',

@@ -11,7 +11,6 @@
  */
 $wgLocalisationUpdateDirectory = false;
 
-
 /**
  * These should point to either an HTTP-accessible file or local file system.
  * $1 is the name of the repo (for extensions) and $2 is the name of file in the repo.
@@ -19,7 +18,8 @@ $wgLocalisationUpdateDirectory = false;
  */
 
 $wgLocalisationUpdateCoreURL = "https://git.wikimedia.org/raw/mediawiki%2Fcore.git/HEAD/$4";
-$wgLocalisationUpdateExtensionURL = "https://git.wikimedia.org/raw/mediawiki%2Fextensions%2F$3.git/HEAD/$4";
+$wgLocalisationUpdateExtensionURL =
+	"https://git.wikimedia.org/raw/mediawiki%2Fextensions%2F$3.git/HEAD/$4";
 
 /// Deprecated
 $wgLocalisationUpdateSVNURL = false;
@@ -28,11 +28,11 @@ $wgLocalisationUpdateRetryAttempts = 5;
 
 // Info about me!
 $wgExtensionCredits['other'][] = array(
-	'path'           => __FILE__,
-	'name'           => 'LocalisationUpdate',
-	'author'         => array( 'Tom Maaswinkel', 'Niklas Laxström', 'Roan Kattouw' ),
-	'version'        => '1.0',
-	'url'            => 'https://www.mediawiki.org/wiki/Extension:LocalisationUpdate',
+	'path' => __FILE__,
+	'name' => 'LocalisationUpdate',
+	'author' => array( 'Tom Maaswinkel', 'Niklas Laxström', 'Roan Kattouw' ),
+	'version' => '1.0',
+	'url' => 'https://www.mediawiki.org/wiki/Extension:LocalisationUpdate',
 	'descriptionmsg' => 'localisationupdate-desc',
 );
 

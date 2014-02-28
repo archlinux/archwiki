@@ -25,9 +25,19 @@ $wgPFStringLengthLimit = 1000;
  *
  * WARNING: enabling this may have an adverse impact on the sanity of your users.
  * An alternative, saner solution for embedding complex text processing in
- * MediaWiki templates can be found at: http://www.mediawiki.org/wiki/Extension:Lua
+ * MediaWiki templates can be found at: http://www.mediawiki.org/wiki/Extension:Scribunto
  */
 $wgPFEnableStringFunctions = false;
+
+/**
+  * Enable string functions, when running Wikimedia Jenkins unit tests.
+  *
+  * Running Jenkins unit tests without setting $wgPFEnableStringFunctions = true;
+  * will cause all the parser tests for string functions to be skipped.
+  */
+if ( isset( $wgWikimediaJenkinsCI ) && ( $wgWikimediaJenkinsCI === true ) ) {
+	$wgPFEnableStringFunctions = true ;
+}
 
 /** REGISTRATION */
 $wgExtensionCredits['parserhook'][] = array(

@@ -48,4 +48,5 @@ $wgJobClasses['renameUser'] = 'RenameUserJob';
 
 $wgHooks['ShowMissingArticle'][] = 'RenameuserHooks::onShowMissingArticle';
 $wgHooks['ContributionsToolLinks'][] = 'RenameuserHooks::onContributionsToolLinks';
+$wgHooks['GetLogTypesOnUser'][] = 'RenameuserHooks::onGetLogTypesOnUser';
 

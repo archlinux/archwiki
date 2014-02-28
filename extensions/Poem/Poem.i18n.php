@@ -124,6 +124,13 @@ $messages['ca'] = array(
 	'poem-desc' => "Afegeix l'etiqueta <code>&lt;poem&gt;</code> per al formatatge  de poemes",
 );
 
+/** Chechen (нохчийн)
+ * @author Умар
+ */
+$messages['ce'] = array(
+	'poem-desc' => 'ТӀетуху тег <code>&lt;poem&gt;</code> дешнаш дӀадаха',
+);
+
 /** Sorani Kurdish (کوردی)
  * @author Asoxor
  */
@@ -131,7 +138,7 @@ $messages['ckb'] = array(
 	'poem-desc' => 'تاگی <code>&lt;poem&gt;</code> زێدەدەکات بۆ ڕێکخستنی ھۆنراوەکان',
 );
 
-/** Czech (česky)
+/** Czech (čeština)
  * @author Matěj Grabovský
  */
 $messages['cs'] = array(
@@ -147,6 +154,7 @@ $messages['da'] = array(
 
 /** German (Deutsch)
  * @author Kghbln
+ * @author Purodha
  * @author Raimond Spekking
  */
 $messages['de'] = array(
@@ -310,7 +318,7 @@ $messages['id'] = array(
  * @author Lam-ang
  */
 $messages['ilo'] = array(
-	'poem-desc' => 'Ikkan na iti<code>&lt;poem&gt;</code> nga tag para ti pagporma ti daniw',
+	'poem-desc' => 'Agnayon ti etiketa ti <code>&lt;poem&gt;</code> para iti panagporma ti daniw',
 );
 
 /** Italian (italiano)
@@ -556,6 +564,13 @@ $messages['sah'] = array(
  */
 $messages['scn'] = array(
 	'poem-desc' => 'Iunci lu tag <code>&lt;poem&gt;</code> pi la furmattazioni di li testa puetici',
+);
+
+/** Scots (Scots)
+ * @author John Reid
+ */
+$messages['sco'] = array(
+	'poem-desc' => 'Adds <code>&lt;poem&gt;</code> tag fr poem formattin',
 );
 
 /** Slovak (slovenčina)

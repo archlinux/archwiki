@@ -1,6 +1,6 @@
 /* Preview module for wikiEditor */
 ( function ( $, mw ) {
-
+/*jshint onevar:false */
 $.wikiEditor.modules.preview = {
 
 /**
@@ -32,7 +32,7 @@ fn: {
 	 * @param context Context object of editor to create module in
 	 * @param config Configuration object to create module from
 	 */
-	create: function ( context, config ) {
+	create: function ( context ) {
 		if ( 'initialized' in context.modules.preview ) {
 			return;
 		}
@@ -65,9 +65,9 @@ fn: {
 					},
 					function ( data ) {
 						if (
-							typeof data.parse == 'undefined' ||
-							typeof data.parse.text == 'undefined' ||
-							typeof data.parse.text['*'] == 'undefined'
+							typeof data.parse === 'undefined' ||
+							typeof data.parse.text === 'undefined' ||
+							typeof data.parse.text['*'] === 'undefined'
 						) {
 							return;
 						}
@@ -89,7 +89,7 @@ fn: {
 				// Gets the latest copy of the wikitext
 				var wikitext = context.$textarea.textSelection( 'getContents' );
 				// Aborts when nothing has changed since the last time
-				if ( context.modules.preview.changesText == wikitext ) {
+				if ( context.modules.preview.changesText === wikitext ) {
 					return;
 				}
 				context.$changesTab.find( 'table.diff tbody' ).empty();
@@ -115,8 +115,9 @@ fn: {
 							rvprop: ''
 						};
 						var section = $( '[name="wpSection"]' ).val();
-						if ( section !== '' )
+						if ( section !== '' ) {
 							postdata2.rvsection = section;
+						}
 
 						$.post( mw.util.wikiScript( 'api' ), postdata2, function ( data ) {
 								// Add diff CSS

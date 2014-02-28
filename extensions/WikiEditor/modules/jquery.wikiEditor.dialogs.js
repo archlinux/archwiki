@@ -42,8 +42,8 @@ $.wikiEditor.modules.dialogs = {
 		},
 		openDialog: function ( context, module ) {
 			if ( module in $.wikiEditor.modules.dialogs.modules ) {
-				var mod = $.wikiEditor.modules.dialogs.modules[module];
-				var $dialog = $( '#' + mod.id );
+				var mod = $.wikiEditor.modules.dialogs.modules[module],
+					$dialog = $( '#' + mod.id );
 				if ( $dialog.length === 0 ) {
 					$.wikiEditor.modules.dialogs.fn.reallyCreate( context, mod, module );
 					$dialog = $( '#' + mod.id );
@@ -82,7 +82,7 @@ $.wikiEditor.modules.dialogs = {
 				module = config[mod];
 				// Only create the dialog if it's supported, isn't filtered and doesn't exist yet
 				filtered = false;
-				if ( typeof module.filters != 'undefined' ) {
+				if ( typeof module.filters !== 'undefined' ) {
 					for ( i = 0; i < module.filters.length; i++ ) {
 						if ( $( module.filters[i] ).length === 0 ) {
 							filtered = true;
@@ -92,7 +92,7 @@ $.wikiEditor.modules.dialogs = {
 				}
 				// If the dialog already exists, but for another textarea, simply remove it
 				$existingDialog = $( '#' + module.id );
-				if ( $existingDialog.length > 0 && $existingDialog.data( 'context' ).$textarea != context.$textarea ) {
+				if ( $existingDialog.length > 0 && $existingDialog.data( 'context' ).$textarea !== context.$textarea ) {
 					$existingDialog.remove();
 				}
 				// Re-select from the DOM, we might have removed the dialog just now
@@ -119,13 +119,13 @@ $.wikiEditor.modules.dialogs = {
 		 * @param {String} name Dialog name (key in $.wikiEditor.modules.dialogs.modules)
 		 */
 		reallyCreate: function ( context, module, name ) {
-			var msg,
+			var msg, dialogDiv,
 				configuration = module.dialog;
 			// Add some stuff to configuration
 			configuration.bgiframe = true;
 			configuration.autoOpen = false;
 			// By default our dialogs are modal, unless explicitely defined in their specific configuration.
-			if( typeof configuration.modal == "undefined" ) {
+			if( typeof configuration.modal === 'undefined' ) {
 				configuration.modal = true;
 			}
 			configuration.title = $.wikiEditor.autoMsg( module, 'title' );
@@ -138,7 +138,7 @@ $.wikiEditor.modules.dialogs = {
 			}
 			configuration.buttons = configuration.newButtons;
 			// Create the dialog <div>
-			var dialogDiv = $( '<div>' )
+			dialogDiv = $( '<div>' )
 				.attr( 'id', module.id )
 				.html( module.html )
 				.data( 'context', context )
@@ -171,26 +171,28 @@ $.wikiEditor.modules.dialogs = {
 		 * NOTE: This function assumes $.ui.dialog has already been loaded
 		 */
 		resize: function () {
-			var wrapper = $(this).closest( '.ui-dialog' );
-			var oldWidth = wrapper.width();
-			// Make sure elements don't wrapped so we get an accurate idea of whether they really fit. Also temporarily show
-			// hidden elements. Work around jQuery bug where <div style="display: inline;"/> inside a dialog is both
-			// :visible and :hidden
-			var oldHidden = $(this).find( '*' ).not( ':visible' );
+			var oldWS, thisWidth, wrapperWidth,
+				wrapper = $(this).closest( '.ui-dialog' ),
+				oldWidth = wrapper.width(),
+				// Make sure elements don't wrapped so we get an accurate idea of whether they really fit. Also temporarily show
+				// hidden elements. Work around jQuery bug where <div style="display: inline;"/> inside a dialog is both
+				// :visible and :hidden
+				oldHidden = $(this).find( '*' ).not( ':visible' );
+
 			// Save the style attributes of the hidden elements to restore them later. Calling hide() after show() messes up
 			// for elements hidden with a class
 			oldHidden.each( function () {
 				$(this).data( 'oldstyle', $(this).attr( 'style' ) );
 			});
 			oldHidden.show();
-			var oldWS = $(this).css( 'white-space' );
+			oldWS = $(this).css( 'white-space' );
 			$(this).css( 'white-space', 'nowrap' );
 			if ( wrapper.width() <= $(this).get(0).scrollWidth ) {
-				var thisWidth = $(this).data( 'thisWidth' ) ? $(this).data( 'thisWidth' ) : 0;
+				thisWidth = $(this).data( 'thisWidth' ) ? $(this).data( 'thisWidth' ) : 0;
 				thisWidth = Math.max( $(this).get(0).width, thisWidth );
 				$(this).width( thisWidth );
 				$(this).data( 'thisWidth', thisWidth );
-				var wrapperWidth = $(this).data( 'wrapperWidth' ) ? $(this).data( 'wrapperWidth' ) : 0;
+				wrapperWidth = $(this).data( 'wrapperWidth' ) ? $(this).data( 'wrapperWidth' ) : 0;
 				wrapperWidth = Math.max( wrapper.get(0).scrollWidth, wrapperWidth );
 				wrapper.width( wrapperWidth );
 				$(this).data( 'wrapperWidth', wrapperWidth );

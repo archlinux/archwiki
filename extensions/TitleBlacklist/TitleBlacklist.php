@@ -22,6 +22,7 @@ $dir = __DIR__;
 $wgExtensionMessagesFiles['TitleBlacklist'] = $dir . '/TitleBlacklist.i18n.php';
 $wgAutoloadClasses['TitleBlacklist'] = $dir . '/TitleBlacklist.list.php';
 $wgAutoloadClasses['TitleBlacklistHooks'] = $dir . '/TitleBlacklist.hooks.php';
+$wgAutoloadClasses['Scribunto_LuaTitleBlacklistLibrary'] = $dir . '/TitleBlacklist.library.php';
 
 /** @defgroup Title blacklist source types
  *  @{
@@ -76,6 +77,16 @@ $wgHooks['CentralAuthAutoCreate'][] = 'TitleBlacklistHooks::centralAuthAutoCreat
 $wgHooks['EditFilter'][] = 'TitleBlacklistHooks::validateBlacklist';
 $wgHooks['ArticleSaveComplete'][] = 'TitleBlacklistHooks::clearBlacklist';
 $wgHooks['UserCreateForm'][] = 'TitleBlacklistHooks::addOverrideCheckbox';
+$wgHooks['UnitTestsList'][] = function( &$files ) {
+	$files += glob( __DIR__ . '/tests/*Test.php' );
+	return true;
+};
+$wgHooks['ScribuntoExternalLibraries'][] = function( $engine, array &$extraLibraries ) {
+	if( $engine == 'lua' ) {
+		$extraLibraries['mw.ext.TitleBlacklist'] = 'Scribunto_LuaTitleBlacklistLibrary';
+	}
+	return true;
+};
 
 $wgResourceModules['mediawiki.api.titleblacklist'] = array(
 	'scripts' => 'mediawiki.api.titleblacklist.js',

@@ -155,6 +155,7 @@ class Cite {
 	 * @return string
 	 */
 	function ref( $str, $argv, $parser ) {
+		global $wgCiteEnablePopups;
 		if ( $this->mInCite ) {
 			return htmlspecialchars( "<ref>$str</ref>" );
 		} else {
@@ -162,6 +163,12 @@ class Cite {
 			$this->mInCite = true;
 			$ret = $this->guardedRef( $str, $argv, $parser );
 			$this->mInCite = false;
+			$parserOutput = $parser->getOutput();
+			$parserOutput->addModules( 'ext.cite' );
+			if ( $wgCiteEnablePopups ) {
+				$parserOutput->addModules( 'ext.cite.popups' );
+			}
+			$parserOutput->addModuleStyles( 'ext.rtlcite' );
 			return $ret;
 		}
 	}
