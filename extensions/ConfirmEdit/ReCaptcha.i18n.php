@@ -81,10 +81,10 @@ $messages['be-tarask'] = array(
 $messages['br'] = array(
 	'recaptcha-edit' => "Evit sikour en em wareziñ diouzh ar stroboù emgefre, merkit an daou c'her a welit er voest dindan :",
 	'recaptcha-addurl' => "Liamm diavaez nevez zo bet degaset ganeoc'h. Evit sikour en em wareziñ diouzh ar stroboù, merkit an daou c'her a welit er voest dindan :",
-	'recaptcha-badlogin' => "Evit sikour da wareziñ ar wiki diouzh an diskuliañ gerioù-tremen emgefre dre daolioù-esae, merkit an daou c'her a welit er voest dindan :",
-	'recaptcha-createaccount' => "Evit sikour d'en em wareziñ diouzh ar c'hrouiñ kontoù emgefre, merkit an daou c'her a welit er voest dindan :",
+	'recaptcha-badlogin' => "Da sikour en em wareziñ diouzh an diskuliañ gerioù-tremen emgefre dre daolioù-esae, merkit an daou c'her a welit er voest dindan :", # Fuzzy
+	'recaptcha-createaccount' => "Da sikour en em wareziñ diouzh ar c'hrouiñ kontoù emgefre, merkit an daou c'her a welit er voest dindan :", # Fuzzy
 	'recaptcha-createaccount-fail' => 'Respont reCAPTHCA faziek pe ezvezant.',
-	'recaptcha-create' => "Evit sikour d'en em wareziñ diouzh ar c'hrouiñ pajennoù emgefre, merkit an daou c'her a welit er voest dindan :",
+	'recaptcha-create' => "Da sikour en em wareziñ diouzh ar c'hrouiñ pajennoù emgefre, merkit an daou c'her a welit er voest dindan :", # Fuzzy
 );
 
 /** Bosnian (bosanski)
@@ -99,18 +99,18 @@ $messages['bs'] = array(
 	'recaptcha-create' => 'Da bismo pomogli protiv automatiziranog pravljenja stranica, molimo upišite dvije riječi koje vidite u kutiju ispod:', # Fuzzy
 );
 
-/** Czech (čeština)
+/** Czech (česky)
  * @author Jkjk
  * @author Mormegil
  */
 $messages['cs'] = array(
 	'recaptcha-desc' => 'Podpora reCAPTCHA pro rozšíření Confirm Edit',
-	'recaptcha-edit' => 'V zájmu ochrany této wiki před automatickým spamováním vás prosíme o opsání dvou slov, která vidíte v rámečku níže:',
-	'recaptcha-addurl' => 'Vaše editace obsahuje nové externí odkazy. V zájmu ochrany této wiki před automatickým spamováním vás prosíme o opsání dvou slov, která vidíte v rámečku níže:',
-	'recaptcha-badlogin' => 'V zájmu ochrany této wiki proti automatickým pokusům uhodnout heslo vás prosíme o opsání dvou slov, která vidíte v rámečku níže:',
-	'recaptcha-createaccount' => 'V zájmu ochrany této wiki před automatickým vytvářením účtů vás prosíme o opsání dvou slov, která vidíte v rámečku níže:',
+	'recaptcha-edit' => 'V zájmu ochrany před automatickým spamováním opište dvě slova, která vidíte na obrázku:', # Fuzzy
+	'recaptcha-addurl' => 'Vaše editace obsahuje nové externí odkazy. V zájmu ochrany před automatickým spamováním opište dvě slova, která vidíte na obrázku:', # Fuzzy
+	'recaptcha-badlogin' => 'V zájmu ochrany proti automatickým pokusům uhodnout heslo opište dvě slova, která vidíte na obrázku:', # Fuzzy
+	'recaptcha-createaccount' => 'V rámci ochrany před automatickým vytvářením účtů opište dvě slova, která vidíte na obrázku:', # Fuzzy
 	'recaptcha-createaccount-fail' => 'Nesprávná nebo chybějící odpověď na reCAPTCHA.',
-	'recaptcha-create' => 'V zájmu ochrany před automatickým zakládáním stránek vás prosíme o opsání dvou slov, která vidíte v rámečku níže:',
+	'recaptcha-create' => 'V zájmu ochrany před automatickým zakládáním stránek opište dvě slova, která vidíte na obrázku:', # Fuzzy
 );
 
 /** Welsh (Cymraeg)
@@ -166,18 +166,6 @@ $messages['es'] = array(
 	'recaptcha-create' => 'Para protegernos de la creación automática de páginas, escribe las dos palabras que ves en el cuadro de abajo:', # Fuzzy
 );
 
-/** Persian (فارسی)
- * @author Armin1392
- */
-$messages['fa'] = array(
-	'recaptcha-edit' => 'برای محافظت ویکی دربرابر ویرایش خودکار اسپم، ما دوستانه از شما درخواست می‌کنیم که دو کلمه‌ای را که در جعبهٔ زیر می‌بینید را بنویسید:',
-	'recaptcha-addurl' => 'ویرایش شما شامل لینک‌های خارجی جدید است.برای محافظت ویکی دربرابر اسپم خودکار، ما دوستانه از شما درخواست می‌کنیم که دو کلمه‌ای را که در جعبهٔ زیر می‌بینید را بنویسید:',
-	'recaptcha-badlogin' => 'برای محافظت ویکی دربرابر رخنهٔ رمز عبور به طور خودکار، ما دوستانه از شما درخواست می‌کنیم که دو کلمه‌ای را که در جعبهٔ زیر می‌بینید را بنویسید:',
-	'recaptcha-createaccount' => 'برای محافظت ویکی دربرابر ایجاد حساب به طور خودکار، ما دوستانه از شما درخواست می‌کنیم که دو کلمه‌ای را که در جعبهٔ زیر می‌بینید را بنویسید:',
-	'recaptcha-createaccount-fail' => 'پاسخ نادرست یا عدم وجود ری‌سی‌اِی‌پی‌تی‌سی‌اچ‌اِی.',
-	'recaptcha-create' => 'برای محافظت ویکی دربرابر ایجاد صفحه به طور خودکار، ما دوستانه از شما درخواست می‌کنیم که دو کلمه‌ای را که در جعبهٔ زیر می‌بینید را بنویسید:',
-);
-
 /** Finnish (suomi)
  * @author Nedergard
  * @author VezonThunder
@@ -194,10 +182,8 @@ $messages['fi'] = array(
 /** French (français)
  * @author Gomoko
  * @author Urhixidur
- * @author Verdy p
  */
 $messages['fr'] = array(
-	'recaptcha-desc' => 'module reCAPTCHA pour Confirmer Modifier',
 	'recaptcha-edit' => 'Afin de protéger le wiki du spam des modifications automatisées, nous vous demandons de bien vouloir écrire les deux mots visibles dans le cadre ci-dessous :',
 	'recaptcha-addurl' => 'Votre contribution contient des liens vers un site externe. Pour protéger le wiki contre le spam automatisé, nous vous demandons de bien vouloir écrire les deux mots visibles dans le cadre qui suit :',
 	'recaptcha-badlogin' => 'Pour protéger le wiki des essais automatiques de cassage de mot de passe, nous vous demandons de bien vouloir écrire les deux mots visibles dans le cadre qui suit:',
@@ -232,27 +218,26 @@ $messages['gsw'] = array(
 );
 
 /** Hebrew (עברית)
- * @author Yona b
  */
 $messages['he'] = array(
-	'recaptcha-edit' => 'אינכם משתמש רשום. כהגנה מפני ספאם אוטומטי, אנא הקלידו את שתי המילים שלהלן. תודה.',
-	'recaptcha-addurl' => 'עריכתכם כוללת קישורים חיצוניים חדשים. כהגנה מפני ספאם אוטומטי, אנא הקלידו את שתי המילים שלהלן. תודה.',
-	'recaptcha-badlogin' => 'כהגנה מפני מפצחי סיסמאות אוטומטיים, אנא הקלידו את שתי המילים שלהלן:',
-	'recaptcha-createaccount' => 'כהגנה מפני יצירה אוטומטית של חשבונות, נא הקלידו את שתי המילים שלהלן:',
+	'recaptcha-edit' => 'אינכם משתמש רשום.כהגנה מפני ספאם אוטומטי, אנא הקלידו את שתי המילים שלהלן. תודה.', # Fuzzy
+	'recaptcha-addurl' => 'אינכם משתמש רשום.כהגנה מפני ספאם אוטומטי, אנא הקלידו את שתי המילים שלהלן. תודה.', # Fuzzy
+	'recaptcha-badlogin' => 'כהגנה מפני מפצחי סיסמאות אוטומטיים אנא הקלידו את שתי המילים שלהלן:', # Fuzzy
+	'recaptcha-createaccount' => 'כהגנה מפני יצירת חשבונות פיקטיביים ע"י אוטומטים אנא הקלידו את שתי המילים שלהלן:', # Fuzzy
 	'recaptcha-createaccount-fail' => 'לא הוקלדו מילות האישור, או שהוקלדו מילים לא נכונות. נסו שנית.',
-	'recaptcha-create' => 'אינכם משתמש רשום. כהגנה מפני ספאם אוטומטי, אנא הקלידו את שתי המילים שלהלן. תודה.',
+	'recaptcha-create' => 'אינכם משתמש רשום.כהגנה מפני ספאם אוטומטי, אנא הקלידו את שתי המילים שלהלן. תודה.', # Fuzzy
 );
 
 /** Upper Sorbian (hornjoserbsce)
  * @author Michawiki
  */
 $messages['hsb'] = array(
-	'recaptcha-edit' => 'Zo by wiki přećiwo awtomatizowanemu spamej škitał, zapisaj prošu dwě słowje, kotrejž w slědowacym polu widźiš:',
-	'recaptcha-addurl' => 'Twoja změna wobsahuje nowe eksterne wotkazy. Zo by wiki přećiwo awtomatizowanemu spamej škitał, zapisaj prošu dwě słowje, kotrejž w slědowacym polu widźiš:',
-	'recaptcha-badlogin' => 'Zo by wiki přećiwo awtomatizowanemu złamanju hesłow škitał, zapisaj prošu dwě słowje, kotrejž widźiš, do slědowaceho pola:',
-	'recaptcha-createaccount' => 'Zo by wiki přećiwo awtomatiskemu wutworjenju konta škitał, zapisaj prošu dwě słowje, kotrejž w slědowacym polu widźiš:',
+	'recaptcha-edit' => 'Za škit přećiwo awtomatizowanemu spamej, prošu zapisaj dwě słowje, kotrejž w slědowacym polu widźiš:', # Fuzzy
+	'recaptcha-addurl' => 'Twoja změna wobsahuje nowe eksterne wotkazy. Za škit přećiwo awtomatizowanemu spamej, prošu zapisaj dwě słowje, kotrerjž w slědowacym polu widźiš:', # Fuzzy
+	'recaptcha-badlogin' => 'Za škit přećiwo awtomatizowanemu złamanju hesłow, zapisaj prošu wobě słowje, kotrejž widźiš, do slědowaceho pola:', # Fuzzy
+	'recaptcha-createaccount' => 'Za škit přećiwo awtomatiskemu wutworjenju konta, prošu zapisaj tej wobě słowje, kotrejž w slědowacym polu widźiš:', # Fuzzy
 	'recaptcha-createaccount-fail' => 'Wopačna abo falowaca wotmołwa reCAPTCHA.',
-	'recaptcha-create' => 'Zo by wiki přećiwo awtomatiskemu wutworjenju strony škitał, zapisaj prošu dwě słowje, kotrejž w slědowacym polu widźiš:',
+	'recaptcha-create' => 'Za škit přećiwo awtomatiskemu wutworjenju strony, prošu zapisaj tej wobě słowje, kotrejž w slědowacym polu widźiš:', # Fuzzy
 );
 
 /** Interlingua (interlingua)
@@ -306,17 +291,16 @@ $messages['ja'] = array(
 );
 
 /** Korean (한국어)
- * @author Priviet
  * @author 아라
  */
 $messages['ko'] = array(
 	'recaptcha-desc' => '편집 확인에 대한 reCAPCHA 모듈',
-	'recaptcha-edit' => '자동 편집 스팸으로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:',
-	'recaptcha-addurl' => '편집에 새로운 바깥 고리가 포함되어 있습니다. 자동 스팸으로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:',
-	'recaptcha-badlogin' => '자동 비밀번호 크래킹으로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:',
-	'recaptcha-createaccount' => '자동화된 계정 만들기로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:',
+	'recaptcha-edit' => '자동화된 편집 스팸으로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:', # Fuzzy
+	'recaptcha-addurl' => '편집에 새로운 바깥 링크가 포함되어 있습니다. 자동화된 스팸으로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:', # Fuzzy
+	'recaptcha-badlogin' => '자동화된 비밀번호 깨기로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:', # Fuzzy
+	'recaptcha-createaccount' => '자동화된 계정 만들기로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:', # Fuzzy
 	'recaptcha-createaccount-fail' => 'reCAPTCHA 답이 올바르지 않거나 없습니다.',
-	'recaptcha-create' => '자동 문서 생성을 막기 위해 아래 상자에 보이는 두 낱말을 입력하세요:',
+	'recaptcha-create' => '자동화된 문서 만들기로부터 보호하기 위해, 아래 상자에 보이는 두 낱말을 입력하세요:', # Fuzzy
 );
 
 /** Colognian (Ripoarisch)
@@ -480,12 +464,12 @@ $messages['pt-br'] = array(
  * @author Joetaras
  */
 $messages['roa-tara'] = array(
-	'recaptcha-edit' => "Pe proteggere condre le cangiaminde automatece de le rummate, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:",
-	'recaptcha-addurl' => "Le cangiaminde tune 'ngludone collegaminde de fore nuève. Pe proteggere condre le cangiaminde automatece de le rummate, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:",
-	'recaptcha-badlogin' => "Pe proteggere condre le futteminde automatece de le passuord, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:",
-	'recaptcha-createaccount' => "Pe proteggere condre le ccrejaziune automatece de le cunde, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:",
+	'recaptcha-edit' => "Pe darne 'na màne a proteggere condre le cangiaminde automatece de le rummate, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:", # Fuzzy
+	'recaptcha-addurl' => "Le cangiaminde tune 'ngludone collegaminde de fore nuève. Pe darne 'na màne a proteggere condre le cangiaminde automatece de le rummate, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:", # Fuzzy
+	'recaptcha-badlogin' => "Pe darne 'na màne a proteggere condre le futteminde automatece de le passuord, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:", # Fuzzy
+	'recaptcha-createaccount' => "Pe darne 'na màne a proteggere condre le ccrejaziune automatece de le cunde, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:", # Fuzzy
 	'recaptcha-createaccount-fail' => 'Resposte reCAPTCHA ingorrette o mangande.',
-	'recaptcha-create' => "Pe proteggere condre le ccrejaziune automatece de le pàggene, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:",
+	'recaptcha-create' => "Pe darne 'na màne a proteggere condre le ccrejaziune automatece de le pàggene, pe piacere scrive le doje parole ca 'ndruche jndr'à buatte aqquà sotte:", # Fuzzy
 );
 
 /** Russian (русский)

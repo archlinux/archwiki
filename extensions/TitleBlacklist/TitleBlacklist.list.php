@@ -156,12 +156,7 @@ class TitleBlacklist {
 		if ( $override && self::userCanOverride( $user, $action ) ) {
 			return false;
 		} else {
-			$entry = $this->isBlacklisted( $title, $action );
-			if ( !$entry ) {
-				return false;
-			}
-			$params = $entry->getParams();
-			return isset( $params['autoconfirmed'] ) && $user->isAllowed( 'autoconfirmed' ) ? false : $entry;
+			return $this->isBlacklisted( $title, $action );
 		}
 	}
 
@@ -177,29 +172,17 @@ class TitleBlacklist {
 	public function isBlacklisted( $title, $action = 'edit' ) {
 		if ( !( $title instanceof Title ) ) {
 			$title = Title::newFromText( $title );
-			if ( !( $title instanceof Title ) ) {
-				// The fact that the page name is invalid will stop whatever
-				// action is going through. No sense in doing more work here.
-				return false;
-			}
 		}
 		$blacklist = $this->getBlacklist();
-		$autoconfirmedItem = false;
 		foreach ( $blacklist as $item ) {
-			if ( $item->matches( $title->getFullText(), $action ) ) {
+			if ( $item->matches( $title, $action ) ) {
 				if ( $this->isWhitelisted( $title, $action ) ) {
 					return false;
 				}
-				$params = $item->getParams();
-				if ( !isset( $params['autoconfirmed'] ) ) {
-					return $item;
-				}
-				if ( !$autoconfirmedItem ) {
-					$autoconfirmedItem = $item;
-				}
+				return $item; // "returning true"
 			}
 		}
-		return $autoconfirmedItem;
+		return false;
 	}
 
 	/**
@@ -216,7 +199,7 @@ class TitleBlacklist {
 		}
 		$whitelist = $this->getWhitelist();
 		foreach ( $whitelist as $item ) {
-			if ( $item->matches( $title->getFullText(), $action ) ) {
+			if ( $item->matches( $title, $action ) ) {
 				return true;
 			}
 		}
@@ -360,7 +343,7 @@ class TitleBlacklistEntry {
 	 * Check whether a user can perform the specified action
 	 * on the specified Title
 	 *
-	 * @param $title string to check
+	 * @param $title Title to check
 	 * @param $action %Action to check
 	 * @return bool TRUE if the the regex matches the title, and is not overridden
 	 * else false if it doesn't match (or was overridden)
@@ -374,20 +357,15 @@ class TitleBlacklistEntry {
 			return false;
 		}
 
-		if ( isset( $this->mParams['antispoof'] ) && is_callable( 'AntiSpoof::checkUnicodeString' ) ) {
-			list( $ok, $norm ) = AntiSpoof::checkUnicodeString( $title );
-			if ( $ok == "OK" ) {
-				list( $ver, $title ) = explode( ':', $norm, 2 );
-			} else {
-				wfDebugLog( 'TitleBlacklist', 'AntiSpoof could not normalize "' . $title . '".' );
-			}
-		}
-
 		wfSuppressWarnings();
-		$match = preg_match( "/^(?:{$this->mRegex})$/us" . ( isset( $this->mParams['casesensitive'] ) ? '' : 'i' ), $title );
+		$match = preg_match( "/^(?:{$this->mRegex})$/us" . ( isset( $this->mParams['casesensitive'] ) ? '' : 'i' ), $title->getFullText() );
 		wfRestoreWarnings();
 
+		global $wgUser;
 		if ( $match ) {
+			if ( isset( $this->mParams['autoconfirmed'] ) && $wgUser->isAllowed( 'autoconfirmed' ) ) {
+				return false;
+			}
 			if ( isset( $this->mParams['moveonly'] ) && $action != 'move' ) {
 				return false;
 			}
@@ -449,9 +427,6 @@ class TitleBlacklistEntry {
 			if ( preg_match( '/errmsg\s*=\s*(.+)/i', $opt, $matches ) ) {
 				$options['errmsg'] = $matches[1];
 			}
-			if ( $opt2 == 'antispoof' ) {
-				$options['antispoof'] = true;
-			}
 		}
 		// Process magic words
 		preg_match_all( '/{{\s*([a-z]+)\s*:\s*(.+?)\s*}}/', $regex, $magicwords, PREG_SET_ORDER );
@@ -494,10 +469,10 @@ class TitleBlacklistEntry {
 	}
 
 	/**
-	 * @return array This entry's parameters
+	 * @return array This entry's options
 	 */
-	public function getParams() {
-		return $this->mParams;
+	public function getOptions() {
+		return $this->mOptions;
 	}
 
 	/**

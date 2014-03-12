@@ -177,7 +177,6 @@ $messages['an'] = array(
 
 /** Arabic (العربية)
  * @author Aiman titi
- * @author Asaifm
  * @author Meno25
  */
 $messages['ar'] = array(
@@ -185,7 +184,6 @@ $messages['ar'] = array(
 	'pfunc_time_error' => 'خطأ: زمن غير صحيح',
 	'pfunc_time_too_long' => 'خطأ: استدعاءات #time كثيرة جدا',
 	'pfunc_time_too_big' => 'خطأ : # الوقت يدعم فقط حتى 9999 سنة',
-	'pfunc_time_too_small' => 'خطأ: #time تدعم الأعوام بدءاً من 0.',
 	'pfunc_rel2abs_invalid_depth' => 'خطأ: عمق غير صحيح في المسار: "$1" (حاول دخول عقدة فوق العقدة الجذرية)',
 	'pfunc_expr_stack_exhausted' => 'خطأ في التعبير: ستاك مجهد',
 	'pfunc_expr_unexpected_number' => 'خطأ في التعبير: رقم غير متوقع',
@@ -239,7 +237,6 @@ $messages['arz'] = array(
 
 /** Assamese (অসমীয়া)
  * @author Bishnu Saikia
- * @author Gitartha.bordoloi
  * @author Rajuonline
  */
 $messages['as'] = array(
@@ -257,7 +254,7 @@ $messages['as'] = array(
 	'pfunc_expr_unexpected_closing_bracket' => 'এক্সপ্ৰেছন ত্ৰুটী: অবাঞ্চিত সমাপ্তকাৰী বন্ধনী',
 	'pfunc_expr_unrecognised_punctuation' => 'এক্সপ্ৰেছন ত্ৰুটী: অপৰিচিত বিৰামচিহ্ন কেৰেক্টাৰ "$1"',
 	'pfunc_expr_unclosed_bracket' => 'এক্সপ্ৰেছন ত্ৰুটী: উন্মুক্ত বন্ধনী',
-	'pfunc_expr_division_by_zero' => 'শূন্যৰে হৰণ কৰা হৈছে।',
+	'pfunc_expr_division_by_zero' => 'শূন্যৰ দ্বাৰা হৰণ কৰা হৈছে',
 	'pfunc_expr_invalid_argument' => '$1 ৰ বাবে ভুল চৰ্ত: < -1 অথবা > 1',
 	'pfunc_expr_invalid_argument_ln' => 'ln ৰ বাবে অমান্য চৰ্ত: <= 0',
 	'pfunc_expr_unknown_error' => 'এক্সপ্ৰেছন ত্ৰুটী: : অজ্ঞাত ত্ৰুটী ($1)',
@@ -548,16 +545,14 @@ $messages['ca'] = array(
  * @author Умар
  */
 $messages['ce'] = array(
-	'pfunc_desc' => 'Дика тайина маьӀнийн функцешца анализатор',
 	'pfunc_time_error' => 'Гlалато: хан нийса яц',
 	'pfunc_expr_stack_exhausted' => 'Яздарехь гlалат ду: хьаладуьззина татол',
 	'pfunc_expr_unrecognised_word' => 'Яздарехь гlалат ду: дойзуш доцу дош «$1»',
-	'pfunc_expr_unexpected_operator' => 'Дешнийн гӀалат: ца хаа оператор $1',
+	'pfunc_expr_unexpected_operator' => 'Дешнийн гӀалам : ца хаа оператор $1',
 	'pfunc_expr_unrecognised_punctuation' => 'Дешнашан гӀалат: евзина йоцу пунктуацин символ «$1»',
-	'pfunc_expr_unknown_error' => 'Дешнийн гӀалат: ца хаа гӀалат ($1)',
 );
 
-/** Czech (čeština)
+/** Czech (česky)
  * @author Danny B.
  * @author Li-sung
  * @author Matěj Grabovský
@@ -569,7 +564,6 @@ $messages['cs'] = array(
 	'pfunc_time_error' => 'Chyba: neplatný čas',
 	'pfunc_time_too_long' => 'Chyba: příliš mnoho volání #time',
 	'pfunc_time_too_big' => 'Chyba: #time nepodporuje roky nad 9999',
-	'pfunc_time_too_small' => 'Chyba: #time nepodporuje roky menší než 0.',
 	'pfunc_rel2abs_invalid_depth' => 'Chyba: Neplatná hloubka v cestě: "$1" (pokus o přístup do uzlu vyššího než kořen)',
 	'pfunc_expr_stack_exhausted' => 'Chyba ve výrazu: Zásobník plně obsazen',
 	'pfunc_expr_unexpected_number' => 'Chyba ve výrazu: Očekáváno číslo',
@@ -637,13 +631,12 @@ $messages['da'] = array(
  * @author Kghbln
  * @author LWChris
  * @author Metalhead64
- * @author Purodha
  * @author Raimond Spekking
  * @author Rentenirer
  * @author Rillke
  */
 $messages['de'] = array(
-	'pfunc_desc' => 'Erweitert den Parser um logische Funktionen',
+	'pfunc_desc' => 'Ergänzt den Parser um logische Funktionen',
 	'pfunc_time_error' => 'Fehler: Ungültige Zeitangabe',
 	'pfunc_time_too_long' => 'Fehler: Zu viele #time-Aufrufe',
 	'pfunc_time_too_big' => 'Fehler: #time unterstützt nur Jahre bis 9999',
@@ -709,8 +702,6 @@ $messages['dsb'] = array(
 	'pfunc_desc' => 'Rozšyrja parser wó logiske funkcije',
 	'pfunc_time_error' => 'Zmólka: njepłaśiwy cas',
 	'pfunc_time_too_long' => 'Zmólka: pśewjele zawołanjow #time',
-	'pfunc_time_too_big' => 'Zmólka: #time pódpěra jano lěta až do 9999.',
-	'pfunc_time_too_small' => 'Zmólka: #time pódpěra jano lěta wót 0.',
 	'pfunc_rel2abs_invalid_depth' => 'Zmólka: Njepłaśiwy dłym w sćažce: "$1" (wopyt na suk pśistup měś, kótaryž jo wušej kórjenjowego suka)',
 	'pfunc_expr_stack_exhausted' => 'Wurazowa zmólka: Stack wupócerany',
 	'pfunc_expr_unexpected_number' => 'Wurazowa zmólka: Njewócakana licba',
@@ -832,10 +823,7 @@ $messages['et'] = array(
 	'pfunc_time_error' => 'Tõrge: Vigane aeg',
 	'pfunc_time_too_long' => 'Tõrge: Liiga palju #time-kutseid.',
 	'pfunc_time_too_big' => 'Tõrge: #time toetab vaid aastaid kuni väärtuseni 9999.',
-	'pfunc_time_too_small' => 'Tõrge: #time toetab aastaid alates 0-st.',
-	'pfunc_rel2abs_invalid_depth' => 'Tõrge: Vigane tee pikkus: "$1" (üritati pöörduda juursõlmest kõrgema sõlme poole).',
 	'pfunc_expr_unexpected_number' => 'Avaldistõrge: Ootamatu number',
-	'pfunc_expr_preg_match_failure' => 'Avaldistõrge: preg_match nurjus ootamatult.',
 	'pfunc_expr_unrecognised_word' => 'Avaldistõrge: Tundmatu sõna "$1"',
 	'pfunc_expr_unexpected_operator' => 'Avaldistõrge: Ootamatu $1-tehtemärk',
 	'pfunc_expr_missing_operand' => 'Avaldistõrge: Puudub $1-tehte operand',
@@ -1147,7 +1135,6 @@ $messages['hsb'] = array(
 	'pfunc_time_error' => 'Zmylk: njepłaćiwe časowe podaće',
 	'pfunc_time_too_long' => 'Zmylk: přewjele zawołanjow #time',
 	'pfunc_time_too_big' => 'Zmylk: #time jenož lěta hač do 9999 podpěruje.',
-	'pfunc_time_too_small' => 'Zmylk: #time jenož lěta wot 0 podpěruje.',
 	'pfunc_rel2abs_invalid_depth' => 'Zmylk: Njepłaćiwa hłubokosć w pućiku: "$1" (Pospyt, zo by na suk wyše hłowneho suka dohrabnyło)',
 	'pfunc_expr_stack_exhausted' => 'Wurazowy zmylk: Staplowy skład wučerpany',
 	'pfunc_expr_unexpected_number' => 'Wurazowy zmylk: Njewočakowana ličba',
@@ -1200,7 +1187,6 @@ $messages['ia'] = array(
 	'pfunc_time_error' => 'Error: tempore invalide',
 	'pfunc_time_too_long' => 'Error: troppo de appellos a #time',
 	'pfunc_time_too_big' => 'Error: #time supporta solmente annos usque a 9999',
-	'pfunc_time_too_small' => 'Error: #time supporta solmente annos desde 0.',
 	'pfunc_rel2abs_invalid_depth' => 'Error: Profunditate invalide in cammino: "$1" (essayava acceder a un nodo superior al radice)',
 	'pfunc_expr_stack_exhausted' => 'Error in expression: Pila exhaurite',
 	'pfunc_expr_unexpected_number' => 'Error in expression: Numero non expectate',
@@ -1247,61 +1233,12 @@ $messages['id'] = array(
 	'pfunc_string_too_long' => 'Kesalahan: String melebihi limit $1 karakter',
 );
 
-/** Iloko (Ilokano)
- * @author Lam-ang
- */
-$messages['ilo'] = array(
-	'pfunc_desc' => 'Napasayaat a parser nga adda kadagiti lohikal nga annong',
-	'pfunc_time_error' => 'Biddut: Imbalido nga oras.',
-	'pfunc_time_too_long' => 'Biddut: Adu unay dagiti panagtawag ti #time.',
-	'pfunc_time_too_big' => 'Biddut: Ti #time ket suportaranna laeng dagiti tawen aginggana iti 9999.',
-	'pfunc_time_too_small' => 'Biddut: ti #time ket suportaranna laeng dagiti tawen manipud ti 0.',
-	'pfunc_rel2abs_invalid_depth' => 'Biddut: Imbalido a kauneg iti dalan: "$1" (nagpadas a nangserrek ti nodo iti ngato ti ramut a nodo).',
-	'pfunc_expr_stack_exhausted' => 'Biddut a panangiyebkas: Naibusen ti tuon.',
-	'pfunc_expr_unexpected_number' => 'Biddut a panangiyebkas:Di nanamnama a bilang.',
-	'pfunc_expr_preg_match_failure' => 'Biddut a panangiyebkas: Di nanamnama a pannakapaay ti preg_match.',
-	'pfunc_expr_unrecognised_word' => 'Biddut a panangiyebkas: Di mabigbigan a balikas ti "$1".',
-	'pfunc_expr_unexpected_operator' => 'Biddut a panangiyebkas: Di nanamnama nga operator ti $1.',
-	'pfunc_expr_missing_operand' => 'Biddut a panangiyebkas: Napukaw nga operand para iti $1.',
-	'pfunc_expr_unexpected_closing_bracket' => 'Biddut a panangiyebkas: Di nanamnama a pangrikep a braket.',
-	'pfunc_expr_unrecognised_punctuation' => 'Biddut a panangiyebkas: Di nanamnama a karakter ti tuldek ti "$1".',
-	'pfunc_expr_unclosed_bracket' => 'Biddut a panangiyebkas: Di narikpan a braket.',
-	'pfunc_expr_division_by_zero' => 'Panagbingbingay babaen ti sero.',
-	'pfunc_expr_invalid_argument' => 'Imbalido nga argumento para iti $1: < -1 wenno > 1.',
-	'pfunc_expr_invalid_argument_ln' => 'Imbalido nga argumento para iti ln: <= 0.',
-	'pfunc_expr_unknown_error' => 'Biddut a panangiyebkas: Di ammo a biddut ($1).',
-	'pfunc_expr_not_a_number' => 'Iti $1: Ti resulta ket saan a bilang.',
-	'pfunc_string_too_long' => 'Biddut: Ti kuerdas ket nasurokanna ti limitado ti karakter iti $1.',
-);
-
 /** Ido (Ido)
  * @author Malafaya
  */
 $messages['io'] = array(
 	'pfunc_time_error' => 'Eroro: ne-valida tempo',
 	'pfunc_expr_division_by_zero' => 'Divido per zero',
-);
-
-/** Icelandic (íslenska)
- * @author Snævar
- */
-$messages['is'] = array(
-	'pfunc_time_error' => 'Villa: Ógildur tími.',
-	'pfunc_time_too_long' => 'Villa: Of mörg köll til #time.',
-	'pfunc_time_too_big' => 'Villa: #time styður aðeins ár upp til 9999.',
-	'pfunc_time_too_small' => 'Villa: #time styður aðeins ár frá 0.',
-	'pfunc_expr_unexpected_number' => 'Villa í segð: Óvænt tala.',
-	'pfunc_expr_unrecognised_word' => 'Villa í segð: Óþekkt orð „$1”.',
-	'pfunc_expr_unexpected_operator' => 'Villa í segð: Óvæntur $1 virki.',
-	'pfunc_expr_missing_operand' => 'Villa í segð: Vantar þolanda fyrir $1.',
-	'pfunc_expr_unrecognised_punctuation' => 'Villa í segð: Óþekkt greinarmerki „$1”.',
-	'pfunc_expr_unclosed_bracket' => 'Villa í segð: Ólokaður svigi.',
-	'pfunc_expr_division_by_zero' => 'Deiling með núlli.',
-	'pfunc_expr_invalid_argument' => 'Ógilt frumgildi fyrir $1: < -1 eða > 1.',
-	'pfunc_expr_invalid_argument_ln' => 'Ógilt frumgildi fyrir ln: <= 0.',
-	'pfunc_expr_unknown_error' => 'Villa í segð: Óþekkt villa ($1).',
-	'pfunc_expr_not_a_number' => 'Niðurstaðan úr $1 er ekki tala.',
-	'pfunc_string_too_long' => 'Villa: Strengurinn er lengri en hámarkslengdin $1 segir til um.',
 );
 
 /** Italian (italiano)
@@ -1557,7 +1494,6 @@ $messages['lb'] = array(
 	'pfunc_time_error' => 'Feeler: ongëlteg Zäit',
 	'pfunc_time_too_long' => 'Feeler: ze dacks #time opgeruff',
 	'pfunc_time_too_big' => 'Feeler: #time ënnerstëtzt nëmme Jore bis 9999',
-	'pfunc_time_too_small' => 'Feeler: #time ënnerstëtzt nëmme Jore vun 0 un.',
 	'pfunc_expr_stack_exhausted' => 'Expressiouns-Feeler: Stack iwwergelaf',
 	'pfunc_expr_unexpected_number' => 'Expressiouns-Feeler: Onerwarten Zuel',
 	'pfunc_expr_unrecognised_word' => 'Expressiouns-Feeler: Onerkantent Wuert "$1"',
@@ -1600,13 +1536,6 @@ $messages['li'] = array(
 	'pfunc_string_too_long' => 'Fout: De teks is lenger es de limiet van $1 {{PLURAL:$1|teike|teikes}}',
 );
 
-/** لوری (لوری)
- * @author Bonevarluri
- */
-$messages['lrc'] = array(
-	'pfunc_time_error' => 'خطا:وخت نامعتور.',
-);
-
 /** Lithuanian (lietuvių)
  * @author Hugo.arg
  */
@@ -1635,7 +1564,7 @@ $messages['min'] = array(
  * @author Brest
  */
 $messages['mk'] = array(
-	'pfunc_desc' => 'Проширување на можностите на расчленувачот со логички функции',
+	'pfunc_desc' => 'Проширување на можностите на парсерот со логички функции',
 	'pfunc_time_error' => 'Грешка: погрешен формат за време',
 	'pfunc_time_too_long' => 'Грешка: премногу повикувања на функцијата #time',
 	'pfunc_time_too_big' => 'Грешка: #time поддржува само години до 9999',
@@ -1834,7 +1763,7 @@ $messages['nl'] = array(
 	'pfunc_expr_preg_match_failure' => 'Fout in uitdrukking: onverwacht falen van preg_match.',
 	'pfunc_expr_unrecognised_word' => 'Fout in uitdrukking: woord "$1" niet herkend.',
 	'pfunc_expr_unexpected_operator' => 'Fout in uitdrukking: niet verwachte operator $1.',
-	'pfunc_expr_missing_operand' => 'Fout in uitdrukking: operand voor $1 ontbreekt.',
+	'pfunc_expr_missing_operand' => 'Fout in uitdrukking: operand voor $1 mist.',
 	'pfunc_expr_unexpected_closing_bracket' => 'Fout in uitdrukking: haakje sluiten op onverwachte plaats.',
 	'pfunc_expr_unrecognised_punctuation' => 'Fout in uitdrukking: niet herkend leesteken "$1".',
 	'pfunc_expr_unclosed_bracket' => 'Fout in uitdrukking: niet gesloten haakje openen.',
@@ -1969,7 +1898,6 @@ $messages['pms'] = array(
 	'pfunc_time_error' => 'Eror: temp nen bon',
 	'pfunc_time_too_long' => 'Eror: #time a ven ciamà tròpe vire',
 	'pfunc_time_too_big' => "Eror: #time a përmët mach j'agn fin al 9999.",
-	'pfunc_time_too_small' => "Eror: #time a përmet j'agn mach da 0.",
 	'pfunc_rel2abs_invalid_depth' => 'Eror: profondità nen bon-a ant ël përcors: "$1" (a l\'é provasse a ciamé un grop dzora a la rèis)',
 	'pfunc_expr_stack_exhausted' => "Eror ëd l'espression: stach esaurìa",
 	'pfunc_expr_unexpected_number' => "Eror ëd l'espression: nùmer pa spetà",
@@ -2013,8 +1941,7 @@ $messages['pt'] = array(
 	'pfunc_desc' => 'Melhora o analisador sintático com funções lógicas',
 	'pfunc_time_error' => 'Erro: tempo inválido',
 	'pfunc_time_too_long' => 'Erro: demasiadas chamadas a #time',
-	'pfunc_time_too_big' => 'Erro: #time só permite anos até 9999',
-	'pfunc_time_too_small' => 'Erro: #time só permite anos a partir de 0.',
+	'pfunc_time_too_big' => 'Erro: #time só lida com anos até 9999',
 	'pfunc_rel2abs_invalid_depth' => 'Erro: Profundidade inválida no caminho: "$1" (foi tentado o acesso a um nó acima do nó raiz)',
 	'pfunc_expr_stack_exhausted' => 'Erro de expressão: Pilha esgotada',
 	'pfunc_expr_unexpected_number' => 'Erro de expressão: Número inesperado',
@@ -2249,15 +2176,6 @@ $messages['scn'] = array(
 	'pfunc_string_too_long' => 'Erruri: la stringa supira lu limiti di $1 carattiri',
 );
 
-/** Serbo-Croatian (srpskohrvatski / српскохрватски)
- * @author Kolega2357
- */
-$messages['sh'] = array(
-	'pfunc_time_error' => 'Greška: pogrešno vreme',
-	'pfunc_time_too_long' => 'Greška: previše pozivanja funkcije #time',
-	'pfunc_rel2abs_invalid_depth' => 'Greška: Nepravilna dubina u putanji: "$1"',
-);
-
 /** Sinhala (සිංහල)
  * @author Budhajeewa
  * @author නන්දිමිතුරු
@@ -2461,7 +2379,6 @@ $messages['sv'] = array(
 	'pfunc_time_error' => 'Fel: ogiltig tid',
 	'pfunc_time_too_long' => 'Fel: för många anrop av #time',
 	'pfunc_time_too_big' => 'Fel: # tid stöder endast år fram till 9999',
-	'pfunc_time_too_small' => 'Fel: #tid stödjer enbart år från 0.',
 	'pfunc_rel2abs_invalid_depth' => 'Fel: felaktig djup i sökväg: "$1" (försöker nå en nod ovanför rotnoden)',
 	'pfunc_expr_stack_exhausted' => 'Fel i uttryck: Stackutrymmet tog slut',
 	'pfunc_expr_unexpected_number' => 'Fel i uttryck: Oväntat tal',

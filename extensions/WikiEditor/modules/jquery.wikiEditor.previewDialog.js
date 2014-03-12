@@ -1,6 +1,5 @@
 /* Publish module for wikiEditor */
-/*jshint onevar:false */
-( function ( $, mw ) { $.wikiEditor.modules.previewDialog = {
+( function( $ ) { $.wikiEditor.modules.previewDialog = {
 
 /**
  * Compatability map
@@ -30,7 +29,7 @@ fn: {
 	 * @param context Context object of editor to create module in
 	 * @param config Configuration object to create module from
 	 */
-	create: function( context ) {
+	create: function( context, config ) {
 		// Build the dialog behind the Publish button
 		var dialogID = 'wikiEditor-' + context.instance + '-preview-dialog';
 		$.wikiEditor.modules.dialogs.fn.create(
@@ -79,7 +78,7 @@ fn: {
 								.css( 'top', '25px' );
 							// $dialog.dialog( 'option', 'width', $( 'body' ).width() - 300 );
 							// Aborts when nothing has changed since the last preview
-							if ( context.modules.preview.previewText === wikitext ) {
+							if ( context.modules.preview.previewText == wikitext ) {
 								return;
 							}
 
@@ -97,9 +96,9 @@ fn: {
 								},
 								function( data ) {
 									if (
-										typeof data.parse === 'undefined' ||
-										typeof data.parse.text === 'undefined' ||
-										typeof data.parse.text['*'] === 'undefined'
+										typeof data.parse == 'undefined' ||
+										typeof data.parse.text == 'undefined' ||
+										typeof data.parse.text['*'] == 'undefined'
 									) {
 										return;
 									}
@@ -129,4 +128,4 @@ fn: {
 	}
 }
 
-}; } )( jQuery, mediaWiki );
+}; } )( jQuery );

@@ -188,12 +188,12 @@ class PdfHandler extends ImageHandler {
 			"-",
 			$dstPath
 		);
-		$cmd .= ")";
+		$cmd .= ") 2>&1";
 
 		wfProfileIn( 'PdfHandler' );
 		wfDebug( __METHOD__ . ": $cmd\n" );
 		$retval = '';
-		$err = wfShellExecWithStderr( $cmd, $retval );
+		$err = wfShellExec( $cmd, $retval );
 		wfProfileOut( 'PdfHandler' );
 
 		$removed = $this->removeBadFile( $dstPath, $retval );

@@ -1,6 +1,6 @@
 <?php
 /**
- * Internationalisation file for extension ImageMap.
+ * Internationalisation file for extension FindSpam.
  *
  * @file
  * @ingroup Extensions
@@ -142,7 +142,7 @@ $messages['as'] = array(
 	'imagemap_desc' => '<code>&lt;imagemap&gt;</code> টেগ্‌ ব্যৱহাৰ কৰি ক্লায়েণ্ট-চাইড ক্লিকেবল্‌ ইমেজ্‌ মেপৰ অনুমতি দিয়ে',
 	'imagemap_no_image' => 'ত্ৰুটী: প্ৰথম শাৰীত এখন ছবি নিৰ্দিষ্ট কৰিবই লাগিব',
 	'imagemap_invalid_image' => 'ত্ৰুটী: ছবিখন অবৈধ বা ছবিখন নাই',
-	'imagemap_bad_image' => 'ত্ৰুটী: এই পৃষ্ঠাত ছবিখন ব্লেকলিষ্টেড কৰা হৈছে।',
+	'imagemap_bad_image' => 'ত্ৰুটী: এই পৃষ্ঠাত ছবিখন ব্লেকলিষ্টেড কৰা হৈছে',
 	'imagemap_no_link' => "ত্ৰুটী: $1 শাৰীৰ শেষত কোনো বৈধ লিংক পোৱা নগ'ল",
 	'imagemap_invalid_title' => 'ত্ৰুটী: $1 শাৰীত থকা লিংকৰ শিৰোনাম অবৈধ',
 	'imagemap_missing_coord' => 'ত্ৰুটী: $1 শাৰীত আকৃতিৰ বাবে যথেষ্ট স্থানাংক নাই',
@@ -365,9 +365,7 @@ $messages['ca'] = array(
  * @author Умар
  */
 $messages['ce'] = array(
-	'imagemap_desc' => 'Таро хуьлуьйту картан суьрта таӀийча латораш билгалдан <code>&lt;imagemap&gt;</code> теган гӀуьнца',
 	'imagemap_invalid_image' => 'ГӀалат: нийса дац я ишта сурт дац кху чохь',
-	'imagemap_no_link' => 'ГӀалат: $1 могӀанан чаккхехь нийса йоцу хьажораг ю',
 	'imagemap_invalid_title' => 'ГӀалат: могӀана $1 хьажориган корта нийса яц',
 	'imagemap_description' => 'Суьртах лаьцна',
 );
@@ -378,7 +376,7 @@ $messages['co'] = array(
 	'imagemap_description' => "À prupositu d'issa imagine",
 );
 
-/** Czech (čeština)
+/** Czech (česky)
  * @author Li-sung
  * @author Mormegil
  */

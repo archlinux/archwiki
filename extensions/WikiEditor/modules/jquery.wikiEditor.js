@@ -8,8 +8,7 @@
  *     $( 'textarea#wpTextbox1' ).wikiEditor( 'addModule', 'toolbar', { ... config ... } );
  *
  */
-/*jshint onevar:false, boss:true */
-( function ( $, mw ) {
+( function ( $ ) {
 
 /**
  * Global static object for wikiEditor that provides generally useful functionality to all modules and contexts.
@@ -114,7 +113,7 @@ $.wikiEditor = {
 	isRequired: function ( module, requirement ) {
 		if ( typeof module.req !== 'undefined' ) {
 			for ( var req in module.req ) {
-				if ( module.req[req] === requirement ) {
+				if ( module.req[req] == requirement ) {
 					return true;
 				}
 			}
@@ -133,10 +132,9 @@ $.wikiEditor = {
 	 * with the key 'bar'.
 	 */
 	autoMsg: function ( object, property ) {
-		var i, p;
 		// Accept array of possible properties, of which the first one found will be used
-		if ( typeof property === 'object' ) {
-			for ( i in property ) {
+		if ( typeof property == 'object' ) {
+			for ( var i in property ) {
 				if ( property[i] in object || property[i] + 'Msg' in object ) {
 					property = property[i];
 					break;
@@ -146,11 +144,11 @@ $.wikiEditor = {
 		if ( property in object ) {
 			return object[property];
 		} else if ( property + 'Msg' in object ) {
-			p = object[property + 'Msg'];
+			var p = object[property + 'Msg'];
 			if ( $.isArray( p ) && p.length >= 2 ) {
-				return mw.message.apply( mw.message, p ).plain();
+				return mediaWiki.message.apply( mediaWiki.message, p ).plain();
 			} else {
-				return mw.message( p ).plain();
+				return mediaWiki.message( p ).plain();
 			}
 		} else {
 			return '';
@@ -183,10 +181,10 @@ $.wikiEditor = {
 		var src = $.wikiEditor.autoLang( icon, lang );
 		path = path || $.wikiEditor.imgPath;
 		// Prepend path if src is not absolute
-		if ( src.substr( 0, 7 ) !== 'http://' && src.substr( 0, 8 ) !== 'https://' && src[0] !== '/' ) {
+		if ( src.substr( 0, 7 ) != 'http://' && src.substr( 0, 8 ) != 'https://' && src[0] != '/' ) {
 			src = path + src;
 		}
-		return src + '?' + mw.loader.getVersion( 'jquery.wikiEditor' );
+		return src + '?' + mw.loader.version( 'jquery.wikiEditor' );
 	},
 
 	/**
@@ -199,9 +197,9 @@ $.wikiEditor = {
 	 */
 	autoIconOrOffset: function ( icon, offset, path, lang ) {
 		lang = lang || mw.config.get( 'wgUserLanguage' );
-		if ( typeof offset === 'object' && lang in offset ) {
+		if ( typeof offset == 'object' && lang in offset ) {
 			return offset[lang];
-		} else if ( typeof icon === 'object' && lang in icon ) {
+		} else if ( typeof icon == 'object' && lang in icon ) {
 			return $.wikiEditor.autoIcon( icon, undefined, lang );
 		} else {
 			return $.wikiEditor.autoLang( offset, lang );
@@ -225,7 +223,7 @@ if ( !$.wikiEditor.isSupported() ) {
 // where we left off
 var context = $(this).data( 'wikiEditor-context' );
 // On first call, we need to set things up, but on all following calls we can skip right to the API handling
-if ( !context || typeof context === 'undefined' ) {
+if ( !context || typeof context == 'undefined' ) {
 
 	// Star filling the context with useful data - any jQuery selections, as usual should be named with a preceding $
 	context = {
@@ -249,7 +247,7 @@ if ( !context || typeof context === 'undefined' ) {
 		'oldDelayedHTML': null,
 		// The previous selection of the iframe, stored to detect whether the selection has changed
 		'oldDelayedSel': null,
-		// Saved selection state for old IE (<=10)
+		// Saved selection state for IE
 		'savedSelection': null,
 		// Stack of states in { html: [string] } form
 		'history': [],
@@ -278,14 +276,14 @@ if ( !context || typeof context === 'undefined' ) {
 		'addModule': function ( context, data ) {
 			var module, call,
 				modules = {};
-			if ( typeof data === 'string' ) {
+			if ( typeof data == 'string' ) {
 				modules[data] = {};
-			} else if ( typeof data === 'object' ) {
+			} else if ( typeof data == 'object' ) {
 				modules = data;
 			}
 			for ( module in modules ) {
 				// Check for the existance of an available / supported module with a matching name and a create function
-				if ( typeof module === 'string' && typeof $.wikiEditor.modules[module] !== 'undefined' &&
+				if ( typeof module == 'string' && typeof $.wikiEditor.modules[module] !== 'undefined' &&
 						$.wikiEditor.isSupported( $.wikiEditor.modules[module] ) )
 				{
 					// Extend the context's core API with this module's own API calls
@@ -328,11 +326,11 @@ if ( !context || typeof context === 'undefined' ) {
 		 */
 		trigger: function ( name, event ) {
 			// Event is an optional argument, but from here on out, at least the type field should be dependable
-			if ( typeof event === 'undefined' ) {
+			if ( typeof event == 'undefined' ) {
 				event = { 'type': 'custom' };
 			}
 			// Ensure there's a place for extra information to live
-			if ( typeof event.data === 'undefined' ) {
+			if ( typeof event.data == 'undefined' ) {
 				event.data = {};
 			}
 
@@ -395,7 +393,7 @@ if ( !context || typeof context === 'undefined' ) {
 				// Return the newly appended tab
 				return $( '<div>' )
 					.attr( 'rel', 'wikiEditor-ui-view-' + options.name )
-					.addClass( context.view === options.name ? 'current' : null )
+					.addClass( context.view == options.name ? 'current' : null )
 					.append( $( '<a>' )
 						.attr( 'href', '#' )
 						.mousedown( function () {
@@ -408,7 +406,7 @@ if ( !context || typeof context === 'undefined' ) {
 							context.$tabs.find( 'div' ).removeClass( 'current' );
 							$(this).parent().addClass( 'current' );
 							$(this).blur();
-							if ( 'init' in options && typeof options.init === 'function' ) {
+							if ( 'init' in options && typeof options.init == 'function' ) {
 								options.init( context );
 							}
 							event.preventDefault();
@@ -459,17 +457,17 @@ if ( !context || typeof context === 'undefined' ) {
 		},
 
 		/**
-		 * Save text selection for old IE (<=10)
+		 * Save text selection for IE
 		 */
 		saveSelection: function () {
-			if ( $.client.profile().name === 'msie' && document.selection && document.selection.createRange ) {
+			if ( $.client.profile().name === 'msie' ) {
 				context.$textarea.focus();
 				context.savedSelection = document.selection.createRange();
 			}
 		},
 
 		/**
-		 * Restore text selection for old IE (<=10)
+		 * Restore text selection for IE
 		 */
 		restoreSelection: function () {
 			if ( $.client.profile().name === 'msie' && context.savedSelection !== null ) {
@@ -479,13 +477,6 @@ if ( !context || typeof context === 'undefined' ) {
 			}
 		}
 	};
-
-	/**
-	 * Workaround for a scrolling bug in IE8 (bug 61908)
-	 */
-	if ( $.client.profile().name === 'msie' ) {
-		context.$textarea.css( 'height', context.$textarea.height() );
-	}
 
 	/**
 	 * Base UI Construction
@@ -548,9 +539,9 @@ if ( !context || typeof context === 'undefined' ) {
 var args = $.makeArray( arguments );
 
 // Dynamically setup core extensions for modules that are required
-if ( args[0] === 'addModule' && typeof args[1] !== 'undefined' ) {
+if ( args[0] == 'addModule' && typeof args[1] !== 'undefined' ) {
 	var modules = args[1];
-	if ( typeof modules !== 'object' ) {
+	if ( typeof modules !== "object" ) {
 		modules = {};
 		modules[args[1]] = '';
 	}
@@ -586,4 +577,4 @@ return $(this).data( 'wikiEditor-context', context );
 
 };
 
-}( jQuery, mediaWiki ) );
+}( jQuery ) );

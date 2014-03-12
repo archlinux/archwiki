@@ -251,5 +251,5 @@ $specialPageAliases['zh-hans'] = array(
 
 /** Traditional Chinese (中文（繁體）‎) */
 $specialPageAliases['zh-hant'] = array(
-	'Interwiki' => array( '跨wiki', '跨維基' ),
+	'Interwiki' => array( '跨維基連結' ),
 );

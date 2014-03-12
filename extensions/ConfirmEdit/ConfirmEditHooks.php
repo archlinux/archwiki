@@ -4,7 +4,7 @@ class ConfirmEditHooks {
 	/**
 	 * Get the global Captcha instance
 	 *
-	 * @return SimpleCaptcha
+	 * @return Captcha|SimpleCaptcha
 	 */
 	static function getInstance() {
 		global $wgCaptcha, $wgCaptchaClass;
@@ -26,21 +26,13 @@ class ConfirmEditHooks {
 	static function confirmEditAPI( $editPage, $newtext, &$resultArr ) {
 		return self::getInstance()->confirmEditAPI( $editPage, $newtext, $resultArr );
 	}
-	
-	static function addNewAccountApiForm( $apiModule, $loginForm ) {
-		return self::getInstance()->addNewAccountApiForm( $apiModule, $loginForm );
-	}
-	
-	static function addNewAccountApiResult( $apiModule, $loginPage, &$result ) {
-		return self::getInstance()->addNewAccountApiResult( $apiModule, $loginPage, $result );
-	}
 
 	static function injectUserCreate( &$template ) {
 		return self::getInstance()->injectUserCreate( $template );
 	}
 
-	static function confirmUserCreate( $u, &$message, &$status = null ) {
-		return self::getInstance()->confirmUserCreate( $u, $message, $status );
+	static function confirmUserCreate( $u, &$message ) {
+		return self::getInstance()->confirmUserCreate( $u, $message );
 	}
 
 	static function triggerUserLogin( $user, $password, $retval ) {

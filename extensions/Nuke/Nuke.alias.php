@@ -61,7 +61,7 @@ $specialPageAliases['dsb'] = array(
 
 /** Spanish (español) */
 $specialPageAliases['es'] = array(
-	'Nuke' => array( 'BorradoMasivo', 'Borrado_en_masa', 'Borrado_masivo' ),
+	'Nuke' => array( 'BorradoMasivo', 'Borrado_en_masa' ),
 );
 
 /** Estonian (eesti) */
@@ -201,7 +201,7 @@ $specialPageAliases['nl'] = array(
 
 /** Norwegian Nynorsk (norsk nynorsk) */
 $specialPageAliases['nn'] = array(
-	'Nuke' => array( 'Massesletting', 'Masseslett' ),
+	'Nuke' => array( 'Massesletting' ),
 );
 
 /** Polish (polski) */

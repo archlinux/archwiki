@@ -95,7 +95,7 @@ class SpecialGadgets extends SpecialPage {
 					array( 'action' => 'edit' )
 				);
 				$links[] = Linker::link(
-					$this->getPageTitle( "export/{$gadget->getName()}" ),
+					$this->getTitle( "export/{$gadget->getName()}" ),
 					$this->msg( 'gadgets-export' )->escaped()
 				);
 

@@ -226,7 +226,7 @@ $messages['ckb'] = array(
 	'exif-pdf-pagesize' => 'قەبارەی پەڕە',
 );
 
-/** Czech (čeština)
+/** Czech (česky)
  * @author Matěj Grabovský
  * @author Mormegil
  */
@@ -542,10 +542,6 @@ $messages['ia'] = array(
 	'pdf-desc' => 'Gestor pro visualisar files PDF in modo de imagine',
 	'pdf_no_metadata' => 'Non pote obtener metadatos ab PDF',
 	'pdf_page_error' => 'Numero de pagina foras del intervallo',
-	'exif-pdf-producer' => 'Programma de conversion',
-	'exif-pdf-version' => 'Version del formato PDF',
-	'exif-pdf-encrypted' => 'Cryptate',
-	'exif-pdf-pagesize' => 'Dimension del pagina',
 );
 
 /** Indonesian (Bahasa Indonesia)
@@ -676,7 +672,6 @@ $messages['lb'] = array(
 	'pdf-desc' => '"Programm" den et erméiglecht PDF-Fichieren als Bild ze kucken',
 	'pdf_no_metadata' => 'Meta-Informatiounen aus dem PDF Dokument kënnen net gelies ginn',
 	'pdf_page_error' => "D'Säitenzuel ass net an dem Beräich.",
-	'exif-pdf-producer' => 'Ëmwandlungsprogramm',
 	'exif-pdf-version' => 'Versioun vum PDF-Format',
 	'exif-pdf-encrypted' => 'Verschlësselt',
 	'exif-pdf-pagesize' => 'Gréisst vun der Säit',
@@ -689,13 +684,6 @@ $messages['li'] = array(
 	'pdf-desc' => "Hanjeltj PDF-bestenj aaf en maak 't meugelik die es aafbeildjing te zeen",
 	'pdf_no_metadata' => 'Kèn gein metadata vanne PDF kriege',
 	'pdf_page_error' => 'paginanómmer besteit neet',
-);
-
-/** لوری (لوری)
- * @author Mogoeilor
- */
-$messages['lrc'] = array(
-	'exif-pdf-pagesize' => 'انازه بلگه',
 );
 
 /** Lithuanian (lietuvių)
@@ -738,12 +726,11 @@ $messages['ml'] = array(
 /** Marathi (मराठी)
  * @author Kaustubh
  * @author Sankalpdravid
- * @author V.narsikar
  */
 $messages['mr'] = array(
 	'pdf-desc' => 'चित्र मोडमध्ये पीडीएफ संचिका पाहण्यासाठी आवश्यक प्रणाली',
 	'pdf_no_metadata' => 'पीडीएफमधून मेटाडाटा घेऊ शकत नाही',
-	'pdf_page_error' => 'पान क्रमांक आवाक्यात नाही',
+	'pdf_page_error' => 'पान क्रमांक सीमेमध्ये नाही',
 );
 
 /** Malay (Bahasa Melayu)

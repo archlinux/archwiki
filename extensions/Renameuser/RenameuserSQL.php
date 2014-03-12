@@ -112,7 +112,6 @@ class RenameuserSQL {
 
 		if ( !$dbw->affectedRows() && $this->checkIfUserExists ) {
 			$dbw->rollback();
-			wfProfileOut( __METHOD__ );
 			return false;
 		}
 
@@ -222,7 +221,7 @@ class RenameuserSQL {
 		}
 
 		if ( count( $jobs ) > 0 ) {
-			JobQueueGroup::singleton()->push( $jobs, JobQueue::QOS_ATOMIC ); // don't commit yet
+			Job::safeBatchInsert( $jobs ); // don't commit yet
 		}
 
 		// Commit the transaction

@@ -36,7 +36,7 @@ class SpecialInterwiki extends SpecialPage {
 		$out->addModules( 'ext.interwiki.specialpage' );
 
 		$action = $par ? $par : $request->getVal( 'action', $par );
-		$return = $this->getPageTitle();
+		$return = $this->getTitle();
 
 		switch( $action ) {
 		case 'delete':
@@ -186,7 +186,7 @@ class SpecialInterwiki extends SpecialPage {
 			array(
 				'id' => "mw-interwiki-{$action}form",
 				'method' => 'post',
-				'action' => $this->getPageTitle()->getLocalUrl( array(
+				'action' => $this->getTitle()->getLocalUrl( array(
 					'action' => 'submit',
 					'prefix' => $prefix
 				) )
@@ -229,7 +229,7 @@ class SpecialInterwiki extends SpecialPage {
 			return;
 		}
 		$reason = $request->getText( 'wpInterwikiReason' );
-		$selfTitle = $this->getPageTitle();
+		$selfTitle = $this->getTitle();
 		$dbw = wfGetDB( DB_MASTER );
 		switch( $do ) {
 		case 'delete':
@@ -325,7 +325,7 @@ class SpecialInterwiki extends SpecialPage {
 		if ( $canModify ) {
 			$this->getOutput()->addHTML( "<br />" . $this->msg( 'interwiki_intro_footer' )->parse() );
 			$addtext = $this->msg( 'interwiki_addtext' )->escaped();
-			$addlink = Linker::linkKnown( $this->getPageTitle( 'add' ), $addtext );
+			$addlink = Linker::linkKnown( $this->getTitle( 'add' ), $addtext );
 			$this->getOutput()->addHTML( '<p class="mw-interwiki-addlink">' . $addlink . '</p>' );
 		}
 
@@ -363,7 +363,7 @@ class SpecialInterwiki extends SpecialPage {
 			);
 		$out .= Html::closeElement( 'tr' ) . "\n";
 
-		$selfTitle = $this->getPageTitle();
+		$selfTitle = $this->getTitle();
 
 		# Output the existing Interwiki prefixes table rows
 		foreach ( $iwPrefixes as $iwPrefix ) {

@@ -395,7 +395,7 @@ $messages['arz'] = array(
  * @author Gitartha.bordoloi
  */
 $messages['as'] = array(
-	'cite_article_desc' => 'এটা [[Special:Cite|উদ্ধৃতি]] পৃষ্ঠা আৰু এটা সা-সৰঞ্জাম লিংক যোগ কৰে',
+	'cite_article_desc' => 'এখন [[Special:Cite|উদ্ধৃতি]] পৃষ্ঠা আৰু এটা টুলবক্স লিংক যোগ কৰে',
 	'cite_article_link' => 'এই পৃষ্ঠাৰ উদ্ধৃতি দিয়ক',
 	'tooltip-cite-article' => 'এই পৃষ্ঠাখনৰ উদ্ধৃতি দিয়াৰ বিষয়ে তথ্য',
 	'cite' => '↓উদ্ধৃত',
@@ -1014,7 +1014,6 @@ $messages['cdo'] = array(
  * @author Умар
  */
 $messages['ce'] = array(
-	'cite_article_desc' => 'ГӀирсан тӀе туху [[Special:Cite|дешнаш дало]] белхан агӀо а хьажораг а',
 	'cite_article_link' => 'АгӀонах лаьцна дешнаш дало',
 	'tooltip-cite-article' => 'ХӀара бу хаам агӀонах лаьцна дешнаш муха дало деза гойтуш',
 	'cite' => 'Далийнадош',
@@ -1049,7 +1048,7 @@ $messages['co'] = array(
 	'cite_page' => 'Pagina:',
 );
 
-/** Czech (čeština)
+/** Czech (česky)
  * @author Beren
  * @author Li-sung
  * @author Martin Kozák
@@ -1131,7 +1130,7 @@ Při použití [[LaTeX]]ového balíčku url (někde na začátku dokumentu je u
 </div> <!--closing div for \"plainlinks\"-->",
 );
 
-/** Church Slavic (словѣньскъ / ⰔⰎⰑⰂⰡⰐⰠⰔⰍⰟ)
+/** Church Slavic (словѣ́ньскъ / ⰔⰎⰑⰂⰡⰐⰠⰔⰍⰟ)
  * @author ОйЛ
  */
 $messages['cu'] = array(
@@ -1286,10 +1285,9 @@ Når du bruger [[LaTeX]] pakkens URL-adressen (<code>\\usepackage{url}</code> et
 
 /** German (Deutsch)
  * @author Kghbln
- * @author Purodha
  */
 $messages['de'] = array(
-	'cite_article_desc' => 'Erweitert das Wiki um eine [[Special:Cite|Spezialseite]] als Zitierhilfe sowie einen Link darauf im Bereich Werkzeuge',
+	'cite_article_desc' => 'Ergänzt eine [[Special:Cite|Spezialseite]] als Zitierhilfe sowie einen zugehörigen Link im Bereich Werkzeuge',
 	'cite_article_link' => 'Seite zitieren',
 	'tooltip-cite-article' => 'Hinweis, wie diese Seite zitiert werden kann',
 	'cite' => 'Zitierhilfe',
@@ -1957,77 +1955,6 @@ $messages['frp'] = array(
 	'cite_submit' => 'Citar',
 );
 
-/** Northern Frisian (Nordfriisk)
- * @author Murma174
- */
-$messages['frr'] = array(
-	'cite_article_desc' => 'Diar komt en nei [[Special:Cite|spezial-sidj]] tu, am sitiarin ianfacher tu maagin, an uk en ferwisang bi a werktjüügen',
-	'cite_article_link' => 'Detdiar sidj sitiare',
-	'tooltip-cite-article' => 'Hü detdiar sidj sitiaret wurd koon',
-	'cite' => 'Sitiare',
-	'cite_page' => 'Sidj:',
-	'cite_submit' => 'Sitiare',
-	'cite_text' => "__NOTOC__
-<div class=\"mw-specialcite-bibliographic\">
-
-== Bibliograafisk dooten för {{FULLPAGENAME}} ==
-
-* Sidj: {{FULLPAGENAME}}
-* Skriiwer: {{SITENAME}} contributors
-* Ütjden faan: ''{{SITENAME}}, {{int:sitesubtitle}}''.
-* Leetst feranrang: {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC
-* Ufrepen: <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC</citation>
-* Permanent URL: {{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
-* Sidjenwerjuun ID: {{REVISIONID}}
-
-</div>
-<div class=\"plainlinks mw-specialcite-styles\">
-
-== Sitiarmuudin för {{FULLPAGENAME}} ==
-
-=== [[APA muude]] ===
-{{FULLPAGENAME}}. ({{CURRENTYEAR}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}). ''{{SITENAME}}, {{int:sitesubtitle}}''. Ufrepen <citation>{{CURRENTTIME}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> faan {{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
-
-=== [[MLA muude]] ===
-\"{{FULLPAGENAME}}.\" ''{{SITENAME}}, {{int:sitesubtitle}}''. {{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC. <citation>{{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}}</citation> &lt;{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;.
-
-=== [[MHRA muude]] ===
-{{SITENAME}} bewerkern, '{{FULLPAGENAME}}', ''{{SITENAME}}, {{int:sitesubtitle}},'' {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC, &lt;{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt; [accessed <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}</citation>]
-
-=== [[Chicago muude]] ===
-{{SITENAME}} bewerkern, \"{{FULLPAGENAME}},\" ''{{SITENAME}}, {{int:sitesubtitle}},'' {{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (ufrepen <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>).
-
-=== [[CBE/CSE muude]] ===
-{{SITENAME}} bewerkern. {{FULLPAGENAME}} [Internet]. {{SITENAME}}, {{int:sitesubtitle}}; {{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}, {{CURRENTTIME}} UTC [sitiaret <citation>{{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}</citation>]. Tu fun faan:
-{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
-
-=== [[Bluebook muude]] ===
-{{FULLPAGENAME}}, {{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (ufrepen <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>).
-
-=== [[BibTeX]] iindrach ===
-
-  @misc{ wiki:xxx,
-    author = \"{{SITENAME}}\",
-    title = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}\",
-    year = \"{{CURRENTYEAR}}\",
-    url = \"{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}\",
-    note = \"[Online; ufrepen <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"
-  }
-
-Wan det [[LaTeX]]-moduul (<code>\\usepackage{url}</code> uun't iinfeerang) mä en smoker wääb-adres brükt woort, as det ferlicht neter so:
-
-  @misc{ wiki:xxx,
-    author = \"{{SITENAME}}\",
-    title = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}\",
-    year = \"{{CURRENTYEAR}}\",
-    url = \"'''\\url{'''{{canonicalurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''\",
-    note = \"[Online; ufrepen <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"
-  }
-
-
-</div> <!--closing div for \"plainlinks\"-->",
-);
-
 /** Friulian (furlan)
  * @author Klenje
  * @author MF-Warburg
@@ -2060,13 +1987,6 @@ $messages['ga'] = array(
 	'cite' => 'Luaigh',
 	'cite_page' => 'Leathanach:',
 	'cite_submit' => 'Luaigh',
-);
-
-/** Scottish Gaelic (Gàidhlig)
- * @author Akerbeltz
- */
-$messages['gd'] = array(
-	'cite_article_link' => 'Thoir iomradh air an duilleag seo',
 );
 
 /** Galician (galego)
@@ -3665,7 +3585,6 @@ $messages['kw'] = array(
 );
 
 /** Latin (Latina)
- * @author Autokrator
  * @author MissPetticoats
  * @author SPQRobin
  * @author UV
@@ -3673,26 +3592,17 @@ $messages['kw'] = array(
 $messages['la'] = array(
 	'cite_article_desc' => ' Addet [[Special:Cite|citation]] specialem paginam et arcam instrumenti', # Fuzzy
 	'cite_article_link' => 'Hanc paginam citare',
-	'tooltip-cite-article' => 'Institutiones de hanc pagina citanda',
 	'cite' => 'Paginam citare',
 	'cite_page' => 'Pagina:',
 	'cite_submit' => 'Citare',
 );
 
-/** Ladino (Ladino)
- * @author Menachem.Moreira
- */
-$messages['lad'] = array(
-	'cite_page' => 'Pajina:',
-);
-
 /** Luxembourgish (Lëtzebuergesch)
  * @author Kaffi
  * @author Robby
- * @author Soued031
  */
 $messages['lb'] = array(
-	'cite_article_desc' => "Setzt eng [[Special:Cite|Zitatioun op dëser Spezialsäit]] bei an e Link an d'Geschiirkëscht",
+	'cite_article_desc' => "Setzt eng [[Special:Cite|Zitatioun op dëser Spezialsäit]] bäi an e Link an d'Geschiirkëscht",
 	'cite_article_link' => 'Dës Säit zitéieren',
 	'tooltip-cite-article' => 'Informatioune wéi een dës Säit zitéiere kann',
 	'cite' => 'Zitéierhëllef',
@@ -3816,15 +3726,10 @@ $messages['lo'] = array(
 );
 
 /** لوری (لوری)
- * @author Bonevarluri
  * @author Mogoeilor
  */
 $messages['lrc'] = array(
-	'cite_article_link' => 'جاگه ای بلگه',
-	'tooltip-cite-article' => 'دونسمنیا چه جور دای بلگه جاگر بوئه',
-	'cite' => 'جاگه',
 	'cite_page' => 'بلگه',
-	'cite_submit' => 'جاگه',
 );
 
 /** Lithuanian (lietuvių)
@@ -4181,7 +4086,7 @@ $messages['mn'] = array(
  * @author V.narsikar
  */
 $messages['mr'] = array(
-	'cite_article_desc' => 'एक  [[Special:Cite|बाह्यदुवे]] देणारे विशेषपान व साधनपेटीचा दुवा जोडते',
+	'cite_article_desc' => 'एक विशेष [[Special:Cite|बाह्यदुवे]] देणारे पान व टूलबॉक्सची लिंक तयार करा',
 	'cite_article_link' => 'हे पान उधृत करा',
 	'tooltip-cite-article' => 'हे पृष्ठ बघण्यासाठीची माहिती',
 	'cite' => 'उधृत करा',
@@ -5506,16 +5411,6 @@ $messages['sgs'] = array(
 	'cite_page' => 'Poslapis:',
 );
 
-/** Serbo-Croatian (srpskohrvatski / српскохрватски)
- * @author Kolega2357
- */
-$messages['sh'] = array(
-	'cite_article_link' => 'Citiraj ovaj članak',
-	'cite' => 'Citiraj',
-	'cite_page' => 'Stranica:',
-	'cite_submit' => 'Citiraj - Цитирај',
-);
-
 /** Sinhala (සිංහල)
  * @author Budhajeewa
  * @author නන්දිමිතුරු
@@ -5685,7 +5580,6 @@ When using the [[LaTeX]] package url (<code>\\usepackage{url}</code> somewhere i
 );
 
 /** Serbian (Cyrillic script) (српски (ћирилица)‎)
- * @author Milicevic01
  * @author Millosh
  * @author Rancher
  * @author Sasa Stefanovic
@@ -5694,144 +5588,25 @@ When using the [[LaTeX]] package url (<code>\\usepackage{url}</code> somewhere i
  */
 $messages['sr-ec'] = array(
 	'cite_article_desc' => 'Додаје посебну страницу за [[Special:Cite|цитирање]] и везу с алаткама',
-	'cite_article_link' => 'Цитирај ову страницу',
+	'cite_article_link' => 'Библиографски подаци',
 	'tooltip-cite-article' => 'Информације о томе како цитирати ову страну',
-	'cite' => 'Цитирање',
+	'cite' => 'цитат',
 	'cite_page' => 'Страница:',
-	'cite_submit' => 'Цитирај',
-	'cite_text' => "__NOTOC__
-<div class=\"mw-specialcite-bibliographic\">
-
-== Библиографски детаљи за страну {{FULLPAGENAME}} ==
-
-* Назив стране: {{FULLPAGENAME}} 
-* Аутор: {{SITENAME}} сарадници
-* Издавач: ''{{SITENAME}}, {{int:sitesubtitle}}''. 
-* Датум последње ревизије: {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC
-* Датум узимања: <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC</citation>
-* Стални URL: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
-* ID верзије стране: {{REVISIONID}}
-
-</div>
-<div class=\"plainlinks mw-specialcite-styles\">
-
-== Стилови цитирања за страну {{FULLPAGENAME}} ==
-
-=== [[APA style|APA стил]] ===
-{{FULLPAGENAME}}. ({{CURRENTYEAR}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}). ''{{SITENAME}}, {{int:sitesubtitle}}''. Узето <citation>{{CURRENTTIME}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> од {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
-
-=== [[The MLA style manual|MLA стил]] ===
-\"{{FULLPAGENAME}}.\" ''{{SITENAME}}, {{int:sitesubtitle}}''. {{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC. <citation>{{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}}</citation> &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;.
-
-=== [[MHRA Style Guide|MHRA стил]] ===
-Википедијини сарадници, '{{FULLPAGENAME}}',  ''{{SITENAME}}, {{int:sitesubtitle}},'' {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC, &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt; [приступљено <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}</citation>]
-
-=== [[The Chicago Manual of Style|Чикаго стил]] ===
-Википедијини сарадници, \"{{FULLPAGENAME}},\"  ''{{SITENAME}}, {{int:sitesubtitle}},'' {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (приступљено <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>).
-
-=== [[Council of Science Editors|CBE/CSE стил]] ===
-Википедијини сарадници. {{FULLPAGENAME}} [Интернет].  {{SITENAME}}, {{int:sitesubtitle}};  {{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}},   {{CURRENTTIME}} UTC [цитирано <citation>{{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}</citation>].  Доступно са: 
-{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
-
-=== [[Bluebook|Bluebook стил]] ===
-{{FULLPAGENAME}}, {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (последња посета <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>).
-
-=== [[BibTeX]] унос ===
-
-  @misc{ wiki:xxx,
-    author = \"{{SITENAME}}\",
-    title = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}\",
-    year = \"{{CURRENTYEAR}}\",
-    url = \"{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}\",
-    note = \"[Online; accessed <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"
-  }
-
-Када користите [[LaTeX]] пакет url (<code>\\usepackage{url}</code> негде у преамбули) који тежи да да далеко лепше форматирану адресу, следеће је можда боље:
-
-  @misc{ wiki:xxx,
-    author = \"{{SITENAME}}\",
-    title = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}\",
-    year = \"{{CURRENTYEAR}}\",
-    url = \"'''\\url{'''{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''\",
-    note = \"[Online; accessed <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"
-  }
-
-
-</div><!--cerrando div para \"plainlinks\"-->",
+	'cite_submit' => 'цитат',
 );
 
 /** Serbian (Latin script) (srpski (latinica)‎)
  * @author Liangent
  * @author Michaello
- * @author Milicevic01
  * @author Жељко Тодоровић
  */
 $messages['sr-el'] = array(
 	'cite_article_desc' => 'Dodaje specijalnu stranu za [[Special:Cite|citiranje]] i vezu ka oruđima.',
-	'cite_article_link' => 'Citiraj ovu stranicu',
+	'cite_article_link' => 'citiranje ove strane',
 	'tooltip-cite-article' => 'Informacije o tome kako citirati ovu stranu',
-	'cite' => 'Citiranje',
+	'cite' => 'citat',
 	'cite_page' => 'Stranica:',
-	'cite_submit' => 'Citiraj',
-	'cite_text' => "__NOTOC__
-<div class=\"mw-specialcite-bibliographic\">
-
-== Bibliografski detalji za stranu {{FULLPAGENAME}} ==
-
-* Naziv strane: {{FULLPAGENAME}} 
-* Autor: {{SITENAME}} saradnici
-* Izdavač: ''{{SITENAME}}, {{int:sitesubtitle}}''. 
-* Datum poslednje revizije: {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC
-* Datum uzimanja: <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC</citation>
-* Stalni URL: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
-* ID verzije strane: {{REVISIONID}}
-
-</div>
-<div class=\"plainlinks mw-specialcite-styles\">
-
-== Stilovi citiranja za stranu {{FULLPAGENAME}} ==
-
-=== [[APA style|APA stil]] ===
-{{FULLPAGENAME}}. ({{CURRENTYEAR}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}). ''{{SITENAME}}, {{int:sitesubtitle}}''. Uzeto <citation>{{CURRENTTIME}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> od {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
-
-=== [[The MLA style manual|MLA stil]] ===
-\"{{FULLPAGENAME}}.\" ''{{SITENAME}}, {{int:sitesubtitle}}''. {{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC. <citation>{{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}}</citation> &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;.
-
-=== [[MHRA Style Guide|MHRA stil]] ===
-Vikipedijini saradnici, '{{FULLPAGENAME}}',  ''{{SITENAME}}, {{int:sitesubtitle}},'' {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC, &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt; [pristupljeno <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}</citation>]
-
-=== [[The Chicago Manual of Style|Čikago stil]] ===
-Vikipedijini saradnici, \"{{FULLPAGENAME}},\"  ''{{SITENAME}}, {{int:sitesubtitle}},'' {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (pristupljeno <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>).
-
-=== [[Council of Science Editors|CBE/CSE stil]] ===
-Vikipedijini saradnici. {{FULLPAGENAME}} [Internet].  {{SITENAME}}, {{int:sitesubtitle}};  {{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}},   {{CURRENTTIME}} UTC [citirano <citation>{{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}</citation>].  Dostupno sa: 
-{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
-
-=== [[Bluebook|Bluebook stil]] ===
-{{FULLPAGENAME}}, {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (poslednja poseta <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>).
-
-=== [[BibTeX]] unos ===
-
-  @misc{ wiki:xxx,
-    author = \"{{SITENAME}}\",
-    title = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}\",
-    year = \"{{CURRENTYEAR}}\",
-    url = \"{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}\",
-    note = \"[Online; accessed <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"
-  }
-
-Kada koristite [[LaTeX]] paket url (<code>\\usepackage{url}</code> negde u preambuli) koji teži da da daleko lepše formatiranu adresu, sledeće je možda bolje:
-
-  @misc{ wiki:xxx,
-    author = \"{{SITENAME}}\",
-    title = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}\",
-    year = \"{{CURRENTYEAR}}\",
-    url = \"'''\\url{'''{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''\",
-    note = \"[Online; accessed <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"
-  }
-
-
-</div><!--closing div for \"plainlinks\"-->",
+	'cite_submit' => 'citat',
 );
 
 /** Seeltersk (Seeltersk)
