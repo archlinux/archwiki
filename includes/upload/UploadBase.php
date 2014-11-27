@@ -1303,8 +1303,8 @@ abstract class UploadBase {
 					wfDebug( __METHOD__ . ": Found href attribute <$strippedElement "
 						. "'$attrib'='$value' in uploaded file.\n" );
 
-				return true;
-			}
+					return true;
+				}
 			}
 
 			# href with embedded svg as target
