@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joetaras"
+		]
+	},
+	"syntaxhighlight-desc": "Dè 'na sindasse evidenziate <code>&lt;syntaxhighlight&gt;</code> ausanne [http://qbnz.com/highlighter/ GeSHi l'Evidenziatore]",
+	"syntaxhighlight-specify": "Tu, abbesogne de 'na lènga specifiche cumme a queste:",
+	"syntaxhighlight-supported": "Linguagge supportate pa sindasse evidenziate:",
+	"syntaxhighlight-err-loading": "(errore carecanne 'a liste de linguagge supportate)",
+	"syntaxhighlight-err-language": "Lénghe invalide.",
+	"geshi.css": "/* CSS mise aqquà avène applicate 'a sindasse GeSHi evidenziate */"
+}

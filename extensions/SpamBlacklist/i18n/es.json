@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Armando-Martin",
+			"Dferg",
+			"Drini",
+			"Fitoschido",
+			"MarcoAurelio",
+			"Sanbec",
+			"Savh",
+			"Vivaelcelta",
+			"Macofe"
+		]
+	},
+	"spam-blacklist": " # Enlaces externos que coincidan con esta lista serán bloqueados al añadirse a una página\n # Esta lista afecta sólo a esta wiki. Existe asímismo una lista global en Meta para todos los proyectos. \n # Para documentación mire: https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n #<!-- Deje esta línea exactamente como está --> <pre>\n#\n# La sintaxis es:\n#  * Todo lo que aparezca desde un caracter \"#\" hasta el fin de la línea es un comentario\n#  * Toda línea que no esté en blanco es una expresión regular que sólo se cotejará con URLs\n\n #</pre> <!-- Deje esta línea exactamente como está -->",
+	"spam-whitelist": " #<!-- Deje esta línea exactamente como está --> <pre>\n# URLs externas que coincidan con esta lista *no* serán bloqueadas incluso si coincidiesen\n# con una entrada en la lista negra.\n#\n## La sintaxis es:\n#  * Todo lo que aparezca desde un caracter \"#\" hasta el fin de la línea es un comentario\n#  * Toda línea que no esté en blanco es una expresión regular que sólo se cotejará con URLs\n\n #</pre> <!-- Deje esta línea exactamente como está -->",
+	"email-blacklist": " # Las direcciones de correo electrónico que coincidan con las de esta lista no podrán registrar cuentas ni enviar correos electrónicos\n # Esta lista sólo afecta a este proyecto aunque existe una lista global para todos los proyectos.\n # Documentación: https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n #<!-- leave this line exactly as it is --> <pre>\n#\n# Sintaxis como sigue:\n#   * Todo lo que sigue a un \"#\" se interpreta como un comentario\n#   * Toda línea no en blanco es un fragmento de expresión regular (regex) que sólo coincidirá con los \"host\" de la dirección de correo electrónico.\n\n #</pre> <!-- leave this line exactly as it is -->",
+	"email-whitelist": " #<!-- Deje esta línea exactamente como está --> <pre>\n# Las direcciones de correo electrónico que aparecen en esta lista*no* serán bloqueadas incluso si hubieran\n# debido ser bloqueadas por aparecer en la lista negra.\n#\n #</pre> <!-- Deje esta línea exactamente como está-->\n# La sintaxis es la siguiente:\n#  * Todo texto a la derecha del carácter \"#\" hasta el final de la línea es un comentario\n#  * Cada línea que no esté en blanco es un fragmento de código que será cotejada por los servidores (hosts) con las direcciones de correo electrónico",
+	"spam-blacklisted-email": "Dirección de correo electrónico de la lista negra",
+	"spam-blacklisted-email-text": "Su dirección de correo electrónico está actualmente en la lista negra y no puede enviar correos electrónicos a otros usuarios.",
+	"spam-blacklisted-email-signup": "La dirección de correo electrónico dada está actualmente en la lista negra de uso.",
+	"spam-invalid-lines": "{{PLURAL:$1|La siguiente línea|Las siguientes líneas}} de la lista negra de spam {{PLURAL:$1|es una expresión regular inválida|son expresiones regulares inválidas}} y es necesario {{PLURAL:$1|corregirla|corregirlas}} antes de guardar la página:",
+	"spam-blacklist-desc": "Herramienta anti-spam basada en expresiones regulares que permite filtrar URLs en páginas y direcciones de correo electrónico para usuarios registrados",
+	"log-name-spamblacklist": "Registro de la lista negra de spam",
+	"log-description-spamblacklist": "Este registro muestra acciones bloqueadas por la lista negra de spam.",
+	"right-spamblacklistlog": "Ver registro de la lista negra de ''spam''"
+}

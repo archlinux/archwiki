@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Renan"
+		]
+	},
+	"syntaxhighlight-desc": "Provide superation de sintaxe de li code fonte, che li element <code>&lt;syntaxhighlight&gt;</code>, usant li [http://qbnz.com/highlighter/ GeSHi - Generic Syntax Highlighter]",
+	"syntaxhighlight-specify": "Vu besona specificar li lingue quam ti:",
+	"syntaxhighlight-supported": "Lingues suportat por superation de sintaxe:",
+	"syntaxhighlight-err-language": "Lingue ínvalid."
+}

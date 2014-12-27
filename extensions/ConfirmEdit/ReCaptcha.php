@@ -18,6 +18,7 @@ $dir = __DIR__;
 require_once $dir . '/ConfirmEdit.php';
 $wgCaptchaClass = 'ReCaptcha';
 
+$wgMessagesDirs['ReCaptcha'] = __DIR__ . '/i18n/re';
 $wgExtensionMessagesFiles['ReCaptcha'] = $dir . '/ReCaptcha.i18n.php';
 
 $wgAutoloadClasses['ReCaptcha'] = $dir . '/ReCaptcha.class.php';

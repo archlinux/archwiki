@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kghbln",
+			"Raimond Spekking"
+		]
+	},
+	"syntaxhighlight-desc": "Ergänzt das Tag <code>&lt;syntaxhighlight&gt;</code> zur Syntaxhervorhebung mit Hilfe des [http://qbnz.com/highlighter/ Generic Syntax Highlighter (GeSHi)]",
+	"syntaxhighlight-specify": "Die gewünschte Sprache muss wie folgt definiert werden:",
+	"syntaxhighlight-supported": "Unterstützte Sprachen für die Syntaxhervorhebung:",
+	"syntaxhighlight-err-loading": "(Fehler beim Laden der Sprachenliste)",
+	"syntaxhighlight-err-language": "Ungültige Sprache.",
+	"geshi.css": "/* CSS in dieser MediaWiki-Systemnachricht wird auf die GeSHi-Syntaxhervorhebung angewendet */"
+}

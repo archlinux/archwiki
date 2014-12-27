@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Arystanbek"
+		]
+	},
+	"cologneblue.css": "/* Мында орналастырылған CSS тек «Көлн зеңгірлігі» (cologneblue) мәнерін пайдаланушыларына ықпал етеді skin */",
+	"cologneblue.js": "/* Мындағы JavaScript тек «Көлн зеңгірлігі» (cologneblue) мәнерін пайдаланушылар үшін жегіледі */",
+	"skinname-cologneblue": "Көк зеңгірлігі (cologneblue)"
+}

@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eitvys200",
+			"Homo",
+			"Matasg"
+		]
+	},
+	"titleblacklist-desc": "Leidžia administratoriams uždrausti kurti puslapius ir vartotojų sąskaitas pagal [[MediaWiki:Titleblacklist|juodąjį sąrašą]] ir [[MediaWiki:Titlewhitelist|baltąjį sąrašą]]",
+	"titleblacklist": "# Tai pavadinimų juodasis sąrašas. Pavadinimai ir vartotojai, kurie atitinka įrašus čia, negali būti sukuriami. \n# Naudokite \"#\" komentarams. \n# Pagal nutylėjimą nejautrus raidžių dydžiui",
+	"titlewhitelist": "# Tai pavadinimų baltasis sąrašas. Naudokite \"#\" komentarams. \n# Pagal nutylėjimą nejautrus raidžių dydžiui",
+	"titleblacklist-forbidden-edit": "Pavadinimą \"$2\" buvo uždrausta sukurti.\nJis atitinką šį juodojo sąrašo įrašą: <code>$1</code>",
+	"titleblacklist-forbidden-move": "\"$2\" negali būti perkeltas į \"$3\", nes pavadinimą \"$3\" buvo uždrausta sukurti.\nJis atitinką šį juodojo sąrašo įrašą: <code>$1</code>",
+	"titleblacklist-forbidden-upload": "Failą \"$2\" buvo uždrausta sukurti.\nJis atitinką šį juodojo sąrašo įrašą: <code>$1</code>",
+	"titleblacklist-forbidden-new-account": "Naudotojo vardą \"$2\" buvo uždrausta sukurti.\nJis atitinką šį juodojo sąrašo įrašą: <code>$1</code>",
+	"titleblacklist-invalid": "Žemiau {{PLURAL:$1|esanti linija|esančios linijos}} juodajame sąraše {{PLURAL:$1|yra|yra}} netinkama;\nprašome {{PLURAL:$1|ją|jas}} pataisyti prieš išsaugant:",
+	"titleblacklist-override": "Ignoruoti juodąjį sąrašą",
+	"right-tboverride": "Nepaisyti juodojo sąrašo"
+}

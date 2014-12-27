@@ -1,13 +1,13 @@
 <?php
 /** Kashmiri (Devanagari script) (कॉशुर)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
  *
  * @author Rk_kaul (on ks.wikipedia.org)
+ * @author VibhasKS
  */
 
 $namespaceNames = array(
@@ -42,10 +42,3 @@ $digitTransformTable = array(
 	'9' => '९', # &#x096f;
 );
 
-$messages = array(
-'help' => 'मदद',
-
-# Recent changes
-'recentchanges' => 'नवि तबदीली',
-
-);

@@ -23,14 +23,18 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
+// @codingStandardsIgnoreStart MediaWiki.NamingConventions.ValidGlobalName.wgPrefix
 global $optionsWithArgs;
+// @codingStandardsIgnoreEnd
 if ( !isset( $optionsWithArgs ) ) {
 	$optionsWithArgs = array();
 }
 
 class CommandLineInc extends Maintenance {
 	public function __construct() {
+		// @codingStandardsIgnoreStart MediaWiki.NamingConventions.ValidGlobalName.wgPrefix
 		global $optionsWithArgs;
+		// @codingStandardsIgnoreEnd
 		parent::__construct();
 		foreach ( $optionsWithArgs as $name ) {
 			$this->addOption( $name, '', false, true );
@@ -39,6 +43,7 @@ class CommandLineInc extends Maintenance {
 
 	/**
 	 * No help, it would just be misleading since it misses custom options
+	 * @param bool $force
 	 */
 	protected function maybeHelp( $force = false ) {
 		if ( !$force ) {
@@ -48,7 +53,9 @@ class CommandLineInc extends Maintenance {
 	}
 
 	public function execute() {
+		// @codingStandardsIgnoreStart MediaWiki.NamingConventions.ValidGlobalName.wgPrefix
 		global $args, $options;
+		// @codingStandardsIgnoreEnd
 		$args = $this->mArgs;
 		$options = $this->mOptions;
 	}

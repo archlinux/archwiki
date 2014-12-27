@@ -35,9 +35,9 @@ class LinkFilter {
 	/**
 	 * Check whether $content contains a link to $filterEntry
 	 *
-	 * @param $content Content: content to check
-	 * @param string $filterEntry domainparts, see makeRegex() for more details
-	 * @return Integer: 0 if no match or 1 if there's at least one match
+	 * @param Content $content Content to check
+	 * @param string $filterEntry Domainparts, see makeRegex() for more details
+	 * @return int 0 if no match or 1 if there's at least one match
 	 */
 	static function matchEntry( Content $content, $filterEntry ) {
 		if ( !( $content instanceof TextContent ) ) {
@@ -58,7 +58,7 @@ class LinkFilter {
 	 *
 	 * @param string $filterEntry URL, if it begins with "*.", it'll be
 	 *        replaced to match any subdomain
-	 * @return String: regex pattern, for preg_match()
+	 * @return string Regex pattern, for preg_match()
 	 */
 	private static function makeRegex( $filterEntry ) {
 		$regex = '!http://';
@@ -84,16 +84,28 @@ class LinkFilter {
 	 *
 	 * Asterisks in any other location are considered invalid.
 	 *
-	 * @param string $filterEntry domainparts
-	 * @param $prot        String: protocol
-	 * @return Array to be passed to DatabaseBase::buildLike() or false on error
+	 * This function does the same as wfMakeUrlIndexes(), except it also takes care
+	 * of adding wildcards
+	 *
+	 * @param string $filterEntry Domainparts
+	 * @param string $protocol Protocol (default http://)
+	 * @return array Array to be passed to DatabaseBase::buildLike() or false on error
 	 */
-	public static function makeLikeArray( $filterEntry, $prot = 'http://' ) {
+	public static function makeLikeArray( $filterEntry, $protocol = 'http://' ) {
 		$db = wfGetDB( DB_MASTER );
-		if ( substr( $filterEntry, 0, 2 ) == '*.' ) {
+
+		$target = $protocol . $filterEntry;
+		$bits = wfParseUrl( $target );
+
+		if ( $bits == false ) {
+			// Unknown protocol?
+			return false;
+		}
+
+		if ( substr( $bits['host'], 0, 2 ) == '*.' ) {
 			$subdomains = true;
-			$filterEntry = substr( $filterEntry, 2 );
-			if ( $filterEntry == '' ) {
+			$bits['host'] = substr( $bits['host'], 2 );
+			if ( $bits['host'] == '' ) {
 				// We don't want to make a clause that will match everything,
 				// that could be dangerous
 				return false;
@@ -101,55 +113,66 @@ class LinkFilter {
 		} else {
 			$subdomains = false;
 		}
-		// No stray asterisks, that could cause confusion
-		// It's not simple or efficient to handle it properly so we don't
-		// handle it at all.
-		if ( strpos( $filterEntry, '*' ) !== false ) {
-			return false;
-		}
-		$slash = strpos( $filterEntry, '/' );
-		if ( $slash !== false ) {
-			$path = substr( $filterEntry, $slash );
-			$host = substr( $filterEntry, 0, $slash );
-		} else {
-			$path = '/';
-			$host = $filterEntry;
-		}
+
 		// Reverse the labels in the hostname, convert to lower case
 		// For emails reverse domainpart only
-		if ( $prot == 'mailto:' && strpos( $host, '@' ) ) {
+		if ( $bits['scheme'] === 'mailto' && strpos( $bits['host'], '@' ) ) {
 			// complete email address
-			$mailparts = explode( '@', $host );
+			$mailparts = explode( '@', $bits['host'] );
 			$domainpart = strtolower( implode( '.', array_reverse( explode( '.', $mailparts[1] ) ) ) );
-			$host = $domainpart . '@' . $mailparts[0];
-			$like = array( "$prot$host", $db->anyString() );
-		} elseif ( $prot == 'mailto:' ) {
-			// domainpart of email address only. do not add '.'
-			$host = strtolower( implode( '.', array_reverse( explode( '.', $host ) ) ) );
-			$like = array( "$prot$host", $db->anyString() );
+			$bits['host'] = $domainpart . '@' . $mailparts[0];
+		} elseif ( $bits['scheme'] === 'mailto' ) {
+			// domainpart of email address only, do not add '.'
+			$bits['host'] = strtolower( implode( '.', array_reverse( explode( '.', $bits['host'] ) ) ) );
 		} else {
-			$host = strtolower( implode( '.', array_reverse( explode( '.', $host ) ) ) );
-			if ( substr( $host, -1, 1 ) !== '.' ) {
-				$host .= '.';
-			}
-			$like = array( "$prot$host" );
-
-			if ( $subdomains ) {
-				$like[] = $db->anyString();
-			}
-			if ( !$subdomains || $path !== '/' ) {
-				$like[] = $path;
-				$like[] = $db->anyString();
+			$bits['host'] = strtolower( implode( '.', array_reverse( explode( '.', $bits['host'] ) ) ) );
+			if ( substr( $bits['host'], -1, 1 ) !== '.' ) {
+				$bits['host'] .= '.';
 			}
 		}
+
+		$like[] = $bits['scheme'] . $bits['delimiter'] . $bits['host'];
+
+		if ( $subdomains ) {
+			$like[] = $db->anyString();
+		}
+
+		if ( isset( $bits['port'] ) ) {
+			$like[] = ':' . $bits['port'];
+		}
+		if ( isset( $bits['path'] ) ) {
+			$like[] = $bits['path'];
+		} elseif ( !$subdomains ) {
+			$like[] = '/';
+		}
+		if ( isset( $bits['query'] ) ) {
+			$like[] = '?' . $bits['query'];
+		}
+		if ( isset( $bits['fragment'] ) ) {
+			$like[] = '#' . $bits['fragment'];
+		}
+
+		// Check for stray asterisks: asterisk only allowed at the start of the domain
+		foreach ( $like as $likepart ) {
+			if ( !( $likepart instanceof LikeMatch ) && strpos( $likepart, '*' ) !== false ) {
+				return false;
+			}
+		}
+
+		if ( !( $like[count( $like ) - 1] instanceof LikeMatch ) ) {
+			// Add wildcard at the end if there isn't one already
+			$like[] = $db->anyString();
+		}
+
 		return $like;
 	}
 
 	/**
-	 * Filters an array returned by makeLikeArray(), removing everything past first pattern placeholder.
+	 * Filters an array returned by makeLikeArray(), removing everything past first
+	 * pattern placeholder.
 	 *
-	 * @param array $arr array to filter
-	 * @return array filtered array
+	 * @param array $arr Array to filter
+	 * @return array Filtered array
 	 */
 	public static function keepOneWildcard( $arr ) {
 		if ( !is_array( $arr ) ) {

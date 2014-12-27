@@ -25,13 +25,12 @@
  * @ingroup SpecialPage
  */
 class SpecialJavaScriptTest extends SpecialPage {
-
 	/**
-	 * @var $frameworks Array: Mapping of framework ids and their initilizer methods
+	 * @var array Mapping of framework ids and their initilizer methods
 	 * in this class. If a framework is requested but not in this array,
 	 * the 'unknownframework' error is served.
 	 */
-	static $frameworks = array(
+	private static $frameworks = array(
 		'qunit' => 'initQUnitTesting',
 	);
 
@@ -68,7 +67,7 @@ class SpecialJavaScriptTest extends SpecialPage {
 				$this->msg( "javascripttest-$framework-name" )->plain()
 			) );
 			$out->setSubtitle( $this->msg( 'javascripttest-backlink' )
-				->rawParams( Linker::linkKnown( $this->getTitle() ) ) );
+				->rawParams( Linker::linkKnown( $this->getPageTitle() ) ) );
 			$this->{self::$frameworks[$framework]}();
 		} else {
 			// Framework not found, display error
@@ -97,7 +96,7 @@ class SpecialJavaScriptTest extends SpecialPage {
 				'li',
 				array(),
 				Linker::link(
-					$this->getTitle( $framework ),
+					$this->getPageTitle( $framework ),
 					// Message: javascripttest-qunit-name
 					$this->msg( "javascripttest-$framework-name" )->escaped()
 				)
@@ -135,16 +134,15 @@ class SpecialJavaScriptTest extends SpecialPage {
 	 * Initialize the page for QUnit.
 	 */
 	private function initQUnitTesting() {
-		global $wgJavaScriptTestConfig;
-
 		$out = $this->getOutput();
+		$testConfig = $this->getConfig()->get( 'JavaScriptTestConfig' );
 
-		$out->addModules( 'mediawiki.tests.qunit.testrunner' );
+		$out->addModules( 'test.mediawiki.qunit.testrunner' );
 		$qunitTestModules = $out->getResourceLoader()->getTestModuleNames( 'qunit' );
 		$out->addModules( $qunitTestModules );
 
 		$summary = $this->msg( 'javascripttest-qunit-intro' )
-			->params( $wgJavaScriptTestConfig['qunit']['documentation'] )
+			->params( $testConfig['qunit']['documentation'] )
 			->parseAsBlock();
 		$header = $this->msg( 'javascripttest-qunit-heading' )->escaped();
 		$userDir = $this->getLanguage()->getDir();
@@ -170,7 +168,22 @@ HTML;
 		// $wgJavaScriptTestConfig in DefaultSettings.php
 		$out->addJsConfigVars(
 			'QUnitTestSwarmInjectJSPath',
-			$wgJavaScriptTestConfig['qunit']['testswarm-injectjs']
+			$testConfig['qunit']['testswarm-injectjs']
+		);
+	}
+
+	/**
+	 * Return an array of subpages beginning with $search that this special page will accept.
+	 *
+	 * @param string $search Prefix to search for
+	 * @param int $limit Maximum number of results to return
+	 * @return string[] Matching subpages
+	 */
+	public function prefixSearchSubpages( $search, $limit = 10 ) {
+		return self::prefixSearchArray(
+			$search,
+			$limit,
+			array_keys( self::$frameworks )
 		);
 	}
 

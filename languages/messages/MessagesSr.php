@@ -1,12 +1,12 @@
 <?php
-/** Serbian (Српски / Srpski)
+/** Serbian (српски / srpski)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
  *
+ * @author Milicevic01
  * @author Misos
  * @author Terik
  * @author Жељко Тодоровић
@@ -15,3 +15,4 @@
 
 $fallback = 'sr-ec';
 $linkTrail = '/^([abvgdđežzijklljmnnjoprstćufhcčdžšабвгдђежзијклљмнњопрстћуфхцчџш]+)(.*)$/usD';
+

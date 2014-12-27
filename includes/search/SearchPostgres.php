@@ -3,7 +3,7 @@
  * PostgreSQL search engine
  *
  * Copyright © 2006-2007 Greg Sabino Mullane <greg@turnstep.com>
- * http://www.mediawiki.org/
+ * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,56 +28,36 @@
  * Search engine hook base class for Postgres
  * @ingroup Search
  */
-class SearchPostgres extends SearchEngine {
-
-	/**
-	 * @var DatabasePostgres
-	 */
-	protected $db;
-	/**
-	 * Creates an instance of this class
-	 * @param $db DatabaseSqlite: database object
-	 */
-	function __construct( $db ) {
-		parent::__construct( $db );
-	}
-
+class SearchPostgres extends SearchDatabase {
 	/**
 	 * Perform a full text search query via tsearch2 and return a result set.
 	 * Currently searches a page's current title (page.page_title) and
 	 * latest revision article text (pagecontent.old_text)
 	 *
-	 * @param string $term raw search term
-	 * @return PostgresSearchResultSet
+	 * @param string $term Raw search term
+	 * @return SqlSearchResultSet
 	 */
 	function searchTitle( $term ) {
 		$q = $this->searchQuery( $term, 'titlevector', 'page_title' );
 		$olderror = error_reporting( E_ERROR );
-		$resultSet = $this->db->resultObject( $this->db->query( $q, 'SearchPostgres', true ) );
+		$resultSet = $this->db->query( $q, 'SearchPostgres', true );
 		error_reporting( $olderror );
-		if ( !$resultSet ) {
-			// Needed for "Query requires full scan, GIN doesn't support it"
-			return new SearchResultTooMany();
-		}
-		return new PostgresSearchResultSet( $resultSet, $this->searchTerms );
+		return new SqlSearchResultSet( $resultSet, $this->searchTerms );
 	}
 
 	function searchText( $term ) {
 		$q = $this->searchQuery( $term, 'textvector', 'old_text' );
 		$olderror = error_reporting( E_ERROR );
-		$resultSet = $this->db->resultObject( $this->db->query( $q, 'SearchPostgres', true ) );
+		$resultSet = $this->db->query( $q, 'SearchPostgres', true );
 		error_reporting( $olderror );
-		if ( !$resultSet ) {
-			return new SearchResultTooMany();
-		}
-		return new PostgresSearchResultSet( $resultSet, $this->searchTerms );
+		return new SqlSearchResultSet( $resultSet, $this->searchTerms );
 	}
 
 	/**
 	 * Transform the user's search string into a better form for tsearch2
 	 * Returns an SQL fragment consisting of quoted text to search for.
 	 *
-	 * @param $term string
+	 * @param string $term
 	 *
 	 * @return string
 	 */
@@ -143,9 +123,9 @@ class SearchPostgres extends SearchEngine {
 
 	/**
 	 * Construct the full SQL query to do the search.
-	 * @param $term String
-	 * @param $fulltext String
-	 * @param $colname
+	 * @param string $term
+	 * @param string $fulltext
+	 * @param string $colname
 	 * @return string
 	 */
 	function searchQuery( $term, $fulltext, $colname ) {
@@ -153,8 +133,8 @@ class SearchPostgres extends SearchEngine {
 		$searchstring = $this->parseQuery( $term );
 
 		## We need a separate query here so gin does not complain about empty searches
-		$SQL = "SELECT to_tsquery($searchstring)";
-		$res = $this->db->query( $SQL );
+		$sql = "SELECT to_tsquery($searchstring)";
+		$res = $this->db->query( $sql );
 		if ( !$res ) {
 			## TODO: Better output (example to catch: one 'two)
 			die( "Sorry, that was not a valid search string. Please go back and try again" );
@@ -162,6 +142,7 @@ class SearchPostgres extends SearchEngine {
 		$top = $res->fetchRow();
 		$top = $top[0];
 
+		$this->searchTerms = array();
 		if ( $top === "" ) { ## e.g. if only stopwords are used XXX return something better
 			$query = "SELECT page_id, page_namespace, page_title, 0 AS score " .
 				"FROM page p, revision r, pagecontent c WHERE p.page_latest = r.rev_id " .
@@ -179,11 +160,6 @@ class SearchPostgres extends SearchEngine {
 			"ts_rank($fulltext, to_tsquery($searchstring), 5) AS score " .
 			"FROM page p, revision r, pagecontent c WHERE p.page_latest = r.rev_id " .
 			"AND r.rev_text_id = c.old_id AND $fulltext @@ to_tsquery($searchstring)";
-		}
-
-		## Redirects
-		if ( !$this->showRedirects ) {
-			$query .= ' AND page_is_redirect = 0';
 		}
 
 		## Namespaces - defaults to 0
@@ -209,10 +185,10 @@ class SearchPostgres extends SearchEngine {
 
 	function update( $pageid, $title, $text ) {
 		## We don't want to index older revisions
-		$SQL = "UPDATE pagecontent SET textvector = NULL WHERE old_id IN " .
+		$sql = "UPDATE pagecontent SET textvector = NULL WHERE textvector IS NOT NULL and old_id IN " .
 				"(SELECT rev_text_id FROM revision WHERE rev_page = " . intval( $pageid ) .
 				" ORDER BY rev_text_id DESC OFFSET 1)";
-		$this->db->query( $SQL );
+		$this->db->query( $sql );
 		return true;
 	}
 
@@ -220,35 +196,4 @@ class SearchPostgres extends SearchEngine {
 		return true;
 	}
 
-} ## end of the SearchPostgres class
-
-/**
- * @ingroup Search
- */
-class PostgresSearchResult extends SearchResult {
-	function __construct( $row ) {
-		parent::__construct( $row );
-		$this->score = $row->score;
-	}
-	function getScore() {
-		return $this->score;
-	}
-}
-
-/**
- * @ingroup Search
- */
-class PostgresSearchResultSet extends SqlSearchResultSet {
-	function __construct( $resultSet, $terms ) {
-		parent::__construct( $resultSet, $terms );
-	}
-
-	function next() {
-		$row = $this->mResultSet->fetchObject();
-		if ( $row === false ) {
-			return false;
-		} else {
-			return new PostgresSearchResult( $row );
-		}
-	}
 }

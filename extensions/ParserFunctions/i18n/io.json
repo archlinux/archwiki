@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Malafaya"
+		]
+	},
+	"pfunc_time_error": "Eroro: ne-valida tempo",
+	"pfunc_expr_division_by_zero": "Divido per zero"
+}

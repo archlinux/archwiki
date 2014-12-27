@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Papuass"
+		]
+	},
+	"pfunc_time_error": "Kļūda: nederīgs laiks",
+	"pfunc_time_too_long": "Kļūda: pārāk daudz #time izsaukumu",
+	"pfunc_expr_division_by_zero": "Dalīšana ar nulli"
+}

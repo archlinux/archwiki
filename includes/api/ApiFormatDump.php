@@ -26,6 +26,7 @@
 
 /**
  * API PHP's var_dump() output formatter
+ * @deprecated since 1.24
  * @ingroup API
  */
 class ApiFormatDump extends ApiFormatBase {
@@ -38,6 +39,7 @@ class ApiFormatDump extends ApiFormatBase {
 	}
 
 	public function execute() {
+		$this->markDeprecated();
 		ob_start();
 		var_dump( $this->getResultData() );
 		$result = ob_get_contents();
@@ -46,6 +48,6 @@ class ApiFormatDump extends ApiFormatBase {
 	}
 
 	public function getDescription() {
-		return 'Output data in PHP\'s var_dump() format' . parent::getDescription();
+		return 'DEPRECATED! Output data in PHP\'s var_dump() format' . parent::getDescription();
 	}
 }

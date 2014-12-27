@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"MaxSem",
+			"Michaello"
+		]
+	},
+	"syntaxhighlight-desc": "Omogućava vizuelno označavanje sintakse <code>&lt;syntaxhighlight&gt;</code> korišćenjem [http://qbnz.com/highlighter/ GeSHi hajlajtera].",
+	"syntaxhighlight-specify": "Potrebno je odrediti jezik kao ovaj:",
+	"syntaxhighlight-supported": "Podržani jezici u vizuelom označavanju sintakse:",
+	"syntaxhighlight-err-loading": "(greška pri učitavanju podržanih jezika)",
+	"syntaxhighlight-err-language": "Nepodoban jezik",
+	"geshi.css": "/* CSS postavljen ovde biće primenjen na vizuelno označavanje sintkse GeSHi */"
+}

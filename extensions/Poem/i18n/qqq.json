@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Raymond"
+		]
+	},
+	"poem-desc": "Extension description displayed on [[Special:Version]]"
+}

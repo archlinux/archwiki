@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Byrial",
+			"Peter Alberti"
+		]
+	},
+	"inputbox-desc": "Muliggør inkludering af forhåndsdefinerede HTML-formularer",
+	"inputbox-error-no-type": "Du har ikke angivet type i inputboksen som skal laves.",
+	"inputbox-error-bad-type": "Inputboks-type \"$1\" kendes ikke.\nVælg venligst \"create\", \"comment\", \"search\", \"search2\" eller \"fulltext\".",
+	"inputbox-tryexact": "Gå til siden",
+	"inputbox-searchfulltext": "Søg efter teksten",
+	"inputbox-createarticle": "Opret side",
+	"inputbox-ns-main": "Hoved"
+}

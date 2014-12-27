@@ -69,7 +69,7 @@ class ApiFormatXml extends ApiFormatBase {
 		$this->printText(
 			self::recXmlPrint( $this->mRootElemName,
 				$data,
-				$this->getIsHtml() ? - 2 : null
+				$this->getIsHtml() ? -2 : null
 			)
 		);
 	}
@@ -111,9 +111,9 @@ class ApiFormatXml extends ApiFormatBase {
 	 * @note The method is recursive, so the same rules apply to any
 	 * sub-arrays.
 	 *
-	 * @param $elemName
-	 * @param $elemValue
-	 * @param $indent
+	 * @param string $elemName
+	 * @param mixed $elemValue
+	 * @param int $indent
 	 *
 	 * @return string
 	 */
@@ -147,6 +147,15 @@ class ApiFormatXml extends ApiFormatBase {
 				$subElemIndName = null;
 			}
 
+			if ( isset( $elemValue['_subelements'] ) ) {
+				foreach ( $elemValue['_subelements'] as $subElemId ) {
+					if ( isset( $elemValue[$subElemId] ) && !is_array( $elemValue[$subElemId] ) ) {
+						$elemValue[$subElemId] = array( '*' => $elemValue[$subElemId] );
+					}
+				}
+				unset( $elemValue['_subelements'] );
+			}
+
 			$indElements = array();
 			$subElements = array();
 			foreach ( $elemValue as $subElemId => & $subElemValue ) {
@@ -156,11 +165,19 @@ class ApiFormatXml extends ApiFormatBase {
 				} elseif ( is_array( $subElemValue ) ) {
 					$subElements[$subElemId] = $subElemValue;
 					unset( $elemValue[$subElemId] );
+				} elseif ( is_bool( $subElemValue ) ) {
+					// treat true as empty string, skip false in xml format
+					if ( $subElemValue === true ) {
+						$subElemValue = '';
+					} else {
+						unset( $elemValue[$subElemId] );
+					}
 				}
 			}
 
 			if ( is_null( $subElemIndName ) && count( $indElements ) ) {
-				ApiBase::dieDebug( __METHOD__, "($elemName, ...) has integer keys without _element value. Use ApiResult::setIndexedTagName()." );
+				ApiBase::dieDebug( __METHOD__, "($elemName, ...) has integer keys " .
+					"without _element value. Use ApiResult::setIndexedTagName()." );
 			}
 
 			if ( count( $subElements ) && count( $indElements ) && !is_null( $subElemContent ) ) {
@@ -193,6 +210,7 @@ class ApiFormatXml extends ApiFormatBase {
 				$retval .= $indstr . Xml::element( $elemName, null, $elemValue );
 			}
 		}
+
 		return $retval;
 	}
 
@@ -200,17 +218,21 @@ class ApiFormatXml extends ApiFormatBase {
 		$nt = Title::newFromText( $this->mXslt );
 		if ( is_null( $nt ) || !$nt->exists() ) {
 			$this->setWarning( 'Invalid or non-existent stylesheet specified' );
+
 			return;
 		}
 		if ( $nt->getNamespace() != NS_MEDIAWIKI ) {
 			$this->setWarning( 'Stylesheet should be in the MediaWiki namespace.' );
+
 			return;
 		}
-		if ( substr( $nt->getText(), - 4 ) !== '.xsl' ) {
+		if ( substr( $nt->getText(), -4 ) !== '.xsl' ) {
 			$this->setWarning( 'Stylesheet should have .xsl extension.' );
+
 			return;
 		}
-		$this->printText( '<?xml-stylesheet href="' . htmlspecialchars( $nt->getLocalURL( 'action=raw' ) ) . '" type="text/xsl" ?>' );
+		$this->printText( '<?xml-stylesheet href="' .
+			htmlspecialchars( $nt->getLocalURL( 'action=raw' ) ) . '" type="text/xsl" ?>' );
 	}
 
 	public function getAllowedParams() {

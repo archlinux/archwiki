@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Toniher"
+		]
+	},
+	"asirra-desc": "Mòdul Asirra de ConfirmEdit",
+	"asirra-edit": "Per tal de protegir el wiki contra les edicions brosses, us demanem que seleccioneu només les fotos de gats del requadre a continuació:",
+	"asirra-addurl": "La modificació inclou nous enllaços externs. Per tal de protegir el wiki davant d'edicions brossa, us demanem que seleccioneu només les fotos de gots del requadre a continuació:",
+	"asirra-badlogin": "Per tal de protegir el wiki contra els intents de trencament de contrasenyes, us demanem que seleccioneu només les fotos de gats del requadre a continuació:",
+	"asirra-createaccount": "Per tal de protegir el wiki contra la creació automatitzada de comptes, us demanem que seleccioneu només les fotos de gats del requadre a continuació:",
+	"asirra-createaccount-fail": "Identifiqueu correctament els gats.",
+	"asirra-create": "Per tal de protegir el wiki contra la creació automàtica de pàgines, us demanem que seleccioneu només les fotos de gats del requadre a continuació:",
+	"asirra-nojs": "'''Habilitieu el JavaScript i torneu a enviar la pàgina.'''",
+	"asirra-failed": "Identifiqueu totes les imatges de gats"
+}

@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"SMP",
+			"Solde"
+		]
+	},
+	"syntaxhighlight-desc": "Proveeix de ressaltat sintàctic amb l'etiqueta <code>&lt;syntaxhighlight&gt;</code> usant el programa [http://qbnz.com/highlighter/ GeSHi]",
+	"syntaxhighlight-specify": "Heu d'especificar un dels llenguatges:",
+	"syntaxhighlight-supported": "Llenguatges admesos per al ressaltament sintàctic:",
+	"syntaxhighlight-err-loading": "(error en carregar la llista de llenguatges)",
+	"syntaxhighlight-err-language": "Llenguatge invàlid.",
+	"geshi.css": "/* El CSS ubicat aquí serà aplicat al ressaltat de sintaxi de GeSHi */"
+}

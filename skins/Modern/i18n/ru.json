@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Alexandr Efremov",
+			"Kaganer",
+			"Milicevic01",
+			"Okras"
+		]
+	},
+	"modern.css": "/* Размещённый здесь CSS будет применяться к теме оформления Modern */",
+	"modern.js": "/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления Modern */",
+	"skinname-modern": "Современное",
+	"modern-desc": "Голубая/серая тема с боковой и верхней панелями. Производная от MonoBook."
+}

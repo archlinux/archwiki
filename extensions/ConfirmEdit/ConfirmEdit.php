@@ -40,7 +40,7 @@ $wgExtensionCredits['antispam'][] = array(
 	'name' => 'ConfirmEdit',
 	'author' => array( 'Brion Vibber', '...' ),
 	'url' => 'https://www.mediawiki.org/wiki/Extension:ConfirmEdit',
-	'version' => '1.2',
+	'version' => '1.3',
 	'descriptionmsg' => 'captcha-desc',
 );
 
@@ -174,6 +174,7 @@ $wgCaptchaRegexes = array();
 $wgSpecialPages['Captcha'] = 'CaptchaSpecialPage';
 
 $wgConfirmEditIP = __DIR__;
+$wgMessagesDirs['ConfirmEdit'] = __DIR__ . '/i18n/core';
 $wgExtensionMessagesFiles['ConfirmEdit'] = "$wgConfirmEditIP/ConfirmEdit.i18n.php";
 $wgExtensionMessagesFiles['ConfirmEditAlias'] = "$wgConfirmEditIP/ConfirmEdit.alias.php";
 
@@ -189,6 +190,8 @@ $wgHooks['EmailUser'][] = 'ConfirmEditHooks::confirmEmailUser';
 $wgHooks['APIEditBeforeSave'][] = 'ConfirmEditHooks::confirmEditAPI';
 $wgHooks['APIGetAllowedParams'][] = 'ConfirmEditHooks::APIGetAllowedParams';
 $wgHooks['APIGetParamDescription'][] = 'ConfirmEditHooks::APIGetParamDescription';
+$wgHooks['AddNewAccountApiForm'][] = 'ConfirmEditHooks::addNewAccountApiForm';
+$wgHooks['AddNewAccountApiResult'][] = 'ConfirmEditHooks::addNewAccountApiResult';
 
 $wgAutoloadClasses['ConfirmEditHooks'] = "$wgConfirmEditIP/ConfirmEditHooks.php";
 $wgAutoloadClasses['SimpleCaptcha'] = "$wgConfirmEditIP/Captcha.php";
@@ -196,7 +199,6 @@ $wgAutoloadClasses['CaptchaStore'] = "$wgConfirmEditIP/CaptchaStore.php";
 $wgAutoloadClasses['CaptchaSessionStore'] = "$wgConfirmEditIP/CaptchaStore.php";
 $wgAutoloadClasses['CaptchaCacheStore'] = "$wgConfirmEditIP/CaptchaStore.php";
 $wgAutoloadClasses['CaptchaSpecialPage'] = "$wgConfirmEditIP/ConfirmEditHooks.php";
-$wgAutoloadClasses['HTMLCaptchaField'] = "$wgConfirmEditIP/HTMLCaptchaField.php";
 
 /**
  * Set up $wgWhitelistRead

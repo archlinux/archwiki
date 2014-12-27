@@ -29,7 +29,6 @@
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  */
 class SiteSQLStore implements SiteStore {
-
 	/**
 	 * @since 1.21
 	 *
@@ -90,7 +89,7 @@ class SiteSQLStore implements SiteStore {
 	 *
 	 * @see SiteList::getSerialVersionId
 	 *
-	 * @return String The cache key.
+	 * @return string The cache key.
 	 */
 	protected function getCacheKey() {
 		wfProfileIn( __METHOD__ );
@@ -115,7 +114,7 @@ class SiteSQLStore implements SiteStore {
 	 *
 	 * @since 1.21
 	 *
-	 * @param string $source either 'cache' or 'recache'
+	 * @param string $source Either 'cache' or 'recache'
 	 *
 	 * @return SiteList
 	 */
@@ -169,7 +168,10 @@ class SiteSQLStore implements SiteStore {
 		}
 
 		if ( $siteRow->hasField( 'language' ) ) {
-			$site->setLanguageCode( $siteRow->getField( 'language' ) === '' ? null : $siteRow->getField( 'language' ) );
+			$site->setLanguageCode( $siteRow->getField( 'language' ) === ''
+				? null
+				: $siteRow->getField( 'language' )
+			);
 		}
 
 		if ( $siteRow->hasField( 'source' ) ) {
@@ -193,7 +195,7 @@ class SiteSQLStore implements SiteStore {
 	 *
 	 * @since 1.22
 	 *
-	 * @param Site
+	 * @param Site $site
 	 *
 	 * @return ORMRow
 	 */
@@ -287,7 +289,7 @@ class SiteSQLStore implements SiteStore {
 	 *
 	 * @param Site $site
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 */
 	public function saveSite( Site $site ) {
 		return $this->saveSites( array( $site ) );
@@ -300,7 +302,7 @@ class SiteSQLStore implements SiteStore {
 	 *
 	 * @param Site[] $sites
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 */
 	public function saveSites( array $sites ) {
 		wfProfileIn( __METHOD__ );
@@ -312,11 +314,7 @@ class SiteSQLStore implements SiteStore {
 
 		$dbw = $this->sitesTable->getWriteDbConnection();
 
-		$trx = $dbw->trxLevel();
-
-		if ( $trx == 0 ) {
-			$dbw->begin( __METHOD__ );
-		}
+		$dbw->startAtomic( __METHOD__ );
 
 		$success = true;
 
@@ -358,9 +356,7 @@ class SiteSQLStore implements SiteStore {
 			);
 		}
 
-		if ( $trx == 0 ) {
-			$dbw->commit( __METHOD__ );
-		}
+		$dbw->endAtomic( __METHOD__ );
 
 		// purge cache
 		$this->reset();
@@ -390,24 +386,16 @@ class SiteSQLStore implements SiteStore {
 	 *
 	 * @see SiteStore::clear()
 	 *
-	 * @return bool success
+	 * @return bool Success
 	 */
 	public function clear() {
 		wfProfileIn( __METHOD__ );
 		$dbw = $this->sitesTable->getWriteDbConnection();
 
-		$trx = $dbw->trxLevel();
-
-		if ( $trx == 0 ) {
-			$dbw->begin( __METHOD__ );
-		}
-
+		$dbw->startAtomic( __METHOD__ );
 		$ok = $dbw->delete( 'sites', '*', __METHOD__ );
 		$ok = $dbw->delete( 'site_identifiers', '*', __METHOD__ ) && $ok;
-
-		if ( $trx == 0 ) {
-			$dbw->commit( __METHOD__ );
-		}
+		$dbw->endAtomic( __METHOD__);
 
 		$this->reset();
 
@@ -458,7 +446,7 @@ class SiteSQLStore implements SiteStore {
 }
 
 /**
- * @deprecated
+ * @deprecated since 1.21
  */
 class Sites extends SiteSQLStore {
 
@@ -466,9 +454,9 @@ class Sites extends SiteSQLStore {
 	 * Factory for creating new site objects.
 	 *
 	 * @since 1.21
-	 * @deprecated
+	 * @deprecated since 1.21
 	 *
-	 * @param string|boolean false $globalId
+	 * @param string|bool $globalId
 	 *
 	 * @return Site
 	 */
@@ -483,7 +471,7 @@ class Sites extends SiteSQLStore {
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated since 1.21
 	 * @return SiteStore
 	 */
 	public static function singleton() {
@@ -497,11 +485,11 @@ class Sites extends SiteSQLStore {
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated since 1.21
+	 * @param string $group
 	 * @return SiteList
 	 */
 	public function getSiteGroup( $group ) {
 		return $this->getSites()->getGroup( $group );
 	}
-
 }

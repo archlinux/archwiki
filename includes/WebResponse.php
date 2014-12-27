@@ -28,11 +28,10 @@
 class WebResponse {
 
 	/**
-	 * Output a HTTP header, wrapper for PHP's
-	 * header()
-	 * @param string $string header to output
-	 * @param bool $replace replace current similar header
-	 * @param $http_response_code null|int Forces the HTTP response code to the specified value.
+	 * Output a HTTP header, wrapper for PHP's header()
+	 * @param string $string Header to output
+	 * @param bool $replace Replace current similar header
+	 * @param null|int $http_response_code Forces the HTTP response code to the specified value.
 	 */
 	public function header( $string, $replace = true, $http_response_code = null ) {
 		header( $string, $replace, $http_response_code );
@@ -40,8 +39,8 @@ class WebResponse {
 
 	/**
 	 * Set the browser cookie
-	 * @param string $name name of cookie
-	 * @param string $value value to give cookie
+	 * @param string $name Name of cookie
+	 * @param string $value Value to give cookie
 	 * @param int|null $expire Unix timestamp (in seconds) when the cookie should expire.
 	 *        0 (the default) causes it to expire $wgCookieExpiration seconds from now.
 	 *        null causes it to be a session cookie.
@@ -52,7 +51,7 @@ class WebResponse {
 	 *     secure: bool, secure attribute ($wgCookieSecure)
 	 *     httpOnly: bool, httpOnly attribute ($wgCookieHttpOnly)
 	 *     raw: bool, if true uses PHP's setrawcookie() instead of setcookie()
-	 *   For backwards compatability, if $options is not an array then it and
+	 *   For backwards compatibility, if $options is not an array then it and
 	 *   the following two parameters will be interpreted as values for
 	 *   'prefix', 'domain', and 'secure'
 	 * @since 1.22 Replaced $prefix, $domain, and $forceSecure with $options
@@ -62,7 +61,7 @@ class WebResponse {
 		global $wgCookieSecure, $wgCookieExpiration, $wgCookieHttpOnly;
 
 		if ( !is_array( $options ) ) {
-			// Backwards compatability
+			// Backwards compatibility
 			$options = array( 'prefix' => $options );
 			if ( func_num_args() >= 5 ) {
 				$options['domain'] = func_get_arg( 4 );
@@ -86,12 +85,6 @@ class WebResponse {
 			$expire = 0; // Session cookie
 		} elseif ( $expire == 0 && $wgCookieExpiration != 0 ) {
 			$expire = time() + $wgCookieExpiration;
-		}
-
-		// Don't mark the cookie as httpOnly if the requesting user-agent is
-		// known to have trouble with httpOnly cookies.
-		if ( !wfHttpOnlySafe() ) {
-			$options['httpOnly'] = false;
 		}
 
 		$func = $options['raw'] ? 'setrawcookie' : 'setcookie';
@@ -130,9 +123,9 @@ class FauxResponse extends WebResponse {
 
 	/**
 	 * Stores a HTTP header
-	 * @param string $string header to output
-	 * @param bool $replace replace current similar header
-	 * @param $http_response_code null|int Forces the HTTP response code to the specified value.
+	 * @param string $string Header to output
+	 * @param bool $replace Replace current similar header
+	 * @param null|int $http_response_code Forces the HTTP response code to the specified value.
 	 */
 	public function header( $string, $replace = true, $http_response_code = null ) {
 		if ( substr( $string, 0, 5 ) == 'HTTP/' ) {
@@ -169,7 +162,7 @@ class FauxResponse extends WebResponse {
 	/**
 	 * Get the HTTP response code, null if not set
 	 *
-	 * @return Int or null
+	 * @return int|null
 	 */
 	public function getStatusCode() {
 		return $this->code;
@@ -178,17 +171,17 @@ class FauxResponse extends WebResponse {
 	/**
 	 * @todo document. It just ignore optional parameters.
 	 *
-	 * @param string $name name of cookie
-	 * @param string $value value to give cookie
-	 * @param int $expire number of seconds til cookie expires (Default: 0)
-	 * @param array $options ignored
+	 * @param string $name Name of cookie
+	 * @param string $value Value to give cookie
+	 * @param int $expire Number of seconds til cookie expires (Default: 0)
+	 * @param array $options Ignored
 	 */
 	public function setcookie( $name, $value, $expire = 0, $options = null ) {
 		$this->cookies[$name] = $value;
 	}
 
 	/**
-	 * @param $name string
+	 * @param string $name
 	 * @return string
 	 */
 	public function getcookie( $name ) {

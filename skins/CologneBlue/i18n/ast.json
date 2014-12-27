@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Xuacu"
+		]
+	},
+	"cologneblue.css": "/* Los CSS allugaos equí afeutarán a los usuarios del aspeutu Cologne Blue */",
+	"cologneblue.js": "/* Cualesquier JavaScript que tea equí se cargará pa los usuarios del aspeutu Cologne Blue */",
+	"skinname-cologneblue": "Azul Colonia",
+	"cologneblue-desc": "Un tema llixeru col mínimu formatu"
+}

@@ -42,35 +42,35 @@ class ApiQueryInfo extends ApiQueryBase {
 	private $pageRestrictions, $pageIsRedir, $pageIsNew, $pageTouched,
 		$pageLatest, $pageLength;
 
-	private $protections, $watched, $watchers, $notificationtimestamps, $talkids, $subjectids, $displaytitles;
+	private $protections, $watched, $watchers, $notificationtimestamps,
+		$talkids, $subjectids, $displaytitles;
 	private $showZeroWatchers = false;
 
 	private $tokenFunctions;
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'in' );
 	}
 
 	/**
-	 * @param $pageSet ApiPageSet
+	 * @param ApiPageSet $pageSet
 	 * @return void
 	 */
 	public function requestExtraData( $pageSet ) {
-		global $wgDisableCounters, $wgContentHandlerUseDB;
-
 		$pageSet->requestField( 'page_restrictions' );
 		// when resolving redirects, no page will have this field
 		if ( !$pageSet->isResolvingRedirects() ) {
 			$pageSet->requestField( 'page_is_redirect' );
 		}
 		$pageSet->requestField( 'page_is_new' );
-		if ( !$wgDisableCounters ) {
+		$config = $this->getConfig();
+		if ( !$config->get( 'DisableCounters' ) ) {
 			$pageSet->requestField( 'page_counter' );
 		}
 		$pageSet->requestField( 'page_touched' );
 		$pageSet->requestField( 'page_latest' );
 		$pageSet->requestField( 'page_len' );
-		if ( $wgContentHandlerUseDB ) {
+		if ( $config->get( 'ContentHandlerUseDB' ) ) {
 			$pageSet->requestField( 'page_content_model' );
 		}
 	}
@@ -79,7 +79,8 @@ class ApiQueryInfo extends ApiQueryBase {
 	 * Get an array mapping token names to their handler functions.
 	 * The prototype for a token function is func($pageid, $title)
 	 * it should return a token or false (permission denied)
-	 * @return array array(tokenname => function)
+	 * @deprecated since 1.24
+	 * @return array Array(tokenname => function)
 	 */
 	protected function getTokenFunctions() {
 		// Don't call the hooks twice
@@ -104,15 +105,22 @@ class ApiQueryInfo extends ApiQueryBase {
 			'watch' => array( 'ApiQueryInfo', 'getWatchToken' ),
 		);
 		wfRunHooks( 'APIQueryInfoTokens', array( &$this->tokenFunctions ) );
+
 		return $this->tokenFunctions;
 	}
 
-	static $cachedTokens = array();
+	static protected $cachedTokens = array();
 
+	/**
+	 * @deprecated since 1.24
+	 */
 	public static function resetTokenCache() {
 		ApiQueryInfo::$cachedTokens = array();
 	}
 
+	/**
+	 * @deprecated since 1.24
+	 */
 	public static function getEditToken( $pageid, $title ) {
 		// We could check for $title->userCan('edit') here,
 		// but that's too expensive for this purpose
@@ -130,6 +138,9 @@ class ApiQueryInfo extends ApiQueryBase {
 		return ApiQueryInfo::$cachedTokens['edit'];
 	}
 
+	/**
+	 * @deprecated since 1.24
+	 */
 	public static function getDeleteToken( $pageid, $title ) {
 		global $wgUser;
 		if ( !$wgUser->isAllowed( 'delete' ) ) {
@@ -144,6 +155,9 @@ class ApiQueryInfo extends ApiQueryBase {
 		return ApiQueryInfo::$cachedTokens['delete'];
 	}
 
+	/**
+	 * @deprecated since 1.24
+	 */
 	public static function getProtectToken( $pageid, $title ) {
 		global $wgUser;
 		if ( !$wgUser->isAllowed( 'protect' ) ) {
@@ -158,6 +172,9 @@ class ApiQueryInfo extends ApiQueryBase {
 		return ApiQueryInfo::$cachedTokens['protect'];
 	}
 
+	/**
+	 * @deprecated since 1.24
+	 */
 	public static function getMoveToken( $pageid, $title ) {
 		global $wgUser;
 		if ( !$wgUser->isAllowed( 'move' ) ) {
@@ -172,6 +189,9 @@ class ApiQueryInfo extends ApiQueryBase {
 		return ApiQueryInfo::$cachedTokens['move'];
 	}
 
+	/**
+	 * @deprecated since 1.24
+	 */
 	public static function getBlockToken( $pageid, $title ) {
 		global $wgUser;
 		if ( !$wgUser->isAllowed( 'block' ) ) {
@@ -186,11 +206,17 @@ class ApiQueryInfo extends ApiQueryBase {
 		return ApiQueryInfo::$cachedTokens['block'];
 	}
 
+	/**
+	 * @deprecated since 1.24
+	 */
 	public static function getUnblockToken( $pageid, $title ) {
 		// Currently, this is exactly the same as the block token
 		return self::getBlockToken( $pageid, $title );
 	}
 
+	/**
+	 * @deprecated since 1.24
+	 */
 	public static function getEmailToken( $pageid, $title ) {
 		global $wgUser;
 		if ( !$wgUser->canSendEmail() || $wgUser->isBlockedFromEmailUser() ) {
@@ -205,6 +231,9 @@ class ApiQueryInfo extends ApiQueryBase {
 		return ApiQueryInfo::$cachedTokens['email'];
 	}
 
+	/**
+	 * @deprecated since 1.24
+	 */
 	public static function getImportToken( $pageid, $title ) {
 		global $wgUser;
 		if ( !$wgUser->isAllowedAny( 'import', 'importupload' ) ) {
@@ -219,6 +248,9 @@ class ApiQueryInfo extends ApiQueryBase {
 		return ApiQueryInfo::$cachedTokens['import'];
 	}
 
+	/**
+	 * @deprecated since 1.24
+	 */
 	public static function getWatchToken( $pageid, $title ) {
 		global $wgUser;
 		if ( !$wgUser->isLoggedIn() ) {
@@ -233,6 +265,9 @@ class ApiQueryInfo extends ApiQueryBase {
 		return ApiQueryInfo::$cachedTokens['watch'];
 	}
 
+	/**
+	 * @deprecated since 1.24
+	 */
 	public static function getOptionsToken( $pageid, $title ) {
 		global $wgUser;
 		if ( !$wgUser->isLoggedIn() ) {
@@ -293,9 +328,7 @@ class ApiQueryInfo extends ApiQueryBase {
 			: array();
 		$this->pageIsNew = $pageSet->getCustomField( 'page_is_new' );
 
-		global $wgDisableCounters;
-
-		if ( !$wgDisableCounters ) {
+		if ( !$this->getConfig()->get( 'DisableCounters' ) ) {
 			$this->pageCounter = $pageSet->getCustomField( 'page_counter' );
 		}
 		$this->pageTouched = $pageSet->getCustomField( 'page_touched' );
@@ -333,8 +366,8 @@ class ApiQueryInfo extends ApiQueryBase {
 			), $pageid, $pageInfo );
 			if ( !$fit ) {
 				$this->setContinueEnumParameter( 'continue',
-						$title->getNamespace() . '|' .
-						$title->getText() );
+					$title->getNamespace() . '|' .
+					$title->getText() );
 				break;
 			}
 		}
@@ -343,12 +376,13 @@ class ApiQueryInfo extends ApiQueryBase {
 	/**
 	 * Get a result array with information about a title
 	 * @param int $pageid Page ID (negative for missing titles)
-	 * @param $title Title object
+	 * @param Title $title
 	 * @return array
 	 */
 	private function extractPageInfo( $pageid, $title ) {
 		$pageInfo = array();
-		$titleExists = $pageid > 0; //$title->exists() needs pageid, which is not set for all title objects
+		// $title->exists() needs pageid, which is not set for all title objects
+		$titleExists = $pageid > 0;
 		$ns = $title->getNamespace();
 		$dbkey = $title->getDBkey();
 
@@ -356,11 +390,9 @@ class ApiQueryInfo extends ApiQueryBase {
 		$pageInfo['pagelanguage'] = $title->getPageLanguage()->getCode();
 
 		if ( $titleExists ) {
-			global $wgDisableCounters;
-
 			$pageInfo['touched'] = wfTimestamp( TS_ISO_8601, $this->pageTouched[$pageid] );
 			$pageInfo['lastrevid'] = intval( $this->pageLatest[$pageid] );
-			$pageInfo['counter'] = $wgDisableCounters
+			$pageInfo['counter'] = $this->getConfig()->get( 'DisableCounters' )
 				? ''
 				: intval( $this->pageCounter[$pageid] );
 			$pageInfo['length'] = intval( $this->pageLength[$pageid] );
@@ -410,7 +442,8 @@ class ApiQueryInfo extends ApiQueryBase {
 		if ( $this->fld_notificationtimestamp ) {
 			$pageInfo['notificationtimestamp'] = '';
 			if ( isset( $this->notificationtimestamps[$ns][$dbkey] ) ) {
-				$pageInfo['notificationtimestamp'] = wfTimestamp( TS_ISO_8601, $this->notificationtimestamps[$ns][$dbkey] );
+				$pageInfo['notificationtimestamp'] =
+					wfTimestamp( TS_ISO_8601, $this->notificationtimestamps[$ns][$dbkey] );
 			}
 		}
 
@@ -425,6 +458,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		if ( $this->fld_url ) {
 			$pageInfo['fullurl'] = wfExpandUrl( $title->getFullURL(), PROTO_CURRENT );
 			$pageInfo['editurl'] = wfExpandUrl( $title->getFullURL( 'action=edit' ), PROTO_CURRENT );
+			$pageInfo['canonicalurl'] = wfExpandUrl( $title->getFullURL(), PROTO_CANONICAL );
 		}
 		if ( $this->fld_readable && $title->userCan( 'read', $this->getUser() ) ) {
 			$pageInfo['readable'] = '';
@@ -465,7 +499,7 @@ class ApiQueryInfo extends ApiQueryBase {
 			$this->resetQueryParams();
 			$this->addTables( 'page_restrictions' );
 			$this->addFields( array( 'pr_page', 'pr_type', 'pr_level',
-					'pr_expiry', 'pr_cascade' ) );
+				'pr_expiry', 'pr_cascade' ) );
 			$this->addWhereFld( 'pr_page', array_keys( $this->titles ) );
 
 			$res = $this->select( __METHOD__ );
@@ -556,8 +590,8 @@ class ApiQueryInfo extends ApiQueryBase {
 			$this->resetQueryParams();
 			$this->addTables( array( 'page_restrictions', 'page', 'templatelinks' ) );
 			$this->addFields( array( 'pr_type', 'pr_level', 'pr_expiry',
-					'page_title', 'page_namespace',
-					'tl_title', 'tl_namespace' ) );
+				'page_title', 'page_namespace',
+				'tl_title', 'tl_namespace' ) );
 			$this->addWhere( $lb->constructSet( 'tl', $db ) );
 			$this->addWhere( 'pr_page = page_id' );
 			$this->addWhere( 'pr_page = tl_from' );
@@ -580,7 +614,7 @@ class ApiQueryInfo extends ApiQueryBase {
 			$this->resetQueryParams();
 			$this->addTables( array( 'page_restrictions', 'page', 'imagelinks' ) );
 			$this->addFields( array( 'pr_type', 'pr_level', 'pr_expiry',
-					'page_title', 'page_namespace', 'il_to' ) );
+				'page_title', 'page_namespace', 'il_to' ) );
 			$this->addWhere( 'pr_page = page_id' );
 			$this->addWhere( 'pr_page = il_from' );
 			$this->addWhereFld( 'pr_cascade', 1 );
@@ -633,10 +667,10 @@ class ApiQueryInfo extends ApiQueryBase {
 		foreach ( $res as $row ) {
 			if ( MWNamespace::isTalk( $row->page_namespace ) ) {
 				$this->talkids[MWNamespace::getSubject( $row->page_namespace )][$row->page_title] =
-						intval( $row->page_id );
+					intval( $row->page_id );
 			} else {
 				$this->subjectids[MWNamespace::getTalk( $row->page_namespace )][$row->page_title] =
-						intval( $row->page_id );
+					intval( $row->page_id );
 			}
 		}
 	}
@@ -697,7 +731,8 @@ class ApiQueryInfo extends ApiQueryBase {
 				$this->watched[$row->wl_namespace][$row->wl_title] = true;
 			}
 			if ( $this->fld_notificationtimestamp ) {
-				$this->notificationtimestamps[$row->wl_namespace][$row->wl_title] = $row->wl_notificationtimestamp;
+				$this->notificationtimestamps[$row->wl_namespace][$row->wl_title] =
+					$row->wl_notificationtimestamp;
 			}
 		}
 	}
@@ -706,15 +741,14 @@ class ApiQueryInfo extends ApiQueryBase {
 	 * Get the count of watchers and put it in $this->watchers
 	 */
 	private function getWatcherInfo() {
-		global $wgUnwatchedPageThreshold;
-
 		if ( count( $this->everything ) == 0 ) {
 			return;
 		}
 
 		$user = $this->getUser();
 		$canUnwatchedpages = $user->isAllowed( 'unwatchedpages' );
-		if ( !$canUnwatchedpages && !is_int( $wgUnwatchedPageThreshold ) ) {
+		$unwatchedPageThreshold = $this->getConfig()->get( 'UnwatchedPageThreshold' );
+		if ( !$canUnwatchedpages && !is_int( $unwatchedPageThreshold ) ) {
 			return;
 		}
 
@@ -732,7 +766,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		) );
 		$this->addOption( 'GROUP BY', array( 'wl_namespace', 'wl_title' ) );
 		if ( !$canUnwatchedpages ) {
-			$this->addOption( 'HAVING', "COUNT(*) >= $wgUnwatchedPageThreshold" );
+			$this->addOption( 'HAVING', "COUNT(*) >= $unwatchedPageThreshold" );
 		}
 
 		$res = $this->select( __METHOD__ );
@@ -761,6 +795,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		if ( !is_null( $params['token'] ) ) {
 			return 'private';
 		}
+
 		return 'public';
 	}
 
@@ -784,6 +819,7 @@ class ApiQueryInfo extends ApiQueryBase {
 					// need to be added to getCacheMode()
 				) ),
 			'token' => array(
+				ApiBase::PARAM_DEPRECATED => true,
 				ApiBase::PARAM_DFLT => null,
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_TYPE => array_keys( $this->getTokenFunctions() )
@@ -802,7 +838,7 @@ class ApiQueryInfo extends ApiQueryBase {
 				' watchers              - The number of watchers, if allowed',
 				' notificationtimestamp - The watchlist notification timestamp of each page',
 				' subjectid             - The page ID of the parent page for each talk page',
-				' url                   - Gives a full URL to the page, and also an edit URL',
+				' url                   - Gives a full URL, an edit URL, and the canonical URL for each page',
 				' readable              - Whether the user can read this page',
 				' preload               - Gives the text returned by EditFormPreloadText',
 				' displaytitle          - Gives the way the page title is actually displayed',
@@ -810,72 +846,6 @@ class ApiQueryInfo extends ApiQueryBase {
 			'token' => 'Request a token to perform a data-modifying action on a page',
 			'continue' => 'When more results are available, use this to continue',
 		);
-	}
-
-	public function getResultProperties() {
-		$props = array(
-			ApiBase::PROP_LIST => false,
-			'' => array(
-				'touched' => 'timestamp',
-				'lastrevid' => 'integer',
-				'counter' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'length' => 'integer',
-				'redirect' => 'boolean',
-				'new' => 'boolean',
-				'starttimestamp' => array(
-					ApiBase::PROP_TYPE => 'timestamp',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'contentmodel' => 'string',
-			),
-			'watched' => array(
-				'watched' => 'boolean'
-			),
-			'watchers' => array(
-				'watchers' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'notificationtimestamp' => array(
-				'notificationtimestamp' => array(
-					ApiBase::PROP_TYPE => 'timestamp',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'talkid' => array(
-				'talkid' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'subjectid' => array(
-				'subjectid' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'url' => array(
-				'fullurl' => 'string',
-				'editurl' => 'string'
-			),
-			'readable' => array(
-				'readable' => 'boolean'
-			),
-			'preload' => array(
-				'preload' => 'string'
-			),
-			'displaytitle' => array(
-				'displaytitle' => 'string'
-			)
-		);
-
-		self::addTokenProperties( $props, $this->getTokenFunctions() );
-
-		return $props;
 	}
 
 	public function getDescription() {

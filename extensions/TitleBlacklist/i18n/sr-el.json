@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Michaello",
+			"Milicevic01"
+		]
+	},
+	"titleblacklist-desc": "Dopušta zabranu stvaranja strana s određenim naslovima: [[MediaWiki:Titleblacklist|crna lista]] i [[MediaWiki:Titlewhitelist|bela lista]].",
+	"titleblacklist": "# Ovo je naslov crnog spiska. Naslovi koji sadrže regularni izraz iz ovog spiska ne mogu biti napravljeni.\n# Koristi \"#\" za komentare.\n# Podrazumevano je neosetljiv na veličinu slova",
+	"titlewhitelist": "# Ovo je beli spisak naslova. Koristi \"#\" za komentare.\n# Podrazumevano je neosetljiv na veličinu slova",
+	"titleblacklist-forbidden-new-account": "Korisničko ime „$2“ nalazi se na crnoj listi.\nPoklapa se sa sledećim unosom na crnoj listi: <code>$1</code>",
+	"titleblacklist-override": "Zanemari crnu listu",
+	"right-tboverride": "zaobilaženje crne liste naslova ili korisničkih imena",
+	"right-tboverride-account": "zaobilaženje crne liste korisničkih imena"
+}

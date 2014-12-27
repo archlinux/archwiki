@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Christian List",
+			"Huslåke"
+		]
+	},
+	"fancycaptcha-addurl": "Din ændring tilføjer nye eksterne henvisninger. For at beskytte mod automatiseret spam, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):",
+	"fancycaptcha-badlogin": "For at beskytte mod automatiske forsøg på at gætte adgangskoden, skal du indtaste ordet som vises i feltet nedenfor. ([[Special:Captcha/help|mere information]]):",
+	"fancycaptcha-createaccount": "For at beskytte mod automatisk oprettelse af brugernavne, der bruges til spam, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):",
+	"fancycaptcha-create": "For at oprette en ny side, skal du indtaste ordet som vises nedenfor i feltet under det. ([[Special:Captcha/help|mere information]]):",
+	"fancycaptcha-edit": "or at redigere denne side\n([[Special:Captcha/help|more info]]):"
+}

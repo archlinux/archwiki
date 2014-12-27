@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kaustubh",
+			"V.narsikar"
+		]
+	},
+	"interwiki": "आंतरविकि डाटा पहा व संपादा",
+	"interwiki-title-norights": "अंतरविकि डाटा पहा",
+	"interwiki-desc": "आंतरविकि सारणी पाहण्यासाठी व संपादण्यासाठी एक [[Special:Interwiki|विशेष पान]] वाढविते",
+	"interwiki_intro": "आंतरविकि सारणी बद्दल अधिक माहीतीसाठी [http://www.mediawiki.org/wiki/Interwiki_table MediaWiki.org] पहा.",
+	"interwiki_prefix": "उपपद (पूर्वप्रत्यय)",
+	"interwiki-prefix-label": "उपपद (पूर्वप्रत्यय):",
+	"interwiki_error": "त्रुटी: आंतरविकि सारणी रिकामी आहे, किंवा इतर काहीतरी चुकलेले आहे.",
+	"interwiki_reasonfield": "कारण:",
+	"interwiki_delquestion": "\"$1\" वगळत आहे",
+	"interwiki_deleting": "तुम्ही \"$1\" उपपद वगळत आहात.",
+	"interwiki_deleted": "\"$1\" उपपद आंतरविकि सारणीमधून वगळण्यात आलेले आहे.",
+	"interwiki_delfailed": "\"$1\" उपपद आंतरविकि सारणीतून वगळता आलेले नाही.",
+	"interwiki_addtext": "एक आंतरविकि उपपद वाढवा",
+	"interwiki_addintro": "तुम्ही एक नवीन आंतरविकि उपपद वाढवित आहात. कृपया लक्षात घ्या की त्यामध्ये स्पेस ( ), विसर्ग (:), आणिचिन्ह (&), किंवा बरोबरची खूण (=) असू शकत नाही.",
+	"interwiki_addbutton": "वाढवा",
+	"interwiki_added": "\"$1\" उपपद आंतरविकि सारणी मध्ये वाढविण्यात आलेले आहे.",
+	"interwiki_addfailed": "\"$1\" उपपद आंतरविकि सारणी मध्ये वाढवू शकलेलो नाही. कदाचित ते अगोदरच अस्तित्वात असण्याची शक्यता आहे.",
+	"interwiki_edittext": "एक आंतरविकि उपपद संपादित आहे",
+	"interwiki_editintro": "तुम्ही एक आंतरविकि उपपद संपादित आहात.\nलक्षात ठेवा की यामुळे अगोदर दिलेले दुवे तुटू शकतात.",
+	"interwiki_edited": "आंतरविकि सारणीमध्ये \"$1\" उपपद यशस्वीरित्या बदलण्यात आलेले आहे.",
+	"interwiki_editerror": "आंतरविकि सारणीमध्ये \"$1\" उपपद बदलू शकत नाही.\nकदाचित ते अस्तित्वात नसेल.",
+	"log-name-interwiki": "आंतरविकि सारणी नोंद",
+	"log-description-interwiki": "[[Special:Interwiki|आंतरविकि सारणीत]] झालेल्या बदलांची ही सूची आहे.",
+	"right-interwiki": "आंतरविकि डाटा बदला"
+}

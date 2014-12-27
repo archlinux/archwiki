@@ -44,6 +44,7 @@ if ( !$maintClass || !class_exists( $maintClass ) ) {
 }
 
 // Get an object to start us off
+/** @var Maintenance $maintenance */
 $maintenance = new $maintClass();
 
 // Basic sanity checks and such
@@ -77,36 +78,23 @@ if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
 	# Use a callback function to configure MediaWiki
 	call_user_func( MW_CONFIG_CALLBACK );
 } else {
-	if ( file_exists( "$IP/../wmf-config/wikimedia-mode" ) ) {
-		// Load settings, using wikimedia-mode if needed
-		// @todo FIXME: Replace this hack with general farm-friendly code
-		# @todo FIXME: Wikimedia-specific stuff needs to go away to an ext
-		# Maybe a hook?
-		global $cluster;
-		$cluster = 'pmtpa';
-		require "$IP/../wmf-config/wgConf.php";
-	}
 	// Require the configuration (probably LocalSettings.php)
 	require $maintenance->loadSettings();
 }
 
-if ( $maintenance->getDbType() === Maintenance::DB_ADMIN &&
-	is_readable( "$IP/AdminSettings.php" ) )
-{
-	require "$IP/AdminSettings.php";
-}
-
 if ( $maintenance->getDbType() === Maintenance::DB_NONE ) {
-	if ( $wgLocalisationCacheConf['storeClass'] === false && ( $wgLocalisationCacheConf['store'] == 'db' || ( $wgLocalisationCacheConf['store'] == 'detect' && !$wgCacheDirectory ) ) ) {
-		$wgLocalisationCacheConf['storeClass'] = 'LCStore_Null';
+	if ( $wgLocalisationCacheConf['storeClass'] === false
+		&& ( $wgLocalisationCacheConf['store'] == 'db'
+			|| ( $wgLocalisationCacheConf['store'] == 'detect' && !$wgCacheDirectory ) )
+	) {
+		$wgLocalisationCacheConf['storeClass'] = 'LCStoreNull';
 	}
 }
+
+$maintenance->setConfig( ConfigFactory::getDefaultInstance()->makeConfig( 'main' ) );
 $maintenance->finalSetup();
 // Some last includes
 require_once "$IP/includes/Setup.php";
-
-// Much much faster startup than creating a title object
-$wgTitle = null;
 
 // Do the work
 try {

@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Borichèt",
+			"Dragonòt"
+		]
+	},
+	"asirra-desc": "Mòdul Asirra për ConfirmEdit",
+	"asirra-edit": "Për giuté a protege contra la rumenta dle modìfiche automàtiche, për piasì ch'a selession-a mach le fòto ëd gat ant ël quàder sì-sota:",
+	"asirra-addurl": "Soa modìfica a conten dle liure esterne neuve. Për giuté a protege contra la rumenta dle modìfiche automàtiche, për piasì ch'a selession-a mach le fòto ëd gat ant ël quàder sì-sota:",
+	"asirra-badlogin": "Për giuté a protege contra la forsadura automatisà ëd le ciav, për piasì ch'a selession-a mach la fòto dël gat ant ël quàder sì-sota:",
+	"asirra-createaccount": "Për giuté a protege contra la creassion automatisà ëd cont, për piasì ch'a selession-a mach la fòto dël gat ant ël quàder sì-sota:",
+	"asirra-createaccount-fail": "Për piasì identifica coretament ij gat.",
+	"asirra-create": "Për giuté a protege contra la creassion automatisà ëd pàgine, për piasì ch'a selession-a mach le fòto ëd gat ant ël quàder sì-sota:",
+	"asirra-nojs": "'''Për piasì, ch'a abìlita JavaScript e ch'a spedissa torna la pàgina.'''",
+	"asirra-failed": "Për piasì identìfica tute le figure ëd gat"
+}

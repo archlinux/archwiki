@@ -27,12 +27,12 @@
  * @ingroup Cache
  */
 class ObjectCache {
-	static $instances = array();
+	public static $instances = array();
 
 	/**
 	 * Get a cached instance of the specified type of cache object.
 	 *
-	 * @param $id string
+	 * @param string $id
 	 *
 	 * @return BagOStuff
 	 */
@@ -56,7 +56,7 @@ class ObjectCache {
 	/**
 	 * Create a new cache object of the specified type.
 	 *
-	 * @param $id string
+	 * @param string $id
 	 *
 	 * @throws MWException
 	 * @return BagOStuff
@@ -75,7 +75,7 @@ class ObjectCache {
 	/**
 	 * Create a new cache object from parameters
 	 *
-	 * @param $params array
+	 * @param array $params
 	 *
 	 * @throws MWException
 	 * @return BagOStuff
@@ -87,8 +87,9 @@ class ObjectCache {
 			$class = $params['class'];
 			return new $class( $params );
 		} else {
-			throw new MWException( "The definition of cache type \"" . print_r( $params, true ) . "\" lacks both " .
-				"factory and class parameters." );
+			throw new MWException( "The definition of cache type \""
+				. print_r( $params, true ) . "\" lacks both "
+				. "factory and class parameters." );
 		}
 	}
 
@@ -101,7 +102,7 @@ class ObjectCache {
 	 * be an alias to the configured cache choice for that.
 	 * If no cache choice is configured (by default $wgMainCacheType is CACHE_NONE),
 	 * then CACHE_ANYTHING will forward to CACHE_DB.
-	 * @param $params array
+	 * @param array $params
 	 * @return BagOStuff
 	 */
 	static function newAnything( $params ) {
@@ -118,11 +119,15 @@ class ObjectCache {
 	/**
 	 * Factory function referenced from DefaultSettings.php for CACHE_ACCEL.
 	 *
-	 * @param $params array
+	 * This will look for any APC style server-local cache.
+	 * A fallback cache can be specified if none is found.
+	 *
+	 * @param array $params
+	 * @param int|string $fallback Fallback cache, e.g. (CACHE_NONE, "hash") (since 1.24)
 	 * @throws MWException
 	 * @return BagOStuff
 	 */
-	static function newAccelerator( $params ) {
+	static function newAccelerator( $params, $fallback = null ) {
 		if ( function_exists( 'apc_fetch' ) ) {
 			$id = 'apc';
 		} elseif ( function_exists( 'xcache_get' ) && wfIniGetBool( 'xcache.var_size' ) ) {
@@ -130,6 +135,9 @@ class ObjectCache {
 		} elseif ( function_exists( 'wincache_ucache_get' ) ) {
 			$id = 'wincache';
 		} else {
+			if ( $fallback ) {
+				return self::newFromId( $fallback );
+			}
 			throw new MWException( "CACHE_ACCEL requested but no suitable object " .
 				"cache is present. You may want to install APC." );
 		}
@@ -143,7 +151,7 @@ class ObjectCache {
 	 * hashing scheme and a different interpretation of the flags bitfield, so
 	 * switching between the two clients randomly would be disastrous.
 	 *
-	 * @param $params array
+	 * @param array $params
 	 *
 	 * @return MemcachedPhpBagOStuff
 	 */

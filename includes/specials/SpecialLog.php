@@ -45,8 +45,6 @@ class SpecialLog extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		global $wgLogRestrictions;
-
 		$this->setHeaders();
 		$this->outputHeader();
 
@@ -77,11 +75,14 @@ class SpecialLog extends SpecialPage {
 		// If the user doesn't have the right permission to view the specific
 		// log type, throw a PermissionsError
 		// If the log type is invalid, just show all public logs
+		$logRestrictions = $this->getConfig()->get( 'LogRestrictions' );
 		$type = $opts->getValue( 'type' );
 		if ( !LogPage::isLogType( $type ) ) {
 			$opts->setValue( 'type', '' );
-		} elseif ( isset( $wgLogRestrictions[$type] ) && !$this->getUser()->isAllowed( $wgLogRestrictions[$type] ) ) {
-			throw new PermissionsError( $wgLogRestrictions[$type] );
+		} elseif ( isset( $logRestrictions[$type] )
+			&& !$this->getUser()->isAllowed( $logRestrictions[$type] )
+		) {
+			throw new PermissionsError( $logRestrictions[$type] );
 		}
 
 		# Handle type-specific inputs
@@ -98,6 +99,7 @@ class SpecialLog extends SpecialPage {
 		# Some log types are only for a 'User:' title but we might have been given
 		# only the username instead of the full title 'User:username'. This part try
 		# to lookup for a user by that name and eventually fix user input. See bug 1697.
+		wfRunHooks( 'GetLogTypesOnUser', array( &$this->typeOnUser ) );
 		if ( in_array( $opts->getValue( 'type' ), $this->typeOnUser ) ) {
 			# ok we have a type of log which expect a user title.
 			$target = Title::newFromText( $opts->getValue( 'page' ) );
@@ -112,14 +114,26 @@ class SpecialLog extends SpecialPage {
 		$this->show( $opts, $qc );
 	}
 
-	private function parseParams( FormOptions $opts, $par ) {
-		global $wgLogTypes;
+	/**
+	 * Return an array of subpages beginning with $search that this special page will accept.
+	 *
+	 * @param string $search Prefix to search for
+	 * @param int $limit Maximum number of results to return
+	 * @return string[] Matching subpages
+	 */
+	public function prefixSearchSubpages( $search, $limit = 10 ) {
+		$subpages = $this->getConfig()->get( 'LogTypes' );
+		$subpages[] = 'all';
+		sort( $subpages );
+		return self::prefixSearchArray( $search, $limit, $subpages );
+	}
 
+	private function parseParams( FormOptions $opts, $par ) {
 		# Get parameters
 		$parms = explode( '/', ( $par = ( $par !== null ) ? $par : '' ) );
 		$symsForAll = array( '*', 'all' );
 		if ( $parms[0] != '' &&
-			( in_array( $par, $wgLogTypes ) || in_array( $par, $symsForAll ) )
+			( in_array( $par, $this->getConfig()->get( 'LogTypes' ) ) || in_array( $par, $symsForAll ) )
 		) {
 			$opts->setValue( 'type', $par );
 		} elseif ( count( $parms ) == 2 ) {
@@ -193,10 +207,9 @@ class SpecialLog extends SpecialPage {
 		}
 
 		# Show button to hide log entries
-		global $wgScript;
 		$s = Html::openElement(
 			'form',
-			array( 'action' => $wgScript, 'id' => 'mw-log-deleterevision-submit' )
+			array( 'action' => wfScript(), 'id' => 'mw-log-deleterevision-submit' )
 		) . "\n";
 		$s .= Html::hidden( 'title', SpecialPage::getTitleFor( 'Revisiondelete' ) ) . "\n";
 		$s .= Html::hidden( 'target', SpecialPage::getTitleFor( 'Log' ) ) . "\n";
@@ -217,7 +230,7 @@ class SpecialLog extends SpecialPage {
 
 	/**
 	 * Set page title and show header for this log type
-	 * @param $type string
+	 * @param string $type
 	 * @since 1.19
 	 */
 	protected function addHeader( $type ) {

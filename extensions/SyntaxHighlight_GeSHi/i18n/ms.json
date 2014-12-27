@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aviator"
+		]
+	},
+	"syntaxhighlight-desc": "Menyediakan tag <code>&lt;syntaxhighlight&gt;</code> untuk penonjolan sintaks menggunakan [http://qbnz.com/highlighter/ GeSHi]",
+	"syntaxhighlight-specify": "Anda hendaklah menyatakan bahasa seperti ini:",
+	"syntaxhighlight-supported": "Bahasa-bahasa yang disokong untuk penonjolan sintaks:",
+	"syntaxhighlight-err-loading": "(berlaku ralat ketika memuat senarai bahasa yang disokong)",
+	"syntaxhighlight-err-language": "Bahasa tidak sah.",
+	"geshi.css": "/* CSS yang diletakkan di sini akan dikenakan kepada penonjolan sintaks GeSHi */"
+}

@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Shinjiman"
+		]
+	},
+	"syntaxhighlight-desc": "使用[http://qbnz.com/highlighter/ GeSHi Highlighter]以<code>&lt;syntaxhighlight&gt;</code>提供高亮",
+	"syntaxhighlight-specify": "您需要指定一种语言，像这样:",
+	"syntaxhighlight-supported": "语法高亮所支持的语言:",
+	"syntaxhighlight-err-loading": "（支持语言列表载入错误）",
+	"syntaxhighlight-err-language": "无效的语言。",
+	"geshi.css": "/* 放在这里的CSS会以GeSHi语法高亮方式显示 */"
+}

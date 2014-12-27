@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Shinjiman"
+		]
+	},
+	"syntaxhighlight-desc": "用[http://qbnz.com/highlighter/ GeSHi Highlighter]以<code>&lt;syntaxhighlight&gt;</code>提供醒目提示",
+	"syntaxhighlight-specify": "你需要指定一種語言，好似咁:",
+	"syntaxhighlight-supported": "語法醒目標示所支援嘅語言:",
+	"syntaxhighlight-err-loading": "(支援語言清單載入錯誤)",
+	"syntaxhighlight-err-language": "無效嘅語言。",
+	"geshi.css": "/* 放響呢度嘅CSS會以GeSHi語法醒目提示方式顯示 */"
+}

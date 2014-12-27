@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bresta"
+		]
+	},
+	"cologneblue.css": "/* CSS i vendosun këtu ka me i prekë shfrytëzuesit e dukjes Cologne Blue */",
+	"cologneblue.js": "/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen Cologne Blue */"
+}

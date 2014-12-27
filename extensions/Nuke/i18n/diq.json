@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aspar",
+			"Erdemaslancan",
+			"Mirzali"
+		]
+	},
+	"nuke": "pêropiya hewnakeno..",
+	"action-nuke": "perê nuke",
+	"nuke-desc": "Hizmetlilere, sayfaları [[Special:Nuke|kitlesel silme]] yeteneği verir",
+	"nuke-nopages": "Vuriyayişê ke hetê ıney ra [[Special:Contributions/$1|{{GENDER:$1|$1}}]] biye tede çı pelê neweyi çini .",
+	"nuke-list": "Pelê ke cêr de yê hetê ıney ra [[Special:Contributions/$1|{{GENDER:$1|$1}}]]  yew tarixo nızdi de  vıraziyayi; mışore bıkerê u qey hewnakerdışi yew tuş bıtıknê.",
+	"nuke-defaultreason": "Peleyê ke [[Special:Contributions/$1|{{GENDER:$1|$1}}]] dekerdê de ena pêron hewadayış",
+	"nuke-tools": "Na hacet, peleyê ke nezdı ra yew karber yana ip ra akerdê êna pêrun rê esternayış de cı rê mısade dano.\nListanê peleyê ke besternaya vinayışi rê namey karberi yana ip adresi dekere de.",
+	"nuke-submit-user": "Şo",
+	"nuke-submit-delete": "Weçinayi esterne",
+	"right-nuke": "pelan yew hew de hewnaker",
+	"nuke-select": "Weçinaye: $1",
+	"nuke-delete-more": "[[Special:Nuke|Zêde pelan bestere]]",
+	"nuke-viewchanges": "vurnayışan bıvêne"
+}

@@ -1,0 +1,14 @@
+{
+    "@metadata": {
+        "authors": []
+    },
+    "asirra-desc": "Asirra module for ConfirmEdit",
+    "asirra-edit": "To protect the wiki against automated edit spam, we kindly ask you to select just the cat photos in the box below:",
+    "asirra-addurl": "Your edit includes new external links. To protect the wiki against automated edit spam, we kindly ask you to select just the cat photos in the box below:",
+    "asirra-badlogin": "To protect the wiki against automated password cracking, we kindly ask you to select just the cat photos in the box below:",
+    "asirra-createaccount": "To protect the wiki against automated account creation, we kindly ask you to select just the cat photos in the box below:",
+    "asirra-createaccount-fail": "Please correctly identify the cats.",
+    "asirra-create": "To protect the wiki against automated page creation, we kindly ask you to select just the cat photos in the box below:",
+    "asirra-nojs": "'''Please enable JavaScript and resubmit the page.'''",
+    "asirra-failed": "Please identify all cat images"
+}

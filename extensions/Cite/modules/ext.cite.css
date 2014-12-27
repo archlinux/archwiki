@@ -14,3 +14,11 @@
 	width: 1px !important;
 	overflow: hidden;
 }
+
+.mw-cite-backlink,
+.cite-accessibility-label {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}

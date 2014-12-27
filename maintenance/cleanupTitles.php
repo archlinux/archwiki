@@ -7,7 +7,7 @@
  *   --fix  Actually clean up titles; otherwise just checks for them
  *
  * Copyright © 2005 Brion Vibber <brion@pobox.com>
- * http://www.mediawiki.org/
+ * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,9 +148,15 @@ class TitleCleanup extends TableCleanup {
 				$ns = 0;
 			}
 
+			# Namespace which no longer exists. Put the page in the main namespace
+			# since we don't have any idea of the old namespace name. See bug 68501.
+			if ( !MWNamespace::exists( $ns ) ) {
+				$ns = 0;
+			}
+
 			$clean = 'Broken/' . $prior;
 			$verified = Title::makeTitleSafe( $ns, $clean );
-			if ( $verified->exists() ) {
+			if ( !$verified || $verified->exists() ) {
 				$blah = "Broken/id:" . $row->page_id;
 				$this->output( "Couldn't legalize; form '$clean' exists; using '$blah'\n" );
 				$verified = Title::makeTitleSafe( $ns, $blah );

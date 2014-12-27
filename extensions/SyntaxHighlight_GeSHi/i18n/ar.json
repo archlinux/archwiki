@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Meno25"
+		]
+	},
+	"syntaxhighlight-desc": "يوفر تعليم النص <code>&lt;syntaxhighlight&gt;</code> باستخدام [http://qbnz.com/highlighter/ معلم GeSHi]",
+	"syntaxhighlight-specify": "يجب عليك تحديد لغة مثل هذه:",
+	"syntaxhighlight-supported": "اللغات المدعومة لتظليل الصياغة:",
+	"syntaxhighlight-err-loading": "(خطأ في تحميل قائمة اللغات المدعومة)",
+	"syntaxhighlight-err-language": "لغة غير صحيحة.",
+	"geshi.css": "/* الأنماط المتراصة CSS المعروضة هنا ستطبق على تظليل صياغة GeSHi */"
+}

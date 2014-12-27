@@ -1,4 +1,5 @@
 /* Publish module for wikiEditor */
+/*jshint onevar:false */
 ( function ( $ ) {
 
 $.wikiEditor.modules.publish = {
@@ -31,7 +32,7 @@ fn: {
 	 * @param context Context object of editor to create module in
 	 * @param config Configuration object to create module from
 	 */
-	create: function ( context, config ) {
+	create: function ( context ) {
 		// Build the dialog behind the Publish button
 		var dialogID = 'wikiEditor-' + context.instance + '-dialog';
 		$.wikiEditor.modules.dialogs.fn.create(
@@ -66,9 +67,9 @@ fn: {
 					init: function () {
 						var i;
 
-						$(this).find( '[rel]' ).each( function () {
-							$(this).text( mediaWiki.msg( $(this).attr( 'rel' ) ) );
-						});
+						$( this ).find( '[rel]' ).each( function () {
+							$( this ).text( mediaWiki.msg( $( this ).attr( 'rel' ) ) );
+						} );
 
 						/* REALLY DIRTY HACK! */
 						// Reformat the copyright warning stuff
@@ -84,26 +85,28 @@ fn: {
 						}
 						newCopyWarnHTML += '</ul>';
 						// No list if there's only one element
-						$(this).find( '.wikiEditor-publish-dialog-copywarn' ).html(
+						$( this ).find( '.wikiEditor-publish-dialog-copywarn' ).html(
 								copyWarnStatements.length > 1 ? newCopyWarnHTML : copyWarnHTML
 						);
 						/* END OF REALLY DIRTY HACK */
 
-						if ( $( '#wpMinoredit' ).length === 0 )
+						if ( $( '#wpMinoredit' ).length === 0 ) {
 							$( '#wikiEditor-' + context.instance + '-dialog-minor' ).hide();
-						else if ( $( '#wpMinoredit' ).is( ':checked' ) )
+						} else if ( $( '#wpMinoredit' ).prop( 'checked' ) ) {
 							$( '#wikiEditor-' + context.instance + '-dialog-minor' )
 								.prop( 'checked', true );
-						if ( $( '#wpWatchthis' ).length === 0 )
+						}
+						if ( $( '#wpWatchthis' ).length === 0 ) {
 							$( '#wikiEditor-' + context.instance + '-dialog-watch' ).hide();
-						else if ( $( '#wpWatchthis' ).is( ':checked' ) )
+						} else if ( $( '#wpWatchthis' ).prop( 'checked' ) ) {
 							$( '#wikiEditor-' + context.instance + '-dialog-watch' )
 								.prop( 'checked', true );
+							}
 
-						$(this).find( 'form' ).submit( function ( e ) {
-							$(this).closest( '.ui-dialog' ).find( 'button:first' ).click();
+						$( this ).find( 'form' ).submit( function ( e ) {
+							$( this ).closest( '.ui-dialog' ).find( 'button:first' ).click();
 							e.preventDefault();
-						});
+						} );
 					},
 					immediateCreate: true,
 					dialog: {
@@ -122,7 +125,7 @@ fn: {
 								$( '#editform' ).submit();
 							},
 							'wikieditor-publish-dialog-goback': function () {
-								$(this).dialog( 'close' );
+								$( this ).dialog( 'close' );
 							}
 						},
 						open: function () {

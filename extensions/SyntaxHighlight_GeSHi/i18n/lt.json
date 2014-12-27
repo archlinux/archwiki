@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Garas",
+			"Homo",
+			"Matasg"
+		]
+	},
+	"syntaxhighlight-desc": "Teikia sintaksės paryškinimus <code>&lt;syntaxhighlight&gt;</code> naudojant [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Jums reikia nurodyti kalbą kaip čia:",
+	"syntaxhighlight-supported": "Palaikomos kalbos sintaksės paryškinimui:",
+	"syntaxhighlight-err-loading": "(klaida įkeliant palaikomų kalbų sąrašą)",
+	"syntaxhighlight-err-language": "Neleistina kalba.",
+	"geshi.css": "/* Čia pateiktas CSS bus taikomas GeSHi sintaksės paryškinimams */"
+}

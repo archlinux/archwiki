@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mostafadaneshvar"
+		]
+	},
+	"syntaxhighlight-desc": "ساختار پررنگی آریت <code>&lt;syntaxhighlight&gt;</code> گون استفاده چه[http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "لازمنت شما یک زبانی په داب شی مشخض کنیت:",
+	"syntaxhighlight-supported": "حمایتی زبانان په ساختار پررنگی:",
+	"syntaxhighlight-err-loading": "(حطا ته بار کتن لیست زبان داشتگین)",
+	"syntaxhighlight-err-language": "نامعتبرین زبان",
+	"geshi.css": "/* CSS که ادان هستن ته ساختار جی شی پررنگ کتن کارمرز بین */"
+}

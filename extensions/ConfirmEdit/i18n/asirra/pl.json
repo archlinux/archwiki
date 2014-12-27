@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"BeginaFelicysym",
+			"WTM"
+		]
+	},
+	"asirra-desc": "Moduł Asirra dla ConfirmEdit",
+	"asirra-edit": "W celu ochrony przed zautomatyzowanym spamem, proszę wybrać tylko zdjęcia kotów w poniższym polu:",
+	"asirra-addurl": "Wprowadzony przez ciebie tekst zawiera nowe linki zewnętrzne. W celu ochrony przed zautomatyzowanym spamem, proszę wskazać tylko zdjęcia kotów w poniższym polu:",
+	"asirra-badlogin": "W celu ochrony przed zautomatyzowanym łamaniem haseł, proszę wybrać tylko zdjęcia kotów w poniższym polu:",
+	"asirra-createaccount": "W celu ochrony przed zautomatyzowanym tworzeniem kont, proszę wybrać tylko zdjęcia kotów w poniższym polu:",
+	"asirra-createaccount-fail": "Prosimy prawidłowo zidentyfikować koty.",
+	"asirra-create": "W celu ochrony przed przed automatycznym tworzeniem stron, proszę wybrać tylko zdjęcia kotów w poniższym polu:",
+	"asirra-nojs": "'''Prosimy włączyć obsługę języka JavaScript i ponowne przesłanie strony.'''",
+	"asirra-failed": "Prosimy wskazać wszystkie obrazy kotów"
+}

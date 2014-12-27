@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bèrto 'd Sèra",
+			"Dragonòt"
+		]
+	},
+	"syntaxhighlight-desc": "A evidensia la sintassi <code>&lt;syntaxhighlight&gt;</code>an dovrand [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "A venta specifiché na lenga coma:",
+	"syntaxhighlight-supported": "Lenghe dont as peul fé l'evidensiassion dla sintassi:",
+	"syntaxhighlight-err-loading": "(eror ën cariand la lista dle lenghe dont sintassi as peul evidensié)",
+	"syntaxhighlight-err-language": "Lenga nen bon-a",
+	"geshi.css": "/* ël CSS piassà ambelessì a sarà aplicà a l'evidensiassion ëd sintassi GeSHi */"
+}

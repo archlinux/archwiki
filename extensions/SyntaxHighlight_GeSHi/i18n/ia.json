@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie"
+		]
+	},
+	"syntaxhighlight-desc": "Forni le coloration syntactic in <code>&lt;syntaxhighlight&gt;</code> per medio de [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Tu debe specificar un linguage in iste modo:",
+	"syntaxhighlight-supported": "Linguages supportate pro le coloration syntactic:",
+	"syntaxhighlight-err-loading": "(error durante le cargamento del lista de linguages supportate)",
+	"syntaxhighlight-err-language": "Linguage invalide.",
+	"geshi.css": "/* Omne CSS inserite hic se applicara al coloration syntactic con GeSHi */"
+}

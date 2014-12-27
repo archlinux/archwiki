@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Anakmalaysia",
+			"Aviator"
+		]
+	},
+	"modern.css": "/* CSS yang terletak di sini akan mempengaruhi pengguna kulit Moden */",
+	"modern.js": "/* Sebarang kod JavaScript di sini akan dimuat oleh sesiapa yang menggunakan rupa Moden */",
+	"skinname-modern": "Moden",
+	"modern-desc": "Tema biru/kelabu dengan palang sisi dan palang puncak. Diubah suai daripada MonoBook."
+}

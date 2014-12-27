@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Chrumps",
+			"Derbeth",
+			"Marcin Łukasz Kiejzik",
+			"Matma Rex",
+			"Sovq",
+			"Sp5uhe"
+		]
+	},
+	"gadgets-desc": "Pozwala użytkownikom wybrać [[Special:Gadgets|gadżety CSS i JavaScript]] na [[Special:Preferences#mw-prefsection-gadgets|stronie preferencji]]",
+	"prefs-gadgets": "Gadżety",
+	"gadgets-prefstext": "Poniżej znajduje się lista specjalnych gadżetów, które możesz włączyć dla swojego konta użytkownika.\nGadżety najczęściej wykorzystują JavaScript, więc by działały, musisz mieć w swojej przeglądarce włączoną obsługę JavaScriptu. Gadżety nie mają wpływu na tę stronę preferencji.\n\nGadżety nie są częścią oprogramowania MediaWiki i najprawdopodobniej zostały stworzone przez użytkowników tej wiki.\nLokalni administratorzy mogą edytować dostępne gadżety używając stron [[MediaWiki:Gadgets-definition|Definicje gadżetów]] oraz [[Special:Gadgets|Gadżety]].",
+	"gadgets": "Gadżety",
+	"gadgets-title": "Gadżety",
+	"gadgets-pagetext": "Poniżej znajduje się lista specjalnych gadżetów, które użytkownicy mogą włączyć na swojej [[Special:Preferences#mw-prefsection-gadgets|stronie preferencji]]. Lista ta jest zdefiniowana na stronie [[MediaWiki:Gadgets-definition|definicji]].\nPoniższy przegląd ułatwia dostęp do komunikatów systemu, które definiują opis i kod każdego z gadżetów.",
+	"gadgets-uses": "Używa",
+	"gadgets-required-rights": "Wymaga {{PLURAL:$2|uprawnienia|następujących uprawnień:}}\n\n$1",
+	"gadgets-required-skins": "Działa wyłącznie ze {{PLURAL:$2|skórką $1|skórkami: $1}}.",
+	"gadgets-default": "Domyślnie włączone dla wszystkich.",
+	"gadgets-export": "Eksportuj",
+	"gadgets-export-title": "Eksportowanie gadżetów",
+	"gadgets-not-found": "Nie odnaleziono gadżetu „$1”.",
+	"gadgets-export-text": "Jeśli chcesz wyeksportować gadżet „$1” kliknij na przycisk „{{int:gadgets-export-download}}”, zapisz pobrany plik, wejdź na stronę „Special:Import” w docelowej wiki i prześlij go. Następnie dodaj poniższy kod do strony MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nMusisz mieć właściwe uprawnienia na wiki docelowej (w tym do edycji komunikatów systemowych) oraz musi być włączony import na serwer poprzez przesłanie pliku.",
+	"gadgets-export-download": "Pobierz"
+}

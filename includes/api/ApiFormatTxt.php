@@ -26,6 +26,7 @@
 
 /**
  * API Text output formatter
+ * @deprecated since 1.24
  * @ingroup API
  */
 class ApiFormatTxt extends ApiFormatBase {
@@ -38,10 +39,11 @@ class ApiFormatTxt extends ApiFormatBase {
 	}
 
 	public function execute() {
+		$this->markDeprecated();
 		$this->printText( print_r( $this->getResultData(), true ) );
 	}
 
 	public function getDescription() {
-		return 'Output data in PHP\'s print_r() format' . parent::getDescription();
+		return 'DEPRECATED! Output data in PHP\'s print_r() format' . parent::getDescription();
 	}
 }

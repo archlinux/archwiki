@@ -23,6 +23,7 @@ $wgExtensionCredits['specialpage'][] = array(
 );
 
 # Internationalisation files
+$wgMessagesDirs['Renameuser'] = __DIR__ . '/i18n';
 $wgExtensionMessagesFiles['Renameuser'] = __DIR__ . '/Renameuser.i18n.php';
 $wgExtensionMessagesFiles['RenameuserAliases'] = __DIR__ . '/Renameuser.alias.php';
 
@@ -48,4 +49,5 @@ $wgJobClasses['renameUser'] = 'RenameUserJob';
 
 $wgHooks['ShowMissingArticle'][] = 'RenameuserHooks::onShowMissingArticle';
 $wgHooks['ContributionsToolLinks'][] = 'RenameuserHooks::onContributionsToolLinks';
+$wgHooks['GetLogTypesOnUser'][] = 'RenameuserHooks::onGetLogTypesOnUser';
 

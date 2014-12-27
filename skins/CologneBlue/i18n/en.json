@@ -1,0 +1,6 @@
+{
+	"cologneblue.css": "/* CSS placed here will affect users of the Cologne Blue skin */",
+	"cologneblue.js": "/* Any JavaScript here will be loaded for users using the Cologne Blue skin */",
+	"skinname-cologneblue": "Cologne Blue",
+	"cologneblue-desc": "A lightweight skin with minimal formatting"
+}

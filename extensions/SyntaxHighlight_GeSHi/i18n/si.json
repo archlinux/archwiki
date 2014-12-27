@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Calcey",
+			"පසිඳු කාවින්ද"
+		]
+	},
+	"syntaxhighlight-specify": "ඔබට මෙවැනි භාෂාවක් විශේෂණය කල යුතු වේ:",
+	"syntaxhighlight-supported": "වාග් රීති උද්දීපනය කිරීම සඳහා සහාය දක්වන භාෂා:",
+	"syntaxhighlight-err-loading": "(සහය දක්වන භාෂා ලැයිස්තුව පූරණය වීමේ දෝෂය)",
+	"syntaxhighlight-err-language": "අවලංගු භාෂාව.",
+	"geshi.css": "/* මෙහි යොදන CSS GeSHi කාරකරීති තීව‍්‍රාලෝකය සඳහා යෙදේ */"
+}

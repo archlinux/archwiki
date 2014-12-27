@@ -57,8 +57,9 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	/**
 	 * Execute page -- can output a file directly or show a listing of them.
 	 *
-	 * @param string $subPage subpage, e.g. in http://example.com/wiki/Special:UploadStash/foo.jpg, the "foo.jpg" part
-	 * @return Boolean: success
+	 * @param string $subPage Subpage, e.g. in
+	 *   http://example.com/wiki/Special:UploadStash/foo.jpg, the "foo.jpg" part
+	 * @return bool Success
 	 */
 	public function execute( $subPage ) {
 		$this->checkPermissions();
@@ -66,6 +67,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		if ( $subPage === null || $subPage === '' ) {
 			return $this->showUploads();
 		}
+
 		return $this->showUpload( $subPage );
 	}
 
@@ -73,7 +75,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * If file available in stash, cats it out to the client as a simple HTTP response.
 	 * n.b. Most sanity checking done in UploadStashLocalFile, so this is straightforward.
 	 *
-	 * @param string $key the key of a particular requested file
+	 * @param string $key The key of a particular requested file
 	 * @throws HttpError
 	 * @return bool
 	 */
@@ -99,7 +101,8 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 			$message = $e->getMessage();
 		} catch ( SpecialUploadStashTooLargeException $e ) {
 			$code = 500;
-			$message = 'Cannot serve a file larger than ' . self::MAX_SERVE_BYTES . ' bytes. ' . $e->getMessage();
+			$message = 'Cannot serve a file larger than ' . self::MAX_SERVE_BYTES .
+				' bytes. ' . $e->getMessage();
 		} catch ( Exception $e ) {
 			$code = 500;
 			$message = $e->getMessage();
@@ -136,10 +139,11 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 			$handler = $file->getHandler();
 			if ( $handler ) {
 				$params = $handler->parseParamString( $paramString );
+
 				return array( 'file' => $file, 'type' => $type, 'params' => $params );
 			} else {
 				throw new UploadStashBadPathException( 'No handler found for ' .
-						"mime {$file->getMimeType()} of file {$file->getPath()}" );
+					"mime {$file->getMimeType()} of file {$file->getPath()}" );
 			}
 		}
 
@@ -149,20 +153,19 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	/**
 	 * Get a thumbnail for file, either generated locally or remotely, and stream it out
 	 *
-	 * @param $file
-	 * @param $params array
+	 * @param File $file
+	 * @param array $params
 	 *
-	 * @return boolean success
+	 * @return bool Success
 	 */
 	private function outputThumbFromStash( $file, $params ) {
-
-		// this global, if it exists, points to a "scaler", as you might find in the Wikimedia Foundation cluster. See outputRemoteScaledThumb()
-		// this is part of our horrible NFS-based system, we create a file on a mount point here, but fetch the scaled file from somewhere else that
-		// happens to share it over NFS
-		global $wgUploadStashScalerBaseUrl;
-
 		$flags = 0;
-		if ( $wgUploadStashScalerBaseUrl ) {
+		// this config option, if it exists, points to a "scaler", as you might find in
+		// the Wikimedia Foundation cluster. See outputRemoteScaledThumb(). This
+		// is part of our horrible NFS-based system, we create a file on a mount
+		// point here, but fetch the scaled file from somewhere else that
+		// happens to share it over NFS.
+		if ( $this->getConfig()->get( 'UploadStashScalerBaseUrl' ) ) {
 			$this->outputRemoteScaledThumb( $file, $params, $flags );
 		} else {
 			$this->outputLocallyScaledThumb( $file, $params, $flags );
@@ -170,16 +173,15 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	}
 
 	/**
-	 * Scale a file (probably with a locally installed imagemagick, or similar) and output it to STDOUT.
-	 * @param $file File
+	 * Scale a file (probably with a locally installed imagemagick, or similar)
+	 * and output it to STDOUT.
+	 * @param File $file
 	 * @param array $params Scaling parameters ( e.g. array( width => '50' ) );
 	 * @param int $flags Scaling flags ( see File:: constants )
-	 * @throws MWException
-	 * @throws UploadStashFileNotFoundException
-	 * @return boolean success
+	 * @throws MWException|UploadStashFileNotFoundException
+	 * @return bool Success
 	 */
 	private function outputLocallyScaledThumb( $file, $params, $flags ) {
-
 		// n.b. this is stupid, we insist on re-transforming the file every time we are invoked. We rely
 		// on HTTP caching to ensure this doesn't happen.
 
@@ -195,8 +197,8 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 			throw new UploadStashFileNotFoundException( "no local path for scaled item" );
 		}
 
-		// now we should construct a File, so we can get mime and other such info in a standard way
-		// n.b. mimetype may be different from original (ogx original -> jpeg thumb)
+		// now we should construct a File, so we can get MIME and other such info in a standard way
+		// n.b. MIME type may be different from original (ogx original -> jpeg thumb)
 		$thumbFile = new UnregisteredLocalFile( false,
 			$this->stash->repo, $thumbnailImage->getStoragePath(), false );
 		if ( !$thumbFile ) {
@@ -204,28 +206,32 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		}
 
 		return $this->outputLocalFile( $thumbFile );
-
 	}
 
 	/**
-	 * Scale a file with a remote "scaler", as exists on the Wikimedia Foundation cluster, and output it to STDOUT.
-	 * Note: unlike the usual thumbnail process, the web client never sees the cluster URL; we do the whole HTTP transaction to the scaler ourselves
-	 *  and cat the results out.
-	 * Note: We rely on NFS to have propagated the file contents to the scaler. However, we do not rely on the thumbnail being created in NFS and then
-	 *   propagated back to our filesystem. Instead we take the results of the HTTP request instead.
-	 * Note: no caching is being done here, although we are instructing the client to cache it forever.
-	 * @param $file: File object
-	 * @param $params: scaling parameters ( e.g. array( width => '50' ) );
-	 * @param $flags: scaling flags ( see File:: constants )
+	 * Scale a file with a remote "scaler", as exists on the Wikimedia Foundation
+	 * cluster, and output it to STDOUT.
+	 * Note: Unlike the usual thumbnail process, the web client never sees the
+	 * cluster URL; we do the whole HTTP transaction to the scaler ourselves
+	 * and cat the results out.
+	 * Note: We rely on NFS to have propagated the file contents to the scaler.
+	 * However, we do not rely on the thumbnail being created in NFS and then
+	 * propagated back to our filesystem. Instead we take the results of the
+	 * HTTP request instead.
+	 * Note: No caching is being done here, although we are instructing the
+	 * client to cache it forever.
+	 *
+	 * @param File $file
+	 * @param array $params Scaling parameters ( e.g. array( width => '50' ) );
+	 * @param int $flags Scaling flags ( see File:: constants )
 	 * @throws MWException
-	 * @return boolean success
+	 * @return bool Success
 	 */
 	private function outputRemoteScaledThumb( $file, $params, $flags ) {
-
-		// this global probably looks something like 'http://upload.wikimedia.org/wikipedia/test/thumb/temp'
-		// do not use trailing slash
-		global $wgUploadStashScalerBaseUrl;
-		$scalerBaseUrl = $wgUploadStashScalerBaseUrl;
+		// This option probably looks something like
+		// 'http://upload.wikimedia.org/wikipedia/test/thumb/temp'. Do not use
+		// trailing slash.
+		$scalerBaseUrl = $this->getConfig()->get( 'UploadStashScalerBaseUrl' );
 
 		if ( preg_match( '/^\/\//', $scalerBaseUrl ) ) {
 			// this is apparently a protocol-relative URL, which makes no sense in this context,
@@ -248,16 +254,17 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		);
 		$req = MWHttpRequest::factory( $scalerThumbUrl, $httpOptions );
 		$status = $req->execute();
-		if ( ! $status->isOK() ) {
+		if ( !$status->isOK() ) {
 			$errors = $status->getErrorsArray();
 			$errorStr = "Fetching thumbnail failed: " . print_r( $errors, 1 );
 			$errorStr .= "\nurl = $scalerThumbUrl\n";
 			throw new MWException( $errorStr );
 		}
 		$contentType = $req->getResponseHeader( "content-type" );
-		if ( ! $contentType ) {
+		if ( !$contentType ) {
 			throw new MWException( "Missing content-type header" );
 		}
+
 		return $this->outputContents( $req->getContent(), $contentType );
 	}
 
@@ -265,7 +272,8 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * Output HTTP response for file
 	 * Side effect: writes HTTP response to STDOUT.
 	 *
-	 * @param $file File object with a local path (e.g. UnregisteredLocalFile, LocalFile. Oddly these don't share an ancestor!)
+	 * @param File $file File object with a local path (e.g. UnregisteredLocalFile,
+	 *   LocalFile. Oddly these don't share an ancestor!)
 	 * @throws SpecialUploadStashTooLargeException
 	 * @return bool
 	 */
@@ -273,6 +281,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		if ( $file->getSize() > self::MAX_SERVE_BYTES ) {
 			throw new SpecialUploadStashTooLargeException();
 		}
+
 		return $file->getRepo()->streamFile( $file->getPath(),
 			array( 'Content-Transfer-Encoding: binary',
 				'Expires: Sun, 17-Jan-2038 19:14:07 GMT' )
@@ -282,8 +291,8 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	/**
 	 * Output HTTP response of raw content
 	 * Side effect: writes HTTP response to STDOUT.
-	 * @param string $content content
-	 * @param string $contentType mime type
+	 * @param string $content Content
+	 * @param string $contentType MIME type
 	 * @throws SpecialUploadStashTooLargeException
 	 * @return bool
 	 */
@@ -294,15 +303,18 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		}
 		self::outputFileHeaders( $contentType, $size );
 		print $content;
+
 		return true;
 	}
 
 	/**
 	 * Output headers for streaming
-	 * XXX unsure about encoding as binary; if we received from HTTP perhaps we should use that encoding, concatted with semicolon to mimeType as it usually is.
+	 * @todo Unsure about encoding as binary; if we received from HTTP perhaps
+	 * we should use that encoding, concatenated with semicolon to `$contentType` as it
+	 * usually is.
 	 * Side effect: preps PHP to write headers to STDOUT.
-	 * @param string $contentType : string suitable for content-type header
-	 * @param string $size: length in bytes
+	 * @param string $contentType String suitable for content-type header
+	 * @param string $size Length in bytes
 	 */
 	private static function outputFileHeaders( $contentType, $size ) {
 		header( "Content-Type: $contentType", true );
@@ -324,11 +336,13 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	public static function tryClearStashedUploads( $formData ) {
 		if ( isset( $formData['Clear'] ) ) {
 			$stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash();
-			wfDebug( "stash has: " . print_r( $stash->listFiles(), true ) );
-			if ( ! $stash->clear() ) {
+			wfDebug( 'stash has: ' . print_r( $stash->listFiles(), true ) . "\n" );
+
+			if ( !$stash->clear() ) {
 				return Status::newFatal( 'uploadstash-errclear' );
 			}
 		}
+
 		return Status::newGood();
 	}
 
@@ -346,7 +360,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 		// this design is extremely dubious, but supposedly HTMLForm is our standard now?
 
 		$context = new DerivativeContext( $this->getContext() );
-		$context->setTitle( $this->getTitle() ); // Remove subpage
+		$context->setTitle( $this->getPageTitle() ); // Remove subpage
 		$form = new HTMLForm( array(
 			'Clear' => array(
 				'type' => 'hidden',
@@ -362,7 +376,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 
 		// show the files + form, if there are any, or just say there are none
 		$refreshHtml = Html::element( 'a',
-			array( 'href' => $this->getTitle()->getLocalURL() ),
+			array( 'href' => $this->getPageTitle()->getLocalURL() ),
 			$this->msg( 'uploadstash-refresh' )->text() );
 		$files = $this->stash->listFiles();
 		if ( $files && count( $files ) ) {
@@ -372,7 +386,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 				// TODO: Use Linker::link or even construct the list in plain wikitext
 				$fileListItemsHtml .= Html::rawElement( 'li', array(),
 					Html::element( 'a', array( 'href' =>
-						$this->getTitle( "file/$file" )->getLocalURL() ), $file )
+						$this->getPageTitle( "file/$file" )->getLocalURL() ), $file )
 				);
 			}
 			$this->getOutput()->addHtml( Html::rawElement( 'ul', array(), $fileListItemsHtml ) );
@@ -390,4 +404,5 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	}
 }
 
-class SpecialUploadStashTooLargeException extends MWException {};
+class SpecialUploadStashTooLargeException extends MWException {
+}

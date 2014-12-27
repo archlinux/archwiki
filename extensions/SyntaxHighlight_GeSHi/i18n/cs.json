@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Li-sung",
+			"Matěj Grabovský"
+		]
+	},
+	"syntaxhighlight-desc": "Poskytuje zvýrazňování syntaxe <code>&lt;syntaxhighlight&gt;</code> pomocí [http://qnbz.com/higlighter zvýrazňovače GeSHi]",
+	"syntaxhighlight-specify": "Musíte určit jazyk tímto způsobem:",
+	"syntaxhighlight-supported": "Seznam jazyků, u kterých je podporováno zvýrazňování syntaxe:",
+	"syntaxhighlight-err-loading": "(chyba při načítání seznamu podporovaných jazyků)",
+	"syntaxhighlight-err-language": "Neplatný jazyk.",
+	"geshi.css": "/* Zde uvedené CSS bude ovlivňovat zvýrazňování syntaxe GeSHi */"
+}

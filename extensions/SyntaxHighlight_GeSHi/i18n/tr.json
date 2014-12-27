@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Erkan Yilmaz",
+			"Joseph"
+		]
+	},
+	"syntaxhighlight-desc": "[http://qbnz.com/highlighter/ GeSHi Highlighter] kullanarak <code>&lt;syntaxhighlight&gt;</code> sözdizimi vurgulamasını sağlar",
+	"syntaxhighlight-specify": "Bu gibi bir dil belirtmelisiniz:",
+	"syntaxhighlight-supported": "Sözdizimi vurgulaması için desteklenen diller:",
+	"syntaxhighlight-err-loading": "(desteklenen diller listesi yüklenirken hata)",
+	"syntaxhighlight-err-language": "Geçersiz dil.",
+	"geshi.css": "/* Buraya yerleştirilen CSS, GeSHi sözdizimi vurgulamasına uygulanacaktır */"
+}

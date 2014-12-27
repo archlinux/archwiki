@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Meursault2004"
+		]
+	},
+	"syntaxhighlight-desc": "Mènèhaké panyorotan sintaksis <code>&lt;syntaxhighlight&gt;</code> nganggo [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Panjenengan kudu nentokaké sawijining basa kaya iki:",
+	"syntaxhighlight-supported": "Basa-basa sing disengkuyung déning panandhan werna sintaksis:",
+	"syntaxhighlight-err-loading": "(ana kaluputan ngunggahaké daftar basa sing disengkuyung)",
+	"syntaxhighlight-err-language": "Basané ora absah.",
+	"geshi.css": "/* CSS ing kéné bakal ditrapaké kanggo panyorotan sintaksis GeSHi */"
+}

@@ -33,7 +33,8 @@ require_once __DIR__ . '/Maintenance.php';
 class BatchedQueryRunner extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Run a query repeatedly until it affects 0 rows, and wait for slaves in between.\n" .
+		$this->mDescription =
+			"Run a query repeatedly until it affects 0 rows, and wait for slaves in between.\n" .
 				"NOTE: You need to set a LIMIT clause yourself.";
 	}
 
@@ -59,7 +60,6 @@ class BatchedQueryRunner extends Maintenance {
 		return Maintenance::DB_ADMIN;
 	}
 }
-
 
 $maintClass = "BatchedQueryRunner";
 require_once RUN_MAINTENANCE_IF_MAIN;

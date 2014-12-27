@@ -6,7 +6,7 @@
  * @author Jeroen De Dauw <jeroendedauw at gmail dot com>
  */
 
-( function ( $, mw ) {
+( function ( $ ) {
 	'use strict';
 
 	$( document ).ready( function () {
@@ -22,4 +22,4 @@
 			selectPages( false );
 		} );
 	} );
-} ) ( window.jQuery, window.mediaWiki );
+}( jQuery ) );

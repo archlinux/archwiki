@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Millosh",
+			"Nikola Smolenski"
+		]
+	},
+	"poem-desc": "Додаје <code>&lt;poem&gt;</code> ознаку за форматирање песама."
+}

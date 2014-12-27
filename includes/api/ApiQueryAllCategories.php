@@ -32,7 +32,7 @@
  */
 class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'ac' );
 	}
 
@@ -49,7 +49,7 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param $resultPageSet ApiPageSet
+	 * @param ApiPageSet $resultPageSet
 	 */
 	private function run( $resultPageSet = null ) {
 		$db = $this->getDB();
@@ -67,8 +67,12 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 		}
 
 		$dir = ( $params['dir'] == 'descending' ? 'older' : 'newer' );
-		$from = ( is_null( $params['from'] ) ? null : $this->titlePartToKey( $params['from'] ) );
-		$to = ( is_null( $params['to'] ) ? null : $this->titlePartToKey( $params['to'] ) );
+		$from = ( $params['from'] === null
+			? null
+			: $this->titlePartToKey( $params['from'], NS_CATEGORY ) );
+		$to = ( $params['to'] === null
+			? null
+			: $this->titlePartToKey( $params['to'], NS_CATEGORY ) );
 		$this->addWhereRange( 'cat_title', $dir, $from, $to );
 
 		$min = $params['min'];
@@ -80,7 +84,9 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 		}
 
 		if ( isset( $params['prefix'] ) ) {
-			$this->addWhere( 'cat_title' . $db->buildLike( $this->titlePartToKey( $params['prefix'] ), $db->anyString() ) );
+			$this->addWhere( 'cat_title' . $db->buildLike(
+				$this->titlePartToKey( $params['prefix'], NS_CATEGORY ),
+				$db->anyString() ) );
 		}
 
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
@@ -109,8 +115,9 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 		$result = $this->getResult();
 		$count = 0;
 		foreach ( $res as $row ) {
-			if ( ++ $count > $params['limit'] ) {
-				// We've reached the one extra which shows that there are additional cats to be had. Stop here...
+			if ( ++$count > $params['limit'] ) {
+				// We've reached the one extra which shows that there are
+				// additional cats to be had. Stop here...
 				$this->setContinueEnumParameter( 'continue', $row->cat_title );
 				break;
 			}
@@ -200,25 +207,8 @@ class ApiQueryAllCategories extends ApiQueryGeneratorBase {
 		);
 	}
 
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'*' => 'string'
-			),
-			'size' => array(
-				'size' => 'integer',
-				'pages' => 'integer',
-				'files' => 'integer',
-				'subcats' => 'integer'
-			),
-			'hidden' => array(
-				'hidden' => 'boolean'
-			)
-		);
-	}
-
 	public function getDescription() {
-		return 'Enumerate all categories';
+		return 'Enumerate all categories.';
 	}
 
 	public function getExamples() {

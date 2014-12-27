@@ -59,7 +59,7 @@ class FileDuplicateSearchPage extends QueryPage {
 	/**
 	 * Fetch dupes from all connected file repositories.
 	 *
-	 * @return array of File objects
+	 * @return array Array of File objects
 	 */
 	function getDupes() {
 		return RepoGroup::singleton()->findBySha1( $this->hash );
@@ -67,7 +67,7 @@ class FileDuplicateSearchPage extends QueryPage {
 
 	/**
 	 *
-	 * @param array $dupes of File objects
+	 * @param array $dupes Array of File objects
 	 */
 	function showList( $dupes ) {
 		$html = array();
@@ -96,12 +96,10 @@ class FileDuplicateSearchPage extends QueryPage {
 	}
 
 	function execute( $par ) {
-		global $wgScript;
-
 		$this->setHeaders();
 		$this->outputHeader();
 
-		$this->filename = isset( $par ) ? $par : $this->getRequest()->getText( 'filename' );
+		$this->filename = $par !== null ? $par : $this->getRequest()->getText( 'filename' );
 		$this->file = null;
 		$this->hash = '';
 		$title = Title::newFromText( $this->filename, NS_FILE );
@@ -115,9 +113,9 @@ class FileDuplicateSearchPage extends QueryPage {
 		$out->addHTML(
 			Html::openElement(
 				'form',
-				array( 'id' => 'fileduplicatesearch', 'method' => 'get', 'action' => $wgScript )
+				array( 'id' => 'fileduplicatesearch', 'method' => 'get', 'action' => wfScript() )
 			) . "\n" .
-				Html::hidden( 'title', $this->getTitle()->getPrefixedDBkey() ) . "\n" .
+				Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) . "\n" .
 				Html::openElement( 'fieldset' ) . "\n" .
 				Html::element( 'legend', null, $this->msg( 'fileduplicatesearch-legend' )->text() ) . "\n" .
 				Xml::inputLabel(

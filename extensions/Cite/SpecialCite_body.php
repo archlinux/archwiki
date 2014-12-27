@@ -34,7 +34,7 @@ class CiteForm {
 	/**
 	 * @var Title
 	 */
-	var $mTitle;
+	public $mTitle;
 
 	function __construct( &$title ) {
 		$this->mTitle =& $title;
@@ -80,26 +80,26 @@ class CiteOutput {
 	/**
 	 * @var Title
 	 */
-	var $mTitle;
+	public $mTitle;
 
 	/**
 	 * @var Article
 	 */
-	var $mArticle;
+	public $mArticle;
 
-	var $mId;
+	public $mId;
 
 	/**
 	 * @var Parser
 	 */
-	var $mParser;
+	public $mParser;
 
 	/**
 	 * @var ParserOptions
 	 */
-	var $mParserOptions;
+	public $mParserOptions;
 
-	var $mSpTitle;
+	public $mSpTitle;
 
 	function __construct( $title, $id ) {
 		global $wgHooks, $wgParser;
@@ -137,7 +137,13 @@ class CiteOutput {
 		}
 		$ret = $wgParser->parse( $msg, $this->mTitle, $this->mParserOptions, false, true, $this->getRevId() );
 		$wgOut->addModules( 'ext.specialcite' );
-		$wgOut->addHTML( $ret->getText() );
+
+		# Introduced in 1.24
+		if( method_exists( $wgOut, 'addParserOutputContent' ) ) {
+			$wgOut->addParserOutputContent( $ret );
+		} else {
+			$wgOut->addHTML( $ret->getText() );
+		}
 	}
 
 	function genParserOptions() {

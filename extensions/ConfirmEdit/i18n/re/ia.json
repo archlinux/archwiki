@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie"
+		]
+	},
+	"recaptcha-edit": "Pro adjutar a proteger le wiki contra le spam automatisate, per favor dactylographa le duo parolas que tu vide in le quadro sequente:",
+	"recaptcha-addurl": "Iste modification include nove ligamines externe. Pro adjutar a proteger le wiki contra le spam automatisate, per favor dactylographa le duo parolas que tu vide in le quadro sequente:",
+	"recaptcha-badlogin": "Pro adjutar a proteger le wiki contra le furto automatisate de contrasignos, per favor dactylographa le duo parolas que tu vide in le quadro sequente:",
+	"recaptcha-createaccount": "Pro adjutar a proteger le wiki contra le creation automatisate de contos, per favor dactylographa le duo parolas que tu vide in le quadro sequente:",
+	"recaptcha-createaccount-fail": "Responsa reCAPTCHA incorrecte o mancante.",
+	"recaptcha-create": "Pro adjutar a proteger le wiki contra le creation automatisate de paginas, per favor dactylographa le duo parolas que tu vide in le quadro sequente:"
+}

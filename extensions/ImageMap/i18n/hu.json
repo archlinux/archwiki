@@ -1,0 +1,21 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dani",
+			"KossuthRad",
+			"Tgr"
+		]
+	},
+	"imagemap_desc": "Lehetővé teszi kliensoldali imagemap-ek létrehozását a <code>&lt;imagemap&gt;</code> tag segítségével",
+	"imagemap_no_image": "Error: kell egy előírt kép az első sorban",
+	"imagemap_invalid_image": "Error: érvénytelen vagy nem létező kép",
+	"imagemap_bad_image": "Hiba: a kép feketelistán van ezen az oldalon",
+	"imagemap_no_link": "Error: nincs érvényes link a(z) $1. sor végén",
+	"imagemap_invalid_title": "Hiba: érvénytelen cím a linkben, a(z) $1. sorban",
+	"imagemap_missing_coord": "Error: nincs elég koordináta az alakításhoz a $1 sorban",
+	"imagemap_unrecognised_shape": "Error: ismeretlen alakzat a(z) $1. sorban, mindegyiknek ezek valamelyikével kell kezdődnie: <code>default</code>, <code>rect</code>, <code>circle</code> vagy <code>poly</code>",
+	"imagemap_invalid_coord": "Hiba: érvénytelen koordináta a(z) $1. sorban, számnak kell lennie",
+	"imagemap_invalid_desc": "Error: hibás desc leírás, ezek egyike kell: <code>$1</code>",
+	"imagemap_description": "Kép leírása",
+	"imagemap_poly_odd": "Hiba: az $1. sorban páratlan számú koordináta található"
+}

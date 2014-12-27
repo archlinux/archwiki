@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dj"
+		]
+	},
+	"cologneblue.css": "/* Az ide elhelyezett CSS hatással lesz a Kölni kék felület használóira */",
+	"cologneblue.js": "/* A Kölni kék felületet használó szerkesztők számára betöltendő JavaScriptek */",
+	"skinname-cologneblue": "Kölni kék"
+}

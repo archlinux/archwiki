@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dj"
+		]
+	},
+	"modern.css": "/* Az ide elhelyezett CSS hatással lesz a Modern felület használóira */",
+	"modern.js": "/* A Modern felületet használó szerkesztők számára betöltendő JavaScriptek */",
+	"skinname-modern": "Modern"
+}

@@ -126,16 +126,15 @@ class SpecialProtectedtitles extends SpecialPage {
 	}
 
 	/**
-	 * @param $namespace Integer:
-	 * @param $type string
-	 * @param $level string
+	 * @param int $namespace
+	 * @param string $type
+	 * @param string $level
 	 * @return string
 	 * @private
 	 */
 	function showOptions( $namespace, $type = 'edit', $level ) {
-		global $wgScript;
-		$action = htmlspecialchars( $wgScript );
-		$title = $this->getTitle();
+		$action = htmlspecialchars( wfScript() );
+		$title = $this->getPageTitle();
 		$special = htmlspecialchars( $title->getPrefixedDBkey() );
 
 		return "<form action=\"$action\" method=\"get\">\n" .
@@ -152,7 +151,7 @@ class SpecialProtectedtitles extends SpecialPage {
 	 * Prepare the namespace filter drop-down; standard namespace
 	 * selector, sans the MediaWiki namespace
 	 *
-	 * @param $namespace Mixed: pre-select namespace
+	 * @param string|null $namespace Pre-select namespace
 	 * @return string
 	 */
 	function getNamespaceMenu( $namespace = null ) {
@@ -175,14 +174,12 @@ class SpecialProtectedtitles extends SpecialPage {
 	 * @private
 	 */
 	function getLevelMenu( $pr_level ) {
-		global $wgRestrictionLevels;
-
 		// Temporary array
 		$m = array( $this->msg( 'restriction-level-all' )->text() => 0 );
 		$options = array();
 
 		// First pass to load the log names
-		foreach ( $wgRestrictionLevels as $type ) {
+		foreach ( $this->getConfig()->get( 'RestrictionLevels' ) as $type ) {
 			if ( $type != '' && $type != '*' ) {
 				// Messages: restriction-level-sysop, restriction-level-autoconfirmed
 				$text = $this->msg( "restriction-level-$type" )->text();

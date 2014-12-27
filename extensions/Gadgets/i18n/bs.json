@@ -1,0 +1,21 @@
+{
+	"@metadata": {
+		"authors": [
+			"CERminator"
+		]
+	},
+	"gadgets-desc": "Omogućava korisnicima da odaberu vlastite [[Special:Gadgets|CSS i JavaScript dodatke]] (gadgets) u svojim [[Special:Preferences#mw-prefsection-gadgets|postavkama]]",
+	"prefs-gadgets": "Dodaci",
+	"gadgets-prefstext": "Ovo je spisak specijalih gadgets (''dodataka'') koje možete omogućiti za Vaš korisnički račun. Ovi dodaci su najčešće bazirani na JavaScript, tako da se postavke JavaScript moraju omogućiti u Vašem web pregledniku da bi mogli raditi.\nZapamtite da ovi gadgets ne uzrokuju nikakve efekte na ovoj stranici za postavke.\n\nTakođer morate obratiti pažnju da ovi specijalni dodaci nisu dio MediaWiki software-a, a obično ih prave i razvijaju korisnici na lokalnim wikijima.\nAdministratori mogu mijenjati dostupne gadgetse koristeći [[MediaWiki:Gadgets-definition|definicije]] i [[Special:Gadgets|opise]].",
+	"gadgets": "Dodaci (gadgets)",
+	"gadgets-title": "Dodaci",
+	"gadgets-pagetext": "Ispod je spisak posebnih dodataka koje korisnici mogu omogućiti na svojim [[Special:Preferences#mw-prefsection-gadgets|postavkama]], kako je to definisano u [[MediaWiki:Gadgets-definition|definicijama dodataka]].\nOvaj pregled daje jednostavan pristup sistemu stranica poruka koje definišu svaki dodatak i njihov opis i kod.",
+	"gadgets-uses": "Upotrebe",
+	"gadgets-required-rights": "Zahtijeva {{PLURAL:$2|$1 pravo|slijedeća prava: $1}}.",
+	"gadgets-default": "Omogućeno za svakog po postavkama.",
+	"gadgets-export": "Izvoz",
+	"gadgets-export-title": "Izvoz dodatka",
+	"gadgets-not-found": "Dodatak \"$1\" nije pronađen.",
+	"gadgets-export-text": "Za izvoz dodatka $1, kliknite na dugme \"{{int:gadgets-export-download}}\", spremite skinutu datoteku,\nidite na Posebno:Uvoz na odredišnu wiki i postavite je. Zatim dodajte slijedeće na stranicu MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nMorate imati odgovarajuća prava na odredišnoj wiki (uključujući pravo da uređujete sistemske poruke) i uvoz iz postavljenih datoteka mora biti omogućen.",
+	"gadgets-export-download": "Skidanje"
+}

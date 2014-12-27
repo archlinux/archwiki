@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kernoweger",
+			"Nrowe"
+		]
+	},
+	"cite_error": "Gwall devynna: $1",
+	"cite_error_refs_without_references": "Yma tagys <code>&lt;ref&gt;</code>, mes ny gavas tag <code>&lt;references/&gt;</code>"
+}

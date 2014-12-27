@@ -24,8 +24,9 @@
 $optionsWithArgs = array( 'start', 'limit', 'type' );
 require __DIR__ . '/../commandLine.inc';
 
-if ( !isset( $args[0] )  ) {
-	echo "Usage: php testCompression.php [--type=<type>] [--start=<start-date>] [--limit=<num-revs>] <page-title>\n";
+if ( !isset( $args[0] ) ) {
+	echo "Usage: php testCompression.php [--type=<type>] [--start=<start-date>] " .
+		"[--limit=<num-revs>] <page-title>\n";
 	exit( 1 );
 }
 
@@ -44,7 +45,6 @@ if ( isset( $options['limit'] ) ) {
 	$untilHappy = true;
 }
 $type = isset( $options['type'] ) ? $options['type'] : 'ConcatenatedGzipHistoryBlob';
-
 
 $dbr = wfGetDB( DB_SLAVE );
 $res = $dbr->select(

@@ -1,0 +1,15 @@
+{
+	"@metadata": [],
+	"captcha-edit": "要編輯呢一篇文，請答出一個簡單嘅加數和，跟住響個盒度打入 ([[Special:Captcha/help|更多資料]]):",
+	"captcha-desc": "簡單嘅 captcha 實行",
+	"captcha-addurl": "你編輯嘅內容裏面有新嘅URL連結；為咗避免受到自動垃圾程式的侵擾，請答出一個簡單嘅加數和，跟住響個盒度打入 ([[Special:Captcha/help|更多資料]]):",
+	"captcha-badlogin": "為咗防止程式自動破解密碼，請答出一個簡單嘅加數和，跟住響個盒度打入 ([[Special:Captcha/help|更多資料]]):",
+	"captcha-createaccount": "為咗防止程式自動註冊，請答出一個簡單嘅加數和，跟住響個盒度打入 ([[Special:Captcha/help|更多資料]]):",
+	"captcha-createaccount-fail": "驗證碼錯誤或者唔見咗。",
+	"captcha-create": "要開呢一版，請答出一個簡單嘅加數和，跟住響個盒度打入 ([[Special:Captcha/help|更多資料]]):",
+	"captchahelp-title": "Captcha 幫助",
+	"captchahelp-cookies-needed": "你需要開咗響瀏覽器度嘅cookies先至可以用呢樣嘢。",
+	"captchahelp-text": "就好似呢個wiki咁，對公眾開放編輯嘅網站係會經常受到垃圾連結騷擾。嗰啲人利用自動化垃圾程序將佢哋嘅連結張貼到好多網站。雖然呢啲連結可以被清除，但係呢啲嘢確實令人十分之討厭。\n\n有時，特別係當響一頁添加新嘅網頁連結嗰陣，呢個網站會畀你睇一幅有顏色的或者有變形文字嘅圖像，跟住要你輸入所顯示嘅文字。因為咁係難以自動完成嘅一項任務，它將允許人保存佢哋嘅編輯，同時亦阻止大多數發送垃圾郵件者同其它機械人嘅攻擊。\n\n令人遺憾嘅係，咁會令到視力唔好嘅人，或者利用基於文本或者基於聲音嘅瀏覽器用戶感到不便。而目前我哋仲未能夠提供音頻嘅選擇。如果咁樣咁啱阻止到你進行正常嘅編輯，請同管理員聯繫以獲得幫助。\n\n撳一下響瀏覽器度嘅「後退」掣返去你之前所編輯緊嘅頁面。",
+	"captcha-addurl-whitelist": " #<!-- leave this line exactly as it is --> <pre>\n# 語法好似下面噉:\n#   * 所有由 \"#\" 字元之後嘅嘢到行尾係註解\n#   * 所有非空白行係一個regex部份，只係會同裏面嘅URL主機相符\n #</pre> <!-- leave this line exactly as it is -->",
+	"right-skipcaptcha": "執行captcha引發嘅動作時唔需要經過captcha"
+}

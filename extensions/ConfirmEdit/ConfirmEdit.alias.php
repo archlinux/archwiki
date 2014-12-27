@@ -59,6 +59,11 @@ $specialPageAliases['gl'] = array(
 	'Captcha' => array( 'Captcha' ),
 );
 
+/** Hawaiian (Hawai`i) */
+$specialPageAliases['haw'] = array(
+	'Captcha' => array( 'Kapakā', 'Kapaka' ),
+);
+
 /** Hindi (हिन्दी) */
 $specialPageAliases['hi'] = array(
 	'Captcha' => array( 'कैप्चा', 'कैपचा' ),

@@ -1,5 +1,6 @@
 /* Publish module for wikiEditor */
-( function( $ ) { $.wikiEditor.modules.previewDialog = {
+/*jshint onevar:false */
+( function ( $, mw ) { $.wikiEditor.modules.previewDialog = {
 
 /**
  * Compatability map
@@ -29,7 +30,7 @@ fn: {
 	 * @param context Context object of editor to create module in
 	 * @param config Configuration object to create module from
 	 */
-	create: function( context, config ) {
+	create: function ( context ) {
 		// Build the dialog behind the Publish button
 		var dialogID = 'wikiEditor-' + context.instance + '-preview-dialog';
 		$.wikiEditor.modules.dialogs.fn.create(
@@ -42,11 +43,11 @@ fn: {
 						<div class="wikiEditor-ui-loading"><span></span></div>\
 						<div class="wikiEditor-preview-dialog-contents"></div>\
 					',
-					init: function() {
+					init: function () {
 					},
 					dialog: {
 						buttons: {
-							'wikieditor-publish-dialog-publish': function() {
+							'wikieditor-publish-dialog-publish': function () {
 								var minorChecked = $( '#wikiEditor-' + context.instance +
 									'-dialog-minor' ).is( ':checked' ) ?
 										'checked' : '';
@@ -59,15 +60,15 @@ fn: {
 									'-dialog-summary' ).val() );
 								$( '#editform' ).submit();
 							},
-							'wikieditor-publish-dialog-goback': function() {
-								$(this).dialog( 'close' );
+							'wikieditor-publish-dialog-goback': function () {
+								$( this ).dialog( 'close' );
 							}
 						},
 						resizable: false,
 						height: $( 'body' ).height() - 100,
 						width: $( 'body' ).width() - 300,
 						position: ['center', 'top'],
-						open: function() {
+						open: function () {
 							// Gets the latest copy of the wikitext
 							var wikitext = context.fn.getContents();
 							var $dialog = $( '#' + dialogID );
@@ -78,7 +79,7 @@ fn: {
 								.css( 'top', '25px' );
 							// $dialog.dialog( 'option', 'width', $( 'body' ).width() - 300 );
 							// Aborts when nothing has changed since the last preview
-							if ( context.modules.preview.previewText == wikitext ) {
+							if ( context.modules.preview.previewText === wikitext ) {
 								return;
 							}
 
@@ -94,11 +95,11 @@ fn: {
 									'pst': '',
 									'format': 'json'
 								},
-								function( data ) {
+								function ( data ) {
 									if (
-										typeof data.parse == 'undefined' ||
-										typeof data.parse.text == 'undefined' ||
-										typeof data.parse.text['*'] == 'undefined'
+										typeof data.parse === 'undefined' ||
+										typeof data.parse.text === 'undefined' ||
+										typeof data.parse.text['*'] === 'undefined'
 									) {
 										return;
 									}
@@ -108,7 +109,7 @@ fn: {
 										.html( '<h1 class="firstHeading" id="firstHeading">' +
 											mw.config.get( 'wgTitle' ) + '</h1>' +
 											data.parse.text['*'] )
-										.find( 'a:not([href^=#])' ).click( function() { return false; } );
+										.find( 'a:not([href^=#])' ).click( function () { return false; } );
 								},
 								'json'
 							);
@@ -120,12 +121,12 @@ fn: {
 		);
 		context.fn.addButton( {
 			'captionMsg': 'wikieditor-preview-tab',
-			'action': function() {
-				context.$textarea.wikiEditor( 'openDialog', 'preview');
+			'action': function () {
+				context.$textarea.wikiEditor( 'openDialog', 'preview' );
 				return false;
 			}
 		} );
 	}
 }
 
-}; } )( jQuery );
+}; } )( jQuery, mediaWiki );

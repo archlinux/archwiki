@@ -38,9 +38,10 @@ class SimpleCaptcha {
 		$captcha = $this->getCaptcha();
 		$index = $this->storeCaptcha( $captcha );
 
-		return "<p><label for=\"wpCaptchaWord\">{$captcha['question']}</label> = " .
+		return "<p><label for=\"wpCaptchaWord\">{$captcha['question']} = </label>" .
 			Xml::element( 'input', array(
 				'name' => 'wpCaptchaWord',
+				'class' => 'mw-ui-input',
 				'id'   => 'wpCaptchaWord',
 				'size'  => 5,
 				'autocomplete' => 'off',
@@ -355,26 +356,38 @@ class SimpleCaptcha {
 	 */
 	function filterLink( $url ) {
 		global $wgCaptchaWhitelist;
-		$source = wfMessage( 'captcha-addurl-whitelist' )->inContentLanguage()->text();
+		static $regexes = null;
 
-		$whitelist = wfMessage( 'captcha-addurl-whitelist', $source )->isDisabled()
-			? false
-			: $this->buildRegexes( explode( "\n", $source ) );
+		if ( $regexes === null ) {
+			$source = wfMessage( 'captcha-addurl-whitelist' )->inContentLanguage();
 
-		$cwl = $wgCaptchaWhitelist !== false ? preg_match( $wgCaptchaWhitelist, $url ) : false;
-		$wl  = $whitelist          !== false ? preg_match( $whitelist, $url )          : false;
+			$regexes = $source->isDisabled()
+				? array()
+				: $this->buildRegexes( explode( "\n", $source->plain() ) );
 
-		return !( $cwl || $wl );
+			if ( $wgCaptchaWhitelist !== false ) {
+				array_unshift( $regexes, $wgCaptchaWhitelist );
+			}
+		}
+
+		foreach ( $regexes as $regex ) {
+			if ( preg_match( $regex, $url ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
 	 * Build regex from whitelist
 	 * @param $lines string from [[MediaWiki:Captcha-addurl-whitelist]]
-	 * @return string Regex or bool false if whitelist is empty
+	 * @return array Regexes
 	 * @access private
 	 */
 	function buildRegexes( $lines ) {
 		# Code duplicated from the SpamBlacklist extension (r19197)
+		# and later modified.
 
 		# Strip comments and whitespace, then remove blanks
 		$lines = array_filter( array_map( 'trim', preg_replace( '/#.*$/', '', $lines ) ) );
@@ -382,34 +395,59 @@ class SimpleCaptcha {
 		# No lines, don't make a regex which will match everything
 		if ( count( $lines ) == 0 ) {
 			wfDebug( "No lines\n" );
-			return false;
+			return array();
 		} else {
 			# Make regex
 			# It's faster using the S modifier even though it will usually only be run once
 			// $regex = 'http://+[a-z0-9_\-.]*(' . implode( '|', $lines ) . ')';
 			// return '/' . str_replace( '/', '\/', preg_replace('|\\\*/|', '/', $regex) ) . '/Si';
-			$regexes = '';
-			$regexStart = '/^https?:\/\/+[a-z0-9_\-.]*(';
-			$regexEnd = ')/Si';
+			$regexes = array();
+			$regexStart = array(
+				'normal' => '/^https?:\/\/+[a-z0-9_\-.]*(?:',
+				'noprotocol' => '/^(?:',
+			);
+			$regexEnd = array(
+				'normal' => ')/Si',
+				'noprotocol' => ')/Si',
+			);
 			$regexMax = 4096;
-			$build = false;
+			$build = array();
 			foreach ( $lines as $line ) {
+				# Extract flags from the line
+				$options = array();
+				if ( preg_match( '/^(.*?)\s*<([^<>]*)>$/', $line, $matches ) ) {
+					if ( $matches[1] === '' ) {
+						wfDebug( "Line with empty regex\n" );
+						continue;
+					}
+					$line = $matches[1];
+					$opts = preg_split( '/\s*\|\s*/', trim( $matches[2] ) );
+					foreach ( $opts as $opt ) {
+						$opt = strtolower( $opt );
+						if ( $opt == 'noprotocol' ) {
+							$options['noprotocol'] = true;
+						}
+					}
+				}
+
+				$key = isset( $options['noprotocol'] ) ? 'noprotocol' : 'normal';
+
 				// FIXME: not very robust size check, but should work. :)
-				if ( $build === false ) {
-					$build = $line;
-				} elseif ( strlen( $build ) + strlen( $line ) > $regexMax ) {
-					$regexes .= $regexStart .
-						str_replace( '/', '\/', preg_replace( '|\\\*/|', '/', $build ) ) .
-						$regexEnd;
-					$build = $line;
+				if ( !isset( $build[$key] ) ) {
+					$build[$key] = $line;
+				} elseif ( strlen( $build[$key] ) + strlen( $line ) > $regexMax ) {
+					$regexes[] = $regexStart[$key] .
+						str_replace( '/', '\/', preg_replace( '|\\\*/|', '/', $build[$key] ) ) .
+						$regexEnd[$key];
+					$build[$key] = $line;
 				} else {
-					$build .= '|' . $line;
+					$build[$key] .= '|' . $line;
 				}
 			}
-			if ( $build !== false ) {
-				$regexes .= $regexStart .
-					str_replace( '/', '\/', preg_replace( '|\\\*/|', '/', $build ) ) .
-					$regexEnd;
+			foreach ( $build as $key => $value ) {
+				$regexes[] = $regexStart[$key] .
+					str_replace( '/', '\/', preg_replace( '|\\\*/|', '/', $build[$key] ) ) .
+					$regexEnd[$key];
 			}
 			return $regexes;
 		}
@@ -500,25 +538,47 @@ class SimpleCaptcha {
 	 * Hook for user creation form submissions.
 	 * @param User $u
 	 * @param string $message
+	 * @param Status $status
 	 * @return bool true to continue, false to abort user creation
 	 */
-	function confirmUserCreate( $u, &$message ) {
-		global $wgCaptchaTriggers, $wgUser;
-		if ( $wgCaptchaTriggers['createaccount'] ) {
-			if ( $wgUser->isAllowed( 'skipcaptcha' ) ) {
-				wfDebug( "ConfirmEdit: user group allows skipping captcha on account creation\n" );
-				return true;
-			}
-			if ( $this->isIPWhitelisted() )
-				return true;
-
+	function confirmUserCreate( $u, &$message, &$status = null ) {
+		if ( $this->needCreateAccountCaptcha() ) {
 			$this->trigger = "new account '" . $u->getName() . "'";
 			if ( !$this->passCaptcha() ) {
+				// For older MediaWiki
 				$message = wfMessage( 'captcha-createaccount-fail' )->text();
+				// For MediaWiki 1.23+
+				$status = Status::newGood();
+				
+				// Apply a *non*-fatal warning. This will still abort the
+				// account creation but returns a "Warning" response to the
+				// API or UI.
+				$status->warning( 'captcha-createaccount-fail' );
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Logic to check if we need to pass a captcha for the current user
+	 * to create a new account, or not
+	 *
+	 * @return bool true to show captcha, false to skip captcha
+	 */
+	function needCreateAccountCaptcha() {
+		global $wgCaptchaTriggers, $wgUser;
+		if ( $wgCaptchaTriggers['createaccount'] ) {
+			if ( $wgUser->isAllowed( 'skipcaptcha' ) ) {
+				wfDebug( "ConfirmEdit: user group allows skipping captcha on account creation\n" );
+				return false;
+			}
+			if ( $this->isIPWhitelisted() ) {
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -582,7 +642,7 @@ class SimpleCaptcha {
 	 * @return bool
 	 */
 	protected function isAPICaptchaModule( $module ) {
-		return $module instanceof ApiEditPage;
+		return $module instanceof ApiEditPage || $module instanceof ApiCreateAccount;
 	}
 
 	/**
@@ -732,5 +792,60 @@ class SimpleCaptcha {
 		if ( CaptchaStore::get()->cookiesNeeded() ) {
 			$wgOut->addWikiMsg( 'captchahelp-cookies-needed' );
 		}
+	}
+
+	/**
+	 * Pass API captcha parameters on to the login form when using
+	 * API account creation.
+	 *
+	 * @param ApiCreateAccount $apiModule
+	 * @param LoginForm $loginForm
+	 * @return hook return value
+	 */
+	function addNewAccountApiForm( $apiModule, $loginForm ) {
+		global $wgRequest;
+		$main = $apiModule->getMain();
+
+		$id = $main->getVal( 'captchaid' );
+		if ( $id ) {
+			$wgRequest->setVal( 'wpCaptchaId', $id );
+
+			// Suppress "unrecognized parameter" warning:
+			$main->getVal( 'wpCaptchaId' );
+		}
+
+		$word = $main->getVal( 'captchaword' );
+		if ( $word ) {
+			$wgRequest->setVal( 'wpCaptchaWord', $word );
+
+			// Suppress "unrecognized parameter" warning:
+			$main->getVal( 'wpCaptchaWord' );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Pass extra data back in API results for account creation.
+	 *
+	 * @param ApiCreateAccount $apiModule
+	 * @param LoginForm &loginPage
+	 * @param array &$result
+	 * @return bool: Hook return value
+	 */
+	function addNewAccountApiResult( $apiModule, $loginPage, &$result ) {
+		if ( $result['result'] !== 'Success' && $this->needCreateAccountCaptcha() ) {
+
+			// If we failed a captcha, override the generic 'Warning' result string
+			if ( $result['result'] === 'Warning' && isset( $result['warnings'] ) ) {
+				foreach ( $result['warnings'] as $warning ) {
+					if ( $warning['message'] === 'captcha-createaccount-fail' ) {
+						$this->addCaptchaAPI( $result );
+						$result['result'] = 'NeedCaptcha';
+					}
+				}
+			}
+		}
+		return true;
 	}
 }

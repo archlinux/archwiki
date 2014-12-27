@@ -39,7 +39,10 @@ class ApiCreateAccount extends ApiBase {
 		// Use userCan in order to hit GlobalBlock checks (according to Special:userlogin)
 		$loginTitle = SpecialPage::getTitleFor( 'Userlogin' );
 		if ( !$loginTitle->userCan( 'createaccount', $this->getUser() ) ) {
-			$this->dieUsage( 'You do not have the right to create a new account', 'permdenied-createaccount' );
+			$this->dieUsage(
+				'You do not have the right to create a new account',
+				'permdenied-createaccount'
+			);
 		}
 		if ( $this->getUser()->isBlockedFromCreateAccount() ) {
 			$this->dieUsage( 'You cannot create a new account because you are blocked', 'blocked' );
@@ -80,13 +83,13 @@ class ApiCreateAccount extends ApiBase {
 
 		$loginForm = new LoginForm();
 		$loginForm->setContext( $context );
+		wfRunHooks( 'AddNewAccountApiForm', array( $this, $loginForm ) );
 		$loginForm->load();
 
 		$status = $loginForm->addNewaccountInternal();
 		$result = array();
 		if ( $status->isGood() ) {
 			// Success!
-			global $wgEmailAuthentication;
 			$user = $status->getValue();
 
 			if ( $params['language'] ) {
@@ -96,8 +99,13 @@ class ApiCreateAccount extends ApiBase {
 			if ( $params['mailpassword'] ) {
 				// If mailpassword was set, disable the password and send an email.
 				$user->setPassword( null );
-				$status->merge( $loginForm->mailPasswordInternal( $user, false, 'createaccount-title', 'createaccount-text' ) );
-			} elseif ( $wgEmailAuthentication && Sanitizer::validateEmail( $user->getEmail() ) ) {
+				$status->merge( $loginForm->mailPasswordInternal(
+					$user,
+					false,
+					'createaccount-title',
+					'createaccount-text'
+				) );
+			} elseif ( $this->getConfig()->get( 'EmailAuthentication' ) && Sanitizer::validateEmail( $user->getEmail() ) ) {
 				// Send out an email authentication message if needed
 				$status->merge( $user->sendConfirmationMail() );
 			}
@@ -129,13 +137,13 @@ class ApiCreateAccount extends ApiBase {
 			// since not having the correct token is part of the normal
 			// flow of events.
 			$result['token'] = LoginForm::getCreateaccountToken();
-			$result['result'] = 'needtoken';
+			$result['result'] = 'NeedToken';
 		} elseif ( !$status->isOK() ) {
 			// There was an error. Die now.
 			$this->dieStatus( $status );
 		} elseif ( !$status->isGood() ) {
 			// Status is not good, but OK. This means warnings.
-			$result['result'] = 'warning';
+			$result['result'] = 'Warning';
 
 			// Add any warnings to the result
 			$warnings = $status->getErrorsByType( 'warning' );
@@ -148,8 +156,11 @@ class ApiCreateAccount extends ApiBase {
 			}
 		} else {
 			// Everything was fine.
-			$result['result'] = 'success';
+			$result['result'] = 'Success';
 		}
+
+		// Give extensions a chance to modify the API result data
+		wfRunHooks( 'AddNewAccountApiResult', array( $this, $loginForm, &$result ) );
 
 		$apiResult->addValue( null, 'createaccount', $result );
 	}
@@ -171,7 +182,6 @@ class ApiCreateAccount extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		global $wgEmailConfirmToEdit;
 		return array(
 			'name' => array(
 				ApiBase::PARAM_TYPE => 'user',
@@ -182,7 +192,7 @@ class ApiCreateAccount extends ApiBase {
 			'token' => null,
 			'email' => array(
 				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => $wgEmailConfirmToEdit
+				ApiBase::PARAM_REQUIRED => $this->getConfig()->get( 'EmailConfirmToEdit' ),
 			),
 			'realname' => null,
 			'mailpassword' => array(
@@ -196,6 +206,7 @@ class ApiCreateAccount extends ApiBase {
 
 	public function getParamDescription() {
 		$p = $this->getModulePrefix();
+
 		return array(
 			'name' => 'Username',
 			'password' => "Password (ignored if {$p}mailpassword is set)",
@@ -205,82 +216,9 @@ class ApiCreateAccount extends ApiBase {
 			'realname' => 'Real name of user (optional)',
 			'mailpassword' => 'If set to any value, a random password will be emailed to the user',
 			'reason' => 'Optional reason for creating the account to be put in the logs',
-			'language' => 'Language code to set as default for the user (optional, defaults to content language)'
+			'language'
+				=> 'Language code to set as default for the user (optional, defaults to content language)'
 		);
-	}
-
-	public function getResultProperties() {
-		return array(
-			'createaccount' => array(
-				'result' => array(
-					ApiBase::PROP_TYPE => array(
-						'success',
-						'warning',
-						'needtoken'
-					)
-				),
-				'username' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'userid' => array(
-					ApiBase::PROP_TYPE => 'int',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'token' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-			)
-		);
-	}
-
-	public function getPossibleErrors() {
-		// Note the following errors aren't possible and don't need to be listed:
-		// sessionfailure, nocookiesfornew, badretype
-		$localErrors = array(
-			'wrongpassword', // Actually caused by wrong domain field. Riddle me that...
-			'sorbs_create_account_reason',
-			'noname',
-			'userexists',
-			'password-name-match', // from User::getPasswordValidity
-			'password-login-forbidden', // from User::getPasswordValidity
-			'noemailtitle',
-			'invalidemailaddress',
-			'externaldberror',
-			'acct_creation_throttle_hit',
-		);
-
-		$errors = parent::getPossibleErrors();
-		// All local errors are from LoginForm, which means they're actually message keys.
-		foreach ( $localErrors as $error ) {
-			$errors[] = array( 'code' => $error, 'info' => wfMessage( $error )->inLanguage( 'en' )->useDatabase( false )->parse() );
-		}
-
-		$errors[] = array(
-			'code' => 'permdenied-createaccount',
-			'info' => 'You do not have the right to create a new account'
-		);
-		$errors[] = array(
-			'code' => 'blocked',
-			'info' => 'You cannot create a new account because you are blocked'
-		);
-		$errors[] = array(
-			'code' => 'aborted',
-			'info' => 'Account creation aborted by hook (info may vary)'
-		);
-		$errors[] = array(
-			'code' => 'langinvalid',
-			'info' => 'Invalid language parameter'
-		);
-
-		// 'passwordtooshort' has parameters. :(
-		global $wgMinimalPasswordLength;
-		$errors[] = array(
-			'code' => 'passwordtooshort',
-			'info' => wfMessage( 'passwordtooshort', $wgMinimalPasswordLength )->inLanguage( 'en' )->useDatabase( false )->parse()
-		);
-		return $errors;
 	}
 
 	public function getExamples() {

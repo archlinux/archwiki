@@ -49,8 +49,8 @@ class LanguageOs extends Language {
 	 * 		Then result word is: word + 'й' + case ending for cases != allative or comitative
 	 * 		and word + case ending for allative or comitative. Ending of allative case here is 'æ'.
 	 *
-	 * @param $word string
-	 * @param $case string
+	 * @param string $word
+	 * @param string $case
 	 * @return string
 	 */
 	function convertGrammar( $word, $case ) {
@@ -66,7 +66,6 @@ class LanguageOs extends Language {
 		$hyphen = '';
 		# Variable for ending
 		$ending = '';
-
 
 		# CHecking if the $word is in plural form
 		if ( preg_match( '/тæ$/u', $word ) ) {

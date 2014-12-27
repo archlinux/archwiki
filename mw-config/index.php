@@ -20,9 +20,18 @@
  * @file
  */
 
+// Bail if PHP is too low
+if ( !function_exists( 'version_compare' ) || version_compare( PHP_VERSION, '5.3.2' ) < 0 ) {
+	// We need to use dirname( __FILE__ ) here cause __DIR__ is PHP5.3+
+	require dirname( dirname( __FILE__ ) ) . '/includes/PHPVersionError.php';
+	wfPHPVersionError( 'mw-config/index.php' );
+}
+
 define( 'MW_CONFIG_CALLBACK', 'Installer::overrideConfig' );
 define( 'MEDIAWIKI_INSTALL', true );
 
+// Resolve relative to regular MediaWiki root
+// instead of mw-config subdirectory.
 chdir( dirname( __DIR__ ) );
 require dirname( __DIR__ ) . '/includes/WebStart.php';
 
@@ -34,6 +43,15 @@ function wfInstallerMain() {
 	$installer = InstallerOverrides::getWebInstaller( $wgRequest );
 
 	if ( !$installer->startSession() ) {
+
+		if ( $installer->request->getVal( "css" ) ) {
+			// Do not display errors on css pages
+			$installer->outputCss();
+			exit;
+		}
+
+		$errors = $installer->getPhpErrors();
+		$installer->showError( 'config-session-error', $errors[0] );
 		$installer->finish();
 		exit;
 	}

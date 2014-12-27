@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Rotem Liss"
+		]
+	},
+	"fancycaptcha-desc": "מחולל תמונות CAPTCHA מגניבות בשביל ההרבחבה Confirm Edit",
+	"fancycaptcha-addurl": "עריכתכם כוללת קישורים חיצוניים חדשים.\nכהגנה מפני זיבול אוטומטי, אנא הקלידו את המילים המופיעות להלן בתיבה ([[Special:Captcha/help|מידע נוסף]]):",
+	"fancycaptcha-badlogin": "כהגנה מפני פריצת סיסמאות אוטומטית, אנא הקלידו את המילים המופיעות להלן בתיבה ([[Special:Captcha/help|מידע נוסף]]):",
+	"fancycaptcha-createaccount": "כהגנה מפני יצירת חשבונות אוטומטית, אנא הקלידו את המילים המופיעות להלן בתיבה ([[Special:Captcha/help|מידע נוסף]]):",
+	"fancycaptcha-create": "כדי ליצור את הדף, אנא הקלידו את המילים המופיעות להלן בתיבה ([[Special:Captcha/help|מידע נוסף]]):",
+	"fancycaptcha-edit": "כדי לערוך את הדף, אנא הקלידו את המילים המופיעות להלן בתיבה ([[Special:Captcha/help|מידע נוסף]]):",
+	"fancycaptcha-sendemail": "כדי לעזור להתגונן מפני שליחת זבל אוטומטית, אנא הכניסו את המילים שמופיעות בתיבה למטה ([[Special:Captcha/help|מידע נוסף]]):",
+	"fancycaptcha-reload-text": "רענון"
+}

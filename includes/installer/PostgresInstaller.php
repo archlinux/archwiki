@@ -83,8 +83,10 @@ class PostgresInstaller extends DatabaseInstaller {
 
 	function submitConnectForm() {
 		// Get variables from the request
-		$newValues = $this->setVarsFromRequest( array( 'wgDBserver', 'wgDBport',
-			'wgDBname', 'wgDBmwschema' ) );
+		$newValues = $this->setVarsFromRequest( array(
+			'wgDBserver', 'wgDBport', 'wgDBname', 'wgDBmwschema',
+			'_InstallUser', '_InstallPassword'
+		) );
 
 		// Validate them
 		$status = Status::newGood();
@@ -95,6 +97,12 @@ class PostgresInstaller extends DatabaseInstaller {
 		}
 		if ( !preg_match( '/^[a-zA-Z0-9_]*$/', $newValues['wgDBmwschema'] ) ) {
 			$status->fatal( 'config-invalid-schema', $newValues['wgDBmwschema'] );
+		}
+		if ( !strlen( $newValues['_InstallUser'] ) ) {
+			$status->fatal( 'config-db-username-empty' );
+		}
+		if ( !strlen( $newValues['_InstallPassword'] ) ) {
+			$status->fatal( 'config-db-password-empty', $newValues['_InstallUser'] );
 		}
 
 		// Submit user box
@@ -144,17 +152,18 @@ class PostgresInstaller extends DatabaseInstaller {
 	 * @param string $user User name
 	 * @param string $password Password
 	 * @param string $dbName Database name
+	 * @param string $schema Database schema
 	 * @return Status
 	 */
-	protected function openConnectionWithParams( $user, $password, $dbName ) {
+	protected function openConnectionWithParams( $user, $password, $dbName, $schema ) {
 		$status = Status::newGood();
 		try {
-			$db = new DatabasePostgres(
-				$this->getVar( 'wgDBserver' ),
-				$user,
-				$password,
-				$dbName
-			);
+			$db = DatabaseBase::factory( 'postgres', array(
+				'host' => $this->getVar( 'wgDBserver' ),
+				'user' => $user,
+				'password' => $password,
+				'dbname' => $dbName,
+				'schema' => $schema ) );
 			$status->value = $db;
 		} catch ( DBConnectionError $e ) {
 			$status->fatal( 'config-connection-error', $e->getMessage() );
@@ -210,8 +219,7 @@ class PostgresInstaller extends DatabaseInstaller {
 	 *    - create-tables: A connection with a role suitable for creating tables.
 	 *
 	 * @throws MWException
-	 * @return Status object. On success, a connection object will be in the
-	 *   value member.
+	 * @return Status On success, a connection object will be in the value member.
 	 */
 	protected function openPgConnection( $type ) {
 		switch ( $type ) {
@@ -223,7 +231,8 @@ class PostgresInstaller extends DatabaseInstaller {
 				return $this->openConnectionWithParams(
 					$this->getVar( '_InstallUser' ),
 					$this->getVar( '_InstallPassword' ),
-					$this->getVar( 'wgDBname' ) );
+					$this->getVar( 'wgDBname' ),
+					$this->getVar( 'wgDBmwschema' ) );
 			case 'create-tables':
 				$status = $this->openPgConnection( 'create-schema' );
 				if ( $status->isOK() ) {
@@ -406,7 +415,7 @@ class PostgresInstaller extends DatabaseInstaller {
 
 	/**
 	 * Recursive helper for canCreateObjectsForWebUser().
-	 * @param $conn DatabaseBase object
+	 * @param DatabaseBase $conn
 	 * @param int $targetMember Role ID of the member to look for
 	 * @param int $group Role ID of the group to look for
 	 * @param int $maxDepth Maximum recursive search depth
@@ -613,6 +622,14 @@ class PostgresInstaller extends DatabaseInstaller {
 		}
 
 		return $status;
+	}
+
+	public function getGlobalDefaults() {
+		// The default $wgDBmwschema is null, which breaks Postgres and other DBMSes that require
+		// the use of a schema, so we need to set it here
+		return array(
+			'wgDBmwschema' => 'mediawiki',
+		);
 	}
 
 	public function setupPLpgSQL() {

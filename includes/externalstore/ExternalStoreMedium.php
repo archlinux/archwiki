@@ -29,7 +29,7 @@
  * @since 1.21
  */
 abstract class ExternalStoreMedium {
-	/** @var Array */
+	/** @var array */
 	protected $params = array();
 
 	/**
@@ -61,17 +61,18 @@ abstract class ExternalStoreMedium {
 			// Dont return when false to allow for simpler implementations.
 			// errored urls are handled in ExternalStore::batchFetchFromURLs
 			if ( $data !== false ) {
-				$retval[$urls] = $data;
+				$retval[$url] = $data;
 			}
 		}
+
 		return $retval;
 	}
 
 	/**
 	 * Insert a data item into a given location
 	 *
-	 * @param string $location the location name
-	 * @param string $data the data item
+	 * @param string $location The location name
+	 * @param string $data The data item
 	 * @return string|bool The URL of the stored data item, or false on error
 	 * @throws MWException
 	 */

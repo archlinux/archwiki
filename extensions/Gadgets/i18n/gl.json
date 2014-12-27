@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Alma",
+			"Toliño"
+		]
+	},
+	"gadgets-desc": "Deixa que os usuarios seleccionen [[Special:Gadgets|trebellos CSS e JavaScript]] nas súas [[Special:Preferences#mw-prefsection-gadgets|preferencias]]",
+	"prefs-gadgets": "Trebellos",
+	"gadgets-prefstext": "A continuación hai unha lista de trebellos especiais que pode activar para a súa conta.\nA maioría destes trebellos baséanse no JavaScript, así que ten que ter o JavaScript activado no seu navegador para que funcionen.\nTeña en conta que estes trebellos non funcionarán nesta páxina de preferencias.\n\nTeña tamén en conta que estes trebellos especiais non son parte do software de MediaWiki e que os crean e manteñen os usuarios no seu wiki local. Os administradores locais poden editar as [[MediaWiki:Gadgets-definition|definicións]] e [[Special:Gadgets|descricións]] dos trebellos dispoñibles.",
+	"gadgets": "Trebellos",
+	"gadgets-title": "Trebellos",
+	"gadgets-pagetext": "Embaixo hai unha lista dos trebellos especiais que os usuarios poden habilitar na súa páxina de preferencias, tal e como se describe nas [[MediaWiki:Gadgets-definition|definicións]].\nEste panorama xeral é de doado acceso ao sistema das páxinas de mensaxes que define cada descrición e código dos trebellos.",
+	"gadgets-uses": "Usa",
+	"gadgets-required-rights": "{{PLURAL:$2|Cómpre o seguinte dereito|Cómpren os seguintes dereitos}}:\n\n$1",
+	"gadgets-required-skins": "Dispoñible {{PLURAL:$2|na aparencia $1|nas seguintes aparencias: $1}}.",
+	"gadgets-default": "Activado para todos por defecto.",
+	"gadgets-export": "Exportar",
+	"gadgets-export-title": "Exportación de trebellos",
+	"gadgets-not-found": "Non se atopou o trebello \"$1\".",
+	"gadgets-export-text": "Para exportar o trebello $1, prema sobre o botón \"{{int:gadgets-export-download}}\", garde o ficheiro descargado,\nvaia á páxina especial Special:Import do wiki de destino e cárgueo. A continuación, engada o seguinte texto na páxina MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nDebe ter os permisos axeitados no wiki de destino (incluído o dereito de modificar as mensaxes do sistema) e a importación desde a carga de ficheiros debe estar activada.",
+	"gadgets-export-download": "Descargar"
+}

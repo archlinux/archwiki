@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Shirayuki",
+			"Umherirrender"
+		]
+	},
+	"modern.css": "{{optional}}",
+	"modern.js": "{{optional}}",
+	"skinname-modern": "{{optional}}\n{{Identical|Modern}}"
+}

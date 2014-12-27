@@ -3,11 +3,11 @@
  * Deletes a batch of pages.
  * Usage: php deleteBatch.php [-u <user>] [-r <reason>] [-i <interval>] [listfile]
  * where
- *	[listfile] is a file where each line contains the title of a page to be
- *             deleted, standard input is used if listfile is not given.
- *	<user> is the username
- *	<reason> is the delete reason
- *	<interval> is the number of seconds to sleep for after each delete
+ *   [listfile] is a file where each line contains the title of a page to be
+ *     deleted, standard input is used if listfile is not given.
+ *   <user> is the username
+ *   <reason> is the delete reason
+ *   <interval> is the number of seconds to sleep for after each delete
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,9 @@ class DeleteBatch extends Maintenance {
 		$dbw = wfGetDB( DB_MASTER );
 
 		# Handle each entry
+		// @codingStandardsIgnoreStart Ignore Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed
 		for ( $linenum = 1; !feof( $file ); $linenum++ ) {
+			// @codingStandardsIgnoreEnd
 			$line = trim( fgets( $file ) );
 			if ( $line == '' ) {
 				continue;
@@ -97,7 +99,7 @@ class DeleteBatch extends Maintenance {
 			$this->output( $title->getPrefixedText() );
 			$dbw->begin( __METHOD__ );
 			if ( $title->getNamespace() == NS_FILE ) {
-				$img = wfFindFile( $title );
+				$img = wfFindFile( $title, array( 'ignoreRedirect' => true ) );
 				if ( $img && $img->isLocal() && !$img->delete( $reason ) ) {
 					$this->output( " FAILED to delete associated file... " );
 				}

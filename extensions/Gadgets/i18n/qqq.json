@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"EugeneZelenko",
+			"Jon Harald Søby",
+			"Kghbln",
+			"Lloffiwr",
+			"Mormegil",
+			"Purodha",
+			"SPQRobin",
+			"Shirayuki",
+			"Siebrand",
+			"The Evil IP address",
+			"Umherirrender"
+		]
+	},
+	"gadgets-desc": "{{desc|name=Gadgets|url=http://www.mediawiki.org/wiki/Extension:Gadgets}}",
+	"prefs-gadgets": "In Gadgets extension. The name of a tab in [[Special:Preferences#mw-prefsection-gadgets|Special:Preferences]] where user set their preferences for the extension.\n\n{{Identical|Gadgets}}",
+	"gadgets-prefstext": "In Gadgets extension. This is the explanation text displayed under the Gadgets tab in [[Special:Preferences#mw-prefsection-gadgets|Special:Preferences]].",
+	"gadgets": "{{doc-special|Gadgets}}\n{{Identical|Gadgets}}",
+	"gadgets-definition": "{{notranslate}}",
+	"gadgets-title": "{{Identical|Gadgets}}",
+	"gadgets-pagetext": "Used as intro text in [[Special:Gadgets]].",
+	"gadgets-uses": "This is used as a verb in third-person singular. It appears in front of a script name. Example: \"''Uses: Gadget-UTCLiveClock.js''\"\n\nSee [[meta:Special:Gadgets|Gadgets page in meta.wikimedia.org]]",
+	"gadgets-required-rights": "Parameters:\n* $1 - a list in wikitext.\n* $2 - the number of items in list $1 for PLURAL use.",
+	"gadgets-required-skins": "Parameters:\n* $1 - a comma separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
+	"gadgets-default": "Used in [[Special:Gadgets]], if the extension is enabled for everyone by the Wiki's default settings.",
+	"gadgets-export": "Used on [[Special:Gadgets]]. This is a verb, not noun.\n{{Identical|Export}}",
+	"gadgets-export-title": "Used as page title. Example: [[Special:Gadgets/export/editbuttons]]",
+	"gadgets-not-found": "Used as error message. Parameters:\n* $1 - gadget name",
+	"gadgets-export-text": "Used as page description in [[Special:Gadgets]].\n\nRefers to {{msg-mw|Gadgets-export-download}}.\n\nSee example: [[Special:Gadgets/export/editbuttons]]\n\nFollowed by the \"Export\" form.\n\nParameters:\n* $1 - gadget name\n* $2 - gadget definition (code)",
+	"gadgets-export-download": "Use the verb for this message. Submit button.\n{{Identical|Download}}"
+}

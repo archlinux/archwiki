@@ -24,29 +24,14 @@
  */
 
 /**
- * Dummy class for pages not in NS_FILE
+ * File reversion user interface
  *
  * @ingroup Actions
  */
-class RevertAction extends Action {
-
-	public function getName() {
-		return 'revert';
-	}
-
-	public function show() {
-		$this->getOutput()->showErrorPage( 'nosuchaction', 'nosuchactiontext' );
-	}
-
-	public function execute() {}
-}
-
-/**
- * Class for pages in NS_FILE
- *
- * @ingroup Actions
- */
-class RevertFileAction extends FormAction {
+class RevertAction extends FormAction {
+	/**
+	 * @var OldLocalFile
+	 */
 	protected $oldFile;
 
 	public function getName() {
@@ -58,17 +43,24 @@ class RevertFileAction extends FormAction {
 	}
 
 	protected function checkCanExecute( User $user ) {
+		if ( $this->getTitle()->getNamespace() !== NS_FILE ) {
+			throw new ErrorPageError( $this->msg( 'nosuchaction' ), $this->msg( 'nosuchactiontext' ) );
+		}
 		parent::checkCanExecute( $user );
 
 		$oldimage = $this->getRequest()->getText( 'oldimage' );
 		if ( strlen( $oldimage ) < 16
 			|| strpos( $oldimage, '/' ) !== false
-			|| strpos( $oldimage, '\\' ) !== false )
-		{
+			|| strpos( $oldimage, '\\' ) !== false
+		) {
 			throw new ErrorPageError( 'internalerror', 'unexpected', array( 'oldimage', $oldimage ) );
 		}
 
-		$this->oldFile = RepoGroup::singleton()->getLocalRepo()->newFromArchiveName( $this->getTitle(), $oldimage );
+		$this->oldFile = RepoGroup::singleton()->getLocalRepo()->newFromArchiveName(
+			$this->getTitle(),
+			$oldimage
+		);
+
 		if ( !$this->oldFile->exists() ) {
 			throw new ErrorPageError( '', 'filerevert-badversion' );
 		}
@@ -78,6 +70,7 @@ class RevertFileAction extends FormAction {
 		$form->setWrapperLegendMsg( 'filerevert-legend' );
 		$form->setSubmitTextMsg( 'filerevert-submit' );
 		$form->addHiddenField( 'oldimage', $this->getRequest()->getText( 'oldimage' ) );
+		$form->setTokenSalt( array( 'revert', $this->getTitle()->getPrefixedDBkey() ) );
 	}
 
 	protected function getFormFields() {
@@ -99,8 +92,10 @@ class RevertFileAction extends FormAction {
 				'raw' => true,
 				'default' => $this->msg( 'filerevert-intro',
 					$this->getTitle()->getText(), $userDate, $userTime,
-					wfExpandUrl( $this->page->getFile()->getArchiveUrl( $this->getRequest()->getText( 'oldimage' ) ),
-						PROTO_CURRENT ) )->parseAsBlock()
+					wfExpandUrl(
+						$this->page->getFile()->getArchiveUrl( $this->getRequest()->getText( 'oldimage' ) ),
+						PROTO_CURRENT
+					) )->parseAsBlock()
 			),
 			'comment' => array(
 				'type' => 'text',
@@ -112,10 +107,21 @@ class RevertFileAction extends FormAction {
 	}
 
 	public function onSubmit( $data ) {
-		$source = $this->page->getFile()->getArchiveVirtualUrl( $this->getRequest()->getText( 'oldimage' ) );
+		$source = $this->page->getFile()->getArchiveVirtualUrl(
+			$this->getRequest()->getText( 'oldimage' )
+		);
 		$comment = $data['comment'];
+
 		// TODO: Preserve file properties from database instead of reloading from file
-		return $this->page->getFile()->upload( $source, $comment, $comment, 0, false, false, $this->getUser() );
+		return $this->page->getFile()->upload(
+			$source,
+			$comment,
+			$comment,
+			0,
+			false,
+			false,
+			$this->getUser()
+		);
 	}
 
 	public function onSuccess() {
@@ -139,6 +145,7 @@ class RevertFileAction extends FormAction {
 
 	protected function getDescription() {
 		$this->getOutput()->addBacklinkSubtitle( $this->getTitle() );
+
 		return '';
 	}
 }

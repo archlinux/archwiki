@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Frokor"
+		]
+	},
+	"syntaxhighlight-desc": "Gjev syntaks som framhevar <code>&lt;syntaxhighlight&gt;</code> ved hjelp av [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Du må gje eit språk slik:",
+	"syntaxhighlight-supported": "Støtta språk for syntaksutheving:",
+	"syntaxhighlight-err-loading": "(feil under lasting av liste over støtta språk)",
+	"syntaxhighlight-err-language": "Ugyldig språk.",
+	"geshi.css": "/* CSS plassert her gjeld GeSHi syntaksutheving */"
+}

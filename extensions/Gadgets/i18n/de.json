@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Daniel Kinzler, brightbyte.de",
+			"Geitost",
+			"Kghbln",
+			"Metalhead64",
+			"Raimond Spekking",
+			"The Evil IP address",
+			"Umherirrender",
+			"✓"
+		]
+	},
+	"gadgets-desc": "Ermöglicht es Benutzern, in ihren [[Special:Preferences#mw-prefsection-gadgets|persönlichen Einstellungen]] vordefinierte [[Special:Gadgets|CSS- und JavaScript-Helferlein]] zu aktivieren",
+	"prefs-gadgets": "Helferlein",
+	"gadgets-prefstext": "Dies ist eine Liste spezieller Helferlein, die jeder Benutzer aktivieren kann.\nDie Helferlein basieren zumeist auf JavaScript. Daher muss JavaScript im Browser aktiviert sein, damit sie funktionieren können.\nSie funktionieren allerdings nicht auf dieser Spezialseite mit den persönlichen Einstellungen.\n\nAußerdem ist zu beachten, dass diese Helferlein im Allgemeinen nicht Teil von MediaWiki sind, sondern meist von Benutzern lokaler Wikis entwickelt und gewartet werden.\nLokale Administratoren können die verfügbaren Helferlein bearbeiten. Dafür stehen die [[MediaWiki:Gadgets-definition|Definitionen]] und [[Special:Gadgets|Beschreibungen]] zur Verfügung.",
+	"gadgets": "Helferlein",
+	"gadgets-title": "Helferlein",
+	"gadgets-pagetext": "Liste besonderer, in [[MediaWiki:Gadgets-definition]] festgelegter Helferlein, die für jeden Benutzer in seinen [[Special:Preferences#mw-prefsection-gadgets|persönlichen Einstellungen]] verfügbar sind.\nDiese Übersicht bietet direkten Zugang zu den MediaWiki-Systemnachrichten, welche die Beschreibung sowie den Programmcode jedes Helferlein enthalten.",
+	"gadgets-uses": "Benutzt",
+	"gadgets-required-rights": "Erfordert die {{PLURAL:$2|folgende Berechtigung|folgenden Berechtigungen}}:\n\n$1",
+	"gadgets-required-skins": "Verfügbar bei {{PLURAL:$2|der folgenden Benutzeroberfläche|den folgenden Benutzeroberflächen}}: $1.",
+	"gadgets-default": "Für alle standardmäßig aktiviert.",
+	"gadgets-export": "Export",
+	"gadgets-export-title": "Export der Helferlein",
+	"gadgets-not-found": "Helferlein „$1“ wurde nicht gefunden.",
+	"gadgets-export-text": "Um das Helferlein $1 zu exportieren, klicke auf die Schaltfläche „{{int:gadgets-export-download}}“ und speichere die heruntergeladene Datei. Gehe sodann zur Spezialseite Spezial:Import auf dem für den Import vorgesehenen Wiki und lade die Datei hoch. Füge danach den folgenden Text zur Seite MediaWiki:Gadgets-definition hinzu:\n<pre>$2</pre>\nDu musst über die notwendigen Berechtigungen auf dem für den Import vorgesehenen Wiki verfügen (einschließlich der Berechtigung, MediaWiki-Systemnachrichten zu bearbeiten). Zudem muss der Import von Datei-Uploads aktiviert sein.",
+	"gadgets-export-download": "Herunterladen"
+}

@@ -1,0 +1,21 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aftab1995",
+			"Bellayet",
+			"Nasir8891",
+			"Zaheen"
+		]
+	},
+	"spam-blacklist": "\n # এই তালিকার সাথে মিলে যায় এমন বহিঃসংযোগ URLগুলি পাতায় যোগ করতে বাধা দেয়া হবে।\n # এই তালিকাটি কেবল এই উইকির ক্ষেত্রে প্রযোজ্য; সামগ্রিক কালোতালিকাও দেখতে পারেন।\n # ডকুমেন্টেশনের জন্য https://www.mediawiki.org/wiki/Extension:SpamBlacklist দেখুন\n #<!-- leave this line exactly as it is --> <pre>\n#\n# সিনট্যাক্স নিচের মত:\n#  * \"#\" ক্যারেক্টার থেকে শুরু করে লাইনের শেষ পর্যন্ত সবকিছু একটি মন্তব্য\n#  * প্রতিটি অশূন্য লাইন একটি রেজেক্স খণ্ডাংশ যেটি কেবল URLগুলির ভেতরের hostগুলির সাথে মিলে যাবে\n\n #</pre> <!-- leave this line exactly as it is -->",
+	"spam-whitelist": " #<!-- এই লাইন যেমন আছে ঠিক তেমনই ছেড়ে দিন --> <pre>\n# External URLs matching this list will *not* be blocked even if they would\n# have been blocked by blacklist entries.\n#\n# Syntax is as follows:\n#  * Everything from a \"#\" character to the end of the line is a comment\n#  * Every non-blank line is a regex fragment which will only match hosts inside URLs\n\n #</pre> <!-- এই লাইন যেমন আছে ঠিক তেমনই ছেড়ে দিন -->",
+	"spam-blacklisted-email": "কালোতালিকাভুক্ত ইমেইল ঠিকানা",
+	"spam-blacklisted-email-text": "অন্যদের ইমেইল পাঠানো থেকে বিরত রাখতে আপনাকে কালোতালিকাভুক্ত করা হয়েছে।",
+	"spam-blacklisted-email-signup": "আপনার লেখা ইমেইল ঠিকানাটি কালোতালিকাভুক্ত।",
+	"spam-invalid-lines": "নিচের স্প্যাম কালোতালিকার {{PLURAL:$1|লাইন|লাইনগুলি}} অবৈধ রেগুলার {{PLURAL:$1|এক্সপ্রেশন|এক্সপ্রেশন}} ধারণ করছে এবং পাতাটি সংরক্ষণের আগে এগুলি ঠিক করা {{PLURAL:$1|প্রয়োজন|প্রয়োজন}}:",
+	"spam-blacklist-desc": "রেজেক্স-ভিত্তিক স্প্যামরোধী সরঞ্জাম: [[MediaWiki:Spam-blacklist]] এবং [[MediaWiki:Spam-whitelist]]",
+	"log-name-spamblacklist": "স্প্যাম কালোতালিকা লগ",
+	"log-description-spamblacklist": "এই ঘটনাগুলি স্প্যাম কালোতালিকার হিট অনুসরণ।",
+	"right-spamblacklistlog": "স্প্যাম কালোতালিকা লগ দেখুন",
+	"action-spamblacklistlog": "স্প্যাম কালোতালিকা লগ দেখুন"
+}

@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"CERminator"
+		]
+	},
+	"cite_article_desc": "Dodaje posebnu stranicu za [[Special:Cite|citiranje]] i link u alatnoj kutiji",
+	"cite_article_link": "Citiraj ovu stranicu",
+	"tooltip-cite-article": "Informacije kako citirati ovu stranicu",
+	"cite": "Citiranje",
+	"cite_page": "Stranica:",
+	"cite_submit": "Citiraj"
+}

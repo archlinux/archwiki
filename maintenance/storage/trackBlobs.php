@@ -24,7 +24,6 @@
 
 require __DIR__ . '/../commandLine.inc';
 
-
 if ( count( $args ) < 1 ) {
 	echo "Usage: php trackBlobs.php <cluster> [... <cluster>]\n";
 	echo "Adds blobs from a given ES cluster to the blob_tracking table\n";
@@ -127,6 +126,7 @@ class TrackBlobs {
 				$this->textClause .= 'old_text' . $dbr->buildLike( "DB://$cluster/", $dbr->anyString() );
 			}
 		}
+
 		return $this->textClause;
 	}
 
@@ -134,6 +134,7 @@ class TrackBlobs {
 		if ( !preg_match( '!^DB://(\w+)/(\d+)(?:/([0-9a-fA-F]+)|)$!', $text, $m ) ) {
 			return false;
 		}
+
 		return array(
 			'cluster' => $m[1],
 			'id' => intval( $m[2] ),
@@ -306,6 +307,7 @@ class TrackBlobs {
 	function findOrphanBlobs() {
 		if ( !extension_loaded( 'gmp' ) ) {
 			echo "Can't find orphan blobs, need bitfield support provided by GMP.\n";
+
 			return;
 		}
 

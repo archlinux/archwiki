@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Filzstift",
+			"Geitost"
+		]
+	},
+	"wikieditor-toolbar-dialogs-preference": "Assistenten zum Einfügen von Links und Tabellen sowie die Funktion «Suchen und Ersetzen» aktivieren",
+	"wikieditor-toolbar-tool-reference-example": "Fussnotentext hier einfügen",
+	"wikieditor-toolbar-tool-big": "Gross",
+	"wikieditor-toolbar-tool-big-example": "Grosser Text",
+	"wikieditor-toolbar-tool-newline": "Zeilenumbruch erzwingen (nicht im Fliesstext verwenden)",
+	"wikieditor-toolbar-tool-replace-case": "Gross- und Kleinschreibung beachten",
+	"wikieditor-toolbar-tool-replace-close": "Schliessen",
+	"wikieditor-toolbar-help-content-file-result": "<div style='width:104px;' class='thumbinner'><a title='Beschreibung' class='image' href='#'><img height='50' width='100' border='0' class='thumbimage' src='$2/WikiEditor/modules/images/toolbar/example-image.png' alt=''/></a><div class='thumbcaption'><div class='magnify'><a title='Vergrössern' class='internal' href='#'><img height='11' width='15' alt='' src='$1/common/images/magnify-clip.png'/></a></div>Beschreibung</div></div>"
+}

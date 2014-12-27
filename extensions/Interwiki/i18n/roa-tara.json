@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joetaras"
+		]
+	},
+	"interwiki": "'Ndruche e cange le date de le inderuicchi",
+	"interwiki-title-norights": "'Ndruche le date de inderuicchi",
+	"interwiki-desc": "Aggiunge 'na [[Special:Interwiki|pàgena speciale]] pe 'ndrucà e cangià 'a tabbelle de inderuicchi",
+	"interwiki_intro": "Queste jè 'na panorameche d'a tabbelle de inderuicchi.",
+	"interwiki-legend-show": "Fà vedè 'a leggende",
+	"interwiki-legend-hide": "Scunne 'a leggende",
+	"interwiki_prefix": "Prefisse",
+	"interwiki-prefix-label": "Prefisse:",
+	"interwiki_prefix_intro": "'U prefisse inderuicchi avène ausate jndr'à <code>[<nowiki />[prefix:<em>pagename</em>]]</code> sindasse uicchiteste.",
+	"interwiki_local": "Inoltre",
+	"interwiki-local-label": "Inoltre:",
+	"interwiki_local_intro": "'Na richieste HTTP sus a sta uicchi locale cu ste prefisse inderuicchi jndr'à URL jè:",
+	"interwiki_local_0_intro": "none onorate, normalmende bloccate da \"pàgene none acchiate\".",
+	"interwiki_1": "sine",
+	"interwiki_0": "none",
+	"interwiki_edit": "Cange",
+	"interwiki_reasonfield": "Mutive:",
+	"interwiki_delquestion": "Scangellamende de \"$1\"",
+	"interwiki_deleting": "Tu ste scangille 'u prefisse \"$1\".",
+	"interwiki_deleted": "'U prefisse \"$1\" ha state luate da 'a tabbelle de inderuicchi.",
+	"interwiki_delfailed": "'U prefisse \"$1\" non ge pò essere luate da 'a tabbelle de inderuicchi.",
+	"interwiki_addtext": "Aggiunge 'nu prefisse inderuicchi",
+	"interwiki_addbutton": "Aggiunge",
+	"right-interwiki": "Cange le date de inderuicchi",
+	"action-interwiki": "cange sta vôsce de inderuicchi"
+}

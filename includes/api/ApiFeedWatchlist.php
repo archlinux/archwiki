@@ -34,7 +34,6 @@
 class ApiFeedWatchlist extends ApiBase {
 
 	private $watchlistModule = null;
-	private $linkToDiffs = false;
 	private $linkToSections = false;
 
 	/**
@@ -51,16 +50,16 @@ class ApiFeedWatchlist extends ApiBase {
 	 * Wrap the result as an RSS/Atom feed.
 	 */
 	public function execute() {
-		global $wgFeed, $wgFeedClasses, $wgFeedLimit, $wgSitename, $wgLanguageCode;
-
+		$config = $this->getConfig();
+		$feedClasses = $config->get( 'FeedClasses' );
 		try {
 			$params = $this->extractRequestParams();
 
-			if ( !$wgFeed ) {
+			if ( !$config->get( 'Feed' ) ) {
 				$this->dieUsage( 'Syndication feeds are not available', 'feed-unavailable' );
 			}
 
-			if ( !isset( $wgFeedClasses[$params['feedformat']] ) ) {
+			if ( !isset( $feedClasses[$params['feedformat']] ) ) {
 				$this->dieUsage( 'Invalid subscription feed type', 'feed-invalid' );
 			}
 
@@ -73,10 +72,10 @@ class ApiFeedWatchlist extends ApiBase {
 				'meta' => 'siteinfo',
 				'siprop' => 'general',
 				'list' => 'watchlist',
-				'wlprop' => 'title|user|comment|timestamp',
+				'wlprop' => 'title|user|comment|timestamp|ids',
 				'wldir' => 'older', // reverse order - from newest to oldest
 				'wlend' => $endTime, // stop at this time
-				'wllimit' => min( 50, $wgFeedLimit )
+				'wllimit' => min( 50, $this->getConfig()->get( 'FeedLimit' ) )
 			);
 
 			if ( $params['wlowner'] !== null ) {
@@ -93,12 +92,6 @@ class ApiFeedWatchlist extends ApiBase {
 			}
 			if ( $params['wltype'] !== null ) {
 				$fauxReqArr['wltype'] = $params['wltype'];
-			}
-
-			// Support linking to diffs instead of article
-			if ( $params['linktodiffs'] ) {
-				$this->linkToDiffs = true;
-				$fauxReqArr['wlprop'] .= '|ids';
 			}
 
 			// Support linking directly to sections when possible
@@ -129,24 +122,29 @@ class ApiFeedWatchlist extends ApiBase {
 
 			$msg = wfMessage( 'watchlist' )->inContentLanguage()->text();
 
-			$feedTitle = $wgSitename . ' - ' . $msg . ' [' . $wgLanguageCode . ']';
+			$feedTitle = $this->getConfig()->get( 'Sitename' ) . ' - ' . $msg . ' [' . $this->getConfig()->get( 'LanguageCode' ) . ']';
 			$feedUrl = SpecialPage::getTitleFor( 'Watchlist' )->getFullURL();
 
-			$feed = new $wgFeedClasses[$params['feedformat']] ( $feedTitle, htmlspecialchars( $msg ), $feedUrl );
+			$feed = new $feedClasses[$params['feedformat']] (
+				$feedTitle,
+				htmlspecialchars( $msg ),
+				$feedUrl
+			);
 
 			ApiFormatFeedWrapper::setResult( $this->getResult(), $feed, $feedItems );
-
 		} catch ( Exception $e ) {
-
 			// Error results should not be cached
 			$this->getMain()->setCacheMaxAge( 0 );
 
-			$feedTitle = $wgSitename . ' - Error - ' . wfMessage( 'watchlist' )->inContentLanguage()->text() . ' [' . $wgLanguageCode . ']';
+			// @todo FIXME: Localise  brackets
+			$feedTitle = $this->getConfig()->get( 'Sitename' ) . ' - Error - ' .
+				wfMessage( 'watchlist' )->inContentLanguage()->text() .
+				' [' . $this->getConfig()->get( 'LanguageCode' ) . ']';
 			$feedUrl = SpecialPage::getTitleFor( 'Watchlist' )->getFullURL();
 
 			$feedFormat = isset( $params['feedformat'] ) ? $params['feedformat'] : 'rss';
 			$msg = wfMessage( 'watchlist' )->inContentLanguage()->escaped();
-			$feed = new $wgFeedClasses[$feedFormat] ( $feedTitle, $msg, $feedUrl );
+			$feed = new $feedClasses[$feedFormat] ( $feedTitle, $msg, $feedUrl );
 
 			if ( $e instanceof UsageException ) {
 				$errorCode = $e->getCodeString();
@@ -162,13 +160,13 @@ class ApiFeedWatchlist extends ApiBase {
 	}
 
 	/**
-	 * @param $info array
+	 * @param array $info
 	 * @return FeedItem
 	 */
 	private function createFeedItem( $info ) {
 		$titleStr = $info['title'];
 		$title = Title::newFromText( $titleStr );
-		if ( $this->linkToDiffs && isset( $info['revid'] ) ) {
+		if ( isset( $info['revid'] ) ) {
 			$titleUrl = $title->getFullURL( array( 'diff' => $info['revid'] ) );
 		} else {
 			$titleUrl = $title->getFullURL();
@@ -179,8 +177,11 @@ class ApiFeedWatchlist extends ApiBase {
 		// The anchor won't work for sections that have dupes on page
 		// as there's no way to strip that info from ApiWatchlist (apparently?).
 		// RegExp in the line below is equal to Linker::formatAutocomments().
-		if ( $this->linkToSections && $comment !== null && preg_match( '!(.*)/\*\s*(.*?)\s*\*/(.*)!', $comment, $matches ) ) {
+		if ( $this->linkToSections && $comment !== null &&
+			preg_match( '!(.*)/\*\s*(.*?)\s*\*/(.*)!', $comment, $matches )
+		) {
 			global $wgParser;
+
 			$sectionTitle = $wgParser->stripSectionName( $matches[2] );
 			$sectionTitle = Sanitizer::normalizeSectionNameWhitespace( $sectionTitle );
 			$titleUrl .= Title::newFromText( '#' . $sectionTitle )->getFragmentForURL();
@@ -199,12 +200,12 @@ class ApiFeedWatchlist extends ApiBase {
 			$this->watchlistModule = $this->getMain()->getModuleManager()->getModule( 'query' )
 				->getModuleManager()->getModule( 'watchlist' );
 		}
+
 		return $this->watchlistModule;
 	}
 
 	public function getAllowedParams( $flags = 0 ) {
-		global $wgFeedClasses;
-		$feedFormatNames = array_keys( $wgFeedClasses );
+		$feedFormatNames = array_keys( $this->getConfig()->get( 'FeedClasses' ) );
 		$ret = array(
 			'feedformat' => array(
 				ApiBase::PARAM_DFLT => 'rss',
@@ -216,7 +217,6 @@ class ApiFeedWatchlist extends ApiBase {
 				ApiBase::PARAM_MIN => 1,
 				ApiBase::PARAM_MAX => 72,
 			),
-			'linktodiffs' => false,
 			'linktosections' => false,
 		);
 		if ( $flags ) {
@@ -235,15 +235,16 @@ class ApiFeedWatchlist extends ApiBase {
 			$ret['wltype'] = null;
 			$ret['wlexcludeuser'] = null;
 		}
+
 		return $ret;
 	}
 
 	public function getParamDescription() {
 		$wldescr = $this->getWatchlistModule()->getParamDescription();
+
 		return array(
 			'feedformat' => 'The format of the feed',
 			'hours' => 'List pages modified within this many hours from now',
-			'linktodiffs' => 'Link to change differences instead of article pages',
 			'linktosections' => 'Link directly to changed sections if possible',
 			'allrev' => $wldescr['allrev'],
 			'wlowner' => $wldescr['owner'],
@@ -255,20 +256,13 @@ class ApiFeedWatchlist extends ApiBase {
 	}
 
 	public function getDescription() {
-		return 'Returns a watchlist feed';
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'code' => 'feed-unavailable', 'info' => 'Syndication feeds are not available' ),
-			array( 'code' => 'feed-invalid', 'info' => 'Invalid subscription feed type' ),
-		) );
+		return 'Returns a watchlist feed.';
 	}
 
 	public function getExamples() {
 		return array(
 			'api.php?action=feedwatchlist',
-			'api.php?action=feedwatchlist&allrev=&linktodiffs=&hours=6'
+			'api.php?action=feedwatchlist&allrev=&hours=6'
 		);
 	}
 

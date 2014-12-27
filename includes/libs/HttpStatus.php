@@ -28,8 +28,6 @@ class HttpStatus {
 	/**
 	 * Get the message associated with HTTP response code $code
 	 *
-	 * Replace OutputPage::getStatusMessage( $code )
-	 *
 	 * @param $code Integer: status code
 	 * @return String or null: message or null if $code is not in the list of
 	 *         messages
@@ -75,13 +73,17 @@ class HttpStatus {
 			422 => 'Unprocessable Entity',
 			423 => 'Locked',
 			424 => 'Failed Dependency',
+			428 => 'Precondition Required',
+			429 => 'Too Many Requests',
+			431 => 'Request Header Fields Too Large',
 			500 => 'Internal Server Error',
 			501 => 'Not Implemented',
 			502 => 'Bad Gateway',
 			503 => 'Service Unavailable',
 			504 => 'Gateway Timeout',
 			505 => 'HTTP Version Not Supported',
-			507 => 'Insufficient Storage'
+			507 => 'Insufficient Storage',
+			511 => 'Network Authentication Required',
 		);
 		return isset( $statusMessage[$code] ) ? $statusMessage[$code] : null;
 	}

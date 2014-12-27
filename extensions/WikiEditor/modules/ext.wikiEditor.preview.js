@@ -1,8 +1,7 @@
 /*
  * JavaScript for WikiEditor Preview module
  */
-
-$( document ).ready( function() {
+jQuery( document ).ready( function ( $ ) {
 	// Add preview module
 	$( 'textarea#wpTextbox1' ).wikiEditor( 'addModule', 'preview' );
 } );

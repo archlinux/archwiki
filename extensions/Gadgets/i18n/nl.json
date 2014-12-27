@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": [
+			"Annabel",
+			"SPQRobin",
+			"Siebrand"
+		]
+	},
+	"gadgets-desc": "Laat gebruikers [[Special:Gadgets|CSS en JavaScripts]] activeren in hun [[Special:Preferences#mw-prefsection-gadgets|voorkeuren]]",
+	"prefs-gadgets": "Uitbreidingen",
+	"gadgets-prefstext": "Hieronder staan de speciale uitbreidingen die u kunt inschakelen.\nDe uitbreidingen zijn voornamelijk gebaseerd op JavaScript, dus JavaScript moet voor uw browser ingeschakeld zijn om ze te laten werken.\nDe uitbreidingen hebben geen invloed op deze pagina met voorkeuren.\n\nDeze speciale uitbreidingen zijn geen onderdeel van de MediaWiki-software en worden meestal ontwikkeld en onderhouden door gebruikers van uw wiki.\nBeheerders kunnen de beschikbare uitbreidingen opgeven in [[MediaWiki:Gadgets-definition|definities]] en [[Special:Gadgets|beschrijvingen]].",
+	"gadgets": "Uitbreidingen",
+	"gadgets-title": "Uitbreidingen",
+	"gadgets-pagetext": "Hieronder staan de speciale uitbreidingen die gebruikers kunnen inschakelen via hun [[Special:Preferences#mw-prefsection-gadgets|voorkeuren]], zoals ingesteld in de [[MediaWiki:Gadgets-definition|definities]].\nDit overzicht biedt eenvoudige toegang tot de systeemtekstpagina waar de beschrijving en de programmacode van iedere uitbreiding staat.",
+	"gadgets-uses": "Gebruikt",
+	"gadgets-required-rights": "{{PLURAL:$2|Het volgende recht is|De volgende rechten zijn}} vereist:\n\n$1.",
+	"gadgets-required-skins": "Beschikbaar in de {{PLURAL:$2|vormgeving $1|volgende vormgevingen: $1}}.",
+	"gadgets-default": "Standaard ingeschakeld voor iedereen.",
+	"gadgets-export": "Exporteren",
+	"gadgets-export-title": "Uitbreiding exporteren",
+	"gadgets-not-found": "Uitbreiding \"$1\" niet gevonden.",
+	"gadgets-export-text": "Klik op de knop \"{{int:gadgets-export-download}}\" om de uitbreiding \"$1\" te exporteren.\nSla daarna het gedownloade bestand op.\nGa naar \"Special:Import\" in de doelwiki en upload het geëxporteerde bestand.\nVoeg daarna het volgende toe aan de pagina \"MediaWiki:Gadgets-definition\":\n<pre>$2</pre>\nU moet de juiste rechten hebben op de doelwiki, inclusief het recht om bewerkingen te maken aan de systeemberichten, en importeren uit bestanden moet ingeschakeld zijn.",
+	"gadgets-export-download": "Downloaden"
+}

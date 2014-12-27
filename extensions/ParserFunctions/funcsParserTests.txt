@@ -21,6 +21,18 @@ File:Dionysos-Brunnen am Kölner Dom.jpg
 blah blah
 !! endarticle
 
+!! article
+File:Redirect_to_Foobar.jpg
+!! text
+#REDIRECT[[File:Foobar.jpg]]
+!! endarticle
+
+!! article
+File:Redirect_to_nowhere.jpg
+!! text
+#REDIRECT[[File:Missing target file.jpg]]
+!! endarticle
+
 !! test
 Input times are UTC, not local time
 !! input
@@ -127,6 +139,21 @@ Not found
 !! end
 
 !! test
+{{#ifexist:}} media redirect (bug 32031)
+!! input
+{{#ifexist:Media:Redirect_to_Foobar.jpg|Found|Not found}}
+{{#ifexist:Media:Redirect_to_nowhere.jpg|Found|Not found}}
+{{#ifexist:Media:Missing file.jpg|Found|Not found}}
+{{#ifexist:Media:Dionysos-Brunnen am Kölner Dom.jpg|Found|Not found}}
+!!result
+<p>Found
+Not found
+Not found
+Not found
+</p>
+!!end
+
+!! test
 #if
 !! input
 {{#if: | yes | no}}
@@ -172,6 +199,23 @@ no
 no
 </p>
 !! end
+
+!! test
+#ifeq entities
+!!input
+{{#ifeq: {{PAGENAME:*foo&bar}} | *foo&bar | yes | no}}
+{{#ifeq: a'b | a&#39;b | yes | no}}
+{{#ifeq: a'b | a&amp;#39;b | yes | no}}
+{{#ifeq: foo | Foo | *yes | *no}}
+!! result
+<p>yes
+yes
+no
+</p>
+<ul><li>no</li></ul>
+
+!! end
+
 
 !! test
 #iferror
@@ -230,5 +274,49 @@ Templates: Parser functions don't strip whitespace from positional parameters
 }}
 !! result
 <p>no-pre-then
+</p>
+!! end
+
+!! test
+#switch
+!! input
+{{#switch:foo&bar|foo&amp;bar=yes|no}}
+{{#switch:foo&bar|fred=1|foo&amp;bar|g=yes|no}}
+{{#switch:foo&bar|fred=1|foo&amp;&#39;bar|g=yes|no}}
+{{#switch:foo|bar|baz=no|*default}}
+{{#switch:none|foo=1|bar=2|#default=no match|baz=3}}
+{{#switch:none|foo=1|bar=2|#default=ignored|baz=3|Second default}}
+{{#switch:|a&amp;#39;b}}
+!! result
+<p>yes
+yes
+no
+</p>
+<ul><li>default</li></ul>
+<p>no match
+Second default
+a&amp;#39;b
+</p>
+!!end
+
+!! test
+#switch #default should match next and not last named parameter
+!! input
+<{{#switch: foo | #default | bar = DEF }}>
+<{{#switch: foo | #default | bar = DEF | baz = GHI }}>
+!! result
+<p>&lt;DEF&gt;
+&lt;DEF&gt;
+</p>
+!! end
+
+!! test
+#switch should not match #default as a prefix
+!! input
+<{{#switch: foo | #defaultWTF? = This is crazy }}>
+<{{#switch: foo | #defaultWTF? | bar = This is crazy }}>
+!! result
+<p>&lt;&gt;
+&lt;&gt;
 </p>
 !! end

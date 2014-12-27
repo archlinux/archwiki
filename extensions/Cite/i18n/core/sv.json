@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"Boivie",
+			"Fluff",
+			"Jopparn",
+			"Lejonel",
+			"M.M.S.",
+			"Najami",
+			"Skalman",
+			"Lokal Profil"
+		]
+	},
+	"cite-desc": "Lägger till taggarna <nowiki><ref[ name=id]></nowiki> och <nowiki><references/></nowiki> för referenser till källor",
+	"cite_error": "Referensfel: $1",
+	"cite_error_ref_numeric_key": "Ogiltig <code>&lt;ref&gt;</code>-tagg; parametern 'name' kan inte vara ett tal, använd en beskrivande titel",
+	"cite_error_ref_no_key": "Ogiltig <code>&lt;ref&gt;</code>-tagg; referenser utan innehåll måste ha ett namn",
+	"cite_error_ref_too_many_keys": "Ogiltig <code>&lt;ref&gt;</code>-tagg;\nogiltiga namn, t.ex. för många",
+	"cite_error_ref_no_input": "Ogiltig <code>&lt;ref&gt;</code>-tagg; referenser utan namn måste ha innehåll",
+	"cite_error_references_invalid_parameters": "Ogiltig <code>&lt;references&gt;</code>-tagg; inga parametrar tillåts. Använd <code>&lt;references /&gt;</code>",
+	"cite_error_references_invalid_parameters_group": "Ogiltig <code>&lt;references&gt;</code>-tagg;\nendast \"group\"-parametern är tillåten.\nAnvänd <code>&lt;references /&gt;</code>, eller <code>&lt;references group=\"...\" /&gt;</code>",
+	"cite_error_references_no_backlink_label": "De anpassade etiketterna för tillbaka-länkar har tagit slut. Definiera fler etiketter i systemmedelandet <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki>",
+	"cite_error_no_link_label_group": "Anpassade länketiketter för gruppen \"$1\" tog slut.\nDefinera fler i <nowiki>[[MediaWiki:$2]]</nowiki>-meddelandet.",
+	"cite_error_references_no_text": "Ogiltig <code>&lt;ref&gt;</code>-tagg; ingen text har angivits för referensen med namnet <code>$1</code>",
+	"cite_error_included_ref": "Avslutande <code>&lt;/ref&gt;</code> saknas för <code>&lt;ref&gt;</code>-tagg",
+	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code>-taggar finns för en grupp vid namn \"$1\", men ingen motsvarande <code>&lt;references group=\"$1\"/&gt;</code>-tagg hittades, eller så saknas en avslutande <code>&lt;/ref&gt;</code>",
+	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code>-tagg i <code>&lt;references&gt;</code> har ett motstridigt group-attribut \"$1\".",
+	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code>-tagg definierad i <code>&lt;references&gt;</code> har group-attribut \"$1\" som inte används tidigare i texten.",
+	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code>-tagg med namn \"$1\", definierad i <code>&lt;references&gt;</code> används inte tidigare i texten.",
+	"cite_error_references_no_key": "<code>&lt;ref&gt;</code>-tagg definierad i <code>&lt;references&gt;</code> saknar name-attribut.",
+	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code>-tagg definierad i <code>&lt;ref&gt;</code> med namn \"$1\" har inget innehåll.",
+	"cite_references_link_accessibility_label": "Hoppa upp",
+	"cite_references_link_many_accessibility_label": "Hoppa upp till:"
+}

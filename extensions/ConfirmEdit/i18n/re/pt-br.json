@@ -1,0 +1,9 @@
+{
+	"@metadata": [],
+	"recaptcha-edit": "Para ajudar a prevenir contra vandalismos, por favor digite as duas palavras que você vê na caixa abaixo:",
+	"recaptcha-addurl": "A sua edição inclui ligações externas. Para ajudar a prevenir contra vandalismos, por favor digite as duas palavras que você vê na caixa abaixo:",
+	"recaptcha-badlogin": "Para ajudar a prevenir contra tentativas de desbloquear senhas, por favor digite as duas palavras que você vê na caixa abaixo:",
+	"recaptcha-createaccount": "Para ajudar a prevenir contra criação automatizada de usuários, por favor digite as duas palavras que você vê na caixa abaixo:",
+	"recaptcha-createaccount-fail": "Resposta incorreta ao reCAPTCHA.",
+	"recaptcha-create": "Para ajudar a prevenir contra criação automatizada de páginas, por favor digite as duas palavras que você vê na caixa abaixo:"
+}

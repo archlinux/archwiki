@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"AlefZet"
+		]
+	},
+	"syntaxhighlight-specify": "Tildi bılaýşa körsetwiñiz qajet:",
+	"syntaxhighlight-supported": "Sïntaksïsi kömeski jarıqtalatın süýemeldengen tilder:",
+	"syntaxhighlight-err-loading": "(süýemeldengen tilder tizimin jüktew qatesi)",
+	"syntaxhighlight-err-language": "Jaramsız til.",
+	"geshi.css": "/* Mındağı CSS ämirleri GeSHi sïntaksïsti kömeski jarıqtawğa qoldanıladı */"
+}

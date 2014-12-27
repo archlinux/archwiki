@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Purodha",
+			"The Evil IP address"
+		]
+	},
+	"cite-desc": "Erlaub Quelle un Referenze met <nowiki><ref[ name=\"id\"]></nowiki> un <nowiki><references /></nowiki> aanzejevve.",
+	"cite_error": "Fähler in <i lang=\"en\">cite</i> met Referenze: $1",
+	"cite_error_ref_numeric_key": "Fähler en <i lang=\"en\">cite</i>:\nEne <code>&lt;ref&gt;</code>-Name kann kei Zahl sin.\nNemm enne Tittel, dä jät säht.",
+	"cite_error_ref_no_key": "Fähler en <i lang=\"en\">cite</i>:\nE <code>&lt;ref&gt;</code> oohne Enhalt moß ene Name han.\nNemm enne Tittel, dä jät säht.",
+	"cite_error_ref_too_many_keys": "Fähler en <i lang=\"en\">cite</i>:\nZo fill <code>&lt;ref&gt;</code>-Name,\nudder kapodde ene Name.",
+	"cite_error_ref_no_input": "Fähler en <i lang=\"en\">cite</i>:\nE <code>&lt;ref&gt;</code> oohne Name moß ene Enhallt han.",
+	"cite_error_references_invalid_parameters": "Fähler en <i lang=\"en\">cite</i>:\nE <code>&lt;references&gt;</code> moß oohne Parrametere sin.\nNemm eifach <code>&lt;references /&gt;</code> un söns nix.",
+	"cite_error_references_invalid_parameters_group": "Fähler en <i lang=\"en\">cite</i>:\nE <code>&lt;references&gt;</code> darf nur dä Parrameeter „<code>group</code>“ han.\nNemm eifach <code>&lt;references /&gt;</code> udder <code>&lt;references group=\"...\" /&gt;</code> un söns nix.",
+	"cite_error_references_no_backlink_label": "Fähler en <i lang=\"en\">cite</i>:\nNit jenoch Name för retuur-Lengks.\nDonn mieh en dä Sigg <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> enndrare.",
+	"cite_error_no_link_label_group": "För de Jruppe „$1“ senn er kein Bezeichnunge för Links mieh doh.\nDonn op <nowiki>[[MediaWiki:$2]]</nowiki> noch e paa dobei.",
+	"cite_error_references_no_text": "Fähler en <i lang=\"en\">cite</i>:\nEt wohr keine Tex aanjejovve för de\n<code>&lt;ref&gt;</code>s met dämm Name „<code>$1</code>“.",
+	"cite_error_included_ref": "Hee för dat <code>&lt;ref&gt;</code> ham_mer kei zopaß <code>&lt;/ref&gt;</code>",
+	"cite_error_refs_without_references": "Et sinn_er <code>&lt;ref&gt;</code>-Befähle en dä Sigg, ävver mer han keine <code>&lt;references/&gt;</code>-Befähl jefunge.",
+	"cite_error_group_refs_without_references": "Et sinn_er <code>&lt;ref&gt;</code>-Befähle för de Jrop „$1“ en heh dä Sigg, ävver mer han keine <code>&lt;references group=\"$1\"/&gt;</code>-Befähl jefonge, udder dä Befähl <code>&lt;/ref&gt;</code> zom zohmaache es nit doh.",
+	"cite_error_references_group_mismatch": "Dä <code>&lt;ref&gt;</code> Befähl en <code>&lt;references&gt;</code> hät en widerschpröschlesche Jroppe-Eijeschaff „$1“.",
+	"cite_error_references_missing_group": "Dä <code>&lt;ref&gt;</code> Befähl, aanjejoove em Befähl <code>&lt;references&gt;</code>, hät en Jroppe-Eijeschaff „$1“, di ävver em Täx doför nit vörjekumme es.",
+	"cite_error_references_missing_key": "Dä <code>&lt;ref&gt;</code> Befähl mem Naame „$1“, aanjejoove em Befähl <code>&lt;references&gt;</code>, es em Täx doför nit vörjekumme.",
+	"cite_error_references_no_key": "Dä <code>&lt;ref&gt;</code> Befähl, aanjejoove em Befähl <code>&lt;references&gt;</code>, hät kei Eijeschaff <code>name=</code> aanjejovve.",
+	"cite_error_empty_references_define": "Dä <code>&lt;ref&gt;</code> Befähl mem Naame „$1“, aanjejoove em Befähl <code>&lt;references&gt;</code> mem Name „$1“, hät keine Enhallt.",
+	"cite_reference_link_key_with_num": "$1_$2",
+	"cite_reference_link_prefix": "fohss_noht_betreck_",
+	"cite_references_link_prefix": "fohss_noht_nommer_",
+	"cite_references_link_many_and": "&#32;",
+	"cite_references_link_accessibility_label": "Jangk noh bovve",
+	"cite_references_link_many_accessibility_label": "Jangk noh bovve op:"
+}

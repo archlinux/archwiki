@@ -1,7 +1,9 @@
 <?php
-
 /**
- * Image map extension.
+ * Main file for extension ImageMap.
+ *
+ * @file
+ * @ingroup Extensions
  *
  * Syntax:
  * <imagemap>

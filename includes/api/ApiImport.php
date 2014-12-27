@@ -98,18 +98,13 @@ class ApiImport extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		global $wgImportSources;
 		return array(
-			'token' => array(
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true
-			),
 			'summary' => null,
 			'xml' => array(
 				ApiBase::PARAM_TYPE => 'upload',
 			),
 			'interwikisource' => array(
-				ApiBase::PARAM_TYPE => $wgImportSources
+				ApiBase::PARAM_TYPE => $this->getConfig()->get( 'ImportSources' ),
 			),
 			'interwikipage' => null,
 			'fullhistory' => false,
@@ -123,7 +118,6 @@ class ApiImport extends ApiBase {
 
 	public function getParamDescription() {
 		return array(
-			'token' => 'Import token obtained through prop=info',
 			'summary' => 'Import summary',
 			'xml' => 'Uploaded XML file',
 			'interwikisource' => 'For interwiki imports: wiki to import from',
@@ -135,17 +129,6 @@ class ApiImport extends ApiBase {
 		);
 	}
 
-	public function getResultProperties() {
-		return array(
-			ApiBase::PROP_LIST => true,
-			'' => array(
-				'ns' => 'namespace',
-				'title' => 'string',
-				'revisions' => 'integer'
-			)
-		);
-	}
-
 	public function getDescription() {
 		return array(
 			'Import a page from another wiki, or an XML file.',
@@ -154,29 +137,14 @@ class ApiImport extends ApiBase {
 		);
 	}
 
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'cantimport' ),
-			array( 'missingparam', 'interwikipage' ),
-			array( 'cantimport-upload' ),
-			array( 'import-unknownerror', 'source' ),
-			array( 'import-unknownerror', 'result' ),
-			array( 'import-rootpage-nosubpage', 'namespace' ),
-			array( 'import-rootpage-invalid' ),
-		) );
-	}
-
 	public function needsToken() {
-		return true;
-	}
-
-	public function getTokenSalt() {
-		return '';
+		return 'csrf';
 	}
 
 	public function getExamples() {
 		return array(
-			'api.php?action=import&interwikisource=meta&interwikipage=Help:ParserFunctions&namespace=100&fullhistory=&token=123ABC'
+			'api.php?action=import&interwikisource=meta&interwikipage=Help:ParserFunctions&' .
+				'namespace=100&fullhistory=&token=123ABC'
 				=> 'Import [[meta:Help:Parserfunctions]] to namespace 100 with full history',
 		);
 	}
@@ -194,11 +162,11 @@ class ApiImportReporter extends ImportReporter {
 	private $mResultArr = array();
 
 	/**
-	 * @param $title Title
-	 * @param $origTitle Title
-	 * @param $revisionCount int
-	 * @param $successCount int
-	 * @param $pageInfo
+	 * @param Title $title
+	 * @param Title $origTitle
+	 * @param int $revisionCount
+	 * @param int $successCount
+	 * @param array $pageInfo
 	 * @return void
 	 */
 	function reportPage( $title, $origTitle, $revisionCount, $successCount, $pageInfo ) {

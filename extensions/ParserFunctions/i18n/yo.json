@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Demmy"
+		]
+	},
+	"pfunc_time_error": "Àsìṣe: àsìkò àìtọ́",
+	"pfunc_expr_unexpected_number": "Àsìṣe ìgbékalẹ̀ọ̀rọ̀: Nọ́mbà àìretí",
+	"pfunc_expr_division_by_zero": "Pínpín pẹ̀lú òdo",
+	"pfunc_expr_not_a_number": "Nínú $1: èsì kìí ṣe nọ́mbà"
+}

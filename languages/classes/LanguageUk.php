@@ -32,8 +32,8 @@ class LanguageUk extends Language {
 	 * Convert from the nominative form of a noun to some other case
 	 * Invoked with {{grammar:case|word}}
 	 *
-	 * @param $word string
-	 * @param $case string
+	 * @param string $word
+	 * @param string $case
 	 * @return string
 	 */
 	function convertGrammar( $word, $case ) {
@@ -51,7 +51,9 @@ class LanguageUk extends Language {
 		if ( !preg_match( "/[a-zA-Z_]/us", $word ) ) {
 			switch ( $case ) {
 				case 'genitive': # родовий відмінок
-					if ( ( join( '', array_slice( $ar[0], -4 ) ) == 'вікі' ) || ( join( '', array_slice( $ar[0], -4 ) ) == 'Вікі' ) ) {
+					if ( ( join( '', array_slice( $ar[0], -4 ) ) == 'вікі' )
+						|| ( join( '', array_slice( $ar[0], -4 ) ) == 'Вікі' )
+					) {
 					} elseif ( join( '', array_slice( $ar[0], -1 ) ) == 'ь' ) {
 						$word = join( '', array_slice( $ar[0], 0, -1 ) ) . 'я';
 					} elseif ( join( '', array_slice( $ar[0], -2 ) ) == 'ія' ) {
@@ -70,7 +72,9 @@ class LanguageUk extends Language {
 					# stub
 					break;
 				case 'accusative': # знахідний відмінок
-					if ( ( join( '', array_slice( $ar[0], -4 ) ) == 'вікі' ) || ( join( '', array_slice( $ar[0], -4 ) ) == 'Вікі' ) ) {
+					if ( ( join( '', array_slice( $ar[0], -4 ) ) == 'вікі' )
+						|| ( join( '', array_slice( $ar[0], -4 ) ) == 'Вікі' )
+					) {
 					} elseif ( join( '', array_slice( $ar[0], -2 ) ) == 'ія' ) {
 						$word = join( '', array_slice( $ar[0], 0, -2 ) ) . 'ію';
 					}
@@ -89,7 +93,7 @@ class LanguageUk extends Language {
 	/**
 	 * Ukrainian numeric format is "12 345,67" but "1234,56"
 	 *
-	 * @param $_ string
+	 * @param string $_
 	 *
 	 * @return string
 	 */

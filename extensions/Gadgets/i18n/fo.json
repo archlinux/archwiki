@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"EileenSanda"
+		]
+	},
+	"gadgets-uses": "Brúkar",
+	"gadgets-required-rights": "Krevur fylgjandi {{PLURAL:$2|rættindi|rættindi}}:\n\n$1",
+	"gadgets-required-skins": "Tøk á {{PLURAL:$2|$1 útsjónd|fylgjandi útsjóndum: $1}}.",
+	"gadgets-default": "Gjørt virkið fyri øllum sum standard",
+	"gadgets-export": "Útflyt"
+}

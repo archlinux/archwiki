@@ -21,8 +21,7 @@ class Gadget {
 	 */
 	const GADGET_CLASS_VERSION = 7;
 
-	private $version = self::GADGET_CLASS_VERSION,
-			$scripts = array(),
+	private $scripts = array(),
 			$styles = array(),
 			$dependencies = array(),
 			$name,
@@ -50,6 +49,11 @@ class Gadget {
 		//      Also, title-normalization applies.
 		$gadget = new Gadget();
 		$gadget->name = trim( str_replace( ' ', '_', $m[1] ) );
+		// If the name is too long, then RL will throw an MWException when
+		// we try to register the module
+		if ( !ResourceLoader::isValidModuleName( $gadget->getModuleName() ) ) {
+			return false;
+		}
 		$gadget->definition = $definition;
 		$options = trim( $m[2], ' []' );
 
@@ -134,14 +138,6 @@ class Gadget {
 	 */
 	public function getModuleName() {
 		return "ext.gadget.{$this->name}";
-	}
-
-	/**
-	 * Checks whether this is an instance of an older version of this class deserialized from cache
-	 * @return Boolean
-	 */
-	public function isOutdated() {
-		return $this->version != self::GADGET_CLASS_VERSION;
 	}
 
 	/**
@@ -322,18 +318,14 @@ class Gadget {
 		if ( !is_array( $gadgets ) ) {
 			return false;
 		}
-		// Check if we have 1) array of gadgets 2) the gadgets are up to date
+		// Check if we have an array of gadgets
 		// One check is enough
 		/**
 		 * @var $g Gadget
 		 */
 		foreach ( $gadgets as $list ) {
 			foreach ( $list as $g ) {
-				if ( !( $g instanceof Gadget ) || $g->isOutdated() ) {
-					return false;
-				} else {
-					return true;
-				}
+				return $g instanceof Gadget;
 			}
 		}
 
@@ -342,14 +334,14 @@ class Gadget {
 
 	/**
 	 * Loads list of gadgets and returns it as associative array of sections with gadgets
-	 * e.g. array( 'sectionnname1' => array( $gadget1, $gadget2),
+	 * e.g. array( 'sectionnname1' => array( $gadget1, $gadget2 ),
 	 *             'sectionnname2' => array( $gadget3 ) );
 	 * @param $forceNewText String: New text of MediaWiki:gadgets-definition. If specified, will
 	 * 	      force a purge of cache and recreation of the gadget list.
 	 * @return Mixed: Array or false
 	 */
 	public static function loadStructuredList( $forceNewText = null ) {
-		global $wgMemc;
+		global $wgMemc, $wgGadgetsCaching;
 
 		static $gadgets = null;
 		if ( $gadgets !== null && $forceNewText === null ) {
@@ -360,11 +352,13 @@ class Gadget {
 		$key = wfMemcKey( 'gadgets-definition', self::GADGET_CLASS_VERSION );
 
 		if ( $forceNewText === null ) {
-			// cached?
-			$gadgets = $wgMemc->get( $key );
-			if ( self::isValidList( $gadgets ) ) {
-				wfProfileOut( __METHOD__ );
-				return $gadgets;
+			if ( $wgGadgetsCaching ) {
+				// cached?
+				$gadgets = $wgMemc->get( $key );
+				if ( self::isValidList( $gadgets ) ) {
+					wfProfileOut( __METHOD__ );
+					return $gadgets;
+				}
 			}
 
 			$g = wfMessage( "gadgets-definition" )->inContentLanguage();
@@ -378,26 +372,9 @@ class Gadget {
 			$g = $forceNewText;
 		}
 
-		$g = preg_replace( '/<!--.*?-->/s', '', $g );
-		$g = preg_split( '/(\r\n|\r|\n)+/', $g );
+		$gadgets = self::listFromDefinition( $g );
 
-		$gadgets = array();
-		$section = '';
-
-		foreach ( $g as $line ) {
-			$m = array();
-			if ( preg_match( '/^==+ *([^*:\s|]+?)\s*==+\s*$/', $line, $m ) ) {
-				$section = $m[1];
-			} else {
-				$gadget = self::newFromDefinition( $line );
-				if ( $gadget ) {
-					$gadgets[$section][$gadget->getName()] = $gadget;
-					$gadget->category = $section;
-				}
-			}
-		}
-
-		if ( !count( $gadgets ) ) {
+		if ( !count( $gadgets ) || !$wgGadgetsCaching ) {
 			// Don't cache in case we couldn't find any gadgets. Bug 37228
 			$gadgets = false;
 			wfProfileOut( __METHOD__ );
@@ -410,6 +387,34 @@ class Gadget {
 		wfDebug( __METHOD__ . ": $source parsed, cache entry $key updated\n" );
 		wfProfileOut( __METHOD__ );
 
+		return $gadgets;
+	}
+
+	/**
+	 * Generates a structured list of Gadget objects from a definition
+	 *
+	 * @param $definition
+	 * @return array Array( category => Array( name => Gadget ) )
+	 */
+	private static function listFromDefinition( $definition ) {
+		$definition = preg_replace( '/<!--.*?-->/s', '', $definition );
+		$lines = preg_split( '/(\r\n|\r|\n)+/', $definition );
+
+		$gadgets = array();
+		$section = '';
+
+		foreach ( $lines as $line ) {
+			$m = array();
+			if ( preg_match( '/^==+ *([^*:\s|]+?)\s*==+\s*$/', $line, $m ) ) {
+				$section = $m[1];
+			} else {
+				$gadget = self::newFromDefinition( $line );
+				if ( $gadget ) {
+					$gadgets[$section][$gadget->getName()] = $gadget;
+					$gadget->category = $section;
+				}
+			}
+		}
 		return $gadgets;
 	}
 }

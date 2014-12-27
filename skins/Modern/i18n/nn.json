@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Frokor"
+		]
+	},
+	"modern.css": "/* CSS i denne fila vil gjelde alle som nyttar drakta Modern */",
+	"modern.js": "* Javascript i denne fila vil gjelde for brukarar av drakta Modern */",
+	"skinname-modern": "Moderne"
+}

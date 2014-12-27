@@ -3,7 +3,7 @@
  * Fix double redirects.
  *
  * Copyright © 2011 Ilmari Karonen <nospam@vyznev.net>
- * http://www.mediawiki.org/
+ * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,13 +44,14 @@ class FixDoubleRedirects extends Maintenance {
 	public function execute() {
 		$async = $this->getOption( 'async', false );
 		$dryrun = $this->getOption( 'dry-run', false );
-		$title = $this->getOption( 'title' );
 
-		if ( isset( $title ) ) {
-			$title = Title::newFromText( $title );
+		if ( $this->hasOption( 'title' ) ) {
+			$title = Title::newFromText( $this->getOption( 'title' ) );
 			if ( !$title || !$title->isRedirect() ) {
 				$this->error( $title->getPrefixedText() . " is not a redirect!\n", true );
 			}
+		} else {
+			$title = null;
 		}
 
 		$dbr = wfGetDB( DB_SLAVE );
@@ -71,11 +72,11 @@ class FixDoubleRedirects extends Maintenance {
 			'rd_from = pa.page_id',
 			'rd_namespace = pb.page_namespace',
 			'rd_title = pb.page_title',
-			'(rd_interwiki IS NULL OR rd_interwiki = "")', // bug 40352
+			'rd_interwiki IS NULL OR rd_interwiki = ' . $dbr->addQuotes( '' ), // bug 40352
 			'pb.page_is_redirect' => 1,
 		);
 
-		if ( isset( $title ) ) {
+		if ( $title != null ) {
 			$conds['pb.page_namespace'] = $title->getNamespace();
 			$conds['pb.page_title'] = $title->getDBkey();
 		}
@@ -85,6 +86,7 @@ class FixDoubleRedirects extends Maintenance {
 
 		if ( !$res->numRows() ) {
 			$this->output( "No double redirects found.\n" );
+
 			return;
 		}
 
@@ -105,7 +107,8 @@ class FixDoubleRedirects extends Maintenance {
 			if ( !$async ) {
 				$success = ( $dryrun ? true : $job->run() );
 				if ( !$success ) {
-					$this->error( "Error fixing " . $titleA->getPrefixedText() . ": " . $job->getLastError() . "\n" );
+					$this->error( "Error fixing " . $titleA->getPrefixedText()
+						. ": " . $job->getLastError() . "\n" );
 				}
 			} else {
 				$jobs[] = $job;

@@ -160,10 +160,11 @@ class PurgeChangedPages extends Maintenance {
 	 * If this returns an empty array for a non-empty query result, then all the rows
 	 * had the same column value and the query should be repeated with a higher LIMIT.
 	 *
-	 * @TODO: move this elsewhere
+	 * @todo move this elsewhere
 	 *
 	 * @param ResultWrapper $res Query result sorted by $column (ascending)
 	 * @param string $column
+	 * @param int $limit
 	 * @return array (array of rows, string column value)
 	 */
 	protected function pageableSortedRows( ResultWrapper $res, $column, $limit ) {
@@ -183,6 +184,7 @@ class PurgeChangedPages extends Maintenance {
 			}
 		}
 		$lastValueLeft = count( $rows ) ? $rows[count( $rows ) - 1]->$column : null;
+
 		return array( $rows, $lastValueLeft );
 	}
 }

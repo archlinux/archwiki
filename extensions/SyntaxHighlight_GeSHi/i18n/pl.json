@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Derbeth",
+			"Sp5uhe"
+		]
+	},
+	"syntaxhighlight-desc": "Zapewnia kolorowanie składni dla znacznika <code>&lt;syntaxhighlight&gt;</code> wykorzystując [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Musisz wybrać język w następujący sposób:",
+	"syntaxhighlight-supported": "Języki obsługiwane w podświetlaniu składni:",
+	"syntaxhighlight-err-loading": "(błąd przy wczytywaniu listy obsługiwanych języków)",
+	"syntaxhighlight-err-language": "Niepoprawny język.",
+	"geshi.css": "/* CSS umieszczony tutaj zostanie użyty do kolorowania składni GeSHi  */"
+}

@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"Delhovlyn",
+			"Dr Brains",
+			"Grondin",
+			"IAlex",
+			"Meno25",
+			"Peter17",
+			"PieRRoMaN",
+			"Sherbrooke",
+			"Urhixidur",
+			"Zcqsc06",
+			"Zetud"
+		]
+	},
+	"gadgets-desc": "Permet aux utilisateurs de choisir des [[Special:Gadgets|gadgets CSS et Javascripts]] personnalisés dans leurs [[Special:Preferences#mw-prefsection-gadgets|préférences]]",
+	"prefs-gadgets": "Gadgets",
+	"gadgets-prefstext": "Ci-dessous apparaît une liste de gadgets que vous pouvez activer pour votre compte. Ils font appel à JavaScript, lequel doit donc être activé pour votre navigateur Web.\n\nNotez aussi que ces gadgets spéciaux ne font nullement partie du logiciel MediaWiki. De plus, ils sont généralement développés et maintenus par les utilisateurs sur votre wiki local. Les administrateurs locaux peuvent modifier les gadgets disponibles en utilisant [[MediaWiki:Gadgets-definition|les définitions]] et les [[Special:Gadgets|descriptions]].",
+	"gadgets": "Gadgets",
+	"gadgets-title": "Gadgets",
+	"gadgets-pagetext": "Voici une liste de gadgets que les utilisateurs peuvent activer dans leur [[Special:Preferences#mw-prefsection-gadgets|page de préférences]], tel que défini dans les [[MediaWiki:Gadgets-definition|définitions]].\nCette vue d’ensemble donne un accès rapide aux pages de messages système qui définissent la description et le code de chaque gadget.",
+	"gadgets-uses": "Utilise",
+	"gadgets-required-rights": "Requiert {{PLURAL:$2|le droit suivant|les droits suivants}} : \n\n$1.",
+	"gadgets-required-skins": "Disponible sur {{PLURAL:$2|l’habillage suivant|les habillages suivants}} : $1.",
+	"gadgets-default": "Activé pour tout le monde par défaut.",
+	"gadgets-export": "Exporter",
+	"gadgets-export-title": "Export de gadget",
+	"gadgets-not-found": "Gadget « $1 » non trouvé.",
+	"gadgets-export-text": "Pour exporter le gadget $1, cliquez sur le bouton « {{int:gadgets-export-download}} », enregistrez le fichier téléchargé puis allez sur la page Special:Import du wiki de destination et importez-la. Ajoutez ensuite le texte suivant dans la page MediaWiki:Gadgets-definition :\n<pre>$2</pre>\nIl est nécessaire de disposer des droits correspondants sur le wiki de destination (y compris celui de modifier les messages système) et l’import depuis des fichiers doit être activé.",
+	"gadgets-export-download": "Télécharger"
+}

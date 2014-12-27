@@ -1,0 +1,35 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dani",
+			"Dj",
+			"Dorgan",
+			"KossuthRad",
+			"Misibacsi",
+			"Tacsipacsi"
+		]
+	},
+	"nuke": "Halmozott törlés",
+	"action-nuke": "oldalak tömeges törlése",
+	"nuke-desc": "Lehetővé teszi az adminisztrátorok számára a lapok [[Special:Nuke|tömeges törlését]].",
+	"nuke-nopages": "Nincsenek új oldalak [[Special:Contributions/$1|$1]] az aktuális események között.",
+	"nuke-list": "Az alábbi lapokat nem rég készítette [[Special:Contributions/$1|{{GENDER:$1|$1}}]]; adj meg egy indoklást, és kattints a gombra a törlésükhöz.",
+	"nuke-list-multiple": "Az alábbi lapok találhatók a friss változtatásokban;\nadjál hozzá megjegyzést, és a törléshez nyomd meg a gombot.",
+	"nuke-defaultreason": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]] által készített lapok tömeges eltávolítása",
+	"nuke-multiplepeople": "Frissen hozzáadott oldalak tömeges törlése",
+	"nuke-tools": "Ez az eszköz lehetővé teszi egy adott felhasználó vagy IP által nemrég készített lapok tömeges törlését. Add meg a felhasználónevet vagy az IP-címet, ezzel megkapod a törölhető lapok listáját. Ha nem adsz meg nevet, az összes felhasználót listázza.",
+	"nuke-submit-user": "Menj",
+	"nuke-submit-delete": "Kijelöltek törlése",
+	"right-nuke": "oldalak tömeges törlése",
+	"nuke-select": "Kiválasztás: $1",
+	"nuke-userorip": "Felhasználónév, IP-cím vagy üres:",
+	"nuke-maxpages": "Lapok maximális száma:",
+	"nuke-editby": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]] által létrehozott",
+	"nuke-deleted": "'''$1''' oldal törölve lett.",
+	"nuke-not-deleted": "[[:$1]] oldalt ''nem sikerült''' törölni.",
+	"nuke-delete-more": "[[Special:Nuke|További oldalak törlése]]",
+	"nuke-pattern": "Lapnév minta:",
+	"nuke-nopages-global": "Nincsenek új lapok a [[Special:RecentChanges|friss változtatásokban]].",
+	"nuke-viewchanges": "változtatások megtekintése",
+	"nuke-namespace": "Csak az alábbi névtérben:"
+}

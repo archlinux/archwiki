@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Minh Nguyen",
+			"Vinhtantran"
+		]
+	},
+	"cologneblue.css": "/* Mã CSS tại đây sẽ ảnh hưởng đến những người dùng sử dụng giao diện Xanh Cologne */",
+	"cologneblue.js": "/* Mã JavaScript tại đây sẽ được tải khi người dùng sử dụng giao diện Xanh Cologne */",
+	"skinname-cologneblue": "Xanh Cologne",
+	"cologneblue-desc": "Giao diện nhẹ nhàng có ít định dạng"
+}

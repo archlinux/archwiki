@@ -28,7 +28,6 @@
  */
 
 interface IORMTable {
-
 	/**
 	 * Returns the name of the database table objects of this type are stored in.
 	 *
@@ -63,8 +62,9 @@ interface IORMTable {
 	 * * array
 	 * * blob
 	 *
-	 * TODO: get rid of the id field. Every row instance needs to have
-	 * one so this is just causing hassle at various locations by requiring an extra check for field name.
+	 * @todo Get rid of the id field. Every row instance needs to have one so
+	 *   this is just causing hassle at various locations by requiring an extra
+	 *   check for field name.
 	 *
 	 * @since 1.20
 	 *
@@ -107,10 +107,10 @@ interface IORMTable {
 	 * @param string|null $functionName
 	 *
 	 * @return ORMResult The result set
-	 * @throws DBQueryError if the query failed (even if the database was in ignoreErrors mode)
+	 * @throws DBQueryError If the query failed (even if the database was in ignoreErrors mode)
 	 */
 	public function select( $fields = null, array $conditions = array(),
-							array $options = array(), $functionName = null );
+		array $options = array(), $functionName = null );
 
 	/**
 	 * Selects the the specified fields of the records matching the provided
@@ -123,10 +123,10 @@ interface IORMTable {
 	 * @param array $options
 	 * @param string|null $functionName
 	 *
-	 * @return array of self
+	 * @return array Array of self
 	 */
 	public function selectObjects( $fields = null, array $conditions = array(),
-								   array $options = array(), $functionName = null );
+		array $options = array(), $functionName = null );
 
 	/**
 	 * Do the actual select.
@@ -139,10 +139,10 @@ interface IORMTable {
 	 * @param null|string $functionName
 	 *
 	 * @return ResultWrapper
-	 * @throws DBQueryError if the query failed (even if the database was in ignoreErrors mode)
+	 * @throws DBQueryError If the query failed (even if the database was in ignoreErrors mode)
 	 */
 	public function rawSelect( $fields = null, array $conditions = array(),
-							   array $options = array(), $functionName = null );
+		array $options = array(), $functionName = null );
 
 	/**
 	 * Selects the the specified fields of the records matching the provided
@@ -161,13 +161,13 @@ interface IORMTable {
 	 * @param array|string|null $fields
 	 * @param array $conditions
 	 * @param array $options
-	 * @param boolean $collapse Set to false to always return each result row as associative array.
+	 * @param bool $collapse Set to false to always return each result row as associative array.
 	 * @param string|null $functionName
 	 *
-	 * @return array of array
+	 * @return array Array of array
 	 */
 	public function selectFields( $fields = null, array $conditions = array(),
-								  array $options = array(), $collapse = true, $functionName = null );
+		array $options = array(), $collapse = true, $functionName = null );
 
 	/**
 	 * Selects the the specified fields of the first matching record.
@@ -183,7 +183,7 @@ interface IORMTable {
 	 * @return IORMRow|bool False on failure
 	 */
 	public function selectRow( $fields = null, array $conditions = array(),
-							   array $options = array(), $functionName = null );
+		array $options = array(), $functionName = null );
 
 	/**
 	 * Selects the the specified fields of the records matching the provided
@@ -199,7 +199,7 @@ interface IORMTable {
 	 * @return ResultWrapper
 	 */
 	public function rawSelectRow( array $fields, array $conditions = array(),
-								  array $options = array(), $functionName = null );
+		array $options = array(), $functionName = null );
 
 	/**
 	 * Selects the the specified fields of the first record matching the provided
@@ -213,13 +213,13 @@ interface IORMTable {
 	 * @param array|string|null $fields
 	 * @param array $conditions
 	 * @param array $options
-	 * @param boolean $collapse Set to false to always return each result row as associative array.
+	 * @param bool $collapse Set to false to always return each result row as associative array.
 	 * @param string|null $functionName
 	 *
 	 * @return mixed|array|bool False on failure
 	 */
 	public function selectFieldsRow( $fields = null, array $conditions = array(),
-									 array $options = array(), $collapse = true, $functionName = null );
+		array $options = array(), $collapse = true, $functionName = null );
 
 	/**
 	 * Returns if there is at least one record matching the provided conditions.
@@ -229,7 +229,7 @@ interface IORMTable {
 	 *
 	 * @param array $conditions
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function has( array $conditions = array() );
 
@@ -238,7 +238,7 @@ interface IORMTable {
 	 *
 	 * @since 1.21
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function exists();
 
@@ -254,7 +254,7 @@ interface IORMTable {
 	 * @param array $conditions
 	 * @param array $options
 	 *
-	 * @return integer
+	 * @return int
 	 */
 	public function count( array $conditions = array(), array $options = array() );
 
@@ -266,7 +266,7 @@ interface IORMTable {
 	 * @param array $conditions
 	 * @param string|null $functionName
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 */
 	public function delete( array $conditions, $functionName = null );
 
@@ -275,8 +275,8 @@ interface IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @param boolean $requireParams
-	 * @param boolean $setDefaults
+	 * @param bool $requireParams
+	 * @param bool $setDefaults
 	 *
 	 * @return array
 	 */
@@ -298,14 +298,14 @@ interface IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @return integer DB_ enum
+	 * @return int DB_ enum
 	 */
 	public function getReadDb();
 
 	/**
 	 * Set the database type to use for read operations.
 	 *
-	 * @param integer $db
+	 * @param int $db
 	 *
 	 * @since 1.20
 	 */
@@ -316,14 +316,16 @@ interface IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @return String|bool The target wiki, in a form that  LBFactory understands (or false if the local wiki is used)
+	 * @return string|bool The target wiki, in a form that LBFactory
+	 *   understands (or false if the local wiki is used)
 	 */
 	public function getTargetWiki();
 
 	/**
 	 * Set the ID of the any foreign wiki to use as a target for database operations
 	 *
-	 * @param string|bool $wiki The target wiki, in a form that  LBFactory understands (or false if the local wiki shall be used)
+	 * @param string|bool $wiki The target wiki, in a form that LBFactory
+	 *   understands (or false if the local wiki shall be used)
 	 *
 	 * @since 1.20
 	 */
@@ -370,7 +372,7 @@ interface IORMTable {
 	 *
 	 * @see LoadBalancer::reuseConnection
 	 *
-	 * @param DatabaseBase $db the database
+	 * @param DatabaseBase $db The database
 	 *
 	 * @since 1.20
 	 */
@@ -386,7 +388,7 @@ interface IORMTable {
 	 * @param array $values
 	 * @param array $conditions
 	 *
-	 * @return boolean Success indicator
+	 * @return bool Success indicator
 	 */
 	public function update( array $values, array $conditions = array() );
 
@@ -419,7 +421,7 @@ interface IORMTable {
 	 *
 	 * @since 1.20
 	 *
-	 * @param array|string $fields
+	 * @param array $fields
 	 *
 	 * @return array
 	 */
@@ -488,7 +490,7 @@ interface IORMTable {
 	 * @since 1.20
 	 *
 	 * @param array $data
-	 * @param boolean $loadDefaults
+	 * @param bool $loadDefaults
 	 *
 	 * @return IORMRow
 	 */
@@ -510,8 +512,7 @@ interface IORMTable {
 	 *
 	 * @param string $name
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function canHaveField( $name );
-
 }

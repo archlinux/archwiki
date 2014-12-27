@@ -36,7 +36,7 @@
  *
  * There are two important configuration options this class uses:
  *
- * $wgMimeType: If this is set to an xml mimetype then output should be
+ * $wgMimeType: If this is set to an xml MIME type then output should be
  *     valid XHTML5.
  * $wgWellFormedXml: If this is set to true, then all output should be
  *     well-formed XML (quotes on attributes, self-closing tags, etc.).
@@ -102,6 +102,35 @@ class Html {
 	);
 
 	/**
+	 * Modifies a set of attributes meant for text input elements
+	 * and apply a set of default attributes.
+	 * Removes size attribute when $wgUseMediaWikiUIEverywhere enabled.
+	 * @param array $attrs An attribute array.
+	 * @return array $attrs A modified attribute array
+	 */
+	public static function getTextInputAttributes( $attrs ) {
+		global $wgUseMediaWikiUIEverywhere;
+		if ( !$attrs ) {
+			$attrs = array();
+		}
+		if ( isset( $attrs['class'] ) ) {
+			if ( is_array( $attrs['class'] ) ) {
+				$attrs['class'][] = 'mw-ui-input';
+			} else {
+				$attrs['class'] .= ' mw-ui-input';
+			}
+		} else {
+			$attrs['class'] = 'mw-ui-input';
+		}
+		if ( $wgUseMediaWikiUIEverywhere ) {
+			// Note that size can effect the desired width rendering of mw-ui-input elements
+			// so it is removed. Left intact when mediawiki ui not enabled.
+			unset( $attrs['size'] );
+		}
+		return $attrs;
+	}
+
+	/**
 	 * Returns an HTML element in a string.  The major advantage here over
 	 * manually typing out the HTML is that it will escape all attribute
 	 * values.  If you're hardcoding all the attributes, or there are none, you
@@ -114,7 +143,7 @@ class Html {
 	 * shaved off the HTML output as well.
 	 *
 	 * @param string $element The element's name, e.g., 'a'
-	 * @param array $attribs  Associative array of attributes, e.g., array(
+	 * @param array $attribs Associative array of attributes, e.g., array(
 	 *   'href' => 'http://www.mediawiki.org/' ). See expandAttributes() for
 	 *   further documentation.
 	 * @param string $contents The raw HTML contents of the element: *not*
@@ -139,9 +168,9 @@ class Html {
 	 * Identical to rawElement(), but HTML-escapes $contents (like
 	 * Xml::element()).
 	 *
-	 * @param $element string
-	 * @param $attribs array
-	 * @param $contents string
+	 * @param string $element
+	 * @param array $attribs
+	 * @param string $contents
 	 *
 	 * @return string
 	 */
@@ -158,8 +187,8 @@ class Html {
 	 * Identical to rawElement(), but has no third parameter and omits the end
 	 * tag (and the self-closing '/' in XML mode for empty elements).
 	 *
-	 * @param $element string
-	 * @param $attribs array
+	 * @param string $element
+	 * @param array $attribs
 	 *
 	 * @return string
 	 */
@@ -225,33 +254,15 @@ class Html {
 	}
 
 	/**
-	 * Returns "</$element>", except if $wgWellFormedXml is off, in which case
-	 * it returns the empty string when that's guaranteed to be safe.
+	 * Returns "</$element>"
 	 *
 	 * @since 1.17
 	 * @param string $element Name of the element, e.g., 'a'
-	 * @return string A closing tag, if required
+	 * @return string A closing tag
 	 */
 	public static function closeElement( $element ) {
-		global $wgWellFormedXml;
-
 		$element = strtolower( $element );
 
-		// Reference:
-		// http://www.whatwg.org/html/syntax.html#optional-tags
-		if ( !$wgWellFormedXml && in_array( $element, array(
-			'html',
-			'head',
-			'body',
-			'li',
-			'dt',
-			'dd',
-			'tr',
-			'td',
-			'th',
-		) ) ) {
-			return '';
-		}
 		return "</$element>";
 	}
 
@@ -267,7 +278,7 @@ class Html {
 	 * to the input array (currently per the HTML 5 draft as of 2009-09-06).
 	 *
 	 * @param string $element Name of the element, e.g., 'a'
-	 * @param array $attribs  Associative array of attributes, e.g., array(
+	 * @param array $attribs Associative array of attributes, e.g., array(
 	 *   'href' => 'http://www.mediawiki.org/' ).  See expandAttributes() for
 	 *   further documentation.
 	 * @return array An array of attributes functionally identical to $attribs
@@ -386,7 +397,7 @@ class Html {
 	 * For instance, it will omit quotation marks if $wgWellFormedXml is false,
 	 * and will treat boolean attributes specially.
 	 *
-	 * Attributes that should contain space-separated lists (such as 'class') array
+	 * Attributes that can contain space-separated lists ('class', 'accesskey' and 'rel') array
 	 * values are allowed as well, which will automagically be normalized
 	 * and converted to a space-separated string. In addition to a numerical
 	 * array, the attribute value may also be an associative array. See the
@@ -413,6 +424,8 @@ class Html {
 	 *   A value of false means to omit the attribute.  For boolean attributes,
 	 *   you can omit the key, e.g., array( 'checked' ) instead of
 	 *   array( 'checked' => 'checked' ) or such.
+	 *
+	 * @throws MWException If an attribute that doesn't allow lists is set to an array
 	 * @return string HTML fragment that goes between element name and '>'
 	 *   (starting with a space if at least one attribute is output)
 	 */
@@ -449,8 +462,8 @@ class Html {
 			// numbers to be entered in 'type="number"' fields, allow
 			// the special case 'step="any"'.
 
-			if ( in_array( $key, array( 'max', 'min', 'pattern', 'required' ) ) ||
-				 $key === 'step' && $value !== 'any' ) {
+			if ( in_array( $key, array( 'max', 'min', 'pattern', 'required' ) )
+				|| $key === 'step' && $value !== 'any' ) {
 				continue;
 			}
 
@@ -500,6 +513,8 @@ class Html {
 
 				// Remove duplicates and create the string
 				$value = implode( ' ', array_unique( $value ) );
+			} elseif ( is_array( $value ) ) {
+				throw new MWException( "HTML attribute $key can not contain a list of values" );
 			}
 
 			// See the "Attributes" section in the HTML syntax part of HTML5,
@@ -583,7 +598,7 @@ class Html {
 	 * Output a "<script>" tag linking to the given URL, e.g.,
 	 * "<script src=foo.js></script>".
 	 *
-	 * @param $url string
+	 * @param string $url
 	 * @return string Raw HTML
 	 */
 	public static function linkedScript( $url ) {
@@ -598,7 +613,7 @@ class Html {
 	 * contains literal "</style>" (admittedly unlikely).
 	 *
 	 * @param string $contents CSS
-	 * @param $media mixed A media type string, like 'screen'
+	 * @param string $media A media type string, like 'screen'
 	 * @return string Raw HTML
 	 */
 	public static function inlineStyle( $contents, $media = 'all' ) {
@@ -618,8 +633,8 @@ class Html {
 	 * Output a "<link rel=stylesheet>" linking to the given URL for the given
 	 * media type (if any).
 	 *
-	 * @param $url string
-	 * @param $media mixed A media type string, like 'screen'
+	 * @param string $url
+	 * @param string $media A media type string, like 'screen'
 	 * @return string Raw HTML
 	 */
 	public static function linkedStyle( $url, $media = 'all' ) {
@@ -635,10 +650,10 @@ class Html {
 	 * Convenience function to produce an "<input>" element.  This supports the
 	 * new HTML5 input types and attributes.
 	 *
-	 * @param $name    string name attribute
-	 * @param $value   mixed  value attribute
-	 * @param $type    string type attribute
-	 * @param array $attribs  Associative array of miscellaneous extra
+	 * @param string $name Name attribute
+	 * @param array $value Value attribute
+	 * @param string $type Type attribute
+	 * @param array $attribs Associative array of miscellaneous extra
 	 *   attributes, passed to Html::element()
 	 * @return string Raw HTML
 	 */
@@ -646,16 +661,79 @@ class Html {
 		$attribs['type'] = $type;
 		$attribs['value'] = $value;
 		$attribs['name'] = $name;
-
+		if ( in_array( $type, array( 'text', 'search', 'email', 'password', 'number' ) ) ) {
+			$attribs = Html::getTextInputAttributes( $attribs );
+		}
 		return self::element( 'input', $attribs );
+	}
+
+	/**
+	 * Convenience function to produce a checkbox (input element with type=checkbox)
+	 *
+	 * @param string $name Name attribute
+	 * @param bool $checked Whether the checkbox is checked or not
+	 * @param array $attribs Array of additional attributes
+	 * @return string
+	 */
+	public static function check( $name, $checked = false, array $attribs = array() ) {
+		if ( isset( $attribs['value'] ) ) {
+			$value = $attribs['value'];
+			unset( $attribs['value'] );
+		} else {
+			$value = 1;
+		}
+
+		if ( $checked ) {
+			$attribs[] = 'checked';
+		}
+
+		return self::input( $name, $value, 'checkbox', $attribs );
+	}
+
+	/**
+	 * Convenience function to produce a checkbox (input element with type=checkbox)
+	 *
+	 * @param string $name Name attribute
+	 * @param bool $checked Whether the checkbox is checked or not
+	 * @param array $attribs Array of additional attributes
+	 * @return string
+	 */
+	public static function radio( $name, $checked = false, array $attribs = array() ) {
+		if ( isset( $attribs['value'] ) ) {
+			$value = $attribs['value'];
+			unset( $attribs['value'] );
+		} else {
+			$value = 1;
+		}
+
+		if ( $checked ) {
+			$attribs[] = 'checked';
+		}
+
+		return self::input( $name, $value, 'radio', $attribs );
+	}
+
+	/**
+	 * Convenience function for generating a label for inputs.
+	 *
+	 * @param string $label Contents of the label
+	 * @param string $id ID of the element being labeled
+	 * @param array $attribs Additional attributes
+	 * @return string
+	 */
+	public static function label( $label, $id, array $attribs = array() ) {
+		$attribs += array(
+			'for' => $id
+		);
+		return self::element( 'label', $attribs, $label );
 	}
 
 	/**
 	 * Convenience function to produce an input element with type=hidden
 	 *
-	 * @param $name    string name attribute
-	 * @param $value   string value attribute
-	 * @param array $attribs  Associative array of miscellaneous extra
+	 * @param string $name Name attribute
+	 * @param string $value Value attribute
+	 * @param array $attribs Associative array of miscellaneous extra
 	 *   attributes, passed to Html::element()
 	 * @return string Raw HTML
 	 */
@@ -664,14 +742,14 @@ class Html {
 	}
 
 	/**
-	 * Convenience function to produce an "<input>" element.
+	 * Convenience function to produce a <textarea> element.
 	 *
 	 * This supports leaving out the cols= and rows= which Xml requires and are
 	 * required by HTML4/XHTML but not required by HTML5.
 	 *
-	 * @param $name    string name attribute
-	 * @param $value   string value attribute
-	 * @param array $attribs  Associative array of miscellaneous extra
+	 * @param string $name Name attribute
+	 * @param string $value Value attribute
+	 * @param array $attribs Associative array of miscellaneous extra
 	 *   attributes, passed to Html::element()
 	 * @return string Raw HTML
 	 */
@@ -687,23 +765,28 @@ class Html {
 		} else {
 			$spacedValue = $value;
 		}
-		return self::element( 'textarea', $attribs, $spacedValue );
+		return self::element( 'textarea', Html::getTextInputAttributes( $attribs ), $spacedValue );
 	}
+
 	/**
 	 * Build a drop-down box for selecting a namespace
 	 *
-	 * @param $params array:
+	 * @param array $params Params to set.
 	 * - selected: [optional] Id of namespace which should be pre-selected
-	 * - all: [optional] Value of item for "all namespaces". If null or unset, no "<option>" is generated to select all namespaces
-	 * - label: text for label to add before the field
-	 * - exclude: [optional] Array of namespace ids to exclude
-	 * - disable: [optional] Array of namespace ids for which the option should be disabled in the selector
+	 * - all: [optional] Value of item for "all namespaces". If null or unset,
+	 *   no "<option>" is generated to select all namespaces.
+	 * - label: text for label to add before the field.
+	 * - exclude: [optional] Array of namespace ids to exclude.
+	 * - disable: [optional] Array of namespace ids for which the option should
+	 *   be disabled in the selector.
 	 * @param array $selectAttribs HTML attributes for the generated select element.
-	 * - id:   [optional], default: 'namespace'
-	 * - name: [optional], default: 'namespace'
+	 * - id:   [optional], default: 'namespace'.
+	 * - name: [optional], default: 'namespace'.
 	 * @return string HTML code to select a namespace.
 	 */
-	public static function namespaceSelector( array $params = array(), array $selectAttribs = array() ) {
+	public static function namespaceSelector( array $params = array(),
+		array $selectAttribs = array()
+	) {
 		global $wgContLang;
 
 		ksort( $selectAttribs );
@@ -793,9 +876,9 @@ class Html {
 	 * Constructs the opening html-tag with necessary doctypes depending on
 	 * global variables.
 	 *
-	 * @param array $attribs  Associative array of miscellaneous extra
+	 * @param array $attribs Associative array of miscellaneous extra
 	 *   attributes, passed to Html::element() of html tag.
-	 * @return string  Raw HTML
+	 * @return string Raw HTML
 	 */
 	public static function htmlHeader( $attribs = array() ) {
 		$ret = '';
@@ -805,7 +888,7 @@ class Html {
 		$isXHTML = self::isXmlMimeType( $wgMimeType );
 
 		if ( $isXHTML ) { // XHTML5
-			// XML mimetyped markup should have an xml header.
+			// XML MIME-typed markup should have an xml header.
 			// However a DOCTYPE is not needed.
 			$ret .= "<?xml version=\"1.0\" encoding=\"UTF-8\" ?" . ">\n";
 
@@ -837,37 +920,30 @@ class Html {
 	}
 
 	/**
-	 * Determines if the given mime type is xml.
+	 * Determines if the given MIME type is xml.
 	 *
-	 * @param $mimetype    string MimeType
-	 * @return Boolean
+	 * @param string $mimetype MIME type
+	 * @return bool
 	 */
 	public static function isXmlMimeType( $mimetype ) {
 		# http://www.whatwg.org/html/infrastructure.html#xml-mime-type
 		# * text/xml
 		# * application/xml
-		# * Any mimetype with a subtype ending in +xml (this implicitly includes application/xhtml+xml)
+		# * Any MIME type with a subtype ending in +xml (this implicitly includes application/xhtml+xml)
 		return (bool)preg_match( '!^(text|application)/xml$|^.+/.+\+xml$!', $mimetype );
 	}
 
 	/**
 	 * Get HTML for an info box with an icon.
 	 *
-	 * @param string $text wikitext, get this with wfMessage()->plain()
-	 * @param string $icon icon name, file in skins/common/images
-	 * @param string $alt alternate text for the icon
-	 * @param string $class additional class name to add to the wrapper div
-	 * @param $useStylePath
+	 * @param string $text Wikitext, get this with wfMessage()->plain()
+	 * @param string $icon Path to icon file (used as 'src' attribute)
+	 * @param string $alt Alternate text for the icon
+	 * @param string $class Additional class name to add to the wrapper div
 	 *
 	 * @return string
 	 */
-	static function infoBox( $text, $icon, $alt, $class = false, $useStylePath = true ) {
-		global $wgStylePath;
-
-		if ( $useStylePath ) {
-			$icon = $wgStylePath . '/common/images/' . $icon;
-		}
-
+	static function infoBox( $text, $icon, $alt, $class = false ) {
 		$s = Html::openElement( 'div', array( 'class' => "mw-infobox $class" ) );
 
 		$s .= Html::openElement( 'div', array( 'class' => 'mw-infobox-left' ) ) .

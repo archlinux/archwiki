@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Giro720",
+			"Hamilton Abreu",
+			"Helder.wiki",
+			"Malafaya",
+			"555"
+		]
+	},
+	"spam-blacklist": "  # URLs externas que coincidam com esta lista serão bloqueadas quando forem\n  # adicionadas a uma página.\n  # Esta lista aplica-se apenas a esta wiki. Consulte também a lista-negra global.\n  # Veja a documentação em https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n  #<!-- mantenha esta linha exatamente assim --> <pre>\n#\n# A sintaxe é a seguinte:\n#  * Tudo o que estiver após um \"#\" até o final de uma linha é um comentário\n#  * Todas as linhas que não estiverem em branco são um fragmento de expressão regular\n#    (regex) de busca, que só poderão coincidir com hosts na URL\n\n  #</pre> <!-- mantenha esta linha exatamente assim -->",
+	"spam-whitelist": " #<!-- mantenha esta linha exatamente assim --> <pre>\n# URLs externas que coincidam com esta lista *não* serão bloqueadas mesmo se\n# teriam sido bloqueadas por entradas presentes na lista negra.\n#\n# A sintaxe é a seguinte:\n#  * Tudo o que estiver após um \"#\" até o final de uma linha é um comentário\n#  * Todas as linhas que não estiverem em branco são um fragmento de expressão regular\n#    (regex) de busca, que só poderão coincidir com hosts na URL\n\n #</pre> <!-- mantenha esta linha exatamente assim -->",
+	"spam-blacklisted-email": "Endereço de correio electrónico da lista negra",
+	"spam-blacklisted-email-text": "Atualmente o seu endereço de e-mail está na lista negra que impede o envio de e-mails a outros utilizadores.",
+	"spam-blacklisted-email-signup": "O endereço de e-mail fornecido não pode ser utilizado pois está na lista negra.",
+	"spam-invalid-lines": "{{PLURAL:$1|A entrada|As entradas}} abaixo {{PLURAL:$1|é uma expressão regular|são expressões regulares}}  ''(regex)'' {{PLURAL:$1|inválida e precisa|inválidas e precisam}} de ser {{PLURAL:$1|corrigida|corrigidas}} antes de gravar a página:",
+	"spam-blacklist-desc": "Ferramenta anti-\"spam\" baseada em Regex: [[MediaWiki:Spam-blacklist]] e [[MediaWiki:Spam-whitelist]]",
+	"log-name-spamblacklist": "Registros da lista negra de spam",
+	"log-description-spamblacklist": "Estes eventos acompanham as ocorrências da lista negra de spam.",
+	"logentry-spamblacklist-hit": "$1 ativou a lista negra de spam em $3 ao tentar inserir $4.",
+	"right-spamblacklistlog": "Ver registros da lista negra de spam",
+	"action-spamblacklistlog": "ver os registos da lista negra de spam"
+}

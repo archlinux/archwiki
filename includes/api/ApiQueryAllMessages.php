@@ -31,7 +31,7 @@
  */
 class ApiQueryAllMessages extends ApiQueryBase {
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'am' );
 	}
 
@@ -63,14 +63,13 @@ class ApiQueryAllMessages extends ApiQueryBase {
 		if ( in_array( '*', $params['messages'] ) ) {
 			$message_names = Language::getMessageKeysFor( $langObj->getCode() );
 			if ( $params['includelocal'] ) {
-				global $wgLanguageCode;
 				$message_names = array_unique( array_merge(
 					$message_names,
 					// Pass in the content language code so we get local messages that have a
 					// MediaWiki:msgkey page. We might theoretically miss messages that have no
 					// MediaWiki:msgkey page but do have a MediaWiki:msgkey/lang page, but that's
 					// just a stupid case.
-					MessageCache::singleton()->getAllMessageKeys( $wgLanguageCode )
+					MessageCache::singleton()->getAllMessageKeys( $this->getConfig()->get( 'LanguageCode' ) )
 				) );
 			}
 			sort( $message_names );
@@ -116,7 +115,7 @@ class ApiQueryAllMessages extends ApiQueryBase {
 			global $wgContLang;
 			$lang = $langObj->getCode();
 
-			$customisedMessages = AllmessagesTablePager::getCustomisedStatuses(
+			$customisedMessages = AllMessagesTablePager::getCustomisedStatuses(
 				array_map( array( $langObj, 'ucfirst' ), $messages_target ), $lang, $lang != $wgContLang->getCode() );
 
 			$customised = $params['customised'] === 'modified';
@@ -241,10 +240,10 @@ class ApiQueryAllMessages extends ApiQueryBase {
 			'messages' => 'Which messages to output. "*" (default) means all messages',
 			'prop' => 'Which properties to get',
 			'enableparser' => array( 'Set to enable parser, will preprocess the wikitext of message',
-							'Will substitute magic words, handle templates etc.' ),
+				'Will substitute magic words, handle templates etc.' ),
 			'nocontent' => 'If set, do not include the content of the messages in the output.',
 			'includelocal' => array( "Also include local messages, i.e. messages that don't exist in the software but do exist as a MediaWiki: page.",
-							"This lists all MediaWiki: pages, so it will also list those that aren't 'really' messages such as Common.js",
+				"This lists all MediaWiki: pages, so it will also list those that aren't 'really' messages such as Common.js",
 			),
 			'title' => 'Page name to use as context when parsing message (for enableparser option)',
 			'args' => 'Arguments to be substituted into message',
@@ -257,35 +256,8 @@ class ApiQueryAllMessages extends ApiQueryBase {
 		);
 	}
 
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'code' => 'invalidlang', 'info' => 'Invalid language code for parameter lang' ),
-		) );
-	}
-
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'name' => 'string',
-				'customised' => 'boolean',
-				'missing' => 'boolean',
-				'*' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'default' => array(
-				'defaultmissing' => 'boolean',
-				'default' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			)
-		);
-	}
-
 	public function getDescription() {
-		return 'Return messages from this site';
+		return 'Return messages from this site.';
 	}
 
 	public function getExamples() {

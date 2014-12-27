@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"UV"
+		]
+	},
+	"captcha-edit": "Ad hanc paginam recensendum, necesse est tibi solvere calculationem subter et responsum in capsam inscribere ([[Special:Captcha/help|Quidst illud?]]):",
+	"captcha-addurl": "Emendatione tua insunt nexus externi; ut spam automaticum vitemus, necesse est tibi solvere calculationem subter et responsum in capsam inscribere ([[Special:Captcha/help|Quidst illud?]]):",
+	"captcha-badlogin": "Ut vitemus ne tesserae frangantur, necesse est tibi solvere calculationem subter et responsum in capsam inscribere ([[Special:Captcha/help|Quidst illud?]]):",
+	"captcha-createaccount": "Ut creationem rationum automaticam vitemus, necesse est tibi solvere calculationem subter et responsum in capsam inscribere ([[Special:Captcha/help|Quidst illud?]]):",
+	"captcha-createaccount-fail": "Codex affirmationis aut non scriptus est aut male.",
+	"captcha-create": "Ad paginam creandum, necesse est tibi solvere calculationem subter et responsum in capsam inscribere ([[Special:Captcha/help|Quidst illud?]]):",
+	"captchahelp-title": "Captcha auxilium"
+}

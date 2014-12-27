@@ -25,11 +25,16 @@
  */
 
 /**
+ * @deprecated since 1.24
  * @ingroup API
  */
 class ApiTokens extends ApiBase {
 
 	public function execute() {
+		$this->setWarning(
+			"action=tokens has been deprecated. Please use action=query&meta=tokens instead."
+		);
+
 		$params = $this->extractRequestParams();
 		$res = array();
 
@@ -67,6 +72,7 @@ class ApiTokens extends ApiBase {
 		wfRunHooks( 'ApiTokensGetTokenTypes', array( &$types ) );
 		ksort( $types );
 		wfProfileOut( __METHOD__ );
+
 		return $types;
 	}
 
@@ -80,16 +86,6 @@ class ApiTokens extends ApiBase {
 		);
 	}
 
-	public function getResultProperties() {
-		$props = array(
-			'' => array(),
-		);
-
-		self::addTokenProperties( $props, $this->getTokenTypes() );
-
-		return $props;
-	}
-
 	public function getParamDescription() {
 		return array(
 			'type' => 'Type of token(s) to request'
@@ -97,7 +93,10 @@ class ApiTokens extends ApiBase {
 	}
 
 	public function getDescription() {
-		return 'Gets tokens for data-modifying actions';
+		return array(
+			'This module is deprecated in favor of action=query&meta=tokens.',
+			'Gets tokens for data-modifying actions.'
+		);
 	}
 
 	protected function getExamples() {

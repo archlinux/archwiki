@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"DCLXVI",
+			"Turin"
+		]
+	},
+	"cite_article_desc": "Добавя специална страница и препратка за [[Special:Cite|цитиране]]",
+	"cite_article_link": "Цитиране на страницата",
+	"tooltip-cite-article": "Данни за начин на цитиране на тази страница",
+	"cite": "Цитиране",
+	"cite_page": "Страница:",
+	"cite_submit": "Цитиране"
+}

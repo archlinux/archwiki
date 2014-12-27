@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Fulup"
+		]
+	},
+	"modern.css": "/* Talvezout a raio ar CSS lakaet amañ evit implijerien ar gwiskadur Modern */",
+	"modern.js": "/* Kement JavaScript amañ a vo karget evit an implijerien a ra gant ar gwiskadur Modern */",
+	"skinname-modern": "Modern"
+}

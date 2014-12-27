@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Toliño"
+		]
+	},
+	"asirra-desc": "Módulo Asirra para ConfirmEdit",
+	"asirra-edit": "Para protexer o wiki contra o spam automático, seleccione só as fotos de gatos na caixa:",
+	"asirra-addurl": "A súa edición inclúe novas ligazóns externas. Para protexer o wiki contra o spam automático, seleccione só as fotos de gatos na caixa:",
+	"asirra-badlogin": "Para protexer o wiki contra o roubo de contrasinais, seleccione só as fotos de gatos na caixa:",
+	"asirra-createaccount": "Para protexer o wiki contra a creación automática de contas, seleccione só as fotos de gatos na caixa:",
+	"asirra-createaccount-fail": "Identifique correctamente os gatos.",
+	"asirra-create": "Para protexer o wiki contra a creación automática de páxinas, seleccione só as fotos de gatos na caixa:",
+	"asirra-nojs": "'''Active o JavaScript e volva enviar a páxina.'''",
+	"asirra-failed": "Identifique todas as fotos de gatos"
+}

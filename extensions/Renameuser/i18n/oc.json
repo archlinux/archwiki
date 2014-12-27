@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"Boulaur",
+			"Cedric31"
+		]
+	},
+	"renameuser": "Tornar nomenar l'utilizaire",
+	"renameuser-linkoncontribs": "tornar nomenar l'utilizaire",
+	"renameuser-linkoncontribs-text": "Tornar nomenar l'utilizaire",
+	"renameuser-desc": "Torna nomenar un utilizaire (necessita los dreches de ''renameuser'')",
+	"renameuserold": "Nom actual de l'utilizaire :",
+	"renameusernew": "Nom novèl de l'utilizaire :",
+	"renameuserreason": "Rason(s) del cambiament de nom :",
+	"renameusermove": "Desplaçar totas las paginas de l’utilizaire cap al nom novèl",
+	"renameuserreserve": "Reservar lo nom ancian per un usatge futur",
+	"renameuserwarnings": "Avertiments :",
+	"renameuserconfirm": "Òc, tornar nomenar l’utilizaire",
+	"renameusersubmit": "Sometre",
+	"renameusererrordoesnotexist": "Lo nom d'utilizaire « <nowiki>$1</nowiki> » es pas valid",
+	"renameusererrorexists": "Lo nom d'utilizaire « <nowiki>$1</nowiki> » existís ja",
+	"renameusererrorinvalid": "Lo nom d'utilizaire « <nowiki>$1</nowiki> » existís pas",
+	"renameuser-error-request": "Un problèma existís amb la recepcion de la requèsta. Tornatz en rèire e ensajatz tornamai.",
+	"renameuser-error-same-user": "Podètz pas tornar nomenar un utilizaire amb la meteissa causa deperabans.",
+	"renameusersuccess": "L'utilizaire « <nowiki>$1</nowiki> » es plan estat renomenat en « <nowiki>$2</nowiki> »",
+	"renameuser-page-exists": "La pagina $1 existís ja e pòt pas èsser remplaçada automaticament.",
+	"renameuser-page-moved": "La pagina $1 es estada desplaçada cap a $2.",
+	"renameuser-page-unmoved": "La pagina $1 pòt pas èsser renomenada en $2.",
+	"log-name-renameuser": "Istoric dels cambiaments de nom d'utilizaire",
+	"log-description-renameuser": "Aquò es l'istoric dels cambiaments de nom dels utilizaires",
+	"renameuser-move-log": "Pagina desplaçada automaticament al moment del cambiament de nom de l’utilizaire \"[[User:$1|$1]]\" en \"[[User:$2|$2]]\"",
+	"right-renameuser": "Tornar nomenar d'utilizaires",
+	"renameuser-renamed-notice": "Aqueste utilizaire es estat renomenat.\nLo jornal dels cambiaments de noms es disponible çaijós per informacion."
+}

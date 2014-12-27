@@ -29,6 +29,9 @@ class WikiEditorHooks {
 			'modules' => array(
 				'ext.wikiEditor.toolbar',
 			),
+			'stylemodules' => array(
+				'ext.wikiEditor.toolbar.styles',
+			),
 		),
 		'dialogs' => array(
 			'preferences' => array(
@@ -66,36 +69,6 @@ class WikiEditorHooks {
 
 		/* Labs Features */
 
-		'templateEditor' => array(
-			'preferences' => array(
-				'wikieditor-template-editor' => array(
-					'type' => 'toggle',
-					'label-message' => 'wikieditor-template-editor-preference',
-					'section' => 'editing/labs',
-				),
-			),
-			'requirements' => array(
-				'wikieditor-template-editor' => true,
-			),
-			'modules' => array(
-				'ext.wikiEditor.templateEditor',
-			),
-		),
-		'templates' => array(
-			'preferences' => array(
-				'wikieditor-templates' => array(
-					'type' => 'toggle',
-					'label-message' => 'wikieditor-templates-preference',
-					'section' => 'editing/labs',
-				),
-			),
-			'requirements' => array(
-				'wikieditor-templates' => true,
-			),
-			'modules' => array(
-				'ext.wikiEditor.templates',
-			),
-		),
 		'preview' => array(
 			'preferences' => array(
 				'wikieditor-preview' => array(
@@ -140,23 +113,7 @@ class WikiEditorHooks {
 			'modules' => array(
 				'ext.wikiEditor.publish',
 			),
-		),
-		'toc' => array(
-			'preferences' => array(
-				// Ideally this key would be 'wikieditor-toc'
-			 	'usenavigabletoc' => array(
-					'type' => 'toggle',
-					'label-message' => 'wikieditor-toc-preference',
-					'section' => 'editing/labs',
-				),
-			),
-			'requirements' => array(
-				'usenavigabletoc' => true,
-			),
-			'modules' => array(
-				'ext.wikiEditor.toc',
-			),
-		),
+		)
 	);
 
 	/* Static Methods */
@@ -198,16 +155,25 @@ class WikiEditorHooks {
 	 *
 	 * Adds the modules to the edit form
 	 *
-	 * @param $toolbar array list of toolbar items
+	 * @param $editPage EditPage the current EditPage object.
+	 * @param $output OutputPage object.
 	 * @return bool
 	 */
-	public static function editPageShowEditFormInitial( &$toolbar ) {
-		global $wgOut;
+	public static function editPageShowEditFormInitial( $editPage, $outputPage ) {
+		if ( $editPage->contentModel !== CONTENT_MODEL_WIKITEXT ) {
+			return true;
+		}
 
 		// Add modules for enabled features
 		foreach ( self::$features as $name => $feature ) {
-			if ( isset( $feature['modules'] ) && self::isEnabled( $name ) ) {
-				$wgOut->addModules( $feature['modules'] );
+			if ( !self::isEnabled( $name ) ) {
+				continue;
+			}
+			if ( isset( $feature['stylemodules'] ) ) {
+				$outputPage->addModuleStyles( $feature['stylemodules'] );
+			}
+			if ( isset( $feature['modules'] ) ) {
+				$outputPage->addModules( $feature['modules'] );
 			}
 		}
 		return true;
@@ -225,8 +191,7 @@ class WikiEditorHooks {
 		if ( self::isEnabled( 'toolbar' ) ) {
 			$toolbar = Html::rawElement(
 				'div', array(
-					'class' => 'wikiEditor-oldToolbar',
-					'style' => 'display:none;'
+					'class' => 'wikiEditor-oldToolbar'
 				),
 				$toolbar
 			);

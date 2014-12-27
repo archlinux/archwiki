@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"S.Örvarr.S",
+			"Snævar"
+		]
+	},
+	"inputbox-error-no-type": "Þú hefur ekki tilgreint hverskonar kassa þú villt búa til.",
+	"inputbox-error-bad-type": "\"$1\" gerð innsetningarkassa þekkist ekki.\nVinsamlegast tilgreindu \"create\", \"comment\", \"search\", \"search2\" eða \"fulltext\".",
+	"inputbox-createarticle": "Búa til síðu",
+	"inputbox-ns-main": "Aðalsíða"
+}

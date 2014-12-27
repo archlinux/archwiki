@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"CERminator"
+		]
+	},
+	"syntaxhighlight-desc": "Omogućava isticanje sintakse <code>&lt;syntaxhighlight&gt;</code> uz pomoć [http://qbnz.com/highlighter/ GeSHi Highlightera]",
+	"syntaxhighlight-specify": "Potrebno je da specificirate jezik ovako:",
+	"syntaxhighlight-supported": "Podržani jezici za isticanje sintakse:",
+	"syntaxhighlight-err-loading": "(greška pri korištenju spiska podržanih jezika)",
+	"syntaxhighlight-err-language": "Pogrešan jezik.",
+	"geshi.css": "/* CSS koji se ovdje postavi će biti korišten za isticanje GeSHi sintakse */"
+}

@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kolega2357"
+		]
+	},
+	"pfunc_time_error": "Greška: pogrešno vreme",
+	"pfunc_time_too_long": "Greška: previše pozivanja funkcije #time",
+	"pfunc_rel2abs_invalid_depth": "Greška: Nepravilna dubina u putanji: \"$1\""
+}

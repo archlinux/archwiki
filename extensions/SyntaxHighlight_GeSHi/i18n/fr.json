@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Grondin",
+			"Sherbrooke",
+			"Verdy p"
+		]
+	},
+	"syntaxhighlight-desc": "Fournit la mise en relief de la syntaxe par la balise <code>&lt;syntaxhighlight&gt;</code> en utilisant [http://qbnz.com/highlighter/ la coloration syntaxique GeSHi]",
+	"syntaxhighlight-specify": "Vous devez spécifier un langage comme ceci :",
+	"syntaxhighlight-supported": "Langages supportés pour la coloration syntaxique :",
+	"syntaxhighlight-err-loading": "(erreur en chargeant la liste des langages supportés)",
+	"syntaxhighlight-err-language": "Langage invalide",
+	"geshi.css": "/* Le code CSS inséré ici sera appliqué à la coloration syntaxique GeSHi. */"
+}

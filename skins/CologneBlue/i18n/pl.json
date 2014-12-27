@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Chrumps",
+			"Sp5uhe"
+		]
+	},
+	"cologneblue.css": "/* Umieszczony tutaj kod CSS wpłynie na wygląd skórki Błękit */",
+	"cologneblue.js": "/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Błękit */",
+	"skinname-cologneblue": "Błękit",
+	"cologneblue-desc": "Lekka skórka z minimalnym formatowaniem"
+}

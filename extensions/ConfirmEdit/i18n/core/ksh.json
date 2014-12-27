@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Purodha"
+		]
+	},
+	"captcha-edit": "Öm de Sigg ze ändere, don di Zahle onge zosamme zälle un don de Antwoot en dat Käßje endraare. ([[Special:Captcha/help|Verklierung]])",
+	"captcha-desc": "Brängk en „Kaptscha“ en et Wiki, öm jääje SPAM un jäje et Paßwööter-Dorschprobeere ze schöze.",
+	"captcha-label": "<span style=\"text-transform:uppercase\">Kaptscha</span>",
+	"captcha-addurl": "Do häß neu Lingks op frembde Websigge dobei jedonn.\nMer schöze uns Wiki jäje automatesche SPAM, dröm\ndon di Zahle onge zosamme träcke un don de Antwoot\nen dat Käßje endraare. ([[Special:Captcha/help|Verklierung]])",
+	"captcha-badlogin": "Mer schöze Metmaacher en unsem Wiki jäje automatesche\nPaßwoot-Knackerei, dröm don di Zahle onge zosamme zälle,\nun de Antwoot en dat Käßje endraare.  ([[Special:Captcha/help|Verklierung]])",
+	"captcha-createaccount": "Mer schöze uns Wiki dojäje, dat mer en Masse automatesch\nMetmaacher aanmeldt. Dröm beß esu joot un\ndon di Zahle onge zosamme zälle un don de Antwoot\nen dat Käßje endraare. ([[Special:Captcha/help|Verklierung]])",
+	"captcha-createaccount-fail": "De Bestätijungszahl fählt udder es verkeeht.",
+	"captcha-create": "Öm di Sigg neu aanzelääje, don di Zahle onge zosamme zälle,\nun don de Antwoot en dat Käßje endraare. (Verklierung)",
+	"captcha-sendemail": "För automettesche SPAM ze verhendere, donn di Zahle onge zosamme zälle,\nun don de Antwoot en dat Käßje endraare. ([[Special:Captcha/help|Verklierung]])",
+	"captcha-sendemail-fail": "De Bestätijungszahl fählt udder es verkeeht.",
+	"captcha-disabledinapi": "För di Aufjab moß en extra Bestätejon enjejovve wääde, un dat künne mer nit övver de API.",
+	"captchahelp-title": "Äklierung zum Kaptscha SPAM-Schotz",
+	"captchahelp-cookies-needed": "Do moß <i lang=\"en\">Cookies</i> en Dingem Brauser enjeschalldt han, domet da hee fluppe kann.",
+	"captchahelp-text": "Op Web Saits wi dat Wiki hee, wo jeder jät beidraare kann, do kumme se öff wi de Fleeje un don met Projramme un fun Hand bloß Reklame-Lingks op de eije Websigge affläje, oohne Sinn un Verstand. Esu en SPAM kam_mer widder fott maache, dat määt ävver Ärjer un Opwand.\n\nSu jät wulle_mer nit hann, un donn_et jlish widder fottschmiiße.\n\nDomet mer do_met nidd_esu fill Ärrbed hann,\nmaache_mer dänne Autmaate et Lääve schwer.\nWann uns Wikki merk, et künnd_esu jet em Bösh sinn, dann zeisch et e Belldshe med komije Texte dren, un fröhsch, dat mer se jenau esu ennjävve sullt,\nwi se do shtonn. För_enne Minsch eß dat eifach, ävver dat es fodammp schwierich ze projrammiere.\nDat es e beßßje läßtish för der Minsch, ävver de Robbotter hälld et unß bahl komplett fum Lief, un su jesinn, ess et netto enne Jewenn.\n\nWann De Dich ens fordeis, es och nit schlimm, De wees norr_enß jefrooch. Wat De jetipp häs, kütt nit fott.\n\nSchaad es, mer hann noch keine Wääsh, dat met Shprooch odder sönswi ze maache, su dat Lück met Shprooch_Ußßjaave, Braille, un met nur Tex em Brauser oohne Bellder, em Räähn shtonn künnte. Dooht Ühr Zeush eets enß oohne Lengk speischere, un saat dä [[Special:ListAdmins|Wikki_Köbesse]],\nwann Ühr Probbleme hatt. Do weed_Üch jehollfe weede.\n\nJetz kanns De met Dingem Brauser singem „Zeröck“-Knopp wigger maache, wo De fürher woohß.",
+	"captcha-addurl-whitelist": " #<!-- Lohß di Reih he jenou esu wi se es --> <pre>\n# Dä Opbou es:\n# * Alles fun enem #-Zeiche bes an et Engk fun ene Reih es ene Kommentaa för de Minsche\n# * Jede Reih met jet dren es en Stöck rejolähre Ußdrok, wat Domains en URL treffe kann\n  #</pre> <!-- Lohß di Reih he jenou esu wi se es -->",
+	"right-skipcaptcha": "De Opforderung fum Kaptscha överjonn"
+}

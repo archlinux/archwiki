@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"IvanLanin"
+		]
+	},
+	"syntaxhighlight-desc": "Memberikan penyorotan sintaks <code>&lt;syntaxhighlight&gt;</code> menggunakan [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Anda harus menentukan suatu bahasa seperti ini:",
+	"syntaxhighlight-supported": "Bahasa-bahasa yang didukung oleh pewarnaan sintaks:",
+	"syntaxhighlight-err-loading": "(kesalahan pemuatan daftar bahasa yang didukung)",
+	"syntaxhighlight-err-language": "Bahasa tak sah.",
+	"geshi.css": "/* CSS di sini akan diterapkan untuk penyorotan sintaks GeSHi */"
+}

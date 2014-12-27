@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lejonel",
+			"Lokal Profil"
+		]
+	},
+	"syntaxhighlight-desc": "Ger syntaxmarkering med [http://qbnz.com/highlighter/ GeSHi Highlighter] inuti <code>&lt;syntaxhighlight&gt;</code>-taggar",
+	"syntaxhighlight-specify": "Du måste ange vilket språk som används, så här:",
+	"syntaxhighlight-supported": "Stödda språk för syntaxmarkering:",
+	"syntaxhighlight-err-loading": "(fel vid laddning av listan över stödda språk)",
+	"syntaxhighlight-err-language": "Ogiltigt språk.",
+	"geshi.css": "/* CSS som skrivs här används för syntaxmarkering med GeSHI */"
+}

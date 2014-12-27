@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eitvys200",
+			"Garas",
+			"Homo",
+			"Matasg"
+		]
+	},
+	"captcha-edit": "Kad redaguotumėte šį straipsnį, apskaičiuokite šią paprastą sumą ir įveskite atsakymą į laukelį ([[Special:Captcha/help|daugiau informacijos]]):",
+	"captcha-label": "CAPTCHA",
+	"captcha-createaccount-fail": "Blogas arba nerastas patvirtinimo kodas.",
+	"captchahelp-title": "CAPTCHA pagalba",
+	"captchahelp-cookies-needed": "Jums reikia būti įjungus sausainėlius savo naršyklėje kad tai veiktu"
+}

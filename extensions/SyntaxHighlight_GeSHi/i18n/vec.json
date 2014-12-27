@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Candalua"
+		]
+	},
+	"syntaxhighlight-desc": "Evidensia la sintassi dei linguagi de programazion <code>&lt;syntaxhighlight&gt;</code> tramite [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Te ghè da specificar un linguagio in sta maniera:",
+	"syntaxhighlight-supported": "Linguagi de cui se pol evidensiar la sintassi coi colori:",
+	"syntaxhighlight-err-loading": "(eror nel caricamento de l'elenco dei linguagi suportà)",
+	"syntaxhighlight-err-language": "Linguagio mìa riconossiùo.",
+	"geshi.css": "/* I stili CSS inserìi qua i se àplica a l'evidenziazion de sintassi con GeSHi */"
+}

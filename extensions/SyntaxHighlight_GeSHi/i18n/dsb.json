@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Michawiki"
+		]
+	},
+	"syntaxhighlight-desc": "Zmóžnja syntaksowe wuzwignjenje <code>&lt;syntaxhighlight&gt;</code> z pomocu [http://qbnz.com/highlighter/ rěda GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Musyš rěc kaž slědujo pódaś:",
+	"syntaxhighlight-supported": "Pódpěrane rěcy za syntaksowe wuzwignjenje:",
+	"syntaxhighlight-err-loading": "(zmólka pśi zacytowanju lisćiny pódpěranych rěcow)",
+	"syntaxhighlight-err-language": "Njepłaśiwa rěc.",
+	"geshi.css": "/* How pódaty CSS nałožujo se na syntaksowe wuzwignjenje GeSHi */"
+}

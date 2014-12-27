@@ -50,16 +50,12 @@ class ApiLogout extends ApiBase {
 		return array();
 	}
 
-	public function getResultProperties() {
-		return array();
-	}
-
 	public function getParamDescription() {
 		return array();
 	}
 
 	public function getDescription() {
-		return 'Log out and clear session data';
+		return 'Log out and clear session data.';
 	}
 
 	public function getExamples() {

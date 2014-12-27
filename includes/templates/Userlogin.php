@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 /**
  * Html form for user login (since 1.22 with VForm appearance).
  *
@@ -28,6 +29,7 @@ class UserloginTemplate extends BaseTemplate {
 		$expirationDays = ceil( $wgCookieExpiration / ( 3600 * 24 ) );
 ?>
 <div class="mw-ui-container">
+	<div id="userloginprompt"><?php $this->msgWiki('loginprompt') ?></div>
 	<?php if ( $this->haveData( 'languages' ) ) { ?>
 		<div id="languagelinks">
 			<p><?php $this->html( 'languages' ); ?></p>
@@ -54,7 +56,7 @@ class UserloginTemplate extends BaseTemplate {
 				</div>
 			<?php } ?>
 
-			<div>
+			<div class="mw-ui-vform-field">
 				<label for='wpName1'>
 					<?php
 					$this->msg( 'userlogin-yourname' );
@@ -70,7 +72,7 @@ class UserloginTemplate extends BaseTemplate {
 				<?php
 				$extraAttrs = array();
 				echo Html::input( 'wpName', $this->data['name'], 'text', array(
-					'class' => 'loginText',
+					'class' => 'loginText mw-ui-input',
 					'id' => 'wpName1',
 					'tabindex' => '1',
 					'size' => '20',
@@ -84,7 +86,7 @@ class UserloginTemplate extends BaseTemplate {
 				?>
 			</div>
 
-			<div>
+			<div class="mw-ui-vform-field">
 				<label for='wpPassword1'>
 					<?php
 					$this->msg( 'userlogin-yourpassword' );
@@ -100,7 +102,7 @@ class UserloginTemplate extends BaseTemplate {
 				</label>
 				<?php
 				echo Html::input( 'wpPassword', null, 'password', array(
-					'class' => 'loginPassword',
+					'class' => 'loginPassword mw-ui-input',
 					'id' => 'wpPassword1',
 					'tabindex' => '2',
 					'size' => '20',
@@ -113,16 +115,15 @@ class UserloginTemplate extends BaseTemplate {
 
 			<?php
 			if ( isset( $this->data['usedomain'] ) && $this->data['usedomain'] ) {
-				$doms = "";
+				$select = new XmlSelect( 'wpDomain', false, $this->data['domain'] );
+				$select->setAttribute( 'tabindex', 3 );
 				foreach ( $this->data['domainnames'] as $dom ) {
-					$doms .= "<option>" . htmlspecialchars( $dom ) . "</option>";
+					$select->addOption( $dom );
 				}
 			?>
-				<div id="mw-user-domain-section">
+				<div class="mw-ui-vform-field" id="mw-user-domain-section">
 					<label for='wpDomain'><?php $this->msg( 'yourdomainname' ); ?></label>
-					<select name="wpDomain" value="<?php $this->text( 'domain' ); ?>" tabindex="3">
-						<?php echo $doms; ?>
-					</select>
+					<?php echo $select->getHTML(); ?>
 				</div>
 			<?php } ?>
 
@@ -132,29 +133,30 @@ class UserloginTemplate extends BaseTemplate {
 			}
 			?>
 
-			<div>
+			<div class="mw-ui-vform-field">
 				<?php if ( $this->data['canremember'] ) { ?>
-					<label class="mw-ui-checkbox-label">
+					<div class="mw-ui-checkbox">
 						<input name="wpRemember" type="checkbox" value="1" id="wpRemember" tabindex="4"
 							<?php if ( $this->data['remember'] ) {
 								echo 'checked="checked"';
 							} ?>
-						>
-						<?php echo $this->getMsg( 'userlogin-remembermypassword' )->numParams( $expirationDays )->escaped(); ?>
-					</label>
+						><label for="wpRemember">
+							<?php echo $this->getMsg( 'userlogin-remembermypassword' )->numParams( $expirationDays )->escaped(); ?></label>
+					</div>
 				<?php } ?>
 			</div>
 
-			<div>
+			<div class="mw-ui-vform-field">
 				<?php
-				echo Html::input( 'wpLoginAttempt', $this->getMsg( 'login' )->text(), 'submit', array(
+				echo Html::input( 'wpLoginAttempt', $this->getMsg( 'pt-login-button' )->text(), 'submit', array(
 					'id' => 'wpLoginAttempt',
 					'tabindex' => '6',
-					'class' => 'mw-ui-button mw-ui-big mw-ui-block mw-ui-primary'
+					'class' => 'mw-ui-button mw-ui-big mw-ui-block mw-ui-constructive'
 				) );
 				?>
 			</div>
-			<div id="mw-userlogin-help">
+
+			<div class="mw-ui-vform-field" id="mw-userlogin-help">
 				<?php
 				echo Html::element(
 					'a',
@@ -167,14 +169,15 @@ class UserloginTemplate extends BaseTemplate {
 				);
 				?>
 			</div>
+
 			<?php if ( $this->haveData( 'createOrLoginHref' ) ) { ?>
 				<?php if ( $this->data['loggedin'] ) { ?>
 					<div id="mw-createaccount-another">
-						<h3 id="mw-userloginlink"><a href="<?php $this->text( 'createOrLoginHref' ); ?>" id="mw-createaccount-join" tabindex="7"  class="mw-ui-button"><?php $this->msg( 'userlogin-createanother' ); ?></a></h3>
+						<a href="<?php $this->text( 'createOrLoginHref' ); ?>" id="mw-createaccount-join" tabindex="7"  class="mw-ui-button"><?php $this->msg( 'userlogin-createanother' ); ?></a>
 					</div>
 				<?php } else { ?>
 					<div id="mw-createaccount-cta">
-						<h3 id="mw-userloginlink"><?php $this->msg( 'userlogin-noaccount' ); ?><a href="<?php $this->text( 'createOrLoginHref' ); ?>" id="mw-createaccount-join" tabindex="7"  class="mw-ui-button mw-ui-constructive"><?php $this->msg( 'userlogin-joinproject' ); ?></a></h3>
+						<?php $this->msg( 'userlogin-noaccount' ); ?><a href="<?php $this->text( 'createOrLoginHref' ); ?>" id="mw-createaccount-join" tabindex="7"  class="mw-ui-button mw-ui-progressive"><?php $this->msg( 'userlogin-joinproject' ); ?></a>
 					</div>
 				<?php } ?>
 			<?php } ?>

@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Anakmalaysia",
+			"Bencmq",
+			"Gaoxuewei",
+			"Hydra",
+			"Liangent",
+			"Shinjiman",
+			"Xiaomingyan",
+			"Yfdyh000",
+			"阿pp",
+			"Mywood"
+		]
+	},
+	"gadgets-desc": "允许用户在其[[Special:Preferences#mw-prefsection-gadgets|系统设置]]中选择自定义[[Special:Gadgets|CSS和JavaScript工具]]",
+	"prefs-gadgets": "小工具",
+	"gadgets-prefstext": "下面是你可以为你的账户启用的特殊小工具的列表。这些小工具大多数基于JavaScript，所以你必需使你的浏览器启用JavaScript以使它们工作。请注意这些小工具不会在这个设置页面上产生效果。\n\n同时请注意，这些特殊小工具不是MediaWiki软件的组成部分，他们通常是由你的本地wiki的用户开发并维护的。本地管理员可以编辑可用小工具的[[MediaWiki:Gadgets-definition|定义]]和[[Special:Gadgets|说明]]。",
+	"gadgets": "小工具",
+	"gadgets-title": "小工具",
+	"gadgets-pagetext": "下面是用户可以在他们的[[Special:Preferences#mw-prefsection-gadgets|设置页面]]启用的特殊小工具的列表，由[[MediaWiki:Gadgets-definition|定义]]确定。这个概览提供便捷访问确定每个小工具的说明和代码的系统信息页面的途径。",
+	"gadgets-uses": "使用",
+	"gadgets-required-rights": "需要以下{{PLURAL:$2|权限|权限}}：\n\n$1",
+	"gadgets-required-skins": "可用在{{PLURAL:$2|$1外观|以下外观：$1}}。",
+	"gadgets-default": "默认所有人启用。",
+	"gadgets-export": "导出",
+	"gadgets-export-title": "导出小工具",
+	"gadgets-not-found": "找不到“$1”小工具。",
+	"gadgets-export-text": "要导出$1小工具，请单击“{{int:gadgets-export-download}}”按钮，保存下载的文件，前往目标wiki的Special:Import并将文件上传。然后添加下内容至MediaWiki:Gadgets-definition页面：\n<pre>$2</pre>\n您必须在目标wiki上拥有适当的权限（包括编辑系统信息的权限），并且启用从文件上传导入。",
+	"gadgets-export-download": "下载"
+}

@@ -27,15 +27,35 @@
  * @ingroup SpecialPage
  */
 class MovePageForm extends UnlistedSpecialPage {
-	/**
-	 * Objects
-	 * @var Title
-	 */
-	var $oldTitle, $newTitle;
-	// Text input
-	var $reason;
+	/** @var Title */
+	protected $oldTitle;
+
+	/** @var Title */
+	protected $newTitle;
+
+
+	/** @var string Text input */
+	protected $reason;
+
 	// Checks
-	var $moveTalk, $deleteAndMove, $moveSubpages, $fixRedirects, $leaveRedirect, $moveOverShared;
+
+	/** @var bool */
+	protected $moveTalk;
+
+	/** @var bool */
+	protected $deleteAndMove;
+
+	/** @var bool */
+	protected $moveSubpages;
+
+	/** @var bool */
+	protected $fixRedirects;
+
+	/** @var bool */
+	protected $leaveRedirect;
+
+	/** @var bool */
+	protected $moveOverShared;
 
 	private $watch = false;
 
@@ -106,12 +126,12 @@ class MovePageForm extends UnlistedSpecialPage {
 	/**
 	 * Show the form
 	 *
-	 * @param array $err error messages. Each item is an error message.
+	 * @param array $err Error messages. Each item is an error message.
 	 *    It may either be a string message name or array message name and
 	 *    parameters, like the second argument to OutputPage::wrapWikiMsg().
 	 */
 	function showForm( $err ) {
-		global $wgContLang, $wgFixDoubleRedirects, $wgMaximumMovedPages;
+		global $wgContLang;
 
 		$this->getSkin()->setRelevantTitle( $this->oldTitle );
 
@@ -163,9 +183,14 @@ class MovePageForm extends UnlistedSpecialPage {
 					"<div class=\"error mw-moveuserpage-warning\">\n$1\n</div>",
 					'moveuserpage-warning'
 				);
+			} elseif ( $this->oldTitle->getNamespace() == NS_CATEGORY ) {
+				$out->wrapWikiMsg(
+					"<div class=\"error mw-movecategorypage-warning\">\n$1\n</div>",
+					'movecategorypage-warning'
+				);
 			}
 
-			$out->addWikiMsg( $wgFixDoubleRedirects ?
+			$out->addWikiMsg( $this->getConfig()->get( 'FixDoubleRedirects' ) ?
 				'movepagetext' :
 				'movepagetext-noredirectfixer'
 			);
@@ -196,7 +221,7 @@ class MovePageForm extends UnlistedSpecialPage {
 				|| ( $oldTitleTalkSubpages && $canMoveSubpage ) );
 
 		$dbr = wfGetDB( DB_SLAVE );
-		if ( $wgFixDoubleRedirects ) {
+		if ( $this->getConfig()->get( 'FixDoubleRedirects' ) ) {
 			$hasRedirects = $dbr->selectField( 'redirect', '1',
 				array(
 					'rd_namespace' => $this->oldTitle->getNamespace(),
@@ -281,7 +306,7 @@ class MovePageForm extends UnlistedSpecialPage {
 				'form',
 				array(
 					'method' => 'post',
-					'action' => $this->getTitle()->getLocalURL( 'action=submit' ),
+					'action' => $this->getPageTitle()->getLocalURL( 'action=submit' ),
 					'id' => 'movepage'
 				)
 			) .
@@ -351,7 +376,16 @@ class MovePageForm extends UnlistedSpecialPage {
 			);
 		}
 
-		if ( $user->isAllowed( 'suppressredirect' ) && $handler->supportsRedirects() ) {
+		if ( $user->isAllowed( 'suppressredirect' ) ) {
+			if ( $handler->supportsRedirects() ) {
+				$isChecked = $this->leaveRedirect;
+				$options = array();
+			} else {
+				$isChecked = false;
+				$options = array(
+					'disabled' => 'disabled'
+				);
+			}
 			$out->addHTML( "
 				<tr>
 					<td></td>
@@ -360,7 +394,8 @@ class MovePageForm extends UnlistedSpecialPage {
 						$this->msg( 'move-leave-redirect' )->text(),
 						'wpLeaveRedirect',
 						'wpLeaveRedirect',
-						$this->leaveRedirect
+						$isChecked,
+						$options
 					) .
 					"</td>
 				</tr>"
@@ -384,6 +419,7 @@ class MovePageForm extends UnlistedSpecialPage {
 		}
 
 		if ( $canMoveSubpage ) {
+			$maximumMovedPages = $this->getConfig()->get( 'MaximumMovedPages' );
 			$out->addHTML( "
 				<tr>
 					<td></td>
@@ -400,7 +436,7 @@ class MovePageForm extends UnlistedSpecialPage {
 							( $this->oldTitle->hasSubpages()
 								? 'move-subpages'
 								: 'move-talk-subpages' )
-						)->numParams( $wgMaximumMovedPages )->params( $wgMaximumMovedPages )->parse()
+						)->numParams( $maximumMovedPages )->params( $maximumMovedPages )->parse()
 					) .
 					"</td>
 				</tr>"
@@ -445,8 +481,6 @@ class MovePageForm extends UnlistedSpecialPage {
 	}
 
 	function doSubmit() {
-		global $wgMaximumMovedPages, $wgFixDoubleRedirects;
-
 		$user = $this->getUser();
 
 		if ( $user->pingLimiter( 'move' ) ) {
@@ -457,7 +491,7 @@ class MovePageForm extends UnlistedSpecialPage {
 		$nt = $this->newTitle;
 
 		# don't allow moving to pages with # in
-		if ( !$nt || $nt->getFragment() != '' ) {
+		if ( !$nt || $nt->hasFragment() ) {
 			$this->showForm( array( array( 'badtitletext' ) ) );
 
 			return;
@@ -522,7 +556,7 @@ class MovePageForm extends UnlistedSpecialPage {
 			return;
 		}
 
-		if ( $wgFixDoubleRedirects && $this->fixRedirects ) {
+		if ( $this->getConfig()->get( 'FixDoubleRedirects' ) && $this->fixRedirects ) {
 			DoubleRedirectJob::fixRedirects( 'move', $ot, $nt );
 		}
 
@@ -532,10 +566,14 @@ class MovePageForm extends UnlistedSpecialPage {
 		$oldLink = Linker::link(
 			$ot,
 			null,
-			array(),
+			array( 'id' => 'movepage-oldlink' ),
 			array( 'redirect' => 'no' )
 		);
-		$newLink = Linker::linkKnown( $nt );
+		$newLink = Linker::linkKnown(
+			$nt,
+			null,
+			array( 'id' => 'movepage-newlink' )
+		);
 		$oldText = $ot->getPrefixedText();
 		$newText = $nt->getPrefixedText();
 
@@ -583,8 +621,8 @@ class MovePageForm extends UnlistedSpecialPage {
 		$dbr = wfGetDB( DB_MASTER );
 		if ( $this->moveSubpages && (
 			MWNamespace::hasSubpages( $nt->getNamespace() ) || (
-				$this->moveTalk &&
-					MWNamespace::hasSubpages( $nt->getTalkPage()->getNamespace() )
+				$this->moveTalk
+					&& MWNamespace::hasSubpages( $nt->getTalkPage()->getNamespace() )
 			)
 		) ) {
 			$conds = array(
@@ -670,17 +708,21 @@ class MovePageForm extends UnlistedSpecialPage {
 					);
 
 					$newLink = Linker::linkKnown( $newSubpage );
-					$extraOutput[] = $this->msg( 'movepage-page-moved' )->rawParams( $oldLink, $newLink )->escaped();
+					$extraOutput[] = $this->msg( 'movepage-page-moved' )
+						->rawParams( $oldLink, $newLink )->escaped();
 					++$count;
 
-					if ( $count >= $wgMaximumMovedPages ) {
-						$extraOutput[] = $this->msg( 'movepage-max-pages' )->numParams( $wgMaximumMovedPages )->escaped();
+					$maximumMovedPages = $this->getConfig()->get( 'MaximumMovedPages' );
+					if ( $count >= $maximumMovedPages ) {
+						$extraOutput[] = $this->msg( 'movepage-max-pages' )
+							->numParams( $maximumMovedPages )->escaped();
 						break;
 					}
 				} else {
 					$oldLink = Linker::linkKnown( $oldSubpage );
 					$newLink = Linker::link( $newSubpage );
-					$extraOutput[] = $this->msg( 'movepage-page-unmoved' )->rawParams( $oldLink, $newLink )->escaped();
+					$extraOutput[] = $this->msg( 'movepage-page-unmoved' )
+						->rawParams( $oldLink, $newLink )->escaped();
 				}
 			}
 		}

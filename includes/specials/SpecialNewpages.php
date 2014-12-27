@@ -27,15 +27,12 @@
  * @ingroup SpecialPage
  */
 class SpecialNewpages extends IncludableSpecialPage {
-	// Stored objects
-
 	/**
 	 * @var FormOptions
 	 */
 	protected $opts;
 	protected $customFilters;
 
-	// Some internal settings
 	protected $showNavigation = false;
 
 	public function __construct() {
@@ -43,8 +40,6 @@ class SpecialNewpages extends IncludableSpecialPage {
 	}
 
 	protected function setup( $par ) {
-		global $wgEnableNewpagesUserFilter;
-
 		// Options
 		$opts = new FormOptions();
 		$this->opts = $opts; // bind
@@ -74,9 +69,6 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 		// Validate
 		$opts->validateIntBounds( 'limit', 0, 5000 );
-		if ( !$wgEnableNewpagesUserFilter ) {
-			$opts->setValue( 'username', '' );
-		}
 	}
 
 	protected function parseParams( $par ) {
@@ -124,8 +116,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 	/**
 	 * Show a form for filtering namespace and username
 	 *
-	 * @param $par String
-	 * @return String
+	 * @param string $par
 	 */
 	public function execute( $par ) {
 		$out = $this->getOutput();
@@ -194,7 +185,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$changed = $this->opts->getChangedValues();
 		unset( $changed['offset'] ); // Reset offset if query type changes
 
-		$self = $this->getTitle();
+		$self = $this->getPageTitle();
 		foreach ( $filters as $key => $msg ) {
 			$onoff = 1 - $this->opts->getValue( $key );
 			$link = Linker::link( $self, $showhide[$onoff], array(),
@@ -207,8 +198,6 @@ class SpecialNewpages extends IncludableSpecialPage {
 	}
 
 	protected function form() {
-		global $wgEnableNewpagesUserFilter, $wgScript;
-
 		// Consume values
 		$this->opts->consumeValue( 'offset' ); // don't carry offset, DWIW
 		$namespace = $this->opts->consumeValue( 'namespace' );
@@ -232,8 +221,8 @@ class SpecialNewpages extends IncludableSpecialPage {
 			list( $tagFilterLabel, $tagFilterSelector ) = $tagFilter;
 		}
 
-		$form = Xml::openElement( 'form', array( 'action' => $wgScript ) ) .
-			Html::hidden( 'title', $this->getTitle()->getPrefixedDBkey() ) .
+		$form = Xml::openElement( 'form', array( 'action' => wfScript() ) ) .
+			Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) .
 			Xml::fieldset( $this->msg( 'newpages' )->text() ) .
 			Xml::openElement( 'table', array( 'id' => 'mw-newpages-table' ) ) .
 			'<tr>
@@ -268,15 +257,14 @@ class SpecialNewpages extends IncludableSpecialPage {
 				$tagFilterSelector .
 				'</td>
 			</tr>' ) : '' ) .
-			( $wgEnableNewpagesUserFilter ?
-				'<tr>
+			'<tr>
 				<td class="mw-label">' .
 					Xml::label( $this->msg( 'newpages-username' )->text(), 'mw-np-username' ) .
 					'</td>
 				<td class="mw-input">' .
 					Xml::input( 'username', 30, $userText, array( 'id' => 'mw-np-username' ) ) .
 					'</td>
-			</tr>' : '' ) .
+			</tr>' .
 			'<tr> <td></td>
 				<td class="mw-submit">' .
 			Xml::submitButton( $this->msg( 'allpagessubmit' )->text() ) .
@@ -301,7 +289,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 	 * size, user links, and a comment
 	 *
 	 * @param object $result Result row
-	 * @return String
+	 * @return string
 	 */
 	public function formatRow( $result ) {
 		$title = Title::newFromRow( $result );
@@ -394,14 +382,15 @@ class SpecialNewpages extends IncludableSpecialPage {
 			$oldTitleText = $this->msg( 'rc-old-title' )->params( $oldTitleText )->escaped();
 		}
 
-		return "<li{$css}>{$time} {$dm}{$plink} {$hist} {$dm}{$length} {$dm}{$ulink} {$comment} {$tagDisplay} {$oldTitleText}</li>\n";
+		return "<li{$css}>{$time} {$dm}{$plink} {$hist} {$dm}{$length} "
+			. "{$dm}{$ulink} {$comment} {$tagDisplay} {$oldTitleText}</li>\n";
 	}
 
 	/**
 	 * Should a specific result row provide "patrollable" links?
 	 *
 	 * @param object $result Result row
-	 * @return Boolean
+	 * @return bool
 	 */
 	protected function patrollable( $result ) {
 		return ( $this->getUser()->useNPPatrol() && !$result->rc_patrolled );
@@ -410,32 +399,31 @@ class SpecialNewpages extends IncludableSpecialPage {
 	/**
 	 * Output a subscription feed listing recent edits to this page.
 	 *
-	 * @param $type String
+	 * @param string $type
 	 */
 	protected function feed( $type ) {
-		global $wgFeed, $wgFeedClasses, $wgFeedLimit;
-
-		if ( !$wgFeed ) {
+		if ( !$this->getConfig()->get( 'Feed' ) ) {
 			$this->getOutput()->addWikiMsg( 'feed-unavailable' );
 
 			return;
 		}
 
-		if ( !isset( $wgFeedClasses[$type] ) ) {
+		$feedClasses = $this->getConfig()->get( 'FeedClasses' );
+		if ( !isset( $feedClasses[$type] ) ) {
 			$this->getOutput()->addWikiMsg( 'feed-invalid' );
 
 			return;
 		}
 
-		$feed = new $wgFeedClasses[$type](
+		$feed = new $feedClasses[$type](
 			$this->feedTitle(),
 			$this->msg( 'tagline' )->text(),
-			$this->getTitle()->getFullURL()
+			$this->getPageTitle()->getFullURL()
 		);
 
 		$pager = new NewPagesPager( $this, $this->opts );
 		$limit = $this->opts->getValue( 'limit' );
-		$pager->mLimit = min( $limit, $wgFeedLimit );
+		$pager->mLimit = min( $limit, $this->getConfig()->get( 'FeedLimit' ) );
 
 		$feed->outHeader();
 		if ( $pager->getNumRows() > 0 ) {
@@ -447,10 +435,11 @@ class SpecialNewpages extends IncludableSpecialPage {
 	}
 
 	protected function feedTitle() {
-		global $wgLanguageCode, $wgSitename;
 		$desc = $this->getDescription();
+		$code = $this->getConfig()->get( 'LanguageCode' );
+		$sitename = $this->getConfig()->get( 'Sitename' );
 
-		return "$wgSitename - $desc [$wgLanguageCode]";
+		return "$sitename - $desc [$code]";
 	}
 
 	protected function feedItem( $row ) {
@@ -514,7 +503,6 @@ class NewPagesPager extends ReverseChronologicalPager {
 	}
 
 	function getQueryInfo() {
-		global $wgEnableNewpagesUserFilter;
 		$conds = array();
 		$conds['rc_new'] = 1;
 
@@ -524,19 +512,17 @@ class NewPagesPager extends ReverseChronologicalPager {
 		$username = $this->opts->getValue( 'username' );
 		$user = Title::makeTitleSafe( NS_USER, $username );
 
+		$rcIndexes = array();
+
 		if ( $namespace !== false ) {
 			if ( $this->opts->getValue( 'invert' ) ) {
 				$conds[] = 'rc_namespace != ' . $this->mDb->addQuotes( $namespace );
 			} else {
 				$conds['rc_namespace'] = $namespace;
 			}
-			$rcIndexes = array( 'new_name_timestamp' );
-		} else {
-			$rcIndexes = array( 'rc_timestamp' );
 		}
 
-		# $wgEnableNewpagesUserFilter - temp WMF hack
-		if ( $wgEnableNewpagesUserFilter && $user ) {
+		if ( $user ) {
 			$conds['rc_user_text'] = $user->getText();
 			$rcIndexes = 'rc_user_text';
 		} elseif ( User::groupHasPermission( '*', 'createpage' ) &&
@@ -572,11 +558,17 @@ class NewPagesPager extends ReverseChronologicalPager {
 		wfRunHooks( 'SpecialNewpagesConditions',
 			array( &$this, $this->opts, &$conds, &$tables, &$fields, &$join_conds ) );
 
+		$options = array();
+
+		if ( $rcIndexes ) {
+			$options = array( 'USE INDEX' => array( 'recentchanges' => $rcIndexes ) );
+		}
+
 		$info = array(
 			'tables' => $tables,
 			'fields' => $fields,
 			'conds' => $conds,
-			'options' => array( 'USE INDEX' => array( 'recentchanges' => $rcIndexes ) ),
+			'options' => $options,
 			'join_conds' => $join_conds
 		);
 

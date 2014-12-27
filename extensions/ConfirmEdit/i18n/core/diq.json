@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Asmen",
+			"Aspar",
+			"Erdemaslancan",
+			"Marmase",
+			"Xoser"
+		]
+	},
+	"captcha-edit": "Qe ena pel vurnayîşî, ma rica keno cewabê problemî qutiyê ke cor de zerre ey ra binuse ([[Special:Captcha/help|enformasyonê bînî]]):",
+	"captcha-desc": "Rehat CAPTCHA teknoloci u  dezgina parola-ezayan",
+	"captcha-label": "'''Kodê itimadi'''",
+	"captcha-addurl": "Vurnayışa şıma gray teberiya newi muhtewa kena.\nOtomatik spamî ra pawitîş, ma rica keno cewabê problemî qutiyê ke cor de zerre ey ra binuse ([[Special:Captcha/help|malumato detayın]]):",
+	"captcha-badlogin": "Otomatik spam ra pawıtışi, ma rica keno cewabê problemî qutiyê ke cor de zerre ey ra binuse \n([[Special:Captcha/help|malumato detayın]]):",
+	"captcha-createaccount": "Otomatik spam ra pawıtışi, ma rica keno cewabê problemî qutiyê ke cor de zerre ey ra binuse \n([[Special:Captcha/help|malumato detayın]]):",
+	"captcha-createaccount-fail": "CAPTCHA ğeleto ya ki kemio",
+	"captcha-create": "Qe pel viraştîşî, ma rica keno cewabê problemî qutiyê ke cor de zerre ey ra binuse ([[Special:Captcha/help|enformasyonê bînî]]):",
+	"captcha-sendemail": "Otomatik spam ra pawıtışi, ma rica keno cewabê problemî qutiyê ke cor de zerre ey ra binuse \n([[Special:Captcha/help|malumato detayın]]):",
+	"captcha-sendemail-fail": "CAPTCHA ğeleto ya ki kemio",
+	"captcha-disabledinapi": "Ena hereket de captcha lazim o, aye ra ser API ra ena hereket nibena.",
+	"captchahelp-title": "Yardimê captchayî",
+	"captchahelp-cookies-needed": "Eka şıma wazeno bıkewê pela Wikipedia, programê internetê şıma de cookiesi gani aktiv bê.",
+	"captchahelp-text": "Siteyan ke kamu ra aleknayişê îlanî ra destur dano, ze ena wiki, spam kerdogan ke xacetane otomatiki ser kar keno inan ra atak beno.\nMa eşkeno linkane inan wedarno, feqat hewna inan problem zeman ma geno. \n\nMavaci, key ti yew pele de linkane newi darneno, wiki belki ti ra yew resim mucneno u ti ra wazeno cekuyan ke resimda inan binusi. \nEka ena process otomatik nibeno, ena process otomatik spam kerogan vinderneno feqay sexsi spam kerdogan nieşkeno vindaro.\n\nMa ef bikeri ena process belki ti ra zehmeti. belki cim tu ra şcekuyan hewl niesno. \nNika ma da sistemê vengî cinoke ti ra vaci resim da kamci cekuyan esto. \nMa rica keno ti yew [[Special:ListAdmins|idarekar]] ra yew mesaj bişavî u o ra yardim bivaci eka ti yew linkê hewlî darnone.\n\nBrowser xo de goceke 'back' rê klik bike şo pela editorî.",
+	"captcha-addurl-whitelist": "  #<!-- leave this line exactly as it is --> <pre>\n#Sîntaks ze ena yo: \n#  * Nişanê \"#\" ra nişanê ke bînê xetî de pêran piya xulasa yo\n#  * Her xetî ke veng niyo fragmento regex u teyna URLan de hostan match keno\n  #</pre> <!-- leave this line exactly as it is -->",
+	"right-skipcaptcha": "Herekatanê captcha trigger perform bike ke ti ser captcha meşo"
+}

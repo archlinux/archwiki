@@ -1,16 +1,16 @@
 <?php
 /**
  * WikiEditor extension
- * 
+ *
  * @file
  * @ingroup Extensions
- * 
+ *
  * @author Trevor Parscal <trevor@wikimedia.org>
  * @author Roan Kattouw <roan.kattouw@gmail.com>
  * @author Nimish Gautam <nimish@wikimedia.org>
  * @author Adam Miller <amiller@wikimedia.org>
  * @license GPL v2 or later
- * @version 0.3.1
+ * @version 0.4.0
  */
 
 /* Configuration */
@@ -34,16 +34,6 @@ $wgWikiEditorFeatures = array(
 	'previewDialog' => array( 'global' => false, 'user' => false ),
 	//  Adds a button and dialog for step-by-step publishing
 	'publish' => array( 'global' => false, 'user' => true ),
-
-	/* I-frame dependent (do not deploy!) */
-
-	// Failry stable table of contents
-	'toc' => array( 'global' => false, 'user' => true ),
-	// Pretty broken template collapsing/editing
-	'templateEditor' => array( 'global' => false, 'user' => false ),
-	// Bare-bones (probably broken) template collapsing
-	'templates' => array( 'global' => false, 'user' => false ),
-
 );
 
 /* Setup */
@@ -52,12 +42,13 @@ $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
 	'name' => 'WikiEditor',
 	'author' => array( 'Trevor Parscal', 'Roan Kattouw', 'Nimish Gautam', 'Adam Miller' ),
-	'version' => '0.3.1',
+	'version' => '0.4.0',
 	'url' => 'https://www.mediawiki.org/wiki/Extension:WikiEditor',
 	'descriptionmsg' => 'wikieditor-desc',
 );
-$wgAutoloadClasses['WikiEditorHooks'] = dirname( __FILE__ ) . '/WikiEditor.hooks.php';
-$wgExtensionMessagesFiles['WikiEditor'] = dirname( __FILE__ ) . '/WikiEditor.i18n.php';
+$wgAutoloadClasses['WikiEditorHooks'] = __DIR__ . '/WikiEditor.hooks.php';
+$wgMessagesDirs['WikiEditor'] = __DIR__ . '/i18n';
+$wgExtensionMessagesFiles['WikiEditor'] = __DIR__ . '/WikiEditor.i18n.php';
 $wgHooks['EditPage::showEditForm:initial'][] = 'WikiEditorHooks::editPageShowEditFormInitial';
 $wgHooks['GetPreferences'][] = 'WikiEditorHooks::getPreferences';
 $wgHooks['ResourceLoaderGetConfigVars'][] = 'WikiEditorHooks::resourceLoaderGetConfigVars';
@@ -65,17 +56,12 @@ $wgHooks['MakeGlobalVariablesScript'][] = 'WikiEditorHooks::makeGlobalVariablesS
 $wgHooks['EditPageBeforeEditToolbar'][] = 'WikiEditorHooks::EditPageBeforeEditToolbar';
 
 $wikiEditorTpl = array(
-	'localBasePath' => dirname( __FILE__ ) . '/modules',
+	'localBasePath' => __DIR__ . '/modules',
 	'remoteExtPath' => 'WikiEditor/modules',
 	'group' => 'ext.wikiEditor',
 );
 
 $wgResourceModules += array(
-	/* Third-party modules */
-
-	'contentCollector' => $wikiEditorTpl + array(
-		'scripts' => 'contentCollector.js',
-	),
 
 	/* WikiEditor jQuery plugin Resources */
 
@@ -85,18 +71,10 @@ $wgResourceModules += array(
 		'dependencies' => array(
 			'jquery.client',
 			'jquery.textSelection',
-			'jquery.delayedBind',
 		),
 		'messages' => array(
 			'wikieditor-wikitext-tab',
 			'wikieditor-loading',
-		),
-	),
-	'jquery.wikiEditor.iframe' => $wikiEditorTpl + array(
-		'scripts' => 'jquery.wikiEditor.iframe.js',
-		'dependencies' => array(
-			'jquery.wikiEditor',
-			'contentCollector',
 		),
 	),
 	'jquery.wikiEditor.dialogs' => $wikiEditorTpl + array(
@@ -136,13 +114,6 @@ $wgResourceModules += array(
 			'wikieditor-toolbar-tool-file-cancel',
 		),
 	),
-	'jquery.wikiEditor.highlight' => $wikiEditorTpl + array(
-		'scripts' => 'jquery.wikiEditor.highlight.js',
-		'dependencies' => array(
-			'jquery.wikiEditor',
-			'jquery.wikiEditor.iframe',
-		),
-	),
 	'jquery.wikiEditor.preview' => $wikiEditorTpl + array(
 		'scripts' => 'jquery.wikiEditor.preview.js',
 		'styles' => 'jquery.wikiEditor.preview.css',
@@ -163,39 +134,14 @@ $wgResourceModules += array(
 			'jquery.wikiEditor.dialogs',
 		),
 	),
-	'jquery.wikiEditor.templateEditor' => $wikiEditorTpl + array(
-		'scripts' => 'jquery.wikiEditor.templateEditor.js',
-		'dependencies' => array(
-			'jquery.wikiEditor',
-			'jquery.wikiEditor.iframe',
-			'jquery.wikiEditor.dialogs',
-		),
-	),
-	'jquery.wikiEditor.templates' => $wikiEditorTpl + array(
-		'scripts' => 'jquery.wikiEditor.templates.js',
-		'dependencies' => array(
-			'jquery.wikiEditor',
-			'jquery.wikiEditor.iframe',
-		),
-	),
-	'jquery.wikiEditor.toc' => $wikiEditorTpl + array(
-		'scripts' => 'jquery.wikiEditor.toc.js',
-		'styles' => 'jquery.wikiEditor.toc.css',
-		'dependencies' => array(
-			'jquery.wikiEditor',
-			'jquery.wikiEditor.iframe',
-			'jquery.ui.draggable',
-			'jquery.ui.resizable',
-			'jquery.autoEllipsis',
-			'jquery.color',
-		),
-	),
 	'jquery.wikiEditor.toolbar' => $wikiEditorTpl + array(
 		'scripts' => 'jquery.wikiEditor.toolbar.js',
 		'styles' => 'jquery.wikiEditor.toolbar.css',
 		'dependencies' => array(
 			'jquery.wikiEditor',
 			'jquery.wikiEditor.toolbar.i18n',
+			'jquery.cookie',
+			'jquery.async',
 		),
 	),
 	'jquery.wikiEditor.toolbar.config' => $wikiEditorTpl + array(
@@ -204,8 +150,6 @@ $wgResourceModules += array(
 			'jquery.wikiEditor',
 			'jquery.wikiEditor.toolbar.i18n',
 			'jquery.wikiEditor.toolbar',
-			'jquery.cookie',
-			'jquery.async',
 		)
 	),
 	'jquery.wikiEditor.toolbar.i18n' => $wikiEditorTpl + array(
@@ -269,8 +213,6 @@ $wgResourceModules += array(
 			'wikieditor-toolbar-tool-ulist-example',
 			'wikieditor-toolbar-tool-olist',
 			'wikieditor-toolbar-tool-olist-example',
-			'wikieditor-toolbar-tool-indent',
-			'wikieditor-toolbar-tool-indent-example',
 			'wikieditor-toolbar-tool-nowiki',
 			'wikieditor-toolbar-tool-nowiki-example',
 			'wikieditor-toolbar-tool-redirect',
@@ -430,13 +372,6 @@ $wgResourceModules += array(
 			'jquery.wikiEditor.dialogs.config',
 		),
 	),
-	'ext.wikiEditor.highlight' => $wikiEditorTpl + array(
-		'scripts' => 'ext.wikiEditor.highlight.js',
-		'dependencies' => array(
-			'ext.wikiEditor',
-			'jquery.wikiEditor.highlight',
-		),
-	),
 	'ext.wikiEditor.preview' => $wikiEditorTpl + array(
 		'scripts' => 'ext.wikiEditor.preview.js',
 		'dependencies' => array(
@@ -478,39 +413,6 @@ $wgResourceModules += array(
 			'wikieditor-publish-dialog-goback',
 		),
 	),
-	'ext.wikiEditor.templateEditor' => $wikiEditorTpl + array(
-		'scripts' => 'ext.wikiEditor.templateEditor.js',
-		'dependencies' => array(
-			'ext.wikiEditor',
-			'ext.wikiEditor.highlight',
-			'jquery.wikiEditor.templateEditor',
-		),
-		'messages' => array(
-			'wikieditor-template-editor-dialog-title',
-			'wikieditor-template-editor-dialog-submit',
-			'wikieditor-template-editor-dialog-cancel',
-		),
-	),
-	'ext.wikiEditor.templates' => $wikiEditorTpl + array(
-		'scripts' => 'ext.wikiEditor.templates.js',
-		'dependencies' => array(
-			'ext.wikiEditor',
-			'ext.wikiEditor.highlight',
-			'jquery.wikiEditor.templates',
-		),
-	),
-	'ext.wikiEditor.toc' => $wikiEditorTpl + array(
-		'scripts' => 'ext.wikiEditor.toc.js',
-		'dependencies' => array(
-			'ext.wikiEditor',
-			'ext.wikiEditor.highlight',
-			'jquery.wikiEditor.toc',
-		),
-		'messages' => array(
-			'wikieditor-toc-show',
-			'wikieditor-toc-hide',
-		),
-	),
 	'ext.wikiEditor.tests.toolbar' => $wikiEditorTpl + array(
 		'scripts' => 'ext.wikiEditor.tests.toolbar.js',
 		'dependencies' => 'ext.wikiEditor.toolbar',
@@ -522,6 +424,9 @@ $wgResourceModules += array(
 			'jquery.wikiEditor.toolbar',
 			'jquery.wikiEditor.toolbar.config',
 		)
+	),
+	'ext.wikiEditor.toolbar.styles' => $wikiEditorTpl + array(
+		'styles' => 'ext.wikiEditor.toolbar.styles.css',
 	),
 	'ext.wikiEditor.toolbar.hideSig' => $wikiEditorTpl + array(
 		'scripts' => 'ext.wikiEditor.toolbar.hideSig.js',

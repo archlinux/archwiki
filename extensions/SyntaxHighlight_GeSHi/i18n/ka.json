@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"გიორგიმელა"
+		]
+	},
+	"syntaxhighlight-desc": "გაძლევთ ნებართვას ფამოიყენოთ თეგი <code>&lt;syntaxhighlight&gt;</code> სინტაქსის გასანათებლად[http://qbnz.com/highlighter/ GeSHi Highlighter-ის] მეშვეობით",
+	"syntaxhighlight-specify": "თქვენ უნდა წარადგინოთ სახელი შემდეგი სახით:",
+	"syntaxhighlight-supported": "მხარდამჭერი ახელები",
+	"syntaxhighlight-err-loading": "(შეუძებელია მხარდამჭერი ენების სიის ატვირთვა)",
+	"syntaxhighlight-err-language": "მოთხოვნილია მხარდაჭერის არმქონე ენა",
+	"geshi.css": "/* აქ წარმოდგენილი CSS-კოდი, გამოიყენება GeSHI სნტაქსის გასანათებლად*/"
+}

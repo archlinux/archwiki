@@ -3,31 +3,27 @@
  */
 
 .wikiEditor-ui {
-	float: left;
 	position: relative;
 	clear: both;
 	width: 100%;
 	background-color: #E0EEf7;
-	border: solid silver 1px;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
 }
 .wikiEditor-ui textarea {
 	width: 100%;
+	border: 0;
 }
 .wikiEditor-ui textarea:focus {
 	outline: none;
 }
-.wikiEditor-ui .wikiEditor-ui-bottom {
-	
+.wikiEditor-ui .wikiEditor-ui-clear {
+	clear: both;
 }
-.wikiEditor-ui .wikiEditor-ui-text {
-	line-height: 0;
+.wikiEditor-ui .wikiEditor-ui-view {
+	border: 1px solid silver;
 }
 .wikiEditor-ui .wikiEditor-ui-top {
 	position: relative;
-	border-bottom: solid silver 1px;
+	border-bottom: 1px solid silver;
 }
 .wikiEditor-ui .wikiEditor-ui-left {
 	float: left;
@@ -46,16 +42,14 @@
 	float: left;
 	width: 100%;
 	background-color: white;
-	margin-top: -1px;
-	border-bottom: solid 1px silver;
 }
 .wikiEditor-ui-tabs {
 	float: left;
 	height: 2.5em;
-	margin-left: -1px;
+	margin-right: -1px;
 	background-color: white;
-	border-left: solid 1px silver;
-	border-top: solid 1px silver;
+	border-left: 1px solid silver;
+	border-top: 1px solid silver;
 }
 .wikiEditor-ui-buttons {
 	float: right;
@@ -63,7 +57,7 @@
 	margin-right: -1px;
 	background-color: white;
 	padding-left: 1em;
-	border-top: solid 1px white;
+	border-top: 1px solid white;
 }
 .wikiEditor-ui-buttons button {
 	margin-left: 0.5em;
@@ -72,11 +66,11 @@
 	float: left;
 	height: 2.5em;
 	background-color: #f3f3f3;
-	border-right: solid 1px silver;
-	border-bottom: solid 1px silver;
+	border-right: 1px solid silver;
+	border-bottom: 1px solid silver;
 }
 .wikiEditor-ui-tabs div.current {
-	border-bottom: solid 1px white;
+	border-bottom: 1px solid white;
 	background-color: white;
 }
 .wikiEditor-ui-tabs div a {

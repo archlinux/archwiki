@@ -31,8 +31,13 @@
  * @ingroup Content
  */
 class JavaScriptContent extends TextContent {
-	public function __construct( $text ) {
-		parent::__construct( $text, CONTENT_MODEL_JAVASCRIPT );
+
+	/**
+	 * @param string $text JavaScript code.
+	 * @param string $modelId the content model name
+	 */
+	public function __construct( $text, $modelId = CONTENT_MODEL_JAVASCRIPT ) {
+		parent::__construct( $text, $modelId );
 	}
 
 	/**
@@ -42,7 +47,8 @@ class JavaScriptContent extends TextContent {
 	 * @param Title $title
 	 * @param User $user
 	 * @param ParserOptions $popts
-	 * @return Content
+	 *
+	 * @return JavaScriptContent
 	 */
 	public function preSaveTransform( Title $title, User $user, ParserOptions $popts ) {
 		global $wgParser;
@@ -52,15 +58,19 @@ class JavaScriptContent extends TextContent {
 		$text = $this->getNativeData();
 		$pst = $wgParser->preSaveTransform( $text, $title, $user, $popts );
 
-		return new JavaScriptContent( $pst );
+		return new static( $pst );
 	}
 
+	/**
+	 * @return string JavaScript wrapped in a <pre> tag.
+	 */
 	protected function getHtml() {
 		$html = "";
 		$html .= "<pre class=\"mw-code mw-js\" dir=\"ltr\">\n";
-		$html .= $this->getHighlightHtml();
+		$html .= htmlspecialchars( $this->getNativeData() );
 		$html .= "\n</pre>\n";
 
 		return $html;
 	}
+
 }

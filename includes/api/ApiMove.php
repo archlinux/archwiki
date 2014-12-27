@@ -61,8 +61,8 @@ class ApiMove extends ApiBase {
 
 		if ( $toTitle->getNamespace() == NS_FILE
 			&& !RepoGroup::singleton()->getLocalRepo()->findFile( $toTitle )
-			&& wfFindFile( $toTitle ) )
-		{
+			&& wfFindFile( $toTitle )
+		) {
 			if ( !$params['ignorewarnings'] && $user->isAllowed( 'reupload-shared' ) ) {
 				$this->dieUsageMsg( 'sharedfile-exists' );
 			} elseif ( !$user->isAllowed( 'reupload-shared' ) ) {
@@ -77,7 +77,11 @@ class ApiMove extends ApiBase {
 			$this->dieUsageMsg( reset( $retval ) );
 		}
 
-		$r = array( 'from' => $fromTitle->getPrefixedText(), 'to' => $toTitle->getPrefixedText(), 'reason' => $params['reason'] );
+		$r = array(
+			'from' => $fromTitle->getPrefixedText(),
+			'to' => $toTitle->getPrefixedText(),
+			'reason' => $params['reason']
+		);
 
 		if ( $fromTitle->exists() ) {
 			//NOTE: we assume that if the old title exists, it's because it was re-created as
@@ -115,7 +119,7 @@ class ApiMove extends ApiBase {
 		// Move subpages
 		if ( $params['movesubpages'] ) {
 			$r['subpages'] = $this->moveSubpages( $fromTitle, $toTitle,
-					$params['reason'], $params['noredirect'] );
+				$params['reason'], $params['noredirect'] );
 			$result->setIndexedTagName( $r['subpages'], 'subpage' );
 
 			if ( $params['movetalk'] ) {
@@ -130,8 +134,10 @@ class ApiMove extends ApiBase {
 			$watch = $params['watchlist'];
 		} elseif ( $params['watch'] ) {
 			$watch = 'watch';
+			$this->logFeatureUsage( 'action=move&watch' );
 		} elseif ( $params['unwatch'] ) {
 			$watch = 'unwatch';
+			$this->logFeatureUsage( 'action=move&unwatch' );
 		}
 
 		// Watch pages
@@ -144,8 +150,8 @@ class ApiMove extends ApiBase {
 	/**
 	 * @param Title $fromTitle
 	 * @param Title $toTitle
-	 * @param  $reason
-	 * @param  $noredirect
+	 * @param string $reason
+	 * @param bool $noredirect
 	 * @return array
 	 */
 	public function moveSubpages( $fromTitle, $toTitle, $reason, $noredirect ) {
@@ -153,20 +159,21 @@ class ApiMove extends ApiBase {
 		$success = $fromTitle->moveSubpages( $toTitle, true, $reason, !$noredirect );
 		if ( isset( $success[0] ) ) {
 			return array( 'error' => $this->parseMsg( $success ) );
-		} else {
-			// At least some pages could be moved
-			// Report each of them separately
-			foreach ( $success as $oldTitle => $newTitle ) {
-				$r = array( 'from' => $oldTitle );
-				if ( is_array( $newTitle ) ) {
-					$r['error'] = $this->parseMsg( reset( $newTitle ) );
-				} else {
-					// Success
-					$r['to'] = $newTitle;
-				}
-				$retval[] = $r;
-			}
 		}
+
+		// At least some pages could be moved
+		// Report each of them separately
+		foreach ( $success as $oldTitle => $newTitle ) {
+			$r = array( 'from' => $oldTitle );
+			if ( is_array( $newTitle ) ) {
+				$r['error'] = $this->parseMsg( reset( $newTitle ) );
+			} else {
+				// Success
+				$r['to'] = $newTitle;
+			}
+			$retval[] = $r;
+		}
+
 		return $retval;
 	}
 
@@ -185,10 +192,6 @@ class ApiMove extends ApiBase {
 				ApiBase::PARAM_TYPE => 'integer'
 			),
 			'to' => array(
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true
-			),
-			'token' => array(
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true
 			),
@@ -219,79 +222,35 @@ class ApiMove extends ApiBase {
 
 	public function getParamDescription() {
 		$p = $this->getModulePrefix();
+
 		return array(
 			'from' => "Title of the page you want to move. Cannot be used together with {$p}fromid",
 			'fromid' => "Page ID of the page you want to move. Cannot be used together with {$p}from",
 			'to' => 'Title you want to rename the page to',
-			'token' => 'A move token previously retrieved through prop=info',
 			'reason' => 'Reason for the move',
 			'movetalk' => 'Move the talk page, if it exists',
 			'movesubpages' => 'Move subpages, if applicable',
 			'noredirect' => 'Don\'t create a redirect',
 			'watch' => 'Add the page and the redirect to your watchlist',
 			'unwatch' => 'Remove the page and the redirect from your watchlist',
-			'watchlist' => 'Unconditionally add or remove the page from your watchlist, use preferences or do not change watch',
+			'watchlist' => 'Unconditionally add or remove the page from your ' .
+				'watchlist, use preferences or do not change watch',
 			'ignorewarnings' => 'Ignore any warnings'
 		);
 	}
 
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'from' => 'string',
-				'to' => 'string',
-				'reason' => 'string',
-				'redirectcreated' => 'boolean',
-				'moveoverredirect' => 'boolean',
-				'talkfrom' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'talkto' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'talkmoveoverredirect' => 'boolean',
-				'talkmove-error-code' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'talkmove-error-info' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			)
-		);
-	}
-
 	public function getDescription() {
-		return 'Move a page';
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(),
-			$this->getRequireOnlyOneParameterErrorMessages( array( 'from', 'fromid' ) ),
-			array(
-				array( 'invalidtitle', 'from' ),
-				array( 'nosuchpageid', 'fromid' ),
-				array( 'notanarticle' ),
-				array( 'invalidtitle', 'to' ),
-				array( 'sharedfile-exists' ),
-			)
-		);
+		return 'Move a page.';
 	}
 
 	public function needsToken() {
-		return true;
-	}
-
-	public function getTokenSalt() {
-		return '';
+		return 'csrf';
 	}
 
 	public function getExamples() {
 		return array(
-			'api.php?action=move&from=Badtitle&to=Goodtitle&token=123ABC&reason=Misspelled%20title&movetalk=&noredirect='
+			'api.php?action=move&from=Badtitle&to=Goodtitle&token=123ABC&' .
+				'reason=Misspelled%20title&movetalk=&noredirect='
 		);
 	}
 

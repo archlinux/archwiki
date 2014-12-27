@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 /**
  * Template used when there is no LocalSettings.php file.
  *
@@ -33,8 +34,8 @@ if ( !isset( $wgVersion ) ) {
 $matches = array();
 $ext = 'php';
 $path = '/';
-foreach( array_filter( explode( '/', $_SERVER['PHP_SELF'] ) ) as $part ) {
-	if( !preg_match( '/\.(php5?)$/', $part, $matches ) ) {
+foreach ( array_filter( explode( '/', $_SERVER['PHP_SELF'] ) ) as $part ) {
+	if ( !preg_match( '/\.(php5?)$/', $part, $matches ) ) {
 		$path .= "$part/";
 	} else {
 		$ext = $matches[1] == 'php5' ? 'php5' : 'php';
@@ -71,20 +72,25 @@ if ( !function_exists( 'session_name' ) ) {
 		</style>
 	</head>
 	<body>
-		<img src="<?php echo htmlspecialchars( $path ) ?>skins/common/images/mediawiki.png" alt='The MediaWiki logo' />
+		<img src="<?php echo htmlspecialchars( $path ) ?>resources/assets/mediawiki.png" alt='The MediaWiki logo' />
 
 		<h1>MediaWiki <?php echo htmlspecialchars( $wgVersion ) ?></h1>
 		<div class='error'>
-		<p>LocalSettings.php not found.</p>
-		<p>
-		<?php
-		if ( $installerStarted ) {
-			echo "Please <a href=\"" . htmlspecialchars( $path ) . "mw-config/index." . htmlspecialchars( $ext ) . "\"> complete the installation</a> and download LocalSettings.php.";
-		} else {
-			echo "Please <a href=\"" . htmlspecialchars( $path ) . "mw-config/index." . htmlspecialchars( $ext ) . "\"> set up the wiki</a> first.";
-		}
-		?>
-		</p>
+		<?php if ( !file_exists( MW_CONFIG_FILE ) ) { ?>
+			<p>LocalSettings.php not found.</p>
+			<p>
+			<?php
+			if ( $installerStarted ) {
+				echo "Please <a href=\"" . htmlspecialchars( $path ) . "mw-config/index." . htmlspecialchars( $ext ) . "\">complete the installation</a> and download LocalSettings.php.";
+			} else {
+				echo "Please <a href=\"" . htmlspecialchars( $path ) . "mw-config/index." . htmlspecialchars( $ext ) . "\">set up the wiki</a> first.";
+			}
+			?>
+			</p>
+		<?php } else { ?>
+			<p>LocalSettings.php not readable.</p>
+			<p>Please correct file permissions and try again.</p>
+		<?php } ?>
 
 		</div>
 	</body>

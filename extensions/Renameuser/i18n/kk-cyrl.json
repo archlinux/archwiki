@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Arystanbek"
+		]
+	},
+	"renameuser": "Қатысушыны қайта атау",
+	"renameuserold": "Ағымдағы қатысушы аты:",
+	"renameusernew": "Жаңа қатысушы аты:",
+	"renameuserreason": "Қайта атау себебі:",
+	"renameusermove": "Қатысушының жеке және талқылау беттерін (және де олардың төменгі беттерін) жаңа атауға жылжыту",
+	"renameusersubmit": "Жіберу",
+	"renameusererrordoesnotexist": "«<nowiki>$1</nowiki>» деген қатысушы жоқ",
+	"renameusererrorexists": "«<nowiki>$1</nowiki>» деген қатысушы бар түге",
+	"renameusererrorinvalid": "«<nowiki>$1</nowiki>» қатысушы аты жарамсыз",
+	"renameusersuccess": "«<nowiki>$1</nowiki>» деген қатысушы аты «<nowiki>$2</nowiki>» дегенге ауыстырылды",
+	"renameuser-page-exists": "$1 деген бет бар түге, және өздік түрде оның үстіне ештеңе жазылмайды.",
+	"renameuser-page-moved": "$1 деген бет $2 деген бетке жылжытылды.",
+	"renameuser-page-unmoved": "$1 деген бет $2 деген бетке жылжытылмады.",
+	"log-name-renameuser": "Қатысушыны есімін өзгеру журналы",
+	"renameuser-move-log": "«[[User:$1|$1]]» деген қатысушы атын «[[User:$2|$2]]» дегенге ауысқанда бет өздік түрде жылжытылды"
+}

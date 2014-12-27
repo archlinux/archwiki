@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Guycn2",
+			"Rotem Liss",
+			"Rotemliss"
+		]
+	},
+	"action-titleblacklistlog": "להציג את יומן הרשימה השחורה של הכותרות",
+	"log-name-titleblacklist": "יומן הרשימה השחורה של הכותרות",
+	"log-description-titleblacklist": "האירועים האלה עוקבים אחרי התאמות לרשימה השחורה.",
+	"logentry-titleblacklist-hit-username": "$1 {{GENDER:$2|גרם|גרמה}} להתאמה ברשימה השחורה של הכותרות בעת ניסיון ליצור את החשבון $3 שמתאים לפריט הרשימה $4.",
+	"titleblacklist-desc": "אפשרות למפעילי המערכת לאסור יצירת דפים וחשבונות משתמש לפי [[MediaWiki:Titleblacklist|רשימה שחורה]] ו[[MediaWiki:Titlewhitelist|רשימה לבנה]]",
+	"titleblacklist": "# זוהי רשימת הכותרות האסורות. לא ניתן ליצור כותרות וחשבונות משתמש שמתאימים לביטוי רגולרי המופיע כאן.\n# השתמשו בסימן \"#\" להערות.\n#רשימה זו אינה תלויה ברישיות כברירת מחדל.",
+	"titlewhitelist": "# זוהי רשימת הכותרות המותרות. השתמשו בסימן \"#\" להערות.\n#רשימה זו אינה תלויה ברישיות כברירת מחדל.",
+	"titleblacklist-forbidden-edit": "הכותרת \"$2\" היא כותרת אסורה ליצירה.\nהיא מתאימה לערך הבא ברשימת הכותרות האסורות: <code>$1</code>",
+	"titleblacklist-forbidden-move": "לא ניתן להעביר את \"$2\" לשם \"$3\", כיוון שהכותרת \"$3\" אסורה ליצירה.\nהיא מתאימה לערך הבא ברשימה השחורה: <code>$1</code>",
+	"titleblacklist-forbidden-upload": "שם הקובץ \"$2\" נאסר ליצירה.\nהוא מתאים לערך הבא ברשימה השחורה: <code>$1</code>",
+	"titleblacklist-forbidden-new-account": "שם המשתמש \"$2\" נאסר ליצירה.\nהוא מתאים לערך הבא ברשימה השחורה: <code>$1</code>",
+	"titleblacklist-invalid": "{{PLURAL:$1|השורה הבאה|השורות הבאות}} ברשימת הכותרות האסורות {{PLURAL:$1|אינה תקינה|אינם תקינים}};\nאנא תקנו {{PLURAL:$1|אותה|אותן}} לפני השמירה:",
+	"titleblacklist-override": "להתעלם מהרשימה השחורה",
+	"titleblacklist-autoconfirmed-warning": "<strong>לתשומת לבך:</strong> רק משתמשים בעלי הרשאת <code>autoconfirmed</code> (משתמשים ותיקים) יכולים לערוך את הדף הזה כי הוא מתאים לשורה הבאה ברשימה השחורה:<br /><code>$1</code>",
+	"titleblacklist-warning": "<strong>לתשומת לבך:</strong> רק מפעילים ומשתמשים אחרים בעלי הרשאת <code>tboverride</code> יכולים לערוך את הדף הזה כי הוא מתאים לשורה הבאה ברשימה השחורה:<br /><code>$1</code>",
+	"right-tboverride": "עקיפת רשימת שמות המשתמשים האסורים",
+	"right-tboverride-account": "עקיפת הרשימה השחורה של שמות המשתמשים",
+	"right-titleblacklistlog": "הצגת יומן הרשימה השחורה של הכותרות"
+}

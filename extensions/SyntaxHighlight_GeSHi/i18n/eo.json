@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Michawiki",
+			"Yekrats"
+		]
+	},
+	"syntaxhighlight-desc": "Provizas kolorigado de sintakso <code>&lt;syntaxhighlight&gt;</code> per [http://qbnz.com/highlighter/ GeSHi Kolorigilo de Sintakso]",
+	"syntaxhighlight-specify": "Vi nepre specifu lingvon kiel ĉi tiu:",
+	"syntaxhighlight-supported": "Subtenaj lingvoj por sintaksa emfazo",
+	"syntaxhighlight-err-loading": "(eraro ŝarĝante subtenitan lingvo-liston)",
+	"syntaxhighlight-err-language": "Malvalida lingvo.",
+	"geshi.css": "/* CSS enigita ĉi tie estos sintakse emfazita de GeSHi */"
+}

@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kaganer",
+			"Okras",
+			"Rave"
+		]
+	},
+	"cologneblue.css": "/* Размещённый здесь CSS будет применяться к теме оформления Cologne Blue */",
+	"cologneblue.js": "/* Размещённый здесь код JavaScript будет загружаться пользователям, использующим тему оформления Cologne Blue */",
+	"skinname-cologneblue": "Кёльнская тоска",
+	"cologneblue-desc": "Легкая тема оформления с минимальным форматированием"
+}

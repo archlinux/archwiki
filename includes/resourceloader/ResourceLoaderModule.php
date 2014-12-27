@@ -26,7 +26,6 @@
  * Abstraction for resource loader modules, with name registration and maxage functionality.
  */
 abstract class ResourceLoaderModule {
-
 	# Type of resource
 	const TYPE_SCRIPTS = 'scripts';
 	const TYPE_STYLES = 'styles';
@@ -65,13 +64,18 @@ abstract class ResourceLoaderModule {
 	// In-object cache for message blob mtime
 	protected $msgBlobMtime = array();
 
+	/**
+	 * @var Config
+	 */
+	protected $config;
+
 	/* Methods */
 
 	/**
 	 * Get this module's name. This is set when the module is registered
 	 * with ResourceLoader::register()
 	 *
-	 * @return mixed: Name (string) or null if no name was set
+	 * @return string|null Name (string) or null if no name was set
 	 */
 	public function getName() {
 		return $this->name;
@@ -91,7 +95,7 @@ abstract class ResourceLoaderModule {
 	 * Get this module's origin. This is set when the module is registered
 	 * with ResourceLoader::register()
 	 *
-	 * @return int: ResourceLoaderModule class constant, the subclass default
+	 * @return int ResourceLoaderModule class constant, the subclass default
 	 *     if not set manually
 	 */
 	public function getOrigin() {
@@ -102,7 +106,7 @@ abstract class ResourceLoaderModule {
 	 * Set this module's origin. This is called by ResourceLoader::register()
 	 * when registering the module. Other code should not call this.
 	 *
-	 * @param int $origin origin
+	 * @param int $origin Origin
 	 */
 	public function setOrigin( $origin ) {
 		$this->origin = $origin;
@@ -123,11 +127,32 @@ abstract class ResourceLoaderModule {
 	 * Includes all relevant JS except loader scripts.
 	 *
 	 * @param ResourceLoaderContext $context
-	 * @return string: JavaScript code
+	 * @return string JavaScript code
 	 */
 	public function getScript( ResourceLoaderContext $context ) {
 		// Stub, override expected
 		return '';
+	}
+
+	/**
+	 * @return Config
+	 * @since 1.24
+	 */
+	public function getConfig() {
+		if ( $this->config === null ) {
+			// Ugh, fall back to default
+			$this->config = ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
+		}
+
+		return $this->config;
+	}
+
+	/**
+	 * @param Config $config
+	 * @since 1.24
+	 */
+	public function setConfig( Config $config ) {
+		$this->config = $config;
 	}
 
 	/**
@@ -142,20 +167,20 @@ abstract class ResourceLoaderModule {
 	 * MUST return either an only= URL or a non-load.php URL.
 	 *
 	 * @param ResourceLoaderContext $context
-	 * @return array: Array of URLs
+	 * @return array Array of URLs
 	 */
 	public function getScriptURLsForDebug( ResourceLoaderContext $context ) {
-		$url = ResourceLoader::makeLoaderURL(
-			array( $this->getName() ),
-			$context->getLanguage(),
-			$context->getSkin(),
-			$context->getUser(),
-			$context->getVersion(),
-			true, // debug
-			'scripts', // only
-			$context->getRequest()->getBool( 'printable' ),
-			$context->getRequest()->getBool( 'handheld' )
+		$resourceLoader = $context->getResourceLoader();
+		$derivative = new DerivativeResourceLoaderContext( $context );
+		$derivative->setModules( array( $this->getName() ) );
+		$derivative->setOnly( 'scripts' );
+		$derivative->setDebug( true );
+
+		$url = $resourceLoader->createLoaderURL(
+			$this->getSource(),
+			$derivative
 		);
+
 		return array( $url );
 	}
 
@@ -173,7 +198,7 @@ abstract class ResourceLoaderModule {
 	 * Get all CSS for this module for a given skin.
 	 *
 	 * @param ResourceLoaderContext $context
-	 * @return array: List of CSS strings or array of CSS strings keyed by media type.
+	 * @return array List of CSS strings or array of CSS strings keyed by media type.
 	 *  like array( 'screen' => '.foo { width: 0 }' );
 	 *  or array( 'screen' => array( '.foo { width: 0 }' ) );
 	 */
@@ -189,20 +214,20 @@ abstract class ResourceLoaderModule {
 	 * load the files directly. See also getScriptURLsForDebug()
 	 *
 	 * @param ResourceLoaderContext $context
-	 * @return array: array( mediaType => array( URL1, URL2, ... ), ... )
+	 * @return array Array( mediaType => array( URL1, URL2, ... ), ... )
 	 */
 	public function getStyleURLsForDebug( ResourceLoaderContext $context ) {
-		$url = ResourceLoader::makeLoaderURL(
-			array( $this->getName() ),
-			$context->getLanguage(),
-			$context->getSkin(),
-			$context->getUser(),
-			$context->getVersion(),
-			true, // debug
-			'styles', // only
-			$context->getRequest()->getBool( 'printable' ),
-			$context->getRequest()->getBool( 'handheld' )
+		$resourceLoader = $context->getResourceLoader();
+		$derivative = new DerivativeResourceLoaderContext( $context );
+		$derivative->setModules( array( $this->getName() ) );
+		$derivative->setOnly( 'styles' );
+		$derivative->setDebug( true );
+
+		$url = $resourceLoader->createLoaderURL(
+			$this->getSource(),
+			$derivative
 		);
+
 		return array( 'all' => array( $url ) );
 	}
 
@@ -211,7 +236,7 @@ abstract class ResourceLoaderModule {
 	 *
 	 * To get a JSON blob with messages, use MessageBlobStore::get()
 	 *
-	 * @return array: List of message keys. Keys may occur more than once
+	 * @return array List of message keys. Keys may occur more than once
 	 */
 	public function getMessages() {
 		// Stub, override expected
@@ -221,7 +246,7 @@ abstract class ResourceLoaderModule {
 	/**
 	 * Get the group this module is in.
 	 *
-	 * @return string: Group name
+	 * @return string Group name
 	 */
 	public function getGroup() {
 		// Stub, override expected
@@ -231,7 +256,7 @@ abstract class ResourceLoaderModule {
 	/**
 	 * Get the origin of this module. Should only be overridden for foreign modules.
 	 *
-	 * @return string: Origin name, 'local' for local modules
+	 * @return string Origin name, 'local' for local modules
 	 */
 	public function getSource() {
 		// Stub, override expected
@@ -263,7 +288,7 @@ abstract class ResourceLoaderModule {
 	/**
 	 * Get the loader JS for this module, if set.
 	 *
-	 * @return mixed: JavaScript loader code as a string or boolean false if no custom loader set
+	 * @return mixed JavaScript loader code as a string or boolean false if no custom loader set
 	 */
 	public function getLoaderScript() {
 		// Stub, override expected
@@ -278,7 +303,7 @@ abstract class ResourceLoaderModule {
 	 *
 	 * To add dependencies dynamically on the client side, use a custom
 	 * loader script, see getLoaderScript()
-	 * @return array: List of module names as strings
+	 * @return array List of module names as strings
 	 */
 	public function getDependencies() {
 		// Stub, override expected
@@ -288,10 +313,28 @@ abstract class ResourceLoaderModule {
 	/**
 	 * Get target(s) for the module, eg ['desktop'] or ['desktop', 'mobile']
 	 *
-	 * @return array: Array of strings
+	 * @return array Array of strings
 	 */
 	public function getTargets() {
 		return $this->targets;
+	}
+
+	/**
+	 * Get the skip function.
+	 *
+	 * Modules that provide fallback functionality can provide a "skip function". This
+	 * function, if provided, will be passed along to the module registry on the client.
+	 * When this module is loaded (either directly or as a dependency of another module),
+	 * then this function is executed first. If the function returns true, the module will
+	 * instantly be considered "ready" without requesting the associated module resources.
+	 *
+	 * The value returned here must be valid javascript for execution in a private function.
+	 * It must not contain the "function () {" and "}" wrapper though.
+	 *
+	 * @return string|null A JavaScript function body returning a boolean value, or null
+	 */
+	public function getSkipFunction() {
+		return null;
 	}
 
 	/**
@@ -299,7 +342,7 @@ abstract class ResourceLoaderModule {
 	 * Currently these are only image files referenced by the module's CSS.
 	 *
 	 * @param string $skin Skin name
-	 * @return array: List of files
+	 * @return array List of files
 	 */
 	public function getFileDependencies( $skin ) {
 		// Try in-object cache first
@@ -335,7 +378,7 @@ abstract class ResourceLoaderModule {
 	 * Get the last modification timestamp of the message blob for this
 	 * module in a given language.
 	 * @param string $lang Language code
-	 * @return int: UNIX timestamp, or 0 if the module doesn't have messages
+	 * @return int UNIX timestamp, or 0 if the module doesn't have messages
 	 */
 	public function getMsgBlobMtime( $lang ) {
 		if ( !isset( $this->msgBlobMtime[$lang] ) ) {
@@ -363,7 +406,7 @@ abstract class ResourceLoaderModule {
 	 * Set a preloaded message blob last modification timestamp. Used so we
 	 * can load this information for all modules at once.
 	 * @param string $lang Language code
-	 * @param $mtime Integer: UNIX timestamp or 0 if there is no such blob
+	 * @param int $mtime UNIX timestamp or 0 if there is no such blob
 	 */
 	public function setMsgBlobMtime( $lang, $mtime ) {
 		$this->msgBlobMtime[$lang] = $mtime;
@@ -387,7 +430,7 @@ abstract class ResourceLoaderModule {
 	 * yourself and take its result into consideration.
 	 *
 	 * @param ResourceLoaderContext $context Context object
-	 * @return integer UNIX timestamp
+	 * @return int UNIX timestamp
 	 */
 	public function getModifiedTime( ResourceLoaderContext $context ) {
 		// 0 would mean now
@@ -398,7 +441,8 @@ abstract class ResourceLoaderModule {
 	 * Helper method for calculating when the module's hash (if it has one) changed.
 	 *
 	 * @param ResourceLoaderContext $context
-	 * @return integer: UNIX timestamp or 0 if there is no hash provided
+	 * @return int UNIX timestamp or 0 if no hash was provided
+	 *  by getModifiedHash()
 	 */
 	public function getHashMtime( ResourceLoaderContext $context ) {
 		$hash = $this->getModifiedHash( $context );
@@ -407,7 +451,7 @@ abstract class ResourceLoaderModule {
 		}
 
 		$cache = wfGetCache( CACHE_ANYTHING );
-		$key = wfMemcKey( 'resourceloader', 'modulemodifiedhash', $this->getName() );
+		$key = wfMemcKey( 'resourceloader', 'modulemodifiedhash', $this->getName(), $hash );
 
 		$data = $cache->get( $key );
 		if ( is_array( $data ) && $data['hash'] === $hash ) {
@@ -425,14 +469,98 @@ abstract class ResourceLoaderModule {
 	}
 
 	/**
-	 * Get the last modification timestamp of the message blob for this
-	 * module in a given language.
+	 * Get the hash for whatever this module may contain.
+	 *
+	 * This is the method subclasses should implement if they want to make
+	 * use of getHashMTime() inside getModifiedTime().
 	 *
 	 * @param ResourceLoaderContext $context
-	 * @return string|null: Hash
+	 * @return string|null Hash
 	 */
 	public function getModifiedHash( ResourceLoaderContext $context ) {
 		return null;
+	}
+
+	/**
+	 * Helper method for calculating when this module's definition summary was last changed.
+	 *
+	 * @since 1.23
+	 *
+	 * @param ResourceLoaderContext $context
+	 * @return int UNIX timestamp or 0 if no definition summary was provided
+	 *  by getDefinitionSummary()
+	 */
+	public function getDefinitionMtime( ResourceLoaderContext $context ) {
+		wfProfileIn( __METHOD__ );
+		$summary = $this->getDefinitionSummary( $context );
+		if ( $summary === null ) {
+			wfProfileOut( __METHOD__ );
+			return 0;
+		}
+
+		$hash = md5( json_encode( $summary ) );
+
+		$cache = wfGetCache( CACHE_ANYTHING );
+
+		// Embed the hash itself in the cache key. This allows for a few nifty things:
+		// - During deployment, servers with old and new versions of the code communicating
+		//   with the same memcached will not override the same key repeatedly increasing
+		//   the timestamp.
+		// - In case of the definition changing and then changing back in a short period of time
+		//   (e.g. in case of a revert or a corrupt server) the old timestamp and client-side cache
+		//   url will be re-used.
+		// - If different context-combinations (e.g. same skin, same language or some combination
+		//   thereof) result in the same definition, they will use the same hash and timestamp.
+		$key = wfMemcKey( 'resourceloader', 'moduledefinition', $this->getName(), $hash );
+
+		$data = $cache->get( $key );
+		if ( is_int( $data ) && $data > 0 ) {
+			// We've seen this hash before, re-use the timestamp of when we first saw it.
+			wfProfileOut( __METHOD__ );
+			return $data;
+		}
+
+		wfDebugLog( 'resourceloader', __METHOD__ . ": New definition hash for module "
+			. "{$this->getName()} in context {$context->getHash()}: $hash." );
+
+		$timestamp = time();
+		$cache->set( $key, $timestamp );
+
+		wfProfileOut( __METHOD__ );
+		return $timestamp;
+	}
+
+	/**
+	 * Get the definition summary for this module.
+	 *
+	 * This is the method subclasses should implement if they want to make
+	 * use of getDefinitionMTime() inside getModifiedTime().
+	 *
+	 * Return an array containing values from all significant properties of this
+	 * module's definition. Be sure to include things that are explicitly ordered,
+	 * in their actaul order (bug 37812).
+	 *
+	 * Avoid including things that are insiginificant (e.g. order of message
+	 * keys is insignificant and should be sorted to avoid unnecessary cache
+	 * invalidation).
+	 *
+	 * Avoid including things already considered by other methods inside your
+	 * getModifiedTime(), such as file mtime timestamps.
+	 *
+	 * Serialisation is done using json_encode, which means object state is not
+	 * taken into account when building the hash. This data structure must only
+	 * contain arrays and scalars as values (avoid object instances) which means
+	 * it requires abstraction.
+	 *
+	 * @since 1.23
+	 *
+	 * @param ResourceLoaderContext $context
+	 * @return array|null
+	 */
+	public function getDefinitionSummary( ResourceLoaderContext $context ) {
+		return array(
+			'class' => get_class( $this ),
+		);
 	}
 
 	/**
@@ -448,7 +576,7 @@ abstract class ResourceLoaderModule {
 		return false;
 	}
 
-	/** @var JSParser lazy-initialized; use self::javaScriptParser() */
+	/** @var JSParser Lazy-initialized; use self::javaScriptParser() */
 	private static $jsParser;
 	private static $parseCacheVersion = 1;
 
@@ -458,11 +586,10 @@ abstract class ResourceLoaderModule {
 	 *
 	 * @param string $fileName
 	 * @param string $contents
-	 * @return string: JS with the original, or a replacement error
+	 * @return string JS with the original, or a replacement error
 	 */
 	protected function validateScriptFile( $fileName, $contents ) {
-		global $wgResourceLoaderValidateJS;
-		if ( $wgResourceLoaderValidateJS ) {
+		if ( $this->getConfig()->get( 'ResourceLoaderValidateJS' ) ) {
 			// Try for cache hit
 			// Use CACHE_ANYTHING since filtering is very slow compared to DB queries
 			$key = wfMemcKey( 'resourceloader', 'jsparse', self::$parseCacheVersion, md5( $contents ) );

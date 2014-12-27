@@ -30,32 +30,7 @@
  * @ingroup API
  */
 class ApiPurge extends ApiBase {
-
 	private $mPageSet;
-
-	/**
-	 * Add all items from $values into the result
-	 * @param array $result output
-	 * @param array $values values to add
-	 * @param string $flag the name of the boolean flag to mark this element
-	 * @param string $name if given, name of the value
-	 */
-	private static function addValues( array &$result, $values, $flag = null, $name = null ) {
-		foreach ( $values as $val ) {
-			if ( $val instanceof Title ) {
-				$v = array();
-				ApiQueryBase::addTitleInfo( $v, $val );
-			} elseif ( $name !== null ) {
-				$v = array( $name => $val );
-			} else {
-				$v = $val;
-			}
-			if ( $flag !== null ) {
-				$v[$flag] = '';
-			}
-			$result[] = $v;
-		}
-	}
 
 	/**
 	 * Purges the cache of a page
@@ -63,18 +38,14 @@ class ApiPurge extends ApiBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 
+		$this->getResult()->beginContinuation( $params['continue'], array(), array() );
+
 		$forceLinkUpdate = $params['forcelinkupdate'];
 		$forceRecursiveLinkUpdate = $params['forcerecursivelinkupdate'];
 		$pageSet = $this->getPageSet();
 		$pageSet->execute();
 
-		$result = array();
-		self::addValues( $result, $pageSet->getInvalidTitles(), 'invalid', 'title' );
-		self::addValues( $result, $pageSet->getSpecialTitles(), 'special', 'title' );
-		self::addValues( $result, $pageSet->getMissingPageIDs(), 'missing', 'pageid' );
-		self::addValues( $result, $pageSet->getMissingRevisionIDs(), 'missing', 'revid' );
-		self::addValues( $result, $pageSet->getMissingTitles(), 'missing' );
-		self::addValues( $result, $pageSet->getInterwikiTitlesAsResult() );
+		$result = $pageSet->getInvalidTitlesAndRevisions();
 
 		foreach ( $pageSet->getGoodTitles() as $title ) {
 			$r = array();
@@ -85,13 +56,17 @@ class ApiPurge extends ApiBase {
 
 			if ( $forceLinkUpdate || $forceRecursiveLinkUpdate ) {
 				if ( !$this->getUser()->pingLimiter( 'linkpurge' ) ) {
-					global $wgEnableParserCache;
-
 					$popts = $page->makeParserOptions( 'canonical' );
 
 					# Parse content; note that HTML generation is only needed if we want to cache the result.
 					$content = $page->getContent( Revision::RAW );
-					$p_result = $content->getParserOutput( $title, $page->getLatest(), $popts, $wgEnableParserCache );
+					$enableParserCache = $this->getConfig()->get( 'EnableParserCache' );
+					$p_result = $content->getParserOutput(
+						$title,
+						$page->getLatest(),
+						$popts,
+						$enableParserCache
+					);
 
 					# Update the links tables
 					$updates = $content->getSecondaryDataUpdates(
@@ -100,7 +75,7 @@ class ApiPurge extends ApiBase {
 
 					$r['linkupdate'] = '';
 
-					if ( $wgEnableParserCache ) {
+					if ( $enableParserCache ) {
 						$pcache = ParserCache::singleton();
 						$pcache->save( $p_result, $page, $popts );
 					}
@@ -129,6 +104,8 @@ class ApiPurge extends ApiBase {
 		if ( $values ) {
 			$apiResult->addValue( null, 'redirects', $values );
 		}
+
+		$apiResult->endContinuation();
 	}
 
 	/**
@@ -139,6 +116,7 @@ class ApiPurge extends ApiBase {
 		if ( !isset( $this->mPageSet ) ) {
 			$this->mPageSet = new ApiPageSet( $this );
 		}
+
 		return $this->mPageSet;
 	}
 
@@ -154,11 +132,13 @@ class ApiPurge extends ApiBase {
 	public function getAllowedParams( $flags = 0 ) {
 		$result = array(
 			'forcelinkupdate' => false,
-			'forcerecursivelinkupdate' => false
+			'forcerecursivelinkupdate' => false,
+			'continue' => '',
 		);
 		if ( $flags ) {
 			$result += $this->getPageSet()->getFinalParams( $flags );
 		}
+
 		return $result;
 	}
 
@@ -168,52 +148,13 @@ class ApiPurge extends ApiBase {
 				'forcelinkupdate' => 'Update the links tables',
 				'forcerecursivelinkupdate' => 'Update the links table, and update ' .
 					'the links tables for any page that uses this page as a template',
+				'continue' => 'When more results are available, use this to continue',
 			);
-	}
-
-	public function getResultProperties() {
-		return array(
-			ApiBase::PROP_LIST => true,
-			'' => array(
-				'ns' => array(
-					ApiBase::PROP_TYPE => 'namespace',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'title' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'pageid' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'revid' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'invalid' => 'boolean',
-				'special' => 'boolean',
-				'missing' => 'boolean',
-				'purged' => 'boolean',
-				'linkupdate' => 'boolean',
-				'iw' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-			)
-		);
 	}
 
 	public function getDescription() {
 		return array( 'Purge the cache for the given titles.',
 			'Requires a POST request if the user is not logged in.'
-		);
-	}
-
-	public function getPossibleErrors() {
-		return array_merge(
-			parent::getPossibleErrors(),
-			$this->getPageSet()->getFinalPossibleErrors()
 		);
 	}
 

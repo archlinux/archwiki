@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hamilton Abreu",
+			"Helder.wiki",
+			"Luckas",
+			"Malafaya",
+			"555"
+		]
+	},
+	"gadgets-desc": "Permite que os utilizadores seleccionem [[Special:Gadgets|''\"gadgets\"'' em JavaScript e CSS]] personalizados nas suas [[Special:Preferences#mw-prefsection-gadgets|preferências]]",
+	"prefs-gadgets": "Gadgets",
+	"gadgets-prefstext": "Segue-se uma lista de ''\"gadgets\"'' especiais que pode ativar na sua conta.\nEstes ''gadgets'' são baseados principalmente em JavaScript, sendo necessário ativar o suporte a JavaScript no seu browser para que funcionem.\nNote que não terão efeito nesta página de preferências.\n\nNote também que estes ''gadgets'' especiais não fazem parte do programa MediaWiki, sendo geralmente desenvolvidos e mantidos por utilizadores na sua wiki local.\nAdministradores locais podem editar os ''gadgets'' disponíveis usando as [[MediaWiki:Gadgets-definition|definições]] e [[Special:Gadgets|descrições]].",
+	"gadgets": "Gadgets",
+	"gadgets-title": "Gadgets",
+	"gadgets-pagetext": "Segue-se uma lista de ''\"gadgets\"'' que podem ser ativados pelos utilizadores nas suas [[Special:Preferences#mw-prefsection-gadgets|preferências]], como estabelecido pelas [[MediaWiki:Gadgets-definition|definições]].\nEste resumo proporciona acesso fácil às páginas das mensagens de sistema que definem a descrição e o código de cada ''gadget''.",
+	"gadgets-uses": "Utiliza",
+	"gadgets-required-rights": "Requer {{PLURAL:$2|o seguinte privilégio|os seguintes privilégios}}:\n\n$1",
+	"gadgets-required-skins": "Disponível {{PLURAL:$2|no tema $1|nos seguintes temas: $1}}",
+	"gadgets-default": "Ativado para todos por padrão.",
+	"gadgets-export": "Exportar",
+	"gadgets-export-title": "Exportação de gadget",
+	"gadgets-not-found": "O gadget \"$1\" não foi encontrado.",
+	"gadgets-export-text": "Para exportar o gadget $1, clique o botão \"{{int:gadgets-export-download}}\", grave o ficheiro transferido,\nvá à página Special:Import na wiki de destino e faça o upload do ficheiro. Depois adicione o seguinte à página MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nNa wiki de destino, tem de ter as permissões necessárias (incluindo o privilégio de editar mensagens de sistema) e têm de ser permitidas importações por upload de ficheiros.",
+	"gadgets-export-download": "Download"
+}

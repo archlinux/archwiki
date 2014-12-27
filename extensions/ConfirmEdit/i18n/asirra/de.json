@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kghbln",
+			"Metalhead64"
+		]
+	},
+	"asirra-desc": "Ermöglicht die Nutzung des Anti-Spam-Moduls Asirra",
+	"asirra-edit": "Zum Schutz des Wikis vor automatisiertem Spam bitten wir dich, nur die Fotos mit Katzen im untenstehenden Feld auszuwählen:",
+	"asirra-addurl": "Deine Bearbeitung enthält neue externe Links. Zum Schutz des Wikis vor automatisiertem Spam bitten wir dich, nur die Fotos mit Katzen im untenstehenden Feld auszuwählen:",
+	"asirra-badlogin": "Zum Schutz des Wikis gegen automatisiertes Knacken von Passwörtern bitten wir dich, nur die Fotos mit Katzen im untenstehenden Feld auszuwählen:",
+	"asirra-createaccount": "Zum Schutz des Wikis gegen automatisiertes Erstellen von Benutzerkonten bitten wir dich, nur die Fotos mit Katzen im untenstehenden Feld auszuwählen:",
+	"asirra-createaccount-fail": "Bitte wähle nur die Fotos mit Katzen aus.",
+	"asirra-create": "Zum Schutz des Wikis gegen automatisiertes Erstellen von Seiten bitten wir dich, nur die Fotos mit Katzen im untenstehenden Feld auszuwählen:",
+	"asirra-nojs": "'''Bitte JavaScript aktivieren und die Seiten nochmals Speichern.'''",
+	"asirra-failed": "Bitte wähle nur die Fotos mit Katzen aus."
+}

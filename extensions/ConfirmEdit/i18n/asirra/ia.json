@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie"
+		]
+	},
+	"asirra-desc": "Modulo de Asirra pro ConfirmEdit",
+	"asirra-edit": "Pro adjutar a proteger le wiki contra le spam automatisate, per favor selige solmente le photos de cattos in le quadro sequente:",
+	"asirra-addurl": "Iste modification include nove ligamines externe. Pro adjutar a proteger le wiki contra le spam automatisate, per favor selige solmente le photos de cattos in le quadro sequente:",
+	"asirra-badlogin": "Pro adjutar a proteger le wiki contra le furto automatisate de contrasignos, per favor selige solmente le photos de cattos in le quadro sequente:",
+	"asirra-createaccount": "Pro adjutar a proteger le wiki contra le creation automatisate de contos, per favor selige solmente le photos de cattos in le quadro sequente:",
+	"asirra-createaccount-fail": "Per favor identifica correctemente le cattos.",
+	"asirra-create": "Pro adjutar a proteger le wiki contra le creation automatisate de paginas, per favor selige solmente le photos de cattos in le quadro sequente:",
+	"asirra-nojs": "'''Per favor activa JavaScript e resubmitte le pagina.'''",
+	"asirra-failed": "Per favor identifica tote le imagines de cattos"
+}

@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Esbardu",
+			"Xuacu"
+		]
+	},
+	"gadgets-desc": "Permite a los usuarios seleicionar al gustu [[Special:Gadgets|accesorios CSS y JavaScript]] nes sos [[Special:Preferences#mw-prefsection-gadgets|preferencies]]",
+	"prefs-gadgets": "Accesorios",
+	"gadgets-prefstext": "Embaxo amuésase una llista de los accesorios especiales que pues activar pa la to cuenta.\nEstos accesorios tán mayormente basaos en JavaScript, polo qu'has tener activáu esti nel to navegador pa que funcionen.\nDate cuenta de qu'estos accesorios nun tendrán efeutu nesta páxina de preferencies.\n\nHas decatate tamién de qu'estos accesorios especiales nun son parte del software MediaWiki, y que normalmente son\ndesenrollaos y manteníos por usuarios de la to wiki llocal.\nLos alministradores llocales puen editar los accesorios disponibles usando les [[MediaWiki:Gadgets-definition|definiciones]] y les [[Special:Gadgets|descripciones]].",
+	"gadgets": "Accesorios",
+	"gadgets-title": "Accesorios",
+	"gadgets-pagetext": "Embaxo amuésase una llista de los accesorios especiales que los usuarios puen activar na so [[Special:Preferences#mw-prefsection-gadgets|páxina de preferencies]], según queden definíos poles [[MediaWiki:Gadgets-definition|definiciones]].\nEsta visión xeneral proporciona un accesu fácil a les páxines de mensaxes del sistema que definen la descripción y el códigu de cada accesoriu.",
+	"gadgets-uses": "Usa",
+	"gadgets-required-rights": "Requier {{PLURAL:$2|el siguiente permisu|los siguientes permisos}}:\n\n$1",
+	"gadgets-required-skins": "Disponible {{PLURAL:$2|nel aspeutu $1|nos siguientes aspeutos: $1}}.",
+	"gadgets-default": "Activáu para toos de mou predetermináu.",
+	"gadgets-export": "Esportar",
+	"gadgets-export-title": "Esportación d'accesorios",
+	"gadgets-not-found": "Nun s'alcontró l'accesoriu \"$1\".",
+	"gadgets-export-text": "Pa esportar l'accesoriu $1, calca nel botón \"{{int:gadgets-export-download}}\", guarda'l ficheru descargáu,\nvete a Special:Import na wiki de destín y xúbilu. Darréu amiesta lo siguiente na páxina MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nHas de tener los permisos afayadizos na wiki de destín (incluyendo permisu pa editar los mensaxes del sistema) y tien de tar activada la importación dende los ficheros xubíos.",
+	"gadgets-export-download": "Descargar"
+}

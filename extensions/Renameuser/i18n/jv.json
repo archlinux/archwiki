@@ -1,0 +1,38 @@
+{
+	"@metadata": {
+		"authors": [
+			"Meursault2004",
+			"NoiX180",
+			"Pras"
+		]
+	},
+	"renameuser": "Ngganti jeneng panganggo",
+	"renameuser-linkoncontribs": "ganti jeneng panganggo",
+	"renameuser-linkoncontribs-text": "Ganti jenengé panganggo iki",
+	"renameuser-desc": "Ngganti jeneng panganggo (perlu hak aksès ''renameuser'')",
+	"renameuserold": "Jeneng panganggo saiki:",
+	"renameusernew": "Jeneng panganggo anyar:",
+	"renameuserreason": "Alesan ganti jeneng:",
+	"renameusermove": "Mindhah kaca panganggo lan kaca dhiskusiné (sarta subkaca-kacané) menyang jeneng anyar",
+	"renameusersuppress": "Aja gawé pangalihan kanggo jeneng anyar",
+	"renameuserreserve": "Blokir utawa cadhangaké jeneng panganggo lawas supaya ora bisa dianggo manèh",
+	"renameuserwarnings": "Pènget:",
+	"renameuserconfirm": "Ya, ganti jeneng panganggo kasebut",
+	"renameusersubmit": "Kirim",
+	"renameuser-submit-blocklog": "Tuduhaké log blokir kanggo panganggo",
+	"renameusererrordoesnotexist": "Panganggo \"<nowiki>$1</nowiki>\" ora ana.",
+	"renameusererrorexists": "Panganggo \"<nowiki>$1</nowiki>\" wis ana.",
+	"renameusererrorinvalid": "Jeneng panganggo \"<nowiki>$1</nowiki>\" ora absah",
+	"renameuser-error-request": "Ana masalah nalika nampa panyuwunan panjenengan.\nMangga balènana lan nyoba manèh.",
+	"renameuser-error-same-user": "Panjenengan ora bisa ngganti jeneng panganggo dadi kaya jeneng asalé.",
+	"renameusersuccess": "Panganggo \"<nowiki>$1</nowiki>\" wis diganti jenengé dadi \"<nowiki>$2</nowiki>\".",
+	"renameuser-page-exists": "Kaca $1 wis ana lan ora bisa ditimpa sacara otomatis.",
+	"renameuser-page-moved": "Kaca $1 wis dialihaké menyang $2.",
+	"renameuser-page-unmoved": "Kaca $1 ora bisa dialihaké menyang $2.",
+	"log-name-renameuser": "Log ganti jeneng panganggo",
+	"log-description-renameuser": "Iki log owah-owahan jeneng panganggo",
+	"renameuser-move-log": "Sacara otomatis mindhah kaca nalika ngganti jeneng panganggo \"[[User:$1|$1]]\" dadi \"[[User:$2|$2]]\"",
+	"action-renameuser": "ganti jeneng panganggo",
+	"right-renameuser": "Ganti jeneng panganggo-panganggo",
+	"renameuser-renamed-notice": "Panganggo iki wis diganti jenengé.\nLog panggantèn jeneng sumadhiya ngisor iki kanggo rujukan."
+}

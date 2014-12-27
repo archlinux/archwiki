@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"CERminator"
+		]
+	},
+	"nuke": "Masovno brisanje",
+	"nuke-desc": "Daje administratorima mogućnost [[Special:Nuke|masovnog brisanja]] stranica",
+	"nuke-nopages": "Nema novih stranica od korisnika [[Special:Contributions/$1|$1]] u nedavnim izmjenama.",
+	"nuke-list": "Prikazane stranice su nedavno napravljenje od strane [[Special:Contributions/$1|$1]];\nnavedite razloge i komentare te kliknite na dugme da bi ste ih obrisali.",
+	"nuke-list-multiple": "Slijedeće stranice su nedavno napravljene;\nstavite ih u komentar i pritisnite dugme za njihovo brisanje.",
+	"nuke-defaultreason": "Masovno uklanjanje stranica koje je dodao $1",
+	"nuke-multiplepeople": "više korisnika",
+	"nuke-tools": "Ovaj alat omogućuje masovno brisanje stranica koje je nedavno dodao određeni korisnik ili IP adresa.\nUnesite korisničko ime ili IP adresu za izlistavanje stranica koje se brišu ili ostavite prazno za prikaz svih korisnika.",
+	"nuke-submit-user": "Idi",
+	"nuke-submit-delete": "Obriši označeno",
+	"right-nuke": "Masovno brisanje stranica",
+	"nuke-select": "Odaberi: $1",
+	"nuke-userorip": "Korisničko ime, IP adresa ili ostaviti prazno:",
+	"nuke-maxpages": "Najveći broj stranica:",
+	"nuke-editby": "Napravio [[Special:Contributions/$1|$1]]"
+}

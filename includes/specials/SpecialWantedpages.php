@@ -54,8 +54,7 @@ class WantedPagesPage extends WantedQueryPage {
 	}
 
 	function getQueryInfo() {
-		global $wgWantedPagesThreshold;
-		$count = $wgWantedPagesThreshold - 1;
+		$count = $this->getConfig()->get( 'WantedPagesThreshold' ) - 1;
 		$query = array(
 			'tables' => array(
 				'pagelinks',
@@ -69,8 +68,7 @@ class WantedPagesPage extends WantedQueryPage {
 			),
 			'conds' => array(
 				'pg1.page_namespace IS NULL',
-				"pl_namespace NOT IN ( '" . NS_USER .
-					"', '" . NS_USER_TALK . "' )",
+				"pl_namespace NOT IN ( '" . NS_USER . "', '" . NS_USER_TALK . "' )",
 				"pg2.page_namespace != '" . NS_MEDIAWIKI . "'"
 			),
 			'options' => array(
@@ -89,6 +87,7 @@ class WantedPagesPage extends WantedQueryPage {
 		);
 		// Replacement for the WantedPages::getSQL hook
 		wfRunHooks( 'WantedPages::getQueryInfo', array( &$this, &$query ) );
+
 		return $query;
 	}
 

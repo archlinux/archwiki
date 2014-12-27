@@ -3,7 +3,7 @@
  * Helper class for making a copy of the database, mostly for unit testing.
  *
  * Copyright © 2010 Chad Horohoe <chad@anyonecanedit.org>
- * http://www.mediawiki.org/
+ * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,49 +25,33 @@
  */
 
 class CloneDatabase {
-
-	/**
-	 * Table prefix for cloning
-	 * @var String
-	 */
+	/** @var string Table prefix for cloning */
 	private $newTablePrefix = '';
 
-	/**
-	 * Current table prefix
-	 * @var String
-	 */
+	/** @var string Current table prefix */
 	private $oldTablePrefix = '';
 
-	/**
-	 * List of tables to be cloned
-	 * @var Array
-	 */
+	/** @var array List of tables to be cloned */
 	private $tablesToClone = array();
 
-	/**
-	 * Should we DROP tables containing the new names?
-	 * @var Bool
-	 */
+	/** @var bool Should we DROP tables containing the new names? */
 	private $dropCurrentTables = true;
 
-	/**
-	 * Whether to use temporary tables or not
-	 * @var Bool
-	 */
+	/** @var bool Whether to use temporary tables or not */
 	private $useTemporaryTables = true;
 
 	/**
 	 * Constructor
 	 *
-	 * @param $db DatabaseBase A database subclass
+	 * @param DatabaseBase $db A database subclass
 	 * @param array $tablesToClone An array of tables to clone, unprefixed
 	 * @param string $newTablePrefix Prefix to assign to the tables
 	 * @param string $oldTablePrefix Prefix on current tables, if not $wgDBprefix
-	 * @param $dropCurrentTables bool
+	 * @param bool $dropCurrentTables
 	 */
 	public function __construct( DatabaseBase $db, array $tablesToClone,
-		$newTablePrefix, $oldTablePrefix = '', $dropCurrentTables = true )
-	{
+		$newTablePrefix, $oldTablePrefix = '', $dropCurrentTables = true
+	) {
 		$this->db = $db;
 		$this->tablesToClone = $tablesToClone;
 		$this->newTablePrefix = $newTablePrefix;
@@ -87,7 +71,13 @@ class CloneDatabase {
 	 * Clone the table structure
 	 */
 	public function cloneTableStructure() {
+		global $wgSharedTables, $wgSharedDB;
 		foreach ( $this->tablesToClone as $tbl ) {
+			if ( $wgSharedDB && in_array( $tbl, $wgSharedTables, true ) ) {
+				// Shared tables don't work properly when cloning due to
+				// how prefixes are handled (bug 65654)
+				throw new MWException( "Cannot clone shared table $tbl." );
+			}
 			# Clean up from previous aborted run.  So that table escaping
 			# works correctly across DB engines, we need to change the pre-
 			# fix back and forth so tableName() works right.
@@ -98,14 +88,21 @@ class CloneDatabase {
 			self::changePrefix( $this->newTablePrefix );
 			$newTableName = $this->db->tableName( $tbl, 'raw' );
 
-			if ( $this->dropCurrentTables && !in_array( $this->db->getType(), array( 'postgres', 'oracle' ) ) ) {
+			if ( $this->dropCurrentTables
+				&& !in_array( $this->db->getType(), array( 'postgres', 'oracle' ) )
+			) {
+				if ( $oldTableName === $newTableName ) {
+					// Last ditch check to avoid data loss
+					throw new MWException( "Not dropping new table, as '$newTableName'"
+						. " is name of both the old and the new table." );
+				}
 				$this->db->dropTable( $tbl, __METHOD__ );
-				wfDebug( __METHOD__ . " dropping {$newTableName}\n", true );
+				wfDebug( __METHOD__ . " dropping {$newTableName}\n" );
 				//Dropping the oldTable because the prefix was changed
 			}
 
 			# Create new table
-			wfDebug( __METHOD__ . " duplicating $oldTableName to $newTableName\n", true );
+			wfDebug( __METHOD__ . " duplicating $oldTableName to $newTableName\n" );
 			$this->db->duplicateTableStructure( $oldTableName, $newTableName, $this->useTemporaryTables );
 		}
 	}
@@ -127,7 +124,7 @@ class CloneDatabase {
 	/**
 	 * Change the table prefix on all open DB connections/
 	 *
-	 * @param $prefix
+	 * @param string $prefix
 	 * @return void
 	 */
 	public static function changePrefix( $prefix ) {
@@ -137,8 +134,8 @@ class CloneDatabase {
 	}
 
 	/**
-	 * @param $lb LoadBalancer
-	 * @param $prefix
+	 * @param LoadBalancer $lb
+	 * @param string $prefix
 	 * @return void
 	 */
 	public static function changeLBPrefix( $lb, $prefix ) {
@@ -146,8 +143,8 @@ class CloneDatabase {
 	}
 
 	/**
-	 * @param $db DatabaseBase
-	 * @param $prefix
+	 * @param DatabaseBase $db
+	 * @param string $prefix
 	 * @return void
 	 */
 	public static function changeDBPrefix( $db, $prefix ) {

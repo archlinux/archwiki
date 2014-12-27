@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Metalhead64"
+		]
+	},
+	"modern.css": "/* Das folgende CSS wird für Benutzer der Modern-Benutzeroberfläche geladen. */",
+	"modern.js": "/* Das folgende JavaScript wird für Benutzer der Modern-Benutzeroberfläche geladen. */",
+	"skinname-modern": "Modern",
+	"modern-desc": "Ein Thema in blau und grau mit Seiten- und Kopfleiste. Abgeleitet von MonoBook."
+}

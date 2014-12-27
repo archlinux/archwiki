@@ -36,26 +36,27 @@ require_once __DIR__ . '/../LanguageConverter.php';
  * @ingroup Language
  */
 class IuConverter extends LanguageConverter {
-
 	protected $mDoContentConvert;
+
 	public $mToLatin = array(
-		'ᐦ' => 'h',   'ᐃ' => 'i',    'ᐄ' => 'ii',    'ᐅ' => 'u',    'ᐆ' => 'uu',    'ᐊ' => 'a',    'ᐋ' => 'aa',
-		'ᑉ' => 'p',   'ᐱ' => 'pi',   'ᐲ' => 'pii',   'ᐳ' => 'pu',   'ᐴ' => 'puu',   'ᐸ' => 'pa',   'ᐹ' => 'paa',
-		'ᑦ' => 't',   'ᑎ' => 'ti',   'ᑏ' => 'tii',   'ᑐ' => 'tu',   'ᑑ' => 'tuu',   'ᑕ' => 'ta',   'ᑖ' => 'taa',
-		'ᒃ' => 'k',   'ᑭ' => 'ki',   'ᑮ' => 'kii',   'ᑯ' => 'ku',   'ᑰ' => 'kuu',   'ᑲ' => 'ka',   'ᑳ' => 'kaa',
-		'ᖅᒃ' => 'qq', 'ᖅᑭ' => 'qqi', 'ᖅᑮ' => 'qqii', 'ᖅᑯ' => 'qqu', 'ᖅᑰ' => 'ᖅqquu', 'ᖅᑲ' => 'qqa', 'ᖅᑳ' => 'qqaa',
-		'ᒡ' => 'g',   'ᒋ' => 'gi',   'ᒌ' => 'gii',   'ᒍ' => 'gu',   'ᒎ' => 'guu',   'ᒐ' => 'ga',   'ᒑ' => 'gaa',
-		'ᒻ' => 'm',   'ᒥ' => 'mi',   'ᒦ' => 'mii',   'ᒧ' => 'mu',   'ᒨ' => 'muu',   'ᒪ' => 'ma',   'ᒫ' => 'maa',
-		'ᓐ' => 'n',   'ᓂ' => 'ni',  'ᓃ' => 'nii',   'ᓄ' => 'nu',   'ᓅ' => 'nuu',   'ᓇ' => 'na',   'ᓈ' => 'naa',
-		'ᔅ' => 's',   'ᓯ' => 'si',   'ᓰ' => 'sii',   'ᓱ' => 'su',   'ᓲ' => 'suu',   'ᓴ' => 'sa',   'ᓵ' => 'saa',
-		'ᓪ' => 'l',   'ᓕ' => 'li',  'ᓖ' => 'lii',   'ᓗ' => 'lu',   'ᓘ' => 'luu',   'ᓚ' => 'la',   'ᓛ' => 'laa',
-		'ᔾ' => 'j',   'ᔨ' => 'ji',   'ᔩ' => 'jii',   'ᔪ' => 'ju',   'ᔫ' => 'juu',   'ᔭ' => 'ja',   'ᔮ' => 'jaa',
-		'ᕝ' => 'v',   'ᕕ' => 'vi',   'ᕖ' => 'vii',   'ᕗ' => 'vu',   'ᕘ' => 'vuu',   'ᕙ' => 'va',   'ᕚ' => 'vaa',
-		'ᕐ' => 'r',   'ᕆ' => 'ri',   'ᕇ' => 'rii',   'ᕈ' => 'ru',   'ᕉ' => 'ruu',   'ᕋ' => 'ra',   'ᕌ' => 'raa',
-		'ᖅ' => 'q',   'ᕿ' => 'qi',   'ᖀ' => 'qii',   'ᖁ' => 'qu',   'ᖂ' => 'quu',   'ᖃ' => 'qa',   'ᖄ' => 'qaa',
-		'ᖕ' => 'ng',  'ᖏ' => 'ngi',  'ᖐ' => 'ngii',  'ᖑ' => 'ngu',  'ᖒ' => 'nguu',  'ᖓ' => 'nga',  'ᖔ' => 'ngaa',
-		'ᖖ' => 'nng', 'ᙱ' => 'nngi', 'ᙲ' => 'nngii', 'ᙳ' => 'nngu', 'ᙴ' => 'nnguu', 'ᙵ' => 'nnga', 'ᙶ' => 'nngaa',
-		'ᖦ' => 'ɫ',   'ᖠ' => 'ɫi',    'ᖡ' => 'ɫii',   'ᖢ' => 'ɫu',    'ᖣ' => 'ɫuu',   'ᖤ' => 'ɫa',    'ᖥ' => 'ɫaa',
+		'ᐦ' => 'h', 'ᐃ' => 'i', 'ᐄ' => 'ii', 'ᐅ' => 'u', 'ᐆ' => 'uu', 'ᐊ' => 'a', 'ᐋ' => 'aa',
+		'ᑉ' => 'p', 'ᐱ' => 'pi', 'ᐲ' => 'pii', 'ᐳ' => 'pu', 'ᐴ' => 'puu', 'ᐸ' => 'pa', 'ᐹ' => 'paa',
+		'ᑦ' => 't', 'ᑎ' => 'ti', 'ᑏ' => 'tii', 'ᑐ' => 'tu', 'ᑑ' => 'tuu', 'ᑕ' => 'ta', 'ᑖ' => 'taa',
+		'ᒃ' => 'k', 'ᑭ' => 'ki', 'ᑮ' => 'kii', 'ᑯ' => 'ku', 'ᑰ' => 'kuu', 'ᑲ' => 'ka', 'ᑳ' => 'kaa',
+		'ᖅᒃ' => 'qq', 'ᖅᑭ' => 'qqi', 'ᖅᑮ' => 'qqii', 'ᖅᑯ' => 'qqu', 'ᖅᑰ' => 'ᖅqquu', 'ᖅᑲ' => 'qqa',
+		'ᖅᑳ' => 'qqaa', 'ᒡ' => 'g', 'ᒋ' => 'gi', 'ᒌ' => 'gii', 'ᒍ' => 'gu', 'ᒎ' => 'guu',
+		'ᒐ' => 'ga', 'ᒑ' => 'gaa', 'ᒻ' => 'm', 'ᒥ' => 'mi', 'ᒦ' => 'mii', 'ᒧ' => 'mu', 'ᒨ' => 'muu',
+		'ᒪ' => 'ma', 'ᒫ' => 'maa', 'ᓐ' => 'n', 'ᓂ' => 'ni', 'ᓃ' => 'nii', 'ᓄ' => 'nu', 'ᓅ' => 'nuu',
+		'ᓇ' => 'na', 'ᓈ' => 'naa', 'ᔅ' => 's', 'ᓯ' => 'si', 'ᓰ' => 'sii', 'ᓱ' => 'su', 'ᓲ' => 'suu',
+		'ᓴ' => 'sa', 'ᓵ' => 'saa', 'ᓪ' => 'l', 'ᓕ' => 'li', 'ᓖ' => 'lii', 'ᓗ' => 'lu', 'ᓘ' => 'luu',
+		'ᓚ' => 'la', 'ᓛ' => 'laa', 'ᔾ' => 'j', 'ᔨ' => 'ji', 'ᔩ' => 'jii', 'ᔪ' => 'ju', 'ᔫ' => 'juu',
+		'ᔭ' => 'ja', 'ᔮ' => 'jaa', 'ᕝ' => 'v', 'ᕕ' => 'vi', 'ᕖ' => 'vii', 'ᕗ' => 'vu', 'ᕘ' => 'vuu',
+		'ᕙ' => 'va', 'ᕚ' => 'vaa', 'ᕐ' => 'r', 'ᕆ' => 'ri', 'ᕇ' => 'rii', 'ᕈ' => 'ru', 'ᕉ' => 'ruu',
+		'ᕋ' => 'ra', 'ᕌ' => 'raa', 'ᖅ' => 'q', 'ᕿ' => 'qi', 'ᖀ' => 'qii', 'ᖁ' => 'qu', 'ᖂ' => 'quu',
+		'ᖃ' => 'qa', 'ᖄ' => 'qaa', 'ᖕ' => 'ng', 'ᖏ' => 'ngi', 'ᖐ' => 'ngii', 'ᖑ' => 'ngu',
+		'ᖒ' => 'nguu', 'ᖓ' => 'nga', 'ᖔ' => 'ngaa', 'ᖖ' => 'nng', 'ᙱ' => 'nngi', 'ᙲ' => 'nngii',
+		'ᙳ' => 'nngu', 'ᙴ' => 'nnguu', 'ᙵ' => 'nnga', 'ᙶ' => 'nngaa', 'ᖦ' => 'ɫ', 'ᖠ' => 'ɫi',
+		'ᖡ' => 'ɫii', 'ᖢ' => 'ɫu', 'ᖣ' => 'ɫuu', 'ᖤ' => 'ɫa', 'ᖥ' => 'ɫaa',
 	);
 
 	public $mUpperToLowerCaseLatin = array(
@@ -68,23 +69,24 @@ class IuConverter extends LanguageConverter {
 	);
 
 	public $mToSyllabics = array(
-		'h' => 'ᐦ',   'i' => 'ᐃ',    'ii' => 'ᐄ',    'u' => 'ᐅ',    'uu' => 'ᐆ',    'a' => 'ᐊ',    'aa' => 'ᐋ',
-		'p' => 'ᑉ',   'pi' => 'ᐱ',   'pii' => 'ᐲ',   'pu' => 'ᐳ',   'puu' => 'ᐴ',   'pa' => 'ᐸ',   'paa' => 'ᐹ',
-		't' => 'ᑦ',   'ti' => 'ᑎ',   'tii' => 'ᑏ',   'tu' => 'ᑐ',   'tuu' => 'ᑑ',   'ta' => 'ᑕ',   'taa' => 'ᑖ',
-		'k' => 'ᒃ',   'ki' => 'ᑭ',   'kii' => 'ᑮ',   'ku' => 'ᑯ',   'kuu' => 'ᑰ',   'ka' => 'ᑲ',   'kaa' => 'ᑳ',
-		'g' => 'ᒡ',   'gi' => 'ᒋ',   'gii' => 'ᒌ',   'gu' => 'ᒍ',   'guu' => 'ᒎ',   'ga' => 'ᒐ',   'gaa' => 'ᒑ',
-		'm' => 'ᒻ',   'mi' => 'ᒥ',   'mii' => 'ᒦ',   'mu' => 'ᒧ',   'muu' => 'ᒨ',   'ma' => 'ᒪ',   'maa' => 'ᒫ',
-		'n' => 'ᓐ',   'ni' => 'ᓂ',   'nii' => 'ᓃ',   'nu' => 'ᓄ',   'nuu' => 'ᓅ',   'na' => 'ᓇ',   'naa' => 'ᓈ',
-		's' => 'ᔅ',   'si' => 'ᓯ',   'sii' => 'ᓰ',   'su' => 'ᓱ',   'suu' => 'ᓲ',   'sa' => 'ᓴ',   'saa' => 'ᓵ',
-		'l' => 'ᓪ',   'li' => 'ᓕ',   'lii' => 'ᓖ',   'lu' => 'ᓗ',   'luu' => 'ᓘ',   'la' => 'ᓚ',   'laa' => 'ᓛ',
-		'j' => 'ᔾ',   'ji' => 'ᔨ',   'jii' => 'ᔩ',   'ju' => 'ᔪ',   'juu' => 'ᔫ',   'ja' => 'ᔭ',   'jaa' => 'ᔮ',
-		'v' => 'ᕝ',   'vi' => 'ᕕ',   'vii' => 'ᕖ',   'vu' => 'ᕗ',   'vuu' => 'ᕘ',   'va' => 'ᕙ',   'vaa' => 'ᕚ',
-		'r' => 'ᕐ',   'ri' => 'ᕆ',   'rii' => 'ᕇ',   'ru' => 'ᕈ',   'ruu' => 'ᕉ',   'ra' => 'ᕋ',   'raa' => 'ᕌ',
-		'qq' => 'ᖅᒃ',  'qqi' => 'ᖅᑭ',  'qqii' => 'ᖅᑮ',  'qqu' => 'ᖅᑯ',  'qquu' => 'ᖅᑰ',  'qqa' => 'ᖅᑲ',  'qqaa' => 'ᖅᑳ',
-		'q' => 'ᖅ',   'qi' => 'ᕿ',   'qii' => 'ᖀ',   'qu' => 'ᖁ',   'quu' => 'ᖂ',   'qa' => 'ᖃ',   'qaa' => 'ᖄ',
-		'ng' => 'ᖕ',  'ngi' => 'ᖏ',  'ngii' => 'ᖐ',  'ngu' => 'ᖑ',  'nguu' => 'ᖒ',  'nga' => 'ᖓ',  'ngaa' => 'ᖔ',
-		'nng' => 'ᖖ', 'nngi' => 'ᙱ', 'nngii' => 'ᙲ', 'nngu' => 'ᙳ', 'nnguu' => 'ᙴ', 'nnga' => 'ᙵ', 'nngaa' => 'ᙶ',
-		'ɫ' => 'ᖦ',   'ɫi' => 'ᖠ',    'ɫii' => 'ᖡ',   'ɫu' => 'ᖢ',    'ɫuu' => 'ᖣ',   'ɫa' => 'ᖤ',    'ɫaa' => 'ᖥ',
+		'h' => 'ᐦ', 'i' => 'ᐃ', 'ii' => 'ᐄ', 'u' => 'ᐅ', 'uu' => 'ᐆ', 'a' => 'ᐊ', 'aa' => 'ᐋ',
+		'p' => 'ᑉ', 'pi' => 'ᐱ', 'pii' => 'ᐲ', 'pu' => 'ᐳ', 'puu' => 'ᐴ', 'pa' => 'ᐸ', 'paa' => 'ᐹ',
+		't' => 'ᑦ', 'ti' => 'ᑎ', 'tii' => 'ᑏ', 'tu' => 'ᑐ', 'tuu' => 'ᑑ', 'ta' => 'ᑕ', 'taa' => 'ᑖ',
+		'k' => 'ᒃ', 'ki' => 'ᑭ', 'kii' => 'ᑮ', 'ku' => 'ᑯ', 'kuu' => 'ᑰ', 'ka' => 'ᑲ', 'kaa' => 'ᑳ',
+		'g' => 'ᒡ', 'gi' => 'ᒋ', 'gii' => 'ᒌ', 'gu' => 'ᒍ', 'guu' => 'ᒎ', 'ga' => 'ᒐ', 'gaa' => 'ᒑ',
+		'm' => 'ᒻ', 'mi' => 'ᒥ', 'mii' => 'ᒦ', 'mu' => 'ᒧ', 'muu' => 'ᒨ', 'ma' => 'ᒪ', 'maa' => 'ᒫ',
+		'n' => 'ᓐ', 'ni' => 'ᓂ', 'nii' => 'ᓃ', 'nu' => 'ᓄ', 'nuu' => 'ᓅ', 'na' => 'ᓇ', 'naa' => 'ᓈ',
+		's' => 'ᔅ', 'si' => 'ᓯ', 'sii' => 'ᓰ', 'su' => 'ᓱ', 'suu' => 'ᓲ', 'sa' => 'ᓴ', 'saa' => 'ᓵ',
+		'l' => 'ᓪ', 'li' => 'ᓕ', 'lii' => 'ᓖ', 'lu' => 'ᓗ', 'luu' => 'ᓘ', 'la' => 'ᓚ', 'laa' => 'ᓛ',
+		'j' => 'ᔾ', 'ji' => 'ᔨ', 'jii' => 'ᔩ', 'ju' => 'ᔪ', 'juu' => 'ᔫ', 'ja' => 'ᔭ', 'jaa' => 'ᔮ',
+		'v' => 'ᕝ', 'vi' => 'ᕕ', 'vii' => 'ᕖ', 'vu' => 'ᕗ', 'vuu' => 'ᕘ', 'va' => 'ᕙ', 'vaa' => 'ᕚ',
+		'r' => 'ᕐ', 'ri' => 'ᕆ', 'rii' => 'ᕇ', 'ru' => 'ᕈ', 'ruu' => 'ᕉ', 'ra' => 'ᕋ', 'raa' => 'ᕌ',
+		'qq' => 'ᖅᒃ', 'qqi' => 'ᖅᑭ', 'qqii' => 'ᖅᑮ', 'qqu' => 'ᖅᑯ', 'qquu' => 'ᖅᑰ', 'qqa' => 'ᖅᑲ',
+		'qqaa' => 'ᖅᑳ', 'q' => 'ᖅ', 'qi' => 'ᕿ', 'qii' => 'ᖀ', 'qu' => 'ᖁ', 'quu' => 'ᖂ',
+		'qa' => 'ᖃ', 'qaa' => 'ᖄ', 'ng' => 'ᖕ', 'ngi' => 'ᖏ', 'ngii' => 'ᖐ', 'ngu' => 'ᖑ',
+		'nguu' => 'ᖒ', 'nga' => 'ᖓ', 'ngaa' => 'ᖔ', 'nng' => 'ᖖ', 'nngi' => 'ᙱ', 'nngii' => 'ᙲ',
+		'nngu' => 'ᙳ', 'nnguu' => 'ᙴ', 'nnga' => 'ᙵ', 'nngaa' => 'ᙶ', 'ɫ' => 'ᖦ', 'ɫi' => 'ᖠ',
+		'ɫii' => 'ᖡ', 'ɫu' => 'ᖢ', 'ɫuu' => 'ᖣ', 'ɫa' => 'ᖤ', 'ɫaa' => 'ᖥ',
 	);
 
 	function loadDefaultTables() {
@@ -102,8 +104,8 @@ class IuConverter extends LanguageConverter {
 	 * update: delete all rule parsing because it's not used
 	 * currently, and just produces a couple of bugs
 	 *
-	 * @param $rule string
-	 * @param $flags array
+	 * @param string $rule
+	 * @param array $flags
 	 * @return array
 	 */
 	function parseManualRule( $rule, $flags = array() ) {
@@ -123,12 +125,13 @@ class IuConverter extends LanguageConverter {
 	/**
 	 * Do not convert content on talk pages
 	 *
-	 * @param $text string
-	 * @param $parser Parser
+	 * @param string $text
+	 * @param Parser $parser
 	 * @return string
 	 */
 	function parserConvert( $text, &$parser ) {
-		$this->mDoContentConvert = !( is_object( $parser->getTitle() ) && $parser->getTitle()->isTalkPage() );
+		$this->mDoContentConvert = !( is_object( $parser->getTitle() )
+			&& $parser->getTitle()->isTalkPage() );
 
 		return parent::parserConvert( $text, $parser );
 	}
@@ -139,9 +142,9 @@ class IuConverter extends LanguageConverter {
 	 *     names as they were
 	 *   - do not try to find variants for usernames
 	 *
-	 * @param $link string
-	 * @param $nt Title
-	 * @param $ignoreOtherCond bool
+	 * @param string &$link
+	 * @param Title &$nt
+	 * @param bool $ignoreOtherCond
 	 */
 	function findVariantLink( &$link, &$nt, $ignoreOtherCond = false ) {
 		// check for user namespace
@@ -160,30 +163,10 @@ class IuConverter extends LanguageConverter {
 	}
 
 	/**
-	 * An ugly function wrapper for parsing Image titles
-	 * (to prevent image name conversion)
-	 *
-	 * @param $text string
-	 * @param $toVariant bool
-	 *
-	 * @return string
-	 */
-	function autoConvert( $text, $toVariant = false ) {
-		global $wgTitle;
-		if ( is_object( $wgTitle ) && $wgTitle->getNamespace() == NS_FILE ) {
-			$imagename = $wgTitle->getNsText();
-			if ( preg_match( "/^$imagename:/", $text ) ) {
-				return $text;
-			}
-		}
-		return parent::autoConvert( $text, $toVariant );
-	}
-
-	/**
 	 * It translates text into variant
 	 *
-	 * @param $text string
-	 * @param $toVariant bool
+	 * @param string $text
+	 * @param bool $toVariant
 	 *
 	 * @return string
 	 */
@@ -215,7 +198,7 @@ class LanguageIu extends Language {
 
 		$variants = array( 'iu', 'ike-cans', 'ike-latn' );
 		$variantfallbacks = array(
-			'iu'    => 'ike-cans',
+			'iu' => 'ike-cans',
 			'ike-cans' => 'iu',
 			'ike-latn' => 'iu',
 		);

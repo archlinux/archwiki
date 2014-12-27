@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Theklan",
+			"Unai Fdz. de Betoño",
+			"Xabier Armendaritz"
+		]
+	},
+	"nuke": "Ezabaketa masiboa",
+	"nuke-nopages": "Aldaketa berrietan ez dago [[Special:Contributions/$1|$1]](r)en orri berririk.",
+	"nuke-list": "Ondorengo orri hauek sortu berri ditu [[Special:Contributions/$1|{{GENDER:$1|$1}}]] wikilariak;\nidatz ezazu ohar bat, eta sakatu botoia orri horiek ezabatzeko.",
+	"nuke-defaultreason": "$1(e)k sortutako orrien ezabaketa masiboa",
+	"nuke-submit-user": "Joan",
+	"nuke-submit-delete": "Aukeratutakoa ezabatu",
+	"right-nuke": "Masiboki ezabatutako orrialdeak"
+}

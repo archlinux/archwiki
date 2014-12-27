@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"CERminator"
+		]
+	},
+	"recaptcha-edit": "Da bismo pomogli protiv automatiziranog spam uređivanja, molimo upišite dvije riječi koje vidite u kutiju ispod:",
+	"recaptcha-addurl": "Vaše izmjene uključuju nove vanjske linkove. Da bismo pomogli protiv automatiziranog spama, molimo upišite dvije riječi koje vidite u kutiju ispod.",
+	"recaptcha-badlogin": "Da bismo pomogli protiv automatiziranog probijanja šifre, molimo upišite dvije riječi koje vidite u kutiju ispod:",
+	"recaptcha-createaccount": "Da bismo pomogli protiv automatiziranog pravljenja računa, molimo upišite dvije riječi koje vidite u kutiju ispod:",
+	"recaptcha-createaccount-fail": "Neispravan ili nedostajući reCAPTCHA odgovor.",
+	"recaptcha-create": "Da bismo pomogli protiv automatiziranog pravljenja stranica, molimo upišite dvije riječi koje vidite u kutiju ispod:"
+}

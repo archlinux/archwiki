@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Beta16",
+			"Nemo bis"
+		]
+	},
+	"recaptcha-edit": "Per proteggere il wiki dalle modifiche automatiche che aggiungono spam, ti chiediamo gentilmente di scrivere le due parole mostrate nel riquadro sottostante:",
+	"recaptcha-addurl": "La tua modifica aggiunge qualche nuovo collegamento esterno. Per proteggere il wiki dallo spam automatico, ti chiediamo gentilmente di scrivere le due parole mostrate nel riquadro sottostante:",
+	"recaptcha-badlogin": "Per proteggere il wiki dalla forzatura automatica delle password, ti chiediamo gentilmente di scrivere le due parole mostrate nel riquadro sottostante:",
+	"recaptcha-createaccount": "Per proteggere il wiki dalla creazione automatica di nuovi accessi, ti chiediamo gentilmente di scrivere le due parole mostrate nel riquadro sottostante:",
+	"recaptcha-createaccount-fail": "Risposta reCAPTCHA mancante o errata.",
+	"recaptcha-create": "Per proteggere il wiki dalla creazione automatica di pagine, ti chiediamo gentilmente di scrivere le due parole mostrate nel riquadro sottostante:"
+}

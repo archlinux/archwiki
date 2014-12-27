@@ -1,0 +1,38 @@
+{
+	"@metadata": {
+		"authors": [
+			"Borislav",
+			"DCLXVI",
+			"Spiritia",
+			"Stanqo",
+			"Turin"
+		]
+	},
+	"renameuser": "Преименуване на потребител",
+	"renameuser-linkoncontribs": "преименуване на потребител",
+	"renameuser-linkoncontribs-text": "Преименуване на този потребител",
+	"renameuser-desc": "Добавя възможност за преименуване на потребители",
+	"renameuserold": "Текущо потребителско име:",
+	"renameusernew": "Ново потребителско име:",
+	"renameuserreason": "Причина за преименуването:",
+	"renameusermove": "Преместване под новото име на потребителската лична страница и беседа (както и техните подстраници)",
+	"renameusersuppress": "Без създаване на пренасочване към новото име",
+	"renameuserreserve": "Блокиране на старото потребителско име срещу узурпация в бъдеще",
+	"renameuserwarnings": "Предупреждения:",
+	"renameuserconfirm": "Да, преименуване на потребителя",
+	"renameusersubmit": "Изпълнение",
+	"renameuser-submit-blocklog": "Показване дневника на блокиранията за потребителя",
+	"renameusererrordoesnotexist": "Потребителят „<nowiki>$1</nowiki>“ не съществува.",
+	"renameusererrorexists": "Потребителят „<nowiki>$1</nowiki>“ вече съществува.",
+	"renameusererrorinvalid": "Потребителското име „<nowiki>$1</nowiki>“ е невалидно.",
+	"renameuser-error-request": "Имаше проблем с приемането на заявката. Върнете се на предишната страница и опитайте отново!",
+	"renameuser-error-same-user": "Новото потребителско име е същото като старото.",
+	"renameusersuccess": "Потребителят „<nowiki>$1</nowiki>“ беше преименуван на „<nowiki>$2</nowiki>“",
+	"renameuser-page-exists": "Страницата $1 вече съществува и не може да бъде автоматично заместена.",
+	"renameuser-page-moved": "Страницата $1 беше преместена като $2.",
+	"renameuser-page-unmoved": "Страницата $1 не можа да бъде преместена като $2.",
+	"log-name-renameuser": "Дневник на преименуванията",
+	"renameuser-move-log": "Автоматично преместена страница при преименуването на потребител \"[[User:$1|$1]]\" като \"[[User:$2|$2]]\"",
+	"right-renameuser": "преименуване на потребители",
+	"renameuser-renamed-notice": "Потребителят беше преименуван.\nЗа справка по-долу е показан Дневникът на преименуванията."
+}

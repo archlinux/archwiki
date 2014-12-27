@@ -1,0 +1,14 @@
+.mw-inputbox-centered {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+.mw-inputbox-inline {
+	display: inline;
+}
+
+.inputbox-element {
+	display: inline;
+	white-space: nowrap;
+}

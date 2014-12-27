@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dani"
+		]
+	},
+	"syntaxhighlight-desc": "Lehetőséget nyújt szintaxiskiemelésre a <code>&lt;syntaxhighlight&gt;</code> tag-gel, a [http://qbnz.com/highlighter/ GeSHi Highlighter] használatával",
+	"syntaxhighlight-specify": "Meg kell adnod egy nyelvet az alábbi módon:",
+	"syntaxhighlight-supported": "Támogatott programozási nyelvek:",
+	"syntaxhighlight-err-loading": "(hiba történt a támogatott nyelvek listájának betöltése közben)",
+	"syntaxhighlight-err-language": "Érvénytelen nyelv.",
+	"geshi.css": "/* Az itt elhelyezett CSS-t fogja alkalmazni a GeSHi szintaxiskiemelő */"
+}

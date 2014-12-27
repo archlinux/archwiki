@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dead3y3"
+		]
+	},
+	"modern.css": "/* Το τοποθετημένο εδώ CSS θα επηρεάσει χρήστες του Modern skin */",
+	"modern.js": "/* Οποιοσδήποτε κώδικας JavaScript εδώ θα φορτωθεί για χρήστες που χρησιμοποιούν το Modern skin */",
+	"skinname-modern": "Μοντέρνο"
+}

@@ -24,6 +24,7 @@ $wgExtensionCredits['specialpage'][] = array(
 
 $dir = __DIR__ . '/';
 # Internationalisation file
+$wgMessagesDirs['SpecialCite'] = __DIR__ . '/i18n/special';
 $wgExtensionMessagesFiles['SpecialCite'] = $dir . 'SpecialCite.i18n.php';
 $wgExtensionMessagesFiles['SpecialCiteAliases'] = $dir . 'SpecialCite.alias.php';
 
@@ -78,7 +79,7 @@ function wfSpecialCiteToolbox( &$skin ) {
 			array( 'id' => 't-cite' ),
 			Linker::link(
 				SpecialPage::getTitleFor( 'Cite' ),
-				wfMessage( 'cite_article_link' )->text(), // @todo Should be escaped()?
+				wfMessage( 'cite_article_link' )->escaped(),
 				# Used message keys: 'tooltip-cite-article', 'accesskey-cite-article'
 				Linker::tooltipAndAccessKeyAttribs( 'cite-article' ),
 				$skin->data['nav_urls']['cite']['args']

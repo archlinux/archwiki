@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bennylin",
+			"Meursault2004",
+			"NoiX180",
+			"Pras"
+		]
+	},
+	"gadgets-desc": "Marengaké para panganggo milih [[Special:Gadgets|gadget CSS lan JavaScript]] ngliwati [[Special:Preferences#mw-prefsection-gadgets|préferènsi]] dhéwé-dhéwé.",
+	"prefs-gadgets": "Gadget",
+	"gadgets-prefstext": "Ing ngisor iki daftar gadget astaméwa sing bisa panjenangan aktifaké kanggo rékening panjenengan. Gadget-gadget iki sabagéyan gedhé adhedhasar JavaScript dadi panjenengan kudu ngaktifaké JavaScript ing panjlajah wèb panjenengan supaya bisa nglakokaké.\nMangga diwigatèkaké yèn gadget-gadget iki ora ndarbèni pangaruh marang kaca préferènsi iki.\n\nUga mangga diwigatèkaké yèn gadget astaméwa iki dudu bagéyan saka piranti empuk MediaWiki lan biasané dikembangaké lan diopèni déning panganggo-panganggo ing wiki lokal panjenengan. Pangurus lokal bisa nyunting gadget sing kasedyakaké nganggo [[MediaWiki:Gadgets-definition|dhéfinisi]] lan [[Special:Gadgets|uraian]].",
+	"gadgets": "Gadget",
+	"gadgets-title": "Gadget",
+	"gadgets-pagetext": "Ing ngisor iki daftar gadget astaméwa sing bisa diaktifaké ing [[Special:Preferences#mw-prefsection-gadgets|kaca prèferènsi]] panganggo, kayadéné didéfinisi déning [[MediaWiki:Gadgets-definition|dhéfinisi]].\nTinjoan iki mènèhi aksès sing gampang menyang kaca-kaca pesen sistem sing ngawedhar saben gadget lan kodhe.",
+	"gadgets-uses": "Kagunan",
+	"gadgets-required-rights": "Mbutuhaké {{PLURAL:$2|hak|hak-hak}}:\n\n$1",
+	"gadgets-required-skins": "Sumadhiya nèng {{PLURAL:$2|$1 kulit|kulit-kulit iki: $1}}.",
+	"gadgets-default": "Diurubaké kanggo kabèh wong sacara gawan.",
+	"gadgets-export": "Èkspor",
+	"gadgets-export-title": "Èkspor perkakas",
+	"gadgets-not-found": "Perkasas \"$1\" ora ditemokaké.",
+	"gadgets-export-text": "Untuk mengekspor perkakas $1, klik tombol \"{{int:gadgets-export-download}}\", simpan berkas yang diunduh,\ntuju ke Special:Import pada wiki tujuan dan unggah berkas itu. Kemudian tambahkan berkas tersebut ke halaman MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nAnda harus memeroleh izin pada wiki tujuan (termasuk hak menyunting pesan sistem) dan mengimpor dari unggahan berkas yang harus diaktifkan.",
+	"gadgets-export-download": "Undhuh"
+}

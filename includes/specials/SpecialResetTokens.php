@@ -40,16 +40,15 @@ class SpecialResetTokens extends FormSpecialPage {
 	 * @return array
 	 */
 	protected function getTokensList() {
-		global $wgHiddenPrefs;
-
 		if ( !isset( $this->tokensList ) ) {
 			$tokens = array(
 				array( 'preference' => 'watchlisttoken', 'label-message' => 'resettokens-watchlist-token' ),
 			);
 			wfRunHooks( 'SpecialResetTokensTokens', array( &$tokens ) );
 
-			$tokens = array_filter( $tokens, function ( $tok ) use ( $wgHiddenPrefs ) {
-				return !in_array( $tok['preference'], $wgHiddenPrefs );
+			$hiddenPrefs = $this->getConfig()->get( 'HiddenPrefs' );
+			$tokens = array_filter( $tokens, function ( $tok ) use ( $hiddenPrefs ) {
+				return !in_array( $tok['preference'], $hiddenPrefs );
 			} );
 
 			$this->tokensList = $tokens;
@@ -61,6 +60,7 @@ class SpecialResetTokens extends FormSpecialPage {
 	public function execute( $par ) {
 		// This is a preferences page, so no user JS for y'all.
 		$this->getOutput()->disallowUserJs();
+		$this->requireLogin();
 
 		parent::execute( $par );
 
@@ -77,6 +77,7 @@ class SpecialResetTokens extends FormSpecialPage {
 	/**
 	 * Display appropriate message if there's nothing to do.
 	 * The submit button is also suppressed in this case (see alterForm()).
+	 * @return array
 	 */
 	protected function getFormFields() {
 		$user = $this->getUser();
@@ -89,7 +90,7 @@ class SpecialResetTokens extends FormSpecialPage {
 					->rawParams( $this->msg( $tok['label-message'] )->parse() )
 					->params( $user->getTokenFromOption( $tok['preference'] ) )
 					->escaped();
-				$tokensForForm[ $label ] = $tok['preference'];
+				$tokensForForm[$label] = $tok['preference'];
 			}
 
 			$desc = array(
@@ -112,6 +113,7 @@ class SpecialResetTokens extends FormSpecialPage {
 	/**
 	 * Suppress the submit button if there's nothing to do;
 	 * provide additional message on it otherwise.
+	 * @param HTMLForm $form
 	 */
 	protected function alterForm( HTMLForm $form ) {
 		if ( $this->getTokensList() ) {

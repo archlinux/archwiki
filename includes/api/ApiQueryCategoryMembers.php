@@ -31,7 +31,7 @@
  */
 class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'cm' );
 	}
 
@@ -48,7 +48,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param $resultPageSet ApiPageSet
+	 * @param ApiPageSet $resultPageSet
 	 * @return void
 	 */
 	private function run( $resultPageSet = null ) {
@@ -86,9 +86,8 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 
 		// Scanning large datasets for rare categories sucks, and I already told
 		// how to have efficient subcategory access :-) ~~~~ (oh well, domas)
-		global $wgMiserMode;
 		$miser_ns = array();
-		if ( $wgMiserMode ) {
+		if ( $this->getConfig()->get( 'MiserMode' ) ) {
 			$miser_ns = $params['namespace'];
 		} else {
 			$this->addWhereFld( 'page_namespace', $params['namespace'] );
@@ -101,6 +100,22 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				$dir,
 				$params['start'],
 				$params['end'] );
+			// Include in ORDER BY for uniqueness
+			$this->addWhereRange( 'cl_from', $dir, null, null );
+
+			if ( !is_null( $params['continue'] ) ) {
+				$cont = explode( '|', $params['continue'] );
+				$this->dieContinueUsageIf( count( $cont ) != 2 );
+				$op = ( $dir === 'newer' ? '>' : '<' );
+				$db = $this->getDB();
+				$continueTimestamp = $db->addQuotes( $db->timestamp( $cont[0] ) );
+				$continueFrom = (int)$cont[1];
+				$this->dieContinueUsageIf( $continueFrom != $cont[1] );
+				$this->addWhere( "cl_timestamp $op $continueTimestamp OR " .
+					"(cl_timestamp = $continueTimestamp AND " .
+					"cl_from $op= $continueFrom)"
+				);
+			}
 
 			$this->addOption( 'USE INDEX', 'cl_timestamp' );
 		} else {
@@ -125,12 +140,22 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				$this->addWhereRange( 'cl_sortkey', $dir, null, null );
 				$this->addWhereRange( 'cl_from', $dir, null, null );
 			} else {
-				$startsortkey = $params['startsortkeyprefix'] !== null ?
-					Collation::singleton()->getSortkey( $params['startsortkeyprefix'] ) :
-					$params['startsortkey'];
-				$endsortkey = $params['endsortkeyprefix'] !== null ?
-					Collation::singleton()->getSortkey( $params['endsortkeyprefix'] ) :
-					$params['endsortkey'];
+				if ( $params['startsortkeyprefix'] !== null ) {
+					$startsortkey = Collation::singleton()->getSortkey( $params['startsortkeyprefix'] );
+				} elseif ( $params['starthexsortkey'] !== null ) {
+					$startsortkey = pack( 'H*', $params['starthexsortkey'] );
+				} else {
+					$this->logFeatureUsage( 'list=categorymembers&cmstartsortkey' );
+					$startsortkey = $params['startsortkey'];
+				}
+				if ( $params['endsortkeyprefix'] !== null ) {
+					$endsortkey = Collation::singleton()->getSortkey( $params['endsortkeyprefix'] );
+				} elseif ( $params['endhexsortkey'] !== null ) {
+					$endsortkey = pack( 'H*', $params['endhexsortkey'] );
+				} else {
+					$this->logFeatureUsage( 'list=categorymembers&cmendsortkey' );
+					$endsortkey = $params['endsortkey'];
+				}
 
 				// The below produces ORDER BY cl_sortkey, cl_from, possibly with DESC added to each of them
 				$this->addWhereRange( 'cl_sortkey',
@@ -180,11 +205,13 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 		$result = $this->getResult();
 		$count = 0;
 		foreach ( $rows as $row ) {
-			if ( ++ $count > $limit ) {
-				// We've reached the one extra which shows that there are additional pages to be had. Stop here...
-				// TODO: Security issue - if the user has no right to view next title, it will still be shown
+			if ( ++$count > $limit ) {
+				// We've reached the one extra which shows that there are
+				// additional pages to be had. Stop here...
+				// @todo Security issue - if the user has no right to view next
+				// title, it will still be shown
 				if ( $params['sort'] == 'timestamp' ) {
-					$this->setContinueEnumParameter( 'start', wfTimestamp( TS_ISO_8601, $row->cl_timestamp ) );
+					$this->setContinueEnumParameter( 'continue', "$row->cl_timestamp|$row->cl_from" );
 				} else {
 					$sortkey = bin2hex( $row->cl_sortkey );
 					$this->setContinueEnumParameter( 'continue',
@@ -224,10 +251,10 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 					$vals['timestamp'] = wfTimestamp( TS_ISO_8601, $row->cl_timestamp );
 				}
 				$fit = $result->addValue( array( 'query', $this->getModuleName() ),
-						null, $vals );
+					null, $vals );
 				if ( !$fit ) {
 					if ( $params['sort'] == 'timestamp' ) {
-						$this->setContinueEnumParameter( 'start', wfTimestamp( TS_ISO_8601, $row->cl_timestamp ) );
+						$this->setContinueEnumParameter( 'continue', "$row->cl_timestamp|$row->cl_from" );
 					} else {
 						$sortkey = bin2hex( $row->cl_sortkey );
 						$this->setContinueEnumParameter( 'continue',
@@ -313,25 +340,32 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 			'end' => array(
 				ApiBase::PARAM_TYPE => 'timestamp'
 			),
-			'startsortkey' => null,
-			'endsortkey' => null,
+			'starthexsortkey' => null,
+			'endhexsortkey' => null,
 			'startsortkeyprefix' => null,
 			'endsortkeyprefix' => null,
+			'startsortkey' => array(
+				ApiBase::PARAM_DEPRECATED => true,
+			),
+			'endsortkey' => array(
+				ApiBase::PARAM_DEPRECATED => true,
+			),
 		);
 	}
 
 	public function getParamDescription() {
-		global $wgMiserMode;
 		$p = $this->getModulePrefix();
 		$desc = array(
-			'title' => "Which category to enumerate (required). Must include Category: prefix. Cannot be used together with {$p}pageid",
+			'title' => "Which category to enumerate (required). Must include " .
+				"'Category:' prefix. Cannot be used together with {$p}pageid",
 			'pageid' => "Page ID of the category to enumerate. Cannot be used together with {$p}title",
 			'prop' => array(
 				'What pieces of information to include',
 				' ids           - Adds the page ID',
 				' title         - Adds the title and namespace ID of the page',
 				' sortkey       - Adds the sortkey used for sorting in the category (hexadecimal string)',
-				' sortkeyprefix - Adds the sortkey prefix used for sorting in the category (human-readable part of the sortkey)',
+				' sortkeyprefix - Adds the sortkey prefix used for sorting in the ' .
+					'category (human-readable part of the sortkey)',
 				' type          - Adds the type that the page has been categorised as (page, subcat or file)',
 				' timestamp     - Adds the timestamp of when the page was included',
 			),
@@ -341,15 +375,22 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 			'dir' => 'In which direction to sort',
 			'start' => "Timestamp to start listing from. Can only be used with {$p}sort=timestamp",
 			'end' => "Timestamp to end listing at. Can only be used with {$p}sort=timestamp",
-			'startsortkey' => "Sortkey to start listing from. Must be given in binary format. Can only be used with {$p}sort=sortkey",
-			'endsortkey' => "Sortkey to end listing at. Must be given in binary format. Can only be used with {$p}sort=sortkey",
-			'startsortkeyprefix' => "Sortkey prefix to start listing from. Can only be used with {$p}sort=sortkey. Overrides {$p}startsortkey",
-			'endsortkeyprefix' => "Sortkey prefix to end listing BEFORE (not at, if this value occurs it will not be included!). Can only be used with {$p}sort=sortkey. Overrides {$p}endsortkey",
+			'starthexsortkey' => "Sortkey to start listing from, as returned by prop=sortkey. " .
+				"Can only be used with {$p}sort=sortkey",
+			'endhexsortkey' => "Sortkey to end listing from, as returned by prop=sortkey. " .
+				"Can only be used with {$p}sort=sortkey",
+			'startsortkeyprefix' => "Sortkey prefix to start listing from. Can " .
+				"only be used with {$p}sort=sortkey. Overrides {$p}starthexsortkey",
+			'endsortkeyprefix' => "Sortkey prefix to end listing BEFORE (not at, " .
+				"if this value occurs it will not be included!). Can only be used with " .
+				"{$p}sort=sortkey. Overrides {$p}endhexsortkey",
+			'startsortkey' => "Use starthexsortkey instead",
+			'endsortkey' => "Use endhexsortkey instead",
 			'continue' => 'For large categories, give the value returned from previous query',
 			'limit' => 'The maximum number of pages to return.',
 		);
 
-		if ( $wgMiserMode ) {
+		if ( $this->getConfig()->get( 'MiserMode' ) ) {
 			$desc['namespace'] = array(
 				$desc['namespace'],
 				"NOTE: Due to \$wgMiserMode, using this may result in fewer than \"{$p}limit\" results",
@@ -357,56 +398,20 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				"Note that you can use {$p}type=subcat or {$p}type=file instead of {$p}namespace=14 or 6.",
 			);
 		}
+
 		return $desc;
 	}
 
-	public function getResultProperties() {
-		return array(
-			'ids' => array(
-				'pageid' => 'integer'
-			),
-			'title' => array(
-				'ns' => 'namespace',
-				'title' => 'string'
-			),
-			'sortkey' => array(
-				'sortkey' => 'string'
-			),
-			'sortkeyprefix' => array(
-				'sortkeyprefix' => 'string'
-			),
-			'type' => array(
-				'type' => array(
-					ApiBase::PROP_TYPE => array(
-						'page',
-						'subcat',
-						'file'
-					)
-				)
-			),
-			'timestamp' => array(
-				'timestamp' => 'timestamp'
-			)
-		);
-	}
-
 	public function getDescription() {
-		return 'List all pages in a given category';
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(),
-			$this->getTitleOrPageIdErrorMessage(),
-			array(
-				array( 'code' => 'invalidcategory', 'info' => 'The category name you entered is not valid' ),
-			)
-		);
+		return 'List all pages in a given category.';
 	}
 
 	public function getExamples() {
 		return array(
-			'api.php?action=query&list=categorymembers&cmtitle=Category:Physics' => 'Get first 10 pages in [[Category:Physics]]',
-			'api.php?action=query&generator=categorymembers&gcmtitle=Category:Physics&prop=info' => 'Get page info about first 10 pages in [[Category:Physics]]',
+			'api.php?action=query&list=categorymembers&cmtitle=Category:Physics'
+				=> 'Get first 10 pages in [[Category:Physics]]',
+			'api.php?action=query&generator=categorymembers&gcmtitle=Category:Physics&prop=info'
+				=> 'Get page info about first 10 pages in [[Category:Physics]]',
 		);
 	}
 

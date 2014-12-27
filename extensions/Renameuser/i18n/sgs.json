@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hugo.arg"
+		]
+	},
+	"renameuserold": "Esams nauduotuojė vards:",
+	"renameusernew": "Naus nauduotuojė vards:",
+	"renameusersuccess": "Nauduotuos \"<nowiki>$1</nowiki>\" bova parvadėnts i \"<nowiki>$2</nowiki>\"."
+}

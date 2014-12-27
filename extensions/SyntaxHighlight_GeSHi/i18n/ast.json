@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Esbardu"
+		]
+	},
+	"syntaxhighlight-desc": "Proporciona resaltáu de sintaxis <code>&lt;syntaxhighlight&gt;</code> usando [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Necesites conseñar una llingua como esta:",
+	"syntaxhighlight-supported": "Llingües sofitaes pa la sintaxis en colores:",
+	"syntaxhighlight-err-loading": "(error al cargar la llista de llingües sofitaes)",
+	"syntaxhighlight-err-language": "Llingua non válida.",
+	"geshi.css": "/* El códigu CSS allugáu equí va ser aplicáu por GeSHi pa la sintaxis en colores */"
+}

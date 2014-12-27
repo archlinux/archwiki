@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="22"
+   height="22"
+   id="svg4055"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="format-bold-P.svg">
+  <defs
+     id="defs4057">
+    <filter
+       id="filter5056"
+       inkscape:label="Diffuse light"
+       inkscape:menu="ABCs"
+       inkscape:menu-tooltip="Basic diffuse bevel to use for building textures"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur5058"
+         stdDeviation="6"
+         in="SourceGraphic"
+         result="result0" />
+      <feDiffuseLighting
+         id="feDiffuseLighting5060"
+         diffuseConstant="1"
+         surfaceScale="10"
+         result="result5">
+        <feDistantLight
+           id="feDistantLight5062"
+           elevation="25"
+           azimuth="235" />
+      </feDiffuseLighting>
+      <feComposite
+         id="feComposite5064"
+         in2="SourceGraphic"
+         k1="1"
+         in="result5"
+         result="result4"
+         operator="arithmetic"
+         k2="0"
+         k3="0.6" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4018">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.27"
+         id="feGaussianBlur4020" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4022">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.36515625"
+         id="feGaussianBlur4024" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4063">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.30199219"
+         id="feGaussianBlur4065" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4067">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.40265625"
+         id="feGaussianBlur4069" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.4"
+     inkscape:cx="14.448713"
+     inkscape:cy="13.902379"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1014"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4060">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-523.28571,-512.07648)">
+    <text
+       xml:space="preserve"
+       style="font-size:17.60938835px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#444444;fill-opacity:1;stroke:none;font-family:DejaVu Serif;-inkscape-font-specification:DejaVu Serif"
+       x="566.91028"
+       y="492.98608"
+       id="text5195"
+       sodipodi:linespacing="125%"
+       transform="scale(0.93034878,1.0748657)"><tspan
+         sodipodi:role="line"
+         id="tspan5197"
+         x="566.91028"
+         y="492.98608"
+         style="font-weight:bold;fill:#444444;fill-opacity:1;-inkscape-font-specification:DejaVu Serif Bold">V</tspan></text>
+    <path
+       style="font-size:17.60938834999999969px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Serif;-inkscape-font-specification:DejaVu Serif;filter:url(#filter4067)"
+       d="m 532.44196,516.10773 0,0.59375 -1.1875,0 3.25,9.15625 0.15625,-0.46875 -2.90625,-8.1875 1.1875,0 0,-1.09375 -0.5,0 z m 7.4375,0 0,0.59375 -1,0 -4.5,12.6875 -1.59375,0 0.1875,0.5 1.875,0 4.53125,-12.6875 1,0 0,-1.09375 -0.5,0 z m -12.5625,0.59375 0,0.5 0.8125,0 -0.1875,-0.5 -0.625,0 z m 9.5,0 0,0.5 0.75,0 0.1875,-0.5 -0.9375,0 z"
+       id="text4049"
+       inkscape:connector-curvature="0" />
+    <path
+       style="font-size:17.60938834999999969px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:DejaVu Serif;-inkscape-font-specification:DejaVu Serif;filter:url(#filter4063);opacity:0.8"
+       d="m 527.31696,516.10773 0,1.09375 0.5,0 0,-0.59375 5.125,0 0,-0.5 -5.625,0 z m 9.5,0 0,1.09375 0.5,0 0,-0.59375 3.0625,0 0,-0.5 -3.5625,0 z m -8.1875,1.59375 4.34375,12.1875 0.3125,0 -4.34375,-12.1875 -0.3125,0 z m 9.4375,0 -2.90625,8.1875 0.34375,0.96875 3.25,-9.15625 -0.6875,0 z"
+       id="text4045"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"WTM"
+		]
+	},
+	"recaptcha-edit": "W celu ochrony przed zautomatyzowanym spamem, proszę wpisać dwa widoczne słowa w poniższym polu:",
+	"recaptcha-addurl": "Wprowadzony przez ciebie tekst zawiera nowe linki zewnętrzne. W celu ochrony przed zautomatyzowanym spamem, proszę wpisać dwa widoczne słowa w poniższym polu:",
+	"recaptcha-badlogin": "W celu ochrony przed zautomatyzowanym łamaniem haseł, proszę wpisać dwa widoczne słowa w poniższym polu:",
+	"recaptcha-createaccount": "W celu ochrony przed zautomatyzowanym tworzeniem kont, proszę wpisać dwa widoczne słowa w poniższym polu:",
+	"recaptcha-createaccount-fail": "Odpowiedź na reCAPTCHA jest fałszywa lub brakująca.",
+	"recaptcha-create": "W celu ochrony przed przed automatycznym tworzeniem stron, proszę wpisać dwa widoczne słowa w poniższym polu:"
+}

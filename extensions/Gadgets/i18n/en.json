@@ -1,0 +1,23 @@
+{
+    "@metadata": {
+        "authors": [
+            "Daniel Kinzler, brightbyte.de"
+        ]
+    },
+    "gadgets-desc": "Lets users select custom [[Special:Gadgets|CSS and JavaScript gadgets]] in their [[Special:Preferences#mw-prefsection-gadgets|preferences]]",
+    "prefs-gadgets": "Gadgets",
+    "gadgets-prefstext": "Below is a list of special gadgets you can enable for your account.\nThese gadgets are mostly based on JavaScript, so JavaScript has to be enabled in your browser for them to work.\nNote that these gadgets will have no effect on this preferences page.\n\nAlso note that these special gadgets are not part of the MediaWiki software, and are usually developed and maintained by users on your local wiki.\nLocal administrators can edit the [[MediaWiki:Gadgets-definition|definitions]] and [[Special:Gadgets|descriptions]] of available gadgets.",
+    "gadgets": "Gadgets",
+    "gadgets-definition": "",
+    "gadgets-title": "Gadgets",
+    "gadgets-pagetext": "Below is a list of special gadgets users can enable on their [[Special:Preferences#mw-prefsection-gadgets|preferences page]], as defined by the [[MediaWiki:Gadgets-definition|definitions]].\nThis overview provides easy access to the system message pages that define each gadget's description and code.",
+    "gadgets-uses": "Uses",
+    "gadgets-required-rights": "Requires the following {{PLURAL:$2|right|rights}}:\n\n$1",
+    "gadgets-required-skins": "Available on the {{PLURAL:$2|$1 skin|following skins: $1}}.",
+    "gadgets-default": "Enabled for everyone by default.",
+    "gadgets-export": "Export",
+    "gadgets-export-title": "Gadget export",
+    "gadgets-not-found": "Gadget \"$1\" not found.",
+    "gadgets-export-text": "To export the $1 gadget, click on \"{{int:gadgets-export-download}}\" button, save the downloaded file,\ngo to Special:Import on destination wiki and upload it. Then add the following to MediaWiki:Gadgets-definition page:\n<pre>$2</pre>\nYou must have appropriate permissions on destination wiki (including the right to edit system messages) and import from file uploads must be enabled.",
+    "gadgets-export-download": "Download"
+}

@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Darth Kule",
+			"FRacco"
+		]
+	},
+	"cologneblue.css": "/* Gli stili CSS inseriti qui si applicano agli utenti che usano la skin Cologne Blue */",
+	"cologneblue.js": "/* Il codice JavaScript inserito qui viene caricato dagli utenti che usano la skin Cologne Blue */",
+	"cologneblue-desc": "Skin leggera con formattazione minima"
+}

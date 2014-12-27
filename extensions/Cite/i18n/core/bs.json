@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"CERminator",
+			"Reedy",
+			"KWiki"
+		]
+	},
+	"cite-desc": "Dodaje oznake <nowiki><ref[ name=id]></nowiki> i <nowiki><references/></nowiki> za citiranje",
+	"cite_error": "Greška kod citiranja: $1",
+	"cite_error_ref_numeric_key": "Nevaljana oznaka <code>&lt;ref&gt;</code>;\nnaslov ne može biti jednostavni cijeli broj. Koristite opisni naslov",
+	"cite_error_ref_no_key": "Nevaljana oznaka <code>&lt;ref&gt;</code>;\nreference bez sadržaja moraju imati naziv",
+	"cite_error_ref_too_many_keys": "Nevaljana oznaka <code>&lt;ref&gt;</code>;\nnevaljani nazivi, npr. možda ih je previše",
+	"cite_error_ref_no_input": "Nevaljana oznaka <code>&lt;ref&gt;</code>;\nreference bez naziva moraju imati sadržaj",
+	"cite_error_references_invalid_parameters": "Nevaljana oznaka <code>&lt;references&gt;</code>;\nnisu dozvoljeni parametri.\nKoristite <code>&lt;references /&gt;</code>",
+	"cite_error_references_invalid_parameters_group": "Nevaljana oznaka <code>&lt;references&gt;</code>\ndozvoljen je samo parametar \"group\".\nKoristite <code>&lt;references /&gt;</code> ili <code>&lt;references group=\"...\" /&gt;</code>",
+	"cite_error_references_no_backlink_label": "Ponestalo je prilagođenih naslova backlinkova.\nDefinirajte ih još u <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> poruci",
+	"cite_error_no_link_label_group": "Nedovoljan broj proizvoljnih naslova linkova za grupu \"$1\".\nDefinišite više putem poruke <nowiki>[[MediaWiki:$2]]</nowiki>.",
+	"cite_error_references_no_text": "Nevaljana oznaka <code>&lt;ref&gt;</code>;\nnije naveden tekst za reference s imenom <code>$1</code>",
+	"cite_error_included_ref": "Nedostaje oznaka za zatvaranje <code>&lt;/ref&gt;</code> nakon <code>&lt;ref&gt;</code>",
+	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> oznake postoje za grupu pod imenom \"$1\", ali nije pronađena pripadajuća oznaka <code>&lt;references group=\"$1\"/&gt;</code>",
+	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code> oznaka u <code>&lt;references&gt;</code> ima atribut grupe konflikta \"$1\".",
+	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> oznaka definisana u <code>&lt;references&gt;</code> ima atribut grupe \"$1\" koji se ne pojavljuje u ranijem tekstu.",
+	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> oznaka s imenom \"$1\" definirana u <code>&lt;references&gt;</code> nije korištena u ranijem tekstu.",
+	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> oznaka definisana u <code>&lt;references&gt;</code> nema imenski atribut.",
+	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> s imenom \"$1\" nema nikakvog sadržaja."
+}

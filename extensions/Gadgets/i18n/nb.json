@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": [
+			"Laaknor",
+			"Nghtwlkr",
+			"Sjurhamre"
+		]
+	},
+	"gadgets-desc": "Lar brukere velge egendefinerte [[Special:Gadgets|CSS- og JavaScript-verktøy]] i [[Special:Preferences#mw-prefsection-gadgets|innstillingene sine]]",
+	"prefs-gadgets": "Tilleggsfunksjoner",
+	"gadgets-prefstext": "Nedenfor er en liste over tilleggsfunksjoner du kan slå på for kontoen din.\nDisse funksjonene er for det meste basert på JavaScript, så du må ha dette slått på i nettleseren din for at de skal fungere.\nMerk at funksjonene ikke vil ha noen innvirkning på denne innstillingssiden.\n\nMerk også at disse verktøyene ikke er del av MediaWiki-programvaren, og vanligvis utvikles og vedlikeholdes av brukere på den lokale wikien. Lokale administratorer kan redigere tilgjengelig verktøy ved å endre [[MediaWiki:Gadgets-definition|definisjonene]] og [[Special:Gadgets|beskrivelsene]].",
+	"gadgets": "Tilleggsfunksjoner",
+	"gadgets-title": "Tilleggsfunksjoner",
+	"gadgets-pagetext": "Nedenfor er en liste over tilleggsfunksjoner brukere kan slå på i [[Special:Preferences#mw-prefsection-gadgets|innstillingene]], som definert på [[MediaWiki:Gadgets-definition]]. Denne oversikten gir lett tilgang til systembeskjedsidene som definerer hvert verktøys beskrivelse og kode.",
+	"gadgets-uses": "Bruk",
+	"gadgets-required-rights": "Krever følgende {{PLURAL:$2|rettighet|rettigheter}}:\n\n$1",
+	"gadgets-required-skins": "Tilgjengelig i {{PLURAL:$2|drakta $1|følgende drakter: $1}}.",
+	"gadgets-default": "Aktivert for alle som standard",
+	"gadgets-export": "Eksporter",
+	"gadgets-export-title": "Tilleggsfunksjon eksport",
+	"gadgets-not-found": "Tilleggsfunksjon «$1» ikke funnet.",
+	"gadgets-export-text": "For å eksportere verktøyet $1, klikk på «{{int:gadgets-export-download}}»-knappen, lagre den nedlastede filen, gå til Special:Import på destinasjonswikien og last den opp. Deretter legger du til følgende på siden MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nDu må ha de nødvendige tillatelsene på destinasjonswikien (inkludert retten til å redigere systemmeldinger) og import fra filopplastinger må være aktivert.",
+	"gadgets-export-download": "Last ned"
+}

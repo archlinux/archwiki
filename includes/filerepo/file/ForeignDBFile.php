@@ -27,11 +27,10 @@
  * @ingroup FileAbstraction
  */
 class ForeignDBFile extends LocalFile {
-
 	/**
-	 * @param $title
-	 * @param $repo
-	 * @param $unused
+	 * @param Title $title
+	 * @param FileRepo $repo
+	 * @param null $unused
 	 * @return ForeignDBFile
 	 */
 	static function newFromTitle( $title, $repo, $unused = null ) {
@@ -42,23 +41,23 @@ class ForeignDBFile extends LocalFile {
 	 * Create a ForeignDBFile from a title
 	 * Do not call this except from inside a repo class.
 	 *
-	 * @param $row
-	 * @param $repo
-	 *
+	 * @param stdClass $row
+	 * @param FileRepo $repo
 	 * @return ForeignDBFile
 	 */
 	static function newFromRow( $row, $repo ) {
 		$title = Title::makeTitle( NS_FILE, $row->img_name );
 		$file = new self( $title, $repo );
 		$file->loadFromRow( $row );
+
 		return $file;
 	}
 
 	/**
-	 * @param $srcPath String
-	 * @param $flags int
-	 * @param $options Array
-	 * @return \FileRepoStatus
+	 * @param string $srcPath
+	 * @param int $flags
+	 * @param array $options
+	 * @return FileRepoStatus
 	 * @throws MWException
 	 */
 	function publish( $srcPath, $flags = 0, array $options = array() ) {
@@ -66,14 +65,14 @@ class ForeignDBFile extends LocalFile {
 	}
 
 	/**
-	 * @param $oldver
-	 * @param $desc string
-	 * @param $license string
-	 * @param $copyStatus string
-	 * @param $source string
-	 * @param $watch bool
-	 * @param $timestamp bool|string
-	 * @param $user User object or null to use $wgUser
+	 * @param string $oldver
+	 * @param string $desc
+	 * @param string $license
+	 * @param string $copyStatus
+	 * @param string $source
+	 * @param bool $watch
+	 * @param bool|string $timestamp
+	 * @param User $user User object or null to use $wgUser
 	 * @return bool
 	 * @throws MWException
 	 */
@@ -83,9 +82,9 @@ class ForeignDBFile extends LocalFile {
 	}
 
 	/**
-	 * @param $versions array
-	 * @param $unsuppress bool
-	 * @return \FileRepoStatus
+	 * @param array $versions
+	 * @param bool $unsuppress
+	 * @return FileRepoStatus
 	 * @throws MWException
 	 */
 	function restore( $versions = array(), $unsuppress = false ) {
@@ -93,18 +92,19 @@ class ForeignDBFile extends LocalFile {
 	}
 
 	/**
-	 * @param $reason string
-	 * @param $suppress bool
-	 * @return \FileRepoStatus
+	 * @param string $reason
+	 * @param bool $suppress
+	 * @param User|null $user
+	 * @return FileRepoStatus
 	 * @throws MWException
 	 */
-	function delete( $reason, $suppress = false ) {
+	function delete( $reason, $suppress = false, $user = null ) {
 		$this->readOnlyError();
 	}
 
 	/**
-	 * @param $target Title
-	 * @return \FileRepoStatus
+	 * @param Title $target
+	 * @return FileRepoStatus
 	 * @throws MWException
 	 */
 	function move( $target ) {
@@ -120,7 +120,7 @@ class ForeignDBFile extends LocalFile {
 	}
 
 	/**
-	 * @param $lang Language Optional language to fetch description in.
+	 * @param bool|Language $lang Optional language to fetch description in.
 	 * @return string
 	 */
 	function getDescriptionText( $lang = false ) {

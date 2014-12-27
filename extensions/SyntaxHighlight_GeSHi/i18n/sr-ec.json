@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Millosh",
+			"Rancher",
+			"Sasa Stefanovic"
+		]
+	},
+	"syntaxhighlight-desc": "Омогућава визуелно означавање синтаксе <code>&lt;syntaxhighlight&gt;</code> коришћењем [http://qbnz.com/highlighter/ GeSHi хајлајтера].",
+	"syntaxhighlight-specify": "Потребно је одредити језик као овај:",
+	"syntaxhighlight-supported": "Подржани језици у визуелом означавању синтаксе:",
+	"syntaxhighlight-err-loading": "(грешка при учитавању подржаних језика)",
+	"syntaxhighlight-err-language": "Неисправан језик.",
+	"geshi.css": "/* CSS постављен овде биће примењен на визуелно означавање синтксе GeSHi */"
+}

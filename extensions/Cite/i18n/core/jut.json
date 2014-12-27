@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Huslåke"
+		]
+	},
+	"cite_error": "Fodnåtfejl: $1",
+	"cite_error_ref_numeric_key": "Ugyldigt <code>&lt;ref&gt;</code>-tag; \"name\" kan ikke være et simpelt heltal, brug en beskrivende titel",
+	"cite_error_ref_no_key": "Ugyldigt <code>&lt;ref&gt;</code>-tag: Et <code>&lt;ref&gt;</code>-tag uden indhold skal have et navn",
+	"cite_error_ref_too_many_keys": "Ugyldigt <code>&lt;ref&gt;</code>-tag: Ugyldege navne, fx før mange",
+	"cite_error_ref_no_input": "Ugyldigt <code>&lt;ref&gt;</code>-tag: Et <code>&lt;ref&gt;</code>-tag uden navn skal have indhold",
+	"cite_error_references_invalid_parameters": "Ugyldig <code>&lt;references&gt;</code>-tag: Parametre er ikke tilladt, brug i stedet <code>&lt;references /&gt;</code>",
+	"cite_error_references_no_backlink_label": "For mange <code>&lt;ref&gt;</code>-tags har det samme \"name\", tillad flere i beskeden <nowiki>[[MediaWiki:Cite_references_link_many_format_backlink_labels]]</nowiki>",
+	"cite_error_references_no_text": "Ugyldigt <code>&lt;ref&gt;</code>-tag: Der er ikke specificeret nogen fodnotetekst til navnet <code>$1</code>"
+}

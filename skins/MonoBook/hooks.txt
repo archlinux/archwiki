@@ -1,0 +1,8 @@
+Hooks provided by the MonoBook skin.
+
+'MonoBookTemplateToolboxEnd': DEPRECATED. Called by Monobook skin after toolbox
+links have been rendered (useful for adding more). Note: this is only run for
+the Monobook skin. To add items to the toolbox you should use the
+SkinTemplateToolboxEnd hook instead, which works for all "SkinTemplate"-type
+skins.
+$tools: array of tools

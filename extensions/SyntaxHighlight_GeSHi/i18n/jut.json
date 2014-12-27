@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Huslåke",
+			"Ælsån"
+		]
+	},
+	"syntaxhighlight-desc": "Gäv syntaks highlighting <code>&lt;syntaxhighlight&gt;</code> via [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Du nødst til spæsifiær en språg als dette:",
+	"syntaxhighlight-supported": "Understønde språg før syntaks highlighting:",
+	"syntaxhighlight-err-loading": "(fejl lægende understønde språg liste)",
+	"syntaxhighlight-err-language": "Fejl språg.",
+	"geshi.css": "/* CSS platsk her hvil være appliærn til GeSHi syntaks highlighting */"
+}

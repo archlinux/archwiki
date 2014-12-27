@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hamilton Abreu",
+			"Fúlvio"
+		]
+	},
+	"recaptcha-edit": "Para proteger esta wiki contra o spam de edições automáticas, por favor, digite as duas palavras que você vê na caixa abaixo:",
+	"recaptcha-addurl": "A sua edição contém links externos novos. Para proteger esta wiki contra o spam automatizado, escreva as duas palavras visíveis na caixa abaixo:",
+	"recaptcha-badlogin": "Para proteger esta wiki contra mecanismos automatizados de descoberta de palavras-chave, por favor escreva  as duas palavras visíveis abaixo:",
+	"recaptcha-createaccount": "Para proteger esta wiki contra a criação de contas automatizada, por favor escreva  as duas palavras visíveis abaixo:",
+	"recaptcha-createaccount-fail": "A resposta ao reCAPTCHA é errada.",
+	"recaptcha-create": "Para proteger esta wiki contra a criação de páginas automatizada, por favor escreva  as duas palavras visíveis abaixo:"
+}

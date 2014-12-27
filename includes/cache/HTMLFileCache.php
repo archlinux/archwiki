@@ -31,25 +31,32 @@
 class HTMLFileCache extends FileCacheBase {
 	/**
 	 * Construct an ObjectFileCache from a Title and an action
-	 * @param $title Title|string Title object or prefixed DB key string
-	 * @param $action string
+	 * @param Title|string $title Title object or prefixed DB key string
+	 * @param string $action
 	 * @throws MWException
 	 * @return HTMLFileCache
+	 *
+	 * @deprecated Since 1.24, instantiate this class directly
 	 */
 	public static function newFromTitle( $title, $action ) {
-		$cache = new self();
+		return new self( $title, $action );
+	}
 
+	/**
+	 * @param Title|string $title Title object or prefixed DB key string
+	 * @param string $action
+	 * @throws MWException
+	 */
+	public function __construct( $title, $action ) {
 		$allowedTypes = self::cacheablePageActions();
 		if ( !in_array( $action, $allowedTypes ) ) {
-			throw new MWException( "Invalid filecache type given." );
+			throw new MWException( 'Invalid file cache type given.' );
 		}
-		$cache->mKey = ( $title instanceof Title )
+		$this->mKey = ( $title instanceof Title )
 			? $title->getPrefixedDBkey()
 			: (string)$title;
-		$cache->mType = (string)$action;
-		$cache->mExt = 'html';
-
-		return $cache;
+		$this->mType = (string)$action;
+		$this->mExt = 'html';
 	}
 
 	/**
@@ -84,7 +91,7 @@ class HTMLFileCache extends FileCacheBase {
 
 	/**
 	 * Check if pages can be cached for this request/user
-	 * @param $context IContextSource
+	 * @param IContextSource $context
 	 * @return bool
 	 */
 	public static function useFileCache( IContextSource $context ) {
@@ -94,6 +101,7 @@ class HTMLFileCache extends FileCacheBase {
 		}
 		if ( $wgShowIPinHeader || $wgDebugToolbar ) {
 			wfDebug( "HTML file cache skipped. Either \$wgShowIPinHeader and/or \$wgDebugToolbar on\n" );
+
 			return false;
 		}
 
@@ -109,6 +117,7 @@ class HTMLFileCache extends FileCacheBase {
 			} elseif ( $query === 'maxage' || $query === 'smaxage' ) {
 				continue;
 			}
+
 			return false;
 		}
 		$user = $context->getUser();
@@ -116,13 +125,18 @@ class HTMLFileCache extends FileCacheBase {
 		// and extensions for auto-detecting user language.
 		$ulang = $context->getLanguage()->getCode();
 		$clang = $wgContLang->getCode();
+
 		// Check that there are no other sources of variation
-		return !$user->getId() && !$user->getNewtalk() && $ulang == $clang;
+		if ( $user->getId() || $user->getNewtalk() || $ulang != $clang ) {
+			return false;
+		}
+		// Allow extensions to disable caching
+		return wfRunHooks( 'HTMLFileCache::useFileCache', array( $context ) );
 	}
 
 	/**
 	 * Read from cache to context output
-	 * @param $context IContextSource
+	 * @param IContextSource $context
 	 * @return void
 	 */
 	public function loadFromFileCache( IContextSource $context ) {
@@ -152,7 +166,7 @@ class HTMLFileCache extends FileCacheBase {
 	/**
 	 * Save this cache object with the given text.
 	 * Use this as an ob_start() handler.
-	 * @param $text string
+	 * @param string $text
 	 * @return bool Whether $wgUseFileCache is enabled
 	 */
 	public function saveToFileCache( $text ) {
@@ -163,7 +177,7 @@ class HTMLFileCache extends FileCacheBase {
 			return $text;
 		}
 
-		wfDebug( __METHOD__ . "()\n", false );
+		wfDebug( __METHOD__ . "()\n", 'log' );
 
 		$now = wfTimestampNow();
 		if ( $this->useGzip() ) {
@@ -185,6 +199,7 @@ class HTMLFileCache extends FileCacheBase {
 			// @todo Ugly wfClientAcceptsGzip() function - use context!
 			if ( wfClientAcceptsGzip() ) {
 				header( 'Content-Encoding: gzip' );
+
 				return $compressed;
 			} else {
 				return $text;
@@ -196,7 +211,7 @@ class HTMLFileCache extends FileCacheBase {
 
 	/**
 	 * Clear the file caches for a page for all actions
-	 * @param $title Title
+	 * @param Title $title
 	 * @return bool Whether $wgUseFileCache is enabled
 	 */
 	public static function clearFileCache( Title $title ) {
@@ -207,7 +222,7 @@ class HTMLFileCache extends FileCacheBase {
 		}
 
 		foreach ( self::cacheablePageActions() as $type ) {
-			$fc = self::newFromTitle( $title, $type );
+			$fc = new self( $title, $type );
 			$fc->clearCache();
 		}
 

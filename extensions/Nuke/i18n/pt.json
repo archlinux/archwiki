@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hamilton Abreu",
+			"Imperadeiro98",
+			"Luckas",
+			"Malafaya",
+			"555",
+			"Vitorvicentevalente"
+		]
+	},
+	"nuke": "Eliminação em massa",
+	"nuke-desc": "[[Special:Nuke|Página especial]] que permite que os administradores apaguem páginas de forma massiva",
+	"nuke-nopages": "Não há novas páginas de [[Special:Contributions/$1|{{GENDER:$1|$1}}]] nas mudanças recentes.",
+	"nuke-list": "As páginas a seguir foram criadas recentemente por [[Special:Contributions/$1|$1]]; introduza um comentário e pressione o botão a seguir para eliminá-las.",
+	"nuke-list-multiple": "As seguintes páginas foram criadas recentemente;\nintroduza um comentário e clique o botão para eliminá-las.",
+	"nuke-defaultreason": "Eliminação em massa de páginas criadas por $1",
+	"nuke-multiplepeople": "Eliminação em massa de páginas recentemente adicionadas",
+	"nuke-tools": "Esta ferramenta permite a eliminação em massa de páginas criadas recentemente por um utilizador ou IP específico. Forneça o nome de utilizador ou o IP para obter a lista de páginas a eliminar, ou deixe em branco para todos os utilizadores.",
+	"nuke-submit-user": "Ir",
+	"nuke-submit-delete": "Eliminar as selecionadas",
+	"right-nuke": "Eliminar páginas em massa",
+	"nuke-select": "Selecionar: $1",
+	"nuke-userorip": "Utilizador, endereço IP, ou vazio:",
+	"nuke-maxpages": "Nº máximo de páginas:",
+	"nuke-editby": "Criada por [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
+	"nuke-deleted": "A página '''$1''' foi eliminada.",
+	"nuke-not-deleted": "Não foi possível eliminar a página [[:$1]].",
+	"nuke-linkoncontribs": "eliminação em massa",
+	"nuke-linkoncontribs-text": "Eliminar em massa páginas em que este utilizador é o único autor"
+}

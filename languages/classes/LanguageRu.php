@@ -34,8 +34,8 @@ class LanguageRu extends Language {
 	 * Convert from the nominative form of a noun to some other case
 	 * Invoked with {{grammar:case|word}}
 	 *
-	 * @param $word string
-	 * @param $case string
+	 * @param string $word
+	 * @param string $case
 	 * @return string
 	 */
 	function convertGrammar( $word, $case ) {
@@ -65,6 +65,8 @@ class LanguageRu extends Language {
 						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'тей';
 					} elseif ( join( '', array_slice( $chars[0], -2 ) ) === 'ды' ) {
 						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'дов';
+					} elseif ( join( '', array_slice( $chars[0], -1 ) ) === 'д' ) {
+						$word = join( '', array_slice( $chars[0], 0, -1 ) ) . 'да';
 					} elseif ( join( '', array_slice( $chars[0], -3 ) ) === 'ник' ) {
 						$word = join( '', array_slice( $chars[0], 0, -3 ) ) . 'ника';
 					} elseif ( join( '', array_slice( $chars[0], -3 ) ) === 'ные' ) {
@@ -91,6 +93,8 @@ class LanguageRu extends Language {
 						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'тях';
 					} elseif ( join( '', array_slice( $chars[0], -2 ) ) === 'ды' ) {
 						$word = join( '', array_slice( $chars[0], 0, -2 ) ) . 'дах';
+					} elseif ( join( '', array_slice( $chars[0], -1 ) ) === 'д' ) {
+						$word = join( '', array_slice( $chars[0], 0, -1 ) ) . 'де';
 					} elseif ( join( '', array_slice( $chars[0], -3 ) ) === 'ник' ) {
 						$word = join( '', array_slice( $chars[0], 0, -3 ) ) . 'нике';
 					} elseif ( join( '', array_slice( $chars[0], -3 ) ) === 'ные' ) {
@@ -108,7 +112,7 @@ class LanguageRu extends Language {
 	 * See manual of style at http://ru.wikipedia.org/wiki/Википедия:Оформление_статей
 	 * So "1 234 567", "12 345" but "1234"
 	 *
-	 * @param $_ string
+	 * @param string $_
 	 *
 	 * @return string
 	 */

@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Michawiki"
+		]
+	},
+	"syntaxhighlight-desc": "Syntaksowe wuzběhnjenje <code>&lt;syntaxhighlight&gt;</code> z pomocu rozšěrjenja [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Dyrbiš rěč takle definować:",
+	"syntaxhighlight-supported": "Podpěrowane rěče za syntaksowe wuzběhnjenje:",
+	"syntaxhighlight-err-loading": "(Zmylk při začitanju lisćiny rěčow)",
+	"syntaxhighlight-err-language": "Njepłaćiwa rěč.",
+	"geshi.css": "/* CSS w tutej zdźělence so na syntaksowe wuzběhnjenje GeSHi nałoži */"
+}

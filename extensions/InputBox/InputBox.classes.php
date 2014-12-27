@@ -44,14 +44,17 @@ class InputBox {
 		// Split caches by language, to make sure visitors do not see a cached
 		// version in a random language (since labels are in the user language)
 		$this->mParser->getOptions()->getUserLangObj();
+		$this->mParser->getOutput()->addModuleStyles( 'ext.inputBox.styles' );
 	}
 
 	public function render() {
 		// Handle various types
-		switch( $this->mType ) {
+		switch ( $this->mType ) {
 			case 'create':
 			case 'comment':
 				return $this->getCreateForm();
+			case 'move':
+				return $this->getMoveForm();
 			case 'commenttitle':
 				return $this->getCommentForm();
 			case 'search':
@@ -84,25 +87,33 @@ class InputBox {
 
 		// Use button label fallbacks
 		if ( !$this->mButtonLabel ) {
-			$this->mButtonLabel = wfMessage( 'tryexact' )->escaped();
+			$this->mButtonLabel = wfMessage( 'inputbox-tryexact' )->text();
 		}
 		if ( !$this->mSearchButtonLabel ) {
-			$this->mSearchButtonLabel = wfMessage( 'searchfulltext' )->escaped();
+			$this->mSearchButtonLabel = wfMessage( 'inputbox-searchfulltext' )->text();
 		}
+		if ( $this->mID !== '' ) {
+			$idArray = array( 'id' => Sanitizer::escapeId( $this->mID ) );
+		} else {
+			$idArray = array();
+		}
+		// We need a unqiue id to link <label> to checkboxes, but also
+		// want multiple <inputbox>'s to not be invalid html
+		$idRandStr = Sanitizer::escapeId( '-' . $this->mID . wfRandom(), 'noninitial' );
 
 		// Build HTML
 		$htmlOut = Xml::openElement( 'div',
 			array(
-				'style' => 'margin-left: auto; margin-right: auto; text-align: center; background-color:' . $this->mBGColor
+				'class' => 'mw-inputbox-centered',
+				'style' => $this->bgColorStyle(),
 			)
 		);
 		$htmlOut .= Xml::openElement( 'form',
 			array(
 				'name' => 'searchbox',
-				'id' => 'searchbox',
 				'class' => 'searchbox',
-				'action' => SpecialPage::getTitleFor( 'Search' )->escapeLocalUrl(),
-			)
+				'action' => SpecialPage::getTitleFor( 'Search' )->getLocalUrl(),
+			) + $idArray
 		);
 		$htmlOut .= Xml::element( 'input',
 			array(
@@ -116,7 +127,7 @@ class InputBox {
 			)
 		);
 
-		if( $this->mPrefix != '' ){
+		if ( $this->mPrefix != '' ) {
 			$htmlOut .= Xml::element( 'input',
 				array(
 					'name' => 'prefix',
@@ -146,9 +157,9 @@ class InputBox {
 				}
 
 				$mainMsg = wfMessage( 'inputbox-ns-main' )->inContentLanguage()->text();
-				if( $userNS == 'Main' || $userNS == $mainMsg ) {
+				if ( $userNS == 'Main' || $userNS == $mainMsg ) {
 					$i = 0;
-				} elseif( array_search( $userNS, $namespaces ) ) {
+				} elseif ( array_search( $userNS, $namespaces ) ) {
 					$i = array_search( $userNS, $namespaces );
 				} elseif ( isset( $nsAliases[$userNS] ) ) {
 					$i = $nsAliases[$userNS];
@@ -156,13 +167,13 @@ class InputBox {
 					continue; # Namespace not recognized, skip
 				}
 				$showNamespaces[$i] = $userNS;
-				if( isset( $checkedNS[$userNS] ) && $checkedNS[$userNS] ) {
+				if ( isset( $checkedNS[$userNS] ) && $checkedNS[$userNS] ) {
 					$checkedNS[$i] = true;
 				}
 			}
 
 			# Show valid namespaces
-			foreach( $showNamespaces as $i => $name ) {
+			foreach ( $showNamespaces as $i => $name ) {
 				$checked = array();
 				// Namespace flagged with "**" or if it's the only one
 				if ( ( isset( $checkedNS[$i] ) && $checkedNS[$i] ) || count( $showNamespaces ) == 1 ) {
@@ -176,29 +187,29 @@ class InputBox {
 							'type' => 'hidden',
 							'name' => 'ns' . $i,
 							'value' => 1,
-							'id' => 'mw-inputbox-ns' . $i
+							'id' => 'mw-inputbox-ns' . $i . $idRandStr
 						) + $checked
 					);
 				} else {
 					// Checkbox
-					$htmlOut .= ' <div class="inputbox-element" style="display: inline; white-space: nowrap;">';
+					$htmlOut .= ' <div class="inputbox-element">';
 					$htmlOut .= Xml::element( 'input',
 						array(
 							'type' => 'checkbox',
 							'name' => 'ns' . $i,
 							'value' => 1,
-							'id' => 'mw-inputbox-ns' . $i
+							'id' => 'mw-inputbox-ns' . $i . $idRandStr
 						) + $checked
 					);
 					// Label
-					$htmlOut .= '&#160;' . Xml::label( $name, 'mw-inputbox-ns' . $i );
+					$htmlOut .= '&#160;' . Xml::label( $name, 'mw-inputbox-ns' . $i . $idRandStr );
 					$htmlOut .= '</div> ';
 				}
 			}
 
 			// Line break
 			$htmlOut .= $this->mBR;
-		} elseif( $type == 'search' ) {
+		} elseif ( $type == 'search' ) {
 			// Go button
 			$htmlOut .= Xml::element( 'input',
 				array(
@@ -222,7 +233,7 @@ class InputBox {
 		);
 
 		// Hidden fulltext param for IE (bug 17161)
-		if( $type == 'fulltext' ) {
+		if ( $type == 'fulltext' ) {
 			$htmlOut .= Html::hidden( 'fulltext', 'Search' );
 		}
 
@@ -239,10 +250,18 @@ class InputBox {
 	public function getSearchForm2() {
 		// Use button label fallbacks
 		if ( !$this->mButtonLabel ) {
-			$this->mButtonLabel = wfMessage( 'tryexact' )->escaped();
+			$this->mButtonLabel = wfMessage( 'inputbox-tryexact' )->text();
 		}
 
-		$id = Sanitizer::escapeId( $this->mID, 'noninitial' );
+		if ( $this->mID !== '' ) {
+			$unescapedID = $this->mID;
+		} else {
+			// The label element needs a unique id, use
+			// random number to avoid multiple input boxes
+			// having conflicts.
+			$unescapedID = wfRandom();
+		}
+		$id = Sanitizer::escapeId( $unescapedID, 'noninitial' );
 		$htmlLabel = '';
 		if ( isset( $this->mLabelText ) && strlen( trim( $this->mLabelText ) ) ) {
 			$this->mLabelText = $this->mParser->recursiveTagParse( $this->mLabelText );
@@ -254,16 +273,14 @@ class InputBox {
 			array(
 				'name' => 'bodySearch' . $id,
 				'id' => 'bodySearch' . $id,
-				'class' => 'bodySearch',
-				'action' => SpecialPage::getTitleFor( 'Search' )->escapeLocalUrl(),
-				'style' => $this->mInline ? 'display: inline;' : ''
+				'class' => 'bodySearch' . ( $this->mInline ? ' mw-inputbox-inline' : '' ),
+				'action' => SpecialPage::getTitleFor( 'Search' )->getLocalUrl(),
 			)
 		);
 		$htmlOut .= Xml::openElement( 'div',
 			array(
-				'class' => 'bodySearchWrap',
-				'style' => 'background-color:' . $this->mBGColor . ';' .
-					$this->mInline ? 'display: inline;' : ''
+				'class' => 'bodySearchWrap' . ( $this->mInline ? ' mw-inputbox-inline' : '' ),
+				'style' => $this->bgColorStyle(),
 			)
 		);
 		$htmlOut .= $htmlLabel;
@@ -281,7 +298,7 @@ class InputBox {
 				'type' => 'submit',
 				'name' => 'go',
 				'value' => $this->mButtonLabel,
-				'class' => 'bodySearchBtnGo' . $id
+				'class' => 'bodySearchBtnGo',
 			)
 		);
 
@@ -312,17 +329,18 @@ class InputBox {
 
 		if ( $this->mType == "comment" ) {
 			if ( !$this->mButtonLabel ) {
-				$this->mButtonLabel = wfMessage( "postcomment" )->escaped();
+				$this->mButtonLabel = wfMessage( 'inputbox-postcomment' )->text();
 			}
 		} else {
 			if ( !$this->mButtonLabel ) {
-				$this->mButtonLabel = wfMessage( 'createarticle' )->escaped();
+				$this->mButtonLabel = wfMessage( 'inputbox-createarticle' )->text();
 			}
 		}
 
 		$htmlOut = Xml::openElement( 'div',
 			array(
-				'style' => 'margin-left: auto; margin-right: auto; text-align: center; background-color:' . $this->mBGColor
+				'class' => 'mw-inputbox-centered',
+				'style' => $this->bgColorStyle(),
 			)
 		);
 		$createBoxParams = array(
@@ -331,8 +349,8 @@ class InputBox {
 			'action' => $wgScript,
 			'method' => 'get'
 		);
-		if( isset( $this->mId ) ) {
-			$createBoxParams['id'] = Sanitizer::escapeId( $this->mId );
+		if ( $this->mID !== '' ) {
+			$createBoxParams['id'] = Sanitizer::escapeId( $this->mID );
 		}
 		$htmlOut .= Xml::openElement( 'form', $createBoxParams );
 		$htmlOut .= Xml::openElement( 'input',
@@ -421,18 +439,92 @@ class InputBox {
 	}
 
 	/**
+	 * Generate move page form
+	 */
+	public function getMoveForm() {
+		global $wgScript;
+
+		if ( !$this->mButtonLabel ) {
+			$this->mButtonLabel = wfMessage( 'inputbox-movearticle' )->text();
+		}
+
+		$htmlOut = Xml::openElement( 'div',
+			array(
+				'class' => 'mw-inputbox-centered',
+				'style' => $this->bgColorStyle(),
+			)
+		);
+		$moveBoxParams = array(
+			'name' => 'movebox',
+			'class' => 'mw-movebox',
+			'action' => $wgScript,
+			'method' => 'get'
+		);
+		if ( $this->mID !== '' ) {
+			$moveBoxParams['id'] = Sanitizer::escapeId( $this->mID );
+		}
+		$htmlOut .= Xml::openElement( 'form', $moveBoxParams );
+		$htmlOut .= Xml::openElement( 'input',
+			array(
+				'type' => 'hidden',
+				'name' => 'title',
+				'value' => SpecialPage::getTitleFor( 'Movepage', $this->mPage )->getPrefixedText(),
+			)
+		);
+		$htmlOut .= Xml::openElement( 'input',
+			array(
+				'type' => 'hidden',
+				'name' => 'wpReason',
+				'value' => $this->mSummary,
+			)
+		);
+		$htmlOut .= Xml::openElement( 'input',
+			array(
+				'type' => 'hidden',
+				'name' => 'prefix',
+				'value' => $this->mPrefix,
+			)
+		);
+		$htmlOut .= Xml::openElement( 'input',
+			array(
+				'type' => $this->mHidden ? 'hidden' : 'text',
+				'name' => 'wpNewTitle',
+				'class' => 'mw-moveboxInput',
+				'value' => $this->mDefaultText,
+				'placeholder' => $this->mPlaceholderText,
+				'size' => $this->mWidth,
+				'dir' => $this->mDir,
+			)
+		);
+		$htmlOut .= $this->mBR;
+		$htmlOut .= Xml::openElement( 'input',
+			array(
+				'type' => 'submit',
+				'class' => 'mw-moveboxButton',
+				'value' => $this->mButtonLabel
+			)
+		);
+		$htmlOut .= Xml::closeElement( 'form' );
+		$htmlOut .= Xml::closeElement( 'div' );
+
+		// Return HTML
+		return $htmlOut;
+	}
+
+	/**
 	 * Generate new section form
 	 */
 	public function getCommentForm() {
 		global $wgScript;
 
 		if ( !$this->mButtonLabel ) {
-				$this->mButtonLabel = wfMessage( "postcomment" )->escaped();
+				$this->mButtonLabel = wfMessage( 'inputbox-postcommenttitle' )->text();
 		}
 
 		$htmlOut = Xml::openElement( 'div',
 			array(
-				'style' => 'margin-left: auto; margin-right: auto; text-align: center; background-color:' . $this->mBGColor
+				'class' => 'mw-inputbox-centered',
+				'style' => $this->bgColorStyle(),
 			)
 		);
 		$commentFormParams = array(
@@ -441,8 +533,8 @@ class InputBox {
 			'action' => $wgScript,
 			'method' => 'get'
 		);
-		if( isset( $this->mId ) ) {
-			$commentFormParams['id'] = Sanitizer::escapeId( $this->mId );
+		if ( $this->mID !== '' ) {
+			$commentFormParams['id'] = Sanitizer::escapeId( $this->mID );
 		}
 		$htmlOut .= Xml::openElement( 'form', $commentFormParams );
 		$htmlOut .= Xml::openElement( 'input',
@@ -589,5 +681,12 @@ class InputBox {
 			) $ /xi
 REGEX;
 		return (bool) preg_match( $regex, $color );
+	}
+
+	private function bgColorStyle() {
+		if ( $this->mBGColor != 'transparent' ) {
+			return 'background-color: ' . $this->mBGColor . ';';
+		}
+		return '';
 	}
 }

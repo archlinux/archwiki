@@ -42,5 +42,6 @@ $wgCaptchaQuestions = array();
 // You can also provide several acceptable answers to a given question (the answers shall be in lowercase):
 // $wgCaptchaQuestions[] = array( 'question' => "2 + 2 ?", 'answer' => array( '4', 'four' ) );
 
+$wgMessagesDirs['QuestyCaptcha'] = __DIR__ . '/i18n/questy';
 $wgExtensionMessagesFiles['QuestyCaptcha'] = $dir . '/QuestyCaptcha.i18n.php';
 $wgAutoloadClasses['QuestyCaptcha'] = $dir . '/QuestyCaptcha.class.php';

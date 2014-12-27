@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Huslåke"
+		]
+	},
+	"inputbox-desc": "Tilstån der inklusje der prædæfiiniærn HTML fårmer",
+	"inputbox-error-no-type": "Du harst ekke spæsifiærn æ type der input boks til skep.",
+	"inputbox-error-bad-type": "Input boks type \"$1\" ekke herkonnen. Spæsifiær \"skep\", \"bimærkenge\", \"søĝ\" æller \"søĝ2\".",
+	"inputbox-tryexact": "Førsøĝ eksakt søĝnenge:",
+	"inputbox-searchfulltext": "Gennemsøĝe'n hæle tekster",
+	"inputbox-createarticle": "Åprette side"
+}

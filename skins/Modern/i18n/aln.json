@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bresta"
+		]
+	},
+	"modern.css": "/* CSSi i vednosun këtu ka me i prekë shfrytëzuesit e dukjes Modern */",
+	"modern.js": "/* Çdo JavaScript këtu ka me u ngarkue për shfrytëzuesit që përdorin dukjen Modern */"
+}

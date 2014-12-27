@@ -39,6 +39,10 @@ class DeleteArchivedFilesImplementation {
 		$count = 0;
 		foreach ( $res as $row ) {
 			$key = $row->fa_storage_key;
+			if ( !strlen( $key ) ) {
+				$output->handleOutput( "Entry with ID {$row->fa_id} has empty key, skipping\n" );
+				continue;
+			}
 			$group = $row->fa_storage_group;
 			$id = $row->fa_id;
 			$path = $repo->getZonePath( 'deleted' ) . '/' . $repo->getDeletedHashPath( $key ) . $key;
@@ -49,9 +53,13 @@ class DeleteArchivedFilesImplementation {
 				$sha1 = LocalRepo::getHashFromKey( $key );
 			}
 			// Check if the file is used anywhere...
-			$inuse = $dbw->selectField( 'oldimage', '1',
-				array( 'oi_sha1' => $sha1,
-				'oi_deleted & ' . File::DELETED_FILE => File::DELETED_FILE ),
+			$inuse = $dbw->selectField(
+				'oldimage',
+				'1',
+				array(
+					'oi_sha1' => $sha1,
+					'oi_deleted & ' . File::DELETED_FILE => File::DELETED_FILE
+				),
 				__METHOD__,
 				array( 'FOR UPDATE' )
 			);

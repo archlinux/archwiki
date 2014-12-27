@@ -27,6 +27,7 @@
  * @ingroup Media
  */
 class TiffHandler extends ExifBitmapHandler {
+	const EXPENSIVE_SIZE_LIMIT = 10485760; // TIFF files over 10M are considered expensive to thumbnail
 
 	/**
 	 * Conversion to PNG for inline display can be disabled here...
@@ -36,12 +37,12 @@ class TiffHandler extends ExifBitmapHandler {
 	 * InstantCommons will have thumbnails managed from the remote instance,
 	 * so we can skip this check.
 	 *
-	 * @param $file
-	 *
+	 * @param File $file
 	 * @return bool
 	 */
 	function canRender( $file ) {
 		global $wgTiffThumbnailType;
+
 		return (bool)$wgTiffThumbnailType
 			|| $file->getRepo() instanceof ForeignAPIRepo;
 	}
@@ -50,8 +51,7 @@ class TiffHandler extends ExifBitmapHandler {
 	 * Browsers don't support TIFF inline generally...
 	 * For inline display, we need to convert to PNG.
 	 *
-	 * @param $file
-	 *
+	 * @param File $file
 	 * @return bool
 	 */
 	function mustRender( $file ) {
@@ -59,13 +59,14 @@ class TiffHandler extends ExifBitmapHandler {
 	}
 
 	/**
-	 * @param $ext
-	 * @param $mime
-	 * @param $params
+	 * @param string $ext
+	 * @param string $mime
+	 * @param array $params
 	 * @return bool
 	 */
 	function getThumbType( $ext, $mime, $params = null ) {
 		global $wgTiffThumbnailType;
+
 		return $wgTiffThumbnailType;
 	}
 
@@ -85,16 +86,21 @@ class TiffHandler extends ExifBitmapHandler {
 					throw new MWException( 'Metadata array is not an array' );
 				}
 				$meta['MEDIAWIKI_EXIF_VERSION'] = Exif::version();
+
 				return serialize( $meta );
-			}
-			catch ( MWException $e ) {
+			} catch ( MWException $e ) {
 				// BitmapMetadataHandler throws an exception in certain exceptional
 				// cases like if file does not exist.
 				wfDebug( __METHOD__ . ': ' . $e->getMessage() . "\n" );
+
 				return ExifBitmapHandler::BROKEN_FILE;
 			}
 		} else {
 			return '';
 		}
+	}
+
+	public function isExpensiveToThumbnail( $file ) {
+		return $file->getSize() > static::EXPENSIVE_SIZE_LIMIT;
 	}
 }

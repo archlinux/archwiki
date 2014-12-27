@@ -32,7 +32,7 @@
  */
 class ApiLogin extends ApiBase {
 
-	public function __construct( $main, $action ) {
+	public function __construct( ApiMain $main, $action ) {
 		parent::__construct( $main, $action, 'lg' );
 	}
 
@@ -52,6 +52,7 @@ class ApiLogin extends ApiBase {
 				'result' => 'Aborted',
 				'reason' => 'Cannot log in when using a callback',
 			) );
+
 			return;
 		}
 
@@ -78,15 +79,12 @@ class ApiLogin extends ApiBase {
 		$loginForm = new LoginForm();
 		$loginForm->setContext( $context );
 
-		global $wgCookiePrefix, $wgPasswordAttemptThrottle;
-
 		$authRes = $loginForm->authenticateUserData();
 		switch ( $authRes ) {
 			case LoginForm::SUCCESS:
 				$user = $context->getUser();
 				$this->getContext()->setUser( $user );
-				$user->setOption( 'rememberpassword', 1 );
-				$user->setCookies( $this->getRequest() );
+				$user->setCookies( $this->getRequest(), null, true );
 
 				ApiQueryInfo::resetTokenCache();
 
@@ -100,14 +98,14 @@ class ApiLogin extends ApiBase {
 				$result['lguserid'] = intval( $user->getId() );
 				$result['lgusername'] = $user->getName();
 				$result['lgtoken'] = $user->getToken();
-				$result['cookieprefix'] = $wgCookiePrefix;
+				$result['cookieprefix'] = $this->getConfig()->get( 'CookiePrefix' );
 				$result['sessionid'] = session_id();
 				break;
 
 			case LoginForm::NEED_TOKEN:
 				$result['result'] = 'NeedToken';
 				$result['token'] = $loginForm->getLoginToken();
-				$result['cookieprefix'] = $wgCookiePrefix;
+				$result['cookieprefix'] = $this->getConfig()->get( 'CookiePrefix' );
 				$result['sessionid'] = session_id();
 				break;
 
@@ -131,7 +129,9 @@ class ApiLogin extends ApiBase {
 				$result['result'] = 'NotExists';
 				break;
 
-			case LoginForm::RESET_PASS: // bug 20223 - Treat a temporary password as wrong. Per SpecialUserLogin - "The e-mailed temporary password should not be used for actual logins;"
+			// bug 20223 - Treat a temporary password as wrong. Per SpecialUserLogin:
+			// The e-mailed temporary password should not be used for actual logins.
+			case LoginForm::RESET_PASS:
 			case LoginForm::WRONG_PASS:
 				$result['result'] = 'WrongPass';
 				break;
@@ -147,7 +147,8 @@ class ApiLogin extends ApiBase {
 
 			case LoginForm::THROTTLED:
 				$result['result'] = 'Throttled';
-				$result['wait'] = intval( $wgPasswordAttemptThrottle['seconds'] );
+				$throttle = $this->getConfig()->get( 'PasswordAttemptThrottle' );
+				$result['wait'] = intval( $throttle['seconds'] );
 				break;
 
 			case LoginForm::USER_BLOCKED:
@@ -192,90 +193,14 @@ class ApiLogin extends ApiBase {
 		);
 	}
 
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'result' => array(
-					ApiBase::PROP_TYPE => array(
-						'Success',
-						'NeedToken',
-						'WrongToken',
-						'NoName',
-						'Illegal',
-						'WrongPluginPass',
-						'NotExists',
-						'WrongPass',
-						'EmptyPass',
-						'CreateBlocked',
-						'Throttled',
-						'Blocked',
-						'Aborted'
-					)
-				),
-				'lguserid' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'lgusername' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'lgtoken' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'cookieprefix' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'sessionid' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'token' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'details' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'wait' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'reason' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			)
-		);
-	}
-
 	public function getDescription() {
 		return array(
-			'Log in and get the authentication tokens. ',
-			'In the event of a successful log-in, a cookie will be attached',
-			'to your session. In the event of a failed log-in, you will not ',
-			'be able to attempt another log-in through this method for 5 seconds.',
-			'This is to prevent password guessing by automated password crackers'
+			'Log in and get the authentication tokens.',
+			'In the event of a successful log-in, a cookie will be attached to your session.',
+			'In the event of a failed log-in, you will not be able to attempt another log-in',
+			'through this method for 5 seconds. This is to prevent password guessing by',
+			'automated password crackers.'
 		);
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'code' => 'NeedToken', 'info' => 'You need to resubmit your login with the specified token. See https://bugzilla.wikimedia.org/show_bug.cgi?id=23076' ),
-			array( 'code' => 'WrongToken', 'info' => 'You specified an invalid token' ),
-			array( 'code' => 'NoName', 'info' => 'You didn\'t set the lgname parameter' ),
-			array( 'code' => 'Illegal', 'info' => ' You provided an illegal username' ),
-			array( 'code' => 'NotExists', 'info' => ' The username you provided doesn\'t exist' ),
-			array( 'code' => 'EmptyPass', 'info' => ' You didn\'t set the lgpassword parameter or you left it empty' ),
-			array( 'code' => 'WrongPass', 'info' => ' The password you provided is incorrect' ),
-			array( 'code' => 'WrongPluginPass', 'info' => 'Same as "WrongPass", returned when an authentication plugin rather than MediaWiki itself rejected the password' ),
-			array( 'code' => 'CreateBlocked', 'info' => 'The wiki tried to automatically create a new account for you, but your IP address has been blocked from account creation' ),
-			array( 'code' => 'Throttled', 'info' => 'You\'ve logged in too many times in a short time' ),
-			array( 'code' => 'Blocked', 'info' => 'User is blocked' ),
-		) );
 	}
 
 	public function getExamples() {

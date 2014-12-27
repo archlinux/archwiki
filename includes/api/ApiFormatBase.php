@@ -30,22 +30,20 @@
  * @ingroup API
  */
 abstract class ApiFormatBase extends ApiBase {
-
 	private $mIsHtml, $mFormat, $mUnescapeAmps, $mHelp, $mCleared;
 	private $mBufferResult = false, $mBuffer, $mDisabled = false;
 
 	/**
-	 * Constructor
 	 * If $format ends with 'fm', pretty-print the output in HTML.
-	 * @param $main ApiMain
+	 * @param ApiMain $main
 	 * @param string $format Format name
 	 */
-	public function __construct( $main, $format ) {
+	public function __construct( ApiMain $main, $format ) {
 		parent::__construct( $main, $format );
 
-		$this->mIsHtml = ( substr( $format, - 2, 2 ) === 'fm' ); // ends with 'fm'
+		$this->mIsHtml = ( substr( $format, -2, 2 ) === 'fm' ); // ends with 'fm'
 		if ( $this->mIsHtml ) {
-			$this->mFormat = substr( $format, 0, - 2 ); // remove ending 'fm'
+			$this->mFormat = substr( $format, 0, -2 ); // remove ending 'fm'
 		} else {
 			$this->mFormat = $format;
 		}
@@ -54,7 +52,7 @@ abstract class ApiFormatBase extends ApiBase {
 	}
 
 	/**
-	 * Overriding class returns the mime type that should be sent to the client.
+	 * Overriding class returns the MIME type that should be sent to the client.
 	 * This method is not called if getIsHtml() returns true.
 	 * @return string
 	 */
@@ -122,6 +120,16 @@ abstract class ApiFormatBase extends ApiBase {
 	}
 
 	/**
+	 * Whether this formatter can handle printing API errors. If this returns
+	 * false, then on API errors the default printer will be instantiated.
+	 * @since 1.23
+	 * @return bool
+	 */
+	public function canPrintErrors() {
+		return true;
+	}
+
+	/**
 	 * Initialize the printer function and prepare the output headers, etc.
 	 * This method must be the first outputting method during execution.
 	 * A human-targeted notice about available formats is printed for the HTML-based output,
@@ -146,9 +154,9 @@ abstract class ApiFormatBase extends ApiBase {
 		$this->getMain()->getRequest()->response()->header( "Content-Type: $mime; charset=utf-8" );
 
 		//Set X-Frame-Options API results (bug 39180)
-		global $wgApiFrameOptions;
-		if ( $wgApiFrameOptions ) {
-			$this->getMain()->getRequest()->response()->header( "X-Frame-Options: $wgApiFrameOptions" );
+		$apiFrameOptions = $this->getConfig()->get( 'ApiFrameOptions' );
+		if ( $apiFrameOptions ) {
+			$this->getMain()->getRequest()->response()->header( "X-Frame-Options: $apiFrameOptions" );
 		}
 
 		if ( $isHtml ) {
@@ -156,17 +164,20 @@ abstract class ApiFormatBase extends ApiBase {
 <!DOCTYPE HTML>
 <html>
 <head>
-<?php if ( $this->mUnescapeAmps ) {
+<?php
+			if ( $this->mUnescapeAmps ) {
 ?>	<title>MediaWiki API</title>
-<?php } else {
+<?php
+			} else {
 ?>	<title>MediaWiki API Result</title>
-<?php } ?>
+<?php
+			}
+?>
 </head>
 <body>
 <?php
-
-
 			if ( !$isHelpScreen ) {
+// @codingStandardsIgnoreStart Exclude long line from CodeSniffer checks
 ?>
 <br />
 <small>
@@ -179,15 +190,14 @@ See the <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>,
 </small>
 <pre style='white-space: pre-wrap;'>
 <?php
-
-
-			} else { // don't wrap the contents of the <pre> for help screens
-			          // because these are actually formatted to rely on
-			          // the monospaced font for layout purposes
+// @codingStandardsIgnoreEnd
+			// don't wrap the contents of the <pre> for help screens
+			// because these are actually formatted to rely on
+			// the monospaced font for layout purposes
+			} else {
 ?>
 <pre>
 <?php
-
 			}
 		}
 	}
@@ -206,8 +216,6 @@ See the <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>,
 </body>
 </html>
 <?php
-
-
 		}
 	}
 
@@ -215,7 +223,7 @@ See the <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>,
 	 * The main format printing function. Call it to output the result
 	 * string to the user. This function will automatically output HTML
 	 * when format name ends in 'fm'.
-	 * @param $text string
+	 * @param string $text
 	 */
 	public function printText( $text ) {
 		if ( $this->mDisabled ) {
@@ -239,6 +247,7 @@ See the <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>,
 
 	/**
 	 * Get the contents of the buffer.
+	 * @return string
 	 */
 	public function getBuffer() {
 		return $this->mBuffer;
@@ -246,7 +255,7 @@ See the <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>,
 
 	/**
 	 * Set the flag to buffer the result instead of printing it.
-	 * @param $value bool
+	 * @param bool $value
 	 */
 	public function setBufferResult( $value ) {
 		$this->mBufferResult = $value;
@@ -254,7 +263,7 @@ See the <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>,
 
 	/**
 	 * Sets whether the pretty-printer should format *bold*
-	 * @param $help bool
+	 * @param bool $help
 	 */
 	public function setHelp( $help = true ) {
 		$this->mHelp = $help;
@@ -263,7 +272,7 @@ See the <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>,
 	/**
 	 * Pretty-print various elements in HTML format, such as xml tags and
 	 * URLs. This method also escapes characters like <
-	 * @param $text string
+	 * @param string $text
 	 * @return string
 	 */
 	protected function formatHTML( $text ) {
@@ -276,8 +285,8 @@ See the <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>,
 		// identify requests to api.php
 		$text = preg_replace( '#^(\s*)(api\.php\?[^ <\n\t]+)$#m', '\1<a href="\2">\2</a>', $text );
 		if ( $this->mHelp ) {
-			// make strings inside * bold
-			$text = preg_replace( "#\\*[^<>\n]+\\*#", '<b>\\0</b>', $text );
+			// make lines inside * bold
+			$text = preg_replace( '#^(\s*)(\*[^<>\n]+\*)(\s*)$#m', '$1<b>$2</b>$3', $text );
 		}
 
 		// Armor links (bug 61362)
@@ -291,7 +300,11 @@ See the <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>,
 		// identify URLs
 		$protos = wfUrlProtocolsWithoutProtRel();
 		// This regex hacks around bug 13218 (&quot; included in the URL)
-		$text = preg_replace( "#(((?i)$protos).*?)(&quot;)?([ \\'\"<>\n]|&lt;|&gt;|&quot;)#", '<a href="\\1">\\1</a>\\3\\4', $text );
+		$text = preg_replace(
+			"#(((?i)$protos).*?)(&quot;)?([ \\'\"<>\n]|&lt;|&gt;|&quot;)#",
+			'<a href="\\1">\\1</a>\\3\\4',
+			$text
+		);
 
 		// Unarmor links
 		$text = preg_replace_callback( '#<([0-9a-f]{40})>#', function ( $matches ) use ( &$masked ) {
@@ -326,73 +339,16 @@ See the <a href='https://www.mediawiki.org/wiki/API'>complete documentation</a>,
 	public function getDescription() {
 		return $this->getIsHtml() ? ' (pretty-print in HTML)' : '';
 	}
-}
-
-/**
- * This printer is used to wrap an instance of the Feed class
- * @ingroup API
- */
-class ApiFormatFeedWrapper extends ApiFormatBase {
-
-	public function __construct( $main ) {
-		parent::__construct( $main, 'feed' );
-	}
 
 	/**
-	 * Call this method to initialize output data. See execute()
-	 * @param $result ApiResult
-	 * @param $feed object an instance of one of the $wgFeedClasses classes
-	 * @param array $feedItems of FeedItem objects
+	 * To avoid code duplication with the deprecation of dbg, dump, txt, wddx,
+	 * and yaml, this method is added to do the necessary work. It should be
+	 * removed when those deprecated formats are removed.
 	 */
-	public static function setResult( $result, $feed, $feedItems ) {
-		// Store output in the Result data.
-		// This way we can check during execution if any error has occurred
-		// Disable size checking for this because we can't continue
-		// cleanly; size checking would cause more problems than it'd
-		// solve
-		$result->disableSizeCheck();
-		$result->addValue( null, '_feed', $feed );
-		$result->addValue( null, '_feeditems', $feedItems );
-		$result->enableSizeCheck();
-	}
-
-	/**
-	 * Feed does its own headers
-	 *
-	 * @return null
-	 */
-	public function getMimeType() {
-		return null;
-	}
-
-	/**
-	 * Optimization - no need to sanitize data that will not be needed
-	 *
-	 * @return bool
-	 */
-	public function getNeedsRawData() {
-		return true;
-	}
-
-	/**
-	 * This class expects the result data to be in a custom format set by self::setResult()
-	 * $result['_feed']		- an instance of one of the $wgFeedClasses classes
-	 * $result['_feeditems']	- an array of FeedItem instances
-	 */
-	public function execute() {
-		$data = $this->getResultData();
-		if ( isset( $data['_feed'] ) && isset( $data['_feeditems'] ) ) {
-			$feed = $data['_feed'];
-			$items = $data['_feeditems'];
-
-			$feed->outHeader();
-			foreach ( $items as & $item ) {
-				$feed->outItem( $item );
-			}
-			$feed->outFooter();
-		} else {
-			// Error has occurred, print something useful
-			ApiBase::dieDebug( __METHOD__, 'Invalid feed class/item' );
-		}
+	protected function markDeprecated() {
+		$fm = $this->getIsHtml() ? 'fm' : '';
+		$name = $this->getModuleName();
+		$this->logFeatureUsage( "format=$name" );
+		$this->setWarning( "format=$name has been deprecated. Please use format=json$fm instead." );
 	}
 }

@@ -28,13 +28,12 @@
  * @ingroup Language
  */
 class LanguageDsb extends Language {
-
 	/**
 	 * Convert from the nominative form of a noun to some other case
 	 * Invoked with {{grammar:case|word}}
 	 *
-	 * @param $word string
-	 * @param $case string
+	 * @param string $word
+	 * @param string $case
 	 * @return string
 	 */
 	function convertGrammar( $word, $case ) {
@@ -49,9 +48,10 @@ class LanguageDsb extends Language {
 			case 'lokatiw': # lokatiw
 				$word = 'wo ' . $word;
 				break;
-			}
+		}
 
-		return $word; # this will return the original value for 'nominatiw' (nominativ) and all undefined case values
+		# this will return the original value for 'nominatiw' (nominativ) and
+		# all undefined case values.
+		return $word;
 	}
-
 }

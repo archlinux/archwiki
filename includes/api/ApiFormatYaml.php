@@ -26,6 +26,7 @@
 
 /**
  * API YAML output formatter
+ * @deprecated since 1.24
  * @ingroup API
  */
 class ApiFormatYaml extends ApiFormatJson {
@@ -34,7 +35,12 @@ class ApiFormatYaml extends ApiFormatJson {
 		return 'application/yaml';
 	}
 
+	public function execute() {
+		$this->markDeprecated();
+		parent::execute();
+	}
+
 	public function getDescription() {
-		return 'Output data in YAML format' . ApiFormatBase::getDescription();
+		return 'DEPRECATED! Output data in YAML format' . ApiFormatBase::getDescription();
 	}
 }

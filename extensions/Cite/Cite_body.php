@@ -53,21 +53,21 @@ class Cite {
 	 *
 	 * @var array
 	 **/
-	var $mRefs = array();
+	public $mRefs = array();
 
 	/**
 	 * Count for user displayed output (ref[1], ref[2], ...)
 	 *
 	 * @var int
 	 */
-	var $mOutCnt = 0;
-	var $mGroupCnt = array();
+	public $mOutCnt = 0;
+	public $mGroupCnt = array();
 
 	/**
 	 * Counter to track the total number of (useful) calls to either the
 	 * ref or references tag hook
 	 */
-	var $mCallCnt = 0;
+	public $mCallCnt = 0;
 
 	/**
 	 * The backlinks, in order, to pass as $3 to
@@ -76,19 +76,19 @@ class Cite {
 	 *
 	 * @var array
 	 */
-	var $mBacklinkLabels;
+	public $mBacklinkLabels;
 
 	/**
 	 * The links to use per group, in order.
 	 *
 	 * @var array
 	 */
-	var $mLinkLabels = array();
+	public $mLinkLabels = array();
 
 	/**
 	 * @var Parser
 	 */
-	var $mParser;
+	public $mParser;
 
 	/**
 	 * True when the ParserAfterParse hook has been called.
@@ -96,7 +96,7 @@ class Cite {
 	 *
 	 * @var boolean
 	 */
-	var $mHaveAfterParse = false;
+	public $mHaveAfterParse = false;
 
 	/**
 	 * True when a <ref> tag is being processed.
@@ -104,7 +104,7 @@ class Cite {
 	 *
 	 * @var boolean
 	 */
-	var $mInCite = false;
+	public $mInCite = false;
 
 	/**
 	 * True when a <references> tag is being processed.
@@ -112,21 +112,21 @@ class Cite {
 	 *
 	 * @var boolean
 	 */
-	var $mInReferences = false;
+	public $mInReferences = false;
 
 	/**
 	 * Error stack used when defining refs in <references>
 	 *
 	 * @var array
 	 */
-	var $mReferencesErrors = array();
+	public $mReferencesErrors = array();
 
 	/**
 	 * Group used when in <references> block
 	 *
 	 * @var string
 	 */
-	var $mReferencesGroup = '';
+	public $mReferencesGroup = '';
 
 	/**
 	 * <ref> call stack
@@ -135,7 +135,7 @@ class Cite {
 	 *
 	 * @var array
 	 */
-	var $mRefCallStack = array();
+	public $mRefCallStack = array();
 
 	/**
 	 * Did we install us into $wgHooks yet?
@@ -151,10 +151,11 @@ class Cite {
 	 * @param $str string Input
 	 * @param $argv array Arguments
 	 * @param $parser Parser
+	 * @param $frame PPFrame
 	 *
 	 * @return string
 	 */
-	function ref( $str, $argv, $parser ) {
+	function ref( $str, $argv, $parser, $frame ) {
 		if ( $this->mInCite ) {
 			return htmlspecialchars( "<ref>$str</ref>" );
 		} else {
@@ -162,6 +163,12 @@ class Cite {
 			$this->mInCite = true;
 			$ret = $this->guardedRef( $str, $argv, $parser );
 			$this->mInCite = false;
+			$parserOutput = $parser->getOutput();
+			$parserOutput->addModules( 'ext.cite' );
+			$parserOutput->addModuleStyles( 'ext.rtlcite' );
+			if ( is_callable( array( $frame, 'setVolatile' ) ) ) {
+				$frame->setVolatile();
+			}
 			return $ret;
 		}
 	}
@@ -519,10 +526,11 @@ class Cite {
 	 * @param $str string Input
 	 * @param $argv array Arguments
 	 * @param $parser Parser
+	 * @param $frame PPFrame
 	 *
 	 * @return string
 	 */
-	function references( $str, $argv, $parser ) {
+	function references( $str, $argv, $parser, $frame ) {
 		if ( $this->mInCite || $this->mInReferences ) {
 			if ( is_null( $str ) ) {
 				return htmlspecialchars( "<references/>" );
@@ -534,6 +542,9 @@ class Cite {
 			$this->mInReferences = true;
 			$ret = $this->guardedReferences( $str, $argv, $parser );
 			$this->mInReferences = false;
+			if ( is_callable( array( $frame, 'setVolatile' ) ) ) {
+				$frame->setVolatile();
+			}
 			return $ret;
 		}
 	}
@@ -656,7 +667,7 @@ class Cite {
 			wfProfileIn( __METHOD__ . '-parse' );
 
 			// Live hack: parse() adds two newlines on WM, can't reproduce it locally -ævar
-			$ret = rtrim( $this->parse( $parserInput ), "\n" );
+			$ret = rtrim( $this->mParser->recursiveTagParse( $parserInput ), "\n" );
 
 			if ( $wgCiteCacheReferences ) {
 				$serData = $this->mParser->serializeHalfParsedText( $ret );
@@ -904,7 +915,7 @@ class Cite {
 		$label = is_null( $label ) ? ++$this->mGroupCnt[$group] : $label;
 
 		return
-			$this->parse(
+			$this->mParser->recursiveTagParse(
 				wfMessage(
 					'cite_reference_link',
 					$this->refKey( $key, $count ),
@@ -939,60 +950,6 @@ class Cite {
 		} else {
 			$t = array_slice( $arr, 0, $cnt - 1 );
 			return implode( $sep, $t ) . $and . $arr[$cnt - 1];
-		}
-	}
-
-	/**
-	 * Parse a given fragment and fix up Tidy's trail of blood on
-	 * it...
-	 *
-	 * @param string $in The text to parse
-	 * @return string The parsed text
-	 */
-	function parse( $in ) {
-		if ( method_exists( $this->mParser, 'recursiveTagParse' ) ) {
-			// New fast method
-			return $this->mParser->recursiveTagParse( $in );
-		} else {
-			// Old method
-			$ret = $this->mParser->parse(
-				$in,
-				$this->mParser->mTitle,
-				$this->mParser->mOptions,
-				// Avoid whitespace buildup
-				false,
-				// Important, otherwise $this->clearState()
-				// would get run every time <ref> or
-				// <references> is called, fucking the whole
-				// thing up.
-				false
-			);
-			$text = $ret->getText();
-
-			return $this->fixTidy( $text );
-		}
-	}
-
-	/**
-	 * Tidy treats all input as a block, it will e.g. wrap most
-	 * input in <p> if it isn't already, fix that and return the fixed text
-	 *
-	 * @static
-	 *
-	 * @param string $text The text to fix
-	 * @return string The fixed text
-	 */
-	function fixTidy( $text ) {
-		global $wgUseTidy;
-
-		if ( !$wgUseTidy ) {
-			return $text;
-		} else {
-			$text = preg_replace( '~^<p>\s*~', '', $text );
-			$text = preg_replace( '~\s*</p>\s*~', '', $text );
-			$text = preg_replace( '~\n$~', '', $text );
-
-			return $text;
 		}
 	}
 
@@ -1110,11 +1067,10 @@ class Cite {
 			if ( count( $refs ) == 0 ) {
 				continue;
 			}
-			$text .= "\n<br />";
 			if ( $group == CITE_DEFAULT_GROUP ) {
-				$text .= $this->error( 'cite_error_refs_without_references' );
+				$text .= $this->referencesFormat( $group, '', '' );
 			} else {
-				$text .= $this->error( 'cite_error_group_refs_without_references', htmlspecialchars( $group ) );
+				$text .= "\n<br />" . $this->error( 'cite_error_group_refs_without_references', htmlspecialchars( $group ) );
 			}
 		}
 		return true;
@@ -1176,7 +1132,7 @@ class Cite {
 			wfMessage( 'cite_error', wfMessage( $key, $param )->inContentLanguage()->plain() )->inContentLanguage()->plain() .
 			'</strong>';
 		if ( $parse == 'parse' ) {
-			$ret = $this->parse( $ret );
+			$ret = $this->mParser->recursiveTagParse( $ret );
 		}
 		return $ret;
 	}

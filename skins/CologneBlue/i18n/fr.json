@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Gomoko",
+			"IAlex",
+			"Zetud"
+		]
+	},
+	"cologneblue.css": "/* Le CSS placé ici affectera les utilisateurs de l’habillage Cologne Blue. */",
+	"cologneblue.js": "/* Tout JavaScript ici sera chargé avec les pages accédées par les utilisateurs de l’habillage Bleu de cologne uniquement */",
+	"skinname-cologneblue": "Bleu de Cologne",
+	"cologneblue-desc": "Un habillage léger avec une mise en forme minimale"
+}

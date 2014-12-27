@@ -33,9 +33,8 @@
  * @ingroup Media
  */
 class XCFHandler extends BitmapHandler {
-
 	/**
-	 * @param $file
+	 * @param File $file
 	 * @return bool
 	 */
 	function mustRender( $file ) {
@@ -45,9 +44,9 @@ class XCFHandler extends BitmapHandler {
 	/**
 	 * Render files as PNG
 	 *
-	 * @param $ext
-	 * @param $mime
-	 * @param $params
+	 * @param string $ext
+	 * @param string $mime
+	 * @param array $params
 	 * @return array
 	 */
 	function getThumbType( $ext, $mime, $params = null ) {
@@ -57,12 +56,33 @@ class XCFHandler extends BitmapHandler {
 	/**
 	 * Get width and height from the XCF header.
 	 *
-	 * @param $image
-	 * @param $filename
+	 * @param File $image
+	 * @param string $filename
 	 * @return array
 	 */
 	function getImageSize( $image, $filename ) {
-		return self::getXCFMetaData( $filename );
+		$header = self::getXCFMetaData( $filename );
+		if ( !$header ) {
+			return false;
+		}
+
+		# Forge a return array containing metadata information just like getimagesize()
+		# See PHP documentation at: http://www.php.net/getimagesize
+		$metadata = array();
+		$metadata[0] = $header['width'];
+		$metadata[1] = $header['height'];
+		$metadata[2] = null; # IMAGETYPE constant, none exist for XCF.
+		$metadata[3] = sprintf(
+			'height="%s" width="%s"', $header['height'], $header['width']
+		);
+		$metadata['mime'] = 'image/x-xcf';
+		$metadata['channels'] = null;
+		$metadata['bits'] = 8; # Always 8-bits per color
+
+		assert( '7 == count($metadata); ' .
+			'# return array must contains 7 elements just like getimagesize() return' );
+
+		return $metadata;
 	}
 
 	/**
@@ -73,7 +93,7 @@ class XCFHandler extends BitmapHandler {
 	 * @author Hashar
 	 *
 	 * @param string $filename Full path to a XCF file
-	 * @return bool|array metadata array just like PHP getimagesize()
+	 * @return bool|array Metadata Array just like PHP getimagesize()
 	 */
 	static function getXCFMetaData( $filename ) {
 		# Decode master structure
@@ -103,12 +123,12 @@ class XCFHandler extends BitmapHandler {
 		#        (enum GimpImageBaseType in libgimpbase/gimpbaseenums.h)
 		try {
 			$header = wfUnpack(
-				  "A9magic"     # A: space padded
-				. "/a5version"  # a: zero padded
-				. "/Nwidth"     # \
-				. "/Nheight"    # N: unsigned long 32bit big endian
-				. "/Nbase_type" # /
-			, $binaryHeader
+				"A9magic" . # A: space padded
+					"/a5version" . # a: zero padded
+					"/Nwidth" . # \
+					"/Nheight" . # N: unsigned long 32bit big endian
+					"/Nbase_type", # /
+				$binaryHeader
 			);
 		} catch ( MWException $mwe ) {
 			return false;
@@ -117,36 +137,97 @@ class XCFHandler extends BitmapHandler {
 		# Check values
 		if ( $header['magic'] !== 'gimp xcf' ) {
 			wfDebug( __METHOD__ . " '$filename' has invalid magic signature.\n" );
+
 			return false;
 		}
 		# TODO: we might want to check for sane values of width and height
 
-		wfDebug( __METHOD__ . ": canvas size of '$filename' is {$header['width']} x {$header['height']} px\n" );
+		wfDebug( __METHOD__ .
+			": canvas size of '$filename' is {$header['width']} x {$header['height']} px\n" );
 
-		# Forge a return array containing metadata information just like getimagesize()
-		# See PHP documentation at: http://www.php.net/getimagesize
+		return $header;
+	}
+
+	/**
+	 * Store the channel type
+	 *
+	 * Greyscale files need different command line options.
+	 *
+	 * @param File $file The image object, or false if there isn't one.
+	 *   Warning, FSFile::getPropsFromPath might pass an (object)array() instead (!)
+	 * @param string $filename The filename
+	 * @return string
+	 */
+	public function getMetadata( $file, $filename ) {
+		$header = self::getXCFMetadata( $filename );
 		$metadata = array();
-		$metadata[0] = $header['width'];
-		$metadata[1] = $header['height'];
-		$metadata[2] = null;   # IMAGETYPE constant, none exist for XCF.
-		$metadata[3] = sprintf(
-			'height="%s" width="%s"', $header['height'], $header['width']
-		);
-		$metadata['mime'] = 'image/x-xcf';
-		$metadata['channels'] = null;
-		$metadata['bits'] = 8;  # Always 8-bits per color
+		if ( $header ) {
+			// Try to be consistent with the names used by PNG files.
+			// Unclear from base media type if it has an alpha layer,
+			// so just assume that it does since it "potentially" could.
+			switch ( $header['base_type'] ) {
+			case 0:
+				$metadata['colorType'] = 'truecolour-alpha';
+				break;
+			case 1:
+				$metadata['colorType'] = 'greyscale-alpha';
+				break;
+			case 2:
+				$metadata['colorType'] = 'index-coloured';
+				break;
+			default:
+				$metadata['colorType'] = 'unknown';
 
-		assert( '7 == count($metadata); # return array must contains 7 elements just like getimagesize() return' );
+			}
+		} else {
+			// Marker to prevent repeated attempted extraction
+			$metadata['error'] = true;
+		}
+		return serialize( $metadata );
+	}
 
-		return $metadata;
+	/**
+	 * Should we refresh the metadata
+	 *
+	 * @param File $file The file object for the file in question
+	 * @param string $metadata Serialized metadata
+	 * @return bool One of the self::METADATA_(BAD|GOOD|COMPATIBLE) constants
+	 */
+	public function isMetadataValid( $file, $metadata ) {
+		if ( !$metadata ) {
+			// Old metadata when we just put an empty string in there
+			return self::METADATA_BAD;
+		} else {
+			return self::METADATA_GOOD;
+		}
 	}
 
 	/**
 	 * Must use "im" for XCF
 	 *
+	 * @param string $dstPath
+	 * @param bool $checkDstPath
 	 * @return string
 	 */
-	protected static function getScalerType( $dstPath, $checkDstPath = true ) {
+	protected function getScalerType( $dstPath, $checkDstPath = true ) {
 		return "im";
+	}
+
+	/**
+	 * Can we render this file?
+	 *
+	 * Image magick doesn't support indexed xcf files as of current
+	 * writing (as of 6.8.9-3)
+	 * @param File $file
+	 * @return bool
+	 */
+	public function canRender( $file ) {
+		wfSuppressWarnings();
+		$xcfMeta = unserialize( $file->getMetadata() );
+		wfRestoreWarnings();
+		if ( isset( $xcfMeta['colorType'] ) && $xcfMeta['colorType'] === 'index-coloured' ) {
+			return false;
+		}
+		return parent::canRender( $file );
 	}
 }

@@ -57,14 +57,9 @@ class FixBug20757 extends Maintenance {
 
 		$totalRevs = $dbr->selectField( 'text', 'MAX(old_id)', false, __METHOD__ );
 
-		if ( $dbr->getType() == 'mysql'
-			&& version_compare( $dbr->getServerVersion(), '4.1.0', '>=' ) )
-		{
+		if ( $dbr->getType() == 'mysql' ) {
 			// In MySQL 4.1+, the binary field old_text has a non-working LOWER() function
 			$lowerLeft = 'LOWER(CONVERT(LEFT(old_text,22) USING latin1))';
-		} else {
-			// No CONVERT() in MySQL 4.0
-			$lowerLeft = 'LOWER(LEFT(old_text,22))';
 		}
 
 		while ( true ) {
@@ -301,14 +296,15 @@ class FixBug20757 extends Maintenance {
 			$this->mapCache[$pageId] = $map;
 			$this->mapCacheSize += count( $map );
 		}
+
 		return $this->mapCache[$pageId];
 	}
 
 	/**
 	 * This is based on part of HistoryBlobStub::getText().
 	 * Determine if the text can be retrieved from the row in the normal way.
-	 * @param $stub
-	 * @param $secondaryRow
+	 * @param array $stub
+	 * @param stdClass $secondaryRow
 	 * @return bool
 	 */
 	function isUnbrokenStub( $stub, $secondaryRow ) {
@@ -316,7 +312,10 @@ class FixBug20757 extends Maintenance {
 		$text = $secondaryRow->old_text;
 		if ( in_array( 'external', $flags ) ) {
 			$url = $text;
-			@list( /* $proto */ , $path ) = explode( '://', $url, 2 );
+			wfSuppressWarnings();
+			list( /* $proto */, $path ) = explode( '://', $url, 2 );
+			wfRestoreWarnings();
+
 			if ( $path == "" ) {
 				return false;
 			}
@@ -343,6 +342,7 @@ class FixBug20757 extends Maintenance {
 
 		$obj->uncompress();
 		$text = $obj->getItem( $stub['hash'] );
+
 		return $text !== false;
 	}
 }

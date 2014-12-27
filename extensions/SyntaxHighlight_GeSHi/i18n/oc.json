@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Cedric31"
+		]
+	},
+	"syntaxhighlight-desc": "Provesís la mesa en relèu de la sintaxi per la balisa <code>&lt;syntaxhighlight&gt;</code> en utilizant [http://qbnz.com/highlighter/ la coloracion sintaxica GeSHi]",
+	"syntaxhighlight-specify": "Vos cal especificar un lengatge coma aquò :",
+	"syntaxhighlight-supported": "Lengatges suportats per la coloracion sintaxica :",
+	"syntaxhighlight-err-loading": "(error en cargant la lista dels lengatges suportats)",
+	"syntaxhighlight-err-language": "Lengatge invalid.",
+	"geshi.css": "/* Lo còde CSS inserit aicí serà aplicat per GeSHi per la coloracion sintaxica. */"
+}

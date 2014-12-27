@@ -1,0 +1,8 @@
+{
+	"@metadata": [],
+	"fancycaptcha-addurl": "你嘅編輯包括咗新嘅外部連結。為咗防止自動化嘅濫貼，請響下面個盒度輸入下面嘅文字 ([[Special:Captcha/help|更多資訊]]):",
+	"fancycaptcha-badlogin": "為咗防止不當程式破解密碼，請響下面個盒度輸入下面嘅文字 ([[Special:Captcha/help|更多資訊]]):",
+	"fancycaptcha-createaccount": "為咗防止自動化開新戶口，請響下面個盒度輸入下面嘅文字 ([[Special:Captcha/help|更多資訊]]):",
+	"fancycaptcha-create": "要開一個新版，請響下面個盒度輸入下面嘅文字 ([[Special:Captcha/help|更多資訊]]):",
+	"fancycaptcha-edit": "要編輯呢一版，請響下面個盒度輸入下面嘅文字 ([[Special:Captcha/help|更多資訊]]):"
+}

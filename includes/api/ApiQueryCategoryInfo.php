@@ -32,7 +32,7 @@
  */
 class ApiQueryCategoryInfo extends ApiQueryBase {
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'ci' );
 	}
 
@@ -45,7 +45,7 @@ class ApiQueryCategoryInfo extends ApiQueryBase {
 		$categories = $alltitles[NS_CATEGORY];
 
 		$titles = $this->getPageSet()->getGoodTitles() +
-					$this->getPageSet()->getMissingTitles();
+			$this->getPageSet()->getMissingTitles();
 		$cattitles = array();
 		foreach ( $categories as $c ) {
 			/** @var $t Title */
@@ -63,7 +63,13 @@ class ApiQueryCategoryInfo extends ApiQueryBase {
 				'pp_propname' => 'hiddencat' ) ),
 		) );
 
-		$this->addFields( array( 'cat_title', 'cat_pages', 'cat_subcats', 'cat_files', 'cat_hidden' => 'pp_propname' ) );
+		$this->addFields( array(
+			'cat_title',
+			'cat_pages',
+			'cat_subcats',
+			'cat_files',
+			'cat_hidden' => 'pp_propname'
+		) );
 		$this->addWhere( array( 'cat_title' => $cattitles ) );
 
 		if ( !is_null( $params['continue'] ) ) {
@@ -108,36 +114,8 @@ class ApiQueryCategoryInfo extends ApiQueryBase {
 		);
 	}
 
-	public function getResultProperties() {
-		return array(
-			ApiBase::PROP_LIST => false,
-			'' => array(
-				'size' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => false
-				),
-				'pages' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => false
-				),
-				'files' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => false
-				),
-				'subcats' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => false
-				),
-				'hidden' => array(
-					ApiBase::PROP_TYPE => 'boolean',
-					ApiBase::PROP_NULLABLE => false
-				)
-			)
-		);
-	}
-
 	public function getDescription() {
-		return 'Returns information about the given categories';
+		return 'Returns information about the given categories.';
 	}
 
 	public function getExamples() {

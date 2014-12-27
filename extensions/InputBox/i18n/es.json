@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Crazymadlover",
+			"Icvav",
+			"MetalBrasil",
+			"Muro de Aguas",
+			"Sanbec",
+			"Fitoschido"
+		]
+	},
+	"inputbox-desc": "Permite la inclusión de formularios en HTML predefinidos.",
+	"inputbox-error-no-type": "No has especificado el tipo de formulario que vas a crear.",
+	"inputbox-error-bad-type": "No se reconoce el tipo de caja de entrada «$1».\nPor favor, especifica «create», «comment», «search» «search2» o \"fulltext\".",
+	"inputbox-tryexact": "Buscar título exacto",
+	"inputbox-searchfulltext": "Buscar por texto completo",
+	"inputbox-createarticle": "Crear artículo",
+	"inputbox-movearticle": "Mover página",
+	"inputbox-postcomment": "Sección nueva",
+	"inputbox-postcommenttitle": "Sección nueva",
+	"inputbox-ns-main": "Principal"
+}

@@ -31,18 +31,26 @@
  * @ingroup Content
  */
 class CssContent extends TextContent {
-	public function __construct( $text ) {
-		parent::__construct( $text, CONTENT_MODEL_CSS );
+
+	/**
+	 * @param string $text CSS code.
+	 * @param string $modelId the content content model
+	 */
+	public function __construct( $text, $modelId = CONTENT_MODEL_CSS ) {
+		parent::__construct( $text, $modelId );
 	}
 
 	/**
 	 * Returns a Content object with pre-save transformations applied using
 	 * Parser::preSaveTransform().
 	 *
-	 * @param $title Title
-	 * @param $user User
-	 * @param $popts ParserOptions
-	 * @return Content
+	 * @param Title $title
+	 * @param User $user
+	 * @param ParserOptions $popts
+	 *
+	 * @return CssContent
+	 *
+	 * @see TextContent::preSaveTransform
 	 */
 	public function preSaveTransform( Title $title, User $user, ParserOptions $popts ) {
 		global $wgParser;
@@ -51,15 +59,19 @@ class CssContent extends TextContent {
 		$text = $this->getNativeData();
 		$pst = $wgParser->preSaveTransform( $text, $title, $user, $popts );
 
-		return new CssContent( $pst );
+		return new static( $pst );
 	}
 
+	/**
+	 * @return string CSS wrapped in a <pre> tag.
+	 */
 	protected function getHtml() {
 		$html = "";
 		$html .= "<pre class=\"mw-code mw-css\" dir=\"ltr\">\n";
-		$html .= $this->getHighlightHtml();
+		$html .= htmlspecialchars( $this->getNativeData() );
 		$html .= "\n</pre>\n";
 
 		return $html;
 	}
+
 }

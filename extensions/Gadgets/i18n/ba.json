@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Рустам Нурыев",
+			"ҒатаУлла"
+		]
+	},
+	"prefs-gadgets": "Гаджеттар",
+	"gadgets": "Гаджеттар",
+	"gadgets-title": "Гаджеттар",
+	"gadgets-uses": "Ҡулланыла",
+	"gadgets-required-rights": "{{PLURAL:$2|1=Хоҡуҡ талап ителә|Хоҡутар талап ителә}}:\n\n$1",
+	"gadgets-export": "Сығарырға",
+	"gadgets-not-found": "\"$1\" гаджеты табылманы.",
+	"gadgets-export-download": "Күсереп алырға"
+}

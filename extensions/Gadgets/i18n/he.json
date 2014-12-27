@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Guycn1",
+			"Guycn2",
+			"Rotem Liss",
+			"YaronSh"
+		]
+	},
+	"gadgets-desc": "אפשרות למשתמשים לבחור [[Special:Gadgets|סקריפטים בקוד JavaScript וסגנונות בקוד CSS]] ב[[Special:Preferences#mw-prefsection-gadgets|העדפות]] שלהם",
+	"prefs-gadgets": "גאדג'טים",
+	"gadgets-prefstext": "להלן רשימה של סקריפטים שתוכלו להתקין בחשבון שלכם.\nהסקריפטים מבוססים ברובם על שפת JavaScript, ולכן יש לאפשר את הפעלתה בדפדפן כדי שהם יעבדו.\nשימו לב שלא תהיה לסקריפטים כל השפעה על דף ההעדפות הזה.\n\nכמו כן, הסקריפטים אינם חלק מתוכנת מדיה־ויקי, והם בדרך כלל מפותחים ומתוחזקים על ידי משתמשים בוויקי המקומי.\nמפעילי המערכת יכולים לערוך את ב[[MediaWiki:Gadgets-definition|דף ההגדרות]] ו[[Special:Gadgets|התיאורים]] של הסקריפטים.",
+	"gadgets": "גאדג'טים",
+	"gadgets-title": "סקריפטים",
+	"gadgets-pagetext": "זוהי רשימה של סקריפטים שמשתמשים יכולים להתקין באמצעות [[Special:Preferences#mw-prefsection-gadgets|דף ההעדפות]] שלהם, כפי שהוגדרו ב[[MediaWiki:Gadgets-definition|הודעת המערכת המתאימה]].\nמכאן ניתן לגשת בקלות לדפי הודעות המערכת שמגדירים את התיאור והקוד של כל סקריפט.",
+	"gadgets-uses": "משתמש בדפים",
+	"gadgets-required-rights": "{{PLURAL:$2|נדרשת ההרשאה הבאה|נדרשות ההרשאות הבאות}}:\n\n$1",
+	"gadgets-required-skins": "זמין {{PLURAL:$2|בערכות העיצוב הבאות: $1|בערכת העיצוב $1}}",
+	"gadgets-default": "מופעל לכולם כברירת מחדל.",
+	"gadgets-export": "יצוא",
+	"gadgets-export-title": "יצוא גאדג'טים",
+	"gadgets-not-found": "הגאדג׳ט \"$1\" לא נמצא.",
+	"gadgets-export-text": "כדי לייצא את הגאדג׳ט $1, יש ללחוץ על הלחצן \"{{int:gadgets-export-download}}\", לשמור את הקובץ שהתקבל,\nלגשת אל Special:Import באתר הוויקי המיועד ולהעלות אותו. ואז להוסיף את הדברים הבאים לדף MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nעליך להיות עם הרשאות מתאימות באתר הוויקי המיועד (לרבות הרשאות לעריכת הודעות מערכת) והאפשרות לייבוא מקובץ חייבת להיות מופעלת.",
+	"gadgets-export-download": "הורדה"
+}

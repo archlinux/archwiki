@@ -55,8 +55,11 @@ class ApiBlock extends ApiBase {
 		}
 
 		$target = User::newFromName( $params['user'] );
-		// Bug 38633 - if the target is a user (not an IP address), but it doesn't exist or is unusable, error.
-		if ( $target instanceof User && ( $target->isAnon() /* doesn't exist */ || !User::isUsableName( $target->getName() ) ) ) {
+		// Bug 38633 - if the target is a user (not an IP address), but it
+		// doesn't exist or is unusable, error.
+		if ( $target instanceof User &&
+			( $target->isAnon() /* doesn't exist */ || !User::isUsableName( $target->getName() ) )
+		) {
 			$this->dieUsageMsg( array( 'nosuchuser', $params['user'] ) );
 		}
 
@@ -149,7 +152,6 @@ class ApiBlock extends ApiBase {
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true
 			),
-			'token' => null,
 			'expiry' => 'never',
 			'reason' => '',
 			'anononly' => false,
@@ -166,80 +168,35 @@ class ApiBlock extends ApiBase {
 	public function getParamDescription() {
 		return array(
 			'user' => 'Username, IP address or IP range you want to block',
-			'token' => 'A block token previously obtained through prop=info',
-			'expiry' => 'Relative expiry time, e.g. \'5 months\' or \'2 weeks\'. If set to \'infinite\', \'indefinite\' or \'never\', the block will never expire.',
+			'expiry' => 'Relative expiry time, e.g. \'5 months\' or \'2 weeks\'. ' .
+				'If set to \'infinite\', \'indefinite\' or \'never\', the block will never expire.',
 			'reason' => 'Reason for block',
 			'anononly' => 'Block anonymous users only (i.e. disable anonymous edits for this IP)',
 			'nocreate' => 'Prevent account creation',
-			'autoblock' => 'Automatically block the last used IP address, and any subsequent IP addresses they try to login from',
-			'noemail' => 'Prevent user from sending email through the wiki. (Requires the "blockemail" right.)',
+			'autoblock' => 'Automatically block the last used IP address, and ' .
+				'any subsequent IP addresses they try to login from',
+			'noemail'
+				=> 'Prevent user from sending email through the wiki. (Requires the "blockemail" right.)',
 			'hidename' => 'Hide the username from the block log. (Requires the "hideuser" right.)',
-			'allowusertalk' => 'Allow the user to edit their own talk page (depends on $wgBlockAllowsUTEdit)',
+			'allowusertalk'
+				=> 'Allow the user to edit their own talk page (depends on $wgBlockAllowsUTEdit)',
 			'reblock' => 'If the user is already blocked, overwrite the existing block',
 			'watchuser' => 'Watch the user/IP\'s user and talk pages',
 		);
 	}
 
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'user' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'userID' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'expiry' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'id' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'reason' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'anononly' => 'boolean',
-				'nocreate' => 'boolean',
-				'autoblock' => 'boolean',
-				'noemail' => 'boolean',
-				'hidename' => 'boolean',
-				'allowusertalk' => 'boolean',
-				'watchuser' => 'boolean'
-			)
-		);
-	}
-
 	public function getDescription() {
-		return 'Block a user';
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'cantblock' ),
-			array( 'canthide' ),
-			array( 'cantblock-email' ),
-			array( 'ipbblocked' ),
-			array( 'ipbnounblockself' ),
-		) );
+		return 'Block a user.';
 	}
 
 	public function needsToken() {
-		return true;
-	}
-
-	public function getTokenSalt() {
-		return '';
+		return 'csrf';
 	}
 
 	public function getExamples() {
 		return array(
-			'api.php?action=block&user=123.5.5.12&expiry=3%20days&reason=First%20strike',
-			'api.php?action=block&user=Vandal&expiry=never&reason=Vandalism&nocreate=&autoblock=&noemail='
+			'api.php?action=block&user=123.5.5.12&expiry=3%20days&reason=First%20strike&token=123ABC',
+			'api.php?action=block&user=Vandal&expiry=never&reason=Vandalism&nocreate=&autoblock=&noemail=&token=123ABC'
 		);
 	}
 

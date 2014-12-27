@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Xuacu"
+		]
+	},
+	"modern.css": "/* Los CSS allugaos equí afeutarán a los usuarios del aspeutu Modern */",
+	"modern.js": "/* Cualesquier JavaScript que tea equí se cargará pa los usuarios del aspeutu Modern */",
+	"skinname-modern": "Modernu",
+	"modern-desc": "Un tema azul/buxu con barres llateral y superior. Deriváu de MonoBook."
+}

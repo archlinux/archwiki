@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Vago"
+		]
+	},
+	"cite_reference_link_key_with_num": "$1_$2",
+	"cite_reference_link_prefix": "sitat_istinad-",
+	"cite_references_link_prefix": "sitat_qeyd-",
+	"cite_reference_link": "<sup id=\"$1\" class=\"reference\">[[#$2|<nowiki>[</nowiki>$3<nowiki>]</nowiki>]]</sup>",
+	"cite_references_link_many_format": "<sup>[[#$1|$2]]</sup>",
+	"cite_references_link_many_sep": "&#32;",
+	"cite_references_link_many_and": "&#32;"
+}

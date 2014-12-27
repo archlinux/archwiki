@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"CERminator"
+		]
+	},
+	"renameuser": "Preimenuj korisnika",
+	"renameuser-linkoncontribs": "preimenuj korisnika",
+	"renameuser-linkoncontribs-text": "Preimenuj ovog korisnika",
+	"renameuser-desc": "Dodaje [[Special:RenameUser|posebnu stranicu]] u svrhu promjene imena korisnika (zahtjeva pravo ''preimenovanja korisnika'')",
+	"renameuserold": "Trenutno ime korisnika:",
+	"renameusernew": "Novo korisničko ime:",
+	"renameuserreason": "Razlog promjene imena:",
+	"renameusermove": "Premještanje korisnika i njegove stranice za razgovor (zajedno sa podstranicama) na novo ime",
+	"renameusersuppress": "Ne pravi preusmjerenja na novo ime",
+	"renameuserreserve": "Blokiraj staro korisničko ime od kasnijeg korištenja",
+	"renameuserwarnings": "Upozorenja:",
+	"renameuserconfirm": "Da, promijeni ime korisnika",
+	"renameusersubmit": "Pošalji",
+	"renameusererrordoesnotexist": "Korisnik \"<nowiki>$1</nowiki>\" ne postoji.",
+	"renameusererrorexists": "Korisnik \"<nowiki>$1</nowiki>\" već postoji.",
+	"renameusererrorinvalid": "Korisničko ime \"<nowiki>$1</nowiki>\" nije valjano.",
+	"renameuser-error-request": "Nastao je problem pri prijemu zahtjeva.\nMolimo Vas da se vratite nazad i pokušate ponovo.",
+	"renameuser-error-same-user": "Ne može se promijeniti ime korisnika u isto kao i ranije.",
+	"renameusersuccess": "Ime korisnika \"<nowiki>$1</nowiki>\" je promijenjeno u \"<nowiki>$2</nowiki>\".",
+	"renameuser-page-exists": "Stranica $1 već postoji i ne može biti automatski prepisana.",
+	"renameuser-page-moved": "Stranica $1 je premještena na $2.",
+	"renameuser-page-unmoved": "Stranica $1 nije mogla biti premještena na $2.",
+	"log-name-renameuser": "Zapisnik preimenovanja korisnika",
+	"renameuser-move-log": "Automatski premještena stranica pri promjeni korisničkog imena \"[[User:$1|$1]]\" u \"[[User:$2|$2]]\"",
+	"right-renameuser": "Preimenovanje korisnika",
+	"renameuser-renamed-notice": "Ovaj korisnik je promijenio ime.\nZapisnik preimenovanje je prikazan ispod kao referenca."
+}

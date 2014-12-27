@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Anakmalaysia"
+		]
+	},
+	"asirra-desc": "Modul Asirra untuk ConfirmEdit",
+	"asirra-edit": "Untuk mencegah suntingan spam automatik, sila pilih gambar-gambar kucing sahaja dalam petak di bawah:",
+	"asirra-addurl": "Suntingan anda mengandungi pautan luar yang baru. Untuk mencegah spam janaan automatik, sila pilih gambar-gambar kucing sahaja dalam petak di bawah:",
+	"asirra-badlogin": "Untuk mencegah pemecahan kata laluan automatik, sila pilih gambar-gambar kucing sahaja dalam petak di bawah:",
+	"asirra-createaccount": "Untuk mencegah pembukaan akaun automatik, sila pilih gambar-gambar kucing sahaja dalam petak di bawah:",
+	"asirra-createaccount-fail": "Sila kenal pasti kucing-kucing dengan betul.",
+	"asirra-create": "Untuk mencegah pembukaan halaman automatik, sila pilih gambar-gambar kucing sahaja dalam petak di bawah:",
+	"asirra-nojs": "'''Sila hidupkan JavaScript dan hantar semula halaman ini.'''",
+	"asirra-failed": "Sila kenal pasti semua gambar kucing"
+}

@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Fantasticfears",
+			"Hzy980512",
+			"Mywood"
+		]
+	},
+	"asirra-desc": "用于确认编辑的Asirra模块",
+	"asirra-edit": "为保护本wiki免受自动垃圾程序的破坏，我们恳请你在下面的方框中选出猫的图片：",
+	"asirra-addurl": "你的编辑包含新的外部链接。为保护本wiki免受自动垃圾程序的破坏，我们恳请你在下面的方框中选出猫的图片：",
+	"asirra-badlogin": "为保护本wiki免受自动密码破解的破坏，我们恳请你在下面的方框中选出猫的图片：",
+	"asirra-createaccount": "为保护本wiki免受自动账户创建的破坏，我们恳请你在下面的方框中选出猫的图片：",
+	"asirra-createaccount-fail": "请选出正确的猫的图片。",
+	"asirra-create": "为保护本wiki免受自动页面创建的破坏，我们恳请你在下面的方框中选出猫的图片：",
+	"asirra-nojs": "'''请启用JavaScript并重新提交页面。'''",
+	"asirra-failed": "请选出所有猫的图片"
+}

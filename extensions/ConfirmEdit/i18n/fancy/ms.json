@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Anakmalaysia",
+			"Aviator"
+		]
+	},
+	"fancycaptcha-addurl": "Suntingan anda mengandungi pautan luar baru. Untuk membanteras kegiatan spam automatik, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
+	"fancycaptcha-badlogin": "Untuk membanteras kegiatan meneka kata laluan secara automatik, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
+	"fancycaptcha-createaccount": "Untuk membanteras kegiatan pembukaan akaun secara automatik, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
+	"fancycaptcha-create": "Untuk mencipta laman ini, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
+	"fancycaptcha-edit": "Untuk menyunting laman ini, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
+	"fancycaptcha-sendemail": "Untuk membanteras kegiatan spam secara automatik, anda diminta mengisi huruf-huruf berikut dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
+	"fancycaptcha-reload-text": "Muat semula"
+}

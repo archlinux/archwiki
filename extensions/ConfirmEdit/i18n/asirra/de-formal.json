@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kghbln"
+		]
+	},
+	"asirra-addurl": "Ihre Bearbeitung enthält neue externe Links. Zum Schutz vor automatisiertem Spam bitten wir Sie, nur die Fotos mit Katzen im untenstehenden Feld auszuwählen:",
+	"asirra-badlogin": "Zum Schutz gegen automatisiertes Knacken von Passwörtern bitten wir Sie, nur die Fotos mit Katzen im untenstehenden Feld auszuwählen:",
+	"asirra-createaccount": "Zum Schutz gegen automatisiertes Erstellen von Benutzerkonten bitten wir Sie, nur die Fotos mit Katzen im untenstehenden Feld auszuwählen:",
+	"asirra-createaccount-fail": "Bitte wählen Sie nur die Fotos mit Katzen aus.",
+	"asirra-create": "Zum Schutz gegen automatisiertes Erstellen von Seiten bitten wir Sie, nur die Fotos mit Katzen im untenstehenden Feld auszuwählen:",
+	"asirra-failed": "Bitte wählen Sie nur die Fotos mit Katzen aus."
+}

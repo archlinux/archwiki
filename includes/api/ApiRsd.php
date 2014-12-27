@@ -60,13 +60,17 @@ class ApiRsd extends ApiBase {
 	}
 
 	public function getDescription() {
-		return 'Export an RSD (Really Simple Discovery) schema';
+		return 'Export an RSD (Really Simple Discovery) schema.';
 	}
 
 	public function getExamples() {
 		return array(
 			'api.php?action=rsd'
 		);
+	}
+
+	public function isReadMode() {
+		return false;
 	}
 
 	/**
@@ -107,6 +111,7 @@ class ApiRsd extends ApiBase {
 			),
 		);
 		wfRunHooks( 'ApiRsdServiceApis', array( &$apis ) );
+
 		return $apis;
 	}
 
@@ -149,12 +154,13 @@ class ApiRsd extends ApiBase {
 			}
 			$outputData[] = $data;
 		}
+
 		return $outputData;
 	}
 }
 
 class ApiFormatXmlRsd extends ApiFormatXml {
-	public function __construct( $main, $format ) {
+	public function __construct( ApiMain $main, $format ) {
 		parent::__construct( $main, $format );
 		$this->setRootElement( 'rsd' );
 	}

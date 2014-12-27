@@ -10,6 +10,8 @@
  * @version 3.0
  * @author Stephanie Amanda Stevens <phroziac@gmail.com>
  * @author Robin Pepermans (SPQRobin) <robinp.1273@gmail.com>
+ * @author Jack Phoenix <jack@shoutwiki.com>
+ * @author Calimonius the Estrange <isarra@shoutwiki.com>
  * @copyright Copyright © 2005-2007 Stephanie Amanda Stevens
  * @copyright Copyright © 2007-2011 Robin Pepermans (SPQRobin)
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
@@ -26,6 +28,9 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 // the addition of a log for interwiki link changes.
 $wgInterwikiViewOnly = false;
 
+// Name of a database where global interwikis will be stored.
+$wgInterwikiCentralDB = null;
+
 // Extension credits for Special:Version
 $wgExtensionCredits['specialpage'][] = array(
 	'path' => __FILE__,
@@ -38,9 +43,11 @@ $wgExtensionCredits['specialpage'][] = array(
 		'Platonides',
 		'Raimond Spekking',
 		'Sam Reed',
+		'Jack Phoenix',
+		'Calimonius the Estrange',
 		'...'
 	),
-	'version' => '2.2 20120425',
+	'version' => '3.0 20140719',
 	'url' => 'https://www.mediawiki.org/wiki/Extension:Interwiki',
 	'descriptionmsg' => 'interwiki-desc',
 );
@@ -58,12 +65,16 @@ $wgResourceModules['ext.interwiki.specialpage'] = array(
 
 // Set up the new special page
 $dir = dirname( __FILE__ ) . '/';
+$wgMessagesDirs['Interwiki'] = __DIR__ . '/i18n';
 $wgExtensionMessagesFiles['Interwiki'] = $dir . 'Interwiki.i18n.php';
 $wgExtensionMessagesFiles['InterwikiAlias'] = $dir . 'Interwiki.alias.php';
 $wgAutoloadClasses['SpecialInterwiki'] = $dir . 'Interwiki_body.php';
 $wgAutoloadClasses['InterwikiLogFormatter'] = $dir . 'Interwiki_body.php';
 $wgSpecialPages['Interwiki'] = 'SpecialInterwiki';
 $wgSpecialPageGroups['Interwiki'] = 'wiki';
+
+$wgHooks['InterwikiLoadPrefix'][] = 'wfGlobalInterwikis';
+
 
 function setupInterwikiExtension() {
 	global $wgInterwikiViewOnly;
@@ -76,9 +87,41 @@ function setupInterwikiExtension() {
 
 		// Set up the new log type - interwiki actions are logged to this new log
 		$wgLogTypes[] = 'interwiki';
-		# interwiki, iw_add, iw_delete, iw_edit
+		// interwiki, iw_add, iw_delete, iw_edit
 		$wgLogActionsHandlers['interwiki/*'] = 'InterwikiLogFormatter';
 	}
 
+	return true;
+}
+
+function wfGlobalInterwikis( $prefix, &$iwData ) {
+	global $wgInterwikiCentralDB;
+	// docs/hooks.txt says: Return true without providing an interwiki to continue interwiki search.
+	if ( $wgInterwikiCentralDB === null || $wgInterwikiCentralDB === wfWikiId() ) {
+		// No global set or this is global, nothing to add
+		return true;
+	}
+	if ( !Language::fetchLanguageName( $prefix ) ) {
+		// Check if prefix exists locally and skip
+		foreach ( Interwiki::getAllPrefixes( null ) as $id => $localPrefixInfo ) {
+			if ( $prefix === $localPrefixInfo['iw_prefix'] ) {
+				return true;
+			}
+		}
+		$dbr = wfGetDB( DB_SLAVE, array(), $wgInterwikiCentralDB );
+		$res = $dbr->selectRow(
+			'interwiki',
+			'*',
+			array( 'iw_prefix' => $prefix ),
+			__METHOD__
+		);
+		if ( !$res ) {
+			return true;
+		}
+		// Excplicitly make this an array since it's expected to be one
+		$iwData = (array)$res;
+		// At this point, we can safely return false because we know that we have something
+		return false;
+	}
 	return true;
 }

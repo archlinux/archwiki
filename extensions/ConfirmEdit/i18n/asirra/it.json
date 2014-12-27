@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Beta16"
+		]
+	},
+	"asirra-desc": "Modulo ASIRRA per ConfirmEdit",
+	"asirra-edit": "Per proteggere il wiki dalle modifiche automatiche che aggiungono spam, ti chiediamo gentilmente di selezionare solo le foto di gatti nel riquadro sottostante:",
+	"asirra-addurl": "La tua modifica aggiunge qualche nuovo collegamento esterno. Per proteggere il wiki dallo spam automatico, ti chiediamo gentilmente di selezionare solo le foto di gatti nel riquadro sottostante:",
+	"asirra-badlogin": "Per proteggere il wiki dalla forzatura automatica delle password, ti chiediamo gentilmente di selezionare solo le foto di gatti nel riquadro sottostante:",
+	"asirra-createaccount": "Per proteggere il wiki dalla creazione automatica di nuovi accessi, ti chiediamo gentilmente di selezionare solo le foto di gatti nel riquadro sottostante:",
+	"asirra-createaccount-fail": "Identifica correttamente i gatti.",
+	"asirra-create": "Per proteggere il wiki dalla creazione automatica di pagine, ti chiediamo gentilmente di selezionare solo le foto di gatti nel riquadro sottostante:",
+	"asirra-nojs": "'''Attiva JavaScript ed invia di nuovo la pagina.'''",
+	"asirra-failed": "Identifica tutte le immagini di gatti"
+}

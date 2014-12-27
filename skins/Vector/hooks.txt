@@ -1,0 +1,6 @@
+Hooks provided by the Vector skin.
+
+'SkinVectorStyleModules': Called when defining the list of module styles to be
+loaded by the Vector skin.
+$skin: SkinVector object
+&$styles: Array of module names whose style will be loaded for the skin

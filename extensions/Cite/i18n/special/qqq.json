@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jon Harald Søby",
+			"Lloffiwr",
+			"Shirayuki",
+			"Siddhartha Ghai",
+			"Siebrand",
+			"Tgr",
+			"Umherirrender"
+		]
+	},
+	"cite_article_desc": "{{desc|name=Special Cite|url=http://www.mediawiki.org/wiki/Extension:Cite/Special:Cite.php}}",
+	"cite_article_link": "Text of link in toolbox\n\nSee also:\n* {{msg-mw|Cite article link}}\n* {{msg-mw|Accesskey-cite-article}}\n* {{msg-mw|Tooltip-cite-article}}",
+	"tooltip-cite-article": "Used as tooltip for the link {{msg-mw|Cite article link}}.\n\nSee also:\n* {{msg-mw|Cite article link}}\n* {{msg-mw|Accesskey-cite-article}}\n* {{msg-mw|Tooltip-cite-article}}",
+	"accesskey-cite-article": "{{doc-accesskey}}\nSee also:\n* {{msg-mw|Cite article link}}\n* {{msg-mw|Accesskey-cite-article}}\n* {{msg-mw|Tooltip-cite-article}}",
+	"cite": "{{doc-special|Cite|unlisted=1}}\n{{Identical|Cite}}",
+	"cite-summary": "{{notranslate}}",
+	"cite_page": "{{Identical|Page}}",
+	"cite_submit": "{{Identical|Cite}}",
+	"cite_text": "Refers to {{msg-mw|Sitesubtitle}}.\n\n* This message is the entire text for the page Special:Cite\n* Any wikilinks in this message point to pages on the wiki, so they may be translated.\n* Do not translate magic words like CURRENTYEAR, SITENAME etc.\n* Do not translate the parameter names (author, title etc.) for BibTeX entries.\n* Do not translate the div class plainlinks mw-specialcite-styles."
+}

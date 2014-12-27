@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Minh Nguyen"
+		]
+	},
+	"syntaxhighlight-desc": "Tô màu cú pháp trong thẻ <code>&lt;syntaxhighlight&gt;</code> dùng [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Bạn cần phải định rõ một ngôn ngữ như vầy:",
+	"syntaxhighlight-supported": "Các ngôn ngữ được tô màu cú pháp:",
+	"syntaxhighlight-err-loading": "(gặp lỗi khi nạp danh sách các ngôn ngữ được hỗ trợ)",
+	"syntaxhighlight-err-language": "Ngôn ngữ không hợp lệ.",
+	"geshi.css": "/* Bộ tô màu cú pháp GeSHi sẽ áp dụng mã CSS ở đây */"
+}

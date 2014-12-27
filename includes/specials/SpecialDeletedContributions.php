@@ -26,7 +26,7 @@
  * @ingroup SpecialPage
  */
 class DeletedContribsPager extends IndexPager {
-	public $mDefaultDirection = true;
+	public $mDefaultDirection = IndexPager::DIR_DESCENDING;
 	public $messages;
 	public $target;
 	public $namespace = '';
@@ -62,7 +62,7 @@ class DeletedContribsPager extends IndexPager {
 		// Paranoia: avoid brute force searches (bug 17792)
 		if ( !$user->isAllowed( 'deletedhistory' ) ) {
 			$conds[] = $this->mDb->bitAnd( 'ar_deleted', Revision::DELETED_USER ) . ' = 0';
-		} elseif ( !$user->isAllowed( 'suppressrevision' ) ) {
+		} elseif ( !$user->isAllowedAny( 'suppressrevision', 'viewsuppressed' ) ) {
 			$conds[] = $this->mDb->bitAnd( 'ar_deleted', Revision::SUPPRESSED_USER ) .
 				' != ' . Revision::SUPPRESSED_USER;
 		}
@@ -147,7 +147,7 @@ class DeletedContribsPager extends IndexPager {
 	 * written by the target user.
 	 *
 	 * @todo This would probably look a lot nicer in a table.
-	 * @param $row
+	 * @param stdClass $row
 	 * @return string
 	 */
 	function formatRow( $row ) {
@@ -276,7 +276,7 @@ class DeletedContribsPager extends IndexPager {
 class DeletedContributionsPage extends SpecialPage {
 	function __construct() {
 		parent::__construct( 'DeletedContributions', 'deletedhistory',
-		/*listed*/true, /*function*/false, /*file*/false );
+			/*listed*/true, /*function*/false, /*file*/false );
 	}
 
 	/**
@@ -286,8 +286,6 @@ class DeletedContributionsPage extends SpecialPage {
 	 * @param string $par (optional) user name of the user for which to show the contributions
 	 */
 	function execute( $par ) {
-		global $wgQueryPageDefaultLimit;
-
 		$this->setHeaders();
 		$this->outputHeader();
 
@@ -317,7 +315,7 @@ class DeletedContributionsPage extends SpecialPage {
 			return;
 		}
 
-		$options['limit'] = $request->getInt( 'limit', $wgQueryPageDefaultLimit );
+		$options['limit'] = $request->getInt( 'limit', $this->getConfig()->get( 'QueryPageDefaultLimit' ) );
 		$options['target'] = $target;
 
 		$userObj = User::newFromName( $target, false );
@@ -375,8 +373,8 @@ class DeletedContributionsPage extends SpecialPage {
 
 	/**
 	 * Generates the subheading with links
-	 * @param $userObj User object for the target
-	 * @return String: appropriately-escaped HTML to be output literally
+	 * @param User $userObj User object for the target
+	 * @return string Appropriately-escaped HTML to be output literally
 	 * @todo FIXME: Almost the same as contributionsSub in SpecialContributions.php. Could be combined.
 	 */
 	function getSubTitle( $userObj ) {
@@ -427,6 +425,15 @@ class DeletedContributionsPage extends SpecialPage {
 						'page' => $nt->getPrefixedText()
 					)
 				);
+				# Suppression log link (bug 59120)
+				if ( $this->getUser()->isAllowed( 'suppressionlog' ) ) {
+					$tools[] = Linker::linkKnown(
+						SpecialPage::getTitleFor( 'Log', 'suppress' ),
+						$this->msg( 'sp-contributions-suppresslog' )->escaped(),
+						array(),
+						array( 'offender' => $userObj->getName() )
+					);
+				}
 			}
 
 			# Uploads
@@ -463,7 +470,12 @@ class DeletedContributionsPage extends SpecialPage {
 			$links = $this->getLanguage()->pipeList( $tools );
 
 			// Show a note if the user is blocked and display the last block log entry.
-			if ( $userObj->isBlocked() ) {
+			$block = Block::newFromTarget( $userObj, $userObj );
+			if ( !is_null( $block ) && $block->getType() != Block::TYPE_AUTO ) {
+				if ( $block->getType() == Block::TYPE_RANGE ) {
+					$nt = MWNamespace::getCanonicalName( NS_USER ) . ':' . $block->getTarget();
+				}
+
 				// LogEventsList::showLogExtract() wants the first parameter by ref
 				$out = $this->getOutput();
 				LogEventsList::showLogExtract(
@@ -476,7 +488,7 @@ class DeletedContributionsPage extends SpecialPage {
 						'showIfEmpty' => false,
 						'msgKey' => array(
 							'sp-contributions-blocked-notice',
-							$nt->getText() # Support GENDER in 'sp-contributions-blocked-notice'
+							$userObj->getName() # Support GENDER in 'sp-contributions-blocked-notice'
 						),
 						'offset' => '' # don't use $this->getRequest() parameter offset
 					)
@@ -489,13 +501,11 @@ class DeletedContributionsPage extends SpecialPage {
 
 	/**
 	 * Generates the namespace selector form with hidden attributes.
-	 * @param array $options the options to be included.
+	 * @param array $options The options to be included.
 	 * @return string
 	 */
 	function getForm( $options ) {
-		global $wgScript;
-
-		$options['title'] = $this->getTitle()->getPrefixedText();
+		$options['title'] = $this->getPageTitle()->getPrefixedText();
 		if ( !isset( $options['target'] ) ) {
 			$options['target'] = '';
 		} else {
@@ -514,7 +524,7 @@ class DeletedContributionsPage extends SpecialPage {
 			$options['target'] = '';
 		}
 
-		$f = Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) );
+		$f = Xml::openElement( 'form', array( 'method' => 'get', 'action' => wfScript() ) );
 
 		foreach ( $options as $name => $value ) {
 			if ( in_array( $name, array( 'namespace', 'target', 'contribs' ) ) ) {

@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": [
+			"Michaello",
+			"Milicevic01",
+			"Жељко Тодоровић"
+		]
+	},
+	"gadgets-desc": "Omogućava korisnicima da izaberu prilagođene [[Special:Gadgets|CSS i javaskript gadžete]] u svojim [[Special:Preferences#mw-prefsection-gadgets|podešavanjima]]",
+	"prefs-gadgets": "Gedžeti",
+	"gadgets-prefstext": "Ispod se nalazi spisak posebnih gadžeta koje možete da omogućite na svom nalogu.\nOve spravice su uglavnom zasnovane na javaskripti, tako da ona mora biti omogućena.\nGadžeti neće uticati na stranicu za podešavanje.\n\nOni nisu deo softvera Medijaviki, već se razvijaju i održavaju od strane korisnika na vašem lokalnom vikiju.\nAdministratori mogu da izmene [[MediaWiki:Gadgets-definition|značenja]] i [[Special:Gadgets|opise]] dostupnih gadžeta.",
+	"gadgets": "Gedžeti",
+	"gadgets-title": "Gedžeti",
+	"gadgets-pagetext": "Ispod je spisak posebnih gadžeta koje korisnici mogu da omoguće na svojoj [[Special:Preferences#mw-prefsection-gadgets|stranici za podešavanje]], kao što je navedeno u [[MediaWiki:Gadgets-definition|definicijama]].\nOvaj pregled pruža brz pristup sistemskim porukama koje definišu svaki opis i kod gadžeta.",
+	"gadgets-uses": "koristi se",
+	"gadgets-required-rights": "Zahteva {{PLURAL:$2|sledeće pravo|sledeća prava}}:\n\n$1",
+	"gadgets-required-skins": "Dostupno u {{PLURAL:$2|temi $1|sledećim temama: $1}}.",
+	"gadgets-default": "Podrazumevano uključen za svakog.",
+	"gadgets-export": "Izvezi",
+	"gadgets-export-title": "Izvoz gadžeta",
+	"gadgets-not-found": "Gadžet „$1“ nije pronađen.",
+	"gadgets-export-text": "Da biste izvezli $1 gadžet, kliknite na dugme „{{int:gadgets-export-download}}“, sačuvajte preuzetu datoteku,\npređite na ''Special:Import'' na željenoj vikiji i pošaljite gadžet. Nakon toga, dodajte sledeće na ''MediaWiki:Gadgets-definition'' stranicu:\n<pre>$2</pre>\nMorate imati određene dozvole na navedenoj vikiji (uključujući i pravo za uređivanje sistemskih poruka), dok uvoz preko datoteka mora biti omogućen.",
+	"gadgets-export-download": "Preuzmi"
+}

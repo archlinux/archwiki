@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Anakmalaysia",
+			"Danny0838",
+			"Gakmo",
+			"Horacewai2",
+			"Justincheng12345",
+			"Liangent",
+			"Mark85296341",
+			"Shinjiman",
+			"Waihorace",
+			"Cwlin0416"
+		]
+	},
+	"gadgets-desc": "讓使用者可以於 [[Special:Preferences#mw-prefsection-gadgets|偏好設定]] 中自訂 [[Special:Gadgets|CSS 與 JavaScript 的小工具]]",
+	"prefs-gadgets": "小工具",
+	"gadgets-prefstext": "以下列出可在您的帳號開啟的特殊小工具。\n這些小工具大多使用 JavaScript 開發，因此瀏覽器必須開啟 JavaScript 才能夠正常運作。\n注意，小工具須離開偏好設定頁面後才會生效。\n\n特別說明，這些特殊小工具並不屬於 MediaWiki 的一部份，通常由個別 Wiki 的使用者開發與維護。於各站管理員可以自行編輯小工具的 [[MediaWiki:Gadgets-definition|定義]] 與 [[Special:Gadgets|描述]]。",
+	"gadgets": "小工具",
+	"gadgets-title": "小工具",
+	"gadgets-pagetext": "以下列出使用者可自行在 [[Special:Preferences#mw-prefsection-gadgets|偏好設定頁面]] 開啟的特殊小工具，此清單在 [[MediaWiki:Gadgets-definition|定義]] 所定義。\n\n此頁面可讓方便您存取定義各小工具描述與程式碼的系統訊息頁面。",
+	"gadgets-uses": "使用",
+	"gadgets-required-rights": "需要以下{{PLURAL:$2|權限|權限}}：\n\n$1",
+	"gadgets-required-skins": "可用於{{PLURAL:$2|$1 外觀|下列外觀：$1}}。",
+	"gadgets-default": "所有人預設開啟。",
+	"gadgets-export": "匯出",
+	"gadgets-export-title": "匯出小工具",
+	"gadgets-not-found": "查無小工具 \"$1\"。",
+	"gadgets-export-text": "要匯出 $1 小工具，請點選 \"{{int:gadgets-export-download}}\" 按鈕，並儲存下載的檔案，\n至目地 Wiki 的 Special:Import 頁面將其上傳。然後將下列文字新增到 MediaWiki:Gadgets-definition 頁面：\n<pre>$2</pre>\n您必須在在目地的 Wiki 上擁有適當的權限 (如：編輯系統訊息)，且須開啟透過檔案上傳匯入的功能。",
+	"gadgets-export-download": "下載"
+}

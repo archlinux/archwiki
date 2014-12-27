@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Liangent"
+		]
+	},
+	"syntaxhighlight-desc": "Imkoni dasturoti rangin kardanro <code>&lt;syntaxhighlight&gt;</code> bo istifoda az [http://qbnz.com/highlighter/ GeSHi Highlighter]-ro faroham meovarad",
+	"syntaxhighlight-specify": "Şumo bojad bo in şakl zabonero muşaxxas kuned:",
+	"syntaxhighlight-supported": "Zabonhoi puştibonişuda baroi rangin kardani dasturoti nahvī:",
+	"syntaxhighlight-err-loading": "(xato dar boguzoriji zabonhoi puştibonişuda)",
+	"syntaxhighlight-err-language": "Zaboni ƣajri miçoz.",
+	"geshi.css": "/* CSS inço guzoştaşuda ba dasturoti ranginkuniji GeSHi ba kor burda meşavad */"
+}

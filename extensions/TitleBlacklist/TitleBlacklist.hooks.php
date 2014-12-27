@@ -42,6 +42,32 @@ class TitleBlacklistHooks {
 	}
 
 	/**
+	 * Display a notice if a user is only able to create or edit a page
+	 * because they have tboverride (or autoconfirmed).
+	 *
+	 * @param Title $title
+	 * @param integer $oldid
+	 * @param array &$notices
+	 */
+	public static function displayBlacklistOverrideNotice( Title $title, $oldid, array &$notices ) {
+		$blacklisted = TitleBlacklist::singleton()->isBlacklisted(
+			$title,
+			$title->exists() ? 'edit' : 'create'
+		);
+		if ( $blacklisted ) {
+			$params = $blacklisted->getParams();
+			$msg = wfMessage(
+				isset( $params['autoconfirmed'] ) ?
+				'titleblacklist-autoconfirmed-warning' :
+				'titleblacklist-warning'
+			);
+			$notices['titleblacklist'] = $msg->rawParams(
+				htmlspecialchars( $blacklisted->getRaw() ) )->parseAsBlock();
+		}
+		return true;
+	}
+
+	/**
 	 * AbortMove hook
 	 *
 	 * @param $old Title
@@ -74,13 +100,17 @@ class TitleBlacklistHooks {
 	 *
 	 * @return bool Acceptable
 	 */
-	private static function acceptNewUserName( $userName, $permissionsUser, &$err, $override = true ) {
+	private static function acceptNewUserName( $userName, $permissionsUser, &$err, $override = true, $log = false ) {
+		global $wgUser;
 		$title = Title::makeTitleSafe( NS_USER, $userName );
 		$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $permissionsUser,
 			'new-account', $override );
 		if ( $blacklisted instanceof TitleBlacklistEntry ) {
 			$message = $blacklisted->getErrorMessage( 'new-account' );
 			$err = wfMessage( $message, $blacklisted->getRaw(), $userName )->parse();
+			if ( $log ) {
+				self::logFilterHitUsername( $wgUser, $title, $blacklisted->getRaw() );
+			}
 			return false;
 		}
 		return true;
@@ -94,14 +124,7 @@ class TitleBlacklistHooks {
 	public static function abortNewAccount( $user, &$message ) {
 		global $wgUser, $wgRequest;
 		$override = $wgRequest->getCheck( 'wpIgnoreTitleBlacklist' );
-		return self::acceptNewUserName( $user->getName(), $wgUser, $message, $override );
-	}
-
-	/** CentralAuthAutoCreate hook */
-	public static function centralAuthAutoCreate( $user, $userName ) {
-		$message = ''; # Will be ignored
-		$anon = new User;
-		return self::acceptNewUserName( $userName, $anon, $message );
+		return self::acceptNewUserName( $user->getName(), $wgUser, $message, $override, true );
 	}
 
 	/**
@@ -178,5 +201,27 @@ class TitleBlacklistHooks {
 				'checkbox', 'titleblacklist-override' );
 		}
 		return true;
+	}
+
+	/**
+	 * Logs the filter username hit to Special:Log if
+	 * $wgTitleBlacklistLogHits is enabled.
+	 *
+	 * @param User $user
+	 * @param Title $title
+	 * @param string $entry
+	 */
+	public static function logFilterHitUsername( $user, $title, $entry ) {
+		global $wgTitleBlacklistLogHits;
+		if ( $wgTitleBlacklistLogHits ) {
+			$logEntry = new ManualLogEntry( 'titleblacklist', 'hit-username' );
+			$logEntry->setPerformer( $user );
+			$logEntry->setTarget( $title );
+			$logEntry->setParameters( array(
+				'4::entry' => $entry,
+			) );
+			$logid = $logEntry->insert();
+			$logEntry->publish( $logid );
+		}
 	}
 }

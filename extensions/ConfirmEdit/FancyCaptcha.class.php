@@ -14,7 +14,8 @@ class FancyCaptcha extends SimpleCaptcha {
 			if ( !$backend ) {
 				$backend = new FSFileBackend( array(
 					'name'           => 'captcha-backend',
-					'lockManager'    => 'nullLockManager',
+					'wikiId'	 => wfWikiId(),
+					'lockManager'    => new NullLockManager( array() ),
 					'containerPaths' => array( 'captcha-render' => $wgCaptchaDirectory ),
 					'fileMode'       => 777
 				) );
@@ -129,6 +130,7 @@ class FancyCaptcha extends SimpleCaptcha {
 			) .
 			Html::element( 'input', array(
 					'name' => 'wpCaptchaWord',
+					'class' => 'mw-ui-input',
 					'id'   => 'wpCaptchaWord',
 					'type' => 'text',
 					'size' => '12',  // max_length in captcha.py plus fudge factor

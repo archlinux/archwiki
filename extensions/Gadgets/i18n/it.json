@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Beta16",
+			"BrokenArrow",
+			"Darth Kule",
+			"Melos",
+			"Nemo bis"
+		]
+	},
+	"gadgets-desc": "Consente agli utenti di selezionare [[Special:Gadgets|accessori CSS e JavaScript]] nelle proprie [[Special:Preferences#mw-prefsection-gadgets|preferenze]]",
+	"prefs-gadgets": "Accessori",
+	"gadgets-prefstext": "Di seguito viene presentata una lista di accessori speciali (''gadget'') che è possibile abilitare per la propria utenza.\nQuesti accessori sono in maggioranza basati su JavaScript, è quindi necessario abilitare JavaScript nel proprio browser perché funzionino correttamente. Si noti che gli accessori non hanno alcun effetto in questa pagina di preferenze.\n\nInoltre, si noti che questi accessori speciali non sono compresi nel software MediaWiki e sono di solito realizzati e gestiti dagli utenti di ciascun sito wiki. Gli amministratori del sito possono modificare la lista degli accessori disponibili tramite le pagine delle [[MediaWiki:Gadgets-definition|definizioni]] e delle [[Special:Gadgets|descrizioni]].",
+	"gadgets": "Accessori",
+	"gadgets-title": "Accessori",
+	"gadgets-pagetext": "Di seguito sono elencati gli accessori (''gadget'') che gli utenti possono abilitare sulla propria pagina delle [[Special:Preferences#mw-prefsection-gadgets|preferenze]], seguendo le [[MediaWiki:Gadgets-definition|definizioni]]. Questa panoramica fornisce un comodo meccanismo per accedere ai messaggi di sistema nei quali sono definiti la descrizione e il codice di ciascun accessorio.",
+	"gadgets-uses": "Utilizza",
+	"gadgets-required-rights": "Richiede {{PLURAL:$2|il seguente diritto|i seguenti diritti}}:\n\n$1",
+	"gadgets-required-skins": "Disponibile {{PLURAL:$2|per la skin $1|per le seguenti skin: $1}}.",
+	"gadgets-default": "Attivato per tutti, per impostazione predefinita.",
+	"gadgets-export": "Esporta",
+	"gadgets-export-title": "Esporta accessorio",
+	"gadgets-not-found": "Accessorio \"$1\" non trovato.",
+	"gadgets-export-text": "Per esportare l'accessorio $1, fai clic sul pulsante \"{{int:gadgets-export-download}}\", salva il file scaricato,\nvai alla pagina Special:Import nella wiki di destinazione e carica il file. Poi aggiungi quanto segue alla pagina MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nDevi disporre dei permessi appropriati nella wiki di destinazione (incluso il diritto di modificare i messaggi di sistema) e l'importazione da file deve essere abilitata.",
+	"gadgets-export-download": "Scarica"
+}

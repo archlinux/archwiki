@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ficell",
+			"IRTC1015",
+			"Klutzy",
+			"Kwj2772",
+			"아라"
+		]
+	},
+	"gadgets-desc": "각 사용자가 [[Special:Gadgets|CSS와 자바스크립트 소도구]]를 [[Special:Preferences#mw-prefsection-gadgets|사용자 환경 설정]]을 통해 사용할 수 있습니다",
+	"prefs-gadgets": "소도구",
+	"gadgets-prefstext": "아래 목록은 현재 사용 가능한 소도구의 목록입니다.\n대부분의 소도구는 자바스크립트로 동작하며, 웹 브라우저에서 자바스크립트를 사용할 수 있어야 동작합니다.\n소도구는 이 환경 설정 페이지에는 영향을 주지 않습니다.\n\n이 소도구는 미디어위키의 기능이 아니며, 일반적으로 각 위키의 사용자가 개발 및 관리하고 있습니다.\n각 위키의 관리자는 [[MediaWiki:Gadgets-definition|소도구 정의 문서]]와 [[Special:Gadgets|소도구 설명 문서]]를 통해 소도구를 관리할 수 있습니다.",
+	"gadgets": "소도구 목록",
+	"gadgets-title": "소도구",
+	"gadgets-pagetext": "[[Special:Preferences#mw-prefsection-gadgets|사용자 환경 설정]]에서 설정할 수 있는 소도구 목록입니다. 해당 목록은 [[MediaWiki:Gadgets-definition|소도구 정의]]에서 편집할 수 있습니다.\n이 문서에서는 각 소도구의 각 설명 문서와 코드의 시스템 메시지 링크를 제공합니다.",
+	"gadgets-uses": "다음 코드를 사용",
+	"gadgets-required-rights": "다음 {{PLURAL:$2|권한}}이 필요합니다: \n\n$1",
+	"gadgets-required-skins": "{{PLURAL:$2|$1 스킨에서 사용 가능합니다.|다음 스킨에서 사용 가능합니다: $1}}",
+	"gadgets-default": "기본적으로 모든 사람에게 활성화되어 있습니다.",
+	"gadgets-export": "내보내기",
+	"gadgets-export-title": "소도구 내보내기",
+	"gadgets-not-found": "\"$1\" 소도구를 찾을 수 없습니다.",
+	"gadgets-export-text": "$1 소도구를 내보내려면 \"{{int:gadgets-export-download}}\" 버튼을 클릭하여 다운로드된 파일을 저장한 후,\n내보내려는 위키에서 Special:Import로 가서 올리십시오. 그 다음 MediaWiki:Gadgets-definition 문서에 다음을 추가하세요:\n<pre>$2</pre>\n해당 위키에서 시스템 메시지 편집 등 특정 권한을 갖고 있어야 합니다. 또한 파일 올리기를 통한 가져오기 기능이 활성화되어 있어야 합니다.",
+	"gadgets-export-download": "다운로드"
+}

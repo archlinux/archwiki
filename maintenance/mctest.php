@@ -30,7 +30,7 @@ require_once __DIR__ . '/Maintenance.php';
  *
  * @ingroup Maintenance
  */
-class mcTest extends Maintenance {
+class McTest extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Makes several 'set', 'incr' and 'get' requests on every"
@@ -67,7 +67,7 @@ class mcTest extends Maintenance {
 		foreach ( $servers as $server ) {
 			$this->output(
 				str_pad( $server, $maxSrvLen ),
-				$server  # output channel
+				$server # output channel
 			);
 
 			$mcc = new MemCachedClientforWiki( array(
@@ -78,7 +78,7 @@ class mcTest extends Maintenance {
 			$set = 0;
 			$incr = 0;
 			$get = 0;
-			$time_start = $this->microtime_float();
+			$time_start = microtime( true );
 			for ( $i = 1; $i <= $iterations; $i++ ) {
 				if ( $mcc->set( "test$i", $i ) ) {
 					$set++;
@@ -95,21 +95,12 @@ class mcTest extends Maintenance {
 					$get++;
 				}
 			}
-			$exectime = $this->microtime_float() - $time_start;
+			$exectime = microtime( true ) - $time_start;
 
 			$this->output( " set: $set   incr: $incr   get: $get time: $exectime", $server );
 		}
 	}
-
-	/**
-	 * Return microtime() as a float
-	 * @return float
-	 */
-	private function microtime_float() {
-		list( $usec, $sec ) = explode( " ", microtime() );
-		return ( (float)$usec + (float)$sec );
-	}
 }
 
-$maintClass = "mcTest";
+$maintClass = "McTest";
 require_once RUN_MAINTENANCE_IF_MAIN;

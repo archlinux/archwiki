@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Rudko"
+		]
+	},
+	"modern.css": "/* Tu umiestnené CSS bude ovplyvňovať používateľov štýlu Moderný */",
+	"modern.js": "/* Tu sa nachádzajúci JavaScript sa načíta používateľom vzhľadu Moderný */",
+	"skinname-modern": "Moderný"
+}

@@ -39,6 +39,7 @@ class RollbackAction extends FormlessAction {
 		$details = null;
 
 		$request = $this->getRequest();
+		$user = $this->getUser();
 
 		$result = $this->page->doRollback(
 			$request->getVal( 'from' ),
@@ -53,13 +54,16 @@ class RollbackAction extends FormlessAction {
 			throw new ThrottledError;
 		}
 
-		if ( isset( $result[0][0] ) && ( $result[0][0] == 'alreadyrolled' || $result[0][0] == 'cantrollback' ) ) {
+		if ( isset( $result[0][0] ) &&
+			( $result[0][0] == 'alreadyrolled' || $result[0][0] == 'cantrollback' )
+		) {
 			$this->getOutput()->setPageTitle( $this->msg( 'rollbackfailed' ) );
 			$errArray = $result[0];
 			$errMsg = array_shift( $errArray );
 			$this->getOutput()->addWikiMsgArray( $errMsg, $errArray );
 
 			if ( isset( $details['current'] ) ) {
+				/** @var Revision $current */
 				$current = $details['current'];
 
 				if ( $current->getComment() != '' ) {
@@ -83,6 +87,7 @@ class RollbackAction extends FormlessAction {
 			throw new ErrorPageError( 'rollbackfailed', $error[0], array_slice( $error, 1 ) );
 		}
 
+		/** @var Revision $current */
 		$current = $details['current'];
 		$target = $details['target'];
 		$newId = $details['newid'];
@@ -91,12 +96,26 @@ class RollbackAction extends FormlessAction {
 
 		$old = Linker::revUserTools( $current );
 		$new = Linker::revUserTools( $target );
-		$this->getOutput()->addHTML( $this->msg( 'rollback-success' )->rawParams( $old, $new )->parseAsBlock() );
+		$this->getOutput()->addHTML( $this->msg( 'rollback-success' )->rawParams( $old, $new )
+			->parseAsBlock() );
+
+		if ( $user->getBoolOption( 'watchrollback' ) ) {
+			$user->addWatch( $this->page->getTitle(), WatchedItem::IGNORE_USER_RIGHTS );
+		}
+
 		$this->getOutput()->returnToMain( false, $this->getTitle() );
 
-		if ( !$request->getBool( 'hidediff', false ) && !$this->getUser()->getBoolOption( 'norollbackdiff', false ) ) {
+		if ( !$request->getBool( 'hidediff', false ) &&
+			!$this->getUser()->getBoolOption( 'norollbackdiff', false )
+		) {
 			$contentHandler = $current->getContentHandler();
-			$de = $contentHandler->createDifferenceEngine( $this->getContext(), $current->getId(), $newId, false, true );
+			$de = $contentHandler->createDifferenceEngine(
+				$this->getContext(),
+				$current->getId(),
+				$newId,
+				false,
+				true
+			);
 			$de->showDiff( '', '' );
 		}
 	}

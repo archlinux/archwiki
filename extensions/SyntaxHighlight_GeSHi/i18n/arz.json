@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Meno25",
+			"Ramsis II"
+		]
+	},
+	"syntaxhighlight-desc": "بيوفر تظليل السينتاكس <code>&lt;syntaxhighlight&gt;</code> باستعمال [http://qbnz.com/highlighter/ GeSHi مظلل]",
+	"syntaxhighlight-specify": "انت لازم تحدد لغة زى كدا:",
+	"syntaxhighlight-supported": "اللغات المدعومة لتظليل السينتاكس:",
+	"syntaxhighlight-err-loading": "(غلط فى تحميل لستة اللغات المدعومة)",
+	"syntaxhighlight-err-language": "لغة مش صحيحة",
+	"geshi.css": "/* CSS المحطوطة هنا ح تتطبق على تظليل سينتاكس الGeSHi */"
+}

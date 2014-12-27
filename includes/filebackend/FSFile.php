@@ -27,26 +27,25 @@
  * @ingroup FileBackend
  */
 class FSFile {
-	protected $path; // path to file
-	protected $sha1Base36; // file SHA-1 in base 36
+	/** @var string Path to file */
+	protected $path;
+
+	/** @var string File SHA-1 in base 36 */
+	protected $sha1Base36;
 
 	/**
 	 * Sets up the file object
 	 *
 	 * @param string $path Path to temporary file on local disk
-	 * @throws MWException
 	 */
 	public function __construct( $path ) {
-		if ( FileBackend::isStoragePath( $path ) ) {
-			throw new MWException( __METHOD__ . " given storage path `$path`." );
-		}
 		$this->path = $path;
 	}
 
 	/**
 	 * Returns the file system path
 	 *
-	 * @return String
+	 * @return string
 	 */
 	public function getPath() {
 		return $this->path;
@@ -82,6 +81,7 @@ class FSFile {
 		if ( $timestamp !== false ) {
 			$timestamp = wfTimestamp( TS_MW, $timestamp );
 		}
+
 		return $timestamp;
 	}
 
@@ -98,7 +98,7 @@ class FSFile {
 	 * Get an associative array containing information about
 	 * a file with the given storage path.
 	 *
-	 * @param Mixed $ext: the file extension, or true to extract it from the filename.
+	 * @param string|bool $ext The file extension, or true to extract it from the filename.
 	 *             Set it to false to ignore the extension.
 	 *
 	 * @return array
@@ -118,9 +118,9 @@ class FSFile {
 				$ext = self::extensionFromPath( $this->path );
 			}
 
-			# mime type according to file contents
+			# MIME type according to file contents
 			$info['file-mime'] = $this->getMimeType();
-			# logical mime type
+			# logical MIME type
 			$info['mime'] = $magic->improveTypeFromExtension( $info['file-mime'], $ext );
 
 			list( $info['major_mime'], $info['minor_mime'] ) = File::splitMime( $info['mime'] );
@@ -147,13 +147,14 @@ class FSFile {
 		}
 
 		wfProfileOut( __METHOD__ );
+
 		return $info;
 	}
 
 	/**
 	 * Placeholder file properties to use for files that don't exist
 	 *
-	 * @return Array
+	 * @return array
 	 */
 	public static function placeholderProps() {
 		$info = array();
@@ -165,6 +166,7 @@ class FSFile {
 		$info['width'] = 0;
 		$info['height'] = 0;
 		$info['bits'] = 0;
+
 		return $info;
 	}
 
@@ -172,7 +174,7 @@ class FSFile {
 	 * Exract image size information
 	 *
 	 * @param array $gis
-	 * @return Array
+	 * @return array
 	 */
 	protected function extractImageSizeInfo( array $gis ) {
 		$info = array();
@@ -184,6 +186,7 @@ class FSFile {
 		} else {
 			$info['bits'] = 0;
 		}
+
 		return $info;
 	}
 
@@ -202,6 +205,7 @@ class FSFile {
 
 		if ( $this->sha1Base36 !== null && !$recache ) {
 			wfProfileOut( __METHOD__ );
+
 			return $this->sha1Base36;
 		}
 
@@ -214,6 +218,7 @@ class FSFile {
 		}
 
 		wfProfileOut( __METHOD__ );
+
 		return $this->sha1Base36;
 	}
 
@@ -225,19 +230,21 @@ class FSFile {
 	 */
 	public static function extensionFromPath( $path ) {
 		$i = strrpos( $path, '.' );
+
 		return strtolower( $i ? substr( $path, $i + 1 ) : '' );
 	}
 
 	/**
 	 * Get an associative array containing information about a file in the local filesystem.
 	 *
-	 * @param string $path absolute local filesystem path
-	 * @param Mixed $ext: the file extension, or true to extract it from the filename.
-	 *             Set it to false to ignore the extension.
+	 * @param string $path Absolute local filesystem path
+	 * @param string|bool $ext The file extension, or true to extract it from the filename.
+	 *   Set it to false to ignore the extension.
 	 * @return array
 	 */
 	public static function getPropsFromPath( $path, $ext = true ) {
 		$fsFile = new self( $path );
+
 		return $fsFile->getProps( $ext );
 	}
 
@@ -253,6 +260,7 @@ class FSFile {
 	 */
 	public static function getSha1Base36FromPath( $path ) {
 		$fsFile = new self( $path );
+
 		return $fsFile->getSha1Base36();
 	}
 }

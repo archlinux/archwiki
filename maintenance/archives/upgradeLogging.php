@@ -52,6 +52,7 @@ class UpdateLogging {
 
 		if ( $this->dbw->tableExists( 'logging_pre_1_10' ) ) {
 			echo "This script has already been run to completion\n";
+
 			return;
 		}
 
@@ -124,6 +125,8 @@ EOT;
 
 	/**
 	 * Copy all rows from $srcTable to $dstTable
+	 * @param string $srcTable
+	 * @param string $dstTable
 	 */
 	function sync( $srcTable, $dstTable ) {
 		$batchSize = 1000;
@@ -158,7 +161,7 @@ EOT;
 			$srcRes = $this->dbw->select( $srcTable, '*', $conds, __METHOD__,
 				array( 'LIMIT' => $batchSize, 'ORDER BY' => 'log_timestamp' ) );
 
-			if ( ! $srcRes->numRows() ) {
+			if ( !$srcRes->numRows() ) {
 				# All done
 				break;
 			}
@@ -205,6 +208,7 @@ EOT;
 				}
 			}
 		}
+
 		return $numRowsCopied;
 	}
 }

@@ -33,6 +33,7 @@
  * @since 1.17
  */
 class WebInstallerOutput {
+
 	/**
 	 * The WebInstaller object this WebInstallerOutput is used by.
 	 *
@@ -42,7 +43,7 @@ class WebInstallerOutput {
 
 	/**
 	 * Buffered contents that haven't been output yet
-	 * @var String
+	 * @var string
 	 */
 	private $contents = '';
 
@@ -52,6 +53,9 @@ class WebInstallerOutput {
 	 */
 	private $headerDone = false;
 
+	/**
+	 * @var string
+	 */
 	public $redirectTarget;
 
 	/**
@@ -69,27 +73,39 @@ class WebInstallerOutput {
 	private $useShortHeader = false;
 
 	/**
-	 * Constructor.
-	 *
-	 * @param $parent WebInstaller
+	 * @param WebInstaller $parent
 	 */
 	public function __construct( WebInstaller $parent ) {
 		$this->parent = $parent;
 	}
 
+	/**
+	 * @param string $html
+	 */
 	public function addHTML( $html ) {
 		$this->contents .= $html;
 		$this->flush();
 	}
 
+	/**
+	 * @param string $text
+	 */
 	public function addWikiText( $text ) {
 		$this->addHTML( $this->parent->parse( $text ) );
 	}
 
+	/**
+	 * @param string $html
+	 */
 	public function addHTMLNoFlush( $html ) {
 		$this->contents .= $html;
 	}
 
+	/**
+	 * @param string $url
+	 *
+	 * @throws MWException
+	 */
 	public function redirect( $url ) {
 		if ( $this->headerDone ) {
 			throw new MWException( __METHOD__ . ' called after sending headers' );
@@ -103,98 +119,69 @@ class WebInstallerOutput {
 	}
 
 	/**
-	 * Get the raw vector CSS, flipping if needed
+	 * Get the stylesheet of the MediaWiki skin.
 	 *
-	 * @todo Possibly get rid of this function and use ResourceLoader in the manner it was
-	 *   designed to be used in, rather than just grabbing a list of filenames from it,
-	 *   and not properly handling such details as media types in module definitions.
-	 *
-	 * @param string $dir 'ltr' or 'rtl'
-	 * @return String
+	 * @return string
 	 */
-	public function getCSS( $dir ) {
-		// All CSS files these modules reference will be concatenated in sequence
-		// and loaded as one file.
+	public function getCSS() {
+		global $wgStyleDirectory;
+
 		$moduleNames = array(
+			// See SkinTemplate::setupSkinUserCss
 			'mediawiki.legacy.shared',
-			'skins.vector',
-			'mediawiki.legacy.config',
+			// See Vector::setupSkinUserCss
+			'mediawiki.skinning.interface',
 		);
 
-		$prepend = '';
-		$css = '';
+		if ( file_exists( "$wgStyleDirectory/Vector/Vector.php" ) ) {
+			// Force loading Vector skin if available as a fallback skin
+			// for whatever ResourceLoader wants to have as the default.
 
-		$cssFileNames = array();
+			// Include instead of require, as this will work without it, it will just look bad.
+			// We need the 'global' statement for $wgResourceModules because the Vector skin adds the
+			// definitions for its RL modules there that we use implicitly below.
+
+			// @codingStandardsIgnoreStart
+			global $wgResourceModules; // This is NOT UNUSED!
+			// @codingStandardsIgnoreEnd
+
+			include_once "$wgStyleDirectory/Vector/Vector.php";
+
+			$moduleNames[] = 'skins.vector.styles';
+		}
+
+		$moduleNames[] = 'mediawiki.legacy.config';
+
 		$resourceLoader = new ResourceLoader();
+		$rlContext = new ResourceLoaderContext( $resourceLoader, new FauxRequest( array(
+				'debug' => 'true',
+				'lang' => $this->getLanguageCode(),
+				'only' => 'styles',
+		) ) );
+
+		$styles = array();
 		foreach ( $moduleNames as $moduleName ) {
+			/** @var ResourceLoaderFileModule $module */
 			$module = $resourceLoader->getModule( $moduleName );
-			$cssFileNames = $module->getAllStyleFiles();
 
-			wfSuppressWarnings();
-			foreach ( $cssFileNames as $cssFileName ) {
-				if ( !file_exists( $cssFileName ) ) {
-					$prepend .= ResourceLoader::makeComment( "Unable to find $cssFileName." );
-					continue;
-				}
-
-				if ( !is_readable( $cssFileName ) ) {
-					$prepend .= ResourceLoader::makeComment( "Unable to read $cssFileName. Please check file permissions." );
-					continue;
-				}
-
-				try {
-
-					if ( preg_match( '/\.less$/', $cssFileName ) ) {
-						// Run the LESS compiler for *.less files (bug 55589)
-						$compiler = ResourceLoader::getLessCompiler();
-						$cssFileContents = $compiler->compileFile( $cssFileName );
-					} else {
-						// Regular CSS file
-						$cssFileContents = file_get_contents( $cssFileName );
-					}
-
-					if ( $cssFileContents ) {
-						// Rewrite URLs, though don't bother embedding images. While static image
-						// files may be cached, CSS returned by this function is definitely not.
-						$cssDirName = dirname( $cssFileName );
-						$css .= CSSMin::remap(
-							/* source */ $cssFileContents,
-							/* local */ $cssDirName,
-							/* remote */ '..' . str_replace(
-								array( $GLOBALS['IP'], DIRECTORY_SEPARATOR ),
-								array( '', '/' ),
-								$cssDirName
-							),
-							/* embedData */ false
-						);
-					} else {
-						$prepend .= ResourceLoader::makeComment( "Unable to read $cssFileName." );
-					}
-
-				} catch ( Exception $e ) {
-					$prepend .= ResourceLoader::formatException( $e );
-				}
-
-				$css .= "\n";
-			}
-			wfRestoreWarnings();
+			// Based on: ResourceLoaderFileModule::getStyles (without the DB query)
+			$styles = array_merge( $styles, ResourceLoader::makeCombinedStyles(
+				$module->readStyleFiles(
+					$module->getStyleFiles( $rlContext ),
+					$module->getFlip( $rlContext )
+			) ) );
 		}
 
-		$css = $prepend . $css;
-
-		if ( $dir == 'rtl' ) {
-			$css = CSSJanus::transform( $css, true );
-		}
-
-		return $css;
+		return implode( "\n", $styles );
 	}
 
 	/**
-	 * "<link>" to index.php?css=foobar for the "<head>"
-	 * @return String
+	 * "<link>" to index.php?css=1 for the "<head>"
+	 *
+	 * @return string
 	 */
 	private function getCssUrl() {
-		return Html::linkedStyle( $_SERVER['PHP_SELF'] . '?css=' . $this->getDir() );
+		return Html::linkedStyle( $_SERVER['PHP_SELF'] . '?css=1' );
 	}
 
 	public function useShortHeader( $use = true ) {
@@ -235,7 +222,7 @@ class WebInstallerOutput {
 	}
 
 	/**
-	 * @return array
+	 * @return string[]
 	 */
 	public function getHeadAttribs() {
 		return array(
@@ -246,6 +233,7 @@ class WebInstallerOutput {
 
 	/**
 	 * Get whether the header has been output
+	 *
 	 * @return bool
 	 */
 	public function headerDone() {
@@ -279,14 +267,14 @@ class WebInstallerOutput {
 	<title><?php $this->outputTitle(); ?></title>
 	<?php echo $this->getCssUrl() . "\n"; ?>
 	<?php echo $this->getJQuery() . "\n"; ?>
-	<?php echo Html::linkedScript( '../skins/common/config.js' ) . "\n"; ?>
+	<?php echo Html::linkedScript( 'config.js' ) . "\n"; ?>
 </head>
 
 <?php echo Html::openElement( 'body', array( 'class' => $this->getDir() ) ) . "\n"; ?>
 <div id="mw-page-base"></div>
 <div id="mw-head-base"></div>
-<div id="content">
-<div id="bodyContent">
+<div id="content" class="mw-body">
+<div id="bodyContent" class="mw-body-content">
 
 <h1><?php $this->outputTitle(); ?></h1>
 <?php
@@ -294,20 +282,18 @@ class WebInstallerOutput {
 
 	public function outputFooter() {
 		if ( $this->useShortHeader ) {
-?>
-</body></html>
-<?php
+			echo Html::closeElement( 'body' ) . Html::closeElement( 'html' );
+
 			return;
 		}
 ?>
 
 </div></div>
 
-
 <div id="mw-panel">
 	<div class="portal" id="p-logo">
-	  <a style="background-image: url(../skins/common/images/mediawiki.png);"
-		href="http://www.mediawiki.org/"
+	  <a style="background-image: url(images/installer-logo.png);"
+		href="https://www.mediawiki.org/"
 		title="Main Page"></a>
 	</div>
 	<div class="portal"><div class="body">
@@ -317,9 +303,8 @@ class WebInstallerOutput {
 	</div></div>
 </div>
 
-</body>
-</html>
 <?php
+		echo Html::closeElement( 'body' ) . Html::closeElement( 'html' );
 	}
 
 	public function outputShortHeader() {
@@ -331,7 +316,7 @@ class WebInstallerOutput {
 	<title><?php $this->outputTitle(); ?></title>
 	<?php echo $this->getCssUrl() . "\n"; ?>
 	<?php echo $this->getJQuery(); ?>
-	<?php echo Html::linkedScript( '../skins/common/config.js' ); ?>
+	<?php echo Html::linkedScript( 'config.js' ); ?>
 </head>
 
 <body style="background-image: none">
@@ -343,7 +328,11 @@ class WebInstallerOutput {
 		echo wfMessage( 'config-title', $wgVersion )->escaped();
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getJQuery() {
-		return Html::linkedScript( "../resources/jquery/jquery.js" );
+		return Html::linkedScript( "../resources/lib/jquery/jquery.js" );
 	}
+
 }

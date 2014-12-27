@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mostafadaneshvar"
+		]
+	},
+	"inputbox-desc": "اجازه داتن په هور بیگ فرم های HTML چه پیش تعریف بوتگین",
+	"inputbox-error-no-type": "شما نوع جعبه ورودی په شرکتن مشخص نه کتت",
+	"inputbox-error-bad-type": "نوع جعبه ورودی \"$1\"  جاه آرگ نه بیت.\nلطفا مشخص کنیت  \"شرکتن\", \"نظر\", \"گردگ\" یا \"گردگ2\".",
+	"inputbox-tryexact": "تطبیق کامل آزمایش کن",
+	"inputbox-searchfulltext": "متن کامل گرد",
+	"inputbox-createarticle": "شرکتن صفحه"
+}

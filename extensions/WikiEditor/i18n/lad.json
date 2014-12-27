@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Menachem.Moreira"
+		]
+	},
+	"wikieditor-wikitext-tab": "Vikiteksto",
+	"wikieditor-publish-button-publish": "Publikar",
+	"wikieditor-publish-dialog-title": "Publikar a {{SITENAME}}",
+	"wikieditor-publish-dialog-publish": "Publikar"
+}

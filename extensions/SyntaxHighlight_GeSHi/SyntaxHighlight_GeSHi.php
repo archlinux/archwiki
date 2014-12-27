@@ -1,6 +1,6 @@
 <?php
 /**
- * Syntax highlighting extension for MediaWiki 1.5 using GeSHi
+ * Syntax highlighting extension for MediaWiki using GeSHi
  * Copyright (C) 2005 Brion Vibber <brion@pobox.com>
  * http://www.mediawiki.org/
  *
@@ -27,10 +27,6 @@
  *
  * This extension wraps the GeSHi highlighter: http://qbnz.com/highlighter/
  *
- * Unlike the older GeSHi MediaWiki extension floating around, this makes
- * use of the new extension parameter support in MediaWiki 1.5 so it only
- * has to register one tag, <source>.
- *
  * A language is specified like: <source lang="c">void main() {}</source>
  * If you forget, or give an unsupported value, the extension spits out
  * some help text and a list of all supported languages.
@@ -52,23 +48,22 @@ $wgExtensionCredits['parserhook']['SyntaxHighlight_GeSHi'] = array(
 $wgSyntaxHighlightDefaultLang = null;
 $wgSyntaxHighlightKeywordLinks = false;
 
-$dir = dirname(__FILE__) . '/';
+$dir = __DIR__ . '/';
+$wgMessagesDirs['SyntaxHighlight_GeSHi'] = __DIR__ . '/i18n';
 $wgExtensionMessagesFiles['SyntaxHighlight_GeSHi'] = $dir . 'SyntaxHighlight_GeSHi.i18n.php';
+
 $wgAutoloadClasses['SyntaxHighlight_GeSHi'] = $dir . 'SyntaxHighlight_GeSHi.class.php';
-$wgHooks['ParserFirstCallInit'][] = 'efSyntaxHighlight_GeSHiSetup';
-$wgHooks['ExtensionTypes'][] = 'SyntaxHighlight_GeSHi::hSpecialVersion_GeSHi';
+$wgAutoloadClasses['ResourceLoaderGeSHiModule'] = $dir . 'ResourceLoaderGeSHiModule.php';
+$wgAutoloadClasses['ResourceLoaderGeSHiLocalModule'] = $dir . 'ResourceLoaderGeSHiLocalModule.php';
 
-//if ( defined( 'MW_SUPPORTS_CONTENTHANDLER' ) ) {
-	// since MW 1.21
-//	$wgHooks['ContentGetParserOutput'][] = 'SyntaxHighlight_GeSHi::renderHook';
-//} else {
-	// B/C until 1.20
-	$wgHooks['ShowRawCssJs'][] = 'SyntaxHighlight_GeSHi::viewHook';
-//}
+$wgHooks['ExtensionTypes'][] = 'SyntaxHighlight_GeSHi::extensionTypes';
+$wgHooks['ResourceLoaderRegisterModules'][] = 'SyntaxHighlight_GeSHi::resourceLoaderRegisterModules';
+$wgHooks['ContentGetParserOutput'][] = 'SyntaxHighlight_GeSHi::renderHook';
 
-
-$wgAutoloadClasses['HighlightGeSHilocal'] = $dir . 'SyntaxHighlight_GeSHi.local.php';
-$wgResourceModules['ext.geshi.local'] = array( 'class' => 'HighlightGeSHilocal' );
+// Module to load MediaWiki:Geshi.css.
+$wgResourceModules['ext.geshi.local'] = array( 'class' => 'ResourceLoaderGeSHiLocalModule' );
+// More modules are defined by SyntaxHighlight_GeSHi::resourceLoaderRegisterModules,
+// one for each supported language. The general name template is 'ext.geshi.language.<lang>'.
 
 /**
  * Map content models to the corresponding language names to be used with the highlighter.
@@ -83,9 +78,10 @@ $wgSyntaxHighlightModels = array(
  * Register parser hook
  *
  * @param $parser Parser
+ * @return bool
  */
-function efSyntaxHighlight_GeSHiSetup( &$parser ) {
+$wgHooks['ParserFirstCallInit'][] = function ( &$parser ) {
 	$parser->setHook( 'source', array( 'SyntaxHighlight_GeSHi', 'parserHook' ) );
 	$parser->setHook( 'syntaxhighlight', array( 'SyntaxHighlight_GeSHi', 'parserHook' ) );
 	return true;
-}
+};

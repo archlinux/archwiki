@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"SPQRobin",
+			"Siebrand"
+		]
+	},
+	"titleblacklist-desc": "Voorkomt het aanmaken van pagina's en gebruikers via een [[MediaWiki:Titleblacklist|zwarte lijst]] en een [[MediaWiki:Titlewhitelist|witte lijst]]",
+	"titleblacklist": "# Dit is een zwarte lijst voor paginanamen. Paginanamen en gebruikers die voldoen aan een reguliere expressie op deze paina kunnen niet aangemaakt worden.\n# Gebruik \"#\" voor opmerkingen.\n# Regels in de zwarte lijst zijn niet hoofdlettergevoelig.",
+	"titlewhitelist": "# Dit is een witte lijst voor paginanamen. Gebruik \"#\" voor opmerkingen.\n# Regels in de witte lijst zijn niet hoofdlettergevoelig.",
+	"titleblacklist-forbidden-edit": "Een pagina met de naam \"$2\" kan niet aangemaakt worden. Deze paginanaam voldoet aan de volgende beperking op de zwarte lijst: <code>$1</code>",
+	"titleblacklist-forbidden-move": "\"$2\" kan niet hernoemd worden naar \"$3\", omdat pagina's met de naam \"$3\" niet aangemaakt kunnen worden. Deze paginanaam voldoet aan de volgende beperking op de zwarte lijst: <code>$1</code>",
+	"titleblacklist-forbidden-upload": "Het bestand \"$2\" kan niet toegevoegd worden. Deze bestandsnaam voldoet aan de volgende beperking op de zwarte lijst: <code>$1</code>",
+	"titleblacklist-forbidden-new-account": "De gebruikersnaam \"$2\" kan niet aangemaakt worden omdat die voldoet aan de volgende beperking op de zwarte lijst: <code>$1</code>",
+	"titleblacklist-invalid": "De volgende {{PLURAL:$1|regel|regels}} in de zwarte lijst voor paginanamen {{PLURAL:$1|is|zijn}} ongeldig.\nVerbeter die {{PLURAL:$1|regel|regels}} voordat u de lijst opslaat:",
+	"titleblacklist-override": "Zwarte lijst negeren",
+	"right-tboverride": "De zwarte lijst voor pagina- en gebruikersnamen omzeilen",
+	"right-tboverride-account": "Zwarte lijst voor gebruikersnamen negeren"
+}

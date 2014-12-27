@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joetaras"
+		]
+	},
+	"asirra-desc": "Module Asirra pe confermà le cangiaminde",
+	"asirra-edit": "Pe proteggere condre le cangiaminde automatece de le rummate, pe piacere scacchie 'a categorije de le fote jndr'à buatte aqquà sotte:",
+	"asirra-addurl": "Le cangiaminde tune 'ngludone collegaminde de fore nuève. Pe proteggere condre le cangiaminde automatece de le rummate, pe piacere scacchie 'a categorije d'a fote 'ndruche jndr'à buatte aqquà sotte:",
+	"asirra-badlogin": "Pe proteggere condre le futteminde automatece de le passuord, pe piacere scacchie 'a categorije de le fote jndr'à buatte aqquà sotte:",
+	"asirra-createaccount": "Pe proteggere condre le ccrejaziune automatece de le cunde, pe piacere scacchie 'a categorije de le fote jndr'à buatte aqquà sotte:",
+	"asirra-createaccount-fail": "Pe piacere idendifiche correttamende le categorije.",
+	"asirra-create": "Pe proteggere condre le ccrejaziune automatece de le pàggene, pe piacere scacchie 'a categorije de le fote jndr'à buatte aqquà sotte:",
+	"asirra-nojs": "'''Pe piacere abbilite JavaScript e conferme arrete 'a pàgene.'''",
+	"asirra-failed": "Pe piacere idendifiche tutte le categorije de le immaggine"
+}

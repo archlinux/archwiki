@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Xuacu"
+		]
+	},
+	"recaptcha-edit": "Pa protexer la wiki escontra'l spam d'edición automáticu, pidimos-y qu'escriba les dos pallabres que se ven na caxella d'abaxo:",
+	"recaptcha-addurl": "La so edición incluye enllaces esternos nuevos. Pa protexer la wiki escontra'l spam automáticu, pidimos-y qu'escriba les dos pallabres que se ven na caxella d'abaxo:",
+	"recaptcha-badlogin": "Pa protexer la wiki escontra'l descifráu de claves automáticu, pidimos-y qu'escriba les dos pallabres que se ven na caxella d'abaxo:",
+	"recaptcha-createaccount": "Pa protexer la wiki escontra la creación de cuentes automática, pidimos-y qu'escriba les dos pallabres que se ven na caxella d'abaxo:",
+	"recaptcha-createaccount-fail": "Falta la rempuesta a la entruga de reCAPTCHA o ye incorreuta",
+	"recaptcha-create": "Pa protexer la wiki escontra la creación de páxines automática, pidimos-y qu'escriba les dos pallabres que se ven na caxella d'abaxo:"
+}

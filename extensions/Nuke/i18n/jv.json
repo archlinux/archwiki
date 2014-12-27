@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Meursault2004",
+			"NoiX180"
+		]
+	},
+	"nuke": "Busak massal",
+	"nuke-desc": "Mènèhi opsis fungsionalitas kanggo [[Special:Nuke|mbusak massal]] kaca-kaca",
+	"nuke-nopages": "Ora ditemokaké kaca anyar saka [[Special:Contributions/$1|$1]] ing owah-owahan pungkasan.",
+	"nuke-list": "Kaca-kaca ing ngisor iki lagi baé digawé déning [[Special:Contributions/$1|$1]];\nlebokna komentar lan pencèten tombol kanggo mbusak kabèh.",
+	"nuke-defaultreason": "Pambusakan massal kaca-kaca sing digawé déning $1",
+	"nuke-tools": "Piranti iki bisa ngakibataké pambusakan massal kaca-kaca sing lagi waé ditambahaké déning sawijining panganggo utawa alamat IP.\nLebokna jeneng panganggo utawa alamat IP kanggo olèh daftar kaca-kaca sing bisa dibusak:",
+	"nuke-submit-user": "Lakokna",
+	"nuke-submit-delete": "Busaken sing kapilih",
+	"right-nuke": "Pambusakan masal",
+	"nuke-select": "Pilih: $1",
+	"nuke-userorip": "Jeneng panganggo, alamat IP utawa kosong:",
+	"nuke-maxpages": "Cacahé kaca maksimal:",
+	"nuke-editby": "Digawé déning [[Special:Contributions/$1|$1]]",
+	"nuke-deleted": "Kaca '''$1''' wis dibusak.",
+	"nuke-not-deleted": "Kaca [[:$1]] '''ora bisa''' dibusak.",
+	"nuke-delete-more": "[[Special:Nuke|Busak kaca luwih akèh]]",
+	"nuke-pattern": "Pola kanggo jeneng kaca:",
+	"nuke-nopages-global": "Ora ana kaca anyar nèng [[Special:RecentChanges|owah-owahan paling anyar]].",
+	"nuke-viewchanges": "delok owah-owahan"
+}

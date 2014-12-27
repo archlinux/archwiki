@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kghbln",
+			"Metalhead64",
+			"Umherirrender"
+		]
+	},
+	"recaptcha-desc": "reCAPTCHA-Module für die Erweiterung „Confirm Edit“",
+	"recaptcha-edit": "Zum Schutz des Wikis vor automatisiertem Spam bitten wir dich, die beiden folgenden Wörter in das untenstehende Feld einzugeben:",
+	"recaptcha-addurl": "Deine Bearbeitung enthält neue externe Links. Zum Schutz des Wikis vor automatisiertem Spam bitten wir dich, die beiden folgenden Wörter in das folgende Feld einzugeben:",
+	"recaptcha-badlogin": "Zum Schutz des Wikis gegen automatisiertes Knacken von Passwörtern bitten wir dich, die beiden folgenden Wörter in das folgende Feld einzugeben:",
+	"recaptcha-createaccount": "Zum Schutz des Wikis gegen die automatisierte Erstellung von Benutzerkonten bitten wir dich, die folgenden beiden Wörter in das untenstehende Feld einzugeben:",
+	"recaptcha-createaccount-fail": "Fehlerhafte oder fehlende reCAPTCHA Antwort.",
+	"recaptcha-create": "Zum Schutz des Wikis gegen automatisierte Erstellung von Seiten bitten wir dich, die beiden folgenden Wörter in das folgende Feld einzugeben:"
+}

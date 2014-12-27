@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joseph"
+		]
+	},
+	"spam-blacklist": " # Bu listeyle eşleşen dış bağlantılar, bir sayfaya eklendiğinde engellenecektir. \n # Bu liste sadece bu vikiyi etkiler; ayrıca küresel karalisteye de bakın.\n # Dokümantasyon için https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n #<!-- bu satırı olduğu gibi bırakın --> <pre>\n#\n# Sözdizimi aşağıdaki gibidir:\n#  * \"#\" karakterinden satır sonuna kadar her şey bir yorumdur\n#  * Her boş olmayan satır, sadece URLlerin içindeki sunucularla eşleşen regex parçasıdır\n\n #</pre> <!-- bu satırı olduğu gibi bırakın -->",
+	"spam-whitelist": " #<!-- bu satırı olduğu gibi bırakın --> <pre>\n# Bu listeyle eşlenen dış bağlantılar *engellenmeyecektir*,\n# karaliste girdileriyle engellenmiş olsalar bile.\n#\n# Sözdizimi aşağıdaki gibidir:\n#  * \"#\" karakterinden satır sonuna kadar her şey bir yorumdur\n#  * Her boş olmayan satır, sadece URLlerin içindeki sunucularla eşleşen regex parçasıdır\n\n #</pre> <!--bu satırı olduğu gibi bırakın -->",
+	"spam-invalid-lines": "Şu spam karaliste {{PLURAL:$1|satırı|satırları}} geçersiz düzenli {{PLURAL:$1|tanımdır|tanımlardır}} ve sayfayı kaydetmeden düzeltilmesi gerekmektedir:",
+	"spam-blacklist-desc": "Regex-tabanlı anti-spam aracı: [[MediaWiki:Spam-blacklist]] ve [[MediaWiki:Spam-whitelist]]"
+}

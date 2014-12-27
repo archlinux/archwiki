@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Als-Chlämens",
+			"Als-Holder",
+			"Melancholie"
+		]
+	},
+	"fancycaptcha-addurl": "In Dyynere Bearbeitig het s neiji externi Link.\nZum Schutz vor automatisiertem Spamming gib des Wort in s Fäld unten yy. Druck derno nomol uf „Syte spychere“. [[Special:Captcha/help|(Frogen oder Probläm?)]]",
+	"fancycaptcha-badlogin": "Zum Schutz vor ere Kompromittierig vu Dyynm Benutzerkonto gib des Wort in s Fäld unten yy [[Special:Captcha/help|(Frogen oder Probläm?)]]:",
+	"fancycaptcha-createaccount": "Zum Schutz vor ere automatisierte Aalag vu Benutzerkonte gib bitte des Wort in s Fäld unten yy ([[Special:Captcha/help|Frogen oder Probläm?]]):",
+	"fancycaptcha-create": "Zum d Syten aalege gib des Wort in s Fäld unten yy. [[Special:Captcha/help|(Frogen oder Probläm?)]]",
+	"fancycaptcha-edit": "Zum d Syte bearbeite gib des Wort in s Fäld unten yy. [[Special:Captcha/help|(Frogen oder Probläm?)]]",
+	"fancycaptcha-sendemail": "As Schutz gege e automatischs Spamming, gib bitte des Wort in s Fäld unten yy ([[Special:Captcha/help|meh Informatione]]):"
+}

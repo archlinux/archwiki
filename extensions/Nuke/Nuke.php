@@ -4,10 +4,11 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
 
-define( 'Nuke_VERSION', '1.1.7' );
+define( 'Nuke_VERSION', '1.2.0' );
 
 $dir = dirname( __FILE__ ) . '/';
 
+$wgMessagesDirs['Nuke'] = __DIR__ . '/i18n';
 $wgExtensionMessagesFiles['Nuke'] = $dir . 'Nuke.i18n.php';
 $wgExtensionMessagesFiles['NukeAlias'] = $dir . 'Nuke.alias.php';
 
@@ -24,8 +25,11 @@ $wgGroupPermissions['sysop']['nuke'] = true;
 $wgAvailableRights[] = 'nuke';
 
 $wgAutoloadClasses['SpecialNuke'] = $dir . 'Nuke_body.php';
+$wgAutoloadClasses['NukeHooks'] = $dir . 'Nuke.hooks.php';
 $wgSpecialPages['Nuke'] = 'SpecialNuke';
 $wgSpecialPageGroups['Nuke'] = 'pagetools';
+
+$wgHooks['ContributionsToolLinks'][] = 'NukeHooks::nukeContributionsLinks';
 
 // Resource loader modules
 $moduleTemplate = array(

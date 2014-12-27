@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ooswesthoesbes"
+		]
+	},
+	"syntaxhighlight-desc": "Guf syntaxismarkering <code>&lt;syntaxhighlight&gt;</code> gebroekende [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Gaef 'ne taal es volg op:",
+	"syntaxhighlight-supported": "Óngersteunde täöl veur syntaxismarkering:",
+	"syntaxhighlight-err-loading": "(fout bie 't laje vanne lies mit óngersteunde täöl)",
+	"syntaxhighlight-err-language": "Ónzjuuste taal.",
+	"geshi.css": "/* Hiej geplaatste CBBS wuuertj toegepas op GeSHo syntax markering */"
+}

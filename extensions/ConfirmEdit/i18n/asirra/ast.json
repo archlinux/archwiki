@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Xuacu"
+		]
+	},
+	"asirra-desc": "Módulu Asirra pa ConfirmEdit",
+	"asirra-edit": "Pa protexer la wiki escontra'l spam d'edición automáticu, pidimos-y qu'esbille namái les fotos de gatos del cuadru d'abaxo:",
+	"asirra-addurl": "La so edición incluye enllaces esternos nuevos. Pa protexer la wiki escontra'l spam automáticu,  pidimos-y qu'esbille namái les fotos de gatos del cuadru d'abaxo:",
+	"asirra-badlogin": "Pa protexer la wiki escontra'l frayamientu de claves automáticu, pidimos-y qu'esbille namái les fotos de gatos del cuadru d'abaxo:",
+	"asirra-createaccount": "Pa protexer la wiki escontra la creación de cuentes automática, pidimos-y qu'esbille namái les fotos de gatos del cuadru d'abaxo:",
+	"asirra-createaccount-fail": "Identifique correutamente los gatos.",
+	"asirra-create": "Pa protexer la wiki escontra la creación de páxines automática, pidimos-y qu'esbille namái les fotos de gatos del cuadru d'abaxo:",
+	"asirra-nojs": "'''Por favor active JavaScript y vuelva a unviar la páxina.'''",
+	"asirra-failed": "Identifique toles imaxes de gatos"
+}

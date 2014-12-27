@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mdann52"
+		]
+	},
+	"interwiki_local_0_intro": "Any external HTTP requests to the local wiki using this interwiki prefix in the URL will result in a \"{{int:badtitle}}\" error page."
+}

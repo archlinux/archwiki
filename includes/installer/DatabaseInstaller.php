@@ -163,19 +163,26 @@ abstract class DatabaseInstaller {
 	}
 
 	/**
-	 * Create database tables from scratch.
+	 * Apply a SQL source file to the database as part of running an installation step.
 	 *
+	 * @param string $sourceFileMethod
+	 * @param string $stepName
+	 * @param string $archiveTableMustNotExist
 	 * @return Status
 	 */
-	public function createTables() {
+	private function stepApplySourceFile(
+		$sourceFileMethod,
+		$stepName,
+		$archiveTableMustNotExist = false
+	) {
 		$status = $this->getConnection();
 		if ( !$status->isOK() ) {
 			return $status;
 		}
 		$this->db->selectDB( $this->getVar( 'wgDBname' ) );
 
-		if ( $this->db->tableExists( 'archive', __METHOD__ ) ) {
-			$status->warning( 'config-install-tables-exist' );
+		if ( $archiveTableMustNotExist && $this->db->tableExists( 'archive', __METHOD__ ) ) {
+			$status->warning( "config-$stepName-tables-exist" );
 			$this->enableLB();
 
 			return $status;
@@ -184,11 +191,13 @@ abstract class DatabaseInstaller {
 		$this->db->setFlag( DBO_DDLMODE ); // For Oracle's handling of schema files
 		$this->db->begin( __METHOD__ );
 
-		$error = $this->db->sourceFile( $this->db->getSchemaPath() );
+		$error = $this->db->sourceFile(
+			call_user_func( array( $this->db, $sourceFileMethod ) )
+		);
 		if ( $error !== true ) {
 			$this->db->reportQueryError( $error, 0, '', __METHOD__ );
 			$this->db->rollback( __METHOD__ );
-			$status->fatal( 'config-install-tables-failed', $error );
+			$status->fatal( "config-$stepName-tables-failed", $error );
 		} else {
 			$this->db->commit( __METHOD__ );
 		}
@@ -198,6 +207,24 @@ abstract class DatabaseInstaller {
 		}
 
 		return $status;
+	}
+
+	/**
+	 * Create database tables from scratch.
+	 *
+	 * @return Status
+	 */
+	public function createTables() {
+		return $this->stepApplySourceFile( 'getSchemaPath', 'install', true );
+	}
+
+	/**
+	 * Insert update keys into table to prevent running unneded updates.
+	 *
+	 * @return Status
+	 */
+	public function insertUpdateKeys() {
+		return $this->stepApplySourceFile( 'getUpdateKeysPath', 'updates', false );
 	}
 
 	/**
@@ -219,7 +246,7 @@ abstract class DatabaseInstaller {
 	/**
 	 * Get the DBMS-specific options for LocalSettings.php generation.
 	 *
-	 * @return String
+	 * @return string
 	 */
 	abstract public function getLocalSettings();
 
@@ -243,7 +270,10 @@ abstract class DatabaseInstaller {
 		if ( $status->isOK() ) {
 			$status->value->setSchemaVars( $this->getSchemaVars() );
 		} else {
-			throw new MWException( __METHOD__ . ': unexpected DB connection error' );
+			$msg = __METHOD__ . ': unexpected error while establishing'
+				. ' a database connection with message: '
+				. $status->getMessage()->plain();
+			throw new MWException( $msg );
 		}
 	}
 
@@ -257,14 +287,14 @@ abstract class DatabaseInstaller {
 		if ( !$status->isOK() ) {
 			throw new MWException( __METHOD__ . ': unexpected DB connection error' );
 		}
-		LBFactory::setInstance( new LBFactory_Single( array(
+		LBFactory::setInstance( new LBFactorySingle( array(
 			'connection' => $status->value ) ) );
 	}
 
 	/**
 	 * Perform database upgrades
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	public function doUpgrade() {
 		$this->setupSchemaVars();
@@ -311,7 +341,7 @@ abstract class DatabaseInstaller {
 	/**
 	 * Construct and initialise parent.
 	 * This is typically only called from Installer::getDBInstaller()
-	 * @param $parent
+	 * @param WebInstaller $parent
 	 */
 	public function __construct( $parent ) {
 		$this->parent = $parent;
@@ -321,7 +351,7 @@ abstract class DatabaseInstaller {
 	 * Convenience function.
 	 * Check if a named extension is present.
 	 *
-	 * @param $name
+	 * @param string $name
 	 * @return bool
 	 */
 	protected static function checkExtension( $name ) {
@@ -330,7 +360,7 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Get the internationalised name for this DBMS.
-	 * @return String
+	 * @return string
 	 */
 	public function getReadableName() {
 		// Messages: config-type-mysql, config-type-postgres, config-type-sqlite,
@@ -357,8 +387,8 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Get a variable, taking local defaults into account.
-	 * @param $var string
-	 * @param $default null
+	 * @param string $var
+	 * @param mixed|null $default
 	 * @return mixed
 	 */
 	public function getVar( $var, $default = null ) {
@@ -375,8 +405,8 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Convenience alias for $this->parent->setVar()
-	 * @param $name string
-	 * @param $value mixed
+	 * @param string $name
+	 * @param mixed $value
 	 */
 	public function setVar( $name, $value ) {
 		$this->parent->setVar( $name, $value );
@@ -385,10 +415,10 @@ abstract class DatabaseInstaller {
 	/**
 	 * Get a labelled text box to configure a local variable.
 	 *
-	 * @param $var string
-	 * @param $label string
-	 * @param $attribs array
-	 * @param $helpData string
+	 * @param string $var
+	 * @param string $label
+	 * @param array $attribs
+	 * @param string $helpData
 	 * @return string
 	 */
 	public function getTextBox( $var, $label, $attribs = array(), $helpData = "" ) {
@@ -412,10 +442,10 @@ abstract class DatabaseInstaller {
 	 * Get a labelled password box to configure a local variable.
 	 * Implements password hiding.
 	 *
-	 * @param $var string
-	 * @param $label string
-	 * @param $attribs array
-	 * @param $helpData string
+	 * @param string $var
+	 * @param string $label
+	 * @param array $attribs
+	 * @param string $helpData
 	 * @return string
 	 */
 	public function getPasswordBox( $var, $label, $attribs = array(), $helpData = "" ) {
@@ -438,6 +468,10 @@ abstract class DatabaseInstaller {
 	/**
 	 * Get a labelled checkbox to configure a local boolean variable.
 	 *
+	 * @param string $var
+	 * @param string $label
+	 * @param array $attribs Optional.
+	 * @param string $helpData Optional.
 	 * @return string
 	 */
 	public function getCheckBox( $var, $label, $attribs = array(), $helpData = "" ) {
@@ -457,8 +491,7 @@ abstract class DatabaseInstaller {
 	/**
 	 * Get a set of labelled radio buttons.
 	 *
-	 * @param $params Array:
-	 *    Parameters are:
+	 * @param array $params Parameters are:
 	 *      var:            The variable to be configured (required)
 	 *      label:          The message name for the label (required)
 	 *      itemLabelPrefix: The message name prefix for the item labels (required)
@@ -478,7 +511,7 @@ abstract class DatabaseInstaller {
 	 * Convenience function to set variables based on form data.
 	 * Assumes that variables containing "password" in the name are (potentially
 	 * fake) passwords.
-	 * @param $varNames Array
+	 * @param array $varNames
 	 * @return array
 	 */
 	public function setVarsFromRequest( $varNames ) {
@@ -493,7 +526,7 @@ abstract class DatabaseInstaller {
 	 * Traditionally, this is done by testing for the existence of either
 	 * the revision table or the cur table.
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	public function needsUpgrade() {
 		$status = $this->getConnection();
@@ -512,7 +545,7 @@ abstract class DatabaseInstaller {
 	/**
 	 * Get a standard install-user fieldset.
 	 *
-	 * @return String
+	 * @return string
 	 */
 	public function getInstallUserBox() {
 		return Html::openElement( 'fieldset' ) .
@@ -544,10 +577,10 @@ abstract class DatabaseInstaller {
 
 	/**
 	 * Get a standard web-user fieldset
-	 * @param string $noCreateMsg Message to display instead of the creation checkbox.
-	 *   Set this to false to show a creation checkbox.
+	 * @param string|bool $noCreateMsg Message to display instead of the creation checkbox.
+	 *   Set this to false to show a creation checkbox (default).
 	 *
-	 * @return String
+	 * @return string
 	 */
 	public function getWebUserBox( $noCreateMsg = false ) {
 		$wrapperStyle = $this->getVar( '_SameAccount' ) ? 'display: none' : '';

@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kaustubh",
+			"Mahitgar",
+			"Shantanoo"
+		]
+	},
+	"syntaxhighlight-desc": "[http://qbnz.com/highlighter/ GeSHi हायलायटर] वापरून सिन्टॅक्स हायलाईट करा <code>&lt;syntaxhighlight&gt;</code>",
+	"syntaxhighlight-specify": "तुम्ही याप्रमाणे भाषा देणे गरजेचे आहे:",
+	"syntaxhighlight-supported": "सिन्टॅक्स हायलायटींग खालील भाषांवर वापरता येते:",
+	"syntaxhighlight-err-loading": "(साहाय्य देणाऱ्या भाषांची यादी दाखविण्यास असमर्थ)",
+	"syntaxhighlight-err-language": "गैरलागू भाषा",
+	"geshi.css": "/* इथे लिहिलेले CSS GeSHi सिन्टॅक्स हायलायटींग साठी वापरले जाईल */"
+}

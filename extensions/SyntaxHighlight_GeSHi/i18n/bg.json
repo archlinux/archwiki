@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Borislav",
+			"DCLXVI",
+			"Turin"
+		]
+	},
+	"syntaxhighlight-desc": "Осигурява синтактично осветяване на <code>&lt;syntaxhighlight&gt;</code> чрез [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Нужно е да укажете език по следния начин:",
+	"syntaxhighlight-supported": "Поддържани езици за синтактично открояване:",
+	"syntaxhighlight-err-loading": "(грешка при зареждането на списъка на поддържаните езици)",
+	"syntaxhighlight-err-language": "Невалиден език.",
+	"geshi.css": "/* Евентуален код на CSS, поставен тук, ще бъде използван за синтактичното открояване чрез GeSHi */"
+}

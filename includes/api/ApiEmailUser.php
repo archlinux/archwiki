@@ -40,7 +40,11 @@ class ApiEmailUser extends ApiBase {
 		}
 
 		// Check permissions and errors
-		$error = SpecialEmailUser::getPermissionsError( $this->getUser(), $params['token'] );
+		$error = SpecialEmailUser::getPermissionsError(
+			$this->getUser(),
+			$params['token'],
+			$this->getConfig()
+		);
 		if ( $error ) {
 			$this->dieUsageMsg( array( $error ) );
 		}
@@ -94,10 +98,6 @@ class ApiEmailUser extends ApiBase {
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true
 			),
-			'token' => array(
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true
-			),
 			'ccme' => false,
 		);
 	}
@@ -107,25 +107,7 @@ class ApiEmailUser extends ApiBase {
 			'target' => 'User to send email to',
 			'subject' => 'Subject header',
 			'text' => 'Mail body',
-			'token' => 'A token previously acquired via prop=info',
 			'ccme' => 'Send a copy of this mail to me',
-		);
-	}
-
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'result' => array(
-					ApiBase::PROP_TYPE => array(
-						'Success',
-						'Failure'
-					),
-				),
-				'message' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			)
 		);
 	}
 
@@ -133,23 +115,14 @@ class ApiEmailUser extends ApiBase {
 		return 'Email a user.';
 	}
 
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'usermaildisabled' ),
-		) );
-	}
-
 	public function needsToken() {
-		return true;
-	}
-
-	public function getTokenSalt() {
-		return '';
+		return 'csrf';
 	}
 
 	public function getExamples() {
 		return array(
-			'api.php?action=emailuser&target=WikiSysop&text=Content' => 'Send an email to the User "WikiSysop" with the text "Content"',
+			'api.php?action=emailuser&target=WikiSysop&text=Content&token=123ABC'
+				=> 'Send an email to the User "WikiSysop" with the text "Content"',
 		);
 	}
 

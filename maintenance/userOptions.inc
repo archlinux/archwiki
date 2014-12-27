@@ -30,7 +30,7 @@ require_once __DIR__ . '/commandLine.inc';
 /**
  * @ingroup Maintenance
  */
-class userOptions {
+class UserOptions {
 	public $mQuick;
 	public $mQuiet;
 	public $mDry;
@@ -40,21 +40,24 @@ class userOptions {
 
 	private $mMode, $mReady;
 
-	/** Constructor. Will show usage and exit if script options are not correct */
+	/**
+	 * Constructor. Will show usage and exit if script options are not correct
+	 * @param array $opts
+	 * @param array $args
+	 */
 	function __construct( $opts, $args ) {
 		if ( !$this->checkOpts( $opts, $args ) ) {
-			userOptions::showUsageAndExit();
+			UserOptions::showUsageAndExit();
 		} else {
 			$this->mReady = $this->initializeOpts( $opts, $args );
 		}
 	}
 
-
 	/**
 	 * This is used to check options. Only needed on construction
 	 *
-	 * @param $opts array
-	 * @param $args array
+	 * @param array $opts
+	 * @param array $args
 	 *
 	 * @return bool
 	 */
@@ -73,8 +76,8 @@ class userOptions {
 	/**
 	 * load script options in the object
 	 *
-	 * @param $opts array
-	 * @param $args array
+	 * @param array $opts
+	 * @param array $args
 	 *
 	 * @return bool
 	 */
@@ -108,7 +111,8 @@ class userOptions {
 			return false;
 		}
 
-		$this->{ $this->mMode } ();
+		$this->{$this->mMode}();
+
 		return true;
 	}
 
@@ -140,7 +144,7 @@ class userOptions {
 			array( 'user_id' ),
 			array(),
 			__METHOD__
-			);
+		);
 
 		foreach ( $result as $id ) {
 
@@ -156,15 +160,18 @@ class userOptions {
 
 				$userValue = $user->getOption( $this->mAnOption );
 				if ( $userValue <> $defaultOptions[$this->mAnOption] ) {
+					// @codingStandardsIgnoreStart Ignore silencing errors is discouraged warning
 					@$ret[$this->mAnOption][$userValue]++;
+					// @codingStandardsIgnoreEnd
 				}
-
 			} else {
 
 				foreach ( $defaultOptions as $name => $defaultValue ) {
 					$userValue = $user->getOption( $name );
 					if ( $userValue <> $defaultValue ) {
+						// @codingStandardsIgnoreStart Ignore silencing errors is discouraged warning
 						@$ret[$name][$userValue]++;
+						// @codingStandardsIgnoreEnd
 					}
 				}
 			}
@@ -179,7 +186,6 @@ class userOptions {
 		}
 	}
 
-
 	/** Change our users options */
 	private function CHANGER() {
 		$this->warn();
@@ -190,7 +196,7 @@ class userOptions {
 			array( 'user_id' ),
 			array(),
 			__METHOD__
-			);
+		);
 
 		foreach ( $result as $id ) {
 
@@ -202,7 +208,8 @@ class userOptions {
 			if ( $curValue == $this->mOldValue ) {
 
 				if ( !$this->mQuiet ) {
-					print "Setting {$this->mAnOption} for $username from '{$this->mOldValue}' to '{$this->mNewValue}'): ";
+					print "Setting {$this->mAnOption} for $username from '{$this->mOldValue}' " .
+						"to '{$this->mNewValue}'): ";
 				}
 
 				// Change value
@@ -215,7 +222,6 @@ class userOptions {
 				if ( !$this->mQuiet ) {
 					print " OK\n";
 				}
-
 			} elseif ( !$this->mQuiet ) {
 				print "Not changing '$username' using <{$this->mAnOption}> = '$curValue'\n";
 			}
@@ -232,6 +238,7 @@ class userOptions {
 		foreach ( $def as $optname => $defaultValue ) {
 			array_push( $ret, $optname );
 		}
+
 		return $ret;
 	}
 
@@ -240,7 +247,7 @@ class userOptions {
 	#
 
 	public static function showUsageAndExit() {
-print <<<USAGE
+		print <<<USAGE
 
 This script pass through all users and change one of their options.
 The new option is NOT validated.
@@ -264,7 +271,7 @@ Options:
 	--dry   : do not save user settings back to database
 
 USAGE;
-	exit( 0 );
+		exit( 0 );
 	}
 
 	/**
@@ -277,14 +284,14 @@ USAGE;
 			return true;
 		}
 
-print <<<WARN
+		print <<<WARN
 The script is about to change the skin for ALL USERS in the database.
 Users with option <$this->mAnOption> = '$this->mOldValue' will be made to use '$this->mNewValue'.
 
 Abort with control-c in the next five seconds....
 WARN;
 		wfCountDown( 5 );
+
 		return true;
 	}
-
 }

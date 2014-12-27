@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Fohanno"
+		]
+	},
+	"asirra-desc": "Modulenn Asirra evit ConfirmEdit",
+	"asirra-edit": "Evit sikour da wareziñ ar wiki diouzh ar stroboù emgefre, diuzit ar skeudennoù kizhier er voest dindan :",
+	"asirra-createaccount-fail": "Diuzit ar c'hizhier, mar plij.",
+	"asirra-create": "Evit gwareziñ ar wiki diouzh ar c'hrouiñ pajennoù emgefre, diuzit ar skeudennoù kizhier er voest dindan :",
+	"asirra-nojs": "'''Gweredekait JavaScript, mar plij, hag adkasit ar bajenn.'''",
+	"asirra-failed": "Diuzit an holl skeudennoù kizhier, mar plij"
+}

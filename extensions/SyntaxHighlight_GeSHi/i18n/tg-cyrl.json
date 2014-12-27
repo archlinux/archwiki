@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ibrahim"
+		]
+	},
+	"syntaxhighlight-desc": "Имкони дастуроти рангин карданро <code>&lt;syntaxhighlight&gt;</code> бо истифода аз [http://qbnz.com/highlighter/ GeSHi Highlighter]-ро фароҳам меоварад",
+	"syntaxhighlight-specify": "Шумо бояд бо ин шакл забонеро мушаххас кунед:",
+	"syntaxhighlight-supported": "Забонҳои пуштибонишуда барои рангин кардани дастуроти наҳвӣ:",
+	"syntaxhighlight-err-loading": "(хато дар богузории забонҳои пуштибонишуда)",
+	"syntaxhighlight-err-language": "Забони ғайри миҷоз.",
+	"geshi.css": "/* CSS инҷо гузошташуда ба дастуроти рангинкунии GeSHi ба кор бурда мешавад */"
+}

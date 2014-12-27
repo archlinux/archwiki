@@ -29,11 +29,11 @@
 class RevisionDeleter {
 	/** List of known revdel types, with their corresponding list classes */
 	private static $allowedTypes = array(
-		'revision' => 'RevDel_RevisionList',
-		'archive' => 'RevDel_ArchiveList',
-		'oldimage' => 'RevDel_FileList',
-		'filearchive' => 'RevDel_ArchivedFileList',
-		'logging' => 'RevDel_LogList',
+		'revision' => 'RevDelRevisionList',
+		'archive' => 'RevDelArchiveList',
+		'oldimage' => 'RevDelFileList',
+		'filearchive' => 'RevDelArchivedFileList',
+		'logging' => 'RevDelLogList',
 	);
 
 	/** Type map to support old log entries */
@@ -77,7 +77,7 @@ class RevisionDeleter {
 	 * @param IContextSource $context
 	 * @param Title $title
 	 * @param array $ids
-	 * @return RevDel_List
+	 * @return RevDelList
 	 */
 	public static function createList( $typeName, IContextSource $context, Title $title, array $ids ) {
 		$typeName = self::getCanonicalTypeName( $typeName );
@@ -91,12 +91,12 @@ class RevisionDeleter {
 	 * Checks for a change in the bitfield for a certain option and updates the
 	 * provided array accordingly.
 	 *
-	 * @param string $desc description to add to the array if the option was
+	 * @param string $desc Description to add to the array if the option was
 	 * enabled / disabled.
-	 * @param $field Integer: the bitmask describing the single option.
-	 * @param $diff Integer: the xor of the old and new bitfields.
-	 * @param $new Integer: the new bitfield
-	 * @param array $arr the array to update.
+	 * @param int $field The bitmask describing the single option.
+	 * @param int $diff The xor of the old and new bitfields.
+	 * @param int $new The new bitfield
+	 * @param array $arr The array to update.
 	 */
 	protected static function checkItem( $desc, $field, $diff, $new, &$arr ) {
 		if ( $diff & $field ) {
@@ -117,8 +117,8 @@ class RevisionDeleter {
 	 * You can turn the keys in $arr[0] and $arr[1] into message keys by
 	 * appending -hid and and -unhid to the keys respectively.
 	 *
-	 * @param $n Integer: the new bitfield.
-	 * @param $o Integer: the old bitfield.
+	 * @param int $n The new bitfield.
+	 * @param int $o The old bitfield.
 	 * @return array An array as described above.
 	 * @since 1.19 public
 	 */
@@ -189,7 +189,7 @@ class RevisionDeleter {
 	 * Suggest a target for the revision deletion
 	 * @since 1.22
 	 * @param string $typeName
-	 * @param Title|null $title User-supplied target
+	 * @param Title|null $target User-supplied target
 	 * @param array $ids
 	 * @return Title|null
 	 */
@@ -201,14 +201,13 @@ class RevisionDeleter {
 		return call_user_func( array( self::$allowedTypes[$typeName], 'suggestTarget' ), $target, $ids );
 	}
 
-
 	/**
 	 * Checks if a revision still exists in the revision table.
 	 * If it doesn't, returns the corresponding ar_timestamp field
 	 * so that this key can be used instead.
 	 *
-	 * @param $title Title
-	 * @param  $revid
+	 * @param Title $title
+	 * @param int $revid
 	 * @return bool|mixed
 	 */
 	public static function checkRevisionExistence( $title, $revid ) {
@@ -231,8 +230,8 @@ class RevisionDeleter {
 	/**
 	 * Put together a rev_deleted bitfield
 	 * @since 1.22
-	 * @param array $bitPars extractBitParams() params
-	 * @param int $oldfield current bitfield
+	 * @param array $bitPars ExtractBitParams() params
+	 * @param int $oldfield Current bitfield
 	 * @return array
 	 */
 	public static function extractBitfield( $bitPars, $oldfield ) {

@@ -3,36 +3,73 @@
 $IP = strval( getenv( 'MW_INSTALL_PATH' ) ) !== ''
 	? getenv( 'MW_INSTALL_PATH' )
 	: realpath( dirname( __FILE__ ) . "/../../" );
+// Can use __DIR__ once we drop support for MW 1.19
 
-// TODO: migrate to maintenance class
-require_once( "$IP/maintenance/commandLine.inc" );
+require "$IP/maintenance/Maintenance.php";
 
-if( isset( $options['help'] ) ) {
-	print "Fetches updated localisation files from MediaWiki development SVN\n";
-	print "and saves into local database to merge with release defaults.\n";
-	print "\n";
-	print "Usage: php extensions/LocalisationUpdate/update.php\n";
-	print "Options:\n";
-	print "  --quiet           Suppress progress output\n";
-	print "  --skip-core       Don't fetch MediaWiki core files\n";
-	print "  --skip-extensions Don't fetch any extension files\n";
-	print "  --all             Fetch all present extensions, not just those enabled\n";
-	print "  --outdir=<dir>    Override output directory for serialized update files\n";
-	print "  --svnurl=<url>    URL to SVN repository, or path to local SVN checkout. Deprecated.\n";
-	print "\n";
-	exit( 0 );
+class LU extends Maintenance {
+	public function __construct() {
+		parent::__construct();
+		$this->mDescription = 'Fetches translation updates to MediaWiki and extensions.';
+		$this->addOption(
+			'repoid',
+			'Fetch translations from repositories identified by this',
+			false, /*required*/
+			true /*has arg*/
+		);
+	}
+
+	public function execute() {
+		// Prevent the script from timing out
+		set_time_limit( 0 );
+		ini_set( "max_execution_time", 0 );
+		ini_set( 'memory_limit', -1 );
+
+		global $wgExtensionMessagesFiles, $wgMessagesDirs, $IP;
+		global $wgLocalisationUpdateRepositories;
+		global $wgLocalisationUpdateRepository;
+
+		$dir = LocalisationUpdate::getDirectory();
+		if ( !$dir ) {
+			$this->error( "No cache directory configured", true );
+			return;
+		}
+
+		$finder = new LU_Finder( $wgExtensionMessagesFiles, $wgMessagesDirs, $IP );
+		$readerFactory = new LU_ReaderFactory();
+		$fetcherFactory = new LU_FetcherFactory();
+
+		$repoid = $this->getOption( 'repoid', $wgLocalisationUpdateRepository );
+		if ( !isset( $wgLocalisationUpdateRepositories[$repoid] ) ) {
+			$known = implode( ', ', array_keys( $wgLocalisationUpdateRepositories ) );
+			$this->error( "Unknown repoid $repoid; known: $known", true );
+			return;
+		}
+		$repos = $wgLocalisationUpdateRepositories[$repoid];
+
+		// Do it ;)
+		$updater = new LU_Updater();
+		$updatedMessages = $updater->execute(
+			$finder,
+			$readerFactory,
+			$fetcherFactory,
+			$repos
+		);
+
+		// Store it ;)
+		$count = array_sum( array_map( 'count', $updatedMessages ) );
+		if ( !$count ) {
+			$this->output( "Found no new translations\n" );
+			return;
+		}
+
+		foreach ( $updatedMessages as $language => $messages ) {
+			$filename = "$dir/" . LocalisationUpdate::getFilename( $language );
+			file_put_contents( $filename, FormatJson::encode( $messages, true ) );
+		}
+		$this->output( "Saved $count new translations\n" );
+	}
 }
 
-
-$starttime = microtime( true );
-
-// Prevent the script from timing out
-set_time_limit( 0 );
-ini_set( "max_execution_time", 0 );
-ini_set( 'memory_limit', -1 );
-
-LocalisationUpdate::updateMessages( $options );
-
-$endtime = microtime( true );
-$totaltime = ( $endtime - $starttime );
-print "All done in " . $totaltime . " seconds\n";
+$maintClass = 'LU';
+require_once RUN_MAINTENANCE_IF_MAIN;

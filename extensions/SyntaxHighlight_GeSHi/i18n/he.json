@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Guycn2",
+			"Rotem Liss"
+		]
+	},
+	"syntaxhighlight-desc": "אפשרות לסימון קוד מקור בצבעים עם התגית <code>&lt;syntaxhighlight&gt;</code> באמצעות [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "יש לציין שפה באופן הבא:",
+	"syntaxhighlight-supported": "שפות נתמכות:",
+	"syntaxhighlight-err-loading": "(שגיאה בטעינת הרשימה של השפות הנתמכות)",
+	"syntaxhighlight-err-language": "שפה שגויה.",
+	"geshi.css": "/* סגנונות CSS שייכתבו כאן יפעלו על התגית source */"
+}

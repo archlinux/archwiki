@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"CERminator"
+		]
+	},
+	"spam-blacklist": "# Vanjski URLovi koji odgovaraju ovom spisku će biti blokirani ako se dodaju na stranicu.\n # Ovaj spisak će biti aktivan samo na ovoj wiki; a poziva se i na globalni zabranjeni spisak.\n # Za objašenjenja i dokumentaciju pogledajte https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n #<!-- ostavite ovaj red tačno onako kakav je --> <pre>\n#\n# Sintaksa je slijedeća:\n#  * Sve od znaka \"#\" do kraja reda je komentar\n#  * Svi neprazni redovi su fragmenti regexa koji će odgovarati samo domaćinima unutar URLova\n\n #</pre> <!-- ostavite ovaj red tačno onako kakav je -->",
+	"spam-whitelist": "#<!-- ostavite ovaj red onakav kakav je --> <pre>\n# Vanjski URLovi koji odgovaraju nekoj od stavki na ovom spisku *neće* biti blokirani čak iako\n# budu blokirani preko spisak nepoželjnih stavki.\n#\n# Sintaksa je slijedeća:\n#  * Sve od znaka \"#\" do kraja reda je komentar\n#  * Svaki neprazni red je fragment regexa koji će odgovarati samo domaćinima unutar URLa\n\n #</pre> <!-- ostavite ovaj red onakav kakav je -->",
+	"spam-invalid-lines": "Slijedeći {{PLURAL:$1|red|redovi}} u spisku spam nepoželjnih stavki {{PLURAL:$1|je nevalidan izraz|su nevalidni izrazi}} i {{PLURAL:$1|treba|trebaju}} se ispraviti prije spremanja stranice:",
+	"spam-blacklist-desc": "Alati protiv spama zasnovani na regexu: [[MediaWiki:Spam-blacklist]] i [[MediaWiki:Spam-whitelist]]"
+}

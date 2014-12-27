@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aftab1995",
+			"Wikitanvir",
+			"Tauhid16"
+		]
+	},
+	"interwiki": "আন্তঃউইকি তথ্য দেখুন ও সম্পাদনা করুন",
+	"interwiki-title-norights": "আন্তঃউইকি তথ্য দেখুন",
+	"interwiki_intro": "এটি আন্তঃউইকি টেবিলের একটি সামগ্রিক চিত্র।",
+	"interwiki_prefix": "উপসর্গ",
+	"interwiki-prefix-label": "উপসর্গ:",
+	"interwiki_1": "হ্যাঁ",
+	"interwiki_0": "না",
+	"interwiki_edit": "সম্পাদনা",
+	"interwiki_reasonfield": "কারণ:",
+	"interwiki_delquestion": "\"$1\" অপসারণ",
+	"interwiki_deleting": "আপনি উপসর্গ \"$1\" অপসারণ করছেন।",
+	"interwiki_addtext": "একটি আন্তউইকি বা ভাষা উপসর্গ যোগ করুন",
+	"interwiki-addtext-local": "একটি স্থানীয় আন্তউইকি বা ভাষা উপসর্গ যোগ করুন",
+	"interwiki_addbutton": "যোগ",
+	"right-interwiki": "আন্তঃউইকি উপাত্ত সম্পাদনা",
+	"interwiki-global-links": "বৈশ্বিক অন্তঃউইকি পছন্দসমূহ",
+	"interwiki-local-links": "স্থানীয় অন্তঃউইকি পছন্দসমূহ",
+	"interwiki-links": "আন্তঃউইকি উপসর্গ",
+	"interwiki-language-links": "আন্তঃভাষা উপসর্গ"
+}

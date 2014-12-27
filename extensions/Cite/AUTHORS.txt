@@ -1,0 +1,68 @@
+Principal Authors (major contributors, alphabetically)
+
+Ævar Arnfjörð Bjarmason
+Andrew Garrett
+Brion Vibber
+Marius Hoch
+Steve Sanbeg
+Yair rand
+
+Patch Contributors (minor contributors, alphabetically)
+
+Aaron Schulz
+Alex Monk
+Alex Z.
+Alexandre Emsenhuber
+Antoine Musso
+Aryeh Gregor
+Brad Jorsch
+Chad Horohoe
+Daniel Cannon
+Danny B.
+Derk-Jan Hartman
+Ed Sanders
+Fomafix
+Gabriel Wicke
+Happy-melon
+Alexander Emsenhuber
+Ivan Lanin
+Jackmcbarn
+James D. Forrester
+Jan Paul Posma
+Jens Frank
+Kevin Brown
+Kevin Israel
+Kunal Mehta
+Mark A. Hershberger
+Bartosz Dziewoński
+Max Semenik
+Meno25
+Moriel Schottlender
+Nemo bis
+Nick Jenkins
+Nik Everett
+Niklas Laxström
+Ori.livneh
+OverlordQ
+Peter Gehres
+Philip Tzou
+Platonides
+Purodha B Blissenbach
+Raimond Spekking
+Remember the dot
+Roan Kattouw
+Rob Church
+Robert Rohde
+Robin Pepermans
+Ryan Kaldari
+Sam Reed
+Shinjiman
+Siebrand Mazeland
+Thomas Dalton
+ThomasV
+Tim Starling
+Tim Weyer
+Tobias
+eranroz
+kghbln
+mrbluesky

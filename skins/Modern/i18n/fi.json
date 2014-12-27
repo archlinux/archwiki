@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nedergard",
+			"Nike",
+			"Str4nd"
+		]
+	},
+	"modern.css": "/* Tämä sivu sisältää Moderni-ulkoasua muuttavia tyylejä. */",
+	"modern.js": "/* Tämän sivun JavaScript-koodi liitetään Moderni-tyyliin */",
+	"skinname-modern": "Moderni"
+}

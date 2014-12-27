@@ -36,7 +36,7 @@ class MostlinkedTemplatesPage extends QueryPage {
 	/**
 	 * Is this report expensive, i.e should it be cached?
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	public function isExpensive() {
 		return true;
@@ -45,7 +45,7 @@ class MostlinkedTemplatesPage extends QueryPage {
 	/**
 	 * Is there a feed available?
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	public function isSyndicated() {
 		return false;
@@ -54,7 +54,7 @@ class MostlinkedTemplatesPage extends QueryPage {
 	/**
 	 * Sort the results in descending order?
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
 	public function sortDescending() {
 		return true;
@@ -68,7 +68,6 @@ class MostlinkedTemplatesPage extends QueryPage {
 				'title' => 'tl_title',
 				'value' => 'COUNT(*)'
 			),
-			'conds' => array( 'tl_namespace' => NS_TEMPLATE ),
 			'options' => array( 'GROUP BY' => array( 'tl_namespace', 'tl_title' ) )
 		);
 	}
@@ -76,7 +75,7 @@ class MostlinkedTemplatesPage extends QueryPage {
 	/**
 	 * Pre-cache page existence to speed up link generation
 	 *
-	 * @param $db DatabaseBase connection
+	 * @param DatabaseBase $db
 	 * @param ResultWrapper $res
 	 */
 	public function preprocessResults( $db, $res ) {
@@ -125,7 +124,7 @@ class MostlinkedTemplatesPage extends QueryPage {
 	 *
 	 * @param Title $title Title to make the link for
 	 * @param object $result Result row
-	 * @return String
+	 * @return string
 	 */
 	private function makeWlhLink( $title, $result ) {
 		$wlh = SpecialPage::getTitleFor( 'Whatlinkshere', $title->getPrefixedText() );

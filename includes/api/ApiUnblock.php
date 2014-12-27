@@ -89,64 +89,28 @@ class ApiUnblock extends ApiBase {
 				ApiBase::PARAM_TYPE => 'integer',
 			),
 			'user' => null,
-			'token' => null,
 			'reason' => '',
 		);
 	}
 
 	public function getParamDescription() {
 		$p = $this->getModulePrefix();
+
 		return array(
-			'id' => "ID of the block you want to unblock (obtained through list=blocks). Cannot be used together with {$p}user",
-			'user' => "Username, IP address or IP range you want to unblock. Cannot be used together with {$p}id",
-			'token' => "An unblock token previously obtained through prop=info",
+			'id' => "ID of the block you want to unblock (obtained through list=blocks). " .
+				"Cannot be used together with {$p}user",
+			'user' => "Username, IP address or IP range you want to unblock. " .
+				"Cannot be used together with {$p}id",
 			'reason' => 'Reason for unblock',
 		);
 	}
 
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'id' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'user' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'userid' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'reason' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			)
-		);
-	}
-
 	public function getDescription() {
-		return 'Unblock a user';
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-			array( 'unblock-notarget' ),
-			array( 'unblock-idanduser' ),
-			array( 'cantunblock' ),
-			array( 'ipbblocked' ),
-			array( 'ipbnounblockself' ),
-		) );
+		return 'Unblock a user.';
 	}
 
 	public function needsToken() {
-		return true;
-	}
-
-	public function getTokenSalt() {
-		return '';
+		return 'csrf';
 	}
 
 	public function getExamples() {

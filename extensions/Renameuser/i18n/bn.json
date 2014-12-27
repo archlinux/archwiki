@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bellayet",
+			"Nasir8891"
+		]
+	},
+	"renameuser": "ব্যবহারকারী নামান্তর করো",
+	"renameuser-linkoncontribs": "ব্যবহারকারী নামান্তর",
+	"renameuser-linkoncontribs-text": "এই ব্যবহারকারী নামান্তর করো",
+	"renameuser-desc": "একজন ব্যবহারকারীকে নামান্তর করুন (''ব্যবহাকারী নামান্তর'' অধিকার প্রয়োজন)",
+	"renameuserold": "বর্তমান ব্যবহারকারী নাম:",
+	"renameusernew": "নতুন ব্যবহারকারী নাম:",
+	"renameuserreason": "কারণ:",
+	"renameusermove": "ব্যবহারকারী এবং আলাপের পাতা (এবং তার উপপাতাসমূহ) নতুন নামে সরিয়ে নাও",
+	"renameusersuppress": "নতুন নামে রিডাইরেক্ট করবেন না",
+	"renameuserreserve": "ভবিষ্যতে উদ্দেশ্যে পুরাতন ব্যবহারকারী নাম ব্লক করা হল",
+	"renameuserwarnings": "সতর্কীকরণ:",
+	"renameuserconfirm": "হ্যাঁ, ব্যবহারকারীর নাম পরিবর্তন করো",
+	"renameusersubmit": "জমা দাও",
+	"renameuser-submit-blocklog": "ব্যবহারকারীর ব্লক লগ দেখুন",
+	"renameusererrordoesnotexist": "\"<nowiki>$1</nowiki>\" নামের কোন ব্যবহারকারী নাই।",
+	"renameusererrorexists": "\"<nowiki>$1</nowiki>\" ব্যবহারকারী ইতিমধ্যে বিদ্যমান আছে।",
+	"renameusererrorinvalid": "\"<nowiki>$1</nowiki>\" ব্যবহারকারী নামটি ঠিক নয়।",
+	"renameuser-error-request": "এই অনুরোধ গ্রহণে সমস্যা ছিল। দয়াকরে পেছনে যান এবং আবার চেষ্টা করুন।",
+	"renameuser-error-same-user": "আপনি পূর্বের নামে নামান্তর করতে পারবেন না।",
+	"renameusersuccess": "ব্যবহারকারী \"<nowiki>$1</nowiki>\" থেকে \"<nowiki>$2</nowiki>\" তে নামান্তরিত করা হয়েছে।",
+	"renameuser-page-exists": "পাতা $1 বিদ্যমান এবং সয়ঙ্ক্রিয়ভাবে এটির উপর লেখা যাবে না",
+	"renameuser-page-moved": "পাতাটি $1 থেকে $2 তে সরিয়ে নেওয়া হয়েছে।",
+	"renameuser-page-unmoved": "পাতাটি $1 থেকে $2 তে সরিয়ে নেওয়া যাবে না।",
+	"log-name-renameuser": "ব্যবহারকারী নামান্তরের লগ",
+	"log-description-renameuser": "এটি ব্যাবহারকারী নামের পরিবর্তনের লগ",
+	"renameuser-move-log": "যখন ব্যবহারকারী \"[[User:$1|$1]]\" থেকে \"[[User:$2|$2]]\" তে নামান্তরিত হবে তখন সয়ঙ্ক্রিয়ভাবে পাতা সরিয়ে নেওয়া হয়েছে",
+	"action-renameuser": "ব্যবহারকারী নাম পরিবর্তন",
+	"right-renameuser": "ব্যবহারকারীদের পুনরায় নাম দাও",
+	"renameuser-renamed-notice": "এই ব্যবহারকারীর নাম পরিবর্তন করা হয়েছে।\nসূত্র হিসাবে নিচে নাম পরিবর্তন লগ দেওয়া হল।"
+}

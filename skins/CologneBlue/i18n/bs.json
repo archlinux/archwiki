@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"CERminator",
+			"Kal-El"
+		]
+	},
+	"cologneblue.css": "/* CSS umetnut ovdje uticat će na korisnike koji koriste Cologne Blue skin */",
+	"cologneblue.js": "/* Bilo koja JavaScript će biti učitana za sve korisnike koji koriste Cologne Blue skin */",
+	"skinname-cologneblue": "Kelnsko plavo"
+}

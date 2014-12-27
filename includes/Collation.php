@@ -21,7 +21,7 @@
  */
 
 abstract class Collation {
-	static $instance;
+	private static $instance;
 
 	/**
 	 * @return Collation
@@ -36,7 +36,7 @@ abstract class Collation {
 
 	/**
 	 * @throws MWException
-	 * @param $collationName string
+	 * @param string $collationName
 	 * @return Collation
 	 */
 	static function factory( $collationName ) {
@@ -47,6 +47,10 @@ abstract class Collation {
 				return new IdentityCollation;
 			case 'uca-default':
 				return new IcuCollation( 'root' );
+			case 'xx-uca-ckb':
+				return new CollationCkb;
+			case 'xx-uca-et':
+				return new CollationEt;
 			default:
 				$match = array();
 				if ( preg_match( '/^uca-([a-z@=-]+)$/', $collationName, $match ) ) {
@@ -106,7 +110,8 @@ abstract class Collation {
 }
 
 class UppercaseCollation extends Collation {
-	var $lang;
+	private $lang;
+
 	function __construct() {
 		// Get a language object so that we can use the generic UTF-8 uppercase
 		// function there
@@ -149,10 +154,22 @@ class IdentityCollation extends Collation {
 }
 
 class IcuCollation extends Collation {
-	const FIRST_LETTER_VERSION = 1;
+	const FIRST_LETTER_VERSION = 2;
 
-	var $primaryCollator, $mainCollator, $locale;
-	var $firstLetterData;
+	/** @var Collator */
+	private $primaryCollator;
+
+	/** @var Collator */
+	private $mainCollator;
+
+	/** @var string */
+	private $locale;
+
+	/** @var Language */
+	protected $digitTransformLanguage;
+
+	/** @var array */
+	private $firstLetterData;
 
 	/**
 	 * Unified CJK blocks.
@@ -163,7 +180,7 @@ class IcuCollation extends Collation {
 	 * is pretty useless for sorting Chinese text anyway. Japanese and Korean
 	 * blocks are not included here, because they are smaller and more useful.
 	 */
-	static $cjkBlocks = array(
+	private static $cjkBlocks = array(
 		array( 0x2E80, 0x2EFF ), // CJK Radicals Supplement
 		array( 0x2F00, 0x2FDF ), // Kangxi Radicals
 		array( 0x2FF0, 0x2FFF ), // Ideographic Description Characters
@@ -202,14 +219,19 @@ class IcuCollation extends Collation {
 	 * Empty arrays are intended; this signifies that the data for the language is
 	 * available and that there are, in fact, no additional letters to consider.
 	 */
-	static $tailoringFirstLetters = array(
+	private static $tailoringFirstLetters = array(
 		// Verified by native speakers
 		'be' => array( "Ё" ),
 		'be-tarask' => array( "Ё" ),
+		'cy' => array( "Ch", "Dd", "Ff", "Ng", "Ll", "Ph", "Rh", "Th" ),
 		'en' => array(),
+		'fa' => array( "آ", "ء", "ه" ),
 		'fi' => array( "Å", "Ä", "Ö" ),
+		'fr' => array(),
 		'hu' => array( "Cs", "Dz", "Dzs", "Gy", "Ly", "Ny", "Ö", "Sz", "Ty", "Ü", "Zs" ),
+		'is' => array( "Á", "Ð", "É", "Í", "Ó", "Ú", "Ý", "Þ", "Æ", "Ö", "Å" ),
 		'it' => array(),
+		'lv' => array( "Č", "Ģ", "Ķ", "Ļ", "Ņ", "Š", "Ž" ),
 		'pl' => array( "Ą", "Ć", "Ę", "Ł", "Ń", "Ó", "Ś", "Ź", "Ż" ),
 		'pt' => array(),
 		'ru' => array(),
@@ -227,18 +249,15 @@ class IcuCollation extends Collation {
 		'ca' => array(),
 		'co' => array(),
 		'cs' => array( "Č", "Ch", "Ř", "Š", "Ž" ),
-		'cy' => array( "Ch", "Dd", "Ff", "Ng", "Ll", "Ph", "Rh", "Th" ),
 		'da' => array( "Æ", "Ø", "Å" ),
 		'de' => array(),
 		'dsb' => array( "Č", "Ć", "Dź", "Ě", "Ch", "Ł", "Ń", "Ŕ", "Š", "Ś", "Ž", "Ź" ),
 		'el' => array(),
 		'eo' => array( "Ĉ", "Ĝ", "Ĥ", "Ĵ", "Ŝ", "Ŭ" ),
 		'es' => array( "Ñ" ),
-		'et' => array( "Š", "Ž", "Õ", "Ä", "Ö", "Ü" ),
+		'et' => array( "Š", "Ž", "Õ", "Ä", "Ö", "Ü", "W" ), // added W for CollationEt (xx-uca-et)
 		'eu' => array( "Ñ" ),
-		'fa' => array( "آ", "ء", "ه" ),
 		'fo' => array( "Á", "Ð", "Í", "Ó", "Ú", "Ý", "Æ", "Ø", "Å" ),
-		'fr' => array(),
 		'fur' => array( "À", "Á", "Â", "È", "Ì", "Ò", "Ù" ),
 		'fy' => array(),
 		'ga' => array(),
@@ -246,7 +265,6 @@ class IcuCollation extends Collation {
 		'gl' => array( "Ch", "Ll", "Ñ" ),
 		'hr' => array( "Č", "Ć", "Dž", "Đ", "Lj", "Nj", "Š", "Ž" ),
 		'hsb' => array( "Č", "Dź", "Ě", "Ch", "Ł", "Ń", "Ř", "Š", "Ć", "Ž" ),
-		'is' => array( "Á", "Ð", "É", "Í", "Ó", "Ú", "Ý", "Þ", "Æ", "Ö", "Å" ),
 		'kk' => array( "Ү", "І" ),
 		'kl' => array( "Æ", "Ø", "Å" ),
 		'ku' => array( "Ç", "Ê", "Î", "Ş", "Û" ),
@@ -254,7 +272,6 @@ class IcuCollation extends Collation {
 		'la' => array(),
 		'lb' => array(),
 		'lt' => array( "Č", "Š", "Ž" ),
-		'lv' => array( "Č", "Ģ", "Ķ", "Ļ", "Ņ", "Š", "Ž" ),
 		'mk' => array(),
 		'mo' => array( "Ă", "Â", "Î", "Ş", "Ţ" ),
 		'mt' => array( "Ċ", "Ġ", "Għ", "Ħ", "Ż" ),
@@ -284,7 +301,12 @@ class IcuCollation extends Collation {
 			throw new MWException( 'An ICU collation was requested, ' .
 				'but the intl extension is not available.' );
 		}
+
 		$this->locale = $locale;
+		// Drop everything after the '@' in locale's name
+		$localeParts = explode( '@', $locale );
+		$this->digitTransformLanguage = Language::factory( $locale === 'root' ? 'en' : $localeParts[0] );
+
 		$this->mainCollator = Collator::create( $locale );
 		if ( !$this->mainCollator ) {
 			throw new MWException( "Invalid ICU locale specified for collation: $locale" );
@@ -319,16 +341,14 @@ class IcuCollation extends Collation {
 
 		// Check for CJK
 		$firstChar = mb_substr( $string, 0, 1, 'UTF-8' );
-		if ( ord( $firstChar ) > 0x7f
-			&& self::isCjk( utf8ToCodepoint( $firstChar ) ) )
-		{
+		if ( ord( $firstChar ) > 0x7f && self::isCjk( utf8ToCodepoint( $firstChar ) ) ) {
 			return $firstChar;
 		}
 
 		$sortKey = $this->getPrimarySortKey( $string );
 
 		// Do a binary search to find the correct letter to sort under
-		$min = $this->findLowerBound(
+		$min = ArrayUtils::findLowerBound(
 			array( $this, 'getSortKeyByLetterIndex' ),
 			$this->getFirstLetterCount(),
 			'strcmp',
@@ -347,7 +367,12 @@ class IcuCollation extends Collation {
 		}
 
 		$cache = wfGetCache( CACHE_ANYTHING );
-		$cacheKey = wfMemcKey( 'first-letters', $this->locale );
+		$cacheKey = wfMemcKey(
+			'first-letters',
+			$this->locale,
+			$this->digitTransformLanguage->getCode(),
+			self::getICUVersion()
+		);
 		$cacheEntry = $cache->get( $cacheKey );
 
 		if ( $cacheEntry && isset( $cacheEntry['version'] )
@@ -366,6 +391,12 @@ class IcuCollation extends Collation {
 			// Remove unnecessary ones, if any
 			if ( isset( self::$tailoringFirstLetters['-' . $this->locale] ) ) {
 				$letters = array_diff( $letters, self::$tailoringFirstLetters['-' . $this->locale] );
+			}
+			// Apply digit transforms
+			$digits = array( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' );
+			$letters = array_diff( $letters, $digits );
+			foreach ( $digits as $digit ) {
+				$letters[] = $this->digitTransformLanguage->formatNum( $digit, true );
 			}
 		} else {
 			$letters = wfGetPrecompiledData( "first-letters-{$this->locale}.ser" );
@@ -459,7 +490,7 @@ class IcuCollation extends Collation {
 			$prev = $trimmedKey;
 		}
 		foreach ( $duplicatePrefixes as $badKey ) {
-			wfDebug( "Removing '{$letterMap[$badKey]}' from first letters." );
+			wfDebug( "Removing '{$letterMap[$badKey]}' from first letters.\n" );
 			unset( $letterMap[$badKey] );
 			// This code assumes that unsetting does not change sort order.
 		}
@@ -499,53 +530,6 @@ class IcuCollation extends Collation {
 		return count( $this->firstLetterData['chars'] );
 	}
 
-	/**
-	 * Do a binary search, and return the index of the largest item that sorts
-	 * less than or equal to the target value.
-	 *
-	 * @param array $valueCallback A function to call to get the value with
-	 *     a given array index.
-	 * @param int $valueCount The number of items accessible via $valueCallback,
-	 *     indexed from 0 to $valueCount - 1
-	 * @param array $comparisonCallback A callback to compare two values, returning
-	 *     -1, 0 or 1 in the style of strcmp().
-	 * @param string $target The target value to find.
-	 *
-	 * @return int|bool The item index of the lower bound, or false if the target value
-	 *     sorts before all items.
-	 */
-	function findLowerBound( $valueCallback, $valueCount, $comparisonCallback, $target ) {
-		if ( $valueCount === 0 ) {
-			return false;
-		}
-
-		$min = 0;
-		$max = $valueCount;
-		do {
-			$mid = $min + ( ( $max - $min ) >> 1 );
-			$item = call_user_func( $valueCallback, $mid );
-			$comparison = call_user_func( $comparisonCallback, $target, $item );
-			if ( $comparison > 0 ) {
-				$min = $mid;
-			} elseif ( $comparison == 0 ) {
-				$min = $mid;
-				break;
-			} else {
-				$max = $mid;
-			}
-		} while ( $min < $max - 1 );
-
-		if ( $min == 0 ) {
-			$item = call_user_func( $valueCallback, $min );
-			$comparison = call_user_func( $comparisonCallback, $target, $item );
-			if ( $comparison < 0 ) {
-				// Before the first item
-				return false;
-			}
-		}
-		return $min;
-	}
-
 	static function isCjk( $codepoint ) {
 		foreach ( self::$cjkBlocks as $block ) {
 			if ( $codepoint >= $block[0] && $codepoint <= $block[1] ) {
@@ -565,7 +549,7 @@ class IcuCollation extends Collation {
 	 * This function will return false on older PHPs.
 	 *
 	 * @since 1.21
-	 * @return string|false
+	 * @return string|bool
 	 */
 	static function getICUVersion() {
 		return defined( 'INTL_ICU_VERSION' ) ? INTL_ICU_VERSION : false;
@@ -576,7 +560,7 @@ class IcuCollation extends Collation {
 	 * currently in use, or false when it can't be determined.
 	 *
 	 * @since 1.21
-	 * @return string|false
+	 * @return string|bool
 	 */
 	static function getUnicodeVersionForICU() {
 		$icuVersion = IcuCollation::getICUVersion();
@@ -604,5 +588,58 @@ class IcuCollation extends Collation {
 		} else {
 			return false;
 		}
+	}
+}
+
+/**
+ * Workaround for the lack of support of Sorani Kurdish / Central Kurdish language ('ckb') in ICU.
+ *
+ * Uses the same collation rules as Persian / Farsi ('fa'), but different characters for digits.
+ */
+class CollationCkb extends IcuCollation {
+	function __construct() {
+		// This will set $locale and collators, which affect the actual sorting order
+		parent::__construct( 'fa' );
+		// Override the 'fa' language set by parent constructor, which affects #getFirstLetterData()
+		$this->digitTransformLanguage = Language::factory( 'ckb' );
+	}
+}
+
+/**
+ * Workaround for incorrect collation of Estonian language ('et') in ICU (bug 54168).
+ *
+ * 'W' and 'V' should not be considered the same letter for the purposes of collation in modern
+ * Estonian. We work around this by replacing 'W' and 'w' with 'ᴡ' U+1D21 'LATIN LETTER SMALL
+ * CAPITAL W' for sortkey generation, which is collated like 'W' and is not tailored to have the
+ * same primary weight as 'V' in Estonian.
+ */
+class CollationEt extends IcuCollation {
+	function __construct() {
+		parent::__construct( 'et' );
+	}
+
+	private static function mangle( $string ) {
+		return str_replace(
+			array( 'w', 'W' ),
+			'ᴡ', // U+1D21 'LATIN LETTER SMALL CAPITAL W'
+			$string
+		);
+	}
+
+	private static function unmangle( $string ) {
+		// Casing data is lost…
+		return str_replace(
+			'ᴡ', // U+1D21 'LATIN LETTER SMALL CAPITAL W'
+			'W',
+			$string
+		);
+	}
+
+	function getSortKey( $string ) {
+		return parent::getSortKey( self::mangle( $string ) );
+	}
+
+	function getFirstLetter( $string ) {
+		return self::unmangle( parent::getFirstLetter( self::mangle( $string ) ) );
 	}
 }

@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Autokrator",
+			"MissPetticoats",
+			"SPQRobin",
+			"UV"
+		]
+	},
+	"cite_article_desc": " Addet [[Special:Cite|citation]] specialem paginam et arcam instrumenti",
+	"cite_article_link": "Hanc paginam citare",
+	"tooltip-cite-article": "Institutiones de hanc pagina citanda",
+	"cite": "Paginam citare",
+	"cite_page": "Pagina:",
+	"cite_submit": "Citare"
+}

@@ -25,29 +25,41 @@ $wgPFStringLengthLimit = 1000;
  *
  * WARNING: enabling this may have an adverse impact on the sanity of your users.
  * An alternative, saner solution for embedding complex text processing in
- * MediaWiki templates can be found at: http://www.mediawiki.org/wiki/Extension:Lua
+ * MediaWiki templates can be found at: http://www.mediawiki.org/wiki/Extension:Scribunto
  */
 $wgPFEnableStringFunctions = false;
+
+/**
+  * Enable string functions, when running Wikimedia Jenkins unit tests.
+  *
+  * Running Jenkins unit tests without setting $wgPFEnableStringFunctions = true;
+  * will cause all the parser tests for string functions to be skipped.
+  */
+if ( isset( $wgWikimediaJenkinsCI ) && $wgWikimediaJenkinsCI === true ) {
+	$wgPFEnableStringFunctions = true;
+}
 
 /** REGISTRATION */
 $wgExtensionCredits['parserhook'][] = array(
 	'path' => __FILE__,
 	'name' => 'ParserFunctions',
-	'version' => '1.5.1',
+	'version' => '1.6.0',
 	'url' => 'https://www.mediawiki.org/wiki/Extension:ParserFunctions',
 	'author' => array( 'Tim Starling', 'Robert Rohde', 'Ross McClure', 'Juraj Simlovic' ),
 	'descriptionmsg' => 'pfunc_desc',
 );
 
-$wgAutoloadClasses['ExtParserFunctions'] = dirname( __FILE__ ) . '/ParserFunctions_body.php';
-$wgAutoloadClasses['ExprParser'] = dirname( __FILE__ ) . '/Expr.php';
-$wgAutoloadClasses['ExprError'] = dirname( __FILE__ ) . '/Expr.php';
+$wgAutoloadClasses['ExtParserFunctions'] = __DIR__ . '/ParserFunctions_body.php';
+$wgAutoloadClasses['ExprParser'] = __DIR__ . '/Expr.php';
+$wgAutoloadClasses['ExprError'] = __DIR__ . '/Expr.php';
+$wgAutoloadClasses['Scribunto_LuaParserFunctionsLibrary'] = __DIR__ . '/ParserFunctions.library.php';
 
-$wgExtensionMessagesFiles['ParserFunctions'] = dirname( __FILE__ ) . '/ParserFunctions.i18n.php';
-$wgExtensionMessagesFiles['ParserFunctionsMagic'] = dirname( __FILE__ ) . '/ParserFunctions.i18n.magic.php';
+$wgMessagesDirs['ParserFunctions'] = __DIR__ . '/i18n';
+$wgExtensionMessagesFiles['ParserFunctions'] = __DIR__ . '/ParserFunctions.i18n.php';
+$wgExtensionMessagesFiles['ParserFunctionsMagic'] = __DIR__ . '/ParserFunctions.i18n.magic.php';
 
-$wgParserTestFiles[] = dirname( __FILE__ ) . "/funcsParserTests.txt";
-$wgParserTestFiles[] = dirname( __FILE__ ) . "/stringFunctionTests.txt";
+$wgParserTestFiles[] = __DIR__ . "/funcsParserTests.txt";
+$wgParserTestFiles[] = __DIR__ . "/stringFunctionTests.txt";
 
 $wgHooks['ParserFirstCallInit'][] = 'wfRegisterParserFunctions';
 
@@ -65,10 +77,10 @@ function wfRegisterParserFunctions( $parser ) {
 	$parser->setFunctionHook( 'ifexist', 'ExtParserFunctions::ifexistObj', SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'ifexpr', 'ExtParserFunctions::ifexprObj', SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'iferror', 'ExtParserFunctions::iferrorObj', SFH_OBJECT_ARGS );
+	$parser->setFunctionHook( 'time', 'ExtParserFunctions::timeObj', SFH_OBJECT_ARGS );
+	$parser->setFunctionHook( 'timel', 'ExtParserFunctions::localTimeObj', SFH_OBJECT_ARGS );
 
 	$parser->setFunctionHook( 'expr', 'ExtParserFunctions::expr' );
-	$parser->setFunctionHook( 'time', 'ExtParserFunctions::time' );
-	$parser->setFunctionHook( 'timel', 'ExtParserFunctions::localTime' );
 	$parser->setFunctionHook( 'rel2abs', 'ExtParserFunctions::rel2abs' );
 	$parser->setFunctionHook( 'titleparts', 'ExtParserFunctions::titleparts' );
 
@@ -94,6 +106,13 @@ $wgHooks['UnitTestsList'][] = 'wfParserFunctionsTests';
  * @return bool
  */
 function wfParserFunctionsTests( &$files ) {
-	$files[] = dirname( __FILE__ ) . '/tests/ExpressionTest.php';
+	$files[] = __DIR__ . '/tests/ExpressionTest.php';
 	return true;
 }
+
+$wgHooks['ScribuntoExternalLibraries'][] = function( $engine, array &$extraLibraries ) {
+	if( $engine == 'lua' ) {
+		$extraLibraries['mw.ext.ParserFunctions'] = 'Scribunto_LuaParserFunctionsLibrary';
+	}
+	return true;
+};

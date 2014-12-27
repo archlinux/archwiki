@@ -1,5 +1,5 @@
-# Mime type info file.
-# the first mime type in each line is the "main" mime type,
+# MIME type info file.
+# the first MIME type in each line is the "main" MIME type,
 # the others are aliases for this type
 # the media type is given in upper case and square brackets,
 # like [BITMAP], and must indicate a media type as defined by
@@ -13,7 +13,7 @@ image/jpeg	[BITMAP]
 image/jp2	[BITMAP]
 image/xbm	[BITMAP]
 image/tiff	[BITMAP]
-image/x-icon image/x-ico	[BITMAP]
+image/x-icon image/x-ico image/vnd.microsoft.icon	[BITMAP]
 image/x-rgb	[BITMAP]
 image/x-portable-pixmap		[BITMAP]
 image/x-portable-graymap image/x-portable-greymap	[BITMAP]
@@ -65,6 +65,9 @@ text/plain	[TEXT]
 text/html application/xhtml+xml	[TEXT]
 application/xml text/xml	[TEXT]
 text	[TEXT]
+application/json	[TEXT]
+text/csv	[TEXT]
+text/tab-separated-values	[TEXT]
 
 application/zip application/x-zip	[ARCHIVE]
 application/x-gzip	[ARCHIVE]
@@ -108,3 +111,8 @@ application/vnd.ms-excel.template.macroEnabled.12				[OFFICE]
 application/vnd.ms-excel.addin.macroEnabled.12					[OFFICE]
 application/vnd.ms-excel.sheet.binary.macroEnabled.12				[OFFICE]
 application/acad application/x-acad application/autocad_dwg image/x-dwg application/dwg application/x-dwg application/x-autocad image/vnd.dwg drawing/dwg [DRAWING]
+chemical/x-mdl-molfile     [DRAWING]
+chemical/x-mdl-sdfile      [DRAWING]
+chemical/x-mdl-rxnfile     [DRAWING]
+chemical/x-mdl-rdfile      [DRAWING]
+chemical/x-mdl-rgfile      [DRAWING]

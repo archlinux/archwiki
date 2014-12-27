@@ -74,7 +74,7 @@ $specialPageAliases['ce'] = array(
 	'Cite' => array( 'Дош' ),
 );
 
-/** Czech (česky) */
+/** Czech (čeština) */
 $specialPageAliases['cs'] = array(
 	'Cite' => array( 'Citovat' ),
 );
@@ -299,6 +299,11 @@ $specialPageAliases['oc'] = array(
 	'Cite' => array( 'Citar' ),
 );
 
+/** Punjabi (ਪੰਜਾਬੀ) */
+$specialPageAliases['pa'] = array(
+	'Cite' => array( 'ਹਵਾਲਾ' ),
+);
+
 /** Polish (polski) */
 $specialPageAliases['pl'] = array(
 	'Cite' => array( 'Cytuj' ),
@@ -352,6 +357,11 @@ $specialPageAliases['sl'] = array(
 /** Albanian (shqip) */
 $specialPageAliases['sq'] = array(
 	'Cite' => array( 'Citim' ),
+);
+
+/** Serbian (Cyrillic script) (српски (ћирилица)‎) */
+$specialPageAliases['sr-ec'] = array(
+	'Cite' => array( 'Цитирај' ),
 );
 
 /** Swedish (svenska) */

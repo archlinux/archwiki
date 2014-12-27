@@ -28,13 +28,13 @@
  * @ingroup API
  */
 class ApiFileRevert extends ApiBase {
-
-	/**
-	 * @var File
-	 */
+	/** @var LocalFile */
 	protected $file;
+
+	/** @var string */
 	protected $archiveName;
 
+	/** @var array */
 	protected $params;
 
 	public function execute() {
@@ -46,7 +46,15 @@ class ApiFileRevert extends ApiBase {
 		$this->checkPermissions( $this->getUser() );
 
 		$sourceUrl = $this->file->getArchiveVirtualUrl( $this->archiveName );
-		$status = $this->file->upload( $sourceUrl, $this->params['comment'], $this->params['comment'], 0, false, false, $this->getUser() );
+		$status = $this->file->upload(
+			$sourceUrl,
+			$this->params['comment'],
+			$this->params['comment'],
+			0,
+			false,
+			false,
+			$this->getUser()
+		);
 
 		if ( $status->isGood() ) {
 			$result = array( 'result' => 'Success' );
@@ -58,13 +66,12 @@ class ApiFileRevert extends ApiBase {
 		}
 
 		$this->getResult()->addValue( null, $this->getModuleName(), $result );
-
 	}
 
 	/**
 	 * Checks that the user has permissions to perform this revert.
 	 * Dies with usage message on inadequate permissions.
-	 * @param $user User The user to check.
+	 * @param User $user The user to check.
 	 */
 	protected function checkPermissions( $user ) {
 		$title = $this->file->getTitle();
@@ -125,69 +132,31 @@ class ApiFileRevert extends ApiBase {
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true,
 			),
-			'token' => array(
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true
-			),
 		);
-
 	}
 
 	public function getParamDescription() {
 		return array(
 			'filename' => 'Target filename without the File: prefix',
-			'token' => 'Edit token. You can get one of these through prop=info',
 			'comment' => 'Upload comment',
 			'archivename' => 'Archive name of the revision to revert to',
 		);
 	}
 
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'result' => array(
-					ApiBase::PROP_TYPE => array(
-						'Success',
-						'Failure'
-					)
-				),
-				'errors' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			)
-		);
-	}
-
 	public function getDescription() {
 		return array(
-			'Revert a file to an old version'
-		);
-	}
-
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(),
-			array(
-				array( 'mustbeloggedin', 'upload' ),
-				array( 'badaccess-groups' ),
-				array( 'invalidtitle', 'title' ),
-				array( 'notanarticle' ),
-				array( 'filerevert-badversion' ),
-			)
+			'Revert a file to an old version.'
 		);
 	}
 
 	public function needsToken() {
-		return true;
-	}
-
-	public function getTokenSalt() {
-		return '';
+		return 'csrf';
 	}
 
 	public function getExamples() {
 		return array(
-			'api.php?action=filerevert&filename=Wiki.png&comment=Revert&archivename=20110305152740!Wiki.png&token=123ABC'
+			'api.php?action=filerevert&filename=Wiki.png&comment=Revert&' .
+				'archivename=20110305152740!Wiki.png&token=123ABC'
 				=> 'Revert Wiki.png to the version of 20110305152740',
 		);
 	}

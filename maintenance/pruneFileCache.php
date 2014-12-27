@@ -75,8 +75,8 @@ class PruneFileCache extends Maintenance {
 	}
 
 	/**
-	 * @param $dir string
-	 * @param $report string|bool Use 'report' to report the directories being scanned
+	 * @param string $dir
+	 * @param string|bool $report Use 'report' to report the directories being scanned
 	 */
 	protected function prune_directory( $dir, $report = false ) {
 		$tsNow = time();
@@ -95,8 +95,8 @@ class PruneFileCache extends Maintenance {
 					// Sanity check the file extension against known cache types
 					if ( $mts < $this->minSurviveTimestamp
 						&& preg_match( '/\.(?:html|cache)(?:\.gz)?$/', $file )
-						&& unlink( $path ) )
-					{
+						&& unlink( $path )
+					) {
 						$daysOld = round( ( $tsNow - $mts ) / 86400, 2 );
 						$this->output( "Deleted `$path` [days=$daysOld]\n" );
 					}

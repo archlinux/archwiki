@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Raymond",
+			"Shirayuki",
+			"Umherirrender"
+		]
+	},
+	"recaptcha-desc": "{{Optional}}\n{{desc}}",
+	"recaptcha-edit": "{{Related|ConfirmEdit-edit}}",
+	"recaptcha-addurl": "{{Related|ConfirmEdit-addurl}}",
+	"recaptcha-badlogin": "{{Related|ConfirmEdit-badlogin}}",
+	"recaptcha-createaccount": "{{Related|ConfirmEdit-createaccount}}",
+	"recaptcha-createaccount-fail": "{{Related|ConfirmEdit-createaccount-fail}}",
+	"recaptcha-create": "{{Related|ConfirmEdit-create}}"
+}

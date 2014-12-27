@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"StephDC",
+			"Cwlin0416"
+		]
+	},
+	"recaptcha-edit": "為了防止垃圾編輯程式，我們要麻煩您輸入在下面的方框中顯示的兩個單字：",
+	"recaptcha-addurl": "您的編輯使用了新的外部連結。為了防止垃圾編輯程式，我們要麻煩您輸入在下面的方框中顯示的兩個單字：",
+	"recaptcha-badlogin": "為了防止密碼破解程式，我們要麻煩您輸入在下面的方框中顯示的兩個單字：",
+	"recaptcha-createaccount": "為了防止自動註冊程式，我們要麻煩您輸入在下面的方框中顯示的兩個單字：",
+	"recaptcha-createaccount-fail": "不正確或者未輸入 reCAPTCHA 回答。",
+	"recaptcha-create": "為了防止自動建立頁面程式，我們要麻煩您輸入在下面的方框中顯示的兩個單字："
+}

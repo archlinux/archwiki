@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"WikiPhoenix"
+		]
+	},
+	"recaptcha-edit": "För att skydda wikin mot automatiskt redigerings-spam ber vi dig att skriva de två orden du ser i rutan nedan.",
+	"recaptcha-addurl": "Din redigering innehåller nya externa länkar. För att skydda wikin mot automatiserat spam ber vi dig att skriva de två ordern du ser i rutan nedan:",
+	"recaptcha-badlogin": "För att skydda wikin mot automatiserade försök att knäcka lösenord ber vi dig att skriva in de två orden du ser i rutan nedan:",
+	"recaptcha-createaccount": "För att skydda wikin mot automatiskt kontoskapande ber vi dig att skriva de två orden som du ser i rutan nedan:",
+	"recaptcha-createaccount-fail": "Du har angivit ett felaktig svar för reCAPTCHA.",
+	"recaptcha-create": "För att skydda wikin mot automatiserade sidskapande ber vi dig att skriva in de två orden du ser i rutan nedan:"
+}

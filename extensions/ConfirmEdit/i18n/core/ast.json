@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": [
+			"Esbardu",
+			"Xuacu"
+		]
+	},
+	"captcha-edit": "Pa editar esta páxina, por favor resuelvi la suma simple d'embaxo y pon la rempuesta nel caxellu ([[Special:Captcha/help|más información]]):",
+	"captcha-desc": "Ufre téuniques de CAPTCHA pa protexese escontra'l spam y descubrimientu de contraseñes",
+	"captcha-label": "CAPTCHA",
+	"captcha-addurl": "La to edición inclúi nuevos enllaces esternos. Pa protexer la wiki escontra'l spam automatizáu, pidimoste por favor que resuelvas la suma simple d'embaxo y pongas la rempuesta na caxella pa guardar la edición ([[Special:Captcha/help|más información]]):",
+	"captcha-badlogin": "Pa protexer la wiki escontra'l descifráu automáticu de claves, pidimoste por favor que resuelvas la suma simple d'embaxo y pongas la rempuesta na caxella ([[Special:Captcha/help|más información]]):",
+	"captcha-createaccount": "Pa protexer la wiki escontra la creación automática de cuentes, pidimoste por favor que resuelvas la suma simple d'embaxo y pongas la rempuesta na caxella ([[Special:Captcha/help|más información]]):",
+	"captcha-createaccount-fail": "CAPTCHA incorreutu o ausente.",
+	"captcha-create": "Pa crear la páxina, por favor resuelvi la suma simple d'embaxo y pon la rempuesta nel caxellu ([[Special:Captcha/help|más información]]):",
+	"captcha-sendemail": "Pa protexer la wiki escontra la puxarra automatizada, pidimoste por favor que resuelvas la suma cenciella d'embaxo y pongas la rempuesta na caxella ([[Special:Captcha/help|más información]]):",
+	"captcha-sendemail-fail": "CAPTCHA incorreutu o ausente.",
+	"captcha-disabledinapi": "Esta aición requier un captcha y, poro, nun pue facese pel API",
+	"captchahelp-title": "Ayuda tocante al CAPTCHA",
+	"captchahelp-cookies-needed": "Has tener les cookies habilitaes nel to navegador pa que'l sistema funcione.",
+	"captchahelp-text": "Los sitios web qu'aceuten mensaxes del publicu, como esta wiki, davezu son oxetu d'abusu por spammers qu'usen programes pa incluyir los sos enllaces automáticamente.\nMientres qu'estos enllaces de puxarra puen desaniciase, son enforma cafiantes.\n\nDacuando, especialmente al amestar nuevos enllaces web nuna páxina, la wiki pue amosate una imaxe de testu coloreáu o distorsionáu y va pidite qu'escribas les pallabres que s'amuesen.\nYá qu'esti ye un llabor difícil d'automatizar, permitirá a les más de les persones reales unviar los sos testos, al empar que llenden los más de los spammers y otros atacantes automáticos.\n\nPor desgracia, esto pue ser un inconveniente pa los usuarios con visión llimitada o qu'usen navegadores de testu o voz. De momentu nun tenemos disponible una alternativa de soníu. Por favor, ponte'n contautu colos [[Special:ListAdmins|alministradores del sitiu]] pa pidir ayuda si esto te torgare facer ediciones llexítimes.\n\nCalca nel botón 'atrás' del to navegador pa volver a la páxina d'edición.",
+	"captcha-addurl-whitelist": " #<!-- dexa esta llinia exautamente como ta --> <pre>\n# La sintaxis ye como sigue:\n#  * Too dende'l carauter \"#\" hasta la fin de la llinia ye un comentariu\n#  * Toa llinia non vacia ye un fragmentu regex que namái buscará hosts n'URLs\n  #</pre> <!-- dexa esta llinia exautamente como ta -->",
+	"right-skipcaptcha": "Facer les acciones que requieren captcha ensin tener que lu introducir"
+}

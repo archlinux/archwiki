@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ajdar",
+			"Ильнар"
+		]
+	},
+	"interwiki": "Интервики көйләнмәләрен карау һәм үзгәртү",
+	"interwiki-title-norights": "Интервики турында мәгълүматларны үзгәртү",
+	"interwiki-desc": "Интервики сылтамаларны карау һәм үзгәртү өчен [[Special:Interwiki|махсус]] бит өсти",
+	"interwiki_intro": "Бу интервики җәдвәленә манзара.",
+	"interwiki_prefix": "Өстәлмә",
+	"interwiki-prefix-label": "Өстәлмә",
+	"interwiki_1": "әйе",
+	"interwiki_0": "юк",
+	"interwiki_reasonfield": "Сәбәп:",
+	"interwiki_addbutton": "Өстәргә"
+}

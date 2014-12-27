@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"-iNu-",
+			"Aldnonymous",
+			"IvanLanin",
+			"Rex"
+		]
+	},
+	"inputbox-desc": "Memungkinkan penggunaan form HTML yang telah ditentukan",
+	"inputbox-error-no-type": "Anda harus menentukan tipe kotak input yang ingin dibuat.",
+	"inputbox-error-bad-type": "Tipe kotak input \"$1\" tak dikenal.\nHarap gunakan \"create\", \"comment\", \"search\", \"search2\", atau \"fulltext\".",
+	"inputbox-tryexact": "Coba pencocokan eksak",
+	"inputbox-searchfulltext": "Cari di teks lengkap",
+	"inputbox-createarticle": "Buat halaman",
+	"inputbox-ns-main": "Utama"
+}

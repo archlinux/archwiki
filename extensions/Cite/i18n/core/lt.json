@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Garas",
+			"Homo",
+			"Matasg"
+		]
+	},
+	"cite-desc": "Prideda <nowiki><ref[ name=id]></nowiki> ir <nowiki><references/></nowiki> žymes citavimui",
+	"cite_error": "Citavimo klaida $1",
+	"cite_error_ref_numeric_key": "Neleistina <code>&lt;ref&gt;</code> gairė; vardas negali būti tiesiog skaičius, naudokite tekstinį pavadinimą",
+	"cite_error_ref_no_key": "Neleistina <code>&lt;ref&gt;</code> gairė; nuorodos be turinio turi turėti vardą",
+	"cite_error_ref_too_many_keys": "Neleistina <code>&lt;ref&gt;</code> gairė; neleistini vardai, pvz., per daug",
+	"cite_error_ref_no_input": "Neleistina <code>&lt;ref&gt;</code> gairė; nuorodos be vardo turi turėti turinį",
+	"cite_error_references_invalid_parameters": "Neleistina <code>&lt;references&gt;</code> gairė; neleidžiami jokie parametrai, naudokite <code>&lt;references /&gt;</code>",
+	"cite_error_references_no_backlink_label": "Baigėsi antraštės.\nNurodykite daugiau <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> sisteminiame tekste",
+	"cite_error_included_ref": "Trūksta uždaromojo <code>&lt;/ref&gt;</code> žymei <code>&lt;ref&gt;</code>",
+	"cite_error_refs_without_references": "puslapyje egzistuoja žyma <code>&lt;ref&gt;</code>, tačiau žymos <code>&lt;references/&gt;</code> nėra rasta"
+}

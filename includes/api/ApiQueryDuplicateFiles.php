@@ -31,7 +31,7 @@
  */
 class ApiQueryDuplicateFiles extends ApiQueryGeneratorBase {
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'df' );
 	}
 
@@ -95,7 +95,8 @@ class ApiQueryDuplicateFiles extends ApiQueryGeneratorBase {
 			$sha1s[$file->getName()] = $file->getSha1();
 		}
 
-		// find all files with the hashes, result format is: array( hash => array( dup1, dup2 ), hash1 => ... )
+		// find all files with the hashes, result format is:
+		// array( hash => array( dup1, dup2 ), hash1 => ... )
 		$filesToFindBySha1s = array_unique( array_values( $sha1s ) );
 		if ( $params['localonly'] ) {
 			$filesBySha1s = RepoGroup::singleton()->getLocalRepo()->findBySha1s( $filesToFindBySha1s );
@@ -187,19 +188,8 @@ class ApiQueryDuplicateFiles extends ApiQueryGeneratorBase {
 		);
 	}
 
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'name' => 'string',
-				'user' => 'string',
-				'timestamp' => 'timestamp',
-				'shared' => 'boolean',
-			)
-		);
-	}
-
 	public function getDescription() {
-		return 'List all files that are duplicates of the given file(s) based on hash values';
+		return 'List all files that are duplicates of the given file(s) based on hash values.';
 	}
 
 	public function getExamples() {

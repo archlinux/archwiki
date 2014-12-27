@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"IvanLanin",
+			"Rex"
+		]
+	},
+	"imagemap_desc": "Menyediakan peta gambar yang dapat diklik dari klien dengan menggunakan tag <code>&lt;imagemap&gt;</code>",
+	"imagemap_no_image": "&lt;imagemap&gt;: harus memberikan suatu gambar di baris pertama",
+	"imagemap_invalid_image": "&lt;imagemap&gt;: gambar tidak sah atau tidak ditemukan",
+	"imagemap_bad_image": "Kesalahan: berkas tidak diperbolehkan pada halaman ini",
+	"imagemap_no_link": "&lt;imagemap&gt;: tidak ditemukan pranala yang sah di akhir baris ke $1",
+	"imagemap_invalid_title": "&lt;imagemap&gt;: judul tidak sah pada pranala di baris ke $1",
+	"imagemap_missing_coord": "&lt;imagemap&gt;: tidak cukup koordinat untuk bentuk pada baris ke $1",
+	"imagemap_unrecognised_shape": "&lt;imagemap&gt;: bentuk tak dikenali pada baris ke $1, tiap baris harus dimulai dengan salah satu dari: <code>default</code>, <code>rect</code>, <code>circle</code> atau <code>poly</code>",
+	"imagemap_invalid_coord": "&lt;imagemap&gt;: koordinat tidak sah pada baris ke $1, haruslah berupa angka",
+	"imagemap_invalid_desc": "&lt;imagemap&gt;: spesifikasi desc tidak sah, harus salah satu dari: $1",
+	"imagemap_description": "Tentang gambar ini",
+	"imagemap_poly_odd": "Kesalahan: terdapat poligon dengan nomor koordinat salah pada baris $1"
+}

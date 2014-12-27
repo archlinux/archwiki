@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Servien"
+		]
+	},
+	"gadgets-desc": "Laot gebrukers [[Special:Gadgets|CSS en JavaScripts]] aktiveren in der eigen [[Special:Preferences#mw-prefsection-gadgets|veurkeuren]]",
+	"prefs-gadgets": "Technies spul",
+	"gadgets-prefstext": "Hieronder steet spesiaal techiniese spul da'j inschakelen kunnen.\n't Is veurnamelik ebaseerd op JavaScript, dus JavaScript mö'j an hebben staon in joew webkieker um t te laoten warken.\nAl dit techniese spul hef gien invleud op disse veurkeurenpagina.\n\nDisse techniese snufjes maken oek gien deel uut van de MediaWiki-programmatuur, en t wörden meestentieds ontwikkeld en onderhouwen\ndeur gebrukers van joew eigen wiki.\nBeheerders kunnen t beschikbaore techniese spul angeven in [[MediaWiki:Gadgets-definition|defenisies]] en [[Special:Gadgets|beschrievingen]].",
+	"gadgets": "Technies spul",
+	"gadgets-title": "Technies spul",
+	"gadgets-pagetext": "Hieronder steet spesiaal technies spul die gebrukers in kunnen schakelen bie [[Special:Preferences#mw-prefsection-gadgets|mien veurkeuren]], zo as in-esteld in de [[MediaWiki:Gadgets-definition|defenisies]].\nDit overzichte biejt eenvoudige toegang tot de systeemtekstzied waor de beschrieving en de programmakode van elke technies snufjen steet.",
+	"gadgets-uses": "Gebruuk"
+}

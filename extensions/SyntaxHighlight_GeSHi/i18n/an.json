@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Juanpabl"
+		]
+	},
+	"syntaxhighlight-desc": "Premite o resalte sintactico <code>&lt;syntaxhighlight&gt;</code> usando [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Ha d'endicar un lenguache asinas:",
+	"syntaxhighlight-supported": "Lenguaches suportatos ta o resalte sintactico:",
+	"syntaxhighlight-err-loading": "(error en cargar a lista de luengaches suportatos)",
+	"syntaxhighlight-err-language": "Luengache invalido.",
+	"geshi.css": "/* Iste codigo CSS s'aplicará ta destacar a sintaxi GeSHi*/"
+}

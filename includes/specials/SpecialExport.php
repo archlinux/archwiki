@@ -37,12 +37,9 @@ class SpecialExport extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		global $wgSitename, $wgExportAllowListContributors, $wgExportFromNamespaces;
-		global $wgExportAllowHistory, $wgExportMaxHistory, $wgExportMaxLinkDepth;
-		global $wgExportAllowAll;
-
 		$this->setHeaders();
 		$this->outputHeader();
+		$config = $this->getConfig();
 
 		// Set some variables
 		$this->curonly = true;
@@ -74,7 +71,7 @@ class SpecialExport extends SpecialPage {
 					}
 				}
 			}
-		} elseif ( $request->getCheck( 'addns' ) && $wgExportFromNamespaces ) {
+		} elseif ( $request->getCheck( 'addns' ) && $config->get( 'ExportFromNamespaces' ) ) {
 			$page = $request->getText( 'pages' );
 			$nsindex = $request->getText( 'nsindex', '' );
 
@@ -87,7 +84,7 @@ class SpecialExport extends SpecialPage {
 					$page .= "\n" . implode( "\n", $nspages );
 				}
 			}
-		} elseif ( $request->getCheck( 'exportall' ) && $wgExportAllowAll ) {
+		} elseif ( $request->getCheck( 'exportall' ) && $config->get( 'ExportAllowAll' ) ) {
 			$this->doExport = true;
 			$exportall = true;
 
@@ -108,19 +105,20 @@ class SpecialExport extends SpecialPage {
 				$offset = null;
 			}
 
+			$maxHistory = $config->get( 'ExportMaxHistory' );
 			$limit = $request->getInt( 'limit' );
 			$dir = $request->getVal( 'dir' );
 			$history = array(
 				'dir' => 'asc',
 				'offset' => false,
-				'limit' => $wgExportMaxHistory,
+				'limit' => $maxHistory,
 			);
 			$historyCheck = $request->getCheck( 'history' );
 
 			if ( $this->curonly ) {
 				$history = WikiExporter::CURRENT;
 			} elseif ( !$historyCheck ) {
-				if ( $limit > 0 && ( $wgExportMaxHistory == 0 || $limit < $wgExportMaxHistory ) ) {
+				if ( $limit > 0 && ( $maxHistory == 0 || $limit < $maxHistory ) ) {
 					$history['limit'] = $limit;
 				}
 
@@ -152,13 +150,13 @@ class SpecialExport extends SpecialPage {
 			}
 		}
 
-		if ( !$wgExportAllowHistory ) {
+		if ( !$config->get( 'ExportAllowHistory' ) ) {
 			// Override
 			$history = WikiExporter::CURRENT;
 		}
 
 		$list_authors = $request->getCheck( 'listauthors' );
-		if ( !$this->curonly || !$wgExportAllowListContributors ) {
+		if ( !$this->curonly || !$config->get( 'ExportAllowListContributors' ) ) {
 			$list_authors = false;
 		}
 
@@ -172,7 +170,7 @@ class SpecialExport extends SpecialPage {
 
 			if ( $request->getCheck( 'wpDownload' ) ) {
 				// Provide a sane filename suggestion
-				$filename = urlencode( $wgSitename . '-' . wfTimestampNow() . '.xml' );
+				$filename = urlencode( $config->get( 'Sitename' ) . '-' . wfTimestampNow() . '.xml' );
 				$request->response()->header( "Content-disposition: attachment;filename={$filename}" );
 			}
 
@@ -185,7 +183,7 @@ class SpecialExport extends SpecialPage {
 		$out->addWikiMsg( 'exporttext' );
 
 		$form = Xml::openElement( 'form', array( 'method' => 'post',
-			'action' => $this->getTitle()->getLocalURL( 'action=submit' ) ) );
+			'action' => $this->getPageTitle()->getLocalURL( 'action=submit' ) ) );
 		$form .= Xml::inputLabel(
 			$this->msg( 'export-addcattext' )->text(),
 			'catname',
@@ -197,7 +195,7 @@ class SpecialExport extends SpecialPage {
 			array( 'name' => 'addcat' )
 		) . '<br />';
 
-		if ( $wgExportFromNamespaces ) {
+		if ( $config->get( 'ExportFromNamespaces' ) ) {
 			$form .= Html::namespaceSelector(
 				array(
 					'selected' => $nsindex,
@@ -214,7 +212,7 @@ class SpecialExport extends SpecialPage {
 			) . '<br />';
 		}
 
-		if ( $wgExportAllowAll ) {
+		if ( $config->get( 'ExportAllowAll' ) ) {
 			$form .= Xml::checkLabel(
 				$this->msg( 'exportall' )->text(),
 				'exportall',
@@ -231,7 +229,7 @@ class SpecialExport extends SpecialPage {
 		);
 		$form .= '<br />';
 
-		if ( $wgExportAllowHistory ) {
+		if ( $config->get( 'ExportAllowHistory' ) ) {
 			$form .= Xml::checkLabel(
 				$this->msg( 'exportcuronly' )->text(),
 				'curonly',
@@ -249,7 +247,7 @@ class SpecialExport extends SpecialPage {
 			$request->wasPosted() ? $request->getCheck( 'templates' ) : false
 		) . '<br />';
 
-		if ( $wgExportMaxLinkDepth || $this->userCanOverrideExportDepth() ) {
+		if ( $config->get( 'ExportMaxLinkDepth' ) || $this->userCanOverrideExportDepth() ) {
 			$form .= Xml::inputLabel(
 				$this->msg( 'export-pagelinks' )->text(),
 				'pagelink-depth',
@@ -259,8 +257,14 @@ class SpecialExport extends SpecialPage {
 			) . '<br />';
 		}
 
-		// Enable this when we can do something useful exporting/importing image information. :)
-		//$form .= Xml::checkLabel( $this->msg( 'export-images' )->text(), 'images', 'wpExportImages', false ) . '<br />';
+		/* Enable this when we can do something useful exporting/importing image information.
+		$form .= Xml::checkLabel(
+				$this->msg( 'export-images' )->text(),
+				'images',
+				'wpExportImages',
+				false
+			) . '<br />';
+		*/
 		$form .= Xml::checkLabel(
 			$this->msg( 'export-download' )->text(),
 			'wpDownload',
@@ -268,7 +272,7 @@ class SpecialExport extends SpecialPage {
 			$request->wasPosted() ? $request->getCheck( 'wpDownload' ) : true
 		) . '<br />';
 
-		if ( $wgExportAllowListContributors ) {
+		if ( $config->get( 'ExportAllowListContributors' ) ) {
 			$form .= Xml::checkLabel(
 				$this->msg( 'exportlistauthors' )->text(),
 				'listauthors',
@@ -296,11 +300,11 @@ class SpecialExport extends SpecialPage {
 	/**
 	 * Do the actual page exporting
 	 *
-	 * @param string $page user input on what page(s) to export
-	 * @param $history Mixed: one of the WikiExporter history export constants
-	 * @param $list_authors Boolean: Whether to add distinct author list (when
-	 *                      not returning full history)
-	 * @param $exportall Boolean: Whether to export everything
+	 * @param string $page User input on what page(s) to export
+	 * @param int $history One of the WikiExporter history export constants
+	 * @param bool $list_authors Whether to add distinct author list (when
+	 *   not returning full history)
+	 * @param bool $exportall Whether to export everything
 	 */
 	private function doExport( $page, $history, $list_authors, $exportall ) {
 
@@ -315,7 +319,7 @@ class SpecialExport extends SpecialPage {
 			foreach ( explode( "\n", $page ) as $pageName ) {
 				$pageName = trim( $pageName );
 				$title = Title::newFromText( $pageName );
-				if ( $title && $title->getInterwiki() == '' && $title->getText() !== '' ) {
+				if ( $title && !$title->isExternal() && $title->getText() !== '' ) {
 					// Only record each page once!
 					$pageSet[$title->getPrefixedText()] = true;
 				}
@@ -397,7 +401,7 @@ class SpecialExport extends SpecialPage {
 	}
 
 	/**
-	 * @param $title Title
+	 * @param Title $title
 	 * @return array
 	 */
 	private function getPagesFromCategory( $title ) {
@@ -430,7 +434,7 @@ class SpecialExport extends SpecialPage {
 	}
 
 	/**
-	 * @param $nsindex int
+	 * @param int $nsindex
 	 * @return array
 	 */
 	private function getPagesFromNamespace( $nsindex ) {
@@ -463,9 +467,9 @@ class SpecialExport extends SpecialPage {
 
 	/**
 	 * Expand a list of pages to include templates used in those pages.
-	 * @param $inputPages array, list of titles to look up
-	 * @param $pageSet array, associative array indexed by titles for output
-	 * @return array associative array index by titles
+	 * @param array $inputPages List of titles to look up
+	 * @param array $pageSet Associative array indexed by titles for output
+	 * @return array Associative array index by titles
 	 */
 	private function getTemplates( $inputPages, $pageSet ) {
 		return $this->getLinks( $inputPages, $pageSet,
@@ -477,19 +481,18 @@ class SpecialExport extends SpecialPage {
 
 	/**
 	 * Validate link depth setting, if available.
-	 * @param $depth int
+	 * @param int $depth
 	 * @return int
 	 */
 	private function validateLinkDepth( $depth ) {
-		global $wgExportMaxLinkDepth;
-
 		if ( $depth < 0 ) {
 			return 0;
 		}
 
 		if ( !$this->userCanOverrideExportDepth() ) {
-			if ( $depth > $wgExportMaxLinkDepth ) {
-				return $wgExportMaxLinkDepth;
+			$maxLinkDepth = $this->getConfig()->get( 'ExportMaxLinkDepth' );
+			if ( $depth > $maxLinkDepth ) {
+				return $maxLinkDepth;
 			}
 		}
 
@@ -504,13 +507,15 @@ class SpecialExport extends SpecialPage {
 
 	/**
 	 * Expand a list of pages to include pages linked to from that page.
-	 * @param $inputPages array
-	 * @param $pageSet array
-	 * @param $depth int
+	 * @param array $inputPages
+	 * @param array $pageSet
+	 * @param int $depth
 	 * @return array
 	 */
 	private function getPageLinks( $inputPages, $pageSet, $depth ) {
+		// @codingStandardsIgnoreStart Squiz.WhiteSpace.SemicolonSpacing.Incorrect
 		for ( ; $depth > 0; --$depth ) {
+			// @codingStandardsIgnoreEnd
 			$pageSet = $this->getLinks(
 				$inputPages, $pageSet, 'pagelinks',
 				array( 'namespace' => 'pl_namespace', 'title' => 'pl_title' ),
@@ -525,10 +530,10 @@ class SpecialExport extends SpecialPage {
 	/**
 	 * Expand a list of pages to include images used in those pages.
 	 *
-	 * @param $inputPages array, list of titles to look up
-	 * @param $pageSet array, associative array indexed by titles for output
+	 * @param array $inputPages List of titles to look up
+	 * @param array $pageSet Associative array indexed by titles for output
 	 *
-	 * @return array associative array index by titles
+	 * @return array Associative array index by titles
 	 */
 	private function getImages( $inputPages, $pageSet ) {
 		return $this->getLinks(

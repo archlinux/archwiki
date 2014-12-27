@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Cedric31"
+		]
+	},
+	"modern.css": "/* Lo CSS plaçat aicí afectarà los utilizaires de l’abilhatge Modern */",
+	"modern.js": "/* Tot JavaScript aicí serà cargat amb las paginas accedidas pels utilizaires de l’abilhatge Modern unicament. */",
+	"skinname-modern": "Modèrne"
+}

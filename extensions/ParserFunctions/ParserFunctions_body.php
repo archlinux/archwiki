@@ -81,7 +81,7 @@ class ExtParserFunctions {
 		try {
 			return self::getExprParser()->doExpression( $expr );
 		} catch ( ExprError $e ) {
-			return $e->getMessage();
+			return '<strong class="error">' . htmlspecialchars( $e->getMessage() ) . '</strong>';
 		}
 	}
 
@@ -104,7 +104,7 @@ class ExtParserFunctions {
 				return $else;
 			}
 		} catch ( ExprError $e ) {
-			return $e->getMessage();
+			return '<strong class="error">' . htmlspecialchars( $e->getMessage() ) . '</strong>';
 		}
 	}
 
@@ -147,8 +147,8 @@ class ExtParserFunctions {
 	 * @return string
 	 */
 	public static function ifeqObj( $parser, $frame, $args ) {
-		$left = isset( $args[0] ) ? trim( $frame->expand( $args[0] ) ) : '';
-		$right = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : '';
+		$left = isset( $args[0] ) ? self::decodeTrimExpand( $args[0], $frame ) : '';
+		$right = isset( $args[1] ) ? self::decodeTrimExpand( $args[1], $frame ) : '';
 		if ( $left == $right ) {
 			return isset( $args[2] ) ? trim( $frame->expand( $args[2] ) ) : '';
 		} else {
@@ -201,10 +201,11 @@ class ExtParserFunctions {
 		if ( count( $args ) == 0 ) {
 			return '';
 		}
-		$primary = trim( $frame->expand( array_shift( $args ) ) );
+		$primary = self::decodeTrimExpand( array_shift( $args ), $frame );
 		$found = $defaultFound = false;
 		$default = null;
 		$lastItemHadNoEquals = false;
+		$lastItem = '';
 		$mwDefault =& MagicWord::get( 'default' );
 		foreach ( $args as $arg ) {
 			$bits = $arg->splitArg();
@@ -219,22 +220,24 @@ class ExtParserFunctions {
 					# Multiple input match
 					return trim( $frame->expand( $valueNode ) );
 				} else {
-					$test = trim( $frame->expand( $nameNode ) );
+					$test = self::decodeTrimExpand( $nameNode, $frame );
 					if ( $test == $primary ) {
 						# Found a match, return now
 						return trim( $frame->expand( $valueNode ) );
-					} elseif ( $defaultFound || $mwDefault->matchStartAndRemove( $test ) ) {
+					} elseif ( $defaultFound || $mwDefault->matchStartToEnd( $test ) ) {
 						$default = $valueNode;
+						$defaultFound = false;
 					} # else wrong case, continue
 				}
 			} else {
 				# Multiple input, single output
 				# If the value matches, set a flag and continue
 				$lastItemHadNoEquals = true;
-				$test = trim( $frame->expand( $valueNode ) );
-				if ( $test == $primary ) {
+				// $lastItem is an "out" variable
+				$decodedTest = self::decodeTrimExpand( $valueNode, $frame, $lastItem );
+				if ( $decodedTest == $primary ) {
 					$found = true;
-				} elseif ( $mwDefault->matchStartAndRemove( $test ) ) {
+				} elseif ( $mwDefault->matchStartToEnd( $decodedTest ) ) {
 					$defaultFound = true;
 				}
 			}
@@ -242,7 +245,7 @@ class ExtParserFunctions {
 		# Default case
 		# Check if the last item had no = sign, thus specifying the default case
 		if ( $lastItemHadNoEquals ) {
-			return $test;
+			return $lastItem;
 		} elseif ( !is_null( $default ) ) {
 			return trim( $frame->expand( $default ) );
 		} else {
@@ -374,7 +377,9 @@ class ExtParserFunctions {
 				}
 				$id = $title->getArticleID();
 				$parser->mOutput->addLink( $title, $id );
-				if ( $id ) {
+
+				// bug 70495: don't just check whether the ID != 0
+				if ( $title->exists() ) {
 					return $then;
 				}
 			}
@@ -403,24 +408,31 @@ class ExtParserFunctions {
 
 	/**
 	 * @param $parser Parser
+	 * @param $frame PPFrame
 	 * @param $format string
 	 * @param $date string
 	 * @param $language string
 	 * @param $local string|bool
 	 * @return string
 	 */
-	public static function time( $parser, $format = '', $date = '', $language = '', $local = false ) {
+	public static function timeCommon( $parser, $frame = null, $format = '', $date = '', $language = '', $local = false ) {
 		global $wgLocaltimezone;
 		self::registerClearHook();
 		if ( $date === '' ) {
 			$cacheKey = $parser->getOptions()->getTimestamp();
 			$timestamp = new MWTimestamp( $cacheKey );
 			$date = $timestamp->getTimestamp( TS_ISO_8601 );
+			$useTTL = true;
 		} else {
 			$cacheKey = $date;
+			$useTTL = false;
 		}
 		if ( isset( self::$mTimeCache[$format][$cacheKey][$language][$local] ) ) {
-			return self::$mTimeCache[$format][$cacheKey][$language][$local];
+			$cachedVal = self::$mTimeCache[$format][$cacheKey][$language][$local];
+			if ( $useTTL && $cachedVal[1] !== null && $frame && is_callable( array( $frame, 'setTTL' ) ) ) {
+				$frame->setTTL( $cachedVal[1] );
+			}
+			return $cachedVal[0];
 		}
 
 		# compute the timestamp string $ts
@@ -463,6 +475,7 @@ class ExtParserFunctions {
 			$invalidTime = true;
 		}
 
+		$ttl = null;
 		# format the timestamp and return the result
 		if ( $invalidTime ) {
 			$result = '<strong class="error">' . wfMessage( 'pfunc_time_error' )->inContentLanguage()->escaped() . '</strong>';
@@ -477,18 +490,49 @@ class ExtParserFunctions {
 					if ( $language !== '' && Language::isValidBuiltInCode( $language ) ) {
 						// use whatever language is passed as a parameter
 						$langObject = Language::factory( $language );
-						$result = $langObject->sprintfDate( $format, $ts, $tz );
 					} else {
 						// use wiki's content language
-						$result = $parser->getFunctionLang()->sprintfDate( $format, $ts, $tz );
+						$langObject = $parser->getFunctionLang();
+						StubObject::unstub( $langObject ); // $ttl is passed by reference, which doesn't work right on stub objects
 					}
+					$result = $langObject->sprintfDate( $format, $ts, $tz, $ttl );
 				} else {
 					return '<strong class="error">' . wfMessage( 'pfunc_time_too_big' )->inContentLanguage()->escaped() . '</strong>';
 				}
 			}
 		}
-		self::$mTimeCache[$format][$cacheKey][$language][$local] = $result;
+		self::$mTimeCache[$format][$cacheKey][$language][$local] = array( $result, $ttl );
+		if ( $useTTL && $ttl !== null && $frame && is_callable( array( $frame, 'setTTL' ) ) ) {
+			$frame->setTTL( $ttl );
+		}
 		return $result;
+	}
+
+	/**
+	 * @param $parser Parser
+	 * @param $format string
+	 * @param $date string
+	 * @param $language string
+	 * @param $local string|bool
+	 * @return string
+	 */
+	public static function time( $parser, $format = '', $date = '', $language = '', $local = false ) {
+		return self::timeCommon( $parser, null, $format, $date, $language, $local );
+	}
+
+
+	/**
+	 * @param $parser Parser
+	 * @param $frame PPFrame
+	 * @param $args array
+	 * @return string
+	 */
+	public static function timeObj( $parser, $frame, $args ) {
+		$format = isset( $args[0] ) ? trim( $frame->expand( $args[0] ) ) : '';
+		$date = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : '';
+		$language = isset( $args[2] ) ? trim( $frame->expand( $args[2] ) ) : '';
+		$local = isset( $args[3] ) && trim( $frame->expand( $args[3] ) );
+		return self::timeCommon( $parser, $frame, $format, $date, $language, $local );
 	}
 
 	/**
@@ -499,7 +543,20 @@ class ExtParserFunctions {
 	 * @return string
 	 */
 	public static function localTime( $parser, $format = '', $date = '', $language = '' ) {
-		return self::time( $parser, $format, $date, $language, true );
+		return self::timeCommon( $parser, null, $format, $date, $language, true );
+	}
+
+	/**
+	 * @param $parser Parser
+	 * @param $frame PPFrame
+	 * @param $args array
+	 * @return string
+	 */
+	public static function localTimeObj( $parser, $frame, $args ) {
+		$format = isset( $args[0] ) ? trim( $frame->expand( $args[0] ) ) : '';
+		$date = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : '';
+		$language = isset( $args[2] ) ? trim( $frame->expand( $args[2] ) ) : '';
+		return self::timeCommon( $parser, $frame, $format, $date, $language, true );
 	}
 
 	/**
@@ -669,7 +726,7 @@ class ExtParserFunctions {
 		}
 
 		if ( intval( $inLength ) == 0 ) {
-			$result = mb_substr( $inStr, $inStart );
+			$result = mb_substr( $inStr, intval( $inStart ) );
 		} else {
 			$result = mb_substr( $inStr, intval( $inStart ), intval( $inLength ) );
 		}
@@ -843,5 +900,22 @@ class ExtParserFunctions {
 
 		wfProfileOut( __METHOD__ );
 		return $result;
+	}
+
+	/**
+	 * Take a PPNode (-ish thing), expand it, remove entities, and trim.
+	 *
+	 * For use when doing string comparisions, where user expects entities
+	 * to be equal for what they stand for (e.g. comparisions with {{PAGENAME}})
+	 *
+	 * @param $obj PPNode|string Thing to expand
+	 * @param $frame PPFrame
+	 * @param &$trimExpanded String Expanded and trimmed version of PPNode, but with char refs intact
+	 * @return String The trimmed, expanded and entity reference decoded version of the PPNode
+	 */
+	private static function decodeTrimExpand( $obj, $frame, &$trimExpanded = null ) {
+		$expanded = $frame->expand( $obj );
+		$trimExpanded = trim( $expanded );
+		return trim( Sanitizer::decodeCharReferences( $expanded ) );
 	}
 }

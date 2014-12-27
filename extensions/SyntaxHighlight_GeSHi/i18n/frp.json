@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"ChrisPtDe"
+		]
+	},
+	"syntaxhighlight-desc": "Balye la misa en èvidence de la sintaxa per la balisa <code>&lt;syntaxhighlight&gt;</code> en utilisent [http://qbnz.com/highlighter/ la coloracion sintaxica GeSHi].",
+	"syntaxhighlight-specify": "Vos dête spècefiar un lengâjo d’ense :",
+	"syntaxhighlight-supported": "Lengâjos recognus por la coloracion sintaxica :",
+	"syntaxhighlight-err-loading": "(èrror en chargient la lista des lengâjos recognus)",
+	"syntaxhighlight-err-language": "Lengâjo envalido.",
+	"geshi.css": "/* Lo code CSS betâ ique serat aplicâ a la coloracion sintaxica GeSHi. */"
+}

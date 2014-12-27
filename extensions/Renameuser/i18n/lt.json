@@ -1,0 +1,35 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eitvys200",
+			"Homo",
+			"Hugo.arg",
+			"Matasg"
+		]
+	},
+	"renameuser": "Pervadinti naudotoją",
+	"renameuser-linkoncontribs": "Pervadinti naudotoją",
+	"renameuser-linkoncontribs-text": "Pervardyti šį vartotoją",
+	"renameuser-desc": "Pervadinti naudotoją (reikia ''pervadintojo'' teisių)",
+	"renameuserold": "Esamas naudotojo vardas:",
+	"renameusernew": "Naujas naudotojo vardas:",
+	"renameuserreason": "Pervadinimo priežastis:",
+	"renameusermove": "Perkelti naudotojo ir aptarimo puslapius (bei jo subpuslapius) prie naujo vardo",
+	"renameuserreserve": "Užblokuoti senąjį naudotojo vardą nuo galimybių naudoti ateityje",
+	"renameuserwarnings": "Įspėjimai:",
+	"renameuserconfirm": "Taip, pervadinti naudotoją",
+	"renameusersubmit": "Patvirtinti",
+	"renameusererrordoesnotexist": "Naudotojas \"<nowiki>$1</nowiki>\" neegzistuoja.",
+	"renameusererrorexists": "Naudotojas \"<nowiki>$1</nowiki>\" jau egzistuoja.",
+	"renameusererrorinvalid": "Naudotojo vardas \"<nowiki>$1</nowiki>\" netinkamas.",
+	"renameuser-error-request": "Iškilo prašymo gavimo problema.\nPrašome eiti atgal ir bandyti iš naujo.",
+	"renameuser-error-same-user": "Jūs negalite pervadinti naudotojo į tokį pat vardą, kaip pirmiau.",
+	"renameusersuccess": "Naudotojas \"<nowiki>$1</nowiki>\" buvo pervadintas į \"<nowiki>$2</nowiki>\".",
+	"renameuser-page-exists": "Puslapis $1 jau egzistuoja ir negali būti automatiškai perrašytas.",
+	"renameuser-page-moved": "Puslapis $1 buvo perkeltas į $2.",
+	"renameuser-page-unmoved": "Puslapis $1 negali būti perkeltas į $2.",
+	"log-name-renameuser": "Naudotojų pervadinimo sąrašas",
+	"renameuser-move-log": "Puslapis automatiškai perkeltas, kai buvo pervadinamas naudotojas \"[[User:$1|$1]]\" į \"[[User:$2|$2]]\"",
+	"action-renameuser": "pervadinti naudotojus",
+	"right-renameuser": "Pervadinti naudotojus"
+}

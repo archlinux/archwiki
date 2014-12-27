@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Emperyan",
+			"Erkan Yilmaz",
+			"Incelemeelemani",
+			"Joseph",
+			"Karduelis",
+			"Koc61"
+		]
+	},
+	"gadgets-desc": "Kullanıcıların [[Special:Preferences#mw-prefsection-gadgets|tercihlerinde]] özel [[Special:Gadgets|CSS ve JavaScript gadgetlerini]] seçmelerine izin verir",
+	"prefs-gadgets": "Küçük araçlar",
+	"gadgets-prefstext": "Aşağıdaki, hesabınız için etkinleştirebileceğiniz özel araçların listesidir. \nBu küçük araçlar çoğunlukla JavaScript temellidir, bu yüzden çalışmaları için tarayıcınızda JavaScript etkinleştirilmelidir. Bu küçük araçların tercihler sayfasına bir etkisinin olmayacağını unutmayın.\n\nAyrıca unutmayın ki, bu özel araçlar MedyaViki yazılımının bir parçası değildir ve genellikle yerel vikinizdeki kullanıcılar tarafından geliştirilip, devam ettirilirler.\nYerel yöneticiler [[MediaWiki:Gadgets-definition|tanımları]] ve [[Special:Gadgets|açıklamaları]] kullanarak uygun araçları değiştirebilirler.",
+	"gadgets": "Küçük araçlar",
+	"gadgets-title": "Küçük araçlar",
+	"gadgets-pagetext": "Aşağıdaki, kullanıcıların [[Special:Preferences#mw-prefsection-gadgets|tercihler sayfasında]] etkin hale getirebileceği, [[MediaWiki:Gadgets-definition|tanımlarla]] belirtildiği gibi, özel gadgetlerin bir listesidir.\nBu genel bakış, her gadget'in tanımını ve kodunu belirten sistem mesaj sayfalarına kolay erişim sağlar.",
+	"gadgets-uses": "Kullanıyor",
+	"gadgets-required-rights": "Aşağıda gösterilen {{PLURAL:$2|hak|haklar}} gereklidir:\n\n$1",
+	"gadgets-required-skins": "Kullanılabilecek {{PLURAL:$2|$1 tema|temalar: $1}}.",
+	"gadgets-default": "Herkes için varsayılan olarak etkindir.",
+	"gadgets-export": "Dışa aktar",
+	"gadgets-export-title": "Gadget dışa aktarımı",
+	"gadgets-not-found": "Gadget \"$1\" bulunamadı.",
+	"gadgets-export-text": "$1 gadgetini dışa aktarmak için \"{{int:gadgets-export-download}}\" düğmesine tıklayın, yüklenen dosyayı kaydedin, hedef vikide Special:Import sayfasına gidin ve yükleyin. Sonra aşağıdakini MediaWiki:Gadgets-definition sayfasına ekleyin:\n<pre>$2</pre>\nHedef vikide uygun izinlerinizin olması (sistem mesajlarını değiştirmek yetkisi dahil) ve dosyadan içe aktarmanın etkinleştirilmiş olması gerekir.",
+	"gadgets-export-download": "İndir"
+}

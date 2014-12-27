@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hamilton Abreu",
+			"Vitorvicentevalente"
+		]
+	},
+	"modern.css": "/* Código CSS colocado aqui afectará os utilizadores do tema Moderno */",
+	"modern.js": "/* Código Javascript colocado aqui será carregado para utilizadores do tema Moderno */",
+	"skinname-modern": "Moderno",
+	"modern-desc": "Um tema azul/cinza com barras lateral e de topo. Derivado do MonoBook."
+}

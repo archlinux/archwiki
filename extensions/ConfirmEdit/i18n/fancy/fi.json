@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Crt",
+			"Nike",
+			"Nedergard",
+			"Stryn"
+		]
+	},
+	"fancycaptcha-addurl": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-badlogin": "Automatisoidun salasanan murtamisen estämiseksi kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-createaccount": "Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-create": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-edit": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-sendemail": "Automatisoidun roskapostin lähettämisen vaikeuttamiseksi kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-reload-text": "Vaihda"
+}

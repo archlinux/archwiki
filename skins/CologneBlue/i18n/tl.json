@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Sky Harbor"
+		]
+	},
+	"cologneblue.css": "/* Ang Cascading Style Sheets na inilagay dito ay makakaapekto sa mga tagagamit ng pabalat na Cologne Blue */",
+	"cologneblue.js": "/* Ang anumang JavaScript dito ay ikakarga para sa mga tagagamit ng pabalat na Cologne Blue */",
+	"skinname-cologneblue": "Cologne Blue"
+}

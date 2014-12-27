@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Badseed",
+			"Consta",
+			"Dead3y3",
+			"ZaDiak"
+		]
+	},
+	"syntaxhighlight-desc": "Παρέχει έμφαση σύνταξης <code>&lt;syntaxhighlight&gt;</code> χρησιμοποιώντας το [http://qbnz.com/highlighter/ GeSHi Highlighter]",
+	"syntaxhighlight-specify": "Πρέπει να επιλέξετε μια γλώσσα σαν κι αυτήν:",
+	"syntaxhighlight-supported": "Υποστηριζόμενες γλώσσες για επισημάνσεις συντακτικού",
+	"syntaxhighlight-err-loading": "(λάθος στη φόρτωση της λίστας των υποστηριζόμενων γλωσσών)",
+	"syntaxhighlight-err-language": "Άκυρη γλώσσα.",
+	"geshi.css": "/* Το CSS τοποθετημένο εδώ θα εφαρμοστεί στo GeSHi syntax highlighting */"
+}

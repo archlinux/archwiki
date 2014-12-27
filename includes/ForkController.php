@@ -30,11 +30,11 @@
  * @ingroup Maintenance
  */
 class ForkController {
-	var $children = array();
-	var $termReceived = false;
-	var $flags = 0, $procsToStart = 0;
+	protected $children = array(), $childNumber = 0;
+	protected $termReceived = false;
+	protected $flags = 0, $procsToStart = 0;
 
-	static $restartableSignals = array(
+	protected static $restartableSignals = array(
 		SIGFPE,
 		SIGILL,
 		SIGSEGV,
@@ -137,6 +137,16 @@ class ForkController {
 		return 'done';
 	}
 
+	/**
+	 * Get the number of the child currently running. Note, this
+	 * is not the pid, but rather which of the total number of children
+	 * we are
+	 * @return int
+	 */
+	public function getChildNumber() {
+		return $this->childNumber;
+	}
+
 	protected function prepareEnvironment() {
 		global $wgMemc;
 		// Don't share DB, storage, or memcached connections
@@ -150,6 +160,7 @@ class ForkController {
 	/**
 	 * Fork a number of worker processes.
 	 *
+	 * @param int $numProcs
 	 * @return string
 	 */
 	protected function forkWorkers( $numProcs ) {
@@ -166,6 +177,7 @@ class ForkController {
 
 			if ( !$pid ) {
 				$this->initChild();
+				$this->childNumber = $i;
 				return 'child';
 			} else {
 				// This is the parent process

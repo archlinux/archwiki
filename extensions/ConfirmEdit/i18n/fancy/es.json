@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Carlosz22",
+			"Fitoschido",
+			"Icvav",
+			"Pertile",
+			"Sanbec",
+			"Sporeunai"
+		]
+	},
+	"fancycaptcha-addurl": "Tu edición incluye nuevos enlaces externos. \nPara protegernos contra el spam automatizado, por favor introduce en el recuadro las palabras que aparecen debajo ([[Special:Captcha/help|más información]]):",
+	"fancycaptcha-badlogin": "Para proteger el wiki del descifrado de contraseñas automatizado, por favor resuelve la simple suma de abajo e introduce la respuesta en la caja ([[Special:Captcha/help|más información]]):",
+	"fancycaptcha-createaccount": "Para proteger el wiki de la creación automática de cuentas, resuelve por favor la simple suma de abajo e introduce la respuesta en la caja ([[Special:Captcha/help|más información]]):",
+	"fancycaptcha-create": "Para crear la página, por favor introduce en el recuadro las palabras que aparecen debajo ([[Special:Captcha/help|más información]]):",
+	"fancycaptcha-edit": "Para editar esta página, por favor introduce en el recuadro las palabras que aparecen debajo ([[Special:Captcha/help|más información]]):",
+	"fancycaptcha-sendemail": "Para proteger el wiki del descifrado de contraseñas automatizado, por favor resuelve la simple suma de abajo e introduce la respuesta en la caja ([[Special:Captcha/help|más información]]):",
+	"fancycaptcha-reload-text": "Actualizar"
+}

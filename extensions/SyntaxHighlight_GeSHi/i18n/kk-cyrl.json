@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"AlefZet"
+		]
+	},
+	"syntaxhighlight-specify": "Тілді былайша көрсетуіңіз қажет:",
+	"syntaxhighlight-supported": "Синтаксисі көмескі жарықталатын сүйемелденген тілдер:",
+	"syntaxhighlight-err-loading": "(сүйемелденген тілдер тізімін жүктеу қатесі)",
+	"syntaxhighlight-err-language": "Жарамсыз тіл.",
+	"geshi.css": "/* Мындағы CSS әмірлері GeSHi синтаксисті көмескі жарықтауға қолданылады */"
+}

@@ -65,6 +65,9 @@ function resolveStubs() {
 
 /**
  * Resolve a history stub
+ * @param int $id
+ * @param string $stubText
+ * @param string $flags
  */
 function resolveStub( $id, $stubText, $flags ) {
 	$fname = 'resolveStub';
@@ -77,12 +80,18 @@ function resolveStub( $id, $stubText, $flags ) {
 
 	if ( strtolower( get_class( $stub ) ) !== 'historyblobstub' ) {
 		print "Error found object of class " . get_class( $stub ) . ", expecting historyblobstub\n";
+
 		return;
 	}
 
 	# Get the (maybe) external row
-	$externalRow = $dbr->selectRow( 'text', array( 'old_text' ),
-		array( 'old_id' => $stub->mOldId, 'old_flags' . $dbr->buildLike( $dbr->anyString(), 'external', $dbr->anyString() ) ),
+	$externalRow = $dbr->selectRow(
+		'text',
+		array( 'old_text' ),
+		array(
+			'old_id' => $stub->mOldId,
+			'old_flags' . $dbr->buildLike( $dbr->anyString(), 'external', $dbr->anyString() )
+		),
 		$fname
 	);
 

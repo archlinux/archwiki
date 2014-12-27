@@ -49,8 +49,6 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 	}
 
 	private function getPageGroups() {
-		global $wgSortSpecialPages;
-
 		$pages = SpecialPageFactory::getUsablePages( $this->getUser() );
 
 		if ( !count( $pages ) ) {
@@ -68,7 +66,7 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 					$groups[$group] = array();
 				}
 				$groups[$group][$page->getDescription()] = array(
-					$page->getTitle(),
+					$page->getPageTitle(),
 					$page->isRestricted(),
 					$page->isCached()
 				);
@@ -76,10 +74,8 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 		}
 
 		/** Sort */
-		if ( $wgSortSpecialPages ) {
-			foreach ( $groups as $group => $sortedPages ) {
-				ksort( $groups[$group] );
-			}
+		foreach ( $groups as $group => $sortedPages ) {
+			ksort( $groups[$group] );
 		}
 
 		/** Always move "other" to end */
@@ -103,9 +99,15 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 			$middle = ceil( $total / 2 );
 			$count = 0;
 
-			$out->wrapWikiMsg( "<h2 class=\"mw-specialpagesgroup\" id=\"mw-specialpagesgroup-$group\">$1</h2>\n", "specialpages-group-$group" );
+			$out->wrapWikiMsg(
+				"<h2 class=\"mw-specialpagesgroup\" id=\"mw-specialpagesgroup-$group\">$1</h2>\n",
+				"specialpages-group-$group"
+			);
 			$out->addHTML(
-				Html::openElement( 'table', array( 'style' => 'width:100%;', 'class' => 'mw-specialpages-table' ) ) . "\n" .
+				Html::openElement(
+					'table',
+					array( 'style' => 'width:100%;', 'class' => 'mw-specialpages-table' )
+				) . "\n" .
 				Html::openElement( 'tr' ) . "\n" .
 				Html::openElement( 'td', array( 'style' => 'width:30%;vertical-align:top' ) ) . "\n" .
 				Html::openElement( 'ul' ) . "\n"
@@ -124,7 +126,11 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 				}
 
 				$link = Linker::linkKnown( $title, htmlspecialchars( $desc ) );
-				$out->addHTML( Html::rawElement( 'li', array( 'class' => implode( ' ', $pageClasses ) ), $link ) . "\n" );
+				$out->addHTML( Html::rawElement(
+						'li',
+						array( 'class' => implode( ' ', $pageClasses ) ),
+						$link
+					) . "\n" );
 
 				# Split up the larger groups
 				$count++;
@@ -144,6 +150,7 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 		}
 
 		if ( $includesRestrictedPages || $includesCachedPages ) {
+			$out->wrapWikiMsg( "<h2 class=\"mw-specialpages-note-top\">$1</h2>", 'specialpages-note-top' );
 			$out->wrapWikiMsg( "<div class=\"mw-specialpages-notes\">\n$1\n</div>", 'specialpages-note' );
 		}
 	}

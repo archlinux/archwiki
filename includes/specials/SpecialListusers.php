@@ -35,9 +35,9 @@
 class UsersPager extends AlphabeticPager {
 
 	/**
-	 * @param $context IContextSource
+	 * @param IContextSource $context
 	 * @param array $par (Default null)
-	 * @param $including boolean Whether this page is being transcluded in
+	 * @param bool $including Whether this page is being transcluded in
 	 * another page
 	 */
 	function __construct( IContextSource $context = null, $par = null, $including = null ) {
@@ -69,7 +69,9 @@ class UsersPager extends AlphabeticPager {
 		$this->editsOnly = $request->getBool( 'editsOnly' );
 		$this->creationSort = $request->getBool( 'creationSort' );
 		$this->including = $including;
-		$this->mDefaultDirection = $request->getBool( 'desc' );
+		$this->mDefaultDirection = $request->getBool( 'desc' )
+			? IndexPager::DIR_DESCENDING
+			: IndexPager::DIR_ASCENDING;
 
 		$this->requestedUser = '';
 
@@ -92,7 +94,7 @@ class UsersPager extends AlphabeticPager {
 	}
 
 	/**
-	 * @return Array
+	 * @return array
 	 */
 	function getQueryInfo() {
 		$dbr = wfGetDB( DB_SLAVE );
@@ -154,8 +156,8 @@ class UsersPager extends AlphabeticPager {
 	}
 
 	/**
-	 * @param $row Object
-	 * @return String
+	 * @param stdClass $row
+	 * @return string
 	 */
 	function formatRow( $row ) {
 		if ( $row->user_id == 0 ) { #Bug 16487
@@ -191,12 +193,9 @@ class UsersPager extends AlphabeticPager {
 		}
 
 		$edits = '';
-		global $wgEdititis;
-		if ( !$this->including && $wgEdititis ) {
-			// @fixme i18n issue: Hardcoded square brackets.
-			$edits = ' [' .
-				$this->msg( 'usereditcount' )->numParams( $row->edits )->escaped() .
-				']';
+		if ( !$this->including && $this->getConfig()->get( 'Edititis' ) ) {
+			$count = $this->msg( 'usereditcount' )->numParams( $row->edits )->escaped();
+			$edits = $this->msg( 'word-separator' )->escaped() . $this->msg( 'brackets', $count )->escaped();
 		}
 
 		$created = '';
@@ -232,14 +231,12 @@ class UsersPager extends AlphabeticPager {
 	 * @return string
 	 */
 	function getPageHeader() {
-		global $wgScript;
-
 		list( $self ) = explode( '/', $this->getTitle()->getPrefixedDBkey() );
 
 		# Form tag
 		$out = Xml::openElement(
 			'form',
-			array( 'method' => 'get', 'action' => $wgScript, 'id' => 'mw-listusers-form' )
+			array( 'method' => 'get', 'action' => wfScript(), 'id' => 'mw-listusers-form' )
 		) .
 			Xml::fieldset( $this->msg( 'listusers' )->text() ) .
 			Html::hidden( 'title', $self );
@@ -333,7 +330,7 @@ class UsersPager extends AlphabeticPager {
 	/**
 	 * Get a list of groups the specified user belongs to
 	 *
-	 * @param $uid Integer: user id
+	 * @param int $uid User id
 	 * @return array
 	 */
 	protected static function getGroups( $uid ) {
@@ -346,7 +343,7 @@ class UsersPager extends AlphabeticPager {
 	/**
 	 * Format a link to a group description page
 	 *
-	 * @param string $group group name
+	 * @param string $group Group name
 	 * @param string $username Username
 	 * @return string
 	 */
@@ -399,7 +396,41 @@ class SpecialListUsers extends IncludableSpecialPage {
 		$this->getOutput()->addHTML( $s );
 	}
 
+	/**
+	 * Return an array of subpages beginning with $search that this special page will accept.
+	 *
+	 * @param string $search Prefix to search for
+	 * @param int $limit Maximum number of results to return
+	 * @return string[] Matching subpages
+	 */
+	public function prefixSearchSubpages( $search, $limit = 10 ) {
+		$subpages = User::getAllGroups();
+		return self::prefixSearchArray( $search, $limit, $subpages );
+	}
+
 	protected function getGroupName() {
 		return 'users';
+	}
+}
+
+/**
+ * Redirect page: Special:ListAdmins --> Special:ListUsers/sysop.
+ *
+ * @ingroup SpecialPage
+ */
+class SpecialListAdmins extends SpecialRedirectToSpecial {
+	function __construct() {
+		parent::__construct( 'Listadmins', 'Listusers', 'sysop' );
+	}
+}
+
+/**
+ * Redirect page: Special:ListBots --> Special:ListUsers/bot.
+ *
+ * @ingroup SpecialPage
+ */
+class SpecialListBots extends SpecialRedirectToSpecial {
+	function __construct() {
+		parent::__construct( 'Listbots', 'Listusers', 'bot' );
 	}
 }

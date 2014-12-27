@@ -10,7 +10,7 @@ class RenameuserSQL {
 	  * @var string
 	  * @access private
 	  */
-	var $old;
+	public $old;
 
 	/**
 	  * The new username
@@ -18,7 +18,7 @@ class RenameuserSQL {
 	  * @var string
 	  * @access private
 	  */
-	var $new;
+	public $new;
 
 	/**
 	  * The user ID
@@ -26,7 +26,7 @@ class RenameuserSQL {
 	  * @var integer
 	  * @access private
 	  */
-	var $uid;
+	public $uid;
 
 	/**
 	  * The the tables => fields to be updated
@@ -34,7 +34,7 @@ class RenameuserSQL {
 	  * @var array
 	  * @access private
 	  */
-	var $tables;
+	public $tables;
 
 	/**
 	  * Flag that can be set to false, in case another process has already started
@@ -43,7 +43,7 @@ class RenameuserSQL {
 	  * @var bool
 	  * @access private
 	  */
-	var $checkIfUserExists;
+	public $checkIfUserExists;
 
 	/**
 	 * Constructor
@@ -112,6 +112,7 @@ class RenameuserSQL {
 
 		if ( !$dbw->affectedRows() && $this->checkIfUserExists ) {
 			$dbw->rollback();
+			wfProfileOut( __METHOD__ );
 			return false;
 		}
 
@@ -221,7 +222,7 @@ class RenameuserSQL {
 		}
 
 		if ( count( $jobs ) > 0 ) {
-			Job::safeBatchInsert( $jobs ); // don't commit yet
+			JobQueueGroup::singleton()->push( $jobs, JobQueue::QOS_ATOMIC ); // don't commit yet
 		}
 
 		// Commit the transaction

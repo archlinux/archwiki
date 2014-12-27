@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kwj2772",
+			"ToePeu",
+			"아라"
+		]
+	},
+	"syntaxhighlight-desc": "[http://qbnz.com/highlighter/ GeSHi Highlighter]를 사용해 <code>&lt;syntaxhighlight&gt;</code>로 문법 강조를 제공합니다",
+	"syntaxhighlight-specify": "다음과 같이 언어를 지정해야 합니다:",
+	"syntaxhighlight-supported": "문법 강조가 지원되는 언어 목록:",
+	"syntaxhighlight-err-loading": "(지원되는 언어 목록을 불러오는 중 오류)",
+	"syntaxhighlight-err-language": "잘못된 언어입니다.",
+	"geshi.css": "/* 여기에서 설정한 CSS는 GeSHi 구문 강조에 적용됩니다 */"
+}

@@ -30,25 +30,27 @@ class ResourceLoaderUserTokensModule extends ResourceLoaderModule {
 
 	protected $origin = self::ORIGIN_CORE_INDIVIDUAL;
 
+	protected $targets = array( 'desktop', 'mobile' );
+
 	/* Methods */
 
 	/**
 	 * Fetch the tokens for the current user.
 	 *
-	 * @return array: List of tokens keyed by token type
+	 * @return array List of tokens keyed by token type
 	 */
 	protected function contextUserTokens() {
 		global $wgUser;
 
 		return array(
 			'editToken' => $wgUser->getEditToken(),
-			'patrolToken' => ApiQueryRecentChanges::getPatrolToken( null, null ),
-			'watchToken' => ApiQueryInfo::getWatchToken( null, null ),
+			'patrolToken' => $wgUser->getEditToken( 'patrol' ),
+			'watchToken' => $wgUser->getEditToken( 'watch' ),
 		);
 	}
 
 	/**
-	 * @param $context ResourceLoaderContext
+	 * @param ResourceLoaderContext $context
 	 * @return string
 	 */
 	public function getScript( ResourceLoaderContext $context ) {

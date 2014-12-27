@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bernardom",
+			"Crazymadlover",
+			"Fitoschido",
+			"Muro de Aguas",
+			"Remember the dot",
+			"Sanbec"
+		]
+	},
+	"pfunc_desc": "Mejora el analizador lógico con funciones.",
+	"pfunc_time_error": "Error con la expresión: Tiempo no válido",
+	"pfunc_time_too_long": "Error con la expresión: se están utilizando demasiados \"#time\"",
+	"pfunc_time_too_big": "Error: #time solo admite años hasta 9999.",
+	"pfunc_rel2abs_invalid_depth": "Error: Profundidad no válida en la ruta: «$1» (trataste de acceder a un nodo por encima de la raíz)",
+	"pfunc_expr_stack_exhausted": "Error de expresión: Pila agotada",
+	"pfunc_expr_unexpected_number": "Error con la expresión: Número no esperado",
+	"pfunc_expr_preg_match_failure": "Error de expresión: Fracaso preg_match no esperado",
+	"pfunc_expr_unrecognised_word": "Error con la expresión: La palabra \"$1\" no se reconoce",
+	"pfunc_expr_unexpected_operator": "Error con la expresión: Operador $1 no esperado",
+	"pfunc_expr_missing_operand": "Error con la expresión: Falta un operador para $1",
+	"pfunc_expr_unexpected_closing_bracket": "Error con la expresión: Paréntesis de cierre no esperado",
+	"pfunc_expr_unrecognised_punctuation": "Error con la expresión: Carácter de puntuación no reconocido \"$1\"",
+	"pfunc_expr_unclosed_bracket": "Error con la expresión: Paréntesis sin cerrar",
+	"pfunc_expr_division_by_zero": "División entre cero",
+	"pfunc_expr_invalid_argument": "Argumento no válido para $1: < -1 o > 1.",
+	"pfunc_expr_invalid_argument_ln": "Argumento incorrecto para ln: <= 0",
+	"pfunc_expr_unknown_error": "Error con la expresión: Error desconocido ($1)",
+	"pfunc_expr_not_a_number": "En $1: el resultado no es un número",
+	"pfunc_string_too_long": "Error: la cadena excede el límite de $1 caracteres"
+}

@@ -59,6 +59,7 @@ if ( $ext == 'php' || $ext == 'php5' ) {
 	# the php webserver will discard post data and things like login
 	# will not function in the dev environment.
 	require $file;
+
 	return true;
 }
 $mime = false;
@@ -79,7 +80,7 @@ if ( !$mime ) {
 	}
 }
 if ( $mime ) {
-	# Use custom handling to serve files with a known mime type
+	# Use custom handling to serve files with a known MIME type
 	# This way we can serve things like .svg files that the built-in
 	# PHP webserver doesn't understand.
 	# ;) Nicely enough we just happen to bundle a mime.types file
@@ -93,6 +94,7 @@ if ( $mime ) {
 	header( "Content-Length: " . filesize( $file ) );
 	// Stream that out to the browser
 	fpassthru( $f );
+
 	return true;
 }
 

@@ -1,0 +1,13 @@
+{
+    "@metadata": {
+        "authors": [
+            "Brion Vibber"
+        ]
+    },
+    "syntaxhighlight-desc": "Provides syntax highlighting <code>&lt;syntaxhighlight&gt;</code> using [http://qbnz.com/highlighter/ GeSHi - Generic Syntax Highlighter]",
+    "syntaxhighlight-specify": "You need to specify a language like this:",
+    "syntaxhighlight-supported": "Supported languages for syntax highlighting:",
+    "syntaxhighlight-err-loading": "(error loading supported language list)",
+    "syntaxhighlight-err-language": "Invalid language.",
+    "geshi.css": "/* CSS placed here will be applied to GeSHi syntax highlighting */"
+}

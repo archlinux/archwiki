@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Crazymadlover",
+			"Fitoschido",
+			"Muro de Aguas",
+			"Remember the dot",
+			"Sanbec",
+			"Vivaelcelta"
+		]
+	},
+	"gadgets-desc": "Permite a los usuarios seleccionar [[Special:Gadgets|accesorios de CSS y JavaScript personailzados]]\nen sus [[Special:Preferences#mw-prefsection-gadgets|preferencias]].",
+	"prefs-gadgets": "Accesorios",
+	"gadgets-prefstext": "Debajo hay una lista de accesorios que puedes activar a tu gusto.\nTen en cuenta que la mayoría de ellos utilizan JavaScript para funcionar, así que debes tenerlo activado en tu navegador si quieres que los accesorios que actives funcionen.\n\nTen en cuenta también que estos complementos no forman parte del software MediaWiki, y están desarrollados por usuarios de este wiki.\n\nLos administradores pueden editar los accesorios que están disponibles en las páginas [[MediaWiki:Gadgets-definition]] y [[Special:Gadgets]].",
+	"gadgets": "Accesorios",
+	"gadgets-title": "Accesorios",
+	"gadgets-pagetext": "Debajo hay una lista de accesorios especiales que los usuarios pueden activar en sus [[Special:Preferences#mw-prefsection-gadgets|preferencias]], según la [[MediaWiki:Gadgets-definition|lista de definición de accesorios]]. Esta vista provee un acceso fácil a las páginas de mensajes del sistema que definen la descripción y el código de cada accesorio.",
+	"gadgets-uses": "Usos",
+	"gadgets-required-rights": "Requiere {{PLURAL:$2|el siguiente derecho|los siguientes derechos}}:\n\n$1",
+	"gadgets-required-skins": "Disponible {{PLURAL:$2|en la apariencia $1|en las siguientes apariencias: $1}}.",
+	"gadgets-default": "Activado para todos de manera predeterminada.",
+	"gadgets-export": "Exportar",
+	"gadgets-export-title": "Exportación de gadget",
+	"gadgets-not-found": "Gadget \"$1\" no encontrado.",
+	"gadgets-export-text": "Para exportar el gadget $1, haz click en el botón \"{{int:gadgets-export-download}}\", graba el archivo descargado,\nve a Special:Importar un wiki de destino y subirlo. Luego agrega lo siguiente a MediaWiki:Gadgets-definition page:\n<pre>$2</pre>\nDebes tener permisos apropiados en el wiki de destino (incluyendo el derecho a editar mensajes de sistema) e importación desde archivos subidos debe estar habilitado.",
+	"gadgets-export-download": "Descargar"
+}

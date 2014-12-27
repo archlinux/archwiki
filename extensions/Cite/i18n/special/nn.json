@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Gunnernett",
+			"Harald Khan",
+			"Jon Harald Søby",
+			"Njardarlogar"
+		]
+	},
+	"cite_article_desc": "Legg til ei [[Special:Cite|siteringsside]] og ei lenkje i verktøy-menyen",
+	"cite_article_link": "Siter denne sida",
+	"tooltip-cite-article": "Informasjon om korleis ein siterer denne sida",
+	"cite": "Siter",
+	"cite_page": "Side:",
+	"cite_submit": "Siter"
+}

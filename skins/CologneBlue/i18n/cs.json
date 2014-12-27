@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Li-sung",
+			"Mormegil"
+		]
+	},
+	"cologneblue.css": "/* Zde uvedené CSS bude ovlivňovat pouze styl „Kolínská modř“  */",
+	"cologneblue.js": "/* JavaScript pro uživatele používající vzhled „Kolínská modř“  */",
+	"skinname-cologneblue": "Kolínská modř",
+	"cologneblue-desc": "Odlehčený vzhled s minimálním formátováním"
+}

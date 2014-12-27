@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Helix84"
+		]
+	},
+	"nuke": "Hromadné mazanie",
+	"nuke-desc": "Dáva správcom schopnosť [[Special:Nuke|hromadného mazania]] stránok",
+	"nuke-nopages": "V posledných zmenách sa nenachádzajú nové stránky od [[Special:Contributions/$1|$1]].",
+	"nuke-list": "[[Special:Contributions/$1|$1]] nedávno vytvoril nasledovné nové stránky; vyplňte komentár a stlačením tlačidla ich vymažete.",
+	"nuke-list-multiple": "Tieto stránky boli nedávno vytvorené;\nvložením komentára a stlačením tlačidla ich môžete zmazať.",
+	"nuke-defaultreason": "Hromadné odstránenie stránok, ktoré pridal $1",
+	"nuke-multiplepeople": "viacerí používatelia",
+	"nuke-tools": "Tento nástroj umožňuje hromadné odstránenie stránok, ktoré nedávno pridal zadaný používateľ alebo IP.\nZadajte používateľa alebo IP a dostanete zoznam stránok na zmazanie. Ponechajte prázdne a použije sa na všetkých používateľov.",
+	"nuke-submit-user": "Vykonať",
+	"nuke-submit-delete": "Zmazať vybrané",
+	"right-nuke": "Hromadné mazanie stránok",
+	"nuke-select": "Vybrať: $1",
+	"nuke-userorip": "Používateľské meno, IP adresa alebo prázdne:",
+	"nuke-maxpages": "Maximálny počet strán:",
+	"nuke-editby": "Vytvoril [[Special:Contributions/$1|$1]]"
+}

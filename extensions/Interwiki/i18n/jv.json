@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Meursault2004",
+			"Pras"
+		]
+	},
+	"interwiki": "Ndeleng lan nyunting data interwiki",
+	"interwiki-title-norights": "Ndeleng data interwiki",
+	"interwiki-desc": "Nambahaké sawijining [[Special:Interwiki|kaca astaméwa]] kanggo ndeleng lan nyunting tabèl interwiki",
+	"interwiki_intro": "Iki sawijining gambaran saka tabel interwiki.",
+	"interwiki_prefix": "Préfiks (sisipan awal)",
+	"interwiki-prefix-label": "Préfiks (sisipan awal):",
+	"interwiki_error": "KALUPUTAN: Tabèl interwikiné kosong, utawa ana masalah liya.",
+	"interwiki_reasonfield": "Alesan:",
+	"interwiki_delquestion": "Mbusak \"$1\"",
+	"interwiki_deleting": "Panjenengan mbusak préfiks utawa sisipan awal \"$1\".",
+	"interwiki_deleted": "Préfisk \"$1\" bisa kasil dibusak saka tabèl interwiki.",
+	"interwiki_delfailed": "Préfiks \"$1\" ora bisa diilangi saka tabèl interwiki.",
+	"interwiki_addtext": "Nambah préfiks interwiki",
+	"interwiki_addintro": "Panjenengan nambah préfiks utawa sisipan awal interwiki anyar.\nÉlinga yèn iku ora bisa ngandhut spasi ( ), pada pangkat (:), ampersands (&), utawa tandha padha (=).",
+	"interwiki_addbutton": "Nambah",
+	"interwiki_added": "Préfiks utawa sisipan awal \"$1\" bisa kasil ditambahaké ing tabèl interwiki.",
+	"interwiki_addfailed": "Préfiks \"$1\" ora bisa ditambahaké ing tabèl interwiki.\nMbok-menawa iki pancèn wis ana ing tabèl interwiki.",
+	"interwiki_edittext": "Nyunting sawijining préfiks interwiki",
+	"interwiki_editintro": "Panjenengan nyunting préfiks interwiki.\nÉlinga yèn iki ora bisa nugel pranala-pranala sing wis ana.",
+	"interwiki_edited": "Préfiks \"$1\" bisa suksès dimodifikasi ing tabèl interwiki.",
+	"interwiki_editerror": "Préfiks utawa sisipan awal \"$1\" ora bisa dimodifikasi ing tabèl interwiki.\nMbok-menawa iki ora ana.",
+	"log-name-interwiki": "Log tabèl interwiki",
+	"log-description-interwiki": "Kaca iki log owah-owahan kanggo [[Special:Interwiki|tabèl interwiki]]."
+}

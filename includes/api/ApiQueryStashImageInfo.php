@@ -27,7 +27,7 @@
  */
 class ApiQueryStashImageInfo extends ApiQueryImageInfo {
 
-	public function __construct( $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'sii' );
 	}
 
@@ -47,6 +47,7 @@ class ApiQueryStashImageInfo extends ApiQueryImageInfo {
 
 		// Alias sessionkey to filekey, but give an existing filekey precedence.
 		if ( !$params['filekey'] && $params['sessionkey'] ) {
+			$this->logFeatureUsage( 'prop=stashimageinfo&siisessionkey' );
 			$params['filekey'] = $params['sessionkey'];
 		}
 
@@ -60,7 +61,7 @@ class ApiQueryStashImageInfo extends ApiQueryImageInfo {
 				$result->addValue( array( 'query', $this->getModuleName() ), null, $imageInfo );
 				$result->setIndexedTagName_internal( array( 'query', $this->getModuleName() ), $modulePrefix );
 			}
-		//TODO: update exception handling here to understand current getFile exceptions
+		// @todo Update exception handling here to understand current getFile exceptions
 		} catch ( UploadStashNotAvailableException $e ) {
 			$this->dieUsage( "Session not available: " . $e->getMessage(), "nosession" );
 		} catch ( UploadStashFileNotFoundException $e ) {
@@ -72,7 +73,7 @@ class ApiQueryStashImageInfo extends ApiQueryImageInfo {
 
 	private $propertyFilter = array(
 		'user', 'userid', 'comment', 'parsedcomment',
-		'mediatype', 'archivename',
+		'mediatype', 'archivename', 'uploadwarning',
 	);
 
 	public function getAllowedParams() {
@@ -108,10 +109,11 @@ class ApiQueryStashImageInfo extends ApiQueryImageInfo {
 
 	/**
 	 * Return the API documentation for the parameters.
-	 * @return Array parameter documentation.
+	 * @return array Parameter documentation.
 	 */
 	public function getParamDescription() {
 		$p = $this->getModulePrefix();
+
 		return array(
 			'prop' => self::getPropertyDescriptions( $this->propertyFilter, $p ),
 			'filekey' => 'Key that identifies a previous upload that was stashed temporarily.',
@@ -123,19 +125,15 @@ class ApiQueryStashImageInfo extends ApiQueryImageInfo {
 		);
 	}
 
-	public function getResultProperties() {
-		return ApiQueryImageInfo::getResultPropertiesFiltered( $this->propertyFilter );
-	}
-
 	public function getDescription() {
-		return 'Returns image information for stashed images';
+		return 'Returns image information for stashed images.';
 	}
 
 	public function getExamples() {
 		return array(
 			'api.php?action=query&prop=stashimageinfo&siifilekey=124sd34rsdf567',
-			'api.php?action=query&prop=stashimageinfo&siifilekey=b34edoe3|bceffd4&siiurlwidth=120&siiprop=url',
+			'api.php?action=query&prop=stashimageinfo&siifilekey=b34edoe3|bceffd4&' .
+				'siiurlwidth=120&siiprop=url',
 		);
 	}
-
 }

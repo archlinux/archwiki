@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jopparn",
+			"Rotsee",
+			"Tobulos1",
+			"WikiPhoenix",
+			"Lokal Profil"
+		]
+	},
+	"asirra-desc": "Asirra-modul för ConfirmEdit",
+	"asirra-edit": "För att skydda wikin mot spam ber vi dig att markera de fotografier som föreställer katter i rutan nedan:",
+	"asirra-addurl": "Din redigering innehåller nya externa länkar. För att skydda wikin mot automatiserat redigerings-spam ber vi dig att endast markera fotografierna på katter i rutan nedan:",
+	"asirra-badlogin": "För att skydda wikin mot automatiserade försök att knäcka lösenord ber vi dig att endast markera fotografierna på katter i rutan nedan:",
+	"asirra-createaccount": "För att skydda wikin mot automatiserat kontoskapande ber vi dig att endast markera fotografierna på katter i rutan nedan:",
+	"asirra-createaccount-fail": "Vänligen identifiera katterna korrekt.",
+	"asirra-create": "För att skydda wikin mot automatiserat sidskapande ber vi dig att endast markera fotografierna på katter i rutan nedan:",
+	"asirra-nojs": "'''Var god aktivera JavaScript och hämta sidan igen.'''",
+	"asirra-failed": "Var god identifiera alla kattbilder"
+}

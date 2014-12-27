@@ -38,7 +38,10 @@ class ShowJobs extends Maintenance {
 		parent::__construct();
 		$this->mDescription = "Show number of jobs waiting in master database";
 		$this->addOption( 'group', 'Show number of jobs per job type' );
-		$this->addOption( 'list', 'Show a complete list of all jobs in a machine-readable format, instead of statistics' );
+		$this->addOption(
+			'list',
+			'Show a complete list of all jobs in a machine-readable format, instead of statistics'
+		);
 	}
 
 	public function execute() {
@@ -56,14 +59,16 @@ class ShowJobs extends Maintenance {
 		} elseif ( $this->hasOption( 'group' ) ) {
 			foreach ( $group->getQueueTypes() as $type ) {
 				$queue = $group->get( $type );
+				$delayed = $queue->getDelayedCount();
 				$pending = $queue->getSize();
 				$claimed = $queue->getAcquiredCount();
 				$abandoned = $queue->getAbandonedCount();
 				$active = max( 0, $claimed - $abandoned );
-				if ( ( $pending + $claimed ) > 0 ) {
+				if ( ( $pending + $claimed + $delayed + $abandoned ) > 0 ) {
 					$this->output(
 						"{$type}: $pending queued; " .
-						"$claimed claimed ($active active, $abandoned abandoned)\n"
+						"$claimed claimed ($active active, $abandoned abandoned); " .
+						"$delayed delayed\n"
 					);
 				}
 			}

@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Huslåke",
+			"Ælsån"
+		]
+	},
+	"renameuser": "Gæf æ bruger en ny navn",
+	"renameuser-desc": "Gæf en bruger en ny navn (''renameuser'' regt er nøteg)",
+	"renameuserold": "Nuværende brugernavn:",
+	"renameusernew": "Ny brugernavn:",
+	"renameuserreason": "Før hvat dett'er dun:",
+	"renameusermove": "Flyt bruger og diskusje sider (og deres substrøk) til ny navn",
+	"renameusersubmit": "Gå til",
+	"renameusererrordoesnotexist": "Æ bruger \"<nowiki>$1</nowiki>\" bestä ekke.",
+	"renameusererrorexists": "Æ bruger \"<nowiki>$1</nowiki>\" er ål.",
+	"renameusererrorinvalid": "Æ brugernavn \"<nowiki>$1</nowiki>\" er ogyldegt.",
+	"renameuser-error-request": "Her har en pråblæm ve enkriige der anfråge. Gå hen og pråbær nurmål.",
+	"renameuser-error-same-user": "Du kenst ekke hernåm æ bruger til æselbste nåm als dafør.",
+	"renameusersuccess": "Æ bruger \"<nowiki>$1</nowiki>\" er hernåmt til \"<nowiki>$2</nowiki>\".",
+	"renameuser-page-exists": "Æ pæge $1 er ål og ken ekke åtåmatisk åverflyttet være.",
+	"renameuser-page-moved": "Æ pæge $1 er flyttet til $2.",
+	"renameuser-page-unmoved": "Æ pæge $1 kon ekke flyttet være til $2.",
+	"log-name-renameuser": "Bruger hernåm log",
+	"renameuser-move-log": "Åtåmatisk flyttet pæge hviil hernåm der bruger \"[[User:$1|$1]]\" til \"[[User:$2|$2]]\""
+}

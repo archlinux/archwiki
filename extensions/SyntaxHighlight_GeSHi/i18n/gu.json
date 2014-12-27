@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ashok modhvadia"
+		]
+	},
+	"syntaxhighlight-supported": "વાક્યરચના સ્પષ્ટીકરણ માટે સહાયક ભાષાઓ:",
+	"syntaxhighlight-err-loading": "(સહાયક ભાષા યાદી લાદણમાં ત્રુટિ)",
+	"syntaxhighlight-err-language": "અમાન્ય ભાષા."
+}

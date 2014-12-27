@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aotake",
+			"Fryed-peach",
+			"JtFuruhata",
+			"Mzm5zbC3",
+			"Shirayuki",
+			"Whym",
+			"青子守歌"
+		]
+	},
+	"gadgets-desc": "利用者が [[Special:Gadgets|CSS や JavaScript のカスタム ガジェット]]を[[Special:Preferences#mw-prefsection-gadgets|{{int:preferences}}]]で選択できるようにする",
+	"prefs-gadgets": "ガジェット",
+	"gadgets-prefstext": "以下はあなたのアカウントで利用できるガジェットの一覧です。\nこれらのガジェットはほとんどが JavaScript ベースであるため、動作させるにはご使用中のブラウザーの JavaScript を有効にする必要があります。\n{{int:preferences}}ページではこれらのガジェットが機能しないことにご注意ください。\n\nまた、これらのガジェットは MediaWiki ソフトウェアの一部ではなく、通常はローカルウィキの利用者が開発/メンテナンスをしていることにもご注意ください。\n管理者は、利用できるガジェットについてその[[MediaWiki:Gadgets-definition|定義]]や[[Special:Gadgets|説明]]を編集できます。",
+	"gadgets": "ガジェット",
+	"gadgets-title": "ガジェット",
+	"gadgets-pagetext": "以下は、利用者が[[Special:Preferences#mw-prefsection-gadgets|{{int:preferences}}]]で有効化できるガジェットの一覧です。これらは[[MediaWiki:Gadgets-definition|定義ページ]]で定義されています。\nこの概要ページでは、各ガジェットの説明やプログラム コードを定義しているシステム メッセージ ページへの簡単なアクセスを提供します。",
+	"gadgets-uses": "使用するファイル",
+	"gadgets-required-rights": "以下の{{PLURAL:$2|権限}}が必要です:\n\n$1",
+	"gadgets-required-skins": "{{PLURAL:$2|$1外装で利用できます|以下の外装で利用できます: $1}}。",
+	"gadgets-default": "既定では全員に有効です。",
+	"gadgets-export": "書き出し",
+	"gadgets-export-title": "ガジェットの書き出し",
+	"gadgets-not-found": "ガジェット「$1」が見つかりません。",
+	"gadgets-export-text": "$1 ガジェットを書き出すには、「{{int:gadgets-export-download}}」ボタンをクリックし、ダウンロードしたファイルを保存し、\n配布先ウィキの Special:Import に行ってアップロードしてください。そして、以下を MediaWiki:Gadgets-definition ページに追加してください:\n<pre>$2</pre>\nこの操作には、配布先のウィキで適切な権限 (システムメッセージの編集権限を含む) が必要で、さらにファイル アップロードによる取り込みが有効になっている必要があります。",
+	"gadgets-export-download": "ダウンロード"
+}

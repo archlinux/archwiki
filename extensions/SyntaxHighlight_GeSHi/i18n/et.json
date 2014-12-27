@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Pikne",
+			"[[et:Kasutaja:M2s17]]"
+		]
+	},
+	"syntaxhighlight-desc": "Võimaldab [http://qbnz.com/highlighter/ GeSHi] abil <code>&lt;syntaxhighlight&gt;</code>-silti kasutades süntaksit esile tõsta.",
+	"syntaxhighlight-specify": "Sa pead täpsustama keelt nõnda:",
+	"syntaxhighlight-supported": "Süntaksi esiletõstu toetavad keeled:",
+	"syntaxhighlight-err-loading": "(toetatud keelte loetelu laadimisel esines viga)",
+	"syntaxhighlight-err-language": "Vigane keel.",
+	"geshi.css": "/* CSS mis on asetatud siia, määrab GeSHi süntaksi esiletoomise stiili */"
+}

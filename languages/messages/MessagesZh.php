@@ -1,8 +1,7 @@
 <?php
 /** Chinese (中文)
  *
- * See MessagesQqq.php for message documentation incl. usage of parameters
- * To improve a translation please visit http://translatewiki.net
+ * To improve a translation please visit https://translatewiki.net
  *
  * @ingroup Language
  * @file
@@ -172,19 +171,3 @@ $specialPageAliases = array(
 	'Whatlinkshere'             => array( '链入页面', '鏈入頁面', '連入頁面', '连入页面' ),
 );
 
-$messages = array(
-/*
-Short names for language variants used for language conversion links.
-Variants for Chinese language
-*/
-'variantname-zh-hans' => '简体',
-'variantname-zh-hant' => '繁體',
-'variantname-zh-cn'   => '大陆简体',
-'variantname-zh-tw'   => '台灣正體',
-'variantname-zh-hk'   => '香港繁體',
-'variantname-zh-mo'   => '澳門繁體',
-'variantname-zh-sg'   => '新加坡简体',
-'variantname-zh-my'   => '大马简体',
-'variantname-zh'      => '不转换',
-
-);

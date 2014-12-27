@@ -60,15 +60,14 @@ class ExprError extends MWException {
 		// pfunc_expr_unexpected_closing_bracket, pfunc_expr_unrecognised_punctuation,
 		// pfunc_expr_unclosed_bracket, pfunc_expr_division_by_zero, pfunc_expr_invalid_argument,
 		// pfunc_expr_invalid_argument_ln, pfunc_expr_unknown_error, pfunc_expr_not_a_number
-		$msg = wfMessage( "pfunc_expr_$msg", $parameter )->inContentLanguage()->escaped();
-		$this->message = '<strong class="error">' . $msg . '</strong>';
+		$this->message = wfMessage( "pfunc_expr_$msg", $parameter )->inContentLanguage()->text();
 	}
 }
 
 class ExprParser {
-	var $maxStackSize = 100;
+	public $maxStackSize = 100;
 
-	var $precedence = array(
+	public $precedence = array(
 		EXPR_NEGATIVE => 10,
 		EXPR_POSITIVE => 10,
 		EXPR_EXPONENT => 10,
@@ -107,7 +106,7 @@ class ExprParser {
 		EXPR_CLOSE => -1,
 	);
 
-	var $names = array(
+	public $names = array(
 		EXPR_NEGATIVE => '-',
 		EXPR_POSITIVE => '+',
 		EXPR_NOT => 'not',
@@ -144,7 +143,7 @@ class ExprParser {
 		EXPR_SQRT => 'sqrt',
 	);
 
-	var $words = array(
+	public $words = array(
 		'mod' => EXPR_MOD,
 		'fmod' => EXPR_FMOD,
 		'and' => EXPR_AND,

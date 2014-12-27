@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Event"
+		]
+	},
+	"asirra-desc": "Assirra-modulen for ConfirmEdit",
+	"asirra-edit": "Som beskyttelse mot automatisk redigert spam, vennligst velg kun kattebildene i boksen under:",
+	"asirra-addurl": "Din redigering inneholder nye eksterne lenker. Som beskyttelse mot automatisk redigert spam, vennligst velg kun kattebildene i boksen under:",
+	"asirra-badlogin": "Som beskyttelse mot automatisk passordknekking, vennligst velg kun kattebildene i boksen under:",
+	"asirra-createaccount": "Som beskyttelse mot automatisk opprettelse av brukerkonto, vennligst velg kun kattebildene i boksen under:",
+	"asirra-createaccount-fail": "Vennligst angi hva som er katter.",
+	"asirra-create": "Som beskyttelse mot automatisk opprettelse av sider, vennligst velg kun kattebildene i boksen under:",
+	"asirra-nojs": "'''Vennligst åpne for JavaScript og lagre siden en gang til.'''",
+	"asirra-failed": "Vennligst merk alle kattebilder"
+}

@@ -37,9 +37,9 @@ class StripState {
 	const UNSTRIP_RECURSION_LIMIT = 20;
 
 	/**
-	 * @param $prefix string
+	 * @param string $prefix
 	 */
-	function __construct( $prefix ) {
+	public function __construct( $prefix ) {
 		$this->prefix = $prefix;
 		$this->data = array(
 			'nowiki' => array(),
@@ -51,26 +51,26 @@ class StripState {
 
 	/**
 	 * Add a nowiki strip item
-	 * @param $marker
-	 * @param $value
+	 * @param string $marker
+	 * @param string $value
 	 */
-	function addNoWiki( $marker, $value ) {
+	public function addNoWiki( $marker, $value ) {
 		$this->addItem( 'nowiki', $marker, $value );
 	}
 
 	/**
-	 * @param $marker
-	 * @param $value
+	 * @param string $marker
+	 * @param string $value
 	 */
-	function addGeneral( $marker, $value ) {
+	public function addGeneral( $marker, $value ) {
 		$this->addItem( 'general', $marker, $value );
 	}
 
 	/**
 	 * @throws MWException
-	 * @param $type
-	 * @param $marker
-	 * @param $value
+	 * @param string $type
+	 * @param string $marker
+	 * @param string $value
 	 */
 	protected function addItem( $type, $marker, $value ) {
 		if ( !preg_match( $this->regex, $marker, $m ) ) {
@@ -81,34 +81,34 @@ class StripState {
 	}
 
 	/**
-	 * @param $text
+	 * @param string $text
 	 * @return mixed
 	 */
-	function unstripGeneral( $text ) {
+	public function unstripGeneral( $text ) {
 		return $this->unstripType( 'general', $text );
 	}
 
 	/**
-	 * @param $text
+	 * @param string $text
 	 * @return mixed
 	 */
-	function unstripNoWiki( $text ) {
+	public function unstripNoWiki( $text ) {
 		return $this->unstripType( 'nowiki', $text );
 	}
 
 	/**
-	 * @param  $text
+	 * @param string $text
 	 * @return mixed
 	 */
-	function unstripBoth( $text ) {
+	public function unstripBoth( $text ) {
 		$text = $this->unstripType( 'general', $text );
 		$text = $this->unstripType( 'nowiki', $text );
 		return $text;
 	}
 
 	/**
-	 * @param $type
-	 * @param $text
+	 * @param string $type
+	 * @param string $text
 	 * @return mixed
 	 */
 	protected function unstripType( $type, $text ) {
@@ -127,7 +127,7 @@ class StripState {
 	}
 
 	/**
-	 * @param $m array
+	 * @param array $m
 	 * @return array
 	 */
 	protected function unstripCallback( $m ) {
@@ -159,11 +159,11 @@ class StripState {
 	 * Get a StripState object which is sufficient to unstrip the given text.
 	 * It will contain the minimum subset of strip items necessary.
 	 *
-	 * @param $text string
+	 * @param string $text
 	 *
 	 * @return StripState
 	 */
-	function getSubState( $text ) {
+	public function getSubState( $text ) {
 		$subState = new StripState( $this->prefix );
 		$pos = 0;
 		while ( true ) {
@@ -195,11 +195,11 @@ class StripState {
 	 * will not be preserved. The strings in the $texts array will have their
 	 * strip markers rewritten, the resulting array of strings will be returned.
 	 *
-	 * @param $otherState StripState
-	 * @param $texts Array
-	 * @return Array
+	 * @param StripState $otherState
+	 * @param array $texts
+	 * @return array
 	 */
-	function merge( $otherState, $texts ) {
+	public function merge( $otherState, $texts ) {
 		$mergePrefix = Parser::getRandomString();
 
 		foreach ( $otherState->data as $type => $items ) {
@@ -215,7 +215,7 @@ class StripState {
 	}
 
 	/**
-	 * @param $m
+	 * @param array $m
 	 * @return string
 	 */
 	protected function mergeCallback( $m ) {
@@ -226,10 +226,10 @@ class StripState {
 	/**
 	 * Remove any strip markers found in the given text.
 	 *
-	 * @param $text Input string
+	 * @param string $text Input string
 	 * @return string
 	 */
-	function killMarkers( $text ) {
+	public function killMarkers( $text ) {
 		return preg_replace( $this->regex, '', $text );
 	}
 }

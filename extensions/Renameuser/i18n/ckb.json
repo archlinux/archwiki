@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Calak"
+		]
+	},
+	"renameusersubmit": "ناردن",
+	"log-name-renameuser": "لۆگی گۆڕینی ناوی بەکارھێنەر",
+	"logentry-renameuser-renameuser": "$1 ناوی بەکارھێنەر $4ی ({{PLURAL:$6|$6 دەستکاری}}) {{GENDER:$2|گۆڕی}} بۆ $5",
+	"right-renameuser": "گۆڕینی ناوی بەکارھێنەران"
+}

@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"පසිඳු කාවින්ද"
+		]
+	},
+	"wikieditor-loading": "Ag Lódáil....",
+	"wikieditor-preview-tab": "Réamhamharc",
+	"wikieditor-preview-loading": "Ag Lódáil....",
+	"wikieditor-previewDialog-tab": "Réamhamharc",
+	"wikieditor-previewDialog-loading": "Ag Lódáil....",
+	"wikieditor-publish-button-cancel": "Cealaigh",
+	"wikieditor-toolbar-loading": "Ag Lódáil....",
+	"wikieditor-toolbar-tool-link-cancel": "Cealaigh",
+	"wikieditor-toolbar-file-format": "Formáid:",
+	"wikieditor-toolbar-tool-file-cancel": "Cealaigh",
+	"wikieditor-toolbar-tool-reference-cancel": "Cealaigh",
+	"wikieditor-toolbar-group-format": "Formáid",
+	"wikieditor-toolbar-tool-table-preview": "Réamhamharc",
+	"wikieditor-toolbar-tool-table-cancel": "Cealaigh",
+	"wikieditor-toolbar-tool-replace-close": "Dún",
+	"wikieditor-toolbar-section-help": "Cuidiú",
+	"wikieditor-toolbar-help-page-file": "Comhaid",
+	"wikieditor-toolbar-help-page-discussion": "Plé",
+	"wikieditor-toolbar-help-content-signature-description": "Síniú"
+}

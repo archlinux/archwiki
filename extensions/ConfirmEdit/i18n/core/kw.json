@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kernoweger",
+			"Nrowe"
+		]
+	},
+	"captcha-createaccount-fail": "Koden afydhya kamm po gwag.",
+	"captcha-sendemail-fail": "Koden afydhya kamm po gwag."
+}

@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"2nd-player",
+			"Beta16",
+			"Raymond",
+			"Shirayuki"
+		]
+	},
+	"asirra-desc": "{{desc|name=Asirra|url=http://www.mediawiki.org/wiki/Extension:Asirra}}",
+	"asirra-edit": "{{Related|ConfirmEdit-edit}}",
+	"asirra-addurl": "{{Related|ConfirmEdit-addurl}}",
+	"asirra-badlogin": "{{Related|ConfirmEdit-badlogin}}",
+	"asirra-createaccount": "{{Related|ConfirmEdit-createaccount}}",
+	"asirra-createaccount-fail": "Used as failure message in JavaScript code.\n{{Related|ConfirmEdit-createaccount-fail}}",
+	"asirra-create": "{{Related|ConfirmEdit-create}}",
+	"asirra-nojs": "Used in HTML <code><nowiki><noscript></nowiki></code> tag.",
+	"asirra-failed": "Used as alert message in JavaScript code."
+}

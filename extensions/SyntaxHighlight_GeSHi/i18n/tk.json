@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hanberke"
+		]
+	},
+	"syntaxhighlight-desc": "[http://qbnz.com/highlighter/ GeSHi Highlighter] ulanyp <code>&lt;syntaxhighlight&gt;</code> sintaksis nygtamasyny üpjün edýär",
+	"syntaxhighlight-specify": "Şunuň ýaly bir dil görkezmeli:",
+	"syntaxhighlight-supported": "Sintaksis nygtamasy üçin goldanylýan diller:",
+	"syntaxhighlight-err-loading": "(goldanylýan diller sanawyny ýükleme säwligi)",
+	"syntaxhighlight-err-language": "Nädogry dil.",
+	"geshi.css": "/* Bu ýere ýerleşdirilen CSS, GeSHi sintaksis nygtamasyna berjaý ediljekdir */"
+}

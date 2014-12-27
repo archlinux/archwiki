@@ -34,35 +34,35 @@ require_once __DIR__ . '/../LanguageConverter.php';
  */
 class SrConverter extends LanguageConverter {
 	public $mToLatin = array(
-		'а' => 'a', 'б' => 'b',  'в' => 'v', 'г' => 'g',  'д' => 'd',
-		'ђ' => 'đ', 'е' => 'e',  'ж' => 'ž', 'з' => 'z',  'и' => 'i',
-		'ј' => 'j', 'к' => 'k',  'л' => 'l', 'љ' => 'lj', 'м' => 'm',
-		'н' => 'n', 'њ' => 'nj', 'о' => 'o', 'п' => 'p',  'р' => 'r',
-		'с' => 's', 'т' => 't',  'ћ' => 'ć', 'у' => 'u',  'ф' => 'f',
-		'х' => 'h', 'ц' => 'c',  'ч' => 'č', 'џ' => 'dž', 'ш' => 'š',
+		'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd',
+		'ђ' => 'đ', 'е' => 'e', 'ж' => 'ž', 'з' => 'z', 'и' => 'i',
+		'ј' => 'j', 'к' => 'k', 'л' => 'l', 'љ' => 'lj', 'м' => 'm',
+		'н' => 'n', 'њ' => 'nj', 'о' => 'o', 'п' => 'p', 'р' => 'r',
+		'с' => 's', 'т' => 't', 'ћ' => 'ć', 'у' => 'u', 'ф' => 'f',
+		'х' => 'h', 'ц' => 'c', 'ч' => 'č', 'џ' => 'dž', 'ш' => 'š',
 
-		'А' => 'A', 'Б' => 'B',  'В' => 'V', 'Г' => 'G',  'Д' => 'D',
-		'Ђ' => 'Đ', 'Е' => 'E',  'Ж' => 'Ž', 'З' => 'Z',  'И' => 'I',
-		'Ј' => 'J', 'К' => 'K',  'Л' => 'L', 'Љ' => 'Lj', 'М' => 'M',
-		'Н' => 'N', 'Њ' => 'Nj', 'О' => 'O', 'П' => 'P',  'Р' => 'R',
-		'С' => 'S', 'Т' => 'T',  'Ћ' => 'Ć', 'У' => 'U',  'Ф' => 'F',
-		'Х' => 'H', 'Ц' => 'C',  'Ч' => 'Č', 'Џ' => 'Dž', 'Ш' => 'Š',
+		'А' => 'A', 'Б' => 'B', 'В' => 'V', 'Г' => 'G', 'Д' => 'D',
+		'Ђ' => 'Đ', 'Е' => 'E', 'Ж' => 'Ž', 'З' => 'Z', 'И' => 'I',
+		'Ј' => 'J', 'К' => 'K', 'Л' => 'L', 'Љ' => 'Lj', 'М' => 'M',
+		'Н' => 'N', 'Њ' => 'Nj', 'О' => 'O', 'П' => 'P', 'Р' => 'R',
+		'С' => 'S', 'Т' => 'T', 'Ћ' => 'Ć', 'У' => 'U', 'Ф' => 'F',
+		'Х' => 'H', 'Ц' => 'C', 'Ч' => 'Č', 'Џ' => 'Dž', 'Ш' => 'Š',
 	);
 
 	public $mToCyrillics = array(
-		'a' => 'а', 'b'  => 'б', 'c' => 'ц', 'č' => 'ч', 'ć'  => 'ћ',
-		'd' => 'д', 'dž' => 'џ', 'đ' => 'ђ', 'e' => 'е', 'f'  => 'ф',
-		'g' => 'г', 'h'  => 'х', 'i' => 'и', 'j' => 'ј', 'k'  => 'к',
+		'a' => 'а', 'b' => 'б', 'c' => 'ц', 'č' => 'ч', 'ć' => 'ћ',
+		'd' => 'д', 'dž' => 'џ', 'đ' => 'ђ', 'e' => 'е', 'f' => 'ф',
+		'g' => 'г', 'h' => 'х', 'i' => 'и', 'j' => 'ј', 'k' => 'к',
 		'l' => 'л', 'lj' => 'љ', 'm' => 'м', 'n' => 'н', 'nj' => 'њ',
-		'o' => 'о', 'p'  => 'п', 'r' => 'р', 's' => 'с', 'š'  => 'ш',
-		't' => 'т', 'u'  => 'у', 'v' => 'в', 'z' => 'з', 'ž'  => 'ж',
+		'o' => 'о', 'p' => 'п', 'r' => 'р', 's' => 'с', 'š' => 'ш',
+		't' => 'т', 'u' => 'у', 'v' => 'в', 'z' => 'з', 'ž' => 'ж',
 
-		'A' => 'А', 'B'  => 'Б', 'C' => 'Ц', 'Č' => 'Ч', 'Ć'  => 'Ћ',
-		'D' => 'Д', 'Dž' => 'Џ', 'Đ' => 'Ђ', 'E' => 'Е', 'F'  => 'Ф',
-		'G' => 'Г', 'H'  => 'Х', 'I' => 'И', 'J' => 'Ј', 'K'  => 'К',
+		'A' => 'А', 'B' => 'Б', 'C' => 'Ц', 'Č' => 'Ч', 'Ć' => 'Ћ',
+		'D' => 'Д', 'Dž' => 'Џ', 'Đ' => 'Ђ', 'E' => 'Е', 'F' => 'Ф',
+		'G' => 'Г', 'H' => 'Х', 'I' => 'И', 'J' => 'Ј', 'K' => 'К',
 		'L' => 'Л', 'LJ' => 'Љ', 'M' => 'М', 'N' => 'Н', 'NJ' => 'Њ',
-		'O' => 'О', 'P'  => 'П', 'R' => 'Р', 'S' => 'С', 'Š'  => 'Ш',
-		'T' => 'Т', 'U'  => 'У', 'V' => 'В', 'Z' => 'З', 'Ž'  => 'Ж',
+		'O' => 'О', 'P' => 'П', 'R' => 'Р', 'S' => 'С', 'Š' => 'Ш',
+		'T' => 'Т', 'U' => 'У', 'V' => 'В', 'Z' => 'З', 'Ž' => 'Ж',
 
 		'DŽ' => 'Џ', 'd!ž' => 'дж', 'D!ž' => 'Дж', 'D!Ž' => 'ДЖ',
 		'Lj' => 'Љ', 'l!j' => 'лј', 'L!j' => 'Лј', 'L!J' => 'ЛЈ',
@@ -84,8 +84,8 @@ class SrConverter extends LanguageConverter {
 	 * update: delete all rule parsing because it's not used
 	 * currently, and just produces a couple of bugs
 	 *
-	 * @param $rule string
-	 * @param $flags array
+	 * @param string $rule
+	 * @param array $flags
 	 * @return array
 	 */
 	function parseManualRule( $rule, $flags = array() ) {
@@ -108,9 +108,9 @@ class SrConverter extends LanguageConverter {
 	 *     names as they were
 	 *   - do not try to find variants for usernames
 	 *
-	 * @param $link string
-	 * @param $nt Title
-	 * @param $ignoreOtherCond bool
+	 * @param string &$link
+	 * @param Title &$nt
+	 * @param bool $ignoreOtherCond
 	 */
 	function findVariantLink( &$link, &$nt, $ignoreOtherCond = false ) {
 		// check for user namespace
@@ -129,31 +129,11 @@ class SrConverter extends LanguageConverter {
 	}
 
 	/**
-	 * An ugly function wrapper for parsing Image titles
-	 * (to prevent image name conversion)
-	 *
-	 * @param $text string
-	 * @param $toVariant bool
-	 *
-	 * @return string
-	 */
-	function autoConvert( $text, $toVariant = false ) {
-		global $wgTitle;
-		if ( is_object( $wgTitle ) && $wgTitle->getNamespace() == NS_FILE ) {
-			$imagename = $wgTitle->getNsText();
-			if ( preg_match( "/^$imagename:/", $text ) ) {
-				return $text;
-			}
-		}
-		return parent::autoConvert( $text, $toVariant );
-	}
-
-	/**
 	 *  It translates text into variant, specials:
 	 *    - ommiting roman numbers
 	 *
-	 * @param $text string
-	 * @param $toVariant string
+	 * @param string $text
+	 * @param string $toVariant
 	 *
 	 * @throws MWException
 	 * @return string
@@ -190,9 +170,9 @@ class SrConverter extends LanguageConverter {
 	 * Guess if a text is written in Cyrillic or Latin.
 	 * Overrides LanguageConverter::guessVariant()
 	 *
-	 * @param string  $text The text to be checked
-	 * @param string  $variant Language code of the variant to be checked for
-	 * @return bool  true if $text appears to be written in $variant
+	 * @param string $text The text to be checked
+	 * @param string $variant Language code of the variant to be checked for
+	 * @return bool True if $text appears to be written in $variant
 	 *
 	 * @author Nikola Smolenski <smolensk@eunet.rs>
 	 * @since 1.19

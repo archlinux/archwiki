@@ -46,7 +46,7 @@
  *
  * @ingroup SpecialPage
  */
-class SpecialRandomInCategory extends SpecialPage {
+class SpecialRandomInCategory extends FormSpecialPage {
 	protected $extra = array(); // Extra SQL statements
 	protected $category = false; // Title object of category
 	protected $maxOffset = 30; // Max amount to fudge randomness by.
@@ -67,12 +67,35 @@ class SpecialRandomInCategory extends SpecialPage {
 		$this->minTimestamp = null;
 	}
 
-	public function execute( $par ) {
-		global $wgScript;
+	protected function getFormFields() {
+		$form = array(
+			'category' => array(
+				'type' => 'text',
+				'label-message' => 'randomincategory-category',
+				'required' => true,
+			)
+		);
 
+		return $form;
+	}
+
+	public function requiresWrite() {
+		return false;
+	}
+
+	public function requiresUnblock() {
+		return false;
+	}
+
+	protected function setParameter( $par ) {
+		// if subpage present, fake form submission
+		$this->onSubmit( array( 'category' => $par ) );
+	}
+
+	public function onSubmit( array $data ) {
 		$cat = false;
 
-		$categoryStr = $this->getRequest()->getText( 'category', $par );
+		$categoryStr = $data['category'];
 
 		if ( $categoryStr ) {
 			$cat = Title::newFromText( $categoryStr, NS_CATEGORY );
@@ -87,48 +110,31 @@ class SpecialRandomInCategory extends SpecialPage {
 			$this->setCategory( $cat );
 		}
 
-
 		if ( !$this->category && $categoryStr ) {
-			$this->setHeaders();
-			$this->getOutput()->addWikiMsg( 'randomincategory-invalidcategory',
+			$msg = $this->msg( 'randomincategory-invalidcategory',
 				wfEscapeWikiText( $categoryStr ) );
 
-			return;
+			return Status::newFatal( $msg );
+
 		} elseif ( !$this->category ) {
-			$this->setHeaders();
-			$input = Html::input( 'category' );
-			$submitText = $this->msg( 'randomincategory-selectcategory-submit' )->text();
-			$submit = Html::input( '', $submitText, 'submit' );
-
-			$msg = $this->msg( 'randomincategory-selectcategory' );
-			$form = Html::rawElement( 'form', array( 'action' => $wgScript ),
-				Html::hidden( 'title', $this->getTitle()->getPrefixedText() ) .
-				$msg->rawParams( $input, $submit )->parse()
-			);
-			$this->getOutput()->addHtml( $form );
-
-			return;
+			return; // no data sent
 		}
 
 		$title = $this->getRandomTitle();
 
 		if ( is_null( $title ) ) {
-			$this->setHeaders();
-			$this->getOutput()->addWikiMsg( 'randomincategory-nopages',
+			$msg = $this->msg( 'randomincategory-nopages',
 				$this->category->getText() );
 
-			return;
+			return Status::newFatal( $msg );
 		}
 
-		$query = $this->getRequest()->getValues();
-		unset( $query['title'] );
-		unset( $query['category'] );
-		$this->getOutput()->redirect( $title->getFullURL( $query ) );
+		$this->getOutput()->redirect( $title->getFullURL() );
 	}
 
 	/**
 	 * Choose a random title.
-	 * @return Title object (or null if nothing to choose from)
+	 * @return Title|null Title object (or null if nothing to choose from)
 	 */
 	public function getRandomTitle() {
 		// Convert to float, since we do math with the random number.
@@ -178,7 +184,7 @@ class SpecialRandomInCategory extends SpecialPage {
 	 *   was a large gap in the distribution of cl_timestamp values. This way instead
 	 *   of things to the right of the gap being favoured, both sides of the gap
 	 *   are favoured.
-	 * @return Array Query information.
+	 * @return array Query information.
 	 */
 	protected function getQueryInfo( $rand, $offset, $up ) {
 		$op = $up ? '>=' : '<=';
@@ -208,6 +214,7 @@ class SpecialRandomInCategory extends SpecialPage {
 			$qi['conds'][] = 'cl_timestamp ' . $op . ' ' .
 				$dbr->addQuotes( $dbr->timestamp( $minClTime ) );
 		}
+
 		return $qi;
 	}
 
@@ -230,6 +237,7 @@ class SpecialRandomInCategory extends SpecialPage {
 		}
 
 		$ts = ( $this->maxTimestamp - $this->minTimestamp ) * $rand + $this->minTimestamp;
+
 		return intval( $ts );
 	}
 
@@ -237,8 +245,8 @@ class SpecialRandomInCategory extends SpecialPage {
 	 * Get the lowest and highest timestamp for a category.
 	 *
 	 * @param Title $category
-	 * @return Array The lowest and highest timestamp
-	 * @throws MWException if category has no entries.
+	 * @return array The lowest and highest timestamp
+	 * @throws MWException If category has no entries.
 	 */
 	protected function getMinAndMaxForCat( Title $category ) {
 		$dbr = wfGetDB( DB_SLAVE );
@@ -259,6 +267,7 @@ class SpecialRandomInCategory extends SpecialPage {
 		if ( !$res ) {
 			throw new MWException( 'No entries in category' );
 		}
+
 		return array( wfTimestamp( TS_UNIX, $res->low ), wfTimestamp( TS_UNIX, $res->high ) );
 	}
 
@@ -266,8 +275,8 @@ class SpecialRandomInCategory extends SpecialPage {
 	 * @param float $rand A random number that is converted to a random timestamp
 	 * @param int $offset A small offset to make the result seem more "random"
 	 * @param bool $up Get the result above the random value
-	 * @param String $fname The name of the calling method
-	 * @return Array Info for the title selected.
+	 * @param string $fname The name of the calling method
+	 * @return array Info for the title selected.
 	 */
 	private function selectRandomPageFromDB( $rand, $offset, $up, $fname = __METHOD__ ) {
 		$dbr = wfGetDB( DB_SLAVE );

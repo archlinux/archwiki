@@ -31,33 +31,35 @@
  * @ingroup SpecialPage
  */
 class ActiveUsersPager extends UsersPager {
-
 	/**
 	 * @var FormOptions
 	 */
 	protected $opts;
 
 	/**
-	 * @var Array
+	 * @var array
 	 */
 	protected $hideGroups = array();
 
 	/**
-	 * @var Array
+	 * @var array
 	 */
 	protected $hideRights = array();
 
 	/**
-	 * @param $context IContextSource
-	 * @param $group null Unused
+	 * @var array
+	 */
+	private $blockStatusByUid;
+
+	/**
+	 * @param IContextSource $context
+	 * @param null $group Unused
 	 * @param string $par Parameter passed to the page
 	 */
 	function __construct( IContextSource $context = null, $group = null, $par = null ) {
-		global $wgActiveUserDays;
-
 		parent::__construct( $context );
 
-		$this->RCMaxAge = $wgActiveUserDays;
+		$this->RCMaxAge = $this->getConfig()->get( 'ActiveUserDays' );
 		$un = $this->getRequest()->getText( 'username', $par );
 		$this->requestedUser = '';
 		if ( $un != '' ) {
@@ -87,39 +89,36 @@ class ActiveUsersPager extends UsersPager {
 	}
 
 	function getIndexField() {
-		return 'rc_user_text';
+		return 'qcc_title';
 	}
 
 	function getQueryInfo() {
 		$dbr = $this->getDatabase();
 
-		$conds = array( 'rc_user > 0' ); // Users - no anons
-		$conds[] = 'rc_log_type IS NULL OR rc_log_type != ' . $dbr->addQuotes( 'newusers' );
-		$conds[] = 'rc_timestamp >= ' . $dbr->addQuotes(
-			$dbr->timestamp( wfTimestamp( TS_UNIX ) - $this->RCMaxAge * 24 * 3600 ) );
-
+		$activeUserSeconds = $this->getConfig()->get( 'ActiveUserDays' ) * 86400;
+		$timestamp = $dbr->timestamp( wfTimestamp( TS_UNIX ) - $activeUserSeconds );
+		$conds = array(
+			'qcc_type' => 'activeusers',
+			'qcc_namespace' => NS_USER,
+			'user_name = qcc_title',
+			'rc_user_text = qcc_title',
+			'rc_type != ' . $dbr->addQuotes( RC_EXTERNAL ), // Don't count wikidata.
+			'rc_log_type IS NULL OR rc_log_type != ' . $dbr->addQuotes( 'newusers' ),
+			'rc_timestamp >= ' . $dbr->addQuotes( $timestamp ),
+		);
 		if ( $this->requestedUser != '' ) {
-			$conds[] = 'rc_user_text >= ' . $dbr->addQuotes( $this->requestedUser );
+			$conds[] = 'qcc_title >= ' . $dbr->addQuotes( $this->requestedUser );
 		}
-
 		if ( !$this->getUser()->isAllowed( 'hideuser' ) ) {
 			$conds[] = 'NOT EXISTS (' . $dbr->selectSQLText(
-				'ipblocks', '1', array( 'rc_user=ipb_user', 'ipb_deleted' => 1 )
+				'ipblocks', '1', array( 'ipb_user=user_id', 'ipb_deleted' => 1 )
 			) . ')';
 		}
 
 		return array(
-			'tables' => array( 'recentchanges' ),
-			'fields' => array(
-				'user_name' => 'rc_user_text', // for Pager inheritance
-				'rc_user_text', // for Pager
-				'user_id' => 'MAX(rc_user)', // Postgres
-				'recentedits' => 'COUNT(*)'
-			),
-			'options' => array(
-				'GROUP BY' => array( 'rc_user_text' ),
-				'USE INDEX' => array( 'recentchanges' => 'rc_user_text' )
-			),
+			'tables' => array( 'querycachetwo', 'user', 'recentchanges' ),
+			'fields' => array( 'user_name', 'user_id', 'recentedits' => 'COUNT(*)', 'qcc_title' ),
+			'options' => array( 'GROUP BY' => array( 'qcc_title' ) ),
 			'conds' => $conds
 		);
 	}
@@ -196,25 +195,34 @@ class ActiveUsersPager extends UsersPager {
 	}
 
 	function getPageHeader() {
-		global $wgScript;
-
 		$self = $this->getTitle();
 		$limit = $this->mLimit ? Html::hidden( 'limit', $this->mLimit ) : '';
 
-		$out = Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) ); # Form tag
+		# Form tag
+		$out = Xml::openElement( 'form', array( 'method' => 'get', 'action' => wfScript() ) );
 		$out .= Xml::fieldset( $this->msg( 'activeusers' )->text() ) . "\n";
 		$out .= Html::hidden( 'title', $self->getPrefixedDBkey() ) . $limit . "\n";
 
+		# Username field
 		$out .= Xml::inputLabel( $this->msg( 'activeusers-from' )->text(),
-			'username', 'offset', 20, $this->requestedUser, array( 'tabindex' => 1 ) ) . '<br />';# Username field
+			'username', 'offset', 20, $this->requestedUser, array( 'tabindex' => 1 ) ) . '<br />';
 
 		$out .= Xml::checkLabel( $this->msg( 'activeusers-hidebots' )->text(),
 			'hidebots', 'hidebots', $this->opts->getValue( 'hidebots' ), array( 'tabindex' => 2 ) );
 
-		$out .= Xml::checkLabel( $this->msg( 'activeusers-hidesysops' )->text(),
-			'hidesysops', 'hidesysops', $this->opts->getValue( 'hidesysops' ), array( 'tabindex' => 3 ) ) . '<br />';
+		$out .= Xml::checkLabel(
+			$this->msg( 'activeusers-hidesysops' )->text(),
+			'hidesysops',
+			'hidesysops',
+			$this->opts->getValue( 'hidesysops' ),
+			array( 'tabindex' => 3 )
+		) . '<br />';
 
-		$out .= Xml::submitButton( $this->msg( 'allpagessubmit' )->text(), array( 'tabindex' => 4 ) ) . "\n";# Submit button and form bottom
+		# Submit button and form bottom
+		$out .= Xml::submitButton(
+			$this->msg( 'allpagessubmit' )->text(),
+			array( 'tabindex' => 4 )
+		) . "\n";
 		$out .= Xml::closeElement( 'fieldset' );
 		$out .= Xml::closeElement( 'form' );
 
@@ -237,17 +245,23 @@ class SpecialActiveUsers extends SpecialPage {
 	/**
 	 * Show the special page
 	 *
-	 * @param $par Mixed: parameter passed to the page or null
+	 * @param string $par Parameter passed to the page or null
 	 */
 	public function execute( $par ) {
-		global $wgActiveUserDays;
+		$days = $this->getConfig()->get( 'ActiveUserDays' );
 
 		$this->setHeaders();
 		$this->outputHeader();
 
 		$out = $this->getOutput();
 		$out->wrapWikiMsg( "<div class='mw-activeusers-intro'>\n$1\n</div>",
-			array( 'activeusers-intro', $this->getLanguage()->formatNum( $wgActiveUserDays ) ) );
+			array( 'activeusers-intro', $this->getLanguage()->formatNum( $days ) ) );
+
+		// Occasionally merge in new updates
+		$seconds = min( self::mergeActiveUsers( 600, $days ), $days * 86400 );
+		// Mention the level of staleness
+		$out->addWikiMsg( 'cachedspecial-viewing-cached-ttl',
+			$this->getLanguage()->formatDuration( $seconds ) );
 
 		$up = new ActiveUsersPager( $this->getContext(), null, $par );
 
@@ -268,5 +282,150 @@ class SpecialActiveUsers extends SpecialPage {
 
 	protected function getGroupName() {
 		return 'users';
+	}
+
+	/**
+	 * @param int $period Seconds (do updates no more often than this)
+	 * @param int $days How many days user must be idle before he is considered inactive
+	 * @return int How many seconds old the cache is
+	 */
+	public static function mergeActiveUsers( $period, $days ) {
+		$dbr = wfGetDB( DB_SLAVE );
+		$cTime = $dbr->selectField( 'querycache_info',
+			'qci_timestamp',
+			array( 'qci_type' => 'activeusers' )
+		);
+
+		if ( !wfReadOnly() ) {
+			if ( !$cTime || ( time() - wfTimestamp( TS_UNIX, $cTime ) ) > $period ) {
+				$dbw = wfGetDB( DB_MASTER );
+				if ( $dbw->estimateRowCount( 'recentchanges' ) <= 10000 ) {
+					$window = $days * 86400; // small wiki
+				} else {
+					$window = $period * 2;
+				}
+				$cTime = self::doQueryCacheUpdate( $dbw, $days, $window ) ?: $cTime;
+			}
+		}
+
+		return ( time() -
+			( $cTime ? wfTimestamp( TS_UNIX, $cTime ) : $days * 86400 ) );
+	}
+
+	/**
+	 * @param DatabaseBase $dbw Passed in from updateSpecialPages.php
+	 * @return void
+	 */
+	public static function cacheUpdate( DatabaseBase $dbw ) {
+		global $wgActiveUserDays;
+
+		self::doQueryCacheUpdate( $dbw, $wgActiveUserDays, $wgActiveUserDays * 86400 );
+	}
+
+	/**
+	 * Update the query cache as needed
+	 *
+	 * @param DatabaseBase $dbw
+	 * @param int $days How many days user must be idle before he is considered inactive
+	 * @param int $window Maximum time range of new data to scan (in seconds)
+	 * @return int|bool UNIX timestamp the cache is now up-to-date as of (false on error)
+	 */
+	protected static function doQueryCacheUpdate( DatabaseBase $dbw, $days, $window ) {
+		$lockKey = wfWikiID() . '-activeusers';
+		if ( !$dbw->lock( $lockKey, __METHOD__, 1 ) ) {
+			return false; // exclusive update (avoids duplicate entries)
+		}
+
+		$now = time();
+		$cTime = $dbw->selectField( 'querycache_info',
+			'qci_timestamp',
+			array( 'qci_type' => 'activeusers' )
+		);
+		$cTimeUnix = $cTime ? wfTimestamp( TS_UNIX, $cTime ) : 1;
+
+		// Pick the date range to fetch from. This is normally from the last
+		// update to till the present time, but has a limited window for sanity.
+		// If the window is limited, multiple runs are need to fully populate it.
+		$sTimestamp = max( $cTimeUnix, $now - $days * 86400 );
+		$eTimestamp = min( $sTimestamp + $window, $now );
+
+		// Get all the users active since the last update
+		$res = $dbw->select(
+			array( 'recentchanges' ),
+			array( 'rc_user_text', 'lastedittime' => 'MAX(rc_timestamp)' ),
+			array(
+				'rc_user > 0', // actual accounts
+				'rc_type != ' . $dbw->addQuotes( RC_EXTERNAL ), // no wikidata
+				'rc_log_type IS NULL OR rc_log_type != ' . $dbw->addQuotes( 'newusers' ),
+				'rc_timestamp >= ' . $dbw->addQuotes( $dbw->timestamp( $sTimestamp ) ),
+				'rc_timestamp <= ' . $dbw->addQuotes( $dbw->timestamp( $eTimestamp ) )
+			),
+			__METHOD__,
+			array(
+				'GROUP BY' => array( 'rc_user_text' ),
+				'ORDER BY' => 'NULL' // avoid filesort
+			)
+		);
+		$names = array();
+		foreach ( $res as $row ) {
+			$names[$row->rc_user_text] = $row->lastedittime;
+		}
+
+		// Rotate out users that have not edited in too long (according to old data set)
+		$dbw->delete( 'querycachetwo',
+			array(
+				'qcc_type' => 'activeusers',
+				'qcc_value < ' . $dbw->addQuotes( $now - $days * 86400 ) // TS_UNIX
+			),
+			__METHOD__
+		);
+
+		// Find which of the recently active users are already accounted for
+		if ( count( $names ) ) {
+			$res = $dbw->select( 'querycachetwo',
+				array( 'user_name' => 'qcc_title' ),
+				array(
+					'qcc_type' => 'activeusers',
+					'qcc_namespace' => NS_USER,
+					'qcc_title' => array_keys( $names ) ),
+				__METHOD__
+			);
+			foreach ( $res as $row ) {
+				unset( $names[$row->user_name] );
+			}
+		}
+
+		// Insert the users that need to be added to the list (which their last edit time
+		if ( count( $names ) ) {
+			$newRows = array();
+			foreach ( $names as $name => $lastEditTime ) {
+				$newRows[] = array(
+					'qcc_type' => 'activeusers',
+					'qcc_namespace' => NS_USER,
+					'qcc_title' => $name,
+					'qcc_value' => wfTimestamp( TS_UNIX, $lastEditTime ),
+					'qcc_namespacetwo' => 0, // unused
+					'qcc_titletwo' => '' // unused
+				);
+			}
+			foreach ( array_chunk( $newRows, 500 ) as $rowBatch ) {
+				$dbw->insert( 'querycachetwo', $rowBatch, __METHOD__ );
+				if ( !$dbw->trxLevel() ) {
+					wfWaitForSlaves();
+				}
+			}
+		}
+
+		// Touch the data freshness timestamp
+		$dbw->replace( 'querycache_info',
+			array( 'qci_type' ),
+			array( 'qci_type' => 'activeusers',
+				'qci_timestamp' => $dbw->timestamp( $eTimestamp ) ), // not always $now
+			__METHOD__
+		);
+
+		$dbw->unlock( $lockKey, __METHOD__ );
+
+		return $eTimestamp;
 	}
 }

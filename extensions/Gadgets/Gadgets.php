@@ -36,11 +36,12 @@ $wgHooks['ResourceLoaderRegisterModules'][] = 'GadgetHooks::registerModules';
 $wgHooks['UnitTestsList'][]                 = 'GadgetHooks::onUnitTestsList';
 
 $dir = dirname( __FILE__ ) . '/';
+$wgMessagesDirs['Gadgets'] = __DIR__ . '/i18n';
 $wgExtensionMessagesFiles['Gadgets'] = $dir . 'Gadgets.i18n.php';
 $wgExtensionMessagesFiles['GadgetsAlias'] = $dir . 'Gadgets.alias.php';
 
-$wgAutoloadClasses['ApiQueryGadgetCategories'] = $dir . 'ApiQueryGadgetCategories.php';
-$wgAutoloadClasses['ApiQueryGadgets'] = $dir . 'ApiQueryGadgets.php';
+$wgAutoloadClasses['ApiQueryGadgetCategories'] = $dir . 'api/ApiQueryGadgetCategories.php';
+$wgAutoloadClasses['ApiQueryGadgets'] = $dir . 'api/ApiQueryGadgets.php';
 $wgAutoloadClasses['Gadget'] = $dir . 'Gadgets_body.php';
 $wgAutoloadClasses['GadgetHooks'] = $dir . 'GadgetHooks.php';
 $wgAutoloadClasses['GadgetResourceLoaderModule'] = $dir . 'Gadgets_body.php';
@@ -51,3 +52,8 @@ $wgSpecialPageGroups['Gadgets'] = 'wiki';
 
 $wgAPIListModules['gadgetcategories'] = 'ApiQueryGadgetCategories';
 $wgAPIListModules['gadgets'] = 'ApiQueryGadgets';
+
+/**
+ * Whether the gadget list should be cached or recomputed every time
+ */
+$wgGadgetsCaching = true;
