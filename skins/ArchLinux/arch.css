@@ -4,14 +4,15 @@ body {
 }
 body,
 #content,
-table {
-    color: #222;
-}
+table,
 h1,
 h2,
 h3,
 h4,
-h5 {
+h5,
+pre,
+code,
+tt {
     color: #222;
 }
 h1 {
@@ -21,7 +22,6 @@ pre,
 code,
 tt {
     background-color: #ebf1f5;
-    color: #222;
     font-family: monospace;
 }
 pre {
