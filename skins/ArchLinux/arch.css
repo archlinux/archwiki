@@ -71,9 +71,13 @@ a,
     outline: none;
 }
 a:link,
+#toc a,
 #p-cactions li a,
 #p-personal li a,
-#bodyContent a.external {
+#p-cactions li a:visited,
+#p-personal li a:visited,
+#bodyContent a.external,
+#bodyContent a.extiw {
     color: #07b;
 }
 a:visited,
