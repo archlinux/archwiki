@@ -32,6 +32,17 @@ code,
 tt {
     padding: 0.3em;
 }
+ul,
+.portlet ul {
+    list-style-image: none;
+}
+#bodyContent table {
+    border-collapse: collapse;
+    padding: 2px;
+}
+#bodyContent td {
+    padding: 2px;
+}
 
 /* links (including page tabs and personal toolbar) */
 a,
@@ -149,18 +160,4 @@ div#footer {
 /* highlight current website in the navbar */
 #archnavbar ul li.anb-selected a {
     color: white !important;
-}
-
-/* make tables prettier */
-#bodyContent table {
-    border-collapse: collapse;
-    padding: 2px;
-}
-#bodyContent td {
-    padding: 2px;
-}
-
-ul,
-.portlet ul {
-    list-style-image: none;
 }
