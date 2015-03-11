@@ -65,11 +65,6 @@ ul,
 #bodyContent #pagehistory a {
     font-weight: normal;
 }
-a,
-#p-cactions li a {
-    text-decoration: none;
-    outline: none;
-}
 a:link,
 #toc a,
 #p-cactions li a,
@@ -78,6 +73,8 @@ a:link,
 #p-personal li a:visited,
 #bodyContent a.external,
 #bodyContent a.extiw {
+    text-decoration: none;
+    outline: none;
     color: #07b;
 }
 a:visited,
