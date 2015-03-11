@@ -103,9 +103,6 @@ a.new,
 
 /* bump down the main content to make room for navbar */
 #content {
-    top: .8em;
-}
-#content {
     top: 10px;
 }
 
