@@ -104,7 +104,8 @@ a:active,
     color: #e90 !important;
 }
 a.new,
-#p-cactions .new a {
+#p-cactions .new a,
+#p-personal a.new {
     color: #b00 !important;
 }
 
