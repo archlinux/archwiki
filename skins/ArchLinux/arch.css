@@ -81,9 +81,6 @@ a:visited,
 #bodyContent a:visited.external {
     color: #666;
 }
-a:focus {
-    color: #e90 !important;
-}
 a:hover,
 #p-personal li a:hover,
 #bodyContent #toc a:hover,
@@ -91,6 +88,9 @@ a:hover,
     text-decoration: underline;
     background-color: transparent;
     color: #999;
+}
+a:focus {
+    color: #e90 !important;
 }
 a:active {
     color: #e90 !important;
