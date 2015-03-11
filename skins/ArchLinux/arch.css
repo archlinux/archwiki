@@ -1,71 +1,184 @@
 /* general styling */
-body { background: #f6f9fc; }
-body, #content, table { color: #222;}
-h1, h2, h3, h4, h5 { color: #222; }
-h1 { font-weight: bold; }
-pre, code, tt { background-color: #ebf1f5; color: #222; font-family: monospace; }
-pre { border: 1px solid #bcd; overflow: auto; }
-code, tt { padding: 0.3em; }
+body {
+    background: #f6f9fc;
+}
+body,
+#content,
+table {
+    color: #222;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+    color: #222;
+}
+h1 {
+    font-weight: bold;
+}
+pre,
+code,
+tt {
+    background-color: #ebf1f5;
+    color: #222;
+    font-family: monospace;
+}
+pre {
+    border: 1px solid #bcd;
+    overflow: auto;
+}
+code,
+tt {
+    padding: 0.3em;
+}
 
 /* links (including page tabs and personal toolbar) */
-a, #p-cactions li a { text-decoration: none; outline: none; }
-a:link, #p-cactions li a, #p-personal li a, #bodyContent a.external { color: #07b; }
-#bodyContent > div.mw-content-ltr a, #bodyContent > div.mw-content-rtl a, #wikiPreview > div.mw-content-ltr a, #wikiPreview > div.mw-content-rtl a { font-weight: bold; }
-#bodyContent #toc a, #bodyContent .special li > a, #bodyContent .special li span a, #bodyContent #pagehistory a { font-weight: normal; }
-a:visited, #bodyContent a:visited.external { color: #666; }
-a:focus { color: #e90 !important; }
-a:hover, #p-personal li a:hover, #bodyContent #toc a:hover, #bodyContent a:hover.external { text-decoration: underline; background-color: transparent; color: #999; }
-a:active { color: #e90 !important; }
-a.new, #p-cactions .new a { color: #b00 !important; }
+a,
+#p-cactions li a {
+    text-decoration: none;
+    outline: none;
+}
+a:link,
+#p-cactions li a,
+#p-personal li a,
+#bodyContent a.external {
+    color: #07b;
+}
+#bodyContent > div.mw-content-ltr a,
+#bodyContent > div.mw-content-rtl a,
+#wikiPreview > div.mw-content-ltr a,
+#wikiPreview > div.mw-content-rtl a {
+    font-weight: bold;
+}
+#bodyContent #toc a,
+#bodyContent .special li > a,
+#bodyContent .special li span a,
+#bodyContent #pagehistory a {
+    font-weight: normal;
+}
+a:visited,
+#bodyContent a:visited.external {
+    color: #666;
+}
+a:focus {
+    color: #e90 !important;
+}
+a:hover,
+#p-personal li a:hover,
+#bodyContent #toc a:hover,
+#bodyContent a:hover.external {
+    text-decoration: underline;
+    background-color: transparent;
+    color: #999;
+}
+a:active {
+    color: #e90 !important;
+}
+a.new,
+#p-cactions .new a {
+    color: #b00 !important;
+}
 
 /* bump down the personal toolbar (top menu) */
-#p-personal { top: 70px; }
+#p-personal {
+    top: 70px;
+}
 
 /* bump down the action tabs (page, discuss, edit, etc.) */
-#p-cactions { top: 7.5em; }
+#p-cactions {
+    top: 7.5em;
+}
 /* first for IE6 */
-#p-cactions { top: 97px; }
+#p-cactions {
+    top: 97px;
+}
 /* and now for the rest */
-html > body #p-cactions { top: 92px; }
+html > body #p-cactions {
+    top: 92px;
+}
 
 /* bump down the main content to make room for navbar */
-#content { top: .8em; }
-#content { top: 10px; }
+#content {
+    top: .8em;
+}
+#content {
+    top: 10px;
+}
 
 /* shrink the content just enough to show off the borders */
-div#globalWrapper { width: 99%; }
+div#globalWrapper {
+    width: 99%;
+}
 
 /* article Table of Contents */
-#toc, .toc, .mw-warning { background-color: #f9faff; border: 1px solid #d7dfe3; }
+#toc,
+.toc,
+.mw-warning {
+    background-color: #f9faff;
+    border: 1px solid #d7dfe3;
+}
 
 /* sidebar menus and content borders */
-.pBody { border: 1px solid #ddd; }
-div#content { border: 1px solid #ccc; }
+.pBody {
+    border: 1px solid #ddd;
+}
+div#content {
+    border: 1px solid #ccc;
+}
 
 /* disable default mediawiki logo and close the gap it leaves behind */
-#p-logo { display: none !important;}
+#p-logo {
+    display: none !important;
+}
 /* first for IE6 */
-#column-one { padding-top: 90px; }
+#column-one {
+    padding-top: 90px;
+}
 /* and now for the browsers that work like they should  */
-html > body #column-one { padding-top: 36px; }
+html > body #column-one {
+    padding-top: 36px;
+}
 
 /* disable footer logos  TODO: see if this can be done in LocalSettings.php */
-#f-poweredbyico, #f-copyrightico { display: none; }
+#f-poweredbyico,
+#f-copyrightico {
+    display: none;
+}
 
 /* clean up the footer */
-div#footer { color: #888; background-color: transparent; border-top: none; border-bottom: none; }
+div#footer {
+    color: #888;
+    background-color: transparent;
+    border-top: none;
+    border-bottom: none;
+}
 
 /* bring footer text inline with content */
 /* first for IE6 */
-#footer ul { margin-left: 0; }
+#footer ul {
+    margin-left: 0;
+}
 /* and now for the other browsers that work properly */
-html > body #footer ul { margin-left: 170px; }
+html > body #footer ul {
+    margin-left: 170px;
+}
 
 /* highlight current website in the navbar */
-#archnavbar ul li.anb-selected a { color: white !important; }
+#archnavbar ul li.anb-selected a {
+    color: white !important;
+}
 
 /* make tables prettier */
-#bodyContent table { border-collapse: collapse; padding: 2px; }
-#bodyContent td { padding: 2px; }
+#bodyContent table {
+    border-collapse: collapse;
+    padding: 2px;
+}
+#bodyContent td {
+    padding: 2px;
+}
 
-ul, .portlet ul { list-style-image: none; }
+ul,
+.portlet ul {
+    list-style-image: none;
+}
