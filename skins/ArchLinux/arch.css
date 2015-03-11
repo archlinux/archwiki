@@ -89,10 +89,18 @@ a:hover,
     background-color: transparent;
     color: #999;
 }
-a:focus {
-    color: #e90 !important;
-}
-a:active {
+a:focus,
+a:active,
+#toc a:focus,
+#toc a:active,
+#p-cactions li a:focus,
+#p-cactions li a:active,
+#p-personal li a:focus,
+#p-personal li a:active,
+#bodyContent a:focus.external,
+#bodyContent a:active.external,
+#bodyContent a:focus.extiw,
+#bodyContent a:active.extiw {
     color: #e90 !important;
 }
 a.new,
