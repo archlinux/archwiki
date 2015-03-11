@@ -45,17 +45,6 @@ ul,
 }
 
 /* links (including page tabs and personal toolbar) */
-a,
-#p-cactions li a {
-    text-decoration: none;
-    outline: none;
-}
-a:link,
-#p-cactions li a,
-#p-personal li a,
-#bodyContent a.external {
-    color: #07b;
-}
 #bodyContent > div.mw-content-ltr a,
 #bodyContent > div.mw-content-rtl a,
 #wikiPreview > div.mw-content-ltr a,
@@ -67,6 +56,17 @@ a:link,
 #bodyContent .special li span a,
 #bodyContent #pagehistory a {
     font-weight: normal;
+}
+a,
+#p-cactions li a {
+    text-decoration: none;
+    outline: none;
+}
+a:link,
+#p-cactions li a,
+#p-personal li a,
+#bodyContent a.external {
+    color: #07b;
 }
 a:visited,
 #bodyContent a:visited.external {
