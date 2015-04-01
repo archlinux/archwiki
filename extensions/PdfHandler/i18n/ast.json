@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Xuacu"
+		]
+	},
+	"pdf-desc": "Xestor pa ver los ficheros PDF en mou d'imaxe",
+	"pdf_no_metadata": "Nun se pudieron sacar los metadatos del PDF",
+	"pdf_page_error": "El númberu de la páxina nun ta nel rangu",
+	"exif-pdf-producer": "Programa de conversión",
+	"exif-pdf-version": "Versión del formatu PDF",
+	"exif-pdf-encrypted": "Cifráu",
+	"exif-pdf-pagesize": "Tamañu de la páxina"
+}

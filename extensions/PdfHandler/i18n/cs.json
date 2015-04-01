@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Matěj Grabovský",
+			"Mormegil"
+		]
+	},
+	"pdf-desc": "Ovladač pro prohlížení PDF souborů jako obrázků",
+	"pdf_no_metadata": "Z PDF se nepodařilo získat metadata",
+	"pdf_page_error": "Číslo stránky mimo rozsah",
+	"exif-pdf-producer": "Konverzní program",
+	"exif-pdf-version": "Verze formátu PDF",
+	"exif-pdf-encrypted": "Šifrovaný",
+	"exif-pdf-pagesize": "Velikost stránky"
+}

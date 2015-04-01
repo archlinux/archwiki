@@ -207,6 +207,9 @@ class MonoBookTemplate extends BaseTemplate {
 				continue;
 			}
 
+			// Numeric strings gets an integer when set as key, cast back - T73639
+			$boxName = (string)$boxName;
+
 			if ( $boxName == 'SEARCH' ) {
 				$this->searchBox();
 			} elseif ( $boxName == 'TOOLBOX' ) {

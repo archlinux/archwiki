@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Holek",
+			"Matma Rex",
+			"Sp5uhe"
+		]
+	},
+	"pdf-desc": "Konwerter graficznego podglądu plików PDF",
+	"pdf_no_metadata": "nie można pobrać metadanych z pliku PDF",
+	"pdf_page_error": "Numer strony poza zakresem",
+	"exif-pdf-producer": "Program użyty do konwersji",
+	"exif-pdf-version": "Wersja formatu PDF",
+	"exif-pdf-encrypted": "Zaszyfrowany",
+	"exif-pdf-pagesize": "Wymiary strony"
+}

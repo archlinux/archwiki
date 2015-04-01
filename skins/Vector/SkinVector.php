@@ -35,8 +35,8 @@ class SkinVector extends SkinTemplate {
 	 */
 	private $vectorConfig;
 
-	public function __construct( Config $config ) {
-		$this->vectorConfig = $config;
+	public function __construct() {
+		$this->vectorConfig = ConfigFactory::getDefaultInstance()->makeConfig( 'vector' );
 	}
 
 	protected static $bodyClasses = array( 'vector-animateLayout' );

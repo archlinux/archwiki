@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Minh Nguyen",
+			"Vinhtantran"
+		]
+	},
+	"pdf-desc": "Bộ xử lý để xem tập tin PDF ở dạng hình ảnh",
+	"pdf_no_metadata": "Không thấy truy xuất siêu dữ liệu từ PDF",
+	"pdf_page_error": "Số trang không nằm trong giới hạn",
+	"exif-pdf-producer": "Chương trình chuyển đổi",
+	"exif-pdf-version": "Phiên bản định dạng PDF",
+	"exif-pdf-encrypted": "Mã hóa",
+	"exif-pdf-pagesize": "Kích thước trang"
+}

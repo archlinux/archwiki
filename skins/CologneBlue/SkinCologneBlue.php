@@ -571,6 +571,9 @@ class CologneBlueTemplate extends BaseTemplate {
 		$s = "<div id='quickbar'>\n";
 
 		foreach ( $bar as $heading => $data ) {
+			// Numeric strings gets an integer when set as key, cast back - T73639
+			$heading = (string)$heading;
+
 			$portletId = Sanitizer::escapeId( "p-$heading" );
 			$headingMsg = wfMessage( $idToMessage[$heading] ? $idToMessage[$heading] : $heading );
 			$headingHTML = "<h3>";

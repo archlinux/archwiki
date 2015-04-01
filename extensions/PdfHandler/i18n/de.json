@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kghbln",
+			"Metalhead64",
+			"Raimond Spekking"
+		]
+	},
+	"pdf-desc": "Stellt eine Schnittstelle zur Ansicht von PDF-Dateien im Bildermodus bereit",
+	"pdf_no_metadata": "Keine Metadaten im PDF vorhanden.",
+	"pdf_page_error": "Seitenzahl außerhalb des Dokumentes.",
+	"exif-pdf-producer": "Umwandlungsprogramm",
+	"exif-pdf-version": "Version des PDF-Formats",
+	"exif-pdf-encrypted": "Verschlüsselt",
+	"exif-pdf-pagesize": "Seitengröße"
+}

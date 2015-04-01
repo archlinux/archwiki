@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jsoby"
+		]
+	},
+	"pdf-desc": "Håndtering av PDF-visning i bildemodus",
+	"pdf_no_metadata": "kan ikke hente metadata fra PDF",
+	"pdf_page_error": "Sidenummer overstiger antall sider i dokumentet",
+	"exif-pdf-producer": "Koverteringsprogram",
+	"exif-pdf-version": "Versjon av PDF-format",
+	"exif-pdf-encrypted": "Kryptert",
+	"exif-pdf-pagesize": "Sidestørrelse"
+}

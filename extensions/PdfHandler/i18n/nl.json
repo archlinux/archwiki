@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Siebrand",
+			"Wiki13"
+		]
+	},
+	"pdf-desc": "Handelt pdfbestanden af en maakt het mogelijk ze als afbeeldingen te bekijken",
+	"pdf_no_metadata": "De metadata van het pdfbestand kan niet uitgelezen worden",
+	"pdf_page_error": "Het paginanummer ligt niet binnen het bereik",
+	"exif-pdf-producer": "Conversieprogramma",
+	"exif-pdf-version": "Versie van pdfopmaak",
+	"exif-pdf-encrypted": "Versleuteld",
+	"exif-pdf-pagesize": "Papierformaat"
+}

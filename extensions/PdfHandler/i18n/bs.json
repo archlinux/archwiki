@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"CERminator"
+		]
+	},
+	"pdf-desc": "Uređivač za pregled PDF datoteka u modu za slike",
+	"pdf_no_metadata": "Ne mogu se naći metapodaci u PDFu",
+	"pdf_page_error": "Broj stranice nije u rasponu"
+}

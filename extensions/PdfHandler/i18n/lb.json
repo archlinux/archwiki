@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Robby"
+		]
+	},
+	"pdf-desc": "\"Programm\" den et erméiglecht PDF-Fichieren als Bild ze kucken",
+	"pdf_no_metadata": "Meta-Informatiounen aus dem PDF Dokument kënnen net gelies ginn",
+	"pdf_page_error": "D'Säitenzuel ass net an dem Beräich.",
+	"exif-pdf-producer": "Ëmwandlungsprogramm",
+	"exif-pdf-version": "Versioun vum PDF-Format",
+	"exif-pdf-encrypted": "Verschlësselt",
+	"exif-pdf-pagesize": "Gréisst vun der Säit"
+}

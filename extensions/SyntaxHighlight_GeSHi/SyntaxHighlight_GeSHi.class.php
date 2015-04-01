@@ -470,18 +470,6 @@ class SyntaxHighlight_GeSHi {
 	}
 
 	/**
-	 * Get the GeSHI's version information while Special:Version is read.
-	 * @param $extensionTypes
-	 * @return bool
-	 */
-	public static function extensionTypes( &$extensionTypes ) {
-		global $wgExtensionCredits;
-		self::initialise();
-		$wgExtensionCredits['parserhook']['SyntaxHighlight_GeSHi']['version'] = GESHI_VERSION;
-		return true;
-	}
-
-	/**
 	 * Register a ResourceLoader module providing styles for each supported language.
 	 *
 	 * @param ResourceLoader $resourceLoader

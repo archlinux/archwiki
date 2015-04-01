@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bjankuloski06",
+			"Brest"
+		]
+	},
+	"pdf-desc": "Ракувач за прегледување PDF податотеки во сликовен режим",
+	"pdf_no_metadata": "Не може да се земат метаподатоци од PDF",
+	"pdf_page_error": "Бројот на страница е надвор од опсег",
+	"exif-pdf-producer": "Програм за претворање",
+	"exif-pdf-version": "Верзија на PDF-форматот",
+	"exif-pdf-encrypted": "Шифрирано",
+	"exif-pdf-pagesize": "Големина на страницата"
+}

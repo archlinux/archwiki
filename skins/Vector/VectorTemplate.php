@@ -279,6 +279,9 @@ class VectorTemplate extends BaseTemplate {
 				continue;
 			}
 
+			// Numeric strings gets an integer when set as key, cast back - T73639
+			$name = (string)$name;
+
 			switch ( $name ) {
 				case 'SEARCH':
 					break;

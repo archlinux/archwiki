@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Purodha"
+		]
+	},
+	"pdf-desc": "Määd et möjjelesch, PDF-Dateie wie Bellder ze beloore.",
+	"pdf_no_metadata": "Kann de Metta-Date nit fun dä PDF-Datei holle.",
+	"pdf_page_error": "En Sigge-Nommer es ußerhallef",
+	"exif-pdf-producer": "Ömwandelongsprojramm",
+	"exif-pdf-version": "PDF-Fommaat-Version",
+	"exif-pdf-encrypted": "Verschlößelt",
+	"exif-pdf-pagesize": "Dä Sigg(e) ier Jrüüße"
+}

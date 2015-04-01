@@ -38,10 +38,7 @@ $GLOBALS['wgAutoloadClasses']['VectorTemplate'] = __DIR__ . '/VectorTemplate.php
 $GLOBALS['wgMessagesDirs']['Vector'] = __DIR__ . '/i18n';
 
 // Register skin
-SkinFactory::getDefaultInstance()->register( 'vector', 'Vector', function(){
-	$config = ConfigFactory::getDefaultInstance()->makeConfig( 'vector' );
-	return new SkinVector( $config );
-} );
+$GLOBALS['wgValidSkinNames']['vector'] = 'Vector';
 
 // Register config
 $GLOBALS['wgConfigRegistry']['vector'] = 'GlobalVarConfig::newInstance';
@@ -97,11 +94,14 @@ $GLOBALS['wgResourceModuleSkinStyles']['vector'] = array(
 	'jquery.ui.button' => 'skinStyles/jquery.ui/jquery.ui.button.css',
 	'jquery.ui.datepicker' => 'skinStyles/jquery.ui/jquery.ui.datepicker.css',
 	'jquery.ui.dialog' => 'skinStyles/jquery.ui/jquery.ui.dialog.css',
+	'jquery.ui.menu' => 'skinStyles/jquery.ui/jquery.ui.menu.css',
 	'jquery.ui.progressbar' => 'skinStyles/jquery.ui/jquery.ui.progressbar.css',
 	'jquery.ui.resizable' => 'skinStyles/jquery.ui/jquery.ui.resizable.css',
 	'jquery.ui.selectable' => 'skinStyles/jquery.ui/jquery.ui.selectable.css',
 	'jquery.ui.slider' => 'skinStyles/jquery.ui/jquery.ui.slider.css',
+	'jquery.ui.spinner' => 'skinStyles/jquery.ui/jquery.ui.spinner.css',
 	'jquery.ui.tabs' => 'skinStyles/jquery.ui/jquery.ui.tabs.css',
+	'jquery.ui.tooltips' => 'skinStyles/jquery.ui/jquery.ui.tooltips.css',
 	'mediawiki.notification' => 'skinStyles/mediawiki.notification.less',
 	'mediawiki.special' => 'skinStyles/mediawiki.special.less',
 	'mediawiki.special.preferences' => 'skinStyles/mediawiki.special.preferences.less',

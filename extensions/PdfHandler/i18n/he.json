@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Rotemliss",
+			"YaronSh"
+		]
+	},
+	"pdf-desc": "טיפול בצפייה בקובצי PDF במצב תמונה",
+	"pdf_no_metadata": "לא ניתן לאחזר את נתוני המסמך מה־PDF",
+	"pdf_page_error": "מספר הדף אינו בטווח",
+	"exif-pdf-producer": "תוכנת המרה",
+	"exif-pdf-version": "הגרסה של תסדיר PDF",
+	"exif-pdf-encrypted": "מוצפן",
+	"exif-pdf-pagesize": "גודל דף"
+}

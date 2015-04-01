@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Matasg"
+		]
+	},
+	"pdf-desc": "Įrankis PDF failų peržiūrai vaizdo režime",
+	"pdf_no_metadata": "Nepavyko gauti metaduomenų iš PDF",
+	"pdf_page_error": "Puslapis numeris nėra diapazone"
+}

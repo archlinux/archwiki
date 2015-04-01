@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"DCamer",
+			"Александр Сигачёв"
+		]
+	},
+	"pdf-desc": "Обработчик для просмотра PDF-файлов в виде изображений",
+	"pdf_no_metadata": "невозможно получить метаданные из PDF",
+	"pdf_page_error": "Номер страницы вне диапазона",
+	"exif-pdf-producer": "Программа преобразования",
+	"exif-pdf-version": "Версия в формате PDF",
+	"exif-pdf-encrypted": "Шифрование",
+	"exif-pdf-pagesize": "Размер страницы"
+}

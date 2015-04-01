@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dani",
+			"Dj"
+		]
+	},
+	"pdf-desc": "PDF fájlok megjelenítse képként",
+	"pdf_no_metadata": "nem sikerült lekérni a PDF metaadatait",
+	"pdf_page_error": "Az oldalszám a tartományon kívül esik",
+	"exif-pdf-producer": "Konvertáló program",
+	"exif-pdf-version": "PDF formátum verziója",
+	"exif-pdf-encrypted": "Titkosított",
+	"exif-pdf-pagesize": "Lapméret"
+}

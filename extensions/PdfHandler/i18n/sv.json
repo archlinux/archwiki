@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ainali",
+			"M.M.S."
+		]
+	},
+	"pdf-desc": "Hantering av PDF-visning i bildläge",
+	"pdf_no_metadata": "Kan inte hämta metadata från PDF",
+	"pdf_page_error": "Sidnummer överstiger antal sidor i dokumentet",
+	"exif-pdf-producer": "Konverteringsprogram",
+	"exif-pdf-version": "Version av PDF-format",
+	"exif-pdf-encrypted": "Krypterad",
+	"exif-pdf-pagesize": "Sidstorlek"
+}

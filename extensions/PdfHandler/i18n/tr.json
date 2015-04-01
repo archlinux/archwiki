@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joseph"
+		]
+	},
+	"pdf-desc": "PDF dosyalarını görüntü modunda görüntülemek için işleyici",
+	"pdf_no_metadata": "PDF'den metadata alınamıyor",
+	"pdf_page_error": "Sayfa numarası aralıkta değil"
+}

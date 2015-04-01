@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Beta16",
+			"Darth Kule"
+		]
+	},
+	"pdf-desc": "Gestore per la visualizzazione di file PDF in modalità immagine",
+	"pdf_no_metadata": "Impossibile ottenere i metadati da PDF",
+	"pdf_page_error": "Numero di pagina non compreso nell'intervallo",
+	"exif-pdf-producer": "Programma di conversione",
+	"exif-pdf-version": "Versione del formato PDF",
+	"exif-pdf-encrypted": "Crittografato",
+	"exif-pdf-pagesize": "Dimensioni pagina"
+}

@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Avjoska",
+			"Pikne"
+		]
+	},
+	"pdf-desc": "Töötleja PDF-failide piltidena kuvamiseks",
+	"pdf_no_metadata": "Ei õnnestu PDF-faili meta-andmeid saada",
+	"pdf_page_error": "Leheküljenumber pole vahemikus.",
+	"exif-pdf-producer": "Teisendusprogramm",
+	"exif-pdf-version": "PDF-vormingu versioon",
+	"exif-pdf-encrypted": "Krüptitud",
+	"exif-pdf-pagesize": "Lehe suurus"
+}

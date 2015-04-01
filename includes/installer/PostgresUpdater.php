@@ -384,8 +384,6 @@ class PostgresUpdater extends DatabaseUpdater {
 				'page(page_id) ON DELETE CASCADE' ),
 			array( 'changeFkeyDeferrable', 'protected_titles', 'pt_user',
 				'mwuser(user_id) ON DELETE SET NULL' ),
-			array( 'changeFkeyDeferrable', 'recentchanges', 'rc_cur_id',
-				'page(page_id) ON DELETE SET NULL' ),
 			array( 'changeFkeyDeferrable', 'recentchanges', 'rc_user',
 				'mwuser(user_id) ON DELETE SET NULL' ),
 			array( 'changeFkeyDeferrable', 'redirect', 'rd_from', 'page(page_id) ON DELETE CASCADE' ),
@@ -418,6 +416,10 @@ class PostgresUpdater extends DatabaseUpdater {
 			array( 'addPgField', 'pagelinks', 'pl_from_namespace', 'INTEGER NOT NULL DEFAULT 0' ),
 			array( 'addPgField', 'templatelinks', 'tl_from_namespace', 'INTEGER NOT NULL DEFAULT 0' ),
 			array( 'addPgField', 'imagelinks', 'il_from_namespace', 'INTEGER NOT NULL DEFAULT 0' ),
+
+			// 1.24.1 (backport from 1.25)
+			array( 'dropFkey', 'recentchanges', 'rc_cur_id' )
+
 		);
 	}
 
@@ -767,6 +769,24 @@ END;
 				$this->applyPatch( $type, true, "Creating index '$index' on table '$table'" );
 			}
 		}
+	}
+
+	protected function dropFkey( $table, $field ) {
+		$fi = $this->db->fieldInfo( $table, $field );
+		if ( is_null( $fi ) ) {
+			$this->output( "WARNING! Column '$table.$field' does not exist but it should! " .
+				"Please report this.\n" );
+			return;
+		}
+		$conname = $fi->conname();
+		if ( $fi->conname() ) {
+			$this->output( "Dropping foreign key constraint on '$table.$field'\n" );
+			$conclause = "CONSTRAINT \"$conname\"";
+			$command = "ALTER TABLE $table DROP CONSTRAINT $conname";
+			$this->db->query( $command );
+		} else {
+			$this->output( "...foreign key constraint on '$table.$field' already does not exist\n" );
+		};
 	}
 
 	protected function changeFkeyDeferrable( $table, $field, $clause ) {

@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Crochet.david",
+			"Gomoko",
+			"Grondin",
+			"Verdy p"
+		]
+	},
+	"pdf-desc": "Gestionnaire permettant de visualiser les fichiers PDF en mode image",
+	"pdf_no_metadata": "Impossible d’obtenir les métadonnées du fichier PDF",
+	"pdf_page_error": "Le numéro de page est hors de l’étendue.",
+	"exif-pdf-producer": "Programme de conversion",
+	"exif-pdf-version": "Version du format PDF",
+	"exif-pdf-encrypted": "Crypté",
+	"exif-pdf-pagesize": "Taille de la page"
+}

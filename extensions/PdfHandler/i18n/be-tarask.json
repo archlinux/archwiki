@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"EugeneZelenko",
+			"Jim-by",
+			"Wizardist"
+		]
+	},
+	"pdf-desc": "Апрацоўшчык для прагляду PDF-файлаў у выглядзе выяваў",
+	"pdf_no_metadata": "Немагчыма атрымаць мэта-зьвесткі з PDF-файла",
+	"pdf_page_error": "Нумар старонкі паза дыяпазонам",
+	"exif-pdf-producer": "Праграма канвэртацыі",
+	"exif-pdf-version": "Вэрсія фармату PDF",
+	"exif-pdf-encrypted": "Зашыфравана",
+	"exif-pdf-pagesize": "Памер старонкі"
+}

@@ -36,12 +36,15 @@ if( !defined( 'MEDIAWIKI' ) ) {
 	die();
 }
 
-$wgExtensionCredits['parserhook']['SyntaxHighlight_GeSHi'] = array(
+require_once __DIR__ . '/geshi/geshi.php';
+
+$wgExtensionCredits['parserhook'][] = array(
 	'path'           => __FILE__,
 	'name'           => 'SyntaxHighlight',
 	'author'         => array( 'Brion Vibber', 'Tim Starling', 'Rob Church', 'Niklas Laxström' ),
 	'descriptionmsg' => 'syntaxhighlight-desc',
 	'url'            => 'https://www.mediawiki.org/wiki/Extension:SyntaxHighlight_GeSHi',
+	'version'        => GESHI_VERSION,
 );
 
 // Change these in LocalSettings.php
@@ -56,7 +59,6 @@ $wgAutoloadClasses['SyntaxHighlight_GeSHi'] = $dir . 'SyntaxHighlight_GeSHi.clas
 $wgAutoloadClasses['ResourceLoaderGeSHiModule'] = $dir . 'ResourceLoaderGeSHiModule.php';
 $wgAutoloadClasses['ResourceLoaderGeSHiLocalModule'] = $dir . 'ResourceLoaderGeSHiLocalModule.php';
 
-$wgHooks['ExtensionTypes'][] = 'SyntaxHighlight_GeSHi::extensionTypes';
 $wgHooks['ResourceLoaderRegisterModules'][] = 'SyntaxHighlight_GeSHi::resourceLoaderRegisterModules';
 $wgHooks['ContentGetParserOutput'][] = 'SyntaxHighlight_GeSHi::renderHook';
 
