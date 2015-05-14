@@ -123,7 +123,7 @@ div#content {
 #p-logo {
     display: none !important;
 }
-#column-one {
+div#column-one {
     padding-top: 36px;
 }
 
