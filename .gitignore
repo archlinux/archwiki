@@ -1,5 +1,7 @@
 .svn
 *~
+*.orig
+*.rej
 *.kate-swp
 .classpath
 .idea
